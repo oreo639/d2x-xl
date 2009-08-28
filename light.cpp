@@ -404,9 +404,9 @@ void CMine::ScaleCornerLight (double fLight, bool bAll)
 
 theApp.SetModified (TRUE);
 scale = fLight / 100.0; // 100.0% = normal
-#pragma omp parallel 
+//#pragma omp parallel 
 	{
-	#pragma omp for
+	//#pragma omp for
 	for (segNum = 0; segNum < segCount; segNum++) {
 		CDSegment* segP = Segments (segNum);
 		if (bAll || (segP->wall_bitmask & MARKED_MASK)) {
@@ -501,7 +501,7 @@ memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
 theApp.SetModified (TRUE);
 #pragma omp parallel 
 	{
-#	pragma omp for
+#pragma omp for
 	for (segnum = 0; segnum < segCount; segnum++) {
 		CDSegment *segP = Segments (segnum);
 		for (int pt = 0; pt < 8; pt++) {
@@ -520,7 +520,7 @@ theApp.SetModified (TRUE);
 			}
 		}
 			//	max_brightness = min(max_brightness,0x8000L);
-#	pragma omp for
+#pragma omp for
 	for (segnum = 0; segnum < segCount; segnum++) {
 		CDSegment *segP = Segments (segnum);
 		for (int pt = 0; pt < 8; pt++) {
@@ -617,7 +617,7 @@ if (srcBr)
 	srcBr /= 65536.0;
 else
 	return;
-#pragma omp critical
+//#pragma omp critical
 	{
 	if (pdc->index) {
 		pdc->color.r += psc->color.r * srcBr;
@@ -712,7 +712,7 @@ int nChildSeg;
 int nSegCount = SegCount ();
 #pragma omp parallel 
 	{
-#	pragma omp for
+#pragma omp for private (effect)
 	for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
 		CDSegment* childSegP = Segments (nChildSeg);
 		// skip if this is too far away
@@ -751,9 +751,6 @@ int nSegCount = SegCount ();
 
 	//		CBRK (psc->index > 0);
 			// if the child side is the same as the source side, then set light and continue
-	#ifdef _DEBUG
-			CBRK (nChildSeg == qqq1 && nChildSide == qqq2);
-	#endif
 			if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
 				uvl*		uvlP = childSegP->sides [nChildSide].uvls;
 				UINT32	vBr, lBr;
@@ -894,7 +891,7 @@ bool bWall, bD2XLights = (level_version >= 15) && (GameInfo ().fileinfo_version 
 fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel
 	{
-#	pragma omp for private (effect)
+#pragma omp for private (effect)
 	for (nSourceSeg = 0; nSourceSeg < nSegCount; nSourceSeg++) {
 		if (nErrors)
 			continue;
@@ -950,7 +947,7 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 
 			if (GameInfo ().dl_indices.count >= MAX_DL_INDICES) {
-#	pragma omp critical
+//#pragma omp critical
 				{
 				if (++nErrors == 1) {
 					char szMsg [256];
@@ -965,7 +962,7 @@ fLightScale = 1.0; ///= 100.0;
 			int dl_index_num;
 
 			// get index number and increment total number of dl_indices
-	#pragma omp critical
+	//#pragma omp critical
 			{
 			dl_index_num = int (GameInfo ().dl_indices.count++);
 			}
@@ -998,7 +995,7 @@ fLightScale = 1.0; ///= 100.0;
 			//       This actually reduces the number of calls since most
 			//       Segments () do not have lights)
 	#if 1
-			INT16* visited;
+			INT16* visited = new INT16 [nSegCount];
 			memset (visited, 0xff, nSegCount * sizeof (*visited));
 			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth, visited);
 			visited [nSourceSeg] = recursion_depth;
@@ -1037,10 +1034,6 @@ fLightScale = 1.0; ///= 100.0;
 				// loop on child sides
 				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
-	#ifdef _DEBUG
-				CBRK (nSourceSeg == 6 && nSourceSide == 2 &&
-					nChildSeg == 10 && nChildSide == 1);
-	#endif
 					if (childSegP->children[nChildSide] >= 0) {
 						UINT16 nWall = childSegP->sides[nChildSide].nWall;
 						// .. if there is no wall ..
@@ -1063,7 +1056,7 @@ fLightScale = 1.0; ///= 100.0;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
 						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
-#	pragma omp critical
+//#pragma omp critical
 							{
 							if (++nErrors == 1) {
 								char szMsg [256];
@@ -1074,7 +1067,7 @@ fLightScale = 1.0; ///= 100.0;
 							continue;
 							}
 						delta_light* dl;
-	#pragma omp critical
+	//#pragma omp critical
 						{
 						dl = DeltaLights (GameInfo ().delta_lights.count++);
 						}
@@ -1093,13 +1086,10 @@ fLightScale = 1.0; ///= 100.0;
 						}
 
 					// calculate vector between center of source segment and center of child
-	#ifdef _DEBUG
-						CBRK (nChildSeg == qqq1 && nChildSide == qqq2);
-	#endif
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
 							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
-#	pragma omp critical
+//#pragma omp critical
 								{
 								if (++nErrors == 1) {
 									char szMsg [256];
@@ -1110,7 +1100,7 @@ fLightScale = 1.0; ///= 100.0;
 								continue;
 								}
 							delta_light *dl;
-#	pragma omp critical
+//#pragma omp critical
 							{
 							dl = DeltaLights (GameInfo ().delta_lights.count++);
 							}
