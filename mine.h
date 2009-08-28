@@ -562,7 +562,8 @@ private:
 	void ClearMineData();
 	void UpdateDeltaLights ();
 	double dround_off(double value, double round);
-	void SetSegmentChildNum(CDSegment *pParent, INT16 segnum,INT16 recursion_level);
+	void SetSegmentChildNum(CDSegment *pRoot, INT16 segnum,INT16 recursion_level);
+	void SetSegmentChildNum (CDSegment *pRoot, INT16 segnum, INT16 recursion_level, INT16* visited);
 	void UnlinkSeg (CDSegment *pSegment, CDSegment *pRoot);
 	void LinkSeg (CDSegment *pSegment, CDSegment *pRoot);
 	void SortDLIndex (int left, int right);

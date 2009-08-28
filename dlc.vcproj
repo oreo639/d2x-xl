@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="DLE-XP"
 	ProjectGUID="{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}"
+	RootNamespace="DLE-XP"
 	Keyword="MFCProj"
 	>
 	<Platforms>
@@ -629,6 +630,7 @@
 				RuntimeLibrary="0"
 				StructMemberAlignment="1"
 				EnableFunctionLevelLinking="true"
+				OpenMP="true"
 				PrecompiledHeaderFile=".\Release/dlc.pch"
 				AssemblerListingLocation="$(IntDir)/"
 				ObjectFile="$(IntDir)/"
@@ -3969,15 +3971,15 @@
 				>
 			</File>
 			<File
+				RelativePath="Resource\Dlc.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource\icons\Dlc.ico"
 				>
 			</File>
 			<File
 				RelativePath="res\dlc.ico"
-				>
-			</File>
-			<File
-				RelativePath="Resource\Dlc.ico"
 				>
 			</File>
 			<File
@@ -5353,15 +5355,15 @@
 				>
 			</File>
 			<File
+				RelativePath="Resource\toolbar.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource\bitmaps\toolbar.bmp"
 				>
 			</File>
 			<File
 				RelativePath="res\Toolbar.bmp"
-				>
-			</File>
-			<File
-				RelativePath="Resource\toolbar.bmp"
 				>
 			</File>
 			<File

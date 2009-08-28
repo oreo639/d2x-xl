@@ -399,28 +399,42 @@ for (segnum = SegCount (), seg = Segments (); segnum; segnum--, seg++) {
 
 void CMine::ScaleCornerLight (double fLight, bool bAll) 
 {
-	int segnum,j,i;
+	int segNum, segCount = SegCount ();
 	double scale;
-	CDSegment *seg;
 
 theApp.SetModified (TRUE);
 scale = fLight / 100.0; // 100.0% = normal
-for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
-	if (bAll || (seg->wall_bitmask & MARKED_MASK))
-		for (j = 0; j < 6; j++)
-			for (i = 0; i < 4; i++) {
-				fLight = ((double) ((UINT16) seg->sides [j].uvls [i].l)) * scale;
-				fLight = min (fLight, 0x8000);
-				fLight = max (fLight, 0);
-				Segments (segnum)->sides[j].uvls[i].l = (UINT16) fLight;
+#pragma omp parallel 
+	{
+	#pragma omp for
+	for (segNum = 0; segNum < segCount; segNum++) {
+		CDSegment* segP = Segments (segNum);
+		if (bAll || (segP->wall_bitmask & MARKED_MASK)) {
+			for (int j = 0; j < 6; j++) {
+				for (int i = 0; i < 4; i++) {
+					double l = ((double) ((UINT16) segP->sides [j].uvls [i].l)) * scale;
+					l = min (l, 0x8000);
+					l = max (l, 0);
+					segP->sides [j].uvls [i].l = (UINT16) l;
+					}
 				}
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+typedef struct tAvgCornerLight {
+	UINT16	light;
+	UINT8		count;
+} tAvgCornerLight;
+
 void CMine::CalcAverageCornerLight (bool bAll)
 {
+#if 0
+
   int segnum,pt,i,vertnum,count,sidenum,uvnum;
   UINT16 max_brightness;
 
@@ -441,7 +455,12 @@ for (vertnum = 0; vertnum < VertCount (); vertnum++) {
 						uvnum = point_corners[pt][i];
 						if ((seg->children[sidenum] < 0) || 
 							 (seg->sides[sidenum].nWall < GameInfo ().walls.count)) {
+#if 1
 							max_brightness = max(max_brightness,(UINT16)seg->sides[sidenum].uvls[uvnum].l);
+#else
+							if (max_brightness < (UINT16)seg->sides[sidenum].uvls[uvnum].l)
+								max_brightness = (UINT16)seg->sides[sidenum].uvls[uvnum].l;
+#endif
 							count++;
 							}
 						}
@@ -470,6 +489,57 @@ for (vertnum = 0; vertnum < VertCount (); vertnum++) {
 			}
 		}
 	}
+
+#else
+
+  int segnum, segCount = SegCount (), wallCount = GameInfo ().walls.count;
+  tAvgCornerLight* max_brightness = new tAvgCornerLight [VertCount ()];
+
+memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
+
+// smooth corner light by averaging all corners which share a vertex
+theApp.SetModified (TRUE);
+#pragma omp parallel 
+	{
+#	pragma omp for
+	for (segnum = 0; segnum < segCount; segnum++) {
+		CDSegment *segP = Segments (segnum);
+		for (int pt = 0; pt < 8; pt++) {
+			int vertnum = segP->verts [pt];
+			if (bAll || (*VertStatus (vertnum) & MARKED_MASK)) {
+				for (int i = 0; i < 3; i++) {
+					int sidenum = point_sides [pt][i];
+					if ((segP->children [sidenum] < 0) || (segP->sides [sidenum].nWall < wallCount)) {
+						int uvnum = point_corners [pt][i];
+						if (max_brightness [vertnum].light < UINT16 (segP->sides [sidenum].uvls [uvnum].l))
+							max_brightness [vertnum].light = UINT16 (segP->sides [sidenum].uvls [uvnum].l);
+						max_brightness [vertnum].count++;
+						}
+					}
+				}
+			}
+		}
+			//	max_brightness = min(max_brightness,0x8000L);
+#	pragma omp for
+	for (segnum = 0; segnum < segCount; segnum++) {
+		CDSegment *segP = Segments (segnum);
+		for (int pt = 0; pt < 8; pt++) {
+			int vertnum = segP->verts [pt];
+			if ((max_brightness [vertnum].count > 0) && (bAll || (*VertStatus (vertnum) & MARKED_MASK))) {
+				for (int i = 0; i < 3; i++) {
+					int sidenum = point_sides [pt][i];
+					if ((segP->children [sidenum] < 0) || (segP->sides [sidenum].nWall < wallCount)) {
+						int uvnum = point_corners [pt][i];
+						segP->sides [sidenum].uvls [uvnum].l = max_brightness [vertnum].light /*/ max_brightness [vertnum].count*/;
+						}
+					}
+				}
+			}
+		}
+	}
+delete[] max_brightness;
+
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -536,19 +606,6 @@ theApp.UnlockUndo ();
 
 void CMine::BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr)
 {
-#if 0
-if (psc->index == 255) {
-	if (pdc->index == 0)
-		*pdc = *psc;
-	return;
-	}
-else if ((pdc->index == 0) || (pdc->index == 255)) {
-	*pdc = *psc;
-	return;
-	}
-else
-	return;
-#endif
 if (destBr)
 	destBr /= 65536.0;
 else {
@@ -560,30 +617,33 @@ if (srcBr)
 	srcBr /= 65536.0;
 else
 	return;
-if (pdc->index) {
-	pdc->color.r += psc->color.r * srcBr;
-	pdc->color.g += psc->color.g * srcBr;
-	pdc->color.b += psc->color.b * srcBr;
-	double cMax = pdc->color.r;
-		if (cMax < pdc->color.g)
-			cMax = pdc->color.g;
-		if (cMax < pdc->color. b)
-			cMax = pdc->color. b;
-		if (cMax > 1) {
-			pdc->color.r /= cMax;
-			pdc->color.g /= cMax;
-			pdc->color.b /= cMax;
-			}
-	}
-else {
-	if (destBr) {
-		pdc->index = 1;
-		pdc->color.r = psc->color.r * destBr;
-		pdc->color.g = psc->color.g * destBr;
-		pdc->color.b = psc->color.b * destBr;
+#pragma omp critical
+	{
+	if (pdc->index) {
+		pdc->color.r += psc->color.r * srcBr;
+		pdc->color.g += psc->color.g * srcBr;
+		pdc->color.b += psc->color.b * srcBr;
+		double cMax = pdc->color.r;
+			if (cMax < pdc->color.g)
+				cMax = pdc->color.g;
+			if (cMax < pdc->color. b)
+				cMax = pdc->color. b;
+			if (cMax > 1) {
+				pdc->color.r /= cMax;
+				pdc->color.g /= cMax;
+				pdc->color.b /= cMax;
+				}
 		}
-	else
-		*pdc = *psc;
+	else {
+		if (destBr) {
+			pdc->index = 1;
+			pdc->color.r = psc->color.r * destBr;
+			pdc->color.g = psc->color.g * destBr;
+			pdc->color.b = psc->color.b * destBr;
+			}
+		else
+			*pdc = *psc;
+		}
 	}
 }
 
@@ -594,21 +654,21 @@ static int qqq1 = -1, qqq2 = 0;
 #endif
 
 void CMine::Illuminate (
-	INT16 source_segnum, 
-	INT16 source_sidenum, 
+	INT16 nSourceSeg, 
+	INT16 nSourceSide, 
 	UINT32 brightness, 
 	double fLightScale, 
-	bool bAll, bool 
-	bCopyTexLights) 
+	bool bAll, 
+	bool bCopyTexLights) 
 {
-CDSegment	*seg = Segments ();
-CDSegment	*child_seg;
-double		effect[4];
-// find orthogonal angle of source segment
-vms_vector A;
+	CDSegment*		segP = Segments ();
+	double			effect[4];
+	// find orthogonal angle of source segment
+	vms_vector		A;
+	INT16*			visited;
 
 //fLightScale /= 100.0;
-CalcOrthoVector (A,source_segnum,source_sidenum);
+CalcOrthoVector (A,nSourceSeg, nSourceSide);
 // remember to flip the sign since we want it to point inward
 A.x = -A.x;
 A.y = -A.y;
@@ -616,18 +676,27 @@ A.z = -A.z;
 
 // calculate the center of the source segment
 vms_vector source_center;
-CalcCenter (source_center,source_segnum,source_sidenum);
-if ((source_segnum == 911) && (source_sidenum == 3))
-	A = A;
+CalcCenter (source_center,nSourceSeg,nSourceSide);
 // mark those Segments () within N children of current cube
 
 // set child numbers
-//Segments ()[source_segnum].seg_number = m_lightRenderDepth;
+//Segments ()[nSourceSeg].seg_number = m_lightRenderDepth;
+
+segP = Segments (nSourceSeg);
+#if 1//def _OPENMP
+visited = new INT16 [SegCount ()];
+memset (visited, 0xff, SegCount () * sizeof (*visited));
+SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
+visited [nSourceSeg] = m_lightRenderDepth;
+#else
 int i;
-for (i = SegCount (); i; i--, seg++)
-	seg->seg_number = -1;
-SetSegmentChildNum (NULL, source_segnum, m_lightRenderDepth);
-CDColor *plc = LightColor (source_segnum, source_sidenum);
+for (i = SegCount (); i; )
+	Segments (--i)->seg_number = -1;
+SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth);
+segP->seg_number = m_lightRenderDepth;
+#endif
+
+CDColor *plc = LightColor (nSourceSeg, nSourceSide);
 if (!plc->index) {
 	plc->index = 255;
 	plc->color.r =
@@ -635,92 +704,97 @@ if (!plc->index) {
 	plc->color.b = 1.0;
 	}
 if (UseTexColors () && bCopyTexLights) {
-	CDColor	*psc = LightColor (source_segnum, source_sidenum, false);
+	CDColor	*psc = LightColor (nSourceSeg, nSourceSide, false);
 	*psc = *plc;
 	}
-seg = Segments (source_segnum);
-seg->seg_number = m_lightRenderDepth;
-bool bWall = false; //FindWall (source_segnum, source_sidenum) != NULL;
+bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != NULL;
 // loop on child Segments ()
-int child_segnum;
-for (child_segnum=0, child_seg = Segments ();child_segnum<SegCount ();child_segnum++, child_seg++) {
-	// skip if this is not viewable
-	if (child_seg->seg_number < 0) 
-		continue;
-	// skip if not marked
-//	if (!(bAll || (child_seg->wall_bitmask & MARKED_MASK)))
-//		continue;
-	// setup source corner vertex for length calculation later
-	vms_vector source_corner[4];
-	int j;
-	for (j = 0; j < 4; j++) {
-		int vertnum = side_vert [source_sidenum][j];
-		int h = seg->verts [vertnum];
-		source_corner[j].x = Vertices (h)->x;
-		source_corner[j].y = Vertices (h)->y;
-		source_corner[j].z = Vertices (h)->z;
-		}
-	// loop on child sides
-	int child_sidenum;
-	for (child_sidenum = 0; child_sidenum < 6; child_sidenum++) {
-		// if side has a child..
-		if (!(bAll || SideIsMarked (child_segnum, child_sidenum)))
+int nChildSeg;
+int nSegCount = SegCount ();
+#pragma omp parallel 
+	{
+#	pragma omp for
+	for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
+		CDSegment* childSegP = Segments (nChildSeg);
+		// skip if this is too far away
+#if 1//def _OPENMP
+		if (visited [nChildSeg] < 0)
 			continue;
-		if (child_seg->children[child_sidenum] >= 0) {
-			UINT16 nWall = child_seg->sides[child_sidenum].nWall;
-			// .. but there is no wall ..
-			if (nWall >= GameInfo ().walls.count)
-				continue;
-				// .. or its not a door ..
-			if (Walls (nWall)->type == WALL_OPEN)
-				continue;
-			}
-
-//		CBRK (psc->index > 0);
-		// if the child side is the same as the source side, then set light and continue
-#ifdef _DEBUG
-		CBRK (child_segnum == qqq1 && child_sidenum == qqq2);
+#else
+		if (childSegP->seg_number < 0) 
+			continue;
 #endif
-		if (child_sidenum == source_sidenum && child_segnum == source_segnum) {
-			uvl		*uvlP = child_seg->sides [child_sidenum].uvls;
-			UINT32	vBr, lBr;
-
-			theApp.SetModified (TRUE);
-			int j;
-			for (j = 0; j < 4; j++, uvlP++) {
-				CDColor *pvc = VertexColors (child_seg->verts [side_vert [child_sidenum][j]]);
-				vBr = (UINT16) uvlP->l;
-				lBr = (UINT32) (brightness * fLightScale);
-				BlendColors (plc, pvc, lBr, vBr);
-				vBr += lBr;
-				vBr = min (0x8000, vBr);
-				uvlP->l = (UINT16) vBr;
-				}
-			continue;
+		// setup source corner vertex for length calculation later
+		vms_vector source_corner[4];
+		int j;
+		for (j = 0; j < 4; j++) {
+			int vertnum = side_vert [nSourceSide][j];
+			int h = segP->verts [vertnum];
+			source_corner[j].x = Vertices (h)->x;
+			source_corner[j].y = Vertices (h)->y;
+			source_corner[j].z = Vertices (h)->z;
 			}
+		// loop on child sides
+		int nChildSide;
+		for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+			// if side has a child..
+			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
+				continue;
+			if (childSegP->children [nChildSide] >= 0) {
+				UINT16 nWall = childSegP->sides [nChildSide].nWall;
+				// .. but there is no wall ..
+				if (nWall >= GameInfo ().walls.count)
+					continue;
+					// .. or its not a door ..
+				if (Walls (nWall)->type == WALL_OPEN)
+					continue;
+				}
 
-		// calculate vector between center of source segment and center of child
-//		CBRK (child_segnum == 1 && child_sidenum == 2);
-		if (CalcSideLights (child_segnum, child_sidenum, source_center, source_corner, A, effect, fLightScale, bWall)) {
-				UINT32	vBr, lBr;	//vertex brightness, light brightness
-				uvl		*uvlP = child_seg->sides [child_sidenum].uvls;
+	//		CBRK (psc->index > 0);
+			// if the child side is the same as the source side, then set light and continue
+	#ifdef _DEBUG
+			CBRK (nChildSeg == qqq1 && nChildSide == qqq2);
+	#endif
+			if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
+				uvl*		uvlP = childSegP->sides [nChildSide].uvls;
+				UINT32	vBr, lBr;
 
-			theApp.SetModified (TRUE);
-			int j;
-			for (j = 0; j < 4; j++, uvlP++) {
-				CDColor *pvc = VertexColors (child_seg->verts [side_vert [child_sidenum][j]]);
-				if (child_seg->verts [side_vert [child_sidenum][j]] == 2368)
-					j = j;
-				vBr = (UINT16) uvlP->l;
-				lBr = (UINT16) (brightness * effect [j] / 32);
-				BlendColors (plc, pvc, lBr, vBr);
-				vBr += lBr;
-				vBr = min (0x8000, vBr);
-				uvlP->l = (UINT16) vBr;
+				theApp.SetModified (TRUE);
+				for (int j = 0; j < 4; j++, uvlP++) {
+					CDColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
+					vBr = (UINT16) uvlP->l;
+					lBr = (UINT32) (brightness * fLightScale);
+					BlendColors (plc, pvc, lBr, vBr);
+					vBr += lBr;
+					vBr = min (0x8000, vBr);
+					uvlP->l = (UINT16) vBr;
+					}
+				continue;
+				}
+
+			// calculate vector between center of source segment and center of child
+	//		CBRK (nChildSeg == 1 && nChildSide == 2);
+			if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
+					UINT32	vBr, lBr;	//vertex brightness, light brightness
+					uvl		*uvlP = childSegP->sides [nChildSide].uvls;
+
+				theApp.SetModified (TRUE);
+				for (int j = 0; j < 4; j++, uvlP++) {
+					CDColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
+					vBr = (UINT16) uvlP->l;
+					lBr = (UINT16) (brightness * effect [j] / 32);
+					BlendColors (plc, pvc, lBr, vBr);
+					vBr += lBr;
+					vBr = min (0x8000, vBr);
+					uvlP->l = (UINT16) vBr;
+					}
 				}
 			}
 		}
 	}
+#if 1//def _OPENMP
+delete[] visited;
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -809,194 +883,175 @@ return -1;
 bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth) 
 {
 	// initialize totals
-CDSegment *srcseg, *childseg;
-int source_segnum, child_segnum;
-double effect[4];
+	int		nSegCount = SegCount ();
+	int		nSourceSeg;
+	double	effect[4];
 
 GameInfo ().delta_lights.count = 0;
 GameInfo ().dl_indices.count = 0;
 bool bWall, bD2XLights = (level_version >= 15) && (GameInfo ().fileinfo_version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
-for (source_segnum = 0, srcseg = Segments (); 
-	  source_segnum < SegCount (); 
-	  source_segnum++, srcseg++) {
-	// skip if not marked unless we are automatically saving
-	if  (!(srcseg->wall_bitmask & MARKED_MASK) && !force) 
-		continue;
-	// loop on all sides
-	int source_sidenum;
-	for (source_sidenum = 0; source_sidenum < 6; source_sidenum++) {
-		INT16 tmapnum = srcseg->sides [source_sidenum].nBaseTex & 0x3fff;
-		INT16 tmapnum2 = srcseg->sides [source_sidenum].nOvlTex & 0x3fff;
-		INT16 trignum;
-		bool bl1 = (bool) (IsLight (tmapnum) != -1);
-		bool bl2 = (bool) (IsLight (tmapnum2) != -1);
-		if (!(bl1 || bl2))
-			continue;	// no lights on this side
-		bool bCalcDeltas = false;
-		// if the current side is a wall and has a light and is the target of a trigger
-		// than can make the wall appear/disappear, calculate delta lights for it
-		if ((bWall = (FindWall (source_segnum, source_sidenum) != NULL)) &&
-			 ((trignum = FindTriggerTarget (0, source_segnum, source_sidenum)) >= 0)) {
-			INT8 trigtype = Triggers (trignum)->type;
-			bCalcDeltas =
-				(trigtype == TT_ILLUSION_OFF) ||
-				(trigtype == TT_ILLUSION_ON) ||
-				(trigtype == TT_CLOSE_WALL) ||
-				(trigtype == TT_OPEN_WALL) ||
-				(trigtype == TT_LIGHT_OFF) ||
-				(trigtype == TT_LIGHT_ON);
-				 
-			}
-		if (!bCalcDeltas)
-			bCalcDeltas = IsFlickeringLight (source_segnum, source_sidenum);
-		if (!bCalcDeltas) {
-			bool bb1 = IsBlastableLight (tmapnum);
-			bool bb2 = IsBlastableLight (tmapnum2);
-			if (bb1 == bb2)
-				bCalcDeltas = bb1;	// both lights blastable or not
-			else if (!(bb1 ? bl2 : bl1))	// i.e. one light blastable and the other texture not a non-blastable light 
-				bCalcDeltas = true;
-			}
-		if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-			int trignum = FindTriggerTarget (0, source_segnum, source_sidenum);
-			if ((trignum >= 0) && (Triggers (trignum)->type >= TT_LIGHT_OFF))
-				bCalcDeltas = true;
-			}
-		if (!bCalcDeltas)
+#pragma omp parallel
+	{
+#	pragma omp for private (effect)
+	for (nSourceSeg = 0; nSourceSeg < segCount; nSourceSeg++) {
+		CDSegment* srcSegP = Segments (nSourceSeg);
+		// skip if not marked unless we are automatically saving
+		if  (!(srcSegP->wall_bitmask & MARKED_MASK) && !force) 
 			continue;
-		// only set lights for textures which have a nOvlTex
-		//if (tmapnum2 == 0)
-		//	continue;
-
-		INT16 srcwall = srcseg->sides [source_sidenum].nWall;
-		if ((srcseg->children [source_sidenum] != -1) &&
-			 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
-			continue;
-
-//		if ((IsLight (tmapnum) == -1) && (IsLight (tmapnum2) == -1))
-//			continue;
-		if (GameInfo ().dl_indices.count >= MAX_DL_INDICES) {
-			char szMsg [256];
-			sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
-			DEBUGMSG (szMsg);
-			return false;
-			}
-
-		vms_vector A,source_center;
-
-		// get index number and increment total number of dl_indices
-		int dl_index_num = (int)GameInfo ().dl_indices.count++;
-		dl_index *pdli = DLIndex (dl_index_num);
-		if (bD2XLights) {
-			pdli->d2x.segnum = source_segnum;
-			pdli->d2x.sidenum = source_sidenum;
-			pdli->d2x.count = 0; // will be incremented below
-			}
-		else {
-			pdli->d2.segnum = source_segnum;
-			pdli->d2.sidenum = source_sidenum;
-			pdli->d2.count = 0; // will be incremented below
-			}
-		pdli->d2.index = (INT16)GameInfo ().delta_lights.count;
-
-		// find orthogonal angle of source segment
-		CalcOrthoVector(A,source_segnum,source_sidenum);
-		// remember to flip the sign since we want it to point inward
-		A.x = -A.x;
-		A.y = -A.y;
-		A.z = -A.z;
-
-		// calculate the center of the source segment
-		CalcCenter(source_center,source_segnum,source_sidenum);
-
-		// mark those Segments () within N children of current cube
-		//(note: this is done once per light instead of once per segment
-		//       even though some Segments () have multiple lights.
-		//       This actually reduces the number of calls since most
-		//       Segments () do not have lights)
-
-		int h;
-		for (h = 0; h < SegCount (); h++)
-			Segments (h)->seg_number = -1;
-		SetSegmentChildNum (srcseg, source_segnum, recursion_depth);
-		srcseg->seg_number = recursion_depth;
-
-		// setup source corner vertex for length calculation later
-		vms_vector source_corner[4];
-		int j;
-		for (j = 0; j < 4; j++) {
-			UINT8 vertnum = side_vert[source_sidenum][j];
-			int h = srcseg->verts[vertnum];
-			source_corner[j].x = Vertices (h)->x;
-			source_corner[j].y = Vertices (h)->y;
-			source_corner[j].z = Vertices (h)->z;
-			}
-
-		// loop on child Segments ()
-		for (child_segnum = 0, childseg = Segments ();
-			  child_segnum < SegCount ();
-			  child_segnum++, childseg++) {
-			if (childseg->seg_number < 0)
+		// loop on all sides
+		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++) {
+			INT16 tmapnum = srcSegP->sides [nSourceSide].nBaseTex & 0x3fff;
+			INT16 tmapnum2 = srcSegP->sides [nSourceSide].nOvlTex & 0x3fff;
+			INT16 trignum;
+			bool bl1 = (bool) (IsLight (tmapnum) != -1);
+			bool bl2 = (bool) (IsLight (tmapnum2) != -1);
+			if (!(bl1 || bl2))
+				continue;	// no lights on this side
+			bool bCalcDeltas = false;
+			// if the current side is a wall and has a light and is the target of a trigger
+			// than can make the wall appear/disappear, calculate delta lights for it
+			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != NULL)) &&
+				 ((trignum = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
+				INT8 trigtype = Triggers (trignum)->type;
+				bCalcDeltas =
+					(trigtype == TT_ILLUSION_OFF) ||
+					(trigtype == TT_ILLUSION_ON) ||
+					(trigtype == TT_CLOSE_WALL) ||
+					(trigtype == TT_OPEN_WALL) ||
+					(trigtype == TT_LIGHT_OFF) ||
+					(trigtype == TT_LIGHT_ON);
+					 
+				}
+			if (!bCalcDeltas)
+				bCalcDeltas = IsFlickeringLight (nSourceSeg, nSourceSide);
+			if (!bCalcDeltas) {
+				bool bb1 = IsBlastableLight (tmapnum);
+				bool bb2 = IsBlastableLight (tmapnum2);
+				if (bb1 == bb2)
+					bCalcDeltas = bb1;	// both lights blastable or not
+				else if (!(bb1 ? bl2 : bl1))	// i.e. one light blastable and the other texture not a non-blastable light 
+					bCalcDeltas = true;
+				}
+			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
+				int trignum = FindTriggerTarget (0, nSourceSeg, nSourceSide);
+				if ((trignum >= 0) && (Triggers (trignum)->type >= TT_LIGHT_OFF))
+					bCalcDeltas = true;
+				}
+			if (!bCalcDeltas)
 				continue;
-			// loop on child sides
-			int child_sidenum;
-			for (child_sidenum = 0; child_sidenum < 6; child_sidenum++) {
-				// if texture has a child..
-#ifdef _DEBUG
-			CBRK (source_segnum == 6 && source_sidenum == 2 &&
-				child_segnum == 10 && child_sidenum == 1);
-#endif
-				if (childseg->children[child_sidenum] >= 0) {
-					UINT16 nWall = childseg->sides[child_sidenum].nWall;
-					// .. if there is no wall ..
-					if (nWall >= GameInfo ().walls.count)
-						continue;
-					// .. or its not a door ..
-					if (Walls (nWall)->type == WALL_OPEN) 
-						continue; // don't put light because there is no texture here
-					}
-				// don't affect non-flickering light emitting textures (e.g. lava)
-				tmapnum = childseg->sides [child_sidenum].nBaseTex;
-				tmapnum2 = childseg->sides [child_sidenum].nOvlTex & 0x3fff;
-				if (m_nNoLightDeltas == 1) {
-					if (((IsLight (tmapnum) >= 0) || (IsLight (tmapnum2) >= 0))
-						 && !IsFlickeringLight (child_segnum, child_sidenum))
-						continue;
-					}
-				else if ((m_nNoLightDeltas == 2) && (IsLava (tmapnum) || IsLava (tmapnum2)))
-					continue;
-				// if the child side is the same as the source side, then set light and continue
-				if (child_sidenum == source_sidenum && child_segnum == source_segnum) {
-					if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
-						 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
-						char szMsg [256];
-						sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
-						DEBUGMSG (szMsg);
-						return false;
-						}
-					delta_light *dl = DeltaLights (GameInfo ().delta_lights.count++);
-					dl->segnum = child_segnum;
-					dl->sidenum = child_sidenum;
-					dl->dummy = 0;
-					dl->vert_light [0] =
-					dl->vert_light [1] =
-					dl->vert_light [2] =
-					dl->vert_light [3] = (UINT8) min (32, 32 * fLightScale);
-					if (bD2XLights)
-						pdli->d2x.count++;
-					else
-						pdli->d2.count++;
-					continue;
-					}
 
-				// calculate vector between center of source segment and center of child
-#ifdef _DEBUG
-					CBRK (child_segnum == qqq1 && child_sidenum == qqq2);
-#endif
-					if (CalcSideLights (child_segnum, child_sidenum, source_center, source_corner, A, effect, fLightScale, bWall)) {
-						theApp.SetModified (TRUE);
+			INT16 srcwall = srcSegP->sides [nSourceSide].nWall;
+			if ((srcSegP->children [nSourceSide] != -1) &&
+				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
+				continue;
+
+			if (GameInfo ().dl_indices.count >= MAX_DL_INDICES) {
+				char szMsg [256];
+				sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+				DEBUGMSG (szMsg);
+				return false;
+				}
+
+			vms_vector A,source_center;
+			int dl_index_num;
+
+			// get index number and increment total number of dl_indices
+	#pragma omp critical
+			{
+			dl_index_num = int (GameInfo ().dl_indices.count++);
+			}
+			dl_index *pdli = DLIndex (dl_index_num);
+			if (bD2XLights) {
+				pdli->d2x.segnum = nSourceSeg;
+				pdli->d2x.sidenum = nSourceSide;
+				pdli->d2x.count = 0; // will be incremented below
+				}
+			else {
+				pdli->d2.segnum = nSourceSeg;
+				pdli->d2.sidenum = nSourceSide;
+				pdli->d2.count = 0; // will be incremented below
+				}
+			pdli->d2.index = (INT16)GameInfo ().delta_lights.count;
+
+			// find orthogonal angle of source segment
+			CalcOrthoVector(A,nSourceSeg,nSourceSide);
+			// remember to flip the sign since we want it to point inward
+			A.x = -A.x;
+			A.y = -A.y;
+			A.z = -A.z;
+
+			// calculate the center of the source segment
+			CalcCenter (source_center, nSourceSeg, nSourceSide);
+
+			// mark those Segments () within N children of current cube
+			//(note: this is done once per light instead of once per segment
+			//       even though some Segments () have multiple lights.
+			//       This actually reduces the number of calls since most
+			//       Segments () do not have lights)
+	#if 1
+			INT16* visited;
+			memset (visited, 0xff, nSegCount * sizeof (*visited));
+			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth, visited);
+			visited [nSourceSeg] = recursion_depth;
+	#else
+			int h;
+			for (h = 0; h < SegCount (); h++)
+				Segments (h)->seg_number = -1;
+			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth);
+			srcSegP->seg_number = recursion_depth;
+	#endif
+
+			// setup source corner vertex for length calculation later
+			vms_vector source_corner[4];
+			for (int j = 0; j < 4; j++) {
+				UINT8 vertnum = side_vert[nSourceSide][j];
+				int h = srcSegP->verts[vertnum];
+				source_corner[j].x = Vertices (h)->x;
+				source_corner[j].y = Vertices (h)->y;
+				source_corner[j].z = Vertices (h)->z;
+				}
+
+			// loop on child Segments ()
+			for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
+	#if 1
+				if (visited [nChildSeg] < 0)
+					continue;
+				CDSegment* childSegP = Segments (nChildSeg);
+	#else
+				CDSegment* childSegP = Segments (nChildSeg);
+				if (childSegP->seg_number < 0)
+					continue;
+	#endif
+				// loop on child sides
+				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
+					// if texture has a child..
+	#ifdef _DEBUG
+				CBRK (nSourceSeg == 6 && nSourceSide == 2 &&
+					nChildSeg == 10 && nChildSide == 1);
+	#endif
+					if (childSegP->children[nChildSide] >= 0) {
+						UINT16 nWall = childSegP->sides[nChildSide].nWall;
+						// .. if there is no wall ..
+						if (nWall >= GameInfo ().walls.count)
+							continue;
+						// .. or its not a door ..
+						if (Walls (nWall)->type == WALL_OPEN) 
+							continue; // don't put light because there is no texture here
+						}
+					// don't affect non-flickering light emitting textures (e.g. lava)
+					tmapnum = childSegP->sides [nChildSide].nBaseTex;
+					tmapnum2 = childSegP->sides [nChildSide].nOvlTex & 0x3fff;
+					if (m_nNoLightDeltas == 1) {
+						if (((IsLight (tmapnum) >= 0) || (IsLight (tmapnum2) >= 0))
+							 && !IsFlickeringLight (nChildSeg, nChildSide))
+							continue;
+						}
+					else if ((m_nNoLightDeltas == 2) && (IsLava (tmapnum) || IsLava (tmapnum2)))
+						continue;
+					// if the child side is the same as the source side, then set light and continue
+					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
 						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
 							 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
 							char szMsg [256];
@@ -1004,21 +1059,67 @@ for (source_segnum = 0, srcseg = Segments ();
 							DEBUGMSG (szMsg);
 							return false;
 							}
-						delta_light *dl = DeltaLights (GameInfo ().delta_lights.count++);
-						dl->segnum = child_segnum;
-						dl->sidenum = child_sidenum;
+						delta_light* dl;
+	#pragma omp critical
+						{
+						dl = DeltaLights (GameInfo ().delta_lights.count++);
+						}
+						dl->segnum = nChildSeg;
+						dl->sidenum = nChildSide;
 						dl->dummy = 0;
-						int iCorner;
-						for (iCorner = 0; iCorner < 4; iCorner++)
-							dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);
+						dl->vert_light [0] =
+						dl->vert_light [1] =
+						dl->vert_light [2] =
+						dl->vert_light [3] = (UINT8) min (32, 32 * fLightScale);
 						if (bD2XLights)
 							pdli->d2x.count++;
 						else
 							pdli->d2.count++;
+						continue;
+						}
+
+					// calculate vector between center of source segment and center of child
+	#ifdef _DEBUG
+						CBRK (nChildSeg == qqq1 && nChildSide == qqq2);
+	#endif
+						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
+							theApp.SetModified (TRUE);
+							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
+								 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
+								char szMsg [256];
+								sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+#	pragma omp critical
+								{
+								DEBUGMSG (szMsg);
+								}
+#if 1
+								delete[] visited;
+#endif
+								return false;
+								}
+							delta_light *dl;
+#	pragma omp critical
+							{
+							dl = DeltaLights (GameInfo ().delta_lights.count++);
+							}
+							dl->segnum = nChildSeg;
+							dl->sidenum = nChildSide;
+							dl->dummy = 0;
+							int iCorner;
+							for (iCorner = 0; iCorner < 4; iCorner++)
+								dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);
+							if (bD2XLights)
+								pdli->d2x.count++;
+							else
+								pdli->d2.count++;
+							}
 						}
 					}
-				}
-//			}
+	//			}
+#if 1
+			delete[] visited;
+#endif
+			}
 		}
 	}
 return true;
@@ -1076,7 +1177,7 @@ pSegment->rootSeg = rootSeg;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-void CMine::SetSegmentChildNum (CDSegment *pRoot, INT16 segnum,INT16 recursion_level) 
+void CMine::SetSegmentChildNum (CDSegment *pRoot, INT16 segnum, INT16 recursion_level) 
 {
 	INT16			sidenum, child, nImprove = 0;
 	UINT16		nWall;
@@ -1121,6 +1222,57 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 	child = seg->children [sidenum];
 	if ((child > -1) && (child < SegCount ()))
 		SetSegmentChildNum (pRoot, child, recursion_level - 1);
+	}
+}
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+void CMine::SetSegmentChildNum (CDSegment *pRoot, INT16 segnum, INT16 recursion_level, INT16* visited) 
+{
+	INT16			sidenum, child, nImprove = 0;
+	UINT16		nWall;
+	CDSegment	*seg = Segments () + segnum;
+	CDSegment	*prevSeg = NULL;
+	bool			bMarkChildren = false;
+
+// mark each child if child number is lower
+for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
+	// Skip if this is a door
+	nWall = seg->sides [sidenum].nWall;
+	// .. if there is a wall and its a door
+	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
+		continue;
+	// mark segment if it has a child
+	child = seg->children [sidenum];
+	if ((child > -1) && (child < SegCount ()) && (recursion_level > visited [segnum])) {
+		if (visited [segnum] >= 0)
+			++nImprove;
+/*
+		if (pRoot) {
+			UnlinkSeg (seg, pRoot);
+			LinkSeg (seg, pRoot);
+			}
+*/
+		visited [segnum] = recursion_level;
+		bMarkChildren = true;
+		break;
+		}
+	}
+//return if segment has no children or max recursion depth is reached
+if (!bMarkChildren || (recursion_level == 1))
+	return;
+
+// check each side of this segment for more children
+for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
+	// skip if there is a wall and its a door
+	nWall = seg->sides [sidenum].nWall;
+	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
+		continue;
+	// check child
+	child = seg->children [sidenum];
+	if ((child > -1) && (child < SegCount ()))
+		SetSegmentChildNum (pRoot, child, recursion_level - 1, visited);
 	}
 }
 
