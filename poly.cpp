@@ -114,7 +114,7 @@ if (!gModelData) {
 // read model data if necessary
 if (last_object_type != obj->type || last_object_id != obj->id) {
 	gModelData[0] = OP_EOF;
-	strcpy(filename, descent2_path);
+	strcpy_s(filename, sizeof (filename), descent2_path);
 	char *slash = strrchr (filename,'\\');
 	if (slash)
 		*(slash+1) = NULL;
@@ -125,13 +125,15 @@ if (last_object_type != obj->type || last_object_id != obj->id) {
 		if (psz)
 			*psz = '\0';
 		}
-	strcat (filename, ((obj->type == OBJ_ROBOT) && (obj->id >= N_D2_ROBOT_TYPES)) ? 
-			  "data\\d2x-xl.hog" :	
-			  (obj->type == OBJ_CAMBOT) ? "cambot.hxm" : "descent2.ham");
-	file = fopen(filename,"rb");
+	strcat_s (filename, sizeof (filename), ((obj->type == OBJ_ROBOT) && (obj->id >= N_D2_ROBOT_TYPES)) 
+				 ? "data\\d2x-xl.hog" 
+	          : (obj->type == OBJ_CAMBOT) 
+				   ? "cambot.hxm" 
+					: "descent2.ham");
+	fopen_s (&file, filename, "rb");
 	if (!file) {
 #if 0		
-		sprintf (message, "SetupModel: Couldn't open model file <%s>.", filename); 
+		sprintf_s (message, sizeof (message), "SetupModel: Couldn't open model file <%s>.", filename); 
 		DEBUGMSG (message);
 #endif		
 		goto abort;

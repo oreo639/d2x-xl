@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include "winuser.h"
 #include "dlc.h"
 
 #include "dlcDoc.h"
@@ -586,7 +587,7 @@ return bChange;
 
                         /*--------------------------*/
 
-void CMineView::OnTimer (UINT nIdEvent)
+void CMineView::OnTimer (UINT_PTR nIdEvent)
 {
 if (nIdEvent == 4) {
 	if (m_mouseState == eMouseStateButtonDown) {
@@ -1738,8 +1739,8 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 			vms_vector center,orthog,vector;
 			APOINT point;
 
-		mine->CalcCenter (center,(INT16)walls [i].segnum,(INT16)walls [i].sidenum);
-		mine->CalcOrthoVector(orthog,(INT16)walls [i].segnum,(INT16)walls [i].sidenum);
+		mine->CalcCenter (center, (INT16)walls [i].segnum, (INT16)walls [i].sidenum);
+		mine->CalcOrthoVector(orthog, (INT16)walls [i].segnum, (INT16)walls [i].sidenum);
 		vector.x = center.x - orthog.x;
 		vector.y = center.y - orthog.y;
 		vector.z = center.z - orthog.z;
@@ -2277,54 +2278,54 @@ if (mine->m_bSplineActive)
 
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
-   strcat(message,"  point (x,y,z): (");
+   strcat_s (message, sizeof (message), "  point (x,y,z): (");
    INT16 vertex = mine->Segments () [mine->Current ()->segment].verts [side_vert [mine->Current ()->side] [mine->Current ()->point]];
 	char	szCoord [20];
 	sprintf (szCoord, "%1.4f,%1.4f,%1.4f)",mine->Vertices (vertex)->x,mine->Vertices (vertex)->y,mine->Vertices (vertex)->z);
-	strcat(message,szCoord);
+	strcat_s (message, sizeof (message), szCoord);
 	}
 else {
    // calculate cube size (length between center point of opposing sides)
-	strcat(message,"  cube size: ");
+	strcat_s (message, sizeof (message), "  cube size: ");
 	vms_vector center1,center2;
    double length;
    mine->CalcCenter (center1,mine->Current ()->segment,0);
 	mine->CalcCenter (center2,mine->Current ()->segment,2);
    length = mine->CalcLength(&center1,&center2) / F1_0;
-	sprintf(message + strlen(message),"%.1f",(double)length);
-	strcat(message," x ");
+	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
+	strcat_s (message, sizeof (message), " x ");
    mine->CalcCenter (center1,mine->Current ()->segment,1);
    mine->CalcCenter (center2,mine->Current ()->segment,3);
 	length = mine->CalcLength(&center1,&center2) / F1_0;
-   sprintf(message + strlen(message),"%.1f",(double)length);
-	strcat(message," x ");
+   sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
+	strcat_s (message, sizeof (message), " x ");
    mine->CalcCenter (center1,mine->Current ()->segment,4);
    mine->CalcCenter (center2,mine->Current ()->segment,5);
    length = mine->CalcLength(&center1,&center2) / F1_0;
-	sprintf(message + strlen(message),"%.1f",(double)length);
+	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
-strcat(message,",  cube:");
-itoa(mine->Current ()->segment,message + strlen(message),10);
-strcat(message," side:");
-itoa((currSide = mine->Current ()->side) + 1,message + strlen(message),10);
-strcat(message," point:");
-itoa(currPoint = mine->Current ()->point,message + strlen(message),10);
-strcat(message," vertex:");
-itoa(mine->CurrSeg ()->verts [side_vert [currSide][currPoint]],message + strlen(message),10);
+strcat_s (message, sizeof (message), ",  cube:");
+_itoa (mine->Current ()->segment,message + strlen(message),10);
+strcat_s (message, sizeof (message), " side:");
+_itoa ((currSide = mine->Current ()->side) + 1,message + strlen(message),10);
+strcat_s (message, sizeof (message), " point:");
+_itoa (currPoint = mine->Current ()->point,message + strlen(message),10);
+strcat_s (message, sizeof (message), " vertex:");
+_itoa (mine->CurrSeg ()->verts [side_vert [currSide][currPoint]],message + strlen(message),10);
 
-strcat(message,",  textures:");
-strcat(message," 1st:");
-itoa(mine->CurrSide ()->nBaseTex,message + strlen(message),10);
-strcat(message," 2nd:");
-itoa(mine->CurrSide ()->nOvlTex & 0x3fff,message + strlen(message),10);
+strcat_s (message, sizeof (message), ",  textures:");
+strcat_s (message, sizeof (message), " 1st:");
+_itoa (mine->CurrSide ()->nBaseTex,message + strlen(message),10);
+strcat_s (message, sizeof (message), " 2nd:");
+_itoa (mine->CurrSide ()->nOvlTex & 0x3fff,message + strlen(message),10);
 
-strcat(message,",  zoom:");
+strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_sizex) / log (1.2);
 if (zoom_factor > 0) 
 	zoom_factor += 0.5;
 else
 	zoom_factor -= 0.5;
-sprintf(message + strlen(message), "%1.2f", zoom_factor);
+sprintf_s (message + strlen (message), sizeof (message) - strlen (message),  "%1.2f", zoom_factor);
 STATUSMSG (message);
 }
 
@@ -2441,7 +2442,7 @@ if (nSteps = ZoomFactor (nSteps, -100, 25))
 else
 	INFOMSG("Already at maximum zoom")
 /*
-		ErrorMsg("Already at maximum zoom\n\n"
+		ErrorMsg ("Already at maximum zoom\n\n"
 					"Hint: Try using the 'A' and 'Z' keys to\n"
 					"move in forward and backwards.");
 */
@@ -2629,7 +2630,7 @@ if (glAngle [i] <= -360)
 	glAngle [i] += 360;
 else if (a >= 360)
 	glAngle [i] -= 360;
-sprintf (message, "ROTATE (%1.2f°)", glAngle [i]);
+sprintf_s (message, sizeof (message), "ROTATE (%1.2f°)", glAngle [i]);
 INFOMSG (message);
 glRotated (glAngle [i], glRotMat [i][0], glRotMat [i][1], glRotMat [i][2]);
 #else
@@ -2639,7 +2640,7 @@ if (a < -360)
 	a += 360;
 else if (a > 360)
 	a -= 360;
-sprintf (message, "ROTATE (%1.2f°)", a);
+sprintf_s (message, sizeof (message), "ROTATE (%1.2f°)", a);
 INFOMSG (message);
 #endif
 Refresh (false);
@@ -2864,7 +2865,7 @@ BOOL CMineView::SetCursor (HCURSOR hCursor)
 {
 if (!hCursor) // || (hCursor == m_hCursor))
    return FALSE;
-::SetClassLong (GetSafeHwnd (), GCL_HCURSOR, (int) (/*m_hCursor =*/ hCursor));
+::SetClassLong (GetSafeHwnd (), int (GCL_HCURSOR), int (hCursor));
 return TRUE;
 }
                         
@@ -3175,7 +3176,7 @@ for (i=0;i<=m_mine->GameInfo ().objects.count;i++) {
 		obj = &temp_obj;
 		obj->type = OBJ_PLAYER;
 		// define obj->position
-		CalcSegmentCenter(obj->pos,(UINT16)m_mine->SecretCubeNum ());
+		CalcSegmentCenter(obj->pos, (UINT16)m_mine->SecretCubeNum ());
 		}
 	else
 		obj = m_mine->Objects (i);
@@ -3595,7 +3596,7 @@ if (count == 1) {
 		if (i!=point1) {
 			vert2 = m_mine->Segments () [m_mine->Current ()->segment].verts [i];
 			if (new_vert==vert2) {
-				ErrorMsg("Cannot drop point onto another corner of the current cube.");
+				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
 				}
 			}
@@ -3606,7 +3607,7 @@ if (count == 1) {
 			point2 = connect_points [point1] [i];
 			vert2 = m_mine->Segments () [m_mine->Current ()->segment].verts [point2];
 			if (m_mine->CalcLength (m_mine->Vertices (new_vert),m_mine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
-				ErrorMsg("Cannot move this point so far away.");
+				ErrorMsg ("Cannot move this point so far away.");
 				break;
 				}
 			}
@@ -3878,7 +3879,7 @@ if (!GetMine ())
 //  DrawHighlight (m_mine, 1);
 if (m_mine->GameInfo ().objects.count > 1) {
 //	if (m_selectMode == OBJECT_MODE)
-		wrap(&new_object,dir,0,(INT16)m_mine->GameInfo ().objects.count - 1) ;
+		wrap(&new_object,dir,0, (INT16)m_mine->GameInfo ().objects.count - 1) ;
 	Refresh (true);
 	}
 //SetSelectMode (OBJECT_MODE);
@@ -4432,26 +4433,26 @@ if (!(m_glDC = GetDC ())) {
 glHDC = m_glDC->GetSafeHdc ();
 if (!(PixelFormat = ChoosePixelFormat (glHDC, &pfd))) {
 	GLKillWindow ();
-	sprintf (message, "OpenGL: Can't find a suitable pixel format. (%d)", GetLastError ());
+	sprintf_s (message, sizeof (message), "OpenGL: Can't find a suitable pixel format. (%d)", GetLastError ());
 	ErrorMsg (message);
 	return FALSE;
 	}
 if(!SetPixelFormat(glHDC, PixelFormat, &pfd)) {
 		GLKillWindow();
-		sprintf (message, "OpenGL: Can't set the pixel format (%d).", GetLastError ());
+		sprintf_s (message, sizeof (message), "OpenGL: Can't set the pixel format (%d).", GetLastError ());
 		ErrorMsg (message);
 		return FALSE;
 	}
 if (!(m_glRC = wglCreateContext (glHDC))) {
 	GLKillWindow ();
-	sprintf (message, "OpenGL: Can't create a rendering context (%d).", GetLastError ());
+	sprintf_s (message, sizeof (message), "OpenGL: Can't create a rendering context (%d).", GetLastError ());
 	ErrorMsg (message);
 	return FALSE;
 	}
 
 if(!wglMakeCurrent (glHDC, m_glRC)) {
 	GLKillWindow ();
-	sprintf (message, "OpenGL: Can't activate the rendering context (%d).", GetLastError ());
+	sprintf_s (message, sizeof (message), "OpenGL: Can't activate the rendering context (%d).", GetLastError ());
 	ErrorMsg (message);
 	return FALSE;
 	}

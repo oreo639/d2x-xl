@@ -45,7 +45,7 @@ public:
   CBlinkDialog(CWnd * AParent, LPSTR name);
   virtual void SetupWindow();
   afx_msg void OnPaint();
-  afx_msg void OnTimer( UINT );
+  afx_msg void OnTimer( UINT_PTR );
   void cycle_time_bar_msg(UINT);
   void blink_radio_button_msg();
   void light_button_msg1();

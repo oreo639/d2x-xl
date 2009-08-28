@@ -239,7 +239,7 @@ int wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++) {
 	if ((wall->segnum == segnum) && (wall->sidenum == sidenum)) {
 		*trignum = wall->trigger;
-		return wall - Walls ();
+		return INT16 (wall - Walls ());
 		}
 	}
 *trignum = NO_TRIGGER;
@@ -252,7 +252,7 @@ CDWall *wall = Walls ();
 int wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++)
 	if (wall->trigger == trignum)
-		return wall - Walls ();
+		return INT16 (wall - Walls ());
 return GameInfo ().walls.count;
 }
 

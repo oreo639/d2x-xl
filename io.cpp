@@ -97,11 +97,11 @@ vms_angvec *read_angvec(vms_angvec *vector,FILE *load_file) {
 }
 
 //------------------------------------------------------------------------
-// write_INT32()
+// write_INT32 ()
 //
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
-INT32 write_INT32(INT32 value,FILE *save_file) {
+INT32 write_INT32 (INT32 value,FILE *save_file) {
   fwrite(&value, sizeof(INT32), 1, save_file );
   return(value);
 }
@@ -189,7 +189,7 @@ static char *CopyIoName (char *dest, char *src, UINT16 srcLen, UINT16 destSize)
 if (dest) {
    if (srcLen > --destSize)
       srcLen = destSize;
-   strncpy (dest, src, srcLen);
+   strncpy_s (dest, 256, src, srcLen);
    dest [srcLen] = '\0';
 	}
 return dest;
@@ -203,7 +203,7 @@ char *FSplit (char *fullName, char *pathName, char *fileName, char *extName)
    char	fn [256];
 	INT32	l;
 
-l = strlen (fullName);
+l = INT32 (strlen (fullName));
 memcpy (fn, fullName, l + 1);
 if (pathName)
    *pathName = 0;
@@ -247,7 +247,7 @@ struct tm *GetTimeDate (struct tm *td)
    struct tm *h;
 
 time (&t);
-h = localtime (&t);
+localtime_s (&h, t);
 h->tm_mon++;
 if (!td)
    return h;
@@ -262,7 +262,7 @@ char *TimeStr (char *pszTime)
 	struct tm td;
 
 GetTimeDate (&td);
-sprintf (pszTime, "%d:%02d.%02d", td.tm_hour, td.tm_min, td.tm_sec);
+sprintf_s (pszTime, sizeof (pszTime), "%d:%02d.%02d", td.tm_hour, td.tm_min, td.tm_sec);
 return pszTime;
 } 
 
@@ -273,9 +273,9 @@ char *DateStr (char *pszTime, bool bMonthNames)
 
 GetTimeDate (&td);
 if (bMonthNames)
-	sprintf (pszTime, "%d %s %d", td.tm_mday, szMonths [td.tm_mon - 1], td.tm_year);
+	sprintf_s (pszTime, sizeof (pszTime), "%d %s %d", td.tm_mday, szMonths [td.tm_mon - 1], td.tm_year);
 else
-	sprintf (pszTime, "%d/%d/%d", td.tm_mon, td.tm_mday, td.tm_year);
+	sprintf_s (pszTime, sizeof (pszTime), "%d/%d/%d", td.tm_mon, td.tm_mday, td.tm_year);
 return pszTime;
 } 
 
@@ -286,11 +286,11 @@ char *TimeDateStr (char *pszTime, bool bMonthNames)
 
 GetTimeDate (&td);
 if (bMonthNames)
-	sprintf (pszTime, "%d %s %d %d:%02d",
+	sprintf_s (pszTime, sizeof (pszTime), "%d %s %d %d:%02d",
 		       td.tm_mday, szMonths [td.tm_mon - 1], td.tm_year,
 			    td.tm_hour, td.tm_min);
 else
-	sprintf (pszTime, "%d/%d/%d %d:%02d",
+	sprintf_s (pszTime, sizeof (pszTime), "%d/%d/%d %d:%02d",
 		       td.tm_mon, td.tm_mday, td.tm_year,
 			    td.tm_hour, td.tm_min);
 return pszTime;

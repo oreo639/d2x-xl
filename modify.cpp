@@ -170,7 +170,7 @@ void CMine::EditGeoBack()
       break;
   }
   if (ok_to_move == FALSE) {
-    ErrorMsg("Too small to move in that direction");
+    ErrorMsg ("Too small to move in that direction");
     return;
   }
 #endif
@@ -180,7 +180,7 @@ void CMine::EditGeoBack()
     if (m_selectMode == POINT_MODE
 	|| m_selectMode == LINE_MODE
 	|| m_selectMode == SIDE_MODE) {
-      ErrorMsg("Cannot make cube any smaller\n"
+      ErrorMsg ("Cannot make cube any smaller\n"
 	       "Cube must be greater or equal to 1.0 units wide.");
     }
   } else {
@@ -300,10 +300,10 @@ int i,pts [4];
 
 switch (m_selectMode){
 	case POINT_MODE:
-	ErrorMsg("Cannot bend a point");
+	ErrorMsg ("Cannot bend a point");
 	break; /* can't spin a point */
 	case LINE_MODE:
-	ErrorMsg("Cannot bend a line");
+	ErrorMsg ("Cannot bend a line");
 	break; /* line spinning not supported */
 	case SIDE_MODE:	// spin side around the opposite side
 		theApp.SetModified (TRUE);
@@ -342,15 +342,15 @@ switch (m_selectMode){
 		break;
 	
 	case CUBE_MODE:
-		ErrorMsg("Cannot bend a cube");
+		ErrorMsg ("Cannot bend a cube");
 		break; /* can't spin a point */
 	
 	case OBJECT_MODE:
-		ErrorMsg("Cannot bend a object");
+		ErrorMsg ("Cannot bend a object");
 		break; /* can't spin a point */
 
 	case BLOCK_MODE:
-		ErrorMsg("Cannot bend a block");
+		ErrorMsg ("Cannot bend a block");
 		break; /* can't spin a point */
 	}
 }
@@ -1109,7 +1109,7 @@ void CMine::RotateVertex(vms_vector *vertex, vms_vector *origin, vms_vector *nor
 //  y2 =   y1;                               // this should equal 0
 //  z2 =   x1*sin(y_spin) + z1*cos(y_spin);  // this should equal 0
 //  if (y2!=0 || x2!=0) {
-//    sprintf(message,"Rotation error (y and z should be zero):"
+//    sprintf_s (message, sizeof (message), "Rotation error (y and z should be zero):"
 //                      "(x,y,z) = (%f,%f,%f)",(double)x2,(double)y2,(double)z2);
 //    DEBUGMSG(message);
 //  }

@@ -97,7 +97,7 @@ void CMine::Reset ()
 	min_y = (UINT16)(miny / F1_0);
 	min_z = (UINT16)(minz / F1_0);
 #if 0
-	sprintf(message, "max(%d, %d, %d), min(%d, %d, %d)", max_x, max_y, max_z, min_x, min_y, min_z);
+	sprintf_s (message, sizeof (message),  "max(%d, %d, %d), min(%d, %d, %d)", max_x, max_y, max_z, min_x, min_y, min_z);
 	DEBUGMSG(message);
 #endif
 	gx0 = 0;
@@ -170,11 +170,11 @@ memset (VertexColors (), 0, sizeof (MineData ().sideColors));
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
 if (filename_passed && *filename_passed)
-	strcpy(filename, filename_passed);
+	strcpy_s (filename, sizeof (filename), filename_passed);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
 	FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-	sprintf(filename, (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+	sprintf_s (filename, sizeof (filename), (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 	bLoadFromHog = false;
 	bNewMine = true;
 	}
@@ -195,11 +195,11 @@ if (!bNewMine && (level_version >= 9) && (level_version < LEVEL_VERSION)) {
 //CalcDeltaLightData ();
 check_err = FixIndexValues();
 if (check_err != 0) {
-	sprintf(message, "File contains corrupted data. Would you like to load anyway? Error Code %#04x", check_err);
+	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", check_err);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
 			FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-			sprintf(filename, (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+			sprintf_s (filename, sizeof (filename), (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 			bLoadFromHog = false;
 			bNewMine = true;
 			}
@@ -272,7 +272,7 @@ else if ((level_version >= 6L) && (level_version <= 18L)) {
 	texture_resource = D2_TEXTURE_STRING_TABLE;
 	}
 else {
-	sprintf(message, "Version %d unknown. Cannot load this level.", level_version);
+	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", level_version);
 	ErrorMsg (message);
 	fclose (fp);
 	return 1;
@@ -293,16 +293,17 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	INT32 minedata_offset = 0;
 	INT32 gamedata_offset = 0;
 	INT32 mine_err, game_err = 0;
-	int return_code = 0;
-	char palette_name [16];
+	int	return_code = 0;
+	char	palette_name [16];
+	char*	ps;
 	INT16 nLights = 0;
 
 changes_made = 0;
-loadFile = fopen (filename, "rb");
+fopen_s (&loadFile, filename, "rb");
 
 if (!loadFile) {
-	sprintf(message, "Error %d: Can't open file <%s>.", GetLastError (), filename);
-	ErrorMsg(message);
+	sprintf_s (message, sizeof (message),  "Error %d: Can't open file <%s>.", GetLastError (), filename);
+	ErrorMsg (message);
 	return -1;
 	}
 	//  strcpy(gamesave_current_filename, filename);
@@ -340,7 +341,7 @@ if (file_type != RDL_FILE) {
 		// replace extension with .pig
 		if (i >= 4) {
 			palette_name [strlen((char *)palette_name) - 4] = NULL;
-			strcat(palette_name, ".PIG");
+			strcat_s (palette_name, sizeof (palette_name), ".PIG");
 			}
 		// try to find new pig file in same directory as Current () pig file
 		// 1) cut off old name
@@ -355,8 +356,8 @@ if (file_type != RDL_FILE) {
 				*path = NULL;
 				}
 			// paste on new *.pig name
-			strcat(descent2_path, palette_name);
-			strlwr(descent2_path);
+			strcat_s (descent2_path, sizeof (descent2_path), palette_name);
+			_strlwr_s (descent2_path, sizeof (descent2_path));
 			}
 		}
 	}
@@ -410,7 +411,7 @@ if (file_type != RDL_FILE) {
 	ReactorStrength () = read_INT32(loadFile); // reactor strength
 
 #if 0
-	sprintf(message, "Reactor time=%ld, Reactor strength=%ld, Secret Cube #=%ld",
+	sprintf_s (message, sizeof (message),  "Reactor time=%ld, Reactor strength=%ld, Secret Cube #=%ld",
 		ReactorTime (), ReactorStrength (), SecretCubeNum ());
 	INFOMSG(message);
 #endif
@@ -422,14 +423,14 @@ if (file_type != RDL_FILE) {
 			} 
 		else {
 			if (nLights != 0) {
-				ErrorMsg("Error reading flickering lights");
+				ErrorMsg ("Error reading flickering lights");
 				nLights = 0;
 				}
 			}
 		}
 	// NOTE: d2 v1.1 has two levels at version 7 (b2 and f4),
 	//       both have 0 flickering lights
-	//    sprintf(message, "%d flickering lights", nflicks);
+	//    sprintf_s (message, sizeof (message),  "%d flickering lights", nflicks);
 	//    DEBUGMSG(message);
 
 	// read secret cube number
@@ -445,7 +446,7 @@ mine_err = LoadMineDataCompiled(loadFile, bNewMine);
 FlickerLightCount () = nLights;
 
 if (mine_err != 0) {
-	ErrorMsg("Error loading mine data");
+	ErrorMsg ("Error loading mine data");
 	fclose(loadFile);
 	return(2);
 }
@@ -454,7 +455,7 @@ fseek(loadFile, gamedata_offset, SEEK_SET);
 game_err = LoadGameData(loadFile, bNewMine);
 
 if (game_err != 0) {
-	ErrorMsg("Error loading game data");
+	ErrorMsg ("Error loading game data");
 	// reset "howmany"
 	GameInfo ().objects.count = 0;
 	GameInfo ().walls.count = 0;
@@ -477,8 +478,12 @@ load_pog:
 
 	fclose(loadFile);
 if (!bLoadFromHog && (file_type != RDL_FILE)) {
-	strcpy (strstr (filename, "."), ".pog");
-	loadFile = fopen(filename, "rb");
+	ps = strstr (filename, ".");
+	if (ps)
+		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
+	else
+		strcat_s (filename, sizeof (filename), ".pog");
+	fopen_s (&loadFile, filename, "rb");
 	if (loadFile) {
 		ReadPog (loadFile);
 		fclose (loadFile);
@@ -498,21 +503,25 @@ if (!bLoadFromHog && (file_type != RDL_FILE)) {
 		FSplit (descent2_path, szHogFile, NULL, NULL);
 		if (p = strstr (szHogFile, "data"))
 			*p = '\0';
-		strcat (szHogFile, "missions\\d2x.hog");
+		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
 		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
 			FSplit (descent2_path, szHamFile, NULL, NULL);
 			if (p = strstr (szHamFile, "data"))
 				*p = '\0';
-			strcat (szHamFile, "missions\\d2x.ham");
+			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
 			if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
 				m_bVertigo = ReadHamFile (szHamFile, EXTENDED_HAM) == 0;
-				unlink (szHamFile);
+				_unlink (szHamFile);
 				}
 			}
 		}
 #endif
-	strcpy (strstr (filename, "."), ".hxm");
-	loadFile = fopen(filename, "rb");
+	ps = strstr (filename, ".");
+	if (ps)
+		strcpy_s (filename, sizeof (filename) - (ps - filename), ".hxm");
+	else
+		strcat_s (filename, sizeof (filename), ".hxm");
+	fopen_s (&loadFile, filename, "rb");
 	if (loadFile) {
 		ReadHxmFile (loadFile, -1);
 		fclose (loadFile);
@@ -610,13 +619,14 @@ if (!data)
 // copy data to a file
 
 FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-sprintf(message, (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+sprintf_s (message, sizeof (message),  (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 memcpy (RobotInfo (), DefRobotInfo (), sizeof(ROBOT_INFO) * N_robot_types);
 texture_resource = (file_type == RDL_FILE) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-FILE *file = fopen(message, "wb");
+FILE *file;
+fopen_s (&file, message, "wb");
 if (file) {
 	size_t nBytes = fwrite(data, sizeof(UINT8), (UINT16)nResSize, file);
-	fclose(file);
+	fclose (file);
 	FreeResource (hGlobal);
 	if (nBytes != nResSize)
 		return 1;
@@ -930,15 +940,15 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	// read version (1 byte)
 	fread(&version, sizeof(UINT8), 1, loadFile);
 	//  if(version!= COMPILED_MINE_VERSION){
-	//    sprintf(message, "Version incorrect (%d)\n", version);
-	//    ErrorMsg(message);
+	//    sprintf_s (message, sizeof (message),  "Version incorrect (%d)\n", version);
+	//    ErrorMsg (message);
 	//  }
 
 	// read number of vertices (2 bytes)
 	fread(&temp_UINT16, sizeof(UINT16), 1, loadFile);
 	n_vertices = temp_UINT16;
 	if (n_vertices > MAX_VERTICES3) {
-		sprintf(message, "Too many vertices (%d)", n_vertices);
+		sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
 		ErrorMsg (message);
 		return(1);
 		}
@@ -950,7 +960,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	fread(&temp_UINT16, sizeof(UINT16), 1, loadFile);
 	n_segments = temp_UINT16;
 	if (n_segments > MAX_SEGMENTS3) {
-		sprintf (message, "Too many Segments (%d)", n_segments);
+		sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 		ErrorMsg (message);
 		return(2);
 	}
@@ -1108,9 +1118,9 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, loadFile);
 		}
 if (GameInfo ().objects.count > MAX_OBJECTS) {
-	sprintf(message, "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
+	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
 			  GameInfo ().objects.count, MAX_OBJECTS2);
-	ErrorMsg(message);
+	ErrorMsg (message);
 	}
 return 0;
 }
@@ -1156,16 +1166,16 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 	// Read in game_top_fileinfo to get size of saved fileinfo.
 	if (fseek(loadfile, start_offset, SEEK_SET)) {
-		ErrorMsg("Error seeking in mine.cpp");
+		ErrorMsg ("Error seeking in mine.cpp");
 		return -1;
 	}
 	if (fread(&game_top_fileinfo, sizeof(game_top_fileinfo), 1, loadfile) != 1) {
-		ErrorMsg("Error reading game info in mine.cpp");
+		ErrorMsg ("Error reading game info in mine.cpp");
 		return -1;
 	}
 	// Check signature
 	if (game_top_fileinfo.fileinfo_signature != 0x6705) {
-		ErrorMsg("Game data signature incorrect");
+		ErrorMsg ("Game data signature incorrect");
 		return -1;
 	}
 	// Check version number
@@ -1174,11 +1184,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 	// Now, Read in the fileinfo
 	if (fseek(loadfile, start_offset, SEEK_SET)) {
-		ErrorMsg("Error seeking to game info in mine.cpp");
+		ErrorMsg ("Error seeking to game info in mine.cpp");
 		return -1;
 	}
 	if (fread(&GameInfo (), (INT16)game_top_fileinfo.fileinfo_size, 1, loadfile)!= 1) {
-		ErrorMsg("Error reading game info from mine.cpp");
+		ErrorMsg ("Error reading game info from mine.cpp");
 		return -1;
 	}
 	if (GameInfo ().fileinfo_version < 14) 
@@ -1198,8 +1208,8 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		fread(&n_save_pof_names, 2, 1, loadfile);
 		n_total_names = (GameInfo ().player.offset - names.offset)/13;
 		if (n_total_names > 100) {
-			sprintf(message, "Exceeded maximum number of total pof names (100 max)");
-			ErrorMsg(message);
+			sprintf_s (message, sizeof (message),  "Exceeded maximum number of total pof names (100 max)");
+			ErrorMsg (message);
 			n_total_names = 100;
 			}
 		fread(save_pof_names, n_total_names, 13, loadfile);
@@ -1218,11 +1228,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 	if (GameInfo ().objects.offset > -1) {
 		if (fseek(loadfile, GameInfo ().objects.offset, SEEK_SET))
-			ErrorMsg("Error seeking to objects.");
+			ErrorMsg ("Error seeking to objects.");
 		else if (GameInfo ().objects.count > MAX_OBJECTS2) {
-			sprintf(message, "Error: Max number of objects (%ld/%d) exceeded", 
+			sprintf_s (message, sizeof (message),  "Error: Max number of objects (%ld/%d) exceeded", 
 					  GameInfo ().objects.count, MAX_OBJECTS2);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().objects.count = MAX_OBJECTS;
 			}
 		else {
@@ -1240,8 +1250,8 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 	if ((GameInfo ().walls.offset > -1) && !fseek(loadfile, GameInfo ().walls.offset, SEEK_SET)) {
 		if (GameInfo ().walls.count > MAX_WALLS) {
-			sprintf(message, "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS);
-			ErrorMsg(message);
+			sprintf_s (message, sizeof (message),  "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS);
+			ErrorMsg (message);
 			GameInfo ().walls.count = MAX_WALLS;
 			}
 		else if (GameInfo ().fileinfo_version < 20)
@@ -1249,7 +1259,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		else if (GameInfo ().walls.count) {
 			for (i = 0; i < GameInfo ().walls.count; i++) {
 				if (!ReadWall (Walls (i), loadfile, GameInfo ().fileinfo_version)) {
-					ErrorMsg("Error reading walls from mine.cpp");
+					ErrorMsg ("Error reading walls from mine.cpp");
 					break;
 					}
 				}
@@ -1260,17 +1270,17 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	// note: not used for D1 or D2 since doors.count is always 0
 	if ((GameInfo ().doors.offset > -1) && !fseek(loadfile, GameInfo ().doors.offset, SEEK_SET)) {
 		if (GameInfo ().doors.count > MAX_DOORS) {
-			sprintf(message, "Error: Max number of doors (%ld/%d) exceeded", GameInfo ().doors.count, MAX_DOORS);
-			ErrorMsg(message);
+			sprintf_s (message, sizeof (message),  "Error: Max number of doors (%ld/%d) exceeded", GameInfo ().doors.count, MAX_DOORS);
+			ErrorMsg (message);
 			GameInfo ().doors.count = MAX_DOORS;
 			}
 		else if (GameInfo ().fileinfo_version < 20)
-			ErrorMsg("Door version < 20, doors not loaded");
+			ErrorMsg ("Door version < 20, doors not loaded");
 		else if(sizeof(*ActiveDoors (i)) != GameInfo ().doors.size)
-			ErrorMsg("Error: Door size incorrect");
+			ErrorMsg ("Error: Door size incorrect");
 		else if (GameInfo ().doors.count && 
 				   fread(ActiveDoors (), (INT16)GameInfo ().doors.size * GameInfo ().doors.count, 1, loadfile)!= 1) {
-			ErrorMsg("Error reading doors.");
+			ErrorMsg ("Error reading doors.");
 			}
 		}
 
@@ -1279,9 +1289,9 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	// note: order different for D2 levels but size is the same
 	if (GameInfo ().triggers.offset > -1) {
 		if (GameInfo ().triggers.count > MAX_TRIGGERS) {
-			sprintf(message, "Error: Max number of triggers (%ld/%d) exceeded",
+			sprintf_s (message, sizeof (message),  "Error: Max number of triggers (%ld/%d) exceeded",
 				GameInfo ().triggers.count, MAX_TRIGGERS);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().triggers.count = MAX_TRIGGERS;
 		}
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
@@ -1344,15 +1354,15 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	// note: same for D1 and D2
 	if (GameInfo ().control.offset > -1) {
 		if (GameInfo ().control.count > MAX_CONTROL_CENTER_TRIGGERS) {
-			sprintf(message, "Error: Max number of control center Triggers () (%ld, %d) exceeded",
+			sprintf_s (message, sizeof (message),  "Error: Max number of control center Triggers () (%ld, %d) exceeded",
 				GameInfo ().control.count, MAX_CONTROL_CENTER_TRIGGERS);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().control.count = MAX_CONTROL_CENTER_TRIGGERS;
 		}
 		if (!fseek(loadfile, GameInfo ().control.offset, SEEK_SET))  {
 //			for (i = 0; i < GameInfo ().control.count; i++)
 				if (fread(CCTriggers (), TotalSize (GameInfo ().control), 1, loadfile)!= 1) {
-					ErrorMsg("Error reading control center triggers from mine.cpp");
+					ErrorMsg ("Error reading control center triggers from mine.cpp");
 //					break;
 				}
 		}
@@ -1362,16 +1372,16 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	// note: added robot_flags2 for Descent 2
 	if (GameInfo ().botgen.offset > -1) {
 		if (GameInfo ().botgen.count > MAX_NUM_MATCENS) {
-			sprintf(message, "Error: Max number of robot centers (%ld/%d) exceeded",
+			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
 				GameInfo ().botgen.count, MAX_NUM_MATCENS);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().botgen.count = MAX_NUM_MATCENS;
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
 				if (file_type != RDL_FILE) {
 					if (fread(BotGens (i), (INT16)GameInfo ().botgen.size, 1, loadfile)!= 1) {
-						ErrorMsg("Error reading botgens from mine.cpp");
+						ErrorMsg ("Error reading botgens from mine.cpp");
 						break;
 					}
 				} else {
@@ -1390,16 +1400,16 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	// note: added robot_flags2 for Descent 2
 	if (GameInfo ().equipgen.offset > -1) {
 		if (GameInfo ().equipgen.count > MAX_NUM_MATCENS) {
-			sprintf(message, "Error: Max number of robot centers (%ld/%d) exceeded",
+			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
 				GameInfo ().equipgen.count, MAX_NUM_MATCENS);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().equipgen.count = MAX_NUM_MATCENS;
 		}
 		if (!fseek(loadfile, GameInfo ().equipgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().equipgen.count; i++) {
 				if (file_type != RDL_FILE) {
 					if (fread(EquipGens (i), (INT16)GameInfo ().equipgen.size, 1, loadfile)!= 1) {
-						ErrorMsg("Error reading equipgens from mine.cpp");
+						ErrorMsg ("Error reading equipgens from mine.cpp");
 						break;
 					}
 				} else {
@@ -1417,18 +1427,18 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	//================ READ DELTA LIGHT INFO============== =
 	// note: D2 only
 	if (file_type != RDL_FILE) {
-		//    sprintf(message, "Number of delta light indices = %ld", GameInfo ().dl_indices.count);
+		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().dl_indices.count);
 		//    DEBUGMSG(message);
 		if (GameInfo ().dl_indices.count > MAX_DL_INDICES) {
-			sprintf(message, "Error: Max number of delta light indices (%ld/%d) exceeded",
+			sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
 				GameInfo ().dl_indices.count, MAX_DL_INDICES);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().dl_indices.count = MAX_DL_INDICES;
 			}
 		if (GameInfo ().dl_indices.offset > -1 && GameInfo ().dl_indices.count > 0) {
 			if (!fseek(loadfile, GameInfo ().dl_indices.offset, SEEK_SET)) {
 				if (fread(DLIndex (), TotalSize (GameInfo ().dl_indices), 1, loadfile)!= 1) {
-					ErrorMsg("Error reading delta light indices from mine.cpp");
+					ErrorMsg ("Error reading delta light indices from mine.cpp");
 				}
 			}
 		}
@@ -1437,12 +1447,12 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	//==================== READ DELTA LIGHTS==================== =
 	// note: D2 only
 	if (file_type != RDL_FILE) {
-		//    sprintf(message, "Number of delta light values = %ld", GameInfo ().delta_lights.count);
+		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().delta_lights.count);
 		//    DEBUGMSG(message);
 		if (GameInfo ().delta_lights.count > MAX_DELTA_LIGHTS) {
-			sprintf(message, "Error: Max number of delta light values (%ld/%d) exceeded",
+			sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
 				GameInfo ().delta_lights.count, MAX_DELTA_LIGHTS);
-			ErrorMsg(message);
+			ErrorMsg (message);
 			GameInfo ().delta_lights.count = MAX_DELTA_LIGHTS;
 		}
 		if (GameInfo ().delta_lights.offset > -1 && GameInfo ().dl_indices.count > 0) {
@@ -1451,7 +1461,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 				dl = DeltaLights ();
 				for (i = 0; i < GameInfo ().delta_lights.count; i++) {
 					if (fread(&temp_dl, GameInfo ().delta_lights.size, 1, loadfile)!= 1) {
-						ErrorMsg("Error reading delta light values from mine.cpp");
+						ErrorMsg ("Error reading delta light values from mine.cpp");
 						break;
 					}
 					memcpy(dl, &temp_dl, (INT32)(GameInfo ().delta_lights.size));
@@ -1694,15 +1704,14 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	INT32 mine_err, game_err;
 
 	//  if (disable_saves) {
-	//    ErrorMsg("Saves disabled, contact Bryan Aamot for your security number.");
+	//    ErrorMsg ("Saves disabled, contact Bryan Aamot for your security number.");
 	//  }
-	strcpy(filename, filename_passed);
+	strcpy_s (filename, sizeof (filename), filename_passed);
 
 	//  if (disable_saves) return 0;
-	save_file = fopen(filename, "wb");
-
+	fopen_s (&save_file, filename, "wb");
 	if (!save_file) {
-		//    sprintf(message, "Can't open save file < %s>", filename);
+		//    sprintf_s (message, sizeof (message),  "Can't open save file < %s>", filename);
 		//    show_message(str, RED, 1, 1);
 		return(1);
 	}
@@ -1710,7 +1719,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	changes_made = 0;
 
 	// write file signature
-	write_INT32('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', save_file); // signature
+	write_INT32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', save_file); // signature
 
 	// always save as version 7 or greater if its a D2 level
 	// otherwise, blinking lights will not work.
@@ -1724,10 +1733,10 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		}
 
 	// write version
-	write_INT32(level_version, save_file);
+	write_INT32 (level_version, save_file);
 
-	write_INT32(0, save_file); // minedata_offset (temporary)
-	write_INT32(0, save_file); // gamedata_offset (temporary)
+	write_INT32 (0, save_file); // minedata_offset (temporary)
+	write_INT32 (0, save_file); // gamedata_offset (temporary)
 
 
 	if (file_type != RDL_FILE) {
@@ -1740,7 +1749,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	}
 
 	if (file_type== RDL_FILE) {
-		write_INT32(0, save_file); // hostagetext_offset (temporary)
+		write_INT32 (0, save_file); // hostagetext_offset (temporary)
 	} else {
 
 		// save palette name
@@ -1751,27 +1760,27 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 			name++;               // point to character after slash
 		}
 		char palette_name [15];
-		strncpy(palette_name, name, 12);
+		strncpy_s (palette_name, sizeof (palette_name), name, 12);
 		palette_name [13] = NULL;  // null terminate just in case
 		// replace extension with *.256
 		if (strlen((char *)palette_name) > 4) {
-			strcpy(&palette_name [strlen((char *)palette_name) - 4], ".256");
+			strcpy_s (&palette_name [strlen((char *) palette_name) - 4], 5, ".256");
 		} else {
-			strcpy(palette_name, "GROUPA.256");
+			strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
 		}
-		strupr(palette_name);
-		strcat(palette_name, "\n"); // add a return to the end
-		fwrite(palette_name, strlen((char *)palette_name), 1, save_file);
+		strupr (palette_name);
+		strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
+		fwrite (palette_name, strlen((char *)palette_name), 1, save_file);
 	}
 
 	// write reactor info
 	if (file_type != RDL_FILE) {
 		// read descent 2 reactor information
-		write_INT32(ReactorTime (), save_file);
-		write_INT32(ReactorStrength (), save_file);
+		write_INT32 (ReactorTime (), save_file);
+		write_INT32 (ReactorStrength (), save_file);
 
 		// flickering light new for version 7
-		write_INT32(FlickerLightCount (), save_file);
+		write_INT32 (FlickerLightCount (), save_file);
 		if (FlickerLightCount () > MAX_FLICKERING_LIGHTS) {
 			FlickerLightCount () = MAX_FLICKERING_LIGHTS;
 		}
@@ -1780,7 +1789,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		}
 
 		// write secret cube number
-		write_INT32(SecretCubeNum (), save_file);
+		write_INT32 (SecretCubeNum (), save_file);
 
 		// write secret cube orientation?
 		write_matrix(&SecretOrient (), save_file);
@@ -1793,7 +1802,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 
 	if (mine_err== -1) {
 		fclose(save_file);
-		ErrorMsg("Error saving mine data");
+		ErrorMsg ("Error saving mine data");
 		return(2);
 	}
 
@@ -1803,7 +1812,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 
 	if (game_err== -1) {
 		fclose(save_file);
-		ErrorMsg("Error saving game data");
+		ErrorMsg ("Error saving game data");
 		return(3);
 	}
 
@@ -1813,24 +1822,32 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 
 	// now and go back to beginning of file and save offsets
 	fseek(save_file, 2*sizeof(INT32), SEEK_SET);
-	write_INT32(minedata_offset, save_file);    // gamedata_offset
-	write_INT32(gamedata_offset, save_file);    // gamedata_offset
+	write_INT32 (minedata_offset, save_file);    // gamedata_offset
+	write_INT32 (gamedata_offset, save_file);    // gamedata_offset
 	if (file_type== RDL_FILE) {
-		write_INT32(hostagetext_offset, save_file); // hostagetext_offset
+		write_INT32 (hostagetext_offset, save_file); // hostagetext_offset
 	}
 
 	fclose(save_file);
 if (HasCustomTextures () && !bSaveToHog) {
-	strcpy (strstr (filename, "."), ".pog");
-	save_file = fopen(filename, "wb");
+	char* ps = strstr (filename, ".");
+	if (ps)
+		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
+	else
+		strcat_s (filename, sizeof (filename), ".pog");
+	fopen_s (&save_file, filename, "wb");
 	if (save_file) {
 		CreatePog (save_file);
 		fclose (save_file);
 		}
 	}
 if (HasCustomRobots () && !bSaveToHog) {
-	strcpy (strstr (filename, "."), ".hxm");
-	save_file = fopen(filename, "wb");
+	char* ps = strstr (filename, ".");
+	if (ps)
+		strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
+	else
+		strcat_s (filename, sizeof (filename), ".hxm");
+	fopen_s (&save_file, filename, "wb");
 	if (save_file)
 		WriteHxmFile (save_file);
 	}
@@ -1949,7 +1966,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		INT32 off;
 		off = ftell(save_file);
 		if (segnum < 10) {
-			sprintf(message, "offset = %#08lx, segnum = ", off, segnum);
+			sprintf_s (message, sizeof (message),  "offset = %#08lx, segnum = ", off, segnum);
 			INFOMSG (message);
 		}
 #endif
@@ -1977,7 +1994,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
 #if 0
 		if (bitmask != seg->child_bitmask) {
-			sprintf(message, " Saving mine: child_bitmask(%#02x) != calculated one(%#02x)\n"
+			sprintf_s (message, sizeof (message),  " Saving mine: child_bitmask(%#02x) != calculated one(%#02x)\n"
 				"for cube (%d)", seg->child_bitmask, bitmask, segnum);
 			DEBUGMSG(message);
 		}
@@ -2316,7 +2333,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		fwrite(BotGens (), TotalSize (GameInfo ().botgen), 1, savefile);
 	else {
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
-			write_INT32(BotGens (i)->objFlags[0], savefile);
+			write_INT32 (BotGens (i)->objFlags[0], savefile);
 			// skip robot_flags2
 			write_FIX  (BotGens (i)->hit_points, savefile);
 			write_FIX  (BotGens (i)->interval, savefile);
@@ -2464,7 +2481,7 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
     case CT_WEAPON:
 		write_INT16(obj->ctype.laser_info.parent_type, f);
 		write_INT16(obj->ctype.laser_info.parent_num, f);
-		write_INT32(obj->ctype.laser_info.parent_signature, f);
+		write_INT32 (obj->ctype.laser_info.parent_signature, f);
 		break;
 
     case CT_LIGHT:
@@ -2473,7 +2490,7 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 
     case CT_POWERUP:
 		if (version >= 25) {
-			write_INT32(obj->ctype.powerup_info.count, f);
+			write_INT32 (obj->ctype.powerup_info.count, f);
 		}
 		break;
 
@@ -2505,20 +2522,20 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 		INT16 i;
 		INT32 tmo;
 
-		write_INT32(obj->rtype.pobj_info.model_num, f);
+		write_INT32 (obj->rtype.pobj_info.model_num, f);
 		for (i = 0; i < MAX_SUBMODELS; i++) {
 			write_angvec(&obj->rtype.pobj_info.anim_angles [i], f);
 		}
-		write_INT32(obj->rtype.pobj_info.subobj_flags, f);
+		write_INT32 (obj->rtype.pobj_info.subobj_flags, f);
 		tmo = obj->rtype.pobj_info.tmap_override;
-		write_INT32(tmo, f);
+		write_INT32 (tmo, f);
 		break;
 					 }
 	case RT_WEAPON_VCLIP:
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		write_INT32(obj->rtype.vclip_info.vclip_num, f);
+		write_INT32 (obj->rtype.vclip_info.vclip_num, f);
 		write_FIX(obj->rtype.vclip_info.frametime, f);
 		write_INT8(obj->rtype.vclip_info.framenum, f);
 		break;

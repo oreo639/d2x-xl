@@ -9,7 +9,7 @@ FIXANG read_FIXANG(FILE *load_file);
 vms_matrix *read_matrix(vms_matrix *matrix,FILE *load_file);
 vms_vector *read_vector(vms_vector *vector,FILE *load_file);
 vms_angvec *read_angvec(vms_angvec *vector,FILE *load_file);
-INT32 write_INT32(INT32 value,FILE *save_file);
+INT32 write_INT32 (INT32 value,FILE *save_file);
 INT16 write_INT16(INT16 value,FILE *save_file);
 INT8 write_INT8(INT8 value,FILE *save_file);
 FIX write_FIX(FIX value,FILE *save_file);

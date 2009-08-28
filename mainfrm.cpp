@@ -308,7 +308,7 @@ return dx;// - 4;
 
                         /*--------------------------*/
 
-void CExtToolBar::OnTimer (UINT nIdEvent)
+void CExtToolBar::OnTimer (UINT_PTR nIdEvent)
 {
 if (nIdEvent == 1) {
 	switch (m_nId) {
@@ -1723,7 +1723,7 @@ void CEditTool::OnEditGeo9 () { theApp.MainFrame ()->OnEditGeoFwd (); }
 
                         /*--------------------------*/
 
-void CEditTool::OnTimer (UINT nIdEvent)
+void CEditTool::OnTimer (UINT_PTR nIdEvent)
 {
 switch (m_nEditFunc) {
 	case IDC_EDITGEO0:

@@ -97,7 +97,7 @@ return TRUE;
 
 void CInputDialog::DoDataExchange (CDataExchange * pDX)
 {
-DDX_Text (pDX, IDC_INPDLG_PROMPT, m_pszPrompt, strlen (m_pszPrompt));
+DDX_Text (pDX, IDC_INPDLG_PROMPT, m_pszPrompt, int (strlen (m_pszPrompt)));
 DDX_Text (pDX, IDC_INPDLG_BUF, m_pszBuf, m_nBufSize);
 }
 
@@ -125,21 +125,21 @@ END_MESSAGE_MAP ()
 
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags, CWnd *pParentWnd)
 {
-   int         nResult;
+   INT_PTR     nResult;
    char		   pn [256];
 
 if (*pszFile)
-	strcpy (pn, pszFile);
+	strcpy_s (pn, sizeof (pn), pszFile);
 else if (*pszDefExt)
-	sprintf (pn, "*.%s", pszDefExt);
+	sprintf_s (pn, sizeof (pn), "*.%s", pszDefExt);
 else
-	strcpy (pn, "*.*");
+	strcpy_s (pn, sizeof (pn), "*.*");
 CFileDialog d (bOpen, pszDefExt, pn, nFlags, pszFilter, pParentWnd);
 d.m_ofn.hInstance = AfxGetInstanceHandle ();
 d.m_ofn.lpstrInitialDir = pn;
 if ((nResult = d.DoModal ()) != IDOK)
 	return false;
-strcpy (pszFile, d.m_ofn.lpstrFile);
+strcpy_s (pszFile, 256, d.m_ofn.lpstrFile);
 return true;
 }
 
@@ -251,7 +251,7 @@ return 0;
 
 int CHogManager::AddFile (LPSTR pszName, long size, long offset, int fileno)
 {
-	int index = LBFiles ()->AddString (strlwr (pszName));
+	int index = LBFiles ()->AddString (_strlwr_s (pszName, 256));
 
 if (0 > AddFileData (index, size, offset, fileno))
 	return -1;
@@ -294,7 +294,7 @@ int CHogManager::FindFilename (LPSTR pszName)
 int h, i;
 for (h = plb->GetCount (), i = 0; i < h; i++) {
 	plb->GetText (i, szName);
-	if (!strcmpi (szName, pszName))
+	if (!_strcmpi (szName, pszName))
 		return i;
 	}
 return -1;
@@ -334,7 +334,7 @@ if (!pszFile)
 if (pszSubFile) {
 	if (!FindFileData (pszFile, pszSubFile, &size, &offset))
 		return false;
-	strcpy (m_pszSubFile, pszSubFile);
+	strcpy_s (m_pszSubFile, sizeof (m_pszSubFile), pszSubFile);
 	}
 else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
@@ -342,9 +342,9 @@ FreeTextureHandles ();
 
 
 FSplit (pszFile, szTmp, NULL, NULL);
-strcat (szTmp, "dle_temp.rdl");
-fTmp = fopen (szTmp, "wb");
-fSrc = fopen (pszFile, "rb");
+strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
+fopen (&fTmp, szTmp, "wb");
+fopen (&fSrc, pszFile, "rb");
 // copy level to a temporary fTmp
 if (!(fTmp && fSrc)) {
 	ErrorMsg ("Unable to create temporary DLE-XP work file.");
@@ -355,7 +355,7 @@ fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
 size_t fPos = ftell (fSrc);
 if (mine->LoadMineSigAndType (fSrc))
 	goto errorExit;
-fseek (fSrc, fPos, SEEK_SET);
+fseek (fSrc, long (fPos), SEEK_SET);
 while (size > 0) {
 	chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
 	fread (dataBuf, 1, chunk, fSrc);
@@ -366,10 +366,10 @@ while (size > 0) {
 	}
 
 // read custom palette if one exists
-strcpy (message, m_pszSubFile);
+strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');
 if (pszExt) {
-	sprintf (pszExt,".pal");
+	sprintf_s (pszExt, 5, ".pal");
 	if (pszSubFile)
 		FindFileData (pszFile, message, &size, &offset);
 	else {
@@ -387,10 +387,10 @@ if (pszExt) {
 		}
 	}
 // read custom light values if a lightmap file exists
-strcpy (message, m_pszSubFile);
+strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');
 if (pszExt) {
-	sprintf (pszExt, ".lgt");
+	sprintf_s (pszExt, 5, ".lgt");
 	if (pszSubFile)
 		FindFileData (pszFile, message, &size, &offset);
 	else {
@@ -411,7 +411,7 @@ if (pszExt) {
 	}
 
 //memset (mine->TexColors (), 0, sizeof (mine->MineData ().texColors));
-sprintf (pszExt, ".clr");
+sprintf_s (pszExt, 5, ".clr");
 if (pszSubFile)
 	FindFileData (pszFile, message, &size, &offset);
 else {
@@ -428,10 +428,10 @@ if ((size >= 0) && (offset >= 0)) {
 	h = ftell (fSrc) - h;
 	}
 // read custom textures if a pog file exists
-strcpy (message, m_pszSubFile);
+strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');
 if (pszExt) {
-	sprintf (pszExt, ".pog");
+	sprintf_s (pszExt, 5, ".pog");
 	if (pszSubFile)
 		FindFileData (pszFile, message, &size, &offset);
 	else {
@@ -442,17 +442,17 @@ if (pszExt) {
 			GetFileData (index, &size, &offset);
 		}
 	if ((size > 0) && (offset >= 0)) {
-		fseek(fSrc, sizeof (struct level_header) + offset, SEEK_SET);
+		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
 		int h = ftell (fSrc);
 		ReadPog (fSrc, size);
 		h = ftell (fSrc) - h;
 		}
 	}
 // read custom robot info if hxm fTmp exists
-strcpy (message, m_pszSubFile);
+strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');
 if (pszExt) {
-	sprintf (pszExt, ".hxm");
+	sprintf_s (pszExt, 5, ".hxm");
 	if (pszSubFile)
 		FindFileData (pszFile, message, &size, &offset);
 	else {
@@ -470,7 +470,7 @@ if (pszExt) {
 		for (i = 0, count = 0; i < (int) N_robot_types;i++)
 			if (mine->RobotInfo (i)->pad [0])
 				count++;
-		sprintf (message," Hog manager: %d custom robots read", count);
+		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);
 		DEBUGMSG (message);
 		}
 	}
@@ -495,7 +495,7 @@ void CHogManager::OnOK ()
 {
 LBFiles ()->GetText (LBFiles ()->GetCurSel (), m_pszSubFile);
 char *pszExt = strrchr ((char *) m_pszSubFile, '.');
-if (pszExt && strcmpi (pszExt,".rdl") && strcmpi (pszExt,".rl2")) {
+if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
 #if 1
 	ErrorMsg ("DLE-XP cannot process this file. To change the file,\n\n"
 				 "export it and process it with the appropriate application.\n"
@@ -567,9 +567,9 @@ if (FindFilename (buf) >= 0) {
 	return;
 	}
 FILE *hogfile;
-hogfile = fopen (m_pszFile,"r+b"); // add it to the end
+fopen (&hogfile, m_pszFile, "r+b"); // add it to the end
 if (!hogfile) {
-	ErrorMsg("Could not open HOG file.");
+	ErrorMsg ("Could not open HOG file.");
 	return;
 	}
 long size, offset;
@@ -577,14 +577,14 @@ level_header lh;
 int fileno = GetFileData (index, &size, &offset);
 fseek (hogfile, offset, SEEK_SET);
 if (!fread (&lh, sizeof (lh), 1, hogfile))
-	ErrorMsg("Cannot read from HOG file");
+	ErrorMsg ("Cannot read from HOG file");
 else {
 	memset(lh.name, 0, sizeof (lh.name));
 	buf[12] = NULL;
-	strlwr(buf);
-	strncpy(lh.name,buf,12);
-	fseek(hogfile,offset,SEEK_SET);
-	if (!fwrite(&lh,sizeof(lh),1,hogfile))
+	_strlwr (buf);
+	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
+	fseek (hogfile,offset,SEEK_SET);
+	if (!fwrite (&lh, sizeof(lh), 1, hogfile))
 		ErrorMsg ("Cannot write to HOG file");
 	else {
 		// update list box
@@ -619,7 +619,7 @@ void CHogManager::OnImport ()
 //  // make sure there is an item selected
 //  index = LBFiles ()->GetCurSel ();
 //  if (index < 0) {
-//    ErrorMsg("You must select an item first.");
+//    ErrorMsg ("You must select an item first.");
 //  } else {
 	// Set all structure members to zero.
 #if 0
@@ -665,12 +665,14 @@ if (!GetOpenFileName (&ofn))
 	return;
 #endif
 
-FILE *fDest = fopen (m_pszFile, "ab"); // add it to the end
+FILE *fDest;
+fopen (&fDest, m_pszFile, "ab"); // add it to the end
 if (!fDest) {
 	ErrorMsg ("Could not open destination HOG file for import.");
 	return;
 	}
-FILE *fSrc = fopen (szFile, "rb");
+FILE *fSrc;
+fopen (&fSrc, szFile, "rb");
 if (!fSrc) {
 	ErrorMsg ("Could not open source file for import.");
 	fclose (fDest);
@@ -679,13 +681,13 @@ if (!fSrc) {
 fseek (fDest, 0, SEEK_END);
 offset = ftell (fDest);
 // write header
-lh.size = filelength (fileno (fSrc));
-strlwr (lh.name);
+lh.size = _filelength (_fileno (fSrc));
+_strlwr_s (lh.name, sizeof (lh.name));
 fwrite (&lh, sizeof (level_header), 1, fDest);
 
 	// write data (from source to HOG)
-while(!feof(fSrc)) {
-	int n_bytes = fread (dataBuf, 1, sizeof (dataBuf), fSrc);
+while (!feof (fSrc)) {
+	size_t n_bytes = fread (dataBuf, 1, sizeof (dataBuf), fSrc);
 	if (n_bytes <= 0)
 		break;
 	fwrite (dataBuf, 1, n_bytes, fDest);
@@ -717,7 +719,7 @@ void CHogManager::OnExport ()
 // make sure there is an item selected
 index = LBFiles ()->GetCurSel ();
 if (index < 0) {
-	ErrorMsg("Please select a file to export.");
+	ErrorMsg ("Please select a file to export.");
 	return;
 	}
 // get item name, size, and offset
@@ -725,7 +727,7 @@ LBFiles ()->GetText (index, lh.name);
 GetFileData (index, &size, &offset);
 lh.size = size;
 offset += sizeof(level_header);
-strcpy (szFile, lh.name);
+strcpy_s (szFile, sizeof (szFile), lh.name);
 #if 1
 if (!BrowseForFile (FALSE, "", szFile, "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
@@ -778,9 +780,9 @@ if (delete_index < 0) {
 	}
 #if 1//ndef _DEBUG
 if (!bExpertMode) {
-	strcpy (message, "Are you sure you want to delete '");
+	strcpy_s (message, sizeof (message), "Are you sure you want to delete '");
 	plb->GetText (delete_index, message + strlen(message));
-	strcat(message,"'?\n(This operation will change the HOG hogFile immediately)");
+	strcat_s (message, sizeof (message), "'?\n(This operation will change the HOG hogFile immediately)");
 	if (QueryMsg (message) != IDYES)
 		return;
 	}
@@ -788,9 +790,9 @@ if (!bExpertMode) {
 fileno = GetFileData (delete_index, &size, &offset);
 int nFiles = plb->GetCount ();
 // open hog hogFile for modification
-hogFile = fopen (m_pszFile,"r+b");
+fopen_s (&hogFile, m_pszFile, "r+b");
 if (!hogFile) {
-	ErrorMsg("Could not open hog hogFile.");
+	ErrorMsg ("Could not open hog hogFile.");
 	return;
 	}
 DeleteSubFile (hogFile, size + sizeof (struct level_header), offset, nFiles, fileno);
@@ -813,15 +815,15 @@ bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels
 	int nFiles;
 
 ClearFileList (plb);
-hog_file = fopen(pszFile,"rb");
+fopen_s (&hog_file, pszFile, "rb");
 if (!hog_file) {
-	sprintf(message,"Unable to open HOG file (%s)",pszFile);
-	ErrorMsg(message);
+	sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
+	ErrorMsg (message);
 	return false;
 	}
-fread(data,3,1,hog_file); // verify signature "DHF"
+fread (data,3,1,hog_file); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
-	ErrorMsg("This is not a Descent HOG file");
+	ErrorMsg ("This is not a Descent HOG file");
 	return false;
 	}
 position = 3;
@@ -837,7 +839,7 @@ while (!feof (hog_file)) {
 		return false;
 		}
 	level->name [sizeof (level->name) - 1] = 0; // null terminate in case its bad
-	strlwr (level->name);
+	_strlwr_s (level->name, sizeof (level->name));
 	if (bAllFiles 
 		 || strstr (level->name, ".rdl") || strstr (level->name, ".rl2")
 		 || (!bOnlyLevels && (strstr (level->name, ".pog") || 
@@ -845,7 +847,7 @@ while (!feof (hog_file)) {
 									 strstr (level->name, ".lgt") || 
 									 strstr (level->name, ".clr") || 
 									 strstr (level->name, ".pal")))) {
-		int i = plb->AddString (strlwr (level->name));
+		int i = plb->AddString (level->name);
 		if (bGetFileData && (0 > AddFileData (plb, i, level->size, position, nFiles))) {
 			ErrorMsg ("Too many files in HOG file.");
 			fclose (hog_file);
@@ -861,10 +863,10 @@ fclose (hog_file);
 for (index = 0; index < nFiles; index++) {
 	message [0] = NULL;
 	plb->GetText (index, message);
-	strlwr (message);
-	if (strstr(message, ".rdl")) 
+	_strlwr_s (message, sizeof (message));
+	if (_strstr_s (message, sizeof (message), ".rdl")) 
 		break;
-	if (strstr(message, ".rl2")) 
+	if (_strstr_s (message, sizeof (message), ".rl2")) 
 		break;
 	}
 if (index == nFiles)
@@ -887,18 +889,18 @@ bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOO
 
 *nSize = -1;
 *nPos = -1;
-hog_file = fopen(pszFile,"rb");
+fopen (&hog_file, pszFile, "rb");
 if (!hog_file) {
 	if (bVerbose) {
-		sprintf(message,"Unable to open HOG file (%s)",pszFile);
-		ErrorMsg(message);
+		sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
+		ErrorMsg (message);
 		}
 	return false;
 	}
 fread(data,3,1,hog_file); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
 	if (bVerbose)
-		ErrorMsg("This is not a Descent HOG file");
+		ErrorMsg ("This is not a Descent HOG file");
 	return false;
 	}
 position = 3;
@@ -915,10 +917,10 @@ while (!feof (hog_file)) {
 		return false;
 		}
 	level->name [sizeof (level->name) - 1] = 0; // null terminate in case its bad
-	strlwr (level->name);
+	_strlwr_s (level->name, sizeof (level->name));
 	if (!strcmp (pszSubFile, "*"))
-		strcpy (pszSubFile, level->name);
-	if (!strcmpi (level->name, pszSubFile)) {
+		strcpy_s (pszSubFile, 256, level->name);
+	if (!_strcmpi (level->name, pszSubFile)) {
 		*nSize = level->size;
 		*nPos = position;
 		fclose (hog_file);
@@ -936,23 +938,25 @@ return false;
 
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size) 
 {
-FILE *fSrc = fopen(pszSrc,"rb");
+FILE *fSrc;
+fopen_s (&fSrc, pszSrc, "rb");
 if (!fSrc) {
-	ErrorMsg("Could not open HOG file.");
+	ErrorMsg ("Could not open HOG file.");
 	return false;
 	}
-FILE *fDest = fopen (pszDest,"wb");
+FILE *fDest;
+fopen_s (&fDest, pszDest,"wb");
 if (!fDest) {
-	ErrorMsg("Could not create export file.");
+	ErrorMsg ("Could not create export file.");
 	fclose (fSrc);
 	return false;
 	}
 // seek to item's offset in HOG file
 fseek(fSrc,offset,SEEK_SET);
 // create file (from HOG to file)
-while(size > 0) {
-	int n_bytes,n;
-	n = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
+while (size > 0) {
+	size_t n_bytes, n;
+	n = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size_t (size);
 	n_bytes = fread (dataBuf, 1, n, fSrc);
 	fwrite (dataBuf, 1, n_bytes, fDest);
 	size -= n_bytes;
@@ -987,7 +991,7 @@ if (delete_index < num_entries - 1) {
 		} while (n_bytes > 0);
 	}
 // set the new size of the file
-chsize (fileno (file), offset);
+_chsize (_fileno (file), offset);
 }
 
 //--------------------------------------------------------------------------
@@ -1033,17 +1037,17 @@ while(!feof (file)) {
 		break;
 	size = lh.size + sizeof (lh);
 	if (regnum < MAX_REGNUM) {
-		strlwr (lh.name);
+		_strlwr_s (lh.name, sizeof (lh.name));
 		LPSTR ext = strrchr (lh.name, '.');
 		if (!ext)
 			goto nextSubFile;
-		if (strcmpi (ext, ".rdl") &&
-		    strcmpi (ext, ".rl2") &&
-		    strcmpi (ext, ".hxm") &&
-		    strcmpi (ext, ".pog") &&
-		    strcmpi (ext, ".pal") &&
-		    strcmpi (ext, ".lgt") &&
-		    strcmpi (ext, ".clr"))
+		if (_strcmpi (ext, ".rdl") &&
+		    _strcmpi (ext, ".rl2") &&
+		    _strcmpi (ext, ".hxm") &&
+		    _strcmpi (ext, ".pog") &&
+		    _strcmpi (ext, ".pal") &&
+		    _strcmpi (ext, ".lgt") &&
+		    _strcmpi (ext, ".clr"))
 			goto nextSubFile;
 		*ext = '\0';
 		if (strcmpi (base, lh.name))
@@ -1086,19 +1090,19 @@ fclose (file);
 int WriteSubFile (FILE *fDest, char *szSrc, char *szLevel) 
 {
 	FILE *fSrc;
-	long n_bytes;
+	size_t n_bytes;
 	level_header lh;
 
-fSrc = fopen (szSrc,"rb");
+fopen_s (&fSrc, szSrc, "rb");
 if (!fSrc) {
-	sprintf(message,"Unable to open temporary file:\n%s",szSrc);
-	ErrorMsg(message);
+	sprintf_s (message, sizeof (message), "Unable to open temporary file:\n%s",szSrc);
+	ErrorMsg (message);
 	return -1;
 	}
 // write szLevel (13 chars, null filled)
 memset (&lh, 0, sizeof (lh));
-strncpy (lh.name, szLevel, 12);
-strlwr(lh.name);
+strncpy_s (lh.name, sizeof (lh.name), szLevel, 12);
+_strlwr_s (lh.name, sizeof (lh.name));
 // calculate then write size
 fseek (fSrc, 0, SEEK_END);
 lh.size = ftell (fSrc);
@@ -1140,11 +1144,11 @@ int MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs)
 	CMine *mine = theApp.GetMine ();
 
 // create HOG file which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
-strcpy(filename,hogFilename);
-hogfile = fopen(filename,"wb");
+strcpy_s (filename, sizeof (filename), hogFilename);
+fopen_s (&hogfile, filename, "wb");
 if (!hogfile) {
-	sprintf(message,"Unable to create HOG file:\n%s",filename);
-	ErrorMsg(message);
+	sprintf_s (message, sizeof (message), "Unable to create HOG file:\n%s",filename);
+	ErrorMsg (message);
 	return 1;
 	}
 // write file type
@@ -1155,7 +1159,7 @@ if (name_start==NULL)
 	name_start = hogFilename;
 else
 	name_start++; // move to just pass the backslash
-strncpy(base_name,name_start,12);
+strncpy_s (base_name, sizeof (base_name), name_start,12);
 base_name[12] = NULL; // make sure it is null terminated
 name_end = strrchr((char *)base_name,'.');
 if (!name_end)
@@ -1166,15 +1170,15 @@ for (;name_end < base_name + 12; name_end++)
 if (*szSubFile) {
 	for (ext_start = szSubFile; *ext_start && (*ext_start != '.'); ext_start++)
 		;
-	strncpy (base_name, szSubFile, ext_start - szSubFile);
+	strncpy_s (base_name, sizeof (base_name), szSubFile, ext_start - szSubFile);
 	base_name [ext_start - szSubFile] = '\0';
 	}
 if (file_type == RDL_FILE)
-	sprintf(szTmp,"%s.RDL",base_name);
+	sprintf_s (szTmp, sizeof (szTmp), "%s.RDL", base_name);
 else
-	sprintf(szTmp,"%s.RL2",base_name);
+	sprintf_s (szTmp, sizeof (szTmp), "%s.RL2", base_name);
 WriteSubFile (hogfile, rdlFilename, szTmp);
-unlink (szTmp);
+_unlink (szTmp);
 #if 0
 // write palette file into hog (if D2)
 if (file_type == RL2_FILE) {
@@ -1196,7 +1200,7 @@ if (file_type == RL2_FILE) {
 			strcpy(szTmp,"GROUPA.256");
 			}
 		strupr(szTmp);
-		sprintf(message,"%s\\groupa.256",starting_directory);
+		sprintf_s (message, sizeof (message), "%s\\groupa.256",starting_directory);
 		write_sub_file(hogfile,message,szTmp);
 		}
 	}
@@ -1204,48 +1208,48 @@ if (file_type == RL2_FILE) {
 
 if (mine->HasCustomLightMap ()) {
 	FSplit (hogFilename, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.lgt");
-	fTmp = fopen (szTmp,"wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
+	fopen_s (fTmp, szTmp, "wb");
 	if (fTmp) {
 		if (!WriteLightMap (fTmp)) {
 			fclose (fTmp);
-			sprintf (szBase, "%s.lgt", base_name);
+			sprintf_s (szBase, sizeof (szBase), "%s.lgt", base_name);
 			WriteSubFile (hogfile, szTmp, szBase);
 			}
 		else
 			fclose (fTmp);
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	}
 if (mine->HasCustomLightColors ()) {
 	FSplit (hogFilename, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.clr");
-	fTmp = fopen (szTmp, "wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
+	fopen (&fTmp, szTmp, "wb");
 	if (fTmp) {
 		if (!mine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
-			sprintf (szBase, "%s.clr", base_name);
+			sprintf_s (szBase, sizeof (szBase), "%s.clr", base_name);
 			WriteSubFile (hogfile, szTmp, szBase);
 			}
 		else
 			fclose (fTmp);
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	}
 	
 if (HasCustomPalette ()) {
 	FSplit (hogFilename, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.pal");
-	fTmp = fopen (szTmp,"wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pal");
+	fopen_s (&fTmp, szTmp,"wb");
 	if (fTmp) {
 		if (!WriteCustomPalette (fTmp)) {
 			fclose (fTmp);
-			sprintf (szBase, "%s.pal", base_name);
+			sprintf_s (szBase, sizeof (szBase), "%s.pal", base_name);
 			WriteSubFile (hogfile, szTmp, szBase);
 			}
 		else
 			fclose (fTmp);
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	}
 
@@ -1257,18 +1261,18 @@ if (HasCustomTextures ()) {
 					 "Note: You must use version 1.2 or higher of Descent2 to see\n"
 					 "the textures when you play the game.") == IDYES) {
 		FSplit (hogFilename, szTmp, NULL, NULL);
-		strcat (szTmp, "dle_temp.pog");
-		fTmp = fopen (szTmp,"wb");
+		strcat_s (szTmp, sizeof (szTmp), "dle_temp.pog");
+		fopen_s (&fTmp, szTmp,"wb");
 		if (fTmp) {
 			if (!CreatePog (fTmp)) {
 				fclose (fTmp);
-				sprintf (szBase, "%s.pog", base_name);
+				sprintf_s (szBase, sizeof (szBase), "%s.pog", base_name);
 				WriteSubFile (hogfile, szTmp, szBase);
 				custom_textures = 1;
 				}
 			else
 				fclose (fTmp);
-			unlink (szTmp);
+			_unlink (szTmp);
 			}
 		}
 	}
@@ -1280,15 +1284,15 @@ if (theApp.GetMine ()->HasCustomRobots ()) {
 					  "Note: You must use version 1.2 or higher of Descent2 for\n"
 					  "the changes to take effect.") == IDYES) {
 		FSplit (hogFilename, szTmp, NULL, NULL);
-		strcat (szTmp, "dle_temp.hxm");
-		fTmp = fopen (szTmp, "wb");
+		strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
+		fopen_s (&fTmp, szTmp, "wb");
 		if (fTmp) {
 			if (!theApp.GetMine ()->WriteHxmFile (fTmp)) {
-				sprintf (szBase, "%s.hxm", base_name);
+				sprintf_s (szBase, sizeof (szBase), "%s.hxm", base_name);
 				WriteSubFile (hogfile, szTmp, szBase);
 				custom_robots = 1;
 				}
-			unlink (szTmp);
+			_unlink (szTmp);
 			}
 		}
 	}
@@ -1308,7 +1312,7 @@ int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs)
 	char *psz;
 	CMine *mine = theApp.GetMine ();
 
-psz = strstr (strlwr (szHogFile), "new.");
+psz = strstr (_strlwr_s (szHogFile, sizeof (szHogFile)), "new.");
 if (!*szSubFile || psz) { 
 	CInputDialog dlg (theApp.MainFrame (), "Name mine", "Enter file name:", szSubFile, 9);
 	if (dlg.DoModal () != IDOK)
@@ -1319,12 +1323,12 @@ if (!*szSubFile || psz) {
 	psz = strrchr (szSubFile, '.');
 	if (psz)
 		*psz = '\0';
-	psz = strstr (strlwr (szHogFile), "new.");
+	psz = strstr (szHogFile, "new.");
 	if (psz) {
-		strcpy (psz, szSubFile);
-		strcat (szHogFile, ".hog");
+		strcpy_s (psz, sizeof (szHogFile) - (ps - szHogFile), szSubFile);
+		strcat_s (szHogFile, sizeof (szHogFile), ".hog");
 		}
-	strcat (szSubFile, (file_type == RDL_FILE) ? ".rdl" : ".rl2");
+	strcat_s (szSubFile, sizeof (szSubFile), (file_type == RDL_FILE) ? ".rdl" : ".rl2");
 	}
 // if this HOG file only contains one rdl/rl2 file total and
 // it has the same name as the current level, and it has
@@ -1335,28 +1339,28 @@ FILE *file;
 // and see if there are any other files here (ignore hxm and pog files)
 int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
-file = fopen (szHogFile, "rb");
+fopen_s (&file, szHogFile, "rb");
 if (!file) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.rdl");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 	theApp.GetMine ()->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, true);
 	}
-fseek(file,3,SEEK_SET); // skip "HOG"
-while(!feof(file)) {
+fseek (file,3,SEEK_SET); // skip "HOG"
+while (!feof (file)) {
 	level_header lh = {"",0};
 	if (!fread (&lh, sizeof (lh), 1, file)) 
 		break;
-	strlwr (lh.name);
+	_strlwr_s (lh.name, sizeof (lh.name));
 	lh.name [sizeof (lh.name) - 1] = NULL; // null terminate
 	if (!strstr ((char *) lh.name, ".hxm") &&     // not a custom robot file
 		 !strstr ((char *) lh.name, ".pog") &&     // not a custom texture file
 		 !strstr ((char *) lh.name, ".lgt") &&     // not an texture brightness table file
 		 !strstr ((char *) lh.name, ".clr") &&     // not an texture color table file
 		 !strstr ((char *) lh.name, ".pal") &&     // not a palette file
-		 strcmpi((char *) lh.name, szSubFile)) // not the same level
+		 _strcmpi((char *) lh.name, szSubFile)) // not the same level
 		bOtherFilesFound = 1;
-	if (!strcmpi ((char *) lh.name, szSubFile)) // same level
+	if (!_strcmpi ((char *) lh.name, szSubFile)) // same level
 		bIdenticalLevelFound = 1;
 	fseek(file, lh.size, SEEK_CUR);
 	}
@@ -1386,7 +1390,7 @@ else {
 	}
 if (bQuickSave) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.rdl");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 	theApp.GetMine ()->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, bSaveAs);
 //	MySetCaption (szHogFile);
@@ -1395,75 +1399,75 @@ char base [256];
 // determine base name
 FSplit (szSubFile, NULL, base, NULL);
 base[8] = NULL;
-strlwr (base);
+_strlwr_s (base, sizeof (base));
 strip_extension (base);
-file = fopen(szHogFile,"r+b"); // reopen file
+fopen_s (file, szHogFile, "r+b"); // reopen file
 if (!file) {
-	ErrorMsg("Destination HOG file not found/accessible.");
+	ErrorMsg ("Destination HOG file not found/accessible.");
 	return 1;
 	}
 DeleteLevelSubFiles (file, base);
 fclose (file);
 // now append sub-files to the end of the HOG file
-file = fopen(szHogFile,"ab");
+fopen_s (&file, szHogFile, "ab");
 if (!file) {
-	ErrorMsg("Could not open destination HOG file for save.");
+	ErrorMsg ("Could not open destination HOG file for save.");
 	return 1;
 	}
-fseek(file,0,SEEK_END);
+fseek (file, 0, SEEK_END);
 FSplit (szHogFile, szTmp, NULL, NULL);
-strcat (szTmp, "dle_temp.rdl");
+strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 theApp.GetMine ()->Save (szTmp, true);
 WriteSubFile (file, szTmp, szSubFile);
 
 if (mine->HasCustomLightMap ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.lgt");
-	fTmp = fopen (szTmp, "wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
+	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
 		if (!WriteLightMap (fTmp)) {
 			fclose (fTmp);
-			sprintf (subName, "%s.lgt", base);
+			sprintf_s (subName, sizeof (subName), "%s.lgt", base);
 			WriteSubFile (file, szTmp, subName);
 			bOk = true;
 			}
 		else
 			fclose (fTmp);
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	if (!bOk)
 		ErrorMsg ("Error writing custom light map.");
 	}
 if (mine->HasCustomLightColors ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.clr");
-	fTmp = fopen (szTmp, "wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
+	fopen_s (&fTmp, szTmp, "wb");
 	if (fTmp) {
 		if (!mine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
-			sprintf (subName, "%s.clr", base);
+			sprintf_s (subName, sizeof (subName), "%s.clr", base);
 			WriteSubFile (file, szTmp, subName);
 			}
 		else
 			fclose (fTmp);
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	}
 
 if (HasCustomTextures ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.hxm");
-	fTmp = fopen (szTmp, "wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
+	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
 		if (!CreatePog (fTmp)) {
-			sprintf (subName, "%s.pog", base);
+			sprintf_s (subName, sizeof (subName), "%s.pog", base);
 			WriteSubFile (file, szTmp, subName);
 			bOk = true;
 			}
 		fclose (fTmp);
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	if (!bOk)
 		ErrorMsg ("Error writing custom textures.");
@@ -1471,16 +1475,16 @@ if (HasCustomTextures ()) {
 
 if (theApp.GetMine ()->HasCustomRobots ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
-	strcat (szTmp, "dle_temp.hxm");
-	fTmp = fopen (szTmp, "wb");
+	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
+	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
 		if (!theApp.GetMine ()->WriteHxmFile (fTmp)) {
-			sprintf (subName, "%s.hxm", base);
+			sprintf_s (subName, sizeof (subName), "%s.hxm", base);
 			WriteSubFile (file, szTmp, subName);
 			bOk = true;
 			}
-		unlink (szTmp);
+		_unlink (szTmp);
 		}
 	if (!bOk)
 		ErrorMsg ("Error writing custom robots.");
@@ -1508,9 +1512,9 @@ static LPSTR *szTags [] = {szMissionName, szMissionInfo, szMissionType, szMissio
 
                          /*--------------------------*/
 
-int atob (LPSTR psz)
+int atob (LPSTR psz, size_t nSize)
 {
-strlwr (psz);
+_strlwr_s (psz, nSize);
 int i;
 for (i = 0; i < 2; i++)
 	if (!strcmp (psz, szBool [i]))
@@ -1528,12 +1532,13 @@ int ReadMissionFile (char *pszFile)
 	char	szTag [20], szValue [80], szBuf [100];
 	int	i, j, l;
 
-strcpy (szMsn, pszFile);
+strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat (szMsn, (file_type == RDL_FILE) ? ".msn" : ".mn2");
-if (!(fMsn = fopen (szMsn, "rt"))) {
+strcat_s (szMsn, sizeof (szMsn), (file_type == RDL_FILE) ? ".msn" : ".mn2");
+fopen_s (&fMsn, szMsn, "rt");
+if (!fMsn) {
 	DEBUGMSG (" Hog manager: Mission file not found.");
 	return -1;
 	}
@@ -1544,11 +1549,11 @@ while (fgets (szBuf, sizeof (szBuf), fMsn)) {
 		*psz = '\0';
 	if (*szBuf == ';') {	//comment
 		if (l) {
-			strncpy (missionData.comment + l, "\r\n", sizeof (missionData.comment) - l);
+			strncpy_s (missionData.comment + l, sizeof (missionData.comment) - l, "\r\n", sizeof (missionData.comment) - l);
 			l += 2;
 			}
-		strncpy (missionData.comment + l, szBuf + 1, sizeof (missionData.comment) - l);
-		l += strlen (szBuf + 1);
+		strncpy_s (missionData.comment + l, sizeof (missionData.comment) - l, szBuf + 1, sizeof (missionData.comment) - l);
+		l += int (strlen (szBuf + 1));
 		continue;
 		}
 	else if (!(psz = strchr (szBuf, '=')))	// otherwise need <tag> '=' <value> format
@@ -1556,48 +1561,48 @@ while (fgets (szBuf, sizeof (szBuf), fMsn)) {
 	for (i = -1; psz + i > szBuf; i--)	// remove blanks around '='
 		if (psz [i] != ' ') {
 			psz [++i] = '\0';
-			strncpy (szTag, szBuf, sizeof (szTag));
+			strncpy_s (szTag, sizeof (szTag), szBuf, sizeof (szTag));
 			szTag [sizeof (szTag) - 1] = '\0';
 			break;
 			}
 	for (i = 1; psz [i]; i++)
 		if (psz [i] != ' ') {
-			strncpy (szValue, psz + i, sizeof (szValue));
+			strncpy_s (szValue, sizeof (szValue), psz + i, sizeof (szValue));
 			szValue [sizeof (szValue) - 1] = '\0';
 			break;
 			}
 	if (!(*szTag && *szValue))	// mustn't be empty
 		continue;
-	strlwr (szTag);	// find valid tag
+	_strlwr_s (szTag, sizeof (szTag));	// find valid tag
 	for (i = 0, j = -1; i < 8; i++)
 		for (ppsz = szTags [i]; *ppsz; ppsz++)
 			if (!strcmp (*ppsz, szTag)) {
-				j = ppsz - szTags [i];
+				j = int (ppsz - szTags [i]);
 				goto tagFound;
 				}
 	continue;
 tagFound:
 	switch (i) {
 		case 0:
-			strcpy (missionData.missionName, szValue);
+			strcpy_s (missionData.missionName, sizeof (missionData.missionName), szValue);
 			break;
 		case 1:
-			strcpy (missionData.missionInfo [j], szValue);
+			strcpy_s (missionData.missionInfo [j], sizeof (missionData.missionInfo [j]), szValue);
 			break;
 		case 2:
-			strlwr (szValue);
+			_strlwr_s (szValue, sizeof (szValue));
 			for (j = 0; j < 2; j++)
 				if (!strcmp (szValue, szMissionTypes [j]))
 					missionData.missionType = j;
 			break;
 		case 3:
-			missionData.missionFlags [j] = atob (szValue);
+			missionData.missionFlags [j] = atob (szValue, sizeof (szValue));
 			break;
 		case 4:
-			missionData.customFlags [j] = atob (szValue);
+			missionData.customFlags [j] = atob (szValue, sizeof (szValue));
 			break;
 		case 5:
-			missionData.authorFlags [j] = atob (szValue);
+			missionData.authorFlags [j] = atob (szValue, sizeof (szValue));
 			break;
 		case 6:
 			missionData.numLevels = atol (szValue);
@@ -1608,14 +1613,14 @@ tagFound:
 						 (missionData.levelList [i][j] != '\n'))
 						break;
 				missionData.levelList [i][j+1] = '\0';
-				strlwr (missionData.levelList [i]);
+				_strlwr_s (missionData.levelList [i], sizeof (missionData.levelList [i]));
 				}
 			break;
 		case 7:
 			missionData.numSecrets = atol (szValue);
 			for (i = 0, j = missionData.numLevels; i < missionData.numSecrets; i++, j++) {
-				fscanf (fMsn, "%s", missionData.levelList [j]);
-				strlwr (missionData.levelList [i]);
+				fscanf_s (fMsn, "%s", missionData.levelList [j], sizeof (missionData.levelList [j]));
+				_strlwr_s (missionData.levelList [i], sizeof (missionData.levelList [i]));
 				}
 			break;
 		default:
@@ -1634,18 +1639,20 @@ int WriteMissionFile (char *pszFile, bool bSaveAs)
 	char  szMsn [256];
 	int	i, j;
 
-strcpy (szMsn, pszFile);
+strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat (szMsn, (file_type == RDL_FILE) ? ".msn" : ".mn2");
-if (bSaveAs && (fMsn = fopen (szMsn, "rt"))) {
-	if (AfxMessageBox ("A mission file with that name already exists.\nOverwrite mission file?", MB_YESNO) != IDYES)
+strcat_s (szMsn, sizeof (szMsn), (file_type == RDL_FILE) ? ".msn" : ".mn2");
+if (bSaveAs) {
+	fopen_s (&fMsn, szMsn, "rt");
+	if (fMsn && (AfxMessageBox ("A mission file with that name already exists.\nOverwrite mission file?", MB_YESNO) != IDYES))
 		return -1;
 	fclose (fMsn);
 	}
 // create mission file
-if (!(fMsn = fopen (szMsn, "wt")))
+fopen_s (&fMsn, szMsn, "wt");
+if (!fMsn)
 	return -1;
 if (level_version >= 9)
 	fprintf (fMsn, "d2x-name = %s\n", missionData.missionName);
@@ -1701,7 +1708,7 @@ int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int b
 //memset (&missionData, 0, sizeof (missionData));
 FSplit (pszSubFile, NULL, szBaseName, NULL);
 if (!*missionData.missionName)
-	strcpy (missionData.missionName, szBaseName);
+	strcpy_s (missionData.missionName, sizeof (missionData.missionName), szBaseName);
 if (bSaveAs || !*missionData.missionName)
 	do {
 		CInputDialog dlg (theApp.MainFrame (), "Mission title", "Enter mission title:", missionData.missionName, sizeof (missionData.missionName));
@@ -1710,14 +1717,14 @@ if (bSaveAs || !*missionData.missionName)
 	} while (!*missionData.missionName);
 missionData.missionType = 1;
 missionData.numLevels = 1;
-strcpy (missionData.levelList [0], pszSubFile);
+strcpy_s (missionData.levelList [0], sizeof (missionData.levelList [0]), pszSubFile);
 if (!strchr (pszSubFile, '.'))
-	strcat (missionData.levelList [0], file_type ? ".rl2" : ".rdl");
+	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), file_type ? ".rl2" : ".rdl");
 missionData.numSecrets = 0;
-strcpy (missionData.missionInfo [0], "DLE-XP");
-strcpy (missionData.missionInfo [2], DateStr (szTime, true));
+strcpy_s (missionData.missionInfo [0], sizeof (missionData.levelList [0]), "DLE-XP");
+strcpy_s (missionData.missionInfo [2], sizeof (missionData.levelList [2]), DateStr (szTime, true));
 if (bSaveAs)
-	strcpy (missionData.missionInfo [3], "1.0");
+	strcpy_s (missionData.missionInfo [3], sizeof (missionData.missionInfo [3]), "1.0");
 missionData.customFlags [0] = bCustomTextures;
 missionData.customFlags [1] = bCustomRobots;
 return WriteMissionFile (pszFile, bSaveAs);

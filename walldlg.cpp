@@ -156,7 +156,7 @@ pcb = CBClipNo ();
 pcb->ResetContent ();
 j = (file_type != RDL_FILE) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
 for (i = 0; i < j; i++) {
-	sprintf (m_szMsg, i ? "door%02d" : "wall%02d", clip_door_number [i]);
+	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", clip_door_number [i]);
 	pcb->AddString (m_szMsg);
 	}
 InitSlider (IDC_WALL_TRANSPARENCY, 0, 10);
@@ -177,7 +177,7 @@ CComboBox *pcb = CBWallNo ();
 pcb->ResetContent ();
 int i;
 for (i = 0; i < m_mine->GameInfo ().walls.count; i++)
-	pcb->AddString (itoa (i, message, 10));
+	pcb->AddString (_itoa (i, message, 10));
 pcb->SetCurSel (m_nWall [0]);
 }
 
@@ -206,7 +206,7 @@ DDX_Text (pDX, IDC_WALL_MSG, m_szMsg, sizeof (m_szMsg));
 char szTransparency [20];
 int t = (int) (((m_nType == WALL_TRANSPARENT) ? m_nStrength : m_nCloak) + 5) / 10;
 DDX_Slider (pDX, IDC_WALL_TRANSPARENCY, t);
-sprintf (szTransparency, "transp: %d%c", t * 10, '%');
+sprintf_s (szTransparency, sizeof (szTransparency), "transp: %d%c", t * 10, '%');
 SetDlgItemText (IDC_WALL_TRANSPARENCY_TEXT, szTransparency);
 }
 
@@ -259,7 +259,7 @@ if (!GetMine ())
 
 InitCBWallNo ();
 if (!(m_pWall [0] = m_mine->FindWall ())) {
-	strcpy (m_szMsg, "No wall for current side");
+	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
 	if (m_mine->CurrSeg ()->children [m_mine->Current ()->side] >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
@@ -290,13 +290,11 @@ else {
 		}
 	// update wall data
 	if (m_pWall [0]->trigger == NO_TRIGGER)
-		sprintf (m_szMsg,"cube = %ld, side = %ld, no trigger", 
-					m_pWall [0]->segnum, m_pWall [0]->sidenum);
+		sprintf_s (m_szMsg, sizeof (szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->sidenum);
 	else
-		sprintf (m_szMsg,"cube = %ld, side = %ld, trigger= %d",
-					m_pWall [0]->segnum, m_pWall [0]->sidenum, (int)m_pWall [0]->trigger);
+		sprintf_s (m_szMsg, sizeof (szMsg), "cube = %ld, side = %ld, trigger= %d",	m_pWall [0]->segnum, m_pWall [0]->sidenum, (int)m_pWall [0]->trigger);
 
-	m_nWall [0] = m_pWall [0] - m_mine->Walls ();
+	m_nWall [0] = int (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
 	m_nCube = m_pWall [0]->segnum;
 	m_nSide = m_pWall [0]->sidenum + 1;
@@ -536,7 +534,7 @@ void CWallTool::OnSetType ()
 	int			nType;
 
 GetWalls ();
-nType = CBType ()->GetItemData (CBType ()->GetCurSel ());
+nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType > WALL_CLOSED) && !file_type) 
 	return;
 if ((nType > WALL_CLOAKED) && (level_version < 9)) 

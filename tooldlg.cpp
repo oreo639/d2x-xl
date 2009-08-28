@@ -64,7 +64,7 @@ if (pDX->m_bSaveAndValidate) {
 		}
 	}
 else {
-	sprintf (szVal, pszFmt && *pszFmt ? pszFmt : "%1.2f", fVal);
+	sprintf_s (szVal, sizeof (szVal), pszFmt && *pszFmt ? pszFmt : "%1.2f", fVal);
    AfxSetWindowText (hWndCtrl, szVal);
 	}
 }
@@ -81,7 +81,7 @@ if (pDX->m_bSaveAndValidate) {
 	return atoi (szVal);
 	}
 else {
-	sprintf (szVal, "%d", i);
+	sprintf_s (szVal, sizeof (szVal), "%d", i);
    AfxSetWindowText (hWndCtrl, szVal);
 	return i;
 	}
@@ -239,11 +239,11 @@ TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
 TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
 //CString strTipText;
 char strTipText [100], *psz;
-UINT nID = pNMHDR->idFrom;
+UINT nID = UINT (pNMHDR->idFrom);
 if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
     pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND)) {
    // idFrom is actually the HWND of the tool
-   nID = ::GetDlgCtrlID ((HWND)nID);
+   nID = ::GetDlgCtrlID (static_cast<HWND> (nID));
 }
 if (nID != 0) // will be zero on a separator
 	if (!LoadString (AfxGetApp()->m_hInstance, nID, strTipText, sizeof (strTipText)))
@@ -487,7 +487,7 @@ if (anim [index [0]] || anim [index [1]]) {
 
                         /*--------------------------*/
 
-void CTexToolDlg::OnTimer (UINT nIdEvent)
+void CTexToolDlg::OnTimer (UINT_PTR nIdEvent)
 {
 if (nIdEvent == (UINT) m_nTimerId)
 	AnimateTexture ();

@@ -468,22 +468,22 @@ bool CMine::AddSegment ()
 	INT16 segnum, sidenum; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return FALSE; 
 	}
 
 currSeg = Segments (Current ()->segment); 
 
 if (SegCount () >= MAX_SEGMENTS) {
-	ErrorMsg("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
+	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
 	return FALSE;
 	}
 if (SegCount () >= MAX_SEGMENTS) {
-	ErrorMsg("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
+	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
 if (currSeg->children [nCurrSide] >= 0) {
-	ErrorMsg("Can not add a new cube to a side\nwhich already has a cube attached."); 
+	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
 	return FALSE;
 	}
 
@@ -1318,11 +1318,11 @@ INT16 vert, segnum, vertnum, opp_segnum, opp_sidenum;
 bool found; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return; 
 	}
 if (VertCount () > (MAX_VERTICES - 1)) {
-	ErrorMsg("Cannot unjoin these points because the\n"
+	ErrorMsg ("Cannot unjoin these points because the\n"
 				"maximum number of points is reached."); 
 	return; 
 	}
@@ -1341,7 +1341,7 @@ for (segnum = 0; (segnum < SegCount ()) && !found; segnum++, seg++)
 				break; 
 				}
 if (!found) {
-	ErrorMsg("This point is not joined with any other point."); 
+	ErrorMsg ("This point is not joined with any other point."); 
 	return; 
 	}
 
@@ -1396,12 +1396,12 @@ void CMine::SplitLines()
   bool found [2]; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return; 
 	}
 if (VertCount () > (MAX_VERTICES - 2)) {
 	if (!bExpertMode)
-		ErrorMsg("Cannot unjoin these lines because\nthere are not enought points left."); 
+		ErrorMsg ("Cannot unjoin these lines because\nthere are not enought points left."); 
 	return; 
 	}
 
@@ -1425,7 +1425,7 @@ for (i = 0; i < 2; i++) {
 	}
 if (!(found [0] && found [1])) {
 	if (!bExpertMode)
-		ErrorMsg("One or both of these points are not joined with any other points."); 
+		ErrorMsg ("One or both of these points are not joined with any other points."); 
 	return; 
 	}
 
@@ -1484,7 +1484,7 @@ void CMine::SplitSegments (int solidify, int sidenum)
   bool found [4]; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return; 
 	}
 
@@ -1520,7 +1520,7 @@ for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
 found:
 
 if (!solidify && (VertCount () > (MAX_VERTICES - nFound))) {
-	ErrorMsg("Cannot unjoin this side because\nthere are not enough vertices left."); 
+	ErrorMsg ("Cannot unjoin this side because\nthere are not enough vertices left."); 
 	return; 
 	}
 
@@ -1587,11 +1587,11 @@ void CMine::JoinPoints()
   CDSelection *cur1, *cur2; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return; 
 	}
 if (Current1 ().segment== Current2 ().segment) {
-	ErrorMsg("You cannot joint two points on the same cube.\n\n"
+	ErrorMsg ("You cannot joint two points on the same cube.\n\n"
 				"Hint: The two golden circles represent the current point, \n"
 				"and the 'other' cube's current point.  Press 'P' to change the\n"
 				"Current () point or press the space bar to switch to the other cube."); 
@@ -1614,13 +1614,13 @@ vert1 = seg1->verts [side_vert [cur1->side][cur1->point]];
 vert2 = seg2->verts [side_vert [cur2->side][cur2->point]]; 
 // make sure verts are different
 if (vert1== vert2) {
-	ErrorMsg("These points are already joined."); 
+	ErrorMsg ("These points are already joined."); 
 	return; 
 	}
 // make sure there are distances are close enough
 distance = CalcLength(Vertices (vert1), Vertices (vert2)); 
 if (distance > JOIN_DISTANCE) {
-	ErrorMsg("Points are too far apart to join"); 
+	ErrorMsg ("Points are too far apart to join"); 
 	return; 
 	}
 if (QueryMsg("Are you sure you want to join the current point\n"
@@ -1654,12 +1654,12 @@ void CMine::JoinLines()
   CDSelection *cur1, *cur2; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return; 
 	}
 
 if (Current1 ().segment == Current2 ().segment) {
-	ErrorMsg("You cannot joint two lines on the same cube.\n\n"
+	ErrorMsg ("You cannot joint two lines on the same cube.\n\n"
 				"Hint: The two green lines represent the current line, \n"
 				"and the 'other' cube's current line.  Press 'L' to change\n"
 				"the current line or press the space bar to switch to the other cube."); 
@@ -1696,7 +1696,7 @@ for (i = 0; i < 2; i++) {
 // make sure verts are different
 if (vert1 [0]== vert2 [0] || vert1 [0]== vert2 [1] ||
 	 vert1 [1]== vert2 [0] || vert1 [1]== vert2 [1]) {
-	ErrorMsg("Some or all of these points are already joined."); 
+	ErrorMsg ("Some or all of these points are already joined."); 
 	return; 
 	}
 
@@ -1716,7 +1716,7 @@ for (i = 0; i < 2; i++) {
 
 // make sure there are distances are close enough
 if (min_radius== JOIN_DISTANCE) {
-	ErrorMsg("Lines are too far apart to join"); 
+	ErrorMsg ("Lines are too far apart to join"); 
 	return; 
 	}
 
@@ -1835,7 +1835,7 @@ void CMine::JoinSegments(int solidify)
 	CDSelection *cur1, *cur2, my_cube; 
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message); 
+	ErrorMsg (spline_error_message); 
 	return; 
 	}
 
@@ -1843,7 +1843,7 @@ if (m_bSplineActive) {
 if (solidify) {
 	if (Segments (Current ()->segment)->children [Current ()->side] != -1) {
 		if (!bExpertMode)
-			ErrorMsg("The current side is already joined to another cube"); 
+			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
 		}
 	cur1 = Current (); 
@@ -1950,7 +1950,7 @@ if (solidify) {
 		}
 	if (my_cube.segment < 0) {
 		if (!bExpertMode)
-			ErrorMsg("Could not find another cube whose side is within\n"
+			ErrorMsg ("Could not find another cube whose side is within\n"
 						"10.0 units from the current side"); 
 		return; 
 		}
@@ -1967,7 +1967,7 @@ else
 
 if (cur1->segment == cur2->segment) {
 	if (!bExpertMode)
-		ErrorMsg("You cannot joint two sides on the same cube.\n\n"
+		ErrorMsg ("You cannot joint two sides on the same cube.\n\n"
 					"Hint: The two red squares represent the current side, \n"
 					"and the 'other' cube's current side.  Press 'S' to change\n"
 					"the current side or press the space bar to switch to the other cube."); 
@@ -2024,7 +2024,7 @@ else if (match [1].i == match [3].i) fail = TRUE;
 else if (match [2].i == match [3].i) fail = TRUE; 
 
 if (fail) {
-	//    ErrorMsg("Can't figure out how to attach these sides\n"
+	//    ErrorMsg ("Can't figure out how to attach these sides\n"
 	//	     "because the closest point to each point\n"
 	//	     "on the current side is not a unique point\n"
 	//	     "on the other side."); 
@@ -2053,7 +2053,7 @@ for (i = 0; i < 4; i++) {
 // make sure there are distances are close enough
 if (max_radius >= JOIN_DISTANCE) {
 	if (!bExpertMode)
-		ErrorMsg("Sides are too far apart to join.\n\n"
+		ErrorMsg ("Sides are too far apart to join.\n\n"
 					"Hint: Cubes should not exceed 200 in any dimension\n"
 					"or they will distort when viewed from close up."); 
 	return; 
@@ -2083,7 +2083,7 @@ if (QueryMsg("Are you sure you want to create a new cube which\n"
 nNewSeg = SegCount (); 
 if (!(SegCount () < MAX_SEGMENTS)) {
 	if (!bExpertMode)
-		ErrorMsg("The maximum number of Segments () has been reached.\n"
+		ErrorMsg ("The maximum number of Segments () has been reached.\n"
 					"Cannot add any more Segments ()."); 
 	return; 
 	}
@@ -2226,7 +2226,7 @@ for (i = 0; i < 4; i++) {
 
 #if UV_DEBUG
 if (abs((int)C [1].z) != 0) {
-	sprintf(message, "SetUV: point 1 not in x/y plane\n(%f); angle = %f", (float)C [1].z, (float)angle); 
+	sprintf_s (message, sizeof (message),  "SetUV: point 1 not in x/y plane\n(%f); angle = %f", (float)C [1].z, (float)angle); 
 	DEBUGMSG (message); 
 	}
 #endif
@@ -2605,7 +2605,7 @@ if ((IsLight (side->nBaseTex)== -1) && (IsLight (side->nOvlTex & 0x3fff)== -1))
 if (!WallClipFromTexture (segnum, sidenum))
 	CheckForDoor (segnum, sidenum); 
 theApp.UnlockUndo (); 
-sprintf (message, "side has textures %d, %d", side->nBaseTex & 0x3fff, side->nOvlTex & 0x3fff); 
+sprintf_s (message, sizeof (message), "side has textures %d, %d", side->nBaseTex & 0x3fff, side->nOvlTex & 0x3fff); 
 INFOMSG (message); 
 return true;
 }
@@ -2697,7 +2697,7 @@ else {
 bool CMine::SplitSegment ()
 {
 	CDSegment	*centerSegP = CurrSeg (), *segP, *childSegP;
-	INT16			centerSegNum = centerSegP - Segments ();
+	INT16			centerSegNum = INT16 (centerSegP - Segments ());
 	INT16			segNum, childSegNum;
 	INT16			sideNum, oppSideNum, childSideNum;
 	INT16			vertNum, wallNum;
@@ -2707,7 +2707,7 @@ bool CMine::SplitSegment ()
 	INT16			oppSides [6] = {2,3,0,1,5,4};
 
 if (SegCount () >= MAX_SEGMENTS - 6) {
-	ErrorMsg("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
+	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
 bUndo = theApp.SetModified (TRUE); 

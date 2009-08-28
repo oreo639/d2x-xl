@@ -66,7 +66,7 @@ void CMine::UndefineSegment (INT16 segnum)
 {
 	CDSegment *seg = (segnum < 0) ? CurrSeg () : Segments (segnum);
 
-segnum = seg - Segments ();
+segnum = INT16 (seg - Segments ());
 if (seg->special == SEGMENT_IS_ROBOTMAKER) {
 	// remove matcen
 	int nMatCens = (int) GameInfo ().botgen.count;
@@ -207,7 +207,7 @@ bool CMine::AddEquipMaker (INT16 segnum, bool bCreate, bool bSetDefTextures)
 {
 int n_matcen = (int) GameInfo ().equipgen.count;
 if (n_matcen >= MAX_NUM_MATCENS) {
-    ErrorMsg("Maximum number of equipment makers reached");
+    ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
 bool bUndo = theApp.SetModified (TRUE);
@@ -245,7 +245,7 @@ bool CMine::AddRobotMaker (INT16 segnum, bool bCreate, bool bSetDefTextures)
 {
 int n_matcen = (int) GameInfo ().botgen.count;
 if (n_matcen >= MAX_NUM_MATCENS) {
-    ErrorMsg("Maximum number of robot makers reached");
+    ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}
 bool bUndo = theApp.SetModified (TRUE);
@@ -546,11 +546,11 @@ bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 tm
 
 wallnum = CurrSide ()->nWall;
 if (wallnum < GameInfo ().walls.count) {
-	ErrorMsg("There is already a wall on this side");
+	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
 if (GameInfo ().walls.count + 1 >= MAX_WALLS) {
-	ErrorMsg("Maximum number of Walls reached");
+	ErrorMsg ("Maximum number of Walls reached");
 	return false;
 	}
 bool bUndo = theApp.SetModified (TRUE);
@@ -625,7 +625,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 0);
 bool CMine::AddForceField () 
 {
 if (file_type == RDL_FILE) {
-	ErrorMsg("Force fields are not supported in Descent 1");
+	ErrorMsg ("Force fields are not supported in Descent 1");
    return false;
 	}
 return AddDoor (WALL_CLOSED, 0, 0, -1, 420);
@@ -662,7 +662,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 401);
 bool CMine::AddLavaFall() 
 {
 if (file_type == RDL_FILE) {
-	ErrorMsg("Lava falls are not supported in Descent 1");
+	ErrorMsg ("Lava falls are not supported in Descent 1");
    return false;
 	}
   // key of 5 selects lava fall
@@ -751,7 +751,7 @@ if (GameInfo ().walls.count >= MAX_WALLS) {
 	return false;
 	}
 if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
-	ErrorMsg("Maximum number of triggers reached");
+	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
 int last_segment = Current ()->segment;
@@ -787,11 +787,11 @@ if (wallnum < GameInfo ().walls.count) {
 	return false;
 	}
 if (GameInfo ().walls.count >= MAX_WALLS - 1) {
-	ErrorMsg("Maximum number of walls reached");
+	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
 if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
-	ErrorMsg("Maximum number of triggers reached");
+	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
 return true;
@@ -836,7 +836,7 @@ CDSelection *other = Other ();
 CDSegment *other_seg = OtherSeg ();
 UINT16 wallnum = other_seg->sides [other->side].nWall;
 if (wallnum >= GameInfo ().walls.count) {
-	ErrorMsg("Other cube's side is not on a wall.\n\n"
+	ErrorMsg ("Other cube's side is not on a wall.\n\n"
 				"Hint: Select a wall using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");
 	return false;
@@ -864,7 +864,7 @@ bool CMine::AddRobotMakerTrigger ()
 {
 CDSegment *other_seg = OtherSeg ();
 if (other_seg->special != SEGMENT_IS_ROBOTMAKER) {
-	ErrorMsg("There is no robot maker cube selected.\n\n"
+	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");
 	return false;
@@ -904,7 +904,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_ENERGY_DRAIN);
 bool CMine::AddUnlockTrigger() 
 {
 if (file_type == RDL_FILE) {
-   ErrorMsg("Control Panels are not supported in Descent 1.");
+   ErrorMsg ("Control Panels are not supported in Descent 1.");
    return false;
 	}
 return AddDoorTrigger (WALL_OVERLAY, (1<<WALL_WALL_SWITCH), TT_UNLOCK_DOOR);

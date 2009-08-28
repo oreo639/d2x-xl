@@ -67,7 +67,7 @@ UINT8 *pCustomPalette = (UINT8 *) malloc (37 * 256);
 if (!pCustomPalette)
 	return 0;
 
-int h = fread (pCustomPalette, 37 * 256, 1, fp);
+int h = int (fread (pCustomPalette, 37 * 256, 1, fp));
 if (h == 37 * 256)
 	return 1;
 
@@ -153,7 +153,7 @@ if (file_type == RDL_FILE)
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
 FSplit (descent2_path, NULL, szFile, NULL);
 for (ppe = palExt; *(ppe->szFile); ppe++)
-	if (!stricmp (ppe->szFile, szFile))
+	if (!_stricmp (ppe->szFile, szFile))
 		return MAKEINTRESOURCE (ppe->nIdPal);
 return MAKEINTRESOURCE (IDR_GROUPA_256);
 /*

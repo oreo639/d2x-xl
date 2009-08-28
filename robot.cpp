@@ -66,19 +66,19 @@ int CMine::ReadHamFile(char *pszFile, int type)
 if (!pszFile) {
 	if (file_type == RL2_FILE) {
 		FSplit (descent2_path, szFile, NULL, NULL);
-		strcat (szFile, "descent2.ham");
+		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}
 	else {
 		FSplit (descent_path, szFile, NULL, NULL);
-		strcat (szFile, "descent.ham");
+		strcat_s (szFile, sizeof (szFile), "descent.ham");
 		}
 	pszFile = szFile;
 	}
 
   pm.n_models = 0;
-  fp = fopen(pszFile,"rb");
+  fopen_s (&fp, pszFile, "rb");
   if (!fp) {
-    sprintf(message," Ham manager: Cannot open robot file <%s>.", pszFile);
+    sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", pszFile);
     DEBUGMSG (message);
     goto abort;
   }
@@ -91,8 +91,8 @@ if (!pszFile) {
 if (type == NORMAL_HAM)  {
 	id = read_INT32(fp); // "HAM!"
 	if (id != MAKESIG (d2HamSig)) {//0x214d4148L) {
-		sprintf(message,"Not a D2 HAM file (%d)",pszFile);
-		ErrorMsg(message);
+		sprintf_s (message, sizeof (message), "Not a D2 HAM file (%s)", pszFile);
+		ErrorMsg (message);
 		goto abort;
 		}
 	read_INT32(fp); // version (0x00000007)
@@ -112,8 +112,8 @@ if (type == NORMAL_HAM)  {
 else if (type == EXTENDED_HAM)  {
 	id = read_INT32(fp); // "HAM!"
 	if (id != MAKESIG (d2xHamSig)) {//0x214d4148L) {
-		sprintf(message,"Not a D2X HAM file (%d)",pszFile);
-		ErrorMsg(message);
+		sprintf_s (message, sizeof (message), "Not a D2X HAM file (%s)", pszFile);
+		ErrorMsg (message);
 		goto abort;
 		}
 	read_INT32(fp); //skip version
@@ -127,8 +127,8 @@ else if (type == EXTENDED_HAM)  {
   t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_TYPES;
   N_robot_types = t0 + t;
   if (N_robot_types > MAX_ROBOT_TYPES) {
-    sprintf(message,"Too many robots (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_TYPES-N_D2_ROBOT_TYPES);
-    ErrorMsg(message);
+    sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_TYPES-N_D2_ROBOT_TYPES);
+    ErrorMsg (message);
 	 N_robot_types = MAX_ROBOT_TYPES;
 	 t = N_robot_types - t0;
 //    goto abort;
@@ -151,14 +151,14 @@ else if (type == EXTENDED_HAM)  {
   //---------------------------------------------
   t = (INT16) read_INT32(fp);
   if (t > MAX_POLYGON_MODELS) {
-    sprintf(message,"Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_D2_POLYGON_MODELS);
-    ErrorMsg(message);
+    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_D2_POLYGON_MODELS);
+    ErrorMsg (message);
     goto abort;
   }
 
   INT16 i, j;
   FILE *file;
-  file = fopen("d:\\bc\\dlc2data\\poly.dat","wt");
+  fopen(&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
   if (file) {
     for (i=0; i<t; i++ ) {
       fread(&pm, sizeof(POLYMODEL), 1, fp );
@@ -196,8 +196,8 @@ else if (type == EXTENDED_HAM)  {
   t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_JOINTS;
   N_robot_joints = t0 + t;
   if (N_robot_joints > MAX_ROBOT_JOINTS) {
-    sprintf(message,"Too many robot joints (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_JOINTS-N_D2_ROBOT_JOINTS);
-    ErrorMsg(message);
+    sprintf_s (message, sizeof (message), "Too many robot joints (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_JOINTS-N_D2_ROBOT_JOINTS);
+    ErrorMsg (message);
     goto abort;
   }
   fread( &Robot_joints[t0], sizeof(JOINTPOS), t, fp );
@@ -217,8 +217,8 @@ else if (type == EXTENDED_HAM)  {
   t0 = (type == NORMAL_HAM) ? 0: N_D2_POLYGON_MODELS;
   N_polygon_models = t0 + t;
   if (N_polygon_models > MAX_POLYGON_MODELS) {
-    sprintf(message,"Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_D2_POLYGON_MODELS);
-    ErrorMsg(message);
+    sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_D2_POLYGON_MODELS);
+    ErrorMsg (message);
     goto abort;
   }
 
@@ -236,7 +236,7 @@ else if (type == EXTENDED_HAM)  {
     Polygon_models[i]->model_data = (UINT8 *) malloc((int)Polygon_models[i]->model_data_size);
 
     if (Polygon_models[i]->model_data == NULL ) {
-      ErrorMsg("Could not allocate memory for polymodel data");
+      ErrorMsg ("Could not allocate memory for polymodel data");
       goto abort;
     }
     fread( Polygon_models[i]->model_data, sizeof(UINT8), (INT16)Polygon_models[i]->model_data_size, fp );
@@ -268,8 +268,8 @@ else if (type == EXTENDED_HAM)  {
     N_object_bitmaps  = t0 + t;  // only update this if we are reading Descent2.ham file
   }
   if (t+t0 > MAX_OBJ_BITMAPS) {
-    sprintf(message,"Too many object bitmaps (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_D2_OBJBITMAPS);
-    ErrorMsg(message);
+    sprintf_s (message, sizeof (message), "Too many object bitmaps (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_D2_OBJBITMAPS);
+    ErrorMsg (message);
     goto abort;
   }
   fread( &ObjBitmaps[t0], sizeof(BITMAP_INDEX), t, fp );
@@ -278,8 +278,8 @@ else if (type == EXTENDED_HAM)  {
     t = (INT16) read_INT32(fp);
     t0 = (type == NORMAL_HAM) ? 0: N_D2_OBJBITMAPPTRS;
     if (t+t0 > MAX_OBJ_BITMAPS) {
-      sprintf(message,"Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_D2_OBJBITMAPPTRS);
-      ErrorMsg(message);
+      sprintf_s (message, sizeof (message), "Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_D2_OBJBITMAPPTRS);
+      ErrorMsg (message);
       goto abort;
     }
   }
@@ -337,17 +337,17 @@ int CMine::ReadHxmFile(FILE *fp, long fSize)
 	long p;
 
 if (!fp) {
-	ErrorMsg("Invalid file handle for reading HXM data.");
+	ErrorMsg ("Invalid file handle for reading HXM data.");
 	goto abort;
 	}
 
 p = ftell (fp);
 if (fSize < 0)
-	fSize = filelength (fileno (fp));
+	fSize = _filelength (fileno (fp));
 UINT32 id;
 id = read_INT32(fp); // "HXM!"
 if (id != 0x21584d48L) {
-	ErrorMsg("Not a HXM file");
+	ErrorMsg ("Not a HXM file");
 	goto abort;
 	}
 if (m_pHxmExtraData) {
@@ -363,8 +363,8 @@ t = (UINT16) read_INT32(fp);
 for (j=0;j<t;j++) {
 	i = (UINT16)read_INT32(fp);
 	if (i>=N_robot_types) {
-		sprintf(message,"Robots number (%d) out of range.  Range = [0..%d].",i,N_robot_types-1);
-		ErrorMsg(message);
+		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].",i,N_robot_types-1);
+		ErrorMsg (message);
 		goto abort;
 		}
 	fread(&rInfo, sizeof(ROBOT_INFO), 1, fp );
@@ -378,11 +378,11 @@ for (j=0;j<t;j++) {
 m_nHxmExtraDataSize = fSize - ftell (fp) + p;
 if (m_nHxmExtraDataSize > 0) {
 	if (!(m_pHxmExtraData = (char*) malloc (m_nHxmExtraDataSize))) {
-		ErrorMsg("Couldn't allocate extra data from hxm file.\nThis data will be lost when saving the level!");
+		ErrorMsg ("Couldn't allocate extra data from hxm file.\nThis data will be lost when saving the level!");
 		goto abort;
 		}
 	if (fread (m_pHxmExtraData, m_nHxmExtraDataSize, 1, fp) != 1) {
-		ErrorMsg("Couldn't read extra data from hxm file.\nThis data will be lost when saving the level!");
+		ErrorMsg ("Couldn't read extra data from hxm file.\nThis data will be lost when saving the level!");
 		goto abort;
 		}
 	}
@@ -417,23 +417,23 @@ for (i = 0,t = 0; i < N_robot_types; i++)
 if (!(t || m_nHxmExtraDataSize))
 	return 0;
 if (!fp) {
-	ErrorMsg("Invalid file handle for writing HXM data.");
+	ErrorMsg ("Invalid file handle for writing HXM data.");
 	goto abort;
 	}
 
 #if 1
 UINT32 id;
 id = 0x21584d48L;    // "HXM!"
-write_INT32(id,fp);
-write_INT32(1,fp);   // version 1
+write_INT32 (id,fp);
+write_INT32 (1,fp);   // version 1
 #endif
 
 // write robot information
 //------------------------
-write_INT32(t,fp); // number of robot info structs stored
+write_INT32 (t,fp); // number of robot info structs stored
 for (i=0;i<N_robot_types;i++) {
 	if (RobotInfo (i)->pad [0]) {
-		write_INT32((UINT32)i,fp);
+		write_INT32 ((UINT32)i,fp);
 		fwrite(RobotInfo (i), sizeof(ROBOT_INFO), 1, fp );
 		}
 	}
@@ -446,15 +446,15 @@ else
 // write zeros for the rest of the data
 //-------------------------------------
 {
-write_INT32(0,fp);  //number of joints
-write_INT32(0,fp);  //number of polygon models
-write_INT32(0,fp);  //number of objbitmaps
-write_INT32(0,fp);  //number of objbitmaps
-write_INT32(0,fp);  //number of objbitmapptrs
+write_INT32 (0,fp);  //number of joints
+write_INT32 (0,fp);  //number of polygon models
+write_INT32 (0,fp);  //number of objbitmaps
+write_INT32 (0,fp);  //number of objbitmaps
+write_INT32 (0,fp);  //number of objbitmapptrs
 }
 
 if (t) {
-	sprintf (message," Hxm manager: Saving %d custom robots",t);
+	sprintf_s (message, sizeof (message)," Hxm manager: Saving %d custom robots",t);
 	DEBUGMSG (message);
 	}
 fclose(fp);
@@ -490,12 +490,12 @@ void CMine::ReadRobotResource(int robot_number)
   HINSTANCE hInst = AfxGetApp ()->m_hInstance;
   HGLOBAL hResource = LoadResource( hInst, hFind);
   if (!hResource) {
-    ErrorMsg("Could not find robot resource data");
+    ErrorMsg ("Could not find robot resource data");
     return;
   }
   ptr = (UINT8 *)LockResource(hResource);
   if (!ptr) {
-    ErrorMsg("Could not lock robot resource data");
+    ErrorMsg ("Could not lock robot resource data");
     return;
   }
   t = (UINT16)(*((UINT32 *)ptr));

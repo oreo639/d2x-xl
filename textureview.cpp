@@ -473,7 +473,7 @@ void CTextureView::RecalcLayout ()
 
 	CDC *pDC = GetDC();
 	if (!pDC) {
-		ErrorMsg("No device context for texture picker available");
+		ErrorMsg ("No device context for texture picker available");
 		return;
 		}
 	BITMAPINFO *bmi;

@@ -143,7 +143,7 @@ for (i = 0; i < 32; i++)
 	szLight [i] = cLight [LightButton (i)->GetCheck ()];
 szLight [32] = '\0';
 if (strcmp (szLight, m_szLight)) {
-	strcpy (m_szLight, szLight);
+	strcpy_s (m_szLight, sizeof (m_szLight), szLight);
 	UpdateLight ();
 	UpdateData (FALSE);
 	}
@@ -157,7 +157,7 @@ void CTextureTool::SetLightButtons (LPSTR szLight, int nSpeed)
 
 if (szLight) {
 	if (szLight != m_szLight)
-		strcpy (m_szLight, szLight);
+		strcpy_s (m_szLight, (m_szLight), szLight);
 	}
 else
 	UpdateData (TRUE);

@@ -737,7 +737,7 @@ if (anim [index [0]] || anim [index [1]]) {
 #endif
                         /*--------------------------*/
 
-void CTextureTool::OnTimer (UINT nIdEvent)
+void CTextureTool::OnTimer (UINT_PTR nIdEvent)
 {
 #if TEXTOOLDLG
 if (nIdEvent == 2)
@@ -819,7 +819,7 @@ void CTextureTool::OnEditTexture ()
 {
 	CTextureEdit	e (NULL);
 
-int i = e.DoModal ();
+int i = int (e.DoModal ());
 theApp.MineView ()->Refresh (false);
 Refresh ();
 }
@@ -846,12 +846,12 @@ for (i = 0; i < 4; i++)
 //CBTexture1 ()->SelectString (-1, texture_name1);
 //CBTexture2 ()->SelectString (-1, texture_name2);
 pcb = CBTexture1 ();
-LoadString (hInst, texture_resource + pcb->GetItemData (pcb->GetCurSel ()), t1Name, sizeof (t1Name));
+LoadString (hInst, texture_resource + int (pcb->GetItemData (pcb->GetCurSel ())), t1Name, sizeof (t1Name));
 pcb = CBTexture2 ();
-if (i = pcb->GetItemData (pcb->GetCurSel ()))
+if (i = int (pcb->GetItemData (pcb->GetCurSel ())))
 	LoadString (hInst, texture_resource + i, t2Name, sizeof (t2Name));
 else
-	strcpy (t2Name, "(none)");
+	strcpy_s (t2Name, sizeof (t2Name), "(none)");
 sprintf(m_szTextureBuf ,"%s,%s", t1Name, t2Name);
 UpdateData (FALSE);
 //SaveTextureStatic->SetText(message);
@@ -1353,7 +1353,7 @@ switch (wParam) {
 	case IDC_TEXALIGN_HSHRINK:
 	case IDC_TEXALIGN_VSHRINK:
 		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
-			m_nEditFunc = wParam;
+			m_nEditFunc = int (wParam);
 			m_nEditTimer = SetTimer (3, m_nTimerDelay = 250U, NULL);
 			}
 		else {

@@ -51,7 +51,7 @@ protected:
 	//{{AFX_MSG(CAboutDlg)
 	afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
-	afx_msg void OnTimer (UINT nIdEvent);
+	afx_msg void OnTimer (UINT_PTR nIdEvent);
 		// No message handlers
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -106,7 +106,7 @@ void CAboutDlg::OnRButtonDown (UINT nFlags, CPoint point)
 EndDialog (1);
 }
 
-void CAboutDlg::OnTimer (UINT nIdEvent)
+void CAboutDlg::OnTimer (UINT_PTR nIdEvent)
 {
 if (m_nTimer == (int) nIdEvent) {
 	m_nTimeout--;

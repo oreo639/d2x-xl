@@ -185,17 +185,16 @@ INT16 CMine::AddFlickeringLight (INT16 segnum, INT16 sidenum, UINT32 mask,FIX ti
 GetCurrent (segnum, sidenum);
 if (GetFlickeringLight (segnum,sidenum) != -1) {
 	if (!bExpertMode)
-		ErrorMsg("There is already a flickering light on this side");
+		ErrorMsg ("There is already a flickering light on this side");
 	return -1;
 	}
 // we are adding a new flickering light
 if (FlickerLightCount () >= MAX_FLICKERING_LIGHTS) {
 	if (!bExpertMode) {
-		sprintf (
-			message, 
-			"Maximum number of flickering lights (%d) have already been added",
-			MAX_FLICKERING_LIGHTS);
-		ErrorMsg(message);
+		sprintf_s (message, sizeof (message),
+					  "Maximum number of flickering lights (%d) have already been added",
+					  MAX_FLICKERING_LIGHTS);
+		ErrorMsg (message);
 		}
 	return -1;
 	}
@@ -203,7 +202,7 @@ INT16 tmapnum = CurrSide ()->nBaseTex & 0x1fff;
 INT16 tmapnum2 = CurrSide ()->nOvlTex & 0x1fff;
 if ((IsLight (tmapnum) == -1) && (IsLight (tmapnum2) == -1)) {
 	if (!bExpertMode)
-		ErrorMsg("Blinking lights can only be added to a side\n"
+		ErrorMsg ("Blinking lights can only be added to a side\n"
 					"that has a Texture with \" - light\" at the\n"
 					"end of its name.");
 	return -1;
@@ -232,7 +231,7 @@ if (sidenum < 0)
 	sidenum = Current ()->side;
 INT16 index = GetFlickeringLight (segnum, sidenum);
 if (index == -1) {
-//ErrorMsg("There is no flickering light on this side.");
+//ErrorMsg ("There is no flickering light on this side.");
 	return false;
 	}
 theApp.SetModified (TRUE);
@@ -880,7 +879,7 @@ for (source_segnum = 0, srcseg = Segments ();
 //			continue;
 		if (GameInfo ().dl_indices.count >= MAX_DL_INDICES) {
 			char szMsg [256];
-			sprintf (szMsg, " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+			sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
 			DEBUGMSG (szMsg);
 			return false;
 			}
@@ -973,7 +972,7 @@ for (source_segnum = 0, srcseg = Segments ();
 					if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
 						 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
 						char szMsg [256];
-						sprintf (szMsg, " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+						sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
 						DEBUGMSG (szMsg);
 						return false;
 						}
@@ -1001,7 +1000,7 @@ for (source_segnum = 0, srcseg = Segments ();
 						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
 							 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
 							char szMsg [256];
-							sprintf (szMsg, " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+							sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
 							DEBUGMSG (szMsg);
 							return false;
 							}

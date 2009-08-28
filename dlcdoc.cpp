@@ -131,7 +131,7 @@ class CNewFileDlg : public CDialog {
 
 		CNewFileDlg (CWnd *pParentWnd, LPSTR lpszName, int *pType)
 			: CDialog (IDD_NEWLEVEL, pParentWnd) {
-			strcpy (m_name, m_lpszName = lpszName);
+			strcpy_s (m_name, sizeof (m_name), m_lpszName = lpszName);
 			m_type = *(m_pType = pType);
 			}
       virtual BOOL OnInitDialog () {
@@ -146,7 +146,7 @@ class CNewFileDlg : public CDialog {
 			}
 		void OnOK (void) {
 			UpdateData (TRUE);
-			strcpy (m_lpszName, m_name); 
+			strcpy_s (m_lpszName, 256, m_name); 
 			*m_pType = m_type;
 			EndDialog (IDOK);
 			}
@@ -225,7 +225,7 @@ void CDlcDoc::CreateNewLevel ()
 {
 char	new_level_name [256];
 int	new_level_type = 1;
-strcpy(new_level_name,"(untitled)");
+strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
 
 CNewFileDlg	d (theApp.MainFrame (), new_level_name, &new_level_type);
 if (d.DoModal () == IDOK) {
@@ -275,7 +275,7 @@ if (d.DoModal () == IDOK) {
 	else
 #endif
 		*m_szSubFile = '\0';
-	strcpy (m_mine->LevelName (), new_level_name);
+	strcpy_s (m_mine->LevelName (), sizeof (m_mine->LevelName ()), new_level_name);
 	m_mine->Reset ();
 	m_mine->SetLinesToDraw ();
 	theApp.MineView ()->ResetView (true);
@@ -310,7 +310,7 @@ SetPathName (m_szFile);
 
 bool CDlcDoc::SaveIfModified (void)
 {
-	int	nAction;
+	INT_PTR	nAction;
 
 if (!IsModified ())
 	return true;
@@ -348,9 +348,9 @@ if (!pszFile)
 	pszFile = m_szFile;
 if (!pszSubFile)
 	pszSubFile = m_szSubFile;
-strlwr (pszFile);
-strcpy (szFile, pszFile);
-strcpy (szSubFile, pszSubFile);
+_strlwr_s (pszFile, 256);
+strcpy_s (szFile, sizeof (szFile), pszFile);
+strcpy_s (szSubFile, sizeof (szSubFile), pszSubFile);
 CreateLightMap ();
 if (strstr (pszFile, ".hog")) {
 	CHogManager	hm (theApp.MainFrame (), szFile, szSubFile);
@@ -363,10 +363,10 @@ if (strstr (pszFile, ".hog")) {
 			return FALSE;
 		}
 	if (pszFile != m_szFile)
-		strcpy (m_szFile, szFile);
-	strcpy (m_szSubFile, szSubFile);
+		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
+	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
 	FSplit (pszFile, starting_directory, NULL, NULL);
-	sprintf (m_szTmpFile, "%sdle_temp.rdl", starting_directory);
+	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", starting_directory);
 	err = m_mine->Load (m_szTmpFile, true);
 	memset (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
@@ -376,7 +376,7 @@ else {
 
 	err = m_mine->Load (pszFile);
 	FSplit (pszFile, NULL, pszSubFile, szExt);
-	strcat (pszSubFile, szExt);
+	strcat_s (pszSubFile, 256, szExt);
 	}
 m_mine->Reset ();
 theApp.TextureView ()->Setup ();
@@ -418,8 +418,8 @@ if (enable_delta_shading)
 if (!*m_szFile) {
 	char	szMissions [256];
 	FSplit ((file_type == RDL_FILE) ? descent_path : levels_path, szMissions, NULL, NULL);
-//	strcpy (m_szFile, (file_type == RDL_FILE) ? "new.rdl" : "new.rl2");
-	sprintf (m_szFile, "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
+//	strcpy_s (m_szFile, sizeof (m_szFile), (file_type == RDL_FILE) ? "new.rdl" : "new.rl2");
+	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))
 	return false;
@@ -441,7 +441,7 @@ return (err == 0);
 
 BOOL CDlcDoc::OnOpenDocument (LPCTSTR lpszPathName) 
 {
-strcpy (m_szFile, lpszPathName);
+strcpy_s (m_szFile, sizeof (m_szFile), lpszPathName);
 return OpenFile (false);
 }
 
@@ -449,7 +449,7 @@ return OpenFile (false);
 
 BOOL CDlcDoc::OnSaveDocument (LPCTSTR lpszPathName) 
 {
-strcpy (m_szFile, lpszPathName);
+strcpy_s (m_szFile, sizeof (m_szFile), lpszPathName);
 return SaveFile (false);
 }
 
@@ -483,26 +483,25 @@ char *h, *p = strstr (m_szFile, "missions\\");
 if (p) {
 	char	szProg [255], szHogFile [255], szMission [255];
 
-	strcpy (szProg, descent2_path);
+	strcpy_s (szProg, sizeof (szProg), descent2_path);
 	if (h = strstr (szProg, "data"))
 		*h = '\0';
-	int i;
-	for (i = strlen (szProg); i && szProg [i - 1] != '\\'; i--)
+	for (int i = int (strlen (szProg)); i && szProg [i - 1] != '\\'; i--)
 		;
 	szProg [i] = '\0';
 	_chdir (szProg);
 #ifdef _DEBUG
 	strcat (szProg, "d2x-xl-dbg.exe");
 #else
-	strcat (szProg, "d2x-xl.exe");
+	strcat_s (szProg, sizeof (szProg), "d2x-xl.exe");
 #endif
-	sprintf (szHogFile, "\"%s\"", p + strlen ("missions\\"));
-	sprintf (szMission, "\"%s\"", m_szSubFile);
-	i = _spawnl (_P_WAIT, szProg, szProg, 
-					 *player_profile ? "-player" : "", player_profile, 
-					 "-auto_hogfile", szHogFile, 
-					 "-auto_mission", szMission, 
-					 NULL);
+	sprintf_s (szHogFile, sizeof (szHogFile), "\"%s\"", p + strlen ("missions\\"));
+	sprintf_s (szMission, sizeof (szMission), "\"%s\"", m_szSubFile);
+	intptr_t j = _spawnl (_P_WAIT, szProg, szProg, 
+								 *player_profile ? "-player" : "", player_profile, 
+								 "-auto_hogfile", szHogFile, 
+								 "-auto_mission", szMission, 
+								 NULL);
 	if (i < 0)
 		i = errno;
 	}

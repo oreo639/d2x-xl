@@ -173,8 +173,8 @@ protected: // create from serialization only
 					m_releaseState;
 	INT16			m_lastSegment;
 	CRect			m_rubberRect;
-	UINT			m_lightTimer;
-	UINT			m_selectTimer;
+	UINT_PTR		m_lightTimer;
+	UINT_PTR		m_selectTimer;
 	int			m_nFrameRate;
 	int			m_bShowLightSource;
 	bool			m_bHScroll,
@@ -404,7 +404,7 @@ protected:
 protected:
 	//{{AFX_MSG(CMineView)
 	afx_msg void OnDestroy ();
-	afx_msg void OnTimer (UINT nIdEvent);
+	afx_msg void OnTimer (UINT_PTR nIdEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

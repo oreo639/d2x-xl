@@ -57,10 +57,10 @@ UINT8 behavior_table [MAX_BEHAVIOR_TABLE] = {
 	};
 
 char *szSkills [5] = {
-	"Trainee",
-	"Rookie",
-	"Hotshot",
-	"Ace",
+	"Trainee", 
+	"Rookie", 
+	"Hotshot", 
+	"Ace", 
 	"Insane"
 };
 
@@ -185,7 +185,7 @@ for (i = min; i < max; i++, psd++) {
 	else {
 		if (psd->nFactor > 0)
 			nPos *= psd->nFactor;
-		sprintf (szPos, "%d", (int) nPos);
+		sprintf_s (szPos, sizeof (szPos), "%d", (int) nPos);
 		pszPos = szPos;
 		}
 	AfxSetWindowText (GetDlgItem (psd->nId + 1)->GetSafeHwnd (), pszPos);
@@ -231,18 +231,18 @@ for (i = 0; i < nMax; i++) {
 	switch (nType) {
 		case 0:
 			h = pIndex ? pIndex [i]: i;
-			sprintf (szLabel, "%s", pszNames [h]);
+			sprintf_s (szLabel, sizeof (szLabel)"%s", pszNames [h]);
 			pszLabel = szLabel;
 //			pszLabel = pszNames [h];
 			break;
 		case 1:
-			sprintf (szLabel, "%d: ", i);
-			l = strlen (szLabel);
+			sprintf_s (szLabel, sizeof (szLabel), "%d: ", i);
+			l = int (strlen (szLabel));
 			LoadString (hInst, ((int) pszNames) + i, szLabel + l, sizeof (szLabel) - l);
 			h = i;
 			break;
 		case 2:
-			sprintf (szLabel, "%s %d", (char *) pszNames, i);
+			sprintf_s (szLabel, sizeof (szLabel), "%s %d", (char *) pszNames, i);
 			h = pIndex ? pIndex [i]: i;
 			break;
 		case 3:
@@ -363,7 +363,7 @@ DDX_Text (pDX, IDC_OBJ_INFO, m_szInfo, sizeof (m_szInfo));
 if (!pDX->m_bSaveAndValidate) {
 	char szCount [4];
 
-	sprintf (szCount, "%d", ObjOfAKindCount ());
+	sprintf_s (szCount, sizeof (szCount), "%d", ObjOfAKindCount ());
 	AfxSetWindowText (GetDlgItem (IDT_OBJ_COUNT)->GetSafeHwnd (), szCount);
 	}
 DDX_Check (pDX, IDC_OBJ_SORT, m_mine->m_bSortObjects);
@@ -466,42 +466,42 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
 			LoadString (hInst, ROBOT_STRING_TABLE + obj->id, string, sizeof (string));
 			break;
 		case OBJ_HOSTAGE: // a hostage you need to rescue
-			sprintf (string, "Hostage");
+			sprintf_s (string, sizeof (string), "Hostage");
 			break;
 		case OBJ_PLAYER: // the player on the console
-			sprintf (string,"Player #%d",obj->id);
+			sprintf_s (string, sizeof (string), "Player #%d", obj->id);
 			break;
 		case OBJ_WEAPON: //
-			strcpy(string, "Red Mine");
+			strcpy_s (string, sizeof (string), "Red Mine");
 			break;
 		case OBJ_POWERUP: // a powerup you can pick up
-			LoadString(hInst, POWERUP_STRING_TABLE + powerupIdStrXlat [obj->id], string, sizeof (string));
+			LoadString (hInst, POWERUP_STRING_TABLE + powerupIdStrXlat [obj->id], string, sizeof (string));
 			break;
 		case OBJ_CNTRLCEN: // a control center */
-			sprintf (string, "Reactor");
+			sprintf_s (string, sizeof (string), "Reactor");
 			break;
 		case OBJ_COOP: // a cooperative player object
-			sprintf (string, "Coop Player #%d", obj->id);
+			sprintf_s (string, sizeof (string), "Coop Player #%d", obj->id);
 			break;
 		case OBJ_CAMBOT: // a camera */
-			sprintf (string, "Camera");
+			sprintf_s (string, sizeof (string), "Camera");
 			break;
 		case OBJ_MONSTERBALL: // a camera */
-			sprintf (string, "Monsterball");
+			sprintf_s (string, sizeof (string), "Monsterball");
 			break;
 		case OBJ_EXPLOSION:
-			sprintf (string, "Explosion");
+			sprintf_s (string, sizeof (string), "Explosion");
 			break;
 		case OBJ_SMOKE: 
-			sprintf (string, "Smoke");
+			sprintf_s (string, sizeof (string), "Smoke");
 			break;
 		case OBJ_EFFECT:
-			sprintf (string, "Effect");
+			sprintf_s (string, sizeof (string), "Effect");
 			break;
 		default:
 			*string = '\0';
 	}
-	sprintf (message, (i < 10) ? "%3d: %s": "%d: %s", i, string);
+	sprintf_s (message, sizeof (message), (i < 10) ? "%3d: %s": "%d: %s", i, string);
 	CBObjNo ()->AddString (message);
 	}
 // add secret object to list
@@ -520,7 +520,7 @@ if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
 
-	strcpy (m_szInfo, "Secret Level Return");
+	strcpy_s (m_szInfo, sizeof (m_szInfo), "Secret Level Return");
 	CBObjType ()->SetCurSel (-1);
 	CBObjId ()->SetCurSel (-1);
 	CBObjAI ()->SetCurSel (-1);
@@ -544,9 +544,9 @@ if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {
 // otherwise (non-secret object), setup the rest of the
 // dialog.
 obj = m_mine->CurrObj ();
-sprintf (m_szInfo , "cube %d", obj->segnum);
+sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", obj->segnum);
 if (/*(object_selection [obj->type] == 0) &&*/ m_mine->RobotInfo (obj->id)->pad [0])
-	strcat (m_szInfo, "\r\nmodified");
+	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
 CBObjType ()->SetCurSel (object_selection [obj->type]);
 SetObjectId (CBObjId (), obj->type, obj->id);
@@ -666,7 +666,7 @@ if ((nType = object_list [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
 	SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos (0);
 	return;
 	}
-i = CBObjId ()->GetItemData (CBObjId ()->GetCurSel ());
+i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 rInfo = *m_mine->RobotInfo (i);
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
@@ -736,7 +736,7 @@ if (!GetMine ())
   ROBOT_INFO rInfo;
 
   // get selection
-i = CBObjId ()->GetItemData (CBObjId ()->GetCurSel ());
+i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
@@ -899,8 +899,8 @@ HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 switch(type) {
 	case OBJ_ROBOT: /* an evil enemy */
 		for (i = 0; i < max_robot_ids; i++) {
-			sprintf (string, (i < 10) ? "%3d: ": "%d: ", i);
-			h = strlen (string);
+			sprintf_s (string, sizeof (string), (i < 10) ? "%3d: ": "%d: ", i);
+			h = int (strlen (string));
 			LoadString (hInst, ROBOT_STRING_TABLE + i, string + h, sizeof(string) - h);
 			if (!strcmp (string, "(not used)"))
 				continue;
@@ -908,7 +908,7 @@ switch(type) {
 			pcb->SetItemData (h, i);
 			}
 		if (id < 0 || id >= max_robot_ids) {
-			sprintf (message," ObjectTool: Unknown robot id (%d)",id);
+			sprintf_s (message, sizeof (message), " ObjectTool: Unknown robot id (%d)", id);
 			DEBUGMSG (message);
 			}
 		SelectItemData (pcb, id); // if out of range, nothing is selected
@@ -916,7 +916,7 @@ switch(type) {
 
 	case OBJ_HOSTAGE: // a hostage you need to rescue
 		for (i = 0; i <= 1; i++) {
-			sprintf (str, "%d", i);
+			sprintf_s (str, sizeof (str), "%d", i);
 			h = pcb->AddString (str);
 			pcb->SetItemData (h, i);
 			}
@@ -925,7 +925,7 @@ switch(type) {
 
 	case OBJ_PLAYER: // the player on the console
 		for (i = 0; i <= 7; i++) {
-			sprintf (str,"%d",i);
+			sprintf_s (str, sizeof (str), "%d", i);
 			h = pcb->AddString (str);
 			pcb->SetItemData (h, i);
 			}
@@ -1000,14 +1000,14 @@ switch(type) {
 	case OBJ_CNTRLCEN: // a control center */
 		if (file_type == RDL_FILE) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
-				sprintf (str,"%d",i);
+				sprintf_s (str, sizeof (str), "%d", i);
 				h = pcb->AddString (str);
 				pcb->SetItemData (h, i);
 				}
 			}
 		else {
 			for (i = 1; i <= 6; i++) {
-				sprintf (str,"%d",i);
+				sprintf_s (str, sizeof (str), "%d", i);
 				h = pcb->AddString (str);
 				pcb->SetItemData (h, i);
 				}
@@ -1017,7 +1017,7 @@ switch(type) {
 
 	case OBJ_COOP: // a cooperative player object
 		for (i = 8; i <= 10; i++) {
-			sprintf (str,"%d", i);
+			sprintf_s (str, sizeof (str), "%d", i);
 			h = pcb->AddString (str);
 			pcb->SetItemData (h, i - 8);
 			}
@@ -1057,7 +1057,7 @@ if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {
  }
 
 if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS) {
-	ErrorMsg("Maximum numbers of objects reached");
+	ErrorMsg ("Maximum numbers of objects reached");
 	return;
 	}
 m_mine->CopyObject (OBJ_NONE);
@@ -1073,11 +1073,11 @@ void CObjectTool::OnDelete ()
 if (!GetMine ())
 	return;
 if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {
-	ErrorMsg("Cannot delete the secret return.");
+	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
 if (m_mine->GameInfo ().objects.count == 1) {
-	ErrorMsg("Cannot delete the last object");
+	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
 if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
@@ -1347,7 +1347,7 @@ if (!GetMine ())
 
 CDObject *obj = m_mine->CurrObj ();
 CComboBox *pcb = CBObjId ();
-int nCurSel = pcb->GetItemData (pcb->GetCurSel ());
+int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -1567,7 +1567,7 @@ if (object_list [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
 if (!GetMine ())
 	return;
-int i = CBObjId ()->GetItemData (CBObjId ()->GetCurSel ());
+int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 memcpy (m_mine->RobotInfo (i), m_mine->DefRobotInfo (i), sizeof (ROBOT_INFO));
 Refresh ();
 }
@@ -1637,7 +1637,7 @@ if (!GetMine ())
 int i = CBContType ()->GetCurSel ();
 if (0 > i)
 	return;
-int j = CBObjId ()->GetItemData (CBObjId ()->GetCurSel ());
+int j = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 ROBOT_INFO *rInfo = m_mine->RobotInfo (j);
 rInfo->contains_type = (UINT8) CBContType ()->GetItemData (i);
 RefreshRobot ();

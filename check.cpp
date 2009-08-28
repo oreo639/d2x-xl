@@ -440,11 +440,11 @@ for (i = m_mine->SegCount (); i; i--, segP++)
 	}
 if (nBotGens != m_mine->RobotMakerCount ()) {
 	if (m_bAutoFixBugs) {
-		sprintf (message, "FIXED: Invalid robot maker count");
+		sprintf_s (message, sizeof (message), "FIXED: Invalid robot maker count");
 		m_mine->RobotMakerCount () = nBotGens;
 		}
 	else
-		sprintf (message,"ERROR: Invalid robot maker count");
+		sprintf_s (message, sizeof (message),"ERROR: Invalid robot maker count");
 	if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, -1))
 		return true;
 	}
@@ -486,14 +486,14 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 //
 	if (seg->special == SEGMENT_IS_ROBOTMAKER) {
 		if ((seg->matcen_num >= m_mine->GameInfo ().botgen.count) || (m_mine->BotGens (seg->matcen_num)->segnum != segnum)) {
-	 		sprintf (message, "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
+	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
 			}
 		}
 	if (seg->special == SEGMENT_IS_EQUIPMAKER) {
 		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->BotGens (seg->matcen_num)->segnum != segnum)) {
-	 		sprintf (message, "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
+	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
 			}
@@ -509,7 +509,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
 		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));
 		if (angle > M_PI_2) {
-			sprintf (message, "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",segnum,pointnum, (int) ( (angle*180.0)/M_PI));
+			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",segnum,pointnum, (int) ( (angle*180.0)/M_PI));
 			if (UpdateStats (message, 0, segnum, -1, -1, pointnum))
 				return true;
 			break; // from for loop
@@ -520,7 +520,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 		for (sidenum = 0; sidenum < 6; sidenum++) {
 			flatness = CalcFlatnessRatio (segnum,sidenum);
 			if (flatness < 0.80) {
-				sprintf (message,"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",segnum,sidenum, (int) (flatness*100));
+				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",segnum,sidenum, (int) (flatness*100));
 				if (UpdateStats (message, 1, segnum, sidenum))
 					return true;
 				break; // from for loop
@@ -534,7 +534,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 		length = m_mine->CalcLength (m_mine->Vertices (seg->verts[line_vert[linenum][0]]),
 											  m_mine->Vertices (seg->verts[line_vert[linenum][1]]));
 		if (length < (double)F1_0) {
-			sprintf (message,"WARNING: Line length too short (cube=%d,line=%d)",segnum,linenum);
+			sprintf_s (message, sizeof (message),"WARNING: Line length too short (cube=%d,line=%d)",segnum,linenum);
 			if (UpdateStats (message, 0, segnum, -1, linenum))
 				return true;
 			}
@@ -545,12 +545,12 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 // check child range 
 		if (child != -1 && child != -2) {
 			if (child < -2) {
-				sprintf (message,"ERROR: Illegal child number %d (cube=%d,side=%d)",child,segnum,sidenum);
+				sprintf_s (message, sizeof (message),"ERROR: Illegal child number %d (cube=%d,side=%d)",child,segnum,sidenum);
 				if (UpdateStats (message, 1, segnum, sidenum))
 					return true;
 				}
 			else if (child >= m_mine->SegCount ()) {
-				sprintf (message,"ERROR: Child out of range %d (cube=%d,side=%d)",child,segnum,sidenum);
+				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (cube=%d,side=%d)",child,segnum,sidenum);
 				if (UpdateStats (message, 1, segnum, sidenum)) 
 					return true;
 				}
@@ -569,13 +569,13 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 								 m_mine->Segments (child)->verts[side_vert[sidenum2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
-						sprintf (message,"WARNING:Child cube does not share points of cube (cube=%d,side=%d,child=%d)",segnum,sidenum,child);
+						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,child=%d)",segnum,sidenum,child);
 						if (UpdateStats (message, 0, segnum, -1, -1, -1, child))
 							return true;
 						}
 					}
 				else {
-					sprintf (message, "WARNING:Child cube does not connect to this cube (cube=%d,side=%d,child=%d)",segnum,sidenum,child);
+					sprintf_s (message, sizeof (message), "WARNING:Child cube does not connect to this cube (cube=%d,side=%d,child=%d)",segnum,sidenum,child);
 					if (UpdateStats (message, 1, segnum, -1, -1, -1, child))
 						return false;
 					}
@@ -622,10 +622,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	if (segnum < 0 || segnum >= m_mine->SegCount ()) {
 		if (m_bAutoFixBugs) {
 			obj->segnum = segnum = 0;
-			sprintf (message,"FIXED: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
+			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
 			}
 		else
-			sprintf (message,"ERROR: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
+			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
 		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
 		}
@@ -633,10 +633,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	if (segnum < 0 || segnum >= m_mine->SegCount ()) {
 		if (m_bAutoFixBugs) {
 			obj->segnum = 0;
-			sprintf (message,"FIXED: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
+			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
 			}
 		else
-			sprintf (message,"ERROR: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
+			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
 		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
 		}
@@ -668,7 +668,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     z = obj->pos.z - center.z;
 	object_radius = sqrt (x*x + y*y + z*z);
     if (object_radius > max_radius) {
-      sprintf (message,"ERROR: Object is outside of cube (object=%d,cube=%d)",objectnum,segnum);
+      sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",objectnum,segnum);
       if (UpdateStats (message, 1, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
     }
@@ -678,10 +678,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	if (flags != 0) {
 		if (m_bAutoFixBugs) {
 			obj->flags = 0;
-			sprintf (message,"FIXED: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
+			sprintf_s (message, sizeof (message),"FIXED: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
 			}
 		else
-			sprintf (message,"ERROR: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
+			sprintf_s (message, sizeof (message),"ERROR: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
       if (UpdateStats (message, 1, segnum, -1, -1, -1, -1, -1, -1, objectnum)) 
 			return true;
     }
@@ -689,11 +689,11 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     // check type range
 	 if ((obj->id < 0) || (obj->id > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf (message,"FIXED: Illegal object id (object=%d,id =%d)",objectnum, obj->id);
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",objectnum, obj->id);
 			obj->id = 0;
 			}
 		 else
-			sprintf (message,"WARNING: Illegal object id (object=%d,id =%d)",objectnum, obj->id);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",objectnum, obj->id);
 		}
 	type = obj->type;
     switch (type) {
@@ -702,30 +702,30 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 			  pPlayer = obj;
 		  if (obj->id > 7) {
 			if (m_bAutoFixBugs) {
-				sprintf (message,"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
 			obj->id = 7;
 				}
 			else
-				sprintf (message,"WARNING: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
 			}
 	  case OBJ_COOP:
 		  if (obj->id > 2) {
 			if (m_bAutoFixBugs) {
-				sprintf (message,"FIXED: Illegal coop player id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",objectnum, obj->id);
 				obj->id = 2;
 				}
 			else
-				sprintf (message,"WARNING: Illegal coop player id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",objectnum, obj->id);
 			}
 			break;
 	  case OBJ_EFFECT:
 		  if (obj->id > 1) {
 			if (m_bAutoFixBugs) {
-				sprintf (message,"FIXED: effect id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",objectnum, obj->id);
 				obj->id = 1;
 				}
 			else
-				sprintf (message,"WARNING: Illegal effect id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",objectnum, obj->id);
 			}
 			break;
 	  case OBJ_ROBOT:
@@ -743,10 +743,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  default:
 		 if (m_bAutoFixBugs) {
 			 m_mine->DeleteObject (objectnum);
-			sprintf (message,"FIXED: Illegal object type (object=%d,type=%d)",objectnum,type);
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object type (object=%d,type=%d)",objectnum,type);
 			}
 		 else
-			sprintf (message,"WARNING: Illegal object type (object=%d,type=%d)",objectnum,type);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object type (object=%d,type=%d)",objectnum,type);
 		if (UpdateStats (message,0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
     }
@@ -755,9 +755,9 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     // check id range
     if (h = CheckId (obj)) {
 		 if (h == 2)
-	      sprintf (message,"FIXED: Illegal object id (object=%d,id=%d)",objectnum,id);
+	      sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",objectnum,id);
 		else
-	      sprintf (message,"WARNING: Illegal object id (object=%d,id=%d)",objectnum,id);
+	      sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",objectnum,id);
       if (UpdateStats (message, 0, segnum, -1, -1, -1, -1, -1, -1, objectnum)) 
 			return true;
     }
@@ -767,10 +767,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
 			obj->contains_count = 0;
-		  sprintf (message,"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
+		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
 			}
 		else
-		  sprintf (message,"WARNING: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
+		  sprintf_s (message, sizeof (message),"WARNING: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
       if (UpdateStats (message, 0, segnum, -1, -1, -1, -1, -1, -1, objectnum)) 
 			return true;
     }
@@ -781,16 +781,16 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 		if (m_bAutoFixBugs) {
 			obj->contains_type = OBJ_POWERUP;
-			sprintf (message,"FIXED: Illegal contained type (object=%d,contains=%d)",objectnum,type);
+			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",objectnum,type);
 			}
 		else
-			sprintf (message,"WARNING: Illegal contained type (object=%d,contains=%d)",objectnum,type);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",objectnum,type);
 	if (UpdateStats (message, 0, segnum, -1, -1, -1, -1, -1, -1, objectnum)) return true;
 	  }
 	  id = obj->contains_id;
 	  // check contains id range
 	  if (CheckId (obj)) {
-	sprintf (message,"WARNING: Illegal contains id (object=%d,contains id=%d)",objectnum,id);
+	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",objectnum,id);
 	if (UpdateStats (message,0,1)) return true;
 	  }
 	}
@@ -803,12 +803,12 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 		memcpy (&h, pPlayer, sizeof (CDObject));
 		memcpy (pPlayer, m_mine->Objects (0), sizeof (CDObject));
 		memcpy (m_mine->Objects (0), pPlayer, sizeof (CDObject));
-		strcpy (message, "FIXED: Object 0 was not Player 0.");
+		strcpy_s (message, sizeof (message), "FIXED: Object 0 was not Player 0.");
 		if (UpdateStats (message, 0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
 		}
 	else {
-		strcpy (message, "WARNING: Object 0 is not Player 0.");
+		strcpy_s (message, sizeof (message), "WARNING: Object 0 is not Player 0.");
 		if (UpdateStats (message, 0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
 		}
@@ -849,19 +849,19 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
   // makesure each count equals 1
   for (id = 0;id < 8; id++) {
 	if (player[id] == 0) {
-	  sprintf (message,"WARNING: No player=%d",id);
+	  sprintf_s (message, sizeof (message),"WARNING: No player=%d",id);
 	  if (UpdateStats (message,0)) 
 		  return true;
 	}
 	if (player[id] > 1) {
-	  sprintf (message,"WARNING: Duplicate player #%d (found %d)",id,player[id]);
+	  sprintf_s (message, sizeof (message),"WARNING: Duplicate player #%d (found %d)",id,player[id]);
 	  if (UpdateStats (message,0)) 
 		  return true;
 	}
   }
 #if 1
 	if (coops != 3) {
-		sprintf (message,"WARNING: %d coop players found (should be 3)",coops);
+		sprintf_s (message, sizeof (message),"WARNING: %d coop players found (should be 3)",coops);
 		if (UpdateStats (message,0)) 
 			return true;
 	}
@@ -869,12 +869,12 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 #else
   for (id=8;id<11;id++) {
 	if (player[id] == 0) {
-	  sprintf (message,"WARNING: No coop player #%d",id);
+	  sprintf_s (message, sizeof (message),"WARNING: No coop player #%d",id);
 	  if (UpdateStats (message,0)) 
 		  return true;
 	}
 	if (player[id] > 1) {
-	  sprintf (message,"WARNING: Duplicatecoop player #%d (found %d)",id,player[id]);
+	  sprintf_s (message, sizeof (message),"WARNING: Duplicatecoop player #%d (found %d)",id,player[id]);
 	  if (UpdateStats (message,0,1)) 
 		  return true;
 	}
@@ -889,22 +889,22 @@ for (objectnum=0;objectnum<objCount;objectnum++, obj++) {
 	if (type == OBJ_CNTRLCEN) {
 		if (m_mine->Segments (obj->segnum)->special != SEGMENT_IS_CONTROLCEN) {
 			if (m_bAutoFixBugs && m_mine->AddRobotMaker (obj->segnum, false, false))
-				sprintf (message,"FIXED: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
+				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
 			else
-				sprintf (message,"WARNING: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
+				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
 			if (UpdateStats (message,0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 				return true;
 			}
 		count++;
 		if (count > 1) {
-			sprintf (message,"WARNING: More than one Reactor found (object=%d)",objectnum);
+			sprintf_s (message, sizeof (message),"WARNING: More than one Reactor found (object=%d)",objectnum);
 			if (UpdateStats (message,0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 				return true;
 			}
 		}
 	}
 if (count < 1) {
-	sprintf (message,"WARNING: No Reactors found (note: ok if boss robot used)");
+	sprintf_s (message, sizeof (message),"WARNING: No Reactors found (note: ok if boss robot used)");
 	if (UpdateStats (message,0)) 
 		return true;
 	}
@@ -996,7 +996,7 @@ for (i = 0; i < MAX_OBJECTS2; i++, or++) {
 		h = j;
 		}
 	if (!bOk) {
-		sprintf (message, "%s: Object trigger list corrupted (trigger=%d, object=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", trignum, i);
+		sprintf_s (message, sizeof (message), "%s: Object trigger list corrupted (trigger=%d, object=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", trignum, i);
 		if (UpdateStats (message, 0)) return true;
 		}
 	}
@@ -1033,12 +1033,12 @@ for (i = 0; i < ccTrigger->num_links; i++)
 				memcpy (ccTrigger->seg + i, ccTrigger->seg + i + 1, (ccTrigger->num_links - i) * sizeof (*(ccTrigger->seg)));
 				memcpy (ccTrigger->side + i, ccTrigger->side + i + 1, (ccTrigger->num_links - i) * sizeof (*(ccTrigger->side)));
 				}
-			strcpy (message, "FIXED: Reactor has invalid trigger target.");
+			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigger target.");
 			if (UpdateStats (message, 0))
 				return true;
 			}
 		else {
-			strcpy (message, "WARNING: Reactor has invalid trigger target.");
+			strcpy_s (message, sizeof (message), "WARNING: Reactor has invalid trigger target.");
 			if (UpdateStats (message, 0))
 				return true;
 			}
@@ -1062,17 +1062,17 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 					wall->segnum,wall->sidenum;
 					if (m_bAutoFixBugs) {
 						m_mine->AutoLinkExitToReactor ();
-						sprintf (message,"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wall->segnum, wall->sidenum);
+						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wall->segnum, wall->sidenum);
 						}
 					else
-						sprintf (message,"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wall->segnum, wall->sidenum);
+						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wall->segnum, wall->sidenum);
 					if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum))
 						return true;
 					}
 				}
 			count++;
 			if (count >1) {
-				sprintf (message,"WARNING: Trigger belongs to more than one wall (trig=%d, wall=%d)",trignum,wallnum);
+				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trig=%d, wall=%d)",trignum,wallnum);
 				if (UpdateStats (message,0, wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
 			}
 		}
@@ -1083,11 +1083,11 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 			trignum--;
 			trigger--;
 			trigCount--;
-			sprintf (message,"FIXED: Unused trigger (trigger=%d)",trignum + deltrignum);
+			sprintf_s (message, sizeof (message),"FIXED: Unused trigger (trigger=%d)",trignum + deltrignum);
 			deltrignum++;
 			}
 		else
-			sprintf (message,"WARNING: Unused trigger (trigger=%d)",trignum);
+			sprintf_s (message, sizeof (message),"WARNING: Unused trigger (trigger=%d)",trignum);
 		if (UpdateStats (message,0,1)) return true;
 		}
 	}
@@ -1119,7 +1119,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 			|| tt==TT_LIGHT_OFF		|| tt==TT_LIGHT_ON
 			|| tt==TT_TELEPORT
 			) {
-			sprintf (message,"WARNING: Trigger has no targets (trigger=%d)",trignum);
+			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigger=%d)",trignum);
 			if (UpdateStats (message,0, -1, -1, -1, -1, -1, -1, trignum))
 				return true;
 			}
@@ -1130,10 +1130,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 			if (linknum >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
 					trigger->num_links = MAX_TRIGGER_TARGETS;
-					sprintf (message,"FIXED: Trigger has too many targets (trigger=%d, number of links=%d)",trignum,linknum);
+					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigger=%d, number of links=%d)",trignum,linknum);
 					}
 				else
-					sprintf (message,"WARNING: Trigger has too many targets (trigger=%d, number of links=%d)",trignum,linknum);
+					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigger=%d, number of links=%d)",trignum,linknum);
 				if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 					return true;
 				break;
@@ -1148,10 +1148,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 						linknum = MAX_TRIGGER_TARGETS;	// take care of the loops
 						trigger--;
 						}
-					sprintf (message,"FIXED: Trigger points to non-existant cube (trigger=%d, cube=%d)",trignum,segnum);
+					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant cube (trigger=%d, cube=%d)",trignum,segnum);
 					}
 				else
-					sprintf (message,"ERROR: Trigger points to non-existant cube (trigger=%d, cube=%d)",trignum,segnum);
+					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant cube (trigger=%d, cube=%d)",trignum,segnum);
 				if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 					return true;
 				}
@@ -1166,10 +1166,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 							linknum = MAX_TRIGGER_TARGETS;
 							trigger--;
 							}
-						sprintf (message,"FIXED: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
+						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
 						}
 					else
-						sprintf (message,"ERROR: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
+						sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 						return true;
 				} else {
@@ -1188,21 +1188,21 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 									linknum = MAX_TRIGGER_TARGETS;
 									trigger--;
 									}
-								sprintf (message,"FIXED: Trigger does not target a door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 								}
 							else
-								sprintf (message,"WARNING: Trigger does not target a door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 						}
 
 						// make sure oposite segment/side has a wall too
 						if (!m_mine->GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum)) {
-							sprintf (message,"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						else {
 							if (m_mine->Segments (opp_segnum)->sides [opp_sidenum].nWall >= wallCount) {
-								sprintf (message,"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 								}
 							}
@@ -1221,17 +1221,17 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 									linknum = MAX_TRIGGER_TARGETS;
 									trigger--;
 									}
-								sprintf (message,"FIXED: Trigger target does not exist (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 								}
 							else
-								sprintf (message,"ERROR: Trigger target does not exist (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"ERROR: Trigger target does not exist (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						}
 //						if (trigger->flags == TRIGGER_MATCEN) {
 					else if ((file_type == RDL_FILE) ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((seg->special != SEGMENT_IS_ROBOTMAKER) && (seg->special != SEGMENT_IS_EQUIPMAKER)) {
-							sprintf (message,"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						}
@@ -1259,7 +1259,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	if ((file_type == RDL_FILE) ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
-			sprintf (message,"WARNING: More than one exit found (trig=%d)",trignum);
+			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trig=%d)",trignum);
 			if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 			}
 		}
@@ -1277,11 +1277,11 @@ for (trignum = 0; trignum < trigCount; trignum++) {
 			CDObjTriggerList *ot = m_mine->ObjTriggerList (trignum);
 			m_mine->DeleteObjTrigger (ot->objnum);
 #endif
-			sprintf (message,"FIXED: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
+			sprintf_s (message, sizeof (message),"FIXED: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
 			}
 		else {
 			CDObjTriggerList *ot = m_mine->ObjTriggerList (trignum);
-			sprintf (message,"ERROR: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
+			sprintf_s (message, sizeof (message),"ERROR: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
 			if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 			}
 		}
@@ -1289,7 +1289,7 @@ for (trignum = 0; trignum < trigCount; trignum++) {
 if (CheckObjTriggers ())
 	return true;
 if (count < 1) {
-	sprintf (message,"WARNING: No exit found");
+	sprintf_s (message, sizeof (message),"WARNING: No exit found");
 	if (UpdateStats (message,0)) return true;
 	}
 
@@ -1352,7 +1352,7 @@ for (nPass = 0; nPass < 2; nPass++) {
 				}
 			}
 		if (!bOk) {
-			sprintf (message, "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
+			sprintf_s (message, sizeof (message), "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (UpdateStats (message, 0)) return true;
 			}
 		}
@@ -1385,7 +1385,7 @@ for (i = 0; i < nMatCens; i++) {
 		if (m_bAutoFixBugs) {
 			for (; h; h--, segP++)
 				if ((segP->special == SEGMENT_IS_EQUIPMAKER) && (segP->matcen_num == i)) {
-					matCenP [i].segnum = nSegment = segP - m_mine->Segments ();
+					matCenP [i].segnum = nSegment = INT16 (segP - m_mine->Segments ());
 					break;
 					}
 			if (!h) {
@@ -1393,7 +1393,7 @@ for (i = 0; i < nMatCens; i++) {
 				for (h = m_mine->SegCount (); h; h--, segP++)
 					if (segP->matcen_num >= nMatCens) {
 						segP->matcen_num = i;
-						matCenP [i].segnum = nSegment = segP - m_mine->Segments ();
+						matCenP [i].segnum = INT16 (nSegment = segP - m_mine->Segments ());
 						break;
 						}
 				}
@@ -1406,7 +1406,7 @@ for (i = 0; i < nMatCens; i++) {
 			}
 		}
 	if (!bOk) {
-		sprintf (message, "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
+		sprintf_s (message, sizeof (message), "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 		if (UpdateStats (message, 0)) return true;
 		}
 	}
@@ -1461,7 +1461,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 		w = m_mine->Walls (wallnum);
 		if (w->segnum != segnum) {
 			if (m_bAutoFixBugs) {
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"FIXED: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							segnum, wallnum, w->segnum);
 				if (wallFixed [wallnum])
@@ -1477,14 +1477,14 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 					}
 				}
 			else
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							segnum, wallnum, w->segnum);
 			if (UpdateStats (message,1, segnum, sidenum, -1, -1, -1, side->nWall)) return true;
 			} 
 		else if (w->sidenum != sidenum) {
 			if (m_bAutoFixBugs) {
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							segnum, sidenum, wallnum, w->segnum);
 				if (wallFixed [wallnum])
@@ -1503,7 +1503,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 					}
 				}
 			else
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							segnum, sidenum, wallnum, w->segnum);
 			if (UpdateStats (message,1, -1, -1, -1, -1, -1, side->nWall)) return true;
@@ -1514,21 +1514,21 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
 	if (wall->type > ((file_type == RDL_FILE) ? WALL_CLOSED : (level_version < 9) ? WALL_CLOAKED : WALL_TRANSPARENT)) {
-		sprintf (message,
+		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
 					wallnum,wall->type);
 		if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
 		}
 		// check range of segment number that the wall points to
 	if (wall->segnum >= m_mine->SegCount ()) {
-		sprintf (message,
+		sprintf_s (message, sizeof (message),
 					"ERROR: Wall sits in non-existant cube (wall=%d, cube=%d)",
 					wallnum,wall->segnum);
 		if (UpdateStats (message,1,-1, -1, -1, -1, -1, wallnum)) return true;
 		} 
 	else if (wall->sidenum >= 6) {
 		// check range of side number that the wall points to
-		sprintf (message,
+		sprintf_s (message, sizeof (message),
 					"ERROR: Wall sits on side which is out of range (wall=%d, side=%d)",
 					wallnum,wall->sidenum);
 		if (UpdateStats (message,1,-1 -1, -1, -1, -1, wallnum)) return true;
@@ -1540,7 +1540,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			w = m_mine->Walls (wallnum);
 			if ((wallnum < wallCount) && (w->segnum == wall->segnum) && (w->sidenum == wall->sidenum)) {
 				if (m_bAutoFixBugs) {
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 								"FIXED: Duplicate wall found (wall=%d, cube=%d)", wallnum, wall->segnum);
 					m_mine->DeleteWall (wallnum);
 					wallnum--;
@@ -1549,19 +1549,19 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					continue;
 					}
 				else 
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 								"ERROR: Duplicate wall found (wall=%d, cube=%d)", wallnum, wall->segnum);
 				if (UpdateStats (message, 1, wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
 				}
 			else {
 				if (m_bAutoFixBugs) {
 					side->nWall = wallnum;
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 								"FIXED: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
 								wallnum,wall->segnum);
 					}
 				else 
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 								"ERROR: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
 								wallnum,wall->segnum);
 				if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
@@ -1570,13 +1570,13 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			// make sure trigger number of wall is in range
 		if ((wall->trigger != NO_TRIGGER) && (wall->trigger >= m_mine->GameInfo ().triggers.count)) {
 			if (m_bAutoFixBugs) {
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)",
 							wallnum, wall->trigger);
 				wall->trigger = NO_TRIGGER;
 				}
 			else
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)",
 							wallnum, wall->trigger);
 			if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
@@ -1588,13 +1588,13 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					wall->linked_wall = m_mine->Segments (oppSeg)->sides [oppSide].nWall;
 					if ((wall->linked_wall < -1) || (wall->linked_wall >= wallCount))
 						wall->linked_wall = -1;
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
 						wallnum, invLinkedWall, wall->linked_wall);
 					}
 				}
 			else
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)",
 					wallnum,wall->linked_wall);
 			}
@@ -1603,7 +1603,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			if (m_mine->GetOppositeSide (oppSeg, oppSide, wall->segnum, wall->sidenum)) {
 				INT16 oppWall = m_mine->Segments (oppSeg)->sides [oppSide].nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
 						wallnum, m_mine->Walls (wall->linked_wall)->segnum, m_mine->Walls (wall->linked_wall)->sidenum);
@@ -1611,7 +1611,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 							wall->linked_wall = -1;
 					}
 				else if (wall->linked_wall != oppWall) {
-					sprintf (message,
+					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
 						wallnum, m_mine->Walls (wall->linked_wall)->segnum, m_mine->Walls (wall->linked_wall)->sidenum);
@@ -1620,7 +1620,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					}
 				}
 			else {
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
 					wallnum, m_mine->Walls (wall->linked_wall)->segnum, m_mine->Walls (wall->linked_wall)->sidenum);
@@ -1633,10 +1633,10 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 		if ((wall->type == WALL_CLOAKED) && (wall->cloak_value > 31)) {
 			if (m_bAutoFixBugs) {
 				wall->cloak_value = 31;
-				sprintf (message, "FIXED: Wall has invalid cloak value (wall=%d)", wallnum);
+				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", wallnum);
 					}
 			else
-				sprintf (message, "ERROR: Wall has invalid cloak value (wall=%d)", wallnum);
+				sprintf_s (message, sizeof (message), "ERROR: Wall has invalid cloak value (wall=%d)", wallnum);
 			}
 		if ((wall->type == WALL_BLASTABLE || wall->type == WALL_DOOR) &&
 			 (   wall->clip_num < 0
@@ -1645,7 +1645,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			  || wall->clip_num == 8
 			  || (file_type == RDL_FILE && wall->clip_num > 25)
 			  || (file_type == RL2_FILE && wall->clip_num > 50))) {
-			sprintf (message,
+			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
 						wallnum,wall->clip_num);
 			if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
@@ -1653,7 +1653,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			// Make sure there is a child to the segment
 		if (wall->type != WALL_OVERLAY) {
 			if (!(m_mine->Segments (wall->segnum)->child_bitmask & (1<< wall->sidenum))) {
-				sprintf (message,
+				sprintf_s (message, sizeof (message),
 							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
 							wallnum,wall->segnum);
 				if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
@@ -1669,7 +1669,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 							break;
 					if (sidenum != 6) {  // if child's side found
 						if (seg->sides[sidenum].nWall >= m_mine->GameInfo ().walls.count) {
-							sprintf (message,
+							sprintf_s (message, sizeof (message),
 										"WARNING: No matching wall for this wall (wall=%d, cube=%d)", 
 										wallnum,segnum);
 							if (UpdateStats (message,0,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
@@ -1679,7 +1679,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 							if ((wallnum2 < wallCount) &&
 								 ((wall->clip_num != m_mine->Walls (wallnum2)->clip_num
 									|| wall->type != m_mine->Walls (wallnum2)->type))) {
-								sprintf (message,
+								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
 											wallnum,segnum);
 								if (UpdateStats (message,0,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
@@ -1703,19 +1703,19 @@ for (segnum=0;segnum<segCount;segnum++, seg++) {
 			if (wallnum >= wallCount) {
 				if (m_bAutoFixBugs) {
 					side->nWall = wallCount;
-					sprintf (message,"FIXED: Cube has an invalid wall number (wall=%d, cube=%d)",wallnum,segnum);
+					sprintf_s (message, sizeof (message),"FIXED: Cube has an invalid wall number (wall=%d, cube=%d)",wallnum,segnum);
 					}
 				else
-					sprintf (message,"ERROR: Cube has an invalid wall number (wall=%d, cube=%d)",wallnum,segnum);
+					sprintf_s (message, sizeof (message),"ERROR: Cube has an invalid wall number (wall=%d, cube=%d)",wallnum,segnum);
 				if (UpdateStats (message,1, segnum, sidenum)) return true;
 			} else {
 				if (m_mine->Walls (wallnum)->segnum != segnum) {
 					if (m_bAutoFixBugs) {
 						m_mine->Walls (wallnum)->segnum = segnum;
-						sprintf (message,"FIXED: Cube's wall does not sit in cube (wall=%d, cube=%d)",wallnum,segnum);
+						sprintf_s (message, sizeof (message),"FIXED: Cube's wall does not sit in cube (wall=%d, cube=%d)",wallnum,segnum);
 						}
 					else
-						sprintf (message,"ERROR: Cube's wall does not sit in cube (wall=%d, cube=%d)",wallnum,segnum);
+						sprintf_s (message, sizeof (message),"ERROR: Cube's wall does not sit in cube (wall=%d, cube=%d)",wallnum,segnum);
 					if (UpdateStats (message,1,segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
 					}
 				}
@@ -1780,9 +1780,9 @@ for (vertnum= m_mine->VertCount (); vertnum; vertnum--, vStat++)
 	*vStat &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)
-		sprintf (message,"FIXED: %d unused vertices found", nUnused);
+		sprintf_s (message, sizeof (message),"FIXED: %d unused vertices found", nUnused);
 	else
-		sprintf (message,"WARNING: %d unused vertices found", nUnused);
+		sprintf_s (message, sizeof (message),"WARNING: %d unused vertices found", nUnused);
 	if (UpdateStats (message,0)) return true;
 	}
 

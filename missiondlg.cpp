@@ -130,19 +130,19 @@ if (pDX->m_bSaveAndValidate) {
 		if (psz = strchr (m_missionData.levelList [i], ',')) {
 			nSecret = atoi (psz + 1);
 			if (nSecret > m_missionData.numLevels) {
-				sprintf (szError, "%s: Invalid secret level source number.", m_missionData.levelList [i]);
+				sprintf_s (szError, sizeof (szError), "%s: Invalid secret level source number.", m_missionData.levelList [i]);
 				ErrorMsg (szError);
 				continue;
 				}
 			else if (!nSecret) {
 				*psz = '\0';
-				strncpy (szSecret, psz + 1, sizeof (szSecret));
+				strncpy_s (szSecret, sizeof (szSecret), psz + 1, sizeof (szSecret));
 				szSecret [sizeof (szSecret) - 1] = '\0';
 				for (nSecret = j = 0; nSecret < m_missionData.numLevels; nSecret++) {
 					if (strchr (m_missionData.levelList [nSecret], ','))
 						j++;	//count secret level info mixed with level info - not a good idea to mix though
 					else if (!strcmp (szSecret, m_missionData.levelList [nSecret])) {
-						sprintf (psz + 1, ",%d", nSecret - j + 1);
+						sprintf_s (psz + 1, sizeof (m_missionData.levelList [i]) - ((psz + 1) - m_missionData.levelList [i]), ",%d", nSecret - j + 1);
 						break;
 						}
 					}
@@ -181,9 +181,9 @@ UpdateData (FALSE);
 
 LPSTR CMissionTool::CopyLevelName (LPSTR pszDest, LPSTR pszSrc)
 {
-strncpy (pszDest, pszSrc, 12);
+strncpy_s (pszDest, 256, pszSrc, 12);
 pszDest [13] = '\0';
-return strlwr (pszDest);
+return _strlwr_s (pszDest, 256);
 }
 
                         /*--------------------------*/
@@ -194,10 +194,10 @@ LPSTR CMissionTool::FixLevelName (LPSTR pszName)
 
 if (psz = strchr (pszName, '.'))
 	*psz = '\0';
-int l = strlen (pszName);
+int l = int (strlen (pszName));
 if (l > 8)
 	pszName [8] = '\0';
-strcat (pszName, (file_type == RDL_FILE) ? ".rdl" : ".rl2");
+strcat_s (pszName, 256, (file_type == RDL_FILE) ? ".rdl" : ".rl2");
 return pszName;
 }
 
@@ -229,7 +229,7 @@ if (*m_szLevel) {
 			STATUSMSG ("invalid secret level");
 			return;
 			}
-		sprintf (m_szLevel, "%s,%d", szLevel, j + 1);
+		sprintf_s (m_szLevel, sizeof (m_szLevel), "%s,%d", szLevel, j + 1);
 		}
 	else
 		FixLevelName (m_szLevel);
@@ -260,7 +260,7 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ())) {
 	if (*m_szLevel) {
 		FixLevelName (m_szLevel);
 		LBLevels ()->DeleteString (i);
-		LBLevels ()->InsertString (i, strlwr (m_szLevel));
+		LBLevels ()->InsertString (i, _strlwr_s (m_szLevel, sizeof (m_szLevel));
 		LBLevels ()->SetCurSel (i);
 		*m_szLevel = '\0';
 	   AfxSetWindowText (((CWnd *) GetDlgItem (IDC_MISSION_LEVELEDIT))->GetSafeHwnd (), "");

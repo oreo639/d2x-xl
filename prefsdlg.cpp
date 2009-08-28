@@ -79,10 +79,10 @@ END_MESSAGE_MAP()
 
 void CPrefsDlg::CompletePath (LPSTR pszPath, LPSTR pszFile, LPSTR pszExt)
 {
-if (*pszPath && !strstr (strlwr (pszPath), pszExt)) {
+if (*pszPath && !strstr (_strlwr_s (pszPath, 256), pszExt)) {
 	if (pszPath [strlen (pszPath) - 1] != '\\')
-		strcat (pszPath, "\\");
-	strcat (pszPath, pszFile);
+		strcat_s (pszPath, 256, "\\");
+	strcat_s (pszPath, 256, pszFile);
 	}
 }
 
@@ -94,13 +94,13 @@ CPrefsDlg::CPrefsDlg (CPropertySheet *pParent)
 	char	szMoveRate [20];
 
 GetPrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, descent_path, sizeof (descent_path), "dle-xp.ini");
-strcpy (m_d1Path, descent_path);
+strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
 CompletePath (m_d1Path, "descent.pig", ".pig");
 GetPrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, descent2_path, sizeof (descent2_path), "dle-xp.ini");
-strcpy (m_d2Path, descent2_path);
+strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
 CompletePath (m_d2Path, "groupa.pig", ".pig");
 GetPrivateProfileString ("DLE-XP", "LevelsDirectory", levels_path, levels_path, sizeof (levels_path), "dle-xp.ini");
-strcpy (m_missionsPath, levels_path);
+strcpy_s (m_missionsPath, sizeof (m_missionsPath), levels_path);
 CompletePath (m_missionsPath, "descent2.hog", ".hog");
 GetPrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, player_profile, sizeof (player_profile), "dle-xp.ini");
 m_depthPerceptions [0] = 10000;
@@ -238,9 +238,9 @@ if (pDX->m_bSaveAndValidate)
 else {
 	char	szViewDist [10];
 	if (m_nViewDist)
-		sprintf (szViewDist, "%d", theApp.MineView ()->ViewDist ());
+		sprintf_s (szViewDist, sizeof (szViewDist), "%d", theApp.MineView ()->ViewDist ());
 	else
-		strcpy (szViewDist, "all");
+		strcpy_s (szViewDist, sizeof (szViewDist), "all");
 	((CWnd *) GetDlgItem (IDC_PREFS_VIEWDIST_TEXT))->SetWindowText (szViewDist);
 	CBMineCenter ()->SetCurSel (m_nMineCenter);
 	}
@@ -269,18 +269,18 @@ return CToolDlg::OnSetActive ();
 
 bool CPrefsDlg::BrowseFile (LPSTR fileType, LPSTR fileName, LPSTR fileExt, BOOL bOpen)
 {
-   char        s [128];
+   char        s [256];
    int         nResult;
    char		   pn [256];
 
-strcpy (pn, fileName);
-sprintf (s, "%s (%s)|%s|all files (*.*)|*.*||", fileType, fileExt, fileExt);
+strcpy_s (pn, sizeof (pn), fileName);
+sprintf_s (s, sizeof (s), "%s (%s)|%s|all files (*.*)|*.*||", fileType, fileExt, fileExt);
 CFileDialog d (bOpen, fileExt, pn, 0, s, this);
 d.m_ofn.hInstance = AfxGetInstanceHandle ();
 d.m_ofn.lpstrInitialDir = pn;
-if ((nResult = d.DoModal ()) != IDOK)
+if ((nResult = int (d.DoModal ())) != IDOK)
 	return false;
-strcpy (fileName, d.m_ofn.lpstrFile);
+strcpy_s (fileName, 256, d.m_ofn.lpstrFile);
 return true;
 }
 
@@ -290,7 +290,7 @@ void CPrefsDlg::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
 	char	szValue [20];
 
-sprintf (szValue, "%d", nValue);
+sprintf_s (szValue, sizeof (szValue), "%d", nValue);
 WritePrivateProfileString ("DLE-XP", szKey, szValue, "dle-xp.ini");
 }
 
@@ -300,7 +300,7 @@ void CPrefsDlg::WritePrivateProfileDouble (LPSTR szKey, double nValue)
 {
 	char	szValue [20];
 
-sprintf (szValue, "%1.3f", nValue);
+sprintf_s (szValue, sizeof (szValue), "%1.3f", nValue);
 WritePrivateProfileString ("DLE-XP", szKey, szValue, "dle-xp.ini");
 }
 
@@ -310,9 +310,9 @@ void CPrefsDlg::GetAppSettings ()
 {
 	int	i;
 
-strcpy (m_d1Path, descent_path);
-strcpy (m_d2Path, descent2_path);
-strcpy (m_missionsPath, levels_path);
+strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
+strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
+strcpy_s (m_missionsPath, sizeof (m_missionsPath), levels_path);
 m_mineViewFlags = theApp.MineView ()->GetMineViewFlags ();
 m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
@@ -346,7 +346,7 @@ if (bSaveFolders) {
 WritePrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, "dle-xp.ini");
 WritePrivateProfileInt ("DepthPerception", m_iDepthPerception);
 WritePrivateProfileInt ("RotateRate", m_iRotateRate);
-sprintf (szMoveRate, "%1.3f", m_moveRate);
+sprintf_s (szMoveRate, sizeof (szMoveRate), "%1.3f", m_moveRate);
 WritePrivateProfileDouble ("MoveRate", m_moveRate);
 WritePrivateProfileInt ("ExpertMode", m_bExpertMode);
 WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
@@ -365,8 +365,8 @@ void CPrefsDlg::SetAppSettings (bool bInitApp)
 {
 if (m_bInvalid)
 	return;
-if (strcmp (descent_path, strlwr (m_d1Path))) {
-	strcpy (descent_path, m_d1Path);
+if (strcmp (descent_path, _strlwr_s (m_d1Path, sizeof (m_d1Path)))) {
+	strcpy_s (descent_path, sizeof (descent_path), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, "dle-xp.ini");
 	if (file_type == RDL_FILE)
 		FreeTextureHandles();
@@ -380,7 +380,7 @@ if (strcmp(descent2_path, strlwr (m_d2Path))) {
 						"Are you sure you want to do this?") != IDOK))
 		bChangePig = false;
 	if (bChangePig) {
-		strcpy (descent2_path, m_d2Path);
+		strcpy_s (descent2_path, sizeof (descent2_path), m_d2Path);
 		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, "dle-xp.ini");
 		if (file_type == RL2_FILE)
 			FreeTextureHandles (false);
@@ -388,8 +388,8 @@ if (strcmp(descent2_path, strlwr (m_d2Path))) {
 		theApp.MineView ()->ResetView (true);
 		}
 	}
-if (strcmp (levels_path, strlwr (m_missionsPath))) {
-	strcpy (levels_path, m_missionsPath);
+if (strcmp (levels_path, _strlwr_s (m_missionsPath, sizeof (m_missionsPath)))) {
+	strcpy_s (levels_path, sizeof (levels_path), m_missionsPath);
 	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, "dle-xp.ini");
 	}
 if (!bInitApp)

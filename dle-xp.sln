@@ -1,24 +1,31 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dlc", "dlc.vcproj", "{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DLE-XP", "dlc.vcproj", "{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Demo = Demo
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Demo|Win32 = Demo|Win32
+		Demo|x64 = Demo|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Debug.ActiveCfg = Debug|Win32
-		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Debug.Build.0 = Debug|Win32
-		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Demo.ActiveCfg = Demo|Win32
-		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Demo.Build.0 = Demo|Win32
-		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Release.ActiveCfg = Release|Win32
-		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Release.Build.0 = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Debug|Win32.Build.0 = Debug|Win32
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Debug|x64.ActiveCfg = Debug|x64
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Debug|x64.Build.0 = Debug|x64
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Demo|Win32.ActiveCfg = Demo|Win32
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Demo|Win32.Build.0 = Demo|Win32
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Demo|x64.ActiveCfg = Demo|x64
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Demo|x64.Build.0 = Demo|x64
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Release|Win32.ActiveCfg = Release|Win32
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Release|Win32.Build.0 = Release|Win32
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Release|x64.ActiveCfg = Release|x64
+		{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

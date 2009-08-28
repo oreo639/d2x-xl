@@ -352,7 +352,7 @@ UINT16 wallnum = Segments (segnum)->sides [sidenum].nWall;
 if (!bExpertMode &&
     (wallnum < GameInfo ().walls.count) &&
 	 ((Walls (wallnum)->type == WALL_BLASTABLE) || (Walls (wallnum)->type == WALL_DOOR)))
-		ErrorMsg("Changing the texture of a door only affects\n"
+		ErrorMsg ("Changing the texture of a door only affects\n"
 					"how the door will look before it is opened.\n"
 					"You can use this trick to hide a door\n"
 					"until it is used for the first time.\n\n"

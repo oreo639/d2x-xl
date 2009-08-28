@@ -22,9 +22,9 @@ extern int nLayout;
 class CEditTool : public CDialog {
 	public:
 		CExtBitmapButton	m_btns [10];
-		int	m_nTimer;
-		int	m_nEditFunc;
-		UINT	m_nTimerDelay;
+		UINT_PTR	m_nTimer;
+		WPARAM	m_nEditFunc;
+		UINT		m_nTimerDelay;
 
 		CEditTool ();
 		virtual BOOL OnInitDialog ();
@@ -38,7 +38,7 @@ class CEditTool : public CDialog {
 		afx_msg void OnEditGeo7 ();
 		afx_msg void OnEditGeo8 ();
 		afx_msg void OnEditGeo9 ();
-		afx_msg void OnTimer (UINT nIdEvent);
+		afx_msg void OnTimer (UINT_PTR nIdEvent);
 		virtual BOOL OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
 		DECLARE_MESSAGE_MAP ()
@@ -59,17 +59,17 @@ class CDlcSplitterWnd : public CSplitterWnd
 class CExtToolBar : public CToolBar
 {
 	public:
-		int	m_nId;
-		UINT	m_nState;
-		int	m_nPos;
-		int	m_nTimer;
-		UINT	m_nTimerDelay;
+		int		m_nId;
+		UINT		m_nState;
+		int		m_nPos;
+		UINT_PTR	m_nTimer;
+		UINT		m_nTimerDelay;
 
 		CExtToolBar ();
 		afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
 		afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
 		afx_msg void OnMouseMove (UINT nFlags, CPoint point);
-		afx_msg void OnTimer (UINT nIdEvent);
+		afx_msg void OnTimer (UINT_PTR nIdEvent);
 		void Notify (UINT nMsg);
 		int Width ();
 

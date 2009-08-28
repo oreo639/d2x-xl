@@ -167,7 +167,7 @@ class CTexToolDlg : public CToolDlg
 
    virtual BOOL OnInitDialog ();
 	afx_msg void OnPaint ();
-	afx_msg void OnTimer (UINT nIdEvent);
+	afx_msg void OnTimer (UINT_PTR nIdEvent);
 	virtual BOOL OnSetActive ();
 	virtual BOOL OnKillActive ();
 	virtual BOOL TextureIsVisible ();
@@ -961,9 +961,9 @@ class CTextureTool : public CTexToolDlg
 								m_maxPt,
 								m_centerPt;
 		UINT					m_nTimerDelay;
-		UINT					m_nTimer;
-		UINT					m_nEditTimer;
-		UINT					m_nLightTimer;
+		UINT_PTR				m_nTimer;
+		UINT_PTR				m_nEditTimer;
+		UINT_PTR				m_nLightTimer;
 		int					m_nLightDelay;
 		double				m_nLightTime;
 		int					m_nHighlight;
@@ -985,7 +985,7 @@ class CTextureTool : public CTexToolDlg
 		virtual BOOL OnKillActive ();
 		afx_msg void LoadTextureListBoxes ();
 		afx_msg void OnPaint ();
-		afx_msg void OnTimer (UINT nIdEvent);
+		afx_msg void OnTimer (UINT_PTR nIdEvent);
 		afx_msg void OnSaveTexture ();
 		afx_msg void OnEditTexture ();
 		afx_msg void OnPasteSide ();

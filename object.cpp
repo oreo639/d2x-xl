@@ -337,8 +337,8 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 		if (id > MAX_PLAYERS) {
 				char szMsg [80];
 
-			sprintf (szMsg, "There are already %d players in the mine", MAX_PLAYERS);
-			ErrorMsg(szMsg);
+			sprintf_s (szMsg, sizeof (szMsg), "There are already %d players in the mine", MAX_PLAYERS);
+			ErrorMsg (szMsg);
 			return FALSE;
 			}
 		}
@@ -348,8 +348,8 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 		if (id > MAX_PLAYERS + MAX_COOP_PLAYERS) {
 				char szMsg [80];
 
-			sprintf (szMsg, "There are already %d cooperative players in the mine", MAX_COOP_PLAYERS);
-			ErrorMsg(szMsg);
+			sprintf_s (szMsg, sizeof (szMsg), "There are already %d cooperative players in the mine", MAX_COOP_PLAYERS);
+			ErrorMsg (szMsg);
 			return FALSE;
 			}
 		}
@@ -509,7 +509,7 @@ CRect rc;
 pWnd->GetClientRect (rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 if ((object_number >= 0) && (object_number <= 129)) {
-	sprintf (message,"OBJ_%03d_BMP", object_number);
+	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", object_number);
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	HRSRC hFind = FindResource (hInst,message, RT_BITMAP);
 	HGLOBAL hGlobal = LoadResource (hInst, hFind);

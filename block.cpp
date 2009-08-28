@@ -113,14 +113,14 @@ z_pprime.y = - x_prime.x*z_prime.y + z_prime.x*x_prime.y;
 z_pprime.z = - y_prime.x*x_prime.y + x_prime.x*y_prime.y;
 
 #if 0
-  sprintf(message,"x'=(%0.3f,%0.3f,%0.3f)\n"
+  sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
 		  "y'=(%0.3f,%0.3f,%0.3f)\n"
 		  "z'=(%0.3f,%0.3f,%0.3f)\n",
 		  (float)x_prime.x,(float)x_prime.y,(float)x_prime.z,
 		  (float)y_prime.x,(float)y_prime.y,(float)y_prime.z,
 		  (float)z_prime.x,(float)z_prime.y,(float)z_prime.z);
   DebugMsg(message);
-  sprintf(message,"x''=(%0.3f,%0.3f,%0.3f)\n"
+  sprintf_s (message, sizeof (message), "x''=(%0.3f,%0.3f,%0.3f)\n"
 		  "y''=(%0.3f,%0.3f,%0.3f)\n"
 		  "z''=(%0.3f,%0.3f,%0.3f)\n",
 		  (float)x_pprime.x,(float)x_pprime.y,(float)x_pprime.z,
@@ -133,19 +133,19 @@ nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
 while(!feof(fBlk)) {
 	if (SegCount () >= MAX_SEGMENTS) {
-		ErrorMsg("No more free segments");
+		ErrorMsg ("No more free segments");
 		return (nNewSegs);
 		}
 // abort if there are not at least 8 vertices free
 	if (MAX_VERTICES - VertCount () < 8) {
-		ErrorMsg("No more free vertices");
+		ErrorMsg ("No more free vertices");
 		return(nNewSegs);
 		}
 	segnum = SegCount ();
 	seg = Segments (segnum);
 	seg->owner = -1;
 	seg->group = -1;
-	fscanf (fBlk,"segment %hd\n",&seg->seg_number);
+	fscanf_s (fBlk, "segment %hd\n", &seg->seg_number);
 	xlatSegNum [seg->seg_number] = segnum;
 	// invert segment number so its children can be children can be fixed later
 	seg->seg_number = ~seg->seg_number;
@@ -154,55 +154,55 @@ while(!feof(fBlk)) {
 	side = seg->sides;
 	int sidenum;
 	for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++, side++) {
-		fscanf (fBlk,"  side %hd\n", &test);
+		fscanf_s (fBlk, "  side %hd\n", &test);
 		if (test != sidenum) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
 		side->nWall = NO_WALL;
-		fscanf (fBlk,"    tmap_num %hd\n",&side->nBaseTex);
-		fscanf (fBlk,"    tmap_num2 %hd\n",&side->nOvlTex);
+		fscanf_s (fBlk, "    tmap_num %hd\n",&side->nBaseTex);
+		fscanf_s (fBlk, "    tmap_num2 %hd\n",&side->nOvlTex);
 		for (j = 0; j < 4; j++)
-			fscanf (fBlk,"    uvls %hd %hd %hd\n",
+			fscanf_s (fBlk, "    uvls %hd %hd %hd\n",
 						&side->uvls [j].u,
 						&side->uvls [j].v,
 						&side->uvls [j].l);
 		if (bExtBlkFmt) {
-			fscanf (fBlk, "    nWall %d\n",&byteBuf);
+			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
 			side->nWall = (UINT16) byteBuf;
 			if (side->nWall != NO_WALL) {
 				CDWall w;
 				CDTrigger t;
 				memset (&w, 0, sizeof (w));
 				memset (&t, 0, sizeof (t));
-				fscanf (fBlk, "        segment %ld\n", &w.segnum);
-				fscanf (fBlk, "        side %ld\n", &w.sidenum);
-				fscanf (fBlk, "        hps %ld\n", &w.hps);
-				fscanf (fBlk, "        type %d\n", &byteBuf);
+				fscanf_s (fBlk, "        segment %ld\n", &w.segnum);
+				fscanf_s (fBlk, "        side %ld\n", &w.sidenum);
+				fscanf_s (fBlk, "        hps %ld\n", &w.hps);
+				fscanf_s (fBlk, "        type %d\n", &byteBuf);
 				w.type = byteBuf;
-				fscanf (fBlk, "        flags %d\n", &byteBuf);
+				fscanf_s (fBlk, "        flags %d\n", &byteBuf);
 				w.flags = byteBuf;
-				fscanf (fBlk, "        state %d\n", &byteBuf);
+				fscanf_s (fBlk, "        state %d\n", &byteBuf);
 				w.state = byteBuf;
-				fscanf (fBlk, "        clip_num %d\n", &byteBuf);
+				fscanf_s (fBlk, "        clip_num %d\n", &byteBuf);
 				w.clip_num = byteBuf;
-				fscanf (fBlk, "        keys %d\n", &byteBuf);
+				fscanf_s (fBlk, "        keys %d\n", &byteBuf);
 				w.keys = byteBuf;
-				fscanf (fBlk, "        cloak %d\n", &byteBuf);
+				fscanf_s (fBlk, "        cloak %d\n", &byteBuf);
 				w.cloak_value = byteBuf;
-				fscanf (fBlk, "        trigger %d\n", &byteBuf);
+				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
 				w.trigger = byteBuf;
 				if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS)) {
-					fscanf (fBlk, "			    type %d\n", &byteBuf);
+					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
 					t.type = byteBuf;
-					fscanf (fBlk, "			    flags %hd\n", &t.flags);
-					fscanf (fBlk, "			    value %ld\n", &t.value);
-					fscanf (fBlk, "			    timer %d\n", &t.time);
-					fscanf (fBlk, "			    num_links %hd\n", &t.num_links);
+					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
+					fscanf_s (fBlk, "			    value %ld\n", &t.value);
+					fscanf_s (fBlk, "			    timer %d\n", &t.time);
+					fscanf_s (fBlk, "			    num_links %hd\n", &t.num_links);
 					int iTarget;
 					for (iTarget = 0; iTarget < t.num_links; iTarget++) {
-						fscanf (fBlk, "			        seg %hd\n", t.seg + iTarget);
-						fscanf (fBlk, "			        side %hd\n", t.side + iTarget);
+						fscanf_s (fBlk, "			        seg %hd\n", t.seg + iTarget);
+						fscanf_s (fBlk, "			        side %hd\n", t.side + iTarget);
 						}
 					}
 				if (GameInfo ().walls.count < MAX_WALLS) {
@@ -222,38 +222,38 @@ while(!feof(fBlk)) {
 					}
 				}
 #if 0
-			fscanf (fBlk, "    object_num %hd\n",&segObjCount);
+			fscanf_s (fBlk, "    object_num %hd\n",&segObjCount);
 			while (segObjCount) {
 				CDObject o;
 				memset (&o, 0, sizeof (o));
-				fscanf (fBlk, "            signature %hd\n", &o.signature);
-				fscanf (fBlk, "            type %d\n", &byteBuf);
+				fscanf_s (fBlk, "            signature %hd\n", &o.signature);
+				fscanf_s (fBlk, "            type %d\n", &byteBuf);
 				o.type = (INT8) byteBuf;
-				fscanf (fBlk, "            id %d\n", &byteBuf);
+				fscanf_s (fBlk, "            id %d\n", &byteBuf);
 				o.id = (INT8) byteBuf;
-				fscanf (fBlk, "            control_type %d\n", &byteBuf);
+				fscanf_s (fBlk, "            control_type %d\n", &byteBuf);
 				o.control_type = (UINT8) byteBuf;
-				fscanf (fBlk, "            movement_type %d\n", &byteBuf);
+				fscanf_s (fBlk, "            movement_type %d\n", &byteBuf);
 				o.movement_type = (UINT8) byteBuf;
-				fscanf (fBlk, "            render_type %d\n", &byteBuf);
+				fscanf_s (fBlk, "            render_type %d\n", &byteBuf);
 				o.render_type = (UINT8) byteBuf;
-				fscanf (fBlk, "            flags %d\n", &byteBuf);
+				fscanf_s (fBlk, "            flags %d\n", &byteBuf);
 				o.flags = (UINT8) byteBuf;
 				o.segnum = segnum;
-				fscanf (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
+				fscanf_s (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
 				memcpy (&o.last_pos, &o.pos, sizeof (o.pos));
-				fscanf (fBlk, "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
+				fscanf_s (fBlk, "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
 													&o.orient.rvec.x, &o.orient.rvec.y, &o.orient.rvec.z,
 													&o.orient.uvec.x, &o.orient.uvec.y, &o.orient.uvec.z,
 													&o.orient.fvec.x, &o.orient.fvec.y, &o.orient.fvec.z);
-				fscanf (fBlk, "            segnum %hd\n", &o.segnum);
-				fscanf (fBlk, "            size %ld\n", &o.size);
-				fscanf (fBlk, "            shields %ld\n", &o.shields);
-				fscanf (fBlk, "            contains_type %d\n", &byteBuf);
+				fscanf_s (fBlk, "            segnum %hd\n", &o.segnum);
+				fscanf_s (fBlk, "            size %ld\n", &o.size);
+				fscanf_s (fBlk, "            shields %ld\n", &o.shields);
+				fscanf_s (fBlk, "            contains_type %d\n", &byteBuf);
 				o.contains_type = (INT8) byteBuf;
-				fscanf (fBlk, "            contains_id %d\n", &byteBuf);
+				fscanf_s (fBlk, "            contains_id %d\n", &byteBuf);
 				o.contains_id = (INT8) byteBuf;
-				fscanf (fBlk, "            contains_count %d\n", &byteBuf);
+				fscanf_s (fBlk, "            contains_count %d\n", &byteBuf);
 				o.contains_count = (INT8) byteBuf;
 				switch (o.type) {
 					case OBJ_POWERUP:
@@ -273,22 +273,22 @@ while(!feof(fBlk)) {
 					}
 				switch (o.movement_type) {
 					case MT_PHYSICS:
-						fscanf (fBlk, "            velocity %ld %ld %ld\n", 
+						fscanf_s (fBlk, "            velocity %ld %ld %ld\n", 
 								  &o.phys_info.velocity.x, &o.phys_info.velocity.y, &o.phys_info.velocity.z);
-						fscanf (fBlk, "            thrust %ld %ld %ld\n", 
+						fscanf_s (fBlk, "            thrust %ld %ld %ld\n", 
 								  &o.phys_info.thrust.x, &o.phys_info.thrust.y, &o.phys_info.thrust.z);
-						fscanf (fBlk, "            mass %ld\n", &o.phys_info.mass);
-						fscanf (fBlk, "            drag %ld\n", &o.phys_info.drag);
-						fscanf (fBlk, "            brakes %ld\n", &o.phys_info.brakes);
-						fscanf (fBlk, "            rotvel %ld %ld %ld\n", 
+						fscanf_s (fBlk, "            mass %ld\n", &o.phys_info.mass);
+						fscanf_s (fBlk, "            drag %ld\n", &o.phys_info.drag);
+						fscanf_s (fBlk, "            brakes %ld\n", &o.phys_info.brakes);
+						fscanf_s (fBlk, "            rotvel %ld %ld %ld\n", 
 								  &o.phys_info.rotvel.x, &o.phys_info.rotvel.y, &o.phys_info.rotvel.z);
-						fscanf (fBlk, "            rotthrust %ld %ld %ld\n", 
+						fscanf_s (fBlk, "            rotthrust %ld %ld %ld\n", 
 								  &o.phys_info.rotthrust.x, &o.phys_info.rotthrust.y, &o.phys_info.rotthrust.z);
-						fscanf (fBlk, "            turnroll %hd\n", &o.phys_info.turnroll);
-						fscanf (fBlk, "            flags %hd\n", &o.phys_info.flags);
+						fscanf_s (fBlk, "            turnroll %hd\n", &o.phys_info.turnroll);
+						fscanf_s (fBlk, "            flags %hd\n", &o.phys_info.flags);
 						break;
 					case MT_SPIN:
-						fscanf (fBlk, "            spinrate %ld %ld %ld\n", 
+						fscanf_s (fBlk, "            spinrate %ld %ld %ld\n", 
 								  &o.spin_rate.x, &o.spin_rate.y, &o.spin_rate.z);
 						break;
 					}
@@ -300,14 +300,14 @@ while(!feof(fBlk)) {
 #endif
 			}
 		}
-	fscanf (fBlk,"  children %hd %hd %hd %hd %hd %hd\n",
+	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n",
 				&seg->children [0],&seg->children [1],&seg->children [2],
 				&seg->children [3],&seg->children [4],&seg->children [5]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
-		fscanf (fBlk,"  vms_vector %hd %ld %ld %ld\n", &test, &vect.x, &vect.y, &vect.z);
+		fscanf_s (fBlk, "  vms_vector %hd %ld %ld %ld\n", &test, &vect.x, &vect.y, &vect.z);
 		if (test != i) {
-			ErrorMsg("Invalid vertex number read");
+			ErrorMsg ("Invalid vertex number read");
 			return (0);
 			}
 		// each vertex relative to the origin has a x', y', and z' component
@@ -337,17 +337,17 @@ while(!feof(fBlk)) {
 	// mark vertices
 	for (i = 0; i < 8; i++)
 		*VertStatus (seg->verts [i]) |= MARKED_MASK;
-	fscanf (fBlk,"  static_light %ld\n",&seg->static_light);
+	fscanf_s (fBlk, "  static_light %ld\n",&seg->static_light);
 	if (bExtBlkFmt) {
-		fscanf (fBlk,"  special %d\n", &byteBuf);
+		fscanf_s (fBlk, "  special %d\n", &byteBuf);
 		seg->special = byteBuf;
-		fscanf (fBlk,"  matcen_num %d\n", &byteBuf);
+		fscanf_s (fBlk, "  matcen_num %d\n", &byteBuf);
 		seg->matcen_num = byteBuf;
-		fscanf (fBlk,"  value %d\n", &byteBuf);
+		fscanf_s (fBlk, "  value %d\n", &byteBuf);
 		seg->value = byteBuf;
-		fscanf (fBlk,"  child_bitmask %d\n", &byteBuf);
+		fscanf_s (fBlk, "  child_bitmask %d\n", &byteBuf);
 		seg->child_bitmask = byteBuf;
-		fscanf (fBlk,"  wall_bitmask %d\n", &byteBuf);
+		fscanf_s (fBlk, "  wall_bitmask %d\n", &byteBuf);
 		seg->wall_bitmask = byteBuf;
 		switch (seg->special) {
 			case SEGMENT_IS_FUELCEN:
@@ -379,9 +379,9 @@ while(!feof(fBlk)) {
 		seg->matcen_num = -1;
 		seg->value = -1;
 		}
-	//        fscanf (fBlk,"  child_bitmask %d\n",&test);
+	//        fscanf_s (fBlk, "  child_bitmask %d\n",&test);
 	//        seg->child_bitmask = test & 0x3f;
-	//        fscanf (fBlk,"  wall_bitmask %d\n",&test);
+	//        fscanf_s (fBlk, "  wall_bitmask %d\n",&test);
 	//        seg->wall_bitmask  = (test & 0x3f) | MARKED_MASK;
 	seg->wall_bitmask = MARKED_MASK; // no other bits
 	// calculate child_bitmask
@@ -409,7 +409,7 @@ for (i = nNewTriggers; i; i--) {
 			}
 	}
 
-sprintf (message,
+sprintf_s (message, sizeof (message),
 			" Block tool: %d blocks, %d walls, %d triggers pasted.", 
 			nNewSegs, nNewWalls, nNewTriggers);
 DEBUGMSG (message);
@@ -489,7 +489,7 @@ z_prime.y /= length;
 z_prime.z /= length;
 
 #if 0
-  sprintf(message,"x'=(%0.3f,%0.3f,%0.3f)\n"
+  sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
 		  "y'=(%0.3f,%0.3f,%0.3f)\n"
 		  "z'=(%0.3f,%0.3f,%0.3f)\n",
 		  (float)x_prime.x,(float)x_prime.y,(float)x_prime.z,
@@ -501,14 +501,14 @@ z_prime.z /= length;
 seg = Segments ();
 for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 	if (seg->wall_bitmask & MARKED_MASK) {
-		fprintf (fBlk,"segment %d\n",segnum);
+		fprintf (fBlk, "segment %d\n",segnum);
 		side = seg->sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, side++) {
-			fprintf (fBlk,"  side %d\n",i);
-			fprintf (fBlk,"    tmap_num %d\n",side->nBaseTex);
-			fprintf (fBlk,"    tmap_num2 %d\n",side->nOvlTex);
+			fprintf (fBlk, "  side %d\n",i);
+			fprintf (fBlk, "    tmap_num %d\n",side->nBaseTex);
+			fprintf (fBlk, "    tmap_num2 %d\n",side->nOvlTex);
 			for (j = 0; j < 4; j++) {
-				fprintf (fBlk,"    uvls %d %d %d\n",
+				fprintf (fBlk, "    uvls %d %d %d\n",
 				side->uvls [j].u,
 				side->uvls [j].v,
 				side->uvls [j].l);
@@ -561,7 +561,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 					}
 				}
 			}
-		fprintf (fBlk,"  children");
+		fprintf (fBlk, "  children");
 		for (i = 0; i < 6; i++)
 			fprintf (fBlk, " %d", seg->children [i]);
 		fprintf (fBlk, "\n");
@@ -575,18 +575,18 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			vect.x = (double) (Vertices (vertnum)->x - origin.x);
 			vect.y = (double) (Vertices (vertnum)->y - origin.y);
 			vect.z = (double) (Vertices (vertnum)->z - origin.z);
-			fprintf (fBlk,"  vms_vector %d %ld %ld %ld\n",i,
+			fprintf (fBlk, "  vms_vector %d %ld %ld %ld\n",i,
 						(FIX)(vect.x*x_prime.x + vect.y*x_prime.y + vect.z*x_prime.z),
 						(FIX)(vect.x*y_prime.x + vect.y*y_prime.y + vect.z*y_prime.z),
 						(FIX)(vect.x*z_prime.x + vect.y*z_prime.y + vect.z*z_prime.z));
 			}
-		fprintf (fBlk,"  static_light %ld\n",seg->static_light);
+		fprintf (fBlk, "  static_light %ld\n",seg->static_light);
 		if (bExtBlkFmt) {
-			fprintf (fBlk,"  special %d\n",seg->special);
-			fprintf (fBlk,"  matcen_num %d\n",seg->matcen_num);
-			fprintf (fBlk,"  value %d\n",seg->value);
-			fprintf (fBlk,"  child_bitmask %d\n",seg->child_bitmask);
-			fprintf (fBlk,"  wall_bitmask %d\n",seg->wall_bitmask);
+			fprintf (fBlk, "  special %d\n",seg->special);
+			fprintf (fBlk, "  matcen_num %d\n",seg->matcen_num);
+			fprintf (fBlk, "  value %d\n",seg->value);
+			fprintf (fBlk, "  child_bitmask %d\n",seg->child_bitmask);
+			fprintf (fBlk, "  wall_bitmask %d\n",seg->wall_bitmask);
 			}
 		}
 	}
@@ -604,21 +604,21 @@ void CMine::CutBlock()
   char szFile [256] = "\0";
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message);
+	ErrorMsg (spline_error_message);
 	return;
 	}
 
   // make sure some cubes are marked
 count = MarkedSegmentCount ();
 if (count==0) {
-	ErrorMsg("No block marked.\n\n"
+	ErrorMsg ("No block marked.\n\n"
 				"Use 'M' or shift left mouse button\n"
 				"to mark one or more cubes.");
 	return;
 	}
 
 //  if (disable_saves) {
-//    ErrorMsg("Saves disabled, contact Interplay for your security number.");
+//    ErrorMsg ("Saves disabled, contact Interplay for your security number.");
 //    return;
 //  }
 
@@ -651,13 +651,13 @@ if (!BrowseForFile (FALSE,
   strcpy (szFile, ofn.lpstrFile);
 #endif
 bExtBlkFmt = strstr (strlwr (szFile), ".blx") != NULL;
-fBlk = fopen (szFile, "w");
+fopen (&fBlk, szFile, "w");
 if (!fBlk) {
-	ErrorMsg("Unable to open block file");
+	ErrorMsg ("Unable to open block file");
 	return;
 	}
 //UpdateUndoBuffer(0);
-strcpy(m_szBlockFile, szFile); // remember file for quick paste
+strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember file for quick paste
 fprintf (fBlk, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fBlk, 0);
 // delete Segments () from last to first because SegCount ()
@@ -674,7 +674,7 @@ for (segnum = SegCount () - 1; segnum; segnum--)
 		}
 theApp.UnlockUndo ();
 fclose(fBlk);
-sprintf(message," Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
+sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
 wrap(&Current1 ().segment,-1,0,SegCount () - 1);
@@ -698,14 +698,14 @@ void CMine::CopyBlock(char *pszBlockFile)
   // make sure some cubes are marked
 count = MarkedSegmentCount ();
 if (count==0) {
-	ErrorMsg("No block marked.\n\n"
+	ErrorMsg ("No block marked.\n\n"
 				"Use 'M' or shift left mouse button\n"
 				"to mark one or more cubes.");
 	return;
 	}
 
 //  if (disable_saves) {
-//    ErrorMsg("Saves disabled, contact Interplay for your security number.");
+//    ErrorMsg ("Saves disabled, contact Interplay for your security number.");
 //    return;
 //  }
 
@@ -713,9 +713,9 @@ if (!bExpertMode && Query2Msg(BLOCKOP_HINT,MB_YESNO) != IDYES)
 	return;
 #if 1
 if (pszBlockFile && *pszBlockFile)
-	strcpy (szFile, pszBlockFile);
+	strcpy_s (szFile, sizeof (szFile), pszBlockFile);
 else {
-	strcpy (szFile, m_szBlockFile);
+	strcpy_s (szFile, sizeof (szFile), m_szBlockFile);
 	if (!BrowseForFile (FALSE, 
 	                 bExtBlkFmt ? "blx" : "blk", szFile, 
 						  "Block file|*.blk|"
@@ -743,19 +743,19 @@ else {
   strcpy (szFile, ofn.lpstrFile);
   }
 #endif
-bExtBlkFmt = strstr (strlwr (szFile), ".blx") != NULL;
-fBlk = fopen (szFile, "w");
+bExtBlkFmt = strstr (_strlwr_s (szFile, sizeof (szFile)), ".blx") != NULL;
+fopen (&fBlk, szFile, "w");
 if (!fBlk) {
-	sprintf(message,"Unable to open block file '%s'", szFile);
-	ErrorMsg(message);
+	sprintf_s (message, sizeof (message), "Unable to open block file '%s'", szFile);
+	ErrorMsg (message);
 	return;
 	}
 //  UpdateUndoBuffer(0);
-strcpy(m_szBlockFile, szFile); // remember fBlk for quick paste
+strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fBlk for quick paste
 fprintf (fBlk, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fBlk, 0);
 fclose (fBlk);
-sprintf(message," Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
+sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
 SetLinesToDraw ();
 theApp.MineView ()->Refresh ();
@@ -768,7 +768,7 @@ theApp.MineView ()->Refresh ();
 void CMine::PasteBlock() 
 {
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message);
+	ErrorMsg (spline_error_message);
 	return;
 	}
 // Initialize data for fBlk open dialog
@@ -819,13 +819,13 @@ int CMine::ReadBlock (char *pszBlockFile,int option)
 	INT16 vertnum;
 	FILE *fBlk;
 
-fBlk = fopen (strlwr (pszBlockFile), "r");
+fopen (&fBlk, _strlwr_s (pszBlockFile, 256), "r");
 if (!fBlk) {
 	ErrorMsg ("Unable to open block file");
 	return 1;
 	}	
 
-fscanf (fBlk,"%s\n",&message);
+fscanf_s (fBlk, "%s\n", &message, sizeof (message));
 if (!strncmp (message, "DMB_BLOCK_FILE", 14))
 	bExtBlkFmt = false;
 else if (!strncmp (message, "DMB_EXT_BLOCK_FILE", 18))
@@ -836,7 +836,7 @@ else {
 	return 2;
 	}
 
-strcpy (m_szBlockFile, pszBlockFile); // remember file for quick paste
+strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file for quick paste
 
 // unmark all Segments ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
@@ -908,7 +908,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++)
 	seg->seg_number = segnum;
 /*
 if (option != 1) {
-	sprintf (message," Block tool: %d blocks pasted.",count);
+	sprintf_s (message, sizeof (message)," Block tool: %d blocks pasted.",count);
 	DEBUGMSG (message);
 	}
 */
@@ -928,13 +928,13 @@ void CMine::QuickPasteBlock ()
 {
 if (!*m_szBlockFile) {
 	PasteBlock ();
-//	ErrorMsg("You must first use one of the cut or paste commands\n"
+//	ErrorMsg ("You must first use one of the cut or paste commands\n"
 //				"before you use the Quick Paste command");
 	return;
 	}
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message);
+	ErrorMsg (spline_error_message);
 	return;
 	}
 
@@ -954,13 +954,13 @@ void CMine::DeleteBlock()
 INT16 segnum,count;
 
 if (m_bSplineActive) {
-	ErrorMsg(spline_error_message);
+	ErrorMsg (spline_error_message);
 	return;
 	}
 // make sure some cubes are marked
 count = MarkedSegmentCount ();
 if (!count) {
-	ErrorMsg("No block marked.\n\n"
+	ErrorMsg ("No block marked.\n\n"
 				"Use 'M' or shift left mouse button\n"
 				"to mark one or more cubes.");
 	return;

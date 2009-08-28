@@ -30,7 +30,7 @@ char *whyS [] = {
 };
 
 int _matherr (struct exception *e) {
-  sprintf (message,"DMB has detected a math error\n"
+  sprintf_s (message, sizeof (message),"DMB has detected a math error\n"
 		   "%s (%8g,%8g): %s\n\n"
 		   "Press OK to continue, or Cancel to close DMB",
 		    e->name, e->arg1, e->arg2, whyS [e->type - 1]);
@@ -325,14 +325,14 @@ if (!m_bSplineActive) {
 	else if (m_nMaxSplines < 3) {
 //	if ((VertCount () + 3 /*MAX_SPLINES*/ * 4 > MAX_VERTICES) ||
 //		 (SegCount () + 3 /*MAX_SPLINES*/ > MAX_SEGMENTS)) {
-		ErrorMsg("Insufficient number of free vertices and/or segments\n"
+		ErrorMsg ("Insufficient number of free vertices and/or segments\n"
 					"to use the tunnel generator.");
 		return;
 		}
 	// make sure there are no children on either segment/side
 	if ((Segments (Current1 ().segment)->children [Current1 ().side] != -1) ||
 		 (Segments (Current2 ().segment)->children [Current2 ().side] != -1)) {
-		ErrorMsg("Starting and/or ending point of spline\n"
+		ErrorMsg ("Starting and/or ending point of spline\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
 					"on sides which do not have cubes attached.");
@@ -361,14 +361,14 @@ if (!m_bSplineActive) {
 	if (m_splineLength2 > MAX_SPLINE_LENGTH)
 		m_splineLength2 = MAX_SPLINE_LENGTH;
 	if (length < 50*F1_0) {
-		ErrorMsg("End points of tunnel are too close.\n\n"
+		ErrorMsg ("End points of tunnel are too close.\n\n"
 					"Hint: Select two sides which are further apart\n"
 					"using the spacebar and left/right arrow keys,\n"
 					"then try again.");
 		return;
 		}
 	if (!bExpertMode)
-		ErrorMsg("Place the current cube on one of the tunnel end points.\n\n"
+		ErrorMsg ("Place the current cube on one of the tunnel end points.\n\n"
 				  "Use the ']' and '[' keys to adjust the length of the red\n"
 				  "spline segment.\n\n"
 				  "Press 'P' to rotate the point connections.\n\n"
@@ -632,7 +632,7 @@ void CMine::CalcSpline ()
   }
 
 #if 0
-  sprintf(message,"theta [0] = %d,%d,%d,%d\n"
+  sprintf_s (message, sizeof (message), "theta [0] = %d,%d,%d,%d\n"
                   "theta [1] = %d,%d,%d,%d\n"
 		  "radius [0] = %d,%d,%d,%d\n"
 		  "radius [1] = %d,%d,%d,%d\n"

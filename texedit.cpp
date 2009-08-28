@@ -311,7 +311,7 @@ m_bitmap =
 m_backupBM = NULL;
 m_tga =
 m_backupTGA = NULL;
-strcpy (m_szDefExt, ".bmp");
+strcpy_s (m_szDefExt, sizeof (m_szDefExt), ".bmp");
 }
 
                         /*--------------------------*/
@@ -700,13 +700,13 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 
    palette = (RGBQUAD *) malloc(256*sizeof(RGBQUAD));
 	if (!palette) {
-	  ErrorMsg("Not enough memory for palette.");
+	  ErrorMsg ("Not enough memory for palette.");
 	  goto errorExit;
 	}
 
 	sysPal = (PALETTEENTRY *) malloc(256*sizeof(PALETTEENTRY));
 	if (!sysPal) {
-	  ErrorMsg("Not enough memory for palette.");
+	  ErrorMsg ("Not enough memory for palette.");
 	  goto errorExit;
 	}
 
@@ -722,13 +722,13 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 
 	// make sure it is a bitmap file
 	if (bmfh.bfType != 'B' + (((UINT16)'M')<<8) ) {
-	  ErrorMsg("This is not a bitmap file.");
+	  ErrorMsg ("This is not a bitmap file.");
 	  goto errorExit;
 	}
 
 	// make sure it is a 256 or 16 color bitmap
 	if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
-	  ErrorMsg("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
+	  ErrorMsg ("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
 		   "Hint: Load this image into a paint program\n"
 		   "then save it as a 16 or 256 color *.bmp file.");
 	  goto errorExit;
@@ -736,7 +736,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 
 	// make sure the data is not compressed
 	if (bmih.biCompression != BI_RGB) {
-	  ErrorMsg("Cannot read compressed bitmap files.\n\n"
+	  ErrorMsg ("Cannot read compressed bitmap files.\n\n"
 		   "Hint: Try loading this image into a paint program\n"
 		   "then save it as a 256 color *.bmp file with the\n"
 		   "compression option off.");
@@ -755,24 +755,24 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 
 	// check color palette
 	int i;
-	for (i=0;i<palette_size;i++) {
-	  color_map[i] = i;
-	  if (palette[i].rgbRed != sysPal[i].peRed ||
-			palette[i].rgbGreen != sysPal[i].peGreen ||
-			palette[i].rgbBlue != sysPal[i].peBlue) {
+	for (i = 0; i < int (palette_size); i++) {
+	  color_map [i] = i;
+	  if (palette [i].rgbRed != sysPal [i].peRed ||
+			palette [i].rgbGreen != sysPal [i].peGreen ||
+			palette [i].rgbBlue != sysPal [i].peBlue) {
 			break;
 	  }
 	}
-	if (i!=palette_size) {
+	if (i != int (palette_size)) {
 		if (!bExpertMode)
-			ErrorMsg("The palette of this bitmap file is not exactly the\n"
+			ErrorMsg ("The palette of this bitmap file is not exactly the\n"
 					  "the same as the Descent palette. Therefore, some color\n"
 					  "changes may occur.\n\n"
 					  "Hint: If you want the palettes to match, then save one of\n"
 					  "the Descent textures to a file an use it as a starting point.\n"
 					  "If you plan to use transparencies, then you may want to start\n"
 					  "with the texture called 'empty'.");
-		for (i=0;i<palette_size;i++) {
+		for (i = 0; i < int (palette_size); i++) {
 			unsigned int closest_index = i;
 			if ((palette [i].rgbRed != sysPal [i].peRed) ||
 				 (palette [i].rgbGreen != sysPal [i].peGreen) ||
@@ -794,7 +794,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	int x0,x1,y0,y1;
 	// if size is not 64 x 64, ask if they want to "size to fit"
 	if ((bmih.biWidth != m_nWidth) || (bmih.biHeight != m_nHeight)) {
-		sprintf(message,"The bitmap being loaded is a %d x %d image.\n"
+		sprintf_s (message, sizeof (message), "The bitmap being loaded is a %d x %d image.\n"
 				  "Do you want the image to be sized to fit the\n"
 				  "the current %d x %d texture size?\n\n"
 			     "(press no to see another option)",
@@ -899,9 +899,9 @@ void CTextureEdit::OnLoad ()
   FILE *file=NULL;
   bool bFuncRes;
 
-  strcpy (szFile, "*");
-  strcat (szFile, m_szDefExt);
-  memset(&ofn, 0, sizeof(OPENFILENAME));
+  strcpy_s (szFile, sizeof (szFile), "*");
+  strcat_s (szFile, sizeof (szFile), m_szDefExt);
+  memset (&ofn, 0, sizeof(OPENFILENAME));
   ofn.lStructSize = sizeof(OPENFILENAME);
   ofn.hwndOwner = m_hWnd;
   ofn.lpstrFilter = "Bitmap Files\0*.bmp\0TGA Files\0*.tga\0";
@@ -913,14 +913,14 @@ void CTextureEdit::OnLoad ()
 
 if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
-		strncpy (m_szDefExt, strchr (ofn.lpstrFile, '.'), 4);
-	file = fopen(ofn.lpstrFile,"rb");
+		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.'), 4);
+	fopen_s (&file, ofn.lpstrFile,"rb");
 	if (!file) {
-		ErrorMsg("Could not open texture file.");
+		ErrorMsg ("Could not open texture file.");
 		goto errorExit;
 		}
 	Backup ();
-	if (!strcmp (strlwr (m_szDefExt), ".bmp"))
+	if (!strcmp (_strlwr_s (m_szDefExt, sizeof (m_szDefExt)), ".bmp"))
 		bFuncRes = LoadBitmap (file);
 	else
 		bFuncRes = LoadTGA (file);
@@ -1014,10 +1014,10 @@ ofn.lpstrDefExt = "bmp";
 ofn.nMaxFile = sizeof(szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName(&ofn)) {
-	strlwr(ofn.lpstrFile);
-	file = fopen(ofn.lpstrFile,"wb");
+	_strlwr_s (ofn.lpstrFile, sizeof (ofn.lpstrFile));
+	fopen (&file, ofn.lpstrFile, "wb");
 	if (!file) {
-		ErrorMsg("Could not create bitmap file.");
+		ErrorMsg ("Could not create bitmap file.");
 		return;
 		}
 	if (m_nFormat)
@@ -1125,27 +1125,27 @@ char fg_color[30];
 char bg_color[30];
 switch(m_fgColor) {
 	case 255: 
-		strcpy(fg_color,"transparent"); 
+		strcpy_s (fg_color, sizeof (fg_color), "transparent"); 
 		break;
 	case 254: 
-		strcpy(fg_color,"see thru"); 
+		strcpy_s (fg_color, sizeof (fg_color), "see thru"); 
 		break;
 	default : 
-		sprintf(fg_color,"color %d",m_fgColor); 
+		sprintf_s (fg_color, sizeof (fg_color), "color %d", m_fgColor); 
 		break;
 	}
 switch(m_bgColor) {
 	case 255: 
-		strcpy(bg_color,"transparent"); 
+		strcpy_s (bg_color, sizeof (bg_color), "transparent"); 
 		break;
 	case 254: 
-		strcpy(bg_color,"see thru"); 
+		strcpy_s (bg_color, sizeof (bg_color), "see thru"); 
 		break;
 	default : 
-		sprintf(bg_color,"color %d",m_bgColor); 
+		sprintf_s (bg_color, sizeof (bg_color), "color %d", m_bgColor); 
 		break;
 	}
-sprintf(m_szColors, "foreground = %s, background = %s.", fg_color, bg_color);
+sprintf_s (m_szColors, sizeof (m_szColors), "foreground = %s, background = %s.", fg_color, bg_color);
 UpdateData (FALSE);
 }
 

@@ -103,9 +103,9 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
 	if (obj == curObj)
 		curSel = i;
 	if (obj->id == SMOKE_ID)
-		sprintf (szEffect, "Smoke");
+		sprintf_s (szEffect, sizeof (szEffect), "Smoke");
 	else if (obj->id == LIGHTNING_ID)
-		sprintf (szEffect, "Lightning %d (%d)", obj->rtype.lightningInfo.nId, i);
+		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", obj->rtype.lightningInfo.nId, i);
 	else
 		continue;
 	index = cbEffects->AddString (szEffect);
@@ -250,7 +250,7 @@ UpdateData (FALSE);
 bool CEffectTool::AddEffect ()
 {
 if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS) {
-	ErrorMsg("Maximum numbers of objects reached");
+	ErrorMsg ("Maximum numbers of objects reached");
 	return false;
 	}
 UpdateData (TRUE);
@@ -299,15 +299,15 @@ void CEffectTool::OnDelete ()
 if (!GetMine ())
 	return;
 if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {
-	ErrorMsg("Cannot delete the secret return.");
+	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
 if (m_mine->GameInfo ().objects.count == 1) {
-	ErrorMsg("Cannot delete the last object");
+	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
 if (m_mine->CurrObj ()->type != OBJ_EFFECT) {
-	ErrorMsg("No effect object currently selected");
+	ErrorMsg ("No effect object currently selected");
 	return;
 	}
 if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
@@ -386,8 +386,8 @@ void CEffectTool::OnSetObject ()
 {
 if (!GetMine ())
 	return;
-INT16 nOld = m_mine->Current ()->object;
-INT16 nNew = CBEffects ()->GetItemData (CBEffects ()->GetCurSel ());
+DWORD_PTR nOld = m_mine->Current ()->object;
+DWORD_PTR nNew = CBEffects ()->GetItemData (CBEffects ()->GetCurSel ());
 if (nOld != nNew) {
 	UpdateData (TRUE);
 	theApp.MineView ()->RefreshObject (nOld, nNew);

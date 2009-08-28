@@ -4,7 +4,7 @@
 // Copyright (C) 1997 Bryan Aamot
 
 //#define HUGE
-#define ErrorMsg(a) AfxMessageBox(a)
+#define ErrorMsg (a) AfxMessageBox(a)
 #define QueryMsg(a) (bExpertMode ? IDYES : AfxMessageBox (a, MB_YESNO))
 #define Query2Msg(a,i) AfxMessageBox(a,i)
 //#define STATUSMSG(a) theApp.MainFrame () ? theApp.MainFrame ()->StatusMsg(a) : AfxMessageBox(a)

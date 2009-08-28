@@ -104,7 +104,7 @@ if (m_pTrigger) {
 	m_nTargets = m_pTrigger->num_links;
 	int i;
 	for (i = 0; i < m_nTargets ; i++) {
-		sprintf (m_szTarget, "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
@@ -191,7 +191,7 @@ theApp.SetModified (TRUE);
 m_pTrigger->seg [m_nTargets] = segnum;
 m_pTrigger->side [m_nTargets] = sidenum - 1;
 m_pTrigger->num_links++;
-sprintf (m_szTarget, "   %d,%d", segnum, sidenum);
+sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
 *m_szTarget = '\0';
@@ -207,7 +207,7 @@ if (!GetMine ())
 	return;
 int segnum, sidenum;
 UpdateData (TRUE);
-sscanf (m_szTarget, "%d,%d", &segnum, &sidenum);
+sscanf_s (m_szTarget, sizeof (m_szTarget), "%d,%d", &segnum, &sidenum);
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()) || (sidenum < 1) || (sidenum > 6))
 	return;
 AddTarget (segnum, sidenum);

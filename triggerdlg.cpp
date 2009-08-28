@@ -256,7 +256,7 @@ if (!m_bInited)
 DDX_CBIndex (pDX, IDC_TRIGGER_TRIGGERNO, m_nTrigger);
 DDX_CBIndex (pDX, IDC_TRIGGER_D2TYPE, m_nType);
 if (pDX->m_bSaveAndValidate)
-	m_nType = CBType ()->GetItemData (CBType ()->GetCurSel ());
+	m_nType = int )CBType ()->GetItemData (CBType ()->GetCurSel ()));
 else
 	SelectItemData (CBType (), m_nType);
 DDX_Text (pDX, IDC_TRIGGER_TIME, m_nTime);
@@ -278,28 +278,28 @@ DDX_Check (pDX, IDC_TRIGGER_AUTOADDWALL, m_bAutoAddWall);
 char szLabel [40];
 if (m_nType == TT_SPEEDBOOST) {
 	DDX_Slider (pDX, IDC_TRIGGER_SLIDER, m_nSliderValue);
-	sprintf (szLabel, "boost: %d%c", m_nSliderValue * 10, '%');
+	sprintf_s (szLabel, sizeof (szLabel), "boost: %d%c", m_nSliderValue * 10, '%');
 	}
 else if ((m_nType == TT_TELEPORT) || (m_nType == TT_SPAWN_BOT)) {
 	DDX_Slider (pDX, IDC_TRIGGER_SLIDER, m_nSliderValue);
-	sprintf (szLabel, "damage: %d%c", m_nSliderValue * 10, '%');
+	sprintf_s (szLabel, sizeof (szLabel), "damage: %d%c", m_nSliderValue * 10, '%');
 	}
 else
-	strcpy (szLabel, "n/a");
+	strcpy_s (szLabel, sizeof (szLabel), "n/a");
 SetDlgItemText (IDC_TRIGGER_SLIDER_TEXT, szLabel);
 DDX_Radio (pDX, IDC_TRIGGER_STANDARD, m_nClass);
 if (m_nType == TT_MESSAGE) {
-	strcpy (szLabel, "msg #");
+	strcpy_s (szLabel, sizeof (strcpy (szLabel), "msg #");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
 	}
 else if (m_nType == TT_SOUND) {
-	strcpy (szLabel, "sound #");
+	strcpy_s (szLabel, sizeof (strcpy (szLabel), "sound #");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
 	}
 else {
-	strcpy (szLabel, "strength:");
+	strcpy_s (szLabel, sizeof (strcpy (szLabel), "strength:");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "%");
 	}
@@ -353,7 +353,7 @@ CComboBox *pcb = CBTriggerNo ();
 pcb->ResetContent ();
 int i, j = NumTriggers ();
 for (i = 0; i < j; i++)
-	pcb->AddString (itoa (i, message, 10));
+	pcb->AddString (_itoa (i, message, 10));
 pcb->SetCurSel (m_nTrigger);
 }
 
@@ -370,7 +370,7 @@ if (m_pTrigger) {
 	m_nTargets = m_pTrigger->num_links;
 	int i;
 	for (i = 0; i < m_nTargets ; i++) {
-		sprintf (m_szTarget, "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
@@ -604,12 +604,12 @@ m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ()
 if (m_nClass) {
 	m_pObjTrigger = m_mine->AddObjTrigger (-1, m_nType);
 	m_pTrigger = m_pObjTrigger ? m_mine->ObjTriggers (m_mine->NumObjTriggers () - 1) : NULL;
-	m_nTrigger = m_pObjTrigger ? m_pObjTrigger - m_mine->ObjTriggerList () : -1; 
+	m_nTrigger = m_pObjTrigger ? int (m_pObjTrigger - m_mine->ObjTriggerList ()) : -1; 
 	}
 else {
 	m_pObjTrigger = NULL;
 	m_pTrigger = m_mine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_pTrigger ? m_pTrigger - m_mine->Triggers () : -1;
+	m_nTrigger = m_pTrigger ? int (m_pTrigger - m_mine->Triggers ()) : -1;
 	}
 // Redraw trigger window
 Refresh ();
@@ -728,7 +728,7 @@ void CTriggerTool::OnSetType ()
 {
 if (!GetMine ())
 	return;
-int nType = CBType ()->GetItemData (CBType ()->GetCurSel ());
+int nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType == TT_SMOKE_BRIGHTNESS) || ((nType >= TT_SMOKE_LIFE) && (nType <= TT_SMOKE_DRIFT))) {
 	ErrorMsg ("This trigger type is not supported any more.\nYou can use the effects tool to edit smoke emitters.");
 	return;
@@ -877,7 +877,7 @@ theApp.SetModified (TRUE);
 m_pTrigger->seg [m_nTargets] = segnum;
 m_pTrigger->side [m_nTargets] = sidenum - 1;
 m_pTrigger->num_links++;
-sprintf (m_szTarget, "   %d,%d", segnum, sidenum);
+sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
 *m_szTarget = '\0';
@@ -893,7 +893,7 @@ if (!GetMine ())
 	return;
 int segnum, sidenum;
 UpdateData (TRUE);
-sscanf (m_szTarget, "%d,%d", &segnum, &sidenum);
+sscanf_s (m_szTarget, "%d, %d", &segnum, &sidenum);
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()) || (sidenum < 1) || (sidenum > 6))
 	return;
 AddTarget (segnum, sidenum);

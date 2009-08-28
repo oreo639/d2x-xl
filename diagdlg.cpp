@@ -80,9 +80,9 @@ LPSTR CDiagTool::ItemText (int nValue, LPSTR pszPrefix)
 	static	char szText [20];
 
 if (pszPrefix)
-	sprintf (szText, "%s: %d", pszPrefix, nValue);
+	sprintf_s (szText, sizeof (szText), "%s: %d", pszPrefix, nValue);
 else
-	sprintf (szText, "%d", nValue);
+	sprintf_s (szText, sizeof (szText), "%d", nValue);
 return szText;
 }
 
@@ -273,7 +273,7 @@ CListBox *plb = LBBugs ();
 int nCount = plb->GetCount ();
 if (nCount) {
 	char	szMsg [256];
-	if ((plb->GetText (nCount - 1, szMsg) != LB_ERR) && !stricmp (szMsg, pszMsg))
+	if ((plb->GetText (nCount - 1, szMsg) != LB_ERR) && !_stricmp (szMsg, pszMsg))
 		return -1;
 	}
 if (nMaxMsgs >= 0)

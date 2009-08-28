@@ -215,7 +215,7 @@ void TextureMap(int resolution,
 	
 	// TEMPORARY
 	int inc_resolution = 1<<resolution;
-	INT16 segnum = segment - mine->Segments ();
+	INT16 segnum = INT16 (segment - mine->Segments ());
 	INT16 flick_light = mine->GetFlickeringLight (segnum, sidenum);
 	INT16 dscan_light,scan_light;
 	INT16 light[4];

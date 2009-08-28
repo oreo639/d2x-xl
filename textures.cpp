@@ -351,9 +351,9 @@ int CDTexture::Read (INT16 index)
 	
 if (m_bModified)
 	return 0;
-strcpy (path, (file_type == RDL_FILE) ? descent_path : descent2_path);
+strcpy_s (path, sizeof (path), (file_type == RDL_FILE) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
-	strcat (path, "groupa.pig");
+	strcat_s (path, sizeof (path), "groupa.pig");
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
 
@@ -383,7 +383,7 @@ if (!hGlobal) {
 texture_ptr = (INT16 *)LockResource (hGlobal);
 texture_table = texture_ptr + 2;
 
-fTextures = fopen (path,"rb");
+fopen_s (&fTextures, path, "rb");
 if (!fTextures) {
 	DEBUGMSG (" Reading texture: Texture file not found.");
 	rc = 1;
@@ -418,7 +418,7 @@ else {
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
 	// copy d1 texture into d2 texture struct
-	strncpy (d2_ptexture.name,ptexture.name,sizeof (ptexture.name));
+	strncpy_s (d2_ptexture.name, sizeof (d2_ptexture.name), ptexture.name, sizeof (ptexture.name));
 	d2_ptexture.dflags = ptexture.dflags;
 	d2_ptexture.xsize = ptexture.xsize;
 	d2_ptexture.ysize = ptexture.ysize;
@@ -644,7 +644,7 @@ if (d2_file_header.signature != 0x474f5044L) {  // 'DPOG'
 	goto abort;
 	}
 FreeTextureHandles ();
-sprintf (message," Pog manager: Reading %d custom textures",d2_file_header.num_textures);
+sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures",d2_file_header.num_textures);
 DEBUGMSG (message);
 xlatTbl = new UINT16 [d2_file_header.num_textures];
 if (!xlatTbl) {
@@ -751,11 +751,11 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		}
 	}
 if (nUnknownTextures) {
-	sprintf (message, " Pog manager: %d unknown textures found.", nUnknownTextures);
+	sprintf_s (message, sizeof (message), " Pog manager: %d unknown textures found.", nUnknownTextures);
 	DEBUGMSG (message);
 	}
 if (nMissingTextures) {
-	sprintf (message, " Pog manager: %d textures missing (Pog file probably damaged).", nMissingTextures);
+	sprintf_s (message, sizeof (message), " Pog manager: %d textures missing (Pog file probably damaged).", nMissingTextures);
 	DEBUGMSG (message);
 	}
 
@@ -779,7 +779,7 @@ void WritePogTextureHeader (FILE *pDestPigFile, CDTexture *pTexture, int nTextur
 	D2_PIG_TEXTURE d2texture;
 	UINT8 *pSrc;
 
-sprintf (d2texture.name, "new%04d", nTexture);
+sprintf_s (d2texture.name, sizeof (d2texture.name), "new%04d", nTexture);
 d2texture.dflags = 0;
 d2texture.flags = pTexture->m_nFormat ? 0x80 : 0;
 d2texture.xsize = pTexture->m_width % 256;
@@ -925,7 +925,7 @@ if (!hGlobal) {
 n_textures = (UINT32 *)LockResource (hGlobal);
 texture_table = (UINT16 *) (n_textures + 1);     // first long is number of textures
 
-sprintf (message,"%s\\dle_temp.pog",starting_directory);
+sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",starting_directory);
 
 // write file  header
 d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
@@ -955,7 +955,7 @@ for (i = 0; i < MAX_D2_TEXTURES; i++)
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
 	WritePogTextureHeader (outPigFile, &pxTx->texture, num, nOffset);
 
-sprintf (message," Pog manager: Saving %d custom textures",d2_file_header.num_textures);
+sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",d2_file_header.num_textures);
 DEBUGMSG (message);
 
 //-----------------------------------------
@@ -1175,8 +1175,9 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))	// this allows to suppress bit
 
 if (bShowTexture) {
 	// check pig file
-	strcpy (szFile, (file_type == RDL_FILE) ? descent_path : descent2_path);
-	if (fTextures = fopen (szFile,"rb")) {
+	strcpy_s (szFile, sizeof (szFile), (file_type == RDL_FILE) ? descent_path : descent2_path);
+	fopen_s (&fTextures, szFile, "rb");
+	if (fTextures) {
 		fseek (fTextures, 0, SEEK_SET);
 		data_offset = read_INT32 (fTextures);  // determine type of pig file
 		fclose (fTextures);

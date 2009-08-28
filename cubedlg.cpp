@@ -95,9 +95,8 @@ if (!GetMine ())
 CComboBox *pcb = CBCubeNo ();
 if (m_mine->SegCount () != pcb->GetCount ()) {
 	pcb->ResetContent ();
-	int i;
-	for (i = 0; i < m_mine->SegCount (); i++)
-		pcb->AddString (itoa (i, message, 10));
+	for (int i = 0; i < m_mine->SegCount (); i++)
+		pcb->AddString (_itoa (i, message, 10));
 	}
 pcb->SetCurSel (m_nCube);
 }
@@ -352,7 +351,7 @@ for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigg
 					break;
 				}
 			if (wallnum < m_mine->GameInfo ().walls.count) {
-				sprintf(message, "%d,%d", (int) wall->segnum, (int) wall->sidenum + 1);
+				sprintf_s (message, sizeof (message),  "%d,%d", (int) wall->segnum, (int) wall->sidenum + 1);
 				int h = LBTriggers ()->AddString (message);
 				LBTriggers ()->SetItemData (h, (long) wall->segnum * 0x10000L + wall->sidenum);
 				}
@@ -437,7 +436,7 @@ else if (IsEquipMaker (seg)) {
 		}
 	}
 else {
-	sprintf(message,"n/a");
+	sprintf_s (message, sizeof (message), "n/a");
 	for (i = 0; i < 2; i++) {
 		plb [i]->ResetContent();
 		plb [i]->AddString(message);
@@ -571,7 +570,7 @@ if (bMarked) {
 	nMaxSeg = m_mine->SegCount ();
 	}
 else {
-	nMinSeg = m_mine->CurrSeg () - m_mine->Segments ();
+	nMinSeg = int (m_mine->CurrSeg () - m_mine->Segments ());
 	nMaxSeg = nMinSeg + 1;
 	}
 segP = m_mine->Segments (nMinSeg);
@@ -833,7 +832,7 @@ int CCubeTool::FindBot (CListBox *plb, LPSTR pszObj)
 i = plb->GetCurSel ();
 if (i < 0)
 	return -1;
-j = plb->GetItemData (i);
+j = int (plb->GetItemData (i));
 if (pszObj)
 	LoadString (AfxGetInstanceHandle(), ROBOT_STRING_TABLE + j, pszObj, 80);
 return j;
@@ -848,7 +847,7 @@ int CCubeTool::FindEquip (CListBox *plb, LPSTR pszObj)
 i = plb->GetCurSel ();
 if (i < 0)
 	return -1;
-j = plb->GetItemData (i);
+j = int (plb->GetItemData (i));
 if (pszObj)
 	LoadString (AfxGetInstanceHandle(), POWERUP_STRING_TABLE + j, pszObj, 80);
 return j;
@@ -1002,7 +1001,7 @@ if (!LBTriggers ()->GetCount ())
 int i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
-long h = LBTriggers ()->GetItemData (i);
+long h = long (LBTriggers ()->GetItemData (i));
 m_mine->Current ()->segment = (INT16) (h / 0x10000L);
 m_mine->Current ()->side = (INT16) (h % 0x10000L);
 theApp.ToolView ()->EditWall ();
@@ -1022,7 +1021,7 @@ if (!LBTriggers ()->GetCount ())
 int i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
-long h = LBTriggers ()->GetItemData (i);
+long h = long (LBTriggers ()->GetItemData (i));
 m_mine->Other ()->segment = m_mine->Current ()->segment;
 m_mine->Other ()->side = m_mine->Current ()->side;
 m_mine->Current ()->segment = (INT16) (h / 0x10000L);
