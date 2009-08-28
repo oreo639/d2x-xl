@@ -885,6 +885,7 @@ bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth)
 	// initialize totals
 	int		nSegCount = SegCount ();
 	int		nSourceSeg;
+	int		nErrors = 0;
 	double	effect[4];
 
 GameInfo ().delta_lights.count = 0;
@@ -895,7 +896,9 @@ fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel
 	{
 #	pragma omp for private (effect)
-	for (nSourceSeg = 0; nSourceSeg < segCount; nSourceSeg++) {
+	for (nSourceSeg = 0; nSourceSeg < nSegCount; nSourceSeg++) {
+		if (nErrors)
+			continue;
 		CDSegment* srcSegP = Segments (nSourceSeg);
 		// skip if not marked unless we are automatically saving
 		if  (!(srcSegP->wall_bitmask & MARKED_MASK) && !force) 
@@ -948,10 +951,15 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 
 			if (GameInfo ().dl_indices.count >= MAX_DL_INDICES) {
-				char szMsg [256];
-				sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
-				DEBUGMSG (szMsg);
-				return false;
+#	pragma omp critical
+				{
+				if (++nErrors == 1) {
+					char szMsg [256];
+					sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+					DEBUGMSG (szMsg);
+					}
+				}
+				continue;
 				}
 
 			vms_vector A,source_center;
@@ -1014,7 +1022,10 @@ fLightScale = 1.0; ///= 100.0;
 				}
 
 			// loop on child Segments ()
+			int nChildSeg;
 			for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
+				if (nErrors)
+					continue;
 	#if 1
 				if (visited [nChildSeg] < 0)
 					continue;
@@ -1052,12 +1063,16 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
-							 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
-							char szMsg [256];
-							sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
-							DEBUGMSG (szMsg);
-							return false;
+						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
+#	pragma omp critical
+							{
+							if (++nErrors == 1) {
+								char szMsg [256];
+								sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+								DEBUGMSG (szMsg);
+								}
+							}
+							continue;
 							}
 						delta_light* dl;
 	#pragma omp critical
@@ -1084,18 +1099,16 @@ fLightScale = 1.0; ///= 100.0;
 	#endif
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || 
-								 (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
-								char szMsg [256];
-								sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
 #	pragma omp critical
 								{
-								DEBUGMSG (szMsg);
+								if (++nErrors == 1) {
+									char szMsg [256];
+									sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+									DEBUGMSG (szMsg);
+									}
 								}
-#if 1
-								delete[] visited;
-#endif
-								return false;
+								continue;
 								}
 							delta_light *dl;
 #	pragma omp critical
@@ -1122,7 +1135,7 @@ fLightScale = 1.0; ///= 100.0;
 			}
 		}
 	}
-return true;
+return (nErrors == 0);
 }
 
 //--------------------------------------------------------------------------
