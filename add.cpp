@@ -907,5 +907,5 @@ if (file_type == RDL_FILE) {
    ErrorMsg ("Control Panels are not supported in Descent 1.");
    return false;
 	}
-return AddDoorTrigger (WALL_OVERLAY, (1<<WALL_WALL_SWITCH), TT_UNLOCK_DOOR);
+return AddDoorTrigger (WALL_OVERLAY, WALL_WALL_SWITCH, TT_UNLOCK_DOOR);
 }

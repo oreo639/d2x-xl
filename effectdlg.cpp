@@ -386,8 +386,8 @@ void CEffectTool::OnSetObject ()
 {
 if (!GetMine ())
 	return;
-DWORD_PTR nOld = m_mine->Current ()->object;
-DWORD_PTR nNew = CBEffects ()->GetItemData (CBEffects ()->GetCurSel ());
+INT16 nOld = m_mine->Current ()->object;
+INT16 nNew = INT16 (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
 	theApp.MineView ()->RefreshObject (nOld, nNew);

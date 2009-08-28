@@ -165,10 +165,10 @@ if (m_mine->IsWall ()) {
 			m_maxPt.y = max(m_maxPt.y,y);
 			}
 		}
-	m_minPt.x = max(m_minPt.x,minRect.x);
-	m_maxPt.x = min(m_maxPt.x,maxRect.x);
-	m_minPt.y = max(m_minPt.y,minRect.y);
-	m_maxPt.y = min(m_maxPt.y,maxRect.y);
+	m_minPt.x = max(m_minPt.x, minRect.x);
+	m_maxPt.x = min(m_maxPt.x, maxRect.x);
+	m_minPt.y = max(m_minPt.y, minRect.y);
+	m_maxPt.y = min(m_maxPt.y, maxRect.y);
 
 	if (m_bShowChildren) {
 		int sidenum,childnum,linenum;
@@ -256,9 +256,9 @@ if (m_mine->IsWall ()) {
 	pDC->SelectObject (hRgn);
 	// draw uvl
 	pDC->SelectObject (hPenCurrentSide);
-	pDC->MoveTo (m_apts [3].x,m_apts [3].y);
+	pDC->MoveTo (m_apts [3].x, m_apts [3].y);
 	for (i=0;i<4;i++)
-		pDC->LineTo (m_apts [i].x,m_apts [i].y);
+		pDC->LineTo (m_apts [i].x, m_apts [i].y);
 	// highlight current line
 	pDC->SelectObject(hPenCurrentLine);
 	pDC->MoveTo (m_apts [nLine].x, m_apts [nLine].y);

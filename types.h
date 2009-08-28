@@ -268,12 +268,12 @@ typedef struct {
   UINT8 	submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
   VMS_VECTOR 	submodel_mins[MAX_SUBMODELS];
   VMS_VECTOR    submodel_maxs[MAX_SUBMODELS];
-  VMS_VECTOR 	mins,maxs;			  // min,max for whole model
+  VMS_VECTOR 	mins, maxs;			  // min, max for whole model
   FIX rad;
   UINT8		n_textures;
   UINT16	first_texture;
   UINT8		simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
-//  VMS_VECTOR min,max;
+//  VMS_VECTOR min, max;
 } POLYMODEL;
 
 typedef struct {

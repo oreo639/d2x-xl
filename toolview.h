@@ -151,7 +151,7 @@ class CTexToolDlg : public CToolDlg
 		DECLARE_DYNCREATE(CTexToolDlg)
 
 	CWnd		m_textureWnd;
-	UINT		m_nTimer;
+	UINT_PTR	m_nTimer;
 	int		m_nTexWndId;
 	int		m_nTimerId;
 	COLORREF	m_bkColor;

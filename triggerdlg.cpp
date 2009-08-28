@@ -256,7 +256,7 @@ if (!m_bInited)
 DDX_CBIndex (pDX, IDC_TRIGGER_TRIGGERNO, m_nTrigger);
 DDX_CBIndex (pDX, IDC_TRIGGER_D2TYPE, m_nType);
 if (pDX->m_bSaveAndValidate)
-	m_nType = int )CBType ()->GetItemData (CBType ()->GetCurSel ()));
+	m_nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 else
 	SelectItemData (CBType (), m_nType);
 DDX_Text (pDX, IDC_TRIGGER_TIME, m_nTime);
@@ -289,17 +289,17 @@ else
 SetDlgItemText (IDC_TRIGGER_SLIDER_TEXT, szLabel);
 DDX_Radio (pDX, IDC_TRIGGER_STANDARD, m_nClass);
 if (m_nType == TT_MESSAGE) {
-	strcpy_s (szLabel, sizeof (strcpy (szLabel), "msg #");
+	strcpy_s (szLabel, sizeof (szLabel), "msg #");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
 	}
 else if (m_nType == TT_SOUND) {
-	strcpy_s (szLabel, sizeof (strcpy (szLabel), "sound #");
+	strcpy_s (szLabel, sizeof (szLabel), "sound #");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
 	}
 else {
-	strcpy_s (szLabel, sizeof (strcpy (szLabel), "strength:");
+	strcpy_s (szLabel, sizeof (szLabel), "strength:");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "%");
 	}
@@ -352,8 +352,10 @@ if (!GetMine ())
 CComboBox *pcb = CBTriggerNo ();
 pcb->ResetContent ();
 int i, j = NumTriggers ();
-for (i = 0; i < j; i++)
-	pcb->AddString (_itoa (i, message, 10));
+for (i = 0; i < j; i++) {
+	_itoa_s (i, message, sizeof (message), 10);
+	pcb->AddString (message);
+	}
 pcb->SetCurSel (m_nTrigger);
 }
 

@@ -472,10 +472,10 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS)) {
-				fread(gModelData,model_data_size[i],1,file);
+				fread(gModelData, model_data_size[i],1,file);
 				break; // were done!
 			} else {
-				fseek(file ,model_data_size[i],SEEK_CUR);
+				fseek(file , model_data_size[i],SEEK_CUR);
 			}
 		}
 	} else {
@@ -528,10 +528,10 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) model_num) {
-				fread(gModelData,model_data_size[i],1,file);
+				fread(gModelData, model_data_size[i],1,file);
 				break; // were done!
 			} else {
-				fseek(file ,model_data_size[i],SEEK_CUR);
+				fseek(file , model_data_size[i],SEEK_CUR);
 			}
 		}
 	}

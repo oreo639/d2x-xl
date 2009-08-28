@@ -1768,7 +1768,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		} else {
 			strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
 		}
-		strupr (palette_name);
+		_strupr_s (palette_name, sizeof (palette_name));
 		strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
 		fwrite (palette_name, strlen((char *)palette_name), 1, save_file);
 	}

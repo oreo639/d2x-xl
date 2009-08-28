@@ -231,14 +231,14 @@ for (i = 0; i < nMax; i++) {
 	switch (nType) {
 		case 0:
 			h = pIndex ? pIndex [i]: i;
-			sprintf_s (szLabel, sizeof (szLabel)"%s", pszNames [h]);
+			sprintf_s (szLabel, sizeof (szLabel), "%s", pszNames [h]);
 			pszLabel = szLabel;
 //			pszLabel = pszNames [h];
 			break;
 		case 1:
 			sprintf_s (szLabel, sizeof (szLabel), "%d: ", i);
 			l = int (strlen (szLabel));
-			LoadString (hInst, ((int) pszNames) + i, szLabel + l, sizeof (szLabel) - l);
+			LoadString (hInst, int (pszNames) + i, szLabel + l, sizeof (szLabel) - l);
 			h = i;
 			break;
 		case 2:
@@ -246,7 +246,7 @@ for (i = 0; i < nMax; i++) {
 			h = pIndex ? pIndex [i]: i;
 			break;
 		case 3:
-			LoadString (hInst, ((int) pszNames) + i, szLabel, sizeof (szLabel));
+			LoadString (hInst, int (pszNames) + i, szLabel, sizeof (szLabel));
 			nErr = GetLastError ();
 			h = i;
 			break;

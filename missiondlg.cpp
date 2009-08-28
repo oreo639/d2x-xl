@@ -181,9 +181,10 @@ UpdateData (FALSE);
 
 LPSTR CMissionTool::CopyLevelName (LPSTR pszDest, LPSTR pszSrc)
 {
-strncpy_s (pszDest, 256, pszSrc, 12);
+strncpy_s (pszDest, 13, pszSrc, 12);
 pszDest [13] = '\0';
-return _strlwr_s (pszDest, 256);
+_strlwr_s (pszDest, 13);
+return pszDest;
 }
 
                         /*--------------------------*/
@@ -260,7 +261,8 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ())) {
 	if (*m_szLevel) {
 		FixLevelName (m_szLevel);
 		LBLevels ()->DeleteString (i);
-		LBLevels ()->InsertString (i, _strlwr_s (m_szLevel, sizeof (m_szLevel));
+		_strlwr_s (m_szLevel, sizeof (m_szLevel));
+		LBLevels ()->InsertString (i, m_szLevel);
 		LBLevels ()->SetCurSel (i);
 		*m_szLevel = '\0';
 	   AfxSetWindowText (((CWnd *) GetDlgItem (IDC_MISSION_LEVELEDIT))->GetSafeHwnd (), "");

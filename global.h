@@ -136,8 +136,8 @@ extern char  wall_state_names[4][8];
 extern APOINT *scrn; //MAX_VERTICES
 extern INT16 gx0, gy0, gz0;
 extern double spinx,spiny,spinz;
-extern double movex,movey,movez;
-extern INT16 max_x,min_x,max_y,min_y,max_z,min_z;
+extern double movex, movey, movez;
+extern INT16 max_x, min_x, max_y, min_y, max_z, min_z;
 extern double sizex,sizey,sizez;
 extern double angle_rate;
 extern FIX   move_rate;

@@ -95,8 +95,10 @@ if (!GetMine ())
 CComboBox *pcb = CBCubeNo ();
 if (m_mine->SegCount () != pcb->GetCount ()) {
 	pcb->ResetContent ();
-	for (int i = 0; i < m_mine->SegCount (); i++)
-		pcb->AddString (_itoa (i, message, 10));
+	for (int i = 0; i < m_mine->SegCount (); i++) {
+		_itoa_s (i, message, sizeof (message), 10);
+		pcb->AddString (message);
+		}
 	}
 pcb->SetCurSel (m_nCube);
 }

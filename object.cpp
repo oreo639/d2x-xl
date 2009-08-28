@@ -511,7 +511,7 @@ pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 if ((object_number >= 0) && (object_number <= 129)) {
 	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", object_number);
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
-	HRSRC hFind = FindResource (hInst,message, RT_BITMAP);
+	HRSRC hFind = FindResource (hInst, message, RT_BITMAP);
 	HGLOBAL hGlobal = LoadResource (hInst, hFind);
 	char *pRes = (char *)LockResource(hGlobal);
 	BITMAPINFO *bmi = (BITMAPINFO *)pRes;

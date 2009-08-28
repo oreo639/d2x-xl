@@ -244,14 +244,14 @@ static char *szMonths [] = {"jan", "feb", "mar", "apr", "may", "jun", "jul", "au
 struct tm *GetTimeDate (struct tm *td)
 {
    time_t t;
-   struct tm *h;
+   static struct tm h;
 
 time (&t);
-localtime_s (&h, t);
-h->tm_mon++;
+localtime_s (&h, &t);
+h.tm_mon++;
 if (!td)
-   return h;
-*td = *h;
+   return &h;
+*td = h;
 td->tm_year += (td->tm_year < 80 ? 2000 : 1900);
 return td;
 }

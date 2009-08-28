@@ -34,7 +34,7 @@ int _matherr (struct exception *e) {
 		   "%s (%8g,%8g): %s\n\n"
 		   "Press OK to continue, or Cancel to close DMB",
 		    e->name, e->arg1, e->arg2, whyS [e->type - 1]);
-  if (MessageBox(NULL,message,"Descent Level Editor XP - Error",
+  if (MessageBox(NULL, message,"Descent Level Editor XP - Error",
 	    MB_ICONEXCLAMATION|MB_OKCANCEL+MB_TASKMODAL) == IDCANCEL) {
     if (QueryMsg("Are you sure you want to abort DLE-XP?") == IDYES) {
       return 0;
@@ -106,7 +106,7 @@ void BezierFcn(vms_vector *pt, double u, int npts, vms_vector *p) {
 
 void CMine::UntwistSegment (INT16 segnum,INT16 sidenum) 
 {
-  double len,min_len;
+  double len, min_len;
   INT16 index,j;
   CDSegment *seg;
   INT16 verts [4];
@@ -546,7 +546,7 @@ void CMine::CalcSpline ()
   // calculate number of segments (min=1)
   length = CalcLength (points,points + 3);
   n_splines = (int)(abs(m_splineLength1)+abs(m_splineLength2))/20 + (int)(length / (40.0*(double)0x10000L));
-  n_splines = min(n_splines,m_nMaxSplines-1);
+  n_splines = min(n_splines, m_nMaxSplines-1);
 
   // calculate spline points
   for (i=0;i<=n_splines;i++) {

@@ -315,7 +315,7 @@ DDX_Text (pDX, IDC_TEXTURE_PASTEBUF, m_szTextureBuf, sizeof (m_szTextureBuf));
 	DDX_Text (pDX, IDC_TEXLIGHT_EDIT, m_szLight, sizeof (m_szLight));
 	DDX_Text (pDX, IDC_TEXLIGHT_COLORINDEX, m_nColorIndex);
 	}
-sprintf (szBrightness, "%d", m_nBrightness);
+sprintf_s (szBrightness, sizeof (szBrightness), "%d", m_nBrightness);
 DDX_Text (pDX, IDC_TEXTURE_BRIGHTNESS, szBrightness, sizeof (szBrightness));
 if (pDX->m_bSaveAndValidate && *szBrightness) {
 	m_nBrightness = atoi (szBrightness);
@@ -852,7 +852,7 @@ if (i = int (pcb->GetItemData (pcb->GetCurSel ())))
 	LoadString (hInst, texture_resource + i, t2Name, sizeof (t2Name));
 else
 	strcpy_s (t2Name, sizeof (t2Name), "(none)");
-sprintf(m_szTextureBuf ,"%s,%s", t1Name, t2Name);
+sprintf_s (m_szTextureBuf, sizeof (m_szTextureBuf ), "%s,%s", t1Name, t2Name);
 UpdateData (FALSE);
 //SaveTextureStatic->SetText(message);
 }

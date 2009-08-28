@@ -176,8 +176,10 @@ if (!GetMine ())
 CComboBox *pcb = CBWallNo ();
 pcb->ResetContent ();
 int i;
-for (i = 0; i < m_mine->GameInfo ().walls.count; i++)
-	pcb->AddString (_itoa (i, message, 10));
+for (i = 0; i < m_mine->GameInfo ().walls.count; i++) {
+	_itoa_s (i, message, sizeof (message), 10);
+	pcb->AddString (message);
+	}
 pcb->SetCurSel (m_nWall [0]);
 }
 
@@ -290,9 +292,9 @@ else {
 		}
 	// update wall data
 	if (m_pWall [0]->trigger == NO_TRIGGER)
-		sprintf_s (m_szMsg, sizeof (szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->sidenum);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->sidenum);
 	else
-		sprintf_s (m_szMsg, sizeof (szMsg), "cube = %ld, side = %ld, trigger= %d",	m_pWall [0]->segnum, m_pWall [0]->sidenum, (int)m_pWall [0]->trigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->segnum, m_pWall [0]->sidenum, (int)m_pWall [0]->trigger);
 
 	m_nWall [0] = int (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();

@@ -400,7 +400,7 @@ for (i = nNewTriggers; i; i--) {
 		if (trigger->seg [j] >= 0)
 			trigger->seg [j] = xlatSegNum [trigger->seg [j]];
 		else if (trigger->num_links == 1) {
-			DeleteTrigger (trigger - Triggers ());
+			DeleteTrigger (INT16 (trigger - Triggers ()));
 			i--;
 			}
 		else if (j < --(trigger->num_links)) {
@@ -650,8 +650,9 @@ if (!BrowseForFile (FALSE,
   }
   strcpy (szFile, ofn.lpstrFile);
 #endif
-bExtBlkFmt = strstr (strlwr (szFile), ".blx") != NULL;
-fopen (&fBlk, szFile, "w");
+_strlwr_s (szFile, sizeof (szFile));
+bExtBlkFmt = strstr (szFile, ".blx") != NULL;
+fopen_s (&fBlk, szFile, "w");
 if (!fBlk) {
 	ErrorMsg ("Unable to open block file");
 	return;
@@ -743,8 +744,9 @@ else {
   strcpy (szFile, ofn.lpstrFile);
   }
 #endif
-bExtBlkFmt = strstr (_strlwr_s (szFile, sizeof (szFile)), ".blx") != NULL;
-fopen (&fBlk, szFile, "w");
+_strlwr_s (szFile, sizeof (szFile));
+bExtBlkFmt = strstr (szFile, ".blx") != NULL;
+fopen_s (&fBlk, szFile, "w");
 if (!fBlk) {
 	sprintf_s (message, sizeof (message), "Unable to open block file '%s'", szFile);
 	ErrorMsg (message);
@@ -819,7 +821,8 @@ int CMine::ReadBlock (char *pszBlockFile,int option)
 	INT16 vertnum;
 	FILE *fBlk;
 
-fopen (&fBlk, _strlwr_s (pszBlockFile, 256), "r");
+_strlwr_s (pszBlockFile, 256);
+fopen_s (&fBlk, pszBlockFile, "r");
 if (!fBlk) {
 	ErrorMsg ("Unable to open block file");
 	return 1;

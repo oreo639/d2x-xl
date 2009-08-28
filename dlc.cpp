@@ -29,8 +29,8 @@ static char THIS_FILE[] = __FILE__;
 class CAboutDlg : public CDialog
 {
 public:
-	int m_nTimer;
-	int m_nTimeout;
+	UINT_PTR m_nTimer;
+	int		m_nTimeout;
 
 	CAboutDlg(int m_nTimeout = 0);
 
@@ -180,7 +180,7 @@ BOOL CDlcApp::InitInstance()
 	//  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	//Enable3dControls();			// Call this when using MFC in a shared DLL
 #else
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
@@ -425,7 +425,7 @@ void CDlcApp::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
 	char	szValue [20];
 
-sprintf (szValue, "%d", nValue);
+sprintf_s (szValue, sizeof (szValue), "%d", nValue);
 WritePrivateProfileString ("DLE-XP", szKey, szValue, "dle-xp.ini");
 }
 

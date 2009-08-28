@@ -352,15 +352,15 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 	} // end for
 	
 	// clip
-	x0 = max(x0,minpt.x);
-	x1 = min(x1,maxpt.x);
+	x0 = max(x0, minpt.x);
+	x1 = min(x1, maxpt.x);
 	
 	// Instead of finding every point using the matrix transformation,
 	// just define the end points and delta values then simply
 	// add the delta values to u and v
 	if (fabs((double) (x0 - x1)) >= 1) {
 		double u0,u1,v0,v1,w0,w1, h, scale, x0d, x1d;
-		UINT32 u,v,du,dv,m,vd,vm,dx;
+		UINT32 u,v,du,dv, m,vd,vm,dx;
 		dscan_light = (dscan_light - scan_light)/(x1-x0);
 		dscan_light <<= resolution;
 		

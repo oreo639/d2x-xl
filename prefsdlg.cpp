@@ -79,7 +79,8 @@ END_MESSAGE_MAP()
 
 void CPrefsDlg::CompletePath (LPSTR pszPath, LPSTR pszFile, LPSTR pszExt)
 {
-if (*pszPath && !strstr (_strlwr_s (pszPath, 256), pszExt)) {
+_strlwr_s (pszPath, 256);
+if (*pszPath && !strstr (pszPath, pszExt)) {
 	if (pszPath [strlen (pszPath) - 1] != '\\')
 		strcat_s (pszPath, 256, "\\");
 	strcat_s (pszPath, 256, pszFile);
@@ -365,13 +366,15 @@ void CPrefsDlg::SetAppSettings (bool bInitApp)
 {
 if (m_bInvalid)
 	return;
-if (strcmp (descent_path, _strlwr_s (m_d1Path, sizeof (m_d1Path)))) {
+_strlwr_s (m_d1Path, sizeof (m_d1Path));
+if (strcmp (descent_path, m_d1Path)) {
 	strcpy_s (descent_path, sizeof (descent_path), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, "dle-xp.ini");
 	if (file_type == RDL_FILE)
 		FreeTextureHandles();
 	}
-if (strcmp(descent2_path, strlwr (m_d2Path))) {
+_strlwr_s (m_d2Path, sizeof (m_d2Path));
+if (strcmp (descent2_path, m_d2Path)) {
 	bool	bChangePig = true;
 	if (HasCustomTextures() &&
 		 (QueryMsg ("Changing the pig file will affect the custom textures\n"
@@ -388,7 +391,8 @@ if (strcmp(descent2_path, strlwr (m_d2Path))) {
 		theApp.MineView ()->ResetView (true);
 		}
 	}
-if (strcmp (levels_path, _strlwr_s (m_missionsPath, sizeof (m_missionsPath)))) {
+_strlwr_s (m_missionsPath, sizeof (m_missionsPath));
+if (strcmp (levels_path, m_missionsPath)) {
 	strcpy_s (levels_path, sizeof (levels_path), m_missionsPath);
 	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, "dle-xp.ini");
 	}

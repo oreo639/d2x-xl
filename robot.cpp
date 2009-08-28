@@ -158,7 +158,7 @@ else if (type == EXTENDED_HAM)  {
 
   INT16 i, j;
   FILE *file;
-  fopen(&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
+  fopen_s (&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
   if (file) {
     for (i=0; i<t; i++ ) {
       fread(&pm, sizeof(POLYMODEL), 1, fp );
@@ -343,7 +343,7 @@ if (!fp) {
 
 p = ftell (fp);
 if (fSize < 0)
-	fSize = _filelength (fileno (fp));
+	fSize = _filelength (_fileno (fp));
 UINT32 id;
 id = read_INT32(fp); // "HXM!"
 if (id != 0x21584d48L) {

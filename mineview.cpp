@@ -406,7 +406,7 @@ if (m_bUpdate) {
 		GLKillWindow ();
 		GLRenderScene ();
 		}
-//	pViewDC->BitBlt (0,0,m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
+//	pViewDC->BitBlt (0,0, m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
 	}
 #else
 	CDlcDoc* pDoc = GetDocument();
@@ -420,7 +420,7 @@ if (m_bUpdate) {
 	m_pDC = pViewDC;
 	if (DrawRubberBox () || DrawDragPos ()) {
 		if (m_DIB)
-			pViewDC->BitBlt (0,0,m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
+			pViewDC->BitBlt (0,0, m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
 		return;
 		}
 	InitView (pViewDC);
@@ -477,7 +477,7 @@ DrawHighlight (m_mine);
 DrawMineCenter (pViewDC);
 // if we are using our own DC, then copy it to the display
 if (m_DIB)
-	pViewDC->BitBlt (0,0,m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
+	pViewDC->BitBlt (0,0, m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
 //CBRK (!m_bUpdate);
 m_bUpdate = false;
 }
@@ -1089,12 +1089,12 @@ for (line=0;line<12;line++) {
 			vert0 = line_vert [line] [0];
 			vert1 = line_vert [line] [1];
 			if (vert1>vert0) {
-				m_pDC->MoveTo (m_viewPoints [seg->verts [vert0]].x,m_viewPoints [seg->verts [vert0]].y);
-				m_pDC->LineTo (m_viewPoints [seg->verts [vert1]].x,m_viewPoints [seg->verts [vert1]].y);
+				m_pDC->MoveTo (m_viewPoints [seg->verts [vert0]].x, m_viewPoints [seg->verts [vert0]].y);
+				m_pDC->LineTo (m_viewPoints [seg->verts [vert1]].x, m_viewPoints [seg->verts [vert1]].y);
 				}
 			else {
-				m_pDC->MoveTo (m_viewPoints [seg->verts [vert1]].x,m_viewPoints [seg->verts [vert1]].y);
-				m_pDC->LineTo (m_viewPoints [seg->verts [vert0]].x,m_viewPoints [seg->verts [vert0]].y);
+				m_pDC->MoveTo (m_viewPoints [seg->verts [vert1]].x, m_viewPoints [seg->verts [vert1]].y);
+				m_pDC->LineTo (m_viewPoints [seg->verts [vert0]].x, m_viewPoints [seg->verts [vert0]].y);
 				}
 			}
 		}
@@ -1475,14 +1475,14 @@ for (i = 0; i < 8; i++, pv++) {
 	m_pDC->SetPixel (m_viewPoints [h].x, m_viewPoints [h].y, color);
 	}
 #if 0
-pDC->SetPixel (m_viewPoints [seg.verts [0]].x,m_viewPoints [seg.verts [0]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [1]].x,m_viewPoints [seg.verts [1]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [2]].x,m_viewPoints [seg.verts [2]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [3]].x,m_viewPoints [seg.verts [3]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [4]].x,m_viewPoints [seg.verts [4]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [5]].x,m_viewPoints [seg.verts [5]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [6]].x,m_viewPoints [seg.verts [6]].y,RGB(128,128,128));
-pDC->SetPixel (m_viewPoints [seg.verts [7]].x,m_viewPoints [seg.verts [7]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [0]].x, m_viewPoints [seg.verts [0]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [1]].x, m_viewPoints [seg.verts [1]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [2]].x, m_viewPoints [seg.verts [2]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [3]].x, m_viewPoints [seg.verts [3]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [4]].x, m_viewPoints [seg.verts [4]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [5]].x, m_viewPoints [seg.verts [5]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [6]].x, m_viewPoints [seg.verts [6]].y,RGB(128,128,128));
+pDC->SetPixel (m_viewPoints [seg.verts [7]].x, m_viewPoints [seg.verts [7]].y,RGB(128,128,128));
 #endif
 }
 
@@ -1564,7 +1564,7 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 	for (i=0;i<mine->VertCount ();i++)
 		if (*mine->VertStatus (i) & MARKED_MASK)
 			if (IN_RANGE(m_viewPoints [i].x,x_max) && IN_RANGE(m_viewPoints [i].y,y_max))
-				m_pDC->Rectangle(m_viewPoints [i].x - 4,m_viewPoints [i].y - 4, m_viewPoints [i].x + 4,m_viewPoints [i].y + 4);
+				m_pDC->Rectangle(m_viewPoints [i].x - 4, m_viewPoints [i].y - 4, m_viewPoints [i].x + 4, m_viewPoints [i].y + 4);
 }
 
 //--------------------------------------------------------------------------
@@ -1662,11 +1662,11 @@ void CMineView::DrawCurrentCube(CDSegment *seg, bool bPartial)
 void CMineView::DrawLine(CDSegment *seg,INT16 vert1,INT16 vert2) 
 {
 	if (vert2 > vert1) {
-		m_pDC->MoveTo(m_viewPoints [seg->verts [vert1]].x,m_viewPoints [seg->verts [vert1]].y);
-		m_pDC->LineTo(m_viewPoints [seg->verts [vert2]].x,m_viewPoints [seg->verts [vert2]].y);
+		m_pDC->MoveTo(m_viewPoints [seg->verts [vert1]].x, m_viewPoints [seg->verts [vert1]].y);
+		m_pDC->LineTo(m_viewPoints [seg->verts [vert2]].x, m_viewPoints [seg->verts [vert2]].y);
 	} else {
-		m_pDC->MoveTo(m_viewPoints [seg->verts [vert2]].x,m_viewPoints [seg->verts [vert2]].y);
-		m_pDC->LineTo(m_viewPoints [seg->verts [vert1]].x,m_viewPoints [seg->verts [vert1]].y);
+		m_pDC->MoveTo(m_viewPoints [seg->verts [vert2]].x, m_viewPoints [seg->verts [vert2]].y);
+		m_pDC->LineTo(m_viewPoints [seg->verts [vert1]].x, m_viewPoints [seg->verts [vert1]].y);
 	}
 }
 //--------------------------------------------------------------------------
@@ -1851,7 +1851,7 @@ void CMineView::DrawLights (CMine *mine)
 				l = min(0x1f,l);
 				l <<= 3;
 				m_pen m_penLight = CreatePen(PS_SOLID, 1, RGB(l,l,255-l));
-				SelectObject(m_pDC,m_penLight);
+				SelectObject(m_pDC, m_penLight);
 				corner.x = m_viewPoints [seg->verts [side_vert [sidenum] [k]]].x;
 				corner.y = m_viewPoints [seg->verts [side_vert [sidenum] [k]]].y;
 				corner.x = (corner.x + light_dest.x)>>1;
@@ -2255,13 +2255,13 @@ if (!clear_it) {
 // draw highlighted Segments () (other first, then current)
 if (mine->Current () == &mine->Current1 ()) {
 	if (mine->Current1 ().segment != mine->Current2 ().segment)
-		DrawCube (mine, mine->Current2 ().segment,mine->Current2 ().side,mine->Current2 ().line,mine->Current2 ().point,clear_it);
-	DrawCube (mine, mine->Current1 ().segment,mine->Current1 ().side,mine->Current1 ().line,mine->Current1 ().point,clear_it);
+		DrawCube (mine, mine->Current2 ().segment, mine->Current2 ().side, mine->Current2 ().line, mine->Current2 ().point,clear_it);
+	DrawCube (mine, mine->Current1 ().segment, mine->Current1 ().side, mine->Current1 ().line, mine->Current1 ().point,clear_it);
 	}
 else {
 	if (mine->Current1 ().segment != mine->Current2 ().segment)
-		DrawCube (mine, mine->Current1 ().segment,mine->Current1 ().side,mine->Current1 ().line,mine->Current1 ().point,clear_it);
-	DrawCube (mine, mine->Current2 ().segment,mine->Current2 ().side,mine->Current2 ().line,mine->Current2 ().point,clear_it);
+		DrawCube (mine, mine->Current1 ().segment, mine->Current1 ().side, mine->Current1 ().line, mine->Current1 ().point,clear_it);
+	DrawCube (mine, mine->Current2 ().segment, mine->Current2 ().side, mine->Current2 ().line, mine->Current2 ().point,clear_it);
 	}
 
 // draw Walls ()
@@ -2281,7 +2281,7 @@ if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
    INT16 vertex = mine->Segments () [mine->Current ()->segment].verts [side_vert [mine->Current ()->side] [mine->Current ()->point]];
 	char	szCoord [20];
-	sprintf (szCoord, "%1.4f,%1.4f,%1.4f)",mine->Vertices (vertex)->x,mine->Vertices (vertex)->y,mine->Vertices (vertex)->z);
+	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", mine->Vertices (vertex)->x, mine->Vertices (vertex)->y, mine->Vertices (vertex)->z);
 	strcat_s (message, sizeof (message), szCoord);
 	}
 else {
@@ -2289,35 +2289,35 @@ else {
 	strcat_s (message, sizeof (message), "  cube size: ");
 	vms_vector center1,center2;
    double length;
-   mine->CalcCenter (center1,mine->Current ()->segment,0);
-	mine->CalcCenter (center2,mine->Current ()->segment,2);
+   mine->CalcCenter (center1, mine->Current ()->segment,0);
+	mine->CalcCenter (center2, mine->Current ()->segment,2);
    length = mine->CalcLength(&center1,&center2) / F1_0;
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   mine->CalcCenter (center1,mine->Current ()->segment,1);
-   mine->CalcCenter (center2,mine->Current ()->segment,3);
+   mine->CalcCenter (center1, mine->Current ()->segment,1);
+   mine->CalcCenter (center2, mine->Current ()->segment,3);
 	length = mine->CalcLength(&center1,&center2) / F1_0;
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   mine->CalcCenter (center1,mine->Current ()->segment,4);
-   mine->CalcCenter (center2,mine->Current ()->segment,5);
+   mine->CalcCenter (center1, mine->Current ()->segment,4);
+   mine->CalcCenter (center2, mine->Current ()->segment,5);
    length = mine->CalcLength(&center1,&center2) / F1_0;
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  cube:");
-_itoa (mine->Current ()->segment,message + strlen(message),10);
+_itoa_s (mine->Current ()->segment, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " side:");
-_itoa ((currSide = mine->Current ()->side) + 1,message + strlen(message),10);
+_itoa ((currSide = mine->Current ()->side) + 1, message + strlen(message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " point:");
-_itoa (currPoint = mine->Current ()->point,message + strlen(message),10);
+_itoa (currPoint = mine->Current ()->point, message + strlen(message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa (mine->CurrSeg ()->verts [side_vert [currSide][currPoint]],message + strlen(message),10);
+_itoa (mine->CurrSeg ()->verts [side_vert [currSide][currPoint]], message + strlen(message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
-_itoa (mine->CurrSide ()->nBaseTex,message + strlen(message),10);
+_itoa (mine->CurrSide ()->nBaseTex, message + strlen(message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
-_itoa (mine->CurrSide ()->nOvlTex & 0x3fff,message + strlen(message),10);
+_itoa (mine->CurrSide ()->nOvlTex & 0x3fff, message + strlen(message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_sizex) / log (1.2);
@@ -2722,7 +2722,7 @@ void CMineView::CenterMine()
 	m_movey = -(max_y + min_y)/2.f;
 	m_movez = -(max_z + min_z)/2.f;
 	int factor;
-	int max_all = max(max(max_x-min_x,max_y-min_y),max_z-min_z)/20;
+	int max_all = max(max(max_x-min_x, max_y-min_y), max_z-min_z)/20;
 	if (max_all < 2)      factor = 14;
 	else if (max_all < 4) factor = 10;
 	else if (max_all < 8) factor = 8;
@@ -3606,7 +3606,7 @@ if (count == 1) {
 		for (i=0;i<3;i++) {
 			point2 = connect_points [point1] [i];
 			vert2 = m_mine->Segments () [m_mine->Current ()->segment].verts [point2];
-			if (m_mine->CalcLength (m_mine->Vertices (new_vert),m_mine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
+			if (m_mine->CalcLength (m_mine->Vertices (new_vert), m_mine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
 				}

@@ -157,7 +157,7 @@ void CTextureTool::SetLightButtons (LPSTR szLight, int nSpeed)
 
 if (szLight) {
 	if (szLight != m_szLight)
-		strcpy_s (m_szLight, (m_szLight), szLight);
+		strcpy_s (m_szLight, sizeof (m_szLight), szLight);
 	}
 else
 	UpdateData (TRUE);

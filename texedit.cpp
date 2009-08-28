@@ -844,7 +844,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	// read data into bitmap
 	m_bModified = TRUE;  // mark this as m_bModified
 	width = (((int)(bmih.biWidth*bmih.biBitCount + 31)>>3)) & ~3;
-	double mx,my;
+	double mx, my;
 	mx = (x1 - x0) / (double) m_nWidth;
 	my = (y1 - y0) / (double) m_nHeight;
 	for (y = 0; y < m_nHeight; y++) {
@@ -920,7 +920,8 @@ if (GetOpenFileName (&ofn)) {
 		goto errorExit;
 		}
 	Backup ();
-	if (!strcmp (_strlwr_s (m_szDefExt, sizeof (m_szDefExt)), ".bmp"))
+	_strlwr_s (m_szDefExt, sizeof (m_szDefExt));
+	if (!strcmp (m_szDefExt, ".bmp"))
 		bFuncRes = LoadBitmap (file);
 	else
 		bFuncRes = LoadTGA (file);
@@ -964,7 +965,7 @@ fwrite(&bmi->bmiHeader,sizeof(BITMAPINFOHEADER),1,file);
 fwrite(bmi->bmiColors,sizeof(RGBQUAD),256,file);
 
 // save bitmap data
-fwrite(m_bitmap,m_nSize,1,file);
+fwrite(m_bitmap, m_nSize,1,file);
 }
 
 //************************************************************************
@@ -1015,7 +1016,7 @@ ofn.nMaxFile = sizeof(szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName(&ofn)) {
 	_strlwr_s (ofn.lpstrFile, sizeof (ofn.lpstrFile));
-	fopen (&file, ofn.lpstrFile, "wb");
+	fopen_s (&file, ofn.lpstrFile, "wb");
 	if (!file) {
 		ErrorMsg ("Could not create bitmap file.");
 		return;

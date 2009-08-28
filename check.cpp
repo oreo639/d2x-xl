@@ -123,8 +123,8 @@ theApp.MineView ()->Refresh ();
 double CDiagTool::CalcFlatnessRatio (INT16 segnum, INT16 sidenum) 
 {
   INT16 vertnum[4],i;
-  vms_vector midpoint1,midpoint2;
-  double length1,length2,ave_length,mid_length;
+  vms_vector midpoint1, midpoint2;
+  double length1,length2,ave_length, mid_length;
   double ratio1,ratio2;
 	vms_vector *vert [4];
   // copy vertnums into an array
@@ -216,7 +216,7 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
 {
   dvector line1,line2,line3,orthog;
   double ratio;
-  double dot_product,magnitude1,magnitude2,angle;
+  double dot_product, magnitude1, magnitude2,angle;
   vms_vector *v0 = m_mine->Vertices (vert0);
   vms_vector *v1 = m_mine->Vertices (vert1);
   vms_vector *v2 = m_mine->Vertices (vert2);
@@ -606,7 +606,7 @@ if (!GetMine ())
 
   int h,objectnum,type,id,count,player[11],segnum,flags,corner,coops;
   vms_vector center;
-  double x,y,z,radius,max_radius,object_radius;
+  double x,y,z,radius, max_radius,object_radius;
   CDObject *obj = m_mine->Objects ();
 	CDObject *pPlayer = NULL;
   int	objCount = m_mine->GameInfo ().objects.count;
@@ -1393,7 +1393,7 @@ for (i = 0; i < nMatCens; i++) {
 				for (h = m_mine->SegCount (); h; h--, segP++)
 					if (segP->matcen_num >= nMatCens) {
 						segP->matcen_num = i;
-						matCenP [i].segnum = INT16 (nSegment = segP - m_mine->Segments ());
+						matCenP [i].segnum = nSegment = INT16 (segP - m_mine->Segments ());
 						break;
 						}
 				}
