@@ -340,7 +340,7 @@ if (file_type != RDL_FILE) {
 			}
 		// replace extension with .pig
 		if (i >= 4) {
-			palette_name [strlen((char *)palette_name) - 4] = NULL;
+			palette_name [strlen ((char *)palette_name) - 4] = NULL;
 			strcat_s (palette_name, sizeof (palette_name), ".PIG");
 			}
 		// try to find new pig file in same directory as Current () pig file
@@ -1763,14 +1763,14 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		strncpy_s (palette_name, sizeof (palette_name), name, 12);
 		palette_name [13] = NULL;  // null terminate just in case
 		// replace extension with *.256
-		if (strlen((char *)palette_name) > 4) {
-			strcpy_s (&palette_name [strlen((char *) palette_name) - 4], 5, ".256");
+		if (strlen ((char *)palette_name) > 4) {
+			strcpy_s (&palette_name [strlen ((char *) palette_name) - 4], 5, ".256");
 		} else {
 			strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
 		}
 		_strupr_s (palette_name, sizeof (palette_name));
 		strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
-		fwrite (palette_name, strlen((char *)palette_name), 1, save_file);
+		fwrite (palette_name, strlen ((char *)palette_name), 1, save_file);
 	}
 
 	// write reactor info
@@ -2230,7 +2230,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 
 	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo_size, 1, savefile);
 	if (GameInfo ().fileinfo_version >= 14) {  /*save mine filename */
-		fwrite(current_level_name, sizeof(char), strlen(current_level_name), savefile);
+		fwrite(current_level_name, sizeof(char), strlen (current_level_name), savefile);
 	}
 	if (file_type != RDL_FILE) {
 		fwrite("\n", 1, 1, savefile); // write an end - of - line
@@ -2269,7 +2269,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//==================== = WRITE PLAYER INFO==========================
 	GameInfo ().player.offset = ftell(savefile);
 	char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
-	fwrite(str, strlen(str) + 1, 1, savefile);
+	fwrite(str, strlen (str) + 1, 1, savefile);
 
 	//==================== = WRITE OBJECT INFO==========================
 	// note: same for D1 and D2

@@ -783,7 +783,7 @@ if (delete_index < 0) {
 #if 1//ndef _DEBUG
 if (!bExpertMode) {
 	strcpy_s (message, sizeof (message), "Are you sure you want to delete '");
-	plb->GetText (delete_index, message + strlen(message));
+	plb->GetText (delete_index, message + strlen (message));
 	strcat_s (message, sizeof (message), "'?\n(This operation will change the HOG hogFile immediately)");
 	if (QueryMsg (message) != IDYES)
 		return;
@@ -1165,7 +1165,7 @@ strncpy_s (base_name, sizeof (base_name), name_start,12);
 base_name[12] = NULL; // make sure it is null terminated
 name_end = strrchr((char *)base_name,'.');
 if (!name_end)
-	name_end = base_name + strlen((char *)base_name);
+	name_end = base_name + strlen ((char *)base_name);
 for (;name_end < base_name + 12; name_end++)
 	*name_end = '\0';
 // write rdl file
@@ -1195,8 +1195,8 @@ if (file_type == RL2_FILE) {
 		strncpy(szTmp,start_name,12);
 		szTmp[13] = NULL;  // null terminate just in case
 		// replace extension with *.256
-		if (strlen(szTmp) > 4) {
-			strcpy(szTmp + strlen(szTmp) - 4,".256");
+		if (strlen (szTmp) > 4) {
+			strcpy(szTmp + strlen (szTmp) - 4,".256");
 			}
 		else {
 			strcpy(szTmp,"GROUPA.256");

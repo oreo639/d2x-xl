@@ -158,18 +158,18 @@ for (ppe = palExt; *(ppe->szFile); ppe++)
 return MAKEINTRESOURCE (IDR_GROUPA_256);
 /*
 LPCTSTR	pszRsc;
-int len = strlen(descent2_path);
+int len = strlen (descent2_path);
 char *str;
 str = "ALIEN1_256";
-if (_strnicmp(&descent2_path[len-strlen(str)],str,6)==0) id = IDR_ALIEN1_256;
+if (_strnicmp(&descent2_path[len-strlen (str)],str,6)==0) id = IDR_ALIEN1_256;
 str = "ALIEN2_256";
-if (_strnicmp(&descent2_path[len-strlen(str)],str,6)==0) id = IDR_ALIEN2_256;
+if (_strnicmp(&descent2_path[len-strlen (str)],str,6)==0) id = IDR_ALIEN2_256;
 str = "FIRE_256";
-if (_strnicmp(&descent2_path[len-strlen(str)],str,4)==0) id = IDR_FIRE_256;
+if (_strnicmp(&descent2_path[len-strlen (str)],str,4)==0) id = IDR_FIRE_256;
 str = "WATER_256";
-if (_strnicmp(&descent2_path[len-strlen(str)],str,5)==0) id = IDR_WATER_256;
+if (_strnicmp(&descent2_path[len-strlen (str)],str,5)==0) id = IDR_WATER_256;
 str = "ICE_256";
-if (_strnicmp(&descent2_path[len-strlen(str)],str,3)==0) id = IDR_FIRE_256;
+if (_strnicmp(&descent2_path[len-strlen (str)],str,3)==0) id = IDR_FIRE_256;
 }
 pszRsc = MAKEINTRESOURCE(id);
 return pszRsc;
