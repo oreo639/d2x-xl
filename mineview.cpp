@@ -2311,13 +2311,13 @@ _itoa_s ((currSide = mine->Current ()->side) + 1, message + strlen (message), si
 strcat_s (message, sizeof (message), " point:");
 _itoa_s (currPoint = mine->Current ()->point, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa (mine->CurrSeg ()->verts [side_vert [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (mine->CurrSeg ()->verts [side_vert [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
 _itoa_s (mine->CurrSide ()->nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
-_itoa (mine->CurrSide ()->nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (mine->CurrSide ()->nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_sizex) / log (1.2);
@@ -2865,7 +2865,7 @@ BOOL CMineView::SetCursor (HCURSOR hCursor)
 {
 if (!hCursor) // || (hCursor == m_hCursor))
    return FALSE;
-::SetClassLong (GetSafeHwnd (), int (GCL_HCURSOR), int (hCursor));
+::SetClassLong (GetSafeHwnd (), -12 /*int (GCL_HCURSOR)*/, int (hCursor));
 return TRUE;
 }
                         
