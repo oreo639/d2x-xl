@@ -1314,7 +1314,7 @@ int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs)
 	char *psz;
 	CMine *mine = theApp.GetMine ();
 
-_strlwr_s (szHogFile, sizeof (szHogFile));
+_strlwr_s (szHogFile, 256);
 psz = strstr (szHogFile, "new.");
 if (!*szSubFile || psz) { 
 	CInputDialog dlg (theApp.MainFrame (), "Name mine", "Enter file name:", szSubFile, 9);

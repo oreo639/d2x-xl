@@ -158,7 +158,7 @@ for (i = SegCount (); i; i--, segP++)
 
 INT16 CMine::Load (const char *filename_passed, bool bLoadFromHog)
 {
-char filename [128];
+char filename [256];
 INT16 check_err;
 bool bNewMine = false;
 
@@ -182,6 +182,7 @@ else if (!CreateNewLevel ()) {
 disable_drawing = TRUE;
 if (!bLoadFromHog)
 	FreeTextureHandles ();
+
 LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && (level_version >= 9) && (level_version < LEVEL_VERSION)) {
 	if (level_version < 15) {
@@ -294,7 +295,7 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	INT32 gamedata_offset = 0;
 	INT32 mine_err, game_err = 0;
 	int	return_code = 0;
-	char	palette_name [16];
+	char	palette_name [256];
 	char*	ps;
 	INT16 nLights = 0;
 
@@ -361,6 +362,7 @@ if (file_type != RDL_FILE) {
 			}
 		}
 	}
+
 #if 1
 if (return_code = LoadPalette ())
 	goto load_end;
@@ -480,9 +482,9 @@ load_pog:
 if (!bLoadFromHog && (file_type != RDL_FILE)) {
 	ps = strstr (filename, ".");
 	if (ps)
-		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
+		strcpy_s (ps, 256 - (ps - filename), ".pog");
 	else
-		strcat_s (filename, sizeof (filename), ".pog");
+		strcat_s (filename, 256, ".pog");
 	fopen_s (&loadFile, filename, "rb");
 	if (loadFile) {
 		ReadPog (loadFile);
@@ -518,9 +520,9 @@ if (!bLoadFromHog && (file_type != RDL_FILE)) {
 #endif
 	ps = strstr (filename, ".");
 	if (ps)
-		strcpy_s (filename, sizeof (filename) - (ps - filename), ".hxm");
+		strcpy_s (filename, 256 - (ps - filename), ".hxm");
 	else
-		strcat_s (filename, sizeof (filename), ".hxm");
+		strcat_s (filename, 256, ".hxm");
 	fopen_s (&loadFile, filename, "rb");
 	if (loadFile) {
 		ReadHxmFile (loadFile, -1);
@@ -1699,7 +1701,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	CMine *mine = theApp.GetMine ();
 #endif
 	FILE * save_file;
-	char filename [128];
+	char filename [256];
 	INT32 minedata_offset, gamedata_offset, hostagetext_offset;
 	INT32 mine_err, game_err;
 

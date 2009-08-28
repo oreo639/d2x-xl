@@ -160,8 +160,27 @@ static const CLSID clsid  =
 /////////////////////////////////////////////////////////////////////////////
 // CDlcApp initialization
 
+#ifdef _DEBUG
+
+LPCTSTR PaletteResource (void);
+
+void DLE_XP_invalid_parameter(
+   const wchar_t * expression,
+   const wchar_t * function, 
+   const wchar_t * file, 
+   unsigned int line,
+   uintptr_t pReserved)
+{
+errno = EINVAL;
+}
+
+#endif
+
 BOOL CDlcApp::InitInstance()
 {
+#ifdef _DEBUG
+	_set_invalid_parameter_handler (DLE_XP_invalid_parameter);
+#endif
 	// Initialize OLE libraries
 	if (!AfxOleInit())
 	{
@@ -184,7 +203,6 @@ BOOL CDlcApp::InitInstance()
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
 	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
-
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
 

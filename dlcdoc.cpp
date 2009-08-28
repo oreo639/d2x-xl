@@ -492,7 +492,7 @@ if (p) {
 	szProg [i] = '\0';
 	_chdir (szProg);
 #ifdef _DEBUG
-	strcat (szProg, "d2x-xl-dbg.exe");
+	strcat_s (szProg, sizeof (szProg), "d2x-xl-dbg.exe");
 #else
 	strcat_s (szProg, sizeof (szProg), "d2x-xl.exe");
 #endif

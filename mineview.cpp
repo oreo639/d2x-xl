@@ -521,7 +521,7 @@ for (i = mine->FlickerLightCount (); i; i--, pfl++, plt++) {
 
                         /*--------------------------*/
 #ifdef _DEBUG
-static qqq1 = -1, qqq2 = 0;
+static int qqq1 = -1, qqq2 = 0;
 #endif
 
 bool CMineView::SetLightStatus (void)
