@@ -665,7 +665,6 @@ void CMine::Illuminate (
 	double			effect[4];
 	// find orthogonal angle of source segment
 	vms_vector		A;
-	INT16*			visited;
 
 //fLightScale /= 100.0;
 CalcOrthoVector (A,nSourceSeg, nSourceSide);
@@ -684,7 +683,7 @@ CalcCenter (source_center,nSourceSeg,nSourceSide);
 
 segP = Segments (nSourceSeg);
 #if 1//def _OPENMP
-visited = new INT16 [SegCount ()];
+INT16* visited = new INT16 [SegCount ()];
 memset (visited, 0xff, SegCount () * sizeof (*visited));
 SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
 visited [nSourceSeg] = m_lightRenderDepth;
