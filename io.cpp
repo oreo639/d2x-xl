@@ -257,40 +257,40 @@ return td;
 }
 
 
-char *TimeStr (char *pszTime)
+char *TimeStr (char *pszTime, int nDestSize)
 {
 	struct tm td;
 
 GetTimeDate (&td);
-sprintf_s (pszTime, sizeof (pszTime), "%d:%02d.%02d", td.tm_hour, td.tm_min, td.tm_sec);
+sprintf_s (pszTime, nDestSize, "%d:%02d.%02d", td.tm_hour, td.tm_min, td.tm_sec);
 return pszTime;
 } 
 
 
-char *DateStr (char *pszTime, bool bMonthNames)
+char *DateStr (char *pszTime, int nDestSize, bool bMonthNames)
 {
 	struct tm td;
 
 GetTimeDate (&td);
 if (bMonthNames)
-	sprintf_s (pszTime, sizeof (pszTime), "%d %s %d", td.tm_mday, szMonths [td.tm_mon - 1], td.tm_year);
+	sprintf_s (pszTime, nDestSize, "%d %s %d", td.tm_mday, szMonths [td.tm_mon - 1], td.tm_year);
 else
-	sprintf_s (pszTime, sizeof (pszTime), "%d/%d/%d", td.tm_mon, td.tm_mday, td.tm_year);
+	sprintf_s (pszTime, nDestSize, "%d/%d/%d", td.tm_mon, td.tm_mday, td.tm_year);
 return pszTime;
 } 
 
 
-char *TimeDateStr (char *pszTime, bool bMonthNames)
+char *TimeDateStr (char *pszTime, int nDestSize, bool bMonthNames)
 {
 	struct tm td;
 
 GetTimeDate (&td);
 if (bMonthNames)
-	sprintf_s (pszTime, sizeof (pszTime), "%d %s %d %d:%02d",
+	sprintf_s (pszTime, nDestSize, "%d %s %d %d:%02d",
 		       td.tm_mday, szMonths [td.tm_mon - 1], td.tm_year,
 			    td.tm_hour, td.tm_min);
 else
-	sprintf_s (pszTime, sizeof (pszTime), "%d/%d/%d %d:%02d",
+	sprintf_s (pszTime, nDestSize, "%d/%d/%d %d:%02d",
 		       td.tm_mon, td.tm_mday, td.tm_year,
 			    td.tm_hour, td.tm_min);
 return pszTime;

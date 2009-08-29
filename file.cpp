@@ -1137,8 +1137,8 @@ return lh.size + sizeof (lh);
 int MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs) 
 {
 	FILE *hogfile, *fTmp;
-	char *name_start,*name_end, *ext_start;
-	char base_name[13];
+	char *name_start,*pszNameEnd, *pszExtStart;
+	char szBaseName[13];
 	char filename[256];
 	char szTmp[256], szBase [13];
 	int custom_robots = 0;
@@ -1161,24 +1161,23 @@ if (name_start==NULL)
 	name_start = hogFilename;
 else
 	name_start++; // move to just pass the backslash
-strncpy_s (base_name, sizeof (base_name), name_start,12);
-base_name[12] = NULL; // make sure it is null terminated
-name_end = strrchr((char *)base_name,'.');
-if (!name_end)
-	name_end = base_name + strlen ((char *)base_name);
-for (;name_end < base_name + 12; name_end++)
-	*name_end = '\0';
+strncpy_s (szBaseName, sizeof (szBaseName), name_start,12);
+szBaseName[12] = NULL; // make sure it is null terminated
+pszNameEnd = strrchr((char *)szBaseName,'.');
+if (!pszNameEnd)
+	pszNameEnd = szBaseName + strlen ((char *)szBaseName);
+memset (pszNameEnd, 12 - (pszNameEnd - szBaseName), 0);
 // write rdl file
 if (*szSubFile) {
-	for (ext_start = szSubFile; *ext_start && (*ext_start != '.'); ext_start++)
+	for (pszExtStart = szSubFile; *pszExtStart && (*pszExtStart != '.'); pszExtStart++)
 		;
-	strncpy_s (base_name, sizeof (base_name), szSubFile, ext_start - szSubFile);
-	base_name [ext_start - szSubFile] = '\0';
+	strncpy_s (szBaseName, sizeof (szBaseName), szSubFile, pszExtStart - szSubFile);
+	szBaseName [pszExtStart - szSubFile] = '\0';
 	}
 if (file_type == RDL_FILE)
-	sprintf_s (szTmp, sizeof (szTmp), "%s.RDL", base_name);
+	sprintf_s (szTmp, sizeof (szTmp), "%s.RDL", szBaseName);
 else
-	sprintf_s (szTmp, sizeof (szTmp), "%s.RL2", base_name);
+	sprintf_s (szTmp, sizeof (szTmp), "%s.RL2", szBaseName);
 WriteSubFile (hogfile, rdlFilename, szTmp);
 _unlink (szTmp);
 #if 0
@@ -1215,7 +1214,7 @@ if (mine->HasCustomLightMap ()) {
 	if (fTmp) {
 		if (!WriteLightMap (fTmp)) {
 			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.lgt", base_name);
+			sprintf_s (szBase, sizeof (szBase), "%s.lgt", szBaseName);
 			WriteSubFile (hogfile, szTmp, szBase);
 			}
 		else
@@ -1230,7 +1229,7 @@ if (mine->HasCustomLightColors ()) {
 	if (fTmp) {
 		if (!mine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.clr", base_name);
+			sprintf_s (szBase, sizeof (szBase), "%s.clr", szBaseName);
 			WriteSubFile (hogfile, szTmp, szBase);
 			}
 		else
@@ -1246,7 +1245,7 @@ if (HasCustomPalette ()) {
 	if (fTmp) {
 		if (!WriteCustomPalette (fTmp)) {
 			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.pal", base_name);
+			sprintf_s (szBase, sizeof (szBase), "%s.pal", szBaseName);
 			WriteSubFile (hogfile, szTmp, szBase);
 			}
 		else
@@ -1268,7 +1267,7 @@ if (HasCustomTextures ()) {
 		if (fTmp) {
 			if (!CreatePog (fTmp)) {
 				fclose (fTmp);
-				sprintf_s (szBase, sizeof (szBase), "%s.pog", base_name);
+				sprintf_s (szBase, sizeof (szBase), "%s.pog", szBaseName);
 				WriteSubFile (hogfile, szTmp, szBase);
 				custom_textures = 1;
 				}
@@ -1290,7 +1289,7 @@ if (theApp.GetMine ()->HasCustomRobots ()) {
 		fopen_s (&fTmp, szTmp, "wb");
 		if (fTmp) {
 			if (!theApp.GetMine ()->WriteHxmFile (fTmp)) {
-				sprintf_s (szBase, sizeof (szBase), "%s.hxm", base_name);
+				sprintf_s (szBase, sizeof (szBase), "%s.hxm", szBaseName);
 				WriteSubFile (hogfile, szTmp, szBase);
 				custom_robots = 1;
 				}
@@ -1649,9 +1648,11 @@ if (pExt)
 strcat_s (szMsn, sizeof (szMsn), (file_type == RDL_FILE) ? ".msn" : ".mn2");
 if (bSaveAs) {
 	fopen_s (&fMsn, szMsn, "rt");
-	if (fMsn && (AfxMessageBox ("A mission file with that name already exists.\nOverwrite mission file?", MB_YESNO) != IDYES))
-		return -1;
-	fclose (fMsn);
+	if (fMsn) {
+		fclose (fMsn);
+		if (AfxMessageBox ("A mission file with that name already exists.\nOverwrite mission file?", MB_YESNO) != IDYES)
+			return -1;
+		}
 	}
 // create mission file
 fopen_s (&fMsn, szMsn, "wt");
@@ -1705,7 +1706,7 @@ return 0;
 
 int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int bCustomRobots, bool bSaveAs) 
 {
-	char	szBaseName [13];
+	char	szBaseName [256];
 	char	szTime [20];
 
 //memset (&missionData, 0, sizeof (missionData));
@@ -1725,7 +1726,7 @@ if (!strchr (pszSubFile, '.'))
 	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), file_type ? ".rl2" : ".rdl");
 missionData.numSecrets = 0;
 strcpy_s (missionData.missionInfo [0], sizeof (missionData.levelList [0]), "DLE-XP");
-strcpy_s (missionData.missionInfo [2], sizeof (missionData.levelList [2]), DateStr (szTime, true));
+strcpy_s (missionData.missionInfo [2], sizeof (missionData.levelList [2]), DateStr (szTime, sizeof (szTime), true));
 if (bSaveAs)
 	strcpy_s (missionData.missionInfo [3], sizeof (missionData.missionInfo [3]), "1.0");
 missionData.customFlags [0] = bCustomTextures;
