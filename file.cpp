@@ -336,7 +336,7 @@ if (!pszFile)
 if (pszSubFile) {
 	if (!FindFileData (pszFile, pszSubFile, &size, &offset))
 		return false;
-	strcpy_s (m_pszSubFile, sizeof (m_pszSubFile), pszSubFile);
+	strcpy_s (m_pszSubFile, 256, pszSubFile);
 	}
 else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
@@ -1166,7 +1166,7 @@ szBaseName[12] = NULL; // make sure it is null terminated
 pszNameEnd = strrchr((char *)szBaseName,'.');
 if (!pszNameEnd)
 	pszNameEnd = szBaseName + strlen ((char *)szBaseName);
-memset (pszNameEnd, 12 - (pszNameEnd - szBaseName), 0);
+memset (pszNameEnd, 0, 12 - int (pszNameEnd - szBaseName));
 // write rdl file
 if (*szSubFile) {
 	for (pszExtStart = szSubFile; *pszExtStart && (*pszExtStart != '.'); pszExtStart++)

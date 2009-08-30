@@ -243,7 +243,7 @@ UINT nID = UINT (pNMHDR->idFrom);
 if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
     pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND)) {
    // idFrom is actually the HWND of the tool
-   nID = int (::GetDlgCtrlID (HWND (nID)));
+   nID = int (::GetDlgCtrlID (HWND (UINT_PTR (nID))));
 }
 if (nID != 0) // will be zero on a separator
 	if (!LoadString (AfxGetApp()->m_hInstance, nID, strTipText, sizeof (strTipText)))
