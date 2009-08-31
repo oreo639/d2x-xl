@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "define.h"
 #include "types.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
 

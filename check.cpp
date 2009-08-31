@@ -1,7 +1,7 @@
 // Copyright (C) 1997 Bryan Aamot
 #include "stdafx.h"
 #include "afxpriv.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #include "dlcDoc.h"
 #include "mineview.h"

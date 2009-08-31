@@ -6,13 +6,13 @@
 #include "stophere.h"
 #include "define.h"
 #include "types.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
 #include "robot.h"
 #include "textures.h"
 #include "robot.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 #include "io.h"
 #include "file.h"
 #include "light.h"
@@ -135,11 +135,11 @@ else if (*pszDefExt)
 else
 	strcpy_s (pn, sizeof (pn), "*.*");
 CFileDialog d (bOpen, pszDefExt, pn, nFlags, pszFilter, pParentWnd);
-d.m_ofn.hInstance = AfxGetInstanceHandle ();
-d.m_ofn.lpstrInitialDir = pn;
+d.GetOFN ().hInstance = AfxGetInstanceHandle ();
+d.GetOFN ().lpstrInitialDir = pn;
 if ((nResult = d.DoModal ()) != IDOK)
 	return false;
-strcpy_s (pszFile, 256, d.m_ofn.lpstrFile);
+strcpy_s (pszFile, 256, d.GetOFN ().lpstrFile);
 return true;
 }
 

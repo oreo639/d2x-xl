@@ -3,7 +3,7 @@
 #if 0//ndef __COMCUBE_H_
 #define __COMCUBE_H_
 
-#include "dlcres.h"       // main symbols
+#include "dle-xp-res.h"       // main symbols
 
 /////////////////////////////////////////////////////////////////////////////
 // CComCube

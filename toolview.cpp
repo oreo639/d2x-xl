@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "afxpriv.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #include "dlcDoc.h"
 #include "mineview.h"

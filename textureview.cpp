@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #include "dlcDoc.h"
 #include "mineview.h"
@@ -57,7 +57,7 @@ m_iconSize.cy = 64 / scale;
 m_iconSpace.cx = m_iconSize.cx + 6;
 m_iconSpace.cy = m_iconSize.cy + 6;
 m_viewFlags = 0;
-TxtFilter () = GetPrivateProfileInt ("DLE-XP", "TxtFilter", 0xFFFFFFFF, "dle-xp.ini");
+TxtFilter () = GetPrivateProfileInt ("DLE-XP", "TxtFilter", 0xFFFFFFFF, INIFILE);
 m_bShowAll = TRUE;
 m_bDelayRefresh = false;
 };

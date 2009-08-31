@@ -3,7 +3,7 @@
 #ifndef __COMOBJ_H_
 #define __COMOBJ_H_
 
-#include "dlcres.h"       // main symbols
+#include "dle-xp-res.h"       // main symbols
 
 /////////////////////////////////////////////////////////////////////////////
 // CComObj

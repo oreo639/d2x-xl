@@ -1,6 +1,6 @@
 // ComMine.cpp : Implementation of CComMine
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "ComMine.h"
 #include "ComCube.h"

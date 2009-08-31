@@ -1,7 +1,7 @@
 // Copyright (c) 1998 Bryan Aamot, Brainware
 
 #include "stdafx.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 
 #include < math.h>
 #include "define.h"
@@ -12,7 +12,7 @@
 #include "io.h"
 #include "textures.h"
 #include "palette.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "robot.h"
 #include "file.h"
 #include "light.h"
@@ -303,7 +303,7 @@ changes_made = 0;
 fopen_s (&loadFile, filename, "rb");
 
 if (!loadFile) {
-	sprintf_s (message, sizeof (message),  "Error %d: Can't open file <%s>.", GetLastError (), filename);
+	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
 	ErrorMsg (message);
 	return -1;
 	}

@@ -1,7 +1,7 @@
 // Segment.cpp
 
 #include "stdafx.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 
 #include < math.h>
 #include "define.h"
@@ -12,7 +12,7 @@
 #include "io.h"
 #include "textures.h"
 #include "palette.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "robot.h"
 
 // -------------------------------------------------------------------------- 

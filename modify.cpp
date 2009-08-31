@@ -1,6 +1,6 @@
 // Copyright (C) 1997 Bryan Aamot
 #include "stdafx.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 
 #include <math.h>
 #include "define.h"
@@ -11,7 +11,7 @@
 #include "io.h"
 #include "textures.h"
 #include "palette.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #define CURRENT_POINT(a) ((Current ()->point + (a))&0x03)
 

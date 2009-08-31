@@ -8,7 +8,7 @@
 #include "global.h"
 #include "mine.h"
 #include "segment.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "dlcdoc.h"
 #include "mainfrm.h"
 #include "mineview.h"

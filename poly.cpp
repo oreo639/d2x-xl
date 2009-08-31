@@ -6,7 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "dlcDoc.h"
 #include "mineview.h"
 #include "define.h"

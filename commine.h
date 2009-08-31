@@ -3,7 +3,7 @@
 #if 0//ndef __COMMINE_H_
 #define __COMMINE_H_
 
-#include "dlcres.h"       // main symbols
+#include "dle-xp-res.h"       // main symbols
 
 /////////////////////////////////////////////////////////////////////////////
 // CComMine

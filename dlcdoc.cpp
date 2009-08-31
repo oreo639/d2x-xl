@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #include "dlcDoc.h"
 #include "global.h"

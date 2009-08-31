@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #include "MainFrm.h"
 #include "global.h"
@@ -375,7 +375,7 @@ m_texPaneWidth = -1;
 m_toolMode = 1;
 m_textureMode = 1;
 m_mineZoom = 0;
-nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, "dle-xp.ini");
+nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, INIFILE);
 #if EDITBAR
 m_bEditorTB = 1;
 #else
@@ -962,8 +962,8 @@ if (m_bEditorTB) {
 		MineView ()->GetClientRect (rc1);
 		MineView ()->ClientToScreen (rc1);
 		m_pEditTool->GetWindowRect (rc2);
-		rc0.left = GetPrivateProfileInt ("DLE-XP", "xEditTB", 0, "dle-xp.ini");
-		rc0.top = GetPrivateProfileInt ("DLE-XP", "yEditTB", 0, "dle-xp.ini");
+		rc0.left = GetPrivateProfileInt ("DLE-XP", "xEditTB", 0, INIFILE);
+		rc0.top = GetPrivateProfileInt ("DLE-XP", "yEditTB", 0, INIFILE);
 		if (rc0.left < 0)
 			rc0.left = 0;
 		else if (rc0.left > rc1.right)

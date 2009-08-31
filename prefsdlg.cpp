@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "afxpriv.h"
-#include "dlc.h"
+#include "dle-xp.h"
 
 #include "dlcDoc.h"
 #include "mineview.h"
@@ -94,39 +94,39 @@ CPrefsDlg::CPrefsDlg (CPropertySheet *pParent)
 {
 	char	szMoveRate [20];
 
-GetPrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, descent_path, sizeof (descent_path), "dle-xp.ini");
+GetPrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, descent_path, sizeof (descent_path), INIFILE);
 strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
 CompletePath (m_d1Path, "descent.pig", ".pig");
-GetPrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, descent2_path, sizeof (descent2_path), "dle-xp.ini");
+GetPrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, descent2_path, sizeof (descent2_path), INIFILE);
 strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
 CompletePath (m_d2Path, "groupa.pig", ".pig");
-GetPrivateProfileString ("DLE-XP", "LevelsDirectory", levels_path, levels_path, sizeof (levels_path), "dle-xp.ini");
+GetPrivateProfileString ("DLE-XP", "LevelsDirectory", levels_path, levels_path, sizeof (levels_path), INIFILE);
 strcpy_s (m_missionsPath, sizeof (m_missionsPath), levels_path);
 CompletePath (m_missionsPath, "descent2.hog", ".hog");
-GetPrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, player_profile, sizeof (player_profile), "dle-xp.ini");
+GetPrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, player_profile, sizeof (player_profile), INIFILE);
 m_depthPerceptions [0] = 10000;
 m_depthPerceptions [1] = 1000;
 m_depthPerceptions [2] = 100;
 m_depthPerceptions [3] = 50;
-m_iDepthPerception = GetPrivateProfileInt ("DLE-XP", "DepthPerception", 0, "dle-xp.ini");
+m_iDepthPerception = GetPrivateProfileInt ("DLE-XP", "DepthPerception", 0, INIFILE);
 m_rotateRates [4] = (double) PI / 4.0;
 m_rotateRates [3] = (double) PI / 8.0;
 m_rotateRates [2] = (double) PI / 16.0;
 m_rotateRates [1] = (double) PI / 32.0;
 m_rotateRates [0] = (double) PI / 64.0;
-m_iRotateRate = GetPrivateProfileInt ("DLE-XP", "RotateRate", 3, "dle-xp.ini");
-GetPrivateProfileString ("DLE-XP", "MoveRate", "1", szMoveRate, sizeof (szMoveRate), "dle-xp.ini");
+m_iRotateRate = GetPrivateProfileInt ("DLE-XP", "RotateRate", 3, INIFILE);
+GetPrivateProfileString ("DLE-XP", "MoveRate", "1", szMoveRate, sizeof (szMoveRate), INIFILE);
 m_moveRate = (double) atof (szMoveRate);
-m_bExpertMode = GetPrivateProfileInt ("DLE-XP", "ExpertMode", 1, "dle-xp.ini");
-m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, "dle-xp.ini");
+m_bExpertMode = GetPrivateProfileInt ("DLE-XP", "ExpertMode", 1, INIFILE);
+m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, INIFILE);
 bExpertMode = (m_bExpertMode != 0);
-m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, "dle-xp.ini");
-m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, "dle-xp.ini");
-m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, "dle-xp.ini");
-m_bUseTexColors = GetPrivateProfileInt ("DLE-XP", "UseTexColors", m_bUseTexColors, "dle-xp.ini");
-m_nViewDist = GetPrivateProfileInt ("DLE-XP", "ViewDistance", 0, "dle-xp.ini");
-m_nMineCenter = GetPrivateProfileInt ("DLE-XP", "MineCenter", 0, "dle-xp.ini");
-m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, "dle-xp.ini");
+m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
+m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
+m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
+m_bUseTexColors = GetPrivateProfileInt ("DLE-XP", "UseTexColors", m_bUseTexColors, INIFILE);
+m_nViewDist = GetPrivateProfileInt ("DLE-XP", "ViewDistance", 0, INIFILE);
+m_nMineCenter = GetPrivateProfileInt ("DLE-XP", "MineCenter", 0, INIFILE);
+m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, INIFILE);
 m_bNoRefresh = false;
 m_bInvalid = false;
 }
@@ -151,10 +151,10 @@ m_btnBrowseMissions.AutoLoad (IDC_PREFS_BROWSE_MISSIONS, this);
 m_mineViewFlags = theApp.MineView ()->GetMineViewFlags ();
 m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
-m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, "dle-xp.ini");
-m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, "dle-xp.ini");
-m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, "dle-xp.ini");
-m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, "dle-xp.ini");
+m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
+m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
+m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
+m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, INIFILE);
 InitSlider (IDC_PREFS_VIEWDIST, 0, MAX_VIEWDIST);
 int i;
 for (i = 0; i <= MAX_VIEWDIST; i++)
@@ -292,7 +292,7 @@ void CPrefsDlg::WritePrivateProfileInt (LPSTR szKey, int nValue)
 	char	szValue [20];
 
 sprintf_s (szValue, sizeof (szValue), "%d", nValue);
-WritePrivateProfileString ("DLE-XP", szKey, szValue, "dle-xp.ini");
+WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 }
 
                         /*--------------------------*/
@@ -302,7 +302,7 @@ void CPrefsDlg::WritePrivateProfileDouble (LPSTR szKey, double nValue)
 	char	szValue [20];
 
 sprintf_s (szValue, sizeof (szValue), "%1.3f", nValue);
-WritePrivateProfileString ("DLE-XP", szKey, szValue, "dle-xp.ini");
+WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 }
 
                         /*--------------------------*/
@@ -340,11 +340,11 @@ void CPrefsDlg::SaveAppSettings (bool bSaveFolders)
 	char	szMoveRate [20];
 
 if (bSaveFolders) {
-	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, "dle-xp.ini");
-	WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, "dle-xp.ini");
-	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, "dle-xp.ini");
+	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, INIFILE);
+	WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
+	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, INIFILE);
 	}
-WritePrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, "dle-xp.ini");
+WritePrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, INIFILE);
 WritePrivateProfileInt ("DepthPerception", m_iDepthPerception);
 WritePrivateProfileInt ("RotateRate", m_iRotateRate);
 sprintf_s (szMoveRate, sizeof (szMoveRate), "%1.3f", m_moveRate);
@@ -369,7 +369,7 @@ if (m_bInvalid)
 _strlwr_s (m_d1Path, sizeof (m_d1Path));
 if (strcmp (descent_path, m_d1Path)) {
 	strcpy_s (descent_path, sizeof (descent_path), m_d1Path);
-	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, "dle-xp.ini");
+	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, INIFILE);
 	if (file_type == RDL_FILE)
 		FreeTextureHandles();
 	}
@@ -384,7 +384,7 @@ if (strcmp (descent2_path, m_d2Path)) {
 		bChangePig = false;
 	if (bChangePig) {
 		strcpy_s (descent2_path, sizeof (descent2_path), m_d2Path);
-		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, "dle-xp.ini");
+		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
 		if (file_type == RL2_FILE)
 			FreeTextureHandles (false);
 		GetMine ()->LoadPalette ();
@@ -394,7 +394,7 @@ if (strcmp (descent2_path, m_d2Path)) {
 _strlwr_s (m_missionsPath, sizeof (m_missionsPath));
 if (strcmp (levels_path, m_missionsPath)) {
 	strcpy_s (levels_path, sizeof (levels_path), m_missionsPath);
-	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, "dle-xp.ini");
+	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, INIFILE);
 	}
 if (!bInitApp)
 	theApp.MineView ()->DelayRefresh (true);

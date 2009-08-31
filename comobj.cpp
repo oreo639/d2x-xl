@@ -1,6 +1,6 @@
 // ComObj.cpp : Implementation of CComObj
 #include "stdafx.h"
-#include "Dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "ComObj.h"
 

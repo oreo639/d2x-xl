@@ -7,7 +7,7 @@
 #include "stophere.h"
 #include "define.h"
 #include "types.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "light.h"
 #include "global.h"

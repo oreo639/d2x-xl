@@ -10,7 +10,7 @@
 #include "define.h"
 #include "types.h"
 #include "mine.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "global.h"
 
 //------------------------------------------------------------------------

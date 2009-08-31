@@ -8,12 +8,12 @@
 #include "stophere.h"
 #include "define.h"
 #include "types.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 #include "textures.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "texedit.h"
 
                         /*--------------------------*/

@@ -10,14 +10,14 @@
 #endif // _MSC_VER >= 1000
 
 #include "afxcview.h"
-#include "Dlc.h"
+#include "dle-xp.h"
 #include "DlcDoc.h"
 #include "Matrix.h"
 #include "poly.h"
 #include "define.h"
 #include "types.h"
 #include "global.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 #include "textures.h"
 #include "texedit.h"
 

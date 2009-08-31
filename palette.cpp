@@ -1,7 +1,7 @@
 // palette.cpp
 
 #include "stdafx.h"
-#include "dlcres.h"
+#include "dle-xp-res.h"
 
 #include <string.h>
 

@@ -1,6 +1,6 @@
 // ComCube.cpp : Implementation of CComCube
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "ComCube.h"
 

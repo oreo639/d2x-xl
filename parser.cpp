@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "dlc.h"
+#include "dle-xp.h"
 #include "mine.h"
 
 #include "Parser.h"
