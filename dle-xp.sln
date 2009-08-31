@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{EAF909A5-FA59-4C3D-9431-0FCC20D5BCF9}") = "DLE-XP", "dlc.icproj", "{FECE4B10-B5B9-44D7-AFBB-A93AA82E5712}"
+Project("{EAF909A5-FA59-4C3D-9431-0FCC20D5BCF9}") = "DLE-XP", "dle-xp.vcproj", "{FECE4B10-B5B9-44D7-AFBB-A93AA82E5712}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
