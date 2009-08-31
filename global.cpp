@@ -267,11 +267,11 @@ char message[256];
 char starting_directory[256];
 //UINT8 test5 = 0xBA;
 FIX grid = 0x2000L;   // 0.125
-char descent_path[256]="\\programs\\d2";
+char descent_path[256]="\\programs\\d2\\data";
 //UINT8 test6 = 0xBA;
-char descent2_path[256]="\\programs\\d2";
+char descent2_path[256]="\\programs\\d2\\data";
 //UINT8 test7 = 0xBA;
-char levels_path[256]="\\programs\\d2";
+char levels_path[256]="\\programs\\d2\\data";
 //UINT8 test8 = 0xBA;
 char player_profile [20] = "";
 

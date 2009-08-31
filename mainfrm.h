@@ -329,6 +329,10 @@ public:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
-#define INIFILE ".\\dle-xp.ini"
+#if defined(_DEBUG) && !defined(_M_IA64) && !defined(_M_AMD64)
+#	define INIFILE ".\\dle-xp.ini"
+#else
+#	define INIFILE "dle-xp.ini"
+#endif
 
 #endif //__mainframe_h
