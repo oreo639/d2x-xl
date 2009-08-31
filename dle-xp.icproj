@@ -5,7 +5,7 @@
 	Name="DLE-XP"
 	ProjectGUID="{FECE4B10-B5B9-44D7-AFBB-A93AA82E5712}"
 	VCNestedProjectGUID="{B1ED4CCD-992E-48E3-808A-64A33D8EC7F7}"
-	VCNestedProjectFileName="dlc.vcproj">
+	VCNestedProjectFileName="dle-xp.vcproj">
 	<Configurations>
 		<Configuration
 			Name="Intel Release|Win32">
