@@ -117,7 +117,6 @@ void CParser::RunScript()
 					}
 				}
 			}
-
 		}
 	}
 }

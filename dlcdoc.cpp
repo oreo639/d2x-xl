@@ -275,7 +275,7 @@ if (d.DoModal () == IDOK) {
 	else
 #endif
 		*m_szSubFile = '\0';
-	strcpy_s (m_mine->LevelName (), sizeof (m_mine->LevelName ()), new_level_name);
+	strcpy_s (m_mine->LevelName (), m_mine->LevelNameSize (), new_level_name);
 	m_mine->Reset ();
 	m_mine->SetLinesToDraw ();
 	theApp.MineView ()->ResetView (true);
