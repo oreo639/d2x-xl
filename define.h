@@ -594,7 +594,7 @@
 
 #define MAX_BRIGHTNESS	0x20000
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(_M_IA64) && !defined(_M_AMD64)
 #	define BRK _asm int 3;
 #	define CBRK(_cond)	if (_cond) BRK;
 #else

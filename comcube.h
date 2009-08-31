@@ -1,6 +1,6 @@
 // ComCube.h : Declaration of the CComCube
 
-#ifndef __COMCUBE_H_
+#if 0//ndef __COMCUBE_H_
 #define __COMCUBE_H_
 
 #include "dlcres.h"       // main symbols

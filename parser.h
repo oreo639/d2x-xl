@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_PARSER_H__6530B927_69FD_11D2_AE2A_00C0F03014A5__INCLUDED_)
+#if 0//!defined(AFX_PARSER_H__6530B927_69FD_11D2_AE2A_00C0F03014A5__INCLUDED_)
 #define AFX_PARSER_H__6530B927_69FD_11D2_AE2A_00C0F03014A5__INCLUDED_
 
 #if _MSC_VER >= 1000

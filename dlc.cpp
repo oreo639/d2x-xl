@@ -285,9 +285,11 @@ BOOL CDlcApp::InitInstance()
 CDLCModule _Module;
 
 BEGIN_OBJECT_MAP(ObjectMap)
+#if 0
 	OBJECT_ENTRY(CLSID_ComMine, CComMine)
 	OBJECT_ENTRY(CLSID_ComCube, CComCube)
 	OBJECT_ENTRY(CLSID_ComObj, CComObj)
+#endif
 END_OBJECT_MAP()
 
                         /*--------------------------*/

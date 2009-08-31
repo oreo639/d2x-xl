@@ -89,7 +89,9 @@ BEGIN_MESSAGE_MAP(CDlcDoc, CDocument)
 	ON_COMMAND(ID_DELETE_OBJECT, OnDeleteObject)
 	ON_COMMAND(ID_DELETE_WALL, OnDeleteWall)
 	ON_COMMAND(ID_DELETE_TRIGGER, OnDeleteTrigger)
+#if 0
 	ON_COMMAND(ID_FILE_TEST, OnFileTest)
+#endif
 	ON_COMMAND(ID_EDIT_CUT, OnCutBlock)
 	ON_COMMAND(ID_EDIT_COPY, OnCopyBlock)
 	ON_COMMAND(ID_EDIT_QUICKCOPY, OnQuickCopyBlock)
@@ -755,6 +757,7 @@ void CDlcDoc::SetMyText(LPCTSTR string)
 //	 m_Text.Format(string);
 }
 
+#if 0
 void CDlcDoc::OnFileTest() 
 {
 	CParser parser(m_mine);
@@ -762,4 +765,4 @@ void CDlcDoc::OnFileTest()
 	parser.RunScript();
 	
 }
-
+#endif

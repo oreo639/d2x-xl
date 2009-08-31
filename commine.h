@@ -1,6 +1,6 @@
 // ComMine.h : Declaration of the CComMine
 
-#ifndef __COMMINE_H_
+#if 0//ndef __COMMINE_H_
 #define __COMMINE_H_
 
 #include "dlcres.h"       // main symbols
