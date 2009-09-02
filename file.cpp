@@ -1327,10 +1327,10 @@ if (!*szSubFile || psz) {
 		*psz = '\0';
 	psz = strstr (szHogFile, "new.");
 	if (psz) {
-		strcpy_s (psz, sizeof (szHogFile) - (psz - szHogFile), szSubFile);
+		strcpy_s (psz, 256 - (psz - szHogFile), szSubFile);
 		strcat_s (szHogFile, sizeof (szHogFile), ".hog");
 		}
-	strcat_s (szSubFile, sizeof (szSubFile), (file_type == RDL_FILE) ? ".rdl" : ".rl2");
+	strcat_s (szSubFile, 256, (file_type == RDL_FILE) ? ".rdl" : ".rl2");
 	}
 // if this HOG file only contains one rdl/rl2 file total and
 // it has the same name as the current level, and it has

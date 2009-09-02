@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by dlc.rc
+// Used by dle-xp.rc
 //
 #define IDC_TRIGGER_SET_ORIENT2         10210
 

@@ -505,8 +505,8 @@ if (p) {
 								 "-auto_hogfile", szHogFile, 
 								 "-auto_mission", szMission, 
 								 NULL);
-	if (i < 0)
-		i = errno;
+	if (j < 0)
+		j = errno;
 	}
 }
 
