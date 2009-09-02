@@ -1,4 +1,4 @@
-// dlc.h : main header file for the DLC application
+// dle-xp.h : main header file for the DLC application
 //
 
 #ifndef __dlc_h
@@ -12,7 +12,7 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "dlcres.h"       // main symbols
+#include "dle-xp-res.h"       // main symbols
 #include "dlc_i.h"
 #include "mainfrm.h"
 #include "mine.h"

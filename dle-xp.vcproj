@@ -269,7 +269,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib glu32.lib"
-				OutputFile="\programs\d2\dle-xp.exe"
+				OutputFile="\programs\d2\dle-xp\dle-xp.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="false"
