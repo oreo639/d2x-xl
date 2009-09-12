@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
 	ON_EN_KILLFOCUS (IDC_LIGHTNING_GREEN, OnEdit)
 	ON_EN_KILLFOCUS (IDC_LIGHTNING_BLUE, OnEdit)
 	ON_EN_KILLFOCUS (IDC_LIGHTNING_ALPHA, OnEdit)
+	ON_EN_KILLFOCUS (IDC_SOUND_FILE, OnEdit)
 	ON_BN_CLICKED (IDC_LIGHTNING_SMOOTHE, OnEdit)
 	ON_BN_CLICKED (IDC_LIGHTNING_CLAMP, OnEdit)
 	ON_BN_CLICKED (IDC_LIGHTNING_SOUND, OnEdit)
@@ -202,7 +203,7 @@ else if (obj->id == LIGHTNING_ID) {
 		HiliteTarget ();
 		}
 	}
-if (obj->id == SMOKE_ID) {
+else if (obj->id == SOUND_ID) {
 	DDX_Text (pDX, IDC_SOUND_FILE, obj->rtype.soundInfo.szFilename, sizeof (obj->rtype.soundInfo.szFilename));
 	DDX_Slider (pDX, IDC_SOUND_VOLUME, obj->rtype.soundInfo.nVolume);
 	}
