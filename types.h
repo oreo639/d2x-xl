@@ -491,6 +491,7 @@ typedef struct tLightningInfo {
 
 
 typedef struct tSoundInfo {
+	int			nVolume;
 	char			szFilename [40];
 } tSoundInfo;
 

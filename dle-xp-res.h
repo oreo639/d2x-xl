@@ -696,7 +696,8 @@
 #define IDC_SMOKE_TYPE                  11762
 
 #define IDC_SOUND_FILE						 11763
-#define IDC_SOUND_ADD						 11764
+#define IDC_SOUND_VOLUME					 11764
+#define IDC_SOUND_ADD						 11765
 
 #define IDC_EFFECT_OBJECTS					 11795
 #define IDC_EFFECT_COPY						 11796

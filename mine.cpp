@@ -1685,6 +1685,7 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 
 	case RT_SOUND:
 		fread (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
+		obj->rtype.soundInfo.nVolume = read_INT32 (f);
 		break;
 
 	default:
@@ -2588,6 +2589,7 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 
 	case RT_SOUND:
 		fwrite (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
+		write_INT32 (obj->rtype.soundInfo.nVolume, f);
 		break;
 
 	default:

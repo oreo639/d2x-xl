@@ -108,7 +108,7 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
 	else if (obj->id == LIGHTNING_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", obj->rtype.lightningInfo.nId, i);
 	else if (obj->id == SOUND_ID)
-		sprintf_s (szEffect, sizeof (obj->rtype.soundInfo.szFilename), "%s", obj->rtype.soundInfo.szFilename, i);
+		sprintf_s (szEffect, sizeof (szEffect), "Sound (%d)", i);
 	else
 		continue;
 	index = cbEffects->AddString (szEffect);
@@ -128,6 +128,9 @@ for (nId = IDC_SMOKE_LIFE; nId <= IDC_SMOKE_BRIGHTNESS; nId++) {
 	for (i = 1; i <= 10; i++)
 		SlCtrl (nId)->SetTic (i);
 	}
+InitSlider (IDC_SOUND_VOLUME, 1, 10);
+for (i = 1; i <= 10; i++)
+	SlCtrl (IDC_SOUND_VOLUME)->SetTic (i);
 CComboBox *pcb = CBStyle ();
 pcb->AddString ("automatic");
 pcb->AddString ("erratic");
@@ -201,6 +204,7 @@ else if (obj->id == LIGHTNING_ID) {
 	}
 if (obj->id == SMOKE_ID) {
 	DDX_Text (pDX, IDC_SOUND_FILE, obj->rtype.soundInfo.szFilename, sizeof (obj->rtype.soundInfo.szFilename));
+	DDX_Slider (pDX, IDC_SOUND_VOLUME, obj->rtype.soundInfo.nVolume);
 	}
 }
 
@@ -231,7 +235,7 @@ if (!GetMine ())
 CDObject *obj = m_mine->CurrObj ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (obj->type == OBJ_EFFECT) && (obj->id == SMOKE_ID));
 CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (obj->type == OBJ_EFFECT) && (obj->id == LIGHTNING_ID));
-CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_FILE, (obj->type == OBJ_EFFECT) && (obj->id == SOUND_ID));
+CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (obj->type == OBJ_EFFECT) && (obj->id == SOUND_ID));
 }
 
 //------------------------------------------------------------------------
@@ -312,6 +316,7 @@ obj->type = OBJ_EFFECT;
 obj->id = SOUND_ID;
 obj->render_type = RT_SOUND;
 *obj->rtype.soundInfo.szFilename = '\0';
+obj->rtype.soundInfo.nVolume = 10;
 Refresh ();
 theApp.MineView ()->Refresh ();
 }
@@ -472,10 +477,11 @@ UpdateData (TRUE);
 
 bool CEffectTool::FindSlider (CScrollBar *pScrollBar)
 {
-int i;
-for (i = IDC_SMOKE_LIFE; i <= IDC_SMOKE_BRIGHTNESS; i++)
+for (int i = IDC_SMOKE_LIFE; i <= IDC_SMOKE_BRIGHTNESS; i++)
 	if (pScrollBar == (CScrollBar *) GetDlgItem (i))
 		return true;
+if (pScrollBar == (CScrollBar *) GetDlgItem (IDC_SOUND_VOLUME))
+	return true;
 return false;
 }
 
