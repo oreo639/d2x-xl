@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
 #endif
 	ON_BN_CLICKED (IDC_SMOKE_ADD, OnAddSmoke)
 	ON_BN_CLICKED (IDC_LIGHTNING_ADD, OnAddLightning)
+	ON_BN_CLICKED (IDC_SOUND_ADD, OnAddSound)
 	ON_BN_CLICKED (IDC_EFFECT_DELETE, OnDelete)
 	ON_BN_CLICKED (IDC_EFFECT_COPY, OnCopy)
 	ON_BN_CLICKED (IDC_EFFECT_PASTE, OnPaste)
@@ -106,6 +107,8 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
 		sprintf_s (szEffect, sizeof (szEffect), "Smoke");
 	else if (obj->id == LIGHTNING_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", obj->rtype.lightningInfo.nId, i);
+	else if (obj->id == SOUND_ID)
+		sprintf_s (szEffect, sizeof (obj->rtype.soundInfo.szFilename), "%s", obj->rtype.soundInfo.szFilename, i);
 	else
 		continue;
 	index = cbEffects->AddString (szEffect);
@@ -196,6 +199,9 @@ else if (obj->id == LIGHTNING_ID) {
 		HiliteTarget ();
 		}
 	}
+if (obj->id == SMOKE_ID) {
+	DDX_Text (pDX, IDC_SOUND_FILE, obj->rtype.soundInfo.szFilename, sizeof (obj->rtype.soundInfo.szFilename));
+	}
 }
 
 								/*--------------------------*/
@@ -225,6 +231,7 @@ if (!GetMine ())
 CDObject *obj = m_mine->CurrObj ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (obj->type == OBJ_EFFECT) && (obj->id == SMOKE_ID));
 CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (obj->type == OBJ_EFFECT) && (obj->id == LIGHTNING_ID));
+CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_FILE, (obj->type == OBJ_EFFECT) && (obj->id == SOUND_ID));
 }
 
 //------------------------------------------------------------------------
@@ -294,6 +301,23 @@ theApp.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------
 
+void CEffectTool::OnAddSound ()
+{
+if (!GetMine ())
+	return;
+if (!AddEffect ())
+	return;
+CDObject *obj = m_mine->CurrObj ();
+obj->type = OBJ_EFFECT;
+obj->id = SOUND_ID;
+obj->render_type = RT_SOUND;
+*obj->rtype.soundInfo.szFilename = '\0';
+Refresh ();
+theApp.MineView ()->Refresh ();
+}
+
+//------------------------------------------------------------------------
+
 void CEffectTool::OnDelete ()
 {
 if (!GetMine ())
@@ -333,6 +357,8 @@ if (m_nBufferId == SMOKE_ID)
 	m_smoke = obj->rtype.smokeInfo;
 else if (m_nBufferId == LIGHTNING_ID)
 	m_lightning = obj->rtype.lightningInfo;
+else if (m_nBufferId == SOUND_ID)
+	m_sound = obj->rtype.soundInfo;
 }
 
 //------------------------------------------------------------------------
@@ -354,6 +380,8 @@ if (obj->id == SMOKE_ID)
 	obj->rtype.smokeInfo = m_smoke;
 else if (obj->id == LIGHTNING_ID)
 	obj->rtype.lightningInfo = m_lightning;
+else if (obj->id == SOUND_ID)
+	obj->rtype.soundInfo = m_sound;
 Refresh ();
 }
 
@@ -377,6 +405,8 @@ for (i = m_mine->ObjCount (); i; i--, obj++)
 			obj->rtype.smokeInfo = m_smoke;
 		else if (m_nBufferId == LIGHTNING_ID)
 			obj->rtype.lightningInfo = m_lightning;
+		else if (m_nBufferId == SOUND_ID)
+			obj->rtype.soundInfo = m_sound;
 Refresh ();
 }
 

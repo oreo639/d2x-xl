@@ -2651,15 +2651,17 @@ BEGIN
     CONTROL         "in plane",IDC_LIGHTNING_INPLANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,397,64,41,10
     COMBOBOX        IDC_LIGHTNING_STYLE,396,87,56,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&add",IDC_LIGHTNING_ADD,401,108,51,12
-    COMBOBOX        IDC_EFFECT_OBJECTS,483,18,74,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "&copy",IDC_EFFECT_COPY,521,67,51,12
-    PUSHBUTTON      "&paste",IDC_EFFECT_PASTE,521,81,51,12
-    PUSHBUTTON      "paste &all",IDC_EFFECT_PASTE_ALL,521,95,51,12
-    PUSHBUTTON      "&delete",IDC_EFFECT_DELETE,521,108,51,12
+    EDITTEXT        IDC_SOUND_FILE,499,19,90,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "&add",IDC_SOUND_ADD,555,40,51,12
+    COMBOBOX        IDC_EFFECT_OBJECTS,497,74,74,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&copy",IDC_EFFECT_COPY,482,95,51,12
+    PUSHBUTTON      "&paste",IDC_EFFECT_PASTE,482,109,51,12
+    PUSHBUTTON      "paste &all",IDC_EFFECT_PASTE_ALL,536,95,51,12
+    PUSHBUTTON      "&delete",IDC_EFFECT_DELETE,536,108,51,12
     GROUPBOX        "smoke data",IDC_STATIC,2,0,187,124,BS_RIGHT
     RTEXT           "life time:",IDC_STATIC,16,14,34,8
     RTEXT           "particle size:",IDC_STATIC,7,29,42,8
-    RTEXT           "density:",IDC_STATIC,16,44,34,8
+    RTEXT           "density:",IDC_STATIC,14,44,34,8
     RTEXT           "speed:",IDC_STATIC,16,59,34,8
     RTEXT           "drift:",IDC_STATIC,18,75,31,8
     RTEXT           "brightness:",IDC_STATIC,12,90,37,8
@@ -2684,7 +2686,7 @@ BEGIN
     RTEXT           "green:",IDC_STATIC,305,79,21,8
     RTEXT           "blue:",IDC_STATIC,309,90,16,8
     RTEXT           "alpha:",IDC_STATIC,305,102,20,8
-    GROUPBOX        "effect objects",IDC_STATIC,461,0,116,124,BS_RIGHT
+    GROUPBOX        "effect objects",IDC_STATIC,461,61,149,63,BS_RIGHT
     RTEXT           "style:",IDC_STATIC,377,89,17,8
     LTEXT           "deg",IDC_STATIC,365,54,18,8
     RTEXT           "red:",IDC_STATIC,122,23,13,8
@@ -2693,6 +2695,9 @@ BEGIN
     RTEXT           "alpha:",IDC_STATIC,116,58,20,8
     RTEXT           "side:",IDC_STATIC,120,74,16,8
     RTEXT           "type:",IDC_STATIC,120,89,16,8
+    GROUPBOX        "sound objects",IDC_STATIC,461,0,149,56,BS_RIGHT
+    LTEXT           ".wav",IDC_STATIC,590,21,16,8
+    LTEXT           "sound file:",IDC_STATIC,465,22,33,8
 END
 
 IDD_EFFECTDATA2 DIALOGEX 0, 0, 222, 389
@@ -2730,18 +2735,20 @@ BEGIN
     EDITTEXT        IDC_LIGHTNING_BLUE,145,210,36,12,ES_CENTER
     EDITTEXT        IDC_LIGHTNING_ALPHA,145,222,36,12,ES_CENTER
     COMBOBOX        IDC_LIGHTNING_STYLE,145,235,56,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "smoothe",IDC_LIGHTNING_SMOOTHE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,240,43,10
-    CONTROL         "clamp",IDC_LIGHTNING_CLAMP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,249,35,10
-    CONTROL         "plasma",IDC_LIGHTNING_PLASMA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,258,38,9
-    CONTROL         "sound",IDC_LIGHTNING_SOUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,267,35,10
-    CONTROL         "random",IDC_LIGHTNING_RANDOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,276,39,10
-    CONTROL         "in plane",IDC_LIGHTNING_INPLANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,285,41,10
-    PUSHBUTTON      "&add",IDC_LIGHTNING_ADD,152,285,51,12
-    COMBOBOX        IDC_EFFECT_OBJECTS,18,322,74,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "&copy",IDC_EFFECT_COPY,99,315,51,12
-    PUSHBUTTON      "&paste",IDC_EFFECT_PASTE,99,329,51,12
-    PUSHBUTTON      "paste &all",IDC_EFFECT_PASTE_ALL,152,315,51,12
-    PUSHBUTTON      "&delete",IDC_EFFECT_DELETE,152,329,51,12
+    CONTROL         "smoothe",IDC_LIGHTNING_SMOOTHE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,31,244,43,10
+    CONTROL         "clamp",IDC_LIGHTNING_CLAMP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,31,253,35,10
+    CONTROL         "plasma",IDC_LIGHTNING_PLASMA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,31,262,38,9
+    CONTROL         "sound",IDC_LIGHTNING_SOUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,76,245,35,10
+    CONTROL         "random",IDC_LIGHTNING_RANDOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,76,254,39,10
+    CONTROL         "in plane",IDC_LIGHTNING_INPLANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,76,263,41,10
+    PUSHBUTTON      "&add",IDC_LIGHTNING_ADD,152,259,51,12
+    EDITTEXT        IDC_SOUND_FILE,53,298,129,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "&add",IDC_SOUND_ADD,152,317,51,12
+    COMBOBOX        IDC_EFFECT_OBJECTS,18,357,74,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&copy",IDC_EFFECT_COPY,99,350,51,12
+    PUSHBUTTON      "&paste",IDC_EFFECT_PASTE,99,364,51,12
+    PUSHBUTTON      "paste &all",IDC_EFFECT_PASTE_ALL,152,350,51,12
+    PUSHBUTTON      "&delete",IDC_EFFECT_DELETE,152,364,51,12
     GROUPBOX        "smoke data",IDC_STATIC,12,0,195,120,BS_RIGHT
     RTEXT           "life time:",IDC_STATIC,25,14,34,8
     RTEXT           "particle size:",IDC_STATIC,15,29,43,8
@@ -2769,8 +2776,8 @@ BEGIN
     RTEXT           "green:",IDC_STATIC,123,201,21,8
     RTEXT           "blue:",IDC_STATIC,127,212,16,8
     RTEXT           "alpha:",IDC_STATIC,123,224,20,8
-    GROUPBOX        "lightning data",IDC_STATIC,12,123,195,177,BS_RIGHT
-    GROUPBOX        "effect objects",IDC_STATIC,12,303,195,46,BS_RIGHT
+    GROUPBOX        "lightning data",IDC_STATIC,12,123,195,154,BS_RIGHT
+    GROUPBOX        "effect objects",IDC_STATIC,12,338,195,46,BS_RIGHT
     RTEXT           "style:",IDC_STATIC,126,237,17,8
     LTEXT           "deg",IDC_STATIC,183,176,18,8
     RTEXT           "red:",IDC_STATIC,132,20,13,8
@@ -2779,6 +2786,9 @@ BEGIN
     RTEXT           "alpha:",IDC_STATIC,126,55,20,8
     RTEXT           "side:",IDC_STATIC,130,71,16,8
     RTEXT           "type:",IDC_STATIC,130,87,16,8
+    GROUPBOX        "sound data",IDC_STATIC,12,279,195,56,BS_RIGHT
+    LTEXT           ".wav",IDC_STATIC,183,300,16,8
+    LTEXT           "sound file:",IDC_STATIC,19,300,33,8
 END
 
 
@@ -6049,8 +6059,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,54,0
- PRODUCTVERSION 1,7,54,0
+ FILEVERSION 1,7,55,0
+ PRODUCTVERSION 1,7,55,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6067,12 +6077,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
             VALUE "FileDescription", "Descent Level Editor XP [2 sep 2009]"
-            VALUE "FileVersion", "1, 7, 54, 0"
+            VALUE "FileVersion", "1, 7, 55, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2009 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 7, 54, 0"
+            VALUE "ProductVersion", "1, 7, 55, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6099,7 +6109,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.7.54\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.7.55\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

@@ -20,7 +20,7 @@
 #define IDI_ICON1                       145
 #define IDR_TEXTURE_DAT                 147
 #define IDR_TEXTURE2_DAT                149
-#define IDR_DLE_XP                         151
+#define IDR_DLE_XP                      151
 #define IDI_ICON2                       153
 #define IDB_TOOLBAR                     155
 #define IDR_EDIT_TOOLBAR                156
@@ -694,6 +694,9 @@
 #define IDC_SMOKE_ALPHA						 11760
 #define IDC_SMOKE_SIDE						 11761
 #define IDC_SMOKE_TYPE                  11762
+
+#define IDC_SOUND_FILE						 11763
+#define IDC_SOUND_ADD						 11764
 
 #define IDC_EFFECT_OBJECTS					 11795
 #define IDC_EFFECT_COPY						 11796

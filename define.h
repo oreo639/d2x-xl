@@ -521,6 +521,7 @@
 
 #define SMOKE_ID				0
 #define LIGHTNING_ID			1
+#define SOUND_ID				2
 
 /*Result types */
 #define RESULT_NOTHING  0 /* Ignore this collision */
@@ -561,6 +562,7 @@
 #define RT_SHRAPNELS		10	 // white explosion light blast
 #define RT_SMOKE			11
 #define RT_LIGHTNING    12
+#define RT_SOUND			13
 
 /*misc object flags */
 #define OF_EXPLODING       1  /*this object is exploding */

@@ -1683,6 +1683,10 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 			obj->rtype.lightningInfo.color [i] = read_INT8 (f);
 		break;
 
+	case RT_SOUND:
+		fread (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
+		break;
+
 	default:
 		break;
 	}
@@ -2580,6 +2584,10 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 		write_INT8 (obj->rtype.lightningInfo.bInPlane, f);
 		for (i = 0; i < 4; i++, f)
 			write_INT8 (obj->rtype.lightningInfo.color [i], f);
+		break;
+
+	case RT_SOUND:
+		fwrite (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
 		break;
 
 	default:

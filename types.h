@@ -490,6 +490,10 @@ typedef struct tLightningInfo {
 } tLightningInfo;
 
 
+typedef struct tSoundInfo {
+	char			szFilename [40];
+} tSoundInfo;
+
 class CDObject {
 public:
   INT16      signature;     /* reduced size to save memory */
@@ -531,6 +535,7 @@ public:
     vclip_info			vclip_info;    /*vclip */
 	 tSmokeInfo			smokeInfo;
 	 tLightningInfo	lightningInfo;
+	 tSoundInfo			soundInfo;
   } rtype;
 
 };

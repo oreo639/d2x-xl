@@ -475,6 +475,7 @@ class CEffectTool : public CToolDlg
 		CDObject				*m_obj;
 		tSmokeInfo			m_smoke;
 		tLightningInfo		m_lightning;
+		tSoundInfo			m_sound;
 		int					m_nBufferId;
 
 		CEffectTool (CPropertySheet *pParent = NULL);
@@ -504,6 +505,7 @@ class CEffectTool : public CToolDlg
 		afx_msg void OnEdit ();
 		afx_msg void OnAddSmoke ();
 		afx_msg void OnAddLightning ();
+		afx_msg void OnAddSound ();
 		afx_msg void OnDelete ();
 		afx_msg void OnCopy ();
 		afx_msg void OnPaste ();
