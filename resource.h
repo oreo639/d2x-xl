@@ -2,9 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
-#define IDC_SMOKE_LIFE2                 11765
-#define IDC_SOUND_VOLUME                11765
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
