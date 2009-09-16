@@ -36,7 +36,8 @@ BEGIN_MESSAGE_MAP (CTriggerTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TRIGGER_PERMANENT, OnD2Flag3)
 	ON_BN_CLICKED (IDC_TRIGGER_ALTERNATE, OnD2Flag4)
 	ON_BN_CLICKED (IDC_TRIGGER_SET_ORIENT, OnD2Flag5)
-	ON_BN_CLICKED (IDC_TRIGGER_AUTOPLAY, OnD2Flag7)
+	ON_BN_CLICKED (IDC_TRIGGER_AUTOPLAY, OnD2Flag6)
+	ON_BN_CLICKED (IDC_TRIGGER_SILENT, OnD2Flag7)
 
 	ON_BN_CLICKED (IDC_TRIGGER_CONTROLDOORS, OnD1Flag1)
 	ON_BN_CLICKED (IDC_TRIGGER_SHIELDDRAIN, OnD1Flag2)
@@ -82,7 +83,7 @@ static INT16 triggerFlagsD1 [MAX_TRIGGER_FLAGS] = {
 	TRIGGER_CLOSE_WALL
 	};
 
-static int d2FlagXlat [] = {0, 1, 3, 4, 5, 7};
+static int d2FlagXlat [] = {0, 1, 3, 4, 5, 7, 6};
 
 //------------------------------------------------------------------------
 // DIALOG - CTriggerTool (constructor)
@@ -263,7 +264,7 @@ DDX_Text (pDX, IDC_TRIGGER_TIME, m_nTime);
 int i;
 for (i = 0; i < 2; i++)
 	DDX_Check (pDX, IDC_TRIGGER_NOMESSAGE + i, m_bD2Flags [i]);
-for (i = 2; i < 6; i++)
+for (i = 2; i < 7; i++)
 	DDX_Check (pDX, IDC_TRIGGER_NOMESSAGE + i, m_bD2Flags [d2FlagXlat [i]]);
 for (i = 0; i < MAX_TRIGGER_FLAGS; i++)
 	DDX_Check (pDX, IDC_TRIGGER_CONTROLDOORS + i, m_bD1Flags [i]);
@@ -535,6 +536,7 @@ if (m_nTrigger != -1) {
 		m_bD2Flags [3] = ((m_pTrigger->flags & TF_PERMANENT) != 0);
 		m_bD2Flags [4] = ((m_pTrigger->flags & TF_ALTERNATE) != 0);
 		m_bD2Flags [5] = ((m_pTrigger->flags & TF_SET_ORIENT) != 0);
+		m_bD2Flags [6] = ((m_pTrigger->flags & TF_SILENT) != 0);
 		m_bD2Flags [7] = ((m_pTrigger->flags & TF_AUTOPLAY) != 0);
 		if (m_nType == TT_SPEEDBOOST)
 			m_nSliderValue = m_pTrigger->value;
@@ -852,7 +854,8 @@ void CTriggerTool::OnD2Flag2 () { OnD2Flag (1); }
 void CTriggerTool::OnD2Flag3 () { OnD2Flag (2); }
 void CTriggerTool::OnD2Flag4 () { OnD2Flag (3); }
 void CTriggerTool::OnD2Flag5 () { OnD2Flag (4); }
-void CTriggerTool::OnD2Flag7 () { OnD2Flag (5); }
+void CTriggerTool::OnD2Flag6 () { OnD2Flag (5); }
+void CTriggerTool::OnD2Flag7 () { OnD2Flag (6); }
 
 //------------------------------------------------------------------------
 // CTriggerTool - Add cube/side to trigger list

@@ -815,10 +815,6 @@
 					>
 				</File>
 				<File
-					RelativePath="Resource.h"
-					>
-				</File>
-				<File
 					RelativePath="StdAfx.h"
 					>
 				</File>
@@ -3046,6 +3042,10 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="Resource.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -3893,15 +3893,15 @@
 				>
 			</File>
 			<File
+				RelativePath="res\dlc.ico"
+				>
+			</File>
+			<File
 				RelativePath="Resource\Dlc.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\icons\Dlc.ico"
-				>
-			</File>
-			<File
-				RelativePath="res\dlc.ico"
 				>
 			</File>
 			<File
@@ -5277,15 +5277,15 @@
 				>
 			</File>
 			<File
+				RelativePath="res\Toolbar.bmp"
+				>
+			</File>
+			<File
 				RelativePath="Resource\toolbar.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\toolbar.bmp"
-				>
-			</File>
-			<File
-				RelativePath="res\Toolbar.bmp"
 				>
 			</File>
 			<File
@@ -7094,6 +7094,78 @@
 			</File>
 			<File
 				RelativePath=".\Resource\palettes\Water.256"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Documents"
+			>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-history.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-cubes.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-diagnosis.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-effects.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-gui.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-intro.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-light.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-lighting-howto.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-misc.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-mission.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-missions.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-music-howto.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-objects.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-textures.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-triggers.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\dle-xp-walls.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Websites\Descent\downloads.html"
 				>
 			</File>
 		</Filter>

@@ -2418,7 +2418,9 @@ write_INT8 (wallP->cloak_value, fp);
 // ------------------------------------------------------------------------
 void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 {
-#if DEMO== 0
+if ((level_version < 9) && (obj->type >= OBJ_CAMBOT))
+	return;	// not a d2x-xl level, but a d2x-xl object
+
 	int i;
 	write_INT8(obj->type, f);
 	write_INT8(obj->id, f);
@@ -2557,7 +2559,7 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 		write_INT32 (obj->rtype.smokeInfo.nSpeed, f);
 		write_INT32 (obj->rtype.smokeInfo.nDrift, f);
 		write_INT32 (obj->rtype.smokeInfo.nBrightness, f);
-		for (i = 0; i < 4; i++, f)
+		for (i = 0; i < 4; i++)
 			write_INT8 (obj->rtype.smokeInfo.color [i], f);
 		write_INT8 (obj->rtype.smokeInfo.nSide, f);
 		write_INT8 (obj->rtype.smokeInfo.nType, f);
@@ -2583,7 +2585,7 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 		write_INT8 (obj->rtype.lightningInfo.bSound, f);
 		write_INT8 (obj->rtype.lightningInfo.bRandom, f);
 		write_INT8 (obj->rtype.lightningInfo.bInPlane, f);
-		for (i = 0; i < 4; i++, f)
+		for (i = 0; i < 4; i++)
 			write_INT8 (obj->rtype.lightningInfo.color [i], f);
 		break;
 
@@ -2596,7 +2598,6 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 		break;
 
 	}
-#endif //DEMO
 }
 
 

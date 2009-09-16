@@ -729,7 +729,7 @@ class CTriggerTool : public CTexToolDlg
 		int					m_nTargets;
 		int					m_iTarget;
 		int					m_bD1Flags [MAX_TRIGGER_FLAGS];
-		int					m_bD2Flags [8];
+		int					m_bD2Flags [16];
 		int					m_nSliderValue;
 		double				m_nStrength;
 		CDTrigger			m_defTrigger;
@@ -793,6 +793,7 @@ class CTriggerTool : public CTexToolDlg
 		afx_msg void OnD2Flag3 ();
 		afx_msg void OnD2Flag4 ();
 		afx_msg void OnD2Flag5 ();
+		afx_msg void OnD2Flag6 ();
 		afx_msg void OnD2Flag7 ();
 		afx_msg void OnD1Flag1 ();
 		afx_msg void OnD1Flag2 ();
