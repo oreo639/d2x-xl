@@ -1001,7 +1001,7 @@ for (i = m_nHeight; i; i--) {
 void CTextureEdit::OnSave ()
 {
 OPENFILENAME ofn;
-char szFile[80] = "\0";
+char szFile[256] = "\0";
 FILE *file;
 
 memset(&ofn, 0, sizeof(OPENFILENAME));
@@ -1014,8 +1014,8 @@ ofn.lpstrFile= szFile;
 ofn.lpstrDefExt = "bmp";
 ofn.nMaxFile = sizeof(szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-if (GetSaveFileName(&ofn)) {
-	_strlwr_s (ofn.lpstrFile, sizeof (ofn.lpstrFile));
+if (GetSaveFileName (&ofn)) {
+	_strlwr_s (ofn.lpstrFile, sizeof (szFile));
 	fopen_s (&file, ofn.lpstrFile, "wb");
 	if (!file) {
 		ErrorMsg ("Could not create bitmap file.");
