@@ -36,7 +36,8 @@ enum eObjectViewFlags {
 	eViewObjectsKeys          = (1<<4),
 	eViewObjectsHostages      = (1<<5),
 	eViewObjectsControlCenter = (1<<6),
-	eViewObjectsAll           = 0x7f
+	eViewObjectsEffects       = (1<<7),
+	eViewObjectsAll           = 0xff
 	};
 
 enum eMineViewFlags {

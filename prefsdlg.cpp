@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CPrefsDlg, CToolDlg)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_KEYS, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_HOSTAGES, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_REACTOR, OnOK)
+	ON_BN_CLICKED (IDC_PREFS_VIEW_EFFECTS, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_WALLS, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_SPECIAL, OnOK)
 	ON_BN_CLICKED (IDC_PREFS_VIEW_LIGHTS, OnOK)
@@ -221,7 +222,7 @@ if (!pDX->m_bSaveAndValidate) {
 h = ((m_texViewFlags & eViewMineUsedTextures) != 0);
 DDX_Check (pDX, IDC_PREFS_VIEW_ALLTEXTURES, h);
 m_texViewFlags = h ? eViewMineUsedTextures : 0;
-for (i = 0; i <= IDC_PREFS_VIEW_REACTOR - IDC_PREFS_VIEW_ROBOTS; i++) {
+for (i = 0; i <= IDC_PREFS_VIEW_EFFECTS - IDC_PREFS_VIEW_ROBOTS; i++) {
 	h = ((m_objViewFlags & (1 << i)) != 0);
 	DDX_Check (pDX, IDC_PREFS_VIEW_ROBOTS + i, h);
 	if (h)

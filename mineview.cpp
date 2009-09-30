@@ -1499,7 +1499,7 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 
 	// draw marked/special Segments () and Walls ()
 	if (!clear_it) {
-		for (i=0;i<mine->SegCount ();i++) {
+		for (i = 0; i < mine->SegCount (); i++) {
 			seg = mine->Segments () + i;
 			if (seg->wall_bitmask & MARKED_MASK) {
 				m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
@@ -2045,32 +2045,32 @@ switch (clear_it) {
 				case OBJ_CAMBOT: /* an evil enemy */
 				case OBJ_EXPLOSION:
 				case OBJ_MONSTERBALL:
-				m_pDC->SelectObject(m_penMagenta);
-				break;
+					m_pDC->SelectObject(m_penMagenta);
+					break;
 				case OBJ_SMOKE:
 				case OBJ_EFFECT:
-				m_pDC->SelectObject(m_penHiGreen);
-				break;
-			case OBJ_HOSTAGE: /* a hostage you need to rescue */
-				m_pDC->SelectObject(m_penBlue);
-				break;
-			case OBJ_PLAYER: /* the player on the console */
-				m_pDC->SelectObject(m_penCyan);
-				break;
-			case OBJ_WEAPON: // exploding mine
-				m_pDC->SelectObject(m_penDkGreen);
-				break;
-			case OBJ_POWERUP: /* a powerup you can pick up */
-				m_pDC->SelectObject(m_penOrange);
-				break;
-			case OBJ_CNTRLCEN: /* the control center */
-				m_pDC->SelectObject(m_penLtGray);
-				break;
-			case OBJ_COOP: /* a cooperative player object */
-				m_pDC->SelectObject(m_penCyan);
-				break;
-			default:
-				m_pDC->SelectObject(m_penGreen);
+					m_pDC->SelectObject(m_penHiGreen);
+					break;
+				case OBJ_HOSTAGE: /* a hostage you need to rescue */
+					m_pDC->SelectObject(m_penBlue);
+					break;
+				case OBJ_PLAYER: /* the player on the console */
+					m_pDC->SelectObject(m_penCyan);
+					break;
+				case OBJ_WEAPON: // exploding mine
+					m_pDC->SelectObject(m_penDkGreen);
+					break;
+				case OBJ_POWERUP: /* a powerup you can pick up */
+					m_pDC->SelectObject(m_penOrange);
+					break;
+				case OBJ_CNTRLCEN: /* the control center */
+					m_pDC->SelectObject(m_penLtGray);
+					break;
+				case OBJ_COOP: /* a cooperative player object */
+					m_pDC->SelectObject(m_penCyan);
+					break;
+				default:
+					m_pDC->SelectObject(m_penGreen);
 				}
 			}
 		break;
@@ -2157,10 +2157,11 @@ switch(obj->type) {
 	case OBJ_ROBOT:
 	case OBJ_CAMBOT:
 	case OBJ_SMOKE:
-	case OBJ_EFFECT:
 	case OBJ_EXPLOSION:
 	case OBJ_MONSTERBALL:
 		return ViewObject (eViewObjectsRobots);
+	case OBJ_EFFECT:
+		return ViewObject (eViewObjectsEffects);
 	case OBJ_HOSTAGE:
 		return ViewObject (eViewObjectsHostages);
 	case OBJ_PLAYER:
