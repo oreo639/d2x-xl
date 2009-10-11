@@ -1653,10 +1653,8 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 		for (i = 0; i < 4; i++)
 			obj->rtype.smokeInfo.color [i] = read_INT8 (f);
 		obj->rtype.smokeInfo.nSide = read_INT8 (f);
-		if (level_version < 18)
-			obj->rtype.smokeInfo.nType = 0;
-		else
-			obj->rtype.smokeInfo.nType = read_INT8 (f);
+		obj->rtype.smokeInfo.nType = (level_version < 18) ? 0 : read_INT8 (f);
+		obj->rtype.smokeInfo.bEnabled = (level_version < 19) ? 1 : read_INT8 (f);
 		break;
 
 	case RT_LIGHTNING:
@@ -1681,11 +1679,13 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 		obj->rtype.lightningInfo.bInPlane = read_INT8 (f);
 		for (i = 0; i < 4; i++)
 			obj->rtype.lightningInfo.color [i] = read_INT8 (f);
+		obj->rtype.lightningInfo.bEnabled = (level_version < 19) ? 1 : read_INT8 (f);
 		break;
 
 	case RT_SOUND:
 		fread (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
 		obj->rtype.soundInfo.nVolume = read_INT32 (f);
+		obj->rtype.soundInfo.bEnabled = (level_version < 19) ? 1 : read_INT8 (f);
 		break;
 
 	default:
@@ -2563,6 +2563,7 @@ if ((level_version < 9) && (obj->type >= OBJ_CAMBOT))
 			write_INT8 (obj->rtype.smokeInfo.color [i], f);
 		write_INT8 (obj->rtype.smokeInfo.nSide, f);
 		write_INT8 (obj->rtype.smokeInfo.nType, f);
+		write_INT8 (obj->rtype.smokeInfo.bEnabled, f);
 		break;
 
 	case RT_LIGHTNING:
@@ -2587,11 +2588,13 @@ if ((level_version < 9) && (obj->type >= OBJ_CAMBOT))
 		write_INT8 (obj->rtype.lightningInfo.bInPlane, f);
 		for (i = 0; i < 4; i++)
 			write_INT8 (obj->rtype.lightningInfo.color [i], f);
+		write_INT8 (obj->rtype.lightningInfo.bEnabled, f);
 		break;
 
 	case RT_SOUND:
 		fwrite (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
 		write_INT32 (obj->rtype.soundInfo.nVolume, f);
+		write_INT8 (obj->rtype.soundInfo.bEnabled, f);
 		break;
 
 	default:

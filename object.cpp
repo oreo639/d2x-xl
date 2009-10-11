@@ -32,6 +32,37 @@ return (pi->id < pm->id) ? -1 : (pi->id > pm->id) ? 1 : 0;
 }
 
 
+INT16 CMine::FindObjBySig (INT16 signature)
+{
+	CDObject*	objP = Objects ();
+
+for (INT16 i = ObjCount (); i; i--, objP++)
+	if (objP->signature == signature)
+		return objP - Objects ();
+return -1;
+}
+
+
+void CMine::RenumberTriggerTargetObjs (void)
+{
+	CDTrigger*	trigP = Triggers ();
+
+for (int i = TriggerCount (); i; i--, trigP++) {
+	for (int j = 0; j < trigP->num_links; ) {
+		if (trigP->side [j] < 0) {
+			int h = FindObjBySig (trigP->seg [j]);
+			if (h >= 0)
+				trigP->seg [j++] = h;
+			else if (j < --trigP->num_links) {
+				trigP->seg [j] = trigP->seg [trigP->num_links];
+				trigP->side [j] = trigP->side [trigP->num_links];
+				}
+			}
+		}
+	}
+}
+
+
 void CMine::RenumberObjTriggers (short i, short objnum)
 {
 i = *ObjTriggerRoot (i);
@@ -84,9 +115,12 @@ void CMine::SortObjects ()
 	int	i, j;
 
 if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
+	for (j = 0; j < i; j++)
+		Objects (i)->signature = j;
 	QSortObjects (0, i - 1);
 	for (j = 0; j < i; j++)
 		RenumberObjTriggers (j, j);
+	RenumberTriggerTargetObjs ();
 	}
 }
 
@@ -360,7 +394,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (GameInfo ().objects.count == 0) {
-	MakeObject(Objects (), OBJ_PLAYER, (segnum < 0) ? Current ()->segment : segnum);
+	MakeObject (Objects (), OBJ_PLAYER, (segnum < 0) ? Current ()->segment : segnum);
 	GameInfo ().objects.count = 1;
 	objnum = 0;
 	}
@@ -409,7 +443,7 @@ return TRUE;
 // DeleteObject()
 //------------------------------------------------------------------------
 
-void CMine::DeleteObject (INT16 objectNumber)
+void CMine::DeleteObject (INT16 nDelObj)
 {
 if (GameInfo ().objects.count == 0) {
 	if (!bExpertMode)
@@ -421,27 +455,30 @@ if (GameInfo ().objects.count == 1) {
 		ErrorMsg ("Cannot delete the last object.");
 	return;
 	}
-if (objectNumber < 0)
-	objectNumber = Current ()->object;
-if (objectNumber == GameInfo ().objects.count) {
+if (nDelObj < 0)
+	nDelObj = Current ()->object;
+if (nDelObj == GameInfo ().objects.count) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-DeleteObjTriggers (objectNumber);
-if (objectNumber < --GameInfo ().objects.count) {
-	int i;
-	for (i = objectNumber; i < GameInfo ().objects.count; i++)
+DeleteObjTriggers (nDelObj);
+int i, j = GameInfo ().objects.count;
+for (i = nDelObj; i < j; i++)
+	Objects (i)->signature = i;
+if (nDelObj < --j) {
+	for (i = nDelObj; i < j; i++)
 		RenumberObjTriggers (i, i - 1);
-	memcpy (Objects () + objectNumber, 
-			  Objects () + objectNumber + 1, 
-		     (GameInfo ().objects.count - objectNumber) * sizeof (CDObject));
-	memcpy (ObjTriggerRoot () + objectNumber,
-  			  ObjTriggerRoot () + objectNumber + 1,
-		     (GameInfo ().objects.count - objectNumber) * sizeof (short));
+	memcpy (Objects () + nDelObj, 
+			  Objects () + nDelObj + 1, 
+		     (GameInfo ().objects.count - nDelObj) * sizeof (CDObject));
+	memcpy (ObjTriggerRoot () + nDelObj,
+  			  ObjTriggerRoot () + nDelObj + 1,
+		     (GameInfo ().objects.count - nDelObj) * sizeof (short));
 	}
+RenumberTriggerTargetObjs ();
 if (Current1 ().object >= GameInfo ().objects.count)
 	Current1 ().object = GameInfo ().objects.count-1;
 if (Current2 ().object >= GameInfo ().objects.count)

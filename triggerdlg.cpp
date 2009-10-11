@@ -25,7 +25,7 @@ BEGIN_MESSAGE_MAP (CTriggerTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TRIGGER_ADDTGT, OnAddTarget)
 	ON_BN_CLICKED (IDC_TRIGGER_DELTGT, OnDeleteTarget)
 	ON_BN_CLICKED (IDC_TRIGGER_ADDWALLTGT, OnAddWallTarget)
-	ON_BN_CLICKED (IDC_TRIGGER_DELWALLTGT, OnDeleteWallTarget)
+	ON_BN_CLICKED (IDC_TRIGGER_ADDOBJTGT, OnAddObjTarget)
 	ON_BN_CLICKED (IDC_TRIGGER_COPY, OnCopyTrigger)
 	ON_BN_CLICKED (IDC_TRIGGER_PASTE, OnPasteTrigger)
 	ON_BN_CLICKED (IDC_TRIGGER_STANDARD, OnStandardTrigger)
@@ -928,6 +928,19 @@ if (i > -1)
 AddTarget (other->segment, other->side + 1);
 }
 
+                        /*--------------------------*/
+
+void CTriggerTool::OnAddObjTarget ()
+{
+if (!GetMine ())
+	return;
+m_nTrigger = CBTriggerNo ()->GetCurSel ();
+if (m_nTrigger == -1)
+	return;
+SetTriggerPtr ();
+AddTarget (m_mine->Current ()->object, 0);
+}
+
 //------------------------------------------------------------------------
 // CTriggerTool - Delete cube/side
 //------------------------------------------------------------------------
@@ -965,26 +978,6 @@ for (i = 0; i < m_pTrigger->num_links; i++)
 	if ((segnum == m_pTrigger->seg [i]) && (sidenum == m_pTrigger->seg [i]))
 		return i;
 return -1;
-}
-
-                        /*--------------------------*/
-
-void CTriggerTool::OnDeleteWallTarget ()
-{
-if (!GetMine ())
-	return;
-CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
-m_nTrigger = CBTriggerNo ()->GetCurSel ();
-if (m_nTrigger == -1)
-	return;
-SetTriggerPtr ();
-int i = FindTarget (other->segment, other->side);
-if (i < 0) {
-	DEBUGMSG (" Trigger tool: Trigger doesn't target other cube's current side.");
-	return;
-	}
-LBTargets ()->SetCurSel (i);
-OnDeleteTarget ();
 }
 
 //------------------------------------------------------------------------

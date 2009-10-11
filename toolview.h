@@ -781,7 +781,7 @@ class CTriggerTool : public CTexToolDlg
 		afx_msg void OnAddTarget ();
 		afx_msg void OnDeleteTarget ();
 		afx_msg void OnAddWallTarget ();
-		afx_msg void OnDeleteWallTarget ();
+		afx_msg void OnAddObjTarget ();
 		afx_msg void OnCopyTrigger ();
 		afx_msg void OnPasteTrigger ();
 		afx_msg void OnStrength ();

@@ -1059,7 +1059,6 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 						break; // found it
 				// if did not find it
 				if (i>=m_mine->CCTriggers ()->num_links) {
-					wall->segnum,wall->sidenum;
 					if (m_bAutoFixBugs) {
 						m_mine->AutoLinkExitToReactor ();
 						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wall->segnum, wall->sidenum);
@@ -1140,7 +1139,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 				}
 			// check segment range
 			segnum = trigger->seg [linknum];
-			if (segnum < 0 || segnum >= m_mine->SegCount ()) {
+			sidenum = trigger->side [linknum];
+			if ((segnum < 0) || ((sidenum < 0) ? (segnum >= m_mine->ObjectCount ()) : (segnum >= m_mine->SegCount ()))) {
 				if (m_bAutoFixBugs) {
 					if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
 						linknum--;
@@ -1157,8 +1157,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 				}
 			else {
 				// check side range
-				sidenum = trigger->side [linknum];
-				if (sidenum < 0 || sidenum >= 6) {
+				if (sidenum < -1 || sidenum >= 6) {
 					if (m_bAutoFixBugs) {
 						if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
 							linknum--;
@@ -1697,7 +1696,7 @@ seg = m_mine->Segments ();
 for (segnum=0;segnum<segCount;segnum++, seg++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	side = seg->sides;
-	for (sidenum=0;sidenum<6;sidenum++, side++) {
+	for (sidenum = 0; sidenum < 6; sidenum++, side++) {
 		if (side->nWall <	wallCount) {
 			wallnum = side->nWall;
 			if (wallnum >= wallCount) {

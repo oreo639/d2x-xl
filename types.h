@@ -464,6 +464,7 @@ typedef struct tSmokeInfo {
 	UINT8			color [4];
 	char			nSide;
 	char			nType;
+	char			bEnabled;
 } tSmokeInfo;
 
 typedef struct tLightningInfo {
@@ -486,6 +487,7 @@ typedef struct tLightningInfo {
 	char			bSound;
 	char			bRandom;
 	char			bInPlane;
+	char			bEnabled;
 	UINT8			color [4];
 } tLightningInfo;
 
@@ -493,6 +495,7 @@ typedef struct tLightningInfo {
 typedef struct tSoundInfo {
 	int			nVolume;
 	char			szFilename [40];
+	char			bEnabled;
 } tSoundInfo;
 
 class CDObject {

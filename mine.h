@@ -415,6 +415,7 @@ public:
 	void DeleteObjTrigger (INT16 objnum);
 	void DeleteObjTriggers (INT16 objnum);
 	INT16 FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
+	INT16 FindObjBySig (INT16 nSignature);
 
 	void DrawObject (CWnd *pWnd, int type, int id);
 	void ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew);
@@ -526,6 +527,7 @@ public:
 	INT16 LoadPalette (void);
 
 	void SortObjects ();
+	void RenumberTriggerTargetObjs (void);
 	void RenumberObjTriggers (short i, short objnum);
 	void QSortObjects (INT16 left, INT16 right);
 	int QCmpObjects (CDObject *pi, CDObject *pm);

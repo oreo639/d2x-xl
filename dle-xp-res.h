@@ -178,7 +178,7 @@
 #define IDC_TRIGGER_ADDTGT              10224
 #define IDC_TRIGGER_DELTGT              10225
 #define IDC_TRIGGER_ADDWALLTGT          10226
-#define IDC_TRIGGER_DELWALLTGT          10227
+#define IDC_TRIGGER_ADDOBJTGT           10227
 #define IDC_TRIGGER_TARGET              10228
 #define IDC_TRIGGER_TARGETLIST          10229
 #define IDC_TRIGGER_ADD                 10230
@@ -706,7 +706,7 @@
 #define IDC_EFFECT_PASTE					 11797
 #define IDC_EFFECT_PASTE_ALL				 11798
 #define IDC_EFFECT_DELETE               11799
-
+#define IDC_EFFECT_ENABLED              11800
 
 #define ID_TB_CHECK                     30774
 #define ID_EDIT_TEXTURE                 30775

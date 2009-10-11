@@ -30,7 +30,7 @@
 
 #define MAX_FLICKERING_LIGHTS 100
 
-#define LEVEL_VERSION		18	//current level version
+#define LEVEL_VERSION		19	//current level version
 
 #define MAX_PLAYERS_D2		8
 #define MAX_PLAYERS_D2X		16

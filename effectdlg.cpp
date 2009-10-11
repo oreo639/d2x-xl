@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP (CEffectTool, CToolDlg)
 	ON_BN_CLICKED (IDC_SMOKE_ADD, OnAddSmoke)
 	ON_BN_CLICKED (IDC_LIGHTNING_ADD, OnAddLightning)
 	ON_BN_CLICKED (IDC_SOUND_ADD, OnAddSound)
+	ON_BN_CLICKED (IDC_EFFECT_ENABLED, OnEdit)
 	ON_BN_CLICKED (IDC_EFFECT_DELETE, OnDelete)
 	ON_BN_CLICKED (IDC_EFFECT_COPY, OnCopy)
 	ON_BN_CLICKED (IDC_EFFECT_PASTE, OnPaste)
@@ -159,6 +160,7 @@ CDObject *obj = m_mine->CurrObj ();
 if (obj->type != OBJ_EFFECT)
 	return;
 if (obj->id == SMOKE_ID) {
+	obj->rtype.smokeInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, obj->rtype.smokeInfo.bEnabled);
 	DDX_Slider (pDX, IDC_SMOKE_LIFE, obj->rtype.smokeInfo.nLife);
 	DDX_Slider (pDX, IDC_SMOKE_SIZE, obj->rtype.smokeInfo.nSize [0]);
 	DDX_Slider (pDX, IDC_SMOKE_DENSITY, obj->rtype.smokeInfo.nParts);
@@ -190,6 +192,7 @@ else if (obj->id == LIGHTNING_ID) {
 	int i;
 	for (i = 0; i < 4; i++)
 		DDX_Text (pDX, IDC_LIGHTNING_RED + i, obj->rtype.lightningInfo.color [i]);
+	obj->rtype.lightningInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, obj->rtype.lightningInfo.bEnabled);
 	obj->rtype.lightningInfo.nSmoothe = DDX_Flag (pDX, IDC_LIGHTNING_SMOOTHE, obj->rtype.lightningInfo.nSmoothe);
 	obj->rtype.lightningInfo.bClamp = DDX_Flag (pDX, IDC_LIGHTNING_CLAMP, obj->rtype.lightningInfo.bClamp);
 	obj->rtype.lightningInfo.bSound = DDX_Flag (pDX, IDC_LIGHTNING_SOUND, obj->rtype.lightningInfo.bSound);
@@ -204,6 +207,7 @@ else if (obj->id == LIGHTNING_ID) {
 		}
 	}
 else if (obj->id == SOUND_ID) {
+	obj->rtype.soundInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, obj->rtype.soundInfo.bEnabled);
 	DDX_Text (pDX, IDC_SOUND_FILE, obj->rtype.soundInfo.szFilename, sizeof (obj->rtype.soundInfo.szFilename));
 	DDX_Slider (pDX, IDC_SOUND_VOLUME, obj->rtype.soundInfo.nVolume);
 	}
