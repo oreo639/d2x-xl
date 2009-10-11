@@ -2665,10 +2665,10 @@ BEGIN
     PUSHBUTTON      "paste &all",IDC_EFFECT_PASTE_ALL,536,95,51,12
     PUSHBUTTON      "&delete",IDC_EFFECT_DELETE,536,108,51,12
     GROUPBOX        "smoke data",IDC_STATIC,2,0,187,124,BS_RIGHT
-    RTEXT           "life time:",IDC_STATIC,16,14,34,8
+    RTEXT           "life time:",IDC_STATIC,15,14,34,8
     RTEXT           "particle size:",IDC_STATIC,7,29,42,8
-    RTEXT           "density:",IDC_STATIC,14,44,34,8
-    RTEXT           "speed:",IDC_STATIC,16,59,34,8
+    RTEXT           "density:",IDC_STATIC,15,44,34,8
+    RTEXT           "speed:",IDC_STATIC,15,59,34,8
     RTEXT           "drift:",IDC_STATIC,18,75,31,8
     RTEXT           "brightness:",IDC_STATIC,12,90,37,8
     GROUPBOX        "lightning data",IDC_STATIC,193,0,263,124,BS_RIGHT

@@ -417,6 +417,7 @@ else {
 				(long) (texture_table[index]-1) * sizeof (ptexture);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
+	ptexture.name [sizeof (ptexture.name) - 1] = '\0';
 	// copy d1 texture into d2 texture struct
 	strncpy_s (d2_ptexture.name, sizeof (d2_ptexture.name), ptexture.name, sizeof (ptexture.name));
 	d2_ptexture.dflags = ptexture.dflags;
