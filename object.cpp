@@ -480,6 +480,7 @@ if (nDelObj < --j) {
   			  ObjTriggerRoot () + nDelObj + 1,
 		     (GameInfo ().objects.count - nDelObj) * sizeof (short));
 	}
+GameInfo ().objects.count = j;
 RenumberTriggerTargetObjs ();
 if (Current1 ().object >= GameInfo ().objects.count)
 	Current1 ().object = GameInfo ().objects.count-1;
