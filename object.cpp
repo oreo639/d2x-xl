@@ -49,7 +49,9 @@ void CMine::RenumberTriggerTargetObjs (void)
 
 for (int i = TriggerCount (); i; i--, trigP++) {
 	for (int j = 0; j < trigP->num_links; ) {
-		if (trigP->side [j] < 0) {
+		if (trigP->side [j] >= 0) 
+			j++;
+		else {
 			int h = FindObjBySig (trigP->seg [j]);
 			if (h >= 0)
 				trigP->seg [j++] = h;
