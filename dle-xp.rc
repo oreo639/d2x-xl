@@ -467,7 +467,7 @@ BEGIN
     CONTROL         "Kamikaze",IDC_OBJ_AI_KAMIKAZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,520,86,44,9
     CONTROL         "Companion",IDC_OBJ_AI_COMPANION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,520,96,50,9
     CONTROL         "Thief",IDC_OBJ_AI_THIEF,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,520,106,41,9
-    CONTROL         "Smart blobs",IDC_OBJ_AI_SMARTBLOBS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,520,116,50,9
+    CONTROL         "Smart blobs",IDC_OBJ_AI_SMARTBLOBS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,520,115,50,9
     CONTROL         "Pursues",IDC_OBJ_AI_PURSUE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,570,86,41,9
     CONTROL         "Charges",IDC_OBJ_AI_CHARGE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,570,96,41,9
     CONTROL         "E. drain",IDC_OBJ_AI_EDRAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,570,106,41,9
@@ -547,6 +547,7 @@ BEGIN
     RTEXT           "sort",IDC_STATIC,123,4,12,8
     RTEXT           "AI",IDC_STATIC,13,46,8,8
     RTEXT           "Boss AI:",IDC_STATIC,520,71,27,8
+    CONTROL         "ends level",IDC_OBJ_AI_ENDSLEVEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,570,115,44,9
 END
 
 IDD_PREFSDATA DIALOGEX 0, 0, 620, 130
@@ -1277,6 +1278,7 @@ BEGIN
     RTEXT           "AI",IDC_STATIC,36,46,8,8
     RTEXT           "Tactics:",IDC_STATIC,113,316,26,8
     RTEXT           "Boss AI:",IDC_STATIC,111,330,27,8
+    CONTROL         "ends level",IDC_OBJ_AI_ENDSLEVEL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,162,373,44,9
 END
 
 IDD_DIAGDATA2 DIALOGEX 0, 0, 222, 389
@@ -6069,8 +6071,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,60,0
- PRODUCTVERSION 1,7,60,0
+ FILEVERSION 1,7,62,0
+ PRODUCTVERSION 1,7,62,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6086,13 +6088,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor XP [11 oct 2009]"
-            VALUE "FileVersion", "1, 7, 60, 0"
+            VALUE "FileDescription", "Descent Level Editor XP [20 oct 2009]"
+            VALUE "FileVersion", "1, 7, 62, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2009 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 7, 60, 0"
+            VALUE "ProductVersion", "1, 7, 62, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -6119,7 +6121,7 @@ IDR_COMOBJ              REGISTRY                "resource/registry/ComObj.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Descent Level Editor XP 1.7.60\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
+    IDR_MAINFRAME           "Descent Level Editor XP 1.7.62\n\nDLE\nDescent Level (*.hog)\n.hog\n\nDLE.Document\nDLE Document"
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 

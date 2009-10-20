@@ -119,6 +119,7 @@ BEGIN_MESSAGE_MAP (CObjectTool, CToolDlg)
 	ON_BN_CLICKED (IDC_OBJ_AI_PURSUE, OnAIPursue)
 	ON_BN_CLICKED (IDC_OBJ_AI_CHARGE, OnAICharge)
 	ON_BN_CLICKED (IDC_OBJ_AI_EDRAIN, OnAIEDrain)
+	ON_BN_CLICKED (IDC_OBJ_AI_ENDSLEVEL, OnAIEndsLevel)
 	ON_BN_CLICKED (IDC_OBJ_BRIGHT, OnBright)
 	ON_BN_CLICKED (IDC_OBJ_CLOAKED, OnCloaked)
 	ON_BN_CLICKED (IDC_OBJ_MULTIPLAYER, OnMultiplayer)
@@ -599,6 +600,7 @@ if ((obj->type == OBJ_ROBOT) || (obj->type == OBJ_CAMBOT)) {
 	}
 else
 	CBObjAI ()->SetCurSel (1); // Normal
+m_bEndsLevel = (obj->type == OBJ_ROBOT) && (m_mine->RobotInfo (obj->id)->boss_flag > 0);
 RefreshRobot ();
 UpdateSliders ();
 DrawObjectImages ();
@@ -639,6 +641,7 @@ if ((nType = object_list [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
 	BtnCtrl (IDC_OBJ_AI_PURSUE)->SetCheck (FALSE);
 	BtnCtrl (IDC_OBJ_AI_CHARGE)->SetCheck (FALSE);
 	BtnCtrl (IDC_OBJ_AI_EDRAIN)->SetCheck (FALSE);
+	BtnCtrl (IDC_OBJ_AI_ENDSLEVEL)->SetCheck (FALSE);
 	BtnCtrl (IDC_OBJ_BRIGHT)->SetCheck (FALSE);
 	BtnCtrl (IDC_OBJ_CLOAKED)->SetCheck (FALSE);
 	if (nType != OBJ_POWERUP)
@@ -690,7 +693,8 @@ SelectItemData (CBSoundDeath (), (int) rInfo.deathroll_sound);
 SelectItemData (CBObjClassAI (), (int) rInfo.behavior);
 SelectItemData (CBExplType (), (int) rInfo.exp2_vclip_num);
 SelectItemData (CBContType (), (int) rInfo.contains_type);
-SelectItemData (CBBossType (), (int) (rInfo.boss_flag < 21) ? rInfo.boss_flag : rInfo.boss_flag - 18);
+INT8 boss_flag = (rInfo.boss_flag < 0) ? -rInfo.boss_flag : rInfo.boss_flag;
+SelectItemData (CBBossType (), (int) (boss_flag < 21) ? boss_flag : boss_flag - 18);
 // update check boxes
 BtnCtrl (IDC_OBJ_AI_KAMIKAZE)->SetCheck (rInfo.kamikaze);
 BtnCtrl (IDC_OBJ_AI_COMPANION)->SetCheck (rInfo.companion);
@@ -698,7 +702,8 @@ BtnCtrl (IDC_OBJ_AI_THIEF)->SetCheck (rInfo.thief);
 BtnCtrl (IDC_OBJ_AI_SMARTBLOBS)->SetCheck (rInfo.smart_blobs);
 BtnCtrl (IDC_OBJ_AI_PURSUE)->SetCheck (rInfo.pursuit);
 BtnCtrl (IDC_OBJ_AI_CHARGE)->SetCheck (rInfo.attack_type);
-BtnCtrl (IDC_OBJ_AI_EDRAIN)->SetCheck (rInfo.energy_drain);
+BtnCtrl (IDC_OBJ_AI_EDRAIN)->SetCheck (m_bEndsLevel);
+BtnCtrl (IDC_OBJ_AI_ENDSLEVEL)->SetCheck (m_bEndsLevel);
 BtnCtrl (IDC_OBJ_BRIGHT)->SetCheck (rInfo.lighting);
 BtnCtrl (IDC_OBJ_CLOAKED)->SetCheck (rInfo.cloak_type);
 
@@ -771,6 +776,7 @@ rInfo.smart_blobs = BtnCtrl (IDC_OBJ_AI_SMARTBLOBS)->GetCheck ();
 rInfo.pursuit = BtnCtrl (IDC_OBJ_AI_PURSUE)->GetCheck ();
 rInfo.attack_type = BtnCtrl (IDC_OBJ_AI_CHARGE)->GetCheck ();
 rInfo.energy_drain = BtnCtrl (IDC_OBJ_AI_EDRAIN)->GetCheck ();
+m_bEndsLevel = BtnCtrl (IDC_OBJ_AI_ENDSLEVEL)->GetCheck ();
 rInfo.lighting = BtnCtrl (IDC_OBJ_BRIGHT)->GetCheck ();
 rInfo.cloak_type = BtnCtrl (IDC_OBJ_CLOAKED)->GetCheck ();
 
@@ -780,6 +786,8 @@ if (0 <= (index = CBBossType ()->GetCurSel ())) {
 	rInfo.boss_flag = (UINT8) CBBossType ()->GetItemData (index);
 	if ((rInfo.boss_flag = (UINT8) CBBossType ()->GetItemData (index)) > 2)
 			rInfo.boss_flag += 18;
+	if (!m_bEndsLevel)
+		rInfo.boss_flag = -rInfo.boss_flag;
 	}
 if (0 <= (index = CBWeapon1 ()->GetCurSel ())) {
 	rInfo.weapon_type = (UINT8) CBWeapon1 ()->GetItemData (index);
@@ -1695,6 +1703,13 @@ UpdateRobot ();
                         /*--------------------------*/
 
 afx_msg void CObjectTool::OnAIEDrain ()
+{
+UpdateRobot ();
+}
+
+                        /*--------------------------*/
+
+afx_msg void CObjectTool::OnAIEndsLevel ()
 {
 UpdateRobot ();
 }

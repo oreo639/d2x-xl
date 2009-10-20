@@ -357,6 +357,7 @@ class CObjectTool : public CToolDlg
 		CWnd		m_showSpawnWnd;
 		CWnd		m_showTextureWnd;
 		int		m_nSpawnQty;
+		int		m_bEndsLevel;
 		char		m_szInfo [200];
 
 		CObjectTool (CPropertySheet *pParent = NULL);
@@ -419,6 +420,7 @@ class CObjectTool : public CToolDlg
 		afx_msg void OnAIPursue ();
 		afx_msg void OnAICharge ();
 		afx_msg void OnAIEDrain ();
+		afx_msg void OnAIEndsLevel ();
 		afx_msg void OnAIBossType ();
 		afx_msg void OnBright ();
 		afx_msg void OnCloaked ();
