@@ -144,6 +144,7 @@ pcb->AddString ("Smoke");
 pcb->AddString ("Spray");
 pcb->AddString ("Bubbles");
 pcb->AddString ("Fire");
+pcb->AddString ("Waterfall");
 pcb->SetCurSel (0);
 m_bInited = TRUE;
 return TRUE;
