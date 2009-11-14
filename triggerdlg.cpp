@@ -274,6 +274,8 @@ else if ((m_nType == TT_MESSAGE) || (m_nType == TT_SOUND))
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 1000, "%1.0f");
 else if ((file_type == RDL_FILE) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -10000, 10000, "%1.0f");
+else
+	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 64, "%1.0f");
 DDX_Text (pDX, IDC_TRIGGER_TARGET, m_szTarget, sizeof (m_szTarget));
 DDX_Check (pDX, IDC_TRIGGER_AUTOADDWALL, m_bAutoAddWall);
 char szLabel [40];

@@ -200,7 +200,7 @@ if (check_err != 0) {
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
 			FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-			sprintf_s (filename, sizeof (filename), (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+			sprintf_s (filename, sizeof (filename), (file_type == RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 			bLoadFromHog = false;
 			bNewMine = true;
 			}
@@ -1701,7 +1701,7 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 
 INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 {
-#if DEMO== 0
+#if 1 //DEMO == 0
 #ifdef _DEBUG
 	CMine *mine = theApp.GetMine ();
 #endif
@@ -2149,6 +2149,8 @@ if (file_type != RDL_FILE) {
 	t->num_links = read_INT8(fp);
 	read_INT8(fp);
 	t->value = read_FIX(fp);
+	if ((GameInfo ().fileinfo_version < 39) && (t->type == TT_MASTER))
+		t->value = 0;
 	t->time = read_FIX(fp);
 	}
 else {
@@ -2177,7 +2179,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 // ------------------------------------------------------------------------
 INT16 CMine::SaveGameData(FILE *savefile)
 {
-#if DEMO== 0
+#if 1 //!DEMO
 	HINSTANCE hInst = AfxGetInstanceHandle();
 
 	INT32 i;
@@ -2230,7 +2232,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		}
 	else {
 		GameInfo ().fileinfo_signature = 0x6705;
-		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 38;
+		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 39;
 		GameInfo ().fileinfo_size = (level_version < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof(GameInfo ())
 		GameInfo ().level = 0;
 	}

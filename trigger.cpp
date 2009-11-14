@@ -25,7 +25,14 @@ void CMine::InitTrigger (CDTrigger *t, INT16 type, INT16 flags)
 {
 t->type = (INT8) type;
 t->flags = (INT8) flags;
-t->value = (type == TT_SPEEDBOOST) ? 10 : (type == TT_CHANGE_TEXTURE) ? 0 : 5 * F1_0; // 5% shield or energy damage
+if (type == TT_SPEEDBOOST)
+	t->value = 10;
+else if ((type == TT_CHANGE_TEXTURE) || (type == TT_MASTER))
+	t->value = 0;
+else if ((type == TT_MESSAGE) || (type == TT_SOUND))
+	t->value = 1;
+else 	
+	t->value = 5 * F1_0; // 5% shield or energy damage
 t->time = -1;
 t->num_links = 0;
 int i;

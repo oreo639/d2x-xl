@@ -73,11 +73,17 @@ int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
 int h = nSize, i = 0, k, x, y;
 
 #if 1
-for (i = 0, k = nSize + nWidth, y = nHeight; y; y--)
-	for (x = nWidth, k -= 2 * nWidth; x; i++, k++, x--) {
-		rgba = pTGA [i];
-		pBM [k] = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
+for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
+	k -= nWidth;
+#pragma omp parallel 
+{
+#	pragma omp for private (x)
+	for (x = 0; x < nWidth; x++) {
+		rgba = pTGA [i + x];
+		pBM [k + x] = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
 		}
+	}
+}
 #else
 if (bConverted = (UINT8 *) malloc ((nSize + 7) / 8))
 	memset (bConverted, 0, (nSize + 7) / 8);
