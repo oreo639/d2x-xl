@@ -301,6 +301,11 @@ else if (m_nType == TT_SOUND) {
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
 	}
+else if (m_nType == TT_MASTER) {
+	strcpy_s (szLabel, sizeof (szLabel), "semaphore:");
+	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
+	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
+	}
 else {
 	strcpy_s (szLabel, sizeof (szLabel), "strength:");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
