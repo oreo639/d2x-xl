@@ -1196,7 +1196,7 @@ trigCount = m_mine->NumObjTriggers ();
 for (trignum = 0; trignum < trigCount; trignum++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	trigger = m_mine->ObjTriggers (trignum);
-	if ((trigger->type != TT_MESSAGE) && (trigger->type != TT_SOUND) && !trigger->num_links) {
+	if ((trigger->type != TT_MESSAGE) && (trigger->type != TT_SOUND) && (trigger->type != TT_COUNTDOWN) && !trigger->num_links) {
 		sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", trignum, trigger->nObject);
 		if (UpdateStats (message,0, trignum, trigger->nObject, -1, -1, -1, -1, trignum)) return true;
 		}

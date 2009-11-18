@@ -71,9 +71,9 @@ do {
 		r--;
 	if (l <= r) {
 		if (l < r) {
-			CDTrigger o = *Triggers (l);
-			*Triggers (l) = *Triggers (r);
-			*Triggers (r) = o;
+			CDTrigger o = *ObjTriggers (l);
+			*ObjTriggers (l) = *ObjTriggers (r);
+			*ObjTriggers (r) = o;
 			}
 		l++;
 		r--;

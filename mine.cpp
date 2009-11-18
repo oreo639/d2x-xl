@@ -1320,7 +1320,9 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 					}
 				}
 			}
-		if (!(bObjTriggersOk && NumObjTriggers ())) {
+		if (bObjTriggersOk && NumObjTriggers ())
+			SortObjTriggers ();
+		else {
 			NumObjTriggers () = 0;
 			memset (ObjTriggers (), 0, sizeof (CDTrigger) * MAX_OBJ_TRIGGERS);
 			}
@@ -2286,10 +2288,13 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		WriteTrigger (Triggers (i), savefile, false);
 	if (level_version >= 12) {
 		fwrite (&NumObjTriggers (), sizeof (int), 1, savefile);
-		for (i = 0; i < NumObjTriggers (); i++)
-			WriteTrigger (ObjTriggers (i), savefile, true);
-		for (i = 0; i < NumObjTriggers (); i++)
-			fwrite (&ObjTriggers (i)->nObject, sizeof(ObjTriggers (i)->nObject), 1, savefile);
+		if (NumObjTriggers ()) {
+			SortObjTriggers ();
+			for (i = 0; i < NumObjTriggers (); i++)
+				WriteTrigger (ObjTriggers (i), savefile, true);
+			for (i = 0; i < NumObjTriggers (); i++)
+				fwrite (&ObjTriggers (i)->nObject, sizeof(ObjTriggers (i)->nObject), 1, savefile);
+			}
 		}
 
 	//================ WRITE CONTROL CENTER TRIGGER INFO============== =
