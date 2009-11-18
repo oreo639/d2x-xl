@@ -65,13 +65,19 @@ for (int i = TriggerCount (); i; i--, trigP++) {
 }
 
 
-void CMine::RenumberObjTriggers (short i, short objnum)
+void CMine::RenumberObjTriggers (void)
 {
-i = *ObjTriggerRoot (i);
-while (i >= 0) {
-	ObjTriggerList (i)->objnum = objnum;
-	i = ObjTriggerList (i)->next;
+	CDTrigger*	trigP = ObjTriggers ();
+	int			i;
+
+for (i = NumObjTriggers (); i; i--, trigP++)
+	trigP->nObject = FindObjBySig (trigP->nObject);
+i = NumObjTriggers ();
+while (i) {
+	if (ObjTriggers (--i)->nObject < 0)
+		DeleteObjTrigger (i);
 	}
+SortObjTriggers ();
 }
 
 
@@ -94,11 +100,6 @@ do {
 				Current ()->object = r;
 			else if (Current ()->object == r)
 				Current ()->object = l;
-			if (level_version > 12) {
-				short h = *ObjTriggerRoot (l);
-				*ObjTriggerRoot (l) = *ObjTriggerRoot (r);
-				*ObjTriggerRoot (r) = h;
-				}
 			}
 		l++;
 		r--;
@@ -120,8 +121,7 @@ if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
 		Objects (i)->signature = j;
 	QSortObjects (0, i - 1);
-	for (j = 0; j < i; j++)
-		RenumberObjTriggers (j, j);
+	RenumberObjTriggers ();
 	RenumberTriggerTargetObjs ();
 	}
 }
@@ -470,16 +470,10 @@ DeleteObjTriggers (nDelObj);
 int i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->signature = i;
-if (nDelObj < --j) {
-	for (i = nDelObj; i < j; i++)
-		RenumberObjTriggers (i, i - 1);
-	memcpy (Objects () + nDelObj, 
-			  Objects () + nDelObj + 1, 
-		     (GameInfo ().objects.count - nDelObj) * sizeof (CDObject));
-	memcpy (ObjTriggerRoot () + nDelObj,
-  			  ObjTriggerRoot () + nDelObj + 1,
-		     (GameInfo ().objects.count - nDelObj) * sizeof (short));
-	}
+RenumberObjTriggers ();
+memcpy (Objects () + nDelObj, 
+		  Objects () + nDelObj + 1, 
+	     (GameInfo ().objects.count - nDelObj) * sizeof (CDObject));
 GameInfo ().objects.count = j;
 RenumberTriggerTargetObjs ();
 if (Current1 ().object >= GameInfo ().objects.count)

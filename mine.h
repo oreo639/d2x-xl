@@ -52,8 +52,6 @@ typedef struct tMineData {
 	active_door					active_doors[MAX_DOORS];
 	CDTrigger					triggers[MAX_TRIGGERS2];
 	CDTrigger					objTriggers[MAX_OBJ_TRIGGERS];
-	CDObjTriggerList			objTriggerList[MAX_OBJ_TRIGGERS];
-	short							objTriggerRoot [MAX_OBJECTS2];
 	int							numObjTriggers;
 	control_center_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
 	matcen_info					robot_centers[MAX_NUM_MATCENS2];
@@ -110,8 +108,6 @@ public:
 	active_door					active_doors[MAX_DOORS];
 	CDTrigger					triggers[MAX_TRIGGERS];
 	CDTrigger					objTriggers[MAX_OBJ_TRIGGERS];
-	CDObjTriggerList			objTriggerList[MAX_OBJ_TRIGGERS];
-	short							objTriggerRoot [MAX_OBJECTS2];
 	int							numObjTriggers;
 	control_center_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
 	matcen_info					robot_centers[MAX_NUM_MATCENS];
@@ -190,10 +186,6 @@ public:
 		{ return GameInfo ().triggers.count; }
 	inline CDTrigger *ObjTriggers (int i = 0)
 		{ return MineData ().objTriggers + i; }
-	inline CDObjTriggerList *ObjTriggerList (int i = 0)
-		{ return MineData ().objTriggerList + i; }
-	inline short *ObjTriggerRoot (int i = 0)
-		{ return MineData ().objTriggerRoot + i; }
 	inline int& NumObjTriggers ()
 		{ return MineData ().numObjTriggers; }
 	inline CDObject *Objects (int i = 0)
@@ -408,10 +400,8 @@ public:
 	INT16 FindTriggerWall (INT16 trignum);
 	INT16 FindTriggerObject (INT16 *trignum);
 	INT16 FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
-	CDObjTriggerList *AddObjTrigger (INT16 objnum, INT16 type);
+	CDTrigger *AddObjTrigger (INT16 objnum, INT16 type);
 	bool ObjTriggerIsInList (INT16 nTrigger);
-	CDObjTriggerList *LinkObjTrigger (INT16 objnum, INT16 trignum);
-	CDObjTriggerList *UnlinkObjTrigger (INT16 nTrigger);
 	void DeleteObjTrigger (INT16 objnum);
 	void DeleteObjTriggers (INT16 objnum);
 	INT16 FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
@@ -528,9 +518,12 @@ public:
 
 	void SortObjects ();
 	void RenumberTriggerTargetObjs (void);
-	void RenumberObjTriggers (short i, short objnum);
+	void RenumberObjTriggers (void);
 	void QSortObjects (INT16 left, INT16 right);
 	int QCmpObjects (CDObject *pi, CDObject *pm);
+	int QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm);
+	void QSortObjTriggers (INT16 left, INT16 right);
+	void SortObjTriggers (void);
 	bool IsCustomRobot (int i);
 	BOOL HasCustomRobots();
 	INT16 LoadMineSigAndType (FILE* fp);

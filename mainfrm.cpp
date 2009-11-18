@@ -1541,8 +1541,6 @@ else {
 			ErrorMsg ("Mine converted to a D2X-XL level.");
 		GetMine ()->ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
 		GetMine ()->NumObjTriggers () = 0;
-		memset (GetMine ()->ObjTriggerList (), 0xff, MAX_OBJ_TRIGGERS * sizeof (CDObjTriggerList));
-		memset (GetMine ()->ObjTriggerRoot (), 0xff, MAX_OBJECTS2 * sizeof (short));
 		}
 	else {
 		level_version = 7;

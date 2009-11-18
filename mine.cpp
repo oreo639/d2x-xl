@@ -188,8 +188,6 @@ if (!bNewMine && (level_version >= 9) && (level_version < LEVEL_VERSION)) {
 	if (level_version < 15) {
 		ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
 		NumObjTriggers () = 0;
-		memset (ObjTriggerList (), 0xff, MAX_OBJ_TRIGGERS * sizeof (CDObjTriggerList));
-		memset (ObjTriggerRoot (), 0xff, MAX_OBJECTS2 * sizeof (short));
 		}
 	level_version = LEVEL_VERSION;
 	}
@@ -633,8 +631,6 @@ if (file) {
 	if (nBytes != nResSize)
 		return 1;
 	NumObjTriggers () = 0;
-	memset (ObjTriggerList (), 0xff, MAX_OBJ_TRIGGERS * sizeof (CDObjTriggerList));
-	memset (ObjTriggerRoot (), 0xff, MAX_OBJECTS2 * sizeof (short));
 	return 0;
 	} 
 else {
@@ -1138,8 +1134,6 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 {
 	INT32 i;
 	INT32 start_offset;
-	short	nObjsWithTrigger, nObject, nFirstTrigger;
-	//  INT32 names.offset;
 
 	start_offset = ftell(loadfile);
 
@@ -1309,46 +1303,26 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			else {
 				for (i = 0; i < NumObjTriggers (); i++)
 					ReadTrigger (ObjTriggers (i), loadfile, true);
-				if (fread (ObjTriggerList (), sizeof (CDObjTriggerList), NumObjTriggers (), loadfile) != NumObjTriggers ()) {
-					ErrorMsg ("Error reading object triggers from mine.");
-					bObjTriggersOk = 0;
-					}
-				if (GameInfo ().fileinfo_version < 36) {
-					if (fread (ObjTriggerRoot (), sizeof (short), 700, loadfile) != 700) {
-						ErrorMsg ("Error reading object triggers from mine.");
-						bObjTriggersOk = 0;
-						}
+				if (GameInfo ().fileinfo_version >= 40) {
+					for (i = 0; i < NumObjTriggers (); i++)
+						ObjTriggers (i)->nObject = read_INT16 (loadfile);
 					}
 				else {
-					memset (ObjTriggerRoot (), 0xff, sizeof (short) * MAX_OBJECTS);
-					if (fread (&nObjsWithTrigger, sizeof (nObjsWithTrigger), 1, loadfile) != 1) {
-						ErrorMsg ("Error reading object triggers from mine.");
-						bObjTriggersOk = 0;
+					for (i = 0; i < NumObjTriggers (); i++) {
+						read_INT16 (loadfile);
+						read_INT16 (loadfile);
+						ObjTriggers (i)->nObject = read_INT16 (loadfile);
 						}
-					else {
-						for (i = 0; i < nObjsWithTrigger; i++) {
-							if ((fread (&nObject, sizeof (nObject), 1, loadfile) != 1) ||
-								 (fread (&nFirstTrigger, sizeof (nFirstTrigger), 1, loadfile) != 1)) {
-								ErrorMsg ("Error reading object triggers from mine.");
-								bObjTriggersOk = 0;
-								break;
-								}
-							if ((nObject < 0) || (nObject >= ObjCount ()) || (nFirstTrigger < 0) || (nFirstTrigger >= NumObjTriggers ())) {
-								ErrorMsg ("Error reading object triggers from mine.");
-								bObjTriggersOk = 0;
-								break;
-								}
-							*ObjTriggerRoot (nObject) = nFirstTrigger;
-							}
-						}
+					if (GameInfo ().fileinfo_version < 36)
+						fseek (loadfile, 700 * sizeof (short), SEEK_CUR);
+					else
+						fseek (loadfile, 2 * sizeof (short) * read_INT16 (loadfile), SEEK_CUR);
 					}
 				}
 			}
 		if (!(bObjTriggersOk && NumObjTriggers ())) {
 			NumObjTriggers () = 0;
 			memset (ObjTriggers (), 0, sizeof (CDTrigger) * MAX_OBJ_TRIGGERS);
-			memset (ObjTriggerList (), 0xff, sizeof (CDObjTriggerList) * MAX_OBJ_TRIGGERS);
-			memset (ObjTriggerRoot (), 0xff, sizeof (short) * MAX_OBJECTS);
 			}
 	}
 
@@ -2188,7 +2162,6 @@ INT16 CMine::SaveGameData(FILE *savefile)
 
 	INT32 i;
 	INT32 start_offset, end_offset;
-	short nObject, nObjsWithTrigger, nFirstTrigger;
 
 	start_offset = ftell(savefile);
 
@@ -2236,7 +2209,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		}
 	else {
 		GameInfo ().fileinfo_signature = 0x6705;
-		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 39;
+		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 40;
 		GameInfo ().fileinfo_size = (level_version < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof(GameInfo ())
 		GameInfo ().level = 0;
 	}
@@ -2315,22 +2288,8 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		fwrite (&NumObjTriggers (), sizeof (int), 1, savefile);
 		for (i = 0; i < NumObjTriggers (); i++)
 			WriteTrigger (ObjTriggers (i), savefile, true);
-		fwrite (ObjTriggerList (), sizeof (CDObjTriggerList), NumObjTriggers (), savefile);
-		for (nObject = 0, nObjsWithTrigger = 0; nObject < MAX_OBJECTS; nObject++) {
-			nFirstTrigger = *ObjTriggerRoot (nObject);
-			if ((nFirstTrigger >= 0) && (nFirstTrigger < NumObjTriggers ()))
-				nObjsWithTrigger++;
-			}
-		fwrite (&nObjsWithTrigger, sizeof (short), 1, savefile);
-		if (nObjsWithTrigger > 0) {
-			for (nObject = 0; nObject < MAX_OBJECTS; nObject++) {
-				nFirstTrigger = *ObjTriggerRoot (nObject);
-				if ((nFirstTrigger >= 0) && (nFirstTrigger < NumObjTriggers ())) {
-					fwrite (&nObject, sizeof (short), 1, savefile);
-					fwrite (&nFirstTrigger, sizeof (short), 1, savefile);
-					}
-				}
-			}
+		for (i = 0; i < NumObjTriggers (); i++)
+			fwrite (&ObjTriggers (i)->nObject, sizeof(ObjTriggers (i)->nObject), 1, savefile);
 		}
 
 	//================ WRITE CONTROL CENTER TRIGGER INFO============== =

@@ -398,14 +398,12 @@ plb->SetCurSel (m_iTarget);
 void CTriggerTool::SetTriggerPtr (void)
 {
 if (m_nTrigger == -1) {
-	m_pObjTrigger = NULL;
 	m_pTrigger = NULL;
 	m_nStdTrigger = 
 	m_nObjTrigger = -1;
 	ClearObjWindow ();
 	}	
 else if (m_nClass) {
-	m_pObjTrigger = m_mine->ObjTriggerList (m_nTrigger);
 	m_pTrigger = m_mine->ObjTriggers (m_nTrigger);
 	DrawObjectImage ();
 	}
@@ -456,7 +454,7 @@ if (!m_bFindTrigger)
 else {
 	if (m_nClass) {
 		if ((m_nTrigger != -1) && 
-			 (m_mine->Current ()->object == m_mine->ObjTriggerList (m_nTrigger)->objnum))
+			 (m_mine->Current ()->object == m_mine->ObjTriggers (m_nTrigger)->nObject))
 			return false;
 		// use current object's first trigger
 		INT16 objnum = m_mine->FindTriggerObject (&trignum);
@@ -596,7 +594,7 @@ m_nStdTrigger = m_nTrigger;
 m_pStdTrigger = m_pTrigger;
 m_nClass = 1;
 UpdateData (FALSE);
-m_pTrigger = m_pObjTrigger ? m_mine->ObjTriggers (m_nTrigger) : NULL;
+m_pTrigger = m_mine->ObjTriggers (m_nTrigger);
 m_nTrigger = m_nObjTrigger;
 Refresh ();
 }
@@ -613,12 +611,10 @@ if (!GetMine ())
 //m_nTrigger = trignum;
 m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ();
 if (m_nClass) {
-	m_pObjTrigger = m_mine->AddObjTrigger (-1, m_nType);
-	m_pTrigger = m_pObjTrigger ? m_mine->ObjTriggers (m_mine->NumObjTriggers () - 1) : NULL;
-	m_nTrigger = m_pObjTrigger ? int (m_pObjTrigger - m_mine->ObjTriggerList ()) : -1; 
+	m_pTrigger = m_mine->AddObjTrigger (-1, m_nType);
+	m_nTrigger = m_pTrigger ? int (m_pTrigger - m_mine->ObjTriggers ()) : -1; 
 	}
 else {
-	m_pObjTrigger = NULL;
 	m_pTrigger = m_mine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
 	m_nTrigger = m_pTrigger ? int (m_pTrigger - m_mine->Triggers ()) : -1;
 	}
@@ -702,7 +698,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= NumTriggers ()))
 	return;
 if (m_nClass) {
-	m_mine->Current ()->object = m_mine->ObjTriggerList (m_nTrigger)->objnum;
+	m_mine->Current ()->object = m_mine->ObjTriggers (m_nTrigger)->nObject;
 	}
 else {
 	for (wallnum = 0, wall = m_mine->Walls (); wallnum < m_mine->GameInfo ().walls.count; wallnum++, wall++)

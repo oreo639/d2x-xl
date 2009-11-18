@@ -44,6 +44,62 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++) {
 
 //------------------------------------------------------------------------
 
+int CMine::QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm)
+{
+	INT16 i = pi->nObject;
+	INT16 m = pm->nObject;
+
+if (i < m)
+	return -1;
+if (i > m)
+	return 1;
+i = pi->type;
+m = pm->type;
+return (i < m) ? -1 : (i > m) ? 1 : 0;
+}
+
+
+void CMine::QSortObjTriggers (INT16 left, INT16 right)
+{
+	CDTrigger median = *ObjTriggers ((left + right) / 2);
+	INT16	l = left, r = right;
+
+do {
+	while (QCmpObjTriggers (ObjTriggers (l), &median) < 0)
+		l++;
+	while (QCmpObjTriggers (ObjTriggers (r), &median) > 0)
+		r--;
+	if (l <= r) {
+		if (l < r) {
+			CDTrigger o = *Triggers (l);
+			*Triggers (l) = *Triggers (r);
+			*Triggers (r) = o;
+			}
+		l++;
+		r--;
+		}
+	}
+while (l < r);
+if (l < right)
+	QSortObjTriggers (l, right);
+if (left < r)
+	QSortObjTriggers (left, r);
+}
+
+
+void CMine::SortObjTriggers (void)
+{
+	int	h;
+
+if ((h = NumObjTriggers ()) > 1) {
+	for (UINT16 i = 0; i < h; i++)
+		ObjTriggers (i)->nIndex = i;
+	QSortObjTriggers (0, h - 1);
+	}
+}
+
+//------------------------------------------------------------------------
+
 CDTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall) 
 {
 	INT16 flags;
@@ -268,13 +324,15 @@ return GameInfo ().walls.count;
 
 INT16 CMine::FindTriggerObject (INT16 *trignum)
 {
-	INT16 objnum = Current ()->object;
+	INT16 nObject = Current ()->object;
 
-if ((*trignum = *ObjTriggerRoot (objnum)) < 0) {
-	*trignum = NO_TRIGGER;
-	return -1;
-	}
-return objnum;
+for (int i = 0; i < NumObjTriggers (); i++)
+	if (ObjTriggers (i)->nObject == nObject) {
+		*trignum = i;
+		return nObject;
+		}
+*trignum = NO_TRIGGER;
+return -1;
 }
 
 //------------------------------------------------------------------------
@@ -372,21 +430,7 @@ theApp.UnlockUndo ();
 
 //------------------------------------------------------------------------
 
-CDObjTriggerList *CMine::LinkObjTrigger (INT16 objnum, INT16 trignum)
-{
-short i = *ObjTriggerRoot (objnum);
-CDObjTriggerList *ot = ObjTriggerList (trignum);
-ot->prev = -1;
-ot->next = i;
-ot->objnum = objnum;
-*ObjTriggerRoot (objnum) = trignum;
-ObjTriggerList (i)->prev = trignum;
-return ot;
-}
-
-//------------------------------------------------------------------------
-
-CDObjTriggerList *CMine::AddObjTrigger (INT16 objnum, INT16 type) 
+CDTrigger *CMine::AddObjTrigger (INT16 objnum, INT16 type) 
 {
 if (objnum < 0)
 	objnum = Current ()->object;
@@ -405,45 +449,22 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 short trignum = NumObjTriggers ();
-CDObjTriggerList *ot = ObjTriggerList (NumObjTriggers ());
-ot = LinkObjTrigger (objnum, trignum);
 InitTrigger (ObjTriggers (trignum), type, 0);
+ObjTriggers (trignum)->nObject = objnum;
 NumObjTriggers ()++;
 theApp.UnlockUndo ();
-return ot;
+SortObjTriggers ();
+for (UINT16 i = NumObjTriggers (); i; )
+	if (ObjTriggers (--i)->nIndex == trignum)
+		return ObjTriggers (i);
+return ObjTriggers (trignum);
 }
 
 //------------------------------------------------------------------------
 
 bool CMine::ObjTriggerIsInList (INT16 nTrigger)
 {
-CDObjTriggerList	*ot0 = ObjTriggerList (nTrigger),
-						*ot1 = ObjTriggerList (*ObjTriggerRoot (ot0->objnum));
-
-for (;;) {
-	if (ot1->next < 0)
-		break;
-	ot1 = ObjTriggerList (ot1->next);
-	if (ot1->objnum != ot0->objnum)
-		return false;
-	}
 return true;
-}
-
-//------------------------------------------------------------------------
-
-CDObjTriggerList *CMine::UnlinkObjTrigger (INT16 nTrigger)
-{
-CDObjTriggerList *ot = ObjTriggerList (nTrigger);
-if (ot->prev < 0) {
-	*ObjTriggerRoot (ot->objnum) = ot->next;
-	ObjTriggerList (ot->next)->prev = -1;
-	}
-else
-	ObjTriggerList (ot->prev)->next = ot->next;
-if (ot->next >= 0)
-	ObjTriggerList (ot->next)->prev = ot->prev;
-return ot;
 }
 
 //------------------------------------------------------------------------
@@ -452,46 +473,29 @@ void CMine::DeleteObjTrigger (INT16 trignum)
 {
 if ((trignum < 0) || (trignum >= NumObjTriggers ()))
 	return;
-CDObjTriggerList *ot = UnlinkObjTrigger (trignum);
-if (trignum < --NumObjTriggers ()) {
-	// move the last trigger in the object trigger table to the free table entry and relink it
-	*ot = *ObjTriggerList (NumObjTriggers ());
-	if (ot->prev < 0)
-		*ObjTriggerRoot (ot->objnum) = trignum;
-	else
-		ObjTriggerList (ot->prev)->next = trignum;
-	if (ot->next >= 0)
-		ObjTriggerList (ot->next)->prev = trignum;
+if (trignum < --NumObjTriggers ())
 	*ObjTriggers (trignum) = *ObjTriggers (NumObjTriggers ());
-	}
-else
-	ot->prev = 
-	ot->next = 
-	ot->objnum = -1;
 }
 
 //------------------------------------------------------------------------
 
 void CMine::DeleteObjTriggers (INT16 objnum) 
 {
-	INT16				h, i = *ObjTriggerRoot (objnum); 
+	INT16 i = NumObjTriggers ();
 	
-while (i >= 0) {
-	h = ObjTriggerList (i)->next;
-	DeleteObjTrigger (i);
-	i = h;
-	}
+while (i)
+	if (ObjTriggers (--i)->nObject == objnum)
+		DeleteObjTrigger (i);
 }
 
 //------------------------------------------------------------------------
 
 INT16 CMine::FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
-CDObjTriggerList *ot = ObjTriggerList ();
 CDTrigger *t = ObjTriggers ();
 int i, j;
 
-for (i = trignum; i < NumObjTriggers (); i++, ot++, t++)
+for (i = trignum; i < NumObjTriggers (); i++, t++)
 	for (j = 0; j < t->num_links; j++)
 		if ((t->seg [j] == segnum) && (t->side [j] == sidenum))
 			return i;

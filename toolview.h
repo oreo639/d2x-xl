@@ -261,8 +261,6 @@ class CDiagTool : public CToolDlg
 		bool CheckSegTypes ();
 		bool CheckWalls ();
 		bool CheckTriggers ();
-		bool CheckObjTriggerList (INT16 nTrigger);
-		bool CheckObjTriggers ();
 		bool CheckObjects ();
 		bool CheckVertices ();
 		bool CheckBotGens ();
@@ -739,7 +737,7 @@ class CTriggerTool : public CTexToolDlg
 		int					m_nTrigger;
 		CDTrigger			*m_pStdTrigger;
 		int					m_nStdTrigger;
-		CDObjTriggerList	*m_pObjTrigger;
+		CDTrigger			*m_pObjTrigger;
 		int					m_nObjTrigger;
 		char					m_szTarget [40];
 		int					m_bAutoAddWall;

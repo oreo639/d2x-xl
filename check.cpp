@@ -327,7 +327,7 @@ int CDiagTool::CheckId (CDObject *obj)
 
 	case OBJ_WEAPON: // (d2 only)
 		if (id != WEAPON_MINE) {
-			if (!m_bAutoFixBugs)
+			//if (!m_bAutoFixBugs)
 				return 1;
 			obj->id = WEAPON_MINE;
 			return 2;
@@ -937,83 +937,6 @@ return false;
 //  o Triggers () point to something
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckObjTriggerList (INT16 nTrigger)
-{
-	CDObjTriggerList	*ot = m_mine->ObjTriggerList (nTrigger);
-	INT16					i, o, objnum = ot->objnum;
-	bool					bOk = true;
-
-while ((i = ot->next) > -1) {
-	ot = m_mine->ObjTriggerList (i);
-	if ((o = ot->objnum) != objnum) {
-		bOk = false;
-		if (m_bAutoFixBugs) {
-#if 1
-			*m_mine->ObjTriggerRoot (o) = -1;
-#else
-			if ((j = *m_mine->ObjTriggerRoot (o)) == i)
-				*m_mine->ObjTriggerRoot (o) = m_mine->ObjTriggerList (j)->next;
-#endif
-			ot->objnum = objnum;
-			}
-		}
-	}
-return bOk;
-}
-
-//------------------------------------------------------------------------
-
-bool CDiagTool::CheckObjTriggers (void)
-{
-	INT16					h, i, j;
-	short					*or = m_mine->ObjTriggerRoot ();
-	CDObjTriggerList	*ot;
-	bool					bOk;
-
-for (i = 0; i < MAX_OBJECTS2; i++, or++) {
-	bOk = true;
-	if ((h = *or) < 0)
-		continue; //object doesn't have triggers
-	ot = m_mine->ObjTriggerList (h);
-	//find the first trigger in the object's trigger list
-	while ((j = ot->prev) > -1) {
-		ot = m_mine->ObjTriggerList (j);
-		if (m_bAutoFixBugs) {
-			bOk = false;
-			if (ot->objnum == i) {	//root index doesn't point to first trigger in list
-				*or = j;
-				}
-			else { //two lists from different objects linked together, so split them
-				ot->next = -1;
-				m_mine->ObjTriggerList (h)->prev = -1;
-				*or = h;
-				break;
-				}
-			}
-		h = j;
-		}
-	ot = m_mine->ObjTriggerList (h);
-	//find the first trigger in the object's trigger list
-	while ((j = ot->next) > -1) {
-		ot = m_mine->ObjTriggerList (j);
-		if (ot->objnum != i) {
-			ot->prev = -1;
-			m_mine->ObjTriggerList (h)->next = -1;
-			bOk = false;
-			break;
-			}
-		h = j;
-		}
-	if (!bOk) {
-		sprintf_s (message, sizeof (message), "%s: Object trigger list corrupted (trigger=%d, object=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", trignum, i);
-		if (UpdateStats (message, 0)) return true;
-		}
-	}
-return false;
-}
-
-//------------------------------------------------------------------------
-
 bool CDiagTool::CheckTriggers ()
  {
 	if (!GetMine ())
@@ -1272,34 +1195,12 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 trigCount = m_mine->NumObjTriggers ();
 for (trignum = 0; trignum < trigCount; trignum++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
-	if (!m_mine->ObjTriggerIsInList (trignum)) {
-		if (m_bAutoFixBugs) {
-#if 1
-			CDObjTriggerList *ot = m_mine->UnlinkObjTrigger (trignum);
-			m_mine->LinkObjTrigger (ot->objnum, trignum);
-#else
-			CDObjTriggerList *ot = m_mine->ObjTriggerList (trignum);
-			m_mine->DeleteObjTrigger (ot->objnum);
-#endif
-			sprintf_s (message, sizeof (message),"FIXED: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
-			}
-		else {
-			CDObjTriggerList *ot = m_mine->ObjTriggerList (trignum);
-			sprintf_s (message, sizeof (message),"ERROR: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
-			if (UpdateStats (message,0, trignum,ot->objnum, -1, -1, -1, -1, trignum)) return true;
-			}
+	trigger = m_mine->ObjTriggers (trignum);
+	if ((trigger->type != TT_MESSAGE) && (trigger->type != TT_SOUND) && !trigger->num_links) {
+		sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", trignum, trigger->nObject);
+		if (UpdateStats (message,0, trignum, trigger->nObject, -1, -1, -1, -1, trignum)) return true;
 		}
-	else {
-		CDTrigger *trigP = m_mine->ObjTriggers (trignum);
-		CDObjTriggerList *trigListP = m_mine->UnlinkObjTrigger (trignum);
-		if ((trigP->type != TT_MESSAGE) && (trigP->type != TT_SOUND) && !trigger->num_links) {
-			sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", trignum, trigListP->objnum);
-			if (UpdateStats (message,0, trignum, trigListP->objnum, -1, -1, -1, -1, trignum)) return true;
-			}
-		}	
 	}
-if (CheckObjTriggers ())
-	return true;
 if (count < 1) {
 	sprintf_s (message, sizeof (message),"WARNING: No exit found");
 	if (UpdateStats (message,0)) return true;
@@ -1377,7 +1278,6 @@ return false;
 bool CDiagTool::CheckEquipGens (void)
 {
 	INT16					h, nSegment;
-	short					*or = m_mine->ObjTriggerRoot ();
 	bool					bOk;
 	int					nMatCens = int (m_mine->GameInfo ().equipgen.count);
 	CDSegment*			segP;

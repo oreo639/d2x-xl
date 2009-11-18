@@ -598,20 +598,14 @@ class CDTrigger {
 public:
   UINT8  type;
   UINT16 flags;
+  UINT16 nObject;
   INT8   num_links;
   FIX    value;
   FIX    time;
   INT16  seg[MAX_TRIGGER_TARGETS];
   INT16  side[MAX_TRIGGER_TARGETS];
+  UINT16	nIndex;
 };
-
-class CDObjTriggerList {
-public:
-	INT16			prev;
-	INT16			next;
-	INT16			objnum;
-};
-
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
 // Light cast upon vert_light vertices in segnum:sidenum by some light
