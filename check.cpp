@@ -501,7 +501,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 			}
 		}
 	if (seg->special == SEGMENT_IS_EQUIPMAKER) {
-		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->BotGens (seg->matcen_num)->segnum != segnum)) {
+		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->EquipGens (seg->matcen_num)->segnum != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
@@ -728,10 +728,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 			}
 			break;
 	  case OBJ_EFFECT:
-		  if (obj->id > 1) {
+		  if (obj->id > SOUND_ID) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",objectnum, obj->id);
-				obj->id = 1;
+				obj->id = 2;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",objectnum, obj->id);
@@ -1085,14 +1085,12 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 				}
 			else {
 				// check side range
-				if (sidenum < -1 || sidenum >= 6) {
+				if (sidenum < -1 || sidenum > 5) {
 					if (m_bAutoFixBugs) {
-						if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
-							linknum--;
-						else {
-							linknum = MAX_TRIGGER_TARGETS;
-							trigger--;
-							}
+						if (sidenum < 0)
+							sidenum = 0;
+						else if (sidenum > 5)
+							sidenum = 5;
 						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
 						}
 					else

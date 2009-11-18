@@ -470,16 +470,15 @@ DeleteObjTriggers (nDelObj);
 int i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->signature = i;
-RenumberObjTriggers ();
-memcpy (Objects () + nDelObj, 
-		  Objects () + nDelObj + 1, 
-	     (GameInfo ().objects.count - nDelObj) * sizeof (CDObject));
+if (nDelObj < --j)
+	memcpy (Objects () + nDelObj, Objects () + nDelObj + 1, (GameInfo ().objects.count - nDelObj) * sizeof (CDObject));
 GameInfo ().objects.count = j;
+RenumberObjTriggers ();
 RenumberTriggerTargetObjs ();
-if (Current1 ().object >= GameInfo ().objects.count)
-	Current1 ().object = GameInfo ().objects.count-1;
-if (Current2 ().object >= GameInfo ().objects.count)
-	Current2 ().object = GameInfo ().objects.count-1;
+if (Current1 ().object >= j)
+	Current1 ().object = j - 1;
+if (Current2 ().object >= j)
+	Current2 ().object = j - 1;
 theApp.UnlockUndo ();
 }
 

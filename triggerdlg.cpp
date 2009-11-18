@@ -901,7 +901,13 @@ if (!GetMine ())
 int segnum, sidenum;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d, %d", &segnum, &sidenum);
-if ((segnum < 0) || (segnum >= m_mine->SegCount ()) || (sidenum < 1) || (sidenum > 6))
+if (segnum < 0)
+	return;
+if (sidenum < 0)
+	sidenum = 0;
+else if (sidenum > 6)
+	sidenum = 6;
+if (segnum > ((sidenum == 0) ? m_mine->ObjCount () : m_mine->SegCount ()))
 	return;
 AddTarget (segnum, sidenum);
 }
