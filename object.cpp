@@ -119,7 +119,7 @@ void CMine::SortObjects ()
 
 if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
-		Objects (i)->signature = j;
+		Objects (j)->signature = j;
 	QSortObjects (0, i - 1);
 	RenumberObjTriggers ();
 	RenumberTriggerTargetObjs ();

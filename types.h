@@ -598,7 +598,7 @@ class CDTrigger {
 public:
   UINT8  type;
   UINT16 flags;
-  UINT16 nObject;
+  INT16  nObject;
   INT8   num_links;
   FIX    value;
   FIX    time;

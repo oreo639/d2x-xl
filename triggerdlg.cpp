@@ -457,10 +457,9 @@ else {
 			 (m_mine->Current ()->object == m_mine->ObjTriggers (m_nTrigger)->nObject))
 			return false;
 		// use current object's first trigger
-		INT16 objnum = m_mine->FindTriggerObject (&trignum);
-		m_nTrigger = (trignum == NO_TRIGGER) ? -1 : trignum;
-		if ((m_nTrigger == -1) || (objnum < 0))
+		if (m_mine->ObjTriggers (m_nTrigger)->nObject < 0)
 			return false;
+		m_mine->Current ()->object = m_mine->ObjTriggers (m_nTrigger)->nObject;
 		}
 	else {
 		// use current side's trigger
