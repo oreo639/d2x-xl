@@ -271,60 +271,69 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
 
 int CDiagTool::CheckId (CDObject *obj) 
 {
-	int error_flag = 0;
 	int type = obj->type;
 	int id = obj->id;
+
 	switch (type) {
-	case OBJ_ROBOT    : /* an evil enemy */
+	case OBJ_ROBOT: /* an evil enemy */
 		if (id < 0 || id >= ((file_type == RDL_FILE) ? ROBOT_IDS1 : ROBOT_IDS2) ) {
-			error_flag = 1;
+			return 1;
 		}
 		break;
-	case OBJ_HOSTAGE  : /* a hostage you need to rescue */
+
+	case OBJ_HOSTAGE: /* a hostage you need to rescue */
 #if 0
 		if (id< 0 || id >1) {
-			error_flag = 1;
+			return 1;
 		}
 #endif
 		break;
-	case OBJ_PLAYER   : /* the player on the console */
+
+	case OBJ_PLAYER: /* the player on the console */
 		if (id< 0 || id >7) {
-			error_flag = 1;
+			return 1;
 		}
 		break;
-	case OBJ_POWERUP  : /* a powerup you can pick up */
+
+	case OBJ_POWERUP: /* a powerup you can pick up */
 		if (id< 0 || id >MAX_POWERUP_IDS) {
-			error_flag = 1;
+			return 1;
 		}
 		break;
+
 	case OBJ_CNTRLCEN : /* the control center */
 		if (file_type == RDL_FILE) {
-			if (id< 0 || id >25) {
-				error_flag = 1;
+			if (id >= 0 || id <= 25) {
+				return 0;
 			}
 		} else {
-			if (id< 1 || id >6) {
-				error_flag = 1;
+			if (id >= 1 || id <= 6) {
+				return 0;
 			}
 		}
-		if (error_flag && m_bAutoFixBugs) {
-			obj->id = (file_type == RDL_FILE) ? 1 : 2;
-			error_flag = 2;
-			}
+		if (!m_bAutoFixBugs)
+			return 1;
+		obj->id = (file_type == RDL_FILE) ? 1 : 2;
+		return 2;
 		break;
-	case OBJ_COOP     : /* a cooperative player object */
+
+	case OBJ_COOP: /* a cooperative player object */
 #if 0
 		if (id< 8 || id >10) {
-			error_flag = 1;
+			return 1;
 		}
 #endif
 		break;
+
 	case OBJ_WEAPON: // (d2 only)
 		if (id != WEAPON_MINE) {
-			error_flag = 1;
+			if (!m_bAutoFixBugs)
+				return 1;
+			obj->id = WEAPON_MINE;
+			return 2;
 		}
 	}
-	return error_flag;
+	return 0;
 }
 
 //--------------------------------------------------------------------------
@@ -667,7 +676,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     y = obj->pos.y - center.y;
     z = obj->pos.z - center.z;
 	object_radius = sqrt (x*x + y*y + z*z);
-    if (object_radius > max_radius) {
+    if ((object_radius > max_radius) && (obj->type != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",objectnum,segnum);
       if (UpdateStats (message, 1, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
@@ -1107,16 +1116,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	int tt = trigger->type;
 	int tf = trigger->flags;
 	if (trigger->num_links == 0) {
-		if ((file_type == RDL_FILE) ?
-			tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | 
-					TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) :
-			   tt==TT_OPEN_DOOR		|| tt==TT_CLOSE_DOOR
-			|| tt==TT_MATCEN        || tt==TT_ILLUSION_OFF
-			|| tt==TT_ILLUSION_ON   || tt==TT_UNLOCK_DOOR
-			|| tt==TT_LOCK_DOOR     || tt==TT_OPEN_WALL
-			|| tt==TT_CLOSE_WALL		|| tt==TT_ILLUSORY_WALL
-			|| tt==TT_LIGHT_OFF		|| tt==TT_LIGHT_ON
-			|| tt==TT_TELEPORT
+		if ((file_type == RDL_FILE) 
+			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
+			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
+			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
 			) {
 			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigger=%d)",trignum);
 			if (UpdateStats (message,0, -1, -1, -1, -1, -1, -1, trignum))
@@ -1148,10 +1151,12 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 						linknum = MAX_TRIGGER_TARGETS;	// take care of the loops
 						trigger--;
 						}
-					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant cube (trigger=%d, cube=%d)",trignum,segnum);
+					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigger=%d, cube=%d)", 
+								  (sidenum < 0) ? "object" : "segment", trignum, segnum);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant cube (trigger=%d, cube=%d)",trignum,segnum);
+					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (trigger=%d, cube=%d)", 
+								  (sidenum < 0) ? "object" : "segment", trignum, segnum);
 				if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 					return true;
 				}
@@ -1175,9 +1180,9 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 					CDSegment *seg = m_mine->Segments (segnum);
 					// check door opening trigger
 //						if (trigger->flags == TRIGGER_CONTROL_DOORS) {
-					if ((file_type == RDL_FILE) ? 
-						 tf & TRIGGER_CONTROL_DOORS :
-					    tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
+					if ((file_type == RDL_FILE) 
+						 ? tf & TRIGGER_CONTROL_DOORS 
+						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigger points to a wall if it controls doors
 						if (seg->sides[sidenum].nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
@@ -1281,9 +1286,17 @@ for (trignum = 0; trignum < trigCount; trignum++) {
 		else {
 			CDObjTriggerList *ot = m_mine->ObjTriggerList (trignum);
 			sprintf_s (message, sizeof (message),"ERROR: Object trigger linked to wrong object (trigger=%d, object=%d))",trignum,ot->objnum);
-			if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
+			if (UpdateStats (message,0, trignum,ot->objnum, -1, -1, -1, -1, trignum)) return true;
 			}
 		}
+	else {
+		CDTrigger *trigP = m_mine->ObjTriggers (trignum);
+		CDObjTriggerList *trigListP = m_mine->UnlinkObjTrigger (trignum);
+		if ((trigP->type != TT_MESSAGE) && (trigP->type != TT_SOUND) && !trigger->num_links) {
+			sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", trignum, trigListP->objnum);
+			if (UpdateStats (message,0, trignum, trigListP->objnum, -1, -1, -1, -1, trignum)) return true;
+			}
+		}	
 	}
 if (CheckObjTriggers ())
 	return true;
@@ -1580,6 +1593,21 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 							wallnum, wall->trigger);
 			if (UpdateStats (message,1,wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
 			}
+#if 1 // linked walls not supported in DLE-XP and D2X-XL
+		if (wall->linked_wall != -1) {
+			INT16 invLinkedWall = wall->linked_wall;
+			if (m_bAutoFixBugs) {
+				wall->linked_wall = -1;
+				sprintf_s (message, sizeof (message),
+							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
+							  wallnum, invLinkedWall, wall->linked_wall);
+				}
+			else
+				sprintf_s (message, sizeof (message),
+							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
+							  wallnum, invLinkedWall, wall->linked_wall);
+			}
+#else
 		if ((wall->linked_wall < -1) || (wall->linked_wall >= wallCount)) {
 			if (m_bAutoFixBugs) {
 				INT16	oppSeg, oppSide, invLinkedWall = wall->linked_wall;
@@ -1627,6 +1655,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					wall->linked_wall = -1;
 				}
 			}
+#endif
 		if (UpdateStats (message, 1, wall->segnum, wall->sidenum, -1, -1, -1, wallnum)) return true;
 			// check wall clip_num
 		if ((wall->type == WALL_CLOAKED) && (wall->cloak_value > 31)) {

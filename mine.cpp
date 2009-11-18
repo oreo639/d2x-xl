@@ -2152,6 +2152,10 @@ if (file_type != RDL_FILE) {
 	if ((GameInfo ().fileinfo_version < 39) && (t->type == TT_MASTER))
 		t->value = 0;
 	t->time = read_FIX(fp);
+#ifdef _DEBUG
+	if (t->type == TT_DISABLE_TRIGGER)
+		t->type = t->type;
+#endif
 	}
 else {
 	t->type = read_INT8(fp);
