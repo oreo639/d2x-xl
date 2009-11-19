@@ -327,7 +327,7 @@ int CDiagTool::CheckId (CDObject *obj)
 
 	case OBJ_WEAPON: // (d2 only)
 		if (id != WEAPON_MINE) {
-			//if (!m_bAutoFixBugs)
+			if (!m_bAutoFixBugs)
 				return 1;
 			obj->id = WEAPON_MINE;
 			return 2;
