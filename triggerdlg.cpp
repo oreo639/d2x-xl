@@ -453,13 +453,16 @@ if (!m_bFindTrigger)
 	trignum = m_nTrigger;
 else {
 	if (m_nClass) {
-		if ((m_nTrigger != -1) && 
-			 (m_mine->Current ()->object == m_mine->ObjTriggers (m_nTrigger)->nObject))
+		if (m_mine->Current ()->object == m_mine->ObjTriggers (m_nTrigger)->nObject)
 			return false;
-		// use current object's first trigger
-		if (m_mine->ObjTriggers (m_nTrigger)->nObject < 0)
-			return false;
-		m_mine->Current ()->object = m_mine->ObjTriggers (m_nTrigger)->nObject;
+		for (int i = 0, j = m_mine->NumObjTriggers (); j; j--, i++) {
+			if (m_mine->Current ()->object == m_mine->ObjTriggers (i)->nObject) {
+				m_nTrigger = i;
+				return false;
+				}
+			}
+		m_nTrigger = -1;
+		return false;
 		}
 	else {
 		// use current side's trigger
