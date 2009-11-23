@@ -205,7 +205,7 @@
 
 #define MAX_SEGMENTS1 800  // descent 1 max # of cubes
 #define MAX_SEGMENTS2 900  // descent 2 max # of cubes
-#define MAX_SEGMENTS3 6000 // D2X-XL max # of cubes
+#define MAX_SEGMENTS3 8000 // D2X-XL max # of cubes
 #define MAX_VERTICES1 2808 // descent 1 max # of vertices
 #define MAX_VERTICES2 (MAX_SEGMENTS2 * 4 + 8) // descent 2 max # of vertices
 #define MAX_VERTICES3 (MAX_SEGMENTS3 * 4 + 8) // descent 2 max # of vertices
