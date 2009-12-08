@@ -262,6 +262,7 @@ class CDiagTool : public CToolDlg
 		bool CheckWalls ();
 		bool CheckTriggers ();
 		bool CheckObjects ();
+		void CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players);
 		bool CheckVertices ();
 		bool CheckBotGens ();
 		bool CheckEquipGens ();

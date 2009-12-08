@@ -1264,12 +1264,14 @@ if ((selection == OBJ_SMOKE) || (selection == OBJ_EFFECT)) {
 	return;
 	}
 // set id
-int playerIds [8] = {0,1,2,3,4,5,6,7};
-int coopIds [3] = {8,9,10};
+int playerIds [16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+int coopIds [3];
+for (int i = 0; i < 3; i++)
+	coopIds [i] = MAX_PLAYERS + i;
 
 switch (selection) {
 	case OBJ_PLAYER:
-		if (!SetPlayerId (obj, selection, playerIds, 8, "Only 8 players allowed."))
+		if (!SetPlayerId (obj, selection, playerIds, MAX_PLAYERS, "Only 8/16 players allowed."))
 			return;
 		break;
 

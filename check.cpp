@@ -290,7 +290,7 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_PLAYER: /* the player on the console */
-		if (id< 0 || id >7) {
+		if ((id < 0) || (id >= MAX_PLAYERS)) {
 			return 1;
 		}
 		break;
@@ -318,11 +318,9 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_COOP: /* a cooperative player object */
-#if 0
-		if (id< 8 || id >10) {
+		if ((id < MAX_PLAYERS) || (id >= MAX_PLAYERS + 3)) {
 			return 1;
 		}
-#endif
 		break;
 
 	case OBJ_WEAPON: // (d2 only)
@@ -600,6 +598,26 @@ return false;
 }
 
 //--------------------------------------------------------------------------
+
+void CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
+{
+int id = m_mine->Objects (nObject)->id;
+if ((id < nMin) || (id > nMax))
+	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
+else if (players [id])
+	sprintf_s (message, sizeof (message), "WARNING: Duplicate player #%d (found %d)", id, players [id]);
+else 
+	return;
+if (m_bAutoFixBugs) {
+	int i;
+	for (i = 0; players [i]; i++)
+		;
+	id = (i < nMax) ? i : nMax - 1;
+	players [id]++;
+	}
+}
+
+//--------------------------------------------------------------------------
 // CDiagTool - check_objects ()
 //
 // ACTION - Checks object's: segment number, type, id, position, container.
@@ -613,7 +631,7 @@ bool CDiagTool::CheckObjects ()
 if (!GetMine ())
 	return false;
 
-  int h,objectnum,type,id,count,player[11],segnum,flags,corner,coops;
+	int h,objectnum,type,id,count,players [16 + 3],segnum,flags,corner, nPlayers [2];
   vms_vector center;
   double x,y,z,radius, max_radius,object_radius;
   CDObject *obj = m_mine->Objects ();
@@ -709,10 +727,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  case OBJ_PLAYER:
 		  if (!pPlayer)
 			  pPlayer = obj;
-		  if (obj->id > 7) {
-			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
-			obj->id = 7;
+			if (obj->id >= MAX_PLAYERS) {
+				if (m_bAutoFixBugs) {
+					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
+				obj->id = 7;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
@@ -825,70 +843,65 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 
 	// make sure there is the proper number of players and coops
 	// reset count to zero
-	for (id=0;id<11;id++) {
-		player[id] = 0;
-	}
+	memset (players, 0, sizeof (players));
+	memset (nPlayers, 0, sizeof (nPlayers));
 	// count each
-	coops = 0;
-  obj = m_mine->Objects ();
+	obj = m_mine->Objects ();
 	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
-		type = obj->type;
-		if (type == OBJ_PLAYER) {
-			id = obj->id;
-			if (id >= 0 && id < 8) {
-				while (m_bAutoFixBugs && (id < 8) && player [id])
-					id = ++obj->id;
-				if (id < 8)
-					player[id]++;
+		if (obj->type == OBJ_PLAYER) {
+			nPlayers [0]++;
+			CheckAndFixPlayer (0, MAX_PLAYERS, objectnum, players);
+			}
+		else if (obj->type == OBJ_COOP) {
+			nPlayers [1]++;
+			CheckAndFixPlayer (MAX_PLAYERS, MAX_PLAYERS + 3, objectnum, players);
 			}
 		}
-#if 1
-		if (type == OBJ_COOP) {
-			coops++;
-		}
-#else
-		if (type == OBJ_COOP) {
-			id = obj->id;
-			if (id >= 8 && id <= 10) {
-				player[id]++;
+// resequence player and coop ids
+if (m_bAutoFixBugs) {
+	int i = 0;
+	for (id = 0; id < MAX_PLAYERS; id++)
+		if (players [id] != 0) 
+			players [id] = i++;
+	for (i = MAX_PLAYERS; id < MAX_PLAYERS + 3; id++)
+		if (players [id] != 0) 
+			players [id] = i++;
+	obj = m_mine->Objects ();
+	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
+		if (obj->type == OBJ_PLAYER) {
+			if ((obj->id >= 0) && (obj->id < MAX_PLAYERS))
+				obj->id = players [obj->id];
+			}
+		else if (obj->type == OBJ_COOP) {
+			if ((obj->id >= MAX_PLAYERS) && (obj->id < MAX_PLAYERS + 3))
+				obj->id = players [obj->id];
 			}
 		}
-#endif
-  }
-  // makesure each count equals 1
-  for (id = 0;id < 8; id++) {
-	if (player[id] == 0) {
-	  sprintf_s (message, sizeof (message),"WARNING: No player=%d",id);
-	  if (UpdateStats (message,0)) 
-		  return true;
-	}
-	if (player[id] > 1) {
-	  sprintf_s (message, sizeof (message),"WARNING: Duplicate player #%d (found %d)",id,player[id]);
-	  if (UpdateStats (message,0)) 
-		  return true;
-	}
-  }
-#if 1
-	if (coops != 3) {
-		sprintf_s (message, sizeof (message),"WARNING: %d coop players found (should be 3)",coops);
-		if (UpdateStats (message,0)) 
-			return true;
 	}
 
-#else
-  for (id=8;id<11;id++) {
-	if (player[id] == 0) {
-	  sprintf_s (message, sizeof (message),"WARNING: No coop player #%d",id);
-	  if (UpdateStats (message,0)) 
-		  return true;
+for (id = 0; id < MAX_PLAYERS; id++) {
+	if (players [id] == 0) {
+		sprintf_s (message, sizeof (message),"WARNING: No player = %d", id);
+		if (UpdateStats (message, 0)) 
+			return true;
+		}
+	if (nPlayers [0] > MAX_PLAYERS) {
+		sprintf_s (message, sizeof (message),"WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS);
+		if (UpdateStats (message,0)) 
+			return true;
+		}
+	if (nPlayers [1] < 3) {
+		sprintf_s (message, sizeof (message),"WARNING: %d coop players found (should be 3)", nPlayers [1]);
+		if (UpdateStats (message,0)) 
+			return true;
+		}
+	else if (nPlayers [1] > 3) {
+		sprintf_s (message, sizeof (message),"WARNING: too many coop players found (found %d, max. allowed 3)", nPlayers [1]);
+		if (UpdateStats (message,0)) 
+			return true;
+		}
 	}
-	if (player[id] > 1) {
-	  sprintf_s (message, sizeof (message),"WARNING: Duplicatecoop player #%d (found %d)",id,player[id]);
-	  if (UpdateStats (message,0,1)) 
-		  return true;
-	}
-  }
-#endif
+
   // make sure there is only one control center
 count = 0;
 obj = m_mine->Objects ();
