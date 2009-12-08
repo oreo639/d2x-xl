@@ -599,22 +599,24 @@ return false;
 
 //--------------------------------------------------------------------------
 
-void CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
+bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
 {
 int id = m_mine->Objects (nObject)->id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
 else if (players [id])
 	sprintf_s (message, sizeof (message), "WARNING: Duplicate player #%d (found %d)", id, players [id]);
-else 
-	return;
-if (m_bAutoFixBugs) {
-	int i;
-	for (i = 0; players [i]; i++)
-		;
-	id = (i < nMax) ? i : nMax - 1;
+else {
 	players [id]++;
+	return false;
 	}
+if (m_bAutoFixBugs) {
+	for (id = 0; players [id]; id++)
+		;
+	m_mine->Objects (nObject)->id = (id < nMax) ? id : nMax - 1;
+	players [m_mine->Objects (nObject)->id]++;
+	}
+return true;
 }
 
 //--------------------------------------------------------------------------
@@ -631,7 +633,7 @@ bool CDiagTool::CheckObjects ()
 if (!GetMine ())
 	return false;
 
-	int h,objectnum,type,id,count,players [16 + 3],segnum,flags,corner, nPlayers [2];
+	int h,objectnum,type,id,count,players [16 + 3],segnum,flags,corner, nPlayers [2], bFix;
   vms_vector center;
   double x,y,z,radius, max_radius,object_radius;
   CDObject *obj = m_mine->Objects ();
@@ -845,36 +847,43 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 	// reset count to zero
 	memset (players, 0, sizeof (players));
 	memset (nPlayers, 0, sizeof (nPlayers));
+	bFix = 0;
 	// count each
 	obj = m_mine->Objects ();
 	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
 		if (obj->type == OBJ_PLAYER) {
 			nPlayers [0]++;
-			CheckAndFixPlayer (0, MAX_PLAYERS, objectnum, players);
+			if (CheckAndFixPlayer (0, MAX_PLAYERS, objectnum, players))
+				bFix |= 1;
 			}
 		else if (obj->type == OBJ_COOP) {
 			nPlayers [1]++;
-			CheckAndFixPlayer (MAX_PLAYERS, MAX_PLAYERS + 3, objectnum, players);
+			if (CheckAndFixPlayer (MAX_PLAYERS, MAX_PLAYERS + 3, objectnum, players))
+				bFix |= 2;
 			}
 		}
 // resequence player and coop ids
 if (m_bAutoFixBugs) {
-	int i = 0;
-	for (id = 0; id < MAX_PLAYERS; id++)
-		if (players [id] != 0) 
-			players [id] = i++;
-	for (i = MAX_PLAYERS; id < MAX_PLAYERS + 3; id++)
-		if (players [id] != 0) 
-			players [id] = i++;
+	int i;
+	if (bFix & 1) {
+		for (i = id = 0; id < MAX_PLAYERS; id++)
+			if (players [id] != 0) 
+				players [id] = ++i;
+		}
+	if (bFix & 2) {
+		for (i = id = MAX_PLAYERS; id < MAX_PLAYERS + 3; id++)
+			if (players [id] != 0) 
+				players [id] = ++i;
+		}
 	obj = m_mine->Objects ();
 	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
 		if (obj->type == OBJ_PLAYER) {
-			if ((obj->id >= 0) && (obj->id < MAX_PLAYERS))
-				obj->id = players [obj->id];
+			if ((bFix & 1) && (obj->id >= 0) && (obj->id < MAX_PLAYERS))
+				obj->id = players [obj->id] - 1;
 			}
 		else if (obj->type == OBJ_COOP) {
-			if ((obj->id >= MAX_PLAYERS) && (obj->id < MAX_PLAYERS + 3))
-				obj->id = players [obj->id];
+			if ((bFix & 2) && (obj->id >= MAX_PLAYERS) && (obj->id < MAX_PLAYERS + 3))
+				obj->id = players [obj->id] - 1;
 			}
 		}
 	}

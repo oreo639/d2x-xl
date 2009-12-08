@@ -932,7 +932,7 @@ switch(type) {
 		break;
 
 	case OBJ_PLAYER: // the player on the console
-		for (i = 0; i <= 7; i++) {
+		for (i = 0; i < MAX_PLAYERS; i++) {
 			sprintf_s (str, sizeof (str), "%d", i);
 			h = pcb->AddString (str);
 			pcb->SetItemData (h, i);
@@ -1024,12 +1024,12 @@ switch(type) {
 		break;
 
 	case OBJ_COOP: // a cooperative player object
-		for (i = 8; i <= 10; i++) {
+		for (i = MAX_PLAYERS; i < MAX_PLAYERS + 3; i++) {
 			sprintf_s (str, sizeof (str), "%d", i);
 			h = pcb->AddString (str);
-			pcb->SetItemData (h, i - 8);
+			pcb->SetItemData (h, i - MAX_PLAYERS);
 			}
-		SelectItemData (pcb, id - 8);
+		SelectItemData (pcb, id - MAX_PLAYERS);
 		break;
 
 	default:
@@ -1363,11 +1363,11 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 switch (obj->type) {
 	case OBJ_PLAYER:
-		SetNewObjId (obj, OBJ_PLAYER, nCurSel, 8);
+		SetNewObjId (obj, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
 		break;
 
 	case OBJ_COOP:
-		SetNewObjId (obj, OBJ_COOP, nCurSel + 8, 3);
+		SetNewObjId (obj, OBJ_COOP, nCurSel + MAX_PLAYERS, 3);
 		break;
 
 	case OBJ_WEAPON:
