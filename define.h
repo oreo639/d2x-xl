@@ -34,7 +34,7 @@
 
 #define MAX_PLAYERS_D2		8
 #define MAX_PLAYERS_D2X		16
-#define MAX_PLAYERS			8 //((level_version < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+#define MAX_PLAYERS			((level_version < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
 #define MAX_COOP_PLAYERS	3
 
 #define NUM_HOT_BUTTONS 21
