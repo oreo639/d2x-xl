@@ -890,25 +890,25 @@ if (m_bAutoFixBugs) {
 
 for (id = 0; id < MAX_PLAYERS; id++) {
 	if (players [id] == 0) {
-		sprintf_s (message, sizeof (message),"WARNING: No player = %d", id);
+		sprintf_s (message, sizeof (message),"WARNING: No player %d", id + 1);
 		if (UpdateStats (message, 0)) 
 			return true;
 		}
-	if (nPlayers [0] > MAX_PLAYERS) {
-		sprintf_s (message, sizeof (message),"WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS);
-		if (UpdateStats (message,0)) 
-			return true;
-		}
-	if (nPlayers [1] < 3) {
-		sprintf_s (message, sizeof (message),"WARNING: %d coop players found (should be 3)", nPlayers [1]);
-		if (UpdateStats (message,0)) 
-			return true;
-		}
-	else if (nPlayers [1] > 3) {
-		sprintf_s (message, sizeof (message),"WARNING: too many coop players found (found %d, max. allowed 3)", nPlayers [1]);
-		if (UpdateStats (message,0)) 
-			return true;
-		}
+	}
+if (nPlayers [0] > MAX_PLAYERS) {
+	sprintf_s (message, sizeof (message),"WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS);
+	if (UpdateStats (message,0)) 
+		return true;
+	}
+if (nPlayers [1] < 3) {
+	sprintf_s (message, sizeof (message),"WARNING: %d coop players found (should be 3)", nPlayers [1]);
+	if (UpdateStats (message,0)) 
+		return true;
+	}
+else if (nPlayers [1] > 3) {
+	sprintf_s (message, sizeof (message),"WARNING: too many coop players found (found %d, max. allowed 3)", nPlayers [1]);
+	if (UpdateStats (message,0)) 
+		return true;
 	}
 
   // make sure there is only one control center

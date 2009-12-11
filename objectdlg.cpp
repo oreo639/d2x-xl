@@ -470,7 +470,7 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
 			sprintf_s (string, sizeof (string), "Hostage");
 			break;
 		case OBJ_PLAYER: // the player on the console
-			sprintf_s (string, sizeof (string), "Player #%d", obj->id);
+			sprintf_s (string, sizeof (string), "Player #%d", obj->id + 1);
 			break;
 		case OBJ_WEAPON: //
 			strcpy_s (string, sizeof (string), "Red Mine");
@@ -933,7 +933,7 @@ switch(type) {
 
 	case OBJ_PLAYER: // the player on the console
 		for (i = 0; i < MAX_PLAYERS; i++) {
-			sprintf_s (str, sizeof (str), "%d", i);
+			sprintf_s (str, sizeof (str), (i < 9) ? "%3d" : "%d", i + 1);
 			h = pcb->AddString (str);
 			pcb->SetItemData (h, i);
 			}

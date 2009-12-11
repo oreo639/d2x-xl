@@ -415,7 +415,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     COMBOBOX        IDC_OBJ_OBJNO,24,2,74,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_OBJ_TYPE,24,16,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_OBJ_ID,24,30,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_OBJ_ID,24,30,74,110,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_OBJ_AI,24,44,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_OBJ_TEXTURE,24,58,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     CONTROL         "",IDC_OBJ_SORT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,136,4,9,10
@@ -1146,7 +1146,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     COMBOBOX        IDC_OBJ_OBJNO,46,2,74,160,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_OBJ_TYPE,46,16,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_OBJ_ID,46,30,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_OBJ_ID,46,30,74,110,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_OBJ_AI,45,44,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_OBJ_TEXTURE,46,58,74,110,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     CONTROL         "",IDC_OBJ_SORT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,209,4,9,10
@@ -6071,8 +6071,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,69,0
- PRODUCTVERSION 1,7,69,0
+ FILEVERSION 1,7,70,0
+ PRODUCTVERSION 1,7,70,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -6088,13 +6088,13 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "MFC port and enhancements: Dietfrid Mali. Logo and icon: Steve Chamberlain."
-            VALUE "FileDescription", "Descent Level Editor XP [8 dec 2009]"
-            VALUE "FileVersion", "1, 7, 69, 0"
+            VALUE "FileDescription", "Descent Level Editor XP [11 dec 2009]"
+            VALUE "FileVersion", "1, 7, 70, 0"
             VALUE "InternalName", "DLE-XP"
             VALUE "LegalCopyright", "Copyright (C) 1998 - 2009 Bryan Aamot"
             VALUE "OriginalFilename", "DLE-XP.EXE"
             VALUE "ProductName", "Descent Level Editor XP"
-            VALUE "ProductVersion", "1, 7, 69, 0"
+            VALUE "ProductVersion", "1, 7, 70, 0"
         END
     END
     BLOCK "VarFileInfo"
