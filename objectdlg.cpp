@@ -482,7 +482,7 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
 			sprintf_s (string, sizeof (string), "Reactor");
 			break;
 		case OBJ_COOP: // a cooperative player object
-			sprintf_s (string, sizeof (string), "Coop Player #%d", obj->id);
+			sprintf_s (string, sizeof (string), "Coop Player #%d", obj->id + 1);
 			break;
 		case OBJ_CAMBOT: // a camera */
 			sprintf_s (string, sizeof (string), "Camera");

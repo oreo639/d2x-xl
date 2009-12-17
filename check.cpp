@@ -318,7 +318,7 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_COOP: /* a cooperative player object */
-		if ((id < MAX_PLAYERS) || (id >= MAX_PLAYERS + 3)) {
+		if ((id < 0) || (id > 2)) {
 			return 1;
 		}
 		break;
@@ -611,7 +611,7 @@ else {
 	return false;
 	}
 if (m_bAutoFixBugs) {
-	for (id = 0; players [id]; id++)
+	for (id = nMin; (id < nMax) && players [id]; id++)
 		;
 	m_mine->Objects (nObject)->id = (id < nMax) ? id : nMax - 1;
 	players [m_mine->Objects (nObject)->id]++;
@@ -732,7 +732,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 			if (obj->id >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
-				obj->id = 7;
+				obj->id = MAX_PLAYERS - 1;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
@@ -858,7 +858,7 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 			}
 		else if (obj->type == OBJ_COOP) {
 			nPlayers [1]++;
-			if (CheckAndFixPlayer (MAX_PLAYERS, MAX_PLAYERS + 3, objectnum, players))
+			if (CheckAndFixPlayer (0, 3, objectnum, players + MAX_PLAYERS))
 				bFix |= 2;
 			}
 		}
@@ -871,7 +871,7 @@ if (m_bAutoFixBugs) {
 				players [id] = ++i;
 		}
 	if (bFix & 2) {
-		for (i = id = MAX_PLAYERS; id < MAX_PLAYERS + 3; id++)
+		for (i = 0, id = MAX_PLAYERS; id < MAX_PLAYERS + 3; id++)
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
@@ -890,7 +890,7 @@ if (m_bAutoFixBugs) {
 
 for (id = 0; id < MAX_PLAYERS; id++) {
 	if (players [id] == 0) {
-		sprintf_s (message, sizeof (message),"WARNING: No player %d", id + 1);
+		sprintf_s (message, sizeof (message),"INFO: No player %d", id + 1);
 		if (UpdateStats (message, 0)) 
 			return true;
 		}
@@ -901,7 +901,7 @@ if (nPlayers [0] > MAX_PLAYERS) {
 		return true;
 	}
 if (nPlayers [1] < 3) {
-	sprintf_s (message, sizeof (message),"WARNING: %d coop players found (should be 3)", nPlayers [1]);
+	sprintf_s (message, sizeof (message),"INFO: %d coop players found (3 allowed)", nPlayers [1]);
 	if (UpdateStats (message,0)) 
 		return true;
 	}
