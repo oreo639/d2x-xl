@@ -1262,7 +1262,7 @@ for (h = i = 0; i < j; i++, segP++) {
 				refList [n] = -1;
 			else
 				refList [n]++;
-			segP->matcen_num = INT8 (FindMatCen (i));
+			segP->matcen_num = INT8 (FindMatCen (matCenP, i));
 			}
 		}
 	}
