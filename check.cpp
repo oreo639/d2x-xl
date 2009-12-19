@@ -1237,8 +1237,7 @@ return false;
 
 INT8 CDiagTool::FindMatCen (matcen_info* matCenP, INT16 nSegment, INT16* refList)
 {
-	 = m_mine->BotGens (0);
-	INT8				i, j = INT8 (m_mine->GameInfo ().botgen.count);
+	INT8	i, j = INT8 (m_mine->GameInfo ().botgen.count);
 
 for (i = 0; i < j; i++) {
 	if (refList ? refList [i] >= 0 : matCenP [i].segnum == nSegment)
