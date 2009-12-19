@@ -267,6 +267,12 @@ class CDiagTool : public CToolDlg
 		bool CheckBotGens ();
 		bool CheckEquipGens ();
 		bool MarkSegment (INT16 segnum);
+		INT8 FindMatCen (INT16 nSegment, INT16* refList = NULL);
+		void CountMatCenRefs (int nSpecialType, INT16* refList, matcen_info* matCenP, INT16 nMatCens);
+		INT16 FixMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens);
+		INT16 AssignMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens);
+		void CleanupMatCens (INT16* refList, matcen_info* matCenP, INT16 nMatCens);
+
 		inline CListView *LVStats ()
 			{ return (CListView *) GetDlgItem (IDC_DIAG_STATS); }
 		inline CListBox *LBBugs ()

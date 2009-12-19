@@ -651,7 +651,7 @@ typedef struct matcen_info {
   INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */
 //  INT32  robot_flags2;// Additional 32 robots for Descent 2
   FIX    hit_points;  /* How hard it is to destroy this particular matcen */
-  FIX    interval;    /* Interval between materialogrifizations */
+  FIX    interval;    /* Interval between materializations */
   INT16  segnum;      /* Segment this is attached to. */
   INT16  fuelcen_num; /* Index in fuelcen array. */
 } matcen_info;
