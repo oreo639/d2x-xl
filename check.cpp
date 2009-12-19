@@ -1237,13 +1237,24 @@ return false;
 
 INT8 CDiagTool::FindMatCen (matcen_info* matCenP, INT16 nSegment, INT16* refList)
 {
-	INT8	i, j = INT8 (m_mine->GameInfo ().botgen.count);
+	INT8	h = -1, i, j = INT8 (m_mine->GameInfo ().botgen.count);
 
-for (i = 0; i < j; i++) {
-	if (refList ? refList [i] >= 0 : matCenP [i].segnum == nSegment)
-		return i;
+if (refList) {
+	for (i = 0; i < j; i++) {
+		if (refList [i] >= 0) {
+			if (matCenP [i].objFlags [0] || matCenP [i].objFlags [1])
+				return i;
+			h = i;
+			}
+		}
 	}
-return -1;
+else {
+	for (i = 0; i < j; i++) {
+		if (matCenP [i].segnum == nSegment)
+			return i;
+		}
+	}
+return h;
 }
 
 //------------------------------------------------------------------------
@@ -1253,7 +1264,7 @@ void CDiagTool::CountMatCenRefs (int nSpecialType, INT16* refList, matcen_info* 
 	CDSegment*		segP = m_mine->Segments ();
 	INT16				n, h, i, j = m_mine->SegCount ();
 
-memset (refList, 0, sizeof (refList));
+memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
 for (h = i = 0; i < j; i++, segP++) {
 	if (segP->special == UINT8 (nSpecialType)) {
 		n = segP->matcen_num;
@@ -1262,7 +1273,6 @@ for (h = i = 0; i < j; i++, segP++) {
 				refList [n] = -1;
 			else
 				refList [n]++;
-			segP->matcen_num = INT8 (FindMatCen (matCenP, i));
 			}
 		}
 	}
@@ -1270,7 +1280,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::FixMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+INT16 CDiagTool::FixMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens, char* pszType)
 {
 	CDSegment*	segP = m_mine->Segments ();
 	INT16			h, i, j = m_mine->SegCount ();
@@ -1280,26 +1290,37 @@ for (h = i = 0; i < j; i++, segP++) {
 	if (segP->special != UINT8 (nSpecialType))
 		continue;
 	n = segP->matcen_num;
-	if ((n < 0) || (n >= nMatCens))
-		n = segP->matcen_num = INT8 (FindMatCen (matCenP, i));
+	if ((n < 0) || (n >= nMatCens)) {
+		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
+		if (m_bAutoFixBugs)
+			n = segP->matcen_num = INT8 (FindMatCen (matCenP, i));
+		}
 	else if (matCenP [n].segnum != i) {
-		n = INT8 (FindMatCen (matCenP, i));
-		if (n >= 0) {
-			segP->matcen_num = n;
-			refList [n] = -1;
-			}
-		else {
-			n = segP->matcen_num;
-			if (refList [n] >= 0) {
-				matCenP [n].segnum = i;
+		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
+		if (m_bAutoFixBugs) {
+			n = INT8 (FindMatCen (matCenP, i));
+			if (n >= 0) {
+				segP->matcen_num = n;
 				refList [n] = -1;
 				}
-			else
-				segP->matcen_num = -1;
+			else {
+				n = segP->matcen_num;
+				if (refList [n] >= 0) {
+					matCenP [n].segnum = i;
+					refList [n] = -1;
+					}
+				else
+					segP->matcen_num = -1;
+				}
 			}
 		}
 	if (h < MAX_NUM_MATCENS2)
 		segList [h++] = i;
+	else {
+		sprintf_s (message, sizeof (message), "%s: Too many %s makers", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
+		if (m_bAutoFixBugs) 
+			m_mine->UndefineSegment (i);
+		}
 	}
 return h;
 }
@@ -1308,6 +1329,9 @@ return h;
 
 INT16 CDiagTool::AssignMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
 {
+if (!m_bAutoFixBugs)
+	return nMatCens;
+
 	CDSegment*	segP = m_mine->Segments ();
 	INT16			h, i, j = m_mine->SegCount ();
 	INT8			n;
@@ -1332,8 +1356,11 @@ return h;
 
 //------------------------------------------------------------------------
 
-void CDiagTool::CleanupMatCens (INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+INT16 CDiagTool::CleanupMatCens (INT16* refList, matcen_info* matCenP, INT16 nMatCens)
 {
+if (!m_bAutoFixBugs)
+	return nMatCens;
+
 	CDSegment*	segP = m_mine->Segments ();
 	
 for (int i = 0; i < nMatCens; i) {
@@ -1344,9 +1371,11 @@ for (int i = 0; i < nMatCens; i) {
 			matCenP [i] = matCenP [nMatCens];
 			matCenP [i].fuelcen_num =
 			segP [matCenP [i].segnum].matcen_num = i;
+			refList [i] = refList [nMatCens];
 			}
 		}
 	}
+return nMatCens;
 }
 
 //------------------------------------------------------------------------
@@ -1364,9 +1393,9 @@ bool CDiagTool::CheckBotGens (void)
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].fuelcen_num = i;
 CountMatCenRefs (SEGMENT_IS_ROBOTMAKER, refList, matCenP, nMatCens);
-nMatCenSegs = FixMatCens (SEGMENT_IS_ROBOTMAKER, segList, refList, matCenP, nMatCens);
+nMatCenSegs = FixMatCens (SEGMENT_IS_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
 AssignMatCens (SEGMENT_IS_ROBOTMAKER, segList, refList, matCenP, nMatCens);
-CleanupMatCens (refList, matCenP, nMatCens);
+m_mine->GameInfo ().botgen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;
@@ -1388,9 +1417,9 @@ bool CDiagTool::CheckEquipGens (void)
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].fuelcen_num = i;
 CountMatCenRefs (SEGMENT_IS_EQUIPMAKER, refList, matCenP, nMatCens);
-nMatCenSegs = FixMatCens (SEGMENT_IS_EQUIPMAKER, segList, refList, matCenP, nMatCens);
+nMatCenSegs = FixMatCens (SEGMENT_IS_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
 AssignMatCens (SEGMENT_IS_EQUIPMAKER, segList, refList, matCenP, nMatCens);
-CleanupMatCens (refList, matCenP, nMatCens);
+m_mine->GameInfo ().equipgen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;
