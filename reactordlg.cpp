@@ -183,7 +183,7 @@ if (m_nTargets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Reactor tool: No more targets possible for this trigger.");
 	return;
 	}
-if (FindTarget (segnum, sidenum)) {
+if (FindTarget (segnum, sidenum) >= 0) {
 	DEBUGMSG (" Reactor tool: Trigger already has this target.");
 	return;
 	}
@@ -221,10 +221,10 @@ if (!GetMine ())
 	return;
 CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
 int i = FindTarget (other->segment, other->side);
-if (i < 0)
+if (i >= 0)
 	return;
 LBTargets ()->SetCurSel (i);
-OnAddTarget ();
+AddTarget (other->segment, other->side + 1);
 }
 
 //------------------------------------------------------------------------
