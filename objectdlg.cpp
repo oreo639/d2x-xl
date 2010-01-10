@@ -1106,11 +1106,15 @@ if (!GetMine ())
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CDObject *obj = m_mine->Objects ();
-bool bAll = (m_mine->MarkedSegmentCount (true) > 0);
+CDObject *obj = m_mine->CurrObj ();
+int nType = obj->type;
+int nId = obj->id;
+obj = m_mine->Objects ();
+bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 int nDeleted = 0;
-int i;
-for (i = m_mine->GameInfo ().objects.count; i; i--, obj++) {
+for (int i = m_mine->GameInfo ().objects.count; i; i--, obj++) {
+	if ((obj->type != nType) || (obj->id != nId))
+		continue;
 	if (bAll || (m_mine->Segments (obj->segnum)->wall_bitmask &= MARKED_MASK)) {
 		m_mine->DeleteObject (i);
 		nDeleted++;
