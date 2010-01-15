@@ -473,12 +473,13 @@ typedef struct tLightningInfo {
 	int			nLength;
 	int			nAmplitude;
 	int			nOffset;
-	short			nLightnings;
+	short			nBolts;
 	short			nId;
 	short			nTarget;
 	short			nNodes;
 	short			nChildren;
 	short			nSteps;
+	short			nWaypoint;
 	char			nAngle;
 	char			nStyle;
 	char			nSmoothe;

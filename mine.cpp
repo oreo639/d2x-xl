@@ -1234,7 +1234,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		else {
 			CDObject *obj = Objects ();
 			for (i = 0; i < GameInfo ().objects.count; i++, obj++) {
-				ReadObject(obj, loadfile, GameInfo ().fileinfo_version);
+				ReadObject (obj, loadfile, GameInfo ().fileinfo_version);
 				//      obj->signature = object_next_signature++;
 				//    verify_object(obj);
 			}
@@ -1639,12 +1639,16 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 		obj->rtype.lightningInfo.nLength = read_INT32 (f);
 		obj->rtype.lightningInfo.nAmplitude = read_INT32 (f);
 		obj->rtype.lightningInfo.nOffset = read_INT32 (f);
-		obj->rtype.lightningInfo.nLightnings = read_INT16 (f);
+		obj->rtype.lightningInfo.nBolts = read_INT16 (f);
 		obj->rtype.lightningInfo.nId = read_INT16 (f);
 		obj->rtype.lightningInfo.nTarget = read_INT16 (f);
 		obj->rtype.lightningInfo.nNodes = read_INT16 (f);
 		obj->rtype.lightningInfo.nChildren = read_INT16 (f);
 		obj->rtype.lightningInfo.nSteps = read_INT16 (f);
+		if (version < 41)
+			obj->rtype.lightningInfo.nWaypoint = 0;
+		else
+			obj->rtype.lightningInfo.nWaypoint = read_INT16 (f);
 		obj->rtype.lightningInfo.nAngle = read_INT8 (f);
 		obj->rtype.lightningInfo.nStyle = read_INT8 (f);
 		obj->rtype.lightningInfo.nSmoothe = read_INT8 (f);
@@ -2211,7 +2215,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		}
 	else {
 		GameInfo ().fileinfo_signature = 0x6705;
-		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 40;
+		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 41;
 		GameInfo ().fileinfo_size = (level_version < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof(GameInfo ())
 		GameInfo ().level = 0;
 	}
@@ -2263,7 +2267,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// note: same for D1 and D2
 	GameInfo ().objects.offset = ftell(savefile);
 	for (i = 0; i < GameInfo ().objects.count; i++)
-		WriteObject(Objects (i), savefile, GameInfo ().fileinfo_version);
+		WriteObject (Objects (i), savefile, GameInfo ().fileinfo_version);
 
 	//==================== = WRITE WALL INFO============================
 	// note: Wall size will automatically strip last two items
@@ -2542,12 +2546,13 @@ if ((level_version < 9) && (obj->type >= OBJ_CAMBOT))
 		write_INT32 (obj->rtype.lightningInfo.nLength, f);
 		write_INT32 (obj->rtype.lightningInfo.nAmplitude, f);
 		write_INT32 (obj->rtype.lightningInfo.nOffset, f);
-		write_INT16 (obj->rtype.lightningInfo.nLightnings, f);
+		write_INT16 (obj->rtype.lightningInfo.nBolts, f);
 		write_INT16 (obj->rtype.lightningInfo.nId, f);
 		write_INT16 (obj->rtype.lightningInfo.nTarget, f);
 		write_INT16 (obj->rtype.lightningInfo.nNodes, f);
 		write_INT16 (obj->rtype.lightningInfo.nChildren, f);
 		write_INT16 (obj->rtype.lightningInfo.nSteps, f);
+		write_INT16 (obj->rtype.lightningInfo.nWaypoint, f);
 		write_INT8 (obj->rtype.lightningInfo.nAngle, f);
 		write_INT8 (obj->rtype.lightningInfo.nStyle, f);
 		write_INT8 (obj->rtype.lightningInfo.nSmoothe, f);
