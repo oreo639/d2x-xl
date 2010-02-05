@@ -181,7 +181,7 @@ if (obj->id == SMOKE_ID) {
 else if (obj->id == LIGHTNING_ID) {
 	obj->rtype.lightningInfo.nId = DDX_Int (pDX, IDC_LIGHTNING_ID, obj->rtype.lightningInfo.nId);
 	obj->rtype.lightningInfo.nTarget = DDX_Int (pDX, IDC_LIGHTNING_TARGET, obj->rtype.lightningInfo.nTarget);
-	obj->rtype.lightningInfo.nBolts = DDX_Int (pDX, IDC_LIGHTNING_BOLTS, obj->rtype.lightningInfo.nBolts);
+	obj->rtype.lightningInfo.nLightnings = DDX_Int (pDX, IDC_LIGHTNING_BOLTS, obj->rtype.lightningInfo.nLightnings);
 	obj->rtype.lightningInfo.nNodes = DDX_Int (pDX, IDC_LIGHTNING_NODES, obj->rtype.lightningInfo.nNodes);
 	obj->rtype.lightningInfo.nChildren = DDX_Int (pDX, IDC_LIGHTNING_CHILDREN, obj->rtype.lightningInfo.nChildren);
 	obj->rtype.lightningInfo.nLife = DDX_Int (pDX, IDC_LIGHTNING_LIFE, obj->rtype.lightningInfo.nLife);
@@ -191,7 +191,6 @@ else if (obj->id == LIGHTNING_ID) {
 	obj->rtype.lightningInfo.nSteps = DDX_Int (pDX, IDC_LIGHTNING_SPEED, obj->rtype.lightningInfo.nSteps);
 	obj->rtype.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, obj->rtype.lightningInfo.nAngle);
 	obj->rtype.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, obj->rtype.lightningInfo.nOffset);
-	obj->rtype.lightningInfo.nWaypoint = DDX_Int (pDX, IDC_LIGHTNING_WAYPOINT, obj->rtype.lightningInfo.nWaypoint);
 	int i;
 	for (i = 0; i < 4; i++)
 		DDX_Text (pDX, IDC_LIGHTNING_RED + i, obj->rtype.lightningInfo.color [i]);
@@ -242,7 +241,7 @@ if (!GetMine ())
 	return;
 CDObject *obj = m_mine->CurrObj ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (obj->type == OBJ_EFFECT) && (obj->id == SMOKE_ID));
-CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_WAYPOINT, (obj->type == OBJ_EFFECT) && (obj->id == LIGHTNING_ID));
+CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (obj->type == OBJ_EFFECT) && (obj->id == LIGHTNING_ID));
 CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (obj->type == OBJ_EFFECT) && (obj->id == SOUND_ID));
 }
 

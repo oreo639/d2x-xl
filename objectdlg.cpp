@@ -1112,13 +1112,14 @@ int nId = obj->id;
 obj = m_mine->Objects ();
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 int nDeleted = 0;
-for (int i = m_mine->GameInfo ().objects.count; i; i--, obj++) {
-	if ((obj->type != nType) || (obj->id != nId))
-		continue;
-	if (bAll || (m_mine->Segments (obj->segnum)->wall_bitmask &= MARKED_MASK)) {
+for (int h = m_mine->GameInfo ().objects.count, i = 0; i < h; ) {
+	if ((obj->type == nType) && (obj->id == nId) && (bAll || (m_mine->Segments (obj->segnum)->wall_bitmask &= MARKED_MASK))) {
 		m_mine->DeleteObject (i);
 		nDeleted++;
+		h--;
 		}
+	else
+		i++, obj++;
 	}
 theApp.MineView ()->DelayRefresh (false);
 if (nDeleted) {
