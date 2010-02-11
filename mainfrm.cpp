@@ -228,7 +228,7 @@ theApp.MainFrame ()->SendMessage (WM_COMMAND, nMsg, NULL);
 
 								/*---------------------------*/
 
-void CExtToolBar::OnLButtonDown (UINT nFlags, CPoint point)
+void CExtToolBar::OnLButtonDown (UINT nFlags, CPoint pos)
 {
    CRect rc;
    int   h, i;
@@ -236,7 +236,7 @@ void CExtToolBar::OnLButtonDown (UINT nFlags, CPoint point)
 GetWindowRect (rc);
 for (i = 0, h = GetToolBarCtrl ().GetButtonCount (); i < h; i++) {
    GetItemRect (i, rc);
-	if ((point.x >= rc.left) && (point.x < rc.right) && (point.y >= rc.top) && (point.y < rc.bottom)) {
+	if ((pos.x >= rc.left) && (pos.x < rc.right) && (pos.y >= rc.top) && (pos.y < rc.bottom)) {
 		if ((i >= 11) && (i <= 23) && (i != 13)) {
 			m_nId = i;
 			m_nTimer = SetTimer (1, m_nTimerDelay = 250U, NULL);
@@ -244,12 +244,12 @@ for (i = 0, h = GetToolBarCtrl ().GetButtonCount (); i < h; i++) {
 		break;
 		}
 	}
-CToolBar::OnLButtonDown (nFlags, point);
+CToolBar::OnLButtonDown (nFlags, pos);
 }
 
 								/*---------------------------*/
 
-void CExtToolBar::OnLButtonUp (UINT nFlags, CPoint point)
+void CExtToolBar::OnLButtonUp (UINT nFlags, CPoint pos)
 {
 if (m_nId >= 0) {
 	m_nId = -1;
@@ -258,18 +258,18 @@ if (m_nId >= 0) {
 		m_nTimer = -1;
 		}
 	}
-CToolBar::OnLButtonUp (nFlags, point);
+CToolBar::OnLButtonUp (nFlags, pos);
 }
 
 								/*---------------------------*/
 
-afx_msg void CExtToolBar::OnMouseMove (UINT nFlags, CPoint point)
+afx_msg void CExtToolBar::OnMouseMove (UINT nFlags, CPoint pos)
 {
 if (nFlags & MK_LBUTTON) {
 	CRect	rc;
 
 	GetItemRect (m_nId, rc);
-	if ((point.x < 0) || (point.y < 0) || (point.x >= rc.right) || (point.y >= rc.bottom)) {
+	if ((pos.x < 0) || (pos.y < 0) || (pos.x >= rc.right) || (pos.y >= rc.bottom)) {
 		if (m_nPos == 1) {
 			m_nPos = 0;
 			if (m_nTimer >= 0) {
@@ -285,7 +285,7 @@ if (nFlags & MK_LBUTTON) {
 			}
 		}
 	}
-CToolBar::OnMouseMove (nFlags, point);
+CToolBar::OnMouseMove (nFlags, pos);
 }
 
 								/*---------------------------*/
@@ -1042,7 +1042,7 @@ pCmdUI->SetCheck(add_segment_mode == MIRROR);
 
 void CMainFrame::UpdateSelectButtons (eSelectModes mode)
 {
-	static char *szSelMode [] = {" select: point", " select: line", " select: side", " select: cube", " select: object", " select: block"};
+	static char *szSelMode [] = {" select: pos", " select: line", " select: side", " select: cube", " select: object", " select: block"};
 
 int i;
 for (i = 0; i <= ID_SEL_BLOCKMODE - ID_SEL_POINTMODE; i++)
@@ -1747,6 +1747,10 @@ return true;
 
 BEGIN_MESSAGE_MAP(CEditTool, CDialog)
 	ON_WM_TIMER ()
+	ON_WM_MOUSEMOVE ()
+	ON_WM_LBUTTONUP ()
+	ON_WM_SETFOCUS ()
+	ON_WM_KILLFOCUS ()
 	ON_BN_CLICKED (IDC_EDITGEO0, OnEditGeo0)
 	ON_BN_CLICKED (IDC_EDITGEO1, OnEditGeo1)
 	ON_BN_CLICKED (IDC_EDITGEO2, OnEditGeo2)
@@ -1802,12 +1806,65 @@ void CEditTool::OnEditGeo7 () { EditGeo7 (); }
 void CEditTool::OnEditGeo8 () { EditGeo8 (); }
 void CEditTool::OnEditGeo9 () { EditGeo9 (); }
 
+/*---------------------------*/
+
+void CEditTool::QuitEditFunc (void)
+{
+if (m_nEditFunc >= 0) {
+	m_nEditFunc = -1;
+	if (m_nTimer >= 0) {
+		KillTimer (m_nTimer);
+		m_nTimer = -1;
+		}
+	}
+}
+
+/*---------------------------*/
+
+afx_msg void CEditTool::OnSetFocus (CWnd* pOldWnd)
+{
+QuitEditFunc ();
+CDialog::OnSetFocus (pOldWnd);
+}
+
+/*---------------------------*/
+
+afx_msg void CEditTool::OnKillFocus (CWnd* pNewWnd)
+{
+QuitEditFunc ();
+CDialog::OnKillFocus (pNewWnd);
+}
+
+/*---------------------------*/
+
+void CEditTool::OnLButtonUp (UINT nFlags, CPoint pos)
+{
+QuitEditFunc ();
+CDialog::OnLButtonUp (nFlags, pos);
+}
+
+								/*---------------------------*/
+
+afx_msg void CEditTool::OnMouseMove (UINT nFlags, CPoint pos)
+{
+QuitEditFunc ();
+CDialog::OnMouseMove (nFlags, pos);
+}
+
                         /*--------------------------*/
 
 void CEditTool::OnTimer (UINT_PTR nIdEvent)
 {
 if (m_nEditFunc == UINT (-1))
 	return;
+POINT pos;
+GetCursorPos (&pos);
+CRect rc;
+GetWindowRect (rc);
+if ((pos.x < rc.left) || (pos.y < rc.top) || (pos.x >= rc.right) || (pos.y >= rc.bottom)) {
+	QuitEditFunc ();
+	return;
+	}
 UINT editFunc = m_nEditFunc;
 m_nEditFunc = UINT (-1);
 switch (editFunc) {
@@ -1876,16 +1933,18 @@ BOOL CEditTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 if ((wParam < IDC_EDITGEO7) || (wParam > IDC_EDITGEO0))
 	return CWnd::OnNotify (wParam, lParam, pResult);
 if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
+	POINT pos;
+	GetCursorPos (&pos);
+	CRect rc;
+	GetWindowRect (rc);
+	if ((pos.x < 0) || (pos.y < 0) || (pos.x >= rc.right) || (pos.y >= rc.bottom))
+		QuitEditFunc ();
 	m_nEditFunc = wParam;
 	m_nTimer = SetTimer (1, 250U, NULL);
 	m_nTimerDelay = 250;
 	}
 else {
-	m_nEditFunc = -1;
-	if (m_nTimer >= 0) {
-		KillTimer (m_nTimer);
-		m_nTimer = -1;
-		}
+	QuitEditFunc ();
 	}
 *pResult = 0;
 return TRUE;

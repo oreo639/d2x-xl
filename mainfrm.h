@@ -27,6 +27,7 @@ class CEditTool : public CDialog {
 		UINT		m_nTimerDelay;
 
 		CEditTool ();
+		void QuitEditFunc (void);
 		virtual BOOL OnInitDialog ();
 		afx_msg void OnEditGeo0 ();
 		afx_msg void OnEditGeo1 ();
@@ -48,7 +49,12 @@ class CEditTool : public CDialog {
 		bool EditGeo7 (void);
 		bool EditGeo8 (void);
 		bool EditGeo9 (void);
+		afx_msg void OnSetFocus (CWnd* pOldWnd);
+		afx_msg void OnKillFocus (CWnd* pNewWnd);
 		afx_msg void OnTimer (UINT_PTR nIdEvent);
+		afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
+		afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
+		afx_msg void OnMouseMove (UINT nFlags, CPoint point);
 		virtual BOOL OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
 		DECLARE_MESSAGE_MAP ()

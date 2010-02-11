@@ -417,14 +417,18 @@ if (m_bUpdate) {
 
 	// Initialize/Reinitialize the View's device context
 	// and other handy variables
+#if 1
 	m_pDC = pViewDC;
 	if (DrawRubberBox () || DrawDragPos ()) {
+#if 0
 		if (m_DIB)
 			pViewDC->BitBlt (0,0, m_viewWidth, m_viewHeight, &m_DC, 0, 0, SRCCOPY);
+#endif
+		m_bUpdate = false;
 		return;
 		}
+#endif
 	InitView (pViewDC);
-
 	if (m_bUpdate) {
 		// Clear the View
 		ClearView();
@@ -473,6 +477,7 @@ if (m_bUpdate) {
 */
 		}
 #endif
+DrawRubberBox ();
 DrawHighlight (m_mine);
 DrawMineCenter (pViewDC);
 // if we are using our own DC, then copy it to the display
@@ -596,8 +601,12 @@ if (nIdEvent == 4) {
 	  	INFOMSG (szMouseStates [m_mouseState]);
 #endif
 		}
-	if (m_mouseState == eMouseStateSelect)
-		SelectCurrentSegment (1, m_clickPos.x, m_clickPos.y);
+	if (m_mouseState == eMouseStateSelect) {
+		if (!SelectCurrentSegment (1, m_clickPos.x, m_clickPos.y)) {
+			SetMouseState (eMouseStateRubberBand);
+			//UpdateRubberRect (m_clickPos);
+			}
+		}
 	}
 else if (nIdEvent == 3) {
 	if (enable_delta_shading) {
@@ -2894,80 +2903,84 @@ void CMineView::OnMouseMove (UINT nFlags, CPoint point)
 
 if (GetFocus () != this)
 	SetFocus ();
-switch(m_mouseState) {
-	case eMouseStateIdle:
-	case eMouseStatePan:
-	case eMouseStateRotate:
-		// if Control Key down
-		if (nFlags & MK_CONTROL) {
-			// if Shift then rotate
-			if (nFlags & MK_SHIFT) {
-				SetMouseState (eMouseStateRotate);
-				Rotate('Y', -((double) change.x) / 200.0);
-				Rotate('X', ((double) change.y) / 200.0);
+if (change.x || change.y) {
+	switch(m_mouseState) {
+		case eMouseStateIdle:
+		case eMouseStatePan:
+		case eMouseStateRotate:
+			// if Control Key down
+			if (nFlags & MK_CONTROL) {
+				// if Shift then rotate
+				if (nFlags & MK_SHIFT) {
+					SetMouseState (eMouseStateRotate);
+					Rotate('Y', -((double) change.x) / 200.0);
+					Rotate('X', ((double) change.y) / 200.0);
+					}
+				else {// else move
+					SetMouseState (eMouseStatePan);
+					if (change.x)
+						Pan ('X', change.x);
+					if (change.y)
+	#if OGL_RENDERING
+						Pan ('Y', change.y);
+	#else
+						Pan ('Y', -change.y);
+	#endif
+					}
 				}
-			else {// else move
-				SetMouseState (eMouseStatePan);
-				if (change.x)
-					Pan ('X', change.x);
-				if (change.y)
-#if OGL_RENDERING
-					Pan ('Y', change.y);
-#else
-					Pan ('Y', -change.y);
-#endif
-				}
-			}
-		else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate))
-			SetMouseState (eMouseStateIdle);
-		break;
+			else if ((m_mouseState == eMouseStatePan) || (m_mouseState == eMouseStateRotate))
+				SetMouseState (eMouseStateIdle);
+			break;
 
-	case eMouseStateButtonDown:
-		if (nFlags & MK_CONTROL)
-			SetMouseState (eMouseStateZoom);
-		else {
-			GetMine ();
-			int v = m_mine->CurrVert ();
-			if ((abs (m_clickPos.x - m_viewPoints [v].x) < 5) && 
-				 (abs (m_clickPos.y - m_viewPoints [v].y) < 5)) {
-				SetMouseState (eMouseStateInitDrag);
+		case eMouseStateButtonDown:
+			if (nFlags & MK_CONTROL)
+				SetMouseState (eMouseStateZoom);
+			else {
+				GetMine ();
+				int v = m_mine->CurrVert ();
+				if ((abs (m_clickPos.x - m_viewPoints [v].x) < 5) && 
+					 (abs (m_clickPos.y - m_viewPoints [v].y) < 5)) {
+					SetMouseState (eMouseStateInitDrag);
+					UpdateDragPos ();
+					}
+				else {
+					SetMouseState (eMouseStateRubberBand);
+					UpdateRubberRect (point);
+					}
+				}
+			break;
+
+		case eMouseStateSelect:
+			m_clickPos = point;
+			SetMouseState (eMouseStateRubberBand);
+			UpdateRubberRect (point);
+			break;
+
+		case eMouseStateDrag:
+			if (change.x || change.y)
 				UpdateDragPos ();
+			break;
+
+		case eMouseStateZoom:
+		case eMouseStateZoomIn:
+		case eMouseStateZoomOut:
+			if ((change.x > 0) || ((change.x == 0) && (change.y < 0))) {
+				SetMouseState (eMouseStateZoomOut);
+				ZoomOut (1, true);
 				}
 			else {
-				SetMouseState (eMouseStateRubberBand);
-				UpdateRubberRect (point);
+				SetMouseState (eMouseStateZoomIn);
+				ZoomIn (1, true);
 				}
-			}
-		break;
-
-	case eMouseStateSelect:
-		m_clickPos = point;
-		break;
-
-	case eMouseStateDrag:
-		if (change.x || change.y)
-			UpdateDragPos ();
-		break;
-
-	case eMouseStateZoom:
-	case eMouseStateZoomIn:
-	case eMouseStateZoomOut:
-		if ((change.x > 0) || ((change.x == 0) && (change.y < 0))) {
-			SetMouseState (eMouseStateZoomOut);
-			ZoomOut (1, true);
-			}
-		else {
-			SetMouseState (eMouseStateZoomIn);
-			ZoomIn (1, true);
-			}
-		break;
-		
-	case eMouseStateRubberBand:
-		UpdateRubberRect (point);
-		break;
+			break;
+			
+		case eMouseStateRubberBand:
+			UpdateRubberRect (point);
+			break;
+		}
+	m_lastMousePos = point;
 	}
-CView::OnMouseMove(nFlags, point);
-m_lastMousePos = point;
+//CView::OnMouseMove(nFlags, point);
 }
 
                         /*--------------------------*/
@@ -3250,10 +3263,10 @@ return (fab * fbc > 0) && (fca * fbc > 0);
 
 //--------------------------------------------------------------------------
 
-void CMineView::SelectCurrentSegment (INT16 direction, long xMouse, long yMouse) 
+bool CMineView::SelectCurrentSegment (INT16 direction, long xMouse, long yMouse) 
 {
 if (!GetMine ())
-	return;
+	return false;
 
   CDSegment		*seg;
   CRect			rc;
@@ -3262,6 +3275,7 @@ if (!GetMine ())
   INT16			i, j;
   int				x, y;
   APOINT			sideVerts [4], mousePos;
+  bool			bFound = false;
 
 /* find next segment which is within the cursor position */
 GetClientRect (rc);
@@ -3283,10 +3297,14 @@ do {
 			// allow segment selection if just one of its vertices is visible
 			if ((x >= rc.left) && (x <= rc.right) && (y >= rc.top) || (y <= rc.bottom)) {
 				sideVerts [j].z = 0;
-				if (PointInTriangle (mousePos, sideVerts [0], sideVerts [1], sideVerts [2]))
+				if (PointInTriangle (mousePos, sideVerts [0], sideVerts [1], sideVerts [2])) {
+					bFound = true;
 					goto foundSeg;
-				if (PointInTriangle (mousePos, sideVerts [0], sideVerts [2], sideVerts [3]))
+					}	
+				if (PointInTriangle (mousePos, sideVerts [0], sideVerts [2], sideVerts [3])) {
+					bFound = true;
 					goto foundSeg;
+					}	
 				}
 			}
 		}
@@ -3324,9 +3342,12 @@ while (next_segment != cur_segment);
 
 foundSeg:
 
+if (!bFound)
+	return false;
 m_mine->Current ()->segment = next_segment;
 theApp.ToolView ()->Refresh ();
 Refresh ();
+return true;
 }
 
 //-------------------------------------------------------------------------
@@ -3374,11 +3395,11 @@ pos.z  =
                         
 BOOL CMineView::DrawRubberBox ()
 {
-//CPaintDC dc (this);
+	static CRect	prevRect (0, 0, 0, 0);
       
 if (m_mouseState != eMouseStateRubberBand)
 	return FALSE;
-if (m_rubberRect.Width () || m_rubberRect.Height ()) {
+if ((m_rubberRect.Width () || m_rubberRect.Height ())) {
       CPen     pen (PS_DOT, 1, RGB (0,0,0));
       CPen *   pOldPen;
       POINT    rubberPoly [5];
@@ -3412,28 +3433,34 @@ if (m_mouseState == eMouseStateDrag)
 if (m_mouseState == eMouseStateButtonDown)
    SetCapture ();
 else {
-   InvalidateRect (&m_rubberRect, FALSE);
-   UpdateWindow ();
+   //InvalidateRect (&m_rubberRect, FALSE);
+   //UpdateWindow ();
    }
+CRect rc = m_rubberRect;
 if (m_clickPos.x < pt.x) {
-   m_rubberRect.left = m_clickPos.x - RUBBER_BORDER;
-   m_rubberRect.right = pt.x + RUBBER_BORDER;
+   rc.left = m_clickPos.x - RUBBER_BORDER;
+   rc.right = pt.x + RUBBER_BORDER;
    }
-else {
-   m_rubberRect.right = m_clickPos.x + RUBBER_BORDER;
-   m_rubberRect.left = pt.x - RUBBER_BORDER;
+else if (m_clickPos.x > pt.x) {
+   rc.right = m_clickPos.x + RUBBER_BORDER;
+   rc.left = pt.x - RUBBER_BORDER;
    }
 if (m_clickPos.y < pt.y) {
-   m_rubberRect.top = m_clickPos.y - RUBBER_BORDER;
-   m_rubberRect.bottom = pt.y + RUBBER_BORDER;
+   rc.top = m_clickPos.y - RUBBER_BORDER;
+   rc.bottom = pt.y + RUBBER_BORDER;
    }
-else {
-   m_rubberRect.bottom = m_clickPos.y + RUBBER_BORDER;
-   m_rubberRect.top = pt.y - RUBBER_BORDER;
+else if (m_clickPos.y > pt.y) {
+   rc.bottom = m_clickPos.y + RUBBER_BORDER;
+   rc.top = pt.y - RUBBER_BORDER;
    }
-SetMouseState (eMouseStateRubberBand);
-InvalidateRect (&m_rubberRect, FALSE);
-UpdateWindow ();
+if (rc != m_rubberRect) {
+	SetMouseState (eMouseStateRubberBand);
+	InvalidateRect (&m_rubberRect, TRUE);
+	UpdateWindow ();
+	m_rubberRect = rc;
+	InvalidateRect (&m_rubberRect, TRUE);
+	//UpdateWindow ();
+	}
 }                        
                         
                         /*--------------------------*/
