@@ -1806,45 +1806,62 @@ void CEditTool::OnEditGeo9 () { EditGeo9 (); }
 
 void CEditTool::OnTimer (UINT_PTR nIdEvent)
 {
-switch (m_nEditFunc) {
+if (m_nEditFunc == UINT (-1))
+	return;
+UINT editFunc = m_nEditFunc;
+m_nEditFunc = UINT (-1);
+switch (editFunc) {
 	case IDC_EDITGEO0:
-		if (!EditGeo0 ()) m_nEditFunc = -1;
+		if (EditGeo0 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO1:
-		if (!EditGeo1 ()) m_nEditFunc = -1;
+		if (EditGeo1 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO2:
-		if (!EditGeo2 ()) m_nEditFunc = -1;
+		if (EditGeo2 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO3:
-		if (!EditGeo3 ()) m_nEditFunc = -1;
+		if (EditGeo3 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO4:
-		if (!EditGeo4 ()) m_nEditFunc = -1;
+		if (EditGeo4 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO5:
-		if (!EditGeo5 ()) m_nEditFunc = -1;
+		if (EditGeo5 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO6:
-		if (!EditGeo6 ()) m_nEditFunc = -1;
+		if (EditGeo6 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO7:
-		if (!EditGeo7 ()) m_nEditFunc = -1;
+		if (EditGeo7 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO8:
-		if (!EditGeo8 ()) m_nEditFunc = -1;
+		if (EditGeo8 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	case IDC_EDITGEO9:
-		if (!EditGeo9 ()) m_nEditFunc = -1;
+		if (EditGeo9 ()) 
+			m_nEditFunc = editFunc;
 		break;
 	default:
-		m_nEditFunc = -1;
+		m_nEditFunc = UINT (-1);
 		break;
 	}
 UINT i = (m_nTimerDelay * 9) / 10;
-if (i >= 25) {
-	KillTimer (m_nTimer);
-	if (m_nEditFunc >= 0)
+if ((m_nEditFunc == UINT (-1)) || (i >= 25)) {
+	if (m_nTimer != UINT (-1))
+		KillTimer (m_nTimer);
+	if (m_nEditFunc == UINT (-1))
+		m_nTimer = -1;
+	else
 		m_nTimer = SetTimer (1, m_nTimerDelay = i, NULL);
 	}
 }
