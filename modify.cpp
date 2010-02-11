@@ -20,267 +20,258 @@
 //::ShowWindow(hwnd,SW_HIDE);
 //::ShowWindow(hwnd,SW_RESTORE);
 
-void CMine::EditGeoFwd ()
+bool CMine::EditGeoFwd (void)
 {
   double x,y,z;
   double radius;
   vms_vector center,opp_center;
   int i;
 /* calculate center of current side */
-    center.x = center.y = center.z = 0;
-    for (i = 0; i < 4; i++) {
-		 int vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
-      center.x += Vertices (vertnum)->x;
-      center.y += Vertices (vertnum)->y;
-      center.z += Vertices (vertnum)->z;
-    }
-   center.x /= 4;
-   center.y /= 4;
-   center.z /= 4;
+ center.x = center.y = center.z = 0;
+ for (i = 0; i < 4; i++) {
+	 int vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
+   center.x += Vertices (vertnum)->x;
+   center.y += Vertices (vertnum)->y;
+   center.z += Vertices (vertnum)->z;
+ }
+center.x /= 4;
+center.y /= 4;
+center.z /= 4;
 
 // calculate center of opposite of current side
-    opp_center.x = opp_center.y = opp_center.z = 0;
-    for (i = 0; i < 4; i++) {
-		 int vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
-      opp_center.x += Vertices (vertnum)->x;
-      opp_center.y += Vertices (vertnum)->y;
-      opp_center.z += Vertices (vertnum)->z;
-    }
-   opp_center.x /= 4;
-   opp_center.y /= 4;
-   opp_center.z /= 4;
+opp_center.x = opp_center.y = opp_center.z = 0;
+for (i = 0; i < 4; i++) {
+	int vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
+   opp_center.x += Vertices (vertnum)->x;
+   opp_center.y += Vertices (vertnum)->y;
+   opp_center.z += Vertices (vertnum)->z;
+	}
+opp_center.x /= 4;
+opp_center.y /= 4;
+opp_center.z /= 4;
 
 // normalize vector
-    x = center.x - opp_center.x;
-    y = center.y - opp_center.y;
-    z = center.z - opp_center.z;
+ x = center.x - opp_center.x;
+ y = center.y - opp_center.y;
+ z = center.z - opp_center.z;
 
 // normalize direction
-    radius = sqrt(x*x + y*y + z*z);
+ radius = sqrt(x*x + y*y + z*z);
 
-    if (radius > (F1_0/10)) {
-      x /= radius;
-      y /= radius;
-      z /= radius;
-    } else {
-      vms_vector direction;
-      CalcOrthoVector(direction,Current ()->segment,Current ()->side);
-      x = (double)direction.x/(double)F1_0;
-      y = (double)direction.y/(double)F1_0;
-      z = (double)direction.z/(double)F1_0;
-    }
+if (radius > (F1_0/10)) {
+	x /= radius;
+	y /= radius;
+	z /= radius;
+	}
+else {
+	vms_vector direction;
+	CalcOrthoVector(direction,Current ()->segment,Current ()->side);
+	x = (double)direction.x/(double)F1_0;
+	y = (double)direction.y/(double)F1_0;
+	z = (double)direction.z/(double)F1_0;
+	}
 
 // move on x, y, and z
-	 theApp.SetModified (TRUE);
-	 theApp.LockUndo ();
-    MoveOn('X', (INT32) (x*move_rate));
-    MoveOn('Y', (INT32) (y*move_rate));
-    MoveOn('Z', (INT32) (z*move_rate));
-	 theApp.UnlockUndo ();
+ theApp.SetModified (TRUE);
+ theApp.LockUndo ();
+ MoveOn('X', (INT32) (x*move_rate));
+ MoveOn('Y', (INT32) (y*move_rate));
+ MoveOn('Z', (INT32) (z*move_rate));
+ theApp.UnlockUndo ();
+ return true;
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-void CMine::EditGeoBack() 
+bool CMine::EditGeoBack (void) 
 {
   vms_vector center,opp_center;
   double x,y,z,radius;
   int i;
 
 /* calculate center of current side */
-  center.x = center.y = center.z = 0;
-  for (i = 0; i < 4; i++) {
-	 int vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
-    center.x += Vertices (vertnum)->x;
-    center.y += Vertices (vertnum)->y;
-    center.z += Vertices (vertnum)->z;
-  }
-  center.x /= 4;
-  center.y /= 4;
-  center.z /= 4;
+center.x = center.y = center.z = 0;
+for (i = 0; i < 4; i++) {
+	int vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
+	center.x += Vertices (vertnum)->x;
+	center.y += Vertices (vertnum)->y;
+	center.z += Vertices (vertnum)->z;
+	}
+center.x /= 4;
+center.y /= 4;
+center.z /= 4;
 
 // calculate center of oppisite current side
-  opp_center.x = opp_center.y = opp_center.z = 0;
-  for (i = 0; i < 4; i++) {
-	 int vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
-    opp_center.x += Vertices (vertnum)->x;
-    opp_center.y += Vertices (vertnum)->y;
-    opp_center.z += Vertices (vertnum)->z;
-  }
-  opp_center.x /= 4;
-  opp_center.y /= 4;
-  opp_center.z /= 4;
+opp_center.x = opp_center.y = opp_center.z = 0;
+for (i = 0; i < 4; i++) {
+	int vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
+	opp_center.x += Vertices (vertnum)->x;
+	opp_center.y += Vertices (vertnum)->y;
+	opp_center.z += Vertices (vertnum)->z;
+	}
+opp_center.x /= 4;
+opp_center.y /= 4;
+opp_center.z /= 4;
 
 // normalize vector
-  x = center.x - opp_center.x;
-  y = center.y - opp_center.y;
-  z = center.z - opp_center.z;
+x = center.x - opp_center.x;
+y = center.y - opp_center.y;
+z = center.z - opp_center.z;
 
-  // make sure distance is positive to prevent
-  // cube from turning inside out
-#if 1
-  // defines line orthogonal to a side at a point
-  UINT8 orthog_line [6][4] = {
-    {8,6,1,3},
-    {0,5,7,2},
-    {3,1,6,8},
-    {2,7,5,0},
-    {4,9,10,11},
-    {11,10,9,4}
-  };
-  CDSegment *seg;
-  INT16 point0,point1;
-  vms_vector *vector0,*vector1;
-  bool ok_to_move;
+// make sure distance is positive to prevent
+// cube from turning inside out
+// defines line orthogonal to a side at a point
+	UINT8 orthog_line [6][4] = {
+		{8,6,1,3},
+		{0,5,7,2},
+		{3,1,6,8},
+		{2,7,5,0},
+		{4,9,10,11},
+		{11,10,9,4}
+		};
+	CDSegment *seg;
+	INT16 point0,point1;
+	vms_vector *vector0,*vector1;
+	bool ok_to_move;
 
-  ok_to_move = TRUE;
-  seg = Segments () + Current ()->segment;
-  switch (m_selectMode) {
-    case POINT_MODE:
-      point0 = line_vert [orthog_line [Current ()->side][Current ()->point]][0];
-      point1 = line_vert [orthog_line [Current ()->side][Current ()->point]][1];
-      vector0 = Vertices (seg->verts [point0]);
-      vector1 = Vertices (seg->verts [point1]);
-      if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-	ok_to_move = FALSE;
-      }
-      break;
-    case LINE_MODE:
-      for (i=0;i<2;i++) {
-	point0 = line_vert [orthog_line [Current ()->side][(Current ()->line+i)%4]][0];
-	point1 = line_vert [orthog_line [Current ()->side][(Current ()->line+i)%4]][1];
-	vector0 = Vertices (seg->verts [point0]);
-	vector1 = Vertices (seg->verts [point1]);
-	if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-	  ok_to_move = FALSE;
+ok_to_move = TRUE;
+seg = Segments () + Current ()->segment;
+switch (m_selectMode) {
+	case POINT_MODE:
+		point0 = line_vert [orthog_line [Current ()->side][Current ()->point]][0];
+		point1 = line_vert [orthog_line [Current ()->side][Current ()->point]][1];
+		vector0 = Vertices (seg->verts [point0]);
+		vector1 = Vertices (seg->verts [point1]);
+		if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
+		ok_to_move = FALSE;
+		}
+		break;
+
+	case LINE_MODE:
+		for (i=0;i<2;i++) {
+			point0 = line_vert [orthog_line [Current ()->side][(Current ()->line+i)%4]][0];
+			point1 = line_vert [orthog_line [Current ()->side][(Current ()->line+i)%4]][1];
+			vector0 = Vertices (seg->verts [point0]);
+			vector1 = Vertices (seg->verts [point1]);
+			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
+			ok_to_move = FALSE;
+			}
+		}
+	break;
+
+	case SIDE_MODE:
+		for (i = 0; i < 4; i++) {
+			point0 = line_vert [orthog_line [Current ()->side][i]][0];
+			point1 = line_vert [orthog_line [Current ()->side][i]][1];
+			vector0 = Vertices (seg->verts [point0]);
+			vector1 = Vertices (seg->verts [point1]);
+			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
+			ok_to_move = FALSE;
+			}
+		}
+		break;
 	}
-      }
-      break;
-    case SIDE_MODE:
-      for (i = 0; i < 4; i++) {
-	point0 = line_vert [orthog_line [Current ()->side][i]][0];
-	point1 = line_vert [orthog_line [Current ()->side][i]][1];
-	vector0 = Vertices (seg->verts [point0]);
-	vector1 = Vertices (seg->verts [point1]);
-	if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-	  ok_to_move = FALSE;
+if (!ok_to_move) {
+	ErrorMsg ("Too small to move in that direction");
+	return false;
 	}
-      }
-      break;
-  }
-  if (ok_to_move == FALSE) {
-    ErrorMsg ("Too small to move in that direction");
-    return;
-  }
-#endif
 
-  radius = sqrt(x*x + y*y + z*z);
-  if ((radius-move_rate) < F1_0 / 4) {
-    if (m_selectMode == POINT_MODE
-	|| m_selectMode == LINE_MODE
-	|| m_selectMode == SIDE_MODE) {
-      ErrorMsg ("Cannot make cube any smaller\n"
-	       "Cube must be greater or equal to 1.0 units wide.");
-    }
-  } else {
-
-    // normalize direction
-    if (radius > (F1_0/10)) {
-      x /= radius;
-      y /= radius;
-      z /= radius;
-    } else {
-      vms_vector direction;
-      CalcOrthoVector(direction,Current ()->segment,Current ()->side);
-      x = (double)direction.x/(double)F1_0;
-      y = (double)direction.y/(double)F1_0;
-      z = (double)direction.z/(double)F1_0;
-    }
-
-// move on x, y, and z
-	 theApp.SetModified (TRUE);
-	 theApp.LockUndo ();
-    MoveOn('X',(INT32) (-x*move_rate));
-    MoveOn('Y',(INT32) (-y*move_rate));
-    MoveOn('Z',(INT32) (-z*move_rate));
-	 theApp.UnlockUndo ();
-  }
+radius = sqrt(x*x + y*y + z*z);
+if ((radius-move_rate) < F1_0 / 4) {
+	if (m_selectMode == POINT_MODE || m_selectMode == LINE_MODE || m_selectMode == SIDE_MODE) {
+		ErrorMsg ("Cannot make cube any smaller\n"
+		"Cube must be greater or equal to 1.0 units wide.");
+		return false;
+		}
+	}
+else {
+	// normalize direction
+	if (radius > (F1_0/10)) {
+		x /= radius;
+		y /= radius;
+		z /= radius;
+		} 
+	else {
+		vms_vector direction;
+		CalcOrthoVector(direction,Current ()->segment,Current ()->side);
+		x = (double)direction.x/(double)F1_0;
+		y = (double)direction.y/(double)F1_0;
+		z = (double)direction.z/(double)F1_0;
+		}
+	// move on x, y, and z
+	theApp.SetModified (TRUE);
+	theApp.LockUndo ();
+	MoveOn('X',(INT32) (-x*move_rate));
+	MoveOn('Y',(INT32) (-y*move_rate));
+	MoveOn('Z',(INT32) (-z*move_rate));
+	theApp.UnlockUndo ();
+	}
 theApp.SetModified (TRUE);
+return true;
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoRotRight() 
+
+bool CMine::EditGeoRotRight (void)
 {
-  SpinSelection(angle_rate);
+return SpinSelection (angle_rate);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoRotLeft() 
+
+bool CMine::EditGeoRotLeft (void)
 {
-  SpinSelection(-angle_rate);
+return SpinSelection (-angle_rate);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoUp() 
+
+bool CMine::EditGeoUp (void) 
 {
-  if (m_selectMode == SIDE_MODE) {
-    RotateSelection(angle_rate,FALSE);
-  } else {
-    MovePoints(1,0);
-  }
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angle_rate,FALSE) : MovePoints (1,0);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoDown() 
+
+bool CMine::EditGeoDown (void) 
 {
-  if (m_selectMode == SIDE_MODE) {
-    RotateSelection(-angle_rate,FALSE);
-  } else {
-    MovePoints(0,1);
-  }
+return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate, FALSE) : MovePoints (0,1);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoRight() 
+
+bool CMine::EditGeoRight (void) 
 {
-  if (m_selectMode == SIDE_MODE) {
-    RotateSelection(angle_rate,TRUE);
-  } else {
-    MovePoints(3,0);
-  }
+return (m_selectMode == SIDE_MODE) ? RotateSelection(angle_rate,TRUE) : MovePoints(3,0);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoLeft() 
+
+bool CMine::EditGeoLeft (void) 
 {
-  if (m_selectMode == SIDE_MODE) {
-    RotateSelection(-angle_rate,TRUE);
-  } else {
-    MovePoints(0,3);
-  }
+return (m_selectMode == SIDE_MODE) ? RotateSelection(-angle_rate,TRUE) : MovePoints(0,3);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoGrow() 
+bool CMine::EditGeoGrow (void) 
 {
-  SizeItem(move_rate);
+return SizeItem (move_rate);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-void CMine::EditGeoShrink() 
+bool CMine::EditGeoShrink (void) 
 {
-  SizeItem(-move_rate);
+return SizeItem (-move_rate);
 }
-
 
 //------------------------------------------------------------------------
 //                    RotateSelection()
@@ -290,7 +281,7 @@ void CMine::EditGeoShrink()
 //          is TRUE, then the lines 1 and 3 are used instead.
 //------------------------------------------------------------------------
 
-void CMine::RotateSelection (double angle, bool perpendicular) 
+bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
 int nSegment = Current ()->segment;
 int nSide = Current ()->side;
@@ -300,11 +291,13 @@ int i,pts [4];
 
 switch (m_selectMode){
 	case POINT_MODE:
-	ErrorMsg ("Cannot bend a point");
-	break; /* can't spin a point */
+		ErrorMsg ("Cannot bend a point");
+		return false;
+
 	case LINE_MODE:
-	ErrorMsg ("Cannot bend a line");
-	break; /* line spinning not supported */
+		ErrorMsg ("Cannot bend a line");
+		return false;
+
 	case SIDE_MODE:	// spin side around the opposite side
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
@@ -343,16 +336,17 @@ switch (m_selectMode){
 	
 	case CUBE_MODE:
 		ErrorMsg ("Cannot bend a cube");
-		break; /* can't spin a point */
+		return false;
 	
 	case OBJECT_MODE:
 		ErrorMsg ("Cannot bend a object");
-		break; /* can't spin a point */
+		return false;
 
 	case BLOCK_MODE:
 		ErrorMsg ("Cannot bend a block");
-		break; /* can't spin a point */
+		return false;
 	}
+return true;
 }
 
 //***************************************************************************
@@ -364,22 +358,22 @@ switch (m_selectMode){
 //
 //***************************************************************************
 
-void CMine::SizeItem (INT32 inc) 
+bool CMine::SizeItem (INT32 inc) 
 {
 	int nSegment = Current ()->segment;
 	int nSide = Current ()->side;
 	CDSegment *seg = Segments (nSegment);
 	int i, j, point [4];
+	bool result = false;
 
 switch (m_selectMode) {
 	case POINT_MODE:
-		break;
+		return false;
 
 	case LINE_MODE:
 		point [0] = line_vert [side_line [Current ()->side][Current ()->line]][0];
 		point [1] = line_vert [side_line [Current ()->side][Current ()->line]][1];
-		SizeLine(seg,point [0],point [1],inc);
-		break;
+		return SizeLine (seg,point [0],point [1],inc);
 
 	case SIDE_MODE:
 		theApp.SetModified (TRUE);
@@ -387,24 +381,24 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++)
 			point [i] = side_vert [Current ()->side][i];
 		// enlarge the diagonals
-		SizeLine(seg,point [0],point [2],(INT32) (inc*sqrt(2.0)));
-		SizeLine(seg,point [1],point [3],(INT32) (inc*sqrt(2.0)));
+		result = SizeLine(seg,point [0],point [2],(INT32) (inc*sqrt(2.0))) &&
+				   SizeLine(seg,point [1],point [3],(INT32) (inc*sqrt(2.0)));
 		theApp.UnlockUndo ();
-		break;
+		return result;
 
 	case CUBE_MODE:
 		// enlarge the diagonals
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
-		SizeLine(seg,0,6,(INT32) (inc*sqrt(3.0)));
-		SizeLine(seg,1,7,(INT32) (inc*sqrt(3.0)));
-		SizeLine(seg,2,4,(INT32) (inc*sqrt(3.0)));
-		SizeLine(seg,3,5,(INT32) (inc*sqrt(3.0)));
+		result = SizeLine(seg,0,6,(INT32) (inc*sqrt(3.0))) &&
+				   SizeLine(seg,1,7,(INT32) (inc*sqrt(3.0))) &&
+					SizeLine(seg,2,4,(INT32) (inc*sqrt(3.0))) &&
+					SizeLine(seg,3,5,(INT32) (inc*sqrt(3.0)));
 		theApp.UnlockUndo ();
-		break;
+		return result;
 
 	case OBJECT_MODE:
-		break;
+		return false;
 
 	case BLOCK_MODE:
 		theApp.SetModified (TRUE);
@@ -440,8 +434,9 @@ switch (m_selectMode) {
 				verts->y = center.y + (long) ((verts->y - center.y) * scale);
 				verts->z = center.z + (long) ((verts->z - center.z) * scale);
 				}
-	break;
+	return true;
 	}
+return false;
 }
 
 //--------------------------------------------------------------------------
@@ -451,7 +446,7 @@ switch (m_selectMode) {
 // of the current line.
 //--------------------------------------------------------------------------
 
-void CMine::MovePoints(int pt0, int pt1) 
+bool CMine::MovePoints(int pt0, int pt1) 
 {
 	vms_vector *vector0,*vector1,delta;
 	int point0,point1;
@@ -541,6 +536,7 @@ switch (m_selectMode){
 		theApp.SetModified (bMoved);
 		break;
 	}
+return true;
 }
 
 //--------------------------------------------------------------------------
@@ -549,7 +545,7 @@ switch (m_selectMode){
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-void CMine::SizeLine (CDSegment *seg,int point0,int point1,INT32 inc) 
+bool CMine::SizeLine (CDSegment *seg,int point0,int point1,INT32 inc) 
 {
 double x,y,z,radius;
 
@@ -574,11 +570,11 @@ z = v1->z - v2->z;
 // normalize direction
 radius = sqrt (x*x + y*y + z*z);
 if (radius > (double) F1_0* (double) F1_0 - inc) 
-	return;
+	return false;
 if ((inc < 0) && (radius <= (double)-inc*3)) 
-	return;
+	return false;
 if (radius == 0) 
-	return;
+	return false;
 x /= radius;
 y /= radius;
 z /= radius;
@@ -593,13 +589,14 @@ v1->z += (INT32)z;
 v2->x -= (INT32)x;
 v2->y -= (INT32)y;
 v2->z -= (INT32)z;
+return true;
 }
 
 /***************************************************************************
 				MoveOn()
 ***************************************************************************/
 
-void CMine::MoveOn (char axis,INT32 inc) 
+bool CMine::MoveOn (char axis,INT32 inc) 
 {
 int nSegment = Current ()->segment;
 int nSide = Current ()->side;
@@ -731,6 +728,7 @@ switch (m_selectMode) {
 		}
 	break;
 	}
+return true;
 }
 
 /***************************************************************************
@@ -741,7 +739,7 @@ switch (m_selectMode) {
 
 ***************************************************************************/
 
-void CMine::SpinSelection(double angle) 
+bool CMine::SpinSelection (double angle) 
 {
 	int nSegment = Current ()->segment;
 	int nSide = Current ()->side;
@@ -759,11 +757,11 @@ void CMine::SpinSelection(double angle)
 switch (m_selectMode) {
 	case POINT_MODE:
 		ErrorMsg ("Cannot spin a point");
-		break; /* can't spin a point */
+		return false;
 	
 	case LINE_MODE:
 		ErrorMsg ("Cannot spin a line");
-		break; /* line spinning not supported */
+		return false;
 	
 	case SIDE_MODE: // spin side around its center in the plane of the side
 		// calculate center of current side
@@ -815,10 +813,8 @@ switch (m_selectMode) {
 		opp_center.y = center.y + (FIX)(0x10000L*c.y);
 		opp_center.z = center.z + (FIX)(0x10000L*c.z);
 		/* rotate points around a line */
-		for (i = 0; i < 4; i++) {
-			RotateVertex(Vertices (seg->verts [side_vert [nSide][i]]),
-			&center,&opp_center,angle);
-			}
+		for (i = 0; i < 4; i++)
+			RotateVertex(Vertices (seg->verts [side_vert [nSide][i]]), &center,&opp_center,angle);
 		break;
 
 
@@ -939,6 +935,7 @@ switch (m_selectMode) {
 				RotateVertex(&obj->pos, &center, &opp_center, angle);
 		break;
 	}
+return true;
 }
 
 
@@ -996,7 +993,7 @@ switch (m_selectMode) {
 // RotateVmsMatrix
 //-----------------------------------------------------------------------------
 
-void CMine::RotateVmsMatrix(vms_matrix *matrix,double angle,char axis) 
+void CMine::RotateVmsMatrix (vms_matrix *matrix,double angle,char axis) 
 {
   vms_matrix new_vms;
   double cosx,sinx;

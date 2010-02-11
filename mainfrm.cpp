@@ -1319,64 +1319,136 @@ void CMainFrame::OnUpdateViewTexturemapped(CCmdUI* pCmdUI)
 
                         /*--------------------------*/
 
+bool CMainFrame::EditGeoFwd (void)
+{
+if (!GetMine ()->EditGeoFwd ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoUp (void)
+{
+if (!GetMine ()->EditGeoUp ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoBack (void)
+{
+if (!GetMine ()->EditGeoBack ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoRotLeft (void)
+{
+if (!GetMine ()->EditGeoRotLeft ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoGrow (void)
+{
+if (!GetMine ()->EditGeoGrow ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoRotRight (void)
+{
+if (!GetMine ()->EditGeoRotRight ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoLeft (void)
+{
+if (!GetMine ()->EditGeoLeft ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoDown (void)
+{
+if (!GetMine ()->EditGeoDown ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoRight (void)
+{
+if (!GetMine ()->EditGeoRight ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+bool CMainFrame::EditGeoShrink (void)
+{
+if (!GetMine ()->EditGeoShrink ())
+	return false;
+MineView ()->Refresh ();
+return true;
+}
+
+                        /*--------------------------*/
+
 void CMainFrame::OnEditGeoFwd ()
 {
-GetMine ()->EditGeoFwd ();
-MineView ()->Refresh ();
+EditGeoFwd ();
 }
 
 void CMainFrame::OnEditGeoUp ()
 {
-GetMine ()->EditGeoUp ();
-MineView ()->Refresh ();
+EditGeoUp ();
 }
 
 void CMainFrame::OnEditGeoBack ()
 {
-GetMine ()->EditGeoBack ();
-MineView ()->Refresh ();
+EditGeoBack ();
 }
 
 void CMainFrame::OnEditGeoRotLeft ()
 {
-GetMine ()->EditGeoRotLeft ();
-MineView ()->Refresh ();
+EditGeoRotLeft ();
 }
 
 void CMainFrame::OnEditGeoGrow ()
 {
-GetMine ()->EditGeoGrow ();
-MineView ()->Refresh ();
+EditGeoGrow ();
 }
 
 void CMainFrame::OnEditGeoRotRight ()
 {
-GetMine ()->EditGeoRotRight ();
-MineView ()->Refresh ();
+EditGeoRotRight ();
 }
 
 void CMainFrame::OnEditGeoLeft ()
 {
-GetMine ()->EditGeoLeft ();
-MineView ()->Refresh ();
+EditGeoLeft ();
 }
 
 void CMainFrame::OnEditGeoDown ()
 {
-GetMine ()->EditGeoDown ();
-MineView ()->Refresh ();
+EditGeoDown ();
 }
 
 void CMainFrame::OnEditGeoRight ()
 {
-GetMine ()->EditGeoRight ();
-MineView ()->Refresh ();
+EditGeoRight ();
 }
 
 void CMainFrame::OnEditGeoShrink ()
 {
-GetMine ()->EditGeoShrink ();
-MineView ()->Refresh ();
+EditGeoShrink ();
 }
 
                         /*--------------------------*/
@@ -1708,16 +1780,27 @@ return TRUE;
 
                         /*--------------------------*/
 
-void CEditTool::OnEditGeo0 () { theApp.MainFrame ()->OnEditGeoShrink (); }
-void CEditTool::OnEditGeo1 () { theApp.MainFrame ()->OnEditGeoRotLeft (); }
-void CEditTool::OnEditGeo2 () { theApp.MainFrame ()->OnEditGeoDown (); }
-void CEditTool::OnEditGeo3 () { theApp.MainFrame ()->OnEditGeoRotRight (); }
-void CEditTool::OnEditGeo4 () { theApp.MainFrame ()->OnEditGeoLeft (); }
-void CEditTool::OnEditGeo5 () { theApp.MainFrame ()->OnEditGeoGrow (); }
-void CEditTool::OnEditGeo6 () { theApp.MainFrame ()->OnEditGeoRight (); }
-void CEditTool::OnEditGeo7 () { theApp.MainFrame ()->OnEditGeoBack (); }
-void CEditTool::OnEditGeo8 () { theApp.MainFrame ()->OnEditGeoUp (); }
-void CEditTool::OnEditGeo9 () { theApp.MainFrame ()->OnEditGeoFwd (); }
+bool CEditTool::EditGeo0 (void) { return theApp.MainFrame ()->EditGeoShrink (); }
+bool CEditTool::EditGeo1 (void) { return theApp.MainFrame ()->EditGeoRotLeft (); }
+bool CEditTool::EditGeo2 (void) { return theApp.MainFrame ()->EditGeoDown (); }
+bool CEditTool::EditGeo3 (void) { return theApp.MainFrame ()->EditGeoRotRight (); }
+bool CEditTool::EditGeo4 (void) { return theApp.MainFrame ()->EditGeoLeft (); }
+bool CEditTool::EditGeo5 (void) { return theApp.MainFrame ()->EditGeoGrow (); }
+bool CEditTool::EditGeo6 (void) { return theApp.MainFrame ()->EditGeoRight (); }
+bool CEditTool::EditGeo7 (void) { return theApp.MainFrame ()->EditGeoBack (); }
+bool CEditTool::EditGeo8 (void) { return theApp.MainFrame ()->EditGeoUp (); }
+bool CEditTool::EditGeo9 (void) { return theApp.MainFrame ()->EditGeoFwd (); }
+
+void CEditTool::OnEditGeo0 () { EditGeo0 (); }
+void CEditTool::OnEditGeo1 () { EditGeo1 (); }
+void CEditTool::OnEditGeo2 () { EditGeo2 (); }
+void CEditTool::OnEditGeo3 () { EditGeo3 (); }
+void CEditTool::OnEditGeo4 () { EditGeo4 (); }
+void CEditTool::OnEditGeo5 () { EditGeo5 (); }
+void CEditTool::OnEditGeo6 () { EditGeo6 (); }
+void CEditTool::OnEditGeo7 () { EditGeo7 (); }
+void CEditTool::OnEditGeo8 () { EditGeo8 (); }
+void CEditTool::OnEditGeo9 () { EditGeo9 (); }
 
                         /*--------------------------*/
 
@@ -1725,42 +1808,44 @@ void CEditTool::OnTimer (UINT_PTR nIdEvent)
 {
 switch (m_nEditFunc) {
 	case IDC_EDITGEO0:
-		OnEditGeo0 ();
+		if (!EditGeo0 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO1:
-		OnEditGeo1 ();
+		if (!EditGeo1 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO2:
-		OnEditGeo2 ();
+		if (!EditGeo2 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO3:
-		OnEditGeo3 ();
+		if (!EditGeo3 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO4:
-		OnEditGeo4 ();
+		if (!EditGeo4 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO5:
-		OnEditGeo5 ();
+		if (!EditGeo5 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO6:
-		OnEditGeo6 ();
+		if (!EditGeo6 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO7:
-		OnEditGeo7 ();
+		if (!EditGeo7 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO8:
-		OnEditGeo8 ();
+		if (!EditGeo8 ()) m_nEditFunc = -1;
 		break;
 	case IDC_EDITGEO9:
-		OnEditGeo9 ();
+		if (!EditGeo9 ()) m_nEditFunc = -1;
 		break;
 	default:
+		m_nEditFunc = -1;
 		break;
 	}
 UINT i = (m_nTimerDelay * 9) / 10;
 if (i >= 25) {
 	KillTimer (m_nTimer);
-	m_nTimer = SetTimer (1, m_nTimerDelay = i, NULL);
+	if (m_nEditFunc >= 0)
+		m_nTimer = SetTimer (1, m_nTimerDelay = i, NULL);
 	}
 }
 

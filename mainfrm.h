@@ -38,6 +38,16 @@ class CEditTool : public CDialog {
 		afx_msg void OnEditGeo7 ();
 		afx_msg void OnEditGeo8 ();
 		afx_msg void OnEditGeo9 ();
+		bool EditGeo0 (void);
+		bool EditGeo1 (void);
+		bool EditGeo2 (void);
+		bool EditGeo3 (void);
+		bool EditGeo4 (void);
+		bool EditGeo5 (void);
+		bool EditGeo6 (void);
+		bool EditGeo7 (void);
+		bool EditGeo8 (void);
+		bool EditGeo9 (void);
 		afx_msg void OnTimer (UINT_PTR nIdEvent);
 		virtual BOOL OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
@@ -174,6 +184,17 @@ public:
 	int CreateStatusBar ();
 	void DockToolBars (bool bToolBar, bool bEditBar);
 
+
+	bool EditGeoFwd (void);
+	bool EditGeoUp (void);
+	bool EditGeoBack (void);
+	bool EditGeoLeft (void);
+	bool EditGeoGrow (void);
+	bool EditGeoRight (void);
+	bool EditGeoRotLeft (void);
+	bool EditGeoDown (void);
+	bool EditGeoRotRight (void);
+	bool EditGeoShrink (void);
 // Generated message map functions
 public:
 	//{{AFX_MSG(CMainFrame)
