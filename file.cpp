@@ -126,24 +126,36 @@ END_MESSAGE_MAP ()
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags, CWnd *pParentWnd)
 {
    INT_PTR     nResult;
-   char		   szFile [256];
+   char		   szFile [256], szFolder [256], * ps;
 
 if (*pszFile)
-	strcpy_s (szFile, sizeof (szFile), pszFile);
-else if (*pszDefExt) {
-	sprintf_s (szFile, sizeof (szFile), "*.%s", pszDefExt);
-	char *ps = strchr (szFile, ';');
-	if (ps) 
-		*ps = '\0';
+	strcpy_s (szFolder, sizeof (szFolder), pszFile);
+else {
+	strcpy_s (szFolder, sizeof (szFolder), levels_path);
+	if ((ps = strstr (szFolder, "\\data")))
+		ps [1] = '\0';
+	if (!*pszDefExt) 
+		strcat_s (szFolder, sizeof (szFolder), "missions\\*.*");
+	else {
+		strcat_s (szFolder, sizeof (szFolder), "missions\\*.");
+		strcat_s (szFolder, sizeof (szFolder), pszDefExt);
+		if ((ps = strchr (szFolder, ';'))) 
+			*ps = '\0';
+		}
 	}
-else
-	strcpy_s (szFile, sizeof (szFile), "*.*");
+if (!(ps = strrchr (szFolder, '\\')))
+	 strcpy_s (szFile, sizeof (szFile), szFolder);
+else {
+	ps [0] = '\0';
+	strcpy_s (szFile, sizeof (szFile), ps + 1);
+	}
 CFileDialog d (bOpen, pszDefExt, szFile, nFlags, pszFilter, pParentWnd);
-d.GetOFN ().hInstance = AfxGetInstanceHandle ();
-d.GetOFN ().lpstrInitialDir = szFile;
+//d.m_ofn.hInstance = AfxGetInstanceHandle ();
+//d.GetOFN ().lpstrInitialDir = szFolder;
+d.m_ofn.lpstrInitialDir = szFolder;
 if ((nResult = d.DoModal ()) != IDOK)
 	return false;
-strcpy_s (pszFile, 256, d.GetOFN ().lpstrFile);
+strcpy_s (pszFile, 256, d.GetPathName ());
 return true;
 }
 

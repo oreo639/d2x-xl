@@ -311,7 +311,8 @@ m_bitmap =
 m_backupBM = NULL;
 m_tga =
 m_backupTGA = NULL;
-strcpy_s (m_szDefExt, sizeof (m_szDefExt), ".bmp");
+if (!*m_szDefExt)
+	strcpy_s (m_szDefExt, sizeof (m_szDefExt), "bmp");
 }
 
                         /*--------------------------*/
@@ -892,6 +893,8 @@ return bFuncRes;
 // 
 //************************************************************************
 
+char	CTextureEdit::m_szDefExt [4] = "bmp";
+
 void CTextureEdit::OnLoad () 
 {
   OPENFILENAME ofn;
@@ -899,12 +902,11 @@ void CTextureEdit::OnLoad ()
   FILE *file=NULL;
   bool bFuncRes;
 
-  strcpy_s (szFile, sizeof (szFile), "*");
-  strcat_s (szFile, sizeof (szFile), m_szDefExt);
+  sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
   memset (&ofn, 0, sizeof(OPENFILENAME));
   ofn.lStructSize = sizeof(OPENFILENAME);
   ofn.hwndOwner = m_hWnd;
-  ofn.lpstrFilter = "Bitmap Files\0*.bmp\0TGA Files\0*.tga\0";
+  ofn.lpstrFilter = "all files\0*.bmp;*.tga\0bitmap files\0*.bmp\0TGA files\0*.tga\0";
   ofn.nFilterIndex = 1;
   ofn.lpstrFile = szFile;
   ofn.lpstrDefExt = m_szDefExt;
@@ -913,7 +915,7 @@ void CTextureEdit::OnLoad ()
 
 if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
-		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.'), 4);
+		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.') + 1, 3);
 	fopen_s (&file, ofn.lpstrFile,"rb");
 	if (!file) {
 		ErrorMsg ("Could not open texture file.");
@@ -921,7 +923,7 @@ if (GetOpenFileName (&ofn)) {
 		}
 	Backup ();
 	_strlwr_s (m_szDefExt, sizeof (m_szDefExt));
-	if (!strcmp (m_szDefExt, ".bmp"))
+	if (!strcmp (m_szDefExt, "bmp"))
 		bFuncRes = LoadBitmap (file);
 	else
 		bFuncRes = LoadTGA (file);

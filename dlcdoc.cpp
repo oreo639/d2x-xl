@@ -293,11 +293,11 @@ if (d.DoModal () == IDOK) {
 
 bool CDlcDoc::BrowseForFile (LPSTR pszFile, BOOL bOpen)
 {
-return ::BrowseForFile (bOpen, "hog;*.rl2;*.rdl", pszFile, 
-								"Descent level (*.hog;*.rl2;*.rdl)|*.hog;*.rl2;*.rdl"
-								"|Descent hog file (*.hog)|*.hog|"
+return ::BrowseForFile (bOpen, "hog;rl2;rdl", pszFile, 
+								"all levels (*.hog;*.rl2;*.rdl)|*.hog;*.rl2;*.rdl"
+								"|mission files (*.hog)|*.hog|"
 								"|Descent 2 level (*.rl2)|*.rl2|"
-								"Descent level (*.rdl)|*.rdl||", 
+								"Descent 1 level (*.rdl)|*.rdl||", 
 								0, theApp.MainFrame ());
 }
 

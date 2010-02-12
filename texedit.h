@@ -69,7 +69,7 @@ class CTextureEdit : public CDialog
 						m_nOldHeight,
 						m_nOldSize,
 						m_nOldFormat;
-		char			m_szDefExt [5];
+		static char	m_szDefExt [4];
 
 		CTextureEdit (CWnd * pParent = NULL);
 		~CTextureEdit ();
