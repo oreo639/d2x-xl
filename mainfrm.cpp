@@ -1865,7 +1865,7 @@ if ((pos.x < rc.left) || (pos.y < rc.top) || (pos.x >= rc.right) || (pos.y >= rc
 	QuitEditFunc ();
 	return;
 	}
-UINT editFunc = m_nEditFunc;
+WPARAM editFunc = UINT (m_nEditFunc);
 m_nEditFunc = UINT (-1);
 switch (editFunc) {
 	case IDC_EDITGEO0:

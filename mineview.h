@@ -281,6 +281,7 @@ public:
 	void	InterpModelData(UINT8 *model_data); // poly.c
 	void	DrawPoly(POLY *p);
 	int	ReadModelData(FILE *file, CDObject *obj);
+	void	ReadPolyModel (POLYMODEL& polyModel, FILE *file);
 
 	// view control functions
 	void	Zoom(int nSteps, double zoom);

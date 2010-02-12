@@ -391,12 +391,39 @@ UINTW read_UINTW(FILE *fp) {
 // ReadModelData();
 //-----------------------------------------------------------------------
 
+#define FREAD(b)	fread (&b, sizeof (b), 1, file)
+
+void CMineView::ReadPolyModel (POLYMODEL& polyModel, FILE *file) 
+{
+FREAD (polyModel.n_models);
+FREAD (polyModel.model_data_size);
+fseek (file, sizeof (INT32), SEEK_CUR);
+polyModel.model_data = NULL;
+FREAD (polyModel.submodel_ptrs);
+FREAD (polyModel.submodel_offsets);
+FREAD (polyModel.submodel_norms);	  // norm for sep plane
+FREAD (polyModel.submodel_pnts);	  // point on sep plane
+FREAD (polyModel.submodel_rads);	  // radius for each submodel
+FREAD (polyModel.submodel_parents);  // what is parent for each submodel
+FREAD (polyModel.submodel_mins);
+FREAD (polyModel.submodel_maxs);
+FREAD (polyModel.mins);
+FREAD (polyModel.maxs);				  // min, max for whole model
+FREAD (polyModel.rad);
+FREAD (polyModel.n_textures);
+FREAD (polyModel.first_texture);
+FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, model_num+1 else)
+assert(polyModel.model_data_size <= MAX_POLY_MODEL_SIZE);
+}
+
+//-----------------------------------------------------------------------
+
 int CMineView::ReadModelData(FILE *file, CDObject *obj) 
 {
 	UINT32     id;
 	UINT32     i,n;
 	UINT16     model_data_size[MAX_POLYGON_MODELS];
-	POLYMODEL  polygon_model;
+	POLYMODEL  polyModel;
 	POLYMODEL  save_model;
 	ROBOT_INFO robot_info;
 	UINT32     model_num;
@@ -460,15 +487,13 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 			}
 			position += sizeof(struct level_header) + level.size;
 		}
-		n = read_UINTW(file);                          // n_polygon_models
+		n = read_UINTW(file);                          // n_polyModels
 		assert(n<=MAX_POLYGON_MODELS);
-		for (i=0;i<n;i++) {
-			fread(&polygon_model, sizeof(POLYMODEL), 1, file);
-			assert(polygon_model.model_data_size <= MAX_POLY_MODEL_SIZE);
-			model_data_size[i] = (UINT16)polygon_model.model_data_size;
-			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS)) {
-				memcpy(&save_model,&polygon_model,sizeof(POLYMODEL));
-			}
+		for (i = 0; i < n; i++) {
+			ReadPolyModel (polyModel, file);
+			model_data_size[i] = (UINT16)polyModel.model_data_size;
+			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS))
+				memcpy(&save_model,&polyModel,sizeof(POLYMODEL));
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS)) {
@@ -516,14 +541,13 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 		fseek(file,n * sizeof(WEAPON_INFO),SEEK_CUR);  // weapon info
 		n = read_UINTW(file);                          // n_powerups
 		fseek(file,n * sizeof(POWERUP_TYPE_INFO),SEEK_CUR); // powerup info
-		n = read_UINTW(file);                          // n_polygon_models
+		n = read_UINTW(file);                          // n_polyModels
 		assert(n<=MAX_POLYGON_MODELS);
 		for (i=0;i<n;i++) {
-			fread(&polygon_model, sizeof(POLYMODEL), 1, file);
-			assert(polygon_model.model_data_size <= MAX_POLY_MODEL_SIZE);
-			model_data_size[i] = (UINT16)polygon_model.model_data_size;
+			ReadPolyModel (polyModel, file);
+			model_data_size[i] = (UINT16)polyModel.model_data_size;
 			if (i==(UINT32) model_num) {
-				memcpy(&save_model,&polygon_model,sizeof(POLYMODEL));
+				memcpy(&save_model,&polyModel,sizeof(POLYMODEL));
 			}
 		}
 		for (i=0;i<n;i++) {

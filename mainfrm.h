@@ -359,7 +359,7 @@ public:
 #if !defined(_M_IA64) && !defined(_M_AMD64)
 #	define INIFILE ".\\dle-xp.ini"
 #else
-#	define INIFILE "dle-xp.ini"
+#	define INIFILE ".\\dle-xp.ini"
 #endif
 
 #endif //__mainframe_h

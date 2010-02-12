@@ -3,6 +3,9 @@
 
 #include "define.h"
 
+# pragma pack(push, packing)
+# pragma pack(1)
+
 // Copyright (C) 1997 Bryan Aamot
 /* define a signed types */
 typedef signed char INT8;
@@ -257,22 +260,22 @@ typedef struct {
 
 //used to describe a polygon model
 typedef struct {
-  INT32		n_models;
-  INT32 	model_data_size;
-  UINT8 	*model_data;
-  INT32 	submodel_ptrs[MAX_SUBMODELS];
+  INT32			n_models;
+  INT32 			model_data_size;
+  UINT8*			model_data;
+  INT32 			submodel_ptrs[MAX_SUBMODELS];
   VMS_VECTOR 	submodel_offsets[MAX_SUBMODELS];
   VMS_VECTOR 	submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
   VMS_VECTOR 	submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
-  FIX 		submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
-  UINT8 	submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
+  FIX 			submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
+  UINT8 			submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
   VMS_VECTOR 	submodel_mins[MAX_SUBMODELS];
-  VMS_VECTOR    submodel_maxs[MAX_SUBMODELS];
+  VMS_VECTOR   submodel_maxs[MAX_SUBMODELS];
   VMS_VECTOR 	mins, maxs;			  // min, max for whole model
-  FIX rad;
-  UINT8		n_textures;
-  UINT16	first_texture;
-  UINT8		simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
+  FIX				rad;
+  UINT8			n_textures;
+  UINT16			first_texture;
+  UINT8			simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
 //  VMS_VECTOR min, max;
 } POLYMODEL;
 

@@ -38,7 +38,7 @@ INT16 CMine::FindObjBySig (INT16 signature)
 
 for (INT16 i = ObjCount (); i; i--, objP++)
 	if (objP->signature == signature)
-		return objP - Objects ();
+		return INT16 (objP - Objects ());
 return -1;
 }
 
