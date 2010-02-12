@@ -126,17 +126,21 @@ END_MESSAGE_MAP ()
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags, CWnd *pParentWnd)
 {
    INT_PTR     nResult;
-   char		   pn [256];
+   char		   szFile [256];
 
 if (*pszFile)
-	strcpy_s (pn, sizeof (pn), pszFile);
-else if (*pszDefExt)
-	sprintf_s (pn, sizeof (pn), "*.%s", pszDefExt);
+	strcpy_s (szFile, sizeof (szFile), pszFile);
+else if (*pszDefExt) {
+	sprintf_s (szFile, sizeof (szFile), "*.%s", pszDefExt);
+	char *ps = strchr (szFile, ';');
+	if (ps) 
+		*ps = '\0';
+	}
 else
-	strcpy_s (pn, sizeof (pn), "*.*");
-CFileDialog d (bOpen, pszDefExt, pn, nFlags, pszFilter, pParentWnd);
+	strcpy_s (szFile, sizeof (szFile), "*.*");
+CFileDialog d (bOpen, pszDefExt, szFile, nFlags, pszFilter, pParentWnd);
 d.GetOFN ().hInstance = AfxGetInstanceHandle ();
-d.GetOFN ().lpstrInitialDir = pn;
+d.GetOFN ().lpstrInitialDir = szFile;
 if ((nResult = d.DoModal ()) != IDOK)
 	return false;
 strcpy_s (pszFile, 256, d.GetOFN ().lpstrFile);
