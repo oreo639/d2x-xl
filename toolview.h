@@ -544,9 +544,11 @@ class CCubeTool : public CToolDlg
 		int		m_nPoint;
 		int		m_nVertex;
 		int		m_nType;
+		int		m_nProps;
 		int		m_nOwner;
 		int		m_nGroup;
 		int		m_bEndOfExit;
+		int		m_nDamage;
 		double	m_nLight;
 		double	m_nCoord [3];
 		int		m_nLastCube;

@@ -450,8 +450,7 @@
 #define SEGMENT_PROP_LAVA				2
 #define SEGMENT_PROP_BLOCKED			4
 #define SEGMENT_PROP_NODAMAGE			8
-#define SEGMENT_PROP_DAMAGE			16
-#define SEGMENT_PROP_OUTDOORS			32
+#define SEGMENT_PROP_OUTDOORS			16
 
 /* Various wall types. */
 #define WALL_NORMAL			0  	/* Normal wall */

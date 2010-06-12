@@ -67,8 +67,10 @@ m_nCube =
 m_nSide =
 m_nPoint = 0;
 m_nType = 0;
+m_nProps = 0;
 m_nVertex = 0;
 m_bEndOfExit = 0;
+m_nDamage = 0;
 m_nLight = 0;
 m_nLastCube =
 m_nLastSide = -1;
@@ -105,24 +107,19 @@ pcb->SetCurSel (m_nCube);
 
 BOOL CCubeTool::OnInitDialog ()
 {
-	static char* pszCubeTypes [] = {
-		"Normal",
+	static char* pszCubeFuncs [] = {
+		"None",
 		"Fuel Center",
 		"Repair Center",
 		"Reactor",
 		"Robot Maker",
 		"Blue Goal",
 		"Red Goal",
-		"Water",
-		"Lava",
 		"Blue Team",
 		"Red Team",
 		"Speed Boost",
-		"Blocked",
-		"No Damage",
 		"Sky Box",
-		"Equip Maker",
-		"Outdoors"
+		"Equip Maker"
 		};
 
 CToolDlg::OnInitDialog ();
@@ -130,8 +127,8 @@ CComboBox *pcb = CBType ();
 pcb->ResetContent ();
 
 int h, i, j;
-for (j = sizeof (pszCubeTypes) / sizeof (*pszCubeTypes), i = 0; i < j; i++) {
-	h = pcb->AddString (pszCubeTypes [i]);
+for (j = sizeof (pszCubeFuncs) / sizeof (*pszCubeFuncs), i = 0; i < j; i++) {
+	h = pcb->AddString (pszCubeFuncs [i]);
 	pcb->SetItemData (h, i);
 	}
 pcb = CBOwner ();
@@ -166,6 +163,15 @@ for (int	i = 0; i < 3; i++) {
 		m_nCoord [i] = 0x7fff;
 //	DDV_MinMaxInt (pDX, (long) m_nCoord [i], -0x7fff, 0x7fff);
 	}
+for (int i = 0; i < 5; i++) {
+	int h = (m_nProps & (1 << i)) != 0;
+	DDX_Check (pDX, IDC_CUBE_WATER + i, h);
+	if (h)
+		m_nProps |= (1 << i);
+	else
+		m_nProps &= ~(1 << i);
+	}
+
 DDX_Check (pDX, IDC_CUBE_ENDOFEXIT, m_bEndOfExit);
 DDX_Check (pDX, IDC_CUBE_SETDEFTEXTURE, m_bSetDefTexture);
 ++m_nOwner;
@@ -176,6 +182,12 @@ if (m_nGroup < -1)
 	m_nGroup = -1;
 else if (m_nGroup > 127)
 	m_nGroup = 127;
+DDX_Text (pDX, IDC_CUBE_DAMAGE, m_nDamage);
+if (m_nDamage < -32767)
+	m_nDamage = -32767;
+else if (m_nDamage > 32767)
+	m_nDamage = 32767;
+
 //DDV_MinMaxInt (pDX, m_nGroup, -1, 127);
 }
 
@@ -331,6 +343,7 @@ m_nCube = m_mine->Current ()->segment;
 m_nSide = m_mine->Current ()->side;
 m_nPoint = m_mine->Current ()->point;
 m_nType = seg->function;
+m_nProps = seg->props;
 m_nOwner = seg->owner;
 m_nGroup = seg->group;
 //CBType ()->SetCurSel (m_nType);

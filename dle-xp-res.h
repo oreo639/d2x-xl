@@ -104,6 +104,14 @@
 #define IDC_CUBE_OWNER                  10038
 #define IDC_CUBE_GROUP                  10039
 #define IDC_CUBE_SPLIT						 10040
+#define IDC_CUBE_WATER                  10041
+#define IDC_CUBE_LAVA                   10042
+#define IDC_CUBE_BLOCKED                10043
+#define IDC_CUBE_NODAMAGE               10044
+#define IDC_CUBE_OUTDOORS               10045
+#define IDC_CUBE_DAMAGE                 10046
+
+
 
 #define IDD_WALLDATA                    10100
 #define IDC_WALL_WALLNO                 10101

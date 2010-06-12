@@ -2,13 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
-#define IDC_CUBE_WATER                  1704
-#define IDC_CUBE_LAVA                   1705
-#define IDC_CUBE_BLOCKED                1706
-#define IDC_CUBE_NODAMAGE               1707
-#define IDC_CUBE_DAMAGE                 1708
-#define IDC_CUBE_WATER6                 1709
-#define IDC_CUBE_OUTDOORS               1709
+#define IDC_CUBE_LIGHT2                 10036
 
 // Next default values for new objects
 // 

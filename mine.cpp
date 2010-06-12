@@ -986,7 +986,6 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	for (segnum = 0; segnum < SegCount (); segnum++)   {
 		INT16   bit; /** was INT32 */
 		CDSegment *seg = Segments (segnum);
-
 		if (level_version >= 9) {
 			fread(&seg->owner, sizeof(UINT8), 1, loadFile);
 			fread(&seg->group, sizeof(INT8), 1, loadFile);
@@ -995,10 +994,6 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			seg->owner = -1;
 			seg->group = -1;
 			}
-		if (level_version > 20)
-			fread(&seg->props, sizeof(UINT8), 1, loadFile);
-		else
-			seg->Upgrade ();
 		// read in child mask (1 byte)
 		fread(&bit_mask, sizeof(UINT8), 1, loadFile);
 		seg->child_bitmask = bit_mask;
@@ -1101,6 +1096,12 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			fread(&seg->matcen_num, sizeof(INT8), 1, loadFile);
 			fread(&seg->value, sizeof(INT8), 1, loadFile);
 			fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
+			if (level_version <= 20)
+				seg->Upgrade ();
+			else {
+				fread(&seg->props, sizeof(UINT8), 1, loadFile);
+				fread(&seg->damage, sizeof(FIX), 1, loadFile);
+				}
 			fread(&seg->static_light, sizeof(FIX), 1, loadFile);
 			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->matcen_num == -1)) {
 				seg->function = SEGMENT_FUNC_NONE;
@@ -1926,7 +1927,6 @@ return 0;
 // ------------------------------------------------------------------------
 INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 {
-#if DEMO== 0
 	INT16    i, segnum, sidenum; /** was INT32 */
 	UINT16   temp_UINT16;
 	UINT8 bitmask;
@@ -2070,8 +2070,10 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 			fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
 			fwrite(&seg->value, sizeof(INT8), 1, save_file);
 			fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file);
-			if (level_version >= 9)
+			if (level_version >= 9) {
 				fwrite(&seg->props, sizeof(UINT8), 1, save_file);
+				fwrite(&seg->damage, sizeof(FIX), 1, save_file);
+				}
 			fwrite(&seg->static_light, sizeof(FIX), 1, save_file);
 	  }
 	if (level_version >= 9) {
@@ -2080,7 +2082,6 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		SaveColors (TexColors (), MAX_D2_TEXTURES, save_file);
 		}
   }
-#endif //DEMO
   return 0;
 }
 
