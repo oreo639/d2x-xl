@@ -24,8 +24,6 @@ BEGIN_MESSAGE_MAP (CCubeTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_ADD_FUELCEN, OnAddFuelCen)
 	ON_BN_CLICKED (IDC_CUBE_ADD_REPAIRCEN, OnAddRepairCen)
 	ON_BN_CLICKED (IDC_CUBE_ADD_CONTROLCEN, OnAddControlCen)
-	ON_BN_CLICKED (IDC_CUBE_ADD_WATER, OnAddWaterCube)
-	ON_BN_CLICKED (IDC_CUBE_ADD_LAVA, OnAddLavaCube)
 	ON_BN_CLICKED (IDC_CUBE_SPLIT, OnSplitCube)
 	ON_BN_CLICKED (IDC_CUBE_DEL, OnDeleteCube)
 	ON_BN_CLICKED (IDC_CUBE_OTHER, OnOtherCube)
@@ -195,7 +193,7 @@ return CToolDlg::OnSetActive ();
 bool CCubeTool::IsBotMaker (CDSegment *seg)
 {
 return 
-	(seg->function == SEGMENT_TYPE_ROBOTMAKER) &&
+	(seg->function == SEGMENT_FUNC_ROBOTMAKER) &&
 	(seg->matcen_num >= 0) &&
 	(seg->matcen_num < m_mine->GameInfo ().botgen.count);
 }
@@ -205,7 +203,7 @@ return
 bool CCubeTool::IsEquipMaker (CDSegment *seg)
 {
 return 
-	(seg->function == SEGMENT_TYPE_EQUIPMAKER) &&
+	(seg->function == SEGMENT_FUNC_EQUIPMAKER) &&
 	(seg->matcen_num >= 0) &&
 	(seg->matcen_num < m_mine->GameInfo ().equipgen.count);
 }
@@ -582,7 +580,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 	m_nType = segP->function;
 	switch(nType) {
 		// check to see if we are adding a robot maker
-		case SEGMENT_TYPE_ROBOTMAKER:
+		case SEGMENT_FUNC_ROBOTMAKER:
 			if (nType == m_nType)
 				goto errorExit;
 			if (!m_mine->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
@@ -592,7 +590,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		// check to see if we are adding a fuel center
-		case SEGMENT_TYPE_REPAIRCEN:
+		case SEGMENT_FUNC_REPAIRCEN:
 			if (level_version < 9) {
 				m_nType = nType;
 				if (!bExpertMode)
@@ -600,16 +598,16 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				break;
 				}
 
-		case SEGMENT_TYPE_FUELCEN:
+		case SEGMENT_FUNC_FUELCEN:
 			if (nType == m_nType)
 				continue;
-			if (!m_mine->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_TYPE_FUELCEN) && (m_bSetDefTexture == 1))) {
+			if (!m_mine->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
 				theApp.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
 
-		case SEGMENT_TYPE_CONTROLCEN:
+		case SEGMENT_FUNC_CONTROLCEN:
 			if (nType == m_nType)
 				continue;
 			if (!m_mine->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
@@ -618,16 +616,16 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				}
 			break;
 
-		case SEGMENT_TYPE_GOAL_BLUE:
-		case SEGMENT_TYPE_GOAL_RED:
+		case SEGMENT_FUNC_GOAL_BLUE:
+		case SEGMENT_FUNC_GOAL_RED:
 			if (nType == m_nType)
 				continue;
 			if (!m_mine->AddGoalCube (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
 				goto errorExit;		
 			break;
 
-		case SEGMENT_TYPE_TEAM_BLUE:
-		case SEGMENT_TYPE_TEAM_RED:
+		case SEGMENT_FUNC_TEAM_BLUE:
+		case SEGMENT_FUNC_TEAM_RED:
 			if (level_version < 9) {
 				m_nType = nType;
 				if (!bExpertMode)
@@ -640,29 +638,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				goto errorExit;		
 			break;
 
-		case SEGMENT_TYPE_WATER:
-			if (level_version < 9) {
-				m_nType = nType;
-				if (!bExpertMode)
-					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
-				break;
-				}
-			if (!m_mine->AddWaterCube (nSegNum, false, m_bSetDefTexture == 1))
-				goto errorExit;
-			break;
-
-		case SEGMENT_TYPE_LAVA:
-			if (level_version < 9) {
-				m_nType = nType;
-				if (!bExpertMode)
-					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
-				break;
-				}
-			if (!m_mine->AddLavaCube (nSegNum, false, m_bSetDefTexture == 1))
-				goto errorExit;
-			break;
-
-		case SEGMENT_TYPE_SPEEDBOOST:
+		case SEGMENT_FUNC_SPEEDBOOST:
 			if (level_version < 9) {
 				m_nType = nType;
 				if (!bExpertMode)
@@ -673,18 +649,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				goto errorExit;
 			break;
 
-		case SEGMENT_TYPE_BLOCKED:
-			if (level_version < 9) {
-				m_nType = nType;
-				if (!bExpertMode)
-					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
-				break;
-				}
-			if (!m_mine->AddBlockedCube (nSegNum, false))
-				goto errorExit;
-			break;
-
-		case SEGMENT_TYPE_SKYBOX:
+		case SEGMENT_FUNC_SKYBOX:
 			if (level_version < 9) {
 				m_nType = nType;
 				if (!bExpertMode)
@@ -695,29 +660,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				goto errorExit;
 			break;
 
-		case SEGMENT_TYPE_OUTDOORS:
-			if (level_version < 9) {
-				m_nType = nType;
-				if (!bExpertMode)
-					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
-				break;
-				}
-			if (!m_mine->AddOutdoorCube (nSegNum, false))
-				goto errorExit;
-			break;
-
-		case SEGMENT_TYPE_NODAMAGE:
-			if (level_version < 9) {
-				m_nType = nType;
-				if (!bExpertMode)
-					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
-				break;
-				}
-			if (!m_mine->AddNoDamageCube (nSegNum, false))
-				goto errorExit;
-			break;
-
-		case SEGMENT_TYPE_EQUIPMAKER:
+		case SEGMENT_FUNC_EQUIPMAKER:
 			if (level_version < 9) {
 				m_nType = nType;
 				if (!bExpertMode)
@@ -728,7 +671,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				goto errorExit;
 			break;
 
-		case SEGMENT_TYPE_NONE:
+		case SEGMENT_FUNC_NONE:
 			m_mine->UndefineSegment (nSegNum);
 			break;
 
@@ -738,7 +681,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 #if 1
 	m_nType = nType;
 #else
-	if (m_nType == SEGMENT_TYPE_ROBOTMAKER) {
+	if (m_nType == SEGMENT_FUNC_ROBOTMAKER) {
 		// remove matcen
 		int nMatCens = (int) m_mine->GameInfo ().matcen.count;
 		if (nMatCens > 0) {
@@ -751,7 +694,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				m_mine->DeleteTriggerTargets (m_nCube, i);
 			}
 		}
-	else if (m_nType == SEGMENT_TYPE_FUELCEN) { //remove all fuel cell Walls ()
+	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
 		INT16 nSegNum = m_mine->Current ()->segment;
 		CDSegment *childseg, *seg = m_mine->CurrSeg ();
 		CDSide *oppside, *side = m_mine->CurrSide ();
@@ -761,7 +704,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (seg->children [sidenum] < 0)	// assume no wall if no child segment at the current side
 				continue;
 			childseg = m_mine->Segments () + seg->children [sidenum];
-			if (childseg->function == SEGMENT_TYPE_FUELCEN)	// don't delete if child segment is fuel center
+			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it
 			if ((wall = m_mine->GetWall (nSegNum, sidenum)) && 
@@ -780,7 +723,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 	if (bChangeOk) {
 		m_nType = nType;
 		m_mine->CurrSeg ()->function = nType;
-		if (nType == SEGMENT_TYPE_NONE)
+		if (nType == SEGMENT_FUNC_NONE)
 			m_mine->CurrSeg ()->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 		else
 			m_mine->CurrSeg ()->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
@@ -1069,7 +1012,7 @@ void CCubeTool::OnAddRepairCen ()
 {
 if (!GetMine ())
 	return;
-m_mine->AddFuelCenter (-1, SEGMENT_TYPE_REPAIRCEN);
+m_mine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
                         /*--------------------------*/
@@ -1079,24 +1022,6 @@ void CCubeTool::OnAddControlCen ()
 if (!GetMine ())
 	return;
 m_mine->AddReactor ();
-}
-
-                        /*--------------------------*/
-
-void CCubeTool::OnAddWaterCube ()
-{
-if (!GetMine ())
-	return;
-m_mine->AddWaterCube ();
-}
-
-                        /*--------------------------*/
-
-void CCubeTool::OnAddLavaCube ()
-{
-if (!GetMine ())
-	return;
-m_mine->AddLavaCube ();
 }
 
                         /*--------------------------*/

@@ -524,7 +524,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 	if (seg->children [sidenum] < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if (currSeg->children [sidenum] < 0 && currSeg->function == SEGMENT_TYPE_NONE) {
+		if (currSeg->children [sidenum] < 0 && currSeg->function == SEGMENT_FUNC_NONE) {
 			seg->sides [sidenum].nBaseTex = currSeg->sides [sidenum].nBaseTex; 
 			seg->sides [sidenum].nOvlTex = currSeg->sides [sidenum].nOvlTex; 
 			for (i = 0; i < 4; i++) 
@@ -2624,7 +2624,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
-		if (seg->function== SEGMENT_TYPE_ROBOTMAKER)
+		if (seg->function== SEGMENT_FUNC_ROBOTMAKER)
 			seg->matcen_num = nMatCens++; 
 		}
 	}
@@ -2632,7 +2632,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 // number "value"
 value = 0; 
 for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
-	if (seg->function== SEGMENT_TYPE_NONE)
+	if (seg->function== SEGMENT_FUNC_NONE)
 		seg->value = 0; 
 	else
 		seg->value = value++; 
@@ -2652,7 +2652,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
-		if (seg->function== SEGMENT_TYPE_EQUIPMAKER)
+		if (seg->function== SEGMENT_FUNC_EQUIPMAKER)
 			seg->matcen_num = nMatCens++; 
 		}
 	}
@@ -2660,7 +2660,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 // number "value"
 value = 0; 
 for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
-	if (seg->function== SEGMENT_TYPE_NONE)
+	if (seg->function== SEGMENT_FUNC_NONE)
 		seg->value = 0; 
 	else
 		seg->value = value++; 

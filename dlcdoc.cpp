@@ -58,8 +58,6 @@ BEGIN_MESSAGE_MAP(CDlcDoc, CDocument)
 	ON_COMMAND(ID_INSERT_CUBE_ROBOTMAKER, OnInsertCubeRobotMaker)
 	ON_COMMAND(ID_INSERT_CUBE_FUELCENTER, OnInsertCubeFuelCenter)
 	ON_COMMAND(ID_INSERT_CUBE_REPAIRCENTER, OnInsertCubeRepairCenter)
-	ON_COMMAND(ID_INSERT_CUBE_WATER, OnInsertCubeWater)
-	ON_COMMAND(ID_INSERT_CUBE_LAVA, OnInsertCubeLava)
 	ON_COMMAND(ID_INSERT_OBJECT_PLAYERCOPY, OnInsertObjectPlayerCopy)
 	ON_COMMAND(ID_INSERT_OBJECT_PLAYER, OnInsertObjectPlayer)
 	ON_COMMAND(ID_INSERT_OBJECT_ROBOT, OnInsertObjectRobot)
@@ -539,17 +537,7 @@ if (m_mine) m_mine->AddFuelCenter ();
 
 void CDlcDoc::OnInsertCubeRepairCenter ()
 {
-if (m_mine) m_mine->AddFuelCenter (-1, SEGMENT_TYPE_REPAIRCEN);
-}
-
-void CDlcDoc::OnInsertCubeWater ()
-{
-if (m_mine) m_mine->AddWaterCube ();
-}
-
-void CDlcDoc::OnInsertCubeLava ()
-{
-if (m_mine) m_mine->AddLavaCube ();
+if (m_mine) m_mine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
 void CDlcDoc::OnInsertDoorNormal ()

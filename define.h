@@ -615,7 +615,7 @@
 
 #define  IMMORTAL_TIME 0x3fffffff  /*  Time assigned to immortal objects, about 32768 seconds, or about 9 hours. */
 
-#define SEGMENT_TYPE_ROBOTMAKER 4
+#define SEGMENT_FUNC_ROBOTMAKER 4
 
 #define MAX_BRIGHTNESS	0x20000
 

@@ -236,7 +236,7 @@ public:
 		(m_nViewDist < 20) ? 10 + 2 * (m_nViewDist - 10) : 30 + 3 * (m_nViewDist - 20);
 		}
 	inline bool Visible (CDSegment *segP) {
-		if ((segP->function == SEGMENT_TYPE_SKYBOX) && !ViewFlag (eViewMineSkyBox))
+		if ((segP->function == SEGMENT_FUNC_SKYBOX) && !ViewFlag (eViewMineSkyBox))
 			return false;
 		if (!m_nViewDist)
 			return true;

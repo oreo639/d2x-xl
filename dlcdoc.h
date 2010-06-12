@@ -72,8 +72,6 @@ protected:
 	afx_msg void OnInsertCubeRobotMaker ();
 	afx_msg void OnInsertCubeFuelCenter ();
 	afx_msg void OnInsertCubeRepairCenter ();
-	afx_msg void OnInsertCubeWater ();
-	afx_msg void OnInsertCubeLava ();
 	afx_msg void OnInsertDoorNormal ();
 	afx_msg void OnInsertDoorPrison ();
 	afx_msg void OnInsertDoorGuideBot ();

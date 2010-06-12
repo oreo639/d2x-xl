@@ -929,7 +929,7 @@ SetTriggerPtr ();
 if ((file_type == RDL_FILE) ? 
 	 (m_pTrigger->flags & TRIGGER_MATCEN) != 0 : 
 	 (m_pTrigger->type == TT_MATCEN) && 
-	 (m_mine->Segments (other->segment)->function != SEGMENT_TYPE_ROBOTMAKER)) {
+	 (m_mine->Segments (other->segment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}

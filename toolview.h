@@ -592,8 +592,6 @@ class CCubeTool : public CToolDlg
 		afx_msg void OnAddEquipGen ();
 		afx_msg void OnAddRepairCen ();
 		afx_msg void OnAddControlCen ();
-		afx_msg void OnAddWaterCube ();
-		afx_msg void OnAddLavaCube ();
 		afx_msg void OnSplitCube ();
 		afx_msg void OnDeleteCube ();
 		afx_msg void OnOtherCube ();

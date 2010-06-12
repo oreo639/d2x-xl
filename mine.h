@@ -448,17 +448,11 @@ public:
 	bool AddReactor (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
 	bool AddRobotMaker (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
 	bool AddEquipMaker (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddFuelCenter (INT16 segnum = -1, UINT8 nType = SEGMENT_TYPE_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddWaterOrLavaCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
-	bool AddWaterCube (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true);
-	bool AddLavaCube (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true);
+	bool AddFuelCenter (INT16 segnum = -1, UINT8 nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
 	bool AddGoalCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
 	bool AddTeamCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
 	bool AddSpeedBoostCube (INT16 segnum, bool bCreate);
 	bool AddSkyboxCube (INT16 segnum, bool bCreate);
-	bool AddOutdoorCube (INT16 segnum, bool bCreate);
-	bool AddBlockedCube (INT16 segnum, bool bCreate);
-	bool AddNoDamageCube (INT16 segnum, bool bCreate);
 	void AutoLinkExitToReactor ();
 	int FuelCenterCount (void);
 	inline int& RobotMakerCount (void) 
