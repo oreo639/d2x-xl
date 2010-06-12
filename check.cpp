@@ -433,13 +433,13 @@ if (!GetMine ())
 
 for (i = m_mine->SegCount (); i; i--, segP++)
 	switch (segP->special) {
-		case SEGMENT_IS_ROBOTMAKER:
+		case SEGMENT_TYPE_ROBOTMAKER:
 			nBotGens++;
 			break;
-		case SEGMENT_IS_EQUIPMAKER:
+		case SEGMENT_TYPE_EQUIPMAKER:
 			nEquipGens++;
 			break;
-		case SEGMENT_IS_FUELCEN:
+		case SEGMENT_TYPE_FUELCEN:
 			nFuelCens++;
 			break;
 		default:
@@ -491,14 +491,14 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 //	and an orthogonal vector of L1 and L2 (called V1), the angle
 //	between L3 and V1 must be less than PI/2.
 //
-	if (seg->special == SEGMENT_IS_ROBOTMAKER) {
+	if (seg->special == SEGMENT_TYPE_ROBOTMAKER) {
 		if ((seg->matcen_num >= m_mine->GameInfo ().botgen.count) || (m_mine->BotGens (seg->matcen_num)->segnum != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
 			}
 		}
-	if (seg->special == SEGMENT_IS_EQUIPMAKER) {
+	if (seg->special == SEGMENT_TYPE_EQUIPMAKER) {
 		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->EquipGens (seg->matcen_num)->segnum != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
@@ -625,7 +625,7 @@ return true;
 // ACTION - Checks object's: segment number, type, id, position, container.
 //          Makes sure the correct number of players coop-players, and
 //          control centers (robots) are used.
-//          Control center belongs to segment with special = SEGMENT_IS_CONTROLCEN
+//          Control center belongs to segment with special = SEGMENT_TYPE_CONTROLCEN
 //--------------------------------------------------------------------------
 
 bool CDiagTool::CheckObjects () 
@@ -918,7 +918,7 @@ for (objectnum=0;objectnum<objCount;objectnum++, obj++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	type = obj->type;
 	if (type == OBJ_CNTRLCEN) {
-		if (m_mine->Segments (obj->segnum)->special != SEGMENT_IS_CONTROLCEN) {
+		if (m_mine->Segments (obj->segnum)->special != SEGMENT_TYPE_CONTROLCEN) {
 			if (m_bAutoFixBugs && m_mine->AddRobotMaker (obj->segnum, false, false))
 				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
 			else
@@ -1177,7 +1177,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 						}
 //						if (trigger->flags == TRIGGER_MATCEN) {
 					else if ((file_type == RDL_FILE) ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
-						if ((seg->special != SEGMENT_IS_ROBOTMAKER) && (seg->special != SEGMENT_IS_EQUIPMAKER)) {
+						if ((seg->special != SEGMENT_TYPE_ROBOTMAKER) && (seg->special != SEGMENT_TYPE_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
@@ -1392,9 +1392,9 @@ bool CDiagTool::CheckBotGens (void)
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].fuelcen_num = i;
-CountMatCenRefs (SEGMENT_IS_ROBOTMAKER, refList, matCenP, nMatCens);
-nMatCenSegs = FixMatCens (SEGMENT_IS_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
-AssignMatCens (SEGMENT_IS_ROBOTMAKER, segList, refList, matCenP, nMatCens);
+CountMatCenRefs (SEGMENT_TYPE_ROBOTMAKER, refList, matCenP, nMatCens);
+nMatCenSegs = FixMatCens (SEGMENT_TYPE_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
+AssignMatCens (SEGMENT_TYPE_ROBOTMAKER, segList, refList, matCenP, nMatCens);
 m_mine->GameInfo ().botgen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
@@ -1416,9 +1416,9 @@ bool CDiagTool::CheckEquipGens (void)
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].fuelcen_num = i;
-CountMatCenRefs (SEGMENT_IS_EQUIPMAKER, refList, matCenP, nMatCens);
-nMatCenSegs = FixMatCens (SEGMENT_IS_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
-AssignMatCens (SEGMENT_IS_EQUIPMAKER, segList, refList, matCenP, nMatCens);
+CountMatCenRefs (SEGMENT_TYPE_EQUIPMAKER, refList, matCenP, nMatCens);
+nMatCenSegs = FixMatCens (SEGMENT_TYPE_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
+AssignMatCens (SEGMENT_TYPE_EQUIPMAKER, segList, refList, matCenP, nMatCens);
 m_mine->GameInfo ().equipgen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);

@@ -1518,39 +1518,39 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 				//    if (show_special) {
 				if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextureMapped) ) {
 					switch(seg->special) {
-					case SEGMENT_IS_FUELCEN:
-					case SEGMENT_IS_SPEEDBOOST:
+					case SEGMENT_TYPE_FUELCEN:
+					case SEGMENT_TYPE_SPEEDBOOST:
 						m_pDC->SelectObject (m_penYellow);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_CONTROLCEN:
+					case SEGMENT_TYPE_CONTROLCEN:
 						m_pDC->SelectObject (m_penOrange);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_REPAIRCEN:
+					case SEGMENT_TYPE_REPAIRCEN:
 						m_pDC->SelectObject (m_penLtBlue);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_ROBOTMAKER:
-					case SEGMENT_IS_EQUIPMAKER:
+					case SEGMENT_TYPE_ROBOTMAKER:
+					case SEGMENT_TYPE_EQUIPMAKER:
 						m_pDC->SelectObject (m_penMagenta);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_GOAL_BLUE:
-					case SEGMENT_IS_TEAM_BLUE:
+					case SEGMENT_TYPE_GOAL_BLUE:
+					case SEGMENT_TYPE_TEAM_BLUE:
 						m_pDC->SelectObject (m_penBlue);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_GOAL_RED:
-					case SEGMENT_IS_TEAM_RED:
+					case SEGMENT_TYPE_GOAL_RED:
+					case SEGMENT_TYPE_TEAM_RED:
 						m_pDC->SelectObject (m_penRed);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_WATER:
+					case SEGMENT_TYPE_WATER:
 						m_pDC->SelectObject (m_penMedBlue);
 						DrawCubeQuick (seg);
 						break;
-					case SEGMENT_IS_LAVA:
+					case SEGMENT_TYPE_LAVA:
 						m_pDC->SelectObject (m_penMedRed);
 						DrawCubeQuick (seg);
 						break;

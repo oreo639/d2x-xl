@@ -448,7 +448,7 @@ public:
 	bool AddReactor (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
 	bool AddRobotMaker (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
 	bool AddEquipMaker (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddFuelCenter (INT16 segnum = -1, UINT8 nType = SEGMENT_IS_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
+	bool AddFuelCenter (INT16 segnum = -1, UINT8 nType = SEGMENT_TYPE_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
 	bool AddWaterOrLavaCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
 	bool AddWaterCube (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true);
 	bool AddLavaCube (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true);

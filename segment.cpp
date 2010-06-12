@@ -524,7 +524,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 	if (seg->children [sidenum] < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if (currSeg->children [sidenum] < 0 && currSeg->special == SEGMENT_IS_NOTHING) {
+		if (currSeg->children [sidenum] < 0 && currSeg->special == SEGMENT_TYPE_NONE) {
 			seg->sides [sidenum].nBaseTex = currSeg->sides [sidenum].nBaseTex; 
 			seg->sides [sidenum].nOvlTex = currSeg->sides [sidenum].nOvlTex; 
 			for (i = 0; i < 4; i++) 
@@ -2624,7 +2624,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
-		if (seg->special== SEGMENT_IS_ROBOTMAKER)
+		if (seg->special== SEGMENT_TYPE_ROBOTMAKER)
 			seg->matcen_num = nMatCens++; 
 		}
 	}
@@ -2632,7 +2632,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 // number "value"
 value = 0; 
 for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
-	if (seg->special== SEGMENT_IS_NOTHING)
+	if (seg->special== SEGMENT_TYPE_NONE)
 		seg->value = 0; 
 	else
 		seg->value = value++; 
@@ -2652,7 +2652,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
-		if (seg->special== SEGMENT_IS_EQUIPMAKER)
+		if (seg->special== SEGMENT_TYPE_EQUIPMAKER)
 			seg->matcen_num = nMatCens++; 
 		}
 	}
@@ -2660,7 +2660,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 // number "value"
 value = 0; 
 for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
-	if (seg->special== SEGMENT_IS_NOTHING)
+	if (seg->special== SEGMENT_TYPE_NONE)
 		seg->value = 0; 
 	else
 		seg->value = value++; 
@@ -2867,6 +2867,58 @@ theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
 return true;
 }
+
+//------------------------------------------------------------------------------
+
+static ubyte segFuncFromType [] = {
+	SEGMENT_FUNC_NONE,
+	SEGMENT_FUNC_FUELCEN,
+	SEGMENT_FUNC_REPAIRCEN,
+	SEGMENT_FUNC_CONTROLCEN,
+	SEGMENT_FUNC_ROBOTMAKER,
+	SEGMENT_FUNC_GOAL_BLUE,
+	SEGMENT_FUNC_GOAL_RED,
+	SEGMENT_FUNC_NONE,
+	SEGMENT_FUNC_NONE,
+	SEGMENT_FUNC_TEAM_BLUE,
+	SEGMENT_FUNC_TEAM_RED,
+	SEGMENT_FUNC_SPEEDBOOST,
+	SEGMENT_FUNC_NONE,
+	SEGMENT_FUNC_NONE,
+	SEGMENT_FUNC_SKYBOX,
+	SEGMENT_FUNC_EQUIPMAKER,
+	SEGMENT_FUNC_NONE
+	};
+
+static ubyte segPropsFromType [] = {
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_WATER,
+	SEGMENT_PROP_LAVA,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_BLOCKED,
+	SEGMENT_PROP_NODAMAGE,
+	SEGMENT_PROP_BLOCKED,
+	SEGMENT_PROP_NONE,
+	SEGMENT_PROP_OUTDOORS
+	};
+
+void CDSegment::Upgrade (void)
+{
+m_props = segPropsFromType [m_function];
+m_function = segFuncFromType [m_function];
+}
+
+                        /* -------------------------- */
+
+
 
                         /* -------------------------- */
 //eof segment.cpp

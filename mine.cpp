@@ -995,6 +995,10 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			seg->owner = -1;
 			seg->group = -1;
 			}
+		if (level_version > 20)
+			fread(&seg->props, sizeof(UINT8), 1, loadFile);
+		else
+			seg->Upgrade ();
 		// read in child mask (1 byte)
 		fread(&bit_mask, sizeof(UINT8), 1, loadFile);
 		seg->child_bitmask = bit_mask;
@@ -1098,8 +1102,8 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			fread(&seg->value, sizeof(INT8), 1, loadFile);
 			fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
 			fread(&seg->static_light, sizeof(FIX), 1, loadFile);
-			if ((seg->special == SEGMENT_IS_ROBOTMAKER) && (seg->matcen_num == -1)) {
-				seg->special = SEGMENT_IS_NOTHING;
+			if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == -1)) {
+				seg->special = SEGMENT_TYPE_NONE;
 				seg->value = 0;
 				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
@@ -2057,8 +2061,8 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 	  CDSegment *seg = Segments ();
 	  for (segnum = 0; segnum < SegCount (); segnum++, seg++)   {
 		  // write special info (8 bytes)
-			if ((seg->special == SEGMENT_IS_ROBOTMAKER) && (seg->matcen_num == -1)) {
-				seg->special = SEGMENT_IS_NOTHING;
+			if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == -1)) {
+				seg->special = SEGMENT_TYPE_NONE;
 				seg->value = 0;
 				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}

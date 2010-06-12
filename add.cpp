@@ -67,7 +67,7 @@ void CMine::UndefineSegment (INT16 segnum)
 	CDSegment *seg = (segnum < 0) ? CurrSeg () : Segments (segnum);
 
 segnum = INT16 (seg - Segments ());
-if (seg->special == SEGMENT_IS_ROBOTMAKER) {
+if (seg->special == SEGMENT_TYPE_ROBOTMAKER) {
 	// remove matcen
 	int nMatCens = (int) GameInfo ().botgen.count;
 	if (nMatCens > 0) {
@@ -84,14 +84,14 @@ if (seg->special == SEGMENT_IS_ROBOTMAKER) {
 			DeleteTriggerTargets (segnum, i);
 		CDSegment *s;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
-			if ((seg->special == SEGMENT_IS_ROBOTMAKER) && (s->matcen_num == nMatCens)) {
+			if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (s->matcen_num == nMatCens)) {
 				s->matcen_num = nDelMatCen;
 				break;
 				}
 		}
 	seg->matcen_num = -1;
 	}
-if (seg->special == SEGMENT_IS_EQUIPMAKER) {
+if (seg->special == SEGMENT_TYPE_EQUIPMAKER) {
 	// remove matcen
 	int nMatCens = (int) GameInfo ().equipgen.count;
 	if (nMatCens > 0) {
@@ -109,14 +109,14 @@ if (seg->special == SEGMENT_IS_EQUIPMAKER) {
 		CDSegment *s;
 		nDelMatCen += (int) GameInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
-			if ((s->special == SEGMENT_IS_EQUIPMAKER) && (s->matcen_num == nMatCens)) {
+			if ((s->special == SEGMENT_TYPE_EQUIPMAKER) && (s->matcen_num == nMatCens)) {
 				s->matcen_num = nDelMatCen;
 				break;
 			}
 		}
 	seg->matcen_num = -1;
 	}
-else if (seg->special == SEGMENT_IS_FUELCEN) { //remove all fuel cell walls
+else if (seg->special == SEGMENT_TYPE_FUELCEN) { //remove all fuel cell walls
 	CDSegment *childseg;
 	CDSide *oppside, *side = seg->sides;
 	CDWall *wall;
@@ -125,7 +125,7 @@ else if (seg->special == SEGMENT_IS_FUELCEN) { //remove all fuel cell walls
 		if (seg->children [sidenum] < 0)	// assume no wall if no child segment at the current side
 			continue;
 		childseg = Segments (seg->children [sidenum]);
-		if (childseg->special == SEGMENT_IS_FUELCEN)	// don't delete if child segment is fuel center
+		if (childseg->special == SEGMENT_TYPE_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wall = GetWall (segnum, sidenum)) && 
@@ -141,7 +141,7 @@ else if (seg->special == SEGMENT_IS_FUELCEN) { //remove all fuel cell walls
 		}
 	}
 seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
-seg->special = SEGMENT_IS_NOTHING;
+seg->special = SEGMENT_TYPE_NONE;
 }
 
 //==========================================================================
@@ -170,7 +170,7 @@ bool CMine::AddReactor (INT16 segnum, bool bCreate, bool bSetDefTextures)
 {
 #if 0
 for (seg = Segments (), i = SegCount (); i; i--, seg++)
-	if (seg->special == SEGMENT_IS_CONTROLCEN) {
+	if (seg->special == SEGMENT_TYPE_CONTROLCEN) {
 		if (!bExpertMode)
 			ErrorMsg ("There is already a reactor in this mine.");
 		return false;
@@ -182,7 +182,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_IS_CONTROLCEN, bSetDefTextures ? (file_type == RDL_FILE) ? 10 : 357 : -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_CONTROLCEN, bSetDefTextures ? (file_type == RDL_FILE) ? 10 : 357 : -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -217,7 +217,7 @@ if (bCreate && !AddSegment ()) {
 	return false; 
 	}	
 theApp.MineView ()->DelayRefresh (true);
-if (!DefineSegment (segnum, SEGMENT_IS_EQUIPMAKER, -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_EQUIPMAKER, -1)) {
 	theApp.ResetModified (bUndo);
 	theApp.MineView ()->DelayRefresh (false);
 	return false; 
@@ -255,7 +255,7 @@ if (bCreate && !AddSegment ()) {
 	return false; 
 	}	
 theApp.MineView ()->DelayRefresh (true);
-if (!DefineSegment (segnum, SEGMENT_IS_ROBOTMAKER,  bSetDefTextures ? (file_type == RDL_FILE) ? 339 : 361 : -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_ROBOTMAKER,  bSetDefTextures ? (file_type == RDL_FILE) ? 339 : 361 : -1)) {
 	theApp.ResetModified (bUndo);
 	theApp.MineView ()->DelayRefresh (false);
 	return false; 
@@ -362,7 +362,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_IS_SKYBOX, -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_SKYBOX, -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -386,7 +386,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_IS_OUTDOOR, -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_OUTDOORS, -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -410,7 +410,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_IS_SPEEDBOOST, -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_SPEEDBOOST, -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -434,7 +434,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_IS_BLOCKED, -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_BLOCKED, -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -458,7 +458,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_IS_NODAMAGE, -1)) {
+if (!DefineSegment (segnum, SEGMENT_TYPE_NODAMAGE, -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -471,12 +471,12 @@ return true;
 
 bool CMine::AddWaterCube (INT16 segnum, bool bCreate, bool bSetDefTextures) 
 {
-return AddWaterOrLavaCube (segnum, bCreate, bSetDefTextures, SEGMENT_IS_WATER, 403);
+return AddWaterOrLavaCube (segnum, bCreate, bSetDefTextures, SEGMENT_TYPE_WATER, 403);
 }
 
 bool CMine::AddLavaCube (INT16 segnum, bool bCreate, bool bSetDefTextures) 
 {
-return AddWaterOrLavaCube (segnum, bCreate, bSetDefTextures, SEGMENT_IS_LAVA, 404);
+return AddWaterOrLavaCube (segnum, bCreate, bSetDefTextures, SEGMENT_TYPE_LAVA, 404);
 }
 
 //==========================================================================
@@ -487,7 +487,7 @@ int n_fuelcen = 0;
 CDSegment *seg = Segments ();
 int i;
 for (i = 0; i < SegCount (); i++, seg++)
-	if ((seg->special == SEGMENT_IS_FUELCEN) || (seg->special == SEGMENT_IS_REPAIRCEN))
+	if ((seg->special == SEGMENT_TYPE_FUELCEN) || (seg->special == SEGMENT_TYPE_REPAIRCEN))
 		n_fuelcen++;
 return n_fuelcen;
 }
@@ -505,7 +505,7 @@ if (n_fuelcen >= MAX_NUM_FUELCENS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
 	}
-if ((file_type == RDL_FILE) && (nType == SEGMENT_IS_REPAIRCEN)) {
+if ((file_type == RDL_FILE) && (nType == SEGMENT_TYPE_REPAIRCEN)) {
 	if (!bExpertMode)
 		ErrorMsg ("Repair centers are not available in Descent 1.");
 	return false;
@@ -518,10 +518,10 @@ if (bCreate && !AddSegment ()) {
 	}	
 int new_segment = Current ()->segment;
 Current ()->segment = last_segment;
-if (bSetDefTextures && (nType == SEGMENT_IS_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS))
+if (bSetDefTextures && (nType == SEGMENT_TYPE_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS))
 	AddWall (Current ()->segment, Current ()->side, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
 Current ()->segment = new_segment;
-if (!((nType == SEGMENT_IS_FUELCEN) ?
+if (!((nType == SEGMENT_TYPE_FUELCEN) ?
 	   DefineSegment (segnum, nType,  bSetDefTextures ? ((file_type == RDL_FILE) ? 322 : 333) : -1, WALL_ILLUSION) :
 	   DefineSegment (segnum, nType,  bSetDefTextures ? 433 : -1, -1)) //use the blue goal texture for repair centers
 	) {
@@ -863,7 +863,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 bool CMine::AddRobotMakerTrigger () 
 {
 CDSegment *other_seg = OtherSeg ();
-if (other_seg->special != SEGMENT_IS_ROBOTMAKER) {
+if (other_seg->special != SEGMENT_TYPE_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

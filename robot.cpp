@@ -540,7 +540,7 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're d
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
 		for (j = SegCount (), seg = Segments (); j; j--, seg++)
-			if (seg->special == SEGMENT_IS_ROBOTMAKER) {
+			if (seg->special == SEGMENT_TYPE_ROBOTMAKER) {
 				int matcen = seg->matcen_num;
 				if ((i < 32) ?
 					 BotGens (matcen)->objFlags [0] & (1L << i) :

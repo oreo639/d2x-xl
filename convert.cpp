@@ -410,7 +410,7 @@ for (i = 0, trigger = m_mine->Triggers (); i < m_mine->GameInfo ().triggers.coun
 for (i = 0; i < m_mine->GameInfo ().botgen.count; i++) {
 	m_mine->BotGens (i)->objFlags [1] = 0;
 	for (j = 0, seg = m_mine->Segments (); j <= segCount; j++, seg++)
-		if ((seg->special == SEGMENT_IS_ROBOTMAKER) && (seg->matcen_num == i))
+		if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == i))
 				m_mine->BotGens (i)->fuelcen_num = (INT16)(seg->value);
 	}
 
@@ -419,7 +419,7 @@ for (i = 0; i < m_mine->GameInfo ().botgen.count; i++) {
 for (i = 0; i < m_mine->GameInfo ().equipgen.count; i++) {
 	m_mine->EquipGens (i)->objFlags [1] = 0;
 	for (j = 0, seg = m_mine->Segments (); j <= segCount; j++, seg++)
-		if ((seg->special == SEGMENT_IS_EQUIPMAKER) && (seg->matcen_num == i))
+		if ((seg->special == SEGMENT_TYPE_EQUIPMAKER) && (seg->matcen_num == i))
 				m_mine->EquipGens (i)->fuelcen_num = (INT16)(seg->value);
 	}
 

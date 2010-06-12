@@ -539,7 +539,7 @@ if (m_mine) m_mine->AddFuelCenter ();
 
 void CDlcDoc::OnInsertCubeRepairCenter ()
 {
-if (m_mine) m_mine->AddFuelCenter (-1, SEGMENT_IS_REPAIRCEN);
+if (m_mine) m_mine->AddFuelCenter (-1, SEGMENT_TYPE_REPAIRCEN);
 }
 
 void CDlcDoc::OnInsertCubeWater ()

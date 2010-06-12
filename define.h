@@ -30,7 +30,7 @@
 
 #define MAX_FLICKERING_LIGHTS 100
 
-#define LEVEL_VERSION		19	//current level version
+#define LEVEL_VERSION		21	//current level version
 
 #define MAX_PLAYERS_D2		8
 #define MAX_PLAYERS_D2X		16
@@ -405,31 +405,53 @@
 #define  IS_CHILD(segnum) (segnum > -1)
 
 /*Special types */
-#define SPECIAL_NORMAL        0
-#define SPECIAL_FUEL          1
-#define SPECIAL_MATCEN        3
-#define SPECIAL_REPRODUCER    4
+#define SPECIAL_NORMAL					0
+#define SPECIAL_FUEL						1
+#define SPECIAL_MATCEN					3
+#define SPECIAL_REPRODUCER				4
 
-#define SEGMENT_IS_NOTHING			0
-#define SEGMENT_IS_FUELCEN			1
-#define SEGMENT_IS_REPAIRCEN		2
-#define SEGMENT_IS_CONTROLCEN		3
-#define SEGMENT_IS_ROBOTMAKER		4
-#define MAX_CENTER_TYPES1			5
+#define SEGMENT_TYPE_NONE				0
+#define SEGMENT_TYPE_FUELCEN			1
+#define SEGMENT_TYPE_REPAIRCEN		2
+#define SEGMENT_TYPE_CONTROLCEN		3
+#define SEGMENT_TYPE_ROBOTMAKER		4
+#define MAX_SEGMENT_TYPES1				5
 
-#define SEGMENT_IS_GOAL_BLUE		5 // Descent 2 only
-#define SEGMENT_IS_GOAL_RED		6 // Descent 2 only
-#define SEGMENT_IS_WATER			7
-#define SEGMENT_IS_LAVA				8
-#define SEGMENT_IS_TEAM_BLUE		9
-#define SEGMENT_IS_TEAM_RED		10
-#define SEGMENT_IS_SPEEDBOOST		11
-#define SEGMENT_IS_BLOCKED			12
-#define SEGMENT_IS_NODAMAGE		13
-#define SEGMENT_IS_SKYBOX			14
-#define SEGMENT_IS_EQUIPMAKER		15	// matcen for powerups
-#define SEGMENT_IS_OUTDOOR			16
-#define MAX_CENTER_TYPES2			17 // Descent 2 only
+#define SEGMENT_TYPE_GOAL_BLUE		5 // Descent 2 only
+#define SEGMENT_TYPE_GOAL_RED			6 // Descent 2 only
+#define SEGMENT_TYPE_WATER				7
+#define SEGMENT_TYPE_LAVA				8
+#define SEGMENT_TYPE_TEAM_BLUE		9
+#define SEGMENT_TYPE_TEAM_RED			10
+#define SEGMENT_TYPE_SPEEDBOOST		11
+#define SEGMENT_TYPE_BLOCKED			12
+#define SEGMENT_TYPE_NODAMAGE			13
+#define SEGMENT_TYPE_SKYBOX			14
+#define SEGMENT_TYPE_EQUIPMAKER		15	// matcen for powerups
+#define SEGMENT_TYPE_OUTDOORS			16
+#define MAX_SEGMENT_TYPES2				17 // Descent 2 only
+
+#define SEGMENT_FUNC_NONE				0
+#define SEGMENT_FUNC_FUELCEN			1
+#define SEGMENT_FUNC_REPAIRCEN		2
+#define SEGMENT_FUNC_CONTROLCEN		3
+#define SEGMENT_FUNC_ROBOTMAKER		4
+#define SEGMENT_FUNC_GOAL_BLUE		5
+#define SEGMENT_FUNC_GOAL_RED			6
+#define SEGMENT_FUNC_TEAM_BLUE		7
+#define SEGMENT_FUNC_TEAM_RED			8
+#define SEGMENT_FUNC_SPEEDBOOST		9
+#define SEGMENT_FUNC_SKYBOX			10
+#define SEGMENT_FUNC_EQUIPMAKER		11
+#define MAX_SEGMENT_FUNCTIONS			12
+
+#define SEGMENT_PROP_NONE				0
+#define SEGMENT_PROP_WATER				1
+#define SEGMENT_PROP_LAVA				2
+#define SEGMENT_PROP_BLOCKED			4
+#define SEGMENT_PROP_NODAMAGE			8
+#define SEGMENT_PROP_DAMAGE			16
+#define SEGMENT_PROP_OUTDOORS			32
 
 /* Various wall types. */
 #define WALL_NORMAL			0  	/* Normal wall */
@@ -593,7 +615,7 @@
 
 #define  IMMORTAL_TIME 0x3fffffff  /*  Time assigned to immortal objects, about 32768 seconds, or about 9 hours. */
 
-#define SEGMENT_IS_ROBOTMAKER 4
+#define SEGMENT_TYPE_ROBOTMAKER 4
 
 #define MAX_BRIGHTNESS	0x20000
 

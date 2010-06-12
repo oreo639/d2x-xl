@@ -350,23 +350,23 @@ while(!feof(fBlk)) {
 		fscanf_s (fBlk, "  wall_bitmask %d\n", &byteBuf);
 		seg->wall_bitmask = byteBuf;
 		switch (seg->special) {
-			case SEGMENT_IS_FUELCEN:
-				if (!AddFuelCenter (segnum, SEGMENT_IS_FUELCEN, false, false))
+			case SEGMENT_TYPE_FUELCEN:
+				if (!AddFuelCenter (segnum, SEGMENT_TYPE_FUELCEN, false, false))
 					seg->special = 0;
 				break;
-			case SEGMENT_IS_REPAIRCEN:
-				if (!AddFuelCenter (segnum, SEGMENT_IS_REPAIRCEN, false, false))
+			case SEGMENT_TYPE_REPAIRCEN:
+				if (!AddFuelCenter (segnum, SEGMENT_TYPE_REPAIRCEN, false, false))
 					seg->special = 0;
 				break;
-			case SEGMENT_IS_ROBOTMAKER:
+			case SEGMENT_TYPE_ROBOTMAKER:
 				if (!AddRobotMaker (segnum, false, false))
 					seg->special = 0;
 				break;
-			case SEGMENT_IS_EQUIPMAKER:
+			case SEGMENT_TYPE_EQUIPMAKER:
 				if (!AddEquipMaker (segnum, false, false))
 					seg->special = 0;
 				break;
-			case SEGMENT_IS_CONTROLCEN:
+			case SEGMENT_TYPE_CONTROLCEN:
 				if (!AddReactor (segnum, false, false))
 					seg->special = 0;
 				break;

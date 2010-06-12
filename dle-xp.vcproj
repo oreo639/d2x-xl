@@ -251,7 +251,7 @@
 				ObjectFile="$(IntDir)/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CallingConvention="1"
 			/>
 			<Tool
@@ -272,7 +272,7 @@
 				OutputFile="\programs\d2\dle-xp\dle-xp.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
