@@ -195,7 +195,7 @@ return CToolDlg::OnSetActive ();
 bool CCubeTool::IsBotMaker (CDSegment *seg)
 {
 return 
-	(seg->special == SEGMENT_TYPE_ROBOTMAKER) &&
+	(seg->function == SEGMENT_TYPE_ROBOTMAKER) &&
 	(seg->matcen_num >= 0) &&
 	(seg->matcen_num < m_mine->GameInfo ().botgen.count);
 }
@@ -205,7 +205,7 @@ return
 bool CCubeTool::IsEquipMaker (CDSegment *seg)
 {
 return 
-	(seg->special == SEGMENT_TYPE_EQUIPMAKER) &&
+	(seg->function == SEGMENT_TYPE_EQUIPMAKER) &&
 	(seg->matcen_num >= 0) &&
 	(seg->matcen_num < m_mine->GameInfo ().equipgen.count);
 }
@@ -332,7 +332,7 @@ m_bEndOfExit = (seg->children [m_mine->Current ()->side] == -2);
 m_nCube = m_mine->Current ()->segment;
 m_nSide = m_mine->Current ()->side;
 m_nPoint = m_mine->Current ()->point;
-m_nType = seg->special;
+m_nType = seg->function;
 m_nOwner = seg->owner;
 m_nGroup = seg->group;
 //CBType ()->SetCurSel (m_nType);
@@ -579,7 +579,7 @@ segP = m_mine->Segments (nMinSeg);
 for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 	if (bMarked && !(segP->wall_bitmask & MARKED_MASK))
 		continue;
-	m_nType = segP->special;
+	m_nType = segP->function;
 	switch(nType) {
 		// check to see if we are adding a robot maker
 		case SEGMENT_TYPE_ROBOTMAKER:
@@ -761,7 +761,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (seg->children [sidenum] < 0)	// assume no wall if no child segment at the current side
 				continue;
 			childseg = m_mine->Segments () + seg->children [sidenum];
-			if (childseg->special == SEGMENT_TYPE_FUELCEN)	// don't delete if child segment is fuel center
+			if (childseg->function == SEGMENT_TYPE_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it
 			if ((wall = m_mine->GetWall (nSegNum, sidenum)) && 
@@ -779,7 +779,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 	// update "special"
 	if (bChangeOk) {
 		m_nType = nType;
-		m_mine->CurrSeg ()->special = nType;
+		m_mine->CurrSeg ()->function = nType;
 		if (nType == SEGMENT_TYPE_NONE)
 			m_mine->CurrSeg ()->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 		else

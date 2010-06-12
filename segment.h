@@ -32,6 +32,7 @@ public:
 	INT16		children [MAX_SIDES_PER_SEGMENT];  /* indices of 6 children segments, front, left, top, right, bottom, back */
 	INT16		verts [MAX_VERTICES_PER_SEGMENT];  /* vertex ids of 4 front and 4 back vertices */
 	UINT8		function;        /* special property of a segment (such as damaging, trigger, etc.) */
+	UINT8		props;
 	INT8		matcen_num;     /* which center segment is associated with, high bit set */
 	INT8		value;          /* matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 */
 	UINT8		s2_flags;	 // New for Descent 2
@@ -42,7 +43,6 @@ public:
 	INT16		map_bitmask;    /* which lines are drawn when displaying wireframe */
 	INT8		owner;
 	INT8		group;
-	UINT8		props;
 
 public:
 	void Upgrade (void);

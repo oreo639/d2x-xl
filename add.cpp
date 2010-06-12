@@ -67,7 +67,7 @@ void CMine::UndefineSegment (INT16 segnum)
 	CDSegment *seg = (segnum < 0) ? CurrSeg () : Segments (segnum);
 
 segnum = INT16 (seg - Segments ());
-if (seg->special == SEGMENT_TYPE_ROBOTMAKER) {
+if (seg->function == SEGMENT_TYPE_ROBOTMAKER) {
 	// remove matcen
 	int nMatCens = (int) GameInfo ().botgen.count;
 	if (nMatCens > 0) {
@@ -84,14 +84,14 @@ if (seg->special == SEGMENT_TYPE_ROBOTMAKER) {
 			DeleteTriggerTargets (segnum, i);
 		CDSegment *s;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
-			if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (s->matcen_num == nMatCens)) {
+			if ((seg->function == SEGMENT_TYPE_ROBOTMAKER) && (s->matcen_num == nMatCens)) {
 				s->matcen_num = nDelMatCen;
 				break;
 				}
 		}
 	seg->matcen_num = -1;
 	}
-if (seg->special == SEGMENT_TYPE_EQUIPMAKER) {
+if (seg->function == SEGMENT_TYPE_EQUIPMAKER) {
 	// remove matcen
 	int nMatCens = (int) GameInfo ().equipgen.count;
 	if (nMatCens > 0) {
@@ -109,14 +109,14 @@ if (seg->special == SEGMENT_TYPE_EQUIPMAKER) {
 		CDSegment *s;
 		nDelMatCen += (int) GameInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
-			if ((s->special == SEGMENT_TYPE_EQUIPMAKER) && (s->matcen_num == nMatCens)) {
+			if ((s->function == SEGMENT_TYPE_EQUIPMAKER) && (s->matcen_num == nMatCens)) {
 				s->matcen_num = nDelMatCen;
 				break;
 			}
 		}
 	seg->matcen_num = -1;
 	}
-else if (seg->special == SEGMENT_TYPE_FUELCEN) { //remove all fuel cell walls
+else if (seg->function == SEGMENT_TYPE_FUELCEN) { //remove all fuel cell walls
 	CDSegment *childseg;
 	CDSide *oppside, *side = seg->sides;
 	CDWall *wall;
@@ -125,7 +125,7 @@ else if (seg->special == SEGMENT_TYPE_FUELCEN) { //remove all fuel cell walls
 		if (seg->children [sidenum] < 0)	// assume no wall if no child segment at the current side
 			continue;
 		childseg = Segments (seg->children [sidenum]);
-		if (childseg->special == SEGMENT_TYPE_FUELCEN)	// don't delete if child segment is fuel center
+		if (childseg->function == SEGMENT_TYPE_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wall = GetWall (segnum, sidenum)) && 
@@ -141,7 +141,7 @@ else if (seg->special == SEGMENT_TYPE_FUELCEN) { //remove all fuel cell walls
 		}
 	}
 seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
-seg->special = SEGMENT_TYPE_NONE;
+seg->function = SEGMENT_TYPE_NONE;
 }
 
 //==========================================================================
@@ -154,7 +154,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 UndefineSegment (segnum);
 CDSegment *seg = (segnum < 0) ? CurrSeg () : Segments (segnum);
-seg->special = type;
+seg->function = type;
 seg->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (tmapnum, walltype);
 theApp.UnlockUndo ();
@@ -170,7 +170,7 @@ bool CMine::AddReactor (INT16 segnum, bool bCreate, bool bSetDefTextures)
 {
 #if 0
 for (seg = Segments (), i = SegCount (); i; i--, seg++)
-	if (seg->special == SEGMENT_TYPE_CONTROLCEN) {
+	if (seg->function == SEGMENT_TYPE_CONTROLCEN) {
 		if (!bExpertMode)
 			ErrorMsg ("There is already a reactor in this mine.");
 		return false;
@@ -487,7 +487,7 @@ int n_fuelcen = 0;
 CDSegment *seg = Segments ();
 int i;
 for (i = 0; i < SegCount (); i++, seg++)
-	if ((seg->special == SEGMENT_TYPE_FUELCEN) || (seg->special == SEGMENT_TYPE_REPAIRCEN))
+	if ((seg->function == SEGMENT_TYPE_FUELCEN) || (seg->function == SEGMENT_TYPE_REPAIRCEN))
 		n_fuelcen++;
 return n_fuelcen;
 }
@@ -863,7 +863,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 bool CMine::AddRobotMakerTrigger () 
 {
 CDSegment *other_seg = OtherSeg ();
-if (other_seg->special != SEGMENT_TYPE_ROBOTMAKER) {
+if (other_seg->function != SEGMENT_TYPE_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

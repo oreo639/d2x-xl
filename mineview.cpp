@@ -1517,7 +1517,7 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 			else {
 				//    if (show_special) {
 				if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextureMapped) ) {
-					switch(seg->special) {
+					switch(seg->function) {
 					case SEGMENT_TYPE_FUELCEN:
 					case SEGMENT_TYPE_SPEEDBOOST:
 						m_pDC->SelectObject (m_penYellow);

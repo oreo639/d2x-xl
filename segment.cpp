@@ -439,7 +439,7 @@ void CMine::InitSegment (INT16 segNum)
 // define special, etc..
 segP->owner = -1;
 segP->group = -1;
-segP->special = 0; 
+segP->function = 0; 
 segP->matcen_num = -1; 
 segP->value = -1; 
 segP->child_bitmask = 0;
@@ -524,7 +524,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 	if (seg->children [sidenum] < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if (currSeg->children [sidenum] < 0 && currSeg->special == SEGMENT_TYPE_NONE) {
+		if (currSeg->children [sidenum] < 0 && currSeg->function == SEGMENT_TYPE_NONE) {
 			seg->sides [sidenum].nBaseTex = currSeg->sides [sidenum].nBaseTex; 
 			seg->sides [sidenum].nOvlTex = currSeg->sides [sidenum].nOvlTex; 
 			for (i = 0; i < 4; i++) 
@@ -2106,7 +2106,7 @@ seg->child_bitmask |= (1 << cur1->side);
 seg->children [cur1->side] = cur2->segment; 
 seg->owner = -1;
 seg->group = -1;
-seg->special = 0; 
+seg->function = 0; 
 seg->matcen_num =-1; 
 seg->value =-1; 
 
@@ -2624,7 +2624,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
-		if (seg->special== SEGMENT_TYPE_ROBOTMAKER)
+		if (seg->function== SEGMENT_TYPE_ROBOTMAKER)
 			seg->matcen_num = nMatCens++; 
 		}
 	}
@@ -2632,7 +2632,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 // number "value"
 value = 0; 
 for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
-	if (seg->special== SEGMENT_TYPE_NONE)
+	if (seg->function== SEGMENT_TYPE_NONE)
 		seg->value = 0; 
 	else
 		seg->value = value++; 
@@ -2652,7 +2652,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
-		if (seg->special== SEGMENT_TYPE_EQUIPMAKER)
+		if (seg->function== SEGMENT_TYPE_EQUIPMAKER)
 			seg->matcen_num = nMatCens++; 
 		}
 	}
@@ -2660,7 +2660,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 // number "value"
 value = 0; 
 for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
-	if (seg->special== SEGMENT_TYPE_NONE)
+	if (seg->function== SEGMENT_TYPE_NONE)
 		seg->value = 0; 
 	else
 		seg->value = value++; 

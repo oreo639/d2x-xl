@@ -432,7 +432,7 @@ if (!GetMine ())
 	CDSegment	*segP = m_mine->Segments ();
 
 for (i = m_mine->SegCount (); i; i--, segP++)
-	switch (segP->special) {
+	switch (segP->function) {
 		case SEGMENT_TYPE_ROBOTMAKER:
 			nBotGens++;
 			break;
@@ -491,14 +491,14 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 //	and an orthogonal vector of L1 and L2 (called V1), the angle
 //	between L3 and V1 must be less than PI/2.
 //
-	if (seg->special == SEGMENT_TYPE_ROBOTMAKER) {
+	if (seg->function == SEGMENT_TYPE_ROBOTMAKER) {
 		if ((seg->matcen_num >= m_mine->GameInfo ().botgen.count) || (m_mine->BotGens (seg->matcen_num)->segnum != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
 			}
 		}
-	if (seg->special == SEGMENT_TYPE_EQUIPMAKER) {
+	if (seg->function == SEGMENT_TYPE_EQUIPMAKER) {
 		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->EquipGens (seg->matcen_num)->segnum != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
@@ -918,7 +918,7 @@ for (objectnum=0;objectnum<objCount;objectnum++, obj++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	type = obj->type;
 	if (type == OBJ_CNTRLCEN) {
-		if (m_mine->Segments (obj->segnum)->special != SEGMENT_TYPE_CONTROLCEN) {
+		if (m_mine->Segments (obj->segnum)->function != SEGMENT_TYPE_CONTROLCEN) {
 			if (m_bAutoFixBugs && m_mine->AddRobotMaker (obj->segnum, false, false))
 				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
 			else
@@ -1177,7 +1177,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 						}
 //						if (trigger->flags == TRIGGER_MATCEN) {
 					else if ((file_type == RDL_FILE) ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
-						if ((seg->special != SEGMENT_TYPE_ROBOTMAKER) && (seg->special != SEGMENT_TYPE_EQUIPMAKER)) {
+						if ((seg->function != SEGMENT_TYPE_ROBOTMAKER) && (seg->function != SEGMENT_TYPE_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
@@ -1266,7 +1266,7 @@ void CDiagTool::CountMatCenRefs (int nSpecialType, INT16* refList, matcen_info* 
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->special == UINT8 (nSpecialType)) {
+	if (segP->function == UINT8 (nSpecialType)) {
 		n = segP->matcen_num;
 		if ((n >= 0) && (n < nMatCens) && (refList [n] >= 0)) {
 			if (matCenP [n].segnum == i)
@@ -1287,7 +1287,7 @@ INT16 CDiagTool::FixMatCens (int nSpecialType, INT16* segList, INT16* refList, m
 	INT8			n;
 
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->special != UINT8 (nSpecialType))
+	if (segP->function != UINT8 (nSpecialType))
 		continue;
 	n = segP->matcen_num;
 	if ((n < 0) || (n >= nMatCens)) {
@@ -1337,7 +1337,7 @@ if (!m_bAutoFixBugs)
 	INT8			n;
 
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->special != UINT8 (nSpecialType))
+	if (segP->function != UINT8 (nSpecialType))
 		continue;
 	n = segP->matcen_num;
 	if (n >= 0)

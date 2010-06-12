@@ -823,7 +823,7 @@ void CMine::Default()
 	seg.verts [6] = 6;
 	seg.verts [7] = 7;
 
-	seg.special = 0;
+	seg.function = 0;
 	seg.matcen_num =-1;
 	seg.value =-1;
 	seg.s2_flags = 0;
@@ -1018,14 +1018,14 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		if (file_type == RDL_FILE) {
 			// read special info (0 to 4 bytes)
 			if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
-				fread(&seg->special, sizeof(UINT8), 1, loadFile);
+				fread(&seg->function, sizeof(UINT8), 1, loadFile);
 				fread(&seg->matcen_num, sizeof(INT8), 1, loadFile);
 				fread(&seg->value, sizeof(INT8), 1, loadFile);
 				fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
 			} else {
 				seg->owner = -1;
 				seg->group = -1;
-				seg->special = 0;
+				seg->function = 0;
 				seg->matcen_num =-1;
 				seg->value = 0;
 			}
@@ -1097,13 +1097,13 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		CDSegment *seg = Segments ();
 		for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			// read special info (8 bytes)
-			fread(&seg->special, sizeof(UINT8), 1, loadFile);
+			fread(&seg->function, sizeof(UINT8), 1, loadFile);
 			fread(&seg->matcen_num, sizeof(INT8), 1, loadFile);
 			fread(&seg->value, sizeof(INT8), 1, loadFile);
 			fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
 			fread(&seg->static_light, sizeof(FIX), 1, loadFile);
-			if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == -1)) {
-				seg->special = SEGMENT_TYPE_NONE;
+			if ((seg->function == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == -1)) {
+				seg->function = SEGMENT_TYPE_NONE;
 				seg->value = 0;
 				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
@@ -1974,7 +1974,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 			}
 		}
 		if (file_type== RDL_FILE) {
-			if (seg->special != 0) { // if this is a special cube
+			if (seg->function != 0) { // if this is a special cube
 				bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 			}
 		}
@@ -2003,7 +2003,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		// write special info (0 to 4 bytes)
 		if (file_type != RL2_FILE) {
 			if (bitmask & (1 << MAX_SIDES_PER_SEGMENT)) {
-				fwrite(&seg->special, sizeof(UINT8), 1, save_file);
+				fwrite(&seg->function, sizeof(UINT8), 1, save_file);
 				fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
 				fwrite(&seg->value, sizeof(INT8), 1, save_file);
 				fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file); // this should be 0
@@ -2061,15 +2061,17 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 	  CDSegment *seg = Segments ();
 	  for (segnum = 0; segnum < SegCount (); segnum++, seg++)   {
 		  // write special info (8 bytes)
-			if ((seg->special == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == -1)) {
-				seg->special = SEGMENT_TYPE_NONE;
+			if ((seg->function == SEGMENT_TYPE_ROBOTMAKER) && (seg->matcen_num == -1)) {
+				seg->function = SEGMENT_TYPE_NONE;
 				seg->value = 0;
 				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
-			fwrite(&seg->special, sizeof(UINT8), 1, save_file);
+			fwrite(&seg->function, sizeof(UINT8), 1, save_file);
 			fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
 			fwrite(&seg->value, sizeof(INT8), 1, save_file);
 			fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file);
+			if (level_version >= 9)
+				fwrite(&seg->props, sizeof(UINT8), 1, save_file);
 			fwrite(&seg->static_light, sizeof(FIX), 1, save_file);
 	  }
 	if (level_version >= 9) {

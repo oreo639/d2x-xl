@@ -340,7 +340,7 @@ while(!feof(fBlk)) {
 	fscanf_s (fBlk, "  static_light %ld\n",&seg->static_light);
 	if (bExtBlkFmt) {
 		fscanf_s (fBlk, "  special %d\n", &byteBuf);
-		seg->special = byteBuf;
+		seg->function = byteBuf;
 		fscanf_s (fBlk, "  matcen_num %d\n", &byteBuf);
 		seg->matcen_num = byteBuf;
 		fscanf_s (fBlk, "  value %d\n", &byteBuf);
@@ -349,33 +349,33 @@ while(!feof(fBlk)) {
 		seg->child_bitmask = byteBuf;
 		fscanf_s (fBlk, "  wall_bitmask %d\n", &byteBuf);
 		seg->wall_bitmask = byteBuf;
-		switch (seg->special) {
+		switch (seg->function) {
 			case SEGMENT_TYPE_FUELCEN:
 				if (!AddFuelCenter (segnum, SEGMENT_TYPE_FUELCEN, false, false))
-					seg->special = 0;
+					seg->function = 0;
 				break;
 			case SEGMENT_TYPE_REPAIRCEN:
 				if (!AddFuelCenter (segnum, SEGMENT_TYPE_REPAIRCEN, false, false))
-					seg->special = 0;
+					seg->function = 0;
 				break;
 			case SEGMENT_TYPE_ROBOTMAKER:
 				if (!AddRobotMaker (segnum, false, false))
-					seg->special = 0;
+					seg->function = 0;
 				break;
 			case SEGMENT_TYPE_EQUIPMAKER:
 				if (!AddEquipMaker (segnum, false, false))
-					seg->special = 0;
+					seg->function = 0;
 				break;
 			case SEGMENT_TYPE_CONTROLCEN:
 				if (!AddReactor (segnum, false, false))
-					seg->special = 0;
+					seg->function = 0;
 				break;
 			default:
 				break;
 			}
 		}
 	else {
-		seg->special = 0;
+		seg->function = 0;
 		seg->matcen_num = -1;
 		seg->value = -1;
 		}
@@ -582,7 +582,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			}
 		fprintf (fBlk, "  static_light %ld\n",seg->static_light);
 		if (bExtBlkFmt) {
-			fprintf (fBlk, "  special %d\n",seg->special);
+			fprintf (fBlk, "  special %d\n",seg->function);
 			fprintf (fBlk, "  matcen_num %d\n",seg->matcen_num);
 			fprintf (fBlk, "  value %d\n",seg->value);
 			fprintf (fBlk, "  child_bitmask %d\n",seg->child_bitmask);
