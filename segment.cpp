@@ -2870,7 +2870,7 @@ return true;
 
 //------------------------------------------------------------------------------
 
-static ubyte segFuncFromType [] = {
+static UINT8 segFuncFromType [] = {
 	SEGMENT_FUNC_NONE,
 	SEGMENT_FUNC_FUELCEN,
 	SEGMENT_FUNC_REPAIRCEN,
@@ -2890,7 +2890,7 @@ static ubyte segFuncFromType [] = {
 	SEGMENT_FUNC_NONE
 	};
 
-static ubyte segPropsFromType [] = {
+static UINT8 segPropsFromType [] = {
 	SEGMENT_PROP_NONE,
 	SEGMENT_PROP_NONE,
 	SEGMENT_PROP_NONE,
@@ -2912,8 +2912,8 @@ static ubyte segPropsFromType [] = {
 
 void CDSegment::Upgrade (void)
 {
-m_props = segPropsFromType [m_function];
-m_function = segFuncFromType [m_function];
+props = segPropsFromType [function];
+function = segFuncFromType [function];
 }
 
                         /* -------------------------- */
