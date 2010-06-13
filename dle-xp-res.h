@@ -109,7 +109,8 @@
 #define IDC_CUBE_BLOCKED                10043
 #define IDC_CUBE_NODAMAGE               10044
 #define IDC_CUBE_OUTDOORS               10045
-#define IDC_CUBE_DAMAGE                 10046
+#define IDC_CUBE_SHIELD_DAMAGE          10046
+#define IDC_CUBE_ENERGY_DAMAGE          10047
 
 
 

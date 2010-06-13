@@ -1100,7 +1100,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 				seg->Upgrade ();
 			else {
 				fread(&seg->props, sizeof(UINT8), 1, loadFile);
-				fread(&seg->damage, sizeof(FIX), 1, loadFile);
+				fread(seg->damage, sizeof(FIX), 2, loadFile);
 				}
 			fread(&seg->static_light, sizeof(FIX), 1, loadFile);
 			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->matcen_num == -1)) {
@@ -2072,7 +2072,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 			fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file);
 			if (level_version >= 9) {
 				fwrite(&seg->props, sizeof(UINT8), 1, save_file);
-				fwrite(&seg->damage, sizeof(FIX), 1, save_file);
+				fwrite(seg->damage, sizeof(FIX), 2, save_file);
 				}
 			fwrite(&seg->static_light, sizeof(FIX), 1, save_file);
 	  }

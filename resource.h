@@ -2,8 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by dle-xp.rc
 //
-#define IDC_CUBE_LIGHT2                 10036
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
@@ -11,7 +9,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        203
 #define _APS_NEXT_COMMAND_VALUE         32950
-#define _APS_NEXT_CONTROL_VALUE         1710
+#define _APS_NEXT_CONTROL_VALUE         1711
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif

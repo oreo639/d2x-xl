@@ -35,8 +35,8 @@ public:
 	UINT8		props;
 	INT8		matcen_num;     /* which center segment is associated with, high bit set */
 	INT8		value;          /* matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 */
-	UINT8		s2_flags;	 // New for Descent 2
-	FIX		damage;
+	UINT8		s2_flags;		 // New for Descent 2
+	INT16		damage [2];
 	FIX		static_light;   /* average static light in segment */
 	UINT8		child_bitmask;  /* bit0 to 5: children, bit6: unused, bit7: special */
 	UINT8		wall_bitmask;   /* bit0 to 5: door/walls, bit6: deleted, bit7: marked segment */

@@ -2914,7 +2914,8 @@ void CDSegment::Upgrade (void)
 {
 props = segPropsFromType [function];
 function = segFuncFromType [function];
-damage = 0;
+damage [0] =
+damage [1] = 0;
 }
 
                         /* -------------------------- */

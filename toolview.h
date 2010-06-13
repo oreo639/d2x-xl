@@ -548,7 +548,7 @@ class CCubeTool : public CToolDlg
 		int		m_nOwner;
 		int		m_nGroup;
 		int		m_bEndOfExit;
-		int		m_nDamage;
+		short		m_nDamage [2];
 		double	m_nLight;
 		double	m_nCoord [3];
 		int		m_nLastCube;
@@ -578,7 +578,9 @@ class CCubeTool : public CToolDlg
 		afx_msg void OnSetCoord ();
 		afx_msg void OnResetCoord ();
 		afx_msg void OnLight ();
-		afx_msg void OnDamage ();
+		void OnDamage (int i);
+		afx_msg void OnDamage0 ();
+		afx_msg void OnDamage1 ();
 		void OnProp (int nProp);
 		afx_msg void OnProp1 ();
 		afx_msg void OnProp2 ();

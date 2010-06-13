@@ -51,7 +51,8 @@ BEGIN_MESSAGE_MAP (CCubeTool, CToolDlg)
 	ON_CBN_SELCHANGE (IDC_CUBE_TYPE, OnSetType)
 	ON_CBN_SELCHANGE (IDC_CUBE_OWNER, OnSetOwner)
 	ON_EN_KILLFOCUS (IDC_CUBE_LIGHT, OnLight)
-	ON_EN_KILLFOCUS (IDC_CUBE_DAMAGE, OnDamage)
+	ON_EN_KILLFOCUS (IDC_CUBE_SHIELD_DAMAGE, OnDamage0)
+	ON_EN_KILLFOCUS (IDC_CUBE_ENERGY_DAMAGE, OnDamage1)
 	ON_EN_KILLFOCUS (IDC_CUBE_GROUP, OnSetGroup)
 	ON_EN_UPDATE (IDC_CUBE_LIGHT, OnLight)
 	ON_LBN_DBLCLK (IDC_CUBE_TRIGGERS, OnTriggerDetails)
@@ -76,7 +77,8 @@ m_nType = 0;
 m_nProps = 0;
 m_nVertex = 0;
 m_bEndOfExit = 0;
-m_nDamage = 0;
+m_nDamage [0] =
+m_nDamage [1] = 0;
 m_nLight = 0;
 m_nLastCube =
 m_nLastSide = -1;
@@ -169,7 +171,10 @@ for (int	i = 0; i < 3; i++) {
 		m_nCoord [i] = 0x7fff;
 //	DDV_MinMaxInt (pDX, (long) m_nCoord [i], -0x7fff, 0x7fff);
 	}
-for (int i = 0; i < 5; i++) {
+
+int i;
+
+for (i = 0; i < 5; i++) {
 	int h = (m_nProps & (1 << i)) != 0;
 	DDX_Check (pDX, IDC_CUBE_WATER + i, h);
 	if (h)
@@ -188,11 +193,8 @@ if (m_nGroup < -1)
 	m_nGroup = -1;
 else if (m_nGroup > 127)
 	m_nGroup = 127;
-DDX_Text (pDX, IDC_CUBE_DAMAGE, m_nDamage);
-if (m_nDamage < -32767)
-	m_nDamage = -32767;
-else if (m_nDamage > 32767)
-	m_nDamage = 32767;
+for (i = 0; i < 2; i++)
+	DDX_Text (pDX, IDC_CUBE_SHIELD_DAMAGE + i, m_nDamage [i]);
 
 //DDV_MinMaxInt (pDX, m_nGroup, -1, 127);
 }
@@ -369,7 +371,8 @@ m_nCube = m_mine->Current ()->segment;
 m_nSide = m_mine->Current ()->side;
 m_nPoint = m_mine->Current ()->point;
 m_nType = seg->function;
-m_nDamage = seg->damage;
+m_nDamage [0] = seg->damage [0];
+m_nDamage [1] = seg->damage [1];
 m_nProps = seg->props;
 m_nOwner = seg->owner;
 m_nGroup = seg->group;
@@ -810,14 +813,17 @@ theApp.SetModified (TRUE);
 
                         /*--------------------------*/
 
-void CCubeTool::OnDamage () 
+void CCubeTool::OnDamage (int i) 
 {
 if (!GetMine ())
 	return;
 UpdateData (TRUE);
-m_mine->CurrSeg ()->damage = m_nDamage;
+m_mine->CurrSeg ()->damage [i] = m_nDamage [i];
 theApp.SetModified (TRUE);
 }
+
+void CCubeTool::OnDamage0 () { OnDamage (0); }
+void CCubeTool::OnDamage1 () { OnDamage (1); }
 
                         /*--------------------------*/
 
