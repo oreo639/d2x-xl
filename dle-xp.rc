@@ -983,7 +983,7 @@ BEGIN
     RTEXT           "triggered by (cube,side)",IDC_STATIC,76,201,38,16
     GROUPBOX        "robot maker data",IDC_STATIC,42,264,146,87,BS_CENTER
     GROUPBOX        "trigger data",IDC_STATIC,42,189,146,74,BS_CENTER
-    GROUPBOX        "segment data",IDC_STATIC,42,1,146,86,BS_CENTER
+    GROUPBOX        "segment data",IDC_STATIC,42,1,146,84,BS_CENTER
     GROUPBOX        "side",IDC_STATIC,42,132,40,56,BS_CENTER
     GROUPBOX        "point",IDC_STATIC,84,132,104,56,BS_CENTER
     RTEXT           "X:",IDC_STATIC,108,146,8,8
@@ -991,10 +991,10 @@ BEGIN
     RTEXT           "Z:",IDC_STATIC,108,172,8,8
     RTEXT           "Owner:",IDC_STATIC,113,101,23,8
     RTEXT           "Group Id:",IDC_STATIC,126,116,30,8
-    GROUPBOX        "segment groups",IDC_STATIC,112,89,76,42,BS_CENTER
+    GROUPBOX        "segment groups",IDC_STATIC,112,87,76,44,BS_CENTER
     RTEXT           "shields:",IDC_STATIC,40,102,29,8,0,WS_EX_RIGHT
     RTEXT           "energy:",IDC_STATIC,45,116,24,8,0,WS_EX_RIGHT
-    GROUPBOX        "damage data",IDC_STATIC,42,89,67,42,BS_CENTER
+    GROUPBOX        "damage data",IDC_STATIC,42,87,67,44,BS_CENTER
 END
 
 IDD_ADVOBJDATA2 DIALOGEX 0, 0, 222, 389
