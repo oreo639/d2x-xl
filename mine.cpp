@@ -266,7 +266,7 @@ if (level_version == 1) {
 	file_type = RDL_FILE;
 	texture_resource = D1_TEXTURE_STRING_TABLE;
 	}
-else if ((level_version >= 6L) && (level_version <= 19L)) {
+else if ((level_version >= 6L) && (level_version <= 21L)) {
 	file_type = RL2_FILE;
 	texture_resource = D2_TEXTURE_STRING_TABLE;
 	}
