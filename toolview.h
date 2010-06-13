@@ -578,6 +578,15 @@ class CCubeTool : public CToolDlg
 		afx_msg void OnSetCoord ();
 		afx_msg void OnResetCoord ();
 		afx_msg void OnLight ();
+		afx_msg void OnDamage ();
+		void OnProp (int nProp);
+		afx_msg void OnProp1 ();
+		afx_msg void OnProp2 ();
+		afx_msg void OnProp3 ();
+		afx_msg void OnProp4 ();
+		afx_msg void OnProp5 ();
+		void OnFlag (int nID, int& nFlag);
+		afx_msg void OnSetDefTexture ();
 		afx_msg void OnSide1 ();
 		afx_msg void OnSide2 ();
 		afx_msg void OnSide3 ();
@@ -620,6 +629,10 @@ class CCubeTool : public CToolDlg
 			{ return LBCtrl (IDC_CUBE_AVAILBOTS); }
 		inline CButton *EndOfExit ()
 			{ return BtnCtrl (IDC_CUBE_ENDOFEXIT); }
+		inline CButton *SetDefTexture ()
+			{ return BtnCtrl (IDC_CUBE_SETDEFTEXTURE); }
+		inline CButton *Prop (int nProp)
+			{ return BtnCtrl (IDC_CUBE_WATER + nProp); }
 		inline CComboBox *CBOwner ()
 			{ return CBCtrl(IDC_CUBE_OWNER); }
 

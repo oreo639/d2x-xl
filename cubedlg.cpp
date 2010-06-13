@@ -28,6 +28,11 @@ BEGIN_MESSAGE_MAP (CCubeTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_DEL, OnDeleteCube)
 	ON_BN_CLICKED (IDC_CUBE_OTHER, OnOtherCube)
 	ON_BN_CLICKED (IDC_CUBE_ENDOFEXIT, OnEndOfExit)
+	ON_BN_CLICKED (IDC_CUBE_WATER, OnProp1)
+	ON_BN_CLICKED (IDC_CUBE_LAVA, OnProp2)
+	ON_BN_CLICKED (IDC_CUBE_BLOCKED, OnProp3)
+	ON_BN_CLICKED (IDC_CUBE_NODAMAGE, OnProp4)
+	ON_BN_CLICKED (IDC_CUBE_OUTDOORS, OnProp5)
 	ON_BN_CLICKED (IDC_CUBE_SIDE1, OnSide1)
 	ON_BN_CLICKED (IDC_CUBE_SIDE2, OnSide2)
 	ON_BN_CLICKED (IDC_CUBE_SIDE3, OnSide3)
@@ -46,6 +51,7 @@ BEGIN_MESSAGE_MAP (CCubeTool, CToolDlg)
 	ON_CBN_SELCHANGE (IDC_CUBE_TYPE, OnSetType)
 	ON_CBN_SELCHANGE (IDC_CUBE_OWNER, OnSetOwner)
 	ON_EN_KILLFOCUS (IDC_CUBE_LIGHT, OnLight)
+	ON_EN_KILLFOCUS (IDC_CUBE_DAMAGE, OnDamage)
 	ON_EN_KILLFOCUS (IDC_CUBE_GROUP, OnSetGroup)
 	ON_EN_UPDATE (IDC_CUBE_LIGHT, OnLight)
 	ON_LBN_DBLCLK (IDC_CUBE_TRIGGERS, OnTriggerDetails)
@@ -275,6 +281,26 @@ theApp.MineView ()->Refresh (false);
 
                         /*--------------------------*/
 
+void CCubeTool::OnProp (int nProp)
+{
+if (!GetMine ())
+	return;
+theApp.SetModified (TRUE);
+if (Prop (nProp)->GetCheck ())
+	m_nProps |= 1 << nProp;
+else
+	m_nProps &= ~(1 << nProp);
+m_mine->CurrSeg ()->props = m_nProps;
+}
+
+void CCubeTool::OnProp1 () { OnProp (0); }
+void CCubeTool::OnProp2 () { OnProp (1); }
+void CCubeTool::OnProp3 () { OnProp (2); }
+void CCubeTool::OnProp4 () { OnProp (3); }
+void CCubeTool::OnProp5 () { OnProp (4); }
+
+                        /*--------------------------*/
+
 void CCubeTool::OnSide (int nSide)
 {
 if (!GetMine ())
@@ -343,6 +369,7 @@ m_nCube = m_mine->Current ()->segment;
 m_nSide = m_mine->Current ()->side;
 m_nPoint = m_mine->Current ()->point;
 m_nType = seg->function;
+m_nDamage = seg->damage;
 m_nProps = seg->props;
 m_nOwner = seg->owner;
 m_nGroup = seg->group;
@@ -778,6 +805,17 @@ if (!GetMine ())
 	return;
 UpdateData (TRUE);
 m_mine->CurrSeg ()->static_light = (FIX) (m_nLight * 24 * 327.68);
+theApp.SetModified (TRUE);
+}
+
+                        /*--------------------------*/
+
+void CCubeTool::OnDamage () 
+{
+if (!GetMine ())
+	return;
+UpdateData (TRUE);
+m_mine->CurrSeg ()->damage = m_nDamage;
 theApp.SetModified (TRUE);
 }
 
