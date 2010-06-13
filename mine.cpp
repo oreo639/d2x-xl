@@ -2132,6 +2132,8 @@ if (file_type != RDL_FILE) {
 	t->num_links = read_INT8(fp);
 	read_INT8(fp);
 	t->value = read_FIX(fp);
+	if ((level_version < 21) && (t->type == TT_EXIT))
+		t->value = 0;
 	if ((GameInfo ().fileinfo_version < 39) && (t->type == TT_MASTER))
 		t->value = 0;
 	t->time = read_FIX(fp);
