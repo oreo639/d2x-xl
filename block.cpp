@@ -636,14 +636,14 @@ if (!BrowseForFile (FALSE,
 #else
   // Initialize data for fBlk open dialog
   OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof(OPENFILENAME));
-  ofn.lStructSize = sizeof(OPENFILENAME);
+  memset(&ofn, 0, sizeof (OPENFILENAME));
+  ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = HWindow;
   ofn.lpstrFilter = "DMB Block File\0*.blk\0";
   ofn.nFilterIndex = 1;
   ofn.lpstrFile= szFile;
   ofn.lpstrDefExt = "blk";
-  ofn.nMaxFile = sizeof(szFile);
+  ofn.nMaxFile = sizeof (szFile);
   ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
   if (!GetSaveFileName(&ofn)) {
 	return;
@@ -729,14 +729,14 @@ else {
 #else
   // Initialize data for fBlk open dialog
   OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof(OPENFILENAME));
-  ofn.lStructSize = sizeof(OPENFILENAME);
+  memset(&ofn, 0, sizeof (OPENFILENAME));
+  ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = HWindow;
   ofn.lpstrFilter = "DLE-XP Block File\0*.blk\0";
   ofn.nFilterIndex = 1;
   ofn.lpstrFile= szFile;
   ofn.lpstrDefExt = "blk";
-  ofn.nMaxFile = sizeof(szFile);
+  ofn.nMaxFile = sizeof (szFile);
   ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 
   if (!GetSaveFileName(&ofn)) {
@@ -787,13 +787,13 @@ if (!BrowseForFile (TRUE,
 	return;
 #else
   OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof(OPENFILENAME));
-  ofn.lStructSize = sizeof(OPENFILENAME);
+  memset(&ofn, 0, sizeof (OPENFILENAME));
+  ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = HWindow;
   ofn.lpstrFilter = "DLE-XP Block File\0*.blk\0";
   ofn.nFilterIndex = 1;
   ofn.lpstrFile= szFile;
-  ofn.nMaxFile = sizeof(szFile);
+  ofn.nMaxFile = sizeof (szFile);
   ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
   if (!GetOpenFileName(&ofn)) {

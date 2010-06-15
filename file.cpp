@@ -530,19 +530,19 @@ if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
 		SizeListBox->GetString (message, index);
 		long size = atol(message);
 		OffsetListBox->GetString(message,index);
-		long offset = atol(message) + sizeof(level_header);
+		long offset = atol(message) + sizeof (level_header);
 
 		// Set all structure members to zero.
 		OPENFILENAME ofn;
-		memset(&ofn, 0, sizeof(OPENFILENAME));
-		ofn.lStructSize = sizeof(OPENFILENAME);
+		memset(&ofn, 0, sizeof (OPENFILENAME));
+		ofn.lStructSize = sizeof (OPENFILENAME);
 		ofn.hwndOwner = HWindow;
 		ofn.lpstrFilter = "All Files\0*.*\0";
 		ofn.nFilterIndex = 1;
 		ofn.lpstrDefExt = pszExt;
 		strcpy(szTmp, m_pszSubFile);
 		ofn.lpstrFile= szTmp;
-		ofn.nMaxFile = sizeof(szTmp);
+		ofn.nMaxFile = sizeof (szTmp);
 		ofn.Flags =   OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 		if (GetSaveFileName(&ofn)) {
 		Export (m_pszName, szTmp, offset, size);
@@ -602,7 +602,7 @@ else {
 	_strlwr_s (buf, sizeof (buf));
 	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
 	fseek (hogfile,offset,SEEK_SET);
-	if (!fwrite (&lh, sizeof(lh), 1, hogfile))
+	if (!fwrite (&lh, sizeof (lh), 1, hogfile))
 		ErrorMsg ("Cannot write to HOG file");
 	else {
 		// update list box
@@ -675,9 +675,9 @@ else {
 	ofn.lpstrDefExt = "rl2";
 	}
 ofn.lpstrFile= szFile;
-ofn.nMaxFile = sizeof(szFile);
+ofn.nMaxFile = sizeof (szFile);
 ofn.lpstrFileTitle = lh.name;
-ofn.nMaxFileTitle = sizeof(lh.name);
+ofn.nMaxFileTitle = sizeof (lh.name);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 if (!GetOpenFileName (&ofn))
 	return;
@@ -744,7 +744,7 @@ if (index < 0) {
 LBFiles ()->GetText (index, lh.name);
 GetFileData (index, &size, &offset);
 lh.size = size;
-offset += sizeof(level_header);
+offset += sizeof (level_header);
 strcpy_s (szFile, sizeof (szFile), lh.name);
 #if 1
 if (!BrowseForFile (FALSE, "", szFile, "All Files|*.*||",
@@ -755,15 +755,15 @@ ExportSubFile (m_pszFile, szFile, offset, lh.size);
 #else //0
 // Set al structure members to zero.
 	OPENFILENAME ofn;
-memset(&ofn, 0, sizeof(OPENFILENAME));
-ofn.lStructSize = sizeof(OPENFILENAME);
+memset(&ofn, 0, sizeof (OPENFILENAME));
+ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = GetSafeHwnd ();
 ofn.lpstrFilter = "All Files\0*.*\0";
 ofn.nFilterIndex = 1;
 ofn.lpstrDefExt = "";
 strcpy(szFile,lh.name);
 ofn.lpstrFile= szFile;
-ofn.nMaxFile = sizeof(szFile);
+ofn.nMaxFile = sizeof (szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName (&ofn))
 	ExportSubFile (m_pszFile, ofn.lpstrFile, offset, lh.size);
@@ -1130,7 +1130,7 @@ fseek (fSrc,0,SEEK_SET);
 fwrite (&lh, sizeof (lh), 1, fDest);
 // write data
 while(!feof (fSrc)) {
-	n_bytes = fread (dataBuf,1,sizeof(dataBuf),fSrc);
+	n_bytes = fread (dataBuf,1,sizeof (dataBuf),fSrc);
 	if (n_bytes > 0)
 		fwrite(dataBuf,1,n_bytes,fDest);
 	}

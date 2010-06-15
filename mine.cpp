@@ -226,7 +226,7 @@ ASSERT(palette);
 if (!palette)
 	return 1;
 // redefine logical palette entries if memory for it is allocated
-dlcLogPalette = (LPLOGPALETTE) malloc (sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * 256);
+dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
 if (!dlcLogPalette) {
 	FreePaletteResource ();
 	return 1;
@@ -372,7 +372,7 @@ if (!palette)
 	goto load_end;
 
 // redefine logical palette entries if memory for it is allocated
-dlcLogPalette = (LPLOGPALETTE) malloc (sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * 256);
+dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
 if (dlcLogPalette) {
 	dlcLogPalette->palVersion = 0x300;
 	dlcLogPalette->palNumEntries = 256;
@@ -419,7 +419,7 @@ if (file_type != RDL_FILE) {
 	if (level_version > 6) {
 		nLights = (INT16)read_INT32(loadFile);
 		if (nLights > 0 && FlickerLightCount () <= MAX_FLICKERING_LIGHTS) {
-			fread(FlickeringLights (), sizeof(FLICKERING_LIGHT), nLights, loadFile);
+			fread(FlickeringLights (), sizeof (FLICKERING_LIGHT), nLights, loadFile);
 			} 
 		else {
 			if (nLights != 0) {
@@ -620,12 +620,12 @@ if (!data)
 
 FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
 sprintf_s (message, sizeof (message),  (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
-memcpy (RobotInfo (), DefRobotInfo (), sizeof(ROBOT_INFO) * N_robot_types);
+memcpy (RobotInfo (), DefRobotInfo (), sizeof (ROBOT_INFO) * N_robot_types);
 texture_resource = (file_type == RDL_FILE) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
 FILE *file;
 fopen_s (&file, message, "wb");
 if (file) {
-	size_t nBytes = fwrite(data, sizeof(UINT8), (UINT16)nResSize, file);
+	size_t nBytes = fwrite(data, sizeof (UINT8), (UINT16)nResSize, file);
 	fclose (file);
 	FreeResource (hGlobal);
 	if (nBytes != nResSize)
@@ -936,14 +936,14 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	UINT16   n_segments;
 
 	// read version (1 byte)
-	fread(&version, sizeof(UINT8), 1, loadFile);
+	fread(&version, sizeof (UINT8), 1, loadFile);
 	//  if(version!= COMPILED_MINE_VERSION){
 	//    sprintf_s (message, sizeof (message),  "Version incorrect (%d)\n", version);
 	//    ErrorMsg (message);
 	//  }
 
 	// read number of vertices (2 bytes)
-	fread(&temp_UINT16, sizeof(UINT16), 1, loadFile);
+	fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
 	n_vertices = temp_UINT16;
 	if (n_vertices > MAX_VERTICES3) {
 		sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
@@ -955,7 +955,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		ErrorMsg ("Warning: Too many vertices for this level version");
 
 	// read number of Segments () (2 bytes)
-	fread(&temp_UINT16, sizeof(UINT16), 1, loadFile);
+	fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
 	n_segments = temp_UINT16;
 	if (n_segments > MAX_SEGMENTS3) {
 		sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
@@ -972,9 +972,9 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	SegCount () = n_segments;
 
 	// read all vertices
-	fread(Vertices (), sizeof(vms_vector), VertCount (), loadFile);
+	fread(Vertices (), sizeof (vms_vector), VertCount (), loadFile);
 	if (n_vertices != VertCount ()) {
-		fseek(loadFile, sizeof(vms_vector)*(n_vertices - VertCount ()), SEEK_CUR);
+		fseek(loadFile, sizeof (vms_vector)*(n_vertices - VertCount ()), SEEK_CUR);
 	}
 
 	// unmark all vertices while we are here...
@@ -987,28 +987,28 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		INT16   bit; /** was INT32 */
 		CDSegment *seg = Segments (segnum);
 		if (level_version >= 9) {
-			fread(&seg->owner, sizeof(UINT8), 1, loadFile);
-			fread(&seg->group, sizeof(INT8), 1, loadFile);
+			fread(&seg->owner, sizeof (UINT8), 1, loadFile);
+			fread(&seg->group, sizeof (INT8), 1, loadFile);
 			}
 		else {
 			seg->owner = -1;
 			seg->group = -1;
 			}
 		// read in child mask (1 byte)
-		fread(&bit_mask, sizeof(UINT8), 1, loadFile);
+		fread(&bit_mask, sizeof (UINT8), 1, loadFile);
 		seg->child_bitmask = bit_mask;
 
 		// read 0 to 6 children (0 to 12 bytes)
 		for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
 			if (bit_mask & (1 << bit)) {
-				fread(&seg->children [bit], sizeof(INT16), 1, loadFile);
+				fread(&seg->children [bit], sizeof (INT16), 1, loadFile);
 			} else {
 				seg->children [bit] =-1;
 			}
 		}
 
 		// read vertex numbers (16 bytes)
-		fread(seg->verts, sizeof(INT16), MAX_VERTICES_PER_SEGMENT, loadFile);
+		fread(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, loadFile);
 
 		if (file_type == RDL_FILE) {
 			// read special info (0 to 4 bytes)
@@ -1027,24 +1027,24 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			seg->s2_flags = 0;  // d1 doesn't use this number, so zero it
 
 			// read static light (2 bytes)
-			fread(&temp_UINT16, sizeof(temp_UINT16), 1, loadFile);
+			fread(&temp_UINT16, sizeof (temp_UINT16), 1, loadFile);
 			seg->static_light = ((FIX)temp_UINT16) << 4;
 		}
 
 		// read the wall bit mask
-		fread(&bit_mask, sizeof(UINT8), 1, loadFile);
+		fread(&bit_mask, sizeof (UINT8), 1, loadFile);
 
 		// read in wall numbers (0 to 6 bytes)
 		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 			if (bit_mask & (1 << sidenum)) {
 				if (level_version < 13) {
 					UINT8	nWall;
-					fread(&nWall, sizeof(UINT8), 1, loadFile);
+					fread(&nWall, sizeof (UINT8), 1, loadFile);
 					seg->sides [sidenum].nWall = nWall;
 					}
 				else {
 					UINT16	nWall;
-					fread(&nWall, sizeof(UINT16), 1, loadFile);
+					fread(&nWall, sizeof (UINT16), 1, loadFile);
 					seg->sides [sidenum].nWall = nWall;
 					}
 				} 
@@ -1057,13 +1057,13 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)   {
 			if ((seg->children [sidenum]==-1) || (bit_mask & (1 << sidenum))) {
 				//  read in texture 1 number
-				fread(&temp_UINT16, sizeof(UINT16), 1, loadFile);
+				fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
 				seg->sides [sidenum].nBaseTex = temp_UINT16 & 0x7fff;
 				//   read in texture 2 number
 				if (!(temp_UINT16 & 0x8000)) {
 					seg->sides [sidenum].nOvlTex = 0;
 				} else {
-					fread(&temp_UINT16, sizeof(UINT16), 1, loadFile);
+					fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
 					seg->sides [sidenum].nOvlTex = temp_UINT16;
 					temp_UINT16 &= 0x1fff;
 					if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES))
@@ -1072,9 +1072,9 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 
 				//   read uvl numbers
 				for (i = 0; i < 4; i++)   {
-					fread(&seg->sides [sidenum].uvls [i].u, sizeof(INT16), 1, loadFile);
-					fread(&seg->sides [sidenum].uvls [i].v, sizeof(INT16), 1, loadFile);
-					fread(&seg->sides [sidenum].uvls [i].l, sizeof(INT16), 1, loadFile);
+					fread(&seg->sides [sidenum].uvls [i].u, sizeof (INT16), 1, loadFile);
+					fread(&seg->sides [sidenum].uvls [i].v, sizeof (INT16), 1, loadFile);
+					fread(&seg->sides [sidenum].uvls [i].l, sizeof (INT16), 1, loadFile);
 				}
 			} else {
 				seg->sides [sidenum].nBaseTex = 0;
@@ -1111,9 +1111,9 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			}
 		}
 	if (level_version == 9) {
-		fread(LightColors (), sizeof(CDColor), SegCount () * 6, loadFile); //skip obsolete side colors 
-		fread(LightColors (), sizeof(CDColor), SegCount () * 6, loadFile);
-		fread(VertexColors (), sizeof(CDColor), VertCount (), loadFile);
+		fread(LightColors (), sizeof (CDColor), SegCount () * 6, loadFile); //skip obsolete side colors 
+		fread(LightColors (), sizeof (CDColor), SegCount () * 6, loadFile);
+		fread(VertexColors (), sizeof (CDColor), VertCount (), loadFile);
 		}
 	else if (level_version > 9) {
 		LoadColors (VertexColors (), VertCount (), 9, 15, loadFile);
@@ -1170,7 +1170,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		ErrorMsg ("Error seeking in mine.cpp");
 		return -1;
 	}
-	if (fread(&game_top_fileinfo, sizeof(game_top_fileinfo), 1, loadfile) != 1) {
+	if (fread(&game_top_fileinfo, sizeof (game_top_fileinfo), 1, loadfile) != 1) {
 		ErrorMsg ("Error reading game info in mine.cpp");
 		return -1;
 	}
@@ -1277,7 +1277,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			}
 		else if (GameInfo ().fileinfo_version < 20)
 			ErrorMsg ("Door version < 20, doors not loaded");
-		else if(sizeof(*ActiveDoors (i)) != GameInfo ().doors.size)
+		else if(sizeof (*ActiveDoors (i)) != GameInfo ().doors.size)
 			ErrorMsg ("Error: Door size incorrect");
 		else if (GameInfo ().doors.count && 
 				   fread(ActiveDoors (), (INT16)GameInfo ().doors.size * GameInfo ().doors.count, 1, loadfile)!= 1) {
@@ -1773,7 +1773,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 			FlickerLightCount () = MAX_FLICKERING_LIGHTS;
 		}
 		if (FlickerLightCount () > 0) {
-			fwrite(FlickeringLights (), sizeof(FLICKERING_LIGHT), FlickerLightCount (), save_file);
+			fwrite(FlickeringLights (), sizeof (FLICKERING_LIGHT), FlickerLightCount (), save_file);
 		}
 
 		// write secret cube number
@@ -1809,7 +1809,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	// leave hostage text empty
 
 	// now and go back to beginning of file and save offsets
-	fseek(save_file, 2*sizeof(INT32), SEEK_SET);
+	fseek(save_file, 2*sizeof (INT32), SEEK_SET);
 	write_INT32 (minedata_offset, save_file);    // gamedata_offset
 	write_INT32 (gamedata_offset, save_file);    // gamedata_offset
 	if (file_type== RDL_FILE) {
@@ -1962,8 +1962,8 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		CDSegment *seg = Segments (segnum);
 
 		if (level_version >= 9) {
-			fwrite(&seg->owner, sizeof(UINT8), 1, save_file);
-			fwrite(&seg->group, sizeof(INT8), 1, save_file);
+			fwrite(&seg->owner, sizeof (UINT8), 1, save_file);
+			fwrite(&seg->group, sizeof (INT8), 1, save_file);
 			}
 		// write child bit mask (1 byte)
 		// (first calculate child_bitmask from children)
@@ -1988,17 +1988,17 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 #endif
 		bitmask = seg->child_bitmask; // override for test purposes
 
-		fwrite(&bitmask, sizeof(UINT8), 1, save_file);
+		fwrite(&bitmask, sizeof (UINT8), 1, save_file);
 
 		// write children numbers (0 to 6 bytes)
 		for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
 			if (bitmask & (1 << bit)) {
-				fwrite(&seg->children [bit], sizeof(INT16), 1, save_file);
+				fwrite(&seg->children [bit], sizeof (INT16), 1, save_file);
 			}
 		}
 
 		// write vertex numbers (16 bytes)
-		fwrite(seg->verts, sizeof(INT16), MAX_VERTICES_PER_SEGMENT, save_file);
+		fwrite(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, save_file);
 
 		// write special info (0 to 4 bytes)
 		if (file_type != RL2_FILE) {
@@ -2011,7 +2011,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
 			// write static light (2 bytes)
 			temp_UINT16 = (UINT16)((seg->static_light) >> 4);
-			fwrite(&temp_UINT16, sizeof(temp_UINT16), 1, save_file);
+			fwrite(&temp_UINT16, sizeof (temp_UINT16), 1, save_file);
 		}
 
 		// calculate wall bit mask
@@ -2021,15 +2021,15 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 				bitmask |= (1 << sidenum);
 			}
 		}
-		fwrite(&bitmask, sizeof(UINT8), 1, save_file);
+		fwrite(&bitmask, sizeof (UINT8), 1, save_file);
 
 		// write wall numbers
 		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 			if (bitmask & (1 << sidenum)) {
 				if (level_version >= 13)
-					fwrite(&seg->sides [sidenum].nWall, sizeof(UINT16), 1, save_file);
+					fwrite(&seg->sides [sidenum].nWall, sizeof (UINT16), 1, save_file);
 				else
-					fwrite(&seg->sides [sidenum].nWall, sizeof(UINT8), 1, save_file);
+					fwrite(&seg->sides [sidenum].nWall, sizeof (UINT8), 1, save_file);
 			}
 		}
 
@@ -2039,18 +2039,18 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 				// write texture 1 & 2 number
 				temp_UINT16 = seg->sides [sidenum].nBaseTex;
 				if (!seg->sides [sidenum].nOvlTex) {
-					fwrite(&temp_UINT16, sizeof(UINT16), 1, save_file);
+					fwrite(&temp_UINT16, sizeof (UINT16), 1, save_file);
 				} else {
 					temp_UINT16 |= 0x8000;
-					fwrite(&temp_UINT16, sizeof(UINT16), 1, save_file);
-					fwrite(&seg->sides [sidenum].nOvlTex, sizeof(INT16), 1, save_file);
+					fwrite(&temp_UINT16, sizeof (UINT16), 1, save_file);
+					fwrite(&seg->sides [sidenum].nOvlTex, sizeof (INT16), 1, save_file);
 				}
 
 				//   write uvls
 				for (i = 0; i < 4; i++)   {
-					fwrite(&seg->sides [sidenum].uvls [i].u, sizeof(INT16), 1, save_file);
-					fwrite(&seg->sides [sidenum].uvls [i].v, sizeof(INT16), 1, save_file);
-					fwrite(&seg->sides [sidenum].uvls [i].l, sizeof(INT16), 1, save_file);
+					fwrite(&seg->sides [sidenum].uvls [i].u, sizeof (INT16), 1, save_file);
+					fwrite(&seg->sides [sidenum].uvls [i].v, sizeof (INT16), 1, save_file);
+					fwrite(&seg->sides [sidenum].uvls [i].l, sizeof (INT16), 1, save_file);
 				}
 			}
 		}
@@ -2093,28 +2093,28 @@ void CMine::WriteTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
 	char	pad = 0;
 
 if (file_type != RDL_FILE) {
-	fwrite (&t->type, sizeof(INT8), 1, fp);
+	fwrite (&t->type, sizeof (INT8), 1, fp);
 	if (bObjTrigger)
-		fwrite (&t->flags, sizeof(INT16), 1, fp);
+		fwrite (&t->flags, sizeof (INT16), 1, fp);
 	else
-		fwrite (&t->flags, sizeof(INT8), 1, fp);
-	fwrite (&t->num_links, sizeof(INT8), 1, fp);
-	fwrite (&pad, sizeof(INT8), 1, fp);
-	fwrite (&t->value, sizeof(FIX), 1, fp);
-	fwrite (&t->time, sizeof(FIX), 1, fp);
+		fwrite (&t->flags, sizeof (INT8), 1, fp);
+	fwrite (&t->num_links, sizeof (INT8), 1, fp);
+	fwrite (&pad, sizeof (INT8), 1, fp);
+	fwrite (&t->value, sizeof (FIX), 1, fp);
+	fwrite (&t->time, sizeof (FIX), 1, fp);
 	}
 else {
-	fwrite (&t->type, sizeof(INT8), 1, fp);
-	fwrite (&t->flags, sizeof(INT16), 1, fp);
-	fwrite (&t->value, sizeof(FIX), 1, fp);
-	fwrite (&t->time, sizeof(FIX), 1, fp);
-	fwrite (&t->num_links, sizeof(INT8), 1, fp);
-	fwrite (&t->num_links, sizeof(INT16), 1, fp);
+	fwrite (&t->type, sizeof (INT8), 1, fp);
+	fwrite (&t->flags, sizeof (INT16), 1, fp);
+	fwrite (&t->value, sizeof (FIX), 1, fp);
+	fwrite (&t->time, sizeof (FIX), 1, fp);
+	fwrite (&t->num_links, sizeof (INT8), 1, fp);
+	fwrite (&t->num_links, sizeof (INT16), 1, fp);
 	}
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fwrite(t->seg  + i, sizeof(INT16), 1, fp);
+	fwrite(t->seg  + i, sizeof (INT16), 1, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fwrite(&t->side [i], sizeof(INT16), 1, fp);
+	fwrite(&t->side [i], sizeof (INT16), 1, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2179,17 +2179,17 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//==================== = WRITE FILE INFO========================
 
 	// Do not assume the "sizeof" values are the same as what was read when level was loaded.
-	// Also be careful no to use sizeof() because the editor's internal size may not match
+	// Also be careful no to use sizeof () because the editor's internal size may not match
 	// the size which is used by the game engine.
-	GameInfo ().objects.size = 0x108;                         // 248 = sizeof(object)
-	GameInfo ().walls.size = 24;                            // 24 = sizeof(wall)
-	GameInfo ().doors.size = 16;                            // 16 = sizeof(active_door)
-	GameInfo ().triggers.size = (file_type== RDL_FILE) ? 54:52; // 54 = sizeof(trigger)
-	GameInfo ().control.size = 42;                            // 42 = sizeof(control_center_trigger)
-	GameInfo ().botgen.size = (file_type== RDL_FILE) ? 16:20; // 20 = sizeof(matcen_info)
-	GameInfo ().equipgen.size = 20; // 20 = sizeof(matcen_info)
-	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof(dl_index)
-	GameInfo ().delta_lights.size = 8;                             // 8 = sizeof(delta_light)
+	GameInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
+	GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
+	GameInfo ().doors.size = 16;                            // 16 = sizeof (active_door)
+	GameInfo ().triggers.size = (file_type== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
+	GameInfo ().control.size = 42;                            // 42 = sizeof (control_center_trigger)
+	GameInfo ().botgen.size = (file_type== RDL_FILE) ? 16:20; // 20 = sizeof (matcen_info)
+	GameInfo ().equipgen.size = 20; // 20 = sizeof (matcen_info)
+	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof (dl_index)
+	GameInfo ().delta_lights.size = 8;                             // 8 = sizeof (delta_light)
 
 	// the offsets will be calculated as we go then rewritten at the end
 	//  GameInfo ().doors.offset =-1;
@@ -2221,13 +2221,13 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	else {
 		GameInfo ().fileinfo_signature = 0x6705;
 		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 40;
-		GameInfo ().fileinfo_size = (level_version < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof(GameInfo ())
+		GameInfo ().fileinfo_size = (level_version < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
 		GameInfo ().level = 0;
 	}
 
 	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo_size, 1, savefile);
 	if (GameInfo ().fileinfo_version >= 14) {  /*save mine filename */
-		fwrite(current_level_name, sizeof(char), strlen (current_level_name), savefile);
+		fwrite(current_level_name, sizeof (char), strlen (current_level_name), savefile);
 	}
 	if (file_type != RDL_FILE) {
 		fwrite("\n", 1, 1, savefile); // write an end - of - line
@@ -2302,7 +2302,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 			for (i = 0; i < NumObjTriggers (); i++)
 				WriteTrigger (ObjTriggers (i), savefile, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				fwrite (&ObjTriggers (i)->nObject, sizeof(ObjTriggers (i)->nObject), 1, savefile);
+				fwrite (&ObjTriggers (i)->nObject, sizeof (ObjTriggers (i)->nObject), 1, savefile);
 			}
 		}
 

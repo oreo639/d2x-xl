@@ -237,7 +237,7 @@ for (i = NumTriggers (); i; i--, trigP++)
 	if (trigP->type >= TT_MASTER)
 		DeleteTriggerTarget (trigP, nSegment, nSide, false);
 if (nTrigger < --GameInfo ().triggers.count)
-	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof(CDTrigger));
+	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof (CDTrigger));
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
 AutoLinkExitToReactor();

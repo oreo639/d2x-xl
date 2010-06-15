@@ -139,7 +139,7 @@ void CMine::MakeObject (CDObject *obj, INT8 type, INT16 segnum)
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
   CalcSegCenter (location,segnum);
-  memset(obj,0,sizeof(CDObject));
+  memset(obj,0,sizeof (CDObject));
   obj->signature = 0;
   obj->type = type;
   if (type==OBJ_WEAPON) {

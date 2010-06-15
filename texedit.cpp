@@ -699,21 +699,21 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	bool bFuncRes = false;
 	UINT32 x, y, width, palette_size;
 
-   palette = (RGBQUAD *) malloc(256*sizeof(RGBQUAD));
+   palette = (RGBQUAD *) malloc(256*sizeof (RGBQUAD));
 	if (!palette) {
 	  ErrorMsg ("Not enough memory for palette.");
 	  goto errorExit;
 	}
 
-	sysPal = (PALETTEENTRY *) malloc(256*sizeof(PALETTEENTRY));
+	sysPal = (PALETTEENTRY *) malloc(256*sizeof (PALETTEENTRY));
 	if (!sysPal) {
 	  ErrorMsg ("Not enough memory for palette.");
 	  goto errorExit;
 	}
 
 	// read the header information
-	fread(&bmfh,sizeof(bmfh),1,file);
-	fread(&bmih,sizeof(bmih),1,file);
+	fread(&bmfh,sizeof (bmfh),1,file);
+	fread(&bmih,sizeof (bmih),1,file);
 
 	// handle exceptions
 	if (bmih.biClrUsed==0)  
@@ -749,7 +749,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	if (palette_size == 0) {
 	  palette_size = 1 << bmih.biBitCount;
 	}
-	fread(palette,sizeof(RGBQUAD),palette_size,file);
+	fread(palette,sizeof (RGBQUAD),palette_size,file);
 
 	// read the logical palette entries
 	thePalette->GetPaletteEntries (0, 256, sysPal);
@@ -903,14 +903,14 @@ void CTextureEdit::OnLoad ()
   bool bFuncRes;
 
   sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
-  memset (&ofn, 0, sizeof(OPENFILENAME));
-  ofn.lStructSize = sizeof(OPENFILENAME);
+  memset (&ofn, 0, sizeof (OPENFILENAME));
+  ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = m_hWnd;
   ofn.lpstrFilter = "all files\0*.bmp;*.tga\0bitmap files\0*.bmp\0TGA files\0*.tga\0";
   ofn.nFilterIndex = 1;
   ofn.lpstrFile = szFile;
   ofn.lpstrDefExt = m_szDefExt;
-  ofn.nMaxFile = sizeof(szFile);
+  ofn.nMaxFile = sizeof (szFile);
   ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 if (GetOpenFileName (&ofn)) {
@@ -948,10 +948,10 @@ void CTextureEdit::SaveBitmap (FILE *file)
 BITMAPFILEHEADER bmfh;
 
 bmfh.bfType = 'B' + ('M'<<8);
-bmfh.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+256*4+m_nSize;
+bmfh.bfSize = sizeof (BITMAPFILEHEADER)+sizeof (BITMAPINFOHEADER)+256*4+m_nSize;
 bmfh.bfReserved1 = 0;
 bmfh.bfReserved2 = 0;
-bmfh.bfOffBits   = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+256*4;
+bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER)+sizeof (BITMAPINFOHEADER)+256*4;
 
 // define the bitmap header
 BITMAPINFO *bmi;
@@ -960,11 +960,11 @@ bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
 
 // write the headers
-fwrite(&bmfh,sizeof(BITMAPFILEHEADER),1,file);
-fwrite(&bmi->bmiHeader,sizeof(BITMAPINFOHEADER),1,file);
+fwrite(&bmfh,sizeof (BITMAPFILEHEADER),1,file);
+fwrite(&bmi->bmiHeader,sizeof (BITMAPINFOHEADER),1,file);
 
 // write palette
-fwrite(bmi->bmiColors,sizeof(RGBQUAD),256,file);
+fwrite(bmi->bmiColors,sizeof (RGBQUAD),256,file);
 
 // save bitmap data
 fwrite(m_bitmap, m_nSize,1,file);
@@ -984,7 +984,7 @@ h.imageType = 2;
 h.width = m_nWidth;
 h.height = m_nHeight;
 h.bits = 32;
-fwrite (&h, sizeof(h), 1, file);
+fwrite (&h, sizeof (h), 1, file);
 pc = m_tga + m_nWidth * (m_nHeight - 1);
 for (i = m_nHeight; i; i--) {
 	for (j = m_nWidth; j; j--, pc++) {
@@ -1006,15 +1006,15 @@ OPENFILENAME ofn;
 char szFile[256] = "\0";
 FILE *file;
 
-memset(&ofn, 0, sizeof(OPENFILENAME));
+memset(&ofn, 0, sizeof (OPENFILENAME));
 
-ofn.lStructSize = sizeof(OPENFILENAME);
+ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = m_hWnd;
 ofn.lpstrFilter = m_nFormat ? "Truevision Targa\0*.tga\0" : "256 color Bitmap Files\0*.bmp\0";
 ofn.nFilterIndex = 1;
 ofn.lpstrFile= szFile;
 ofn.lpstrDefExt = "bmp";
-ofn.nMaxFile = sizeof(szFile);
+ofn.nMaxFile = sizeof (szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName (&ofn)) {
 	_strlwr_s (ofn.lpstrFile, sizeof (szFile));

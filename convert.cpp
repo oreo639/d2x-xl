@@ -149,7 +149,7 @@ if (!m_bInited)
 #endif
 
 // find matching entry for Texture 1
-//  CBD1 ()->GetSelString (message,sizeof(message));
+//  CBD1 ()->GetSelString (message,sizeof (message));
 //  texture1 = GetTextureID (message);
 texture1 = (INT16) (CBD1 ()->GetItemData (CBD1 ()->GetCurSel ()));
 texture2 = m_pTextures [texture1];
@@ -191,7 +191,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   bi = &bmi->bmiHeader;
 
   // define bit map info header elements
-  bi->biSize          = sizeof(BITMAPINFOHEADER);
+  bi->biSize          = sizeof (BITMAPINFOHEADER);
   bi->biWidth         = 64;
   bi->biHeight        = 64;
   bi->biPlanes        = 1;

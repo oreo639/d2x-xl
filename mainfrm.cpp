@@ -457,7 +457,7 @@ int CMainFrame::CreateStatusBar ()
 	int cxWidth;
 
 if (!m_statusBar.Create (this) || 
-	 !m_statusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT))) {
+	 !m_statusBar.SetIndicators(indicators, sizeof (indicators)/sizeof (UINT))) {
 	TRACE0("Failed to create status bar\n");
 	return -1;      // fail to create
 	}

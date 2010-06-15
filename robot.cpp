@@ -97,17 +97,17 @@ if (type == NORMAL_HAM)  {
 		}
 	read_INT32(fp); // version (0x00000007)
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof(BITMAP_INDEX)*t,SEEK_CUR);
-	fseek(fp,sizeof(TMAP_INFO)*t,SEEK_CUR);
+	fseek(fp,sizeof (BITMAP_INDEX)*t,SEEK_CUR);
+	fseek(fp,sizeof (TMAP_INFO)*t,SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof(UINT8)*t,SEEK_CUR);
-	fseek(fp,sizeof(UINT8)*t,SEEK_CUR);
+	fseek(fp,sizeof (UINT8)*t,SEEK_CUR);
+	fseek(fp,sizeof (UINT8)*t,SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof(VCLIP)*t,SEEK_CUR);
+	fseek(fp,sizeof (VCLIP)*t,SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof(ECLIP)*t,SEEK_CUR);
+	fseek(fp,sizeof (ECLIP)*t,SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof(WCLIP)*t,SEEK_CUR);
+	fseek(fp,sizeof (WCLIP)*t,SEEK_CUR);
 	}
 else if (type == EXTENDED_HAM)  {
 	id = read_INT32(fp); // "HAM!"
@@ -133,18 +133,18 @@ else if (type == EXTENDED_HAM)  {
 	 t = N_robot_types - t0;
 //    goto abort;
   }
-  fread(RobotInfo (t0), sizeof(ROBOT_INFO), t, fp );
-  memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof(ROBOT_INFO) * t);
+  fread(RobotInfo (t0), sizeof (ROBOT_INFO), t, fp );
+  memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof (ROBOT_INFO) * t);
 
   // skip joints weapons, and powerups
   //----------------------------------
   t = (INT16) read_INT32(fp);
-  fseek(fp,sizeof(JOINTPOS)*t,SEEK_CUR);
+  fseek(fp,sizeof (JOINTPOS)*t,SEEK_CUR);
   if (type == NORMAL_HAM) {
     t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof(WEAPON_INFO)*t,SEEK_CUR);
+    fseek(fp,sizeof (WEAPON_INFO)*t,SEEK_CUR);
     t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof(POWERUP_TYPE_INFO)*t,SEEK_CUR);
+    fseek(fp,sizeof (POWERUP_TYPE_INFO)*t,SEEK_CUR);
   }
 
   // read poly model data and write it to a file
@@ -161,7 +161,7 @@ else if (type == EXTENDED_HAM)  {
   fopen_s (&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
   if (file) {
     for (i=0; i<t; i++ ) {
-      fread(&pm, sizeof(POLYMODEL), 1, fp );
+      fread(&pm, sizeof (POLYMODEL), 1, fp );
       fprintf(file,"n_models        = %ld\n",pm.n_models);
       fprintf(file,"model_data_size = %ld\n",pm.model_data_size);
       for (j = 0; j < pm.n_models; j++) {
@@ -200,15 +200,15 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-  fread( &Robot_joints[t0], sizeof(JOINTPOS), t, fp );
+  fread( &Robot_joints[t0], sizeof (JOINTPOS), t, fp );
 
   // skip weapon and powerup data
   //-----------------------------
   if (type == NORMAL_HAM) {
     t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof(WEAPON_INFO)*t,SEEK_CUR);
+    fseek(fp,sizeof (WEAPON_INFO)*t,SEEK_CUR);
     t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof(POWERUP_TYPE_INFO)*t,SEEK_CUR);
+    fseek(fp,sizeof (POWERUP_TYPE_INFO)*t,SEEK_CUR);
   }
 
   // read poly model data
@@ -229,8 +229,8 @@ else if (type == EXTENDED_HAM)  {
     if (Polygon_models[i]->model_data != NULL ) {
       free((void *)Polygon_models[i]->model_data);
     }
-    fread(Polygon_models[i], sizeof(POLYMODEL), 1, fp );
-    fread(&Polygon_model, sizeof(POLYMODEL), 1, fp );
+    fread(Polygon_models[i], sizeof (POLYMODEL), 1, fp );
+    fread(&Polygon_model, sizeof (POLYMODEL), 1, fp );
   }
   for (i=t0; i<t0+t; i++ ) {
     Polygon_models[i]->model_data = (UINT8 *) malloc((int)Polygon_models[i]->model_data_size);
@@ -239,20 +239,20 @@ else if (type == EXTENDED_HAM)  {
       ErrorMsg ("Could not allocate memory for polymodel data");
       goto abort;
     }
-    fread( Polygon_models[i]->model_data, sizeof(UINT8), (INT16)Polygon_models[i]->model_data_size, fp );
+    fread( Polygon_models[i]->model_data, sizeof (UINT8), (INT16)Polygon_models[i]->model_data_size, fp );
 //    g3_init_polygon_model(Polygon_models[i].model_data);
   }
 
   // extended hog writes over normal hogs dying models instead of adding new ones
-  fread( &Dying_modelnums[t0], sizeof(INT32), t, fp );
-  fread( &Dead_modelnums[t0], sizeof(INT32), t, fp );
+  fread( &Dying_modelnums[t0], sizeof (INT32), t, fp );
+  fread( &Dead_modelnums[t0], sizeof (INT32), t, fp );
 
   // skip gague data
   //----------------
   if (type == NORMAL_HAM) {
     t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof(BITMAP_INDEX)*t,SEEK_CUR); // lores gague
-    fseek(fp,sizeof(BITMAP_INDEX)*t,SEEK_CUR); // hires gague
+    fseek(fp,sizeof (BITMAP_INDEX)*t,SEEK_CUR); // lores gague
+    fseek(fp,sizeof (BITMAP_INDEX)*t,SEEK_CUR); // hires gague
   }
 
   // read object bitmap data
@@ -272,7 +272,7 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-  fread( &ObjBitmaps[t0], sizeof(BITMAP_INDEX), t, fp );
+  fread( &ObjBitmaps[t0], sizeof (BITMAP_INDEX), t, fp );
 
   if (type == EXTENDED_HAM) {
     t = (INT16) read_INT32(fp);
@@ -283,7 +283,7 @@ else if (type == EXTENDED_HAM)  {
       goto abort;
     }
   }
-  fread(&ObjBitmapPtrs[t0], sizeof(BITMAP_INDEX), t, fp );
+  fread(&ObjBitmapPtrs[t0], sizeof (BITMAP_INDEX), t, fp );
 #endif
 
   fclose(fp);
@@ -367,10 +367,10 @@ for (j=0;j<t;j++) {
 		ErrorMsg (message);
 		goto abort;
 		}
-	fread(&rInfo, sizeof(ROBOT_INFO), 1, fp );
+	fread(&rInfo, sizeof (ROBOT_INFO), 1, fp );
 	// compare this to existing data
-	if (memcmp(&rInfo,RobotInfo (i),sizeof(ROBOT_INFO)) != 0) {
-		memcpy(RobotInfo (i),&rInfo,sizeof(ROBOT_INFO));
+	if (memcmp(&rInfo,RobotInfo (i),sizeof (ROBOT_INFO)) != 0) {
+		memcpy(RobotInfo (i),&rInfo,sizeof (ROBOT_INFO));
 		RobotInfo (i)->pad[0] = 1; // mark as custom
 		}
 	}
@@ -434,7 +434,7 @@ write_INT32 (t,fp); // number of robot info structs stored
 for (i=0;i<N_robot_types;i++) {
 	if (RobotInfo (i)->pad [0]) {
 		write_INT32 ((UINT32)i,fp);
-		fwrite(RobotInfo (i), sizeof(ROBOT_INFO), 1, fp );
+		fwrite(RobotInfo (i), sizeof (ROBOT_INFO), 1, fp );
 		}
 	}
 
@@ -500,16 +500,16 @@ void CMine::ReadRobotResource(int robot_number)
   }
   t = (UINT16)(*((UINT32 *)ptr));
   N_robot_types = min(t,MAX_ROBOT_TYPES);
-  ptr += sizeof(UINT32);
+  ptr += sizeof (UINT32);
   for (j=0;j<t;j++) {
     i = (UINT16)(*((UINT32 *)ptr));
     if (i>MAX_ROBOT_TYPES) break;
-    ptr += sizeof(UINT32);
+    ptr += sizeof (UINT32);
     // copy the robot info for one robot, or all robots
     if (j==robot_number || robot_number == -1) {
-      memcpy(RobotInfo (i), ptr, sizeof(ROBOT_INFO));
+      memcpy(RobotInfo (i), ptr, sizeof (ROBOT_INFO));
     }
-    ptr += sizeof(ROBOT_INFO);
+    ptr += sizeof (ROBOT_INFO);
   }
   FreeResource(hResource);
 }

@@ -268,7 +268,7 @@ for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
 // move remaining Walls () in place of deleted wall
 // for (i = wallnum; i < GameInfo ().walls.count - 1; i++)
 if (wallnum < --GameInfo ().walls.count)
-	memcpy (Walls (wallnum), Walls (wallnum + 1), (GameInfo ().walls.count - wallnum) * sizeof(CDWall));
+	memcpy (Walls (wallnum), Walls (wallnum + 1), (GameInfo ().walls.count - wallnum) * sizeof (CDWall));
 // update number of Walls () in mine
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();

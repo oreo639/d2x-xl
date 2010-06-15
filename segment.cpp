@@ -92,7 +92,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			FlickerLightCount ()--; 
 			// put last light in place of deleted light
 			memcpy(FlickeringLights (index), FlickeringLights (FlickerLightCount ()), 
-				sizeof(FLICKERING_LIGHT)); 
+				sizeof (FLICKERING_LIGHT)); 
 		}
 	}
 
@@ -338,7 +338,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		for (segnum = delSegNum; segnum < (SegCount ()-1); segnum++) {
 			seg = Segments (segnum); 
 			seg2 = Segments (segnum + 1); 
-			memcpy(seg, seg2, sizeof(CDSegment)); 
+			memcpy(seg, seg2, sizeof (CDSegment)); 
 			}
   SegCount ()-- ; 
 #endif
@@ -376,7 +376,7 @@ void CMine::DeleteVertex(INT16 deleted_vertnum)
 	memcpy (VertStatus (deleted_vertnum), VertStatus (deleted_vertnum + 1), (VertCount ()-1 - deleted_vertnum) * sizeof (*VertStatus ()));
 /*
 	for (vertnum = deleted_vertnum; vertnum < VertCount ()-1; vertnum++) {
-		memcpy(&vertices [vertnum], &vertices [vertnum + 1], sizeof(vms_vector)); 
+		memcpy(&vertices [vertnum], &vertices [vertnum + 1], sizeof (vms_vector)); 
 		*VertStatus (vertnum] = *VertStatus (vertnum + 1]; 
 	}
 */

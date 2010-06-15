@@ -849,7 +849,7 @@ else {
 		if (!pDC)
 			return;
 		HINSTANCE hInst = AfxGetApp()->m_hInstance;
-		LoadString (hInst,texture_resource + tnum, message, sizeof(message));
+		LoadString (hInst,texture_resource + tnum, message, sizeof (message));
 		CBObjTexture ()->SelectString (-1, message);
 		// and show bitmap
 		CDTexture tx (bmBuf);
@@ -909,7 +909,7 @@ switch(type) {
 		for (i = 0; i < max_robot_ids; i++) {
 			sprintf_s (string, sizeof (string), (i < 10) ? "%3d: ": "%d: ", i);
 			h = int (strlen (string));
-			LoadString (hInst, ROBOT_STRING_TABLE + i, string + h, sizeof(string) - h);
+			LoadString (hInst, ROBOT_STRING_TABLE + i, string + h, sizeof (string) - h);
 			if (!strcmp (string, "(not used)"))
 				continue;
 			h = CBAddString (pcb, string);
@@ -985,7 +985,7 @@ switch(type) {
 		pcb->SetItemData (h, -1);
 		for (i = 0; i < MAX_POWERUP_IDS; i++) {
 			j = powerupIdStrXlat [i];
-			LoadString (hInst, POWERUP_STRING_TABLE + j, string, sizeof(string));
+			LoadString (hInst, POWERUP_STRING_TABLE + j, string, sizeof (string));
 			if (!strcmp (string, "(not used)"))
 				continue;
 			h = pcb->AddString (string);

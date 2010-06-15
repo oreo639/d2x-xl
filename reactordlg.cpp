@@ -145,7 +145,7 @@ void CReactorTool::OnCountDown ()
 if (!GetMine ())
 	return;
 char szVal [5];
-::GetWindowText (GetDlgItem (IDC_REACTOR_COUNTDOWN)->m_hWnd, szVal, sizeof(szVal));
+::GetWindowText (GetDlgItem (IDC_REACTOR_COUNTDOWN)->m_hWnd, szVal, sizeof (szVal));
 if (!*szVal)
 	return;
 UpdateData (TRUE);
@@ -162,7 +162,7 @@ void CReactorTool::OnSecretReturn ()
 if (!GetMine ())
 	return;
 char szVal [5];
-::GetWindowText (GetDlgItem (IDC_REACTOR_SECRETRETURN)->m_hWnd, szVal, sizeof(szVal));
+::GetWindowText (GetDlgItem (IDC_REACTOR_SECRETRETURN)->m_hWnd, szVal, sizeof (szVal));
 if (!*szVal)
 	return;
 UpdateData (TRUE);

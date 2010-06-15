@@ -730,7 +730,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		if (nMatCens > 0) {
 			// fill in deleted matcen
 			int nDelMatCen = m_mine->CurrSeg ()->value;
-			memcpy (m_mine->BotGens (nDelMatCen), m_mine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof(matcen_info));
+			memcpy (m_mine->BotGens (nDelMatCen), m_mine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (matcen_info));
 			m_mine->GameInfo ().matcen.count--;
 			int i;
 			for (i = 0; i < 6; i++)

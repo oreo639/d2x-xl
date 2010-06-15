@@ -740,7 +740,7 @@ void CMineView::InitView (CDC *pViewDC)
 
 			// define the bitmap parameters
 			MYBITMAPINFO mybmi;
-			mybmi.bmiHeader.biSize              = sizeof(BITMAPINFOHEADER);
+			mybmi.bmiHeader.biSize              = sizeof (BITMAPINFOHEADER);
 			mybmi.bmiHeader.biWidth             = m_viewWidth;
 			mybmi.bmiHeader.biHeight            = m_viewHeight;
 			mybmi.bmiHeader.biPlanes            = 1;
@@ -4434,7 +4434,7 @@ if (m_glDC)
 	GLuint PixelFormat;
 
 static PIXELFORMATDESCRIPTOR pfd = {
-	sizeof(PIXELFORMATDESCRIPTOR),
+	sizeof (PIXELFORMATDESCRIPTOR),
 	1,	
 	PFD_DRAW_TO_WINDOW |	PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
 	PFD_TYPE_RGBA,

@@ -99,7 +99,7 @@ int CMineView::SetupModel(CMine *mine, CDObject *obj)
 
   // allocate memory if not already allocated
 if (gModel.polys == NULL)
-	gModel.polys = (POLY *) malloc (MAX_POLYS*sizeof(POLY));
+	gModel.polys = (POLY *) malloc (MAX_POLYS*sizeof (POLY));
 if (!gModel.polys) {
 	DEBUGMSG ("SetupModel: Couldn't allocate model polygon.");
 	goto abort;
@@ -270,7 +270,7 @@ void CMineView::InterpModelData(UINT8 *p)
 					gModel.points[pt+pt0].z = VP(p+8)[pt].z + gOffset.z;
 				}
 				SetModelPoints(pt0,pt0+n_points);
-				p += W(p+2)*sizeof(VMS_VECTOR) + 8;
+				p += W(p+2)*sizeof (VMS_VECTOR) + 8;
 				break;
 			}
 			// Flat Shaded Polygon:
@@ -382,7 +382,7 @@ void CMineView::InterpModelData(UINT8 *p)
 //--------------------------------------------------------------------------
 UINTW read_UINTW(FILE *fp) {
   UINT32 value;
-  fread(&value, sizeof(UINT32), 1, fp);
+  fread(&value, sizeof (UINT32), 1, fp);
   assert(value <= 0xffff);
   return (UINTW)value;
 }
@@ -460,32 +460,32 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 		position = 3;
 		while(!feof(file)) {
 			fseek(file,position,SEEK_SET);
-			if (fread(&level,sizeof(struct level_header),1,file) != 1) return 1;
+			if (fread(&level,sizeof (struct level_header),1,file) != 1) return 1;
 			if (level.size > 10000000L || level.size < 0) return 1;
 			if (strcmp(level.name,"d2x.ham") == 0) {
 				id = read_INT32(file);	  					   // read id
 				if (id != 0x5848414DL) return 1;
 				read_UINTW(file);                              // read version
 				n  = read_UINTW(file);                         // n_weapon_types
-				fseek(file,n * sizeof(WEAPON_INFO),SEEK_CUR);  // weapon_info
+				fseek(file,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon_info
 				n  = read_UINTW(file);                         // n_robot_types
 				if (obj->type == OBJ_ROBOT) {
 					for (i=0;i<n;i++) {
 						if (i == (UINT32) (obj->id - N_D2_ROBOT_TYPES)) {
-							fread(&robot_info,sizeof(ROBOT_INFO),1,file);// read robot info
+							fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
 							model_num = robot_info.model_num;
 						} else {
-							fseek(file,sizeof(ROBOT_INFO),SEEK_CUR);   // skip robot info
+							fseek(file,sizeof (ROBOT_INFO),SEEK_CUR);   // skip robot info
 						}
 					}
 				} else {
-					fseek(file,n * sizeof(ROBOT_INFO),SEEK_CUR);
+					fseek(file,n * sizeof (ROBOT_INFO),SEEK_CUR);
 				}
 				n  = read_UINTW(file);                         // n_robot_joints
-				fseek(file,n * sizeof(JOINTPOS),SEEK_CUR);     // robot_joints
+				fseek(file,n * sizeof (JOINTPOS),SEEK_CUR);     // robot_joints
 				break;
 			}
-			position += sizeof(struct level_header) + level.size;
+			position += sizeof (struct level_header) + level.size;
 		}
 		n = read_UINTW(file);                          // n_polyModels
 		assert(n<=MAX_POLYGON_MODELS);
@@ -493,7 +493,7 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 			ReadPolyModel (polyModel, file);
 			model_data_size[i] = (UINT16)polyModel.model_data_size;
 			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS))
-				memcpy(&save_model,&polyModel,sizeof(POLYMODEL));
+				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS)) {
@@ -511,43 +511,43 @@ int CMineView::ReadModelData(FILE *file, CDObject *obj)
 		}
 		read_UINTW(file);                              // read version
 		n  = read_UINTW(file);                         // n_tmap_info
-		fseek(file,n * sizeof(BITMAP_INDEX),SEEK_CUR); // bitmap_indicies
-		fseek(file,n * sizeof(TMAP_INFO),SEEK_CUR);    // tmap_info
+		fseek(file,n * sizeof (BITMAP_INDEX),SEEK_CUR); // bitmap_indicies
+		fseek(file,n * sizeof (TMAP_INFO),SEEK_CUR);    // tmap_info
 		n = read_UINTW(file);                          // n_sounds
-		fseek(file,n * sizeof(UINT8),SEEK_CUR);        // sounds
-		fseek(file,n * sizeof(UINT8),SEEK_CUR);        // alt_sounds
+		fseek(file,n * sizeof (UINT8),SEEK_CUR);        // sounds
+		fseek(file,n * sizeof (UINT8),SEEK_CUR);        // alt_sounds
 		n = read_UINTW(file);                          // n_vclips
-		fseek(file,n * sizeof(VCLIP),SEEK_CUR);        // video clips
+		fseek(file,n * sizeof (VCLIP),SEEK_CUR);        // video clips
 		n = read_UINTW(file);                          // n_eclips
-		fseek(file,n * sizeof(ECLIP),SEEK_CUR);        // effect clips
+		fseek(file,n * sizeof (ECLIP),SEEK_CUR);        // effect clips
 		n = read_UINTW(file);                          // n_wclips
-		fseek(file,n * sizeof(WCLIP),SEEK_CUR);        // weapon clips
+		fseek(file,n * sizeof (WCLIP),SEEK_CUR);        // weapon clips
 		n = read_UINTW(file);                          // n_robots
 		if (obj->type == OBJ_ROBOT) {
 			for (i=0;i<n;i++) {
 				if (i == (UINT32) obj->id) {
-					fread(&robot_info,sizeof(ROBOT_INFO),1,file);// read robot info
+					fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
 					model_num = robot_info.model_num;
 				} else {
-					fseek(file,sizeof(ROBOT_INFO),SEEK_CUR);   // skip robot info
+					fseek(file,sizeof (ROBOT_INFO),SEEK_CUR);   // skip robot info
 				}
 			}
 		} else {
-			fseek(file,n * sizeof(ROBOT_INFO),SEEK_CUR);
+			fseek(file,n * sizeof (ROBOT_INFO),SEEK_CUR);
 		}
 		n = read_UINTW(file);                          // n_robot_joints
-		fseek(file,n * sizeof(JOINTPOS),SEEK_CUR);     // robot joints
+		fseek(file,n * sizeof (JOINTPOS),SEEK_CUR);     // robot joints
 		n = read_UINTW(file);                          // n_weapon
-		fseek(file,n * sizeof(WEAPON_INFO),SEEK_CUR);  // weapon info
+		fseek(file,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon info
 		n = read_UINTW(file);                          // n_powerups
-		fseek(file,n * sizeof(POWERUP_TYPE_INFO),SEEK_CUR); // powerup info
+		fseek(file,n * sizeof (POWERUP_TYPE_INFO),SEEK_CUR); // powerup info
 		n = read_UINTW(file);                          // n_polyModels
 		assert(n<=MAX_POLYGON_MODELS);
 		for (i=0;i<n;i++) {
 			ReadPolyModel (polyModel, file);
 			model_data_size[i] = (UINT16)polyModel.model_data_size;
 			if (i==(UINT32) model_num) {
-				memcpy(&save_model,&polyModel,sizeof(POLYMODEL));
+				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 			}
 		}
 		for (i=0;i<n;i++) {

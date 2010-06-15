@@ -391,7 +391,7 @@ else {
 		// use last "n_spline" segments
 		vertnum = (MAX_VERTICES-1)-(spline*4);
 		for (j = 0; j < 4; j++) {
-		//	  memcpy(&vertices [VertCount ()],&vertices [vertnum-j],sizeof(vms_vector));
+		//	  memcpy(&vertices [VertCount ()],&vertices [vertnum-j],sizeof (vms_vector));
 			if (VertCount () >= MAX_VERTICES)
 				DEBUGMSG (" Tunnel generator: Vertex count out of range.")
 			else if ((vertnum - j < 0) || (vertnum - j >= MAX_VERTICES))

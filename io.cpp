@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------
 INT32 read_INT32(FILE *load_file) {
   INT32 return_value=0;
-  fread( &return_value, sizeof(INT32), 1, load_file );
+  fread( &return_value, sizeof (INT32), 1, load_file );
   return(return_value);
 }
 
@@ -22,7 +22,7 @@ INT32 read_INT32(FILE *load_file) {
 //------------------------------------------------------------------------
 INT16 read_INT16(FILE *load_file) {
   INT16 return_value=0;
-  fread( &return_value, sizeof(INT16), 1, load_file );
+  fread( &return_value, sizeof (INT16), 1, load_file );
   return(return_value);
 }
 
@@ -33,7 +33,7 @@ INT16 read_INT16(FILE *load_file) {
 //------------------------------------------------------------------------
 INT8 read_INT8(FILE *load_file) {
   INT8 return_value=0;
-  fread( &return_value, sizeof(INT8), 1, load_file );
+  fread( &return_value, sizeof (INT8), 1, load_file );
   return(return_value);
 }
 
@@ -44,7 +44,7 @@ INT8 read_INT8(FILE *load_file) {
 //------------------------------------------------------------------------
 FIX read_FIX(FILE *load_file) {
   FIX return_value=0;
-  fread( &return_value, sizeof(FIX), 1, load_file );
+  fread( &return_value, sizeof (FIX), 1, load_file );
   return(return_value);
 }
 
@@ -55,7 +55,7 @@ FIX read_FIX(FILE *load_file) {
 //------------------------------------------------------------------------
 FIXANG read_FIXANG(FILE *load_file) {
   FIXANG return_value=0;
-  fread( &return_value, sizeof(FIXANG), 1, load_file );
+  fread( &return_value, sizeof (FIXANG), 1, load_file );
   return(return_value);
 }
 
@@ -77,9 +77,9 @@ vms_matrix *read_matrix(vms_matrix *matrix,FILE *load_file) {
 // ACTION - Reads a vector structure from a file.
 //------------------------------------------------------------------------
 vms_vector *read_vector(vms_vector *vector,FILE *load_file) {
-  fread( &vector->x, sizeof(FIX), 1, load_file );
-  fread( &vector->y, sizeof(FIX), 1, load_file );
-  fread( &vector->z, sizeof(FIX), 1, load_file );
+  fread( &vector->x, sizeof (FIX), 1, load_file );
+  fread( &vector->y, sizeof (FIX), 1, load_file );
+  fread( &vector->z, sizeof (FIX), 1, load_file );
   return(vector);
 }
 
@@ -90,9 +90,9 @@ vms_vector *read_vector(vms_vector *vector,FILE *load_file) {
 //
 //------------------------------------------------------------------------
 vms_angvec *read_angvec(vms_angvec *vector,FILE *load_file) {
-  fread( &vector->p, sizeof(FIXANG), 1, load_file );
-  fread( &vector->b, sizeof(FIXANG), 1, load_file );
-  fread( &vector->h, sizeof(FIXANG), 1, load_file );
+  fread( &vector->p, sizeof (FIXANG), 1, load_file );
+  fread( &vector->b, sizeof (FIXANG), 1, load_file );
+  fread( &vector->h, sizeof (FIXANG), 1, load_file );
   return(vector);
 }
 
@@ -102,7 +102,7 @@ vms_angvec *read_angvec(vms_angvec *vector,FILE *load_file) {
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
 INT32 write_INT32 (INT32 value,FILE *save_file) {
-  fwrite(&value, sizeof(INT32), 1, save_file );
+  fwrite(&value, sizeof (INT32), 1, save_file );
   return(value);
 }
 
@@ -112,7 +112,7 @@ INT32 write_INT32 (INT32 value,FILE *save_file) {
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
 INT16 write_INT16(INT16 value,FILE *save_file) {
-  fwrite(&value, sizeof(INT16), 1, save_file );
+  fwrite(&value, sizeof (INT16), 1, save_file );
   return(value);
 }
 
@@ -122,7 +122,7 @@ INT16 write_INT16(INT16 value,FILE *save_file) {
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
 INT8 write_INT8(INT8 value,FILE *save_file) {
-  fwrite( &value, sizeof(INT8), 1, save_file );
+  fwrite( &value, sizeof (INT8), 1, save_file );
   return(value);
 }
 
@@ -132,7 +132,7 @@ INT8 write_INT8(INT8 value,FILE *save_file) {
 // ACTION - Writes a FIX word to a file.
 //------------------------------------------------------------------------
 FIX write_FIX(FIX value,FILE *save_file) {
-  fwrite( &value, sizeof(FIX), 1, save_file );
+  fwrite( &value, sizeof (FIX), 1, save_file );
   return(value);
 }
 
@@ -142,7 +142,7 @@ FIX write_FIX(FIX value,FILE *save_file) {
 // ACTION - Writes a FIXANG word to a file.
 //------------------------------------------------------------------------
 FIXANG write_FIXANG(FIXANG value,FILE *save_file) {
-  fwrite( &value, sizeof(FIXANG), 1, save_file );
+  fwrite( &value, sizeof (FIXANG), 1, save_file );
   return(value);
 }
 
@@ -164,9 +164,9 @@ vms_matrix *write_matrix(vms_matrix *matrix,FILE *save_file) {
 // ACTION - Writes a vector structure to a file.
 //------------------------------------------------------------------------
 vms_vector *write_vector(vms_vector *vector,FILE *save_file) {
-  fwrite( &vector->x, sizeof(FIX), 1, save_file );
-  fwrite( &vector->y, sizeof(FIX), 1, save_file );
-  fwrite( &vector->z, sizeof(FIX), 1, save_file );
+  fwrite( &vector->x, sizeof (FIX), 1, save_file );
+  fwrite( &vector->y, sizeof (FIX), 1, save_file );
+  fwrite( &vector->z, sizeof (FIX), 1, save_file );
   return(vector);
 }
 
@@ -176,9 +176,9 @@ vms_vector *write_vector(vms_vector *vector,FILE *save_file) {
 // ACTION - Writes a vector structure to a file.
 //------------------------------------------------------------------------
 vms_angvec *write_angvec(vms_angvec *vector,FILE *save_file) {
-  fwrite( &vector->p, sizeof(FIXANG), 1, save_file );
-  fwrite( &vector->b, sizeof(FIXANG), 1, save_file );
-  fwrite( &vector->h, sizeof(FIXANG), 1, save_file );
+  fwrite( &vector->p, sizeof (FIXANG), 1, save_file );
+  fwrite( &vector->b, sizeof (FIXANG), 1, save_file );
+  fwrite( &vector->h, sizeof (FIXANG), 1, save_file );
   return(vector);
 }
 

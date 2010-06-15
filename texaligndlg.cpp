@@ -300,12 +300,12 @@ offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 // set up logical palette
 oldPalette = pDC->SelectPalette(thePalette, FALSE);
 pDC->RealizePalette();
-memset(tx.m_pDataBM, 0, sizeof(bmBuf));
+memset(tx.m_pDataBM, 0, sizeof (bmBuf));
 if (DefineTexture (side->nBaseTex, side->nOvlTex, &tx, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (DefineTexture failed)");
 	return;
 	}
-hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof(POINT), ALTERNATE);
+hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);
 pDC->SelectObject (&hRgn);
 scale = min (tx.m_width, tx.m_height) / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {

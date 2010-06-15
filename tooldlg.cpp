@@ -252,9 +252,9 @@ if (nID != 0) // will be zero on a separator
 		*psz = '\0';
 //   strTipText.Format ("Control ID = %d", nID);
 if (pNMHDR->code == TTN_NEEDTEXTA)
-   lstrcpyn(pTTTA->szText, strTipText, sizeof(pTTTA->szText));
+   lstrcpyn(pTTTA->szText, strTipText, sizeof (pTTTA->szText));
 else
-   _mbstowcsz(pTTTW->szText, strTipText, sizeof(pTTTW->szText));
+   _mbstowcsz(pTTTW->szText, strTipText, sizeof (pTTTW->szText));
 *pResult = 0;
 return TRUE;    // message was handled
 }

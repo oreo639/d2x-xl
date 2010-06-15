@@ -296,6 +296,11 @@ if (m_nType == TT_MESSAGE) {
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
 	}
+else if (m_nType == TT_EXIT) {
+	strcpy_s (szLabel, sizeof (szLabel), "dest:");
+	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);
+	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT2, "");
+	}
 else if (m_nType == TT_SOUND) {
 	strcpy_s (szLabel, sizeof (szLabel), "sound #");
 	SetDlgItemText (IDC_TRIGGER_STRENGTH_TEXT, szLabel);

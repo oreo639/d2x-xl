@@ -549,7 +549,7 @@ void CTextureView::Setup()
   // calculate total number of textures
 m_nTextures [1] = 0;
 for (i = 0; i < nTextures; i++) {
-	LoadString (hInst, texture_resource + i, name, sizeof(name));
+	LoadString (hInst, texture_resource + i, name, sizeof (name));
 	if (strstr ((char*) name, "frame"))
 		++nFrames;
 	else
@@ -560,7 +560,7 @@ for (i = 0; i < nTextures; i++) {
 #if 0
 if (m_pTextures)
 	free (m_pTextures);
-m_pTextures = (int *) malloc (m_nTextures [1] * sizeof(int));
+m_pTextures = (int *) malloc (m_nTextures [1] * sizeof (int));
 if (m_pTextures) {
 	// fill in texture list
 #if 1
@@ -569,7 +569,7 @@ if (m_pTextures) {
 #else
    m_nTextures [1] = 0;
    for (i = 0; i < nTextures; i++) {
-		LoadString(hInst,texture_resource + i,name,sizeof(name));
+		LoadString(hInst,texture_resource + i,name,sizeof (name));
 		if (strstr((char*)name,"frame") == NULL)
 			m_pTextures[m_nTextures [1]++] = i;
 		else
