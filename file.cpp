@@ -928,7 +928,7 @@ while (!feof (hog_file)) {
 	if (fread (data, sizeof (struct level_header), 1, hog_file) != 1) 
 		break;
 	level = (struct level_header *) data;
-	if (level->size > 10000000L || level->size < 0) {
+	if (level->size > 100000000L || level->size < 0) {
 		if (bVerbose)
 			ErrorMsg ("Error reading HOG file");
 		fclose (hog_file);
