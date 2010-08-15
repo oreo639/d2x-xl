@@ -1,0 +1,10 @@
+D:\projects\Libraries\DockPanel\DockPanel\bin\Debug\license.txt
+D:\projects\Libraries\DockPanel\DockPanel\bin\Debug\WeifenLuo.WinFormsUI.Docking.dll
+D:\projects\Libraries\DockPanel\DockPanel\bin\Debug\WeifenLuo.WinFormsUI.Docking.pdb
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\ResolveAssemblyReference.cache
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\WeifenLuo.WinFormsUI.Docking.Resources.resources
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\WeifenLuo.WinFormsUI.Docking.Strings.resources
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\WeifenLuo.WinFormsUI.Docking.dll
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\WeifenLuo.WinFormsUI.Docking.pdb
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\GenerateResource.read.1.tlog
+D:\projects\Libraries\DockPanel\DockPanel\obj\Debug\GenerateResource.write.1.tlog
