@@ -65,9 +65,9 @@
             this.staticRenderDepth = new System.Windows.Forms.TrackBar();
             this.lightTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.setVertexLight = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.vertexLight = new System.Windows.Forms.NumericUpDown();
-            this.setVertexLight = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.defaultButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -482,6 +482,15 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Vertex light";
             // 
+            // setVertexLight
+            // 
+            this.setVertexLight.Location = new System.Drawing.Point(176, 19);
+            this.setVertexLight.Name = "setVertexLight";
+            this.setVertexLight.Size = new System.Drawing.Size(60, 20);
+            this.setVertexLight.TabIndex = 18;
+            this.setVertexLight.Text = "Set";
+            this.setVertexLight.UseVisualStyleBackColor = true;
+            // 
             // label14
             // 
             this.label14.AutoSize = true;
@@ -503,15 +512,6 @@
             0,
             0,
             0});
-            // 
-            // setVertexLight
-            // 
-            this.setVertexLight.Location = new System.Drawing.Point(176, 19);
-            this.setVertexLight.Name = "setVertexLight";
-            this.setVertexLight.Size = new System.Drawing.Size(60, 20);
-            this.setVertexLight.TabIndex = 18;
-            this.setVertexLight.Text = "Set";
-            this.setVertexLight.UseVisualStyleBackColor = true;
             // 
             // applyButton
             // 

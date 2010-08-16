@@ -444,6 +444,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon5.ico" />
+    <None Include="Resources\walltool.ico" />
+    <None Include="Resources\texturetool.ico" />
+    <None Include="Resources\objecttool.ico" />
+    <None Include="Resources\lighttool.ico" />
     <None Include="Resources\zoomout.cur" />
     <None Include="Resources\zoomin.cur" />
     <None Include="Resources\zoom.cur" />
