@@ -30,6 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LightTool));
+            this.lightTimer = new System.Windows.Forms.Timer(this.components);
+            this.button1 = new System.Windows.Forms.Button();
+            this.defaultButton = new System.Windows.Forms.Button();
+            this.applyButton = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.setVertexLight = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.vertexLight = new System.Windows.Forms.NumericUpDown();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
@@ -63,14 +71,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.staticRenderDepth = new System.Windows.Forms.TrackBar();
-            this.lightTimer = new System.Windows.Forms.Timer(this.components);
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.setVertexLight = new System.Windows.Forms.Button();
-            this.label14 = new System.Windows.Forms.Label();
-            this.vertexLight = new System.Windows.Forms.NumericUpDown();
-            this.applyButton = new System.Windows.Forms.Button();
-            this.defaultButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.vertexLight)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynLightValue)).BeginInit();
@@ -80,9 +82,81 @@
             ((System.ComponentModel.ISupportInitialize)(this.scaleLightValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.illuminateValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.staticRenderDepth)).BeginInit();
-            this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.vertexLight)).BeginInit();
             this.SuspendLayout();
+            // 
+            // lightTimer
+            // 
+            this.lightTimer.Tick += new System.EventHandler(this.dynLightTimer_Tick);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(86, 640);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(167, 24);
+            this.button1.TabIndex = 21;
+            this.button1.Text = "Reset brightness and color";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // defaultButton
+            // 
+            this.defaultButton.Location = new System.Drawing.Point(173, 616);
+            this.defaultButton.Name = "defaultButton";
+            this.defaultButton.Size = new System.Drawing.Size(80, 24);
+            this.defaultButton.TabIndex = 20;
+            this.defaultButton.Text = "Default";
+            this.defaultButton.UseVisualStyleBackColor = true;
+            // 
+            // applyButton
+            // 
+            this.applyButton.Location = new System.Drawing.Point(86, 616);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(80, 24);
+            this.applyButton.TabIndex = 19;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.setVertexLight);
+            this.groupBox3.Controls.Add(this.label14);
+            this.groupBox3.Controls.Add(this.vertexLight);
+            this.groupBox3.Location = new System.Drawing.Point(12, 550);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(320, 54);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Vertex light";
+            // 
+            // setVertexLight
+            // 
+            this.setVertexLight.Location = new System.Drawing.Point(176, 19);
+            this.setVertexLight.Name = "setVertexLight";
+            this.setVertexLight.Size = new System.Drawing.Size(60, 20);
+            this.setVertexLight.TabIndex = 18;
+            this.setVertexLight.Text = "Set";
+            this.setVertexLight.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(138, 23);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(15, 13);
+            this.label14.TabIndex = 13;
+            this.label14.Text = "%";
+            // 
+            // vertexLight
+            // 
+            this.vertexLight.Location = new System.Drawing.Point(76, 19);
+            this.vertexLight.Name = "vertexLight";
+            this.vertexLight.Size = new System.Drawing.Size(60, 20);
+            this.vertexLight.TabIndex = 17;
+            this.vertexLight.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.vertexLight.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
             // 
             // groupBox2
             // 
@@ -466,80 +540,6 @@
             this.staticRenderDepth.TabIndex = 7;
             this.staticRenderDepth.Value = 1;
             // 
-            // lightTimer
-            // 
-            this.lightTimer.Tick += new System.EventHandler(this.dynLightTimer_Tick);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.setVertexLight);
-            this.groupBox3.Controls.Add(this.label14);
-            this.groupBox3.Controls.Add(this.vertexLight);
-            this.groupBox3.Location = new System.Drawing.Point(12, 550);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(320, 54);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Vertex light";
-            // 
-            // setVertexLight
-            // 
-            this.setVertexLight.Location = new System.Drawing.Point(176, 19);
-            this.setVertexLight.Name = "setVertexLight";
-            this.setVertexLight.Size = new System.Drawing.Size(60, 20);
-            this.setVertexLight.TabIndex = 18;
-            this.setVertexLight.Text = "Set";
-            this.setVertexLight.UseVisualStyleBackColor = true;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(138, 23);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(15, 13);
-            this.label14.TabIndex = 13;
-            this.label14.Text = "%";
-            // 
-            // vertexLight
-            // 
-            this.vertexLight.Location = new System.Drawing.Point(76, 19);
-            this.vertexLight.Name = "vertexLight";
-            this.vertexLight.Size = new System.Drawing.Size(60, 20);
-            this.vertexLight.TabIndex = 17;
-            this.vertexLight.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.vertexLight.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            // 
-            // applyButton
-            // 
-            this.applyButton.Location = new System.Drawing.Point(86, 616);
-            this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(80, 24);
-            this.applyButton.TabIndex = 19;
-            this.applyButton.Text = "Apply";
-            this.applyButton.UseVisualStyleBackColor = true;
-            // 
-            // defaultButton
-            // 
-            this.defaultButton.Location = new System.Drawing.Point(173, 616);
-            this.defaultButton.Name = "defaultButton";
-            this.defaultButton.Size = new System.Drawing.Size(80, 24);
-            this.defaultButton.TabIndex = 20;
-            this.defaultButton.Text = "Default";
-            this.defaultButton.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(86, 640);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(167, 24);
-            this.button1.TabIndex = 21;
-            this.button1.Text = "Reset brightness and color";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // LightTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -556,6 +556,9 @@
             this.Name = "LightTool";
             this.Opacity = 0.5D;
             this.Text = "Lights";
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.vertexLight)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -568,9 +571,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.scaleLightValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.illuminateValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.staticRenderDepth)).EndInit();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.vertexLight)).EndInit();
             this.ResumeLayout(false);
 
         }
