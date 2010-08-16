@@ -96,6 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Customization\DockHelper.cs" />
+    <Compile Include="GraphicsPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="RenderWindow.cs">
       <SubType>Form</SubType>
     </Compile>

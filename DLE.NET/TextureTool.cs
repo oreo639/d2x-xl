@@ -55,11 +55,7 @@ namespace DLE.NET
             {
                 if ((control is Panel) && (control.Name.Length > 9) && (control.Name.Substring(0, 9) == "tickPanel"))
                 {
-                    if (control.Controls [0] is RadioButton)
-                        m_lightTicks[control.TabIndex] = control.Controls [0] as RadioButton;
-                    else
-                        continue;
-
+                    m_lightTicks[control.TabIndex] = control.Controls [0] as RadioButton;
                     Point pos = center;
                     pos.X = center.X + (int)(xRad * (float)System.Math.Cos((float)control.TabIndex * scale));
                     pos.Y = center.Y + (int)(yRad * (float)System.Math.Sin((float)control.TabIndex * scale));
@@ -109,7 +105,10 @@ namespace DLE.NET
         {
             m_lightTicks[m_index].Checked = m_bLight;
             m_index = (m_index + 1) % 32;
-            m_bLight = m_lightTicks[m_index].Checked;
+            if (m_bLight = m_lightTicks[m_index].Checked)
+                tickDisplay.BackColor = Color.Gold;
+            else
+                tickDisplay.BackColor = Color.FromName("GradientActiveCaption");
             m_lightTicks[m_index].Checked = true;
         }
 
@@ -131,6 +130,7 @@ namespace DLE.NET
             {
                 m_bAnimate = false;
                 m_lightTicks[m_index].Checked = m_bLight;
+                tickDisplay.BackColor = Color.FromName("GradientActiveCaption");
                 lightTimer.Stop();
             }
         }
