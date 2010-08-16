@@ -28,43 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WallTool));
             this.dataGroup = new System.Windows.Forms.GroupBox();
-            this.segmentId = new System.Windows.Forms.TextBox();
-            this.sideId = new System.Windows.Forms.TextBox();
-            this.triggerId = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.targetSideDisplay = new System.Windows.Forms.Panel();
-            this.transparencySlider = new System.Windows.Forms.TrackBar();
-            this.transparencyLabel = new System.Windows.Forms.Label();
-            this.wallId = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.wallType = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.clipId = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.setBothSides = new System.Windows.Forms.CheckBox();
-            this.strengthValue = new System.Windows.Forms.TextBox();
-            this.cloakValue = new System.Windows.Forms.TextBox();
-            this.cloakLabel = new System.Windows.Forms.Label();
             this.strengthLabel = new System.Windows.Forms.Label();
+            this.cloakLabel = new System.Windows.Forms.Label();
+            this.cloakValue = new System.Windows.Forms.TextBox();
+            this.strengthValue = new System.Windows.Forms.TextBox();
+            this.setBothSides = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.clipId = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.wallType = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.wallId = new System.Windows.Forms.ComboBox();
+            this.transparencyLabel = new System.Windows.Forms.Label();
+            this.transparencySlider = new System.Windows.Forms.TrackBar();
+            this.targetSideDisplay = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.triggerId = new System.Windows.Forms.TextBox();
+            this.sideId = new System.Windows.Forms.TextBox();
+            this.segmentId = new System.Windows.Forms.TextBox();
             this.keyGroup = new System.Windows.Forms.GroupBox();
-            this.noKey = new System.Windows.Forms.RadioButton();
-            this.blueKey = new System.Windows.Forms.RadioButton();
-            this.redKey = new System.Windows.Forms.RadioButton();
             this.goldKey = new System.Windows.Forms.RadioButton();
+            this.redKey = new System.Windows.Forms.RadioButton();
+            this.blueKey = new System.Windows.Forms.RadioButton();
+            this.noKey = new System.Windows.Forms.RadioButton();
             this.propertyGroup = new System.Windows.Forms.GroupBox();
-            this.propBlasted = new System.Windows.Forms.CheckBox();
-            this.propDoorOpen = new System.Windows.Forms.CheckBox();
-            this.propDoorAuto = new System.Windows.Forms.CheckBox();
-            this.propDoorLocked = new System.Windows.Forms.CheckBox();
-            this.propIllusionOff = new System.Windows.Forms.CheckBox();
             this.propFlyThrough = new System.Windows.Forms.CheckBox();
             this.propIgnoreMarker = new System.Windows.Forms.CheckBox();
             this.propAdditive = new System.Windows.Forms.CheckBox();
             this.propBuddyProof = new System.Windows.Forms.CheckBox();
             this.propSwitch = new System.Windows.Forms.CheckBox();
+            this.propIllusionOff = new System.Windows.Forms.CheckBox();
+            this.propDoorAuto = new System.Windows.Forms.CheckBox();
+            this.propDoorLocked = new System.Windows.Forms.CheckBox();
+            this.propDoorOpen = new System.Windows.Forms.CheckBox();
+            this.propBlasted = new System.Windows.Forms.CheckBox();
             this.deleteAllWalls = new System.Windows.Forms.Button();
             this.deleteWall = new System.Windows.Forms.Button();
             this.addWall = new System.Windows.Forms.Button();
@@ -77,13 +78,13 @@
             this.addExit = new System.Windows.Forms.Button();
             this.addStdDoor = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.addLavaFall = new System.Windows.Forms.Button();
+            this.addWaterfall = new System.Windows.Forms.Button();
             this.addGrating = new System.Windows.Forms.Button();
             this.addFan = new System.Windows.Forms.Button();
             this.addForceField = new System.Windows.Forms.Button();
             this.addIllusion = new System.Windows.Forms.Button();
             this.addFuelCells = new System.Windows.Forms.Button();
-            this.addLavaFall = new System.Windows.Forms.Button();
-            this.addWaterfall = new System.Windows.Forms.Button();
             this.dataGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.transparencySlider)).BeginInit();
             this.keyGroup.SuspendLayout();
@@ -121,98 +122,77 @@
             this.dataGroup.TabStop = false;
             this.dataGroup.Text = "Wall data";
             // 
-            // segmentId
+            // strengthLabel
             // 
-            this.segmentId.Location = new System.Drawing.Point(58, 19);
-            this.segmentId.Name = "segmentId";
-            this.segmentId.Size = new System.Drawing.Size(60, 20);
-            this.segmentId.TabIndex = 0;
+            this.strengthLabel.AutoSize = true;
+            this.strengthLabel.Location = new System.Drawing.Point(158, 146);
+            this.strengthLabel.Name = "strengthLabel";
+            this.strengthLabel.Size = new System.Drawing.Size(50, 13);
+            this.strengthLabel.TabIndex = 19;
+            this.strengthLabel.Text = "Strength:";
+            this.strengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // sideId
+            // cloakLabel
             // 
-            this.sideId.Location = new System.Drawing.Point(58, 45);
-            this.sideId.Name = "sideId";
-            this.sideId.Size = new System.Drawing.Size(60, 20);
-            this.sideId.TabIndex = 1;
+            this.cloakLabel.AutoSize = true;
+            this.cloakLabel.Location = new System.Drawing.Point(170, 172);
+            this.cloakLabel.Name = "cloakLabel";
+            this.cloakLabel.Size = new System.Drawing.Size(37, 13);
+            this.cloakLabel.TabIndex = 18;
+            this.cloakLabel.Text = "Cloak:";
+            this.cloakLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // triggerId
+            // cloakValue
             // 
-            this.triggerId.Location = new System.Drawing.Point(58, 71);
-            this.triggerId.Name = "triggerId";
-            this.triggerId.Size = new System.Drawing.Size(60, 20);
-            this.triggerId.TabIndex = 2;
+            this.cloakValue.Location = new System.Drawing.Point(211, 169);
+            this.cloakValue.Name = "cloakValue";
+            this.cloakValue.Size = new System.Drawing.Size(71, 20);
+            this.cloakValue.TabIndex = 8;
             // 
-            // label1
+            // strengthValue
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Segment";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.strengthValue.Location = new System.Drawing.Point(211, 143);
+            this.strengthValue.Name = "strengthValue";
+            this.strengthValue.Size = new System.Drawing.Size(71, 20);
+            this.strengthValue.TabIndex = 7;
             // 
-            // label2
+            // setBothSides
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(27, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(28, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Side";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.setBothSides.AutoSize = true;
+            this.setBothSides.Location = new System.Drawing.Point(211, 100);
+            this.setBothSides.Name = "setBothSides";
+            this.setBothSides.Size = new System.Drawing.Size(93, 17);
+            this.setBothSides.TabIndex = 6;
+            this.setBothSides.Text = "Set both sides";
+            this.setBothSides.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // label6
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 74);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(40, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Trigger";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(174, 76);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(34, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Clip #";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // targetSideDisplay
+            // clipId
             // 
-            this.targetSideDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.targetSideDisplay.Location = new System.Drawing.Point(42, 97);
-            this.targetSideDisplay.Name = "targetSideDisplay";
-            this.targetSideDisplay.Size = new System.Drawing.Size(90, 90);
-            this.targetSideDisplay.TabIndex = 6;
+            this.clipId.FormattingEnabled = true;
+            this.clipId.Location = new System.Drawing.Point(211, 73);
+            this.clipId.Name = "clipId";
+            this.clipId.Size = new System.Drawing.Size(72, 21);
+            this.clipId.TabIndex = 5;
             // 
-            // transparencySlider
+            // label5
             // 
-            this.transparencySlider.Location = new System.Drawing.Point(9, 219);
-            this.transparencySlider.Name = "transparencySlider";
-            this.transparencySlider.Size = new System.Drawing.Size(302, 45);
-            this.transparencySlider.TabIndex = 9;
-            // 
-            // transparencyLabel
-            // 
-            this.transparencyLabel.Location = new System.Drawing.Point(9, 201);
-            this.transparencyLabel.Name = "transparencyLabel";
-            this.transparencyLabel.Size = new System.Drawing.Size(302, 18);
-            this.transparencyLabel.TabIndex = 8;
-            this.transparencyLabel.Text = "Transparency";
-            this.transparencyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // wallId
-            // 
-            this.wallId.FormattingEnabled = true;
-            this.wallId.Location = new System.Drawing.Point(211, 19);
-            this.wallId.Name = "wallId";
-            this.wallId.Size = new System.Drawing.Size(72, 21);
-            this.wallId.TabIndex = 3;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(170, 23);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(38, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Wall #";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(177, 49);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(31, 13);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "Type";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // wallType
             // 
@@ -233,77 +213,98 @@
             this.wallType.Size = new System.Drawing.Size(100, 21);
             this.wallType.TabIndex = 4;
             // 
-            // label5
+            // label4
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(177, 49);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(31, 13);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "Type";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(170, 23);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(38, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Wall #";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // clipId
+            // wallId
             // 
-            this.clipId.FormattingEnabled = true;
-            this.clipId.Location = new System.Drawing.Point(211, 73);
-            this.clipId.Name = "clipId";
-            this.clipId.Size = new System.Drawing.Size(72, 21);
-            this.clipId.TabIndex = 5;
+            this.wallId.FormattingEnabled = true;
+            this.wallId.Location = new System.Drawing.Point(211, 19);
+            this.wallId.Name = "wallId";
+            this.wallId.Size = new System.Drawing.Size(72, 21);
+            this.wallId.TabIndex = 3;
             // 
-            // label6
+            // transparencyLabel
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(174, 76);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(34, 13);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "Clip #";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.transparencyLabel.Location = new System.Drawing.Point(9, 201);
+            this.transparencyLabel.Name = "transparencyLabel";
+            this.transparencyLabel.Size = new System.Drawing.Size(302, 18);
+            this.transparencyLabel.TabIndex = 8;
+            this.transparencyLabel.Text = "Transparency";
+            this.transparencyLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // setBothSides
+            // transparencySlider
             // 
-            this.setBothSides.AutoSize = true;
-            this.setBothSides.Location = new System.Drawing.Point(211, 100);
-            this.setBothSides.Name = "setBothSides";
-            this.setBothSides.Size = new System.Drawing.Size(93, 17);
-            this.setBothSides.TabIndex = 6;
-            this.setBothSides.Text = "Set both sides";
-            this.setBothSides.UseVisualStyleBackColor = true;
+            this.transparencySlider.Location = new System.Drawing.Point(9, 219);
+            this.transparencySlider.Name = "transparencySlider";
+            this.transparencySlider.Size = new System.Drawing.Size(302, 45);
+            this.transparencySlider.TabIndex = 9;
             // 
-            // strengthValue
+            // targetSideDisplay
             // 
-            this.strengthValue.Location = new System.Drawing.Point(211, 143);
-            this.strengthValue.Name = "strengthValue";
-            this.strengthValue.Size = new System.Drawing.Size(71, 20);
-            this.strengthValue.TabIndex = 7;
+            this.targetSideDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.targetSideDisplay.Location = new System.Drawing.Point(42, 97);
+            this.targetSideDisplay.Name = "targetSideDisplay";
+            this.targetSideDisplay.Size = new System.Drawing.Size(90, 90);
+            this.targetSideDisplay.TabIndex = 6;
             // 
-            // cloakValue
+            // label3
             // 
-            this.cloakValue.Location = new System.Drawing.Point(211, 169);
-            this.cloakValue.Name = "cloakValue";
-            this.cloakValue.Size = new System.Drawing.Size(71, 20);
-            this.cloakValue.TabIndex = 8;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 74);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(40, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Trigger";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // cloakLabel
+            // label2
             // 
-            this.cloakLabel.AutoSize = true;
-            this.cloakLabel.Location = new System.Drawing.Point(170, 172);
-            this.cloakLabel.Name = "cloakLabel";
-            this.cloakLabel.Size = new System.Drawing.Size(37, 13);
-            this.cloakLabel.TabIndex = 18;
-            this.cloakLabel.Text = "Cloak:";
-            this.cloakLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(27, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(28, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Side";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // strengthLabel
+            // label1
             // 
-            this.strengthLabel.AutoSize = true;
-            this.strengthLabel.Location = new System.Drawing.Point(158, 146);
-            this.strengthLabel.Name = "strengthLabel";
-            this.strengthLabel.Size = new System.Drawing.Size(50, 13);
-            this.strengthLabel.TabIndex = 19;
-            this.strengthLabel.Text = "Strength:";
-            this.strengthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Segment";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // triggerId
+            // 
+            this.triggerId.Location = new System.Drawing.Point(58, 71);
+            this.triggerId.Name = "triggerId";
+            this.triggerId.Size = new System.Drawing.Size(60, 20);
+            this.triggerId.TabIndex = 2;
+            // 
+            // sideId
+            // 
+            this.sideId.Location = new System.Drawing.Point(58, 45);
+            this.sideId.Name = "sideId";
+            this.sideId.Size = new System.Drawing.Size(60, 20);
+            this.sideId.TabIndex = 1;
+            // 
+            // segmentId
+            // 
+            this.segmentId.Location = new System.Drawing.Point(58, 19);
+            this.segmentId.Name = "segmentId";
+            this.segmentId.Size = new System.Drawing.Size(60, 20);
+            this.segmentId.TabIndex = 0;
             // 
             // keyGroup
             // 
@@ -318,27 +319,16 @@
             this.keyGroup.TabStop = false;
             this.keyGroup.Text = "Key";
             // 
-            // noKey
+            // goldKey
             // 
-            this.noKey.AutoSize = true;
-            this.noKey.Location = new System.Drawing.Point(18, 19);
-            this.noKey.Name = "noKey";
-            this.noKey.Size = new System.Drawing.Size(51, 17);
-            this.noKey.TabIndex = 10;
-            this.noKey.TabStop = true;
-            this.noKey.Text = "None";
-            this.noKey.UseVisualStyleBackColor = true;
-            // 
-            // blueKey
-            // 
-            this.blueKey.AutoSize = true;
-            this.blueKey.Location = new System.Drawing.Point(18, 42);
-            this.blueKey.Name = "blueKey";
-            this.blueKey.Size = new System.Drawing.Size(46, 17);
-            this.blueKey.TabIndex = 11;
-            this.blueKey.TabStop = true;
-            this.blueKey.Text = "Blue";
-            this.blueKey.UseVisualStyleBackColor = true;
+            this.goldKey.AutoSize = true;
+            this.goldKey.Location = new System.Drawing.Point(18, 88);
+            this.goldKey.Name = "goldKey";
+            this.goldKey.Size = new System.Drawing.Size(47, 17);
+            this.goldKey.TabIndex = 13;
+            this.goldKey.TabStop = true;
+            this.goldKey.Text = "Gold";
+            this.goldKey.UseVisualStyleBackColor = true;
             // 
             // redKey
             // 
@@ -351,16 +341,27 @@
             this.redKey.Text = "Red";
             this.redKey.UseVisualStyleBackColor = true;
             // 
-            // goldKey
+            // blueKey
             // 
-            this.goldKey.AutoSize = true;
-            this.goldKey.Location = new System.Drawing.Point(18, 88);
-            this.goldKey.Name = "goldKey";
-            this.goldKey.Size = new System.Drawing.Size(47, 17);
-            this.goldKey.TabIndex = 13;
-            this.goldKey.TabStop = true;
-            this.goldKey.Text = "Gold";
-            this.goldKey.UseVisualStyleBackColor = true;
+            this.blueKey.AutoSize = true;
+            this.blueKey.Location = new System.Drawing.Point(18, 42);
+            this.blueKey.Name = "blueKey";
+            this.blueKey.Size = new System.Drawing.Size(46, 17);
+            this.blueKey.TabIndex = 11;
+            this.blueKey.TabStop = true;
+            this.blueKey.Text = "Blue";
+            this.blueKey.UseVisualStyleBackColor = true;
+            // 
+            // noKey
+            // 
+            this.noKey.AutoSize = true;
+            this.noKey.Location = new System.Drawing.Point(18, 19);
+            this.noKey.Name = "noKey";
+            this.noKey.Size = new System.Drawing.Size(51, 17);
+            this.noKey.TabIndex = 10;
+            this.noKey.TabStop = true;
+            this.noKey.Text = "None";
+            this.noKey.UseVisualStyleBackColor = true;
             // 
             // propertyGroup
             // 
@@ -380,56 +381,6 @@
             this.propertyGroup.TabIndex = 4;
             this.propertyGroup.TabStop = false;
             this.propertyGroup.Text = "Properties";
-            // 
-            // propBlasted
-            // 
-            this.propBlasted.AutoSize = true;
-            this.propBlasted.Location = new System.Drawing.Point(6, 19);
-            this.propBlasted.Name = "propBlasted";
-            this.propBlasted.Size = new System.Drawing.Size(61, 17);
-            this.propBlasted.TabIndex = 14;
-            this.propBlasted.Text = "Blasted";
-            this.propBlasted.UseVisualStyleBackColor = true;
-            // 
-            // propDoorOpen
-            // 
-            this.propDoorOpen.AutoSize = true;
-            this.propDoorOpen.Location = new System.Drawing.Point(6, 39);
-            this.propDoorOpen.Name = "propDoorOpen";
-            this.propDoorOpen.Size = new System.Drawing.Size(76, 17);
-            this.propDoorOpen.TabIndex = 15;
-            this.propDoorOpen.Text = "Door open";
-            this.propDoorOpen.UseVisualStyleBackColor = true;
-            // 
-            // propDoorAuto
-            // 
-            this.propDoorAuto.AutoSize = true;
-            this.propDoorAuto.Location = new System.Drawing.Point(6, 79);
-            this.propDoorAuto.Name = "propDoorAuto";
-            this.propDoorAuto.Size = new System.Drawing.Size(73, 17);
-            this.propDoorAuto.TabIndex = 17;
-            this.propDoorAuto.Text = "Door auto";
-            this.propDoorAuto.UseVisualStyleBackColor = true;
-            // 
-            // propDoorLocked
-            // 
-            this.propDoorLocked.AutoSize = true;
-            this.propDoorLocked.Location = new System.Drawing.Point(6, 59);
-            this.propDoorLocked.Name = "propDoorLocked";
-            this.propDoorLocked.Size = new System.Drawing.Size(84, 17);
-            this.propDoorLocked.TabIndex = 16;
-            this.propDoorLocked.Text = "Door locked";
-            this.propDoorLocked.UseVisualStyleBackColor = true;
-            // 
-            // propIllusionOff
-            // 
-            this.propIllusionOff.AutoSize = true;
-            this.propIllusionOff.Location = new System.Drawing.Point(6, 99);
-            this.propIllusionOff.Name = "propIllusionOff";
-            this.propIllusionOff.Size = new System.Drawing.Size(73, 17);
-            this.propIllusionOff.TabIndex = 18;
-            this.propIllusionOff.Text = "Illusion off";
-            this.propIllusionOff.UseVisualStyleBackColor = true;
             // 
             // propFlyThrough
             // 
@@ -480,6 +431,56 @@
             this.propSwitch.TabIndex = 19;
             this.propSwitch.Text = "Switch";
             this.propSwitch.UseVisualStyleBackColor = true;
+            // 
+            // propIllusionOff
+            // 
+            this.propIllusionOff.AutoSize = true;
+            this.propIllusionOff.Location = new System.Drawing.Point(6, 99);
+            this.propIllusionOff.Name = "propIllusionOff";
+            this.propIllusionOff.Size = new System.Drawing.Size(73, 17);
+            this.propIllusionOff.TabIndex = 18;
+            this.propIllusionOff.Text = "Illusion off";
+            this.propIllusionOff.UseVisualStyleBackColor = true;
+            // 
+            // propDoorAuto
+            // 
+            this.propDoorAuto.AutoSize = true;
+            this.propDoorAuto.Location = new System.Drawing.Point(6, 79);
+            this.propDoorAuto.Name = "propDoorAuto";
+            this.propDoorAuto.Size = new System.Drawing.Size(73, 17);
+            this.propDoorAuto.TabIndex = 17;
+            this.propDoorAuto.Text = "Door auto";
+            this.propDoorAuto.UseVisualStyleBackColor = true;
+            // 
+            // propDoorLocked
+            // 
+            this.propDoorLocked.AutoSize = true;
+            this.propDoorLocked.Location = new System.Drawing.Point(6, 59);
+            this.propDoorLocked.Name = "propDoorLocked";
+            this.propDoorLocked.Size = new System.Drawing.Size(84, 17);
+            this.propDoorLocked.TabIndex = 16;
+            this.propDoorLocked.Text = "Door locked";
+            this.propDoorLocked.UseVisualStyleBackColor = true;
+            // 
+            // propDoorOpen
+            // 
+            this.propDoorOpen.AutoSize = true;
+            this.propDoorOpen.Location = new System.Drawing.Point(6, 39);
+            this.propDoorOpen.Name = "propDoorOpen";
+            this.propDoorOpen.Size = new System.Drawing.Size(76, 17);
+            this.propDoorOpen.TabIndex = 15;
+            this.propDoorOpen.Text = "Door open";
+            this.propDoorOpen.UseVisualStyleBackColor = true;
+            // 
+            // propBlasted
+            // 
+            this.propBlasted.AutoSize = true;
+            this.propBlasted.Location = new System.Drawing.Point(6, 19);
+            this.propBlasted.Name = "propBlasted";
+            this.propBlasted.Size = new System.Drawing.Size(61, 17);
+            this.propBlasted.TabIndex = 14;
+            this.propBlasted.Text = "Blasted";
+            this.propBlasted.UseVisualStyleBackColor = true;
             // 
             // deleteAllWalls
             // 
@@ -601,6 +602,24 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Add wall";
             // 
+            // addLavaFall
+            // 
+            this.addLavaFall.Location = new System.Drawing.Point(10, 136);
+            this.addLavaFall.Name = "addLavaFall";
+            this.addLavaFall.Size = new System.Drawing.Size(90, 21);
+            this.addLavaFall.TabIndex = 40;
+            this.addLavaFall.Text = "La&va fall";
+            this.addLavaFall.UseVisualStyleBackColor = true;
+            // 
+            // addWaterfall
+            // 
+            this.addWaterfall.Location = new System.Drawing.Point(10, 116);
+            this.addWaterfall.Name = "addWaterfall";
+            this.addWaterfall.Size = new System.Drawing.Size(90, 21);
+            this.addWaterfall.TabIndex = 39;
+            this.addWaterfall.Text = "&Waterfall";
+            this.addWaterfall.UseVisualStyleBackColor = true;
+            // 
             // addGrating
             // 
             this.addGrating.Location = new System.Drawing.Point(10, 96);
@@ -646,24 +665,6 @@
             this.addFuelCells.Text = "Fuel &cells";
             this.addFuelCells.UseVisualStyleBackColor = true;
             // 
-            // addLavaFall
-            // 
-            this.addLavaFall.Location = new System.Drawing.Point(10, 136);
-            this.addLavaFall.Name = "addLavaFall";
-            this.addLavaFall.Size = new System.Drawing.Size(90, 21);
-            this.addLavaFall.TabIndex = 40;
-            this.addLavaFall.Text = "La&va fall";
-            this.addLavaFall.UseVisualStyleBackColor = true;
-            // 
-            // addWaterfall
-            // 
-            this.addWaterfall.Location = new System.Drawing.Point(10, 116);
-            this.addWaterfall.Name = "addWaterfall";
-            this.addWaterfall.Size = new System.Drawing.Size(90, 21);
-            this.addWaterfall.TabIndex = 39;
-            this.addWaterfall.Text = "&Waterfall";
-            this.addWaterfall.UseVisualStyleBackColor = true;
-            // 
             // WallTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -680,8 +681,9 @@
             this.Controls.Add(this.propertyGroup);
             this.Controls.Add(this.keyGroup);
             this.Controls.Add(this.dataGroup);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "WallTool";
-            this.Text = "WallTool";
+            this.Text = "Walls";
             this.dataGroup.ResumeLayout(false);
             this.dataGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.transparencySlider)).EndInit();

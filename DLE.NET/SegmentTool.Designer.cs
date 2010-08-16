@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SegmentTool));
             this.AddRepairCenter = new System.Windows.Forms.Button();
             this.addReactor = new System.Windows.Forms.Button();
             this.addFuelCenter = new System.Windows.Forms.Button();
@@ -109,7 +110,7 @@
             // 
             // AddRepairCenter
             // 
-            this.AddRepairCenter.Location = new System.Drawing.Point(168, 708);
+            this.AddRepairCenter.Location = new System.Drawing.Point(175, 710);
             this.AddRepairCenter.Name = "AddRepairCenter";
             this.AddRepairCenter.Size = new System.Drawing.Size(118, 22);
             this.AddRepairCenter.TabIndex = 40;
@@ -118,7 +119,7 @@
             // 
             // addReactor
             // 
-            this.addReactor.Location = new System.Drawing.Point(168, 729);
+            this.addReactor.Location = new System.Drawing.Point(175, 731);
             this.addReactor.Name = "addReactor";
             this.addReactor.Size = new System.Drawing.Size(118, 22);
             this.addReactor.TabIndex = 41;
@@ -127,7 +128,7 @@
             // 
             // addFuelCenter
             // 
-            this.addFuelCenter.Location = new System.Drawing.Point(168, 687);
+            this.addFuelCenter.Location = new System.Drawing.Point(175, 689);
             this.addFuelCenter.Name = "addFuelCenter";
             this.addFuelCenter.Size = new System.Drawing.Size(118, 22);
             this.addFuelCenter.TabIndex = 39;
@@ -136,7 +137,7 @@
             // 
             // addEquipMaker
             // 
-            this.addEquipMaker.Location = new System.Drawing.Point(168, 666);
+            this.addEquipMaker.Location = new System.Drawing.Point(175, 668);
             this.addEquipMaker.Name = "addEquipMaker";
             this.addEquipMaker.Size = new System.Drawing.Size(118, 22);
             this.addEquipMaker.TabIndex = 38;
@@ -145,7 +146,7 @@
             // 
             // addRobotMaker
             // 
-            this.addRobotMaker.Location = new System.Drawing.Point(168, 645);
+            this.addRobotMaker.Location = new System.Drawing.Point(175, 647);
             this.addRobotMaker.Name = "addRobotMaker";
             this.addRobotMaker.Size = new System.Drawing.Size(118, 22);
             this.addRobotMaker.TabIndex = 37;
@@ -154,7 +155,7 @@
             // 
             // splitSegment
             // 
-            this.splitSegment.Location = new System.Drawing.Point(42, 729);
+            this.splitSegment.Location = new System.Drawing.Point(49, 731);
             this.splitSegment.Name = "splitSegment";
             this.splitSegment.Size = new System.Drawing.Size(116, 22);
             this.splitSegment.TabIndex = 36;
@@ -163,7 +164,7 @@
             // 
             // otherSegment
             // 
-            this.otherSegment.Location = new System.Drawing.Point(42, 697);
+            this.otherSegment.Location = new System.Drawing.Point(49, 699);
             this.otherSegment.Name = "otherSegment";
             this.otherSegment.Size = new System.Drawing.Size(116, 22);
             this.otherSegment.TabIndex = 35;
@@ -172,7 +173,7 @@
             // 
             // deleteSegment
             // 
-            this.deleteSegment.Location = new System.Drawing.Point(42, 666);
+            this.deleteSegment.Location = new System.Drawing.Point(49, 668);
             this.deleteSegment.Name = "deleteSegment";
             this.deleteSegment.Size = new System.Drawing.Size(116, 22);
             this.deleteSegment.TabIndex = 34;
@@ -181,7 +182,7 @@
             // 
             // addSegment
             // 
-            this.addSegment.Location = new System.Drawing.Point(42, 645);
+            this.addSegment.Location = new System.Drawing.Point(49, 647);
             this.addSegment.Name = "addSegment";
             this.addSegment.Size = new System.Drawing.Size(116, 22);
             this.addSegment.TabIndex = 33;
@@ -829,6 +830,7 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SegmentTool";
             this.Text = "Segments";
             this.groupBox8.ResumeLayout(false);

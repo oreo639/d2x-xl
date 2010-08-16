@@ -1779,6 +1779,7 @@
             this.Controls.Add(this.lightEffectGroup);
             this.Controls.Add(this.texAlignGroup);
             this.Controls.Add(this.texEditGroup);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TextureTool";
             this.Text = "Texture";
             this.lightColorGroup.ResumeLayout(false);

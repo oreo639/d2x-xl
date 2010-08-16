@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TriggerTool));
             this.addPredefGroup = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.addEnergyDrain = new System.Windows.Forms.Button();
@@ -847,6 +848,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.D2TypesGroup);
             this.Controls.Add(this.dataGroup);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TriggerTool";
             this.Text = "Triggers";
             this.addPredefGroup.ResumeLayout(false);
