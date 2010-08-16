@@ -222,6 +222,52 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\alien1.256" />
+    <None Include="Resources\alien1.pal" />
+    <None Include="Resources\alien2.256" />
+    <None Include="Resources\alien2.pal" />
+    <None Include="Resources\credits.256" />
+    <None Include="Resources\credits.pal" />
+    <None Include="Resources\d12d2.dat" />
+    <None Include="Resources\default.256" />
+    <None Include="Resources\default.pal" />
+    <None Include="Resources\descent.clr" />
+    <None Include="Resources\descent.lgt" />
+    <None Include="Resources\descent2.clr" />
+    <None Include="Resources\descent2.lgt" />
+    <None Include="Resources\fire.256" />
+    <None Include="Resources\fire.pal" />
+    <None Include="Resources\groupa.256" />
+    <None Include="Resources\groupa.pal" />
+    <None Include="Resources\ice.256" />
+    <None Include="Resources\ice.pal" />
+    <None Include="Resources\level1.rl2" />
+    <None Include="Resources\level1b.rl2" />
+    <None Include="Resources\level1c.rl2" />
+    <None Include="Resources\level1d.rl2" />
+    <None Include="Resources\level1e.rl2" />
+    <None Include="Resources\level1f.rl2" />
+    <None Include="Resources\light.dat" />
+    <None Include="Resources\light2.dat" />
+    <None Include="Resources\new1.rl2" />
+    <None Include="Resources\new2.rl2" />
+    <None Include="Resources\new3.rl2" />
+    <None Include="Resources\new_save.mn2" />
+    <None Include="Resources\new_save.msn" />
+    <None Include="Resources\new_save.rdl" />
+    <None Include="Resources\new_save.rl2" />
+    <None Include="Resources\palette.256" />
+    <None Include="Resources\palette.pal" />
+    <None Include="Resources\pofs1.dat" />
+    <None Include="Resources\pofs2.dat" />
+    <None Include="Resources\rc_data1.bin" />
+    <None Include="Resources\robot.hxm" />
+    <None Include="Resources\ship.dat" />
+    <None Include="Resources\temp.dat" />
+    <None Include="Resources\temp2.dat" />
+    <None Include="Resources\temp2.ham" />
+    <None Include="Resources\texture.dat" />
+    <None Include="Resources\texture2.dat" />
     <None Include="Resources\texturetool.png" />
   </ItemGroup>
   <ItemGroup>
@@ -312,9 +358,13 @@
     <None Include="Resources\splitsides.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\tnames.dat" />
+    <None Include="Resources\tnames2.dat" />
     <None Include="Resources\walltool.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\water.256" />
+    <None Include="Resources\water.pal" />
     <None Include="Resources\xrotright.png" />
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +441,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon5.ico" />
+    <None Include="Resources\zoomout.cur" />
+    <None Include="Resources\zoomin.cur" />
+    <None Include="Resources\zoom.cur" />
+    <None Include="Resources\xhairs.cur" />
+    <None Include="Resources\rotate.cur" />
+    <None Include="Resources\pencil.cur" />
+    <None Include="Resources\pan.cur" />
+    <None Include="Resources\drag.cur" />
+    <None Include="Resources\arrow.cur" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -60,6 +60,20 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] _default {
+            get {
+                object obj = ResourceManager.GetObject("_default", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] _default1 {
+            get {
+                object obj = ResourceManager.GetObject("_default1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap addcube {
             get {
                 object obj = ResourceManager.GetObject("addcube", resourceCulture);
@@ -71,6 +85,34 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("addyndlight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] alien1 {
+            get {
+                object obj = ResourceManager.GetObject("alien1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] alien11 {
+            get {
+                object obj = ResourceManager.GetObject("alien11", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] alien2 {
+            get {
+                object obj = ResourceManager.GetObject("alien2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] alien21 {
+            get {
+                object obj = ResourceManager.GetObject("alien21", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -102,6 +144,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] arrow {
+            get {
+                object obj = ResourceManager.GetObject("arrow", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap blockmode {
             get {
                 object obj = ResourceManager.GetObject("blockmode", resourceCulture);
@@ -113,6 +162,20 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("checkmine", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] credits {
+            get {
+                object obj = ResourceManager.GetObject("credits", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] credits1 {
+            get {
+                object obj = ResourceManager.GetObject("credits1", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -130,6 +193,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] d12d2 {
+            get {
+                object obj = ResourceManager.GetObject("d12d2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap deldynlight {
             get {
                 object obj = ResourceManager.GetObject("deldynlight", resourceCulture);
@@ -137,10 +207,59 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] descent {
+            get {
+                object obj = ResourceManager.GetObject("descent", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] descent1 {
+            get {
+                object obj = ResourceManager.GetObject("descent1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] descent2 {
+            get {
+                object obj = ResourceManager.GetObject("descent2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] descent21 {
+            get {
+                object obj = ResourceManager.GetObject("descent21", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] drag {
+            get {
+                object obj = ResourceManager.GetObject("drag", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap extendcube {
             get {
                 object obj = ResourceManager.GetObject("extendcube", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] fire {
+            get {
+                object obj = ResourceManager.GetObject("fire", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] fire1 {
+            get {
+                object obj = ResourceManager.GetObject("fire1", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -158,10 +277,38 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] groupa {
+            get {
+                object obj = ResourceManager.GetObject("groupa", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] groupa1 {
+            get {
+                object obj = ResourceManager.GetObject("groupa1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap horzflip {
             get {
                 object obj = ResourceManager.GetObject("horzflip", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] ice {
+            get {
+                object obj = ResourceManager.GetObject("ice", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] ice1 {
+            get {
+                object obj = ResourceManager.GetObject("ice1", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -183,6 +330,62 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("joinsides", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] level1 {
+            get {
+                object obj = ResourceManager.GetObject("level1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] level1b {
+            get {
+                object obj = ResourceManager.GetObject("level1b", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] level1c {
+            get {
+                object obj = ResourceManager.GetObject("level1c", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] level1d {
+            get {
+                object obj = ResourceManager.GetObject("level1d", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] level1e {
+            get {
+                object obj = ResourceManager.GetObject("level1e", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] level1f {
+            get {
+                object obj = ResourceManager.GetObject("level1f", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] light {
+            get {
+                object obj = ResourceManager.GetObject("light", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] light2 {
+            get {
+                object obj = ResourceManager.GetObject("light2", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -235,6 +438,55 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] new_save {
+            get {
+                object obj = ResourceManager.GetObject("new_save", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] new_save1 {
+            get {
+                object obj = ResourceManager.GetObject("new_save1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] new_save2 {
+            get {
+                object obj = ResourceManager.GetObject("new_save2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] new_save3 {
+            get {
+                object obj = ResourceManager.GetObject("new_save3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] new1 {
+            get {
+                object obj = ResourceManager.GetObject("new1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] new2 {
+            get {
+                object obj = ResourceManager.GetObject("new2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] new3 {
+            get {
+                object obj = ResourceManager.GetObject("new3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap objectmode {
             get {
                 object obj = ResourceManager.GetObject("objectmode", resourceCulture);
@@ -256,6 +508,48 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] palette {
+            get {
+                object obj = ResourceManager.GetObject("palette", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] palette1 {
+            get {
+                object obj = ResourceManager.GetObject("palette1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] pan {
+            get {
+                object obj = ResourceManager.GetObject("pan", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] pencil {
+            get {
+                object obj = ResourceManager.GetObject("pencil", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] pofs1 {
+            get {
+                object obj = ResourceManager.GetObject("pofs1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] pofs2 {
+            get {
+                object obj = ResourceManager.GetObject("pofs2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap pointmode {
             get {
                 object obj = ResourceManager.GetObject("pointmode", resourceCulture);
@@ -267,6 +561,13 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("preferences", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] rc_data1 {
+            get {
+                object obj = ResourceManager.GetObject("rc_data1", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -291,10 +592,31 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] robot {
+            get {
+                object obj = ResourceManager.GetObject("robot", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] rotate {
+            get {
+                object obj = ResourceManager.GetObject("rotate", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap savefile {
             get {
                 object obj = ResourceManager.GetObject("savefile", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] ship {
+            get {
+                object obj = ResourceManager.GetObject("ship", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -354,10 +676,59 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] temp {
+            get {
+                object obj = ResourceManager.GetObject("temp", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] temp2 {
+            get {
+                object obj = ResourceManager.GetObject("temp2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] temp21 {
+            get {
+                object obj = ResourceManager.GetObject("temp21", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] texture {
+            get {
+                object obj = ResourceManager.GetObject("texture", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] texture2 {
+            get {
+                object obj = ResourceManager.GetObject("texture2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap texturetool {
             get {
                 object obj = ResourceManager.GetObject("texturetool", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] tnames {
+            get {
+                object obj = ResourceManager.GetObject("tnames", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] tnames2 {
+            get {
+                object obj = ResourceManager.GetObject("tnames2", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -372,6 +743,27 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("walltool", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] water {
+            get {
+                object obj = ResourceManager.GetObject("water", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] water1 {
+            get {
+                object obj = ResourceManager.GetObject("water1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] xhairs {
+            get {
+                object obj = ResourceManager.GetObject("xhairs", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -403,6 +795,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] zoom {
+            get {
+                object obj = ResourceManager.GetObject("zoom", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap zoomin {
             get {
                 object obj = ResourceManager.GetObject("zoomin", resourceCulture);
@@ -410,10 +809,24 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static byte[] zoomin1 {
+            get {
+                object obj = ResourceManager.GetObject("zoomin1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap zoomout {
             get {
                 object obj = ResourceManager.GetObject("zoomout", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] zoomout1 {
+            get {
+                object obj = ResourceManager.GetObject("zoomout1", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

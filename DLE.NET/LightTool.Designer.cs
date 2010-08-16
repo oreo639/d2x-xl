@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
@@ -61,6 +62,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.staticRenderDepth = new System.Windows.Forms.TrackBar();
+            this.lightTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynLightValue)).BeginInit();
@@ -167,6 +169,7 @@
             this.animateDynLight.TabIndex = 15;
             this.animateDynLight.Text = "Animate";
             this.animateDynLight.UseVisualStyleBackColor = true;
+            this.animateDynLight.Click += new System.EventHandler(this.animateDynLight_Click);
             // 
             // label12
             // 
@@ -245,6 +248,7 @@
             this.dynamicFrameRate.TabIndex = 14;
             this.dynamicFrameRate.TickFrequency = 10;
             this.dynamicFrameRate.Value = 100;
+            this.dynamicFrameRate.Scroll += new System.EventHandler(this.dynamicFrameRate_Scroll);
             // 
             // label4
             // 
@@ -452,6 +456,10 @@
             this.staticRenderDepth.TabIndex = 7;
             this.staticRenderDepth.Value = 1;
             // 
+            // dynLightTimer
+            // 
+            this.lightTimer.Tick += new System.EventHandler(this.dynLightTimer_Tick);
+            // 
             // LightTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -514,5 +522,6 @@
         private System.Windows.Forms.CheckBox showOnlyLights;
         private System.Windows.Forms.Button animateDynLight;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Timer lightTimer;
     }
 }
