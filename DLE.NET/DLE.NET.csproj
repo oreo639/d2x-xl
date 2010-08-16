@@ -146,6 +146,12 @@
     <Compile Include="TriggerTool.Designer.cs">
       <DependentUpon>TriggerTool.cs</DependentUpon>
     </Compile>
+    <Compile Include="WallTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WallTool.Designer.cs">
+      <DependentUpon>WallTool.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="LightTool.resx">
       <DependentUpon>LightTool.cs</DependentUpon>
     </EmbeddedResource>
@@ -179,6 +185,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TriggerTool.resx">
       <DependentUpon>TriggerTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WallTool.resx">
+      <DependentUpon>WallTool.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -272,7 +272,7 @@
             this.useOvlTexture.Location = new System.Drawing.Point(131, 197);
             this.useOvlTexture.Name = "useOvlTexture";
             this.useOvlTexture.Size = new System.Drawing.Size(15, 14);
-            this.useOvlTexture.TabIndex = 26;
+            this.useOvlTexture.TabIndex = 7;
             this.useOvlTexture.UseVisualStyleBackColor = true;
             // 
             // useBaseTexture
@@ -281,7 +281,7 @@
             this.useBaseTexture.Location = new System.Drawing.Point(131, 172);
             this.useBaseTexture.Name = "useBaseTexture";
             this.useBaseTexture.Size = new System.Drawing.Size(15, 14);
-            this.useBaseTexture.TabIndex = 25;
+            this.useBaseTexture.TabIndex = 5;
             this.useBaseTexture.UseVisualStyleBackColor = true;
             // 
             // label7
@@ -319,7 +319,7 @@
             this.showFrames.Location = new System.Drawing.Point(147, 171);
             this.showFrames.Name = "showFrames";
             this.showFrames.Size = new System.Drawing.Size(87, 17);
-            this.showFrames.TabIndex = 21;
+            this.showFrames.TabIndex = 8;
             this.showFrames.Text = "Show frames";
             this.showFrames.UseVisualStyleBackColor = true;
             // 
@@ -328,7 +328,7 @@
             this.texBrightValue.Location = new System.Drawing.Point(243, 195);
             this.texBrightValue.Name = "texBrightValue";
             this.texBrightValue.Size = new System.Drawing.Size(50, 20);
-            this.texBrightValue.TabIndex = 20;
+            this.texBrightValue.TabIndex = 16;
             this.texBrightValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label5
@@ -349,14 +349,14 @@
             this.texBrightSlider.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.texBrightSlider.Size = new System.Drawing.Size(45, 156);
             this.texBrightSlider.TabIndex = 18;
-            this.texBrightSlider.TickFrequency = 10;
+            this.texBrightSlider.TickFrequency = 15;
             // 
             // replaceTextures
             // 
             this.replaceTextures.Location = new System.Drawing.Point(144, 139);
             this.replaceTextures.Name = "replaceTextures";
             this.replaceTextures.Size = new System.Drawing.Size(90, 21);
-            this.replaceTextures.TabIndex = 17;
+            this.replaceTextures.TabIndex = 14;
             this.replaceTextures.Text = "&Replace";
             this.replaceTextures.UseVisualStyleBackColor = true;
             // 
@@ -365,7 +365,7 @@
             this.button1.Location = new System.Drawing.Point(144, 119);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(90, 21);
-            this.button1.TabIndex = 16;
+            this.button1.TabIndex = 13;
             this.button1.Text = "Paste &touching";
             this.button1.UseVisualStyleBackColor = true;
             // 
@@ -374,7 +374,7 @@
             this.pasteTexturesToMarked.Location = new System.Drawing.Point(144, 99);
             this.pasteTexturesToMarked.Name = "pasteTexturesToMarked";
             this.pasteTexturesToMarked.Size = new System.Drawing.Size(90, 21);
-            this.pasteTexturesToMarked.TabIndex = 15;
+            this.pasteTexturesToMarked.TabIndex = 12;
             this.pasteTexturesToMarked.Text = "Paste &marked";
             this.pasteTexturesToMarked.UseVisualStyleBackColor = true;
             // 
@@ -383,7 +383,7 @@
             this.pasteTextures.Location = new System.Drawing.Point(144, 79);
             this.pasteTextures.Name = "pasteTextures";
             this.pasteTextures.Size = new System.Drawing.Size(90, 21);
-            this.pasteTextures.TabIndex = 14;
+            this.pasteTextures.TabIndex = 11;
             this.pasteTextures.Text = "&Paste";
             this.pasteTextures.UseVisualStyleBackColor = true;
             // 
@@ -400,7 +400,7 @@
             this.copyTextures.Location = new System.Drawing.Point(144, 39);
             this.copyTextures.Name = "copyTextures";
             this.copyTextures.Size = new System.Drawing.Size(90, 21);
-            this.copyTextures.TabIndex = 12;
+            this.copyTextures.TabIndex = 10;
             this.copyTextures.Text = "&Copy";
             this.copyTextures.UseVisualStyleBackColor = true;
             // 
@@ -409,7 +409,7 @@
             this.editTexture.Location = new System.Drawing.Point(144, 19);
             this.editTexture.Name = "editTexture";
             this.editTexture.Size = new System.Drawing.Size(90, 21);
-            this.editTexture.TabIndex = 11;
+            this.editTexture.TabIndex = 9;
             this.editTexture.Text = "&Edit ...";
             this.editTexture.UseVisualStyleBackColor = true;
             // 
@@ -440,7 +440,7 @@
             this.ovlTextureList.MaxDropDownItems = 16;
             this.ovlTextureList.Name = "ovlTextureList";
             this.ovlTextureList.Size = new System.Drawing.Size(90, 21);
-            this.ovlTextureList.TabIndex = 8;
+            this.ovlTextureList.TabIndex = 6;
             // 
             // baseTextureList
             // 
@@ -449,7 +449,7 @@
             this.baseTextureList.MaxDropDownItems = 16;
             this.baseTextureList.Name = "baseTextureList";
             this.baseTextureList.Size = new System.Drawing.Size(90, 21);
-            this.baseTextureList.TabIndex = 7;
+            this.baseTextureList.TabIndex = 4;
             // 
             // label2
             // 
@@ -466,7 +466,7 @@
             this.cornerLight4.Location = new System.Drawing.Point(84, 141);
             this.cornerLight4.Name = "cornerLight4";
             this.cornerLight4.Size = new System.Drawing.Size(44, 20);
-            this.cornerLight4.TabIndex = 5;
+            this.cornerLight4.TabIndex = 3;
             this.cornerLight4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // cornerLight3
@@ -474,7 +474,7 @@
             this.cornerLight3.Location = new System.Drawing.Point(38, 141);
             this.cornerLight3.Name = "cornerLight3";
             this.cornerLight3.Size = new System.Drawing.Size(44, 20);
-            this.cornerLight3.TabIndex = 4;
+            this.cornerLight3.TabIndex = 2;
             this.cornerLight3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1
@@ -565,7 +565,7 @@
             this.alignShowChildren.Location = new System.Drawing.Point(114, 200);
             this.alignShowChildren.Name = "alignShowChildren";
             this.alignShowChildren.Size = new System.Drawing.Size(63, 17);
-            this.alignShowChildren.TabIndex = 36;
+            this.alignShowChildren.TabIndex = 43;
             this.alignShowChildren.Text = "children";
             this.alignShowChildren.UseVisualStyleBackColor = true;
             // 
@@ -575,7 +575,7 @@
             this.alignShowTexture.Location = new System.Drawing.Point(49, 201);
             this.alignShowTexture.Name = "alignShowTexture";
             this.alignShowTexture.Size = new System.Drawing.Size(58, 17);
-            this.alignShowTexture.TabIndex = 35;
+            this.alignShowTexture.TabIndex = 42;
             this.alignShowTexture.Text = "texture";
             this.alignShowTexture.UseVisualStyleBackColor = true;
             // 
@@ -607,7 +607,7 @@
             this.rotate270.Location = new System.Drawing.Point(62, 32);
             this.rotate270.Name = "rotate270";
             this.rotate270.Size = new System.Drawing.Size(47, 17);
-            this.rotate270.TabIndex = 3;
+            this.rotate270.TabIndex = 41;
             this.rotate270.TabStop = true;
             this.rotate270.Text = "270°";
             this.rotate270.UseVisualStyleBackColor = true;
@@ -618,7 +618,7 @@
             this.rotate180.Location = new System.Drawing.Point(12, 32);
             this.rotate180.Name = "rotate180";
             this.rotate180.Size = new System.Drawing.Size(47, 17);
-            this.rotate180.TabIndex = 2;
+            this.rotate180.TabIndex = 40;
             this.rotate180.TabStop = true;
             this.rotate180.Text = "180°";
             this.rotate180.UseVisualStyleBackColor = true;
@@ -629,7 +629,7 @@
             this.rotate90.Location = new System.Drawing.Point(62, 15);
             this.rotate90.Name = "rotate90";
             this.rotate90.Size = new System.Drawing.Size(41, 17);
-            this.rotate90.TabIndex = 1;
+            this.rotate90.TabIndex = 39;
             this.rotate90.TabStop = true;
             this.rotate90.Text = "90°";
             this.rotate90.UseVisualStyleBackColor = true;
@@ -640,7 +640,7 @@
             this.rotate0.Location = new System.Drawing.Point(12, 15);
             this.rotate0.Name = "rotate0";
             this.rotate0.Size = new System.Drawing.Size(35, 17);
-            this.rotate0.TabIndex = 0;
+            this.rotate0.TabIndex = 38;
             this.rotate0.TabStop = true;
             this.rotate0.Text = "0°";
             this.rotate0.UseVisualStyleBackColor = true;
@@ -682,7 +682,7 @@
             this.vertAlignValue.Location = new System.Drawing.Point(196, 67);
             this.vertAlignValue.Name = "vertAlignValue";
             this.vertAlignValue.Size = new System.Drawing.Size(46, 20);
-            this.vertAlignValue.TabIndex = 28;
+            this.vertAlignValue.TabIndex = 25;
             this.vertAlignValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // horzAlignValue
@@ -690,7 +690,7 @@
             this.horzAlignValue.Location = new System.Drawing.Point(196, 44);
             this.horzAlignValue.Name = "horzAlignValue";
             this.horzAlignValue.Size = new System.Drawing.Size(46, 20);
-            this.horzAlignValue.TabIndex = 27;
+            this.horzAlignValue.TabIndex = 21;
             this.horzAlignValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // resetAlignment
@@ -700,7 +700,7 @@
             this.resetAlignment.Location = new System.Drawing.Point(196, 111);
             this.resetAlignment.Name = "resetAlignment";
             this.resetAlignment.Size = new System.Drawing.Size(24, 24);
-            this.resetAlignment.TabIndex = 20;
+            this.resetAlignment.TabIndex = 32;
             this.resetAlignment.UseVisualStyleBackColor = false;
             // 
             // resetMarked
@@ -709,7 +709,7 @@
             this.resetMarked.Location = new System.Drawing.Point(219, 111);
             this.resetMarked.Name = "resetMarked";
             this.resetMarked.Size = new System.Drawing.Size(24, 24);
-            this.resetMarked.TabIndex = 19;
+            this.resetMarked.TabIndex = 33;
             this.resetMarked.UseVisualStyleBackColor = true;
             // 
             // stretchToFit
@@ -718,7 +718,7 @@
             this.stretchToFit.Location = new System.Drawing.Point(242, 111);
             this.stretchToFit.Name = "stretchToFit";
             this.stretchToFit.Size = new System.Drawing.Size(24, 24);
-            this.stretchToFit.TabIndex = 18;
+            this.stretchToFit.TabIndex = 34;
             this.stretchToFit.UseVisualStyleBackColor = true;
             // 
             // alignChildren
@@ -727,7 +727,7 @@
             this.alignChildren.Location = new System.Drawing.Point(265, 111);
             this.alignChildren.Name = "alignChildren";
             this.alignChildren.Size = new System.Drawing.Size(24, 24);
-            this.alignChildren.TabIndex = 17;
+            this.alignChildren.TabIndex = 35;
             this.alignChildren.UseVisualStyleBackColor = true;
             // 
             // button22
@@ -736,7 +736,7 @@
             this.button22.Location = new System.Drawing.Point(288, 111);
             this.button22.Name = "button22";
             this.button22.Size = new System.Drawing.Size(24, 24);
-            this.button22.TabIndex = 16;
+            this.button22.TabIndex = 36;
             this.button22.UseVisualStyleBackColor = true;
             // 
             // button14
@@ -745,7 +745,7 @@
             this.button14.Location = new System.Drawing.Point(196, 19);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(24, 24);
-            this.button14.TabIndex = 13;
+            this.button14.TabIndex = 17;
             this.button14.UseVisualStyleBackColor = true;
             // 
             // button15
@@ -754,7 +754,7 @@
             this.button15.Location = new System.Drawing.Point(219, 19);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(24, 24);
-            this.button15.TabIndex = 12;
+            this.button15.TabIndex = 18;
             this.button15.UseVisualStyleBackColor = true;
             // 
             // button10
@@ -763,7 +763,7 @@
             this.button10.Location = new System.Drawing.Point(242, 88);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(24, 24);
-            this.button10.TabIndex = 11;
+            this.button10.TabIndex = 30;
             this.button10.UseVisualStyleBackColor = true;
             // 
             // alignUp
@@ -772,7 +772,7 @@
             this.alignUp.Location = new System.Drawing.Point(242, 65);
             this.alignUp.Name = "alignUp";
             this.alignUp.Size = new System.Drawing.Size(24, 24);
-            this.alignUp.TabIndex = 10;
+            this.alignUp.TabIndex = 26;
             this.alignUp.UseVisualStyleBackColor = true;
             // 
             // button12
@@ -781,7 +781,7 @@
             this.button12.Location = new System.Drawing.Point(242, 42);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(24, 24);
-            this.button12.TabIndex = 9;
+            this.button12.TabIndex = 22;
             this.button12.UseVisualStyleBackColor = true;
             // 
             // flipHorizontal
@@ -790,7 +790,7 @@
             this.flipHorizontal.Location = new System.Drawing.Point(242, 19);
             this.flipHorizontal.Name = "flipHorizontal";
             this.flipHorizontal.Size = new System.Drawing.Size(24, 24);
-            this.flipHorizontal.TabIndex = 8;
+            this.flipHorizontal.TabIndex = 19;
             this.flipHorizontal.UseVisualStyleBackColor = true;
             // 
             // button6
@@ -799,7 +799,7 @@
             this.button6.Location = new System.Drawing.Point(265, 88);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(24, 24);
-            this.button6.TabIndex = 7;
+            this.button6.TabIndex = 31;
             this.button6.UseVisualStyleBackColor = true;
             // 
             // alignDown
@@ -808,7 +808,7 @@
             this.alignDown.Location = new System.Drawing.Point(265, 65);
             this.alignDown.Name = "alignDown";
             this.alignDown.Size = new System.Drawing.Size(24, 24);
-            this.alignDown.TabIndex = 6;
+            this.alignDown.TabIndex = 27;
             this.alignDown.UseVisualStyleBackColor = true;
             // 
             // button8
@@ -817,7 +817,7 @@
             this.button8.Location = new System.Drawing.Point(265, 42);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(24, 24);
-            this.button8.TabIndex = 5;
+            this.button8.TabIndex = 23;
             this.button8.UseVisualStyleBackColor = true;
             // 
             // flipVertical
@@ -826,7 +826,7 @@
             this.flipVertical.Location = new System.Drawing.Point(265, 19);
             this.flipVertical.Name = "flipVertical";
             this.flipVertical.Size = new System.Drawing.Size(24, 24);
-            this.flipVertical.TabIndex = 4;
+            this.flipVertical.TabIndex = 20;
             this.flipVertical.UseVisualStyleBackColor = true;
             // 
             // shrinkVertical
@@ -835,7 +835,7 @@
             this.shrinkVertical.Location = new System.Drawing.Point(288, 65);
             this.shrinkVertical.Name = "shrinkVertical";
             this.shrinkVertical.Size = new System.Drawing.Size(24, 24);
-            this.shrinkVertical.TabIndex = 2;
+            this.shrinkVertical.TabIndex = 28;
             this.shrinkVertical.UseVisualStyleBackColor = true;
             // 
             // shrinkHorizontal
@@ -844,7 +844,7 @@
             this.shrinkHorizontal.Location = new System.Drawing.Point(288, 42);
             this.shrinkHorizontal.Name = "shrinkHorizontal";
             this.shrinkHorizontal.Size = new System.Drawing.Size(24, 24);
-            this.shrinkHorizontal.TabIndex = 1;
+            this.shrinkHorizontal.TabIndex = 24;
             this.shrinkHorizontal.UseVisualStyleBackColor = true;
             // 
             // lightEffectGroup
@@ -925,7 +925,7 @@
             this.lightTick7.Location = new System.Drawing.Point(0, 0);
             this.lightTick7.Name = "lightTick7";
             this.lightTick7.Size = new System.Drawing.Size(14, 13);
-            this.lightTick7.TabIndex = 6;
+            this.lightTick7.TabIndex = 50;
             this.lightTick7.TabStop = true;
             this.lightTick7.UseVisualStyleBackColor = true;
             // 
@@ -943,14 +943,14 @@
             this.lightTick6.Location = new System.Drawing.Point(0, 0);
             this.lightTick6.Name = "lightTick6";
             this.lightTick6.Size = new System.Drawing.Size(14, 13);
-            this.lightTick6.TabIndex = 5;
+            this.lightTick6.TabIndex = 49;
             this.lightTick6.TabStop = true;
             this.lightTick6.UseVisualStyleBackColor = true;
             // 
             // tickPanel4
             // 
             this.tickPanel4.Controls.Add(this.lightTick4);
-            this.tickPanel4.Location = new System.Drawing.Point(131, 18);
+            this.tickPanel4.Location = new System.Drawing.Point(129, 17);
             this.tickPanel4.Name = "tickPanel4";
             this.tickPanel4.Size = new System.Drawing.Size(14, 13);
             this.tickPanel4.TabIndex = 3;
@@ -961,14 +961,14 @@
             this.lightTick4.Location = new System.Drawing.Point(0, 0);
             this.lightTick4.Name = "lightTick4";
             this.lightTick4.Size = new System.Drawing.Size(14, 13);
-            this.lightTick4.TabIndex = 3;
+            this.lightTick4.TabIndex = 47;
             this.lightTick4.TabStop = true;
             this.lightTick4.UseVisualStyleBackColor = true;
             // 
             // tickPanel3
             // 
             this.tickPanel3.Controls.Add(this.lightTick3);
-            this.tickPanel3.Location = new System.Drawing.Point(113, 11);
+            this.tickPanel3.Location = new System.Drawing.Point(113, 8);
             this.tickPanel3.Name = "tickPanel3";
             this.tickPanel3.Size = new System.Drawing.Size(14, 13);
             this.tickPanel3.TabIndex = 2;
@@ -979,14 +979,14 @@
             this.lightTick3.Location = new System.Drawing.Point(0, 0);
             this.lightTick3.Name = "lightTick3";
             this.lightTick3.Size = new System.Drawing.Size(14, 13);
-            this.lightTick3.TabIndex = 2;
+            this.lightTick3.TabIndex = 46;
             this.lightTick3.TabStop = true;
             this.lightTick3.UseVisualStyleBackColor = true;
             // 
             // tickPanel2
             // 
             this.tickPanel2.Controls.Add(this.lightTick2);
-            this.tickPanel2.Location = new System.Drawing.Point(97, 5);
+            this.tickPanel2.Location = new System.Drawing.Point(97, 3);
             this.tickPanel2.Name = "tickPanel2";
             this.tickPanel2.Size = new System.Drawing.Size(14, 13);
             this.tickPanel2.TabIndex = 1;
@@ -997,14 +997,14 @@
             this.lightTick2.Location = new System.Drawing.Point(0, 0);
             this.lightTick2.Name = "lightTick2";
             this.lightTick2.Size = new System.Drawing.Size(14, 13);
-            this.lightTick2.TabIndex = 1;
+            this.lightTick2.TabIndex = 45;
             this.lightTick2.TabStop = true;
             this.lightTick2.UseVisualStyleBackColor = true;
             // 
             // tickPanel32
             // 
             this.tickPanel32.Controls.Add(this.lightTick32);
-            this.tickPanel32.Location = new System.Drawing.Point(61, 8);
+            this.tickPanel32.Location = new System.Drawing.Point(63, 3);
             this.tickPanel32.Name = "tickPanel32";
             this.tickPanel32.Size = new System.Drawing.Size(14, 13);
             this.tickPanel32.TabIndex = 31;
@@ -1015,14 +1015,14 @@
             this.lightTick32.Location = new System.Drawing.Point(0, 0);
             this.lightTick32.Name = "lightTick32";
             this.lightTick32.Size = new System.Drawing.Size(14, 13);
-            this.lightTick32.TabIndex = 31;
+            this.lightTick32.TabIndex = 75;
             this.lightTick32.TabStop = true;
             this.lightTick32.UseVisualStyleBackColor = true;
             // 
             // tickPanel31
             // 
             this.tickPanel31.Controls.Add(this.lightTick31);
-            this.tickPanel31.Location = new System.Drawing.Point(44, 8);
+            this.tickPanel31.Location = new System.Drawing.Point(47, 5);
             this.tickPanel31.Name = "tickPanel31";
             this.tickPanel31.Size = new System.Drawing.Size(14, 13);
             this.tickPanel31.TabIndex = 30;
@@ -1033,14 +1033,14 @@
             this.lightTick31.Location = new System.Drawing.Point(0, 0);
             this.lightTick31.Name = "lightTick31";
             this.lightTick31.Size = new System.Drawing.Size(14, 13);
-            this.lightTick31.TabIndex = 30;
+            this.lightTick31.TabIndex = 74;
             this.lightTick31.TabStop = true;
             this.lightTick31.UseVisualStyleBackColor = true;
             // 
             // tickPanel29
             // 
             this.tickPanel29.Controls.Add(this.lightTick29);
-            this.tickPanel29.Location = new System.Drawing.Point(18, 18);
+            this.tickPanel29.Location = new System.Drawing.Point(22, 20);
             this.tickPanel29.Name = "tickPanel29";
             this.tickPanel29.Size = new System.Drawing.Size(14, 13);
             this.tickPanel29.TabIndex = 28;
@@ -1051,14 +1051,14 @@
             this.lightTick29.Location = new System.Drawing.Point(0, 0);
             this.lightTick29.Name = "lightTick29";
             this.lightTick29.Size = new System.Drawing.Size(14, 13);
-            this.lightTick29.TabIndex = 28;
+            this.lightTick29.TabIndex = 72;
             this.lightTick29.TabStop = true;
             this.lightTick29.UseVisualStyleBackColor = true;
             // 
             // tickPanel28
             // 
             this.tickPanel28.Controls.Add(this.lightTick28);
-            this.tickPanel28.Location = new System.Drawing.Point(12, 31);
+            this.tickPanel28.Location = new System.Drawing.Point(11, 32);
             this.tickPanel28.Name = "tickPanel28";
             this.tickPanel28.Size = new System.Drawing.Size(14, 13);
             this.tickPanel28.TabIndex = 27;
@@ -1069,14 +1069,14 @@
             this.lightTick28.Location = new System.Drawing.Point(0, 0);
             this.lightTick28.Name = "lightTick28";
             this.lightTick28.Size = new System.Drawing.Size(14, 13);
-            this.lightTick28.TabIndex = 27;
+            this.lightTick28.TabIndex = 71;
             this.lightTick28.TabStop = true;
             this.lightTick28.UseVisualStyleBackColor = true;
             // 
             // tickPanel27
             // 
             this.tickPanel27.Controls.Add(this.lightTick27);
-            this.tickPanel27.Location = new System.Drawing.Point(9, 45);
+            this.tickPanel27.Location = new System.Drawing.Point(4, 47);
             this.tickPanel27.Name = "tickPanel27";
             this.tickPanel27.Size = new System.Drawing.Size(14, 13);
             this.tickPanel27.TabIndex = 26;
@@ -1087,14 +1087,14 @@
             this.lightTick27.Location = new System.Drawing.Point(0, 0);
             this.lightTick27.Name = "lightTick27";
             this.lightTick27.Size = new System.Drawing.Size(14, 13);
-            this.lightTick27.TabIndex = 26;
+            this.lightTick27.TabIndex = 70;
             this.lightTick27.TabStop = true;
             this.lightTick27.UseVisualStyleBackColor = true;
             // 
             // tickPanel26
             // 
             this.tickPanel26.Controls.Add(this.lightTick26);
-            this.tickPanel26.Location = new System.Drawing.Point(2, 61);
+            this.tickPanel26.Location = new System.Drawing.Point(2, 63);
             this.tickPanel26.Name = "tickPanel26";
             this.tickPanel26.Size = new System.Drawing.Size(14, 13);
             this.tickPanel26.TabIndex = 25;
@@ -1105,7 +1105,7 @@
             this.lightTick26.Location = new System.Drawing.Point(0, 0);
             this.lightTick26.Name = "lightTick26";
             this.lightTick26.Size = new System.Drawing.Size(14, 13);
-            this.lightTick26.TabIndex = 25;
+            this.lightTick26.TabIndex = 69;
             this.lightTick26.TabStop = true;
             this.lightTick26.UseVisualStyleBackColor = true;
             // 
@@ -1123,14 +1123,14 @@
             this.lightTick24.Location = new System.Drawing.Point(0, 0);
             this.lightTick24.Name = "lightTick24";
             this.lightTick24.Size = new System.Drawing.Size(14, 13);
-            this.lightTick24.TabIndex = 23;
+            this.lightTick24.TabIndex = 67;
             this.lightTick24.TabStop = true;
             this.lightTick24.UseVisualStyleBackColor = true;
             // 
             // tickPanel23
             // 
             this.tickPanel23.Controls.Add(this.lightTick23);
-            this.tickPanel23.Location = new System.Drawing.Point(5, 107);
+            this.tickPanel23.Location = new System.Drawing.Point(6, 108);
             this.tickPanel23.Name = "tickPanel23";
             this.tickPanel23.Size = new System.Drawing.Size(14, 13);
             this.tickPanel23.TabIndex = 22;
@@ -1141,14 +1141,14 @@
             this.lightTick23.Location = new System.Drawing.Point(0, 0);
             this.lightTick23.Name = "lightTick23";
             this.lightTick23.Size = new System.Drawing.Size(14, 13);
-            this.lightTick23.TabIndex = 22;
+            this.lightTick23.TabIndex = 66;
             this.lightTick23.TabStop = true;
             this.lightTick23.UseVisualStyleBackColor = true;
             // 
             // tickPanel22
             // 
             this.tickPanel22.Controls.Add(this.lightTick22);
-            this.tickPanel22.Location = new System.Drawing.Point(12, 120);
+            this.tickPanel22.Location = new System.Drawing.Point(13, 122);
             this.tickPanel22.Name = "tickPanel22";
             this.tickPanel22.Size = new System.Drawing.Size(14, 13);
             this.tickPanel22.TabIndex = 21;
@@ -1159,7 +1159,7 @@
             this.lightTick22.Location = new System.Drawing.Point(0, 0);
             this.lightTick22.Name = "lightTick22";
             this.lightTick22.Size = new System.Drawing.Size(14, 13);
-            this.lightTick22.TabIndex = 21;
+            this.lightTick22.TabIndex = 65;
             this.lightTick22.TabStop = true;
             this.lightTick22.UseVisualStyleBackColor = true;
             // 
@@ -1177,7 +1177,7 @@
             this.lightTick20.Location = new System.Drawing.Point(0, 0);
             this.lightTick20.Name = "lightTick20";
             this.lightTick20.Size = new System.Drawing.Size(14, 13);
-            this.lightTick20.TabIndex = 19;
+            this.lightTick20.TabIndex = 63;
             this.lightTick20.TabStop = true;
             this.lightTick20.UseVisualStyleBackColor = true;
             // 
@@ -1195,7 +1195,7 @@
             this.lightTick18.Location = new System.Drawing.Point(0, 0);
             this.lightTick18.Name = "lightTick18";
             this.lightTick18.Size = new System.Drawing.Size(14, 13);
-            this.lightTick18.TabIndex = 17;
+            this.lightTick18.TabIndex = 61;
             this.lightTick18.TabStop = true;
             this.lightTick18.UseVisualStyleBackColor = true;
             // 
@@ -1213,7 +1213,7 @@
             this.lightTick16.Location = new System.Drawing.Point(0, 0);
             this.lightTick16.Name = "lightTick16";
             this.lightTick16.Size = new System.Drawing.Size(14, 13);
-            this.lightTick16.TabIndex = 15;
+            this.lightTick16.TabIndex = 59;
             this.lightTick16.TabStop = true;
             this.lightTick16.UseVisualStyleBackColor = true;
             // 
@@ -1231,7 +1231,7 @@
             this.lightTick19.Location = new System.Drawing.Point(0, 0);
             this.lightTick19.Name = "lightTick19";
             this.lightTick19.Size = new System.Drawing.Size(14, 13);
-            this.lightTick19.TabIndex = 18;
+            this.lightTick19.TabIndex = 62;
             this.lightTick19.TabStop = true;
             this.lightTick19.UseVisualStyleBackColor = true;
             // 
@@ -1249,7 +1249,7 @@
             this.lightTick14.Location = new System.Drawing.Point(0, 0);
             this.lightTick14.Name = "lightTick14";
             this.lightTick14.Size = new System.Drawing.Size(14, 13);
-            this.lightTick14.TabIndex = 13;
+            this.lightTick14.TabIndex = 57;
             this.lightTick14.TabStop = true;
             this.lightTick14.UseVisualStyleBackColor = true;
             // 
@@ -1267,7 +1267,7 @@
             this.lightTick15.Location = new System.Drawing.Point(0, 0);
             this.lightTick15.Name = "lightTick15";
             this.lightTick15.Size = new System.Drawing.Size(14, 13);
-            this.lightTick15.TabIndex = 14;
+            this.lightTick15.TabIndex = 58;
             this.lightTick15.TabStop = true;
             this.lightTick15.UseVisualStyleBackColor = true;
             // 
@@ -1285,7 +1285,7 @@
             this.lightTick12.Location = new System.Drawing.Point(0, 0);
             this.lightTick12.Name = "lightTick12";
             this.lightTick12.Size = new System.Drawing.Size(14, 13);
-            this.lightTick12.TabIndex = 11;
+            this.lightTick12.TabIndex = 55;
             this.lightTick12.TabStop = true;
             this.lightTick12.UseVisualStyleBackColor = true;
             // 
@@ -1303,7 +1303,7 @@
             this.lightTick11.Location = new System.Drawing.Point(0, 0);
             this.lightTick11.Name = "lightTick11";
             this.lightTick11.Size = new System.Drawing.Size(14, 13);
-            this.lightTick11.TabIndex = 10;
+            this.lightTick11.TabIndex = 54;
             this.lightTick11.TabStop = true;
             this.lightTick11.UseVisualStyleBackColor = true;
             // 
@@ -1321,7 +1321,7 @@
             this.lightTick10.Location = new System.Drawing.Point(0, 0);
             this.lightTick10.Name = "lightTick10";
             this.lightTick10.Size = new System.Drawing.Size(14, 13);
-            this.lightTick10.TabIndex = 9;
+            this.lightTick10.TabIndex = 53;
             this.lightTick10.TabStop = true;
             this.lightTick10.UseVisualStyleBackColor = true;
             // 
@@ -1339,7 +1339,7 @@
             this.lightTick8.Location = new System.Drawing.Point(0, 0);
             this.lightTick8.Name = "lightTick8";
             this.lightTick8.Size = new System.Drawing.Size(14, 13);
-            this.lightTick8.TabIndex = 7;
+            this.lightTick8.TabIndex = 51;
             this.lightTick8.TabStop = true;
             this.lightTick8.UseVisualStyleBackColor = true;
             // 
@@ -1376,7 +1376,7 @@
             this.lightTick21.Location = new System.Drawing.Point(0, 0);
             this.lightTick21.Name = "lightTick21";
             this.lightTick21.Size = new System.Drawing.Size(14, 13);
-            this.lightTick21.TabIndex = 20;
+            this.lightTick21.TabIndex = 64;
             this.lightTick21.TabStop = true;
             this.lightTick21.UseVisualStyleBackColor = true;
             // 
@@ -1394,14 +1394,14 @@
             this.lightTick13.Location = new System.Drawing.Point(0, 0);
             this.lightTick13.Name = "lightTick13";
             this.lightTick13.Size = new System.Drawing.Size(14, 13);
-            this.lightTick13.TabIndex = 12;
+            this.lightTick13.TabIndex = 56;
             this.lightTick13.TabStop = true;
             this.lightTick13.UseVisualStyleBackColor = true;
             // 
             // tickPanel30
             // 
             this.tickPanel30.Controls.Add(this.lightTick30);
-            this.tickPanel30.Location = new System.Drawing.Point(28, 15);
+            this.tickPanel30.Location = new System.Drawing.Point(34, 12);
             this.tickPanel30.Name = "tickPanel30";
             this.tickPanel30.Size = new System.Drawing.Size(14, 13);
             this.tickPanel30.TabIndex = 29;
@@ -1412,7 +1412,7 @@
             this.lightTick30.Location = new System.Drawing.Point(0, 0);
             this.lightTick30.Name = "lightTick30";
             this.lightTick30.Size = new System.Drawing.Size(14, 13);
-            this.lightTick30.TabIndex = 29;
+            this.lightTick30.TabIndex = 73;
             this.lightTick30.TabStop = true;
             this.lightTick30.UseVisualStyleBackColor = true;
             // 
@@ -1430,7 +1430,7 @@
             this.lightTick5.Location = new System.Drawing.Point(0, 0);
             this.lightTick5.Name = "lightTick5";
             this.lightTick5.Size = new System.Drawing.Size(14, 13);
-            this.lightTick5.TabIndex = 4;
+            this.lightTick5.TabIndex = 48;
             this.lightTick5.TabStop = true;
             this.lightTick5.UseVisualStyleBackColor = true;
             // 
@@ -1448,7 +1448,7 @@
             this.lightTick25.Location = new System.Drawing.Point(0, 0);
             this.lightTick25.Name = "lightTick25";
             this.lightTick25.Size = new System.Drawing.Size(14, 13);
-            this.lightTick25.TabIndex = 24;
+            this.lightTick25.TabIndex = 68;
             this.lightTick25.TabStop = true;
             this.lightTick25.UseVisualStyleBackColor = true;
             // 
@@ -1466,7 +1466,7 @@
             this.lightTick17.Location = new System.Drawing.Point(0, 0);
             this.lightTick17.Name = "lightTick17";
             this.lightTick17.Size = new System.Drawing.Size(14, 13);
-            this.lightTick17.TabIndex = 16;
+            this.lightTick17.TabIndex = 60;
             this.lightTick17.TabStop = true;
             this.lightTick17.UseVisualStyleBackColor = true;
             // 
@@ -1484,7 +1484,7 @@
             this.lightTick9.Location = new System.Drawing.Point(0, 0);
             this.lightTick9.Name = "lightTick9";
             this.lightTick9.Size = new System.Drawing.Size(14, 13);
-            this.lightTick9.TabIndex = 8;
+            this.lightTick9.TabIndex = 52;
             this.lightTick9.TabStop = true;
             this.lightTick9.UseVisualStyleBackColor = true;
             // 
@@ -1502,7 +1502,7 @@
             this.lightTick1.Location = new System.Drawing.Point(0, 0);
             this.lightTick1.Name = "lightTick1";
             this.lightTick1.Size = new System.Drawing.Size(14, 13);
-            this.lightTick1.TabIndex = 0;
+            this.lightTick1.TabIndex = 44;
             this.lightTick1.TabStop = true;
             this.lightTick1.UseVisualStyleBackColor = true;
             // 
@@ -1524,7 +1524,7 @@
             this.dynLightOn.Location = new System.Drawing.Point(9, 56);
             this.dynLightOn.Name = "dynLightOn";
             this.dynLightOn.Size = new System.Drawing.Size(39, 17);
-            this.dynLightOn.TabIndex = 4;
+            this.dynLightOn.TabIndex = 80;
             this.dynLightOn.Text = "On";
             this.dynLightOn.UseVisualStyleBackColor = true;
             // 
@@ -1534,7 +1534,7 @@
             this.dynLightFlicker.Location = new System.Drawing.Point(9, 42);
             this.dynLightFlicker.Name = "dynLightFlicker";
             this.dynLightFlicker.Size = new System.Drawing.Size(56, 17);
-            this.dynLightFlicker.TabIndex = 3;
+            this.dynLightFlicker.TabIndex = 79;
             this.dynLightFlicker.Text = "Flicker";
             this.dynLightFlicker.UseVisualStyleBackColor = true;
             // 
@@ -1544,7 +1544,7 @@
             this.dynLightStrobe8.Location = new System.Drawing.Point(9, 28);
             this.dynLightStrobe8.Name = "dynLightStrobe8";
             this.dynLightStrobe8.Size = new System.Drawing.Size(70, 17);
-            this.dynLightStrobe8.TabIndex = 2;
+            this.dynLightStrobe8.TabIndex = 78;
             this.dynLightStrobe8.Text = "Strobe /8";
             this.dynLightStrobe8.UseVisualStyleBackColor = true;
             // 
@@ -1554,7 +1554,7 @@
             this.dynLightStrobe4.Location = new System.Drawing.Point(9, 14);
             this.dynLightStrobe4.Name = "dynLightStrobe4";
             this.dynLightStrobe4.Size = new System.Drawing.Size(70, 17);
-            this.dynLightStrobe4.TabIndex = 1;
+            this.dynLightStrobe4.TabIndex = 77;
             this.dynLightStrobe4.Text = "Strobe /4";
             this.dynLightStrobe4.UseVisualStyleBackColor = true;
             // 
@@ -1564,7 +1564,7 @@
             this.dynLightOff.Location = new System.Drawing.Point(9, 0);
             this.dynLightOff.Name = "dynLightOff";
             this.dynLightOff.Size = new System.Drawing.Size(39, 17);
-            this.dynLightOff.TabIndex = 0;
+            this.dynLightOff.TabIndex = 76;
             this.dynLightOff.TabStop = true;
             this.dynLightOff.Text = "Off";
             this.dynLightOff.UseVisualStyleBackColor = true;
@@ -1583,7 +1583,7 @@
             this.delDynLight.Location = new System.Drawing.Point(117, 100);
             this.delDynLight.Name = "delDynLight";
             this.delDynLight.Size = new System.Drawing.Size(24, 24);
-            this.delDynLight.TabIndex = 41;
+            this.delDynLight.TabIndex = 82;
             this.delDynLight.UseVisualStyleBackColor = true;
             // 
             // addDynLight
@@ -1592,7 +1592,7 @@
             this.addDynLight.Location = new System.Drawing.Point(31, 100);
             this.addDynLight.Name = "addDynLight";
             this.addDynLight.Size = new System.Drawing.Size(24, 24);
-            this.addDynLight.TabIndex = 40;
+            this.addDynLight.TabIndex = 81;
             this.addDynLight.UseVisualStyleBackColor = true;
             // 
             // label13
@@ -1678,7 +1678,7 @@
             this.tickTime.Location = new System.Drawing.Point(248, 194);
             this.tickTime.Name = "tickTime";
             this.tickTime.Size = new System.Drawing.Size(50, 20);
-            this.tickTime.TabIndex = 45;
+            this.tickTime.TabIndex = 84;
             this.tickTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label16
@@ -1698,7 +1698,7 @@
             this.secsPerTick.Name = "secsPerTick";
             this.secsPerTick.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.secsPerTick.Size = new System.Drawing.Size(45, 153);
-            this.secsPerTick.TabIndex = 43;
+            this.secsPerTick.TabIndex = 83;
             this.secsPerTick.TickFrequency = 10;
             // 
             // colorPicker
@@ -1714,7 +1714,7 @@
             this.selectRGB.Location = new System.Drawing.Point(269, 19);
             this.selectRGB.Name = "selectRGB";
             this.selectRGB.Size = new System.Drawing.Size(40, 20);
-            this.selectRGB.TabIndex = 4;
+            this.selectRGB.TabIndex = 85;
             this.selectRGB.Text = "RGB";
             this.selectRGB.UseVisualStyleBackColor = true;
             // 

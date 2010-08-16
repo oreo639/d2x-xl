@@ -112,7 +112,7 @@
             this.AddRepairCenter.Location = new System.Drawing.Point(168, 708);
             this.AddRepairCenter.Name = "AddRepairCenter";
             this.AddRepairCenter.Size = new System.Drawing.Size(118, 22);
-            this.AddRepairCenter.TabIndex = 22;
+            this.AddRepairCenter.TabIndex = 40;
             this.AddRepairCenter.Text = "Add re&pair center";
             this.AddRepairCenter.UseVisualStyleBackColor = true;
             // 
@@ -121,7 +121,7 @@
             this.addReactor.Location = new System.Drawing.Point(168, 729);
             this.addReactor.Name = "addReactor";
             this.addReactor.Size = new System.Drawing.Size(118, 22);
-            this.addReactor.TabIndex = 21;
+            this.addReactor.TabIndex = 41;
             this.addReactor.Text = "Add reac&tor";
             this.addReactor.UseVisualStyleBackColor = true;
             // 
@@ -130,7 +130,7 @@
             this.addFuelCenter.Location = new System.Drawing.Point(168, 687);
             this.addFuelCenter.Name = "addFuelCenter";
             this.addFuelCenter.Size = new System.Drawing.Size(118, 22);
-            this.addFuelCenter.TabIndex = 20;
+            this.addFuelCenter.TabIndex = 39;
             this.addFuelCenter.Text = "Add &fuel center";
             this.addFuelCenter.UseVisualStyleBackColor = true;
             // 
@@ -139,7 +139,7 @@
             this.addEquipMaker.Location = new System.Drawing.Point(168, 666);
             this.addEquipMaker.Name = "addEquipMaker";
             this.addEquipMaker.Size = new System.Drawing.Size(118, 22);
-            this.addEquipMaker.TabIndex = 19;
+            this.addEquipMaker.TabIndex = 38;
             this.addEquipMaker.Text = "Add &equip maker";
             this.addEquipMaker.UseVisualStyleBackColor = true;
             // 
@@ -148,7 +148,7 @@
             this.addRobotMaker.Location = new System.Drawing.Point(168, 645);
             this.addRobotMaker.Name = "addRobotMaker";
             this.addRobotMaker.Size = new System.Drawing.Size(118, 22);
-            this.addRobotMaker.TabIndex = 18;
+            this.addRobotMaker.TabIndex = 37;
             this.addRobotMaker.Text = "Add &robot maker";
             this.addRobotMaker.UseVisualStyleBackColor = true;
             // 
@@ -157,7 +157,7 @@
             this.splitSegment.Location = new System.Drawing.Point(42, 729);
             this.splitSegment.Name = "splitSegment";
             this.splitSegment.Size = new System.Drawing.Size(116, 22);
-            this.splitSegment.TabIndex = 17;
+            this.splitSegment.TabIndex = 36;
             this.splitSegment.Text = "&Split segment";
             this.splitSegment.UseVisualStyleBackColor = true;
             // 
@@ -166,7 +166,7 @@
             this.otherSegment.Location = new System.Drawing.Point(42, 697);
             this.otherSegment.Name = "otherSegment";
             this.otherSegment.Size = new System.Drawing.Size(116, 22);
-            this.otherSegment.TabIndex = 16;
+            this.otherSegment.TabIndex = 35;
             this.otherSegment.Text = "&Other segment";
             this.otherSegment.UseVisualStyleBackColor = true;
             // 
@@ -175,7 +175,7 @@
             this.deleteSegment.Location = new System.Drawing.Point(42, 666);
             this.deleteSegment.Name = "deleteSegment";
             this.deleteSegment.Size = new System.Drawing.Size(116, 22);
-            this.deleteSegment.TabIndex = 15;
+            this.deleteSegment.TabIndex = 34;
             this.deleteSegment.Text = "&Delete";
             this.deleteSegment.UseVisualStyleBackColor = true;
             // 
@@ -184,7 +184,7 @@
             this.addSegment.Location = new System.Drawing.Point(42, 645);
             this.addSegment.Name = "addSegment";
             this.addSegment.Size = new System.Drawing.Size(116, 22);
-            this.addSegment.TabIndex = 14;
+            this.addSegment.TabIndex = 33;
             this.addSegment.Text = "&Add";
             this.addSegment.UseVisualStyleBackColor = true;
             // 
@@ -225,7 +225,7 @@
             this.addRobot.Location = new System.Drawing.Point(168, 133);
             this.addRobot.Name = "addRobot";
             this.addRobot.Size = new System.Drawing.Size(137, 22);
-            this.addRobot.TabIndex = 3;
+            this.addRobot.TabIndex = 32;
             this.addRobot.Text = "<-- Add";
             this.addRobot.UseVisualStyleBackColor = true;
             // 
@@ -234,7 +234,7 @@
             this.deleteRobot.Location = new System.Drawing.Point(12, 133);
             this.deleteRobot.Name = "deleteRobot";
             this.deleteRobot.Size = new System.Drawing.Size(137, 22);
-            this.deleteRobot.TabIndex = 2;
+            this.deleteRobot.TabIndex = 31;
             this.deleteRobot.Text = "Delete -->";
             this.deleteRobot.UseVisualStyleBackColor = true;
             // 
@@ -274,7 +274,7 @@
             this.showTriggerDetails.Location = new System.Drawing.Point(37, 94);
             this.showTriggerDetails.Name = "showTriggerDetails";
             this.showTriggerDetails.Size = new System.Drawing.Size(125, 22);
-            this.showTriggerDetails.TabIndex = 3;
+            this.showTriggerDetails.TabIndex = 30;
             this.showTriggerDetails.Text = "Show trigger details ...";
             this.showTriggerDetails.UseVisualStyleBackColor = true;
             // 
@@ -283,7 +283,7 @@
             this.showWallDetails.Location = new System.Drawing.Point(37, 66);
             this.showWallDetails.Name = "showWallDetails";
             this.showWallDetails.Size = new System.Drawing.Size(125, 22);
-            this.showWallDetails.TabIndex = 2;
+            this.showWallDetails.TabIndex = 29;
             this.showWallDetails.Text = "Show wall details ...";
             this.showWallDetails.UseVisualStyleBackColor = true;
             // 
@@ -322,7 +322,7 @@
             this.selectPoint4.Location = new System.Drawing.Point(23, 75);
             this.selectPoint4.Name = "selectPoint4";
             this.selectPoint4.Size = new System.Drawing.Size(26, 20);
-            this.selectPoint4.TabIndex = 10;
+            this.selectPoint4.TabIndex = 23;
             this.selectPoint4.Text = "4";
             this.selectPoint4.UseVisualStyleBackColor = true;
             // 
@@ -331,7 +331,7 @@
             this.selectPoint2.Location = new System.Drawing.Point(23, 37);
             this.selectPoint2.Name = "selectPoint2";
             this.selectPoint2.Size = new System.Drawing.Size(26, 20);
-            this.selectPoint2.TabIndex = 8;
+            this.selectPoint2.TabIndex = 21;
             this.selectPoint2.Text = "2";
             this.selectPoint2.UseVisualStyleBackColor = true;
             // 
@@ -340,7 +340,7 @@
             this.selectPoint1.Location = new System.Drawing.Point(23, 18);
             this.selectPoint1.Name = "selectPoint1";
             this.selectPoint1.Size = new System.Drawing.Size(26, 20);
-            this.selectPoint1.TabIndex = 7;
+            this.selectPoint1.TabIndex = 20;
             this.selectPoint1.Text = "1";
             this.selectPoint1.UseVisualStyleBackColor = true;
             // 
@@ -349,7 +349,7 @@
             this.selectPoint3.Location = new System.Drawing.Point(23, 56);
             this.selectPoint3.Name = "selectPoint3";
             this.selectPoint3.Size = new System.Drawing.Size(26, 20);
-            this.selectPoint3.TabIndex = 9;
+            this.selectPoint3.TabIndex = 22;
             this.selectPoint3.Text = "3";
             this.selectPoint3.UseVisualStyleBackColor = true;
             // 
@@ -375,7 +375,7 @@
             this.resetPointCoord.Location = new System.Drawing.Point(101, 57);
             this.resetPointCoord.Name = "resetPointCoord";
             this.resetPointCoord.Size = new System.Drawing.Size(50, 21);
-            this.resetPointCoord.TabIndex = 19;
+            this.resetPointCoord.TabIndex = 28;
             this.resetPointCoord.Text = "Reset";
             this.resetPointCoord.UseVisualStyleBackColor = true;
             // 
@@ -384,7 +384,7 @@
             this.assignPointCoord.Location = new System.Drawing.Point(101, 37);
             this.assignPointCoord.Name = "assignPointCoord";
             this.assignPointCoord.Size = new System.Drawing.Size(50, 21);
-            this.assignPointCoord.TabIndex = 18;
+            this.assignPointCoord.TabIndex = 27;
             this.assignPointCoord.Text = "Assign";
             this.assignPointCoord.UseVisualStyleBackColor = true;
             // 
@@ -423,28 +423,28 @@
             this.pointZ.Location = new System.Drawing.Point(31, 74);
             this.pointZ.Name = "pointZ";
             this.pointZ.Size = new System.Drawing.Size(64, 20);
-            this.pointZ.TabIndex = 15;
+            this.pointZ.TabIndex = 26;
             // 
             // pointY
             // 
             this.pointY.Location = new System.Drawing.Point(31, 48);
             this.pointY.Name = "pointY";
             this.pointY.Size = new System.Drawing.Size(64, 20);
-            this.pointY.TabIndex = 14;
+            this.pointY.TabIndex = 25;
             // 
             // pointX
             // 
             this.pointX.Location = new System.Drawing.Point(31, 22);
             this.pointX.Name = "pointX";
             this.pointX.Size = new System.Drawing.Size(64, 20);
-            this.pointX.TabIndex = 13;
+            this.pointX.TabIndex = 24;
             // 
             // selectSide3
             // 
             this.selectSide3.Location = new System.Drawing.Point(24, 297);
             this.selectSide3.Name = "selectSide3";
             this.selectSide3.Size = new System.Drawing.Size(26, 26);
-            this.selectSide3.TabIndex = 2;
+            this.selectSide3.TabIndex = 16;
             this.selectSide3.Text = "3";
             this.selectSide3.UseVisualStyleBackColor = true;
             // 
@@ -467,7 +467,7 @@
             this.selectSide6.Location = new System.Drawing.Point(37, 68);
             this.selectSide6.Name = "selectSide6";
             this.selectSide6.Size = new System.Drawing.Size(26, 26);
-            this.selectSide6.TabIndex = 10;
+            this.selectSide6.TabIndex = 19;
             this.selectSide6.Text = "6";
             this.selectSide6.UseVisualStyleBackColor = true;
             // 
@@ -476,7 +476,7 @@
             this.selectSide2.Location = new System.Drawing.Point(12, 43);
             this.selectSide2.Name = "selectSide2";
             this.selectSide2.Size = new System.Drawing.Size(26, 26);
-            this.selectSide2.TabIndex = 1;
+            this.selectSide2.TabIndex = 15;
             this.selectSide2.Text = "2";
             this.selectSide2.UseVisualStyleBackColor = true;
             // 
@@ -485,7 +485,7 @@
             this.selectSide5.Location = new System.Drawing.Point(37, 43);
             this.selectSide5.Name = "selectSide5";
             this.selectSide5.Size = new System.Drawing.Size(26, 26);
-            this.selectSide5.TabIndex = 9;
+            this.selectSide5.TabIndex = 18;
             this.selectSide5.Text = "5";
             this.selectSide5.UseVisualStyleBackColor = true;
             // 
@@ -494,7 +494,7 @@
             this.selectSide1.Location = new System.Drawing.Point(12, 18);
             this.selectSide1.Name = "selectSide1";
             this.selectSide1.Size = new System.Drawing.Size(26, 26);
-            this.selectSide1.TabIndex = 0;
+            this.selectSide1.TabIndex = 14;
             this.selectSide1.Text = "1";
             this.selectSide1.UseVisualStyleBackColor = true;
             // 
@@ -503,7 +503,7 @@
             this.selectSide4.Location = new System.Drawing.Point(37, 18);
             this.selectSide4.Name = "selectSide4";
             this.selectSide4.Size = new System.Drawing.Size(26, 26);
-            this.selectSide4.TabIndex = 8;
+            this.selectSide4.TabIndex = 17;
             this.selectSide4.Text = "4";
             this.selectSide4.UseVisualStyleBackColor = true;
             // 
@@ -532,7 +532,7 @@
             this.segOwner.MaxDropDownItems = 4;
             this.segOwner.Name = "segOwner";
             this.segOwner.Size = new System.Drawing.Size(74, 21);
-            this.segOwner.TabIndex = 6;
+            this.segOwner.TabIndex = 12;
             // 
             // numericUpDown1
             // 
@@ -549,7 +549,7 @@
             -2147483648});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(75, 20);
-            this.numericUpDown1.TabIndex = 5;
+            this.numericUpDown1.TabIndex = 13;
             this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label6
@@ -600,7 +600,7 @@
             -2147483648});
             this.energyDrain.Name = "energyDrain";
             this.energyDrain.Size = new System.Drawing.Size(75, 20);
-            this.energyDrain.TabIndex = 5;
+            this.energyDrain.TabIndex = 11;
             this.energyDrain.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // shieldDrain
@@ -618,7 +618,7 @@
             -2147483648});
             this.shieldDrain.Name = "shieldDrain";
             this.shieldDrain.Size = new System.Drawing.Size(75, 20);
-            this.shieldDrain.TabIndex = 4;
+            this.shieldDrain.TabIndex = 10;
             this.shieldDrain.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label5
@@ -672,7 +672,7 @@
             this.setDefaultTexture.Name = "setDefaultTexture";
             this.setDefaultTexture.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.setDefaultTexture.Size = new System.Drawing.Size(112, 17);
-            this.setDefaultTexture.TabIndex = 12;
+            this.setDefaultTexture.TabIndex = 3;
             this.setDefaultTexture.Text = "Set default texture";
             this.setDefaultTexture.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.setDefaultTexture.UseVisualStyleBackColor = true;
@@ -683,7 +683,7 @@
             this.segPropEndOfExit.Location = new System.Drawing.Point(178, 103);
             this.segPropEndOfExit.Name = "segPropEndOfExit";
             this.segPropEndOfExit.Size = new System.Drawing.Size(108, 17);
-            this.segPropEndOfExit.TabIndex = 11;
+            this.segPropEndOfExit.TabIndex = 9;
             this.segPropEndOfExit.Text = "End of exit tunnel";
             this.segPropEndOfExit.UseVisualStyleBackColor = true;
             // 
@@ -693,7 +693,7 @@
             this.segPropOutdoors.Location = new System.Drawing.Point(178, 86);
             this.segPropOutdoors.Name = "segPropOutdoors";
             this.segPropOutdoors.Size = new System.Drawing.Size(69, 17);
-            this.segPropOutdoors.TabIndex = 10;
+            this.segPropOutdoors.TabIndex = 8;
             this.segPropOutdoors.Text = "Outdoors";
             this.segPropOutdoors.UseVisualStyleBackColor = true;
             // 
@@ -703,7 +703,7 @@
             this.segPropNoDamage.Location = new System.Drawing.Point(178, 69);
             this.segPropNoDamage.Name = "segPropNoDamage";
             this.segPropNoDamage.Size = new System.Drawing.Size(81, 17);
-            this.segPropNoDamage.TabIndex = 9;
+            this.segPropNoDamage.TabIndex = 7;
             this.segPropNoDamage.Text = "No damage";
             this.segPropNoDamage.UseVisualStyleBackColor = true;
             // 
@@ -713,7 +713,7 @@
             this.segPropBlocked.Location = new System.Drawing.Point(178, 52);
             this.segPropBlocked.Name = "segPropBlocked";
             this.segPropBlocked.Size = new System.Drawing.Size(65, 17);
-            this.segPropBlocked.TabIndex = 8;
+            this.segPropBlocked.TabIndex = 6;
             this.segPropBlocked.Text = "Blocked";
             this.segPropBlocked.UseVisualStyleBackColor = true;
             // 
@@ -723,7 +723,7 @@
             this.segFuncLava.Location = new System.Drawing.Point(178, 35);
             this.segFuncLava.Name = "segFuncLava";
             this.segFuncLava.Size = new System.Drawing.Size(50, 17);
-            this.segFuncLava.TabIndex = 7;
+            this.segFuncLava.TabIndex = 5;
             this.segFuncLava.Text = "Lava";
             this.segFuncLava.UseVisualStyleBackColor = true;
             // 
@@ -733,7 +733,7 @@
             this.segPropWater.Location = new System.Drawing.Point(178, 18);
             this.segPropWater.Name = "segPropWater";
             this.segPropWater.Size = new System.Drawing.Size(55, 17);
-            this.segPropWater.TabIndex = 6;
+            this.segPropWater.TabIndex = 4;
             this.segPropWater.Text = "Water";
             this.segPropWater.UseVisualStyleBackColor = true;
             // 
@@ -752,7 +752,7 @@
             this.textBox1.Location = new System.Drawing.Point(63, 73);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(75, 20);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 2;
             // 
             // label2
             // 
@@ -785,7 +785,7 @@
             this.segFuncCtrl.MaxDropDownItems = 12;
             this.segFuncCtrl.Name = "segFuncCtrl";
             this.segFuncCtrl.Size = new System.Drawing.Size(91, 21);
-            this.segFuncCtrl.TabIndex = 2;
+            this.segFuncCtrl.TabIndex = 1;
             // 
             // label1
             // 
@@ -829,11 +829,6 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft)
-                        | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)
-                        | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop)
-                        | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)
-                        | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
             this.Name = "SegmentTool";
             this.Text = "Segments";
             this.groupBox8.ResumeLayout(false);

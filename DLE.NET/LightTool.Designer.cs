@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.showOnlyLights = new System.Windows.Forms.CheckBox();
-            this.animateDynLight = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
             this.dynLightExceptLava = new System.Windows.Forms.RadioButton();
             this.dynLightExceptStatic = new System.Windows.Forms.RadioButton();
             this.dynLightAllTextures = new System.Windows.Forms.RadioButton();
+            this.showOnlyLights = new System.Windows.Forms.CheckBox();
+            this.animateDynLight = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.dynLightValue = new System.Windows.Forms.NumericUpDown();
             this.dynLightBox = new System.Windows.Forms.CheckBox();
@@ -60,8 +61,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.staticRenderDepth = new System.Windows.Forms.TrackBar();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox2.SuspendLayout();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynLightValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dynamicFrameRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dynamicRenderDepth)).BeginInit();
@@ -69,7 +70,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.scaleLightValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.illuminateValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.staticRenderDepth)).BeginInit();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox2
@@ -95,24 +95,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Exploding && blinking lights";
             // 
-            // showOnlyLights
+            // panel1
             // 
-            this.showOnlyLights.AutoSize = true;
-            this.showOnlyLights.Location = new System.Drawing.Point(120, 275);
-            this.showOnlyLights.Name = "showOnlyLights";
-            this.showOnlyLights.Size = new System.Drawing.Size(137, 17);
-            this.showOnlyLights.TabIndex = 18;
-            this.showOnlyLights.Text = "Only show light sources";
-            this.showOnlyLights.UseVisualStyleBackColor = true;
-            // 
-            // animateDynLight
-            // 
-            this.animateDynLight.Location = new System.Drawing.Point(39, 271);
-            this.animateDynLight.Name = "animateDynLight";
-            this.animateDynLight.Size = new System.Drawing.Size(75, 23);
-            this.animateDynLight.TabIndex = 17;
-            this.animateDynLight.Text = "Animate";
-            this.animateDynLight.UseVisualStyleBackColor = true;
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.dynLightExceptLava);
+            this.panel1.Controls.Add(this.dynLightExceptStatic);
+            this.panel1.Controls.Add(this.dynLightAllTextures);
+            this.panel1.Location = new System.Drawing.Point(67, 68);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(162, 82);
+            this.panel1.TabIndex = 19;
             // 
             // label13
             // 
@@ -130,7 +122,7 @@
             this.dynLightExceptLava.Location = new System.Drawing.Point(46, 51);
             this.dynLightExceptLava.Name = "dynLightExceptLava";
             this.dynLightExceptLava.Size = new System.Drawing.Size(103, 17);
-            this.dynLightExceptLava.TabIndex = 15;
+            this.dynLightExceptLava.TabIndex = 12;
             this.dynLightExceptLava.TabStop = true;
             this.dynLightExceptLava.Text = "not to static lava";
             this.dynLightExceptLava.UseVisualStyleBackColor = true;
@@ -141,7 +133,7 @@
             this.dynLightExceptStatic.Location = new System.Drawing.Point(46, 28);
             this.dynLightExceptStatic.Name = "dynLightExceptStatic";
             this.dynLightExceptStatic.Size = new System.Drawing.Size(107, 17);
-            this.dynLightExceptStatic.TabIndex = 14;
+            this.dynLightExceptStatic.TabIndex = 11;
             this.dynLightExceptStatic.TabStop = true;
             this.dynLightExceptStatic.Text = "not to static lights";
             this.dynLightExceptStatic.UseVisualStyleBackColor = true;
@@ -152,10 +144,29 @@
             this.dynLightAllTextures.Location = new System.Drawing.Point(46, 5);
             this.dynLightAllTextures.Name = "dynLightAllTextures";
             this.dynLightAllTextures.Size = new System.Drawing.Size(87, 17);
-            this.dynLightAllTextures.TabIndex = 13;
+            this.dynLightAllTextures.TabIndex = 10;
             this.dynLightAllTextures.TabStop = true;
             this.dynLightAllTextures.Text = "to all textures";
             this.dynLightAllTextures.UseVisualStyleBackColor = true;
+            // 
+            // showOnlyLights
+            // 
+            this.showOnlyLights.AutoSize = true;
+            this.showOnlyLights.Location = new System.Drawing.Point(120, 275);
+            this.showOnlyLights.Name = "showOnlyLights";
+            this.showOnlyLights.Size = new System.Drawing.Size(137, 17);
+            this.showOnlyLights.TabIndex = 16;
+            this.showOnlyLights.Text = "Only show light sources";
+            this.showOnlyLights.UseVisualStyleBackColor = true;
+            // 
+            // animateDynLight
+            // 
+            this.animateDynLight.Location = new System.Drawing.Point(39, 271);
+            this.animateDynLight.Name = "animateDynLight";
+            this.animateDynLight.Size = new System.Drawing.Size(75, 23);
+            this.animateDynLight.TabIndex = 15;
+            this.animateDynLight.Text = "Animate";
+            this.animateDynLight.UseVisualStyleBackColor = true;
             // 
             // label12
             // 
@@ -171,7 +182,7 @@
             this.dynLightValue.Location = new System.Drawing.Point(214, 29);
             this.dynLightValue.Name = "dynLightValue";
             this.dynLightValue.Size = new System.Drawing.Size(54, 20);
-            this.dynLightValue.TabIndex = 11;
+            this.dynLightValue.TabIndex = 9;
             this.dynLightValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.dynLightValue.Value = new decimal(new int[] {
             50,
@@ -186,7 +197,7 @@
             this.dynLightBox.Name = "dynLightBox";
             this.dynLightBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.dynLightBox.Size = new System.Drawing.Size(184, 17);
-            this.dynLightBox.TabIndex = 11;
+            this.dynLightBox.TabIndex = 8;
             this.dynLightBox.Text = "Compute exploding/blinking lights";
             this.dynLightBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.dynLightBox.UseVisualStyleBackColor = true;
@@ -231,7 +242,7 @@
             this.dynamicFrameRate.Minimum = 10;
             this.dynamicFrameRate.Name = "dynamicFrameRate";
             this.dynamicFrameRate.Size = new System.Drawing.Size(166, 31);
-            this.dynamicFrameRate.TabIndex = 4;
+            this.dynamicFrameRate.TabIndex = 14;
             this.dynamicFrameRate.TickFrequency = 10;
             this.dynamicFrameRate.Value = 100;
             // 
@@ -272,7 +283,7 @@
             this.dynamicRenderDepth.Minimum = 1;
             this.dynamicRenderDepth.Name = "dynamicRenderDepth";
             this.dynamicRenderDepth.Size = new System.Drawing.Size(166, 31);
-            this.dynamicRenderDepth.TabIndex = 0;
+            this.dynamicRenderDepth.TabIndex = 13;
             this.dynamicRenderDepth.Value = 1;
             // 
             // groupBox1
@@ -322,7 +333,7 @@
             this.createSideLightsBox.Name = "createSideLightsBox";
             this.createSideLightsBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.createSideLightsBox.Size = new System.Drawing.Size(169, 17);
-            this.createSideLightsBox.TabIndex = 10;
+            this.createSideLightsBox.TabIndex = 6;
             this.createSideLightsBox.Text = "Create side lights from textures";
             this.createSideLightsBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.createSideLightsBox.UseVisualStyleBackColor = true;
@@ -334,7 +345,7 @@
             this.dynSegLightLightBox.Name = "dynSegLightLightBox";
             this.dynSegLightLightBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.dynSegLightLightBox.Size = new System.Drawing.Size(175, 17);
-            this.dynSegLightLightBox.TabIndex = 9;
+            this.dynSegLightLightBox.TabIndex = 5;
             this.dynSegLightLightBox.Text = "Compute dynamic segment light";
             this.dynSegLightLightBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.dynSegLightLightBox.UseVisualStyleBackColor = true;
@@ -346,7 +357,7 @@
             this.avgCornerLightBox.Name = "avgCornerLightBox";
             this.avgCornerLightBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.avgCornerLightBox.Size = new System.Drawing.Size(165, 17);
-            this.avgCornerLightBox.TabIndex = 8;
+            this.avgCornerLightBox.TabIndex = 4;
             this.avgCornerLightBox.Text = "Compute average corner light";
             this.avgCornerLightBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.avgCornerLightBox.UseVisualStyleBackColor = true;
@@ -356,7 +367,7 @@
             this.scaleLightValue.Location = new System.Drawing.Point(214, 51);
             this.scaleLightValue.Name = "scaleLightValue";
             this.scaleLightValue.Size = new System.Drawing.Size(54, 20);
-            this.scaleLightValue.TabIndex = 7;
+            this.scaleLightValue.TabIndex = 3;
             this.scaleLightValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.scaleLightValue.Value = new decimal(new int[] {
             50,
@@ -369,7 +380,7 @@
             this.illuminateValue.Location = new System.Drawing.Point(214, 26);
             this.illuminateValue.Name = "illuminateValue";
             this.illuminateValue.Size = new System.Drawing.Size(54, 20);
-            this.illuminateValue.TabIndex = 6;
+            this.illuminateValue.TabIndex = 1;
             this.illuminateValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.illuminateValue.Value = new decimal(new int[] {
             50,
@@ -384,7 +395,7 @@
             this.scaleLightBox.Name = "scaleLightBox";
             this.scaleLightBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.scaleLightBox.Size = new System.Drawing.Size(139, 17);
-            this.scaleLightBox.TabIndex = 5;
+            this.scaleLightBox.TabIndex = 2;
             this.scaleLightBox.Text = "(Scale light (0% to 200%";
             this.scaleLightBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.scaleLightBox.UseVisualStyleBackColor = true;
@@ -396,7 +407,7 @@
             this.illuminateBox.Name = "illuminateBox";
             this.illuminateBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.illuminateBox.Size = new System.Drawing.Size(134, 17);
-            this.illuminateBox.TabIndex = 4;
+            this.illuminateBox.TabIndex = 0;
             this.illuminateBox.Text = "(Illuminate (0% to 200%";
             this.illuminateBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.illuminateBox.UseVisualStyleBackColor = true;
@@ -438,19 +449,8 @@
             this.staticRenderDepth.Minimum = 1;
             this.staticRenderDepth.Name = "staticRenderDepth";
             this.staticRenderDepth.Size = new System.Drawing.Size(166, 31);
-            this.staticRenderDepth.TabIndex = 0;
+            this.staticRenderDepth.TabIndex = 7;
             this.staticRenderDepth.Value = 1;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label13);
-            this.panel1.Controls.Add(this.dynLightExceptLava);
-            this.panel1.Controls.Add(this.dynLightExceptStatic);
-            this.panel1.Controls.Add(this.dynLightAllTextures);
-            this.panel1.Location = new System.Drawing.Point(67, 68);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(162, 82);
-            this.panel1.TabIndex = 19;
             // 
             // LightTool
             // 
@@ -465,6 +465,8 @@
             this.Text = "Lights";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynLightValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dynamicFrameRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dynamicRenderDepth)).EndInit();
@@ -473,8 +475,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.scaleLightValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.illuminateValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.staticRenderDepth)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }

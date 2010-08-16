@@ -10,10 +10,13 @@ namespace DLE.NET
     {
         private bool m_bSaveLayout = false;
         private DeserializeDockContent m_deserializeDockContent;
+
         private SegmentTool m_segmentTool;
         private LightTool m_lightTool;
         private TextureTool m_textureTool;
         private TriggerTool m_triggerTool;
+        private WallTool m_wallTool;
+
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
 
@@ -32,6 +35,8 @@ namespace DLE.NET
             m_segmentTool.RightToLeftLayout = false;
             m_textureTool = new TextureTool();
             m_textureTool.RightToLeftLayout = false;
+            m_wallTool = new WallTool();
+            m_wallTool.RightToLeftLayout = false;
             m_triggerTool = new TriggerTool();
             m_triggerTool.RightToLeftLayout = false;
             m_lightTool = new LightTool();
@@ -49,9 +54,10 @@ namespace DLE.NET
         {
             m_renderWindow.Show(dockPanel, DockState.Document);
             m_segmentTool.Show(dockPanel, DockState.DockLeft);
-            m_textureTool.Show(m_segmentTool.Pane, null);
-            m_triggerTool.Show(m_segmentTool.Pane, null);
             m_lightTool.Show(m_segmentTool.Pane, null);
+            m_textureTool.Show(m_segmentTool.Pane, null);
+            m_wallTool.Show(m_segmentTool.Pane, null);
+            m_triggerTool.Show(m_segmentTool.Pane, null);
             m_textureList.Show(m_renderWindow.Pane, DockAlignment.Bottom, 200.0f / (float) m_renderWindow.Height);
             //m_textureList.Show(dockPanel, DockState.DockBottom);
         }
