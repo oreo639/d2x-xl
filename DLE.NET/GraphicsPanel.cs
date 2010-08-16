@@ -23,7 +23,7 @@ namespace DLE.NET
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            using (Graphics g = pe.Graphics) ;
+            using (Graphics g = pe.Graphics);
         }
     }
 }
