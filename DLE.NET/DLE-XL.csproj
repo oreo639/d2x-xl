@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F7408C74-AE9D-4421-9348-44C541D4B595}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DLE_XL</RootNamespace>
+    <AssemblyName>DLE-XL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PictureBox">
+      <HintPath>..\..\..\Libraries\PictureBoxCtrl\bin\Release\PictureBox.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Customization\DockHelper.cs" />
+    <Compile Include="RenderWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RenderWindow.Designer.cs">
+      <DependentUpon>RenderWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextureTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextureTool.Designer.cs">
+      <DependentUpon>TextureTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextureWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextureWindow.Designer.cs">
+      <DependentUpon>TextureWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToolWindow.Designer.cs">
+      <DependentUpon>ToolWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LightTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LightTool.Designer.cs">
+      <DependentUpon>LightTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SegmentTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SegmentTool.Designer.cs">
+      <DependentUpon>SegmentTool.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="LightTool.resx">
+      <DependentUpon>LightTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="RenderWindow.resx">
+      <DependentUpon>RenderWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SegmentTool.resx">
+      <DependentUpon>SegmentTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextureTool.resx">
+      <DependentUpon>TextureTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextureWindow.resx">
+      <DependentUpon>TextureWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolWindow.resx">
+      <DependentUpon>ToolWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\texturetool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\addcube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blockmode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checkmine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cubemode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cubetool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\extendcube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fitview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fullscreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\joinlines.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\joinpoints.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\joinsides.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lighttool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\linemode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mirrorcubes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\movedown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\moveright.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\moveup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\objectmode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\objecttool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\openfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pointmode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preferences.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\redraw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\savefile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sidemode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\splitlines.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\splitpoints.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\splitscreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\splitsides.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\walltool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xrotright.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yrotleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yrotright.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\zoomin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\zoomout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\zrotleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\zrotright.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\moveleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xrotleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\DockPanel\DockPanel\DockPanel.csproj">
+      <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
+      <Name>DockPanel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\vertflip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shrinkhorz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stretchtofit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alignchildren.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alignchildren1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\aligndown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shrinkvert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resetmarked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\horzflip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alignall1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alignup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\resetaligment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\addyndlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\deldynlight.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
