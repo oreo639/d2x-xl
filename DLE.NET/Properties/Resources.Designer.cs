@@ -74,6 +74,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap add_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("add_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap addcube {
             get {
                 object obj = ResourceManager.GetObject("addcube", resourceCulture);
@@ -116,9 +123,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap align_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("align_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap alignall {
             get {
                 object obj = ResourceManager.GetObject("alignall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap alignall_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("alignall_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -158,9 +179,37 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap blockmode_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("blockmode_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap brokenwall_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("brokenwall_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap chainwheel_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("chainwheel_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap checkmine {
             get {
                 object obj = ResourceManager.GetObject("checkmine", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap copy_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("copy_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -189,6 +238,13 @@ namespace DLE.NET.Properties {
         internal static System.Drawing.Bitmap cubetool {
             get {
                 object obj = ResourceManager.GetObject("cubetool", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cut_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("cut_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -235,10 +291,38 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap diagnosis_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("diagnosis_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static byte[] drag {
             get {
                 object obj = ResourceManager.GetObject("drag", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap expand_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("expand_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap expandhorz_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("expandhorz_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap expandvert_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("expandvert_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -266,6 +350,20 @@ namespace DLE.NET.Properties {
         internal static System.Drawing.Bitmap fitview {
             get {
                 object obj = ResourceManager.GetObject("fitview", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap fliphorz_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("fliphorz_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap flipvert_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("flipvert_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -319,6 +417,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap joinlines_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("joinlines_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap joinpoints {
             get {
                 object obj = ResourceManager.GetObject("joinpoints", resourceCulture);
@@ -326,9 +431,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap joinpoints_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("joinpoints_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap joinsides {
             get {
                 object obj = ResourceManager.GetObject("joinsides", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap joinsides_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("joinsides_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -389,9 +508,30 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap lightbulb_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("lightbulb_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap lighttool {
             get {
                 object obj = ResourceManager.GetObject("lighttool", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap lighttool_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("lighttool_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap line_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("line_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -410,9 +550,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap missiontool_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("missiontool_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap movedown {
             get {
                 object obj = ResourceManager.GetObject("movedown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap movedown_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("movedown_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -424,6 +578,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap moveleft_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("moveleft_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap moveright {
             get {
                 object obj = ResourceManager.GetObject("moveright", resourceCulture);
@@ -431,9 +592,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap moveright_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("moveright_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap moveup {
             get {
                 object obj = ResourceManager.GetObject("moveup", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap moveup_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("moveup_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -487,9 +662,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap nozoom_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("nozoom_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap objectmode {
             get {
                 object obj = ResourceManager.GetObject("objectmode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap objects_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("objects_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -501,9 +690,9 @@ namespace DLE.NET.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap openfile {
+        internal static System.Drawing.Bitmap openfile_16x16 {
             get {
-                object obj = ResourceManager.GetObject("openfile", resourceCulture);
+                object obj = ResourceManager.GetObject("openfile_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -529,6 +718,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap paste_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("paste_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static byte[] pencil {
             get {
                 object obj = ResourceManager.GetObject("pencil", resourceCulture);
@@ -547,6 +743,13 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("pofs2", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap point_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("point_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -571,9 +774,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap redo_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("redo_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap redraw {
             get {
                 object obj = ResourceManager.GetObject("redraw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap refresh_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("refresh_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -585,9 +802,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap resetblue_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("resetblue_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap resetmarked {
             get {
                 object obj = ResourceManager.GetObject("resetmarked", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap resetred_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("resetred_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -609,6 +840,41 @@ namespace DLE.NET.Properties {
         internal static System.Drawing.Bitmap savefile {
             get {
                 object obj = ResourceManager.GetObject("savefile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap savefile_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("savefile_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap segment_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("segment_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap segments_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("segments_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap segmenttool_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("segmenttool_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap settings_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("settings_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -641,6 +907,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap sides_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("sides_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap splitlines {
             get {
                 object obj = ResourceManager.GetObject("splitlines", resourceCulture);
@@ -648,9 +921,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap splitlines_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("splitlines_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap splitpoints {
             get {
                 object obj = ResourceManager.GetObject("splitpoints", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap splitpoints_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("splitpoints_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -669,9 +956,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap splitsides_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("splitsides_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap stretchtofit {
             get {
                 object obj = ResourceManager.GetObject("stretchtofit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap subtract_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("subtract_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -718,6 +1019,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap texturetool_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("texturetool_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static byte[] tnames {
             get {
                 object obj = ResourceManager.GetObject("tnames", resourceCulture);
@@ -732,9 +1040,23 @@ namespace DLE.NET.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap vertflip2 {
+        internal static System.Drawing.Bitmap truecolor_16x16 {
             get {
-                object obj = ResourceManager.GetObject("vertflip2", resourceCulture);
+                object obj = ResourceManager.GetObject("truecolor_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap truecolor_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("truecolor_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap undo_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("undo_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -774,9 +1096,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap xrotleft_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("xrotleft_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap xrotright {
             get {
                 object obj = ResourceManager.GetObject("xrotright", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap xrotright_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("xrotright_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -788,9 +1124,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap yrotleft_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("yrotleft_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap yrotright {
             get {
                 object obj = ResourceManager.GetObject("yrotright", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap yrotright_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("yrotright_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -809,6 +1159,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap zoomin_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("zoomin_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static byte[] zoomin1 {
             get {
                 object obj = ResourceManager.GetObject("zoomin1", resourceCulture);
@@ -819,6 +1176,13 @@ namespace DLE.NET.Properties {
         internal static System.Drawing.Bitmap zoomout {
             get {
                 object obj = ResourceManager.GetObject("zoomout", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap zoomout_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("zoomout_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -837,9 +1201,23 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap zrotleft_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("zrotleft_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap zrotright {
             get {
                 object obj = ResourceManager.GetObject("zrotright", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap zrotright_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("zrotright_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

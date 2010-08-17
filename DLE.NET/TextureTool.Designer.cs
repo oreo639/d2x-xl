@@ -112,8 +112,6 @@
             this.dynLightStrobe4 = new System.Windows.Forms.RadioButton();
             this.dynLightOff = new System.Windows.Forms.RadioButton();
             this.tickDisplay = new System.Windows.Forms.Panel();
-            this.delDynLight = new System.Windows.Forms.Button();
-            this.addDynLight = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -137,27 +135,9 @@
             this.rotate0 = new System.Windows.Forms.RadioButton();
             this.texAlignScrollHorz = new System.Windows.Forms.HScrollBar();
             this.texAlignScrollVert = new System.Windows.Forms.VScrollBar();
-            this.texAlignDisplay = new System.Windows.Forms.PictureBox();
             this.rotAlignValue = new System.Windows.Forms.TextBox();
             this.vertAlignValue = new System.Windows.Forms.TextBox();
             this.horzAlignValue = new System.Windows.Forms.TextBox();
-            this.resetAlignment = new System.Windows.Forms.Button();
-            this.resetMarked = new System.Windows.Forms.Button();
-            this.stretchToFit = new System.Windows.Forms.Button();
-            this.alignChildren = new System.Windows.Forms.Button();
-            this.button22 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
-            this.button15 = new System.Windows.Forms.Button();
-            this.button10 = new System.Windows.Forms.Button();
-            this.alignUp = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
-            this.flipHorizontal = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.alignDown = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
-            this.flipVertical = new System.Windows.Forms.Button();
-            this.shrinkVertical = new System.Windows.Forms.Button();
-            this.shrinkHorizontal = new System.Windows.Forms.Button();
             this.texEditGroup = new System.Windows.Forms.GroupBox();
             this.useOvlTexture = new System.Windows.Forms.CheckBox();
             this.useBaseTexture = new System.Windows.Forms.CheckBox();
@@ -183,9 +163,29 @@
             this.cornerLight4 = new System.Windows.Forms.TextBox();
             this.cornerLight3 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.cornerLight2 = new System.Windows.Forms.TextBox();
             this.cornerLight1 = new System.Windows.Forms.TextBox();
+            this.delDynLight = new System.Windows.Forms.Button();
+            this.addDynLight = new System.Windows.Forms.Button();
+            this.texAlignDisplay = new System.Windows.Forms.PictureBox();
+            this.resetAlignment = new System.Windows.Forms.Button();
+            this.resetMarked = new System.Windows.Forms.Button();
+            this.stretchToFit = new System.Windows.Forms.Button();
+            this.alignChildren = new System.Windows.Forms.Button();
+            this.button22 = new System.Windows.Forms.Button();
+            this.button14 = new System.Windows.Forms.Button();
+            this.button15 = new System.Windows.Forms.Button();
+            this.alignRotLeft = new System.Windows.Forms.Button();
+            this.alignUp = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
+            this.flipHorizontal = new System.Windows.Forms.Button();
+            this.alignRotRight = new System.Windows.Forms.Button();
+            this.alignDown = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.flipVertical = new System.Windows.Forms.Button();
+            this.alignExpandVert = new System.Windows.Forms.Button();
+            this.alignExpandHorz = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lightColorGroup.SuspendLayout();
             this.lightEffectGroup.SuspendLayout();
             this.effectDisplayGroup.SuspendLayout();
@@ -226,9 +226,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.secsPerTick)).BeginInit();
             this.texAlignGroup.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.texAlignDisplay)).BeginInit();
             this.texEditGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.texBrightSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.texAlignDisplay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -262,7 +262,7 @@
             // colorIndex
             // 
             this.colorIndex.Enabled = false;
-            this.colorIndex.Location = new System.Drawing.Point(269, 54);
+            this.colorIndex.Location = new System.Drawing.Point(269, 56);
             this.colorIndex.Name = "colorIndex";
             this.colorIndex.Size = new System.Drawing.Size(40, 20);
             this.colorIndex.TabIndex = 6;
@@ -277,11 +277,11 @@
             // 
             // selectRGB
             // 
-            this.selectRGB.Location = new System.Drawing.Point(269, 19);
+            this.selectRGB.Image = global::DLE.NET.Properties.Resources.truecolor_16x16;
+            this.selectRGB.Location = new System.Drawing.Point(269, 15);
             this.selectRGB.Name = "selectRGB";
-            this.selectRGB.Size = new System.Drawing.Size(40, 20);
+            this.selectRGB.Size = new System.Drawing.Size(40, 24);
             this.selectRGB.TabIndex = 85;
-            this.selectRGB.Text = "RGB";
             this.selectRGB.UseVisualStyleBackColor = true;
             // 
             // colorPicker
@@ -1022,26 +1022,6 @@
             this.tickDisplay.Size = new System.Drawing.Size(50, 50);
             this.tickDisplay.TabIndex = 42;
             // 
-            // delDynLight
-            // 
-            this.delDynLight.Image = global::DLE.NET.Properties.Resources.deldynlight;
-            this.delDynLight.Location = new System.Drawing.Point(117, 100);
-            this.delDynLight.Name = "delDynLight";
-            this.delDynLight.Size = new System.Drawing.Size(24, 24);
-            this.delDynLight.TabIndex = 82;
-            this.delDynLight.UseVisualStyleBackColor = true;
-            this.delDynLight.Click += new System.EventHandler(this.delDynLight_Click);
-            // 
-            // addDynLight
-            // 
-            this.addDynLight.Image = global::DLE.NET.Properties.Resources.addyndlight;
-            this.addDynLight.Location = new System.Drawing.Point(31, 100);
-            this.addDynLight.Name = "addDynLight";
-            this.addDynLight.Size = new System.Drawing.Size(24, 24);
-            this.addDynLight.TabIndex = 81;
-            this.addDynLight.UseVisualStyleBackColor = true;
-            this.addDynLight.Click += new System.EventHandler(this.addDynLight_Click);
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
@@ -1172,16 +1152,16 @@
             this.texAlignGroup.Controls.Add(this.button22);
             this.texAlignGroup.Controls.Add(this.button14);
             this.texAlignGroup.Controls.Add(this.button15);
-            this.texAlignGroup.Controls.Add(this.button10);
+            this.texAlignGroup.Controls.Add(this.alignRotLeft);
             this.texAlignGroup.Controls.Add(this.alignUp);
             this.texAlignGroup.Controls.Add(this.button12);
             this.texAlignGroup.Controls.Add(this.flipHorizontal);
-            this.texAlignGroup.Controls.Add(this.button6);
+            this.texAlignGroup.Controls.Add(this.alignRotRight);
             this.texAlignGroup.Controls.Add(this.alignDown);
             this.texAlignGroup.Controls.Add(this.button8);
             this.texAlignGroup.Controls.Add(this.flipVertical);
-            this.texAlignGroup.Controls.Add(this.shrinkVertical);
-            this.texAlignGroup.Controls.Add(this.shrinkHorizontal);
+            this.texAlignGroup.Controls.Add(this.alignExpandVert);
+            this.texAlignGroup.Controls.Add(this.alignExpandHorz);
             this.texAlignGroup.Location = new System.Drawing.Point(11, 240);
             this.texAlignGroup.Name = "texAlignGroup";
             this.texAlignGroup.Size = new System.Drawing.Size(321, 228);
@@ -1299,16 +1279,6 @@
             this.texAlignScrollVert.Size = new System.Drawing.Size(16, 160);
             this.texAlignScrollVert.TabIndex = 31;
             // 
-            // texAlignDisplay
-            // 
-            this.texAlignDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.texAlignDisplay.Location = new System.Drawing.Point(10, 19);
-            this.texAlignDisplay.Name = "texAlignDisplay";
-            this.texAlignDisplay.Size = new System.Drawing.Size(160, 160);
-            this.texAlignDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.texAlignDisplay.TabIndex = 30;
-            this.texAlignDisplay.TabStop = false;
-            // 
             // rotAlignValue
             // 
             this.rotAlignValue.Location = new System.Drawing.Point(196, 90);
@@ -1332,160 +1302,6 @@
             this.horzAlignValue.Size = new System.Drawing.Size(46, 20);
             this.horzAlignValue.TabIndex = 21;
             this.horzAlignValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // resetAlignment
-            // 
-            this.resetAlignment.BackColor = System.Drawing.Color.Transparent;
-            this.resetAlignment.Image = global::DLE.NET.Properties.Resources.resetaligment;
-            this.resetAlignment.Location = new System.Drawing.Point(196, 111);
-            this.resetAlignment.Name = "resetAlignment";
-            this.resetAlignment.Size = new System.Drawing.Size(24, 24);
-            this.resetAlignment.TabIndex = 32;
-            this.resetAlignment.UseVisualStyleBackColor = false;
-            // 
-            // resetMarked
-            // 
-            this.resetMarked.Image = global::DLE.NET.Properties.Resources.resetmarked;
-            this.resetMarked.Location = new System.Drawing.Point(219, 111);
-            this.resetMarked.Name = "resetMarked";
-            this.resetMarked.Size = new System.Drawing.Size(24, 24);
-            this.resetMarked.TabIndex = 33;
-            this.resetMarked.UseVisualStyleBackColor = true;
-            // 
-            // stretchToFit
-            // 
-            this.stretchToFit.Image = global::DLE.NET.Properties.Resources.stretchtofit;
-            this.stretchToFit.Location = new System.Drawing.Point(242, 111);
-            this.stretchToFit.Name = "stretchToFit";
-            this.stretchToFit.Size = new System.Drawing.Size(24, 24);
-            this.stretchToFit.TabIndex = 34;
-            this.stretchToFit.UseVisualStyleBackColor = true;
-            // 
-            // alignChildren
-            // 
-            this.alignChildren.Image = ((System.Drawing.Image)(resources.GetObject("alignChildren.Image")));
-            this.alignChildren.Location = new System.Drawing.Point(265, 111);
-            this.alignChildren.Name = "alignChildren";
-            this.alignChildren.Size = new System.Drawing.Size(24, 24);
-            this.alignChildren.TabIndex = 35;
-            this.alignChildren.UseVisualStyleBackColor = true;
-            // 
-            // button22
-            // 
-            this.button22.Image = global::DLE.NET.Properties.Resources.alignall;
-            this.button22.Location = new System.Drawing.Point(288, 111);
-            this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(24, 24);
-            this.button22.TabIndex = 36;
-            this.button22.UseVisualStyleBackColor = true;
-            // 
-            // button14
-            // 
-            this.button14.Image = global::DLE.NET.Properties.Resources.zoomin;
-            this.button14.Location = new System.Drawing.Point(196, 19);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(24, 24);
-            this.button14.TabIndex = 17;
-            this.button14.UseVisualStyleBackColor = true;
-            // 
-            // button15
-            // 
-            this.button15.Image = global::DLE.NET.Properties.Resources.zoomout;
-            this.button15.Location = new System.Drawing.Point(219, 19);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(24, 24);
-            this.button15.TabIndex = 18;
-            this.button15.UseVisualStyleBackColor = true;
-            // 
-            // button10
-            // 
-            this.button10.Image = global::DLE.NET.Properties.Resources.zrotright;
-            this.button10.Location = new System.Drawing.Point(242, 88);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(24, 24);
-            this.button10.TabIndex = 30;
-            this.button10.UseVisualStyleBackColor = true;
-            // 
-            // alignUp
-            // 
-            this.alignUp.Image = global::DLE.NET.Properties.Resources.alignup;
-            this.alignUp.Location = new System.Drawing.Point(242, 65);
-            this.alignUp.Name = "alignUp";
-            this.alignUp.Size = new System.Drawing.Size(24, 24);
-            this.alignUp.TabIndex = 26;
-            this.alignUp.UseVisualStyleBackColor = true;
-            // 
-            // button12
-            // 
-            this.button12.Image = global::DLE.NET.Properties.Resources.moveleft;
-            this.button12.Location = new System.Drawing.Point(242, 42);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(24, 24);
-            this.button12.TabIndex = 22;
-            this.button12.UseVisualStyleBackColor = true;
-            // 
-            // flipHorizontal
-            // 
-            this.flipHorizontal.Image = global::DLE.NET.Properties.Resources.horzflip;
-            this.flipHorizontal.Location = new System.Drawing.Point(242, 19);
-            this.flipHorizontal.Name = "flipHorizontal";
-            this.flipHorizontal.Size = new System.Drawing.Size(24, 24);
-            this.flipHorizontal.TabIndex = 19;
-            this.flipHorizontal.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            this.button6.Image = global::DLE.NET.Properties.Resources.zrotleft;
-            this.button6.Location = new System.Drawing.Point(265, 88);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(24, 24);
-            this.button6.TabIndex = 31;
-            this.button6.UseVisualStyleBackColor = true;
-            // 
-            // alignDown
-            // 
-            this.alignDown.Image = global::DLE.NET.Properties.Resources.aligndown;
-            this.alignDown.Location = new System.Drawing.Point(265, 65);
-            this.alignDown.Name = "alignDown";
-            this.alignDown.Size = new System.Drawing.Size(24, 24);
-            this.alignDown.TabIndex = 27;
-            this.alignDown.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            this.button8.Image = global::DLE.NET.Properties.Resources.moveright;
-            this.button8.Location = new System.Drawing.Point(265, 42);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(24, 24);
-            this.button8.TabIndex = 23;
-            this.button8.UseVisualStyleBackColor = true;
-            // 
-            // flipVertical
-            // 
-            this.flipVertical.Image = global::DLE.NET.Properties.Resources.vertflip2;
-            this.flipVertical.Location = new System.Drawing.Point(265, 19);
-            this.flipVertical.Name = "flipVertical";
-            this.flipVertical.Size = new System.Drawing.Size(24, 24);
-            this.flipVertical.TabIndex = 20;
-            this.flipVertical.UseVisualStyleBackColor = true;
-            // 
-            // shrinkVertical
-            // 
-            this.shrinkVertical.Image = global::DLE.NET.Properties.Resources.shrinkvert;
-            this.shrinkVertical.Location = new System.Drawing.Point(288, 65);
-            this.shrinkVertical.Name = "shrinkVertical";
-            this.shrinkVertical.Size = new System.Drawing.Size(24, 24);
-            this.shrinkVertical.TabIndex = 28;
-            this.shrinkVertical.UseVisualStyleBackColor = true;
-            // 
-            // shrinkHorizontal
-            // 
-            this.shrinkHorizontal.Image = global::DLE.NET.Properties.Resources.shrinkhorz;
-            this.shrinkHorizontal.Location = new System.Drawing.Point(288, 42);
-            this.shrinkHorizontal.Name = "shrinkHorizontal";
-            this.shrinkHorizontal.Size = new System.Drawing.Size(24, 24);
-            this.shrinkHorizontal.TabIndex = 24;
-            this.shrinkHorizontal.UseVisualStyleBackColor = true;
             // 
             // texEditGroup
             // 
@@ -1544,21 +1360,21 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(290, 39);
+            this.label7.Location = new System.Drawing.Point(284, 39);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(25, 13);
+            this.label7.Size = new System.Drawing.Size(33, 13);
             this.label7.TabIndex = 24;
-            this.label7.Text = "200";
+            this.label7.Text = "200%";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(296, 166);
+            this.label6.Location = new System.Drawing.Point(290, 170);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(13, 13);
+            this.label6.Size = new System.Drawing.Size(21, 13);
             this.label6.TabIndex = 23;
-            this.label6.Text = "1";
+            this.label6.Text = "0%";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label10
@@ -1744,15 +1560,6 @@
             this.label1.Text = "Light:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox1.Location = new System.Drawing.Point(38, 45);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(90, 90);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
             // cornerLight2
             // 
             this.cornerLight2.Location = new System.Drawing.Point(84, 19);
@@ -1768,6 +1575,199 @@
             this.cornerLight1.Size = new System.Drawing.Size(44, 20);
             this.cornerLight1.TabIndex = 0;
             this.cornerLight1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // delDynLight
+            // 
+            this.delDynLight.Image = global::DLE.NET.Properties.Resources.subtract_16x16;
+            this.delDynLight.Location = new System.Drawing.Point(117, 100);
+            this.delDynLight.Name = "delDynLight";
+            this.delDynLight.Size = new System.Drawing.Size(24, 24);
+            this.delDynLight.TabIndex = 82;
+            this.delDynLight.UseVisualStyleBackColor = true;
+            this.delDynLight.Click += new System.EventHandler(this.delDynLight_Click);
+            // 
+            // addDynLight
+            // 
+            this.addDynLight.Image = global::DLE.NET.Properties.Resources.add_16x16;
+            this.addDynLight.Location = new System.Drawing.Point(31, 100);
+            this.addDynLight.Name = "addDynLight";
+            this.addDynLight.Size = new System.Drawing.Size(24, 24);
+            this.addDynLight.TabIndex = 81;
+            this.addDynLight.UseVisualStyleBackColor = true;
+            this.addDynLight.Click += new System.EventHandler(this.addDynLight_Click);
+            // 
+            // texAlignDisplay
+            // 
+            this.texAlignDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.texAlignDisplay.Location = new System.Drawing.Point(10, 19);
+            this.texAlignDisplay.Name = "texAlignDisplay";
+            this.texAlignDisplay.Size = new System.Drawing.Size(160, 160);
+            this.texAlignDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.texAlignDisplay.TabIndex = 30;
+            this.texAlignDisplay.TabStop = false;
+            // 
+            // resetAlignment
+            // 
+            this.resetAlignment.BackColor = System.Drawing.Color.Transparent;
+            this.resetAlignment.Image = global::DLE.NET.Properties.Resources.resetred_16x16;
+            this.resetAlignment.Location = new System.Drawing.Point(196, 111);
+            this.resetAlignment.Name = "resetAlignment";
+            this.resetAlignment.Size = new System.Drawing.Size(24, 24);
+            this.resetAlignment.TabIndex = 32;
+            this.resetAlignment.UseVisualStyleBackColor = false;
+            // 
+            // resetMarked
+            // 
+            this.resetMarked.Image = global::DLE.NET.Properties.Resources.resetblue_16x16;
+            this.resetMarked.Location = new System.Drawing.Point(219, 111);
+            this.resetMarked.Name = "resetMarked";
+            this.resetMarked.Size = new System.Drawing.Size(24, 24);
+            this.resetMarked.TabIndex = 33;
+            this.resetMarked.UseVisualStyleBackColor = true;
+            // 
+            // stretchToFit
+            // 
+            this.stretchToFit.Image = global::DLE.NET.Properties.Resources.expand_16x16;
+            this.stretchToFit.Location = new System.Drawing.Point(242, 111);
+            this.stretchToFit.Name = "stretchToFit";
+            this.stretchToFit.Size = new System.Drawing.Size(24, 24);
+            this.stretchToFit.TabIndex = 34;
+            this.stretchToFit.UseVisualStyleBackColor = true;
+            // 
+            // alignChildren
+            // 
+            this.alignChildren.Image = global::DLE.NET.Properties.Resources.align_16x16;
+            this.alignChildren.Location = new System.Drawing.Point(265, 111);
+            this.alignChildren.Name = "alignChildren";
+            this.alignChildren.Size = new System.Drawing.Size(24, 24);
+            this.alignChildren.TabIndex = 35;
+            this.alignChildren.UseVisualStyleBackColor = true;
+            // 
+            // button22
+            // 
+            this.button22.Image = global::DLE.NET.Properties.Resources.alignall_16x16;
+            this.button22.Location = new System.Drawing.Point(288, 111);
+            this.button22.Name = "button22";
+            this.button22.Size = new System.Drawing.Size(24, 24);
+            this.button22.TabIndex = 36;
+            this.button22.UseVisualStyleBackColor = true;
+            // 
+            // button14
+            // 
+            this.button14.Image = global::DLE.NET.Properties.Resources.zoomin_16x16;
+            this.button14.Location = new System.Drawing.Point(196, 19);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(24, 24);
+            this.button14.TabIndex = 17;
+            this.button14.UseVisualStyleBackColor = true;
+            // 
+            // button15
+            // 
+            this.button15.Image = global::DLE.NET.Properties.Resources.zoomout_16x16;
+            this.button15.Location = new System.Drawing.Point(219, 19);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(24, 24);
+            this.button15.TabIndex = 18;
+            this.button15.UseVisualStyleBackColor = true;
+            // 
+            // alignRotLeft
+            // 
+            this.alignRotLeft.Image = global::DLE.NET.Properties.Resources.yrotleft_16x16;
+            this.alignRotLeft.Location = new System.Drawing.Point(242, 88);
+            this.alignRotLeft.Name = "alignRotLeft";
+            this.alignRotLeft.Size = new System.Drawing.Size(24, 24);
+            this.alignRotLeft.TabIndex = 30;
+            this.alignRotLeft.UseVisualStyleBackColor = true;
+            // 
+            // alignUp
+            // 
+            this.alignUp.Image = global::DLE.NET.Properties.Resources.moveup_16x16;
+            this.alignUp.Location = new System.Drawing.Point(242, 65);
+            this.alignUp.Name = "alignUp";
+            this.alignUp.Size = new System.Drawing.Size(24, 24);
+            this.alignUp.TabIndex = 26;
+            this.alignUp.UseVisualStyleBackColor = true;
+            // 
+            // button12
+            // 
+            this.button12.Image = global::DLE.NET.Properties.Resources.moveleft_16x16;
+            this.button12.Location = new System.Drawing.Point(242, 42);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(24, 24);
+            this.button12.TabIndex = 22;
+            this.button12.UseVisualStyleBackColor = true;
+            // 
+            // flipHorizontal
+            // 
+            this.flipHorizontal.Image = global::DLE.NET.Properties.Resources.fliphorz_16x16;
+            this.flipHorizontal.Location = new System.Drawing.Point(242, 19);
+            this.flipHorizontal.Name = "flipHorizontal";
+            this.flipHorizontal.Size = new System.Drawing.Size(24, 24);
+            this.flipHorizontal.TabIndex = 19;
+            this.flipHorizontal.UseVisualStyleBackColor = true;
+            // 
+            // alignRotRight
+            // 
+            this.alignRotRight.Image = global::DLE.NET.Properties.Resources.yrotright_16x16;
+            this.alignRotRight.Location = new System.Drawing.Point(265, 88);
+            this.alignRotRight.Name = "alignRotRight";
+            this.alignRotRight.Size = new System.Drawing.Size(24, 24);
+            this.alignRotRight.TabIndex = 31;
+            this.alignRotRight.UseVisualStyleBackColor = true;
+            // 
+            // alignDown
+            // 
+            this.alignDown.Image = global::DLE.NET.Properties.Resources.movedown_16x16;
+            this.alignDown.Location = new System.Drawing.Point(265, 65);
+            this.alignDown.Name = "alignDown";
+            this.alignDown.Size = new System.Drawing.Size(24, 24);
+            this.alignDown.TabIndex = 27;
+            this.alignDown.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            this.button8.Image = global::DLE.NET.Properties.Resources.moveright_16x16;
+            this.button8.Location = new System.Drawing.Point(265, 42);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(24, 24);
+            this.button8.TabIndex = 23;
+            this.button8.UseVisualStyleBackColor = true;
+            // 
+            // flipVertical
+            // 
+            this.flipVertical.Image = global::DLE.NET.Properties.Resources.flipvert_16x16;
+            this.flipVertical.Location = new System.Drawing.Point(265, 19);
+            this.flipVertical.Name = "flipVertical";
+            this.flipVertical.Size = new System.Drawing.Size(24, 24);
+            this.flipVertical.TabIndex = 20;
+            this.flipVertical.UseVisualStyleBackColor = true;
+            // 
+            // alignExpandVert
+            // 
+            this.alignExpandVert.Image = global::DLE.NET.Properties.Resources.expandvert_16x16;
+            this.alignExpandVert.Location = new System.Drawing.Point(288, 65);
+            this.alignExpandVert.Name = "alignExpandVert";
+            this.alignExpandVert.Size = new System.Drawing.Size(24, 24);
+            this.alignExpandVert.TabIndex = 28;
+            this.alignExpandVert.UseVisualStyleBackColor = true;
+            // 
+            // alignExpandHorz
+            // 
+            this.alignExpandHorz.Image = global::DLE.NET.Properties.Resources.expandhorz_16x16;
+            this.alignExpandHorz.Location = new System.Drawing.Point(288, 42);
+            this.alignExpandHorz.Name = "alignExpandHorz";
+            this.alignExpandHorz.Size = new System.Drawing.Size(24, 24);
+            this.alignExpandHorz.TabIndex = 24;
+            this.alignExpandHorz.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox1.Location = new System.Drawing.Point(38, 45);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(90, 90);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
             // 
             // TextureTool
             // 
@@ -1861,10 +1861,10 @@
             this.texAlignGroup.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.texAlignDisplay)).EndInit();
             this.texEditGroup.ResumeLayout(false);
             this.texEditGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.texBrightSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.texAlignDisplay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -1909,16 +1909,16 @@
         private System.Windows.Forms.Button button22;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
-        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button alignRotLeft;
         private System.Windows.Forms.Button alignUp;
         private System.Windows.Forms.Button button12;
         private System.Windows.Forms.Button flipHorizontal;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button alignRotRight;
         private System.Windows.Forms.Button alignDown;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button flipVertical;
-        private System.Windows.Forms.Button shrinkVertical;
-        private System.Windows.Forms.Button shrinkHorizontal;
+        private System.Windows.Forms.Button alignExpandVert;
+        private System.Windows.Forms.Button alignExpandHorz;
         private System.Windows.Forms.TextBox rotAlignValue;
         private System.Windows.Forms.TextBox vertAlignValue;
         private System.Windows.Forms.VScrollBar texAlignScrollVert;

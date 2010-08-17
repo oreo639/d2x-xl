@@ -118,340 +118,502 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="linemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\linemode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="moveleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\moveleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="resetmarked" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\resetmarked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sidemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sidemode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="extendcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\extendcube.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="shrinkvert" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\shrinkvert.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="aligndown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\aligndown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="stretchtofit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\stretchtofit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="xrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="addcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\addcube.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="redraw" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\redraw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="xrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="joinlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\joinlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="blockmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\blockmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="alignchildren" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alignchildren.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cubemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cubemode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="alignup" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alignup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="yrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\yrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="texturetool" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\texturetool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="splitsides" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\splitsides.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="objectmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\objectmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="moveright" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\moveright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="vertflip2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\vertflip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zoomout" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zoomout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="splitpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\splitpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zoomin" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zoomin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="walltool" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\walltool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="addyndlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\addyndlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cubetool" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cubetool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="shrinkhorz" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\shrinkhorz.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fitview" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fitview.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="splitscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\splitscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="moveup" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\moveup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="alignall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alignall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="joinsides" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\joinsides.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="preferences" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\preferences.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="horzflip" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\horzflip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="mirrorcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mirrorcubes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="openfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\openfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="joinpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\joinpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="splitlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\splitlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="resetaligment" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\resetaligment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="savefile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\savefile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fullscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fullscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="lighttool" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lighttool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pointmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pointmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="checkmine" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\checkmine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="objecttool" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\objecttool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="movedown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\movedown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="deldynlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\deldynlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="alien1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alien1.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="alien11" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alien1.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="alien2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alien2.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="alien21" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alien2.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\arrow.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="credits" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\credits.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="credits1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\credits.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="d12d2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\d12d2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="descent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\descent.clr;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="descent1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\descent.lgt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="palette" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\palette.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="descent2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\descent2.clr;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="descent21" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\descent2.lgt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="drag" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\drag.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="fire" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fire.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="fire1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fire.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupa" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\groupa.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="groupa1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\groupa.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ice" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ice.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ice1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ice.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="level1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\level1.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="level1b" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\level1b.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="level1c" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\level1c.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="level1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\level1d.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="level1e" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\level1e.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="level1f" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\level1f.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="light" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\light.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="light2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\light2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new1.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new2.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new3.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new_save.mn2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new_save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new_save.msn;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new_save2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new_save.rdl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="new_save3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new_save.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="palette" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\palette.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="palette1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\palette.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="pan" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pan.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pencil.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="pofs1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pofs1.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="pofs2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pofs2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="rc_data1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rc_data1.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="robot" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\robot.hxm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="rotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rotate.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ship" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ship.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="temp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\temp.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="temp2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\temp2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="temp21" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\temp2.ham;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="texture" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\texture.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="texture2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\texture2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="tnames" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tnames.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="tnames2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tnames2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="water" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\water.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="deldynlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\deldynlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="water1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\water.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="robot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\robot.hxm;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="xhairs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xhairs.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="new_save3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new_save.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="zoom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zoom.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="level1e" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\level1e.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="moveup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moveup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_default1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\default.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="moveright" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moveright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tnames" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tnames.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="aligndown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\aligndown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="movedown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\movedown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="zoomin1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoomin.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="zrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mirrorcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mirrorcubes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="temp2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\temp2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="new_save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new_save.msn;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="alignchildren" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alignchildren.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drag.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sidemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sidemode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="level1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\level1d.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="splitsides" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitsides.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zoomin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zoomin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="new1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new1.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="blockmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\blockmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="joinlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="credits" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\credits.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="level1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\level1.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="linemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\linemode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="new3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new3.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="redraw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redraw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cubemode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cubemode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="alien21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alien2.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="light2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\light2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="texturetool" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\texturetool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xhairs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xhairs.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="fire1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fire.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="splitscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lighttool" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lighttool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zoom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zoom.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="horzflip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\horzflip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="water1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\water.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="savefile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\savefile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="palette1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\palette.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fullscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fullscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pan.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="descent21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\descent2.lgt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="alignall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alignall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pofs1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pofs1.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="splitlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="preferences" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\preferences.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\yrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="shrinkhorz" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shrinkhorz.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zoomout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zoomout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="zoomout1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoomout.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="resetaligment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\resetaligment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\yrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="joinpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="groupa1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\groupa.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cubetool" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cubetool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="groupa" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\groupa.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="addcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\addcube.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="texture" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\texture.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="objecttool" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objecttool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="water" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\water.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="new_save2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new_save.rdl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="joinsides" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinsides.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="temp21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\temp2.ham;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="zrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="resetmarked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\resetmarked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="new2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new2.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="rc_data1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rc_data1.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="walltool" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\walltool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="level1c" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\level1c.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="new_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new_save.mn2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="shrinkvert" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shrinkvert.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="alien1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alien1.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="alignup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alignup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_default" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\default.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="_default1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\default.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ship" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ship.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="credits1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\credits.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pofs2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pofs2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="objectmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objectmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="moveleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moveleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="level1f" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\level1f.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pointmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pointmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="rotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rotate.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="alien11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alien1.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ice1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ice.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="d12d2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\d12d2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="extendcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\extendcube.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fitview" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fitview.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pencil.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ice.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="light" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\light.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="texture2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\texture2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="addyndlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\addyndlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="descent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\descent.clr;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="splitpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="stretchtofit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stretchtofit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fire" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fire.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="descent1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\descent.lgt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="alien2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alien2.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="checkmine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\checkmine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="level1b" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\level1b.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="add_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\add-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blockmode_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\blockmode-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="brokenwall_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\brokenwall-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="chainwheel_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\chainwheel-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cut_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cut-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="diagnosis_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\diagnosis-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="expandhorz_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expandhorz-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="expandvert_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expandvert-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="expand_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lighttool_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lighttool-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="movedown_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\movedown-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="moveleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moveleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="moveright_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moveright-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="moveup_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moveup-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="objects_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\objects-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="openfile_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\openfile-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="paste_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\paste-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redo_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redo-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="savefile_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\savefile-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="segments_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\segments-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="segmenttool_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\segmenttool-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="settings_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\settings-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="texturetool_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\texturetool-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="undo_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\undo-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xrotleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xrotleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xrotright_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xrotright-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yrotleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\yrotleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yrotright_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\yrotright-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zoomin_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zoomin-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zoomout_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zoomout-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zrotleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zrotleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="zrotright_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zrotright-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fliphorz_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fliphorz-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flipvert_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\flipvert-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lightbulb_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lightbulb-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nozoom_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nozoom-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="point_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\point-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="segment_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\segment-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sides_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sides-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="alignall_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alignall-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="align_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\align-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="copy_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\copy-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="joinlines_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinlines-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="joinpoints_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinpoints-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="joinsides_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinsides-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="line_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\line-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="missiontool_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\missiontool-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="resetblue_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\resetblue-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="resetred_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\resetred-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="splitlines_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitlines-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="splitpoints_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitpoints-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="splitsides_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitsides-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="subtract_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\subtract-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="truecolor_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\truecolor-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="truecolor_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\truecolor-32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

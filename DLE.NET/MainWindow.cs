@@ -16,6 +16,9 @@ namespace DLE.NET
         private TextureTool m_textureTool;
         private TriggerTool m_triggerTool;
         private WallTool m_wallTool;
+        private ObjectTool m_objectTool;
+        private MissionTool m_missionTool;
+        private PreferencesForm m_prefsForm;
 
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
@@ -41,6 +44,12 @@ namespace DLE.NET
             m_triggerTool.RightToLeftLayout = false;
             m_lightTool = new LightTool();
             m_lightTool.RightToLeftLayout = false;
+            m_prefsForm = new PreferencesForm();
+            m_prefsForm.RightToLeftLayout = false;
+            m_objectTool = new ObjectTool();
+            m_objectTool.RightToLeftLayout = false;
+            m_missionTool = new MissionTool();
+            m_missionTool.RightToLeftLayout = false;
             if (!m_bSaveLayout)
                 Setup();
             //dockPanel.DockRightPortion = (float)m_segmentTool.Width / (float)dockPanel.Width;
@@ -58,6 +67,9 @@ namespace DLE.NET
             m_textureTool.Show(m_segmentTool.Pane, null);
             m_wallTool.Show(m_segmentTool.Pane, null);
             m_triggerTool.Show(m_segmentTool.Pane, null);
+            m_objectTool.Show(m_segmentTool.Pane, null);
+            m_missionTool.Show(m_segmentTool.Pane, null);
+            m_prefsForm.Show(m_segmentTool.Pane, null);
             m_textureList.Show(m_renderWindow.Pane, DockAlignment.Bottom, 200.0f / (float) m_renderWindow.Height);
             //m_textureList.Show(dockPanel, DockState.DockBottom);
         }

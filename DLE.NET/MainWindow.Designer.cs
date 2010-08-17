@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
             WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin1 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
@@ -44,6 +43,7 @@
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolAddMDIChild = new System.Windows.Forms.ToolStripButton();
             this.toolAddTechList = new System.Windows.Forms.ToolStripButton();
@@ -220,22 +220,34 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutDLEXLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.mainStatus = new System.Windows.Forms.StatusStrip();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolBar = new System.Windows.Forms.ToolStrip();
+            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.toolStripSeparator22 = new System.Windows.Forms.ToolStripSeparator();
             this.tbOpenFile = new System.Windows.Forms.ToolStripButton();
             this.tbSaveFile = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tbCutBlock = new System.Windows.Forms.ToolStripButton();
+            this.tbCopyBlock = new System.Windows.Forms.ToolStripButton();
+            this.tbPasteBlock = new System.Windows.Forms.ToolStripButton();
             this.tbCheckMine = new System.Windows.Forms.ToolStripButton();
             this.tbLightTool = new System.Windows.Forms.ToolStripButton();
             this.tbTextureTool = new System.Windows.Forms.ToolStripButton();
             this.tbSegmentTool = new System.Windows.Forms.ToolStripButton();
             this.tbWallTool = new System.Windows.Forms.ToolStripButton();
             this.tbObjectTool = new System.Windows.Forms.ToolStripButton();
+            this.tbMissionTool = new System.Windows.Forms.ToolStripButton();
             this.tbPreferences = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tbZoomIn = new System.Windows.Forms.ToolStripButton();
             this.tbZoomOut = new System.Windows.Forms.ToolStripButton();
             this.tbFitToView = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tbRedraw = new System.Windows.Forms.ToolStripButton();
             this.tbMoveLeft = new System.Windows.Forms.ToolStripButton();
             this.tbMoveRight = new System.Windows.Forms.ToolStripButton();
             this.tbMoveUp = new System.Windows.Forms.ToolStripButton();
@@ -246,29 +258,21 @@
             this.tbXRotDown = new System.Windows.Forms.ToolStripButton();
             this.tbZRotRight = new System.Windows.Forms.ToolStripButton();
             this.tbZRotLeft = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.tbJoinPoints = new System.Windows.Forms.ToolStripButton();
             this.tbSplitPoints = new System.Windows.Forms.ToolStripButton();
             this.tbJoinLines = new System.Windows.Forms.ToolStripButton();
             this.tbSplitLines = new System.Windows.Forms.ToolStripButton();
             this.tbJoinSides = new System.Windows.Forms.ToolStripButton();
             this.tbSplitSides = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.tbAddStandardSeg = new System.Windows.Forms.ToolStripButton();
             this.tbAddExtendSeg = new System.Windows.Forms.ToolStripButton();
             this.tbAddMirrorSeg = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.tbPointMode = new System.Windows.Forms.ToolStripButton();
             this.tbLineMode = new System.Windows.Forms.ToolStripButton();
             this.tbSideMode = new System.Windows.Forms.ToolStripButton();
             this.tbSegmentMode = new System.Windows.Forms.ToolStripButton();
             this.tbObjectMode = new System.Windows.Forms.ToolStripButton();
             this.tbBlockMode = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.tbRedraw = new System.Windows.Forms.ToolStripButton();
-            this.toolBar = new System.Windows.Forms.ToolStrip();
-            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.mainMenu.SuspendLayout();
             this.toolBar.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -1601,450 +1605,44 @@
             this.mainMenu.TabIndex = 3;
             this.mainMenu.Text = "mainMenu";
             // 
-            // statusStrip1
+            // mainStatus
             // 
-            this.statusStrip1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.statusStrip1.Location = new System.Drawing.Point(0, 613);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(948, 22);
-            this.statusStrip1.TabIndex = 27;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // tbOpenFile
-            // 
-            this.tbOpenFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbOpenFile.Image = ((System.Drawing.Image)(resources.GetObject("tbOpenFile.Image")));
-            this.tbOpenFile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbOpenFile.Name = "tbOpenFile";
-            this.tbOpenFile.Size = new System.Drawing.Size(23, 23);
-            this.tbOpenFile.Text = "Load mission";
-            // 
-            // tbSaveFile
-            // 
-            this.tbSaveFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSaveFile.Image = ((System.Drawing.Image)(resources.GetObject("tbSaveFile.Image")));
-            this.tbSaveFile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSaveFile.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSaveFile.Name = "tbSaveFile";
-            this.tbSaveFile.Size = new System.Drawing.Size(23, 23);
-            this.tbSaveFile.Text = "Save level";
+            this.mainStatus.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.mainStatus.Location = new System.Drawing.Point(0, 613);
+            this.mainStatus.Name = "mainStatus";
+            this.mainStatus.Size = new System.Drawing.Size(1114, 22);
+            this.mainStatus.TabIndex = 27;
+            this.mainStatus.Text = "statusStrip1";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 26);
             // 
-            // tbCheckMine
-            // 
-            this.tbCheckMine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbCheckMine.Image = ((System.Drawing.Image)(resources.GetObject("tbCheckMine.Image")));
-            this.tbCheckMine.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbCheckMine.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbCheckMine.Name = "tbCheckMine";
-            this.tbCheckMine.Size = new System.Drawing.Size(23, 23);
-            this.tbCheckMine.Text = "Check level";
-            this.tbCheckMine.ToolTipText = "Run a level check";
-            // 
-            // tbLightTool
-            // 
-            this.tbLightTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbLightTool.Image = ((System.Drawing.Image)(resources.GetObject("tbLightTool.Image")));
-            this.tbLightTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbLightTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbLightTool.Name = "tbLightTool";
-            this.tbLightTool.Size = new System.Drawing.Size(23, 23);
-            this.tbLightTool.Text = "Light tool";
-            this.tbLightTool.ToolTipText = "Open light tool";
-            // 
-            // tbTextureTool
-            // 
-            this.tbTextureTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbTextureTool.Image = ((System.Drawing.Image)(resources.GetObject("tbTextureTool.Image")));
-            this.tbTextureTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbTextureTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbTextureTool.Name = "tbTextureTool";
-            this.tbTextureTool.Size = new System.Drawing.Size(23, 23);
-            this.tbTextureTool.Text = "Texture tool";
-            this.tbTextureTool.ToolTipText = "Open texture tool";
-            // 
-            // tbSegmentTool
-            // 
-            this.tbSegmentTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSegmentTool.Image = ((System.Drawing.Image)(resources.GetObject("tbSegmentTool.Image")));
-            this.tbSegmentTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSegmentTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSegmentTool.Name = "tbSegmentTool";
-            this.tbSegmentTool.Size = new System.Drawing.Size(23, 23);
-            this.tbSegmentTool.Text = "Segment tool";
-            this.tbSegmentTool.ToolTipText = "Open segment tool";
-            // 
-            // tbWallTool
-            // 
-            this.tbWallTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbWallTool.Image = ((System.Drawing.Image)(resources.GetObject("tbWallTool.Image")));
-            this.tbWallTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbWallTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbWallTool.Name = "tbWallTool";
-            this.tbWallTool.Size = new System.Drawing.Size(23, 23);
-            this.tbWallTool.Text = "Wall tool";
-            this.tbWallTool.ToolTipText = "Open wall tool";
-            // 
-            // tbObjectTool
-            // 
-            this.tbObjectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbObjectTool.Image = ((System.Drawing.Image)(resources.GetObject("tbObjectTool.Image")));
-            this.tbObjectTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbObjectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbObjectTool.Name = "tbObjectTool";
-            this.tbObjectTool.Size = new System.Drawing.Size(23, 23);
-            this.tbObjectTool.Text = "Object tool";
-            // 
-            // tbPreferences
-            // 
-            this.tbPreferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbPreferences.Image = ((System.Drawing.Image)(resources.GetObject("tbPreferences.Image")));
-            this.tbPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbPreferences.Name = "tbPreferences";
-            this.tbPreferences.Size = new System.Drawing.Size(23, 23);
-            this.tbPreferences.Text = "Preferences";
-            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 26);
-            // 
-            // tbZoomIn
-            // 
-            this.tbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("tbZoomIn.Image")));
-            this.tbZoomIn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbZoomIn.Name = "tbZoomIn";
-            this.tbZoomIn.Size = new System.Drawing.Size(23, 23);
-            this.tbZoomIn.Text = "Zoom in";
-            // 
-            // tbZoomOut
-            // 
-            this.tbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("tbZoomOut.Image")));
-            this.tbZoomOut.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbZoomOut.Name = "tbZoomOut";
-            this.tbZoomOut.Size = new System.Drawing.Size(23, 23);
-            this.tbZoomOut.Text = "Zoom out";
-            // 
-            // tbFitToView
-            // 
-            this.tbFitToView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbFitToView.Image = ((System.Drawing.Image)(resources.GetObject("tbFitToView.Image")));
-            this.tbFitToView.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbFitToView.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbFitToView.Name = "tbFitToView";
-            this.tbFitToView.Size = new System.Drawing.Size(23, 23);
-            this.tbFitToView.Text = "Fit view to window";
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(6, 26);
             // 
-            // tbMoveLeft
-            // 
-            this.tbMoveLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveLeft.Image = ((System.Drawing.Image)(resources.GetObject("tbMoveLeft.Image")));
-            this.tbMoveLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbMoveLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbMoveLeft.Name = "tbMoveLeft";
-            this.tbMoveLeft.Size = new System.Drawing.Size(23, 23);
-            this.tbMoveLeft.Text = "Move left";
-            // 
-            // tbMoveRight
-            // 
-            this.tbMoveRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveRight.Image = ((System.Drawing.Image)(resources.GetObject("tbMoveRight.Image")));
-            this.tbMoveRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbMoveRight.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbMoveRight.Name = "tbMoveRight";
-            this.tbMoveRight.Size = new System.Drawing.Size(23, 23);
-            this.tbMoveRight.Text = "Move right";
-            // 
-            // tbMoveUp
-            // 
-            this.tbMoveUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveUp.Image = ((System.Drawing.Image)(resources.GetObject("tbMoveUp.Image")));
-            this.tbMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbMoveUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbMoveUp.Name = "tbMoveUp";
-            this.tbMoveUp.Size = new System.Drawing.Size(23, 23);
-            this.tbMoveUp.Text = "Move up";
-            // 
-            // tbMoveDown
-            // 
-            this.tbMoveDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMoveDown.Image = ((System.Drawing.Image)(resources.GetObject("tbMoveDown.Image")));
-            this.tbMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbMoveDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbMoveDown.Name = "tbMoveDown";
-            this.tbMoveDown.Size = new System.Drawing.Size(23, 23);
-            this.tbMoveDown.Text = "Move down";
-            // 
-            // tbYRotLeft
-            // 
-            this.tbYRotLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbYRotLeft.Image = ((System.Drawing.Image)(resources.GetObject("tbYRotLeft.Image")));
-            this.tbYRotLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbYRotLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbYRotLeft.Name = "tbYRotLeft";
-            this.tbYRotLeft.Size = new System.Drawing.Size(23, 23);
-            this.tbYRotLeft.Text = "Rotate left around Y axis";
-            // 
-            // tbYRotRight
-            // 
-            this.tbYRotRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbYRotRight.Image = ((System.Drawing.Image)(resources.GetObject("tbYRotRight.Image")));
-            this.tbYRotRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbYRotRight.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbYRotRight.Name = "tbYRotRight";
-            this.tbYRotRight.Size = new System.Drawing.Size(23, 23);
-            this.tbYRotRight.Text = "Rotate right around Y axis";
-            // 
-            // tbXRotUp
-            // 
-            this.tbXRotUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbXRotUp.Image = ((System.Drawing.Image)(resources.GetObject("tbXRotUp.Image")));
-            this.tbXRotUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbXRotUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbXRotUp.Name = "tbXRotUp";
-            this.tbXRotUp.Size = new System.Drawing.Size(23, 23);
-            this.tbXRotUp.Text = "Rotate up around X axis";
-            // 
-            // tbXRotDown
-            // 
-            this.tbXRotDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbXRotDown.Image = ((System.Drawing.Image)(resources.GetObject("tbXRotDown.Image")));
-            this.tbXRotDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbXRotDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbXRotDown.Name = "tbXRotDown";
-            this.tbXRotDown.Size = new System.Drawing.Size(23, 23);
-            this.tbXRotDown.Text = "Rotate down around X axis";
-            // 
-            // tbZRotRight
-            // 
-            this.tbZRotRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZRotRight.Image = ((System.Drawing.Image)(resources.GetObject("tbZRotRight.Image")));
-            this.tbZRotRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbZRotRight.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbZRotRight.Name = "tbZRotRight";
-            this.tbZRotRight.Size = new System.Drawing.Size(23, 23);
-            this.tbZRotRight.Text = "Rotate right around Z axis";
-            // 
-            // tbZRotLeft
-            // 
-            this.tbZRotLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbZRotLeft.Image = ((System.Drawing.Image)(resources.GetObject("tbZRotLeft.Image")));
-            this.tbZRotLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbZRotLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbZRotLeft.Name = "tbZRotLeft";
-            this.tbZRotLeft.Size = new System.Drawing.Size(23, 23);
-            this.tbZRotLeft.Text = "Rotate left around Z axis";
-            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 26);
-            // 
-            // tbJoinPoints
-            // 
-            this.tbJoinPoints.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbJoinPoints.Image = ((System.Drawing.Image)(resources.GetObject("tbJoinPoints.Image")));
-            this.tbJoinPoints.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbJoinPoints.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbJoinPoints.Name = "tbJoinPoints";
-            this.tbJoinPoints.Size = new System.Drawing.Size(23, 23);
-            this.tbJoinPoints.Text = "Join points";
-            this.tbJoinPoints.ToolTipText = "Join two points";
-            // 
-            // tbSplitPoints
-            // 
-            this.tbSplitPoints.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSplitPoints.Image = ((System.Drawing.Image)(resources.GetObject("tbSplitPoints.Image")));
-            this.tbSplitPoints.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSplitPoints.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSplitPoints.Name = "tbSplitPoints";
-            this.tbSplitPoints.Size = new System.Drawing.Size(23, 23);
-            this.tbSplitPoints.Text = "Split points";
-            this.tbSplitPoints.ToolTipText = "Split two points";
-            // 
-            // tbJoinLines
-            // 
-            this.tbJoinLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbJoinLines.Image = ((System.Drawing.Image)(resources.GetObject("tbJoinLines.Image")));
-            this.tbJoinLines.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbJoinLines.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbJoinLines.Name = "tbJoinLines";
-            this.tbJoinLines.Size = new System.Drawing.Size(23, 23);
-            this.tbJoinLines.Text = "Join lines";
-            this.tbJoinLines.ToolTipText = "Join two lines";
-            // 
-            // tbSplitLines
-            // 
-            this.tbSplitLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSplitLines.Image = ((System.Drawing.Image)(resources.GetObject("tbSplitLines.Image")));
-            this.tbSplitLines.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSplitLines.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSplitLines.Name = "tbSplitLines";
-            this.tbSplitLines.Size = new System.Drawing.Size(23, 23);
-            this.tbSplitLines.Text = "Split lines";
-            this.tbSplitLines.ToolTipText = "Split two lines";
-            // 
-            // tbJoinSides
-            // 
-            this.tbJoinSides.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbJoinSides.Image = ((System.Drawing.Image)(resources.GetObject("tbJoinSides.Image")));
-            this.tbJoinSides.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbJoinSides.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbJoinSides.Name = "tbJoinSides";
-            this.tbJoinSides.Size = new System.Drawing.Size(23, 23);
-            this.tbJoinSides.Text = "Join sides";
-            this.tbJoinSides.ToolTipText = "Join two sides";
-            // 
-            // tbSplitSides
-            // 
-            this.tbSplitSides.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSplitSides.Image = ((System.Drawing.Image)(resources.GetObject("tbSplitSides.Image")));
-            this.tbSplitSides.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSplitSides.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSplitSides.Name = "tbSplitSides";
-            this.tbSplitSides.Size = new System.Drawing.Size(23, 23);
-            this.tbSplitSides.Text = "Split sides";
-            this.tbSplitSides.ToolTipText = "Split two sides";
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 26);
             // 
-            // tbAddStandardSeg
-            // 
-            this.tbAddStandardSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbAddStandardSeg.Image = ((System.Drawing.Image)(resources.GetObject("tbAddStandardSeg.Image")));
-            this.tbAddStandardSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbAddStandardSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbAddStandardSeg.Name = "tbAddStandardSeg";
-            this.tbAddStandardSeg.Size = new System.Drawing.Size(23, 23);
-            this.tbAddStandardSeg.Text = "Add segment";
-            this.tbAddStandardSeg.ToolTipText = "Add standard segment";
-            // 
-            // tbAddExtendSeg
-            // 
-            this.tbAddExtendSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbAddExtendSeg.Image = ((System.Drawing.Image)(resources.GetObject("tbAddExtendSeg.Image")));
-            this.tbAddExtendSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbAddExtendSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbAddExtendSeg.Name = "tbAddExtendSeg";
-            this.tbAddExtendSeg.Size = new System.Drawing.Size(23, 23);
-            this.tbAddExtendSeg.Text = "Extend segment";
-            this.tbAddExtendSeg.ToolTipText = "Add and extend segment";
-            // 
-            // tbAddMirrorSeg
-            // 
-            this.tbAddMirrorSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbAddMirrorSeg.Image = ((System.Drawing.Image)(resources.GetObject("tbAddMirrorSeg.Image")));
-            this.tbAddMirrorSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbAddMirrorSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbAddMirrorSeg.Name = "tbAddMirrorSeg";
-            this.tbAddMirrorSeg.Size = new System.Drawing.Size(23, 23);
-            this.tbAddMirrorSeg.Text = "Mirror segment";
-            this.tbAddMirrorSeg.ToolTipText = "Add and mirror segment";
-            // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 26);
-            // 
-            // tbPointMode
-            // 
-            this.tbPointMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbPointMode.Image = ((System.Drawing.Image)(resources.GetObject("tbPointMode.Image")));
-            this.tbPointMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbPointMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbPointMode.Name = "tbPointMode";
-            this.tbPointMode.Size = new System.Drawing.Size(23, 23);
-            this.tbPointMode.Text = "Point mode";
-            this.tbPointMode.ToolTipText = "Enable point edit mode";
-            // 
-            // tbLineMode
-            // 
-            this.tbLineMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbLineMode.Image = ((System.Drawing.Image)(resources.GetObject("tbLineMode.Image")));
-            this.tbLineMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbLineMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbLineMode.Name = "tbLineMode";
-            this.tbLineMode.Size = new System.Drawing.Size(23, 23);
-            this.tbLineMode.Text = "Line mode";
-            this.tbLineMode.ToolTipText = "Enable line edit mode";
-            // 
-            // tbSideMode
-            // 
-            this.tbSideMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSideMode.Image = ((System.Drawing.Image)(resources.GetObject("tbSideMode.Image")));
-            this.tbSideMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSideMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSideMode.Name = "tbSideMode";
-            this.tbSideMode.Size = new System.Drawing.Size(23, 23);
-            this.tbSideMode.Text = "Side mode";
-            this.tbSideMode.ToolTipText = "Enable side edit mode";
-            // 
-            // tbSegmentMode
-            // 
-            this.tbSegmentMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSegmentMode.Image = ((System.Drawing.Image)(resources.GetObject("tbSegmentMode.Image")));
-            this.tbSegmentMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSegmentMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSegmentMode.Name = "tbSegmentMode";
-            this.tbSegmentMode.Size = new System.Drawing.Size(23, 23);
-            this.tbSegmentMode.Text = "Segment mode";
-            this.tbSegmentMode.ToolTipText = "Enable segment edit mode";
-            // 
-            // tbObjectMode
-            // 
-            this.tbObjectMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbObjectMode.Image = ((System.Drawing.Image)(resources.GetObject("tbObjectMode.Image")));
-            this.tbObjectMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbObjectMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbObjectMode.Name = "tbObjectMode";
-            this.tbObjectMode.Size = new System.Drawing.Size(23, 23);
-            this.tbObjectMode.Text = "Object mode";
-            this.tbObjectMode.ToolTipText = "Enable object edit mode";
-            // 
-            // tbBlockMode
-            // 
-            this.tbBlockMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbBlockMode.Image = ((System.Drawing.Image)(resources.GetObject("tbBlockMode.Image")));
-            this.tbBlockMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbBlockMode.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbBlockMode.Name = "tbBlockMode";
-            this.tbBlockMode.Size = new System.Drawing.Size(23, 23);
-            this.tbBlockMode.Text = "Block mode";
-            this.tbBlockMode.ToolTipText = "Enable block edit mode";
-            // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 26);
-            // 
-            // tbRedraw
-            // 
-            this.tbRedraw.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbRedraw.Image = ((System.Drawing.Image)(resources.GetObject("tbRedraw.Image")));
-            this.tbRedraw.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbRedraw.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbRedraw.Name = "tbRedraw";
-            this.tbRedraw.Size = new System.Drawing.Size(23, 23);
-            this.tbRedraw.Text = "Redraw mine";
-            this.tbRedraw.ToolTipText = "Redraw mine view";
             // 
             // toolBar
             // 
@@ -2053,6 +1651,10 @@
             this.toolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tbOpenFile,
             this.tbSaveFile,
+            this.toolStripSeparator22,
+            this.tbCutBlock,
+            this.tbCopyBlock,
+            this.tbPasteBlock,
             this.toolStripSeparator1,
             this.tbCheckMine,
             this.tbLightTool,
@@ -2060,11 +1662,13 @@
             this.tbSegmentTool,
             this.tbWallTool,
             this.tbObjectTool,
+            this.tbMissionTool,
             this.tbPreferences,
             this.toolStripSeparator2,
             this.tbZoomIn,
             this.tbZoomOut,
             this.tbFitToView,
+            this.tbRedraw,
             this.toolStripSeparator6,
             this.tbMoveLeft,
             this.tbMoveRight,
@@ -2093,12 +1697,10 @@
             this.tbSideMode,
             this.tbSegmentMode,
             this.tbObjectMode,
-            this.tbBlockMode,
-            this.toolStripSeparator7,
-            this.tbRedraw});
+            this.tbBlockMode});
             this.toolBar.Location = new System.Drawing.Point(3, 24);
             this.toolBar.Name = "toolBar";
-            this.toolBar.Size = new System.Drawing.Size(928, 26);
+            this.toolBar.Size = new System.Drawing.Size(1051, 26);
             this.toolBar.TabIndex = 23;
             this.toolBar.Text = "toolBar";
             // 
@@ -2109,7 +1711,7 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.dockPanel);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(948, 563);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1114, 563);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // toolStripContainer1.LeftToolStripPanel
@@ -2118,7 +1720,7 @@
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
-            this.toolStripContainer1.Size = new System.Drawing.Size(948, 613);
+            this.toolStripContainer1.Size = new System.Drawing.Size(1114, 613);
             this.toolStripContainer1.TabIndex = 28;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -2137,7 +1739,7 @@
             this.dockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.dockPanel.Location = new System.Drawing.Point(0, 0);
             this.dockPanel.Name = "dockPanel";
-            this.dockPanel.Size = new System.Drawing.Size(948, 563);
+            this.dockPanel.Size = new System.Drawing.Size(1114, 563);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
@@ -2184,13 +1786,455 @@
             this.dockPanel.Skin = dockPanelSkin1;
             this.dockPanel.TabIndex = 30;
             // 
+            // toolStripSeparator22
+            // 
+            this.toolStripSeparator22.Name = "toolStripSeparator22";
+            this.toolStripSeparator22.Size = new System.Drawing.Size(6, 26);
+            // 
+            // tbOpenFile
+            // 
+            this.tbOpenFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbOpenFile.Image = global::DLE.NET.Properties.Resources.openfile_16x16;
+            this.tbOpenFile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbOpenFile.Name = "tbOpenFile";
+            this.tbOpenFile.Size = new System.Drawing.Size(23, 23);
+            this.tbOpenFile.Text = "Load mission";
+            // 
+            // tbSaveFile
+            // 
+            this.tbSaveFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSaveFile.Image = global::DLE.NET.Properties.Resources.savefile_16x16;
+            this.tbSaveFile.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSaveFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSaveFile.Name = "tbSaveFile";
+            this.tbSaveFile.Size = new System.Drawing.Size(23, 23);
+            this.tbSaveFile.Text = "Save level";
+            // 
+            // tbCutBlock
+            // 
+            this.tbCutBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbCutBlock.Image = global::DLE.NET.Properties.Resources.cut_16x16;
+            this.tbCutBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbCutBlock.Name = "tbCutBlock";
+            this.tbCutBlock.Size = new System.Drawing.Size(23, 23);
+            this.tbCutBlock.Text = "Cut current block";
+            // 
+            // tbCopyBlock
+            // 
+            this.tbCopyBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbCopyBlock.Image = global::DLE.NET.Properties.Resources.copy_16x16;
+            this.tbCopyBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbCopyBlock.Name = "tbCopyBlock";
+            this.tbCopyBlock.Size = new System.Drawing.Size(23, 23);
+            this.tbCopyBlock.Text = "Copy current block";
+            // 
+            // tbPasteBlock
+            // 
+            this.tbPasteBlock.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbPasteBlock.Image = global::DLE.NET.Properties.Resources.paste_16x16;
+            this.tbPasteBlock.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbPasteBlock.Name = "tbPasteBlock";
+            this.tbPasteBlock.Size = new System.Drawing.Size(23, 23);
+            this.tbPasteBlock.Text = "Paste block";
+            // 
+            // tbCheckMine
+            // 
+            this.tbCheckMine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbCheckMine.Image = global::DLE.NET.Properties.Resources.diagnosis_16x16;
+            this.tbCheckMine.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbCheckMine.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbCheckMine.Name = "tbCheckMine";
+            this.tbCheckMine.Size = new System.Drawing.Size(23, 23);
+            this.tbCheckMine.Text = "Check level";
+            this.tbCheckMine.ToolTipText = "Run a level check";
+            // 
+            // tbLightTool
+            // 
+            this.tbLightTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbLightTool.Image = global::DLE.NET.Properties.Resources.lighttool_16x16;
+            this.tbLightTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbLightTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbLightTool.Name = "tbLightTool";
+            this.tbLightTool.Size = new System.Drawing.Size(23, 23);
+            this.tbLightTool.Text = "Light tool";
+            this.tbLightTool.ToolTipText = "Open light tool";
+            // 
+            // tbTextureTool
+            // 
+            this.tbTextureTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbTextureTool.Image = global::DLE.NET.Properties.Resources.texturetool_16x16;
+            this.tbTextureTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbTextureTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbTextureTool.Name = "tbTextureTool";
+            this.tbTextureTool.Size = new System.Drawing.Size(23, 23);
+            this.tbTextureTool.Text = "Texture tool";
+            this.tbTextureTool.ToolTipText = "Open texture tool";
+            // 
+            // tbSegmentTool
+            // 
+            this.tbSegmentTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSegmentTool.Image = global::DLE.NET.Properties.Resources.segmenttool_16x16;
+            this.tbSegmentTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSegmentTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSegmentTool.Name = "tbSegmentTool";
+            this.tbSegmentTool.Size = new System.Drawing.Size(23, 23);
+            this.tbSegmentTool.Text = "Segment tool";
+            this.tbSegmentTool.ToolTipText = "Open segment tool";
+            // 
+            // tbWallTool
+            // 
+            this.tbWallTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbWallTool.Image = global::DLE.NET.Properties.Resources.brokenwall_16x16;
+            this.tbWallTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbWallTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbWallTool.Name = "tbWallTool";
+            this.tbWallTool.Size = new System.Drawing.Size(23, 23);
+            this.tbWallTool.Text = "Wall tool";
+            this.tbWallTool.ToolTipText = "Open wall tool";
+            // 
+            // tbObjectTool
+            // 
+            this.tbObjectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbObjectTool.Image = global::DLE.NET.Properties.Resources.objects_16x16;
+            this.tbObjectTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbObjectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbObjectTool.Name = "tbObjectTool";
+            this.tbObjectTool.Size = new System.Drawing.Size(23, 23);
+            this.tbObjectTool.Text = "Object tool";
+            // 
+            // tbMissionTool
+            // 
+            this.tbMissionTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbMissionTool.Image = global::DLE.NET.Properties.Resources.missiontool_16x16;
+            this.tbMissionTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbMissionTool.Name = "tbMissionTool";
+            this.tbMissionTool.Size = new System.Drawing.Size(23, 23);
+            this.tbMissionTool.Text = "Open mission tool";
+            // 
+            // tbPreferences
+            // 
+            this.tbPreferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbPreferences.Image = global::DLE.NET.Properties.Resources.settings_16x16;
+            this.tbPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbPreferences.Name = "tbPreferences";
+            this.tbPreferences.Size = new System.Drawing.Size(23, 23);
+            this.tbPreferences.Text = "Open preferences";
+            // 
+            // tbZoomIn
+            // 
+            this.tbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbZoomIn.Image = global::DLE.NET.Properties.Resources.zoomin_16x16;
+            this.tbZoomIn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbZoomIn.Name = "tbZoomIn";
+            this.tbZoomIn.Size = new System.Drawing.Size(23, 23);
+            this.tbZoomIn.Text = "Zoom in";
+            // 
+            // tbZoomOut
+            // 
+            this.tbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbZoomOut.Image = global::DLE.NET.Properties.Resources.zoomout_16x16;
+            this.tbZoomOut.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbZoomOut.Name = "tbZoomOut";
+            this.tbZoomOut.Size = new System.Drawing.Size(23, 23);
+            this.tbZoomOut.Text = "Zoom out";
+            // 
+            // tbFitToView
+            // 
+            this.tbFitToView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbFitToView.Image = global::DLE.NET.Properties.Resources.nozoom_16x16;
+            this.tbFitToView.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbFitToView.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbFitToView.Name = "tbFitToView";
+            this.tbFitToView.Size = new System.Drawing.Size(23, 23);
+            this.tbFitToView.Text = "Fit view to window";
+            // 
+            // tbRedraw
+            // 
+            this.tbRedraw.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbRedraw.Image = global::DLE.NET.Properties.Resources.refresh_16x16;
+            this.tbRedraw.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbRedraw.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbRedraw.Name = "tbRedraw";
+            this.tbRedraw.Size = new System.Drawing.Size(23, 23);
+            this.tbRedraw.Text = "Redraw mine";
+            this.tbRedraw.ToolTipText = "Redraw mine view";
+            // 
+            // tbMoveLeft
+            // 
+            this.tbMoveLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbMoveLeft.Image = global::DLE.NET.Properties.Resources.moveleft_16x16;
+            this.tbMoveLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbMoveLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbMoveLeft.Name = "tbMoveLeft";
+            this.tbMoveLeft.Size = new System.Drawing.Size(23, 23);
+            this.tbMoveLeft.Text = "Move left";
+            // 
+            // tbMoveRight
+            // 
+            this.tbMoveRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbMoveRight.Image = global::DLE.NET.Properties.Resources.moveright_16x16;
+            this.tbMoveRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbMoveRight.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbMoveRight.Name = "tbMoveRight";
+            this.tbMoveRight.Size = new System.Drawing.Size(23, 23);
+            this.tbMoveRight.Text = "Move right";
+            // 
+            // tbMoveUp
+            // 
+            this.tbMoveUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbMoveUp.Image = global::DLE.NET.Properties.Resources.moveup_16x16;
+            this.tbMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbMoveUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbMoveUp.Name = "tbMoveUp";
+            this.tbMoveUp.Size = new System.Drawing.Size(23, 23);
+            this.tbMoveUp.Text = "Move up";
+            // 
+            // tbMoveDown
+            // 
+            this.tbMoveDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbMoveDown.Image = global::DLE.NET.Properties.Resources.movedown_16x16;
+            this.tbMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbMoveDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbMoveDown.Name = "tbMoveDown";
+            this.tbMoveDown.Size = new System.Drawing.Size(23, 23);
+            this.tbMoveDown.Text = "Move down";
+            // 
+            // tbYRotLeft
+            // 
+            this.tbYRotLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbYRotLeft.Image = global::DLE.NET.Properties.Resources.yrotright_16x16;
+            this.tbYRotLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbYRotLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbYRotLeft.Name = "tbYRotLeft";
+            this.tbYRotLeft.Size = new System.Drawing.Size(23, 23);
+            this.tbYRotLeft.Text = "Rotate left around Y axis";
+            // 
+            // tbYRotRight
+            // 
+            this.tbYRotRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbYRotRight.Image = global::DLE.NET.Properties.Resources.yrotleft_16x16;
+            this.tbYRotRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbYRotRight.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbYRotRight.Name = "tbYRotRight";
+            this.tbYRotRight.Size = new System.Drawing.Size(23, 23);
+            this.tbYRotRight.Text = "Rotate right around Y axis";
+            // 
+            // tbXRotUp
+            // 
+            this.tbXRotUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbXRotUp.Image = global::DLE.NET.Properties.Resources.xrotright_16x16;
+            this.tbXRotUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbXRotUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbXRotUp.Name = "tbXRotUp";
+            this.tbXRotUp.Size = new System.Drawing.Size(23, 23);
+            this.tbXRotUp.Text = "Rotate up around X axis";
+            // 
+            // tbXRotDown
+            // 
+            this.tbXRotDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbXRotDown.Image = global::DLE.NET.Properties.Resources.xrotleft_16x16;
+            this.tbXRotDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbXRotDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbXRotDown.Name = "tbXRotDown";
+            this.tbXRotDown.Size = new System.Drawing.Size(23, 23);
+            this.tbXRotDown.Text = "Rotate down around X axis";
+            // 
+            // tbZRotRight
+            // 
+            this.tbZRotRight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbZRotRight.Image = global::DLE.NET.Properties.Resources.zrotright_16x16;
+            this.tbZRotRight.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbZRotRight.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbZRotRight.Name = "tbZRotRight";
+            this.tbZRotRight.Size = new System.Drawing.Size(23, 23);
+            this.tbZRotRight.Text = "Rotate right around Z axis";
+            // 
+            // tbZRotLeft
+            // 
+            this.tbZRotLeft.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbZRotLeft.Image = global::DLE.NET.Properties.Resources.zrotleft_16x16;
+            this.tbZRotLeft.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbZRotLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbZRotLeft.Name = "tbZRotLeft";
+            this.tbZRotLeft.Size = new System.Drawing.Size(23, 23);
+            this.tbZRotLeft.Text = "Rotate left around Z axis";
+            // 
+            // tbJoinPoints
+            // 
+            this.tbJoinPoints.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbJoinPoints.Image = ((System.Drawing.Image)(resources.GetObject("tbJoinPoints.Image")));
+            this.tbJoinPoints.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbJoinPoints.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbJoinPoints.Name = "tbJoinPoints";
+            this.tbJoinPoints.Size = new System.Drawing.Size(23, 23);
+            this.tbJoinPoints.Text = "Join points";
+            this.tbJoinPoints.ToolTipText = "Join two points";
+            // 
+            // tbSplitPoints
+            // 
+            this.tbSplitPoints.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSplitPoints.Image = ((System.Drawing.Image)(resources.GetObject("tbSplitPoints.Image")));
+            this.tbSplitPoints.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSplitPoints.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSplitPoints.Name = "tbSplitPoints";
+            this.tbSplitPoints.Size = new System.Drawing.Size(23, 23);
+            this.tbSplitPoints.Text = "Split points";
+            this.tbSplitPoints.ToolTipText = "Split two points";
+            // 
+            // tbJoinLines
+            // 
+            this.tbJoinLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbJoinLines.Image = global::DLE.NET.Properties.Resources.joinlines_16x16;
+            this.tbJoinLines.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbJoinLines.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbJoinLines.Name = "tbJoinLines";
+            this.tbJoinLines.Size = new System.Drawing.Size(23, 23);
+            this.tbJoinLines.Text = "Join lines";
+            this.tbJoinLines.ToolTipText = "Join two lines";
+            // 
+            // tbSplitLines
+            // 
+            this.tbSplitLines.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSplitLines.Image = global::DLE.NET.Properties.Resources.splitlines_16x16;
+            this.tbSplitLines.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSplitLines.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSplitLines.Name = "tbSplitLines";
+            this.tbSplitLines.Size = new System.Drawing.Size(23, 23);
+            this.tbSplitLines.Text = "Split lines";
+            this.tbSplitLines.ToolTipText = "Split two lines";
+            // 
+            // tbJoinSides
+            // 
+            this.tbJoinSides.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbJoinSides.Image = ((System.Drawing.Image)(resources.GetObject("tbJoinSides.Image")));
+            this.tbJoinSides.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbJoinSides.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbJoinSides.Name = "tbJoinSides";
+            this.tbJoinSides.Size = new System.Drawing.Size(23, 23);
+            this.tbJoinSides.Text = "Join sides";
+            this.tbJoinSides.ToolTipText = "Join two sides";
+            // 
+            // tbSplitSides
+            // 
+            this.tbSplitSides.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSplitSides.Image = ((System.Drawing.Image)(resources.GetObject("tbSplitSides.Image")));
+            this.tbSplitSides.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSplitSides.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSplitSides.Name = "tbSplitSides";
+            this.tbSplitSides.Size = new System.Drawing.Size(23, 23);
+            this.tbSplitSides.Text = "Split sides";
+            this.tbSplitSides.ToolTipText = "Split two sides";
+            // 
+            // tbAddStandardSeg
+            // 
+            this.tbAddStandardSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbAddStandardSeg.Image = global::DLE.NET.Properties.Resources.segments_16x16;
+            this.tbAddStandardSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbAddStandardSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbAddStandardSeg.Name = "tbAddStandardSeg";
+            this.tbAddStandardSeg.Size = new System.Drawing.Size(23, 23);
+            this.tbAddStandardSeg.Text = "Add segment";
+            this.tbAddStandardSeg.ToolTipText = "Add standard segment";
+            // 
+            // tbAddExtendSeg
+            // 
+            this.tbAddExtendSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbAddExtendSeg.Image = ((System.Drawing.Image)(resources.GetObject("tbAddExtendSeg.Image")));
+            this.tbAddExtendSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbAddExtendSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbAddExtendSeg.Name = "tbAddExtendSeg";
+            this.tbAddExtendSeg.Size = new System.Drawing.Size(23, 23);
+            this.tbAddExtendSeg.Text = "Extend segment";
+            this.tbAddExtendSeg.ToolTipText = "Add and extend segment";
+            // 
+            // tbAddMirrorSeg
+            // 
+            this.tbAddMirrorSeg.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbAddMirrorSeg.Image = ((System.Drawing.Image)(resources.GetObject("tbAddMirrorSeg.Image")));
+            this.tbAddMirrorSeg.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbAddMirrorSeg.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbAddMirrorSeg.Name = "tbAddMirrorSeg";
+            this.tbAddMirrorSeg.Size = new System.Drawing.Size(23, 23);
+            this.tbAddMirrorSeg.Text = "Mirror segment";
+            this.tbAddMirrorSeg.ToolTipText = "Add and mirror segment";
+            // 
+            // tbPointMode
+            // 
+            this.tbPointMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbPointMode.Image = global::DLE.NET.Properties.Resources.point_16x16;
+            this.tbPointMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbPointMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbPointMode.Name = "tbPointMode";
+            this.tbPointMode.Size = new System.Drawing.Size(23, 23);
+            this.tbPointMode.Text = "Point mode";
+            this.tbPointMode.ToolTipText = "Enable point edit mode";
+            // 
+            // tbLineMode
+            // 
+            this.tbLineMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbLineMode.Image = global::DLE.NET.Properties.Resources.line_16x16;
+            this.tbLineMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbLineMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbLineMode.Name = "tbLineMode";
+            this.tbLineMode.Size = new System.Drawing.Size(23, 23);
+            this.tbLineMode.Text = "Line mode";
+            this.tbLineMode.ToolTipText = "Enable line edit mode";
+            // 
+            // tbSideMode
+            // 
+            this.tbSideMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSideMode.Image = global::DLE.NET.Properties.Resources.sides_16x16;
+            this.tbSideMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSideMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSideMode.Name = "tbSideMode";
+            this.tbSideMode.Size = new System.Drawing.Size(23, 23);
+            this.tbSideMode.Text = "Side mode";
+            this.tbSideMode.ToolTipText = "Enable side edit mode";
+            // 
+            // tbSegmentMode
+            // 
+            this.tbSegmentMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSegmentMode.Image = global::DLE.NET.Properties.Resources.segment_16x16;
+            this.tbSegmentMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSegmentMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSegmentMode.Name = "tbSegmentMode";
+            this.tbSegmentMode.Size = new System.Drawing.Size(23, 23);
+            this.tbSegmentMode.Text = "Segment mode";
+            this.tbSegmentMode.ToolTipText = "Enable segment edit mode";
+            // 
+            // tbObjectMode
+            // 
+            this.tbObjectMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbObjectMode.Image = global::DLE.NET.Properties.Resources.objects_16x16;
+            this.tbObjectMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbObjectMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbObjectMode.Name = "tbObjectMode";
+            this.tbObjectMode.Size = new System.Drawing.Size(23, 23);
+            this.tbObjectMode.Text = "Object mode";
+            this.tbObjectMode.ToolTipText = "Enable object edit mode";
+            // 
+            // tbBlockMode
+            // 
+            this.tbBlockMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbBlockMode.Image = global::DLE.NET.Properties.Resources.blockmode_16x16;
+            this.tbBlockMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbBlockMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbBlockMode.Name = "tbBlockMode";
+            this.tbBlockMode.Size = new System.Drawing.Size(23, 23);
+            this.tbBlockMode.Text = "Block mode";
+            this.tbBlockMode.ToolTipText = "Enable block edit mode";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(948, 635);
+            this.ClientSize = new System.Drawing.Size(1114, 635);
             this.Controls.Add(this.toolStripContainer1);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.mainStatus);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.mainMenu;
@@ -2387,7 +2431,7 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutDLEXLToolStripMenuItem;
         private System.Windows.Forms.MenuStrip mainMenu;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip mainStatus;
         private System.Windows.Forms.ToolStripButton tbOpenFile;
         private System.Windows.Forms.ToolStripButton tbSaveFile;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -2431,7 +2475,6 @@
         private System.Windows.Forms.ToolStripButton tbSegmentMode;
         private System.Windows.Forms.ToolStripButton tbObjectMode;
         private System.Windows.Forms.ToolStripButton tbBlockMode;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripButton tbRedraw;
         private System.Windows.Forms.ToolStrip toolBar;
         private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
@@ -2441,6 +2484,11 @@
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
+        private System.Windows.Forms.ToolStripButton tbMissionTool;
+        private System.Windows.Forms.ToolStripButton tbCopyBlock;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator22;
+        private System.Windows.Forms.ToolStripButton tbCutBlock;
+        private System.Windows.Forms.ToolStripButton tbPasteBlock;
     }
 }
 
