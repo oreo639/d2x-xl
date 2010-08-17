@@ -207,7 +207,7 @@
             this.spawnedQuantity.Location = new System.Drawing.Point(46, 76);
             this.spawnedQuantity.Name = "spawnedQuantity";
             this.spawnedQuantity.Size = new System.Drawing.Size(60, 20);
-            this.spawnedQuantity.TabIndex = 15;
+            this.spawnedQuantity.TabIndex = 9;
             this.spawnedQuantity.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // labelSpawnId
@@ -252,7 +252,7 @@
             this.spawnedType.Location = new System.Drawing.Point(46, 19);
             this.spawnedType.Name = "spawnedType";
             this.spawnedType.Size = new System.Drawing.Size(100, 21);
-            this.spawnedType.TabIndex = 0;
+            this.spawnedType.TabIndex = 7;
             // 
             // dataGroup
             // 
@@ -333,7 +333,7 @@
             this.objectTexture.Location = new System.Drawing.Point(46, 127);
             this.objectTexture.Name = "objectTexture";
             this.objectTexture.Size = new System.Drawing.Size(100, 21);
-            this.objectTexture.TabIndex = 10;
+            this.objectTexture.TabIndex = 4;
             // 
             // objectAI
             // 
@@ -341,7 +341,7 @@
             this.objectAI.Location = new System.Drawing.Point(46, 100);
             this.objectAI.Name = "objectAI";
             this.objectAI.Size = new System.Drawing.Size(100, 21);
-            this.objectAI.TabIndex = 9;
+            this.objectAI.TabIndex = 3;
             // 
             // objectId
             // 
@@ -349,7 +349,7 @@
             this.objectId.Location = new System.Drawing.Point(46, 73);
             this.objectId.Name = "objectId";
             this.objectId.Size = new System.Drawing.Size(60, 21);
-            this.objectId.TabIndex = 8;
+            this.objectId.TabIndex = 2;
             // 
             // objectType
             // 
@@ -357,7 +357,7 @@
             this.objectType.Location = new System.Drawing.Point(46, 46);
             this.objectType.Name = "objectType";
             this.objectType.Size = new System.Drawing.Size(100, 21);
-            this.objectType.TabIndex = 7;
+            this.objectType.TabIndex = 1;
             // 
             // locationLabel
             // 
@@ -375,7 +375,7 @@
             this.multiplayerCheck.Name = "multiplayerCheck";
             this.multiplayerCheck.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.multiplayerCheck.Size = new System.Drawing.Size(76, 17);
-            this.multiplayerCheck.TabIndex = 5;
+            this.multiplayerCheck.TabIndex = 6;
             this.multiplayerCheck.Text = "Multiplayer";
             this.multiplayerCheck.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.multiplayerCheck.UseVisualStyleBackColor = true;
@@ -387,7 +387,7 @@
             this.sortCheck.Name = "sortCheck";
             this.sortCheck.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.sortCheck.Size = new System.Drawing.Size(45, 17);
-            this.sortCheck.TabIndex = 4;
+            this.sortCheck.TabIndex = 5;
             this.sortCheck.Text = "Sort";
             this.sortCheck.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.sortCheck.UseVisualStyleBackColor = true;
@@ -464,7 +464,7 @@
             0});
             this.containedProbability.Name = "containedProbability";
             this.containedProbability.Size = new System.Drawing.Size(60, 20);
-            this.containedProbability.TabIndex = 17;
+            this.containedProbability.TabIndex = 13;
             this.containedProbability.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label32
@@ -482,7 +482,7 @@
             this.containedQuantity.Location = new System.Drawing.Point(226, 20);
             this.containedQuantity.Name = "containedQuantity";
             this.containedQuantity.Size = new System.Drawing.Size(60, 20);
-            this.containedQuantity.TabIndex = 15;
+            this.containedQuantity.TabIndex = 12;
             this.containedQuantity.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label33
@@ -501,7 +501,7 @@
             this.containedId.Location = new System.Drawing.Point(46, 46);
             this.containedId.Name = "containedId";
             this.containedId.Size = new System.Drawing.Size(60, 21);
-            this.containedId.TabIndex = 8;
+            this.containedId.TabIndex = 11;
             // 
             // label34
             // 
@@ -519,7 +519,7 @@
             this.containedType.Location = new System.Drawing.Point(46, 19);
             this.containedType.Name = "containedType";
             this.containedType.Size = new System.Drawing.Size(100, 21);
-            this.containedType.TabIndex = 0;
+            this.containedType.TabIndex = 10;
             // 
             // behaviorTab
             // 
@@ -549,7 +549,7 @@
             this.endsLevelCheck.Location = new System.Drawing.Point(162, 152);
             this.endsLevelCheck.Name = "endsLevelCheck";
             this.endsLevelCheck.Size = new System.Drawing.Size(75, 17);
-            this.endsLevelCheck.TabIndex = 26;
+            this.endsLevelCheck.TabIndex = 45;
             this.endsLevelCheck.Text = "Ends level";
             this.endsLevelCheck.UseVisualStyleBackColor = true;
             // 
@@ -559,7 +559,7 @@
             this.energyDrainCheck.Location = new System.Drawing.Point(162, 132);
             this.energyDrainCheck.Name = "energyDrainCheck";
             this.energyDrainCheck.Size = new System.Drawing.Size(91, 17);
-            this.energyDrainCheck.TabIndex = 25;
+            this.energyDrainCheck.TabIndex = 43;
             this.energyDrainCheck.Text = "Drains energy";
             this.energyDrainCheck.UseVisualStyleBackColor = true;
             // 
@@ -569,7 +569,7 @@
             this.chargesCheck.Location = new System.Drawing.Point(162, 112);
             this.chargesCheck.Name = "chargesCheck";
             this.chargesCheck.Size = new System.Drawing.Size(65, 17);
-            this.chargesCheck.TabIndex = 24;
+            this.chargesCheck.TabIndex = 41;
             this.chargesCheck.Text = "Charges";
             this.chargesCheck.UseVisualStyleBackColor = true;
             // 
@@ -579,7 +579,7 @@
             this.pursuesCheck.Location = new System.Drawing.Point(162, 92);
             this.pursuesCheck.Name = "pursuesCheck";
             this.pursuesCheck.Size = new System.Drawing.Size(64, 17);
-            this.pursuesCheck.TabIndex = 23;
+            this.pursuesCheck.TabIndex = 39;
             this.pursuesCheck.Text = "Pursues";
             this.pursuesCheck.UseVisualStyleBackColor = true;
             // 
@@ -589,7 +589,7 @@
             this.smartBlobsCheck.Location = new System.Drawing.Point(53, 152);
             this.smartBlobsCheck.Name = "smartBlobsCheck";
             this.smartBlobsCheck.Size = new System.Drawing.Size(101, 17);
-            this.smartBlobsCheck.TabIndex = 22;
+            this.smartBlobsCheck.TabIndex = 44;
             this.smartBlobsCheck.Text = "Has smart blobs";
             this.smartBlobsCheck.UseVisualStyleBackColor = true;
             // 
@@ -599,7 +599,7 @@
             this.thiefCheck.Location = new System.Drawing.Point(53, 132);
             this.thiefCheck.Name = "thiefCheck";
             this.thiefCheck.Size = new System.Drawing.Size(50, 17);
-            this.thiefCheck.TabIndex = 21;
+            this.thiefCheck.TabIndex = 42;
             this.thiefCheck.Text = "Thief";
             this.thiefCheck.UseVisualStyleBackColor = true;
             // 
@@ -609,7 +609,7 @@
             this.companionCheck.Location = new System.Drawing.Point(53, 112);
             this.companionCheck.Name = "companionCheck";
             this.companionCheck.Size = new System.Drawing.Size(79, 17);
-            this.companionCheck.TabIndex = 20;
+            this.companionCheck.TabIndex = 40;
             this.companionCheck.Text = "Companion";
             this.companionCheck.UseVisualStyleBackColor = true;
             // 
@@ -619,7 +619,7 @@
             this.kamikazeCheck.Location = new System.Drawing.Point(53, 92);
             this.kamikazeCheck.Name = "kamikazeCheck";
             this.kamikazeCheck.Size = new System.Drawing.Size(72, 17);
-            this.kamikazeCheck.TabIndex = 19;
+            this.kamikazeCheck.TabIndex = 38;
             this.kamikazeCheck.Text = "Kamikaze";
             this.kamikazeCheck.UseVisualStyleBackColor = true;
             // 
@@ -639,7 +639,7 @@
             this.bossAI.Location = new System.Drawing.Point(104, 47);
             this.bossAI.Name = "bossAI";
             this.bossAI.Size = new System.Drawing.Size(100, 21);
-            this.bossAI.TabIndex = 17;
+            this.bossAI.TabIndex = 37;
             // 
             // label30
             // 
@@ -657,7 +657,7 @@
             this.objectTactics.Location = new System.Drawing.Point(104, 20);
             this.objectTactics.Name = "objectTactics";
             this.objectTactics.Size = new System.Drawing.Size(100, 21);
-            this.objectTactics.TabIndex = 15;
+            this.objectTactics.TabIndex = 36;
             // 
             // combatTab
             // 
@@ -707,7 +707,7 @@
             this.trackBar10.Minimum = 2;
             this.trackBar10.Name = "trackBar10";
             this.trackBar10.Size = new System.Drawing.Size(180, 20);
-            this.trackBar10.TabIndex = 64;
+            this.trackBar10.TabIndex = 35;
             this.trackBar10.Value = 2;
             // 
             // circleDistSlider
@@ -716,7 +716,7 @@
             this.circleDistSlider.Location = new System.Drawing.Point(73, 182);
             this.circleDistSlider.Name = "circleDistSlider";
             this.circleDistSlider.Size = new System.Drawing.Size(180, 20);
-            this.circleDistSlider.TabIndex = 63;
+            this.circleDistSlider.TabIndex = 34;
             // 
             // evadeSpeedSlider
             // 
@@ -725,7 +725,7 @@
             this.evadeSpeedSlider.Maximum = 6;
             this.evadeSpeedSlider.Name = "evadeSpeedSlider";
             this.evadeSpeedSlider.Size = new System.Drawing.Size(180, 20);
-            this.evadeSpeedSlider.TabIndex = 62;
+            this.evadeSpeedSlider.TabIndex = 33;
             // 
             // fireFreqSlider
             // 
@@ -735,7 +735,7 @@
             this.fireFreqSlider.Minimum = 1;
             this.fireFreqSlider.Name = "fireFreqSlider";
             this.fireFreqSlider.Size = new System.Drawing.Size(180, 20);
-            this.fireFreqSlider.TabIndex = 61;
+            this.fireFreqSlider.TabIndex = 32;
             this.fireFreqSlider.Value = 1;
             // 
             // speedSlider
@@ -744,7 +744,7 @@
             this.speedSlider.Location = new System.Drawing.Point(73, 116);
             this.speedSlider.Name = "speedSlider";
             this.speedSlider.Size = new System.Drawing.Size(180, 20);
-            this.speedSlider.TabIndex = 60;
+            this.speedSlider.TabIndex = 31;
             // 
             // turnTimeSlider
             // 
@@ -754,7 +754,7 @@
             this.turnTimeSlider.Maximum = 140;
             this.turnTimeSlider.Name = "turnTimeSlider";
             this.turnTimeSlider.Size = new System.Drawing.Size(180, 20);
-            this.turnTimeSlider.TabIndex = 59;
+            this.turnTimeSlider.TabIndex = 30;
             this.turnTimeSlider.TickFrequency = 10;
             // 
             // fireDelay2Slider
@@ -765,7 +765,7 @@
             this.fireDelay2Slider.Minimum = 1;
             this.fireDelay2Slider.Name = "fireDelay2Slider";
             this.fireDelay2Slider.Size = new System.Drawing.Size(180, 20);
-            this.fireDelay2Slider.TabIndex = 58;
+            this.fireDelay2Slider.TabIndex = 29;
             this.fireDelay2Slider.Value = 1;
             // 
             // fireDelay1Slider
@@ -775,7 +775,7 @@
             this.fireDelay1Slider.Maximum = 35;
             this.fireDelay1Slider.Name = "fireDelay1Slider";
             this.fireDelay1Slider.Size = new System.Drawing.Size(180, 20);
-            this.fireDelay1Slider.TabIndex = 57;
+            this.fireDelay1Slider.TabIndex = 28;
             // 
             // skillSlider
             // 
@@ -784,7 +784,7 @@
             this.skillSlider.Maximum = 4;
             this.skillSlider.Name = "skillSlider";
             this.skillSlider.Size = new System.Drawing.Size(90, 20);
-            this.skillSlider.TabIndex = 56;
+            this.skillSlider.TabIndex = 26;
             // 
             // label26
             // 
@@ -963,7 +963,7 @@
             this.fovSlider.Minimum = -10;
             this.fovSlider.Name = "fovSlider";
             this.fovSlider.Size = new System.Drawing.Size(180, 20);
-            this.fovSlider.TabIndex = 30;
+            this.fovSlider.TabIndex = 27;
             // 
             // label13
             // 
@@ -1029,7 +1029,7 @@
             // glowValue
             // 
             this.glowValue.AutoSize = true;
-            this.glowValue.Location = new System.Drawing.Point(242, 162);
+            this.glowValue.Location = new System.Drawing.Point(240, 186);
             this.glowValue.Name = "glowValue";
             this.glowValue.Size = new System.Drawing.Size(13, 13);
             this.glowValue.TabIndex = 24;
@@ -1038,7 +1038,7 @@
             // lightValue
             // 
             this.lightValue.AutoSize = true;
-            this.lightValue.Location = new System.Drawing.Point(242, 136);
+            this.lightValue.Location = new System.Drawing.Point(240, 160);
             this.lightValue.Name = "lightValue";
             this.lightValue.Size = new System.Drawing.Size(13, 13);
             this.lightValue.TabIndex = 23;
@@ -1047,7 +1047,7 @@
             // eBlobsValue
             // 
             this.eBlobsValue.AutoSize = true;
-            this.eBlobsValue.Location = new System.Drawing.Point(242, 110);
+            this.eBlobsValue.Location = new System.Drawing.Point(240, 134);
             this.eBlobsValue.Name = "eBlobsValue";
             this.eBlobsValue.Size = new System.Drawing.Size(13, 13);
             this.eBlobsValue.TabIndex = 22;
@@ -1056,7 +1056,7 @@
             // dragValue
             // 
             this.dragValue.AutoSize = true;
-            this.dragValue.Location = new System.Drawing.Point(242, 84);
+            this.dragValue.Location = new System.Drawing.Point(240, 108);
             this.dragValue.Name = "dragValue";
             this.dragValue.Size = new System.Drawing.Size(13, 13);
             this.dragValue.TabIndex = 21;
@@ -1065,7 +1065,7 @@
             // massValue
             // 
             this.massValue.AutoSize = true;
-            this.massValue.Location = new System.Drawing.Point(242, 58);
+            this.massValue.Location = new System.Drawing.Point(240, 82);
             this.massValue.Name = "massValue";
             this.massValue.Size = new System.Drawing.Size(13, 13);
             this.massValue.TabIndex = 20;
@@ -1074,7 +1074,7 @@
             // strengthValue
             // 
             this.strengthValue.AutoSize = true;
-            this.strengthValue.Location = new System.Drawing.Point(242, 32);
+            this.strengthValue.Location = new System.Drawing.Point(240, 56);
             this.strengthValue.Name = "strengthValue";
             this.strengthValue.Size = new System.Drawing.Size(13, 13);
             this.strengthValue.TabIndex = 19;
@@ -1082,7 +1082,7 @@
             // 
             // scoreValue
             // 
-            this.scoreValue.Location = new System.Drawing.Point(245, 4);
+            this.scoreValue.Location = new System.Drawing.Point(243, 28);
             this.scoreValue.Maximum = new decimal(new int[] {
             30000,
             0,
@@ -1090,7 +1090,7 @@
             0});
             this.scoreValue.Name = "scoreValue";
             this.scoreValue.Size = new System.Drawing.Size(58, 20);
-            this.scoreValue.TabIndex = 18;
+            this.scoreValue.TabIndex = 19;
             this.scoreValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.scoreValue.Value = new decimal(new int[] {
             500,
@@ -1101,16 +1101,16 @@
             // glowSlider
             // 
             this.glowSlider.AutoSize = false;
-            this.glowSlider.Location = new System.Drawing.Point(59, 162);
+            this.glowSlider.Location = new System.Drawing.Point(57, 186);
             this.glowSlider.Maximum = 12;
             this.glowSlider.Name = "glowSlider";
             this.glowSlider.Size = new System.Drawing.Size(180, 20);
-            this.glowSlider.TabIndex = 15;
+            this.glowSlider.TabIndex = 25;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(31, 162);
+            this.label10.Location = new System.Drawing.Point(29, 186);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(31, 13);
             this.label10.TabIndex = 14;
@@ -1120,15 +1120,15 @@
             // lightSlider
             // 
             this.lightSlider.AutoSize = false;
-            this.lightSlider.Location = new System.Drawing.Point(59, 136);
+            this.lightSlider.Location = new System.Drawing.Point(57, 160);
             this.lightSlider.Name = "lightSlider";
             this.lightSlider.Size = new System.Drawing.Size(180, 20);
-            this.lightSlider.TabIndex = 13;
+            this.lightSlider.TabIndex = 24;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(32, 136);
+            this.label9.Location = new System.Drawing.Point(30, 160);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(30, 13);
             this.label9.TabIndex = 12;
@@ -1139,17 +1139,17 @@
             // 
             this.eBlobsSlider.AutoSize = false;
             this.eBlobsSlider.LargeChange = 10;
-            this.eBlobsSlider.Location = new System.Drawing.Point(59, 110);
+            this.eBlobsSlider.Location = new System.Drawing.Point(57, 134);
             this.eBlobsSlider.Maximum = 100;
             this.eBlobsSlider.Name = "eBlobsSlider";
             this.eBlobsSlider.Size = new System.Drawing.Size(180, 20);
-            this.eBlobsSlider.TabIndex = 11;
+            this.eBlobsSlider.TabIndex = 23;
             this.eBlobsSlider.TickFrequency = 10;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(19, 110);
+            this.label8.Location = new System.Drawing.Point(17, 134);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(43, 13);
             this.label8.TabIndex = 10;
@@ -1159,18 +1159,18 @@
             // dragSlider
             // 
             this.dragSlider.AutoSize = false;
-            this.dragSlider.Location = new System.Drawing.Point(59, 84);
+            this.dragSlider.Location = new System.Drawing.Point(57, 108);
             this.dragSlider.Maximum = 13;
             this.dragSlider.Minimum = 1;
             this.dragSlider.Name = "dragSlider";
             this.dragSlider.Size = new System.Drawing.Size(180, 20);
-            this.dragSlider.TabIndex = 9;
+            this.dragSlider.TabIndex = 22;
             this.dragSlider.Value = 1;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(32, 84);
+            this.label7.Location = new System.Drawing.Point(30, 108);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(30, 13);
             this.label7.TabIndex = 8;
@@ -1180,18 +1180,18 @@
             // massSlider
             // 
             this.massSlider.AutoSize = false;
-            this.massSlider.Location = new System.Drawing.Point(59, 58);
+            this.massSlider.Location = new System.Drawing.Point(57, 82);
             this.massSlider.Maximum = 20;
             this.massSlider.Minimum = 10;
             this.massSlider.Name = "massSlider";
             this.massSlider.Size = new System.Drawing.Size(180, 20);
-            this.massSlider.TabIndex = 7;
+            this.massSlider.TabIndex = 21;
             this.massSlider.Value = 10;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(30, 58);
+            this.label6.Location = new System.Drawing.Point(28, 82);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(32, 13);
             this.label6.TabIndex = 6;
@@ -1201,18 +1201,18 @@
             // strengthSlider
             // 
             this.strengthSlider.AutoSize = false;
-            this.strengthSlider.Location = new System.Drawing.Point(59, 32);
+            this.strengthSlider.Location = new System.Drawing.Point(57, 56);
             this.strengthSlider.Maximum = 20;
             this.strengthSlider.Minimum = 13;
             this.strengthSlider.Name = "strengthSlider";
             this.strengthSlider.Size = new System.Drawing.Size(180, 20);
-            this.strengthSlider.TabIndex = 5;
+            this.strengthSlider.TabIndex = 20;
             this.strengthSlider.Value = 13;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 32);
+            this.label5.Location = new System.Drawing.Point(12, 56);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 13);
             this.label5.TabIndex = 4;
@@ -1223,17 +1223,17 @@
             // 
             this.scoreSlider.AutoSize = false;
             this.scoreSlider.LargeChange = 500;
-            this.scoreSlider.Location = new System.Drawing.Point(59, 6);
+            this.scoreSlider.Location = new System.Drawing.Point(57, 30);
             this.scoreSlider.Maximum = 30000;
             this.scoreSlider.Name = "scoreSlider";
             this.scoreSlider.Size = new System.Drawing.Size(180, 20);
-            this.scoreSlider.TabIndex = 3;
+            this.scoreSlider.TabIndex = 18;
             this.scoreSlider.TickFrequency = 50;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(27, 6);
+            this.label4.Location = new System.Drawing.Point(25, 30);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 2;
@@ -1247,11 +1247,11 @@
             this.objProperties.Controls.Add(this.behaviorTab);
             this.objProperties.Controls.Add(this.weaponsTab);
             this.objProperties.Controls.Add(this.deathAnimTab);
-            this.objProperties.Location = new System.Drawing.Point(16, 378);
+            this.objProperties.Location = new System.Drawing.Point(12, 378);
             this.objProperties.Name = "objProperties";
             this.objProperties.SelectedIndex = 0;
-            this.objProperties.Size = new System.Drawing.Size(317, 256);
-            this.objProperties.TabIndex = 9;
+            this.objProperties.Size = new System.Drawing.Size(318, 256);
+            this.objProperties.TabIndex = 17;
             // 
             // weaponsTab
             // 
@@ -1283,7 +1283,7 @@
             this.primaryWeapon.Location = new System.Drawing.Point(95, 40);
             this.primaryWeapon.Name = "primaryWeapon";
             this.primaryWeapon.Size = new System.Drawing.Size(120, 21);
-            this.primaryWeapon.TabIndex = 1;
+            this.primaryWeapon.TabIndex = 46;
             // 
             // labelPrimaryWeapon
             // 
@@ -1301,7 +1301,7 @@
             this.secondaryWeapon.Location = new System.Drawing.Point(95, 67);
             this.secondaryWeapon.Name = "secondaryWeapon";
             this.secondaryWeapon.Size = new System.Drawing.Size(120, 21);
-            this.secondaryWeapon.TabIndex = 2;
+            this.secondaryWeapon.TabIndex = 47;
             // 
             // deathAnimTab
             // 
@@ -1315,7 +1315,7 @@
             this.deathAnimTab.Location = new System.Drawing.Point(4, 22);
             this.deathAnimTab.Name = "deathAnimTab";
             this.deathAnimTab.Padding = new System.Windows.Forms.Padding(3);
-            this.deathAnimTab.Size = new System.Drawing.Size(309, 230);
+            this.deathAnimTab.Size = new System.Drawing.Size(310, 230);
             this.deathAnimTab.TabIndex = 7;
             this.deathAnimTab.Text = "Death animation";
             // 
@@ -1339,7 +1339,7 @@
             0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown1.TabIndex = 17;
+            this.numericUpDown1.TabIndex = 48;
             this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown1.Value = new decimal(new int[] {
             10,
@@ -1352,7 +1352,7 @@
             this.numericUpDown2.Location = new System.Drawing.Point(125, 66);
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown2.TabIndex = 19;
+            this.numericUpDown2.TabIndex = 49;
             this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown2.Value = new decimal(new int[] {
             100,
@@ -1366,7 +1366,7 @@
             this.explType.Location = new System.Drawing.Point(104, 92);
             this.explType.Name = "explType";
             this.explType.Size = new System.Drawing.Size(100, 21);
-            this.explType.TabIndex = 2;
+            this.explType.TabIndex = 50;
             // 
             // label2
             // 
