@@ -16,5 +16,20 @@ namespace DLE.NET
         {
             InitializeComponent();
         }
+
+        private void particleBrightness_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label38_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void effectObjList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
