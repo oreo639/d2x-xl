@@ -17,8 +17,12 @@ namespace DLE.NET
         private TriggerTool m_triggerTool;
         private WallTool m_wallTool;
         private ObjectTool m_objectTool;
+        private ReactorTool m_reactorTool;
         private MissionTool m_missionTool;
+        private EffectTool m_effectTool;
+        private DiagnosisTool m_diagnosisTool;
         private PreferencesForm m_prefsForm;
+        private TextureFilters m_textureFilters;
 
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
@@ -48,8 +52,18 @@ namespace DLE.NET
             m_prefsForm.RightToLeftLayout = false;
             m_objectTool = new ObjectTool();
             m_objectTool.RightToLeftLayout = false;
+            m_reactorTool = new ReactorTool();
+            m_reactorTool.RightToLeftLayout = false;
+            m_effectTool = new EffectTool();
+            m_effectTool.RightToLeftLayout = false;
+            m_diagnosisTool = new DiagnosisTool();
+            m_diagnosisTool.RightToLeftLayout = false;
             m_missionTool = new MissionTool();
             m_missionTool.RightToLeftLayout = false;
+            m_missionTool = new MissionTool();
+            m_missionTool.RightToLeftLayout = false;
+            m_textureFilters = new TextureFilters();
+            m_textureFilters.RightToLeftLayout = false;
             if (!m_bSaveLayout)
                 Setup();
             //dockPanel.DockRightPortion = (float)m_segmentTool.Width / (float)dockPanel.Width;
@@ -67,10 +81,15 @@ namespace DLE.NET
             m_textureTool.Show(m_segmentTool.Pane, null);
             m_wallTool.Show(m_segmentTool.Pane, null);
             m_triggerTool.Show(m_segmentTool.Pane, null);
+            m_effectTool.Show(m_segmentTool.Pane, null);
             m_objectTool.Show(m_segmentTool.Pane, null);
+            m_reactorTool.Show(m_segmentTool.Pane, null);
             m_missionTool.Show(m_segmentTool.Pane, null);
+            m_diagnosisTool.Show(m_segmentTool.Pane, null);
+            m_textureFilters.Show(m_segmentTool.Pane, null);
             m_prefsForm.Show(m_segmentTool.Pane, null);
-            m_textureList.Show(m_renderWindow.Pane, DockAlignment.Bottom, 200.0f / (float) m_renderWindow.Height);
+            m_segmentTool.Show();
+            m_textureList.Show(m_renderWindow.Pane, DockAlignment.Bottom, 200.0f / (float)m_renderWindow.Height);
             //m_textureList.Show(dockPanel, DockState.DockBottom);
         }
 
@@ -128,6 +147,121 @@ namespace DLE.NET
                 dockPanel.SaveAsXml(configFile);
             else if (File.Exists(configFile))
                 File.Delete(configFile);
+        }
+
+        private void tbLightTool_Click(object sender, EventArgs e)
+        {
+            m_lightTool.Show();
+        }
+
+        private void tbTextureTool_Click(object sender, EventArgs e)
+        {
+            m_textureTool.Show();
+        }
+
+        private void tbSegmentTool_Click(object sender, EventArgs e)
+        {
+            m_segmentTool.Show();
+        }
+
+        private void tbWallTool_Click(object sender, EventArgs e)
+        {
+            m_wallTool.Show();
+        }
+
+        private void tbTriggerTool_Click(object sender, EventArgs e)
+        {
+            m_triggerTool.Show();
+        }
+
+        private void tbEffectTool_Click(object sender, EventArgs e)
+        {
+            m_effectTool.Show();
+        }
+
+        private void tbObjectTool_Click(object sender, EventArgs e)
+        {
+            m_objectTool.Show();
+        }
+
+        private void tbReactorTool_Click(object sender, EventArgs e)
+        {
+            m_reactorTool.Show();
+        }
+
+        private void tbMissionTool_Click(object sender, EventArgs e)
+        {
+            m_missionTool.Show();
+        }
+
+        private void tbPreferences_Click(object sender, EventArgs e)
+        {
+            m_prefsForm.Show();
+        }
+
+        private void tbCheckMine_Click(object sender, EventArgs e)
+        {
+            m_diagnosisTool.Show();
+        }
+
+        private void textureEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_textureTool.Show();
+        }
+
+        private void pointEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_segmentTool.Show();
+        }
+
+        private void cubeEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_segmentTool.Show();
+        }
+
+        private void objectEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_objectTool.Show();
+        }
+
+        private void effectToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_effectTool.Show();
+        }
+
+        private void wallToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_wallTool.Show();
+        }
+
+        private void triggerToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_triggerTool.Show();
+        }
+
+        private void lightCalculationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_lightTool.Show();
+        }
+
+        private void texturealignmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_textureTool.Show();
+        }
+
+        private void reactorTriggersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_reactorTool.Show();
+        }
+
+        private void texturefiltersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void curvegeneratorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

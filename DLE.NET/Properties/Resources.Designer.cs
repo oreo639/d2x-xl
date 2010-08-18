@@ -783,7 +783,7 @@ namespace DLE.NET.Properties {
         
         internal static System.Drawing.Bitmap reactor_16x16 {
             get {
-                object obj = ResourceManager.GetObject("reactor-16x16", resourceCulture);
+                object obj = ResourceManager.GetObject("reactor_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -146,6 +146,12 @@
     <Compile Include="RenderWindow.Designer.cs">
       <DependentUpon>RenderWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextureFilters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextureFilters.Designer.cs">
+      <DependentUpon>TextureFilters.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextureTool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,6 +236,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SegmentTool.resx">
       <DependentUpon>SegmentTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextureFilters.resx">
+      <DependentUpon>TextureFilters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextureTool.resx">
       <DependentUpon>TextureTool.cs</DependentUpon>
