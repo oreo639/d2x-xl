@@ -25,22 +25,34 @@
         const int MAX_SEGMENTS1 = 800;  // descent 1 max # of cubes
         const int MAX_SEGMENTS2 = 900;  // descent 2 max # of cubes
         const int MAX_SEGMENTS3 = 8000; // D2X-XL max # of cubes
+        public int MAX_SEGMENTS() { return (m_fileType == FileType.RDL) ? MAX_SEGMENTS1 : (m_levelVersion < 9) ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+
         const int MAX_VERTICES1 = 2808; // descent 1 max # of vertices
         const int MAX_VERTICES2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
         const int MAX_VERTICES3 = (MAX_SEGMENTS3 * 4 + 8); // descent 2 max # of vertices
+        public int MAX_VERTICES() { return (m_fileType == FileType.RDL) ? MAX_VERTICES1 : (m_levelVersion < 9) ? MAX_VERTICES2 : MAX_VERTICES3; }
+
         const int MAX_OBJECTS1 = 350;
         const int MAX_OBJECTS2 = 2000;
+        public int MAX_OBJECTS() { return (m_levelVersion < 9) ? MAX_OBJECTS1 : MAX_OBJECTS2; }
+
         const int MAX_WALLS1 = 175; // Maximum number of walls for Descent 1
         const int MAX_WALLS2 = 255; // Maximum number of walls for Descent 2
         const int MAX_WALLS3 = 2047; // Maximum number of walls for Descent 2
+        public int MAX_WALLS() { return (m_fileType == FileType.RDL) ? MAX_WALLS1 : (m_levelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+        public int NO_WALL() { return MAX_WALLS(); }
+
         const int MAX_TRIGGERS1 = 100;
         const int MAX_TRIGGERS2 = 254;
+        public int MAX_TRIGGERS() { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
+
         const int MAX_OBJ_TRIGGERS = 254;
         const int MAX_TRIGGER_FLAGS = 12;
         const int NO_TRIGGER = 255;
 
         const int MAX_PLAYERS_D2 = 8;
         const int MAX_PLAYERS_D2X = 16;
+        public int MAX_PLAYERS() { return (m_levelVersion < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
         const int MAX_COOP_PLAYERS = 3;
 
         const int VCLIP_MAX_FRAMES = 30;
@@ -61,8 +73,11 @@
         const int MAX_D2_AI_OPTIONS = 9;
 
         const int MAX_MACROS = 100;
+
         const int MAX_D1_TEXTURES = 584;
         const int MAX_D2_TEXTURES = 910;
+        public int MAX_TEXTURES() { return (m_fileType == FileType.RDL) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
+
         const int MAX_D1_WALL_FLAGS = 5;
         const int MAX_D2_WALL_FLAGS = 9;
         const int MAX_WALL_FLAGS = 9;
@@ -82,44 +97,24 @@
 
         const int MAX_POLY = 6;
 
-        public int MAX_PLAYERS()
-        {
-            return (m_levelVersion < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X;
-        }
+        const int MAX_OBJECT_NUMBER = 12;
+        const int MAX_CONTAINS_NUMBER = 2;
+        const int HOSTAGE_CLIP_NUMBER = 33;
+        const int VCLIP_BIG_EXPLOSION = 0;
+        const int VCLIP_SMALL_EXPLOSION = 2;
 
-        public int MAX_SEGMENTS ()
-        {
-            return (m_fileType == FileType.RDL) ? MAX_SEGMENTS1  : (m_levelVersion < 9) ? MAX_SEGMENTS2 : MAX_SEGMENTS3;
-        }
+        const int D1_PLAYER_CLIP_NUMBER = 43;
+        const int D2_PLAYER_CLIP_NUMBER = 108;
+        public int PLAYER_CLIP_NUMBER () { return (m_fileType == FileType.RDL) ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER; }
 
-        public int MAX_VERTICES ()
-        {
-            return (m_fileType == FileType.RDL) ? MAX_VERTICES1 : (m_levelVersion < 9) ? MAX_VERTICES2 : MAX_VERTICES3;
-        }
+        const int D1_COOP_CLIP_NUMBER = 44;
+        const int D2_COOP_CLIP_NUMBER = 108;
+        public int COOP_CLIP_NUMBER () { return (m_fileType == FileType.RDL) ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER; }
 
-        public int MAX_WALLS ()
-        {
-            return (m_fileType == FileType.RDL) ? MAX_WALLS1 : (m_levelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3;
-        }
+        const int D1_REACTOR_CLIP_NUMBER = 39;
+        const int D2_REACTOR_CLIP_NUMBER = 97;
+        public int REACTOR_CLIP_NUMBER() { return (m_fileType == FileType.RDL) ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
 
-        public int NO_WALL()
-        {
-            return MAX_WALLS ();
-        }
 
-        public int MAX_TEXTURES ()
-        {
-            return (m_fileType == FileType.RDL) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
-        }
-
-        public int MAX_TRIGGERS ()
-        {
-            return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2;
-        }
-
-        public int MAX_OBJECTS	()
-        {
-            return (m_levelVersion < 9) ? MAX_OBJECTS1 : MAX_OBJECTS2;
-        }
     }
 }
