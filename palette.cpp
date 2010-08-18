@@ -149,7 +149,7 @@ LPCTSTR PaletteResource (void)
 	char		szFile [256];
 
 int id = IDR_GROUPA_256;
-if (file_type == RDL_FILE)
+if (IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
 FSplit (descent2_path, NULL, szFile, NULL);
 for (ppe = palExt; *(ppe->szFile); ppe++)

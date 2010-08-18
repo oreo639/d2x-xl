@@ -238,8 +238,8 @@ CDSegment *seg = m_mine->CurrSeg ();
 // enable/disable "end of exit tunnel" button
 EndOfExit ()->EnableWindow (seg->children [m_nSide] < 0);
 // enable/disable add cube button
-GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((m_mine->SegCount () < MAX_SEGMENTS) &&
-													  (m_mine->VertCount () < MAX_VERTICES - 4) &&
+GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((m_mine->SegCount () < MAX_SEGMENTS (m_mine)) &&
+													  (m_mine->VertCount () < MAX_VERTICES (m_mine) - 4) &&
 													  (seg->children [m_nSide] < 0));
 GetDlgItem (IDC_CUBE_DEL)->EnableWindow (m_mine->SegCount () > 1);
 // enable/disable add robot button
@@ -247,9 +247,9 @@ GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (seg) || IsEquipMaker (s
 GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsBotMaker (seg) || IsEquipMaker (seg)) && (LBUsedBots ()->GetCount () > 0));
 GetDlgItem (IDC_CUBE_WALLDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_TRIGGERDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
-GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (file_type != RDL_FILE);
-GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (level_version >= 9);
-GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (level_version >= 9);
+GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (IsD2File ());
+GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (m_mine->IsD2XLevel ());
+GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (m_mine->IsD2XLevel ());
 }
 
                         /*--------------------------*/
@@ -335,14 +335,14 @@ void CCubeTool::OnPoint4 () { OnPoint (3); }
 
                         /*--------------------------*/
 
-void CCubeTool::SetDefTexture (INT16 tmapnum)
+void CCubeTool::SetDefTexture (INT16 nTexture)
 {
 CDSegment *seg = m_mine->Segments () + m_nCube;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	int i;
 	for (i = 0; i < 6; i++)
 		if (seg->children [i] == -1)
-			m_mine->SetTexture (m_nCube, i, tmapnum, 0);
+			m_mine->SetTexture (m_nCube, i, nTexture, 0);
 	}
 }
 
@@ -634,7 +634,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 		// check to see if we are adding a fuel center
 		case SEGMENT_FUNC_REPAIRCEN:
-			if (level_version < 9) {
+			if (m_mine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -669,7 +669,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 		case SEGMENT_FUNC_TEAM_BLUE:
 		case SEGMENT_FUNC_TEAM_RED:
-			if (level_version < 9) {
+			if (m_mine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -682,7 +682,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_SPEEDBOOST:
-			if (level_version < 9) {
+			if (m_mine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -693,7 +693,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_SKYBOX:
-			if (level_version < 9) {
+			if (m_mine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -704,7 +704,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_EQUIPMAKER:
-			if (level_version < 9) {
+			if (m_mine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -751,13 +751,13 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				continue;
 			// if there is a wall and it's a fuel cell delete it
 			if ((wall = m_mine->GetWall (nSegNum, sidenum)) && 
-				 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (file_type == RDL_FILE) ? 322 : 333))
+				 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (IsD1File ()) ? 322 : 333))
 				m_mine->DeleteWall (side->nWall);
 			// if there is a wall at the opposite side and it's a fuel cell delete it
 			if (m_mine->GetOppositeSide (opp_segnum, opp_sidenum, nSegNum, sidenum) &&
 				 (wall = m_mine->GetWall (nSegNum, sidenum)) && (wall->type == WALL_ILLUSION)) {
 				oppside = m_mine->Segments (opp_segnum)->sides + opp_sidenum;
-				if (oppside->nBaseTex == (file_type == RDL_FILE) ? 322 : 333)
+				if (oppside->nBaseTex == (IsD1File ()) ? 322 : 333)
 					m_mine->DeleteWall (oppside->nWall);
 				}
 			}

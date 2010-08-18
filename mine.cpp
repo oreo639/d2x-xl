@@ -173,8 +173,8 @@ if (filename_passed && *filename_passed)
 	strcpy_s (filename, sizeof (filename), filename_passed);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
-	FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-	sprintf_s (filename, sizeof (filename), (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+	FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
+	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 	bLoadFromHog = false;
 	bNewMine = true;
 	}
@@ -184,12 +184,12 @@ if (!bLoadFromHog)
 	FreeTextureHandles ();
 
 LoadMine (filename, bLoadFromHog, bNewMine);
-if (!bNewMine && (level_version >= 9) && (level_version < LEVEL_VERSION)) {
-	if (level_version < 15) {
+if (!bNewMine && (IsD2XLevel ()) && (LevelOutdated ())) {
+	if (LevelVersion () < 15) {
 		ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
 		NumObjTriggers () = 0;
 		}
-	level_version = LEVEL_VERSION;
+	UpdateLevelVersion ();
 	}
 //CalcDeltaLightData ();
 check_err = FixIndexValues();
@@ -197,8 +197,8 @@ if (check_err != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", check_err);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
-			FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-			sprintf_s (filename, sizeof (filename), (file_type == RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
+			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 			bLoadFromHog = false;
 			bNewMine = true;
 			}
@@ -261,17 +261,17 @@ if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	}
 
 // read version
-level_version = read_INT32 (fp);
-if (level_version == 1) {
-	file_type = RDL_FILE;
+SetLevelVersion (read_INT32 (fp));
+if (LevelVersion () == 1) {
+	SetFileType (RDL_FILE);
 	texture_resource = D1_TEXTURE_STRING_TABLE;
 	}
-else if ((level_version >= 6L) && (level_version <= 21L)) {
-	file_type = RL2_FILE;
+else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
+	SetFileType (RL2_FILE);
 	texture_resource = D2_TEXTURE_STRING_TABLE;
 	}
 else {
-	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", level_version);
+	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
 	ErrorMsg (message);
 	fclose (fp);
 	return 1;
@@ -317,8 +317,8 @@ gamedata_offset = read_INT32 (loadFile);
 // for Descent 1 files since we dont use it anyway
 // hostagetext_offset = read_INT32(loadFile);
 
-if (file_type != RDL_FILE) {
-	if (level_version >= 8) {
+if (IsD2File ()) {
+	if (LevelVersion () >= 8) {
 		read_INT16(loadFile);
 		read_INT16(loadFile);
 		read_INT16(loadFile);
@@ -327,7 +327,7 @@ if (file_type != RDL_FILE) {
 	}
 
 // read palette name *.256
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		// read palette file name
 		int i;
 		for (i = 0; i < 15; i++) {
@@ -406,7 +406,7 @@ FreeResource(hGlobal);
 
 // read descent 2 reactor information
 nLights = 0;
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	ReactorTime () = read_INT32(loadFile); // base control center explosion time
 	ReactorStrength () = read_INT32(loadFile); // reactor strength
 
@@ -416,7 +416,7 @@ if (file_type != RDL_FILE) {
 	INFOMSG(message);
 #endif
 
-	if (level_version > 6) {
+	if (LevelVersion () > 6) {
 		nLights = (INT16)read_INT32(loadFile);
 		if (nLights > 0 && FlickerLightCount () <= MAX_FLICKERING_LIGHTS) {
 			fread(FlickeringLights (), sizeof (FLICKERING_LIGHT), nLights, loadFile);
@@ -477,7 +477,7 @@ load_end:
 load_pog:
 
 	fclose(loadFile);
-if (!bLoadFromHog && (file_type != RDL_FILE)) {
+if (!bLoadFromHog && (IsD2File ())) {
 	ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, 256 - (ps - filename), ".pog");
@@ -496,7 +496,7 @@ if (!bLoadFromHog && (file_type != RDL_FILE)) {
 	ReadHamFile (szHamFile, EXTENDED_HAM);
 #endif
 #if 1
-	if (file_type == RL2_FILE) {
+	if (IsD2File ()) {
 		char szHogFile [256], szHamFile [256], *p;
 		long nSize, nPos;
 
@@ -551,7 +551,7 @@ BOOL CMine::HasCustomLightMap (void)
 {
 HGLOBAL hGlobal = 0;
 UINT32 nSize = 0;
-UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((file_type == RDL_FILE) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
+UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
 BOOL bCustom = memcmp (lightMap, dataP, sizeof (lightMap)) != 0;
@@ -565,7 +565,7 @@ BOOL CMine::HasCustomLightColors (void)
 {
 HGLOBAL hGlobal = 0;
 UINT32 nSize = 0;
-UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((file_type == RDL_FILE) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
+UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
 BOOL bCustom = memcmp (MineData ().texColors, dataP, sizeof (MineData ().texColors)) != 0;
@@ -579,7 +579,7 @@ INT16 CMine::LoadDefaultLightAndColor (void)
 {
 HGLOBAL hGlobal = 0;
 UINT32 nSize = 0;
-UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((file_type == RDL_FILE) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
+UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
 int i = nSize / (3 * sizeof (int) + sizeof (UINT8));
@@ -595,7 +595,7 @@ for (CDColor *pc = MineData ().texColors; i; i--, pc++) {
 	dataP += sizeof (int);
 	}
 FreeResource (hGlobal);
-dataP = LoadDataResource (MAKEINTRESOURCE ((file_type == RDL_FILE) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
+dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
 memcpy (lightMap, dataP, min (nSize, sizeof (lightMap)));
@@ -613,15 +613,15 @@ INT16 CMine::CreateNewLevel ()
 {
 HGLOBAL hGlobal;
 UINT32 nResSize;
-UINT8 *data = LoadDataResource (MAKEINTRESOURCE ((file_type == RDL_FILE) ? IDR_NEW_RDL : IDR_NEW_RL2), hGlobal, nResSize);
+UINT8 *data = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_NEW_RDL : IDR_NEW_RL2), hGlobal, nResSize);
 if (!data)
 	return 0;
 // copy data to a file
 
-FSplit ((file_type== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-sprintf_s (message, sizeof (message),  (file_type== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
+sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
 memcpy (RobotInfo (), DefRobotInfo (), sizeof (ROBOT_INFO) * N_robot_types);
-texture_resource = (file_type == RDL_FILE) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
 FILE *file;
 fopen_s (&file, message, "wb");
 if (file) {
@@ -660,8 +660,8 @@ INT16 CMine::FixIndexValues()
 			// check wall numbers
 			CDSide& side = seg->sides [sidenum];
 			if (side.nWall >= GameInfo ().walls.count &&
-				side.nWall != NO_WALL) {
-				side.nWall = NO_WALL;
+				side.nWall != NO_WALL (this)) {
+				side.nWall = NO_WALL (this);
 				check_err |= (1 << 0);
 			}
 			// check children
@@ -711,7 +711,7 @@ void CMine::Default()
 	CDSegment& seg = *Segments ();
 	vms_vector *vert = Vertices ();
 
-	seg.sides [0].nWall = NO_WALL;
+	seg.sides [0].nWall = NO_WALL (this);
 	seg.sides [0].nBaseTex = 0;
 	seg.sides [0].nOvlTex = 0;
 	seg.sides [0].uvls [0].u = 0;
@@ -727,7 +727,7 @@ void CMine::Default()
 	seg.sides [0].uvls [3].v = 0;
 	seg.sides [0].uvls [3].l = 0x8000U;
 
-	seg.sides [1].nWall = NO_WALL;
+	seg.sides [1].nWall = NO_WALL (this);
 	seg.sides [1].nBaseTex = 263;
 	seg.sides [1].nOvlTex = 264;
 	seg.sides [1].uvls [0].u = 0;
@@ -743,7 +743,7 @@ void CMine::Default()
 	seg.sides [1].uvls [3].v = 0;
 	seg.sides [1].uvls [3].l = 0x8000U;
 
-	seg.sides [2].nWall = NO_WALL;
+	seg.sides [2].nWall = NO_WALL (this);
 	seg.sides [2].nBaseTex = 0;
 	seg.sides [2].nOvlTex = 0;
 	seg.sides [2].uvls [0].u = 0;
@@ -759,7 +759,7 @@ void CMine::Default()
 	seg.sides [2].uvls [3].v = 0;
 	seg.sides [2].uvls [3].l = 0x8000U;
 
-	seg.sides [3].nWall = NO_WALL;
+	seg.sides [3].nWall = NO_WALL (this);
 	seg.sides [3].nBaseTex = 270;
 	seg.sides [3].nOvlTex = 0;
 	seg.sides [3].uvls [0].u = 0;
@@ -775,7 +775,7 @@ void CMine::Default()
 	seg.sides [3].uvls [3].v = 0;
 	seg.sides [3].uvls [3].l = 11678;
 
-	seg.sides [4].nWall = NO_WALL;
+	seg.sides [4].nWall = NO_WALL (this);
 	seg.sides [4].nBaseTex = 0;
 	seg.sides [4].nOvlTex = 0;
 	seg.sides [4].uvls [0].u = 0;
@@ -791,7 +791,7 @@ void CMine::Default()
 	seg.sides [4].uvls [3].v = 0;
 	seg.sides [4].uvls [3].l = 0x8000U;
 
-	seg.sides [5].nWall = NO_WALL;
+	seg.sides [5].nWall = NO_WALL (this);
 	seg.sides [5].nBaseTex = 0;
 	seg.sides [5].nOvlTex = 0;
 	seg.sides [5].uvls [0].u = 0;
@@ -870,7 +870,7 @@ void CMine::ClearMineData() {
 
 	// initialize Segments ()
 	CDSegment *seg = Segments ();
-	for (i = 0; i < MAX_SEGMENTS; i++, seg++)
+	for (i = 0; i < MAX_SEGMENTS (this); i++, seg++)
 		seg->wall_bitmask &= ~MARKED_MASK;
 	SegCount () = 0;
 
@@ -913,8 +913,8 @@ pc->color.b = (double) c / (double) 0x7fffffff;
 
 void CMine::LoadColors (CDColor *pc, int nColors, int nFirstVersion, int nNewVersion, FILE *fp)
 {
-if (level_version > nFirstVersion)
-	if (level_version < nNewVersion)
+if (LevelVersion () > nFirstVersion)
+	if (LevelVersion () < nNewVersion)
 		fread (pc, sizeof (CDColor), nColors, fp);
 	else
 		for (; nColors; nColors--, pc++)
@@ -950,8 +950,8 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		ErrorMsg (message);
 		return(1);
 		}
-	if (((file_type == RDL_FILE) && (n_vertices > MAX_VERTICES1)) ||
-		 ((file_type != RDL_FILE) && (level_version < 9) && (n_vertices > MAX_VERTICES2)))
+	if (((IsD1File ()) && (n_vertices > MAX_VERTICES1)) ||
+		 ((IsD2File ()) && (IsStdLevel ()) && (n_vertices > MAX_VERTICES2)))
 		ErrorMsg ("Warning: Too many vertices for this level version");
 
 	// read number of Segments () (2 bytes)
@@ -962,8 +962,8 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		ErrorMsg (message);
 		return(2);
 	}
-	if (((file_type == RDL_FILE) && (n_segments > MAX_SEGMENTS1)) ||
-		 ((file_type != RDL_FILE) && (level_version < 9) && (n_segments > MAX_SEGMENTS2)))
+	if (((IsD1File ()) && (n_segments > MAX_SEGMENTS1)) ||
+		 ((IsD2File ()) && (IsStdLevel ()) && (n_segments > MAX_SEGMENTS2)))
 		ErrorMsg ("Warning: Too many Segments for this level version");
 
 	// if we are happy with the number of verts and Segments (), then proceed...
@@ -986,7 +986,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	for (segnum = 0; segnum < SegCount (); segnum++)   {
 		INT16   bit; /** was INT32 */
 		CDSegment *seg = Segments (segnum);
-		if (level_version >= 9) {
+		if (IsD2XLevel ()) {
 			fread(&seg->owner, sizeof (UINT8), 1, loadFile);
 			fread(&seg->group, sizeof (INT8), 1, loadFile);
 			}
@@ -1010,7 +1010,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		// read vertex numbers (16 bytes)
 		fread(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, loadFile);
 
-		if (file_type == RDL_FILE) {
+		if (IsD1File ()) {
 			// read special info (0 to 4 bytes)
 			if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
 				fread(&seg->function, sizeof(UINT8), 1, loadFile);
@@ -1037,7 +1037,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		// read in wall numbers (0 to 6 bytes)
 		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 			if (bit_mask & (1 << sidenum)) {
-				if (level_version < 13) {
+				if (LevelVersion () < 13) {
 					UINT8	nWall;
 					fread(&nWall, sizeof (UINT8), 1, loadFile);
 					seg->sides [sidenum].nWall = nWall;
@@ -1049,7 +1049,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 					}
 				} 
 			else {
-				seg->sides [sidenum].nWall = NO_WALL;
+				seg->sides [sidenum].nWall = NO_WALL (this);
 			}
 		}
 
@@ -1088,7 +1088,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		}
 	}
 
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		CDSegment *seg = Segments ();
 		for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			// read special info (8 bytes)
@@ -1096,7 +1096,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			fread(&seg->matcen_num, sizeof(INT8), 1, loadFile);
 			fread(&seg->value, sizeof(INT8), 1, loadFile);
 			fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
-			if (level_version <= 20)
+			if (LevelVersion () <= 20)
 				seg->Upgrade ();
 			else {
 				fread(&seg->props, sizeof(UINT8), 1, loadFile);
@@ -1110,17 +1110,17 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 				}
 			}
 		}
-	if (level_version == 9) {
+	if (LevelVersion () == 9) {
 		fread(LightColors (), sizeof (CDColor), SegCount () * 6, loadFile); //skip obsolete side colors 
 		fread(LightColors (), sizeof (CDColor), SegCount () * 6, loadFile);
 		fread(VertexColors (), sizeof (CDColor), VertCount (), loadFile);
 		}
-	else if (level_version > 9) {
+	else if (LevelVersion () > 9) {
 		LoadColors (VertexColors (), VertCount (), 9, 15, loadFile);
 		LoadColors (LightColors (), SegCount () * 6, 9, 14, loadFile);
 		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, loadFile);
 		}
-if (GameInfo ().objects.count > MAX_OBJECTS) {
+if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
 			  GameInfo ().objects.count, MAX_OBJECTS2);
 	ErrorMsg (message);
@@ -1234,7 +1234,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			sprintf_s (message, sizeof (message),  "Error: Max number of objects (%ld/%d) exceeded", 
 					  GameInfo ().objects.count, MAX_OBJECTS2);
 			ErrorMsg (message);
-			GameInfo ().objects.count = MAX_OBJECTS;
+			GameInfo ().objects.count = MAX_OBJECTS (this);
 			}
 		else {
 			CDObject *obj = Objects ();
@@ -1250,10 +1250,10 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	// note: Wall size will automatically strip last two items
 
 	if ((GameInfo ().walls.offset > -1) && !fseek(loadfile, GameInfo ().walls.offset, SEEK_SET)) {
-		if (GameInfo ().walls.count > MAX_WALLS) {
-			sprintf_s (message, sizeof (message),  "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS);
+		if (GameInfo ().walls.count > MAX_WALLS (this)) {
+			sprintf_s (message, sizeof (message),  "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS (this));
 			ErrorMsg (message);
-			GameInfo ().walls.count = MAX_WALLS;
+			GameInfo ().walls.count = MAX_WALLS (this);
 			}
 		else if (GameInfo ().fileinfo_version < 20)
 			ErrorMsg ("Wall version < 20, walls not loaded");
@@ -1289,11 +1289,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	//==================== READ TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
 	if (GameInfo ().triggers.offset > -1) {
-		if (GameInfo ().triggers.count > MAX_TRIGGERS) {
+		if (GameInfo ().triggers.count > MAX_TRIGGERS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of triggers (%ld/%d) exceeded",
-				GameInfo ().triggers.count, MAX_TRIGGERS);
+				GameInfo ().triggers.count, MAX_TRIGGERS (this));
 			ErrorMsg (message);
-			GameInfo ().triggers.count = MAX_TRIGGERS;
+			GameInfo ().triggers.count = MAX_TRIGGERS (this);
 		}
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
 			for (i = 0; i < GameInfo ().triggers.count; i++)
@@ -1362,7 +1362,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
-				if (file_type != RDL_FILE) {
+				if (IsD2File ()) {
 					if (fread(BotGens (i), (INT16)GameInfo ().botgen.size, 1, loadfile)!= 1) {
 						ErrorMsg ("Error reading botgens from mine.cpp");
 						break;
@@ -1390,7 +1390,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().equipgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().equipgen.count; i++) {
-				if (file_type != RDL_FILE) {
+				if (IsD2File ()) {
 					if (fread(EquipGens (i), (INT16)GameInfo ().equipgen.size, 1, loadfile)!= 1) {
 						ErrorMsg ("Error reading equipgens from mine.cpp");
 						break;
@@ -1409,7 +1409,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 	//================ READ DELTA LIGHT INFO============== =
 	// note: D2 only
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().dl_indices.count);
 		//    DEBUGMSG(message);
 		if (GameInfo ().dl_indices.count > MAX_DL_INDICES) {
@@ -1429,7 +1429,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 	//==================== READ DELTA LIGHTS==================== =
 	// note: D2 only
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().delta_lights.count);
 		//    DEBUGMSG(message);
 		if (GameInfo ().delta_lights.count > MAX_DELTA_LIGHTS) {
@@ -1541,7 +1541,7 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 		obj->ctype.ai_info.hide_index = read_INT16(f);
 		obj->ctype.ai_info.path_length = read_INT16(f);
 		obj->ctype.ai_info.cur_path_index = read_INT16(f);
-		if (file_type != RL2_FILE) {
+		if (IsD1File ()) {
 			obj->ctype.ai_info.follow_path_start_seg = read_INT16(f);
 			obj->ctype.ai_info.follow_path_end_seg = read_INT16(f);
 		}
@@ -1634,8 +1634,8 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 		for (i = 0; i < 4; i++)
 			obj->rtype.smokeInfo.color [i] = read_INT8 (f);
 		obj->rtype.smokeInfo.nSide = read_INT8 (f);
-		obj->rtype.smokeInfo.nType = (level_version < 18) ? 0 : read_INT8 (f);
-		obj->rtype.smokeInfo.bEnabled = (level_version < 19) ? 1 : read_INT8 (f);
+		obj->rtype.smokeInfo.nType = (LevelVersion () < 18) ? 0 : read_INT8 (f);
+		obj->rtype.smokeInfo.bEnabled = (LevelVersion () < 19) ? 1 : read_INT8 (f);
 		break;
 
 	case RT_LIGHTNING:
@@ -1660,13 +1660,13 @@ void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version)
 		obj->rtype.lightningInfo.bInPlane = read_INT8 (f);
 		for (i = 0; i < 4; i++)
 			obj->rtype.lightningInfo.color [i] = read_INT8 (f);
-		obj->rtype.lightningInfo.bEnabled = (level_version < 19) ? 1 : read_INT8 (f);
+		obj->rtype.lightningInfo.bEnabled = (LevelVersion () < 19) ? 1 : read_INT8 (f);
 		break;
 
 	case RT_SOUND:
 		fread (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
 		obj->rtype.soundInfo.nVolume = read_INT32 (f);
-		obj->rtype.soundInfo.bEnabled = (level_version < 19) ? 1 : read_INT8 (f);
+		obj->rtype.soundInfo.bEnabled = (LevelVersion () < 19) ? 1 : read_INT8 (f);
 		break;
 
 	default:
@@ -1711,24 +1711,24 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 
 	// always save as version 7 or greater if its a D2 level
 	// otherwise, blinking lights will not work.
-	if (level_version < 7 && file_type != RDL_FILE) {
-		level_version = 7;
+	if (LevelVersion () < 7 && IsD2File ()) {
+		SetLevelVersion (7);
 	}
-	if ((level_version >= 9) && (level_version < LEVEL_VERSION)) {
-		level_version = LEVEL_VERSION;
-		//if (level_version < 15)
+	if ((IsD2XLevel ()) && (LevelOutdated ())) {
+		UpdateLevelVersion (LEVEL_VERSION);
+		//if (LevelVersion () < 15)
 			ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
 		}
 
 	// write version
-	write_INT32 (level_version, save_file);
+	write_INT32 (LevelVersion (), save_file);
 
 	write_INT32 (0, save_file); // minedata_offset (temporary)
 	write_INT32 (0, save_file); // gamedata_offset (temporary)
 
 
-	if (file_type != RDL_FILE) {
-		if (level_version >= 8) {
+	if (IsD2File ()) {
+		if (LevelVersion () >= 8) {
 			write_INT16(rand(), save_file);
 			write_INT16(rand(), save_file);
 			write_INT16(rand(), save_file);
@@ -1736,7 +1736,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		}
 	}
 
-	if (file_type== RDL_FILE) {
+	if (m_fileType== RDL_FILE) {
 		write_INT32 (0, save_file); // hostagetext_offset (temporary)
 	} else {
 
@@ -1762,7 +1762,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	}
 
 	// write reactor info
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		// read descent 2 reactor information
 		write_INT32 (ReactorTime (), save_file);
 		write_INT32 (ReactorStrength (), save_file);
@@ -1812,7 +1812,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 	fseek(save_file, 2*sizeof (INT32), SEEK_SET);
 	write_INT32 (minedata_offset, save_file);    // gamedata_offset
 	write_INT32 (gamedata_offset, save_file);    // gamedata_offset
-	if (file_type== RDL_FILE) {
+	if (m_fileType== RDL_FILE) {
 		write_INT32 (hostagetext_offset, save_file); // hostagetext_offset
 	}
 
@@ -1961,7 +1961,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
 		CDSegment *seg = Segments (segnum);
 
-		if (level_version >= 9) {
+		if (IsD2XLevel ()) {
 			fwrite(&seg->owner, sizeof (UINT8), 1, save_file);
 			fwrite(&seg->group, sizeof (INT8), 1, save_file);
 			}
@@ -1973,7 +1973,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 				bitmask |= (1 << sidenum);
 			}
 		}
-		if (file_type== RDL_FILE) {
+		if (m_fileType== RDL_FILE) {
 			if (seg->function != 0) { // if this is a special cube
 				bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 			}
@@ -2001,7 +2001,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		fwrite(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, save_file);
 
 		// write special info (0 to 4 bytes)
-		if (file_type != RL2_FILE) {
+		if (IsD1File ()) {
 			if (bitmask & (1 << MAX_SIDES_PER_SEGMENT)) {
 				fwrite(&seg->function, sizeof(UINT8), 1, save_file);
 				fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
@@ -2026,7 +2026,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		// write wall numbers
 		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 			if (bitmask & (1 << sidenum)) {
-				if (level_version >= 13)
+				if (LevelVersion () >= 13)
 					fwrite(&seg->sides [sidenum].nWall, sizeof (UINT16), 1, save_file);
 				else
 					fwrite(&seg->sides [sidenum].nWall, sizeof (UINT8), 1, save_file);
@@ -2057,7 +2057,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
   }
 
   // for Descent 2, save special info here
-  if (file_type != RDL_FILE) {
+  if (IsD2File ()) {
 	  CDSegment *seg = Segments ();
 	  for (segnum = 0; segnum < SegCount (); segnum++, seg++)   {
 		  // write special info (8 bytes)
@@ -2070,13 +2070,13 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 			fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
 			fwrite(&seg->value, sizeof(INT8), 1, save_file);
 			fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file);
-			if (level_version >= 9) {
+			if (IsD2XLevel ()) {
 				fwrite(&seg->props, sizeof(UINT8), 1, save_file);
 				fwrite(seg->damage, sizeof(INT16), 2, save_file);
 				}
 			fwrite(&seg->static_light, sizeof(FIX), 1, save_file);
 	  }
-	if (level_version >= 9) {
+	if (IsD2XLevel ()) {
 		SaveColors (VertexColors (), VertCount (), save_file);
 		SaveColors (LightColors (), SegCount () * 6, save_file);
 		SaveColors (TexColors (), MAX_D2_TEXTURES, save_file);
@@ -2092,7 +2092,7 @@ void CMine::WriteTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
 	int	i;
 	char	pad = 0;
 
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	fwrite (&t->type, sizeof (INT8), 1, fp);
 	if (bObjTrigger)
 		fwrite (&t->flags, sizeof (INT16), 1, fp);
@@ -2123,7 +2123,7 @@ void CMine::ReadTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
 {
 	int	i;
 
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	t->type = read_INT8(fp);
 	if (bObjTrigger)
 		t->flags = read_INT16(fp);
@@ -2132,7 +2132,7 @@ if (file_type != RDL_FILE) {
 	t->num_links = read_INT8(fp);
 	read_INT8(fp);
 	t->value = read_FIX(fp);
-	if ((level_version < 21) && (t->type == TT_EXIT))
+	if ((LevelVersion () < 21) && (t->type == TT_EXIT))
 		t->value = 0;
 	if ((GameInfo ().fileinfo_version < 39) && (t->type == TT_MASTER))
 		t->value = 0;
@@ -2184,9 +2184,9 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	GameInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
 	GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
 	GameInfo ().doors.size = 16;                            // 16 = sizeof (active_door)
-	GameInfo ().triggers.size = (file_type== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
+	GameInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
 	GameInfo ().control.size = 42;                            // 42 = sizeof (control_center_trigger)
-	GameInfo ().botgen.size = (file_type== RDL_FILE) ? 16:20; // 20 = sizeof (matcen_info)
+	GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (matcen_info)
 	GameInfo ().equipgen.size = 20; // 20 = sizeof (matcen_info)
 	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof (dl_index)
 	GameInfo ().delta_lights.size = 8;                             // 8 = sizeof (delta_light)
@@ -2212,7 +2212,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//  GameInfo ().dl_indices.count = 0; // D2
 	//  GameInfo ().delta_lights.count = 0; // D2
 
-	if (file_type== RDL_FILE) {
+	if (m_fileType== RDL_FILE) {
 		GameInfo ().fileinfo_signature = 0x6705;
 		GameInfo ().fileinfo_version = 25;
 		GameInfo ().fileinfo_size = 119;
@@ -2220,8 +2220,8 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		}
 	else {
 		GameInfo ().fileinfo_signature = 0x6705;
-		GameInfo ().fileinfo_version = (level_version < 13) ? 31 : 40;
-		GameInfo ().fileinfo_size = (level_version < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
+		GameInfo ().fileinfo_version = (LevelVersion () < 13) ? 31 : 40;
+		GameInfo ().fileinfo_size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
 		GameInfo ().level = 0;
 	}
 
@@ -2229,7 +2229,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	if (GameInfo ().fileinfo_version >= 14) {  /*save mine filename */
 		fwrite(current_level_name, sizeof (char), strlen (current_level_name), savefile);
 	}
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		fwrite("\n", 1, 1, savefile); // write an end - of - line
 	} else {
 		fwrite("", 1, 1, savefile);   // write a null
@@ -2241,7 +2241,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	UINT8 *save_pof_names;
 	INT16 n_save_pof_names, n_pofs;
 
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		n_save_pof_names = 166;
 		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES2), "RC_DATA")))
 			return 1;
@@ -2295,7 +2295,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	GameInfo ().triggers.offset = ftell(savefile);
 	for (i = 0; i < GameInfo ().triggers.count; i++)
 		WriteTrigger (Triggers (i), savefile, false);
-	if (level_version >= 12) {
+	if (LevelVersion () >= 12) {
 		fwrite (&NumObjTriggers (), sizeof (int), 1, savefile);
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
@@ -2315,7 +2315,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//================ WRITE MATERIALIZATION CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
 	GameInfo ().botgen.offset = ftell(savefile);
-	if (file_type != RDL_FILE)
+	if (IsD2File ())
 		fwrite(BotGens (), TotalSize (GameInfo ().botgen), 1, savefile);
 	else {
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
@@ -2331,25 +2331,25 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//================ WRITE EQUIPMENT CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
 	GameInfo ().equipgen.offset = ftell(savefile);
-	if (file_type != RDL_FILE)
+	if (IsD2File ())
 		fwrite(EquipGens (), TotalSize (GameInfo ().equipgen), 1, savefile);
 
 	//============== CALCULATE DELTA LIGHT DATA============ =
-	if (file_type != RDL_FILE)
+	if (IsD2File ())
 		UpdateDeltaLights ();
 
 	//================ WRITE DELTA LIGHT INFO============== =
 	// note: D2 only
 	GameInfo ().dl_indices.offset = ftell(savefile);
-	if ((level_version >= 15) && (GameInfo ().fileinfo_version >= 34))
+	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34))
 		SortDLIndex (0, GameInfo ().dl_indices.count - 1);
-	if (file_type != RDL_FILE)
+	if (IsD2File ())
 		fwrite(DLIndex (), TotalSize (GameInfo ().dl_indices), 1, savefile);
 
 	//================ = WRITE DELTA LIGHTS==================
 	// note: D2 only
 	GameInfo ().delta_lights.offset = ftell(savefile);
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		delta_light *dl, temp_dl;
 		dl = DeltaLights ();
 		for (i = 0; i < GameInfo ().delta_lights.count; i++) {
@@ -2397,7 +2397,7 @@ write_INT8 (wallP->cloak_value, fp);
 // ------------------------------------------------------------------------
 void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 {
-if ((level_version < 9) && (obj->type >= OBJ_CAMBOT))
+if ((IsStdLevel ()) && (obj->type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
 	int i;
@@ -2454,7 +2454,7 @@ if ((level_version < 9) && (obj->type >= OBJ_CAMBOT))
 		write_INT16(obj->ctype.ai_info.hide_index, f);
 		write_INT16(obj->ctype.ai_info.path_length, f);
 		write_INT16(obj->ctype.ai_info.cur_path_index, f);
-		if (file_type != RL2_FILE) {
+		if (IsD1File ()) {
 			write_INT16(obj->ctype.ai_info.follow_path_start_seg, f);
 			write_INT16(obj->ctype.ai_info.follow_path_end_seg, f);
 		}
@@ -2675,5 +2675,5 @@ void CMine::CalcCenter(vms_vector &center, INT16 segnum, INT16 sidenum)
 	}
 }
 
-
+CMine* GetMine (CMine* m) { return m ? m : theApp.GetMine (); }
 //eof mine.cpp

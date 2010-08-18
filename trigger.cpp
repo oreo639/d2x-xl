@@ -126,7 +126,7 @@ if (trignum != NO_TRIGGER) {
 	ErrorMsg ("There is already a trigger on this side");
 	return NULL;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS (this)) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return NULL;
 	}
@@ -135,7 +135,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (CurrSide ()->nWall >= GameInfo ().walls.count) {
 	if (bAutoAddWall) {
-		if (GameInfo ().walls.count >= MAX_WALLS) {
+		if (GameInfo ().walls.count >= MAX_WALLS (this)) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
 			return NULL;
 			}
@@ -153,7 +153,7 @@ if (CurrSide ()->nWall >= GameInfo ().walls.count) {
 		}
 	}
 // if D1, then convert type to flag value
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	switch(type) {
 		case TT_OPEN_DOOR:
 			flags = TRIGGER_CONTROL_DOORS;
@@ -402,7 +402,7 @@ num_links =  ccTrigger->num_links;
 for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
 	trignum = Walls (wallnum)->trigger;
 	if (trignum >= 0 && trignum <GameInfo ().triggers.count) {
-		if ((file_type == RDL_FILE) ?
+		if ((IsD1File ()) ?
 			 Triggers (trignum)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) :
 			 Triggers (trignum)->type == TT_EXIT || Triggers (trignum)->type == TT_SECRET_EXIT) {
 			// see if cube,side is already on the list

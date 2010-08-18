@@ -51,8 +51,8 @@ void CreateLightMap (void)
 if (theApp.GetMine ())
 	theApp.GetMine ()->LoadDefaultLightAndColor ();
 #else
-	TEXTURE_LIGHT	*pTexLights = (file_type == RDL_FILE) ? d1_texture_light : d2_texture_light;
-	int				i = ((file_type == RDL_FILE) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
+	TEXTURE_LIGHT	*pTexLights = (IsD1File ()) ? d1_texture_light : d2_texture_light;
+	int				i = ((IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
 
 memset (lightMap, 0, sizeof (lightMap));
 while (i) {
@@ -113,7 +113,7 @@ return (UINT8) ((lightMap [nBaseTex] - 1) / 0x0200L);
   int i;
 
 #	if 1
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	i = FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1);
 	if (i >= 0)
 		return (UINT8) ((d1_texture_light [i].light - 1) / 0x0200L);
@@ -128,7 +128,7 @@ return 0;
 	UINT8 result;
 
 if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
-	if (file_type == RDL_FILE) {
+	if (IsD1File ()) {
 		for (i=0;i<NUM_LIGHTS_D1;i++)
 			if (nBaseTex <= d1_texture_light[i].nBaseTex) 
 				break;
@@ -198,9 +198,9 @@ if (FlickerLightCount () >= MAX_FLICKERING_LIGHTS) {
 		}
 	return -1;
 	}
-INT16 tmapnum = CurrSide ()->nBaseTex & 0x1fff;
+INT16 nTexture = CurrSide ()->nBaseTex & 0x1fff;
 INT16 tmapnum2 = CurrSide ()->nOvlTex & 0x1fff;
-if ((IsLight (tmapnum) == -1) && (IsLight (tmapnum2) == -1)) {
+if ((IsLight (nTexture) == -1) && (IsLight (tmapnum2) == -1)) {
 	if (!bExpertMode)
 		ErrorMsg ("Blinking lights can only be added to a side\n"
 					"that has a Texture with \" - light\" at the\n"
@@ -256,14 +256,14 @@ int CMine::IsLight(int nBaseTex)
 return (lightMap [nBaseTex & 0x3fff] > 0) ? 0 : -1;
 #else
 #	if 1
-return (file_type == RDL_FILE) ?
+return (IsD1File ()) ?
 	FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1) : 
 	FindLight (nBaseTex, d2_texture_light, NUM_LIGHTS_D2);
 #	else
 	int retval = -1;
 	int i;
 	TEXTURE_LIGHT *t;
-	if (file_type == RDL_FILE) {
+	if (IsD1File ()) {
 		i = NUM_LIGHTS_D1;
 		t = d1_texture_light;
 		}
@@ -275,13 +275,13 @@ return (file_type == RDL_FILE) ?
 		if (nBaseTex <= t->nBaseTex)
 			break;
 	if (nBaseTex == t->nBaseTex)
-		return t - ((file_type == RDL_FILE) ? d1_texture_light : d2_texture_light);
+		return t - ((IsD1File ()) ? d1_texture_light : d2_texture_light);
 	return -1;
 #	if 0
 	for (i=0;i<NUM_LIGHTS_D1;i++) {
 		if (nBaseTex <= d1_texture_light[i].nBaseTex) break;
 	if (nBaseTex > 0) {
-		if (file_type == RDL_FILE) {
+		if (IsD1File ()) {
 			for (i=0;i<NUM_LIGHTS_D1;i++) {
 				if (nBaseTex <= d1_texture_light[i].nBaseTex) break;
 			}
@@ -336,7 +336,7 @@ bool CMine::IsBlastableLight (int nBaseTex)
 nBaseTex &= 0x3fff;
 if (IsExplodingLight (nBaseTex))
 	return true;
-if (file_type == RDL_FILE)
+if (IsD1File ())
 	return false;
 for (INT16 *p = d2_blastable_lights; *p >= 0; p++)
 	if (*p == nBaseTex)
@@ -860,7 +860,7 @@ int CMine::FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi)
 	int	j	= (int)GameInfo ().dl_indices.count++;
 	dl_index	*pdli = DLIndex ();
 
-if ((level_version >= 15) && (GameInfo ().fileinfo_version >= 34)) {
+if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34)) {
 	for (; i < j; i++, pdli++)
 		if ((pdli->d2x.segnum == segnum) && (pdli->d2x.sidenum = (UINT8) sidenum))
 			return i;
@@ -886,7 +886,7 @@ bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth)
 
 GameInfo ().delta_lights.count = 0;
 GameInfo ().dl_indices.count = 0;
-bool bWall, bD2XLights = (level_version >= 15) && (GameInfo ().fileinfo_version >= 34);
+bool bWall, bD2XLights = (LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel
@@ -901,10 +901,10 @@ fLightScale = 1.0; ///= 100.0;
 			continue;
 		// loop on all sides
 		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++) {
-			INT16 tmapnum = srcSegP->sides [nSourceSide].nBaseTex & 0x3fff;
+			INT16 nTexture = srcSegP->sides [nSourceSide].nBaseTex & 0x3fff;
 			INT16 tmapnum2 = srcSegP->sides [nSourceSide].nOvlTex & 0x3fff;
 			INT16 trignum;
-			bool bl1 = (bool) (IsLight (tmapnum) != -1);
+			bool bl1 = (bool) (IsLight (nTexture) != -1);
 			bool bl2 = (bool) (IsLight (tmapnum2) != -1);
 			if (!(bl1 || bl2))
 				continue;	// no lights on this side
@@ -926,7 +926,7 @@ fLightScale = 1.0; ///= 100.0;
 			if (!bCalcDeltas)
 				bCalcDeltas = IsFlickeringLight (nSourceSeg, nSourceSide);
 			if (!bCalcDeltas) {
-				bool bb1 = IsBlastableLight (tmapnum);
+				bool bb1 = IsBlastableLight (nTexture);
 				bool bb2 = IsBlastableLight (tmapnum2);
 				if (bb1 == bb2)
 					bCalcDeltas = bb1;	// both lights blastable or not
@@ -1044,14 +1044,14 @@ fLightScale = 1.0; ///= 100.0;
 							continue; // don't put light because there is no texture here
 						}
 					// don't affect non-flickering light emitting textures (e.g. lava)
-					tmapnum = childSegP->sides [nChildSide].nBaseTex;
+					nTexture = childSegP->sides [nChildSide].nBaseTex;
 					tmapnum2 = childSegP->sides [nChildSide].nOvlTex & 0x3fff;
 					if (m_nNoLightDeltas == 1) {
-						if (((IsLight (tmapnum) >= 0) || (IsLight (tmapnum2) >= 0))
+						if (((IsLight (nTexture) >= 0) || (IsLight (tmapnum2) >= 0))
 							 && !IsFlickeringLight (nChildSeg, nChildSide))
 							continue;
 						}
-					else if ((m_nNoLightDeltas == 2) && (IsLava (tmapnum) || IsLava (tmapnum2)))
+					else if ((m_nNoLightDeltas == 2) && (IsLava (nTexture) || IsLava (tmapnum2)))
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {

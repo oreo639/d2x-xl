@@ -64,7 +64,7 @@ int CMine::ReadHamFile(char *pszFile, int type)
   static char d2xHamSig [4] = {'M','A','H','X'};
 
 if (!pszFile) {
-	if (file_type == RL2_FILE) {
+	if (IsD2File ()) {
 		FSplit (descent2_path, szFile, NULL, NULL);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}

@@ -206,13 +206,13 @@ plc.SetItemText (6, 1, ItemText (m_mine->ObjectCount ()));
 for (i = 0; i < 8; i++)
 	plc.SetItemText (7 + i, 1, ItemText (m_nObjects [i]));
 plc.SetItemText (15, 1, ItemText (CountTextures ()));
-plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS));
-plc.SetItemText (1, 2, ItemText (MAX_VERTICES));
+plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS (m_mine)));
+plc.SetItemText (1, 2, ItemText (MAX_VERTICES (m_mine)));
 plc.SetItemText (2, 2, ItemText (MAX_NUM_MATCENS));
 plc.SetItemText (3, 2, ItemText (MAX_NUM_FUELCENS));
-plc.SetItemText (4, 2, ItemText (MAX_WALLS));
-plc.SetItemText (5, 2, ItemText (MAX_TRIGGERS));
-plc.SetItemText (6, 2, ItemText (MAX_OBJECTS));
+plc.SetItemText (4, 2, ItemText (MAX_WALLS (m_mine)));
+plc.SetItemText (5, 2, ItemText (MAX_TRIGGERS (m_mine)));
+plc.SetItemText (6, 2, ItemText (MAX_OBJECTS (m_mine)));
 plc.SetItemText (7, 2, ItemText (m_nContained [0], "cont"));
 plc.SetItemText (9, 2, ItemText (8));
 plc.SetItemText (10, 2, ItemText (3));

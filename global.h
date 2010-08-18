@@ -31,7 +31,7 @@ extern char SubFile[20];
 
 // robot related globals
 extern INT32 preferences;
-extern INT32 level_version;
+extern INT32 m_levelVersion;
 extern INT16  N_flickering_lights;
 //extern FLICKERING_LIGHT *flickering_lights;
 extern LIGHT_TIMER light_timers [MAX_FLICKERING_LIGHTS];
@@ -75,7 +75,7 @@ extern int texture_resource;
 extern long ScrnMemMax;
 extern int ScrnWidth;
 extern int ScrnHeight;
-extern int file_type;
+extern int m_fileType;
 extern dl_index *dl_indices;
 extern delta_light *delta_lights;
 extern INT16 num_static_lights;
@@ -245,7 +245,7 @@ typedef struct tTxtFilter {
 extern tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE];
 extern tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE];
 
-#define TXT_FILTER_SIZE	((file_type==RDL_FILE) ? D1_TXT_FILTER_SIZE : D2_TXT_FILTER_SIZE)
-#define TXT_FILTERS ((file_type==RDL_FILE) ? txtFiltersD1 : txtFiltersD2)
+#define TXT_FILTER_SIZE	((m_fileType==RDL_FILE) ? D1_TXT_FILTER_SIZE : D2_TXT_FILTER_SIZE)
+#define TXT_FILTERS ((m_fileType==RDL_FILE) ? txtFiltersD1 : txtFiltersD2)
 
 #endif //__global_h4

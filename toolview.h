@@ -569,7 +569,7 @@ class CCubeTool : public CToolDlg
 		int FindEquip (CListBox *plb, LPSTR pszBot = NULL);
 		bool IsBotMaker (CDSegment *seg);
 		bool IsEquipMaker (CDSegment *seg);
-		void SetDefTexture (INT16 tmapnum);
+		void SetDefTexture (INT16 nTexture);
 	
 		afx_msg void OnSetCube ();
 		afx_msg void OnSetType ();

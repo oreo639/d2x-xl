@@ -538,7 +538,7 @@ bool CMineView::SetLightStatus (void)
 	FLICKERING_LIGHT *pfl = mine->FlickeringLights ();
 	LIGHT_STATUS *pls;
 	bool bChange = false;
-	bool bD2XLights = (level_version >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
+	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
 	INT16 source_segnum, source_sidenum, segnum, sidenum;
 
 delta_light *dll = mine->DeltaLights ();
@@ -1832,7 +1832,7 @@ void CMineView::DrawLights (CMine *mine)
   // first show lights that blow up (delta lights)
   SelectObject(m_pDC, m_penLtGray);
 
-  if (file_type != RDL_FILE) {
+  if (IsD2File ()) {
     DLIndex () = (dl_index *)GlobalLock(hDLIndex ());
     if (DLIndex ()) {
       DeltaLights () = (DeltaLights () *)GlobalLock(hDeltaLights ());
@@ -1971,7 +1971,7 @@ j = MAX_VERTICES - 1;
 vms_vector *verts = mine->Vertices (j);
 for (h = n_splines * 4, i = 0; i < h; i++, j--, verts--)
 	m_matrix.SetPoint (verts, m_viewPoints + j);
-CDSegment *seg = mine->Segments (MAX_SEGMENTS - 1);
+CDSegment *seg = mine->Segments (MAX_SEGMENTS (mine) - 1);
 for (i = 0; i < n_splines; i++, seg--)
 	DrawCubeQuick (seg);
 }
@@ -2103,7 +2103,7 @@ for (i = 0; i < 6; i++)
 			IN_RANGE (poly_draw [i].y, y_max)))
 		return;
 
-if ((file_type != RDL_FILE) &&
+if ((IsD2File ()) &&
 	 (objnum == mine->Current ()->object) &&
 	 (obj->type != OBJ_CAMBOT) && (obj->type != OBJ_MONSTERBALL) && 
 	 (obj->type != OBJ_EXPLOSION) && (obj->type != OBJ_SMOKE) && (obj->type != OBJ_EFFECT) &&
@@ -2223,7 +2223,7 @@ if (!ViewObject ())
 	return;
 
 int i, j;
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < mine->GameInfo ().triggers.count; i++)
 	if (mine->Triggers (i)->type == TT_SECRET_EXIT) {
@@ -3175,7 +3175,7 @@ closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
 int enable_secret = FALSE;
-if (file_type != RDL_FILE)
+if (IsD2File ())
 	for(i=0;i<(INT16)m_mine->GameInfo ().triggers.count;i++)
 		if (m_mine->Triggers (i)->type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
@@ -3185,7 +3185,7 @@ if (file_type != RDL_FILE)
 for (i=0;i<=m_mine->GameInfo ().objects.count;i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == m_mine->GameInfo ().objects.count && file_type != RDL_FILE && enable_secret) {
+	if (i == m_mine->GameInfo ().objects.count && IsD2File () && enable_secret) {
 		obj = &temp_obj;
 		obj->type = OBJ_PLAYER;
 		// define obj->position

@@ -210,7 +210,7 @@ void TextureMap(int resolution,
 	UINT8 *ptr;
 	uvl *uvls;
 	CMine *mine = theApp.GetMine ();
-	bool bD2XLights = (level_version >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
+	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
 	
 	
 	// TEMPORARY

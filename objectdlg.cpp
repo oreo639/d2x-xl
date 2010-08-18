@@ -291,10 +291,10 @@ InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) object_names, contains_list, NULL, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (file_type == RDL_FILE) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
-CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (file_type == RDL_FILE) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
-INT16 nTextures = (file_type == RDL_FILE) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
+INT16 nTextures = (IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 INT16 i, j;
 char sz [100], **psz;
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
@@ -577,7 +577,7 @@ if (obj->render_type != RT_POLYOBJ)
 	CBObjTexture ()->EnableWindow (FALSE);
 
 // gray edit if this is an RDL file
-if (file_type == RDL_FILE)
+if (IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
@@ -837,7 +837,7 @@ if (obj->render_type != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (INT16) m_mine->CurrObj ()->rtype.pobj_info.tmap_override;
-	if ((tnum < 0) || (tnum >= ((file_type == RDL_FILE) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES))) {
+	if ((tnum < 0) || (tnum >= ((IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
 		}
@@ -900,8 +900,8 @@ void CObjectTool::SetObjectId (CComboBox *pcb, INT16 type, INT16 id, INT16 flag)
 {
 char str [40];
 int h, i, j;
-INT16 max_robot_ids = flag ? (file_type==RDL_FILE) ? ROBOT_IDS1: 64: 
-									 (file_type==RDL_FILE) ? ROBOT_IDS1: ROBOT_IDS2;
+INT16 max_robot_ids = flag ? (m_fileType==RDL_FILE) ? ROBOT_IDS1: 64: 
+									 (m_fileType==RDL_FILE) ? ROBOT_IDS1: ROBOT_IDS2;
 pcb->ResetContent ();
 HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 switch(type) {
@@ -1006,7 +1006,7 @@ switch(type) {
 		break;
 
 	case OBJ_CNTRLCEN: // a control center */
-		if (file_type == RDL_FILE) {
+		if (IsD1File ()) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
 				sprintf_s (str, sizeof (str), "%d", i);
 				h = pcb->AddString (str);
@@ -1064,7 +1064,7 @@ if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {
 	return;
  }
 
-if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS) {
+if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS (m_mine)) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return;
 	}
@@ -1260,7 +1260,7 @@ if (!GetMine ())
 
 CDObject *obj = m_mine->CurrObj ();
 int selection = object_list [CBObjType ()->GetCurSel ()];
-if ((file_type == RDL_FILE) && (selection == OBJ_WEAPON)) {
+if ((IsD1File ()) && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
 	}
@@ -1286,11 +1286,11 @@ switch (selection) {
 		break;
 
 	case OBJ_WEAPON:
-		obj->id = WEAPON_MINE;
+		obj->id = SMALLMINE_ID;
 		break;
 
 	case OBJ_CNTRLCEN:
-		obj->id = (file_type == RDL_FILE) ? 0: 2;
+		obj->id = (IsD1File ()) ? 0: 2;
 		break;
 
 	case OBJ_EXPLOSION:
@@ -1376,11 +1376,11 @@ switch (obj->type) {
 		break;
 
 	case OBJ_WEAPON:
-		obj->id = WEAPON_MINE;
+		obj->id = SMALLMINE_ID;
 		break;
 
 	case OBJ_CNTRLCEN:
-		obj->id = nCurSel; // + (file_type != RDL_FILE);
+		obj->id = nCurSel; // + (IsD2File ());
 		obj->rtype.vclip_info.vclip_num = nCurSel;
 		break;
 
@@ -1405,7 +1405,7 @@ switch (obj->type) {
 	case OBJ_CNTRLCEN:
 		obj->size = REACTOR_SIZE;
 		obj->shields = REACTOR_SHIELD;
-		if (file_type == RDL_FILE)
+		if (IsD1File ())
 			obj->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
 		else {
 			INT32 model;

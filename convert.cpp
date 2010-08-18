@@ -112,7 +112,7 @@ for (nSeg = segCount; nSeg; nSeg--, seg++) {
 pcb->SetCurSel (0);
 
   // add complete set for Texture 2 combo box
-nTextures = (file_type == RDL_FILE) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = (IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 pcb = CBD2 ();
 int i;
 for (i = 0; i < nTextures; i++) {
@@ -159,11 +159,11 @@ if (LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + texture2, message, sizeof (me
 else
 	nError = GetLastError ();
 #endif
-old_file_type = file_type;
-file_type = RL2_FILE;
+old_file_type = m_fileType;
+m_fileType = RL2_FILE;
 m_mine->LoadPalette ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
-file_type = RDL_FILE;
+m_fileType = RDL_FILE;
 m_mine->LoadPalette ();
 PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
 
@@ -206,8 +206,8 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   HDC hdc = GetDC(HWindow);
 
   // define d1 palette from resource
-  old_file_type = file_type;
-  file_type = RDL_FILE;
+  old_file_type = m_fileType;
+  m_fileType = RDL_FILE;
   hFind = FindResource( hInst,PaletteResource(), RT_RCDATA);
   hPalette = LoadResource( hInst, hFind);
   palette = (UINT8 *) LockResource(hPalette);
@@ -236,7 +236,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   }
 
   // define d2 palette from resource
-  file_type = RL2_FILE;
+  m_fileType = RL2_FILE;
   hFind = FindResource( hInst,PaletteResource(), RT_RCDATA);
   hPalette = LoadResource( hInst, hFind);
   palette = (UINT8 *) LockResource(hPalette);
@@ -266,7 +266,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   ReleaseDC(HWindow, hdc);
 #endif
   // restore file type (should always be RDL_TYPE)
-  file_type = old_file_type;
+  m_fileType = old_file_type;
 }
 
 //------------------------------------------------------------------------
@@ -332,7 +332,7 @@ if (!GetMine ())
 FreeTextureHandles ();
 theApp.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
-file_type = RL2_FILE;
+m_fileType = RL2_FILE;
 texture_resource = D2_TEXTURE_STRING_TABLE;
 m_mine->LoadPalette ();
 

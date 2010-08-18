@@ -179,10 +179,10 @@ int DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, int x0, int
 #if 0	
 	ASSERT (textures [i] < MAX_TEXTURES);
 #endif
-if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
+if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES ()))
 	textures [i] = 0;
 	// buffer textures if not already buffered
-	pTx [i] = pTextures [file_type] + textures [i];
+	pTx [i] = pTextures [m_fileType] + textures [i];
 	if (!(pTx [i]->m_pDataBM && pTx [i]->m_bValid))
 		if (rc = pTx [i]->Read (textures [i]))
 			return (rc);
@@ -357,21 +357,21 @@ int CDTexture::Read (INT16 index)
 	
 if (m_bModified)
 	return 0;
-strcpy_s (path, sizeof (path), (file_type == RDL_FILE) ? descent_path : descent2_path);
+strcpy_s (path, sizeof (path), (IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
 	strcat_s (path, sizeof (path), "groupa.pig");
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
 
 // do a range check on the texture number
-if ((index > ((file_type == RDL_FILE) ? MAX_D1_TEXTURES:MAX_D2_TEXTURES)) || (index < 0)) {
+if ((index > ((IsD1File ()) ? MAX_D1_TEXTURES:MAX_D2_TEXTURES)) || (index < 0)) {
 DEBUGMSG (" Reading texture: Texture # out of range.");
 rc = 1;
 goto abort;
 }
 
 // get pointer to texture table from resource fTextures
-hFind = (file_type == RDL_FILE) ?
+hFind = (IsD1File ()) ?
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
 if (!hFind) {
@@ -404,13 +404,13 @@ if (data_offset == 0x47495050L) /* 'PPIG' Descent 2 type */
 else if (data_offset < 0x10000L)
 	data_offset = 0;
 fseek (fTextures,data_offset,SEEK_SET);
-if (file_type == RL2_FILE)
+if (IsD2File ())
 	fread (&d2_file_header, sizeof (d2_file_header), 1, fTextures);
 else
 	fread (&file_header, sizeof (file_header), 1, fTextures);
 
 // read texture header
-if (file_type == RL2_FILE) {
+if (IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset +
 				(long) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures,offset,SEEK_SET);
@@ -438,7 +438,7 @@ else {
 s = w * h;
 
 // seek to data
-if (file_type == RL2_FILE) {
+if (IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset
 	+ d2_file_header.num_textures * sizeof (D2_PIG_TEXTURE)
 	+ d2_ptexture.offset;
@@ -617,7 +617,7 @@ int ReadPog (FILE *fTextures, UINT32 nFileSize)
 	CDTexture	*pTx;
 
 // make sure this is descent 2 fTextures
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
 	rc = 1;
 	goto abort;
@@ -707,7 +707,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		texture1 = 0;
 		}
 	else
-		pTx = pTextures [file_type];
+		pTx = pTextures [m_fileType];
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {
@@ -907,7 +907,7 @@ int CreatePog (FILE *outPigFile)
   int num;
   pExtraTexture	pxTx;
 
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
 	rc = 4;
 	goto abort;
@@ -939,7 +939,7 @@ d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
 d2_file_header.version      = 0x00000001L;
 d2_file_header.num_textures = 0;
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [file_type][i].m_bModified) {
+	if (pTextures [m_fileType][i].m_bModified) {
 		d2_file_header.num_textures++;
 		}
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -948,7 +948,7 @@ fwrite (&d2_file_header, sizeof (D2_PIG_HEADER), 1, outPigFile);
 
 // write list of textures
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [file_type][i].m_bModified)
+	if (pTextures [m_fileType][i].m_bModified)
 		fwrite (texture_table + i, sizeof (UINT16), 1, outPigFile);
 
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -957,8 +957,8 @@ for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 // write texture headers
 num = 0;
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [file_type][i].m_bModified)
-		WritePogTextureHeader (outPigFile, pTextures [file_type] + i, num++, nOffset);
+	if (pTextures [m_fileType][i].m_bModified)
+		WritePogTextureHeader (outPigFile, pTextures [m_fileType] + i, num++, nOffset);
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
 	WritePogTextureHeader (outPigFile, &pxTx->texture, num, nOffset);
 
@@ -970,8 +970,8 @@ DEBUGMSG (message);
 //-----------------------------------------
 rc = 8;
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [file_type][i].m_bModified && 
-		 !WritePogTexture (outPigFile, pTextures [file_type] + i))
+	if (pTextures [m_fileType][i].m_bModified && 
+		 !WritePogTexture (outPigFile, pTextures [m_fileType] + i))
 		goto abort;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 	if (!WritePogTexture (outPigFile, &pxTx->texture))
@@ -1012,8 +1012,8 @@ for (j = 0; j < 2; j++)
 			free (pTextures [j][i].m_pDataTGA);
 			pTextures [j][i].m_pDataTGA = NULL;
 			}
-		pTextures [file_type][i].m_bModified = FALSE;
-		pTextures [file_type][i].m_nFormat = 0;
+		pTextures [m_fileType][i].m_bModified = FALSE;
+		pTextures [m_fileType][i].m_nFormat = 0;
 		}
 pExtraTexture	p;
 while (extraTextures) {
@@ -1029,7 +1029,7 @@ BOOL HasCustomTextures ()
 {
 int i;
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [file_type][i].m_bModified)
+	if (pTextures [m_fileType][i].m_bModified)
 		return TRUE;
 return FALSE;
 }
@@ -1041,7 +1041,7 @@ int CountCustomTextures ()
 	int i, count = 0;
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [file_type][i].m_bModified)
+	if (pTextures [m_fileType][i].m_bModified)
 		count++;
 return count;
 }
@@ -1157,7 +1157,7 @@ if (!pDC)
 	CDSide		*side;
 	INT16			nWall;
 	bool			bShowTexture = true;
-	char			*path = (file_type == RDL_FILE) ? descent_path : descent2_path;
+	char			*path = (IsD1File ()) ? descent_path : descent2_path;
 
 CRect	rc;
 pWnd->GetClientRect (rc);
@@ -1175,14 +1175,14 @@ if (texture1 < 0) {
 		bShowTexture = (nWall < mine->GameInfo ().walls.count);
 		}
 	}
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES + 10))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES () + 10))
 	bShowTexture = false;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))	// this allows to suppress bitmap display by 
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES ()))	// this allows to suppress bitmap display by 
 	bShowTexture = false;									// passing 0 for texture 1 and -1 for texture2
 
 if (bShowTexture) {
 	// check pig file
-	strcpy_s (szFile, sizeof (szFile), (file_type == RDL_FILE) ? descent_path : descent2_path);
+	strcpy_s (szFile, sizeof (szFile), (IsD1File ()) ? descent_path : descent2_path);
 	fopen_s (&fTextures, szFile, "rb");
 	if (fTextures) {
 		fseek (fTextures, 0, SEEK_SET);

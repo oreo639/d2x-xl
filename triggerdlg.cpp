@@ -128,8 +128,8 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (file_type == RDL_FILE) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (file_type == RDL_FILE) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -217,7 +217,7 @@ CreateImgWnd (&m_showObjWnd, IDC_TRIGGER_SHOW_OBJ);
 CreateImgWnd (&m_showTexWnd, IDC_TRIGGER_SHOW_TEXTURE);
 CComboBox *pcb = CBType ();
 pcb->ResetContent();
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	int h, i, j = sizeof (triggerData) / sizeof (tTriggerData);
 	for (i = 0; i < j; i++) {
 		h = pcb->AddString (triggerData [i].pszName);
@@ -272,7 +272,7 @@ if (TriggerHasSlider () || (m_nType == TT_SHIELD_DAMAGE_D2) || (m_nType == TT_EN
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -1000, 1000, "%3.1f");
 else if ((m_nType == TT_MESSAGE) || (m_nType == TT_SOUND))
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 1000, "%1.0f");
-else if ((file_type == RDL_FILE) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
+else if ((IsD1File ()) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -10000, 10000, "%1.0f");
 else
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 64, "%1.0f");
@@ -338,8 +338,8 @@ return CTexToolDlg::OnKillActive ();
 
 void CTriggerTool::EnableControls (BOOL bEnable)
 {
-CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, level_version >= 12);
-CToolDlg::EnableControls (IDC_TRIGGER_SHOW_OBJ, IDC_TRIGGER_SHOW_OBJ, level_version >= 12);
+CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, m_mine->LevelVersion () >= 12);
+CToolDlg::EnableControls (IDC_TRIGGER_SHOW_OBJ, IDC_TRIGGER_SHOW_OBJ, m_mine->LevelVersion () >= 12);
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO + 1, IDC_TRIGGER_ADD_CONTROLPANEL, bEnable);
 CToolDlg::EnableControls (IDC_TRIGGER_SLIDER, IDC_TRIGGER_SLIDER, bEnable && TriggerHasSlider ());
 CToolDlg::EnableControls (IDC_TRIGGER_STRENGTH, IDC_TRIGGER_STRENGTH, bEnable && (m_nType != TT_SPEEDBOOST) && (m_nType != TT_CHANGE_TEXTURE));
@@ -505,7 +505,7 @@ if (m_nClass || (m_nTrigger == -1)) {
 	EnableControls (FALSE);
 	CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, TRUE);
 	CToolDlg::EnableControls (IDC_TRIGGER_ADD_OPENDOOR, IDC_TRIGGER_ADD_CONTROLPANEL, TRUE);
-	if (file_type != RDL_FILE)
+	if (IsD2File ())
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
 	GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_TRIGGER_D2TYPE)->EnableWindow (TRUE);
@@ -538,7 +538,7 @@ if (m_nTrigger != -1) {
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
-	if (file_type != RDL_FILE) {
+	if (IsD2File ()) {
 		SelectItemData (CBType (), m_nType);
 		CToolDlg::EnableControls (IDC_TRIGGER_CONTROLDOORS, IDC_TRIGGER_CLOSEWALL, FALSE);
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
@@ -667,7 +667,7 @@ int i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, seg++) {
 	side = seg->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
-		if (side->nWall >= MAX_WALLS)
+		if (side->nWall >= MAX_WALLS (m_mine))
 			continue;
 		CDWall *wall = m_mine->Walls (side->nWall);
 		if (wall->trigger >= NumTriggers ())
@@ -747,7 +747,7 @@ if ((nType == TT_SMOKE_BRIGHTNESS) || ((nType >= TT_SMOKE_LIFE) && (nType <= TT_
 	ErrorMsg ("This trigger type is not supported any more.\nYou can use the effects tool to edit smoke emitters.");
 	return;
 	}
-if ((nType >= TT_TELEPORT) && (level_version < 9)) {
+if ((nType >= TT_TELEPORT) && (m_mine->IsStdLevel ())) {
 	SelectItemData (CBType (), m_nType);
 	return;
 	}
@@ -931,7 +931,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-if ((file_type == RDL_FILE) ? 
+if ((IsD1File ()) ? 
 	 (m_pTrigger->flags & TRIGGER_MATCEN) != 0 : 
 	 (m_pTrigger->type == TT_MATCEN) && 
 	 (m_mine->Segments (other->segment)->function != SEGMENT_FUNC_ROBOTMAKER)) {

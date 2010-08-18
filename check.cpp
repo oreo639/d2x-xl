@@ -276,7 +276,7 @@ int CDiagTool::CheckId (CDObject *obj)
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		if (id < 0 || id >= ((file_type == RDL_FILE) ? ROBOT_IDS1 : ROBOT_IDS2) ) {
+		if (id < 0 || id >= ((IsD1File ()) ? ROBOT_IDS1 : ROBOT_IDS2) ) {
 			return 1;
 		}
 		break;
@@ -302,7 +302,7 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_CNTRLCEN : /* the control center */
-		if (file_type == RDL_FILE) {
+		if (IsD1File ()) {
 			if (id >= 0 || id <= 25) {
 				return 0;
 			}
@@ -313,7 +313,7 @@ int CDiagTool::CheckId (CDObject *obj)
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		obj->id = (file_type == RDL_FILE) ? 1 : 2;
+		obj->id = (IsD1File ()) ? 1 : 2;
 		return 2;
 		break;
 
@@ -324,10 +324,10 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_WEAPON: // (d2 only)
-		if (id != WEAPON_MINE) {
+		if (id != SMALLMINE_ID) {
 			if (!m_bAutoFixBugs)
 				return 1;
-			obj->id = WEAPON_MINE;
+			obj->id = SMALLMINE_ID;
 			return 2;
 		}
 	}
@@ -767,7 +767,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  case OBJ_SMOKE:
 	  case OBJ_MONSTERBALL:
 	  case OBJ_EXPLOSION:
-			if (file_type != RDL_FILE) 
+			if (IsD2File ()) 
 				break;
 	  default:
 		 if (m_bAutoFixBugs) {
@@ -1006,7 +1006,7 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 			// if exit, make sure it is linked to control_center_trigger
 			int tt = trigger->type;
 			int tf = trigger->flags;
-			if ((file_type == RDL_FILE) ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
+			if ((IsD1File ()) ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < ccTrigger->num_links; i++)
 					if (ccTrigger->seg [i] == wall->segnum &&
 						 ccTrigger->side [i] == wall->sidenum)
@@ -1061,7 +1061,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	int tt = trigger->type;
 	int tf = trigger->flags;
 	if (trigger->num_links == 0) {
-		if ((file_type == RDL_FILE) 
+		if ((IsD1File ()) 
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
@@ -1123,7 +1123,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 					CDSegment *seg = m_mine->Segments (segnum);
 					// check door opening trigger
 //						if (trigger->flags == TRIGGER_CONTROL_DOORS) {
-					if ((file_type == RDL_FILE) 
+					if ((IsD1File ()) 
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigger points to a wall if it controls doors
@@ -1154,7 +1154,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 								}
 							}
 						}
-					else if ((file_type == RDL_FILE) ? 
+					else if ((IsD1File ()) ? 
 						 tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) :
 						 tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON ||
 						 tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL ||
@@ -1176,7 +1176,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 							}
 						}
 //						if (trigger->flags == TRIGGER_MATCEN) {
-					else if ((file_type == RDL_FILE) ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
+					else if ((IsD1File ()) ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((seg->function != SEGMENT_FUNC_ROBOTMAKER) && (seg->function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
@@ -1203,7 +1203,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 		trigSeg = trigSide = -1;
 	int tt = trigger->type;
 	int tf = trigger->flags;
-	if ((file_type == RDL_FILE) ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
+	if ((IsD1File ()) ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
 			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trig=%d)",trignum);
@@ -1437,7 +1437,7 @@ CDWall *CDiagTool::OppWall (UINT16 segnum, UINT16 sidenum)
 if (!m_mine->GetOppositeSide (oppSegnum, oppSidenum, segnum, sidenum))
 	return NULL;
 wallnum = m_mine->Segments (oppSegnum)->sides [oppSidenum].nWall;
-if ((wallnum < 0) || (wallnum > MAX_WALLS))
+if ((wallnum < 0) || (wallnum > MAX_WALLS (m_mine)))
 	return NULL;
 return m_mine->Walls (wallnum);
 }
@@ -1451,7 +1451,7 @@ bool CDiagTool::CheckWalls ()
 		return false;
 	INT16 segnum,sidenum;
 	UINT16 wallnum, wallCount = m_mine->GameInfo ().walls.count, 
-			 maxWalls = MAX_WALLS;
+			 maxWalls = MAX_WALLS (m_mine);
 	CDSegment *seg;
 	CDSide *side;
 	CDWall *wall = m_mine->Walls (), *w, *ow;
@@ -1527,7 +1527,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wall->type > ((file_type == RDL_FILE) ? WALL_CLOSED : (level_version < 9) ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wall->type > ((IsD1File ()) ? WALL_CLOSED : (m_mine->IsStdLevel ()) ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
 					wallnum,wall->type);
@@ -1673,8 +1673,8 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			  || wall->clip_num == 2
 //			     || wall->clip_num == 7
 			  || wall->clip_num == 8
-			  || (file_type == RDL_FILE && wall->clip_num > 25)
-			  || (file_type == RL2_FILE && wall->clip_num > 50))) {
+			  || (IsD1File () && wall->clip_num > 25)
+			  || (IsD2File () && wall->clip_num > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
 						wallnum,wall->clip_num);

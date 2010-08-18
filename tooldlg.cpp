@@ -449,10 +449,10 @@ if (nWall >= m_mine->GameInfo ().walls.count)
 // note: 910 is not an anim texture, but it is used to calculate
 //       the number of m_frames in 901
 // The 0 is used to end the search
-	UINT16 *anim; // points to d1_anim or d2_anim depending on file_type
+	UINT16 *anim; // points to d1_anim or d2_anim depending on m_fileType
 
 // first find out if one of the textures is animated
-anim = (file_type == RDL_FILE) ? d1_anims : d2_anims;
+anim = (IsD1File ()) ? d1_anims : d2_anims;
 
 for (i=0; i<2;i++)
 	for (index [i] = 0; anim [index [i]]; index [i]++)

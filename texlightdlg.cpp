@@ -195,13 +195,13 @@ CDWall *pWall = m_mine->CurrWall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
-	if (level_version >= 9)
+	if (m_mine->IsD2XLevel ())
 		memset (m_mine->CurrLightColor (), 0, sizeof (CDColor));
 	}
 else {
 	if (!m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = TRUE);
-	if (level_version >= 9) {
+	if (m_mine->IsD2XLevel ()) {
 		CDColor *plc = m_mine->CurrLightColor ();
 		if (!plc->index) {	// set light color to white for new lights
 			plc->index = 255;
@@ -356,7 +356,7 @@ if (!GetMine ())
 
 	CRect		rcPal;
 
-if (/*(level_version >= 9) &&*/ SideHasLight ()) {
+if (/*(m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 	GetCtrlClientRect (&m_paletteWnd, rcPal);
 	if (PtInRect (rcPal, point)) {
 		point.x -= rcPal.left;

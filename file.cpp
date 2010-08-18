@@ -641,7 +641,7 @@ void CHogManager::OnImport ()
 //  } else {
 	// Set all structure members to zero.
 #if 0
-if (!BrowseForFile (TRUE, (file_type == RDL_FILE) ? "rdl" : "rl2", szFile, 
+if (!BrowseForFile (TRUE, (IsD1File ()) ? "rdl" : "rl2", szFile, 
 						  "Descent Level|*.rdl|"
 						  "Descent 2 Level|*.rl2|"
 						  "Texture file|*.pog|"
@@ -666,7 +666,7 @@ ofn.lpstrFilter = "Descent Level\0*.rdl\0"
 						"Color file\0*.clr\0"
 						"Palette file\0*.pal\0"
 						"All Files\0*.*\0";
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	ofn.nFilterIndex = 1;
 	ofn.lpstrDefExt = "rdl";
 	}
@@ -1190,7 +1190,7 @@ if (*szSubFile) {
 	strncpy_s (szBaseName, sizeof (szBaseName), szSubFile, pszExtStart - szSubFile);
 	szBaseName [pszExtStart - szSubFile] = '\0';
 	}
-if (file_type == RDL_FILE)
+if (IsD1File ())
 	sprintf_s (szTmp, sizeof (szTmp), "%s.RDL", szBaseName);
 else
 	sprintf_s (szTmp, sizeof (szTmp), "%s.RL2", szBaseName);
@@ -1198,7 +1198,7 @@ WriteSubFile (hogfile, rdlFilename, szTmp);
 _unlink (szTmp);
 #if 0
 // write palette file into hog (if D2)
-if (file_type == RL2_FILE) {
+if (IsD2File ()) {
 	if (strcmp(palette_resource(),"GROUPA_256") == 0) {
 		char *start_name = strrchr(descent2_path,'\\');
 		if (!start_name) {
@@ -1346,7 +1346,7 @@ if (!*szSubFile || psz) {
 		strcpy_s (psz, 256 - (psz - szHogFile), szSubFile);
 		strcat_s (szHogFile, sizeof (szHogFile), ".hog");
 		}
-	strcat_s (szSubFile, 256, (file_type == RDL_FILE) ? ".rdl" : ".rl2");
+	strcat_s (szSubFile, 256, (IsD1File ()) ? ".rdl" : ".rl2");
 	}
 // if this HOG file only contains one rdl/rl2 file total and
 // it has the same name as the current level, and it has
@@ -1554,7 +1554,7 @@ strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat_s (szMsn, sizeof (szMsn), (file_type == RDL_FILE) ? ".msn" : ".mn2");
+strcat_s (szMsn, sizeof (szMsn), (IsD1File ()) ? ".msn" : ".mn2");
 fopen_s (&fMsn, szMsn, "rt");
 if (!fMsn) {
 	DEBUGMSG (" Hog manager: Mission file not found.");
@@ -1651,7 +1651,7 @@ return 0;
 
                          /*--------------------------*/
 
-int WriteMissionFile (char *pszFile, bool bSaveAs) 
+int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs) 
 {
 	FILE	*fMsn;
 	char  szMsn [256];
@@ -1661,7 +1661,7 @@ strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat_s (szMsn, sizeof (szMsn), (file_type == RDL_FILE) ? ".msn" : ".mn2");
+strcat_s (szMsn, sizeof (szMsn), (IsD1File ()) ? ".msn" : ".mn2");
 if (bSaveAs) {
 	fopen_s (&fMsn, szMsn, "rt");
 	if (fMsn) {
@@ -1674,9 +1674,9 @@ if (bSaveAs) {
 fopen_s (&fMsn, szMsn, "wt");
 if (!fMsn)
 	return -1;
-if (level_version >= 9)
+if (levelVersion >= 9)
 	fprintf (fMsn, "d2x-name = %s\n", missionData.missionName);
-else if (level_version >= 8)
+else if (levelVersion >= 8)
 	fprintf (fMsn, "zname = %s\n", missionData.missionName);
 else
 	fprintf (fMsn, "name = %s\n", missionData.missionName);
@@ -1739,7 +1739,7 @@ missionData.missionType = 1;
 missionData.numLevels = 1;
 strcpy_s (missionData.levelList [0], sizeof (missionData.levelList [0]), pszSubFile);
 if (!strchr (pszSubFile, '.'))
-	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), file_type ? ".rl2" : ".rdl");
+	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), IsD2File () ? ".rl2" : ".rdl");
 missionData.numSecrets = 0;
 strcpy_s (missionData.missionInfo [0], sizeof (missionData.levelList [0]), "DLE-XP");
 strcpy_s (missionData.missionInfo [2], sizeof (missionData.levelList [2]), DateStr (szTime, sizeof (szTime), true));
@@ -1747,7 +1747,7 @@ if (bSaveAs)
 	strcpy_s (missionData.missionInfo [3], sizeof (missionData.missionInfo [3]), "1.0");
 missionData.customFlags [0] = bCustomTextures;
 missionData.customFlags [1] = bCustomRobots;
-return WriteMissionFile (pszFile, bSaveAs);
+return WriteMissionFile (pszFile, theApp.GetMine ()->LevelVersion (), bSaveAs);
 }
 
 // eof file.cpp

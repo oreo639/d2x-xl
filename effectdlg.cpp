@@ -267,7 +267,7 @@ UpdateData (FALSE);
 
 bool CEffectTool::AddEffect ()
 {
-if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS) {
+if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS (m_mine)) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return false;
 	}

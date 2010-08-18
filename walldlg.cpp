@@ -154,7 +154,7 @@ for (i = 0; i < j; i++) {
 
 pcb = CBClipNo ();
 pcb->ResetContent ();
-j = (file_type != RDL_FILE) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
+j = (IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
 for (i = 0; i < j; i++) {
 	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", clip_door_number [i]);
 	pcb->AddString (m_szMsg);
@@ -276,16 +276,16 @@ else {
     // enable all
 	EnableControls (TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (FALSE);
-   if ((file_type == RL2_FILE) && (m_pWall [0]->type == WALL_TRANSPARENT))
+   if ((IsD2File ()) && (m_pWall [0]->type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_STRENGTH)->EnableWindow (FALSE);
 	else {
 		GetDlgItem (IDC_WALL_FLYTHROUGH)->EnableWindow (FALSE);
 		}
-   if ((file_type != RL2_FILE) || (m_pWall [0]->type == WALL_TRANSPARENT))
+   if ((IsD1File ()) || (m_pWall [0]->type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_CLOAK)->EnableWindow (FALSE);
 
     // enable buddy proof and switch checkboxes only if d2 level
-	if (file_type == RDL_FILE) {
+	if (IsD1File ()) {
 		int i;
 		for (i = 0; i < 2; i++)
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
@@ -374,10 +374,10 @@ if (m_mine->GetOppositeSide (segnum [1], sidenum [1], segnum [0], sidenum [0])) 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (side [bSide]->nWall < m_mine->GameInfo ().walls.count)
 		ErrorMsg ("There is already a wall at that side of the current cube.");
-	else if (m_mine->GameInfo ().walls.count >= MAX_WALLS)
+	else if (m_mine->GameInfo ().walls.count >= MAX_WALLS (m_mine))
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((file_type != RDL_FILE) && (seg [bSide]->children [sidenum [bSide]] == -1))
+		if ((IsD2File ()) && (seg [bSide]->children [sidenum [bSide]] == -1))
 			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wall = m_mine->AddWall (segnum [bSide], sidenum [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.clip_num, m_defTexture)) {
@@ -454,7 +454,7 @@ int i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, seg++) {
 	side = seg->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
-		if (side->nWall >= MAX_WALLS)
+		if (side->nWall >= MAX_WALLS (m_mine))
 			continue;
 		if (bAll || m_mine->SideIsMarked (i, j)) {
 			m_mine->DeleteWall (side->nWall);
@@ -537,9 +537,9 @@ void CWallTool::OnSetType ()
 
 GetWalls ();
 nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
-if ((nType > WALL_CLOSED) && !file_type) 
+if ((nType > WALL_CLOSED) && IsD1File ()) 
 	return;
-if ((nType > WALL_CLOAKED) && (level_version < 9)) 
+if ((nType > WALL_CLOAKED) && (m_mine->IsStdLevel ())) 
 	return;
 
 m_defWall.type = m_nType = nType;

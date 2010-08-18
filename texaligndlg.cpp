@@ -738,7 +738,7 @@ UpdateAlignWnd ();
 void CTextureTool::OnAlignStretch2Fit ()
 {
 	CDSide		*side = m_mine->CurrSide ();
-	UINT32		scale = 1; //pTextures [file_type][side->nBaseTex].Scale (side->nBaseTex);
+	UINT32		scale = 1; //pTextures [m_fileType][side->nBaseTex].Scale (side->nBaseTex);
 	CDSegment	*seg;
 	INT16			segnum, sidenum;
 	int			i;
@@ -785,7 +785,7 @@ if (bStart) {
 // mark current side as aligned
 m_mine->Segments (segnum)->seg_number = 1;
 // call recursive function which aligns one at a time
-AlignChildTextures (segnum, sidenum, MAX_SEGMENTS);
+AlignChildTextures (segnum, sidenum, MAX_SEGMENTS (m_mine));
 }
 
                         /*--------------------------*/

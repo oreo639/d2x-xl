@@ -1587,7 +1587,7 @@ void CMainFrame::OnConvert ()
 {
 	CConvertDlg	d;
 
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	if (d.DoModal () == IDOK) {
 		MineView ()->Refresh ();
 		if (bExpertMode)
@@ -1598,15 +1598,15 @@ if (file_type == RDL_FILE) {
 		}
 	}
 else {
-	if (level_version < 8) {
-		level_version = 8;
+	if (GetMine ()->LevelVersion () < 8) {
+		GetMine ()->SetLevelVersion (8);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a Vertigo level.");
 		}
-	else if (level_version < LEVEL_VERSION) {
-		level_version = LEVEL_VERSION;
+	else if (GetMine ()->LevelVersion () < LEVEL_VERSION) {
+		GetMine ()->SetLevelVersion (LEVEL_VERSION);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a D2X-XL level")
 		else
@@ -1615,7 +1615,7 @@ else {
 		GetMine ()->NumObjTriggers () = 0;
 		}
 	else {
-		level_version = 7;
+		GetMine ()->SetLevelVersion (7);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a non-Vertigo level")
 		else

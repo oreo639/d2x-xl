@@ -137,7 +137,7 @@ while(!feof(fBlk)) {
 		return (nNewSegs);
 		}
 // abort if there are not at least 8 vertices free
-	if (MAX_VERTICES - VertCount () < 8) {
+	if (MAX_VERTICES (this) - VertCount () < 8) {
 		ErrorMsg ("No more free vertices");
 		return(nNewSegs);
 		}
@@ -192,7 +192,7 @@ while(!feof(fBlk)) {
 				w.cloak_value = byteBuf;
 				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
 				w.trigger = byteBuf;
-				if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS)) {
+				if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS (this))) {
 					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
 					t.type = byteBuf;
 					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
@@ -205,9 +205,9 @@ while(!feof(fBlk)) {
 						fscanf_s (fBlk, "			        side %hd\n", t.side + iTarget);
 						}
 					}
-				if (GameInfo ().walls.count < MAX_WALLS) {
-					if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS)) {
-						if (GameInfo ().triggers.count >= MAX_TRIGGERS)
+				if (GameInfo ().walls.count < MAX_WALLS (this)) {
+					if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS (this))) {
+						if (GameInfo ().triggers.count >= MAX_TRIGGERS (this))
 							w.trigger = NO_TRIGGER;
 						else {
 							w.trigger = GameInfo ().triggers.count++;
@@ -540,7 +540,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 								nTargets++;
 #if 0
 						if (trigger->num_links && !nTargets)	// no targets in marked area
-							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS);
+							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS (this));
 						else 
 #endif
 							{
@@ -853,7 +853,7 @@ for (segnum = 0;segnum < MAX_SEGMENTS; segnum++, seg++) {
 	}
 
 // unmark all vertices
-for (vertnum = 0; vertnum < MAX_VERTICES; vertnum++) {
+for (vertnum = 0; vertnum < MAX_VERTICES (this); vertnum++) {
 	*VertStatus (vertnum) &= ~MARKED_MASK;
 	*VertStatus (vertnum) &= ~NEW_MASK;
 	}
@@ -903,7 +903,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 		}
 	}
 // clear all new vertices as such
-for (vertnum=0;vertnum<MAX_VERTICES;vertnum++)
+for (vertnum=0;vertnum<MAX_VERTICES (this);vertnum++)
 	*VertStatus (vertnum) &= ~NEW_MASK;
 // now set all seg_numbers
 seg = Segments ();

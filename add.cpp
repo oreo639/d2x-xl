@@ -11,20 +11,20 @@
 // SetDefaultTexture
 //==========================================================================
 
-bool CMine::SetDefaultTexture (INT16 tmapnum, INT16 walltype)
+bool CMine::SetDefaultTexture (INT16 nTexture, INT16 walltype)
 {
-if (tmapnum < 0)
+if (nTexture < 0)
 	return true;
 INT16 segnum = Current ()->segment;
 INT16 opp_segnum, opp_sidenum;
 CDSegment *seg = Segments (segnum);
 CDSide *side = seg->sides;
-double scale = pTextures [file_type][tmapnum].Scale (tmapnum);
+double scale = pTextures [m_fileType][nTexture].Scale (nTexture);
 seg->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 for (INT16 sidenum = 0; sidenum < 6; sidenum++, side++) {
 	if (seg->children [sidenum] == -1) {
-		SetTexture (segnum, sidenum, tmapnum, 0);
+		SetTexture (segnum, sidenum, nTexture, 0);
 	/*
 		side->uvls [0].l = 0x8000;
 		side->uvls [1].l = 0x8000;
@@ -39,14 +39,14 @@ for (INT16 sidenum = 0; sidenum < 6; sidenum++, side++) {
 			}
 		SetUV (segnum, sidenum, 0, 0, 0);
 		}
-	else if (tmapnum >= 0) {
+	else if (nTexture >= 0) {
 		if (walltype >= 0) {
-			if ((GameInfo ().walls.count < MAX_WALLS) &&
+			if ((GameInfo ().walls.count < MAX_WALLS (this)) &&
 				 (Segments (segnum)->sides [sidenum].nWall >= GameInfo ().walls.count))
 				AddWall (segnum, sidenum, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
-			if ((GameInfo ().walls.count < MAX_WALLS) &&
+			if ((GameInfo ().walls.count < MAX_WALLS (this)) &&
 				 GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum) &&
 				 (Segments (opp_segnum)->sides [opp_sidenum].nWall >= GameInfo ().walls.count))
 				AddWall (opp_segnum, opp_sidenum, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
@@ -129,13 +129,13 @@ else if (seg->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wall = GetWall (segnum, sidenum)) && 
-			 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (file_type == RDL_FILE) ? 322 : 333))
+			 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (IsD1File ()) ? 322 : 333))
 			DeleteWall (side->nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		if (GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum) &&
 			 (wall = GetWall (segnum, sidenum)) && (wall->type == WALL_ILLUSION)) {
 			oppside = Segments (opp_segnum)->sides + opp_sidenum;
-			if (oppside->nBaseTex == (file_type == RDL_FILE) ? 322 : 333)
+			if (oppside->nBaseTex == (IsD1File ()) ? 322 : 333)
 				DeleteWall (oppside->nWall);
 			}
 		}
@@ -148,7 +148,7 @@ seg->function = SEGMENT_FUNC_NONE;
 // DefineSegment
 //==========================================================================
 
-bool CMine::DefineSegment (INT16 segnum, UINT8 type, INT16 tmapnum, INT16 walltype)
+bool CMine::DefineSegment (INT16 segnum, UINT8 type, INT16 nTexture, INT16 walltype)
 {
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -156,7 +156,7 @@ UndefineSegment (segnum);
 CDSegment *seg = (segnum < 0) ? CurrSeg () : Segments (segnum);
 seg->function = type;
 seg->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
-SetDefaultTexture (tmapnum, walltype);
+SetDefaultTexture (nTexture, walltype);
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
 return true;
@@ -182,7 +182,7 @@ if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}
-if (!DefineSegment (segnum, SEGMENT_FUNC_CONTROLCEN, bSetDefTextures ? (file_type == RDL_FILE) ? 10 : 357 : -1)) {
+if (!DefineSegment (segnum, SEGMENT_FUNC_CONTROLCEN, bSetDefTextures ? (IsD1File ()) ? 10 : 357 : -1)) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
@@ -191,7 +191,7 @@ if (bCreate) {
 		theApp.ResetModified (bUndo);
 		return false; 
 		}	
-	CurrObj ()->id = (file_type == RDL_FILE) ? 0 : 2;
+	CurrObj ()->id = (IsD1File ()) ? 0 : 2;
 	AutoLinkExitToReactor ();
 	}
 theApp.UnlockUndo ();
@@ -255,7 +255,7 @@ if (bCreate && !AddSegment ()) {
 	return false; 
 	}	
 theApp.MineView ()->DelayRefresh (true);
-if (!DefineSegment (segnum, SEGMENT_FUNC_ROBOTMAKER,  bSetDefTextures ? (file_type == RDL_FILE) ? 339 : 361 : -1)) {
+if (!DefineSegment (segnum, SEGMENT_FUNC_ROBOTMAKER,  bSetDefTextures ? (IsD1File ()) ? 339 : 361 : -1)) {
 	theApp.ResetModified (bUndo);
 	theApp.MineView ()->DelayRefresh (false);
 	return false; 
@@ -279,7 +279,7 @@ return true;
 
 bool CMine::AddGoalCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture) 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	if (!bExpertMode)
 		ErrorMsg ("Flag goals are not available in Descent 1.");
 	return false;
@@ -303,7 +303,7 @@ return true;
 
 bool CMine::AddTeamCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture) 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	if (!bExpertMode)
 		ErrorMsg ("Team start positions are not available in Descent 1.");
 	return false;
@@ -327,7 +327,7 @@ return true;
 
 bool CMine::AddSkyboxCube (INT16 segnum, bool bCreate) 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	if (!bExpertMode)
 		ErrorMsg ("Blocked cubes are not available in Descent 1.");
 	return false;
@@ -351,7 +351,7 @@ return true;
 
 bool CMine::AddSpeedBoostCube (INT16 segnum, bool bCreate) 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	if (!bExpertMode)
 		ErrorMsg ("Speed boost cubes are not available in Descent 1.");
 	return false;
@@ -397,7 +397,7 @@ if (n_fuelcen >= MAX_NUM_FUELCENS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
 	}
-if ((file_type == RDL_FILE) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
+if ((IsD1File ()) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
 	if (!bExpertMode)
 		ErrorMsg ("Repair centers are not available in Descent 1.");
 	return false;
@@ -410,11 +410,11 @@ if (bCreate && !AddSegment ()) {
 	}	
 int new_segment = Current ()->segment;
 Current ()->segment = last_segment;
-if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS))
+if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS (this)))
 	AddWall (Current ()->segment, Current ()->side, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
 Current ()->segment = new_segment;
 if (!((nType == SEGMENT_FUNC_FUELCEN) ?
-	   DefineSegment (segnum, nType,  bSetDefTextures ? ((file_type == RDL_FILE) ? 322 : 333) : -1, WALL_ILLUSION) :
+	   DefineSegment (segnum, nType,  bSetDefTextures ? ((IsD1File ()) ? 322 : 333) : -1, WALL_ILLUSION) :
 	   DefineSegment (segnum, nType,  bSetDefTextures ? 433 : -1, -1)) //use the blue goal texture for repair centers
 	) {
 	theApp.ResetModified (bUndo);
@@ -431,7 +431,7 @@ return true;
 // Action - Adds a wall to both sides of the current side
 //---------------------------------------------------------------------------
 
-bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 tmapnum) 
+bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 nTexture) 
 {
   INT16 	opp_segnum, opp_sidenum;
   UINT16 wallnum;
@@ -441,17 +441,17 @@ if (wallnum < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count + 1 >= MAX_WALLS) {
+if (GameInfo ().walls.count + 1 >= MAX_WALLS (this)) {
 	ErrorMsg ("Maximum number of Walls reached");
 	return false;
 	}
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // add a door to the current segment/side
-if (AddWall (Current ()->segment, Current ()->side, type, flags, keys, clipnum, tmapnum)) {
+if (AddWall (Current ()->segment, Current ()->side, type, flags, keys, clipnum, nTexture)) {
 	// add a door to the opposite segment/side
 	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, Current ()->side) &&
-		 AddWall (opp_segnum, opp_sidenum, type, flags, keys, clipnum, tmapnum)) {
+		 AddWall (opp_segnum, opp_sidenum, type, flags, keys, clipnum, nTexture)) {
 		theApp.UnlockUndo ();
 		theApp.MineView ()->Refresh ();
 		return true;
@@ -465,9 +465,9 @@ return false;
 // MENU - Add Auto Door
 //==========================================================================
 
-bool CMine::AddAutoDoor (INT8 clipnum, INT16 tmapnum) 
+bool CMine::AddAutoDoor (INT8 clipnum, INT16 nTexture) 
 {
-return AddDoor (WALL_DOOR, WALL_DOOR_AUTO, KEY_NONE, clipnum,  tmapnum);
+return AddDoor (WALL_DOOR, WALL_DOOR_AUTO, KEY_NONE, clipnum,  nTexture);
 }
 
 //==========================================================================
@@ -485,7 +485,7 @@ return AddDoor (WALL_BLASTABLE, 0, 0, -1, -1);
 
 bool CMine::AddGuideBotDoor() 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	ErrorMsg ("Guide bot doors are not allowed in Descent 1");
 	return false;
   }
@@ -498,7 +498,7 @@ return AddDoor (WALL_BLASTABLE, 0, 0, 46, -1);
 
 bool CMine::AddFuelCell () 
 {
-return AddDoor (WALL_ILLUSION, 0, 0, -1, (file_type == RDL_FILE) ? 328 : 353);
+return AddDoor (WALL_ILLUSION, 0, 0, -1, (IsD1File ()) ? 328 : 353);
 }
 
 //==========================================================================
@@ -516,7 +516,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 0);
 
 bool CMine::AddForceField () 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	ErrorMsg ("Force fields are not supported in Descent 1");
    return false;
 	}
@@ -531,7 +531,7 @@ return AddDoor (WALL_CLOSED, 0, 0, -1, 420);
 
 bool CMine::AddFan ()
 {
-return AddDoor (WALL_CLOSED, 0, 0, -2, (file_type == RDL_FILE) ? 325 : 354);
+return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 325 : 354);
 }
 
 //==========================================================================
@@ -540,7 +540,7 @@ return AddDoor (WALL_CLOSED, 0, 0, -2, (file_type == RDL_FILE) ? 325 : 354);
 
 bool CMine::AddWaterFall ()
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	ErrorMsg ("Water falls are not supported in Descent 1");
    return false;
 	}
@@ -553,7 +553,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 401);
 
 bool CMine::AddLavaFall() 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
 	ErrorMsg ("Lava falls are not supported in Descent 1");
    return false;
 	}
@@ -569,7 +569,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 408);
 
 bool CMine::AddGrate() 
 {
-return AddDoor (WALL_CLOSED, 0, 0, -2, (file_type == RDL_FILE) ? 246 : 321);
+return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 246 : 321);
 }
 
 //==========================================================================
@@ -595,11 +595,11 @@ if (wallnum < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS - 1) {
+if (GameInfo ().walls.count >= MAX_WALLS (this) - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -609,7 +609,7 @@ theApp.LockUndo ();
 if (AddWall (Current ()->segment, Current ()->side, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Walls () [GameInfo ().walls.count-1].clip_num = 10;
-	SetTexture (Current ()->segment, Current ()->side, 0, (file_type == RDL_FILE) ? 444 : 508);
+	SetTexture (Current ()->segment, Current ()->side, 0, (IsD1File ()) ? 444 : 508);
 	AddTrigger (GameInfo ().walls.count - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	INT16 opp_segnum, opp_sidenum;
@@ -617,7 +617,7 @@ if (AddWall (Current ()->segment, Current ()->side, WALL_DOOR, WALL_DOOR_LOCKED,
 		AddWall (opp_segnum, opp_sidenum, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
 		Walls () [GameInfo ().walls.count - 1].clip_num = 10;
-		SetTexture (opp_segnum, opp_sidenum, 0, (file_type == RDL_FILE) ? 444 : 508);
+		SetTexture (opp_segnum, opp_sidenum, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
 		theApp.UnlockUndo ();
 		theApp.MineView ()->Refresh ();
@@ -634,15 +634,15 @@ return false;
 
 bool CMine::AddSecretExit () 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
     AddExit (TT_SECRET_EXIT);
 	 return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS) {
+if (GameInfo ().walls.count >= MAX_WALLS (this)) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -678,11 +678,11 @@ if (wallnum < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS - 1) {
+if (GameInfo ().walls.count >= MAX_WALLS (this) - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -770,7 +770,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_MATCEN);
 
 bool CMine::AddShieldTrigger() 
 {
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	ErrorMsg ("Descent 2 does not support shield damage Triggers ()");
    return false;
 	}
@@ -782,7 +782,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_SHIELD_DAMAGE);
 //==========================================================================
 bool CMine::AddEnergyTrigger() 
 {
-if (file_type != RDL_FILE) {
+if (IsD2File ()) {
 	ErrorMsg ("Descent 2 does not support energy drain Triggers ()");
    return false;
 	}
@@ -795,7 +795,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_ENERGY_DRAIN);
 
 bool CMine::AddUnlockTrigger() 
 {
-if (file_type == RDL_FILE) {
+if (IsD1File ()) {
    ErrorMsg ("Control Panels are not supported in Descent 1.");
    return false;
 	}

@@ -313,27 +313,6 @@ public:
 	INT16 object;
 };
 
-typedef struct _PcxHeader {
-  BYTE Identifier;	/* PXC Id Number (Always 0x0A) */
-  BYTE Version;		/* Version Number [0..5] */
-  BYTE Encoding;	/* 1 = RLE encoding scheme */
-  BYTE BitsPerPixel;	/* (see below) */
-  WORD XStart;		/* left   */
-  WORD YStart;		/* top    */
-  WORD XEnd;		/* right  */
-  WORD YEnd;		/* bottom */
-  WORD HorzRes;		/* pixels per line or DPI */
-  WORD VertRes;         /* (see HorzRes) */
-  BYTE Palette[48];     /* 16-color EGA palette */
-  BYTE Reserved1;       /* (Always 0) */
-  BYTE NumBitPlanes;    /* (see below) */
-  WORD BytesPerLine;    /* (see below) */
-  WORD PaletteType;     /* 1 = color/mono, 2 = grayscale */
-  WORD HorzScreenSize;  /* resolution of screen on which image was created */
-  WORD VertScreenSize;  /* (sometimes on version 5 or higher) */
-  BYTE Reserved2[54];   /* (pad to make size 128 bytes total) */
-} PCXHEAD;
-
 struct dvector {
   double x,y,z;
 };

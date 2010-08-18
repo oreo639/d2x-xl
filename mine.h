@@ -78,8 +78,8 @@ class CMine {
 public:
 	
 	// level info
-//	int							file_type;
-//	INT32							level_version;
+	int							m_fileType;
+	INT32							m_levelVersion;
 	char							current_level_name[256];	
 	game_top_info				game_top_fileinfo;
 #if 1
@@ -251,7 +251,18 @@ public:
 		{ return MineData ().lightColors [i] + j; }
 	inline CDColor *CurrLightColor ()
 		{ return LightColor (Current ()->segment, Current ()->side); }
+
+	inline INT32 LevelVersion (void) { return m_levelVersion; }
+	inline void SetLevelVersion (INT32 levelVersion) { m_levelVersion = levelVersion; }
+	inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
+	inline bool IsStdLevel (void) { return LevelVersion () < 9; }
+	inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
+	inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
 		
+	inline int FileType (void) { return m_fileType; }
+	inline void SetFileType (int fileType) { m_fileType = fileType; }
+	inline bool IsD1File (void) { return IsD1File (); }
+	inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
 	UINT8 *LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, UINT32& nResSize);
 	INT16 LoadDefaultLightAndColor (void);
@@ -380,14 +391,14 @@ public:
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 
-	CDWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 clipnum, INT16 tmapnum);
+	CDWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 clipnum, INT16 nTexture);
 	CDWall *GetWall (INT16 segnum = -1, INT16 sidenum = -1);
 	void DeleteWall (UINT16 wallnum = -1);
 	CDWall *FindWall (INT16 segnum = -1, INT16 sidenum = -1);
 	void DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
-						  UINT8 type, INT8 clipnum, INT16 tmapnum,
+						  UINT8 type, INT8 clipnum, INT16 nTexture,
 						  bool bRedefine);
-	void SetWallTextures (UINT16 wallnum, INT16 tmapnum = 0);
+	void SetWallTextures (UINT16 wallnum, INT16 nTexture = 0);
 	// trigger stuff
 	void InitTrigger (CDTrigger *t, INT16 type, INT16 flags);
 	CDTrigger *AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall = FALSE);
@@ -413,15 +424,15 @@ public:
 	bool GetOppositeSide (INT16& opp_segnum, INT16& opp_sidenum, INT16 segnum = -1, INT16 sidenum = -1);
 	bool GetOppositeWall (INT16 &opp_wallnum, INT16 segnum = -1, INT16 sidenum = -1);
 	CDSide *OppSide ();
-	bool SetTexture (INT16 segnum, INT16 sidenum, INT16 tmapnum, INT16 tmapnum2);
+	bool SetTexture (INT16 segnum, INT16 sidenum, INT16 nTexture, INT16 tmapnum2);
 	void CopyOtherCube ();
 	bool WallClipFromTexture (INT16 segnum, INT16 sidenum);
 	void CheckForDoor (INT16 segnum, INT16 sidenum);
 	void RenumberBotGens ();
 	void RenumberEquipGens ();
 
-	bool SetDefaultTexture (INT16 tmapnum = -1, INT16 walltype = -1);
-	bool DefineSegment (INT16 segnum, UINT8 type, INT16 tmapnum, INT16 walltype = -1);
+	bool SetDefaultTexture (INT16 nTexture = -1, INT16 walltype = -1);
+	bool DefineSegment (INT16 segnum, UINT8 type, INT16 nTexture, INT16 walltype = -1);
 	void UndefineSegment (INT16 segnum);
 	bool GetTriggerResources (UINT16& wallnum);
 	bool AutoAddTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type);
@@ -434,8 +445,8 @@ public:
 	bool AddExit (INT16 type); 
 	bool AddNormalExit(); 
 	bool AddSecretExit(); 
-	bool AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 tmapnum); 
-	bool AddAutoDoor (INT8 clipnum = -1, INT16 tmapnum = -1); 
+	bool AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 nTexture); 
+	bool AddAutoDoor (INT8 clipnum = -1, INT16 nTexture = -1); 
 	bool AddPrisonDoor (); 
 	bool AddGuideBotDoor(); 
 	bool AddFuelCell (); 
@@ -523,7 +534,7 @@ public:
 	INT16 LoadMineSigAndType (FILE* fp);
 
 private:
-	int FindClip (CDWall *wall, INT16 tmapnum);
+	int FindClip (CDWall *wall, INT16 nTexture);
 	INT16 CreateNewLevel ();
 	void DefineVertices(INT16 new_verts[4]);
 	void UnlinkChild(INT16 parent_segnum,INT16 sidenum);
@@ -557,5 +568,20 @@ private:
 	void LinkSeg (CDSegment *pSegment, CDSegment *pRoot);
 	void SortDLIndex (int left, int right);
 	};
+
+CMine* GetMine (CMine* m);
+
+#define GET_MINE(m) (m = GetMine(m))
+
+inline int MAX_SEGMENTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_SEGMENTS1  : m->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+inline int MAX_VERTICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_VERTICES1 : m->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
+inline int MAX_WALLS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_WALLS1 : (m->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+inline int MAX_TEXTURES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
+inline int MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
+inline int MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
+inline int MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
+inline int MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+
+#define NO_WALL(m) MAX_WALLS(m)
 
 #endif //__mine_h

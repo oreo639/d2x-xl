@@ -350,8 +350,8 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (file_type == RDL_FILE) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (file_type == RDL_FILE) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -390,7 +390,7 @@ return pWall && (pWall->type == WALL_TRANSPARENT);
 
 void CTextureTool::UpdatePaletteWnd (void)
 {
-if (/*!nLayout && (level_version >= 9) &&*/ SideHasLight ()) {
+if (/*!nLayout && (m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 	EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, TRUE);
 	m_paletteWnd.ShowWindow (SW_SHOW);
 	m_paletteWnd.DrawPalette ();
@@ -452,8 +452,8 @@ if (!GetMine ())
 	CDColor		*color;
 // enable buttons as required
 /*
-EditButton->EnableWindow((file_type == RDL_FILE || path [0] == NULL) ? FALSE: TRUE);
-LightButton->EnableWindow((file_type==RDL_FILE) ? FALSE:TRUE);
+EditButton->EnableWindow((IsD1File () || path [0] == NULL) ? FALSE: TRUE);
+LightButton->EnableWindow((m_fileType==RDL_FILE) ? FALSE:TRUE);
 PickButton->EnableWindow(path [0] ? TRUE:FALSE);
 */
 // set animation frames to zero
@@ -699,10 +699,10 @@ if (m_mine->Walls () [nWall].type != WALL_DOOR)
 // note: 910 is not an anim texture, but it is used to calculate
 //       the number of frames in 901
 // The 0 is used to end the search
-	UINT16 *anim; // points to d1_anim or d2_anim depending on file_type
+	UINT16 *anim; // points to d1_anim or d2_anim depending on m_fileType
 
 // first find out if one of the textures is animated
-anim = (file_type == RDL_FILE) ? d1_anims : d2_anims;
+anim = (IsD1File ()) ? d1_anims : d2_anims;
 
 for (i=0; i<2;i++)
 	for (index [i] = 0; anim [index [i]]; index [i]++)

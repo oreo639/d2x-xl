@@ -525,7 +525,7 @@ switch (m_selectMode){
 
 	case BLOCK_MODE:
 		bool bMoved = false;
-		for (i = 0; i < MAX_VERTICES; i++) {
+		for (i = 0; i < MAX_VERTICES (this); i++) {
 			if (*VertStatus (i) & MARKED_MASK) {
 				Vertices (i)->x += delta.x;
 				Vertices (i)->y += delta.y;
@@ -699,7 +699,7 @@ switch (m_selectMode) {
 		CDObject *obj = Objects ();
 		switch (axis) {
 			case 'X':
-				for (i = 0; i < MAX_VERTICES; i++)
+				for (i = 0; i < MAX_VERTICES (this); i++)
 					if (*VertStatus (i) & MARKED_MASK)
 						Vertices (i)->x += inc;
 				for (i = GameInfo ().objects.count; i; i--, obj++)
@@ -708,7 +708,7 @@ switch (m_selectMode) {
 							obj->pos.x += inc;
 				break;
 			case 'Y':
-				for (i = 0; i < MAX_VERTICES; i++)
+				for (i = 0; i < MAX_VERTICES (this); i++)
 					if (*VertStatus (i) & MARKED_MASK)
 						Vertices (i)->y += inc;
 				for (i = GameInfo ().objects.count; i; i--, obj++)
@@ -717,7 +717,7 @@ switch (m_selectMode) {
 							obj->pos.y += inc;
 				break;
 			case 'Z':
-				for (i = 0; i < MAX_VERTICES; i++)
+				for (i = 0; i < MAX_VERTICES (this); i++)
 					if (*VertStatus (i) & MARKED_MASK)
 						Vertices (i)->z += inc;
 				for (i = GameInfo ().objects.count; i; i--, obj++)

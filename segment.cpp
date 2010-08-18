@@ -189,7 +189,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 				CDSide *side = deleted_seg->sides + child;
 				SetTexture (segnum, child, side->nBaseTex, side->nOvlTex); 
 				SetUV (segnum, child, 0, 0, 0); 
-				double scale = pTextures [file_type][side->nBaseTex].Scale (side->nBaseTex);
+				double scale = pTextures [m_fileType][side->nBaseTex].Scale (side->nBaseTex);
 				for (i = 0; i < 4; i++) {
 					seg->sides [child].uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
 					seg->sides [child].uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
@@ -474,11 +474,11 @@ if (m_bSplineActive) {
 
 currSeg = Segments (Current ()->segment); 
 
-if (SegCount () >= MAX_SEGMENTS) {
+if (SegCount () >= MAX_SEGMENTS (this)) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
 	return FALSE;
 	}
-if (SegCount () >= MAX_SEGMENTS) {
+if (SegCount () >= MAX_SEGMENTS (this)) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
@@ -1133,7 +1133,7 @@ void CMine::MarkSegment(INT16 segnum)
 	// update vertices's marked status
 	// ..first clear all marked verts
 	INT16 vertnum; 
-	for (vertnum = 0; vertnum < MAX_VERTICES; vertnum++)
+	for (vertnum = 0; vertnum < MAX_VERTICES (this); vertnum++)
 		*VertStatus (vertnum) &= ~MARKED_MASK; 
 	// ..then mark all verts for marked Segments ()
 	for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
@@ -1184,10 +1184,10 @@ void CMine::MarkAll() {
 void CMine::UnmarkAll() {
 	int i; 
 	CDSegment *seg = Segments ();
-	for (i = 0; i < MAX_SEGMENTS; i++, seg++)
+	for (i = 0; i < MAX_SEGMENTS (this); i++, seg++)
 		seg->wall_bitmask &= ~MARKED_MASK; 
 	UINT8 *stat = VertStatus ();
-	for (i = 0; i < MAX_VERTICES; i++, stat++)
+	for (i = 0; i < MAX_VERTICES (this); i++, stat++)
 		*stat &= ~MARKED_MASK; 
 	theApp.MineView ()->Refresh (); 
 }
@@ -1211,7 +1211,7 @@ CDSide *side = seg->sides + sidenum;
 side->nBaseTex = 0; 
 side->nOvlTex = 0; 
 uvl *uvls = side->uvls;
-double scale = pTextures [file_type][side->nBaseTex].Scale (side->nBaseTex);
+double scale = pTextures [m_fileType][side->nBaseTex].Scale (side->nBaseTex);
 int i;
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->u = (INT16) (default_uvls [i].u / scale); 
@@ -1321,7 +1321,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (VertCount () > (MAX_VERTICES - 1)) {
+if (VertCount () > (MAX_VERTICES (this) - 1)) {
 	ErrorMsg ("Cannot unjoin these points because the\n"
 				"maximum number of points is reached."); 
 	return; 
@@ -1399,7 +1399,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (VertCount () > (MAX_VERTICES - 2)) {
+if (VertCount () > (MAX_VERTICES (this) - 2)) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot unjoin these lines because\nthere are not enought points left."); 
 	return; 
@@ -1519,7 +1519,7 @@ for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
 
 found:
 
-if (!solidify && (VertCount () > (MAX_VERTICES - nFound))) {
+if (!solidify && (VertCount () > (MAX_VERTICES (this) - nFound))) {
 	ErrorMsg ("Cannot unjoin this side because\nthere are not enough vertices left."); 
 	return; 
 	}
@@ -2081,7 +2081,7 @@ if (QueryMsg("Are you sure you want to create a new cube which\n"
 //  nNewSeg = first_free_segment(); 
 //  if (nNewSeg== -1) {
 nNewSeg = SegCount (); 
-if (!(SegCount () < MAX_SEGMENTS)) {
+if (!(SegCount () < MAX_SEGMENTS (this))) {
 	if (!bExpertMode)
 		ErrorMsg ("The maximum number of Segments () has been reached.\n"
 					"Cannot add any more Segments ()."); 
@@ -2176,9 +2176,9 @@ void CMine::LoadSideTextures (INT16 segNum, INT16 sideNum)
 {
 GetCurrent (segNum, sideNum);
 CDSide	*sideP = Segments (segNum)->sides + sideNum;
-pTextures [file_type][sideP->nBaseTex].Read (sideP->nBaseTex);
+pTextures [m_fileType][sideP->nBaseTex].Read (sideP->nBaseTex);
 if ((sideP->nOvlTex & 0x3fff) > 0)
-	pTextures [file_type][sideP->nOvlTex & 0x3fff].Read (sideP->nOvlTex & 0x3fff);
+	pTextures [m_fileType][sideP->nOvlTex & 0x3fff].Read (sideP->nOvlTex & 0x3fff);
 }
 
 // ------------------------------------------------------------------------ 
@@ -2291,7 +2291,7 @@ switch (x) {
 #else
 theApp.SetModified (TRUE); 
 LoadSideTextures (segnum, sidenum);
-double scale = 1.0; //pTextures [file_type][sideP->nBaseTex].Scale (sideP->nBaseTex);
+double scale = 1.0; //pTextures [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->v = (INT16) ((y + (E [i].x / 640)) / scale); 
 	uvls->u = (INT16) ((x - (E [i].y / 640)) / scale); 
@@ -2340,7 +2340,7 @@ return (Segments (segnum)->children [sidenum]== -1) ||
 
 int CMine::ScrollSpeed (UINT16 texture, int *x, int *y)
 {
-if (file_type == RDL_FILE)
+if (IsD1File ())
 	return 0;
 *x = 0; 
 *y = 0; 
@@ -2559,7 +2559,7 @@ return Segments (opp_segnum)->sides + opp_sidenum;
 
                         /* -------------------------- */
 
-bool CMine::SetTexture (INT16 segnum, INT16 sidenum, INT16 tmapnum, INT16 tmapnum2)
+bool CMine::SetTexture (INT16 segnum, INT16 sidenum, INT16 nTexture, INT16 tmapnum2)
 {
 	bool bUndo, bChange = false;
 	CDTexture pTx [2];
@@ -2567,12 +2567,12 @@ bool CMine::SetTexture (INT16 segnum, INT16 sidenum, INT16 tmapnum, INT16 tmapnu
 bUndo = theApp.SetModified (TRUE); 
 theApp.LockUndo (); 
 GetCurrent (segnum, sidenum); 
-if (tmapnum2 == tmapnum)
+if (tmapnum2 == nTexture)
    tmapnum2 = 0; 
 CDSide *side = Segments (segnum)->sides + sidenum; 
-if ((tmapnum >= 0) && (tmapnum != side->nBaseTex)) {
-	side->nBaseTex = tmapnum; 
-	if (tmapnum == (side->nOvlTex & 0x3fff)) {
+if ((nTexture >= 0) && (nTexture != side->nBaseTex)) {
+	side->nBaseTex = nTexture; 
+	if (nTexture == (side->nOvlTex & 0x3fff)) {
 		side->nOvlTex = 0; 
 		}
 	bChange = true; 
@@ -2592,12 +2592,12 @@ if (!bChange) {
 	theApp.ResetModified (bUndo);
 	return false;
 	}
-pTextures [file_type][side->nBaseTex].Read (side->nBaseTex);
-pTextures [file_type][side->nOvlTex & 0x3fff].Read (side->nOvlTex & 0x3fff);
+pTextures [m_fileType][side->nBaseTex].Read (side->nBaseTex);
+pTextures [m_fileType][side->nOvlTex & 0x3fff].Read (side->nOvlTex & 0x3fff);
 #if 0
 if (((side->nOvlTex & 0x3fff) > 0) &&
-    (pTextures [file_type][side->nBaseTex].m_size != 
-	  pTextures [file_type][side->nOvlTex & 0x3fff].m_size))
+    (pTextures [m_fileType][side->nBaseTex].m_size != 
+	  pTextures [m_fileType][side->nOvlTex & 0x3fff].m_size))
 	side->nOvlTex = 0;
 #endif
 if ((IsLight (side->nBaseTex)== -1) && (IsLight (side->nOvlTex & 0x3fff)== -1))
@@ -2706,7 +2706,7 @@ bool CMine::SplitSegment ()
 	int			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};
 
-if (SegCount () >= MAX_SEGMENTS - 6) {
+if (SegCount () >= MAX_SEGMENTS (this) - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}

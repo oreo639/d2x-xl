@@ -236,30 +236,30 @@ if (d.DoModal () == IDOK) {
 //		InitRobotData();
 
 	*m_szFile = '\0';
-	file_type = new_level_type;
+	m_fileType = new_level_type;
 	switch (new_level_type) {
 		case 0:
-			file_type = 0;
+			m_fileType = 0;
 			break;
 		case 1:
 		case 2:
 		case 3:
-			file_type = 1;
+			m_fileType = 1;
 			break;
 		}
 	m_mine->Load ();
 	switch (new_level_type) {
 		case 0:
-			level_version = 1;
+			m_mine->LevelVersion () = 1;
 			break;
 		case 1:
-			level_version = 7;
+			m_mine->LevelVersion () = 7;
 			break;
 		case 2:
-			level_version = 8;
+			m_mine->LevelVersion () = 8;
 			break;
 		case 3:
-			level_version = LEVEL_VERSION;
+			m_mine->LevelVersion () = LEVEL_VERSION;
 			m_mine->ConvertWallNum (MAX_WALLS2, MAX_WALLS3
 				);
 		}
@@ -268,8 +268,8 @@ if (d.DoModal () == IDOK) {
 		strcpy (m_szSubFile, new_level_name);
 #if 0
 		int l = strlen (new_level_name);
-		if ((l < 4) || strcmpi (new_level_name + l - 4, file_type ? ".rl2" : ".rdl"))
-			strcat (new_level_name, (file_type ? ".rl2" : ".rdl"));
+		if ((l < 4) || strcmpi (new_level_name + l - 4, m_fileType ? ".rl2" : ".rdl"))
+			strcat (new_level_name, (m_fileType ? ".rl2" : ".rdl"));
 #endif
 	}
 	else
@@ -417,8 +417,8 @@ if (enable_delta_shading)
 	theApp.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
-	FSplit ((file_type == RDL_FILE) ? descent_path : levels_path, szMissions, NULL, NULL);
-//	strcpy_s (m_szFile, sizeof (m_szFile), (file_type == RDL_FILE) ? "new.rdl" : "new.rl2");
+	FSplit ((IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
+//	strcpy_s (m_szFile, sizeof (m_szFile), (IsD1File ()) ? "new.rdl" : "new.rl2");
 	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))

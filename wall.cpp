@@ -19,12 +19,12 @@
 //
 // Returns - TRUE on success
 //
-// Note: clipnum & tmapnum are used for call to DefineWall only.
+// Note: clipnum & nTexture are used for call to DefineWall only.
 //--------------------------------------------------------------------------
 
 CDWall *CMine::AddWall (INT16 segnum,INT16 sidenum,
 								INT16 type, UINT16 flags, UINT8 keys,
-								INT8 clipnum, INT16 tmapnum) 
+								INT8 clipnum, INT16 nTexture) 
 {
 GetCurrent (segnum, sidenum);
 
@@ -53,7 +53,7 @@ if (seg->sides [sidenum].nWall < GameInfo ().walls.count) {
 	return NULL;
 	}
 
-if ((wallnum = GameInfo ().walls.count) >= MAX_WALLS) {
+if ((wallnum = GameInfo ().walls.count) >= MAX_WALLS (this)) {
 	ErrorMsg ("Maximum number of Walls () reached");
 	return NULL;
 	}
@@ -62,7 +62,7 @@ if ((wallnum = GameInfo ().walls.count) >= MAX_WALLS) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 seg->sides [sidenum].nWall = wallnum;
-DefineWall (segnum, sidenum, wallnum, (UINT8) type, clipnum, tmapnum, false);
+DefineWall (segnum, sidenum, wallnum, (UINT8) type, clipnum, nTexture, false);
 Walls (wallnum)->flags = flags;
 Walls (wallnum)->keys = keys;
 // update number of Walls () in mine
@@ -88,12 +88,12 @@ return true;
 // DefineWall()
 //
 // Note: if clipnum == -1, then it is overriden for blastable and auto door
-//       if tmapnum == -1, then it is overriden for illusion Walls ()
+//       if nTexture == -1, then it is overriden for illusion Walls ()
 //       if clipnum == -2, then texture is applied to nOvlTex instead
 //--------------------------------------------------------------------------
 
 void CMine::DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
-								UINT8 type, INT8 clipnum, INT16 tmapnum,
+								UINT8 type, INT8 clipnum, INT16 nTexture,
 								bool bRedefine) 
 {
 GetCurrent (segnum, sidenum);
@@ -118,14 +118,14 @@ switch (type) {
 		wall->clip_num = (clipnum == -1) ?  6 : clipnum;
 		wall->hps = WALL_HPS;
 		// define door textures based on clip number
-		SetWallTextures (wallnum, tmapnum);
+		SetWallTextures (wallnum, nTexture);
 		break;
 
 	case WALL_DOOR:
 		wall->clip_num = (clipnum == -1) ? 1 : clipnum;
 		wall->hps = 0;
 		// define door textures based on clip number
-		SetWallTextures (wallnum, tmapnum);
+		SetWallTextures (wallnum, nTexture);
 		break;
 
 	case WALL_CLOSED:
@@ -133,12 +133,12 @@ switch (type) {
 		wall->clip_num = -1;
 		wall->hps = 0;
 		// define texture to be energy
-		if (tmapnum == -1)
-			SetTexture (segnum, sidenum, (file_type == RDL_FILE) ? 328 : 353, 0); // energy
+		if (nTexture == -1)
+			SetTexture (segnum, sidenum, (IsD1File ()) ? 328 : 353, 0); // energy
 		else if (clipnum == -2)
-			SetTexture (segnum, sidenum, 0, tmapnum);
+			SetTexture (segnum, sidenum, 0, nTexture);
 		else
-			SetTexture (segnum, sidenum, tmapnum, 0);
+			SetTexture (segnum, sidenum, nTexture, 0);
 		break;
 
 	case WALL_OVERLAY: // d2 only
@@ -159,7 +159,7 @@ switch (type) {
 	default:
 		wall->clip_num = -1;
 		wall->hps = 0;
-		SetTexture (segnum, sidenum, tmapnum, 0);
+		SetTexture (segnum, sidenum, nTexture, 0);
 		break;
 	}
 wall->flags = 0;
@@ -169,7 +169,7 @@ wall->keys = 0;
 wall->controlling_trigger = 0;
 
 // set uvls of new texture
-UINT32	scale = (UINT32) pTextures [file_type][tmapnum].Scale (tmapnum);
+UINT32	scale = (UINT32) pTextures [m_fileType][nTexture].Scale (nTexture);
 for (i = 0;i<4;i++) {
 	side->uvls [i].u = default_uvls [i].u / scale;
 	side->uvls [i].v = default_uvls [i].v / scale;
@@ -185,7 +185,7 @@ theApp.UnlockUndo ();
 // 1/27/97 - added wall01 and door08
 //--------------------------------------------------------------------------
 
-void CMine::SetWallTextures (UINT16 wallnum, INT16 tmapnum) 
+void CMine::SetWallTextures (UINT16 wallnum, INT16 nTexture) 
 {
 static INT16 wall_texture [N_WALL_TEXTURES] [2] = {
 	{371,0},{0,376},{0,0},  {0,387},{0,399},{413,0},{419,0},{0,424},  {0,0},{436,0},
@@ -208,7 +208,7 @@ INT8 clip_num = wall->clip_num;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if ((wall->type == WALL_DOOR) || (wall->type == WALL_BLASTABLE))
-	if (file_type == RDL_FILE) {
+	if (IsD1File ()) {
 		side->nBaseTex = wall_texture [clip_num] [0];
 		side->nOvlTex = wall_texture [clip_num] [1];
 		} 
@@ -216,8 +216,8 @@ if ((wall->type == WALL_DOOR) || (wall->type == WALL_BLASTABLE))
 		side->nBaseTex = d2_wall_texture [clip_num] [0];
 		side->nOvlTex = d2_wall_texture [clip_num] [1];
 		}
-else if (tmapnum >= 0) {
-	side->nBaseTex = tmapnum;
+else if (nTexture >= 0) {
+	side->nBaseTex = nTexture;
 	side->nOvlTex = 0;
 	}
 else
@@ -258,11 +258,11 @@ if (GetOppositeSide (opp_segnum, opp_sidenum, Walls (wallnum)->segnum, Walls (wa
 for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
 	for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++)
 		if (side->nWall >= GameInfo ().walls.count)
-			side->nWall = NO_WALL;
+			side->nWall = NO_WALL (this);
 		else if (side->nWall > wallnum)
 			side->nWall--;
 		else if (side->nWall == wallnum) {
-			side->nWall = NO_WALL;
+			side->nWall = NO_WALL (this);
 			DeleteTriggerTargets (segnum, sidenum); //delete this wall from all Triggers () that target it
 			}
 // move remaining Walls () in place of deleted wall
@@ -291,12 +291,12 @@ return NULL;
 
                         /*--------------------------*/
 
-int CMine::FindClip (CDWall *wall, INT16 tmapnum)
+int CMine::FindClip (CDWall *wall, INT16 nTexture)
 {
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	char szName [80], *ps;
 
-LoadString (hInst, texture_resource + tmapnum, szName, sizeof (szName));
+LoadString (hInst, texture_resource + nTexture, szName, sizeof (szName));
 if (!strcmp (szName, "wall01 - anim"))
 	return wall->clip_num = 0;
 if (ps = strstr (szName, "door")) {

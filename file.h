@@ -72,7 +72,7 @@ bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels
 bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose = TRUE);
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size);
 int ReadMissionFile (char *pszFile);
-int WriteMissionFile (char *pszFile, bool bSaveAs = true);
+int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs = true);
 int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int bCustomRobots, bool bSaveAs = true);
 
                          /*--------------------------*/

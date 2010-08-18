@@ -143,7 +143,7 @@ void CMine::MakeObject (CDObject *obj, INT8 type, INT16 segnum)
   obj->signature = 0;
   obj->type = type;
   if (type==OBJ_WEAPON) {
-	obj->id = WEAPON_MINE;
+	obj->id = SMALLMINE_ID;
   } else {
 	obj->id = 0;
   }
@@ -263,7 +263,7 @@ switch (type) {
 	  obj->render_type   = RT_POLYOBJ;
 	  obj->size          = REACTOR_SIZE;
 	  obj->shields       = REACTOR_SHIELD;
-	  if (file_type == RDL_FILE)
+	  if (IsD1File ())
 			obj->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
 	  else {
 		INT32 model;
@@ -346,7 +346,7 @@ bool CMine::CopyObject (UINT8 new_type, INT16 segnum)
 	UINT8 type;
 	INT16 i,count;
 
-if (GameInfo ().objects.count >= MAX_OBJECTS) {
+if (GameInfo ().objects.count >= MAX_OBJECTS (this)) {
 	ErrorMsg ("The maximum number of objects has already been reached.");
 	return false;
 	}
@@ -510,7 +510,7 @@ switch (type) {
 		object_number = (id < 66) ? 1 + id : 118 + (id - 66);
 		break;
 	case OBJ_CNTRLCEN:
-	if (file_type == RDL_FILE)
+	if (IsD1File ())
 		object_number = 67;
 	else
 		switch(id) {
