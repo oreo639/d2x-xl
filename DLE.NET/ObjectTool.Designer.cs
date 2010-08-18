@@ -30,19 +30,20 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectTool));
             this.spawnGroup = new System.Windows.Forms.GroupBox();
+            this.spawnDisplay = new System.Windows.Forms.PictureBox();
             this.labelSpawnQty = new System.Windows.Forms.Label();
             this.spawnedQuantity = new System.Windows.Forms.NumericUpDown();
             this.labelSpawnId = new System.Windows.Forms.Label();
             this.spawnedId = new System.Windows.Forms.ComboBox();
-            this.spawnDisplay = new System.Windows.Forms.Panel();
             this.labelSpawnType = new System.Windows.Forms.Label();
             this.spawnedType = new System.Windows.Forms.ComboBox();
             this.dataGroup = new System.Windows.Forms.GroupBox();
+            this.textureDisplay = new System.Windows.Forms.PictureBox();
+            this.objectDisplay = new System.Windows.Forms.PictureBox();
             this.labelObjTexture = new System.Windows.Forms.Label();
             this.labelObjAI = new System.Windows.Forms.Label();
             this.labelObjId = new System.Windows.Forms.Label();
             this.labelObjType = new System.Windows.Forms.Label();
-            this.textureDisplay = new System.Windows.Forms.Panel();
             this.objectTexture = new System.Windows.Forms.ComboBox();
             this.objectAI = new System.Windows.Forms.ComboBox();
             this.objectId = new System.Windows.Forms.ComboBox();
@@ -51,7 +52,6 @@
             this.multiplayerCheck = new System.Windows.Forms.CheckBox();
             this.sortCheck = new System.Windows.Forms.CheckBox();
             this.objectCountLabel = new System.Windows.Forms.Label();
-            this.objectDisplay = new System.Windows.Forms.Panel();
             this.labelObjDesc = new System.Windows.Forms.Label();
             this.objectDescription = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -142,9 +142,52 @@
             this.explType = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label50 = new System.Windows.Forms.Label();
+            this.advObjClipFrameNo = new System.Windows.Forms.TextBox();
+            this.label51 = new System.Windows.Forms.Label();
+            this.advObjClipFrameCount = new System.Windows.Forms.TextBox();
+            this.label52 = new System.Windows.Forms.Label();
+            this.advObjModelOrClip = new System.Windows.Forms.TextBox();
+            this.advObjRotThrustZ = new System.Windows.Forms.TextBox();
+            this.advObjRotThrustY = new System.Windows.Forms.TextBox();
+            this.label49 = new System.Windows.Forms.Label();
+            this.advObjRotThrustX = new System.Windows.Forms.TextBox();
+            this.advObjRotVelZ = new System.Windows.Forms.TextBox();
+            this.advObjRotVelY = new System.Windows.Forms.TextBox();
+            this.label48 = new System.Windows.Forms.Label();
+            this.advObjRotVelX = new System.Windows.Forms.TextBox();
+            this.advObjThrustZ = new System.Windows.Forms.TextBox();
+            this.advObjThrustY = new System.Windows.Forms.TextBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.advObjThrustX = new System.Windows.Forms.TextBox();
+            this.label46 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.advObjVelZ = new System.Windows.Forms.TextBox();
+            this.advObjVelY = new System.Windows.Forms.TextBox();
+            this.label43 = new System.Windows.Forms.Label();
+            this.advObjVelX = new System.Windows.Forms.TextBox();
+            this.label40 = new System.Windows.Forms.Label();
+            this.advObjShield = new System.Windows.Forms.TextBox();
+            this.label41 = new System.Windows.Forms.Label();
+            this.advObjSize = new System.Windows.Forms.TextBox();
+            this.label42 = new System.Windows.Forms.Label();
+            this.advObjFlags = new System.Windows.Forms.TextBox();
+            this.label38 = new System.Windows.Forms.Label();
+            this.advObjTurnRoll = new System.Windows.Forms.TextBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.advObjBrakes = new System.Windows.Forms.TextBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.advObjDrag = new System.Windows.Forms.TextBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.advObjMass = new System.Windows.Forms.TextBox();
             this.spawnGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spawnDisplay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spawnedQuantity)).BeginInit();
             this.dataGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textureDisplay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.objectDisplay)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containedProbability)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.containedQuantity)).BeginInit();
@@ -174,23 +217,33 @@
             this.deathAnimTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // spawnGroup
             // 
+            this.spawnGroup.Controls.Add(this.spawnDisplay);
             this.spawnGroup.Controls.Add(this.labelSpawnQty);
             this.spawnGroup.Controls.Add(this.spawnedQuantity);
             this.spawnGroup.Controls.Add(this.labelSpawnId);
             this.spawnGroup.Controls.Add(this.spawnedId);
-            this.spawnGroup.Controls.Add(this.spawnDisplay);
             this.spawnGroup.Controls.Add(this.labelSpawnType);
             this.spawnGroup.Controls.Add(this.spawnedType);
             this.spawnGroup.Location = new System.Drawing.Point(12, 178);
             this.spawnGroup.Name = "spawnGroup";
-            this.spawnGroup.Size = new System.Drawing.Size(318, 110);
+            this.spawnGroup.Size = new System.Drawing.Size(324, 110);
             this.spawnGroup.TabIndex = 6;
             this.spawnGroup.TabStop = false;
             this.spawnGroup.Text = "This robot spawns";
+            // 
+            // spawnDisplay
+            // 
+            this.spawnDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.spawnDisplay.Location = new System.Drawing.Point(152, 19);
+            this.spawnDisplay.Name = "spawnDisplay";
+            this.spawnDisplay.Size = new System.Drawing.Size(80, 80);
+            this.spawnDisplay.TabIndex = 17;
+            this.spawnDisplay.TabStop = false;
             // 
             // labelSpawnQty
             // 
@@ -228,14 +281,6 @@
             this.spawnedId.Size = new System.Drawing.Size(60, 21);
             this.spawnedId.TabIndex = 8;
             // 
-            // spawnDisplay
-            // 
-            this.spawnDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.spawnDisplay.Location = new System.Drawing.Point(152, 19);
-            this.spawnDisplay.Name = "spawnDisplay";
-            this.spawnDisplay.Size = new System.Drawing.Size(80, 80);
-            this.spawnDisplay.TabIndex = 2;
-            // 
             // labelSpawnType
             // 
             this.labelSpawnType.AutoSize = true;
@@ -256,11 +301,12 @@
             // 
             // dataGroup
             // 
+            this.dataGroup.Controls.Add(this.textureDisplay);
+            this.dataGroup.Controls.Add(this.objectDisplay);
             this.dataGroup.Controls.Add(this.labelObjTexture);
             this.dataGroup.Controls.Add(this.labelObjAI);
             this.dataGroup.Controls.Add(this.labelObjId);
             this.dataGroup.Controls.Add(this.labelObjType);
-            this.dataGroup.Controls.Add(this.textureDisplay);
             this.dataGroup.Controls.Add(this.objectTexture);
             this.dataGroup.Controls.Add(this.objectAI);
             this.dataGroup.Controls.Add(this.objectId);
@@ -269,15 +315,32 @@
             this.dataGroup.Controls.Add(this.multiplayerCheck);
             this.dataGroup.Controls.Add(this.sortCheck);
             this.dataGroup.Controls.Add(this.objectCountLabel);
-            this.dataGroup.Controls.Add(this.objectDisplay);
             this.dataGroup.Controls.Add(this.labelObjDesc);
             this.dataGroup.Controls.Add(this.objectDescription);
             this.dataGroup.Location = new System.Drawing.Point(12, 12);
             this.dataGroup.Name = "dataGroup";
-            this.dataGroup.Size = new System.Drawing.Size(318, 160);
+            this.dataGroup.Size = new System.Drawing.Size(324, 160);
             this.dataGroup.TabIndex = 5;
             this.dataGroup.TabStop = false;
             this.dataGroup.Text = "Object data";
+            // 
+            // textureDisplay
+            // 
+            this.textureDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.textureDisplay.Location = new System.Drawing.Point(242, 78);
+            this.textureDisplay.Name = "textureDisplay";
+            this.textureDisplay.Size = new System.Drawing.Size(70, 70);
+            this.textureDisplay.TabIndex = 17;
+            this.textureDisplay.TabStop = false;
+            // 
+            // objectDisplay
+            // 
+            this.objectDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.objectDisplay.Location = new System.Drawing.Point(152, 19);
+            this.objectDisplay.Name = "objectDisplay";
+            this.objectDisplay.Size = new System.Drawing.Size(80, 80);
+            this.objectDisplay.TabIndex = 16;
+            this.objectDisplay.TabStop = false;
             // 
             // labelObjTexture
             // 
@@ -318,14 +381,6 @@
             this.labelObjType.TabIndex = 12;
             this.labelObjType.Text = "Type";
             this.labelObjType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // textureDisplay
-            // 
-            this.textureDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.textureDisplay.Location = new System.Drawing.Point(241, 78);
-            this.textureDisplay.Name = "textureDisplay";
-            this.textureDisplay.Size = new System.Drawing.Size(70, 70);
-            this.textureDisplay.TabIndex = 11;
             // 
             // objectTexture
             // 
@@ -401,14 +456,6 @@
             this.objectCountLabel.TabIndex = 3;
             this.objectCountLabel.Text = "#: ";
             // 
-            // objectDisplay
-            // 
-            this.objectDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.objectDisplay.Location = new System.Drawing.Point(152, 19);
-            this.objectDisplay.Name = "objectDisplay";
-            this.objectDisplay.Size = new System.Drawing.Size(80, 80);
-            this.objectDisplay.TabIndex = 2;
-            // 
             // labelObjDesc
             // 
             this.labelObjDesc.AutoSize = true;
@@ -439,7 +486,7 @@
             this.groupBox1.Controls.Add(this.containedType);
             this.groupBox1.Location = new System.Drawing.Point(12, 294);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(318, 78);
+            this.groupBox1.Size = new System.Drawing.Size(324, 78);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "This robot type contains";
@@ -539,7 +586,7 @@
             this.behaviorTab.Location = new System.Drawing.Point(4, 22);
             this.behaviorTab.Name = "behaviorTab";
             this.behaviorTab.Padding = new System.Windows.Forms.Padding(3);
-            this.behaviorTab.Size = new System.Drawing.Size(309, 230);
+            this.behaviorTab.Size = new System.Drawing.Size(316, 230);
             this.behaviorTab.TabIndex = 4;
             this.behaviorTab.Text = "Behavior";
             // 
@@ -695,7 +742,7 @@
             this.combatTab.Location = new System.Drawing.Point(4, 22);
             this.combatTab.Name = "combatTab";
             this.combatTab.Padding = new System.Windows.Forms.Padding(3);
-            this.combatTab.Size = new System.Drawing.Size(309, 230);
+            this.combatTab.Size = new System.Drawing.Size(316, 230);
             this.combatTab.TabIndex = 3;
             this.combatTab.Text = "Combat";
             // 
@@ -1022,7 +1069,7 @@
             this.physicsTab.Location = new System.Drawing.Point(4, 22);
             this.physicsTab.Name = "physicsTab";
             this.physicsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.physicsTab.Size = new System.Drawing.Size(309, 230);
+            this.physicsTab.Size = new System.Drawing.Size(316, 230);
             this.physicsTab.TabIndex = 2;
             this.physicsTab.Text = "Physics";
             // 
@@ -1247,10 +1294,11 @@
             this.objProperties.Controls.Add(this.behaviorTab);
             this.objProperties.Controls.Add(this.weaponsTab);
             this.objProperties.Controls.Add(this.deathAnimTab);
+            this.objProperties.Controls.Add(this.tabPage1);
             this.objProperties.Location = new System.Drawing.Point(12, 378);
             this.objProperties.Name = "objProperties";
             this.objProperties.SelectedIndex = 0;
-            this.objProperties.Size = new System.Drawing.Size(318, 256);
+            this.objProperties.Size = new System.Drawing.Size(324, 256);
             this.objProperties.TabIndex = 17;
             // 
             // weaponsTab
@@ -1263,7 +1311,7 @@
             this.weaponsTab.Location = new System.Drawing.Point(4, 22);
             this.weaponsTab.Name = "weaponsTab";
             this.weaponsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.weaponsTab.Size = new System.Drawing.Size(309, 230);
+            this.weaponsTab.Size = new System.Drawing.Size(316, 230);
             this.weaponsTab.TabIndex = 6;
             this.weaponsTab.Text = "Weapons";
             // 
@@ -1315,9 +1363,9 @@
             this.deathAnimTab.Location = new System.Drawing.Point(4, 22);
             this.deathAnimTab.Name = "deathAnimTab";
             this.deathAnimTab.Padding = new System.Windows.Forms.Padding(3);
-            this.deathAnimTab.Size = new System.Drawing.Size(310, 230);
+            this.deathAnimTab.Size = new System.Drawing.Size(316, 230);
             this.deathAnimTab.TabIndex = 7;
-            this.deathAnimTab.Text = "Death animation";
+            this.deathAnimTab.Text = "Death";
             // 
             // label3
             // 
@@ -1388,6 +1436,402 @@
             this.label1.Text = "Explosion";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.tabPage1.Controls.Add(this.label50);
+            this.tabPage1.Controls.Add(this.advObjClipFrameNo);
+            this.tabPage1.Controls.Add(this.label51);
+            this.tabPage1.Controls.Add(this.advObjClipFrameCount);
+            this.tabPage1.Controls.Add(this.label52);
+            this.tabPage1.Controls.Add(this.advObjModelOrClip);
+            this.tabPage1.Controls.Add(this.advObjRotThrustZ);
+            this.tabPage1.Controls.Add(this.advObjRotThrustY);
+            this.tabPage1.Controls.Add(this.label49);
+            this.tabPage1.Controls.Add(this.advObjRotThrustX);
+            this.tabPage1.Controls.Add(this.advObjRotVelZ);
+            this.tabPage1.Controls.Add(this.advObjRotVelY);
+            this.tabPage1.Controls.Add(this.label48);
+            this.tabPage1.Controls.Add(this.advObjRotVelX);
+            this.tabPage1.Controls.Add(this.advObjThrustZ);
+            this.tabPage1.Controls.Add(this.advObjThrustY);
+            this.tabPage1.Controls.Add(this.label47);
+            this.tabPage1.Controls.Add(this.advObjThrustX);
+            this.tabPage1.Controls.Add(this.label46);
+            this.tabPage1.Controls.Add(this.label45);
+            this.tabPage1.Controls.Add(this.label44);
+            this.tabPage1.Controls.Add(this.advObjVelZ);
+            this.tabPage1.Controls.Add(this.advObjVelY);
+            this.tabPage1.Controls.Add(this.label43);
+            this.tabPage1.Controls.Add(this.advObjVelX);
+            this.tabPage1.Controls.Add(this.label40);
+            this.tabPage1.Controls.Add(this.advObjShield);
+            this.tabPage1.Controls.Add(this.label41);
+            this.tabPage1.Controls.Add(this.advObjSize);
+            this.tabPage1.Controls.Add(this.label42);
+            this.tabPage1.Controls.Add(this.advObjFlags);
+            this.tabPage1.Controls.Add(this.label38);
+            this.tabPage1.Controls.Add(this.advObjTurnRoll);
+            this.tabPage1.Controls.Add(this.label39);
+            this.tabPage1.Controls.Add(this.advObjBrakes);
+            this.tabPage1.Controls.Add(this.label37);
+            this.tabPage1.Controls.Add(this.advObjDrag);
+            this.tabPage1.Controls.Add(this.label36);
+            this.tabPage1.Controls.Add(this.advObjMass);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(316, 230);
+            this.tabPage1.TabIndex = 8;
+            this.tabPage1.Text = "Advanced";
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Location = new System.Drawing.Point(151, 191);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(54, 13);
+            this.label50.TabIndex = 39;
+            this.label50.Text = "Frame no:";
+            this.label50.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjClipFrameNo
+            // 
+            this.advObjClipFrameNo.Location = new System.Drawing.Point(208, 188);
+            this.advObjClipFrameNo.Name = "advObjClipFrameNo";
+            this.advObjClipFrameNo.Size = new System.Drawing.Size(50, 20);
+            this.advObjClipFrameNo.TabIndex = 71;
+            this.advObjClipFrameNo.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(161, 165);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(44, 13);
+            this.label51.TabIndex = 37;
+            this.label51.Text = "Frames:";
+            this.label51.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjClipFrameCount
+            // 
+            this.advObjClipFrameCount.Location = new System.Drawing.Point(208, 162);
+            this.advObjClipFrameCount.Name = "advObjClipFrameCount";
+            this.advObjClipFrameCount.Size = new System.Drawing.Size(50, 20);
+            this.advObjClipFrameCount.TabIndex = 70;
+            this.advObjClipFrameCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(144, 139);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(60, 13);
+            this.label52.TabIndex = 35;
+            this.label52.Text = "Model/clip:";
+            this.label52.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjModelOrClip
+            // 
+            this.advObjModelOrClip.Location = new System.Drawing.Point(208, 136);
+            this.advObjModelOrClip.Name = "advObjModelOrClip";
+            this.advObjModelOrClip.Size = new System.Drawing.Size(50, 20);
+            this.advObjModelOrClip.TabIndex = 69;
+            this.advObjModelOrClip.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjRotThrustZ
+            // 
+            this.advObjRotThrustZ.Location = new System.Drawing.Point(260, 110);
+            this.advObjRotThrustZ.Name = "advObjRotThrustZ";
+            this.advObjRotThrustZ.Size = new System.Drawing.Size(50, 20);
+            this.advObjRotThrustZ.TabIndex = 68;
+            this.advObjRotThrustZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjRotThrustY
+            // 
+            this.advObjRotThrustY.Location = new System.Drawing.Point(208, 110);
+            this.advObjRotThrustY.Name = "advObjRotThrustY";
+            this.advObjRotThrustY.Size = new System.Drawing.Size(50, 20);
+            this.advObjRotThrustY.TabIndex = 67;
+            this.advObjRotThrustY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(108, 114);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(45, 13);
+            this.label49.TabIndex = 31;
+            this.label49.Text = "Rot. thr:";
+            this.label49.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjRotThrustX
+            // 
+            this.advObjRotThrustX.Location = new System.Drawing.Point(156, 110);
+            this.advObjRotThrustX.Name = "advObjRotThrustX";
+            this.advObjRotThrustX.Size = new System.Drawing.Size(50, 20);
+            this.advObjRotThrustX.TabIndex = 66;
+            this.advObjRotThrustX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjRotVelZ
+            // 
+            this.advObjRotVelZ.Location = new System.Drawing.Point(260, 84);
+            this.advObjRotVelZ.Name = "advObjRotVelZ";
+            this.advObjRotVelZ.Size = new System.Drawing.Size(50, 20);
+            this.advObjRotVelZ.TabIndex = 65;
+            this.advObjRotVelZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjRotVelY
+            // 
+            this.advObjRotVelY.Location = new System.Drawing.Point(208, 84);
+            this.advObjRotVelY.Name = "advObjRotVelY";
+            this.advObjRotVelY.Size = new System.Drawing.Size(50, 20);
+            this.advObjRotVelY.TabIndex = 64;
+            this.advObjRotVelY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(104, 88);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(50, 13);
+            this.label48.TabIndex = 27;
+            this.label48.Text = "Rot. vel.:";
+            this.label48.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjRotVelX
+            // 
+            this.advObjRotVelX.Location = new System.Drawing.Point(156, 84);
+            this.advObjRotVelX.Name = "advObjRotVelX";
+            this.advObjRotVelX.Size = new System.Drawing.Size(50, 20);
+            this.advObjRotVelX.TabIndex = 63;
+            this.advObjRotVelX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjThrustZ
+            // 
+            this.advObjThrustZ.Location = new System.Drawing.Point(260, 58);
+            this.advObjThrustZ.Name = "advObjThrustZ";
+            this.advObjThrustZ.Size = new System.Drawing.Size(50, 20);
+            this.advObjThrustZ.TabIndex = 62;
+            this.advObjThrustZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjThrustY
+            // 
+            this.advObjThrustY.Location = new System.Drawing.Point(208, 58);
+            this.advObjThrustY.Name = "advObjThrustY";
+            this.advObjThrustY.Size = new System.Drawing.Size(50, 20);
+            this.advObjThrustY.TabIndex = 61;
+            this.advObjThrustY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(113, 62);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(40, 13);
+            this.label47.TabIndex = 23;
+            this.label47.Text = "Thrust:";
+            this.label47.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjThrustX
+            // 
+            this.advObjThrustX.Location = new System.Drawing.Point(156, 58);
+            this.advObjThrustX.Name = "advObjThrustX";
+            this.advObjThrustX.Size = new System.Drawing.Size(50, 20);
+            this.advObjThrustX.TabIndex = 60;
+            this.advObjThrustX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(279, 16);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(14, 13);
+            this.label46.TabIndex = 21;
+            this.label46.Text = "Z";
+            this.label46.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(229, 16);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(14, 13);
+            this.label45.TabIndex = 20;
+            this.label45.Text = "Y";
+            this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(178, 16);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(14, 13);
+            this.label44.TabIndex = 19;
+            this.label44.Text = "X";
+            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // advObjVelZ
+            // 
+            this.advObjVelZ.Location = new System.Drawing.Point(260, 32);
+            this.advObjVelZ.Name = "advObjVelZ";
+            this.advObjVelZ.Size = new System.Drawing.Size(50, 20);
+            this.advObjVelZ.TabIndex = 59;
+            this.advObjVelZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // advObjVelY
+            // 
+            this.advObjVelY.Location = new System.Drawing.Point(208, 32);
+            this.advObjVelY.Name = "advObjVelY";
+            this.advObjVelY.Size = new System.Drawing.Size(50, 20);
+            this.advObjVelY.TabIndex = 58;
+            this.advObjVelY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(106, 36);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(47, 13);
+            this.label43.TabIndex = 16;
+            this.label43.Text = "Velocity:";
+            this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjVelX
+            // 
+            this.advObjVelX.Location = new System.Drawing.Point(156, 32);
+            this.advObjVelX.Name = "advObjVelX";
+            this.advObjVelX.Size = new System.Drawing.Size(50, 20);
+            this.advObjVelX.TabIndex = 57;
+            this.advObjVelX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(9, 191);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(39, 13);
+            this.label40.TabIndex = 14;
+            this.label40.Text = "Shield:";
+            this.label40.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjShield
+            // 
+            this.advObjShield.Location = new System.Drawing.Point(51, 188);
+            this.advObjShield.Name = "advObjShield";
+            this.advObjShield.Size = new System.Drawing.Size(50, 20);
+            this.advObjShield.TabIndex = 56;
+            this.advObjShield.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(18, 165);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(30, 13);
+            this.label41.TabIndex = 12;
+            this.label41.Text = "Size:";
+            this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjSize
+            // 
+            this.advObjSize.Location = new System.Drawing.Point(51, 162);
+            this.advObjSize.Name = "advObjSize";
+            this.advObjSize.Size = new System.Drawing.Size(50, 20);
+            this.advObjSize.TabIndex = 56;
+            this.advObjSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.advObjSize.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(13, 139);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(35, 13);
+            this.label42.TabIndex = 10;
+            this.label42.Text = "Flags:";
+            this.label42.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjFlags
+            // 
+            this.advObjFlags.Location = new System.Drawing.Point(51, 136);
+            this.advObjFlags.Name = "advObjFlags";
+            this.advObjFlags.Size = new System.Drawing.Size(50, 20);
+            this.advObjFlags.TabIndex = 55;
+            this.advObjFlags.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(1, 113);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(48, 13);
+            this.label38.TabIndex = 8;
+            this.label38.Text = "Turn roll:";
+            this.label38.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjTurnRoll
+            // 
+            this.advObjTurnRoll.Location = new System.Drawing.Point(51, 110);
+            this.advObjTurnRoll.Name = "advObjTurnRoll";
+            this.advObjTurnRoll.Size = new System.Drawing.Size(50, 20);
+            this.advObjTurnRoll.TabIndex = 54;
+            this.advObjTurnRoll.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(5, 87);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(43, 13);
+            this.label39.TabIndex = 6;
+            this.label39.Text = "Brakes:";
+            this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjBrakes
+            // 
+            this.advObjBrakes.Location = new System.Drawing.Point(51, 84);
+            this.advObjBrakes.Name = "advObjBrakes";
+            this.advObjBrakes.Size = new System.Drawing.Size(50, 20);
+            this.advObjBrakes.TabIndex = 53;
+            this.advObjBrakes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(15, 61);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(33, 13);
+            this.label37.TabIndex = 4;
+            this.label37.Text = "Drag:";
+            this.label37.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjDrag
+            // 
+            this.advObjDrag.Location = new System.Drawing.Point(51, 58);
+            this.advObjDrag.Name = "advObjDrag";
+            this.advObjDrag.Size = new System.Drawing.Size(50, 20);
+            this.advObjDrag.TabIndex = 52;
+            this.advObjDrag.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(13, 35);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(35, 13);
+            this.label36.TabIndex = 2;
+            this.label36.Text = "Mass:";
+            this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // advObjMass
+            // 
+            this.advObjMass.Location = new System.Drawing.Point(51, 32);
+            this.advObjMass.Name = "advObjMass";
+            this.advObjMass.Size = new System.Drawing.Size(50, 20);
+            this.advObjMass.TabIndex = 51;
+            this.advObjMass.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // ObjectTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1403,9 +1847,12 @@
             this.Text = "Objects";
             this.spawnGroup.ResumeLayout(false);
             this.spawnGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spawnDisplay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spawnedQuantity)).EndInit();
             this.dataGroup.ResumeLayout(false);
             this.dataGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textureDisplay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.objectDisplay)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.containedProbability)).EndInit();
@@ -1441,6 +1888,8 @@
             this.deathAnimTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1452,7 +1901,6 @@
         private System.Windows.Forms.NumericUpDown spawnedQuantity;
         private System.Windows.Forms.Label labelSpawnId;
         private System.Windows.Forms.ComboBox spawnedId;
-        private System.Windows.Forms.Panel spawnDisplay;
         private System.Windows.Forms.Label labelSpawnType;
         private System.Windows.Forms.ComboBox spawnedType;
         private System.Windows.Forms.GroupBox dataGroup;
@@ -1460,7 +1908,6 @@
         private System.Windows.Forms.Label labelObjAI;
         private System.Windows.Forms.Label labelObjId;
         private System.Windows.Forms.Label labelObjType;
-        private System.Windows.Forms.Panel textureDisplay;
         private System.Windows.Forms.ComboBox objectTexture;
         private System.Windows.Forms.ComboBox objectAI;
         private System.Windows.Forms.ComboBox objectId;
@@ -1469,7 +1916,6 @@
         private System.Windows.Forms.CheckBox multiplayerCheck;
         private System.Windows.Forms.CheckBox sortCheck;
         private System.Windows.Forms.Label objectCountLabel;
-        private System.Windows.Forms.Panel objectDisplay;
         private System.Windows.Forms.Label labelObjDesc;
         private System.Windows.Forms.ComboBox objectDescription;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -1560,5 +2006,48 @@
         private System.Windows.Forms.ComboBox explType;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.TextBox advObjClipFrameNo;
+        private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.TextBox advObjClipFrameCount;
+        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.TextBox advObjModelOrClip;
+        private System.Windows.Forms.TextBox advObjRotThrustZ;
+        private System.Windows.Forms.TextBox advObjRotThrustY;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.TextBox advObjRotThrustX;
+        private System.Windows.Forms.TextBox advObjRotVelZ;
+        private System.Windows.Forms.TextBox advObjRotVelY;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.TextBox advObjRotVelX;
+        private System.Windows.Forms.TextBox advObjThrustZ;
+        private System.Windows.Forms.TextBox advObjThrustY;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.TextBox advObjThrustX;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.TextBox advObjVelZ;
+        private System.Windows.Forms.TextBox advObjVelY;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.TextBox advObjVelX;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.TextBox advObjShield;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.TextBox advObjSize;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.TextBox advObjFlags;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.TextBox advObjTurnRoll;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.TextBox advObjBrakes;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.TextBox advObjDrag;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.TextBox advObjMass;
+        private System.Windows.Forms.PictureBox objectDisplay;
+        private System.Windows.Forms.PictureBox spawnDisplay;
+        private System.Windows.Forms.PictureBox textureDisplay;
     }
 }

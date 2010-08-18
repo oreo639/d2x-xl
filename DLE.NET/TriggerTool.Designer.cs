@@ -42,15 +42,15 @@
             this.autoAddWall = new System.Windows.Forms.CheckBox();
             this.addTrigger = new System.Windows.Forms.Button();
             this.targetGroup = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.targetList = new System.Windows.Forms.ListBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.addObjTarget = new System.Windows.Forms.Button();
             this.addWallTarget = new System.Windows.Forms.Button();
             this.delTarget = new System.Windows.Forms.Button();
             this.addTarget = new System.Windows.Forms.Button();
             this.triggerTarget = new System.Windows.Forms.TextBox();
-            this.targetWallDisplay = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.permanentProp = new System.Windows.Forms.CheckBox();
             this.noSoundProp = new System.Windows.Forms.CheckBox();
@@ -76,7 +76,6 @@
             this.D2TypesGroup = new System.Windows.Forms.GroupBox();
             this.ovlTexture = new System.Windows.Forms.ComboBox();
             this.baseTexture = new System.Windows.Forms.ComboBox();
-            this.texChangeDisplay = new System.Windows.Forms.Panel();
             this.valueLabel = new System.Windows.Forms.Label();
             this.valueSlider = new System.Windows.Forms.TrackBar();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -86,14 +85,17 @@
             this.strengthLabel = new System.Windows.Forms.Label();
             this.triggerTime = new System.Windows.Forms.TextBox();
             this.triggerStrength = new System.Windows.Forms.TextBox();
-            this.targetObjDisplay = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.triggerId = new System.Windows.Forms.ComboBox();
             this.triggerClassGroup = new System.Windows.Forms.Panel();
             this.triggerClassObj = new System.Windows.Forms.RadioButton();
             this.triggerClassStd = new System.Windows.Forms.RadioButton();
+            this.texChangeDisplay = new System.Windows.Forms.PictureBox();
+            this.targetObjDisplay = new System.Windows.Forms.PictureBox();
+            this.targetWallDisplay = new System.Windows.Forms.PictureBox();
             this.addPredefGroup.SuspendLayout();
             this.targetGroup.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.d2PropsGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -101,6 +103,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.valueSlider)).BeginInit();
             this.dataGroup.SuspendLayout();
             this.triggerClassGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.texChangeDisplay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetObjDisplay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetWallDisplay)).BeginInit();
             this.SuspendLayout();
             // 
             // addPredefGroup
@@ -220,21 +225,39 @@
             // targetGroup
             // 
             this.targetGroup.BackColor = System.Drawing.Color.Transparent;
+            this.targetGroup.Controls.Add(this.targetWallDisplay);
+            this.targetGroup.Controls.Add(this.panel1);
             this.targetGroup.Controls.Add(this.label3);
-            this.targetGroup.Controls.Add(this.targetList);
             this.targetGroup.Controls.Add(this.label2);
             this.targetGroup.Controls.Add(this.addObjTarget);
             this.targetGroup.Controls.Add(this.addWallTarget);
             this.targetGroup.Controls.Add(this.delTarget);
             this.targetGroup.Controls.Add(this.addTarget);
             this.targetGroup.Controls.Add(this.triggerTarget);
-            this.targetGroup.Controls.Add(this.targetWallDisplay);
             this.targetGroup.Location = new System.Drawing.Point(12, 383);
             this.targetGroup.Name = "targetGroup";
             this.targetGroup.Size = new System.Drawing.Size(324, 231);
             this.targetGroup.TabIndex = 5;
             this.targetGroup.TabStop = false;
             this.targetGroup.Text = "Trigger targets";
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.targetList);
+            this.panel1.Location = new System.Drawing.Point(140, 34);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(112, 186);
+            this.panel1.TabIndex = 33;
+            // 
+            // targetList
+            // 
+            this.targetList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.targetList.FormattingEnabled = true;
+            this.targetList.Location = new System.Drawing.Point(0, 0);
+            this.targetList.Name = "targetList";
+            this.targetList.Size = new System.Drawing.Size(108, 182);
+            this.targetList.TabIndex = 11;
             // 
             // label3
             // 
@@ -244,14 +267,6 @@
             this.label3.Size = new System.Drawing.Size(121, 13);
             this.label3.TabIndex = 12;
             this.label3.Text = "Segment, side activated";
-            // 
-            // targetList
-            // 
-            this.targetList.FormattingEnabled = true;
-            this.targetList.Location = new System.Drawing.Point(140, 34);
-            this.targetList.Name = "targetList";
-            this.targetList.Size = new System.Drawing.Size(118, 186);
-            this.targetList.TabIndex = 11;
             // 
             // label2
             // 
@@ -305,14 +320,6 @@
             this.triggerTarget.Size = new System.Drawing.Size(90, 20);
             this.triggerTarget.TabIndex = 28;
             this.triggerTarget.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // targetWallDisplay
-            // 
-            this.targetWallDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.targetWallDisplay.Location = new System.Drawing.Point(44, 130);
-            this.targetWallDisplay.Name = "targetWallDisplay";
-            this.targetWallDisplay.Size = new System.Drawing.Size(90, 90);
-            this.targetWallDisplay.TabIndex = 4;
             // 
             // groupBox2
             // 
@@ -552,9 +559,9 @@
             // 
             // D2TypesGroup
             // 
+            this.D2TypesGroup.Controls.Add(this.texChangeDisplay);
             this.D2TypesGroup.Controls.Add(this.ovlTexture);
             this.D2TypesGroup.Controls.Add(this.baseTexture);
-            this.D2TypesGroup.Controls.Add(this.texChangeDisplay);
             this.D2TypesGroup.Controls.Add(this.valueLabel);
             this.D2TypesGroup.Controls.Add(this.valueSlider);
             this.D2TypesGroup.Controls.Add(this.comboBox1);
@@ -647,14 +654,6 @@
             this.baseTexture.Size = new System.Drawing.Size(108, 21);
             this.baseTexture.TabIndex = 7;
             // 
-            // texChangeDisplay
-            // 
-            this.texChangeDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.texChangeDisplay.Location = new System.Drawing.Point(15, 94);
-            this.texChangeDisplay.Name = "texChangeDisplay";
-            this.texChangeDisplay.Size = new System.Drawing.Size(90, 90);
-            this.texChangeDisplay.TabIndex = 4;
-            // 
             // valueLabel
             // 
             this.valueLabel.AutoSize = true;
@@ -714,12 +713,12 @@
             // 
             // dataGroup
             // 
+            this.dataGroup.Controls.Add(this.targetObjDisplay);
             this.dataGroup.Controls.Add(this.strengthSuffix);
             this.dataGroup.Controls.Add(this.timeLabel);
             this.dataGroup.Controls.Add(this.strengthLabel);
             this.dataGroup.Controls.Add(this.triggerTime);
             this.dataGroup.Controls.Add(this.triggerStrength);
-            this.dataGroup.Controls.Add(this.targetObjDisplay);
             this.dataGroup.Controls.Add(this.label1);
             this.dataGroup.Controls.Add(this.triggerId);
             this.dataGroup.Controls.Add(this.triggerClassGroup);
@@ -774,14 +773,6 @@
             this.triggerStrength.Size = new System.Drawing.Size(50, 20);
             this.triggerStrength.TabIndex = 3;
             // 
-            // targetObjDisplay
-            // 
-            this.targetObjDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.targetObjDisplay.Location = new System.Drawing.Point(224, 19);
-            this.targetObjDisplay.Name = "targetObjDisplay";
-            this.targetObjDisplay.Size = new System.Drawing.Size(90, 90);
-            this.targetObjDisplay.TabIndex = 3;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -829,6 +820,33 @@
             this.triggerClassStd.Text = "Standard trigger";
             this.triggerClassStd.UseVisualStyleBackColor = true;
             // 
+            // texChangeDisplay
+            // 
+            this.texChangeDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.texChangeDisplay.Location = new System.Drawing.Point(17, 94);
+            this.texChangeDisplay.Name = "texChangeDisplay";
+            this.texChangeDisplay.Size = new System.Drawing.Size(90, 90);
+            this.texChangeDisplay.TabIndex = 9;
+            this.texChangeDisplay.TabStop = false;
+            // 
+            // targetObjDisplay
+            // 
+            this.targetObjDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.targetObjDisplay.Location = new System.Drawing.Point(228, 19);
+            this.targetObjDisplay.Name = "targetObjDisplay";
+            this.targetObjDisplay.Size = new System.Drawing.Size(90, 90);
+            this.targetObjDisplay.TabIndex = 9;
+            this.targetObjDisplay.TabStop = false;
+            // 
+            // targetWallDisplay
+            // 
+            this.targetWallDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.targetWallDisplay.Location = new System.Drawing.Point(46, 133);
+            this.targetWallDisplay.Name = "targetWallDisplay";
+            this.targetWallDisplay.Size = new System.Drawing.Size(86, 86);
+            this.targetWallDisplay.TabIndex = 12;
+            this.targetWallDisplay.TabStop = false;
+            // 
             // TriggerTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -854,6 +872,7 @@
             this.addPredefGroup.ResumeLayout(false);
             this.targetGroup.ResumeLayout(false);
             this.targetGroup.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.d2PropsGroup.ResumeLayout(false);
@@ -866,6 +885,9 @@
             this.dataGroup.ResumeLayout(false);
             this.dataGroup.PerformLayout();
             this.triggerClassGroup.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.texChangeDisplay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetObjDisplay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetWallDisplay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -878,7 +900,6 @@
         private System.Windows.Forms.RadioButton triggerClassStd;
         private System.Windows.Forms.RadioButton triggerClassObj;
         private System.Windows.Forms.ComboBox triggerId;
-        private System.Windows.Forms.Panel targetObjDisplay;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label timeLabel;
         private System.Windows.Forms.Label strengthLabel;
@@ -889,7 +910,6 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label valueLabel;
         private System.Windows.Forms.TrackBar valueSlider;
-        private System.Windows.Forms.Panel texChangeDisplay;
         private System.Windows.Forms.ComboBox ovlTexture;
         private System.Windows.Forms.ComboBox baseTexture;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -915,7 +935,6 @@
         private System.Windows.Forms.CheckBox permanentProp;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox targetGroup;
-        private System.Windows.Forms.Panel targetWallDisplay;
         private System.Windows.Forms.TextBox triggerTarget;
         private System.Windows.Forms.ListBox targetList;
         private System.Windows.Forms.Label label2;
@@ -936,5 +955,9 @@
         private System.Windows.Forms.Button addShieldDrain;
         private System.Windows.Forms.Button addRobotMaker;
         private System.Windows.Forms.Button addOpenDoor;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox targetWallDisplay;
+        private System.Windows.Forms.PictureBox texChangeDisplay;
+        private System.Windows.Forms.PictureBox targetObjDisplay;
     }
 }

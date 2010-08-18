@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
-            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin2 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient4 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient8 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient9 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient5 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient10 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient11 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient12 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient6 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient13 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient14 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
+            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin1 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient1 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient2 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient3 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient4 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient5 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolAddMDIChild = new System.Windows.Forms.ToolStripButton();
             this.toolAddTechList = new System.Windows.Forms.ToolStripButton();
@@ -66,6 +66,9 @@
             this.menuFileEditMission = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.menuFileConvertMine = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuFileConvertMineStandard = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuFileConvertMineVertigo = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuFileConvertMineD2X = new System.Windows.Forms.ToolStripMenuItem();
             this.menuFileCheckMine = new System.Windows.Forms.ToolStripMenuItem();
             this.menuFilePlayLevel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
@@ -275,9 +278,6 @@
             this.tbPreferences = new System.Windows.Forms.ToolStripButton();
             this.tbCheckMine = new System.Windows.Forms.ToolStripButton();
             this.tbTextureFilter = new System.Windows.Forms.ToolStripButton();
-            this.menuFileConvertMineStandard = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuFileConvertMineVertigo = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuFileConvertMineD2X = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.mainToolBar.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -455,6 +455,25 @@
             this.menuFileConvertMine.Name = "menuFileConvertMine";
             this.menuFileConvertMine.Size = new System.Drawing.Size(169, 22);
             this.menuFileConvertMine.Text = "Con&vert mine";
+            // 
+            // menuFileConvertMineStandard
+            // 
+            this.menuFileConvertMineStandard.Name = "menuFileConvertMineStandard";
+            this.menuFileConvertMineStandard.Size = new System.Drawing.Size(121, 22);
+            this.menuFileConvertMineStandard.Text = "&Standard";
+            this.menuFileConvertMineStandard.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
+            // 
+            // menuFileConvertMineVertigo
+            // 
+            this.menuFileConvertMineVertigo.Name = "menuFileConvertMineVertigo";
+            this.menuFileConvertMineVertigo.Size = new System.Drawing.Size(121, 22);
+            this.menuFileConvertMineVertigo.Text = "&Vertigo";
+            // 
+            // menuFileConvertMineD2X
+            // 
+            this.menuFileConvertMineD2X.Name = "menuFileConvertMineD2X";
+            this.menuFileConvertMineD2X.Size = new System.Drawing.Size(121, 22);
+            this.menuFileConvertMineD2X.Text = "&D2X-XL";
             // 
             // menuFileCheckMine
             // 
@@ -934,7 +953,7 @@
             this.menuViewObjRobots.Checked = true;
             this.menuViewObjRobots.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjRobots.Name = "menuViewObjRobots";
-            this.menuViewObjRobots.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjRobots.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjRobots.Text = "&Robots";
             // 
             // menuViewObjHostages
@@ -942,7 +961,7 @@
             this.menuViewObjHostages.Checked = true;
             this.menuViewObjHostages.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjHostages.Name = "menuViewObjHostages";
-            this.menuViewObjHostages.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjHostages.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjHostages.Text = "&Hostages";
             // 
             // menuViewObjPlayers
@@ -950,7 +969,7 @@
             this.menuViewObjPlayers.Checked = true;
             this.menuViewObjPlayers.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjPlayers.Name = "menuViewObjPlayers";
-            this.menuViewObjPlayers.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjPlayers.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjPlayers.Text = "&Players";
             // 
             // menuViewObjWeapons
@@ -958,7 +977,7 @@
             this.menuViewObjWeapons.Checked = true;
             this.menuViewObjWeapons.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjWeapons.Name = "menuViewObjWeapons";
-            this.menuViewObjWeapons.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjWeapons.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjWeapons.Text = "&Weapons";
             // 
             // menuViewObjKeys
@@ -966,7 +985,7 @@
             this.menuViewObjKeys.Checked = true;
             this.menuViewObjKeys.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjKeys.Name = "menuViewObjKeys";
-            this.menuViewObjKeys.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjKeys.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjKeys.Text = "&Keys";
             // 
             // menuViewObjPowerups
@@ -974,7 +993,7 @@
             this.menuViewObjPowerups.Checked = true;
             this.menuViewObjPowerups.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjPowerups.Name = "menuViewObjPowerups";
-            this.menuViewObjPowerups.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjPowerups.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjPowerups.Text = "Po&werups";
             // 
             // menuViewObjReactor
@@ -982,24 +1001,24 @@
             this.menuViewObjReactor.Checked = true;
             this.menuViewObjReactor.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuViewObjReactor.Name = "menuViewObjReactor";
-            this.menuViewObjReactor.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjReactor.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjReactor.Text = "Reac&tor";
             // 
             // toolStripSeparator21
             // 
             this.toolStripSeparator21.Name = "toolStripSeparator21";
-            this.toolStripSeparator21.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator21.Size = new System.Drawing.Size(128, 6);
             // 
             // menuViewObjAll
             // 
             this.menuViewObjAll.Name = "menuViewObjAll";
-            this.menuViewObjAll.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjAll.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjAll.Text = "&All objects";
             // 
             // menuViewObjNone
             // 
             this.menuViewObjNone.Name = "menuViewObjNone";
-            this.menuViewObjNone.Size = new System.Drawing.Size(152, 22);
+            this.menuViewObjNone.Size = new System.Drawing.Size(131, 22);
             this.menuViewObjNone.Text = "&No objects";
             // 
             // menuSelect
@@ -1138,38 +1157,38 @@
             this.menuInsertSegFuelCenter,
             this.menuInsertSegRepairCenter});
             this.cubeToolStripMenuItem.Name = "cubeToolStripMenuItem";
-            this.cubeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cubeToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.cubeToolStripMenuItem.Text = "&Segment";
             // 
             // menuInsertSegNormal
             // 
             this.menuInsertSegNormal.Name = "menuInsertSegNormal";
             this.menuInsertSegNormal.ShortcutKeys = System.Windows.Forms.Keys.Insert;
-            this.menuInsertSegNormal.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertSegNormal.Size = new System.Drawing.Size(143, 22);
             this.menuInsertSegNormal.Text = "&Normal";
             // 
             // menuInsertSegReactor
             // 
             this.menuInsertSegReactor.Name = "menuInsertSegReactor";
-            this.menuInsertSegReactor.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertSegReactor.Size = new System.Drawing.Size(143, 22);
             this.menuInsertSegReactor.Text = "&Reactor";
             // 
             // menuInsertSegRobotMaker
             // 
             this.menuInsertSegRobotMaker.Name = "menuInsertSegRobotMaker";
-            this.menuInsertSegRobotMaker.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertSegRobotMaker.Size = new System.Drawing.Size(143, 22);
             this.menuInsertSegRobotMaker.Text = "Robot &Maker";
             // 
             // menuInsertSegFuelCenter
             // 
             this.menuInsertSegFuelCenter.Name = "menuInsertSegFuelCenter";
-            this.menuInsertSegFuelCenter.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertSegFuelCenter.Size = new System.Drawing.Size(143, 22);
             this.menuInsertSegFuelCenter.Text = "&Fuel center";
             // 
             // menuInsertSegRepairCenter
             // 
             this.menuInsertSegRepairCenter.Name = "menuInsertSegRepairCenter";
-            this.menuInsertSegRepairCenter.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertSegRepairCenter.Size = new System.Drawing.Size(143, 22);
             this.menuInsertSegRepairCenter.Text = "Re&pair center";
             // 
             // menuInsertObjCopyOfCurrent
@@ -1184,7 +1203,7 @@
             this.menuInsertObjReactor,
             this.menuInsertObjGuidebot});
             this.menuInsertObjCopyOfCurrent.Name = "menuInsertObjCopyOfCurrent";
-            this.menuInsertObjCopyOfCurrent.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertObjCopyOfCurrent.Size = new System.Drawing.Size(121, 22);
             this.menuInsertObjCopyOfCurrent.Text = "&Object";
             // 
             // insMenuObjectCopy
@@ -1244,31 +1263,31 @@
             this.menuInsertDoorPrison,
             this.menuInsertDoorGuidebot});
             this.menuInsertDoor.Name = "menuInsertDoor";
-            this.menuInsertDoor.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertDoor.Size = new System.Drawing.Size(121, 22);
             this.menuInsertDoor.Text = "&Door";
             // 
             // menuInsertDoorExit
             // 
             this.menuInsertDoorExit.Name = "menuInsertDoorExit";
-            this.menuInsertDoorExit.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertDoorExit.Size = new System.Drawing.Size(151, 22);
             this.menuInsertDoorExit.Text = "&Normal exit";
             // 
             // menuInsertDoorSecretExit
             // 
             this.menuInsertDoorSecretExit.Name = "menuInsertDoorSecretExit";
-            this.menuInsertDoorSecretExit.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertDoorSecretExit.Size = new System.Drawing.Size(151, 22);
             this.menuInsertDoorSecretExit.Text = "&Secret exit";
             // 
             // menuInsertDoorPrison
             // 
             this.menuInsertDoorPrison.Name = "menuInsertDoorPrison";
-            this.menuInsertDoorPrison.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertDoorPrison.Size = new System.Drawing.Size(151, 22);
             this.menuInsertDoorPrison.Text = "&Prison door";
             // 
             // menuInsertDoorGuidebot
             // 
             this.menuInsertDoorGuidebot.Name = "menuInsertDoorGuidebot";
-            this.menuInsertDoorGuidebot.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertDoorGuidebot.Size = new System.Drawing.Size(151, 22);
             this.menuInsertDoorGuidebot.Text = "&Guidebot door";
             // 
             // insMenuOpenDoorTrigger
@@ -1280,37 +1299,37 @@
             this.menuInsertTriggerEnergyDrain,
             this.menuInsertTriggerControlPanel});
             this.insMenuOpenDoorTrigger.Name = "insMenuOpenDoorTrigger";
-            this.insMenuOpenDoorTrigger.Size = new System.Drawing.Size(152, 22);
+            this.insMenuOpenDoorTrigger.Size = new System.Drawing.Size(121, 22);
             this.insMenuOpenDoorTrigger.Text = "&Trigger";
             // 
             // menuInsertTriggerOpenDoor
             // 
             this.menuInsertTriggerOpenDoor.Name = "menuInsertTriggerOpenDoor";
-            this.menuInsertTriggerOpenDoor.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertTriggerOpenDoor.Size = new System.Drawing.Size(146, 22);
             this.menuInsertTriggerOpenDoor.Text = "&Open door";
             // 
             // menuInsertTriggerRobotMaker
             // 
             this.menuInsertTriggerRobotMaker.Name = "menuInsertTriggerRobotMaker";
-            this.menuInsertTriggerRobotMaker.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertTriggerRobotMaker.Size = new System.Drawing.Size(146, 22);
             this.menuInsertTriggerRobotMaker.Text = "&Robot maker";
             // 
             // menuInsertTriggerShieldDrain
             // 
             this.menuInsertTriggerShieldDrain.Name = "menuInsertTriggerShieldDrain";
-            this.menuInsertTriggerShieldDrain.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertTriggerShieldDrain.Size = new System.Drawing.Size(146, 22);
             this.menuInsertTriggerShieldDrain.Text = "&Shield drain";
             // 
             // menuInsertTriggerEnergyDrain
             // 
             this.menuInsertTriggerEnergyDrain.Name = "menuInsertTriggerEnergyDrain";
-            this.menuInsertTriggerEnergyDrain.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertTriggerEnergyDrain.Size = new System.Drawing.Size(146, 22);
             this.menuInsertTriggerEnergyDrain.Text = "&Energy drain";
             // 
             // menuInsertTriggerControlPanel
             // 
             this.menuInsertTriggerControlPanel.Name = "menuInsertTriggerControlPanel";
-            this.menuInsertTriggerControlPanel.Size = new System.Drawing.Size(152, 22);
+            this.menuInsertTriggerControlPanel.Size = new System.Drawing.Size(146, 22);
             this.menuInsertTriggerControlPanel.Text = "&Control panel";
             // 
             // wallToolStripMenuItem
@@ -1324,7 +1343,7 @@
             this.insMenuWallWaterfall,
             this.insMenuWallLavafall});
             this.wallToolStripMenuItem.Name = "wallToolStripMenuItem";
-            this.wallToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.wallToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.wallToolStripMenuItem.Text = "&Wall";
             // 
             // menuInsertWallFuelCells
@@ -2106,50 +2125,50 @@
             this.dockPanel.Location = new System.Drawing.Point(0, 0);
             this.dockPanel.Name = "dockPanel";
             this.dockPanel.Size = new System.Drawing.Size(1114, 538);
-            dockPanelGradient4.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient4.StartColor = System.Drawing.SystemColors.ControlLight;
-            autoHideStripSkin2.DockStripGradient = dockPanelGradient4;
-            tabGradient8.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient8.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient8.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            autoHideStripSkin2.TabGradient = tabGradient8;
-            dockPanelSkin2.AutoHideStripSkin = autoHideStripSkin2;
-            tabGradient9.EndColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient9.StartColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient9.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient2.ActiveTabGradient = tabGradient9;
-            dockPanelGradient5.EndColor = System.Drawing.SystemColors.Control;
-            dockPanelGradient5.StartColor = System.Drawing.SystemColors.Control;
-            dockPaneStripGradient2.DockStripGradient = dockPanelGradient5;
-            tabGradient10.EndColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient10.StartColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient10.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient2.InactiveTabGradient = tabGradient10;
-            dockPaneStripSkin2.DocumentGradient = dockPaneStripGradient2;
-            tabGradient11.EndColor = System.Drawing.SystemColors.ActiveCaption;
-            tabGradient11.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient11.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
-            tabGradient11.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
-            dockPaneStripToolWindowGradient2.ActiveCaptionGradient = tabGradient11;
-            tabGradient12.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient12.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient12.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripToolWindowGradient2.ActiveTabGradient = tabGradient12;
-            dockPanelGradient6.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient6.StartColor = System.Drawing.SystemColors.ControlLight;
-            dockPaneStripToolWindowGradient2.DockStripGradient = dockPanelGradient6;
-            tabGradient13.EndColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            tabGradient13.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient13.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            tabGradient13.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripToolWindowGradient2.InactiveCaptionGradient = tabGradient13;
-            tabGradient14.EndColor = System.Drawing.Color.Transparent;
-            tabGradient14.StartColor = System.Drawing.Color.Transparent;
-            tabGradient14.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            dockPaneStripToolWindowGradient2.InactiveTabGradient = tabGradient14;
-            dockPaneStripSkin2.ToolWindowGradient = dockPaneStripToolWindowGradient2;
-            dockPanelSkin2.DockPaneStripSkin = dockPaneStripSkin2;
-            this.dockPanel.Skin = dockPanelSkin2;
+            dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
+            autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
+            tabGradient1.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient1.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient1.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            autoHideStripSkin1.TabGradient = tabGradient1;
+            dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
+            tabGradient2.EndColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient2.StartColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient2.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
+            dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
+            dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
+            dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
+            tabGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient3.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
+            dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
+            tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
+            tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
+            tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
+            dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
+            tabGradient5.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient5.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient5.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
+            dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+            dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
+            tabGradient6.EndColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
+            tabGradient7.EndColor = System.Drawing.Color.Transparent;
+            tabGradient7.StartColor = System.Drawing.Color.Transparent;
+            tabGradient7.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
+            dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
+            dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
+            this.dockPanel.Skin = dockPanelSkin1;
             this.dockPanel.TabIndex = 30;
             // 
             // toolsToolBar
@@ -2157,12 +2176,12 @@
             this.toolsToolBar.BackColor = System.Drawing.Color.Transparent;
             this.toolsToolBar.Dock = System.Windows.Forms.DockStyle.None;
             this.toolsToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tbLightTool,
             this.tbTextureTool,
             this.tbSegmentTool,
             this.tbWallTool,
             this.tbTriggerTool,
             this.tbEffectTool,
+            this.tbLightTool,
             this.tbObjectTool,
             this.tbReactorTool,
             this.tbMissionTool,
@@ -2171,7 +2190,7 @@
             this.tbTextureFilter});
             this.toolsToolBar.Location = new System.Drawing.Point(3, 50);
             this.toolsToolBar.Name = "toolsToolBar";
-            this.toolsToolBar.Size = new System.Drawing.Size(288, 25);
+            this.toolsToolBar.Size = new System.Drawing.Size(319, 25);
             this.toolsToolBar.TabIndex = 24;
             // 
             // tbLightTool
@@ -2305,25 +2324,6 @@
             this.tbTextureFilter.Size = new System.Drawing.Size(23, 22);
             this.tbTextureFilter.Text = "toolStripButton4";
             this.tbTextureFilter.Click += new System.EventHandler(this.tbTextureFilter_Click);
-            // 
-            // menuFileConvertMineStandard
-            // 
-            this.menuFileConvertMineStandard.Name = "menuFileConvertMineStandard";
-            this.menuFileConvertMineStandard.Size = new System.Drawing.Size(152, 22);
-            this.menuFileConvertMineStandard.Text = "&Standard";
-            this.menuFileConvertMineStandard.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
-            // 
-            // menuFileConvertMineVertigo
-            // 
-            this.menuFileConvertMineVertigo.Name = "menuFileConvertMineVertigo";
-            this.menuFileConvertMineVertigo.Size = new System.Drawing.Size(152, 22);
-            this.menuFileConvertMineVertigo.Text = "&Vertigo";
-            // 
-            // menuFileConvertMineD2X
-            // 
-            this.menuFileConvertMineD2X.Name = "menuFileConvertMineD2X";
-            this.menuFileConvertMineD2X.Size = new System.Drawing.Size(152, 22);
-            this.menuFileConvertMineD2X.Text = "&D2X-XL";
             // 
             // MainWindow
             // 

@@ -39,17 +39,20 @@
             this.deleteSegment = new System.Windows.Forms.Button();
             this.addSegment = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.availableRobotsPanel = new System.Windows.Forms.Panel();
+            this.availableRobotsList = new System.Windows.Forms.ListBox();
+            this.usedRobotsPanel = new System.Windows.Forms.Panel();
+            this.usedRobotsList = new System.Windows.Forms.ListBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.usedRobots = new System.Windows.Forms.ListBox();
             this.addRobot = new System.Windows.Forms.Button();
             this.deleteRobot = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
-            this.availableBots = new System.Windows.Forms.ListBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.triggerSourcePanel = new System.Windows.Forms.Panel();
+            this.triggerSourceList = new System.Windows.Forms.ListBox();
             this.showTriggerDetails = new System.Windows.Forms.Button();
             this.showWallDetails = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
-            this.triggeredBy = new System.Windows.Forms.ListBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.selectPoint4 = new System.Windows.Forms.Button();
             this.selectPoint2 = new System.Windows.Forms.Button();
@@ -96,7 +99,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.segIdCtrl = new System.Windows.Forms.ComboBox();
             this.groupBox8.SuspendLayout();
+            this.availableRobotsPanel.SuspendLayout();
+            this.usedRobotsPanel.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.triggerSourcePanel.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -191,18 +197,54 @@
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.availableRobotsPanel);
+            this.groupBox8.Controls.Add(this.usedRobotsPanel);
             this.groupBox8.Controls.Add(this.label13);
-            this.groupBox8.Controls.Add(this.usedRobots);
             this.groupBox8.Controls.Add(this.addRobot);
             this.groupBox8.Controls.Add(this.deleteRobot);
             this.groupBox8.Controls.Add(this.label12);
-            this.groupBox8.Controls.Add(this.availableBots);
             this.groupBox8.Location = new System.Drawing.Point(12, 467);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(320, 164);
             this.groupBox8.TabIndex = 13;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Robot maker data";
+            // 
+            // availableRobotsPanel
+            // 
+            this.availableRobotsPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.availableRobotsPanel.Controls.Add(this.availableRobotsList);
+            this.availableRobotsPanel.Location = new System.Drawing.Point(168, 32);
+            this.availableRobotsPanel.Name = "availableRobotsPanel";
+            this.availableRobotsPanel.Size = new System.Drawing.Size(137, 100);
+            this.availableRobotsPanel.TabIndex = 34;
+            // 
+            // availableRobotsList
+            // 
+            this.availableRobotsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.availableRobotsList.FormattingEnabled = true;
+            this.availableRobotsList.Location = new System.Drawing.Point(0, 0);
+            this.availableRobotsList.Name = "availableRobotsList";
+            this.availableRobotsList.Size = new System.Drawing.Size(133, 96);
+            this.availableRobotsList.TabIndex = 0;
+            // 
+            // usedRobotsPanel
+            // 
+            this.usedRobotsPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.usedRobotsPanel.Controls.Add(this.usedRobotsList);
+            this.usedRobotsPanel.Location = new System.Drawing.Point(15, 32);
+            this.usedRobotsPanel.Name = "usedRobotsPanel";
+            this.usedRobotsPanel.Size = new System.Drawing.Size(137, 99);
+            this.usedRobotsPanel.TabIndex = 33;
+            // 
+            // usedRobotsList
+            // 
+            this.usedRobotsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.usedRobotsList.FormattingEnabled = true;
+            this.usedRobotsList.Location = new System.Drawing.Point(0, 0);
+            this.usedRobotsList.Name = "usedRobotsList";
+            this.usedRobotsList.Size = new System.Drawing.Size(133, 95);
+            this.usedRobotsList.TabIndex = 4;
             // 
             // label13
             // 
@@ -212,14 +254,6 @@
             this.label13.TabIndex = 5;
             this.label13.Text = "Used robots";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // usedRobots
-            // 
-            this.usedRobots.FormattingEnabled = true;
-            this.usedRobots.Location = new System.Drawing.Point(12, 32);
-            this.usedRobots.Name = "usedRobots";
-            this.usedRobots.Size = new System.Drawing.Size(137, 95);
-            this.usedRobots.TabIndex = 4;
             // 
             // addRobot
             // 
@@ -248,27 +282,37 @@
             this.label12.Text = "Available robots";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // availableBots
-            // 
-            this.availableBots.FormattingEnabled = true;
-            this.availableBots.Location = new System.Drawing.Point(168, 32);
-            this.availableBots.Name = "availableBots";
-            this.availableBots.Size = new System.Drawing.Size(137, 95);
-            this.availableBots.TabIndex = 0;
-            // 
             // groupBox7
             // 
             this.groupBox7.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox7.Controls.Add(this.triggerSourcePanel);
             this.groupBox7.Controls.Add(this.showTriggerDetails);
             this.groupBox7.Controls.Add(this.showWallDetails);
             this.groupBox7.Controls.Add(this.label11);
-            this.groupBox7.Controls.Add(this.triggeredBy);
             this.groupBox7.Location = new System.Drawing.Point(12, 337);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(320, 124);
             this.groupBox7.TabIndex = 12;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Trigger data";
+            // 
+            // triggerSourcePanel
+            // 
+            this.triggerSourcePanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.triggerSourcePanel.Controls.Add(this.triggerSourceList);
+            this.triggerSourcePanel.Location = new System.Drawing.Point(171, 21);
+            this.triggerSourcePanel.Name = "triggerSourcePanel";
+            this.triggerSourcePanel.Size = new System.Drawing.Size(96, 100);
+            this.triggerSourcePanel.TabIndex = 31;
+            // 
+            // triggerSourceList
+            // 
+            this.triggerSourceList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.triggerSourceList.FormattingEnabled = true;
+            this.triggerSourceList.Location = new System.Drawing.Point(0, 0);
+            this.triggerSourceList.Name = "triggerSourceList";
+            this.triggerSourceList.Size = new System.Drawing.Size(92, 96);
+            this.triggerSourceList.TabIndex = 0;
             // 
             // showTriggerDetails
             // 
@@ -296,14 +340,6 @@
             this.label11.TabIndex = 1;
             this.label11.Text = "Triggered by (segment, side)";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // triggeredBy
-            // 
-            this.triggeredBy.FormattingEnabled = true;
-            this.triggeredBy.Location = new System.Drawing.Point(168, 19);
-            this.triggeredBy.Name = "triggeredBy";
-            this.triggeredBy.Size = new System.Drawing.Size(104, 95);
-            this.triggeredBy.TabIndex = 0;
             // 
             // groupBox6
             // 
@@ -834,7 +870,10 @@
             this.Name = "SegmentTool";
             this.Text = "Segments";
             this.groupBox8.ResumeLayout(false);
+            this.availableRobotsPanel.ResumeLayout(false);
+            this.usedRobotsPanel.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
+            this.triggerSourcePanel.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -901,15 +940,15 @@
         private System.Windows.Forms.Button selectPoint3;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.ListBox triggeredBy;
+        private System.Windows.Forms.ListBox triggerSourceList;
         private System.Windows.Forms.Button showTriggerDetails;
         private System.Windows.Forms.Button showWallDetails;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.Button addRobot;
         private System.Windows.Forms.Button deleteRobot;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.ListBox availableBots;
-        private System.Windows.Forms.ListBox usedRobots;
+        private System.Windows.Forms.ListBox availableRobotsList;
+        private System.Windows.Forms.ListBox usedRobotsList;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button addSegment;
         private System.Windows.Forms.Button deleteSegment;
@@ -920,5 +959,8 @@
         private System.Windows.Forms.Button addFuelCenter;
         private System.Windows.Forms.Button addReactor;
         private System.Windows.Forms.Button AddRepairCenter;
+        private System.Windows.Forms.Panel usedRobotsPanel;
+        private System.Windows.Forms.Panel triggerSourcePanel;
+        private System.Windows.Forms.Panel availableRobotsPanel;
     }
 }
