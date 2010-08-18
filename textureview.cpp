@@ -100,6 +100,8 @@ short CTextureView::TxtFilterIndex (short nTxt)
 {
 	short	m, l = 0, r = TXT_FILTER_SIZE - 1;
 
+if (nTxt == 348)
+	nTxt = nTxt;
 do {
 	m = (l + r) / 2;
 	if (nTxt < TXT_FILTERS [m].iTexture.nMin)
@@ -379,11 +381,11 @@ if (bShowAll) {
 	else {
 		memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 		m_nTextures [0] = 0;
-		int i;
+		int i, f = m_nTxtFilter & ~TXT_MOVE;
 		for (i = 0; i < m_nTextures [1]; i++) {
 			int t = m_mapViewToTxt [i];
 			int j = TxtFilterIndex (t);
-			if ((TXT_FILTERS [j].nFilter | TXT_FILTERS [j].n2ndFilter) & m_nTxtFilter) {
+			if ((TXT_FILTERS [j].nFilter | TXT_FILTERS [j].n2ndFilter) & f) {
 				SETBIT (pFilter, i);
 				m_nTextures [0]++;
 				}
