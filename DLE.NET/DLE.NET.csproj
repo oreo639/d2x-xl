@@ -96,6 +96,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Customization\DockHelper.cs" />
+    <Compile Include="DiagnosisTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DiagnosisTool.Designer.cs">
+      <DependentUpon>DiagnosisTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EffectTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EffectTool.Designer.cs">
+      <DependentUpon>EffectTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="GraphicsPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -121,6 +133,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ReactorTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReactorTool.Designer.cs">
+      <DependentUpon>ReactorTool.cs</DependentUpon>
     </Compile>
     <Compile Include="RenderWindow.cs">
       <SubType>Form</SubType>
@@ -178,6 +196,12 @@
     <Compile Include="WallTool.Designer.cs">
       <DependentUpon>WallTool.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DiagnosisTool.resx">
+      <DependentUpon>DiagnosisTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EffectTool.resx">
+      <DependentUpon>EffectTool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LightTool.resx">
       <DependentUpon>LightTool.cs</DependentUpon>
     </EmbeddedResource>
@@ -197,6 +221,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReactorTool.resx">
+      <DependentUpon>ReactorTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RenderWindow.resx">
       <DependentUpon>RenderWindow.cs</DependentUpon>
@@ -471,6 +498,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="dle-icon.ico" />
+    <None Include="Resources\reactor-16x16.png" />
+    <None Include="Resources\effecttool-16x161.png" />
+    <None Include="Resources\effecttool-16x16.png" />
     <None Include="Resources\copy-16x16.png" />
     <None Include="Resources\missiontool-16x16.png" />
     <None Include="Resources\truecolor-32x32.png" />

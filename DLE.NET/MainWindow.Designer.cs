@@ -221,29 +221,21 @@
             this.aboutDLEXLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.mainStatus = new System.Windows.Forms.StatusStrip();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolBar = new System.Windows.Forms.ToolStrip();
+            this.mainToolBar = new System.Windows.Forms.ToolStrip();
+            this.toolStripSeparator22 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.toolStripSeparator22 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolsToolBar = new System.Windows.Forms.ToolStrip();
             this.tbOpenFile = new System.Windows.Forms.ToolStripButton();
             this.tbSaveFile = new System.Windows.Forms.ToolStripButton();
             this.tbCutBlock = new System.Windows.Forms.ToolStripButton();
             this.tbCopyBlock = new System.Windows.Forms.ToolStripButton();
             this.tbPasteBlock = new System.Windows.Forms.ToolStripButton();
-            this.tbCheckMine = new System.Windows.Forms.ToolStripButton();
-            this.tbLightTool = new System.Windows.Forms.ToolStripButton();
-            this.tbTextureTool = new System.Windows.Forms.ToolStripButton();
-            this.tbSegmentTool = new System.Windows.Forms.ToolStripButton();
-            this.tbWallTool = new System.Windows.Forms.ToolStripButton();
-            this.tbObjectTool = new System.Windows.Forms.ToolStripButton();
-            this.tbMissionTool = new System.Windows.Forms.ToolStripButton();
-            this.tbPreferences = new System.Windows.Forms.ToolStripButton();
             this.tbZoomIn = new System.Windows.Forms.ToolStripButton();
             this.tbZoomOut = new System.Windows.Forms.ToolStripButton();
             this.tbFitToView = new System.Windows.Forms.ToolStripButton();
@@ -273,11 +265,23 @@
             this.tbSegmentMode = new System.Windows.Forms.ToolStripButton();
             this.tbObjectMode = new System.Windows.Forms.ToolStripButton();
             this.tbBlockMode = new System.Windows.Forms.ToolStripButton();
+            this.tbLightTool = new System.Windows.Forms.ToolStripButton();
+            this.tbTextureTool = new System.Windows.Forms.ToolStripButton();
+            this.tbSegmentTool = new System.Windows.Forms.ToolStripButton();
+            this.tbWallTool = new System.Windows.Forms.ToolStripButton();
+            this.tbTriggerTool = new System.Windows.Forms.ToolStripButton();
+            this.tbEffectTool = new System.Windows.Forms.ToolStripButton();
+            this.tbObjectTool = new System.Windows.Forms.ToolStripButton();
+            this.tbMissionTool = new System.Windows.Forms.ToolStripButton();
+            this.tbPreferences = new System.Windows.Forms.ToolStripButton();
+            this.tbCheckMine = new System.Windows.Forms.ToolStripButton();
+            this.tbReactorTool = new System.Windows.Forms.ToolStripButton();
             this.mainMenu.SuspendLayout();
-            this.toolBar.SuspendLayout();
+            this.mainToolBar.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.toolsToolBar.SuspendLayout();
             this.SuspendLayout();
             // 
             // fileToolStripMenuItem
@@ -1614,11 +1618,6 @@
             this.mainStatus.TabIndex = 27;
             this.mainStatus.Text = "statusStrip1";
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 26);
-            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -1644,26 +1643,17 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 26);
             // 
-            // toolBar
+            // mainToolBar
             // 
-            this.toolBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.toolBar.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mainToolBar.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.mainToolBar.Dock = System.Windows.Forms.DockStyle.None;
+            this.mainToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tbOpenFile,
             this.tbSaveFile,
             this.toolStripSeparator22,
             this.tbCutBlock,
             this.tbCopyBlock,
             this.tbPasteBlock,
-            this.toolStripSeparator1,
-            this.tbCheckMine,
-            this.tbLightTool,
-            this.tbTextureTool,
-            this.tbSegmentTool,
-            this.tbWallTool,
-            this.tbObjectTool,
-            this.tbMissionTool,
-            this.tbPreferences,
             this.toolStripSeparator2,
             this.tbZoomIn,
             this.tbZoomOut,
@@ -1698,11 +1688,16 @@
             this.tbSegmentMode,
             this.tbObjectMode,
             this.tbBlockMode});
-            this.toolBar.Location = new System.Drawing.Point(3, 24);
-            this.toolBar.Name = "toolBar";
-            this.toolBar.Size = new System.Drawing.Size(1051, 26);
-            this.toolBar.TabIndex = 23;
-            this.toolBar.Text = "toolBar";
+            this.mainToolBar.Location = new System.Drawing.Point(3, 24);
+            this.mainToolBar.Name = "mainToolBar";
+            this.mainToolBar.Size = new System.Drawing.Size(830, 26);
+            this.mainToolBar.TabIndex = 23;
+            this.mainToolBar.Text = "toolBar";
+            // 
+            // toolStripSeparator22
+            // 
+            this.toolStripSeparator22.Name = "toolStripSeparator22";
+            this.toolStripSeparator22.Size = new System.Drawing.Size(6, 26);
             // 
             // toolStripContainer1
             // 
@@ -1711,7 +1706,7 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.dockPanel);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1114, 563);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1114, 538);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // toolStripContainer1.LeftToolStripPanel
@@ -1728,7 +1723,8 @@
             // 
             this.toolStripContainer1.TopToolStripPanel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.mainMenu);
-            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolBar);
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.mainToolBar);
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolsToolBar);
             // 
             // dockPanel
             // 
@@ -1739,7 +1735,7 @@
             this.dockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.dockPanel.Location = new System.Drawing.Point(0, 0);
             this.dockPanel.Name = "dockPanel";
-            this.dockPanel.Size = new System.Drawing.Size(1114, 563);
+            this.dockPanel.Size = new System.Drawing.Size(1114, 538);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
@@ -1786,10 +1782,26 @@
             this.dockPanel.Skin = dockPanelSkin1;
             this.dockPanel.TabIndex = 30;
             // 
-            // toolStripSeparator22
+            // toolsToolBar
             // 
-            this.toolStripSeparator22.Name = "toolStripSeparator22";
-            this.toolStripSeparator22.Size = new System.Drawing.Size(6, 26);
+            this.toolsToolBar.BackColor = System.Drawing.Color.Transparent;
+            this.toolsToolBar.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolsToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tbLightTool,
+            this.tbTextureTool,
+            this.tbSegmentTool,
+            this.tbWallTool,
+            this.tbTriggerTool,
+            this.tbEffectTool,
+            this.tbObjectTool,
+            this.tbReactorTool,
+            this.tbMissionTool,
+            this.tbPreferences,
+            this.tbCheckMine});
+            this.toolsToolBar.Location = new System.Drawing.Point(3, 50);
+            this.toolsToolBar.Name = "toolsToolBar";
+            this.toolsToolBar.Size = new System.Drawing.Size(296, 25);
+            this.toolsToolBar.TabIndex = 24;
             // 
             // tbOpenFile
             // 
@@ -1837,90 +1849,6 @@
             this.tbPasteBlock.Name = "tbPasteBlock";
             this.tbPasteBlock.Size = new System.Drawing.Size(23, 23);
             this.tbPasteBlock.Text = "Paste block";
-            // 
-            // tbCheckMine
-            // 
-            this.tbCheckMine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbCheckMine.Image = global::DLE.NET.Properties.Resources.diagnosis_16x16;
-            this.tbCheckMine.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbCheckMine.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbCheckMine.Name = "tbCheckMine";
-            this.tbCheckMine.Size = new System.Drawing.Size(23, 23);
-            this.tbCheckMine.Text = "Check level";
-            this.tbCheckMine.ToolTipText = "Run a level check";
-            // 
-            // tbLightTool
-            // 
-            this.tbLightTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbLightTool.Image = global::DLE.NET.Properties.Resources.lighttool_16x16;
-            this.tbLightTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbLightTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbLightTool.Name = "tbLightTool";
-            this.tbLightTool.Size = new System.Drawing.Size(23, 23);
-            this.tbLightTool.Text = "Light tool";
-            this.tbLightTool.ToolTipText = "Open light tool";
-            // 
-            // tbTextureTool
-            // 
-            this.tbTextureTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbTextureTool.Image = global::DLE.NET.Properties.Resources.texturetool_16x16;
-            this.tbTextureTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbTextureTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbTextureTool.Name = "tbTextureTool";
-            this.tbTextureTool.Size = new System.Drawing.Size(23, 23);
-            this.tbTextureTool.Text = "Texture tool";
-            this.tbTextureTool.ToolTipText = "Open texture tool";
-            // 
-            // tbSegmentTool
-            // 
-            this.tbSegmentTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbSegmentTool.Image = global::DLE.NET.Properties.Resources.segmenttool_16x16;
-            this.tbSegmentTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbSegmentTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbSegmentTool.Name = "tbSegmentTool";
-            this.tbSegmentTool.Size = new System.Drawing.Size(23, 23);
-            this.tbSegmentTool.Text = "Segment tool";
-            this.tbSegmentTool.ToolTipText = "Open segment tool";
-            // 
-            // tbWallTool
-            // 
-            this.tbWallTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbWallTool.Image = global::DLE.NET.Properties.Resources.brokenwall_16x16;
-            this.tbWallTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbWallTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbWallTool.Name = "tbWallTool";
-            this.tbWallTool.Size = new System.Drawing.Size(23, 23);
-            this.tbWallTool.Text = "Wall tool";
-            this.tbWallTool.ToolTipText = "Open wall tool";
-            // 
-            // tbObjectTool
-            // 
-            this.tbObjectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbObjectTool.Image = global::DLE.NET.Properties.Resources.objects_16x16;
-            this.tbObjectTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbObjectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbObjectTool.Name = "tbObjectTool";
-            this.tbObjectTool.Size = new System.Drawing.Size(23, 23);
-            this.tbObjectTool.Text = "Object tool";
-            // 
-            // tbMissionTool
-            // 
-            this.tbMissionTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbMissionTool.Image = global::DLE.NET.Properties.Resources.missiontool_16x16;
-            this.tbMissionTool.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbMissionTool.Name = "tbMissionTool";
-            this.tbMissionTool.Size = new System.Drawing.Size(23, 23);
-            this.tbMissionTool.Text = "Open mission tool";
-            // 
-            // tbPreferences
-            // 
-            this.tbPreferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbPreferences.Image = global::DLE.NET.Properties.Resources.settings_16x16;
-            this.tbPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tbPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbPreferences.Name = "tbPreferences";
-            this.tbPreferences.Size = new System.Drawing.Size(23, 23);
-            this.tbPreferences.Text = "Open preferences";
             // 
             // tbZoomIn
             // 
@@ -2228,6 +2156,117 @@
             this.tbBlockMode.Text = "Block mode";
             this.tbBlockMode.ToolTipText = "Enable block edit mode";
             // 
+            // tbLightTool
+            // 
+            this.tbLightTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbLightTool.Image = global::DLE.NET.Properties.Resources.lighttool_16x16;
+            this.tbLightTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbLightTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbLightTool.Name = "tbLightTool";
+            this.tbLightTool.Size = new System.Drawing.Size(23, 22);
+            this.tbLightTool.Text = "Light tool";
+            this.tbLightTool.ToolTipText = "Open light tool";
+            // 
+            // tbTextureTool
+            // 
+            this.tbTextureTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbTextureTool.Image = global::DLE.NET.Properties.Resources.texturetool_16x16;
+            this.tbTextureTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbTextureTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbTextureTool.Name = "tbTextureTool";
+            this.tbTextureTool.Size = new System.Drawing.Size(23, 22);
+            this.tbTextureTool.Text = "Texture tool";
+            this.tbTextureTool.ToolTipText = "Open texture tool";
+            // 
+            // tbSegmentTool
+            // 
+            this.tbSegmentTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbSegmentTool.Image = global::DLE.NET.Properties.Resources.segmenttool_16x16;
+            this.tbSegmentTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbSegmentTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbSegmentTool.Name = "tbSegmentTool";
+            this.tbSegmentTool.Size = new System.Drawing.Size(23, 22);
+            this.tbSegmentTool.Text = "Segment tool";
+            this.tbSegmentTool.ToolTipText = "Open segment tool";
+            // 
+            // tbWallTool
+            // 
+            this.tbWallTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbWallTool.Image = global::DLE.NET.Properties.Resources.brokenwall_16x16;
+            this.tbWallTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbWallTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbWallTool.Name = "tbWallTool";
+            this.tbWallTool.Size = new System.Drawing.Size(23, 22);
+            this.tbWallTool.Text = "Wall tool";
+            this.tbWallTool.ToolTipText = "Open wall tool";
+            // 
+            // tbTriggerTool
+            // 
+            this.tbTriggerTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbTriggerTool.Image = global::DLE.NET.Properties.Resources.chainwheel_16x16;
+            this.tbTriggerTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbTriggerTool.Name = "tbTriggerTool";
+            this.tbTriggerTool.Size = new System.Drawing.Size(23, 22);
+            this.tbTriggerTool.Text = "toolStripButton4";
+            // 
+            // tbEffectTool
+            // 
+            this.tbEffectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbEffectTool.Image = global::DLE.NET.Properties.Resources.effecttool_16x16;
+            this.tbEffectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbEffectTool.Name = "tbEffectTool";
+            this.tbEffectTool.Size = new System.Drawing.Size(23, 22);
+            this.tbEffectTool.Text = "Open effect tool";
+            // 
+            // tbObjectTool
+            // 
+            this.tbObjectTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbObjectTool.Image = global::DLE.NET.Properties.Resources.objects_16x16;
+            this.tbObjectTool.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbObjectTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbObjectTool.Name = "tbObjectTool";
+            this.tbObjectTool.Size = new System.Drawing.Size(23, 22);
+            this.tbObjectTool.Text = "Object tool";
+            // 
+            // tbMissionTool
+            // 
+            this.tbMissionTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbMissionTool.Image = global::DLE.NET.Properties.Resources.missiontool_16x16;
+            this.tbMissionTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbMissionTool.Name = "tbMissionTool";
+            this.tbMissionTool.Size = new System.Drawing.Size(23, 22);
+            this.tbMissionTool.Text = "Open mission tool";
+            // 
+            // tbPreferences
+            // 
+            this.tbPreferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbPreferences.Image = global::DLE.NET.Properties.Resources.settings_16x16;
+            this.tbPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbPreferences.Name = "tbPreferences";
+            this.tbPreferences.Size = new System.Drawing.Size(23, 22);
+            this.tbPreferences.Text = "Open preferences";
+            // 
+            // tbCheckMine
+            // 
+            this.tbCheckMine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbCheckMine.Image = global::DLE.NET.Properties.Resources.diagnosis_16x16;
+            this.tbCheckMine.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbCheckMine.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbCheckMine.Name = "tbCheckMine";
+            this.tbCheckMine.Size = new System.Drawing.Size(23, 22);
+            this.tbCheckMine.Text = "Check level";
+            this.tbCheckMine.ToolTipText = "Run a level check";
+            // 
+            // tbReactorTool
+            // 
+            this.tbReactorTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbReactorTool.Image = global::DLE.NET.Properties.Resources.reactor_16x16;
+            this.tbReactorTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbReactorTool.Name = "tbReactorTool";
+            this.tbReactorTool.Size = new System.Drawing.Size(23, 22);
+            this.tbReactorTool.Text = "Open reactor settings";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2246,13 +2285,15 @@
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.mainMenu.ResumeLayout(false);
             this.mainMenu.PerformLayout();
-            this.toolBar.ResumeLayout(false);
-            this.toolBar.PerformLayout();
+            this.mainToolBar.ResumeLayout(false);
+            this.mainToolBar.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            this.toolsToolBar.ResumeLayout(false);
+            this.toolsToolBar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2434,14 +2475,6 @@
         private System.Windows.Forms.StatusStrip mainStatus;
         private System.Windows.Forms.ToolStripButton tbOpenFile;
         private System.Windows.Forms.ToolStripButton tbSaveFile;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton tbCheckMine;
-        private System.Windows.Forms.ToolStripButton tbLightTool;
-        private System.Windows.Forms.ToolStripButton tbTextureTool;
-        private System.Windows.Forms.ToolStripButton tbSegmentTool;
-        private System.Windows.Forms.ToolStripButton tbWallTool;
-        private System.Windows.Forms.ToolStripButton tbObjectTool;
-        private System.Windows.Forms.ToolStripButton tbPreferences;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton tbZoomIn;
         private System.Windows.Forms.ToolStripButton tbZoomOut;
@@ -2476,7 +2509,7 @@
         private System.Windows.Forms.ToolStripButton tbObjectMode;
         private System.Windows.Forms.ToolStripButton tbBlockMode;
         private System.Windows.Forms.ToolStripButton tbRedraw;
-        private System.Windows.Forms.ToolStrip toolBar;
+        private System.Windows.Forms.ToolStrip mainToolBar;
         private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
         private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
@@ -2484,11 +2517,22 @@
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
-        private System.Windows.Forms.ToolStripButton tbMissionTool;
         private System.Windows.Forms.ToolStripButton tbCopyBlock;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator22;
         private System.Windows.Forms.ToolStripButton tbCutBlock;
         private System.Windows.Forms.ToolStripButton tbPasteBlock;
+        private System.Windows.Forms.ToolStrip toolsToolBar;
+        private System.Windows.Forms.ToolStripButton tbLightTool;
+        private System.Windows.Forms.ToolStripButton tbTextureTool;
+        private System.Windows.Forms.ToolStripButton tbSegmentTool;
+        private System.Windows.Forms.ToolStripButton tbObjectTool;
+        private System.Windows.Forms.ToolStripButton tbWallTool;
+        private System.Windows.Forms.ToolStripButton tbEffectTool;
+        private System.Windows.Forms.ToolStripButton tbMissionTool;
+        private System.Windows.Forms.ToolStripButton tbPreferences;
+        private System.Windows.Forms.ToolStripButton tbCheckMine;
+        private System.Windows.Forms.ToolStripButton tbTriggerTool;
+        private System.Windows.Forms.ToolStripButton tbReactorTool;
     }
 }
 

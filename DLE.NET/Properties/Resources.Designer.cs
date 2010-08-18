@@ -305,6 +305,13 @@ namespace DLE.NET.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap effecttool_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("effecttool_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap expand_16x16 {
             get {
                 object obj = ResourceManager.GetObject("expand_16x16", resourceCulture);
@@ -771,6 +778,13 @@ namespace DLE.NET.Properties {
             get {
                 object obj = ResourceManager.GetObject("rc_data1", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap reactor_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("reactor-16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
