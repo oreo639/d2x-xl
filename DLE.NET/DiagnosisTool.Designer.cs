@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DiagnosisTool));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.problemReport = new System.Windows.Forms.ListBox();
             this.showWarnCheck = new System.Windows.Forms.CheckBox();
             this.autoFixCheck = new System.Windows.Forms.CheckBox();
@@ -37,16 +38,15 @@
             this.showProblemBtn = new System.Windows.Forms.Button();
             this.runCheckBtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.statisticsView = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.statisticsView = new System.Windows.Forms.ListView();
             this.Item = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Count = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.maxCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox2.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox2
@@ -58,6 +58,15 @@
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Problem report";
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel2.Controls.Add(this.problemReport);
+            this.panel2.Location = new System.Drawing.Point(8, 19);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(311, 513);
+            this.panel2.TabIndex = 0;
             // 
             // problemReport
             // 
@@ -125,6 +134,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Statistics";
             // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.statisticsView);
+            this.panel1.Location = new System.Drawing.Point(7, 19);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(213, 213);
+            this.panel1.TabIndex = 0;
+            // 
             // statisticsView
             // 
             this.statisticsView.BackColor = System.Drawing.SystemColors.Window;
@@ -145,15 +163,6 @@
             this.statisticsView.UseCompatibleStateImageBehavior = false;
             this.statisticsView.View = System.Windows.Forms.View.Details;
             // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Controls.Add(this.statisticsView);
-            this.panel1.Location = new System.Drawing.Point(7, 19);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(213, 213);
-            this.panel1.TabIndex = 0;
-            // 
             // Item
             // 
             this.Item.Text = "Item";
@@ -165,15 +174,6 @@
             // maxCount
             // 
             this.maxCount.Text = "Max #";
-            // 
-            // panel2
-            // 
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel2.Controls.Add(this.problemReport);
-            this.panel2.Location = new System.Drawing.Point(8, 19);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(311, 513);
-            this.panel2.TabIndex = 0;
             // 
             // DiagnosisTool
             // 
@@ -192,9 +192,9 @@
             this.Name = "DiagnosisTool";
             this.Text = "DiagnosisTool";
             this.groupBox2.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

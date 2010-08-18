@@ -27,7 +27,7 @@ namespace DLE.NET
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
 
-        const float toolPaneWidth = 360.0f;
+        const float toolPaneWidth = 340.0f;
         const float texturePaneHeight = 200.0f;
 
         public MainWindow()
@@ -86,10 +86,10 @@ namespace DLE.NET
             m_reactorTool.Show(m_segmentTool.Pane, null);
             m_missionTool.Show(m_segmentTool.Pane, null);
             m_diagnosisTool.Show(m_segmentTool.Pane, null);
-            m_textureFilters.Show(m_segmentTool.Pane, null);
             m_prefsForm.Show(m_segmentTool.Pane, null);
             m_segmentTool.Show();
             m_textureList.Show(m_renderWindow.Pane, DockAlignment.Bottom, 200.0f / (float)m_renderWindow.Height);
+            m_textureFilters.Show(m_textureList.Pane, DockAlignment.Left, (float)265.0f / (float)m_renderWindow.Width);
             //m_textureList.Show(dockPanel, DockState.DockBottom);
         }
 

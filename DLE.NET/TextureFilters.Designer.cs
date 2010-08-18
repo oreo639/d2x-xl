@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textureFilterGroup = new System.Windows.Forms.TabControl();
+            this.rockFilterPage = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.rockNone = new System.Windows.Forms.Button();
             this.rockAll = new System.Windows.Forms.Button();
@@ -38,7 +38,7 @@
             this.rockRed = new System.Windows.Forms.CheckBox();
             this.rockBrown = new System.Windows.Forms.CheckBox();
             this.rockBlack = new System.Windows.Forms.CheckBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.natureFilterPage = new System.Windows.Forms.TabPage();
             this.natureNone = new System.Windows.Forms.Button();
             this.natureAll = new System.Windows.Forms.Button();
             this.natureLava = new System.Windows.Forms.CheckBox();
@@ -47,7 +47,7 @@
             this.natureGrass = new System.Windows.Forms.CheckBox();
             this.natureSand = new System.Windows.Forms.CheckBox();
             this.natureIce = new System.Windows.Forms.CheckBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.buildingFilterPage = new System.Windows.Forms.TabPage();
             this.buildingNone = new System.Windows.Forms.Button();
             this.buildingAll = new System.Windows.Forms.Button();
             this.buildingBricks = new System.Windows.Forms.CheckBox();
@@ -56,13 +56,13 @@
             this.buildingTarmac = new System.Windows.Forms.CheckBox();
             this.buildingConcrete = new System.Windows.Forms.CheckBox();
             this.buildingSteel = new System.Windows.Forms.CheckBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.applianceFilterPage = new System.Windows.Forms.TabPage();
             this.appNone = new System.Windows.Forms.Button();
             this.appAll = new System.Windows.Forms.Button();
+            this.appDoors = new System.Windows.Forms.CheckBox();
             this.appFans = new System.Windows.Forms.CheckBox();
             this.appGrates = new System.Windows.Forms.CheckBox();
+            this.techFilterPage = new System.Windows.Forms.TabPage();
             this.techNone = new System.Windows.Forms.Button();
             this.techAll = new System.Windows.Forms.Button();
             this.techWiresTubes = new System.Windows.Forms.CheckBox();
@@ -70,34 +70,35 @@
             this.techForceFields = new System.Windows.Forms.CheckBox();
             this.techEnergy = new System.Windows.Forms.CheckBox();
             this.techLights = new System.Windows.Forms.CheckBox();
+            this.signFilterPage = new System.Windows.Forms.TabPage();
             this.signsNone = new System.Windows.Forms.Button();
             this.signsAll = new System.Windows.Forms.Button();
             this.signsStripes = new System.Windows.Forms.CheckBox();
             this.signsMonitors = new System.Windows.Forms.CheckBox();
             this.signsLabels = new System.Windows.Forms.CheckBox();
-            this.appDoors = new System.Windows.Forms.CheckBox();
-            this.textureFilterGroup.SuspendLayout();
+            this.rockFilterPage.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tabPage5.SuspendLayout();
-            this.tabPage6.SuspendLayout();
+            this.natureFilterPage.SuspendLayout();
+            this.buildingFilterPage.SuspendLayout();
+            this.applianceFilterPage.SuspendLayout();
+            this.techFilterPage.SuspendLayout();
+            this.signFilterPage.SuspendLayout();
             this.SuspendLayout();
             // 
-            // textureFilterGroup
+            // rockFilterPage
             // 
-            this.textureFilterGroup.Controls.Add(this.tabPage1);
-            this.textureFilterGroup.Controls.Add(this.tabPage2);
-            this.textureFilterGroup.Controls.Add(this.tabPage3);
-            this.textureFilterGroup.Controls.Add(this.tabPage4);
-            this.textureFilterGroup.Controls.Add(this.tabPage5);
-            this.textureFilterGroup.Controls.Add(this.tabPage6);
-            this.textureFilterGroup.Location = new System.Drawing.Point(10, 8);
-            this.textureFilterGroup.Name = "textureFilterGroup";
-            this.textureFilterGroup.SelectedIndex = 0;
-            this.textureFilterGroup.Size = new System.Drawing.Size(286, 198);
-            this.textureFilterGroup.TabIndex = 0;
+            this.rockFilterPage.Controls.Add(this.tabPage1);
+            this.rockFilterPage.Controls.Add(this.natureFilterPage);
+            this.rockFilterPage.Controls.Add(this.buildingFilterPage);
+            this.rockFilterPage.Controls.Add(this.applianceFilterPage);
+            this.rockFilterPage.Controls.Add(this.techFilterPage);
+            this.rockFilterPage.Controls.Add(this.signFilterPage);
+            this.rockFilterPage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rockFilterPage.Location = new System.Drawing.Point(0, 0);
+            this.rockFilterPage.Name = "rockFilterPage";
+            this.rockFilterPage.SelectedIndex = 0;
+            this.rockFilterPage.Size = new System.Drawing.Size(281, 152);
+            this.rockFilterPage.TabIndex = 0;
             // 
             // tabPage1
             // 
@@ -113,13 +114,13 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(278, 172);
+            this.tabPage1.Size = new System.Drawing.Size(273, 126);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Rock";
             // 
             // rockNone
             // 
-            this.rockNone.Location = new System.Drawing.Point(132, 144);
+            this.rockNone.Location = new System.Drawing.Point(65, 101);
             this.rockNone.Name = "rockNone";
             this.rockNone.Size = new System.Drawing.Size(55, 22);
             this.rockNone.TabIndex = 7;
@@ -128,7 +129,7 @@
             // 
             // rockAll
             // 
-            this.rockAll.Location = new System.Drawing.Point(71, 144);
+            this.rockAll.Location = new System.Drawing.Point(8, 101);
             this.rockAll.Name = "rockAll";
             this.rockAll.Size = new System.Drawing.Size(55, 22);
             this.rockAll.TabIndex = 6;
@@ -138,7 +139,7 @@
             // rockBlue
             // 
             this.rockBlue.AutoSize = true;
-            this.rockBlue.Location = new System.Drawing.Point(71, 121);
+            this.rockBlue.Location = new System.Drawing.Point(8, 81);
             this.rockBlue.Name = "rockBlue";
             this.rockBlue.Size = new System.Drawing.Size(47, 17);
             this.rockBlue.TabIndex = 5;
@@ -148,7 +149,7 @@
             // rockGreen
             // 
             this.rockGreen.AutoSize = true;
-            this.rockGreen.Location = new System.Drawing.Point(71, 98);
+            this.rockGreen.Location = new System.Drawing.Point(8, 66);
             this.rockGreen.Name = "rockGreen";
             this.rockGreen.Size = new System.Drawing.Size(55, 17);
             this.rockGreen.TabIndex = 4;
@@ -158,7 +159,7 @@
             // rockYellow
             // 
             this.rockYellow.AutoSize = true;
-            this.rockYellow.Location = new System.Drawing.Point(71, 75);
+            this.rockYellow.Location = new System.Drawing.Point(8, 51);
             this.rockYellow.Name = "rockYellow";
             this.rockYellow.Size = new System.Drawing.Size(57, 17);
             this.rockYellow.TabIndex = 3;
@@ -168,7 +169,7 @@
             // rockRed
             // 
             this.rockRed.AutoSize = true;
-            this.rockRed.Location = new System.Drawing.Point(71, 52);
+            this.rockRed.Location = new System.Drawing.Point(8, 36);
             this.rockRed.Name = "rockRed";
             this.rockRed.Size = new System.Drawing.Size(46, 17);
             this.rockRed.TabIndex = 2;
@@ -178,7 +179,7 @@
             // rockBrown
             // 
             this.rockBrown.AutoSize = true;
-            this.rockBrown.Location = new System.Drawing.Point(71, 29);
+            this.rockBrown.Location = new System.Drawing.Point(8, 21);
             this.rockBrown.Name = "rockBrown";
             this.rockBrown.Size = new System.Drawing.Size(56, 17);
             this.rockBrown.TabIndex = 1;
@@ -188,34 +189,34 @@
             // rockBlack
             // 
             this.rockBlack.AutoSize = true;
-            this.rockBlack.Location = new System.Drawing.Point(71, 6);
+            this.rockBlack.Location = new System.Drawing.Point(8, 6);
             this.rockBlack.Name = "rockBlack";
             this.rockBlack.Size = new System.Drawing.Size(97, 17);
             this.rockBlack.TabIndex = 0;
             this.rockBlack.Text = "Black and gray";
             this.rockBlack.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // natureFilterPage
             // 
-            this.tabPage2.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.tabPage2.Controls.Add(this.natureNone);
-            this.tabPage2.Controls.Add(this.natureAll);
-            this.tabPage2.Controls.Add(this.natureLava);
-            this.tabPage2.Controls.Add(this.natureWater);
-            this.tabPage2.Controls.Add(this.natureStones);
-            this.tabPage2.Controls.Add(this.natureGrass);
-            this.tabPage2.Controls.Add(this.natureSand);
-            this.tabPage2.Controls.Add(this.natureIce);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(278, 172);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Nature";
+            this.natureFilterPage.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.natureFilterPage.Controls.Add(this.natureNone);
+            this.natureFilterPage.Controls.Add(this.natureAll);
+            this.natureFilterPage.Controls.Add(this.natureLava);
+            this.natureFilterPage.Controls.Add(this.natureWater);
+            this.natureFilterPage.Controls.Add(this.natureStones);
+            this.natureFilterPage.Controls.Add(this.natureGrass);
+            this.natureFilterPage.Controls.Add(this.natureSand);
+            this.natureFilterPage.Controls.Add(this.natureIce);
+            this.natureFilterPage.Location = new System.Drawing.Point(4, 22);
+            this.natureFilterPage.Name = "natureFilterPage";
+            this.natureFilterPage.Padding = new System.Windows.Forms.Padding(3);
+            this.natureFilterPage.Size = new System.Drawing.Size(273, 126);
+            this.natureFilterPage.TabIndex = 1;
+            this.natureFilterPage.Text = "Nature";
             // 
             // natureNone
             // 
-            this.natureNone.Location = new System.Drawing.Point(132, 144);
+            this.natureNone.Location = new System.Drawing.Point(65, 101);
             this.natureNone.Name = "natureNone";
             this.natureNone.Size = new System.Drawing.Size(55, 22);
             this.natureNone.TabIndex = 15;
@@ -224,7 +225,7 @@
             // 
             // natureAll
             // 
-            this.natureAll.Location = new System.Drawing.Point(71, 144);
+            this.natureAll.Location = new System.Drawing.Point(8, 101);
             this.natureAll.Name = "natureAll";
             this.natureAll.Size = new System.Drawing.Size(55, 22);
             this.natureAll.TabIndex = 14;
@@ -234,7 +235,7 @@
             // natureLava
             // 
             this.natureLava.AutoSize = true;
-            this.natureLava.Location = new System.Drawing.Point(71, 121);
+            this.natureLava.Location = new System.Drawing.Point(8, 81);
             this.natureLava.Name = "natureLava";
             this.natureLava.Size = new System.Drawing.Size(50, 17);
             this.natureLava.TabIndex = 13;
@@ -244,7 +245,7 @@
             // natureWater
             // 
             this.natureWater.AutoSize = true;
-            this.natureWater.Location = new System.Drawing.Point(71, 98);
+            this.natureWater.Location = new System.Drawing.Point(8, 66);
             this.natureWater.Name = "natureWater";
             this.natureWater.Size = new System.Drawing.Size(55, 17);
             this.natureWater.TabIndex = 12;
@@ -254,7 +255,7 @@
             // natureStones
             // 
             this.natureStones.AutoSize = true;
-            this.natureStones.Location = new System.Drawing.Point(71, 75);
+            this.natureStones.Location = new System.Drawing.Point(8, 51);
             this.natureStones.Name = "natureStones";
             this.natureStones.Size = new System.Drawing.Size(59, 17);
             this.natureStones.TabIndex = 11;
@@ -264,7 +265,7 @@
             // natureGrass
             // 
             this.natureGrass.AutoSize = true;
-            this.natureGrass.Location = new System.Drawing.Point(71, 52);
+            this.natureGrass.Location = new System.Drawing.Point(8, 36);
             this.natureGrass.Name = "natureGrass";
             this.natureGrass.Size = new System.Drawing.Size(53, 17);
             this.natureGrass.TabIndex = 10;
@@ -274,7 +275,7 @@
             // natureSand
             // 
             this.natureSand.AutoSize = true;
-            this.natureSand.Location = new System.Drawing.Point(71, 29);
+            this.natureSand.Location = new System.Drawing.Point(8, 21);
             this.natureSand.Name = "natureSand";
             this.natureSand.Size = new System.Drawing.Size(51, 17);
             this.natureSand.TabIndex = 9;
@@ -284,34 +285,34 @@
             // natureIce
             // 
             this.natureIce.AutoSize = true;
-            this.natureIce.Location = new System.Drawing.Point(71, 6);
+            this.natureIce.Location = new System.Drawing.Point(8, 6);
             this.natureIce.Name = "natureIce";
             this.natureIce.Size = new System.Drawing.Size(41, 17);
             this.natureIce.TabIndex = 8;
             this.natureIce.Text = "Ice";
             this.natureIce.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // buildingFilterPage
             // 
-            this.tabPage3.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.tabPage3.Controls.Add(this.buildingNone);
-            this.tabPage3.Controls.Add(this.buildingAll);
-            this.tabPage3.Controls.Add(this.buildingBricks);
-            this.tabPage3.Controls.Add(this.buildingFloors);
-            this.tabPage3.Controls.Add(this.buildingWalls);
-            this.tabPage3.Controls.Add(this.buildingTarmac);
-            this.tabPage3.Controls.Add(this.buildingConcrete);
-            this.tabPage3.Controls.Add(this.buildingSteel);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(278, 172);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Building";
+            this.buildingFilterPage.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.buildingFilterPage.Controls.Add(this.buildingNone);
+            this.buildingFilterPage.Controls.Add(this.buildingAll);
+            this.buildingFilterPage.Controls.Add(this.buildingBricks);
+            this.buildingFilterPage.Controls.Add(this.buildingFloors);
+            this.buildingFilterPage.Controls.Add(this.buildingWalls);
+            this.buildingFilterPage.Controls.Add(this.buildingTarmac);
+            this.buildingFilterPage.Controls.Add(this.buildingConcrete);
+            this.buildingFilterPage.Controls.Add(this.buildingSteel);
+            this.buildingFilterPage.Location = new System.Drawing.Point(4, 22);
+            this.buildingFilterPage.Name = "buildingFilterPage";
+            this.buildingFilterPage.Padding = new System.Windows.Forms.Padding(3);
+            this.buildingFilterPage.Size = new System.Drawing.Size(273, 126);
+            this.buildingFilterPage.TabIndex = 2;
+            this.buildingFilterPage.Text = "Building";
             // 
             // buildingNone
             // 
-            this.buildingNone.Location = new System.Drawing.Point(132, 144);
+            this.buildingNone.Location = new System.Drawing.Point(65, 101);
             this.buildingNone.Name = "buildingNone";
             this.buildingNone.Size = new System.Drawing.Size(55, 22);
             this.buildingNone.TabIndex = 23;
@@ -320,7 +321,7 @@
             // 
             // buildingAll
             // 
-            this.buildingAll.Location = new System.Drawing.Point(71, 144);
+            this.buildingAll.Location = new System.Drawing.Point(8, 101);
             this.buildingAll.Name = "buildingAll";
             this.buildingAll.Size = new System.Drawing.Size(55, 22);
             this.buildingAll.TabIndex = 22;
@@ -330,7 +331,7 @@
             // buildingBricks
             // 
             this.buildingBricks.AutoSize = true;
-            this.buildingBricks.Location = new System.Drawing.Point(71, 75);
+            this.buildingBricks.Location = new System.Drawing.Point(8, 51);
             this.buildingBricks.Name = "buildingBricks";
             this.buildingBricks.Size = new System.Drawing.Size(55, 17);
             this.buildingBricks.TabIndex = 21;
@@ -340,7 +341,7 @@
             // buildingFloors
             // 
             this.buildingFloors.AutoSize = true;
-            this.buildingFloors.Location = new System.Drawing.Point(71, 121);
+            this.buildingFloors.Location = new System.Drawing.Point(8, 81);
             this.buildingFloors.Name = "buildingFloors";
             this.buildingFloors.Size = new System.Drawing.Size(62, 17);
             this.buildingFloors.TabIndex = 20;
@@ -350,7 +351,7 @@
             // buildingWalls
             // 
             this.buildingWalls.AutoSize = true;
-            this.buildingWalls.Location = new System.Drawing.Point(71, 98);
+            this.buildingWalls.Location = new System.Drawing.Point(8, 66);
             this.buildingWalls.Name = "buildingWalls";
             this.buildingWalls.Size = new System.Drawing.Size(52, 17);
             this.buildingWalls.TabIndex = 19;
@@ -360,7 +361,7 @@
             // buildingTarmac
             // 
             this.buildingTarmac.AutoSize = true;
-            this.buildingTarmac.Location = new System.Drawing.Point(71, 52);
+            this.buildingTarmac.Location = new System.Drawing.Point(8, 36);
             this.buildingTarmac.Name = "buildingTarmac";
             this.buildingTarmac.Size = new System.Drawing.Size(62, 17);
             this.buildingTarmac.TabIndex = 18;
@@ -370,7 +371,7 @@
             // buildingConcrete
             // 
             this.buildingConcrete.AutoSize = true;
-            this.buildingConcrete.Location = new System.Drawing.Point(71, 29);
+            this.buildingConcrete.Location = new System.Drawing.Point(8, 21);
             this.buildingConcrete.Name = "buildingConcrete";
             this.buildingConcrete.Size = new System.Drawing.Size(69, 17);
             this.buildingConcrete.TabIndex = 17;
@@ -380,63 +381,31 @@
             // buildingSteel
             // 
             this.buildingSteel.AutoSize = true;
-            this.buildingSteel.Location = new System.Drawing.Point(71, 6);
+            this.buildingSteel.Location = new System.Drawing.Point(8, 6);
             this.buildingSteel.Name = "buildingSteel";
             this.buildingSteel.Size = new System.Drawing.Size(50, 17);
             this.buildingSteel.TabIndex = 16;
             this.buildingSteel.Text = "Steel";
             this.buildingSteel.UseVisualStyleBackColor = true;
             // 
-            // tabPage4
+            // applianceFilterPage
             // 
-            this.tabPage4.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.tabPage4.Controls.Add(this.appNone);
-            this.tabPage4.Controls.Add(this.appAll);
-            this.tabPage4.Controls.Add(this.appDoors);
-            this.tabPage4.Controls.Add(this.appFans);
-            this.tabPage4.Controls.Add(this.appGrates);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(278, 172);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Appliances";
-            // 
-            // tabPage5
-            // 
-            this.tabPage5.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.tabPage5.Controls.Add(this.techNone);
-            this.tabPage5.Controls.Add(this.techAll);
-            this.tabPage5.Controls.Add(this.techWiresTubes);
-            this.tabPage5.Controls.Add(this.techSwitches);
-            this.tabPage5.Controls.Add(this.techForceFields);
-            this.tabPage5.Controls.Add(this.techEnergy);
-            this.tabPage5.Controls.Add(this.techLights);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(278, 172);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Tech";
-            // 
-            // tabPage6
-            // 
-            this.tabPage6.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.tabPage6.Controls.Add(this.signsNone);
-            this.tabPage6.Controls.Add(this.signsAll);
-            this.tabPage6.Controls.Add(this.signsStripes);
-            this.tabPage6.Controls.Add(this.signsMonitors);
-            this.tabPage6.Controls.Add(this.signsLabels);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(278, 172);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Signs";
+            this.applianceFilterPage.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.applianceFilterPage.Controls.Add(this.appNone);
+            this.applianceFilterPage.Controls.Add(this.appAll);
+            this.applianceFilterPage.Controls.Add(this.appDoors);
+            this.applianceFilterPage.Controls.Add(this.appFans);
+            this.applianceFilterPage.Controls.Add(this.appGrates);
+            this.applianceFilterPage.Location = new System.Drawing.Point(4, 22);
+            this.applianceFilterPage.Name = "applianceFilterPage";
+            this.applianceFilterPage.Padding = new System.Windows.Forms.Padding(3);
+            this.applianceFilterPage.Size = new System.Drawing.Size(273, 126);
+            this.applianceFilterPage.TabIndex = 3;
+            this.applianceFilterPage.Text = "Appliance";
             // 
             // appNone
             // 
-            this.appNone.Location = new System.Drawing.Point(142, 144);
+            this.appNone.Location = new System.Drawing.Point(65, 101);
             this.appNone.Name = "appNone";
             this.appNone.Size = new System.Drawing.Size(55, 22);
             this.appNone.TabIndex = 31;
@@ -445,17 +414,27 @@
             // 
             // appAll
             // 
-            this.appAll.Location = new System.Drawing.Point(81, 144);
+            this.appAll.Location = new System.Drawing.Point(8, 101);
             this.appAll.Name = "appAll";
             this.appAll.Size = new System.Drawing.Size(55, 22);
             this.appAll.TabIndex = 30;
             this.appAll.Text = "&All";
             this.appAll.UseVisualStyleBackColor = true;
             // 
+            // appDoors
+            // 
+            this.appDoors.AutoSize = true;
+            this.appDoors.Location = new System.Drawing.Point(8, 36);
+            this.appDoors.Name = "appDoors";
+            this.appDoors.Size = new System.Drawing.Size(55, 17);
+            this.appDoors.TabIndex = 29;
+            this.appDoors.Text = "Bricks";
+            this.appDoors.UseVisualStyleBackColor = true;
+            // 
             // appFans
             // 
             this.appFans.AutoSize = true;
-            this.appFans.Location = new System.Drawing.Point(81, 52);
+            this.appFans.Location = new System.Drawing.Point(8, 21);
             this.appFans.Name = "appFans";
             this.appFans.Size = new System.Drawing.Size(62, 17);
             this.appFans.TabIndex = 26;
@@ -465,16 +444,33 @@
             // appGrates
             // 
             this.appGrates.AutoSize = true;
-            this.appGrates.Location = new System.Drawing.Point(81, 29);
+            this.appGrates.Location = new System.Drawing.Point(8, 6);
             this.appGrates.Name = "appGrates";
             this.appGrates.Size = new System.Drawing.Size(57, 17);
             this.appGrates.TabIndex = 25;
             this.appGrates.Text = "Grates";
             this.appGrates.UseVisualStyleBackColor = true;
             // 
+            // techFilterPage
+            // 
+            this.techFilterPage.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.techFilterPage.Controls.Add(this.techNone);
+            this.techFilterPage.Controls.Add(this.techAll);
+            this.techFilterPage.Controls.Add(this.techWiresTubes);
+            this.techFilterPage.Controls.Add(this.techSwitches);
+            this.techFilterPage.Controls.Add(this.techForceFields);
+            this.techFilterPage.Controls.Add(this.techEnergy);
+            this.techFilterPage.Controls.Add(this.techLights);
+            this.techFilterPage.Location = new System.Drawing.Point(4, 22);
+            this.techFilterPage.Name = "techFilterPage";
+            this.techFilterPage.Padding = new System.Windows.Forms.Padding(3);
+            this.techFilterPage.Size = new System.Drawing.Size(273, 126);
+            this.techFilterPage.TabIndex = 4;
+            this.techFilterPage.Text = "Tech";
+            // 
             // techNone
             // 
-            this.techNone.Location = new System.Drawing.Point(142, 144);
+            this.techNone.Location = new System.Drawing.Point(65, 101);
             this.techNone.Name = "techNone";
             this.techNone.Size = new System.Drawing.Size(55, 22);
             this.techNone.TabIndex = 31;
@@ -483,7 +479,7 @@
             // 
             // techAll
             // 
-            this.techAll.Location = new System.Drawing.Point(81, 144);
+            this.techAll.Location = new System.Drawing.Point(8, 101);
             this.techAll.Name = "techAll";
             this.techAll.Size = new System.Drawing.Size(55, 22);
             this.techAll.TabIndex = 30;
@@ -493,7 +489,7 @@
             // techWiresTubes
             // 
             this.techWiresTubes.AutoSize = true;
-            this.techWiresTubes.Location = new System.Drawing.Point(81, 75);
+            this.techWiresTubes.Location = new System.Drawing.Point(8, 6);
             this.techWiresTubes.Name = "techWiresTubes";
             this.techWiresTubes.Size = new System.Drawing.Size(103, 17);
             this.techWiresTubes.TabIndex = 29;
@@ -503,7 +499,7 @@
             // techSwitches
             // 
             this.techSwitches.AutoSize = true;
-            this.techSwitches.Location = new System.Drawing.Point(81, 98);
+            this.techSwitches.Location = new System.Drawing.Point(8, 36);
             this.techSwitches.Name = "techSwitches";
             this.techSwitches.Size = new System.Drawing.Size(69, 17);
             this.techSwitches.TabIndex = 27;
@@ -513,7 +509,7 @@
             // techForceFields
             // 
             this.techForceFields.AutoSize = true;
-            this.techForceFields.Location = new System.Drawing.Point(81, 52);
+            this.techForceFields.Location = new System.Drawing.Point(8, 21);
             this.techForceFields.Name = "techForceFields";
             this.techForceFields.Size = new System.Drawing.Size(80, 17);
             this.techForceFields.TabIndex = 26;
@@ -523,7 +519,7 @@
             // techEnergy
             // 
             this.techEnergy.AutoSize = true;
-            this.techEnergy.Location = new System.Drawing.Point(81, 29);
+            this.techEnergy.Location = new System.Drawing.Point(8, 66);
             this.techEnergy.Name = "techEnergy";
             this.techEnergy.Size = new System.Drawing.Size(59, 17);
             this.techEnergy.TabIndex = 25;
@@ -533,16 +529,31 @@
             // techLights
             // 
             this.techLights.AutoSize = true;
-            this.techLights.Location = new System.Drawing.Point(81, 6);
+            this.techLights.Location = new System.Drawing.Point(8, 51);
             this.techLights.Name = "techLights";
             this.techLights.Size = new System.Drawing.Size(54, 17);
             this.techLights.TabIndex = 24;
             this.techLights.Text = "Lights";
             this.techLights.UseVisualStyleBackColor = true;
             // 
+            // signFilterPage
+            // 
+            this.signFilterPage.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.signFilterPage.Controls.Add(this.signsNone);
+            this.signFilterPage.Controls.Add(this.signsAll);
+            this.signFilterPage.Controls.Add(this.signsStripes);
+            this.signFilterPage.Controls.Add(this.signsMonitors);
+            this.signFilterPage.Controls.Add(this.signsLabels);
+            this.signFilterPage.Location = new System.Drawing.Point(4, 22);
+            this.signFilterPage.Name = "signFilterPage";
+            this.signFilterPage.Padding = new System.Windows.Forms.Padding(3);
+            this.signFilterPage.Size = new System.Drawing.Size(273, 126);
+            this.signFilterPage.TabIndex = 5;
+            this.signFilterPage.Text = "Signs";
+            // 
             // signsNone
             // 
-            this.signsNone.Location = new System.Drawing.Point(142, 144);
+            this.signsNone.Location = new System.Drawing.Point(65, 101);
             this.signsNone.Name = "signsNone";
             this.signsNone.Size = new System.Drawing.Size(55, 22);
             this.signsNone.TabIndex = 31;
@@ -551,7 +562,7 @@
             // 
             // signsAll
             // 
-            this.signsAll.Location = new System.Drawing.Point(81, 144);
+            this.signsAll.Location = new System.Drawing.Point(8, 101);
             this.signsAll.Name = "signsAll";
             this.signsAll.Size = new System.Drawing.Size(55, 22);
             this.signsAll.TabIndex = 30;
@@ -561,7 +572,7 @@
             // signsStripes
             // 
             this.signsStripes.AutoSize = true;
-            this.signsStripes.Location = new System.Drawing.Point(81, 75);
+            this.signsStripes.Location = new System.Drawing.Point(8, 21);
             this.signsStripes.Name = "signsStripes";
             this.signsStripes.Size = new System.Drawing.Size(58, 17);
             this.signsStripes.TabIndex = 29;
@@ -571,7 +582,7 @@
             // signsMonitors
             // 
             this.signsMonitors.AutoSize = true;
-            this.signsMonitors.Location = new System.Drawing.Point(81, 52);
+            this.signsMonitors.Location = new System.Drawing.Point(8, 6);
             this.signsMonitors.Name = "signsMonitors";
             this.signsMonitors.Size = new System.Drawing.Size(66, 17);
             this.signsMonitors.TabIndex = 26;
@@ -582,58 +593,49 @@
             // 
             this.signsLabels.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.signsLabels.AutoSize = true;
-            this.signsLabels.Location = new System.Drawing.Point(81, 29);
+            this.signsLabels.Location = new System.Drawing.Point(8, 37);
             this.signsLabels.Name = "signsLabels";
             this.signsLabels.Size = new System.Drawing.Size(57, 17);
             this.signsLabels.TabIndex = 25;
             this.signsLabels.Text = "Labels";
             this.signsLabels.UseVisualStyleBackColor = true;
             // 
-            // appDoors
-            // 
-            this.appDoors.AutoSize = true;
-            this.appDoors.Location = new System.Drawing.Point(81, 75);
-            this.appDoors.Name = "appDoors";
-            this.appDoors.Size = new System.Drawing.Size(55, 17);
-            this.appDoors.TabIndex = 29;
-            this.appDoors.Text = "Bricks";
-            this.appDoors.UseVisualStyleBackColor = true;
-            // 
             // TextureFilters
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.ClientSize = new System.Drawing.Size(304, 212);
-            this.Controls.Add(this.textureFilterGroup);
+            this.ClientSize = new System.Drawing.Size(281, 152);
+            this.Controls.Add(this.rockFilterPage);
+            this.ForceToolWindowStyle = true;
             this.Name = "TextureFilters";
             this.Text = "Texture Filters";
-            this.textureFilterGroup.ResumeLayout(false);
+            this.rockFilterPage.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
-            this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
-            this.tabPage6.ResumeLayout(false);
-            this.tabPage6.PerformLayout();
+            this.natureFilterPage.ResumeLayout(false);
+            this.natureFilterPage.PerformLayout();
+            this.buildingFilterPage.ResumeLayout(false);
+            this.buildingFilterPage.PerformLayout();
+            this.applianceFilterPage.ResumeLayout(false);
+            this.applianceFilterPage.PerformLayout();
+            this.techFilterPage.ResumeLayout(false);
+            this.techFilterPage.PerformLayout();
+            this.signFilterPage.ResumeLayout(false);
+            this.signFilterPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl textureFilterGroup;
+        private System.Windows.Forms.TabControl rockFilterPage;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.TabPage tabPage5;
-        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.TabPage natureFilterPage;
+        private System.Windows.Forms.TabPage buildingFilterPage;
+        private System.Windows.Forms.TabPage applianceFilterPage;
+        private System.Windows.Forms.TabPage techFilterPage;
+        private System.Windows.Forms.TabPage signFilterPage;
         private System.Windows.Forms.Button rockNone;
         private System.Windows.Forms.Button rockAll;
         private System.Windows.Forms.CheckBox rockBlue;
