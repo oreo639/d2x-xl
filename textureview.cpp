@@ -100,8 +100,6 @@ short CTextureView::TxtFilterIndex (short nTxt)
 {
 	short	m, l = 0, r = TXT_FILTER_SIZE - 1;
 
-if (nTxt == 348)
-	nTxt = nTxt;
 do {
 	m = (l + r) / 2;
 	if (nTxt < TXT_FILTERS [m].iTexture.nMin)
