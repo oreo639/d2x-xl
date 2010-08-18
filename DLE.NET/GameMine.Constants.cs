@@ -2,13 +2,13 @@
 {
   public partial class GameMine
     {
-        const uint F0_0 = 0;
-        const uint F1_0 = 0x10000;
-        const uint F2_0 = 0x20000;
-        const uint F3_0 = 0x30000;
-        const uint F10_0 = 0xa0000;
-        const uint F0_1 = 0x199a;
-        const uint F0_5 = 0x8000;
+        const int F0_0 = 0;
+        const int F1_0 = 0x10000;
+        const int F2_0 = 0x20000;
+        const int F3_0 = 0x30000;
+        const int F10_0 = 0xa0000;
+        const int F0_1 = 0x199a;
+        const int F0_5 = 0x8000;
 
         const int N_D2_ROBOT_TYPES = 66;
         const int N_D2_ROBOT_JOINTS = 1145;
@@ -54,6 +54,29 @@
         const int MAX_PLAYERS_D2X = 16;
         public int MAX_PLAYERS() { return (m_levelVersion < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
         const int MAX_COOP_PLAYERS = 3;
+
+        const int MAX_DOORS = 1;
+        const int MAX_CONTROL_CENTER_TRIGGERS = 10;
+        const int MAX_NUM_MATCENS1 = 20;
+        const int MAX_NUM_MATCENS2 = 100;
+        public int MAX_NUM_MATCENS () { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+        const int MAX_WALL_SWITCHES = 50;
+        const int MAX_WALL_LINKS = 100;
+        const int MAX_NUM_FUELCENS1 = 70;
+        const int MAX_NUM_REPAIRCENS1 = 70;
+        const int MAX_NUM_FUELCENS2 = 500;
+        const int MAX_NUM_REPAIRCENS2 = 500;
+        public int MAX_NUM_FUELCENS() { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
+        public int MAX_NUM_REPAIRCENS () { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+        const int MAX_WALL_ANIMS1 = 30;  // Maximum different types of doors Descent 1
+        const int MAX_WALL_ANIMS2 = 60;  // Maximum different types of doors Descent 2
+        const int MAX_CLIP_FRAMES1 = 20; // Descent 1
+        const int MAX_CLIP_FRAMES2 = 50; // Descent 2
+        const int MAX_STUCK_OBJECTS = 32;
+        const int MAX_SIDES_PER_SEGMENT = 6;
+        const int MAX_VERTICES_PER_SEGMENT = 8;
+        const int MAX_AI_FLAGS = 11; // This MUST cause word (4 bytes) alignment in ai_static, allowing for one byte mode 
+        const int MAX_SUBMODELS = 10; // I guessed at this value (BAA) 
 
         const int VCLIP_MAX_FRAMES = 30;
         const int MAX_GUNS = 8;  //should be multiple of 4 for ubyte array
@@ -115,6 +138,18 @@
         const int D2_REACTOR_CLIP_NUMBER = 97;
         public int REACTOR_CLIP_NUMBER() { return (m_fileType == FileType.RDL) ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
 
+        const int COMPILED_MINE_VERSION = 0;
 
+        const int ROBOT_IDS1 = 24;
+        const int MAX_ROBOT_IDS_TOTAL = 78;
+        public int ROBOT_IDS2() { return (m_levelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
+        const int MAX_POWERUP_IDS1 = 26;
+        const int MAX_POWERUP_IDS2 = 50;
+        const int MAX_POWERUP_IDS_D2 = 48;
+        public int MAX_POWERUP_IDS    () {return (m_fileType == FileType.RDL) ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2; }
+        const int MAX_TRIGGER_TARGETS = 10;
+
+        const int DEFAULT_LIGHTING = F0_5;      // (F1_0/2) 
+        const int TRIGGER_DEFAULT = 2 * F1_0;
     }
 }
