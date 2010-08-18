@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextureFilters));
             this.rockFilterPage = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.rockNone = new System.Windows.Forms.Button();
@@ -608,8 +609,9 @@
             this.ClientSize = new System.Drawing.Size(281, 152);
             this.Controls.Add(this.rockFilterPage);
             this.ForceToolWindowStyle = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TextureFilters";
-            this.Text = "Texture Filters";
+            this.Text = "Texture Filter";
             this.rockFilterPage.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();

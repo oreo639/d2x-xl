@@ -184,6 +184,9 @@
   <data name="redraw" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\redraw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="savefile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\savefile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="palette" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\palette.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -274,9 +277,6 @@
   <data name="pofs1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pofs1.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="zrotleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zrotleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="expandvert_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\expandvert-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -358,11 +358,17 @@
   <data name="cubetool" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cubetool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="splitsides_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splitsides-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="mirrorcube" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mirrorcubes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="light2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\light2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pencil.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_default1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\default.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -391,11 +397,11 @@
   <data name="moveright_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\moveright-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="new3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new3.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="copy_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\copy-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="palette1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\palette.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="fire" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\fire.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -463,6 +469,9 @@
   <data name="light" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\light.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="reactor_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reactor-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="splitscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\splitscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -487,6 +496,9 @@
   <data name="level1d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\level1d.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="new_save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\new_save.msn;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="texturetool_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\texturetool-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -508,9 +520,6 @@
   <data name="zrotright_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zrotright-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="joinpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\joinpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="moveleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\moveleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -520,8 +529,11 @@
   <data name="splitlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\splitlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="splitsides_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\splitsides-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="joinlines_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinlines-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="joinpoints" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\joinpoints.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="resetred_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\resetred-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -531,9 +543,6 @@
   </data>
   <data name="pointmode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pointmode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="truecolor_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\truecolor-32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="yrotright" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\yrotright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -550,11 +559,8 @@
   <data name="movedown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\movedown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="savefile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\savefile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="zoomin_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\zoomin-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="palette1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\palette.pal;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="point_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\point-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -568,8 +574,8 @@
   <data name="temp2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\temp2.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="new_save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new_save.msn;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="zrotleft_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zrotleft-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="yrotleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\yrotleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -580,11 +586,8 @@
   <data name="zoomin1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoomin.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="joinlines_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\joinlines-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fitview" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fitview.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="zoomin_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\zoomin-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="alignall_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\alignall-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -601,25 +604,25 @@
   <data name="paste_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\paste-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pencil.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="truecolor_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\truecolor-32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="splitsides" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\splitsides.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="alien1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\alien1.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="fitview" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fitview.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="walltool" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\walltool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="new3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\new3.rl2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="alien1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\alien1.256;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="zoomout_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoomout-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="reactor_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\reactor-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="texturefilter-16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\texturefilter-16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

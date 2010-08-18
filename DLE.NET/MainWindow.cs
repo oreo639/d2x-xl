@@ -22,7 +22,7 @@ namespace DLE.NET
         private EffectTool m_effectTool;
         private DiagnosisTool m_diagnosisTool;
         private PreferencesForm m_prefsForm;
-        private TextureFilters m_textureFilters;
+        private TextureFilters m_textureFilter;
 
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
@@ -62,8 +62,8 @@ namespace DLE.NET
             m_missionTool.RightToLeftLayout = false;
             m_missionTool = new MissionTool();
             m_missionTool.RightToLeftLayout = false;
-            m_textureFilters = new TextureFilters();
-            m_textureFilters.RightToLeftLayout = false;
+            m_textureFilter = new TextureFilters();
+            m_textureFilter.RightToLeftLayout = false;
             if (!m_bSaveLayout)
                 Setup();
             //dockPanel.DockRightPortion = (float)m_segmentTool.Width / (float)dockPanel.Width;
@@ -89,7 +89,7 @@ namespace DLE.NET
             m_prefsForm.Show(m_segmentTool.Pane, null);
             m_segmentTool.Show();
             m_textureList.Show(m_renderWindow.Pane, DockAlignment.Bottom, 200.0f / (float)m_renderWindow.Height);
-            m_textureFilters.Show(m_textureList.Pane, DockAlignment.Left, (float)265.0f / (float)m_renderWindow.Width);
+            m_textureFilter.Show(m_textureList.Pane, DockAlignment.Left, (float)265.0f / (float)m_renderWindow.Width);
             //m_textureList.Show(dockPanel, DockState.DockBottom);
         }
 
@@ -263,5 +263,31 @@ namespace DLE.NET
         {
 
         }
+
+        private void tbTextureFilter_Click(object sender, EventArgs e)
+        {
+            m_textureFilter.Show();
+        }
+
+        private void standardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void inToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void forwardCubeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

@@ -507,6 +507,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="dle-icon.ico" />
+    <None Include="Resources\texturefilter-16x16.png" />
     <None Include="Resources\reactor-16x16.png" />
     <None Include="Resources\effecttool-16x161.png" />
     <None Include="Resources\effecttool-16x16.png" />
