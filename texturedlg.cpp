@@ -342,16 +342,16 @@ bShowFrames = GetCheck (IDC_TEXTURE_SHOWFRAMES);
 INT16 texture1 = m_mine ? m_mine->CurrSide ()->nBaseTex : 0;
 INT16 texture2 = m_mine ? m_mine->CurrSide ()->nOvlTex & 0x3fff : 0;
 
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES (m_mine)))
 	texture1 = 0;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
 	texture2 = 0;
 
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (m_mine->IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (m_mine->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -473,9 +473,9 @@ m_nColorIndex = (pWall && (pWall->type == WALL_TRANSPARENT)) ? pWall->cloak_valu
 m_rgbColor.peRed = (char) (255.0 * color->color.r);
 m_rgbColor.peGreen = (char) (255.0 * color->color.g);
 m_rgbColor.peBlue = (char) (255.0 * color->color.b);
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES (m_mine)))
 	texture1 = 0;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
 	texture2 = 0;
 GetBrightness ((m_bUse2nd && !m_bUse1st) ? texture2 : texture1);
 mode = side->nOvlTex & 0xc000;
@@ -996,7 +996,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++)
 				continue;
 			if (m_bUse2nd && ((side->nOvlTex & 0x3FFF) != last_texture2))
 				continue;
-			if ((seg->children [sidenum] >= 0) && (side->nWall == NO_WALL))
+			if ((seg->children [sidenum] >= 0) && (side->nWall == NO_WALL (m_mine)))
 				 continue;
 			if (m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
@@ -1031,9 +1031,9 @@ if (!GetMine ())
 // remember these texture for a comparison below
 old_texture1 = side->nBaseTex;
 old_texture2 = side->nOvlTex;
-if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES))
+if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES (m_mine)))
 	old_texture1 = 0;
-if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES))
+if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES (m_mine)))
 	old_texture2 = 0;
 // mark segment as "pasted"
 seg->seg_number = 1;

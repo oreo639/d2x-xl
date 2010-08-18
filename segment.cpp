@@ -53,7 +53,7 @@ void CMine::DeleteSegmentWalls (INT16 segnum)
 
 int i;
 for (i = MAX_SIDES_PER_SEGMENT; i; i--, side++)
-	if (side->nWall != NO_WALL)
+	if (side->nWall != NO_WALL (this))
 		DeleteWall (side->nWall); 
 }
 
@@ -105,7 +105,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		if (child >= 0 && child < SegCount ()) {
 			INT16	oppSegNum, oppSideNum;
 			GetOppositeSide (oppSegNum, oppSideNum, delSegNum, i);
-			if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL)
+			if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL (this))
 				DeleteWall (Segments (oppSegNum)->sides [oppSideNum].nWall); 
 			}
 		}
@@ -446,7 +446,7 @@ segP->child_bitmask = 0;
 // define Walls ()
 segP->wall_bitmask = 0; // unmarked cube
 for (sideNum = 0; sideNum < MAX_SIDES_PER_SEGMENT; sideNum++) {
-	segP->sides [sideNum].nWall = NO_WALL; 
+	segP->sides [sideNum].nWall = NO_WALL (this); 
 	segP->sides [sideNum].nBaseTex =
 	segP->sides [sideNum].nOvlTex = 0; 
 	int i;
@@ -2119,7 +2119,7 @@ for (i = 0; i < 4; i++) {
 // define Walls ()
 seg->wall_bitmask = 0; // unmarked
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)
-	seg->sides [sidenum].nWall = NO_WALL; 
+	seg->sides [sidenum].nWall = NO_WALL (this); 
 
 // define sides
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
@@ -2811,9 +2811,9 @@ for (segNum = SegCount (), sideNum = 0; sideNum < 6; segNum++, sideNum++) {
 	centerSegP->child_bitmask |= (1 << sideNum);
 	wallNum = centerSegP->sides [sideNum].nWall;
 	segP->sides [sideNum].nWall = wallNum;
-	if ((wallNum >= 0) && (wallNum != NO_WALL)) {
+	if ((wallNum >= 0) && (wallNum != NO_WALL (this))) {
 		Walls (wallNum)->segnum = segNum;
-		centerSegP->sides [sideNum].nWall = NO_WALL;
+		centerSegP->sides [sideNum].nWall = NO_WALL (this);
 		}
 	}
 // relocate center segment vertex indices

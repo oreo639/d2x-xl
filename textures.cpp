@@ -177,7 +177,7 @@ int DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, int x0, int
 	mode     = nOvlTex & 0xC000;
 	for (i = 0; i < 2; i++) {
 #if 0	
-	ASSERT (textures [i] < MAX_TEXTURES);
+	ASSERT (textures [i] < MAX_TEXTURES ());
 #endif
 if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES ()))
 	textures [i] = 0;
@@ -357,21 +357,21 @@ int CDTexture::Read (INT16 index)
 	
 if (m_bModified)
 	return 0;
-strcpy_s (path, sizeof (path), (IsD1File ()) ? descent_path : descent2_path);
+strcpy_s (path, sizeof (path), (theApp.GetMine ()->IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
 	strcat_s (path, sizeof (path), "groupa.pig");
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
 
 // do a range check on the texture number
-if ((index > ((IsD1File ()) ? MAX_D1_TEXTURES:MAX_D2_TEXTURES)) || (index < 0)) {
+if ((index > ((theApp.GetMine ()->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
 DEBUGMSG (" Reading texture: Texture # out of range.");
 rc = 1;
 goto abort;
 }
 
 // get pointer to texture table from resource fTextures
-hFind = (IsD1File ()) ?
+hFind = (theApp.GetMine ()->IsD1File ()) ?
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
 if (!hFind) {
@@ -404,13 +404,13 @@ if (data_offset == 0x47495050L) /* 'PPIG' Descent 2 type */
 else if (data_offset < 0x10000L)
 	data_offset = 0;
 fseek (fTextures,data_offset,SEEK_SET);
-if (IsD2File ())
+if (theApp.GetMine ()->IsD2File ())
 	fread (&d2_file_header, sizeof (d2_file_header), 1, fTextures);
 else
 	fread (&file_header, sizeof (file_header), 1, fTextures);
 
 // read texture header
-if (IsD2File ()) {
+if (theApp.GetMine ()->IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset +
 				(long) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures,offset,SEEK_SET);
@@ -438,7 +438,7 @@ else {
 s = w * h;
 
 // seek to data
-if (IsD2File ()) {
+if (theApp.GetMine ()->IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset
 	+ d2_file_header.num_textures * sizeof (D2_PIG_TEXTURE)
 	+ d2_ptexture.offset;
@@ -617,7 +617,7 @@ int ReadPog (FILE *fTextures, UINT32 nFileSize)
 	CDTexture	*pTx;
 
 // make sure this is descent 2 fTextures
-if (IsD1File ()) {
+if (theApp.GetMine ()->IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
 	rc = 1;
 	goto abort;
@@ -907,7 +907,7 @@ int CreatePog (FILE *outPigFile)
   int num;
   pExtraTexture	pxTx;
 
-if (IsD1File ()) {
+if (theApp.GetMine ()->IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
 	rc = 4;
 	goto abort;
@@ -1157,7 +1157,7 @@ if (!pDC)
 	CDSide		*side;
 	INT16			nWall;
 	bool			bShowTexture = true;
-	char			*path = (IsD1File ()) ? descent_path : descent2_path;
+	char			*path = (theApp.GetMine ()->IsD1File ()) ? descent_path : descent2_path;
 
 CRect	rc;
 pWnd->GetClientRect (rc);
@@ -1182,7 +1182,7 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES ()))	// this allows to suppress 
 
 if (bShowTexture) {
 	// check pig file
-	strcpy_s (szFile, sizeof (szFile), (IsD1File ()) ? descent_path : descent2_path);
+	strcpy_s (szFile, sizeof (szFile), (theApp.GetMine ()->IsD1File ()) ? descent_path : descent2_path);
 	fopen_s (&fTextures, szFile, "rb");
 	if (fTextures) {
 		fseek (fTextures, 0, SEEK_SET);

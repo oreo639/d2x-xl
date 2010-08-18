@@ -219,7 +219,7 @@ plc.SetItemText (10, 2, ItemText (3));
 plc.SetItemText (11, 2, ItemText (m_nContained [1], "cont"));
 plc.SetItemText (13, 2, ItemText (3));
 plc.SetItemText (14, 2, ItemText (1));
-plc.SetItemText (15, 2, ItemText (MAX_TEXTURES));
+plc.SetItemText (15, 2, ItemText (MAX_TEXTURES (m_mine)));
 }
 
                         /*--------------------------*/

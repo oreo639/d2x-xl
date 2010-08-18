@@ -875,7 +875,7 @@ void CMine::ClearMineData() {
 	SegCount () = 0;
 
 	// initialize vertices
-	for (i = 0; i < MAX_VERTICES; i++) {
+	for (i = 0; i < MAX_VERTICES (this); i++) {
 		*VertStatus (i) &= ~MARKED_MASK;
 	}
 	VertCount () = 0;
@@ -1066,7 +1066,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 					fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
 					seg->sides [sidenum].nOvlTex = temp_UINT16;
 					temp_UINT16 &= 0x1fff;
-					if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES))
+					if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES (this)))
 						seg->sides [sidenum].nOvlTex = 0;
 				}
 
@@ -1715,7 +1715,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		SetLevelVersion (7);
 	}
 	if ((IsD2XLevel ()) && (LevelOutdated ())) {
-		UpdateLevelVersion (LEVEL_VERSION);
+		UpdateLevelVersion ();
 		//if (LevelVersion () < 15)
 			ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
 		}

@@ -51,8 +51,8 @@ void CreateLightMap (void)
 if (theApp.GetMine ())
 	theApp.GetMine ()->LoadDefaultLightAndColor ();
 #else
-	TEXTURE_LIGHT	*pTexLights = (IsD1File ()) ? d1_texture_light : d2_texture_light;
-	int				i = ((IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
+	TEXTURE_LIGHT	*pTexLights = (theApp.GetMine ()->IsD1File ()) ? d1_texture_light : d2_texture_light;
+	int				i = ((theApp.GetMine ()->IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
 
 memset (lightMap, 0, sizeof (lightMap));
 while (i) {
@@ -113,7 +113,7 @@ return (UINT8) ((lightMap [nBaseTex] - 1) / 0x0200L);
   int i;
 
 #	if 1
-if (IsD1File ()) {
+if (theApp.GetMine ()->IsD1File ()) {
 	i = FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1);
 	if (i >= 0)
 		return (UINT8) ((d1_texture_light [i].light - 1) / 0x0200L);
@@ -127,8 +127,8 @@ return 0;
 #	else
 	UINT8 result;
 
-if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
-	if (IsD1File ()) {
+if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES (this)) {
+	if (theApp.GetMine ()->IsD1File ()) {
 		for (i=0;i<NUM_LIGHTS_D1;i++)
 			if (nBaseTex <= d1_texture_light[i].nBaseTex) 
 				break;
@@ -355,7 +355,7 @@ return false;
 
 bool CMine::VisibleWall (UINT16 nWall)
 {
-if (nWall == NO_WALL)
+if (nWall == NO_WALL (this))
 	return false;
 CDWall	*wallP = Walls (nWall);
 return (wallP->type != WALL_OPEN);
@@ -583,10 +583,10 @@ for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++) {
 			memset (LightColor (segnum, sidenum, false), 0, sizeof (CDColor));
 		brightness = 0;
 		texture_num = side->nBaseTex;
-		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES))
+		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES (this)))
 			brightness = max (brightness, LightWeight (texture_num));
 		texture_num = side->nOvlTex & 0x3fff;
-		if ((texture_num > 0) && (texture_num < MAX_TEXTURES))
+		if ((texture_num > 0) && (texture_num < MAX_TEXTURES (this)))
 			brightness = max (brightness, LightWeight (texture_num));
 		if (brightness > 0)
 			Illuminate (segnum, sidenum, (UINT32) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);

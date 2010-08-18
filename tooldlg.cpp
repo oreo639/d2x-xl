@@ -331,7 +331,7 @@ if (nVisible > 0) {
 	}
 if (nVisible > 0)
 	return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, nBaseTex, nOvlTex);
-return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
+return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES (m_mine));
 }
 
                         /*--------------------------*/
@@ -344,7 +344,7 @@ if (TextureIsVisible ()) {
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, side->nBaseTex, side->nOvlTex & 0x1fff);
 	}
 else
-	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
+	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES (m_mine));
 m_textureWnd.InvalidateRect (NULL);
 m_textureWnd.UpdateWindow ();
 }
