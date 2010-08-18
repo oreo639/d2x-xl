@@ -19,5 +19,18 @@
             BLOCK_MODE     = 5,
             N_SELECT_MODES = 6
         }
+
+        enum MarkModes : uint
+        {
+            NEW_MASK = 0x20, // used on vert_status                
+            DELETED_MASK = 0x40, // used on wall_bitmask & vert_status 
+            MARKED_MASK = 0x80 // used on wall_bitmask & vert_status 
+        }
+
+        enum FileType : uint
+        {
+            RDL = 0,
+            RL2 = 1
+        }
     }
 }

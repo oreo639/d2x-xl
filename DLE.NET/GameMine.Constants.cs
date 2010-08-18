@@ -22,6 +22,23 @@
         const int MAX_OBJ_BITMAPS = 600;
         const int MAX_WEAPON_TYPES = 65;
 
+        const int MAX_SEGMENTS1 = 800;  // descent 1 max # of cubes
+        const int MAX_SEGMENTS2 = 900;  // descent 2 max # of cubes
+        const int MAX_SEGMENTS3 = 8000; // D2X-XL max # of cubes
+        const int MAX_VERTICES1 = 2808; // descent 1 max # of vertices
+        const int MAX_VERTICES2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
+        const int MAX_VERTICES3 = (MAX_SEGMENTS3 * 4 + 8); // descent 2 max # of vertices
+        const int MAX_OBJECTS1 = 350;
+        const int MAX_OBJECTS2 = 2000;
+        const int MAX_WALLS1 = 175; // Maximum number of walls for Descent 1
+        const int MAX_WALLS2 = 255; // Maximum number of walls for Descent 2
+        const int MAX_WALLS3 = 2047; // Maximum number of walls for Descent 2
+        const int MAX_TRIGGERS1 = 100;
+        const int MAX_TRIGGERS2 = 254;
+        const int MAX_OBJ_TRIGGERS = 254;
+        const int MAX_TRIGGER_FLAGS = 12;
+        const int NO_TRIGGER = 255;
+
         const int MAX_PLAYERS_D2 = 8;
         const int MAX_PLAYERS_D2X = 16;
         const int MAX_COOP_PLAYERS = 3;
@@ -57,11 +74,52 @@
         const float ANGLE_RATE = 0.01f;
         const int MOVE_RATE = 5;
 
+        const int DEFAULT_SEGMENT = 0;
+        const int DEFAULT_SIDE = 4;
+        const int DEFAULT_LINE = 0; // line of the current side (0..3) 
+        const int DEFAULT_POINT = 0; // point of the current side (0..3) 
+        const int DEFAULT_OBJECT = 0;
+
         const int MAX_POLY = 6;
 
         public int MAX_PLAYERS()
         {
             return (m_levelVersion < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X;
+        }
+
+        public int MAX_SEGMENTS ()
+        {
+            return (m_fileType == FileType.RDL) ? MAX_SEGMENTS1  : (m_levelVersion < 9) ? MAX_SEGMENTS2 : MAX_SEGMENTS3;
+        }
+
+        public int MAX_VERTICES ()
+        {
+            return (m_fileType == FileType.RDL) ? MAX_VERTICES1 : (m_levelVersion < 9) ? MAX_VERTICES2 : MAX_VERTICES3;
+        }
+
+        public int MAX_WALLS ()
+        {
+            return (m_fileType == FileType.RDL) ? MAX_WALLS1 : (m_levelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3;
+        }
+
+        public int NO_WALL()
+        {
+            return MAX_WALLS ();
+        }
+
+        public int MAX_TEXTURES ()
+        {
+            return (m_fileType == FileType.RDL) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+        }
+
+        public int MAX_TRIGGERS ()
+        {
+            return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2;
+        }
+
+        public int MAX_OBJECTS	()
+        {
+            return (m_levelVersion < 9) ? MAX_OBJECTS1 : MAX_OBJECTS2;
         }
     }
 }
