@@ -666,7 +666,7 @@ ofn.lpstrFilter = "Descent Level\0*.rdl\0"
 						"Color file\0*.clr\0"
 						"Palette file\0*.pal\0"
 						"All Files\0*.*\0";
-if (IsD1File ()) {
+if (theApp.GetMine ()->IsD1File ()) {
 	ofn.nFilterIndex = 1;
 	ofn.lpstrDefExt = "rdl";
 	}
@@ -1190,7 +1190,7 @@ if (*szSubFile) {
 	strncpy_s (szBaseName, sizeof (szBaseName), szSubFile, pszExtStart - szSubFile);
 	szBaseName [pszExtStart - szSubFile] = '\0';
 	}
-if (IsD1File ())
+if (mine->IsD1File ())
 	sprintf_s (szTmp, sizeof (szTmp), "%s.RDL", szBaseName);
 else
 	sprintf_s (szTmp, sizeof (szTmp), "%s.RL2", szBaseName);
@@ -1346,7 +1346,7 @@ if (!*szSubFile || psz) {
 		strcpy_s (psz, 256 - (psz - szHogFile), szSubFile);
 		strcat_s (szHogFile, sizeof (szHogFile), ".hog");
 		}
-	strcat_s (szSubFile, 256, (IsD1File ()) ? ".rdl" : ".rl2");
+	strcat_s (szSubFile, 256, (mine->IsD1File ()) ? ".rdl" : ".rl2");
 	}
 // if this HOG file only contains one rdl/rl2 file total and
 // it has the same name as the current level, and it has
@@ -1554,7 +1554,7 @@ strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat_s (szMsn, sizeof (szMsn), (IsD1File ()) ? ".msn" : ".mn2");
+strcat_s (szMsn, sizeof (szMsn), (theApp.GetMine ()->IsD1File ()) ? ".msn" : ".mn2");
 fopen_s (&fMsn, szMsn, "rt");
 if (!fMsn) {
 	DEBUGMSG (" Hog manager: Mission file not found.");
@@ -1661,7 +1661,7 @@ strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat_s (szMsn, sizeof (szMsn), (IsD1File ()) ? ".msn" : ".mn2");
+strcat_s (szMsn, sizeof (szMsn), (theApp.GetMine ()->IsD1File ()) ? ".msn" : ".mn2");
 if (bSaveAs) {
 	fopen_s (&fMsn, szMsn, "rt");
 	if (fMsn) {

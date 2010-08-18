@@ -364,24 +364,24 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 	for (objnum = GameInfo ().objects.count; objnum; objnum--, obj++)
 		if (obj->type == type) {
 			id = obj->id;
-			if (id >= 0 && id < (MAX_PLAYERS + MAX_COOP_PLAYERS))
+			if (id >= 0 && id < (MAX_PLAYERS (this) + MAX_COOP_PLAYERS))
 				ids[id]++;
 			}
 	if (type == OBJ_PLAYER) {
-		for (id = 0; (id <= MAX_PLAYERS) && ids[id]; id++)
+		for (id = 0; (id <= MAX_PLAYERS (this)) && ids[id]; id++)
 				;// loop until 1st id with 0
-		if (id > MAX_PLAYERS) {
+		if (id > MAX_PLAYERS (this)) {
 				char szMsg [80];
 
-			sprintf_s (szMsg, sizeof (szMsg), "There are already %d players in the mine", MAX_PLAYERS);
+			sprintf_s (szMsg, sizeof (szMsg), "There are already %d players in the mine", MAX_PLAYERS (this));
 			ErrorMsg (szMsg);
 			return FALSE;
 			}
 		}
 	else {
-		for (id = MAX_PLAYERS; (id < MAX_PLAYERS + MAX_COOP_PLAYERS) && ids[id]; id++)
+		for (id = MAX_PLAYERS (this); (id < MAX_PLAYERS (this) + MAX_COOP_PLAYERS) && ids[id]; id++)
 			;// loop until 1st id with 0
-		if (id > MAX_PLAYERS + MAX_COOP_PLAYERS) {
+		if (id > MAX_PLAYERS (this) + MAX_COOP_PLAYERS) {
 				char szMsg [80];
 
 			sprintf_s (szMsg, sizeof (szMsg), "There are already %d cooperative players in the mine", MAX_COOP_PLAYERS);

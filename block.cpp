@@ -132,7 +132,7 @@ z_pprime.z = - y_prime.x*x_prime.y + x_prime.x*y_prime.y;
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
 while(!feof(fBlk)) {
-	if (SegCount () >= MAX_SEGMENTS) {
+	if (SegCount () >= MAX_SEGMENTS (this)) {
 		ErrorMsg ("No more free segments");
 		return (nNewSegs);
 		}
@@ -159,7 +159,7 @@ while(!feof(fBlk)) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
-		side->nWall = NO_WALL;
+		side->nWall = NO_WALL (this);
 		fscanf_s (fBlk, "    tmap_num %hd\n",&side->nBaseTex);
 		fscanf_s (fBlk, "    tmap_num2 %hd\n",&side->nOvlTex);
 		for (j = 0; j < 4; j++)
@@ -170,7 +170,7 @@ while(!feof(fBlk)) {
 		if (bExtBlkFmt) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
 			side->nWall = (UINT16) byteBuf;
-			if (side->nWall != NO_WALL) {
+			if (side->nWall != NO_WALL (this)) {
 				CDWall w;
 				CDTrigger t;
 				memset (&w, 0, sizeof (w));
@@ -515,7 +515,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 				}
 			if (bExtBlkFmt) {
 				fprintf (fBlk, "    nWall %d\n", 
-							(side->nWall < GameInfo ().walls.count) ? side->nWall : NO_WALL);
+							(side->nWall < GameInfo ().walls.count) ? side->nWall : NO_WALL (this));
 				if (side->nWall < GameInfo ().walls.count) {
 					wall = Walls (side->nWall);
 					fprintf (fBlk, "        segment %d\n", wall->segnum);

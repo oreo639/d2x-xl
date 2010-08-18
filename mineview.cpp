@@ -1438,10 +1438,10 @@ void CMineView::DrawCubeTextured(CDSegment *seg, UINT8* light_index)
 		UINT16 rowOffset = (m_viewWidth + 3) & ~3;
 		UINT16 sidenum = 5;
 		CDWall *pWall;
-		UINT16 wallnum = NO_WALL;
+		UINT16 wallnum = NO_WALL (m_mine);
 
 		for (sidenum=0; sidenum<6; sidenum++) {
-			pWall = ((wallnum = seg->sides [sidenum].nWall) == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->m_mine->Walls () + wallnum;
+			pWall = ((wallnum = seg->sides [sidenum].nWall) == NO_WALL (m_mine)) ? NULL : ((CDlcDoc*) GetDocument ())->m_mine->Walls () + wallnum;
 			if ((seg->children [sidenum] == -1) ||
 				(pWall && (pWall->type != WALL_OPEN) && ((pWall->type != WALL_CLOAKED) || pWall->cloak_value))
 				)
@@ -2103,7 +2103,7 @@ for (i = 0; i < 6; i++)
 			IN_RANGE (poly_draw [i].y, y_max)))
 		return;
 
-if ((IsD2File ()) &&
+if ((mine->IsD2File ()) &&
 	 (objnum == mine->Current ()->object) &&
 	 (obj->type != OBJ_CAMBOT) && (obj->type != OBJ_MONSTERBALL) && 
 	 (obj->type != OBJ_EXPLOSION) && (obj->type != OBJ_SMOKE) && (obj->type != OBJ_EFFECT) &&
@@ -2223,7 +2223,7 @@ if (!ViewObject ())
 	return;
 
 int i, j;
-if (IsD2File ()) {
+if (mine->IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < mine->GameInfo ().triggers.count; i++)
 	if (mine->Triggers (i)->type == TT_SECRET_EXIT) {
@@ -3175,7 +3175,7 @@ closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
 int enable_secret = FALSE;
-if (IsD2File ())
+if (mine->IsD2File ())
 	for(i=0;i<(INT16)m_mine->GameInfo ().triggers.count;i++)
 		if (m_mine->Triggers (i)->type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
@@ -3185,7 +3185,7 @@ if (IsD2File ())
 for (i=0;i<=m_mine->GameInfo ().objects.count;i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == m_mine->GameInfo ().objects.count && IsD2File () && enable_secret) {
+	if (i == m_mine->GameInfo ().objects.count && mine->IsD2File () && enable_secret) {
 		obj = &temp_obj;
 		obj->type = OBJ_PLAYER;
 		// define obj->position

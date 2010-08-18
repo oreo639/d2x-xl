@@ -291,10 +291,10 @@ InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) object_names, contains_list, NULL, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
-CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (m_mine->IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (m_mine->IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
-INT16 nTextures = (IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
+INT16 nTextures = (m_mine->IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 INT16 i, j;
 char sz [100], **psz;
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
@@ -577,7 +577,7 @@ if (obj->render_type != RT_POLYOBJ)
 	CBObjTexture ()->EnableWindow (FALSE);
 
 // gray edit if this is an RDL file
-if (IsD1File ())
+if (m_mine->IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
@@ -675,7 +675,7 @@ j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
 switch (rInfo.contains_type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		CBInit (CBContId (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1, true);
+		CBInit (CBContId (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2 (m_mine), 1, true);
 		break;
 	case OBJ_POWERUP: // a powerup you can pick up
 		CBInit (CBContId (), (char **) POWERUP_STRING_TABLE, NULL, NULL, MAX_POWERUP_IDS, 1, true);
@@ -837,7 +837,7 @@ if (obj->render_type != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (INT16) m_mine->CurrObj ()->rtype.pobj_info.tmap_override;
-	if ((tnum < 0) || (tnum >= ((IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES))) {
+	if ((tnum < 0) || (tnum >= ((m_mine->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
 		}
@@ -898,10 +898,14 @@ int bbb = 1;
 
 void CObjectTool::SetObjectId (CComboBox *pcb, INT16 type, INT16 id, INT16 flag) 
 {
-char str [40];
-int h, i, j;
-INT16 max_robot_ids = flag ? (m_fileType==RDL_FILE) ? ROBOT_IDS1: 64: 
-									 (m_fileType==RDL_FILE) ? ROBOT_IDS1: ROBOT_IDS2;
+if (!GetMine ())
+	return;
+
+	char str [40];
+	int h, i, j;
+	INT16 max_robot_ids = flag ? (m_fileType==RDL_FILE) ? ROBOT_IDS1 : 64: 
+										 (m_fileType==RDL_FILE) ? ROBOT_IDS1 : ROBOT_IDS2 (m_mine);
+
 pcb->ResetContent ();
 HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 switch(type) {
@@ -932,7 +936,7 @@ switch(type) {
 		break;
 
 	case OBJ_PLAYER: // the player on the console
-		for (i = 0; i < MAX_PLAYERS; i++) {
+		for (i = 0; i < MAX_PLAYERS (m_mine); i++) {
 			sprintf_s (str, sizeof (str), (i < 9) ? "%3d" : "%d", i + 1);
 			h = pcb->AddString (str);
 			pcb->SetItemData (h, i);
@@ -1024,12 +1028,12 @@ switch(type) {
 		break;
 
 	case OBJ_COOP: // a cooperative player object
-		for (i = MAX_PLAYERS; i < MAX_PLAYERS + 3; i++) {
+		for (i = MAX_PLAYERS (m_mine); i < MAX_PLAYERS (m_mine) + MAX_COOP_PLAYERS; i++) {
 			sprintf_s (str, sizeof (str), "%d", i);
 			h = pcb->AddString (str);
-			pcb->SetItemData (h, i - MAX_PLAYERS);
+			pcb->SetItemData (h, i - MAX_PLAYERS (m_mine));
 			}
-		SelectItemData (pcb, id - MAX_PLAYERS);
+		SelectItemData (pcb, id - MAX_PLAYERS (m_mine));
 		break;
 
 	default:
@@ -1272,11 +1276,11 @@ if ((selection == OBJ_SMOKE) || (selection == OBJ_EFFECT)) {
 int playerIds [16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 int coopIds [3];
 for (int i = 0; i < 3; i++)
-	coopIds [i] = MAX_PLAYERS + i;
+	coopIds [i] = MAX_PLAYERS (m_mine) + i;
 
 switch (selection) {
 	case OBJ_PLAYER:
-		if (!SetPlayerId (obj, selection, playerIds, MAX_PLAYERS, "Only 8/16 players allowed."))
+		if (!SetPlayerId (obj, selection, playerIds, MAX_PLAYERS (m_mine), "Only 8/16 players allowed."))
 			return;
 		break;
 
@@ -1368,11 +1372,11 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 switch (obj->type) {
 	case OBJ_PLAYER:
-		SetNewObjId (obj, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
+		SetNewObjId (obj, OBJ_PLAYER, nCurSel, MAX_PLAYERS (m_mine));
 		break;
 
 	case OBJ_COOP:
-		SetNewObjId (obj, OBJ_COOP, nCurSel + MAX_PLAYERS, 3);
+		SetNewObjId (obj, OBJ_COOP, nCurSel + MAX_PLAYERS (m_mine), 3);
 		break;
 
 	case OBJ_WEAPON:

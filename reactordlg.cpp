@@ -127,7 +127,7 @@ if (!m_bInited)
 	return;
 if (!GetMine ())
 	return;
-EnableControls (IsD2File ());
+EnableControls (m_mine->IsD2File ());
 m_pTrigger = GetMine ()->CCTriggers (m_nTrigger);
 m_nCountDown = m_mine->ReactorTime ();
 m_nSecretReturn = m_mine->SecretCubeNum ();

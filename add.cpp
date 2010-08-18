@@ -129,7 +129,7 @@ else if (seg->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wall = GetWall (segnum, sidenum)) && 
-			 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (IsD1File ()) ? 322 : 333))
+			 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (IsD1File () ? 322 : 333)))
 			DeleteWall (side->nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		if (GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum) &&
@@ -393,7 +393,7 @@ bool CMine::AddFuelCenter (INT16 segnum, UINT8 nType, bool bCreate, bool bSetDef
 // count number of fuel centers
 int n_fuelcen = FuelCenterCount ();
 CDSegment *seg = Segments ();
-if (n_fuelcen >= MAX_NUM_FUELCENS) {
+if (n_fuelcen >= MAX_NUM_FUELCENS (this)) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
 	}

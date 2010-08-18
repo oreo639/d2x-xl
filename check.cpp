@@ -271,6 +271,9 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
 
 int CDiagTool::CheckId (CDObject *obj) 
 {
+if (!GetMine ())
+	return 1;
+
 	int type = obj->type;
 	int id = obj->id;
 
@@ -290,7 +293,7 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_PLAYER: /* the player on the console */
-		if ((id < 0) || (id >= MAX_PLAYERS)) {
+		if ((id < 0) || (id >= MAX_PLAYERS (m_mine))) {
 			return 1;
 		}
 		break;
@@ -302,7 +305,7 @@ int CDiagTool::CheckId (CDObject *obj)
 		break;
 
 	case OBJ_CNTRLCEN : /* the control center */
-		if (IsD1File ()) {
+		if (m_mine->IsD1File ()) {
 			if (id >= 0 || id <= 25) {
 				return 0;
 			}
@@ -633,7 +636,7 @@ bool CDiagTool::CheckObjects ()
 if (!GetMine ())
 	return false;
 
-	int h,objectnum,type,id,count,players [16 + 3],segnum,flags,corner, nPlayers [2], bFix;
+	int h,objectnum,type,id,count,players [16 + MAX_COOP_PLAYERS],segnum,flags,corner, nPlayers [2], bFix;
   vms_vector center;
   double x,y,z,radius, max_radius,object_radius;
   CDObject *obj = m_mine->Objects ();
@@ -729,10 +732,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  case OBJ_PLAYER:
 		  if (!pPlayer)
 			  pPlayer = obj;
-			if (obj->id >= MAX_PLAYERS) {
+			if (obj->id >= MAX_PLAYERS (m_mine)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
-				obj->id = MAX_PLAYERS - 1;
+				obj->id = MAX_PLAYERS (m_mine) - 1;
 				}
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
@@ -853,12 +856,12 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
 		if (obj->type == OBJ_PLAYER) {
 			nPlayers [0]++;
-			if (CheckAndFixPlayer (0, MAX_PLAYERS, objectnum, players))
+			if (CheckAndFixPlayer (0, MAX_PLAYERS (m_mine), objectnum, players))
 				bFix |= 1;
 			}
 		else if (obj->type == OBJ_COOP) {
 			nPlayers [1]++;
-			if (CheckAndFixPlayer (0, 3, objectnum, players + MAX_PLAYERS))
+			if (CheckAndFixPlayer (0, 3, objectnum, players + MAX_PLAYERS (m_mine)))
 				bFix |= 2;
 			}
 		}
@@ -866,37 +869,37 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 if (m_bAutoFixBugs) {
 	int i;
 	if (bFix & 1) {
-		for (i = id = 0; id < MAX_PLAYERS; id++)
+		for (i = id = 0; id < MAX_PLAYERS (m_mine); id++)
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
 	if (bFix & 2) {
-		for (i = 0, id = MAX_PLAYERS; id < MAX_PLAYERS + 3; id++)
+		for (i = 0, id = MAX_PLAYERS (m_mine); id < MAX_PLAYERS (m_mine) + MAX_COOP_PLAYERS; id++)
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
 	obj = m_mine->Objects ();
 	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
 		if (obj->type == OBJ_PLAYER) {
-			if ((bFix & 1) && (obj->id >= 0) && (obj->id < MAX_PLAYERS))
+			if ((bFix & 1) && (obj->id >= 0) && (obj->id < MAX_PLAYERS (m_mine)))
 				obj->id = players [obj->id] - 1;
 			}
 		else if (obj->type == OBJ_COOP) {
-			if ((bFix & 2) && (obj->id >= MAX_PLAYERS) && (obj->id < MAX_PLAYERS + 3))
+			if ((bFix & 2) && (obj->id >= MAX_PLAYERS (m_mine)) && (obj->id < MAX_PLAYERS (m_mine) + MAX_COOP_PLAYERS))
 				obj->id = players [obj->id] - 1;
 			}
 		}
 	}
 
-for (id = 0; id < MAX_PLAYERS; id++) {
+for (id = 0; id < MAX_PLAYERS (m_mine); id++) {
 	if (players [id] == 0) {
 		sprintf_s (message, sizeof (message),"INFO: No player %d", id + 1);
 		if (UpdateStats (message, 0)) 
 			return true;
 		}
 	}
-if (nPlayers [0] > MAX_PLAYERS) {
-	sprintf_s (message, sizeof (message),"WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS);
+if (nPlayers [0] > MAX_PLAYERS (m_mine)) {
+	sprintf_s (message, sizeof (message),"WARNING: too many players found (found %d, max. allowed %d)", nPlayers [0], MAX_PLAYERS (m_mine));
 	if (UpdateStats (message,0)) 
 		return true;
 	}

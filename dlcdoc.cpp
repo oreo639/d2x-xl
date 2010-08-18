@@ -250,16 +250,16 @@ if (d.DoModal () == IDOK) {
 	m_mine->Load ();
 	switch (new_level_type) {
 		case 0:
-			m_mine->LevelVersion () = 1;
+			m_mine->SetLevelVersion (1);
 			break;
 		case 1:
-			m_mine->LevelVersion () = 7;
+			m_mine->SetLevelVersion (7);
 			break;
 		case 2:
-			m_mine->LevelVersion () = 8;
+			m_mine->SetLevelVersion (8);
 			break;
 		case 3:
-			m_mine->LevelVersion () = LEVEL_VERSION;
+			m_mine->UpdateLevelVersion ();
 			m_mine->ConvertWallNum (MAX_WALLS2, MAX_WALLS3
 				);
 		}
@@ -417,8 +417,8 @@ if (enable_delta_shading)
 	theApp.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
-	FSplit ((IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
-//	strcpy_s (m_szFile, sizeof (m_szFile), (IsD1File ()) ? "new.rdl" : "new.rl2");
+	FSplit ((m_mine->IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
+//	strcpy_s (m_szFile, sizeof (m_szFile), (m_mine->IsD1File ()) ? "new.rdl" : "new.rl2");
 	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))

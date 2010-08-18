@@ -261,7 +261,7 @@ public:
 		
 	inline int FileType (void) { return m_fileType; }
 	inline void SetFileType (int fileType) { m_fileType = fileType; }
-	inline bool IsD1File (void) { return IsD1File (); }
+	inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
 	inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
 	UINT8 *LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, UINT32& nResSize);
@@ -581,6 +581,8 @@ inline int MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1F
 inline int MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
 inline int MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
 inline int MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+inline int MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
+inline int ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
 
 #define NO_WALL(m) MAX_WALLS(m)
 

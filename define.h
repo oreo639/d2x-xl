@@ -54,7 +54,6 @@
 #define MAX_PLAYERS_D2		8
 #define MAX_PLAYERS_D2X		16
 #define MAX_COOP_PLAYERS	3
-#define MAX_PLAYERS			((IsStdLevel ()) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
 
 #define NUM_HOT_BUTTONS 21
 
@@ -254,7 +253,6 @@
 
 #define ROBOT_IDS1						24
 #define MAX_ROBOT_IDS_TOTAL         78
-#define ROBOT_IDS2						(theApp.GetMine ()->LevelVersion () == 7L) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL)
 #define MAX_POWERUP_IDS1            26
 #define MAX_POWERUP_IDS2            50
 #define MAX_POWERUP_IDS_D2          48
