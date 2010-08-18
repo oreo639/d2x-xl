@@ -27,7 +27,7 @@ namespace DLE.NET
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
 
-        const float toolPaneWidth = 350.0f;
+        const float toolPaneWidth = 345.0f;
         const float texturePaneHeight = 200.0f;
 
         public MainWindow()

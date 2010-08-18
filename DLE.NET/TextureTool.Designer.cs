@@ -186,6 +186,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.cornerLight2 = new System.Windows.Forms.TextBox();
             this.cornerLight1 = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
             this.lightColorGroup.SuspendLayout();
             this.lightEffectGroup.SuspendLayout();
             this.effectDisplayGroup.SuspendLayout();
@@ -1489,6 +1490,9 @@
             // 
             // texEditGroup
             // 
+            this.texEditGroup.Controls.Add(this.cornerLight4);
+            this.texEditGroup.Controls.Add(this.baseTextureList);
+            this.texEditGroup.Controls.Add(this.label19);
             this.texEditGroup.Controls.Add(this.useOvlTexture);
             this.texEditGroup.Controls.Add(this.useBaseTexture);
             this.texEditGroup.Controls.Add(this.label7);
@@ -1508,9 +1512,7 @@
             this.texEditGroup.Controls.Add(this.label4);
             this.texEditGroup.Controls.Add(this.label3);
             this.texEditGroup.Controls.Add(this.ovlTextureList);
-            this.texEditGroup.Controls.Add(this.baseTextureList);
             this.texEditGroup.Controls.Add(this.label2);
-            this.texEditGroup.Controls.Add(this.cornerLight4);
             this.texEditGroup.Controls.Add(this.cornerLight3);
             this.texEditGroup.Controls.Add(this.label1);
             this.texEditGroup.Controls.Add(this.pictureBox1);
@@ -1768,6 +1770,16 @@
             this.cornerLight1.Size = new System.Drawing.Size(44, 20);
             this.cornerLight1.TabIndex = 0;
             this.cornerLight1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(125, 159);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(26, 13);
+            this.label19.TabIndex = 25;
+            this.label19.Text = "Use";
+            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // TextureTool
             // 
@@ -2028,5 +2040,6 @@
         private System.Windows.Forms.Panel tickPanel20;
         private System.Windows.Forms.RadioButton lightTick20;
         private System.Windows.Forms.RadioButton lightTick21;
+        private System.Windows.Forms.Label label19;
     }
 }
