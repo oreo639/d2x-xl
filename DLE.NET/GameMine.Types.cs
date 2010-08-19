@@ -36,6 +36,43 @@ namespace DLE.NET
         public SideKey (short nSegment = 0, short side = 0) { m_nSegment = nSegment; m_nSide = side; }
         public static bool operator == (SideKey k1, SideKey k2) { return (k1.m_nSegment == k2.m_nSegment) && (k1.m_nSide == k2.m_nSide); }
         public static bool operator != (SideKey k1, SideKey k2) { return (k1.m_nSegment != k2.m_nSegment) || (k1.m_nSide != k2.m_nSide); }
+
+        public override bool Equals (System.Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Point return false.
+            SideKey p = obj as SideKey;
+            if ((System.Object)p == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (m_nSegment == p.m_nSegment) && (m_nSide == p.m_nSide);
+        }
+
+        public bool Equals (SideKey p)
+        {
+            // If parameter is null return false:
+            if ((object)p == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (m_nSegment == p.m_nSegment) && (m_nSide == p.m_nSide);
+        }
+
+        public override int GetHashCode ()
+        {
+            return m_nSegment ^ m_nSide;
+        }
+
     }
 
     public partial class GameMine

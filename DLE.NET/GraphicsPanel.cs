@@ -22,6 +22,7 @@ namespace DLE.NET
             using (Graphics gfx = e.Graphics)
             {
             }
+            base.OnPaint (e);
         }
     }
 }

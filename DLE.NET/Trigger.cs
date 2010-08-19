@@ -6,8 +6,8 @@ namespace DLE.NET
     {
         public const int MAX_TARGETS = 10;
 
-        short m_count { get; private set; }
-        SideKey [] m_targets = new SideKey [MAX_TARGETS];
+        public short m_count { get; private set; }
+        public SideKey [] m_targets = new SideKey [MAX_TARGETS];
 
         public short Add (SideKey key)
         {
