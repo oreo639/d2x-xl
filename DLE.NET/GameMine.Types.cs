@@ -27,9 +27,18 @@ class APOINT {
 
 namespace DLE.NET
 {
+    public class SideKey
+    {
+        short m_nSegment;
+        short m_nSide;
+
+	public SideKey(short nSegment = 0, short side = 0) { m_nSegment = nSegment; m_nSide = side; }
+    public static bool operator == (SideKey k1, SideKey k2) { return (k1.m_nSegment == k2.m_nSegment) && (k1.m_nSide == k2.m_nSide); }
+    public static bool operator != (SideKey k1, SideKey k2) { return (k1.m_nSegment != k2.m_nSegment) || (k1.m_nSide != k2.m_nSide); }
+    }
+
     public partial class GameMine
     {
-
         public class TMAP_INFO
         {
             byte	    flags;		//values defined above
@@ -344,57 +353,26 @@ namespace DLE.NET
 
         // New stuff, 10/14/95: For shooting out lights and monitors.
         // Light cast upon vert_light vertices in segnum:sidenum by some light
-        public class DELTA_LIGHT 
+        public class LightDeltaValue : SideKey
         {
             short   segnum;
-            char    sidenum;
-            char    dummy;
+            short   sidenum;
             byte[]  vert_light = new byte[4];
         }
 
         // Light at segnum:sidenum casts light on count sides beginning at index (in array Delta_lights)
-        public class DL_INDEX_D2X 
+        public class LightDeltaIndex : SideKey
         {
             short   segnum;
-            ushort  bitField;
-            ushort  sidenum
-            { 
-                get { return (ushort) (bitField & 3); }
-                set { bitField = (ushort) ((bitField & ~3) | (value & 3)); }
-            }
-            ushort  count 
-            { 
-                get { return (ushort) (bitField >> 3); }
-                set { bitField = (ushort) ((value << 3) | (bitField & ~3)); }
-            }
+            ushort  sidenum;
+            ushort  count;
             ushort  index;
         }
-
-        public class DL_INDEX_STD
-        {
-            short segnum;
-            byte sidenum;
-            byte count;
-            ushort index;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        public class DL_INDEX
-        {
-	        [FieldOffset(0)] DL_INDEX_STD	std;
-	        [FieldOffset(0)] DL_INDEX_D2X	d2x;
-        } 
 
         //extern dl_index    Dl_indices[MAX_DL_INDICES];
         //extern delta_light Delta_lights[MAX_DELTA_LIGHTS];
         //extern int	     Num_static_lights;
 
-
-        public class REACTOR_TRIGGER
-        {
-            short num_links;
-            Trigger.Target[] targets = new Trigger.Target[Trigger.MAX_TARGETS];
-        }
 
         public class MATCEN_INFO 
         {
