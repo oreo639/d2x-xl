@@ -3,7 +3,7 @@ namespace DLE.NET
 {
     partial class Trigger
     {
-        enum TriggerTypeD1 : byte
+        enum D1Type : byte
         {
             CONTROL_DOORS = 1,	// Control Trigger 
             SHIELD_DAMAGE = 2,	// Shield Damage Trigger 
@@ -20,7 +20,7 @@ namespace DLE.NET
             MAKE_ILLUSIONARY = 4096
         }
 
-        enum TriggerTypeD2 : byte
+        enum D2Type : byte
         {
             OPEN_DOOR = 0,  // Open a door
             CLOSE_DOOR = 1,  // Close a door
@@ -61,7 +61,7 @@ namespace DLE.NET
             ENERGY_DRAIN = 101    // added to support d1 energy drain
         }
 
-        enum TriggerFlagD1 : uint
+        enum D1Flag : uint
         {
             CONTROL_DOORS = 1, // Control Trigger 
             SHIELD_DAMAGE = 2, // Shield Damage Trigger 
@@ -78,7 +78,7 @@ namespace DLE.NET
             MAKE_ILLUSIONARY = 4096
         }
 
-        enum TriggerFlagD2 : byte
+        enum D2Flag : byte
         {
             NO_MESSAGE = 1, // Don't show a message when triggered
             ONE_SHOT = 2, // Only trigger once
