@@ -521,7 +521,7 @@ void CMine::ReadRobotResource(INT32 robot_number)
 bool CMine::IsCustomRobot (INT32 i)
 {
 	bool	bFound = false;
-	CDSegment *segP;
+	CSegment *segP;
 	CGameObject *objP;
 	INT32 j;
 

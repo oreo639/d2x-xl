@@ -16,26 +16,26 @@ bool CMine::SetDefaultTexture (INT16 nTexture, INT16 walltype)
 if (nTexture < 0)
 	return true;
 INT16 nSegment = Current ()->nSegment;
-INT16 opp_segnum, opp_sidenum;
-CDSegment *segP = Segments (nSegment);
-CDSide *side = segP->sides;
+INT16 nOppSeg, nOppSide;
+CSegment *segP = Segments (nSegment);
+CSide *sideP = segP->sides;
 double scale = pTextures [m_fileType][nTexture].Scale (nTexture);
 segP->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
-for (INT16 nSide = 0; nSide < 6; nSide++, side++) {
+for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 	if (segP->children [nSide] == -1) {
 		SetTexture (nSegment, nSide, nTexture, 0);
 	/*
-		side->uvls [0].l = 0x8000;
-		side->uvls [1].l = 0x8000;
-		side->uvls [2].l = 0x8000;
-		side->uvls [3].l = 0x8000;
+		sideP->uvls [0].l = 0x8000;
+		sideP->uvls [1].l = 0x8000;
+		sideP->uvls [2].l = 0x8000;
+		sideP->uvls [3].l = 0x8000;
 	*/
 		INT32 i;
 		for (i = 0; i < 4; i++) {
-			side->uvls [i].u = (INT16) ((double) default_uvls [i].u / scale);
-			side->uvls [i].v = (INT16) ((double) default_uvls [i].v / scale);
-			side->uvls [i].l = default_uvls [i].l;
+			sideP->uvls [i].u = (INT16) ((double) default_uvls [i].u / scale);
+			sideP->uvls [i].v = (INT16) ((double) default_uvls [i].v / scale);
+			sideP->uvls [i].l = default_uvls [i].l;
 			}
 		SetUV (nSegment, nSide, 0, 0, 0);
 		}
@@ -47,9 +47,9 @@ for (INT16 nSide = 0; nSide < 6; nSide++, side++) {
 			else
 				return false;
 			if ((GameInfo ().walls.count < MAX_WALLS (this)) &&
-				 GetOppositeSide (opp_segnum, opp_sidenum, nSegment, nSide) &&
-				 (Segments (opp_segnum)->sides [opp_sidenum].nWall >= GameInfo ().walls.count))
-				AddWall (opp_segnum, opp_sidenum, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
+				 GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
+				 (Segments (nOppSeg)->sides [nOppSide].nWall >= GameInfo ().walls.count))
+				AddWall (nOppSeg, nOppSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
 			}
@@ -64,7 +64,7 @@ return true;
 
 void CMine::UndefineSegment (INT16 nSegment)
 {
-	CDSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
+	CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 
 nSegment = INT16 (segP - Segments ());
 if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
@@ -82,7 +82,7 @@ if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
 		INT32 i;
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (nSegment, i);
-		CDSegment *s;
+		CSegment *s;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
 			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (s->nMatCen == nMatCens)) {
 				s->nMatCen = nDelMatCen;
@@ -106,7 +106,7 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 		INT32 i;
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (nSegment, i);
-		CDSegment *s;
+		CSegment *s;
 		nDelMatCen += (INT32) GameInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
 			if ((s->function == SEGMENT_FUNC_EQUIPMAKER) && (s->nMatCen == nMatCens)) {
@@ -117,11 +117,11 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 	segP->nMatCen = -1;
 	}
 else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
-	CDSegment *childseg;
-	CDSide *oppside, *side = segP->sides;
-	CWall *wall;
-	INT16 opp_segnum, opp_sidenum;
-	for (INT16 nSide = 0; nSide < 6; nSide++, side++) {
+	CSegment *childseg;
+	CSide *oppside, *sideP = segP->sides;
+	CWall *wallP;
+	INT16 nOppSeg, nOppSide;
+	for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (segP->children [nSide] < 0)	// assume no wall if no child segment at the current side
 			continue;
 		childseg = Segments (segP->children [nSide]);
@@ -129,14 +129,14 @@ else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wall = GetWall (nSegment, nSide)) && 
-			 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (IsD1File () ? 322 : 333)))
-			DeleteWall (side->nWall);
+			 (wallP->type == WALL_ILLUSION) && (sideP->nBaseTex == (IsD1File () ? 322 : 333)))
+			DeleteWall (sideP->nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
-		if (GetOppositeSide (opp_segnum, opp_sidenum, nSegment, nSide) &&
-			 (wall = GetWall (nSegment, nSide)) && (wall->type == WALL_ILLUSION)) {
-			oppside = Segments (opp_segnum)->sides + opp_sidenum;
-			if (oppside->nBaseTex == (IsD1File () ? 322 : 333))
-				DeleteWall (oppside->nWall);
+		if (GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
+			 (wall = GetWall (nSegment, nSide)) && (wallP->type == WALL_ILLUSION)) {
+			oppside = Segments (nOppSeg)->sides + nOppSide;
+			if (oppsideP->nBaseTex == (IsD1File () ? 322 : 333))
+				DeleteWall (oppsideP->nWall);
 			}
 		}
 	}
@@ -153,7 +153,7 @@ bool CMine::DefineSegment (INT16 nSegment, UINT8 type, INT16 nTexture, INT16 wal
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 UndefineSegment (nSegment);
-CDSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
+CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 segP->function = type;
 segP->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
@@ -376,7 +376,7 @@ return true;
 INT32 CMine::FuelCenterCount (void)
 {
 INT32 n_fuelcen = 0;
-CDSegment *segP = Segments ();
+CSegment *segP = Segments ();
 INT32 i;
 for (i = 0; i < SegCount (); i++, segP++)
 	if ((segP->function == SEGMENT_FUNC_FUELCEN) || (segP->function == SEGMENT_FUNC_REPAIRCEN))
@@ -392,7 +392,7 @@ bool CMine::AddFuelCenter (INT16 nSegment, UINT8 nType, bool bCreate, bool bSetD
 {
 // count number of fuel centers
 INT32 n_fuelcen = FuelCenterCount ();
-CDSegment *segP = Segments ();
+CSegment *segP = Segments ();
 if (n_fuelcen >= MAX_NUM_FUELCENS (this)) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
@@ -433,7 +433,7 @@ return true;
 
 bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 nClip, INT16 nTexture) 
 {
-  INT16 	opp_segnum, opp_sidenum;
+  INT16 	nOppSeg, nOppSide;
   UINT16 nWall;
 
 nWall = CurrSide ()->nWall;
@@ -450,8 +450,8 @@ theApp.LockUndo ();
 // add a door to the current segment/side
 if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
-	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, Current ()->nSide) &&
-		 AddWall (opp_segnum, opp_sidenum, type, flags, keys, nClip, nTexture)) {
+	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
+		 AddWall (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
 		theApp.UnlockUndo ();
 		theApp.MineView ()->Refresh ();
 		return true;
@@ -612,12 +612,12 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKE
 	SetTexture (Current ()->nSegment, Current ()->nSide, 0, (IsD1File ()) ? 444 : 508);
 	AddTrigger (GameInfo ().walls.count - 1, type);
 // add a new wall and trigger to the opposite segment/side
-	INT16 opp_segnum, opp_sidenum;
-	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, Current ()->nSide) &&
-		AddWall (opp_segnum, opp_sidenum, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+	INT16 nOppSeg, nOppSide;
+	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
+		AddWall (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
 		Walls () [GameInfo ().walls.count - 1].nClip = 10;
-		SetTexture (opp_segnum, opp_sidenum, 0, (IsD1File ()) ? 444 : 508);
+		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
 		theApp.UnlockUndo ();
 		theApp.MineView ()->Refresh ();
@@ -723,7 +723,7 @@ return false;
 
 bool CMine::AddDoorTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
-CDSegment* otherSegP = OtherSeg ();
+CSegment* otherSegP = OtherSeg ();
 UINT16 nWall = otherSegP->sides [Other ()->nSide].nWall;
 if (nWall >= GameInfo ().walls.count) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
@@ -752,7 +752,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 
 bool CMine::AddRobotMakerTrigger () 
 {
-CDSegment *otherSegP = OtherSeg ();
+CSegment *otherSegP = OtherSeg ();
 if (otherSegP->function != SEGMENT_FUNC_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"

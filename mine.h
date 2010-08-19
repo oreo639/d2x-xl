@@ -40,7 +40,7 @@ typedef struct tMineData {
 	tFixVector					vertices[MAX_VERTICES3];
 	
 	UINT16						numSegments;
-	CDSegment					segments[MAX_SEGMENTS3];
+	CSegment					segments[MAX_SEGMENTS3];
 	CDColor 						lightColors [MAX_SEGMENTS3][6];
 	CDColor						texColors [MAX_D2_TEXTURES];
 	CDColor 						sideColors [MAX_SEGMENTS3][6];
@@ -131,7 +131,7 @@ public:
 		{ return MineData ().vertices + i; }
 	inline UINT8 *VertStatus (INT32 i = 0)
 		{ return MineData ().vertexStatus + i; }
-	inline CDSegment *Segments (INT32 i = 0)
+	inline CSegment *Segments (INT32 i = 0)
 		{ return MineData ().segments + i; }
 	inline CDColor *VertexColors (INT32 i = 0)
 		{ return &(MineData ().vertexColors [i]); }
@@ -254,13 +254,13 @@ public:
 	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
 	void	CalcSegCenter(tFixVector &pos,INT16 nSegment);
-	inline CDSegment *CurrSeg ()
+	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
 		{ INT32 w = Segments (i)->sides [j].nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CWall *CurrWall ()
 		{ INT32 w = CurrSide ()->nWall; return (w < 0) ? NULL : Walls (w); }
-	inline CDSide *CurrSide ()
+	inline CSide *CurrSide ()
 		{ return CurrSeg ()->sides + Current ()->nSide; }
 	inline INT16 CurrVert ()
 		{ return CurrSeg ()->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; }
@@ -274,8 +274,8 @@ public:
 	bool SideIsMarked (INT16 nSegment, INT16 nSide);
 	bool SegmentIsMarked (INT16 nSegment);
 
-	bool IsPointOfSide (CDSegment *segP, INT32 nSide, INT32 pointnum);
-	bool IsLineOfSide (CDSegment *segP, INT32 nSide, INT32 linenum);
+	bool IsPointOfSide (CSegment *segP, INT32 nSide, INT32 pointnum);
+	bool IsLineOfSide (CSegment *segP, INT32 nSide, INT32 linenum);
 
 	void JoinSegments(INT32 automatic = 0);
 	void JoinLines();
@@ -339,7 +339,7 @@ public:
 	bool RotateSelection(double angle, bool perpendicular); 
 	bool SizeItem (INT32 inc); 
 	bool MovePoints (INT32 pt0, INT32 pt1); 
-	bool SizeLine (CDSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
+	bool SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
 	void RotateVmsVector(tFixVector *vector,double angle,char axis); 
@@ -378,9 +378,9 @@ public:
 	void DrawObject (CWnd *pWnd, INT32 type, INT32 id);
 	void ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew);
 
-	bool GetOppositeSide (INT16& opp_segnum, INT16& opp_sidenum, INT16 nSegment = -1, INT16 nSide = -1);
-	bool GetOppositeWall (INT16 &opp_wallnum, INT16 nSegment = -1, INT16 nSide = -1);
-	CDSide *OppSide ();
+	bool GetOppositeSide (INT16& nOppSeg, INT16& nOppSide, INT16 nSegment = -1, INT16 nSide = -1);
+	bool GetOppositeWall (INT16 &nOppWall, INT16 nSegment = -1, INT16 nSide = -1);
+	CSide *OppSide ();
 	bool SetTexture (INT16 nSegment, INT16 nSide, INT16 nTexture, INT16 tmapnum2);
 	void CopyOtherCube ();
 	bool WallClipFromTexture (INT16 nSegment, INT16 nSide);
@@ -434,9 +434,9 @@ public:
 	inline INT32& ObjectCount (void) 
 		{ return GameInfo ().objects.count; }
 
-	inline CDSegment *OtherSeg (void)
+	inline CSegment *OtherSeg (void)
 		{ return Segments () + Other ()->nSegment; }
-	inline CDSide *OtherSide (void)
+	inline CSide *OtherSide (void)
 		{ return OtherSeg ()->sides + Other ()->nSide; }
 	inline void SetCurrent (INT16 nSegment = -1, INT16 nSide = -1, INT16 nLine = -1, INT16 nPoint = -1) {
 		if (nSegment >= 0) Current ()->nSegment = nSegment;
@@ -491,7 +491,7 @@ public:
 	INT16 LoadMineSigAndType (FILE* fp);
 
 private:
-	INT32 FindClip (CWall *wall, INT16 nTexture);
+	INT32 FindClip (CWall *wallP, INT16 nTexture);
 	INT16 CreateNewLevel ();
 	void DefineVertices(INT16 new_verts[4]);
 	void UnlinkChild(INT16 parent_segnum,INT16 nSide);
@@ -513,10 +513,10 @@ private:
 	void ClearMineData();
 	void UpdateDeltaLights ();
 	double dround_off(double value, double round);
-	void SetSegmentChildNum(CDSegment *pRoot, INT16 nSegment,INT16 recursion_level);
-	void SetSegmentChildNum (CDSegment *pRoot, INT16 nSegment, INT16 recursion_level, INT16* visited);
-	void UnlinkSeg (CDSegment *pSegment, CDSegment *pRoot);
-	void LinkSeg (CDSegment *pSegment, CDSegment *pRoot);
+	void SetSegmentChildNum(CSegment *pRoot, INT16 nSegment,INT16 recursion_level);
+	void SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion_level, INT16* visited);
+	void UnlinkSeg (CSegment *pSegment, CSegment *pRoot);
+	void LinkSeg (CSegment *pSegment, CSegment *pRoot);
 	void SortDLIndex (INT32 left, INT32 right);
 	};
 

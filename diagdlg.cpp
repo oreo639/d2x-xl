@@ -138,23 +138,23 @@ for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 
 INT32 CDiagTool::CountTextures (void)
 {
-	CDSegment *segP = m_mine->Segments ();
-	CDSide *side;
+	CSegment *segP = m_mine->Segments ();
+	CSide *sideP;
 	char bUsed [(MAX_D2_TEXTURES + 7) / 8];
 	INT32 t, i, j, h = m_mine->GameInfo ().walls.count;
 	INT32 nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));
 for (i = m_mine->SegCount (); i; i--, segP++)
-	for (j = 0, side = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, side++)
-		if ((segP->children [j] == -1) || (side->nWall < h)) {
-			t = side->nBaseTex;
+	for (j = 0, side = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
+		if ((segP->children [j] == -1) || (sideP->nWall < h)) {
+			t = sideP->nBaseTex;
 //			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
 			if ((t >= 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;
 				bUsed [t >> 3] |= (1 << (t & 7));
 				}
-			t = side->nOvlTex;
+			t = sideP->nOvlTex;
 //			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
 			if ((t > 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;

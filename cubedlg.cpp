@@ -210,7 +210,7 @@ return CToolDlg::OnSetActive ();
 
                         /*--------------------------*/
 
-bool CSegmentTool::IsBotMaker (CDSegment *segP)
+bool CSegmentTool::IsBotMaker (CSegment *segP)
 {
 return 
 	(segP->function == SEGMENT_FUNC_ROBOTMAKER) &&
@@ -220,7 +220,7 @@ return
 
                         /*--------------------------*/
 
-bool CSegmentTool::IsEquipMaker (CDSegment *segP)
+bool CSegmentTool::IsEquipMaker (CSegment *segP)
 {
 return 
 	(segP->function == SEGMENT_FUNC_EQUIPMAKER) &&
@@ -234,7 +234,7 @@ void CSegmentTool::EnableControls (BOOL bEnable)
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 // enable/disable "end of exit tunnel" button
 EndOfExit ()->EnableWindow (segP->children [m_nSide] < 0);
 // enable/disable add cube button
@@ -337,7 +337,7 @@ void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
 void CSegmentTool::SetDefTexture (INT16 nTexture)
 {
-CDSegment *segP = m_mine->Segments () + m_nSegment;
+CSegment *segP = m_mine->Segments () + m_nSegment;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	INT32 i;
 	for (i = 0; i < 6; i++)
@@ -365,7 +365,7 @@ INT32 h, i, j;
 m_mine->RenumberBotGens ();
 m_mine->RenumberEquipGens ();
 // update cube number combo box if number of cubes has changed
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 m_bEndOfExit = (segP->children [m_mine->Current ()->nSide] == -2);
 m_nSegment = m_mine->Current ()->nSegment;
 m_nSide = m_mine->Current ()->nSide;
@@ -384,8 +384,8 @@ LBTriggers()->ResetContent();
 CTrigger *trigP = m_mine->Triggers ();
 INT32 nTrigger;
 for (nTrigger = 0; nTrigger < m_mine->GameInfo ().triggers.count; nTrigger++, trigP++) {
-	for (i = 0; i < trigP->count; i++) {
-		if (trigP->targets [i] == CSideKey (m_nSegment, m_nSide)) {
+	for (i = 0; i < trigP->m_count; i++) {
+		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
 			CWall *wallP = m_mine->Walls ();
 			INT32 nWall;
@@ -394,9 +394,9 @@ for (nTrigger = 0; nTrigger < m_mine->GameInfo ().triggers.count; nTrigger++, tr
 					break;
 				}
 			if (nWall < m_mine->GameInfo ().walls.count) {
-				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wallP->nSegment, (INT32) wallP->nSide + 1);
+				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wallP->m_nSegment, (INT32) wallP->m_nSide + 1);
 				INT32 h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (long) wallP->nSegment * 0x10000L + wallP->nSide);
+				LBTriggers ()->SetItemData (h, (long) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
 				}
 			}
 		}
@@ -495,7 +495,7 @@ void CSegmentTool::OnEndOfExit ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 theApp.SetModified (TRUE);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
 	segP->children [m_nSide] = -2;
@@ -547,7 +547,7 @@ theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
-	CDSegment *segP = m_mine->Segments ();
+	CSegment *segP = m_mine->Segments ();
 	for (INT16 nSegNum = 0; nSegNum < m_mine->SegCount (); nSegNum++, segP++)
 		if (segP->wall_bitmask & MARKED_MASK)
 			segP->owner = m_nOwner;
@@ -573,7 +573,7 @@ theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
-	CDSegment *segP = m_mine->Segments ();
+	CSegment *segP = m_mine->Segments ();
 	for (INT16 nSegNum = 0; nSegNum < m_mine->SegCount (); nSegNum++, segP++)
 		if (segP->wall_bitmask & MARKED_MASK)
 			segP->group = m_nGroup;
@@ -596,7 +596,7 @@ if (!GetMine ())
 	BOOL			bChangeOk = TRUE;
 	BOOL			bMarked = m_mine->GotMarkedSegments ();
 	INT32			nSegNum, nMinSeg, nMaxSeg;
-	CDSegment	*segP;
+	CSegment	*segP;
 
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -734,11 +734,11 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		}
 	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
 		INT16 nSegNum = m_mine->Current ()->nSegment;
-		CDSegment *childseg, *segP = m_mine->CurrSeg ();
-		CDSide *oppside, *side = m_mine->CurrSide ();
-		CWall *wall;
-		INT16 opp_segnum, opp_sidenum;
-		for (INT16 nSide = 0; nSide < 6; nSide++, side++) {
+		CSegment *childseg, *segP = m_mine->CurrSeg ();
+		CSide *oppside, *sideP = m_mine->CurrSide ();
+		CWall *wallP;
+		INT16 nOppSeg, nOppSide;
+		for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 			if (segP->children [nSide] < 0)	// assume no wall if no child segment at the current side
 				continue;
 			childseg = m_mine->Segments () + segP->children [nSide];
@@ -746,14 +746,14 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				continue;
 			// if there is a wall and it's a fuel cell delete it
 			if ((wall = m_mine->GetWall (nSegNum, nSide)) && 
-				 (wall->type == WALL_ILLUSION) && (side->nBaseTex == (IsD1File ()) ? 322 : 333))
-				m_mine->DeleteWall (side->nWall);
+				 (wallP->type == WALL_ILLUSION) && (sideP->nBaseTex == (IsD1File ()) ? 322 : 333))
+				m_mine->DeleteWall (sideP->nWall);
 			// if there is a wall at the opposite side and it's a fuel cell delete it
-			if (m_mine->GetOppositeSide (opp_segnum, opp_sidenum, nSegNum, nSide) &&
-				 (wall = m_mine->GetWall (nSegNum, nSide)) && (wall->type == WALL_ILLUSION)) {
-				oppside = m_mine->Segments (opp_segnum)->sides + opp_sidenum;
-				if (oppside->nBaseTex == (IsD1File ()) ? 322 : 333)
-					m_mine->DeleteWall (oppside->nWall);
+			if (m_mine->GetOppositeSide (nOppSeg, nOppSide, nSegNum, nSide) &&
+				 (wall = m_mine->GetWall (nSegNum, nSide)) && (wallP->type == WALL_ILLUSION)) {
+				oppside = m_mine->Segments (nOppSeg)->sides + nOppSide;
+				if (oppsideP->nBaseTex == (IsD1File ()) ? 322 : 333)
+					m_mine->DeleteWall (oppsideP->nWall);
 				}
 			}
 		}
@@ -858,7 +858,7 @@ void CSegmentTool::AddBot ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 INT32 matcen = segP->nMatCen;
 char szObj [80];
 INT32 i = FindBot (LBAvailBots (), szObj);
@@ -882,7 +882,7 @@ void CSegmentTool::AddEquip ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 INT32 matcen = segP->nMatCen;
 char szObj [80];
 INT32 i = FindEquip (LBAvailBots (), szObj);
@@ -906,7 +906,7 @@ void CSegmentTool::OnAddObj ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 if (IsBotMaker (segP))
 	AddBot ();
 else if (IsEquipMaker (segP))
@@ -921,7 +921,7 @@ void CSegmentTool::DeleteBot ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 INT32 matcen = segP->nMatCen;
 char szObj [80];
 INT32 i = FindBot (LBUsedBots (), szObj);
@@ -945,7 +945,7 @@ void CSegmentTool::DeleteEquip ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 INT32 matcen = segP->nMatCen;
 char szObj [80];
 INT32 i = FindEquip (LBUsedBots (), szObj);
@@ -969,7 +969,7 @@ void CSegmentTool::OnDeleteObj ()
 {
 if (!GetMine ())
 	return;
-CDSegment *segP = m_mine->CurrSeg ();
+CSegment *segP = m_mine->CurrSeg ();
 if (IsBotMaker (segP))
 	DeleteBot ();
 else if (IsEquipMaker (segP))

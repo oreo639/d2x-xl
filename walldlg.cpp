@@ -353,9 +353,9 @@ void CWallTool::OnAddWall ()
 if (!GetMine ())
 	return;
 
-CWall *wall;
-CDSegment *segP [2];
-CDSide *side [2];
+CWall *wallP;
+CSegment *segP [2];
+CSide *sideP [2];
 INT16 nSegment [2]; 
 INT16 nSide [2];
 
@@ -381,17 +381,17 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wall = m_mine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
-			if (wall->type == m_defWall.type) {
-				wall->hps = m_defWall.hps;
-				wall->cloak_value = m_defWall.cloak_value;
+			if (wallP->type == m_defWall.type) {
+				wallP->hps = m_defWall.hps;
+				wallP->cloak_value = m_defWall.cloak_value;
 				}
-			else if (wall->type == WALL_CLOAKED) {
-				wall->hps = 0;
-				wall->cloak_value = 16;
+			else if (wallP->type == WALL_CLOAKED) {
+				wallP->hps = 0;
+				wallP->cloak_value = 16;
 				}
 			else {
-				wall->hps = 0;
-				wall->cloak_value = 31;
+				wallP->hps = 0;
+				wallP->cloak_value = 31;
 				}
 			}
 			// update main window
@@ -447,17 +447,17 @@ if (!GetMine ())
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CDSegment *segP = m_mine->Segments ();
-CDSide *side;
+CSegment *segP = m_mine->Segments ();
+CSide *sideP;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, segP++) {
 	side = segP->sides;
-	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
-		if (side->nWall >= MAX_WALLS (m_mine))
+	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
+		if (sideP->nWall >= MAX_WALLS (m_mine))
 			continue;
 		if (bAll || m_mine->SideIsMarked (i, j)) {
-			m_mine->DeleteWall (side->nWall);
+			m_mine->DeleteWall (sideP->nWall);
 			nDeleted++;
 			}
 		}
@@ -488,11 +488,11 @@ CWall *CWallTool::GetOtherWall (void)
 if (!GetMine ())
 	return m_pWall [1] = NULL;
 
-INT16 opp_segnum, opp_sidenum;
+INT16 nOppSeg, nOppSide;
 
-if (!m_mine->GetOppositeSide (opp_segnum, opp_sidenum))
+if (!m_mine->GetOppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = NULL;
-m_nWall [1] = m_mine->Segments (opp_segnum)->sides [opp_sidenum].nWall;
+m_nWall [1] = m_mine->Segments (nOppSeg)->sides [nOppSide].nWall;
 return m_pWall [1] = (m_nWall [1] < m_mine->GameInfo ().walls.count ? m_mine->Walls (m_nWall [1]) : NULL);
 }
 
@@ -529,9 +529,9 @@ Refresh ();
 
 void CWallTool::OnSetType ()
 {
-	CDSegment	*segP [2];
-	CDSide		*side [2];
-	CWall		*wall;
+	CSegment	*segP [2];
+	CSide		*sideP [2];
+	CWall		*wallP;
 	INT16			nSegment [2], nSide [2];
 	INT32			nType;
 
@@ -560,10 +560,10 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		INT16 nBaseTex  = side [bSide]->nBaseTex;
 		INT16 nOvlTex = side [bSide]->nOvlTex;
 		m_mine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
-		if ((wall->type == WALL_OPEN) || (wall->type == WALL_CLOSED))
-			m_mine->SetTexture (wall->nSegment, wall->nSide, nBaseTex, nOvlTex);
-//		else if ((wall->type == WALL_CLOAKED) || (wall->type == WALL_TRANSPARENT))
-//			wall->cloak_value = m_defWall.cloak_value;
+		if ((wallP->type == WALL_OPEN) || (wallP->type == WALL_CLOSED))
+			m_mine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
+//		else if ((wallP->type == WALL_CLOAKED) || (wallP->type == WALL_TRANSPARENT))
+//			wallP->cloak_value = m_defWall.cloak_value;
 		}
 theApp.MineView ()->Refresh ();
 Refresh ();
@@ -574,7 +574,7 @@ Refresh ();
 void CWallTool::OnSetClip ()
 {
 	INT32		nClip;
-	CWall	*wall;
+	CWall	*wallP;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 m_pWall [0] = m_mine->Walls () + m_nWall [0];
@@ -583,14 +583,14 @@ GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wall = m_pWall [bSide])
-		if ((wall->type == WALL_BLASTABLE) || (wall->type == WALL_DOOR)) {
+		if ((wallP->type == WALL_BLASTABLE) || (wallP->type == WALL_DOOR)) {
 			if (m_nWall [bSide] < m_mine->GameInfo ().walls.count) {
 				theApp.SetModified (TRUE);
 				theApp.LockUndo ();
 				nClip = clipList [m_nClip];
-				wall->nClip = nClip;
+				wallP->nClip = nClip;
 				// define door textures based on clip number
-				if (wall->nClip >= 0)
+				if (wallP->nClip >= 0)
 					m_mine->SetWallTextures (m_nWall [bSide], m_defTexture);
 				theApp.UnlockUndo ();
 				theApp.MineView ()->Refresh ();
@@ -598,7 +598,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				}
 			}
 		else
-			wall->nClip = -1;
+			wallP->nClip = -1;
 }
 
                         /*--------------------------*/

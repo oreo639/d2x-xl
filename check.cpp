@@ -97,12 +97,12 @@ else
 	nWall = -1;
 if ((nWall >= 0) && MarkSegment ((wallP = m_mine->Walls (nWall))->nSegment))
 	if (bCurSeg) {
-		m_mine->Other ()->nSegment = wallP->nSegment;
-		m_mine->Other ()->nSide = wallP->nSide;
+		m_mine->Other ()->nSegment = wallP->m_nSegment;
+		m_mine->Other ()->nSide = wallP->m_nSide;
 		}
 	else {
-		m_mine->Current ()->nSegment = wallP->nSegment;
-		m_mine->Current ()->nSide = wallP->nSide;
+		m_mine->Current ()->nSegment = wallP->m_nSegment;
+		m_mine->Current ()->nSide = wallP->m_nSide;
 		}
 if ((pbp->nObject >= 0) && (pbp->nObject < m_mine->GameInfo ().objects.count))
 	m_mine->Current ()->nObject = pbp->nObject;
@@ -128,7 +128,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
   double ratio1,ratio2;
 	tFixVector *vert [4];
   // copy vertnums into an array
-	CDSegment *segP = m_mine->Segments (nSegment);
+	CSegment *segP = m_mine->Segments (nSegment);
   for (i=0;i<4;i++) {
     vertnum[i] = segP->verts[side_vert[nSide][i]];
 	 vert [i] = m_mine->Vertices (vertnum [i]);
@@ -432,7 +432,7 @@ if (!GetMine ())
 	return false;
 
 	INT16	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
-	CDSegment	*segP = m_mine->Segments ();
+	CSegment	*segP = m_mine->Segments ();
 
 for (i = m_mine->SegCount (); i; i--, segP++)
 	switch (segP->function) {
@@ -479,7 +479,7 @@ if (!GetMine ())
   INT16 i,j;
   double angle,flatness;
   INT16 match[4];
-  CDSegment *segP = m_mine->Segments ();
+  CSegment *segP = m_mine->Segments ();
 
   // check Segments ()
   //--------------------------------------------------------------
@@ -642,7 +642,7 @@ if (!GetMine ())
   CGameObject *objP = m_mine->Objects ();
 	CGameObject *pPlayer = NULL;
   INT32	objCount = m_mine->GameInfo ().objects.count;
-  CDSegment *segP;
+  CSegment *segP;
 
 INT16 sub_errors = m_nErrors [0];
 INT16 sub_warnings = m_nErrors [1];
@@ -969,7 +969,7 @@ bool CDiagTool::CheckTriggers ()
 
 	INT32 count, trignum, deltrignum, nWall, i;
 	INT32 nSegment, nSide, linknum;
-	INT16 opp_segnum, opp_sidenum;
+	INT16 nOppSeg, nOppSide;
 
 	INT16 sub_errors = m_nErrors [0];
 	INT16 sub_warnings = m_nErrors [1];
@@ -982,7 +982,7 @@ bool CDiagTool::CheckTriggers ()
 	CReactorTrigger *reactorTrigger = m_mine->ReactorTriggers ();
 
 	// make sure trigP is linked to exactly one wallP
-for (i = 0; i < reactorTrigger->count; i++)
+for (i = 0; i < reactorTrigger->m_count; i++)
 	if ((reactorTrigger->Segment (i) >= segCount) ||
 		(m_mine->Segments (reactorTrigger->Segment (i))->sides [reactorTrigger->Side (i)].nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
@@ -1007,25 +1007,25 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigP++) {
 			INT32 tt = trigP->type;
 			INT32 tf = trigP->flags;
 			if (theApp.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
-				for (i = 0; i < reactorTrigger->count; i++)
+				for (i = 0; i < reactorTrigger->m_count; i++)
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
 						break; // found it
 				// if did not find it
-				if (i>=m_mine->ReactorTriggers ()->count) {
+				if (i>=m_mine->ReactorTriggers ()->m_count) {
 					if (m_bAutoFixBugs) {
 						m_mine->AutoLinkExitToReactor ();
-						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->nSegment, wallP->nSide);
+						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 						}
 					else
-						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wallP->nSegment, wallP->nSide);
-					if (UpdateStats (message,1,wallP->nSegment, wallP->nSide, -1, -1, -1, nWall))
+						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
+					if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall))
 						return true;
 					}
 				}
 			count++;
 			if (count >1) {
 				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wallP (trig=%d, wallP=%d)",trignum,nWall);
-				if (UpdateStats (message,0, wallP->nSegment, wallP->nSide, -1, -1, -1, nWall)) return true;
+				if (UpdateStats (message,0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 		}
 	}
@@ -1051,15 +1051,15 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 	nWall = m_mine->FindTriggerWall (trignum);
 	if (nWall < wallCount) {
 		wallP = m_mine->Walls (nWall);
-		trigSeg = wallP->nSegment;
-		trigSide = wallP->nSide;
+		trigSeg = wallP->m_nSegment;
+		trigSide = wallP->m_nSide;
 		}
 	else
 		trigSeg = trigSide = -1;
 	// check number of links of trigP (only for
 	INT32 tt = trigP->type;
 	INT32 tf = trigP->flags;
-	if (trigP->count == 0) {
+	if (trigP->m_count == 0) {
 		if (theApp.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
@@ -1072,10 +1072,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 		}
 	else {
 		// check range of links
-		for (linknum = 0; linknum < trigP->count; linknum++) {
+		for (linknum = 0; linknum < trigP->m_count; linknum++) {
 			if (linknum >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
-					trigP->count = MAX_TRIGGER_TARGETS;
+					trigP->m_count = MAX_TRIGGER_TARGETS;
 					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigP=%d, number of links=%d)",trignum,linknum);
 					}
 				else
@@ -1119,7 +1119,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 						return true;
 				} else {
-					CDSegment *segP = m_mine->Segments (nSegment);
+					CSegment *segP = m_mine->Segments (nSegment);
 					// check door opening trigP
 //						if (trigP->flags == TRIGGER_CONTROL_DOORS) {
 					if (theApp.IsD1File ()
@@ -1142,12 +1142,12 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 						}
 
 						// make sure oposite segment/side has a wallP too
-						if (!m_mine->GetOppositeSide (opp_segnum, opp_sidenum, nSegment, nSide)) {
+						if (!m_mine->GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",trignum,nSegment,nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						else {
-							if (m_mine->Segments (opp_segnum)->sides [opp_sidenum].nWall >= wallCount) {
+							if (m_mine->Segments (nOppSeg)->sides [nOppSide].nWall >= wallCount) {
 								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",trignum,nSegment,nSide);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 								}
@@ -1194,8 +1194,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 	nWall = m_mine->FindTriggerWall (trignum);
 	if (nWall < wallCount) {
 		wallP = m_mine->Walls (nWall);
-		trigSeg = wallP->nSegment;
-		trigSide = wallP->nSide;
+		trigSeg = wallP->m_nSegment;
+		trigSide = wallP->m_nSide;
 		}
 	else
 		trigSeg = trigSide = -1;
@@ -1214,7 +1214,7 @@ trigCount = m_mine->NumObjTriggers ();
 for (trignum = 0; trignum < trigCount; trignum++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	trigP = m_mine->ObjTriggers (trignum);
-	if ((trigP->type != TT_MESSAGE) && (trigP->type != TT_SOUND) && (trigP->type != TT_COUNTDOWN) && !trigP->count) {
+	if ((trigP->type != TT_MESSAGE) && (trigP->type != TT_SOUND) && (trigP->type != TT_COUNTDOWN) && !trigP->m_count) {
 		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", trignum, trigP->nObject);
 		if (UpdateStats (message,0, trignum, trigP->nObject, -1, -1, -1, -1, trignum)) return true;
 		}
@@ -1259,7 +1259,7 @@ return h;
 
 void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
 {
-	CDSegment*		segP = m_mine->Segments ();
+	CSegment*		segP = m_mine->Segments ();
 	INT16				n, h, i, j = m_mine->SegCount ();
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
@@ -1280,7 +1280,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType)
 {
-	CDSegment*	segP = m_mine->Segments ();
+	CSegment*	segP = m_mine->Segments ();
 	INT16			h, i, j = m_mine->SegCount ();
 	INT8			n;
 
@@ -1330,7 +1330,7 @@ INT16 CDiagTool::AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refLi
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
-	CDSegment*	segP = m_mine->Segments ();
+	CSegment*	segP = m_mine->Segments ();
 	INT16			h, i, j = m_mine->SegCount ();
 	INT8			n;
 
@@ -1359,7 +1359,7 @@ INT16 CDiagTool::CleanupMatCens (INT16* refList, CRobotMaker* matCenP, INT16 nMa
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
-	CDSegment*	segP = m_mine->Segments ();
+	CSegment*	segP = m_mine->Segments ();
 	
 for (INT32 i = 0; i < nMatCens; i) {
 	if (refList [i] < 0) 
@@ -1383,7 +1383,7 @@ bool CDiagTool::CheckBotGens (void)
 	INT16					h = m_mine->SegCount (), i, nSegment = 0;
 	bool					bOk = true;
 	INT16					nMatCenSegs, nMatCens = INT16 (m_mine->GameInfo ().botgen.count);
-	CDSegment*			segP = m_mine->Segments ();
+	CSegment*			segP = m_mine->Segments ();
 	CRobotMaker*		matCenP = m_mine->BotGens (0);
 	INT16					segList [MAX_NUM_MATCENS2];
 	INT16					refList [MAX_NUM_MATCENS2];
@@ -1450,9 +1450,9 @@ bool CDiagTool::CheckWalls ()
 	INT16 nSegment,nSide;
 	UINT16 nWall, wallCount = m_mine->GameInfo ().walls.count, 
 			 maxWalls = MAX_WALLS (m_mine);
-	CDSegment *segP;
-	CDSide *side;
-	CWall *wall = m_mine->Walls (), *w, *ow;
+	CSegment *segP;
+	CSide *sideP;
+	CWall *wallP = m_mine->Walls (), *w, *ow;
 	INT32 segCount = m_mine->SegCount ();
 	UINT8 wallFixed [MAX_WALLS2];
 
@@ -1463,11 +1463,11 @@ bool CDiagTool::CheckWalls ()
 memset (wallFixed, 0, sizeof (wallFixed));
 *message = '\0';
 for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, segP++) {
-	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++) {
-		nWall = side->nWall;
+	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, sideP++) {
+		nWall = sideP->nWall;
 		if ((nWall < 0) || (nWall >= wallCount) || (nWall >= maxWalls)) {
 			if (nWall != NO_WALL (m_mine))
-				side->nWall = NO_WALL (m_mine);
+				sideP->nWall = NO_WALL (m_mine);
 			continue;
 			}
 		w = m_mine->Walls (nWall);
@@ -1477,10 +1477,10 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 							"FIXED: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							nSegment, nWall, w->nSegment);
 				if (wallFixed [nWall])
-					side->nWall = NO_WALL (m_mine);
+					sideP->nWall = NO_WALL (m_mine);
 				else {
 					if (m_mine->Segments (w->nSegment)->sides [w->nSide].nWall == nWall)
-						side->nWall = NO_WALL (m_mine);
+						sideP->nWall = NO_WALL (m_mine);
 					else {
 						w->nSegment = nSegment;
 						w->nSide = nSide;
@@ -1492,7 +1492,7 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							nSegment, nWall, w->nSegment);
-			if (UpdateStats (message,1, nSegment, nSide, -1, -1, -1, side->nWall)) return true;
+			if (UpdateStats (message,1, nSegment, nSide, -1, -1, -1, sideP->nWall)) return true;
 			} 
 		else if (w->nSide != nSide) {
 			if (m_bAutoFixBugs) {
@@ -1500,7 +1500,7 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							nSegment, nSide, nWall, w->nSegment);
 				if (wallFixed [nWall])
-					side->nWall = NO_WALL (m_mine);
+					sideP->nWall = NO_WALL (m_mine);
 				else {
 					ow = OppWall (nSegment, nSide);
 					if (ow && (ow->type == w->type)) {
@@ -1508,7 +1508,7 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 						w->nSide = nSide;
 						}
 					else if (segP->sides [w->nSide].nWall == nWall)
-						side->nWall = NO_WALL (m_mine);
+						sideP->nWall = NO_WALL (m_mine);
 					else
 						w->nSide = nSide;
 					wallFixed [nWall] = 1;
@@ -1518,42 +1518,42 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							nSegment, nSide, nWall, w->nSegment);
-			if (UpdateStats (message,1, -1, -1, -1, -1, -1, side->nWall)) return true;
+			if (UpdateStats (message,1, -1, -1, -1, -1, -1, sideP->nWall)) return true;
 			}
 		} 
 	}
-for (nWall = 0; nWall < wallCount; nWall++, wall++) {
+for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wall->type > (theApp.IsD1File () ? WALL_CLOSED : m_mine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wallP->type > (theApp.IsD1File () ? WALL_CLOSED : m_mine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
-					nWall,wall->type);
-		if (UpdateStats (message,1,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+					nWall,wallP->type);
+		if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 		}
 		// check range of segment number that the wall points to
-	if (wall->nSegment >= m_mine->SegCount ()) {
+	if (wallP->m_nSegment >= m_mine->SegCount ()) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall sits in non-existant cube (wall=%d, cube=%d)",
-					nWall,wall->nSegment);
+					nWall,wallP->m_nSegment);
 		if (UpdateStats (message,1,-1, -1, -1, -1, -1, nWall)) return true;
 		} 
-	else if (wall->nSide >= 6) {
+	else if (wallP->m_nSide >= 6) {
 		// check range of side number that the wall points to
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall sits on side which is out of range (wall=%d, side=%d)",
-					nWall,wall->nSide);
+					nWall,wallP->m_nSide);
 		if (UpdateStats (message,1,-1 -1, -1, -1, -1, nWall)) return true;
 		}
 	else {
 		// check to make sure segment points back to wall
-		side = m_mine->Segments (wall->nSegment)->sides + wall->nSide;
-		if (side->nWall != nWall) {
+		side = m_mine->Segments (wallP->m_nSegment)->sides + wallP->m_nSide;
+		if (sideP->nWall != nWall) {
 			w = m_mine->Walls (nWall);
-			if ((nWall < wallCount) && (w->nSegment == wall->nSegment) && (w->nSide == wall->nSide)) {
+			if ((nWall < wallCount) && (w->nSegment == wallP->m_nSegment) && (w->nSide == wallP->m_nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),
-								"FIXED: Duplicate wall found (wall=%d, cube=%d)", nWall, wall->nSegment);
+								"FIXED: Duplicate wall found (wall=%d, cube=%d)", nWall, wallP->m_nSegment);
 					m_mine->DeleteWall (nWall);
 					nWall--;
 					wall--;
@@ -1562,155 +1562,155 @@ for (nWall = 0; nWall < wallCount; nWall++, wall++) {
 					}
 				else 
 					sprintf_s (message, sizeof (message),
-								"ERROR: Duplicate wall found (wall=%d, cube=%d)", nWall, wall->nSegment);
-				if (UpdateStats (message, 1, wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+								"ERROR: Duplicate wall found (wall=%d, cube=%d)", nWall, wallP->m_nSegment);
+				if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
 				if (m_bAutoFixBugs) {
-					side->nWall = nWall;
+					sideP->nWall = nWall;
 					sprintf_s (message, sizeof (message),
 								"FIXED: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
-								nWall,wall->nSegment);
+								nWall,wallP->m_nSegment);
 					}
 				else 
 					sprintf_s (message, sizeof (message),
 								"ERROR: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
-								nWall,wall->nSegment);
-				if (UpdateStats (message,1,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+								nWall,wallP->m_nSegment);
+				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			}
 			// make sure trigger number of wall is in range
-		if ((wall->nTrigger != NO_TRIGGER) && (wall->nTrigger >= m_mine->GameInfo ().triggers.count)) {
+		if ((wallP->nTrigger != NO_TRIGGER) && (wallP->nTrigger >= m_mine->GameInfo ().triggers.count)) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)",
-							nWall, wall->nTrigger);
-				wall->nTrigger = NO_TRIGGER;
+							nWall, wallP->nTrigger);
+				wallP->nTrigger = NO_TRIGGER;
 				}
 			else
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)",
-							nWall, wall->nTrigger);
-			if (UpdateStats (message,1,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+							nWall, wallP->nTrigger);
+			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 #if 1 // linked walls not supported in DLE-XP and D2X-XL
-		if (wall->linkedWall != -1) {
-			INT16 invLinkedWall = wall->linkedWall;
+		if (wallP->linkedWall != -1) {
+			INT16 invLinkedWall = wallP->linkedWall;
 			if (m_bAutoFixBugs) {
-				wall->linkedWall = -1;
+				wallP->linkedWall = -1;
 				sprintf_s (message, sizeof (message),
 							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-							  nWall, invLinkedWall, wall->linkedWall);
+							  nWall, invLinkedWall, wallP->linkedWall);
 				}
 			else
 				sprintf_s (message, sizeof (message),
 							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-							  nWall, invLinkedWall, wall->linkedWall);
+							  nWall, invLinkedWall, wallP->linkedWall);
 			}
 #else
-		if ((wall->linkedWall < -1) || (wall->linkedWall >= wallCount)) {
+		if ((wallP->linkedWall < -1) || (wallP->linkedWall >= wallCount)) {
 			if (m_bAutoFixBugs) {
-				INT16	oppSeg, oppSide, invLinkedWall = wall->linkedWall;
-				if (m_mine->GetOppositeSide (oppSeg, oppSide, wall->nSegment, wall->nSide)) {
-					wall->linkedWall = m_mine->Segments (oppSeg)->sides [oppSide].nWall;
-					if ((wall->linkedWall < -1) || (wall->linkedWall >= wallCount))
-						wall->linkedWall = -1;
+				INT16	oppSeg, oppSide, invLinkedWall = wallP->linkedWall;
+				if (m_mine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
+					wallP->linkedWall = m_mine->Segments (oppSeg)->sides [oppSide].nWall;
+					if ((wallP->linkedWall < -1) || (wallP->linkedWall >= wallCount))
+						wallP->linkedWall = -1;
 					sprintf_s (message, sizeof (message),
 						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-						nWall, invLinkedWall, wall->linkedWall);
+						nWall, invLinkedWall, wallP->linkedWall);
 					}
 				}
 			else
 				sprintf_s (message, sizeof (message),
 					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)",
-					nWall,wall->linkedWall);
+					nWall,wallP->linkedWall);
 			}
-		else if (wall->linkedWall >= 0) {
+		else if (wallP->linkedWall >= 0) {
 			INT16	oppSeg, oppSide;
-			if (m_mine->GetOppositeSide (oppSeg, oppSide, wall->nSegment, wall->nSide)) {
+			if (m_mine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 				INT16 oppWall = m_mine->Segments (oppSeg)->sides [oppSide].nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, m_mine->Walls (wall->linkedWall)->nSegment, m_mine->Walls (wall->linkedWall)->nSide);
+						nWall, m_mine->Walls (wallP->linkedWall)->nSegment, m_mine->Walls (wallP->linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wall->linkedWall = -1;
+							wallP->linkedWall = -1;
 					}
-				else if (wall->linkedWall != oppWall) {
+				else if (wallP->linkedWall != oppWall) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, m_mine->Walls (wall->linkedWall)->nSegment, m_mine->Walls (wall->linkedWall)->nSide);
+						nWall, m_mine->Walls (wallP->linkedWall)->nSegment, m_mine->Walls (wallP->linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wall->linkedWall = oppWall;
+							wallP->linkedWall = oppWall;
 					}
 				}
 			else {
 				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
-					nWall, m_mine->Walls (wall->linkedWall)->nSegment, m_mine->Walls (wall->linkedWall)->nSide);
+					nWall, m_mine->Walls (wallP->linkedWall)->nSegment, m_mine->Walls (wallP->linkedWall)->nSide);
 				if (m_bAutoFixBugs)
-					wall->linkedWall = -1;
+					wallP->linkedWall = -1;
 				}
 			}
 #endif
-		if (UpdateStats (message, 1, wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			// check wall nClip
-		if ((wall->type == WALL_CLOAKED) && (wall->cloak_value > 31)) {
+		if ((wallP->type == WALL_CLOAKED) && (wallP->cloak_value > 31)) {
 			if (m_bAutoFixBugs) {
-				wall->cloak_value = 31;
+				wallP->cloak_value = 31;
 				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", nWall);
 					}
 			else
 				sprintf_s (message, sizeof (message), "ERROR: Wall has invalid cloak value (wall=%d)", nWall);
 			}
-		if ((wall->type == WALL_BLASTABLE || wall->type == WALL_DOOR) &&
-			 (   wall->nClip < 0
-			  || wall->nClip == 2
-//			     || wall->nClip == 7
-			  || wall->nClip == 8
-			  || (theApp.IsD1File () && wall->nClip > 25)
-			  || (theApp.IsD2File () && wall->nClip > 50))) {
+		if ((wallP->type == WALL_BLASTABLE || wallP->type == WALL_DOOR) &&
+			 (   wallP->nClip < 0
+			  || wallP->nClip == 2
+//			     || wallP->nClip == 7
+			  || wallP->nClip == 8
+			  || (theApp.IsD1File () && wallP->nClip > 25)
+			  || (theApp.IsD2File () && wallP->nClip > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
-						nWall,wall->nClip);
-			if (UpdateStats (message,1,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+						nWall,wallP->nClip);
+			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 			// Make sure there is a child to the segment
-		if (wall->type != WALL_OVERLAY) {
-			if (!(m_mine->Segments (wall->nSegment)->child_bitmask & (1<< wall->nSide))) {
+		if (wallP->type != WALL_OVERLAY) {
+			if (!(m_mine->Segments (wallP->m_nSegment)->child_bitmask & (1<< wallP->m_nSide))) {
 				sprintf_s (message, sizeof (message),
 							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
-							nWall,wall->nSegment);
-				if (UpdateStats (message,1,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+							nWall,wallP->m_nSegment);
+				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
-				nSegment = m_mine->Segments (wall->nSegment)->children[wall->nSide];
-				CDSegment *segP = m_mine->Segments (nSegment);
+				nSegment = m_mine->Segments (wallP->m_nSegment)->children[wallP->m_nSide];
+				CSegment *segP = m_mine->Segments (nSegment);
 				if ((nSegment >= 0 && nSegment < m_mine->SegCount ()) &&
-					 (wall->type == WALL_DOOR || wall->type == WALL_ILLUSION)) {
+					 (wallP->type == WALL_DOOR || wallP->type == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
-						if (segP->children[nSide] == wall->nSegment)
+						if (segP->children[nSide] == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
 						if (segP->sides[nSide].nWall >= m_mine->GameInfo ().walls.count) {
 							sprintf_s (message, sizeof (message),
 										"WARNING: No matching wall for this wall (wall=%d, cube=%d)", 
 										nWall,nSegment);
-							if (UpdateStats (message,0,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+							if (UpdateStats (message,0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 							} 
 						else {
 							UINT16 wallnum2 = segP->sides[nSide].nWall;
 							if ((wallnum2 < wallCount) &&
-								 ((wall->nClip != m_mine->Walls (wallnum2)->nClip
-									|| wall->type != m_mine->Walls (wallnum2)->type))) {
+								 ((wallP->nClip != m_mine->Walls (wallnum2)->nClip
+									|| wallP->type != m_mine->Walls (wallnum2)->type))) {
 								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
 											nWall,nSegment);
-								if (UpdateStats (message,0,wall->nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+								if (UpdateStats (message,0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 								}
 							}
 						}
@@ -1725,12 +1725,12 @@ segP = m_mine->Segments ();
 for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	side = segP->sides;
-	for (nSide = 0; nSide < 6; nSide++, side++) {
-		if (side->nWall <	wallCount) {
-			nWall = side->nWall;
+	for (nSide = 0; nSide < 6; nSide++, sideP++) {
+		if (sideP->nWall <	wallCount) {
+			nWall = sideP->nWall;
 			if (nWall >= wallCount) {
 				if (m_bAutoFixBugs) {
-					side->nWall = wallCount;
+					sideP->nWall = wallCount;
 					sprintf_s (message, sizeof (message),"FIXED: Cube has an invalid wall number (wall=%d, cube=%d)",nWall,nSegment);
 					}
 				else
@@ -1744,7 +1744,7 @@ for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 						}
 					else
 						sprintf_s (message, sizeof (message),"ERROR: Cube's wall does not sit in cube (wall=%d, cube=%d)",nWall,nSegment);
-					if (UpdateStats (message,1,nSegment, wall->nSide, -1, -1, -1, nWall)) return true;
+					if (UpdateStats (message,1,nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 					}
 				}
 			}
@@ -1781,7 +1781,7 @@ for (vertnum= m_mine->VertCount (); vertnum; vertnum--, vStat++)
 	*vStat &= ~NEW_MASK;
 
 // mark all used verts
-CDSegment *segP = m_mine->Segments ();
+CSegment *segP = m_mine->Segments ();
 for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		*m_mine->VertStatus (segP->verts [point]) |= NEW_MASK;
@@ -1795,7 +1795,7 @@ for (vStat = m_mine->VertStatus (vertnum); vertnum >= 0; vertnum--, vStat--) {
 				memcpy (m_mine->Vertices (vertnum), m_mine->Vertices (vertnum + 1), (m_mine->VertCount () - vertnum) * sizeof (*m_mine->Vertices ()));
 				memcpy (m_mine->VertStatus (vertnum), m_mine->VertStatus (vertnum + 1), (m_mine->VertCount () - vertnum) * sizeof (*m_mine->VertStatus ()));
 				}
-			CDSegment *segP = m_mine->Segments ();
+			CSegment *segP = m_mine->Segments ();
 			for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
 					if (segP->verts [point] >= vertnum)

@@ -88,13 +88,13 @@ INT16	nSeg,	nSide, nTextures;
 INT16 tnum [2], segCount = m_mine->SegCount ();
 char	szName [80];
 INT32 h;
-CDSegment *segP = m_mine->Segments ();
-CDSide *side;
+CSegment *segP = m_mine->Segments ();
+CSide *sideP;
 // add textures that have been used to Texture 1 combo box
 for (nSeg = segCount; nSeg; nSeg--, segP++) {
-	for (side = segP->sides, nSide = 6; nSide; nSide--, side++) {
-		tnum [0] = side->nBaseTex;
-		tnum [1] = side->nOvlTex & 0x1fff;
+	for (side = segP->sides, nSide = 6; nSide; nSide--, sideP++) {
+		tnum [0] = sideP->nBaseTex;
+		tnum [1] = sideP->nOvlTex & 0x1fff;
 		INT32 i;
 		for (i = 0; i < 2; i++) {
 			if (tnum [i] != -1) {
@@ -222,9 +222,9 @@ if (!GetMine ())
 	return;
 
   INT16		i,j;
-  CDSegment *segP;
-  CDSide		*side;
-  CWall		*wall;
+  CSegment *segP;
+  CSide		*sideP;
+  CWall		*wallP;
   CTrigger	*trigger;
   CGameObject	*objP;
   INT16		nSegment, nSide, d1Texture, mode,
@@ -264,9 +264,9 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 
 // defined D2 wall parameters
 //--------------------------------------
-for (i = 0, wall = m_mine->Walls (); i < wallCount; i++, wall++) {
-	wall->controlling_trigger = 0;
-	wall->cloak_value = 0;
+for (i = 0, wall = m_mine->Walls (); i < wallCount; i++, wallP++) {
+	wallP->controlling_trigger = 0;
+	wallP->cloak_value = 0;
 	}
 
 // change trigger type and flags

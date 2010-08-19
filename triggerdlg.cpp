@@ -162,7 +162,7 @@ m_nType = 0;
 m_nStrength = 0;
 m_nTime = 0;
 m_bAutoAddWall = 1;
-m_nTargets = 0;
+m_targets = 0;
 m_iTarget = -1;
 m_nSliderValue = 10;
 m_bFindTrigger = true;
@@ -383,18 +383,18 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
-	m_nTargets = m_pTrigger->count;
+	m_targets = m_pTrigger->m_count;
 	INT32 i;
-	for (i = 0; i < m_nTargets ; i++) {
+	for (i = 0; i < m_targets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
 		plb->AddString (m_szTarget);
 		}
-	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
+	if ((m_iTarget < 0) || (m_iTarget >= m_targets))
 		m_iTarget = 0;
 	*m_szTarget = '\0';
 	}
 else
-	m_nTargets =
+	m_targets =
 	m_iTarget = 0;
 plb->SetCurSel (m_iTarget);
 }
@@ -497,7 +497,7 @@ if (!GetMine ())
 	INT16			trignum;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
-	CDSide		*side;
+	CSide		*sideP;
 
 FindTrigger (trignum);
 InitCBTriggerNo ();
@@ -535,7 +535,7 @@ if (m_nTrigger != -1) {
 	if (!m_nClass)
 		GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (FALSE);
 	m_nTime = m_pTrigger->time;
-	m_nTargets = m_pTrigger->count;
+	m_targets = m_pTrigger->m_count;
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
@@ -571,8 +571,8 @@ if (m_nTrigger != -1) {
 	}
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumTriggers () > 0);
 CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumTriggers () > 0);
-side = m_mine->OtherSide ();
-CTexToolDlg::Refresh (side->nBaseTex, side->nOvlTex, 1);
+sideP = m_mine->OtherSide ();
+CTexToolDlg::Refresh (sideP->nBaseTex, sideP->nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
 	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
 else
@@ -661,20 +661,20 @@ if (!GetMine ())
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CDSegment *segP = m_mine->Segments ();
-CDSide *side;
+CSegment *segP = m_mine->Segments ();
+CSide *sideP;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, segP++) {
-	side = segP->sides;
-	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
-		if (side->nWall >= MAX_WALLS (m_mine))
+	sideP = segP->sides;
+	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
+		if (sideP->nWall >= MAX_WALLS (m_mine))
 			continue;
-		CWall *wall = m_mine->Walls (side->nWall);
-		if (wall->nTrigger >= NumTriggers ())
+		CWall *wallP = m_mine->Walls (sideP->nWall);
+		if (wallP->nTrigger >= NumTriggers ())
 			continue;
 		if (bAll || m_mine->SideIsMarked (i, j)) {
-			m_mine->DeleteTrigger (wall->nTrigger);
+			m_mine->DeleteTrigger (wallP->nTrigger);
 			nDeleted++;
 			}
 		}
@@ -699,7 +699,7 @@ if (!GetMine ())
 	return;
 
 UINT16 nWall;
-CWall *wall;
+CWall *wallP;
 
 // find first wall with this trigger
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
@@ -709,23 +709,23 @@ if (m_nClass) {
 	m_mine->Current ()->nObject = m_mine->ObjTriggers (m_nTrigger)->nObject;
 	}
 else {
-	for (nWall = 0, wall = m_mine->Walls (); nWall < m_mine->GameInfo ().walls.count; nWall++, wall++)
-		if (wall->nTrigger == m_nTrigger)
+	for (nWall = 0, wallP = m_mine->Walls (); nWall < m_mine->GameInfo ().walls.count; nWall++, wallP++)
+		if (wallP->nTrigger == m_nTrigger)
 			break;
 	if (nWall >= m_mine->GameInfo ().walls.count) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((wall->nSegment >= m_mine->SegCount ()) || (wall->nSegment < 0) || 
-		 (wall->nSide < 0) || (wall->nSide > 5)) {
+	if ((wallP->m_nSegment >= m_mine->SegCount ()) || (wallP->m_nSegment < 0) || 
+		 (wallP->m_nSide < 0) || (wallP->m_nSide > 5)) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((m_mine->Current ()->nSegment != wall->nSegment) ||
-		 (m_mine->Current ()->nSide != wall->nSide)) {
-		m_mine->SetCurrent (wall->nSegment, wall->nSide);
+	if ((m_mine->Current ()->nSegment != wallP->m_nSegment) ||
+		 (m_mine->Current ()->nSide != wallP->m_nSide)) {
+		m_mine->SetCurrent (wallP->m_nSegment, wallP->m_nSide);
 		}
 	}
 SetTriggerPtr ();
@@ -880,8 +880,8 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-m_nTargets = m_pTrigger->count;
-if (m_nTargets >= MAX_TRIGGER_TARGETS) {
+m_targets = m_pTrigger->m_count;
+if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Trigger tool: No more targets possible for this trigger.");
 	return;
 	}
@@ -893,7 +893,7 @@ theApp.SetModified (TRUE);
 m_pTrigger->Add (nSegment, nSide + 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
-LBTargets ()->SetCurSel (m_nTargets++);
+LBTargets ()->SetCurSel (m_targets++);
 *m_szTarget = '\0';
 Refresh ();
 }
@@ -970,7 +970,7 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
 SetTriggerPtr ();
-m_nTargets = m_pTrigger->Delete (m_iTarget);
+m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;
@@ -1002,7 +1002,7 @@ SetTriggerPtr ();
 // get affected cube/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->m_count))
 	return;
 INT16 nSegment = m_pTrigger->Segment (m_iTarget);
 if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()))
@@ -1095,7 +1095,7 @@ m_mine->AddUnlockTrigger ();
 
 BOOL CTriggerTool::TextureIsVisible ()
 {
-return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->count);
+return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->m_count);
 }
 
                         /*--------------------------*/
@@ -1105,7 +1105,7 @@ void CTriggerTool::SelectTexture (INT32 nIdC, bool bFirst)
 if (!GetMine ())
 	return;
 
-	CDSide		*side = m_mine->CurrSide ();
+	CSide		*sideP = m_mine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	INT32			index = pcb->GetCurSel ();
 	

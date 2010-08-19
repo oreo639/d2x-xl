@@ -112,7 +112,7 @@ void square2quad_matrix(double A[3][3],POINT a[4])
 // TextureMap()
 //------------------------------------------------------------------------
 void TextureMap(INT32 resolution,
-				CDSegment *segment,
+				CSegment *segment,
 				INT16 nSide,
 				UINT8 *bmData,
 				UINT16 bmWidth,
@@ -141,7 +141,7 @@ void TextureMap(INT32 resolution,
 	// TEMPORARY
 	INT32 inc_resolution = 1<<resolution;
 	CSideKey face (INT16 (segment - mine->Segments ()), nSide);
-	INT16 flick_light = mine->GetFlickeringLight (face.nSegment, face.nSide);
+	INT16 flick_light = mine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
 	INT16 dscan_light,scan_light;
 	INT16 light[4];
 	UINT16 bmWidth2;
@@ -204,7 +204,7 @@ if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
 	INT32 dlIdxCount = mine->GameInfo ().lightDeltaIndices.count;
 	CLightDeltaValue* CLightDeltaValues;
-	if (!lightStatus [face.nSegment][face.nSide].bIsOn &&
+	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
 		 (lightDeltaIndices = mine->LightDeltaIndex ()) &&
 		 (CLightDeltaValues = mine->LightDeltaValues ())) {
 		// search delta light index to see if current side has a light

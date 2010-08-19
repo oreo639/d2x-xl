@@ -325,23 +325,23 @@ void CTextureTool::SetWallColor (void)
 if (m_mine->UseTexColors ()) {
 	INT16			nSegment, nSide;
 	INT16			nBaseTex = m_mine->CurrSide ()->nBaseTex;
-	CDSegment	*segP = m_mine->Segments ();
-	CDSide		*side;
-	CWall		*wall;
+	CSegment	*segP = m_mine->Segments ();
+	CSide		*sideP;
+	CWall			*wallP;
 	bool			bAll = !m_mine->GotMarkedSides ();
 
 	for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
-		for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++) {
-			if (side->nWall < 0)
+		for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
+			if (sideP->nWall < 0)
 				continue;
-			wall = m_mine->Walls (side->nWall);
-			if (wall->type != WALL_TRANSPARENT)
+			wallP = m_mine->Walls (sideP->nWall);
+			if (wallP->type != WALL_TRANSPARENT)
 				continue;
 			if (!(bAll || m_mine->SideIsMarked (nSegment, nSide)))
 				continue;
-			if (side->nBaseTex != nBaseTex)
+			if (sideP->nBaseTex != nBaseTex)
 				continue;
-			wall->cloak_value = m_nColorIndex;
+			wallP->cloak_value = m_nColorIndex;
 			}
 		}
 	}

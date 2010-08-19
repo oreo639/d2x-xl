@@ -323,9 +323,9 @@ if (nVisible > 0) {
 		INT16 nSegment = m_bOtherSeg ? m_mine->Other ()->nSegment : m_mine->Current ()->nSegment;
 		INT16 nSide = m_bOtherSeg ? m_mine->Other ()->nSide : m_mine->Current ()->nSide;
 		if (nVisible = m_mine->IsWall (nSegment, nSide)) {
-			CDSide *side = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
-			nBaseTex = side->nBaseTex;
-			nOvlTex = side->nOvlTex & 0x3fff;
+			CSide *sideP = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
+			nBaseTex = sideP->nBaseTex;
+			nOvlTex = sideP->nOvlTex & 0x3fff;
 			}
 		}
 	}
@@ -340,8 +340,8 @@ void CTexToolDlg::OnPaint ()
 {
 CToolDlg::OnPaint ();
 if (TextureIsVisible ()) {
-	CDSide *side = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
-	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, side->nBaseTex, side->nOvlTex & 0x1fff);
+	CSide *sideP = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
+	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, sideP->nBaseTex, sideP->nOvlTex & 0x1fff);
 	}
 else
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES (m_mine));
@@ -382,16 +382,16 @@ if (!TextureIsVisible ())
 if (!GetMine ())
 	return;
 
-	CDSegment *segP = m_bOtherSeg ? m_mine->OtherSeg () : m_mine->CurrSeg ();
+	CSegment *segP = m_bOtherSeg ? m_mine->OtherSeg () : m_mine->CurrSeg ();
 
 	UINT16 texture [2];
 	INT32 bScroll;
 	INT32 x,y;
 
-	CDSide	*side = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
+	CSide	*sideP = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
 
-texture [0] = side->nBaseTex & 0x3fff;
-texture [1] = side->nOvlTex;
+texture [0] = sideP->nBaseTex & 0x3fff;
+texture [1] = sideP->nOvlTex;
 
 // if texture1 is a scrolling texture, then offset the textures and
 // redraw them, then return
@@ -417,7 +417,7 @@ scroll_offset_y = 0;
 
 // abort if this is not a wall
 #ifndef _DEBUG
-UINT16 nWall = side->nWall;
+UINT16 nWall = sideP->nWall;
 if (nWall >= m_mine->GameInfo ().walls.count)
 	return;
 

@@ -36,8 +36,8 @@ char *BLOCKOP_HINT =
 
 INT16 CMine::ReadSegmentInfo (FILE *fBlk) 
 {
-	CDSegment		*segP;
-	CDSide			*side;
+	CSegment		*segP;
+	CSide			*sideP;
 #if 0
 	CGameObject			*objP;
 	INT16				objnum, segObjCount;
@@ -153,24 +153,24 @@ while(!feof(fBlk)) {
 	// read in side information 
 	side = segP->sides;
 	INT32 nSide;
-	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, side++) {
+	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
 		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
-		side->nWall = NO_WALL (this);
-		fscanf_s (fBlk, "    tmap_num %hd\n",&side->nBaseTex);
-		fscanf_s (fBlk, "    tmap_num2 %hd\n",&side->nOvlTex);
+		sideP->nWall = NO_WALL (this);
+		fscanf_s (fBlk, "    tmap_num %hd\n",&sideP->nBaseTex);
+		fscanf_s (fBlk, "    tmap_num2 %hd\n",&sideP->nOvlTex);
 		for (j = 0; j < 4; j++)
 			fscanf_s (fBlk, "    uvls %hd %hd %hd\n",
-						&side->uvls [j].u,
-						&side->uvls [j].v,
-						&side->uvls [j].l);
+						&sideP->uvls [j].u,
+						&sideP->uvls [j].v,
+						&sideP->uvls [j].l);
 		if (bExtBlkFmt) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
-			side->nWall = (UINT16) byteBuf;
-			if (side->nWall != NO_WALL (this)) {
+			sideP->nWall = (UINT16) byteBuf;
+			if (sideP->nWall != NO_WALL (this)) {
 				CWall w;
 				CTrigger t;
 				memset (&w, 0, sizeof (w));
@@ -216,9 +216,9 @@ while(!feof(fBlk)) {
 							}
 						}
 					nNewWalls++;
-					side->nWall = GameInfo ().walls.count++;
+					sideP->nWall = GameInfo ().walls.count++;
 					w.nSegment = nSegment;
-					*Walls (side->nWall) = w;
+					*Walls (sideP->nWall) = w;
 					}
 				}
 #if 0
@@ -396,10 +396,10 @@ while(!feof(fBlk)) {
 CTrigger *trigger = Triggers (GameInfo ().triggers.count);
 for (i = nNewTriggers; i; i--) {
 	trigger--;
-	for (j = 0; j < trigger->count; j++) {
+	for (j = 0; j < trigger->m_count; j++) {
 		if (trigger->Segment (j) >= 0)
 			trigger->Segment (j) = xlatSegNum [trigger->Segment (j)];
-		else if (trigger->count == 1) {
+		else if (trigger->m_count == 1) {
 			DeleteTrigger (INT16 (trigger - Triggers ()));
 			i--;
 			}
@@ -434,9 +434,9 @@ return (nNewSegs);
 void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/) 
 {
 	INT16				nSegment;
-	CDSegment		*segP;
-	CDSide			*side;
-	CWall			*wall;
+	CSegment		*segP;
+	CSide			*sideP;
+	CWall			*wallP;
 	INT16				i,j;
 	tFixVector		origin;
 	struct dvector	x_prime,y_prime,z_prime,vect;
@@ -503,53 +503,53 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->wall_bitmask & MARKED_MASK) {
 		fprintf (fBlk, "segment %d\n",nSegment);
 		side = segP->sides;
-		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, side++) {
+		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
 			fprintf (fBlk, "  side %d\n",i);
-			fprintf (fBlk, "    tmap_num %d\n",side->nBaseTex);
-			fprintf (fBlk, "    tmap_num2 %d\n",side->nOvlTex);
+			fprintf (fBlk, "    tmap_num %d\n",sideP->nBaseTex);
+			fprintf (fBlk, "    tmap_num2 %d\n",sideP->nOvlTex);
 			for (j = 0; j < 4; j++) {
 				fprintf (fBlk, "    uvls %d %d %d\n",
-				side->uvls [j].u,
-				side->uvls [j].v,
-				side->uvls [j].l);
+				sideP->uvls [j].u,
+				sideP->uvls [j].v,
+				sideP->uvls [j].l);
 				}
 			if (bExtBlkFmt) {
 				fprintf (fBlk, "    nWall %d\n", 
-							(side->nWall < GameInfo ().walls.count) ? side->nWall : NO_WALL (this));
-				if (side->nWall < GameInfo ().walls.count) {
-					wall = Walls (side->nWall);
-					fprintf (fBlk, "        segment %d\n", wall->nSegment);
-					fprintf (fBlk, "        side %d\n", wall->nSide);
-					fprintf (fBlk, "        hps %d\n", wall->hps);
-					fprintf (fBlk, "        type %d\n", wall->type);
-					fprintf (fBlk, "        flags %d\n", wall->flags);
-					fprintf (fBlk, "        state %d\n", wall->state);
-					fprintf (fBlk, "        nClip %d\n", wall->nClip);
-					fprintf (fBlk, "        keys %d\n", wall->keys);
-					fprintf (fBlk, "        cloak %d\n", wall->cloak_value);
-					if ((wall->nTrigger < 0) || (wall->nTrigger >= GameInfo ().triggers.count))
+							(sideP->nWall < GameInfo ().walls.count) ? sideP->nWall : NO_WALL (this));
+				if (sideP->nWall < GameInfo ().walls.count) {
+					wall = Walls (sideP->nWall);
+					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
+					fprintf (fBlk, "        side %d\n", wallP->m_nSide);
+					fprintf (fBlk, "        hps %d\n", wallP->hps);
+					fprintf (fBlk, "        type %d\n", wallP->type);
+					fprintf (fBlk, "        flags %d\n", wallP->flags);
+					fprintf (fBlk, "        state %d\n", wallP->state);
+					fprintf (fBlk, "        nClip %d\n", wallP->nClip);
+					fprintf (fBlk, "        keys %d\n", wallP->keys);
+					fprintf (fBlk, "        cloak %d\n", wallP->cloak_value);
+					if ((wallP->nTrigger < 0) || (wallP->nTrigger >= GameInfo ().triggers.count))
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
-						CTrigger *trigger = Triggers (wall->nTrigger);
+						CTrigger *trigger = Triggers (wallP->nTrigger);
 						INT32 iTarget;
 						INT32 count = 0;
 						// count trigger targets in marked area
-						for (iTarget = 0; iTarget < trigger->count; iTarget++)
+						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 							if (Segments (trigger->Segment (iTarget))->wall_bitmask & MARKED_MASK)
 								count++;
 #if 0
-						if (trigger->count && !count)	// no targets in marked area
+						if (trigger->m_count && !count)	// no targets in marked area
 							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS (this));
 						else 
 #endif
 							{
-							fprintf (fBlk, "        trigger %d\n", wall->nTrigger);
+							fprintf (fBlk, "        trigger %d\n", wallP->nTrigger);
 							fprintf (fBlk, "			    type %d\n", trigger->type);
 							fprintf (fBlk, "			    flags %ld\n", trigger->flags);
 							fprintf (fBlk, "			    value %ld\n", trigger->value);
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
 							fprintf (fBlk, "			    count %d\n", count);
-							for (iTarget = 0; iTarget < trigger->count; iTarget++)
+							for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 								if (Segments (trigger->Segment (iTarget))->wall_bitmask & MARKED_MASK) {
 									fprintf (fBlk, "			        segP %d\n", trigger->Segment (iTarget));
 									fprintf (fBlk, "			        side %d\n", trigger->Side (iTarget));
@@ -664,7 +664,7 @@ WriteSegmentInfo (fBlk, 0);
 // the SegCount () will be decremented for each nSegment in loop.
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-CDSegment *segP = Segments () + SegCount ();
+CSegment *segP = Segments () + SegCount ();
 for (nSegment = SegCount () - 1; nSegment; nSegment--)
     if ((--segP)->wall_bitmask & MARKED_MASK) {
 		if (SegCount () <= 1)
@@ -813,7 +813,7 @@ if (!ReadBlock (szFile, 0))
 
 INT32 CMine::ReadBlock (char *pszBlockFile,INT32 option) 
 {
-	CDSegment *segP,*seg2;
+	CSegment *segP,*seg2;
 	INT16 nSegment,seg_offset;
 	INT16 count,child;
 	INT16 vertnum;

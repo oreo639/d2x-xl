@@ -530,11 +530,16 @@ public:
 
 class CSideKey {
 public:
-	INT16	nSegment;
-	INT16	nSide;
+	INT16	m_nSegment;
+	INT16	m_nSide;
 
-	CSideKey(INT16 segP = 0, INT16 side = 0) : nSegment(segP), nSide(side) {}
-	inline bool operator==(CSideKey& other) { return (nSegment == other.nSegment) && (nSide == other.nSide); }
+	CSideKey(INT16 nSegment = 0, INT16 nSide = 0) : m_nSegment(nSegment), m_nSide(nSide) {}
+	inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
+	inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }
+	inline bool operator < (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide < other.m_nSide)); }
+	inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
+	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
+	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
 };
 
 class CWall : public CSideKey {
@@ -597,47 +602,49 @@ typedef struct {
 
 //extern char	Wall_names[7][10]; // New for Descent 2
 
-class CTriggerTargetList {
+class CTriggerTargets {
 public:
-	INT16		count;
-	CSideKey	targets [MAX_TRIGGER_TARGETS];
+	INT16		m_count;
+	CSideKey	m_targets [MAX_TRIGGER_TARGETS];
 
-	inline CSideKey& operator[](UINT32 i) { return targets [i]; }
+	CTriggerTargets () : m_count (0) {}
+
+	inline CSideKey& operator[](UINT32 i) { return m_targets [i]; }
 
 	inline INT16 Add (CSideKey key) {
-		if (count < sizeof (targets) / sizeof (targets [0]))
-			targets [count] = key;
-		return count++;
+		if (m_count < sizeof (m_targets) / sizeof (m_targets [0]))
+			m_targets [m_count] = key;
+		return m_count++;
 		}
 	inline INT16 Add (INT16 nSegment, INT16 nSide) { return Add (CSideKey (nSegment, nSide)); }
 
 	inline INT16 Delete (int i = -1) {
 		if (i < 0)
-			i = count - 1;
-		if ((count > 0) && (i < --count)) {
-			int l = count - i;
+			i = m_count - 1;
+		if ((m_count > 0) && (i < --m_count)) {
+			int l = m_count - i;
 			if (l)
-				memcpy (targets + i, targets + i + 1, l * sizeof (targets [0]));
-			targets [count] = CSideKey (0,0);
+				memcpy (m_targets + i, m_targets + i + 1, l * sizeof (m_targets [0]));
+			m_targets [m_count] = CSideKey (0,0);
 			}
-		return count;
+		return m_count;
 		}	
 
-	inline INT16 Pop (void) { return Delete (count - 1); }
+	inline INT16 Pop (void) { return Delete (m_count - 1); }
 
 	inline int Find (CSideKey key) { 
-		for (int i = 0; i < count; i++)
-			if (targets [i] == key)
+		for (int i = 0; i < m_count; i++)
+			if (m_targets [i] == key)
 				return i;
 		return -1;
 		}
 	inline int Find (INT16 nSegment, INT16 nSide) { return Find (CSideKey (nSegment, nSide)); }
-	inline INT16& Segment (UINT32 i) { return targets [i].nSegment; }
-	inline INT16& Side (UINT32 i) { return targets [i].nSide; }
+	inline INT16& Segment (UINT32 i) { return m_targets [i].m_nSegment; }
+	inline INT16& Side (UINT32 i) { return m_targets [i].m_nSide; }
 
 };
 
-class CTrigger : public CTriggerTargetList {
+class CTrigger : public CTriggerTargets {
 public:
 	UINT8		type;
 	UINT16	flags;
@@ -677,7 +684,7 @@ public:
 //extern INT32	     Num_static_lights;
 
 
-class CReactorTrigger : public CTriggerTargetList {
+class CReactorTrigger : public CTriggerTargets {
 public:
 	INT32 Read (FILE *fp, INT32 version);
 	void Write (FILE *fp, INT32 version);

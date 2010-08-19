@@ -108,7 +108,7 @@ void CMine::UntwistSegment (INT16 nSegment,INT16 nSide)
 {
   double len, min_len;
   INT16 index,j;
-  CDSegment *segP;
+  CSegment *segP;
   INT16 verts [4];
 
 segP = Segments (nSegment);
@@ -316,7 +316,7 @@ void CMine::TunnelGenerator() {
 
 double length;
 INT32 i,j,vertnum,spline;
-CDSegment *segP;
+CSegment *segP;
 
 if (!m_bSplineActive) {
 	m_nMaxSplines = MAX_SEGMENTS (this) - SegCount ();
@@ -513,7 +513,7 @@ void CMine::CalcSpline ()
   double length;
   double angle;
   INT32 i,j;
-  CDSegment *segP;
+  CSegment *segP;
   INT16 vertnum;
   tFixVector vertex;
 //  tFixVector opp_center;

@@ -551,14 +551,14 @@ for (i = mine->SegCount (); i; i--)
 		pls->bWasOn = pls->bIsOn;
 for (h = 0; h < mine->GameInfo ().lightDeltaIndices.count; h++, pdli++) {
 	if (bD2XLights) {
-		nSrcSide = pdli->nSegment;
-		nSrcSeg = pdli->nSide;
-		i = pdli->count;
+		nSrcSide = pdli->m_nSegment;
+		nSrcSeg = pdli->m_nSide;
+		i = pdli->m_count;
 		}
 	else {
-		nSrcSide = pdli->nSegment;
-		nSrcSeg = pdli->nSide;
-		i = pdli->count;
+		nSrcSide = pdli->m_nSegment;
+		nSrcSeg = pdli->m_nSide;
+		i = pdli->m_count;
 		}	
 	j = mine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
@@ -802,7 +802,7 @@ else {
 void CMineView::CalcSegDist (CMine *mine)
 {
 	INT32			h, i, j, c, nDist, segNum = mine->SegCount (), sideNum;
-	CDSegment	*segI, *segJ;
+	CSegment	*segI, *segJ;
 	INT16			*segRef = new INT16 [segNum];
 
 for (i = segNum, segI = mine->Segments (); i; i--, segI++)
@@ -836,7 +836,7 @@ delete segRef;
 void CMineView::DrawWireFrame (CMine *mine, bool bPartial)
 {
 	INT32			nSegment;
-	CDSegment	*segP;
+	CSegment	*segP;
 
 CalcSegDist (mine);
 m_pDC->SelectObject(m_penGray);
@@ -899,7 +899,7 @@ void CMineView::DrawTextureMappedCubes (CMine *mine)
 	UINT32 nSegment;
 	INT16	 iVertex;
 	INT32	 z, zMax;
-	CDSegment *segP;
+	CSegment *segP;
 
 	// Get shading table data
 UINT8* light_index = 0;
@@ -943,14 +943,14 @@ return true;
 
 								/*-----------------------*/
 
-void CMineView::DrawCube (CDSegment *segP, bool bPartial)
+void CMineView::DrawCube (CSegment *segP, bool bPartial)
 {
 DrawCubeQuick (segP, bPartial);
 }
 
 void CMineView::DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it) 
 {
-	CDSegment *segP = mine->Segments (nSegment);
+	CSegment *segP = mine->Segments (nSegment);
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 
@@ -1078,7 +1078,7 @@ void CMineView::DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum
 //			 draw_partial_segment()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubePartial (CDSegment *segP) {
+void CMineView::DrawCubePartial (CSegment *segP) {
   INT16 line;
   INT16 vert0,vert1;
 
@@ -1137,7 +1137,7 @@ if (left < r)
 
 
 
-void CMineView::DrawCubeQuick	(CDSegment *segP, bool bPartial)
+void CMineView::DrawCubeQuick	(CSegment *segP, bool bPartial)
 {
 if (!GetMine ())
 	return;
@@ -1147,7 +1147,7 @@ if (!Visible (segP))
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 	INT32	chSegI, chSideI, chVertI, i, j, commonVerts;
-	CDSegment	*child;
+	CSegment	*child;
 	INT16 *pv = segP->verts;
 
 for (i = 0; i < 8; i++, pv++) {
@@ -1401,7 +1401,7 @@ DrawLine (pTx, pt [0], pt [3], 1);
 // DrawCubeTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubeTextured(CDSegment *segP, UINT8* light_index) 
+void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index) 
 {
 
 	INT16 x_max = m_viewWidth * 2;
@@ -1468,7 +1468,7 @@ void CMineView::DrawCubeTextured(CDSegment *segP, UINT8* light_index)
 //                        draw_segment_points()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubePoints (CDSegment *segP)
+void CMineView::DrawCubePoints (CSegment *segP)
 {
 	INT16		*pv = segP->verts;
 	COLORREF	color = RGB (128,128,128);
@@ -1496,7 +1496,7 @@ pDC->SetPixel (m_viewPoints [segP.verts [7]].x, m_viewPoints [segP.verts [7]].y,
 
 void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it) 
 {
-	CDSegment	*segP;
+	CSegment	*segP;
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 	INT16 i;
@@ -1574,7 +1574,7 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 // DrawCurrentCube()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCurrentCube(CDSegment *segP, bool bPartial)
+void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 {
 	INT16 nSide = m_Current->nSide;
 	INT16 linenum = m_Current->nPoint;
@@ -1662,7 +1662,7 @@ void CMineView::DrawCurrentCube(CDSegment *segP, bool bPartial)
 // Action - draws a line starting with lowest vert
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine(CDSegment *segP,INT16 vert1,INT16 vert2) 
+void CMineView::DrawLine(CSegment *segP,INT16 vert1,INT16 vert2) 
 {
 	if (vert2 > vert1) {
 		m_pDC->MoveTo(m_viewPoints [segP->verts [vert1]].x, m_viewPoints [segP->verts [vert1]].y);
@@ -1679,9 +1679,9 @@ void CMineView::DrawLine(CDSegment *segP,INT16 vert1,INT16 vert2)
 void CMineView::DrawWalls(CMine *mine) 
 {
 	CWall		*walls = mine->Walls ();
-	CDSegment	*segments = mine->Segments ();
+	CSegment	*segments = mine->Segments ();
 	tFixVector	*vertices = mine->Vertices ();
-	CDSegment	*segP;
+	CSegment	*segP;
 	INT16 i,j;
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
@@ -1890,7 +1890,7 @@ for (i=0;i<mine->FlickerLightCount ();i++)
 
 void CMineView::DrawOctagon(CMine *mine, INT16 nSide, INT16 nSegment) 
 {
-	CDSegment *segP;
+	CSegment *segP;
 	INT16 j;
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
@@ -1966,7 +1966,7 @@ j = MAX_VERTICES (mine) - 1;
 tFixVector *verts = mine->Vertices (j);
 for (h = n_splines * 4, i = 0; i < h; i++, j--, verts--)
 	m_matrix.SetPoint (verts, m_viewPoints + j);
-CDSegment *segP = mine->Segments (MAX_SEGMENTS (mine) - 1);
+CSegment *segP = mine->Segments (MAX_SEGMENTS (mine) - 1);
 for (i = 0; i < n_splines; i++, segP--)
 	DrawCubeQuick (segP);
 }
@@ -2748,7 +2748,7 @@ void CMineView::CenterCube()
 {
 if (!GetMine ())
 	return;
-	CDSegment& segP = m_mine->Segments () [m_Current->nSegment];
+	CSegment& segP = m_mine->Segments () [m_Current->nSegment];
 	tFixVector *vMine = m_mine->Vertices ();
 	INT16 *vSeg = segP.verts;
 
@@ -3088,7 +3088,7 @@ Refresh ();
 
 bool CMineView::VertexVisible (INT32 v)
 {
-	CDSegment	*segP;
+	CSegment	*segP;
 	INT32			i, j;
 
 if (!m_nViewDist)
@@ -3259,7 +3259,7 @@ bool CMineView::SelectCurrentSegment (INT16 direction, long xMouse, long yMouse)
 if (!GetMine ())
 	return false;
 
-  CDSegment		*segP;
+  CSegment		*segP;
   CRect			rc;
 //  extern INT16 xMouse,yMouse;
   INT16			cur_segment, next_segment;
@@ -3350,7 +3350,7 @@ void CMineView::CalcSegmentCenter(tFixVector &pos,INT16 nSegment)
 if (!GetMine ())
 	return;
 
-CDSegment *segP = m_mine->Segments () + nSegment;
+CSegment *segP = m_mine->Segments () + nSegment;
 tFixVector *vMine = m_mine->Vertices ();
 INT16 *vSeg = segP->verts;
 pos.x  =
@@ -3791,7 +3791,7 @@ void CMineView::ForwardCube (INT32 dir)
 if (!GetMine ())
 	return;
 
-	CDSegment *segP,*childseg;
+	CSegment *segP,*childseg;
 	INT16 child,nSide;
 	bool bFwd = (dir == 1);
 
@@ -3871,13 +3871,13 @@ bool CMineView::SelectOtherSide ()
 if (!GetMine ())
 	return false;
 
-INT16 opp_segnum, opp_sidenum;
+INT16 nOppSeg, nOppSide;
 
-if (!m_mine->GetOppositeSide (opp_segnum, opp_sidenum))
+if (!m_mine->GetOppositeSide (nOppSeg, nOppSide))
 	return false;
 
-m_mine->Current ()->nSegment = opp_segnum;
-m_mine->Current ()->nSide = opp_sidenum;
+m_mine->Current ()->nSegment = nOppSeg;
+m_mine->Current ()->nSide = nOppSide;
 Refresh (true);
 //theApp.ToolView ()->CubeTool ()->Refresh ();
 return true;
@@ -4253,8 +4253,8 @@ if (!glHandles [nTexture]) {
 
 void CMineView::GLRenderTexture (INT16 nSegment, INT16 nSide, INT16 nTexture)
 {
-	CDSegment *segP = m_mine->Segments (nSegment);
-	CDSide *side = segP->sides + nSide;
+	CSegment *segP = m_mine->Segments (nSegment);
+	CSide *sideP = segP->sides + nSide;
 	uvl *uvls;
 	double l;
 #if OGL_MAPPED
@@ -4275,7 +4275,7 @@ glBindTexture (GL_TEXTURE_2D, glHandles [nTexture & 0x1FFF]);
 glBegin (GL_TRIANGLE_FAN);
 INT32 i;
 for (i = 0; i < 4; i++) {
-	uvls = side->uvls + j;
+	uvls = sideP->uvls + j;
 	l = (bShaded ? uvls->l: F1_0) / UV_FACTOR;
 	glColor3d (l,l,l);
 	switch (h) {
@@ -4308,12 +4308,12 @@ glEnd ();
 
 void CMineView::GLRenderFace (INT16 nSegment, INT16 nSide)
 {
-	CDSegment *segP = m_mine->Segments (nSegment);
-	CDSide *side = segP->sides + nSide;
+	CSegment *segP = m_mine->Segments (nSegment);
+	CSide *sideP = segP->sides + nSide;
 	tFixVector *verts = m_mine->Vertices ();
 	UINT16 nWall = segP->sides [nSide].nWall;
 
-if (side->nBaseTex < 0)
+if (sideP->nBaseTex < 0)
 	return;
 CWall *pWall = (nWall == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->m_mine->Walls (nWall);
 if ((segP->children [nSide] > -1) &&
@@ -4344,9 +4344,9 @@ b.y = p3->y - p0->y;
 if (a.x*b.y > a.y*b.x)
 	return;
 #endif
-GLRenderTexture (nSegment, nSide, side->nBaseTex);
-if (side->nOvlTex)
-	GLRenderTexture (nSegment, nSide, side->nOvlTex);
+GLRenderTexture (nSegment, nSide, sideP->nBaseTex);
+if (sideP->nOvlTex)
+	GLRenderTexture (nSegment, nSide, sideP->nOvlTex);
 }
 
                         /*--------------------------*/

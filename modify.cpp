@@ -130,7 +130,7 @@ z = center.z - opp_center.z;
 		{4,9,10,11},
 		{11,10,9,4}
 		};
-	CDSegment *segP;
+	CSegment *segP;
 	INT16 point0,point1;
 	tFixVector *vector0,*vector1;
 	bool ok_to_move;
@@ -285,7 +285,7 @@ bool CMine::RotateSelection (double angle, bool perpendicular)
 {
 INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
-CDSegment *segP = Segments (nSegment);
+CSegment *segP = Segments (nSegment);
 tFixVector center,opp_center;
 INT32 i,pts [4];
 
@@ -362,7 +362,7 @@ bool CMine::SizeItem (INT32 inc)
 {
 	INT32 nSegment = Current ()->nSegment;
 	INT32 nSide = Current ()->nSide;
-	CDSegment *segP = Segments (nSegment);
+	CSegment *segP = Segments (nSegment);
 	INT32 i, j, point [4];
 	bool result = false;
 
@@ -545,7 +545,7 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::SizeLine (CDSegment *segP,INT32 point0,INT32 point1,INT32 inc) 
+bool CMine::SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc) 
 {
 double x,y,z,radius;
 
@@ -602,7 +602,7 @@ INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
 INT32 nPoint = Current ()->nPoint;
 INT32 nLine = Current ()->nLine;
-CDSegment *segP = Segments (nSegment);
+CSegment *segP = Segments (nSegment);
 INT16 i;
 
 theApp.SetModified (TRUE);
@@ -743,7 +743,7 @@ bool CMine::SpinSelection (double angle)
 {
 	INT32 nSegment = Current ()->nSegment;
 	INT32 nSide = Current ()->nSide;
-	CDSegment *segP = Segments (nSegment);
+	CSegment *segP = Segments (nSegment);
 	CGameObject *objP;
 	tFixVector center,opp_center;
 	INT16 i;

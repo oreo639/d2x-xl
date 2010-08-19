@@ -235,7 +235,7 @@ public:
 		return (m_nViewDist <= 10) ? m_nViewDist : 
 		(m_nViewDist < 20) ? 10 + 2 * (m_nViewDist - 10) : 30 + 3 * (m_nViewDist - 20);
 		}
-	inline bool Visible (CDSegment *segP) {
+	inline bool Visible (CSegment *segP) {
 		if ((segP->function == SEGMENT_FUNC_SKYBOX) && !ViewFlag (eViewMineSkyBox))
 			return false;
 		if (!m_nViewDist)
@@ -255,15 +255,15 @@ public:
 	void	DrawWireFrame(CMine *mine, bool bPartial);
 	void	DrawTextureMappedCubes(CMine *mine);
 	void	DrawMarkedCubes (CMine *mine, INT16 clear_it = 0);
-	void	DrawCube(CDSegment *segP, bool bPartial);
+	void	DrawCube(CSegment *segP, bool bPartial);
 	void	DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it = 0);
-	void	DrawCubePartial (CDSegment *segP);
-	void	DrawCubeQuick(CDSegment *segP, bool bPartial = false);
-	void	DrawCubeTextured(CDSegment *segP, UINT8* light_index);
-	void	DrawCubePoints (CDSegment *segP);
+	void	DrawCubePartial (CSegment *segP);
+	void	DrawCubeQuick(CSegment *segP, bool bPartial = false);
+	void	DrawCubeTextured(CSegment *segP, UINT8* light_index);
+	void	DrawCubePoints (CSegment *segP);
 
-	void	DrawCurrentCube(CDSegment *segP, bool bPartial);
-	void	DrawLine(CDSegment *segP,INT16 vert1,INT16 vert2);
+	void	DrawCurrentCube(CSegment *segP, bool bPartial);
+	void	DrawLine(CSegment *segP,INT16 vert1,INT16 vert2);
 	void	DrawLine (CDTexture *pTx, POINT pt0, POINT pt1, UINT8 color);
 	void	DrawAnimDirArrows (INT16 texture1, CDTexture *pTx);
 

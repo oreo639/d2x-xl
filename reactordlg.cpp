@@ -47,7 +47,7 @@ void CReactorTool::Reset ()
 m_nCountDown = 30;
 m_nSecretReturn = 0;
 m_nTrigger = 0;
-m_nTargets = 0;
+m_targets = 0;
 m_iTarget = -1;
 *m_szTarget = '\0';
 }
@@ -101,18 +101,18 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
-	m_nTargets = m_pTrigger->count;
+	m_targets = m_pTrigger->m_count;
 	INT32 i;
-	for (i = 0; i < m_nTargets ; i++) {
+	for (i = 0; i < m_targets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
 		plb->AddString (m_szTarget);
 		}
-	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
+	if ((m_iTarget < 0) || (m_iTarget >= m_targets))
 		m_iTarget = 0;
 	*m_szTarget = '\0';
 	}
 else
-	m_nTargets = 
+	m_targets = 
 	m_iTarget = 0;
 plb->SetCurSel (m_iTarget);
 }
@@ -178,8 +178,8 @@ void CReactorTool::AddTarget (INT16 nSegment, INT16 nSide)
 {
 if (!GetMine ())
 	return;
-m_nTargets = m_pTrigger->count;
-if (m_nTargets >= MAX_TRIGGER_TARGETS) {
+m_targets = m_pTrigger->m_count;
+if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Reactor tool: No more targets possible for this trigger.");
 	return;
 	}
@@ -191,7 +191,7 @@ theApp.SetModified (TRUE);
 m_pTrigger->Add (nSegment, nSide - 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
-LBTargets ()->SetCurSel (m_nTargets++);
+LBTargets ()->SetCurSel (m_targets++);
 *m_szTarget = '\0';
 Refresh ();
 }
@@ -235,7 +235,7 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
-m_nTargets = m_pTrigger->Delete (m_iTarget);
+m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;
@@ -279,7 +279,7 @@ if (!GetMine ())
 // get affected cube/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->m_count))
 	return;
 
 INT16 nSegment = m_pTrigger->Segment (m_iTarget);

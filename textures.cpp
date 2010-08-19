@@ -1166,8 +1166,8 @@ if (!pDC)
 	char			szFile [256];
 	BITMAP		bm;
 	CDC			memDC;
-	CDSegment	*segP;
-	CDSide		*side;
+	CSegment	*segP;
+	CSide		*sideP;
 	INT16			nWall;
 	bool			bShowTexture = true;
 	char			*path = (theApp.IsD1File ()) ? descent_path : descent2_path;
@@ -1177,14 +1177,14 @@ pWnd->GetClientRect (rc);
 
 if (texture1 < 0) {
 	segP = (nSegment < 0) ? mine->CurrSeg () : mine->Segments (nSegment);
-	side = (nSide < 0) ? mine->CurrSide () : segP->sides + nSide;
+	sideP = (nSide < 0) ? mine->CurrSide () : segP->sides + nSide;
 	INT32 nSide = mine->Current ()->nSide;
-	texture1 = side->nBaseTex;
-	texture2 = side->nOvlTex & 0x1fff;
+	texture1 = sideP->nBaseTex;
+	texture2 = sideP->nOvlTex & 0x1fff;
 	if (segP->children [nSide] == -1)
 		bShowTexture = TRUE;
 	else {
-		nWall = side->nWall;
+		nWall = sideP->nWall;
 		bShowTexture = (nWall < mine->GameInfo ().walls.count);
 		}
 	}

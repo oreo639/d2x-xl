@@ -7,7 +7,7 @@ typedef struct uvl {
 	INT16 u,v,l; /* was FIX */
 } uvl;
 
-class CDSide {
+class CSide {
 public:
 	UINT16 nWall;  /* (was INT16) Index into Walls array, which wall (probably door) is on this side */
 	INT16  nBaseTex;  /* Index into array of textures specified in bitmaps.bin */
@@ -25,10 +25,10 @@ class CDColor {
 		rgbColor	color;
 };
 
-class CDSegment {
+class CSegment {
 public:
 
-	CDSide	sides [MAX_SIDES_PER_SEGMENT];    /* 6 sides */
+	CSide		sides [MAX_SIDES_PER_SEGMENT];    /* 6 sides */
 	INT16		children [MAX_SIDES_PER_SEGMENT];  /* indices of 6 children segments, front, left, top, right, bottom, back */
 	INT16		verts [MAX_VERTICES_PER_SEGMENT];  /* vertex ids of 4 front and 4 back vertices */
 	UINT8		function;        /* special property of a segment (such as damaging, trigger, etc.) */

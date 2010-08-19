@@ -140,8 +140,8 @@ void CMine::Reset ()
 
 void CMine::ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew)
 {
-CDSegment *segP = Segments ();
-CDSide *sideP;
+CSegment *segP = Segments ();
+CSide *sideP;
 INT32 i, j;
 
 for (i = SegCount (); i; i--, segP++)
@@ -656,11 +656,11 @@ INT16 CMine::FixIndexValues()
 	INT16 	check_err;
 
 	check_err = 0;
-	CDSegment *segP = Segments ();
+	CSegment *segP = Segments ();
 	for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			// check wall numbers
-			CDSide& side = segP->sides [nSide];
+			CSide& side = segP->sides [nSide];
 			if (side.nWall >= GameInfo ().walls.count &&
 				side.nWall != NO_WALL (this)) {
 				side.nWall = NO_WALL (this);
@@ -680,16 +680,16 @@ INT16 CMine::FixIndexValues()
 			}
 		}
 	}
-	CWall *wall = Walls ();
-	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wall++) {
+	CWall *wallP = Walls ();
+	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++) {
 		// check nSegment
-		if (wall->nSegment < 0 || wall->nSegment > SegCount ()) {
-			wall->nSegment = 0;
+		if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
+			wallP->m_nSegment = 0;
 			check_err |= (1 << 3);
 		}
 		// check nSide
-		if (wall->nSide < 0 || wall->nSide > 5) {
-			wall->nSide = 0;
+		if (wallP->m_nSide < 0 || wallP->m_nSide > 5) {
+			wallP->m_nSide = 0;
 			check_err |= (1 << 4);
 		}
 	}
@@ -710,7 +710,7 @@ void CMine::Default()
 		m_nHxmExtraDataSize = 0;
 		}
 
-	CDSegment& segP = *Segments ();
+	CSegment& segP = *Segments ();
 	tFixVector *vert = Vertices ();
 
 	segP.sides [0].nWall = NO_WALL (this);
@@ -871,7 +871,7 @@ void CMine::ClearMineData() {
 	INT16 i;
 
 	// initialize Segments ()
-	CDSegment *segP = Segments ();
+	CSegment *segP = Segments ();
 	for (i = 0; i < MAX_SEGMENTS (this); i++, segP++)
 		segP->wall_bitmask &= ~MARKED_MASK;
 	SegCount () = 0;
@@ -987,7 +987,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	// read segment information
 	for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 		INT16   bit; /** was INT32 */
-		CDSegment *segP = Segments (nSegment);
+		CSegment *segP = Segments (nSegment);
 		if (IsD2XLevel ()) {
 			fread(&segP->owner, sizeof (UINT8), 1, loadFile);
 			fread(&segP->group, sizeof (INT8), 1, loadFile);
@@ -1091,7 +1091,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	}
 
 	if (IsD2File ()) {
-		CDSegment *segP = Segments ();
+		CSegment *segP = Segments ();
 		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// read special info (8 bytes)
 			fread(&segP->function, sizeof(UINT8), 1, loadFile);
@@ -1638,18 +1638,21 @@ void CMine::SortDLIndex (INT32 left, INT32 right)
 	INT32	l = left,
 			r = right,
 			m = (left + right) / 2;
-	INT16	mSeg = LightDeltaIndex (m)->nSegment, 
-			mSide = LightDeltaIndex (m)->nSide;
+	INT16	mSeg = LightDeltaIndex (m)->m_nSegment, 
+			mSide = LightDeltaIndex (m)->m_nSide;
+	CSideKey mKey = CSideKey (mSeg, mSide);
 	CLightDeltaIndex	*pl, *pr;
 
 do {
 	pl = LightDeltaIndex (l);
-	while ((pl->nSegment < mSeg) || ((pl->nSegment == mSeg) && (pl->nSide < mSide))) {
+	//while ((pl->m_nSegment < mSeg) || ((pl->m_nSegment == mSeg) && (pl->nSide < mSide))) {
+	while (*pl < mKey) {
 		pl++;
 		l++;
 		}
 	pr = LightDeltaIndex (r);
-	while ((pr->nSegment > mSeg) || ((pr->nSegment == mSeg) && (pr->nSide > mSide))) {
+	//while ((pr->nSegment > mSeg) || ((pr->nSegment == mSeg) && (pr->nSide > mSide))) {
+	while (*pr > mKey) {
 		pr--;
 		r--;
 		}
@@ -1732,7 +1735,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 #endif
 
 
-		CDSegment *segP = Segments (nSegment);
+		CSegment *segP = Segments (nSegment);
 
 		if (IsD2XLevel ()) {
 			fwrite(&segP->owner, sizeof (UINT8), 1, save_file);
@@ -1831,7 +1834,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
   // for Descent 2, save special info here
   if (IsD2File ()) {
-	  CDSegment *segP = Segments ();
+	  CSegment *segP = Segments ();
 	  for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)   {
 		  // write special info (8 bytes)
 			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
@@ -2077,7 +2080,7 @@ void CMine::UpdateDeltaLights ()
 {
 return;
 	bool found = FALSE;
-	CDSegment *segP = Segments ();
+	CSegment *segP = Segments ();
 	INT32 nSegment;
 	for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		INT32 nSide;
@@ -2153,7 +2156,7 @@ void CMine::CalcCenter(tFixVector &center, INT16 nSegment, INT16 nSide)
 
 	center.x = center.y = center.z = 0;
 	tFixVector *v;
-	CDSegment *segP = Segments (nSegment);
+	CSegment *segP = Segments (nSegment);
 	for (i = 0; i < 4; i++) {
 		v = Vertices (segP->verts [side_vert [nSide][i]]);
 		center.x += (v->x) >> 2;

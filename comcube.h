@@ -31,7 +31,7 @@ public:
 
 // Data members
 public:
-	CDSegment* _pCube;
+	CSegment* _pCube;
 };
 
 #endif //__COMCUBE_H_

@@ -220,7 +220,7 @@ class CDiagTool : public CToolDlg
 {
 	public:
 		INT32			m_nTrigger;
-		INT32			m_nTargets;
+		INT32			m_targets;
 		INT32			m_iTarget;
 		INT32			m_nCountDown;
 		INT32			m_nSecretReturn;
@@ -290,7 +290,7 @@ class CReactorTool : public CToolDlg
 {
 	public:
 		INT32			m_nTrigger;
-		INT32			m_nTargets;
+		INT32			m_targets;
 		INT32			m_iTarget;
 		INT32			m_nCountDown;
 		INT32			m_nSecretReturn;
@@ -567,8 +567,8 @@ class CSegmentTool : public CToolDlg
 		void OnPoint (INT32 nPoint);
 		INT32 FindBot (CListBox *plb, LPSTR pszBot = NULL);
 		INT32 FindEquip (CListBox *plb, LPSTR pszBot = NULL);
-		bool IsBotMaker (CDSegment *segP);
-		bool IsEquipMaker (CDSegment *segP);
+		bool IsBotMaker (CSegment *segP);
+		bool IsEquipMaker (CSegment *segP);
 		void SetDefTexture (INT16 nTexture);
 	
 		afx_msg void OnSetCube ();
@@ -748,7 +748,7 @@ class CTriggerTool : public CTexToolDlg
 		INT32					m_nClass;
 		INT32					m_nType;
 		INT32					m_nTime;
-		INT32					m_nTargets;
+		INT32					m_targets;
 		INT32					m_iTarget;
 		INT32					m_bD1Flags [MAX_TRIGGER_FLAGS];
 		INT32					m_bD2Flags [16];

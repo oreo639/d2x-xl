@@ -35,9 +35,9 @@ else if ((type == TT_MESSAGE) || (type == TT_SOUND))
 else 	
 	t->value = 5 * F1_0; // 5% shield or energy damage
 t->time = -1;
-t->count = 0;
+t->m_count = 0;
 for (INT32 i = 0; i < MAX_TRIGGER_TARGETS; i++) {
-	t->targets [i] = CSideKey (-1, -1);
+	t->m_targets [i] = CSideKey (-1, -1);
 	}
 }
 
@@ -225,8 +225,8 @@ for (i = GameInfo ().walls.count; i; i--, wallP++)
 		wallP->nTrigger--;
 	else if (wallP->nTrigger == nTrigger) {
 		wallP->nTrigger = NO_TRIGGER;
-		nSegment = wallP->nSegment;
-		nSide = wallP->nSide;
+		nSegment = wallP->m_nSegment;
+		nSide = wallP->m_nSide;
 		}
 // remove trigger from array
 //for (i=nTrigger;i<GameInfo ().triggers.count-1;i++)
@@ -248,15 +248,15 @@ AutoLinkExitToReactor();
 
 INT32 CMine::DeleteTargetFromTrigger (CTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger)
 {
-if (!--trigger->count) {
+if (!--trigger->m_count) {
 	if (bAutoDeleteTrigger)
 		DeleteTrigger ();
 	return 0;
 	}
-if (linknum < trigger->count) {
-	memcpy (trigger->targets + linknum, trigger->targets + linknum + 1, (trigger->count - linknum) * sizeof (trigger [0]));
+if (linknum < trigger->m_count) {
+	memcpy (trigger->m_targets + linknum, trigger->m_targets + linknum + 1, (trigger->m_count - linknum) * sizeof (trigger [0]));
 	}
-return trigger->count;
+return trigger->m_count;
 }
 
 
@@ -269,8 +269,8 @@ return DeleteTargetFromTrigger (Triggers (nTrigger), linknum, bAutoDeleteTrigger
 bool CMine::DeleteTriggerTarget (CTrigger* trigP, INT16 nSegment, INT16 nSide, bool bAutoDeleteTrigger) 
 {
 INT32 j;
-for (j = 0; j < trigP->count; j++)
-	if ((trigP->targets [j] == CSideKey (nSegment, nSide)))
+for (j = 0; j < trigP->m_count; j++)
+	if ((trigP->m_targets [j] == CSideKey (nSegment, nSide)))
 		return DeleteTargetFromTrigger (trigP, j, bAutoDeleteTrigger) == 0;
 return false;
 }
@@ -298,12 +298,12 @@ for (i = 0; i < NumObjTriggers (); i++)
 INT16 CMine::FindTriggerWall (INT16 *nTrigger, INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
-CWall *wall = Walls ();
+CWall *wallP = Walls ();
 INT32 nWall;
-for (nWall = GameInfo ().walls.count; nWall; nWall--, wall++) {
-	if ((wall->nSegment == nSegment) && (wall->nSide == nSide)) {
-		*nTrigger = wall->nTrigger;
-		return INT16 (wall - Walls ());
+for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++) {
+	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide)) {
+		*nTrigger = wallP->nTrigger;
+		return INT16 (wallP - Walls ());
 		}
 	}
 *nTrigger = NO_TRIGGER;
@@ -312,11 +312,11 @@ return GameInfo ().walls.count;
 
 INT16 CMine::FindTriggerWall (INT16 nTrigger)
 {
-CWall *wall = Walls ();
+CWall *wallP = Walls ();
 INT32 nWall;
-for (nWall = GameInfo ().walls.count; nWall; nWall--, wall++)
-	if (wall->nTrigger == nTrigger)
-		return INT16 (wall - Walls ());
+for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++)
+	if (wallP->nTrigger == nTrigger)
+		return INT16 (wallP - Walls ());
 return GameInfo ().walls.count;
 }
 
@@ -371,9 +371,9 @@ void CMine::AutoLinkExitToReactor ()
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // remove items from list that do not point to a wall
-for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
-	count = reactorTrigger->count;
-	face = reactorTrigger->targets [linknum];
+for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
+	count = reactorTrigger->m_count;
+	face = reactorTrigger->m_targets [linknum];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
 	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
@@ -389,7 +389,7 @@ for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 
 // add exit to list if not already in list
 // search for Walls () that have a exit of type trigger
-count =  reactorTrigger->count;
+count =  reactorTrigger->m_count;
 for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
 	nTrigger = Walls (nWall)->nTrigger;
 	if (nTrigger >= 0 && nTrigger <GameInfo ().triggers.count) {
@@ -400,7 +400,7 @@ for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
 			face = *Walls (nWall);
 			found = FALSE;
 			for (linknum = 0; linknum < count; linknum++) {
-				if (face == reactorTrigger->targets [linknum]) {
+				if (face == reactorTrigger->m_targets [linknum]) {
 					found = TRUE;
 					break;
 					}
@@ -484,7 +484,7 @@ CSideKey key = CSideKey (nSegment, nSide);
 INT32 i, j;
 
 for (i = nTrigger; i < NumObjTriggers (); i++, t++)
-	for (j = 0; j < t->count; j++)
+	for (j = 0; j < t->m_count; j++)
 		if (-1 < (i = t->Find (key)))
 			return i;
 return -1;
@@ -499,7 +499,7 @@ void CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
 if (theApp.IsD2File ()) {
 	type = read_INT8(fp);
 	flags = bObjTrigger ? read_INT16(fp) : (UINT16) read_INT8(fp);
-	count = read_INT8(fp);
+	m_count = read_INT8(fp);
 	read_INT8(fp);
 	value = read_FIX(fp);
 	if ((theApp.LevelVersion () < 21) && (type == TT_EXIT))
@@ -518,16 +518,16 @@ else {
 	value = read_FIX(fp);
 	time = read_FIX(fp);
 	read_INT8(fp); //skip 8 bit value "link_num"
-	count = INT8 (read_INT16(fp));
-	if (count < 0)
-		count = 0;
-	else if (count > MAX_TRIGGER_TARGETS)
-		count = MAX_TRIGGER_TARGETS;
+	m_count = INT8 (read_INT16(fp));
+	if (m_count < 0)
+		m_count = 0;
+	else if (m_count > MAX_TRIGGER_TARGETS)
+		m_count = MAX_TRIGGER_TARGETS;
 	}
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	targets [i].nSegment = read_INT16(fp);
+	m_targets [i].m_nSegment = read_INT16(fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	targets [i].nSide = read_INT16(fp);
+	m_targets [i].m_nSide = read_INT16(fp);
 }
 
 // ------------------------------------------------------------------------
@@ -553,12 +553,12 @@ else {
 	write_INT32 (value, fp);
 	write_INT32 (time, fp);
 	write_INT8 (INT8 (count), fp);
-	write_INT16 (count, fp);
+	write_INT16 (m_count, fp);
 	}
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	write_INT16 (targets [i].nSegment, fp);
+	write_INT16 (m_targets [i].m_nSegment, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	write_INT16 (targets [i].nSide, fp);
+	write_INT16 (m_targets [i].m_nSide, fp);
 }
 
 //------------------------------------------------------------------------
@@ -567,11 +567,11 @@ INT32 CReactorTrigger::Read (FILE *fp, INT32 version)
 {
 	int	i;
 
-count = INT8 (read_INT16 (fp));
+m_count = INT8 (read_INT16 (fp));
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	targets [i].nSegment = read_INT16(fp);
+	m_targets [i].m_nSegment = read_INT16(fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	targets [i].nSide = read_INT16(fp);
+	m_targets [i].m_nSide = read_INT16(fp);
 return 1;
 }
 
@@ -581,11 +581,11 @@ void CReactorTrigger::Write (FILE *fp, INT32 version)
 {
 	int	i;
 
-write_INT16 (count, fp);
+write_INT16 (m_count, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	write_INT16 (targets [i].nSegment, fp);
+	write_INT16 (m_targets [i].m_nSegment, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	write_INT16 (targets [i].nSide, fp);
+	write_INT16 (m_targets [i].m_nSide, fp);
 }
 
 //------------------------------------------------------------------------

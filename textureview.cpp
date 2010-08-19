@@ -264,7 +264,7 @@ theApp.SetModified (TRUE);
 void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	CMine	*mine = theApp.GetMine ();
-	CDSide *side = mine->CurrSide ();
+	CSide *sideP = mine->CurrSide ();
 	INT16	nBaseTex;
 
 if (PickTexture (point, nBaseTex))
@@ -393,7 +393,7 @@ if (bShowAll) {
 else {
 	UINT16 nSegment,nSide;
 	CMine	*mine = theApp.GetMine ();
-	CDSegment *segP;
+	CSegment *segP;
 
 	memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 	m_nTextures [0] = 0;

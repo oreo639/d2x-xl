@@ -49,15 +49,15 @@ void CMine::RenumberTriggerTargetObjs (void)
 	CTrigger*	trigP = Triggers ();
 
 for (INT32 i = TriggerCount (); i; i--, trigP++) {
-	for (INT32 j = 0; j < trigP->count; ) {
+	for (INT32 j = 0; j < trigP->m_count; ) {
 		if (trigP->Side (j) >= 0) 
 			j++;
 		else {
 			INT32 h = FindObjBySig (trigP->Segment (j));
 			if (h >= 0)
 				trigP->Side (j++) = h;
-			else if (j < --trigP->count) {
-				trigP [j] = trigP [trigP->count];
+			else if (j < --trigP->m_count) {
+				trigP [j] = trigP [trigP->m_count];
 				}
 			}
 		}
