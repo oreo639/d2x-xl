@@ -154,7 +154,7 @@ for (i = 0; i < j; i++) {
 
 pcb = CBClipNo ();
 pcb->ResetContent ();
-j = (m_mine->IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
+j = (theApp.IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
 for (i = 0; i < j; i++) {
 	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", clip_door_number [i]);
 	pcb->AddString (m_szMsg);
@@ -276,16 +276,16 @@ else {
     // enable all
 	EnableControls (TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (FALSE);
-   if ((m_mine->IsD2File ()) && (m_pWall [0]->type == WALL_TRANSPARENT))
+   if ((theApp.IsD2File ()) && (m_pWall [0]->type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_STRENGTH)->EnableWindow (FALSE);
 	else {
 		GetDlgItem (IDC_WALL_FLYTHROUGH)->EnableWindow (FALSE);
 		}
-   if ((m_mine->IsD1File ()) || (m_pWall [0]->type == WALL_TRANSPARENT))
+   if ((theApp.IsD1File ()) || (m_pWall [0]->type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_CLOAK)->EnableWindow (FALSE);
 
     // enable buddy proof and switch checkboxes only if d2 level
-	if (m_mine->IsD1File ()) {
+	if (theApp.IsD1File ()) {
 		INT32 i;
 		for (i = 0; i < 2; i++)
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
@@ -377,7 +377,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	else if (m_mine->GameInfo ().walls.count >= MAX_WALLS (m_mine))
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((m_mine->IsD2File ()) && (seg [bSide]->children [sidenum [bSide]] == -1))
+		if ((theApp.IsD2File ()) && (seg [bSide]->children [sidenum [bSide]] == -1))
 			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wall = m_mine->AddWall (segnum [bSide], sidenum [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
@@ -537,7 +537,7 @@ void CWallTool::OnSetType ()
 
 GetWalls ();
 nType = INT32 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
-if ((nType > WALL_CLOSED) && m_mine->IsD1File ()) 
+if ((nType > WALL_CLOSED) && theApp.IsD1File ()) 
 	return;
 if ((nType > WALL_CLOAKED) && (m_mine->IsStdLevel ())) 
 	return;

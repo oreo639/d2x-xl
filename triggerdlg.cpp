@@ -128,8 +128,8 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (m_mine->IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (m_mine->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (theApp.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -217,7 +217,7 @@ CreateImgWnd (&m_showObjWnd, IDC_TRIGGER_SHOW_OBJ);
 CreateImgWnd (&m_showTexWnd, IDC_TRIGGER_SHOW_TEXTURE);
 CComboBox *pcb = CBType ();
 pcb->ResetContent();
-if (m_mine->IsD2File ()) {
+if (theApp.IsD2File ()) {
 	INT32 h, i, j = sizeof (triggerData) / sizeof (tTriggerData);
 	for (i = 0; i < j; i++) {
 		h = pcb->AddString (triggerData [i].pszName);
@@ -273,7 +273,7 @@ if (TriggerHasSlider () || (m_nType == TT_SHIELD_DAMAGE_D2) || (m_nType == TT_EN
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -1000, 1000, "%3.1f");
 else if ((m_nType == TT_MESSAGE) || (m_nType == TT_SOUND))
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 1000, "%1.0f");
-else if ((m_mine->IsD1File ()) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
+else if ((theApp.IsD1File ()) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -10000, 10000, "%1.0f");
 else
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 64, "%1.0f");
@@ -506,7 +506,7 @@ if (m_nClass || (m_nTrigger == -1)) {
 	EnableControls (FALSE);
 	CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, TRUE);
 	CToolDlg::EnableControls (IDC_TRIGGER_ADD_OPENDOOR, IDC_TRIGGER_ADD_CONTROLPANEL, TRUE);
-	if (m_mine->IsD2File ())
+	if (theApp.IsD2File ())
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
 	GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_TRIGGER_D2TYPE)->EnableWindow (TRUE);
@@ -539,7 +539,7 @@ if (m_nTrigger != -1) {
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
-	if (m_mine->IsD2File ()) {
+	if (theApp.IsD2File ()) {
 		SelectItemData (CBType (), m_nType);
 		CToolDlg::EnableControls (IDC_TRIGGER_CONTROLDOORS, IDC_TRIGGER_CLOSEWALL, FALSE);
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
@@ -930,7 +930,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-if ((m_mine->IsD1File ()) ? 
+if ((theApp.IsD1File ()) ? 
 	 (m_pTrigger->flags & TRIGGER_MATCEN) != 0 : 
 	 (m_pTrigger->type == TT_MATCEN) && 
 	 (m_mine->Segments (other->nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {

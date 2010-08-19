@@ -496,13 +496,13 @@ void CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
 {
 	INT32	i;
 
-if (theApp.GetMine ()->IsD2File ()) {
+if (theApp.IsD2File ()) {
 	type = read_INT8(fp);
 	flags = bObjTrigger ? read_INT16(fp) : (UINT16) read_INT8(fp);
 	count = read_INT8(fp);
 	read_INT8(fp);
 	value = read_FIX(fp);
-	if ((theApp.GetMine ()->LevelVersion () < 21) && (type == TT_EXIT))
+	if ((theApp.LevelVersion () < 21) && (type == TT_EXIT))
 		value = 0;
 	if ((version < 39) && (type == TT_MASTER))
 		value = 0;
@@ -536,7 +536,7 @@ void CTrigger::Write (FILE *fp, INT32 version, bool bObjTrigger)
 {
 	INT32	i;
 
-if (theApp.GetMine ()->IsD2File ()) {
+if (theApp.IsD2File ()) {
 	write_INT8 (type, fp);
 	if (bObjTrigger)
 		write_INT16 (flags, fp);

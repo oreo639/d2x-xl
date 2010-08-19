@@ -371,7 +371,7 @@ _strlwr_s (m_d1Path, sizeof (m_d1Path));
 if (strcmp (descent_path, m_d1Path)) {
 	strcpy_s (descent_path, sizeof (descent_path), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, INIFILE);
-	if (m_mine->IsD1File ())
+	if (theApp.IsD1File ())
 		FreeTextureHandles();
 	}
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
@@ -386,7 +386,7 @@ if (strcmp (descent2_path, m_d2Path)) {
 	if (bChangePig) {
 		strcpy_s (descent2_path, sizeof (descent2_path), m_d2Path);
 		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
-		if (m_mine->IsD2File ())
+		if (theApp.IsD2File ())
 			FreeTextureHandles (false);
 		GetMine ()->LoadPalette ();
 		theApp.MineView ()->ResetView (true);

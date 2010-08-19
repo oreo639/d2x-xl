@@ -171,7 +171,7 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0,
 	CDTexture	*pTx [2];
 	UINT8			*bmBuf = pDestTx->m_pDataBM;
 	UINT8			c;
-	INT32			fileType = theApp.GetMine ()->FileType ();
+	INT32			fileType = theApp.FileType ();
 
 	
 	textures [0] = nBaseTex;
@@ -359,21 +359,21 @@ INT32 CDTexture::Read (INT16 index)
 	
 if (m_bModified)
 	return 0;
-strcpy_s (path, sizeof (path), (theApp.GetMine ()->IsD1File ()) ? descent_path : descent2_path);
+strcpy_s (path, sizeof (path), (theApp.IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
 	strcat_s (path, sizeof (path), "groupa.pig");
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
 
 // do a range check on the texture number
-if ((index > ((theApp.GetMine ()->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
+if ((index > ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
 DEBUGMSG (" Reading texture: Texture # out of range.");
 rc = 1;
 goto abort;
 }
 
 // get pointer to texture table from resource fTextures
-hFind = (theApp.GetMine ()->IsD1File ()) ?
+hFind = (theApp.IsD1File ()) ?
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
 if (!hFind) {
@@ -406,13 +406,13 @@ if (data_offset == 0x47495050L) /* 'PPIG' Descent 2 type */
 else if (data_offset < 0x10000L)
 	data_offset = 0;
 fseek (fTextures,data_offset,SEEK_SET);
-if (theApp.GetMine ()->IsD2File ())
+if (theApp.IsD2File ())
 	fread (&d2_file_header, sizeof (d2_file_header), 1, fTextures);
 else
 	fread (&file_header, sizeof (file_header), 1, fTextures);
 
 // read texture header
-if (theApp.GetMine ()->IsD2File ()) {
+if (theApp.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset +
 				(long) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures,offset,SEEK_SET);
@@ -440,7 +440,7 @@ else {
 s = w * h;
 
 // seek to data
-if (theApp.GetMine ()->IsD2File ()) {
+if (theApp.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset
 	+ d2_file_header.num_textures * sizeof (D2_PIG_TEXTURE)
 	+ d2_ptexture.offset;
@@ -617,10 +617,10 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	UINT16		nUnknownTextures, nMissingTextures;
 	bool			bExtraTexture;
 	CDTexture	*pTx;
-	INT32			fileType = theApp.GetMine ()->FileType ();
+	INT32			fileType = theApp.FileType ();
 
 // make sure this is descent 2 fTextures
-if (theApp.GetMine ()->IsD1File ()) {
+if (theApp.IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
 	rc = 1;
 	goto abort;
@@ -909,9 +909,9 @@ INT32 CreatePog (FILE *outPigFile)
   INT32 i;
   INT32 num;
   pExtraTexture	pxTx;
-	INT32			fileType = theApp.GetMine ()->FileType ();
+	INT32			fileType = theApp.FileType ();
 
-if (theApp.GetMine ()->IsD1File ()) {
+if (theApp.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
 	rc = 4;
 	goto abort;
@@ -1038,7 +1038,7 @@ while (extraTextures) {
 BOOL HasCustomTextures () 
 {
 	INT32 i;
-	INT32 fileType = theApp.GetMine ()->FileType ();
+	INT32 fileType = theApp.FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
 	if (pTextures [fileType][i].m_bModified)
@@ -1051,7 +1051,7 @@ return FALSE;
 INT32 CountCustomTextures () 
 {
 	INT32 i, count = 0;
-	INT32 fileType = theApp.GetMine ()->FileType ();
+	INT32 fileType = theApp.FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
 	if (pTextures [fileType][i].m_bModified)
@@ -1170,7 +1170,7 @@ if (!pDC)
 	CDSide		*side;
 	INT16			nWall;
 	bool			bShowTexture = true;
-	char			*path = (theApp.GetMine ()->IsD1File ()) ? descent_path : descent2_path;
+	char			*path = (theApp.IsD1File ()) ? descent_path : descent2_path;
 
 CRect	rc;
 pWnd->GetClientRect (rc);
@@ -1195,7 +1195,7 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES ()))	// this allows to suppress 
 
 if (bShowTexture) {
 	// check pig file
-	strcpy_s (szFile, sizeof (szFile), (mine->IsD1File ()) ? descent_path : descent2_path);
+	strcpy_s (szFile, sizeof (szFile), (theApp.IsD1File ()) ? descent_path : descent2_path);
 	fopen_s (&fTextures, szFile, "rb");
 	if (fTextures) {
 		fseek (fTextures, 0, SEEK_SET);

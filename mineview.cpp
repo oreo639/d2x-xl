@@ -2098,7 +2098,7 @@ for (i = 0; i < 6; i++)
 			IN_RANGE (poly_draw [i].y, y_max)))
 		return;
 
-if ((mine->IsD2File ()) &&
+if ((theApp.IsD2File ()) &&
 	 (objnum == mine->Current ()->nObject) &&
 	 (objP->type != OBJ_CAMBOT) && (objP->type != OBJ_MONSTERBALL) && 
 	 (objP->type != OBJ_EXPLOSION) && (objP->type != OBJ_SMOKE) && (objP->type != OBJ_EFFECT) &&
@@ -2218,7 +2218,7 @@ if (!ViewObject ())
 	return;
 
 INT32 i, j;
-if (mine->IsD2File ()) {
+if (theApp.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < mine->GameInfo ().triggers.count; i++)
 	if (mine->Triggers (i)->type == TT_SECRET_EXIT) {
@@ -3167,7 +3167,7 @@ closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
 INT32 enable_secret = FALSE;
-if (m_mine->IsD2File ())
+if (theApp.IsD2File ())
 	for(i=0;i<(INT16)m_mine->GameInfo ().triggers.count;i++)
 		if (m_mine->Triggers (i)->type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
@@ -3177,7 +3177,7 @@ if (m_mine->IsD2File ())
 for (i=0;i<=m_mine->GameInfo ().objects.count;i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == m_mine->GameInfo ().objects.count && m_mine->IsD2File () && enable_secret) {
+	if (i == m_mine->GameInfo ().objects.count && theApp.IsD2File () && enable_secret) {
 		objP = &temp_obj;
 		objP->type = OBJ_PLAYER;
 		// define objP->position

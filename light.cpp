@@ -49,8 +49,8 @@ void CreateLightMap (void)
 if (theApp.GetMine ())
 	theApp.GetMine ()->LoadDefaultLightAndColor ();
 #else
-	TEXTURE_LIGHT	*pTexLights = (theApp.GetMine ()->IsD1File ()) ? d1_texture_light : d2_texture_light;
-	INT32				i = ((theApp.GetMine ()->IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
+	TEXTURE_LIGHT	*pTexLights = (theApp.IsD1File ()) ? d1_texture_light : d2_texture_light;
+	INT32				i = ((theApp.IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
 
 memset (lightMap, 0, sizeof (lightMap));
 while (i) {
@@ -111,7 +111,7 @@ return (UINT8) ((lightMap [nBaseTex] - 1) / 0x0200L);
   INT32 i;
 
 #	if 1
-if (theApp.GetMine ()->IsD1File ()) {
+if (theApp.IsD1File ()) {
 	i = FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1);
 	if (i >= 0)
 		return (UINT8) ((d1_texture_light [i].light - 1) / 0x0200L);
@@ -126,7 +126,7 @@ return 0;
 	UINT8 result;
 
 if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES (this)) {
-	if (theApp.GetMine ()->IsD1File ()) {
+	if (theApp.IsD1File ()) {
 		for (i=0;i<NUM_LIGHTS_D1;i++)
 			if (nBaseTex <= d1_texture_light[i].nBaseTex) 
 				break;

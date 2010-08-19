@@ -571,7 +571,7 @@ pWnd->UpdateWindow ();
 
 void CGameObject::Read (FILE *fp, INT32 version) 
 {
-	INT32 i, levelVersion = theApp.GetMine ()->LevelVersion ();
+	INT32 i, levelVersion = theApp.LevelVersion ();
 
 	type = read_INT8(fp);
 	id = read_INT8(fp);
@@ -628,7 +628,7 @@ void CGameObject::Read (FILE *fp, INT32 version)
 		ctype.ai_info.hide_index = read_INT16(fp);
 		ctype.ai_info.path_length = read_INT16(fp);
 		ctype.ai_info.cur_path_index = read_INT16(fp);
-		if (theApp.GetMine ()->IsD1File ()) {
+		if (theApp.IsD1File ()) {
 			ctype.ai_info.follow_path_start_seg = read_INT16(fp);
 			ctype.ai_info.follow_path_end_seg = read_INT16(fp);
 		}

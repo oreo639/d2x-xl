@@ -2893,7 +2893,7 @@ damage [1] = 0;
 INT32 CRobotMaker::Read (FILE *fp, INT32 version)
 {
 objFlags [0] = read_INT32 (fp);
-if (theApp.GetMine ()->IsD2File ())
+if (theApp.IsD2File ())
 	objFlags [1] = read_INT32 (fp);
 hitPoints = read_FIX (fp);
 interval = read_FIX (fp);
@@ -2907,7 +2907,7 @@ return 1;
 void CRobotMaker::Write (FILE *fp, INT32 version)
 {
 write_INT32 (objFlags [0], fp);
-if (theApp.GetMine ()->IsD2File ())
+if (theApp.IsD2File ())
 	write_INT32 (objFlags [1], fp);
 write_FIX (hitPoints, fp);
 write_FIX (interval, fp);

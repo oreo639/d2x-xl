@@ -350,8 +350,8 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (m_mine->IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (m_mine->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (m_mine && theApp.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (m_mine && theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)

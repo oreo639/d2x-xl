@@ -247,7 +247,7 @@ GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (seg) || IsEquipMaker (s
 GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsBotMaker (seg) || IsEquipMaker (seg)) && (LBUsedBots ()->GetCount () > 0));
 GetDlgItem (IDC_CUBE_WALLDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_TRIGGERDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
-GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (m_mine->IsD2File ());
+GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (theApp.IsD2File ());
 GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (m_mine->IsD2XLevel ());
 GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (m_mine->IsD2XLevel ());
 }

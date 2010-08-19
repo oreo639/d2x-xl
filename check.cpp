@@ -279,7 +279,7 @@ if (!GetMine ())
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		if (id < 0 || id >= (m_mine->IsD1File () ? ROBOT_IDS1 : ROBOT_IDS2 (m_mine))) {
+		if (id < 0 || id >= (theApp.IsD1File () ? ROBOT_IDS1 : ROBOT_IDS2 (m_mine))) {
 			return 1;
 		}
 		break;
@@ -305,7 +305,7 @@ if (!GetMine ())
 		break;
 
 	case OBJ_CNTRLCEN: /* the control center */
-		if (m_mine->IsD1File ()) {
+		if (theApp.IsD1File ()) {
 			if (id >= 0 || id <= 25) {
 				return 0;
 			}
@@ -316,7 +316,7 @@ if (!GetMine ())
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		objP->id = m_mine->IsD1File () ? 1 : 2;
+		objP->id = theApp.IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -770,7 +770,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 	  case OBJ_SMOKE:
 	  case OBJ_MONSTERBALL:
 	  case OBJ_EXPLOSION:
-			if (m_mine->IsD2File ()) 
+			if (theApp.IsD2File ()) 
 				break;
 	  default:
 		 if (m_bAutoFixBugs) {
@@ -1006,7 +1006,7 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigP++) {
 			// if exit, make sure it is linked to CReactorTrigger
 			INT32 tt = trigP->type;
 			INT32 tf = trigP->flags;
-			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
+			if (theApp.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->count; i++)
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
 						break; // found it
@@ -1060,7 +1060,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 	INT32 tt = trigP->type;
 	INT32 tf = trigP->flags;
 	if (trigP->count == 0) {
-		if (m_mine->IsD1File ()
+		if (theApp.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
@@ -1122,7 +1122,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 					CDSegment *seg = m_mine->Segments (segnum);
 					// check door opening trigP
 //						if (trigP->flags == TRIGGER_CONTROL_DOORS) {
-					if (m_mine->IsD1File ()
+					if (theApp.IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigP points to a wallP if it controls doors
@@ -1153,7 +1153,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 								}
 							}
 						}
-					else if (m_mine->IsD1File () 
+					else if (theApp.IsD1File () 
 								? tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
 							  ) {
@@ -1174,7 +1174,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 							}
 						}
 //						if (trigP->flags == TRIGGER_MATCEN) {
-					else if (m_mine->IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
+					else if (theApp.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((seg->function != SEGMENT_FUNC_ROBOTMAKER) && (seg->function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
@@ -1201,7 +1201,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 		trigSeg = trigSide = -1;
 	INT32 tt = trigP->type;
 	INT32 tf = trigP->flags;
-	if (m_mine->IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
+	if (theApp.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
 			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trig=%d)",trignum);
@@ -1525,7 +1525,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wall->type > (m_mine->IsD1File () ? WALL_CLOSED : m_mine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wall->type > (theApp.IsD1File () ? WALL_CLOSED : m_mine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
 					wallnum,wall->type);
@@ -1671,8 +1671,8 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			  || wall->nClip == 2
 //			     || wall->nClip == 7
 			  || wall->nClip == 8
-			  || (m_mine->IsD1File () && wall->nClip > 25)
-			  || (m_mine->IsD2File () && wall->nClip > 50))) {
+			  || (theApp.IsD1File () && wall->nClip > 25)
+			  || (theApp.IsD2File () && wall->nClip > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
 						wallnum,wall->nClip);

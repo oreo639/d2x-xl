@@ -127,7 +127,7 @@ if (!m_bInited)
 	return;
 if (!GetMine ())
 	return;
-EnableControls (m_mine->IsD2File ());
+EnableControls (theApp.IsD2File ());
 m_pTrigger = GetMine ()->ReactorTriggers (m_nTrigger);
 m_nCountDown = m_mine->ReactorTime ();
 m_nSecretReturn = m_mine->SecretCubeNum ();

@@ -166,7 +166,7 @@ void CMissionTool::OnOK (void)
 {
 UpdateData (TRUE);
 memcpy (&missionData, &m_missionData, sizeof (missionData));
-WriteMissionFile (theApp.GetDocument ()->File (), theApp.GetMine ()->LevelVersion ());
+WriteMissionFile (theApp.GetDocument ()->File (), theApp.LevelVersion ());
 }
 
                         /*--------------------------*/
@@ -198,7 +198,7 @@ if (psz = strchr (pszName, '.'))
 INT32 l = INT32 (strlen (pszName));
 if (l > 8)
 	pszName [8] = '\0';
-strcat_s (pszName, 256, m_mine->IsD1File () ? ".rdl" : ".rl2");
+strcat_s (pszName, 256, theApp.IsD1File () ? ".rdl" : ".rl2");
 return pszName;
 }
 

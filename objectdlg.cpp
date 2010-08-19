@@ -291,10 +291,10 @@ InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) object_names, contains_list, NULL, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (m_mine->IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
-CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (m_mine->IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
-INT16 nTextures = (m_mine->IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
+INT16 nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 INT16 i, j;
 char sz [100], **psz;
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
@@ -577,7 +577,7 @@ if (objP->render_type != RT_POLYOBJ)
 	CBObjTexture ()->EnableWindow (FALSE);
 
 // gray edit if this is an RDL file
-if (m_mine->IsD1File ())
+if (theApp.IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
@@ -837,7 +837,7 @@ if (objP->render_type != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (INT16) m_mine->CurrObj ()->rtype.pobj_info.tmap_override;
-	if ((tnum < 0) || (tnum >= ((m_mine->IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
+	if ((tnum < 0) || (tnum >= ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
 		}
@@ -904,10 +904,10 @@ if (!GetMine ())
 	char str [40];
 	INT32 h, i, j;
 	INT16 max_robot_ids = flag 
-								 ? m_mine->IsD1File () 
+								 ? theApp.IsD1File () 
 									? ROBOT_IDS1 
 									: 64 
-								 : m_mine->IsD1File () 
+								 : theApp.IsD1File () 
 									? ROBOT_IDS1 
 									: ROBOT_IDS2 (m_mine);
 
@@ -1015,7 +1015,7 @@ switch(type) {
 		break;
 
 	case OBJ_CNTRLCEN: // a control center */
-		if (m_mine->IsD1File ()) {
+		if (theApp.IsD1File ()) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
 				sprintf_s (str, sizeof (str), "%d", i);
 				h = pcb->AddString (str);
@@ -1269,7 +1269,7 @@ if (!GetMine ())
 
 CGameObject *objP = m_mine->CurrObj ();
 INT32 selection = object_list [CBObjType ()->GetCurSel ()];
-if (m_mine->IsD1File () && (selection == OBJ_WEAPON)) {
+if (theApp.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
 	}
@@ -1299,7 +1299,7 @@ switch (selection) {
 		break;
 
 	case OBJ_CNTRLCEN:
-		objP->id = m_mine->IsD1File () ? 0: 2;
+		objP->id = theApp.IsD1File () ? 0: 2;
 		break;
 
 	case OBJ_EXPLOSION:
@@ -1414,7 +1414,7 @@ switch (objP->type) {
 	case OBJ_CNTRLCEN:
 		objP->size = REACTOR_SIZE;
 		objP->shields = REACTOR_SHIELD;
-		if (m_mine->IsD1File ())
+		if (theApp.IsD1File ())
 			objP->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
 		else {
 			INT32 model;

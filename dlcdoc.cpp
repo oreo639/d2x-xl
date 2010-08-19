@@ -406,8 +406,8 @@ if (bEnableDeltaShading)
 	theApp.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
-	FSplit ((m_mine->IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
-//	strcpy_s (m_szFile, sizeof (m_szFile), (m_mine->IsD1File ()) ? "new.rdl" : "new.rl2");
+	FSplit ((theApp.IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
+//	strcpy_s (m_szFile, sizeof (m_szFile), (theApp.IsD1File ()) ? "new.rdl" : "new.rl2");
 	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))

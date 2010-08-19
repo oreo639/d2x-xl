@@ -112,7 +112,7 @@ for (nSeg = segCount; nSeg; nSeg--, seg++) {
 pcb->SetCurSel (0);
 
   // add complete set for Texture 2 combo box
-nTextures = m_mine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = theApp.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 pcb = CBD2 ();
 INT32 i;
 for (i = 0; i < nTextures; i++) {
@@ -159,7 +159,7 @@ if (LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + texture2, message, sizeof (me
 else
 	nError = GetLastError ();
 #endif
-fileTypeBackup = theApp.GetMine ()->FileType ();
+fileTypeBackup = theApp.FileType ();
 m_mine->SetFileType (RL2_FILE);
 m_mine->LoadPalette ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);

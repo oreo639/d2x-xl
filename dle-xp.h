@@ -108,6 +108,16 @@ public:
 #else
 		{ CDlcDoc *h; return (h = GetDocument ()) ? h->m_mine : NULL; }
 #endif
+	inline int FileType (void) { 
+		CMine* m = GetMine ();
+		return m ? m->FileType () : RL2_FILE;
+		}
+	inline int LevelVersion (void) { 
+		CMine* m = GetMine ();
+		return m ? m->LevelVersion () : 7;
+		}
+	inline bool IsD1File (void) { return FileType () == RDL_FILE; }
+	inline bool IsD2File (void) { return FileType () != RDL_FILE; }
 	inline CWnd *TexturePane ()
 		{ return MainFrame ()->TexturePane (); }
 	inline CWnd *MinePane ()
