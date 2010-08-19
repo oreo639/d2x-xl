@@ -576,10 +576,6 @@ for (h = 0; h < mine->GameInfo ().lightDeltaIndices.count; h++, pdli++) {
 		else if (((segnum != nSrcSide) || (sidenum != nSrcSeg)) &&
 			 (0 <= mine->GetFlickeringLight (segnum, sidenum)))
 			continue;
-#ifdef _DEBUG
-		CBRK (segnum < 0 || segnum >= mine->SegCount () || sidenum < 0 || sidenum >= MAX_SIDES_PER_SEGMENT);
-		CBRK (segnum == qqq1 && sidenum == qqq2);
-#endif
 		pls = lightStatus [segnum] + sidenum;
 		plt = lightTimers + j;
 		pls->bIsOn = (pfl [j].mask & (1 << lightTimers [j].impulse)) != 0;
@@ -826,7 +822,6 @@ for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 			if (segJ->nIndex != -1)
 				continue;
 			segJ->nIndex = nDist;
-			CBRK (i >= segNum);
 			segRef [i++] = c;
 			}
 		}

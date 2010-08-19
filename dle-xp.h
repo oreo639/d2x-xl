@@ -98,7 +98,16 @@ public:
 	inline CDlcDoc *GetDocument ()
 		{ CMineView *h; return (h = MineView ()) ? h->GetDocument () : NULL; }
 	inline CMine *GetMine ()
+#ifdef _DEBUG
+		{ CDlcDoc *h; CMine* m;
+		  m = (h = GetDocument ()) ? h->m_mine : NULL; 
+		  if (m)
+			  return m;
+		  return NULL;
+		}
+#else
 		{ CDlcDoc *h; return (h = GetDocument ()) ? h->m_mine : NULL; }
+#endif
 	inline CWnd *TexturePane ()
 		{ return MainFrame ()->TexturePane (); }
 	inline CWnd *MinePane ()

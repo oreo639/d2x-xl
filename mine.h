@@ -524,19 +524,19 @@ CMine* GetMine (CMine* m);
 
 #define GET_MINE(m) (m = GetMine(m))
 
-inline INT32 MAX_SEGMENTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_SEGMENTS1  : m->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
-inline INT32 MAX_VERTICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_VERTICES1 : m->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
-inline INT32 MAX_WALLS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_WALLS1 : (m->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3; }
-inline INT32 MAX_TEXTURES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
-inline INT32 MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
-inline INT32 MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
-inline INT32 MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
-inline INT32 MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
-inline INT32 MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
-inline INT32 ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
-inline INT32 MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
-inline INT32 MAX_LIGHT_DELTA_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X; }
-inline INT32 MAX_LIGHT_DELTA_VALUES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X; }
+inline INT32 MAX_SEGMENTS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_SEGMENTS3 : m->IsD1File () ? MAX_SEGMENTS1  : m->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+inline INT32 MAX_VERTICES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_VERTICES3 : m->IsD1File () ? MAX_VERTICES1 : m->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
+inline INT32 MAX_WALLS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_WALLS3 : m->IsD1File () ? MAX_WALLS1 : (m->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+inline INT32 MAX_TEXTURES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_D2_TEXTURES : m->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
+inline INT32 MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_TRIGGERS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
+inline INT32 MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_OBJECTS2 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
+inline INT32 MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_FUELCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
+inline INT32 MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_REPAIRCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+inline INT32 MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_PLAYERS_D2X : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
+inline INT32 ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? MAX_ROBOT_IDS_TOTAL : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
+inline INT32 MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_MATCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+inline INT32 MAX_LIGHT_DELTA_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_INDICES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X; }
+inline INT32 MAX_LIGHT_DELTA_VALUES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_VALUES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X; }
 
 #define NO_WALL(m) MAX_WALLS(m)
 

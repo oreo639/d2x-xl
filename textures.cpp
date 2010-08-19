@@ -1002,9 +1002,13 @@ return 0;
 
 void FreeTextureHandles (bool bDeleteModified) 
 {
+	CMine* mineP = theApp.GetMine ();
+
+	if (!mineP)
+		return;
   // free any textures that have been buffered
 	INT32 i, j;
-	INT32 fileType = theApp.GetMine ()->FileType ();
+	INT32 fileType = mineP->FileType ();
 
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_D2_TEXTURES; i++) {
