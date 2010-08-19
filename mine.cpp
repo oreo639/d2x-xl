@@ -1970,7 +1970,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// note: same for D1 and D2
 	GameInfo ().objects.offset = ftell(savefile);
 	for (i = 0; i < GameInfo ().objects.count; i++)
-		WriteObject(Objects (i), savefile, GameInfo ().fileinfo_version);
+		Objects (i)->Write (savefile, GameInfo ().fileinfo_version);
 
 	//==================== = WRITE WALL INFO============================
 	// note: Wall size will automatically strip last two items

@@ -503,8 +503,6 @@ private:
 	void ReadRobotResource(INT32 robot_number);
 	void ReadColor (CDColor *pc, FILE *load_file);
 	void SaveColor (CDColor *pc, FILE *save_file);
-	void ReadTrigger (CTrigger *t, FILE *fp, bool bObjTrigger);
-	void WriteTrigger (CTrigger *t, FILE *fp, bool bObjTrigger);
 	void LoadColors (CDColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
 	void SaveColors (CDColor *pc, INT32 nColors, FILE *fp);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);
@@ -512,10 +510,6 @@ private:
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);
 	INT16 SaveMineDataCompiled(FILE *save_file);
 	INT16 SaveGameData(FILE *savefile);
-	void ReadObject(CGameObject *objP,FILE *f,INT32 version);
-	void WriteObject(CGameObject *objP,FILE *f,INT32 version);
-	INT32 ReadWall (CWall* wallP, FILE* fp, INT32 version);
-	void WriteWall (CWall* wallP, FILE* fp, INT32 version);
 	void ClearMineData();
 	void UpdateDeltaLights ();
 	double dround_off(double value, double round);
