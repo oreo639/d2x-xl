@@ -15,9 +15,9 @@
             LINE_MODE = 1,
             SIDE_MODE = 2,
             CUBE_MODE = 3,
-            OBJECT_MODE = 4,
+            OBJEMODE = 4,
             BLOCK_MODE = 5,
-            N_SELECT_MODES = 6
+            N_SELEMODES = 6
         }
 
         enum EditModes : uint
@@ -308,38 +308,5 @@
             EXTERNAL = 8	// 0/0/0/1 don't see it, dont fly through it 
         }
 
-        enum ObjType : byte
-        {
-            WALL = 0,  // A wall... not really an object, but used for collisions 
-            FIREBALL = 1,  // a fireball, part of an explosion 
-            ROBOT = 2,  // an evil enemy 
-            HOSTAGE = 3,  // a hostage you need to rescue 
-            PLAYER = 4,  // the player on the console 
-            WEAPON = 5,  // a laser, missile, etc 
-            CAMERA = 6,  // a camera to slew around with 
-            POWERUP = 7,  // a powerup you can pick up 
-            DEBRIS = 8,  // a piece of robot 
-            CNTRLCEN = 9,  // the control center 
-            FLARE = 10,  // a flare 
-            CLUTTER = 11,  // misc objects 
-            GHOST = 12,  // what the player turns into when dead 
-            LIGHT = 13,  // a light source, & not much else 
-            COOP = 14,  // a cooperative player object. 
-            MARKER = 15,
-            CAMBOT = 16,
-            MONSTERBALL = 17,
-            SMOKE = 18,
-            EXPLOSION = 19,
-            EFFECT = 20,
-            COUNT = 21,
-            NONE = 255  // unused object 
-        }
-
-        enum EffectId : byte
-        {
-            PARTICLES = 0,
-            LIGHTNING = 1,
-            SOUND = 2
-        }
     }
 }
