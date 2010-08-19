@@ -146,6 +146,8 @@
         const int MAX_DELTA_LIGHTS_D2X = 50000;
         const int DL_SCALE = 2048;	// Divide light to allow 3 bits integer, 5 bits fraction.
 
+        const int MAX_BRIGHTNESS = 0x20000;
+      
         // pseudo constants
         public int MAX_SEGMENTS() { return IsD1File() ? MAX_SEGMENTS1 : IsStdLevel() ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
         public int MAX_VERTICES() { return IsD1File() ? MAX_VERTICES1 : IsStdLevel() ? MAX_VERTICES2 : MAX_VERTICES3; }
