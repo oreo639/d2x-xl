@@ -7,12 +7,12 @@ namespace DLE.NET
         public const int MAX_TARGETS = 10;
 
         short m_count { get; private set; }
-        SideKey[] m_targets = new SideKey[MAX_TARGETS];
+        SideKey [] m_targets = new SideKey [MAX_TARGETS];
 
         public short Add (SideKey key)
         {
             if (m_count < m_targets.Length)
-                m_targets[m_count] = key;
+                m_targets [m_count] = key;
             return m_count++;
         }
 
@@ -29,8 +29,8 @@ namespace DLE.NET
             {
                 int l = m_count - i;
                 for (int j = 0; j < l; j++)
-                    m_targets[j] = m_targets[j + 1];
-                m_targets[m_count] = new SideKey (0, 0);
+                    m_targets [j] = m_targets [j + 1];
+                m_targets [m_count] = new SideKey (0, 0);
             }
             return m_count;
         }
@@ -40,13 +40,13 @@ namespace DLE.NET
     #region Trigger
     public partial class Trigger : TargetList
     {
-        byte    type;
-        ushort  flags;
-        short   nObject;
-        char    num_links;
-        int     value;
-        int     time;
-        ushort  nIndex;
+        byte type;
+        ushort flags;
+        short nObject;
+        char num_links;
+        int value;
+        int time;
+        ushort nIndex;
     }
     #endregion
 }

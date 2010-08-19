@@ -1,6 +1,6 @@
 ﻿namespace DLE.NET
 {
-  public partial class GameMine
+    public partial class GameMine
     {
         public const int F0_0 = 0;
         public const int F1_0 = 0x10000;
@@ -146,25 +146,25 @@
         public const int DL_SCALE = 2048;	// Divide light to allow 3 bits integer, 5 bits fraction.
 
         public const int MAX_BRIGHTNESS = 0x20000;
-      
+
         // pseudo constants
-        public int MAX_SEGMENTS() { return IsD1File() ? MAX_SEGMENTS1 : IsStdLevel() ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
-        public int MAX_VERTICES() { return IsD1File() ? MAX_VERTICES1 : IsStdLevel() ? MAX_VERTICES2 : MAX_VERTICES3; }
-        public int MAX_OBJECTS() { return IsStdLevel() ? MAX_OBJECTS1 : MAX_OBJECTS2; }
-        public int MAX_WALLS() { return IsD1File() ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3; }
-        public int NO_WALL() { return MAX_WALLS(); }
-        public int MAX_TRIGGERS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
-        public int MAX_PLAYERS() { return IsStdLevel() ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
-        public int MAX_NUM_MATCENS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
-        public int MAX_NUM_FUELCENS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
-        public int MAX_NUM_REPAIRCENS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
-        public int MAX_TEXTURES() { return IsD1File() ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
-        public int PLAYER_CLIP_NUMBER() { return IsD1File() ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER; }
-        public int COOP_CLIP_NUMBER() { return IsD1File() ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER; }
-        public int REACTOR_CLIP_NUMBER() { return IsD1File() ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
-        public int ROBOT_IDS2() { return (LevelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
-        public int MAX_POWERUP_IDS() { return IsD1File() ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2; }
+        public int MAX_SEGMENTS () { return IsD1File () ? MAX_SEGMENTS1 : IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+        public int MAX_VERTICES () { return IsD1File () ? MAX_VERTICES1 : IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
+        public int MAX_OBJECTS () { return IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
+        public int MAX_WALLS () { return IsD1File () ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+        public int NO_WALL () { return MAX_WALLS (); }
+        public int MAX_TRIGGERS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
+        public int MAX_PLAYERS () { return IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
+        public int MAX_NUM_MATCENS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+        public int MAX_NUM_FUELCENS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
+        public int MAX_NUM_REPAIRCENS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+        public int MAX_TEXTURES () { return IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
+        public int PLAYER_CLIP_NUMBER () { return IsD1File () ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER; }
+        public int COOP_CLIP_NUMBER () { return IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER; }
+        public int REACTOR_CLIP_NUMBER () { return IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
+        public int ROBOT_IDS2 () { return (LevelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
+        public int MAX_POWERUP_IDS () { return IsD1File () ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2; }
         public int MAX_DL_INDICES () { return (IsD1File () || IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X; }
-        public int MAX_DELTA_LIGHTS() { return (IsD1File() || IsStdLevel()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
+        public int MAX_DELTA_LIGHTS () { return (IsD1File () || IsStdLevel ()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
     }
 }
