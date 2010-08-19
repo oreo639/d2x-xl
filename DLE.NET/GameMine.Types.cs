@@ -1,15 +1,27 @@
 ﻿//using DLE.NET.GameMine.Types;
 
-public struct FixVector {
+public struct FixVector 
+{
     int x, y, z;
 }
 
-public struct AngleVector {
+public struct AngleVector 
+{
     short p, b, h;
 }
 
-public struct FixMatrix {
+public struct FixMatrix 
+{
     FixVector rvec, uvec, fvec;
+} 
+
+struct DoubleVector 
+{
+    double x,y,z;
+}
+
+struct APOINT {
+    short x, y, z;
 } 
 
 namespace DLE.NET
@@ -138,67 +150,47 @@ namespace DLE.NET
         } ;
 
         struct WEAPON_INFO {
-          char	render_type;		// How to draw 0=laser, 1=blob, 2=object
-          char	persistent;		// 0 = dies when it hits something, 1 = continues (eg, fusion cannon)
-          short	model_num;		// Model num if rendertype==2.
-          short	model_num_inner;	// Model num of inner part if rendertype==2.
-
-          char	flash_vclip;		// What vclip to use for muzzle flash
-          char	robot_hit_vclip;	// What vclip for impact with robot
-          short	flash_sound;		// What sound to play when fired
-
-          char	wall_hit_vclip;		// What vclip for impact with wall
-          char	fire_count;		// Number of bursts fired from EACH GUN per firing.
-				        // ..For weapons which fire from both sides, 3*fire_count shots will be fired.
-          short	robot_hit_sound;	// What sound for impact with robot
-
-          char	ammo_usage;		// How many units of ammunition it uses.
-          char	weapon_vclip;		// Vclip to render for the weapon, itself.
-          short	wall_hit_sound;		// What sound for impact with wall
-
-          char	destroyable;		// If !0, this weapon can be destroyed by another weapon.
-          char	matter;			// Flag: set if this object is matter (as opposed to energy)
-          char	bounce;			// 1==always bounces, 2=bounces twice
-          char	homing_flag;		// Set if this weapon can home in on a target.
-
-          byte	speedvar;		// allowed variance in speed below average, /128: 64 = 50% meaning if speed = 100,
-				        // ..can be 50..100
-
-          byte	flags;			// see values above
-
-          char	flash;			// Flash effect
-          char	afterburner_size;	// Size of blobs in F1_0/16 units, specify in bitmaps.tbl as floating point.
-				        // ..Player afterburner size = 2.5.
-
-          char	children;		// ID of weapon to drop if this contains children.  -1 means no children.
-
-          int	energy_usage;		// How much fuel is consumed to fire this weapon.
-          int	fire_wait;		// Time until this weapon can be fired again.
-
-          int	multi_damage_scale;	// Scale damage by this amount when applying to player in multiplayer.
-				        // ..F1_0 means no change.
-
-          ushort bitmap;		// Pointer to bitmap if rendertype==0 or 1.
-
-          int	    blob_size;		// Size of blob if blob type
-          int	    flash_size;		// How big to draw the flash
-          int	    impact_size;	// How big of an impact
-          int[NDL]  strength;	// How much damage it can inflict
-          int	    speed[NDL];		// How fast it can move, difficulty level based.
-          int	    mass;			// How much mass it has
-          int	    drag;			// How much drag it has
-          int	    thrust;			// How much thrust it has
-          int	    po_len_to_width_ratio;	// For polyobjects, the ratio of len/width. (10 maybe?)
-          int	    light;			// Amount of light this weapon casts.
-          int	    lifetime;		// Lifetime in seconds of this weapon.
-          int	    damage_radius;		// Radius of damage caused by weapon, used for missiles (not lasers) to apply
-				        // ..to damage to things it did not hit
-        //-- unused--	int	damage_force;	 // Force of damage caused by weapon, used for missiles (not lasers) to
-        // ..apply to damage to things it did not hit.
-        // damage_force was a real mess.  Wasn't Difficulty_level based, and was being applied instead of weapon's
-        // ..actual strength.  Now use 2*strength instead. --MK, 01/19/95
-          ushort    picture;	// a picture of the weapon for the cockpit
-          ushort	hires_picture;	// a hires picture of the above
+            char	render_type;		// How to draw 0=laser, 1=blob, 2=object
+            char	persistent;		    // 0 = dies when it hits something, 1 = continues (eg, fusion cannon)
+            short	model_num;		    // Model num if rendertype==2.
+            short	model_num_inner;	// Model num of inner part if rendertype==2.
+            char	flash_vclip;		// What vclip to use for muzzle flash
+            char	robot_hit_vclip;	// What vclip for impact with robot
+            short	flash_sound;		// What sound to play when fired
+            char	wall_hit_vclip;		// What vclip for impact with wall
+            char	fire_count;		    // Number of bursts fired from EACH GUN per firing.
+			                            // ..For weapons which fire from both sides, 3*fire_count shots will be fired.
+            short	robot_hit_sound;	// What sound for impact with robot
+            char	ammo_usage;		    // How many units of ammunition it uses.
+            char	weapon_vclip;		// Vclip to render for the weapon, itself.
+            short	wall_hit_sound;		// What sound for impact with wall
+            char	destructible;		// If !0, this weapon can be destroyed by another weapon.
+            char	matter;			    // Flag: set if this object is matter (as opposed to energy)
+            char	bounce;			    // 1==always bounces, 2=bounces twice
+            char	homing_flag;		// Set if this weapon can home in on a target.
+            byte	speedvar;		    // allowed variance in speed below average, /128: 64 = 50% meaning if speed = 100, can be 50..100
+            byte	flags;			    // see values above
+            char	flash;			    // Flash effect
+            char	afterburner_size;	// Size of blobs in F1_0/16 units, specify in bitmaps.tbl as floating point. Player afterburner size = 2.5.
+            char	children;		    // ID of weapon to drop if this contains children.  -1 means no children.
+            int	    energy_usage;		// How much fuel is consumed to fire this weapon.
+            int	    fire_wait;		    // Time until this weapon can be fired again.
+            int	    multi_damage_scale;	// Scale damage by this amount when applying to player in multiplayer. F1_0 means no change.
+            ushort  bitmap;		        // Pointer to bitmap if rendertype==0 or 1.
+            int	    blob_size;		    // Size of blob if blob type
+            int	    flash_size;		    // How big to draw the flash
+            int	    impact_size;	    // How big of an impact
+            fixed int  strength[NDL];   // How much damage it can inflict
+            fixed int  speed[NDL];		// How fast it can move, difficulty level based.
+            int	    mass;			    // How much mass it has
+            int	    drag;			    // How much drag it has
+            int	    thrust;			    // How much thrust it has
+            int	    po_len_to_width_ratio;	// For polyobjects, the ratio of len/width. (10 maybe?)
+            int	    light;			    // Amount of light this weapon casts.
+            int	    lifetime;		    // Lifetime in seconds of this weapon.
+            int	    damage_radius;		// Radius of damage caused by weapon, used for missiles (not lasers) to apply to damage to things it did not hit
+            ushort  picture;	        // a picture of the weapon for the cockpit
+            ushort	hires_picture;	    // a hires picture of the above
         } 
 
         struct POWERUP_TYPE_INFO {
@@ -210,23 +202,22 @@ namespace DLE.NET
 
         //used to describe a polygon model
         struct POLYMODEL {
-          int			n_models;
-          int 			model_data_size;
-          byte*			model_data;
-          int 			submodel_ptrs[MAX_SUBMODELS];
-          FixVector 	submodel_offsets[MAX_SUBMODELS];
-          FixVector 	submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
-          FixVector 	submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
-          int 			submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
-          byte 			submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
-          FixVector 	submodel_mins[MAX_SUBMODELS];
-          FixVector   submodel_maxs[MAX_SUBMODELS];
-          FixVector 	mins, maxs;			  // min, max for whole model
-          int				rad;
-          byte			n_textures;
-          ushort			first_texture;
-          byte			simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
-        //  FixVector min, max;
+            int			    n_models;
+            int 			model_data_size;
+            byte[]			model_data;
+            fixed int 		submodel_ptrs[MAX_SUBMODELS];
+            fixed FixVector submodel_offsets[MAX_SUBMODELS];
+            fixed FixVector submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
+            fixed FixVector submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
+            fixed int 		submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
+            fixed byte 		submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
+            fixed FixVector submodel_mins[MAX_SUBMODELS];
+            fixed FixVector submodel_maxs[MAX_SUBMODELS];
+            fixed FixVector mins, maxs;			  // min, max for whole model
+            int				rad;
+            byte			n_textures;
+            ushort			first_texture;
+            byte			simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
         } 
 
         struct TEXTURE_LIGHT {
@@ -234,37 +225,29 @@ namespace DLE.NET
           long   light;
         } 
 
-        struct APOINT {
-          short x,y,z;
-        } 
-
         struct CUBE {
-          short segment;
-          short side;
-          short line;
-          short point;
-          short object;
+          short nSegment;
+          short nSide;
+          short nLine;
+          short nPoint;
+          short nObject;
         } 
 
         class Selection 
         {
-	        short segment;
-	        short side;
-	        short line;
-	        short point;
-	        short object;
+	        short nSegment;
+	        short nSide;
+	        short nLine;
+	        short nPoint;
+	        short nObject;
             public Selection()
             {
-		        segment = 0;
-		        side = DEFAULT_SIDE;
-		        line = DEFAULT_LINE;
-		        point = DEFAULT_POINT;
-		        object = DEFAULT_OBJECT;
+		        nSegment = 0;
+		        nSide = DEFAULT_SIDE;
+		        nLine = DEFAULT_LINE;
+		        nPoint = DEFAULT_POINT;
+		        nObject = DEFAULT_OBJECT;
 	        }
-        }
-
-        struct DoubleVector {
-          double x,y,z;
         }
 
         struct LEVEL_HEADER {
@@ -272,68 +255,53 @@ namespace DLE.NET
           int size;
         }
 
-        struct SUBFILE {
-          INT64 offset;
-          char name[13];
-          int size;
+        struct SUBFILE 
+        {
+            long    offset;
+            fixed char name[13];
+            int     size;
         }
 
-        struct game_top_info {
-          ushort  fileinfo_signature;
-          ushort  fileinfo_version;
-          int   fileinfo_size;
-        }     /* Should be same as first two fields below... */
+        struct game_top_info 
+        {
+            ushort  fileinfo_signature;
+            ushort  fileinfo_version;
+            int     fileinfo_size;
+        }     
 
-        struct player_item_info {
+        struct player_item_info 
+        {
 	        int	 offset;
 	        int  size;
         } 
 
-        struct game_item_info {
+        struct game_item_info 
+        {
 	        int	 offset;
 	        int	 count;
 	        int  size;
         } 
 
-        struct game_info {
-          ushort    fileinfo_signature;
-          ushort    fileinfo_version;
-          int       fileinfo_size;
-          char      mine_filename[15];
-          int       level;
-          player_item_info player;
-          game_item_info	objects;
-          game_item_info	walls;
-          game_item_info	doors;
-          game_item_info	triggers;
-          game_item_info	links;
-          game_item_info	control;
-          game_item_info	botgen;
-          game_item_info	dl_indices;
-          game_item_info	delta_lights;
-          game_item_info	equipgen;
+        struct game_info 
+        {
+            ushort              fileinfo_signature;
+            ushort              fileinfo_version;
+            int                 fileinfo_size;
+            fixed char          mine_filename[15];
+            int                 level;
+            player_item_info    player;
+            game_item_info	    objects;
+            game_item_info	    walls;
+            game_item_info	    doors;
+            game_item_info	    triggers;
+            game_item_info	    links;
+            game_item_info	    control;
+            game_item_info	    botgen;
+            game_item_info	    dl_indices;
+            game_item_info	    delta_lights;
+            game_item_info	    equipgen;
         } 
 
-
-        class CDWall {
-        public:
-          int segnum,sidenum; /* Seg & side for this wall */
-          int   hps;            /* "Hit points" of the wall.  */
-          int linked_wall;    /* number of linked wall */
-          byte type;           /* What kind of special wall. */
-          ushort flags;          /* Flags for the wall.     */
-          byte state;          /* Opening, closing, etc. */
-          byte trigger;        /* Which trigger is associated with the wall. */
-          char  clip_num;       /* Which  animation associated with the wall.  */
-          byte keys;           /* which keys are required */
- 
-         // the following two Descent2 bytes replace the "short pad" of Descent1
-          char	controlling_trigger; // which trigger causes something to happen here.
-		        // Not like "trigger" above, which is the trigger on this wall.
-		        //	Note: This gets stuffed at load time in gamemine.c.  
-		        // Don't try to use it in the editor.  You will be sorry!
-          char	cloak_value;	// if this wall is cloaked, the fade value
-        };
 
         struct active_door {
           int	 n_parts;	   // for linked walls
@@ -350,18 +318,19 @@ namespace DLE.NET
           int	time;		  // how long been cloaking or decloaking
         } cloaking_wall;
 
-        /*
-        struct {
-          int	play_time;
-          short	num_frames;
-          short	frames[MAX_CLIP_FRAMES];
-          short	open_sound;
-          short	close_sound;
-          short	flags;
-          char	filename[13];
-          char	pad;
-        } wclip;
-        */
+        //
+        struct WCLIP 
+            {
+            int	play_time;
+            short	num_frames;
+            short	frames[MAX_CLIP_FRAMES];
+            short	open_sound;
+            short	close_sound;
+            short	flags;
+            char	filename[13];
+            char	pad;
+        } w
+        
 
         //extern char	Wall_names[7][10]; // New for Descent 2
 
@@ -373,38 +342,42 @@ namespace DLE.NET
           char   num_links;
           int    value;
           int    time;
-          short  seg[MAX_TRIGGER_TARGETS];
-          short  side[MAX_TRIGGER_TARGETS];
+          fixed short  seg[MAX_TRIGGER_TARGETS];
+          fixed short  side[MAX_TRIGGER_TARGETS];
           ushort	nIndex;
-        };
+        }
 
         // New stuff, 10/14/95: For shooting out lights and monitors.
         // Light cast upon vert_light vertices in segnum:sidenum by some light
-        struct {
+        struct DELTA_LIGHT 
+            {
           short segnum;
           char  sidenum;
           char  dummy;
-          byte vert_light[4];
-        } delta_light;
+          fixed byte vert_light[4];
+            }
 
         // Light at segnum:sidenum casts light on count sides beginning at index (in array Delta_lights)
-        struct {
-          short segnum;
-          ushort sidenum :3;
-          ushort count :13;
-          ushort index;
-        } dl_index_d2x;
+        struct DL_INDEX_D2X 
+        {
+            short segnum;
+            ushort sidenum :3;
+            ushort count :13;
+            ushort index;
+        } 
 
-        struct {
+        struct DL_INDEX_STD
+        {
           short segnum;
           byte sidenum;
           byte count;
           ushort index;
-        } dl_index_d2;
+        }
 
-        union {
-	        dl_index_d2		d2;
-	        dl_index_d2x	d2x;
+            [StructLayout(LayoutKind.Explicit)] 
+        struct DL_INDEX {
+	        [FieldOffset(0)] DL_INDEX_STD	d2;
+	        [FieldOffset(0)] DL_INDEX_D2X	d2x;
         } dl_index;
 
         //extern dl_index    Dl_indices[MAX_DL_INDICES];
@@ -414,43 +387,48 @@ namespace DLE.NET
 
         struct control_center_trigger {
           short num_links;
-          short seg[MAX_TRIGGER_TARGETS];
-          short side[MAX_TRIGGER_TARGETS];
+          fixed short seg[MAX_TRIGGER_TARGETS];
+          fixed short side[MAX_TRIGGER_TARGETS];
         } control_center_trigger;
 
-        struct matcen_info {
-          int  objFlags [2]; /* Up to 32 different Descent 1 robots */
+        struct matcen_info 
+        {
+          fixed int  objFlags [2]; // Up to 32 different Descent 1 robots 
         //  int  robot_flags2;// Additional 32 robots for Descent 2
-          int    hit_points;  /* How hard it is to destroy this particular matcen */
-          int    interval;    /* Interval between materializations */
-          short  segnum;      /* Segment this is attached to. */
-          short  fuelcen_num; /* Index in fuelcen array. */
-        } matcen_info;
+          int    hit_points;  // How hard it is to destroy this particular matcen 
+          int    interval;    // Interval between materializations 
+          short  segnum;      // Segment this is attached to. 
+          short  fuelcen_num; // Index in fuelcen array. 
+        }
 
 
-        /* pig file types */
-        struct {
+        // pig file types 
+        struct PIG_HEADER
+        {
           int number_of_textures;
           int number_of_sounds;
-        } PIG_HEADER;
+        } 
 
-        struct {
+        struct PIG_TEXTURE
+        {
           char name[8];
-          byte dflags; /* this is only important for large bitmaps like the cockpit */
+          byte dflags; // this is only important for large bitmaps like the cockpit 
           byte xsize;
           byte ysize;
           byte flags;
           byte avg_color;
-          UINT32 offset;
-        } PIG_TEXTURE;
+          uint offset;
+        } 
 
-        struct {
+        struct D2_PIG_HEADER
+        {
           int signature;
           int version;
           int num_textures;
-        } D2_PIG_HEADER;
+        } 
 
-        struct {
+        struct D2_PIG_TEXTURE
+        {
           char name[8];
           byte dflags;  // bits 0-5 anim frame num, bit 6 abm flag
           byte xsize;   // low 8 bits here, 4 more bits in pad
@@ -458,55 +436,62 @@ namespace DLE.NET
           byte wh_extra;     // bits 0-3 xsize, bits 4-7 ysize
           byte flags;   // see BM_FLAG_XXX in define.h
           byte avg_color;   // average color
-          UINT32 offset;
-        } D2_PIG_TEXTURE;
+          uint offset;
+        } 
 
-        struct {
-          byte unknown[20];
-        } PIG_SOUND;
+        struct PIG_SOUND
+        {
+          fixed byte unknown[20];
+        } 
 
-        struct {
+        struct TEXTURE
+        {
           char name[8];
           short number;
-        } TEXTURE;
+        } 
 
-        struct {
+        struct FLICKERING_LIGHT
+        {
           short segnum,sidenum;  // cube with light on it
-          UINT32 mask;           // bits with 1 = on, 0 = off
+          uint mask;           // bits with 1 = on, 0 = off
           int timer;		 // always set to 0
           int delay;             // time for each bit in mask (int seconds)
-        }FLICKERING_LIGHT;
+        }
 
-        struct {
+        struct LIGHT_TIMER
+        {
 	        short	ticks;
 	        short	impulse;
-        } LIGHT_TIMER;
+        } 
 
-        struct {
+        struct LIGHT_STATUS
+        {
 	        bool	bIsOn;
 	        bool	bWasOn;
-        } LIGHT_STATUS;
+        } 
 
-        #define MAX_LEVELS	1000
+        const int MAX_LEVELS = 1000;
 
-        struct {
-	        char	missionName [80];
-	        char  missionInfo [8][80];
-	        int	authorFlags [2];
+        struct MISSION_DATA
+        {
+	        fixed char	missionName [80];
+	        fixed char  missionInfo [8][80];
+	        fixed int	authorFlags [2];
 	        int	missionType;
-	        int	missionFlags [6];
-	        int	customFlags [3];
-	        char	levelList [MAX_LEVELS][17];	//18 == ########.###,####'\0' == levlname.ext,secr
-	        char	comment [4000];
+	        fixed int	missionFlags [6];
+	        fixed int	customFlags [3];
+	        fixed char	levelList [MAX_LEVELS][17];	//18 == ########.###,####'\0' == levlname.ext,secr
+	        fixed char	comment [4000];
 	        int   numLevels;
 	        int	numSecrets;
-        } MISSION_DATA;
+        } 
 
-        struct tVertMatch {
-		        short		b;
-		        short		i;
-		        double	d;
-	        } tVertMatch; 
+        struct tVertMatch 
+            {
+		    short		b;
+		    short		i;
+		    double	d;
+	        }  
 
     }
 }

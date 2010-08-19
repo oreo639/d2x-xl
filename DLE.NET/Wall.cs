@@ -77,5 +77,23 @@ namespace DLE.NET
             TRANSILLUSORY = 7,	// 1/1/1 transparent illusory wall 
             EXTERNAL = 8	// 0/0/0/1 don't see it, dont fly through it 
         }
+
+        int     segnum, sidenum; // Seg & side for this wall 
+        int     hps;            // "Hit points" of the wall.  
+        int     linked_wall;    // number of linked wall 
+        byte    type;           // What kind of special wall. 
+        ushort  flags;          // Flags for the wall.     
+        byte    state;          // Opening, closing, etc. 
+        byte    trigger;        // Which trigger is associated with the wall. 
+        char    clip_num;       // Which  animation associated with the wall.  
+        byte    keys;           // which keys are required 
+
+        // the following two Descent2 bytes replace the "short pad" of Descent1
+        char    controlling_trigger;    // which trigger causes something to happen here.
+                                        // Not like "trigger" above, which is the trigger on this wall.
+                                        //	Note: This gets stuffed at load time in gamemine.c.  
+                                        // Don't try to use it in the editor.  You will be sorry!
+        char    cloak_value;	        // if this wall is cloaked, the fade value
+
     }
 }
