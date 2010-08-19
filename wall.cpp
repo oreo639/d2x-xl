@@ -401,6 +401,33 @@ write_INT8 (controlling_trigger, fp);
 write_INT8 (cloak_value, fp);
 }
 
-	                        /*--------------------------*/
+
+// ------------------------------------------------------------------------
+
+INT32 CActiveDoor::Read (FILE *fp, INT32 version)
+{
+n_parts = read_INT32 (fp);
+nFrontWall [0] = read_INT16 (fp);
+nFrontWall [1] = read_INT16 (fp);
+nBackWall [0] = read_INT16 (fp); 
+nBackWall [1] = read_INT16 (fp); 
+time = read_INT32 (fp);		  
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CActiveDoor::Write (FILE *fp, INT32 version)
+{
+write_INT32 (n_parts, fp);
+write_INT16 (nFrontWall[0], fp);
+write_INT16 (nFrontWall[1], fp);
+write_INT16 (nBackWall[0], fp); 
+write_INT16 (nBackWall[1], fp); 
+write_INT32 (time, fp);		  
+}
+
+// ------------------------------------------------------------------------
+
 
 //eof wall.cpp

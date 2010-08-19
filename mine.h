@@ -46,23 +46,23 @@ typedef struct tMineData {
 	CDColor 						sideColors [MAX_SEGMENTS3][6];
 	CDColor						vertexColors [MAX_VERTICES3];
 	
-	UINT8							vert_status[MAX_VERTICES3];
+	UINT8							vertexStatus[MAX_VERTICES3];
 	
-	CWall						walls[MAX_WALLS3];
+	CWall							walls[MAX_WALLS3];
 	CActiveDoor					active_doors[MAX_DOORS];
-	CTrigger					triggers[MAX_TRIGGERS2];
-	CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
+	CTrigger						triggers[MAX_TRIGGERS2];
+	CTrigger						objTriggers[MAX_OBJ_TRIGGERS];
 	INT32							numObjTriggers;
-	reactor_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
-	matcen_info					robot_centers[MAX_NUM_MATCENS2];
-	matcen_info					equip_centers[MAX_NUM_MATCENS2];
+	CReactorTrigger			reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
+	CRobotMaker					robot_centers[MAX_NUM_MATCENS2];
+	CRobotMaker					equip_centers[MAX_NUM_MATCENS2];
 	
 	// object data
-	CGameObject						objects[MAX_OBJECTS2];
+	CGameObject					objects[MAX_OBJECTS2];
 	
 	// light data
-	dl_index						dl_indices[MAX_DL_INDICES_D2X];
-	delta_light					delta_lights[MAX_DELTA_LIGHTS_D2X];
+	CLightDeltaIndex			lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
+	CLightDeltaValue			lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
 	
 	// flickering light
 	INT16							m_nFlickeringLights;
@@ -130,7 +130,7 @@ public:
 	inline tFixVector *Vertices (INT32 i = 0)
 		{ return MineData ().vertices + i; }
 	inline UINT8 *VertStatus (INT32 i = 0)
-		{ return MineData ().vert_status + i; }
+		{ return MineData ().vertexStatus + i; }
 	inline CDSegment *Segments (INT32 i = 0)
 		{ return MineData ().segments + i; }
 	inline CDColor *VertexColors (INT32 i = 0)
@@ -147,12 +147,12 @@ public:
 		{ return MineData ().numObjTriggers; }
 	inline CGameObject *Objects (INT32 i = 0)
 		{ return MineData ().objects + i; }
-	inline matcen_info *BotGens (INT32 i = 0)
+	inline CRobotMaker *BotGens (INT32 i = 0)
 		{ return MineData ().robot_centers + i; }
-	inline matcen_info *EquipGens (INT32 i = 0)
+	inline CRobotMaker *EquipGens (INT32 i = 0)
 		{ return MineData ().equip_centers + i; }
-	inline reactor_trigger *CCTriggers (INT32 i = 0)
-		{ return MineData ().control_center_triggers + i; }
+	inline CReactorTrigger *ReactorTriggers (INT32 i = 0)
+		{ return MineData ().reactorTriggers + i; }
 	inline CActiveDoor *ActiveDoors (INT32 i = 0)
 		{ return MineData ().active_doors + i; }
 	inline ROBOT_INFO *RobotInfo (INT32 i = 0)
@@ -167,10 +167,10 @@ public:
 		{ return GameInfo ().objects.count; }
 	inline UINT16& VertCount ()
 		{ return MineData ().numVertices; }
-	inline dl_index *DLIndex (INT32 i = 0)
-		{ return MineData ().dl_indices + i; }
-	inline delta_light *DeltaLights (INT32 i = 0)
-		{ return MineData ().delta_lights + i; }
+	inline CLightDeltaIndex *LightDeltaIndex (INT32 i = 0)
+		{ return MineData ().lightDeltaIndices + i; }
+	inline CLightDeltaValue *LightDeltaValues (INT32 i = 0)
+		{ return MineData ().lightDeltaValues + i; }
 	inline FLICKERING_LIGHT *FlickeringLights (INT32 i = 0)
 		{ return MineData ().flickering_lights + i; }
 	inline INT16& FlickerLightCount ()
@@ -541,8 +541,8 @@ inline INT32 MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (
 inline INT32 MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
 inline INT32 ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
 inline INT32 MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
-inline INT32 MAX_DL_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X; }
-inline INT32 MAX_DELTA_LIGHTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
+inline INT32 MAX_LIGHT_DELTA_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X; }
+inline INT32 MAX_LIGHT_DELTA_VALUES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X; }
 
 #define NO_WALL(m) MAX_WALLS(m)
 

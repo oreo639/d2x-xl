@@ -201,18 +201,18 @@ for (i=0;i<4;i++) {
 	// reduce texture light if current side is on a delta light
 	// first make sure we have allocated space for delta lights
 if (bEnableDeltaShading) {
-	dl_index *dl_indices;
+	CLightDeltaIndex *dl_indices;
 	INT32 dlIdxCount = mine->GameInfo ().dl_indices.count;
-	delta_light* delta_lights;
+	CLightDeltaValue* CLightDeltaValues;
 	if (!lightStatus [face.nSegment][face.nSide].bIsOn &&
-		 (dl_indices = mine->DLIndex ()) &&
-		 (delta_lights = mine->DeltaLights ())) {
+		 (dl_indices = mine->LightDeltaIndex ()) &&
+		 (CLightDeltaValues = mine->LightDeltaValues ())) {
 		// search delta light index to see if current side has a light
-		dl_index	*dli = dl_indices;
+		CLightDeltaIndex	*dli = dl_indices;
 		for (i = 0; i <dlIdxCount; i++, dli++) {
 //				if (dli->segnum == mine->current->segment) {
 			// loop on each delta light till the segment/side is found
-				delta_light *dl = delta_lights + dli->index;
+				CLightDeltaValue *dl = CLightDeltaValues + dli->index;
 				h = dli->count;
 				for (j = 0; j < h; j++, dl++) {
 					if (*dl == face) {

@@ -95,8 +95,8 @@ INT16 get_flickering_light(UINT16 segnum, UINT16 sidenum);
 
 void set_segment_child_num(INT16 segnum,INT16 recursion_level);
 UINT8 light_weight(INT16 nBaseTex);
-void calculate_delta_light_data(double factor, INT32 force); // light.cpp
-void update_delta_lights(); // light.cpp
+void calculate_CLightDeltaValue_data(double factor, INT32 force); // light.cpp
+void update_CLightDeltaValues(); // light.cpp
 INT32 is_light(INT32 value);
 INT32 is_exploding_light(INT32 value);
 void CreateLightMap (void);

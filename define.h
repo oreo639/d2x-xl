@@ -41,7 +41,7 @@
 #define PREFS_SHOW_POINT_COORDINATES 1
 #define PREFS_SHOW_CROSS_HAIR        2
 #define PREFS_HIDE_MARKED_BLOCKS     4
-#define PREFS_DONT_SAVE_DELTA_LIGHTS 8
+#define PREFS_DONT_SAVE_CLightDeltaValueS 8
 
 // My own defines
 #define EXTENDED_HAM 1
@@ -219,9 +219,9 @@
 #define DEFAULT_POINT   0 // point of the current side (0..3) 
 #define DEFAULT_OBJECT  0
 
-#define MARKED_MASK  0x80 // used on wall_bitmask & vert_status 
-#define DELETED_MASK 0x40 // used on wall_bitmask & vert_status 
-#define NEW_MASK     0x20 // used on vert_status                
+#define MARKED_MASK  0x80 // used on wall_bitmask & vertexStatus 
+#define DELETED_MASK 0x40 // used on wall_bitmask & vertexStatus 
+#define NEW_MASK     0x20 // used on vertexStatus                
 
 #define MAX_SEGMENTS1 800  // descent 1 max # of cubes
 #define MAX_SEGMENTS2 900  // descent 2 max # of cubes
@@ -360,11 +360,11 @@
 #define TF_SILENT          64
 #define TF_AUTOPLAY			128
 
-#define	MAX_DL_INDICES_D2		500
-#define	MAX_DELTA_LIGHTS_D2	10000
-#define	MAX_DL_INDICES_D2X	3000
-#define	MAX_DELTA_LIGHTS_D2X	50000
-#define	DL_SCALE     			2048	// Divide light to allow 3 bits integer, 5 bits fraction.
+#define	MAX_LIGHT_DELTA_INDICES_STD	500
+#define	MAX_LIGHT_DELTA_VALUES_STD		10000
+#define	MAX_LIGHT_DELTA_INDICES_D2X	3000
+#define	MAX_LIGHT_DELTA_VALUES_D2X		50000
+#define	LIGHT_DELTA_SCALE     			2048	// Divide light to allow 3 bits integer, 5 bits fraction.
 
 // Texture flags
 #define	BM_FLAG_TRANSPARENT        1

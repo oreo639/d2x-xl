@@ -533,7 +533,7 @@ bool CMineView::SetLightStatus (void)
 {
 	CMine *mine = GetMine ();
 	INT32 h, i, j;
-	dl_index *pdli = mine->DLIndex ();
+	CLightDeltaIndex *pdli = mine->LightDeltaIndex ();
 	LIGHT_TIMER *plt;
 	FLICKERING_LIGHT *pfl = mine->FlickeringLights ();
 	LIGHT_STATUS *pls;
@@ -541,7 +541,7 @@ bool CMineView::SetLightStatus (void)
 	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
 	INT16 nSrcSide, nSrcSeg, segnum, sidenum;
 
-delta_light *dll = mine->DeltaLights ();
+CLightDeltaValue *dll = mine->LightDeltaValues ();
 if (!dll)
 	return false;
 // search delta light index to see if current side has a light
@@ -563,7 +563,7 @@ for (h = 0; h < mine->GameInfo ().dl_indices.count; h++, pdli++) {
 	j = mine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
-	dll = mine->DeltaLights (pdli->std.index);
+	dll = mine->LightDeltaValues (pdli->std.index);
 	for (; i; i--, dll++) {
 		segnum = dll->segnum;
 		sidenum = dll->sidenum;
@@ -1833,29 +1833,29 @@ void CMineView::DrawLights (CMine *mine)
   SelectObject(m_pDC, m_penLtGray);
 
   if (IsD2File ()) {
-    DLIndex () = (dl_index *)GlobalLock(hDLIndex ());
-    if (DLIndex ()) {
-      DeltaLights () = (DeltaLights () *)GlobalLock(hDeltaLights ());
-      if (DeltaLights ()) {
+    LightDeltaIndex () = (CLightDeltaIndex *)GlobalLock(hDLIndex ());
+    if (LightDeltaIndex ()) {
+      LightDeltaValues () = (LightDeltaValues () *)GlobalLock(hDeltaLights ());
+      if (LightDeltaValues ()) {
 	for (i=0;i<GameInfo ().dl_indices.count;i++) {
-	  sidenum = DLIndex () [i].sidenum;
-	  segnum  = DLIndex () [i].segnum;
+	  sidenum = LightDeltaIndex () [i].sidenum;
+	  segnum  = LightDeltaIndex () [i].segnum;
 	  if (!Visible (mine->Segments (segnum))
 		  continue;
 	  draw_octagon(m_pDC,sidenum,segnum);
 	  if (segnum == current->segment && sidenum == current->side) {
 	    POINT light_source;
 	    light_source = segment_center_xy(sidenum,segnum);
-	    for (j=0;j<DLIndex () [i].count;j++) {
+	    for (j=0;j<LightDeltaIndex () [i].count;j++) {
 	      POINT light_dest;
-	      INT32 index = DLIndex () [i].index+j;
-	      sidenum = DeltaLights () [index].sidenum;
-			segnum  = DeltaLights () [index].segnum;
+	      INT32 index = LightDeltaIndex () [i].index+j;
+	      sidenum = LightDeltaValues () [index].sidenum;
+			segnum  = LightDeltaValues () [index].segnum;
 	      segment *seg = Segments () [segnum];
 	      light_dest = segment_center_xy(sidenum,segnum);
 			for (k=0;k<4;k++)  {
 				POINT corner;
-				UINT8 l = DeltaLights () [index].vert_light [k];
+				UINT8 l = LightDeltaValues () [index].vert_light [k];
 				l = min(0x1f,l);
 				l <<= 3;
 				m_pen m_penLight = CreatePen(PS_SOLID, 1, RGB(l,l,255-l));

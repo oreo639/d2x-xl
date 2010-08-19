@@ -47,7 +47,7 @@ CMine::CMine()
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
 	GameInfo ().dl_indices.count = 0;
-	GameInfo ().delta_lights.count = 0;
+	GameInfo ().lightDeltaValues.count = 0;
 	m_nNoLightDeltas = 2;
 	m_lightRenderDepth = MAX_LIGHT_DEPTH;
 	m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
@@ -467,7 +467,7 @@ if (game_err != 0) {
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
 	GameInfo ().dl_indices.count = 0;
-	GameInfo ().delta_lights.count = 0;
+	GameInfo ().lightDeltaValues.count = 0;
 	fclose(loadFile);
 	return(3);
 	}
@@ -893,7 +893,7 @@ void CMine::ClearMineData() {
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
 	GameInfo ().dl_indices.count = 0;
-	GameInfo ().delta_lights.count = 0;
+	GameInfo ().lightDeltaValues.count = 0;
 }
 
 // ------------------------------------------------------------------------
@@ -1153,7 +1153,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
 	GameInfo ().dl_indices.count = 0;
-	GameInfo ().delta_lights.count = 0;
+	GameInfo ().lightDeltaValues.count = 0;
 
 	GameInfo ().objects.offset =-1;
 	GameInfo ().walls.offset =-1;
@@ -1163,7 +1163,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	GameInfo ().botgen.offset =-1;
 	GameInfo ().equipgen.offset =-1;
 	GameInfo ().dl_indices.offset =-1;
-	GameInfo ().delta_lights.offset =-1;
+	GameInfo ().lightDeltaValues.offset =-1;
 
 	//==================== = READ FILE INFO========================
 
@@ -1279,14 +1279,15 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			}
 		else if (GameInfo ().fileinfo_version < 20)
 			ErrorMsg ("Door version < 20, doors not loaded");
-		else if(sizeof (*ActiveDoors (i)) != GameInfo ().doors.size)
+		else if (sizeof (*ActiveDoors (i)) != GameInfo ().doors.size)
 			ErrorMsg ("Error: Door size incorrect");
-		else if (GameInfo ().doors.count && 
-				   fread(ActiveDoors (), (INT16)GameInfo ().doors.size * GameInfo ().doors.count, 1, loadfile)!= 1) {
-			ErrorMsg ("Error reading doors.");
+		else if (GameInfo ().doors.count) {
+			for (i = 0; i < GameInfo ().doors.count; i++) {
+				if (!ActiveDoors ()->Read (loadfile, GameInfo ().fileinfo_version))
+					ErrorMsg ("Error reading doors.");
+				}
 			}
 		}
-
 
 	//==================== READ TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
@@ -1345,8 +1346,8 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			GameInfo ().control.count = MAX_CONTROL_CENTER_TRIGGERS;
 		}
 		if (!fseek(loadfile, GameInfo ().control.offset, SEEK_SET))  {
-//			for (i = 0; i < GameInfo ().control.count; i++)
-				if (fread(CCTriggers (), TotalSize (GameInfo ().control), 1, loadfile)!= 1) {
+			for (i = 0; i < GameInfo ().control.count; i++)
+				if (!ReactorTriggers (i)->Read (loadfile, GameInfo ().fileinfo_version)) {
 					ErrorMsg ("Error reading control center triggers from mine.cpp");
 //					break;
 				}
@@ -1364,22 +1365,13 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
-				if (IsD2File ()) {
-					if (fread(BotGens (i), (INT16)GameInfo ().botgen.size, 1, loadfile)!= 1) {
-						ErrorMsg ("Error reading botgens from mine.cpp");
-						break;
+				if (!BotGens (i)->Read (loadfile, GameInfo ().fileinfo_version)) {
+					ErrorMsg ("Error reading botgens from mine.cpp");
+					break;
 					}
-				} else {
-					BotGens (i)->objFlags[0] = read_INT32(loadfile);
-					// skip robot_flags2
-					BotGens (i)->hit_points = read_FIX(loadfile);
-					BotGens (i)->interval = read_FIX(loadfile);
-					BotGens (i)->segnum = read_INT16(loadfile);
-					BotGens (i)->fuelcen_num = read_INT16(loadfile);
 				}
 			}
 		}
-	}
 
 	//================ READ EQUIPMENT CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
@@ -1396,68 +1388,60 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 					if (fread(EquipGens (i), (INT16)GameInfo ().equipgen.size, 1, loadfile)!= 1) {
 						ErrorMsg ("Error reading equipgens from mine.cpp");
 						break;
+						}
 					}
-				} else {
-					EquipGens (i)->objFlags[0] = read_INT32(loadfile);
-					// skip robot_flags2
-					EquipGens (i)->hit_points = read_FIX(loadfile);
-					EquipGens (i)->interval = read_FIX(loadfile);
-					EquipGens (i)->segnum = read_INT16(loadfile);
-					EquipGens (i)->fuelcen_num = read_INT16(loadfile);
 				}
 			}
 		}
-	}
 
 	//================ READ DELTA LIGHT INFO============== =
 	// note: D2 only
 	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().dl_indices.count);
 		//    DEBUGMSG(message);
-		if (GameInfo ().dl_indices.count > MAX_DL_INDICES (this)) {
+		if (GameInfo ().dl_indices.count > MAX_LIGHT_DELTA_INDICES (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
-				GameInfo ().dl_indices.count, MAX_DL_INDICES (this));
+				GameInfo ().dl_indices.count, MAX_LIGHT_DELTA_INDICES (this));
 			ErrorMsg (message);
-			GameInfo ().dl_indices.count = MAX_DL_INDICES (this);
+			GameInfo ().dl_indices.count = MAX_LIGHT_DELTA_INDICES (this);
 			}
 		if (GameInfo ().dl_indices.offset > -1 && GameInfo ().dl_indices.count > 0) {
 			if (!fseek(loadfile, GameInfo ().dl_indices.offset, SEEK_SET)) {
-				if (fread(DLIndex (), TotalSize (GameInfo ().dl_indices), 1, loadfile)!= 1) {
+				bool bD2X = (LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
+				for (i = 0; i < GameInfo ().dl_indices.count; i++) {
+					if (!LightDeltaIndex (i)->Read (loadfile, bD2X)) 
 					ErrorMsg ("Error reading delta light indices from mine.cpp");
+					}
 				}
 			}
 		}
-	}
 
 	//==================== READ DELTA LIGHTS==================== =
 	// note: D2 only
 	if (IsD2File ()) {
-		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().delta_lights.count);
+		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().lightDeltaValues.count);
 		//    DEBUGMSG(message);
-		if (GameInfo ().delta_lights.count > MAX_DELTA_LIGHTS (this)) {
+		if (GameInfo ().lightDeltaValues.count > MAX_LIGHT_DELTA_VALUES (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
-				GameInfo ().delta_lights.count, MAX_DELTA_LIGHTS (this));
+				GameInfo ().lightDeltaValues.count, MAX_LIGHT_DELTA_VALUES (this));
 			ErrorMsg (message);
-			GameInfo ().delta_lights.count = MAX_DELTA_LIGHTS (this);
-		}
-		if (GameInfo ().delta_lights.offset > -1 && GameInfo ().dl_indices.count > 0) {
-			if (!fseek(loadfile, GameInfo ().delta_lights.offset, SEEK_SET)) {
-				delta_light *dl, temp_dl;
-				dl = DeltaLights ();
-				for (i = 0; i < GameInfo ().delta_lights.count; i++) {
-					if (fread(&temp_dl, GameInfo ().delta_lights.size, 1, loadfile)!= 1) {
+			GameInfo ().lightDeltaValues.count = MAX_LIGHT_DELTA_VALUES (this);
+			}
+		if (GameInfo ().lightDeltaValues.offset > -1 && GameInfo ().dl_indices.count > 0) {
+			if (!fseek(loadfile, GameInfo ().lightDeltaValues.offset, SEEK_SET)) {
+				CLightDeltaValue *dl, temp_dl;
+				dl = LightDeltaValues ();
+				for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
+					if (!LightDeltaValues (i)->Read (fp)) {
 						ErrorMsg ("Error reading delta light values from mine.cpp");
 						break;
 					}
-					memcpy(dl, &temp_dl, (INT32)(GameInfo ().delta_lights.size));
+					memcpy(dl, &temp_dl, (INT32)(GameInfo ().lightDeltaValues.size));
 					dl++;
+					}
 				}
 			}
 		}
-	}
-
-
-
 	return 0;
 }
 
@@ -1654,24 +1638,24 @@ void CMine::SortDLIndex (INT32 left, INT32 right)
 	INT32	l = left,
 			r = right,
 			m = (left + right) / 2;
-	INT16	mSeg = DLIndex (m)->nSegment, 
-			mSide = DLIndex (m)->nSide;
-	dl_index	*pl, *pr;
+	INT16	mSeg = LightDeltaIndex (m)->nSegment, 
+			mSide = LightDeltaIndex (m)->nSide;
+	CLightDeltaIndex	*pl, *pr;
 
 do {
-	pl = DLIndex (l);
+	pl = LightDeltaIndex (l);
 	while ((pl->nSegment < mSeg) || ((pl->nSegment == mSeg) && (pl->nSide < mSide))) {
 		pl++;
 		l++;
 		}
-	pr = DLIndex (r);
+	pr = LightDeltaIndex (r);
 	while ((pr->nSegment > mSeg) || ((pr->nSegment == mSeg) && (pr->nSide > mSide))) {
 		pr--;
 		r--;
 		}
 	if (l <= r) {
 		if (l < r) {
-			dl_index	h = *pl;
+			CLightDeltaIndex	h = *pl;
 			*pl = *pr;
 			*pr = h;
 			}
@@ -1931,11 +1915,11 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
 	GameInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
 	GameInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
-	GameInfo ().control.size = 42;                            // 42 = sizeof (reactor_trigger)
-	GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (matcen_info)
-	GameInfo ().equipgen.size = 20; // 20 = sizeof (matcen_info)
-	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof (dl_index)
-	GameInfo ().delta_lights.size = 8;                             // 8 = sizeof (delta_light)
+	GameInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
+	GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
+	GameInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
+	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
+	GameInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
 
 	// the offsets will be calculated as we go then rewritten at the end
 	//  GameInfo ().doors.offset =-1;
@@ -1946,7 +1930,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//  GameInfo ().control.offset =-1;
 	//  GameInfo ().matcen.offset =-1;
 	//  GameInfo ().dl_indices.offset =-1;
-	//  GameInfo ().delta_lights.offset =-1;
+	//  GameInfo ().lightDeltaValues.offset =-1;
 
 	// these numbers (.howmany) are updated by the editor
 	//  GameInfo ().objects.count = 0;
@@ -1956,7 +1940,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//  GameInfo ().control.count = 0;
 	//  GameInfo ().matcen.count = 0;
 	//  GameInfo ().dl_indices.count = 0; // D2
-	//  GameInfo ().delta_lights.count = 0; // D2
+	//  GameInfo ().lightDeltaValues.count = 0; // D2
 
 	if (m_fileType== RDL_FILE) {
 		GameInfo ().fileinfo_signature = 0x6705;
@@ -2056,7 +2040,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// note: same for D1 and D2
 	GameInfo ().control.offset = ftell(savefile);
 	//for (i = 0; i < GameInfo ().control.count; i++)
-		fwrite(CCTriggers (), TotalSize (GameInfo ().control), 1, savefile);
+		fwrite(ReactorTriggers (), TotalSize (GameInfo ().control), 1, savefile);
 
 	//================ WRITE MATERIALIZATION CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
@@ -2090,17 +2074,17 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34))
 		SortDLIndex (0, GameInfo ().dl_indices.count - 1);
 	if (IsD2File ())
-		fwrite(DLIndex (), TotalSize (GameInfo ().dl_indices), 1, savefile);
+		fwrite(LightDeltaIndex (), TotalSize (GameInfo ().dl_indices), 1, savefile);
 
 	//================ = WRITE DELTA LIGHTS==================
 	// note: D2 only
-	GameInfo ().delta_lights.offset = ftell(savefile);
+	GameInfo ().lightDeltaValues.offset = ftell(savefile);
 	if (IsD2File ()) {
-		delta_light *dl, temp_dl;
-		dl = DeltaLights ();
-		for (i = 0; i < GameInfo ().delta_lights.count; i++) {
-			memcpy(&temp_dl, dl, (INT16)(GameInfo ().delta_lights.size));
-			fwrite(&temp_dl, (INT16)(GameInfo ().delta_lights.size), 1, savefile);
+		CLightDeltaValue *dl, temp_dl;
+		dl = LightDeltaValues ();
+		for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
+			memcpy(&temp_dl, dl, (INT16)(GameInfo ().lightDeltaValues.size));
+			fwrite(&temp_dl, (INT16)(GameInfo ().lightDeltaValues.size), 1, savefile);
 			dl++;
 		}
 	}

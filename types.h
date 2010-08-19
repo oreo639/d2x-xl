@@ -359,8 +359,8 @@ typedef struct game_info {
   game_item_info	links;
   game_item_info	control;
   game_item_info	botgen;
-  game_item_info	dl_indices;
-  game_item_info	delta_lights;
+  game_item_info	lightDeltaIndices;
+  game_item_info	lightDeltaValues;
   game_item_info	equipgen;
 } game_info;
 
@@ -566,7 +566,7 @@ public:
   INT16		nBackWall[2];  // back wall numbers for this door
   FIX			time;		   // how long been opening, closing, waiting
 
-	void Read (FILE *fp, INT32 version);
+	INT32 Read (FILE *fp, INT32 version);
 	void Write (FILE *fp, INT32 version);
 };
 
@@ -574,11 +574,11 @@ class CCloakingWall {    // NEW for Descent 2
 public:
 	INT16		nFrontWall;	  // front wall numbers for this door
 	INT16		nBackWall; 	  // back wall numbers for this door
-	FIX			front_ls[4]; 	  // front wall saved light values
-	FIX			back_ls[4];	  // back wall saved light values
-	FIX			time;		  // how long been cloaking or decloaking
+	FIX		front_ls[4]; 	  // front wall saved light values
+	FIX		back_ls[4];	  // back wall saved light values
+	FIX		time;		  // how long been cloaking or decloaking
 
-	void Read (FILE *fp, INT32 version);
+	INT32 Read (FILE *fp, INT32 version);
 	void Write (FILE *fp, INT32 version);
 };
 
@@ -617,33 +617,46 @@ public:
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
 // Light cast upon vert_light vertices in segnum:sidenum by some light
-class delta_light : public CSideKey {
+class CLightDeltaValue : public CSideKey {
 public:
-	UINT8 vert_light[4];
+	UINT8 vert_light [4];
+
+	INT32 Read (FILE *fp);
+	void Write (FILE *fp);
 };
 
-// Light at segnum:sidenum casts light on count sides beginning at index (in array Delta_lights)
-class dl_index : public CSideKey {
+// Light at segnum:sidenum casts light on count sides beginning at index (in array CLightDeltaValues)
+class CLightDeltaIndex : public CSideKey {
 public:
 	UINT16 count;
 	UINT16 index;
+
+	INT32 Read (FILE *fp, bool bD2X);
+	void Write (FILE *fp, bool bD2X);
 };
 
-//extern dl_index    Dl_indices[MAX_DL_INDICES];
-//extern delta_light Delta_lights[MAX_DELTA_LIGHTS];
+//extern CLightDeltaIndex    Dl_indices[MAX_LIGHT_DELTA_INDICES];
+//extern CLightDeltaValue CLightDeltaValues[MAX_LIGHT_DELTA_VALUES];
 //extern INT32	     Num_static_lights;
 
 
-typedef trigger_target_list reactor_trigger;
+class CReactorTrigger : public trigger_target_list {
+	INT32 Read (FILE *fp, INT32 version);
+	void Write (FILE *fp, INT32 version);
+};
 
-typedef struct matcen_info {
-  INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */
-//  INT32  robot_flags2;// Additional 32 robots for Descent 2
-  FIX    hit_points;  /* How hard it is to destroy this particular matcen */
-  FIX    interval;    /* Interval between materializations */
-  INT16  segnum;      /* Segment this is attached to. */
-  INT16  fuelcen_num; /* Index in fuelcen array. */
-} matcen_info;
+class CRobotMaker {
+public:
+	INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */
+	//  INT32  robot_flags2;// Additional 32 robots for Descent 2
+	FIX    hit_points;  /* How hard it is to destroy this particular matcen */
+	FIX    interval;    /* Interval between materializations */
+	INT16  segnum;      /* Segment this is attached to. */
+	INT16  fuelcen_num; /* Index in fuelcen array. */
+
+	INT32 Read (FILE *fp, INT32 version);
+	void Write (FILE *fp, INT32 version);
+};
 
 
 /* pig file types */

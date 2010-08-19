@@ -14,6 +14,7 @@
 #include "palette.h"
 #include "dle-xp.h"
 #include "robot.h"
+#include "io.h"
 
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
@@ -123,7 +124,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		if (segnum == delSegNum) {
 			INT32 nMatCens = --GameInfo ().botgen.count; 
 			if (i < nMatCens)
-			memcpy ((void *) BotGens (i), (void *) BotGens (nMatCens), sizeof (matcen_info)); 
+			memcpy ((void *) BotGens (i), (void *) BotGens (nMatCens), sizeof (CRobotMaker)); 
 			}
 		}
 
@@ -133,7 +134,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		if (segnum == delSegNum) {
 			GameInfo ().equipgen.count--; 
 			memcpy ((void *) EquipGens (i), (void *) EquipGens (i + 1), 
-					  (GameInfo ().equipgen.count - i) * sizeof (matcen_info)); 
+					  (GameInfo ().equipgen.count - i) * sizeof (CRobotMaker)); 
 			}
 		}
 #endif
@@ -145,17 +146,17 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			EquipGens (i)->segnum--;
 	// delete any control seg with this segment
 	for (i = (UINT16)GameInfo ().control.count - 1; i >= 0; i--) {
-		INT32 count = CCTriggers (i)->count; 
+		INT32 count = ReactorTriggers (i)->count; 
 		for (j = count - 1; j>0; j--) {
-			segnum = CCTriggers (i)->targets [j].nSegment; 
+			segnum = ReactorTriggers (i)->targets [j].nSegment; 
 			if (segnum == delSegNum) {
 				// move last segment into this spot
-				CCTriggers (i)->targets [j].nSegment = 
-					CCTriggers (i)->targets [count - 1].nSegment; 
-				CCTriggers (i)->targets [j].nSide = 
-					CCTriggers (i)->targets [count - 1].nSide; 
-				CCTriggers (i)->targets [count - 1] = CSideKey(0,0);
-				CCTriggers (i)->count--; 
+				ReactorTriggers (i)->targets [j].nSegment = 
+					ReactorTriggers (i)->targets [count - 1].nSegment; 
+				ReactorTriggers (i)->targets [j].nSide = 
+					ReactorTriggers (i)->targets [count - 1].nSide; 
+				ReactorTriggers (i)->targets [count - 1] = CSideKey(0,0);
+				ReactorTriggers (i)->count--; 
 			}
 		}
 	}
@@ -296,14 +297,14 @@ void CMine::DeleteSegment(INT16 delSegNum)
 
 		// replace control seg numbers with real numbers
 		for (i = 0; i < GameInfo ().control.count; i++) {
-			for (j = 0; j < CCTriggers (i)->count; j++) {
-				segnum = CCTriggers (i)->targets [j].nSegment; 
+			for (j = 0; j < ReactorTriggers (i)->count; j++) {
+				segnum = ReactorTriggers (i)->targets [j].nSegment; 
 				if (segnum < SegCount ()) {
 					seg = Segments (segnum); 
-					CCTriggers (i)->targets [j].nSegment = seg->nIndex; 
+					ReactorTriggers (i)->targets [j].nSegment = seg->nIndex; 
 					}
 				else {
-					CCTriggers (i)->targets [j].nSegment = 0; // fix control center segment number
+					ReactorTriggers (i)->targets [j].nSegment = 0; // fix control center segment number
 				}
 			}
 		}
@@ -557,7 +558,7 @@ currSeg->sides [nCurrSide].nBaseTex = 0;
 currSeg->sides [nCurrSide].nOvlTex = 0; 
 memset (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
  
-// update number of Segments () and vertices and clear vert_status
+// update number of Segments () and vertices and clear vertexStatus
 SegCount ()++; 
 memset (VertStatus (VertCount ()), 0, 4 * sizeof (*VertStatus ()));
 VertCount () += 4;
@@ -2921,9 +2922,81 @@ damage [0] =
 damage [1] = 0;
 }
 
-                        /* -------------------------- */
+// ------------------------------------------------------------------------
 
+INT32 CRobotMaker::Read (FILE *fp, INT32 version)
+{
+objFlags [0] = read_INT32 (fp);
+if (theApp.GetMine ()->IsD2File ())
+	objFlags [1] = read_INT32 (fp);
+hit_points = read_FIX (fp);
+interval = read_FIX (fp);
+segnum = read_INT16 (fp);
+fuelcen_num = read_INT16 (fp);
+return 1;
+}
 
+// ------------------------------------------------------------------------
 
-                        /* -------------------------- */
+void CRobotMaker::Write (FILE *fp, INT32 version)
+{
+write_INT32 (objFlags [0], fp);
+if (theApp.GetMine ()->IsD2File ())
+	write_INT32 (objFlags [1], fp);
+write_FIX (hit_points, fp);
+write_FIX (interval, fp);
+write_INT16 (segnum, fp);
+write_INT16 (fuelcen_num, fp);
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CLightDeltaValue::Read (FILE *fp)
+{
+nSegment = read_INT16 (fp);
+nSide = INT16 (read_INT8 (fp));
+for (int i = 0; i < 4; i++)
+	vert_light [i] = read_INT8 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CLightDeltaValue::Write (FILE *fp)
+{
+write_INT16 (nSegment, fp);
+write_INT8 (INT8 (nSide), fp);
+for (int i = 0; i < 4; i++)
+	write_INT8 (vert_light [i], fp);
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CLightDeltaIndex::Read (FILE *fp, bool bD2X)
+{
+nSegment = read_INT16 (fp);
+UINT16 h = read_INT16 (fp);
+if (bD2X) {
+	nSide = h & 3;
+	count = h >> 3;
+	}
+else {
+	nSide = h % 256;
+	count = h / 256;
+	}
+index = read_INT16 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CLightDeltaIndex::Write (FILE *fp, bool bD2X)
+{
+write_INT16 (nSegment, fp);
+if (bD2X)
+	write_INT16 (bD2X ? (nSide & 3) | (count << 3) : (nSide % 256 + count * 256), fp);
+write_INT16 (index, fp);
+}
+
+// ------------------------------------------------------------------------
 //eof segment.cpp

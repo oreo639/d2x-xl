@@ -74,7 +74,7 @@ if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
 		// fill in deleted matcen
 		INT32 nDelMatCen = seg->matcen_num;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
-			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (matcen_info));
+			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (CRobotMaker));
 			BotGens (nDelMatCen)->fuelcen_num = nDelMatCen;
 			seg->matcen_num = -1;
 			}
@@ -98,7 +98,7 @@ if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
 		// fill in deleted matcen
 		INT32 nDelMatCen = seg->matcen_num;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
-			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (matcen_info));
+			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (CRobotMaker));
 			EquipGens (nDelMatCen)->fuelcen_num = nDelMatCen;
 			seg->matcen_num = -1;
 			}

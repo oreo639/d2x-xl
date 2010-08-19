@@ -94,8 +94,8 @@ INT32 ScrnHeight = 0;
 
 // new data for Descent 2
 INT32 file_type = RL2_FILE;
-//dl_index     *dl_indices=0;    // MAX_DL_INDICES   x 6 bytes each
-//delta_light  *delta_lights=0;  // MAX_DELTA_LIGHTS x 8 bytes each
+//CLightDeltaIndex     *dl_indices=0;    // MAX_LIGHT_DELTA_INDICES   x 6 bytes each
+//CLightDeltaValue  *CLightDeltaValues=0;  // MAX_LIGHT_DELTA_VALUES x 8 bytes each
 INT16	     num_static_lights=0;
 
 char string[256];
@@ -856,15 +856,15 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //tFixVector *vertices=0;
 //segment *Segments ()[MAX_SEGMENTS2];
 //object *Objects ()[MAX_OBJECTS];
-//UINT8 *vert_status=0; //MAX_VERTICES
+//UINT8 *vertexStatus=0; //MAX_VERTICES
 
 //char m_currentLevelName[256];
 
 //wall *Walls (); //MAX_WALLS
 //CActiveDoor active_doors[MAX_DOORS];
 //trigger *Triggers ();// MAX_TRIGGERS;
-//reactor_trigger control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
-//matcen_info robot_centers[MAX_NUM_MATCENS];
+//CReactorTrigger reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
+//CRobotMaker robot_centers[MAX_NUM_MATCENS];
 
 //game_top_info game_top_fileinfo;
 //game_info GameInfo ();

@@ -402,7 +402,7 @@ for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigg
 		}
 	}
 // show if this is cube/side is triggered by the control_center
-reactor_trigger	*ccTrigger = m_mine->CCTriggers ();
+CReactorTrigger	*ccTrigger = m_mine->ReactorTriggers ();
 INT32 control;
 for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, ccTrigger++) {
 	INT32 count = ccTrigger->count;
@@ -730,7 +730,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		if (nMatCens > 0) {
 			// fill in deleted matcen
 			INT32 nDelMatCen = m_mine->CurrSeg ()->value;
-			memcpy (m_mine->BotGens (nDelMatCen), m_mine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (matcen_info));
+			memcpy (m_mine->BotGens (nDelMatCen), m_mine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
 			m_mine->GameInfo ().matcen.count--;
 			INT32 i;
 			for (i = 0; i < 6; i++)

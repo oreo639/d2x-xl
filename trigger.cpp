@@ -356,7 +356,7 @@ return -1;
 //
 // Action - Updates control center Triggers () so that exit door opens
 //          when the reactor blows up.  Removes any invalid cube/sides
-//          from control_center_triggers if they exist.
+//          from reactorTriggers if they exist.
 //------------------------------------------------------------------------
 
 void CMine::AutoLinkExitToReactor () 
@@ -368,7 +368,7 @@ void CMine::AutoLinkExitToReactor ()
   bool 		found;
 
   control = 0; // only 0 used by the game Descent
-  reactor_trigger *ccTrigger = CCTriggers (control);
+  CReactorTrigger *ccTrigger = ReactorTriggers (control);
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -564,6 +564,29 @@ else {
 	write_INT8 (count, fp);
 	write_INT16 (count, fp);
 	}
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	write_INT16 (targets [i].nSegment, fp);
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	write_INT16 (targets [i].nSide, fp);
+}
+
+//------------------------------------------------------------------------
+
+INT32 CReactorTrigger::Read (FILE *fp, INT32 version)
+{
+count = read_INT16 ();
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	targets [i].nSegment = read_INT16(fp);
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	targets [i].nSide = read_INT16(fp);
+return 1;
+}
+
+//------------------------------------------------------------------------
+
+void CReactorTrigger::Write (FILE *fp, INT32 version)
+{
+write_INT16 (count);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	write_INT16 (targets [i].nSegment, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)

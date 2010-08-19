@@ -979,7 +979,7 @@ bool CDiagTool::CheckTriggers ()
 	CTrigger *trigger = m_mine->Triggers ();
 	INT32 wallCount = m_mine->GameInfo ().walls.count;
 	CWall *wall;
-	reactor_trigger *ccTrigger = m_mine->CCTriggers ();
+	CReactorTrigger *ccTrigger = m_mine->ReactorTriggers ();
 
 	// make sure trigger is linked to exactly one wall
 for (i = 0; i < ccTrigger->count; i++)
@@ -1006,7 +1006,7 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 	wall = m_mine->Walls ();
 	for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 		if (wall->trigger == trignum) {
-			// if exit, make sure it is linked to reactor_trigger
+			// if exit, make sure it is linked to CReactorTrigger
 			INT32 tt = trigger->type;
 			INT32 tf = trigger->flags;
 			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
@@ -1015,7 +1015,7 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 						 ccTrigger->side [i] == wall->nSide)
 						break; // found it
 				// if did not find it
-				if (i>=m_mine->CCTriggers ()->count) {
+				if (i>=m_mine->ReactorTriggers ()->count) {
 					if (m_bAutoFixBugs) {
 						m_mine->AutoLinkExitToReactor ();
 						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wall->nSegment, wall->nSide);
@@ -1190,7 +1190,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 		}
 	}
 
-// make sure there is exactly one exit and its linked to the reactor_trigger
+// make sure there is exactly one exit and its linked to the CReactorTrigger
 count = 0;
 trigger = m_mine->Triggers ();
 for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
@@ -1237,7 +1237,7 @@ return false;
 
 //------------------------------------------------------------------------
 
-INT8 CDiagTool::FindMatCen (matcen_info* matCenP, INT16 nSegment, INT16* refList)
+INT8 CDiagTool::FindMatCen (CRobotMaker* matCenP, INT16 nSegment, INT16* refList)
 {
 	INT8	h = -1, i, j = INT8 (m_mine->GameInfo ().botgen.count);
 
@@ -1261,7 +1261,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
 {
 	CDSegment*		segP = m_mine->Segments ();
 	INT16				n, h, i, j = m_mine->SegCount ();
@@ -1282,7 +1282,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens, char* pszType)
+INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType)
 {
 	CDSegment*	segP = m_mine->Segments ();
 	INT16			h, i, j = m_mine->SegCount ();
@@ -1329,7 +1329,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+INT16 CDiagTool::AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
@@ -1358,7 +1358,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::CleanupMatCens (INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+INT16 CDiagTool::CleanupMatCens (INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
@@ -1388,7 +1388,7 @@ bool CDiagTool::CheckBotGens (void)
 	bool					bOk = true;
 	INT16					nMatCenSegs, nMatCens = INT16 (m_mine->GameInfo ().botgen.count);
 	CDSegment*			segP = m_mine->Segments ();
-	matcen_info*		matCenP = m_mine->BotGens (0);
+	CRobotMaker*		matCenP = m_mine->BotGens (0);
 	INT16					segList [MAX_NUM_MATCENS2];
 	INT16					refList [MAX_NUM_MATCENS2];
 
@@ -1412,7 +1412,7 @@ bool CDiagTool::CheckEquipGens (void)
 	INT16					i, nSegment = 0;
 	bool					bOk = true;
 	INT32					nMatCenSegs, nMatCens = INT32 (m_mine->GameInfo ().equipgen.count);
-	matcen_info*		matCenP = m_mine->EquipGens (0);
+	CRobotMaker*		matCenP = m_mine->EquipGens (0);
 	INT16					segList [MAX_NUM_MATCENS2];
 	INT16					refList [MAX_NUM_MATCENS2];
 

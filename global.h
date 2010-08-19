@@ -69,8 +69,8 @@ extern long ScrnMemMax;
 extern INT32 ScrnWidth;
 extern INT32 ScrnHeight;
 extern INT32 m_fileType;
-extern dl_index *dl_indices;
-extern delta_light *delta_lights;
+extern CLightDeltaIndex *dl_indices;
+extern CLightDeltaValue *CLightDeltaValues;
 extern INT16 num_static_lights;
 extern char string[256];
 extern INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
@@ -156,15 +156,15 @@ extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
 //extern tFixVector FAR *vertices;
 //extern segment far *segments[MAX_SEGMENTS2];
 //extern object far *objects[MAX_OBJECTS];
-//extern UINT8 *vert_status;
+//extern UINT8 *vertexStatus;
 
 //extern char m_currentLevelName[256];
 
 //extern wall *walls; // MAX_WALLS
 //extern CActiveDoor active_doors[MAX_DOORS];
 //extern trigger *triggers; // MAX_TRIGGERS
-//extern reactor_trigger control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
-//extern matcen_info robot_centers[MAX_NUM_MATCENS];
+//extern CReactorTrigger reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
+//extern CRobotMaker robot_centers[MAX_NUM_MATCENS];
 
 //extern game_top_info game_top_fileinfo;
 //extern game_info game_fileinfo;

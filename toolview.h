@@ -230,7 +230,7 @@ class CDiagTool : public CToolDlg
 		INT32			m_nErrors [2];
 		INT32			m_bAutoFixBugs;
 		INT32			m_bShowWarnings;
-		reactor_trigger	*m_pTrigger;
+		CReactorTrigger	*m_pTrigger;
 		bool			m_bCheckMsgs;
 
 		CDiagTool (CPropertySheet *pParent = NULL);
@@ -267,11 +267,11 @@ class CDiagTool : public CToolDlg
 		bool CheckBotGens ();
 		bool CheckEquipGens ();
 		bool MarkSegment (INT16 segnum);
-		INT8 FindMatCen (matcen_info* matCenP, INT16 nSegment, INT16* refList = NULL);
-		void CountMatCenRefs (INT32 nSpecialType, INT16* refList, matcen_info* matCenP, INT16 nMatCens);
-		INT16 FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens, char* pszType);
-		INT16 AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens);
-		INT16 CleanupMatCens (INT16* refList, matcen_info* matCenP, INT16 nMatCens);
+		INT8 FindMatCen (CRobotMaker* matCenP, INT16 nSegment, INT16* refList = NULL);
+		void CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
+		INT16 FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType);
+		INT16 AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
+		INT16 CleanupMatCens (INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
 
 		inline CListView *LVStats ()
 			{ return (CListView *) GetDlgItem (IDC_DIAG_STATS); }
@@ -295,7 +295,7 @@ class CReactorTool : public CToolDlg
 		INT32			m_nCountDown;
 		INT32			m_nSecretReturn;
 		char			m_szTarget [40];
-		reactor_trigger	*m_pTrigger;
+		CReactorTrigger	*m_pTrigger;
 
 		CReactorTool (CPropertySheet *pParent = NULL);
       virtual BOOL OnInitDialog ();

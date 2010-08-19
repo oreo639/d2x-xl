@@ -128,7 +128,7 @@ if (!m_bInited)
 if (!GetMine ())
 	return;
 EnableControls (m_mine->IsD2File ());
-m_pTrigger = GetMine ()->CCTriggers (m_nTrigger);
+m_pTrigger = GetMine ()->ReactorTriggers (m_nTrigger);
 m_nCountDown = m_mine->ReactorTime ();
 m_nSecretReturn = m_mine->SecretCubeNum ();
 InitLBTargets ();
