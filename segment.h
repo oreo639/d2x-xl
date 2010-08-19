@@ -33,7 +33,7 @@ public:
 	INT16		verts [MAX_VERTICES_PER_SEGMENT];  /* vertex ids of 4 front and 4 back vertices */
 	UINT8		function;        /* special property of a segment (such as damaging, trigger, etc.) */
 	UINT8		props;
-	INT8		matcen_num;     /* which center segment is associated with, high bit set */
+	INT8		nMatCen;     /* which center segment is associated with, high bit set */
 	INT8		value;          /* matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 */
 	UINT8		s2_flags;		 // New for Descent 2
 	INT16		damage [2];

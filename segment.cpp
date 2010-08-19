@@ -120,7 +120,7 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 #if 0 // done by UndefineSegment ()
 	// delete any robot centers with this
 	for (i = (UINT16)GameInfo ().botgen.count - 1; i >= 0; i--) {
-		segnum = BotGens (i)->segnum; 
+		segnum = BotGens (i)->nSegment; 
 		if (segnum == nDelSeg) {
 			INT32 nMatCens = --GameInfo ().botgen.count; 
 			if (i < nMatCens)
@@ -130,7 +130,7 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 
 	// delete any equipment centers with this
 	for (i = (UINT16) GameInfo ().equipgen.count - 1; i >= 0; i--) {
-		segnum = EquipGens (i)->segnum; 
+		segnum = EquipGens (i)->nSegment; 
 		if (segnum == nDelSeg) {
 			GameInfo ().equipgen.count--; 
 			memcpy ((void *) EquipGens (i), (void *) EquipGens (i + 1), 
@@ -139,11 +139,11 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 		}
 #endif
 	for (j = 0; j < GameInfo ().botgen.count; j++)
-		if (BotGens (i)->segnum > nDelSeg)
-			BotGens (i)->segnum--;
+		if (BotGens (i)->nSegment > nDelSeg)
+			BotGens (i)->nSegment--;
 	for (j = 0; j < GameInfo ().equipgen.count; j++)
-		if (EquipGens (i)->segnum > nDelSeg)
-			EquipGens (i)->segnum--;
+		if (EquipGens (i)->nSegment > nDelSeg)
+			EquipGens (i)->nSegment--;
 	// delete any control seg with this segment
 	for (i = (UINT16)GameInfo ().control.count - 1; i >= 0; i--) {
 		INT32 count = ReactorTriggers (i)->count; 
@@ -260,18 +260,18 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 
 		// replace robot centers seg numbers with real numbers
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
-			if (SegCount () > (segnum = BotGens (i)->segnum))
-				BotGens (i)->segnum = Segments (segnum)->nIndex; 
+			if (SegCount () > (segnum = BotGens (i)->nSegment))
+				BotGens (i)->nSegment = Segments (segnum)->nIndex; 
 			else
-				BotGens (i)->segnum = 0; // fix robot center segnum
+				BotGens (i)->nSegment = 0; // fix robot center segnum
 			}
 
 		// replace equipment centers seg numbers with real numbers
 		for (i = 0; i < GameInfo ().equipgen.count; i++) {
-			if (SegCount () > (segnum = EquipGens (i)->segnum))
-				EquipGens (i)->segnum = Segments (segnum)->nIndex; 
+			if (SegCount () > (segnum = EquipGens (i)->nSegment))
+				EquipGens (i)->nSegment = Segments (segnum)->nIndex; 
 			else
-				EquipGens (i)->segnum = 0; // fix robot center segnum
+				EquipGens (i)->nSegment = 0; // fix robot center segnum
 			}
 
 		// replace control seg numbers with real numbers
@@ -411,7 +411,7 @@ void CMine::InitSegment (INT16 segNum)
 segP->owner = -1;
 segP->group = -1;
 segP->function = 0; 
-segP->matcen_num = -1; 
+segP->nMatCen = -1; 
 segP->value = -1; 
 segP->child_bitmask = 0;
 // define Walls ()
@@ -2077,7 +2077,7 @@ seg->children [cur1->nSide] = cur2->nSegment;
 seg->owner = -1;
 seg->group = -1;
 seg->function = 0; 
-seg->matcen_num =-1; 
+seg->nMatCen =-1; 
 seg->value =-1; 
 
 // define vert numbers
@@ -2590,12 +2590,12 @@ void CMine::RenumberBotGens ()
 // number "matcen"
 nMatCens = 0; 
 for (i = 0; i < GameInfo ().botgen.count; i++) {
-	segnum = BotGens (i)->segnum; 
+	segnum = BotGens (i)->nSegment; 
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
 		if (seg->function== SEGMENT_FUNC_ROBOTMAKER)
-			seg->matcen_num = nMatCens++; 
+			seg->nMatCen = nMatCens++; 
 		}
 	}
 
@@ -2618,12 +2618,12 @@ void CMine::RenumberEquipGens ()
 // number "matcen"
 nMatCens = 0; 
 for (i = 0; i < GameInfo ().equipgen.count; i++) {
-	segnum = EquipGens (i)->segnum; 
+	segnum = EquipGens (i)->nSegment; 
 	if (segnum >= 0) {
 		seg = Segments () + segnum; 
 		seg->value = i; 
 		if (seg->function== SEGMENT_FUNC_EQUIPMAKER)
-			seg->matcen_num = nMatCens++; 
+			seg->nMatCen = nMatCens++; 
 		}
 	}
 
@@ -2897,7 +2897,7 @@ if (theApp.GetMine ()->IsD2File ())
 	objFlags [1] = read_INT32 (fp);
 hitPoints = read_FIX (fp);
 interval = read_FIX (fp);
-segnum = read_INT16 (fp);
+nSegment = read_INT16 (fp);
 nFuelCen = read_INT16 (fp);
 return 1;
 }
@@ -2911,7 +2911,7 @@ if (theApp.GetMine ()->IsD2File ())
 	write_INT32 (objFlags [1], fp);
 write_FIX (hitPoints, fp);
 write_FIX (interval, fp);
-write_INT16 (segnum, fp);
+write_INT16 (nSegment, fp);
 write_INT16 (nFuelCen, fp);
 }
 

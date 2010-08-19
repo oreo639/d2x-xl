@@ -454,7 +454,7 @@ else {
 		seg->owner = -1;
 		seg->group = -1;
 		seg->function = 0;
-		seg->matcen_num = -1;
+		seg->nMatCen = -1;
 		seg->value = -1;
 		seg->wall_bitmask = 0; // make sure segment is not marked
 		SegCount ()++;

@@ -68,7 +68,7 @@ INT32 level_modified = 0;
 //UINT8 texture_modified[1+MAX_D2_TEXTURES/8];
 INT32 disable_saves = 1;
 
-UINT8 clip_num[D2_NUM_OF_CLIPS] = {
+UINT8 clipList [D2_NUM_OF_CLIPS] = {
 	0,1,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,    // added 0 & 7 1/28/97
 	22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
 	40,41,42,43,44,45,46,47,48,49,50

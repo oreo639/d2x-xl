@@ -72,11 +72,11 @@ if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
 	INT32 nMatCens = (INT32) GameInfo ().botgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
-		INT32 nDelMatCen = seg->matcen_num;
+		INT32 nDelMatCen = seg->nMatCen;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (CRobotMaker));
 			BotGens (nDelMatCen)->nFuelCen = nDelMatCen;
-			seg->matcen_num = -1;
+			seg->nMatCen = -1;
 			}
 		GameInfo ().botgen.count--;
 		INT32 i;
@@ -84,23 +84,23 @@ if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
 			DeleteTriggerTargets (segnum, i);
 		CDSegment *s;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
-			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (s->matcen_num == nMatCens)) {
-				s->matcen_num = nDelMatCen;
+			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (s->nMatCen == nMatCens)) {
+				s->nMatCen = nDelMatCen;
 				break;
 				}
 		}
-	seg->matcen_num = -1;
+	seg->nMatCen = -1;
 	}
 if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
 	// remove matcen
 	INT32 nMatCens = (INT32) GameInfo ().equipgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
-		INT32 nDelMatCen = seg->matcen_num;
+		INT32 nDelMatCen = seg->nMatCen;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (CRobotMaker));
 			EquipGens (nDelMatCen)->nFuelCen = nDelMatCen;
-			seg->matcen_num = -1;
+			seg->nMatCen = -1;
 			}
 		GameInfo ().equipgen.count--;
 		INT32 i;
@@ -109,12 +109,12 @@ if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
 		CDSegment *s;
 		nDelMatCen += (INT32) GameInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
-			if ((s->function == SEGMENT_FUNC_EQUIPMAKER) && (s->matcen_num == nMatCens)) {
-				s->matcen_num = nDelMatCen;
+			if ((s->function == SEGMENT_FUNC_EQUIPMAKER) && (s->nMatCen == nMatCens)) {
+				s->nMatCen = nDelMatCen;
 				break;
 			}
 		}
-	seg->matcen_num = -1;
+	seg->nMatCen = -1;
 	}
 else if (seg->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CDSegment *childseg;
@@ -226,10 +226,10 @@ EquipGens (n_matcen)->objFlags [0] = 0;
 EquipGens (n_matcen)->objFlags [1] = 0;
 EquipGens (n_matcen)->hitPoints = 0;
 EquipGens (n_matcen)->interval = 0;
-EquipGens (n_matcen)->segnum = segnum;
+EquipGens (n_matcen)->nSegment = segnum;
 EquipGens (n_matcen)->nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->value = 
-Segments (Current ()->nSegment)->matcen_num = n_matcen;
+Segments (Current ()->nSegment)->nMatCen = n_matcen;
 GameInfo ().equipgen.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
@@ -264,10 +264,10 @@ BotGens (n_matcen)->objFlags [0] = 8;
 BotGens (n_matcen)->objFlags [1] = 0;
 BotGens (n_matcen)->hitPoints = 0;
 BotGens (n_matcen)->interval = 0;
-BotGens (n_matcen)->segnum = segnum;
+BotGens (n_matcen)->nSegment = segnum;
 BotGens (n_matcen)->nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->value = 
-Segments (Current ()->nSegment)->matcen_num = n_matcen;
+Segments (Current ()->nSegment)->nMatCen = n_matcen;
 GameInfo ().botgen.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
@@ -431,7 +431,7 @@ return true;
 // Action - Adds a wall to both sides of the current side
 //---------------------------------------------------------------------------
 
-bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 nTexture) 
+bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 nClip, INT16 nTexture) 
 {
   INT16 	opp_segnum, opp_sidenum;
   UINT16 wallnum;
@@ -448,10 +448,10 @@ if (GameInfo ().walls.count + 1 >= MAX_WALLS (this)) {
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // add a door to the current segment/side
-if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, clipnum, nTexture)) {
+if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, Current ()->nSide) &&
-		 AddWall (opp_segnum, opp_sidenum, type, flags, keys, clipnum, nTexture)) {
+		 AddWall (opp_segnum, opp_sidenum, type, flags, keys, nClip, nTexture)) {
 		theApp.UnlockUndo ();
 		theApp.MineView ()->Refresh ();
 		return true;
@@ -465,9 +465,9 @@ return false;
 // MENU - Add Auto Door
 //==========================================================================
 
-bool CMine::AddAutoDoor (INT8 clipnum, INT16 nTexture) 
+bool CMine::AddAutoDoor (INT8 nClip, INT16 nTexture) 
 {
-return AddDoor (WALL_DOOR, WALL_DOOR_AUTO, KEY_NONE, clipnum,  nTexture);
+return AddDoor (WALL_DOOR, WALL_DOOR_AUTO, KEY_NONE, nClip,  nTexture);
 }
 
 //==========================================================================
@@ -608,7 +608,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	Walls () [GameInfo ().walls.count-1].clip_num = 10;
+	Walls () [GameInfo ().walls.count-1].nClip = 10;
 	SetTexture (Current ()->nSegment, Current ()->nSide, 0, (IsD1File ()) ? 444 : 508);
 	AddTrigger (GameInfo ().walls.count - 1, type);
 // add a new wall and trigger to the opposite segment/side
@@ -616,7 +616,7 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKE
 	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, Current ()->nSide) &&
 		AddWall (opp_segnum, opp_sidenum, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		Walls () [GameInfo ().walls.count - 1].clip_num = 10;
+		Walls () [GameInfo ().walls.count - 1].nClip = 10;
 		SetTexture (opp_segnum, opp_sidenum, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
 		theApp.UnlockUndo ();

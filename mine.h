@@ -348,12 +348,12 @@ public:
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 
-	CWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 clipnum, INT16 nTexture);
+	CWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 nClip, INT16 nTexture);
 	CWall *GetWall (INT16 segnum = -1, INT16 sidenum = -1);
 	void DeleteWall (UINT16 wallnum = -1);
 	CWall *FindWall (INT16 segnum = -1, INT16 sidenum = -1);
 	void DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
-						  UINT8 type, INT8 clipnum, INT16 nTexture,
+						  UINT8 type, INT8 nClip, INT16 nTexture,
 						  bool bRedefine);
 	void SetWallTextures (UINT16 wallnum, INT16 nTexture = 0);
 	// trigger stuff
@@ -402,8 +402,8 @@ public:
 	bool AddExit (INT16 type); 
 	bool AddNormalExit(); 
 	bool AddSecretExit(); 
-	bool AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 clipnum, INT16 nTexture); 
-	bool AddAutoDoor (INT8 clipnum = -1, INT16 nTexture = -1); 
+	bool AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 nClip, INT16 nTexture); 
+	bool AddAutoDoor (INT8 nClip = -1, INT16 nTexture = -1); 
 	bool AddPrisonDoor (); 
 	bool AddGuideBotDoor(); 
 	bool AddFuelCell (); 

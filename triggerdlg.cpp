@@ -671,10 +671,10 @@ for (i = m_mine->SegCount (); i; i--, seg++) {
 		if (side->nWall >= MAX_WALLS (m_mine))
 			continue;
 		CWall *wall = m_mine->Walls (side->nWall);
-		if (wall->trigger >= NumTriggers ())
+		if (wall->nTrigger >= NumTriggers ())
 			continue;
 		if (bAll || m_mine->SideIsMarked (i, j)) {
-			m_mine->DeleteTrigger (wall->trigger);
+			m_mine->DeleteTrigger (wall->nTrigger);
 			nDeleted++;
 			}
 		}
@@ -710,7 +710,7 @@ if (m_nClass) {
 	}
 else {
 	for (wallnum = 0, wall = m_mine->Walls (); wallnum < m_mine->GameInfo ().walls.count; wallnum++, wall++)
-		if (wall->trigger == m_nTrigger)
+		if (wall->nTrigger == m_nTrigger)
 			break;
 	if (wallnum >= m_mine->GameInfo ().walls.count) {
 		EnableControls (FALSE);

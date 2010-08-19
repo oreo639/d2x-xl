@@ -19,12 +19,12 @@
 //
 // Returns - TRUE on success
 //
-// Note: clipnum & nTexture are used for call to DefineWall only.
+// Note: nClip & nTexture are used for call to DefineWall only.
 //--------------------------------------------------------------------------
 
 CWall *CMine::AddWall (INT16 segnum,INT16 sidenum,
 								INT16 type, UINT16 flags, UINT8 keys,
-								INT8 clipnum, INT16 nTexture) 
+								INT8 nClip, INT16 nTexture) 
 {
 GetCurrent (segnum, sidenum);
 
@@ -62,7 +62,7 @@ if ((wallnum = GameInfo ().walls.count) >= MAX_WALLS (this)) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 seg->sides [sidenum].nWall = wallnum;
-DefineWall (segnum, sidenum, wallnum, (UINT8) type, clipnum, nTexture, false);
+DefineWall (segnum, sidenum, wallnum, (UINT8) type, nClip, nTexture, false);
 Walls (wallnum)->flags = flags;
 Walls (wallnum)->keys = keys;
 // update number of Walls () in mine
@@ -87,13 +87,13 @@ return true;
 //--------------------------------------------------------------------------
 // DefineWall()
 //
-// Note: if clipnum == -1, then it is overriden for blastable and auto door
+// Note: if nClip == -1, then it is overriden for blastable and auto door
 //       if nTexture == -1, then it is overriden for illusion Walls ()
-//       if clipnum == -2, then texture is applied to nOvlTex instead
+//       if nClip == -2, then texture is applied to nOvlTex instead
 //--------------------------------------------------------------------------
 
 void CMine::DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
-								UINT8 type, INT8 clipnum, INT16 nTexture,
+								UINT8 type, INT8 nClip, INT16 nTexture,
 								bool bRedefine) 
 {
 GetCurrent (segnum, sidenum);
@@ -101,72 +101,72 @@ GetCurrent (segnum, sidenum);
 	INT32 i;
 	CDSegment *seg = Segments (segnum);
 	CDSide *side = seg->sides + sidenum;
-	CWall *wall = Walls (wallnum);
+	CWall *wallP = Walls (wallnum);
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-// define new wall
-wall->nSegment = segnum;
-wall->nSide = sidenum;
-wall->type = type;
+// define new wallP
+wallP->nSegment = segnum;
+wallP->nSide = sidenum;
+wallP->type = type;
 if (!bRedefine) {
-	wall->trigger = NO_TRIGGER;
-	wall->linked_wall = -1; //GetOppositeWall (opp_wallnum, segnum, sidenum) ? opp_wallnum : -1;
+	wallP->nTrigger = NO_TRIGGER;
+	wallP->linkedWall = -1; //GetOppositeWall (opp_wallnum, segnum, sidenum) ? opp_wallnum : -1;
 	}
 switch (type) {
 	case WALL_BLASTABLE:
-		wall->clip_num = (clipnum == -1) ?  6 : clipnum;
-		wall->hps = WALL_HPS;
+		wallP->nClip = (nClip == -1) ?  6 : nClip;
+		wallP->hps = WALL_HPS;
 		// define door textures based on clip number
 		SetWallTextures (wallnum, nTexture);
 		break;
 
 	case WALL_DOOR:
-		wall->clip_num = (clipnum == -1) ? 1 : clipnum;
-		wall->hps = 0;
+		wallP->nClip = (nClip == -1) ? 1 : nClip;
+		wallP->hps = 0;
 		// define door textures based on clip number
 		SetWallTextures (wallnum, nTexture);
 		break;
 
 	case WALL_CLOSED:
 	case WALL_ILLUSION:
-		wall->clip_num = -1;
-		wall->hps = 0;
+		wallP->nClip = -1;
+		wallP->hps = 0;
 		// define texture to be energy
 		if (nTexture == -1)
 			SetTexture (segnum, sidenum, (IsD1File ()) ? 328 : 353, 0); // energy
-		else if (clipnum == -2)
+		else if (nClip == -2)
 			SetTexture (segnum, sidenum, 0, nTexture);
 		else
 			SetTexture (segnum, sidenum, nTexture, 0);
 		break;
 
 	case WALL_OVERLAY: // d2 only
-		wall->clip_num = -1;
-		wall->hps = 0;
+		wallP->nClip = -1;
+		wallP->hps = 0;
 		// define box01a
 		SetTexture (segnum, sidenum, -1, 414);
 		break;
 
 	case WALL_CLOAKED:
-		wall->cloak_value = 17;
+		wallP->cloak_value = 17;
 		break;
 
 	case WALL_TRANSPARENT:
-		wall->cloak_value = 0;
+		wallP->cloak_value = 0;
 		break;
 
 	default:
-		wall->clip_num = -1;
-		wall->hps = 0;
+		wallP->nClip = -1;
+		wallP->hps = 0;
 		SetTexture (segnum, sidenum, nTexture, 0);
 		break;
 	}
-wall->flags = 0;
-wall->state = 0;
-wall->keys = 0;
-//  wall->pad = 0;
-wall->controlling_trigger = 0;
+wallP->flags = 0;
+wallP->state = 0;
+wallP->keys = 0;
+//  wallP->pad = 0;
+wallP->controlling_trigger = 0;
 
 // set uvls of new texture
 UINT32	scale = (UINT32) pTextures [m_fileType][nTexture].Scale (nTexture);
@@ -203,18 +203,18 @@ static INT16 d2_wall_texture [D2_N_WALL_TEXTURES] [2] = {
 
 CWall *wall = Walls (wallnum);
 CDSide *side = Segments (wall->nSegment)->sides + (INT16) wall->nSide;
-INT8 clip_num = wall->clip_num;
+INT8 nClip = wall->nClip;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if ((wall->type == WALL_DOOR) || (wall->type == WALL_BLASTABLE))
 	if (IsD1File ()) {
-		side->nBaseTex = wall_texture [clip_num] [0];
-		side->nOvlTex = wall_texture [clip_num] [1];
+		side->nBaseTex = wall_texture [nClip] [0];
+		side->nOvlTex = wall_texture [nClip] [1];
 		} 
 	else {
-		side->nBaseTex = d2_wall_texture [clip_num] [0];
-		side->nOvlTex = d2_wall_texture [clip_num] [1];
+		side->nBaseTex = d2_wall_texture [nClip] [0];
+		side->nOvlTex = d2_wall_texture [nClip] [1];
 		}
 else if (nTexture >= 0) {
 	side->nBaseTex = nTexture;
@@ -242,7 +242,7 @@ if (wallnum < 0)
 if (wallnum >= GameInfo ().walls.count)
 	return;
 // if trigger exists, remove it as well
-trignum = Walls (wallnum)->trigger;
+trignum = Walls (wallnum)->nTrigger;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if ((trignum > -1) && (trignum < GameInfo ().triggers.count))
@@ -251,7 +251,7 @@ if ((trignum > -1) && (trignum < GameInfo ().triggers.count))
 if (GetOppositeSide (opp_segnum, opp_sidenum, Walls (wallnum)->nSegment, Walls (wallnum)->nSide)) {
 	INT16 opp_wallnum = Segments (opp_segnum)->sides [opp_sidenum].nWall;
 	if ((opp_wallnum >= 0) && (opp_wallnum < GameInfo ().walls.count))
-		Walls (opp_wallnum)->linked_wall = -1;
+		Walls (opp_wallnum)->linkedWall = -1;
 	}
 // update all Segments () that point to Walls () higher than deleted one
 // and unlink all Segments () that point to deleted wall
@@ -298,12 +298,12 @@ INT32 CMine::FindClip (CWall *wall, INT16 nTexture)
 
 LoadString (hInst, texture_resource + nTexture, szName, sizeof (szName));
 if (!strcmp (szName, "wall01 - anim"))
-	return wall->clip_num = 0;
+	return wall->nClip = 0;
 if (ps = strstr (szName, "door")) {
 	INT32 i, nDoor = atol (ps + 4);
 	for (i = 1; i < D2_NUM_OF_CLIPS; i++)
 		if (nDoor == clip_door_number [i]) {
-			wall->clip_num = clip_num [i];
+			wall->nClip = clipList [i];
 			theApp.SetModified (TRUE);
 			theApp.MineView ()->Refresh ();
 			return i;
@@ -368,12 +368,12 @@ INT32 CWall::Read (FILE* fp, INT32 version)
 nSegment = read_INT32 (fp);
 nSide = read_INT32 (fp); 
 hps = read_FIX (fp);
-linked_wall = read_INT32 (fp);
+linkedWall = read_INT32 (fp);
 type = UINT8 (read_INT8 (fp));
 flags = UINT16 ((version < 37) ? read_INT8 (fp) : read_INT16 (fp));         
 state = UINT8 (read_INT8 (fp));         
-trigger = UINT8 (read_INT8 (fp));       
-clip_num = UINT8 (read_INT8 (fp));      
+nTrigger = UINT8 (read_INT8 (fp));       
+nClip = UINT8 (read_INT8 (fp));      
 keys = UINT8 (read_INT8 (fp));          
 controlling_trigger = read_INT8 (fp);
 cloak_value = read_INT8 (fp);
@@ -387,15 +387,15 @@ void CWall::Write (FILE* fp, INT32 version)
 write_INT32 (nSegment, fp);
 write_INT32 (nSide, fp); 
 write_FIX (hps, fp);
-write_INT32 (linked_wall, fp);
+write_INT32 (linkedWall, fp);
 write_INT8 (type, fp);
 if (version < 37) 
 	write_INT8 (INT8 (flags), fp);
 else
 	write_INT16 (flags, fp);         
 write_INT8 (state, fp);         
-write_INT8 (trigger, fp);       
-write_INT8 (clip_num, fp);      
+write_INT8 (nTrigger, fp);       
+write_INT8 (nClip, fp);      
 write_INT8 (keys, fp);          
 write_INT8 (controlling_trigger, fp);
 write_INT8 (cloak_value, fp);

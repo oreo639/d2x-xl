@@ -74,7 +74,7 @@ memset (&m_defWall, 0, sizeof (m_defWall));
 m_defWall.type = WALL_DOOR;
 m_defWall.flags = WALL_DOOR_AUTO;
 m_defWall.keys = KEY_NONE;
-m_defWall.clip_num = -1;
+m_defWall.nClip = -1;
 m_defWall.cloak_value = 16; //50%
 m_defDoorTexture = -1;
 m_defTexture = -1;
@@ -291,18 +291,18 @@ else {
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
 		}
 	// update wall data
-	if (m_pWall [0]->trigger == NO_TRIGGER)
+	if (m_pWall [0]->nTrigger == NO_TRIGGER)
 		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->nSegment, m_pWall [0]->nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->nSegment, m_pWall [0]->nSide, (INT32)m_pWall [0]->trigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->nSegment, m_pWall [0]->nSide, (INT32)m_pWall [0]->nTrigger);
 
 	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
 	m_nSegment = m_pWall [0]->nSegment;
 	m_nSide = m_pWall [0]->nSide + 1;
-	m_nTrigger = (m_pWall [0]->trigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->trigger : -1;
+	m_nTrigger = (m_pWall [0]->nTrigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->nTrigger : -1;
 	m_nType = m_pWall [0]->type;
-	m_nClip = m_pWall [0]->clip_num;
+	m_nClip = m_pWall [0]->nClip;
 	m_nStrength = ((double) m_pWall [0]->hps) / F1_0;
 	if (m_bFlyThrough = (m_nStrength < 0))
 		m_nStrength = -m_nStrength;
@@ -314,7 +314,7 @@ else {
 	// select list box index for clip
 	INT32 i;
 	for (i = 0; i < D2_NUM_OF_CLIPS; i++)
-		if (clip_num [i] == m_nClip)
+		if (clipList [i] == m_nClip)
 			break;
 	m_nClip = i;
 	CBClipNo ()->SetCurSel ((i < D2_NUM_OF_CLIPS) ? i : 0);
@@ -380,7 +380,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		if ((m_mine->IsD2File ()) && (seg [bSide]->children [sidenum [bSide]] == -1))
 			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wall = m_mine->AddWall (segnum [bSide], sidenum [bSide], m_defWall.type, m_defWall.flags, 
-													m_defWall.keys, m_defWall.clip_num, m_defTexture)) {
+													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
 			if (wall->type == m_defWall.type) {
 				wall->hps = m_defWall.hps;
 				wall->cloak_value = m_defWall.cloak_value;
@@ -511,7 +511,7 @@ if (m_nWall [0] < 0) {
 	}
 m_pWall [0] = m_mine->Walls (m_nWall [0]);
 m_mine->SetCurrent (m_pWall [0]->nSegment, m_pWall [0]->nSide);
-m_nTrigger = m_pWall [0]->trigger;
+m_nTrigger = m_pWall [0]->nTrigger;
 GetOtherWall ();
 return true;
 }
@@ -559,7 +559,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if ((wall = m_pWall [bSide]) && side [bSide]) {
 		INT16 nBaseTex  = side [bSide]->nBaseTex;
 		INT16 nOvlTex = side [bSide]->nOvlTex;
-		m_mine->DefineWall (segnum [bSide], sidenum [bSide], m_nWall [bSide], m_nType, m_pWall [0]->clip_num, -1, true);
+		m_mine->DefineWall (segnum [bSide], sidenum [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
 		if ((wall->type == WALL_OPEN) || (wall->type == WALL_CLOSED))
 			m_mine->SetTexture (wall->nSegment, wall->nSide, nBaseTex, nOvlTex);
 //		else if ((wall->type == WALL_CLOAKED) || (wall->type == WALL_TRANSPARENT))
@@ -573,7 +573,7 @@ Refresh ();
 
 void CWallTool::OnSetClip ()
 {
-	INT32		clipnum;
+	INT32		nClip;
 	CWall	*wall;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
@@ -587,10 +587,10 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 			if (m_nWall [bSide] < m_mine->GameInfo ().walls.count) {
 				theApp.SetModified (TRUE);
 				theApp.LockUndo ();
-				clipnum = clip_num [m_nClip];
-				wall->clip_num = clipnum;
+				nClip = clipList [m_nClip];
+				wall->nClip = nClip;
 				// define door textures based on clip number
-				if (wall->clip_num >= 0)
+				if (wall->nClip >= 0)
 					m_mine->SetWallTextures (m_nWall [bSide], m_defTexture);
 				theApp.UnlockUndo ();
 				theApp.MineView ()->Refresh ();
@@ -598,7 +598,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				}
 			}
 		else
-			wall->clip_num = -1;
+			wall->nClip = -1;
 }
 
                         /*--------------------------*/
@@ -730,7 +730,7 @@ void CWallTool::OnAddDoorNormal ()
 {
 if (!GetMine ())
 	return;
-m_mine->AddAutoDoor (m_defDoor.clip_num, m_defDoorTexture);
+m_mine->AddAutoDoor (m_defDoor.nClip, m_defDoorTexture);
 }
 
 void CWallTool::OnAddDoorExit ()

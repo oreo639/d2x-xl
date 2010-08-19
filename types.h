@@ -540,12 +540,12 @@ public:
 class CWall : public CSideKey {
 public:
 	FIX		hps;            /* "Hit points" of the wall.  */
-	INT32		linked_wall;    /* number of linked wall */
+	INT32		linkedWall;		 /* number of linked wall */
 	UINT8		type;           /* What kind of special wall. */
 	UINT16	flags;          /* Flags for the wall.     */
 	UINT8		state;          /* Opening, closing, etc. */
-	UINT8		trigger;        /* Which trigger is associated with the wall. */
-	INT8		clip_num;       /* Which  animation associated with the wall.  */
+	UINT8		nTrigger;       /* Which trigger is associated with the wall. */
+	INT8		nClip;          /* Which  animation associated with the wall.  */
 	UINT8		keys;           /* which keys are required */
  
  // the following two Descent2 bytes replace the "INT16 pad" of Descent1

@@ -1758,7 +1758,7 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 			m_pDC->LineTo(m_viewPoints [seg->verts [side_vert [(INT16)walls [i].nSide] [j]]].x,
 			m_viewPoints [seg->verts [side_vert [(INT16)walls [i].nSide] [j]]].y);
 			}
-		if (walls [i].trigger != NO_TRIGGER) {
+		if (walls [i].nTrigger != NO_TRIGGER) {
 				APOINT arrowstart_point,arrowend_point,arrow1_point,arrow2_point;
 				tFixVector fin;
 

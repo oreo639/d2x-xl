@@ -826,7 +826,7 @@ void CMine::Default()
 	seg.verts [7] = 7;
 
 	seg.function = 0;
-	seg.matcen_num =-1;
+	seg.nMatCen =-1;
 	seg.value =-1;
 	seg.s2_flags = 0;
 	seg.static_light = 263152L;
@@ -1016,14 +1016,14 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 			// read special info (0 to 4 bytes)
 			if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
 				fread(&seg->function, sizeof(UINT8), 1, loadFile);
-				fread(&seg->matcen_num, sizeof(INT8), 1, loadFile);
+				fread(&seg->nMatCen, sizeof(INT8), 1, loadFile);
 				fread(&seg->value, sizeof(INT8), 1, loadFile);
 				fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
 			} else {
 				seg->owner = -1;
 				seg->group = -1;
 				seg->function = 0;
-				seg->matcen_num =-1;
+				seg->nMatCen =-1;
 				seg->value = 0;
 			}
 			seg->s2_flags = 0;  // d1 doesn't use this number, so zero it
@@ -1095,7 +1095,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 		for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			// read special info (8 bytes)
 			fread(&seg->function, sizeof(UINT8), 1, loadFile);
-			fread(&seg->matcen_num, sizeof(INT8), 1, loadFile);
+			fread(&seg->nMatCen, sizeof(INT8), 1, loadFile);
 			fread(&seg->value, sizeof(INT8), 1, loadFile);
 			fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
 			if (LevelVersion () <= 20)
@@ -1105,7 +1105,7 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 				fread(seg->damage, sizeof(INT16), 2, loadFile);
 				}
 			fread(&seg->static_light, sizeof(FIX), 1, loadFile);
-			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->matcen_num == -1)) {
+			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == -1)) {
 				seg->function = SEGMENT_FUNC_NONE;
 				seg->value = 0;
 				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
@@ -1777,7 +1777,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 		if (IsD1File ()) {
 			if (bitmask & (1 << MAX_SIDES_PER_SEGMENT)) {
 				fwrite(&seg->function, sizeof(UINT8), 1, save_file);
-				fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
+				fwrite(&seg->nMatCen, sizeof(INT8), 1, save_file);
 				fwrite(&seg->value, sizeof(INT8), 1, save_file);
 				fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file); // this should be 0
 			}
@@ -1834,13 +1834,13 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 	  CDSegment *seg = Segments ();
 	  for (segnum = 0; segnum < SegCount (); segnum++, seg++)   {
 		  // write special info (8 bytes)
-			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->matcen_num == -1)) {
+			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == -1)) {
 				seg->function = SEGMENT_FUNC_NONE;
 				seg->value = 0;
 				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
 			fwrite(&seg->function, sizeof(UINT8), 1, save_file);
-			fwrite(&seg->matcen_num, sizeof(INT8), 1, save_file);
+			fwrite(&seg->nMatCen, sizeof(INT8), 1, save_file);
 			fwrite(&seg->value, sizeof(INT8), 1, save_file);
 			fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file);
 			if (IsD2XLevel ()) {
@@ -2021,7 +2021,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 			// skip robot_flags2
 			write_FIX  (BotGens (i)->hitPoints, savefile);
 			write_FIX  (BotGens (i)->interval, savefile);
-			write_INT16(BotGens (i)->segnum, savefile);
+			write_INT16(BotGens (i)->nSegment, savefile);
 			write_INT16(BotGens (i)->nFuelCen, savefile);
 		}
 	}

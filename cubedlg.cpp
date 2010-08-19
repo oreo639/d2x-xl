@@ -214,8 +214,8 @@ bool CSegmentTool::IsBotMaker (CDSegment *seg)
 {
 return 
 	(seg->function == SEGMENT_FUNC_ROBOTMAKER) &&
-	(seg->matcen_num >= 0) &&
-	(seg->matcen_num < m_mine->GameInfo ().botgen.count);
+	(seg->nMatCen >= 0) &&
+	(seg->nMatCen < m_mine->GameInfo ().botgen.count);
 }
 
                         /*--------------------------*/
@@ -224,8 +224,8 @@ bool CSegmentTool::IsEquipMaker (CDSegment *seg)
 {
 return 
 	(seg->function == SEGMENT_FUNC_EQUIPMAKER) &&
-	(seg->matcen_num >= 0) &&
-	(seg->matcen_num < m_mine->GameInfo ().equipgen.count);
+	(seg->nMatCen >= 0) &&
+	(seg->nMatCen < m_mine->GameInfo ().equipgen.count);
 }
 
                         /*--------------------------*/
@@ -381,31 +381,31 @@ SelectItemData (CBType (), m_nType);
 OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
-CTrigger *trigger = m_mine->Triggers ();
-INT32 trignum;
-for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigger++) {
-	for (i = 0; i < trigger->count; i++) {
-		if (trigger.targets [i] == CSideKey (m_nSegment, m_nSide)) {
-			// find the wall with this trigger
-			CWall *wall = m_mine->Walls ();
+CTrigger *trigP = m_mine->Triggers ();
+INT32 nTrigger;
+for (nTrigger = 0; nTrigger < m_mine->GameInfo ().triggers.count; nTrigger++, trigP++) {
+	for (i = 0; i < trigP->count; i++) {
+		if (trigP->targets [i] == CSideKey (m_nSegment, m_nSide)) {
+			// find the wallP with this trigP
+			CWall *wallP = m_mine->Walls ();
 			INT32 wallnum;
-			for (wallnum = 0; wallnum < m_mine->GameInfo ().walls.count ;wallnum++, wall++) {
-				if (wall->trigger == trignum) 
+			for (wallnum = 0; wallnum < m_mine->GameInfo ().walls.count ;wallnum++, wallP++) {
+				if (wallP->nTrigger == nTrigger) 
 					break;
 				}
 			if (wallnum < m_mine->GameInfo ().walls.count) {
-				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wall->nSegment, (INT32) wall->nSide + 1);
+				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wallP->nSegment, (INT32) wallP->nSide + 1);
 				INT32 h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (long) wall->nSegment * 0x10000L + wall->nSide);
+				LBTriggers ()->SetItemData (h, (long) wallP->nSegment * 0x10000L + wallP->nSide);
 				}
 			}
 		}
 	}
-// show if this is cube/side is triggered by the control_center
+// show if this is cube/side is trigPed by the control_center
 CReactorTrigger* reactorTrigger = m_mine->ReactorTriggers ();
 INT32 control;
 for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, reactorTrigger++) {
-	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide)) {
+	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide))) {
 		LBTriggers ()->AddString ("Reactor");
 		break;
 		}
@@ -420,7 +420,7 @@ m_nLight = ((double) seg->static_light) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
 if (IsBotMaker (seg)) {
-	INT32 nMatCen = seg->matcen_num;
+	INT32 nMatCen = seg->nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
@@ -446,7 +446,7 @@ if (IsBotMaker (seg)) {
 		}
 	}
 else if (IsEquipMaker (seg)) {
-	INT32 nMatCen = seg->matcen_num;
+	INT32 nMatCen = seg->nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
@@ -859,7 +859,7 @@ void CSegmentTool::AddBot ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-INT32 matcen = seg->matcen_num;
+INT32 matcen = seg->nMatCen;
 char szObj [80];
 INT32 i = FindBot (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
@@ -883,7 +883,7 @@ void CSegmentTool::AddEquip ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-INT32 matcen = seg->matcen_num;
+INT32 matcen = seg->nMatCen;
 char szObj [80];
 INT32 i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS2))
@@ -922,7 +922,7 @@ void CSegmentTool::DeleteBot ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-INT32 matcen = seg->matcen_num;
+INT32 matcen = seg->nMatCen;
 char szObj [80];
 INT32 i = FindBot (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
@@ -946,7 +946,7 @@ void CSegmentTool::DeleteEquip ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-INT32 matcen = seg->matcen_num;
+INT32 matcen = seg->nMatCen;
 char szObj [80];
 INT32 i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))

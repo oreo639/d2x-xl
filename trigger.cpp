@@ -190,7 +190,7 @@ nTrigger = (UINT16) GameInfo ().triggers.count;
 // set new trigger data
 InitTrigger (Triggers (nTrigger), type, flags);
 // link trigger to the wall
-Walls (wallnum)->trigger = (UINT8) nTrigger;
+Walls (wallnum)->nTrigger = (UINT8) nTrigger;
 // update number of Triggers ()
 GameInfo ().triggers.count++;
 AutoLinkExitToReactor();
@@ -211,7 +211,7 @@ if (nTrigger < 0) {
 	nWall = CurrSeg ()->sides [Current ()->nSide].nWall;
 	if (nWall >= GameInfo ().walls.count)
 		return;
-	nTrigger = Walls (nWall)->trigger;
+	nTrigger = Walls (nWall)->nTrigger;
 	}
 if (nTrigger >= GameInfo ().triggers.count)
 	return;
@@ -221,10 +221,10 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 CWall *wallP = Walls ();
 for (i = GameInfo ().walls.count; i; i--, wallP++)
-	if ((wallP->trigger != NO_TRIGGER) && (wallP->trigger > nTrigger))
-		wallP->trigger--;
-	else if (wallP->trigger == nTrigger) {
-		wallP->trigger = NO_TRIGGER;
+	if ((wallP->nTrigger != NO_TRIGGER) && (wallP->nTrigger > nTrigger))
+		wallP->nTrigger--;
+	else if (wallP->nTrigger == nTrigger) {
+		wallP->nTrigger = NO_TRIGGER;
 		nSegment = wallP->nSegment;
 		nSide = wallP->nSide;
 		}
@@ -302,7 +302,7 @@ CWall *wall = Walls ();
 INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++) {
 	if ((wall->nSegment == segnum) && (wall->nSide == sidenum)) {
-		*nTrigger = wall->trigger;
+		*nTrigger = wall->nTrigger;
 		return INT16 (wall - Walls ());
 		}
 	}
@@ -315,7 +315,7 @@ INT16 CMine::FindTriggerWall (INT16 nTrigger)
 CWall *wall = Walls ();
 INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++)
-	if (wall->trigger == nTrigger)
+	if (wall->nTrigger == nTrigger)
 		return INT16 (wall - Walls ());
 return GameInfo ().walls.count;
 }
@@ -383,7 +383,7 @@ for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 		}
 	}
 	if (!found) {
-		reactorTrigger.Delete (linknum);
+		reactorTrigger->Delete (linknum);
 		}
 	}
 
@@ -391,7 +391,7 @@ for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 // search for Walls () that have a exit of type trigger
 count =  reactorTrigger->count;
 for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
-	nTrigger = Walls (wallnum)->trigger;
+	nTrigger = Walls (wallnum)->nTrigger;
 	if (nTrigger >= 0 && nTrigger <GameInfo ().triggers.count) {
 		if (IsD1File () 
 			 ? Triggers (nTrigger)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
@@ -400,7 +400,7 @@ for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
 			face = *Walls (wallnum);
 			found = FALSE;
 			for (linknum = 0; linknum < count; linknum++) {
-				if (face == reactorTrigger.targets [linknum]) {
+				if (face == reactorTrigger->targets [linknum]) {
 					found = TRUE;
 					break;
 					}
@@ -485,7 +485,7 @@ INT32 i, j;
 
 for (i = nTrigger; i < NumObjTriggers (); i++, t++)
 	for (j = 0; j < t->count; j++)
-		(-1 < (i = t->Find (key)))
+		if (-1 < (i = t->Find (key)))
 			return i;
 return -1;
 }
@@ -552,7 +552,7 @@ else {
 	write_INT16 (flags, fp);
 	write_INT32 (value, fp);
 	write_INT32 (time, fp);
-	write_INT8 (count, fp);
+	write_INT8 (INT8 (count), fp);
 	write_INT16 (count, fp);
 	}
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)

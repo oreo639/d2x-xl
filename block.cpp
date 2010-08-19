@@ -184,15 +184,15 @@ while(!feof(fBlk)) {
 				w.flags = byteBuf;
 				fscanf_s (fBlk, "        state %d\n", &byteBuf);
 				w.state = byteBuf;
-				fscanf_s (fBlk, "        clip_num %d\n", &byteBuf);
-				w.clip_num = byteBuf;
+				fscanf_s (fBlk, "        nClip %d\n", &byteBuf);
+				w.nClip = byteBuf;
 				fscanf_s (fBlk, "        keys %d\n", &byteBuf);
 				w.keys = byteBuf;
 				fscanf_s (fBlk, "        cloak %d\n", &byteBuf);
 				w.cloak_value = byteBuf;
 				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
-				w.trigger = byteBuf;
-				if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS (this))) {
+				w.nTrigger = byteBuf;
+				if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS (this))) {
 					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
 					t.type = byteBuf;
 					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
@@ -206,13 +206,13 @@ while(!feof(fBlk)) {
 						}
 					}
 				if (GameInfo ().walls.count < MAX_WALLS (this)) {
-					if ((w.trigger >= 0) && (w.trigger < MAX_TRIGGERS (this))) {
+					if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS (this))) {
 						if (GameInfo ().triggers.count >= MAX_TRIGGERS (this))
-							w.trigger = NO_TRIGGER;
+							w.nTrigger = NO_TRIGGER;
 						else {
-							w.trigger = GameInfo ().triggers.count++;
+							w.nTrigger = GameInfo ().triggers.count++;
 							++nNewTriggers;
-							*Triggers (w.trigger) = t;
+							*Triggers (w.nTrigger) = t;
 							}
 						}
 					nNewWalls++;
@@ -341,8 +341,8 @@ while(!feof(fBlk)) {
 	if (bExtBlkFmt) {
 		fscanf_s (fBlk, "  special %d\n", &byteBuf);
 		seg->function = byteBuf;
-		fscanf_s (fBlk, "  matcen_num %d\n", &byteBuf);
-		seg->matcen_num = byteBuf;
+		fscanf_s (fBlk, "  nMatCen %d\n", &byteBuf);
+		seg->nMatCen = byteBuf;
 		fscanf_s (fBlk, "  value %d\n", &byteBuf);
 		seg->value = byteBuf;
 		fscanf_s (fBlk, "  child_bitmask %d\n", &byteBuf);
@@ -376,7 +376,7 @@ while(!feof(fBlk)) {
 		}
 	else {
 		seg->function = 0;
-		seg->matcen_num = -1;
+		seg->nMatCen = -1;
 		seg->value = -1;
 		}
 	//        fscanf_s (fBlk, "  child_bitmask %d\n",&test);
@@ -524,13 +524,13 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 					fprintf (fBlk, "        type %d\n", wall->type);
 					fprintf (fBlk, "        flags %d\n", wall->flags);
 					fprintf (fBlk, "        state %d\n", wall->state);
-					fprintf (fBlk, "        clip_num %d\n", wall->clip_num);
+					fprintf (fBlk, "        nClip %d\n", wall->nClip);
 					fprintf (fBlk, "        keys %d\n", wall->keys);
 					fprintf (fBlk, "        cloak %d\n", wall->cloak_value);
-					if ((wall->trigger < 0) || (wall->trigger >= GameInfo ().triggers.count))
+					if ((wall->nTrigger < 0) || (wall->nTrigger >= GameInfo ().triggers.count))
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
-						CTrigger *trigger = Triggers (wall->trigger);
+						CTrigger *trigger = Triggers (wall->nTrigger);
 						INT32 iTarget;
 						INT32 count = 0;
 						// count trigger targets in marked area
@@ -543,7 +543,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 						else 
 #endif
 							{
-							fprintf (fBlk, "        trigger %d\n", wall->trigger);
+							fprintf (fBlk, "        trigger %d\n", wall->nTrigger);
 							fprintf (fBlk, "			    type %d\n", trigger->type);
 							fprintf (fBlk, "			    flags %ld\n", trigger->flags);
 							fprintf (fBlk, "			    value %ld\n", trigger->value);
@@ -581,7 +581,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 		fprintf (fBlk, "  static_light %ld\n",seg->static_light);
 		if (bExtBlkFmt) {
 			fprintf (fBlk, "  special %d\n",seg->function);
-			fprintf (fBlk, "  matcen_num %d\n",seg->matcen_num);
+			fprintf (fBlk, "  nMatCen %d\n",seg->nMatCen);
 			fprintf (fBlk, "  value %d\n",seg->value);
 			fprintf (fBlk, "  child_bitmask %d\n",seg->child_bitmask);
 			fprintf (fBlk, "  wall_bitmask %d\n",seg->wall_bitmask);

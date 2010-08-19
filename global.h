@@ -62,7 +62,7 @@ extern INT32 splash;
 extern INT32 level_modified;
 //extern UINT8 texture_modified[1+MAX_D2_TEXTURES/8];
 extern INT32 disable_saves;
-extern UINT8 clip_num[D2_NUM_OF_CLIPS];
+extern UINT8 clipList [D2_NUM_OF_CLIPS];
 extern UINT16 wall_flags[9];
 extern INT32 texture_resource;
 extern long ScrnMemMax;
