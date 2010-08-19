@@ -383,7 +383,7 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
-	m_nTargets = m_pTrigger->num_links;
+	m_nTargets = m_pTrigger->targets.count;
 	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
@@ -437,7 +437,7 @@ if (pDC) {
 void CTriggerTool::DrawObjectImage ()
 {
 if (m_nClass) {
-	CDObject *obj = m_mine->CurrObj ();
+	CGameObject *obj = m_mine->CurrObj ();
 	if ((obj->type == OBJ_ROBOT) || (obj->type == OBJ_CAMBOT) || (obj->type == OBJ_MONSTERBALL) || (obj->type == OBJ_SMOKE))
 		m_mine->DrawObject (&m_showObjWnd, obj->type, obj->id);
 	}
@@ -535,7 +535,7 @@ if (m_nTrigger != -1) {
 	if (!m_nClass)
 		GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (FALSE);
 	m_nTime = m_pTrigger->time;
-	m_nTargets = m_pTrigger->num_links;
+	m_nTargets = m_pTrigger->count;
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
@@ -670,7 +670,7 @@ for (i = m_mine->SegCount (); i; i--, seg++) {
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
 		if (side->nWall >= MAX_WALLS (m_mine))
 			continue;
-		CDWall *wall = m_mine->Walls (side->nWall);
+		CWall *wall = m_mine->Walls (side->nWall);
 		if (wall->trigger >= NumTriggers ())
 			continue;
 		if (bAll || m_mine->SideIsMarked (i, j)) {
@@ -699,7 +699,7 @@ if (!GetMine ())
 	return;
 
 UINT16 wallnum;
-CDWall *wall;
+CWall *wall;
 
 // find first wall with this trigger
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
@@ -717,15 +717,15 @@ else {
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((wall->segnum >= m_mine->SegCount ()) || (wall->segnum < 0) || 
-		 (wall->sidenum < 0) || (wall->sidenum > 5)) {
+	if ((wall->nSegment >= m_mine->SegCount ()) || (wall->nSegment < 0) || 
+		 (wall->nSide < 0) || (wall->nSide > 5)) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((m_mine->Current ()->segment != wall->segnum) ||
-		 (m_mine->Current ()->side != wall->sidenum)) {
-		m_mine->SetCurrent (wall->segnum, wall->sidenum);
+	if ((m_mine->Current ()->segment != wall->nSegment) ||
+		 (m_mine->Current ()->side != wall->nSide)) {
+		m_mine->SetCurrent (wall->nSegment, wall->nSide);
 		}
 	}
 SetTriggerPtr ();
@@ -880,7 +880,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-m_nTargets = m_pTrigger->num_links;
+m_nTargets = m_pTrigger->count;
 if (m_nTargets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Trigger tool: No more targets possible for this trigger.");
 	return;
@@ -892,7 +892,7 @@ if (FindTarget (segnum, sidenum) > -1) {
 theApp.SetModified (TRUE);
 m_pTrigger->seg [m_nTargets] = segnum;
 m_pTrigger->side [m_nTargets] = sidenum - 1;
-m_pTrigger->num_links++;
+m_pTrigger->count++;
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
@@ -972,7 +972,7 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
 SetTriggerPtr ();
-m_nTargets = --(m_pTrigger->num_links);
+m_nTargets = --(m_pTrigger->count);
 m_pTrigger->seg [m_iTarget] = 0;
 m_pTrigger->side [m_iTarget] = 0;
 if (m_iTarget < m_nTargets) {
@@ -991,7 +991,7 @@ Refresh ();
 INT32 CTriggerTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
 INT32 i;
-for (i = 0; i < m_pTrigger->num_links; i++)
+for (i = 0; i < m_pTrigger->count; i++)
 	if ((segnum == m_pTrigger->seg [i]) && (sidenum == m_pTrigger->seg [i]))
 		return i;
 return -1;
@@ -1014,7 +1014,7 @@ SetTriggerPtr ();
 // get affected cube/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->num_links))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
 	return;
 INT16 segnum = m_pTrigger->seg [m_iTarget];
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
@@ -1107,7 +1107,7 @@ m_mine->AddUnlockTrigger ();
 
 BOOL CTriggerTool::TextureIsVisible ()
 {
-return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->num_links);
+return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->count);
 }
 
                         /*--------------------------*/

@@ -243,7 +243,7 @@ void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CDObject *obj = mine->Objects () + mine->Current ()->object;
+	CGameObject *obj = mine->Objects () + mine->Current ()->object;
    if (obj->render_type != RT_POLYOBJ) 
 		return;
 	obj->rtype.pobj_info.tmap_override = nBaseTex;

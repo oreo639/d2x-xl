@@ -224,9 +224,9 @@ if (!GetMine ())
   INT16		i,j;
   CDSegment *seg;
   CDSide		*side;
-  CDWall		*wall;
-  CDTrigger	*trigger;
-  CDObject	*obj;
+  CWall		*wall;
+  CTrigger	*trigger;
+  CGameObject	*obj;
   INT16		segnum, sidenum, d1Texture, mode,
 				segCount = m_mine->SegCount (),
 				wallCount = m_mine->GameInfo ().walls.count;

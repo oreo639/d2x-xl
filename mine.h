@@ -48,17 +48,17 @@ typedef struct tMineData {
 	
 	UINT8							vert_status[MAX_VERTICES3];
 	
-	CDWall						walls[MAX_WALLS3];
-	active_door					active_doors[MAX_DOORS];
-	CDTrigger					triggers[MAX_TRIGGERS2];
-	CDTrigger					objTriggers[MAX_OBJ_TRIGGERS];
+	CWall						walls[MAX_WALLS3];
+	CActiveDoor					active_doors[MAX_DOORS];
+	CTrigger					triggers[MAX_TRIGGERS2];
+	CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
 	INT32							numObjTriggers;
-	control_center_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
+	reactor_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
 	matcen_info					robot_centers[MAX_NUM_MATCENS2];
 	matcen_info					equip_centers[MAX_NUM_MATCENS2];
 	
 	// object data
-	CDObject						objects[MAX_OBJECTS2];
+	CGameObject						objects[MAX_OBJECTS2];
 	
 	// light data
 	dl_index						dl_indices[MAX_DL_INDICES_D2X];
@@ -135,25 +135,25 @@ public:
 		{ return MineData ().segments + i; }
 	inline CDColor *VertexColors (INT32 i = 0)
 		{ return &(MineData ().vertexColors [i]); }
-	inline CDWall *Walls (INT32 i = 0)
+	inline CWall *Walls (INT32 i = 0)
 		{ return MineData ().walls + i; }
-	inline CDTrigger *Triggers (INT32 i = 0)
+	inline CTrigger *Triggers (INT32 i = 0)
 		{ return MineData ().triggers + i; }
 	inline INT32 &NumTriggers ()
 		{ return GameInfo ().triggers.count; }
-	inline CDTrigger *ObjTriggers (INT32 i = 0)
+	inline CTrigger *ObjTriggers (INT32 i = 0)
 		{ return MineData ().objTriggers + i; }
 	inline INT32& NumObjTriggers ()
 		{ return MineData ().numObjTriggers; }
-	inline CDObject *Objects (INT32 i = 0)
+	inline CGameObject *Objects (INT32 i = 0)
 		{ return MineData ().objects + i; }
 	inline matcen_info *BotGens (INT32 i = 0)
 		{ return MineData ().robot_centers + i; }
 	inline matcen_info *EquipGens (INT32 i = 0)
 		{ return MineData ().equip_centers + i; }
-	inline control_center_trigger *CCTriggers (INT32 i = 0)
+	inline reactor_trigger *CCTriggers (INT32 i = 0)
 		{ return MineData ().control_center_triggers + i; }
-	inline active_door *ActiveDoors (INT32 i = 0)
+	inline CActiveDoor *ActiveDoors (INT32 i = 0)
 		{ return MineData ().active_doors + i; }
 	inline ROBOT_INFO *RobotInfo (INT32 i = 0)
 		{ return MineData ().Robot_info + i; }
@@ -241,7 +241,7 @@ public:
 		{ m_bSplineActive = bSplineActive; }
 	void  DeleteSegment(INT16 delete_segnum = -1);
 	void  DeleteSegmentWalls (INT16 segnum);
-	void	MakeObject (CDObject *obj, INT8 type, INT16 segnum);
+	void	MakeObject (CGameObject *obj, INT8 type, INT16 segnum);
 	void	SetObjectData (INT8 type);
 	bool	CopyObject (UINT8 new_type, INT16 segnum = -1);
 	void  DeleteObject(INT16 objectNumber = -1);
@@ -256,15 +256,15 @@ public:
 	void	CalcSegCenter(tFixVector &pos,INT16 segnum);
 	inline CDSegment *CurrSeg ()
 		{ return Segments () + Current ()->segment; }
-	inline CDWall *SideWall (INT32 i = 0, INT32 j = 0)
+	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
 		{ INT32 w = Segments (i)->sides [j].nWall; return (w < 0) ? NULL : Walls (w); }
-	inline CDWall *CurrWall ()
+	inline CWall *CurrWall ()
 		{ INT32 w = CurrSide ()->nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CDSide *CurrSide ()
 		{ return CurrSeg ()->sides + Current ()->side; }
 	inline INT16 CurrVert ()
 		{ return CurrSeg ()->verts [side_vert [Current ()->side][Current ()->point]]; }
-	inline CDObject *CurrObj ()
+	inline CGameObject *CurrObj ()
 		{ return Objects () + Current ()->object; }
 	void Mark ();
 	void MarkAll ();
@@ -307,7 +307,7 @@ public:
 	void CalcAverageCornerLight (bool bAll = false);
 	void AutoAdjustLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);
 	void BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr);
-	void Illuminate (INT16 source_segnum, INT16 source_sidenum, UINT32 brightness, 
+	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
 	bool CalcSideLights (INT32 segnum, INT32 sidenum, tFixVector& source_center, 
 								tFixVector *source_corner, tFixVector& A, double *effect,
@@ -348,27 +348,27 @@ public:
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 
-	CDWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 clipnum, INT16 nTexture);
-	CDWall *GetWall (INT16 segnum = -1, INT16 sidenum = -1);
+	CWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 clipnum, INT16 nTexture);
+	CWall *GetWall (INT16 segnum = -1, INT16 sidenum = -1);
 	void DeleteWall (UINT16 wallnum = -1);
-	CDWall *FindWall (INT16 segnum = -1, INT16 sidenum = -1);
+	CWall *FindWall (INT16 segnum = -1, INT16 sidenum = -1);
 	void DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
 						  UINT8 type, INT8 clipnum, INT16 nTexture,
 						  bool bRedefine);
 	void SetWallTextures (UINT16 wallnum, INT16 nTexture = 0);
 	// trigger stuff
-	void InitTrigger (CDTrigger *t, INT16 type, INT16 flags);
-	CDTrigger *AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall = FALSE);
+	void InitTrigger (CTrigger *t, INT16 type, INT16 flags);
+	CTrigger *AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall = FALSE);
 	void DeleteTrigger (INT16 trignum = -1);
-	bool DeleteTriggerTarget (CDTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger = true);
+	bool DeleteTriggerTarget (CTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger = true);
 	void DeleteTriggerTargets (INT16 segnum, INT16 sidenum);
-	INT32 DeleteTargetFromTrigger (CDTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger = true);
+	INT32 DeleteTargetFromTrigger (CTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger = true);
 	INT32 DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger = true);
 	INT16 FindTriggerWall (INT16 *trignum, INT16 segnum = -1, INT16 sidenum = -1);
 	INT16 FindTriggerWall (INT16 trignum);
 	INT16 FindTriggerObject (INT16 *trignum);
 	INT16 FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
-	CDTrigger *AddObjTrigger (INT16 objnum, INT16 type);
+	CTrigger *AddObjTrigger (INT16 objnum, INT16 type);
 	bool ObjTriggerIsInList (INT16 nTrigger);
 	void DeleteObjTrigger (INT16 objnum);
 	void DeleteObjTriggers (INT16 objnum);
@@ -482,8 +482,8 @@ public:
 	void RenumberTriggerTargetObjs (void);
 	void RenumberObjTriggers (void);
 	void QSortObjects (INT16 left, INT16 right);
-	INT32 QCmpObjects (CDObject *pi, CDObject *pm);
-	INT32 QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm);
+	INT32 QCmpObjects (CGameObject *pi, CGameObject *pm);
+	INT32 QCmpObjTriggers (CTrigger *pi, CTrigger *pm);
 	void QSortObjTriggers (INT16 left, INT16 right);
 	void SortObjTriggers (void);
 	bool IsCustomRobot (INT32 i);
@@ -491,7 +491,7 @@ public:
 	INT16 LoadMineSigAndType (FILE* fp);
 
 private:
-	INT32 FindClip (CDWall *wall, INT16 nTexture);
+	INT32 FindClip (CWall *wall, INT16 nTexture);
 	INT16 CreateNewLevel ();
 	void DefineVertices(INT16 new_verts[4]);
 	void UnlinkChild(INT16 parent_segnum,INT16 sidenum);
@@ -503,8 +503,8 @@ private:
 	void ReadRobotResource(INT32 robot_number);
 	void ReadColor (CDColor *pc, FILE *load_file);
 	void SaveColor (CDColor *pc, FILE *save_file);
-	void ReadTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger);
-	void WriteTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger);
+	void ReadTrigger (CTrigger *t, FILE *fp, bool bObjTrigger);
+	void WriteTrigger (CTrigger *t, FILE *fp, bool bObjTrigger);
 	void LoadColors (CDColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
 	void SaveColors (CDColor *pc, INT32 nColors, FILE *fp);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);
@@ -512,10 +512,10 @@ private:
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);
 	INT16 SaveMineDataCompiled(FILE *save_file);
 	INT16 SaveGameData(FILE *savefile);
-	void ReadObject(CDObject *obj,FILE *f,INT32 version);
-	void WriteObject(CDObject *obj,FILE *f,INT32 version);
-	INT32 ReadWall (CDWall* wallP, FILE* fp, INT32 version);
-	void WriteWall (CDWall* wallP, FILE* fp, INT32 version);
+	void ReadObject(CGameObject *obj,FILE *f,INT32 version);
+	void WriteObject(CGameObject *obj,FILE *f,INT32 version);
+	INT32 ReadWall (CWall* wallP, FILE* fp, INT32 version);
+	void WriteWall (CWall* wallP, FILE* fp, INT32 version);
 	void ClearMineData();
 	void UpdateDeltaLights ();
 	double dround_off(double value, double round);

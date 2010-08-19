@@ -12,6 +12,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "global.h"
+#include "io.h"
 
 //------------------------------------------------------------------------
 // SortObjects ()
@@ -20,7 +21,7 @@
 static INT16 sortObjType [MAX_OBJECT_TYPES] = {7, 8, 5, 4, 0, 2, 9, 3, 10, 6, 11, 12, 13, 14, 1, 16, 15, 17, 18, 19, 20};
 
 
-INT32 CMine::QCmpObjects (CDObject *pi, CDObject *pm)
+INT32 CMine::QCmpObjects (CGameObject *pi, CGameObject *pm)
 {
 	INT16 ti = sortObjType [pi->type];
 	INT16 tm = sortObjType [pm->type];
@@ -34,7 +35,7 @@ return (pi->id < pm->id) ? -1 : (pi->id > pm->id) ? 1 : 0;
 
 INT16 CMine::FindObjBySig (INT16 signature)
 {
-	CDObject*	objP = Objects ();
+	CGameObject*	objP = Objects ();
 
 for (INT16 i = ObjCount (); i; i--, objP++)
 	if (objP->signature == signature)
@@ -45,19 +46,18 @@ return -1;
 
 void CMine::RenumberTriggerTargetObjs (void)
 {
-	CDTrigger*	trigP = Triggers ();
+	CTrigger*	trigP = Triggers ();
 
 for (INT32 i = TriggerCount (); i; i--, trigP++) {
-	for (INT32 j = 0; j < trigP->num_links; ) {
-		if (trigP->side [j] >= 0) 
+	for (INT32 j = 0; j < trigP->count; ) {
+		if (trigP->targets [j].nSide >= 0) 
 			j++;
 		else {
-			INT32 h = FindObjBySig (trigP->seg [j]);
+			INT32 h = FindObjBySig (trigP->targets [j].nSegment);
 			if (h >= 0)
-				trigP->seg [j++] = h;
-			else if (j < --trigP->num_links) {
-				trigP->seg [j] = trigP->seg [trigP->num_links];
-				trigP->side [j] = trigP->side [trigP->num_links];
+				trigP->targets [j++].nSide = h;
+			else if (j < --trigP->count) {
+				trigP->targets [j] = trigP->targets [trigP->count];
 				}
 			}
 		}
@@ -67,7 +67,7 @@ for (INT32 i = TriggerCount (); i; i--, trigP++) {
 
 void CMine::RenumberObjTriggers (void)
 {
-	CDTrigger*	trigP = ObjTriggers ();
+	CTrigger*	trigP = ObjTriggers ();
 	INT32			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
@@ -83,7 +83,7 @@ SortObjTriggers ();
 
 void CMine::QSortObjects (INT16 left, INT16 right)
 {
-	CDObject	median = *Objects ((left + right) / 2);
+	CGameObject	median = *Objects ((left + right) / 2);
 	INT16	l = left, r = right;
 
 do {
@@ -93,7 +93,7 @@ do {
 		r--;
 	if (l <= r) {
 		if (l < r) {
-			CDObject o = *Objects (l);
+			CGameObject o = *Objects (l);
 			*Objects (l) = *Objects (r);
 			*Objects (r) = o;
 			if (Current ()->object == l)
@@ -132,14 +132,14 @@ if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 // Action - Defines a standard object (currently assumed to be a player)
 //------------------------------------------------------------------------
 
-void CMine::MakeObject (CDObject *obj, INT8 type, INT16 segnum) 
+void CMine::MakeObject (CGameObject *obj, INT8 type, INT16 segnum) 
 {
   tFixVector location;
 
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
   CalcSegCenter (location,segnum);
-  memset(obj,0,sizeof (CDObject));
+  memset(obj,0,sizeof (CGameObject));
   obj->signature = 0;
   obj->type = type;
   if (type==OBJ_WEAPON) {
@@ -184,7 +184,7 @@ void CMine::MakeObject (CDObject *obj, INT8 type, INT16 segnum)
 
 void CMine::SetObjectData (INT8 type) 
 {
-  CDObject *obj;
+  CGameObject *obj;
   INT32  id;
 
 theApp.SetModified (TRUE);
@@ -342,7 +342,7 @@ bool CMine::CopyObject (UINT8 new_type, INT16 segnum)
 {
 	INT16 objnum,id;
 	INT16 ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0};
-	CDObject *obj,*current_obj;
+	CGameObject *obj,*current_obj;
 	UINT8 type;
 	INT16 i,count;
 
@@ -405,7 +405,7 @@ else {
 	objnum = GameInfo ().objects.count++;
 	obj = Objects (objnum);
 	current_obj = CurrObj ();
-	memcpy (obj, current_obj, sizeof (CDObject));
+	memcpy (obj, current_obj, sizeof (CGameObject));
 	}
 obj->flags = 0;                                      // new: 1/27/97
 obj->segnum = Current ()->segment;
@@ -471,7 +471,7 @@ INT32 i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->signature = i;
 if (nDelObj < --j)
-	memcpy (Objects () + nDelObj, Objects () + nDelObj + 1, (GameInfo ().objects.count - nDelObj) * sizeof (CDObject));
+	memcpy (Objects () + nDelObj, Objects () + nDelObj + 1, (GameInfo ().objects.count - nDelObj) * sizeof (CGameObject));
 GameInfo ().objects.count = j;
 RenumberObjTriggers ();
 RenumberTriggerTargetObjs ();
@@ -567,4 +567,389 @@ pWnd->InvalidateRect (NULL, TRUE);
 pWnd->UpdateWindow ();
 }
 
+// ------------------------------------------------------------------------
+
+void CGameObject::Read (FILE *fp, INT32 version) 
+{
+	INT32 i, levelVersion = theApp.GetMine ()->LevelVersion ();
+
+	type = read_INT8(fp);
+	id = read_INT8(fp);
+	control_type = read_INT8(fp);
+	movement_type = read_INT8(fp);
+	render_type = read_INT8(fp);
+	flags = read_INT8(fp);
+	if (version > 37)
+		multiplayer = read_INT8(fp);
+	else
+		multiplayer = 0;
+	segnum = read_INT16(fp);
+	read_vector(&pos, fp);
+	read_matrix(&orient, fp);
+	size = read_FIX(fp);
+	shields = read_FIX(fp);
+	read_vector(&last_pos, fp);
+	contains_type = read_INT8(fp);
+	contains_id = read_INT8(fp);
+	contains_count = read_INT8(fp);
+
+	switch (movement_type) {
+    case MT_PHYSICS:
+		read_vector(&mtype.phys_info.velocity, fp);
+		read_vector(&mtype.phys_info.thrust, fp);
+		mtype.phys_info.mass = read_FIX(fp);
+		mtype.phys_info.drag = read_FIX(fp);
+		mtype.phys_info.brakes = read_FIX(fp);
+		read_vector(&mtype.phys_info.rotvel, fp);
+		read_vector(&mtype.phys_info.rotthrust, fp);
+		mtype.phys_info.turnroll = read_FIXANG(fp);
+		mtype.phys_info.flags = read_INT16(fp);
+		break;
+
+    case MT_SPINNING:
+		read_vector(&mtype.spin_rate, fp);
+		break;
+
+    case MT_NONE:
+		break;
+
+    default:
+		break;
+	}
+
+	switch (control_type) {
+    case CT_AI: {
+		INT16 i;
+		ctype.ai_info.behavior = read_INT8(fp);
+		for (i = 0; i < MAX_AI_FLAGS; i++) {
+			ctype.ai_info.flags [i] = read_INT8(fp);
+		}
+		ctype.ai_info.hide_segment = read_INT16(fp);
+		ctype.ai_info.hide_index = read_INT16(fp);
+		ctype.ai_info.path_length = read_INT16(fp);
+		ctype.ai_info.cur_path_index = read_INT16(fp);
+		if (theApp.GetMine ()->IsD1File ()) {
+			ctype.ai_info.follow_path_start_seg = read_INT16(fp);
+			ctype.ai_info.follow_path_end_seg = read_INT16(fp);
+		}
+		break;
+				}
+    case CT_EXPLOSION:
+		ctype.expl_info.spawn_time = read_FIX(fp);
+		ctype.expl_info.delete_time = read_FIX(fp);
+		ctype.expl_info.delete_objnum = (UINT8)read_INT16(fp);
+		ctype.expl_info.next_attach = ctype.expl_info.prev_attach = ctype.expl_info.attach_parent =-1;
+		break;
+
+    case CT_WEAPON:
+		ctype.laser_info.parent_type = read_INT16(fp);
+		ctype.laser_info.parent_num = read_INT16(fp);
+		ctype.laser_info.parent_signature = read_INT32(fp);
+		break;
+
+    case CT_LIGHT:
+		ctype.light_info.intensity = read_FIX(fp);
+		break;
+
+    case CT_POWERUP:
+		if (version >= 25) {
+			ctype.powerup_info.count = read_INT32(fp);
+		} else {
+			ctype.powerup_info.count = 1;
+			//      if (id== POW_VULCAN_WEAPON)
+			//          ctype.powerup_info.count = VULCAN_WEAPON_AMMO_AMOUNT;
+		}
+		break;
+
+    case CT_NONE:
+    case CT_FLYING:
+    case CT_DEBRIS:
+		break;
+
+    case CT_SLEW:    /*the player is generally saved as slew */
+		break;
+
+    case CT_CNTRLCEN:
+		break;
+
+    case CT_MORPH:
+    case CT_FLYTHROUGH:
+    case CT_REPAIRCEN:
+    default:
+		break;
+	}
+
+	switch (render_type) {
+    case RT_NONE:
+		break;
+
+    case RT_MORPH:
+    case RT_POLYOBJ: {
+		INT16 i;
+		INT32 tmo;
+		rtype.pobj_info.model_num = read_INT32(fp);
+		for (i = 0; i < MAX_SUBMODELS; i++) {
+			read_angvec(&rtype.pobj_info.anim_angles [i], fp);
+		}
+		rtype.pobj_info.subobj_flags = read_INT32(fp);
+		tmo = read_INT32(fp);
+		rtype.pobj_info.tmap_override = tmo;
+		rtype.pobj_info.alt_textures = 0;
+		break;
+					 }
+
+    case RT_WEAPON_VCLIP:
+    case RT_HOSTAGE:
+    case RT_POWERUP:
+    case RT_FIREBALL:
+		rtype.vclip_info.vclip_num = read_INT32(fp);
+		rtype.vclip_info.frametime = read_FIX(fp);
+		rtype.vclip_info.framenum = read_INT8(fp);
+
+		break;
+
+    case RT_LASER:
+		break;
+
+	case RT_SMOKE:
+		rtype.smokeInfo.nLife = read_INT32 (fp);
+		rtype.smokeInfo.nSize [0] = read_INT32 (fp);
+		rtype.smokeInfo.nParts = read_INT32 (fp);
+		rtype.smokeInfo.nSpeed = read_INT32 (fp);
+		rtype.smokeInfo.nDrift = read_INT32 (fp);
+		rtype.smokeInfo.nBrightness = read_INT32 (fp);
+		for (i = 0; i < 4; i++)
+			rtype.smokeInfo.color [i] = read_INT8 (fp);
+		rtype.smokeInfo.nSide = read_INT8 (fp);
+		rtype.smokeInfo.nType = (levelVersion < 18) ? 0 : read_INT8 (fp);
+		rtype.smokeInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		break;
+
+	case RT_LIGHTNING:
+		rtype.lightningInfo.nLife = read_INT32 (fp);
+		rtype.lightningInfo.nDelay = read_INT32 (fp);
+		rtype.lightningInfo.nLength = read_INT32 (fp);
+		rtype.lightningInfo.nAmplitude = read_INT32 (fp);
+		rtype.lightningInfo.nOffset = read_INT32 (fp);
+		rtype.lightningInfo.nLightnings = read_INT16 (fp);
+		rtype.lightningInfo.nId = read_INT16 (fp);
+		rtype.lightningInfo.nTarget = read_INT16 (fp);
+		rtype.lightningInfo.nNodes = read_INT16 (fp);
+		rtype.lightningInfo.nChildren = read_INT16 (fp);
+		rtype.lightningInfo.nSteps = read_INT16 (fp);
+		rtype.lightningInfo.nAngle = read_INT8 (fp);
+		rtype.lightningInfo.nStyle = read_INT8 (fp);
+		rtype.lightningInfo.nSmoothe = read_INT8 (fp);
+		rtype.lightningInfo.bClamp = read_INT8 (fp);
+		rtype.lightningInfo.bPlasma = read_INT8 (fp);
+		rtype.lightningInfo.bSound = read_INT8 (fp);
+		rtype.lightningInfo.bRandom = read_INT8 (fp);
+		rtype.lightningInfo.bInPlane = read_INT8 (fp);
+		for (i = 0; i < 4; i++)
+			rtype.lightningInfo.color [i] = read_INT8 (fp);
+		rtype.lightningInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		break;
+
+	case RT_SOUND:
+		fread (rtype.soundInfo.szFilename, 1, sizeof (rtype.soundInfo.szFilename), fp);
+		rtype.soundInfo.nVolume = read_INT32 (fp);
+		rtype.soundInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		break;
+
+	default:
+		break;
+	}
+}
+
+// ------------------------------------------------------------------------
+// WriteObject()
+// ------------------------------------------------------------------------
+
+void CGameObject::Write (FILE *fp, INT32 version)
+{
+if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
+	return;	// not a d2x-xl level, but a d2x-xl object
+
+	INT32 i;
+	write_INT8(type, fp);
+	write_INT8(id, fp);
+	write_INT8(control_type, fp);
+	write_INT8(movement_type, fp);
+	write_INT8(render_type, fp);
+	write_INT8(flags, fp);
+	if (version > 36)
+		write_INT8(multiplayer, fp);
+	write_INT16(segnum, fp);
+	write_vector(&pos, fp);
+	write_matrix(&orient, fp);
+	write_FIX(size, fp);
+	write_FIX(shields, fp);
+	write_vector(&last_pos, fp);
+	write_INT8(contains_type, fp);
+	write_INT8(contains_id, fp);
+	write_INT8(contains_count, fp);
+
+	switch (movement_type) {
+    case MT_PHYSICS:
+		write_vector(&mtype.phys_info.velocity, fp);
+		write_vector(&mtype.phys_info.thrust, fp);
+		write_FIX(mtype.phys_info.mass, fp);
+		write_FIX(mtype.phys_info.drag, fp);
+		write_FIX(mtype.phys_info.brakes, fp);
+		write_vector(&mtype.phys_info.rotvel, fp);
+		write_vector(&mtype.phys_info.rotthrust, fp);
+		write_FIXANG(mtype.phys_info.turnroll, fp);
+		write_INT16(mtype.phys_info.flags, fp);
+		break;
+
+    case MT_SPINNING:
+		write_vector(&mtype.spin_rate, fp);
+		break;
+
+    case MT_NONE:
+		break;
+
+    default:
+		break;
+	}
+
+	switch (control_type) {
+	case CT_AI: {
+		INT16 i;
+		write_INT8(ctype.ai_info.behavior, fp);
+		for (i = 0; i < MAX_AI_FLAGS; i++)
+			write_INT8(ctype.ai_info.flags [i], fp);
+		write_INT16(ctype.ai_info.hide_segment, fp);
+		write_INT16(ctype.ai_info.hide_index, fp);
+		write_INT16(ctype.ai_info.path_length, fp);
+		write_INT16(ctype.ai_info.cur_path_index, fp);
+		if (theApp.GetMine()->IsD1File ()) {
+			write_INT16(ctype.ai_info.follow_path_start_seg, fp);
+			write_INT16(ctype.ai_info.follow_path_end_seg, fp);
+		}
+		break;
+				}
+    case CT_EXPLOSION:
+		write_FIX(ctype.expl_info.spawn_time, fp);
+		write_FIX(ctype.expl_info.delete_time, fp);
+		write_INT16(ctype.expl_info.delete_objnum, fp);
+		break;
+
+    case CT_WEAPON:
+		write_INT16(ctype.laser_info.parent_type, fp);
+		write_INT16(ctype.laser_info.parent_num, fp);
+		write_INT32 (ctype.laser_info.parent_signature, fp);
+		break;
+
+    case CT_LIGHT:
+		write_FIX(ctype.light_info.intensity, fp);
+		break;
+
+    case CT_POWERUP:
+		if (version >= 25) {
+			write_INT32 (ctype.powerup_info.count, fp);
+		}
+		break;
+
+
+    case CT_NONE:
+    case CT_FLYING:
+    case CT_DEBRIS:
+		break;
+
+    case CT_SLEW:    /*the player is generally saved as slew */
+		break;
+
+	case CT_CNTRLCEN:
+		break;
+
+    case CT_MORPH:
+    case CT_FLYTHROUGH:
+    case CT_REPAIRCEN:
+    default:
+		break;
+	}
+
+	switch (render_type) {
+    case RT_NONE:
+		break;
+
+    case RT_MORPH:
+    case RT_POLYOBJ: {
+		INT16 i;
+		INT32 tmo;
+
+		write_INT32 (rtype.pobj_info.model_num, fp);
+		for (i = 0; i < MAX_SUBMODELS; i++) {
+			write_angvec(&rtype.pobj_info.anim_angles [i], fp);
+		}
+		write_INT32 (rtype.pobj_info.subobj_flags, fp);
+		tmo = rtype.pobj_info.tmap_override;
+		write_INT32 (tmo, fp);
+		break;
+					 }
+	case RT_WEAPON_VCLIP:
+	case RT_HOSTAGE:
+	case RT_POWERUP:
+	case RT_FIREBALL:
+		write_INT32 (rtype.vclip_info.vclip_num, fp);
+		write_FIX(rtype.vclip_info.frametime, fp);
+		write_INT8(rtype.vclip_info.framenum, fp);
+		break;
+
+	case RT_LASER:
+		break;
+
+	case RT_SMOKE:
+		write_INT32 (rtype.smokeInfo.nLife, fp);
+		write_INT32 (rtype.smokeInfo.nSize [0], fp);
+		write_INT32 (rtype.smokeInfo.nParts, fp);
+		write_INT32 (rtype.smokeInfo.nSpeed, fp);
+		write_INT32 (rtype.smokeInfo.nDrift, fp);
+		write_INT32 (rtype.smokeInfo.nBrightness, fp);
+		for (i = 0; i < 4; i++)
+			write_INT8 (rtype.smokeInfo.color [i], fp);
+		write_INT8 (rtype.smokeInfo.nSide, fp);
+		write_INT8 (rtype.smokeInfo.nType, fp);
+		write_INT8 (rtype.smokeInfo.bEnabled, fp);
+		break;
+
+	case RT_LIGHTNING:
+		write_INT32 (rtype.lightningInfo.nLife, fp);
+		write_INT32 (rtype.lightningInfo.nDelay, fp);
+		write_INT32 (rtype.lightningInfo.nLength, fp);
+		write_INT32 (rtype.lightningInfo.nAmplitude, fp);
+		write_INT32 (rtype.lightningInfo.nOffset, fp);
+		write_INT16 (rtype.lightningInfo.nLightnings, fp);
+		write_INT16 (rtype.lightningInfo.nId, fp);
+		write_INT16 (rtype.lightningInfo.nTarget, fp);
+		write_INT16 (rtype.lightningInfo.nNodes, fp);
+		write_INT16 (rtype.lightningInfo.nChildren, fp);
+		write_INT16 (rtype.lightningInfo.nSteps, fp);
+		write_INT8 (rtype.lightningInfo.nAngle, fp);
+		write_INT8 (rtype.lightningInfo.nStyle, fp);
+		write_INT8 (rtype.lightningInfo.nSmoothe, fp);
+		write_INT8 (rtype.lightningInfo.bClamp, fp);
+		write_INT8 (rtype.lightningInfo.bPlasma, fp);
+		write_INT8 (rtype.lightningInfo.bSound, fp);
+		write_INT8 (rtype.lightningInfo.bRandom, fp);
+		write_INT8 (rtype.lightningInfo.bInPlane, fp);
+		for (i = 0; i < 4; i++)
+			write_INT8 (rtype.lightningInfo.color [i], fp);
+		write_INT8 (rtype.lightningInfo.bEnabled, fp);
+		break;
+
+	case RT_SOUND:
+		fwrite (rtype.soundInfo.szFilename, 1, sizeof (rtype.soundInfo.szFilename), fp);
+		write_INT32 (rtype.soundInfo.nVolume, fp);
+		write_INT8 (rtype.soundInfo.bEnabled, fp);
+		break;
+
+	default:
+		break;
+
+	}
+}
+
+// ------------------------------------------------------------------------
 // eof object.cpp

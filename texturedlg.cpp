@@ -380,7 +380,7 @@ if	((m_mine->IsLight (m_mine->CurrSide ()->nBaseTex) != -1) ||
 	 (((m_mine->CurrSide ()->nOvlTex & 0x3fff) != 0) &&
 	  (m_mine->IsLight (m_mine->CurrSide ()->nOvlTex & 0x3fff) != -1)))
 	return true;
-CDWall *pWall = m_mine->CurrWall ();
+CWall *pWall = m_mine->CurrWall ();
 return pWall && (pWall->type == WALL_TRANSPARENT);
 
 }
@@ -448,7 +448,7 @@ if (!GetMine ())
 	INT32			i, j;
 	CDSegment	*seg;
 	CDSide		*side;
-	CDWall		*pWall;
+	CWall		*pWall;
 	CDColor		*color;
 // enable buttons as required
 /*
@@ -913,7 +913,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 	CDSegment *seg = m_mine->Segments ();
 INT32 segnum;
 for (segnum = m_mine->SegCount (); segnum; segnum--, seg++)
-    seg->seg_number = 0;
+    seg->nIndex = 0;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 PasteTexture (m_mine->Current ()->segment, m_mine->Current ()->side, 100);
@@ -1036,7 +1036,7 @@ if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES (m_mine)))
 if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES (m_mine)))
 	old_texture2 = 0;
 // mark segment as "pasted"
-seg->seg_number = 1;
+seg->nIndex = 1;
 // paste texture
 m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 for (i = 0; i < 4; i++)
@@ -1050,7 +1050,7 @@ for (i = 0; i < 4; i++) {
 		seg = m_mine->Segments (adj_segnum);
 		side = seg->sides + adj_sidenum;
 #if 0
-		if (seg->seg_number)
+		if (seg->nIndex)
 			continue;
 		if (m_bUse1st && (side->nBaseTex != old_texture1))
 			continue;
@@ -1058,7 +1058,7 @@ for (i = 0; i < 4; i++) {
 			continue;
 		PasteTexture (adj_segnum, adj_sidenum, --nDepth);
 #else
-		if ((seg->seg_number == 0) &&
+		if ((seg->nIndex == 0) &&
 			 (!m_bUse1st || (side->nBaseTex == old_texture1)) &&
 			 (!m_bUse2nd || (side->nOvlTex == old_texture2))) {
 			PasteTexture (adj_segnum, adj_sidenum, --nDepth);

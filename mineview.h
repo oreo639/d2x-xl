@@ -212,7 +212,7 @@ public:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CGameObject* pHint);
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -240,7 +240,7 @@ public:
 			return false;
 		if (!m_nViewDist)
 			return true;
-		return (segP->seg_number >= 0) && (segP->seg_number <= ViewDist ()); 
+		return (segP->nIndex >= 0) && (segP->nIndex <= ViewDist ()); 
 		}
 	void DrawMineCenter (CDC *pViewDC);
 	bool VertexVisible (INT32 v);
@@ -275,12 +275,12 @@ public:
 	void	DrawHighlight (CMine *mine, INT16 clear_it = 0);
 	void  DrawSpline (CMine *mine);
 
-	INT32	SetupModel(CMine *mine, CDObject *obj); // poly.c
+	INT32	SetupModel(CMine *mine, CGameObject *obj); // poly.c
 	void	SetModelPoints(INT32 start, INT32 end);
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
 	void	DrawPoly(POLY *p);
-	INT32	ReadModelData(FILE *file, CDObject *obj);
+	INT32	ReadModelData(FILE *file, CGameObject *obj);
 	void	ReadPolyModel (POLYMODEL& polyModel, FILE *file);
 
 	// view control functions
@@ -331,7 +331,7 @@ public:
 	void Invalidate (BOOL bErase);
 	void InvalidateRect (LPCRECT lpRect, BOOL bErase);
 
-	bool ViewObject (CDObject *obj);
+	bool ViewObject (CGameObject *obj);
 	inline bool ViewObject (UINT32 flag = 0)
 		{ return flag ? ((m_viewObjectFlags & flag) != 0) : (m_viewObjectFlags != 0); }
 	inline bool ViewFlag (UINT32 flag = 0)

@@ -355,7 +355,7 @@ bool CMine::VisibleWall (UINT16 nWall)
 {
 if (nWall == NO_WALL (this))
 	return false;
-CDWall	*wallP = Walls (nWall);
+CWall	*wallP = Walls (nWall);
 return (wallP->type != WALL_OPEN);
 }
 
@@ -677,7 +677,7 @@ CalcCenter (source_center,nSourceSeg,nSourceSide);
 // mark those Segments () within N children of current cube
 
 // set child numbers
-//Segments ()[nSourceSeg].seg_number = m_lightRenderDepth;
+//Segments ()[nSourceSeg].nIndex = m_lightRenderDepth;
 
 segP = Segments (nSourceSeg);
 #if 1//def _OPENMP
@@ -688,9 +688,9 @@ visited [nSourceSeg] = m_lightRenderDepth;
 #else
 INT32 i;
 for (i = SegCount (); i; )
-	Segments (--i)->seg_number = -1;
+	Segments (--i)->nIndex = -1;
 SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth);
-segP->seg_number = m_lightRenderDepth;
+segP->nIndex = m_lightRenderDepth;
 #endif
 
 CDColor *plc = LightColor (nSourceSeg, nSourceSide);
@@ -718,7 +718,7 @@ INT32 nSegCount = SegCount ();
 		if (visited [nChildSeg] < 0)
 			continue;
 #else
-		if (childSegP->seg_number < 0) 
+		if (childSegP->nIndex < 0) 
 			continue;
 #endif
 		// setup source corner vertex for length calculation later
@@ -860,12 +860,12 @@ INT32 CMine::FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi)
 
 if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34)) {
 	for (; i < j; i++, pdli++)
-		if ((pdli->d2x.segnum == segnum) && (pdli->d2x.sidenum = (UINT8) sidenum))
+		if ((pdli->d2x.nSegment == segnum) && (pdli->d2x.nSide = (UINT8) sidenum))
 			return i;
 	}
 else {
 	for (; i < j; i++, pdli++)
-		if ((pdli->d2.segnum == segnum) && (pdli->d2.sidenum = (UINT8) sidenum))
+		if ((pdli->std.nSegment == segnum) && (pdli->std.nSide = (UINT8) sidenum))
 			return i;
 	}
 return -1;
@@ -966,16 +966,16 @@ fLightScale = 1.0; ///= 100.0;
 			}
 			dl_index *pdli = DLIndex (dl_index_num);
 			if (bD2XLights) {
-				pdli->d2x.segnum = nSourceSeg;
-				pdli->d2x.sidenum = nSourceSide;
+				pdli->d2x.nSegment = nSourceSeg;
+				pdli->d2x.nSide = nSourceSide;
 				pdli->d2x.count = 0; // will be incremented below
 				}
 			else {
-				pdli->d2.segnum = nSourceSeg;
-				pdli->d2.sidenum = nSourceSide;
-				pdli->d2.count = 0; // will be incremented below
+				pdli->std.nSegment = nSourceSeg;
+				pdli->std.nSide = nSourceSide;
+				pdli->std.count = 0; // will be incremented below
 				}
-			pdli->d2.index = (INT16)GameInfo ().delta_lights.count;
+			pdli->std.index = (INT16)GameInfo ().delta_lights.count;
 
 			// find orthogonal angle of source segment
 			CalcOrthoVector(A,nSourceSeg,nSourceSide);
@@ -1000,9 +1000,9 @@ fLightScale = 1.0; ///= 100.0;
 	#else
 			INT32 h;
 			for (h = 0; h < SegCount (); h++)
-				Segments (h)->seg_number = -1;
+				Segments (h)->nIndex = -1;
 			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth);
-			srcSegP->seg_number = recursion_depth;
+			srcSegP->nIndex = recursion_depth;
 	#endif
 
 			// setup source corner vertex for length calculation later
@@ -1026,7 +1026,7 @@ fLightScale = 1.0; ///= 100.0;
 				CDSegment* childSegP = Segments (nChildSeg);
 	#else
 				CDSegment* childSegP = Segments (nChildSeg);
-				if (childSegP->seg_number < 0)
+				if (childSegP->nIndex < 0)
 					continue;
 	#endif
 				// loop on child sides
@@ -1053,7 +1053,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
+						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->std.count == 255)) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1079,14 +1079,14 @@ fLightScale = 1.0; ///= 100.0;
 						if (bD2XLights)
 							pdli->d2x.count++;
 						else
-							pdli->d2.count++;
+							pdli->std.count++;
 						continue;
 						}
 
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
+							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->std.count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {
@@ -1111,7 +1111,7 @@ fLightScale = 1.0; ///= 100.0;
 							if (bD2XLights)
 								pdli->d2x.count++;
 							else
-								pdli->d2.count++;
+								pdli->std.count++;
 							}
 						}
 					}
@@ -1128,7 +1128,7 @@ return (nErrors == 0);
 //--------------------------------------------------------------------------
 // SetSegmentChildNum()
 //
-// Action - Sets seg_number to child number from parent
+// Action - Sets nIndex to child number from parent
 //--------------------------------------------------------------------------
 
 void CMine::UnlinkSeg (CDSegment *pSegment, CDSegment *pRoot)
@@ -1194,8 +1194,8 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 		continue;
 	// mark segment if it has a child
 	child = seg->children [sidenum];
-	if ((child > -1) && (child < SegCount ()) && (recursion_level > seg->seg_number)) {
-		if (seg->seg_number >= 0)
+	if ((child > -1) && (child < SegCount ()) && (recursion_level > seg->nIndex)) {
+		if (seg->nIndex >= 0)
 			++nImprove;
 /*
 		if (pRoot) {
@@ -1203,7 +1203,7 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 			LinkSeg (seg, pRoot);
 			}
 */
-		seg->seg_number = recursion_level;
+		seg->nIndex = recursion_level;
 		bMarkChildren = true;
 		break;
 		}
@@ -1347,7 +1347,7 @@ return (effect [0] != 0 || effect [1] != 0 || effect [2] != 0 || effect [3] != 0
 CDColor *CMine::LightColor (INT32 i, INT32 j, bool bUseTexColors) 
 { 
 if (bUseTexColors && UseTexColors ()) {
-	CDWall *pWall = SideWall (i, j);
+	CWall *pWall = SideWall (i, j);
 	//if (!pWall || (pWall->type != WALL_TRANSPARENT)) 
 		{	//always use a side color for transp. walls
 		CDColor *pc;

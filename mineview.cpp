@@ -539,7 +539,7 @@ bool CMineView::SetLightStatus (void)
 	LIGHT_STATUS *pls;
 	bool bChange = false;
 	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
-	INT16 source_segnum, source_sidenum, segnum, sidenum;
+	INT16 nSrcSide, nSrcSeg, segnum, sidenum;
 
 delta_light *dll = mine->DeltaLights ();
 if (!dll)
@@ -551,29 +551,29 @@ for (i = mine->SegCount (); i; i--)
 		pls->bWasOn = pls->bIsOn;
 for (h = 0; h < mine->GameInfo ().dl_indices.count; h++, pdli++) {
 	if (bD2XLights) {
-		source_segnum = pdli->d2x.segnum;
-		source_sidenum = pdli->d2x.sidenum;
+		nSrcSide = pdli->d2x.nSegment;
+		nSrcSeg = pdli->d2x.nSide;
 		i = pdli->d2x.count;
 		}
 	else {
-		source_segnum = pdli->d2.segnum;
-		source_sidenum = pdli->d2.sidenum;
-		i = pdli->d2.count;
+		nSrcSide = pdli->std.nSegment;
+		nSrcSeg = pdli->std.nSide;
+		i = pdli->std.count;
 		}	
-	j = mine->GetFlickeringLight (source_segnum, source_sidenum);
+	j = mine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
-	dll = mine->DeltaLights (pdli->d2.index);
+	dll = mine->DeltaLights (pdli->std.index);
 	for (; i; i--, dll++) {
 		segnum = dll->segnum;
 		sidenum = dll->sidenum;
 		if (m_bShowLightSource) {
-			if ((segnum != source_segnum) || (sidenum != source_sidenum)) 
+			if ((segnum != nSrcSide) || (sidenum != nSrcSeg)) 
 				continue;
 			if (0 > mine->GetFlickeringLight (segnum, sidenum))
 				continue;
 			}
-		else if (((segnum != source_segnum) || (sidenum != source_sidenum)) &&
+		else if (((segnum != nSrcSide) || (sidenum != nSrcSeg)) &&
 			 (0 <= mine->GetFlickeringLight (segnum, sidenum)))
 			continue;
 #ifdef _DEBUG
@@ -810,9 +810,9 @@ void CMineView::CalcSegDist (CMine *mine)
 	INT16			*segRef = new INT16 [segNum];
 
 for (i = segNum, segI = mine->Segments (); i; i--, segI++)
-	segI->seg_number = -1;
+	segI->nIndex = -1;
 segRef [0] = mine->Current ()->segment;	
-mine->CurrSeg ()->seg_number = 0;
+mine->CurrSeg ()->nIndex = 0;
 i = 1;
 h = j = 0;
 for (nDist = 1; (j < segNum) && (h < i); nDist++) {
@@ -823,9 +823,9 @@ for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 			if (c < 0) 
 				continue;
 			segJ = mine->Segments (c);
-			if (segJ->seg_number != -1)
+			if (segJ->nIndex != -1)
 				continue;
-			segJ->seg_number = nDist;
+			segJ->nIndex = nDist;
 			CBRK (i >= segNum);
 			segRef [i++] = c;
 			}
@@ -1437,7 +1437,7 @@ void CMineView::DrawCubeTextured(CDSegment *seg, UINT8* light_index)
 		UINT16 height = m_viewHeight;
 		UINT16 rowOffset = (m_viewWidth + 3) & ~3;
 		UINT16 sidenum = 5;
-		CDWall *pWall;
+		CWall *pWall;
 		UINT16 wallnum = NO_WALL (m_mine);
 
 		for (sidenum=0; sidenum<6; sidenum++) {
@@ -1683,7 +1683,7 @@ void CMineView::DrawLine(CDSegment *seg,INT16 vert1,INT16 vert2)
 
 void CMineView::DrawWalls(CMine *mine) 
 {
-	CDWall		*walls = mine->Walls ();
+	CWall		*walls = mine->Walls ();
 	CDSegment	*segments = mine->Segments ();
 	tFixVector	*vertices = mine->Vertices ();
 	CDSegment	*seg;
@@ -1998,7 +1998,7 @@ dest.z += offs.z;
 void CMineView::DrawObject(CMine *mine,INT16 objnum,INT16 clear_it) 
 {
 	INT16 poly;
-	CDObject *obj;
+	CGameObject *obj;
 	tFixVector pt [MAX_POLY];
 	APOINT poly_draw [MAX_POLY];
 	APOINT object_shape [MAX_POLY] = {
@@ -2009,7 +2009,7 @@ void CMineView::DrawObject(CMine *mine,INT16 objnum,INT16 clear_it)
 		{ 2,  0,  2},
 		{ 0,  0,  4}
 		};
-	CDObject temp_obj;
+	CGameObject temp_obj;
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 
@@ -2159,7 +2159,7 @@ if ((objnum == mine->Current ()->object) || (objnum == mine->Other ()->object)) 
 //			  DrawObjects()
 //--------------------------------------------------------------------------
 
-bool CMineView::ViewObject (CDObject *obj)
+bool CMineView::ViewObject (CGameObject *obj)
 {
 switch(obj->type) {
 	case OBJ_ROBOT:
@@ -2200,7 +2200,7 @@ void CMineView::HiliteTarget (CMine *mine)
 {
 	INT32 i, nTarget;
 
-CDObject *obj = mine->CurrObj ();
+CGameObject *obj = mine->CurrObj ();
 if ((obj->type != OBJ_EFFECT) || (obj->id != LIGHTNING_ID))
 	return;
 mine->Other ()->object = mine->Current ()->object;
@@ -2232,7 +2232,7 @@ if (mine->IsD2File ()) {
 		}
 	}
 HiliteTarget (mine);
-CDObject *obj = mine->Objects ();
+CGameObject *obj = mine->Objects ();
 for (i = mine->GameInfo ().objects.count, j = 0; i; i--, j++, obj++)
 	if (ViewObject (obj))
 		DrawObject (mine, j, 0);
@@ -2795,7 +2795,7 @@ void CMineView::CenterObject()
 	if (!pDoc->m_mine) return;
 	CMine *mine = pDoc->m_mine;
 
-	CDObject& obj = mine->Objects () [m_Current->object];
+	CGameObject& obj = mine->Objects () [m_Current->object];
 	m_movex = (INT16)(-(obj.pos.x)/0x10000L);
 	m_movey = (INT16)(-(obj.pos.y)/0x10000L);
 	m_movez = (INT16)(-(obj.pos.z)/0x10000L);
@@ -3082,7 +3082,7 @@ if (!(bRefreshing || m_nDelayRefresh)) {
 
                         /*--------------------------*/
 
-void CMineView::OnUpdate (CView* pSender, LPARAM lHint, CObject* pHint)
+void CMineView::OnUpdate (CView* pSender, LPARAM lHint, CGameObject* pHint)
 {
 //m_bUpdate = true;
 //InvalidateRect(NULL);
@@ -3159,12 +3159,12 @@ void CMineView::SelectCurrentObject (long xMouse, long yMouse)
 if (!GetMine ())
 	return;
 
-CDObject *obj;
+CGameObject *obj;
 INT16 closest_object;
 INT16 i;
 double radius,closest_radius;
 APOINT pt;
-CDObject temp_obj;
+CGameObject temp_obj;
 
 // default to object 0 but set radius very large
 closest_object = 0;
@@ -4320,7 +4320,7 @@ void CMineView::GLRenderFace (INT16 segnum, INT16 sidenum)
 
 if (side->nBaseTex < 0)
 	return;
-CDWall *pWall = (wallnum == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->m_mine->Walls (wallnum);
+CWall *pWall = (wallnum == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->m_mine->Walls (wallnum);
 if ((seg->children [sidenum] > -1) &&
 	 (!pWall || (pWall->type == WALL_OPEN) || ((pWall->type == WALL_CLOAKED) && !pWall->cloak_value)))
 	return;

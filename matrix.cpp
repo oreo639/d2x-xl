@@ -393,7 +393,7 @@ void CMatrix::UnsetPoint(tFixVector *vert,APOINT *apoint)
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-INT32 CMatrix::CheckNormal(CDObject *obj, tFixVector *a, tFixVector *b) 
+INT32 CMatrix::CheckNormal(CGameObject *obj, tFixVector *a, tFixVector *b) 
 {
   double ax,ay,az;
   double bx,by,bz;

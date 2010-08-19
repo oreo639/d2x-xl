@@ -90,7 +90,7 @@ return szText;
 
 void CDiagTool::CountObjects (void)
 {
-CDObject *obj = m_mine->Objects ();
+CGameObject *obj = m_mine->Objects ();
 memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 INT32 i, j;

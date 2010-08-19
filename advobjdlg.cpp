@@ -98,7 +98,7 @@ if (!m_bInited)
 if (!GetMine ())
 	return;
 UpdateData (TRUE);
-CDObject *pObj = m_mine->CurrObj ();
+CGameObject *pObj = m_mine->CurrObj ();
 pObj->mtype.phys_info.mass = m_mass;
 pObj->mtype.phys_info.drag = m_drag;
 pObj->mtype.phys_info.brakes = m_brakes;
@@ -146,7 +146,7 @@ if (!m_mine->GameInfo ().objects.count) {
 	EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, FALSE);
 	return;
 	}
-CDObject *pObj = m_mine->CurrObj ();
+CGameObject *pObj = m_mine->CurrObj ();
 EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, TRUE);
 m_size = pObj->size;
 m_shields = pObj->shields;

@@ -61,7 +61,7 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 //-----------------------------------------------------------------------
 static MODEL gModel;
 static UINT8 *gModelData;
-static CDObject * gpObject;
+static CGameObject * gpObject;
 static VMS_VECTOR gOffset;
 static INT16 glow_num = -1;
 static double normal[3];	// Storage for calculated surface normal
@@ -85,7 +85,7 @@ FIX MultiplyFix(FIX a, FIX b) {
 // Action - sets the global handle used when drawing polygon models
 //-----------------------------------------------------------------------
 
-INT32 CMineView::SetupModel(CMine *mine, CDObject *obj) 
+INT32 CMineView::SetupModel(CMine *mine, CGameObject *obj) 
 {
   gOffset.x = 0;
   gOffset.y = 0;
@@ -173,7 +173,7 @@ void CMineView::DrawModel()
 
 void CMineView::SetModelPoints(INT32 start, INT32 end) 
 {
-  CDObject *obj = gpObject;
+  CGameObject *obj = gpObject;
   tFixVector pt;
   INT32 i;
   for (i=start;i<end;i++) {
@@ -240,8 +240,8 @@ void CMineView::DrawPoly(POLY *p) {
 
 //-----------------------------------------------------------------------
 //
-// Calls the CDObject interpreter to render an CDObject.
-// The CDObject renderer is really a seperate pipeline. returns true if drew
+// Calls the CGameObject interpreter to render an CGameObject.
+// The CGameObject renderer is really a seperate pipeline. returns true if drew
 //
 //-----------------------------------------------------------------------
 
@@ -418,7 +418,7 @@ assert(polyModel.model_data_size <= MAX_POLY_MODEL_SIZE);
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData(FILE *file, CDObject *obj) 
+INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj) 
 {
 	UINT32     id;
 	UINT32     i,n;

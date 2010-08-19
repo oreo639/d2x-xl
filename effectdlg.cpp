@@ -97,7 +97,7 @@ void CEffectTool::LoadEffectList ()
 GetMine ();
 
 cbEffects->ResetContent ();
-CDObject *curObj = m_mine->CurrObj (),
+CGameObject *curObj = m_mine->CurrObj (),
 			*obj = m_mine->Objects ();
 INT32 i;
 for (i = 0; i < m_mine->GameInfo ().objects.count; i++, obj++) {
@@ -158,7 +158,7 @@ if (!m_bInited)
 	return;
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 if (obj->type != OBJ_EFFECT)
 	return;
 if (obj->id == SMOKE_ID) {
@@ -239,7 +239,7 @@ if (!m_bInited)
 	return;
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (obj->type == OBJ_EFFECT) && (obj->id == SMOKE_ID));
 CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (obj->type == OBJ_EFFECT) && (obj->id == LIGHTNING_ID));
 CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (obj->type == OBJ_EFFECT) && (obj->id == SOUND_ID));
@@ -284,7 +284,7 @@ if (!GetMine ())
 	return;
 if (!AddEffect ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 obj->type = OBJ_EFFECT;
 obj->id = SMOKE_ID;
 obj->render_type = RT_SMOKE;
@@ -301,7 +301,7 @@ if (!GetMine ())
 	return;
 if (!AddEffect ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 obj->type = OBJ_EFFECT;
 obj->id = LIGHTNING_ID;
 obj->render_type = RT_LIGHTNING;
@@ -318,7 +318,7 @@ if (!GetMine ())
 	return;
 if (!AddEffect ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 obj->type = OBJ_EFFECT;
 obj->id = SOUND_ID;
 obj->render_type = RT_SOUND;
@@ -359,7 +359,7 @@ void CEffectTool::OnCopy ()
 {
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 if (obj->type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -379,7 +379,7 @@ void CEffectTool::OnPaste ()
 {
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 if (obj->type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -407,7 +407,7 @@ if (m_nBufferId < 0) {
 	}
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->Objects ();
+CGameObject *obj = m_mine->Objects ();
 boolean bAll = !m_mine->GotMarkedSegments ();
 
 INT32 i;
@@ -444,7 +444,7 @@ void CEffectTool::OnSetStyle ()
 {
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 obj->rtype.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 //Refresh ();
 }
@@ -458,7 +458,7 @@ void CEffectTool::HiliteTarget (void)
 
 if (!GetMine ())
 	return;
-CDObject *obj = m_mine->CurrObj ();
+CGameObject *obj = m_mine->CurrObj ();
 if ((obj->type != OBJ_EFFECT) || (obj->id != LIGHTNING_ID))
 	return;
 m_mine->Other ()->object = m_mine->Current ()->object;

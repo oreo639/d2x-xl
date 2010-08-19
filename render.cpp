@@ -140,8 +140,8 @@ void TextureMap(INT32 resolution,
 	
 	// TEMPORARY
 	INT32 inc_resolution = 1<<resolution;
-	INT16 segnum = INT16 (segment - mine->Segments ());
-	INT16 flick_light = mine->GetFlickeringLight (segnum, sidenum);
+	CSideKey face (INT16 (segment - mine->Segments ()), sidenum);
+	INT16 flick_light = mine->GetFlickeringLight (face.nSegment, face.nSide);
 	INT16 dscan_light,scan_light;
 	INT16 light[4];
 	UINT16 bmWidth2;
@@ -203,8 +203,8 @@ for (i=0;i<4;i++) {
 if (bEnableDeltaShading) {
 	dl_index *dl_indices;
 	INT32 dlIdxCount = mine->GameInfo ().dl_indices.count;
-	delta_light  *delta_lights;
-	if (!lightStatus [segnum][sidenum].bIsOn &&
+	delta_light* delta_lights;
+	if (!lightStatus [face.nSegment][face.nSide].bIsOn &&
 		 (dl_indices = mine->DLIndex ()) &&
 		 (delta_lights = mine->DeltaLights ())) {
 		// search delta light index to see if current side has a light
@@ -212,10 +212,10 @@ if (bEnableDeltaShading) {
 		for (i = 0; i <dlIdxCount; i++, dli++) {
 //				if (dli->segnum == mine->current->segment) {
 			// loop on each delta light till the segment/side is found
-				delta_light *dl = delta_lights + dli->d2.index;
-				h = bD2XLights ? dli->d2x.count : dli->d2.count;
+				delta_light *dl = delta_lights + dli->index;
+				h = dli->count;
 				for (j = 0; j < h; j++, dl++) {
-					if (dl->segnum==segnum && dl->sidenum==sidenum) {
+					if (*dl == face) {
 						for (k = 0; k < 4; k++) {
 							INT16 dlight = dl->vert_light[k];
 							if (dlight >= 0x20)

@@ -63,8 +63,8 @@ void CMine::DeleteSegment(INT16 delSegNum)
 {
 	CDSegment	*seg, *deleted_seg; 
 	CDSegment	*seg2; 
-	CDObject		*obj; 
-	CDTrigger	*trigP;
+	CGameObject		*obj; 
+	CTrigger	*trigP;
 	UINT16		segnum, real_segnum; 
 	INT16			child; 
 	//  UINT8 vert_check = 0;  // a 1 means that the vertex is being used by another segment
@@ -145,18 +145,17 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			EquipGens (i)->segnum--;
 	// delete any control seg with this segment
 	for (i = (UINT16)GameInfo ().control.count - 1; i >= 0; i--) {
-		INT32 num_links = CCTriggers (i)->num_links; 
-		for (j = num_links - 1; j>0; j--) {
-			segnum = CCTriggers (i)->seg [j]; 
+		INT32 count = CCTriggers (i)->count; 
+		for (j = count - 1; j>0; j--) {
+			segnum = CCTriggers (i)->targets [j].nSegment; 
 			if (segnum == delSegNum) {
 				// move last segment into this spot
-				CCTriggers (i)->seg [j]  = 
-					CCTriggers (i)->seg [num_links - 1]; 
-				CCTriggers (i)->side [j]  = 
-					CCTriggers (i)->side [num_links - 1]; 
-				CCTriggers (i)->seg [num_links - 1] = 0; 
-				CCTriggers (i)->side [num_links - 1] = 0; 
-				CCTriggers (i)->num_links--; 
+				CCTriggers (i)->targets [j].nSegment = 
+					CCTriggers (i)->targets [count - 1].nSegment; 
+				CCTriggers (i)->targets [j].nSide = 
+					CCTriggers (i)->targets [count - 1].nSide; 
+				CCTriggers (i)->targets [count - 1] = CSideKey(0,0);
+				CCTriggers (i)->count--; 
 			}
 		}
 	}
@@ -206,7 +205,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		real_segnum = 0; 
 		for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
 			if(delSegNum != segnum)
-				seg->seg_number = real_segnum++; 
+				seg->nIndex = real_segnum++; 
 
 		// replace all children with real numbers
 		for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++) {
@@ -214,29 +213,30 @@ void CMine::DeleteSegment(INT16 delSegNum)
 				if (seg->child_bitmask & (1 << child)
 					&& seg->children [child] >= 0 && seg->children [child] < SegCount ()) { // debug fix
 					seg2 = &Segments () [seg->children [child]]; 
-					seg->children [child] = seg2->seg_number; 
+					seg->children [child] = seg2->nIndex; 
 				}
 			}
 		}
 
 		// replace all wall seg numbers with real numbers
 		for (i = 0; i < GameInfo ().walls.count; i++) {
-			segnum = (INT16)Walls (i)->segnum; 
+			segnum = (INT16)Walls (i)->nSegment; 
 			if (segnum < SegCount ()) {
 				seg = Segments (segnum); 
-				Walls (i)->segnum = seg->seg_number; 
-			} else {
-				Walls (i)->segnum = 0; // fix wall segment number
+				Walls (i)->nSegment = seg->nIndex; 
+				} 
+			else {
+				Walls (i)->nSegment = 0; // fix wall segment number
 			}
 		}
 
 		// replace all trigger seg numbers with real numbers
 		for (i = NumTriggers (), trigP = Triggers (); i; i--, trigP++) {
-			for (j = 0; j < trigP->num_links; j++) {
-				segnum = trigP->seg [j]; 
+			for (j = 0; j < trigP->count; j++) {
+				segnum = trigP->targets [j].nSegment; 
 				if (segnum < SegCount ()) {
 					seg = Segments (segnum); 
-					trigP->seg [j] = seg->seg_number; 
+					trigP->targets [j].nSegment = seg->nIndex; 
 					}
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
@@ -247,11 +247,11 @@ void CMine::DeleteSegment(INT16 delSegNum)
 
 		// replace all trigger seg numbers with real numbers
 		for (i = NumObjTriggers (), trigP = ObjTriggers (); i; i--, trigP++) {
-			for (j = 0; j < trigP->num_links; j++) {
-				segnum = trigP->seg [j]; 
+			for (j = 0; j < trigP->count; j++) {
+				segnum = trigP->targets [j].nSegment; 
 				if (segnum < SegCount ()) {
 					seg = Segments (segnum); 
-					trigP->seg [j] = seg->seg_number; 
+					trigP->targets [j].nSegment = seg->nIndex; 
 					}
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
@@ -266,7 +266,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			segnum = obj->segnum; 
 			if (segnum < SegCount ()) {
 				seg = Segments (segnum); 
-				obj->segnum = seg->seg_number; 
+				obj->segnum = seg->nIndex; 
 			} else {
 				obj->segnum = 0; // fix object segment number
 			}
@@ -277,7 +277,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			segnum = BotGens (i)->segnum; 
 			if (segnum < SegCount ()) {
 				seg = Segments (segnum); 
-				BotGens (i)->segnum = seg->seg_number; 
+				BotGens (i)->segnum = seg->nIndex; 
 			} else {
 				BotGens (i)->segnum = 0; // fix robot center segnum
 			}
@@ -288,7 +288,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			segnum = EquipGens (i)->segnum; 
 			if (segnum < SegCount ()) {
 				seg = Segments (segnum); 
-				EquipGens (i)->segnum = seg->seg_number; 
+				EquipGens (i)->segnum = seg->nIndex; 
 			} else {
 				EquipGens (i)->segnum = 0; // fix robot center segnum
 			}
@@ -296,13 +296,14 @@ void CMine::DeleteSegment(INT16 delSegNum)
 
 		// replace control seg numbers with real numbers
 		for (i = 0; i < GameInfo ().control.count; i++) {
-			for (j = 0; j < CCTriggers (i)->num_links; j++) {
-				segnum = CCTriggers (i)->seg [j]; 
+			for (j = 0; j < CCTriggers (i)->count; j++) {
+				segnum = CCTriggers (i)->targets [j].nSegment; 
 				if (segnum < SegCount ()) {
 					seg = Segments (segnum); 
-					CCTriggers (i)->seg [j] = seg->seg_number; 
-				} else {
-					CCTriggers (i)->seg [j] = 0; // fix control center segment number
+					CCTriggers (i)->targets [j].nSegment = seg->nIndex; 
+					}
+				else {
+					CCTriggers (i)->targets [j].nSegment = 0; // fix control center segment number
 				}
 			}
 		}
@@ -312,8 +313,9 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			segnum = FlickeringLights (i)->segnum; 
 			if (segnum < SegCount ()) {
 				seg = Segments (segnum); 
-				FlickeringLights (i)->segnum = seg->seg_number; 
-			} else {
+				FlickeringLights (i)->segnum = seg->nIndex; 
+				}
+			else {
 				FlickeringLights (i)->segnum = 0; // fix object segment number
 			}
 		}
@@ -322,8 +324,9 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		segnum = (UINT16) SecretCubeNum (); 
 		if (segnum < SegCount ()) {
 			seg = Segments (segnum); 
-			SecretCubeNum () = seg->seg_number; 
-		} else {
+			SecretCubeNum () = seg->nIndex; 
+			}
+		else {
 			SecretCubeNum () = 0; // fix secret cube number
 		}
 
@@ -2812,7 +2815,7 @@ for (segNum = SegCount (), sideNum = 0; sideNum < 6; segNum++, sideNum++) {
 	wallNum = centerSegP->sides [sideNum].nWall;
 	segP->sides [sideNum].nWall = wallNum;
 	if ((wallNum >= 0) && (wallNum != NO_WALL (this))) {
-		Walls (wallNum)->segnum = segNum;
+		Walls (wallNum)->nSegment = segNum;
 		centerSegP->sides [sideNum].nWall = NO_WALL (this);
 		}
 	}

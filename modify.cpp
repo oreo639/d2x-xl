@@ -696,7 +696,7 @@ switch (m_selectMode) {
 	break;
 
 	case BLOCK_MODE:
-		CDObject *obj = Objects ();
+		CGameObject *obj = Objects ();
 		switch (axis) {
 			case 'X':
 				for (i = 0; i < MAX_VERTICES (this); i++)
@@ -744,7 +744,7 @@ bool CMine::SpinSelection (double angle)
 	INT32 nSegment = Current ()->segment;
 	INT32 nSide = Current ()->side;
 	CDSegment *seg = Segments (nSegment);
-	CDObject *obj;
+	CGameObject *obj;
 	tFixVector center,opp_center;
 	INT16 i;
 

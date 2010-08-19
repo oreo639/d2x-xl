@@ -39,7 +39,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	CDSegment		*seg;
 	CDSide			*side;
 #if 0
-	CDObject			*obj;
+	CGameObject			*obj;
 	INT16				objnum, segObjCount;
 #endif
 	INT16				segnum, sidenum, vertnum;
@@ -145,10 +145,10 @@ while(!feof(fBlk)) {
 	seg = Segments (segnum);
 	seg->owner = -1;
 	seg->group = -1;
-	fscanf_s (fBlk, "segment %hd\n", &seg->seg_number);
-	xlatSegNum [seg->seg_number] = segnum;
+	fscanf_s (fBlk, "segment %hd\n", &seg->nIndex);
+	xlatSegNum [seg->nIndex] = segnum;
 	// invert segment number so its children can be children can be fixed later
-	seg->seg_number = ~seg->seg_number;
+	seg->nIndex = ~seg->nIndex;
 
 	// read in side information 
 	side = seg->sides;
@@ -171,8 +171,8 @@ while(!feof(fBlk)) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
 			side->nWall = (UINT16) byteBuf;
 			if (side->nWall != NO_WALL (this)) {
-				CDWall w;
-				CDTrigger t;
+				CWall w;
+				CTrigger t;
 				memset (&w, 0, sizeof (w));
 				memset (&t, 0, sizeof (t));
 				fscanf_s (fBlk, "        segment %ld\n", &w.segnum);
@@ -198,9 +198,9 @@ while(!feof(fBlk)) {
 					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
 					fscanf_s (fBlk, "			    value %ld\n", &t.value);
 					fscanf_s (fBlk, "			    timer %d\n", &t.time);
-					fscanf_s (fBlk, "			    num_links %hd\n", &t.num_links);
+					fscanf_s (fBlk, "			    count %hd\n", &t.count);
 					INT32 iTarget;
-					for (iTarget = 0; iTarget < t.num_links; iTarget++) {
+					for (iTarget = 0; iTarget < t.count; iTarget++) {
 						fscanf_s (fBlk, "			        seg %hd\n", t.seg + iTarget);
 						fscanf_s (fBlk, "			        side %hd\n", t.side + iTarget);
 						}
@@ -224,7 +224,7 @@ while(!feof(fBlk)) {
 #if 0
 			fscanf_s (fBlk, "    object_num %hd\n",&segObjCount);
 			while (segObjCount) {
-				CDObject o;
+				CGameObject o;
 				memset (&o, 0, sizeof (o));
 				fscanf_s (fBlk, "            signature %hd\n", &o.signature);
 				fscanf_s (fBlk, "            type %d\n", &byteBuf);
@@ -393,19 +393,19 @@ while(!feof(fBlk)) {
 	nNewSegs++;
 	}
 
-CDTrigger *trigger = Triggers (GameInfo ().triggers.count);
+CTrigger *trigger = Triggers (GameInfo ().triggers.count);
 for (i = nNewTriggers; i; i--) {
 	trigger--;
-	for (j = 0; j < trigger->num_links; j++)
+	for (j = 0; j < trigger->count; j++)
 		if (trigger->seg [j] >= 0)
 			trigger->seg [j] = xlatSegNum [trigger->seg [j]];
-		else if (trigger->num_links == 1) {
+		else if (trigger->count == 1) {
 			DeleteTrigger (INT16 (trigger - Triggers ()));
 			i--;
 			}
-		else if (j < --(trigger->num_links)) {
-			memcpy (trigger->seg + j, trigger->seg + j + 1, (trigger->num_links - j) * sizeof (*(trigger->seg)));
-			memcpy (trigger->side + j, trigger->side + j + 1, (trigger->num_links - j) * sizeof (*(trigger->side)));
+		else if (j < --(trigger->count)) {
+			memcpy (trigger->seg + j, trigger->seg + j + 1, (trigger->count - j) * sizeof (*(trigger->seg)));
+			memcpy (trigger->side + j, trigger->side + j + 1, (trigger->count - j) * sizeof (*(trigger->side)));
 			}
 	}
 
@@ -436,7 +436,7 @@ void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*segnum*/)
 	INT16				segnum;
 	CDSegment		*seg;
 	CDSide			*side;
-	CDWall			*wall;
+	CWall			*wall;
 	INT16				i,j;
 	tFixVector		origin;
 	struct dvector	x_prime,y_prime,z_prime,vect;
@@ -518,8 +518,8 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 							(side->nWall < GameInfo ().walls.count) ? side->nWall : NO_WALL (this));
 				if (side->nWall < GameInfo ().walls.count) {
 					wall = Walls (side->nWall);
-					fprintf (fBlk, "        segment %d\n", wall->segnum);
-					fprintf (fBlk, "        side %d\n", wall->sidenum);
+					fprintf (fBlk, "        segment %d\n", wall->nSegment);
+					fprintf (fBlk, "        side %d\n", wall->nSide);
 					fprintf (fBlk, "        hps %d\n", wall->hps);
 					fprintf (fBlk, "        type %d\n", wall->type);
 					fprintf (fBlk, "        flags %d\n", wall->flags);
@@ -530,16 +530,16 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 					if ((wall->trigger < 0) || (wall->trigger >= GameInfo ().triggers.count))
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
-						CDTrigger *trigger = Triggers (wall->trigger);
+						CTrigger *trigger = Triggers (wall->trigger);
 						INT32 iTarget;
-						INT32 nTargets = 0;
+						INT32 count = 0;
 						INT16 *tgtSegs = trigger->seg;
 						// count trigger targets in marked area
-						for (iTarget = 0; iTarget < trigger->num_links; iTarget++, tgtSegs++)
+						for (iTarget = 0; iTarget < trigger->count; iTarget++, tgtSegs++)
 							if (Segments (*tgtSegs)->wall_bitmask & MARKED_MASK)
-								nTargets++;
+								count++;
 #if 0
-						if (trigger->num_links && !nTargets)	// no targets in marked area
+						if (trigger->count && !count)	// no targets in marked area
 							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS (this));
 						else 
 #endif
@@ -549,9 +549,9 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 							fprintf (fBlk, "			    flags %ld\n", trigger->flags);
 							fprintf (fBlk, "			    value %ld\n", trigger->value);
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
-							fprintf (fBlk, "			    num_links %d\n", nTargets);
+							fprintf (fBlk, "			    count %d\n", count);
 							tgtSegs = trigger->seg;
-							for (iTarget = 0; iTarget < trigger->num_links; iTarget++, tgtSegs++)
+							for (iTarget = 0; iTarget < trigger->count; iTarget++, tgtSegs++)
 								if (Segments (*tgtSegs)->wall_bitmask & MARKED_MASK) {
 									fprintf (fBlk, "			        seg %d\n", *tgtSegs);
 									fprintf (fBlk, "			        side %d\n", trigger->side [iTarget]);
@@ -848,7 +848,7 @@ theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 seg = Segments ();
 for (segnum = 0;segnum < MAX_SEGMENTS (this); segnum++, seg++) {
-	seg->seg_number = segnum;
+	seg->nIndex = segnum;
 	seg->wall_bitmask &= ~MARKED_MASK;
 	}
 
@@ -862,14 +862,14 @@ count = ReadSegmentInfo (fBlk);
 // fix up the new Segments () children
 seg = Segments ();
 for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
-	if (seg->seg_number < 0) {  // if segment was just inserted
+	if (seg->nIndex < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
 		//  segment's offset number, otherwise set it to -1
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (seg->child_bitmask & (1 << child)) {
 				seg2 = Segments ();
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
-					if (seg->children [child] == ~seg2->seg_number) {
+					if (seg->children [child] == ~seg2->nIndex) {
 						seg->children [child] = seg_offset;
 						break;
 						}
@@ -908,7 +908,7 @@ for (vertnum=0;vertnum<MAX_VERTICES (this);vertnum++)
 // now set all seg_numbers
 seg = Segments ();
 for (segnum = 0; segnum < SegCount (); segnum++, seg++)
-	seg->seg_number = segnum;
+	seg->nIndex = segnum;
 /*
 if (option != 1) {
 	sprintf_s (message, sizeof (message)," Block tool: %d blocks pasted.",count);

@@ -230,7 +230,7 @@ class CDiagTool : public CToolDlg
 		INT32			m_nErrors [2];
 		INT32			m_bAutoFixBugs;
 		INT32			m_bShowWarnings;
-		control_center_trigger	*m_pTrigger;
+		reactor_trigger	*m_pTrigger;
 		bool			m_bCheckMsgs;
 
 		CDiagTool (CPropertySheet *pParent = NULL);
@@ -256,7 +256,7 @@ class CDiagTool : public CToolDlg
 		double CalcDistance (tFixVector *v1,tFixVector *v2,tFixVector *v3);
 		double CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3);
 		void ClearBugList ();
-		INT32 CheckId (CDObject *obj);
+		INT32 CheckId (CGameObject *obj);
 		bool CheckSegments ();
 		bool CheckSegTypes ();
 		bool CheckWalls ();
@@ -279,7 +279,7 @@ class CDiagTool : public CToolDlg
 			{ return LBCtrl (IDC_DIAG_BUGLIST); }
 		inline CWnd *TargetEdit ()
 			{ return GetDlgItem (IDC_REACTOR_TARGET); }
-		CDWall *OppWall (UINT16 segnum, UINT16 sidenum);
+		CWall *OppWall (UINT16 segnum, UINT16 sidenum);
 
 		DECLARE_MESSAGE_MAP ()
 };
@@ -295,7 +295,7 @@ class CReactorTool : public CToolDlg
 		INT32			m_nCountDown;
 		INT32			m_nSecretReturn;
 		char			m_szTarget [40];
-		control_center_trigger	*m_pTrigger;
+		reactor_trigger	*m_pTrigger;
 
 		CReactorTool (CPropertySheet *pParent = NULL);
       virtual BOOL OnInitDialog ();
@@ -377,7 +377,7 @@ class CObjectTool : public CToolDlg
 		void DrawObjectImages ();
 		void DrawObject (CWnd *pWnd, INT32 type, INT32 id);
 		void SetTextureOverride ();
-		bool SetPlayerId (CDObject *obj, INT32 objType, INT32 *ids, INT32 maxIds, char *pszError);
+		bool SetPlayerId (CGameObject *obj, INT32 objType, INT32 *ids, INT32 maxIds, char *pszError);
 		void SetObjectId (CComboBox *pcb, INT16 type, INT16 id, INT16 flag = 0);
 
 		void CBInit (CComboBox *pcb, char* pszNames [], UINT8 *pIndex, UINT8 *pItemData, INT32 nMax, INT32 nType = 0, bool bAddNone = false);
@@ -387,8 +387,8 @@ class CObjectTool : public CToolDlg
 		double SliderFactor (INT32 nId);
 		void UpdateRobot ();
 		INT32 ObjOfAKindCount (INT32 nType = -1, INT32 nId = -1);
-		INT32 GetObjectsOfAKind (INT32 nType, CDObject *objList []);
-		void SetNewObjId (CDObject *obj, INT32 nType, INT32 nId, INT32 nMaxId);
+		INT32 GetObjectsOfAKind (INT32 nType, CGameObject *objList []);
+		void SetNewObjId (CGameObject *obj, INT32 nType, INT32 nId, INT32 nMaxId);
 
 		afx_msg void OnPaint ();
 		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
@@ -479,7 +479,7 @@ class CObjectTool : public CToolDlg
 class CEffectTool : public CToolDlg
 {
 	public:
-		CDObject				*m_obj;
+		CGameObject				*m_obj;
 		tSmokeInfo			m_smoke;
 		tLightningInfo		m_lightning;
 		tSoundInfo			m_sound;
@@ -659,9 +659,9 @@ class CWallTool : public CTexToolDlg
 		INT32		m_bKeys [4];
 		INT32		m_bFlags [MAX_WALL_FLAGS];
 		char		m_szMsg [256];
-		CDWall	*m_pWall [2];
-		CDWall	m_defWall;
-		CDWall	m_defDoor;
+		CWall	*m_pWall [2];
+		CWall	m_defWall;
+		CWall	m_defDoor;
 		INT16		m_defTexture;
 		INT16		m_defDoorTexture;
 		INT16		m_defOvlTexture;
@@ -681,7 +681,7 @@ class CWallTool : public CTexToolDlg
 		void Refresh ();
 		virtual BOOL TextureIsVisible ();
 		bool GetWalls ();
-		CDWall *GetOtherWall (void);
+		CWall *GetOtherWall (void);
 
 		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
 		afx_msg void OnBothSides ();
@@ -754,12 +754,12 @@ class CTriggerTool : public CTexToolDlg
 		INT32					m_bD2Flags [16];
 		INT32					m_nSliderValue;
 		double				m_nStrength;
-		CDTrigger			m_defTrigger;
-		CDTrigger			*m_pTrigger;
+		CTrigger			m_defTrigger;
+		CTrigger			*m_pTrigger;
 		INT32					m_nTrigger;
-		CDTrigger			*m_pStdTrigger;
+		CTrigger			*m_pStdTrigger;
 		INT32					m_nStdTrigger;
-		CDTrigger			*m_pObjTrigger;
+		CTrigger			*m_pObjTrigger;
 		INT32					m_nObjTrigger;
 		char					m_szTarget [40];
 		INT32					m_bAutoAddWall;

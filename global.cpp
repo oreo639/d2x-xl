@@ -861,9 +861,9 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //char m_currentLevelName[256];
 
 //wall *Walls (); //MAX_WALLS
-//active_door active_doors[MAX_DOORS];
+//CActiveDoor active_doors[MAX_DOORS];
 //trigger *Triggers ();// MAX_TRIGGERS;
-//control_center_trigger control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
+//reactor_trigger control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
 //matcen_info robot_centers[MAX_NUM_MATCENS];
 
 //game_top_info game_top_fileinfo;

@@ -12,6 +12,7 @@
 #include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
+#include "io.h"
 
 //------------------------------------------------------------------------
 // Mine - add_trigger()
@@ -21,7 +22,7 @@
 // Changes - now takes type instead of flag.
 //------------------------------------------------------------------------
 
-void CMine::InitTrigger (CDTrigger *t, INT16 type, INT16 flags)
+void CMine::InitTrigger (CTrigger *t, INT16 type, INT16 flags)
 {
 t->type = (INT8) type;
 t->flags = (INT8) flags;
@@ -34,17 +35,17 @@ else if ((type == TT_MESSAGE) || (type == TT_SOUND))
 else 	
 	t->value = 5 * F1_0; // 5% shield or energy damage
 t->time = -1;
-t->num_links = 0;
+t->count = 0;
 INT32 i;
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++) {
-	t->seg [i] = -1;
-	t->side [i] = -1;
+	t->targets [i].nSegment = -1;
+	t->targets [i].nSide = -1;
 	}
 }
 
 //------------------------------------------------------------------------
 
-INT32 CMine::QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm)
+INT32 CMine::QCmpObjTriggers (CTrigger *pi, CTrigger *pm)
 {
 	INT16 i = pi->nObject;
 	INT16 m = pm->nObject;
@@ -61,7 +62,7 @@ return (i < m) ? -1 : (i > m) ? 1 : 0;
 
 void CMine::QSortObjTriggers (INT16 left, INT16 right)
 {
-	CDTrigger median = *ObjTriggers ((left + right) / 2);
+	CTrigger median = *ObjTriggers ((left + right) / 2);
 	INT16	l = left, r = right;
 
 do {
@@ -71,7 +72,7 @@ do {
 		r--;
 	if (l <= r) {
 		if (l < r) {
-			CDTrigger o = *ObjTriggers (l);
+			CTrigger o = *ObjTriggers (l);
 			*ObjTriggers (l) = *ObjTriggers (r);
 			*ObjTriggers (r) = o;
 			}
@@ -100,7 +101,7 @@ if ((h = NumObjTriggers ()) > 1) {
 
 //------------------------------------------------------------------------
 
-CDTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall) 
+CTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall) 
 {
 	INT16 flags;
 	INT16 segnum, sidenum, trignum;
@@ -220,24 +221,24 @@ if (nTrigger >= GameInfo ().triggers.count)
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-CDWall *wallP = Walls ();
+CWall *wallP = Walls ();
 for (i = GameInfo ().walls.count; i; i--, wallP++)
 	if ((wallP->trigger != NO_TRIGGER) && (wallP->trigger > nTrigger))
 		wallP->trigger--;
 	else if (wallP->trigger == nTrigger) {
 		wallP->trigger = NO_TRIGGER;
-		nSegment = wallP->segnum;
-		nSide = wallP->sidenum;
+		nSegment = wallP->nSegment;
+		nSide = wallP->nSide;
 		}
 // remove trigger from array
 //for (i=nTrigger;i<GameInfo ().triggers.count-1;i++)
 // update number of Triggers ()
-CDTrigger *trigP = Triggers ();
+CTrigger *trigP = Triggers ();
 for (i = NumTriggers (); i; i--, trigP++)
 	if (trigP->type >= TT_MASTER)
 		DeleteTriggerTarget (trigP, nSegment, nSide, false);
 if (nTrigger < --GameInfo ().triggers.count)
-	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof (CDTrigger));
+	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof (CTrigger));
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
 AutoLinkExitToReactor();
@@ -247,18 +248,17 @@ AutoLinkExitToReactor();
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------
 
-INT32 CMine::DeleteTargetFromTrigger (CDTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger)
+INT32 CMine::DeleteTargetFromTrigger (CTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger)
 {
-if (!--trigger->num_links) {
+if (!--trigger->count) {
 	if (bAutoDeleteTrigger)
 		DeleteTrigger ();
 	return 0;
 	}
-if (linknum < trigger->num_links) {
-	memcpy (trigger->seg + linknum, trigger->seg + linknum + 1, (trigger->num_links - linknum) * sizeof (*(trigger->seg)));
-	memcpy (trigger->side + linknum, trigger->side + linknum + 1, (trigger->num_links - linknum) * sizeof (*(trigger->side)));
+if (linknum < trigger->count) {
+	memcpy (trigger->targets + linknum, trigger->targets + linknum + 1, (trigger->count - linknum) * sizeof (CSideKey));
 	}
-return trigger->num_links;
+return trigger->count;
 }
 
 
@@ -268,11 +268,11 @@ return DeleteTargetFromTrigger (Triggers (trignum), linknum, bAutoDeleteTrigger)
 }
 
 
-bool CMine::DeleteTriggerTarget (CDTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger) 
+bool CMine::DeleteTriggerTarget (CTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger) 
 {
 INT32 j;
-for (j = 0; j < trigger->num_links; j++)
-	if ((trigger->seg [j] == segnum) && (trigger->side [j] == sidenum))
+for (j = 0; j < trigger->count; j++)
+	if ((trigger->targets [j].nSegment == segnum) && (trigger->targets [j].nSide == sidenum))
 		return DeleteTargetFromTrigger (trigger, j, bAutoDeleteTrigger) == 0;
 return false;
 }
@@ -300,10 +300,10 @@ for (i = 0; i < NumObjTriggers (); i++)
 INT16 CMine::FindTriggerWall (INT16 *trignum, INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
-CDWall *wall = Walls ();
+CWall *wall = Walls ();
 INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++) {
-	if ((wall->segnum == segnum) && (wall->sidenum == sidenum)) {
+	if ((wall->nSegment == segnum) && (wall->nSide == sidenum)) {
 		*trignum = wall->trigger;
 		return INT16 (wall - Walls ());
 		}
@@ -314,7 +314,7 @@ return GameInfo ().walls.count;
 
 INT16 CMine::FindTriggerWall (INT16 trignum)
 {
-CDWall *wall = Walls ();
+CWall *wall = Walls ();
 INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++)
 	if (wall->trigger == trignum)
@@ -341,12 +341,12 @@ return -1;
 
 INT16 CMine::FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
-CDTrigger *trigger = Triggers ();
+CTrigger *trigger = Triggers ();
 INT32 i, j;
 
 for (i = trignum; i < GameInfo ().triggers.count; i++, trigger++)
-	for (j = 0; j < trigger->num_links; j++)
-		if ((trigger->seg [j] == segnum) && (trigger->side [j] == sidenum))
+	for (j = 0; j < trigger->count; j++)
+		if ((trigger->targets [j].nSegment == segnum) && (trigger->targets [j].nSide == sidenum))
 			return i;
 return -1;
 }
@@ -361,66 +361,63 @@ return -1;
 
 void CMine::AutoLinkExitToReactor () 
 {
-  INT16 	linknum,control,num_links,segnum,sidenum;
-  UINT16	wallnum;
-  INT8 	trignum;
-  bool 	found;
+  INT16 		linknum,control,count;
+  CSideKey	face;
+  UINT16		wallnum;
+  INT8 		trignum;
+  bool 		found;
 
   control = 0; // only 0 used by the game Descent
-  control_center_trigger *ccTrigger = CCTriggers (control);
+  reactor_trigger *ccTrigger = CCTriggers (control);
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // remove items from list that do not point to a wall
-for (linknum = 0; linknum < ccTrigger->num_links; linknum++) {
-	num_links = ccTrigger->num_links;
-	segnum = ccTrigger->seg [linknum];
-	sidenum = ccTrigger->side [linknum];
+for (linknum = 0; linknum < ccTrigger->count; linknum++) {
+	count = ccTrigger->count;
+	face = ccTrigger->targets [linknum];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
-	for (wallnum=0;wallnum<GameInfo ().walls.count;wallnum++) {
-		if (Walls (wallnum)->segnum == segnum && Walls (wallnum)->sidenum == sidenum) {
+	for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
+		if (*Walls (wallnum) == face) {
 		found = TRUE;
 		break;
 		}
 	}
 	if (!found) {
-		if (num_links > 0) { // just in case
+		if (count > 0) { // just in case
 			// move last link into this deleted link's spot
-			ccTrigger->seg [linknum] = ccTrigger->seg [num_links-1];
-			ccTrigger->side [linknum] = ccTrigger->side [num_links-1];
-			ccTrigger->seg [num_links-1] = 0;
-			ccTrigger->side [num_links-1] = 0;
-			ccTrigger->num_links--;
+			ccTrigger->targets [linknum] = ccTrigger->targets [count-1];
+			ccTrigger->targets [count-1].nSegment = 0;
+			ccTrigger->targets [count-1].nSide = 0;
+			ccTrigger->count--;
 			}
 		}
 	}
 
 // add exit to list if not already in list
 // search for Walls () that have a exit of type trigger
-num_links =  ccTrigger->num_links;
+count =  ccTrigger->count;
 for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
 	trignum = Walls (wallnum)->trigger;
 	if (trignum >= 0 && trignum <GameInfo ().triggers.count) {
-		if ((IsD1File ()) ?
-			 Triggers (trignum)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) :
-			 Triggers (trignum)->type == TT_EXIT || Triggers (trignum)->type == TT_SECRET_EXIT) {
+		if (IsD1File () 
+			 ? Triggers (trignum)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
+			 : Triggers (trignum)->type == TT_EXIT || Triggers (trignum)->type == TT_SECRET_EXIT) {
 			// see if cube,side is already on the list
-			segnum = (INT16)Walls (wallnum)->segnum;
-			sidenum =(INT16)Walls (wallnum)->sidenum;
+			face = *Walls (wallnum);
 			found = FALSE;
-			for (linknum = 0; linknum < num_links; linknum++) {
-				if (segnum == ccTrigger->seg [linknum] && sidenum == ccTrigger->side [linknum]) {
+			for (linknum = 0; linknum < count; linknum++) {
+				if (face == ccTrigger->targets [linknum]) {
 					found = TRUE;
 					break;
 					}
 				}
 			// if not already on the list, add it
 			if (!found) {
-				linknum = ccTrigger->num_links;
-				ccTrigger->seg [linknum] = segnum;
-				ccTrigger->side [linknum] = sidenum;
-				ccTrigger->num_links++;
+				linknum = ccTrigger->count;
+				ccTrigger->targets [linknum] = face;
+				ccTrigger->count++;
 				}
 			}
 		}
@@ -430,7 +427,7 @@ theApp.UnlockUndo ();
 
 //------------------------------------------------------------------------
 
-CDTrigger *CMine::AddObjTrigger (INT16 objnum, INT16 type) 
+CTrigger *CMine::AddObjTrigger (INT16 objnum, INT16 type) 
 {
 if (objnum < 0)
 	objnum = Current ()->object;
@@ -492,14 +489,85 @@ while (i)
 
 INT16 CMine::FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
-CDTrigger *t = ObjTriggers ();
+CTrigger *t = ObjTriggers ();
 INT32 i, j;
 
 for (i = trignum; i < NumObjTriggers (); i++, t++)
-	for (j = 0; j < t->num_links; j++)
-		if ((t->seg [j] == segnum) && (t->side [j] == sidenum))
+	for (j = 0; j < t->count; j++)
+		if ((t->targets [j].nSegment == segnum) && (t->targets [j].nSide == sidenum))
 			return i;
 return -1;
+}
+
+// ------------------------------------------------------------------------
+
+void CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
+{
+	INT32	i;
+
+if (theApp.GetMine ()->IsD2File ()) {
+	type = read_INT8(fp);
+	flags = bObjTrigger ? read_INT16(fp) : (UINT16) read_INT8(fp);
+	count = read_INT8(fp);
+	read_INT8(fp);
+	value = read_FIX(fp);
+	if ((theApp.GetMine ()->LevelVersion () < 21) && (type == TT_EXIT))
+		value = 0;
+	if ((version < 39) && (type == TT_MASTER))
+		value = 0;
+	time = read_FIX(fp);
+#ifdef _DEBUG
+	if (type == TT_DISABLE_TRIGGER)
+		type = type;
+#endif
+	}
+else {
+	type = read_INT8(fp);
+	flags = read_INT16(fp);
+	value = read_FIX(fp);
+	time = read_FIX(fp);
+	read_INT8(fp); //skip 8 bit value "link_num"
+	count = (INT8) read_INT16(fp);
+	if (count < 0)
+		count = 0;
+	else if (count > MAX_TRIGGER_TARGETS)
+		count = MAX_TRIGGER_TARGETS;
+	}
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	targets [i].nSegment = read_INT16(fp);
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	targets [i].nSide = read_INT16(fp);
+}
+
+// ------------------------------------------------------------------------
+
+void CTrigger::Write (FILE *fp, INT32 version, bool bObjTrigger)
+{
+	INT32	i;
+
+if (theApp.GetMine ()->IsD2File ()) {
+	write_INT8 (type, fp);
+	if (bObjTrigger)
+		write_INT16 (flags, fp);
+	else
+		write_INT8 (INT8 (flags), fp);
+	write_INT8 (count, fp);
+	write_INT8 (0, fp);
+	write_INT32 (value, fp);
+	write_INT32 (time, fp);
+	}
+else {
+	write_INT8 (type, fp);
+	write_INT16 (flags, fp);
+	write_INT32 (value, fp);
+	write_INT32 (time, fp);
+	write_INT8 (count, fp);
+	write_INT16 (count, fp);
+	}
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	write_INT16 (targets [i].nSegment, fp);
+for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	write_INT16 (targets [i].nSide, fp);
 }
 
 //------------------------------------------------------------------------

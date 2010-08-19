@@ -161,9 +161,9 @@ extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
 //extern char m_currentLevelName[256];
 
 //extern wall *walls; // MAX_WALLS
-//extern active_door active_doors[MAX_DOORS];
+//extern CActiveDoor active_doors[MAX_DOORS];
 //extern trigger *triggers; // MAX_TRIGGERS
-//extern control_center_trigger control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
+//extern reactor_trigger control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
 //extern matcen_info robot_centers[MAX_NUM_MATCENS];
 
 //extern game_top_info game_top_fileinfo;

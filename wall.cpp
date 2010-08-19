@@ -12,7 +12,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "global.h"
-
+#include "io.h"
 
 //--------------------------------------------------------------------------
 // Mine - add wall
@@ -22,7 +22,7 @@
 // Note: clipnum & nTexture are used for call to DefineWall only.
 //--------------------------------------------------------------------------
 
-CDWall *CMine::AddWall (INT16 segnum,INT16 sidenum,
+CWall *CMine::AddWall (INT16 segnum,INT16 sidenum,
 								INT16 type, UINT16 flags, UINT8 keys,
 								INT8 clipnum, INT16 nTexture) 
 {
@@ -101,13 +101,13 @@ GetCurrent (segnum, sidenum);
 	INT32 i;
 	CDSegment *seg = Segments (segnum);
 	CDSide *side = seg->sides + sidenum;
-	CDWall *wall = Walls (wallnum);
+	CWall *wall = Walls (wallnum);
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define new wall
-wall->segnum = segnum;
-wall->sidenum = sidenum;
+wall->nSegment = segnum;
+wall->nSide = sidenum;
 wall->type = type;
 if (!bRedefine) {
 	wall->trigger = NO_TRIGGER;
@@ -201,8 +201,8 @@ static INT16 d2_wall_texture [D2_N_WALL_TEXTURES] [2] = {
 	{901,0}
 	};
 
-CDWall *wall = Walls (wallnum);
-CDSide *side = Segments (wall->segnum)->sides + (INT16) wall->sidenum;
+CWall *wall = Walls (wallnum);
+CDSide *side = Segments (wall->nSegment)->sides + (INT16) wall->nSide;
 INT8 clip_num = wall->clip_num;
 
 theApp.SetModified (TRUE);
@@ -248,7 +248,7 @@ theApp.LockUndo ();
 if ((trignum > -1) && (trignum < GameInfo ().triggers.count))
 	DeleteTrigger (trignum); 
 // remove references to the deleted wall
-if (GetOppositeSide (opp_segnum, opp_sidenum, Walls (wallnum)->segnum, Walls (wallnum)->sidenum)) {
+if (GetOppositeSide (opp_segnum, opp_sidenum, Walls (wallnum)->nSegment, Walls (wallnum)->nSide)) {
 	INT16 opp_wallnum = Segments (opp_segnum)->sides [opp_sidenum].nWall;
 	if ((opp_wallnum >= 0) && (opp_wallnum < GameInfo ().walls.count))
 		Walls (opp_wallnum)->linked_wall = -1;
@@ -268,7 +268,7 @@ for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
 // move remaining Walls () in place of deleted wall
 // for (i = wallnum; i < GameInfo ().walls.count - 1; i++)
 if (wallnum < --GameInfo ().walls.count)
-	memcpy (Walls (wallnum), Walls (wallnum + 1), (GameInfo ().walls.count - wallnum) * sizeof (CDWall));
+	memcpy (Walls (wallnum), Walls (wallnum + 1), (GameInfo ().walls.count - wallnum) * sizeof (CWall));
 // update number of Walls () in mine
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
@@ -277,21 +277,21 @@ AutoLinkExitToReactor();
 
                         /*--------------------------*/
 
-CDWall *CMine::FindWall (INT16 segnum, INT16 sidenum)
+CWall *CMine::FindWall (INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
-CDWall *wall;
+CWall *wall;
 INT32 nWall;
 
 for (wall = Walls (), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wall++)
-	if ((wall->segnum == segnum) && (wall->sidenum == sidenum))
+	if ((wall->nSegment == segnum) && (wall->nSide == sidenum))
 		return wall;
 return NULL;
 }
 
                         /*--------------------------*/
 
-INT32 CMine::FindClip (CDWall *wall, INT16 nTexture)
+INT32 CMine::FindClip (CWall *wall, INT16 nTexture)
 {
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	char szName [80], *ps;
@@ -314,7 +314,7 @@ return -1;
 
                         /*--------------------------*/
 
-CDWall *CMine::GetWall (INT16 segnum, INT16 sidenum)
+CWall *CMine::GetWall (INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
 UINT16 wallnum = Segments (segnum)->sides [sidenum].nWall;
@@ -325,7 +325,7 @@ return (wallnum < GameInfo ().walls.count) ? Walls (wallnum) : NULL;
 
 bool CMine::WallClipFromTexture (INT16 segnum, INT16 sidenum)
 {
-CDWall *wall = FindWall (segnum, sidenum);
+CWall *wall = FindWall (segnum, sidenum);
 
 if (!wall || ((wall->type != WALL_DOOR) && (wall->type != WALL_BLASTABLE)))
 	return true;
@@ -359,6 +359,46 @@ if (!bExpertMode &&
 					"Hint: To change the door animation,\n"
 					"select \"Wall edit...\" from the Tools\n"
 					"menu and change the clip number.");
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CWall::Read (FILE* fp, INT32 version)
+{
+nSegment = read_INT32 (fp);
+nSide = read_INT32 (fp); 
+hps = read_FIX (fp);
+linked_wall = read_INT32 (fp);
+type = UINT8 (read_INT8 (fp));
+flags = UINT16 ((version < 37) ? read_INT8 (fp) : read_INT16 (fp));         
+state = UINT8 (read_INT8 (fp));         
+trigger = UINT8 (read_INT8 (fp));       
+clip_num = UINT8 (read_INT8 (fp));      
+keys = UINT8 (read_INT8 (fp));          
+controlling_trigger = read_INT8 (fp);
+cloak_value = read_INT8 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CWall::Write (FILE* fp, INT32 version)
+{
+write_INT32 (nSegment, fp);
+write_INT32 (nSide, fp); 
+write_FIX (hps, fp);
+write_INT32 (linked_wall, fp);
+write_INT8 (type, fp);
+if (version < 37) 
+	write_INT8 (INT8 (flags), fp);
+else
+	write_INT16 (flags, fp);         
+write_INT8 (state, fp);         
+write_INT8 (trigger, fp);       
+write_INT8 (clip_num, fp);      
+write_INT8 (keys, fp);          
+write_INT8 (controlling_trigger, fp);
+write_INT8 (cloak_value, fp);
 }
 
 	                        /*--------------------------*/

@@ -505,12 +505,12 @@ if (!bLoadFromHog && (IsD2File ())) {
 		FSplit (descent2_path, szHogFile, NULL, NULL);
 		if (p = strstr (szHogFile, "data"))
 			*p = '\0';
-		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
-		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
+		strcat_s (szHogFile, sizeof (szHogFile), "missions\\hog");
+		if (FindFileData (szHogFile, "ham", &nSize, &nPos, FALSE)) {
 			FSplit (descent2_path, szHamFile, NULL, NULL);
 			if (p = strstr (szHamFile, "data"))
 				*p = '\0';
-			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
+			strcat_s (szHamFile, sizeof (szHamFile), "missions\\ham");
 			if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
 				m_bVertigo = ReadHamFile (szHamFile, EXTENDED_HAM) == 0;
 				_unlink (szHamFile);
@@ -680,16 +680,16 @@ INT16 CMine::FixIndexValues()
 			}
 		}
 	}
-	CDWall *wall = Walls ();
+	CWall *wall = Walls ();
 	for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++, wall++) {
 		// check segnum
-		if (wall->segnum < 0 || wall->segnum > SegCount ()) {
-			wall->segnum = 0;
+		if (wall->nSegment < 0 || wall->nSegment > SegCount ()) {
+			wall->nSegment = 0;
 			check_err |= (1 << 3);
 		}
 		// check sidenum
-		if (wall->sidenum < 0 || wall->sidenum > 5) {
-			wall->sidenum = 0;
+		if (wall->nSide < 0 || wall->nSide > 5) {
+			wall->nSide = 0;
 			check_err |= (1 << 4);
 		}
 	}
@@ -832,7 +832,7 @@ void CMine::Default()
 	seg.static_light = 263152L;
 	seg.child_bitmask = 0;
 	seg.wall_bitmask = 0;
-	seg.seg_number = 0;
+	seg.nIndex = 0;
 	seg.map_bitmask = 0;
 
 	vert [0].x = 10*F1_0;
@@ -1239,9 +1239,9 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			GameInfo ().objects.count = MAX_OBJECTS (this);
 			}
 		else {
-			CDObject *obj = Objects ();
+			CGameObject *obj = Objects ();
 			for (i = 0; i < GameInfo ().objects.count; i++, obj++) {
-				ReadObject(obj, loadfile, GameInfo ().fileinfo_version);
+				obj->Read (loadfile, GameInfo ().fileinfo_version);
 				//      obj->signature = object_next_signature++;
 				//    verify_object(obj);
 			}
@@ -1261,7 +1261,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			ErrorMsg ("Wall version < 20, walls not loaded");
 		else if (GameInfo ().walls.count) {
 			for (i = 0; i < GameInfo ().walls.count; i++) {
-				if (!ReadWall (Walls (i), loadfile, GameInfo ().fileinfo_version)) {
+				if (!Walls (i)->Read (loadfile, GameInfo ().fileinfo_version)) {
 					ErrorMsg ("Error reading walls from mine.cpp");
 					break;
 					}
@@ -1299,7 +1299,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
 			for (i = 0; i < GameInfo ().triggers.count; i++)
-				ReadTrigger (Triggers (i), loadfile, false);
+				Triggers (i)->Read (loadfile, GameInfo ().fileinfo_version, false);
 		INT32 bObjTriggersOk = 1;
 		if (GameInfo ().fileinfo_version >= 33) {
 			INT32 i = ftell (loadfile);
@@ -1309,7 +1309,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 				}
 			else {
 				for (i = 0; i < NumObjTriggers (); i++)
-					ReadTrigger (ObjTriggers (i), loadfile, true);
+					ObjTriggers (i)->Read (loadfile, GameInfo ().fileinfo_version, true);
 				if (GameInfo ().fileinfo_version >= 40) {
 					for (i = 0; i < NumObjTriggers (); i++)
 						ObjTriggers (i)->nObject = read_INT16 (loadfile);
@@ -1331,7 +1331,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			SortObjTriggers ();
 		else {
 			NumObjTriggers () = 0;
-			memset (ObjTriggers (), 0, sizeof (CDTrigger) * MAX_OBJ_TRIGGERS);
+			memset (ObjTriggers (), 0, sizeof (CTrigger) * MAX_OBJ_TRIGGERS);
 			}
 	}
 
@@ -1462,220 +1462,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 }
 
 // ------------------------------------------------------------------------
-
-INT32 CMine::ReadWall (CDWall* wallP, FILE* fp, INT32 version)
-{
-wallP->segnum = read_INT32 (fp);
-wallP->sidenum = read_INT32 (fp); 
-wallP->hps = read_FIX (fp);
-wallP->linked_wall = read_INT32 (fp);
-wallP->type = UINT8 (read_INT8 (fp));
-wallP->flags = UINT16 ((version < 37) ? read_INT8 (fp) : read_INT16 (fp));         
-wallP->state = UINT8 (read_INT8 (fp));         
-wallP->trigger = UINT8 (read_INT8 (fp));       
-wallP->clip_num = UINT8 (read_INT8 (fp));      
-wallP->keys = UINT8 (read_INT8 (fp));          
-wallP->controlling_trigger = read_INT8 (fp);
-wallP->cloak_value = read_INT8 (fp);
-return 1;
-}
-
-// ------------------------------------------------------------------------
 // ReadObject()
-// ------------------------------------------------------------------------
-
-void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version) 
-{
-	INT32 i;
-
-	obj->type = read_INT8(f);
-	obj->id = read_INT8(f);
-	obj->control_type = read_INT8(f);
-	obj->movement_type = read_INT8(f);
-	obj->render_type = read_INT8(f);
-	obj->flags = read_INT8(f);
-	if (version > 37)
-		obj->multiplayer = read_INT8(f);
-	else
-		obj->multiplayer = 0;
-	obj->segnum = read_INT16(f);
-	read_vector(&obj->pos, f);
-	read_matrix(&obj->orient, f);
-	obj->size = read_FIX(f);
-	obj->shields = read_FIX(f);
-	read_vector(&obj->last_pos, f);
-	obj->contains_type = read_INT8(f);
-	obj->contains_id = read_INT8(f);
-	obj->contains_count = read_INT8(f);
-
-	switch (obj->movement_type) {
-    case MT_PHYSICS:
-		read_vector(&obj->mtype.phys_info.velocity, f);
-		read_vector(&obj->mtype.phys_info.thrust, f);
-		obj->mtype.phys_info.mass = read_FIX(f);
-		obj->mtype.phys_info.drag = read_FIX(f);
-		obj->mtype.phys_info.brakes = read_FIX(f);
-		read_vector(&obj->mtype.phys_info.rotvel, f);
-		read_vector(&obj->mtype.phys_info.rotthrust, f);
-		obj->mtype.phys_info.turnroll = read_FIXANG(f);
-		obj->mtype.phys_info.flags = read_INT16(f);
-		break;
-
-    case MT_SPINNING:
-		read_vector(&obj->mtype.spin_rate, f);
-		break;
-
-    case MT_NONE:
-		break;
-
-    default:
-		break;
-	}
-
-	switch (obj->control_type) {
-    case CT_AI: {
-		INT16 i;
-		obj->ctype.ai_info.behavior = read_INT8(f);
-		for (i = 0; i < MAX_AI_FLAGS; i++) {
-			obj->ctype.ai_info.flags [i] = read_INT8(f);
-		}
-		obj->ctype.ai_info.hide_segment = read_INT16(f);
-		obj->ctype.ai_info.hide_index = read_INT16(f);
-		obj->ctype.ai_info.path_length = read_INT16(f);
-		obj->ctype.ai_info.cur_path_index = read_INT16(f);
-		if (IsD1File ()) {
-			obj->ctype.ai_info.follow_path_start_seg = read_INT16(f);
-			obj->ctype.ai_info.follow_path_end_seg = read_INT16(f);
-		}
-		break;
-				}
-    case CT_EXPLOSION:
-		obj->ctype.expl_info.spawn_time = read_FIX(f);
-		obj->ctype.expl_info.delete_time = read_FIX(f);
-		obj->ctype.expl_info.delete_objnum = (UINT8)read_INT16(f);
-		obj->ctype.expl_info.next_attach = obj->ctype.expl_info.prev_attach = obj->ctype.expl_info.attach_parent =-1;
-		break;
-
-    case CT_WEAPON:
-		obj->ctype.laser_info.parent_type = read_INT16(f);
-		obj->ctype.laser_info.parent_num = read_INT16(f);
-		obj->ctype.laser_info.parent_signature = read_INT32(f);
-		break;
-
-    case CT_LIGHT:
-		obj->ctype.light_info.intensity = read_FIX(f);
-		break;
-
-    case CT_POWERUP:
-		if (version >= 25) {
-			obj->ctype.powerup_info.count = read_INT32(f);
-		} else {
-			obj->ctype.powerup_info.count = 1;
-			//      if (obj->id== POW_VULCAN_WEAPON)
-			//          obj->ctype.powerup_info.count = VULCAN_WEAPON_AMMO_AMOUNT;
-		}
-		break;
-
-    case CT_NONE:
-    case CT_FLYING:
-    case CT_DEBRIS:
-		break;
-
-    case CT_SLEW:    /*the player is generally saved as slew */
-		break;
-
-    case CT_CNTRLCEN:
-		break;
-
-    case CT_MORPH:
-    case CT_FLYTHROUGH:
-    case CT_REPAIRCEN:
-    default:
-		break;
-	}
-
-	switch (obj->render_type) {
-    case RT_NONE:
-		break;
-
-    case RT_MORPH:
-    case RT_POLYOBJ: {
-		INT16 i;
-		INT32 tmo;
-		obj->rtype.pobj_info.model_num = read_INT32(f);
-		for (i = 0; i < MAX_SUBMODELS; i++) {
-			read_angvec(&obj->rtype.pobj_info.anim_angles [i], f);
-		}
-		obj->rtype.pobj_info.subobj_flags = read_INT32(f);
-		tmo = read_INT32(f);
-		obj->rtype.pobj_info.tmap_override = tmo;
-		obj->rtype.pobj_info.alt_textures = 0;
-		break;
-					 }
-
-    case RT_WEAPON_VCLIP:
-    case RT_HOSTAGE:
-    case RT_POWERUP:
-    case RT_FIREBALL:
-		obj->rtype.vclip_info.vclip_num = read_INT32(f);
-		obj->rtype.vclip_info.frametime = read_FIX(f);
-		obj->rtype.vclip_info.framenum = read_INT8(f);
-
-		break;
-
-    case RT_LASER:
-		break;
-
-	case RT_SMOKE:
-		obj->rtype.smokeInfo.nLife = read_INT32 (f);
-		obj->rtype.smokeInfo.nSize [0] = read_INT32 (f);
-		obj->rtype.smokeInfo.nParts = read_INT32 (f);
-		obj->rtype.smokeInfo.nSpeed = read_INT32 (f);
-		obj->rtype.smokeInfo.nDrift = read_INT32 (f);
-		obj->rtype.smokeInfo.nBrightness = read_INT32 (f);
-		for (i = 0; i < 4; i++)
-			obj->rtype.smokeInfo.color [i] = read_INT8 (f);
-		obj->rtype.smokeInfo.nSide = read_INT8 (f);
-		obj->rtype.smokeInfo.nType = (LevelVersion () < 18) ? 0 : read_INT8 (f);
-		obj->rtype.smokeInfo.bEnabled = (LevelVersion () < 19) ? 1 : read_INT8 (f);
-		break;
-
-	case RT_LIGHTNING:
-		obj->rtype.lightningInfo.nLife = read_INT32 (f);
-		obj->rtype.lightningInfo.nDelay = read_INT32 (f);
-		obj->rtype.lightningInfo.nLength = read_INT32 (f);
-		obj->rtype.lightningInfo.nAmplitude = read_INT32 (f);
-		obj->rtype.lightningInfo.nOffset = read_INT32 (f);
-		obj->rtype.lightningInfo.nLightnings = read_INT16 (f);
-		obj->rtype.lightningInfo.nId = read_INT16 (f);
-		obj->rtype.lightningInfo.nTarget = read_INT16 (f);
-		obj->rtype.lightningInfo.nNodes = read_INT16 (f);
-		obj->rtype.lightningInfo.nChildren = read_INT16 (f);
-		obj->rtype.lightningInfo.nSteps = read_INT16 (f);
-		obj->rtype.lightningInfo.nAngle = read_INT8 (f);
-		obj->rtype.lightningInfo.nStyle = read_INT8 (f);
-		obj->rtype.lightningInfo.nSmoothe = read_INT8 (f);
-		obj->rtype.lightningInfo.bClamp = read_INT8 (f);
-		obj->rtype.lightningInfo.bPlasma = read_INT8 (f);
-		obj->rtype.lightningInfo.bSound = read_INT8 (f);
-		obj->rtype.lightningInfo.bRandom = read_INT8 (f);
-		obj->rtype.lightningInfo.bInPlane = read_INT8 (f);
-		for (i = 0; i < 4; i++)
-			obj->rtype.lightningInfo.color [i] = read_INT8 (f);
-		obj->rtype.lightningInfo.bEnabled = (LevelVersion () < 19) ? 1 : read_INT8 (f);
-		break;
-
-	case RT_SOUND:
-		fread (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
-		obj->rtype.soundInfo.nVolume = read_INT32 (f);
-		obj->rtype.soundInfo.bEnabled = (LevelVersion () < 19) ? 1 : read_INT8 (f);
-		break;
-
-	default:
-		break;
-	}
-}
-
 // ------------------------------------------------------------------------
 // CMine - save()
 //
@@ -1867,18 +1654,18 @@ void CMine::SortDLIndex (INT32 left, INT32 right)
 	INT32	l = left,
 			r = right,
 			m = (left + right) / 2;
-	INT16	mSeg = DLIndex (m)->d2x.segnum, 
-			mSide = DLIndex (m)->d2x.sidenum;
+	INT16	mSeg = DLIndex (m)->nSegment, 
+			mSide = DLIndex (m)->nSide;
 	dl_index	*pl, *pr;
 
 do {
 	pl = DLIndex (l);
-	while ((pl->d2x.segnum < mSeg) || ((pl->d2x.segnum == mSeg) && (pl->d2x.sidenum < mSide))) {
+	while ((pl->nSegment < mSeg) || ((pl->nSegment == mSeg) && (pl->nSide < mSide))) {
 		pl++;
 		l++;
 		}
 	pr = DLIndex (r);
-	while ((pr->d2x.segnum > mSeg) || ((pr->d2x.segnum == mSeg) && (pr->d2x.sidenum > mSide))) {
+	while ((pr->nSegment > mSeg) || ((pr->nSegment == mSeg) && (pr->nSide > mSide))) {
 		pr--;
 		r--;
 		}
@@ -2089,7 +1876,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
 // ------------------------------------------------------------------------
 
-void CMine::WriteTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
+void CMine::WriteTrigger (CTrigger *t, FILE *fp, bool bObjTrigger)
 {
 	INT32	i;
 	char	pad = 0;
@@ -2100,7 +1887,7 @@ if (IsD2File ()) {
 		fwrite (&t->flags, sizeof (INT16), 1, fp);
 	else
 		fwrite (&t->flags, sizeof (INT8), 1, fp);
-	fwrite (&t->num_links, sizeof (INT8), 1, fp);
+	fwrite (&t->count, sizeof (INT8), 1, fp);
 	fwrite (&pad, sizeof (INT8), 1, fp);
 	fwrite (&t->value, sizeof (FIX), 1, fp);
 	fwrite (&t->time, sizeof (FIX), 1, fp);
@@ -2110,56 +1897,13 @@ else {
 	fwrite (&t->flags, sizeof (INT16), 1, fp);
 	fwrite (&t->value, sizeof (FIX), 1, fp);
 	fwrite (&t->time, sizeof (FIX), 1, fp);
-	fwrite (&t->num_links, sizeof (INT8), 1, fp);
-	fwrite (&t->num_links, sizeof (INT16), 1, fp);
+	fwrite (&t->count, sizeof (INT8), 1, fp);
+	fwrite (&t->count, sizeof (INT16), 1, fp);
 	}
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fwrite(t->seg  + i, sizeof (INT16), 1, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fwrite(&t->side [i], sizeof (INT16), 1, fp);
-}
-
-// ------------------------------------------------------------------------
-
-void CMine::ReadTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
-{
-	INT32	i;
-
-if (IsD2File ()) {
-	t->type = read_INT8(fp);
-	if (bObjTrigger)
-		t->flags = read_INT16(fp);
-	else
-		t->flags = (UINT16) read_INT8(fp);
-	t->num_links = read_INT8(fp);
-	read_INT8(fp);
-	t->value = read_FIX(fp);
-	if ((LevelVersion () < 21) && (t->type == TT_EXIT))
-		t->value = 0;
-	if ((GameInfo ().fileinfo_version < 39) && (t->type == TT_MASTER))
-		t->value = 0;
-	t->time = read_FIX(fp);
-#ifdef _DEBUG
-	if (t->type == TT_DISABLE_TRIGGER)
-		t->type = t->type;
-#endif
-	}
-else {
-	t->type = read_INT8(fp);
-	t->flags = read_INT16(fp);
-	t->value = read_FIX(fp);
-	t->time = read_FIX(fp);
-	read_INT8(fp); //skip 8 bit value "link_num"
-	t->num_links = (INT8) read_INT16(fp);
-	if (t->num_links < 0)
-		t->num_links = 0;
-	else if (t->num_links > MAX_TRIGGER_TARGETS)
-		t->num_links = MAX_TRIGGER_TARGETS;
-	}
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	t->seg [i] = read_INT16(fp);
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	t->side [i] = read_INT16(fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2185,9 +1929,9 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// the size which is used by the game engine.
 	GameInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
 	GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
-	GameInfo ().doors.size = 16;                            // 16 = sizeof (active_door)
+	GameInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
 	GameInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
-	GameInfo ().control.size = 42;                            // 42 = sizeof (control_center_trigger)
+	GameInfo ().control.size = 42;                            // 42 = sizeof (reactor_trigger)
 	GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (matcen_info)
 	GameInfo ().equipgen.size = 20; // 20 = sizeof (matcen_info)
 	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof (dl_index)
@@ -2282,7 +2026,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	GameInfo ().walls.offset = ftell(savefile);
 	if (GameInfo ().fileinfo_version >= 20) {
 		for (i = 0; i < GameInfo ().walls.count; i++)
-			WriteWall (Walls (i), savefile, GameInfo ().fileinfo_version);
+			Walls (i)->Write (savefile, GameInfo ().fileinfo_version);
 	}
 
 	//==================== = WRITE DOOR INFO============================
@@ -2296,15 +2040,15 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// note: order different for D2 levels but size is the same
 	GameInfo ().triggers.offset = ftell(savefile);
 	for (i = 0; i < GameInfo ().triggers.count; i++)
-		WriteTrigger (Triggers (i), savefile, false);
+		Triggers (i)->Write (savefile, GameInfo ().fileinfo_version, false);
 	if (LevelVersion () >= 12) {
-		fwrite (&NumObjTriggers (), sizeof (INT32), 1, savefile);
+		write_INT32 (NumObjTriggers (), savefile);
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
-				WriteTrigger (ObjTriggers (i), savefile, true);
+				ObjTriggers (i)->Write (savefile, GameInfo ().fileinfo_version, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				fwrite (&ObjTriggers (i)->nObject, sizeof (ObjTriggers (i)->nObject), 1, savefile);
+				write_INT16 (ObjTriggers (i)->nObject, savefile);
 			}
 		}
 
@@ -2371,217 +2115,6 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	fseek(savefile, end_offset, SEEK_SET);
 #endif //DEMO
 	return(0);
-}
-
-// ------------------------------------------------------------------------
-
-void CMine::WriteWall (CDWall* wallP, FILE* fp, INT32 version)
-{
-write_INT32 (wallP->segnum, fp);
-write_INT32 (wallP->sidenum, fp); 
-write_FIX (wallP->hps, fp);
-write_INT32 (wallP->linked_wall, fp);
-write_INT8 (wallP->type, fp);
-if (version < 37) 
-	write_INT8 (INT8 (wallP->flags), fp);
-else
-	write_INT16 (wallP->flags, fp);         
-write_INT8 (wallP->state, fp);         
-write_INT8 (wallP->trigger, fp);       
-write_INT8 (wallP->clip_num, fp);      
-write_INT8 (wallP->keys, fp);          
-write_INT8 (wallP->controlling_trigger, fp);
-write_INT8 (wallP->cloak_value, fp);
-}
-
-// ------------------------------------------------------------------------
-// WriteObject()
-// ------------------------------------------------------------------------
-void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
-{
-if ((IsStdLevel ()) && (obj->type >= OBJ_CAMBOT))
-	return;	// not a d2x-xl level, but a d2x-xl object
-
-	INT32 i;
-	write_INT8(obj->type, f);
-	write_INT8(obj->id, f);
-	write_INT8(obj->control_type, f);
-	write_INT8(obj->movement_type, f);
-	write_INT8(obj->render_type, f);
-	write_INT8(obj->flags, f);
-	if (version > 36)
-		write_INT8(obj->multiplayer, f);
-	write_INT16(obj->segnum, f);
-	write_vector(&obj->pos, f);
-	write_matrix(&obj->orient, f);
-	write_FIX(obj->size, f);
-	write_FIX(obj->shields, f);
-	write_vector(&obj->last_pos, f);
-	write_INT8(obj->contains_type, f);
-	write_INT8(obj->contains_id, f);
-	write_INT8(obj->contains_count, f);
-
-	switch (obj->movement_type) {
-    case MT_PHYSICS:
-		write_vector(&obj->mtype.phys_info.velocity, f);
-		write_vector(&obj->mtype.phys_info.thrust, f);
-		write_FIX(obj->mtype.phys_info.mass, f);
-		write_FIX(obj->mtype.phys_info.drag, f);
-		write_FIX(obj->mtype.phys_info.brakes, f);
-		write_vector(&obj->mtype.phys_info.rotvel, f);
-		write_vector(&obj->mtype.phys_info.rotthrust, f);
-		write_FIXANG(obj->mtype.phys_info.turnroll, f);
-		write_INT16(obj->mtype.phys_info.flags, f);
-		break;
-
-    case MT_SPINNING:
-		write_vector(&obj->mtype.spin_rate, f);
-		break;
-
-    case MT_NONE:
-		break;
-
-    default:
-		break;
-	}
-
-	switch (obj->control_type) {
-	case CT_AI: {
-		INT16 i;
-		write_INT8(obj->ctype.ai_info.behavior, f);
-		for (i = 0; i < MAX_AI_FLAGS; i++) {
-			write_INT8(obj->ctype.ai_info.flags [i], f);
-		}
-		write_INT16(obj->ctype.ai_info.hide_segment, f);
-		write_INT16(obj->ctype.ai_info.hide_index, f);
-		write_INT16(obj->ctype.ai_info.path_length, f);
-		write_INT16(obj->ctype.ai_info.cur_path_index, f);
-		if (IsD1File ()) {
-			write_INT16(obj->ctype.ai_info.follow_path_start_seg, f);
-			write_INT16(obj->ctype.ai_info.follow_path_end_seg, f);
-		}
-		break;
-				}
-    case CT_EXPLOSION:
-		write_FIX(obj->ctype.expl_info.spawn_time, f);
-		write_FIX(obj->ctype.expl_info.delete_time, f);
-		write_INT16(obj->ctype.expl_info.delete_objnum, f);
-		break;
-
-    case CT_WEAPON:
-		write_INT16(obj->ctype.laser_info.parent_type, f);
-		write_INT16(obj->ctype.laser_info.parent_num, f);
-		write_INT32 (obj->ctype.laser_info.parent_signature, f);
-		break;
-
-    case CT_LIGHT:
-		write_FIX(obj->ctype.light_info.intensity, f);
-		break;
-
-    case CT_POWERUP:
-		if (version >= 25) {
-			write_INT32 (obj->ctype.powerup_info.count, f);
-		}
-		break;
-
-
-    case CT_NONE:
-    case CT_FLYING:
-    case CT_DEBRIS:
-		break;
-
-    case CT_SLEW:    /*the player is generally saved as slew */
-		break;
-
-	case CT_CNTRLCEN:
-		break;
-
-    case CT_MORPH:
-    case CT_FLYTHROUGH:
-    case CT_REPAIRCEN:
-    default:
-		break;
-	}
-
-	switch (obj->render_type) {
-    case RT_NONE:
-		break;
-
-    case RT_MORPH:
-    case RT_POLYOBJ: {
-		INT16 i;
-		INT32 tmo;
-
-		write_INT32 (obj->rtype.pobj_info.model_num, f);
-		for (i = 0; i < MAX_SUBMODELS; i++) {
-			write_angvec(&obj->rtype.pobj_info.anim_angles [i], f);
-		}
-		write_INT32 (obj->rtype.pobj_info.subobj_flags, f);
-		tmo = obj->rtype.pobj_info.tmap_override;
-		write_INT32 (tmo, f);
-		break;
-					 }
-	case RT_WEAPON_VCLIP:
-	case RT_HOSTAGE:
-	case RT_POWERUP:
-	case RT_FIREBALL:
-		write_INT32 (obj->rtype.vclip_info.vclip_num, f);
-		write_FIX(obj->rtype.vclip_info.frametime, f);
-		write_INT8(obj->rtype.vclip_info.framenum, f);
-		break;
-
-	case RT_LASER:
-		break;
-
-	case RT_SMOKE:
-		write_INT32 (obj->rtype.smokeInfo.nLife, f);
-		write_INT32 (obj->rtype.smokeInfo.nSize [0], f);
-		write_INT32 (obj->rtype.smokeInfo.nParts, f);
-		write_INT32 (obj->rtype.smokeInfo.nSpeed, f);
-		write_INT32 (obj->rtype.smokeInfo.nDrift, f);
-		write_INT32 (obj->rtype.smokeInfo.nBrightness, f);
-		for (i = 0; i < 4; i++)
-			write_INT8 (obj->rtype.smokeInfo.color [i], f);
-		write_INT8 (obj->rtype.smokeInfo.nSide, f);
-		write_INT8 (obj->rtype.smokeInfo.nType, f);
-		write_INT8 (obj->rtype.smokeInfo.bEnabled, f);
-		break;
-
-	case RT_LIGHTNING:
-		write_INT32 (obj->rtype.lightningInfo.nLife, f);
-		write_INT32 (obj->rtype.lightningInfo.nDelay, f);
-		write_INT32 (obj->rtype.lightningInfo.nLength, f);
-		write_INT32 (obj->rtype.lightningInfo.nAmplitude, f);
-		write_INT32 (obj->rtype.lightningInfo.nOffset, f);
-		write_INT16 (obj->rtype.lightningInfo.nLightnings, f);
-		write_INT16 (obj->rtype.lightningInfo.nId, f);
-		write_INT16 (obj->rtype.lightningInfo.nTarget, f);
-		write_INT16 (obj->rtype.lightningInfo.nNodes, f);
-		write_INT16 (obj->rtype.lightningInfo.nChildren, f);
-		write_INT16 (obj->rtype.lightningInfo.nSteps, f);
-		write_INT8 (obj->rtype.lightningInfo.nAngle, f);
-		write_INT8 (obj->rtype.lightningInfo.nStyle, f);
-		write_INT8 (obj->rtype.lightningInfo.nSmoothe, f);
-		write_INT8 (obj->rtype.lightningInfo.bClamp, f);
-		write_INT8 (obj->rtype.lightningInfo.bPlasma, f);
-		write_INT8 (obj->rtype.lightningInfo.bSound, f);
-		write_INT8 (obj->rtype.lightningInfo.bRandom, f);
-		write_INT8 (obj->rtype.lightningInfo.bInPlane, f);
-		for (i = 0; i < 4; i++)
-			write_INT8 (obj->rtype.lightningInfo.color [i], f);
-		write_INT8 (obj->rtype.lightningInfo.bEnabled, f);
-		break;
-
-	case RT_SOUND:
-		fwrite (obj->rtype.soundInfo.szFilename, 1, sizeof (obj->rtype.soundInfo.szFilename), f);
-		write_INT32 (obj->rtype.soundInfo.nVolume, f);
-		write_INT8 (obj->rtype.soundInfo.bEnabled, f);
-		break;
-
-	default:
-		break;
-
-	}
 }
 
 

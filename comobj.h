@@ -35,7 +35,7 @@ public:
 
 // Data members
 public:
-	CDObject* _pObject;
+	CGameObject* _pObject;
 };
 
 #endif //__COMOBJ_H_

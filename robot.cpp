@@ -522,7 +522,7 @@ bool CMine::IsCustomRobot (INT32 i)
 {
 	bool	bFound = false;
 	CDSegment *seg;
-	CDObject *obj;
+	CGameObject *obj;
 	INT32 j;
 
 if (!RobotInfo (i)->pad [0]) //changed?

@@ -191,7 +191,7 @@ void CTextureTool::UpdateLightWnd (void)
 {
 if (!GetMine ())
 	return;
-CDWall *pWall = m_mine->CurrWall ();
+CWall *pWall = m_mine->CurrWall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
@@ -327,7 +327,7 @@ if (m_mine->UseTexColors ()) {
 	INT16			nBaseTex = m_mine->CurrSide ()->nBaseTex;
 	CDSegment	*seg = m_mine->Segments ();
 	CDSide		*side;
-	CDWall		*wall;
+	CWall		*wall;
 	bool			bAll = !m_mine->GotMarkedSides ();
 
 	for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
@@ -362,7 +362,7 @@ if (/*(m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.x -= rcPal.left;
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
-			CDWall *pWall = m_mine->CurrWall ();
+			CWall *pWall = m_mine->CurrWall ();
 			if (pWall && (pWall->type == WALL_TRANSPARENT)) {
 				pWall->cloak_value = m_nColorIndex;
 				SetWallColor ();

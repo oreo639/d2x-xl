@@ -780,10 +780,10 @@ if (bStart) {
 	CDSegment *seg = m_mine->Segments ();
 	INT32 i;
 	for (i = m_mine->SegCount (); i; i--, seg++)
-		 seg->seg_number = 0; // all six sides not aligned yet
+		 seg->nIndex = 0; // all six sides not aligned yet
 	}
 // mark current side as aligned
-m_mine->Segments (segnum)->seg_number = 1;
+m_mine->Segments (segnum)->nIndex = 1;
 // call recursive function which aligns one at a time
 AlignChildTextures (segnum, sidenum, MAX_SEGMENTS (m_mine));
 }
@@ -810,9 +810,9 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 bool bAll = !m_mine->GotMarkedSegments ();
 for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum++, seg++)
-	 seg->seg_number = 0;
+	 seg->nIndex = 0;
 for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum++, seg++) {
-	if (seg->seg_number)
+	if (seg->nIndex)
 		continue;
 	childSide = seg->sides + sidenum;
 	if (m_bUse1st && (side->nBaseTex != childSide->nBaseTex))
@@ -897,7 +897,7 @@ if (nDepth <= 0)
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
 	return;
 seg = m_mine->Segments (segnum);
-if (seg->seg_number < 0)
+if (seg->nIndex < 0)
 	return;
 
 	INT16			*childList = new INT16 [m_mine->SegCount ()];
@@ -907,7 +907,7 @@ if (!childList)
 	return;
 
 childList [tos++] = segnum;
-seg->seg_number = sidenum;
+seg->nIndex = sidenum;
 
 if (m_bIgnorePlane) {
 	side = seg->sides + sidenum;
@@ -931,15 +931,15 @@ if (m_bIgnorePlane) {
 					if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 						continue;
 					childSeg = m_mine->Segments (child_segnum);
-					if (childSeg->seg_number != 0)
+					if (childSeg->nIndex != 0)
 						continue;
 					h = m_mine->AlignTextures (segnum, child_sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
-					childSeg->seg_number = h + 1;
+					childSeg->nIndex = h + 1;
 					}
 				}
 			}
 		}
-	seg->seg_number = -1;
+	seg->nIndex = -1;
 	--nDepth;
 	for (sidenum = 0, childSide = seg->sides; sidenum < 6; sidenum++, childSide++) {
 //			if (childSide->nBaseTex != side->nBaseTex)
@@ -949,7 +949,7 @@ if (m_bIgnorePlane) {
 			if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 				continue;
 			childSeg = m_mine->Segments (child_segnum);
-			child_sidenum = childSeg->seg_number - 1;
+			child_sidenum = childSeg->nIndex - 1;
 			if (child_sidenum < 0)
 				continue;
 			AlignChildTextures (child_segnum, child_sidenum, nDepth);
@@ -960,8 +960,8 @@ else {
 	while (pos < tos) {
 		segnum = childList [pos++];
 		seg = m_mine->Segments (segnum);
-		sidenum = seg->seg_number;
-		seg->seg_number = -1;
+		sidenum = seg->nIndex;
+		seg->nIndex = -1;
 		for (nLine = 0; nLine < 4; nLine++) {
 			if (sidenum < 0)
 				continue;
@@ -969,10 +969,10 @@ else {
 			if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 				continue;
 			childSeg = m_mine->Segments (child_segnum);
-			if (childSeg->seg_number)
+			if (childSeg->nIndex)
 				continue;
-			childSeg->seg_number = m_mine->AlignTextures (segnum, sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
-			if (childSeg->seg_number >= 0)
+			childSeg->nIndex = m_mine->AlignTextures (segnum, sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
+			if (childSeg->nIndex >= 0)
 				childList [tos++] = child_segnum;
 			}
 /*
@@ -981,7 +981,7 @@ else {
 			if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 				continue;
 			childSeg = m_mine->Segments (child_segnum);
-			child_sidenum = childSeg->seg_number;
+			child_sidenum = childSeg->nIndex;
 			if (child_sidenum < 0)
 				continue;
 			AlignChildTextures (child_segnum, child_sidenum, --nDepth);

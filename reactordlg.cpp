@@ -101,7 +101,7 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
-	m_nTargets = m_pTrigger->num_links;
+	m_nTargets = m_pTrigger->count;
 	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
@@ -178,7 +178,7 @@ void CReactorTool::AddTarget (INT16 segnum, INT16 sidenum)
 {
 if (!GetMine ())
 	return;
-m_nTargets = m_pTrigger->num_links;
+m_nTargets = m_pTrigger->count;
 if (m_nTargets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Reactor tool: No more targets possible for this trigger.");
 	return;
@@ -190,7 +190,7 @@ if (FindTarget (segnum, sidenum) >= 0) {
 theApp.SetModified (TRUE);
 m_pTrigger->seg [m_nTargets] = segnum;
 m_pTrigger->side [m_nTargets] = sidenum - 1;
-m_pTrigger->num_links++;
+m_pTrigger->count++;
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
@@ -237,7 +237,7 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
-m_nTargets = --(m_pTrigger->num_links);
+m_nTargets = --(m_pTrigger->count);
 m_pTrigger->seg [m_iTarget] = 0;
 m_pTrigger->side [m_iTarget] = 0;
 if (m_iTarget < m_nTargets) {
@@ -256,7 +256,7 @@ Refresh ();
 INT32 CReactorTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
 INT32 i;
-for (i = 0; i < m_pTrigger->num_links; i++)
+for (i = 0; i < m_pTrigger->count; i++)
 	if ((segnum = m_pTrigger->seg [i]) && (sidenum = m_pTrigger->seg [i]))
 		return i;
 return -1;
@@ -291,7 +291,7 @@ if (!GetMine ())
 // get affected cube/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->num_links))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
 	return;
 
 INT16 segnum = m_pTrigger->seg [m_iTarget];

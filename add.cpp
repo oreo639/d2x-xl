@@ -119,7 +119,7 @@ if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
 else if (seg->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CDSegment *childseg;
 	CDSide *oppside, *side = seg->sides;
-	CDWall *wall;
+	CWall *wall;
 	INT16 opp_segnum, opp_sidenum;
 	for (INT16 sidenum = 0; sidenum < 6; sidenum++, side++) {
 		if (seg->children [sidenum] < 0)	// assume no wall if no child segment at the current side
@@ -709,7 +709,7 @@ if (AddWall (Current ()->segment, Current ()->side, (UINT8) wall_type, wall_flag
 	 AddTrigger (GameInfo ().walls.count - 1, trigger_type)) {
 	INT16 trignum = GameInfo ().triggers.count - 1;
 	// set link to trigger target
-	Triggers () [trignum].num_links = 1;
+	Triggers () [trignum].count = 1;
 	Triggers () [trignum].seg [0] = other->segment;
 	Triggers () [trignum].side [0] = other->side;
 	theApp.UnlockUndo ();

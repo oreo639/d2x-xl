@@ -102,14 +102,14 @@ typedef struct {
 } JOINTLIST;
 
 typedef struct {
-  INT32	      	model_num;		  // which polygon model?
+  INT32	      model_num;		  // which polygon model?
   VMS_VECTOR	gun_points[MAX_GUNS];	  // where each gun model is
-  UINT8		gun_submodels[MAX_GUNS];  // which submodel is each gun in?
+  UINT8			gun_submodels[MAX_GUNS];  // which submodel is each gun in?
 
-  INT16 	exp1_vclip_num;
+  INT16 		exp1_vclip_num;
   INT16		exp1_sound_num;
 
-  INT16 	exp2_vclip_num;
+  INT16 		exp2_vclip_num;
   INT16		exp2_sound_num;
 
   INT8		weapon_type;
@@ -480,86 +480,107 @@ typedef struct tSoundInfo {
 	char			bEnabled;
 } tSoundInfo;
 
-class CDObject {
+class CGameObject {
 public:
-  INT16      signature;     /* reduced size to save memory */
-  INT8       type;          /* what type of object this is... robot, weapon, hostage, powerup, fireball */
-  INT8       id;            /* which form of object...which powerup, robot, etc. */
-  UINT8      control_type;  /* how this object is controlled */
-  UINT8      movement_type; /* how this object moves */
-  UINT8      render_type;   /*  how this object renders */
-  UINT8      flags;         /* misc flags */
-  UINT8		 multiplayer;   /* object only available in multiplayer games */
-  INT16      segnum;        /* segment number containing object */
-  tFixVector pos;           /* absolute x,y,z coordinate of center of object */
-  tFixMatrix orient;        /* orientation of object in world */
-  FIX        size;          /* 3d size of object - for collision detection */
-  FIX        shields;       /* Starts at maximum, when <0, object dies.. */
-  tFixVector last_pos;      /* where object was last frame */
-  INT8		 contains_type; /*  Type of object this object contains (eg, spider contains powerup) */
-  INT8		 contains_id;   /*  ID of object this object contains (eg, id = blue type = key) */
-  INT8		 contains_count;/* number of objects of type:id this object contains */
-  
-  /*movement info, determined by MOVEMENT_TYPE */
-  union {
-    physics_info phys_info; /* a physics object */
-    tFixVector   spin_rate; /* for spinning objects */
-  } mtype;
+	INT16			signature;     // reduced size to save memory 
+	INT8			type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
+	INT8			id;            // which form of object...which powerup, robot, etc. 
+	UINT8			control_type;  // how this object is controlled 
+	UINT8			movement_type; // how this object moves 
+	UINT8			render_type;   //  how this object renders 
+	UINT8			flags;         // misc flags 
+	UINT8			multiplayer;   // object only available in multiplayer games 
+	INT16			segnum;        // segment number containing object 
+	tFixVector	pos;           // absolute x,y,z coordinate of center of object 
+	tFixMatrix	orient;        // orientation of object in world 
+	FIX			size;          // 3d size of object - for collision detection 
+	FIX			shields;       // Starts at maximum, when <0, object dies.. 
+	tFixVector	last_pos;      // where object was last frame 
+	INT8			contains_type; //  Type of object this object contains (eg, spider contains powerup) 
+	INT8			contains_id;   //  ID of object this object contains (eg, id = blue type = key) 
+	INT8			contains_count;// number of objects of type:id this object contains 
 
-  /*control info, determined by CONTROL_TYPE */
-  union {
-    laser_info     laser_info;
-    explosion_info expl_info;   /*NOTE: debris uses this also */
-    ai_static      ai_info;
-    light_info     light_info;  /*why put this here?  Didn't know what else to do with it. */
-    powerup_info   powerup_info;
-  } ctype;
+	//movement info, determined by MOVEMENT_TYPE 
+	union {
+		physics_info	phys_info; // a physics object 
+		tFixVector		spin_rate; // for spinning objects 
+		} mtype;
 
-  /*render info, determined by RENDER_TYPE */
-  union {
-    polyobj_info		pobj_info;     /*polygon model */
-    vclip_info			vclip_info;    /*vclip */
-	 tSmokeInfo			smokeInfo;
-	 tLightningInfo	lightningInfo;
-	 tSoundInfo			soundInfo;
-  } rtype;
+	//control info, determined by CONTROL_TYPE 
+	union {
+		laser_info     laser_info;
+		explosion_info expl_info;   //NOTE: debris uses this also 
+		ai_static      ai_info;
+		light_info     light_info;  //why put this here?  Didn't know what else to do with it. 
+		powerup_info   powerup_info;
+		} ctype;
 
+	//render info, determined by RENDER_TYPE 
+	union {
+		polyobj_info	pobj_info;     //polygon model 
+		vclip_info		vclip_info;    //vclip 
+		tSmokeInfo		smokeInfo;
+		tLightningInfo	lightningInfo;
+		tSoundInfo		soundInfo;
+		} rtype;
+
+	void Read (FILE *fp, INT32 version);
+	void Write (FILE *fp, INT32 version);
 };
 
-class CDWall {
+class CSideKey {
 public:
-  INT32 segnum,sidenum; /* Seg & side for this wall */
-  FIX   hps;            /* "Hit points" of the wall.  */
-  INT32 linked_wall;    /* number of linked wall */
-  UINT8 type;           /* What kind of special wall. */
-  UINT16 flags;          /* Flags for the wall.     */
-  UINT8 state;          /* Opening, closing, etc. */
-  UINT8 trigger;        /* Which trigger is associated with the wall. */
-  INT8  clip_num;       /* Which  animation associated with the wall.  */
-  UINT8 keys;           /* which keys are required */
+	INT16	nSegment;
+	INT16	nSide;
+
+	CSideKey(INT16 seg = 0, INT16 side = 0) : nSegment(seg), nSide(side) {}
+	inline bool operator==(CSideKey& other) { return (nSegment == other.nSegment) && (nSide == other.nSide); }
+};
+
+class CWall : public CSideKey {
+public:
+	FIX		hps;            /* "Hit points" of the wall.  */
+	INT32		linked_wall;    /* number of linked wall */
+	UINT8		type;           /* What kind of special wall. */
+	UINT16	flags;          /* Flags for the wall.     */
+	UINT8		state;          /* Opening, closing, etc. */
+	UINT8		trigger;        /* Which trigger is associated with the wall. */
+	INT8		clip_num;       /* Which  animation associated with the wall.  */
+	UINT8		keys;           /* which keys are required */
  
  // the following two Descent2 bytes replace the "INT16 pad" of Descent1
-  INT8	controlling_trigger; // which trigger causes something to happen here.
+	INT8		controlling_trigger; // which trigger causes something to happen here.
 		// Not like "trigger" above, which is the trigger on this wall.
 		//	Note: This gets stuffed at load time in gamemine.c.  
 		// Don't try to use it in the editor.  You will be sorry!
-  INT8	cloak_value;	// if this wall is cloaked, the fade value
+	INT8		cloak_value;	// if this wall is cloaked, the fade value
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
 };
 
-typedef struct active_door {
-  INT32	 n_parts;	   // for linked walls
-  INT16	 front_wallnum[2]; // front wall numbers for this door
-  INT16	 back_wallnum[2];  // back wall numbers for this door
-  FIX    time;		   // how long been opening, closing, waiting
-} active_door;
+class CActiveDoor {
+public:
+  INT32		n_parts;	   // for linked walls
+  INT16		nFrontWall[2]; // front wall numbers for this door
+  INT16		nBackWall[2];  // back wall numbers for this door
+  FIX			time;		   // how long been opening, closing, waiting
 
-typedef struct cloaking_wall {    // NEW for Descent 2
-  INT16 front_wallnum;	  // front wall numbers for this door
-  INT16	back_wallnum; 	  // back wall numbers for this door
-  FIX	front_ls[4]; 	  // front wall saved light values
-  FIX	back_ls[4];	  // back wall saved light values
-  FIX	time;		  // how long been cloaking or decloaking
-} cloaking_wall;
+	void Read (FILE *fp, INT32 version);
+	void Write (FILE *fp, INT32 version);
+};
+
+class CCloakingWall {    // NEW for Descent 2
+public:
+	INT16		nFrontWall;	  // front wall numbers for this door
+	INT16		nBackWall; 	  // back wall numbers for this door
+	FIX			front_ls[4]; 	  // front wall saved light values
+	FIX			back_ls[4];	  // back wall saved light values
+	FIX			time;		  // how long been cloaking or decloaking
+
+	void Read (FILE *fp, INT32 version);
+	void Write (FILE *fp, INT32 version);
+};
 
 /*
 typedef struct {
@@ -576,58 +597,44 @@ typedef struct {
 
 //extern char	Wall_names[7][10]; // New for Descent 2
 
-class CDTrigger {
+typedef struct {
+  INT8		count;
+  CSideKey	targets [MAX_TRIGGER_TARGETS];
+} trigger_target_list;
+
+class CTrigger : public trigger_target_list {
 public:
-  UINT8  type;
-  UINT16 flags;
-  INT16  nObject;
-  INT8   num_links;
-  FIX    value;
-  FIX    time;
-  INT16  seg[MAX_TRIGGER_TARGETS];
-  INT16  side[MAX_TRIGGER_TARGETS];
-  UINT16	nIndex;
+	UINT8		type;
+	UINT16	flags;
+	INT16		nObject;
+	FIX		value;
+	FIX		time;
+	UINT16	nIndex;
+
+	void Read (FILE *fp, INT32 version, bool bObjTrigger);
+	void Write (FILE *fp, INT32 version, bool bObjTrigger);
 };
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
 // Light cast upon vert_light vertices in segnum:sidenum by some light
-typedef struct {
-  INT16 segnum;
-  INT8  sidenum;
-  INT8  dummy;
-  UINT8 vert_light[4];
-} delta_light;
+class delta_light : public CSideKey {
+public:
+	UINT8 vert_light[4];
+};
 
 // Light at segnum:sidenum casts light on count sides beginning at index (in array Delta_lights)
-typedef struct {
-  INT16 segnum;
-  UINT16 sidenum :3;
-  UINT16 count :13;
-  UINT16 index;
-} dl_index_d2x;
-
-typedef struct {
-  INT16 segnum;
-  UINT8 sidenum;
-  UINT8 count;
-  UINT16 index;
-} dl_index_d2;
-
-typedef union {
-	dl_index_d2		d2;
-	dl_index_d2x	d2x;
-} dl_index;
+class dl_index : public CSideKey {
+public:
+	UINT16 count;
+	UINT16 index;
+};
 
 //extern dl_index    Dl_indices[MAX_DL_INDICES];
 //extern delta_light Delta_lights[MAX_DELTA_LIGHTS];
 //extern INT32	     Num_static_lights;
 
 
-typedef struct control_center_trigger {
-  INT16 num_links;
-  INT16 seg[MAX_TRIGGER_TARGETS];
-  INT16 side[MAX_TRIGGER_TARGETS];
-} control_center_trigger;
+typedef trigger_target_list reactor_trigger;
 
 typedef struct matcen_info {
   INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */

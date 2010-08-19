@@ -353,7 +353,7 @@ void CWallTool::OnAddWall ()
 if (!GetMine ())
 	return;
 
-CDWall *wall;
+CWall *wall;
 CDSegment *seg [2];
 CDSide *side [2];
 INT16 segnum [2]; 
@@ -483,7 +483,7 @@ theApp.MineView ()->SelectOtherSide ();
 
                         /*--------------------------*/
 
-CDWall *CWallTool::GetOtherWall (void)
+CWall *CWallTool::GetOtherWall (void)
 {
 if (!GetMine ())
 	return m_pWall [1] = NULL;
@@ -531,7 +531,7 @@ void CWallTool::OnSetType ()
 {
 	CDSegment	*seg [2];
 	CDSide		*side [2];
-	CDWall		*wall;
+	CWall		*wall;
 	INT16			segnum [2], sidenum [2];
 	INT32			nType;
 
@@ -561,7 +561,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		INT16 nOvlTex = side [bSide]->nOvlTex;
 		m_mine->DefineWall (segnum [bSide], sidenum [bSide], m_nWall [bSide], m_nType, m_pWall [0]->clip_num, -1, true);
 		if ((wall->type == WALL_OPEN) || (wall->type == WALL_CLOSED))
-			m_mine->SetTexture (wall->segnum, wall->sidenum, nBaseTex, nOvlTex);
+			m_mine->SetTexture (wall->nSegment, wall->nSide, nBaseTex, nOvlTex);
 //		else if ((wall->type == WALL_CLOAKED) || (wall->type == WALL_TRANSPARENT))
 //			wall->cloak_value = m_defWall.cloak_value;
 		}
@@ -574,7 +574,7 @@ Refresh ();
 void CWallTool::OnSetClip ()
 {
 	INT32		clipnum;
-	CDWall	*wall;
+	CWall	*wall;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 m_pWall [0] = m_mine->Walls () + m_nWall [0];

@@ -40,7 +40,7 @@ public:
 	FIX		static_light;   /* average static light in segment */
 	UINT8		child_bitmask;  /* bit0 to 5: children, bit6: unused, bit7: special */
 	UINT8		wall_bitmask;   /* bit0 to 5: door/walls, bit6: deleted, bit7: marked segment */
-	INT16		seg_number;     /* used for cut & paste to help link children */
+	INT16		nIndex;     /* used for cut & paste to help link children */
 	INT16		map_bitmask;    /* which lines are drawn when displaying wireframe */
 	INT8		owner;
 	INT8		group;

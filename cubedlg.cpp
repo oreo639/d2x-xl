@@ -381,38 +381,38 @@ SelectItemData (CBType (), m_nType);
 OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
-CDTrigger *trigger = m_mine->Triggers ();
+CTrigger *trigger = m_mine->Triggers ();
 INT32 trignum;
 for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigger++) {
-	for (i = 0; i < trigger->num_links; i++) {
+	for (i = 0; i < trigger->count; i++) {
 		if ((trigger->seg [i] == m_nCube) && (trigger->side [i] == m_nSide)) {
 			// find the wall with this trigger
-			CDWall *wall = m_mine->Walls ();
+			CWall *wall = m_mine->Walls ();
 			INT32 wallnum;
 			for (wallnum = 0; wallnum < m_mine->GameInfo ().walls.count ;wallnum++, wall++) {
 				if (wall->trigger == trignum) 
 					break;
 				}
 			if (wallnum < m_mine->GameInfo ().walls.count) {
-				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wall->segnum, (INT32) wall->sidenum + 1);
+				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wall->nSegment, (INT32) wall->nSide + 1);
 				INT32 h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (long) wall->segnum * 0x10000L + wall->sidenum);
+				LBTriggers ()->SetItemData (h, (long) wall->nSegment * 0x10000L + wall->nSide);
 				}
 			}
 		}
 	}
 // show if this is cube/side is triggered by the control_center
-control_center_trigger	*ccTrigger = m_mine->CCTriggers ();
+reactor_trigger	*ccTrigger = m_mine->CCTriggers ();
 INT32 control;
 for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, ccTrigger++) {
-	INT32 num_links = ccTrigger->num_links;
-	for (i = 0; i < num_links; i++) {
+	INT32 count = ccTrigger->count;
+	for (i = 0; i < count; i++) {
 		if ((m_nCube == ccTrigger->seg [i]) && (m_nSide == ccTrigger->side [i])) {
 			LBTriggers ()->AddString ("Reactor");
 			break;
 			}
 		}
-	if (i < num_links) 
+	if (i < count) 
 		break; // quit if for loop broke above
 	}
 
@@ -741,7 +741,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		INT16 nSegNum = m_mine->Current ()->segment;
 		CDSegment *childseg, *seg = m_mine->CurrSeg ();
 		CDSide *oppside, *side = m_mine->CurrSide ();
-		CDWall *wall;
+		CWall *wall;
 		INT16 opp_segnum, opp_sidenum;
 		for (INT16 sidenum = 0; sidenum < 6; sidenum++, side++) {
 			if (seg->children [sidenum] < 0)	// assume no wall if no child segment at the current side
