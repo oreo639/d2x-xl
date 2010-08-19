@@ -75,7 +75,7 @@ if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
 		INT32 nDelMatCen = seg->matcen_num;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (CRobotMaker));
-			BotGens (nDelMatCen)->fuelcen_num = nDelMatCen;
+			BotGens (nDelMatCen)->nFuelCen = nDelMatCen;
 			seg->matcen_num = -1;
 			}
 		GameInfo ().botgen.count--;
@@ -99,7 +99,7 @@ if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
 		INT32 nDelMatCen = seg->matcen_num;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (CRobotMaker));
-			EquipGens (nDelMatCen)->fuelcen_num = nDelMatCen;
+			EquipGens (nDelMatCen)->nFuelCen = nDelMatCen;
 			seg->matcen_num = -1;
 			}
 		GameInfo ().equipgen.count--;
@@ -224,10 +224,10 @@ if (!DefineSegment (segnum, SEGMENT_FUNC_EQUIPMAKER, -1)) {
 	}	
 EquipGens (n_matcen)->objFlags [0] = 0;
 EquipGens (n_matcen)->objFlags [1] = 0;
-EquipGens (n_matcen)->hit_points = 0;
+EquipGens (n_matcen)->hitPoints = 0;
 EquipGens (n_matcen)->interval = 0;
 EquipGens (n_matcen)->segnum = segnum;
-EquipGens (n_matcen)->fuelcen_num = n_matcen;
+EquipGens (n_matcen)->nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->value = 
 Segments (Current ()->nSegment)->matcen_num = n_matcen;
 GameInfo ().equipgen.count++;
@@ -262,10 +262,10 @@ if (!DefineSegment (segnum, SEGMENT_FUNC_ROBOTMAKER,  bSetDefTextures ? (IsD1Fil
 	}	
 BotGens (n_matcen)->objFlags [0] = 8;
 BotGens (n_matcen)->objFlags [1] = 0;
-BotGens (n_matcen)->hit_points = 0;
+BotGens (n_matcen)->hitPoints = 0;
 BotGens (n_matcen)->interval = 0;
 BotGens (n_matcen)->segnum = segnum;
-BotGens (n_matcen)->fuelcen_num = n_matcen;
+BotGens (n_matcen)->nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->value = 
 Segments (Current ()->nSegment)->matcen_num = n_matcen;
 GameInfo ().botgen.count++;

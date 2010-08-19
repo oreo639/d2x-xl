@@ -405,15 +405,10 @@ for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigg
 CReactorTrigger* reactorTrigger = m_mine->ReactorTriggers ();
 INT32 control;
 for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, reactorTrigger++) {
-	INT32 count = reactorTrigger->count;
-	for (i = 0; i < count; i++) {
-		if (reactorTrigger [i] == CSideKey (m_nSegment, m_nSide)) {
-			LBTriggers ()->AddString ("Reactor");
-			break;
-			}
+	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide)) {
+		LBTriggers ()->AddString ("Reactor");
+		break;
 		}
-	if (i < count) 
-		break; // quit if for loop broke above
 	}
 
 // show "none" if there is no Triggers ()

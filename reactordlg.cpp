@@ -235,11 +235,7 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
-m_nTargets = --(m_pTrigger->count);
-m_pTrigger [m_iTarget] = CSideKey (0,0);
-if (m_iTarget < m_nTargets) {
-	memcpy (m_pTrigger->targets + m_iTarget, m_pTrigger->targets + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (m_pTrigger [0]));
-	}
+m_nTargets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;

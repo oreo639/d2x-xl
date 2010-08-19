@@ -779,7 +779,7 @@ if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	write_INT8(flags, fp);
 	if (version > 36)
 		write_INT8(multiplayer, fp);
-	write_INT16(segnum, fp);
+	write_INT16(nSegment, fp);
 	write_vector(&pos, fp);
 	write_matrix(&orient, fp);
 	write_FIX(size, fp);

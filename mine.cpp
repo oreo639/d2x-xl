@@ -2019,10 +2019,10 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
 			write_INT32 (BotGens (i)->objFlags[0], savefile);
 			// skip robot_flags2
-			write_FIX  (BotGens (i)->hit_points, savefile);
+			write_FIX  (BotGens (i)->hitPoints, savefile);
 			write_FIX  (BotGens (i)->interval, savefile);
 			write_INT16(BotGens (i)->segnum, savefile);
-			write_INT16(BotGens (i)->fuelcen_num, savefile);
+			write_INT16(BotGens (i)->nFuelCen, savefile);
 		}
 	}
 

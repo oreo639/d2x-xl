@@ -82,15 +82,15 @@ if (!pbp)
 m_mine->UnmarkAll ();
 if (bCurSeg = MarkSegment (pbp->nSegment))
 	m_mine->Current ()->nSegment = pbp->nSegment;
-MarkSegment (pbp->childnum);
+MarkSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
 	m_mine->Current ()->nSide = pbp->nSide;
 if ((pbp->nLine >= 0) && (pbp->nLine < 4))
 	m_mine->Current ()->nLine = pbp->nLine;
 if ((pbp->pointnum >= 0) && (pbp->pointnum < 8))
 	m_mine->Current ()->nPoint = pbp->pointnum;
-if ((pbp->wallnum >= 0) && (pbp->wallnum < m_mine->GameInfo ().walls.count))
-	nWall = pbp->wallnum;
+if ((pbp->nWall >= 0) && (pbp->nWall < m_mine->GameInfo ().walls.count))
+	nWall = pbp->nWall;
 else if ((pbp->trignum >= 0) && (pbp->trignum < m_mine->GameInfo ().triggers.count))
 	nWall = m_mine->FindTriggerWall (pbp->trignum);
 else
@@ -410,10 +410,10 @@ if (h >= 0) {
 	pbp->nSide = sidenum;
 	pbp->nLine = linenum;
 	pbp->pointnum = pointnum;
-	pbp->wallnum = wallnum;
+	pbp->nWall = wallnum;
 	pbp->trignum = trignum;
 	pbp->nObject = objnum;
-	pbp->childnum = childnum;
+	pbp->nChild = childnum;
 	LBBugs ()->SetItemDataPtr (h, (void *) pbp);
 	}
 *szError = '\0';
@@ -976,36 +976,36 @@ bool CDiagTool::CheckTriggers ()
 	LBBugs ()->AddString ("[Triggers]");
 	INT32 segCount = m_mine->SegCount ();
 	INT32 trigCount = m_mine->GameInfo ().triggers.count;
-	CTrigger *trigger = m_mine->Triggers ();
+	CTrigger *trigP = m_mine->Triggers ();
 	INT32 wallCount = m_mine->GameInfo ().walls.count;
 	CWall *wallP;
 	CReactorTrigger *reactorTrigger = m_mine->ReactorTriggers ();
 
-	// make sure trigger is linked to exactly one wallP
+	// make sure trigP is linked to exactly one wallP
 for (i = 0; i < reactorTrigger->count; i++)
 	if ((reactorTrigger [i].nSegment >= segCount) ||
 		(m_mine->Segments (reactorTrigger->Segment (i))->sides [reactorTrigger->Side (i)].nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
 			reactorTrigger.Delete (i);
-			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigger target.");
+			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigP target.");
 			if (UpdateStats (message, 0))
 				return true;
 			}
 		else {
-			strcpy_s (message, sizeof (message), "WARNING: Reactor has invalid trigger target.");
+			strcpy_s (message, sizeof (message), "WARNING: Reactor has invalid trigP target.");
 			if (UpdateStats (message, 0))
 				return true;
 			}
 		}
-for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
+for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	count = 0;
 	wallP = m_mine->Walls ();
 	for (wallnum = 0; wallnum < wallCount; wallnum++, wallP++) {
-		if (wallP->trigger == trignum) {
+		if (wallP->trigP == trignum) {
 			// if exit, make sure it is linked to CReactorTrigger
-			INT32 tt = trigger->type;
-			INT32 tf = trigger->flags;
+			INT32 tt = trigP->type;
+			INT32 tf = trigP->flags;
 			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->count; i++)
 					if (*reactorTrigger == *wallP)
@@ -1033,20 +1033,20 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 		if (m_bAutoFixBugs) {
 			m_mine->DeleteTrigger (trignum);
 			trignum--;
-			trigger--;
+			trigP--;
 			trigCount--;
-			sprintf_s (message, sizeof (message),"FIXED: Unused trigger (trigger=%d)",trignum + deltrignum);
+			sprintf_s (message, sizeof (message),"FIXED: Unused trigP (trigP=%d)",trignum + deltrignum);
 			deltrignum++;
 			}
 		else
-			sprintf_s (message, sizeof (message),"WARNING: Unused trigger (trigger=%d)",trignum);
+			sprintf_s (message, sizeof (message),"WARNING: Unused trigP (trigP=%d)",trignum);
 		if (UpdateStats (message,0,1)) return true;
 		}
 	}
 
 INT16 trigSeg, trigSide;
-trigger = m_mine->Triggers ();
-for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
+trigP = m_mine->Triggers ();
+for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	wallnum = m_mine->FindTriggerWall (trignum);
 	if (wallnum < wallCount) {
@@ -1056,50 +1056,50 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 		}
 	else
 		trigSeg = trigSide = -1;
-	// check number of links of trigger (only for
-	INT32 tt = trigger->type;
-	INT32 tf = trigger->flags;
-	if (trigger->count == 0) {
+	// check number of links of trigP (only for
+	INT32 tt = trigP->type;
+	INT32 tf = trigP->flags;
+	if (trigP->count == 0) {
 		if (m_mine->IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
 			) {
-			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigger=%d)",trignum);
+			sprintf_s (message, sizeof (message),"WARNING: Trigger has no targets (trigP=%d)",trignum);
 			if (UpdateStats (message,0, -1, -1, -1, -1, -1, -1, trignum))
 				return true;
 			}
 		}
 	else {
 		// check range of links
-		for (linknum = 0; linknum < trigger->count; linknum++) {
+		for (linknum = 0; linknum < trigP->count; linknum++) {
 			if (linknum >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
-					trigger->count = MAX_TRIGGER_TARGETS;
-					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigger=%d, number of links=%d)",trignum,linknum);
+					trigP->count = MAX_TRIGGER_TARGETS;
+					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigP=%d, number of links=%d)",trignum,linknum);
 					}
 				else
-					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigger=%d, number of links=%d)",trignum,linknum);
+					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigP=%d, number of links=%d)",trignum,linknum);
 				if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 					return true;
 				break;
 				}
 			// check segment range
-			segnum = trigger [linknum].nSegment;
-			sidenum = trigger [linknum].nSide;
+			segnum = trigP->Segment (linknum);
+			sidenum = trigP->Side (linknum);
 			if ((segnum < 0) || ((sidenum < 0) ? (segnum >= m_mine->ObjectCount ()) : (segnum >= m_mine->SegCount ()))) {
 				if (m_bAutoFixBugs) {
-					if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
+					if (m_mine->DeleteTargetFromTrigger (trigP, linknum))
 						linknum--;
-					else { // => trigger deleted
+					else { // => trigP deleted
 						linknum = MAX_TRIGGER_TARGETS;	// take care of the loops
-						trigger--;
+						trigP--;
 						}
-					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigger=%d, cube=%d)", 
+					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigP=%d, cube=%d)", 
 								  (sidenum < 0) ? "object" : "segment", trignum, segnum);
 					}
 				else
-					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (trigger=%d, cube=%d)", 
+					sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant %s (trigP=%d, cube=%d)", 
 								  (sidenum < 0) ? "object" : "segment", trignum, segnum);
 				if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 					return true;
@@ -1112,43 +1112,43 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 							sidenum = 0;
 						else if (sidenum > 5)
 							sidenum = 5;
-						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
+						sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant side (trigP=%d, side=%d)",trignum,sidenum);
 						}
 					else
-						sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant side (trigger=%d, side=%d)",trignum,sidenum);
+						sprintf_s (message, sizeof (message),"ERROR: Trigger points to non-existant side (trigP=%d, side=%d)",trignum,sidenum);
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) 
 						return true;
 				} else {
 					CDSegment *seg = m_mine->Segments (segnum);
-					// check door opening trigger
-//						if (trigger->flags == TRIGGER_CONTROL_DOORS) {
+					// check door opening trigP
+//						if (trigP->flags == TRIGGER_CONTROL_DOORS) {
 					if (m_mine->IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
-						// make sure trigger points to a wallP if it controls doors
+						// make sure trigP points to a wallP if it controls doors
 						if (seg->sides[sidenum].nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
-								if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
+								if (m_mine->DeleteTargetFromTrigger (trigP, linknum))
 									linknum--;
 								else {
 									linknum = MAX_TRIGGER_TARGETS;
-									trigger--;
+									trigP--;
 									}
-								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 								}
 							else
-								sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a door (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 						}
 
 						// make sure oposite segment/side has a wallP too
 						if (!m_mine->GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum)) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						else {
 							if (m_mine->Segments (opp_segnum)->sides [opp_sidenum].nWall >= wallCount) {
-								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 								}
 							}
@@ -1157,26 +1157,26 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 								? tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
 							  ) {
-						// make sure trigger points to a wallP if it controls doors
+						// make sure trigP points to a wallP if it controls doors
 						if (seg->sides [sidenum].nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
-								if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
+								if (m_mine->DeleteTargetFromTrigger (trigP, linknum))
 									linknum--;
 								else {
 									linknum = MAX_TRIGGER_TARGETS;
-									trigger--;
+									trigP--;
 									}
-								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 								}
 							else
-								sprintf_s (message, sizeof (message),"ERROR: Trigger target does not exist (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+								sprintf_s (message, sizeof (message),"ERROR: Trigger target does not exist (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						}
-//						if (trigger->flags == TRIGGER_MATCEN) {
+//						if (trigP->flags == TRIGGER_MATCEN) {
 					else if (m_mine->IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((seg->function != SEGMENT_FUNC_ROBOTMAKER) && (seg->function != SEGMENT_FUNC_EQUIPMAKER)) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
+							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 							}
 						}
@@ -1188,8 +1188,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 
 // make sure there is exactly one exit and its linked to the CReactorTrigger
 count = 0;
-trigger = m_mine->Triggers ();
-for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
+trigP = m_mine->Triggers ();
+for (trignum = 0; trignum < trigCount; trignum++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	wallnum = m_mine->FindTriggerWall (trignum);
 	if (wallnum < wallCount) {
@@ -1199,8 +1199,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 		}
 	else
 		trigSeg = trigSide = -1;
-	INT32 tt = trigger->type;
-	INT32 tf = trigger->flags;
+	INT32 tt = trigP->type;
+	INT32 tf = trigP->flags;
 	if (m_mine->IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
@@ -1213,10 +1213,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 trigCount = m_mine->NumObjTriggers ();
 for (trignum = 0; trignum < trigCount; trignum++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
-	trigger = m_mine->ObjTriggers (trignum);
-	if ((trigger->type != TT_MESSAGE) && (trigger->type != TT_SOUND) && (trigger->type != TT_COUNTDOWN) && !trigger->count) {
-		sprintf_s (message, sizeof (message), "ERROR: Object trigger has no targets (trigger=%d, object=%d))", trignum, trigger->nObject);
-		if (UpdateStats (message,0, trignum, trigger->nObject, -1, -1, -1, -1, trignum)) return true;
+	trigP = m_mine->ObjTriggers (trignum);
+	if ((trigP->type != TT_MESSAGE) && (trigP->type != TT_SOUND) && (trigP->type != TT_COUNTDOWN) && !trigP->count) {
+		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", trignum, trigP->nObject);
+		if (UpdateStats (message,0, trignum, trigP->nObject, -1, -1, -1, -1, trignum)) return true;
 		}
 	}
 if (count < 1) {
@@ -1367,7 +1367,7 @@ for (INT32 i = 0; i < nMatCens; i) {
 	else {
 		if (i < --nMatCens) {
 			matCenP [i] = matCenP [nMatCens];
-			matCenP [i].fuelcen_num =
+			matCenP [i].nFuelCen =
 			segP [matCenP [i].segnum].matcen_num = i;
 			refList [i] = refList [nMatCens];
 			}
@@ -1389,7 +1389,7 @@ bool CDiagTool::CheckBotGens (void)
 	INT16					refList [MAX_NUM_MATCENS2];
 
 for (i = 0; i < nMatCens; i++)
-	matCenP [i].fuelcen_num = i;
+	matCenP [i].nFuelCen = i;
 CountMatCenRefs (SEGMENT_FUNC_ROBOTMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
 AssignMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens);
@@ -1413,7 +1413,7 @@ bool CDiagTool::CheckEquipGens (void)
 	INT16					refList [MAX_NUM_MATCENS2];
 
 for (i = 0; i < nMatCens; i++)
-	matCenP [i].fuelcen_num = i;
+	matCenP [i].nFuelCen = i;
 CountMatCenRefs (SEGMENT_FUNC_EQUIPMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
 AssignMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens);

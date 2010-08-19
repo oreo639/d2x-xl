@@ -307,22 +307,22 @@ for (i = 0, trigger = m_mine->Triggers (); i < m_mine->GameInfo ().triggers.coun
 	trigger->flags = 0;
 	}
 
-// set robot_center fuelcen_num and robot_flags2
+// set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < m_mine->GameInfo ().botgen.count; i++) {
 	m_mine->BotGens (i)->objFlags [1] = 0;
 	for (j = 0, seg = m_mine->Segments (); j <= segCount; j++, seg++)
 		if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->matcen_num == i))
-				m_mine->BotGens (i)->fuelcen_num = (INT16)(seg->value);
+				m_mine->BotGens (i)->nFuelCen = (INT16)(seg->value);
 	}
 
-// set equip_center fuelcen_num and robot_flags2
+// set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < m_mine->GameInfo ().equipgen.count; i++) {
 	m_mine->EquipGens (i)->objFlags [1] = 0;
 	for (j = 0, seg = m_mine->Segments (); j <= segCount; j++, seg++)
 		if ((seg->function == SEGMENT_FUNC_EQUIPMAKER) && (seg->matcen_num == i))
-				m_mine->EquipGens (i)->fuelcen_num = (INT16)(seg->value);
+				m_mine->EquipGens (i)->nFuelCen = (INT16)(seg->value);
 	}
 
 // Objects ()

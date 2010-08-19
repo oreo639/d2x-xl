@@ -609,7 +609,7 @@ public:
 			targets [count] = key;
 		return count++;
 		}
-	inline INT16 Add (INT16 nSegment, INT16 nSide) { Add (CSideKey (nSegment, nSide)); }
+	inline INT16 Add (INT16 nSegment, INT16 nSide) { return Add (CSideKey (nSegment, nSide)); }
 
 	inline INT16 Delete (int i = -1) {
 		if (i < 0)
@@ -687,10 +687,10 @@ class CRobotMaker {
 public:
 	INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */
 	//  INT32  robot_flags2;// Additional 32 robots for Descent 2
-	FIX    hit_points;  /* How hard it is to destroy this particular matcen */
+	FIX    hitPoints;  /* How hard it is to destroy this particular matcen */
 	FIX    interval;    /* Interval between materializations */
-	INT16  segnum;      /* Segment this is attached to. */
-	INT16  fuelcen_num; /* Index in fuelcen array. */
+	INT16  nSegment;      /* Segment this is attached to. */
+	INT16  nFuelCen; /* Index in fuelcen array. */
 
 	INT32 Read (FILE *fp, INT32 version);
 	void Write (FILE *fp, INT32 version);

@@ -261,7 +261,7 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 		// replace robot centers seg numbers with real numbers
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
 			if (SegCount () > (segnum = BotGens (i)->segnum))
-				BotGens (i)->segnum = Segments (segnum)->nIndex->nIndex; 
+				BotGens (i)->segnum = Segments (segnum)->nIndex; 
 			else
 				BotGens (i)->segnum = 0; // fix robot center segnum
 			}
@@ -2001,12 +2001,11 @@ if (fail) {
 	//	     "on the other side."); 
 	//    return; 
 	// go method #2, use current points
-	INT32 offset; 
-	offset = (4 + cur1->point - (3 - cur2->point))%4; 
-	match [0].i = (offset + 3)%4; 
-	match [1].i = (offset + 2)%4; 
-	match [2].i = (offset + 1)%4; 
-	match [3].i = (offset + 0)%4; 
+	INT32 offset = (4 + cur1->nPoint - (3 - cur2->nPoint))%4; 
+	match [0].i = (offset + 3) % 4; 
+	match [1].i = (offset + 2) % 4; 
+	match [2].i = (offset + 1) % 4; 
+	match [3].i = (offset + 0) % 4; 
 	}
 
 // determine min and max distances
@@ -2896,10 +2895,10 @@ INT32 CRobotMaker::Read (FILE *fp, INT32 version)
 objFlags [0] = read_INT32 (fp);
 if (theApp.GetMine ()->IsD2File ())
 	objFlags [1] = read_INT32 (fp);
-hit_points = read_FIX (fp);
+hitPoints = read_FIX (fp);
 interval = read_FIX (fp);
 segnum = read_INT16 (fp);
-fuelcen_num = read_INT16 (fp);
+nFuelCen = read_INT16 (fp);
 return 1;
 }
 
@@ -2910,10 +2909,10 @@ void CRobotMaker::Write (FILE *fp, INT32 version)
 write_INT32 (objFlags [0], fp);
 if (theApp.GetMine ()->IsD2File ())
 	write_INT32 (objFlags [1], fp);
-write_FIX (hit_points, fp);
+write_FIX (hitPoints, fp);
 write_FIX (interval, fp);
 write_INT16 (segnum, fp);
-write_INT16 (fuelcen_num, fp);
+write_INT16 (nFuelCen, fp);
 }
 
 // ------------------------------------------------------------------------
