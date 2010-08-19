@@ -553,20 +553,20 @@ for (h = 0; h < mine->GameInfo ().lightDeltaIndices.count; h++, pdli++) {
 	if (bD2XLights) {
 		nSrcSide = pdli->m_nSegment;
 		nSrcSeg = pdli->m_nSide;
-		i = pdli->m_count;
+		i = pdli->count;
 		}
 	else {
 		nSrcSide = pdli->m_nSegment;
 		nSrcSeg = pdli->m_nSide;
-		i = pdli->m_count;
+		i = pdli->count;
 		}	
 	j = mine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
 	dll = mine->LightDeltaValues (pdli->index);
 	for (; i; i--, dll++) {
-		nSegment = dll->nSegment;
-		nSide = dll->nSide;
+		nSegment = dll->m_nSegment;
+		nSide = dll->m_nSide;
 		if (m_bShowLightSource) {
 			if ((nSegment != nSrcSide) || (nSide != nSrcSeg)) 
 				continue;
@@ -1687,9 +1687,9 @@ void CMineView::DrawWalls(CMine *mine)
 	INT16 y_max = m_viewHeight * 2;
 
 for (i=0;i<mine->GameInfo ().walls.count;i++) {
-	if (walls [i].nSegment > mine->SegCount ())
+	if (walls [i].m_nSegment > mine->SegCount ())
 		continue;
-	segP = segments + (INT32)walls [i].nSegment;
+	segP = segments + (INT32)walls [i].m_nSegment;
 	if (!Visible (segP))
 		continue;
 	switch(walls [i].type) {
@@ -1729,7 +1729,7 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 		default:
 			m_pDC->SelectObject(m_penLtGray);
 		}
-	j = walls [i].nSide;
+	j = walls [i].m_nSide;
 	if (IN_RANGE(m_viewPoints [segP->verts [side_vert [j][0]]].x,x_max) &&
 		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][0]]].y,y_max) &&
 		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][1]]].x,x_max) &&
@@ -1737,21 +1737,21 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][2]]].x,x_max) &&
 		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][2]]].y,y_max) &&
 		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][3]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][3]]].y,y_max)   ) {
+		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][3]]].y,y_max)) {
 
 			tFixVector center,orthog,vector;
 			APOINT point;
 
-		mine->CalcCenter (center, (INT16)walls [i].nSegment, (INT16)walls [i].nSide);
-		mine->CalcOrthoVector(orthog, (INT16)walls [i].nSegment, (INT16)walls [i].nSide);
+		mine->CalcCenter (center, walls [i].m_nSegment, walls [i].m_nSide);
+		mine->CalcOrthoVector(orthog, walls [i].m_nSegment, walls [i].m_nSide);
 		vector.x = center.x - orthog.x;
 		vector.y = center.y - orthog.y;
 		vector.z = center.z - orthog.z;
 		m_matrix.SetPoint(&vector,&point);
 		for (j=0;j<4;j++) {
 			m_pDC->MoveTo(point.x,point.y);
-			m_pDC->LineTo(m_viewPoints [segP->verts [side_vert [(INT16)walls [i].nSide] [j]]].x,
-			m_viewPoints [segP->verts [side_vert [(INT16)walls [i].nSide] [j]]].y);
+			m_pDC->LineTo(m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].x,
+			m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].y);
 			}
 		if (walls [i].nTrigger != NO_TRIGGER) {
 				APOINT arrowstart_point,arrowend_point,arrow1_point,arrow2_point;
@@ -1768,7 +1768,7 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 			m_matrix.SetPoint(&vector,&arrowend_point);
 
 			// direction toward center of line 0 from center
-			UINT8 *svp = &side_vert [walls [i].nSide][0];
+			UINT8 *svp = &side_vert [walls [i].m_nSide][0];
 			vector.x  = vertices [segP->verts [svp [0]]].x;
 			vector.x += vertices [segP->verts [svp [1]]].x;
 			vector.x /= 2;
@@ -1877,9 +1877,10 @@ void CMineView::DrawLights (CMine *mine)
   m_pDC->SelectObject(m_penYellow);
 
   // find flickering light from
-for (i=0;i<mine->FlickerLightCount ();i++)
-	if (Visible (mine->Segments (mine->FlickeringLights (i)->nSegment)))
-	   DrawOctagon(mine, mine->FlickeringLights (i)->nSide, mine->FlickeringLights (i)->nSegment);
+CFlickeringLight* pfl = mine->FlickeringLights ();
+for (i = 0; i < mine->FlickerLightCount (); i++, pfl++)
+	if (Visible (mine->Segments (pfl->m_nSegment)))
+	   DrawOctagon(mine, pfl->m_nSide, pfl->m_nSegment);
 }
 
 //------------------------------------------------------------------------

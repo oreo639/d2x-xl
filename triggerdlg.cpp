@@ -453,10 +453,10 @@ DrawObjectImage ();
 
 //------------------------------------------------------------------------
 
-bool CTriggerTool::FindTrigger (INT16 &trignum)
+bool CTriggerTool::FindTrigger (INT16 &nTrigger)
 {
 if (!m_bFindTrigger)
-	trignum = m_nTrigger;
+	nTrigger = m_nTrigger;
 else {
 	if (m_nClass) {
 		if (m_mine->Current ()->nObject == m_mine->ObjTriggers (m_nTrigger)->nObject)
@@ -472,8 +472,8 @@ else {
 		}
 	else {
 		// use current side's trigger
-		UINT16 nWall = m_mine->FindTriggerWall (&trignum);
-		m_nTrigger = (trignum == NO_TRIGGER) ? -1 : trignum;
+		UINT16 nWall = m_mine->FindTriggerWall (&nTrigger);
+		m_nTrigger = (nTrigger == NO_TRIGGER) ? -1 : nTrigger;
 		// if found, proceed
 		if ((m_nTrigger == -1) || (nWall >= m_mine->GameInfo ().walls.count))
 			return false;
@@ -494,12 +494,12 @@ if (!GetMine ())
 	return;
 
 	INT32			i;
-	INT16			trignum;
+	INT16			nTrigger;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 	CSide		*sideP;
 
-FindTrigger (trignum);
+FindTrigger (nTrigger);
 InitCBTriggerNo ();
 if (m_nClass || (m_nTrigger == -1)) {
 	SetTriggerPtr ();
@@ -616,7 +616,7 @@ void CTriggerTool::OnAddTrigger ()
 if (!GetMine ())
 	return;
 
-//m_nTrigger = trignum;
+//m_nTrigger = nTrigger;
 m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ();
 if (m_nClass) {
 	m_pTrigger = m_mine->AddObjTrigger (-1, m_nType);
@@ -995,8 +995,8 @@ void CTriggerTool::OnSetTarget ()
 {
 if (!GetMine ())
 	return;
-INT16 trignum;
-if (!FindTrigger (trignum))
+INT16 nTrigger;
+if (!FindTrigger (nTrigger))
 	return;
 SetTriggerPtr ();
 // get affected cube/side list box index

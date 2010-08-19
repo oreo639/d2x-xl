@@ -359,20 +359,20 @@ public:
 	// trigger stuff
 	void InitTrigger (CTrigger *t, INT16 type, INT16 flags);
 	CTrigger *AddTrigger (UINT16 nWall, INT16 type, BOOL bAutoAddWall = FALSE);
-	void DeleteTrigger (INT16 trignum = -1);
+	void DeleteTrigger (INT16 nTrigger = -1);
 	bool DeleteTriggerTarget (CTrigger *trigger, INT16 nSegment, INT16 nSide, bool bAutoDeleteTrigger = true);
 	void DeleteTriggerTargets (INT16 nSegment, INT16 nSide);
 	INT32 DeleteTargetFromTrigger (CTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger = true);
-	INT32 DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger = true);
-	INT16 FindTriggerWall (INT16 *trignum, INT16 nSegment = -1, INT16 nSide = -1);
-	INT16 FindTriggerWall (INT16 trignum);
-	INT16 FindTriggerObject (INT16 *trignum);
-	INT16 FindTriggerTarget (INT16 trignum, INT16 nSegment, INT16 nSide);
+	INT32 DeleteTargetFromTrigger (INT16 nTrigger, INT16 linknum, bool bAutoDeleteTrigger = true);
+	INT16 FindTriggerWall (INT16 *nTrigger, INT16 nSegment = -1, INT16 nSide = -1);
+	INT16 FindTriggerWall (INT16 nTrigger);
+	INT16 FindTriggerObject (INT16 *nTrigger);
+	INT16 FindTriggerTarget (INT16 nTrigger, INT16 nSegment, INT16 nSide);
 	CTrigger *AddObjTrigger (INT16 objnum, INT16 type);
 	bool ObjTriggerIsInList (INT16 nTrigger);
 	void DeleteObjTrigger (INT16 objnum);
 	void DeleteObjTriggers (INT16 objnum);
-	INT16 FindObjTriggerTarget (INT16 trignum, INT16 nSegment, INT16 nSide);
+	INT16 FindObjTriggerTarget (INT16 nTrigger, INT16 nSegment, INT16 nSide);
 	INT16 FindObjBySig (INT16 nSignature);
 
 	void DrawObject (CWnd *pWnd, INT32 type, INT32 id);

@@ -118,7 +118,7 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 	}
 else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childseg;
-	CSide *oppside, *sideP = segP->sides;
+	CSide *oppsideP, *sideP = segP->sides;
 	CWall *wallP;
 	INT16 nOppSeg, nOppSide;
 	for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
@@ -128,12 +128,12 @@ else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 		if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
-		if ((wall = GetWall (nSegment, nSide)) && 
+		if ((wallP = GetWall (nSegment, nSide)) && 
 			 (wallP->type == WALL_ILLUSION) && (sideP->nBaseTex == (IsD1File () ? 322 : 333)))
 			DeleteWall (sideP->nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		if (GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
-			 (wall = GetWall (nSegment, nSide)) && (wallP->type == WALL_ILLUSION)) {
+			 (wallP = GetWall (nSegment, nSide)) && (wallP->type == WALL_ILLUSION)) {
 			oppside = Segments (nOppSeg)->sides + nOppSide;
 			if (oppsideP->nBaseTex == (IsD1File () ? 322 : 333))
 				DeleteWall (oppsideP->nWall);
@@ -706,11 +706,11 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, (UINT8) wall_type, wall_flags, KEY_NONE, -1, -1) &&
 	 AddTrigger (GameInfo ().walls.count - 1, trigger_type)) {
-	INT16 trignum = GameInfo ().triggers.count - 1;
+	INT16 nTrigger = GameInfo ().triggers.count - 1;
 	// set link to trigger target
-	Triggers () [trignum].count = 1;
-	Triggers () [trignum].targets [0].nSegment = Other ()->nSegment;
-	Triggers () [trignum].targets [0].nSide = Other ()->nSide;
+	Triggers (nTrigger)->m_count = 1;
+	Triggers (nTrigger)-m_targets [0].m_nSegment = Other ()->nSegment;
+	Triggers (nTrigger)-m_targets [0].m_nSide = Other ()->nSide;
 	theApp.UnlockUndo ();
 	theApp.MineView ()->Refresh ();
 	return true;

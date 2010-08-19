@@ -191,7 +191,7 @@ m_mine = theApp.GetMine ();
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
-	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, sideP++) {
+	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			vertnum = segP->verts [side_vert [nSide][i]];
 			if (*m_mine->VertStatus (vertnum) & MARKED_MASK) {

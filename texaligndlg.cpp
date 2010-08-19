@@ -737,9 +737,9 @@ UpdateAlignWnd ();
 
 void CTextureTool::OnAlignStretch2Fit ()
 {
-	CSide		*sideP = m_mine->CurrSide ();
+	CSide*		sideP = m_mine->CurrSide ();
 	UINT32		scale = 1; //pTextures [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
-	CSegment	*segP;
+	CSegment*	segP;
 	INT16			nSegment, nSide;
 	INT32			i;
 
@@ -754,7 +754,7 @@ if (!m_mine->GotMarkedSides ()) {
 else {
 	theApp.LockUndo ();
 	for (nSegment = 0, segP = m_mine->Segments (); nSegment < m_mine->SegCount (); nSegment++, segP++) {
-		for (nSide = 0, side = segP->sides; nSide < 6; nSide++, sideP++) {
+		for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 			if (m_mine->SideIsMarked (nSegment, nSide)) {
 				for (i = 0; i < 4; i++) {
 					sideP->uvls [i].u = default_uvls [i].u / scale;
@@ -910,7 +910,7 @@ childList [tos++] = nSegment;
 segP->nIndex = nSide;
 
 if (m_bIgnorePlane) {
-	side = segP->sides + nSide;
+	sideP = segP->sides + nSide;
 	nBaseTex = sideP->nBaseTex;
 	bAlignedSides = 1 << nSide;
 	h = m_mine->AlignTextures (nSegment, nSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);

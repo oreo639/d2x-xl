@@ -232,7 +232,7 @@ theApp.MineView ()->Refresh ();
 
 void CMine::DeleteWall (UINT16 nWall) 
 {
-	INT16 trignum;
+	INT16 nTrigger;
 	INT16 nSegment, nSide, nOppSeg, nOppSide;
 	CSegment *segP;
 	CSide *sideP;
@@ -242,11 +242,11 @@ if (nWall < 0)
 if (nWall >= GameInfo ().walls.count)
 	return;
 // if trigger exists, remove it as well
-trignum = Walls (nWall)->nTrigger;
+nTrigger = Walls (nWall)->nTrigger;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-if ((trignum > -1) && (trignum < GameInfo ().triggers.count))
-	DeleteTrigger (trignum); 
+if ((nTrigger > -1) && (nTrigger < GameInfo ().triggers.count))
+	DeleteTrigger (nTrigger); 
 // remove references to the deleted wall
 if (GetOppositeSide (nOppSeg, nOppSide, Walls (nWall)->m_nSegment, Walls (nWall)->m_nSide)) {
 	INT16 nOppWall = Segments (nOppSeg)->sides [nOppSide].nWall;

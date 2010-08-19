@@ -92,7 +92,7 @@ CSegment *segP = m_mine->Segments ();
 CSide *sideP;
 // add textures that have been used to Texture 1 combo box
 for (nSeg = segCount; nSeg; nSeg--, segP++) {
-	for (side = segP->sides, nSide = 6; nSide; nSide--, sideP++) {
+	for (sideP = segP->sides, nSide = 6; nSide; nSide--, sideP++) {
 		tnum [0] = sideP->nBaseTex;
 		tnum [1] = sideP->nOvlTex & 0x1fff;
 		INT32 i;
@@ -241,7 +241,7 @@ m_mine->LoadPalette ();
   // convert textures
 for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, segP++) {
 	segP->s2_flags = 0;
-	for (nSide = 0, side = segP->sides; nSide < 6; nSide++) {
+	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++) {
 		if ((segP->children [nSide] == -1) || (segP->sides [nSide].nWall < wallCount)) {
 			d1Texture = segP->sides [nSide].nBaseTex;
 			if ((d1Texture >= 0) && (d1Texture < MAX_D1_TEXTURES))
@@ -264,7 +264,7 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 
 // defined D2 wall parameters
 //--------------------------------------
-for (i = 0, wall = m_mine->Walls (); i < wallCount; i++, wallP++) {
+for (i = 0, wallP = m_mine->Walls (); i < wallCount; i++, wallP++) {
 	wallP->controlling_trigger = 0;
 	wallP->cloak_value = 0;
 	}

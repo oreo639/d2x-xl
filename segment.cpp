@@ -2944,11 +2944,11 @@ m_nSegment = read_INT16 (fp);
 UINT16 h = read_INT16 (fp);
 if (bD2X) {
 	m_nSide = h & 3;
-	m_count = h >> 3;
+	count = h >> 3;
 	}
 else {
 	m_nSide = h % 256;
-	m_count = h / 256;
+	count = h / 256;
 	}
 index = read_INT16 (fp);
 return 1;
@@ -2960,7 +2960,7 @@ void CLightDeltaIndex::Write (FILE *fp, bool bD2X)
 {
 write_INT16 (nSegment, fp);
 if (bD2X)
-	write_INT16 (bD2X ? (nSide & 3) | (count << 3) : (nSide % 256 + count * 256), fp);
+	write_INT16 (bD2X ? (m_nSide & 3) | (count << 3) : (m_nSide % 256 + count * 256), fp);
 write_INT16 (index, fp);
 }
 

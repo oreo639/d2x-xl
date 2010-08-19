@@ -158,7 +158,7 @@ GetCurrent (nSegment, nSide);
 CFlickeringLight *pfl = FlickeringLights ();
 INT32 i;
 for (i = FlickerLightCount (); i; i--, pfl++)
-	if ((pfl->nSegment == nSegment) && (pfl->nSide == nSide))
+	if ((pfl->m_nSegment == nSegment) && (pfl->m_nSide == nSide))
 		break;
 if (i > 0)
 	return FlickerLightCount () - i;
@@ -207,8 +207,8 @@ if ((IsLight (nTexture) == -1) && (IsLight (tmapnum2) == -1)) {
 	}
 theApp.SetModified (TRUE);
 CFlickeringLight *pfl = FlickeringLights (FlickerLightCount ());
-pfl->nSegment = nSegment;
-pfl->nSide = nSide;
+pfl->m_nSegment = nSegment;
+pfl->m_nSide = nSide;
 pfl->delay = time;
 pfl->timer = time;
 pfl->mask = mask;
@@ -557,7 +557,7 @@ if (bAll)
 	memset (VertexColors (), 0, sizeof (MineData ().vertexColors));
 for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 	if (bAll || (segP->wall_bitmask & MARKED_MASK))
-		for (nSide=0, side = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 			INT32 i;
 			for (i = 0; i < 4; i++) {
 				sideP->uvls [i].l = 0;
@@ -570,7 +570,7 @@ for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 // for each marked side in the level
 // (range: 0 = min, 0x8000 = max)
 for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
-	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, sideP++) {
+	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || SideIsMarked (nSegment, nSide)))
 			continue;
 		if ((segP->children [nSide] >= 0) && !VisibleWall (sideP->nWall))
@@ -899,7 +899,7 @@ fLightScale = 1.0; ///= 100.0;
 		for (INT32 nSourceSide = 0; nSourceSide < 6; nSourceSide++) {
 			INT16 nTexture = srcSegP->sides [nSourceSide].nBaseTex & 0x3fff;
 			INT16 tmapnum2 = srcSegP->sides [nSourceSide].nOvlTex & 0x3fff;
-			INT16 trignum;
+			INT16 nTrigger;
 			bool bl1 = (bool) (IsLight (nTexture) != -1);
 			bool bl2 = (bool) (IsLight (tmapnum2) != -1);
 			if (!(bl1 || bl2))
@@ -908,8 +908,8 @@ fLightScale = 1.0; ///= 100.0;
 			// if the current side is a wall and has a light and is the target of a trigger
 			// than can make the wall appear/disappear, calculate delta lights for it
 			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != NULL)) &&
-				 ((trignum = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
-				INT8 trigtype = Triggers (trignum)->type;
+				 ((nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
+				INT8 trigtype = Triggers (nTrigger)->type;
 				bCalcDeltas =
 					(trigtype == TT_ILLUSION_OFF) ||
 					(trigtype == TT_ILLUSION_ON) ||
@@ -930,8 +930,8 @@ fLightScale = 1.0; ///= 100.0;
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-				INT32 trignum = FindTriggerTarget (0, nSourceSeg, nSourceSide);
-				if ((trignum >= 0) && (Triggers (trignum)->type >= TT_LIGHT_OFF))
+				INT32 nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide);
+				if ((nTrigger >= 0) && (Triggers (nTrigger)->type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas)
@@ -966,12 +966,12 @@ fLightScale = 1.0; ///= 100.0;
 			if (bD2XLights) {
 				pdli->m_nSegment = nSourceSeg;
 				pdli->m_nSide = nSourceSide;
-				pdli->m_count = 0; // will be incremented below
+				pdli->count = 0; // will be incremented below
 				}
 			else {
 				pdli->m_nSegment = nSourceSeg;
 				pdli->m_nSide = nSourceSide;
-				pdli->m_count = 0; // will be incremented below
+				pdli->count = 0; // will be incremented below
 				}
 			pdli->index = (INT16)GameInfo ().lightDeltaValues.count;
 
@@ -1051,7 +1051,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->m_count == 8191 : pdli->m_count == 255)) {
+						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1074,16 +1074,16 @@ fLightScale = 1.0; ///= 100.0;
 						dl->vert_light [2] =
 						dl->vert_light [3] = (UINT8) min (32, 32 * fLightScale);
 						if (bD2XLights)
-							pdli->m_count++;
+							pdli->count++;
 						else
-							pdli->m_count++;
+							pdli->count++;
 						continue;
 						}
 
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->m_count == 8191 : pdli->m_count == 255)) {
+							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {
@@ -1105,9 +1105,9 @@ fLightScale = 1.0; ///= 100.0;
 							for (iCorner = 0; iCorner < 4; iCorner++)
 								dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);
 							if (bD2XLights)
-								pdli->m_count++;
+								pdli->count++;
 							else
-								pdli->m_count++;
+								pdli->count++;
 							}
 						}
 					}

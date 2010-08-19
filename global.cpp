@@ -268,7 +268,7 @@ char levels_path[256]="\\programs\\d2\\data";
 //UINT8 test8 = 0xBA;
 char player_profile [20] = "";
 
-INT16 trignum = 0;
+INT16 nTrigger = 0;
 //INT16 number_of_textures=0;
 //INT16  show_lines      = SHOW_LINES_PARTIAL;
 #if 0

@@ -251,7 +251,7 @@ class CDiagTool : public CToolDlg
 		INT32 AddMessage (const char *pszMsg, INT32 nMaxMsgs = 100, bool bCheckMsg = false);
 		bool UpdateStats (char *szError, INT32 nErrorLevel, 
 							   INT32 nSegment = -1, INT32 nSide = -1, INT32 linenum = -1, INT32 pointnum = -1, 
-							   INT32 childnum = -1, INT32 nWall = -1, INT32 trignum = -1, INT32 objnum = -1);
+							   INT32 childnum = -1, INT32 nWall = -1, INT32 nTrigger = -1, INT32 objnum = -1);
 		double CalcFlatnessRatio (INT16 nSegment, INT16 nSide);
 		double CalcDistance (tFixVector *v1,tFixVector *v2,tFixVector *v3);
 		double CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3);
@@ -787,7 +787,7 @@ class CTriggerTool : public CTexToolDlg
 		void ClearObjWindow (void);
 		void DrawObjectImage ();
 		virtual BOOL TextureIsVisible ();
-		bool FindTrigger (INT16 &trignum);
+		bool FindTrigger (INT16 &nTrigger);
 		bool TriggerHasSlider (void);
 		INT32 NumTriggers ();
 		void OnSelect1st ();

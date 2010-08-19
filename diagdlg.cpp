@@ -146,7 +146,7 @@ INT32 CDiagTool::CountTextures (void)
 
 memset (bUsed, 0, sizeof (bUsed));
 for (i = m_mine->SegCount (); i; i--, segP++)
-	for (j = 0, side = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
+	for (j = 0, sideP = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
 		if ((segP->children [j] == -1) || (sideP->nWall < h)) {
 			t = sideP->nBaseTex;
 //			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);

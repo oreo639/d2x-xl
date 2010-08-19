@@ -103,7 +103,7 @@ extern char descent_path[256];
 extern char descent2_path[256];
 extern char levels_path[256];
 extern char player_profile [20];
-extern INT16 trignum;
+extern INT16 nTrigger;
 //extern INT16 number_of_textures;
 #if 0
 extern INT16  show_lines;

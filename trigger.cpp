@@ -542,7 +542,7 @@ if (theApp.IsD2File ()) {
 		write_INT16 (flags, fp);
 	else
 		write_INT8 (INT8 (flags), fp);
-	write_INT8 (INT8 (count), fp);
+	write_INT8 (INT8 (m_count), fp);
 	write_INT8 (0, fp);
 	write_INT32 (value, fp);
 	write_INT32 (time, fp);
@@ -552,7 +552,7 @@ else {
 	write_INT16 (flags, fp);
 	write_INT32 (value, fp);
 	write_INT32 (time, fp);
-	write_INT8 (INT8 (count), fp);
+	write_INT8 (INT8 (m_count), fp);
 	write_INT16 (m_count, fp);
 	}
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)

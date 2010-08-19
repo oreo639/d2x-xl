@@ -151,7 +151,7 @@ while(!feof(fBlk)) {
 	segP->nIndex = ~segP->nIndex;
 
 	// read in side information 
-	side = segP->sides;
+	sideP = segP->sides;
 	INT32 nSide;
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
@@ -175,8 +175,8 @@ while(!feof(fBlk)) {
 				CTrigger t;
 				memset (&w, 0, sizeof (w));
 				memset (&t, 0, sizeof (t));
-				fscanf_s (fBlk, "        segment %ld\n", &w.nSegment);
-				fscanf_s (fBlk, "        side %ld\n", &w.nSide);
+				fscanf_s (fBlk, "        segment %ld\n", &w.m_nSegment);
+				fscanf_s (fBlk, "        side %ld\n", &w.m_nSide);
 				fscanf_s (fBlk, "        hps %ld\n", &w.hps);
 				fscanf_s (fBlk, "        type %d\n", &byteBuf);
 				w.type = byteBuf;
@@ -198,11 +198,11 @@ while(!feof(fBlk)) {
 					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
 					fscanf_s (fBlk, "			    value %ld\n", &t.value);
 					fscanf_s (fBlk, "			    timer %d\n", &t.time);
-					fscanf_s (fBlk, "			    count %hd\n", &t.count);
+					fscanf_s (fBlk, "			    count %hd\n", &t.m_count);
 					INT32 iTarget;
-					for (iTarget = 0; iTarget < t.count; iTarget++) {
-						fscanf_s (fBlk, "			        segP %hd\n", &t.targets [iTarget].nSegment);
-						fscanf_s (fBlk, "			        side %hd\n", &t.targets [iTarget].nSide);
+					for (iTarget = 0; iTarget < t.m_count; iTarget++) {
+						fscanf_s (fBlk, "			        segP %hd\n", &t [iTarget].m_nSegment);
+						fscanf_s (fBlk, "			        side %hd\n", &t [iTarget].m_nSide);
 						}
 					}
 				if (GameInfo ().walls.count < MAX_WALLS (this)) {
@@ -502,7 +502,7 @@ segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->wall_bitmask & MARKED_MASK) {
 		fprintf (fBlk, "segment %d\n",nSegment);
-		side = segP->sides;
+		sideP = segP->sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
 			fprintf (fBlk, "  side %d\n",i);
 			fprintf (fBlk, "    tmap_num %d\n",sideP->nBaseTex);
@@ -517,7 +517,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				fprintf (fBlk, "    nWall %d\n", 
 							(sideP->nWall < GameInfo ().walls.count) ? sideP->nWall : NO_WALL (this));
 				if (sideP->nWall < GameInfo ().walls.count) {
-					wall = Walls (sideP->nWall);
+					wallP = Walls (sideP->nWall);
 					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
 					fprintf (fBlk, "        side %d\n", wallP->m_nSide);
 					fprintf (fBlk, "        hps %d\n", wallP->hps);

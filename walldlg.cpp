@@ -292,14 +292,14 @@ else {
 		}
 	// update wall data
 	if (m_pWall [0]->nTrigger == NO_TRIGGER)
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->nSegment, m_pWall [0]->nSide);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->nSegment, m_pWall [0]->nSide, (INT32)m_pWall [0]->nTrigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (INT32)m_pWall [0]->nTrigger);
 
 	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
 	m_nSegment = m_pWall [0]->nSegment;
-	m_nSide = m_pWall [0]->nSide + 1;
+	m_nSide = m_pWall [0]->m_nSide + 1;
 	m_nTrigger = (m_pWall [0]->nTrigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->nTrigger : -1;
 	m_nType = m_pWall [0]->type;
 	m_nClip = m_pWall [0]->nClip;
@@ -324,7 +324,7 @@ else {
 		m_bKeys [i] = ((m_pWall [0]->keys & (1 << i)) != 0);
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
-		i = m_mine->Segments (m_defWall.nSegment)->sides [m_defWall.nSide].nBaseTex;
+		i = m_mine->Segments (m_defWall.m_nSegment)->sides [m_defWall.m_nSide].nBaseTex;
 		if (m_defWall.type == WALL_CLOAKED)
 			m_defOvlTexture = i;
 		else
@@ -363,23 +363,23 @@ bool bRefresh = false;
 
 m_bDelayRefresh = true;
 segP [0] = m_mine->CurrSeg ();
-side [0] = m_mine->CurrSide ();
+sideP [0] = m_mine->CurrSide ();
 nSegment [0] = m_mine->Current ()->nSegment;
 nSide [0] = m_mine->Current ()->nSide;
 if (m_mine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = m_mine->Segments (nSegment [1]);
-	side [1] = segP [1]->sides + nSide [1];
+	sideP [1] = segP [1]->sides + nSide [1];
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (side [bSide]->nWall < m_mine->GameInfo ().walls.count)
+	if (sideP [bSide]->nWall < m_mine->GameInfo ().walls.count)
 		ErrorMsg ("There is already a wall at that side of the current cube.");
 	else if (m_mine->GameInfo ().walls.count >= MAX_WALLS (m_mine))
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
 		if ((theApp.IsD2File ()) && (segP [bSide]->children [nSide [bSide]] == -1))
 			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
-		else if (wall = m_mine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
+		else if (wallP = m_mine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
 			if (wallP->type == m_defWall.type) {
 				wallP->hps = m_defWall.hps;
@@ -452,7 +452,7 @@ CSide *sideP;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, segP++) {
-	side = segP->sides;
+	sideP = segP->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->nWall >= MAX_WALLS (m_mine))
 			continue;
@@ -510,7 +510,7 @@ if (m_nWall [0] < 0) {
 	return false;
 	}
 m_pWall [0] = m_mine->Walls (m_nWall [0]);
-m_mine->SetCurrent (m_pWall [0]->nSegment, m_pWall [0]->nSide);
+m_mine->SetCurrent (m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
 m_nTrigger = m_pWall [0]->nTrigger;
 GetOtherWall ();
 return true;
@@ -548,17 +548,17 @@ m_nWall [0] = CBWallNo ()->GetCurSel ();
 m_pWall [0] = m_mine->Walls (m_nWall [0]);
 */
 segP [0] = m_mine->CurrSeg ();
-side [0] = m_mine->CurrSide ();
+sideP [0] = m_mine->CurrSide ();
 nSegment [0] = m_mine->Current ()->nSegment;
 nSide [0] = m_mine->Current ()->nSide;
 if (m_mine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = m_mine->Segments (nSegment [1]);
-	side [1] = segP [1]->sides + nSide [1];
+	sideP [1] = segP [1]->sides + nSide [1];
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if ((wall = m_pWall [bSide]) && side [bSide]) {
-		INT16 nBaseTex  = side [bSide]->nBaseTex;
-		INT16 nOvlTex = side [bSide]->nOvlTex;
+	if ((wallP = m_pWall [bSide]) && sideP [bSide]) {
+		INT16 nBaseTex  = sideP [bSide]->nBaseTex;
+		INT16 nOvlTex = sideP [bSide]->nOvlTex;
 		m_mine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
 		if ((wallP->type == WALL_OPEN) || (wallP->type == WALL_CLOSED))
 			m_mine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
@@ -582,7 +582,7 @@ m_pWall [0] = m_mine->Walls () + m_nWall [0];
 GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (wall = m_pWall [bSide])
+	if (wallP = m_pWall [bSide])
 		if ((wallP->type == WALL_BLASTABLE) || (wallP->type == WALL_DOOR)) {
 			if (m_nWall [bSide] < m_mine->GameInfo ().walls.count) {
 				theApp.SetModified (TRUE);
