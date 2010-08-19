@@ -99,10 +99,10 @@ if ((h = NumObjTriggers ()) > 1) {
 
 //------------------------------------------------------------------------
 
-CTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall) 
+CTrigger *CMine::AddTrigger (UINT16 nWall, INT16 type, BOOL bAutoAddWall) 
 {
 	INT16 flags;
-	INT16 segnum, sidenum, nTrigger;
+	INT16 nSegment, nSide, nTrigger;
 	static INT16 defWallTypes [NUM_TRIGGER_TYPES] = {
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_ILLUSION, 
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, 
@@ -120,7 +120,7 @@ CTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall)
 		};
 
 // check if there's already a trigger on the current side
-wallnum = FindTriggerWall (&nTrigger);
+nWall = FindTriggerWall (&nTrigger);
 if (nTrigger != NO_TRIGGER) {
 	ErrorMsg ("There is already a trigger on this side");
 	return NULL;
@@ -138,9 +138,9 @@ if (CurrSide ()->nWall >= GameInfo ().walls.count) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
 			return NULL;
 			}
-		segnum = sidenum = -1;
-		GetCurrent (segnum, sidenum);
-		if (!AddWall (-1, -1, (Segments (segnum)->children [sidenum] < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
+		nSegment = nSide = -1;
+		GetCurrent (nSegment, nSide);
+		if (!AddWall (-1, -1, (Segments (nSegment)->children [nSide] < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			theApp.ResetModified (bUndo);
 			return NULL;
@@ -190,7 +190,7 @@ nTrigger = (UINT16) GameInfo ().triggers.count;
 // set new trigger data
 InitTrigger (Triggers (nTrigger), type, flags);
 // link trigger to the wall
-Walls (wallnum)->nTrigger = (UINT8) nTrigger;
+Walls (nWall)->nTrigger = (UINT8) nTrigger;
 // update number of Triggers ()
 GameInfo ().triggers.count++;
 AutoLinkExitToReactor();
@@ -266,26 +266,26 @@ return DeleteTargetFromTrigger (Triggers (nTrigger), linknum, bAutoDeleteTrigger
 }
 
 
-bool CMine::DeleteTriggerTarget (CTrigger* trigP, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger) 
+bool CMine::DeleteTriggerTarget (CTrigger* trigP, INT16 nSegment, INT16 nSide, bool bAutoDeleteTrigger) 
 {
 INT32 j;
 for (j = 0; j < trigP->count; j++)
-	if ((trigP->targets [j] == CSideKey (segnum, sidenum)))
+	if ((trigP->targets [j] == CSideKey (nSegment, nSide)))
 		return DeleteTargetFromTrigger (trigP, j, bAutoDeleteTrigger) == 0;
 return false;
 }
 
 
-void CMine::DeleteTriggerTargets (INT16 segnum, INT16 sidenum) 
+void CMine::DeleteTriggerTargets (INT16 nSegment, INT16 nSide) 
 {
 INT32 i;
 
 for (i = 0; i < GameInfo ().triggers.count; i++)
-	if (DeleteTriggerTarget (Triggers (i), segnum, sidenum))
+	if (DeleteTriggerTarget (Triggers (i), nSegment, nSide))
 		i--;
 
 for (i = 0; i < NumObjTriggers (); i++)
-	if (DeleteTriggerTarget (ObjTriggers (i), segnum, sidenum, false)) {
+	if (DeleteTriggerTarget (ObjTriggers (i), nSegment, nSide, false)) {
 		DeleteObjTrigger (i);
 		i--;
 		}
@@ -295,13 +295,13 @@ for (i = 0; i < NumObjTriggers (); i++)
 // Mine - FindTrigger
 //------------------------------------------------------------------------
 
-INT16 CMine::FindTriggerWall (INT16 *nTrigger, INT16 segnum, INT16 sidenum)
+INT16 CMine::FindTriggerWall (INT16 *nTrigger, INT16 nSegment, INT16 nSide)
 {
-GetCurrent (segnum, sidenum);
+GetCurrent (nSegment, nSide);
 CWall *wall = Walls ();
-INT32 wallnum;
-for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++) {
-	if ((wall->nSegment == segnum) && (wall->nSide == sidenum)) {
+INT32 nWall;
+for (nWall = GameInfo ().walls.count; nWall; nWall--, wall++) {
+	if ((wall->nSegment == nSegment) && (wall->nSide == nSide)) {
 		*nTrigger = wall->nTrigger;
 		return INT16 (wall - Walls ());
 		}
@@ -313,8 +313,8 @@ return GameInfo ().walls.count;
 INT16 CMine::FindTriggerWall (INT16 nTrigger)
 {
 CWall *wall = Walls ();
-INT32 wallnum;
-for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++)
+INT32 nWall;
+for (nWall = GameInfo ().walls.count; nWall; nWall--, wall++)
 	if (wall->nTrigger == nTrigger)
 		return INT16 (wall - Walls ());
 return GameInfo ().walls.count;
@@ -337,10 +337,10 @@ return -1;
 // Mine - FindTrigger
 //------------------------------------------------------------------------
 
-INT16 CMine::FindTriggerTarget (INT16 nTrigger, INT16 segnum, INT16 sidenum)
+INT16 CMine::FindTriggerTarget (INT16 nTrigger, INT16 nSegment, INT16 nSide)
 {
 	CTrigger *trigP = Triggers ();
-	CSideKey key = CSideKey (segnum, sidenum);
+	CSideKey key = CSideKey (nSegment, nSide);
 	INT32 i, j;
 
 for (i = nTrigger; i < GameInfo ().triggers.count; i++, trigP++)
@@ -361,7 +361,7 @@ void CMine::AutoLinkExitToReactor ()
 {
   INT16 		linknum,control,count;
   CSideKey	face;
-  UINT16		wallnum;
+  UINT16		nWall;
   INT8 		nTrigger;
   bool 		found;
 
@@ -376,8 +376,8 @@ for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 	face = reactorTrigger->targets [linknum];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
-	for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
-		if (*Walls (wallnum) == face) {
+	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
+		if (*Walls (nWall) == face) {
 		found = TRUE;
 		break;
 		}
@@ -390,14 +390,14 @@ for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 // add exit to list if not already in list
 // search for Walls () that have a exit of type trigger
 count =  reactorTrigger->count;
-for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
-	nTrigger = Walls (wallnum)->nTrigger;
+for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
+	nTrigger = Walls (nWall)->nTrigger;
 	if (nTrigger >= 0 && nTrigger <GameInfo ().triggers.count) {
 		if (IsD1File () 
 			 ? Triggers (nTrigger)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
 			 : Triggers (nTrigger)->type == TT_EXIT || Triggers (nTrigger)->type == TT_SECRET_EXIT) {
 			// see if cube,side is already on the list
-			face = *Walls (wallnum);
+			face = *Walls (nWall);
 			found = FALSE;
 			for (linknum = 0; linknum < count; linknum++) {
 				if (face == reactorTrigger->targets [linknum]) {

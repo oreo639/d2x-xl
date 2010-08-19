@@ -72,7 +72,7 @@ void FreeTextureHandles(bool bDeleteModified = true);
 INT32 ReadPog(FILE *file, UINT32 nFileSize = 0xFFFFFFFF);
 INT32 CreatePog (FILE *file);
 bool PaintTexture (CWnd *pWnd, INT32 bkColor = -1, 
-						 INT32 segnum = -1, INT32 sidenum = -1, INT32 texture1 = -1, INT32 texture2 = 0,
+						 INT32 nSegment = -1, INT32 nSide = -1, INT32 texture1 = -1, INT32 texture2 = 0,
 						 INT32 xOffset = 0, INT32 yOffset = 0);
 bool TGA2Bitmap (tRGBA *pTGA, UINT8 *pBM, INT32 nWidth, INT32 nHeight);
 

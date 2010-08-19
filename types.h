@@ -81,7 +81,7 @@ typedef struct {
   INT32	 dest_eclip;		//what eclip to play when exploding
   FIX	 dest_size;		//3d size of explosion
   INT32	 sound_num;		//what sound this makes
-  INT32	 segnum,sidenum;	//what seg & side, for one-shot clips
+  INT32	 nSegment,nSide;	//what segP & side, for one-shot clips
 } ECLIP;
 
 typedef struct {
@@ -533,7 +533,7 @@ public:
 	INT16	nSegment;
 	INT16	nSide;
 
-	CSideKey(INT16 seg = 0, INT16 side = 0) : nSegment(seg), nSide(side) {}
+	CSideKey(INT16 segP = 0, INT16 side = 0) : nSegment(segP), nSide(side) {}
 	inline bool operator==(CSideKey& other) { return (nSegment == other.nSegment) && (nSide == other.nSide); }
 };
 
@@ -653,7 +653,7 @@ public:
 };
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
-// Light cast upon vert_light vertices in segnum:sidenum by some light
+// Light cast upon vert_light vertices in nSegment:nSide by some light
 class CLightDeltaValue : public CSideKey {
 public:
 	UINT8 vert_light [4];
@@ -662,7 +662,7 @@ public:
 	void Write (FILE *fp);
 };
 
-// Light at segnum:sidenum casts light on count sides beginning at index (in array CLightDeltaValues)
+// Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
 class CLightDeltaIndex : public CSideKey {
 public:
 	UINT16 count;

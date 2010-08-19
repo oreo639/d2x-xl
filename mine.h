@@ -240,10 +240,10 @@ public:
 	inline void SetSplineActive (bool bSplineActive)
 		{ m_bSplineActive = bSplineActive; }
 	void  DeleteSegment(INT16 delete_segnum = -1);
-	void  DeleteSegmentWalls (INT16 segnum);
-	void	MakeObject (CGameObject *objP, INT8 type, INT16 segnum);
+	void  DeleteSegmentWalls (INT16 nSegment);
+	void	MakeObject (CGameObject *objP, INT8 type, INT16 nSegment);
 	void	SetObjectData (INT8 type);
-	bool	CopyObject (UINT8 new_type, INT16 segnum = -1);
+	bool	CopyObject (UINT8 new_type, INT16 nSegment = -1);
 	void  DeleteObject(INT16 objectNumber = -1);
 	void  DeleteUnusedVertices();
 	void  DeleteVertex(INT16 deleted_vertnum);
@@ -253,7 +253,7 @@ public:
 	bool  AddSegment();
 	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
-	void	CalcSegCenter(tFixVector &pos,INT16 segnum);
+	void	CalcSegCenter(tFixVector &pos,INT16 nSegment);
 	inline CDSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
@@ -269,37 +269,37 @@ public:
 	void Mark ();
 	void MarkAll ();
 	void UnmarkAll ();
-	void MarkSegment (INT16 segnum);
+	void MarkSegment (INT16 nSegment);
 	void UpdateMarkedCubes ();
-	bool SideIsMarked (INT16 segnum, INT16 sidenum);
-	bool SegmentIsMarked (INT16 segnum);
+	bool SideIsMarked (INT16 nSegment, INT16 nSide);
+	bool SegmentIsMarked (INT16 nSegment);
 
-	bool IsPointOfSide (CDSegment *seg, INT32 sidenum, INT32 pointnum);
-	bool IsLineOfSide (CDSegment *seg, INT32 sidenum, INT32 linenum);
+	bool IsPointOfSide (CDSegment *segP, INT32 nSide, INT32 pointnum);
+	bool IsLineOfSide (CDSegment *segP, INT32 nSide, INT32 linenum);
 
 	void JoinSegments(INT32 automatic = 0);
 	void JoinLines();
 	void JoinPoints();
-	void SplitSegments(INT32 solidify = 0, INT32 sidenum = -1);
+	void SplitSegments(INT32 solidify = 0, INT32 nSide = -1);
 	void SplitLines();
 	void SplitPoints();
 
-	void CalcOrthoVector (tFixVector &result,INT16 segnum,INT16 sidenum);
-	void CalcCenter (tFixVector &center,INT16 segnum,INT16 sidenum);
+	void CalcOrthoVector (tFixVector &result,INT16 nSegment,INT16 nSide);
+	void CalcCenter (tFixVector &center,INT16 nSegment,INT16 nSide);
 	double CalcLength (tFixVector *center1, tFixVector *center2);
 
 	INT32 IsLight(INT32 nBaseTex);
-	INT32 IsWall (INT16 segnum = -1, INT16 sidenum = -1);
+	INT32 IsWall (INT16 nSegment = -1, INT16 nSide = -1);
 	bool IsLava (INT32 nBaseTex);
 	bool IsBlastableLight (INT32 nBaseTex);
-	bool IsFlickeringLight (INT16 segnum, INT16 sidenum);
+	bool IsFlickeringLight (INT16 nSegment, INT16 nSide);
 	bool CalcDeltaLights (double fLightScale, INT32 force, INT32 recursion_depth);
 	void CalcDeltaLightData (double fLightScale = 1.0, INT32 force = 1);
-	INT32 FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi = NULL);
+	INT32 FindDeltaLight (INT16 nSegment, INT16 nSide, INT16 *pi = NULL);
 	UINT8 LightWeight(INT16 nBaseTex);
-	INT16 GetFlickeringLight(INT16 segnum = -1, INT16 sidenum = -1);
-	INT16 AddFlickeringLight( INT16 segnum = -1, INT16 sidenum = -1, UINT32 mask = 0xAAAAAAAA, FIX time = 0x10000 / 4);
-	bool DeleteFlickeringLight(INT16 segnum = -1, INT16 sidenum = -1);
+	INT16 GetFlickeringLight(INT16 nSegment = -1, INT16 nSide = -1);
+	INT16 AddFlickeringLight( INT16 nSegment = -1, INT16 nSide = -1, UINT32 mask = 0xAAAAAAAA, FIX time = 0x10000 / 4);
+	bool DeleteFlickeringLight(INT16 nSegment = -1, INT16 nSide = -1);
 	INT32 IsExplodingLight(INT32 nBaseTex);
 	bool VisibleWall (UINT16 nWall);
 	void SetCubeLight (double fLight, bool bAll = false, bool bDynCubeLights = false);
@@ -309,7 +309,7 @@ public:
 	void BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr);
 	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
-	bool CalcSideLights (INT32 segnum, INT32 sidenum, tFixVector& source_center, 
+	bool CalcSideLights (INT32 nSegment, INT32 nSide, tFixVector& source_center, 
 								tFixVector *source_corner, tFixVector& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);
 
@@ -339,7 +339,7 @@ public:
 	bool RotateSelection(double angle, bool perpendicular); 
 	bool SizeItem (INT32 inc); 
 	bool MovePoints (INT32 pt0, INT32 pt1); 
-	bool SizeLine (CDSegment *seg,INT32 point0,INT32 point1,INT32 inc); 
+	bool SizeLine (CDSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
 	void RotateVmsVector(tFixVector *vector,double angle,char axis); 
@@ -348,50 +348,50 @@ public:
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 
-	CWall *AddWall (INT16 segnum, INT16 sidenum, INT16 type, UINT16 flags, UINT8 keys, INT8 nClip, INT16 nTexture);
-	CWall *GetWall (INT16 segnum = -1, INT16 sidenum = -1);
-	void DeleteWall (UINT16 wallnum = -1);
-	CWall *FindWall (INT16 segnum = -1, INT16 sidenum = -1);
-	void DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
+	CWall *AddWall (INT16 nSegment, INT16 nSide, INT16 type, UINT16 flags, UINT8 keys, INT8 nClip, INT16 nTexture);
+	CWall *GetWall (INT16 nSegment = -1, INT16 nSide = -1);
+	void DeleteWall (UINT16 nWall = -1);
+	CWall *FindWall (INT16 nSegment = -1, INT16 nSide = -1);
+	void DefineWall (INT16 nSegment, INT16 nSide, UINT16 nWall,
 						  UINT8 type, INT8 nClip, INT16 nTexture,
 						  bool bRedefine);
-	void SetWallTextures (UINT16 wallnum, INT16 nTexture = 0);
+	void SetWallTextures (UINT16 nWall, INT16 nTexture = 0);
 	// trigger stuff
 	void InitTrigger (CTrigger *t, INT16 type, INT16 flags);
-	CTrigger *AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall = FALSE);
+	CTrigger *AddTrigger (UINT16 nWall, INT16 type, BOOL bAutoAddWall = FALSE);
 	void DeleteTrigger (INT16 trignum = -1);
-	bool DeleteTriggerTarget (CTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger = true);
-	void DeleteTriggerTargets (INT16 segnum, INT16 sidenum);
+	bool DeleteTriggerTarget (CTrigger *trigger, INT16 nSegment, INT16 nSide, bool bAutoDeleteTrigger = true);
+	void DeleteTriggerTargets (INT16 nSegment, INT16 nSide);
 	INT32 DeleteTargetFromTrigger (CTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger = true);
 	INT32 DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger = true);
-	INT16 FindTriggerWall (INT16 *trignum, INT16 segnum = -1, INT16 sidenum = -1);
+	INT16 FindTriggerWall (INT16 *trignum, INT16 nSegment = -1, INT16 nSide = -1);
 	INT16 FindTriggerWall (INT16 trignum);
 	INT16 FindTriggerObject (INT16 *trignum);
-	INT16 FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
+	INT16 FindTriggerTarget (INT16 trignum, INT16 nSegment, INT16 nSide);
 	CTrigger *AddObjTrigger (INT16 objnum, INT16 type);
 	bool ObjTriggerIsInList (INT16 nTrigger);
 	void DeleteObjTrigger (INT16 objnum);
 	void DeleteObjTriggers (INT16 objnum);
-	INT16 FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
+	INT16 FindObjTriggerTarget (INT16 trignum, INT16 nSegment, INT16 nSide);
 	INT16 FindObjBySig (INT16 nSignature);
 
 	void DrawObject (CWnd *pWnd, INT32 type, INT32 id);
 	void ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew);
 
-	bool GetOppositeSide (INT16& opp_segnum, INT16& opp_sidenum, INT16 segnum = -1, INT16 sidenum = -1);
-	bool GetOppositeWall (INT16 &opp_wallnum, INT16 segnum = -1, INT16 sidenum = -1);
+	bool GetOppositeSide (INT16& opp_segnum, INT16& opp_sidenum, INT16 nSegment = -1, INT16 nSide = -1);
+	bool GetOppositeWall (INT16 &opp_wallnum, INT16 nSegment = -1, INT16 nSide = -1);
 	CDSide *OppSide ();
-	bool SetTexture (INT16 segnum, INT16 sidenum, INT16 nTexture, INT16 tmapnum2);
+	bool SetTexture (INT16 nSegment, INT16 nSide, INT16 nTexture, INT16 tmapnum2);
 	void CopyOtherCube ();
-	bool WallClipFromTexture (INT16 segnum, INT16 sidenum);
-	void CheckForDoor (INT16 segnum, INT16 sidenum);
+	bool WallClipFromTexture (INT16 nSegment, INT16 nSide);
+	void CheckForDoor (INT16 nSegment, INT16 nSide);
 	void RenumberBotGens ();
 	void RenumberEquipGens ();
 
 	bool SetDefaultTexture (INT16 nTexture = -1, INT16 walltype = -1);
-	bool DefineSegment (INT16 segnum, UINT8 type, INT16 nTexture, INT16 walltype = -1);
-	void UndefineSegment (INT16 segnum);
-	bool GetTriggerResources (UINT16& wallnum);
+	bool DefineSegment (INT16 nSegment, UINT8 type, INT16 nTexture, INT16 walltype = -1);
+	void UndefineSegment (INT16 nSegment);
+	bool GetTriggerResources (UINT16& nWall);
 	bool AutoAddTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type);
 	bool AddDoorTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type);
 	bool AddOpenDoorTrigger(); 
@@ -413,14 +413,14 @@ public:
 	bool AddWaterFall ();
 	bool AddLavaFall(); 
 	bool AddGrate(); 
-	bool AddReactor (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddRobotMaker (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddEquipMaker (INT16 segnum = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddFuelCenter (INT16 segnum = -1, UINT8 nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddGoalCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
-	bool AddTeamCube (INT16 segnum, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
-	bool AddSpeedBoostCube (INT16 segnum, bool bCreate);
-	bool AddSkyboxCube (INT16 segnum, bool bCreate);
+	bool AddReactor (INT16 nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+	bool AddRobotMaker (INT16 nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+	bool AddEquipMaker (INT16 nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+	bool AddFuelCenter (INT16 nSegment = -1, UINT8 nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
+	bool AddGoalCube (INT16 nSegment, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
+	bool AddTeamCube (INT16 nSegment, bool bCreate, bool bSetDefTextures, UINT8 nType, INT16 nTexture);
+	bool AddSpeedBoostCube (INT16 nSegment, bool bCreate);
+	bool AddSkyboxCube (INT16 nSegment, bool bCreate);
 	void AutoLinkExitToReactor ();
 	INT32 FuelCenterCount (void);
 	inline INT32& RobotMakerCount (void) 
@@ -454,7 +454,7 @@ public:
 	INT32 ReadHxmFile (FILE *fp, long fSize);
 
 	INT16 ReadSegmentInfo (FILE *file);
-	void WriteSegmentInfo (FILE *file, INT16 /*segnum*/);
+	void WriteSegmentInfo (FILE *file, INT16 /*nSegment*/);
 	void CutBlock ();
 	void CopyBlock (char *pszBlkFile = NULL);
 	void PasteBlock (); 
@@ -474,7 +474,7 @@ public:
 	void IncreaseSpline ();
 	void DecreaseSpline ();
 	void CalcSpline ();
-	void UntwistSegment (INT16 segnum,INT16 sidenum);
+	void UntwistSegment (INT16 nSegment,INT16 nSide);
 	INT32 MatchingSide (INT32 j);
 	INT16 LoadPalette (void);
 
@@ -494,9 +494,9 @@ private:
 	INT32 FindClip (CWall *wall, INT16 nTexture);
 	INT16 CreateNewLevel ();
 	void DefineVertices(INT16 new_verts[4]);
-	void UnlinkChild(INT16 parent_segnum,INT16 sidenum);
+	void UnlinkChild(INT16 parent_segnum,INT16 nSide);
 	INT16 FixIndexValues();
-	void ResetSide (INT16 segnum,INT16 sidenum);
+	void ResetSide (INT16 nSegment,INT16 nSide);
 
 	INT32 ReadHamFile(char *fname = NULL, INT32 type = NORMAL_HAM);
 	void ReadPigTextureTable();
@@ -513,8 +513,8 @@ private:
 	void ClearMineData();
 	void UpdateDeltaLights ();
 	double dround_off(double value, double round);
-	void SetSegmentChildNum(CDSegment *pRoot, INT16 segnum,INT16 recursion_level);
-	void SetSegmentChildNum (CDSegment *pRoot, INT16 segnum, INT16 recursion_level, INT16* visited);
+	void SetSegmentChildNum(CDSegment *pRoot, INT16 nSegment,INT16 recursion_level);
+	void SetSegmentChildNum (CDSegment *pRoot, INT16 nSegment, INT16 recursion_level, INT16* visited);
 	void UnlinkSeg (CDSegment *pSegment, CDSegment *pRoot);
 	void LinkSeg (CDSegment *pSegment, CDSegment *pRoot);
 	void SortDLIndex (INT32 left, INT32 right);

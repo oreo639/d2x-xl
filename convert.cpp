@@ -88,11 +88,11 @@ INT16	nSeg,	nSide, nTextures;
 INT16 tnum [2], segCount = m_mine->SegCount ();
 char	szName [80];
 INT32 h;
-CDSegment *seg = m_mine->Segments ();
+CDSegment *segP = m_mine->Segments ();
 CDSide *side;
 // add textures that have been used to Texture 1 combo box
-for (nSeg = segCount; nSeg; nSeg--, seg++) {
-	for (side = seg->sides, nSide = 6; nSide; nSide--, side++) {
+for (nSeg = segCount; nSeg; nSeg--, segP++) {
+	for (side = segP->sides, nSide = 6; nSide; nSide--, side++) {
 		tnum [0] = side->nBaseTex;
 		tnum [1] = side->nOvlTex & 0x1fff;
 		INT32 i;
@@ -222,12 +222,12 @@ if (!GetMine ())
 	return;
 
   INT16		i,j;
-  CDSegment *seg;
+  CDSegment *segP;
   CDSide		*side;
   CWall		*wall;
   CTrigger	*trigger;
   CGameObject	*objP;
-  INT16		segnum, sidenum, d1Texture, mode,
+  INT16		nSegment, nSide, d1Texture, mode,
 				segCount = m_mine->SegCount (),
 				wallCount = m_mine->GameInfo ().walls.count;
 
@@ -239,24 +239,24 @@ texture_resource = D2_TEXTURE_STRING_TABLE;
 m_mine->LoadPalette ();
 
   // convert textures
-for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) {
-	seg->s2_flags = 0;
-	for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++) {
-		if ((seg->children [sidenum] == -1) || (seg->sides [sidenum].nWall < wallCount)) {
-			d1Texture = seg->sides [sidenum].nBaseTex;
+for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, segP++) {
+	segP->s2_flags = 0;
+	for (nSide = 0, side = segP->sides; nSide < 6; nSide++) {
+		if ((segP->children [nSide] == -1) || (segP->sides [nSide].nWall < wallCount)) {
+			d1Texture = segP->sides [nSide].nBaseTex;
 			if ((d1Texture >= 0) && (d1Texture < MAX_D1_TEXTURES))
-				seg->sides[sidenum].nBaseTex = m_pTextures [d1Texture];
+				segP->sides[nSide].nBaseTex = m_pTextures [d1Texture];
 			else { 
 				DEBUGMSG (" Level converter: Invalid texture 1 found")
-				seg->sides [sidenum].nBaseTex = 0;
+				segP->sides [nSide].nBaseTex = 0;
 				}
-			d1Texture = seg->sides [sidenum].nOvlTex & 0x1fff;
-			mode = seg->sides[sidenum].nOvlTex & 0xc000;
+			d1Texture = segP->sides [nSide].nOvlTex & 0x1fff;
+			mode = segP->sides[nSide].nOvlTex & 0xc000;
 			if (d1Texture > 0 && d1Texture < MAX_D1_TEXTURES)
-				seg->sides [sidenum].nOvlTex = m_pTextures [d1Texture] | mode;
+				segP->sides [nSide].nOvlTex = m_pTextures [d1Texture] | mode;
 			else if (d1Texture < 0) {
 				DEBUGMSG (" Level converter: Invalid texture 2 found")
-				seg->sides [sidenum].nOvlTex = 0;
+				segP->sides [nSide].nOvlTex = 0;
 				}
 			}
 		}
@@ -311,18 +311,18 @@ for (i = 0, trigger = m_mine->Triggers (); i < m_mine->GameInfo ().triggers.coun
 //-----------------------------------------------
 for (i = 0; i < m_mine->GameInfo ().botgen.count; i++) {
 	m_mine->BotGens (i)->objFlags [1] = 0;
-	for (j = 0, seg = m_mine->Segments (); j <= segCount; j++, seg++)
-		if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == i))
-				m_mine->BotGens (i)->nFuelCen = (INT16)(seg->value);
+	for (j = 0, segP = m_mine->Segments (); j <= segCount; j++, segP++)
+		if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == i))
+				m_mine->BotGens (i)->nFuelCen = (INT16)(segP->value);
 	}
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < m_mine->GameInfo ().equipgen.count; i++) {
 	m_mine->EquipGens (i)->objFlags [1] = 0;
-	for (j = 0, seg = m_mine->Segments (); j <= segCount; j++, seg++)
-		if ((seg->function == SEGMENT_FUNC_EQUIPMAKER) && (seg->nMatCen == i))
-				m_mine->EquipGens (i)->nFuelCen = (INT16)(seg->value);
+	for (j = 0, segP = m_mine->Segments (); j <= segCount; j++, segP++)
+		if ((segP->function == SEGMENT_FUNC_EQUIPMAKER) && (segP->nMatCen == i))
+				m_mine->EquipGens (i)->nFuelCen = (INT16)(segP->value);
 	}
 
 // Objects ()

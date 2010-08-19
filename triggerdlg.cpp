@@ -472,10 +472,10 @@ else {
 		}
 	else {
 		// use current side's trigger
-		UINT16 wallnum = m_mine->FindTriggerWall (&trignum);
+		UINT16 nWall = m_mine->FindTriggerWall (&trignum);
 		m_nTrigger = (trignum == NO_TRIGGER) ? -1 : trignum;
 		// if found, proceed
-		if ((m_nTrigger == -1) || (wallnum >= m_mine->GameInfo ().walls.count))
+		if ((m_nTrigger == -1) || (nWall >= m_mine->GameInfo ().walls.count))
 			return false;
 		}
 	}
@@ -661,12 +661,12 @@ if (!GetMine ())
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CDSegment *seg = m_mine->Segments ();
+CDSegment *segP = m_mine->Segments ();
 CDSide *side;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
-for (i = m_mine->SegCount (); i; i--, seg++) {
-	side = seg->sides;
+for (i = m_mine->SegCount (); i; i--, segP++) {
+	side = segP->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
 		if (side->nWall >= MAX_WALLS (m_mine))
 			continue;
@@ -698,7 +698,7 @@ void CTriggerTool::OnSetTrigger ()
 if (!GetMine ())
 	return;
 
-UINT16 wallnum;
+UINT16 nWall;
 CWall *wall;
 
 // find first wall with this trigger
@@ -709,10 +709,10 @@ if (m_nClass) {
 	m_mine->Current ()->nObject = m_mine->ObjTriggers (m_nTrigger)->nObject;
 	}
 else {
-	for (wallnum = 0, wall = m_mine->Walls (); wallnum < m_mine->GameInfo ().walls.count; wallnum++, wall++)
+	for (nWall = 0, wall = m_mine->Walls (); nWall < m_mine->GameInfo ().walls.count; nWall++, wall++)
 		if (wall->nTrigger == m_nTrigger)
 			break;
-	if (wallnum >= m_mine->GameInfo ().walls.count) {
+	if (nWall >= m_mine->GameInfo ().walls.count) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
@@ -872,7 +872,7 @@ void CTriggerTool::OnD2Flag7 () { OnD2Flag (6); }
 // CTriggerTool - Add cube/side to trigger list
 //------------------------------------------------------------------------
 
-void CTriggerTool::AddTarget (INT16 segnum, INT16 sidenum) 
+void CTriggerTool::AddTarget (INT16 nSegment, INT16 nSide) 
 {
 if (!GetMine ())
 	return;
@@ -885,13 +885,13 @@ if (m_nTargets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Trigger tool: No more targets possible for this trigger.");
 	return;
 	}
-if (FindTarget (segnum, sidenum) > -1) {
+if (FindTarget (nSegment, nSide) > -1) {
 	DEBUGMSG (" Trigger tool: Trigger already has this target.");
 	return;
 	}
 theApp.SetModified (TRUE);
-m_pTrigger->Add (segnum, sidenum + 1);
-sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
+m_pTrigger->Add (nSegment, nSide + 1);
+sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
 *m_szTarget = '\0';
@@ -905,18 +905,18 @@ void CTriggerTool::OnAddTarget ()
 {
 if (!GetMine ())
 	return;
-INT32 segnum, sidenum;
+INT32 nSegment, nSide;
 UpdateData (TRUE);
-sscanf_s (m_szTarget, "%d, %d", &segnum, &sidenum);
-if (segnum < 0)
+sscanf_s (m_szTarget, "%d, %d", &nSegment, &nSide);
+if (nSegment < 0)
 	return;
-if (sidenum < 0)
-	sidenum = 0;
-else if (sidenum > 6)
-	sidenum = 6;
-if (segnum > ((sidenum == 0) ? m_mine->ObjCount () : m_mine->SegCount ()))
+if (nSide < 0)
+	nSide = 0;
+else if (nSide > 6)
+	nSide = 6;
+if (nSegment > ((nSide == 0) ? m_mine->ObjCount () : m_mine->SegCount ()))
 	return;
-AddTarget (segnum, sidenum);
+AddTarget (nSegment, nSide);
 }
 
                         /*--------------------------*/
@@ -980,9 +980,9 @@ Refresh ();
 
                         /*--------------------------*/
 
-INT32 CTriggerTool::FindTarget (INT16 segnum, INT16 sidenum)
+INT32 CTriggerTool::FindTarget (INT16 nSegment, INT16 nSide)
 {
-return m_pTrigger->Find (segnum, sidenum);
+return m_pTrigger->Find (nSegment, nSide);
 }
 
 //------------------------------------------------------------------------
@@ -1004,15 +1004,15 @@ m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
 	return;
-INT16 segnum = m_pTrigger->Segment (m_iTarget);
-if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
+INT16 nSegment = m_pTrigger->Segment (m_iTarget);
+if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()))
 	 return;
-INT16 sidenum = m_pTrigger->Side (m_iTarget);
-if ((sidenum < 0) || (sidenum > 5))
+INT16 nSide = m_pTrigger->Side (m_iTarget);
+if ((nSide < 0) || (nSide > 5))
 	return;
 
 CSelection *other = m_mine->Other ();
-if ((m_mine->Current ()->nSegment == segnum) && (m_mine->Current ()->nSide == sidenum))
+if ((m_mine->Current ()->nSegment == nSegment) && (m_mine->Current ()->nSide == nSide))
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);

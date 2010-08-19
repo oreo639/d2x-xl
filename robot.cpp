@@ -521,7 +521,7 @@ void CMine::ReadRobotResource(INT32 robot_number)
 bool CMine::IsCustomRobot (INT32 i)
 {
 	bool	bFound = false;
-	CDSegment *seg;
+	CDSegment *segP;
 	CGameObject *objP;
 	INT32 j;
 
@@ -539,9 +539,9 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're d
 		bFound = true;
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
-		for (j = SegCount (), seg = Segments (); j; j--, seg++)
-			if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
-				INT32 matcen = seg->nMatCen;
+		for (j = SegCount (), segP = Segments (); j; j--, segP++)
+			if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
+				INT32 matcen = segP->nMatCen;
 				if ((i < 32) ?
 					 BotGens (matcen)->objFlags [0] & (1L << i) :
 					 BotGens (matcen)->objFlags [1] & (1L << (i-32)))

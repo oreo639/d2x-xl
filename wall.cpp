@@ -22,38 +22,38 @@
 // Note: nClip & nTexture are used for call to DefineWall only.
 //--------------------------------------------------------------------------
 
-CWall *CMine::AddWall (INT16 segnum,INT16 sidenum,
+CWall *CMine::AddWall (INT16 nSegment,INT16 nSide,
 								INT16 type, UINT16 flags, UINT8 keys,
 								INT8 nClip, INT16 nTexture) 
 {
-GetCurrent (segnum, sidenum);
+GetCurrent (nSegment, nSide);
 
-UINT16 wallnum;
-CDSegment *seg = Segments (segnum);
+UINT16 nWall;
+CDSegment *segP = Segments (nSegment);
 
 // if wall is an overlay, make sure there is no child
 if (type < 0)
-	type = (seg->children [sidenum] == -1) ? WALL_OVERLAY : WALL_OPEN;
+	type = (segP->children [nSide] == -1) ? WALL_OVERLAY : WALL_OPEN;
 if (type == WALL_OVERLAY) {
-	if (seg->children [sidenum] != -1) {
+	if (segP->children [nSide] != -1) {
 		ErrorMsg ("Switches can only be put on solid sides.");
 		return NULL;
 		}
 	}
 else {
 	// otherwise make sure there is a child
-	if (seg->children [sidenum] < 0) {
+	if (segP->children [nSide] < 0) {
 		ErrorMsg ("This side must be attached to an other cube before a wall can be added.");
 		return NULL;
 		}
 	}
 
-if (seg->sides [sidenum].nWall < GameInfo ().walls.count) {
+if (segP->sides [nSide].nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side.");
 	return NULL;
 	}
 
-if ((wallnum = GameInfo ().walls.count) >= MAX_WALLS (this)) {
+if ((nWall = GameInfo ().walls.count) >= MAX_WALLS (this)) {
 	ErrorMsg ("Maximum number of Walls () reached");
 	return NULL;
 	}
@@ -61,24 +61,24 @@ if ((wallnum = GameInfo ().walls.count) >= MAX_WALLS (this)) {
 // link wall to segment/side
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-seg->sides [sidenum].nWall = wallnum;
-DefineWall (segnum, sidenum, wallnum, (UINT8) type, nClip, nTexture, false);
-Walls (wallnum)->flags = flags;
-Walls (wallnum)->keys = keys;
+segP->sides [nSide].nWall = nWall;
+DefineWall (nSegment, nSide, nWall, (UINT8) type, nClip, nTexture, false);
+Walls (nWall)->flags = flags;
+Walls (nWall)->keys = keys;
 // update number of Walls () in mine
 GameInfo ().walls.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
-return Walls (wallnum);
+return Walls (nWall);
 }
 
 //--------------------------------------------------------------------------
 
-bool CMine::GetOppositeWall (INT16& opp_wallnum, INT16 segnum, INT16 sidenum)
+bool CMine::GetOppositeWall (INT16& opp_wallnum, INT16 nSegment, INT16 nSide)
 {
 	INT16 opp_segnum, opp_sidenum;
 
-if (!GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum))
+if (!GetOppositeSide (opp_segnum, opp_sidenum, nSegment, nSide))
 	return false;
 opp_wallnum = Segments (opp_segnum)->sides [opp_sidenum].nWall;
 return true;
@@ -92,40 +92,40 @@ return true;
 //       if nClip == -2, then texture is applied to nOvlTex instead
 //--------------------------------------------------------------------------
 
-void CMine::DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
+void CMine::DefineWall (INT16 nSegment, INT16 nSide, UINT16 nWall,
 								UINT8 type, INT8 nClip, INT16 nTexture,
 								bool bRedefine) 
 {
-GetCurrent (segnum, sidenum);
+GetCurrent (nSegment, nSide);
 
 	INT32 i;
-	CDSegment *seg = Segments (segnum);
-	CDSide *side = seg->sides + sidenum;
-	CWall *wallP = Walls (wallnum);
+	CDSegment *segP = Segments (nSegment);
+	CDSide *side = segP->sides + nSide;
+	CWall *wallP = Walls (nWall);
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define new wallP
-wallP->nSegment = segnum;
-wallP->nSide = sidenum;
+wallP->nSegment = nSegment;
+wallP->nSide = nSide;
 wallP->type = type;
 if (!bRedefine) {
 	wallP->nTrigger = NO_TRIGGER;
-	wallP->linkedWall = -1; //GetOppositeWall (opp_wallnum, segnum, sidenum) ? opp_wallnum : -1;
+	wallP->linkedWall = -1; //GetOppositeWall (opp_wallnum, nSegment, nSide) ? opp_wallnum : -1;
 	}
 switch (type) {
 	case WALL_BLASTABLE:
 		wallP->nClip = (nClip == -1) ?  6 : nClip;
 		wallP->hps = WALL_HPS;
 		// define door textures based on clip number
-		SetWallTextures (wallnum, nTexture);
+		SetWallTextures (nWall, nTexture);
 		break;
 
 	case WALL_DOOR:
 		wallP->nClip = (nClip == -1) ? 1 : nClip;
 		wallP->hps = 0;
 		// define door textures based on clip number
-		SetWallTextures (wallnum, nTexture);
+		SetWallTextures (nWall, nTexture);
 		break;
 
 	case WALL_CLOSED:
@@ -134,18 +134,18 @@ switch (type) {
 		wallP->hps = 0;
 		// define texture to be energy
 		if (nTexture == -1)
-			SetTexture (segnum, sidenum, (IsD1File ()) ? 328 : 353, 0); // energy
+			SetTexture (nSegment, nSide, (IsD1File ()) ? 328 : 353, 0); // energy
 		else if (nClip == -2)
-			SetTexture (segnum, sidenum, 0, nTexture);
+			SetTexture (nSegment, nSide, 0, nTexture);
 		else
-			SetTexture (segnum, sidenum, nTexture, 0);
+			SetTexture (nSegment, nSide, nTexture, 0);
 		break;
 
 	case WALL_OVERLAY: // d2 only
 		wallP->nClip = -1;
 		wallP->hps = 0;
 		// define box01a
-		SetTexture (segnum, sidenum, -1, 414);
+		SetTexture (nSegment, nSide, -1, 414);
 		break;
 
 	case WALL_CLOAKED:
@@ -159,7 +159,7 @@ switch (type) {
 	default:
 		wallP->nClip = -1;
 		wallP->hps = 0;
-		SetTexture (segnum, sidenum, nTexture, 0);
+		SetTexture (nSegment, nSide, nTexture, 0);
 		break;
 	}
 wallP->flags = 0;
@@ -175,7 +175,7 @@ for (i = 0;i<4;i++) {
 	side->uvls [i].v = default_uvls [i].v / scale;
 	side->uvls [i].l = default_uvls [i].l;
 	}
-SetUV (segnum, sidenum, 0, 0, 0);
+SetUV (nSegment, nSide, 0, 0, 0);
 theApp.UnlockUndo ();
 }
 
@@ -185,7 +185,7 @@ theApp.UnlockUndo ();
 // 1/27/97 - added wall01 and door08
 //--------------------------------------------------------------------------
 
-void CMine::SetWallTextures (UINT16 wallnum, INT16 nTexture) 
+void CMine::SetWallTextures (UINT16 nWall, INT16 nTexture) 
 {
 static INT16 wall_texture [N_WALL_TEXTURES] [2] = {
 	{371,0},{0,376},{0,0},  {0,387},{0,399},{413,0},{419,0},{0,424},  {0,0},{436,0},
@@ -201,7 +201,7 @@ static INT16 d2_wall_texture [D2_N_WALL_TEXTURES] [2] = {
 	{901,0}
 	};
 
-CWall *wall = Walls (wallnum);
+CWall *wall = Walls (nWall);
 CDSide *side = Segments (wall->nSegment)->sides + (INT16) wall->nSide;
 INT8 nClip = wall->nClip;
 
@@ -230,45 +230,45 @@ theApp.MineView ()->Refresh ();
 // Mine - delete wall
 //--------------------------------------------------------------------------
 
-void CMine::DeleteWall (UINT16 wallnum) 
+void CMine::DeleteWall (UINT16 nWall) 
 {
 	INT16 trignum;
-	INT16 segnum, sidenum, opp_segnum, opp_sidenum;
-	CDSegment *seg;
+	INT16 nSegment, nSide, opp_segnum, opp_sidenum;
+	CDSegment *segP;
 	CDSide *side;
 
-if (wallnum < 0)
-	wallnum = CurrSide ()->nWall;
-if (wallnum >= GameInfo ().walls.count)
+if (nWall < 0)
+	nWall = CurrSide ()->nWall;
+if (nWall >= GameInfo ().walls.count)
 	return;
 // if trigger exists, remove it as well
-trignum = Walls (wallnum)->nTrigger;
+trignum = Walls (nWall)->nTrigger;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if ((trignum > -1) && (trignum < GameInfo ().triggers.count))
 	DeleteTrigger (trignum); 
 // remove references to the deleted wall
-if (GetOppositeSide (opp_segnum, opp_sidenum, Walls (wallnum)->nSegment, Walls (wallnum)->nSide)) {
+if (GetOppositeSide (opp_segnum, opp_sidenum, Walls (nWall)->nSegment, Walls (nWall)->nSide)) {
 	INT16 opp_wallnum = Segments (opp_segnum)->sides [opp_sidenum].nWall;
 	if ((opp_wallnum >= 0) && (opp_wallnum < GameInfo ().walls.count))
 		Walls (opp_wallnum)->linkedWall = -1;
 	}
 // update all Segments () that point to Walls () higher than deleted one
 // and unlink all Segments () that point to deleted wall
-for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
-	for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++)
+for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
+	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++)
 		if (side->nWall >= GameInfo ().walls.count)
 			side->nWall = NO_WALL (this);
-		else if (side->nWall > wallnum)
+		else if (side->nWall > nWall)
 			side->nWall--;
-		else if (side->nWall == wallnum) {
+		else if (side->nWall == nWall) {
 			side->nWall = NO_WALL (this);
-			DeleteTriggerTargets (segnum, sidenum); //delete this wall from all Triggers () that target it
+			DeleteTriggerTargets (nSegment, nSide); //delete this wall from all Triggers () that target it
 			}
 // move remaining Walls () in place of deleted wall
-// for (i = wallnum; i < GameInfo ().walls.count - 1; i++)
-if (wallnum < --GameInfo ().walls.count)
-	memcpy (Walls (wallnum), Walls (wallnum + 1), (GameInfo ().walls.count - wallnum) * sizeof (CWall));
+// for (i = nWall; i < GameInfo ().walls.count - 1; i++)
+if (nWall < --GameInfo ().walls.count)
+	memcpy (Walls (nWall), Walls (nWall + 1), (GameInfo ().walls.count - nWall) * sizeof (CWall));
 // update number of Walls () in mine
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
@@ -277,14 +277,14 @@ AutoLinkExitToReactor();
 
                         /*--------------------------*/
 
-CWall *CMine::FindWall (INT16 segnum, INT16 sidenum)
+CWall *CMine::FindWall (INT16 nSegment, INT16 nSide)
 {
-GetCurrent (segnum, sidenum);
+GetCurrent (nSegment, nSide);
 CWall *wall;
 INT32 nWall;
 
 for (wall = Walls (), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wall++)
-	if ((wall->nSegment == segnum) && (wall->nSide == sidenum))
+	if ((wall->nSegment == nSegment) && (wall->nSide == nSide))
 		return wall;
 return NULL;
 }
@@ -314,23 +314,23 @@ return -1;
 
                         /*--------------------------*/
 
-CWall *CMine::GetWall (INT16 segnum, INT16 sidenum)
+CWall *CMine::GetWall (INT16 nSegment, INT16 nSide)
 {
-GetCurrent (segnum, sidenum);
-UINT16 wallnum = Segments (segnum)->sides [sidenum].nWall;
-return (wallnum < GameInfo ().walls.count) ? Walls (wallnum) : NULL;
+GetCurrent (nSegment, nSide);
+UINT16 nWall = Segments (nSegment)->sides [nSide].nWall;
+return (nWall < GameInfo ().walls.count) ? Walls (nWall) : NULL;
 }
 
                         /*--------------------------*/
 
-bool CMine::WallClipFromTexture (INT16 segnum, INT16 sidenum)
+bool CMine::WallClipFromTexture (INT16 nSegment, INT16 nSide)
 {
-CWall *wall = FindWall (segnum, sidenum);
+CWall *wall = FindWall (nSegment, nSide);
 
 if (!wall || ((wall->type != WALL_DOOR) && (wall->type != WALL_BLASTABLE)))
 	return true;
 
-CDSide *side = Segments () [segnum].sides + sidenum;
+CDSide *side = Segments () [nSegment].sides + nSide;
 
 if (FindClip (wall, side->nOvlTex) >= 0)
 	return true;
@@ -343,15 +343,15 @@ return false;
 // CheckForDoor()
 //------------------------------------------------------------------------
 
-void CMine::CheckForDoor (INT16 segnum, INT16 sidenum) 
+void CMine::CheckForDoor (INT16 nSegment, INT16 nSide) 
 {
-GetCurrent (segnum, sidenum);
+GetCurrent (nSegment, nSide);
 // put up a warning if changing a door's texture
-UINT16 wallnum = Segments (segnum)->sides [sidenum].nWall;
+UINT16 nWall = Segments (nSegment)->sides [nSide].nWall;
 
 if (!bExpertMode &&
-    (wallnum < GameInfo ().walls.count) &&
-	 ((Walls (wallnum)->type == WALL_BLASTABLE) || (Walls (wallnum)->type == WALL_DOOR)))
+    (nWall < GameInfo ().walls.count) &&
+	 ((Walls (nWall)->type == WALL_BLASTABLE) || (Walls (nWall)->type == WALL_DOOR)))
 		ErrorMsg ("Changing the texture of a door only affects\n"
 					"how the door will look before it is opened.\n"
 					"You can use this trick to hide a door\n"

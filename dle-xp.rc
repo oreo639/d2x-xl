@@ -77,12 +77,12 @@ BEGIN
     LISTBOX         IDC_CUBE_TRIGGERS,407,19,70,81,LBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LISTBOX         IDC_CUBE_USEDBOTS,222,19,84,64,LBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     LISTBOX         IDC_CUBE_AVAILBOTS,310,19,84,59,LBS_SORT | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "seg. #",IDC_STATIC,10,17,23,8
+    RTEXT           "segP. #",IDC_STATIC,10,17,23,8
     RTEXT           "function:",IDC_STATIC,8,32,27,8,0,WS_EX_RIGHT
     RTEXT           "light:",IDC_STATIC,18,46,18,8
     CTEXT           "used bots",IDC_STATIC,224,11,81,8
     CTEXT           "available bots",IDC_STATIC,312,11,81,8
-    RTEXT           "triggered by (seg,side)",IDC_STATIC,407,11,70,8
+    RTEXT           "triggered by (segP,side)",IDC_STATIC,407,11,70,8
     GROUPBOX        "robot maker data",IDC_STATIC,218,2,180,92,BS_CENTER
     GROUPBOX        "trigger data",IDC_STATIC,402,2,82,126,BS_CENTER
     GROUPBOX        "segment data",IDC_STATIC,4,2,84,74,BS_CENTER

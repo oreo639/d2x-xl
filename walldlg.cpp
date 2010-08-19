@@ -354,21 +354,21 @@ if (!GetMine ())
 	return;
 
 CWall *wall;
-CDSegment *seg [2];
+CDSegment *segP [2];
 CDSide *side [2];
-INT16 segnum [2]; 
-INT16 sidenum [2];
+INT16 nSegment [2]; 
+INT16 nSide [2];
 
 bool bRefresh = false;
 
 m_bDelayRefresh = true;
-seg [0] = m_mine->CurrSeg ();
+segP [0] = m_mine->CurrSeg ();
 side [0] = m_mine->CurrSide ();
-segnum [0] = m_mine->Current ()->nSegment;
-sidenum [0] = m_mine->Current ()->nSide;
-if (m_mine->GetOppositeSide (segnum [1], sidenum [1], segnum [0], sidenum [0])) {
-	seg [1] = m_mine->Segments (segnum [1]);
-	side [1] = seg [1]->sides + sidenum [1];
+nSegment [0] = m_mine->Current ()->nSegment;
+nSide [0] = m_mine->Current ()->nSide;
+if (m_mine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
+	segP [1] = m_mine->Segments (nSegment [1]);
+	side [1] = segP [1]->sides + nSide [1];
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
@@ -377,9 +377,9 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	else if (m_mine->GameInfo ().walls.count >= MAX_WALLS (m_mine))
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((theApp.IsD2File ()) && (seg [bSide]->children [sidenum [bSide]] == -1))
+		if ((theApp.IsD2File ()) && (segP [bSide]->children [nSide [bSide]] == -1))
 			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
-		else if (wall = m_mine->AddWall (segnum [bSide], sidenum [bSide], m_defWall.type, m_defWall.flags, 
+		else if (wall = m_mine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
 			if (wall->type == m_defWall.type) {
 				wall->hps = m_defWall.hps;
@@ -411,16 +411,16 @@ if (bRefresh) {
 void CWallTool::OnDeleteWall () 
 {
 	bool bRefresh = false;
-	INT16 wallnum;
+	INT16 nWall;
 
 GetWalls ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
-	wallnum = m_nWall [bSide];
+	nWall = m_nWall [bSide];
 	if (bSide && (m_nWall [1] > m_nWall [0]))
-		wallnum--;
-	if (wallnum >= 0) {
+		nWall--;
+	if (nWall >= 0) {
 		m_bDelayRefresh = true;
-		m_mine->DeleteWall ((UINT16) wallnum);
+		m_mine->DeleteWall ((UINT16) nWall);
 		m_bDelayRefresh = false;
 		bRefresh = true;
 		}
@@ -447,12 +447,12 @@ if (!GetMine ())
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CDSegment *seg = m_mine->Segments ();
+CDSegment *segP = m_mine->Segments ();
 CDSide *side;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
-for (i = m_mine->SegCount (); i; i--, seg++) {
-	side = seg->sides;
+for (i = m_mine->SegCount (); i; i--, segP++) {
+	side = segP->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
 		if (side->nWall >= MAX_WALLS (m_mine))
 			continue;
@@ -529,10 +529,10 @@ Refresh ();
 
 void CWallTool::OnSetType ()
 {
-	CDSegment	*seg [2];
+	CDSegment	*segP [2];
 	CDSide		*side [2];
 	CWall		*wall;
-	INT16			segnum [2], sidenum [2];
+	INT16			nSegment [2], nSide [2];
 	INT32			nType;
 
 GetWalls ();
@@ -547,19 +547,19 @@ m_defWall.type = m_nType = nType;
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 m_pWall [0] = m_mine->Walls (m_nWall [0]);
 */
-seg [0] = m_mine->CurrSeg ();
+segP [0] = m_mine->CurrSeg ();
 side [0] = m_mine->CurrSide ();
-segnum [0] = m_mine->Current ()->nSegment;
-sidenum [0] = m_mine->Current ()->nSide;
-if (m_mine->GetOppositeSide (segnum [1], sidenum [1], segnum [0], sidenum [0])) {
-	seg [1] = m_mine->Segments (segnum [1]);
-	side [1] = seg [1]->sides + sidenum [1];
+nSegment [0] = m_mine->Current ()->nSegment;
+nSide [0] = m_mine->Current ()->nSide;
+if (m_mine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
+	segP [1] = m_mine->Segments (nSegment [1]);
+	side [1] = segP [1]->sides + nSide [1];
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if ((wall = m_pWall [bSide]) && side [bSide]) {
 		INT16 nBaseTex  = side [bSide]->nBaseTex;
 		INT16 nOvlTex = side [bSide]->nOvlTex;
-		m_mine->DefineWall (segnum [bSide], sidenum [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
+		m_mine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
 		if ((wall->type == WALL_OPEN) || (wall->type == WALL_CLOSED))
 			m_mine->SetTexture (wall->nSegment, wall->nSide, nBaseTex, nOvlTex);
 //		else if ((wall->type == WALL_CLOAKED) || (wall->type == WALL_TRANSPARENT))

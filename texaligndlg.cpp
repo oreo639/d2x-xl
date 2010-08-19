@@ -58,7 +58,7 @@ theApp.MineView ()->Refresh (false);
 void CTextureTool::RefreshAlignWnd () 
 {
 	INT32			x, y, i, uv;
-	CDSegment	*seg,
+	CDSegment	*segP,
 					*childSeg;
 	CDSide		*side;
 	INT32			nSide,
@@ -104,7 +104,7 @@ maxRect.y = minRect.y + 166;
 m_centerPt.x = minRect.x + 166 / 2;
 m_centerPt.y = minRect.y + 166 / 2;
 
-seg = m_mine->CurrSeg ();
+segP = m_mine->CurrSeg ();
 side = m_mine->CurrSide ();
 nSide = m_mine->Current ()->nSide;
 nLine = m_mine->Current ()->nLine;
@@ -171,33 +171,33 @@ if (m_mine->IsWall ()) {
 	m_maxPt.y = min(m_maxPt.y, maxRect.y);
 
 	if (m_bShowChildren) {
-		INT32 sidenum,childnum,linenum;
-		INT32 point0,point1,vert0,vert1;
-		INT32 childs_side,childs_line;
-		INT32 childs_point0,childs_point1,childs_vert0,childs_vert1;
-		INT32 x0,y0;
+		INT32 nChildSide, nChild, nChildLine;
+		INT32 point0, point1, vert0, vert1;
+		INT32 childs_side, childs_line;
+		INT32 childs_point0, childs_point1, childs_vert0, childs_vert1;
+		INT32 x0, y0;
 		POINT child_pts[4];
 
 		// draw all sides (u,v)
 		pDC->SelectObject (hPenGrid);
-		for (linenum=0;linenum<4;linenum++) {
+		for (nChildLine=0;nChildLine<4;nChildLine++) {
 			// find vert numbers for the line's two end points
-			point0 = line_vert[side_line[nSide][linenum]][0];
-			point1 = line_vert[side_line[nSide][linenum]][1];
-			vert0  = seg->verts[point0];
-			vert1  = seg->verts[point1];
+			point0 = line_vert[side_line[nSide][nChildLine]][0];
+			point1 = line_vert[side_line[nSide][nChildLine]][1];
+			vert0  = segP->verts[point0];
+			vert1  = segP->verts[point1];
 
 			// check child for this line 
-			sidenum = side_child[nSide][linenum];
-			childnum = seg->children[sidenum];
-			childSeg = m_mine->Segments () + childnum;
-			if (childnum > -1) {
+			nChildSide = side_child[nSide][nChildLine];
+			nChild = segP->children[nChildSide];
+			childSeg = m_mine->Segments () + nChild;
+			if (nChild > -1) {
 
 				// figure out which side of child shares two points w/ current->side
 				for (childs_side=0;childs_side<6;childs_side++) {
 					// ignore children of different textures (or no texture)
 					CDSide *childSide = childSeg->sides + childs_side;
-					if (m_mine->IsWall (childnum, childs_side) &&
+					if (m_mine->IsWall (nChild, childs_side) &&
 						 (childSide->nBaseTex == side->nBaseTex)) {
 						for (childs_line=0;childs_line<4;childs_line++) {
 							// find vert numbers for the line's two end points
@@ -221,8 +221,8 @@ if (m_mine->IsWall ()) {
 									}
 								// now, calculate offset
 								uv = (childs_line+1)&3;
-								x0 = child_pts[uv].x - m_apts [linenum].x;
-								y0 = child_pts[uv].y - m_apts [linenum].y;
+								x0 = child_pts[uv].x - m_apts [nChildLine].x;
+								y0 = child_pts[uv].y - m_apts [nChildLine].y;
 								x0 = round_int(x0,(INT32)(32.0*m_zoom));
 								y0 = round_int(y0,(INT32)(32.0*m_zoom));
 								// translate child points
@@ -706,20 +706,20 @@ void CTextureTool::OnAlignResetMarked ()
 if (!GetMine ())
 	return;
 
-	CDSegment *seg;
-	INT16 segnum, sidenum, nWalls = m_mine->GameInfo ().walls.count;
+	CDSegment *segP;
+	INT16 nSegment, nSide, nWalls = m_mine->GameInfo ().walls.count;
 	BOOL bModified = FALSE;
 
 UpdateData (TRUE);
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum++, seg++) {
-	for (sidenum = 0; sidenum < 6; sidenum++) {
-		if (m_mine->SideIsMarked (segnum, sidenum)) {
-			if ((seg->children [sidenum] == -1) || 
-				 (seg->sides [sidenum].nWall < nWalls)) {
-				seg->sides [sidenum].nOvlTex &= 0x3fff; // rotate 0
-				m_mine->SetUV (segnum,sidenum,0,0,0);
+for (nSegment = 0, segP = m_mine->Segments (); nSegment < m_mine->SegCount (); nSegment++, segP++) {
+	for (nSide = 0; nSide < 6; nSide++) {
+		if (m_mine->SideIsMarked (nSegment, nSide)) {
+			if ((segP->children [nSide] == -1) || 
+				 (segP->sides [nSide].nWall < nWalls)) {
+				segP->sides [nSide].nOvlTex &= 0x3fff; // rotate 0
+				m_mine->SetUV (nSegment,nSide,0,0,0);
 				bModified = TRUE;
 				}
 			}
@@ -739,8 +739,8 @@ void CTextureTool::OnAlignStretch2Fit ()
 {
 	CDSide		*side = m_mine->CurrSide ();
 	UINT32		scale = 1; //pTextures [m_fileType][side->nBaseTex].Scale (side->nBaseTex);
-	CDSegment	*seg;
-	INT16			segnum, sidenum;
+	CDSegment	*segP;
+	INT16			nSegment, nSide;
 	INT32			i;
 
 UpdateData (TRUE);
@@ -753,9 +753,9 @@ if (!m_mine->GotMarkedSides ()) {
 	}
 else {
 	theApp.LockUndo ();
-	for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum++, seg++) {
-		for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++) {
-			if (m_mine->SideIsMarked (segnum, sidenum)) {
+	for (nSegment = 0, segP = m_mine->Segments (); nSegment < m_mine->SegCount (); nSegment++, segP++) {
+		for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++) {
+			if (m_mine->SideIsMarked (nSegment, nSide)) {
 				for (i = 0; i < 4; i++) {
 					side->uvls [i].u = default_uvls [i].u / scale;
 					side->uvls [i].v = default_uvls [i].v / scale;
@@ -771,21 +771,21 @@ UpdateAlignWnd ();
 
                         /*--------------------------*/
 
-void CTextureTool::AlignChildren (INT16 segnum, INT16 sidenum, bool bStart)
+void CTextureTool::AlignChildren (INT16 nSegment, INT16 nSide, bool bStart)
 {
 // set all segment sides as not aligned yet
 if (!GetMine ())
 	return;
 if (bStart) {
-	CDSegment *seg = m_mine->Segments ();
+	CDSegment *segP = m_mine->Segments ();
 	INT32 i;
-	for (i = m_mine->SegCount (); i; i--, seg++)
-		 seg->nIndex = 0; // all six sides not aligned yet
+	for (i = m_mine->SegCount (); i; i--, segP++)
+		 segP->nIndex = 0; // all six sides not aligned yet
 	}
 // mark current side as aligned
-m_mine->Segments (segnum)->nIndex = 1;
+m_mine->Segments (nSegment)->nIndex = 1;
 // call recursive function which aligns one at a time
-AlignChildTextures (segnum, sidenum, MAX_SEGMENTS (m_mine));
+AlignChildTextures (nSegment, nSide, MAX_SEGMENTS (m_mine));
 }
 
                         /*--------------------------*/
@@ -797,36 +797,36 @@ if (!GetMine ())
 	return;
 
 	CDSegment	*currSeg = m_mine->CurrSeg (),
-					*seg = m_mine->Segments ();
+					*segP = m_mine->Segments ();
 	CDSide		*side = m_mine->CurrSide (),
 					*childSide;
-	INT16			segnum, 
-					sidenum = m_mine->Current ()->nSide,
-					linenum = 3;
+	INT16			nSegment, 
+					nSide = m_mine->Current ()->nSide,
+					nChildLine = 3;
 	double		sangle, cangle, angle, length; 
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 bool bAll = !m_mine->GotMarkedSegments ();
-for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum++, seg++)
-	 seg->nIndex = 0;
-for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum++, seg++) {
-	if (seg->nIndex)
+for (nSegment = 0, segP = m_mine->Segments (); nSegment < m_mine->SegCount (); nSegment++, segP++)
+	 segP->nIndex = 0;
+for (nSegment = 0, segP = m_mine->Segments (); nSegment < m_mine->SegCount (); nSegment++, segP++) {
+	if (segP->nIndex)
 		continue;
-	childSide = seg->sides + sidenum;
+	childSide = segP->sides + nSide;
 	if (m_bUse1st && (side->nBaseTex != childSide->nBaseTex))
 		continue;
 	if (m_bUse2nd && (side->nOvlTex != childSide->nOvlTex))
 		continue;
-	if (!(bAll || m_mine->SideIsMarked (segnum, sidenum)))
+	if (!(bAll || m_mine->SideIsMarked (nSegment, nSide)))
 		continue;
-	if (segnum != m_mine->Current ()->nSegment) {
-		m_mine->SetUV (segnum, sidenum, 0, 0, 0);
-		sangle = atan3 (side->uvls [(linenum + 1) & 3].v - side->uvls [linenum].v, 
-							 side->uvls [(linenum + 1) & 3].u - side->uvls [linenum].u); 
-		cangle = atan3 (childSide->uvls [linenum].v - childSide->uvls [(linenum + 1) & 3].v, 
-							 childSide->uvls [linenum].u - childSide->uvls [(linenum + 1) & 3].u); 
+	if (nSegment != m_mine->Current ()->nSegment) {
+		m_mine->SetUV (nSegment, nSide, 0, 0, 0);
+		sangle = atan3 (side->uvls [(nChildLine + 1) & 3].v - side->uvls [nChildLine].v, 
+							 side->uvls [(nChildLine + 1) & 3].u - side->uvls [nChildLine].u); 
+		cangle = atan3 (childSide->uvls [nChildLine].v - childSide->uvls [(nChildLine + 1) & 3].v, 
+							 childSide->uvls [nChildLine].u - childSide->uvls [(nChildLine + 1) & 3].u); 
 		// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
 		INT32 i;
 		for (i = 0; i < 4; i++) {
@@ -838,7 +838,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum
 			childSide->uvls [i].v = (INT16) (length * sin (angle)); 
 			}
 		}
-	AlignChildren (segnum, sidenum, false);
+	AlignChildren (nSegment, nSide, false);
 	}
 theApp.UnlockUndo ();
 UpdateAlignWnd ();
@@ -858,11 +858,11 @@ if (!m_mine->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, true);
 else {	// use all marked sides as alignment source
-	INT32 segnum, sidenum;
-	for (segnum = 0; segnum < m_mine->SegCount (); segnum++)
-		for (sidenum = 0; sidenum < 6; sidenum++)
-			if (m_mine->SideIsMarked (segnum, sidenum)) 
-				AlignChildren (segnum, sidenum, true);
+	INT32 nSegment, nSide;
+	for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++)
+		for (nSide = 0; nSide < 6; nSide++)
+			if (m_mine->SideIsMarked (nSegment, nSide)) 
+				AlignChildren (nSegment, nSide, true);
 	}
 theApp.UnlockUndo ();
 UpdateAlignWnd ();
@@ -879,12 +879,12 @@ static const INT32 side_child[6][4] = {
   {0,3,2,1}
 };
 
-void CTextureTool::AlignChildTextures (INT32 segnum, INT32 sidenum, INT32 nDepth)  
+void CTextureTool::AlignChildTextures (INT32 nSegment, INT32 nSide, INT32 nDepth)  
 {
 if (!GetMine ())
 	return;
 
-	CDSegment	*seg, *childSeg;
+	CDSegment	*segP, *childSeg;
 	CDSide		*side, *childSide; 
 	INT32			child_segnum;
 	INT32			child_sidenum;
@@ -894,10 +894,10 @@ if (!GetMine ())
 
 if (nDepth <= 0)
 	return;
-if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
+if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()))
 	return;
-seg = m_mine->Segments (segnum);
-if (seg->nIndex < 0)
+segP = m_mine->Segments (nSegment);
+if (segP->nIndex < 0)
 	return;
 
 	INT16			*childList = new INT16 [m_mine->SegCount ()];
@@ -906,46 +906,46 @@ if (seg->nIndex < 0)
 if (!childList)
 	return;
 
-childList [tos++] = segnum;
-seg->nIndex = sidenum;
+childList [tos++] = nSegment;
+segP->nIndex = nSide;
 
 if (m_bIgnorePlane) {
-	side = seg->sides + sidenum;
+	side = segP->sides + nSide;
 	nBaseTex = side->nBaseTex;
-	bAlignedSides = 1 << sidenum;
-	h = m_mine->AlignTextures (segnum, sidenum, segnum, m_bUse1st, m_bUse2nd, bAlignedSides);
+	bAlignedSides = 1 << nSide;
+	h = m_mine->AlignTextures (nSegment, nSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 	for (nLine = 0; nLine < 4; nLine++) {
-		child_sidenum = side_child[sidenum][nLine];
+		child_sidenum = side_child[nSide][nLine];
 		if (!(bAlignedSides & (1 << child_sidenum))) {
 			bAlignedSides |= (1 << child_sidenum);
-			childSide = seg->sides + child_sidenum;
+			childSide = segP->sides + child_sidenum;
 			if (childSide->nBaseTex == nBaseTex)
-				m_mine->AlignTextures (segnum, child_sidenum, segnum, m_bUse1st, m_bUse2nd, bAlignedSides);
+				m_mine->AlignTextures (nSegment, child_sidenum, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 			}
 		}
 	if (h >= 0) {
-		for (child_sidenum = 0, childSide = seg->sides; child_sidenum < 6; child_sidenum++, childSide++) {
+		for (child_sidenum = 0, childSide = segP->sides; child_sidenum < 6; child_sidenum++, childSide++) {
 			if (childSide->nBaseTex == nBaseTex) {
 				for (nLine = 0; nLine < 4; nLine++) {
-					child_segnum = seg->children [side_child[child_sidenum][nLine]];
+					child_segnum = segP->children [side_child[child_sidenum][nLine]];
 					if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 						continue;
 					childSeg = m_mine->Segments (child_segnum);
 					if (childSeg->nIndex != 0)
 						continue;
-					h = m_mine->AlignTextures (segnum, child_sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
+					h = m_mine->AlignTextures (nSegment, child_sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
 					childSeg->nIndex = h + 1;
 					}
 				}
 			}
 		}
-	seg->nIndex = -1;
+	segP->nIndex = -1;
 	--nDepth;
-	for (sidenum = 0, childSide = seg->sides; sidenum < 6; sidenum++, childSide++) {
+	for (nSide = 0, childSide = segP->sides; nSide < 6; nSide++, childSide++) {
 //			if (childSide->nBaseTex != side->nBaseTex)
 //				continue;
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = seg->children [side_child[sidenum][nLine]];
+			child_segnum = segP->children [side_child[nSide][nLine]];
 			if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 				continue;
 			childSeg = m_mine->Segments (child_segnum);
@@ -958,26 +958,26 @@ if (m_bIgnorePlane) {
 	}
 else {
 	while (pos < tos) {
-		segnum = childList [pos++];
-		seg = m_mine->Segments (segnum);
-		sidenum = seg->nIndex;
-		seg->nIndex = -1;
+		nSegment = childList [pos++];
+		segP = m_mine->Segments (nSegment);
+		nSide = segP->nIndex;
+		segP->nIndex = -1;
 		for (nLine = 0; nLine < 4; nLine++) {
-			if (sidenum < 0)
+			if (nSide < 0)
 				continue;
-			child_segnum = seg->children [side_child[sidenum][nLine]];
+			child_segnum = segP->children [side_child[nSide][nLine]];
 			if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 				continue;
 			childSeg = m_mine->Segments (child_segnum);
 			if (childSeg->nIndex)
 				continue;
-			childSeg->nIndex = m_mine->AlignTextures (segnum, sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
+			childSeg->nIndex = m_mine->AlignTextures (nSegment, nSide, child_segnum, m_bUse1st, m_bUse2nd, 0);
 			if (childSeg->nIndex >= 0)
 				childList [tos++] = child_segnum;
 			}
 /*
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = seg->children [side_child[sidenum][nLine]];
+			child_segnum = segP->children [side_child[nSide][nLine]];
 			if ((child_segnum < 0) || (child_segnum >= m_mine->SegCount ()))
 				continue;
 			childSeg = m_mine->Segments (child_segnum);

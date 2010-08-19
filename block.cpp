@@ -36,13 +36,13 @@ char *BLOCKOP_HINT =
 
 INT16 CMine::ReadSegmentInfo (FILE *fBlk) 
 {
-	CDSegment		*seg;
+	CDSegment		*segP;
 	CDSide			*side;
 #if 0
 	CGameObject			*objP;
 	INT16				objnum, segObjCount;
 #endif
-	INT16				segnum, sidenum, vertnum;
+	INT16				nSegment, nSide, vertnum;
 	INT16				i, j, test;
 	INT16				origVertCount, k;
 	FIX				x,y,z;
@@ -58,9 +58,9 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 origVertCount = VertCount ();
 
 // set origin
-seg = CurrSeg ();
-sidenum = Current ()->nSide;
-vertnum = seg->verts [side_vert [sidenum][CURRENT_POINT(0)]];
+segP = CurrSeg ();
+nSide = Current ()->nSide;
+vertnum = segP->verts [side_vert [nSide][CURRENT_POINT(0)]];
 memcpy (&origin, Vertices (vertnum), sizeof (*Vertices ()));
 /*
 origin.x = Vertices (vertnum)->x;
@@ -68,13 +68,13 @@ origin.y = Vertices (vertnum)->y;
 origin.z = Vertices (vertnum)->z;
 */
 // set x'
-vertnum = seg->verts [side_vert [sidenum][CURRENT_POINT(1)]];
+vertnum = segP->verts [side_vert [nSide][CURRENT_POINT(1)]];
 x_prime.x = (double)(Vertices (vertnum)->x - origin.x);
 x_prime.y = (double)(Vertices (vertnum)->y - origin.y);
 x_prime.z = (double)(Vertices (vertnum)->z - origin.z);
 
 // calculate y'
-vertnum = seg->verts [side_vert [sidenum][CURRENT_POINT(3)]];
+vertnum = segP->verts [side_vert [nSide][CURRENT_POINT(3)]];
 vect.x = (FIX)(Vertices (vertnum)->x - origin.x);
 vect.y = (FIX)(Vertices (vertnum)->y - origin.y);
 vect.z = (FIX)(Vertices (vertnum)->z - origin.z);
@@ -141,21 +141,21 @@ while(!feof(fBlk)) {
 		ErrorMsg ("No more free vertices");
 		return(nNewSegs);
 		}
-	segnum = SegCount ();
-	seg = Segments (segnum);
-	seg->owner = -1;
-	seg->group = -1;
-	fscanf_s (fBlk, "segment %hd\n", &seg->nIndex);
-	xlatSegNum [seg->nIndex] = segnum;
+	nSegment = SegCount ();
+	segP = Segments (nSegment);
+	segP->owner = -1;
+	segP->group = -1;
+	fscanf_s (fBlk, "segment %hd\n", &segP->nIndex);
+	xlatSegNum [segP->nIndex] = nSegment;
 	// invert segment number so its children can be children can be fixed later
-	seg->nIndex = ~seg->nIndex;
+	segP->nIndex = ~segP->nIndex;
 
 	// read in side information 
-	side = seg->sides;
-	INT32 sidenum;
-	for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++, side++) {
+	side = segP->sides;
+	INT32 nSide;
+	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, side++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
-		if (test != sidenum) {
+		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
@@ -201,7 +201,7 @@ while(!feof(fBlk)) {
 					fscanf_s (fBlk, "			    count %hd\n", &t.count);
 					INT32 iTarget;
 					for (iTarget = 0; iTarget < t.count; iTarget++) {
-						fscanf_s (fBlk, "			        seg %hd\n", &t.targets [iTarget].nSegment);
+						fscanf_s (fBlk, "			        segP %hd\n", &t.targets [iTarget].nSegment);
 						fscanf_s (fBlk, "			        side %hd\n", &t.targets [iTarget].nSide);
 						}
 					}
@@ -217,7 +217,7 @@ while(!feof(fBlk)) {
 						}
 					nNewWalls++;
 					side->nWall = GameInfo ().walls.count++;
-					w.nSegment = segnum;
+					w.nSegment = nSegment;
 					*Walls (side->nWall) = w;
 					}
 				}
@@ -239,14 +239,14 @@ while(!feof(fBlk)) {
 				o.render_type = (UINT8) byteBuf;
 				fscanf_s (fBlk, "            flags %d\n", &byteBuf);
 				o.flags = (UINT8) byteBuf;
-				o.segnum = segnum;
+				o.nSegment = nSegment;
 				fscanf_s (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
 				memcpy (&o.last_pos, &o.pos, sizeof (o.pos));
 				fscanf_s (fBlk, "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
 													&o.orient.rvec.x, &o.orient.rvec.y, &o.orient.rvec.z,
 													&o.orient.uvec.x, &o.orient.uvec.y, &o.orient.uvec.z,
 													&o.orient.fvec.x, &o.orient.fvec.y, &o.orient.fvec.z);
-				fscanf_s (fBlk, "            segnum %hd\n", &o.segnum);
+				fscanf_s (fBlk, "            nSegment %hd\n", &o.nSegment);
 				fscanf_s (fBlk, "            size %ld\n", &o.size);
 				fscanf_s (fBlk, "            shields %ld\n", &o.shields);
 				fscanf_s (fBlk, "            contains_type %d\n", &byteBuf);
@@ -301,8 +301,8 @@ while(!feof(fBlk)) {
 			}
 		}
 	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n",
-				&seg->children [0],&seg->children [1],&seg->children [2],
-				&seg->children [3],&seg->children [4],&seg->children [5]);
+				&segP->children [0],&segP->children [1],&segP->children [2],
+				&segP->children [3],&segP->children [4],&segP->children [5]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
 		fscanf_s (fBlk, "  tFixVector %hd %ld %ld %ld\n", &test, &vect.x, &vect.y, &vect.z);
@@ -320,14 +320,14 @@ while(!feof(fBlk)) {
 		tFixVector *vert = Vertices (origVertCount);
 		for (k = origVertCount; k < VertCount (); k++, vert++)
 			if (vert->x == x && vert->y == y && vert->z == z) {
-				seg->verts [i] = k;
+				segP->verts [i] = k;
 				break;
 				}
 		// else make a new vertex
 		if (k == VertCount ()) {
 			vertnum = VertCount ();
 			*VertStatus (vertnum) |= NEW_MASK;
-			seg->verts [i] = vertnum;
+			segP->verts [i] = vertnum;
 			Vertices (vertnum)->x = x;
 			Vertices (vertnum)->y = y;
 			Vertices (vertnum)->z = z;
@@ -336,59 +336,59 @@ while(!feof(fBlk)) {
 		}
 	// mark vertices
 	for (i = 0; i < 8; i++)
-		*VertStatus (seg->verts [i]) |= MARKED_MASK;
-	fscanf_s (fBlk, "  static_light %ld\n",&seg->static_light);
+		*VertStatus (segP->verts [i]) |= MARKED_MASK;
+	fscanf_s (fBlk, "  static_light %ld\n",&segP->static_light);
 	if (bExtBlkFmt) {
 		fscanf_s (fBlk, "  special %d\n", &byteBuf);
-		seg->function = byteBuf;
+		segP->function = byteBuf;
 		fscanf_s (fBlk, "  nMatCen %d\n", &byteBuf);
-		seg->nMatCen = byteBuf;
+		segP->nMatCen = byteBuf;
 		fscanf_s (fBlk, "  value %d\n", &byteBuf);
-		seg->value = byteBuf;
+		segP->value = byteBuf;
 		fscanf_s (fBlk, "  child_bitmask %d\n", &byteBuf);
-		seg->child_bitmask = byteBuf;
+		segP->child_bitmask = byteBuf;
 		fscanf_s (fBlk, "  wall_bitmask %d\n", &byteBuf);
-		seg->wall_bitmask = byteBuf;
-		switch (seg->function) {
+		segP->wall_bitmask = byteBuf;
+		switch (segP->function) {
 			case SEGMENT_FUNC_FUELCEN:
-				if (!AddFuelCenter (segnum, SEGMENT_FUNC_FUELCEN, false, false))
-					seg->function = 0;
+				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
+					segP->function = 0;
 				break;
 			case SEGMENT_FUNC_REPAIRCEN:
-				if (!AddFuelCenter (segnum, SEGMENT_FUNC_REPAIRCEN, false, false))
-					seg->function = 0;
+				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_REPAIRCEN, false, false))
+					segP->function = 0;
 				break;
 			case SEGMENT_FUNC_ROBOTMAKER:
-				if (!AddRobotMaker (segnum, false, false))
-					seg->function = 0;
+				if (!AddRobotMaker (nSegment, false, false))
+					segP->function = 0;
 				break;
 			case SEGMENT_FUNC_EQUIPMAKER:
-				if (!AddEquipMaker (segnum, false, false))
-					seg->function = 0;
+				if (!AddEquipMaker (nSegment, false, false))
+					segP->function = 0;
 				break;
 			case SEGMENT_FUNC_CONTROLCEN:
-				if (!AddReactor (segnum, false, false))
-					seg->function = 0;
+				if (!AddReactor (nSegment, false, false))
+					segP->function = 0;
 				break;
 			default:
 				break;
 			}
 		}
 	else {
-		seg->function = 0;
-		seg->nMatCen = -1;
-		seg->value = -1;
+		segP->function = 0;
+		segP->nMatCen = -1;
+		segP->value = -1;
 		}
 	//        fscanf_s (fBlk, "  child_bitmask %d\n",&test);
-	//        seg->child_bitmask = test & 0x3f;
+	//        segP->child_bitmask = test & 0x3f;
 	//        fscanf_s (fBlk, "  wall_bitmask %d\n",&test);
-	//        seg->wall_bitmask  = (test & 0x3f) | MARKED_MASK;
-	seg->wall_bitmask = MARKED_MASK; // no other bits
+	//        segP->wall_bitmask  = (test & 0x3f) | MARKED_MASK;
+	segP->wall_bitmask = MARKED_MASK; // no other bits
 	// calculate child_bitmask
-	seg->child_bitmask = 0;
+	segP->child_bitmask = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-		if (seg->children [i] >= 0)
-		seg->child_bitmask |= (1 << i);
+		if (segP->children [i] >= 0)
+		segP->child_bitmask |= (1 << i);
 	SegCount ()++;
 	nNewSegs++;
 	}
@@ -431,10 +431,10 @@ return (nNewSegs);
 //
 //---------------------------------------------------------------------------
 
-void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*segnum*/) 
+void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/) 
 {
-	INT16				segnum;
-	CDSegment		*seg;
+	INT16				nSegment;
+	CDSegment		*segP;
 	CDSide			*side;
 	CWall			*wall;
 	INT16				i,j;
@@ -448,20 +448,20 @@ ErrorMsg ("You cannot save a mine in the demo.");
 return;
 #endif
 // set origin
-seg = CurrSeg ();
-vertnum = seg->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
+segP = CurrSeg ();
+vertnum = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
 origin.x = Vertices (vertnum)->x;
 origin.y = Vertices (vertnum)->y;
 origin.z = Vertices (vertnum)->z;
 
 // set x'
-vertnum = seg->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
+vertnum = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
 x_prime.x = (double)(Vertices (vertnum)->x - origin.x);
 x_prime.y = (double)(Vertices (vertnum)->y - origin.y);
 x_prime.z = (double)(Vertices (vertnum)->z - origin.z);
 
 // calculate y'
-vertnum = seg->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
+vertnum = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
 vect.x = (double)(Vertices (vertnum)->x - origin.x);
 vect.y = (double)(Vertices (vertnum)->y - origin.y);
 vect.z = (double)(Vertices (vertnum)->z - origin.z);
@@ -498,11 +498,11 @@ z_prime.z /= length;
   DebugMsg(message);
 #endif
 
-seg = Segments ();
-for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
-	if (seg->wall_bitmask & MARKED_MASK) {
-		fprintf (fBlk, "segment %d\n",segnum);
-		side = seg->sides;
+segP = Segments ();
+for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+	if (segP->wall_bitmask & MARKED_MASK) {
+		fprintf (fBlk, "segment %d\n",nSegment);
+		side = segP->sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, side++) {
 			fprintf (fBlk, "  side %d\n",i);
 			fprintf (fBlk, "    tmap_num %d\n",side->nBaseTex);
@@ -551,7 +551,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 							fprintf (fBlk, "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->count; iTarget++)
 								if (Segments (trigger->Segment (iTarget))->wall_bitmask & MARKED_MASK) {
-									fprintf (fBlk, "			        seg %d\n", trigger->Segment (iTarget));
+									fprintf (fBlk, "			        segP %d\n", trigger->Segment (iTarget));
 									fprintf (fBlk, "			        side %d\n", trigger->Side (iTarget));
 									}
 							}
@@ -561,7 +561,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			}
 		fprintf (fBlk, "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fBlk, " %d", seg->children [i]);
+			fprintf (fBlk, " %d", segP->children [i]);
 		fprintf (fBlk, "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
@@ -569,7 +569,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 			// which is a constant (k) times the axis
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vector (always 1)
-			vertnum = seg->verts [i];
+			vertnum = segP->verts [i];
 			vect.x = (double) (Vertices (vertnum)->x - origin.x);
 			vect.y = (double) (Vertices (vertnum)->y - origin.y);
 			vect.z = (double) (Vertices (vertnum)->z - origin.z);
@@ -578,13 +578,13 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 						(FIX)(vect.x*y_prime.x + vect.y*y_prime.y + vect.z*y_prime.z),
 						(FIX)(vect.x*z_prime.x + vect.y*z_prime.y + vect.z*z_prime.z));
 			}
-		fprintf (fBlk, "  static_light %ld\n",seg->static_light);
+		fprintf (fBlk, "  static_light %ld\n",segP->static_light);
 		if (bExtBlkFmt) {
-			fprintf (fBlk, "  special %d\n",seg->function);
-			fprintf (fBlk, "  nMatCen %d\n",seg->nMatCen);
-			fprintf (fBlk, "  value %d\n",seg->value);
-			fprintf (fBlk, "  child_bitmask %d\n",seg->child_bitmask);
-			fprintf (fBlk, "  wall_bitmask %d\n",seg->wall_bitmask);
+			fprintf (fBlk, "  special %d\n",segP->function);
+			fprintf (fBlk, "  nMatCen %d\n",segP->nMatCen);
+			fprintf (fBlk, "  value %d\n",segP->value);
+			fprintf (fBlk, "  child_bitmask %d\n",segP->child_bitmask);
+			fprintf (fBlk, "  wall_bitmask %d\n",segP->wall_bitmask);
 			}
 		}
 	}
@@ -597,7 +597,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 void CMine::CutBlock()
 {
   FILE *fBlk;
-  INT16 segnum;
+  INT16 nSegment;
   INT16 count;
   char szFile [256] = "\0";
 
@@ -661,15 +661,15 @@ fprintf (fBlk, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fBlk, 0);
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
-// the SegCount () will be decremented for each segnum in loop.
+// the SegCount () will be decremented for each nSegment in loop.
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-CDSegment *seg = Segments () + SegCount ();
-for (segnum = SegCount () - 1; segnum; segnum--)
-    if ((--seg)->wall_bitmask & MARKED_MASK) {
+CDSegment *segP = Segments () + SegCount ();
+for (nSegment = SegCount () - 1; nSegment; nSegment--)
+    if ((--segP)->wall_bitmask & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
-		DeleteSegment (segnum); // delete seg w/o asking "are you sure"
+		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
 theApp.UnlockUndo ();
 fclose(fBlk);
@@ -813,8 +813,8 @@ if (!ReadBlock (szFile, 0))
 
 INT32 CMine::ReadBlock (char *pszBlockFile,INT32 option) 
 {
-	CDSegment *seg,*seg2;
-	INT16 segnum,seg_offset;
+	CDSegment *segP,*seg2;
+	INT16 nSegment,seg_offset;
 	INT16 count,child;
 	INT16 vertnum;
 	FILE *fBlk;
@@ -844,10 +844,10 @@ strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-seg = Segments ();
-for (segnum = 0;segnum < MAX_SEGMENTS (this); segnum++, seg++) {
-	seg->nIndex = segnum;
-	seg->wall_bitmask &= ~MARKED_MASK;
+segP = Segments ();
+for (nSegment = 0;nSegment < MAX_SEGMENTS (this); nSegment++, segP++) {
+	segP->nIndex = nSegment;
+	segP->wall_bitmask &= ~MARKED_MASK;
 	}
 
 // unmark all vertices
@@ -858,36 +858,36 @@ for (vertnum = 0; vertnum < MAX_VERTICES (this); vertnum++) {
 count = ReadSegmentInfo (fBlk);
 
 // fix up the new Segments () children
-seg = Segments ();
-for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
-	if (seg->nIndex < 0) {  // if segment was just inserted
+segP = Segments ();
+for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+	if (segP->nIndex < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
 		//  segment's offset number, otherwise set it to -1
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (seg->child_bitmask & (1 << child)) {
+			if (segP->child_bitmask & (1 << child)) {
 				seg2 = Segments ();
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
-					if (seg->children [child] == ~seg2->nIndex) {
-						seg->children [child] = seg_offset;
+					if (segP->children [child] == ~seg2->nIndex) {
+						segP->children [child] = seg_offset;
 						break;
 						}
 					}
 				if (seg_offset == SegCount ()) { // no child found
-					ResetSide (segnum,child);
+					ResetSide (nSegment,child);
 					// auto link the new segment with any touching Segments ()
 					seg2 = Segments ();
 					INT32 segnum2, sidenum2;
 					for (segnum2 = 0; segnum2 < SegCount (); segnum2++, seg2++) {
-						if (segnum != segnum2) {
+						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							tFixVector *v1 = Vertices (seg ->verts [0]);
+							tFixVector *v1 = Vertices (segP ->verts [0]);
 							tFixVector *v2 = Vertices (seg2->verts [0]);
 							if (labs (v1->x - v2->x) < 0xA00000L &&
 								 labs (v1->y - v2->y) < 0xA00000L &&
 								 labs (v1->z - v2->z) < 0xA00000L) {
 								for (sidenum2 = 0;sidenum2 < 6; sidenum2++) {
-									LinkSegments (segnum, child, segnum2, sidenum2, 3 * F1_0);
+									LinkSegments (nSegment, child, segnum2, sidenum2, 3 * F1_0);
 									}
 								}
 							}
@@ -895,7 +895,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 					}
 				} 
 			else {
-				seg->children [child] = -1; // force child to agree with bitmask
+				segP->children [child] = -1; // force child to agree with bitmask
 				}
 			}
 		}
@@ -904,9 +904,9 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 for (vertnum=0;vertnum<MAX_VERTICES (this);vertnum++)
 	*VertStatus (vertnum) &= ~NEW_MASK;
 // now set all seg_numbers
-seg = Segments ();
-for (segnum = 0; segnum < SegCount (); segnum++, seg++)
-	seg->nIndex = segnum;
+segP = Segments ();
+for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+	segP->nIndex = nSegment;
 /*
 if (option != 1) {
 	sprintf_s (message, sizeof (message)," Block tool: %d blocks pasted.",count);
@@ -952,7 +952,7 @@ if (!ReadBlock (m_szBlockFile, 1))
 void CMine::DeleteBlock()
 {
 
-INT16 segnum,count;
+INT16 nSegment,count;
 
 if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
@@ -973,16 +973,16 @@ theApp.MineView ()->DelayRefresh (true);
 
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
-// the SegCount () will be decremented for each segnum in loop.
+// the SegCount () will be decremented for each nSegment in loop.
 if (QueryMsg("Are you sure you want to delete the marked cubes?")!=IDYES)
 	return;
 
-for (segnum = SegCount () - 1; segnum >= 0; segnum--)
-	if (Segments (segnum)->wall_bitmask & MARKED_MASK) {
+for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--)
+	if (Segments (nSegment)->wall_bitmask & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
-		if (Objects (0)->nSegment != segnum)
-			DeleteSegment (segnum); // delete seg w/o asking "are you sure"
+		if (Objects (0)->nSegment != nSegment)
+			DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
 // wrap back then forward to make sure segment is valid
 wrap(&Current1 ().nSegment,-1,0,SegCount () - 1);

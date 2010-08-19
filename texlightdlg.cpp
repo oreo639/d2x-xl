@@ -323,21 +323,21 @@ void CTextureTool::OnLight32 () { ToggleLight (32); }
 void CTextureTool::SetWallColor (void)
 {
 if (m_mine->UseTexColors ()) {
-	INT16			segnum, sidenum;
+	INT16			nSegment, nSide;
 	INT16			nBaseTex = m_mine->CurrSide ()->nBaseTex;
-	CDSegment	*seg = m_mine->Segments ();
+	CDSegment	*segP = m_mine->Segments ();
 	CDSide		*side;
 	CWall		*wall;
 	bool			bAll = !m_mine->GotMarkedSides ();
 
-	for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
-		for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++) {
+	for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
+		for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++) {
 			if (side->nWall < 0)
 				continue;
 			wall = m_mine->Walls (side->nWall);
 			if (wall->type != WALL_TRANSPARENT)
 				continue;
-			if (!(bAll || m_mine->SideIsMarked (segnum, sidenum)))
+			if (!(bAll || m_mine->SideIsMarked (nSegment, nSide)))
 				continue;
 			if (side->nBaseTex != nBaseTex)
 				continue;

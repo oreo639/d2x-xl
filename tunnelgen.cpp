@@ -104,18 +104,18 @@ void BezierFcn(tFixVector *pt, double u, INT32 npts, tFixVector *p) {
 // Action - swaps vertices of opposing side if cube is twisted
 //--------------------------------------------------------------------------
 
-void CMine::UntwistSegment (INT16 segnum,INT16 sidenum) 
+void CMine::UntwistSegment (INT16 nSegment,INT16 nSide) 
 {
   double len, min_len;
   INT16 index,j;
-  CDSegment *seg;
+  CDSegment *segP;
   INT16 verts [4];
 
-seg = Segments (segnum);
+segP = Segments (nSegment);
 // calculate length from point 0 to opp_points
 for (j=0;j<4;j++) {
-	len = CalcLength (Vertices (seg->verts [side_vert [sidenum] [0]]),
-							Vertices (seg->verts [opp_side_vert [sidenum] [j]]));
+	len = CalcLength (Vertices (segP->verts [side_vert [nSide] [0]]),
+							Vertices (segP->verts [opp_side_vert [nSide] [j]]));
 	if (j==0) {
 		min_len = len;
 		index = 0;
@@ -128,9 +128,9 @@ for (j=0;j<4;j++) {
 // swap verts if index != 0
 if (index != 0) {
 	for (j=0;j<4;j++)
-		verts [j] = seg->verts [opp_side_vert [sidenum] [(j+index)%4]];
+		verts [j] = segP->verts [opp_side_vert [nSide] [(j+index)%4]];
 	for (j=0;j<4;j++)
-		seg->verts [opp_side_vert [sidenum] [j]] = verts [j];
+		segP->verts [opp_side_vert [nSide] [j]] = verts [j];
 	}
 }
 
@@ -316,7 +316,7 @@ void CMine::TunnelGenerator() {
 
 double length;
 INT32 i,j,vertnum,spline;
-CDSegment *seg;
+CDSegment *segP;
 
 if (!m_bSplineActive) {
 	m_nMaxSplines = MAX_SEGMENTS (this) - SegCount ();
@@ -385,9 +385,9 @@ else {
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
 	for (spline = 0; spline < n_splines; spline++) {
-		seg = Segments (SegCount ());
+		segP = Segments (SegCount ());
 		// copy current segment
-		*seg = *Segments (Current ()->nSegment);
+		*segP = *Segments (Current ()->nSegment);
 		// use last "n_spline" segments
 		vertnum = (MAX_VERTICES (this)-1)-(spline*4);
 		for (j = 0; j < 4; j++) {
@@ -404,59 +404,59 @@ else {
 			vertices [VertCount ()].z = vertices [vertnum-j].z;
 */
 			if (spline == 0) {         // 1st segment
-				seg->verts [side_vert [spline_side1] [j]] = VertCount ();
-				seg->verts [opp_side_vert [spline_side1] [j]] = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
+				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
+				segP->verts [opp_side_vert [spline_side1] [j]] = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
 				*VertStatus (VertCount ()++) = 0;
 				}
 			else if(spline < n_splines - 1) { // center segments
-				seg->verts [side_vert [spline_side1] [j]] = VertCount ();
-				seg->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4;
+				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
+				segP->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4;
 				*VertStatus (VertCount ()++) = 0;
 				}
 			else {          // last segment
-				seg->verts [side_vert [spline_side1] [j]] = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
-				seg->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4 + j;
+				segP->verts [side_vert [spline_side1] [j]] = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
+				segP->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4 + j;
 				}
 			}
 		// fix twisted segments
 		UntwistSegment (SegCount (), spline_side1);
 		// define children and sides (textures and nWall)
 		for (j = 0; j < 6; j++) {
-			seg->children [j] = -1;
-			seg->sides [j].nBaseTex = 0;
-			seg->sides [j].nOvlTex = 0;
-			seg->sides [j].nWall = NO_WALL (this);
+			segP->children [j] = -1;
+			segP->sides [j].nBaseTex = 0;
+			segP->sides [j].nOvlTex = 0;
+			segP->sides [j].nWall = NO_WALL (this);
 			for (i=0;i<4;i++) {
-//	    seg->sides [j].uvls [i].u = default_uvls [i].u;
-//	    seg->sides [j].uvls [i].v = default_uvls [i].v;
-				seg->sides [j].uvls [i].l = (UINT16) DEFAULT_LIGHTING;
+//	    segP->sides [j].uvls [i].u = default_uvls [i].u;
+//	    segP->sides [j].uvls [i].v = default_uvls [i].v;
+				segP->sides [j].uvls [i].l = (UINT16) DEFAULT_LIGHTING;
 				}
 			SetUV (SegCount (),j,0,0,0);
 			}
 		if (spline==0) {
-			seg->children [opp_side [spline_side1]] = spline_segment1;
-			seg->children [spline_side1] = SegCount ()+1;
+			segP->children [opp_side [spline_side1]] = spline_segment1;
+			segP->children [spline_side1] = SegCount ()+1;
 			Segments (spline_segment1)->children [spline_side1] = SegCount ();
 			Segments (spline_segment1)->child_bitmask |= (1<<spline_side1);
 			} 
 		else if (spline<n_splines-1) {
-			seg->children [opp_side [spline_side1]] = SegCount ()-1;
-			seg->children [spline_side1] = SegCount ()+1;
+			segP->children [opp_side [spline_side1]] = SegCount ()-1;
+			segP->children [spline_side1] = SegCount ()+1;
 			}
 		else {
-			seg->children [opp_side [spline_side1]] = SegCount ()-1;
-			seg->children [spline_side1] = spline_segment2;
+			segP->children [opp_side [spline_side1]] = SegCount ()-1;
+			segP->children [spline_side1] = spline_segment2;
 			Segments (spline_segment2)->children [spline_side2] = SegCount ();
 			Segments (spline_segment2)->child_bitmask |= (1<<spline_side2);
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
-		seg->child_bitmask = (1<<spline_side1) | (1<<opp_side [spline_side1]);
-		seg->owner = -1;
-		seg->group = -1;
-		seg->function = 0;
-		seg->nMatCen = -1;
-		seg->value = -1;
-		seg->wall_bitmask = 0; // make sure segment is not marked
+		segP->child_bitmask = (1<<spline_side1) | (1<<opp_side [spline_side1]);
+		segP->owner = -1;
+		segP->group = -1;
+		segP->function = 0;
+		segP->nMatCen = -1;
+		segP->value = -1;
+		segP->wall_bitmask = 0; // make sure segment is not marked
 		SegCount ()++;
 		}
 	theApp.UnlockUndo ();
@@ -513,7 +513,7 @@ void CMine::CalcSpline ()
   double length;
   double angle;
   INT32 i,j;
-  CDSegment *seg;
+  CDSegment *segP;
   INT16 vertnum;
   tFixVector vertex;
 //  tFixVector opp_center;
@@ -559,19 +559,19 @@ void CMine::CalcSpline ()
     rel_pts [i].y = points [i].y - points [0].y;
     rel_pts [i].z = points [i].z - points [0].z;
   }
-  seg = Segments (spline_segment1);
+  segP = Segments (spline_segment1);
   tFixVector *vert;
   for (i=0;i<4;i++) {
     vertnum = side_vert [spline_side1] [i];
-	 vert = Vertices (seg->verts [vertnum]);
+	 vert = Vertices (segP->verts [vertnum]);
     rel_side_pts [0] [i].x = vert->x - points [0].x;
     rel_side_pts [0] [i].y = vert->y - points [0].y;
     rel_side_pts [0] [i].z = vert->z - points [0].z;
   }
-  seg = Segments (spline_segment2);
+  segP = Segments (spline_segment2);
   for (i=0;i<4;i++) {
     vertnum = side_vert [spline_side2] [i];
-	 vert = Vertices (seg->verts [vertnum]);
+	 vert = Vertices (segP->verts [vertnum]);
     rel_side_pts [1] [i].x = vert->x - points [0].x;
     rel_side_pts [1] [i].y = vert->y - points [0].y;
     rel_side_pts [1] [i].z = vert->z - points [0].z;
@@ -670,21 +670,21 @@ void CMine::CalcSpline ()
   // define segment vert numbers
   for (i=0;i<n_splines;i++) {
     // use last "n_spline" segments
-    seg = Segments (MAX_SEGMENTS (this) - 1 - i);
+    segP = Segments (MAX_SEGMENTS (this) - 1 - i);
     vertnum = MAX_VERTICES (this) - 1 - i * 4;
     for (j = 0; j < 4; j++) {
       if (i == 0) {         // 1st segment
-	  seg->verts [side_vert [spline_side1] [j]] = vertnum - j;
-	  seg->verts [opp_side_vert [spline_side1] [j]]
+	  segP->verts [side_vert [spline_side1] [j]] = vertnum - j;
+	  segP->verts [opp_side_vert [spline_side1] [j]]
 	    = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
       } else {
 	if(i<n_splines-1) { // center segments
-	  seg->verts [side_vert [spline_side1] [j]] = vertnum - j;
-	  seg->verts [opp_side_vert [spline_side1] [j]] = vertnum + 4 - j;
+	  segP->verts [side_vert [spline_side1] [j]] = vertnum - j;
+	  segP->verts [opp_side_vert [spline_side1] [j]] = vertnum + 4 - j;
 	} else {          // last segment
-	  seg->verts [side_vert [spline_side1] [j]]
+	  segP->verts [side_vert [spline_side1] [j]]
 	    = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
-	  seg->verts [opp_side_vert [spline_side1] [j]] = vertnum + 4 - j;
+	  segP->verts [opp_side_vert [spline_side1] [j]] = vertnum + 4 - j;
         }
       }
     }

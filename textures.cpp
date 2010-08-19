@@ -1147,7 +1147,7 @@ static MyBMI my_bmi;
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 segnum, INT32 sidenum, INT32 texture1, INT32 texture2, INT32 xOffset, INT32 yOffset)
+bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 nSegment, INT32 nSide, INT32 texture1, INT32 texture2, INT32 xOffset, INT32 yOffset)
 {
 	CMine			*mine;
 
@@ -1166,7 +1166,7 @@ if (!pDC)
 	char			szFile [256];
 	BITMAP		bm;
 	CDC			memDC;
-	CDSegment	*seg;
+	CDSegment	*segP;
 	CDSide		*side;
 	INT16			nWall;
 	bool			bShowTexture = true;
@@ -1176,12 +1176,12 @@ CRect	rc;
 pWnd->GetClientRect (rc);
 
 if (texture1 < 0) {
-	seg = (segnum < 0) ? mine->CurrSeg () : mine->Segments (segnum);
-	side = (sidenum < 0) ? mine->CurrSide () : seg->sides + sidenum;
+	segP = (nSegment < 0) ? mine->CurrSeg () : mine->Segments (nSegment);
+	side = (nSide < 0) ? mine->CurrSide () : segP->sides + nSide;
 	INT32 nSide = mine->Current ()->nSide;
 	texture1 = side->nBaseTex;
 	texture2 = side->nOvlTex & 0x1fff;
-	if (seg->children [nSide] == -1)
+	if (segP->children [nSide] == -1)
 		bShowTexture = TRUE;
 	else {
 		nWall = side->nWall;

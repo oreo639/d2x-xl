@@ -2,7 +2,7 @@
 
 void TextureMap(INT32 resolution,
 				CDSegment *segment,
-				INT16 sidenum,
+				INT16 nSide,
 				UINT8 *bmData,
 				UINT16 bmWidth,
 				UINT16 bmHeight,
@@ -16,6 +16,6 @@ void TextureMap(INT32 resolution,
 double dround_off(double value, double round);
 /*
 double CalcLength(tFixVector &center1,tFixVector &center2);
-void CalcCenter(CMine &mine, tFixVector &center,INT16 segnum,INT16 sidenum);
-void CalcOrthoVector(CMine *mine, tFixVector &result,INT16 segnum,INT16 sidenum);
+void CalcCenter(CMine &mine, tFixVector &center,INT16 nSegment,INT16 nSide);
+void CalcOrthoVector(CMine *mine, tFixVector &result,INT16 nSegment,INT16 nSide);
 */

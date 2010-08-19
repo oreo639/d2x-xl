@@ -255,21 +255,21 @@ public:
 	void	DrawWireFrame(CMine *mine, bool bPartial);
 	void	DrawTextureMappedCubes(CMine *mine);
 	void	DrawMarkedCubes (CMine *mine, INT16 clear_it = 0);
-	void	DrawCube(CDSegment *seg, bool bPartial);
-	void	DrawCube (CMine *mine, INT16 segnum,INT16 sidenum, INT16 linenum, INT16 pointnum, INT16 clear_it = 0);
-	void	DrawCubePartial (CDSegment *seg);
-	void	DrawCubeQuick(CDSegment *seg, bool bPartial = false);
-	void	DrawCubeTextured(CDSegment *seg, UINT8* light_index);
-	void	DrawCubePoints (CDSegment *seg);
+	void	DrawCube(CDSegment *segP, bool bPartial);
+	void	DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it = 0);
+	void	DrawCubePartial (CDSegment *segP);
+	void	DrawCubeQuick(CDSegment *segP, bool bPartial = false);
+	void	DrawCubeTextured(CDSegment *segP, UINT8* light_index);
+	void	DrawCubePoints (CDSegment *segP);
 
-	void	DrawCurrentCube(CDSegment *seg, bool bPartial);
-	void	DrawLine(CDSegment *seg,INT16 vert1,INT16 vert2);
+	void	DrawCurrentCube(CDSegment *segP, bool bPartial);
+	void	DrawLine(CDSegment *segP,INT16 vert1,INT16 vert2);
 	void	DrawLine (CDTexture *pTx, POINT pt0, POINT pt1, UINT8 color);
 	void	DrawAnimDirArrows (INT16 texture1, CDTexture *pTx);
 
 	void	DrawWalls (CMine *mine);
 	void	DrawLights (CMine *mine);
-	void	DrawOctagon(CMine *mine, INT16 sidenum, INT16 segnum);
+	void	DrawOctagon(CMine *mine, INT16 nSide, INT16 nSegment);
 	void	DrawObject (CMine *mine,INT16 objnum,INT16 clear_it = 0);
 	void	DrawObjects (CMine *mine, INT16 clear_it = 0);
 	void	DrawHighlight (CMine *mine, INT16 clear_it = 0);
@@ -373,7 +373,7 @@ public:
 
 	bool SelectCurrentSegment(INT16 direction,long mouse_x, long mouse_y);
 	void SelectCurrentObject(long mouse_x, long mouse_y);
-	void CalcSegmentCenter(tFixVector &pos,INT16 segnum);
+	void CalcSegmentCenter(tFixVector &pos,INT16 nSegment);
 	void RefreshObject(INT16 old_object, INT16 new_object);
 	void MarkRubberBandedVertices (void);
 	BOOL DrawRubberBox ();
@@ -393,8 +393,8 @@ public:
 	GLvoid GLFitToView (GLvoid);
 	BOOL GLResizeScene (GLvoid);
 	BOOL GLRenderScene (GLvoid);
-	void GLRenderFace (INT16 segnum, INT16 sidenum);
-	void GLRenderTexture (INT16 segnum, INT16 sidenum, INT16 nTexture);
+	void GLRenderFace (INT16 nSegment, INT16 nSide);
+	void GLRenderTexture (INT16 nSegment, INT16 nSide, INT16 nTexture);
 	void GLCreateTexture (INT16 nTexture);
 	GLvoid GLKillWindow (GLvoid);
 	BOOL GLCreateWindow (CDC *pDC = NULL);

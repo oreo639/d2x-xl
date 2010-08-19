@@ -23,7 +23,7 @@ public:
 	void scale_corner_light(double fvalue);
 	void Apply();
 	void ShowDelta();
-	void set_illumination(INT16 segnum, INT16 sidenum, UINT32 brightness);
+	void set_illumination(INT16 nSegment, INT16 nSide, UINT32 brightness);
 //	DECLARE_RESPONSE_TABLE( CLightDialog );
 };
 
@@ -89,11 +89,11 @@ public:
 //DECLARE_RESPONSE_TABLE( CBlinkDialog );
 };
 
-void delete_flickering_light(UINT16 segnum, UINT16 sidenum);
-void add_flickering_light(UINT16 segnum, UINT16 sidenum, UINT32 mask,FIX time);
-INT16 get_flickering_light(UINT16 segnum, UINT16 sidenum);
+void delete_flickering_light(UINT16 nSegment, UINT16 nSide);
+void add_flickering_light(UINT16 nSegment, UINT16 nSide, UINT32 mask,FIX time);
+INT16 get_flickering_light(UINT16 nSegment, UINT16 nSide);
 
-void set_segment_child_num(INT16 segnum,INT16 recursion_level);
+void set_segment_child_num(INT16 nSegment,INT16 recursion_level);
 UINT8 light_weight(INT16 nBaseTex);
 void calculate_CLightDeltaValue_data(double factor, INT32 force); // light.cpp
 void update_CLightDeltaValues(); // light.cpp

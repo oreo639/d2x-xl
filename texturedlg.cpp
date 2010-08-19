@@ -446,7 +446,7 @@ if (!GetMine ())
 	INT16			texture1, texture2, mode;
 	bool			bShowTexture;
 	INT32			i, j;
-	CDSegment	*seg;
+	CDSegment	*segP;
 	CDSide		*side;
 	CWall		*pWall;
 	CDColor		*color;
@@ -462,7 +462,7 @@ m_frame [0] = 0;
 m_frame [1] = 0;
 #endif
 
-seg = m_mine->CurrSeg ();
+segP = m_mine->CurrSeg ();
 side = m_mine->CurrSide ();
 color = m_mine->CurrLightColor ();
 INT32 nSide = m_mine->Current ()->nSide;
@@ -503,7 +503,7 @@ for (i = 0; i < 4; i++) {
 	m_lights [j] = (double) ((UINT16) side->uvls [i].l) / 327.68;
 	}
 
-if (seg->children [nSide]==-1)
+if (segP->children [nSide]==-1)
 	bShowTexture = TRUE;
 else {
 	UINT16 nWall = side->nWall;
@@ -630,7 +630,7 @@ void CTextureTool::AnimateTexture (void)
 if (!GetMine ())
 	return;
 
-	CDSegment *seg = m_mine->CurrSeg ();
+	CDSegment *segP = m_mine->CurrSeg ();
 
 	UINT16 texture [2];
 	static INT32 scroll_offset_x = 0;
@@ -910,10 +910,10 @@ if (save_texture1 == -1 || save_texture2 == -1)
 	return;
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
-	CDSegment *seg = m_mine->Segments ();
-INT32 segnum;
-for (segnum = m_mine->SegCount (); segnum; segnum--, seg++)
-    seg->nIndex = 0;
+	CDSegment *segP = m_mine->Segments ();
+INT32 nSegment;
+for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
+    segP->nIndex = 0;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 PasteTexture (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, 100);
@@ -932,9 +932,9 @@ if (!(m_bUse1st || m_bUse2nd))
 if (!GetMine ())
 	return;
 
-	INT16			segnum,
-					sidenum;
-	CDSegment	*seg = m_mine->Segments ();
+	INT16			nSegment,
+					nSide;
+	CDSegment	*segP = m_mine->Segments ();
 	CDSide		*side;
 	bool			bChange = false,
 					bAll = !m_mine->GotMarkedSides ();
@@ -945,12 +945,12 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
-for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
-	for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++) {
-		if (bAll || m_mine->SideIsMarked (segnum, sidenum)) {
-			if (seg->children [sidenum] == -1) {
+for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
+	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++) {
+		if (bAll || m_mine->SideIsMarked (nSegment, nSide)) {
+			if (segP->children [nSide] == -1) {
 				bChange = true;
-				m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+				m_mine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 				INT32 i;
 				for (i = 0; i < 4; i++)
 					side->uvls [i].l = save_uvls [i].l;
@@ -976,9 +976,9 @@ if (!(m_bUse1st || m_bUse2nd))
 if (!GetMine ())
 	return;
 
-	INT16			segnum,
-					sidenum;
-	CDSegment	*seg = m_mine->Segments ();
+	INT16			nSegment,
+					nSide;
+	CDSegment	*segP = m_mine->Segments ();
 	CDSide		*side;
 	bool			bChange = false,
 					bAll = !m_mine->GotMarkedSides ();
@@ -989,16 +989,16 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
-for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++)
-	for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++)
-		if (bAll || m_mine->SideIsMarked (segnum, sidenum)) {
+for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++)
+	for (nSide = 0, side = segP->sides; nSide < 6; nSide++, side++)
+		if (bAll || m_mine->SideIsMarked (nSegment, nSide)) {
 			if (m_bUse1st && (side->nBaseTex != last_texture1))
 				continue;
 			if (m_bUse2nd && ((side->nOvlTex & 0x3FFF) != last_texture2))
 				continue;
-			if ((seg->children [sidenum] >= 0) && (side->nWall == NO_WALL (m_mine)))
+			if ((segP->children [nSide] >= 0) && (side->nWall == NO_WALL (m_mine)))
 				 continue;
-			if (m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
+			if (m_mine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
 //			INT32 i;
 //			for (i = 0; i < 4; i++)
@@ -1014,7 +1014,7 @@ theApp.MineView ()->Refresh ();
 
                         /*--------------------------*/
 
-void CTextureTool::PasteTexture (INT16 segnum, INT16 sidenum, INT16 nDepth) 
+void CTextureTool::PasteTexture (INT16 nSegment, INT16 nSide, INT16 nDepth) 
 {
 if (nDepth <= 0) 
 	return;
@@ -1022,8 +1022,8 @@ if (nDepth <= 0)
 if (!GetMine ())
 	return;
 
-	CDSegment	*seg = m_mine->Segments (segnum);
-	CDSide		*side = seg->sides + sidenum;
+	CDSegment	*segP = m_mine->Segments (nSegment);
+	CDSide		*side = segP->sides + nSide;
 	INT16			old_texture1, 
 					old_texture2;
 	INT32			i;
@@ -1036,21 +1036,21 @@ if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES (m_mine)))
 if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES (m_mine)))
 	old_texture2 = 0;
 // mark segment as "pasted"
-seg->nIndex = 1;
+segP->nIndex = 1;
 // paste texture
-m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+m_mine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 for (i = 0; i < 4; i++)
 	side->uvls [i].l = save_uvls [i].l;
 
 // now check each adjing side to see it has the same texture
 for (i = 0; i < 4; i++) {
 	INT16 adj_segnum, adj_sidenum;
-	if (GetAdjacentSide (segnum, sidenum, i, &adj_segnum, &adj_sidenum)) {
+	if (GetAdjacentSide (nSegment, nSide, i, &adj_segnum, &adj_sidenum)) {
 		// if adj matches and its not "pasted" yet
-		seg = m_mine->Segments (adj_segnum);
-		side = seg->sides + adj_sidenum;
+		segP = m_mine->Segments (adj_segnum);
+		side = segP->sides + adj_sidenum;
 #if 0
-		if (seg->nIndex)
+		if (segP->nIndex)
 			continue;
 		if (m_bUse1st && (side->nBaseTex != old_texture1))
 			continue;
@@ -1058,7 +1058,7 @@ for (i = 0; i < 4; i++) {
 			continue;
 		PasteTexture (adj_segnum, adj_sidenum, --nDepth);
 #else
-		if ((seg->nIndex == 0) &&
+		if ((segP->nIndex == 0) &&
 			 (!m_bUse1st || (side->nBaseTex == old_texture1)) &&
 			 (!m_bUse2nd || (side->nOvlTex == old_texture2))) {
 			PasteTexture (adj_segnum, adj_sidenum, --nDepth);
@@ -1076,8 +1076,8 @@ bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16
 if (!GetMine ())
 	return false;
 
-	CDSegment *seg;
-	INT16 sidenum,childnum;
+	CDSegment *segP;
+	INT16 nSide,childnum;
 	INT16 point0,point1,vert0,vert1;
 	INT16 childs_side,childs_line;
 	INT16 childs_point0,childs_point1,childs_vert0,childs_vert1;
@@ -1094,24 +1094,24 @@ if (!GetMine ())
   // find vert numbers for the line's two end points
 point0 = line_vert[side_line[start_side][linenum]][0];
 point1 = line_vert[side_line[start_side][linenum]][1];
-seg = m_mine->Segments () + start_segment;
-vert0  = seg->verts[point0];
-vert1  = seg->verts[point1];
+segP = m_mine->Segments () + start_segment;
+vert0  = segP->verts[point0];
+vert1  = segP->verts[point1];
 
-sidenum = side_child[start_side][linenum];
-childnum = seg->children[sidenum];
+nSide = side_child[start_side][linenum];
+childnum = segP->children[nSide];
 if (childnum < 0 || childnum >= m_mine->SegCount ())
 	return false;
 for (childs_side=0;childs_side<6;childs_side++) {
-	seg = m_mine->Segments () + childnum;
-	if ((seg->children[childs_side] == -1) ||
-	    (seg->sides[childs_side].nWall < m_mine->GameInfo ().walls.count)) {
+	segP = m_mine->Segments () + childnum;
+	if ((segP->children[childs_side] == -1) ||
+	    (segP->sides[childs_side].nWall < m_mine->GameInfo ().walls.count)) {
 		for (childs_line=0;childs_line<4;childs_line++) {
 			// find vert numbers for the line's two end points
 			childs_point0 = line_vert[side_line[childs_side][childs_line]][0];
 			childs_point1 = line_vert[side_line[childs_side][childs_line]][1];
-			childs_vert0  = seg->verts[childs_point0];
-			childs_vert1  = seg->verts[childs_point1];
+			childs_vert0  = segP->verts[childs_point0];
+			childs_vert1  = segP->verts[childs_point1];
 			// if points of child's line == corresponding points of parent
 			if (childs_vert0 == vert1 && childs_vert1 == vert0 ||
 				childs_vert0 == vert0 && childs_vert1 == vert1) {

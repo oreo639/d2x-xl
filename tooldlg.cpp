@@ -320,9 +320,9 @@ if (nVisible < 0)
 	nVisible = (INT16) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		INT16 segnum = m_bOtherSeg ? m_mine->Other ()->nSegment : m_mine->Current ()->nSegment;
-		INT16 sidenum = m_bOtherSeg ? m_mine->Other ()->nSide : m_mine->Current ()->nSide;
-		if (nVisible = m_mine->IsWall (segnum, sidenum)) {
+		INT16 nSegment = m_bOtherSeg ? m_mine->Other ()->nSegment : m_mine->Current ()->nSegment;
+		INT16 nSide = m_bOtherSeg ? m_mine->Other ()->nSide : m_mine->Current ()->nSide;
+		if (nVisible = m_mine->IsWall (nSegment, nSide)) {
 			CDSide *side = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
 			nBaseTex = side->nBaseTex;
 			nOvlTex = side->nOvlTex & 0x3fff;
@@ -382,7 +382,7 @@ if (!TextureIsVisible ())
 if (!GetMine ())
 	return;
 
-	CDSegment *seg = m_bOtherSeg ? m_mine->OtherSeg () : m_mine->CurrSeg ();
+	CDSegment *segP = m_bOtherSeg ? m_mine->OtherSeg () : m_mine->CurrSeg ();
 
 	UINT16 texture [2];
 	INT32 bScroll;

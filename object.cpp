@@ -132,13 +132,13 @@ if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 // Action - Defines a standard object (currently assumed to be a player)
 //------------------------------------------------------------------------
 
-void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 segnum) 
+void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment) 
 {
   tFixVector location;
 
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
-  CalcSegCenter (location,segnum);
+  CalcSegCenter (location,nSegment);
   memset(objP,0,sizeof (CGameObject));
   objP->signature = 0;
   objP->type = type;
@@ -338,7 +338,7 @@ switch (type) {
 //
 //------------------------------------------------------------------------
 
-bool CMine::CopyObject (UINT8 new_type, INT16 segnum) 
+bool CMine::CopyObject (UINT8 new_type, INT16 nSegment) 
 {
 	INT16 objnum,id;
 	INT16 ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0};
@@ -396,7 +396,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (GameInfo ().objects.count == 0) {
-	MakeObject (Objects (), OBJ_PLAYER, (segnum < 0) ? Current ()->nSegment : segnum);
+	MakeObject (Objects (), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
 	GameInfo ().objects.count = 1;
 	objnum = 0;
 	}

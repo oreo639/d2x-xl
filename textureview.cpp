@@ -391,19 +391,19 @@ if (bShowAll) {
 		}
 	}
 else {
-	UINT16 segnum,sidenum;
+	UINT16 nSegment,nSide;
 	CMine	*mine = theApp.GetMine ();
-	CDSegment *seg;
+	CDSegment *segP;
 
 	memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 	m_nTextures [0] = 0;
-	for (segnum = 0, seg = mine->Segments (); segnum < mine->SegCount (); segnum++, seg++)
-      for (sidenum = 0;sidenum < 6; sidenum++) {
-			UINT16 nWall = seg->sides[sidenum].nWall;
-			if ((seg->children [sidenum] == -1) ||
+	for (nSegment = 0, segP = mine->Segments (); nSegment < mine->SegCount (); nSegment++, segP++)
+      for (nSide = 0;nSide < 6; nSide++) {
+			UINT16 nWall = segP->sides[nSide].nWall;
+			if ((segP->children [nSide] == -1) ||
 				 (nWall < mine->GameInfo ().walls.count && 
 				  mine->Walls (nWall)->type != WALL_OPEN)) {
-				INT32 t = seg->sides [sidenum].nBaseTex;
+				INT32 t = segP->sides [nSide].nBaseTex;
 				INT32 i = TextureIndex (t);
 				INT32 j = TexFilterIndex (t);
 				if ((i >= 0) && !BITSET (pFilter, i) && 
@@ -412,7 +412,7 @@ else {
 					m_nTextures [0]++;
 					}
 //					pFilter[t/8] |= (1<<(t&7));
-				t = seg->sides [sidenum].nOvlTex & 0x3fff;
+				t = segP->sides [nSide].nOvlTex & 0x3fff;
 				i = TextureIndex (t);
 				j = TexFilterIndex (t);
 				if ((t > 0) && !BITSET (pFilter, i)) {

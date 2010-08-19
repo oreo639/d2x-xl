@@ -380,9 +380,9 @@
 #define	CONTROL_LIGHTS_OFF		32	// If Trigger turns off lights in a certain area 
 #define	TRIGGER_CONTROL_ROBOTS	64	// If Trigger is a Door control trigger (Linked) 
 
-//  Returns true if segnum references a child, else returns false. 
+//  Returns true if nSegment references a child, else returns false. 
 //  Note that -1 means no connection, -2 means a connection to the outside world. 
-#define  IS_CHILD(segnum) (segnum > -1)
+#define  IS_CHILD(nSegment) (nSegment > -1)
 
 #define SEGMENT_TYPE_NONE				0
 #define SEGMENT_TYPE_FUELCEN			1
@@ -485,7 +485,7 @@
 #define WID_TRANSILLUSORY_WALL	7	// 1/1/1 transparent illusory wall 
 #define WID_EXTERNAL					8	// 0/0/0/1 don't see it, dont fly through it 
 
-#define WALL_IS_DOORWAY(seg,side) (((seg)->children[(side)] == -1) ? WID_RENDER_FLAG : ((seg)->children[(side)] == -2) ? WID_EXTERNAL_FLAG : ((seg)->sides[(side)].nWall == -1) ? (WID_FLY_FLAG|WID_RENDPAST_FLAG) : wall_is_doorway((seg), (side)))
+#define WALL_IS_DOORWAY(segP,side) (((segP)->children[(side)] == -1) ? WID_RENDER_FLAG : ((segP)->children[(side)] == -2) ? WID_EXTERNAL_FLAG : ((segP)->sides[(side)].nWall == -1) ? (WID_FLY_FLAG|WID_RENDPAST_FLAG) : wall_is_doorway((segP), (side)))
 
 //Object types 
 #define OBJ_NONE         255  // unused object 

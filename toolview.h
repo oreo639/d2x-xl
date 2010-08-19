@@ -250,9 +250,9 @@ class CDiagTool : public CToolDlg
 		afx_msg void OnShowWarnings ();
 		INT32 AddMessage (const char *pszMsg, INT32 nMaxMsgs = 100, bool bCheckMsg = false);
 		bool UpdateStats (char *szError, INT32 nErrorLevel, 
-							   INT32 segnum = -1, INT32 sidenum = -1, INT32 linenum = -1, INT32 pointnum = -1, 
-							   INT32 childnum = -1, INT32 wallnum = -1, INT32 trignum = -1, INT32 objnum = -1);
-		double CalcFlatnessRatio (INT16 segnum, INT16 sidenum);
+							   INT32 nSegment = -1, INT32 nSide = -1, INT32 linenum = -1, INT32 pointnum = -1, 
+							   INT32 childnum = -1, INT32 nWall = -1, INT32 trignum = -1, INT32 objnum = -1);
+		double CalcFlatnessRatio (INT16 nSegment, INT16 nSide);
 		double CalcDistance (tFixVector *v1,tFixVector *v2,tFixVector *v3);
 		double CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3);
 		void ClearBugList ();
@@ -266,7 +266,7 @@ class CDiagTool : public CToolDlg
 		bool CheckVertices ();
 		bool CheckBotGens ();
 		bool CheckEquipGens ();
-		bool MarkSegment (INT16 segnum);
+		bool MarkSegment (INT16 nSegment);
 		INT8 FindMatCen (CRobotMaker* matCenP, INT16 nSegment, INT16* refList = NULL);
 		void CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
 		INT16 FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType);
@@ -279,7 +279,7 @@ class CDiagTool : public CToolDlg
 			{ return LBCtrl (IDC_DIAG_BUGLIST); }
 		inline CWnd *TargetEdit ()
 			{ return GetDlgItem (IDC_REACTOR_TARGET); }
-		CWall *OppWall (UINT16 segnum, UINT16 sidenum);
+		CWall *OppWall (UINT16 nSegment, UINT16 nSide);
 
 		DECLARE_MESSAGE_MAP ()
 };
@@ -305,8 +305,8 @@ class CReactorTool : public CToolDlg
 		void InitLBTargets ();
 		void Reset ();
 		void Refresh ();
-		void AddTarget (INT16 segnum, INT16 sidenum);
-		INT32 FindTarget (INT16 segnum, INT16 sidenum);
+		void AddTarget (INT16 nSegment, INT16 nSide);
+		INT32 FindTarget (INT16 nSegment, INT16 nSide);
 		afx_msg void OnAddTarget ();
 		afx_msg void OnDeleteTarget ();
 		afx_msg void OnAddWallTarget ();
@@ -567,8 +567,8 @@ class CSegmentTool : public CToolDlg
 		void OnPoint (INT32 nPoint);
 		INT32 FindBot (CListBox *plb, LPSTR pszBot = NULL);
 		INT32 FindEquip (CListBox *plb, LPSTR pszBot = NULL);
-		bool IsBotMaker (CDSegment *seg);
-		bool IsEquipMaker (CDSegment *seg);
+		bool IsBotMaker (CDSegment *segP);
+		bool IsEquipMaker (CDSegment *segP);
 		void SetDefTexture (INT16 nTexture);
 	
 		afx_msg void OnSetCube ();
@@ -779,8 +779,8 @@ class CTriggerTool : public CTexToolDlg
 		void Reset ();
 		void EnableControls (BOOL bEnable);
 		void Refresh ();
-		void AddTarget (INT16 segnum, INT16 sidenum);
-		INT32 FindTarget (INT16 segnum, INT16 sidenum);
+		void AddTarget (INT16 nSegment, INT16 nSide);
+		INT32 FindTarget (INT16 nSegment, INT16 nSide);
 		bool OnD1Flag (INT32 i, INT32 j = -1);
 		void OnD2Flag (INT32 i, INT32 j = 0);
 		void SetTriggerPtr (void);
@@ -1116,7 +1116,7 @@ class CTextureTool : public CTexToolDlg
 		void HFlip (void);
 		void VFlip (void);
 		void SelectTexture (INT32 nIdC, bool bFirst);
-		void PasteTexture (INT16 segnum, INT16 sidenum, INT16 nDepth);
+		void PasteTexture (INT16 nSegment, INT16 nSide, INT16 nDepth);
 		bool GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16 linenum,
 									 INT16 *neighbor_segnum, INT16 *neighbor_sidenum);
 		bool SideHasLight (void);
@@ -1134,8 +1134,8 @@ class CTextureTool : public CTexToolDlg
 		void DrawAlignment (CDC *pDC);
 		INT32 ScrollSpeed (UINT16 texture,INT32 *x,INT32 *y);
 		INT32 AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child);
-		void AlignChildTextures (INT32 segnum, INT32 sidenum, INT32 nDepth);
-		void AlignChildren (INT16 segnum, INT16 sidenum, bool bStart);
+		void AlignChildTextures (INT32 nSegment, INT32 nSide, INT32 nDepth);
+		void AlignChildren (INT16 nSegment, INT16 nSide, bool bStart);
 		void SetWallColor (void);
 
 		inline CScrollBar *HScrollAlign ()

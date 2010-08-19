@@ -113,7 +113,7 @@ void square2quad_matrix(double A[3][3],POINT a[4])
 //------------------------------------------------------------------------
 void TextureMap(INT32 resolution,
 				CDSegment *segment,
-				INT16 sidenum,
+				INT16 nSide,
 				UINT8 *bmData,
 				UINT16 bmWidth,
 				UINT16 bmHeight,
@@ -140,7 +140,7 @@ void TextureMap(INT32 resolution,
 	
 	// TEMPORARY
 	INT32 inc_resolution = 1<<resolution;
-	CSideKey face (INT16 (segment - mine->Segments ()), sidenum);
+	CSideKey face (INT16 (segment - mine->Segments ()), nSide);
 	INT16 flick_light = mine->GetFlickeringLight (face.nSegment, face.nSide);
 	INT16 dscan_light,scan_light;
 	INT16 light[4];
@@ -153,7 +153,7 @@ bmWidth2 = bmWidth / 2;
 // define 4 corners of texture to be displayed on the screen
 for (i=0;i<4;i++) {
 	INT16 vertnum;
-	vertnum = segment->verts[side_vert[sidenum][i]];
+	vertnum = segment->verts[side_vert[nSide][i]];
 	a[i].x = scrn[vertnum].x;
 	a[i].y = scrn[vertnum].y;
 	}
@@ -184,7 +184,7 @@ square2quad_matrix(A,a);
 adjoint_matrix(A,IA);
 
 // store uv coordinates into b[]
-uvls = segment->sides[sidenum].uvls;
+uvls = segment->sides[nSide].uvls;
 for (i=0;i<4;i++) {
 	b[i].x = uvls[i].u;
 	b[i].y = uvls[i].v;
@@ -210,7 +210,7 @@ if (bEnableDeltaShading) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i <dlIdxCount; i++, dli++) {
-//				if (dli->segnum == mine->current->segment) {
+//				if (dli->nSegment == mine->current->segment) {
 			// loop on each delta light till the segment/side is found
 				CLightDeltaValue *dl = CLightDeltaValues + dli->index;
 				h = dli->count;
@@ -344,7 +344,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						if (bEnableShading) {
 #if 0
 							// TEXTURE_MAP_LIGHT_HIRES
-							UINT8 temp1 = descent_side_colors[sidenum];
+							UINT8 temp1 = descent_side_colors[nSide];
 							while (k--) {
 								*pixelP++ = light_index[temp1 + ((scan_light / 4) & 0x1f00)];
 								scan_light += dscan_light;
@@ -369,7 +369,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						else {
 							// TEXTURE_MAP_NOLIGHT_HIRES
 #if 0
-							UINT8 temp = descent_side_colors[sidenum];
+							UINT8 temp = descent_side_colors[nSide];
 							while (k--) {
 								*pixelP++ = temp;
 								}
@@ -394,7 +394,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						if (bEnableShading) {
 							// TEXTURE_MAP_LIGHT_LOWRES
 #if 0
-							UINT8 temp1 = descent_side_colors[sidenum];
+							UINT8 temp1 = descent_side_colors[nSide];
 							while (k--) {
 								pixelP[0] = 
 								pixelP[1] = light_index[temp1 + ((scan_light / 4) & 0x1f00)];
@@ -422,7 +422,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						else {
 							// TEXTURE_MAP_NOLIGHT_LOWRES
 #if 0
-							UINT8 emp = descent_side_colors[sidenum];
+							UINT8 emp = descent_side_colors[nSide];
 							while (k--) {
 								pixelP[0] = 
 								pixelP[1] = temp;

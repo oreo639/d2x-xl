@@ -130,19 +130,19 @@ z = center.z - opp_center.z;
 		{4,9,10,11},
 		{11,10,9,4}
 		};
-	CDSegment *seg;
+	CDSegment *segP;
 	INT16 point0,point1;
 	tFixVector *vector0,*vector1;
 	bool ok_to_move;
 
 ok_to_move = TRUE;
-seg = Segments () + Current ()->nSegment;
+segP = Segments () + Current ()->nSegment;
 switch (m_selectMode) {
 	case POINT_MODE:
 		point0 = line_vert [orthog_line [Current ()->nSide][Current ()->nPoint]][0];
 		point1 = line_vert [orthog_line [Current ()->nSide][Current ()->nPoint]][1];
-		vector0 = Vertices (seg->verts [point0]);
-		vector1 = Vertices (seg->verts [point1]);
+		vector0 = Vertices (segP->verts [point0]);
+		vector1 = Vertices (segP->verts [point1]);
 		if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
 		ok_to_move = FALSE;
 		}
@@ -152,8 +152,8 @@ switch (m_selectMode) {
 		for (i=0;i<2;i++) {
 			point0 = line_vert [orthog_line [Current ()->nSide][(Current ()->nLine+i)%4]][0];
 			point1 = line_vert [orthog_line [Current ()->nSide][(Current ()->nLine+i)%4]][1];
-			vector0 = Vertices (seg->verts [point0]);
-			vector1 = Vertices (seg->verts [point1]);
+			vector0 = Vertices (segP->verts [point0]);
+			vector1 = Vertices (segP->verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
 			ok_to_move = FALSE;
 			}
@@ -164,8 +164,8 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++) {
 			point0 = line_vert [orthog_line [Current ()->nSide][i]][0];
 			point1 = line_vert [orthog_line [Current ()->nSide][i]][1];
-			vector0 = Vertices (seg->verts [point0]);
-			vector1 = Vertices (seg->verts [point1]);
+			vector0 = Vertices (segP->verts [point0]);
+			vector1 = Vertices (segP->verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
 			ok_to_move = FALSE;
 			}
@@ -285,7 +285,7 @@ bool CMine::RotateSelection (double angle, bool perpendicular)
 {
 INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
-CDSegment *seg = Segments (nSegment);
+CDSegment *segP = Segments (nSegment);
 tFixVector center,opp_center;
 INT32 i,pts [4];
 
@@ -314,22 +314,22 @@ switch (m_selectMode){
 			pts [3] = 3;
 			}
 		// calculate center opp side line 0
-		opp_center.x = (Vertices (seg->verts [opp_side_vert [nSide][pts [0]]])->x +
-							 Vertices (seg->verts [opp_side_vert [nSide][pts [1]]])->x) / 2;
-		opp_center.y = (Vertices (seg->verts [opp_side_vert [nSide][pts [0]]])->y +
-							 Vertices (seg->verts [opp_side_vert [nSide][pts [1]]])->y) / 2;
-		opp_center.z = (Vertices (seg->verts [opp_side_vert [nSide][pts [0]]])->z +
-							 Vertices (seg->verts [opp_side_vert [nSide][pts [1]]])->z) / 2;
+		opp_center.x = (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]])->x +
+							 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->x) / 2;
+		opp_center.y = (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]])->y +
+							 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->y) / 2;
+		opp_center.z = (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]])->z +
+							 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->z) / 2;
 		// calculate center opp side line 2
-		center.x = (Vertices (seg->verts [opp_side_vert [nSide][pts [2]]])->x +
-						Vertices (seg->verts [opp_side_vert [nSide][pts [3]]])->x) / 2;
-		center.y = (Vertices (seg->verts [opp_side_vert [nSide][pts [2]]])->y +
-						Vertices (seg->verts [opp_side_vert [nSide][pts [3]]])->y) / 2;
-		center.z = (Vertices (seg->verts [opp_side_vert [nSide][pts [2]]])->z +
-						Vertices (seg->verts [opp_side_vert [nSide][pts [3]]])->z) / 2;
+		center.x = (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]])->x +
+						Vertices (segP->verts [opp_side_vert [nSide][pts [3]]])->x) / 2;
+		center.y = (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]])->y +
+						Vertices (segP->verts [opp_side_vert [nSide][pts [3]]])->y) / 2;
+		center.z = (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]])->z +
+						Vertices (segP->verts [opp_side_vert [nSide][pts [3]]])->z) / 2;
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
-			RotateVertex (Vertices (seg->verts [side_vert [nSide][i]]),
+			RotateVertex (Vertices (segP->verts [side_vert [nSide][i]]),
 							  &center, &opp_center, angle);
 		theApp.UnlockUndo ();	
 		break;
@@ -362,7 +362,7 @@ bool CMine::SizeItem (INT32 inc)
 {
 	INT32 nSegment = Current ()->nSegment;
 	INT32 nSide = Current ()->nSide;
-	CDSegment *seg = Segments (nSegment);
+	CDSegment *segP = Segments (nSegment);
 	INT32 i, j, point [4];
 	bool result = false;
 
@@ -373,7 +373,7 @@ switch (m_selectMode) {
 	case LINE_MODE:
 		point [0] = line_vert [side_line [Current ()->nSide][Current ()->nLine]][0];
 		point [1] = line_vert [side_line [Current ()->nSide][Current ()->nLine]][1];
-		return SizeLine (seg,point [0],point [1],inc);
+		return SizeLine (segP,point [0],point [1],inc);
 
 	case SIDE_MODE:
 		theApp.SetModified (TRUE);
@@ -381,8 +381,8 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++)
 			point [i] = side_vert [Current ()->nSide][i];
 		// enlarge the diagonals
-		result = SizeLine(seg,point [0],point [2],(INT32) (inc*sqrt(2.0))) &&
-				   SizeLine(seg,point [1],point [3],(INT32) (inc*sqrt(2.0)));
+		result = SizeLine(segP,point [0],point [2],(INT32) (inc*sqrt(2.0))) &&
+				   SizeLine(segP,point [1],point [3],(INT32) (inc*sqrt(2.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -390,10 +390,10 @@ switch (m_selectMode) {
 		// enlarge the diagonals
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
-		result = SizeLine(seg,0,6,(INT32) (inc*sqrt(3.0))) &&
-				   SizeLine(seg,1,7,(INT32) (inc*sqrt(3.0))) &&
-					SizeLine(seg,2,4,(INT32) (inc*sqrt(3.0))) &&
-					SizeLine(seg,3,5,(INT32) (inc*sqrt(3.0)));
+		result = SizeLine(segP,0,6,(INT32) (inc*sqrt(3.0))) &&
+				   SizeLine(segP,1,7,(INT32) (inc*sqrt(3.0))) &&
+					SizeLine(segP,2,4,(INT32) (inc*sqrt(3.0))) &&
+					SizeLine(segP,3,5,(INT32) (inc*sqrt(3.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -545,7 +545,7 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::SizeLine (CDSegment *seg,INT32 point0,INT32 point1,INT32 inc) 
+bool CMine::SizeLine (CDSegment *segP,INT32 point0,INT32 point1,INT32 inc) 
 {
 double x,y,z,radius;
 
@@ -561,8 +561,8 @@ else
 	else if (inc & 1)
 		inc++;
 
-tFixVector *v1 = Vertices (seg->verts [point0]),
-			  *v2 = Vertices (seg->verts [point1]);
+tFixVector *v1 = Vertices (segP->verts [point0]),
+			  *v2 = Vertices (segP->verts [point1]);
 // figure out direction to modify line
 x = v1->x - v2->x;
 y = v1->y - v2->y;
@@ -602,7 +602,7 @@ INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
 INT32 nPoint = Current ()->nPoint;
 INT32 nLine = Current ()->nLine;
-CDSegment *seg = Segments (nSegment);
+CDSegment *segP = Segments (nSegment);
 INT16 i;
 
 theApp.SetModified (TRUE);
@@ -610,13 +610,13 @@ switch (m_selectMode) {
 	case POINT_MODE:
 		switch (axis) {
 			case 'X':
-				Vertices (seg->verts [side_vert [nSide][nPoint]])->x += inc;
+				Vertices (segP->verts [side_vert [nSide][nPoint]])->x += inc;
 				break;
 			case 'Y':
-				Vertices (seg->verts [side_vert [nSide][nPoint]])->y += inc;
+				Vertices (segP->verts [side_vert [nSide][nPoint]])->y += inc;
 				break;
 			case 'Z':
-				Vertices (seg->verts [side_vert [nSide][nPoint]])->z += inc;
+				Vertices (segP->verts [side_vert [nSide][nPoint]])->z += inc;
 				break;
 			}
 		break;
@@ -624,16 +624,16 @@ switch (m_selectMode) {
 	case LINE_MODE:
 		switch (axis) {
 			case 'X':
-				Vertices (seg->verts [line_vert [side_line [nSide][nLine]][0]])->x += inc;
-				Vertices (seg->verts [line_vert [side_line [nSide][nLine]][1]])->x += inc;
+				Vertices (segP->verts [line_vert [side_line [nSide][nLine]][0]])->x += inc;
+				Vertices (segP->verts [line_vert [side_line [nSide][nLine]][1]])->x += inc;
 				break;
 			case 'Y':
-				Vertices (seg->verts [line_vert [side_line [nSide][nLine]][0]])->y += inc;
-				Vertices (seg->verts [line_vert [side_line [nSide][nLine]][1]])->y += inc;
+				Vertices (segP->verts [line_vert [side_line [nSide][nLine]][0]])->y += inc;
+				Vertices (segP->verts [line_vert [side_line [nSide][nLine]][1]])->y += inc;
 				break;
 			case 'Z':
-				Vertices (seg->verts [line_vert [side_line [nSide][nLine]][0]])->z += inc;
-				Vertices (seg->verts [line_vert [side_line [nSide][nLine]][1]])->z += inc;
+				Vertices (segP->verts [line_vert [side_line [nSide][nLine]][0]])->z += inc;
+				Vertices (segP->verts [line_vert [side_line [nSide][nLine]][1]])->z += inc;
 				break;
 			}
 		break;
@@ -642,15 +642,15 @@ switch (m_selectMode) {
 		switch (axis) {
 			case 'X':
 			for (i = 0; i < 4; i++)
-				Vertices (seg->verts [side_vert [nSide][i]])->x += inc;
+				Vertices (segP->verts [side_vert [nSide][i]])->x += inc;
 			break;
 		case 'Y':
 			for (i = 0; i < 4; i++)
-				Vertices (seg->verts [side_vert [nSide][i]])->y += inc;
+				Vertices (segP->verts [side_vert [nSide][i]])->y += inc;
 			break;
 		case 'Z':
 			for (i = 0; i < 4; i++)
-				Vertices (seg->verts [side_vert [nSide][i]])->z += inc;
+				Vertices (segP->verts [side_vert [nSide][i]])->z += inc;
 			break;
 		}
 		break;
@@ -659,21 +659,21 @@ switch (m_selectMode) {
 		switch (axis) {
 			case 'X':
 				for (i = 0; i < 8; i++)
-					Vertices (seg->verts [i])->x += inc;
+					Vertices (segP->verts [i])->x += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++)
 					if (Objects (i)->nSegment == nSegment)
 						Objects (i)->pos.x += inc;
 				break;
 			case 'Y':
 				for (i = 0; i < 8; i++)
-					Vertices (seg->verts [i])->y += inc;
+					Vertices (segP->verts [i])->y += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
 					if (Objects (i)->nSegment == nSegment)
 						Objects (i)->pos.y += inc;
 				break;
 			case 'Z':
 				for (i = 0; i < 8; i++)
-					Vertices (seg->verts [i])->z += inc;
+					Vertices (segP->verts [i])->z += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
 					if (Objects (i)->nSegment == nSegment) 
 						Objects (i)->pos.z += inc;
@@ -743,7 +743,7 @@ bool CMine::SpinSelection (double angle)
 {
 	INT32 nSegment = Current ()->nSegment;
 	INT32 nSide = Current ()->nSide;
-	CDSegment *seg = Segments (nSegment);
+	CDSegment *segP = Segments (nSegment);
 	CGameObject *objP;
 	tFixVector center,opp_center;
 	INT16 i;
@@ -768,9 +768,9 @@ switch (m_selectMode) {
 		theApp.SetModified (TRUE);
 		center.x = center.y = center.z = 0;
 		for (i = 0; i < 4; i++) {
-			center.x += Vertices (seg->verts [side_vert [nSide][i]])->x;
-			center.y += Vertices (seg->verts [side_vert [nSide][i]])->y;
-			center.z += Vertices (seg->verts [side_vert [nSide][i]])->z;
+			center.x += Vertices (segP->verts [side_vert [nSide][i]])->x;
+			center.y += Vertices (segP->verts [side_vert [nSide][i]])->y;
+			center.z += Vertices (segP->verts [side_vert [nSide][i]])->z;
 			}
 		center.x /= 4;
 		center.y /= 4;
@@ -784,13 +784,13 @@ switch (m_selectMode) {
 		double length;
 		INT16 vertnum1,vertnum2;
 
-		vertnum1 = seg->verts [side_vert [nSide][0]];
-		vertnum2 = seg->verts [side_vert [nSide][1]];
+		vertnum1 = segP->verts [side_vert [nSide][0]];
+		vertnum2 = segP->verts [side_vert [nSide][1]];
 		a.x = (double)(Vertices (vertnum2)->x - Vertices (vertnum1)->x);
 		a.y = (double)(Vertices (vertnum2)->y - Vertices (vertnum1)->y);
 		a.z = (double)(Vertices (vertnum2)->z - Vertices (vertnum1)->z);
-		vertnum1 = seg->verts [side_vert [nSide][0]];
-		vertnum2 = seg->verts [side_vert [nSide][3]];
+		vertnum1 = segP->verts [side_vert [nSide][0]];
+		vertnum2 = segP->verts [side_vert [nSide][3]];
 		b.x = (double)(Vertices (vertnum2)->x - Vertices (vertnum1)->x);
 		b.y = (double)(Vertices (vertnum2)->y - Vertices (vertnum1)->y);
 		b.z = (double)(Vertices (vertnum2)->z - Vertices (vertnum1)->z);
@@ -814,7 +814,7 @@ switch (m_selectMode) {
 		opp_center.z = center.z + (FIX)(0x10000L*c.z);
 		/* rotate points around a line */
 		for (i = 0; i < 4; i++)
-			RotateVertex(Vertices (seg->verts [side_vert [nSide][i]]), &center,&opp_center,angle);
+			RotateVertex(Vertices (segP->verts [side_vert [nSide][i]]), &center,&opp_center,angle);
 		break;
 
 
@@ -823,9 +823,9 @@ switch (m_selectMode) {
 		theApp.SetModified (TRUE);
 		center.x = center.y = center.z = 0;
 		for (i = 0; i < 8; i++) {
-			center.x += Vertices (seg->verts [i])->x;
-			center.y += Vertices (seg->verts [i])->y;
-			center.z += Vertices (seg->verts [i])->z;
+			center.x += Vertices (segP->verts [i])->x;
+			center.y += Vertices (segP->verts [i])->y;
+			center.z += Vertices (segP->verts [i])->z;
 			}
 		center.x /= 8;
 		center.y /= 8;
@@ -833,16 +833,16 @@ switch (m_selectMode) {
 		// calculate center of oppisite current side
 		opp_center.x = opp_center.y = opp_center.z = 0;
 		for (i = 0; i < 4; i++) {
-			opp_center.x += Vertices (seg->verts [opp_side_vert [nSide][i]])->x;
-			opp_center.y += Vertices (seg->verts [opp_side_vert [nSide][i]])->y;
-			opp_center.z += Vertices (seg->verts [opp_side_vert [nSide][i]])->z;
+			opp_center.x += Vertices (segP->verts [opp_side_vert [nSide][i]])->x;
+			opp_center.y += Vertices (segP->verts [opp_side_vert [nSide][i]])->y;
+			opp_center.z += Vertices (segP->verts [opp_side_vert [nSide][i]])->z;
 			}
 		opp_center.x /= 4;
 		opp_center.y /= 4;
 		opp_center.z /= 4;
 		// rotate points about a point
 		for (i = 0; i < 8; i++)
-			RotateVertex(Vertices (seg->verts [i]),&center,&opp_center,angle);
+			RotateVertex(Vertices (segP->verts [i]),&center,&opp_center,angle);
 		break;
 
 	case OBJECT_MODE:	// spin object vector
@@ -875,9 +875,9 @@ switch (m_selectMode) {
 		// make point0 the origin
 		// and get coordinates of points 1 and 2 relative to point 0
 		for (i=0;i<3;i++) {
-			rel [i].x = vertices [seg->verts [side_vert [nSide][i]]].x - vertices [seg->verts [side_vert [nSide][0]]].x;
-			rel [i].y = vertices [seg->verts [side_vert [nSide][i]]].y - vertices [seg->verts [side_vert [nSide][0]]].y;
-			rel [i].z = vertices [seg->verts [side_vert [nSide][i]]].z - vertices [seg->verts [side_vert [nSide][0]]].z;
+			rel [i].x = vertices [segP->verts [side_vert [nSide][i]]].x - vertices [segP->verts [side_vert [nSide][0]]].x;
+			rel [i].y = vertices [segP->verts [side_vert [nSide][i]]].y - vertices [segP->verts [side_vert [nSide][0]]].y;
+			rel [i].z = vertices [segP->verts [side_vert [nSide][i]]].z - vertices [segP->verts [side_vert [nSide][0]]].z;
 			}
 		// calculate z-axis spin angle to rotate point1 so it lies in x-y plane
 		zspin = (rel [1].x==rel [1].y) ? PI/4 : atan2(rel [1].y,rel [1].x);
@@ -907,9 +907,9 @@ switch (m_selectMode) {
 		// calculate center of current cube
 		center.x = center.y = center.z = 0;
 		for (i = 0; i < 8; i++) {
-			center.x += Vertices (seg->verts [i])->x;
-			center.y += Vertices (seg->verts [i])->y;
-			center.z += Vertices (seg->verts [i])->z;
+			center.x += Vertices (segP->verts [i])->x;
+			center.y += Vertices (segP->verts [i])->y;
+			center.z += Vertices (segP->verts [i])->z;
 			}
 		center.x /= 8;
 		center.y /= 8;
@@ -917,9 +917,9 @@ switch (m_selectMode) {
 		// calculate center of oppisite current side
 		opp_center.x = opp_center.y = opp_center.z = 0;
 		for (i = 0; i < 4; i++) {
-			opp_center.x += Vertices (seg->verts [opp_side_vert [nSide][i]])->x;
-			opp_center.y += Vertices (seg->verts [opp_side_vert [nSide][i]])->y;
-			opp_center.z += Vertices (seg->verts [opp_side_vert [nSide][i]])->z;
+			opp_center.x += Vertices (segP->verts [opp_side_vert [nSide][i]])->x;
+			opp_center.y += Vertices (segP->verts [opp_side_vert [nSide][i]])->y;
+			opp_center.z += Vertices (segP->verts [opp_side_vert [nSide][i]])->z;
 			}
 		opp_center.x /= 4;
 		opp_center.y /= 4;

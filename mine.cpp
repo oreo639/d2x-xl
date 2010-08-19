@@ -651,43 +651,43 @@ else {
 // ------------------------------------------------------------------------
 INT16 CMine::FixIndexValues()
 {
-	INT16 	segnum, sidenum, vertnum;
-	UINT16	wallnum;
+	INT16 	nSegment, nSide, vertnum;
+	UINT16	nWall;
 	INT16 	check_err;
 
 	check_err = 0;
-	CDSegment *seg = Segments ();
-	for(segnum = 0; segnum < SegCount (); segnum++, seg++) {
-		for(sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
+	CDSegment *segP = Segments ();
+	for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			// check wall numbers
-			CDSide& side = seg->sides [sidenum];
+			CDSide& side = segP->sides [nSide];
 			if (side.nWall >= GameInfo ().walls.count &&
 				side.nWall != NO_WALL (this)) {
 				side.nWall = NO_WALL (this);
 				check_err |= (1 << 0);
 			}
 			// check children
-			if (seg->children [sidenum] < - 2 || seg->children [sidenum] >(INT16)SegCount ()) {
-				seg->children [sidenum] =-1;
+			if (segP->children [nSide] < - 2 || segP->children [nSide] >(INT16)SegCount ()) {
+				segP->children [nSide] =-1;
 				check_err |= (1 << 1);
 			}
 		}
 		// check verts
 		for(vertnum = 0; vertnum < MAX_VERTICES_PER_SEGMENT; vertnum++) {
-			if (seg->verts [vertnum] < 0 || seg->verts [vertnum] >= VertCount ()) {
-				seg->verts [vertnum] = 0;  // this will cause a bad looking picture
+			if (segP->verts [vertnum] < 0 || segP->verts [vertnum] >= VertCount ()) {
+				segP->verts [vertnum] = 0;  // this will cause a bad looking picture
 				check_err |= (1 << 2);      // but it will prevent a crash
 			}
 		}
 	}
 	CWall *wall = Walls ();
-	for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++, wall++) {
-		// check segnum
+	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wall++) {
+		// check nSegment
 		if (wall->nSegment < 0 || wall->nSegment > SegCount ()) {
 			wall->nSegment = 0;
 			check_err |= (1 << 3);
 		}
-		// check sidenum
+		// check nSide
 		if (wall->nSide < 0 || wall->nSide > 5) {
 			wall->nSide = 0;
 			check_err |= (1 << 4);
@@ -710,130 +710,130 @@ void CMine::Default()
 		m_nHxmExtraDataSize = 0;
 		}
 
-	CDSegment& seg = *Segments ();
+	CDSegment& segP = *Segments ();
 	tFixVector *vert = Vertices ();
 
-	seg.sides [0].nWall = NO_WALL (this);
-	seg.sides [0].nBaseTex = 0;
-	seg.sides [0].nOvlTex = 0;
-	seg.sides [0].uvls [0].u = 0;
-	seg.sides [0].uvls [0].v = 0;
-	seg.sides [0].uvls [0].l = 0x8000U;
-	seg.sides [0].uvls [1].u = 0;
-	seg.sides [0].uvls [1].v = 2047;
-	seg.sides [0].uvls [1].l = 511;
-	seg.sides [0].uvls [2].u = - 2048;
-	seg.sides [0].uvls [2].v = 2047;
-	seg.sides [0].uvls [2].l = 3833;
-	seg.sides [0].uvls [3].u = - 2048;
-	seg.sides [0].uvls [3].v = 0;
-	seg.sides [0].uvls [3].l = 0x8000U;
+	segP.sides [0].nWall = NO_WALL (this);
+	segP.sides [0].nBaseTex = 0;
+	segP.sides [0].nOvlTex = 0;
+	segP.sides [0].uvls [0].u = 0;
+	segP.sides [0].uvls [0].v = 0;
+	segP.sides [0].uvls [0].l = 0x8000U;
+	segP.sides [0].uvls [1].u = 0;
+	segP.sides [0].uvls [1].v = 2047;
+	segP.sides [0].uvls [1].l = 511;
+	segP.sides [0].uvls [2].u = - 2048;
+	segP.sides [0].uvls [2].v = 2047;
+	segP.sides [0].uvls [2].l = 3833;
+	segP.sides [0].uvls [3].u = - 2048;
+	segP.sides [0].uvls [3].v = 0;
+	segP.sides [0].uvls [3].l = 0x8000U;
 
-	seg.sides [1].nWall = NO_WALL (this);
-	seg.sides [1].nBaseTex = 263;
-	seg.sides [1].nOvlTex = 264;
-	seg.sides [1].uvls [0].u = 0;
-	seg.sides [1].uvls [0].v = 0;
-	seg.sides [1].uvls [0].l = 0x8000U;
-	seg.sides [1].uvls [1].u = 0;
-	seg.sides [1].uvls [1].v = 2047;
-	seg.sides [1].uvls [1].l = 0x8000U;
-	seg.sides [1].uvls [2].u = - 2048;
-	seg.sides [1].uvls [2].v = 2047;
-	seg.sides [1].uvls [2].l = 0x8000U;
-	seg.sides [1].uvls [3].u = - 2048;
-	seg.sides [1].uvls [3].v = 0;
-	seg.sides [1].uvls [3].l = 0x8000U;
+	segP.sides [1].nWall = NO_WALL (this);
+	segP.sides [1].nBaseTex = 263;
+	segP.sides [1].nOvlTex = 264;
+	segP.sides [1].uvls [0].u = 0;
+	segP.sides [1].uvls [0].v = 0;
+	segP.sides [1].uvls [0].l = 0x8000U;
+	segP.sides [1].uvls [1].u = 0;
+	segP.sides [1].uvls [1].v = 2047;
+	segP.sides [1].uvls [1].l = 0x8000U;
+	segP.sides [1].uvls [2].u = - 2048;
+	segP.sides [1].uvls [2].v = 2047;
+	segP.sides [1].uvls [2].l = 0x8000U;
+	segP.sides [1].uvls [3].u = - 2048;
+	segP.sides [1].uvls [3].v = 0;
+	segP.sides [1].uvls [3].l = 0x8000U;
 
-	seg.sides [2].nWall = NO_WALL (this);
-	seg.sides [2].nBaseTex = 0;
-	seg.sides [2].nOvlTex = 0;
-	seg.sides [2].uvls [0].u = 0;
-	seg.sides [2].uvls [0].v = 0;
-	seg.sides [2].uvls [0].l = 0x8000U;
-	seg.sides [2].uvls [1].u = 0;
-	seg.sides [2].uvls [1].v = 2047;
-	seg.sides [2].uvls [1].l = 3836;
-	seg.sides [2].uvls [2].u = - 2048;
-	seg.sides [2].uvls [2].v = 2047;
-	seg.sides [2].uvls [2].l = 5126;
-	seg.sides [2].uvls [3].u = - 2048;
-	seg.sides [2].uvls [3].v = 0;
-	seg.sides [2].uvls [3].l = 0x8000U;
+	segP.sides [2].nWall = NO_WALL (this);
+	segP.sides [2].nBaseTex = 0;
+	segP.sides [2].nOvlTex = 0;
+	segP.sides [2].uvls [0].u = 0;
+	segP.sides [2].uvls [0].v = 0;
+	segP.sides [2].uvls [0].l = 0x8000U;
+	segP.sides [2].uvls [1].u = 0;
+	segP.sides [2].uvls [1].v = 2047;
+	segP.sides [2].uvls [1].l = 3836;
+	segP.sides [2].uvls [2].u = - 2048;
+	segP.sides [2].uvls [2].v = 2047;
+	segP.sides [2].uvls [2].l = 5126;
+	segP.sides [2].uvls [3].u = - 2048;
+	segP.sides [2].uvls [3].v = 0;
+	segP.sides [2].uvls [3].l = 0x8000U;
 
-	seg.sides [3].nWall = NO_WALL (this);
-	seg.sides [3].nBaseTex = 270;
-	seg.sides [3].nOvlTex = 0;
-	seg.sides [3].uvls [0].u = 0;
-	seg.sides [3].uvls [0].v = 0;
-	seg.sides [3].uvls [0].l = 11678;
-	seg.sides [3].uvls [1].u = 0;
-	seg.sides [3].uvls [1].v = 2047;
-	seg.sides [3].uvls [1].l = 12001;
-	seg.sides [3].uvls [2].u = - 2048;
-	seg.sides [3].uvls [2].v = 2047;
-	seg.sides [3].uvls [2].l = 12001;
-	seg.sides [3].uvls [3].u = - 2048;
-	seg.sides [3].uvls [3].v = 0;
-	seg.sides [3].uvls [3].l = 11678;
+	segP.sides [3].nWall = NO_WALL (this);
+	segP.sides [3].nBaseTex = 270;
+	segP.sides [3].nOvlTex = 0;
+	segP.sides [3].uvls [0].u = 0;
+	segP.sides [3].uvls [0].v = 0;
+	segP.sides [3].uvls [0].l = 11678;
+	segP.sides [3].uvls [1].u = 0;
+	segP.sides [3].uvls [1].v = 2047;
+	segP.sides [3].uvls [1].l = 12001;
+	segP.sides [3].uvls [2].u = - 2048;
+	segP.sides [3].uvls [2].v = 2047;
+	segP.sides [3].uvls [2].l = 12001;
+	segP.sides [3].uvls [3].u = - 2048;
+	segP.sides [3].uvls [3].v = 0;
+	segP.sides [3].uvls [3].l = 11678;
 
-	seg.sides [4].nWall = NO_WALL (this);
-	seg.sides [4].nBaseTex = 0;
-	seg.sides [4].nOvlTex = 0;
-	seg.sides [4].uvls [0].u = 0;
-	seg.sides [4].uvls [0].v = 0;
-	seg.sides [4].uvls [0].l = 0x8000U;
-	seg.sides [4].uvls [1].u = 0;
-	seg.sides [4].uvls [1].v = 2043;
-	seg.sides [4].uvls [1].l = 0x8000U;
-	seg.sides [4].uvls [2].u = - 2044;
-	seg.sides [4].uvls [2].v = 2045;
-	seg.sides [4].uvls [2].l = 0x8000U;
-	seg.sides [4].uvls [3].u = - 2043;
-	seg.sides [4].uvls [3].v = 0;
-	seg.sides [4].uvls [3].l = 0x8000U;
+	segP.sides [4].nWall = NO_WALL (this);
+	segP.sides [4].nBaseTex = 0;
+	segP.sides [4].nOvlTex = 0;
+	segP.sides [4].uvls [0].u = 0;
+	segP.sides [4].uvls [0].v = 0;
+	segP.sides [4].uvls [0].l = 0x8000U;
+	segP.sides [4].uvls [1].u = 0;
+	segP.sides [4].uvls [1].v = 2043;
+	segP.sides [4].uvls [1].l = 0x8000U;
+	segP.sides [4].uvls [2].u = - 2044;
+	segP.sides [4].uvls [2].v = 2045;
+	segP.sides [4].uvls [2].l = 0x8000U;
+	segP.sides [4].uvls [3].u = - 2043;
+	segP.sides [4].uvls [3].v = 0;
+	segP.sides [4].uvls [3].l = 0x8000U;
 
-	seg.sides [5].nWall = NO_WALL (this);
-	seg.sides [5].nBaseTex = 0;
-	seg.sides [5].nOvlTex = 0;
-	seg.sides [5].uvls [0].u = 0;
-	seg.sides [5].uvls [0].v = 0;
-	seg.sides [5].uvls [0].l = 24576;
-	seg.sides [5].uvls [1].u = 0;
-	seg.sides [5].uvls [1].v = 2048;
-	seg.sides [5].uvls [1].l = 24576;
-	seg.sides [5].uvls [2].u = - 2048;
-	seg.sides [5].uvls [2].v = 2048;
-	seg.sides [5].uvls [2].l = 24576;
-	seg.sides [5].uvls [3].u = - 2048;
-	seg.sides [5].uvls [3].v = 0;
-	seg.sides [5].uvls [3].l = 24576;
+	segP.sides [5].nWall = NO_WALL (this);
+	segP.sides [5].nBaseTex = 0;
+	segP.sides [5].nOvlTex = 0;
+	segP.sides [5].uvls [0].u = 0;
+	segP.sides [5].uvls [0].v = 0;
+	segP.sides [5].uvls [0].l = 24576;
+	segP.sides [5].uvls [1].u = 0;
+	segP.sides [5].uvls [1].v = 2048;
+	segP.sides [5].uvls [1].l = 24576;
+	segP.sides [5].uvls [2].u = - 2048;
+	segP.sides [5].uvls [2].v = 2048;
+	segP.sides [5].uvls [2].l = 24576;
+	segP.sides [5].uvls [3].u = - 2048;
+	segP.sides [5].uvls [3].v = 0;
+	segP.sides [5].uvls [3].l = 24576;
 
-	seg.children [0] =-1;
-	seg.children [1] =-1;
-	seg.children [2] =-1;
-	seg.children [3] =-1;
-	seg.children [4] =-1;
-	seg.children [5] =-1;
+	segP.children [0] =-1;
+	segP.children [1] =-1;
+	segP.children [2] =-1;
+	segP.children [3] =-1;
+	segP.children [4] =-1;
+	segP.children [5] =-1;
 
-	seg.verts [0] = 0;
-	seg.verts [1] = 1;
-	seg.verts [2] = 2;
-	seg.verts [3] = 3;
-	seg.verts [4] = 4;
-	seg.verts [5] = 5;
-	seg.verts [6] = 6;
-	seg.verts [7] = 7;
+	segP.verts [0] = 0;
+	segP.verts [1] = 1;
+	segP.verts [2] = 2;
+	segP.verts [3] = 3;
+	segP.verts [4] = 4;
+	segP.verts [5] = 5;
+	segP.verts [6] = 6;
+	segP.verts [7] = 7;
 
-	seg.function = 0;
-	seg.nMatCen =-1;
-	seg.value =-1;
-	seg.s2_flags = 0;
-	seg.static_light = 263152L;
-	seg.child_bitmask = 0;
-	seg.wall_bitmask = 0;
-	seg.nIndex = 0;
-	seg.map_bitmask = 0;
+	segP.function = 0;
+	segP.nMatCen =-1;
+	segP.value =-1;
+	segP.s2_flags = 0;
+	segP.static_light = 263152L;
+	segP.child_bitmask = 0;
+	segP.wall_bitmask = 0;
+	segP.nIndex = 0;
+	segP.map_bitmask = 0;
 
 	vert [0].x = 10*F1_0;
 	vert [0].y = 10*F1_0;
@@ -871,9 +871,9 @@ void CMine::ClearMineData() {
 	INT16 i;
 
 	// initialize Segments ()
-	CDSegment *seg = Segments ();
-	for (i = 0; i < MAX_SEGMENTS (this); i++, seg++)
-		seg->wall_bitmask &= ~MARKED_MASK;
+	CDSegment *segP = Segments ();
+	for (i = 0; i < MAX_SEGMENTS (this); i++, segP++)
+		segP->wall_bitmask &= ~MARKED_MASK;
 	SegCount () = 0;
 
 	// initialize vertices
@@ -930,7 +930,7 @@ if (LevelVersion () > nFirstVersion)
 // ------------------------------------------------------------------------
 INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 {
-	INT16    i, segnum, sidenum; /** was INT32 */
+	INT16    i, nSegment, nSide; /** was INT32 */
 	UINT8    version;
 	UINT16   temp_UINT16;
 	UINT8    bit_mask;
@@ -985,130 +985,130 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	}
 
 	// read segment information
-	for (segnum = 0; segnum < SegCount (); segnum++)   {
+	for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 		INT16   bit; /** was INT32 */
-		CDSegment *seg = Segments (segnum);
+		CDSegment *segP = Segments (nSegment);
 		if (IsD2XLevel ()) {
-			fread(&seg->owner, sizeof (UINT8), 1, loadFile);
-			fread(&seg->group, sizeof (INT8), 1, loadFile);
+			fread(&segP->owner, sizeof (UINT8), 1, loadFile);
+			fread(&segP->group, sizeof (INT8), 1, loadFile);
 			}
 		else {
-			seg->owner = -1;
-			seg->group = -1;
+			segP->owner = -1;
+			segP->group = -1;
 			}
 		// read in child mask (1 byte)
 		fread(&bit_mask, sizeof (UINT8), 1, loadFile);
-		seg->child_bitmask = bit_mask;
+		segP->child_bitmask = bit_mask;
 
 		// read 0 to 6 children (0 to 12 bytes)
 		for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
 			if (bit_mask & (1 << bit)) {
-				fread(&seg->children [bit], sizeof (INT16), 1, loadFile);
+				fread(&segP->children [bit], sizeof (INT16), 1, loadFile);
 			} else {
-				seg->children [bit] =-1;
+				segP->children [bit] =-1;
 			}
 		}
 
 		// read vertex numbers (16 bytes)
-		fread(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, loadFile);
+		fread(segP->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, loadFile);
 
 		if (IsD1File ()) {
 			// read special info (0 to 4 bytes)
 			if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
-				fread(&seg->function, sizeof(UINT8), 1, loadFile);
-				fread(&seg->nMatCen, sizeof(INT8), 1, loadFile);
-				fread(&seg->value, sizeof(INT8), 1, loadFile);
-				fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
+				fread(&segP->function, sizeof(UINT8), 1, loadFile);
+				fread(&segP->nMatCen, sizeof(INT8), 1, loadFile);
+				fread(&segP->value, sizeof(INT8), 1, loadFile);
+				fread(&segP->s2_flags, sizeof(UINT8), 1, loadFile);
 			} else {
-				seg->owner = -1;
-				seg->group = -1;
-				seg->function = 0;
-				seg->nMatCen =-1;
-				seg->value = 0;
+				segP->owner = -1;
+				segP->group = -1;
+				segP->function = 0;
+				segP->nMatCen =-1;
+				segP->value = 0;
 			}
-			seg->s2_flags = 0;  // d1 doesn't use this number, so zero it
+			segP->s2_flags = 0;  // d1 doesn't use this number, so zero it
 
 			// read static light (2 bytes)
 			fread(&temp_UINT16, sizeof (temp_UINT16), 1, loadFile);
-			seg->static_light = ((FIX)temp_UINT16) << 4;
+			segP->static_light = ((FIX)temp_UINT16) << 4;
 		}
 
 		// read the wall bit mask
 		fread(&bit_mask, sizeof (UINT8), 1, loadFile);
 
 		// read in wall numbers (0 to 6 bytes)
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
-			if (bit_mask & (1 << sidenum)) {
+		for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+			if (bit_mask & (1 << nSide)) {
 				if (LevelVersion () < 13) {
 					UINT8	nWall;
 					fread(&nWall, sizeof (UINT8), 1, loadFile);
-					seg->sides [sidenum].nWall = nWall;
+					segP->sides [nSide].nWall = nWall;
 					}
 				else {
 					UINT16	nWall;
 					fread(&nWall, sizeof (UINT16), 1, loadFile);
-					seg->sides [sidenum].nWall = nWall;
+					segP->sides [nSide].nWall = nWall;
 					}
 				} 
 			else {
-				seg->sides [sidenum].nWall = NO_WALL (this);
+				segP->sides [nSide].nWall = NO_WALL (this);
 			}
 		}
 
 		// read in textures and uvls (0 to 60 bytes)
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)   {
-			if ((seg->children [sidenum]==-1) || (bit_mask & (1 << sidenum))) {
+		for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)   {
+			if ((segP->children [nSide]==-1) || (bit_mask & (1 << nSide))) {
 				//  read in texture 1 number
 				fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
-				seg->sides [sidenum].nBaseTex = temp_UINT16 & 0x7fff;
+				segP->sides [nSide].nBaseTex = temp_UINT16 & 0x7fff;
 				//   read in texture 2 number
 				if (!(temp_UINT16 & 0x8000)) {
-					seg->sides [sidenum].nOvlTex = 0;
+					segP->sides [nSide].nOvlTex = 0;
 				} else {
 					fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
-					seg->sides [sidenum].nOvlTex = temp_UINT16;
+					segP->sides [nSide].nOvlTex = temp_UINT16;
 					temp_UINT16 &= 0x1fff;
 					if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES (this)))
-						seg->sides [sidenum].nOvlTex = 0;
+						segP->sides [nSide].nOvlTex = 0;
 				}
 
 				//   read uvl numbers
 				for (i = 0; i < 4; i++)   {
-					fread(&seg->sides [sidenum].uvls [i].u, sizeof (INT16), 1, loadFile);
-					fread(&seg->sides [sidenum].uvls [i].v, sizeof (INT16), 1, loadFile);
-					fread(&seg->sides [sidenum].uvls [i].l, sizeof (INT16), 1, loadFile);
+					fread(&segP->sides [nSide].uvls [i].u, sizeof (INT16), 1, loadFile);
+					fread(&segP->sides [nSide].uvls [i].v, sizeof (INT16), 1, loadFile);
+					fread(&segP->sides [nSide].uvls [i].l, sizeof (INT16), 1, loadFile);
 				}
 			} else {
-				seg->sides [sidenum].nBaseTex = 0;
-				seg->sides [sidenum].nOvlTex = 0;
+				segP->sides [nSide].nBaseTex = 0;
+				segP->sides [nSide].nOvlTex = 0;
 				for (i = 0; i < 4; i++)   {
-					seg->sides [sidenum].uvls [i].u = 0;
-					seg->sides [sidenum].uvls [i].v = 0;
-					seg->sides [sidenum].uvls [i].l = 0;
+					segP->sides [nSide].uvls [i].u = 0;
+					segP->sides [nSide].uvls [i].v = 0;
+					segP->sides [nSide].uvls [i].l = 0;
 				}
 			}
 		}
 	}
 
 	if (IsD2File ()) {
-		CDSegment *seg = Segments ();
-		for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
+		CDSegment *segP = Segments ();
+		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// read special info (8 bytes)
-			fread(&seg->function, sizeof(UINT8), 1, loadFile);
-			fread(&seg->nMatCen, sizeof(INT8), 1, loadFile);
-			fread(&seg->value, sizeof(INT8), 1, loadFile);
-			fread(&seg->s2_flags, sizeof(UINT8), 1, loadFile);
+			fread(&segP->function, sizeof(UINT8), 1, loadFile);
+			fread(&segP->nMatCen, sizeof(INT8), 1, loadFile);
+			fread(&segP->value, sizeof(INT8), 1, loadFile);
+			fread(&segP->s2_flags, sizeof(UINT8), 1, loadFile);
 			if (LevelVersion () <= 20)
-				seg->Upgrade ();
+				segP->Upgrade ();
 			else {
-				fread(&seg->props, sizeof(UINT8), 1, loadFile);
-				fread(seg->damage, sizeof(INT16), 2, loadFile);
+				fread(&segP->props, sizeof(UINT8), 1, loadFile);
+				fread(segP->damage, sizeof(INT16), 2, loadFile);
 				}
-			fread(&seg->static_light, sizeof(FIX), 1, loadFile);
-			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == -1)) {
-				seg->function = SEGMENT_FUNC_NONE;
-				seg->value = 0;
-				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
+			fread(&segP->static_light, sizeof(FIX), 1, loadFile);
+			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
+				segP->function = SEGMENT_FUNC_NONE;
+				segP->value = 0;
+				segP->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
 			}
 		}
@@ -1700,7 +1700,7 @@ return 0;
 // ------------------------------------------------------------------------
 INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 {
-	INT16    i, segnum, sidenum; /** was INT32 */
+	INT16    i, nSegment, nSide; /** was INT32 */
 	UINT16   temp_UINT16;
 	UINT8 bitmask;
 
@@ -1719,111 +1719,111 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 	fwrite(Vertices (), sizeof (tFixVector), VertCount (), save_file);
 
 	// write segment information
-	for (segnum = 0; segnum < SegCount (); segnum++)   {
+	for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 		INT16   bit;
 
 #if 0
 		INT32 off;
 		off = ftell(save_file);
-		if (segnum < 10) {
-			sprintf_s (message, sizeof (message),  "offset = %#08lx, segnum = ", off, segnum);
+		if (nSegment < 10) {
+			sprintf_s (message, sizeof (message),  "offset = %#08lx, nSegment = ", off, nSegment);
 			INFOMSG (message);
 		}
 #endif
 
 
-		CDSegment *seg = Segments (segnum);
+		CDSegment *segP = Segments (nSegment);
 
 		if (IsD2XLevel ()) {
-			fwrite(&seg->owner, sizeof (UINT8), 1, save_file);
-			fwrite(&seg->group, sizeof (INT8), 1, save_file);
+			fwrite(&segP->owner, sizeof (UINT8), 1, save_file);
+			fwrite(&segP->group, sizeof (INT8), 1, save_file);
 			}
 		// write child bit mask (1 byte)
 		// (first calculate child_bitmask from children)
 		bitmask = 0;
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
-			if(seg->children [sidenum] != -1) {
-				bitmask |= (1 << sidenum);
+		for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+			if(segP->children [nSide] != -1) {
+				bitmask |= (1 << nSide);
 			}
 		}
 		if (m_fileType== RDL_FILE) {
-			if (seg->function != 0) { // if this is a special cube
+			if (segP->function != 0) { // if this is a special cube
 				bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
 			}
 		}
 
 #if 0
-		if (bitmask != seg->child_bitmask) {
+		if (bitmask != segP->child_bitmask) {
 			sprintf_s (message, sizeof (message),  " Saving mine: child_bitmask(%#02x) != calculated one(%#02x)\n"
-				"for cube (%d)", seg->child_bitmask, bitmask, segnum);
+				"for cube (%d)", segP->child_bitmask, bitmask, nSegment);
 			DEBUGMSG(message);
 		}
 #endif
-		bitmask = seg->child_bitmask; // override for test purposes
+		bitmask = segP->child_bitmask; // override for test purposes
 
 		fwrite(&bitmask, sizeof (UINT8), 1, save_file);
 
 		// write children numbers (0 to 6 bytes)
 		for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
 			if (bitmask & (1 << bit)) {
-				fwrite(&seg->children [bit], sizeof (INT16), 1, save_file);
+				fwrite(&segP->children [bit], sizeof (INT16), 1, save_file);
 			}
 		}
 
 		// write vertex numbers (16 bytes)
-		fwrite(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, save_file);
+		fwrite(segP->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, save_file);
 
 		// write special info (0 to 4 bytes)
 		if (IsD1File ()) {
 			if (bitmask & (1 << MAX_SIDES_PER_SEGMENT)) {
-				fwrite(&seg->function, sizeof(UINT8), 1, save_file);
-				fwrite(&seg->nMatCen, sizeof(INT8), 1, save_file);
-				fwrite(&seg->value, sizeof(INT8), 1, save_file);
-				fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file); // this should be 0
+				fwrite(&segP->function, sizeof(UINT8), 1, save_file);
+				fwrite(&segP->nMatCen, sizeof(INT8), 1, save_file);
+				fwrite(&segP->value, sizeof(INT8), 1, save_file);
+				fwrite(&segP->s2_flags, sizeof(UINT8), 1, save_file); // this should be 0
 			}
 
 			// write static light (2 bytes)
-			temp_UINT16 = (UINT16)((seg->static_light) >> 4);
+			temp_UINT16 = (UINT16)((segP->static_light) >> 4);
 			fwrite(&temp_UINT16, sizeof (temp_UINT16), 1, save_file);
 		}
 
 		// calculate wall bit mask
 		bitmask = 0;
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
-			if(seg->sides [sidenum].nWall < GameInfo ().walls.count) {
-				bitmask |= (1 << sidenum);
+		for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+			if(segP->sides [nSide].nWall < GameInfo ().walls.count) {
+				bitmask |= (1 << nSide);
 			}
 		}
 		fwrite(&bitmask, sizeof (UINT8), 1, save_file);
 
 		// write wall numbers
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
-			if (bitmask & (1 << sidenum)) {
+		for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+			if (bitmask & (1 << nSide)) {
 				if (LevelVersion () >= 13)
-					fwrite(&seg->sides [sidenum].nWall, sizeof (UINT16), 1, save_file);
+					fwrite(&segP->sides [nSide].nWall, sizeof (UINT16), 1, save_file);
 				else
-					fwrite(&seg->sides [sidenum].nWall, sizeof (UINT8), 1, save_file);
+					fwrite(&segP->sides [nSide].nWall, sizeof (UINT8), 1, save_file);
 			}
 		}
 
 		// write textures and uvls
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)   {
-			if ((seg->children [sidenum]==-1) || (bitmask & (1 << sidenum)))   {
+		for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)   {
+			if ((segP->children [nSide]==-1) || (bitmask & (1 << nSide)))   {
 				// write texture 1 & 2 number
-				temp_UINT16 = seg->sides [sidenum].nBaseTex;
-				if (!seg->sides [sidenum].nOvlTex) {
+				temp_UINT16 = segP->sides [nSide].nBaseTex;
+				if (!segP->sides [nSide].nOvlTex) {
 					fwrite(&temp_UINT16, sizeof (UINT16), 1, save_file);
 				} else {
 					temp_UINT16 |= 0x8000;
 					fwrite(&temp_UINT16, sizeof (UINT16), 1, save_file);
-					fwrite(&seg->sides [sidenum].nOvlTex, sizeof (INT16), 1, save_file);
+					fwrite(&segP->sides [nSide].nOvlTex, sizeof (INT16), 1, save_file);
 				}
 
 				//   write uvls
 				for (i = 0; i < 4; i++)   {
-					fwrite(&seg->sides [sidenum].uvls [i].u, sizeof (INT16), 1, save_file);
-					fwrite(&seg->sides [sidenum].uvls [i].v, sizeof (INT16), 1, save_file);
-					fwrite(&seg->sides [sidenum].uvls [i].l, sizeof (INT16), 1, save_file);
+					fwrite(&segP->sides [nSide].uvls [i].u, sizeof (INT16), 1, save_file);
+					fwrite(&segP->sides [nSide].uvls [i].v, sizeof (INT16), 1, save_file);
+					fwrite(&segP->sides [nSide].uvls [i].l, sizeof (INT16), 1, save_file);
 				}
 			}
 		}
@@ -1831,23 +1831,23 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
   // for Descent 2, save special info here
   if (IsD2File ()) {
-	  CDSegment *seg = Segments ();
-	  for (segnum = 0; segnum < SegCount (); segnum++, seg++)   {
+	  CDSegment *segP = Segments ();
+	  for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)   {
 		  // write special info (8 bytes)
-			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == -1)) {
-				seg->function = SEGMENT_FUNC_NONE;
-				seg->value = 0;
-				seg->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
+			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
+				segP->function = SEGMENT_FUNC_NONE;
+				segP->value = 0;
+				segP->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
-			fwrite(&seg->function, sizeof(UINT8), 1, save_file);
-			fwrite(&seg->nMatCen, sizeof(INT8), 1, save_file);
-			fwrite(&seg->value, sizeof(INT8), 1, save_file);
-			fwrite(&seg->s2_flags, sizeof(UINT8), 1, save_file);
+			fwrite(&segP->function, sizeof(UINT8), 1, save_file);
+			fwrite(&segP->nMatCen, sizeof(INT8), 1, save_file);
+			fwrite(&segP->value, sizeof(INT8), 1, save_file);
+			fwrite(&segP->s2_flags, sizeof(UINT8), 1, save_file);
 			if (IsD2XLevel ()) {
-				fwrite(&seg->props, sizeof(UINT8), 1, save_file);
-				fwrite(seg->damage, sizeof(INT16), 2, save_file);
+				fwrite(&segP->props, sizeof(UINT8), 1, save_file);
+				fwrite(segP->damage, sizeof(INT16), 2, save_file);
 				}
-			fwrite(&seg->static_light, sizeof(FIX), 1, save_file);
+			fwrite(&segP->static_light, sizeof(FIX), 1, save_file);
 	  }
 	if (IsD2XLevel ()) {
 		SaveColors (VertexColors (), VertCount (), save_file);
@@ -2077,12 +2077,12 @@ void CMine::UpdateDeltaLights ()
 {
 return;
 	bool found = FALSE;
-	CDSegment *seg = Segments ();
-	INT32 segnum;
-	for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
-		INT32 sidenum;
-		for (sidenum = 0; sidenum < 6; sidenum++) {
-			INT16 tmapnum2 = seg->sides [sidenum].nOvlTex & 0x1fff;
+	CDSegment *segP = Segments ();
+	INT32 nSegment;
+	for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+		INT32 nSide;
+		for (nSide = 0; nSide < 6; nSide++) {
+			INT16 tmapnum2 = segP->sides [nSide].nOvlTex & 0x1fff;
 			if (IsLight(tmapnum2) != -1) {
 				found = TRUE;
 				break;
@@ -2102,7 +2102,7 @@ return;
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcOrthoVector(tFixVector &result, INT16 segnum, INT16 sidenum)
+void CMine::CalcOrthoVector(tFixVector &result, INT16 nSegment, INT16 nSide)
 {
 	struct dvector a, b, c;
 	double length;
@@ -2113,15 +2113,15 @@ void CMine::CalcOrthoVector(tFixVector &result, INT16 segnum, INT16 sidenum)
     // AxB = |ax ay az|= x(aybz - azby), y(azbx - axbz), z(axby - aybx)
     //       |bx by bz|
 
-    vertnum1 =Segments (segnum)->verts [side_vert [sidenum] [0]];
-    vertnum2 =Segments (segnum)->verts [side_vert [sidenum] [1]];
+    vertnum1 =Segments (nSegment)->verts [side_vert [nSide] [0]];
+    vertnum2 =Segments (nSegment)->verts [side_vert [nSide] [1]];
 	 tFixVector *v1 = Vertices (vertnum1);
 	 tFixVector *v2 = Vertices (vertnum2);
     a.x = (double)(v2->x - v1->x);
     a.y = (double)(v2->y - v1->y);
     a.z = (double)(v2->z - v1->z);
-    vertnum1 =Segments (segnum)->verts [side_vert [sidenum] [0]];
-    vertnum2 =Segments (segnum)->verts [side_vert [sidenum] [3]];
+    vertnum1 =Segments (nSegment)->verts [side_vert [nSide] [0]];
+    vertnum2 =Segments (nSegment)->verts [side_vert [nSide] [3]];
 	 v1 = Vertices (vertnum1);
 	 v2 = Vertices (vertnum2);
     b.x = (double)(v2->x - v1->x);
@@ -2147,15 +2147,15 @@ void CMine::CalcOrthoVector(tFixVector &result, INT16 segnum, INT16 sidenum)
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcCenter(tFixVector &center, INT16 segnum, INT16 sidenum)
+void CMine::CalcCenter(tFixVector &center, INT16 nSegment, INT16 nSide)
 {
 	INT32 i;
 
 	center.x = center.y = center.z = 0;
 	tFixVector *v;
-	CDSegment *seg = Segments (segnum);
+	CDSegment *segP = Segments (nSegment);
 	for (i = 0; i < 4; i++) {
-		v = Vertices (seg->verts [side_vert [sidenum][i]]);
+		v = Vertices (segP->verts [side_vert [nSide][i]]);
 		center.x += (v->x) >> 2;
 		center.y += (v->y) >> 2;
 		center.z += (v->z) >> 2;
