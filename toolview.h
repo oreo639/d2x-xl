@@ -1349,7 +1349,7 @@ class CToolView : public CWnd {
 			{ return m_missionTool; }
 		inline CDiagTool *DiagTool ()
 			{ return m_diagTool; }
-		inline CTxtFilterTool *TxtFilter ()
+		inline CTxtFilterTool *TextureFilter ()
 			{ return m_txtFilterTool; }
 		inline CPrefsDlg *PrefsDlg ()
 			{ return m_prefsDlg; }

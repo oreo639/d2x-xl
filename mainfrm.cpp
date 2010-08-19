@@ -750,7 +750,7 @@ GetMine ()->TunnelGenerator ();
 void CMainFrame::OnTxtFilters () 
 {
 ShowTools ();
-ToolView ()->TxtFilter ();
+ToolView ()->TextureFilter ();
 }
 
 void CMainFrame::OnIncSpline () 

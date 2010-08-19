@@ -41,8 +41,8 @@ class CTextureView : public CWnd {
 		void Reset ();
 		void QSortTxtMap (short left, short right);
 		void CrtTxtMap (void);
-		UINT32 TxtFilter (short nTxt);
-		short TxtFilterIndex (short nTxt);
+		UINT32 TextureFilter (short nTxt);
+		short TexFilterIndex (short nTxt);
 		int QCmpTxtFilters (int nTxt, int mTxt, UINT32 mf, UINT32 mf2);
 //		CTreeView	m_treeView;
 //		afx_msg int CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -72,7 +72,7 @@ class CTextureView : public CWnd {
 			}
 		inline UINT32 GetViewFlags ()
 			{ return m_viewFlags; }
-		inline UINT32& TxtFilter (void)
+		inline UINT32& TextureFilter (void)
 			{ return m_nTxtFilter; }
 		inline bool ShowAll ()
 			{ return m_bShowAll && (m_nTxtFilter == 0xFFFFFFFF); }

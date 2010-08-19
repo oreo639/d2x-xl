@@ -57,7 +57,7 @@ m_iconSize.cy = 64 / scale;
 m_iconSpace.cx = m_iconSize.cx + 6;
 m_iconSpace.cy = m_iconSize.cy + 6;
 m_viewFlags = 0;
-TxtFilter () = GetPrivateProfileInt ("DLE-XP", "TxtFilter", 0xFFFFFFFF, INIFILE);
+TextureFilter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, INIFILE);
 m_bShowAll = TRUE;
 m_bDelayRefresh = false;
 };
@@ -96,15 +96,15 @@ Refresh ();
 
 //------------------------------------------------------------------------
 
-short CTextureView::TxtFilterIndex (short nTxt)
+short CTextureView::TexFilterIndex (short nTxt)
 {
-	short	m, l = 0, r = TXT_FILTER_SIZE - 1;
+	short	m, l = 0, r = TEX_FILTER_SIZE - 1;
 
 do {
 	m = (l + r) / 2;
-	if (nTxt < TXT_FILTERS [m].iTexture.nMin)
+	if (nTxt < TEXTURE_FILTERS [m].iTexture.nMin)
 		r = m - 1;
-	else if (nTxt > TXT_FILTERS [m].iTexture.nMax)
+	else if (nTxt > TEXTURE_FILTERS [m].iTexture.nMax)
 		l = m + 1;
 	else
 		return m;
@@ -115,20 +115,20 @@ return -1;
 
 //------------------------------------------------------------------------
 
-UINT32 CTextureView::TxtFilter (short nTxt)
+UINT32 CTextureView::TextureFilter (short nTxt)
 {
-	short	m = TxtFilterIndex (nTxt);
+	short	m = TexFilterIndex (nTxt);
 
-return (m < 0) ? 0 : TXT_FILTERS [m].nFilter;
+return (m < 0) ? 0 : TEXTURE_FILTERS [m].nFilter;
 }
 
 //------------------------------------------------------------------------
 
 int CTextureView::QCmpTxtFilters (int nTxt, int mTxt, UINT32 mf, UINT32 mf2)
 {
-	short	n = TxtFilterIndex (nTxt);
-	UINT32	nf = TXT_FILTERS [n].nFilter,
-			nf2 = TXT_FILTERS [n].n2ndFilter;
+	short	n = TexFilterIndex (nTxt);
+	UINT32	nf = TEXTURE_FILTERS [n].nFilter,
+			nf2 = TEXTURE_FILTERS [n].n2ndFilter;
 
 //CBRK (((nf == TXT_DOOR) && (mf == TXT_SAND)) || ((mf == TXT_DOOR) && (nf == TXT_SAND)));
 if (nf < mf)
@@ -148,12 +148,12 @@ else
 void CTextureView::QSortTxtMap (short left, short right)
 {
 	short		mTxt = m_mapViewToTxt [(left + right) / 2];
-	short		m = TxtFilterIndex (mTxt);
+	short		m = TexFilterIndex (mTxt);
 	UINT32	mf, mf2;
 	short		h, l = left, r = right;
 
-mf = TXT_FILTERS [m].nFilter;
-mf2 = TXT_FILTERS [m].n2ndFilter;
+mf = TEXTURE_FILTERS [m].nFilter;
+mf2 = TEXTURE_FILTERS [m].n2ndFilter;
 do {
 	while (QCmpTxtFilters (m_mapViewToTxt [l], mTxt, mf, mf2) < 0)
 		l++;
@@ -382,8 +382,8 @@ if (bShowAll) {
 		int i, f = m_nTxtFilter & ~TXT_MOVE;
 		for (i = 0; i < m_nTextures [1]; i++) {
 			int t = m_mapViewToTxt [i];
-			int j = TxtFilterIndex (t);
-			if ((TXT_FILTERS [j].nFilter | TXT_FILTERS [j].n2ndFilter) & f) {
+			int j = TexFilterIndex (t);
+			if ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & f) {
 				SETBIT (pFilter, i);
 				m_nTextures [0]++;
 				}
@@ -405,16 +405,16 @@ else {
 				  mine->Walls (nWall)->type != WALL_OPEN)) {
 				int t = seg->sides [sidenum].nBaseTex;
 				int i = TextureIndex (t);
-				int j = TxtFilterIndex (t);
+				int j = TexFilterIndex (t);
 				if ((i >= 0) && !BITSET (pFilter, i) && 
-					 ((TXT_FILTERS [j].nFilter | TXT_FILTERS [j].n2ndFilter) & m_nTxtFilter)) {
+					 ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & m_nTxtFilter)) {
 					SETBIT (pFilter, i);
 					m_nTextures [0]++;
 					}
 //					pFilter[t/8] |= (1<<(t&7));
 				t = seg->sides [sidenum].nOvlTex & 0x3fff;
 				i = TextureIndex (t);
-				j = TxtFilterIndex (t);
+				j = TexFilterIndex (t);
 				if ((t > 0) && !BITSET (pFilter, i)) {
 					SETBIT (pFilter, i);
 //					pFilter[t/8] |= (1<<(t&7));
@@ -542,7 +542,7 @@ void CTextureView::Setup()
   char name[20];
   int i;
   int nTextures, nFrames = 0;
-  HINSTANCE hInst   = AfxGetApp()->m_hInstance;
+  HINSTANCE hInst = AfxGetApp()->m_hInstance;
 
   nTextures = theApp.GetMine ()->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 

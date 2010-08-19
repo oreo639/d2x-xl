@@ -149,12 +149,12 @@ void CTxtFilterTool::DoDataExchange (CDataExchange *pDX)
 	int		h, i;
 
 for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
-	h = (theApp.TextureView ()->TxtFilter () & ctrlMap [i].nFlag) != 0;
+	h = (theApp.TextureView ()->TextureFilter () & ctrlMap [i].nFlag) != 0;
 	DDX_Check (pDX, ctrlMap [i].nIdC, h);
 	if (h)
-		theApp.TextureView ()->TxtFilter () |= ctrlMap [i].nFlag;
+		theApp.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
 	else
-		theApp.TextureView ()->TxtFilter () &= ~ctrlMap [i].nFlag;
+		theApp.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
 	}
 }
 
@@ -162,10 +162,10 @@ for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
 
 void CTxtFilterTool::SetFilter (int i)
 {
-if (theApp.TextureView ()->TxtFilter () & ctrlMap [i].nFlag)
-	theApp.TextureView ()->TxtFilter () &= ~ctrlMap [i].nFlag;
+if (theApp.TextureView ()->TextureFilter () & ctrlMap [i].nFlag)
+	theApp.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
 else
-	theApp.TextureView ()->TxtFilter () |= ctrlMap [i].nFlag;
+	theApp.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
 UpdateData (FALSE);
 theApp.TextureView ()->Refresh ();
 }
@@ -175,11 +175,11 @@ theApp.TextureView ()->Refresh ();
 void CTxtFilterTool::SetFilterRange (UINT32 nFlags, int nValue)
 {
 if (nValue == 1)
-	theApp.TextureView ()->TxtFilter () |= nFlags;
+	theApp.TextureView ()->TextureFilter () |= nFlags;
 else if (nValue == 0)
-	theApp.TextureView ()->TxtFilter () &= ~nFlags;
+	theApp.TextureView ()->TextureFilter () &= ~nFlags;
 else if (nValue == -1)
-	theApp.TextureView ()->TxtFilter ()	^= nFlags;
+	theApp.TextureView ()->TextureFilter ()	^= nFlags;
 UpdateData (FALSE);
 theApp.TextureView ()->Refresh ();
 }

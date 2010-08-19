@@ -359,7 +359,7 @@ WritePrivateProfileInt ("UseTexColors", m_bUseTexColors);
 WritePrivateProfileInt ("ViewDistance", m_nViewDist);
 WritePrivateProfileInt ("MineCenter", *theApp.MineView ()->MineCenter ());
 WritePrivateProfileInt ("MaxUndo", m_nMaxUndo);
-WritePrivateProfileInt ("TxtFilter", theApp.TextureView ()->TxtFilter ());
+WritePrivateProfileInt ("TextureFilter", theApp.TextureView ()->TextureFilter ());
 }
                         /*--------------------------*/
 
