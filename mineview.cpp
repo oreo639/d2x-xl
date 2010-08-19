@@ -849,7 +849,7 @@ for (segnum=0, seg = mine->Segments ();segnum<mine->SegCount ();segnum++, seg++)
 	if (!Visible (seg))
 		continue;
 	DrawCube (seg, bPartial);
-	if (segnum == m_Current->segment) {
+	if (segnum == m_Current->nSegment) {
 		DrawCurrentCube (seg, bPartial);
 		m_pDC->SelectObject (m_penGray);
 		}
@@ -1581,9 +1581,9 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 
 void CMineView::DrawCurrentCube(CDSegment *seg, bool bPartial)
 {
-	INT16 sidenum = m_Current->side;
-	INT16 linenum = m_Current->point;
-	INT16 pointnum = m_Current->point;
+	INT16 sidenum = m_Current->nSide;
+	INT16 linenum = m_Current->nPoint;
+	INT16 pointnum = m_Current->nPoint;
 
 	if (seg->wall_bitmask & MARKED_MASK) {
 		m_pDC->SelectObject(m_penCyan);
@@ -2129,7 +2129,7 @@ else {
 			}
 		}
 	}
-if ((objnum == mine->Current ()->nObject) || (objnum == mine->Other ()->object)) {
+if ((objnum == mine->Current ()->nObject) || (objnum == mine->Other ()->nObject)) {
 	CPen     pen, *pOldPen;
 	INT32		d;
 
@@ -2203,11 +2203,11 @@ void CMineView::HiliteTarget (CMine *mine)
 CGameObject *objP = mine->CurrObj ();
 if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
-mine->Other ()->object = mine->Current ()->nObject;
+mine->Other ()->nObject = mine->Current ()->nObject;
 if (nTarget = objP->rtype.lightningInfo.nTarget)
 	for (i = 0, objP = mine->Objects (); i < mine->GameInfo ().objects.count; i++, objP++)
 		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rtype.lightningInfo.nId == nTarget)) {
-			mine->Other ()->object = i;
+			mine->Other ()->nObject = i;
 			break;
 			return;
 			}
@@ -2260,14 +2260,14 @@ if (!clear_it) {
 
 // draw highlighted Segments () (other first, then current)
 if (mine->Current () == &mine->Current1 ()) {
-	if (mine->Current1 ().segment != mine->Current2 ().segment)
-		DrawCube (mine, mine->Current2 ().segment, mine->Current2 ().side, mine->Current2 ().line, mine->Current2 ().point,clear_it);
-	DrawCube (mine, mine->Current1 ().segment, mine->Current1 ().side, mine->Current1 ().line, mine->Current1 ().point,clear_it);
+	if (mine->Current1 ().nSegment != mine->Current2 ().nSegment)
+		DrawCube (mine, mine->Current2 ().nSegment, mine->Current2 ().nSide, mine->Current2 ().nLine, mine->Current2 ().nPoint,clear_it);
+	DrawCube (mine, mine->Current1 ().nSegment, mine->Current1 ().nSide, mine->Current1 ().nLine, mine->Current1 ().nPoint,clear_it);
 	}
 else {
-	if (mine->Current1 ().segment != mine->Current2 ().segment)
-		DrawCube (mine, mine->Current1 ().segment, mine->Current1 ().side, mine->Current1 ().line, mine->Current1 ().point,clear_it);
-	DrawCube (mine, mine->Current2 ().segment, mine->Current2 ().side, mine->Current2 ().line, mine->Current2 ().point,clear_it);
+	if (mine->Current1 ().nSegment != mine->Current2 ().nSegment)
+		DrawCube (mine, mine->Current1 ().nSegment, mine->Current1 ().nSide, mine->Current1 ().nLine, mine->Current1 ().nPoint,clear_it);
+	DrawCube (mine, mine->Current2 ().nSegment, mine->Current2 ().nSide, mine->Current2 ().nLine, mine->Current2 ().nPoint,clear_it);
 	}
 
 // draw Walls ()
@@ -2753,7 +2753,7 @@ void CMineView::CenterCube()
 {
 if (!GetMine ())
 	return;
-	CDSegment& seg = m_mine->Segments () [m_Current->segment];
+	CDSegment& seg = m_mine->Segments () [m_Current->nSegment];
 	tFixVector *vMine = m_mine->Vertices ();
 	INT16 *vSeg = seg.verts;
 
@@ -2795,7 +2795,7 @@ void CMineView::CenterObject()
 	if (!pDoc->m_mine) return;
 	CMine *mine = pDoc->m_mine;
 
-	CGameObject& objP = mine->Objects () [m_Current->object];
+	CGameObject& objP = mine->Objects () [m_Current->nObject];
 	m_movex = (INT16)(-(objP.pos.x)/0x10000L);
 	m_movey = (INT16)(-(objP.pos.y)/0x10000L);
 	m_movez = (INT16)(-(objP.pos.z)/0x10000L);

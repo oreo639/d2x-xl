@@ -550,7 +550,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
 							fprintf (fBlk, "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->count; iTarget++)
-								if (Segments (trigger [iTarget].nSegment)->wall_bitmask & MARKED_MASK) {
+								if (Segments (trigger->Segment (iTarget))->wall_bitmask & MARKED_MASK) {
 									fprintf (fBlk, "			        seg %d\n", trigger->Segment (iTarget));
 									fprintf (fBlk, "			        side %d\n", trigger->Side (iTarget));
 									}
@@ -676,10 +676,10 @@ fclose(fBlk);
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
-wrap(&Current1 ().segment,-1,0,SegCount () - 1);
-wrap(&Current2 ().segment,1,0,SegCount () - 1);
-wrap(&Current2 ().segment,-1,0,SegCount () - 1);
-wrap(&Current2 ().segment,1,0,SegCount () - 1);
+wrap(&Current1 ().nSegment,-1,0,SegCount () - 1);
+wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
+wrap(&Current2 ().nSegment,-1,0,SegCount () - 1);
+wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
 SetLinesToDraw ();
 theApp.MineView ()->Refresh ();
 }
@@ -981,14 +981,14 @@ for (segnum = SegCount () - 1; segnum >= 0; segnum--)
 	if (Segments (segnum)->wall_bitmask & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
-		if (Objects (0).nSegment != segnum)
+		if (Objects (0)->nSegment != segnum)
 			DeleteSegment (segnum); // delete seg w/o asking "are you sure"
 		}
 // wrap back then forward to make sure segment is valid
-wrap(&Current1 ().segment,-1,0,SegCount () - 1);
-wrap(&Current2 ().segment,1,0,SegCount () - 1);
-wrap(&Current2 ().segment,-1,0,SegCount () - 1);
-wrap(&Current2 ().segment,1,0,SegCount () - 1);
+wrap(&Current1 ().nSegment,-1,0,SegCount () - 1);
+wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
+wrap(&Current2 ().nSegment,-1,0,SegCount () - 1);
+wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
 theApp.MineView ()->Refresh ();

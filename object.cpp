@@ -418,7 +418,7 @@ Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
 for (i = 0; i < GameInfo ().objects.count - 1; i++)
-	if (Objects (i)->segnum == Current ()->nSegment)
+	if (Objects (i)->nSegment == Current ()->nSegment)
 		count++;
 objP->pos.y += count*2*F1_0;
 objP->last_pos.y += count*2*F1_0;
@@ -475,10 +475,10 @@ if (nDelObj < --j)
 GameInfo ().objects.count = j;
 RenumberObjTriggers ();
 RenumberTriggerTargetObjs ();
-if (Current1 ().object >= j)
-	Current1 ().object = j - 1;
-if (Current2 ().object >= j)
-	Current2 ().object = j - 1;
+if (Current1 ().nObject >= j)
+	Current1 ().nObject = j - 1;
+if (Current2 ().nObject >= j)
+	Current2 ().nObject = j - 1;
 theApp.UnlockUndo ();
 }
 
@@ -583,7 +583,7 @@ void CGameObject::Read (FILE *fp, INT32 version)
 		multiplayer = read_INT8(fp);
 	else
 		multiplayer = 0;
-	segnum = read_INT16(fp);
+	nSegment = read_INT16(fp);
 	read_vector(&pos, fp);
 	read_matrix(&orient, fp);
 	size = read_FIX(fp);

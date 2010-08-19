@@ -102,7 +102,7 @@ if ((h = NumObjTriggers ()) > 1) {
 CTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall) 
 {
 	INT16 flags;
-	INT16 segnum, sidenum, trignum;
+	INT16 segnum, sidenum, nTrigger;
 	static INT16 defWallTypes [NUM_TRIGGER_TYPES] = {
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_ILLUSION, 
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, 
@@ -120,8 +120,8 @@ CTrigger *CMine::AddTrigger (UINT16 wallnum, INT16 type, BOOL bAutoAddWall)
 		};
 
 // check if there's already a trigger on the current side
-wallnum = FindTriggerWall (&trignum);
-if (trignum != NO_TRIGGER) {
+wallnum = FindTriggerWall (&nTrigger);
+if (nTrigger != NO_TRIGGER) {
 	ErrorMsg ("There is already a trigger on this side");
 	return NULL;
 	}
@@ -186,17 +186,17 @@ if (IsD1File ()) {
 else
 	flags = 0;
 
-trignum = (UINT16) GameInfo ().triggers.count;
+nTrigger = (UINT16) GameInfo ().triggers.count;
 // set new trigger data
-InitTrigger (Triggers (trignum), type, flags);
+InitTrigger (Triggers (nTrigger), type, flags);
 // link trigger to the wall
-Walls (wallnum)->trigger = (UINT8) trignum;
+Walls (wallnum)->trigger = (UINT8) nTrigger;
 // update number of Triggers ()
 GameInfo ().triggers.count++;
 AutoLinkExitToReactor();
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
-return Triggers (trignum);
+return Triggers (nTrigger);
 }
 
 //------------------------------------------------------------------------
@@ -260,9 +260,9 @@ return trigger->count;
 }
 
 
-INT32 CMine::DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger)
+INT32 CMine::DeleteTargetFromTrigger (INT16 nTrigger, INT16 linknum, bool bAutoDeleteTrigger)
 {
-return DeleteTargetFromTrigger (Triggers (trignum), linknum, bAutoDeleteTrigger);
+return DeleteTargetFromTrigger (Triggers (nTrigger), linknum, bAutoDeleteTrigger);
 }
 
 
@@ -295,41 +295,41 @@ for (i = 0; i < NumObjTriggers (); i++)
 // Mine - FindTrigger
 //------------------------------------------------------------------------
 
-INT16 CMine::FindTriggerWall (INT16 *trignum, INT16 segnum, INT16 sidenum)
+INT16 CMine::FindTriggerWall (INT16 *nTrigger, INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
 CWall *wall = Walls ();
 INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++) {
 	if ((wall->nSegment == segnum) && (wall->nSide == sidenum)) {
-		*trignum = wall->trigger;
+		*nTrigger = wall->trigger;
 		return INT16 (wall - Walls ());
 		}
 	}
-*trignum = NO_TRIGGER;
+*nTrigger = NO_TRIGGER;
 return GameInfo ().walls.count;
 }
 
-INT16 CMine::FindTriggerWall (INT16 trignum)
+INT16 CMine::FindTriggerWall (INT16 nTrigger)
 {
 CWall *wall = Walls ();
 INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++)
-	if (wall->trigger == trignum)
+	if (wall->trigger == nTrigger)
 		return INT16 (wall - Walls ());
 return GameInfo ().walls.count;
 }
 
-INT16 CMine::FindTriggerObject (INT16 *trignum)
+INT16 CMine::FindTriggerObject (INT16 *nTrigger)
 {
 	INT16 nObject = Current ()->nObject;
 
 for (INT32 i = 0; i < NumObjTriggers (); i++)
 	if (ObjTriggers (i)->nObject == nObject) {
-		*trignum = i;
+		*nTrigger = i;
 		return nObject;
 		}
-*trignum = NO_TRIGGER;
+*nTrigger = NO_TRIGGER;
 return -1;
 }
 
@@ -337,15 +337,15 @@ return -1;
 // Mine - FindTrigger
 //------------------------------------------------------------------------
 
-INT16 CMine::FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
+INT16 CMine::FindTriggerTarget (INT16 nTrigger, INT16 segnum, INT16 sidenum)
 {
-CTrigger *trigP = Triggers ();
-INT32 i, j;
+	CTrigger *trigP = Triggers ();
+	CSideKey key = CSideKey (segnum, sidenum);
+	INT32 i, j;
 
-for (i = trignum; i < GameInfo ().triggers.count; i++, trigP++)
-	for (j = 0; j < trigP->count; j++)
-		if ((trigP->targets [j] == CSideKey (segnum, sidenum))
-			return i;
+for (i = nTrigger; i < GameInfo ().triggers.count; i++, trigP++)
+	if (-1 < (j = trigP->Find (key)))
+		return i;
 return -1;
 }
 
@@ -362,7 +362,7 @@ void CMine::AutoLinkExitToReactor ()
   INT16 		linknum,control,count;
   CSideKey	face;
   UINT16		wallnum;
-  INT8 		trignum;
+  INT8 		nTrigger;
   bool 		found;
 
   control = 0; // only 0 used by the game Descent
@@ -373,7 +373,7 @@ theApp.LockUndo ();
 // remove items from list that do not point to a wall
 for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 	count = reactorTrigger->count;
-	face = reactorTrigger [linknum];
+	face = reactorTrigger->targets [linknum];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
 	for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
@@ -391,11 +391,11 @@ for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
 // search for Walls () that have a exit of type trigger
 count =  reactorTrigger->count;
 for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
-	trignum = Walls (wallnum)->trigger;
-	if (trignum >= 0 && trignum <GameInfo ().triggers.count) {
+	nTrigger = Walls (wallnum)->trigger;
+	if (nTrigger >= 0 && nTrigger <GameInfo ().triggers.count) {
 		if (IsD1File () 
-			 ? Triggers (trignum)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
-			 : Triggers (trignum)->type == TT_EXIT || Triggers (trignum)->type == TT_SECRET_EXIT) {
+			 ? Triggers (nTrigger)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
+			 : Triggers (nTrigger)->type == TT_EXIT || Triggers (nTrigger)->type == TT_SECRET_EXIT) {
 			// see if cube,side is already on the list
 			face = *Walls (wallnum);
 			found = FALSE;
@@ -435,16 +435,16 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	}
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-INT16 trignum = NumObjTriggers ();
-InitTrigger (ObjTriggers (trignum), type, 0);
-ObjTriggers (trignum)->nObject = objnum;
+INT16 nTrigger = NumObjTriggers ();
+InitTrigger (ObjTriggers (nTrigger), type, 0);
+ObjTriggers (nTrigger)->nObject = objnum;
 NumObjTriggers ()++;
 theApp.UnlockUndo ();
 SortObjTriggers ();
 for (UINT16 i = NumObjTriggers (); i; )
-	if (ObjTriggers (--i)->nIndex == trignum)
+	if (ObjTriggers (--i)->nIndex == nTrigger)
 		return ObjTriggers (i);
-return ObjTriggers (trignum);
+return ObjTriggers (nTrigger);
 }
 
 //------------------------------------------------------------------------
@@ -456,12 +456,12 @@ return true;
 
 //------------------------------------------------------------------------
 
-void CMine::DeleteObjTrigger (INT16 trignum) 
+void CMine::DeleteObjTrigger (INT16 nTrigger) 
 {
-if ((trignum < 0) || (trignum >= NumObjTriggers ()))
+if ((nTrigger < 0) || (nTrigger >= NumObjTriggers ()))
 	return;
-if (trignum < --NumObjTriggers ())
-	*ObjTriggers (trignum) = *ObjTriggers (NumObjTriggers ());
+if (nTrigger < --NumObjTriggers ())
+	*ObjTriggers (nTrigger) = *ObjTriggers (NumObjTriggers ());
 }
 
 //------------------------------------------------------------------------
@@ -477,13 +477,13 @@ while (i)
 
 //------------------------------------------------------------------------
 
-INT16 CMine::FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
+INT16 CMine::FindObjTriggerTarget (INT16 nTrigger, INT16 nSegment, INT16 nSide)
 {
 CTrigger *t = ObjTriggers ();
 CSideKey key = CSideKey (nSegment, nSide);
 INT32 i, j;
 
-for (i = trignum; i < NumObjTriggers (); i++, t++)
+for (i = nTrigger; i < NumObjTriggers (); i++, t++)
 	for (j = 0; j < t->count; j++)
 		(-1 < (i = t->Find (key)))
 			return i;
@@ -542,7 +542,7 @@ if (theApp.GetMine ()->IsD2File ()) {
 		write_INT16 (flags, fp);
 	else
 		write_INT8 (INT8 (flags), fp);
-	write_INT8 (count, fp);
+	write_INT8 (INT8 (count), fp);
 	write_INT8 (0, fp);
 	write_INT32 (value, fp);
 	write_INT32 (time, fp);

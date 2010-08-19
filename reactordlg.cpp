@@ -188,8 +188,7 @@ if (FindTarget (segnum, sidenum) >= 0) {
 	return;
 	}
 theApp.SetModified (TRUE);
-m_pTrigger [m_nTargets] = CSideKey (segnum, sidenum - 1);
-m_pTrigger->count++;
+m_pTrigger->Add (segnum, sidenum - 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
@@ -219,11 +218,11 @@ void CReactorTool::OnAddWallTarget ()
 if (!GetMine ())
 	return;
 CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
-INT32 i = FindTarget (other->segment, other->side);
+INT32 i = FindTarget (other->nSegment, other->nSide);
 if (i >= 0)
 	return;
 LBTargets ()->SetCurSel (i);
-AddTarget (other->segment, other->side + 1);
+AddTarget (other->nSegment, other->nSide + 1);
 }
 
 //------------------------------------------------------------------------
@@ -262,7 +261,7 @@ void CReactorTool::OnDeleteWallTarget ()
 if (!GetMine ())
 	return;
 CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
-INT32 i = FindTarget (other->segment, other->side);
+INT32 i = FindTarget (other->nSegment, other->nSide);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
 	return;
@@ -297,8 +296,8 @@ if ((sidenum < 0) || (sidenum > 5))
 CSelection *other = m_mine->Other ();
 if ((m_mine->Current ()->nSegment == segnum) && (m_mine->Current ()->nSide == sidenum))
 	return;
-other->segment = m_pTrigger->nSegment (m_iTarget);
-other->side = m_pTrigger->Side (m_iTarget);
+other->nSegment = m_pTrigger->Segment (m_iTarget);
+other->nSide = m_pTrigger->Side (m_iTarget);
 theApp.MineView ()->Refresh ();
 }
 

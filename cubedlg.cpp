@@ -15,7 +15,7 @@
 
                         /*--------------------------*/
 
-BEGIN_MESSAGE_MAP (CCubeTool, CToolDlg)
+BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_SETCOORD, OnSetCoord)
 	ON_BN_CLICKED (IDC_CUBE_RESETCOORD, OnResetCoord)
 	ON_BN_CLICKED (IDC_CUBE_ADD, OnAddCube)
@@ -60,7 +60,7 @@ END_MESSAGE_MAP ()
 
                         /*--------------------------*/
 
-CCubeTool::CCubeTool (CPropertySheet *pParent)
+CSegmentTool::CSegmentTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_CUBEDATA2 : IDD_CUBEDATA, pParent)
 {
 Reset ();
@@ -68,7 +68,7 @@ Reset ();
 
                         /*--------------------------*/
 
-void CCubeTool::Reset ()
+void CSegmentTool::Reset ()
 {
 m_nSegment =
 m_nSide =
@@ -96,7 +96,7 @@ memset (m_nCoord, 0, sizeof (m_nCoord));
 
                         /*--------------------------*/
 
-void CCubeTool::InitCBCubeNo ()
+void CSegmentTool::InitCBCubeNo ()
 {
 if (!GetMine ())
 	return;
@@ -113,7 +113,7 @@ pcb->SetCurSel (m_nSegment);
 
                         /*--------------------------*/
 
-BOOL CCubeTool::OnInitDialog ()
+BOOL CSegmentTool::OnInitDialog ()
 {
 	static char* pszCubeFuncs [] = {
 		"None",
@@ -152,7 +152,7 @@ return TRUE;
 
                         /*--------------------------*/
 
-void CCubeTool::DoDataExchange (CDataExchange *pDX)
+void CSegmentTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!GetMine ())
 	return;
@@ -202,7 +202,7 @@ for (i = 0; i < 2; i++)
 
                         /*--------------------------*/
 
-BOOL CCubeTool::OnSetActive ()
+BOOL CSegmentTool::OnSetActive ()
 {
 Refresh ();
 return CToolDlg::OnSetActive ();
@@ -210,7 +210,7 @@ return CToolDlg::OnSetActive ();
 
                         /*--------------------------*/
 
-bool CCubeTool::IsBotMaker (CDSegment *seg)
+bool CSegmentTool::IsBotMaker (CDSegment *seg)
 {
 return 
 	(seg->function == SEGMENT_FUNC_ROBOTMAKER) &&
@@ -220,7 +220,7 @@ return
 
                         /*--------------------------*/
 
-bool CCubeTool::IsEquipMaker (CDSegment *seg)
+bool CSegmentTool::IsEquipMaker (CDSegment *seg)
 {
 return 
 	(seg->function == SEGMENT_FUNC_EQUIPMAKER) &&
@@ -230,7 +230,7 @@ return
 
                         /*--------------------------*/
 
-void CCubeTool::EnableControls (BOOL bEnable)
+void CSegmentTool::EnableControls (BOOL bEnable)
 {
 if (!GetMine ())
 	return;
@@ -254,7 +254,7 @@ GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (m_mine->IsD2XLevel ());
 
                         /*--------------------------*/
 
-void CCubeTool::OnSetCoord ()
+void CSegmentTool::OnSetCoord ()
 {
 if (!GetMine ())
 	return;
@@ -269,7 +269,7 @@ theApp.MineView ()->Refresh (false);
 
                         /*--------------------------*/
 
-void CCubeTool::OnResetCoord ()
+void CSegmentTool::OnResetCoord ()
 {
 if (!GetMine ())
 	return;
@@ -283,7 +283,7 @@ theApp.MineView ()->Refresh (false);
 
                         /*--------------------------*/
 
-void CCubeTool::OnProp (INT32 nProp)
+void CSegmentTool::OnProp (INT32 nProp)
 {
 if (!GetMine ())
 	return;
@@ -295,15 +295,15 @@ else
 m_mine->CurrSeg ()->props = m_nProps;
 }
 
-void CCubeTool::OnProp1 () { OnProp (0); }
-void CCubeTool::OnProp2 () { OnProp (1); }
-void CCubeTool::OnProp3 () { OnProp (2); }
-void CCubeTool::OnProp4 () { OnProp (3); }
-void CCubeTool::OnProp5 () { OnProp (4); }
+void CSegmentTool::OnProp1 () { OnProp (0); }
+void CSegmentTool::OnProp2 () { OnProp (1); }
+void CSegmentTool::OnProp3 () { OnProp (2); }
+void CSegmentTool::OnProp4 () { OnProp (3); }
+void CSegmentTool::OnProp5 () { OnProp (4); }
 
                         /*--------------------------*/
 
-void CCubeTool::OnSide (INT32 nSide)
+void CSegmentTool::OnSide (INT32 nSide)
 {
 if (!GetMine ())
 	return;
@@ -311,16 +311,16 @@ m_mine->Current ()->nSide = m_nSide = nSide;
 theApp.MineView ()->Refresh ();
 }
 
-void CCubeTool::OnSide1 () { OnSide (0); }
-void CCubeTool::OnSide2 () { OnSide (1); }
-void CCubeTool::OnSide3 () { OnSide (2); }
-void CCubeTool::OnSide4 () { OnSide (3); }
-void CCubeTool::OnSide5 () { OnSide (4); }
-void CCubeTool::OnSide6 () { OnSide (5); }
+void CSegmentTool::OnSide1 () { OnSide (0); }
+void CSegmentTool::OnSide2 () { OnSide (1); }
+void CSegmentTool::OnSide3 () { OnSide (2); }
+void CSegmentTool::OnSide4 () { OnSide (3); }
+void CSegmentTool::OnSide5 () { OnSide (4); }
+void CSegmentTool::OnSide6 () { OnSide (5); }
 
                         /*--------------------------*/
 
-void CCubeTool::OnPoint (INT32 nPoint)
+void CSegmentTool::OnPoint (INT32 nPoint)
 {
 if (!GetMine ())
 	return;
@@ -328,14 +328,14 @@ m_mine->Current ()->nPoint = m_nPoint = nPoint;
 theApp.MineView ()->Refresh ();
 }
 
-void CCubeTool::OnPoint1 () { OnPoint (0); }
-void CCubeTool::OnPoint2 () { OnPoint (1); }
-void CCubeTool::OnPoint3 () { OnPoint (2); }
-void CCubeTool::OnPoint4 () { OnPoint (3); }
+void CSegmentTool::OnPoint1 () { OnPoint (0); }
+void CSegmentTool::OnPoint2 () { OnPoint (1); }
+void CSegmentTool::OnPoint3 () { OnPoint (2); }
+void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
                         /*--------------------------*/
 
-void CCubeTool::SetDefTexture (INT16 nTexture)
+void CSegmentTool::SetDefTexture (INT16 nTexture)
 {
 CDSegment *seg = m_mine->Segments () + m_nSegment;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
@@ -347,10 +347,10 @@ if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetChe
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - RefreshData
+// CSegmentTool - RefreshData
 //------------------------------------------------------------------------
 
-void CCubeTool::Refresh () 
+void CSegmentTool::Refresh () 
 {
 if (!m_bInited)
 	return;
@@ -385,7 +385,7 @@ CTrigger *trigger = m_mine->Triggers ();
 INT32 trignum;
 for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigger++) {
 	for (i = 0; i < trigger->count; i++) {
-		if ((trigger [i] == CSideKey (m_nSegment, m_nSide)) {
+		if (trigger.targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wall with this trigger
 			CWall *wall = m_mine->Walls ();
 			INT32 wallnum;
@@ -493,10 +493,10 @@ UpdateData (FALSE);
 
 
 //------------------------------------------------------------------------
-// CCubeTool - EndOfExitTunnel ()
+// CSegmentTool - EndOfExitTunnel ()
 //------------------------------------------------------------------------
 
-void CCubeTool::OnEndOfExit ()
+void CSegmentTool::OnEndOfExit ()
 {
 if (!GetMine ())
 	return;
@@ -513,10 +513,10 @@ else {
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - Add Cube
+// CSegmentTool - Add Cube
 //------------------------------------------------------------------------
 
-void CCubeTool::OnAddCube () 
+void CSegmentTool::OnAddCube () 
 {
 if (!GetMine ())
 	return;
@@ -525,10 +525,10 @@ theApp.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - Delete Cube
+// CSegmentTool - Delete Cube
 //------------------------------------------------------------------------
 
-void CCubeTool::OnDeleteCube () 
+void CSegmentTool::OnDeleteCube () 
 {
 if (!GetMine ())
 	return;
@@ -538,7 +538,7 @@ theApp.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------
 
-void CCubeTool::OnSetOwner ()
+void CSegmentTool::OnSetOwner ()
 {
 if (!GetMine ())
 	return;
@@ -565,7 +565,7 @@ theApp.MineView ()->DelayRefresh (false);
 
 //------------------------------------------------------------------------
 
-void CCubeTool::OnSetGroup ()
+void CSegmentTool::OnSetGroup ()
 {
 if (!GetMine ())
 	return;
@@ -590,10 +590,10 @@ theApp.MineView ()->DelayRefresh (false);
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - SpecialMsg
+// CSegmentTool - SpecialMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnSetType ()
+void CSegmentTool::OnSetType ()
 {
 if (!GetMine ())
 	return;
@@ -787,10 +787,10 @@ UpdateData (TRUE);
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - Cube Number Message
+// CSegmentTool - Cube Number Message
 //------------------------------------------------------------------------
 
-void CCubeTool::OnSetCube () 
+void CSegmentTool::OnSetCube () 
 {
 if (!GetMine ())
 	return;
@@ -799,10 +799,10 @@ theApp.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - LightMsg
+// CSegmentTool - LightMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnLight () 
+void CSegmentTool::OnLight () 
 {
 if (!GetMine ())
 	return;
@@ -813,7 +813,7 @@ theApp.SetModified (TRUE);
 
                         /*--------------------------*/
 
-void CCubeTool::OnDamage (INT32 i) 
+void CSegmentTool::OnDamage (INT32 i) 
 {
 if (!GetMine ())
 	return;
@@ -822,12 +822,12 @@ m_mine->CurrSeg ()->damage [i] = m_nDamage [i];
 theApp.SetModified (TRUE);
 }
 
-void CCubeTool::OnDamage0 () { OnDamage (0); }
-void CCubeTool::OnDamage1 () { OnDamage (1); }
+void CSegmentTool::OnDamage0 () { OnDamage (0); }
+void CSegmentTool::OnDamage1 () { OnDamage (1); }
 
                         /*--------------------------*/
 
-INT32 CCubeTool::FindBot (CListBox *plb, LPSTR pszObj)
+INT32 CSegmentTool::FindBot (CListBox *plb, LPSTR pszObj)
 {
 	INT32 i, j;
 
@@ -842,7 +842,7 @@ return j;
 
                         /*--------------------------*/
 
-INT32 CCubeTool::FindEquip (CListBox *plb, LPSTR pszObj)
+INT32 CSegmentTool::FindEquip (CListBox *plb, LPSTR pszObj)
 {
 	INT32 i, j;
 
@@ -859,7 +859,7 @@ return j;
 // 
 //------------------------------------------------------------------------
 
-void CCubeTool::AddBot ()
+void CSegmentTool::AddBot ()
 {
 if (!GetMine ())
 	return;
@@ -883,7 +883,7 @@ theApp.MineView ()->Refresh ();
 // 
 //------------------------------------------------------------------------
 
-void CCubeTool::AddEquip ()
+void CSegmentTool::AddEquip ()
 {
 if (!GetMine ())
 	return;
@@ -904,10 +904,10 @@ theApp.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - AddMsg
+// CSegmentTool - AddMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnAddObj ()
+void CSegmentTool::OnAddObj ()
 {
 if (!GetMine ())
 	return;
@@ -919,10 +919,10 @@ else if (IsEquipMaker (seg))
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - DelMsg
+// CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::DeleteBot () 
+void CSegmentTool::DeleteBot () 
 {
 if (!GetMine ())
 	return;
@@ -943,10 +943,10 @@ theApp.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - DelMsg
+// CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::DeleteEquip () 
+void CSegmentTool::DeleteEquip () 
 {
 if (!GetMine ())
 	return;
@@ -967,10 +967,10 @@ theApp.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - DelMsg
+// CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnDeleteObj () 
+void CSegmentTool::OnDeleteObj () 
 {
 if (!GetMine ())
 	return;
@@ -982,19 +982,19 @@ else if (IsEquipMaker (seg))
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - OtherCubeMsg
+// CSegmentTool - OtherCubeMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnOtherCube () 
+void CSegmentTool::OnOtherCube () 
 {
 theApp.MineView ()->SelectOtherCube ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - CubeButtonMsg
+// CSegmentTool - CubeButtonMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnWallDetails () 
+void CSegmentTool::OnWallDetails () 
 {
 if (!GetMine ())
 	return;
@@ -1011,10 +1011,10 @@ theApp.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CCubeTool - TriggerButtonMsg
+// CSegmentTool - TriggerButtonMsg
 //------------------------------------------------------------------------
 
-void CCubeTool::OnTriggerDetails ()
+void CSegmentTool::OnTriggerDetails ()
 {
 if (!GetMine ())
 	return;
@@ -1024,8 +1024,8 @@ INT32 i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-m_mine->Other ()->segment = m_mine->Current ()->nSegment;
-m_mine->Other ()->side = m_mine->Current ()->nSide;
+m_mine->Other ()->nSegment = m_mine->Current ()->nSegment;
+m_mine->Other ()->nSide = m_mine->Current ()->nSide;
 m_mine->Current ()->nSegment = (INT16) (h / 0x10000L);
 m_mine->Current ()->nSide = (INT16) (h % 0x10000L);
 theApp.ToolView ()->EditTrigger ();
@@ -1034,7 +1034,7 @@ theApp.MineView ()->Refresh ();
 
                         /*--------------------------*/
 
-void CCubeTool::OnAddBotGen ()
+void CSegmentTool::OnAddBotGen ()
 {
 if (!GetMine ())
 	return;
@@ -1045,7 +1045,7 @@ Refresh ();
 
                         /*--------------------------*/
 
-void CCubeTool::OnAddEquipGen ()
+void CSegmentTool::OnAddEquipGen ()
 {
 if (!GetMine ())
 	return;
@@ -1056,7 +1056,7 @@ Refresh ();
 
                         /*--------------------------*/
 
-void CCubeTool::OnAddFuelCen ()
+void CSegmentTool::OnAddFuelCen ()
 {
 if (!GetMine ())
 	return;
@@ -1065,7 +1065,7 @@ m_mine->AddFuelCenter ();
 
                         /*--------------------------*/
 
-void CCubeTool::OnAddRepairCen ()
+void CSegmentTool::OnAddRepairCen ()
 {
 if (!GetMine ())
 	return;
@@ -1074,7 +1074,7 @@ m_mine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 
                         /*--------------------------*/
 
-void CCubeTool::OnAddControlCen ()
+void CSegmentTool::OnAddControlCen ()
 {
 if (!GetMine ())
 	return;
@@ -1083,7 +1083,7 @@ m_mine->AddReactor ();
 
                         /*--------------------------*/
 
-void CCubeTool::OnSplitCube ()
+void CSegmentTool::OnSplitCube ()
 {
 if (!GetMine ())
 	return;

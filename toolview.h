@@ -536,10 +536,10 @@ class CEffectTool : public CToolDlg
 
                         /*--------------------------*/
 
-class CCubeTool : public CToolDlg
+class CSegmentTool : public CToolDlg
 {
 	public:
-		INT32		m_nCube;
+		INT32		m_nSegment;
 		INT32		m_nSide;
 		INT32		m_nPoint;
 		INT32		m_nVertex;
@@ -555,7 +555,7 @@ class CCubeTool : public CToolDlg
 		INT32		m_nLastSide;
 		INT32		m_bSetDefTexture;
 
-		CCubeTool (CPropertySheet *pParent = NULL);
+		CSegmentTool (CPropertySheet *pParent = NULL);
 		virtual BOOL OnInitDialog ();
 		virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
@@ -647,7 +647,7 @@ class CWallTool : public CTexToolDlg
 {
 	public:
 		CWnd		m_textureWnd;
-		INT32		m_nCube;
+		INT32		m_nSegment;
 		INT32		m_nSide;
 		INT32		m_nTrigger;
 		INT32		m_nWall [2];
@@ -1274,7 +1274,7 @@ class CToolView : public CWnd {
 		DECLARE_DYNCREATE(CToolView)
 
 		CPropertySheet	*m_pTools;
-		CCubeTool		*m_cubeTool;
+		CSegmentTool		*m_cubeTool;
 		CWallTool		*m_wallTool;
 		CTriggerTool	*m_triggerTool;
 		CTextureTool	*m_textureTool;
@@ -1333,7 +1333,7 @@ class CToolView : public CWnd {
 			{ SetActive (11); }
 		inline void EditPrefs ()
 			{ SetActive (12); }
-		inline CCubeTool *CubeTool ()
+		inline CSegmentTool *CubeTool ()
 			{ return m_cubeTool; }
 		inline CTextureTool *TextureTool ()
 			{ return m_textureTool; }

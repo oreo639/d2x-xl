@@ -16,14 +16,14 @@
 #include <math.h>
 
 typedef struct tBugPos {
-	INT32	segnum;
-	INT32	sidenum;
-	INT32	linenum;
-	INT32	pointnum;
-	INT32	childnum;
-	INT32	wallnum;
-	INT32	trignum;
-	INT32	objnum;
+	INT32	nSegment;
+	INT32	nSide;
+	INT32	nLine;
+	INT32	nPoint;
+	INT32	nChild;
+	INT32	nWall;
+	INT32	nTrigger;
+	INT32	nObject;
 } tBugPos;
 
                         /*--------------------------*/
@@ -68,7 +68,7 @@ return true;
 void CDiagTool::OnShowBug (void)
 {
 	bool bCurSeg;
-	CWall *pWall;
+	CWall *wallP;
 	INT32 nWall;
 
 if (!GetMine ())
@@ -83,10 +83,10 @@ m_mine->UnmarkAll ();
 if (bCurSeg = MarkSegment (pbp->nSegment))
 	m_mine->Current ()->nSegment = pbp->nSegment;
 MarkSegment (pbp->childnum);
-if ((pbp->sidenum >= 0) && (pbp->sidenum < MAX_SIDES_PER_SEGMENT))
-	m_mine->Current ()->nSide = pbp->sidenum;
-if ((pbp->linenum >= 0) && (pbp->linenum < 4))
-	m_mine->Current ()->nLine = pbp->linenum;
+if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
+	m_mine->Current ()->nSide = pbp->nSide;
+if ((pbp->nLine >= 0) && (pbp->nLine < 4))
+	m_mine->Current ()->nLine = pbp->nLine;
 if ((pbp->pointnum >= 0) && (pbp->pointnum < 8))
 	m_mine->Current ()->nPoint = pbp->pointnum;
 if ((pbp->wallnum >= 0) && (pbp->wallnum < m_mine->GameInfo ().walls.count))
@@ -95,17 +95,17 @@ else if ((pbp->trignum >= 0) && (pbp->trignum < m_mine->GameInfo ().triggers.cou
 	nWall = m_mine->FindTriggerWall (pbp->trignum);
 else
 	nWall = -1;
-if ((nWall >= 0) && MarkSegment ((pWall = m_mine->Walls (nWall))->nSegment))
+if ((nWall >= 0) && MarkSegment ((wallP = m_mine->Walls (nWall))->nSegment))
 	if (bCurSeg) {
-		m_mine->Other ()->segment = pWall->nSegment;
-		m_mine->Other ()->side = pWall->sidenum;
+		m_mine->Other ()->nSegment = wallP->nSegment;
+		m_mine->Other ()->nSide = wallP->nSide;
 		}
 	else {
-		m_mine->Current ()->nSegment = pWall->nSegment;
-		m_mine->Current ()->nSide = pWall->sidenum;
+		m_mine->Current ()->nSegment = wallP->nSegment;
+		m_mine->Current ()->nSide = wallP->nSide;
 		}
-if ((pbp->objnum >= 0) && (pbp->objnum < m_mine->GameInfo ().objects.count))
-	m_mine->Current ()->nObject = pbp->objnum;
+if ((pbp->nObject >= 0) && (pbp->nObject < m_mine->GameInfo ().objects.count))
+	m_mine->Current ()->nObject = pbp->nObject;
 theApp.MineView ()->Refresh ();
 }
 
@@ -407,12 +407,12 @@ if (h >= 0) {
 	if (!pbp)
 		return false;
 	pbp->nSegment = segnum;
-	pbp->sidenum = sidenum;
-	pbp->linenum = linenum;
+	pbp->nSide = sidenum;
+	pbp->nLine = linenum;
 	pbp->pointnum = pointnum;
 	pbp->wallnum = wallnum;
 	pbp->trignum = trignum;
-	pbp->objnum = objnum;
+	pbp->nObject = objnum;
 	pbp->childnum = childnum;
 	LBBugs ()->SetItemDataPtr (h, (void *) pbp);
 	}
@@ -978,15 +978,15 @@ bool CDiagTool::CheckTriggers ()
 	INT32 trigCount = m_mine->GameInfo ().triggers.count;
 	CTrigger *trigger = m_mine->Triggers ();
 	INT32 wallCount = m_mine->GameInfo ().walls.count;
-	CWall *wall;
+	CWall *wallP;
 	CReactorTrigger *reactorTrigger = m_mine->ReactorTriggers ();
 
-	// make sure trigger is linked to exactly one wall
+	// make sure trigger is linked to exactly one wallP
 for (i = 0; i < reactorTrigger->count; i++)
 	if ((reactorTrigger [i].nSegment >= segCount) ||
-		(m_mine->Segments (reactorTrigger [i].nSegment)->sides [reactorTrigger [i].nSide].nWall >= wallCount)) {
+		(m_mine->Segments (reactorTrigger->Segment (i))->sides [reactorTrigger->Side (i)].nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
-			reactorTriggers.Delete (i);
+			reactorTrigger.Delete (i);
 			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigger target.");
 			if (UpdateStats (message, 0))
 				return true;
@@ -1000,33 +1000,32 @@ for (i = 0; i < reactorTrigger->count; i++)
 for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	count = 0;
-	wall = m_mine->Walls ();
-	for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
-		if (wall->trigger == trignum) {
+	wallP = m_mine->Walls ();
+	for (wallnum = 0; wallnum < wallCount; wallnum++, wallP++) {
+		if (wallP->trigger == trignum) {
 			// if exit, make sure it is linked to CReactorTrigger
 			INT32 tt = trigger->type;
 			INT32 tf = trigger->flags;
 			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->count; i++)
-					if (reactorTrigger [i].nSegment == wall->nSegment &&
-						 reactorTrigger [i].nSide == wall->nSide)
+					if (*reactorTrigger == *wallP)
 						break; // found it
 				// if did not find it
 				if (i>=m_mine->ReactorTriggers ()->count) {
 					if (m_bAutoFixBugs) {
 						m_mine->AutoLinkExitToReactor ();
-						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wall->nSegment, wall->nSide);
+						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->nSegment, wallP->nSide);
 						}
 					else
-						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wall->nSegment, wall->nSide);
-					if (UpdateStats (message,1,wall->nSegment, wall->nSide, -1, -1, -1, wallnum))
+						sprintf_s (message, sizeof (message),"WARNING: Exit not linked to reactor (cube=%d, side=%d)", wallP->nSegment, wallP->nSide);
+					if (UpdateStats (message,1,wallP->nSegment, wallP->nSide, -1, -1, -1, wallnum))
 						return true;
 					}
 				}
 			count++;
 			if (count >1) {
-				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trig=%d, wall=%d)",trignum,wallnum);
-				if (UpdateStats (message,0, wall->nSegment, wall->nSide, -1, -1, -1, wallnum)) return true;
+				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wallP (trig=%d, wallP=%d)",trignum,wallnum);
+				if (UpdateStats (message,0, wallP->nSegment, wallP->nSide, -1, -1, -1, wallnum)) return true;
 			}
 		}
 	}
@@ -1051,9 +1050,9 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	wallnum = m_mine->FindTriggerWall (trignum);
 	if (wallnum < wallCount) {
-		wall = m_mine->Walls (wallnum);
-		trigSeg = wall->nSegment;
-		trigSide = wall->nSide;
+		wallP = m_mine->Walls (wallnum);
+		trigSeg = wallP->nSegment;
+		trigSide = wallP->nSide;
 		}
 	else
 		trigSeg = trigSide = -1;
@@ -1126,7 +1125,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 					if (m_mine->IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
-						// make sure trigger points to a wall if it controls doors
+						// make sure trigger points to a wallP if it controls doors
 						if (seg->sides[sidenum].nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
 								if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
@@ -1142,7 +1141,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
 						}
 
-						// make sure oposite segment/side has a wall too
+						// make sure oposite segment/side has a wallP too
 						if (!m_mine->GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
@@ -1158,7 +1157,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 								? tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
 							  ) {
-						// make sure trigger points to a wall if it controls doors
+						// make sure trigger points to a wallP if it controls doors
 						if (seg->sides [sidenum].nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
 								if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
@@ -1194,9 +1193,9 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	wallnum = m_mine->FindTriggerWall (trignum);
 	if (wallnum < wallCount) {
-		wall = m_mine->Walls (wallnum);
-		trigSeg = wall->nSegment;
-		trigSide = wall->nSide;
+		wallP = m_mine->Walls (wallnum);
+		trigSeg = wallP->nSegment;
+		trigSide = wallP->nSide;
 		}
 	else
 		trigSeg = trigSide = -1;
@@ -1480,11 +1479,11 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 				if (wallFixed [wallnum])
 					side->nWall = NO_WALL (m_mine);
 				else {
-					if (m_mine->Segments (w->nSegment)->sides [w->sidenum].nWall == wallnum)
+					if (m_mine->Segments (w->nSegment)->sides [w->nSide].nWall == wallnum)
 						side->nWall = NO_WALL (m_mine);
 					else {
 						w->nSegment = segnum;
-						w->sidenum = sidenum;
+						w->nSide = sidenum;
 						}
 					wallFixed [wallnum] = 1;
 					}
@@ -1495,7 +1494,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 							segnum, wallnum, w->nSegment);
 			if (UpdateStats (message,1, segnum, sidenum, -1, -1, -1, side->nWall)) return true;
 			} 
-		else if (w->sidenum != sidenum) {
+		else if (w->nSide != sidenum) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
@@ -1505,13 +1504,13 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 				else {
 					ow = OppWall (segnum, sidenum);
 					if (ow && (ow->type == w->type)) {
-						seg->sides [w->sidenum].nWall = NO_WALL (m_mine);
-						w->sidenum = sidenum;
+						seg->sides [w->nSide].nWall = NO_WALL (m_mine);
+						w->nSide = sidenum;
 						}
-					else if (seg->sides [w->sidenum].nWall == wallnum)
+					else if (seg->sides [w->nSide].nWall == wallnum)
 						side->nWall = NO_WALL (m_mine);
 					else
-						w->sidenum = sidenum;
+						w->nSide = sidenum;
 					wallFixed [wallnum] = 1;
 					}
 				}
@@ -1551,7 +1550,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 		side = m_mine->Segments (wall->nSegment)->sides + wall->nSide;
 		if (side->nWall != wallnum) {
 			w = m_mine->Walls (wallnum);
-			if ((wallnum < wallCount) && (w->nSegment == wall->nSegment) && (w->sidenum == wall->nSide)) {
+			if ((wallnum < wallCount) && (w->nSegment == wall->nSegment) && (w->nSide == wall->nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),
 								"FIXED: Duplicate wall found (wall=%d, cube=%d)", wallnum, wall->nSegment);
@@ -1634,7 +1633,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->sidenum);
+						wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->nSide);
 						if (m_bAutoFixBugs)
 							wall->linked_wall = -1;
 					}
@@ -1642,7 +1641,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->sidenum);
+						wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->nSide);
 						if (m_bAutoFixBugs)
 							wall->linked_wall = oppWall;
 					}
@@ -1651,7 +1650,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
-					wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->sidenum);
+					wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->nSide);
 				if (m_bAutoFixBugs)
 					wall->linked_wall = -1;
 				}

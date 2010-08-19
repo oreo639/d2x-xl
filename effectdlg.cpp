@@ -461,11 +461,11 @@ if (!GetMine ())
 CGameObject *objP = m_mine->CurrObj ();
 if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
-m_mine->Other ()->object = m_mine->Current ()->nObject;
+m_mine->Other ()->nObject = m_mine->Current ()->nObject;
 if (nTarget = objP->rtype.lightningInfo.nTarget)
 	for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++, objP++)
 		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rtype.lightningInfo.nId == nTarget)) {
-			m_mine->Other ()->object = i;
+			m_mine->Other ()->nObject = i;
 			break;
 			return;
 			}

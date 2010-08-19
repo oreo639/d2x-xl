@@ -698,7 +698,6 @@ return true;
 
 bool CMine::AutoAddTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
-CSelection *other = Other ();
 UINT16 wallnum;
 if (!GetTriggerResources (wallnum))
 	return false;
@@ -710,8 +709,8 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, (UINT8) wall_type, wall_fl
 	INT16 trignum = GameInfo ().triggers.count - 1;
 	// set link to trigger target
 	Triggers () [trignum].count = 1;
-	Triggers () [trignum].targets [0].nSegment = other->segment;
-	Triggers () [trignum].targets [0].nSide = other->side;
+	Triggers () [trignum].targets [0].nSegment = Other ()->nSegment;
+	Triggers () [trignum].targets [0].nSide = Other ()->nSide;
 	theApp.UnlockUndo ();
 	theApp.MineView ()->Refresh ();
 	return true;
@@ -724,9 +723,8 @@ return false;
 
 bool CMine::AddDoorTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
-CSelection *other = Other ();
-CDSegment *other_seg = OtherSeg ();
-UINT16 wallnum = other_seg->sides [other->side].nWall;
+CDSegment* otherSegP = OtherSeg ();
+UINT16 wallnum = otherSegP->sides [Other ()->nSide].nWall;
 if (wallnum >= GameInfo ().walls.count) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
 				"Hint: Select a wall using the 'other cube' and\n"
@@ -754,8 +752,8 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 
 bool CMine::AddRobotMakerTrigger () 
 {
-CDSegment *other_seg = OtherSeg ();
-if (other_seg->function != SEGMENT_FUNC_ROBOTMAKER) {
+CDSegment *otherSegP = OtherSeg ();
+if (otherSegP->function != SEGMENT_FUNC_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

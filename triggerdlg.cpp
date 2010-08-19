@@ -383,7 +383,7 @@ CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
-	m_nTargets = m_pTrigger->targets.count;
+	m_nTargets = m_pTrigger->count;
 	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
@@ -890,7 +890,7 @@ if (FindTarget (segnum, sidenum) > -1) {
 	return;
 	}
 theApp.SetModified (TRUE);
-m_pTrigger.Add (segnum, sidenum + 1);
+m_pTrigger->Add (segnum, sidenum + 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
@@ -933,14 +933,14 @@ SetTriggerPtr ();
 if ((m_mine->IsD1File ()) ? 
 	 (m_pTrigger->flags & TRIGGER_MATCEN) != 0 : 
 	 (m_pTrigger->type == TT_MATCEN) && 
-	 (m_mine->Segments (other->segment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
+	 (m_mine->Segments (other->nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}
-INT32 i = FindTarget (other->segment, other->side);
+INT32 i = FindTarget (other->nSegment, other->nSide);
 if (i > -1)
 	return;
-AddTarget (other->segment, other->side + 1);
+AddTarget (other->nSegment, other->nSide + 1);
 }
 
                         /*--------------------------*/
@@ -1014,8 +1014,8 @@ if ((sidenum < 0) || (sidenum > 5))
 CSelection *other = m_mine->Other ();
 if ((m_mine->Current ()->nSegment == segnum) && (m_mine->Current ()->nSide == sidenum))
 	return;
-other->segment = m_pTrigger->Segment (m_iTarget);
-other->side = m_pTrigger->Side (m_iTarget);
+other->nSegment = m_pTrigger->Segment (m_iTarget);
+other->nSide = m_pTrigger->Side (m_iTarget);
 theApp.MineView ()->Refresh ();
 }
 

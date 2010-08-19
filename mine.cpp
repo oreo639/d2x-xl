@@ -125,16 +125,16 @@ void CMine::Reset ()
 	sizey = sizex;
 	sizez = sizex;
 */
-	Current1 ().segment = DEFAULT_SEGMENT;
-	Current1 ().point = DEFAULT_POINT;
-	Current1 ().line = DEFAULT_LINE;
-	Current1 ().side = DEFAULT_SIDE;
-	Current1 ().object = DEFAULT_OBJECT;
-	Current2 ().segment = DEFAULT_SEGMENT;
-	Current2 ().point = DEFAULT_POINT;
-	Current2 ().line = DEFAULT_LINE;
-	Current2 ().side = DEFAULT_SIDE;
-	Current2 ().object = DEFAULT_OBJECT;
+	Current1 ().nSegment = DEFAULT_SEGMENT;
+	Current1 ().nPoint = DEFAULT_POINT;
+	Current1 ().nLine = DEFAULT_LINE;
+	Current1 ().nSide = DEFAULT_SIDE;
+	Current1 ().nObject = DEFAULT_OBJECT;
+	Current2 ().nSegment = DEFAULT_SEGMENT;
+	Current2 ().nPoint = DEFAULT_POINT;
+	Current2 ().nLine = DEFAULT_LINE;
+	Current2 ().nSide = DEFAULT_SIDE;
+	Current2 ().nObject = DEFAULT_OBJECT;
 	theApp.ResetUndoBuffer ();
 }
 

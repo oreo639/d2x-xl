@@ -98,7 +98,7 @@ CWallTool::~CWallTool ()
 void CWallTool::Reset ()
 {
 m_mine = NULL;
-m_nCube = 0;
+m_nSegment = 0;
 m_nSide = 1;
 m_nTrigger = 0;
 m_nWall [0] = -1;
@@ -189,7 +189,7 @@ void CWallTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!m_bInited)
 	return;
-DDX_Text (pDX, IDC_WALL_CUBE, m_nCube);
+DDX_Text (pDX, IDC_WALL_CUBE, m_nSegment);
 DDX_Text (pDX, IDC_WALL_SIDE, m_nSide);
 DDX_Text (pDX, IDC_WALL_TRIGGER, m_nTrigger);
 DDX_CBIndex (pDX, IDC_WALL_WALLNO, m_nWall [0]);
@@ -298,7 +298,7 @@ else {
 
 	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
-	m_nCube = m_pWall [0]->nSegment;
+	m_nSegment = m_pWall [0]->nSegment;
 	m_nSide = m_pWall [0]->nSide + 1;
 	m_nTrigger = (m_pWall [0]->trigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->trigger : -1;
 	m_nType = m_pWall [0]->type;

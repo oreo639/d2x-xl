@@ -435,9 +435,9 @@ public:
 		{ return GameInfo ().objects.count; }
 
 	inline CDSegment *OtherSeg (void)
-		{ return Segments () + Other ()->segment; }
+		{ return Segments () + Other ()->nSegment; }
 	inline CDSide *OtherSide (void)
-		{ return OtherSeg ()->sides + Other ()->side; }
+		{ return OtherSeg ()->sides + Other ()->nSide; }
 	inline void SetCurrent (INT16 nSegment = -1, INT16 nSide = -1, INT16 nLine = -1, INT16 nPoint = -1) {
 		if (nSegment >= 0) Current ()->nSegment = nSegment;
 		if (nSide >= 0) Current ()->nSide = nSide;

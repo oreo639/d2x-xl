@@ -228,8 +228,8 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 		// replace all trigger seg numbers with real numbers
 		for (i = NumTriggers (), trigP = Triggers (); i; i--, trigP++) {
 			for (j = 0; j < trigP->count; j++) {
-				if (SegCount () > (segnum = trigP [j].nSegment))
-					trigP [j].nSegment = Segments (segnum)->nIndex; 
+				if (SegCount () > (segnum = trigP->Segment (j)))
+					trigP->Segment (j) = Segments (segnum)->nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -240,8 +240,8 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 		// replace all trigger seg numbers with real numbers
 		for (i = NumObjTriggers (), trigP = ObjTriggers (); i; i--, trigP++) {
 			for (j = 0; j < trigP->count; j++) {
-				if (SegCount () > (segnum = trigP [j].nSegment))
-					trigP [j].nSegment = Segments (segnum)->nIndex; 
+				if (SegCount () > (segnum = trigP->Segment (j)))
+					trigP->Segment (j) = Segments (segnum)->nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -319,10 +319,10 @@ void CMine::DeleteSegment(INT16 nDelSeg)
   DeleteUnusedVertices(); 
 
   // make sure current segment numbers are valid
-  if (Current1 ().segment >= SegCount ()) Current1 ().segment--; 
-  if (Current2 ().segment >= SegCount ()) Current2 ().segment--; 
-  if (Current1 ().segment < 0) Current1 ().segment = 0; 
-  if (Current2 ().segment < 0) Current2 ().segment = 0; 
+  if (Current1 ().nSegment >= SegCount ()) Current1 ().nSegment--; 
+  if (Current2 ().nSegment >= SegCount ()) Current2 ().nSegment--; 
+  if (Current1 ().nSegment < 0) Current1 ().nSegment = 0; 
+  if (Current2 ().nSegment < 0) Current2 ().nSegment = 0; 
 theApp.MineView ()->Refresh (false); 
 theApp.ToolView ()->Refresh (); 
 theApp.UnlockUndo ();
@@ -1561,7 +1561,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (Current1 ().segment== Current2 ().segment) {
+if (Current1 ().nSegment== Current2 ().nSegment) {
 	ErrorMsg ("You cannot joint two points on the same cube.\n\n"
 				"Hint: The two golden circles represent the current point, \n"
 				"and the 'other' cube's current point.  Press 'P' to change the\n"
@@ -1570,19 +1570,19 @@ if (Current1 ().segment== Current2 ().segment) {
 	}
 
 if (Current () == &Current1 ()) {
-	seg1 = Segments () + Current1 ().segment; 
-	seg2 = Segments () + Current2 ().segment; 
+	seg1 = Segments () + Current1 ().nSegment; 
+	seg2 = Segments () + Current2 ().nSegment; 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	}
 else {
-	seg1 = Segments () + Current2 ().segment; 
-	seg2 = Segments () + Current1 ().segment; 
+	seg1 = Segments () + Current2 ().nSegment; 
+	seg2 = Segments () + Current1 ().nSegment; 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
-vert1 = seg1->verts [side_vert [cur1->side][cur1->point]]; 
-vert2 = seg2->verts [side_vert [cur2->side][cur2->point]]; 
+vert1 = seg1->verts [side_vert [cur1->nSide][cur1->nPoint]]; 
+vert2 = seg2->verts [side_vert [cur2->nSide][cur2->nPoint]]; 
 // make sure verts are different
 if (vert1== vert2) {
 	ErrorMsg ("These points are already joined."); 
@@ -1600,7 +1600,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 // define vert numbers
-seg1->verts [side_vert [cur1->side][cur1->point]] = vert2; 
+seg1->verts [side_vert [cur1->nSide][cur1->nPoint]] = vert2; 
 // delete any unused vertices
 //  delete_unused_vertices(); 
 FixChildren(); 
@@ -1629,7 +1629,7 @@ if (m_bSplineActive) {
 	return; 
 	}
 
-if (Current1 ().segment == Current2 ().segment) {
+if (Current1 ().nSegment == Current2 ().nSegment) {
 	ErrorMsg ("You cannot joint two lines on the same cube.\n\n"
 				"Hint: The two green lines represent the current line, \n"
 				"and the 'other' cube's current line.  Press 'L' to change\n"
@@ -1638,22 +1638,22 @@ if (Current1 ().segment == Current2 ().segment) {
 	}
 
 if (Current ()== &Current1 ()) {
-	seg1 = Segments () + Current1 ().segment; 
-	seg2 = Segments () + Current2 ().segment; 
+	seg1 = Segments () + Current1 ().nSegment; 
+	seg2 = Segments () + Current2 ().nSegment; 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	} 
 else {
-	seg1 = Segments () + Current2 ().segment; 
-	seg2 = Segments () + Current1 ().segment; 
+	seg1 = Segments () + Current2 ().nSegment; 
+	seg2 = Segments () + Current1 ().nSegment; 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
 
 for (i = 0; i < 2; i++) {
-	linenum = side_line [cur1->side][cur1->line]; 
+	linenum = side_line [cur1->nSide][cur1->nLine]; 
 	v1 = vert1 [i] = seg1->verts [line_vert [linenum][i]]; 
-	linenum = side_line [cur2->side][cur2->line]; 
+	linenum = side_line [cur2->nSide][cur2->nLine]; 
 	v2 = vert2 [i] = seg2->verts [line_vert [linenum][i]]; 
 	v1x [i] = Vertices (v1)->x; 
 	v1y [i] = Vertices (v1)->y; 
@@ -1705,7 +1705,7 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
-	linenum = side_line [cur1->side][cur1->line]; 
+	linenum = side_line [cur1->nSide][cur1->nLine]; 
 	seg1->verts [line_vert [linenum][i]] = vert2 [match [i]]; 
 	}
 FixChildren(); 
@@ -1819,15 +1819,15 @@ if (solidify) {
 		}
 	cur1 = Current (); 
 	cur2 = &my_cube; 
-	my_cube.segment = -1;
+	my_cube.nSegment = -1;
 	// find first cube (other than this cube) which shares all 4 points
 	// of the current side (points must be < 5.0 away)
-	seg1 = Segments (cur1->segment); 
+	seg1 = Segments (cur1->nSegment); 
 	for (i = 0; i < 4; i++) {
 #if 1
-		memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->side][i]]), sizeof (*Vertices ()));
+		memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (*Vertices ()));
 #else
-		INT32 vertnum = seg1->verts [side_vert [cur1->side][i]];
+		INT32 vertnum = seg1->verts [side_vert [cur1->nSide][i]];
 		v1 [i].x = Vertices (vertnum)->x; 
 		v1 [i].y = Vertices (vertnum)->y; 
 		v1 [i].z = Vertices (vertnum)->z; 
@@ -1835,7 +1835,7 @@ if (solidify) {
 		}
 	minTotalRad = 1e300;
 	for (segnum = 0, seg2 = Segments (); segnum < SegCount (); segnum++, seg2++) {
-		if (segnum== cur1->segment)
+		if (segnum== cur1->nSegment)
 			continue; 
 		for (sidenum = 0; sidenum < 6; sidenum++) {
 			fail = FALSE; 
@@ -1908,9 +1908,9 @@ if (solidify) {
 				totalRad += match [i].d;
 			if (minTotalRad > totalRad) {
 				minTotalRad = totalRad;
-				my_cube.segment = segnum; 
-				my_cube.side = sidenum; 
-				my_cube.point = 0; // should not be used
+				my_cube.nSegment = segnum; 
+				my_cube.nSide = sidenum; 
+				my_cube.nPoint = 0; // should not be used
 			// force break from loops
 				if (minTotalRad == 0) {
 					sidenum = 6; 
@@ -1919,7 +1919,7 @@ if (solidify) {
 				}
 			}
 		}
-	if (my_cube.segment < 0) {
+	if (my_cube.nSegment < 0) {
 		if (!bExpertMode)
 			ErrorMsg ("Could not find another cube whose side is within\n"
 						"10.0 units from the current side"); 
@@ -1936,7 +1936,7 @@ else
 		cur2 = &Current1 (); 
 		}
 
-if (cur1->segment == cur2->segment) {
+if (cur1->nSegment == cur2->nSegment) {
 	if (!bExpertMode)
 		ErrorMsg ("You cannot joint two sides on the same cube.\n\n"
 					"Hint: The two red squares represent the current side, \n"
@@ -1945,21 +1945,21 @@ if (cur1->segment == cur2->segment) {
 	return; 
 	}
 
-seg1 = Segments (cur1->segment); 
-seg2 = Segments (cur2->segment); 
+seg1 = Segments (cur1->nSegment); 
+seg2 = Segments (cur2->nSegment); 
 
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->side][i]]), sizeof (*Vertices ())); 
-	memcpy (v2 + i, Vertices (seg2->verts [side_vert [cur2->side][i]]), sizeof (*Vertices ())); 
+	memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (*Vertices ())); 
+	memcpy (v2 + i, Vertices (seg2->verts [side_vert [cur2->nSide][i]]), sizeof (*Vertices ())); 
 /*
-	v1 [i].x = vertices [seg1->verts [side_vert [cur1->side][i]]].x; 
-	v1 [i].y = vertices [seg1->verts [side_vert [cur1->side][i]]].y; 
-	v1 [i].z = vertices [seg1->verts [side_vert [cur1->side][i]]].z; 
-	v2 [i].x = vertices [seg2->verts [side_vert [cur2->side][i]]].x; 
-	v2 [i].y = vertices [seg2->verts [side_vert [cur2->side][i]]].y; 
-	v2 [i].z = vertices [seg2->verts [side_vert [cur2->side][i]]].z; 
+	v1 [i].x = vertices [seg1->verts [side_vert [cur1->nSide][i]]].x; 
+	v1 [i].y = vertices [seg1->verts [side_vert [cur1->nSide][i]]].y; 
+	v1 [i].z = vertices [seg1->verts [side_vert [cur1->nSide][i]]].z; 
+	v2 [i].x = vertices [seg2->verts [side_vert [cur2->nSide][i]]].x; 
+	v2 [i].y = vertices [seg2->verts [side_vert [cur2->nSide][i]]].y; 
+	v2 [i].z = vertices [seg2->verts [side_vert [cur2->nSide][i]]].z; 
 */
 	match [i].i = -1; 
 	}
@@ -2035,7 +2035,7 @@ if (max_radius >= JOIN_DISTANCE) {
 if (min_radius <= 5*F1_0) {
 	theApp.SetModified (TRUE); 
 	theApp.LockUndo ();
-	LinkSides (cur1->segment, cur1->side, cur2->segment, cur2->side, match); 
+	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 
 	SetLinesToDraw(); 
 	theApp.UnlockUndo ();
 	theApp.MineView ()->Refresh ();
@@ -2070,11 +2070,11 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
 
 // now define two sides:
 // near side has opposite side number cube 1
-seg->child_bitmask |= (1 << (opp_side [cur1->side])); 
-seg->children [opp_side [cur1->side]] = cur1->segment; 
+seg->child_bitmask |= (1 << (opp_side [cur1->nSide])); 
+seg->children [opp_side [cur1->nSide]] = cur1->nSegment; 
 // far side has same side number as cube 1
-seg->child_bitmask |= (1 << cur1->side); 
-seg->children [cur1->side] = cur2->segment; 
+seg->child_bitmask |= (1 << cur1->nSide); 
+seg->children [cur1->nSide] = cur2->nSegment; 
 seg->owner = -1;
 seg->group = -1;
 seg->function = 0; 
@@ -2083,8 +2083,8 @@ seg->value =-1;
 
 // define vert numbers
 for (i = 0; i < 4; i++) {
-	seg->verts [opp_side_vert [cur1->side][i]] = seg1->verts [side_vert [cur1->side][i]]; 
-	seg->verts [side_vert [cur1->side][i]] = seg2->verts [side_vert [cur2->side][match [i].i]]; 
+	seg->verts [opp_side_vert [cur1->nSide][i]] = seg1->verts [side_vert [cur1->nSide][i]]; 
+	seg->verts [side_vert [cur1->nSide][i]] = seg2->verts [side_vert [cur2->nSide][match [i].i]]; 
 	}
 
 // define Walls ()
@@ -2095,11 +2095,11 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)
 // define sides
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 	if (seg->children [sidenum]==-1) {
-		SetTexture (nNewSeg, sidenum, seg1->sides [cur1->side].nBaseTex, seg1->sides [cur1->side].nOvlTex); 
+		SetTexture (nNewSeg, sidenum, seg1->sides [cur1->nSide].nBaseTex, seg1->sides [cur1->nSide].nOvlTex); 
 //        for (i = 0; i < 4; i++) {
-//	  seg->sides [sidenum].uvls [i].u = seg1->sides [cur1->side].uvls [i].u; 
-//	  seg->sides [sidenum].uvls [i].v = seg1->sides [cur1->side].uvls [i].v; 
-//	  seg->sides [sidenum].uvls [i].l = seg1->sides [cur1->side].uvls [i].l; 
+//	  seg->sides [sidenum].uvls [i].u = seg1->sides [cur1->nSide].uvls [i].u; 
+//	  seg->sides [sidenum].uvls [i].v = seg1->sides [cur1->nSide].uvls [i].v; 
+//	  seg->sides [sidenum].uvls [i].l = seg1->sides [cur1->nSide].uvls [i].l; 
 //        }
 		SetUV (nNewSeg, sidenum, 0, 0, 0); 
 		}
@@ -2117,21 +2117,21 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 seg->static_light = seg1->static_light; 
 
 // update cur segment
-seg1->children [cur1->side] = nNewSeg; 
-seg1->child_bitmask |= (1 << cur1->side); 
-SetTexture (cur1->segment, cur1->side, 0, 0); 
+seg1->children [cur1->nSide] = nNewSeg; 
+seg1->child_bitmask |= (1 << cur1->nSide); 
+SetTexture (cur1->nSegment, cur1->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
-	seg1->sides [cur1->side].uvls [i].u = 0; 
-	seg1->sides [cur1->side].uvls [i].v = 0; 
-	seg1->sides [cur1->side].uvls [i].l = 0; 
+	seg1->sides [cur1->nSide].uvls [i].u = 0; 
+	seg1->sides [cur1->nSide].uvls [i].v = 0; 
+	seg1->sides [cur1->nSide].uvls [i].l = 0; 
 	}
-seg2->children [cur2->side] = nNewSeg; 
-seg2->child_bitmask |= (1 << cur2->side); 
-SetTexture (cur2->segment, cur2->side, 0, 0); 
+seg2->children [cur2->nSide] = nNewSeg; 
+seg2->child_bitmask |= (1 << cur2->nSide); 
+SetTexture (cur2->nSegment, cur2->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
-	seg2->sides [cur2->side].uvls [i].u = 0; 
-	seg2->sides [cur2->side].uvls [i].v = 0; 
-	seg2->sides [cur2->side].uvls [i].l = 0; 
+	seg2->sides [cur2->nSide].uvls [i].u = 0; 
+	seg2->sides [cur2->nSide].uvls [i].v = 0; 
+	seg2->sides [cur2->nSide].uvls [i].l = 0; 
 	}
 
 // update number of Segments () and vertices
@@ -2643,7 +2643,7 @@ void CMine::CopyOtherCube ()
 {
 	bool bUndo, bChange = false;
 
-if (Current1 ().segment == Current2 ().segment)
+if (Current1 ().nSegment == Current2 ().nSegment)
 	return; 
 INT16 segnum = Current ()->nSegment; 
 CDSegment *otherSeg = OtherSeg (); 

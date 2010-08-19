@@ -139,7 +139,7 @@ void CToolView::Setup (void)
 {
 if (!m_pTools)
 	return;
-m_cubeTool = new CCubeTool (m_pTools);
+m_cubeTool = new CSegmentTool (m_pTools);
 m_wallTool = new CWallTool (m_pTools);
 m_triggerTool = new CTriggerTool (m_pTools);
 m_textureTool = new CTextureTool (m_pTools);
