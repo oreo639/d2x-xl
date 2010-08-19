@@ -25,26 +25,20 @@
         const int MAX_SEGMENTS1 = 800;  // descent 1 max # of cubes
         const int MAX_SEGMENTS2 = 900;  // descent 2 max # of cubes
         const int MAX_SEGMENTS3 = 8000; // D2X-XL max # of cubes
-        public int MAX_SEGMENTS() { return (m_fileType == FileType.RDL) ? MAX_SEGMENTS1 : (m_levelVersion < 9) ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
 
         const int MAX_VERTICES1 = 2808; // descent 1 max # of vertices
         const int MAX_VERTICES2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
         const int MAX_VERTICES3 = (MAX_SEGMENTS3 * 4 + 8); // descent 2 max # of vertices
-        public int MAX_VERTICES() { return (m_fileType == FileType.RDL) ? MAX_VERTICES1 : (m_levelVersion < 9) ? MAX_VERTICES2 : MAX_VERTICES3; }
 
         const int MAX_OBJECTS1 = 350;
         const int MAX_OBJECTS2 = 2000;
-        public int MAX_OBJECTS() { return (m_levelVersion < 9) ? MAX_OBJECTS1 : MAX_OBJECTS2; }
 
         const int MAX_WALLS1 = 175; // Maximum number of walls for Descent 1
         const int MAX_WALLS2 = 255; // Maximum number of walls for Descent 2
         const int MAX_WALLS3 = 2047; // Maximum number of walls for Descent 2
-        public int MAX_WALLS() { return (m_fileType == FileType.RDL) ? MAX_WALLS1 : (m_levelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3; }
-        public int NO_WALL() { return MAX_WALLS(); }
 
         const int MAX_TRIGGERS1 = 100;
         const int MAX_TRIGGERS2 = 254;
-        public int MAX_TRIGGERS() { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
 
         const int MAX_OBJ_TRIGGERS = 254;
         const int MAX_TRIGGER_FLAGS = 12;
@@ -52,22 +46,18 @@
 
         const int MAX_PLAYERS_D2 = 8;
         const int MAX_PLAYERS_D2X = 16;
-        public int MAX_PLAYERS() { return (m_levelVersion < 9) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
         const int MAX_COOP_PLAYERS = 3;
 
         const int MAX_DOORS = 1;
         const int MAX_CONTROL_CENTER_TRIGGERS = 10;
         const int MAX_NUM_MATCENS1 = 20;
         const int MAX_NUM_MATCENS2 = 100;
-        public int MAX_NUM_MATCENS () { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
         const int MAX_WALL_SWITCHES = 50;
         const int MAX_WALL_LINKS = 100;
         const int MAX_NUM_FUELCENS1 = 70;
         const int MAX_NUM_REPAIRCENS1 = 70;
         const int MAX_NUM_FUELCENS2 = 500;
         const int MAX_NUM_REPAIRCENS2 = 500;
-        public int MAX_NUM_FUELCENS() { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
-        public int MAX_NUM_REPAIRCENS () { return ((m_fileType == FileType.RDL) || (m_levelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
         const int MAX_WALL_ANIMS1 = 30;  // Maximum different types of doors Descent 1
         const int MAX_WALL_ANIMS2 = 60;  // Maximum different types of doors Descent 2
         const int MAX_CLIP_FRAMES1 = 20; // Descent 1
@@ -99,7 +89,6 @@
 
         const int MAX_D1_TEXTURES = 584;
         const int MAX_D2_TEXTURES = 910;
-        public int MAX_TEXTURES() { return (m_fileType == FileType.RDL) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
 
         const int MAX_D1_WALL_FLAGS = 5;
         const int MAX_D2_WALL_FLAGS = 9;
@@ -128,28 +117,48 @@
 
         const int D1_PLAYER_CLIP_NUMBER = 43;
         const int D2_PLAYER_CLIP_NUMBER = 108;
-        public int PLAYER_CLIP_NUMBER () { return (m_fileType == FileType.RDL) ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER; }
 
         const int D1_COOP_CLIP_NUMBER = 44;
         const int D2_COOP_CLIP_NUMBER = 108;
-        public int COOP_CLIP_NUMBER () { return (m_fileType == FileType.RDL) ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER; }
 
         const int D1_REACTOR_CLIP_NUMBER = 39;
         const int D2_REACTOR_CLIP_NUMBER = 97;
-        public int REACTOR_CLIP_NUMBER() { return (m_fileType == FileType.RDL) ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
 
         const int COMPILED_MINE_VERSION = 0;
 
         const int ROBOT_IDS1 = 24;
         const int MAX_ROBOT_IDS_TOTAL = 78;
-        public int ROBOT_IDS2() { return (m_levelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
         const int MAX_POWERUP_IDS1 = 26;
         const int MAX_POWERUP_IDS2 = 50;
         const int MAX_POWERUP_IDS_D2 = 48;
-        public int MAX_POWERUP_IDS    () {return (m_fileType == FileType.RDL) ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2; }
         const int MAX_TRIGGER_TARGETS = 10;
+
+        const int MAX_DL_INDICES_D2 = 500;
+        const int MAX_DELTA_LIGHTS_D2 = 10000;
+        const int MAX_DL_INDICES_D2X = 3000;
+        const int MAX_DELTA_LIGHTS_D2X = 50000;
+        const int DL_SCALE = 2048;	// Divide light to allow 3 bits integer, 5 bits fraction.
 
         const int DEFAULT_LIGHTING = F0_5;      // (F1_0/2) 
         const int TRIGGER_DEFAULT = 2 * F1_0;
+
+        public int MAX_SEGMENTS() { return IsD1File() ? MAX_SEGMENTS1 : IsStdLevel() ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+        public int MAX_VERTICES() { return IsD1File() ? MAX_VERTICES1 : IsStdLevel() ? MAX_VERTICES2 : MAX_VERTICES3; }
+        public int MAX_OBJECTS() { return IsStdLevel() ? MAX_OBJECTS1 : MAX_OBJECTS2; }
+        public int MAX_WALLS() { return IsD1File() ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+        public int NO_WALL() { return MAX_WALLS(); }
+        public int MAX_TRIGGERS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
+        public int MAX_PLAYERS() { return IsStdLevel() ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
+        public int MAX_NUM_MATCENS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+        public int MAX_NUM_FUELCENS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
+        public int MAX_NUM_REPAIRCENS() { return (IsD1File() || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+        public int MAX_TEXTURES() { return IsD1File() ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
+        public int PLAYER_CLIP_NUMBER() { return IsD1File() ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER; }
+        public int COOP_CLIP_NUMBER() { return IsD1File() ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER; }
+        public int REACTOR_CLIP_NUMBER() { return IsD1File() ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
+        public int ROBOT_IDS2() { return (LevelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
+        public int MAX_POWERUP_IDS() { return IsD1File() ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2; }
+        public int MAX_DL_INDICES () { return (IsD1File () || IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X; }
+        public int MAX_DELTA_LIGHTS() { return (IsD1File() || IsStdLevel()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
     }
 }

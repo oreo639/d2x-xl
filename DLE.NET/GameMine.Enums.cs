@@ -43,7 +43,7 @@
             SHOW_FILLED_POLYGONS = 16
         }
 
-        enum FileType : uint
+        enum GameFileType : uint
         {
             RDL = 0,
             RL2 = 1
@@ -147,6 +147,23 @@
             ENERGY_DRAIN = 101    // added to support d1 energy drain
         }
 
+        enum TriggerFlagD1 : uint
+        {
+            CONTROL_DOORS = 1, // Control Trigger 
+            SHIELD_DAMAGE = 2, // Shield Damage Trigger 
+            ENERGY_DRAIN = 4, // Energy Drain Trigger 
+            EXIT = 8, // End of level Trigger 
+            ON = 16, // Whether Trigger is active 
+            ONE_SHOT = 32, // If Trigger can only be triggered once 
+            MATCEN = 64, // Trigger for materialization centers 
+            ILLUSION_OFF = 128, // Switch Illusion OFF trigger 
+            SECRET_EXIT = 256, // Exit to secret level 
+            ILLUSION_ON = 512, // Switch Illusion ON trigger 
+            OPEN_WALL = 1024,
+            CLOSE_WALL = 2048,
+            MAKE_ILLUSIONARY = 4096
+            }
+
         enum TriggerFlagD2 : byte
         {
             NO_MESSAGE = 1, // Don't show a message when triggered
@@ -157,6 +174,16 @@
             SET_ORIENT = 32, // switch will assume the opposite function after operation
             SILENT = 64,
             AUTOPLAY = 128
+        }
+
+        enum TextureFlag : int
+        {
+            TRANSPARENT = 1,
+            SUPER_TRANSPARENT = 2,
+            NO_LIGHTING = 4,
+            RLE = 8,
+            PAGED_OUT = 16,
+            RLE_BIG = 32
         }
     }
 }
