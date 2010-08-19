@@ -294,7 +294,6 @@
 
 // misc 
 #define DEFAULT_LIGHTING    F0_5      // (F1_0/2) 
-#define TRIGGER_DEFAULT     2*F1_0
 
 // Trigger flags for Descent 1
 #define	TRIGGER_CONTROL_DOORS		1	// Control Trigger 
@@ -374,10 +373,6 @@
 #define	BM_FLAG_RLE                8
 #define	BM_FLAG_PAGED_OUT          16
 #define	BM_FLAG_RLE_BIG            32
-
-// Trigger delay times before they can be retriggered (Recharge time) 
-#define	TRIGGER_DELAY_DOOR	F1_0*1	// 1 second for doors 
-#define	TRIGGER_DELAY_ZAPS	F1_0/10	// 1/10 second for quickie stuff 
 
 // New unimplemented trigger ideas  
 #define	CONTROL_ROBOTS				8	// If Trigger modifies robot behavior 
