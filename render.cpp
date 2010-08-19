@@ -152,10 +152,10 @@ bmWidth2 = bmWidth / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i=0;i<4;i++) {
-	INT16 vertnum;
-	vertnum = segment->verts[side_vert[nSide][i]];
-	a[i].x = scrn[vertnum].x;
-	a[i].y = scrn[vertnum].y;
+	INT16 nVertex;
+	nVertex = segment->verts[side_vert[nSide][i]];
+	a[i].x = scrn[nVertex].x;
+	a[i].y = scrn[nVertex].y;
 	}
 	
 	// determin min/max points

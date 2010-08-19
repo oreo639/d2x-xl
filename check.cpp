@@ -122,7 +122,7 @@ theApp.MineView ()->Refresh ();
 
 double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide) 
 {
-  INT16 vertnum[4],i;
+  INT16 nVertex[4],i;
   tFixVector midpoint1, midpoint2;
   double length1,length2,ave_length, mid_length;
   double ratio1,ratio2;
@@ -130,8 +130,8 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
   // copy vertnums into an array
 	CSegment *segP = m_mine->Segments (nSegment);
   for (i=0;i<4;i++) {
-    vertnum[i] = segP->verts[side_vert[nSide][i]];
-	 vert [i] = m_mine->Vertices (vertnum [i]);
+    nVertex[i] = segP->verts[side_vert[nSide][i]];
+	 vert [i] = m_mine->Vertices (nVertex [i]);
   }
 
   length1 = CalcDistance (vert [0], vert [1], vert [2]);
@@ -1768,7 +1768,7 @@ bool CDiagTool::CheckVertices ()
 	if (!GetMine ())
 		return false;
 //  bool found;
-  INT32 nSegment,vertnum,point;
+  INT32 nSegment,nVertex,point;
   INT32 nUnused = 0;
 
   INT16 sub_errors = m_nErrors [0];
@@ -1777,7 +1777,7 @@ bool CDiagTool::CheckVertices ()
 
   UINT8 *vStat = m_mine->VertStatus ();
 
-for (vertnum= m_mine->VertCount (); vertnum; vertnum--, vStat++)
+for (nVertex= m_mine->VertCount (); nVertex; nVertex--, vStat++)
 	*vStat &= ~NEW_MASK;
 
 // mark all used verts
@@ -1785,26 +1785,26 @@ CSegment *segP = m_mine->Segments ();
 for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		*m_mine->VertStatus (segP->verts [point]) |= NEW_MASK;
-vertnum = m_mine->VertCount () - 1;
-for (vStat = m_mine->VertStatus (vertnum); vertnum >= 0; vertnum--, vStat--) {
+nVertex = m_mine->VertCount () - 1;
+for (vStat = m_mine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	if (!(*vStat & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
-			if (vertnum < --m_mine->VertCount ()) {
-				memcpy (m_mine->Vertices (vertnum), m_mine->Vertices (vertnum + 1), (m_mine->VertCount () - vertnum) * sizeof (*m_mine->Vertices ()));
-				memcpy (m_mine->VertStatus (vertnum), m_mine->VertStatus (vertnum + 1), (m_mine->VertCount () - vertnum) * sizeof (*m_mine->VertStatus ()));
+			if (nVertex < --m_mine->VertCount ()) {
+				memcpy (m_mine->Vertices (nVertex), m_mine->Vertices (nVertex + 1), (m_mine->VertCount () - nVertex) * sizeof (*m_mine->Vertices ()));
+				memcpy (m_mine->VertStatus (nVertex), m_mine->VertStatus (nVertex + 1), (m_mine->VertCount () - nVertex) * sizeof (*m_mine->VertStatus ()));
 				}
 			CSegment *segP = m_mine->Segments ();
 			for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
-					if (segP->verts [point] >= vertnum)
+					if (segP->verts [point] >= nVertex)
 						segP->verts [point]--;
 			}
 		}
 	}
 vStat = m_mine->VertStatus ();
-for (vertnum= m_mine->VertCount (); vertnum; vertnum--, vStat++)
+for (nVertex= m_mine->VertCount (); nVertex; nVertex--, vStat++)
 	*vStat &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)

@@ -42,7 +42,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	CGameObject			*objP;
 	INT16				objnum, segObjCount;
 #endif
-	INT16				nSegment, nSide, vertnum;
+	INT16				nSegment, nSide, nVertex;
 	INT16				i, j, test;
 	INT16				origVertCount, k;
 	FIX				x,y,z;
@@ -60,24 +60,24 @@ origVertCount = VertCount ();
 // set origin
 segP = CurrSeg ();
 nSide = Current ()->nSide;
-vertnum = segP->verts [side_vert [nSide][CURRENT_POINT(0)]];
-memcpy (&origin, Vertices (vertnum), sizeof (*Vertices ()));
+nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(0)]];
+memcpy (&origin, Vertices (nVertex), sizeof (*Vertices ()));
 /*
-origin.x = Vertices (vertnum)->x;
-origin.y = Vertices (vertnum)->y;
-origin.z = Vertices (vertnum)->z;
+origin.x = Vertices (nVertex)->x;
+origin.y = Vertices (nVertex)->y;
+origin.z = Vertices (nVertex)->z;
 */
 // set x'
-vertnum = segP->verts [side_vert [nSide][CURRENT_POINT(1)]];
-x_prime.x = (double)(Vertices (vertnum)->x - origin.x);
-x_prime.y = (double)(Vertices (vertnum)->y - origin.y);
-x_prime.z = (double)(Vertices (vertnum)->z - origin.z);
+nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(1)]];
+x_prime.x = (double)(Vertices (nVertex)->x - origin.x);
+x_prime.y = (double)(Vertices (nVertex)->y - origin.y);
+x_prime.z = (double)(Vertices (nVertex)->z - origin.z);
 
 // calculate y'
-vertnum = segP->verts [side_vert [nSide][CURRENT_POINT(3)]];
-vect.x = (FIX)(Vertices (vertnum)->x - origin.x);
-vect.y = (FIX)(Vertices (vertnum)->y - origin.y);
-vect.z = (FIX)(Vertices (vertnum)->z - origin.z);
+nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(3)]];
+vect.x = (FIX)(Vertices (nVertex)->x - origin.x);
+vect.y = (FIX)(Vertices (nVertex)->y - origin.y);
+vect.z = (FIX)(Vertices (nVertex)->z - origin.z);
 y_prime.x = x_prime.y*vect.z - x_prime.z*vect.y;
 y_prime.y = x_prime.z*vect.x - x_prime.x*vect.z;
 y_prime.z = x_prime.x*vect.y - x_prime.y*vect.x;
@@ -325,12 +325,12 @@ while(!feof(fBlk)) {
 				}
 		// else make a new vertex
 		if (k == VertCount ()) {
-			vertnum = VertCount ();
-			*VertStatus (vertnum) |= NEW_MASK;
-			segP->verts [i] = vertnum;
-			Vertices (vertnum)->x = x;
-			Vertices (vertnum)->y = y;
-			Vertices (vertnum)->z = z;
+			nVertex = VertCount ();
+			*VertStatus (nVertex) |= NEW_MASK;
+			segP->verts [i] = nVertex;
+			Vertices (nVertex)->x = x;
+			Vertices (nVertex)->y = y;
+			Vertices (nVertex)->z = z;
 			VertCount ()++;
 			}
 		}
@@ -440,7 +440,7 @@ void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/)
 	INT16				i,j;
 	tFixVector		origin;
 	struct dvector	x_prime,y_prime,z_prime,vect;
-	INT16				vertnum;
+	INT16				nVertex;
 	double			length;
 
 #if DEMO
@@ -449,22 +449,22 @@ return;
 #endif
 // set origin
 segP = CurrSeg ();
-vertnum = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
-origin.x = Vertices (vertnum)->x;
-origin.y = Vertices (vertnum)->y;
-origin.z = Vertices (vertnum)->z;
+nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
+origin.x = Vertices (nVertex)->x;
+origin.y = Vertices (nVertex)->y;
+origin.z = Vertices (nVertex)->z;
 
 // set x'
-vertnum = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
-x_prime.x = (double)(Vertices (vertnum)->x - origin.x);
-x_prime.y = (double)(Vertices (vertnum)->y - origin.y);
-x_prime.z = (double)(Vertices (vertnum)->z - origin.z);
+nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
+x_prime.x = (double)(Vertices (nVertex)->x - origin.x);
+x_prime.y = (double)(Vertices (nVertex)->y - origin.y);
+x_prime.z = (double)(Vertices (nVertex)->z - origin.z);
 
 // calculate y'
-vertnum = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
-vect.x = (double)(Vertices (vertnum)->x - origin.x);
-vect.y = (double)(Vertices (vertnum)->y - origin.y);
-vect.z = (double)(Vertices (vertnum)->z - origin.z);
+nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
+vect.x = (double)(Vertices (nVertex)->x - origin.x);
+vect.y = (double)(Vertices (nVertex)->y - origin.y);
+vect.z = (double)(Vertices (nVertex)->z - origin.z);
 y_prime.x = x_prime.y*vect.z - x_prime.z*vect.y;
 y_prime.y = x_prime.z*vect.x - x_prime.x*vect.z;
 y_prime.z = x_prime.x*vect.y - x_prime.y*vect.x;
@@ -569,10 +569,10 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// which is a constant (k) times the axis
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vector (always 1)
-			vertnum = segP->verts [i];
-			vect.x = (double) (Vertices (vertnum)->x - origin.x);
-			vect.y = (double) (Vertices (vertnum)->y - origin.y);
-			vect.z = (double) (Vertices (vertnum)->z - origin.z);
+			nVertex = segP->verts [i];
+			vect.x = (double) (Vertices (nVertex)->x - origin.x);
+			vect.y = (double) (Vertices (nVertex)->y - origin.y);
+			vect.z = (double) (Vertices (nVertex)->z - origin.z);
 			fprintf (fBlk, "  tFixVector %d %ld %ld %ld\n",i,
 						(FIX)(vect.x*x_prime.x + vect.y*x_prime.y + vect.z*x_prime.z),
 						(FIX)(vect.x*y_prime.x + vect.y*y_prime.y + vect.z*y_prime.z),
@@ -816,7 +816,7 @@ INT32 CMine::ReadBlock (char *pszBlockFile,INT32 option)
 	CSegment *segP,*seg2;
 	INT16 nSegment,seg_offset;
 	INT16 count,child;
-	INT16 vertnum;
+	INT16 nVertex;
 	FILE *fBlk;
 
 _strlwr_s (pszBlockFile, 256);
@@ -851,9 +851,9 @@ for (nSegment = 0;nSegment < MAX_SEGMENTS (this); nSegment++, segP++) {
 	}
 
 // unmark all vertices
-for (vertnum = 0; vertnum < MAX_VERTICES (this); vertnum++) {
-	*VertStatus (vertnum) &= ~MARKED_MASK;
-	*VertStatus (vertnum) &= ~NEW_MASK;
+for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++) {
+	*VertStatus (nVertex) &= ~MARKED_MASK;
+	*VertStatus (nVertex) &= ~NEW_MASK;
 	}
 count = ReadSegmentInfo (fBlk);
 
@@ -901,8 +901,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		}
 	}
 // clear all new vertices as such
-for (vertnum=0;vertnum<MAX_VERTICES (this);vertnum++)
-	*VertStatus (vertnum) &= ~NEW_MASK;
+for (nVertex=0;nVertex<MAX_VERTICES (this);nVertex++)
+	*VertStatus (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
 segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)

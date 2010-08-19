@@ -183,7 +183,7 @@ UpdateData (TRUE);
 nVertexLight = (INT32) (m_fVertexLight * f1_0 / 100.0);
 m_mine = theApp.GetMine ();
 
-	INT16			nSegment, nSide, vertnum, i;
+	INT16			nSegment, nSide, nVertex, i;
 	CSegment	*segP = m_mine->Segments ();
 	CSide		*sideP;
 	bool			bChange = false;
@@ -193,8 +193,8 @@ theApp.LockUndo ();
 for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
-			vertnum = segP->verts [side_vert [nSide][i]];
-			if (*m_mine->VertStatus (vertnum) & MARKED_MASK) {
+			nVertex = segP->verts [side_vert [nSide][i]];
+			if (*m_mine->VertStatus (nVertex) & MARKED_MASK) {
 				sideP->uvls [i].l = nVertexLight;
 				bChange = true;
 				}

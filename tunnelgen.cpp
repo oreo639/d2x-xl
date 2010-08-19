@@ -315,7 +315,7 @@ void CMine::TunnelGenerator() {
 //  UpdateUndoBuffer(0);
 
 double length;
-INT32 i,j,vertnum,spline;
+INT32 i,j,nVertex,spline;
 CSegment *segP;
 
 if (!m_bSplineActive) {
@@ -389,19 +389,19 @@ else {
 		// copy current segment
 		*segP = *Segments (Current ()->nSegment);
 		// use last "n_spline" segments
-		vertnum = (MAX_VERTICES (this)-1)-(spline*4);
+		nVertex = (MAX_VERTICES (this)-1)-(spline*4);
 		for (j = 0; j < 4; j++) {
-		//	  memcpy(&vertices [VertCount ()],&vertices [vertnum-j],sizeof (tFixVector));
+		//	  memcpy(&vertices [VertCount ()],&vertices [nVertex-j],sizeof (tFixVector));
 			if (VertCount () >= MAX_VERTICES (this))
 				DEBUGMSG (" Tunnel generator: Vertex count out of range.")
-			else if ((vertnum - j < 0) || (vertnum - j >= MAX_VERTICES (this)))
+			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES (this)))
 				DEBUGMSG (" Tunnel generator: Vertex number out of range.")
 			else
-				memcpy (Vertices (VertCount ()), Vertices (vertnum - j), sizeof (*Vertices ()));
+				memcpy (Vertices (VertCount ()), Vertices (nVertex - j), sizeof (*Vertices ()));
 /*
-			vertices [VertCount ()].x = vertices [vertnum-j].x;
-			vertices [VertCount ()].y = vertices [vertnum-j].y;
-			vertices [VertCount ()].z = vertices [vertnum-j].z;
+			vertices [VertCount ()].x = vertices [nVertex-j].x;
+			vertices [VertCount ()].y = vertices [nVertex-j].y;
+			vertices [VertCount ()].z = vertices [nVertex-j].z;
 */
 			if (spline == 0) {         // 1st segment
 				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
@@ -514,7 +514,7 @@ void CMine::CalcSpline ()
   double angle;
   INT32 i,j;
   CSegment *segP;
-  INT16 vertnum;
+  INT16 nVertex;
   tFixVector vertex;
 //  tFixVector opp_center;
   double theta [2] [4],radius [2] [4]; // polor coordinates of sides
@@ -562,16 +562,16 @@ void CMine::CalcSpline ()
   segP = Segments (spline_segment1);
   tFixVector *vert;
   for (i=0;i<4;i++) {
-    vertnum = side_vert [spline_side1] [i];
-	 vert = Vertices (segP->verts [vertnum]);
+    nVertex = side_vert [spline_side1] [i];
+	 vert = Vertices (segP->verts [nVertex]);
     rel_side_pts [0] [i].x = vert->x - points [0].x;
     rel_side_pts [0] [i].y = vert->y - points [0].y;
     rel_side_pts [0] [i].z = vert->z - points [0].z;
   }
   segP = Segments (spline_segment2);
   for (i=0;i<4;i++) {
-    vertnum = side_vert [spline_side2] [i];
-	 vert = Vertices (segP->verts [vertnum]);
+    nVertex = side_vert [spline_side2] [i];
+	 vert = Vertices (segP->verts [nVertex]);
     rel_side_pts [1] [i].x = vert->x - points [0].x;
     rel_side_pts [1] [i].y = vert->y - points [0].y;
     rel_side_pts [1] [i].z = vert->z - points [0].z;
@@ -652,9 +652,9 @@ void CMine::CalcSpline ()
   // calculate segment verticies as weighted average between the two sides
   // then spin verticies in the direction of the segment vector
   for (i=0;i<n_splines;i++) {
-    vertnum = (MAX_VERTICES (this)-1)-(i*4);
+    nVertex = (MAX_VERTICES (this)-1)-(i*4);
     for (j=0;j<4;j++) {
-	   vert = Vertices (vertnum - j);
+	   vert = Vertices (nVertex - j);
       angle  = ((float)i/(float)n_splines) * delta_angle [j] + theta [0] [j];
       length = ((float)i/(float)n_splines) * radius [1] [MatchingSide (j)] + (((float)n_splines-(float)i)/(float)n_splines) * radius [0] [j];
       RectPoints(angle,length,vert,&rel_spline_pts [i],&rel_spline_pts [i+1]);
@@ -671,20 +671,20 @@ void CMine::CalcSpline ()
   for (i=0;i<n_splines;i++) {
     // use last "n_spline" segments
     segP = Segments (MAX_SEGMENTS (this) - 1 - i);
-    vertnum = MAX_VERTICES (this) - 1 - i * 4;
+    nVertex = MAX_VERTICES (this) - 1 - i * 4;
     for (j = 0; j < 4; j++) {
       if (i == 0) {         // 1st segment
-	  segP->verts [side_vert [spline_side1] [j]] = vertnum - j;
+	  segP->verts [side_vert [spline_side1] [j]] = nVertex - j;
 	  segP->verts [opp_side_vert [spline_side1] [j]]
 	    = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
       } else {
 	if(i<n_splines-1) { // center segments
-	  segP->verts [side_vert [spline_side1] [j]] = vertnum - j;
-	  segP->verts [opp_side_vert [spline_side1] [j]] = vertnum + 4 - j;
+	  segP->verts [side_vert [spline_side1] [j]] = nVertex - j;
+	  segP->verts [opp_side_vert [spline_side1] [j]] = nVertex + 4 - j;
 	} else {          // last segment
 	  segP->verts [side_vert [spline_side1] [j]]
 	    = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
-	  segP->verts [opp_side_vert [spline_side1] [j]] = vertnum + 4 - j;
+	  segP->verts [opp_side_vert [spline_side1] [j]] = nVertex + 4 - j;
         }
       }
     }

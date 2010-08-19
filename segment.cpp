@@ -337,26 +337,26 @@ theApp.UnlockUndo ();
 //	    Segments () vertices who's vertex is greater than the deleted vertex
 // -------------------------------------------------------------------------- 
 
-void CMine::DeleteVertex(INT16 deleted_vertnum)
+void CMine::DeleteVertex(INT16 nDeletedVert)
 {
-	INT16 vertnum, nSegment; 
+	INT16 nVertex, nSegment; 
 
 	theApp.SetModified (TRUE); 
 	// fill in gap in vertex array and status
-	memcpy (Vertices (deleted_vertnum), Vertices (deleted_vertnum + 1), (VertCount ()-1 - deleted_vertnum) * sizeof (tFixVector));
-	memcpy (VertStatus (deleted_vertnum), VertStatus (deleted_vertnum + 1), (VertCount ()-1 - deleted_vertnum) * sizeof (*VertStatus ()));
+	memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount ()-1 - nDeletedVert) * sizeof (tFixVector));
+	memcpy (VertStatus (nDeletedVert), VertStatus (nDeletedVert + 1), (VertCount ()-1 - nDeletedVert) * sizeof (*VertStatus ()));
 /*
-	for (vertnum = deleted_vertnum; vertnum < VertCount ()-1; vertnum++) {
-		memcpy(&vertices [vertnum], &vertices [vertnum + 1], sizeof (tFixVector)); 
-		*VertStatus (vertnum] = *VertStatus (vertnum + 1]; 
+	for (nVertex = nDeletedVert; nVertex < VertCount ()-1; nVertex++) {
+		memcpy(&vertices [nVertex], &vertices [nVertex + 1], sizeof (tFixVector)); 
+		*VertStatus (nVertex] = *VertStatus (nVertex + 1]; 
 	}
 */
 	// update anyone pointing to this vertex
 	CSegment *segP = Segments ();
 	for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-		for (vertnum = 0; vertnum < 8; vertnum++)
-			if (segP->verts [vertnum] > deleted_vertnum)
-				segP->verts [vertnum]--; 
+		for (nVertex = 0; nVertex < 8; nVertex++)
+			if (segP->verts [nVertex] > nDeletedVert)
+				segP->verts [nVertex]--; 
 
 	// update number of vertices
 	VertCount ()--; 
@@ -370,18 +370,18 @@ void CMine::DeleteVertex(INT16 deleted_vertnum)
 
 void CMine::DeleteUnusedVertices()
 {
-	INT16 vertnum, nSegment, point; 
+	INT16 nVertex, nSegment, point; 
 
-for (vertnum = 0; vertnum < VertCount (); vertnum++)
-	*VertStatus (vertnum) &= ~NEW_MASK; 
+for (nVertex = 0; nVertex < VertCount (); nVertex++)
+	*VertStatus (nVertex) &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
 		*VertStatus (segP->verts [point]) |= NEW_MASK; 
-for (vertnum = VertCount ()-1; vertnum >= 0; vertnum--)
-	if (!(*VertStatus (vertnum) & NEW_MASK))
-		DeleteVertex(vertnum); 
+for (nVertex = VertCount ()-1; nVertex >= 0; nVertex--)
+	if (!(*VertStatus (nVertex) & NEW_MASK))
+		DeleteVertex(nVertex); 
 }
 
 // -------------------------------------------------------------------------- 
@@ -575,7 +575,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	struct dvector A [8], B [8], C [8], D [8], E [8], a, b, c, d; 
 	double angle1, angle2, angle3; 
 	double length; 
-	INT16 vertnum; 
+	INT16 nVertex; 
 	INT16 i; 
 	tFixVector center, opp_center, orthog; 
 	tFixVector *vert, new_center; 
@@ -611,15 +611,15 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			double factor; 
 
 			// point 0
-			vertnum = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]];
-			vert = Vertices (vertnum);
+			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]];
+			vert = Vertices (nVertex);
 			a.x = orthog.x + vert->x; 
 			a.y = orthog.y + vert->y; 
 			a.z = orthog.z + vert->z; 
 
 			// point 1
-			vertnum = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]; 
-			vert = Vertices (vertnum);
+			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]; 
+			vert = Vertices (nVertex);
 			b.x = orthog.x + vert->x; 
 			b.y = orthog.y + vert->y; 
 			b.z = orthog.z + vert->z; 
@@ -689,11 +689,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				//vertnum = currSeg->verts [side_vert [Current ()->nSide][i]]; 
-				vertnum = new_verts [i];
-				Vertices (vertnum)->x = (long) dround_off(A [i].x, 1.0); 
-				Vertices (vertnum)->y = (long) dround_off(A [i].y, 1.0); 
-				Vertices (vertnum)->z = (long) dround_off(A [i].z, 1.0); 
+				//nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
+				nVertex = new_verts [i];
+				Vertices (nVertex)->x = (long) dround_off(A [i].x, 1.0); 
+				Vertices (nVertex)->y = (long) dround_off(A [i].y, 1.0); 
+				Vertices (nVertex)->z = (long) dround_off(A [i].z, 1.0); 
 			}
 		}
 		break; 
@@ -729,14 +729,14 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		{
 			// copy side's four points into A
 			for (i = 0; i < 4; i++) {
-				vertnum = currSeg->verts [side_vert [Current ()->nSide][i]]; 
-				A [i].x = Vertices (vertnum)->x; 
-				A [i].y = Vertices (vertnum)->y; 
-				A [i].z = Vertices (vertnum)->z; 
-				vertnum = currSeg->verts [opp_side_vert [Current ()->nSide][i]]; 
-				A [i + 4].x = Vertices (vertnum)->x; 
-				A [i + 4].y = Vertices (vertnum)->y; 
-				A [i + 4].z = Vertices (vertnum)->z; 
+				nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
+				A [i].x = Vertices (nVertex)->x; 
+				A [i].y = Vertices (nVertex)->y; 
+				A [i].z = Vertices (nVertex)->z; 
+				nVertex = currSeg->verts [opp_side_vert [Current ()->nSide][i]]; 
+				A [i + 4].x = Vertices (nVertex)->x; 
+				A [i + 4].y = Vertices (nVertex)->y; 
+				A [i + 4].z = Vertices (nVertex)->z; 
 			}
 
 			// subtract point 0 from all points in A to form B points
@@ -811,18 +811,18 @@ void CMine::DefineVertices (INT16 new_verts [4])
 				B [i].z = - C [i].y * sin(- angle1) + C [i].z * cos(- angle1); 
 			}
 			// and translate back
-			vertnum = currSeg->verts [side_vert [Current ()->nSide][0]]; 
+			nVertex = currSeg->verts [side_vert [Current ()->nSide][0]]; 
 			for (i = 4; i < 8; i++) {
-				A [i].x = B [i].x + Vertices (vertnum)->x; 
-				A [i].y = B [i].y + Vertices (vertnum)->y; 
-				A [i].z = B [i].z + Vertices (vertnum)->z; 
+				A [i].x = B [i].x + Vertices (nVertex)->x; 
+				A [i].y = B [i].y + Vertices (nVertex)->y; 
+				A [i].z = B [i].z + Vertices (nVertex)->z; 
 			}
 
 			for (i = 0; i < 4; i++) {
-				INT32 vertnum = new_verts [i];
-				Vertices (vertnum)->x = (long) dround_off(A [i + 4].x, 1.0); 
-				Vertices (vertnum)->y = (long) dround_off(A [i + 4].y, 1.0); 
-				Vertices (vertnum)->z = (long) dround_off(A [i + 4].z, 1.0); 
+				INT32 nVertex = new_verts [i];
+				Vertices (nVertex)->x = (long) dround_off(A [i + 4].x, 1.0); 
+				Vertices (nVertex)->y = (long) dround_off(A [i + 4].y, 1.0); 
+				Vertices (nVertex)->z = (long) dround_off(A [i + 4].z, 1.0); 
 			}
 		}
 	}
@@ -857,19 +857,19 @@ if (seg1->children [sidenum1]!=-1 || seg2->children [sidenum2]!=-1)
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = seg1->verts [side_vert [sidenum1][i]];
-	memcpy (v1 + i, Vertices (vertnum), sizeof (*Vertices ()));
+	INT32 nVertex = seg1->verts [side_vert [sidenum1][i]];
+	memcpy (v1 + i, Vertices (nVertex), sizeof (*Vertices ()));
 /*
-	v1 [i].x = Vertices (vertnum)->x; 
-	v1 [i].y = Vertices (vertnum)->y; 
-	v1 [i].z = Vertices (vertnum)->z; 
+	v1 [i].x = Vertices (nVertex)->x; 
+	v1 [i].y = Vertices (nVertex)->y; 
+	v1 [i].z = Vertices (nVertex)->z; 
 */
-	vertnum = seg2->verts [side_vert [sidenum2][i]];
-	memcpy (v2 + i, Vertices (vertnum), sizeof (*Vertices ()));
+	nVertex = seg2->verts [side_vert [sidenum2][i]];
+	memcpy (v2 + i, Vertices (nVertex), sizeof (*Vertices ()));
 /*
-	v2 [i].x = Vertices (vertnum)->x; 
-	v2 [i].y = Vertices (vertnum)->y; 
-	v2 [i].z = Vertices (vertnum)->z; 
+	v2 [i].x = Vertices (nVertex)->x; 
+	v2 [i].y = Vertices (nVertex)->y; 
+	v2 [i].z = Vertices (nVertex)->z; 
 */
 	match [i].i =-1; 
 }
@@ -924,7 +924,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 	seg1 = Segments (segnum1); 
 	seg2 = Segments (segnum2); 
 	INT32 i; 
-	INT16 nSegment, vertnum, oldVertex, newVertex; 
+	INT16 nSegment, nVertex, oldVertex, newVertex; 
 
 	seg1->children [sidenum1] = segnum2; 
 	seg1->child_bitmask |= (1 << sidenum1); 
@@ -957,9 +957,9 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 		if (oldVertex != newVertex) {
 			CSegment *segP = Segments ();
 			for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-				for (vertnum = 0; vertnum < 8; vertnum++)
-					if (segP->verts [vertnum] == oldVertex)
-						segP->verts [vertnum] = newVertex; 
+				for (nVertex = 0; nVertex < 8; nVertex++)
+					if (segP->verts [nVertex] == oldVertex)
+						segP->verts [nVertex] = newVertex; 
 			// then delete the vertex
 			DeleteVertex (oldVertex); 
 		}
@@ -1103,14 +1103,14 @@ void CMine::MarkSegment(INT16 nSegment)
 
 	// update vertices's marked status
 	// ..first clear all marked verts
-	INT16 vertnum; 
-	for (vertnum = 0; vertnum < MAX_VERTICES (this); vertnum++)
-		*VertStatus (vertnum) &= ~MARKED_MASK; 
+	INT16 nVertex; 
+	for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++)
+		*VertStatus (nVertex) &= ~MARKED_MASK; 
 	// ..then mark all verts for marked Segments ()
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
 		if (segP->wall_bitmask & MARKED_MASK)
-			for (vertnum = 0; vertnum < 8; vertnum++)
-				*VertStatus (segP->verts [vertnum]) |=  MARKED_MASK; 
+			for (nVertex = 0; nVertex < 8; nVertex++)
+				*VertStatus (segP->verts [nVertex]) |=  MARKED_MASK; 
 }
 
 // -------------------------------------------------------------------------- 
@@ -1285,7 +1285,7 @@ return true;
 void CMine::SplitPoints () 
 {
 CSegment *segP; 
-INT16 vert, nSegment, vertnum, nOppSeg, nOppSide; 
+INT16 vert, nSegment, nVertex, nOppSeg, nOppSide; 
 bool found; 
 
 if (m_bSplineActive) {
@@ -1306,8 +1306,8 @@ found = FALSE;
 segP = Segments ();
 for (nSegment = 0; (nSegment < SegCount ()) && !found; nSegment++, segP++)
 	if (nSegment != Current ()->nSegment)
-		for (vertnum = 0; vertnum < 8; vertnum++)
-			if (segP->verts [vertnum] == vert) {
+		for (nVertex = 0; nVertex < 8; nVertex++)
+			if (segP->verts [nVertex] == vert) {
 				found = TRUE; 
 				break; 
 				}
@@ -1363,7 +1363,7 @@ INFOMSG("A new point was made for the current point.");
 void CMine::SplitLines() 
 {
   CSegment *segP; 
-  INT16 vert [2], nSegment, vertnum, linenum, nOppSeg, nOppSide, i; 
+  INT16 vert [2], nSegment, nVertex, linenum, nOppSeg, nOppSide, i; 
   bool found [2]; 
 
 if (m_bSplineActive) {
@@ -1385,8 +1385,8 @@ for (i = 0; i < 2; i++) {
 	segP = Segments ();
 	for (nSegment = 0; (nSegment < SegCount ()) && !found [i]; nSegment++, segP++) {
 		if (nSegment != Current ()->nSegment) {
-			for (vertnum = 0; vertnum < 8; vertnum++) {
-				if (segP->verts [vertnum] == vert [i]) {
+			for (nVertex = 0; nVertex < 8; nVertex++) {
+				if (segP->verts [nVertex] == vert [i]) {
 					found [i] = TRUE; 
 					break; 
 					}
@@ -1451,7 +1451,7 @@ INFOMSG ("Two new points were made for the current line.");
 void CMine::SplitSegments (INT32 solidify, INT32 nSide) 
 {
   CSegment *segP; 
-  INT32 vert [4], nSegment, vertnum, i, nFound = 0; 
+  INT32 vert [4], nSegment, nVertex, i, nFound = 0; 
   bool found [4]; 
 
 if (m_bSplineActive) {
@@ -1475,8 +1475,8 @@ for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP+
 	if (nSegment != Current ()->nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = FALSE;
-			for (vertnum = 0; vertnum < 8; vertnum++)
-				if (segP->verts [vertnum] == vert [i]) {
+			for (nVertex = 0; nVertex < 8; nVertex++)
+				if (segP->verts [nVertex] == vert [i]) {
 					found [i] = TRUE;
 					if (++nFound == 4)
 						goto found;
@@ -1827,10 +1827,10 @@ if (solidify) {
 #if 1
 		memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (*Vertices ()));
 #else
-		INT32 vertnum = seg1->verts [side_vert [cur1->nSide][i]];
-		v1 [i].x = Vertices (vertnum)->x; 
-		v1 [i].y = Vertices (vertnum)->y; 
-		v1 [i].z = Vertices (vertnum)->z; 
+		INT32 nVertex = seg1->verts [side_vert [cur1->nSide][i]];
+		v1 [i].x = Vertices (nVertex)->x; 
+		v1 [i].y = Vertices (nVertex)->y; 
+		v1 [i].z = Vertices (nVertex)->z; 
 #endif
 		}
 	minTotalRad = 1e300;
@@ -1843,10 +1843,10 @@ if (solidify) {
 #if 1
 				memcpy (v2 + i, Vertices (seg2->verts[side_vert[nSide][i]]), sizeof (*Vertices ()));
 #else
-				INT32 vertnum = seg2->verts [side_vert [nSide][i]];
-				v2 [i].x = Vertices (vertnum)->x; 
-				v2 [i].y = Vertices (vertnum)->y; 
-				v2 [i].z = Vertices (vertnum)->z; 
+				INT32 nVertex = seg2->verts [side_vert [nSide][i]];
+				v2 [i].x = Vertices (nVertex)->x; 
+				v2 [i].y = Vertices (nVertex)->y; 
+				v2 [i].z = Vertices (nVertex)->z; 
 #endif
 				}
 			for (i = 0; i < 4; i++)
@@ -2162,7 +2162,7 @@ void CMine::SetUV (INT16 nSegment, INT16 nSide, INT16 x, INT16 y, double dummy)
 		}; 
 
 	struct vector A [4], B [4], C [4], D [4], E [4]; 
-	INT32 i, vertnum; 
+	INT32 i, nVertex; 
 	double angle; 
 
 // for testing, x is used to tell how far to convert vector
@@ -2171,10 +2171,10 @@ void CMine::SetUV (INT16 nSegment, INT16 nSide, INT16 x, INT16 y, double dummy)
 // copy side's four points into A
 INT32 h = sizeof (*Vertices ());
 for (i = 0; i < 4; i++) {
-	vertnum = Segments (nSegment)->verts [side_vert [nSide][i]]; 
-	A [i].x = Vertices (vertnum)->x; 
-	A [i].y = Vertices (vertnum)->y; 
-	A [i].z = Vertices (vertnum)->z; 
+	nVertex = Segments (nSegment)->verts [side_vert [nSide][i]]; 
+	A [i].x = Vertices (nVertex)->x; 
+	A [i].y = Vertices (nVertex)->y; 
+	A [i].z = Vertices (nVertex)->z; 
 	}
 
 // subtract point 0 from all points in A to form B points

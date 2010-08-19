@@ -651,7 +651,7 @@ else {
 // ------------------------------------------------------------------------
 INT16 CMine::FixIndexValues()
 {
-	INT16 	nSegment, nSide, vertnum;
+	INT16 	nSegment, nSide, nVertex;
 	UINT16	nWall;
 	INT16 	check_err;
 
@@ -673,9 +673,9 @@ INT16 CMine::FixIndexValues()
 			}
 		}
 		// check verts
-		for(vertnum = 0; vertnum < MAX_VERTICES_PER_SEGMENT; vertnum++) {
-			if (segP->verts [vertnum] < 0 || segP->verts [vertnum] >= VertCount ()) {
-				segP->verts [vertnum] = 0;  // this will cause a bad looking picture
+		for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
+			if (segP->verts [nVertex] < 0 || segP->verts [nVertex] >= VertCount ()) {
+				segP->verts [nVertex] = 0;  // this will cause a bad looking picture
 				check_err |= (1 << 2);      // but it will prevent a crash
 			}
 		}

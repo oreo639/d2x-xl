@@ -431,20 +431,20 @@ void CMine::CalcAverageCornerLight (bool bAll)
 {
 #if 0
 
-  INT32 nSegment,pt,i,vertnum,count,nSide,uvnum;
+  INT32 nSegment,pt,i,nVertex,count,nSide,uvnum;
   UINT16 max_brightness;
 
 // smooth corner light by averaging all corners which share a vertex
 theApp.SetModified (TRUE);
-for (vertnum = 0; vertnum < VertCount (); vertnum++) {
-	if (bAll || (*VertStatus (vertnum) & MARKED_MASK)) {
+for (nVertex = 0; nVertex < VertCount (); nVertex++) {
+	if (bAll || (*VertStatus (nVertex) & MARKED_MASK)) {
 		max_brightness = 0;
 		count = 0;
 		// find all Segments () which share this point
 		CSegment *segP = Segments ();
 		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			for (pt = 0; pt < 8; pt++) {
-				if (segP->verts[pt] == vertnum) {
+				if (segP->verts[pt] == nVertex) {
 					// add all the uvls for this point
 					for (i = 0; i < 3; i++) {
 						nSide = point_sides[pt][i];
@@ -470,7 +470,7 @@ for (vertnum = 0; vertnum < VertCount (); vertnum++) {
 			CSegment *segP = Segments ();
 			for (nSegment=0;nSegment<SegCount ();nSegment++, segP++) {
 				for (pt=0;pt<8;pt++) {
-					if (segP->verts[pt] == vertnum) {
+					if (segP->verts[pt] == nVertex) {
 						for (i=0;i<3;i++) {
 							nSide = point_sides[pt][i];
 							uvnum = point_corners[pt][i];
@@ -501,15 +501,15 @@ theApp.SetModified (TRUE);
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
-			INT32 vertnum = segP->verts [pt];
-			if (bAll || (*VertStatus (vertnum) & MARKED_MASK)) {
+			INT32 nVertex = segP->verts [pt];
+			if (bAll || (*VertStatus (nVertex) & MARKED_MASK)) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
 					if ((segP->children [nSide] < 0) || (segP->sides [nSide].nWall < wallCount)) {
 						INT32 uvnum = point_corners [pt][i];
-						if (max_brightness [vertnum].light < UINT16 (segP->sides [nSide].uvls [uvnum].l))
-							max_brightness [vertnum].light = UINT16 (segP->sides [nSide].uvls [uvnum].l);
-						max_brightness [vertnum].count++;
+						if (max_brightness [nVertex].light < UINT16 (segP->sides [nSide].uvls [uvnum].l))
+							max_brightness [nVertex].light = UINT16 (segP->sides [nSide].uvls [uvnum].l);
+						max_brightness [nVertex].count++;
 						}
 					}
 				}
@@ -520,13 +520,13 @@ theApp.SetModified (TRUE);
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
-			INT32 vertnum = segP->verts [pt];
-			if ((max_brightness [vertnum].count > 0) && (bAll || (*VertStatus (vertnum) & MARKED_MASK))) {
+			INT32 nVertex = segP->verts [pt];
+			if ((max_brightness [nVertex].count > 0) && (bAll || (*VertStatus (nVertex) & MARKED_MASK))) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
 					if ((segP->children [nSide] < 0) || (segP->sides [nSide].nWall < wallCount)) {
 						INT32 uvnum = point_corners [pt][i];
-						segP->sides [nSide].uvls [uvnum].l = max_brightness [vertnum].light /*/ max_brightness [vertnum].count*/;
+						segP->sides [nSide].uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
 						}
 					}
 				}
@@ -723,8 +723,8 @@ INT32 nSegCount = SegCount ();
 		tFixVector source_corner[4];
 		INT32 j;
 		for (j = 0; j < 4; j++) {
-			INT32 vertnum = side_vert [nSourceSide][j];
-			INT32 h = segP->verts [vertnum];
+			INT32 nVertex = side_vert [nSourceSide][j];
+			INT32 h = segP->verts [nVertex];
 			source_corner[j].x = Vertices (h)->x;
 			source_corner[j].y = Vertices (h)->y;
 			source_corner[j].z = Vertices (h)->z;
@@ -1006,8 +1006,8 @@ fLightScale = 1.0; ///= 100.0;
 			// setup source corner vertex for length calculation later
 			tFixVector source_corner[4];
 			for (INT32 j = 0; j < 4; j++) {
-				UINT8 vertnum = side_vert[nSourceSide][j];
-				INT32 h = srcSegP->verts[vertnum];
+				UINT8 nVertex = side_vert[nSourceSide][j];
+				INT32 h = srcSegP->verts[nVertex];
 				source_corner[j].x = Vertices (h)->x;
 				source_corner[j].y = Vertices (h)->y;
 				source_corner[j].z = Vertices (h)->z;
@@ -1316,8 +1316,8 @@ if (!bIgnoreAngle) {
 INT32 i, j;
 for (j = 0; j < 4; j++) {
 	tFixVector corner;
-	INT32 vertnum = side_vert[nSide][j];
-	INT32 h = segP->verts[vertnum];
+	INT32 nVertex = side_vert[nSide][j];
+	INT32 h = segP->verts[nVertex];
 	corner.x = Vertices (h)->x;
 	corner.y = Vertices (h)->y;
 	corner.z = Vertices (h)->z;

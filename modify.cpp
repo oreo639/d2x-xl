@@ -29,10 +29,10 @@ bool CMine::EditGeoFwd (void)
 /* calculate center of current side */
  center.x = center.y = center.z = 0;
  for (i = 0; i < 4; i++) {
-	 INT32 vertnum = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
-   center.x += Vertices (vertnum)->x;
-   center.y += Vertices (vertnum)->y;
-   center.z += Vertices (vertnum)->z;
+	 INT32 nVertex = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
+   center.x += Vertices (nVertex)->x;
+   center.y += Vertices (nVertex)->y;
+   center.z += Vertices (nVertex)->z;
  }
 center.x /= 4;
 center.y /= 4;
@@ -41,10 +41,10 @@ center.z /= 4;
 // calculate center of opposite of current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
-   opp_center.x += Vertices (vertnum)->x;
-   opp_center.y += Vertices (vertnum)->y;
-   opp_center.z += Vertices (vertnum)->z;
+	INT32 nVertex = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
+   opp_center.x += Vertices (nVertex)->x;
+   opp_center.y += Vertices (nVertex)->y;
+   opp_center.z += Vertices (nVertex)->z;
 	}
 opp_center.x /= 4;
 opp_center.y /= 4;
@@ -93,10 +93,10 @@ bool CMine::EditGeoBack (void)
 /* calculate center of current side */
 center.x = center.y = center.z = 0;
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
-	center.x += Vertices (vertnum)->x;
-	center.y += Vertices (vertnum)->y;
-	center.z += Vertices (vertnum)->z;
+	INT32 nVertex = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
+	center.x += Vertices (nVertex)->x;
+	center.y += Vertices (nVertex)->y;
+	center.z += Vertices (nVertex)->z;
 	}
 center.x /= 4;
 center.y /= 4;
@@ -105,10 +105,10 @@ center.z /= 4;
 // calculate center of oppisite current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
-	opp_center.x += Vertices (vertnum)->x;
-	opp_center.y += Vertices (vertnum)->y;
-	opp_center.z += Vertices (vertnum)->z;
+	INT32 nVertex = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
+	opp_center.x += Vertices (nVertex)->x;
+	opp_center.y += Vertices (nVertex)->y;
+	opp_center.z += Vertices (nVertex)->z;
 	}
 opp_center.x /= 4;
 opp_center.y /= 4;

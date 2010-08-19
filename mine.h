@@ -246,7 +246,7 @@ public:
 	bool	CopyObject (UINT8 new_type, INT16 nSegment = -1);
 	void  DeleteObject(INT16 objectNumber = -1);
 	void  DeleteUnusedVertices();
-	void  DeleteVertex(INT16 deleted_vertnum);
+	void  DeleteVertex(INT16 nDeletedVert);
 
 	void InitSegment (INT16 segNum);
 	bool SplitSegment ();
