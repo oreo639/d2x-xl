@@ -236,5 +236,49 @@
             NODAMAGE = 8,
             OUTDOORS = 16
         }
+
+        enum WallType : byte
+        {
+            NORMAL = 0, // Normal wall 
+            BLASTABLE = 1, // Removable (by shooting) wall 
+            DOOR = 2, // Door  
+            ILLUSION = 3, // Wall that appears to be there, but you can fly thru 
+            OPEN = 4, // Just an open side. (Trigger) 
+            CLOSED = 5, // Wall.  Used for transparent walls. 
+            OVERLAY = 6, // Goes over an actual solid side.  For triggers (Descent 2)
+            CLOAKED = 7, // Can see it, and see through it  (Descent 2)
+            TRANSPARENT = 8
+        }
+
+        enum WallFlag : ushort
+        {
+            BLASTED = 1, // Blasted out wall. 
+            DOOR_OPENED = 2, // Open door.  
+            RENDER_ADDITIVE = 4,
+            DOOR_LOCKED = 8, // Door is locked. 
+            DOOR_AUTO = 16, // Door automatically closes after time. 
+            ILLUSION_OFF = 32, // Illusionary wall is shut off. 
+            WALL_SWITCH = 64, // This wall is openable by a wall switch (Descent 2)
+            BUDDY_PROOF = 128, // Buddy assumes he cannot get through this wall (Descent 2)
+            IGNORE_MARKER = 256
+        }
+
+        enum WallClipFlag : byte
+        {
+            EXPLODES = 1, //door explodes when opening
+            BLASTABLE = 2, //this is a blastable wall
+            TMAP1 = 4, //this uses primary tmap, not tmap2
+            HIDDEN = 8 //this uses primary tmap, not tmap2
+        }
+
+        enum WallState : byte
+        {
+            DOOR_CLOSED	    = 0,// Door is closed 
+            DOOR_OPENING = 1,// Door is opening. 
+            DOOR_WAITING = 2,// Waiting to close 
+            DOOR_CLOSING = 3,// Door is closing 
+            DOOR_CLOAKING = 5,// Wall is going from closed -> open (Descent 2)
+            DOOR_DECLOAKING = 6	// Wall is going from open -> closed (Descent 2)
+        }
     }
 }
