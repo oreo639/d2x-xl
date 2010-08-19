@@ -138,7 +138,6 @@
         public const int MAX_POWERUP_IDS1 = 26;
         public const int MAX_POWERUP_IDS2 = 50;
         public const int MAX_POWERUP_IDS_D2 = 48;
-        public const int MAX_TRIGGER_TARGETS = 10;
 
         public const int MAX_DL_INDICES_D2 = 500;
         public const int MAX_DELTA_LIGHTS_D2 = 10000;

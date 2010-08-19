@@ -3,7 +3,7 @@ namespace DLE.NET
 {
     partial class Trigger
     {
-        enum D1Type : byte
+        enum D1Type : ushort
         {
             CONTROL_DOORS = 1,	// Control Trigger 
             SHIELD_DAMAGE = 2,	// Shield Damage Trigger 

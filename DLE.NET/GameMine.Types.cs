@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-public struct FixVector 
+public class FixVector 
 {
     int x, y, z;
 }
 
-public struct AngleVector 
+public class AngleVector 
 {
     short p, b, h;
 }
 
-public struct FixMatrix 
+public class FixMatrix 
 {
     FixVector rvec, uvec, fvec;
 } 
 
-struct DoubleVector 
+class DoubleVector 
 {
     double x,y,z;
 }
 
-struct APOINT {
+class APOINT {
     short x, y, z;
 } 
 
@@ -30,28 +30,30 @@ namespace DLE.NET
     public partial class GameMine
     {
 
+        public class TMAP_INFO
+        {
+            byte	    flags;		//values defined above
+            byte        pad1, pad2, pad3;	    //keep alignment
+            int	        lighting;	//how much light this casts
+            int	        damage;	    //how much damage being against this does (for lava)
+            short	    eclip_num;	//the eclip that changes this, or -1
+            short	    destroyed;	//bitmap to show when destroyed, or -1
+            short	    slide_u, slide_v;   //slide rates of texture, stored in 8:8 int
+        }
 
-        public struct TMAP_INFO {
-          byte	    flags;		//values defined above
-          fixed byte pad [3];	    //keep alignment
-          int	    lighting;	//how much light this casts
-          int	    damage;	    //how much damage being against this does (for lava)
-          short	    eclip_num;	//the eclip that changes this, or -1
-          short	    destroyed;	//bitmap to show when destroyed, or -1
-          short	    slide_u, slide_v;   //slide rates of texture, stored in 8:8 int
-        } 
+        public class VCLIP
+        {
+            int	        play_time;  //total time (in seconds) of clip
+            int	        num_frames;
+            int	        frame_time; //time (in seconds) of each frame
+            int	        flags;
+            short	    sound_num;
+            ushort[]    frames = new ushort[VCLIP_MAX_FRAMES];
+            int	        light_value;
+        }
 
-        struct VCLIP {
-            int	play_time;  //total time (in seconds) of clip
-            int	    num_frames;
-            int	    frame_time; //time (in seconds) of each frame
-            int	    flags;
-            short	 sound_num;
-            fixed ushort frames [VCLIP_MAX_FRAMES];
-            int	    light_value;
-        } 
-
-        struct ECLIP {
+        public class ECLIP
+        {
             VCLIP   vc;			        //embedded vclip
             int     time_left;		    //for sequencing
             int	    frame_count;		//for sequencing
@@ -65,29 +67,32 @@ namespace DLE.NET
             int	    dest_size;		    //3d size of explosion
             int	    sound_num;		    //what sound this makes
             int	    segnum, sidenum;	//what seg & side, for one-shot clips
-        } 
+        }
 
-        struct WCLIP {
+        public class WCLIP
+        {
             int	        play_time;
             short	    num_frames;
-            fixed short	frames [MAX_CLIP_FRAMES2];
+            short[] 	frames = new short[MAX_CLIP_FRAMES2];
             short	    open_sound;
             short	    close_sound;
             short	    flags;
-            fixed char  filename [13];
+            string      filename;
             char	    pad;
         } ;
 
         //describes a list of joint positions
-        struct JOINTLIST {
+        public class JOINTLIST
+        {
           short  n_joints;
           short  offset;
-        } 
+        }
 
-        struct ROBOT_INFO {
+        public class ROBOT_INFO
+        {
             int	      	model_num;		  // which polygon model?
-            fixed FixVector	gun_points [MAX_GUNS];	  // where each gun model is
-            fixed byte	gun_submodels [MAX_GUNS];  // which submodel is each gun in?
+            FixVector[]	gun_points = new FixVector[MAX_GUNS];	  // where each gun model is
+            byte[]	    gun_submodels = new byte[MAX_GUNS];  // which submodel is each gun in?
             short 	    exp1_vclip_num;
             short		exp1_sound_num;
             short 	    exp2_vclip_num;
@@ -107,14 +112,14 @@ namespace DLE.NET
             int		    strength;		    // Initial shields of robot
             int		    mass;			    // how heavy is this thing?
             int		    drag;			    // how much drag does it have?
-            fixed int   field_of_view [NDL];// compare this value with forward_vector.dot.vector_to_player,
-            fixed int	firing_wait [NDL];	// time in seconds between shots
-            fixed int	firing_wait2 [NDL];	// time in seconds between shots
-            fixed int	turn_time [NDL];	// time in seconds to rotate 360 degrees in a dimension
-            fixed int	max_speed [NDL];	// maximum speed attainable by this robot
-            fixed int	circle_distance [NDL]; // distance at which robot circles player
-            fixed char	rapidfire_count [NDL]; // number of shots fired rapidly
-            fixed char	evade_speed [NDL];	// rate at which robot can evade shots, 0=none, 4=very fast
+            int[]       field_of_view = new int[NDL];   // compare this value with forward_vector.dot.vector_to_player,
+            int[]	    firing_wait = new int[NDL];	    // time in seconds between shots
+            int[]	    firing_wait2  = new int[NDL];	// time in seconds between shots
+            int[]	    turn_time = new int[NDL];	    // time in seconds to rotate 360 degrees in a dimension
+            int[]	    max_speed = new int[NDL];	    // maximum speed attainable by this robot
+            int[]	    circle_distance = new int[NDL]; // distance at which robot circles player
+            char[]	    rapidfire_count = new char[NDL];// number of shots fired rapidly
+            char[]      evade_speed = new char[NDL];	// rate at which robot can evade shots, 0=none, 4=very fast
             char		cloak_type;		    // 0=never, 1=always, 2=except-when-firing
             char		attack_type;		// 0=firing, 1=charge (like green guy)
             byte		see_sound;		    // sound robot makes when it first sees the player
@@ -132,25 +137,32 @@ namespace DLE.NET
             char		lightcast;		    // Amount of light cast. 1 is default.  10 is very large.
             char		death_roll;		    // 0 = dies without death roll. !0 means does death roll, larger = faster and louder
             byte		flags;			    // misc properties
-            fixed byte	pad [3];	        // alignment
+            byte	    pad1, pad2, pad3;   // alignment
             byte		deathroll_sound;	// if has deathroll, what sound?
             byte		glow;			    // apply this light to robot itself. stored as 4:4 FIXed-point
             byte		behavior;		    // Default behavior.
             byte		aim;			    // 255 = perfect, less = more likely to miss.  0 != random, would look stupid.
 					                        // ..0=45 degree spread.  Specify in bitmaps.tbl in range 0.0..1.0
             //animation info
-            fixed JOINTLIST anim_states[(MAX_GUNS+1) * N_ANIM_STATES];
-
+            JOINTLIST[][] anim_states = new JOINTLIST[MAX_GUNS + 1][];
             int		    always_0xabcd;		// debugging
+
+            public ROBOT_INFO ()
+            {
+                for (int i = 0; i < anim_states.Length; i++)
+                {
+                    anim_states[i] = new JOINTLIST[N_ANIM_STATES];
+                }
+            }
 
         } 
 
-        struct JOINTPOS {
+        class JOINTPOS {
           short jointnum;
           AngleVector angles;
         } ;
 
-        struct WEAPON_INFO {
+        class WEAPON_INFO {
             char	render_type;		// How to draw 0=laser, 1=blob, 2=object
             char	persistent;		    // 0 = dies when it hits something, 1 = continues (eg, fusion cannon)
             short	model_num;		    // Model num if rendertype==2.
@@ -181,8 +193,8 @@ namespace DLE.NET
             int	    blob_size;		    // Size of blob if blob type
             int	    flash_size;		    // How big to draw the flash
             int	    impact_size;	    // How big of an impact
-            fixed int  strength[NDL];   // How much damage it can inflict
-            fixed int  speed[NDL];		// How fast it can move, difficulty level based.
+            int[]   strength = new int[NDL];   // How much damage it can inflict
+            int[]   speed = new int[NDL];		// How fast it can move, difficulty level based.
             int	    mass;			    // How much mass it has
             int	    drag;			    // How much drag it has
             int	    thrust;			    // How much thrust it has
@@ -194,47 +206,55 @@ namespace DLE.NET
             ushort	hires_picture;	    // a hires picture of the above
         } 
 
-        struct POWERUP_TYPE_INFO {
+        class POWERUP_TYPE_INFO 
+        {
           int	vclip_num;
           int	hit_sound;
           int	size;			// 3d size of longest dimension
           int	light;			// amount of light cast by this powerup, set in bitmaps.tbl
         } 
 
+        public class SUBMODEL_INFO
+        {
+            int 		ptrs;
+            FixVector   offsets;
+            FixVector   norms;	  // norm for sep plane
+            FixVector   pnts;	  // point on sep plane
+            int 		rads;	  // radius for each submodel
+            byte 		parents;  // what is parent for each submodel
+            FixVector   mins;
+            FixVector   maxs;
+        }
+
         //used to describe a polygon model
-        struct POLYMODEL {
+        class POLYMODEL {
             int			    n_models;
             int 			model_data_size;
             byte[]			model_data;
-            fixed int 		submodel_ptrs[MAX_SUBMODELS];
-            fixed FixVector submodel_offsets[MAX_SUBMODELS];
-            fixed FixVector submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
-            fixed FixVector submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
-            fixed int 		submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
-            fixed byte 		submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
-            fixed FixVector submodel_mins[MAX_SUBMODELS];
-            fixed FixVector submodel_maxs[MAX_SUBMODELS];
+            SUBMODEL_INFO[] submodel = new SUBMODEL_INFO[MAX_SUBMODELS];
             FixVector       mins, maxs;			  // min, max for whole model
             int				rad;
             byte			n_textures;
             ushort			first_texture;
             byte			simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
-        } 
+        }
 
-        struct TEXTURE_LIGHT {
+        public class TEXTURE_LIGHT
+        {
           int    nBaseTex;
           long   light;
-        } 
+        }
 
-        struct CUBE {
+        public class CUBE
+        {
           short nSegment;
           short nSide;
           short nLine;
           short nPoint;
           short nObject;
-        } 
+        }
 
-        class Selection 
+        public class Selection 
         {
 	        short nSegment;
 	        short nSide;
@@ -251,44 +271,45 @@ namespace DLE.NET
 	        }
         }
 
-        struct LEVEL_HEADER {
-          fixed char name[13];
-          int size;
-        }
-
-        struct SUBFILE 
+        public class LEVEL_HEADER
         {
-            long    offset;
-            fixed char name[13];
+            string  name;
             int     size;
         }
 
-        struct GAME_TOP_INFO 
+        public class SUBFILE 
+        {
+            long    offset;
+            string  name;
+            int     size;
+        }
+
+        public class GAME_TOP_INFO 
         {
             ushort  fileinfo_signature;
             ushort  fileinfo_version;
             int     fileinfo_size;
-        }     
+        }
 
-        struct PLAYER_ITEM_INFO 
+        public class PLAYER_ITEM_INFO 
         {
 	        int	 offset;
 	        int  size;
-        } 
+        }
 
-        struct GAME_ITEM_INFO 
+        public class GAME_ITEM_INFO 
         {
 	        int	 offset;
 	        int	 count;
 	        int  size;
-        } 
+        }
 
-        struct game_info 
+        public class game_info 
         {
             ushort              fileinfo_signature;
             ushort              fileinfo_version;
             int                 fileinfo_size;
-            fixed char          mine_filename[15];
+            string              mine_filename;
             int                 level;
             PLAYER_ITEM_INFO    player;
             GAME_ITEM_INFO	    objects;
@@ -301,36 +322,38 @@ namespace DLE.NET
             GAME_ITEM_INFO	    dl_indices;
             GAME_ITEM_INFO	    delta_lights;
             GAME_ITEM_INFO	    equipgen;
-        } 
+        }
 
 
-        struct ACTIVE_DOOR {
-          int	 n_parts;	   // for linked walls
-          fixed short	 front_wallnum[2]; // front wall numbers for this door
-          fixed short	 back_wallnum[2];  // back wall numbers for this door
-          int    time;		   // how long been opening, closing, waiting
-        } 
+        public class ACTIVE_DOOR
+        {
+          int	    n_parts;	   // for linked walls
+          short[]	front_wallnum = new short[2]; // front wall numbers for this door
+          short[]   back_wallnum = new short[2];  // back wall numbers for this door
+          int       time;		   // how long been opening, closing, waiting
+        }
 
-        struct CLOAKING_WALL {    // NEW for Descent 2
-          short front_wallnum;	  // front wall numbers for this door
-          short	back_wallnum; 	  // back wall numbers for this door
-          fixed int	front_ls[4]; 	  // front wall saved light values
-          fixed int	back_ls[4];	  // back wall saved light values
-          int	time;		  // how long been cloaking or decloaking
+        public class CLOAKING_WALL
+        {    // NEW for Descent 2
+          short     front_wallnum;	  // front wall numbers for this door
+          short	    back_wallnum; 	  // back wall numbers for this door
+          int[]	    front_ls = new int[4]; 	  // front wall saved light values
+          int[]     back_ls = new int[4];	  // back wall saved light values
+          int	    time;		  // how long been cloaking or decloaking
         } 
 
         // New stuff, 10/14/95: For shooting out lights and monitors.
         // Light cast upon vert_light vertices in segnum:sidenum by some light
-        struct DELTA_LIGHT 
+        public class DELTA_LIGHT 
         {
-            short segnum;
-            char  sidenum;
-            char  dummy;
-            fixed byte vert_light[4];
+            short   segnum;
+            char    sidenum;
+            char    dummy;
+            byte[]  vert_light = new byte[4];
         }
 
         // Light at segnum:sidenum casts light on count sides beginning at index (in array Delta_lights)
-        struct DL_INDEX_D2X 
+        public class DL_INDEX_D2X 
         {
             short   segnum;
             ushort  bitField;
@@ -345,9 +368,9 @@ namespace DLE.NET
                 set { bitField = (ushort) ((value << 3) | (bitField & ~3)); }
             }
             ushort  index;
-        } 
+        }
 
-        struct DL_INDEX_STD
+        public class DL_INDEX_STD
         {
             short segnum;
             byte sidenum;
@@ -355,8 +378,9 @@ namespace DLE.NET
             ushort index;
         }
 
-        [StructLayout(LayoutKind.Explicit)] 
-        struct DL_INDEX {
+        [StructLayout(LayoutKind.Explicit)]
+        public class DL_INDEX
+        {
 	        [FieldOffset(0)] DL_INDEX_STD	std;
 	        [FieldOffset(0)] DL_INDEX_D2X	d2x;
         } 
@@ -366,72 +390,73 @@ namespace DLE.NET
         //extern int	     Num_static_lights;
 
 
-        struct REACTOR_TRIGGER {
-          short num_links;
-          fixed short seg [MAX_TRIGGER_TARGETS];
-          fixed short side [MAX_TRIGGER_TARGETS];
-        } 
-
-        struct matcen_info 
+        public class REACTOR_TRIGGER
         {
-          fixed int  objFlags [2];  // Up to 32 different Descent 1 robots 
-          //int  robot_flags_d2x;   // Additional 32 robots for Descent 2
-          int    hit_points;        // How hard it is to destroy this particular matcen 
-          int    interval;          // Interval between materializations 
-          short  segnum;            // Segment this is attached to. 
-          short  fuelcen_num;       // Index in fuelcen array. 
+            short num_links;
+            Trigger.Target[] targets = new Trigger.Target[Trigger.MAX_TARGETS];
+        }
+
+        public class MATCEN_INFO 
+        {
+          int       objFlag1;          // Up to 32 different Descent 1 robots 
+          int       objFlag2;
+          //int  robot_flags_d2x;       // Additional 32 robots for Descent 2
+          int       hit_points;        // How hard it is to destroy this particular matcen 
+          int       interval;          // Interval between materializations 
+          short     segnum;            // Segment this is attached to. 
+          short     fuelcen_num;       // Index in fuelcen array. 
         }
 
 
         // pig file types 
-        struct PIG_HEADER
+        public class PIG_HEADER
         {
           int number_of_textures;
           int number_of_sounds;
-        } 
+        }
 
-        struct PIG_TEXTURE
+        public class PIG_TEXTURE
         {
-          fixed char name[8];
-          byte dflags; // this is only important for large bitmaps like the cockpit 
-          byte xsize;
-          byte ysize;
-          byte flags;
-          byte avg_color;
-          uint offset;
-        } 
+          string    name;
+          byte      dflags; // this is only important for large bitmaps like the cockpit 
+          byte      xsize;
+          byte      ysize;
+          byte      flags;
+          byte      avg_color;
+          uint      offset;
+        }
 
-        struct D2_PIG_HEADER
+        public class D2_PIG_HEADER
         {
           int signature;
           int version;
           int num_textures;
-        } 
+        }
 
-        struct D2_PIG_TEXTURE
+        public class D2_PIG_TEXTURE
         {
-          fixed char name[8];
-          byte dflags;  // bits 0-5 anim frame num, bit 6 abm flag
-          byte xsize;   // low 8 bits here, 4 more bits in pad
-          byte ysize;   // low 8 bits here, 4 more bits in pad
-          byte wh_extra;     // bits 0-3 xsize, bits 4-7 ysize
-          byte flags;   // see BM_FLAG_XXX in define.h
-          byte avg_color;   // average color
-          uint offset;
+          string    name;
+          byte      dflags;  // bits 0-5 anim frame num, bit 6 abm flag
+          byte      xsize;   // low 8 bits here, 4 more bits in pad
+          byte      ysize;   // low 8 bits here, 4 more bits in pad
+          byte      wh_extra;     // bits 0-3 xsize, bits 4-7 ysize
+          byte      flags;   // see BM_FLAG_XXX in define.h
+          byte      avg_color;   // average color
+          uint      offset;
         } 
 
-        struct PIG_SOUND
+        public class PIG_SOUND
         {
-          fixed byte unknown[20];
+          byte[] unknown = new byte[20];
         } 
 
-        struct TEXTURE
+        public class TEXTURE
         {
-          fixed char name[8];
-          short number;
-        } 
+          string    name;
+          short     number;
+        }
 
-        struct FLICKERING_LIGHT
+        public class FLICKERING_LIGHT
         {
           short segnum;
           short sidenum;  // cube with light on it
@@ -440,13 +465,13 @@ namespace DLE.NET
           int   delay;    // time for each bit in mask (int seconds)
         }
 
-        struct LIGHT_TIMER
+        public class LIGHT_TIMER
         {
 	        short	ticks;
 	        short	impulse;
-        } 
+        }
 
-        struct LIGHT_STATUS
+        public class LIGHT_STATUS
         {
 	        bool	bIsOn;
 	        bool	bWasOn;
@@ -454,21 +479,21 @@ namespace DLE.NET
 
         const int MAX_LEVELS = 1000;
 
-        struct MISSION_DATA
+        public class MISSION_DATA
         {
-	        fixed char	    missionName [80];
-	        fixed string    missionInfo [8 * 80];
-	        fixed int	    authorFlags [2];
-	        int	            missionType;
-	        fixed int	    missionFlags [6];
-	        fixed int	    customFlags [3];
-	        fixed string    levelList [MAX_LEVELS];	//18 == ########.###,####'\0' == levlname.ext,secr
-	        fixed char	    comment [4000];
-	        int             numLevels;
-	        int	            numSecrets;
+	        string	    missionName;
+	        string[]    missionInfo = new string[8];
+	        int[]	    authorFlags = new int[2];
+	        int	        missionType;
+	        int[]	    missionFlags = new int[6];
+	        int[]	    customFlags = new int[3];
+	        string[]    levelList = new string[MAX_LEVELS];	//18 == ########.###,####'\0' == levlname.ext,secr
+	        char[]	    comment = new char[4000];
+	        int         numLevels;
+	        int	        numSecrets;
         } 
 
-        struct tVertMatch 
+        public class tVertMatch 
             {
 		    short	b;
 		    short   i;

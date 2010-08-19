@@ -5,7 +5,7 @@ namespace DLE.NET
 {
     public partial class GameObject
     {
-        struct PHYSICS_INFO {
+        public class PHYSICS_INFO {
             FixVector  velocity;   //velocity vector of this object 
             FixVector  thrust;     //constant force applied to this object 
             int        mass;       //the mass of this object 
@@ -19,7 +19,7 @@ namespace DLE.NET
 
         //stuctures for different kinds of simulation 
 
-        struct LASER_INFO {
+        public class LASER_INFO {
             short   parent_type;     // The type of the parent of this object 
             short   parent_num;      // The object's parent's number 
             int     parent_signature;// The object's parent's signature... 
@@ -29,7 +29,7 @@ namespace DLE.NET
             int     multiplier;      //  Power if this is a fusion bolt (or other super weapon to be added). 
         } 
 
-        struct EXPLOSION_INFO {
+        public class EXPLOSION_INFO {
             int     spawn_time;     // when lifeleft is < this, spawn another 
             int     delete_time;    // when to delete object 
             char    delete_objnum;  // and what object to delete 
@@ -38,15 +38,15 @@ namespace DLE.NET
             char    next_attach;    // next explosion in attach list 
         } 
 
-        struct LIGHT_INFO {
+        public class LIGHT_INFO {
             int     intensity;    //how bright the light is 
         } 
 
-        struct POWERUP_INFO {
+        public class POWERUP_INFO {
             int     count;      //how many/much we pick up (vulcan cannon only?) 
         } 
 
-        struct VCLIP_INFO {
+        public class VCLIP_INFO {
             int       vclip_num;
             int       frametime;
             char      framenum;
@@ -54,17 +54,19 @@ namespace DLE.NET
 
         //structures for different kinds of rendering 
 
-        struct POLYOBJ_INFO {
+        public class POLYOBJ_INFO 
+        {
             int     model_num;        //which polygon model 
-            fixed   AngleVector anim_angles[GameMine.MAX_SUBMODELS];  //angles for each subobject 
+            AngleVector[] anim_angles = new AngleVector [GameMine.MAX_SUBMODELS];  //angles for each subobject 
             int     subobj_flags;     //specify which subobjs to draw 
             int     tmap_override;    //if this is not -1, map all face to this 
             char    alt_textures;     //if not -1, use these textures instead 
         }
 
-        struct AI_STATIC {
+        public class AI_STATIC 
+        {
             byte    behavior;            //  
-            fixed char   flags[GameMine.MAX_AI_FLAGS]; // various flags, meaning defined by constants 
+            char[]  flags = new char[GameMine.MAX_AI_FLAGS]; // various flags, meaning defined by constants 
             short   hide_segment;        //  Segment to go to for hiding. 
             short   hide_index;          //  Index in Path_seg_points 
             short   path_length;         //  Length of hide path. 
@@ -75,20 +77,22 @@ namespace DLE.NET
             short  danger_laser_num;
         } 
 
-        struct PARTICLE_INFO {
+        public class PARTICLE_INFO 
+        {
 	        int			nLife;
-	        fixed int	nSize [2];
+	        int[]	    nSize = new int[2];
 	        int			nParts;
 	        int			nSpeed;
 	        int			nDrift;
 	        int			nBrightness;
-	        fixed byte	color [4];
+	        byte[]  	color = new byte[4];
 	        char		nSide;
 	        char		nType;
 	        char		bEnabled;
         } 
 
-        struct LIGHTNING_INFO {
+        public class LIGHTNING_INFO 
+        {
 	        int			nLife;
 	        int			nDelay;
 	        int			nLength;
@@ -109,19 +113,20 @@ namespace DLE.NET
 	        char		bRandom;
 	        char		bInPlane;
 	        char		bEnabled;
-	        fixed byte	color [4];
+	        byte[]      color;
         } 
 
 
-        struct tSoundInfo {
+        public class tSoundInfo 
+        {
 	        int			nVolume;
-	        fixed char	szFilename [40];
+	        string  	filename;
 	        char		bEnabled;
         } 
 
         //movement info, determined by MOVEMENT_TYPE 
         [StructLayout(LayoutKind.Explicit)] 
-        struct MType 
+        public class MType 
         {
             [FieldOffset(0)] PHYSICS_INFO phys_info; // a physics object 
             [FieldOffset(0)] FixVector   spin_rate; // for spinning objects 
@@ -129,7 +134,7 @@ namespace DLE.NET
 
         //control info, determined by CONTROL_TYPE 
         [StructLayout(LayoutKind.Explicit)] 
-        struct CType 
+        public class CType 
         {
             [FieldOffset(0)] LASER_INFO     laser_info;
             [FieldOffset(0)] EXPLOSION_INFO expl_info;   //NOTE: debris uses this also 
@@ -140,7 +145,7 @@ namespace DLE.NET
 
         //render info, determined by RENDER_TYPE 
         [StructLayout(LayoutKind.Explicit)] 
-        struct RType 
+        public class RType 
         {
             [FieldOffset(0)] POLYOBJ_INFO	pobj_info;     //polygon model 
             [FieldOffset(0)] VCLIP_INFO		vclip_info;    //vclip 

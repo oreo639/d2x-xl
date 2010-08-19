@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace DLE.NET
 {
-    class GraphicsPanel : Panel
+    public class GraphicsPanel : Panel
     {
         public GraphicsPanel() : base()
         {
@@ -17,9 +17,11 @@ namespace DLE.NET
             return;
         }
 
-        protected override void OnPaint(PaintEventArgs pe)
+        protected override void  OnPaint(PaintEventArgs e)
         {
-            using (Graphics g = pe.Graphics) ;
+            using (Graphics gfx = e.Graphics)
+            {
+            }
         }
     }
 }
