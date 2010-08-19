@@ -6,15 +6,15 @@ namespace DLE.NET
     public partial class GameObject
     {
         struct physics_info {
-            GameMine.FixVector  velocity;   //velocity vector of this object 
-            GameMine.FixVector  thrust;     //constant force applied to this object 
-            int                 mass;       //the mass of this object 
-            int                 drag;       //how fast this slows down 
-            int                 brakes;     //how much brakes applied 
-            GameMine.FixVector  rotvel;     //rotational velecity (angles) 
-            GameMine.FixVector  rotthrust;  //rotational acceleration 
-            short               turnroll;   //rotation caused by turn banking 
-            ushort              flags;      //misc physics flags 
+            FixVector  velocity;   //velocity vector of this object 
+            FixVector  thrust;     //constant force applied to this object 
+            int        mass;       //the mass of this object 
+            int        drag;       //how fast this slows down 
+            int        brakes;     //how much brakes applied 
+            FixVector  rotvel;     //rotational velecity (angles) 
+            FixVector  rotthrust;  //rotational acceleration 
+            short      turnroll;   //rotation caused by turn banking 
+            ushort     flags;      //misc physics flags 
         } 
 
         //stuctures for different kinds of simulation 
@@ -56,7 +56,7 @@ namespace DLE.NET
 
         struct polyobj_info {
             int     model_num;        //which polygon model 
-            fixed   tAngleVector anim_angles[MAX_SUBMODELS];  //angles for each subobject 
+            fixed   AngleVector anim_angles[GameMine.MAX_SUBMODELS];  //angles for each subobject 
             int     subobj_flags;     //specify which subobjs to draw 
             int     tmap_override;    //if this is not -1, map all face to this 
             char    alt_textures;     //if not -1, use these textures instead 
@@ -64,7 +64,7 @@ namespace DLE.NET
 
         struct ai_static {
             byte    behavior;            //  
-            fixed char   flags[MAX_AI_FLAGS]; // various flags, meaning defined by constants 
+            fixed char   flags[GameMine.MAX_AI_FLAGS]; // various flags, meaning defined by constants 
             short   hide_segment;        //  Segment to go to for hiding. 
             short   hide_index;          //  Index in Path_seg_points 
             short   path_length;         //  Length of hide path. 
@@ -119,27 +119,7 @@ namespace DLE.NET
 	        char		bEnabled;
         } 
 
-        class CDObject 
-            {
-            short       signature;     // reduced size to save memory 
-            char        type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
-            char        id;            // which form of object...which powerup, robot, etc. 
-            byte        control_type;  // how this object is controlled 
-            byte        movement_type; // how this object moves 
-            byte        render_type;   //  how this object renders 
-            byte        flags;         // misc flags 
-            byte	    multiplayer;   // object only available in multiplayer games 
-            short       segnum;        // segment number containing object 
-            FixVector   pos;           // absolute x,y,z coordinate of center of object 
-            FixMatrix   orient;        // orientation of object in world 
-            int         size;          // 3d size of object - for collision detection 
-            int         shields;       // Starts at maximum, when <0, object dies.. 
-            FixVector   last_pos;      // where object was last frame 
-            char		contains_type; //  Type of object this object contains (eg, spider contains powerup) 
-            char		contains_id;   //  ID of object this object contains (eg, id = blue type = key) 
-            char		contains_count;// number of objects of type:id this object contains 
-  
-          //movement info, determined by MOVEMENT_TYPE 
+            //movement info, determined by MOVEMENT_TYPE 
             [StructLayout(LayoutKind.Explicit)] 
             struct MType 
             {
@@ -147,7 +127,7 @@ namespace DLE.NET
                 [FieldOffset(0)] FixVector   spin_rate; // for spinning objects 
             } 
 
-          //control info, determined by CONTROL_TYPE 
+            //control info, determined by CONTROL_TYPE 
             [StructLayout(LayoutKind.Explicit)] 
             struct CType 
             {
@@ -158,9 +138,10 @@ namespace DLE.NET
                 [FieldOffset(0)] powerup_info   powerup_info;
             } 
 
-          //render info, determined by RENDER_TYPE 
+            //render info, determined by RENDER_TYPE 
             [StructLayout(LayoutKind.Explicit)] 
-            struct RType {
+            struct RType 
+            {
                 [FieldOffset(0)] polyobj_info	pobj_info;     //polygon model 
                 [FieldOffset(0)] vclip_info		vclip_info;    //vclip 
                 [FieldOffset(0)] tSmokeInfo		smokeInfo;
@@ -168,9 +149,6 @@ namespace DLE.NET
                 [FieldOffset(0)] tSoundInfo		soundInfo;
             } 
 
-            MType mtype;
-            CType ctype;
-            RType rtype;
-        };
+        }
     }
 }

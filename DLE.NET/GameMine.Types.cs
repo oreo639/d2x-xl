@@ -1,20 +1,21 @@
 ﻿//using DLE.NET.GameMine.Types;
 
+public struct FixVector {
+    int x, y, z;
+}
+
+public struct AngleVector {
+    short p, b, h;
+}
+
+public struct FixMatrix {
+    FixVector rvec, uvec, fvec;
+} 
+
 namespace DLE.NET
 {
     public partial class GameMine
     {
-        public struct FixVector {
-          int x, y, z;
-        }
-
-        public struct AngleVector {
-          short p, b, h;
-        }
-
-        public struct FixMatrix {
-          FixVector rvec, uvec, fvec;
-        } 
 
 
         public struct TMAP_INFO {
