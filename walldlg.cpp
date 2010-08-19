@@ -298,7 +298,7 @@ else {
 
 	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
-	m_nSegment = m_pWall [0]->nSegment;
+	m_nSegment = m_pWall [0]->m_nSegment;
 	m_nSide = m_pWall [0]->m_nSide + 1;
 	m_nTrigger = (m_pWall [0]->nTrigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->nTrigger : -1;
 	m_nType = m_pWall [0]->type;

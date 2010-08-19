@@ -1067,8 +1067,8 @@ fLightScale = 1.0; ///= 100.0;
 						{
 						dl = LightDeltaValues (GameInfo ().lightDeltaValues.count++);
 						}
-						dl->nSegment = nChildSeg;
-						dl->nSide = nChildSide;
+						dl->m_nSegment = nChildSeg;
+						dl->m_nSide = nChildSide;
 						dl->vert_light [0] =
 						dl->vert_light [1] =
 						dl->vert_light [2] =
@@ -1099,8 +1099,8 @@ fLightScale = 1.0; ///= 100.0;
 							{
 							dl = LightDeltaValues (GameInfo ().lightDeltaValues.count++);
 							}
-							dl->nSegment = nChildSeg;
-							dl->nSide = nChildSide;
+							dl->m_nSegment = nChildSeg;
+							dl->m_nSide = nChildSide;
 							INT32 iCorner;
 							for (iCorner = 0; iCorner < 4; iCorner++)
 								dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);

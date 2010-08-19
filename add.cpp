@@ -118,7 +118,7 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 	}
 else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childseg;
-	CSide *oppsideP, *sideP = segP->sides;
+	CSide *oppSideP, *sideP = segP->sides;
 	CWall *wallP;
 	INT16 nOppSeg, nOppSide;
 	for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
@@ -134,9 +134,9 @@ else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		if (GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
 			 (wallP = GetWall (nSegment, nSide)) && (wallP->type == WALL_ILLUSION)) {
-			oppside = Segments (nOppSeg)->sides + nOppSide;
-			if (oppsideP->nBaseTex == (IsD1File () ? 322 : 333))
-				DeleteWall (oppsideP->nWall);
+			oppSideP = Segments (nOppSeg)->sides + nOppSide;
+			if (oppSideP->nBaseTex == (IsD1File () ? 322 : 333))
+				DeleteWall (oppSideP->nWall);
 			}
 		}
 	}
@@ -709,8 +709,8 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, (UINT8) wall_type, wall_fl
 	INT16 nTrigger = GameInfo ().triggers.count - 1;
 	// set link to trigger target
 	Triggers (nTrigger)->m_count = 1;
-	Triggers (nTrigger)-m_targets [0].m_nSegment = Other ()->nSegment;
-	Triggers (nTrigger)-m_targets [0].m_nSide = Other ()->nSide;
+	Triggers (nTrigger)->m_targets [0].m_nSegment = Other ()->nSegment;
+	Triggers (nTrigger)->m_targets [0].m_nSide = Other ()->nSide;
 	theApp.UnlockUndo ();
 	theApp.MineView ()->Refresh ();
 	return true;

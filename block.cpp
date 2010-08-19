@@ -217,7 +217,7 @@ while(!feof(fBlk)) {
 						}
 					nNewWalls++;
 					sideP->nWall = GameInfo ().walls.count++;
-					w.nSegment = nSegment;
+					w.m_nSegment = nSegment;
 					*Walls (sideP->nWall) = w;
 					}
 				}

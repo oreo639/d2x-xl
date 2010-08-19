@@ -1547,7 +1547,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		}
 	else {
 		// check to make sure segment points back to wall
-		side = m_mine->Segments (wallP->m_nSegment)->sides + wallP->m_nSide;
+		sideP = m_mine->Segments (wallP->m_nSegment)->sides + wallP->m_nSide;
 		if (sideP->nWall != nWall) {
 			w = m_mine->Walls (nWall);
 			if ((nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {

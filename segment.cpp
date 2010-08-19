@@ -2958,7 +2958,7 @@ return 1;
 
 void CLightDeltaIndex::Write (FILE *fp, bool bD2X)
 {
-write_INT16 (nSegment, fp);
+write_INT16 (m_nSegment, fp);
 if (bD2X)
 	write_INT16 (bD2X ? (m_nSide & 3) | (count << 3) : (m_nSide % 256 + count * 256), fp);
 write_INT16 (index, fp);
