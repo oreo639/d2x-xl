@@ -20,7 +20,7 @@
 static INT16 sortObjType [MAX_OBJECT_TYPES] = {7, 8, 5, 4, 0, 2, 9, 3, 10, 6, 11, 12, 13, 14, 1, 16, 15, 17, 18, 19, 20};
 
 
-int CMine::QCmpObjects (CDObject *pi, CDObject *pm)
+INT32 CMine::QCmpObjects (CDObject *pi, CDObject *pm)
 {
 	INT16 ti = sortObjType [pi->type];
 	INT16 tm = sortObjType [pm->type];
@@ -47,12 +47,12 @@ void CMine::RenumberTriggerTargetObjs (void)
 {
 	CDTrigger*	trigP = Triggers ();
 
-for (int i = TriggerCount (); i; i--, trigP++) {
-	for (int j = 0; j < trigP->num_links; ) {
+for (INT32 i = TriggerCount (); i; i--, trigP++) {
+	for (INT32 j = 0; j < trigP->num_links; ) {
 		if (trigP->side [j] >= 0) 
 			j++;
 		else {
-			int h = FindObjBySig (trigP->seg [j]);
+			INT32 h = FindObjBySig (trigP->seg [j]);
 			if (h >= 0)
 				trigP->seg [j++] = h;
 			else if (j < --trigP->num_links) {
@@ -68,7 +68,7 @@ for (int i = TriggerCount (); i; i--, trigP++) {
 void CMine::RenumberObjTriggers (void)
 {
 	CDTrigger*	trigP = ObjTriggers ();
-	int			i;
+	INT32			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
 	trigP->nObject = FindObjBySig (trigP->nObject);
@@ -115,7 +115,7 @@ if (left < r)
 
 void CMine::SortObjects ()
 {
-	int	i, j;
+	INT32	i, j;
 
 if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
@@ -185,7 +185,7 @@ void CMine::MakeObject (CDObject *obj, INT8 type, INT16 segnum)
 void CMine::SetObjectData (INT8 type) 
 {
   CDObject *obj;
-  int  id;
+  INT32  id;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -467,7 +467,7 @@ if (nDelObj == GameInfo ().objects.count) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 DeleteObjTriggers (nDelObj);
-int i, j = GameInfo ().objects.count;
+INT32 i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->signature = i;
 if (nDelObj < --j)
@@ -486,16 +486,16 @@ theApp.UnlockUndo ();
 /// CObjectTool - DrawObject
 //------------------------------------------------------------------------
 
-void CMine::DrawObject (CWnd *pWnd, int type, int id)
+void CMine::DrawObject (CWnd *pWnd, INT32 type, INT32 id)
 {
-	int powerup_lookup[48] = {
+	INT32 powerup_lookup[48] = {
 		 0, 1, 2, 3, 4, 5, 6,-1,-1,-1,
 		 7, 8, 9,10,11,12,13,14,15,16,
 		17,18,19,20,-1,21,-1,-1,22,23,
 		24,25,26,27,28,29,30,31,32,33,
 		34,35,36,37,38,39,40,41
 		};
-	int object_number;
+	INT32 object_number;
 
 // figure out object number based on object type and id
 object_number = -1; // assume that we can't find the object
@@ -549,14 +549,14 @@ if ((object_number >= 0) && (object_number <= 129)) {
 	char *pRes = (char *)LockResource(hGlobal);
 	BITMAPINFO *bmi = (BITMAPINFO *)pRes;
 	if (bmi) {	//if not, there is a problem in the resource file
-		int ncolors = (int)bmi->bmiHeader.biClrUsed;
+		INT32 ncolors = (INT32)bmi->bmiHeader.biClrUsed;
 		if (ncolors == 0)
 			ncolors = 1 << (bmi->bmiHeader.biBitCount); // 256 colors for 8-bit data
 		char *pImage = pRes + sizeof (BITMAPINFOHEADER) + ncolors * 4;
-		int width = (int)bmi->bmiHeader.biWidth;
-		int height = (int)bmi->bmiHeader.biHeight;
-		int xoffset = (64 - width) / 2;
-		int yoffset = (64 - height) / 2;
+		INT32 width = (INT32)bmi->bmiHeader.biWidth;
+		INT32 height = (INT32)bmi->bmiHeader.biHeight;
+		INT32 xoffset = (64 - width) / 2;
+		INT32 yoffset = (64 - height) / 2;
 		SetDIBitsToDevice(pDC->m_hDC, xoffset,yoffset,width,height,0,0,
 								0, height,pImage, bmi, DIB_RGB_COLORS);
 		}

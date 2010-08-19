@@ -135,7 +135,7 @@ last_texture1 = -1;
 last_texture2 = 0;
 save_texture1 = -1;
 save_texture2 = 0;
-int i;
+INT32 i;
 for (i = 0; i < 4; i++)
 	save_uvls [i].l = default_uvls [i].l;
 #if TEXTOODLG == 0
@@ -186,7 +186,7 @@ if (m_bInited) {
 
                         /*--------------------------*/
 
-void CTextureTool::CreateColorCtrl (CWnd *pWnd, int nIdC)
+void CTextureTool::CreateColorCtrl (CWnd *pWnd, INT32 nIdC)
 {
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
@@ -294,7 +294,7 @@ return TRUE;
 
 void CTextureTool::DoDataExchange (CDataExchange *pDX)
 {
-	int		i, nBrightness;
+	INT32		i, nBrightness;
 	char		szBrightness [20];
 
 for (i = 0; i < 4; i++)
@@ -331,8 +331,8 @@ void CTextureTool::LoadTextureListBoxes ()
 {
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			name [80];
-	int			bShowFrames;
-	int			nTextures, iTexture, index;
+	INT32			bShowFrames;
+	INT32			nTextures, iTexture, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 
@@ -431,7 +431,7 @@ m_textureWnd.UpdateWindow ();
 
                         /*--------------------------*/
 
-int lightIdxFromMode [4] = {0, 3, 2, 1};
+INT32 lightIdxFromMode [4] = {0, 3, 2, 1};
 
 void CTextureTool::Refresh ()
 {
@@ -445,7 +445,7 @@ if (!GetMine ())
 	CComboBox	*cbTexture2 = CBTexture2 ();
 	INT16			texture1, texture2, mode;
 	bool			bShowTexture;
-	int			i, j;
+	INT32			i, j;
 	CDSegment	*seg;
 	CDSide		*side;
 	CDWall		*pWall;
@@ -465,7 +465,7 @@ m_frame [1] = 0;
 seg = m_mine->CurrSeg ();
 side = m_mine->CurrSide ();
 color = m_mine->CurrLightColor ();
-int nSide = m_mine->Current ()->side;
+INT32 nSide = m_mine->Current ()->side;
 texture1 = side->nBaseTex;
 texture2 = side->nOvlTex & 0x3fff;
 pWall = m_mine->CurrWall ();
@@ -557,11 +557,11 @@ if (!PaintTexture (&m_textureWnd))
 
                         /*--------------------------*/
 #if TEXTOOLDLG == 0
-void CTextureTool::DrawTexture (INT16 texture1, INT16 texture2, int x0, int y0) 
+void CTextureTool::DrawTexture (INT16 texture1, INT16 texture2, INT32 x0, INT32 y0) 
 {
 	UINT8 bitmap_array [64*64];
-	int x_offset;
-	int y_offset;
+	INT32 x_offset;
+	INT32 y_offset;
 	x_offset = 0;
 	y_offset = 0;
 	CDC	*pDC = m_textureWnd.GetDC ();
@@ -633,11 +633,11 @@ if (!GetMine ())
 	CDSegment *seg = m_mine->CurrSeg ();
 
 	UINT16 texture [2];
-	static int scroll_offset_x = 0;
-	static int scroll_offset_y = 0;
-	int bScroll;
-	int x,y;
-	static int old_x,old_y;
+	static INT32 scroll_offset_x = 0;
+	static INT32 scroll_offset_y = 0;
+	INT32 bScroll;
+	INT32 x,y;
+	static INT32 old_x,old_y;
 
 	CDSide	*side = m_mine->CurrSide ();
 
@@ -675,10 +675,10 @@ if (nWall >= m_mine->GameInfo ().walls.count)
 if (m_mine->Walls () [nWall].type != WALL_DOOR)
 	return;
 #endif
-	int i;
-	static int hold_time [2] = {0,0};
-	static int inc [2]= {1,1}; // 1=forward or -1=backwards
-	int index [2];
+	INT32 i;
+	static INT32 hold_time [2] = {0,0};
+	static INT32 inc [2]= {1,1}; // 1=forward or -1=backwards
+	INT32 index [2];
 	static UINT16 d1_anims [] = {
 		371, 376, 387, 399, 413, 419, 424, 436, 444, 459,
 		472, 486, 492, 500, 508, 515, 521, 529, 536, 543,
@@ -760,14 +760,14 @@ else
 
                         /*--------------------------*/
 
-void CTextureTool::SelectTexture (int nIdC, bool bFirst)
+void CTextureTool::SelectTexture (INT32 nIdC, bool bFirst)
 {
 if (!GetMine ())
 	return;
 
 	CDSide		*side = m_mine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
-	int			index = pcb->GetCurSel ();
+	INT32			index = pcb->GetCurSel ();
 	
 if (index <= 0)
 	side->nOvlTex = 0;
@@ -791,7 +791,7 @@ if (!GetMine ())
 UpdateData (TRUE);
 CDSide *side = m_mine->CurrSide ();
 INT16 mode = side->nOvlTex & 0xc000;
-int i, j;
+INT32 i, j;
 for (i = 0; i < 4; i++) {
 	j = (i + lightIdxFromMode [mode / 0x4000]) % 4;
 	side->uvls [i].l = (UINT16) (m_lights [j] * 327.68);
@@ -819,7 +819,7 @@ void CTextureTool::OnEditTexture ()
 {
 	CTextureEdit	e (NULL);
 
-int i = int (e.DoModal ());
+INT32 i = INT32 (e.DoModal ());
 theApp.MineView ()->Refresh (false);
 Refresh ();
 }
@@ -839,16 +839,16 @@ if (!GetMine ())
 
 save_texture1 = side->nBaseTex & 0x3fff;
 save_texture2 = side->nOvlTex & 0x3fff;
-int i;
+INT32 i;
 for (i = 0; i < 4; i++)
 	save_uvls [i].l = side->uvls [i].l;
 
 //CBTexture1 ()->SelectString (-1, texture_name1);
 //CBTexture2 ()->SelectString (-1, texture_name2);
 pcb = CBTexture1 ();
-LoadString (hInst, texture_resource + int (pcb->GetItemData (pcb->GetCurSel ())), t1Name, sizeof (t1Name));
+LoadString (hInst, texture_resource + INT32 (pcb->GetItemData (pcb->GetCurSel ())), t1Name, sizeof (t1Name));
 pcb = CBTexture2 ();
-if (i = int (pcb->GetItemData (pcb->GetCurSel ())))
+if (i = INT32 (pcb->GetItemData (pcb->GetCurSel ())))
 	LoadString (hInst, texture_resource + i, t2Name, sizeof (t2Name));
 else
 	strcpy_s (t2Name, sizeof (t2Name), "(none)");
@@ -889,7 +889,7 @@ if (!GetMine ())
 theApp.SetModified (TRUE);
 m_mine->SetTexture (m_mine->Current ()->segment, m_mine->Current ()->side, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
-int i;
+INT32 i;
 for (i = 0; i < 4; i++)
 	side->uvls [i].l = save_uvls [i].l;
 Refresh ();
@@ -911,7 +911,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
 	CDSegment *seg = m_mine->Segments ();
-int segnum;
+INT32 segnum;
 for (segnum = m_mine->SegCount (); segnum; segnum--, seg++)
     seg->seg_number = 0;
 theApp.SetModified (TRUE);
@@ -951,7 +951,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 			if (seg->children [sidenum] == -1) {
 				bChange = true;
 				m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
-				int i;
+				INT32 i;
 				for (i = 0; i < 4; i++)
 					side->uvls [i].l = save_uvls [i].l;
 				}
@@ -1000,7 +1000,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++)
 				 continue;
 			if (m_mine->SetTexture (segnum, sidenum, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
-//			int i;
+//			INT32 i;
 //			for (i = 0; i < 4; i++)
 //				side->uvls [i].l = save_uvls [i].l;
 			}
@@ -1026,7 +1026,7 @@ if (!GetMine ())
 	CDSide		*side = seg->sides + sidenum;
 	INT16			old_texture1, 
 					old_texture2;
-	int			i;
+	INT32			i;
 
 // remember these texture for a comparison below
 old_texture1 = side->nBaseTex;
@@ -1081,7 +1081,7 @@ if (!GetMine ())
 	INT16 point0,point1,vert0,vert1;
 	INT16 childs_side,childs_line;
 	INT16 childs_point0,childs_point1,childs_vert0,childs_vert1;
-	int side_child[6][4] = {
+	INT32 side_child[6][4] = {
 		{4,3,5,1},
 		{2,4,0,5},
 		{5,3,4,1},
@@ -1129,9 +1129,9 @@ return false;
 }
                         /*--------------------------*/
 
-void CTextureTool::GetBrightness (int nTexture)
+void CTextureTool::GetBrightness (INT32 nTexture)
 {
-	int nBrightness;
+	INT32 nBrightness;
 
 if (nTexture < 0)
 	nBrightness = 0;
@@ -1148,7 +1148,7 @@ m_nBrightness = nBrightness;
 
                         /*--------------------------*/
 
-void CTextureTool::SetBrightness (int nBrightness)
+void CTextureTool::SetBrightness (INT32 nBrightness)
 {
 	static	BOOL	bSemaphore = FALSE;
 
@@ -1156,7 +1156,7 @@ if (!bSemaphore) {
 	bSemaphore = TRUE;
 
 	CComboBox	*pcb = (m_bUse2nd && !m_bUse1st) ? CBTexture2 () : CBTexture1 ();
-	int			index = pcb->GetCurSel ();
+	INT32			index = pcb->GetCurSel ();
 	INT16			texture = (INT16) pcb->GetItemData (index);
 
 	if (texture >= 0) {
@@ -1178,7 +1178,7 @@ UpdateData (TRUE);
 
 void CTextureTool::OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	int	nPos = pScrollBar->GetScrollPos ();
+	INT32	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (pScrollBar == BrightnessSlider ()) {
@@ -1242,7 +1242,7 @@ UpdateAlignWnd ();
 
 void CTextureTool::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	int	nPos = pScrollBar->GetScrollPos ();
+	INT32	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (pScrollBar == TimerSlider ()) {
@@ -1336,7 +1336,7 @@ else {
 BOOL CTextureTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	LPNMHDR	nmHdr = (LPNMHDR) lParam;
-	int		nMsg = nmHdr->code;
+	INT32		nMsg = nmHdr->code;
 
 switch (wParam) {
 	case IDC_TEXALIGN_HALIGN:
@@ -1353,7 +1353,7 @@ switch (wParam) {
 	case IDC_TEXALIGN_HSHRINK:
 	case IDC_TEXALIGN_VSHRINK:
 		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
-			m_nEditFunc = int (wParam);
+			m_nEditFunc = INT32 (wParam);
 			m_nEditTimer = SetTimer (3, m_nTimerDelay = 250U, NULL);
 			}
 		else {

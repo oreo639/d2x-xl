@@ -40,7 +40,7 @@ public:
   CStatic *BlackBox;
   CEdit *PatternEdit;
   UINT32 test;
-  int current_highlight;
+  INT32 current_highlight;
 
   CBlinkDialog(CWnd * AParent, LPSTR name);
   virtual void SetupWindow();
@@ -80,7 +80,7 @@ public:
   void light_button_msg30();
   void light_button_msg31();
   void light_button_msg32();
-  void handle_light_button(int);
+  void handle_light_button(INT32);
   void add_msg();
   void delete_msg();
   void RefreshData();
@@ -95,14 +95,14 @@ INT16 get_flickering_light(UINT16 segnum, UINT16 sidenum);
 
 void set_segment_child_num(INT16 segnum,INT16 recursion_level);
 UINT8 light_weight(INT16 nBaseTex);
-void calculate_delta_light_data(double factor, int force); // light.cpp
+void calculate_delta_light_data(double factor, INT32 force); // light.cpp
 void update_delta_lights(); // light.cpp
-int is_light(int value);
-int is_exploding_light(int value);
+INT32 is_light(INT32 value);
+INT32 is_exploding_light(INT32 value);
 void CreateLightMap (void);
-int ReadLightMap (FILE *fLightMap, UINT32 nSize);
-int WriteLightMap (FILE *fLightMap);
-int WriteColorMap (FILE *fColorMap);
+INT32 ReadLightMap (FILE *fLightMap, UINT32 nSize);
+INT32 WriteLightMap (FILE *fLightMap);
+INT32 WriteColorMap (FILE *fColorMap);
 BOOL HasCustomLightMap (void);
 
 #endif

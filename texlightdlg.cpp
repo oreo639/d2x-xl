@@ -68,7 +68,7 @@ UpdateColorCtrl (
 
                         /*--------------------------*/
 
-void CTextureTool::ToggleLight (int i)
+void CTextureTool::ToggleLight (INT32 i)
 {
 CButton *pb = LightButton (i - 1);
 pb->SetCheck (!pb->GetCheck ());
@@ -86,7 +86,7 @@ if (m_iLight < 0)
 if (!GetMine ())
 	return;
 UINT32 nLightMask = 0;
-int i;
+INT32 i;
 for (i = 0; i < 32; i++)
 	if (m_szLight [i] == '1')
 		nLightMask |= (1 << i);
@@ -110,7 +110,7 @@ m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 
                         /*--------------------------*/
 
-bool CTextureTool::SetLightDelay (int nSpeed)
+bool CTextureTool::SetLightDelay (INT32 nSpeed)
 {
 if (nSpeed < 0)
 	return false;
@@ -138,7 +138,7 @@ void CTextureTool::SetLightString (void)
 	static char cLight [2] = {'0', '1'};
 	char szLight [33];
 
-int i;
+INT32 i;
 for (i = 0; i < 32; i++)
 	szLight [i] = cLight [LightButton (i)->GetCheck ()];
 szLight [32] = '\0';
@@ -151,7 +151,7 @@ if (strcmp (szLight, m_szLight)) {
 		
                         /*--------------------------*/
 
-void CTextureTool::SetLightButtons (LPSTR szLight, int nSpeed)
+void CTextureTool::SetLightButtons (LPSTR szLight, INT32 nSpeed)
 {
 	bool	bDefault = false;
 
@@ -161,7 +161,7 @@ if (szLight) {
 	}
 else
 	UpdateData (TRUE);
-int i;
+INT32 i;
 for (i = 0; i < 32; i++) {
 	if (!bDefault && (m_szLight [i] == '\0'))
 		bDefault = true;
@@ -180,7 +180,7 @@ if (!SetLightDelay (nSpeed)) {
 
 void CTextureTool::EnableLightControls (BOOL bEnable)
 {
-int i;
+INT32 i;
 for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 	GetDlgItem (i)->EnableWindow (bEnable);
 }
@@ -218,11 +218,11 @@ if (m_iLight < 0) {
 	}
 
 long nLightMask = m_mine->FlickeringLights (m_iLight)->mask;
-int i;
+INT32 i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
 m_szLight [32] = '\0';
-SetLightButtons (m_szLight, (int) (((1000 * m_mine->FlickeringLights (m_iLight)->delay + F0_5) / F1_0)));
+SetLightButtons (m_szLight, (INT32) (((1000 * m_mine->FlickeringLights (m_iLight)->delay + F0_5) / F1_0)));
 }
 
                         /*--------------------------*/
@@ -245,7 +245,7 @@ if (m_iLight < 0)
 	UpdateData (FALSE);
 else {
 	UpdateData (TRUE);
-	SetLightDelay ((int) (1000 * m_nLightTime));
+	SetLightDelay ((INT32) (1000 * m_nLightTime));
 	}
 }
 

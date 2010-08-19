@@ -51,9 +51,9 @@
 //   1) Memory was allocated for globals (except polymodel data)
 //------------------------------------------------------------------------
 
-#define MAKESIG(_sig)	(UINT32) *((int *) &(_sig))
+#define MAKESIG(_sig)	(UINT32) *((INT32 *) &(_sig))
 
-int CMine::ReadHamFile(char *pszFile, int type) 
+INT32 CMine::ReadHamFile(char *pszFile, INT32 type) 
 {
   FILE *fp;
   INT16 t,t0;
@@ -233,7 +233,7 @@ else if (type == EXTENDED_HAM)  {
     fread(&Polygon_model, sizeof (POLYMODEL), 1, fp );
   }
   for (i=t0; i<t0+t; i++ ) {
-    Polygon_models[i]->model_data = (UINT8 *) malloc((int)Polygon_models[i]->model_data_size);
+    Polygon_models[i]->model_data = (UINT8 *) malloc((INT32)Polygon_models[i]->model_data_size);
 
     if (Polygon_models[i]->model_data == NULL ) {
       ErrorMsg ("Could not allocate memory for polymodel data");
@@ -330,7 +330,7 @@ abort:
 //   1) Memory was allocated for globals (except polymodel data)
 //------------------------------------------------------------------------
 
-int CMine::ReadHxmFile(FILE *fp, long fSize) 
+INT32 CMine::ReadHxmFile(FILE *fp, long fSize) 
 {
 	UINT16 t,i,j;
 	ROBOT_INFO rInfo;
@@ -407,7 +407,7 @@ return 1;
 //  Robot_info[MAX_ROBOT_TYPES]
 //------------------------------------------------------------------------
 
-int CMine::WriteHxmFile(FILE *fp) 
+INT32 CMine::WriteHxmFile(FILE *fp) 
 {
 UINT16 t,i;
 
@@ -482,7 +482,7 @@ void CMine::InitRobotData()
 //
 // if robot_number == -1, then it reads all robots
 //------------------------------------------------------------------------
-void CMine::ReadRobotResource(int robot_number) 
+void CMine::ReadRobotResource(INT32 robot_number) 
 {
   UINT16 i,j,t;
   UINT8 *ptr;
@@ -518,12 +518,12 @@ void CMine::ReadRobotResource(int robot_number)
 // has_custom_robots()
 //--------------------------------------------------------------------------
 
-bool CMine::IsCustomRobot (int i)
+bool CMine::IsCustomRobot (INT32 i)
 {
 	bool	bFound = false;
 	CDSegment *seg;
 	CDObject *obj;
-	int j;
+	INT32 j;
 
 if (!RobotInfo (i)->pad [0]) //changed?
 	return false;
@@ -541,7 +541,7 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're d
 		// find a matcen producing a robot of that type
 		for (j = SegCount (), seg = Segments (); j; j--, seg++)
 			if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
-				int matcen = seg->matcen_num;
+				INT32 matcen = seg->matcen_num;
 				if ((i < 32) ?
 					 BotGens (matcen)->objFlags [0] & (1L << i) :
 					 BotGens (matcen)->objFlags [1] & (1L << (i-32)))
@@ -565,8 +565,8 @@ return bFound;
 
 BOOL CMine::HasCustomRobots() 
 {
-int i;
-for (i = 0; i < (int) N_robot_types; i++)
+INT32 i;
+for (i = 0; i < (INT32) N_robot_types; i++)
 	if (IsCustomRobot (i))
 		return TRUE;
 return (m_nHxmExtraDataSize > 0);

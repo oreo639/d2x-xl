@@ -1,6 +1,6 @@
 // render.h
 
-void TextureMap(int resolution,
+void TextureMap(INT32 resolution,
 				CDSegment *segment,
 				INT16 sidenum,
 				UINT8 *bmData,

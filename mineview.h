@@ -94,9 +94,9 @@ protected: // create from serialization only
 	CSplitterWnd	*m_pSplitter;
 	// member variables
 	CMine			*m_mine;
-	int			m_viewHeight;	// in pixels
-	int			m_viewWidth;	// in pixels
-	int			m_viewDepth;	// in bytes
+	INT32			m_viewHeight;	// in pixels
+	INT32			m_viewWidth;	// in pixels
+	INT32			m_viewDepth;	// in bytes
 	HBITMAP		m_DIB;
 	void			*m_pvBits;
 	CDC			m_DC;
@@ -104,7 +104,7 @@ protected: // create from serialization only
 	bool			m_bUpdate;
 	bool			m_bUpdateCursor;
 	bool			m_bDelayRefresh;
-	int			m_nDelayRefresh;
+	INT32			m_nDelayRefresh;
 	UINT32		m_viewObjectFlags;
 	UINT32		m_viewMineFlags;
 	UINT32		m_viewOption;
@@ -163,8 +163,8 @@ protected: // create from serialization only
 	APOINT		m_minVPIdx;
 	APOINT		m_maxVPIdx;
 
-	int			m_mouseState;
-	int			m_lastMouseState;
+	INT32			m_mouseState;
+	INT32			m_lastMouseState;
 	CPoint		m_lastMousePos;
 	CPoint		m_clickPos, 
 					m_releasePos,
@@ -176,18 +176,18 @@ protected: // create from serialization only
 	CRect			m_rubberRect;
 	UINT_PTR		m_lightTimer;
 	UINT_PTR		m_selectTimer;
-	int			m_nFrameRate;
-	int			m_bShowLightSource;
+	INT32			m_nFrameRate;
+	INT32			m_bShowLightSource;
 	bool			m_bHScroll,
 					m_bVScroll;
-	int			m_xScrollRange,
+	INT32			m_xScrollRange,
 					m_yScrollRange;
-	int			m_xScrollCenter,
+	INT32			m_xScrollCenter,
 					m_yScrollCenter;
-	int			m_xRenderOffs,
+	INT32			m_xRenderOffs,
 					m_yRenderOffs;
-	int			m_nViewDist;
-	int			m_nMineCenter;
+	INT32			m_nViewDist;
+	INT32			m_nMineCenter;
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context
@@ -225,13 +225,13 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-	inline void SetViewDist (int nViewDist) {
+	inline void SetViewDist (INT32 nViewDist) {
 		if (m_nViewDist != nViewDist) {
 			m_nViewDist = nViewDist;
 			Refresh ();
 			}
 		}
-	inline int ViewDist (void) {
+	inline INT32 ViewDist (void) {
 		return (m_nViewDist <= 10) ? m_nViewDist : 
 		(m_nViewDist < 20) ? 10 + 2 * (m_nViewDist - 10) : 30 + 3 * (m_nViewDist - 20);
 		}
@@ -243,7 +243,7 @@ public:
 		return (segP->seg_number >= 0) && (segP->seg_number <= ViewDist ()); 
 		}
 	void DrawMineCenter (CDC *pViewDC);
-	bool VertexVisible (int v);
+	bool VertexVisible (INT32 v);
 	void SetViewPoints (CRect *pRC = NULL, bool bSetViewInfo = true);
 	void ShiftViewPoints ();
 	// drawing functions
@@ -275,20 +275,20 @@ public:
 	void	DrawHighlight (CMine *mine, INT16 clear_it = 0);
 	void  DrawSpline (CMine *mine);
 
-	int	SetupModel(CMine *mine, CDObject *obj); // poly.c
-	void	SetModelPoints(int start, int end);
+	INT32	SetupModel(CMine *mine, CDObject *obj); // poly.c
+	void	SetModelPoints(INT32 start, INT32 end);
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
 	void	DrawPoly(POLY *p);
-	int	ReadModelData(FILE *file, CDObject *obj);
+	INT32	ReadModelData(FILE *file, CDObject *obj);
 	void	ReadPolyModel (POLYMODEL& polyModel, FILE *file);
 
 	// view control functions
-	void	Zoom(int nSteps, double zoom);
-	int	ZoomFactor (int nSteps, double min, double max);
-	int	ZoomIn(int nSteps = 1, bool bSlow = false);
-	int	ZoomOut(int nSteps = 1, bool bSlow = false);
-	int	FitToView (void);
+	void	Zoom(INT32 nSteps, double zoom);
+	INT32	ZoomFactor (INT32 nSteps, double min, double max);
+	INT32	ZoomIn(INT32 nSteps = 1, bool bSlow = false);
+	INT32	ZoomOut(INT32 nSteps = 1, bool bSlow = false);
+	INT32	FitToView (void);
 	void	Rotate(char direction, double angle);
 	void	Pan(char direction, INT32 amount);
 	void	AlignSide();
@@ -304,28 +304,28 @@ public:
 	void CalcSegDist (CMine *mine);
 	bool	InRange (INT16 *pv, INT16 i);
 
-	void NextPoint (int dir = 1);
+	void NextPoint (INT32 dir = 1);
 	void PrevPoint ();
-	void NextLine (int dir = 1);
+	void NextLine (INT32 dir = 1);
 	void PrevLine ();
-	void NextSide (int dir = 1);
+	void NextSide (INT32 dir = 1);
 	void PrevSide ();
-	void NextSide2 (int dir = 1);
+	void NextSide2 (INT32 dir = 1);
 	void PrevSide2 ();
-	void NextCube (int dir = 1);
+	void NextCube (INT32 dir = 1);
 	void PrevCube ();
-	void ForwardCube (int dir = 1);
+	void ForwardCube (INT32 dir = 1);
 	void BackwardsCube ();
 	void SelectOtherCube ();
 	bool SelectOtherSide ();
-	void NextObject (int dir = 1);
+	void NextObject (INT32 dir = 1);
 	void PrevObject ();
-	void NextCubeElement (int dir = 1);
+	void NextCubeElement (INT32 dir = 1);
 	void PrevCubeElement ();
 	void HiliteTarget (CMine *mine);
 
 	void Refresh (bool bAll = true);
-	void EnableDeltaShading (int bEnable, int nFrameRate, int bShowLightSource);
+	void EnableDeltaShading (INT32 bEnable, INT32 nFrameRate, INT32 bShowLightSource);
 	void AdvanceLightTick (void);
 	bool SetLightStatus (void);
 	void Invalidate (BOOL bErase);
@@ -348,7 +348,7 @@ public:
 		{ return m_viewOption; }
 	inline UINT32 GetSelectMode ()
 		{ return m_selectMode; }
-	inline int *MineCenter (void)
+	inline INT32 *MineCenter (void)
 		{ return &m_nMineCenter; }
 	inline double &DepthPerception (void)
 		{ return m_depthPerception; }
@@ -359,7 +359,7 @@ public:
 			m_nDelayRefresh--;
 		}
 
-	void SetMouseState (int newMouseState);
+	void SetMouseState (INT32 newMouseState);
 	BOOL SetCursor (HCURSOR hCursor);
 //	void UpdateCursor (void);
 
@@ -384,7 +384,7 @@ public:
 	BOOL CMineView::DrawDragPos (void);
 	void FinishDrag (void);
 
-	BOOL SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
+	BOOL SetWindowPos(const CWnd *pWndInsertAfter, INT32 x, INT32 y, INT32 cx, INT32 cy, UINT nFlags);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);
@@ -408,7 +408,7 @@ protected:
 	afx_msg void OnDestroy ();
 	afx_msg void OnTimer (UINT_PTR nIdEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT32 cx, INT32 cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -416,7 +416,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnPaint ();
-	afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
+	afx_msg BOOL OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt);
 	afx_msg void OnSelectPrevTab ();
 	afx_msg void OnSelectNextTab ();
 	afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);

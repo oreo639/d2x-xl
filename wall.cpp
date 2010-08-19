@@ -98,7 +98,7 @@ void CMine::DefineWall (INT16 segnum, INT16 sidenum, UINT16 wallnum,
 {
 GetCurrent (segnum, sidenum);
 
-	int i;
+	INT32 i;
 	CDSegment *seg = Segments (segnum);
 	CDSide *side = seg->sides + sidenum;
 	CDWall *wall = Walls (wallnum);
@@ -281,7 +281,7 @@ CDWall *CMine::FindWall (INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
 CDWall *wall;
-int nWall;
+INT32 nWall;
 
 for (wall = Walls (), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wall++)
 	if ((wall->segnum == segnum) && (wall->sidenum == sidenum))
@@ -291,7 +291,7 @@ return NULL;
 
                         /*--------------------------*/
 
-int CMine::FindClip (CDWall *wall, INT16 nTexture)
+INT32 CMine::FindClip (CDWall *wall, INT16 nTexture)
 {
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	char szName [80], *ps;
@@ -300,7 +300,7 @@ LoadString (hInst, texture_resource + nTexture, szName, sizeof (szName));
 if (!strcmp (szName, "wall01 - anim"))
 	return wall->clip_num = 0;
 if (ps = strstr (szName, "door")) {
-	int i, nDoor = atol (ps + 4);
+	INT32 i, nDoor = atol (ps + 4);
 	for (i = 1; i < D2_NUM_OF_CLIPS; i++)
 		if (nDoor == clip_door_number [i]) {
 			wall->clip_num = clip_num [i];

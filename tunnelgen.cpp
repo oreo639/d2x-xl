@@ -29,7 +29,7 @@ char *whyS [] = {
     "partial loss of significance"
 };
 
-int _matherr (struct exception *e) {
+INT32 _matherr (struct exception *e) {
   sprintf_s (message, sizeof (message),"DMB has detected a math error\n"
 		   "%s (%8g,%8g): %s\n\n"
 		   "Press OK to continue, or Cancel to close DMB",
@@ -46,9 +46,9 @@ int _matherr (struct exception *e) {
 //-------------------------------------------------------------------------
 //   Faculty (q) - returns n! (n factorial)
 //-------------------------------------------------------------------------
-long Faculty (int n) {
+long Faculty (INT32 n) {
   long i;
-  int j;
+  INT32 j;
 
   i=1;
   for (j=n;j>=2;j--) {
@@ -60,16 +60,16 @@ long Faculty (int n) {
 //-------------------------------------------------------------------------
 //   Coeff(n,i) - returns n!/(i!*(n-i)!)
 //-------------------------------------------------------------------------
-double Coeff(int n, int i) {
+double Coeff(INT32 n, INT32 i) {
   return ((double)Faculty (n)/((double)Faculty (i)*(double)Faculty (n-i)));
 }
 
 //-------------------------------------------------------------------------
 //   Blend(i,n,u) - returns a weighted coefficient for each point in a spline
 //-------------------------------------------------------------------------
-double Blend(int i, int n, double u) {
+double Blend(INT32 i, INT32 n, double u) {
   double partial;
-  int j;
+  INT32 j;
 
   partial = Coeff(n,i);
   for(j=1;j<=i;j++) {
@@ -84,8 +84,8 @@ double Blend(int i, int n, double u) {
 //-------------------------------------------------------------------------
 //   BezierFcn(pt,u,n,p [] []) - sets (x,y,z) for u=#/segs based on points p
 //-------------------------------------------------------------------------
-void BezierFcn(vms_vector *pt, double u, int npts, vms_vector *p) {
-  int i;
+void BezierFcn(vms_vector *pt, double u, INT32 npts, vms_vector *p) {
+  INT32 i;
   double b;
   pt->x = 0;
   pt->y = 0;
@@ -170,10 +170,10 @@ void SpinBackPoint (vms_vector *point,double y_spin,double z_spin)
 // Action - Returns matching side depending on the current points
 //--------------------------------------------------------------------------
 
-int CMine::MatchingSide (int j) 
+INT32 CMine::MatchingSide (INT32 j) 
 {
-  int ret [4] [4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
-  int offset;
+  INT32 ret [4] [4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
+  INT32 offset;
 
   offset = (4+ Current1 ().point - Current2 ().point)%4;
   return ret [offset] [j];
@@ -315,7 +315,7 @@ void CMine::TunnelGenerator() {
 //  UpdateUndoBuffer(0);
 
 double length;
-int i,j,vertnum,spline;
+INT32 i,j,vertnum,spline;
 CDSegment *seg;
 
 if (!m_bSplineActive) {
@@ -512,7 +512,7 @@ void CMine::CalcSpline ()
 {
   double length;
   double angle;
-  int i,j;
+  INT32 i,j;
   CDSegment *seg;
   INT16 vertnum;
   vms_vector vertex;
@@ -545,7 +545,7 @@ void CMine::CalcSpline ()
 
   // calculate number of segments (min=1)
   length = CalcLength (points,points + 3);
-  n_splines = (int)(abs(m_splineLength1)+abs(m_splineLength2))/20 + (int)(length / (40.0*(double)0x10000L));
+  n_splines = (INT32)(abs(m_splineLength1)+abs(m_splineLength2))/20 + (INT32)(length / (40.0*(double)0x10000L));
   n_splines = min(n_splines, m_nMaxSplines-1);
 
   // calculate spline points
@@ -639,12 +639,12 @@ void CMine::CalcSpline ()
 		  "delta_angles = %d,%d,%d,%d\n"
 		  "y_spin = %d\n"
 		  "z_spin = %d",
-		   (int)(theta [0] [0]*180/M_PI),(int)(theta [0] [1]*180/M_PI),(int)(theta [0] [2]*180/M_PI),(int)(theta [0] [3]*180/M_PI),
-		   (int)(theta [1] [0]*180/M_PI),(int)(theta [1] [1]*180/M_PI),(int)(theta [1] [2]*180/M_PI),(int)(theta [1] [3]*180/M_PI),
-		   (int)(radius [0] [0]*180/M_PI),(int)(radius [0] [1]*180/M_PI),(int)(radius [0] [2]*180/M_PI),(int)(radius [0] [3]*180/M_PI),
-		   (int)(radius [1] [0]*180/M_PI),(int)(radius [1] [1]*180/M_PI),(int)(radius [1] [2]*180/M_PI),(int)(radius [1] [3]*180/M_PI),
-		   (int)(delta_angle [0]*180/M_PI),(int)(delta_angle [1]*180/M_PI),(int)(delta_angle [2]*180/M_PI),(int)(delta_angle [3]*180/M_PI),
-		   (int)(y_spin*180/M_PI),(int)(z_spin*180/M_PI)
+		   (INT32)(theta [0] [0]*180/M_PI),(INT32)(theta [0] [1]*180/M_PI),(INT32)(theta [0] [2]*180/M_PI),(INT32)(theta [0] [3]*180/M_PI),
+		   (INT32)(theta [1] [0]*180/M_PI),(INT32)(theta [1] [1]*180/M_PI),(INT32)(theta [1] [2]*180/M_PI),(INT32)(theta [1] [3]*180/M_PI),
+		   (INT32)(radius [0] [0]*180/M_PI),(INT32)(radius [0] [1]*180/M_PI),(INT32)(radius [0] [2]*180/M_PI),(INT32)(radius [0] [3]*180/M_PI),
+		   (INT32)(radius [1] [0]*180/M_PI),(INT32)(radius [1] [1]*180/M_PI),(INT32)(radius [1] [2]*180/M_PI),(INT32)(radius [1] [3]*180/M_PI),
+		   (INT32)(delta_angle [0]*180/M_PI),(INT32)(delta_angle [1]*180/M_PI),(INT32)(delta_angle [2]*180/M_PI),(INT32)(delta_angle [3]*180/M_PI),
+		   (INT32)(y_spin*180/M_PI),(INT32)(z_spin*180/M_PI)
 		   );
   DebugMsg(message);
 #endif

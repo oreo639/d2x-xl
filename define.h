@@ -384,12 +384,6 @@
 //  Note that -1 means no connection, -2 means a connection to the outside world. 
 #define  IS_CHILD(segnum) (segnum > -1)
 
-//Special types 
-#define SPECIAL_NORMAL					0
-#define SPECIAL_FUEL						1
-#define SPECIAL_MATCEN					3
-#define SPECIAL_REPRODUCER				4
-
 #define SEGMENT_TYPE_NONE				0
 #define SEGMENT_TYPE_FUELCEN			1
 #define SEGMENT_TYPE_REPAIRCEN		2
@@ -475,9 +469,6 @@
 
 #define WALL_HPS		100*F1_0 // Normal wall's hp 
 #define WALL_DOOR_INTERVAL	5*F1_0	 // How many seconds a door is open 
-
-#define DOOR_OPEN_TIME		i2f(2)	 // How long takes to open 
-#define DOOR_WAIT_TIME		i2f(5)	 // How long before auto door closes 
 
 // WALL_IS_DOORWAY flags. 
 #define WID_FLY_FLAG			1
@@ -575,14 +566,6 @@
 #define OF_ATTACHED       16  //this object is a fireball attached to another object 
 #define OF_HARMLESS       32  //this object does no damage.  Added to make quad lasers do 1.5 damage as normal lasers. 
 
-//Different Weapon ID types... 
-#define WEAPON_ID_LASER      0
-#define WEAPON_ID_MISSLE     1
-#define WEAPON_ID_CANNONBALL 2
-
-//Object Initial shields... 
-#define OBJECT_INITIAL_SHIELDS F1_0/2
-
 //physics flags 
 #define PF_TURNROLL    1    // roll when turning 
 #define PF_LEVELLING   2    // level object with closest side 
@@ -592,14 +575,10 @@
 #define PF_PERSISTENT  32    // object keeps going even after it hits another object (eg, fusion cannon) 
 #define PF_USES_THRUST 64    // this object uses its thrust 
 
-#define  IMMORTAL_TIME 0x3fffffff  //  Time assigned to immortal objects, about 32768 seconds, or about 9 hours. 
-
-#define SEGMENT_FUNC_ROBOTMAKER 4
-
 #define MAX_BRIGHTNESS	0x20000
 
 #if defined(_DEBUG) && !defined(_M_IA64) && !defined(_M_AMD64)
-#	define BRK _asm int 3;
+#	define BRK _asm INT32 3;
 #	define CBRK(_cond)	if (_cond) BRK;
 #else
 #	define BRK

@@ -18,8 +18,8 @@ private:
 	INT16 _viewWidth;
 	INT16 _viewHeight;
 
-	void ClampAngle (int i);
-	void RotateAngle (int i, double a);
+	void ClampAngle (INT32 i);
+	void RotateAngle (INT32 i, double a);
 
 public:
 	CMatrix ();
@@ -36,7 +36,7 @@ public:
 	void CalculateInverse(double movex, double movey, double movez);
 	void SetPoint(vms_vector *vert, APOINT *apoint);
 	void UnsetPoint(vms_vector *vert, APOINT *apoint);
-	int CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b);
+	INT32 CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b);
 	inline double Aspect (void) { return (double) _viewHeight / (double) _viewWidth; }
 	inline double Scale (void) { return _scale; }
 	void Push (void);

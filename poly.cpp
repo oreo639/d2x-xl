@@ -50,7 +50,7 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 #define glEnd()
 #define glTexCoord2fv(a)
 
-#define UINTW int
+#define UINTW INT32
 
 //-----------------------------------------------------------------------
 // local prototypes
@@ -66,9 +66,9 @@ static VMS_VECTOR gOffset;
 static INT16 glow_num = -1;
 static double normal[3];	// Storage for calculated surface normal
 static POLY *panel;
-static int pt,pt0,n_points;
-static int last_object_type = -1;
-static int last_object_id = -1;
+static INT32 pt,pt0,n_points;
+static INT32 last_object_type = -1;
+static INT32 last_object_id = -1;
 static APOINT poly_xy[MAX_POLY_MODEL_POINTS];
 
 //-----------------------------------------------------------------------
@@ -85,7 +85,7 @@ FIX MultiplyFix(FIX a, FIX b) {
 // Action - sets the global handle used when drawing polygon models
 //-----------------------------------------------------------------------
 
-int CMineView::SetupModel(CMine *mine, CDObject *obj) 
+INT32 CMineView::SetupModel(CMine *mine, CDObject *obj) 
 {
   gOffset.x = 0;
   gOffset.y = 0;
@@ -93,7 +93,7 @@ int CMineView::SetupModel(CMine *mine, CDObject *obj)
   gModel.n_points = 0;
   glow_num = -1;
   gpObject = obj;
-  int rc = 1; // set return code to fail
+  INT32 rc = 1; // set return code to fail
   FILE *file = NULL;
   char filename[256];
 
@@ -171,11 +171,11 @@ void CMineView::DrawModel()
 // Rotates, translates, then sets screen points (xy) for 3d model points
 //-----------------------------------------------------------------------
 
-void CMineView::SetModelPoints(int start, int end) 
+void CMineView::SetModelPoints(INT32 start, INT32 end) 
 {
   CDObject *obj = gpObject;
   vms_vector pt;
-  int i;
+  INT32 i;
   for (i=start;i<end;i++) {
 	FIX x0 = gModel.points[i].x;
 	FIX y0 = gModel.points[i].y;
@@ -210,7 +210,7 @@ void CMineView::SetModelPoints(int start, int end)
 //          Used global device context handle set by SetupModel()
 //-----------------------------------------------------------------------
 void CMineView::DrawPoly(POLY *p) {
-  int i,j;
+  INT32 i,j;
   if (m_matrix.CheckNormal(gpObject, &p->offset,&p->normal)) {
 #if 1
 	POINT aPoints[MAX_POLY_POINTS];
@@ -418,7 +418,7 @@ assert(polyModel.model_data_size <= MAX_POLY_MODEL_SIZE);
 
 //-----------------------------------------------------------------------
 
-int CMineView::ReadModelData(FILE *file, CDObject *obj) 
+INT32 CMineView::ReadModelData(FILE *file, CDObject *obj) 
 {
 	UINT32     id;
 	UINT32     i,n;

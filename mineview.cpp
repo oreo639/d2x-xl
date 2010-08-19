@@ -38,8 +38,8 @@ static UINT8	rgbBuf [64*64*4];
 static GLuint	glHandles [910];
 static UINT8	*glPalette = NULL;
 static BOOL		glFitToView = FALSE;
-static int		glMinZ = 1;
-static int		glMaxZ = 1;
+static INT32		glMinZ = 1;
+static INT32		glMaxZ = 1;
 static bool		glInit = true;
 #endif
 
@@ -142,7 +142,7 @@ m_penHiBlue		= new CPen(PS_SOLID, 2, RGB(  0,  0,255));
 m_penHiYellow  = new CPen(PS_SOLID, 2, RGB(255,196,  0));
 m_penHiOrange  = new CPen(PS_SOLID, 2, RGB(255,128,  0));
 m_penHiMagenta = new CPen(PS_SOLID, 2, RGB(255,  0,255));
-int i;
+INT32 i;
 for (i = eMouseStateIdle; i < eMouseStateCount; i++)
 	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? NULL: theApp.m_hInstance, nIdCursors [i]);
 m_viewObjectFlags = eViewObjectsAll;
@@ -255,16 +255,16 @@ bool CMineView::UpdateScrollBars (void)
 return false;
 SetViewPoints ();
 
-	int		dx = m_maxViewPoint.x - m_minViewPoint.x + 1;
-	int		dy = m_minViewPoint.y - m_maxViewPoint.y + 1;
+	INT32		dx = m_maxViewPoint.x - m_minViewPoint.x + 1;
+	INT32		dy = m_minViewPoint.y - m_maxViewPoint.y + 1;
 	double	r;
 
 bool bHScroll = m_bHScroll;
 bool bVScroll = m_bVScroll;
-int xScrollCenter = m_xScrollCenter;
-int yScrollCenter = m_yScrollCenter;
-int xScrollRange = m_xScrollRange;
-int yScrollRange = m_yScrollRange;
+INT32 xScrollCenter = m_xScrollCenter;
+INT32 yScrollCenter = m_yScrollCenter;
+INT32 xScrollRange = m_xScrollRange;
+INT32 yScrollRange = m_yScrollRange;
 m_bHScroll = (dx > m_viewWidth);
 m_bVScroll = (dy > m_viewHeight);
 ShowScrollBar (SB_HORZ, m_bHScroll);
@@ -280,7 +280,7 @@ if (m_bHScroll) {
 		SetScrollPos (SB_HORZ, m_xScrollCenter = m_xScrollRange / 2, TRUE);
 	else if (xScrollRange != m_xScrollRange) {
 		r = (double) xScrollRange / (double) m_xScrollRange;
-		int nPos = GetScrollPos (SB_HORZ);
+		INT32 nPos = GetScrollPos (SB_HORZ);
 		nPos -= m_xScrollCenter;
 		m_xScrollCenter = m_xScrollRange / 2;
 		SetScrollPos (SB_HORZ, (UINT) (m_xScrollCenter + (double) nPos * r), TRUE);
@@ -299,7 +299,7 @@ if (m_bVScroll) {
 		SetScrollPos (SB_VERT, m_yScrollCenter = m_yScrollRange / 2, TRUE);
 	else if (yScrollRange != m_yScrollRange) {
 		r = (double) yScrollRange / (double) m_yScrollRange;
-		int nPos = GetScrollPos (SB_VERT);
+		INT32 nPos = GetScrollPos (SB_VERT);
 		nPos -= m_yScrollCenter;
 		m_yScrollCenter = m_yScrollRange / 2;
 		SetScrollPos (SB_VERT, (UINT) (m_yScrollCenter + (double) nPos * r), TRUE);
@@ -320,10 +320,10 @@ void CMineView::DrawMineCenter (CDC *pViewDC)
 {
 if (m_nMineCenter == 1) {
 	m_pDC->SelectObject(GetStockObject (WHITE_PEN));
-	m_pDC->MoveTo (x_center,y_center-(int)(10.0*m_sizey)+1);
-	m_pDC->LineTo (x_center,y_center+(int)(10.0*m_sizey)+1);
-	m_pDC->MoveTo (x_center-(int)(10.0*m_sizex/**aspect_ratio*/)+1,y_center);
-	m_pDC->LineTo (x_center+(int)(10.0*m_sizex/**aspect_ratio*/)+1,y_center);
+	m_pDC->MoveTo (x_center,y_center-(INT32)(10.0*m_sizey)+1);
+	m_pDC->LineTo (x_center,y_center+(INT32)(10.0*m_sizey)+1);
+	m_pDC->MoveTo (x_center-(INT32)(10.0*m_sizex/**aspect_ratio*/)+1,y_center);
+	m_pDC->LineTo (x_center+(INT32)(10.0*m_sizex/**aspect_ratio*/)+1,y_center);
 	}
 if (m_nMineCenter == 2) {
 	// draw a globe
@@ -333,7 +333,7 @@ if (m_nMineCenter == 2) {
 	APOINT pt;
 
 	m_pDC->SelectObject (m_penCyan);
-	int i, j;
+	INT32 i, j;
 	for (i=-60;i<=60;i+=30) {
 		for (j=0;j<=360;j+=15) {
 			double scale = (FIX)(5*F1_0*cos((double)i*(M_PI/180.0)));
@@ -400,7 +400,7 @@ void CMineView::OnDraw (CDC* pViewDC)
 if (m_bUpdate) {
 	GLRenderScene ();
 	if (!SwapBuffers (glHDC)) {
-		int err = GetLastError ();
+		INT32 err = GetLastError ();
 	//	m_glDC = GetDC ();
 	//	glHDC = m_glDC->m_hDC;
 		GLKillWindow ();
@@ -509,7 +509,7 @@ void CMineView::AdvanceLightTick (void)
 	CMine *mine = GetMine ();
 	LIGHT_TIMER *plt = light_timers;
 	FLICKERING_LIGHT *pfl = mine->FlickeringLights ();
-	int i, light_delay;
+	INT32 i, light_delay;
 
 for (i = mine->FlickerLightCount (); i; i--, pfl++, plt++) {
 	light_delay = (pfl->delay * 100 /*+ F0_5*/) / F1_0;
@@ -526,13 +526,13 @@ for (i = mine->FlickerLightCount (); i; i--, pfl++, plt++) {
 
                         /*--------------------------*/
 #ifdef _DEBUG
-static int qqq1 = -1, qqq2 = 0;
+static INT32 qqq1 = -1, qqq2 = 0;
 #endif
 
 bool CMineView::SetLightStatus (void)
 {
 	CMine *mine = GetMine ();
-	int h, i, j;
+	INT32 h, i, j;
 	dl_index *pdli = mine->DLIndex ();
 	LIGHT_TIMER *plt;
 	FLICKERING_LIGHT *pfl = mine->FlickeringLights ();
@@ -624,7 +624,7 @@ else
 
 								/*---------------------------*/
 
-void CMineView::EnableDeltaShading (int bEnable, int nFrameRate, int bShowLightSource)
+void CMineView::EnableDeltaShading (INT32 bEnable, INT32 nFrameRate, INT32 bShowLightSource)
 {
 if (enable_delta_shading = bEnable) {
 	m_lightTimer = SetTimer (3, (UINT) (m_nFrameRate + 5) / 10, NULL);
@@ -643,7 +643,7 @@ else if (m_lightTimer != -1) {
 
 								/*---------------------------*/
 
-BOOL CMineView::SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags)
+BOOL CMineView::SetWindowPos(const CWnd *pWndInsertAfter, INT32 x, INT32 y, INT32 cx, INT32 cy, UINT nFlags)
 {
 	CRect	rc;
 
@@ -661,8 +661,8 @@ bool CMineView::InitViewDimensions (void)
 	CRect	rc;
 
 GetClientRect (rc);
-int width = (rc.Width () + 3) & ~3; // long word align
-int height = rc.Height ();
+INT32 width = (rc.Width () + 3) & ~3; // long word align
+INT32 height = rc.Height ();
 if ((m_viewWidth == width) && (m_viewHeight == height))
 	return false;
 m_viewWidth = width;
@@ -701,14 +701,14 @@ void CMineView::InitView (CDC *pViewDC)
 	m_pDC = pViewDC;
 #endif
 
-//	int depth = m_pDC->GetDeviceCaps(BITSPIXEL) / 8;
-	int depth = 1; // force 8-bit DIB
+//	INT32 depth = m_pDC->GetDeviceCaps(BITSPIXEL) / 8;
+	INT32 depth = 1; // force 8-bit DIB
 #if 0
 	// if view size is new, then reset dib and delete the current device context
 	CRect Rect;
 	GetClientRect(Rect);
-	int width = Rect.Width (); //(Rect.Width() + 3) & ~3; // long word align
-	int height = Rect.Height();
+	INT32 width = Rect.Width (); //(Rect.Width() + 3) & ~3; // long word align
+	INT32 height = Rect.Height();
 
 	if (width != m_viewWidth || height != m_viewHeight || depth != m_viewDepth) {
 #else
@@ -755,7 +755,7 @@ void CMineView::InitView (CDC *pViewDC)
 			// copy the bitmap palette
 			UINT8 *palette = PalettePtr ();
 			if (palette) {
-				int i, j;
+				INT32 i, j;
 				for (i = j = 0; i < 256; i++) {
 					mybmi.bmiColors [i].rgbRed   = palette [j++]<<2;
 					mybmi.bmiColors [i].rgbGreen = palette [j++]<<2;
@@ -805,7 +805,7 @@ else {
 
 void CMineView::CalcSegDist (CMine *mine)
 {
-	int			h, i, j, c, nDist, segNum = mine->SegCount (), sideNum;
+	INT32			h, i, j, c, nDist, segNum = mine->SegCount (), sideNum;
 	CDSegment	*segI, *segJ;
 	INT16			*segRef = new INT16 [segNum];
 
@@ -935,7 +935,7 @@ for (segnum = 0; segnum < mine->SegCount (); segnum++) {
 
 bool CMineView::InRange (INT16 *pv, INT16 i)
 {
-	int	v;
+	INT32	v;
 
 for (; i; i--, pv++) {
 	v = *pv;
@@ -966,7 +966,7 @@ void CMineView::DrawCube (CMine *mine, INT16 segnum,INT16 sidenum, INT16 linenum
 	if (clear_it) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 		m_pDC->SelectObject (GetStockObject(BLACK_PEN)); // BLACK
-		int nVert = seg->verts [side_vert [sidenum] [pointnum]];
+		INT32 nVert = seg->verts [side_vert [sidenum] [pointnum]];
 		if (IN_RANGE (m_viewPoints [nVert].x,x_max) &&
 			 IN_RANGE (m_viewPoints [nVert].y,y_max)) {
 			m_pDC->Ellipse(m_viewPoints [nVert].x - 4,
@@ -1151,12 +1151,12 @@ if (!Visible (seg))
 
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
-	int	chSegI, chSideI, chVertI, i, j, commonVerts;
+	INT32	chSegI, chSideI, chVertI, i, j, commonVerts;
 	CDSegment	*child;
 	INT16 *pv = seg->verts;
 
 for (i = 0; i < 8; i++, pv++) {
-	int	v = *pv;
+	INT32	v = *pv;
 	if (!(IN_RANGE (m_viewPoints [v].x, x_max) &&
 			IN_RANGE (m_viewPoints [v].y, y_max)))
 		return;
@@ -1201,7 +1201,7 @@ if (bPartial) {
 					for (commonVerts = 0, chVertI = 0; (chVertI < 4) && (commonVerts < 2); chVertI++) {
 						vert.x = m_viewPoints [child->verts [side_vert [chSideI] [chVertI]]].x;
 						vert.y = m_viewPoints [child->verts [side_vert [chSideI] [chVertI]]].y;
-						int h;
+						INT32 h;
 						for (h = 0; h < 2; h++) {
 							if ((line [h].x == vert.x) && (line [h].y == vert.y)) {
 								++commonVerts;
@@ -1220,16 +1220,16 @@ else {	//!bPartial
 	POINT	lines [12][2];
 	POINT lineRef [12];
 /*
-	static	int poly1 [] = {4,0,1,2,3};
-	static	int poly2 [] = {3,0,3,7};
-	static	int poly3 [] = {5,0,4,5,6,7};
-	static	int poly4 [] = {2,4,7};
-	static	int poly5 [] = {2,2,6};
-	static	int poly6 [] = {2,1,5};
-	static	int* polys [] = {poly1, poly2, poly3, poly4, poly5, poly6};
+	static	INT32 poly1 [] = {4,0,1,2,3};
+	static	INT32 poly2 [] = {3,0,3,7};
+	static	INT32 poly3 [] = {5,0,4,5,6,7};
+	static	INT32 poly4 [] = {2,4,7};
+	static	INT32 poly5 [] = {2,2,6};
+	static	INT32 poly6 [] = {2,1,5};
+	static	INT32* polys [] = {poly1, poly2, poly3, poly4, poly5, poly6};
 */
-	static	int points [] = {0,1,1,2,2,3,3,0,0,4,4,5,5,6,6,7,7,4,3,7,2,6,1,5,-1};
-	int		i, j, k, v, l;
+	static	INT32 points [] = {0,1,1,2,2,3,3,0,0,4,4,5,5,6,6,7,7,4,3,7,2,6,1,5,-1};
+	INT32		i, j, k, v, l;
 
 	for (i = 0;; i++) {
 		k = points [i];
@@ -1260,14 +1260,14 @@ else {	//!bPartial
 
 void CMineView::DrawLine (CDTexture *pTx, POINT pt0, POINT pt1, UINT8 color) 
 {
-	int i,x,y;
-	int dx = pt1.x - pt0.x;
-	int dy = pt1.y - pt0.y;
+	INT32 i,x,y;
+	INT32 dx = pt1.x - pt0.x;
+	INT32 dy = pt1.y - pt0.y;
 
 #if 1
-	int xInc, yInc;
+	INT32 xInc, yInc;
 	double scale;
-	int nStep = 0;
+	INT32 nStep = 0;
 
 if (dx > 0)
 	xInc = 1;
@@ -1282,15 +1282,15 @@ else {
 	dy = -dy;
 	}
 scale = pTx->Scale ();
-xInc = (int) ((double) xInc * scale);
-yInc = (int) ((double) yInc * scale);
+xInc = (INT32) ((double) xInc * scale);
+yInc = (INT32) ((double) yInc * scale);
 
 x = pt0.x;
 y = pt0.y;
 
 #if 0	//most universal
-int xStep = 0, yStep = 0;
-int dd = (dx >= dy) ? dx: dy;
+INT32 xStep = 0, yStep = 0;
+INT32 dd = (dx >= dy) ? dx: dy;
 for (i = dd + 1; i; i--) {
 	pTx->m_pDataBM [y*pTx->m_width+x] = color;
 	yStep += dy;
@@ -1372,8 +1372,8 @@ else
 
 void CMineView::DrawAnimDirArrows (INT16 texture1, CDTexture *pTx)
 {
-	int sx,sy;
-	int bScroll = GetMine ()->ScrollSpeed (texture1, &sx, &sy);
+	INT32 sx,sy;
+	INT32 bScroll = GetMine ()->ScrollSpeed (texture1, &sx, &sy);
 
 if (!bScroll)
 	return;
@@ -1430,7 +1430,7 @@ void CMineView::DrawCubeTextured(CDSegment *seg, UINT8* light_index)
 		IN_RANGE(m_viewPoints [seg->verts [7]].y,y_max)   )
 	{
 
-		int resolution = 0;
+		INT32 resolution = 0;
 		CDTexture tx (bmBuf);
 		UINT8 *pm_viewPointsMem = (UINT8 *)m_pvBits;
 		UINT16 width = m_viewWidth;
@@ -1477,7 +1477,7 @@ void CMineView::DrawCubePoints (CDSegment *seg)
 {
 	INT16		*pv = seg->verts;
 	COLORREF	color = RGB (128,128,128);
-	int		h, i;
+	INT32		h, i;
 
 for (i = 0; i < 8; i++, pv++) {
 	h = *pv;
@@ -1694,7 +1694,7 @@ void CMineView::DrawWalls(CMine *mine)
 for (i=0;i<mine->GameInfo ().walls.count;i++) {
 	if (walls [i].segnum > mine->SegCount ())
 		continue;
-	seg = segments + (int)walls [i].segnum;
+	seg = segments + (INT32)walls [i].segnum;
 	if (!Visible (seg))
 		continue;
 	switch(walls [i].type) {
@@ -1848,7 +1848,7 @@ void CMineView::DrawLights (CMine *mine)
 	    light_source = segment_center_xy(sidenum,segnum);
 	    for (j=0;j<DLIndex () [i].count;j++) {
 	      POINT light_dest;
-	      int index = DLIndex () [i].index+j;
+	      INT32 index = DLIndex () [i].index+j;
 	      sidenum = DeltaLights () [index].sidenum;
 			segnum  = DeltaLights () [index].segnum;
 	      segment *seg = Segments () [segnum];
@@ -1915,7 +1915,7 @@ void CMineView::DrawOctagon(CMine *mine, INT16 sidenum, INT16 segnum)
 	    center.x = (corners [0].x + corners [1].x + corners [2].x + corners [3].x)>>2;
 	    center.y = (corners [0].y + corners [1].y + corners [2].y + corners [3].y)>>2;
 		for (j=0;j<4;j++) {
-	      int k = (j+1) & 0x03;
+	      INT32 k = (j+1) & 0x03;
 			line_centers [j].x = (corners [j].x + corners [k].x) >> 1;
 	      line_centers [j].y = (corners [j].y + corners [k].y) >> 1;
 	      diamond [j].x = (line_centers [j].x + center.x) >> 1;
@@ -1939,7 +1939,7 @@ void CMineView::DrawOctagon(CMine *mine, INT16 sidenum, INT16 segnum)
 
 void CMineView::DrawSpline (CMine *mine) 
 {
-	int h, i, j;
+	INT32 h, i, j;
 
 //  SelectObject(hdc, hrgnAll);
 m_pDC->SelectObject (m_penRed);
@@ -2097,7 +2097,7 @@ for (poly = 0; poly < MAX_POLY; poly++) {
 
 // figure out world coordinates
 
-int i;
+INT32 i;
 for (i = 0; i < 6; i++)
 	if (!(IN_RANGE (poly_draw [i].x, x_max) &&
 			IN_RANGE (poly_draw [i].y, y_max)))
@@ -2119,7 +2119,7 @@ else {
 	for (poly = 0; poly < 6; poly++)
 		m_pDC->LineTo (poly_draw [poly].x, poly_draw [poly].y);
 	if (objnum == mine->Current ()->object) {
-		int dx,dy;
+		INT32 dx,dy;
 		for (dx = -1; dx < 2; dx++) {
 			for (dy = -1; dy < 2; dy++) {
 				m_pDC->MoveTo (poly_draw [0].x+dx,poly_draw [0].y+dy);
@@ -2131,7 +2131,7 @@ else {
 	}
 if ((objnum == mine->Current ()->object) || (objnum == mine->Other ()->object)) {
 	CPen     pen, *pOldPen;
-	int		d;
+	INT32		d;
 
 	pt [0] =
 	pt [1] =
@@ -2198,7 +2198,7 @@ return false;
 
 void CMineView::HiliteTarget (CMine *mine)
 {
-	int i, nTarget;
+	INT32 i, nTarget;
 
 CDObject *obj = mine->CurrObj ();
 if ((obj->type != OBJ_EFFECT) || (obj->id != LIGHTNING_ID))
@@ -2222,7 +2222,7 @@ void CMineView::DrawObjects (CMine *mine, INT16 clear_it)
 if (!ViewObject ())
 	return;
 
-int i, j;
+INT32 i, j;
 if (mine->IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < mine->GameInfo ().triggers.count; i++)
@@ -2248,7 +2248,7 @@ void CMineView::DrawHighlight(CMine *mine, INT16 clear_it)
 //	INT16 i;
 //	RECT rect;
 
-if (disable_drawing) 
+if (m_disableDrawing) 
 	return;
 
 if (mine->SegCount ()==0) 
@@ -2390,7 +2390,7 @@ BOOL CMineView::OnEraseBkgnd(CDC* pDC)
 
                         /*--------------------------*/
 
-void CMineView::OnSize(UINT nType, int cx, int cy)
+void CMineView::OnSize(UINT nType, INT32 cx, INT32 cy)
 {
 	CRect	rc;
 
@@ -2416,22 +2416,22 @@ m_bUpdate = true;
 
 static double zoomScales [2] = {1.2, 1.033};
 
-int CMineView::ZoomFactor (int nSteps, double min, double max)
+INT32 CMineView::ZoomFactor (INT32 nSteps, double min, double max)
 {
 double zoom;
-int i;
+INT32 i;
 
 for (zoom = log(10*m_sizex), i = 0; i < nSteps; i++) {
 	zoom /= log (1.2);
 	if ((zoom < min) || (zoom > max))
 		return i;
 	}
-return nSteps; //(int) ((zoom > 0) ? zoom + 0.5: zoom - 0.5);
+return nSteps; //(INT32) ((zoom > 0) ? zoom + 0.5: zoom - 0.5);
 }
 
                         /*--------------------------*/
 
-void CMineView::Zoom (int nSteps, double zoom)
+void CMineView::Zoom (INT32 nSteps, double zoom)
 {
 for (; nSteps; nSteps--) {
 //	m_sizex *= zoom;
@@ -2444,7 +2444,7 @@ Refresh (false);
 
                         /*--------------------------*/
 
-int CMineView::ZoomIn (int nSteps, bool bSlow)
+INT32 CMineView::ZoomIn (INT32 nSteps, bool bSlow)
 {
 if (nSteps = ZoomFactor (nSteps, -100, 25))
 	Zoom (nSteps, zoomScales [bSlow]);
@@ -2460,7 +2460,7 @@ return nSteps;
 
                         /*--------------------------*/
 
-int CMineView::ZoomOut(int nSteps, bool bSlow)
+INT32 CMineView::ZoomOut(INT32 nSteps, bool bSlow)
 {
 if (nSteps = ZoomFactor (nSteps, -5, 100))
 	Zoom (nSteps, 1.0 / zoomScales [bSlow]);
@@ -2478,7 +2478,7 @@ if (!(m_xRenderOffs && m_yRenderOffs && GetMine ()))
 
 	APOINT *a = m_viewPoints;
 
-int i;
+INT32 i;
 for (i = m_mine->VertCount (); i; i--, a++) {
 	a->x += m_xRenderOffs;
 	a->y += m_yRenderOffs;
@@ -2561,14 +2561,14 @@ m_maxViewPoint.z = (INT16) maxZ;
 
                         /*--------------------------*/
 
-int CMineView::FitToView (void)
+INT32 CMineView::FitToView (void)
 {
 //if (!GetMine ())
 //	return;
 
 	CRect			rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
 	double		zoomX, zoomY, zoom;
-	int			dx, dy;
+	INT32			dx, dy;
 
 DelayRefresh (true);
 //CenterMine ();
@@ -2629,7 +2629,7 @@ return 1;
 void CMineView::Rotate (char direction, double angle)
 {
 	static double a = 0;
-int i = direction - 'X';
+INT32 i = direction - 'X';
 if ((i < 0) || (i > 2))
 	return;
 #if 0 //OGL_RENDERING
@@ -2661,7 +2661,7 @@ void CMineView::Pan (char direction, INT32 value)
 {
 if (!value)
 	return;
-int i = direction - 'X';
+INT32 i = direction - 'X';
 if ((i < 0) || (i > 2))
 	i = 0;
 #if 0 //OGL_RENDERING
@@ -2730,8 +2730,8 @@ void CMineView::CenterMine()
 	m_movex = -(max_x + min_x)/2.f;
 	m_movey = -(max_y + min_y)/2.f;
 	m_movez = -(max_z + min_z)/2.f;
-	int factor;
-	int max_all = max(max(max_x-min_x, max_y-min_y), max_z-min_z)/20;
+	INT32 factor;
+	INT32 max_all = max(max(max_x-min_x, max_y-min_y), max_z-min_z)/20;
 	if (max_all < 2)      factor = 14;
 	else if (max_all < 4) factor = 10;
 	else if (max_all < 8) factor = 8;
@@ -2874,13 +2874,13 @@ BOOL CMineView::SetCursor (HCURSOR hCursor)
 {
 if (!hCursor) // || (hCursor == m_hCursor))
    return FALSE;
-::SetClassLong (GetSafeHwnd (), -12 /*int (GCL_HCURSOR)*/, int (hCursor));
+::SetClassLong (GetSafeHwnd (), -12 /*INT32 (GCL_HCURSOR)*/, INT32 (hCursor));
 return TRUE;
 }
                         
                         /*--------------------------*/
 
-void CMineView::SetMouseState (int newMouseState)
+void CMineView::SetMouseState (INT32 newMouseState)
 {
 if (newMouseState != m_mouseState) {
 	m_lastMouseState = m_mouseState;
@@ -2936,7 +2936,7 @@ if (change.x || change.y) {
 				SetMouseState (eMouseStateZoom);
 			else {
 				GetMine ();
-				int v = m_mine->CurrVert ();
+				INT32 v = m_mine->CurrVert ();
 				if ((abs (m_clickPos.x - m_viewPoints [v].x) < 5) && 
 					 (abs (m_clickPos.y - m_viewPoints [v].y) < 5)) {
 					SetMouseState (eMouseStateInitDrag);
@@ -3094,10 +3094,10 @@ Refresh ();
 
                         /*--------------------------*/
 
-bool CMineView::VertexVisible (int v)
+bool CMineView::VertexVisible (INT32 v)
 {
 	CDSegment	*segP;
-	int			i, j;
+	INT32			i, j;
 
 if (!m_nViewDist)
 	return true;
@@ -3116,9 +3116,9 @@ if (!GetMine ())
 	return;
 
 	APOINT	*pa = m_viewPoints;
-	int		x, y;
+	INT32		x, y;
 
-int i;
+INT32 i;
 for (i = 0; i < m_mine->VertCount (); i++, pa++) {
 	x = pa->x;
 	y = pa->y;
@@ -3174,7 +3174,7 @@ closest_object = 0;
 closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
-int enable_secret = FALSE;
+INT32 enable_secret = FALSE;
 if (m_mine->IsD2File ())
 	for(i=0;i<(INT16)m_mine->GameInfo ().triggers.count;i++)
 		if (m_mine->Triggers (i)->type ==TT_SECRET_EXIT) {
@@ -3244,10 +3244,10 @@ RefreshObject(i, closest_object);
 
 //--------------------------------------------------------------------------
 
-int Side (APOINT &p0, APOINT &p1, APOINT &p2)
+INT32 Side (APOINT &p0, APOINT &p1, APOINT &p2)
 {
-return ((int) p0.y - (int) p1.y) * ((int) p2.x - (int) p1.x)  - 
-		 ((int) p0.x - (int) p1.x) * ((int) p2.y - (int) p1.y);
+return ((INT32) p0.y - (INT32) p1.y) * ((INT32) p2.x - (INT32) p1.x)  - 
+		 ((INT32) p0.x - (INT32) p1.x) * ((INT32) p2.y - (INT32) p1.y);
 }
 
 //--------------------------------------------------------------------------
@@ -3272,7 +3272,7 @@ if (!GetMine ())
 //  extern INT16 xMouse,yMouse;
   INT16			cur_segment, next_segment;
   INT16			i, j;
-  int				x, y;
+  INT32				x, y;
   APOINT			sideVerts [4], mousePos;
   bool			bFound = false;
 
@@ -3510,7 +3510,7 @@ m_pDC->SetROP2 (R2_NOT);
 m_pDC->Ellipse (x-4, y-4, x+4, y+4);
 
 CRect	rc (x, y, x, y);
-int i;
+INT32 i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
 	INT16 nVert2 = connect_points [nVert] [i];
@@ -3545,7 +3545,7 @@ if (m_lastMousePos == m_lastDragPos)
 
 	INT16 nVert;
 	INT16 x, y;
-	int i;
+	INT32 i;
 
 nVert = side_vert [m_mine->Current ()->side] [m_mine->Current ()->point];
 
@@ -3592,8 +3592,8 @@ void CMineView::FinishDrag (void)
 if (!GetMine ())
 	return;
 
-	int		changes_made = 1;
-	int		i, new_vert, count = 0;
+	INT32		m_changesMade = 1;
+	INT32		i, new_vert, count = 0;
 	long		xPos,yPos;
 	INT16		xPoint,yPoint;
 	INT16		point1,vert1;
@@ -3663,7 +3663,7 @@ Refresh ();
 //==========================================================================
 // MENU - NextPoint
 //==========================================================================
-void CMineView::NextPoint(int dir) 
+void CMineView::NextPoint(INT32 dir) 
 {
 if (!GetMine ())
 	return;
@@ -3689,7 +3689,7 @@ NextPoint (-1);
 //==========================================================================
 // MENU - NextSide
 //==========================================================================
-void CMineView::NextSide (int dir) 
+void CMineView::NextSide (INT32 dir) 
 {
 if (!GetMine ())
 	return;
@@ -3710,7 +3710,7 @@ NextSide (-1);
 //==========================================================================
 // MENU - NextSide2 (same except doesn't change mode)
 //==========================================================================
-void CMineView::NextSide2 (int dir)
+void CMineView::NextSide2 (INT32 dir)
 {
 if (!GetMine ())
 	return;
@@ -3728,7 +3728,7 @@ NextSide2 (-1);
 // MENU - NextLine
 //==========================================================================
 
-void CMineView::NextLine (int dir) 
+void CMineView::NextLine (INT32 dir) 
 {
 if (!GetMine ())
 	return;
@@ -3752,7 +3752,7 @@ NextLine (-1);
 // MENU - NextCube
 //==========================================================================
 
-void CMineView::NextCube (int dir) 
+void CMineView::NextCube (INT32 dir) 
 {
 if (!GetMine ())
 	return;
@@ -3794,7 +3794,7 @@ NextCube (-1);
 //         Smart side selection done before moving (instead of after) (v0.9)
 //==========================================================================
 
-void CMineView::ForwardCube (int dir) 
+void CMineView::ForwardCube (INT32 dir) 
 {
 if (!GetMine ())
 	return;
@@ -3895,7 +3895,7 @@ return true;
 // MENU - NextObject
 //==========================================================================
 
-void CMineView::NextObject (int dir) 
+void CMineView::NextObject (INT32 dir) 
 {
 if (!GetMine ())
 	return;
@@ -3926,7 +3926,7 @@ NextObject (-1);
 // NextElement
 //==========================================================================
 
-void CMineView::NextCubeElement (int dir)
+void CMineView::NextCubeElement (INT32 dir)
 {
 switch (m_selectMode) {
 	case eSelectPoint:
@@ -3950,7 +3950,7 @@ NextCubeElement (-1);
 
 								/*---------------------------*/
 
-BOOL CMineView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
+BOOL CMineView::OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt)
 {
 	CRect	rc;
 
@@ -4019,7 +4019,7 @@ Refresh ();
 
 void CMineView::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-int nPos = GetScrollPos (SB_VERT);
+INT32 nPos = GetScrollPos (SB_VERT);
 CRect rect;
 GetClientRect(rect);
 
@@ -4141,13 +4141,13 @@ FitToView ();
 CRect	rc;
 SetViewPoints (&rc);
 
-int rad = rc.Width ();
+INT32 rad = rc.Width ();
 if (rad < rc.Height ())
 	rad = rc.Height ();
 if (rad < (m_maxViewPoint.z - m_minViewPoint.z + 1))
 	rad = (m_maxViewPoint.z - m_minViewPoint.z + 1);
-int xMid = (rc.left + rc.right) / 2;
-int yMid = (rc.bottom + rc.top) / 2;
+INT32 xMid = (rc.left + rc.right) / 2;
+INT32 yMid = (rc.bottom + rc.top) / 2;
 double left = (double) xMid - rad;
 double right = (double) xMid + rad;
 double bottom = (double) yMid - rad;
@@ -4231,7 +4231,7 @@ if (!glHandles [nTexture]) {
 	DefineTexture (nTexture, 0, &tx, 0, 0);
 	DrawAnimDirArrows (nTexture, &tx);
 	// create RGBA bitmap from source bitmap
-	int h, i, j;
+	INT32 h, i, j;
 	for (h = i = 0; i < 64*64; i++) {
 		j = bmBuf [i];
 		if (j < 254) {
@@ -4271,9 +4271,9 @@ void CMineView::GLRenderTexture (INT16 segnum, INT16 sidenum, INT16 nTexture)
 	vms_vector *verts = m_mine->Vertices ();
 	vms_vector *v;
 #endif
-	static int rotOffs [4] = {0,3,2,1};
-	int h = rotOffs [(nTexture & 0xC000) >> 14];
-	int j = h;
+	static INT32 rotOffs [4] = {0,3,2,1};
+	INT32 h = rotOffs [(nTexture & 0xC000) >> 14];
+	INT32 j = h;
 	bool bShaded = (m_viewMineFlags & eViewMineShading) != 0;
 
 //CBRK (segnum == 57 && sidenum == 3);
@@ -4281,7 +4281,7 @@ GLCreateTexture (nTexture);
 glEnable (GL_TEXTURE_2D);
 glBindTexture (GL_TEXTURE_2D, glHandles [nTexture & 0x1FFF]); 
 glBegin (GL_TRIANGLE_FAN);
-int i;
+INT32 i;
 for (i = 0; i < 4; i++) {
 	uvls = side->uvls + j;
 	l = (bShaded ? uvls->l: F1_0) / UV_FACTOR;
@@ -4379,7 +4379,7 @@ double cy = (double) rc.Height () / 2;
 glTranslated (-cx, -cy, glMinZ);
 #else
 glTranslated (glPan [0], glPan [1], glPan [2] -500);	
-int i;
+INT32 i;
 for (i = 0; i < 3; i++)
 	glRotated (glAngle [i], glRotMat [i][0], glRotMat [i][1], glRotMat [i][2]);
 #endif

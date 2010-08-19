@@ -17,7 +17,6 @@
 #include "global.h"
 #include "mine.h"
 
-int changes_made = 0;
 MISSION_DATA missionData;
 //HGLOBAL texture_handle [MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
 CPalette *thePalette;
@@ -55,25 +54,25 @@ BITMAP_INDEX *ObjBitmaps;     // MAX_OBJ_BITMAPS
 BITMAP_INDEX *ObjBitmapPtrs;  // MAX_OBJ_BITMAPS
 #endif
 
-int skip_about;
-int disable_drawing=0;
+INT32 skip_about;
+INT32 m_disableDrawing=0;
 char skip[16] = "tom≈";
-int left;
-int top;
-int right;
-int bottom;
-int x_center;
-int y_center;
-int x_max;
-int y_max;
+INT32 left;
+INT32 top;
+INT32 right;
+INT32 bottom;
+INT32 x_center;
+INT32 y_center;
+INT32 x_max;
+INT32 y_max;
 double aspect_ratio;
-int refresh_needed = 0;
-int splash = 0;
+INT32 refresh_needed = 0;
+INT32 splash = 0;
 
 
-int level_modified = 0;
+INT32 level_modified = 0;
 //UINT8 texture_modified[1+MAX_D2_TEXTURES/8];
-int disable_saves = 1;
+INT32 disable_saves = 1;
 
 UINT8 clip_num[D2_NUM_OF_CLIPS] = {
 	0,1,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,    // added 0 & 7 1/28/97
@@ -93,14 +92,14 @@ UINT16 wall_flags [MAX_WALL_FLAGS] = {
 	WALL_IGNORE_MARKER
 };
 
-int texture_resource = D2_TEXTURE_STRING_TABLE;
+INT32 texture_resource = D2_TEXTURE_STRING_TABLE;
 
 long ScrnMemMax = 0L;
-int ScrnWidth = 0;
-int ScrnHeight = 0;
+INT32 ScrnWidth = 0;
+INT32 ScrnHeight = 0;
 
 // new data for Descent 2
-int file_type = RL2_FILE;
+INT32 file_type = RL2_FILE;
 //dl_index     *dl_indices=0;    // MAX_DL_INDICES   x 6 bytes each
 //delta_light  *delta_lights=0;  // MAX_DELTA_LIGHTS x 8 bytes each
 INT16	     num_static_lights=0;
@@ -264,7 +263,7 @@ char dlc_version[10] = "2.7a";
 INT16 serial_number   = 27;
 char message[256];
 //UINT8 test4 = 0xBA;
-char starting_directory[256];
+char m_startFolder [256];
 //UINT8 test5 = 0xBA;
 FIX grid = 0x2000L;   // 0.125
 char descent_path[256]="\\programs\\d2\\data";
@@ -519,8 +518,8 @@ UINT8 clip_door_number [D2_NUM_OF_CLIPS] = {
 	51,52,53,54,55,56,57
 	};
 
-int renderXOffs = 0;
-int renderYOffs = 0;
+INT32 renderXOffs = 0;
+INT32 renderYOffs = 0;
 
 tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE] = {
 	{{0, 5}, TXT_GRAY_ROCK, 0},
@@ -865,7 +864,7 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //object *Objects ()[MAX_OBJECTS];
 //UINT8 *vert_status=0; //MAX_VERTICES
 
-//char current_level_name[256];
+//char m_currentLevelName[256];
 
 //wall *Walls (); //MAX_WALLS
 //active_door active_doors[MAX_DOORS];

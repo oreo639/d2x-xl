@@ -61,7 +61,7 @@ if (!CToolDlg::OnInitDialog ())
 CListCtrl& plc = LVStats ()->GetListCtrl ();
 CRect rc;
 plc.GetClientRect (rc);
-int cx = rc.Width () - 16;
+INT32 cx = rc.Width () - 16;
 if (plc.InsertColumn (0, "item", LVCFMT_LEFT, (cx * 43) / 100) == -1)
    return FALSE;
 if (plc.InsertColumn (1, "count", LVCFMT_LEFT, (cx * 25) / 100) == -1)
@@ -75,7 +75,7 @@ return TRUE;
 
                         /*--------------------------*/
 
-LPSTR CDiagTool::ItemText (int nValue, LPSTR pszPrefix)
+LPSTR CDiagTool::ItemText (INT32 nValue, LPSTR pszPrefix)
 {
 	static	char szText [20];
 
@@ -93,7 +93,7 @@ void CDiagTool::CountObjects (void)
 CDObject *obj = m_mine->Objects ();
 memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
-int i, j;
+INT32 i, j;
 for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, obj++)
 	switch(obj->type) {
 		case OBJ_ROBOT:
@@ -136,13 +136,13 @@ for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, obj++)
 
                         /*--------------------------*/
 
-int CDiagTool::CountTextures (void)
+INT32 CDiagTool::CountTextures (void)
 {
 	CDSegment *seg = m_mine->Segments ();
 	CDSide *side;
 	char bUsed [(MAX_D2_TEXTURES + 7) / 8];
-	int t, i, j, h = m_mine->GameInfo ().walls.count;
-	int nUsed = 0;
+	INT32 t, i, j, h = m_mine->GameInfo ().walls.count;
+	INT32 nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));
 for (i = m_mine->SegCount (); i; i--, seg++)
@@ -185,7 +185,7 @@ if (!GetMine ())
 
 	CListCtrl& plc = LVStats ()->GetListCtrl ();
 	LPSTR	*psz;
-	int i;
+	INT32 i;
 
 	static LPSTR szItems [] = {
 		"cubes", "vertices", "mat cens", "fuel centers", "walls", "triggers", "objects:", 
@@ -261,7 +261,7 @@ UpdateData (TRUE);
 
                         /*--------------------------*/
 
-int CDiagTool::AddMessage (const char *pszMsg, int nMaxMsgs, bool bCheckMsg)
+INT32 CDiagTool::AddMessage (const char *pszMsg, INT32 nMaxMsgs, bool bCheckMsg)
 {
 if (!m_bInited)
 	return -1;
@@ -270,7 +270,7 @@ if (bCheckMsg != m_bCheckMsgs) {
 	m_bCheckMsgs = bCheckMsg;
 	}
 CListBox *plb = LBBugs ();
-int nCount = plb->GetCount ();
+INT32 nCount = plb->GetCount ();
 if (nCount) {
 	char	szMsg [256];
 	if ((plb->GetText (nCount - 1, szMsg) != LB_ERR) && !_stricmp (szMsg, pszMsg))

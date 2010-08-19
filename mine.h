@@ -52,7 +52,7 @@ typedef struct tMineData {
 	active_door					active_doors[MAX_DOORS];
 	CDTrigger					triggers[MAX_TRIGGERS2];
 	CDTrigger					objTriggers[MAX_OBJ_TRIGGERS];
-	int							numObjTriggers;
+	INT32							numObjTriggers;
 	control_center_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
 	matcen_info					robot_centers[MAX_NUM_MATCENS2];
 	matcen_info					equip_centers[MAX_NUM_MATCENS2];
@@ -78,64 +78,20 @@ class CMine {
 public:
 	
 	// level info
-	int							m_fileType;
+	INT32							m_fileType;
 	INT32							m_levelVersion;
-	char							current_level_name[256];	
+	char							m_currentLevelName [256];	
 	game_top_info				game_top_fileinfo;
-#if 1
 	MINE_DATA					m_mineData;
-#else
-	game_info					game_fileinfo;
-
-	INT32							m_reactor_time;
-	INT32							m_reactor_strength;
-	INT32							m_secret_cubenum;
-	vms_matrix					m_secret_orient;
-	
-	// robot data
-	ROBOT_INFO					Robot_info[MAX_ROBOT_TYPES];
-	
-	// structure data
-	UINT16						numVertices;
-	vms_vector					vertices[MAX_VERTICES3];
-	
-	UINT16						numSegments;
-	CDSegment					segments[MAX_SEGMENTS3];
-	
-	UINT8							vert_status[MAX_VERTICES3];
-	
-	CDWall						walls[MAX_WALLS3];
-	active_door					active_doors[MAX_DOORS];
-	CDTrigger					triggers[MAX_TRIGGERS];
-	CDTrigger					objTriggers[MAX_OBJ_TRIGGERS];
-	int							numObjTriggers;
-	control_center_trigger	control_center_triggers[MAX_CONTROL_CENTER_TRIGGERS];
-	matcen_info					robot_centers[MAX_NUM_MATCENS];
-	
-	// object data
-	CDObject						objects[MAX_OBJECTS];
-	
-	// light data
-	dl_index						dl_indices[MAX_DL_INDICES];
-	delta_light					delta_lights[MAX_DELTA_LIGHTS];
-	
-	// flickering light
-	INT16							N_flickering_lights;
-	FLICKERING_LIGHT			flickering_lights[MAX_FLICKERING_LIGHTS];
-
-	CDSelection		current1;
-	CDSelection		current2;
-	CDSelection		*current;
-#endif	
-	ROBOT_INFO					def_robot_info[MAX_ROBOT_TYPES];
+	ROBOT_INFO					m_defaultRobotInfo [MAX_ROBOT_TYPES];
 	// textures and palettes
 //	HGLOBAL						texture_handle[MAX_D2_TEXTURES];
-	HPALETTE						ThePalette;
-	LPLOGPALETTE				dlcLogPalette;
+	HPALETTE						m_currentPalette;
+	LPLOGPALETTE				m_dlcLogPalette;
 	
 	// strings
 	char				message[256];
-	char				starting_directory[256];
+	char				m_startFolder [256];
 //	char				descent_path[256];
 //	char				descent2_path[256];
 //	char				levels_path[256];
@@ -144,22 +100,22 @@ public:
 	
 	// flags
 	INT16				m_selectMode;
-	int				disable_drawing;
-	int				changes_made;
+	INT32				m_disableDrawing;
+	INT32				m_changesMade;
 	
 	bool				m_bSplineActive;
 	BOOL				m_bSortObjects;
-	int				m_nMaxSplines;
-	int				m_nNoLightDeltas;
-	int				m_lightRenderDepth;
-	int				m_deltaLightRenderDepth;
+	INT32				m_nMaxSplines;
+	INT32				m_nNoLightDeltas;
+	INT32				m_lightRenderDepth;
+	INT32				m_deltaLightRenderDepth;
 
 	char				m_szBlockFile [256];
 	INT16				m_splineLength1,
 						m_splineLength2;
 	bool				m_bVertigo;
-	char				*m_pHxmExtraData;
-	int				m_nHxmExtraDataSize;
+	char*				m_pHxmExtraData;
+	INT32				m_nHxmExtraDataSize;
 	bool				m_bUseTexColors;
 // Constructor/Desctuctor
 public:
@@ -170,38 +126,38 @@ public:
 public:
 	inline MINE_DATA& MineData ()
 		{ return m_mineData; }
-	inline vms_vector *Vertices (int i = 0)
+	inline vms_vector *Vertices (INT32 i = 0)
 		{ return MineData ().vertices + i; }
-	inline UINT8 *VertStatus (int i = 0)
+	inline UINT8 *VertStatus (INT32 i = 0)
 		{ return MineData ().vert_status + i; }
-	inline CDSegment *Segments (int i = 0)
+	inline CDSegment *Segments (INT32 i = 0)
 		{ return MineData ().segments + i; }
-	inline CDColor *VertexColors (int i = 0)
+	inline CDColor *VertexColors (INT32 i = 0)
 		{ return &(MineData ().vertexColors [i]); }
-	inline CDWall *Walls (int i = 0)
+	inline CDWall *Walls (INT32 i = 0)
 		{ return MineData ().walls + i; }
-	inline CDTrigger *Triggers (int i = 0)
+	inline CDTrigger *Triggers (INT32 i = 0)
 		{ return MineData ().triggers + i; }
-	inline int &NumTriggers ()
+	inline INT32 &NumTriggers ()
 		{ return GameInfo ().triggers.count; }
-	inline CDTrigger *ObjTriggers (int i = 0)
+	inline CDTrigger *ObjTriggers (INT32 i = 0)
 		{ return MineData ().objTriggers + i; }
-	inline int& NumObjTriggers ()
+	inline INT32& NumObjTriggers ()
 		{ return MineData ().numObjTriggers; }
-	inline CDObject *Objects (int i = 0)
+	inline CDObject *Objects (INT32 i = 0)
 		{ return MineData ().objects + i; }
-	inline matcen_info *BotGens (int i = 0)
+	inline matcen_info *BotGens (INT32 i = 0)
 		{ return MineData ().robot_centers + i; }
-	inline matcen_info *EquipGens (int i = 0)
+	inline matcen_info *EquipGens (INT32 i = 0)
 		{ return MineData ().equip_centers + i; }
-	inline control_center_trigger *CCTriggers (int i = 0)
+	inline control_center_trigger *CCTriggers (INT32 i = 0)
 		{ return MineData ().control_center_triggers + i; }
-	inline active_door *ActiveDoors (int i = 0)
+	inline active_door *ActiveDoors (INT32 i = 0)
 		{ return MineData ().active_doors + i; }
-	inline ROBOT_INFO *RobotInfo (int i = 0)
+	inline ROBOT_INFO *RobotInfo (INT32 i = 0)
 		{ return MineData ().Robot_info + i; }
-	inline ROBOT_INFO *DefRobotInfo (int i = 0)
-		{ return def_robot_info + i; }
+	inline ROBOT_INFO *DefRobotInfo (INT32 i = 0)
+		{ return m_defaultRobotInfo + i; }
 	inline game_info& GameInfo ()
 		{ return MineData ().game_fileinfo; }
 	inline UINT16& SegCount ()
@@ -210,11 +166,11 @@ public:
 		{ return GameInfo ().objects.count; }
 	inline UINT16& VertCount ()
 		{ return MineData ().numVertices; }
-	inline dl_index *DLIndex (int i = 0)
+	inline dl_index *DLIndex (INT32 i = 0)
 		{ return MineData ().dl_indices + i; }
-	inline delta_light *DeltaLights (int i = 0)
+	inline delta_light *DeltaLights (INT32 i = 0)
 		{ return MineData ().delta_lights + i; }
-	inline FLICKERING_LIGHT *FlickeringLights (int i = 0)
+	inline FLICKERING_LIGHT *FlickeringLights (INT32 i = 0)
 		{ return MineData ().flickering_lights + i; }
 	inline INT16& FlickerLightCount ()
 		{ return MineData ().N_flickering_lights; }
@@ -236,7 +192,7 @@ public:
 		{ return MineData ().current2; }
 	inline CDSelection *Other (void)
 		{ return (Current () == &Current2 ()) ? &Current1 () : &Current2 (); }
-	inline CDColor *TexColors (int i = 0)
+	inline CDColor *TexColors (INT32 i = 0)
 		{ return MineData ().texColors + (i & 0x3fff); }
 	inline bool& UseTexColors (void)
 		{ return m_bUseTexColors; }
@@ -246,8 +202,8 @@ public:
 		}
 	inline CDColor *GetTexColor (INT16 nBaseTex, bool bIsTranspWall = false)	
 		{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : NULL; }
-	CDColor *LightColor (int i = 0, int j = 0, bool bUseTexColors = true);
-	inline CDColor *LightColors (int i = 0, int j = 0)
+	CDColor *LightColor (INT32 i = 0, INT32 j = 0, bool bUseTexColors = true);
+	inline CDColor *LightColors (INT32 i = 0, INT32 j = 0)
 		{ return MineData ().lightColors [i] + j; }
 	inline CDColor *CurrLightColor ()
 		{ return LightColor (Current ()->segment, Current ()->side); }
@@ -259,8 +215,8 @@ public:
 	inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
 	inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
 		
-	inline int FileType (void) { return m_fileType; }
-	inline void SetFileType (int fileType) { m_fileType = fileType; }
+	inline INT32 FileType (void) { return m_fileType; }
+	inline void SetFileType (INT32 fileType) { m_fileType = fileType; }
 	inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
 	inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
@@ -271,13 +227,13 @@ public:
 
 	INT16 Load(const char *filename = NULL, bool bLoadFromHog = false);
 	INT16 Save(const char *filename, bool bSaveToHog = false);
-	int WriteColorMap (FILE *fColorMap);
-	int ReadColorMap (FILE *fColorMap);
+	INT32 WriteColorMap (FILE *fColorMap);
+	INT32 ReadColorMap (FILE *fColorMap);
 	void  Default();
 	inline LPSTR LevelName (void)
-		{ return current_level_name; }
-	inline int LevelNameSize (void)
-		{ return sizeof current_level_name; }
+		{ return m_currentLevelName; }
+	inline INT32 LevelNameSize (void)
+		{ return sizeof m_currentLevelName; }
 	inline bool	SplineActive (void)
 		{ return m_bSplineActive; }
 	inline void SetSplineActive (bool bSplineActive)
@@ -299,10 +255,10 @@ public:
 	void	CalcSegCenter(vms_vector &pos,INT16 segnum);
 	inline CDSegment *CurrSeg ()
 		{ return Segments () + Current ()->segment; }
-	inline CDWall *SideWall (int i = 0, int j = 0)
-		{ int w = Segments (i)->sides [j].nWall; return (w < 0) ? NULL : Walls (w); }
+	inline CDWall *SideWall (INT32 i = 0, INT32 j = 0)
+		{ INT32 w = Segments (i)->sides [j].nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CDWall *CurrWall ()
-		{ int w = CurrSide ()->nWall; return (w < 0) ? NULL : Walls (w); }
+		{ INT32 w = CurrSide ()->nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CDSide *CurrSide ()
 		{ return CurrSeg ()->sides + Current ()->side; }
 	inline INT16 CurrVert ()
@@ -317,13 +273,13 @@ public:
 	bool SideIsMarked (INT16 segnum, INT16 sidenum);
 	bool SegmentIsMarked (INT16 segnum);
 
-	bool IsPointOfSide (CDSegment *seg, int sidenum, int pointnum);
-	bool IsLineOfSide (CDSegment *seg, int sidenum, int linenum);
+	bool IsPointOfSide (CDSegment *seg, INT32 sidenum, INT32 pointnum);
+	bool IsLineOfSide (CDSegment *seg, INT32 sidenum, INT32 linenum);
 
-	void JoinSegments(int automatic = 0);
+	void JoinSegments(INT32 automatic = 0);
 	void JoinLines();
 	void JoinPoints();
-	void SplitSegments(int solidify = 0, int sidenum = -1);
+	void SplitSegments(INT32 solidify = 0, INT32 sidenum = -1);
 	void SplitLines();
 	void SplitPoints();
 
@@ -331,19 +287,19 @@ public:
 	void CalcCenter (vms_vector &center,INT16 segnum,INT16 sidenum);
 	double CalcLength (vms_vector *center1, vms_vector *center2);
 
-	int IsLight(int nBaseTex);
-	int IsWall (INT16 segnum = -1, INT16 sidenum = -1);
-	bool IsLava (int nBaseTex);
-	bool IsBlastableLight (int nBaseTex);
+	INT32 IsLight(INT32 nBaseTex);
+	INT32 IsWall (INT16 segnum = -1, INT16 sidenum = -1);
+	bool IsLava (INT32 nBaseTex);
+	bool IsBlastableLight (INT32 nBaseTex);
 	bool IsFlickeringLight (INT16 segnum, INT16 sidenum);
-	bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
-	void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
-	int FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi = NULL);
+	bool CalcDeltaLights (double fLightScale, INT32 force, INT32 recursion_depth);
+	void CalcDeltaLightData (double fLightScale = 1.0, INT32 force = 1);
+	INT32 FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi = NULL);
 	UINT8 LightWeight(INT16 nBaseTex);
 	INT16 GetFlickeringLight(INT16 segnum = -1, INT16 sidenum = -1);
 	INT16 AddFlickeringLight( INT16 segnum = -1, INT16 sidenum = -1, UINT32 mask = 0xAAAAAAAA, FIX time = 0x10000 / 4);
 	bool DeleteFlickeringLight(INT16 segnum = -1, INT16 sidenum = -1);
-	int IsExplodingLight(int nBaseTex);
+	INT32 IsExplodingLight(INT32 nBaseTex);
 	bool VisibleWall (UINT16 nWall);
 	void SetCubeLight (double fLight, bool bAll = false, bool bDynCubeLights = false);
 	void ScaleCornerLight (double fLight, bool bAll = false);
@@ -352,7 +308,7 @@ public:
 	void BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr);
 	void Illuminate (INT16 source_segnum, INT16 source_sidenum, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
-	bool CalcSideLights (int segnum, int sidenum, vms_vector& source_center, 
+	bool CalcSideLights (INT32 segnum, INT32 sidenum, vms_vector& source_center, 
 								vms_vector *source_corner, vms_vector& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);
 
@@ -366,8 +322,8 @@ public:
 
 	inline void SetSelectMode (INT16 mode)
 		{ m_selectMode = mode; }
-	int ScrollSpeed (UINT16 texture,int *x,int *y);
-	int AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
+	INT32 ScrollSpeed (UINT16 texture,INT32 *x,INT32 *y);
+	INT32 AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
 
 	bool EditGeoFwd (void);
 	bool EditGeoBack (void);
@@ -381,8 +337,8 @@ public:
 	bool EditGeoShrink (void); 
 	bool RotateSelection(double angle, bool perpendicular); 
 	bool SizeItem (INT32 inc); 
-	bool MovePoints (int pt0, int pt1); 
-	bool SizeLine (CDSegment *seg,int point0,int point1,INT32 inc); 
+	bool MovePoints (INT32 pt0, INT32 pt1); 
+	bool SizeLine (CDSegment *seg,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
 	void RotateVmsVector(vms_vector *vector,double angle,char axis); 
@@ -405,8 +361,8 @@ public:
 	void DeleteTrigger (INT16 trignum = -1);
 	bool DeleteTriggerTarget (CDTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger = true);
 	void DeleteTriggerTargets (INT16 segnum, INT16 sidenum);
-	int DeleteTargetFromTrigger (CDTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger = true);
-	int DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger = true);
+	INT32 DeleteTargetFromTrigger (CDTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger = true);
+	INT32 DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger = true);
 	INT16 FindTriggerWall (INT16 *trignum, INT16 segnum = -1, INT16 sidenum = -1);
 	INT16 FindTriggerWall (INT16 trignum);
 	INT16 FindTriggerObject (INT16 *trignum);
@@ -418,7 +374,7 @@ public:
 	INT16 FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum);
 	INT16 FindObjBySig (INT16 nSignature);
 
-	void DrawObject (CWnd *pWnd, int type, int id);
+	void DrawObject (CWnd *pWnd, INT32 type, INT32 id);
 	void ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew);
 
 	bool GetOppositeSide (INT16& opp_segnum, INT16& opp_sidenum, INT16 segnum = -1, INT16 sidenum = -1);
@@ -465,16 +421,16 @@ public:
 	bool AddSpeedBoostCube (INT16 segnum, bool bCreate);
 	bool AddSkyboxCube (INT16 segnum, bool bCreate);
 	void AutoLinkExitToReactor ();
-	int FuelCenterCount (void);
-	inline int& RobotMakerCount (void) 
+	INT32 FuelCenterCount (void);
+	inline INT32& RobotMakerCount (void) 
 		{ return GameInfo ().botgen.count; }
-	inline int& EquipMakerCount (void) 
+	inline INT32& EquipMakerCount (void) 
 		{ return GameInfo ().equipgen.count; }
-	inline int& WallCount (void) 
+	inline INT32& WallCount (void) 
 		{ return GameInfo ().walls.count; }
-	inline int& TriggerCount (void) 
+	inline INT32& TriggerCount (void) 
 		{ return GameInfo ().triggers.count; }
-	inline int& ObjectCount (void) 
+	inline INT32& ObjectCount (void) 
 		{ return GameInfo ().objects.count; }
 
 	inline CDSegment *OtherSeg (void)
@@ -493,15 +449,15 @@ public:
 		}
 
 	void InitRobotData();
-	int WriteHxmFile (FILE *fp);
-	int ReadHxmFile (FILE *fp, long fSize);
+	INT32 WriteHxmFile (FILE *fp);
+	INT32 ReadHxmFile (FILE *fp, long fSize);
 
 	INT16 ReadSegmentInfo (FILE *file);
 	void WriteSegmentInfo (FILE *file, INT16 /*segnum*/);
 	void CutBlock ();
 	void CopyBlock (char *pszBlkFile = NULL);
 	void PasteBlock (); 
-	int ReadBlock (char *name,int option); 
+	INT32 ReadBlock (char *name,INT32 option); 
 	void QuickPasteBlock  ();
 	void DeleteBlock ();
 
@@ -518,38 +474,38 @@ public:
 	void DecreaseSpline ();
 	void CalcSpline ();
 	void UntwistSegment (INT16 segnum,INT16 sidenum);
-	int MatchingSide (int j);
+	INT32 MatchingSide (INT32 j);
 	INT16 LoadPalette (void);
 
 	void SortObjects ();
 	void RenumberTriggerTargetObjs (void);
 	void RenumberObjTriggers (void);
 	void QSortObjects (INT16 left, INT16 right);
-	int QCmpObjects (CDObject *pi, CDObject *pm);
-	int QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm);
+	INT32 QCmpObjects (CDObject *pi, CDObject *pm);
+	INT32 QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm);
 	void QSortObjTriggers (INT16 left, INT16 right);
 	void SortObjTriggers (void);
-	bool IsCustomRobot (int i);
+	bool IsCustomRobot (INT32 i);
 	BOOL HasCustomRobots();
 	INT16 LoadMineSigAndType (FILE* fp);
 
 private:
-	int FindClip (CDWall *wall, INT16 nTexture);
+	INT32 FindClip (CDWall *wall, INT16 nTexture);
 	INT16 CreateNewLevel ();
 	void DefineVertices(INT16 new_verts[4]);
 	void UnlinkChild(INT16 parent_segnum,INT16 sidenum);
 	INT16 FixIndexValues();
 	void ResetSide (INT16 segnum,INT16 sidenum);
 
-	int ReadHamFile(char *fname = NULL, int type = NORMAL_HAM);
+	INT32 ReadHamFile(char *fname = NULL, INT32 type = NORMAL_HAM);
 	void ReadPigTextureTable();
-	void ReadRobotResource(int robot_number);
+	void ReadRobotResource(INT32 robot_number);
 	void ReadColor (CDColor *pc, FILE *load_file);
 	void SaveColor (CDColor *pc, FILE *save_file);
 	void ReadTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger);
 	void WriteTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger);
-	void LoadColors (CDColor *pc, int nColors, int nFirstVersion, int nNewVersion, FILE *fp);
-	void SaveColors (CDColor *pc, int nColors, FILE *fp);
+	void LoadColors (CDColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
+	void SaveColors (CDColor *pc, INT32 nColors, FILE *fp);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);
 	INT16 LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);
@@ -557,7 +513,7 @@ private:
 	INT16 SaveGameData(FILE *savefile);
 	void ReadObject(CDObject *obj,FILE *f,INT32 version);
 	void WriteObject(CDObject *obj,FILE *f,INT32 version);
-	int ReadWall (CDWall* wallP, FILE* fp, INT32 version);
+	INT32 ReadWall (CDWall* wallP, FILE* fp, INT32 version);
 	void WriteWall (CDWall* wallP, FILE* fp, INT32 version);
 	void ClearMineData();
 	void UpdateDeltaLights ();
@@ -566,26 +522,26 @@ private:
 	void SetSegmentChildNum (CDSegment *pRoot, INT16 segnum, INT16 recursion_level, INT16* visited);
 	void UnlinkSeg (CDSegment *pSegment, CDSegment *pRoot);
 	void LinkSeg (CDSegment *pSegment, CDSegment *pRoot);
-	void SortDLIndex (int left, int right);
+	void SortDLIndex (INT32 left, INT32 right);
 	};
 
 CMine* GetMine (CMine* m);
 
 #define GET_MINE(m) (m = GetMine(m))
 
-inline int MAX_SEGMENTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_SEGMENTS1  : m->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
-inline int MAX_VERTICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_VERTICES1 : m->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
-inline int MAX_WALLS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_WALLS1 : (m->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3; }
-inline int MAX_TEXTURES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
-inline int MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
-inline int MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
-inline int MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
-inline int MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
-inline int MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
-inline int ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
-inline int MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
-inline int MAX_DL_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X; }
-inline int MAX_DELTA_LIGHTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
+inline INT32 MAX_SEGMENTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_SEGMENTS1  : m->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+inline INT32 MAX_VERTICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_VERTICES1 : m->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
+inline INT32 MAX_WALLS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_WALLS1 : (m->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+inline INT32 MAX_TEXTURES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
+inline INT32 MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
+inline INT32 MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
+inline INT32 MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
+inline INT32 MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
+inline INT32 MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
+inline INT32 ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
+inline INT32 MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+inline INT32 MAX_DL_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X; }
+inline INT32 MAX_DELTA_LIGHTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
 
 #define NO_WALL(m) MAX_WALLS(m)
 

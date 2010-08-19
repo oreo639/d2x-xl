@@ -24,13 +24,13 @@ UINT8 bmBuf [2048 * 2048 * 4];
 
 //------------------------------------------------------------------------
 
-inline int Sqr (int i)
+inline INT32 Sqr (INT32 i)
 {
 return i * i;
 }
 
 
-inline int ColorDelta (unsigned char r, unsigned char g, unsigned char b, PALETTEENTRY *sysPal, int j)
+inline INT32 ColorDelta (unsigned char r, unsigned char g, unsigned char b, PALETTEENTRY *sysPal, INT32 j)
 {
 sysPal += j;
 return 
@@ -41,9 +41,9 @@ return
 
 //------------------------------------------------------------------------
 
-inline unsigned int ClosestColor (unsigned char r, unsigned char g, unsigned char b, PALETTEENTRY *sysPal)
+inline UINT32 ClosestColor (unsigned char r, unsigned char g, unsigned char b, PALETTEENTRY *sysPal)
 {
-	unsigned int	k, delta, closestDelta = 0x7fffffff, closestIndex = 0;
+	UINT32	k, delta, closestDelta = 0x7fffffff, closestIndex = 0;
 
 for (k = 0; (k < 256) && closestDelta; k++) {
 	delta = ColorDelta (r, g, b, sysPal, k);
@@ -57,7 +57,7 @@ return closestIndex;
 
 //------------------------------------------------------------------------
 
-bool TGA2Bitmap (tRGBA *pTGA, UINT8 *pBM, int nWidth, int nHeight)
+bool TGA2Bitmap (tRGBA *pTGA, UINT8 *pBM, INT32 nWidth, INT32 nHeight)
 {
 	tRGBA			rgba = {0,0,0,0};
 	UINT8			*bConverted = NULL;
@@ -69,8 +69,8 @@ if (!sysPal) {
 	}
 thePalette->GetPaletteEntries (0, 256, sysPal);
 
-int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
-int h = nSize, i = 0, k, x, y;
+INT32 nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
+INT32 h = nSize, i = 0, k, x, y;
 
 #if 1
 for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
@@ -157,21 +157,21 @@ return true;
 //          The next time that texture is used, the handle will be defined.
 //------------------------------------------------------------------------
 
-int DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, int x0, int y0) 
+INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0, INT32 y0) 
 {
 	typedef struct tFrac {
-		int	c, d;
+		INT32	c, d;
 	} tFrac;
 
 	UINT8			*ptr;
 	INT16			textures [2], mode, w, h;
-	int			i, x, y, y1, offs, s;
+	INT32			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
-	int			rc; // return code
+	INT32			rc; // return code
 	CDTexture	*pTx [2];
 	UINT8			*bmBuf = pDestTx->m_pDataBM;
 	UINT8			c;
-	int			fileType = theApp.GetMine ()->FileType ();
+	INT32			fileType = theApp.GetMine ()->FileType ();
 
 	
 	textures [0] = nBaseTex;
@@ -205,8 +205,8 @@ if (ptr) {
 		// otherwise, copy bit by bit
 		w = pTx [0]->m_width;
 #if 1
-		int	l1 = y0 * w + x0;
-		int	l2 = pTx [0]->m_size - l1;
+		INT32	l1 = y0 * w + x0;
+		INT32	l2 = pTx [0]->m_size - l1;
 		memcpy (bmBuf, ptr + l1, l2);
 		memcpy (bmBuf + l2, ptr, l1);
 #else
@@ -335,7 +335,7 @@ return 0;
 // Changes - Y axis flipped to since DIBs have zero in lower left corner
 //------------------------------------------------------------------------
 
-int CDTexture::Read (INT16 index) 
+INT32 CDTexture::Read (INT16 index) 
 {
 	UINT8				xsize[200];
 	UINT8				line[320],*line_ptr;
@@ -352,7 +352,7 @@ int CDTexture::Read (INT16 index)
 	HRSRC				hFind = 0;
 	HGLOBAL			hGlobal = 0;
 	INT16				*texture_table;
-	int				rc;
+	INT32				rc;
 	INT16				*texture_ptr;
 	FILE				*fTextures = NULL;
 	char				path [256];
@@ -536,17 +536,17 @@ return m_width ? (double) m_width / 64.0 : 1.0;
 
 //------------------------------------------------------------------------------
 
-int rle_expand (D2_PIG_TEXTURE *bmP, UINT8 *texBuf)
+INT32 RLEExpand (D2_PIG_TEXTURE *bmP, UINT8 *texBuf)
 {
 #	define RLE_CODE			0xE0
 #	define NOT_RLE_CODE		31
 #	define IS_RLE_CODE(x)	(((x) & RLE_CODE) == RLE_CODE)
 
 
-	UINT8				*expandBuf, *pSrc, *pDest;
-	UINT8				c, h;
-	int				i, j, l, bufSize, bBigRLE;
-	unsigned short nLineSize;
+	UINT8	*expandBuf, *pSrc, *pDest;
+	UINT8	c, h;
+	INT32	i, j, l, bufSize, bBigRLE;
+	UINT16 nLineSize;
 
 bufSize = bmP->xsize * bmP->ysize;
 if (!(bmP->flags & BM_FLAG_RLE))
@@ -562,7 +562,7 @@ else
 pDest = expandBuf;
 for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
 	if (bBigRLE)
-		nLineSize = *((unsigned short *) (texBuf + 4 + 2 * i));
+		nLineSize = *((UINT16 *) (texBuf + 4 + 2 * i));
 	else
 		nLineSize = texBuf [4 + i];
 	for (j = 0; j < nLineSize; j++) {
@@ -586,7 +586,7 @@ for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
 			}
 		}
 	}
-l = (int) (pDest - expandBuf);
+l = (INT32) (pDest - expandBuf);
 memcpy (texBuf, expandBuf, l);
 bmP->flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
 free (expandBuf);
@@ -597,7 +597,7 @@ return l;
 // ReadPog ()
 //-----------------------------------------------------------------------------
 
-int ReadPog (FILE *fTextures, UINT32 nFileSize) 
+INT32 ReadPog (FILE *fTextures, UINT32 nFileSize) 
 {
 	D2_PIG_HEADER	d2_file_header;
 	D2_PIG_TEXTURE d2texture;
@@ -608,16 +608,16 @@ int ReadPog (FILE *fTextures, UINT32 nFileSize)
 	UINT16		*texture_table;
 	UINT16		texture1;
 	UINT16		*xlatTbl = NULL;
-	int			tWidth, tHeight, tSize;
+	INT32			tWidth, tHeight, tSize;
 	UINT32		offset, hdrOffset, bmpOffset, hdrSize, xlatTblSize;
-	int			rc; // return code;
-	int			tnum;
+	INT32			rc; // return code;
+	INT32			tnum;
 	UINT8			*ptr;
-	int			row;
+	INT32			row;
 	UINT16		nUnknownTextures, nMissingTextures;
 	bool			bExtraTexture;
 	CDTexture	*pTx;
-	int			fileType = theApp.GetMine ()->FileType ();
+	INT32			fileType = theApp.GetMine ()->FileType ();
 
 // make sure this is descent 2 fTextures
 if (theApp.GetMine ()->IsD1File ()) {
@@ -686,7 +686,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		break;
 	tWidth = d2texture.xsize + ((d2texture.wh_extra & 0xF) << 8);
 	if ((d2texture.flags & 0x80) && (tWidth > 256))
-		tHeight = (int) d2texture.ysize * tWidth;
+		tHeight = (INT32) d2texture.ysize * tWidth;
 	else
 		tHeight = d2texture.ysize + ((d2texture.wh_extra & 0xF0) << 4);
 //	if (tWidth != 512 || tHeight != 512)
@@ -741,12 +741,12 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		if (pTx [texture1].m_nFormat) {
 			fread (ptr, pTx [texture1].m_size * sizeof (tRGBA), 1, fTextures);
 			pTx [texture1].m_bValid = 
-				TGA2Bitmap (pTx [texture1].m_pDataTGA, pTx [texture1].m_pDataBM, (int) tWidth, (int) tHeight);
+				TGA2Bitmap (pTx [texture1].m_pDataTGA, pTx [texture1].m_pDataBM, (INT32) tWidth, (INT32) tHeight);
 			}
 		else {
 			if (d2texture.flags & BM_FLAG_RLE) {
 				fread (ptr, tSize, 1, fTextures);
-				rle_expand (&d2texture, ptr);
+				RLEExpand (&d2texture, ptr);
 				}
 			else {
 				UINT8 *p = ptr + tWidth * (tHeight - 1); // point to last row of bitmap
@@ -784,7 +784,7 @@ return rc;
 
 //-----------------------------------------------------------------------------
 
-void WritePogTextureHeader (FILE *pDestPigFile, CDTexture *pTexture, int nTexture, UINT32& nOffset)
+void WritePogTextureHeader (FILE *pDestPigFile, CDTexture *pTexture, INT32 nTexture, UINT32& nOffset)
 {
 	D2_PIG_TEXTURE d2texture;
 	UINT8 *pSrc;
@@ -831,12 +831,12 @@ if (!pSrc) {
 	}
 if (pTexture->m_nFormat) {
 #if 0
-	int w = pTexture->m_width;
-	int h = pTexture->m_height;
+	INT32 w = pTexture->m_width;
+	INT32 h = pTexture->m_height;
 	tBGRA	bgra;
 
 	pSrc += w * (h - 1) * 4;
-	int i, j;
+	INT32 i, j;
 	for (i = h; i; i--) {
 		for (j = w; j; j--) {
 			bgra.b = *pSrc++;
@@ -855,7 +855,7 @@ else {
 	UINT16 w = pTexture->m_width;
 	UINT16 h = pTexture->m_height;
 	pSrc += w * (h - 1); // point to last row of bitmap
-	int row;
+	INT32 row;
 	for (row = 0; row < h; row++) {
 		fwrite (pSrc, w, 1, pDestPigFile);
 		pSrc -= w;
@@ -897,19 +897,19 @@ return true;
 //   omitted since the xsize array defines the length of each line???
 //
 //-----------------------------------------------------------------------------
-int CreatePog (FILE *outPigFile) 
+INT32 CreatePog (FILE *outPigFile) 
 {
 #if DEMO == 0
-  int rc; // return code;
+  INT32 rc; // return code;
   D2_PIG_HEADER d2_file_header;
   HRSRC hFind = 0;
   HGLOBAL hGlobal = 0;
   UINT32 *n_textures = 0, nOffset = 0;
   UINT16 *texture_table;
-  int i;
-  int num;
+  INT32 i;
+  INT32 num;
   pExtraTexture	pxTx;
-	int			fileType = theApp.GetMine ()->FileType ();
+	INT32			fileType = theApp.GetMine ()->FileType ();
 
 if (theApp.GetMine ()->IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
@@ -936,7 +936,7 @@ if (!hGlobal) {
 n_textures = (UINT32 *)LockResource (hGlobal);
 texture_table = (UINT16 *) (n_textures + 1);     // first long is number of textures
 
-sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",starting_directory);
+sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 
 // write file  header
 d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
@@ -1003,8 +1003,8 @@ return 0;
 void FreeTextureHandles (bool bDeleteModified) 
 {
   // free any textures that have been buffered
-	int i, j;
-	int fileType = theApp.GetMine ()->FileType ();
+	INT32 i, j;
+	INT32 fileType = theApp.GetMine ()->FileType ();
 
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_D2_TEXTURES; i++) {
@@ -1033,8 +1033,8 @@ while (extraTextures) {
 
 BOOL HasCustomTextures () 
 {
-	int i;
-	int fileType = theApp.GetMine ()->FileType ();
+	INT32 i;
+	INT32 fileType = theApp.GetMine ()->FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
 	if (pTextures [fileType][i].m_bModified)
@@ -1044,10 +1044,10 @@ return FALSE;
 
 
 
-int CountCustomTextures () 
+INT32 CountCustomTextures () 
 {
-	int i, count = 0;
-	int fileType = theApp.GetMine ()->FileType ();
+	INT32 i, count = 0;
+	INT32 fileType = theApp.GetMine ()->FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
 	if (pTextures [fileType][i].m_bModified)
@@ -1059,7 +1059,7 @@ return count;
 //
 //------------------------------------------------------------------------
 
-void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB)
+void RgbFromIndex (INT32 nIndex, PALETTEENTRY *pRGB)
 {
 if (pRGB) {
 	HRSRC hFind = FindResource (hInst, PaletteResource (), "RC_DATA");
@@ -1143,7 +1143,7 @@ static MyBMI my_bmi;
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-bool PaintTexture (CWnd *pWnd, int bkColor, int segnum, int sidenum, int texture1, int texture2, int xOffset, int yOffset)
+bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 segnum, INT32 sidenum, INT32 texture1, INT32 texture2, INT32 xOffset, INT32 yOffset)
 {
 	CMine			*mine;
 
@@ -1174,7 +1174,7 @@ pWnd->GetClientRect (rc);
 if (texture1 < 0) {
 	seg = (segnum < 0) ? mine->CurrSeg () : mine->Segments (segnum);
 	side = (sidenum < 0) ? mine->CurrSide () : seg->sides + sidenum;
-	int nSide = mine->Current ()->side;
+	INT32 nSide = mine->Current ()->side;
 	texture1 = side->nBaseTex;
 	texture2 = side->nOvlTex & 0x1fff;
 	if (seg->children [nSide] == -1)
@@ -1206,7 +1206,7 @@ if (bShowTexture) {
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (thePalette, FALSE);
 		pDC->RealizePalette ();
-		int caps = pDC->GetDeviceCaps (RASTERCAPS);
+		INT32 caps = pDC->GetDeviceCaps (RASTERCAPS);
 		if (caps & RC_DIBTODEV) {
 			BITMAPINFO *bmi = MakeBitmap ();
 			if (!bmi)
@@ -1219,8 +1219,8 @@ if (bShowTexture) {
 		else {
 			double scale = tx.Scale ();
 			UINT32 x, y;
-			for (x = 0; x < tx.m_width; x = (int) (x + scale))
-				for (y = 0; y < tx.m_width; y = (int) (y + scale))
+			for (x = 0; x < tx.m_width; x = (INT32) (x + scale))
+				for (y = 0; y < tx.m_width; y = (INT32) (y + scale))
 					pDC->SetPixel ((INT16) (x / scale), (INT16) (y / scale), PALETTEINDEX (bmBuf [y*tx.m_width+x]));
 			}
 		pDC->SelectPalette (pOldPalette, FALSE);

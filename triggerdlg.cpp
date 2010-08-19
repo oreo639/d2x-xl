@@ -83,7 +83,7 @@ static INT16 triggerFlagsD1 [MAX_TRIGGER_FLAGS] = {
 	TRIGGER_CLOSE_WALL
 	};
 
-static int d2FlagXlat [] = {0, 1, 3, 4, 5, 7, 6};
+static INT32 d2FlagXlat [] = {0, 1, 3, 4, 5, 7, 6};
 
 //------------------------------------------------------------------------
 // DIALOG - CTriggerTool (constructor)
@@ -111,7 +111,7 @@ void CTriggerTool::LoadTextureListBoxes ()
 {
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			name [80];
-	int			nTextures, iTexture, index;
+	INT32			nTextures, iTexture, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 
@@ -175,7 +175,7 @@ memset (m_bD2Flags, 0, sizeof (m_bD2Flags));
 
 typedef struct tTriggerData {
 	char	*pszName;
-	int	nType;
+	INT32	nType;
 } tTriggerData;
 
 static tTriggerData triggerData [] = {
@@ -218,7 +218,7 @@ CreateImgWnd (&m_showTexWnd, IDC_TRIGGER_SHOW_TEXTURE);
 CComboBox *pcb = CBType ();
 pcb->ResetContent();
 if (m_mine->IsD2File ()) {
-	int h, i, j = sizeof (triggerData) / sizeof (tTriggerData);
+	INT32 h, i, j = sizeof (triggerData) / sizeof (tTriggerData);
 	for (i = 0; i < j; i++) {
 		h = pcb->AddString (triggerData [i].pszName);
 		pcb->SetItemData (h, triggerData [i].nType);
@@ -228,7 +228,7 @@ else
 	pcb->AddString ("n/a");
 pcb->SetCurSel (0);
 InitSlider (IDC_TRIGGER_SLIDER, 1, 10);
-int i;
+INT32 i;
 for (i = 1; i <= 10; i++)
 	SlCtrl (IDC_TRIGGER_SLIDER)->SetTic (i);
 LoadTextureListBoxes ();
@@ -258,11 +258,11 @@ GetMine ();
 DDX_CBIndex (pDX, IDC_TRIGGER_TRIGGERNO, m_nTrigger);
 DDX_CBIndex (pDX, IDC_TRIGGER_D2TYPE, m_nType);
 if (pDX->m_bSaveAndValidate)
-	m_nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
+	m_nType = INT32 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 else
 	SelectItemData (CBType (), m_nType);
 DDX_Text (pDX, IDC_TRIGGER_TIME, m_nTime);
-int i;
+INT32 i;
 for (i = 0; i < 2; i++)
 	DDX_Check (pDX, IDC_TRIGGER_NOMESSAGE + i, m_bD2Flags [i]);
 for (i = 2; i < 7; i++)
@@ -345,14 +345,14 @@ CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO + 1, IDC_TRIGGER_ADD_CONTROLPANE
 CToolDlg::EnableControls (IDC_TRIGGER_SLIDER, IDC_TRIGGER_SLIDER, bEnable && TriggerHasSlider ());
 CToolDlg::EnableControls (IDC_TRIGGER_STRENGTH, IDC_TRIGGER_STRENGTH, bEnable && (m_nType != TT_SPEEDBOOST) && (m_nType != TT_CHANGE_TEXTURE));
 CToolDlg::EnableControls (IDC_TRIGGER_SHOW_TEXTURE, IDC_TRIGGER_TEXTURE2, bEnable && (m_nType == TT_CHANGE_TEXTURE));
-//int i;
+//INT32 i;
 //for (i = IDC_TRIGGER_TRIGGER_NO; i <= IDC_TRIGGER_PASTE; i++)
 //	GetDlgItem (i)->EnableWindow (bEnable);
 }
 
 								/*--------------------------*/
 
-int CTriggerTool::NumTriggers ()
+INT32 CTriggerTool::NumTriggers ()
 {
 return m_nClass ? m_mine->NumObjTriggers () : m_mine->GameInfo ().triggers.count;
 }
@@ -365,7 +365,7 @@ if (!GetMine ())
 	return;
 CComboBox *pcb = CBTriggerNo ();
 pcb->ResetContent ();
-int i, j = NumTriggers ();
+INT32 i, j = NumTriggers ();
 for (i = 0; i < j; i++) {
 	_itoa_s (i, message, sizeof (message), 10);
 	pcb->AddString (message);
@@ -384,7 +384,7 @@ m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
 	m_nTargets = m_pTrigger->num_links;
-	int i;
+	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
 		plb->AddString (m_szTarget);
@@ -461,7 +461,7 @@ else {
 	if (m_nClass) {
 		if (m_mine->Current ()->object == m_mine->ObjTriggers (m_nTrigger)->nObject)
 			return false;
-		for (int i = 0, j = m_mine->NumObjTriggers (); j; j--, i++) {
+		for (INT32 i = 0, j = m_mine->NumObjTriggers (); j; j--, i++) {
 			if (m_mine->Current ()->object == m_mine->ObjTriggers (i)->nObject) {
 				m_nTrigger = i;
 				return false;
@@ -493,7 +493,7 @@ if (!m_bInited)
 if (!GetMine ())
 	return;
 
-	int			i;
+	INT32			i;
 	INT16			trignum;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
@@ -620,11 +620,11 @@ if (!GetMine ())
 m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ();
 if (m_nClass) {
 	m_pTrigger = m_mine->AddObjTrigger (-1, m_nType);
-	m_nTrigger = m_pTrigger ? int (m_pTrigger - m_mine->ObjTriggers ()) : -1; 
+	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - m_mine->ObjTriggers ()) : -1; 
 	}
 else {
 	m_pTrigger = m_mine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_pTrigger ? int (m_pTrigger - m_mine->Triggers ()) : -1;
+	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - m_mine->Triggers ()) : -1;
 	}
 // Redraw trigger window
 Refresh ();
@@ -664,7 +664,7 @@ theApp.MineView ()->DelayRefresh (true);
 CDSegment *seg = m_mine->Segments ();
 CDSide *side;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
-int i, j, nDeleted = 0;
+INT32 i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, seg++) {
 	side = seg->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
@@ -743,7 +743,7 @@ void CTriggerTool::OnSetType ()
 {
 if (!GetMine ())
 	return;
-int nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
+INT32 nType = INT32 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType == TT_SMOKE_BRIGHTNESS) || ((nType >= TT_SMOKE_LIFE) && (nType <= TT_SMOKE_DRIFT))) {
 	ErrorMsg ("This trigger type is not supported any more.\nYou can use the effects tool to edit smoke emitters.");
 	return;
@@ -799,7 +799,7 @@ m_pTrigger->time = m_nTime;
 // CTriggerTool - TriggerFlags0Msg
 //------------------------------------------------------------------------
 
-bool CTriggerTool::OnD1Flag (int i, int j)
+bool CTriggerTool::OnD1Flag (INT32 i, INT32 j)
 {
 if (!GetMine ())	
 	return false;
@@ -825,7 +825,7 @@ return m_bD1Flags [i] != 0;
 
                         /*--------------------------*/
 
-void CTriggerTool::OnD2Flag (int i, int j)
+void CTriggerTool::OnD2Flag (INT32 i, INT32 j)
 {
 if (!GetMine ())	
 	return;
@@ -835,7 +835,7 @@ if (m_nTrigger == -1)
 SetTriggerPtr ();
 theApp.SetModified (TRUE);
 j = d2FlagXlat [i];
-int h = 1 << j;
+INT32 h = 1 << j;
 m_pTrigger->flags ^= h;
 m_bD2Flags [j] = ((m_pTrigger->flags & h) != 0);
 ((CButton *) GetDlgItem (IDC_TRIGGER_NOMESSAGE + i))->SetCheck (m_bD2Flags [j]);
@@ -907,7 +907,7 @@ void CTriggerTool::OnAddTarget ()
 {
 if (!GetMine ())
 	return;
-int segnum, sidenum;
+INT32 segnum, sidenum;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d, %d", &segnum, &sidenum);
 if (segnum < 0)
@@ -939,7 +939,7 @@ if ((m_mine->IsD1File ()) ?
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}
-int i = FindTarget (other->segment, other->side);
+INT32 i = FindTarget (other->segment, other->side);
 if (i > -1)
 	return;
 AddTarget (other->segment, other->side + 1);
@@ -988,9 +988,9 @@ Refresh ();
 
                         /*--------------------------*/
 
-int CTriggerTool::FindTarget (INT16 segnum, INT16 sidenum)
+INT32 CTriggerTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
-int i;
+INT32 i;
 for (i = 0; i < m_pTrigger->num_links; i++)
 	if ((segnum == m_pTrigger->seg [i]) && (sidenum == m_pTrigger->seg [i]))
 		return i;
@@ -1112,14 +1112,14 @@ return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_p
 
                         /*--------------------------*/
 
-void CTriggerTool::SelectTexture (int nIdC, bool bFirst)
+void CTriggerTool::SelectTexture (INT32 nIdC, bool bFirst)
 {
 if (!GetMine ())
 	return;
 
 	CDSide		*side = m_mine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
-	int			index = pcb->GetCurSel ();
+	INT32			index = pcb->GetCurSel ();
 	
 if (index <= 0)
 	SetTexture (0, 0);
@@ -1151,7 +1151,7 @@ SelectTexture (IDC_TRIGGER_TEXTURE2, false);
 
 void CTriggerTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	int	nPos = pScrollBar->GetScrollPos ();
+	INT32	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (!m_pTrigger || !TriggerHasSlider ())
@@ -1186,7 +1186,7 @@ if (pScrollBar == SpeedBoostSlider ()) {
 #if 0
 	pScrollBar->SetScrollPos (nPos, TRUE);
 	if (!(nPos = pScrollBar->GetScrollPos ())) {
-		int	h, i, j;
+		INT32	h, i, j;
 		pScrollBar->GetScrollRange (&i, &j);
 		h = i;
 		h = j;

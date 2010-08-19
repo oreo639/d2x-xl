@@ -48,7 +48,7 @@ EnableToolTips (true);
 
 								/*---------------------------*/
 
-void CToolDlg::DDX_Double (CDataExchange * pDX, int nIDC, double& fVal, double min, double max, LPSTR pszFmt, LPSTR pszErrMsg)
+void CToolDlg::DDX_Double (CDataExchange * pDX, INT32 nIDC, double& fVal, double min, double max, LPSTR pszFmt, LPSTR pszErrMsg)
 {
    HWND  hWndCtrl = pDX->PrepareEditCtrl (nIDC);
 	char	szVal [100];
@@ -71,7 +71,7 @@ else {
 
 								/*---------------------------*/
 
-int CToolDlg::DDX_Int (CDataExchange * pDX, int nIDC, int i)
+INT32 CToolDlg::DDX_Int (CDataExchange * pDX, INT32 nIDC, INT32 i)
 {
    HWND  hWndCtrl = pDX->PrepareEditCtrl (nIDC);
 	char	szVal [100];
@@ -89,7 +89,7 @@ else {
 
 								/*---------------------------*/
 
-int CToolDlg::DDX_Flag (CDataExchange * pDX, int nIDC, int i)
+INT32 CToolDlg::DDX_Flag (CDataExchange * pDX, INT32 nIDC, INT32 i)
 {
 DDX_Check (pDX, nIDC, i);
 return i;
@@ -97,7 +97,7 @@ return i;
 
                         /*--------------------------*/
 
-void CToolDlg::InitSlider (int nIdC, int nMin, int nMax) 
+void CToolDlg::InitSlider (INT32 nIdC, INT32 nMin, INT32 nMax) 
 {
 	CSliderCtrl	*ps;
 
@@ -109,7 +109,7 @@ if (ps = (CSliderCtrl *) GetDlgItem (nIdC)) {
 
                         /*--------------------------*/
 
-void CToolDlg::DDX_Slider (CDataExchange * pDX, int nIdC, int& nTic) 
+void CToolDlg::DDX_Slider (CDataExchange * pDX, INT32 nIdC, INT32& nTic) 
 {
 	CSliderCtrl	*ps;
 
@@ -124,7 +124,7 @@ if (nTic != ps->GetPos ())
 
                         /*--------------------------*/
 
-int CToolDlg::GetCheck (int nIdC)
+INT32 CToolDlg::GetCheck (INT32 nIdC)
 {
 	CButton	*pb;
 
@@ -140,10 +140,10 @@ return (m_mine = theApp.GetMine ());
 
 								/*--------------------------*/
 
-void CToolDlg::EnableControls (int nIdFirst, int nIdLast, BOOL bEnable)
+void CToolDlg::EnableControls (INT32 nIdFirst, INT32 nIdLast, BOOL bEnable)
 {
 CWnd *pWnd;
-int i;
+INT32 i;
 for (i = nIdFirst; i <= nIdLast; i++)
 	if (pWnd = GetDlgItem (i))
 		pWnd->EnableWindow (bEnable);
@@ -151,7 +151,7 @@ for (i = nIdFirst; i <= nIdLast; i++)
 
                         /*--------------------------*/
 
-void CToolDlg::CreateImgWnd (CWnd * pImgWnd, int nIdC)
+void CToolDlg::CreateImgWnd (CWnd * pImgWnd, INT32 nIdC)
 {
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
@@ -177,9 +177,9 @@ theApp.ToolView ()->NextTab ();
 
                         /*--------------------------*/
 
-int CToolDlg::CBAddString (CComboBox *pcb, char *str)
+INT32 CToolDlg::CBAddString (CComboBox *pcb, char *str)
 {
-	int	i = 0, m = 0, l = 0, r = pcb->GetCount () - 1;
+	INT32	i = 0, m = 0, l = 0, r = pcb->GetCount () - 1;
 	char	h [80], *hsz, *psz;
 
 psz = isalpha (*str) ? str : strstr (str, ":") + 1;
@@ -202,11 +202,11 @@ return pcb->InsertString (m, str);
 
                         /*--------------------------*/
 
-void CToolDlg::SelectItemData (CComboBox *pcb, int nItemData)
+void CToolDlg::SelectItemData (CComboBox *pcb, INT32 nItemData)
 {
 //if (nItemData >= 0) 
 	{
-	int i, h = pcb->GetCount ();
+	INT32 i, h = pcb->GetCount ();
 	for (i = 0; i < h; i++)
 		if (pcb->GetItemData (i) == (DWORD) nItemData) {
 			pcb->SetCurSel (i);
@@ -219,7 +219,7 @@ pcb->SetCurSel (-1);
                         /*--------------------------*/
 
 #if 0
-int CToolDlg::OnToolHitTest (CPoint point, TOOLINFO* pTI)
+INT32 CToolDlg::OnToolHitTest (CPoint point, TOOLINFO* pTI)
 {
 	CRect	rc;
 
@@ -243,7 +243,7 @@ UINT nID = UINT (pNMHDR->idFrom);
 if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
     pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND)) {
    // idFrom is actually the HWND of the tool
-   nID = int (::GetDlgCtrlID (HWND (UINT_PTR (nID))));
+   nID = INT32 (::GetDlgCtrlID (HWND (UINT_PTR (nID))));
 }
 if (nID != 0) // will be zero on a separator
 	if (!LoadString (AfxGetApp()->m_hInstance, nID, strTipText, sizeof (strTipText)))
@@ -271,7 +271,7 @@ END_MESSAGE_MAP()
 								/*---------------------------*/
 
 CTexToolDlg::CTexToolDlg (UINT nIdTemplate, CPropertySheet *pParent, 
-								  int nTexWndId, int nTimerId, COLORREF bkColor,
+								  INT32 nTexWndId, INT32 nTimerId, COLORREF bkColor,
 								  bool bOtherSeg)
 	: CToolDlg (nIdTemplate, pParent)
 {
@@ -371,9 +371,9 @@ return CToolDlg::OnKillActive ();
 
                         /*--------------------------*/
 
-	static int scroll_offset_x = 0;
-	static int scroll_offset_y = 0;
-	static int old_x,old_y;
+	static INT32 scroll_offset_x = 0;
+	static INT32 scroll_offset_y = 0;
+	static INT32 old_x,old_y;
 
 void CTexToolDlg::AnimateTexture (void)
 {
@@ -385,8 +385,8 @@ if (!GetMine ())
 	CDSegment *seg = m_bOtherSeg ? m_mine->OtherSeg () : m_mine->CurrSeg ();
 
 	UINT16 texture [2];
-	int bScroll;
-	int x,y;
+	INT32 bScroll;
+	INT32 x,y;
 
 	CDSide	*side = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
 
@@ -425,10 +425,10 @@ if (nWall >= m_mine->GameInfo ().walls.count)
 //if (m_mine->Walls (nWall)->type != WALL_DOOR)
 //	return;
 #endif
-	int i;
-	static int hold_time [2] = {0,0};
-	static int inc [2]= {1,1}; // 1=forward or -1=backwards
-	int index [2];
+	INT32 i;
+	static INT32 hold_time [2] = {0,0};
+	static INT32 inc [2]= {1,1}; // 1=forward or -1=backwards
+	INT32 index [2];
 	static UINT16 d1_anims [] = {
 		371, 376, 387, 399, 413, 419, 424, 436, 444, 459,
 		472, 486, 492, 500, 508, 515, 521, 529, 536, 543,
@@ -500,7 +500,7 @@ else
 void CToolDlg::GetCtrlClientRect (CWnd *pWnd, CRect& rc)
 {
 	CRect	rcc;
-	int	dx, dy;
+	INT32	dx, dy;
 
 pWnd->GetClientRect (&rcc);
 pWnd->GetWindowRect (rc);

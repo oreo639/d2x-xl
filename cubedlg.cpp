@@ -103,7 +103,7 @@ if (!GetMine ())
 CComboBox *pcb = CBCubeNo ();
 if (m_mine->SegCount () != pcb->GetCount ()) {
 	pcb->ResetContent ();
-	for (int i = 0; i < m_mine->SegCount (); i++) {
+	for (INT32 i = 0; i < m_mine->SegCount (); i++) {
 		_itoa_s (i, message, sizeof (message), 10);
 		pcb->AddString (message);
 		}
@@ -134,7 +134,7 @@ CToolDlg::OnInitDialog ();
 CComboBox *pcb = CBType ();
 pcb->ResetContent ();
 
-int h, i, j;
+INT32 h, i, j;
 for (j = sizeof (pszCubeFuncs) / sizeof (*pszCubeFuncs), i = 0; i < j; i++) {
 	h = pcb->AddString (pszCubeFuncs [i]);
 	pcb->SetItemData (h, i);
@@ -163,7 +163,7 @@ SelectItemData (CBType (), m_nType);
 DDX_Double (pDX, IDC_CUBE_LIGHT, m_nLight);
 DDX_Radio (pDX, IDC_CUBE_SIDE1, m_nSide);
 DDX_Radio (pDX, IDC_CUBE_POINT1, m_nPoint);
-for (int	i = 0; i < 3; i++) {
+for (INT32	i = 0; i < 3; i++) {
 	DDX_Double (pDX, IDC_CUBE_POINTX + i, m_nCoord [i]);
 	if (m_nCoord [i] < -0x7fff)
 		m_nCoord [i] = -0x7fff;
@@ -172,10 +172,10 @@ for (int	i = 0; i < 3; i++) {
 //	DDV_MinMaxInt (pDX, (long) m_nCoord [i], -0x7fff, 0x7fff);
 	}
 
-int i;
+INT32 i;
 
 for (i = 0; i < 5; i++) {
-	int h = (m_nProps & (1 << i)) != 0;
+	INT32 h = (m_nProps & (1 << i)) != 0;
 	DDX_Check (pDX, IDC_CUBE_WATER + i, h);
 	if (h)
 		m_nProps |= (1 << i);
@@ -283,7 +283,7 @@ theApp.MineView ()->Refresh (false);
 
                         /*--------------------------*/
 
-void CCubeTool::OnProp (int nProp)
+void CCubeTool::OnProp (INT32 nProp)
 {
 if (!GetMine ())
 	return;
@@ -303,7 +303,7 @@ void CCubeTool::OnProp5 () { OnProp (4); }
 
                         /*--------------------------*/
 
-void CCubeTool::OnSide (int nSide)
+void CCubeTool::OnSide (INT32 nSide)
 {
 if (!GetMine ())
 	return;
@@ -320,7 +320,7 @@ void CCubeTool::OnSide6 () { OnSide (5); }
 
                         /*--------------------------*/
 
-void CCubeTool::OnPoint (int nPoint)
+void CCubeTool::OnPoint (INT32 nPoint)
 {
 if (!GetMine ())
 	return;
@@ -339,7 +339,7 @@ void CCubeTool::SetDefTexture (INT16 nTexture)
 {
 CDSegment *seg = m_mine->Segments () + m_nCube;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
-	int i;
+	INT32 i;
 	for (i = 0; i < 6; i++)
 		if (seg->children [i] == -1)
 			m_mine->SetTexture (m_nCube, i, nTexture, 0);
@@ -359,7 +359,7 @@ if (!GetMine ())
 InitCBCubeNo ();
 OnResetCoord ();
 
-int h, i, j;
+INT32 h, i, j;
 
 // update automatic data
 m_mine->RenumberBotGens ();
@@ -382,20 +382,20 @@ OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
 CDTrigger *trigger = m_mine->Triggers ();
-int trignum;
+INT32 trignum;
 for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigger++) {
 	for (i = 0; i < trigger->num_links; i++) {
 		if ((trigger->seg [i] == m_nCube) && (trigger->side [i] == m_nSide)) {
 			// find the wall with this trigger
 			CDWall *wall = m_mine->Walls ();
-			int wallnum;
+			INT32 wallnum;
 			for (wallnum = 0; wallnum < m_mine->GameInfo ().walls.count ;wallnum++, wall++) {
 				if (wall->trigger == trignum) 
 					break;
 				}
 			if (wallnum < m_mine->GameInfo ().walls.count) {
-				sprintf_s (message, sizeof (message),  "%d,%d", (int) wall->segnum, (int) wall->sidenum + 1);
-				int h = LBTriggers ()->AddString (message);
+				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wall->segnum, (INT32) wall->sidenum + 1);
+				INT32 h = LBTriggers ()->AddString (message);
 				LBTriggers ()->SetItemData (h, (long) wall->segnum * 0x10000L + wall->sidenum);
 				}
 			}
@@ -403,9 +403,9 @@ for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigg
 	}
 // show if this is cube/side is triggered by the control_center
 control_center_trigger	*ccTrigger = m_mine->CCTriggers ();
-int control;
+INT32 control;
 for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, ccTrigger++) {
-	int num_links = ccTrigger->num_links;
+	INT32 num_links = ccTrigger->num_links;
 	for (i = 0; i < num_links; i++) {
 		if ((m_nCube == ccTrigger->seg [i]) && (m_nSide == ccTrigger->side [i])) {
 			LBTriggers ()->AddString ("Reactor");
@@ -425,7 +425,7 @@ m_nLight = ((double) seg->static_light) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
 if (IsBotMaker (seg)) {
-	int nMatCen = seg->matcen_num;
+	INT32 nMatCen = seg->matcen_num;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
@@ -451,7 +451,7 @@ if (IsBotMaker (seg)) {
 		}
 	}
 else if (IsEquipMaker (seg)) {
-	int nMatCen = seg->matcen_num;
+	INT32 nMatCen = seg->matcen_num;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
@@ -600,7 +600,7 @@ if (!GetMine ())
 
 	BOOL			bChangeOk = TRUE;
 	BOOL			bMarked = m_mine->GotMarkedSegments ();
-	int			nSegNum, nMinSeg, nMaxSeg;
+	INT32			nSegNum, nMinSeg, nMaxSeg;
 	CDSegment	*segP;
 
 bool bUndo = theApp.SetModified (TRUE);
@@ -613,7 +613,7 @@ if (bMarked) {
 	nMaxSeg = m_mine->SegCount ();
 	}
 else {
-	nMinSeg = int (m_mine->CurrSeg () - m_mine->Segments ());
+	nMinSeg = INT32 (m_mine->CurrSeg () - m_mine->Segments ());
 	nMaxSeg = nMinSeg + 1;
 	}
 segP = m_mine->Segments (nMinSeg);
@@ -726,13 +726,13 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 #else
 	if (m_nType == SEGMENT_FUNC_ROBOTMAKER) {
 		// remove matcen
-		int nMatCens = (int) m_mine->GameInfo ().matcen.count;
+		INT32 nMatCens = (INT32) m_mine->GameInfo ().matcen.count;
 		if (nMatCens > 0) {
 			// fill in deleted matcen
-			int nDelMatCen = m_mine->CurrSeg ()->value;
+			INT32 nDelMatCen = m_mine->CurrSeg ()->value;
 			memcpy (m_mine->BotGens (nDelMatCen), m_mine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (matcen_info));
 			m_mine->GameInfo ().matcen.count--;
-			int i;
+			INT32 i;
 			for (i = 0; i < 6; i++)
 				m_mine->DeleteTriggerTargets (m_nCube, i);
 			}
@@ -813,7 +813,7 @@ theApp.SetModified (TRUE);
 
                         /*--------------------------*/
 
-void CCubeTool::OnDamage (int i) 
+void CCubeTool::OnDamage (INT32 i) 
 {
 if (!GetMine ())
 	return;
@@ -827,14 +827,14 @@ void CCubeTool::OnDamage1 () { OnDamage (1); }
 
                         /*--------------------------*/
 
-int CCubeTool::FindBot (CListBox *plb, LPSTR pszObj)
+INT32 CCubeTool::FindBot (CListBox *plb, LPSTR pszObj)
 {
-	int i, j;
+	INT32 i, j;
 
 i = plb->GetCurSel ();
 if (i < 0)
 	return -1;
-j = int (plb->GetItemData (i));
+j = INT32 (plb->GetItemData (i));
 if (pszObj)
 	LoadString (AfxGetInstanceHandle(), ROBOT_STRING_TABLE + j, pszObj, 80);
 return j;
@@ -842,14 +842,14 @@ return j;
 
                         /*--------------------------*/
 
-int CCubeTool::FindEquip (CListBox *plb, LPSTR pszObj)
+INT32 CCubeTool::FindEquip (CListBox *plb, LPSTR pszObj)
 {
-	int i, j;
+	INT32 i, j;
 
 i = plb->GetCurSel ();
 if (i < 0)
 	return -1;
-j = int (plb->GetItemData (i));
+j = INT32 (plb->GetItemData (i));
 if (pszObj)
 	LoadString (AfxGetInstanceHandle(), POWERUP_STRING_TABLE + j, pszObj, 80);
 return j;
@@ -864,13 +864,13 @@ void CCubeTool::AddBot ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-int matcen = seg->matcen_num;
+INT32 matcen = seg->matcen_num;
 char szObj [80];
-int i = FindBot (LBAvailBots (), szObj);
+INT32 i = FindBot (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 m_mine->BotGens (matcen)->objFlags [i / 32] |= (1L << (i % 32));
-int h = LBAvailBots ()->GetCurSel ();
+INT32 h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
@@ -888,13 +888,13 @@ void CCubeTool::AddEquip ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-int matcen = seg->matcen_num;
+INT32 matcen = seg->matcen_num;
 char szObj [80];
-int i = FindEquip (LBAvailBots (), szObj);
+INT32 i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS2))
 	return;
 m_mine->EquipGens (matcen)->objFlags [i / 32] |= (1L << (i % 32));
-int h = LBAvailBots ()->GetCurSel ();
+INT32 h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
@@ -927,13 +927,13 @@ void CCubeTool::DeleteBot ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-int matcen = seg->matcen_num;
+INT32 matcen = seg->matcen_num;
 char szObj [80];
-int i = FindBot (LBUsedBots (), szObj);
+INT32 i = FindBot (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 m_mine->BotGens (matcen)->objFlags [i / 32] &= ~(1L << (i % 32));
-int h = LBUsedBots ()->GetCurSel ();
+INT32 h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
@@ -951,13 +951,13 @@ void CCubeTool::DeleteEquip ()
 if (!GetMine ())
 	return;
 CDSegment *seg = m_mine->CurrSeg ();
-int matcen = seg->matcen_num;
+INT32 matcen = seg->matcen_num;
 char szObj [80];
-int i = FindEquip (LBUsedBots (), szObj);
+INT32 i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 m_mine->EquipGens (matcen)->objFlags [i / 32] &= ~(1L << (i % 32));
-int h = LBUsedBots ()->GetCurSel ();
+INT32 h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
@@ -1000,7 +1000,7 @@ if (!GetMine ())
 	return;
 if (!LBTriggers ()->GetCount ())
 	return;
-int i = LBTriggers ()->GetCurSel ();
+INT32 i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
@@ -1020,7 +1020,7 @@ if (!GetMine ())
 	return;
 if (!LBTriggers ()->GetCount ())
 	return;
-int i = LBTriggers ()->GetCurSel ();
+INT32 i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
 long h = long (LBTriggers ()->GetItemData (i));

@@ -18,8 +18,8 @@ vms_matrix *write_matrix(vms_matrix *matrix,FILE *save_file);
 vms_vector *write_vector(vms_vector *vector,FILE *save_file);
 vms_angvec *write_angvec(vms_angvec *vector,FILE *save_file);
 LPSTR FSplit (LPSTR fullName, LPSTR pathName, LPSTR fileName, LPSTR extName);
-char *TimeStr (char *pszTime, int nDestSize);
-char *DateStr (char *pszTime, int nDestSize, bool bMonthNames = false);
-char *DateTimeStr (char *pszTime, int nDestSize, bool bMonthNames = false);
+char *TimeStr (char *pszTime, INT32 nDestSize);
+char *DateStr (char *pszTime, INT32 nDestSize, bool bMonthNames = false);
+char *DateTimeStr (char *pszTime, INT32 nDestSize, bool bMonthNames = false);
 
 #endif //__io_h

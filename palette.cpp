@@ -18,9 +18,9 @@ HGLOBAL hPalette;
 
 //------------------------------------------------------------------------
 
-int Luminance (int r, int g, int b)
+INT32 Luminance (INT32 r, INT32 g, INT32 b)
 {
-	int minColor, maxColor;
+	INT32 minColor, maxColor;
 
 if (r < g) {
 	minColor = (r < b) ? r : b;
@@ -35,14 +35,14 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-UINT8 FadeValue (UINT8 c, int f)
+UINT8 FadeValue (UINT8 c, INT32 f)
 {
-return (UINT8) (((int) c * f) / 34);
+return (UINT8) (((INT32) c * f) / 34);
 }
 
 //------------------------------------------------------------------------
 
-int HasCustomPalette (void)
+INT32 HasCustomPalette (void)
 {
 return pCustomPalette != NULL;
 }
@@ -59,7 +59,7 @@ if (pCustomPalette) {
 
 //------------------------------------------------------------------------
 
-int ReadCustomPalette (FILE *fp, long fSize)
+INT32 ReadCustomPalette (FILE *fp, long fSize)
 {
 FreeCustomPalette ();
 
@@ -68,7 +68,7 @@ UINT8 *pCustomPalette = (UINT8 *) malloc (37 * 256);
 if (!pCustomPalette)
 	return 0;
 
-int h = int (fread (pCustomPalette, 37 * 256, 1, fp));
+INT32 h = INT32 (fread (pCustomPalette, 37 * 256, 1, fp));
 if (h == 37 * 256)
 	return 1;
 
@@ -79,7 +79,7 @@ if (h != 3 * 256) {
 
 UINT8 *pFade = pCustomPalette + 3 * 256;
 
-int i, j;
+INT32 i, j;
 for (i = 0; i < 256; i++) {
 	UINT8	c = pCustomPalette [i];
 	for (j = 0; j < 34; j++)
@@ -90,7 +90,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-int WriteCustomPalette (FILE *fp)
+INT32 WriteCustomPalette (FILE *fp)
 {
 return fwrite (pCustomPalette, 37 * 256, 1, fp) == 37 * 256;
 }
@@ -134,7 +134,7 @@ LPCTSTR PaletteResource (void)
 {
 	typedef struct tPalExt {
 		char	szFile [256];
-		int	nIdPal;
+		INT32	nIdPal;
 	} tPalExt;
 
 	static tPalExt palExt [] = {
@@ -149,7 +149,7 @@ LPCTSTR PaletteResource (void)
 	tPalExt	*ppe;
 	char		szFile [256];
 
-int id = IDR_GROUPA_256;
+INT32 id = IDR_GROUPA_256;
 if (theApp.GetMine ()->IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
 FSplit (descent2_path, NULL, szFile, NULL);

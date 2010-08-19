@@ -27,8 +27,8 @@ class CSaveFileDlg : public CDialog {
 	public:
 		char	m_name [256];
 		LPSTR	m_lpszName;
-		int	m_type;
-		int	*m_pType;
+		INT32	m_type;
+		INT32	*m_pType;
 
 		CSaveFileDlg (CWnd *pParentWnd)
 			: CDialog (IDD_SAVELEVEL, pParentWnd) {};
@@ -126,10 +126,10 @@ class CNewFileDlg : public CDialog {
 	public:
 		char	m_name [256];
 		LPSTR	m_lpszName;
-		int	m_type;
-		int	*m_pType;
+		INT32	m_type;
+		INT32	*m_pType;
 
-		CNewFileDlg (CWnd *pParentWnd, LPSTR lpszName, int *pType)
+		CNewFileDlg (CWnd *pParentWnd, LPSTR lpszName, INT32 *pType)
 			: CDialog (IDD_NEWLEVEL, pParentWnd) {
 			strcpy_s (m_name, sizeof (m_name), m_lpszName = lpszName);
 			m_type = *(m_pType = pType);
@@ -224,7 +224,7 @@ return TRUE;
 void CDlcDoc::CreateNewLevel ()
 {
 char	new_level_name [256];
-int	newFileType = 1;
+INT32	newFileType = 1;
 strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
 
 CNewFileDlg	d (theApp.MainFrame (), new_level_name, &newFileType);
@@ -320,7 +320,7 @@ return true;
 
 BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile) 
 {
-	int err = 0;
+	INT32 err = 0;
 	char szFile [256], szSubFile [256];
 
 if (!m_mine) 
@@ -354,8 +354,8 @@ if (strstr (pszFile, ".hog")) {
 	if (pszFile != m_szFile)
 		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
-	FSplit (pszFile, starting_directory, NULL, NULL);
-	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", starting_directory);
+	FSplit (pszFile, m_startFolder , NULL, NULL);
+	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder );
 	err = m_mine->Load (m_szTmpFile, true);
 	memset (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
@@ -396,7 +396,7 @@ bool CDlcDoc::SaveFile (bool bSaveAs)
 ErrorMsg ("You cannot save a mine in the demo.");
 return false;
 #else
-	int err = 0;
+	INT32 err = 0;
 
 if (!m_mine)
 	return false;
@@ -475,8 +475,8 @@ if (p) {
 	strcpy_s (szProg, sizeof (szProg), descent2_path);
 	if (h = strstr (szProg, "data"))
 		*h = '\0';
-	int i;
-	for (i = int (strlen (szProg)); i && szProg [i - 1] != '\\'; i--)
+	INT32 i;
+	for (i = INT32 (strlen (szProg)); i && szProg [i - 1] != '\\'; i--)
 		;
 	szProg [i] = '\0';
 	_chdir (szProg);

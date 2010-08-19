@@ -29,8 +29,8 @@ typedef unsigned short WORD;
 typedef unsigned long LONGWORD;
 
 /* special types */
-typedef long FIX;	/*16 bits int, 16 bits frac */
-typedef short FIXANG;	/*angles */
+typedef long FIX;	/*16 bits INT32, 16 bits frac */
+typedef INT16 FIXANG;	/*angles */
 
 typedef struct vms_vector {
   FIX x,y,z;
@@ -280,7 +280,7 @@ typedef struct {
 } POLYMODEL;
 
 typedef struct {
-  int    nBaseTex;
+  INT32    nBaseTex;
   long   light;
 } TEXTURE_LIGHT;
 
@@ -437,12 +437,12 @@ typedef struct ai_static {
 } ai_static;
 
 typedef struct tSmokeInfo {
-	int			nLife;
-	int			nSize [2];
-	int			nParts;
-	int			nSpeed;
-	int			nDrift;
-	int			nBrightness;
+	INT32			nLife;
+	INT32			nSize [2];
+	INT32			nParts;
+	INT32			nSpeed;
+	INT32			nDrift;
+	INT32			nBrightness;
 	UINT8			color [4];
 	char			nSide;
 	char			nType;
@@ -450,17 +450,17 @@ typedef struct tSmokeInfo {
 } tSmokeInfo;
 
 typedef struct tLightningInfo {
-	int			nLife;
-	int			nDelay;
-	int			nLength;
-	int			nAmplitude;
-	int			nOffset;
-	short			nLightnings;
-	short			nId;
-	short			nTarget;
-	short			nNodes;
-	short			nChildren;
-	short			nSteps;
+	INT32			nLife;
+	INT32			nDelay;
+	INT32			nLength;
+	INT32			nAmplitude;
+	INT32			nOffset;
+	INT16			nLightnings;
+	INT16			nId;
+	INT16			nTarget;
+	INT16			nNodes;
+	INT16			nChildren;
+	INT16			nSteps;
 	char			nAngle;
 	char			nStyle;
 	char			nSmoothe;
@@ -475,7 +475,7 @@ typedef struct tLightningInfo {
 
 
 typedef struct tSoundInfo {
-	int			nVolume;
+	INT32			nVolume;
 	char			szFilename [40];
 	char			bEnabled;
 } tSoundInfo;
@@ -620,7 +620,7 @@ typedef union {
 
 //extern dl_index    Dl_indices[MAX_DL_INDICES];
 //extern delta_light Delta_lights[MAX_DELTA_LIGHTS];
-//extern int	     Num_static_lights;
+//extern INT32	     Num_static_lights;
 
 
 typedef struct control_center_trigger {
@@ -685,7 +685,7 @@ typedef struct {
   INT16 segnum,sidenum;  // cube with light on it
   UINT32 mask;           // bits with 1 = on, 0 = off
   FIX timer;		 // always set to 0
-  FIX delay;             // time for each bit in mask (int seconds)
+  FIX delay;             // time for each bit in mask (INT32 seconds)
 }FLICKERING_LIGHT;
 
 typedef struct {
@@ -703,14 +703,14 @@ typedef struct {
 typedef struct {
 	char	missionName [80];
 	char  missionInfo [8][80];
-	int	authorFlags [2];
-	int	missionType;
-	int	missionFlags [6];
-	int	customFlags [3];
+	INT32	authorFlags [2];
+	INT32	missionType;
+	INT32	missionFlags [6];
+	INT32	customFlags [3];
 	char	levelList [MAX_LEVELS][17];	//18 == ########.###,####'\0' == levlname.ext,secr
 	char	comment [4000];
-	int   numLevels;
-	int	numSecrets;
+	INT32   numLevels;
+	INT32	numSecrets;
 } MISSION_DATA;
 
 typedef struct tVertMatch {

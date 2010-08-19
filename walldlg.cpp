@@ -146,7 +146,7 @@ InitCBWallNo ();
 pcb = CBType ();
 pcb->ResetContent ();
 
-int h, i, j = sizeof (pszWallTypes) /  sizeof (*pszWallTypes);
+INT32 h, i, j = sizeof (pszWallTypes) /  sizeof (*pszWallTypes);
 for (i = 0; i < j; i++) {
 	h = pcb->AddString (pszWallTypes [i]);
 	pcb->SetItemData (h, i);
@@ -175,7 +175,7 @@ if (!GetMine ())
 	return;
 CComboBox *pcb = CBWallNo ();
 pcb->ResetContent ();
-int i;
+INT32 i;
 for (i = 0; i < m_mine->GameInfo ().walls.count; i++) {
 	_itoa_s (i, message, sizeof (message), 10);
 	pcb->AddString (message);
@@ -198,7 +198,7 @@ SelectItemData (CBType (), m_nType);
 DDX_CBIndex (pDX, IDC_WALL_CLIPNO, m_nClip);
 DDX_Double (pDX, IDC_WALL_STRENGTH, m_nStrength, -100, 100, "%3.1f");
 DDX_Double (pDX, IDC_WALL_CLOAK, m_nCloak, 0, 100, "%3.1f");
-int i;
+INT32 i;
 for (i = 0; i < 4; i++)
 	DDX_Check (pDX, IDC_WALL_NOKEY + i, m_bKeys [i]);
 for (i = 0; i < MAX_WALL_FLAGS; i++)
@@ -206,7 +206,7 @@ for (i = 0; i < MAX_WALL_FLAGS; i++)
 DDX_Check (pDX, IDC_WALL_FLYTHROUGH, m_bFlyThrough);
 DDX_Text (pDX, IDC_WALL_MSG, m_szMsg, sizeof (m_szMsg));
 char szTransparency [20];
-int t = (int) (((m_nType == WALL_TRANSPARENT) ? m_nStrength : m_nCloak) + 5) / 10;
+INT32 t = (INT32) (((m_nType == WALL_TRANSPARENT) ? m_nStrength : m_nCloak) + 5) / 10;
 DDX_Slider (pDX, IDC_WALL_TRANSPARENCY, t);
 sprintf_s (szTransparency, sizeof (szTransparency), "transp: %d%c", t * 10, '%');
 SetDlgItemText (IDC_WALL_TRANSPARENCY_TEXT, szTransparency);
@@ -216,7 +216,7 @@ SetDlgItemText (IDC_WALL_TRANSPARENCY_TEXT, szTransparency);
 
 void CWallTool::EnableControls (BOOL bEnable)
 {
-int i;
+INT32 i;
 for (i = IDC_WALL_WALLNO + 1; i <= IDC_WALL_FLYTHROUGH; i++)
 	GetDlgItem (i)->EnableWindow (bEnable);
 }
@@ -286,7 +286,7 @@ else {
 
     // enable buddy proof and switch checkboxes only if d2 level
 	if (m_mine->IsD1File ()) {
-		int i;
+		INT32 i;
 		for (i = 0; i < 2; i++)
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
 		}
@@ -294,9 +294,9 @@ else {
 	if (m_pWall [0]->trigger == NO_TRIGGER)
 		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->sidenum);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->segnum, m_pWall [0]->sidenum, (int)m_pWall [0]->trigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->segnum, m_pWall [0]->sidenum, (INT32)m_pWall [0]->trigger);
 
-	m_nWall [0] = int (m_pWall [0] - m_mine->Walls ());
+	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
 	m_nCube = m_pWall [0]->segnum;
 	m_nSide = m_pWall [0]->sidenum + 1;
@@ -312,7 +312,7 @@ else {
 	SelectItemData (CBType (), m_nType);
 	CBClipNo ()->EnableWindow ((m_nType == WALL_BLASTABLE) || (m_nType == WALL_DOOR));
 	// select list box index for clip
-	int i;
+	INT32 i;
 	for (i = 0; i < D2_NUM_OF_CLIPS; i++)
 		if (clip_num [i] == m_nClip)
 			break;
@@ -450,7 +450,7 @@ theApp.MineView ()->DelayRefresh (true);
 CDSegment *seg = m_mine->Segments ();
 CDSide *side;
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
-int i, j, nDeleted = 0;
+INT32 i, j, nDeleted = 0;
 for (i = m_mine->SegCount (); i; i--, seg++) {
 	side = seg->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, side++) {
@@ -533,10 +533,10 @@ void CWallTool::OnSetType ()
 	CDSide		*side [2];
 	CDWall		*wall;
 	INT16			segnum [2], sidenum [2];
-	int			nType;
+	INT32			nType;
 
 GetWalls ();
-nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
+nType = INT32 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType > WALL_CLOSED) && m_mine->IsD1File ()) 
 	return;
 if ((nType > WALL_CLOAKED) && (m_mine->IsStdLevel ())) 
@@ -573,7 +573,7 @@ Refresh ();
 
 void CWallTool::OnSetClip ()
 {
-	int		clipnum;
+	INT32		clipnum;
 	CDWall	*wall;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
@@ -603,7 +603,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 
                         /*--------------------------*/
 
-void CWallTool::OnKey (int i) 
+void CWallTool::OnKey (INT32 i) 
 {
 GetWalls ();
 memset (m_bKeys, 0, sizeof (m_bKeys));
@@ -616,7 +616,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		}
 }
 
-void CWallTool::OnFlag (int i) 
+void CWallTool::OnFlag (INT32 i) 
 {
 GetWalls ();
 m_bFlags [i] = BtnCtrl (IDC_WALL_BLASTED + i)->GetCheck ();
@@ -679,7 +679,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 
 void CWallTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	int	nPos = pScrollBar->GetScrollPos ();
+	INT32	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (!m_pWall [0])

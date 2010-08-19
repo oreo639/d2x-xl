@@ -32,7 +32,7 @@ m_mine = NULL;
 // CConvertDlg - ~CConvertDlg (destructor)
 //------------------------------------------------------------------------
 
-void CConvertDlg::EndDialog (int nResult) 
+void CConvertDlg::EndDialog (INT32 nResult) 
 {
 if (m_bInited) {
 	m_showD1.DestroyWindow ();
@@ -50,7 +50,7 @@ return m_mine = theApp.GetMine ();
 
                         /*--------------------------*/
 
-void CConvertDlg::CreateImgWnd (CWnd *pImgWnd, int nIdC)
+void CConvertDlg::CreateImgWnd (CWnd *pImgWnd, INT32 nIdC)
 {
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
@@ -87,7 +87,7 @@ CComboBox *pcb = CBD1 ();
 INT16	nSeg,	nSide, nTextures;
 INT16 tnum [2], segCount = m_mine->SegCount ();
 char	szName [80];
-int h;
+INT32 h;
 CDSegment *seg = m_mine->Segments ();
 CDSide *side;
 // add textures that have been used to Texture 1 combo box
@@ -95,7 +95,7 @@ for (nSeg = segCount; nSeg; nSeg--, seg++) {
 	for (side = seg->sides, nSide = 6; nSide; nSide--, side++) {
 		tnum [0] = side->nBaseTex;
 		tnum [1] = side->nOvlTex & 0x1fff;
-		int i;
+		INT32 i;
 		for (i = 0; i < 2; i++) {
 			if (tnum [i] != -1) {
 				// read name of texture from Descent 1 texture resource
@@ -114,7 +114,7 @@ pcb->SetCurSel (0);
   // add complete set for Texture 2 combo box
 nTextures = m_mine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 pcb = CBD2 ();
-int i;
+INT32 i;
 for (i = 0; i < nTextures; i++) {
 // read szName of texture from Descent 2 texture resource
 	LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + i, szName, sizeof (szName));
@@ -172,7 +172,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   HRSRC hFind;
   HGLOBAL hPalette;
   UINT8 *palette;
-  int rc;
+  INT32 rc;
   // define DIB header
   INT16 x_offset,y_offset;
   BITMAPINFO *bmi;
@@ -229,7 +229,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
 	y_offset = Texture1Button->Attr.Y;
 //	x_offset = 55;
 //  y_offset = 45;
-    HPALETTE OldPalette = SelectPalette(hdc, ThePalette, FALSE);
+    HPALETTE OldPalette = SelectPalette(hdc, m_currentPalette, FALSE);
     RealizePalette(hdc);
     SetDIBitsToDevice(hdc, x_offset, y_offset, 64, 64, 0, 0, 0, 64, bitmap_array, bmi, DIB_RGB_COLORS);
     SelectPalette(hdc, OldPalette, FALSE);
@@ -257,7 +257,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
 	y_offset = Texture2Button->Attr.Y;
 //	x_offset = 215;
 //	y_offset = 45;
-	HPALETTE OldPalette = SelectPalette(hdc, ThePalette, FALSE);
+	HPALETTE OldPalette = SelectPalette(hdc, m_currentPalette, FALSE);
 	RealizePalette(hdc);
 	SetDIBitsToDevice(hdc, x_offset, y_offset, 64, 64, 0, 0, 0, 64, bitmap_array, bmi, DIB_RGB_COLORS);
 	SelectPalette(hdc, OldPalette, FALSE);
@@ -450,7 +450,7 @@ m_mine->AutoAdjustLight (50.0, true);
 m_mine->CalcAverageCornerLight (true);
 m_mine->ScaleCornerLight (100.0, true);
 m_mine->SetCubeLight (50.0, true);
-m_mine->CalcDeltaLightData (50.0, (int) true);
+m_mine->CalcDeltaLightData (50.0, (INT32) true);
 
 // d2 reactor and secret cube
 //----------------------------------------------

@@ -35,7 +35,7 @@ else
 	t->value = 5 * F1_0; // 5% shield or energy damage
 t->time = -1;
 t->num_links = 0;
-int i;
+INT32 i;
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++) {
 	t->seg [i] = -1;
 	t->side [i] = -1;
@@ -44,7 +44,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++) {
 
 //------------------------------------------------------------------------
 
-int CMine::QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm)
+INT32 CMine::QCmpObjTriggers (CDTrigger *pi, CDTrigger *pm)
 {
 	INT16 i = pi->nObject;
 	INT16 m = pm->nObject;
@@ -89,7 +89,7 @@ if (left < r)
 
 void CMine::SortObjTriggers (void)
 {
-	int	h;
+	INT32	h;
 
 if ((h = NumObjTriggers ()) > 1) {
 	for (UINT16 i = 0; i < h; i++)
@@ -247,7 +247,7 @@ AutoLinkExitToReactor();
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------
 
-int CMine::DeleteTargetFromTrigger (CDTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger)
+INT32 CMine::DeleteTargetFromTrigger (CDTrigger *trigger, INT16 linknum, bool bAutoDeleteTrigger)
 {
 if (!--trigger->num_links) {
 	if (bAutoDeleteTrigger)
@@ -262,7 +262,7 @@ return trigger->num_links;
 }
 
 
-int CMine::DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger)
+INT32 CMine::DeleteTargetFromTrigger (INT16 trignum, INT16 linknum, bool bAutoDeleteTrigger)
 {
 return DeleteTargetFromTrigger (Triggers (trignum), linknum, bAutoDeleteTrigger);
 }
@@ -270,7 +270,7 @@ return DeleteTargetFromTrigger (Triggers (trignum), linknum, bAutoDeleteTrigger)
 
 bool CMine::DeleteTriggerTarget (CDTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger) 
 {
-int j;
+INT32 j;
 for (j = 0; j < trigger->num_links; j++)
 	if ((trigger->seg [j] == segnum) && (trigger->side [j] == sidenum))
 		return DeleteTargetFromTrigger (trigger, j, bAutoDeleteTrigger) == 0;
@@ -280,7 +280,7 @@ return false;
 
 void CMine::DeleteTriggerTargets (INT16 segnum, INT16 sidenum) 
 {
-int i;
+INT32 i;
 
 for (i = 0; i < GameInfo ().triggers.count; i++)
 	if (DeleteTriggerTarget (Triggers (i), segnum, sidenum))
@@ -301,7 +301,7 @@ INT16 CMine::FindTriggerWall (INT16 *trignum, INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
 CDWall *wall = Walls ();
-int wallnum;
+INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++) {
 	if ((wall->segnum == segnum) && (wall->sidenum == sidenum)) {
 		*trignum = wall->trigger;
@@ -315,7 +315,7 @@ return GameInfo ().walls.count;
 INT16 CMine::FindTriggerWall (INT16 trignum)
 {
 CDWall *wall = Walls ();
-int wallnum;
+INT32 wallnum;
 for (wallnum = GameInfo ().walls.count; wallnum; wallnum--, wall++)
 	if (wall->trigger == trignum)
 		return INT16 (wall - Walls ());
@@ -326,7 +326,7 @@ INT16 CMine::FindTriggerObject (INT16 *trignum)
 {
 	INT16 nObject = Current ()->object;
 
-for (int i = 0; i < NumObjTriggers (); i++)
+for (INT32 i = 0; i < NumObjTriggers (); i++)
 	if (ObjTriggers (i)->nObject == nObject) {
 		*trignum = i;
 		return nObject;
@@ -342,7 +342,7 @@ return -1;
 INT16 CMine::FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
 CDTrigger *trigger = Triggers ();
-int i, j;
+INT32 i, j;
 
 for (i = trignum; i < GameInfo ().triggers.count; i++, trigger++)
 	for (j = 0; j < trigger->num_links; j++)
@@ -448,7 +448,7 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	}
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-short trignum = NumObjTriggers ();
+INT16 trignum = NumObjTriggers ();
 InitTrigger (ObjTriggers (trignum), type, 0);
 ObjTriggers (trignum)->nObject = objnum;
 NumObjTriggers ()++;
@@ -493,7 +493,7 @@ while (i)
 INT16 CMine::FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
 CDTrigger *t = ObjTriggers ();
-int i, j;
+INT32 i, j;
 
 for (i = trignum; i < NumObjTriggers (); i++, t++)
 	for (j = 0; j < t->num_links; j++)

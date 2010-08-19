@@ -51,7 +51,7 @@ void CMine::DeleteSegmentWalls (INT16 segnum)
 {
 	CDSide *side =Segments (segnum)->sides; 
 
-int i;
+INT32 i;
 for (i = MAX_SIDES_PER_SEGMENT; i; i--, side++)
 	if (side->nWall != NO_WALL (this))
 		DeleteWall (side->nWall); 
@@ -84,7 +84,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 	UndefineSegment (delSegNum);
 
 	// delete any flickering lights that use this segment
-	int sidenum;
+	INT32 sidenum;
 	for (sidenum = 0; sidenum < 6; sidenum++) {
 		DeleteTriggerTargets (delSegNum, sidenum); 
 		INT16 index = GetFlickeringLight(delSegNum, sidenum); 
@@ -121,7 +121,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 	for (i = (UINT16)GameInfo ().botgen.count - 1; i >= 0; i--) {
 		segnum = BotGens (i)->segnum; 
 		if (segnum == delSegNum) {
-			int nMatCens = --GameInfo ().botgen.count; 
+			INT32 nMatCens = --GameInfo ().botgen.count; 
 			if (i < nMatCens)
 			memcpy ((void *) BotGens (i), (void *) BotGens (nMatCens), sizeof (matcen_info)); 
 			}
@@ -145,7 +145,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 			EquipGens (i)->segnum--;
 	// delete any control seg with this segment
 	for (i = (UINT16)GameInfo ().control.count - 1; i >= 0; i--) {
-		int num_links = CCTriggers (i)->num_links; 
+		INT32 num_links = CCTriggers (i)->num_links; 
 		for (j = num_links - 1; j>0; j--) {
 			segnum = CCTriggers (i)->seg [j]; 
 			if (segnum == delSegNum) {
@@ -330,7 +330,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		// move remaining Segments () down by 1
   }
 #if 1
-		if (int segC = (--SegCount () - delSegNum)) {
+		if (INT32 segC = (--SegCount () - delSegNum)) {
 			memcpy (Segments (delSegNum), Segments (delSegNum + 1), segC * sizeof (CDSegment));
 			memcpy (LightColors (delSegNum), LightColors (delSegNum + 1), segC * 6 * sizeof (CDColor));
 			}
@@ -449,7 +449,7 @@ for (sideNum = 0; sideNum < MAX_SIDES_PER_SEGMENT; sideNum++) {
 	segP->sides [sideNum].nWall = NO_WALL (this); 
 	segP->sides [sideNum].nBaseTex =
 	segP->sides [sideNum].nOvlTex = 0; 
-	int i;
+	INT32 i;
 	for (i = 0; i < 4; i++)
 		segP->sides [sideNum].uvls [i].l = (UINT16) DEFAULT_LIGHTING; 
 	SetUV (segNum, sideNum, 0, 0, 0); 
@@ -613,7 +613,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
 // TODO:
-//	int add_segment_mode = ORTHOGONAL; 
+//	INT32 add_segment_mode = ORTHOGONAL; 
 	switch (add_segment_mode)
 	{
 		case(ORTHOGONAL):
@@ -744,8 +744,8 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				int v1 = currSeg->verts [side_vert [Current ()->side][i]]; 
-				int v2 = new_verts [i];
+				INT32 v1 = currSeg->verts [side_vert [Current ()->side][i]]; 
+				INT32 v2 = new_verts [i];
 				Vertices (v2)->x = orthog.x + Vertices (v1)->x; 
 				Vertices (v2)->y = orthog.y + Vertices (v1)->y; 
 				Vertices (v2)->z = orthog.z + Vertices (v1)->z; 
@@ -848,7 +848,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			}
 
 			for (i = 0; i < 4; i++) {
-				int vertnum = new_verts [i];
+				INT32 vertnum = new_verts [i];
 				Vertices (vertnum)->x = (long) dround_off(A [i + 4].x, 1.0); 
 				Vertices (vertnum)->y = (long) dround_off(A [i + 4].y, 1.0); 
 				Vertices (vertnum)->z = (long) dround_off(A [i + 4].z, 1.0); 
@@ -886,7 +886,7 @@ if (seg1->children [sidenum1]!=-1 || seg2->children [sidenum2]!=-1)
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
-	int vertnum = seg1->verts [side_vert [sidenum1][i]];
+	INT32 vertnum = seg1->verts [side_vert [sidenum1][i]];
 	memcpy (v1 + i, Vertices (vertnum), sizeof (*Vertices ()));
 /*
 	v1 [i].x = Vertices (vertnum)->x; 
@@ -926,7 +926,7 @@ for (i = 0; i < 4; i++)
 */
 if (match [0].i == -1)
 	return FALSE;
-static int matches [][4] = {{0,3,2,1},{1,0,3,2},{2,1,0,3},{3,2,1,0}};
+static INT32 matches [][4] = {{0,3,2,1},{1,0,3,2},{2,1,0,3},{3,2,1,0}};
 for (i = 1; i < 4; i++)
 	if (match [i].i != matches [match [0].i][i])
 		return FALSE;
@@ -952,7 +952,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 	CDSegment *seg1, *seg2; 
 	seg1 = Segments (segnum1); 
 	seg2 = Segments (segnum2); 
-	int i; 
+	INT32 i; 
 	INT16 segnum, vertnum, oldVertex, newVertex; 
 
 	seg1->children [sidenum1] = segnum2; 
@@ -1004,7 +1004,7 @@ void CMine::CalcSegCenter(vms_vector &pos, INT16 segnum)
   vms_vector *vert;
   
 memset (&pos, 0, sizeof (pos));
-int i;
+INT32 i;
 for (i = 0; i < 8; i++) {
 	vert = Vertices (nVerts [i]);
 	pos.x += vert->x;
@@ -1053,7 +1053,7 @@ bool CMine::SideIsMarked (INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum);
 CDSegment *seg = Segments (segnum);
-int i;
+INT32 i;
 for (i = 0;  i < 4; i++) {
 	if (!(*VertStatus (seg->verts [side_vert [sidenum][i]]) & MARKED_MASK))
 		return false;
@@ -1064,7 +1064,7 @@ return true;
 bool CMine::SegmentIsMarked (INT16 segnum)
 {
 CDSegment *seg = Segments (segnum);
-int i;
+INT32 i;
 for (i = 0;  i < 8; i++)
 	if (!(*VertStatus (seg->verts [i]) & MARKED_MASK))
 		return false;
@@ -1078,7 +1078,7 @@ void CMine::Mark()
 {
 	bool	bCubeMark = false; 
 	CDSegment *seg = CurrSeg (); 
-	int i, p [8], n_points; 
+	INT32 i, p [8], n_points; 
 
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
@@ -1148,7 +1148,7 @@ void CMine::MarkSegment(INT16 segnum)
 void CMine::UpdateMarkedCubes()
 {
 	CDSegment *seg; 
-	int i; 
+	INT32 i; 
 	// mark all cubes which have all 8 verts marked
 	for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
 		if ((*VertStatus (seg->verts [0]) & MARKED_MASK) &&
@@ -1168,7 +1168,7 @@ void CMine::UpdateMarkedCubes()
 // MENU - Mark all cubes
 //========================================================================== 
 void CMine::MarkAll() {
-	int i; 
+	INT32 i; 
 	for (i = 0; i < SegCount (); i++) {
 		Segments (i)->wall_bitmask |= MARKED_MASK; 
 	}
@@ -1182,7 +1182,7 @@ void CMine::MarkAll() {
 // MENU - Unmark all cubes
 //========================================================================== 
 void CMine::UnmarkAll() {
-	int i; 
+	INT32 i; 
 	CDSegment *seg = Segments ();
 	for (i = 0; i < MAX_SEGMENTS (this); i++, seg++)
 		seg->wall_bitmask &= ~MARKED_MASK; 
@@ -1212,7 +1212,7 @@ side->nBaseTex = 0;
 side->nOvlTex = 0; 
 uvl *uvls = side->uvls;
 double scale = pTextures [m_fileType][side->nBaseTex].Scale (side->nBaseTex);
-int i;
+INT32 i;
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->u = (INT16) (default_uvls [i].u / scale); 
 	uvls->v = (INT16) (default_uvls [i].v / scale); 
@@ -1234,22 +1234,22 @@ void CMine::UnlinkChild (INT16 parent_segnum, INT16 sidenum)
   CDSegment *parent_seg = Segments (parent_segnum); 
 
 // loop on each side of the parent
-//	int sidenum;
+//	INT32 sidenum;
 //  for (sidenum = 0; sidenum < 6; sidenum++) {
-int child_segnum = parent_seg->children [sidenum]; 
+INT32 child_segnum = parent_seg->children [sidenum]; 
 // does this side have a child?
 if (child_segnum < 0 || child_segnum >= SegCount ())
 	return;
 CDSegment *child_seg = Segments () + child_segnum; 
 // yes, see if child has a side which points to the parent
-int child_sidenum;
+INT32 child_sidenum;
 for (child_sidenum = 0; child_sidenum < 6; child_sidenum++)
 	if (child_seg->children [child_sidenum]== parent_segnum) break; 
 // if we found the matching side
 if (child_sidenum < 6) {
 // define vert numbers for comparison
-	INT16 pv [4], cv [4]; // (short names given for clarity)
-	int i;
+	INT16 pv [4], cv [4]; // (INT16 names given for clarity)
+	INT32 i;
 	for (i = 0; i < 4; i++) {
 		pv [i] = parent_seg->verts [side_vert [sidenum][i]]; // parent vert
 		cv [i] = child_seg->verts [side_vert [child_sidenum][i]]; // child vert
@@ -1281,9 +1281,9 @@ else {
 
 // -------------------------------------------------------------------------- 
 
-bool CMine::IsPointOfSide (CDSegment *seg, int sidenum, int pointnum)
+bool CMine::IsPointOfSide (CDSegment *seg, INT32 sidenum, INT32 pointnum)
 {
-	int	i;
+	INT32	i;
 
 for (i = 0; i < 4; i++)
 	if (side_vert [sidenum][i] == pointnum)
@@ -1293,9 +1293,9 @@ return false;
 
 // -------------------------------------------------------------------------- 
 
-bool CMine::IsLineOfSide (CDSegment *seg, int sidenum, int linenum)
+bool CMine::IsLineOfSide (CDSegment *seg, INT32 sidenum, INT32 linenum)
 {
-	int	i;
+	INT32	i;
 
 for (i = 0; i < 2; i++)
 	if (!IsPointOfSide (seg, sidenum, line_vert [linenum][i]))
@@ -1365,7 +1365,7 @@ seg->wall_bitmask &= ~MARKED_MASK;
 // update total number of vertices
 *VertStatus (VertCount ()++) = 0; 
 
-int sidenum;
+INT32 sidenum;
 for (sidenum = 0; sidenum < 6; sidenum++)
 	if (IsPointOfSide (seg, sidenum, seg->verts [side_vert [Current ()->side][Current ()->point]]) &&
 		 GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, sidenum)) {
@@ -1450,7 +1450,7 @@ for (i = 0; i < 2; i++)
 		// update total number of vertices
 		*VertStatus (VertCount ()++) = 0; 
 		}
-int sidenum;
+INT32 sidenum;
 for (sidenum = 0; sidenum < 6; sidenum++) {
 	if (IsLineOfSide (seg, sidenum, linenum) && 
 		 GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, sidenum)) {
@@ -1477,10 +1477,10 @@ INFOMSG ("Two new points were made for the current line.");
 // constitutes an error in the level structure.
 // -------------------------------------------------------------------------- 
 
-void CMine::SplitSegments (int solidify, int sidenum) 
+void CMine::SplitSegments (INT32 solidify, INT32 sidenum) 
 {
   CDSegment *seg; 
-  int vert [4], segnum, vertnum, i, nFound = 0; 
+  INT32 vert [4], segnum, vertnum, i, nFound = 0; 
   bool found [4]; 
 
 if (m_bSplineActive) {
@@ -1491,7 +1491,7 @@ if (m_bSplineActive) {
 seg = CurrSeg (); 
 if (sidenum < 0)
 	sidenum = Current ()->side;
-int child_segnum = seg->children [sidenum]; 
+INT32 child_segnum = seg->children [sidenum]; 
 if (child_segnum == -1) {
 	ErrorMsg ("The current side is not connected to another cube"); 
 	return; 
@@ -1550,7 +1550,7 @@ if (!solidify) {
 			*VertStatus (VertCount ()++) = 0; 
 			}
 		}
-	int sidenum;
+	INT32 sidenum;
 	for (sidenum = 0; sidenum < 6; sidenum++)
 		if (sidenum != opp_side [sidenum])
 			UnlinkChild (Current ()->segment, sidenum); 
@@ -1561,7 +1561,7 @@ else {
 	// does this side have a child?
 	CDSegment *child_seg = Segments (child_segnum); 
 	// yes, see if child has a side which points to the parent
-	int child_sidenum;
+	INT32 child_sidenum;
 	for (child_sidenum = 0; child_sidenum < 6; child_sidenum++)
 		if (child_seg->children [child_sidenum]== Current ()->segment) 
 			break; 
@@ -1583,7 +1583,7 @@ void CMine::JoinPoints()
 {
   CDSegment *seg1, *seg2; 
  double distance; //v1x, v1y, v1z, v2x, v2y, v2z; 
-  int vert1, vert2; 
+  INT32 vert1, vert2; 
   CDSelection *cur1, *cur2; 
 
 if (m_bSplineActive) {
@@ -1647,7 +1647,7 @@ void CMine::JoinLines()
   CDSegment *seg1, *seg2; 
   double v1x [2], v1y [2], v1z [2], v2x [2], v2y [2], v2z [2]; 
   double distance, min_radius; 
-  int v1, v2, vert1 [2], vert2 [2]; 
+  INT32 v1, v2, vert1 [2], vert2 [2]; 
   INT16 match [2]; 
   INT16 i, j, linenum; 
   bool fail; 
@@ -1823,7 +1823,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, pSeg) {
 //  Changes - Added option to solidifyally figure out "other cube"
 // -------------------------------------------------------------------------- 
 
-void CMine::JoinSegments(int solidify)
+void CMine::JoinSegments(INT32 solidify)
 {
 	CDSegment *seg; 
 	CDSegment *seg1, *seg2; 
@@ -1856,7 +1856,7 @@ if (solidify) {
 #if 1
 		memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->side][i]]), sizeof (*Vertices ()));
 #else
-		int vertnum = seg1->verts [side_vert [cur1->side][i]];
+		INT32 vertnum = seg1->verts [side_vert [cur1->side][i]];
 		v1 [i].x = Vertices (vertnum)->x; 
 		v1 [i].y = Vertices (vertnum)->y; 
 		v1 [i].z = Vertices (vertnum)->z; 
@@ -1872,7 +1872,7 @@ if (solidify) {
 #if 1
 				memcpy (v2 + i, Vertices (seg2->verts[side_vert[sidenum][i]]), sizeof (*Vertices ()));
 #else
-				int vertnum = seg2->verts [side_vert [sidenum][i]];
+				INT32 vertnum = seg2->verts [side_vert [sidenum][i]];
 				v2 [i].x = Vertices (vertnum)->x; 
 				v2 [i].y = Vertices (vertnum)->y; 
 				v2 [i].z = Vertices (vertnum)->z; 
@@ -2030,7 +2030,7 @@ if (fail) {
 	//	     "on the other side."); 
 	//    return; 
 	// go method #2, use current points
-	int offset; 
+	INT32 offset; 
 	offset = (4 + cur1->point - (3 - cur2->point))%4; 
 	match [0].i = (offset + 3)%4; 
 	match [1].i = (offset + 2)%4; 
@@ -2192,14 +2192,14 @@ void CMine::SetUV (INT16 segnum, INT16 sidenum, INT16 x, INT16 y, double dummy)
 		}; 
 
 	struct vector A [4], B [4], C [4], D [4], E [4]; 
-	int i, vertnum; 
+	INT32 i, vertnum; 
 	double angle; 
 
 // for testing, x is used to tell how far to convert vector
 // 0, 1, 2, 3 represent B, C, D, E coordinate transformations
 
 // copy side's four points into A
-int h = sizeof (*Vertices ());
+INT32 h = sizeof (*Vertices ());
 for (i = 0; i < 4; i++) {
 	vertnum = Segments (segnum)->verts [side_vert [sidenum][i]]; 
 	A [i].x = Vertices (vertnum)->x; 
@@ -2225,7 +2225,7 @@ for (i = 0; i < 4; i++) {
 	}
 
 #if UV_DEBUG
-if (abs((int)C [1].z) != 0) {
+if (abs((INT32)C [1].z) != 0) {
 	sprintf_s (message, sizeof (message),  "SetUV: point 1 not in x/y plane\n(%f); angle = %f", (float)C [1].z, (float)angle); 
 	DEBUGMSG (message); 
 	}
@@ -2241,7 +2241,7 @@ for (i = 0; i < 4; i++) {
 	D [i].z = C [i].z; 
 	}
 #if UV_DEBUG
-if (abs((int)D [1].y) != 0) {
+if (abs((INT32)D [1].y) != 0) {
 	DEBUGMSG (" SetUV: Point 1 not in x axis"); 
 	}
 #endif
@@ -2303,7 +2303,7 @@ for (i = 0; i < 4; i++, uvls++) {
 
 bool CMine::GotMarkedSides ()
 {
-int	segnum, sidenum; 
+INT32	segnum, sidenum; 
 
 for (segnum = 0; segnum < SegCount (); segnum++)
 	for (sidenum = 0; sidenum < 6; sidenum++)
@@ -2316,7 +2316,7 @@ return false;
 
 INT16 CMine::MarkedSegmentCount (bool bCheck)
 {
-	int	segnum, nCount; 
+	INT32	segnum, nCount; 
 	CDSegment *seg = Segments ();
 for (segnum = SegCount (), nCount = 0; segnum; segnum--, seg++)
 	if (seg->wall_bitmask & MARKED_MASK)
@@ -2329,7 +2329,7 @@ return nCount;
 
                         /* -------------------------- */
 
-int CMine::IsWall (INT16 segnum, INT16 sidenum)
+INT32 CMine::IsWall (INT16 segnum, INT16 sidenum)
 {
 GetCurrent (segnum, sidenum); 
 return (Segments (segnum)->children [sidenum]== -1) ||
@@ -2338,7 +2338,7 @@ return (Segments (segnum)->children [sidenum]== -1) ||
 
                         /* -------------------------- */
 
-int CMine::ScrollSpeed (UINT16 texture, int *x, int *y)
+INT32 CMine::ScrollSpeed (UINT16 texture, INT32 *x, INT32 *y)
 {
 if (IsD1File ())
 	return 0;
@@ -2364,14 +2364,14 @@ return 1;
 
                         /* -------------------------- */
 
-int CMine::AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
+INT32 CMine::AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
 {
 	CDSegment *seg = Segments (start_segment); 
 	CDSegment *childSeg; 
 	CDSide *side = seg->sides + start_side; 
 	CDSide *childSide; 
 
-	int return_code =-1; 
+	INT32 return_code =-1; 
 	INT16 i; 
 	INT16 sidenum, childnum, linenum; 
 	INT16 point0, point1, vert0, vert1; 
@@ -2380,7 +2380,7 @@ int CMine::AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_chil
 	INT16 u0, v0; 
 	double sangle, cangle; 
 	double angle, length; 
-	static int side_child [6][4] = {
+	static INT32 side_child [6][4] = {
 		{4, 3, 5, 1}, //{5, 1, 4, 3}, 
 		{2, 4, 0, 5}, //{5, 0, 4, 2}, 
 		{5, 3, 4, 1}, //{5, 3, 4, 1}, 
@@ -2475,7 +2475,7 @@ for (linenum = 0; linenum < 4; linenum++) {
 					return_code = childs_side; 
 				}
 			if (bAlign2nd && side->nOvlTex && childSide->nOvlTex) {
-				int r;
+				INT32 r;
 				switch (side->nOvlTex & 0xC000) {
 					case 0:
 						r = 0;
@@ -2490,7 +2490,7 @@ for (linenum = 0; linenum < 4; linenum++) {
 						r = 3;
 						break;
 					}
-				int h = (int) (fabs (angle) * 180.0 / PI / 90 + 0.5); 
+				INT32 h = (INT32) (fabs (angle) * 180.0 / PI / 90 + 0.5); 
 //				h +=(childs_line + linenum + 2) % 4; //(childs_line > linenum) ? childs_line - linenum : linenum - childs_line;
 				h = (h + r) % 4;
 				childSide->nOvlTex &= ~0xC000;
@@ -2614,7 +2614,7 @@ return true;
 
 void CMine::RenumberBotGens () 
 {
-	int			i, nMatCens, value, segnum; 
+	INT32			i, nMatCens, value, segnum; 
 	CDSegment	*seg; 
 
 // number "matcen"
@@ -2642,7 +2642,7 @@ for (i = 0, seg = Segments (); i < SegCount (); i++, seg++)
 
 void CMine::RenumberEquipGens () 
 {
-	int			i, nMatCens, value, segnum; 
+	INT32			i, nMatCens, value, segnum; 
 	CDSegment	*seg; 
 
 // number "matcen"
@@ -2678,7 +2678,7 @@ INT16 segnum = Current ()->segment;
 CDSegment *otherSeg = OtherSeg (); 
 bUndo = theApp.SetModified (TRUE); 
 theApp.LockUndo ();
-int sidenum;
+INT32 sidenum;
 for (sidenum = 0; sidenum < 6; sidenum++)
 	if (SetTexture (segnum, sidenum, 
 						 otherSeg->sides [sidenum].nBaseTex, 
@@ -2703,7 +2703,7 @@ bool CMine::SplitSegment ()
 	INT16			vertNum, wallNum;
 	vms_vector	segCenter, *v, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
-	int			h, i, j, k;
+	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};
 
 if (SegCount () >= MAX_SEGMENTS (this) - 6) {

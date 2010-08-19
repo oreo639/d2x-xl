@@ -31,7 +31,7 @@ for (INT16 sidenum = 0; sidenum < 6; sidenum++, side++) {
 		side->uvls [2].l = 0x8000;
 		side->uvls [3].l = 0x8000;
 	*/
-		int i;
+		INT32 i;
 		for (i = 0; i < 4; i++) {
 			side->uvls [i].u = (INT16) ((double) default_uvls [i].u / scale);
 			side->uvls [i].v = (INT16) ((double) default_uvls [i].v / scale);
@@ -69,17 +69,17 @@ void CMine::UndefineSegment (INT16 segnum)
 segnum = INT16 (seg - Segments ());
 if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
 	// remove matcen
-	int nMatCens = (int) GameInfo ().botgen.count;
+	INT32 nMatCens = (INT32) GameInfo ().botgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
-		int nDelMatCen = seg->matcen_num;
+		INT32 nDelMatCen = seg->matcen_num;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (matcen_info));
 			BotGens (nDelMatCen)->fuelcen_num = nDelMatCen;
 			seg->matcen_num = -1;
 			}
 		GameInfo ().botgen.count--;
-		int i;
+		INT32 i;
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (segnum, i);
 		CDSegment *s;
@@ -93,21 +93,21 @@ if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
 	}
 if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
 	// remove matcen
-	int nMatCens = (int) GameInfo ().equipgen.count;
+	INT32 nMatCens = (INT32) GameInfo ().equipgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
-		int nDelMatCen = seg->matcen_num;
+		INT32 nDelMatCen = seg->matcen_num;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (matcen_info));
 			EquipGens (nDelMatCen)->fuelcen_num = nDelMatCen;
 			seg->matcen_num = -1;
 			}
 		GameInfo ().equipgen.count--;
-		int i;
+		INT32 i;
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (segnum, i);
 		CDSegment *s;
-		nDelMatCen += (int) GameInfo ().botgen.count;
+		nDelMatCen += (INT32) GameInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (); i; i--, s++)
 			if ((s->function == SEGMENT_FUNC_EQUIPMAKER) && (s->matcen_num == nMatCens)) {
 				s->matcen_num = nDelMatCen;
@@ -205,7 +205,7 @@ return true;
 
 bool CMine::AddEquipMaker (INT16 segnum, bool bCreate, bool bSetDefTextures) 
 {
-int n_matcen = (int) GameInfo ().equipgen.count;
+INT32 n_matcen = (INT32) GameInfo ().equipgen.count;
 if (n_matcen >= MAX_NUM_MATCENS (this)) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
@@ -243,7 +243,7 @@ return true;
 
 bool CMine::AddRobotMaker (INT16 segnum, bool bCreate, bool bSetDefTextures) 
 {
-int n_matcen = (int) GameInfo ().botgen.count;
+INT32 n_matcen = (INT32) GameInfo ().botgen.count;
 if (n_matcen >= MAX_NUM_MATCENS (this)) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
@@ -373,11 +373,11 @@ return true;
 
 //==========================================================================
 
-int CMine::FuelCenterCount (void)
+INT32 CMine::FuelCenterCount (void)
 {
-int n_fuelcen = 0;
+INT32 n_fuelcen = 0;
 CDSegment *seg = Segments ();
-int i;
+INT32 i;
 for (i = 0; i < SegCount (); i++, seg++)
 	if ((seg->function == SEGMENT_FUNC_FUELCEN) || (seg->function == SEGMENT_FUNC_REPAIRCEN))
 		n_fuelcen++;
@@ -391,7 +391,7 @@ return n_fuelcen;
 bool CMine::AddFuelCenter (INT16 segnum, UINT8 nType, bool bCreate, bool bSetDefTextures) 
 {
 // count number of fuel centers
-int n_fuelcen = FuelCenterCount ();
+INT32 n_fuelcen = FuelCenterCount ();
 CDSegment *seg = Segments ();
 if (n_fuelcen >= MAX_NUM_FUELCENS (this)) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
@@ -402,13 +402,13 @@ if ((IsD1File ()) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
 		ErrorMsg ("Repair centers are not available in Descent 1.");
 	return false;
 	}
-int last_segment = Current ()->segment;
+INT32 last_segment = Current ()->segment;
 bool bUndo = theApp.SetModified (TRUE);
 if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
-int new_segment = Current ()->segment;
+INT32 new_segment = Current ()->segment;
 Current ()->segment = last_segment;
 if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS (this)))
 	AddWall (Current ()->segment, Current ()->side, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
@@ -646,14 +646,14 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
-int last_segment = Current ()->segment;
+INT32 last_segment = Current ()->segment;
 bool bUndo = theApp.SetModified (true);
 theApp.LockUndo ();
 if (!AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false;
 	}
-int new_segment = Current ()->segment;
+INT32 new_segment = Current ()->segment;
 Current ()->segment = last_segment;
 if (AddWall (Current ()->segment, Current ()->side, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	AddTrigger (GameInfo ().walls.count - 1, TT_SECRET_EXIT);

@@ -16,14 +16,14 @@
 #include <math.h>
 
 typedef struct tBugPos {
-	int	segnum;
-	int	sidenum;
-	int	linenum;
-	int	pointnum;
-	int	childnum;
-	int	wallnum;
-	int	trignum;
-	int	objnum;
+	INT32	segnum;
+	INT32	sidenum;
+	INT32	linenum;
+	INT32	pointnum;
+	INT32	childnum;
+	INT32	wallnum;
+	INT32	trignum;
+	INT32	objnum;
 } tBugPos;
 
                         /*--------------------------*/
@@ -34,11 +34,11 @@ if (!m_bInited)
 	return;
 
 	CListBox	*plb = LBBugs ();
-	int h = plb->GetCount ();
+	INT32 h = plb->GetCount ();
 	char szText [256];
 
 tBugPos *pbp;
-int i;
+INT32 i;
 for (i = 0; i < h; i++) {
 	plb->GetText (i, szText);
 	if (!strchr (szText, '['))
@@ -69,11 +69,11 @@ void CDiagTool::OnShowBug (void)
 {
 	bool bCurSeg;
 	CDWall *pWall;
-	int nWall;
+	INT32 nWall;
 
 if (!GetMine ())
 	return;
-int i = LBBugs ()->GetCurSel ();
+INT32 i = LBBugs ()->GetCurSel ();
 if ((i < 0) || (i >= LBBugs ()->GetCount ()))
 	return;
 tBugPos *pbp = (tBugPos *) LBBugs ()->GetItemDataPtr (i);
@@ -250,7 +250,7 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
         angle = (200.0 * M_PI)/180.0; 
       } else {
 	ratio = dot_product/ (magnitude1*magnitude2);
-	ratio = ( (double) ( (int) (ratio*1000.0))) / 1000.0; // bug fix 9/21/96
+	ratio = ( (double) ( (INT32) (ratio*1000.0))) / 1000.0; // bug fix 9/21/96
 	if (ratio < -1.0 || ratio > (double)1.0) {
 	  angle = (199.0 * M_PI)/180.0;
 	} else {
@@ -269,13 +269,13 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
 //  RETURN - Returns TRUE if ID is out of range.  Otherwise, FALSE.
 //--------------------------------------------------------------------------
 
-int CDiagTool::CheckId (CDObject *obj) 
+INT32 CDiagTool::CheckId (CDObject *obj) 
 {
 if (!GetMine ())
 	return 1;
 
-	int type = obj->type;
-	int id = obj->id;
+	INT32 type = obj->type;
+	INT32 id = obj->id;
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
@@ -393,15 +393,15 @@ if (m_bAutoFixBugs)
 //              warning   = set to a 1 if this is a warning 
 //--------------------------------------------------------------------------
 
-bool CDiagTool::UpdateStats (char *szError, int nErrorLevel, 
-									  int segnum, int sidenum, int linenum, int pointnum, 
-									  int childnum, int wallnum, int trignum, int objnum)
+bool CDiagTool::UpdateStats (char *szError, INT32 nErrorLevel, 
+									  INT32 segnum, INT32 sidenum, INT32 linenum, INT32 pointnum, 
+									  INT32 childnum, INT32 wallnum, INT32 trignum, INT32 objnum)
 {
 if (!(szError && *szError))
 	return false;
 if (!(m_bShowWarnings || !strstr (szError, "WARNING:")))
 	return true;
-int h = AddMessage (szError, -1, true);
+INT32 h = AddMessage (szError, -1, true);
 if (h >= 0) {
 	tBugPos *pbp = new tBugPos;
 	if (!pbp)
@@ -519,7 +519,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
 		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));
 		if (angle > M_PI_2) {
-			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",segnum,pointnum, (int) ( (angle*180.0)/M_PI));
+			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",segnum,pointnum, (INT32) ( (angle*180.0)/M_PI));
 			if (UpdateStats (message, 0, segnum, -1, -1, pointnum))
 				return true;
 			break; // from for loop
@@ -530,7 +530,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 		for (sidenum = 0; sidenum < 6; sidenum++) {
 			flatness = CalcFlatnessRatio (segnum,sidenum);
 			if (flatness < 0.80) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",segnum,sidenum, (int) (flatness*100));
+				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",segnum,sidenum, (INT32) (flatness*100));
 				if (UpdateStats (message, 1, segnum, sidenum))
 					return true;
 				break; // from for loop
@@ -544,7 +544,7 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 		length = m_mine->CalcLength (m_mine->Vertices (seg->verts[line_vert[linenum][0]]),
 											  m_mine->Vertices (seg->verts[line_vert[linenum][1]]));
 		if (length < (double)F1_0) {
-			sprintf_s (message, sizeof (message),"WARNING: Line length too short (cube=%d,line=%d)",segnum,linenum);
+			sprintf_s (message, sizeof (message),"WARNING: Line length too INT16 (cube=%d,line=%d)",segnum,linenum);
 			if (UpdateStats (message, 0, segnum, -1, linenum))
 				return true;
 			}
@@ -602,9 +602,9 @@ return false;
 
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
+bool CDiagTool::CheckAndFixPlayer (INT32 nMin, INT32 nMax, INT32 nObject, INT32* players)
 {
-int id = m_mine->Objects (nObject)->id;
+INT32 id = m_mine->Objects (nObject)->id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
 else if (players [id])
@@ -636,12 +636,12 @@ bool CDiagTool::CheckObjects ()
 if (!GetMine ())
 	return false;
 
-	int h,objectnum,type,id,count,players [16 + MAX_COOP_PLAYERS],segnum,flags,corner, nPlayers [2], bFix;
+	INT32 h,objectnum,type,id,count,players [16 + MAX_COOP_PLAYERS],segnum,flags,corner, nPlayers [2], bFix;
   vms_vector center;
   double x,y,z,radius, max_radius,object_radius;
   CDObject *obj = m_mine->Objects ();
 	CDObject *pPlayer = NULL;
-  int	objCount = m_mine->GameInfo ().objects.count;
+  INT32	objCount = m_mine->GameInfo ().objects.count;
   CDSegment *seg;
 
 INT16 sub_errors = m_nErrors [0];
@@ -867,7 +867,7 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 		}
 // resequence player and coop ids
 if (m_bAutoFixBugs) {
-	int i;
+	INT32 i;
 	if (bFix & 1) {
 		for (i = id = 0; id < MAX_PLAYERS (m_mine); id++)
 			if (players [id] != 0) 
@@ -967,17 +967,17 @@ bool CDiagTool::CheckTriggers ()
 	if (!GetMine ())
 		return false;
 
-	int count, trignum, deltrignum, wallnum, i;
-	int segnum, sidenum, linknum;
+	INT32 count, trignum, deltrignum, wallnum, i;
+	INT32 segnum, sidenum, linknum;
 	INT16 opp_segnum, opp_sidenum;
 
 	INT16 sub_errors = m_nErrors [0];
 	INT16 sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Triggers]");
-	int segCount = m_mine->SegCount ();
-	int trigCount = m_mine->GameInfo ().triggers.count;
+	INT32 segCount = m_mine->SegCount ();
+	INT32 trigCount = m_mine->GameInfo ().triggers.count;
 	CDTrigger *trigger = m_mine->Triggers ();
-	int wallCount = m_mine->GameInfo ().walls.count;
+	INT32 wallCount = m_mine->GameInfo ().walls.count;
 	CDWall *wall;
 	control_center_trigger *ccTrigger = m_mine->CCTriggers ();
 
@@ -1007,8 +1007,8 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 	for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 		if (wall->trigger == trignum) {
 			// if exit, make sure it is linked to control_center_trigger
-			int tt = trigger->type;
-			int tf = trigger->flags;
+			INT32 tt = trigger->type;
+			INT32 tf = trigger->flags;
 			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < ccTrigger->num_links; i++)
 					if (ccTrigger->seg [i] == wall->segnum &&
@@ -1061,8 +1061,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	else
 		trigSeg = trigSide = -1;
 	// check number of links of trigger (only for
-	int tt = trigger->type;
-	int tf = trigger->flags;
+	INT32 tt = trigger->type;
+	INT32 tf = trigger->flags;
 	if (trigger->num_links == 0) {
 		if (m_mine->IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
@@ -1203,8 +1203,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 		}
 	else
 		trigSeg = trigSide = -1;
-	int tt = trigger->type;
-	int tf = trigger->flags;
+	INT32 tt = trigger->type;
+	INT32 tf = trigger->flags;
 	if (m_mine->IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
@@ -1261,7 +1261,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-void CDiagTool::CountMatCenRefs (int nSpecialType, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
 {
 	CDSegment*		segP = m_mine->Segments ();
 	INT16				n, h, i, j = m_mine->SegCount ();
@@ -1282,7 +1282,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::FixMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens, char* pszType)
+INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens, char* pszType)
 {
 	CDSegment*	segP = m_mine->Segments ();
 	INT16			h, i, j = m_mine->SegCount ();
@@ -1329,7 +1329,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::AssignMatCens (int nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
+INT16 CDiagTool::AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, matcen_info* matCenP, INT16 nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
@@ -1365,7 +1365,7 @@ if (!m_bAutoFixBugs)
 
 	CDSegment*	segP = m_mine->Segments ();
 	
-for (int i = 0; i < nMatCens; i) {
+for (INT32 i = 0; i < nMatCens; i) {
 	if (refList [i] < 0) 
 		i++;
 	else {
@@ -1411,7 +1411,7 @@ bool CDiagTool::CheckEquipGens (void)
 {
 	INT16					i, nSegment = 0;
 	bool					bOk = true;
-	int					nMatCenSegs, nMatCens = int (m_mine->GameInfo ().equipgen.count);
+	INT32					nMatCenSegs, nMatCens = INT32 (m_mine->GameInfo ().equipgen.count);
 	matcen_info*		matCenP = m_mine->EquipGens (0);
 	INT16					segList [MAX_NUM_MATCENS2];
 	INT16					refList [MAX_NUM_MATCENS2];
@@ -1457,7 +1457,7 @@ bool CDiagTool::CheckWalls ()
 	CDSegment *seg;
 	CDSide *side;
 	CDWall *wall = m_mine->Walls (), *w, *ow;
-	int segCount = m_mine->SegCount ();
+	INT32 segCount = m_mine->SegCount ();
 	UINT8 wallFixed [MAX_WALLS2];
 
 	INT16 sub_errors = m_nErrors [0];
@@ -1772,8 +1772,8 @@ bool CDiagTool::CheckVertices ()
 	if (!GetMine ())
 		return false;
 //  bool found;
-  int segnum,vertnum,point;
-  int nUnused = 0;
+  INT32 segnum,vertnum,point;
+  INT32 nUnused = 0;
 
   INT16 sub_errors = m_nErrors [0];
   INT16 sub_warnings = m_nErrors [1];

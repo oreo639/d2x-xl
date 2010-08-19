@@ -14,7 +14,7 @@
 #include "mineview.h"
 
 extern UINT8 side_vert[6][4];
-int enable_delta_shading = 0;
+INT32 enable_delta_shading = 0;
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -28,7 +28,7 @@ return (value >= 0) ? value + round / 2 : value - round / 2;
 // multiply_matrix()
 //------------------------------------------------------------------------
 void multiply_matrix(double C[3][3], double A[3][3], double B[3][3]) {
-  int i,j;
+  INT32 i,j;
 
   for (i=0;i<3;i++) {
     for (j=0;j<3;j++)	{
@@ -41,7 +41,7 @@ void multiply_matrix(double C[3][3], double A[3][3], double B[3][3]) {
 // scale_matrix()
 //------------------------------------------------------------------------
 void scale_matrix(double A[3][3], double scale) {
-  int i,j;
+  INT32 i,j;
   double B[3][3]; // temporary copy of A
   double C[3][3]; // scale matrix
 
@@ -109,7 +109,7 @@ void square2quad_matrix(double A[3][3],POINT a[4]) {
 #if 0
 
 void CalcCenter(CMine *mine, vms_vector &center,INT16 segnum,INT16 sidenum) {
-  int i;
+  INT32 i;
   vms_vector	*v;
   // calculate center of current side
   center.x = center.y = center.z = 0;
@@ -186,7 +186,7 @@ double CalcLength (vms_vector &center1,vms_vector &center2)
 //------------------------------------------------------------------------
 // TextureMap()
 //------------------------------------------------------------------------
-void TextureMap(int resolution,
+void TextureMap(INT32 resolution,
 				CDSegment *segment,
 				INT16 sidenum,
 				UINT8 *bmData,
@@ -200,8 +200,8 @@ void TextureMap(int resolution,
 				UINT16 rowOffset)
 {
 	
-	int h, i, j, k;
-	int x, y;
+	INT32 h, i, j, k;
+	INT32 x, y;
 	LONG yi,  yj;
 	POINT a[4];
 	POINT minpt, maxpt;
@@ -214,7 +214,7 @@ void TextureMap(int resolution,
 	
 	
 	// TEMPORARY
-	int inc_resolution = 1<<resolution;
+	INT32 inc_resolution = 1<<resolution;
 	INT16 segnum = INT16 (segment - mine->Segments ());
 	INT16 flick_light = mine->GetFlickeringLight (segnum, sidenum);
 	INT16 dscan_light,scan_light;
@@ -277,7 +277,7 @@ for (i=0;i<4;i++) {
 	// first make sure we have allocated space for delta lights
 if (enable_delta_shading) {
 	dl_index *dl_indices;
-	int dlIdxCount = mine->GameInfo ().dl_indices.count;
+	INT32 dlIdxCount = mine->GameInfo ().dl_indices.count;
 	delta_light  *delta_lights;
 	if (!light_status [segnum][sidenum].bIsOn &&
 		 (dl_indices = mine->DLIndex ()) &&
@@ -315,7 +315,7 @@ square2quad_matrix(UV,b);
 scale_matrix(UV,1.0/2048.0);
 multiply_matrix(B,IA,UV);
 for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
-	int x0,x1;
+	INT32 x0,x1;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
@@ -329,19 +329,19 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
 			w = yi - yj;
 			if (w != 0) { // avoid divide by zero
-				x = (int)((
+				x = (INT32)((
 					(double)a[i].x * ((double)y - (double)yj) -
 					(double)a[j].x * ((double)y - (double)yi)
 					) / w);
 				if (x<x0) {
-					scan_light = (int)((
+					scan_light = (INT32)((
 						(double)light[i] * ((double)y - (double)yj) -
 						(double)light[j] * ((double)y - (double)yi)
 						) / w);
 					x0 = x;
 				}
 				if (x>x1) {
-					dscan_light = (int)((
+					dscan_light = (INT32)((
 						(double)light[i] * ((double)y - (double)yj) -
 						(double)light[j] * ((double)y - (double)yi)
 						) / w);
@@ -365,7 +365,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 		dscan_light <<= resolution;
 		
 		// loop for every 32 bytes
-		int end_x = x1;
+		INT32 end_x = x1;
 		for (;x0 < end_x ;x0 += bmWidth2) {
 			if (end_x - x0 > bmWidth2)
 				x1 = bmWidth2 + x0;
@@ -411,7 +411,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 					x0 &= ~1; // round down if low res
 				ptr = pScrnMem + (UINT32)(height-y-1) * (UINT32)rowOffset + x0;
 				
-				int k = (x1-x0)>>resolution;
+				INT32 k = (x1-x0)>>resolution;
 				if (y<(height-1) && k>0)  {
 					UINT8 *pixelP;
 					pixelP = ptr;

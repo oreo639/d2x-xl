@@ -22,43 +22,43 @@ class CTextureView : public CWnd {
 // structs
 		DECLARE_DYNCREATE(CTextureView)
 
-		int			*m_pTextures;
-		int			m_nTextures [2];
+		INT32			*m_pTextures;
+		INT32			m_nTextures [2];
 		CPen			*m_penCyan;
 		CSize			m_iconSize;
 		CSize			m_iconSpace;
 		CSize			m_viewSpace;
-		int			m_nRows [2];
+		INT32			m_nRows [2];
 		UINT32		m_viewFlags;
 		BOOL			m_bShowAll;
 		bool			m_bDelayRefresh;
-		short			m_mapTxtToView [MAX_D2_TEXTURES];
-		short			m_mapViewToTxt [MAX_D2_TEXTURES];
+		INT16			m_mapTxtToView [MAX_D2_TEXTURES];
+		INT16			m_mapViewToTxt [MAX_D2_TEXTURES];
 		UINT32		m_nTxtFilter;
 
 		CTextureView ();
 		~CTextureView ();
 		void Reset ();
-		void QSortTxtMap (short left, short right);
+		void QSortTxtMap (INT16 left, INT16 right);
 		void CrtTxtMap (void);
-		UINT32 TextureFilter (short nTxt);
-		short TexFilterIndex (short nTxt);
-		int QCmpTxtFilters (int nTxt, int mTxt, UINT32 mf, UINT32 mf2);
+		UINT32 TextureFilter (INT16 nTxt);
+		INT16 TexFilterIndex (INT16 nTxt);
+		INT32 QCmpTxtFilters (INT32 nTxt, INT32 mTxt, UINT32 mf, UINT32 mf2);
 //		CTreeView	m_treeView;
-//		afx_msg int CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
+//		afx_msg INT32 CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);
 		afx_msg void OnPaint ();
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
+		afx_msg BOOL OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt);
 		void Setup ();
 		void RecalcLayout ();
 		void FilterTextures(UINT8 *show_texture,BOOL show_all_textures);
-		int TextureIndex(INT16 nBaseTex);
-		int PickTexture(CPoint &point,INT16 &nBaseTex);
-//		int ReadTextureFromFile(INT16 texture_number,UINT8 *bitmap_array);
-//		int ReadPog(FILE *file);
+		INT32 TextureIndex(INT16 nBaseTex);
+		INT32 PickTexture(CPoint &point,INT16 &nBaseTex);
+//		INT32 ReadTextureFromFile(INT16 texture_number,UINT8 *bitmap_array);
+//		INT32 ReadPog(FILE *file);
 		void Refresh (bool bRepaint = true);
 		void ToggleViewFlag(eMineViewFlags flag) {
 			m_viewFlags ^= flag;

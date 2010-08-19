@@ -6,7 +6,7 @@
 #include "types.h"
 #include "segment.h"
 
-extern int changes_made;
+extern INT32 m_changesMade;
 extern bool bExpertMode;
 extern bool bExtBlkFmt;
 
@@ -18,12 +18,12 @@ extern HINSTANCE hInst;
 extern HGLOBAL hdelta_lights;
 extern HGLOBAL hdl_indices;
 extern HGLOBAL ScrnMem;
-extern int left,right,top,bottom;
+extern INT32 left,right,top,bottom;
 extern LPLOGPALETTE MyLogPalette;
 extern INT16 d2_blastable_lights [];
 extern INT16 d2_switches [];
 
-extern int enable_delta_shading;
+extern INT32 enable_delta_shading;
 
 extern char FileName[256];
 extern char FilePath[256];
@@ -31,8 +31,6 @@ extern char SubFile[20];
 
 // robot related globals
 extern INT32 preferences;
-extern INT32 m_levelVersion;
-extern INT16  N_flickering_lights;
 //extern FLICKERING_LIGHT *flickering_lights;
 extern LIGHT_TIMER light_timers [MAX_FLICKERING_LIGHTS];
 extern LIGHT_STATUS light_status [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
@@ -49,33 +47,33 @@ extern UINT32       *Dead_modelnums;
 extern BITMAP_INDEX *ObjBitmaps;
 extern BITMAP_INDEX *ObjBitmapPtrs;
 #endif
-extern int skip_about;
-extern int disable_drawing;
+extern INT32 skip_about;
+extern INT32 m_disableDrawing;
 extern char skip[16];
-extern int left;
-extern int top;
-extern int right;
-extern int bottom;
-extern int x_center;
-extern int y_center;
-extern int x_max;
-extern int y_max;
+extern INT32 left;
+extern INT32 top;
+extern INT32 right;
+extern INT32 bottom;
+extern INT32 x_center;
+extern INT32 y_center;
+extern INT32 x_max;
+extern INT32 y_max;
 extern double aspect_ratio;
-extern int refresh_needed;
-extern int splash;
+extern INT32 refresh_needed;
+extern INT32 splash;
 
 
 
-extern int level_modified;
+extern INT32 level_modified;
 //extern UINT8 texture_modified[1+MAX_D2_TEXTURES/8];
-extern int disable_saves;
+extern INT32 disable_saves;
 extern UINT8 clip_num[D2_NUM_OF_CLIPS];
 extern UINT16 wall_flags[9];
-extern int texture_resource;
+extern INT32 texture_resource;
 extern long ScrnMemMax;
-extern int ScrnWidth;
-extern int ScrnHeight;
-extern int m_fileType;
+extern INT32 ScrnWidth;
+extern INT32 ScrnHeight;
+extern INT32 m_fileType;
 extern dl_index *dl_indices;
 extern delta_light *delta_lights;
 extern INT16 num_static_lights;
@@ -104,7 +102,7 @@ extern char dlc_version[10];
 extern char testers_name[20];
 extern INT16 serial_number;
 extern char message[256];
-extern char starting_directory[256];
+extern char m_startFolder [256];
 extern FIX grid;
 extern char descent_path[256];
 extern char descent2_path[256];
@@ -165,7 +163,7 @@ extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
 //extern object far *objects[MAX_OBJECTS];
 //extern UINT8 *vert_status;
 
-//extern char current_level_name[256];
+//extern char m_currentLevelName[256];
 
 //extern wall *walls; // MAX_WALLS
 //extern active_door active_doors[MAX_DOORS];
@@ -184,8 +182,8 @@ extern void cleanup(INT16 error);
 
 extern INT16 map_mask[4];
 
-extern int renderXOffs;
-extern int renderYOffs;
+extern INT32 renderXOffs;
+extern INT32 renderYOffs;
 
 extern UINT8 *pCustomPalette;
 
@@ -230,7 +228,7 @@ extern UINT8 *pCustomPalette;
 #define	TXT_SIGNS		(TXT_SIGN | TXT_LABEL | TXT_MONITOR | TXT_STRIPES)
 
 typedef struct tTxtRange {
-	short	nMin, nMax;
+	INT16	nMin, nMax;
 } tTxtRange;
 
 typedef struct tTxtFilter {

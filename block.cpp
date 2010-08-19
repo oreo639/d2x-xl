@@ -52,7 +52,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	double			length;
 	INT16				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	INT16				xlatSegNum [MAX_SEGMENTS3];
-	int				byteBuf;
+	INT32				byteBuf;
 
 // remember number of vertices for later
 origVertCount = VertCount ();
@@ -152,7 +152,7 @@ while(!feof(fBlk)) {
 
 	// read in side information 
 	side = seg->sides;
-	int sidenum;
+	INT32 sidenum;
 	for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++, side++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
 		if (test != sidenum) {
@@ -199,7 +199,7 @@ while(!feof(fBlk)) {
 					fscanf_s (fBlk, "			    value %ld\n", &t.value);
 					fscanf_s (fBlk, "			    timer %d\n", &t.time);
 					fscanf_s (fBlk, "			    num_links %hd\n", &t.num_links);
-					int iTarget;
+					INT32 iTarget;
 					for (iTarget = 0; iTarget < t.num_links; iTarget++) {
 						fscanf_s (fBlk, "			        seg %hd\n", t.seg + iTarget);
 						fscanf_s (fBlk, "			        side %hd\n", t.side + iTarget);
@@ -531,8 +531,8 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
 						CDTrigger *trigger = Triggers (wall->trigger);
-						int iTarget;
-						int nTargets = 0;
+						INT32 iTarget;
+						INT32 nTargets = 0;
 						INT16 *tgtSegs = trigger->seg;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigger->num_links; iTarget++, tgtSegs++)
@@ -813,7 +813,7 @@ if (!ReadBlock (szFile, 0))
 // if option == 1, then "x blocks pasted" message is suppressed
 //==========================================================================
 
-int CMine::ReadBlock (char *pszBlockFile,int option) 
+INT32 CMine::ReadBlock (char *pszBlockFile,INT32 option) 
 {
 	CDSegment *seg,*seg2;
 	INT16 segnum,seg_offset;
@@ -878,7 +878,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 					ResetSide (segnum,child);
 					// auto link the new segment with any touching Segments ()
 					seg2 = Segments ();
-					int segnum2, sidenum2;
+					INT32 segnum2, sidenum2;
 					for (segnum2 = 0; segnum2 < SegCount (); segnum2++, seg2++) {
 						if (segnum != segnum2) {
 							// first check to see if Segments () are any where near each other

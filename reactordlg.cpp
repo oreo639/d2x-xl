@@ -86,7 +86,7 @@ return CToolDlg::OnSetActive ();
 void CReactorTool::EnableControls (BOOL bEnable)
 {
 CToolDlg::EnableControls (IDC_REACTOR_COUNTDOWN, IDC_REACTOR_SECRETRETURN, bEnable);
-//int i;
+//INT32 i;
 //for (i = IDC_TRIGGER_TRIGGER_NO; i <= IDC_TRIGGER_PASTE; i++)
 //	GetDlgItem (i)->EnableWindow (bEnable);
 }
@@ -102,7 +102,7 @@ m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
 	m_nTargets = m_pTrigger->num_links;
-	int i;
+	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
 		plb->AddString (m_szTarget);
@@ -205,7 +205,7 @@ void CReactorTool::OnAddTarget ()
 {
 if (!GetMine ())
 	return;
-int segnum, sidenum;
+INT32 segnum, sidenum;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d,%d", &segnum, &sidenum);
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()) || (sidenum < 1) || (sidenum > 6))
@@ -220,7 +220,7 @@ void CReactorTool::OnAddWallTarget ()
 if (!GetMine ())
 	return;
 CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
-int i = FindTarget (other->segment, other->side);
+INT32 i = FindTarget (other->segment, other->side);
 if (i >= 0)
 	return;
 LBTargets ()->SetCurSel (i);
@@ -253,9 +253,9 @@ Refresh ();
 
                         /*--------------------------*/
 
-int CReactorTool::FindTarget (INT16 segnum, INT16 sidenum)
+INT32 CReactorTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
-int i;
+INT32 i;
 for (i = 0; i < m_pTrigger->num_links; i++)
 	if ((segnum = m_pTrigger->seg [i]) && (sidenum = m_pTrigger->seg [i]))
 		return i;
@@ -269,7 +269,7 @@ void CReactorTool::OnDeleteWallTarget ()
 if (!GetMine ())
 	return;
 CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
-int i = FindTarget (other->segment, other->side);
+INT32 i = FindTarget (other->segment, other->side);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
 	return;

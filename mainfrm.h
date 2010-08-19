@@ -15,7 +15,7 @@
 #include "textureview.h"
 #include "toolview.h"
 
-extern int nLayout;
+extern INT32 nLayout;
 
 #if EDITBAR == 0
 
@@ -65,19 +65,19 @@ class CEditTool : public CDialog {
 class CDlcSplitterWnd : public CSplitterWnd 
 {
 	public:
-		int	m_texPaneHeight;
+		INT32	m_texPaneHeight;
 		CDlcSplitterWnd () : CSplitterWnd ()
 			{ m_texPaneHeight = -1; }
-		virtual void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
+		virtual void RecalcLayout (INT32 nToolMode = 0, INT32 nTextureMode = 0);
 };
 
 
 class CExtToolBar : public CToolBar
 {
 	public:
-		int		m_nId;
+		INT32		m_nId;
 		UINT		m_nState;
-		int		m_nPos;
+		INT32		m_nPos;
 		UINT_PTR	m_nTimer;
 		UINT		m_nTimerDelay;
 
@@ -87,7 +87,7 @@ class CExtToolBar : public CToolBar
 		afx_msg void OnMouseMove (UINT nFlags, CPoint point);
 		afx_msg void OnTimer (UINT_PTR nIdEvent);
 		void Notify (UINT nMsg);
-		int Width ();
+		INT32 Width ();
 
 		DECLARE_MESSAGE_MAP ()
 };
@@ -132,19 +132,19 @@ public:  // control bar embedded members
 #else
 	CEditTool			*m_pEditTool;
 #endif
-	int					m_bEditorTB;
+	INT32					m_bEditorTB;
 	CSplitterWnd		m_splitter1;
 	CDlcSplitterWnd	m_splitter2;
 	CMineView			*m_mineView;
 	CTextureView		*m_textureView;
 	CToolView			*m_toolView;
-	int					m_paneMode;
-	int					m_toolMode;
-	int					m_textureMode;
-	int					m_mineZoom;
-	int					m_bShowCtrlBar;
-	int					m_bRecalcBarLayout;
-	int					m_texPaneWidth;
+	INT32					m_paneMode;
+	INT32					m_toolMode;
+	INT32					m_textureMode;
+	INT32					m_mineZoom;
+	INT32					m_bShowCtrlBar;
+	INT32					m_bRecalcBarLayout;
+	INT32					m_texPaneWidth;
 	CProgressCtrl		m_progress;
 
 public:
@@ -165,7 +165,7 @@ public:
 		{ return m_splitter2.GetPane (0,0); }
 	inline CWnd *ToolPane ()
 		{ return nLayout ? m_splitter1.GetPane (0,0) : m_splitter2.GetPane (1,0); }
-	virtual void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
+	virtual void RecalcLayout (INT32 nToolMode = 0, INT32 nTextureMode = 0);
 	inline void StatusMsg (const char *pszMsg)
 		{ m_statusBar.SetPaneText (1, pszMsg); }
 	inline void InfoMsg (const char *pszMsg)
@@ -176,7 +176,7 @@ public:
 		{ m_statusBar.SetPaneText (4, pszMsg); }
 	CProgressCtrl& Progress ()
 		{ return m_progress; }
-	bool InitProgress (int nMax);
+	bool InitProgress (INT32 nMax);
 	void DebugMsg (const char *);
 	void FixToolBars ();
 	void ShowTools (void);
@@ -186,8 +186,8 @@ public:
 	void UpdateSelectButtons (eSelectModes mode);
 	void SetInsertMode (INT16 mode);
 	void UpdateInsModeButtons (INT16 mode);
-	int CreateToolBars (bool bToolBar = true, bool bEditBar = true);
-	int CreateStatusBar ();
+	INT32 CreateToolBars (bool bToolBar = true, bool bEditBar = true);
+	INT32 CreateStatusBar ();
 	void DockToolBars (bool bToolBar, bool bEditBar);
 
 
@@ -204,9 +204,9 @@ public:
 // Generated message map functions
 public:
 	//{{AFX_MSG(CMainFrame)
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT32 OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose ();
-	afx_msg void OnSize (UINT nType, int cx, int cy);
+	afx_msg void OnSize (UINT nType, INT32 cx, INT32 cy);
 	afx_msg BOOL OnCreateClient (LPCREATESTRUCT lpcs, CCreateContext * pContext);
 	afx_msg void OnExtBlkFmt ();
 	afx_msg void OnUpdateExtBlkFmt ();

@@ -32,7 +32,7 @@ CMine::CMine()
 {
 	VertCount () = 0;
 	SegCount () = 0;
-	dlcLogPalette = 0;
+	m_dlcLogPalette = 0;
 	thePalette = NULL;
 	FlickerLightCount () = 0;
 	Current () = &Current1 ();
@@ -109,8 +109,8 @@ void CMine::Reset ()
 	movex = - (max_x + min_x)/2.f;
 	movey = - (max_y + min_y)/2.f;
 	movez = - (max_z + min_z)/2.f;
-	int factor;
-	int max_all;
+	INT32 factor;
+	INT32 max_all;
 	max_all = max(max(max_x - min_x, max_y - min_y), max_z - min_z)/20;
 	if (max_all < 2)      factor = 14;
 	else if (max_all < 4) factor = 10;
@@ -140,7 +140,7 @@ void CMine::ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew)
 {
 CDSegment *segP = Segments ();
 CDSide *sideP;
-int i, j;
+INT32 i, j;
 
 for (i = SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->sides; j < 6; j++, sideP++)
@@ -173,13 +173,13 @@ if (filename_passed && *filename_passed)
 	strcpy_s (filename, sizeof (filename), filename_passed);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
-	FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+	FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
+	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 	bLoadFromHog = false;
 	bNewMine = true;
 	}
 
-disable_drawing = TRUE;
+m_disableDrawing = TRUE;
 if (!bLoadFromHog)
 	FreeTextureHandles ();
 
@@ -197,19 +197,19 @@ if (check_err != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", check_err);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
-			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
+			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 			bLoadFromHog = false;
 			bNewMine = true;
 			}
-		disable_drawing = TRUE;
+		m_disableDrawing = TRUE;
 		FreeTextureHandles ();
 		LoadMine(filename, bLoadFromHog, bNewMine);
-		disable_drawing = FALSE;
+		m_disableDrawing = FALSE;
 		return 1;
 		}
 	}
-disable_drawing = FALSE;
+m_disableDrawing = FALSE;
 return 0;
 }
 
@@ -226,25 +226,25 @@ ASSERT(palette);
 if (!palette)
 	return 1;
 // redefine logical palette entries if memory for it is allocated
-dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
-if (!dlcLogPalette) {
+m_dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
+if (!m_dlcLogPalette) {
 	FreePaletteResource ();
 	return 1;
 	}
-dlcLogPalette->palVersion = 0x300;
-dlcLogPalette->palNumEntries = 256;
-int i;
+m_dlcLogPalette->palVersion = 0x300;
+m_dlcLogPalette->palNumEntries = 256;
+INT32 i;
 for (i = 0; i < 256; ++i) {
-	dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
-	dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
-	dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
-	dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
+	m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
+	m_dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
+	m_dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
+	m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
 }
 // now recreate the global Palette
 if (thePalette)
 	delete thePalette;
 thePalette = new CPalette ();
-thePalette->CreatePalette (dlcLogPalette);
+thePalette->CreatePalette (m_dlcLogPalette);
 FreePaletteResource ();
 return 0;
 }
@@ -292,12 +292,12 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	INT32 minedata_offset = 0;
 	INT32 gamedata_offset = 0;
 	INT32 mine_err, game_err = 0;
-	int	return_code = 0;
+	INT32	return_code = 0;
 	char	palette_name [256];
 	char*	ps;
 	INT16 nLights = 0;
 
-changes_made = 0;
+m_changesMade = 0;
 fopen_s (&loadFile, filename, "rb");
 
 if (!loadFile) {
@@ -329,7 +329,7 @@ if (IsD2File ()) {
 // read palette name *.256
 	if (IsD2File ()) {
 		// read palette file name
-		int i;
+		INT32 i;
 		for (i = 0; i < 15; i++) {
 			palette_name [i] = fgetc(loadFile);
 			if (palette_name [i]== 0x0a) {
@@ -372,33 +372,33 @@ if (!palette)
 	goto load_end;
 
 // redefine logical palette entries if memory for it is allocated
-dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
-if (dlcLogPalette) {
-	dlcLogPalette->palVersion = 0x300;
-	dlcLogPalette->palNumEntries = 256;
-	int i;
+m_dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
+if (m_dlcLogPalette) {
+	m_dlcLogPalette->palVersion = 0x300;
+	m_dlcLogPalette->palNumEntries = 256;
+	INT32 i;
 #if 0
 	for (i = 0; i < 256; ++i) {
-		dlcLogPalette->palPalEntry [i].peRed = *palette++;
-		dlcLogPalette->palPalEntry [i].peGreen = *palette++;
-		dlcLogPalette->palPalEntry [i].peBlue = *palette++;
-		dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED; palette++;
+		m_dlcLogPalette->palPalEntry [i].peRed = *palette++;
+		m_dlcLogPalette->palPalEntry [i].peGreen = *palette++;
+		m_dlcLogPalette->palPalEntry [i].peBlue = *palette++;
+		m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED; palette++;
 		}
 #else
 	for (i = 0; i < 256;++i) {
-		dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
-		dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
-		dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
-		dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
+		m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
+		m_dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
+		m_dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
+		m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
 		}
 #endif
 	// now recreate the global Palette
 	if (thePalette) {
 		delete thePalette;
 		thePalette = new CPalette ();
-		thePalette->CreatePalette (dlcLogPalette);
-//			::DeleteObject(ThePalette);
-//			ThePalette = CreatePalette(dlcLogPalette);
+		thePalette->CreatePalette (m_dlcLogPalette);
+//			::DeleteObject(m_currentPalette);
+//			m_currentPalette = CreatePalette(m_dlcLogPalette);
 		}
 	}
 FreeResource(hGlobal);
@@ -439,7 +439,7 @@ if (IsD2File ()) {
 	read_matrix(&SecretOrient (), loadFile);
 	}
 
-disable_drawing = TRUE;
+m_disableDrawing = TRUE;
 
 fseek(loadFile, minedata_offset, SEEK_SET);
 mine_err = LoadMineDataCompiled(loadFile, bNewMine);
@@ -582,17 +582,17 @@ UINT32 nSize = 0;
 UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
-int i = nSize / (3 * sizeof (int) + sizeof (UINT8));
+INT32 i = nSize / (3 * sizeof (INT32) + sizeof (UINT8));
 if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
 	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
 for (CDColor *pc = MineData ().texColors; i; i--, pc++) {
 	pc->index = *dataP++;
-	pc->color.r = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	pc->color.g = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	pc->color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
+	pc->color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
+	dataP += sizeof (INT32);
+	pc->color.g = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
+	dataP += sizeof (INT32);
+	pc->color.b = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
+	dataP += sizeof (INT32);
 	}
 FreeResource (hGlobal);
 dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
@@ -618,8 +618,8 @@ if (!data)
 	return 0;
 // copy data to a file
 
-FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, starting_directory, NULL, NULL);
-sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", starting_directory);
+FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
+sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 memcpy (RobotInfo (), DefRobotInfo (), sizeof (ROBOT_INFO) * N_robot_types);
 texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
 FILE *file;
@@ -898,7 +898,7 @@ void CMine::ClearMineData() {
 
 void CMine::ReadColor (CDColor *pc, FILE *loadFile)
 {
-	int	c;
+	INT32	c;
 
 fread (&pc->index, sizeof (pc->index), 1, loadFile);
 fread (&c, sizeof (c), 1, loadFile);
@@ -911,7 +911,7 @@ pc->color.b = (double) c / (double) 0x7fffffff;
 
 // ------------------------------------------------------------------------
 
-void CMine::LoadColors (CDColor *pc, int nColors, int nFirstVersion, int nNewVersion, FILE *fp)
+void CMine::LoadColors (CDColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp)
 {
 if (LevelVersion () > nFirstVersion)
 	if (LevelVersion () < nNewVersion)
@@ -1193,10 +1193,10 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		return -1;
 	}
 	if (GameInfo ().fileinfo_version < 14) 
-		current_level_name [0] = 0;
+		m_currentLevelName [0] = 0;
 	else {  /*load mine filename */
 		char *p;
-		for (p = current_level_name; ; p++) {
+		for (p = m_currentLevelName; ; p++) {
 			*p = fgetc(loadfile);
 			if (*p== '\n') *p = 0;
 			if (*p== 0) break;
@@ -1298,10 +1298,10 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
 			for (i = 0; i < GameInfo ().triggers.count; i++)
 				ReadTrigger (Triggers (i), loadfile, false);
-		int bObjTriggersOk = 1;
+		INT32 bObjTriggersOk = 1;
 		if (GameInfo ().fileinfo_version >= 33) {
-			int i = ftell (loadfile);
-			if (fread (&NumObjTriggers (), sizeof (int), 1, loadfile) != 1) {
+			INT32 i = ftell (loadfile);
+			if (fread (&NumObjTriggers (), sizeof (INT32), 1, loadfile) != 1) {
 				ErrorMsg ("Error reading object triggers from mine.");
 				bObjTriggersOk = 0;
 				}
@@ -1319,9 +1319,9 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 						ObjTriggers (i)->nObject = read_INT16 (loadfile);
 						}
 					if (GameInfo ().fileinfo_version < 36)
-						fseek (loadfile, 700 * sizeof (short), SEEK_CUR);
+						fseek (loadfile, 700 * sizeof (INT16), SEEK_CUR);
 					else
-						fseek (loadfile, 2 * sizeof (short) * read_INT16 (loadfile), SEEK_CUR);
+						fseek (loadfile, 2 * sizeof (INT16) * read_INT16 (loadfile), SEEK_CUR);
 					}
 				}
 			}
@@ -1461,7 +1461,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 
 // ------------------------------------------------------------------------
 
-int CMine::ReadWall (CDWall* wallP, FILE* fp, INT32 version)
+INT32 CMine::ReadWall (CDWall* wallP, FILE* fp, INT32 version)
 {
 wallP->segnum = read_INT32 (fp);
 wallP->sidenum = read_INT32 (fp); 
@@ -1484,7 +1484,7 @@ return 1;
 
 void CMine::ReadObject(CDObject *obj, FILE *f, INT32 version) 
 {
-	int i;
+	INT32 i;
 
 	obj->type = read_INT8(f);
 	obj->id = read_INT8(f);
@@ -1704,7 +1704,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 		return(1);
 	}
 
-	changes_made = 0;
+	m_changesMade = 0;
 
 	// write file signature
 	write_INT32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', save_file); // signature
@@ -1847,25 +1847,25 @@ if (HasCustomRobots () && !bSaveToHog) {
 
 void CMine::SaveColor (CDColor *pc, FILE *save_file)
 {
-	int	c;
+	INT32	c;
 
 fwrite (&pc->index, sizeof (pc->index), 1, save_file);
-c = (int) (pc->color.r * 0x7fffffff + 0.5);
+c = (INT32) (pc->color.r * 0x7fffffff + 0.5);
 fwrite (&c, sizeof (c), 1, save_file);
-c = (int) (pc->color.g * 0x7fffffff + 0.5);
+c = (INT32) (pc->color.g * 0x7fffffff + 0.5);
 fwrite (&c, sizeof (c), 1, save_file);
-c = (int) (pc->color.b * 0x7fffffff + 0.5);
+c = (INT32) (pc->color.b * 0x7fffffff + 0.5);
 fwrite (&c, sizeof (c), 1, save_file);
 }
 
 // ------------------------------------------------------------------------
 
-void CMine::SortDLIndex (int left, int right)
+void CMine::SortDLIndex (INT32 left, INT32 right)
 {
-	int	l = left,
+	INT32	l = left,
 			r = right,
 			m = (left + right) / 2;
-	short	mSeg = DLIndex (m)->d2x.segnum, 
+	INT16	mSeg = DLIndex (m)->d2x.segnum, 
 			mSide = DLIndex (m)->d2x.sidenum;
 	dl_index	*pl, *pr;
 
@@ -1898,7 +1898,7 @@ if (r > left)
 
 // ------------------------------------------------------------------------
 
-void CMine::SaveColors (CDColor *pc, int nColors, FILE *fp)
+void CMine::SaveColors (CDColor *pc, INT32 nColors, FILE *fp)
 {
 for (; nColors; nColors--, pc++)
 	SaveColor (pc, fp);
@@ -1906,7 +1906,7 @@ for (; nColors; nColors--, pc++)
 
 //--------------------------------------------------------------------------
 
-int CMine::WriteColorMap (FILE *fColorMap)
+INT32 CMine::WriteColorMap (FILE *fColorMap)
 {
 SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
 return 0;
@@ -1914,7 +1914,7 @@ return 0;
 
 //--------------------------------------------------------------------------
 
-int CMine::ReadColorMap (FILE *fColorMap)
+INT32 CMine::ReadColorMap (FILE *fColorMap)
 {
 LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
 return 0;
@@ -2089,7 +2089,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 
 void CMine::WriteTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
 {
-	int	i;
+	INT32	i;
 	char	pad = 0;
 
 if (IsD2File ()) {
@@ -2121,7 +2121,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 void CMine::ReadTrigger (CDTrigger *t, FILE *fp, bool bObjTrigger)
 {
-	int	i;
+	INT32	i;
 
 if (IsD2File ()) {
 	t->type = read_INT8(fp);
@@ -2227,7 +2227,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 
 	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo_size, 1, savefile);
 	if (GameInfo ().fileinfo_version >= 14) {  /*save mine filename */
-		fwrite(current_level_name, sizeof (char), strlen (current_level_name), savefile);
+		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName), savefile);
 	}
 	if (IsD2File ()) {
 		fwrite("\n", 1, 1, savefile); // write an end - of - line
@@ -2296,7 +2296,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	for (i = 0; i < GameInfo ().triggers.count; i++)
 		WriteTrigger (Triggers (i), savefile, false);
 	if (LevelVersion () >= 12) {
-		fwrite (&NumObjTriggers (), sizeof (int), 1, savefile);
+		fwrite (&NumObjTriggers (), sizeof (INT32), 1, savefile);
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
@@ -2400,7 +2400,7 @@ void CMine::WriteObject(CDObject *obj, FILE *f, INT32 version)
 if ((IsStdLevel ()) && (obj->type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
-	int i;
+	INT32 i;
 	write_INT8(obj->type, f);
 	write_INT8(obj->id, f);
 	write_INT8(obj->control_type, f);
@@ -2591,9 +2591,9 @@ void CMine::UpdateDeltaLights ()
 return;
 	bool found = FALSE;
 	CDSegment *seg = Segments ();
-	int segnum;
+	INT32 segnum;
 	for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
-		int sidenum;
+		INT32 sidenum;
 		for (sidenum = 0; sidenum < 6; sidenum++) {
 			INT16 tmapnum2 = seg->sides [sidenum].nOvlTex & 0x1fff;
 			if (IsLight(tmapnum2) != -1) {
@@ -2662,7 +2662,7 @@ void CMine::CalcOrthoVector(vms_vector &result, INT16 segnum, INT16 sidenum)
 // --------------------------------------------------------------------------
 void CMine::CalcCenter(vms_vector &center, INT16 segnum, INT16 sidenum)
 {
-	int i;
+	INT32 i;
 
 	center.x = center.y = center.z = 0;
 	vms_vector *v;

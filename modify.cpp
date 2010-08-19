@@ -25,11 +25,11 @@ bool CMine::EditGeoFwd (void)
   double x,y,z;
   double radius;
   vms_vector center,opp_center;
-  int i;
+  INT32 i;
 /* calculate center of current side */
  center.x = center.y = center.z = 0;
  for (i = 0; i < 4; i++) {
-	 int vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
+	 INT32 vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
    center.x += Vertices (vertnum)->x;
    center.y += Vertices (vertnum)->y;
    center.z += Vertices (vertnum)->z;
@@ -41,7 +41,7 @@ center.z /= 4;
 // calculate center of opposite of current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
-	int vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
+	INT32 vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
    opp_center.x += Vertices (vertnum)->x;
    opp_center.y += Vertices (vertnum)->y;
    opp_center.z += Vertices (vertnum)->z;
@@ -88,12 +88,12 @@ bool CMine::EditGeoBack (void)
 {
   vms_vector center,opp_center;
   double x,y,z,radius;
-  int i;
+  INT32 i;
 
 /* calculate center of current side */
 center.x = center.y = center.z = 0;
 for (i = 0; i < 4; i++) {
-	int vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
+	INT32 vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
 	center.x += Vertices (vertnum)->x;
 	center.y += Vertices (vertnum)->y;
 	center.z += Vertices (vertnum)->z;
@@ -105,7 +105,7 @@ center.z /= 4;
 // calculate center of oppisite current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
-	int vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
+	INT32 vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
 	opp_center.x += Vertices (vertnum)->x;
 	opp_center.y += Vertices (vertnum)->y;
 	opp_center.z += Vertices (vertnum)->z;
@@ -283,11 +283,11 @@ return SizeItem (-move_rate);
 
 bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
-int nSegment = Current ()->segment;
-int nSide = Current ()->side;
+INT32 nSegment = Current ()->segment;
+INT32 nSide = Current ()->side;
 CDSegment *seg = Segments (nSegment);
 vms_vector center,opp_center;
-int i,pts [4];
+INT32 i,pts [4];
 
 switch (m_selectMode){
 	case POINT_MODE:
@@ -360,10 +360,10 @@ return true;
 
 bool CMine::SizeItem (INT32 inc) 
 {
-	int nSegment = Current ()->segment;
-	int nSide = Current ()->side;
+	INT32 nSegment = Current ()->segment;
+	INT32 nSide = Current ()->side;
 	CDSegment *seg = Segments (nSegment);
-	int i, j, point [4];
+	INT32 i, j, point [4];
 	bool result = false;
 
 switch (m_selectMode) {
@@ -446,13 +446,13 @@ return false;
 // of the current line.
 //--------------------------------------------------------------------------
 
-bool CMine::MovePoints(int pt0, int pt1) 
+bool CMine::MovePoints(INT32 pt0, INT32 pt1) 
 {
 	vms_vector *vector0,*vector1,delta;
-	int point0,point1;
+	INT32 point0,point1;
 	double length;
-	int point;
-	int i;
+	INT32 point;
+	INT32 i;
 	vms_vector *vect;
 
 point0  = side_vert [Current ()->side][CURRENT_POINT(pt0)];
@@ -545,7 +545,7 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::SizeLine (CDSegment *seg,int point0,int point1,INT32 inc) 
+bool CMine::SizeLine (CDSegment *seg,INT32 point0,INT32 point1,INT32 inc) 
 {
 double x,y,z,radius;
 
@@ -598,10 +598,10 @@ return true;
 
 bool CMine::MoveOn (char axis,INT32 inc) 
 {
-int nSegment = Current ()->segment;
-int nSide = Current ()->side;
-int nPoint = Current ()->point;
-int nLine = Current ()->line;
+INT32 nSegment = Current ()->segment;
+INT32 nSide = Current ()->side;
+INT32 nPoint = Current ()->point;
+INT32 nLine = Current ()->line;
 CDSegment *seg = Segments (nSegment);
 INT16 i;
 
@@ -741,8 +741,8 @@ return true;
 
 bool CMine::SpinSelection (double angle) 
 {
-	int nSegment = Current ()->segment;
-	int nSide = Current ()->side;
+	INT32 nSegment = Current ()->segment;
+	INT32 nSide = Current ()->side;
 	CDSegment *seg = Segments (nSegment);
 	CDObject *obj;
 	vms_vector center,opp_center;

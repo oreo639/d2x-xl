@@ -96,17 +96,17 @@ void CMatrix::Set (
 // Rotate()
 //--------------------------------------------------------------------------
 
-void CMatrix::ClampAngle (int i)
+void CMatrix::ClampAngle (INT32 i)
 {
 if (_angles [i] < 0)
-	_angles [i] += (int) (-_angles [i] / 360) * 360;
+	_angles [i] += (INT32) (-_angles [i] / 360) * 360;
 else
-	_angles [i] -= (int) (_angles [i] / 360) * 360;
+	_angles [i] -= (INT32) (_angles [i] / 360) * 360;
 }
 
 //--------------------------------------------------------------------------
 
-void CMatrix::RotateAngle (int i, double a)
+void CMatrix::RotateAngle (INT32 i, double a)
 {
 _angles [i] += a;
 //ClampAngle (i);
@@ -393,7 +393,7 @@ void CMatrix::UnsetPoint(vms_vector *vert,APOINT *apoint)
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-int CMatrix::CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b) {
+INT32 CMatrix::CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b) {
   double ax,ay,az;
   double bx,by,bz;
   double x,y,z;

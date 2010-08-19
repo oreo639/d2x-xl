@@ -30,11 +30,11 @@ static char THIS_FILE [] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CToolView
 
-static int rotMasks [4] = {0x0000, 0xC000, 0x8000, 0x4000};
+static INT32 rotMasks [4] = {0x0000, 0xC000, 0x8000, 0x4000};
 
                         /*--------------------------*/
 
-int round_int (int value, int round) 
+INT32 round_int (INT32 value, INT32 round) 
 {
 if (value >= 0)
 	value += round/2;
@@ -57,11 +57,11 @@ theApp.MineView ()->Refresh (false);
 
 void CTextureTool::RefreshAlignWnd () 
 {
-	int			x, y, i, uv;
+	INT32			x, y, i, uv;
 	CDSegment	*seg,
 					*childSeg;
 	CDSide		*side;
-	int			nSide,
+	INT32			nSide,
 					nLine;
 	CPen			hPenAxis, 
 					hPenGrid;
@@ -72,7 +72,7 @@ void CTextureTool::RefreshAlignWnd ()
 	CPoint		offset;
 	CRgn			hRgn;
 // each side has 4 children (ordered by side's line number)
-	static int side_child[6][4] = {
+	static INT32 side_child[6][4] = {
 		{4,3,5,1},//{5,1,4,3},
 		{2,4,0,5},//{5,0,4,2},
 		{5,3,4,1},//{5,3,4,1},
@@ -85,8 +85,8 @@ void CTextureTool::RefreshAlignWnd ()
 if (!GetMine ())
 	return;
 // read scroll bar
-offset.x = (int)(m_zoom * (double) HScrollAlign ()->GetScrollPos ());
-offset.y = (int)(m_zoom * (double) VScrollAlign ()->GetScrollPos ());
+offset.x = (INT32)(m_zoom * (double) HScrollAlign ()->GetScrollPos ());
+offset.y = (INT32)(m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 UpdateData (TRUE);
 /*
 RefreshX();
@@ -141,17 +141,17 @@ pDC->SetBkMode (TRANSPARENT);
 y=16;
 for (x= -32 * y; x < 32 * y; x += 32) {
 	pDC->SelectObject((x==0) ? hPenAxis : hPenGrid);
-	pDC->MoveTo ((int) (offset.x+m_centerPt.x+m_zoom*x   ), (int) (offset.y+m_centerPt.y-m_zoom*32*y));
-	pDC->LineTo ((int) (offset.x+m_centerPt.x+m_zoom*x   ), (int) (offset.y+m_centerPt.y+m_zoom*32*y));
-	pDC->MoveTo ((int) (offset.x+m_centerPt.x-m_zoom*32*y), (int) (offset.y+m_centerPt.y+m_zoom*x   ));
-	pDC->LineTo ((int) (offset.x+m_centerPt.x+m_zoom*32*y), (int) (offset.y+m_centerPt.y+m_zoom*x   ));
+	pDC->MoveTo ((INT32) (offset.x+m_centerPt.x+m_zoom*x   ), (INT32) (offset.y+m_centerPt.y-m_zoom*32*y));
+	pDC->LineTo ((INT32) (offset.x+m_centerPt.x+m_zoom*x   ), (INT32) (offset.y+m_centerPt.y+m_zoom*32*y));
+	pDC->MoveTo ((INT32) (offset.x+m_centerPt.x-m_zoom*32*y), (INT32) (offset.y+m_centerPt.y+m_zoom*x   ));
+	pDC->LineTo ((INT32) (offset.x+m_centerPt.x+m_zoom*32*y), (INT32) (offset.y+m_centerPt.y+m_zoom*x   ));
 	}	
 
 if (m_mine->IsWall ()) {
 	// define array of screen points for (u,v) coordinates
 	for (i = 0; i < 4; i++) {
-		x = offset.x + m_centerPt.x + (int)(m_zoom*(double)side->uvls[i].u/64.0);
-		y = offset.y + m_centerPt.y + (int)(m_zoom*(double)side->uvls[i].v/64.0);
+		x = offset.x + m_centerPt.x + (INT32)(m_zoom*(double)side->uvls[i].u/64.0);
+		y = offset.y + m_centerPt.y + (INT32)(m_zoom*(double)side->uvls[i].v/64.0);
 		m_apts [i].x = x;
 		m_apts [i].y = y;
 		if (i==0) {
@@ -171,11 +171,11 @@ if (m_mine->IsWall ()) {
 	m_maxPt.y = min(m_maxPt.y, maxRect.y);
 
 	if (m_bShowChildren) {
-		int sidenum,childnum,linenum;
-		int point0,point1,vert0,vert1;
-		int childs_side,childs_line;
-		int childs_point0,childs_point1,childs_vert0,childs_vert1;
-		int x0,y0;
+		INT32 sidenum,childnum,linenum;
+		INT32 point0,point1,vert0,vert1;
+		INT32 childs_side,childs_line;
+		INT32 childs_point0,childs_point1,childs_vert0,childs_vert1;
+		INT32 x0,y0;
 		POINT child_pts[4];
 
 		// draw all sides (u,v)
@@ -214,8 +214,8 @@ if (m_mine->IsWall ()) {
 								// ..of the texture size in order to make it line up on the screen
 								// start by copying points into an array
 								for (i = 0; i < 4; i++) {
-									x = offset.x + m_centerPt.x + (int)(m_zoom*(double)childSide->uvls[i].u/64.0);
-									y = offset.y + m_centerPt.y + (int)(m_zoom*(double)childSide->uvls[i].v/64.0);
+									x = offset.x + m_centerPt.x + (INT32)(m_zoom*(double)childSide->uvls[i].u/64.0);
+									y = offset.y + m_centerPt.y + (INT32)(m_zoom*(double)childSide->uvls[i].v/64.0);
 									child_pts[i].x = x;
 									child_pts[i].y = y;
 									}
@@ -223,8 +223,8 @@ if (m_mine->IsWall ()) {
 								uv = (childs_line+1)&3;
 								x0 = child_pts[uv].x - m_apts [linenum].x;
 								y0 = child_pts[uv].y - m_apts [linenum].y;
-								x0 = round_int(x0,(int)(32.0*m_zoom));
-								y0 = round_int(y0,(int)(32.0*m_zoom));
+								x0 = round_int(x0,(INT32)(32.0*m_zoom));
+								y0 = round_int(y0,(INT32)(32.0*m_zoom));
 								// translate child points
 								for (i=0;i<4;i++) {
 									child_pts[i].x -= x0;
@@ -249,8 +249,8 @@ if (m_mine->IsWall ()) {
 	pDC->SelectObject (hPenCurrentPoint);
 	x = m_apts [m_mine->Current ()->point].x;
 	y = m_apts [m_mine->Current ()->point].y;
-	pDC->Ellipse((int) (x-4*m_zoom), (int) (y-4*m_zoom), 
-					 (int) (x+4*m_zoom), (int) (y+4*m_zoom));
+	pDC->Ellipse((INT32) (x-4*m_zoom), (INT32) (y-4*m_zoom), 
+					 (INT32) (x+4*m_zoom), (INT32) (y+4*m_zoom));
 	// fill in texture
 	DrawAlignment (pDC);
 	pDC->SelectObject (hRgn);
@@ -287,15 +287,15 @@ if (!GetMine ())
 
 	CPalette		*oldPalette;
 	CRgn			hRgn;
-	int			h, i, j, x, y;
+	INT32			h, i, j, x, y;
 	POINT			offset;
 	CDSide		*side = m_mine->CurrSide ();
 	CDTexture	tx (bmBuf);
 	UINT16		scale;
 
 // read scroll bar
-offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ());
-offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
+offset.x = (INT32) (m_zoom * (double) HScrollAlign ()->GetScrollPos ());
+offset.y = (INT32) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 
 // set up logical palette
 oldPalette = pDC->SelectPalette(thePalette, FALSE);
@@ -310,8 +310,8 @@ pDC->SelectObject (&hRgn);
 scale = min (tx.m_width, tx.m_height) / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
-		i=((int)(((((x-(m_centerPt.x+offset.x))+128)*2)/m_zoom))&63)*scale;
-		j=((int)(((((y-(m_centerPt.y+offset.y))+128)*2)/m_zoom))&63)*scale;
+		i=((INT32)(((((x-(m_centerPt.x+offset.x))+128)*2)/m_zoom))&63)*scale;
+		j=((INT32)(((((y-(m_centerPt.y+offset.y))+128)*2)/m_zoom))&63)*scale;
 		pDC->SetPixel(x, y, h=PALETTEINDEX(tx.m_pDataBM[(tx.m_width-j)*tx.m_width+i]));
 		}
 	}
@@ -329,10 +329,10 @@ if (!GetMine ())
 	return;
 UpdateData (TRUE);
 
-	int i,	delta;
+	INT32 i,	delta;
 	CDSide	*side = m_mine->CurrSide ();
 
-if (delta = (int) (side->uvls [m_mine->Current ()->point].u - m_alignX / UV_FACTOR)) {
+if (delta = (INT32) (side->uvls [m_mine->Current ()->point].u - m_alignX / UV_FACTOR)) {
 	UpdateData (TRUE);
 	theApp.SetModified (TRUE);
 	switch (theApp.MineView ()->GetSelectMode ()) {
@@ -359,10 +359,10 @@ if (!GetMine ())
 	return;
 UpdateData (TRUE);
 
-	int i, delta;
+	INT32 i, delta;
 	CDSide	*side = m_mine->CurrSide ();
 
-if (delta = (int) (side->uvls [m_mine->Current ()->point].v - m_alignY / UV_FACTOR)) {
+if (delta = (INT32) (side->uvls [m_mine->Current ()->point].v - m_alignY / UV_FACTOR)) {
 	UpdateData (TRUE);
 	theApp.SetModified (TRUE);
 	switch (theApp.MineView ()->GetSelectMode ()) {
@@ -417,7 +417,7 @@ if (m_alignAngle < 0)
 	m_alignAngle += 360.0;
 else if (m_alignAngle > 360)
 	m_alignAngle -= 360.0;
-int h = side->nOvlTex & 0xC000;
+INT32 h = side->nOvlTex & 0xC000;
 for (m_alignRot2nd = 0; m_alignRot2nd < 4; m_alignRot2nd++)
 	if (rotMasks [m_alignRot2nd] == h)
 		break;
@@ -430,7 +430,7 @@ void CTextureTool::RotateUV (double angle, bool bUpdate)
 if (!GetMine ())
 	return;
 
-	int i;
+	INT32 i;
 	double	x,y,a,radius;
 	CDSide	*side = m_mine->CurrSide ();
 
@@ -524,12 +524,12 @@ UpdateAlignWnd ();
 
                         /*--------------------------*/
 
-void CTextureTool::HAlign (int dir)
+void CTextureTool::HAlign (INT32 dir)
 {
 if (!GetMine ())
 	return;
 
-	int		i;
+	INT32		i;
 	CDSide	*side = m_mine->CurrSide ();
 	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom * dir;
 
@@ -555,12 +555,12 @@ UpdateAlignWnd ();
 
                         /*--------------------------*/
 
-void CTextureTool::VAlign (int dir)
+void CTextureTool::VAlign (INT32 dir)
 {
 if (!GetMine ())
 	return;
 
-	int		i;
+	INT32		i;
 	CDSide	*side = m_mine->CurrSide ();
 	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom * dir;
 
@@ -647,7 +647,7 @@ void CTextureTool::OnHShrink ()
 if (!GetMine ())
 	return;
 
-	int		i = m_mine->Current ()->point;
+	INT32		i = m_mine->Current ()->point;
 	CDSide	*side = m_mine->CurrSide ();
 	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom ;
 
@@ -667,7 +667,7 @@ void CTextureTool::OnVShrink ()
 if (!GetMine ())
 	return;
 
-	int		i = m_mine->Current ()->point;
+	INT32		i = m_mine->Current ()->point;
 	CDSide	*side = m_mine->CurrSide ();
 	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom;
 
@@ -741,7 +741,7 @@ void CTextureTool::OnAlignStretch2Fit ()
 	UINT32		scale = 1; //pTextures [m_fileType][side->nBaseTex].Scale (side->nBaseTex);
 	CDSegment	*seg;
 	INT16			segnum, sidenum;
-	int			i;
+	INT32			i;
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
@@ -778,7 +778,7 @@ if (!GetMine ())
 	return;
 if (bStart) {
 	CDSegment *seg = m_mine->Segments ();
-	int i;
+	INT32 i;
 	for (i = m_mine->SegCount (); i; i--, seg++)
 		 seg->seg_number = 0; // all six sides not aligned yet
 	}
@@ -828,7 +828,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum
 		cangle = atan3 (childSide->uvls [linenum].v - childSide->uvls [(linenum + 1) & 3].v, 
 							 childSide->uvls [linenum].u - childSide->uvls [(linenum + 1) & 3].u); 
 		// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
-		int i;
+		INT32 i;
 		for (i = 0; i < 4; i++) {
 			angle = atan3 (childSide->uvls [i].v, childSide->uvls [i].u); 
 			length = sqrt ((double)childSide->uvls [i].u * (double) childSide->uvls [i].u +
@@ -858,7 +858,7 @@ if (!m_mine->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (m_mine->Current ()->segment, m_mine->Current ()->side, true);
 else {	// use all marked sides as alignment source
-	int segnum, sidenum;
+	INT32 segnum, sidenum;
 	for (segnum = 0; segnum < m_mine->SegCount (); segnum++)
 		for (sidenum = 0; sidenum < 6; sidenum++)
 			if (m_mine->SideIsMarked (segnum, sidenum)) 
@@ -870,7 +870,7 @@ UpdateAlignWnd ();
 
                         /*--------------------------*/
 
-static const int side_child[6][4] = {
+static const INT32 side_child[6][4] = {
   {4,3,5,1},
   {2,4,0,5},
   {5,3,4,1},
@@ -879,16 +879,16 @@ static const int side_child[6][4] = {
   {0,3,2,1}
 };
 
-void CTextureTool::AlignChildTextures (int segnum, int sidenum, int nDepth)  
+void CTextureTool::AlignChildTextures (INT32 segnum, INT32 sidenum, INT32 nDepth)  
 {
 if (!GetMine ())
 	return;
 
 	CDSegment	*seg, *childSeg;
 	CDSide		*side, *childSide; 
-	int			child_segnum;
-	int			child_sidenum;
-	int			nLine, h;
+	INT32			child_segnum;
+	INT32			child_sidenum;
+	INT32			nLine, h;
 	INT16			nBaseTex;
 	char			bAlignedSides = 0;
 
@@ -1014,7 +1014,7 @@ if (m_zoom > 1.0/16.0) {
 
                         /*--------------------------*/
 
-void CTextureTool::Rot2nd (int iAngle)
+void CTextureTool::Rot2nd (INT32 iAngle)
 {
 	CDSide *side = m_mine->CurrSide ();
  

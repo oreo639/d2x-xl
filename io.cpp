@@ -257,7 +257,7 @@ return td;
 }
 
 
-char *TimeStr (char *pszTime, int nDestSize)
+char *TimeStr (char *pszTime, INT32 nDestSize)
 {
 	struct tm td;
 
@@ -267,7 +267,7 @@ return pszTime;
 } 
 
 
-char *DateStr (char *pszTime, int nDestSize, bool bMonthNames)
+char *DateStr (char *pszTime, INT32 nDestSize, bool bMonthNames)
 {
 	struct tm td;
 
@@ -280,7 +280,7 @@ return pszTime;
 } 
 
 
-char *TimeDateStr (char *pszTime, int nDestSize, bool bMonthNames)
+char *TimeDateStr (char *pszTime, INT32 nDestSize, bool bMonthNames)
 {
 	struct tm td;
 
