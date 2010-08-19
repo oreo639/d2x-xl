@@ -271,14 +271,75 @@
             HIDDEN = 8 //this uses primary tmap, not tmap2
         }
 
-        enum WallState : byte
+        enum DoorState : byte
         {
-            DOOR_CLOSED	    = 0,// Door is closed 
-            DOOR_OPENING = 1,// Door is opening. 
-            DOOR_WAITING = 2,// Waiting to close 
-            DOOR_CLOSING = 3,// Door is closing 
-            DOOR_CLOAKING = 5,// Wall is going from closed -> open (Descent 2)
-            DOOR_DECLOAKING = 6	// Wall is going from open -> closed (Descent 2)
+            CLOSED = 0, // Door is closed 
+            OPENING = 1, // Door is opening. 
+            WAITING = 2, // Waiting to close 
+            CLOSING = 3, // Door is closing 
+            CLOAKING = 5, // Wall is going from closed -> open (Descent 2)
+            DECLOAKING = 6	// Wall is going from open -> closed (Descent 2)
+        }
+
+        enum KeyType : byte
+        {
+            NONE = 1,
+            BLUE = 2,
+            RED = 4,
+            GOLD = 8
+        }
+
+        enum WallVisType : byte
+        {
+            FLY = 1,
+            RENDER = 2,
+            RENDPAST = 4,
+            EXTERNAL = 8,
+            CLOAKED = 16 // Descent 2
+        }
+
+        enum WallRenderType : byte  // WALL_IS_DOORWAY return values F/R/RP 
+        {
+            SOLID = 2,	// 0/1/0 wall	 
+            ILLUSORY = 3,	// 1/1/0 illusory wall 
+            NONE = 5,	// 1/0/1 no wall, can fly through 
+            TRANSPARENT = 6,	// 0/1/1 transparent wall 
+            TRANSILLUSORY = 7,	// 1/1/1 transparent illusory wall 
+            EXTERNAL = 8	// 0/0/0/1 don't see it, dont fly through it 
+        }
+
+        enum ObjType : byte
+        {
+            WALL = 0,  // A wall... not really an object, but used for collisions 
+            FIREBALL = 1,  // a fireball, part of an explosion 
+            ROBOT = 2,  // an evil enemy 
+            HOSTAGE = 3,  // a hostage you need to rescue 
+            PLAYER = 4,  // the player on the console 
+            WEAPON = 5,  // a laser, missile, etc 
+            CAMERA = 6,  // a camera to slew around with 
+            POWERUP = 7,  // a powerup you can pick up 
+            DEBRIS = 8,  // a piece of robot 
+            CNTRLCEN = 9,  // the control center 
+            FLARE = 10,  // a flare 
+            CLUTTER = 11,  // misc objects 
+            GHOST = 12,  // what the player turns into when dead 
+            LIGHT = 13,  // a light source, & not much else 
+            COOP = 14,  // a cooperative player object. 
+            MARKER = 15,
+            CAMBOT = 16,
+            MONSTERBALL = 17,
+            SMOKE = 18,
+            EXPLOSION = 19,
+            EFFECT = 20,
+            COUNT = 21,
+            NONE = 255  // unused object 
+        }
+
+        enum EffectId : byte
+        {
+            PARTICLES = 0,
+            LIGHTNING = 1,
+            SOUND = 2
         }
     }
 }

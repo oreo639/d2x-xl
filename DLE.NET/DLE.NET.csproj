@@ -109,6 +109,7 @@
       <DependentUpon>EffectTool.cs</DependentUpon>
     </Compile>
     <Compile Include="GameMine.Constants.cs" />
+    <Compile Include="GameMine.Convert.cs" />
     <Compile Include="GameMine.cs" />
     <Compile Include="GameMine.Enums.cs" />
     <Compile Include="GraphicsPanel.cs">
