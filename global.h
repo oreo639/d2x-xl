@@ -69,7 +69,7 @@ extern long ScrnMemMax;
 extern INT32 ScrnWidth;
 extern INT32 ScrnHeight;
 extern INT32 m_fileType;
-extern CLightDeltaIndex *dl_indices;
+extern CLightDeltaIndex *lightDeltaIndices;
 extern CLightDeltaValue *CLightDeltaValues;
 extern INT16 num_static_lights;
 extern char string[256];

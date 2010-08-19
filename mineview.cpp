@@ -549,7 +549,7 @@ pls = lightStatus [0];
 for (i = mine->SegCount (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
-for (h = 0; h < mine->GameInfo ().dl_indices.count; h++, pdli++) {
+for (h = 0; h < mine->GameInfo ().lightDeltaIndices.count; h++, pdli++) {
 	if (bD2XLights) {
 		nSrcSide = pdli->d2x.nSegment;
 		nSrcSeg = pdli->d2x.nSide;
@@ -1837,7 +1837,7 @@ void CMineView::DrawLights (CMine *mine)
     if (LightDeltaIndex ()) {
       LightDeltaValues () = (LightDeltaValues () *)GlobalLock(hDeltaLights ());
       if (LightDeltaValues ()) {
-	for (i=0;i<GameInfo ().dl_indices.count;i++) {
+	for (i=0;i<GameInfo ().lightDeltaIndices.count;i++) {
 	  sidenum = LightDeltaIndex () [i].sidenum;
 	  segnum  = LightDeltaIndex () [i].segnum;
 	  if (!Visible (mine->Segments (segnum))

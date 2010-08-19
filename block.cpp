@@ -175,8 +175,8 @@ while(!feof(fBlk)) {
 				CTrigger t;
 				memset (&w, 0, sizeof (w));
 				memset (&t, 0, sizeof (t));
-				fscanf_s (fBlk, "        segment %ld\n", &w.segnum);
-				fscanf_s (fBlk, "        side %ld\n", &w.sidenum);
+				fscanf_s (fBlk, "        segment %ld\n", &w.nSegment);
+				fscanf_s (fBlk, "        side %ld\n", &w.nSide);
 				fscanf_s (fBlk, "        hps %ld\n", &w.hps);
 				fscanf_s (fBlk, "        type %d\n", &byteBuf);
 				w.type = byteBuf;
@@ -201,8 +201,8 @@ while(!feof(fBlk)) {
 					fscanf_s (fBlk, "			    count %hd\n", &t.count);
 					INT32 iTarget;
 					for (iTarget = 0; iTarget < t.count; iTarget++) {
-						fscanf_s (fBlk, "			        seg %hd\n", t.seg + iTarget);
-						fscanf_s (fBlk, "			        side %hd\n", t.side + iTarget);
+						fscanf_s (fBlk, "			        seg %hd\n", &t.targets [iTarget].nSegment);
+						fscanf_s (fBlk, "			        side %hd\n", &t.targets [iTarget].nSide);
 						}
 					}
 				if (GameInfo ().walls.count < MAX_WALLS (this)) {
@@ -217,7 +217,7 @@ while(!feof(fBlk)) {
 						}
 					nNewWalls++;
 					side->nWall = GameInfo ().walls.count++;
-					w.segnum = segnum;
+					w.nSegment = segnum;
 					*Walls (side->nWall) = w;
 					}
 				}
@@ -397,15 +397,14 @@ CTrigger *trigger = Triggers (GameInfo ().triggers.count);
 for (i = nNewTriggers; i; i--) {
 	trigger--;
 	for (j = 0; j < trigger->count; j++)
-		if (trigger->seg [j] >= 0)
-			trigger->seg [j] = xlatSegNum [trigger->seg [j]];
+		if (trigger->targets [j].nSegment >= 0)
+			trigger->targets [j].nSegment = xlatSegNum [trigger->targets [j].nSegment];
 		else if (trigger->count == 1) {
 			DeleteTrigger (INT16 (trigger - Triggers ()));
 			i--;
 			}
 		else if (j < --(trigger->count)) {
-			memcpy (trigger->seg + j, trigger->seg + j + 1, (trigger->count - j) * sizeof (*(trigger->seg)));
-			memcpy (trigger->side + j, trigger->side + j + 1, (trigger->count - j) * sizeof (*(trigger->side)));
+			memcpy (trigger->targets + j, trigger->targets + j + 1, (trigger->count - j) * sizeof (trigger->targets [0]));
 			}
 	}
 
@@ -533,10 +532,9 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 						CTrigger *trigger = Triggers (wall->trigger);
 						INT32 iTarget;
 						INT32 count = 0;
-						INT16 *tgtSegs = trigger->seg;
 						// count trigger targets in marked area
-						for (iTarget = 0; iTarget < trigger->count; iTarget++, tgtSegs++)
-							if (Segments (*tgtSegs)->wall_bitmask & MARKED_MASK)
+						for (iTarget = 0; iTarget < trigger->count; iTarget++)
+							if (Segments (trigger->targets [iTarget].nSegment)->wall_bitmask & MARKED_MASK)
 								count++;
 #if 0
 						if (trigger->count && !count)	// no targets in marked area
@@ -550,11 +548,10 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 							fprintf (fBlk, "			    value %ld\n", trigger->value);
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
 							fprintf (fBlk, "			    count %d\n", count);
-							tgtSegs = trigger->seg;
-							for (iTarget = 0; iTarget < trigger->count; iTarget++, tgtSegs++)
-								if (Segments (*tgtSegs)->wall_bitmask & MARKED_MASK) {
-									fprintf (fBlk, "			        seg %d\n", *tgtSegs);
-									fprintf (fBlk, "			        side %d\n", trigger->side [iTarget]);
+							for (iTarget = 0; iTarget < trigger->count; iTarget++)
+								if (Segments (trigger->targets [iTarget].nSegment)->wall_bitmask & MARKED_MASK) {
+									fprintf (fBlk, "			        seg %d\n", trigger->targets [iTarget].nSegment);
+									fprintf (fBlk, "			        side %d\n", trigger->targets [iTarget].nSide);
 									}
 							}
 						}

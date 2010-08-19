@@ -292,14 +292,14 @@ else {
 		}
 	// update wall data
 	if (m_pWall [0]->trigger == NO_TRIGGER)
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->sidenum);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->segnum, m_pWall [0]->sidenum, (INT32)m_pWall [0]->trigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->segnum, m_pWall [0]->nSide, (INT32)m_pWall [0]->trigger);
 
 	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
-	m_nCube = m_pWall [0]->segnum;
-	m_nSide = m_pWall [0]->sidenum + 1;
+	m_nCube = m_pWall [0]->nSegment;
+	m_nSide = m_pWall [0]->nSide + 1;
 	m_nTrigger = (m_pWall [0]->trigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->trigger : -1;
 	m_nType = m_pWall [0]->type;
 	m_nClip = m_pWall [0]->clip_num;
@@ -324,7 +324,7 @@ else {
 		m_bKeys [i] = ((m_pWall [0]->keys & (1 << i)) != 0);
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
-		i = m_mine->Segments (m_defWall.segnum)->sides [m_defWall.sidenum].nBaseTex;
+		i = m_mine->Segments (m_defWall.nSegment)->sides [m_defWall.nSide].nBaseTex;
 		if (m_defWall.type == WALL_CLOAKED)
 			m_defOvlTexture = i;
 		else
@@ -510,7 +510,7 @@ if (m_nWall [0] < 0) {
 	return false;
 	}
 m_pWall [0] = m_mine->Walls (m_nWall [0]);
-m_mine->SetCurrent (m_pWall [0]->segnum, m_pWall [0]->sidenum);
+m_mine->SetCurrent (m_pWall [0]->nSegment, m_pWall [0]->nSide);
 m_nTrigger = m_pWall [0]->trigger;
 GetOtherWall ();
 return true;

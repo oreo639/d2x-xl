@@ -386,7 +386,7 @@ if (m_pTrigger) {
 	m_nTargets = m_pTrigger->targets.count;
 	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
-		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->targets [i].nSegment, m_pTrigger->targets [i].nSide + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
@@ -890,8 +890,7 @@ if (FindTarget (segnum, sidenum) > -1) {
 	return;
 	}
 theApp.SetModified (TRUE);
-m_pTrigger->seg [m_nTargets] = segnum;
-m_pTrigger->side [m_nTargets] = sidenum - 1;
+m_pTrigger->targets [m_nTargets] = CSideKey (segnum, sidenum + 1);
 m_pTrigger->count++;
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
@@ -973,11 +972,9 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 theApp.SetModified (TRUE);
 SetTriggerPtr ();
 m_nTargets = --(m_pTrigger->count);
-m_pTrigger->seg [m_iTarget] = 0;
-m_pTrigger->side [m_iTarget] = 0;
+m_pTrigger->targets [m_iTarget] = CSideKey (0,0);
 if (m_iTarget < m_nTargets) {
-	memcpy (m_pTrigger->seg + m_iTarget, m_pTrigger->seg + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (*(m_pTrigger->seg)));
-	memcpy (m_pTrigger->side + m_iTarget, m_pTrigger->side + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (*(m_pTrigger->side)));
+	memcpy (m_pTrigger->targets + m_iTarget, m_pTrigger->targets + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (m_pTrigger->targets [0]));
 	}
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
@@ -992,7 +989,7 @@ INT32 CTriggerTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
 INT32 i;
 for (i = 0; i < m_pTrigger->count; i++)
-	if ((segnum == m_pTrigger->seg [i]) && (sidenum == m_pTrigger->seg [i]))
+	if ((segnum == m_pTrigger->targets [i].nSegment) && (sidenum == m_pTrigger->targets [i].nSegment))
 		return i;
 return -1;
 }
@@ -1016,18 +1013,18 @@ m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
 	return;
-INT16 segnum = m_pTrigger->seg [m_iTarget];
+INT16 segnum = m_pTrigger->targets [m_iTarget].nSegment;
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
 	 return;
-INT16 sidenum = m_pTrigger->side [m_iTarget];
+INT16 sidenum = m_pTrigger->targets [m_iTarget].nSide;
 if ((sidenum < 0) || (sidenum > 5))
 	return;
 
 CDSelection *other = m_mine->Other ();
 if ((m_mine->Current ()->segment == segnum) && (m_mine->Current ()->side == sidenum))
 	return;
-other->segment = m_pTrigger->seg [m_iTarget];
-other->side = m_pTrigger->side [m_iTarget];
+other->segment = m_pTrigger->targets [m_iTarget].nSegment;
+other->side = m_pTrigger->targets [m_iTarget].nSide;
 theApp.MineView ()->Refresh ();
 }
 

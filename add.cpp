@@ -710,8 +710,8 @@ if (AddWall (Current ()->segment, Current ()->side, (UINT8) wall_type, wall_flag
 	INT16 trignum = GameInfo ().triggers.count - 1;
 	// set link to trigger target
 	Triggers () [trignum].count = 1;
-	Triggers () [trignum].seg [0] = other->segment;
-	Triggers () [trignum].side [0] = other->side;
+	Triggers () [trignum].targets [0].nSegment = other->segment;
+	Triggers () [trignum].targets [0].nSide = other->side;
 	theApp.UnlockUndo ();
 	theApp.MineView ()->Refresh ();
 	return true;

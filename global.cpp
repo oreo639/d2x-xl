@@ -94,7 +94,7 @@ INT32 ScrnHeight = 0;
 
 // new data for Descent 2
 INT32 file_type = RL2_FILE;
-//CLightDeltaIndex     *dl_indices=0;    // MAX_LIGHT_DELTA_INDICES   x 6 bytes each
+//CLightDeltaIndex     *lightDeltaIndices=0;    // MAX_LIGHT_DELTA_INDICES   x 6 bytes each
 //CLightDeltaValue  *CLightDeltaValues=0;  // MAX_LIGHT_DELTA_VALUES x 8 bytes each
 INT16	     num_static_lights=0;
 

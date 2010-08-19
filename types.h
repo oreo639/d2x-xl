@@ -641,6 +641,7 @@ public:
 
 
 class CReactorTrigger : public trigger_target_list {
+public:
 	INT32 Read (FILE *fp, INT32 version);
 	void Write (FILE *fp, INT32 version);
 };

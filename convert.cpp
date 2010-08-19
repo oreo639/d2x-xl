@@ -345,7 +345,7 @@ for (i = 0, obj = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++
 
 // d2 light data and indicies
 //--------------------------------------------
-m_mine->GameInfo ().dl_indices.count = 0;
+m_mine->GameInfo ().lightDeltaIndices.count = 0;
 m_mine->GameInfo ().lightDeltaValues.count = 0;
 m_mine->FlickerLightCount () = 0;
 m_mine->AutoAdjustLight (50.0, true);

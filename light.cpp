@@ -235,9 +235,7 @@ if (index == -1) {
 theApp.SetModified (TRUE);
 if (index < --FlickerLightCount ())
 // put last light in place of deleted light
-	memcpy (FlickeringLights (index), 
-			  FlickeringLights (FlickerLightCount ()),
-			  sizeof (FLICKERING_LIGHT));
+	memcpy (FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (FLICKERING_LIGHT));
 return true;
 }
 
@@ -794,7 +792,7 @@ delete[] visited;
 //------------------------------------------------------------------------
 // CalcDeltaLightData()
 //
-// Action - Calculates dl_indices and CLightDeltaValues arrays.
+// Action - Calculates lightDeltaIndices and CLightDeltaValues arrays.
 //
 //	Delta lights are only created if the segment has a nOvlTex
 //	which matches one of the entries in the broken[] table.
@@ -855,17 +853,17 @@ return (strstr((char*)name,"lava") != NULL);
 INT32 CMine::FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi)
 {
 	INT32	i = pi ? *pi : 0;
-	INT32	j	= (INT32)GameInfo ().dl_indices.count++;
+	INT32	j	= (INT32)GameInfo ().lightDeltaIndices.count++;
 	CLightDeltaIndex	*pdli = LightDeltaIndex ();
 
 if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34)) {
 	for (; i < j; i++, pdli++)
-		if ((pdli->d2x.nSegment == segnum) && (pdli->d2x.nSide = (UINT8) sidenum))
+		if ((pdli->knSegment == segnum) && (pdli->nSide = (UINT8) sidenum))
 			return i;
 	}
 else {
 	for (; i < j; i++, pdli++)
-		if ((pdli->std.nSegment == segnum) && (pdli->std.nSide = (UINT8) sidenum))
+		if ((pdli->nSegment == segnum) && (pdli->nSide = (UINT8) sidenum))
 			return i;
 	}
 return -1;
@@ -883,7 +881,7 @@ bool CMine::CalcDeltaLights (double fLightScale, INT32 force, INT32 recursion_de
 	double	effect[4];
 
 GameInfo ().lightDeltaValues.count = 0;
-GameInfo ().dl_indices.count = 0;
+GameInfo ().lightDeltaIndices.count = 0;
 bool bWall, bD2XLights = (LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
@@ -944,7 +942,7 @@ fLightScale = 1.0; ///= 100.0;
 				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
 				continue;
 
-			if (GameInfo ().dl_indices.count >= MAX_LIGHT_DELTA_INDICES (this)) {
+			if (GameInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES (this)) {
 //#pragma omp critical
 				{
 				if (++nErrors == 1) {
@@ -959,23 +957,23 @@ fLightScale = 1.0; ///= 100.0;
 			tFixVector A,source_center;
 			INT32 CLightDeltaValueIndex_num;
 
-			// get index number and increment total number of dl_indices
+			// get index number and increment total number of lightDeltaIndices
 	//#pragma omp critical
 			{
-			CLightDeltaValueIndex_num = INT32 (GameInfo ().dl_indices.count++);
+			CLightDeltaValueIndex_num = INT32 (GameInfo ().lightDeltaIndices.count++);
 			}
 			CLightDeltaIndex *pdli = LightDeltaIndex (CLightDeltaValueIndex_num);
 			if (bD2XLights) {
-				pdli->d2x.nSegment = nSourceSeg;
-				pdli->d2x.nSide = nSourceSide;
-				pdli->d2x.count = 0; // will be incremented below
+				pdli->nSegment = nSourceSeg;
+				pdli->nSide = nSourceSide;
+				pdli->count = 0; // will be incremented below
 				}
 			else {
-				pdli->std.nSegment = nSourceSeg;
-				pdli->std.nSide = nSourceSide;
-				pdli->std.count = 0; // will be incremented below
+				pdli->nSegment = nSourceSeg;
+				pdli->nSide = nSourceSide;
+				pdli->count = 0; // will be incremented below
 				}
-			pdli->std.index = (INT16)GameInfo ().lightDeltaValues.count;
+			pdli->index = (INT16)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
 			CalcOrthoVector(A,nSourceSeg,nSourceSide);
@@ -1053,7 +1051,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->std.count == 255)) {
+						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1077,16 +1075,16 @@ fLightScale = 1.0; ///= 100.0;
 						dl->vert_light [2] =
 						dl->vert_light [3] = (UINT8) min (32, 32 * fLightScale);
 						if (bD2XLights)
-							pdli->d2x.count++;
+							pdli->count++;
 						else
-							pdli->std.count++;
+							pdli->count++;
 						continue;
 						}
 
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->std.count == 255)) {
+							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {
@@ -1109,9 +1107,9 @@ fLightScale = 1.0; ///= 100.0;
 							for (iCorner = 0; iCorner < 4; iCorner++)
 								dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);
 							if (bD2XLights)
-								pdli->d2x.count++;
+								pdli->count++;
 							else
-								pdli->std.count++;
+								pdli->count++;
 							}
 						}
 					}

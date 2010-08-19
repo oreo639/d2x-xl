@@ -256,7 +256,7 @@ if (!--trigger->count) {
 	return 0;
 	}
 if (linknum < trigger->count) {
-	memcpy (trigger->targets + linknum, trigger->targets + linknum + 1, (trigger->count - linknum) * sizeof (CSideKey));
+	memcpy (trigger->targets + linknum, trigger->targets + linknum + 1, (trigger->count - linknum) * sizeof (trigger->targets [0]));
 	}
 return trigger->count;
 }
@@ -527,7 +527,7 @@ else {
 	value = read_FIX(fp);
 	time = read_FIX(fp);
 	read_INT8(fp); //skip 8 bit value "link_num"
-	count = (INT8) read_INT16(fp);
+	count = INT8 (read_INT16(fp));
 	if (count < 0)
 		count = 0;
 	else if (count > MAX_TRIGGER_TARGETS)
@@ -574,7 +574,9 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 INT32 CReactorTrigger::Read (FILE *fp, INT32 version)
 {
-count = read_INT16 ();
+	int	i;
+
+count = INT8 (read_INT16 (fp));
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	targets [i].nSegment = read_INT16(fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
@@ -586,6 +588,8 @@ return 1;
 
 void CReactorTrigger::Write (FILE *fp, INT32 version)
 {
+	int	i;
+
 write_INT16 (count);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	write_INT16 (targets [i].nSegment, fp);

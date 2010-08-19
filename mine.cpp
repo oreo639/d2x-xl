@@ -46,7 +46,7 @@ CMine::CMine()
 	GameInfo ().control.count = 0;
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
-	GameInfo ().dl_indices.count = 0;
+	GameInfo ().lightDeltaIndices.count = 0;
 	GameInfo ().lightDeltaValues.count = 0;
 	m_nNoLightDeltas = 2;
 	m_lightRenderDepth = MAX_LIGHT_DEPTH;
@@ -466,7 +466,7 @@ if (game_err != 0) {
 	GameInfo ().control.count = 0;
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
-	GameInfo ().dl_indices.count = 0;
+	GameInfo ().lightDeltaIndices.count = 0;
 	GameInfo ().lightDeltaValues.count = 0;
 	fclose(loadFile);
 	return(3);
@@ -892,7 +892,7 @@ void CMine::ClearMineData() {
 	GameInfo ().control.count = 0;
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
-	GameInfo ().dl_indices.count = 0;
+	GameInfo ().lightDeltaIndices.count = 0;
 	GameInfo ().lightDeltaValues.count = 0;
 }
 
@@ -1152,7 +1152,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	GameInfo ().control.count = 0;
 	GameInfo ().botgen.count = 0;
 	GameInfo ().equipgen.count = 0;
-	GameInfo ().dl_indices.count = 0;
+	GameInfo ().lightDeltaIndices.count = 0;
 	GameInfo ().lightDeltaValues.count = 0;
 
 	GameInfo ().objects.offset =-1;
@@ -1162,7 +1162,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	GameInfo ().control.offset =-1;
 	GameInfo ().botgen.offset =-1;
 	GameInfo ().equipgen.offset =-1;
-	GameInfo ().dl_indices.offset =-1;
+	GameInfo ().lightDeltaIndices.offset =-1;
 	GameInfo ().lightDeltaValues.offset =-1;
 
 	//==================== = READ FILE INFO========================
@@ -1397,18 +1397,18 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	//================ READ DELTA LIGHT INFO============== =
 	// note: D2 only
 	if (IsD2File ()) {
-		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().dl_indices.count);
+		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().lightDeltaIndices.count);
 		//    DEBUGMSG(message);
-		if (GameInfo ().dl_indices.count > MAX_LIGHT_DELTA_INDICES (this)) {
+		if (GameInfo ().lightDeltaIndices.count > MAX_LIGHT_DELTA_INDICES (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
-				GameInfo ().dl_indices.count, MAX_LIGHT_DELTA_INDICES (this));
+				GameInfo ().lightDeltaIndices.count, MAX_LIGHT_DELTA_INDICES (this));
 			ErrorMsg (message);
-			GameInfo ().dl_indices.count = MAX_LIGHT_DELTA_INDICES (this);
+			GameInfo ().lightDeltaIndices.count = MAX_LIGHT_DELTA_INDICES (this);
 			}
-		if (GameInfo ().dl_indices.offset > -1 && GameInfo ().dl_indices.count > 0) {
-			if (!fseek(loadfile, GameInfo ().dl_indices.offset, SEEK_SET)) {
-				bool bD2X = (LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
-				for (i = 0; i < GameInfo ().dl_indices.count; i++) {
+		if (GameInfo ().lightDeltaIndices.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
+			if (!fseek(loadfile, GameInfo ().lightDeltaIndices.offset, SEEK_SET)) {
+				bool bD2X = (LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34);
+				for (i = 0; i < GameInfo ().lightDeltaIndices.count; i++) {
 					if (!LightDeltaIndex (i)->Read (loadfile, bD2X)) 
 					ErrorMsg ("Error reading delta light indices from mine.cpp");
 					}
@@ -1427,12 +1427,12 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			ErrorMsg (message);
 			GameInfo ().lightDeltaValues.count = MAX_LIGHT_DELTA_VALUES (this);
 			}
-		if (GameInfo ().lightDeltaValues.offset > -1 && GameInfo ().dl_indices.count > 0) {
+		if (GameInfo ().lightDeltaValues.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
 			if (!fseek(loadfile, GameInfo ().lightDeltaValues.offset, SEEK_SET)) {
 				CLightDeltaValue *dl, temp_dl;
 				dl = LightDeltaValues ();
 				for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
-					if (!LightDeltaValues (i)->Read (fp)) {
+					if (!LightDeltaValues (i)->Read (loadfile)) {
 						ErrorMsg ("Error reading delta light values from mine.cpp");
 						break;
 					}
@@ -1859,38 +1859,6 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 }
 
 // ------------------------------------------------------------------------
-
-void CMine::WriteTrigger (CTrigger *t, FILE *fp, bool bObjTrigger)
-{
-	INT32	i;
-	char	pad = 0;
-
-if (IsD2File ()) {
-	fwrite (&t->type, sizeof (INT8), 1, fp);
-	if (bObjTrigger)
-		fwrite (&t->flags, sizeof (INT16), 1, fp);
-	else
-		fwrite (&t->flags, sizeof (INT8), 1, fp);
-	fwrite (&t->count, sizeof (INT8), 1, fp);
-	fwrite (&pad, sizeof (INT8), 1, fp);
-	fwrite (&t->value, sizeof (FIX), 1, fp);
-	fwrite (&t->time, sizeof (FIX), 1, fp);
-	}
-else {
-	fwrite (&t->type, sizeof (INT8), 1, fp);
-	fwrite (&t->flags, sizeof (INT16), 1, fp);
-	fwrite (&t->value, sizeof (FIX), 1, fp);
-	fwrite (&t->time, sizeof (FIX), 1, fp);
-	fwrite (&t->count, sizeof (INT8), 1, fp);
-	fwrite (&t->count, sizeof (INT16), 1, fp);
-	}
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fwrite(t->seg  + i, sizeof (INT16), 1, fp);
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fwrite(&t->side [i], sizeof (INT16), 1, fp);
-}
-
-// ------------------------------------------------------------------------
 // SaveGameData()
 //
 //  ACTION - Saves the player, object, wall, door, trigger, and
@@ -1918,7 +1886,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	GameInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
 	GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
 	GameInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
-	GameInfo ().dl_indices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
+	GameInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
 	GameInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
 
 	// the offsets will be calculated as we go then rewritten at the end
@@ -1929,7 +1897,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//  GameInfo ().triggers.offset =-1;
 	//  GameInfo ().control.offset =-1;
 	//  GameInfo ().matcen.offset =-1;
-	//  GameInfo ().dl_indices.offset =-1;
+	//  GameInfo ().lightDeltaIndices.offset =-1;
 	//  GameInfo ().lightDeltaValues.offset =-1;
 
 	// these numbers (.howmany) are updated by the editor
@@ -1939,7 +1907,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//  GameInfo ().triggers.count = 0;
 	//  GameInfo ().control.count = 0;
 	//  GameInfo ().matcen.count = 0;
-	//  GameInfo ().dl_indices.count = 0; // D2
+	//  GameInfo ().lightDeltaIndices.count = 0; // D2
 	//  GameInfo ().lightDeltaValues.count = 0; // D2
 
 	if (m_fileType== RDL_FILE) {
@@ -2070,11 +2038,11 @@ INT16 CMine::SaveGameData(FILE *savefile)
 
 	//================ WRITE DELTA LIGHT INFO============== =
 	// note: D2 only
-	GameInfo ().dl_indices.offset = ftell(savefile);
+	GameInfo ().lightDeltaIndices.offset = ftell(savefile);
 	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34))
-		SortDLIndex (0, GameInfo ().dl_indices.count - 1);
+		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
 	if (IsD2File ())
-		fwrite(LightDeltaIndex (), TotalSize (GameInfo ().dl_indices), 1, savefile);
+		fwrite(LightDeltaIndex (), TotalSize (GameInfo ().lightDeltaIndices), 1, savefile);
 
 	//================ = WRITE DELTA LIGHTS==================
 	// note: D2 only
