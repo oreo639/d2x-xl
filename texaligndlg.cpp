@@ -298,7 +298,7 @@ offset.x = (INT32) (m_zoom * (double) HScrollAlign ()->GetScrollPos ());
 offset.y = (INT32) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 
 // set up logical palette
-oldPalette = pDC->SelectPalette(thePalette, FALSE);
+oldPalette = pDC->SelectPalette(theApp.GetMine ()->m_currentPalette, FALSE);
 pDC->RealizePalette();
 memset(tx.m_pDataBM, 0, sizeof (bmBuf));
 if (DefineTexture (side->nBaseTex, side->nOvlTex, &tx, 0, 0)) {

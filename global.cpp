@@ -19,11 +19,8 @@
 
 MISSION_DATA missionData;
 //HGLOBAL texture_handle [MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
-CPalette *thePalette;
+CPalette *m_currentPalette;
 HINSTANCE hInst;
-HGLOBAL hdelta_lights;
-HGLOBAL hdl_indices;
-HGLOBAL ScrnMem;
 LPLOGPALETTE MyLogPalette;
 
 char FileName[256]="";
@@ -34,14 +31,13 @@ bool bExpertMode = true;
 bool bExtBlkFmt = false;
 
 INT32 preferences = 0;
-INT32 level_version=7;
 
-INT16  N_flickering_lights = 0;
 //FLICKERING_LIGHT *flickering_lights=0;
-LIGHT_TIMER light_timers [MAX_FLICKERING_LIGHTS];
-LIGHT_STATUS light_status [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
+LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
+LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 UINT32       N_robot_types=0;
 //ROBOT_INFO   *Robot_info;     // MAX_ROBOT_TYPES
+
 #if ALLOCATE_POLYOBJECT
 UINT32       N_robot_joints=0;
 UINT32       N_polygon_models=0;
@@ -50,12 +46,10 @@ JOINTPOS     *Robot_joints;   // MAX_ROBOT_JOINTS
 POLYMODEL    *Polygon_models[MAX_POLYGON_MODELS];
 UINT32       *Dying_modelnums;// N_D2_POLYGON_MODELS
 UINT32       *Dead_modelnums; // N_D2_POLYGON_MODELS
-BITMAP_INDEX *ObjBitmaps;     // MAX_OBJ_BITMAPS
-BITMAP_INDEX *ObjBitmapPtrs;  // MAX_OBJ_BITMAPS
+UINT16 *ObjBitmaps;     // MAX_OBJ_BITMAPS
+UINT16 *ObjBitmapPtrs;  // MAX_OBJ_BITMAPS
 #endif
 
-INT32 skip_about;
-INT32 m_disableDrawing=0;
 char skip[16] = "tom≈";
 INT32 left;
 INT32 top;
@@ -107,8 +101,8 @@ INT16	     num_static_lights=0;
 char string[256];
 INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
 char spline_error_message[] = "You must exit spline creation before preforming this function";
-vms_vector spline_points[MAX_SPLINES];
-vms_vector points[4];
+tFixVector spline_points[MAX_SPLINES];
+tFixVector points[4];
 INT16 n_splines=0;
 INT16 spline_length1=20,spline_length2=20;
 INT16 spline_active=0;
@@ -859,7 +853,7 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //UINT16 num_vertices;
 //UINT16 num_segments;
 
-//vms_vector *vertices=0;
+//tFixVector *vertices=0;
 //segment *Segments ()[MAX_SEGMENTS2];
 //object *Objects ()[MAX_OBJECTS];
 //UINT8 *vert_status=0; //MAX_VERTICES

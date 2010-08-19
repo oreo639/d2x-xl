@@ -123,10 +123,10 @@ theApp.MineView ()->Refresh ();
 double CDiagTool::CalcFlatnessRatio (INT16 segnum, INT16 sidenum) 
 {
   INT16 vertnum[4],i;
-  vms_vector midpoint1, midpoint2;
+  tFixVector midpoint1, midpoint2;
   double length1,length2,ave_length, mid_length;
   double ratio1,ratio2;
-	vms_vector *vert [4];
+	tFixVector *vert [4];
   // copy vertnums into an array
 	CDSegment *seg = m_mine->Segments (segnum);
   for (i=0;i<4;i++) {
@@ -175,7 +175,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 segnum, INT16 sidenum)
 // Action - calculates the distance from a line to a point
 //--------------------------------------------------------------------------
 
-double CDiagTool::CalcDistance (vms_vector *v1,vms_vector *v2,vms_vector *v3)
+double CDiagTool::CalcDistance (tFixVector *v1,tFixVector *v2,tFixVector *v3)
 {
   dvector A,B,B2;
   double c,a2,distance;
@@ -217,10 +217,10 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
   dvector line1,line2,line3,orthog;
   double ratio;
   double dot_product, magnitude1, magnitude2,angle;
-  vms_vector *v0 = m_mine->Vertices (vert0);
-  vms_vector *v1 = m_mine->Vertices (vert1);
-  vms_vector *v2 = m_mine->Vertices (vert2);
-  vms_vector *v3 = m_mine->Vertices (vert3);
+  tFixVector *v0 = m_mine->Vertices (vert0);
+  tFixVector *v1 = m_mine->Vertices (vert1);
+  tFixVector *v2 = m_mine->Vertices (vert2);
+  tFixVector *v3 = m_mine->Vertices (vert3);
       // define lines
       line1.x = ((double) v1->x - (double) v0->x)/F1_0;
       line1.y = ((double) v1->y - (double) v0->y)/F1_0;
@@ -637,7 +637,7 @@ if (!GetMine ())
 	return false;
 
 	INT32 h,objectnum,type,id,count,players [16 + MAX_COOP_PLAYERS],segnum,flags,corner, nPlayers [2], bFix;
-  vms_vector center;
+  tFixVector center;
   double x,y,z,radius, max_radius,object_radius;
   CDObject *obj = m_mine->Objects ();
 	CDObject *pPlayer = NULL;
@@ -680,7 +680,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     // from center and make sure it is less than max corner.
     center.x = center.y = center.z = 0;
     for (corner=0;corner<8;corner++) {
-		 vms_vector *v = m_mine->Vertices (seg->verts[corner]);
+		 tFixVector *v = m_mine->Vertices (seg->verts[corner]);
       center.x += v->x;
       center.y += v->y;
       center.z += v->z;
@@ -688,7 +688,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     center.x /= 8; center.y /= 8; center.z /= 8;
     max_radius = 0;
     for (corner=0;corner<8;corner++) {
-		 vms_vector *v = m_mine->Vertices (seg->verts[corner]);
+		 tFixVector *v = m_mine->Vertices (seg->verts[corner]);
       x = v->x - center.x;
       y = v->y - center.y;
       z = v->z - center.z;

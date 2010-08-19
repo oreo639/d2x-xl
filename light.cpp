@@ -13,9 +13,7 @@
 #include "global.h"
 
 // external globals
-extern INT32 enable_shading; // uvls.cpp
-extern INT32 enable_hires;   // uvls.cpp
-extern INT32 enable_delta_shading; // uvls.cpp
+extern INT32 bEnableDeltaShading; // uvls.cpp
 
 long lightMap [MAX_D2_TEXTURES];
 long defLightMap [MAX_D2_TEXTURES];
@@ -664,7 +662,7 @@ void CMine::Illuminate (
 	CDSegment*		segP = Segments ();
 	double			effect[4];
 	// find orthogonal angle of source segment
-	vms_vector		A;
+	tFixVector		A;
 
 //fLightScale /= 100.0;
 CalcOrthoVector (A,nSourceSeg, nSourceSide);
@@ -674,7 +672,7 @@ A.y = -A.y;
 A.z = -A.z;
 
 // calculate the center of the source segment
-vms_vector source_center;
+tFixVector source_center;
 CalcCenter (source_center,nSourceSeg,nSourceSide);
 // mark those Segments () within N children of current cube
 
@@ -724,7 +722,7 @@ INT32 nSegCount = SegCount ();
 			continue;
 #endif
 		// setup source corner vertex for length calculation later
-		vms_vector source_corner[4];
+		tFixVector source_corner[4];
 		INT32 j;
 		for (j = 0; j < 4; j++) {
 			INT32 vertnum = side_vert [nSourceSide][j];
@@ -958,7 +956,7 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 				}
 
-			vms_vector A,source_center;
+			tFixVector A,source_center;
 			INT32 dl_index_num;
 
 			// get index number and increment total number of dl_indices
@@ -1008,7 +1006,7 @@ fLightScale = 1.0; ///= 100.0;
 	#endif
 
 			// setup source corner vertex for length calculation later
-			vms_vector source_corner[4];
+			tFixVector source_corner[4];
 			for (INT32 j = 0; j < 4; j++) {
 				UINT8 vertnum = side_vert[nSourceSide][j];
 				INT32 h = srcSegP->verts[vertnum];
@@ -1280,13 +1278,13 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 
 //--------------------------------------------------------------------------
 
-bool CMine::CalcSideLights (INT32 segnum, INT32 sidenum, vms_vector& source_center, 
-									 vms_vector *source_corner, vms_vector& A, double *effect,
+bool CMine::CalcSideLights (INT32 segnum, INT32 sidenum, tFixVector& source_center, 
+									 tFixVector *source_corner, tFixVector& A, double *effect,
 									 double fLightScale, bool bIgnoreAngle)
 {
 	CDSegment *seg = Segments (segnum);
 // calculate vector between center of source segment and center of child
-vms_vector B,center;
+tFixVector B,center;
 CalcCenter (center,segnum,sidenum);
 B.x = center.x - source_center.x;
 B.y = center.y - source_center.y;
@@ -1321,7 +1319,7 @@ if (!bIgnoreAngle) {
 	}
 INT32 i, j;
 for (j = 0; j < 4; j++) {
-	vms_vector corner;
+	tFixVector corner;
 	INT32 vertnum = side_vert[sidenum][j];
 	INT32 h = seg->verts[vertnum];
 	corner.x = Vertices (h)->x;

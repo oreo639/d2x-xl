@@ -174,7 +174,7 @@ void CMineView::DrawModel()
 void CMineView::SetModelPoints(INT32 start, INT32 end) 
 {
   CDObject *obj = gpObject;
-  vms_vector pt;
+  tFixVector pt;
   INT32 i;
   for (i=start;i<end;i++) {
 	FIX x0 = gModel.points[i].x;
@@ -511,7 +511,7 @@ INT32 CMineView::ReadModelData(FILE *file, CDObject *obj)
 		}
 		read_UINTW(file);                              // read version
 		n  = read_UINTW(file);                         // n_tmap_info
-		fseek(file,n * sizeof (BITMAP_INDEX),SEEK_CUR); // bitmap_indicies
+		fseek(file,n * sizeof (UINT16),SEEK_CUR); // bitmap_indicies
 		fseek(file,n * sizeof (TMAP_INFO),SEEK_CUR);    // tmap_info
 		n = read_UINTW(file);                          // n_sounds
 		fseek(file,n * sizeof (UINT8),SEEK_CUR);        // sounds

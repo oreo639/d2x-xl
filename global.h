@@ -13,17 +13,13 @@ extern bool bExtBlkFmt;
 extern MISSION_DATA	missionData;
 //extern HGLOBAL texture_handle[MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
 ; // MAX_D2_TEXTURES
-extern CPalette *thePalette;
 extern HINSTANCE hInst;
-extern HGLOBAL hdelta_lights;
-extern HGLOBAL hdl_indices;
-extern HGLOBAL ScrnMem;
 extern INT32 left,right,top,bottom;
 extern LPLOGPALETTE MyLogPalette;
 extern INT16 d2_blastable_lights [];
 extern INT16 d2_switches [];
 
-extern INT32 enable_delta_shading;
+extern INT32 bEnableDeltaShading;
 
 extern char FileName[256];
 extern char FilePath[256];
@@ -32,8 +28,8 @@ extern char SubFile[20];
 // robot related globals
 extern INT32 preferences;
 //extern FLICKERING_LIGHT *flickering_lights;
-extern LIGHT_TIMER light_timers [MAX_FLICKERING_LIGHTS];
-extern LIGHT_STATUS light_status [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
+extern LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
+extern LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 extern UINT32        N_robot_types;
 //extern ROBOT_INFO   *Robot_info;
 #if ALLOCATE_POLYOBJECT
@@ -44,11 +40,10 @@ extern JOINTPOS     *Robot_joints;
 extern POLYMODEL    *Polygon_models[MAX_POLYGON_MODELS];
 extern UINT32       *Dying_modelnums;
 extern UINT32       *Dead_modelnums;
-extern BITMAP_INDEX *ObjBitmaps;
-extern BITMAP_INDEX *ObjBitmapPtrs;
+extern UINT16 *ObjBitmaps;
+extern UINT16 *ObjBitmapPtrs;
 #endif
-extern INT32 skip_about;
-extern INT32 m_disableDrawing;
+
 extern char skip[16];
 extern INT32 left;
 extern INT32 top;
@@ -80,8 +75,8 @@ extern INT16 num_static_lights;
 extern char string[256];
 extern INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
 extern char spline_error_message[];
-extern vms_vector spline_points[MAX_SPLINES];
-extern vms_vector points[4];
+extern tFixVector spline_points[MAX_SPLINES];
+extern tFixVector points[4];
 extern INT16 n_splines;
 //extern INT16 spline_active;
 extern UINT8 object_list[MAX_OBJECT_NUMBER];
@@ -158,7 +153,7 @@ extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
 //extern UINT16 num_vertices;
 //extern UINT16 num_segments;
 
-//extern vms_vector FAR *vertices;
+//extern tFixVector FAR *vertices;
 //extern segment far *segments[MAX_SEGMENTS2];
 //extern object far *objects[MAX_OBJECTS];
 //extern UINT8 *vert_status;

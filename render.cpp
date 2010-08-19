@@ -14,12 +14,12 @@
 #include "mineview.h"
 
 extern UINT8 side_vert[6][4];
-INT32 enable_delta_shading = 0;
+INT32 bEnableDeltaShading = 0;
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
 
-double dround_off(double value, double round) 
+double dround_off (double value, double round) 
 {
 return (value >= 0) ? value + round / 2 : value - round / 2;
 }
@@ -27,11 +27,10 @@ return (value >= 0) ? value + round / 2 : value - round / 2;
 //------------------------------------------------------------------------
 // multiply_matrix()
 //------------------------------------------------------------------------
-void multiply_matrix(double C[3][3], double A[3][3], double B[3][3]) {
-  INT32 i,j;
-
-  for (i=0;i<3;i++) {
-    for (j=0;j<3;j++)	{
+void multiply_matrix (double C[3][3], double A[3][3], double B[3][3]) 
+{
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++)	{
       C[i][j] = A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j];
     }
   }
@@ -40,7 +39,8 @@ void multiply_matrix(double C[3][3], double A[3][3], double B[3][3]) {
 //------------------------------------------------------------------------
 // scale_matrix()
 //------------------------------------------------------------------------
-void scale_matrix(double A[3][3], double scale) {
+void scale_matrix (double A[3][3], double scale) 
+{
   INT32 i,j;
   double B[3][3]; // temporary copy of A
   double C[3][3]; // scale matrix
@@ -64,7 +64,8 @@ void scale_matrix(double A[3][3], double scale) {
 //------------------------------------------------------------------------
 // adjoint_matrix()
 //------------------------------------------------------------------------
-void adjoint_matrix(double A[3][3],double B[3][3]) {
+void adjoint_matrix(double A[3][3],double B[3][3]) 
+{
     B[0][0] = A[1][1]*A[2][2] - A[1][2]*A[2][1];
     B[0][1] = A[0][2]*A[2][1] - A[0][1]*A[2][2];
     B[0][2] = A[0][1]*A[1][2] - A[0][2]*A[1][1];
@@ -79,7 +80,8 @@ void adjoint_matrix(double A[3][3],double B[3][3]) {
 //------------------------------------------------------------------------
 // define_square2quad_matrix()
 //------------------------------------------------------------------------
-void square2quad_matrix(double A[3][3],POINT a[4]) {
+void square2quad_matrix(double A[3][3],POINT a[4]) 
+{
     double dx1,dx2,dx3,dy1,dy2,dy3; // temporary storage variables
     double w;
 
@@ -106,83 +108,6 @@ void square2quad_matrix(double A[3][3],POINT a[4]) {
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#if 0
-
-void CalcCenter(CMine *mine, vms_vector &center,INT16 segnum,INT16 sidenum) {
-  INT32 i;
-  vms_vector	*v;
-  // calculate center of current side
-  center.x = center.y = center.z = 0;
-  for (i=0;i<4;i++) {
-		v = mine->vertices + mine->Segments (segnum)->verts[side_vert[sidenum][i]];
-    center.x += v->x>>2;
-    center.y += v->y>>2;
-    center.z += v->z>>2;
-  }
-//  center.x /= 4;
-//  center.y /= 4;
-//  center.z /= 4;
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-void CalcOrthoVector(CMine &mine, vms_vector &result,INT16 segnum,INT16 sidenum) {
-  struct dvector a,b,c;
-  double length;
-  INT16 vertnum1,vertnum2;
-  CDSegment	*Segments () = mine->Segments ();
-  vms_vector	*vertices = mine->vertices;
-    // calculate orthogonal vector from lines which intersect point 0
-    //
-    //       |x  y  z |
-    // AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
-    //       |bx by bz|
-
-    vertnum1 = Segments (segnum)->verts[side_vert[sidenum][0]];
-    vertnum2 = Segments (segnum)->verts[side_vert[sidenum][1]];
-    a.x = (double)(vertices[vertnum2].x - vertices[vertnum1].x);
-    a.y = (double)(vertices[vertnum2].y - vertices[vertnum1].y);
-    a.z = (double)(vertices[vertnum2].z - vertices[vertnum1].z);
-    vertnum1 = Segments (segnum)->verts[side_vert[sidenum][0]];
-    vertnum2 = Segments (segnum)->verts[side_vert[sidenum][3]];
-    b.x = (double)(vertices[vertnum2].x - vertices[vertnum1].x);
-    b.y = (double)(vertices[vertnum2].y - vertices[vertnum1].y);
-    b.z = (double)(vertices[vertnum2].z - vertices[vertnum1].z);
-
-    c.x = a.y*b.z - a.z*b.y;
-    c.y = a.z*b.x - a.x*b.z;
-    c.z = a.x*b.y - a.y*b.x;
-
-    // normalize the vector
-    length = my_sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
-    if (length>0) {
-      c.x /= length;
-      c.y /= length;
-      c.z /= length;
-    }
-
-    result.x = dround_off(-c.x * 0x10000L,1.0);
-    result.y = dround_off(-c.y * 0x10000L,1.0);
-    result.z = dround_off(-c.z * 0x10000L,1.0);
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-double CalcLength (vms_vector &center1,vms_vector &center2) 
-{
-  vms_vector direction;
-
-  // calculate distance vector between the centers
-  direction.x = center1.x - center2.x;
-  direction.y = center1.y - center2.y;
-  direction.z = center1.z - center2.z;
-
-  // calculate the length of the new cube
-  return (my_sqrt((double)direction.x*(double)direction.x
-          + (double)direction.y*(double)direction.y
-	       + (double)direction.z*(double)direction.z));
-}
-#endif //0
 //------------------------------------------------------------------------
 // TextureMap()
 //------------------------------------------------------------------------
@@ -220,7 +145,7 @@ void TextureMap(INT32 resolution,
 	INT16 dscan_light,scan_light;
 	INT16 light[4];
 	UINT16 bmWidth2;
-	bool enable_shading = (light_index != NULL);
+	bool bEnableShading = (light_index != NULL);
 
 bmHeight = bmWidth;
 bmWidth2 = bmWidth / 2;
@@ -275,11 +200,11 @@ for (i=0;i<4;i++) {
 	}
 	// reduce texture light if current side is on a delta light
 	// first make sure we have allocated space for delta lights
-if (enable_delta_shading) {
+if (bEnableDeltaShading) {
 	dl_index *dl_indices;
 	INT32 dlIdxCount = mine->GameInfo ().dl_indices.count;
 	delta_light  *delta_lights;
-	if (!light_status [segnum][sidenum].bIsOn &&
+	if (!lightStatus [segnum][sidenum].bIsOn &&
 		 (dl_indices = mine->DLIndex ()) &&
 		 (delta_lights = mine->DeltaLights ())) {
 		// search delta light index to see if current side has a light
@@ -416,7 +341,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 					UINT8 *pixelP;
 					pixelP = ptr;
 					if (resolution == 0) {
-						if (enable_shading) {
+						if (bEnableShading) {
 #if 0
 							// TEXTURE_MAP_LIGHT_HIRES
 							UINT8 temp1 = descent_side_colors[sidenum];
@@ -466,7 +391,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						} 
 					else {
 						// if doing a splash, define multiple points as the same color
-						if (enable_shading) {
+						if (bEnableShading) {
 							// TEXTURE_MAP_LIGHT_LOWRES
 #if 0
 							UINT8 temp1 = descent_side_colors[sidenum];

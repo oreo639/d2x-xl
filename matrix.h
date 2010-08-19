@@ -34,9 +34,9 @@ public:
 	void Multiply(double A[4][4], double B[4][4]);
 	void Calculate(double movex, double movey, double movez);
 	void CalculateInverse(double movex, double movey, double movez);
-	void SetPoint(vms_vector *vert, APOINT *apoint);
-	void UnsetPoint(vms_vector *vert, APOINT *apoint);
-	INT32 CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b);
+	void SetPoint(tFixVector *vert, APOINT *apoint);
+	void UnsetPoint(tFixVector *vert, APOINT *apoint);
+	INT32 CheckNormal(CDObject *obj, tFixVector *a, tFixVector *b);
 	inline double Aspect (void) { return (double) _viewHeight / (double) _viewWidth; }
 	inline double Scale (void) { return _scale; }
 	void Push (void);

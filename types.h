@@ -32,30 +32,30 @@ typedef unsigned long LONGWORD;
 typedef long FIX;	/*16 bits INT32, 16 bits frac */
 typedef INT16 FIXANG;	/*angles */
 
-typedef struct vms_vector {
+typedef struct tFixVector {
   FIX x,y,z;
-} vms_vector;
+} tFixVector;
 
-typedef struct vms_angvec {
+typedef struct tAngleVector {
   FIXANG p,b,h;
-} vms_angvec;
+} tAngleVector;
 
-typedef struct vms_matrix {
-  vms_vector rvec,uvec,fvec;
-} vms_matrix;
+typedef struct tFixMatrix {
+  tFixVector rvec,uvec,fvec;
+} tFixMatrix;
 
 typedef struct {
   UINT16 index;
 } BITMAP_INDEX;
 
 typedef struct {
-  UINT8	 flags;		    //values defined above
-  UINT8	 pad[3];	    //keep alignment
-  FIX	 lighting;	    //how much light this casts
-  FIX	 damage;	    //how much damage being against this does (for lava)
-  INT16	 eclip_num;	    //the eclip that changes this, or -1
-  INT16	 destroyed;	    //bitmap to show when destroyed, or -1
-  INT16	 slide_u,slide_v;   //slide rates of texture, stored in 8:8 FIX
+  UINT8	flags;		    //values defined above
+  UINT8	pad[3];	    //keep alignment
+  FIX		lighting;	    //how much light this casts
+  FIX		damage;	    //how much damage being against this does (for lava)
+  INT16	eclip_num;	    //the eclip that changes this, or -1
+  INT16	destroyed;	    //bitmap to show when destroyed, or -1
+  INT16	slide_u, slide_v;   //slide rates of texture, stored in 8:8 FIX
 } TMAP_INFO;
 
 typedef struct {
@@ -64,13 +64,13 @@ typedef struct {
   FIX		frame_time; //time (in seconds) of each frame
   INT32	flags;
   INT16	sound_num;
-  BITMAP_INDEX	frames[VCLIP_MAX_FRAMES];
+  UINT16	frames[VCLIP_MAX_FRAMES];
   FIX		light_value;
 } VCLIP;
 
 typedef struct {
-  VCLIP  vc;			   //imbedded vclip
-  FIX	 time_left;		   //for sequencing
+  VCLIP   vc;			   //imbedded vclip
+  FIX		 time_left;		   //for sequencing
   INT32	 frame_count;		   //for sequencing
   INT16	 changing_wall_texture;	   //Which element of Textures array to replace.
   INT16	 changing_object_texture;  //Which element of ObjBitmapPtrs array to replace.
@@ -85,7 +85,7 @@ typedef struct {
 } ECLIP;
 
 typedef struct {
-  FIX	 play_time;
+  FIX		 play_time;
   INT16	 num_frames;
   INT16	 frames[MAX_CLIP_FRAMES2];
   INT16	 open_sound;
@@ -228,7 +228,7 @@ typedef struct {
   FIX	multi_damage_scale;	// Scale damage by this amount when applying to player in multiplayer.
 				// ..F1_0 means no change.
 
-  BITMAP_INDEX bitmap;		// Pointer to bitmap if rendertype==0 or 1.
+  UINT16 bitmap;		// Pointer to bitmap if rendertype==0 or 1.
 
   FIX	blob_size;		// Size of blob if blob type
   FIX	flash_size;		// How big to draw the flash
@@ -247,8 +247,8 @@ typedef struct {
 // ..apply to damage to things it did not hit.
 // damage_force was a real mess.  Wasn't Difficulty_level based, and was being applied instead of weapon's
 // ..actual strength.  Now use 2*strength instead. --MK, 01/19/95
-  BITMAP_INDEX	picture;	// a picture of the weapon for the cockpit
-  BITMAP_INDEX	hires_picture;	// a hires picture of the above
+  UINT16	picture;	// a picture of the weapon for the cockpit
+  UINT16	hires_picture;	// a hires picture of the above
 } WEAPON_INFO;
 
 typedef struct {
@@ -365,13 +365,13 @@ typedef struct game_info {
 } game_info;
 
 typedef struct physics_info {
-  vms_vector velocity;   /*velocity vector of this object */
-  vms_vector thrust;     /*constant force applied to this object */
+  tFixVector velocity;   /*velocity vector of this object */
+  tFixVector thrust;     /*constant force applied to this object */
   FIX        mass;       /*the mass of this object */
   FIX        drag;       /*how fast this slows down */
   FIX        brakes;     /*how much brakes applied */
-  vms_vector rotvel;     /*rotational velecity (angles) */
-  vms_vector rotthrust;  /*rotational acceleration */
+  tFixVector rotvel;     /*rotational velecity (angles) */
+  tFixVector rotthrust;  /*rotational acceleration */
   FIXANG     turnroll;   /*rotation caused by turn banking */
   UINT16     flags;      /*misc physics flags */
 } physics_info;
@@ -415,7 +415,7 @@ typedef struct vclip_info {
 
 typedef struct polyobj_info {
   INT32      model_num;        /*which polygon model */
-  vms_angvec anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
+  tAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
   INT32      subobj_flags;     /*specify which subobjs to draw */
   INT32      tmap_override;    /*if this is not -1, map all face to this */
   INT8       alt_textures;     /*if not -1, use these textures instead */
@@ -491,11 +491,11 @@ public:
   UINT8      flags;         /* misc flags */
   UINT8		 multiplayer;   /* object only available in multiplayer games */
   INT16      segnum;        /* segment number containing object */
-  vms_vector pos;           /* absolute x,y,z coordinate of center of object */
-  vms_matrix orient;        /* orientation of object in world */
+  tFixVector pos;           /* absolute x,y,z coordinate of center of object */
+  tFixMatrix orient;        /* orientation of object in world */
   FIX        size;          /* 3d size of object - for collision detection */
   FIX        shields;       /* Starts at maximum, when <0, object dies.. */
-  vms_vector last_pos;      /* where object was last frame */
+  tFixVector last_pos;      /* where object was last frame */
   INT8		 contains_type; /*  Type of object this object contains (eg, spider contains powerup) */
   INT8		 contains_id;   /*  ID of object this object contains (eg, id = blue type = key) */
   INT8		 contains_count;/* number of objects of type:id this object contains */
@@ -503,7 +503,7 @@ public:
   /*movement info, determined by MOVEMENT_TYPE */
   union {
     physics_info phys_info; /* a physics object */
-    vms_vector   spin_rate; /* for spinning objects */
+    tFixVector   spin_rate; /* for spinning objects */
   } mtype;
 
   /*control info, determined by CONTROL_TYPE */

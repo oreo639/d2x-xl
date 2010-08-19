@@ -572,7 +572,7 @@ if (DefineTexture(texture1,texture2,&tx,x0,y0))
 	return;
 BITMAPINFO *bmi;
 bmi = MakeBitmap ();
-CPalette	*oldPalette = pDC->SelectPalette (thePalette, FALSE);
+CPalette	*oldPalette = pDC->SelectPalette (m_currentPalette, FALSE);
 pDC->RealizePalette ();
 //SetDIBitsToDevice (pDC->m_hDC, x_offset, y_offset, 64, 64, 0, 0, 0, 64, bitmap_array, bmi, DIB_RGB_COLORS);
 CRect	rc;

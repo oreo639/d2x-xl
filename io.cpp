@@ -64,7 +64,7 @@ FIXANG read_FIXANG(FILE *load_file) {
 //
 //  ACTION - Reads a matrix structure from a file.
 //------------------------------------------------------------------------
-vms_matrix *read_matrix(vms_matrix *matrix,FILE *load_file) {
+tFixMatrix *read_matrix(tFixMatrix *matrix,FILE *load_file) {
   read_vector(&matrix->rvec,load_file );
   read_vector(&matrix->uvec,load_file );
   read_vector(&matrix->fvec,load_file );
@@ -76,7 +76,7 @@ vms_matrix *read_matrix(vms_matrix *matrix,FILE *load_file) {
 //
 // ACTION - Reads a vector structure from a file.
 //------------------------------------------------------------------------
-vms_vector *read_vector(vms_vector *vector,FILE *load_file) {
+tFixVector *read_vector(tFixVector *vector,FILE *load_file) {
   fread( &vector->x, sizeof (FIX), 1, load_file );
   fread( &vector->y, sizeof (FIX), 1, load_file );
   fread( &vector->z, sizeof (FIX), 1, load_file );
@@ -89,7 +89,7 @@ vms_vector *read_vector(vms_vector *vector,FILE *load_file) {
 // ACTION - Reads a vector structure from a file.
 //
 //------------------------------------------------------------------------
-vms_angvec *read_angvec(vms_angvec *vector,FILE *load_file) {
+tAngleVector *read_angvec(tAngleVector *vector,FILE *load_file) {
   fread( &vector->p, sizeof (FIXANG), 1, load_file );
   fread( &vector->b, sizeof (FIXANG), 1, load_file );
   fread( &vector->h, sizeof (FIXANG), 1, load_file );
@@ -151,7 +151,7 @@ FIXANG write_FIXANG(FIXANG value,FILE *save_file) {
 //
 // ACTION - Writes a matrix structure to a file.
 //------------------------------------------------------------------------
-vms_matrix *write_matrix(vms_matrix *matrix,FILE *save_file) {
+tFixMatrix *write_matrix(tFixMatrix *matrix,FILE *save_file) {
   write_vector(&matrix->rvec,save_file );
   write_vector(&matrix->uvec,save_file );
   write_vector(&matrix->fvec,save_file );
@@ -163,7 +163,7 @@ vms_matrix *write_matrix(vms_matrix *matrix,FILE *save_file) {
 //
 // ACTION - Writes a vector structure to a file.
 //------------------------------------------------------------------------
-vms_vector *write_vector(vms_vector *vector,FILE *save_file) {
+tFixVector *write_vector(tFixVector *vector,FILE *save_file) {
   fwrite( &vector->x, sizeof (FIX), 1, save_file );
   fwrite( &vector->y, sizeof (FIX), 1, save_file );
   fwrite( &vector->z, sizeof (FIX), 1, save_file );
@@ -175,7 +175,7 @@ vms_vector *write_vector(vms_vector *vector,FILE *save_file) {
 //
 // ACTION - Writes a vector structure to a file.
 //------------------------------------------------------------------------
-vms_angvec *write_angvec(vms_angvec *vector,FILE *save_file) {
+tAngleVector *write_angvec(tAngleVector *vector,FILE *save_file) {
   fwrite( &vector->p, sizeof (FIXANG), 1, save_file );
   fwrite( &vector->b, sizeof (FIXANG), 1, save_file );
   fwrite( &vector->h, sizeof (FIXANG), 1, save_file );

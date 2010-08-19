@@ -854,7 +854,7 @@ else {
 		// and show bitmap
 		CDTexture tx (bmBuf);
 		if (!DefineTexture(tnum,0,&tx,0,0)) {
-			CPalette * pOldPalette = pDC->SelectPalette(thePalette, FALSE);
+			CPalette * pOldPalette = pDC->SelectPalette(m_currentPalette, FALSE);
 			pDC->RealizePalette ();
 			BITMAPINFO *bmi;
 			bmi = MakeBitmap ();
@@ -1148,7 +1148,7 @@ void CObjectTool::OnReset ()
 {
 if (!GetMine ())
 	return;
-vms_matrix *orient;
+tFixMatrix *orient;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (m_mine->Current ()->object == m_mine->GameInfo ().objects.count) {

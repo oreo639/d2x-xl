@@ -480,7 +480,7 @@ void CTextureView::RecalcLayout ()
 	bmi = MakeBitmap();
 
       // realize pallette for 256 color displays
-	CPalette *oldPalette = pDC->SelectPalette(thePalette, FALSE);
+	CPalette *oldPalette = pDC->SelectPalette(mine->m_currentPalette, FALSE);
 	pDC->RealizePalette();
 	pDC->SetStretchBltMode(STRETCH_DELETESCANS);
 	INT32 x=0;

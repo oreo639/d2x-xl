@@ -67,7 +67,7 @@ if (!sysPal) {
 	ErrorMsg ("Not enough memory for palette.");
 	return false;
 	}
-thePalette->GetPaletteEntries (0, 256, sysPal);
+theApp.GetMine ()->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 
 INT32 nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
 INT32 h = nSize, i = 0, k, x, y;
@@ -1191,7 +1191,7 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES ()))	// this allows to suppress 
 
 if (bShowTexture) {
 	// check pig file
-	strcpy_s (szFile, sizeof (szFile), (theApp.GetMine ()->IsD1File ()) ? descent_path : descent2_path);
+	strcpy_s (szFile, sizeof (szFile), (mine->IsD1File ()) ? descent_path : descent2_path);
 	fopen_s (&fTextures, szFile, "rb");
 	if (fTextures) {
 		fseek (fTextures, 0, SEEK_SET);
@@ -1204,7 +1204,7 @@ if (bShowTexture) {
 		CDTexture	tx (bmBuf);
 		if (DefineTexture (texture1, texture2, &tx, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
-		CPalette *pOldPalette = pDC->SelectPalette (thePalette, FALSE);
+		CPalette *pOldPalette = pDC->SelectPalette (mine->m_currentPalette, FALSE);
 		pDC->RealizePalette ();
 		INT32 caps = pDC->GetDeviceCaps (RASTERCAPS);
 		if (caps & RC_DIBTODEV) {

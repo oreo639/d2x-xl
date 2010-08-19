@@ -97,7 +97,7 @@ if (type == NORMAL_HAM)  {
 		}
 	read_INT32(fp); // version (0x00000007)
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof (BITMAP_INDEX)*t,SEEK_CUR);
+	fseek(fp,sizeof (UINT16)*t,SEEK_CUR);
 	fseek(fp,sizeof (TMAP_INFO)*t,SEEK_CUR);
 	t = (INT16) read_INT32(fp);
 	fseek(fp,sizeof (UINT8)*t,SEEK_CUR);
@@ -251,8 +251,8 @@ else if (type == EXTENDED_HAM)  {
   //----------------
   if (type == NORMAL_HAM) {
     t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof (BITMAP_INDEX)*t,SEEK_CUR); // lores gague
-    fseek(fp,sizeof (BITMAP_INDEX)*t,SEEK_CUR); // hires gague
+    fseek(fp,sizeof (UINT16)*t,SEEK_CUR); // lores gague
+    fseek(fp,sizeof (UINT16)*t,SEEK_CUR); // hires gague
   }
 
   // read object bitmap data
@@ -272,7 +272,7 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-  fread( &ObjBitmaps[t0], sizeof (BITMAP_INDEX), t, fp );
+  fread( &ObjBitmaps[t0], sizeof (UINT16), t, fp );
 
   if (type == EXTENDED_HAM) {
     t = (INT16) read_INT32(fp);
@@ -283,7 +283,7 @@ else if (type == EXTENDED_HAM)  {
       goto abort;
     }
   }
-  fread(&ObjBitmapPtrs[t0], sizeof (BITMAP_INDEX), t, fp );
+  fread(&ObjBitmapPtrs[t0], sizeof (UINT16), t, fp );
 #endif
 
   fclose(fp);

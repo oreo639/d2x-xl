@@ -246,7 +246,7 @@ if (m_pDC)
 	return false;
 if (!(m_pDC = GetDC ()))
 	 return false;
-m_pOldPal = m_pDC->SelectPalette (thePalette, FALSE);
+m_pOldPal = m_pDC->SelectPalette (theApp.GetMine ()->m_currentPalette, FALSE);
 m_pDC->RealizePalette ();
 return true;
 }
@@ -525,7 +525,7 @@ if (m_pDC)
 if (!(m_pDC = pWnd->GetDC ()))
 	 return false;
 m_pPaintWnd = pWnd;
-m_pOldPal = m_pDC->SelectPalette (thePalette, FALSE);
+m_pOldPal = m_pDC->SelectPalette (theApp.GetMine ()->m_currentPalette, FALSE);
 m_pDC->RealizePalette ();
 return true;
 }
@@ -752,7 +752,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	fread(palette,sizeof (RGBQUAD),palette_size,file);
 
 	// read the logical palette entries
-	thePalette->GetPaletteEntries (0, 256, sysPal);
+	theApp.GetMine ()->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 
 	// check color palette
 	INT32 i;

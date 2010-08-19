@@ -32,8 +32,10 @@ CMine::CMine()
 {
 	VertCount () = 0;
 	SegCount () = 0;
+	m_levelVersion = 7;
+	m_fileType = RL2_FILE;
 	m_dlcLogPalette = 0;
-	thePalette = NULL;
+	m_currentPalette = NULL;
 	FlickerLightCount () = 0;
 	Current () = &Current1 ();
 	*m_szBlockFile = '\0';
@@ -241,10 +243,10 @@ for (i = 0; i < 256; ++i) {
 	m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
 }
 // now recreate the global Palette
-if (thePalette)
-	delete thePalette;
-thePalette = new CPalette ();
-thePalette->CreatePalette (m_dlcLogPalette);
+if (m_currentPalette)
+	delete m_currentPalette;
+m_currentPalette = new CPalette ();
+m_currentPalette->CreatePalette (m_dlcLogPalette);
 FreePaletteResource ();
 return 0;
 }
@@ -393,10 +395,10 @@ if (m_dlcLogPalette) {
 		}
 #endif
 	// now recreate the global Palette
-	if (thePalette) {
-		delete thePalette;
-		thePalette = new CPalette ();
-		thePalette->CreatePalette (m_dlcLogPalette);
+	if (m_currentPalette) {
+		delete m_currentPalette;
+		m_currentPalette = new CPalette ();
+		m_currentPalette->CreatePalette (m_dlcLogPalette);
 //			::DeleteObject(m_currentPalette);
 //			m_currentPalette = CreatePalette(m_dlcLogPalette);
 		}
@@ -709,7 +711,7 @@ void CMine::Default()
 		}
 
 	CDSegment& seg = *Segments ();
-	vms_vector *vert = Vertices ();
+	tFixVector *vert = Vertices ();
 
 	seg.sides [0].nWall = NO_WALL (this);
 	seg.sides [0].nBaseTex = 0;
@@ -972,9 +974,9 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	SegCount () = n_segments;
 
 	// read all vertices
-	fread(Vertices (), sizeof (vms_vector), VertCount (), loadFile);
+	fread(Vertices (), sizeof (tFixVector), VertCount (), loadFile);
 	if (n_vertices != VertCount ()) {
-		fseek(loadFile, sizeof (vms_vector)*(n_vertices - VertCount ()), SEEK_CUR);
+		fseek(loadFile, sizeof (tFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
 	}
 
 	// unmark all vertices while we are here...
@@ -1943,7 +1945,7 @@ INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 	write_INT16(SegCount (), save_file);
 
 	// write all vertices
-	fwrite(Vertices (), sizeof (vms_vector), VertCount (), save_file);
+	fwrite(Vertices (), sizeof (tFixVector), VertCount (), save_file);
 
 	// write segment information
 	for (segnum = 0; segnum < SegCount (); segnum++)   {
@@ -2615,7 +2617,7 @@ return;
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcOrthoVector(vms_vector &result, INT16 segnum, INT16 sidenum)
+void CMine::CalcOrthoVector(tFixVector &result, INT16 segnum, INT16 sidenum)
 {
 	struct dvector a, b, c;
 	double length;
@@ -2628,8 +2630,8 @@ void CMine::CalcOrthoVector(vms_vector &result, INT16 segnum, INT16 sidenum)
 
     vertnum1 =Segments (segnum)->verts [side_vert [sidenum] [0]];
     vertnum2 =Segments (segnum)->verts [side_vert [sidenum] [1]];
-	 vms_vector *v1 = Vertices (vertnum1);
-	 vms_vector *v2 = Vertices (vertnum2);
+	 tFixVector *v1 = Vertices (vertnum1);
+	 tFixVector *v2 = Vertices (vertnum2);
     a.x = (double)(v2->x - v1->x);
     a.y = (double)(v2->y - v1->y);
     a.z = (double)(v2->z - v1->z);
@@ -2660,12 +2662,12 @@ void CMine::CalcOrthoVector(vms_vector &result, INT16 segnum, INT16 sidenum)
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcCenter(vms_vector &center, INT16 segnum, INT16 sidenum)
+void CMine::CalcCenter(tFixVector &center, INT16 segnum, INT16 sidenum)
 {
 	INT32 i;
 
 	center.x = center.y = center.z = 0;
-	vms_vector *v;
+	tFixVector *v;
 	CDSegment *seg = Segments (segnum);
 	for (i = 0; i < 4; i++) {
 		v = Vertices (seg->verts [side_vert [sidenum][i]]);

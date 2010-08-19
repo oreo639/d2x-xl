@@ -134,7 +134,7 @@ if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 
 void CMine::MakeObject (CDObject *obj, INT8 type, INT16 segnum) 
 {
-  vms_vector location;
+  tFixVector location;
 
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();

@@ -329,7 +329,7 @@ if (m_nMineCenter == 2) {
 	// draw a globe
 	// 5 circles around each axis at angles of 30, 60, 90, 120, and 150
 	// each circle has 18 points
-	vms_vector circle;
+	tFixVector circle;
 	APOINT pt;
 
 	m_pDC->SelectObject (m_penCyan);
@@ -507,7 +507,7 @@ EndPaint (&ps);
 void CMineView::AdvanceLightTick (void)
 {
 	CMine *mine = GetMine ();
-	LIGHT_TIMER *plt = light_timers;
+	LIGHT_TIMER *plt = lightTimers;
 	FLICKERING_LIGHT *pfl = mine->FlickeringLights ();
 	INT32 i, light_delay;
 
@@ -545,7 +545,7 @@ delta_light *dll = mine->DeltaLights ();
 if (!dll)
 	return false;
 // search delta light index to see if current side has a light
-pls = light_status [0];
+pls = lightStatus [0];
 for (i = mine->SegCount (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
@@ -580,9 +580,9 @@ for (h = 0; h < mine->GameInfo ().dl_indices.count; h++, pdli++) {
 		CBRK (segnum < 0 || segnum >= mine->SegCount () || sidenum < 0 || sidenum >= MAX_SIDES_PER_SEGMENT);
 		CBRK (segnum == qqq1 && sidenum == qqq2);
 #endif
-		pls = light_status [segnum] + sidenum;
-		plt = light_timers + j;
-		pls->bIsOn = (pfl [j].mask & (1 << light_timers [j].impulse)) != 0;
+		pls = lightStatus [segnum] + sidenum;
+		plt = lightTimers + j;
+		pls->bIsOn = (pfl [j].mask & (1 << lightTimers [j].impulse)) != 0;
 		if (pls->bWasOn != pls->bIsOn)
 			bChange = true;
 		}
@@ -609,7 +609,7 @@ if (nIdEvent == 4) {
 		}
 	}
 else if (nIdEvent == 3) {
-	if (enable_delta_shading) {
+	if (bEnableDeltaShading) {
 		AdvanceLightTick ();
 		if (SetLightStatus ()) {
 			m_bUpdate = TRUE;
@@ -626,14 +626,14 @@ else
 
 void CMineView::EnableDeltaShading (INT32 bEnable, INT32 nFrameRate, INT32 bShowLightSource)
 {
-if (enable_delta_shading = bEnable) {
+if (bEnableDeltaShading = bEnable) {
 	m_lightTimer = SetTimer (3, (UINT) (m_nFrameRate + 5) / 10, NULL);
 	if ((nFrameRate >= 10) && (nFrameRate <= 100))
 		m_nFrameRate = nFrameRate;
 	if (bShowLightSource != -1)
 		m_bShowLightSource = bShowLightSource;
-	memset (light_timers, 0, sizeof (light_timers));
-	memset (light_status, 0xff, sizeof (light_status));
+	memset (lightTimers, 0, sizeof (lightTimers));
+	memset (lightStatus, 0xff, sizeof (lightStatus));
 	}
 else if (m_lightTimer != -1) {
 	KillTimer (m_lightTimer);
@@ -1172,7 +1172,7 @@ if (bPartial) {
 			side [i].x = m_viewPoints [seg->verts [side_vert [sidenum] [i]]].x; 
 			side [i].y = m_viewPoints [seg->verts [side_vert [sidenum] [i]]].y; 
 			}
-		vms_vector a,b;
+		tFixVector a,b;
 		a.x = side [1].x - side [0].x;
 		a.y = side [1].y - side [0].y;
 		b.x = side [3].x - side [0].x;
@@ -1450,7 +1450,7 @@ void CMineView::DrawCubeTextured(CDSegment *seg, UINT8* light_index)
 				APOINT& p1 = m_viewPoints [seg->verts [side_vert [sidenum] [1]]];
 				APOINT& p3 = m_viewPoints [seg->verts [side_vert [sidenum] [3]]];
 
-				vms_vector a,b;
+				tFixVector a,b;
 				a.x = p1.x - p0.x;
 				a.y = p1.y - p0.y;
 				b.x = p3.x - p0.x;
@@ -1685,7 +1685,7 @@ void CMineView::DrawWalls(CMine *mine)
 {
 	CDWall		*walls = mine->Walls ();
 	CDSegment	*segments = mine->Segments ();
-	vms_vector	*vertices = mine->Vertices ();
+	tFixVector	*vertices = mine->Vertices ();
 	CDSegment	*seg;
 	INT16 i,j;
 	INT16 x_max = m_viewWidth * 2;
@@ -1744,7 +1744,7 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 		 IN_RANGE(m_viewPoints [seg->verts [side_vert [j][3]]].x,x_max) &&
 		 IN_RANGE(m_viewPoints [seg->verts [side_vert [j][3]]].y,y_max)   ) {
 
-			vms_vector center,orthog,vector;
+			tFixVector center,orthog,vector;
 			APOINT point;
 
 		mine->CalcCenter (center, (INT16)walls [i].segnum, (INT16)walls [i].sidenum);
@@ -1760,7 +1760,7 @@ for (i=0;i<mine->GameInfo ().walls.count;i++) {
 			}
 		if (walls [i].trigger != NO_TRIGGER) {
 				APOINT arrowstart_point,arrowend_point,arrow1_point,arrow2_point;
-				vms_vector fin;
+				tFixVector fin;
 
 			// calculate arrow points
 			vector.x = center.x - 3*orthog.x;
@@ -1968,7 +1968,7 @@ if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
 	}
 m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES (mine) - 1;
-vms_vector *verts = mine->Vertices (j);
+tFixVector *verts = mine->Vertices (j);
 for (h = n_splines * 4, i = 0; i < h; i++, j--, verts--)
 	m_matrix.SetPoint (verts, m_viewPoints + j);
 CDSegment *seg = mine->Segments (MAX_SEGMENTS (mine) - 1);
@@ -1984,7 +1984,7 @@ for (i = 0; i < n_splines; i++, seg--)
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
-void TransformModelPoint (vms_vector &dest, APOINT &src, vms_matrix &orient, vms_vector offs)
+void TransformModelPoint (tFixVector &dest, APOINT &src, tFixMatrix &orient, tFixVector offs)
 {
 dest.x = (orient.rvec.x * (FIX)src.x + orient.uvec.x * (FIX)src.y + orient.fvec.x * (FIX)src.z);
 dest.y = (orient.rvec.y * (FIX)src.x +	orient.uvec.y * (FIX)src.y + orient.fvec.y * (FIX)src.z);
@@ -1999,7 +1999,7 @@ void CMineView::DrawObject(CMine *mine,INT16 objnum,INT16 clear_it)
 {
 	INT16 poly;
 	CDObject *obj;
-	vms_vector pt [MAX_POLY];
+	tFixVector pt [MAX_POLY];
 	APOINT poly_draw [MAX_POLY];
 	APOINT object_shape [MAX_POLY] = {
 		{ 0,  4, -4},
@@ -2248,9 +2248,6 @@ void CMineView::DrawHighlight(CMine *mine, INT16 clear_it)
 //	INT16 i;
 //	RECT rect;
 
-if (m_disableDrawing) 
-	return;
-
 if (mine->SegCount ()==0) 
 	return;
 
@@ -2296,7 +2293,7 @@ if (preferences & PREFS_SHOW_POINT_COORDINATES) {
 else {
    // calculate cube size (length between center point of opposing sides)
 	strcat_s (message, sizeof (message), "  cube size: ");
-	vms_vector center1,center2;
+	tFixVector center1,center2;
    double length;
    mine->CalcCenter (center1, mine->Current ()->segment,0);
 	mine->CalcCenter (center2, mine->Current ()->segment,2);
@@ -2507,7 +2504,7 @@ InitViewDimensions ();
 if (bSetViewInfo)
 	m_matrix.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = m_mine->VertCount ();
-vms_vector *v = m_mine->Vertices (i);
+tFixVector *v = m_mine->Vertices (i);
 APOINT *a = m_viewPoints + i;
 for (; i--; ) {
 	m_matrix.SetPoint (--v, --a);
@@ -2696,7 +2693,7 @@ void CMineView::CenterMine()
 //	CDlcDoc* pDoc = GetDocument();
 //	ASSERT_VALID(pDoc);
 
-	vms_vector *verts;
+	tFixVector *verts;
 	if (!GetMine ())
 		return;
 
@@ -2757,7 +2754,7 @@ void CMineView::CenterCube()
 if (!GetMine ())
 	return;
 	CDSegment& seg = m_mine->Segments () [m_Current->segment];
-	vms_vector *vMine = m_mine->Vertices ();
+	tFixVector *vMine = m_mine->Vertices ();
 	INT16 *vSeg = seg.verts;
 
 	m_movex = -((double)vMine [seg.verts [0]].x
@@ -3353,13 +3350,13 @@ return true;
 // calculate_segment_center()
 //-------------------------------------------------------------------------
 
-void CMineView::CalcSegmentCenter(vms_vector &pos,INT16 segnum) 
+void CMineView::CalcSegmentCenter(tFixVector &pos,INT16 segnum) 
 {
 if (!GetMine ())
 	return;
 
 CDSegment *seg = m_mine->Segments () + segnum;
-vms_vector *vMine = m_mine->Vertices ();
+tFixVector *vMine = m_mine->Vertices ();
 INT16 *vSeg = seg->verts;
 pos.x  =
    (vMine [vSeg [0]].x
@@ -4268,8 +4265,8 @@ void CMineView::GLRenderTexture (INT16 segnum, INT16 sidenum, INT16 nTexture)
 #if OGL_MAPPED
 	APOINT *a;
 #else
-	vms_vector *verts = m_mine->Vertices ();
-	vms_vector *v;
+	tFixVector *verts = m_mine->Vertices ();
+	tFixVector *v;
 #endif
 	static INT32 rotOffs [4] = {0,3,2,1};
 	INT32 h = rotOffs [(nTexture & 0xC000) >> 14];
@@ -4318,7 +4315,7 @@ void CMineView::GLRenderFace (INT16 segnum, INT16 sidenum)
 {
 	CDSegment *seg = m_mine->Segments (segnum);
 	CDSide *side = seg->sides + sidenum;
-	vms_vector *verts = m_mine->Vertices ();
+	tFixVector *verts = m_mine->Vertices ();
 	UINT16 wallnum = seg->sides [sidenum].nWall;
 
 if (side->nBaseTex < 0)
@@ -4332,7 +4329,7 @@ APOINT& p0 = m_viewPoints [seg->verts [side_vert [sidenum] [0]]];
 APOINT& p1 = m_viewPoints [seg->verts [side_vert [sidenum] [1]]];
 APOINT& p3 = m_viewPoints [seg->verts [side_vert [sidenum] [3]]];
 
-vms_vector a,b;
+tFixVector a,b;
 a.x = p1.x - p0.x;
 a.y = p1.y - p0.y;
 b.x = p3.x - p0.x;
@@ -4340,11 +4337,11 @@ b.y = p3.y - p0.y;
 if (a.x*b.y > a.y*b.x)
 	return;
 #else
-vms_vector *p0 = verts + seg->verts [side_vert [sidenum] [0]];
-vms_vector *p1 = verts + seg->verts [side_vert [sidenum] [1]];
-vms_vector *p3 = verts + seg->verts [side_vert [sidenum] [3]];
+tFixVector *p0 = verts + seg->verts [side_vert [sidenum] [0]];
+tFixVector *p1 = verts + seg->verts [side_vert [sidenum] [1]];
+tFixVector *p3 = verts + seg->verts [side_vert [sidenum] [3]];
 
-vms_vector a,b;
+tFixVector a,b;
 a.x = p1->x - p0->x;
 a.y = p1->y - p0->y;
 b.x = p3->x - p0->x;

@@ -30,14 +30,14 @@ typedef struct tMineData {
 	INT32							m_reactor_time;
 	INT32							m_reactor_strength;
 	INT32							m_secret_cubenum;
-	vms_matrix					m_secret_orient;
+	tFixMatrix					m_secret_orient;
 	
 	// robot data
 	ROBOT_INFO					Robot_info[MAX_ROBOT_TYPES];
 	
 	// structure data
 	UINT16						numVertices;
-	vms_vector					vertices[MAX_VERTICES3];
+	tFixVector					vertices[MAX_VERTICES3];
 	
 	UINT16						numSegments;
 	CDSegment					segments[MAX_SEGMENTS3];
@@ -65,7 +65,7 @@ typedef struct tMineData {
 	delta_light					delta_lights[MAX_DELTA_LIGHTS_D2X];
 	
 	// flickering light
-	INT16							N_flickering_lights;
+	INT16							m_nFlickeringLights;
 	FLICKERING_LIGHT			flickering_lights[MAX_FLICKERING_LIGHTS];
 
 	CDSelection					current1;
@@ -86,7 +86,8 @@ public:
 	ROBOT_INFO					m_defaultRobotInfo [MAX_ROBOT_TYPES];
 	// textures and palettes
 //	HGLOBAL						texture_handle[MAX_D2_TEXTURES];
-	HPALETTE						m_currentPalette;
+	HPALETTE						m_paletteHandle;
+	CPalette*					m_currentPalette;
 	LPLOGPALETTE				m_dlcLogPalette;
 	
 	// strings
@@ -126,7 +127,7 @@ public:
 public:
 	inline MINE_DATA& MineData ()
 		{ return m_mineData; }
-	inline vms_vector *Vertices (INT32 i = 0)
+	inline tFixVector *Vertices (INT32 i = 0)
 		{ return MineData ().vertices + i; }
 	inline UINT8 *VertStatus (INT32 i = 0)
 		{ return MineData ().vert_status + i; }
@@ -173,7 +174,7 @@ public:
 	inline FLICKERING_LIGHT *FlickeringLights (INT32 i = 0)
 		{ return MineData ().flickering_lights + i; }
 	inline INT16& FlickerLightCount ()
-		{ return MineData ().N_flickering_lights; }
+		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (game_item_info& gii)
 		{ return (long) gii.size * (long) gii.count; }
 	inline INT32& ReactorTime ()
@@ -182,7 +183,7 @@ public:
 		{ return MineData ().m_reactor_strength; }
 	inline INT32& SecretCubeNum ()
 		{ return MineData ().m_secret_cubenum; }
-	inline vms_matrix& SecretOrient ()
+	inline tFixMatrix& SecretOrient ()
 		{ return MineData ().m_secret_orient; }
 	inline CDSelection* &Current ()
 		{ return MineData ().current; }
@@ -252,7 +253,7 @@ public:
 	bool  AddSegment();
 	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
-	void	CalcSegCenter(vms_vector &pos,INT16 segnum);
+	void	CalcSegCenter(tFixVector &pos,INT16 segnum);
 	inline CDSegment *CurrSeg ()
 		{ return Segments () + Current ()->segment; }
 	inline CDWall *SideWall (INT32 i = 0, INT32 j = 0)
@@ -283,9 +284,9 @@ public:
 	void SplitLines();
 	void SplitPoints();
 
-	void CalcOrthoVector (vms_vector &result,INT16 segnum,INT16 sidenum);
-	void CalcCenter (vms_vector &center,INT16 segnum,INT16 sidenum);
-	double CalcLength (vms_vector *center1, vms_vector *center2);
+	void CalcOrthoVector (tFixVector &result,INT16 segnum,INT16 sidenum);
+	void CalcCenter (tFixVector &center,INT16 segnum,INT16 sidenum);
+	double CalcLength (tFixVector *center1, tFixVector *center2);
 
 	INT32 IsLight(INT32 nBaseTex);
 	INT32 IsWall (INT16 segnum = -1, INT16 sidenum = -1);
@@ -308,8 +309,8 @@ public:
 	void BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr);
 	void Illuminate (INT16 source_segnum, INT16 source_sidenum, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
-	bool CalcSideLights (INT32 segnum, INT32 sidenum, vms_vector& source_center, 
-								vms_vector *source_corner, vms_vector& A, double *effect,
+	bool CalcSideLights (INT32 segnum, INT32 sidenum, tFixVector& source_center, 
+								tFixVector *source_corner, tFixVector& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);
 
 	void FixChildren();
@@ -341,9 +342,9 @@ public:
 	bool SizeLine (CDSegment *seg,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
-	void RotateVmsVector(vms_vector *vector,double angle,char axis); 
-	void RotateVmsMatrix(vms_matrix *matrix,double angle,char axis); 
-	void RotateVertex(vms_vector *vertex, vms_vector *orgin, vms_vector *normal, double angle); 
+	void RotateVmsVector(tFixVector *vector,double angle,char axis); 
+	void RotateVmsMatrix(tFixMatrix *matrix,double angle,char axis); 
+	void RotateVertex(tFixVector *vertex, tFixVector *orgin, tFixVector *normal, double angle); 
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 

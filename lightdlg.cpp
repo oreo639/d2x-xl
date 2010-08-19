@@ -103,7 +103,7 @@ if (!pDX->m_bSaveAndValidate)
 	DDX_Text (pDX, IDT_LIGHT_DELTA_FRAMERATE, m_deltaLightFrameRate);
 DDX_Check (pDX, IDC_LIGHT_DELTA_SHOWSOURCE, m_bShowLightSource);
 if (!pDX->m_bSaveAndValidate)
-	((CWnd *) GetDlgItem (IDC_LIGHT_SHOWDELTA))->SetWindowText (enable_delta_shading ? "stop" : "animate");
+	((CWnd *) GetDlgItem (IDC_LIGHT_SHOWDELTA))->SetWindowText (bEnableDeltaShading ? "stop" : "animate");
 DDX_Check (pDX, IDC_LIGHT_COPYTEXLIGHTS, m_bCopyTexLights);
 }
 
@@ -150,7 +150,7 @@ UpdateData (FALSE);
 void CLightTool::OnShowLightSource ()
 {
 m_bShowLightSource = BtnCtrl (IDC_LIGHT_DELTA_SHOWSOURCE)->GetCheck ();
-theApp.MineView ()->EnableDeltaShading (enable_delta_shading, m_deltaLightFrameRate, m_bShowLightSource);
+theApp.MineView ()->EnableDeltaShading (bEnableDeltaShading, m_deltaLightFrameRate, m_bShowLightSource);
 }
 
                         /*--------------------------*/
@@ -160,7 +160,7 @@ void CLightTool::OnShowDelta ()
 if (!::IsWindow(m_hWnd))
 	return;
 UpdateData (TRUE);
-if (enable_delta_shading) {
+if (bEnableDeltaShading) {
 	((CWnd *) GetDlgItem (IDC_LIGHT_SHOWDELTA))->SetWindowText ("animate");
 	theApp.MineView ()->EnableDeltaShading (0, m_deltaLightFrameRate, m_bShowLightSource);
 	}

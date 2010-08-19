@@ -312,7 +312,7 @@ void CMatrix::CalculateInverse(double movex, double movey, double movez)
 // SetPoint()
 //--------------------------------------------------------------------------
 
-void CMatrix::SetPoint(vms_vector *vert, APOINT *apoint) 
+void CMatrix::SetPoint(tFixVector *vert, APOINT *apoint) 
 {
 	double x,y,z,x1,y1,z1,x2,y2,z2,x3,y3;
 	
@@ -362,7 +362,7 @@ void CMatrix::SetPoint(vms_vector *vert, APOINT *apoint)
 //			     unset_point()
 //--------------------------------------------------------------------------
 
-void CMatrix::UnsetPoint(vms_vector *vert,APOINT *apoint) 
+void CMatrix::UnsetPoint(tFixVector *vert,APOINT *apoint) 
 {
   double x,y,z,x1,y1,z1,x2,y2,z2,x3,y3;
 
@@ -373,11 +373,11 @@ void CMatrix::UnsetPoint(vms_vector *vert,APOINT *apoint)
   //x3 /= aspect_ratio;
 
   // remove perspective
-  x2 = (x3 * (z2 + depth_perception)) / depth_perception;
-  y2 = (y3 * (z2 + depth_perception)) / depth_perception;
+  x2 = x3 * (z2 + depth_perception) / depth_perception;
+  y2 = y3 * (z2 + depth_perception) / depth_perception;
   // unscale
-  x1 = x2/5;
-  y1 = y2/5;
+  x1 = x2 / 5;
+  y1 = y2 / 5;
   z1 = z2;
 
   // unrotate
@@ -386,14 +386,15 @@ void CMatrix::UnsetPoint(vms_vector *vert,APOINT *apoint)
   z = IM[3][1]*x1 + IM[3][2]*y1 + IM[3][3]*z1;
 
   // untranslate
-  vert->x = (long) ((x - M[1][0]) * 0x10000L);
-  vert->y = (long) ((y - M[2][0]) * 0x10000L);
-  vert->z = (long) ((z - M[3][0]) * 0x10000L);
+  vert->x = (FIX) ((x - M[1][0]) * 0x10000L);
+  vert->y = (FIX) ((y - M[2][0]) * 0x10000L);
+  vert->z = (FIX) ((z - M[3][0]) * 0x10000L);
 }
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-INT32 CMatrix::CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b) {
+INT32 CMatrix::CheckNormal(CDObject *obj, tFixVector *a, tFixVector *b) 
+{
   double ax,ay,az;
   double bx,by,bz;
   double x,y,z;
@@ -436,6 +437,5 @@ INT32 CMatrix::CheckNormal(CDObject *obj, vms_vector *a, vms_vector *b) {
   z  = M[3][0] + bz / F1_0;
   z2 = M[3][1]*x + M[3][2]*y + M[3][3]*z;
 
-  if (z1 > z2) return 1;
-  else         return 0;
+  return (z1 > z2);
 }

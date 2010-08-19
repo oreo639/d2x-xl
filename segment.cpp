@@ -18,9 +18,9 @@
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-double CMine::CalcLength(vms_vector *center1, vms_vector *center2)
+double CMine::CalcLength(tFixVector *center1, tFixVector *center2)
 {
-	vms_vector direction; 
+	tFixVector direction; 
 
 	// calculate distance vector between the centers
 	direction.x = center1->x - center2->x; 
@@ -372,11 +372,11 @@ void CMine::DeleteVertex(INT16 deleted_vertnum)
 
 	theApp.SetModified (TRUE); 
 	// fill in gap in vertex array and status
-	memcpy (Vertices (deleted_vertnum), Vertices (deleted_vertnum + 1), (VertCount ()-1 - deleted_vertnum) * sizeof (vms_vector));
+	memcpy (Vertices (deleted_vertnum), Vertices (deleted_vertnum + 1), (VertCount ()-1 - deleted_vertnum) * sizeof (tFixVector));
 	memcpy (VertStatus (deleted_vertnum), VertStatus (deleted_vertnum + 1), (VertCount ()-1 - deleted_vertnum) * sizeof (*VertStatus ()));
 /*
 	for (vertnum = deleted_vertnum; vertnum < VertCount ()-1; vertnum++) {
-		memcpy(&vertices [vertnum], &vertices [vertnum + 1], sizeof (vms_vector)); 
+		memcpy(&vertices [vertnum], &vertices [vertnum + 1], sizeof (tFixVector)); 
 		*VertStatus (vertnum] = *VertStatus (vertnum + 1]; 
 	}
 */
@@ -562,8 +562,8 @@ VertCount () += 4;
 
 // link the new segment with any touching Segments ()
 CDSegment *pSeg = Segments ();
-vms_vector *vNewSeg = Vertices (Segments (nNewSeg)->verts [0]);
-vms_vector *vSeg;
+tFixVector *vNewSeg = Vertices (Segments (nNewSeg)->verts [0]);
+tFixVector *vSeg;
 for (segnum = 0; segnum < SegCount (); segnum++, pSeg++) {
 	if (segnum!= nNewSeg) {
 		// first check to see if Segments () are any where near each other
@@ -606,8 +606,8 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	double length; 
 	INT16 vertnum; 
 	INT16 i; 
-	vms_vector center, opp_center, orthog; 
-	vms_vector *vert, new_center; 
+	tFixVector center, opp_center, orthog; 
+	tFixVector *vert, new_center; 
 
 	currSeg = Segments (Current ()->segment); 
 
@@ -873,7 +873,7 @@ bool CMine::LinkSegments (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 si
 {
 	CDSegment *seg1, *seg2; 
 	INT16 i, j; 
-	vms_vector v1 [4], v2 [4]; 
+	tFixVector v1 [4], v2 [4]; 
 	INT16 fail;
 	tVertMatch match [4]; 
 
@@ -998,10 +998,10 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 // calculate_segment_center()
 // ------------------------------------------------------------------------- 
 
-void CMine::CalcSegCenter(vms_vector &pos, INT16 segnum) 
+void CMine::CalcSegCenter(tFixVector &pos, INT16 segnum) 
 {
   INT16	*nVerts =Segments (segnum)->verts; 
-  vms_vector *vert;
+  tFixVector *vert;
   
 memset (&pos, 0, sizeof (pos));
 INT32 i;
@@ -1786,7 +1786,7 @@ nNewSeg = Current ()->segment;
 nNewSide = Current ()->side; 
 CDSegment *pSeg = Segments (),
 			 *pNewSeg = Segments (nNewSeg);
-vms_vector *vSeg, 
+tFixVector *vSeg, 
 			  *vNewSeg = Vertices (pNewSeg->verts [0]);
 for (segnum = 0; segnum < SegCount (); segnum++, pSeg) {
 	if (segnum != nNewSeg) {
@@ -1828,7 +1828,7 @@ void CMine::JoinSegments(INT32 solidify)
 	CDSegment *seg; 
 	CDSegment *seg1, *seg2; 
 	INT16 h, i, j, sidenum, nNewSeg, segnum; 
-	vms_vector v1 [4], v2 [4]; 
+	tFixVector v1 [4], v2 [4]; 
 	double radius, min_radius, max_radius, dx, dy, dz, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
@@ -2701,7 +2701,7 @@ bool CMine::SplitSegment ()
 	INT16			segNum, childSegNum;
 	INT16			sideNum, oppSideNum, childSideNum;
 	INT16			vertNum, wallNum;
-	vms_vector	segCenter, *v, *segVert, *centerSegVert;
+	tFixVector	segCenter, *v, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
 	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};

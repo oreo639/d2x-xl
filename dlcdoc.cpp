@@ -325,7 +325,7 @@ BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile)
 
 if (!m_mine) 
 	return FALSE;
-if (enable_delta_shading)
+if (bEnableDeltaShading)
 	theApp.ToolView ()->LightTool ()->OnShowDelta ();
 if (!SaveIfModified ())
 	return FALSE;
@@ -402,7 +402,7 @@ if (!m_mine)
 	return false;
 theApp.ToolView ()->Refresh ();
 CountCustomTextures ();
-if (enable_delta_shading)
+if (bEnableDeltaShading)
 	theApp.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
