@@ -13,7 +13,7 @@
 #include "palette.h"
 #include "dle-xp.h"
 
-#define CURRENT_POINT(a) ((Current ()->point + (a))&0x03)
+#define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
 
 //This dialog is always active,
 //but is hidden or restored by user
@@ -29,7 +29,7 @@ bool CMine::EditGeoFwd (void)
 /* calculate center of current side */
  center.x = center.y = center.z = 0;
  for (i = 0; i < 4; i++) {
-	 INT32 vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
+	 INT32 vertnum = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
    center.x += Vertices (vertnum)->x;
    center.y += Vertices (vertnum)->y;
    center.z += Vertices (vertnum)->z;
@@ -41,7 +41,7 @@ center.z /= 4;
 // calculate center of opposite of current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
+	INT32 vertnum = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
    opp_center.x += Vertices (vertnum)->x;
    opp_center.y += Vertices (vertnum)->y;
    opp_center.z += Vertices (vertnum)->z;
@@ -65,7 +65,7 @@ if (radius > (F1_0/10)) {
 	}
 else {
 	tFixVector direction;
-	CalcOrthoVector(direction,Current ()->segment,Current ()->side);
+	CalcOrthoVector(direction,Current ()->nSegment,Current ()->nSide);
 	x = (double)direction.x/(double)F1_0;
 	y = (double)direction.y/(double)F1_0;
 	z = (double)direction.z/(double)F1_0;
@@ -93,7 +93,7 @@ bool CMine::EditGeoBack (void)
 /* calculate center of current side */
 center.x = center.y = center.z = 0;
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = Segments (Current ()->segment)->verts [side_vert [Current ()->side][i]];
+	INT32 vertnum = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
 	center.x += Vertices (vertnum)->x;
 	center.y += Vertices (vertnum)->y;
 	center.z += Vertices (vertnum)->z;
@@ -105,7 +105,7 @@ center.z /= 4;
 // calculate center of oppisite current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
-	INT32 vertnum = Segments (Current ()->segment)->verts [opp_side_vert [Current ()->side][i]];
+	INT32 vertnum = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
 	opp_center.x += Vertices (vertnum)->x;
 	opp_center.y += Vertices (vertnum)->y;
 	opp_center.z += Vertices (vertnum)->z;
@@ -136,11 +136,11 @@ z = center.z - opp_center.z;
 	bool ok_to_move;
 
 ok_to_move = TRUE;
-seg = Segments () + Current ()->segment;
+seg = Segments () + Current ()->nSegment;
 switch (m_selectMode) {
 	case POINT_MODE:
-		point0 = line_vert [orthog_line [Current ()->side][Current ()->point]][0];
-		point1 = line_vert [orthog_line [Current ()->side][Current ()->point]][1];
+		point0 = line_vert [orthog_line [Current ()->nSide][Current ()->nPoint]][0];
+		point1 = line_vert [orthog_line [Current ()->nSide][Current ()->nPoint]][1];
 		vector0 = Vertices (seg->verts [point0]);
 		vector1 = Vertices (seg->verts [point1]);
 		if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
@@ -150,8 +150,8 @@ switch (m_selectMode) {
 
 	case LINE_MODE:
 		for (i=0;i<2;i++) {
-			point0 = line_vert [orthog_line [Current ()->side][(Current ()->line+i)%4]][0];
-			point1 = line_vert [orthog_line [Current ()->side][(Current ()->line+i)%4]][1];
+			point0 = line_vert [orthog_line [Current ()->nSide][(Current ()->nLine+i)%4]][0];
+			point1 = line_vert [orthog_line [Current ()->nSide][(Current ()->nLine+i)%4]][1];
 			vector0 = Vertices (seg->verts [point0]);
 			vector1 = Vertices (seg->verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
@@ -162,8 +162,8 @@ switch (m_selectMode) {
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
-			point0 = line_vert [orthog_line [Current ()->side][i]][0];
-			point1 = line_vert [orthog_line [Current ()->side][i]][1];
+			point0 = line_vert [orthog_line [Current ()->nSide][i]][0];
+			point1 = line_vert [orthog_line [Current ()->nSide][i]][1];
 			vector0 = Vertices (seg->verts [point0]);
 			vector1 = Vertices (seg->verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
@@ -194,7 +194,7 @@ else {
 		} 
 	else {
 		tFixVector direction;
-		CalcOrthoVector(direction,Current ()->segment,Current ()->side);
+		CalcOrthoVector(direction,Current ()->nSegment,Current ()->nSide);
 		x = (double)direction.x/(double)F1_0;
 		y = (double)direction.y/(double)F1_0;
 		z = (double)direction.z/(double)F1_0;
@@ -283,8 +283,8 @@ return SizeItem (-move_rate);
 
 bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
-INT32 nSegment = Current ()->segment;
-INT32 nSide = Current ()->side;
+INT32 nSegment = Current ()->nSegment;
+INT32 nSide = Current ()->nSide;
 CDSegment *seg = Segments (nSegment);
 tFixVector center,opp_center;
 INT32 i,pts [4];
@@ -360,8 +360,8 @@ return true;
 
 bool CMine::SizeItem (INT32 inc) 
 {
-	INT32 nSegment = Current ()->segment;
-	INT32 nSide = Current ()->side;
+	INT32 nSegment = Current ()->nSegment;
+	INT32 nSide = Current ()->nSide;
 	CDSegment *seg = Segments (nSegment);
 	INT32 i, j, point [4];
 	bool result = false;
@@ -371,15 +371,15 @@ switch (m_selectMode) {
 		return false;
 
 	case LINE_MODE:
-		point [0] = line_vert [side_line [Current ()->side][Current ()->line]][0];
-		point [1] = line_vert [side_line [Current ()->side][Current ()->line]][1];
+		point [0] = line_vert [side_line [Current ()->nSide][Current ()->nLine]][0];
+		point [1] = line_vert [side_line [Current ()->nSide][Current ()->nLine]][1];
 		return SizeLine (seg,point [0],point [1],inc);
 
 	case SIDE_MODE:
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
 		for (i = 0; i < 4; i++)
-			point [i] = side_vert [Current ()->side][i];
+			point [i] = side_vert [Current ()->nSide][i];
 		// enlarge the diagonals
 		result = SizeLine(seg,point [0],point [2],(INT32) (inc*sqrt(2.0))) &&
 				   SizeLine(seg,point [1],point [3],(INT32) (inc*sqrt(2.0)));
@@ -455,10 +455,10 @@ bool CMine::MovePoints(INT32 pt0, INT32 pt1)
 	INT32 i;
 	tFixVector *vect;
 
-point0  = side_vert [Current ()->side][CURRENT_POINT(pt0)];
-point1  = side_vert [Current ()->side][CURRENT_POINT(pt1)];
-vector0 = Vertices (Segments (Current ()->segment)->verts [point0]);
-vector1 = Vertices (Segments (Current ()->segment)->verts [point1]);
+point0  = side_vert [Current ()->nSide][CURRENT_POINT(pt0)];
+point1  = side_vert [Current ()->nSide][CURRENT_POINT(pt1)];
+vector0 = Vertices (Segments (Current ()->nSegment)->verts [point0]);
+vector1 = Vertices (Segments (Current ()->nSegment)->verts [point1]);
 length  = CalcLength(vector0,vector1);
 if (length >= F1_0) {
 	delta.x = (FIX)(((double)(vector1->x - vector0->x) * (double)move_rate)/length);
@@ -473,8 +473,8 @@ else {
 
 switch (m_selectMode){
 	case POINT_MODE:
-		point = side_vert [Current ()->side][CURRENT_POINT(0)];
-		vect  = Vertices (Segments (Current ()->segment)->verts [point]);
+		point = side_vert [Current ()->nSide][CURRENT_POINT(0)];
+		vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
 		vect->x += delta.x;
 		vect->y += delta.y;
 		vect->z += delta.z;
@@ -482,13 +482,13 @@ switch (m_selectMode){
 		break;
 
 	case LINE_MODE:
-		point = side_vert [Current ()->side][CURRENT_POINT(0)];
-		vect  = Vertices (Segments (Current ()->segment)->verts [point]);
+		point = side_vert [Current ()->nSide][CURRENT_POINT(0)];
+		vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
 		vect->x += delta.x;
 		vect->y += delta.y;
 		vect->z += delta.z;
-		point = side_vert [Current ()->side][CURRENT_POINT(1)];
-		vect  = Vertices (Segments (Current ()->segment)->verts [point]);
+		point = side_vert [Current ()->nSide][CURRENT_POINT(1)];
+		vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
 		vect->x += delta.x;
 		vect->y += delta.y;
 		vect->z += delta.z;
@@ -497,8 +497,8 @@ switch (m_selectMode){
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
-			point = side_vert [Current ()->side][i];
-			vect  = Vertices (Segments (Current ()->segment)->verts [point]);
+			point = side_vert [Current ()->nSide][i];
+			vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
 			vect->x += delta.x;
 			vect->y += delta.y;
 			vect->z += delta.z;
@@ -508,7 +508,7 @@ switch (m_selectMode){
 
 	case CUBE_MODE:
 		for (i = 0; i < 8; i++) {
-			vect = Vertices (Segments (Current ()->segment)->verts [i]);
+			vect = Vertices (Segments (Current ()->nSegment)->verts [i]);
 			vect->x += delta.x;
 			vect->y += delta.y;
 			vect->z += delta.z;
@@ -598,10 +598,10 @@ return true;
 
 bool CMine::MoveOn (char axis,INT32 inc) 
 {
-INT32 nSegment = Current ()->segment;
-INT32 nSide = Current ()->side;
-INT32 nPoint = Current ()->point;
-INT32 nLine = Current ()->line;
+INT32 nSegment = Current ()->nSegment;
+INT32 nSide = Current ()->nSide;
+INT32 nPoint = Current ()->nPoint;
+INT32 nLine = Current ()->nLine;
 CDSegment *seg = Segments (nSegment);
 INT16 i;
 
@@ -661,21 +661,21 @@ switch (m_selectMode) {
 				for (i = 0; i < 8; i++)
 					Vertices (seg->verts [i])->x += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++)
-					if (Objects (i)->segnum == nSegment)
+					if (Objects (i)->nSegment == nSegment)
 						Objects (i)->pos.x += inc;
 				break;
 			case 'Y':
 				for (i = 0; i < 8; i++)
 					Vertices (seg->verts [i])->y += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
-					if (Objects (i)->segnum == nSegment)
+					if (Objects (i)->nSegment == nSegment)
 						Objects (i)->pos.y += inc;
 				break;
 			case 'Z':
 				for (i = 0; i < 8; i++)
 					Vertices (seg->verts [i])->z += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
-					if (Objects (i)->segnum == nSegment) 
+					if (Objects (i)->nSegment == nSegment) 
 						Objects (i)->pos.z += inc;
 				break;
 			}
@@ -696,34 +696,34 @@ switch (m_selectMode) {
 	break;
 
 	case BLOCK_MODE:
-		CGameObject *obj = Objects ();
+		CGameObject *objP = Objects ();
 		switch (axis) {
 			case 'X':
 				for (i = 0; i < MAX_VERTICES (this); i++)
 					if (*VertStatus (i) & MARKED_MASK)
 						Vertices (i)->x += inc;
-				for (i = GameInfo ().objects.count; i; i--, obj++)
-					if (obj->segnum >= 0)
-						if (Segments (obj->segnum)->wall_bitmask & MARKED_MASK)
-							obj->pos.x += inc;
+				for (i = GameInfo ().objects.count; i; i--, objP++)
+					if (objP->nSegment >= 0)
+						if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+							objP->pos.x += inc;
 				break;
 			case 'Y':
 				for (i = 0; i < MAX_VERTICES (this); i++)
 					if (*VertStatus (i) & MARKED_MASK)
 						Vertices (i)->y += inc;
-				for (i = GameInfo ().objects.count; i; i--, obj++)
-					if (obj->segnum >= 0)
-						if (Segments (obj->segnum)->wall_bitmask & MARKED_MASK)
-							obj->pos.y += inc;
+				for (i = GameInfo ().objects.count; i; i--, objP++)
+					if (objP->nSegment >= 0)
+						if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+							objP->pos.y += inc;
 				break;
 			case 'Z':
 				for (i = 0; i < MAX_VERTICES (this); i++)
 					if (*VertStatus (i) & MARKED_MASK)
 						Vertices (i)->z += inc;
-				for (i = GameInfo ().objects.count; i; i--, obj++)
-					if (obj->segnum >= 0)
-						if (Segments (obj->segnum)->wall_bitmask & MARKED_MASK)
-							obj->pos.z += inc;
+				for (i = GameInfo ().objects.count; i; i--, objP++)
+					if (objP->nSegment >= 0)
+						if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+							objP->pos.z += inc;
 				break;
 		}
 	break;
@@ -741,10 +741,10 @@ return true;
 
 bool CMine::SpinSelection (double angle) 
 {
-	INT32 nSegment = Current ()->segment;
-	INT32 nSide = Current ()->side;
+	INT32 nSegment = Current ()->nSegment;
+	INT32 nSide = Current ()->nSide;
 	CDSegment *seg = Segments (nSegment);
-	CGameObject *obj;
+	CGameObject *objP;
 	tFixVector center,opp_center;
 	INT16 i;
 
@@ -848,7 +848,7 @@ switch (m_selectMode) {
 	case OBJECT_MODE:	// spin object vector
 		theApp.SetModified (TRUE);
 		tFixMatrix *orient;
-		orient = (Current ()->object == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->orient;
+		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->orient;
 		switch (nSide) {
 			case 0:
 				RotateVmsMatrix(orient,angle,'x');
@@ -893,12 +893,12 @@ switch (m_selectMode) {
 		xspin = (rel [2].z==rel [2].y) ? PI/4 : atan2(rel [2].z,rel [2].y);
 		// spin points 2 on x axis (don't need to spin point 1 since it is on the x-axis
 		RotateVmsVector(&rel [2],xspin,'x');
-		RotateVmsMatrix(&obj->orient,zspin,'z');
-		RotateVmsMatrix(&obj->orient,yspin,'y');
-		RotateVmsMatrix(&obj->orient,xspin,'x');
-		RotateVmsMatrix(&obj->orient,-xspin,'x');
-		RotateVmsMatrix(&obj->orient,-yspin,'y');
-		RotateVmsMatrix(&obj->orient,-zspin,'z');
+		RotateVmsMatrix(&objP->orient,zspin,'z');
+		RotateVmsMatrix(&objP->orient,yspin,'y');
+		RotateVmsMatrix(&objP->orient,xspin,'x');
+		RotateVmsMatrix(&objP->orient,-xspin,'x');
+		RotateVmsMatrix(&objP->orient,-yspin,'y');
+		RotateVmsMatrix(&objP->orient,-zspin,'z');
 #endif //SPIN_RELATIVE
 		break;
 
@@ -929,10 +929,10 @@ switch (m_selectMode) {
 			if (*VertStatus (i) & MARKED_MASK)
 				RotateVertex(Vertices (i),&center,&opp_center,angle);
 		// rotate Objects () within marked cubes
-		obj = Objects ();
-		for (i = GameInfo ().objects.count; i; i--, obj++)
-			if (Segments (obj->segnum)->wall_bitmask & MARKED_MASK)
-				RotateVertex(&obj->pos, &center, &opp_center, angle);
+		objP = Objects ();
+		for (i = GameInfo ().objects.count; i; i--, objP++)
+			if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+				RotateVertex(&objP->pos, &center, &opp_center, angle);
 		break;
 	}
 return true;

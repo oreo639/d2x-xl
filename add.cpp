@@ -15,7 +15,7 @@ bool CMine::SetDefaultTexture (INT16 nTexture, INT16 walltype)
 {
 if (nTexture < 0)
 	return true;
-INT16 segnum = Current ()->segment;
+INT16 segnum = Current ()->nSegment;
 INT16 opp_segnum, opp_sidenum;
 CDSegment *seg = Segments (segnum);
 CDSide *side = seg->sides;
@@ -228,8 +228,8 @@ EquipGens (n_matcen)->hit_points = 0;
 EquipGens (n_matcen)->interval = 0;
 EquipGens (n_matcen)->segnum = segnum;
 EquipGens (n_matcen)->fuelcen_num = n_matcen;
-Segments (Current ()->segment)->value = 
-Segments (Current ()->segment)->matcen_num = n_matcen;
+Segments (Current ()->nSegment)->value = 
+Segments (Current ()->nSegment)->matcen_num = n_matcen;
 GameInfo ().equipgen.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
@@ -266,8 +266,8 @@ BotGens (n_matcen)->hit_points = 0;
 BotGens (n_matcen)->interval = 0;
 BotGens (n_matcen)->segnum = segnum;
 BotGens (n_matcen)->fuelcen_num = n_matcen;
-Segments (Current ()->segment)->value = 
-Segments (Current ()->segment)->matcen_num = n_matcen;
+Segments (Current ()->nSegment)->value = 
+Segments (Current ()->nSegment)->matcen_num = n_matcen;
 GameInfo ().botgen.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
@@ -402,17 +402,17 @@ if ((IsD1File ()) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
 		ErrorMsg ("Repair centers are not available in Descent 1.");
 	return false;
 	}
-INT32 last_segment = Current ()->segment;
+INT32 last_segment = Current ()->nSegment;
 bool bUndo = theApp.SetModified (TRUE);
 if (bCreate && !AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false; 
 	}	
-INT32 new_segment = Current ()->segment;
-Current ()->segment = last_segment;
+INT32 new_segment = Current ()->nSegment;
+Current ()->nSegment = last_segment;
 if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS (this)))
-	AddWall (Current ()->segment, Current ()->side, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
-Current ()->segment = new_segment;
+	AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
+Current ()->nSegment = new_segment;
 if (!((nType == SEGMENT_FUNC_FUELCEN) ?
 	   DefineSegment (segnum, nType,  bSetDefTextures ? ((IsD1File ()) ? 322 : 333) : -1, WALL_ILLUSION) :
 	   DefineSegment (segnum, nType,  bSetDefTextures ? 433 : -1, -1)) //use the blue goal texture for repair centers
@@ -448,9 +448,9 @@ if (GameInfo ().walls.count + 1 >= MAX_WALLS (this)) {
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // add a door to the current segment/side
-if (AddWall (Current ()->segment, Current ()->side, type, flags, keys, clipnum, nTexture)) {
+if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, clipnum, nTexture)) {
 	// add a door to the opposite segment/side
-	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, Current ()->side) &&
+	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, Current ()->nSide) &&
 		 AddWall (opp_segnum, opp_sidenum, type, flags, keys, clipnum, nTexture)) {
 		theApp.UnlockUndo ();
 		theApp.MineView ()->Refresh ();
@@ -590,7 +590,7 @@ return AddExit (TT_EXIT);
 bool CMine::AddExit (INT16 type) 
 {
 
-UINT16 wallnum = Segments (Current ()->segment)->sides [Current ()->side].nWall;
+UINT16 wallnum = Segments (Current ()->nSegment)->sides [Current ()->nSide].nWall;
 if (wallnum < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -606,14 +606,14 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
 // make a new wall and a new trigger
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-if (AddWall (Current ()->segment, Current ()->side, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Walls () [GameInfo ().walls.count-1].clip_num = 10;
-	SetTexture (Current ()->segment, Current ()->side, 0, (IsD1File ()) ? 444 : 508);
+	SetTexture (Current ()->nSegment, Current ()->nSide, 0, (IsD1File ()) ? 444 : 508);
 	AddTrigger (GameInfo ().walls.count - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	INT16 opp_segnum, opp_sidenum;
-	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, Current ()->side) &&
+	if (GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, Current ()->nSide) &&
 		AddWall (opp_segnum, opp_sidenum, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
 		Walls () [GameInfo ().walls.count - 1].clip_num = 10;
@@ -646,20 +646,20 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
-INT32 last_segment = Current ()->segment;
+INT32 last_segment = Current ()->nSegment;
 bool bUndo = theApp.SetModified (true);
 theApp.LockUndo ();
 if (!AddSegment ()) {
 	theApp.ResetModified (bUndo);
 	return false;
 	}
-INT32 new_segment = Current ()->segment;
-Current ()->segment = last_segment;
-if (AddWall (Current ()->segment, Current ()->side, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+INT32 new_segment = Current ()->nSegment;
+Current ()->nSegment = last_segment;
+if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	AddTrigger (GameInfo ().walls.count - 1, TT_SECRET_EXIT);
-	SecretCubeNum () = Current ()->segment;
+	SecretCubeNum () = Current ()->nSegment;
 	SetDefaultTexture (426, -1);
-	Current ()->segment = new_segment;
+	Current ()->nSegment = new_segment;
 	SetDefaultTexture (426, -1);
 	theApp.MineView ()->Refresh ();
 	theApp.UnlockUndo ();
@@ -698,14 +698,14 @@ return true;
 
 bool CMine::AutoAddTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
-CDSelection *other = Other ();
+CSelection *other = Other ();
 UINT16 wallnum;
 if (!GetTriggerResources (wallnum))
 	return false;
 // make a new wall and a new trigger
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-if (AddWall (Current ()->segment, Current ()->side, (UINT8) wall_type, wall_flags, KEY_NONE, -1, -1) &&
+if (AddWall (Current ()->nSegment, Current ()->nSide, (UINT8) wall_type, wall_flags, KEY_NONE, -1, -1) &&
 	 AddTrigger (GameInfo ().walls.count - 1, trigger_type)) {
 	INT16 trignum = GameInfo ().triggers.count - 1;
 	// set link to trigger target
@@ -724,7 +724,7 @@ return false;
 
 bool CMine::AddDoorTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
-CDSelection *other = Other ();
+CSelection *other = Other ();
 CDSegment *other_seg = OtherSeg ();
 UINT16 wallnum = other_seg->sides [other->side].nWall;
 if (wallnum >= GameInfo ().walls.count) {

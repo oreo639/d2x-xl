@@ -320,8 +320,8 @@ if (nVisible < 0)
 	nVisible = (INT16) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		INT16 segnum = m_bOtherSeg ? m_mine->Other ()->segment : m_mine->Current ()->segment;
-		INT16 sidenum = m_bOtherSeg ? m_mine->Other ()->side : m_mine->Current ()->side;
+		INT16 segnum = m_bOtherSeg ? m_mine->Other ()->segment : m_mine->Current ()->nSegment;
+		INT16 sidenum = m_bOtherSeg ? m_mine->Other ()->side : m_mine->Current ()->nSide;
 		if (nVisible = m_mine->IsWall (segnum, sidenum)) {
 			CDSide *side = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
 			nBaseTex = side->nBaseTex;

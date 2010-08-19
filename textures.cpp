@@ -1174,7 +1174,7 @@ pWnd->GetClientRect (rc);
 if (texture1 < 0) {
 	seg = (segnum < 0) ? mine->CurrSeg () : mine->Segments (segnum);
 	side = (sidenum < 0) ? mine->CurrSide () : seg->sides + sidenum;
-	INT32 nSide = mine->Current ()->side;
+	INT32 nSide = mine->Current ()->nSide;
 	texture1 = side->nBaseTex;
 	texture2 = side->nOvlTex & 0x1fff;
 	if (seg->children [nSide] == -1)

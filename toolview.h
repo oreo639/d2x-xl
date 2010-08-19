@@ -256,7 +256,7 @@ class CDiagTool : public CToolDlg
 		double CalcDistance (tFixVector *v1,tFixVector *v2,tFixVector *v3);
 		double CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3);
 		void ClearBugList ();
-		INT32 CheckId (CGameObject *obj);
+		INT32 CheckId (CGameObject *objP);
 		bool CheckSegments ();
 		bool CheckSegTypes ();
 		bool CheckWalls ();
@@ -377,7 +377,7 @@ class CObjectTool : public CToolDlg
 		void DrawObjectImages ();
 		void DrawObject (CWnd *pWnd, INT32 type, INT32 id);
 		void SetTextureOverride ();
-		bool SetPlayerId (CGameObject *obj, INT32 objType, INT32 *ids, INT32 maxIds, char *pszError);
+		bool SetPlayerId (CGameObject *objP, INT32 objType, INT32 *ids, INT32 maxIds, char *pszError);
 		void SetObjectId (CComboBox *pcb, INT16 type, INT16 id, INT16 flag = 0);
 
 		void CBInit (CComboBox *pcb, char* pszNames [], UINT8 *pIndex, UINT8 *pItemData, INT32 nMax, INT32 nType = 0, bool bAddNone = false);
@@ -388,7 +388,7 @@ class CObjectTool : public CToolDlg
 		void UpdateRobot ();
 		INT32 ObjOfAKindCount (INT32 nType = -1, INT32 nId = -1);
 		INT32 GetObjectsOfAKind (INT32 nType, CGameObject *objList []);
-		void SetNewObjId (CGameObject *obj, INT32 nType, INT32 nId, INT32 nMaxId);
+		void SetNewObjId (CGameObject *objP, INT32 nType, INT32 nId, INT32 nMaxId);
 
 		afx_msg void OnPaint ();
 		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);

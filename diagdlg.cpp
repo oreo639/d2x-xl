@@ -90,15 +90,15 @@ return szText;
 
 void CDiagTool::CountObjects (void)
 {
-CGameObject *obj = m_mine->Objects ();
+CGameObject *objP = m_mine->Objects ();
 memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 INT32 i, j;
-for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, obj++)
-	switch(obj->type) {
+for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
+	switch(objP->type) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
-			m_nContained [0] += obj->contains_count;
+			m_nContained [0] += objP->contains_count;
 			break;
 		case OBJ_HOSTAGE:
 			m_nObjects [1]++;
@@ -113,13 +113,13 @@ for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, obj++)
 			m_nObjects [4]++;
 			break;
 		case OBJ_POWERUP:
-			switch (powerup_types [obj->id]) {
+			switch (powerup_types [objP->id]) {
 				case POWERUP_WEAPON_MASK:
 					m_nObjects [4]++;
 					break;
 				case POWERUP_POWERUP_MASK:
 					m_nObjects [5]++;
-					m_nContained [1] += obj->contains_count;
+					m_nContained [1] += objP->contains_count;
 					break;
 				case POWERUP_KEY_MASK:
 					m_nObjects [6]++;

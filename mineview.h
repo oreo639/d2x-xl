@@ -111,7 +111,7 @@ protected: // create from serialization only
 	UINT32		m_selectMode;
 	HCURSOR		m_hCursors [eMouseStateCount];
 
-	CDSelection	*m_Current;
+	CSelection	*m_Current;
 
 	CPen*			m_penCyan;
 	CPen*			m_penRed;
@@ -275,12 +275,12 @@ public:
 	void	DrawHighlight (CMine *mine, INT16 clear_it = 0);
 	void  DrawSpline (CMine *mine);
 
-	INT32	SetupModel(CMine *mine, CGameObject *obj); // poly.c
+	INT32	SetupModel(CMine *mine, CGameObject *objP); // poly.c
 	void	SetModelPoints(INT32 start, INT32 end);
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
 	void	DrawPoly(POLY *p);
-	INT32	ReadModelData(FILE *file, CGameObject *obj);
+	INT32	ReadModelData(FILE *file, CGameObject *objP);
 	void	ReadPolyModel (POLYMODEL& polyModel, FILE *file);
 
 	// view control functions
@@ -331,7 +331,7 @@ public:
 	void Invalidate (BOOL bErase);
 	void InvalidateRect (LPCRECT lpRect, BOOL bErase);
 
-	bool ViewObject (CGameObject *obj);
+	bool ViewObject (CGameObject *objP);
 	inline bool ViewObject (UINT32 flag = 0)
 		{ return flag ? ((m_viewObjectFlags & flag) != 0) : (m_viewObjectFlags != 0); }
 	inline bool ViewFlag (UINT32 flag = 0)

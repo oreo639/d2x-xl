@@ -13,7 +13,7 @@
 #include "io.h"
 #include "file.h"
 
-#define CURRENT_POINT(a) ((theApp.GetMine ()->Current ()->point + (a))&0x03)
+#define CURRENT_POINT(a) ((theApp.GetMine ()->Current ()->nPoint + (a))&0x03)
 
 char *BLOCKOP_HINT =
 	"The block of cubes will be saved relative to the current cube.\n"
@@ -39,7 +39,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	CDSegment		*seg;
 	CDSide			*side;
 #if 0
-	CGameObject			*obj;
+	CGameObject			*objP;
 	INT16				objnum, segObjCount;
 #endif
 	INT16				segnum, sidenum, vertnum;
@@ -59,7 +59,7 @@ origVertCount = VertCount ();
 
 // set origin
 seg = CurrSeg ();
-sidenum = Current ()->side;
+sidenum = Current ()->nSide;
 vertnum = seg->verts [side_vert [sidenum][CURRENT_POINT(0)]];
 memcpy (&origin, Vertices (vertnum), sizeof (*Vertices ()));
 /*
@@ -396,16 +396,17 @@ while(!feof(fBlk)) {
 CTrigger *trigger = Triggers (GameInfo ().triggers.count);
 for (i = nNewTriggers; i; i--) {
 	trigger--;
-	for (j = 0; j < trigger->count; j++)
-		if (trigger->targets [j].nSegment >= 0)
-			trigger->targets [j].nSegment = xlatSegNum [trigger->targets [j].nSegment];
+	for (j = 0; j < trigger->count; j++) {
+		if (trigger->Segment (j) >= 0)
+			trigger->Segment (j) = xlatSegNum [trigger->Segment (j)];
 		else if (trigger->count == 1) {
 			DeleteTrigger (INT16 (trigger - Triggers ()));
 			i--;
 			}
-		else if (j < --(trigger->count)) {
-			memcpy (trigger->targets + j, trigger->targets + j + 1, (trigger->count - j) * sizeof (trigger->targets [0]));
+		else {
+			trigger->Delete (j);
 			}
+		}
 	}
 
 sprintf_s (message, sizeof (message),
@@ -448,19 +449,19 @@ return;
 #endif
 // set origin
 seg = CurrSeg ();
-vertnum = seg->verts[side_vert[Current ()->side][CURRENT_POINT(0)]];
+vertnum = seg->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
 origin.x = Vertices (vertnum)->x;
 origin.y = Vertices (vertnum)->y;
 origin.z = Vertices (vertnum)->z;
 
 // set x'
-vertnum = seg->verts[side_vert[Current ()->side][CURRENT_POINT(1)]];
+vertnum = seg->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
 x_prime.x = (double)(Vertices (vertnum)->x - origin.x);
 x_prime.y = (double)(Vertices (vertnum)->y - origin.y);
 x_prime.z = (double)(Vertices (vertnum)->z - origin.z);
 
 // calculate y'
-vertnum = seg->verts[side_vert[Current ()->side][CURRENT_POINT(3)]];
+vertnum = seg->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
 vect.x = (double)(Vertices (vertnum)->x - origin.x);
 vect.y = (double)(Vertices (vertnum)->y - origin.y);
 vect.z = (double)(Vertices (vertnum)->z - origin.z);
@@ -534,7 +535,7 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 						INT32 count = 0;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigger->count; iTarget++)
-							if (Segments (trigger->targets [iTarget].nSegment)->wall_bitmask & MARKED_MASK)
+							if (Segments (trigger->Segment (iTarget))->wall_bitmask & MARKED_MASK)
 								count++;
 #if 0
 						if (trigger->count && !count)	// no targets in marked area
@@ -549,9 +550,9 @@ for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
 							fprintf (fBlk, "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->count; iTarget++)
-								if (Segments (trigger->targets [iTarget].nSegment)->wall_bitmask & MARKED_MASK) {
-									fprintf (fBlk, "			        seg %d\n", trigger->targets [iTarget].nSegment);
-									fprintf (fBlk, "			        side %d\n", trigger->targets [iTarget].nSide);
+								if (Segments (trigger [iTarget].nSegment)->wall_bitmask & MARKED_MASK) {
+									fprintf (fBlk, "			        seg %d\n", trigger->Segment (iTarget));
+									fprintf (fBlk, "			        side %d\n", trigger->Side (iTarget));
 									}
 							}
 						}
@@ -976,11 +977,11 @@ theApp.MineView ()->DelayRefresh (true);
 if (QueryMsg("Are you sure you want to delete the marked cubes?")!=IDYES)
 	return;
 
-for (segnum=SegCount ()-1;segnum>=0;segnum--)
+for (segnum = SegCount () - 1; segnum >= 0; segnum--)
 	if (Segments (segnum)->wall_bitmask & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
-		if (Objects () [0].segnum != segnum)
+		if (Objects (0).nSegment != segnum)
 			DeleteSegment (segnum); // delete seg w/o asking "are you sure"
 		}
 // wrap back then forward to make sure segment is valid

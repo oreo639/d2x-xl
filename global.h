@@ -27,7 +27,7 @@ extern char SubFile[20];
 
 // robot related globals
 extern INT32 preferences;
-//extern FLICKERING_LIGHT *flickering_lights;
+//extern CFlickeringLight *flickeringLights;
 extern LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 extern LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 extern UINT32        N_robot_types;

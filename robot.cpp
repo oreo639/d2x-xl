@@ -522,7 +522,7 @@ bool CMine::IsCustomRobot (INT32 i)
 {
 	bool	bFound = false;
 	CDSegment *seg;
-	CGameObject *obj;
+	CGameObject *objP;
 	INT32 j;
 
 if (!RobotInfo (i)->pad [0]) //changed?
@@ -532,8 +532,8 @@ UINT8 pad = DefRobotInfo (i)->pad [0];
 DefRobotInfo (i)->pad [0] = RobotInfo (i)->pad [0]; //make sure it's equal for the comparison
 if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're different
 	// find a robot of that type
-	for (j = GameInfo ().objects.count, obj = Objects (); j; j--, obj++)
-		if ((obj->type == OBJ_ROBOT) && (obj->id == i))
+	for (j = GameInfo ().objects.count, objP = Objects (); j; j--, objP++)
+		if ((objP->type == OBJ_ROBOT) && (objP->id == i))
 			break;
 	if (j) // found one
 		bFound = true;

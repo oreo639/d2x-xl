@@ -85,14 +85,14 @@ FIX MultiplyFix(FIX a, FIX b) {
 // Action - sets the global handle used when drawing polygon models
 //-----------------------------------------------------------------------
 
-INT32 CMineView::SetupModel(CMine *mine, CGameObject *obj) 
+INT32 CMineView::SetupModel(CMine *mine, CGameObject *objP) 
 {
   gOffset.x = 0;
   gOffset.y = 0;
   gOffset.z = 0;
   gModel.n_points = 0;
   glow_num = -1;
-  gpObject = obj;
+  gpObject = objP;
   INT32 rc = 1; // set return code to fail
   FILE *file = NULL;
   char filename[256];
@@ -112,7 +112,7 @@ if (!gModelData) {
 	}
 
 // read model data if necessary
-if (last_object_type != obj->type || last_object_id != obj->id) {
+if (last_object_type != objP->type || last_object_id != objP->id) {
 	gModelData[0] = OP_EOF;
 	strcpy_s(filename, sizeof (filename), descent2_path);
 	char *slash = strrchr (filename,'\\');
@@ -120,14 +120,14 @@ if (last_object_type != obj->type || last_object_id != obj->id) {
 		*(slash+1) = NULL;
 	else
 		filename[0] = NULL;
-	if ((obj->type == OBJ_ROBOT) && (obj->id >= N_D2_ROBOT_TYPES)) {
+	if ((objP->type == OBJ_ROBOT) && (objP->id >= N_D2_ROBOT_TYPES)) {
 		char *psz = strstr (filename, "data");
 		if (psz)
 			*psz = '\0';
 		}
-	strcat_s (filename, sizeof (filename), ((obj->type == OBJ_ROBOT) && (obj->id >= N_D2_ROBOT_TYPES)) 
+	strcat_s (filename, sizeof (filename), ((objP->type == OBJ_ROBOT) && (objP->id >= N_D2_ROBOT_TYPES)) 
 				 ? "data\\d2x-xl.hog" 
-	          : (obj->type == OBJ_CAMBOT) 
+	          : (objP->type == OBJ_CAMBOT) 
 				   ? "cambot.hxm" 
 					: "descent2.ham");
 	fopen_s (&file, filename, "rb");
@@ -138,14 +138,14 @@ if (last_object_type != obj->type || last_object_id != obj->id) {
 #endif		
 		goto abort;
 		}
-	if (ReadModelData(file,obj)) {
+	if (ReadModelData(file,objP)) {
 #if 0		
 		DEBUGMSG ("SetupModel: Couldn't read model data.");
 #endif		
 		goto abort;
 		}
-	last_object_type = obj->type;
-	last_object_id = obj->id;
+	last_object_type = objP->type;
+	last_object_id = objP->id;
 	}
 rc = 0;
 
@@ -173,7 +173,7 @@ void CMineView::DrawModel()
 
 void CMineView::SetModelPoints(INT32 start, INT32 end) 
 {
-  CGameObject *obj = gpObject;
+  CGameObject *objP = gpObject;
   tFixVector pt;
   INT32 i;
   for (i=start;i<end;i++) {
@@ -182,20 +182,20 @@ void CMineView::SetModelPoints(INT32 start, INT32 end)
 	FIX z0 = gModel.points[i].z;
 
 	// rotate point using Objects () rotation matrix
-	pt.x = (MultiplyFix(obj->orient.rvec.x,x0)
-			+ MultiplyFix(obj->orient.uvec.x,y0)
-			+ MultiplyFix(obj->orient.fvec.x,z0));
-	pt.y = (MultiplyFix(obj->orient.rvec.y,x0)
-			+ MultiplyFix(obj->orient.uvec.y,y0)
-			+ MultiplyFix(obj->orient.fvec.y,z0));
-	pt.z = (MultiplyFix(obj->orient.rvec.z,x0)
-			+ MultiplyFix(obj->orient.uvec.z,y0)
-			+ MultiplyFix(obj->orient.fvec.z,z0));
+	pt.x = (MultiplyFix(objP->orient.rvec.x,x0)
+			+ MultiplyFix(objP->orient.uvec.x,y0)
+			+ MultiplyFix(objP->orient.fvec.x,z0));
+	pt.y = (MultiplyFix(objP->orient.rvec.y,x0)
+			+ MultiplyFix(objP->orient.uvec.y,y0)
+			+ MultiplyFix(objP->orient.fvec.y,z0));
+	pt.z = (MultiplyFix(objP->orient.rvec.z,x0)
+			+ MultiplyFix(objP->orient.uvec.z,y0)
+			+ MultiplyFix(objP->orient.fvec.z,z0));
 
 	// set point to be in world coordinates
-	pt.x += obj->pos.x;
-	pt.y += obj->pos.y;
-	pt.z += obj->pos.z;
+	pt.x += objP->pos.x;
+	pt.y += objP->pos.y;
+	pt.z += objP->pos.z;
 
 	// now that points are relative to mine, set screen xy points (poly_xy)
 	m_matrix.SetPoint(&pt,poly_xy + i);
@@ -418,7 +418,7 @@ assert(polyModel.model_data_size <= MAX_POLY_MODEL_SIZE);
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj) 
+INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP) 
 {
 	UINT32     id;
 	UINT32     i,n;
@@ -428,7 +428,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj)
 	ROBOT_INFO robot_info;
 	UINT32     model_num;
 
-	switch (obj->type) {
+	switch (objP->type) {
 		case OBJ_PLAYER:
 		case OBJ_COOP:
 			model_num = D2_PLAYER_CLIP_NUMBER;
@@ -437,7 +437,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj)
 			model_num = MINE_CLIP_NUMBER;
 			break;
 		case OBJ_CNTRLCEN:
-			switch(obj->id) {
+			switch(objP->id) {
 				case 1:  model_num = 95;  break;
 				case 2:  model_num = 97;  break;
 				case 3:  model_num = 99;  break;
@@ -450,7 +450,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj)
 			// if it is a robot, then read the id from the HAM file
 	}
 
-	if ((obj->type == OBJ_CAMBOT) || ((obj->type == OBJ_ROBOT) && (obj->id >= N_D2_ROBOT_TYPES))) {
+	if ((objP->type == OBJ_CAMBOT) || ((objP->type == OBJ_ROBOT) && (objP->id >= N_D2_ROBOT_TYPES))) {
 		struct level_header level;
 		char data[3];
 		long position;
@@ -469,9 +469,9 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj)
 				n  = read_UINTW(file);                         // n_weapon_types
 				fseek(file,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon_info
 				n  = read_UINTW(file);                         // n_robot_types
-				if (obj->type == OBJ_ROBOT) {
+				if (objP->type == OBJ_ROBOT) {
 					for (i=0;i<n;i++) {
-						if (i == (UINT32) (obj->id - N_D2_ROBOT_TYPES)) {
+						if (i == (UINT32) (objP->id - N_D2_ROBOT_TYPES)) {
 							fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
 							model_num = robot_info.model_num;
 						} else {
@@ -523,9 +523,9 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *obj)
 		n = read_UINTW(file);                          // n_wclips
 		fseek(file,n * sizeof (WCLIP),SEEK_CUR);        // weapon clips
 		n = read_UINTW(file);                          // n_robots
-		if (obj->type == OBJ_ROBOT) {
+		if (objP->type == OBJ_ROBOT) {
 			for (i=0;i<n;i++) {
-				if (i == (UINT32) obj->id) {
+				if (i == (UINT32) objP->id) {
 					fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
 					model_num = robot_info.model_num;
 				} else {

@@ -393,7 +393,7 @@ void CMatrix::UnsetPoint(tFixVector *vert,APOINT *apoint)
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-INT32 CMatrix::CheckNormal(CGameObject *obj, tFixVector *a, tFixVector *b) 
+INT32 CMatrix::CheckNormal(CGameObject *objP, tFixVector *a, tFixVector *b) 
 {
   double ax,ay,az;
   double bx,by,bz;
@@ -401,29 +401,29 @@ INT32 CMatrix::CheckNormal(CGameObject *obj, tFixVector *a, tFixVector *b)
   double z1,z2;
 
   // rotate point using Objects () rotation matrix
-  ax =    (double)obj->orient.rvec.x * (double)a->x
-		+ (double)obj->orient.uvec.x * (double)a->y
-		+ (double)obj->orient.fvec.x * (double)a->z;
-  ay =    (double)obj->orient.rvec.y * (double)a->x
-		+ (double)obj->orient.uvec.y * (double)a->y
-		+ (double)obj->orient.fvec.y * (double)a->z;
-  az =    (double)obj->orient.rvec.z * (double)a->x
-		+ (double)obj->orient.uvec.z * (double)a->y
-		+ (double)obj->orient.fvec.z * (double)a->z;
-  bx =    (double)obj->orient.rvec.x * (double)b->x
-		+ (double)obj->orient.uvec.x * (double)b->y
-		+ (double)obj->orient.fvec.x * (double)b->z;
-  by =    (double)obj->orient.rvec.y * (double)b->x
-		+ (double)obj->orient.uvec.y * (double)b->y
-		+ (double)obj->orient.fvec.y * (double)b->z;
-  bz =    (double)obj->orient.rvec.z * (double)b->x
-		+ (double)obj->orient.uvec.z * (double)b->y
-		+ (double)obj->orient.fvec.z * (double)b->z;
+  ax =    (double)objP->orient.rvec.x * (double)a->x
+		+ (double)objP->orient.uvec.x * (double)a->y
+		+ (double)objP->orient.fvec.x * (double)a->z;
+  ay =    (double)objP->orient.rvec.y * (double)a->x
+		+ (double)objP->orient.uvec.y * (double)a->y
+		+ (double)objP->orient.fvec.y * (double)a->z;
+  az =    (double)objP->orient.rvec.z * (double)a->x
+		+ (double)objP->orient.uvec.z * (double)a->y
+		+ (double)objP->orient.fvec.z * (double)a->z;
+  bx =    (double)objP->orient.rvec.x * (double)b->x
+		+ (double)objP->orient.uvec.x * (double)b->y
+		+ (double)objP->orient.fvec.x * (double)b->z;
+  by =    (double)objP->orient.rvec.y * (double)b->x
+		+ (double)objP->orient.uvec.y * (double)b->y
+		+ (double)objP->orient.fvec.y * (double)b->z;
+  bz =    (double)objP->orient.rvec.z * (double)b->x
+		+ (double)objP->orient.uvec.z * (double)b->y
+		+ (double)objP->orient.fvec.z * (double)b->z;
 
   // set point to be in world coordinates
-  ax += obj->pos.x;
-  ay += obj->pos.y;
-  az += obj->pos.z;
+  ax += objP->pos.x;
+  ay += objP->pos.y;
+  az += objP->pos.z;
   bx += ax;
   by += ay;
   bz += az;

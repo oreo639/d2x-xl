@@ -289,28 +289,28 @@ typedef struct {
 } APOINT;
 
 typedef struct {
-  INT16 segment;
-  INT16 side;
-  INT16 line;
-  INT16 point;
-  INT16 object;
-} CUBE;
+  INT16 nSegment;
+  INT16 nSide;
+  INT16 nLine;
+  INT16 nPoint;
+  INT16 nObject;
+} SEGMENT;
 
-class CDSelection {
+class CSelection {
 public:
-	CDSelection() :
-		segment(0),
-		side(DEFAULT_SIDE),
-		line(DEFAULT_LINE),
-		point(DEFAULT_POINT),
-		object(DEFAULT_OBJECT)
+	CSelection() :
+		nSegment(0),
+		nSide(DEFAULT_SIDE),
+		nLine(DEFAULT_LINE),
+		nPoint(DEFAULT_POINT),
+		nObject(DEFAULT_OBJECT)
 	{}
 
-	INT16 segment;
-	INT16 side;
-	INT16 line;
-	INT16 point;
-	INT16 object;
+	INT16 nSegment;
+	INT16 nSide;
+	INT16 nLine;
+	INT16 nPoint;
+	INT16 nObject;
 };
 
 struct dvector {
@@ -490,7 +490,7 @@ public:
 	UINT8			render_type;   //  how this object renders 
 	UINT8			flags;         // misc flags 
 	UINT8			multiplayer;   // object only available in multiplayer games 
-	INT16			segnum;        // segment number containing object 
+	INT16			nSegment;      // segment number containing object 
 	tFixVector	pos;           // absolute x,y,z coordinate of center of object 
 	tFixMatrix	orient;        // orientation of object in world 
 	FIX			size;          // 3d size of object - for collision detection 
@@ -597,12 +597,47 @@ typedef struct {
 
 //extern char	Wall_names[7][10]; // New for Descent 2
 
-typedef struct {
-  INT8		count;
-  CSideKey	targets [MAX_TRIGGER_TARGETS];
-} trigger_target_list;
+class CTriggerTargetList {
+public:
+	INT16		count;
+	CSideKey	targets [MAX_TRIGGER_TARGETS];
 
-class CTrigger : public trigger_target_list {
+	inline CSideKey& operator[](UINT32 i) { return targets [i]; }
+
+	inline INT16 Add (CSideKey key) {
+		if (count < sizeof (targets) / sizeof (targets [0]))
+			targets [count] = key;
+		return count++;
+		}
+	inline INT16 Add (INT16 nSegment, INT16 nSide) { Add (CSideKey (nSegment, nSide)); }
+
+	inline INT16 Delete (int i = -1) {
+		if (i < 0)
+			i = count - 1;
+		if ((count > 0) && (i < --count)) {
+			int l = count - i;
+			if (l)
+				memcpy (targets + i, targets + i + 1, l * sizeof (targets [0]));
+			targets [count] = CSideKey (0,0);
+			}
+		return count;
+		}	
+
+	inline INT16 Pop (void) { return Delete (count - 1); }
+
+	inline int Find (CSideKey key) { 
+		for (int i = 0; i < count; i++)
+			if (targets [i] == key)
+				return i;
+		return -1;
+		}
+	inline int Find (INT16 nSegment, INT16 nSide) { return Find (CSideKey (nSegment, nSide)); }
+	inline INT16& Segment (UINT32 i) { return targets [i].nSegment; }
+	inline INT16& Side (UINT32 i) { return targets [i].nSide; }
+
+};
+
+class CTrigger : public CTriggerTargetList {
 public:
 	UINT8		type;
 	UINT16	flags;
@@ -610,6 +645,8 @@ public:
 	FIX		value;
 	FIX		time;
 	UINT16	nIndex;
+
+	//inline CSideKey& operator[](UINT32 i) { return targets [i]; }
 
 	void Read (FILE *fp, INT32 version, bool bObjTrigger);
 	void Write (FILE *fp, INT32 version, bool bObjTrigger);
@@ -640,7 +677,7 @@ public:
 //extern INT32	     Num_static_lights;
 
 
-class CReactorTrigger : public trigger_target_list {
+class CReactorTrigger : public CTriggerTargetList {
 public:
 	INT32 Read (FILE *fp, INT32 version);
 	void Write (FILE *fp, INT32 version);
@@ -702,12 +739,12 @@ typedef struct {
   INT16 number;
 } TEXTURE;
 
-typedef struct {
-  INT16 segnum,sidenum;  // cube with light on it
-  UINT32 mask;           // bits with 1 = on, 0 = off
-  FIX timer;		 // always set to 0
-  FIX delay;             // time for each bit in mask (INT32 seconds)
-}FLICKERING_LIGHT;
+class CFlickeringLight : public CSideKey {
+public:
+	UINT32 mask;           // bits with 1 = on, 0 = off
+	FIX timer;		 // always set to 0
+	FIX delay;             // time for each bit in mask (INT32 seconds)
+};
 
 typedef struct {
 	INT16	ticks;

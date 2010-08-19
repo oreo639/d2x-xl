@@ -36,10 +36,8 @@ else
 	t->value = 5 * F1_0; // 5% shield or energy damage
 t->time = -1;
 t->count = 0;
-INT32 i;
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++) {
-	t->targets [i].nSegment = -1;
-	t->targets [i].nSide = -1;
+for (INT32 i = 0; i < MAX_TRIGGER_TARGETS; i++) {
+	t->targets [i] = CSideKey (-1, -1);
 	}
 }
 
@@ -210,7 +208,7 @@ void CMine::DeleteTrigger (INT16 nTrigger)
 	INT16	i, nSegment, nSide, nWall;
 
 if (nTrigger < 0) {
-	nWall = CurrSeg ()->sides [Current ()->side].nWall;
+	nWall = CurrSeg ()->sides [Current ()->nSide].nWall;
 	if (nWall >= GameInfo ().walls.count)
 		return;
 	nTrigger = Walls (nWall)->trigger;
@@ -256,7 +254,7 @@ if (!--trigger->count) {
 	return 0;
 	}
 if (linknum < trigger->count) {
-	memcpy (trigger->targets + linknum, trigger->targets + linknum + 1, (trigger->count - linknum) * sizeof (trigger->targets [0]));
+	memcpy (trigger->targets + linknum, trigger->targets + linknum + 1, (trigger->count - linknum) * sizeof (trigger [0]));
 	}
 return trigger->count;
 }
@@ -268,12 +266,12 @@ return DeleteTargetFromTrigger (Triggers (trignum), linknum, bAutoDeleteTrigger)
 }
 
 
-bool CMine::DeleteTriggerTarget (CTrigger *trigger, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger) 
+bool CMine::DeleteTriggerTarget (CTrigger* trigP, INT16 segnum, INT16 sidenum, bool bAutoDeleteTrigger) 
 {
 INT32 j;
-for (j = 0; j < trigger->count; j++)
-	if ((trigger->targets [j].nSegment == segnum) && (trigger->targets [j].nSide == sidenum))
-		return DeleteTargetFromTrigger (trigger, j, bAutoDeleteTrigger) == 0;
+for (j = 0; j < trigP->count; j++)
+	if ((trigP->targets [j] == CSideKey (segnum, sidenum)))
+		return DeleteTargetFromTrigger (trigP, j, bAutoDeleteTrigger) == 0;
 return false;
 }
 
@@ -324,7 +322,7 @@ return GameInfo ().walls.count;
 
 INT16 CMine::FindTriggerObject (INT16 *trignum)
 {
-	INT16 nObject = Current ()->object;
+	INT16 nObject = Current ()->nObject;
 
 for (INT32 i = 0; i < NumObjTriggers (); i++)
 	if (ObjTriggers (i)->nObject == nObject) {
@@ -341,12 +339,12 @@ return -1;
 
 INT16 CMine::FindTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
-CTrigger *trigger = Triggers ();
+CTrigger *trigP = Triggers ();
 INT32 i, j;
 
-for (i = trignum; i < GameInfo ().triggers.count; i++, trigger++)
-	for (j = 0; j < trigger->count; j++)
-		if ((trigger->targets [j].nSegment == segnum) && (trigger->targets [j].nSide == sidenum))
+for (i = trignum; i < GameInfo ().triggers.count; i++, trigP++)
+	for (j = 0; j < trigP->count; j++)
+		if ((trigP->targets [j] == CSideKey (segnum, sidenum))
 			return i;
 return -1;
 }
@@ -368,14 +366,14 @@ void CMine::AutoLinkExitToReactor ()
   bool 		found;
 
   control = 0; // only 0 used by the game Descent
-  CReactorTrigger *ccTrigger = ReactorTriggers (control);
+  CReactorTrigger *reactorTrigger = ReactorTriggers (control);
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // remove items from list that do not point to a wall
-for (linknum = 0; linknum < ccTrigger->count; linknum++) {
-	count = ccTrigger->count;
-	face = ccTrigger->targets [linknum];
+for (linknum = 0; linknum < reactorTrigger->count; linknum++) {
+	count = reactorTrigger->count;
+	face = reactorTrigger [linknum];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
 	for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
@@ -385,19 +383,13 @@ for (linknum = 0; linknum < ccTrigger->count; linknum++) {
 		}
 	}
 	if (!found) {
-		if (count > 0) { // just in case
-			// move last link into this deleted link's spot
-			ccTrigger->targets [linknum] = ccTrigger->targets [count-1];
-			ccTrigger->targets [count-1].nSegment = 0;
-			ccTrigger->targets [count-1].nSide = 0;
-			ccTrigger->count--;
-			}
+		reactorTrigger.Delete (linknum);
 		}
 	}
 
 // add exit to list if not already in list
 // search for Walls () that have a exit of type trigger
-count =  ccTrigger->count;
+count =  reactorTrigger->count;
 for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
 	trignum = Walls (wallnum)->trigger;
 	if (trignum >= 0 && trignum <GameInfo ().triggers.count) {
@@ -408,16 +400,14 @@ for (wallnum = 0; wallnum < GameInfo ().walls.count; wallnum++) {
 			face = *Walls (wallnum);
 			found = FALSE;
 			for (linknum = 0; linknum < count; linknum++) {
-				if (face == ccTrigger->targets [linknum]) {
+				if (face == reactorTrigger.targets [linknum]) {
 					found = TRUE;
 					break;
 					}
 				}
 			// if not already on the list, add it
 			if (!found) {
-				linknum = ccTrigger->count;
-				ccTrigger->targets [linknum] = face;
-				ccTrigger->count++;
+				linknum = reactorTrigger->Add (face);
 				}
 			}
 		}
@@ -430,7 +420,7 @@ theApp.UnlockUndo ();
 CTrigger *CMine::AddObjTrigger (INT16 objnum, INT16 type) 
 {
 if (objnum < 0)
-	objnum = Current ()->object;
+	objnum = Current ()->nObject;
 if ((Objects (objnum)->type != OBJ_ROBOT) && 
 	 (Objects (objnum)->type != OBJ_CAMBOT) &&
 	 (Objects (objnum)->type != OBJ_POWERUP) &&
@@ -490,11 +480,12 @@ while (i)
 INT16 CMine::FindObjTriggerTarget (INT16 trignum, INT16 segnum, INT16 sidenum)
 {
 CTrigger *t = ObjTriggers ();
+CSideKey key = CSideKey (nSegment, nSide);
 INT32 i, j;
 
 for (i = trignum; i < NumObjTriggers (); i++, t++)
 	for (j = 0; j < t->count; j++)
-		if ((t->targets [j].nSegment == segnum) && (t->targets [j].nSide == sidenum))
+		(-1 < (i = t->Find (key)))
 			return i;
 return -1;
 }
@@ -590,7 +581,7 @@ void CReactorTrigger::Write (FILE *fp, INT32 version)
 {
 	int	i;
 
-write_INT16 (count);
+write_INT16 (count, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	write_INT16 (targets [i].nSegment, fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)

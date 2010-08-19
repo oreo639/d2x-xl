@@ -386,7 +386,7 @@ if (m_pTrigger) {
 	m_nTargets = m_pTrigger->targets.count;
 	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
-		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->targets [i].nSegment, m_pTrigger->targets [i].nSide + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
@@ -437,9 +437,9 @@ if (pDC) {
 void CTriggerTool::DrawObjectImage ()
 {
 if (m_nClass) {
-	CGameObject *obj = m_mine->CurrObj ();
-	if ((obj->type == OBJ_ROBOT) || (obj->type == OBJ_CAMBOT) || (obj->type == OBJ_MONSTERBALL) || (obj->type == OBJ_SMOKE))
-		m_mine->DrawObject (&m_showObjWnd, obj->type, obj->id);
+	CGameObject *objP = m_mine->CurrObj ();
+	if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT) || (objP->type == OBJ_MONSTERBALL) || (objP->type == OBJ_SMOKE))
+		m_mine->DrawObject (&m_showObjWnd, objP->type, objP->id);
 	}
 }
 
@@ -459,10 +459,10 @@ if (!m_bFindTrigger)
 	trignum = m_nTrigger;
 else {
 	if (m_nClass) {
-		if (m_mine->Current ()->object == m_mine->ObjTriggers (m_nTrigger)->nObject)
+		if (m_mine->Current ()->nObject == m_mine->ObjTriggers (m_nTrigger)->nObject)
 			return false;
 		for (INT32 i = 0, j = m_mine->NumObjTriggers (); j; j--, i++) {
-			if (m_mine->Current ()->object == m_mine->ObjTriggers (i)->nObject) {
+			if (m_mine->Current ()->nObject == m_mine->ObjTriggers (i)->nObject) {
 				m_nTrigger = i;
 				return false;
 				}
@@ -706,7 +706,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= NumTriggers ()))
 	return;
 if (m_nClass) {
-	m_mine->Current ()->object = m_mine->ObjTriggers (m_nTrigger)->nObject;
+	m_mine->Current ()->nObject = m_mine->ObjTriggers (m_nTrigger)->nObject;
 	}
 else {
 	for (wallnum = 0, wall = m_mine->Walls (); wallnum < m_mine->GameInfo ().walls.count; wallnum++, wall++)
@@ -723,8 +723,8 @@ else {
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((m_mine->Current ()->segment != wall->nSegment) ||
-		 (m_mine->Current ()->side != wall->nSide)) {
+	if ((m_mine->Current ()->nSegment != wall->nSegment) ||
+		 (m_mine->Current ()->nSide != wall->nSide)) {
 		m_mine->SetCurrent (wall->nSegment, wall->nSide);
 		}
 	}
@@ -890,8 +890,7 @@ if (FindTarget (segnum, sidenum) > -1) {
 	return;
 	}
 theApp.SetModified (TRUE);
-m_pTrigger->targets [m_nTargets] = CSideKey (segnum, sidenum + 1);
-m_pTrigger->count++;
+m_pTrigger.Add (segnum, sidenum + 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_nTargets++);
@@ -926,7 +925,7 @@ void CTriggerTool::OnAddWallTarget ()
 {
 if (!GetMine ())
 	return;
-CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
+CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
@@ -954,7 +953,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-AddTarget (m_mine->Current ()->object, 0);
+AddTarget (m_mine->Current ()->nObject, 0);
 }
 
 //------------------------------------------------------------------------
@@ -971,11 +970,7 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
 SetTriggerPtr ();
-m_nTargets = --(m_pTrigger->count);
-m_pTrigger->targets [m_iTarget] = CSideKey (0,0);
-if (m_iTarget < m_nTargets) {
-	memcpy (m_pTrigger->targets + m_iTarget, m_pTrigger->targets + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (m_pTrigger->targets [0]));
-	}
+m_nTargets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;
@@ -987,11 +982,7 @@ Refresh ();
 
 INT32 CTriggerTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
-INT32 i;
-for (i = 0; i < m_pTrigger->count; i++)
-	if ((segnum == m_pTrigger->targets [i].nSegment) && (sidenum == m_pTrigger->targets [i].nSegment))
-		return i;
-return -1;
+return m_pTrigger->Find (segnum, sidenum);
 }
 
 //------------------------------------------------------------------------
@@ -1013,18 +1004,18 @@ m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
 	return;
-INT16 segnum = m_pTrigger->targets [m_iTarget].nSegment;
+INT16 segnum = m_pTrigger->Segment (m_iTarget);
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
 	 return;
-INT16 sidenum = m_pTrigger->targets [m_iTarget].nSide;
+INT16 sidenum = m_pTrigger->Side (m_iTarget);
 if ((sidenum < 0) || (sidenum > 5))
 	return;
 
-CDSelection *other = m_mine->Other ();
-if ((m_mine->Current ()->segment == segnum) && (m_mine->Current ()->side == sidenum))
+CSelection *other = m_mine->Other ();
+if ((m_mine->Current ()->nSegment == segnum) && (m_mine->Current ()->nSide == sidenum))
 	return;
-other->segment = m_pTrigger->targets [m_iTarget].nSegment;
-other->side = m_pTrigger->targets [m_iTarget].nSide;
+other->segment = m_pTrigger->Segment (m_iTarget);
+other->side = m_pTrigger->Side (m_iTarget);
 theApp.MineView ()->Refresh ();
 }
 

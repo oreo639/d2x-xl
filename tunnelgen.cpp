@@ -11,7 +11,7 @@
 #include "dlcdoc.h"
 #include <signal.h>
 
-#define CURRENT_POINT(a) ((Current ()->point + (a))&0x03)
+#define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
 #define JOIN_DISTANCE (20*20*F1_0)
 
 //-------------------------------------------------------------------------
@@ -387,7 +387,7 @@ else {
 	for (spline = 0; spline < n_splines; spline++) {
 		seg = Segments (SegCount ());
 		// copy current segment
-		*seg = *Segments (Current ()->segment);
+		*seg = *Segments (Current ()->nSegment);
 		// use last "n_spline" segments
 		vertnum = (MAX_VERTICES (this)-1)-(spline*4);
 		for (j = 0; j < 4; j++) {
@@ -474,10 +474,10 @@ void CMine::IncreaseSpline()
 
 //UpdateUndoBuffer(0);
 
-if (Current ()->segment == spline_segment1)
+if (Current ()->nSegment == spline_segment1)
 	if (m_splineLength1 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength1 += SPLINE_INTERVAL;
-if (Current ()->segment == spline_segment2)
+if (Current ()->nSegment == spline_segment2)
 	if (m_splineLength2 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength2 += SPLINE_INTERVAL;
 theApp.MineView ()->Refresh ();
@@ -492,10 +492,10 @@ void CMine::DecreaseSpline()
 
 //  UpdateUndoBuffer(0);
 
-if (Current ()->segment == spline_segment1)
+if (Current ()->nSegment == spline_segment1)
 	if (m_splineLength1 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength1 -= SPLINE_INTERVAL;
-if (Current ()->segment == spline_segment2)
+if (Current ()->nSegment == spline_segment2)
 	if (m_splineLength2 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength2 -= SPLINE_INTERVAL;
 theApp.MineView ()->Refresh ();

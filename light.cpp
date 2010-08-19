@@ -155,10 +155,10 @@ return (result);
 INT16 CMine::GetFlickeringLight (INT16 segnum, INT16 sidenum) 
 {
 GetCurrent (segnum, sidenum);
-FLICKERING_LIGHT *pfl = FlickeringLights ();
+CFlickeringLight *pfl = FlickeringLights ();
 INT32 i;
 for (i = FlickerLightCount (); i; i--, pfl++)
-	if ((pfl->segnum == segnum) && (pfl->sidenum == sidenum))
+	if ((pfl->nSegment == segnum) && (pfl->nSide == sidenum))
 		break;
 if (i > 0)
 	return FlickerLightCount () - i;
@@ -206,9 +206,9 @@ if ((IsLight (nTexture) == -1) && (IsLight (tmapnum2) == -1)) {
 	return -1;
 	}
 theApp.SetModified (TRUE);
-FLICKERING_LIGHT *pfl = FlickeringLights (FlickerLightCount ());
-pfl->segnum = segnum;
-pfl->sidenum = sidenum;
+CFlickeringLight *pfl = FlickeringLights (FlickerLightCount ());
+pfl->nSegment = segnum;
+pfl->nSide = sidenum;
 pfl->delay = time;
 pfl->timer = time;
 pfl->mask = mask;
@@ -224,9 +224,9 @@ return ++FlickerLightCount ();
 bool CMine::DeleteFlickeringLight(INT16 segnum, INT16 sidenum) 
 {
 if (segnum < 0)
-	segnum = Current ()->segment;
+	segnum = Current ()->nSegment;
 if (sidenum < 0)
-	sidenum = Current ()->side;
+	sidenum = Current ()->nSide;
 INT16 index = GetFlickeringLight (segnum, sidenum);
 if (index == -1) {
 //ErrorMsg ("There is no flickering light on this side.");
@@ -235,7 +235,7 @@ if (index == -1) {
 theApp.SetModified (TRUE);
 if (index < --FlickerLightCount ())
 // put last light in place of deleted light
-	memcpy (FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (FLICKERING_LIGHT));
+	memcpy (FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (CFlickeringLight));
 return true;
 }
 
@@ -858,7 +858,7 @@ INT32 CMine::FindDeltaLight (INT16 segnum, INT16 sidenum, INT16 *pi)
 
 if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34)) {
 	for (; i < j; i++, pdli++)
-		if ((pdli->knSegment == segnum) && (pdli->nSide = (UINT8) sidenum))
+		if ((pdli->nSegment == segnum) && (pdli->nSide = (UINT8) sidenum))
 			return i;
 	}
 else {
@@ -1067,9 +1067,8 @@ fLightScale = 1.0; ///= 100.0;
 						{
 						dl = LightDeltaValues (GameInfo ().lightDeltaValues.count++);
 						}
-						dl->segnum = nChildSeg;
-						dl->sidenum = nChildSide;
-						dl->dummy = 0;
+						dl->nSegment = nChildSeg;
+						dl->nSide = nChildSide;
 						dl->vert_light [0] =
 						dl->vert_light [1] =
 						dl->vert_light [2] =
@@ -1100,9 +1099,8 @@ fLightScale = 1.0; ///= 100.0;
 							{
 							dl = LightDeltaValues (GameInfo ().lightDeltaValues.count++);
 							}
-							dl->segnum = nChildSeg;
-							dl->sidenum = nChildSide;
-							dl->dummy = 0;
+							dl->nSegment = nChildSeg;
+							dl->nSide = nChildSide;
 							INT32 iCorner;
 							for (iCorner = 0; iCorner < 4; iCorner++)
 								dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);

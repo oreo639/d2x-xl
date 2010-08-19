@@ -263,7 +263,7 @@ InitCBWallNo ();
 if (!(m_pWall [0] = m_mine->FindWall ())) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (m_mine->CurrSeg ()->children [m_mine->Current ()->side] >= 0)
+	if (m_mine->CurrSeg ()->children [m_mine->Current ()->nSide] >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);
@@ -292,9 +292,9 @@ else {
 		}
 	// update wall data
 	if (m_pWall [0]->trigger == NO_TRIGGER)
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->segnum, m_pWall [0]->nSide);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->nSegment, m_pWall [0]->nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->segnum, m_pWall [0]->nSide, (INT32)m_pWall [0]->trigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->nSegment, m_pWall [0]->nSide, (INT32)m_pWall [0]->trigger);
 
 	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
 	GetOtherWall ();
@@ -364,8 +364,8 @@ bool bRefresh = false;
 m_bDelayRefresh = true;
 seg [0] = m_mine->CurrSeg ();
 side [0] = m_mine->CurrSide ();
-segnum [0] = m_mine->Current ()->segment;
-sidenum [0] = m_mine->Current ()->side;
+segnum [0] = m_mine->Current ()->nSegment;
+sidenum [0] = m_mine->Current ()->nSide;
 if (m_mine->GetOppositeSide (segnum [1], sidenum [1], segnum [0], sidenum [0])) {
 	seg [1] = m_mine->Segments (segnum [1]);
 	side [1] = seg [1]->sides + sidenum [1];
@@ -549,8 +549,8 @@ m_pWall [0] = m_mine->Walls (m_nWall [0]);
 */
 seg [0] = m_mine->CurrSeg ();
 side [0] = m_mine->CurrSide ();
-segnum [0] = m_mine->Current ()->segment;
-sidenum [0] = m_mine->Current ()->side;
+segnum [0] = m_mine->Current ()->nSegment;
+sidenum [0] = m_mine->Current ()->nSide;
 if (m_mine->GetOppositeSide (segnum [1], sidenum [1], segnum [0], sidenum [0])) {
 	seg [1] = m_mine->Segments (segnum [1]);
 	side [1] = seg [1]->sides + sidenum [1];

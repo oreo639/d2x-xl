@@ -243,10 +243,10 @@ void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *obj = mine->Objects () + mine->Current ()->object;
-   if (obj->render_type != RT_POLYOBJ) 
+	CGameObject *objP = mine->Objects () + mine->Current ()->nObject;
+   if (objP->render_type != RT_POLYOBJ) 
 		return;
-	obj->rtype.pobj_info.tmap_override = nBaseTex;
+	objP->rtype.pobj_info.tmap_override = nBaseTex;
   } 
 else if (nFlags & MK_CONTROL) {
 	theApp.ToolView ()->TriggerTool ()->SetTexture (nBaseTex, -1);

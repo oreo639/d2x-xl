@@ -465,7 +465,7 @@ m_frame [1] = 0;
 seg = m_mine->CurrSeg ();
 side = m_mine->CurrSide ();
 color = m_mine->CurrLightColor ();
-INT32 nSide = m_mine->Current ()->side;
+INT32 nSide = m_mine->Current ()->nSide;
 texture1 = side->nBaseTex;
 texture2 = side->nOvlTex & 0x3fff;
 pWall = m_mine->CurrWall ();
@@ -887,7 +887,7 @@ if (!GetMine ())
 
 //CheckForDoor ();
 theApp.SetModified (TRUE);
-m_mine->SetTexture (m_mine->Current ()->segment, m_mine->Current ()->side, 
+m_mine->SetTexture (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 INT32 i;
 for (i = 0; i < 4; i++)
@@ -916,7 +916,7 @@ for (segnum = m_mine->SegCount (); segnum; segnum--, seg++)
     seg->nIndex = 0;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-PasteTexture (m_mine->Current ()->segment, m_mine->Current ()->side, 100);
+PasteTexture (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, 100);
 theApp.UnlockUndo ();
 Refresh ();
 theApp.MineView ()->Refresh ();

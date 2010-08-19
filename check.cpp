@@ -80,32 +80,32 @@ tBugPos *pbp = (tBugPos *) LBBugs ()->GetItemDataPtr (i);
 if (!pbp)
 	return;
 m_mine->UnmarkAll ();
-if (bCurSeg = MarkSegment (pbp->segnum))
-	m_mine->Current ()->segment = pbp->segnum;
+if (bCurSeg = MarkSegment (pbp->nSegment))
+	m_mine->Current ()->nSegment = pbp->nSegment;
 MarkSegment (pbp->childnum);
 if ((pbp->sidenum >= 0) && (pbp->sidenum < MAX_SIDES_PER_SEGMENT))
-	m_mine->Current ()->side = pbp->sidenum;
+	m_mine->Current ()->nSide = pbp->sidenum;
 if ((pbp->linenum >= 0) && (pbp->linenum < 4))
-	m_mine->Current ()->line = pbp->linenum;
+	m_mine->Current ()->nLine = pbp->linenum;
 if ((pbp->pointnum >= 0) && (pbp->pointnum < 8))
-	m_mine->Current ()->point = pbp->pointnum;
+	m_mine->Current ()->nPoint = pbp->pointnum;
 if ((pbp->wallnum >= 0) && (pbp->wallnum < m_mine->GameInfo ().walls.count))
 	nWall = pbp->wallnum;
 else if ((pbp->trignum >= 0) && (pbp->trignum < m_mine->GameInfo ().triggers.count))
 	nWall = m_mine->FindTriggerWall (pbp->trignum);
 else
 	nWall = -1;
-if ((nWall >= 0) && MarkSegment ((pWall = m_mine->Walls (nWall))->segnum))
+if ((nWall >= 0) && MarkSegment ((pWall = m_mine->Walls (nWall))->nSegment))
 	if (bCurSeg) {
-		m_mine->Other ()->segment = pWall->segnum;
+		m_mine->Other ()->segment = pWall->nSegment;
 		m_mine->Other ()->side = pWall->sidenum;
 		}
 	else {
-		m_mine->Current ()->segment = pWall->segnum;
-		m_mine->Current ()->side = pWall->sidenum;
+		m_mine->Current ()->nSegment = pWall->nSegment;
+		m_mine->Current ()->nSide = pWall->sidenum;
 		}
 if ((pbp->objnum >= 0) && (pbp->objnum < m_mine->GameInfo ().objects.count))
-	m_mine->Current ()->object = pbp->objnum;
+	m_mine->Current ()->nObject = pbp->objnum;
 theApp.MineView ()->Refresh ();
 }
 
@@ -269,13 +269,13 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
 //  RETURN - Returns TRUE if ID is out of range.  Otherwise, FALSE.
 //--------------------------------------------------------------------------
 
-INT32 CDiagTool::CheckId (CGameObject *obj) 
+INT32 CDiagTool::CheckId (CGameObject *objP) 
 {
 if (!GetMine ())
 	return 1;
 
-	INT32 type = obj->type;
-	INT32 id = obj->id;
+	INT32 type = objP->type;
+	INT32 id = objP->id;
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
@@ -316,7 +316,7 @@ if (!GetMine ())
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		obj->id = m_mine->IsD1File () ? 1 : 2;
+		objP->id = m_mine->IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -330,7 +330,7 @@ if (!GetMine ())
 		if (id != SMALLMINE_ID) {
 			if (!m_bAutoFixBugs)
 				return 1;
-			obj->id = SMALLMINE_ID;
+			objP->id = SMALLMINE_ID;
 			return 2;
 		}
 	}
@@ -406,7 +406,7 @@ if (h >= 0) {
 	tBugPos *pbp = new tBugPos;
 	if (!pbp)
 		return false;
-	pbp->segnum = segnum;
+	pbp->nSegment = segnum;
 	pbp->sidenum = sidenum;
 	pbp->linenum = linenum;
 	pbp->pointnum = pointnum;
@@ -495,14 +495,14 @@ for (segnum = 0; segnum < m_mine->SegCount (); segnum++, seg++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (seg->function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((seg->matcen_num >= m_mine->GameInfo ().botgen.count) || (m_mine->BotGens (seg->matcen_num)->segnum != segnum)) {
+		if ((seg->matcen_num >= m_mine->GameInfo ().botgen.count) || (m_mine->BotGens (seg->matcen_num)->nSegment != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
 			}
 		}
 	if (seg->function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->EquipGens (seg->matcen_num)->segnum != segnum)) {
+		if ((seg->matcen_num >= m_mine->GameInfo ().equipgen.count) || (m_mine->EquipGens (seg->matcen_num)->nSegment != segnum)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", segnum);
 			if (m_bAutoFixBugs)
 				m_mine->UndefineSegment (segnum);
@@ -639,7 +639,7 @@ if (!GetMine ())
 	INT32 h,objectnum,type,id,count,players [16 + MAX_COOP_PLAYERS],segnum,flags,corner, nPlayers [2], bFix;
   tFixVector center;
   double x,y,z,radius, max_radius,object_radius;
-  CGameObject *obj = m_mine->Objects ();
+  CGameObject *objP = m_mine->Objects ();
 	CGameObject *pPlayer = NULL;
   INT32	objCount = m_mine->GameInfo ().objects.count;
   CDSegment *seg;
@@ -647,13 +647,13 @@ if (!GetMine ())
 INT16 sub_errors = m_nErrors [0];
 INT16 sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Objects]");
-for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
+for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check segment range
-	segnum = obj->segnum;
+	segnum = objP->nSegment;
 	if (segnum < 0 || segnum >= m_mine->SegCount ()) {
 		if (m_bAutoFixBugs) {
-			obj->segnum = segnum = 0;
+			objP->nSegment = segnum = 0;
 			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
 			}
 		else
@@ -664,7 +664,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 
 	if (segnum < 0 || segnum >= m_mine->SegCount ()) {
 		if (m_bAutoFixBugs) {
-			obj->segnum = 0;
+			objP->nSegment = 0;
 			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,segnum=%d)",objectnum,segnum);
 			}
 		else
@@ -695,21 +695,21 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  radius = sqrt (x*x + y*y + z*z);
 	  max_radius = max (max_radius,radius);
     }
-    x = obj->pos.x - center.x;
-    y = obj->pos.y - center.y;
-    z = obj->pos.z - center.z;
+    x = objP->pos.x - center.x;
+    y = objP->pos.y - center.y;
+    z = objP->pos.z - center.z;
 	object_radius = sqrt (x*x + y*y + z*z);
-    if ((object_radius > max_radius) && (obj->type != OBJ_EFFECT)) {
+    if ((object_radius > max_radius) && (objP->type != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",objectnum,segnum);
       if (UpdateStats (message, 1, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
     }
 
     // check for non-zero flags (I don't know what these flags are for)
-   flags = obj->flags;
+   flags = objP->flags;
 	if (flags != 0) {
 		if (m_bAutoFixBugs) {
-			obj->flags = 0;
+			objP->flags = 0;
 			sprintf_s (message, sizeof (message),"FIXED: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
 			}
 		else
@@ -719,45 +719,45 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     }
 
     // check type range
-	 if ((obj->id < 0) || (obj->id > 255)) {
+	 if ((objP->id < 0) || (objP->id > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",objectnum, obj->id);
-			obj->id = 0;
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",objectnum, objP->id);
+			objP->id = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",objectnum, obj->id);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",objectnum, objP->id);
 		}
-	type = obj->type;
+	type = objP->type;
     switch (type) {
 	  case OBJ_PLAYER:
 		  if (!pPlayer)
-			  pPlayer = obj;
-			if (obj->id >= MAX_PLAYERS (m_mine)) {
+			  pPlayer = objP;
+			if (objP->id >= MAX_PLAYERS (m_mine)) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
-				obj->id = MAX_PLAYERS (m_mine) - 1;
+					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, objP->id);
+				objP->id = MAX_PLAYERS (m_mine) - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, objP->id);
 			}
 	  case OBJ_COOP:
-		  if (obj->id > 2) {
+		  if (objP->id > 2) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",objectnum, obj->id);
-				obj->id = 2;
+				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",objectnum, objP->id);
+				objP->id = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",objectnum, objP->id);
 			}
 			break;
 	  case OBJ_EFFECT:
-		  if (obj->id > SOUND_ID) {
+		  if (objP->id > SOUND_ID) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",objectnum, obj->id);
-				obj->id = 2;
+				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",objectnum, objP->id);
+				objP->id = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",objectnum, obj->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",objectnum, objP->id);
 			}
 			break;
 	  case OBJ_ROBOT:
@@ -782,10 +782,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 		if (UpdateStats (message,0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 			return true;
     }
-    id = obj->id;
+    id = objP->id;
 
     // check id range
-    if (h = CheckId (obj)) {
+    if (h = CheckId (objP)) {
 		 if (h == 2)
 	      sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",objectnum,id);
 		else
@@ -795,10 +795,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
     }
 
 	// check contains count range
-    count = obj->contains_count;
+    count = objP->contains_count;
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
-			obj->contains_count = 0;
+			objP->contains_count = 0;
 		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
 			}
 		else
@@ -809,19 +809,19 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 
     // check container type range
 	if (count > 0) {
-      type = obj->contains_type;
+      type = objP->contains_type;
 	  if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 		if (m_bAutoFixBugs) {
-			obj->contains_type = OBJ_POWERUP;
+			objP->contains_type = OBJ_POWERUP;
 			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",objectnum,type);
 			}
 		else
 			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",objectnum,type);
 	if (UpdateStats (message, 0, segnum, -1, -1, -1, -1, -1, -1, objectnum)) return true;
 	  }
-	  id = obj->contains_id;
+	  id = objP->contains_id;
 	  // check contains id range
-	  if (CheckId (obj)) {
+	  if (CheckId (objP)) {
 	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",objectnum,id);
 	if (UpdateStats (message,0,1)) return true;
 	  }
@@ -852,14 +852,14 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 	memset (nPlayers, 0, sizeof (nPlayers));
 	bFix = 0;
 	// count each
-	obj = m_mine->Objects ();
-	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
-		if (obj->type == OBJ_PLAYER) {
+	objP = m_mine->Objects ();
+	for (objectnum = 0; objectnum < objCount; objectnum++, objP++) {
+		if (objP->type == OBJ_PLAYER) {
 			nPlayers [0]++;
 			if (CheckAndFixPlayer (0, MAX_PLAYERS (m_mine), objectnum, players))
 				bFix |= 1;
 			}
-		else if (obj->type == OBJ_COOP) {
+		else if (objP->type == OBJ_COOP) {
 			nPlayers [1]++;
 			if (CheckAndFixPlayer (0, 3, objectnum, players + MAX_PLAYERS (m_mine)))
 				bFix |= 2;
@@ -878,15 +878,15 @@ if (m_bAutoFixBugs) {
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
-	obj = m_mine->Objects ();
-	for (objectnum = 0; objectnum < objCount; objectnum++, obj++) {
-		if (obj->type == OBJ_PLAYER) {
-			if ((bFix & 1) && (obj->id >= 0) && (obj->id < MAX_PLAYERS (m_mine)))
-				obj->id = players [obj->id] - 1;
+	objP = m_mine->Objects ();
+	for (objectnum = 0; objectnum < objCount; objectnum++, objP++) {
+		if (objP->type == OBJ_PLAYER) {
+			if ((bFix & 1) && (objP->id >= 0) && (objP->id < MAX_PLAYERS (m_mine)))
+				objP->id = players [objP->id] - 1;
 			}
-		else if (obj->type == OBJ_COOP) {
-			if ((bFix & 2) && (obj->id >= MAX_PLAYERS (m_mine)) && (obj->id < MAX_PLAYERS (m_mine) + MAX_COOP_PLAYERS))
-				obj->id = players [obj->id] - 1;
+		else if (objP->type == OBJ_COOP) {
+			if ((bFix & 2) && (objP->id >= MAX_PLAYERS (m_mine)) && (objP->id < MAX_PLAYERS (m_mine) + MAX_COOP_PLAYERS))
+				objP->id = players [objP->id] - 1;
 			}
 		}
 	}
@@ -916,16 +916,16 @@ else if (nPlayers [1] > 3) {
 
   // make sure there is only one control center
 count = 0;
-obj = m_mine->Objects ();
-for (objectnum=0;objectnum<objCount;objectnum++, obj++) {
+objP = m_mine->Objects ();
+for (objectnum=0;objectnum<objCount;objectnum++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
-	type = obj->type;
+	type = objP->type;
 	if (type == OBJ_CNTRLCEN) {
-		if (m_mine->Segments (obj->segnum)->function != SEGMENT_FUNC_CONTROLCEN) {
-			if (m_bAutoFixBugs && m_mine->AddRobotMaker (obj->segnum, false, false))
-				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
+		if (m_mine->Segments (objP->nSegment)->function != SEGMENT_FUNC_CONTROLCEN) {
+			if (m_bAutoFixBugs && m_mine->AddRobotMaker (objP->nSegment, false, false))
+				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, seg=%d)",objectnum,objP->nSegment);
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (obj=%d, seg=%d)",objectnum,obj->segnum);
+				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (objP=%d, seg=%d)",objectnum,objP->nSegment);
 			if (UpdateStats (message,0, segnum, -1, -1, -1, -1, -1, -1, objectnum))
 				return true;
 			}
@@ -979,17 +979,14 @@ bool CDiagTool::CheckTriggers ()
 	CTrigger *trigger = m_mine->Triggers ();
 	INT32 wallCount = m_mine->GameInfo ().walls.count;
 	CWall *wall;
-	CReactorTrigger *ccTrigger = m_mine->ReactorTriggers ();
+	CReactorTrigger *reactorTrigger = m_mine->ReactorTriggers ();
 
 	// make sure trigger is linked to exactly one wall
-for (i = 0; i < ccTrigger->count; i++)
-	if ((ccTrigger->seg [i] >= segCount) ||
-		(m_mine->Segments (ccTrigger->seg [i])->sides [ccTrigger->side [i]].nWall >= wallCount)) {
+for (i = 0; i < reactorTrigger->count; i++)
+	if ((reactorTrigger [i].nSegment >= segCount) ||
+		(m_mine->Segments (reactorTrigger [i].nSegment)->sides [reactorTrigger [i].nSide].nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
-			if (i < --(ccTrigger->count)) {
-				memcpy (ccTrigger->seg + i, ccTrigger->seg + i + 1, (ccTrigger->count - i) * sizeof (*(ccTrigger->seg)));
-				memcpy (ccTrigger->side + i, ccTrigger->side + i + 1, (ccTrigger->count - i) * sizeof (*(ccTrigger->side)));
-				}
+			reactorTriggers.Delete (i);
 			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigger target.");
 			if (UpdateStats (message, 0))
 				return true;
@@ -1010,9 +1007,9 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 			INT32 tt = trigger->type;
 			INT32 tf = trigger->flags;
 			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
-				for (i = 0; i < ccTrigger->count; i++)
-					if (ccTrigger->seg [i] == wall->nSegment &&
-						 ccTrigger->side [i] == wall->nSide)
+				for (i = 0; i < reactorTrigger->count; i++)
+					if (reactorTrigger [i].nSegment == wall->nSegment &&
+						 reactorTrigger [i].nSide == wall->nSide)
 						break; // found it
 				// if did not find it
 				if (i>=m_mine->ReactorTriggers ()->count) {
@@ -1089,8 +1086,8 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 				break;
 				}
 			// check segment range
-			segnum = trigger->seg [linknum];
-			sidenum = trigger->side [linknum];
+			segnum = trigger [linknum].nSegment;
+			sidenum = trigger [linknum].nSide;
 			if ((segnum < 0) || ((sidenum < 0) ? (segnum >= m_mine->ObjectCount ()) : (segnum >= m_mine->SegCount ()))) {
 				if (m_bAutoFixBugs) {
 					if (m_mine->DeleteTargetFromTrigger (trigger, linknum))
@@ -1475,18 +1472,18 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 			continue;
 			}
 		w = m_mine->Walls (wallnum);
-		if (w->segnum != segnum) {
+		if (w->nSegment != segnum) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
-							segnum, wallnum, w->segnum);
+							segnum, wallnum, w->nSegment);
 				if (wallFixed [wallnum])
 					side->nWall = NO_WALL (m_mine);
 				else {
-					if (m_mine->Segments (w->segnum)->sides [w->sidenum].nWall == wallnum)
+					if (m_mine->Segments (w->nSegment)->sides [w->sidenum].nWall == wallnum)
 						side->nWall = NO_WALL (m_mine);
 					else {
-						w->segnum = segnum;
+						w->nSegment = segnum;
 						w->sidenum = sidenum;
 						}
 					wallFixed [wallnum] = 1;
@@ -1495,14 +1492,14 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 			else
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
-							segnum, wallnum, w->segnum);
+							segnum, wallnum, w->nSegment);
 			if (UpdateStats (message,1, segnum, sidenum, -1, -1, -1, side->nWall)) return true;
 			} 
 		else if (w->sidenum != sidenum) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
-							segnum, sidenum, wallnum, w->segnum);
+							segnum, sidenum, wallnum, w->nSegment);
 				if (wallFixed [wallnum])
 					side->nWall = NO_WALL (m_mine);
 				else {
@@ -1521,7 +1518,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 			else
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
-							segnum, sidenum, wallnum, w->segnum);
+							segnum, sidenum, wallnum, w->nSegment);
 			if (UpdateStats (message,1, -1, -1, -1, -1, -1, side->nWall)) return true;
 			}
 		} 
@@ -1554,7 +1551,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 		side = m_mine->Segments (wall->nSegment)->sides + wall->nSide;
 		if (side->nWall != wallnum) {
 			w = m_mine->Walls (wallnum);
-			if ((wallnum < wallCount) && (w->segnum == wall->nSegment) && (w->sidenum == wall->nSide)) {
+			if ((wallnum < wallCount) && (w->nSegment == wall->nSegment) && (w->sidenum == wall->nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),
 								"FIXED: Duplicate wall found (wall=%d, cube=%d)", wallnum, wall->nSegment);
@@ -1637,7 +1634,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						wallnum, m_mine->Walls (wall->linked_wall)->segnum, m_mine->Walls (wall->linked_wall)->sidenum);
+						wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->sidenum);
 						if (m_bAutoFixBugs)
 							wall->linked_wall = -1;
 					}
@@ -1645,7 +1642,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						wallnum, m_mine->Walls (wall->linked_wall)->segnum, m_mine->Walls (wall->linked_wall)->sidenum);
+						wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->sidenum);
 						if (m_bAutoFixBugs)
 							wall->linked_wall = oppWall;
 					}
@@ -1654,7 +1651,7 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
-					wallnum, m_mine->Walls (wall->linked_wall)->segnum, m_mine->Walls (wall->linked_wall)->sidenum);
+					wallnum, m_mine->Walls (wall->linked_wall)->nSegment, m_mine->Walls (wall->linked_wall)->sidenum);
 				if (m_bAutoFixBugs)
 					wall->linked_wall = -1;
 				}
@@ -1741,9 +1738,9 @@ for (segnum=0;segnum<segCount;segnum++, seg++) {
 					sprintf_s (message, sizeof (message),"ERROR: Cube has an invalid wall number (wall=%d, cube=%d)",wallnum,segnum);
 				if (UpdateStats (message,1, segnum, sidenum)) return true;
 			} else {
-				if (m_mine->Walls (wallnum)->segnum != segnum) {
+				if (m_mine->Walls (wallnum)->nSegment != segnum) {
 					if (m_bAutoFixBugs) {
-						m_mine->Walls (wallnum)->segnum = segnum;
+						m_mine->Walls (wallnum)->nSegment = segnum;
 						sprintf_s (message, sizeof (message),"FIXED: Cube's wall does not sit in cube (wall=%d, cube=%d)",wallnum,segnum);
 						}
 					else

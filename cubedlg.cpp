@@ -70,7 +70,7 @@ Reset ();
 
 void CCubeTool::Reset ()
 {
-m_nCube =
+m_nSegment =
 m_nSide =
 m_nPoint = 0;
 m_nType = 0;
@@ -108,7 +108,7 @@ if (m_mine->SegCount () != pcb->GetCount ()) {
 		pcb->AddString (message);
 		}
 	}
-pcb->SetCurSel (m_nCube);
+pcb->SetCurSel (m_nSegment);
 }
 
                         /*--------------------------*/
@@ -157,7 +157,7 @@ void CCubeTool::DoDataExchange (CDataExchange *pDX)
 if (!GetMine ())
 	return;
 
-DDX_CBIndex (pDX, IDC_CUBE_CUBENO, m_nCube);
+DDX_CBIndex (pDX, IDC_CUBE_CUBENO, m_nSegment);
 //DDX_CBIndex (pDX, IDC_CUBE_TYPE, m_nType);
 SelectItemData (CBType (), m_nType);
 DDX_Double (pDX, IDC_CUBE_LIGHT, m_nLight);
@@ -260,7 +260,7 @@ if (!GetMine ())
 	return;
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-m_nVertex = m_mine->CurrSeg ()->verts[side_vert[m_mine->Current ()->side][m_mine->Current ()->point]];
+m_nVertex = m_mine->CurrSeg ()->verts[side_vert[m_mine->Current ()->nSide][m_mine->Current ()->nPoint]];
 m_mine->Vertices (m_nVertex)->x = (FIX) (m_nCoord [0] * 0x10000L);
 m_mine->Vertices (m_nVertex)->y = (FIX) (m_nCoord [1] * 0x10000L);
 m_mine->Vertices (m_nVertex)->z = (FIX) (m_nCoord [2] * 0x10000L);
@@ -273,7 +273,7 @@ void CCubeTool::OnResetCoord ()
 {
 if (!GetMine ())
 	return;
-m_nVertex = m_mine->CurrSeg ()->verts[side_vert[m_mine->Current ()->side][m_mine->Current ()->point]];
+m_nVertex = m_mine->CurrSeg ()->verts[side_vert[m_mine->Current ()->nSide][m_mine->Current ()->nPoint]];
 m_nCoord [0] = (double) m_mine->Vertices (m_nVertex)->x / 0x10000L;
 m_nCoord [1] = (double) m_mine->Vertices (m_nVertex)->y / 0x10000L;
 m_nCoord [2] = (double) m_mine->Vertices (m_nVertex)->z / 0x10000L;
@@ -307,7 +307,7 @@ void CCubeTool::OnSide (INT32 nSide)
 {
 if (!GetMine ())
 	return;
-m_mine->Current ()->side = m_nSide = nSide;
+m_mine->Current ()->nSide = m_nSide = nSide;
 theApp.MineView ()->Refresh ();
 }
 
@@ -324,7 +324,7 @@ void CCubeTool::OnPoint (INT32 nPoint)
 {
 if (!GetMine ())
 	return;
-m_mine->Current ()->point = m_nPoint = nPoint;
+m_mine->Current ()->nPoint = m_nPoint = nPoint;
 theApp.MineView ()->Refresh ();
 }
 
@@ -337,12 +337,12 @@ void CCubeTool::OnPoint4 () { OnPoint (3); }
 
 void CCubeTool::SetDefTexture (INT16 nTexture)
 {
-CDSegment *seg = m_mine->Segments () + m_nCube;
+CDSegment *seg = m_mine->Segments () + m_nSegment;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	INT32 i;
 	for (i = 0; i < 6; i++)
 		if (seg->children [i] == -1)
-			m_mine->SetTexture (m_nCube, i, nTexture, 0);
+			m_mine->SetTexture (m_nSegment, i, nTexture, 0);
 	}
 }
 
@@ -366,10 +366,10 @@ m_mine->RenumberBotGens ();
 m_mine->RenumberEquipGens ();
 // update cube number combo box if number of cubes has changed
 CDSegment *seg = m_mine->CurrSeg ();
-m_bEndOfExit = (seg->children [m_mine->Current ()->side] == -2);
-m_nCube = m_mine->Current ()->segment;
-m_nSide = m_mine->Current ()->side;
-m_nPoint = m_mine->Current ()->point;
+m_bEndOfExit = (seg->children [m_mine->Current ()->nSide] == -2);
+m_nSegment = m_mine->Current ()->nSegment;
+m_nSide = m_mine->Current ()->nSide;
+m_nPoint = m_mine->Current ()->nPoint;
 m_nType = seg->function;
 m_nDamage [0] = seg->damage [0];
 m_nDamage [1] = seg->damage [1];
@@ -385,7 +385,7 @@ CTrigger *trigger = m_mine->Triggers ();
 INT32 trignum;
 for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigger++) {
 	for (i = 0; i < trigger->count; i++) {
-		if ((trigger->seg [i] == m_nCube) && (trigger->side [i] == m_nSide)) {
+		if ((trigger [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wall with this trigger
 			CWall *wall = m_mine->Walls ();
 			INT32 wallnum;
@@ -402,12 +402,12 @@ for (trignum = 0; trignum < m_mine->GameInfo ().triggers.count; trignum++, trigg
 		}
 	}
 // show if this is cube/side is triggered by the control_center
-CReactorTrigger	*ccTrigger = m_mine->ReactorTriggers ();
+CReactorTrigger* reactorTrigger = m_mine->ReactorTriggers ();
 INT32 control;
-for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, ccTrigger++) {
-	INT32 count = ccTrigger->count;
+for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, reactorTrigger++) {
+	INT32 count = reactorTrigger->count;
 	for (i = 0; i < count; i++) {
-		if ((m_nCube == ccTrigger->seg [i]) && (m_nSide == ccTrigger->side [i])) {
+		if (reactorTrigger [i] == CSideKey (m_nSegment, m_nSide)) {
 			LBTriggers ()->AddString ("Reactor");
 			break;
 			}
@@ -433,7 +433,7 @@ if (IsBotMaker (seg)) {
 	INT32		objFlags [2];
 	for (i = 0; i < 2; i++)
 		objFlags [i] = m_mine->BotGens (nMatCen)->objFlags [i];
-	if ((m_nLastCube != m_nCube) || (m_nLastSide != m_nSide)) {
+	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
 			for (j = 0; j < 64; j++) {
@@ -459,7 +459,7 @@ else if (IsEquipMaker (seg)) {
 	INT32		objFlags [2];
 	for (i = 0; i < 2; i++)
 		objFlags [i] = m_mine->EquipGens (nMatCen)->objFlags [i];
-	if ((m_nLastCube != m_nCube) || (m_nLastSide != m_nSide)) {
+	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
 			for (j = 0; j < MAX_POWERUP_IDS2; j++) {
@@ -485,7 +485,7 @@ else {
 		plb [i]->AddString(message);
 		}
 	}
-m_nLastCube = m_nCube;
+m_nLastCube = m_nSegment;
 m_nLastSide = m_nSide;
 EnableControls (TRUE);
 UpdateData (FALSE);
@@ -532,7 +532,7 @@ void CCubeTool::OnDeleteCube ()
 {
 if (!GetMine ())
 	return;
-m_mine->DeleteSegment (m_mine->Current ()->segment);
+m_mine->DeleteSegment (m_mine->Current ()->nSegment);
 theApp.MineView ()->Refresh ();
 }
 
@@ -734,11 +734,11 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			m_mine->GameInfo ().matcen.count--;
 			INT32 i;
 			for (i = 0; i < 6; i++)
-				m_mine->DeleteTriggerTargets (m_nCube, i);
+				m_mine->DeleteTriggerTargets (m_nSegment, i);
 			}
 		}
 	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
-		INT16 nSegNum = m_mine->Current ()->segment;
+		INT16 nSegNum = m_mine->Current ()->nSegment;
 		CDSegment *childseg, *seg = m_mine->CurrSeg ();
 		CDSide *oppside, *side = m_mine->CurrSide ();
 		CWall *wall;
@@ -794,7 +794,7 @@ void CCubeTool::OnSetCube ()
 {
 if (!GetMine ())
 	return;
-m_mine->Current ()->segment = CBCubeNo ()->GetCurSel ();
+m_mine->Current ()->nSegment = CBCubeNo ()->GetCurSel ();
 theApp.MineView ()->Refresh ();
 }
 
@@ -1004,8 +1004,8 @@ INT32 i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-m_mine->Current ()->segment = (INT16) (h / 0x10000L);
-m_mine->Current ()->side = (INT16) (h % 0x10000L);
+m_mine->Current ()->nSegment = (INT16) (h / 0x10000L);
+m_mine->Current ()->nSide = (INT16) (h % 0x10000L);
 theApp.ToolView ()->EditWall ();
 theApp.MineView ()->Refresh ();
 }
@@ -1024,10 +1024,10 @@ INT32 i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-m_mine->Other ()->segment = m_mine->Current ()->segment;
-m_mine->Other ()->side = m_mine->Current ()->side;
-m_mine->Current ()->segment = (INT16) (h / 0x10000L);
-m_mine->Current ()->side = (INT16) (h % 0x10000L);
+m_mine->Other ()->segment = m_mine->Current ()->nSegment;
+m_mine->Other ()->side = m_mine->Current ()->nSide;
+m_mine->Current ()->nSegment = (INT16) (h / 0x10000L);
+m_mine->Current ()->nSide = (INT16) (h % 0x10000L);
 theApp.ToolView ()->EditTrigger ();
 theApp.MineView ()->Refresh ();
 }

@@ -104,7 +104,7 @@ if (m_pTrigger) {
 	m_nTargets = m_pTrigger->count;
 	INT32 i;
 	for (i = 0; i < m_nTargets ; i++) {
-		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->seg [i], m_pTrigger->side [i] + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_nTargets))
@@ -188,8 +188,7 @@ if (FindTarget (segnum, sidenum) >= 0) {
 	return;
 	}
 theApp.SetModified (TRUE);
-m_pTrigger->seg [m_nTargets] = segnum;
-m_pTrigger->side [m_nTargets] = sidenum - 1;
+m_pTrigger [m_nTargets] = CSideKey (segnum, sidenum - 1);
 m_pTrigger->count++;
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", segnum, sidenum);
 LBTargets ()->AddString (m_szTarget);
@@ -219,7 +218,7 @@ void CReactorTool::OnAddWallTarget ()
 {
 if (!GetMine ())
 	return;
-CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
+CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
 INT32 i = FindTarget (other->segment, other->side);
 if (i >= 0)
 	return;
@@ -238,11 +237,9 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
 theApp.SetModified (TRUE);
 m_nTargets = --(m_pTrigger->count);
-m_pTrigger->seg [m_iTarget] = 0;
-m_pTrigger->side [m_iTarget] = 0;
+m_pTrigger [m_iTarget] = CSideKey (0,0);
 if (m_iTarget < m_nTargets) {
-	memcpy (m_pTrigger->seg + m_iTarget, m_pTrigger->seg + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (*(m_pTrigger->seg)));
-	memcpy (m_pTrigger->side + m_iTarget, m_pTrigger->side + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (*(m_pTrigger->side)));
+	memcpy (m_pTrigger->targets + m_iTarget, m_pTrigger->targets + m_iTarget + 1, (m_nTargets - m_iTarget) * sizeof (m_pTrigger [0]));
 	}
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
@@ -255,11 +252,7 @@ Refresh ();
 
 INT32 CReactorTool::FindTarget (INT16 segnum, INT16 sidenum)
 {
-INT32 i;
-for (i = 0; i < m_pTrigger->count; i++)
-	if ((segnum = m_pTrigger->seg [i]) && (sidenum = m_pTrigger->seg [i]))
-		return i;
-return -1;
+return m_pTrigger->Find (segnum, sidenum);
 }
 
                         /*--------------------------*/
@@ -268,7 +261,7 @@ void CReactorTool::OnDeleteWallTarget ()
 {
 if (!GetMine ())
 	return;
-CDSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
+CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
 INT32 i = FindTarget (other->segment, other->side);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
@@ -294,18 +287,18 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->count))
 	return;
 
-INT16 segnum = m_pTrigger->seg [m_iTarget];
+INT16 segnum = m_pTrigger->Segment (m_iTarget);
 if ((segnum < 0) || (segnum >= m_mine->SegCount ()))
 	 return;
-INT16 sidenum = m_pTrigger->side [m_iTarget];
+INT16 sidenum = m_pTrigger->Side (m_iTarget);
 if ((sidenum < 0) || (sidenum > 5))
 	return;
 
-CDSelection *other = m_mine->Other ();
-if ((m_mine->Current ()->segment == segnum) && (m_mine->Current ()->side == sidenum))
+CSelection *other = m_mine->Other ();
+if ((m_mine->Current ()->nSegment == segnum) && (m_mine->Current ()->nSide == sidenum))
 	return;
-other->segment = m_pTrigger->seg [m_iTarget];
-other->side = m_pTrigger->side [m_iTarget];
+other->segment = m_pTrigger->nSegment (m_iTarget);
+other->side = m_pTrigger->Side (m_iTarget);
 theApp.MineView ()->Refresh ();
 }
 

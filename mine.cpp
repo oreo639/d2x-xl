@@ -421,7 +421,7 @@ if (IsD2File ()) {
 	if (LevelVersion () > 6) {
 		nLights = (INT16)read_INT32(loadFile);
 		if (nLights > 0 && FlickerLightCount () <= MAX_FLICKERING_LIGHTS) {
-			fread(FlickeringLights (), sizeof (FLICKERING_LIGHT), nLights, loadFile);
+			fread(FlickeringLights (), sizeof (CFlickeringLight), nLights, loadFile);
 			} 
 		else {
 			if (nLights != 0) {
@@ -1239,11 +1239,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			GameInfo ().objects.count = MAX_OBJECTS (this);
 			}
 		else {
-			CGameObject *obj = Objects ();
-			for (i = 0; i < GameInfo ().objects.count; i++, obj++) {
-				obj->Read (loadfile, GameInfo ().fileinfo_version);
-				//      obj->signature = object_next_signature++;
-				//    verify_object(obj);
+			CGameObject *objP = Objects ();
+			for (i = 0; i < GameInfo ().objects.count; i++, objP++) {
+				objP->Read (loadfile, GameInfo ().fileinfo_version);
+				//      objP->signature = object_next_signature++;
+				//    verify_object(objP);
 			}
 		}
 	}
@@ -1546,7 +1546,7 @@ INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 			FlickerLightCount () = MAX_FLICKERING_LIGHTS;
 		}
 		if (FlickerLightCount () > 0) {
-			fwrite(FlickeringLights (), sizeof (FLICKERING_LIGHT), FlickerLightCount (), save_file);
+			fwrite(FlickeringLights (), sizeof (CFlickeringLight), FlickerLightCount (), save_file);
 		}
 
 		// write secret cube number

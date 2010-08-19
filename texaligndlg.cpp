@@ -106,8 +106,8 @@ m_centerPt.y = minRect.y + 166 / 2;
 
 seg = m_mine->CurrSeg ();
 side = m_mine->CurrSide ();
-nSide = m_mine->Current ()->side;
-nLine = m_mine->Current ()->line;
+nSide = m_mine->Current ()->nSide;
+nLine = m_mine->Current ()->nLine;
 
 // get device context handle
 pDC = m_alignWnd.GetDC ();
@@ -247,8 +247,8 @@ if (m_mine->IsWall ()) {
 	// highlight current point
 	pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 	pDC->SelectObject (hPenCurrentPoint);
-	x = m_apts [m_mine->Current ()->point].x;
-	y = m_apts [m_mine->Current ()->point].y;
+	x = m_apts [m_mine->Current ()->nPoint].x;
+	y = m_apts [m_mine->Current ()->nPoint].y;
 	pDC->Ellipse((INT32) (x-4*m_zoom), (INT32) (y-4*m_zoom), 
 					 (INT32) (x+4*m_zoom), (INT32) (y+4*m_zoom));
 	// fill in texture
@@ -332,16 +332,16 @@ UpdateData (TRUE);
 	INT32 i,	delta;
 	CDSide	*side = m_mine->CurrSide ();
 
-if (delta = (INT32) (side->uvls [m_mine->Current ()->point].u - m_alignX / UV_FACTOR)) {
+if (delta = (INT32) (side->uvls [m_mine->Current ()->nPoint].u - m_alignX / UV_FACTOR)) {
 	UpdateData (TRUE);
 	theApp.SetModified (TRUE);
 	switch (theApp.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			side->uvls[m_mine->Current ()->point].u -= delta;
+			side->uvls[m_mine->Current ()->nPoint].u -= delta;
 			break;
 		case LINE_MODE:
-			side->uvls[m_mine->Current ()->line].u -= delta;
-			side->uvls[(m_mine->Current ()->line+1)&3].u -= delta;
+			side->uvls[m_mine->Current ()->nLine].u -= delta;
+			side->uvls[(m_mine->Current ()->nLine+1)&3].u -= delta;
 			break;
 		default:
 			for (i = 0; i < 4; i++)
@@ -362,16 +362,16 @@ UpdateData (TRUE);
 	INT32 i, delta;
 	CDSide	*side = m_mine->CurrSide ();
 
-if (delta = (INT32) (side->uvls [m_mine->Current ()->point].v - m_alignY / UV_FACTOR)) {
+if (delta = (INT32) (side->uvls [m_mine->Current ()->nPoint].v - m_alignY / UV_FACTOR)) {
 	UpdateData (TRUE);
 	theApp.SetModified (TRUE);
 	switch (theApp.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			side->uvls[m_mine->Current ()->point].v -= delta;
+			side->uvls[m_mine->Current ()->nPoint].v -= delta;
 			break;
 		case LINE_MODE:
-			side->uvls[m_mine->Current ()->line].v -= delta;
-			side->uvls[(m_mine->Current ()->line+1)&3].v -= delta;
+			side->uvls[m_mine->Current ()->nLine].v -= delta;
+			side->uvls[(m_mine->Current ()->nLine+1)&3].v -= delta;
 			break;
 		default:
 			for (i = 0; i < 4; i++)
@@ -407,8 +407,8 @@ if (!GetMine ())
 	return;
 CDSide * side = m_mine->CurrSide ();
 
-m_alignX = (double) side->uvls [m_mine->Current ()->point].u * UV_FACTOR;
-m_alignY = (double) side->uvls [m_mine->Current ()->point].v * UV_FACTOR;
+m_alignX = (double) side->uvls [m_mine->Current ()->nPoint].u * UV_FACTOR;
+m_alignY = (double) side->uvls [m_mine->Current ()->nPoint].v * UV_FACTOR;
 
 double dx = side->uvls [1].u - side->uvls [0].u;
 double dy = side->uvls [1].v - side->uvls [0].v;
@@ -472,7 +472,7 @@ switch (theApp.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		l = m_mine->Current ()->line;
+		l = m_mine->Current ()->nLine;
 		h = side->uvls [l].u;
 		side->uvls [l].u = side->uvls [(l + 1) & 3].u;
 		side->uvls [(l + 1) & 3].u = h;
@@ -505,7 +505,7 @@ switch (theApp.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		l = m_mine->Current ()->line;
+		l = m_mine->Current ()->nLine;
 		h = side->uvls [l].v;
 		side->uvls [l].v = side->uvls [(l + 1) & 3].v;
 		side->uvls [(l + 1) & 3].v = h;
@@ -537,17 +537,17 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		side->uvls[m_mine->Current ()->point].u += (INT16) delta;
+		side->uvls[m_mine->Current ()->nPoint].u += (INT16) delta;
 		break;
 	case LINE_MODE:
-		side->uvls[m_mine->Current ()->line].u += (INT16) delta;
-		side->uvls[(m_mine->Current ()->line+1)&3].u += (INT16) delta;
+		side->uvls[m_mine->Current ()->nLine].u += (INT16) delta;
+		side->uvls[(m_mine->Current ()->nLine+1)&3].u += (INT16) delta;
 		break;
 	default:
 		for (i=0;i<4;i++)
 			side->uvls[i].u += (INT16) delta;
 	}
-m_alignX = (double) side->uvls [m_mine->Current ()->point].u * UV_FACTOR;
+m_alignX = (double) side->uvls [m_mine->Current ()->nPoint].u * UV_FACTOR;
 UpdateData (FALSE);
 theApp.SetModified (TRUE);
 UpdateAlignWnd ();
@@ -568,17 +568,17 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		side->uvls[m_mine->Current ()->point].v += (INT16) delta;
+		side->uvls[m_mine->Current ()->nPoint].v += (INT16) delta;
 		break;
 	case LINE_MODE:
-		side->uvls[m_mine->Current ()->line].v += (INT16) delta;
-		side->uvls[(m_mine->Current ()->line+1)&3].v += (INT16) delta;
+		side->uvls[m_mine->Current ()->nLine].v += (INT16) delta;
+		side->uvls[(m_mine->Current ()->nLine+1)&3].v += (INT16) delta;
 		break;
 	default:
 		for (i=0;i<4;i++)
 			side->uvls[i].v += (INT16) delta;
 	}
-m_alignY = (double)side->uvls[m_mine->Current ()->point].v * UV_FACTOR;
+m_alignY = (double)side->uvls[m_mine->Current ()->nPoint].v * UV_FACTOR;
 UpdateData (FALSE);
 theApp.SetModified (TRUE);
 UpdateAlignWnd ();
@@ -647,7 +647,7 @@ void CTextureTool::OnHShrink ()
 if (!GetMine ())
 	return;
 
-	INT32		i = m_mine->Current ()->point;
+	INT32		i = m_mine->Current ()->nPoint;
 	CDSide	*side = m_mine->CurrSide ();
 	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom ;
 
@@ -667,7 +667,7 @@ void CTextureTool::OnVShrink ()
 if (!GetMine ())
 	return;
 
-	INT32		i = m_mine->Current ()->point;
+	INT32		i = m_mine->Current ()->nPoint;
 	CDSide	*side = m_mine->CurrSide ();
 	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom;
 
@@ -689,7 +689,7 @@ if (!GetMine ())
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-m_mine->SetUV (m_mine->Current ()->segment, m_mine->Current ()->side, 0, 0, 0);
+m_mine->SetUV (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, 0, 0, 0);
 m_alignX = 0;
 m_alignY = 0;
 m_alignAngle = 0;
@@ -801,7 +801,7 @@ if (!GetMine ())
 	CDSide		*side = m_mine->CurrSide (),
 					*childSide;
 	INT16			segnum, 
-					sidenum = m_mine->Current ()->side,
+					sidenum = m_mine->Current ()->nSide,
 					linenum = 3;
 	double		sangle, cangle, angle, length; 
 
@@ -821,7 +821,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < m_mine->SegCount (); segnum
 		continue;
 	if (!(bAll || m_mine->SideIsMarked (segnum, sidenum)))
 		continue;
-	if (segnum != m_mine->Current ()->segment) {
+	if (segnum != m_mine->Current ()->nSegment) {
 		m_mine->SetUV (segnum, sidenum, 0, 0, 0);
 		sangle = atan3 (side->uvls [(linenum + 1) & 3].v - side->uvls [linenum].v, 
 							 side->uvls [(linenum + 1) & 3].u - side->uvls [linenum].u); 
@@ -856,7 +856,7 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (!m_mine->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
-	AlignChildren (m_mine->Current ()->segment, m_mine->Current ()->side, true);
+	AlignChildren (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, true);
 else {	// use all marked sides as alignment source
 	INT32 segnum, sidenum;
 	for (segnum = 0; segnum < m_mine->SegCount (); segnum++)

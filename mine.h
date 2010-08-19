@@ -66,11 +66,11 @@ typedef struct tMineData {
 	
 	// flickering light
 	INT16							m_nFlickeringLights;
-	FLICKERING_LIGHT			flickering_lights[MAX_FLICKERING_LIGHTS];
+	CFlickeringLight			flickeringLights[MAX_FLICKERING_LIGHTS];
 
-	CDSelection					current1;
-	CDSelection					current2;
-	CDSelection					*current;
+	CSelection					current1;
+	CSelection					current2;
+	CSelection					*current;
 
 } MINE_DATA;
 
@@ -171,8 +171,8 @@ public:
 		{ return MineData ().lightDeltaIndices + i; }
 	inline CLightDeltaValue *LightDeltaValues (INT32 i = 0)
 		{ return MineData ().lightDeltaValues + i; }
-	inline FLICKERING_LIGHT *FlickeringLights (INT32 i = 0)
-		{ return MineData ().flickering_lights + i; }
+	inline CFlickeringLight *FlickeringLights (INT32 i = 0)
+		{ return MineData ().flickeringLights + i; }
 	inline INT16& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (game_item_info& gii)
@@ -185,13 +185,13 @@ public:
 		{ return MineData ().m_secret_cubenum; }
 	inline tFixMatrix& SecretOrient ()
 		{ return MineData ().m_secret_orient; }
-	inline CDSelection* &Current ()
+	inline CSelection* &Current ()
 		{ return MineData ().current; }
-	inline CDSelection& Current1 ()
+	inline CSelection& Current1 ()
 		{ return MineData ().current1; }
-	inline CDSelection& Current2 ()
+	inline CSelection& Current2 ()
 		{ return MineData ().current2; }
-	inline CDSelection *Other (void)
+	inline CSelection *Other (void)
 		{ return (Current () == &Current2 ()) ? &Current1 () : &Current2 (); }
 	inline CDColor *TexColors (INT32 i = 0)
 		{ return MineData ().texColors + (i & 0x3fff); }
@@ -207,7 +207,7 @@ public:
 	inline CDColor *LightColors (INT32 i = 0, INT32 j = 0)
 		{ return MineData ().lightColors [i] + j; }
 	inline CDColor *CurrLightColor ()
-		{ return LightColor (Current ()->segment, Current ()->side); }
+		{ return LightColor (Current ()->nSegment, Current ()->nSide); }
 
 	inline INT32 LevelVersion (void) { return m_levelVersion; }
 	inline void SetLevelVersion (INT32 levelVersion) { m_levelVersion = levelVersion; }
@@ -241,7 +241,7 @@ public:
 		{ m_bSplineActive = bSplineActive; }
 	void  DeleteSegment(INT16 delete_segnum = -1);
 	void  DeleteSegmentWalls (INT16 segnum);
-	void	MakeObject (CGameObject *obj, INT8 type, INT16 segnum);
+	void	MakeObject (CGameObject *objP, INT8 type, INT16 segnum);
 	void	SetObjectData (INT8 type);
 	bool	CopyObject (UINT8 new_type, INT16 segnum = -1);
 	void  DeleteObject(INT16 objectNumber = -1);
@@ -255,17 +255,17 @@ public:
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
 	void	CalcSegCenter(tFixVector &pos,INT16 segnum);
 	inline CDSegment *CurrSeg ()
-		{ return Segments () + Current ()->segment; }
+		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
 		{ INT32 w = Segments (i)->sides [j].nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CWall *CurrWall ()
 		{ INT32 w = CurrSide ()->nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CDSide *CurrSide ()
-		{ return CurrSeg ()->sides + Current ()->side; }
+		{ return CurrSeg ()->sides + Current ()->nSide; }
 	inline INT16 CurrVert ()
-		{ return CurrSeg ()->verts [side_vert [Current ()->side][Current ()->point]]; }
+		{ return CurrSeg ()->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; }
 	inline CGameObject *CurrObj ()
-		{ return Objects () + Current ()->object; }
+		{ return Objects () + Current ()->nObject; }
 	void Mark ();
 	void MarkAll ();
 	void UnmarkAll ();
@@ -439,14 +439,14 @@ public:
 	inline CDSide *OtherSide (void)
 		{ return OtherSeg ()->sides + Other ()->side; }
 	inline void SetCurrent (INT16 nSegment = -1, INT16 nSide = -1, INT16 nLine = -1, INT16 nPoint = -1) {
-		if (nSegment >= 0) Current ()->segment = nSegment;
-		if (nSide >= 0) Current ()->side = nSide;
-		if (nLine >= 0) Current ()->line = nLine;
-		if (nPoint >= 0) Current ()->point = nPoint;
+		if (nSegment >= 0) Current ()->nSegment = nSegment;
+		if (nSide >= 0) Current ()->nSide = nSide;
+		if (nLine >= 0) Current ()->nLine = nLine;
+		if (nPoint >= 0) Current ()->nPoint = nPoint;
 		}
 	inline void GetCurrent (INT16 &nSegment, INT16& nSide) {
-		if (nSegment < 0) nSegment = Current ()->segment;
-		if (nSide < 0) nSide = Current ()->side;
+		if (nSegment < 0) nSegment = Current ()->nSegment;
+		if (nSide < 0) nSide = Current ()->nSide;
 		}
 
 	void InitRobotData();
@@ -512,8 +512,8 @@ private:
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);
 	INT16 SaveMineDataCompiled(FILE *save_file);
 	INT16 SaveGameData(FILE *savefile);
-	void ReadObject(CGameObject *obj,FILE *f,INT32 version);
-	void WriteObject(CGameObject *obj,FILE *f,INT32 version);
+	void ReadObject(CGameObject *objP,FILE *f,INT32 version);
+	void WriteObject(CGameObject *objP,FILE *f,INT32 version);
 	INT32 ReadWall (CWall* wallP, FILE* fp, INT32 version);
 	void WriteWall (CWall* wallP, FILE* fp, INT32 version);
 	void ClearMineData();

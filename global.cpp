@@ -32,7 +32,7 @@ bool bExtBlkFmt = false;
 
 INT32 preferences = 0;
 
-//FLICKERING_LIGHT *flickering_lights=0;
+//CFlickeringLight *flickeringLights=0;
 LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 UINT32       N_robot_types=0;
@@ -127,7 +127,7 @@ UINT8 contains_list[MAX_CONTAINS_NUMBER] = {
 	OBJ_POWERUP
 };
 
-// the following array is used to select a list item by obj->type
+// the following array is used to select a list item by objP->type
 INT8 object_selection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,1,2,3,-1,4,-1,5,-1,-1,-1,-1,6,-1,7,8,9,10,11
 };

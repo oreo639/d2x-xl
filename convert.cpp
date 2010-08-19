@@ -226,7 +226,7 @@ if (!GetMine ())
   CDSide		*side;
   CWall		*wall;
   CTrigger	*trigger;
-  CGameObject	*obj;
+  CGameObject	*objP;
   INT16		segnum, sidenum, d1Texture, mode,
 				segCount = m_mine->SegCount (),
 				wallCount = m_mine->GameInfo ().walls.count;
@@ -328,17 +328,17 @@ for (i = 0; i < m_mine->GameInfo ().equipgen.count; i++) {
 // Objects ()
 //-----------------------------------------------
 
-for (i = 0, obj = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++, obj++) {
+for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++, objP++) {
 // fix clip numbers for poly Objects () (except robots)
-	switch (obj->type) {
+	switch (objP->type) {
 		case OBJ_PLAYER   : // the player on the console
-			obj->rtype.pobj_info.model_num = D2_PLAYER_CLIP_NUMBER;
+			objP->rtype.pobj_info.model_num = D2_PLAYER_CLIP_NUMBER;
 			break;
 		case OBJ_CNTRLCEN : // the control center
-			obj->rtype.pobj_info.model_num = D2_REACTOR_CLIP_NUMBER;
+			objP->rtype.pobj_info.model_num = D2_REACTOR_CLIP_NUMBER;
 			break;
 		case OBJ_COOP     : // a cooperative player object
-			obj->rtype.pobj_info.model_num = D2_COOP_CLIP_NUMBER;
+			objP->rtype.pobj_info.model_num = D2_COOP_CLIP_NUMBER;
 			break;
 		}
 	}

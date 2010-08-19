@@ -60,11 +60,11 @@ for (i = MAX_SIDES_PER_SEGMENT; i; i--, side++)
 
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
-void CMine::DeleteSegment(INT16 delSegNum)
+void CMine::DeleteSegment(INT16 nDelSeg)
 {
 	CDSegment	*seg, *deleted_seg; 
 	CDSegment	*seg2; 
-	CGameObject		*obj; 
+	CGameObject		*objP; 
 	CTrigger	*trigP;
 	UINT16		segnum, real_segnum; 
 	INT16			child; 
@@ -74,38 +74,38 @@ void CMine::DeleteSegment(INT16 delSegNum)
 
 	if (SegCount () < 2)
 		return; 
-	if (delSegNum < 0)
-		delSegNum = Current ()->segment; 
-	if (delSegNum < 0 || delSegNum >= SegCount ()) 
+	if (nDelSeg < 0)
+		nDelSeg = Current ()->nSegment; 
+	if (nDelSeg < 0 || nDelSeg >= SegCount ()) 
 		return; 
 
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
-	deleted_seg = Segments (delSegNum); 
-	UndefineSegment (delSegNum);
+	deleted_seg = Segments (nDelSeg); 
+	UndefineSegment (nDelSeg);
 
 	// delete any flickering lights that use this segment
 	INT32 sidenum;
 	for (sidenum = 0; sidenum < 6; sidenum++) {
-		DeleteTriggerTargets (delSegNum, sidenum); 
-		INT16 index = GetFlickeringLight(delSegNum, sidenum); 
+		DeleteTriggerTargets (nDelSeg, sidenum); 
+		INT16 index = GetFlickeringLight(nDelSeg, sidenum); 
 		if (index != -1) {
 			FlickerLightCount ()--; 
 			// put last light in place of deleted light
 			memcpy(FlickeringLights (index), FlickeringLights (FlickerLightCount ()), 
-				sizeof (FLICKERING_LIGHT)); 
+				sizeof (CFlickeringLight)); 
 		}
 	}
 
 	// delete any Walls () within segment (if defined)
-	DeleteSegmentWalls (delSegNum); 
+	DeleteSegmentWalls (nDelSeg); 
 
 	// delete any Walls () on child Segments () that connect to this segment
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		child = deleted_seg->children [i]; 
 		if (child >= 0 && child < SegCount ()) {
 			INT16	oppSegNum, oppSideNum;
-			GetOppositeSide (oppSegNum, oppSideNum, delSegNum, i);
+			GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
 			if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL (this))
 				DeleteWall (Segments (oppSegNum)->sides [oppSideNum].nWall); 
 			}
@@ -113,7 +113,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 
 	// delete any Objects () within segment
 	for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
-		if (Objects (i)->segnum == delSegNum) {
+		if (Objects (i)->nSegment == nDelSeg) {
 			DeleteObject(i); 
 		}
 	}
@@ -121,7 +121,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 	// delete any robot centers with this
 	for (i = (UINT16)GameInfo ().botgen.count - 1; i >= 0; i--) {
 		segnum = BotGens (i)->segnum; 
-		if (segnum == delSegNum) {
+		if (segnum == nDelSeg) {
 			INT32 nMatCens = --GameInfo ().botgen.count; 
 			if (i < nMatCens)
 			memcpy ((void *) BotGens (i), (void *) BotGens (nMatCens), sizeof (CRobotMaker)); 
@@ -131,7 +131,7 @@ void CMine::DeleteSegment(INT16 delSegNum)
 	// delete any equipment centers with this
 	for (i = (UINT16) GameInfo ().equipgen.count - 1; i >= 0; i--) {
 		segnum = EquipGens (i)->segnum; 
-		if (segnum == delSegNum) {
+		if (segnum == nDelSeg) {
 			GameInfo ().equipgen.count--; 
 			memcpy ((void *) EquipGens (i), (void *) EquipGens (i + 1), 
 					  (GameInfo ().equipgen.count - i) * sizeof (CRobotMaker)); 
@@ -139,31 +139,25 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		}
 #endif
 	for (j = 0; j < GameInfo ().botgen.count; j++)
-		if (BotGens (i)->segnum > delSegNum)
+		if (BotGens (i)->segnum > nDelSeg)
 			BotGens (i)->segnum--;
 	for (j = 0; j < GameInfo ().equipgen.count; j++)
-		if (EquipGens (i)->segnum > delSegNum)
+		if (EquipGens (i)->segnum > nDelSeg)
 			EquipGens (i)->segnum--;
 	// delete any control seg with this segment
 	for (i = (UINT16)GameInfo ().control.count - 1; i >= 0; i--) {
 		INT32 count = ReactorTriggers (i)->count; 
-		for (j = count - 1; j>0; j--) {
-			segnum = ReactorTriggers (i)->targets [j].nSegment; 
-			if (segnum == delSegNum) {
+		for (j = count - 1; j > 0; j--) {
+			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
 				// move last segment into this spot
-				ReactorTriggers (i)->targets [j].nSegment = 
-					ReactorTriggers (i)->targets [count - 1].nSegment; 
-				ReactorTriggers (i)->targets [j].nSide = 
-					ReactorTriggers (i)->targets [count - 1].nSide; 
-				ReactorTriggers (i)->targets [count - 1] = CSideKey(0,0);
-				ReactorTriggers (i)->count--; 
+				ReactorTriggers (i)->Delete (j);
 			}
 		}
 	}
 
 	// update secret cube number if out of range now
 	segnum = (UINT16) SecretCubeNum (); 
-	if (segnum >= SegCount () || segnum== delSegNum) {
+	if (segnum >= SegCount () || segnum== nDelSeg) {
 		SecretCubeNum () = 0; 
 	}
 
@@ -173,12 +167,12 @@ void CMine::DeleteSegment(INT16 delSegNum)
 	// unlink any children with this segment number
 	for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (seg->children [child]== delSegNum) {
+			if (seg->children [child]== nDelSeg) {
 
 				// subtract by 1 if segment is above deleted segment
-				Current ()->segment = segnum; 
-				if (segnum > delSegNum) {
-					Current ()->segment--; 
+				Current ()->nSegment = segnum; 
+				if (segnum > nDelSeg) {
+					Current ()->nSegment--; 
 				}
 
 				// remove child number and update child bitmask
@@ -200,12 +194,12 @@ void CMine::DeleteSegment(INT16 delSegNum)
 	}
 
 	// move other Segments () to deleted segment location
-	if (delSegNum != SegCount ()-1) { // if this is not the last segment
+	if (nDelSeg != SegCount ()-1) { // if this is not the last segment
 
 		// mark each segment with it's real number
 		real_segnum = 0; 
 		for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
-			if(delSegNum != segnum)
+			if(nDelSeg != segnum)
 				seg->nIndex = real_segnum++; 
 
 		// replace all children with real numbers
@@ -234,11 +228,8 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		// replace all trigger seg numbers with real numbers
 		for (i = NumTriggers (), trigP = Triggers (); i; i--, trigP++) {
 			for (j = 0; j < trigP->count; j++) {
-				segnum = trigP->targets [j].nSegment; 
-				if (segnum < SegCount ()) {
-					seg = Segments (segnum); 
-					trigP->targets [j].nSegment = seg->nIndex; 
-					}
+				if (SegCount () > (segnum = trigP [j].nSegment))
+					trigP [j].nSegment = Segments (segnum)->nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -249,11 +240,8 @@ void CMine::DeleteSegment(INT16 delSegNum)
 		// replace all trigger seg numbers with real numbers
 		for (i = NumObjTriggers (), trigP = ObjTriggers (); i; i--, trigP++) {
 			for (j = 0; j < trigP->count; j++) {
-				segnum = trigP->targets [j].nSegment; 
-				if (segnum < SegCount ()) {
-					seg = Segments (segnum); 
-					trigP->targets [j].nSegment = seg->nIndex; 
-					}
+				if (SegCount () > (segnum = trigP [j].nSegment))
+					trigP [j].nSegment = Segments (segnum)->nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -263,83 +251,62 @@ void CMine::DeleteSegment(INT16 delSegNum)
 
 		// replace all object seg numbers with real numbers
 		for (i = 0; i < GameInfo ().objects.count; i++) {
-			obj = Objects (i); 
-			segnum = obj->segnum; 
-			if (segnum < SegCount ()) {
-				seg = Segments (segnum); 
-				obj->segnum = seg->nIndex; 
-			} else {
-				obj->segnum = 0; // fix object segment number
+			objP = Objects (i); 
+			if (SegCount () > (segnum = objP->nSegment))
+				objP->nSegment = Segments (segnum)->nIndex; 
+			else
+				objP->nSegment = 0; // fix object segment number
 			}
-		}
 
 		// replace robot centers seg numbers with real numbers
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
-			segnum = BotGens (i)->segnum; 
-			if (segnum < SegCount ()) {
-				seg = Segments (segnum); 
-				BotGens (i)->segnum = seg->nIndex; 
-			} else {
+			if (SegCount () > (segnum = BotGens (i)->segnum))
+				BotGens (i)->segnum = Segments (segnum)->nIndex->nIndex; 
+			else
 				BotGens (i)->segnum = 0; // fix robot center segnum
 			}
-		}
 
 		// replace equipment centers seg numbers with real numbers
 		for (i = 0; i < GameInfo ().equipgen.count; i++) {
-			segnum = EquipGens (i)->segnum; 
-			if (segnum < SegCount ()) {
-				seg = Segments (segnum); 
-				EquipGens (i)->segnum = seg->nIndex; 
-			} else {
+			if (SegCount () > (segnum = EquipGens (i)->segnum))
+				EquipGens (i)->segnum = Segments (segnum)->nIndex; 
+			else
 				EquipGens (i)->segnum = 0; // fix robot center segnum
 			}
-		}
 
 		// replace control seg numbers with real numbers
 		for (i = 0; i < GameInfo ().control.count; i++) {
 			for (j = 0; j < ReactorTriggers (i)->count; j++) {
-				segnum = ReactorTriggers (i)->targets [j].nSegment; 
-				if (segnum < SegCount ()) {
-					seg = Segments (segnum); 
-					ReactorTriggers (i)->targets [j].nSegment = seg->nIndex; 
-					}
-				else {
-					ReactorTriggers (i)->targets [j].nSegment = 0; // fix control center segment number
-				}
+				if (SegCount () > (segnum = ReactorTriggers (i)->Segment (j)))
+					ReactorTriggers (i)->Segment (j) = Segments (segnum)->nIndex; 
+				else 
+					ReactorTriggers (i)->Segment (j) = 0; // fix control center segment number
 			}
 		}
 
 		// replace flickering light seg numbers with real numbers
 		for (i = 0; i < FlickerLightCount (); i++) {
-			segnum = FlickeringLights (i)->segnum; 
-			if (segnum < SegCount ()) {
-				seg = Segments (segnum); 
-				FlickeringLights (i)->segnum = seg->nIndex; 
-				}
-			else {
-				FlickeringLights (i)->segnum = 0; // fix object segment number
+			if (SegCount () > (segnum = FlickeringLights (i)->nSegment))
+				FlickeringLights (i)->nSegment = Segments (segnum)->nIndex; 
+			else 
+				FlickeringLights (i)->nSegment = 0; // fix object segment number
 			}
-		}
 
 		// replace secret cubenum with real number
-		segnum = (UINT16) SecretCubeNum (); 
-		if (segnum < SegCount ()) {
-			seg = Segments (segnum); 
-			SecretCubeNum () = seg->nIndex; 
-			}
-		else {
+		if (SegCount () > (segnum = (UINT16) SecretCubeNum ()))
+			SecretCubeNum () = Segments (segnum)->nIndex; 
+		else
 			SecretCubeNum () = 0; // fix secret cube number
-		}
 
 		// move remaining Segments () down by 1
   }
 #if 1
-		if (INT32 segC = (--SegCount () - delSegNum)) {
-			memcpy (Segments (delSegNum), Segments (delSegNum + 1), segC * sizeof (CDSegment));
-			memcpy (LightColors (delSegNum), LightColors (delSegNum + 1), segC * 6 * sizeof (CDColor));
+		if (INT32 segC = (--SegCount () - nDelSeg)) {
+			memcpy (Segments (nDelSeg), Segments (nDelSeg + 1), segC * sizeof (CDSegment));
+			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CDColor));
 			}
 #else
-		for (segnum = delSegNum; segnum < (SegCount ()-1); segnum++) {
+		for (segnum = nDelSeg; segnum < (SegCount ()-1); segnum++) {
 			seg = Segments (segnum); 
 			seg2 = Segments (segnum + 1); 
 			memcpy(seg, seg2, sizeof (CDSegment)); 
@@ -467,7 +434,7 @@ memset (segP->children, 0xFF, sizeof (segP->children));
 bool CMine::AddSegment ()
 {
 	CDSegment *seg, *currSeg; 
-	INT16 i, nNewSeg, nNewSide, nCurrSide = Current ()->side; 
+	INT16 i, nNewSeg, nNewSide, nCurrSide = Current ()->nSide; 
 	INT16 new_verts [4]; 
 	INT16 segnum, sidenum; 
 
@@ -476,7 +443,7 @@ if (m_bSplineActive) {
 	return FALSE; 
 	}
 
-currSeg = Segments (Current ()->segment); 
+currSeg = Segments (Current ()->nSegment); 
 
 if (SegCount () >= MAX_SEGMENTS (this)) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
@@ -522,7 +489,7 @@ InitSegment (nNewSeg);
 // define children and special child
 seg->child_bitmask = 1 << opp_side [nCurrSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	seg->children [i] = (seg->child_bitmask & (1 << i)) ? Current ()->segment : -1;
+	seg->children [i] = (seg->child_bitmask & (1 << i)) ? Current ()->nSegment : -1;
 
 // define textures
 for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
@@ -544,11 +511,11 @@ for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
 seg->static_light = currSeg->static_light; 
 
 // delete flickering light if it exists
-INT16 index = GetFlickeringLight (Current ()->segment, nCurrSide); 
+INT16 index = GetFlickeringLight (Current ()->nSegment, nCurrSide); 
 if (index != -1) {
 	FlickerLightCount ()--; 
 	// put last light in place of deleted light
-	memcpy( FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (FLICKERING_LIGHT)); 
+	memcpy( FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (CFlickeringLight)); 
 	}
 
 // update current segment
@@ -583,9 +550,9 @@ for (segnum = 0; segnum < SegCount (); segnum++, pSeg++) {
 	}
 // auto align textures new segment
 for (nNewSide = 0; nNewSide < 6; nNewSide++)
-	AlignTextures (Current ()->segment, nNewSide, nNewSeg, TRUE, TRUE); 
+	AlignTextures (Current ()->nSegment, nNewSide, nNewSeg, TRUE, TRUE); 
 // set current segment to new segment
-Current ()->segment = nNewSeg; 
+Current ()->nSegment = nNewSeg; 
 //		SetLinesToDraw(); 
 theApp.MineView ()->Refresh (false); 
 theApp.ToolView ()->Refresh (); 
@@ -600,7 +567,7 @@ return TRUE;
 //
 // -------------------------------------------------------------------------- 
 
-#define CURRENT_POINT(a) ((Current ()->point + (a))&0x03)
+#define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
 
 void CMine::DefineVertices (INT16 new_verts [4])
 {
@@ -613,7 +580,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	tFixVector center, opp_center, orthog; 
 	tFixVector *vert, new_center; 
 
-	currSeg = Segments (Current ()->segment); 
+	currSeg = Segments (Current ()->nSegment); 
 
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
 // TODO:
@@ -622,10 +589,10 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	{
 		case(ORTHOGONAL):
 		{
-			CalcCenter(center, Current ()->segment, Current ()->side); 
-			CalcCenter(opp_center, Current ()->segment, opp_side [Current ()->side]); 
+			CalcCenter(center, Current ()->nSegment, Current ()->nSide); 
+			CalcCenter(opp_center, Current ()->nSegment, opp_side [Current ()->nSide]); 
 
-			CalcOrthoVector(orthog, Current ()->segment, Current ()->side); 
+			CalcOrthoVector(orthog, Current ()->nSegment, Current ()->nSide); 
 
 			// set the length of the new cube to be one standard cube length
 			length = 20; 
@@ -644,14 +611,14 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			double factor; 
 
 			// point 0
-			vertnum = currSeg->verts [side_vert [Current ()->side][CURRENT_POINT(0)]];
+			vertnum = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]];
 			vert = Vertices (vertnum);
 			a.x = orthog.x + vert->x; 
 			a.y = orthog.y + vert->y; 
 			a.z = orthog.z + vert->z; 
 
 			// point 1
-			vertnum = currSeg->verts [side_vert [Current ()->side][CURRENT_POINT(1)]]; 
+			vertnum = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]; 
 			vert = Vertices (vertnum);
 			b.x = orthog.x + vert->x; 
 			b.y = orthog.y + vert->y; 
@@ -722,7 +689,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				//vertnum = currSeg->verts [side_vert [Current ()->side][i]]; 
+				//vertnum = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				vertnum = new_verts [i];
 				Vertices (vertnum)->x = (long) dround_off(A [i].x, 1.0); 
 				Vertices (vertnum)->y = (long) dround_off(A [i].y, 1.0); 
@@ -733,10 +700,10 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		// METHOD 2: orghogonal with right angle on new side
 		case(EXTEND):
 		{
-			CalcCenter(center, Current ()->segment, Current ()->side); 
-			CalcCenter(opp_center, Current ()->segment, opp_side [Current ()->side]); 
+			CalcCenter(center, Current ()->nSegment, Current ()->nSide); 
+			CalcCenter(opp_center, Current ()->nSegment, opp_side [Current ()->nSide]); 
 
-			CalcOrthoVector(orthog, Current ()->segment, Current ()->side); 
+			CalcOrthoVector(orthog, Current ()->nSegment, Current ()->nSide); 
 
 			// calculate the length of the new cube
 			length = CalcLength(&center, &opp_center) / 0x10000L; 
@@ -748,7 +715,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				INT32 v1 = currSeg->verts [side_vert [Current ()->side][i]]; 
+				INT32 v1 = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				INT32 v2 = new_verts [i];
 				Vertices (v2)->x = orthog.x + Vertices (v1)->x; 
 				Vertices (v2)->y = orthog.y + Vertices (v1)->y; 
@@ -762,11 +729,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		{
 			// copy side's four points into A
 			for (i = 0; i < 4; i++) {
-				vertnum = currSeg->verts [side_vert [Current ()->side][i]]; 
+				vertnum = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				A [i].x = Vertices (vertnum)->x; 
 				A [i].y = Vertices (vertnum)->y; 
 				A [i].z = Vertices (vertnum)->z; 
-				vertnum = currSeg->verts [opp_side_vert [Current ()->side][i]]; 
+				vertnum = currSeg->verts [opp_side_vert [Current ()->nSide][i]]; 
 				A [i + 4].x = Vertices (vertnum)->x; 
 				A [i + 4].y = Vertices (vertnum)->y; 
 				A [i + 4].z = Vertices (vertnum)->z; 
@@ -844,7 +811,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 				B [i].z = - C [i].y * sin(- angle1) + C [i].z * cos(- angle1); 
 			}
 			// and translate back
-			vertnum = currSeg->verts [side_vert [Current ()->side][0]]; 
+			vertnum = currSeg->verts [side_vert [Current ()->nSide][0]]; 
 			for (i = 4; i < 8; i++) {
 				A [i].x = B [i].x + Vertices (vertnum)->x; 
 				A [i].y = B [i].y + Vertices (vertnum)->y; 
@@ -1087,24 +1054,24 @@ void CMine::Mark()
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
 		n_points = 1; 
-		p [0] = seg->verts [side_vert [Current ()->side][Current ()->point]]; 
+		p [0] = seg->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
 		break; 
 	case eSelectLine:
 		n_points = 2; 
-		p [0] = seg->verts [side_vert [Current ()->side][Current ()->point]]; 
-		p [1] = seg->verts [side_vert [Current ()->side][(Current ()->point + 1)&3]]; 
+		p [0] = seg->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
+		p [1] = seg->verts [side_vert [Current ()->nSide][(Current ()->nPoint + 1)&3]]; 
 		break; 
 	case eSelectSide:
 		n_points = 4; 
 		for (i = 0; i < n_points; i++)
-			p [i] = seg->verts [side_vert [Current ()->side][i]]; 
+			p [i] = seg->verts [side_vert [Current ()->nSide][i]]; 
 		break; 
 	default:
 		bCubeMark = true; 
 	}
 
 if (bCubeMark)
-		MarkSegment (Current ()->segment); 
+		MarkSegment (Current ()->nSegment); 
 else {
 	// set i to n_points if all verts are marked
 	for (i = 0; i < n_points; i++)
@@ -1331,14 +1298,14 @@ if (VertCount () > (MAX_VERTICES (this) - 1)) {
 	return; 
 	}
 
-seg = Segments (Current ()->segment); 
-vert = seg->verts [side_vert [Current ()->side][Current ()->point]]; 
+seg = Segments (Current ()->nSegment); 
+vert = seg->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 found = FALSE; 
 seg = Segments ();
 for (segnum = 0; (segnum < SegCount ()) && !found; segnum++, seg++)
-	if (segnum != Current ()->segment)
+	if (segnum != Current ()->nSegment)
 		for (vertnum = 0; vertnum < 8; vertnum++)
 			if (seg->verts [vertnum] == vert) {
 				found = TRUE; 
@@ -1362,8 +1329,8 @@ Vertices (VertCount ()).y = Vertices (vert).y;
 Vertices (VertCount ()).z = Vertices (vert).z; 
 */
 // replace existing point with new point
-seg = Segments (Current ()->segment); 
-seg->verts [side_vert [Current ()->side][Current ()->point]] = VertCount (); 
+seg = Segments (Current ()->nSegment); 
+seg->verts [side_vert [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
 seg->wall_bitmask &= ~MARKED_MASK; 
 
 // update total number of vertices
@@ -1371,13 +1338,13 @@ seg->wall_bitmask &= ~MARKED_MASK;
 
 INT32 sidenum;
 for (sidenum = 0; sidenum < 6; sidenum++)
-	if (IsPointOfSide (seg, sidenum, seg->verts [side_vert [Current ()->side][Current ()->point]]) &&
-		 GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, sidenum)) {
+	if (IsPointOfSide (seg, sidenum, seg->verts [side_vert [Current ()->nSide][Current ()->nPoint]]) &&
+		 GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, sidenum)) {
 		UnlinkChild (seg->children [sidenum], opp_side [sidenum]);
-		UnlinkChild (Current ()->segment, sidenum); 
+		UnlinkChild (Current ()->nSegment, sidenum); 
 		}
 
-	UnlinkChild(Current ()->segment, sidenum); 
+	UnlinkChild(Current ()->nSegment, sidenum); 
 
 //  *VertStatus (VertCount ()-1] &= ~DELETED_MASK; 
 SetLinesToDraw(); 
@@ -1409,15 +1376,15 @@ if (VertCount () > (MAX_VERTICES (this) - 2)) {
 	return; 
 	}
 
-seg = Segments (Current ()->segment); 
+seg = Segments (Current ()->nSegment); 
 for (i = 0; i < 2; i++) {
-	linenum = side_line [Current ()->side][Current ()->line]; 
-	vert [i] = Segments (Current ()->segment)->verts [line_vert [linenum][i]]; 
+	linenum = side_line [Current ()->nSide][Current ()->nLine]; 
+	vert [i] = Segments (Current ()->nSegment)->verts [line_vert [linenum][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
 	seg = Segments ();
 	for (segnum = 0; (segnum < SegCount ()) && !found [i]; segnum++, seg++) {
-		if (segnum != Current ()->segment) {
+		if (segnum != Current ()->nSegment) {
 			for (vertnum = 0; vertnum < 8; vertnum++) {
 				if (seg->verts [vertnum] == vert [i]) {
 					found [i] = TRUE; 
@@ -1437,7 +1404,7 @@ if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
-seg = Segments (Current ()->segment); 
+seg = Segments (Current ()->nSegment); 
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (found [i]) {
@@ -1448,7 +1415,7 @@ for (i = 0; i < 2; i++)
 		vertices [VertCount ()].z = vertices [vert [i]].z; 
 		*/
 		// replace existing points with new points
-		linenum = side_line [Current ()->side][Current ()->line]; 
+		linenum = side_line [Current ()->nSide][Current ()->nLine]; 
 		seg->verts [line_vert [linenum][i]] = VertCount (); 
 		seg->wall_bitmask &= ~MARKED_MASK; 
 		// update total number of vertices
@@ -1457,9 +1424,9 @@ for (i = 0; i < 2; i++)
 INT32 sidenum;
 for (sidenum = 0; sidenum < 6; sidenum++) {
 	if (IsLineOfSide (seg, sidenum, linenum) && 
-		 GetOppositeSide (opp_segnum, opp_sidenum, Current ()->segment, sidenum)) {
+		 GetOppositeSide (opp_segnum, opp_sidenum, Current ()->nSegment, sidenum)) {
 		UnlinkChild (opp_segnum, opp_sidenum);
-		UnlinkChild (Current ()->segment, sidenum); 
+		UnlinkChild (Current ()->nSegment, sidenum); 
 		}
 	}
 //  *VertStatus (VertCount ()-1] &= ~DELETED_MASK; 
@@ -1494,7 +1461,7 @@ if (m_bSplineActive) {
 
 seg = CurrSeg (); 
 if (sidenum < 0)
-	sidenum = Current ()->side;
+	sidenum = Current ()->nSide;
 INT32 child_segnum = seg->children [sidenum]; 
 if (child_segnum == -1) {
 	ErrorMsg ("The current side is not connected to another cube"); 
@@ -1505,7 +1472,7 @@ for (i = 0; i < 4; i++)
 	vert [i] = seg->verts [side_vert [sidenum][i]]; 
 	// check to see if current points are shared by any other cubes
 for (segnum = 0, seg = Segments (); segnum < SegCount (); segnum++, seg++)
-	if (segnum != Current ()->segment)
+	if (segnum != Current ()->nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = FALSE;
 			for (vertnum = 0; vertnum < 8; vertnum++)
@@ -1533,7 +1500,7 @@ if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
-seg = Segments (Current ()->segment); 
+seg = Segments (Current ()->nSegment); 
 if (nFound < 4)
 	solidify = 0;
 if (!solidify) {
@@ -1557,7 +1524,7 @@ if (!solidify) {
 	INT32 sidenum;
 	for (sidenum = 0; sidenum < 6; sidenum++)
 		if (sidenum != opp_side [sidenum])
-			UnlinkChild (Current ()->segment, sidenum); 
+			UnlinkChild (Current ()->nSegment, sidenum); 
 	SetLinesToDraw(); 
 	INFOMSG (" Four new points were made for the current side."); 
 	}
@@ -1567,12 +1534,12 @@ else {
 	// yes, see if child has a side which points to the parent
 	INT32 child_sidenum;
 	for (child_sidenum = 0; child_sidenum < 6; child_sidenum++)
-		if (child_seg->children [child_sidenum]== Current ()->segment) 
+		if (child_seg->children [child_sidenum]== Current ()->nSegment) 
 			break; 
 	// if we found the matching side
 	if (child_sidenum < 6)
 		ResetSide (child_segnum, child_sidenum); 
-	ResetSide (Current ()->segment, Current ()->side); 
+	ResetSide (Current ()->nSegment, Current ()->nSide); 
 	SetLinesToDraw(); 
 	}
 theApp.UnlockUndo ();
@@ -1588,7 +1555,7 @@ void CMine::JoinPoints()
   CDSegment *seg1, *seg2; 
  double distance; //v1x, v1y, v1z, v2x, v2y, v2z; 
   INT32 vert1, vert2; 
-  CDSelection *cur1, *cur2; 
+  CSelection *cur1, *cur2; 
 
 if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
@@ -1655,7 +1622,7 @@ void CMine::JoinLines()
   INT16 match [2]; 
   INT16 i, j, linenum; 
   bool fail; 
-  CDSelection *cur1, *cur2; 
+  CSelection *cur1, *cur2; 
 
 if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
@@ -1786,8 +1753,8 @@ void CMine::FixChildren()
 {
 INT16 nNewSide, sidenum, segnum, nNewSeg; 
 
-nNewSeg = Current ()->segment; 
-nNewSide = Current ()->side; 
+nNewSeg = Current ()->nSegment; 
+nNewSide = Current ()->nSide; 
 CDSegment *pSeg = Segments (),
 			 *pNewSeg = Segments (nNewSeg);
 tFixVector *vSeg, 
@@ -1836,7 +1803,7 @@ void CMine::JoinSegments(INT32 solidify)
 	double radius, min_radius, max_radius, dx, dy, dz, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
-	CDSelection *cur1, *cur2, my_cube; 
+	CSelection *cur1, *cur2, my_cube; 
 
 if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
@@ -1845,7 +1812,7 @@ if (m_bSplineActive) {
 
 // figure out "other' cube
 if (solidify) {
-	if (Segments (Current ()->segment)->children [Current ()->side] != -1) {
+	if (Segments (Current ()->nSegment)->children [Current ()->nSide] != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
@@ -2678,7 +2645,7 @@ void CMine::CopyOtherCube ()
 
 if (Current1 ().segment == Current2 ().segment)
 	return; 
-INT16 segnum = Current ()->segment; 
+INT16 segnum = Current ()->nSegment; 
 CDSegment *otherSeg = OtherSeg (); 
 bUndo = theApp.SetModified (TRUE); 
 theApp.LockUndo ();
