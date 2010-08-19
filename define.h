@@ -136,15 +136,15 @@
 
 #define D1_PLAYER_CLIP_NUMBER		43
 #define D2_PLAYER_CLIP_NUMBER		108
-#define PLAYER_CLIP_NUMBER ((theApp.GetMine ()->IsD1File ()) ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER)
+#define PLAYER_CLIP_NUMBER			(theApp.GetMine ()->IsD1File () ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER)
 
 #define D1_COOP_CLIP_NUMBER		44
 #define D2_COOP_CLIP_NUMBER		108
-#define COOP_CLIP_NUMBER ((theApp.GetMine ()->IsD1File ()) ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER)
+#define COOP_CLIP_NUMBER			(theApp.GetMine ()->IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER)
 
 #define D1_REACTOR_CLIP_NUMBER	39
 #define D2_REACTOR_CLIP_NUMBER	97
-#define REACTOR_CLIP_NUMBER		((theApp.GetMine ()->IsD1File ()) ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER)
+#define REACTOR_CLIP_NUMBER		(theApp.GetMine ()->IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER)
 
 
 #define HOSTAGE_SIZE   0x50000L
@@ -256,7 +256,7 @@
 #define MAX_POWERUP_IDS1            26
 #define MAX_POWERUP_IDS2            50
 #define MAX_POWERUP_IDS_D2          48
-#define MAX_POWERUP_IDS					((theApp.GetMine ()->IsD1File ()) ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2)
+#define MAX_POWERUP_IDS					(theApp.GetMine ()->IsD1File () ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2)
 #define MAX_TRIGGER_TARGETS         10
 
 #define POW_AMMORACK						35
@@ -268,7 +268,6 @@
 #define MAX_CONTROL_CENTER_TRIGGERS 10
 #define MAX_NUM_MATCENS1				20
 #define MAX_NUM_MATCENS2				100
-#define MAX_NUM_MATCENS					(((theApp.GetMine ()->IsD1File ()) || (theApp.GetMine ()->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2)
 #define MAX_WALL_SWITCHES           50
 #define MAX_WALL_LINKS              100
 #define MAX_NUM_FUELCENS1				70
@@ -366,10 +365,6 @@
 #define	MAX_DELTA_LIGHTS_D2	10000
 #define	MAX_DL_INDICES_D2X	3000
 #define	MAX_DELTA_LIGHTS_D2X	50000
-#define  MAX_DL_INDICES	\
-	(((theApp.GetMine ()->IsD1File ()) || (IsStdLevel ())) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X)
-#define  MAX_DELTA_LIGHTS	\
-	(((theApp.GetMine ()->IsD1File ()) || (IsStdLevel ())) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X)
 #define	DL_SCALE     			2048	// Divide light to allow 3 bits integer, 5 bits fraction.
 
 // Texture flags

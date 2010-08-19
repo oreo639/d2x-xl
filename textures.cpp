@@ -171,6 +171,8 @@ int DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, int x0, int
 	CDTexture	*pTx [2];
 	UINT8			*bmBuf = pDestTx->m_pDataBM;
 	UINT8			c;
+	int			fileType = theApp.GetMine ()->FileType ();
+
 	
 	textures [0] = nBaseTex;
 	textures [1] = nOvlTex & 0x3fff;
@@ -182,7 +184,7 @@ int DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, int x0, int
 if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES ()))
 	textures [i] = 0;
 	// buffer textures if not already buffered
-	pTx [i] = pTextures [m_fileType] + textures [i];
+	pTx [i] = pTextures [fileType] + textures [i];
 	if (!(pTx [i]->m_pDataBM && pTx [i]->m_bValid))
 		if (rc = pTx [i]->Read (textures [i]))
 			return (rc);
@@ -615,6 +617,7 @@ int ReadPog (FILE *fTextures, UINT32 nFileSize)
 	UINT16		nUnknownTextures, nMissingTextures;
 	bool			bExtraTexture;
 	CDTexture	*pTx;
+	int			fileType = theApp.GetMine ()->FileType ();
 
 // make sure this is descent 2 fTextures
 if (theApp.GetMine ()->IsD1File ()) {
@@ -707,7 +710,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		texture1 = 0;
 		}
 	else
-		pTx = pTextures [m_fileType];
+		pTx = pTextures [fileType];
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {
@@ -906,6 +909,7 @@ int CreatePog (FILE *outPigFile)
   int i;
   int num;
   pExtraTexture	pxTx;
+	int			fileType = theApp.GetMine ()->FileType ();
 
 if (theApp.GetMine ()->IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
@@ -939,7 +943,7 @@ d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
 d2_file_header.version      = 0x00000001L;
 d2_file_header.num_textures = 0;
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [m_fileType][i].m_bModified) {
+	if (pTextures [fileType][i].m_bModified) {
 		d2_file_header.num_textures++;
 		}
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -948,7 +952,7 @@ fwrite (&d2_file_header, sizeof (D2_PIG_HEADER), 1, outPigFile);
 
 // write list of textures
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [m_fileType][i].m_bModified)
+	if (pTextures [fileType][i].m_bModified)
 		fwrite (texture_table + i, sizeof (UINT16), 1, outPigFile);
 
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -957,8 +961,8 @@ for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 // write texture headers
 num = 0;
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [m_fileType][i].m_bModified)
-		WritePogTextureHeader (outPigFile, pTextures [m_fileType] + i, num++, nOffset);
+	if (pTextures [fileType][i].m_bModified)
+		WritePogTextureHeader (outPigFile, pTextures [fileType] + i, num++, nOffset);
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
 	WritePogTextureHeader (outPigFile, &pxTx->texture, num, nOffset);
 
@@ -970,8 +974,8 @@ DEBUGMSG (message);
 //-----------------------------------------
 rc = 8;
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [m_fileType][i].m_bModified && 
-		 !WritePogTexture (outPigFile, pTextures [m_fileType] + i))
+	if (pTextures [fileType][i].m_bModified && 
+		 !WritePogTexture (outPigFile, pTextures [fileType] + i))
 		goto abort;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 	if (!WritePogTexture (outPigFile, &pxTx->texture))
@@ -999,7 +1003,9 @@ return 0;
 void FreeTextureHandles (bool bDeleteModified) 
 {
   // free any textures that have been buffered
-int i, j;
+	int i, j;
+	int fileType = theApp.GetMine ()->FileType ();
+
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_D2_TEXTURES; i++) {
 		if (!bDeleteModified && pTextures [j][i].m_bModified)
@@ -1012,8 +1018,8 @@ for (j = 0; j < 2; j++)
 			free (pTextures [j][i].m_pDataTGA);
 			pTextures [j][i].m_pDataTGA = NULL;
 			}
-		pTextures [m_fileType][i].m_bModified = FALSE;
-		pTextures [m_fileType][i].m_nFormat = 0;
+		pTextures [fileType][i].m_bModified = FALSE;
+		pTextures [fileType][i].m_nFormat = 0;
 		}
 pExtraTexture	p;
 while (extraTextures) {
@@ -1027,9 +1033,11 @@ while (extraTextures) {
 
 BOOL HasCustomTextures () 
 {
-int i;
+	int i;
+	int fileType = theApp.GetMine ()->FileType ();
+
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [m_fileType][i].m_bModified)
+	if (pTextures [fileType][i].m_bModified)
 		return TRUE;
 return FALSE;
 }
@@ -1039,9 +1047,10 @@ return FALSE;
 int CountCustomTextures () 
 {
 	int i, count = 0;
+	int fileType = theApp.GetMine ()->FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [m_fileType][i].m_bModified)
+	if (pTextures [fileType][i].m_bModified)
 		count++;
 return count;
 }

@@ -224,10 +224,10 @@ return TRUE;
 void CDlcDoc::CreateNewLevel ()
 {
 char	new_level_name [256];
-int	new_level_type = 1;
+int	newFileType = 1;
 strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
 
-CNewFileDlg	d (theApp.MainFrame (), new_level_name, &new_level_type);
+CNewFileDlg	d (theApp.MainFrame (), new_level_name, &newFileType);
 if (d.DoModal () == IDOK) {
 	m_mine->Default ();
 	theApp.MineView ()->Reset ();
@@ -236,19 +236,19 @@ if (d.DoModal () == IDOK) {
 //		InitRobotData();
 
 	*m_szFile = '\0';
-	m_fileType = new_level_type;
-	switch (new_level_type) {
+	m_mine->SetFileType (newFileType);
+	switch (newFileType) {
 		case 0:
-			m_fileType = 0;
+			m_mine->SetFileType (0);
 			break;
 		case 1:
 		case 2:
 		case 3:
-			m_fileType = 1;
+			m_mine->SetFileType (1);
 			break;
 		}
 	m_mine->Load ();
-	switch (new_level_type) {
+	switch (newFileType) {
 		case 0:
 			m_mine->SetLevelVersion (1);
 			break;
@@ -263,18 +263,7 @@ if (d.DoModal () == IDOK) {
 			m_mine->ConvertWallNum (MAX_WALLS2, MAX_WALLS3
 				);
 		}
-#if 0
-	if (strcmpi (strlwr (new_level_name), "(untitled)")) {
-		strcpy (m_szSubFile, new_level_name);
-#if 0
-		int l = strlen (new_level_name);
-		if ((l < 4) || strcmpi (new_level_name + l - 4, m_fileType ? ".rl2" : ".rdl"))
-			strcat (new_level_name, (m_fileType ? ".rl2" : ".rdl"));
-#endif
-	}
-	else
-#endif
-		*m_szSubFile = '\0';
+	*m_szSubFile = '\0';
 	strcpy_s (m_mine->LevelName (), m_mine->LevelNameSize (), new_level_name);
 	m_mine->Reset ();
 	m_mine->SetLinesToDraw ();

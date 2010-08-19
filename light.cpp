@@ -946,7 +946,7 @@ fLightScale = 1.0; ///= 100.0;
 				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
 				continue;
 
-			if (GameInfo ().dl_indices.count >= MAX_DL_INDICES) {
+			if (GameInfo ().dl_indices.count >= MAX_DL_INDICES (this)) {
 //#pragma omp critical
 				{
 				if (++nErrors == 1) {
@@ -1055,7 +1055,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
+						if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1088,7 +1088,7 @@ fLightScale = 1.0; ///= 100.0;
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
+							if ((GameInfo ().delta_lights.count >= MAX_DELTA_LIGHTS (this)) || (bD2XLights ? pdli->d2x.count == 8191 : pdli->d2.count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {

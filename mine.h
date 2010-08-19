@@ -583,6 +583,9 @@ inline int MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->I
 inline int MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
 inline int MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
 inline int ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
+inline int MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+inline int MAX_DL_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X; }
+inline int MAX_DELTA_LIGHTS (CMine* m = NULL) { return !GET_MINE (m) ? 0 : (m->IsD1File () || m->IsStdLevel ()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X; }
 
 #define NO_WALL(m) MAX_WALLS(m)
 

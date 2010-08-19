@@ -1354,11 +1354,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	//================ READ MATERIALIZATION CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
 	if (GameInfo ().botgen.offset > -1) {
-		if (GameInfo ().botgen.count > MAX_NUM_MATCENS) {
+		if (GameInfo ().botgen.count > MAX_NUM_MATCENS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
-				GameInfo ().botgen.count, MAX_NUM_MATCENS);
+				GameInfo ().botgen.count, MAX_NUM_MATCENS (this));
 			ErrorMsg (message);
-			GameInfo ().botgen.count = MAX_NUM_MATCENS;
+			GameInfo ().botgen.count = MAX_NUM_MATCENS (this);
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
@@ -1382,11 +1382,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	//================ READ EQUIPMENT CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
 	if (GameInfo ().equipgen.offset > -1) {
-		if (GameInfo ().equipgen.count > MAX_NUM_MATCENS) {
+		if (GameInfo ().equipgen.count > MAX_NUM_MATCENS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
-				GameInfo ().equipgen.count, MAX_NUM_MATCENS);
+				GameInfo ().equipgen.count, MAX_NUM_MATCENS (this));
 			ErrorMsg (message);
-			GameInfo ().equipgen.count = MAX_NUM_MATCENS;
+			GameInfo ().equipgen.count = MAX_NUM_MATCENS (this);
 		}
 		if (!fseek(loadfile, GameInfo ().equipgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().equipgen.count; i++) {
@@ -1412,11 +1412,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().dl_indices.count);
 		//    DEBUGMSG(message);
-		if (GameInfo ().dl_indices.count > MAX_DL_INDICES) {
+		if (GameInfo ().dl_indices.count > MAX_DL_INDICES (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
-				GameInfo ().dl_indices.count, MAX_DL_INDICES);
+				GameInfo ().dl_indices.count, MAX_DL_INDICES (this));
 			ErrorMsg (message);
-			GameInfo ().dl_indices.count = MAX_DL_INDICES;
+			GameInfo ().dl_indices.count = MAX_DL_INDICES (this);
 			}
 		if (GameInfo ().dl_indices.offset > -1 && GameInfo ().dl_indices.count > 0) {
 			if (!fseek(loadfile, GameInfo ().dl_indices.offset, SEEK_SET)) {
@@ -1432,11 +1432,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().delta_lights.count);
 		//    DEBUGMSG(message);
-		if (GameInfo ().delta_lights.count > MAX_DELTA_LIGHTS) {
+		if (GameInfo ().delta_lights.count > MAX_DELTA_LIGHTS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
-				GameInfo ().delta_lights.count, MAX_DELTA_LIGHTS);
+				GameInfo ().delta_lights.count, MAX_DELTA_LIGHTS (this));
 			ErrorMsg (message);
-			GameInfo ().delta_lights.count = MAX_DELTA_LIGHTS;
+			GameInfo ().delta_lights.count = MAX_DELTA_LIGHTS (this);
 		}
 		if (GameInfo ().delta_lights.offset > -1 && GameInfo ().dl_indices.count > 0) {
 			if (!fseek(loadfile, GameInfo ().delta_lights.offset, SEEK_SET)) {

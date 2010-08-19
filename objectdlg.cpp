@@ -903,8 +903,13 @@ if (!GetMine ())
 
 	char str [40];
 	int h, i, j;
-	INT16 max_robot_ids = flag ? (m_fileType==RDL_FILE) ? ROBOT_IDS1 : 64: 
-										 (m_fileType==RDL_FILE) ? ROBOT_IDS1 : ROBOT_IDS2 (m_mine);
+	INT16 max_robot_ids = flag 
+								 ? m_mine->IsD1File () 
+									? ROBOT_IDS1 
+									: 64 
+								 : m_mine->IsD1File () 
+									? ROBOT_IDS1 
+									: ROBOT_IDS2 (m_mine);
 
 pcb->ResetContent ();
 HINSTANCE hInst = AfxGetApp ()->m_hInstance;

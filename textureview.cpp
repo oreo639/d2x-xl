@@ -544,7 +544,7 @@ void CTextureView::Setup()
   int nTextures, nFrames = 0;
   HINSTANCE hInst   = AfxGetApp()->m_hInstance;
 
-  nTextures = (m_fileType==RDL_FILE) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+  nTextures = theApp.GetMine ()->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 
   // calculate total number of textures
 m_nTextures [1] = 0;

@@ -143,7 +143,7 @@ if (!m_bInited)
 	return;
 
 	INT16 texture1,texture2;
-	INT16 old_file_type;
+	INT16 fileTypeBackup;
 #ifdef _DEBUG
 	DWORD nError;
 #endif
@@ -159,7 +159,7 @@ if (LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + texture2, message, sizeof (me
 else
 	nError = GetLastError ();
 #endif
-old_file_type = m_fileType;
+fileTypeBackup = theApp.GetMine ()->FileType ();
 m_fileType = RL2_FILE;
 m_mine->LoadPalette ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
@@ -206,8 +206,8 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   HDC hdc = GetDC(HWindow);
 
   // define d1 palette from resource
-  old_file_type = m_fileType;
-  m_fileType = RDL_FILE;
+  fileTypeBackup = theApp.GetMine ()->FileType ();
+  theApp.GetMine ()->SetFileType (RDL_FILE);
   hFind = FindResource( hInst,PaletteResource(), RT_RCDATA);
   hPalette = LoadResource( hInst, hFind);
   palette = (UINT8 *) LockResource(hPalette);
@@ -236,7 +236,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   }
 
   // define d2 palette from resource
-  m_fileType = RL2_FILE;
+  theApp.GetMine ()->SetFileType (RL2_FILE);
   hFind = FindResource( hInst,PaletteResource(), RT_RCDATA);
   hPalette = LoadResource( hInst, hFind);
   palette = (UINT8 *) LockResource(hPalette);
@@ -266,7 +266,7 @@ PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
   ReleaseDC(HWindow, hdc);
 #endif
   // restore file type (should always be RDL_TYPE)
-  m_fileType = old_file_type;
+  theApp.GetMine ()->SetFileType (fileTypeBackup);
 }
 
 //------------------------------------------------------------------------
