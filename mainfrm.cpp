@@ -1587,7 +1587,7 @@ void CMainFrame::OnConvert ()
 {
 	CConvertDlg	d;
 
-if (mine->IsD1File ()) {
+if (GetMine ()->IsD1File ()) {
 	if (d.DoModal () == IDOK) {
 		MineView ()->Refresh ();
 		if (bExpertMode)

@@ -1967,7 +1967,7 @@ if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
 		}
 	}
 m_pDC->SelectObject (m_penBlue);
-j = MAX_VERTICES - 1;
+j = MAX_VERTICES (mine) - 1;
 vms_vector *verts = mine->Vertices (j);
 for (h = n_splines * 4, i = 0; i < h; i++, j--, verts--)
 	m_matrix.SetPoint (verts, m_viewPoints + j);
@@ -3175,7 +3175,7 @@ closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
 int enable_secret = FALSE;
-if (mine->IsD2File ())
+if (m_mine->IsD2File ())
 	for(i=0;i<(INT16)m_mine->GameInfo ().triggers.count;i++)
 		if (m_mine->Triggers (i)->type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
@@ -3185,7 +3185,7 @@ if (mine->IsD2File ())
 for (i=0;i<=m_mine->GameInfo ().objects.count;i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == m_mine->GameInfo ().objects.count && mine->IsD2File () && enable_secret) {
+	if (i == m_mine->GameInfo ().objects.count && m_mine->IsD2File () && enable_secret) {
 		obj = &temp_obj;
 		obj->type = OBJ_PLAYER;
 		// define obj->position

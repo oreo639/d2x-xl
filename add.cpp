@@ -135,7 +135,7 @@ else if (seg->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 		if (GetOppositeSide (opp_segnum, opp_sidenum, segnum, sidenum) &&
 			 (wall = GetWall (segnum, sidenum)) && (wall->type == WALL_ILLUSION)) {
 			oppside = Segments (opp_segnum)->sides + opp_sidenum;
-			if (oppside->nBaseTex == (IsD1File ()) ? 322 : 333)
+			if (oppside->nBaseTex == (IsD1File () ? 322 : 333))
 				DeleteWall (oppside->nWall);
 			}
 		}

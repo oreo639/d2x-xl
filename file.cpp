@@ -1739,7 +1739,7 @@ missionData.missionType = 1;
 missionData.numLevels = 1;
 strcpy_s (missionData.levelList [0], sizeof (missionData.levelList [0]), pszSubFile);
 if (!strchr (pszSubFile, '.'))
-	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), IsD2File () ? ".rl2" : ".rdl");
+	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), theApp.GetMine ()->IsD2File () ? ".rl2" : ".rdl");
 missionData.numSecrets = 0;
 strcpy_s (missionData.missionInfo [0], sizeof (missionData.levelList [0]), "DLE-XP");
 strcpy_s (missionData.missionInfo [2], sizeof (missionData.levelList [2]), DateStr (szTime, sizeof (szTime), true));

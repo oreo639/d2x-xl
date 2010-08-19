@@ -7,6 +7,7 @@
 
 #include "define.h"
 #include "types.h"
+#include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
 #include "io.h"

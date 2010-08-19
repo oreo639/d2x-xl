@@ -847,7 +847,7 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 seg = Segments ();
-for (segnum = 0;segnum < MAX_SEGMENTS; segnum++, seg++) {
+for (segnum = 0;segnum < MAX_SEGMENTS (this); segnum++, seg++) {
 	seg->seg_number = segnum;
 	seg->wall_bitmask &= ~MARKED_MASK;
 	}

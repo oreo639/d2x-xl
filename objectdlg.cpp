@@ -742,7 +742,7 @@ if (!GetMine ())
 
   // get selection
 i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-if (i < 0 || i >= ROBOT_IDS2)
+if (i < 0 || i >= ROBOT_IDS2 (m_mine))
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *m_mine->RobotInfo (i);
@@ -1010,7 +1010,7 @@ switch(type) {
 		break;
 
 	case OBJ_CNTRLCEN: // a control center */
-		if (IsD1File ()) {
+		if (m_mine->IsD1File ()) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
 				sprintf_s (str, sizeof (str), "%d", i);
 				h = pcb->AddString (str);
@@ -1264,7 +1264,7 @@ if (!GetMine ())
 
 CDObject *obj = m_mine->CurrObj ();
 int selection = object_list [CBObjType ()->GetCurSel ()];
-if ((IsD1File ()) && (selection == OBJ_WEAPON)) {
+if (m_mine->IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
 	}
@@ -1294,7 +1294,7 @@ switch (selection) {
 		break;
 
 	case OBJ_CNTRLCEN:
-		obj->id = (IsD1File ()) ? 0: 2;
+		obj->id = m_mine->IsD1File () ? 0: 2;
 		break;
 
 	case OBJ_EXPLOSION:
@@ -1409,7 +1409,7 @@ switch (obj->type) {
 	case OBJ_CNTRLCEN:
 		obj->size = REACTOR_SIZE;
 		obj->shields = REACTOR_SHIELD;
-		if (IsD1File ())
+		if (m_mine->IsD1File ())
 			obj->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
 		else {
 			INT32 model;

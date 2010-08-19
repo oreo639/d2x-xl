@@ -452,7 +452,7 @@ if (nWall >= m_mine->GameInfo ().walls.count)
 	UINT16 *anim; // points to d1_anim or d2_anim depending on m_fileType
 
 // first find out if one of the textures is animated
-anim = (IsD1File ()) ? d1_anims : d2_anims;
+anim = (m_mine->IsD1File ()) ? d1_anims : d2_anims;
 
 for (i=0; i<2;i++)
 	for (index [i] = 0; anim [index [i]]; index [i]++)

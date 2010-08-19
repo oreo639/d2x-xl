@@ -198,7 +198,7 @@ if (psz = strchr (pszName, '.'))
 int l = int (strlen (pszName));
 if (l > 8)
 	pszName [8] = '\0';
-strcat_s (pszName, 256, (IsD1File ()) ? ".rdl" : ".rl2");
+strcat_s (pszName, 256, m_mine->IsD1File () ? ".rdl" : ".rl2");
 return pszName;
 }
 

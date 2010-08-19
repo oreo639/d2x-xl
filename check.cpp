@@ -279,7 +279,7 @@ if (!GetMine ())
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		if (id < 0 || id >= ((IsD1File ()) ? ROBOT_IDS1 : ROBOT_IDS2) ) {
+		if (id < 0 || id >= (m_mine->IsD1File () ? ROBOT_IDS1 : ROBOT_IDS2 (m_mine))) {
 			return 1;
 		}
 		break;
@@ -299,12 +299,12 @@ if (!GetMine ())
 		break;
 
 	case OBJ_POWERUP: /* a powerup you can pick up */
-		if (id< 0 || id >MAX_POWERUP_IDS) {
+		if (id< 0 || id > MAX_POWERUP_IDS) {
 			return 1;
 		}
 		break;
 
-	case OBJ_CNTRLCEN : /* the control center */
+	case OBJ_CNTRLCEN: /* the control center */
 		if (m_mine->IsD1File ()) {
 			if (id >= 0 || id <= 25) {
 				return 0;
@@ -316,7 +316,7 @@ if (!GetMine ())
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		obj->id = (IsD1File ()) ? 1 : 2;
+		obj->id = m_mine->IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -770,7 +770,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, obj++) {
 	  case OBJ_SMOKE:
 	  case OBJ_MONSTERBALL:
 	  case OBJ_EXPLOSION:
-			if (IsD2File ()) 
+			if (m_mine->IsD2File ()) 
 				break;
 	  default:
 		 if (m_bAutoFixBugs) {
@@ -1009,7 +1009,7 @@ for (trignum = deltrignum = 0; trignum < trigCount; trignum++, trigger++) {
 			// if exit, make sure it is linked to control_center_trigger
 			int tt = trigger->type;
 			int tf = trigger->flags;
-			if ((IsD1File ()) ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
+			if (m_mine->IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < ccTrigger->num_links; i++)
 					if (ccTrigger->seg [i] == wall->segnum &&
 						 ccTrigger->side [i] == wall->sidenum)
@@ -1064,7 +1064,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 	int tt = trigger->type;
 	int tf = trigger->flags;
 	if (trigger->num_links == 0) {
-		if ((IsD1File ()) 
+		if (m_mine->IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
@@ -1126,7 +1126,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 					CDSegment *seg = m_mine->Segments (segnum);
 					// check door opening trigger
 //						if (trigger->flags == TRIGGER_CONTROL_DOORS) {
-					if ((IsD1File ()) 
+					if (m_mine->IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigger points to a wall if it controls doors
@@ -1157,11 +1157,10 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 								}
 							}
 						}
-					else if ((IsD1File ()) ? 
-						 tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) :
-						 tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON ||
-						 tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL ||
-						 tt == TT_ILLUSORY_WALL) {
+					else if (m_mine->IsD1File () 
+								? tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
+								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
+							  ) {
 						// make sure trigger points to a wall if it controls doors
 						if (seg->sides [sidenum].nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
@@ -1179,7 +1178,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 							}
 						}
 //						if (trigger->flags == TRIGGER_MATCEN) {
-					else if ((IsD1File ()) ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
+					else if (m_mine->IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((seg->function != SEGMENT_FUNC_ROBOTMAKER) && (seg->function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigger=%d, link= (%d,%d))",trignum,segnum,sidenum);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, trignum)) return true;
@@ -1206,7 +1205,7 @@ for (trignum = 0; trignum < trigCount; trignum++, trigger++) {
 		trigSeg = trigSide = -1;
 	int tt = trigger->type;
 	int tf = trigger->flags;
-	if ((IsD1File ()) ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
+	if (m_mine->IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
 			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trig=%d)",trignum);
@@ -1471,8 +1470,8 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 	for (sidenum = 0, side = seg->sides; sidenum < 6; sidenum++, side++) {
 		wallnum = side->nWall;
 		if ((wallnum < 0) || (wallnum >= wallCount) || (wallnum >= maxWalls)) {
-			if (wallnum != NO_WALL)
-				side->nWall = NO_WALL;
+			if (wallnum != NO_WALL (m_mine))
+				side->nWall = NO_WALL (m_mine);
 			continue;
 			}
 		w = m_mine->Walls (wallnum);
@@ -1482,10 +1481,10 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 							"FIXED: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							segnum, wallnum, w->segnum);
 				if (wallFixed [wallnum])
-					side->nWall = NO_WALL;
+					side->nWall = NO_WALL (m_mine);
 				else {
 					if (m_mine->Segments (w->segnum)->sides [w->sidenum].nWall == wallnum)
-						side->nWall = NO_WALL;
+						side->nWall = NO_WALL (m_mine);
 					else {
 						w->segnum = segnum;
 						w->sidenum = sidenum;
@@ -1505,15 +1504,15 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							segnum, sidenum, wallnum, w->segnum);
 				if (wallFixed [wallnum])
-					side->nWall = NO_WALL;
+					side->nWall = NO_WALL (m_mine);
 				else {
 					ow = OppWall (segnum, sidenum);
 					if (ow && (ow->type == w->type)) {
-						seg->sides [w->sidenum].nWall = NO_WALL;
+						seg->sides [w->sidenum].nWall = NO_WALL (m_mine);
 						w->sidenum = sidenum;
 						}
 					else if (seg->sides [w->sidenum].nWall == wallnum)
-						side->nWall = NO_WALL;
+						side->nWall = NO_WALL (m_mine);
 					else
 						w->sidenum = sidenum;
 					wallFixed [wallnum] = 1;
@@ -1530,7 +1529,7 @@ for (segnum = 0, seg = m_mine->Segments (); segnum < segCount; segnum++, seg++) 
 for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wall->type > ((IsD1File ()) ? WALL_CLOSED : (m_mine->IsStdLevel ()) ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wall->type > (m_mine->IsD1File () ? WALL_CLOSED : m_mine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
 					wallnum,wall->type);
@@ -1676,8 +1675,8 @@ for (wallnum = 0; wallnum < wallCount; wallnum++, wall++) {
 			  || wall->clip_num == 2
 //			     || wall->clip_num == 7
 			  || wall->clip_num == 8
-			  || (IsD1File () && wall->clip_num > 25)
-			  || (IsD2File () && wall->clip_num > 50))) {
+			  || (m_mine->IsD1File () && wall->clip_num > 25)
+			  || (m_mine->IsD2File () && wall->clip_num > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
 						wallnum,wall->clip_num);

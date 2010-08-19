@@ -112,7 +112,7 @@ for (nSeg = segCount; nSeg; nSeg--, seg++) {
 pcb->SetCurSel (0);
 
   // add complete set for Texture 2 combo box
-nTextures = (IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = m_mine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 pcb = CBD2 ();
 int i;
 for (i = 0; i < nTextures; i++) {
