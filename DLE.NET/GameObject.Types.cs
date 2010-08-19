@@ -5,7 +5,7 @@ namespace DLE.NET
 {
     public partial class GameObject
     {
-        struct physics_info {
+        struct PHYSICS_INFO {
             FixVector  velocity;   //velocity vector of this object 
             FixVector  thrust;     //constant force applied to this object 
             int        mass;       //the mass of this object 
@@ -19,7 +19,7 @@ namespace DLE.NET
 
         //stuctures for different kinds of simulation 
 
-        struct laser_info {
+        struct LASER_INFO {
             short   parent_type;     // The type of the parent of this object 
             short   parent_num;      // The object's parent's number 
             int     parent_signature;// The object's parent's signature... 
@@ -29,7 +29,7 @@ namespace DLE.NET
             int     multiplier;      //  Power if this is a fusion bolt (or other super weapon to be added). 
         } 
 
-        struct explosion_info {
+        struct EXPLOSION_INFO {
             int     spawn_time;     // when lifeleft is < this, spawn another 
             int     delete_time;    // when to delete object 
             char    delete_objnum;  // and what object to delete 
@@ -38,15 +38,15 @@ namespace DLE.NET
             char    next_attach;    // next explosion in attach list 
         } 
 
-        struct light_info {
+        struct LIGHT_INFO {
             int     intensity;    //how bright the light is 
         } 
 
-        struct powerup_info {
+        struct POWERUP_INFO {
             int     count;      //how many/much we pick up (vulcan cannon only?) 
         } 
 
-        struct vclip_info {
+        struct VCLIP_INFO {
             int       vclip_num;
             int       frametime;
             char      framenum;
@@ -54,15 +54,15 @@ namespace DLE.NET
 
         //structures for different kinds of rendering 
 
-        struct polyobj_info {
+        struct POLYOBJ_INFO {
             int     model_num;        //which polygon model 
             fixed   AngleVector anim_angles[GameMine.MAX_SUBMODELS];  //angles for each subobject 
             int     subobj_flags;     //specify which subobjs to draw 
             int     tmap_override;    //if this is not -1, map all face to this 
             char    alt_textures;     //if not -1, use these textures instead 
-        } polyobj_info;
+        }
 
-        struct ai_static {
+        struct AI_STATIC {
             byte    behavior;            //  
             fixed char   flags[GameMine.MAX_AI_FLAGS]; // various flags, meaning defined by constants 
             short   hide_segment;        //  Segment to go to for hiding. 
@@ -75,7 +75,7 @@ namespace DLE.NET
             short  danger_laser_num;
         } 
 
-        struct tSmokeInfo {
+        struct PARTICLE_INFO {
 	        int			nLife;
 	        fixed int	nSize [2];
 	        int			nParts;
@@ -88,7 +88,7 @@ namespace DLE.NET
 	        char		bEnabled;
         } 
 
-        struct tLightningInfo {
+        struct LIGHTNING_INFO {
 	        int			nLife;
 	        int			nDelay;
 	        int			nLength;
@@ -119,36 +119,34 @@ namespace DLE.NET
 	        char		bEnabled;
         } 
 
-            //movement info, determined by MOVEMENT_TYPE 
-            [StructLayout(LayoutKind.Explicit)] 
-            struct MType 
-            {
-                [FieldOffset(0)] physics_info phys_info; // a physics object 
-                [FieldOffset(0)] FixVector   spin_rate; // for spinning objects 
-            } 
+        //movement info, determined by MOVEMENT_TYPE 
+        [StructLayout(LayoutKind.Explicit)] 
+        struct MType 
+        {
+            [FieldOffset(0)] PHYSICS_INFO phys_info; // a physics object 
+            [FieldOffset(0)] FixVector   spin_rate; // for spinning objects 
+        } 
 
-            //control info, determined by CONTROL_TYPE 
-            [StructLayout(LayoutKind.Explicit)] 
-            struct CType 
-            {
-                [FieldOffset(0)] laser_info     laser_info;
-                [FieldOffset(0)] explosion_info expl_info;   //NOTE: debris uses this also 
-                [FieldOffset(0)] ai_static      ai_info;
-                [FieldOffset(0)] light_info     light_info;  //why put this here?  Didn't know what else to do with it. 
-                [FieldOffset(0)] powerup_info   powerup_info;
-            } 
+        //control info, determined by CONTROL_TYPE 
+        [StructLayout(LayoutKind.Explicit)] 
+        struct CType 
+        {
+            [FieldOffset(0)] LASER_INFO     laser_info;
+            [FieldOffset(0)] EXPLOSION_INFO expl_info;   //NOTE: debris uses this also 
+            [FieldOffset(0)] AI_STATIC      ai_info;
+            [FieldOffset(0)] LIGHT_INFO     light_info;  //why put this here?  Didn't know what else to do with it. 
+            [FieldOffset(0)] POWERUP_INFO   powerup_info;
+        } 
 
-            //render info, determined by RENDER_TYPE 
-            [StructLayout(LayoutKind.Explicit)] 
-            struct RType 
-            {
-                [FieldOffset(0)] polyobj_info	pobj_info;     //polygon model 
-                [FieldOffset(0)] vclip_info		vclip_info;    //vclip 
-                [FieldOffset(0)] tSmokeInfo		smokeInfo;
-                [FieldOffset(0)] tLightningInfo	lightningInfo;
-                [FieldOffset(0)] tSoundInfo		soundInfo;
-            } 
-
+        //render info, determined by RENDER_TYPE 
+        [StructLayout(LayoutKind.Explicit)] 
+        struct RType 
+        {
+            [FieldOffset(0)] POLYOBJ_INFO	pobj_info;     //polygon model 
+            [FieldOffset(0)] VCLIP_INFO		vclip_info;    //vclip 
+            [FieldOffset(0)] PARTICLE_INFO	particleInfo;
+            [FieldOffset(0)] LIGHTNING_INFO	lightningInfo;
+            [FieldOffset(0)] tSoundInfo		soundInfo;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿//using DLE.NET.GameMine.Types;
+﻿using System;
+using System.Runtime.InteropServices;
 
 public struct FixVector 
 {
@@ -213,7 +214,7 @@ namespace DLE.NET
             fixed byte 		submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
             fixed FixVector submodel_mins[MAX_SUBMODELS];
             fixed FixVector submodel_maxs[MAX_SUBMODELS];
-            fixed FixVector mins, maxs;			  // min, max for whole model
+            FixVector       mins, maxs;			  // min, max for whole model
             int				rad;
             byte			n_textures;
             ushort			first_texture;
@@ -251,7 +252,7 @@ namespace DLE.NET
         }
 
         struct LEVEL_HEADER {
-          char name[13];
+          fixed char name[13];
           int size;
         }
 
@@ -262,20 +263,20 @@ namespace DLE.NET
             int     size;
         }
 
-        struct game_top_info 
+        struct GAME_TOP_INFO 
         {
             ushort  fileinfo_signature;
             ushort  fileinfo_version;
             int     fileinfo_size;
         }     
 
-        struct player_item_info 
+        struct PLAYER_ITEM_INFO 
         {
 	        int	 offset;
 	        int  size;
         } 
 
-        struct game_item_info 
+        struct GAME_ITEM_INFO 
         {
 	        int	 offset;
 	        int	 count;
@@ -289,116 +290,96 @@ namespace DLE.NET
             int                 fileinfo_size;
             fixed char          mine_filename[15];
             int                 level;
-            player_item_info    player;
-            game_item_info	    objects;
-            game_item_info	    walls;
-            game_item_info	    doors;
-            game_item_info	    triggers;
-            game_item_info	    links;
-            game_item_info	    control;
-            game_item_info	    botgen;
-            game_item_info	    dl_indices;
-            game_item_info	    delta_lights;
-            game_item_info	    equipgen;
+            PLAYER_ITEM_INFO    player;
+            GAME_ITEM_INFO	    objects;
+            GAME_ITEM_INFO	    walls;
+            GAME_ITEM_INFO	    doors;
+            GAME_ITEM_INFO	    triggers;
+            GAME_ITEM_INFO	    links;
+            GAME_ITEM_INFO	    control;
+            GAME_ITEM_INFO	    botgen;
+            GAME_ITEM_INFO	    dl_indices;
+            GAME_ITEM_INFO	    delta_lights;
+            GAME_ITEM_INFO	    equipgen;
         } 
 
 
-        struct active_door {
+        struct ACTIVE_DOOR {
           int	 n_parts;	   // for linked walls
-          short	 front_wallnum[2]; // front wall numbers for this door
-          short	 back_wallnum[2];  // back wall numbers for this door
+          fixed short	 front_wallnum[2]; // front wall numbers for this door
+          fixed short	 back_wallnum[2];  // back wall numbers for this door
           int    time;		   // how long been opening, closing, waiting
-        } active_door;
+        } 
 
-        struct cloaking_wall {    // NEW for Descent 2
+        struct CLOAKING_WALL {    // NEW for Descent 2
           short front_wallnum;	  // front wall numbers for this door
           short	back_wallnum; 	  // back wall numbers for this door
-          int	front_ls[4]; 	  // front wall saved light values
-          int	back_ls[4];	  // back wall saved light values
+          fixed int	front_ls[4]; 	  // front wall saved light values
+          fixed int	back_ls[4];	  // back wall saved light values
           int	time;		  // how long been cloaking or decloaking
-        } cloaking_wall;
-
-        //
-        struct WCLIP 
-            {
-            int	play_time;
-            short	num_frames;
-            short	frames[MAX_CLIP_FRAMES];
-            short	open_sound;
-            short	close_sound;
-            short	flags;
-            char	filename[13];
-            char	pad;
-        } w
-        
-
-        //extern char	Wall_names[7][10]; // New for Descent 2
-
-        class CDTrigger {
-        public:
-          byte  type;
-          ushort flags;
-          short  nObject;
-          char   num_links;
-          int    value;
-          int    time;
-          fixed short  seg[MAX_TRIGGER_TARGETS];
-          fixed short  side[MAX_TRIGGER_TARGETS];
-          ushort	nIndex;
-        }
+        } 
 
         // New stuff, 10/14/95: For shooting out lights and monitors.
         // Light cast upon vert_light vertices in segnum:sidenum by some light
         struct DELTA_LIGHT 
-            {
-          short segnum;
-          char  sidenum;
-          char  dummy;
-          fixed byte vert_light[4];
-            }
+        {
+            short segnum;
+            char  sidenum;
+            char  dummy;
+            fixed byte vert_light[4];
+        }
 
         // Light at segnum:sidenum casts light on count sides beginning at index (in array Delta_lights)
         struct DL_INDEX_D2X 
         {
-            short segnum;
-            ushort sidenum :3;
-            ushort count :13;
-            ushort index;
+            short   segnum;
+            ushort  bitField;
+            ushort  sidenum
+            { 
+                get { return (ushort) (bitField & 3); }
+                set { bitField = (ushort) ((bitField & ~3) | (value & 3)); }
+            }
+            ushort  count 
+            { 
+                get { return (ushort) (bitField >> 3); }
+                set { bitField = (ushort) ((value << 3) | (bitField & ~3)); }
+            }
+            ushort  index;
         } 
 
         struct DL_INDEX_STD
         {
-          short segnum;
-          byte sidenum;
-          byte count;
-          ushort index;
+            short segnum;
+            byte sidenum;
+            byte count;
+            ushort index;
         }
 
-            [StructLayout(LayoutKind.Explicit)] 
+        [StructLayout(LayoutKind.Explicit)] 
         struct DL_INDEX {
-	        [FieldOffset(0)] DL_INDEX_STD	d2;
+	        [FieldOffset(0)] DL_INDEX_STD	std;
 	        [FieldOffset(0)] DL_INDEX_D2X	d2x;
-        } dl_index;
+        } 
 
         //extern dl_index    Dl_indices[MAX_DL_INDICES];
         //extern delta_light Delta_lights[MAX_DELTA_LIGHTS];
         //extern int	     Num_static_lights;
 
 
-        struct control_center_trigger {
+        struct REACTOR_TRIGGER {
           short num_links;
-          fixed short seg[MAX_TRIGGER_TARGETS];
-          fixed short side[MAX_TRIGGER_TARGETS];
-        } control_center_trigger;
+          fixed short seg [MAX_TRIGGER_TARGETS];
+          fixed short side [MAX_TRIGGER_TARGETS];
+        } 
 
         struct matcen_info 
         {
-          fixed int  objFlags [2]; // Up to 32 different Descent 1 robots 
-        //  int  robot_flags2;// Additional 32 robots for Descent 2
-          int    hit_points;  // How hard it is to destroy this particular matcen 
-          int    interval;    // Interval between materializations 
-          short  segnum;      // Segment this is attached to. 
-          short  fuelcen_num; // Index in fuelcen array. 
+          fixed int  objFlags [2];  // Up to 32 different Descent 1 robots 
+          //int  robot_flags_d2x;   // Additional 32 robots for Descent 2
+          int    hit_points;        // How hard it is to destroy this particular matcen 
+          int    interval;          // Interval between materializations 
+          short  segnum;            // Segment this is attached to. 
+          short  fuelcen_num;       // Index in fuelcen array. 
         }
 
 
@@ -411,7 +392,7 @@ namespace DLE.NET
 
         struct PIG_TEXTURE
         {
-          char name[8];
+          fixed char name[8];
           byte dflags; // this is only important for large bitmaps like the cockpit 
           byte xsize;
           byte ysize;
@@ -429,7 +410,7 @@ namespace DLE.NET
 
         struct D2_PIG_TEXTURE
         {
-          char name[8];
+          fixed char name[8];
           byte dflags;  // bits 0-5 anim frame num, bit 6 abm flag
           byte xsize;   // low 8 bits here, 4 more bits in pad
           byte ysize;   // low 8 bits here, 4 more bits in pad
@@ -446,16 +427,17 @@ namespace DLE.NET
 
         struct TEXTURE
         {
-          char name[8];
+          fixed char name[8];
           short number;
         } 
 
         struct FLICKERING_LIGHT
         {
-          short segnum,sidenum;  // cube with light on it
-          uint mask;           // bits with 1 = on, 0 = off
-          int timer;		 // always set to 0
-          int delay;             // time for each bit in mask (int seconds)
+          short segnum;
+          short sidenum;  // cube with light on it
+          uint  mask;     // bits with 1 = on, 0 = off
+          int   timer;	  // always set to 0
+          int   delay;    // time for each bit in mask (int seconds)
         }
 
         struct LIGHT_TIMER
@@ -474,22 +456,22 @@ namespace DLE.NET
 
         struct MISSION_DATA
         {
-	        fixed char	missionName [80];
-	        fixed char  missionInfo [8][80];
-	        fixed int	authorFlags [2];
-	        int	missionType;
-	        fixed int	missionFlags [6];
-	        fixed int	customFlags [3];
-	        fixed char	levelList [MAX_LEVELS][17];	//18 == ########.###,####'\0' == levlname.ext,secr
-	        fixed char	comment [4000];
-	        int   numLevels;
-	        int	numSecrets;
+	        fixed char	    missionName [80];
+	        fixed string    missionInfo [8 * 80];
+	        fixed int	    authorFlags [2];
+	        int	            missionType;
+	        fixed int	    missionFlags [6];
+	        fixed int	    customFlags [3];
+	        fixed string    levelList [MAX_LEVELS];	//18 == ########.###,####'\0' == levlname.ext,secr
+	        fixed char	    comment [4000];
+	        int             numLevels;
+	        int	            numSecrets;
         } 
 
         struct tVertMatch 
             {
-		    short		b;
-		    short		i;
+		    short	b;
+		    short   i;
 		    double	d;
 	        }  
 
