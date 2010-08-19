@@ -343,7 +343,7 @@ BOOL CTextureEdit::OnInitDialog ()
 {
 CDialog::OnInitDialog ();
 
-	CWnd *pWnd;
+	CWnd*	pWnd;
 	CRect	rc;
 
 pWnd = GetDlgItem (IDC_TEXEDIT_TEXTURE);

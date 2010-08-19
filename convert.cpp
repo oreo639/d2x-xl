@@ -160,10 +160,10 @@ else
 	nError = GetLastError ();
 #endif
 fileTypeBackup = theApp.GetMine ()->FileType ();
-m_fileType = RL2_FILE;
+m_mine->SetFileType (RL2_FILE);
 m_mine->LoadPalette ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
-m_fileType = RDL_FILE;
+m_mine->SetFileType (RDL_FILE);
 m_mine->LoadPalette ();
 PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
 
@@ -332,7 +332,7 @@ if (!GetMine ())
 FreeTextureHandles ();
 theApp.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
-m_fileType = RL2_FILE;
+m_mine->SetFileType (RL2_FILE);
 texture_resource = D2_TEXTURE_STRING_TABLE;
 m_mine->LoadPalette ();
 
