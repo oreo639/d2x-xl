@@ -32,29 +32,85 @@ typedef unsigned long LONGWORD;
 typedef long FIX;	/*16 bits INT32, 16 bits frac */
 typedef INT16 FIXANG;	/*angles */
 
+#include "io.h"
+
+class CAngleVector {
+public:
+	FIXANG p, b, h;
+	CAngleVector (FIXANG p, FIXANG b, FIXANG h) : p(p), b(b), h(h) {}
+	CAngleVector (CAngleVector& a) : p(a.p), b(a.b), h(a.h) {}
+
+inline INT32 Read (FILE* fp) { 
+	p = read_FIXANG (fp);
+	b = read_FIXANG (fp);
+	h = read_FIXANG (fp);
+	return 1;
+	}
+
+void Write (FILE* fp) { 
+	write_FIXANG (p, fp);
+	write_FIXANG (b, fp);
+	write_FIXANG (h, fp);
+	}
+};
+
 class CFixVector {
 public:
 	FIX x, y, z;
+	CFixVector (FIX x, FIX y, FIX z) : x(x), y(y), z(z) {}
+	CFixVector (CFixVector& v) : x(v.x), y(v.y), z(v.z) {}
+
+inline INT32 Read (FILE* fp) { 
+	x = read_FIX (fp);
+	y = read_FIX (fp);
+	z = read_FIX (fp);
+	return 1;
+	}
+
+void Write (FILE* fp) { 
+	write_FIX (x, fp);
+	write_FIX (y, fp);
+	write_FIX (z, fp);
+	}
+};
+
+class CFixMatrix {
+public:
+	CFixVector rvec, uvec, fvec;
 
 	inline INT32 Read (FILE* fp) { 
-		read_FIX (x, fp);
-		read_FIX (y, fp);
-		read_FIX (z, fp);
-		}
-	void Write (FILE* fp) { 
-		write_FIX (x, fp);
-		write_FIX (y, fp);
-		write_FIX (z, fp);
-		}
-}
+		rvec.Read (fp);
+		uvec.Read (fp);
+		fvec.Read (fp);
+		return 1;
+	}
 
-typedef struct tAngleVector {
-  FIXANG p,b,h;
-} tAngleVector;
+	inline INT32 Write (FILE* fp) { 
+		rvec.Write (fp);
+		uvec.Write (fp);
+		fvec.Write (fp);
+	}
+};
 
-typedef struct tFixMatrix {
-  tFixVector rvec,uvec,fvec;
-} tFixMatrix;
+class CStatusMask {
+public:
+	UINT8	m_status;
+
+	inline UINT8 Status () { return m_status; }
+	inline void Mark (UINT8 flags = MARKED_MASK) { m_status |= flags; }
+	inline void Unmark (UINT8 flags = MARKED_MASK) { m_status &= ~flags; }
+	inline bool Marked (UINT8 flags = MARKED_MASK) { return (m_status & flags) != 0; }
+	inline INT32 Read (FILE* fp) { 
+		m_status = UINT8 (read_INT8 (fp));
+		return 1;
+		}
+	inline void Write (FILE* fp)
+	{
+		write_INT8 (INT8 (m_status), fp);
+	}
+};
+
+class CVertex : public CFixVector, public CStatusMask {};
 
 typedef struct {
   UINT16 index;
@@ -115,7 +171,7 @@ typedef struct {
 
 typedef struct {
   INT32	      model_num;		  // which polygon model?
-  VMS_VECTOR	gun_points[MAX_GUNS];	  // where each gun model is
+  CFixVector	gun_points[MAX_GUNS];	  // where each gun model is
   UINT8			gun_submodels[MAX_GUNS];  // which submodel is each gun in?
 
   INT16 		exp1_vclip_num;
@@ -196,7 +252,7 @@ typedef struct {
 
 typedef struct {
   INT16 jointnum;
-  VMS_ANGVEC angles;
+  CAngleVector angles;
 } JOINTPOS;
 
 typedef struct {
@@ -276,19 +332,19 @@ typedef struct {
   INT32 			model_data_size;
   UINT8*			model_data;
   INT32 			submodel_ptrs[MAX_SUBMODELS];
-  VMS_VECTOR 	submodel_offsets[MAX_SUBMODELS];
-  VMS_VECTOR 	submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
-  VMS_VECTOR 	submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
+  CFixVector 	submodel_offsets[MAX_SUBMODELS];
+  CFixVector 	submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
+  CFixVector 	submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
   FIX 			submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
   UINT8 			submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
-  VMS_VECTOR 	submodel_mins[MAX_SUBMODELS];
-  VMS_VECTOR   submodel_maxs[MAX_SUBMODELS];
-  VMS_VECTOR 	mins, maxs;			  // min, max for whole model
+  CFixVector 	submodel_mins[MAX_SUBMODELS];
+  CFixVector   submodel_maxs[MAX_SUBMODELS];
+  CFixVector 	mins, maxs;			  // min, max for whole model
   FIX				rad;
   UINT8			n_textures;
   UINT16			first_texture;
   UINT8			simpler_model;			  // alternate model with less detail (0 if none, model_num+1 else)
-//  VMS_VECTOR min, max;
+//  CFixVector min, max;
 } POLYMODEL;
 
 typedef struct {
@@ -377,13 +433,13 @@ typedef struct game_info {
 } game_info;
 
 typedef struct physics_info {
-  tFixVector velocity;   /*velocity vector of this object */
-  tFixVector thrust;     /*constant force applied to this object */
+  CFixVector velocity;   /*velocity vector of this object */
+  CFixVector thrust;     /*constant force applied to this object */
   FIX        mass;       /*the mass of this object */
   FIX        drag;       /*how fast this slows down */
   FIX        brakes;     /*how much brakes applied */
-  tFixVector rotvel;     /*rotational velecity (angles) */
-  tFixVector rotthrust;  /*rotational acceleration */
+  CFixVector rotvel;     /*rotational velecity (angles) */
+  CFixVector rotthrust;  /*rotational acceleration */
   FIXANG     turnroll;   /*rotation caused by turn banking */
   UINT16     flags;      /*misc physics flags */
 } physics_info;
@@ -427,7 +483,7 @@ typedef struct vclip_info {
 
 typedef struct polyobj_info {
   INT32      model_num;        /*which polygon model */
-  tAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
+  CAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
   INT32      subobj_flags;     /*specify which subobjs to draw */
   INT32      tmap_override;    /*if this is not -1, map all face to this */
   INT8       alt_textures;     /*if not -1, use these textures instead */
@@ -503,11 +559,11 @@ public:
 	UINT8			flags;         // misc flags 
 	UINT8			multiplayer;   // object only available in multiplayer games 
 	INT16			nSegment;      // segment number containing object 
-	tFixVector	pos;           // absolute x,y,z coordinate of center of object 
-	tFixMatrix	orient;        // orientation of object in world 
+	CFixVector	pos;           // absolute x,y,z coordinate of center of object 
+	CFixMatrix	orient;        // orientation of object in world 
 	FIX			size;          // 3d size of object - for collision detection 
 	FIX			shields;       // Starts at maximum, when <0, object dies.. 
-	tFixVector	last_pos;      // where object was last frame 
+	CFixVector	last_pos;      // where object was last frame 
 	INT8			contains_type; //  Type of object this object contains (eg, spider contains powerup) 
 	INT8			contains_id;   //  ID of object this object contains (eg, id = blue type = key) 
 	INT8			contains_count;// number of objects of type:id this object contains 
@@ -515,7 +571,7 @@ public:
 	//movement info, determined by MOVEMENT_TYPE 
 	union {
 		physics_info	phys_info; // a physics object 
-		tFixVector		spin_rate; // for spinning objects 
+		CFixVector		spin_rate; // for spinning objects 
 		} mtype;
 
 	//control info, determined by CONTROL_TYPE 

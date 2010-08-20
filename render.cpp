@@ -133,7 +133,7 @@ void TextureMap(INT32 resolution,
 	double A[3][3], IA[3][3], B[3][3], UV[3][3]; // transformation matrices
 	double w;
 	UINT8 *ptr;
-	uvl *uvls;
+	CUVL *uvls;
 	CMine *mine = theApp.GetMine ();
 	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
 	

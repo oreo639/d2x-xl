@@ -75,8 +75,8 @@ extern INT16 num_static_lights;
 extern char string[256];
 extern INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
 extern char spline_error_message[];
-extern tFixVector spline_points[MAX_SPLINES];
-extern tFixVector points[4];
+extern CFixVector spline_points[MAX_SPLINES];
+extern CFixVector points[4];
 extern INT16 n_splines;
 //extern INT16 spline_active;
 extern UINT8 object_list[MAX_OBJECT_NUMBER];
@@ -120,7 +120,7 @@ extern INT16  show_powerups;
 extern INT16 select_mode;
 #endif
 extern INT16 edit_mode;
-extern uvl   default_uvls[4];
+extern CUVL   default_uvls[4];
 extern char  *object_names[MAX_OBJECT_TYPES];
 extern UINT8 powerup_types[MAX_POWERUP_IDS2];
 extern char  wall_type_names[6][10];
@@ -153,7 +153,7 @@ extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
 //extern UINT16 num_vertices;
 //extern UINT16 num_segments;
 
-//extern tFixVector FAR *vertices;
+//extern CFixVector FAR *vertices;
 //extern segment far *segments[MAX_SEGMENTS2];
 //extern object far *objects[MAX_OBJECTS];
 //extern UINT8 *vertexStatus;

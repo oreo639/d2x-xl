@@ -84,7 +84,7 @@ double Blend(INT32 i, INT32 n, double u) {
 //-------------------------------------------------------------------------
 //   BezierFcn(pt,u,n,p [] []) - sets (x,y,z) for u=#/segs based on points p
 //-------------------------------------------------------------------------
-void BezierFcn(tFixVector *pt, double u, INT32 npts, tFixVector *p) {
+void BezierFcn(CFixVector *pt, double u, INT32 npts, CFixVector *p) {
   INT32 i;
   double b;
   pt->x = 0;
@@ -138,7 +138,7 @@ if (index != 0) {
 // SpinPoint () - spin on y-axis then z-axis
 //--------------------------------------------------------------------------
 
-void SpinPoint (tFixVector *point,double y_spin,double z_spin) 
+void SpinPoint (CFixVector *point,double y_spin,double z_spin) 
 {
   double tx,ty,tz;
   tx      =   point->x*cos(y_spin) - point->z*sin(y_spin);
@@ -153,7 +153,7 @@ void SpinPoint (tFixVector *point,double y_spin,double z_spin)
 // SpinBackPoint () - spin on z-axis then y-axis
 //--------------------------------------------------------------------------
 
-void SpinBackPoint (tFixVector *point,double y_spin,double z_spin) 
+void SpinBackPoint (CFixVector *point,double y_spin,double z_spin) 
 {
   double tx,ty,tz;
   tx      =   point->x*cos(-z_spin) + point->y*sin(-z_spin);
@@ -188,7 +188,7 @@ INT32 CMine::MatchingSide (INT32 j)
 //--------------------------------------------------------------------------
 
 void RectPoints(double angle,double radius,
-                  tFixVector *vertex,tFixVector *orgin,tFixVector *normal) 
+                  CFixVector *vertex,CFixVector *orgin,CFixVector *normal) 
 {
   double y_spin,z_spin;
   double nx,ny,nz;
@@ -266,7 +266,7 @@ void RectPoints(double angle,double radius,
 //--------------------------------------------------------------------------
 
 void PolarPoints (double *angle,double *radius,
-		  tFixVector *vertex,tFixVector *orgin,tFixVector *normal) 
+		  CFixVector *vertex,CFixVector *orgin,CFixVector *normal) 
 {
   double z_spin,y_spin;
   double vx,vy,vz,nx,ny,nz;
@@ -391,7 +391,7 @@ else {
 		// use last "n_spline" segments
 		nVertex = (MAX_VERTICES (this)-1)-(spline*4);
 		for (j = 0; j < 4; j++) {
-		//	  memcpy(&vertices [VertCount ()],&vertices [nVertex-j],sizeof (tFixVector));
+		//	  memcpy(&vertices [VertCount ()],&vertices [nVertex-j],sizeof (CFixVector));
 			if (VertCount () >= MAX_VERTICES (this))
 				DEBUGMSG (" Tunnel generator: Vertex count out of range.")
 			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES (this)))
@@ -406,12 +406,12 @@ else {
 			if (spline == 0) {         // 1st segment
 				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
 				segP->verts [opp_side_vert [spline_side1] [j]] = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
-				*VertStatus (VertCount ()++) = 0;
+				VertStatus (VertCount ()++) = 0;
 				}
 			else if(spline < n_splines - 1) { // center segments
 				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
 				segP->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4;
-				*VertStatus (VertCount ()++) = 0;
+				VertStatus (VertCount ()++) = 0;
 				}
 			else {          // last segment
 				segP->verts [side_vert [spline_side1] [j]] = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
@@ -515,13 +515,13 @@ void CMine::CalcSpline ()
   INT32 i,j;
   CSegment *segP;
   INT16 nVertex;
-  tFixVector vertex;
-//  tFixVector opp_center;
+  CFixVector vertex;
+//  CFixVector opp_center;
   double theta [2] [4],radius [2] [4]; // polor coordinates of sides
   double delta_angle [4];
-  tFixVector rel_side_pts [2] [4]; // side points reletave to center of side 1
-  tFixVector rel_pts [4]; // 4 points of spline reletave to 1st point
-  tFixVector rel_spline_pts [MAX_SPLINES];
+  CFixVector rel_side_pts [2] [4]; // side points reletave to center of side 1
+  CFixVector rel_pts [4]; // 4 points of spline reletave to 1st point
+  CFixVector rel_spline_pts [MAX_SPLINES];
   double y,z;
   double y_spin,z_spin;
 //  double tx,ty,tz;
@@ -560,7 +560,7 @@ void CMine::CalcSpline ()
     rel_pts [i].z = points [i].z - points [0].z;
   }
   segP = Segments (spline_segment1);
-  tFixVector *vert;
+  CFixVector *vert;
   for (i=0;i<4;i++) {
     nVertex = side_vert [spline_side1] [i];
 	 vert = Vertices (segP->verts [nVertex]);

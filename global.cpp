@@ -101,8 +101,8 @@ INT16	     num_static_lights=0;
 char string[256];
 INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
 char spline_error_message[] = "You must exit spline creation before preforming this function";
-tFixVector spline_points[MAX_SPLINES];
-tFixVector points[4];
+CFixVector spline_points[MAX_SPLINES];
+CFixVector points[4];
 INT16 n_splines=0;
 INT16 spline_length1=20,spline_length2=20;
 INT16 spline_active=0;
@@ -295,7 +295,7 @@ INT16  show_powerups   =  POWERUP_POWERUP_MASK + POWERUP_WEAPON_MASK + POWERUP_K
 INT16 select_mode     = CUBE_MODE;
 INT16 edit_mode       = EDIT_OFF;
 #endif
-uvl default_uvls[4] = {
+CUVL default_uvls[4] = {
 	{(UINT16) 0x0000, (UINT16)0x0000, (UINT16)DEFAULT_LIGHTING},
 	{(UINT16) 0x0000, (UINT16)0x0800, (UINT16)DEFAULT_LIGHTING},
 	{(UINT16)-0x0800, (UINT16)0x0800, (UINT16)DEFAULT_LIGHTING},
@@ -490,7 +490,7 @@ INT8 point_sides[8][3] = {
     {0,1,4}
 };
 
-// uvl corner for point_sides above
+// CUVL corner for point_sides above
 INT8 point_corners[8][3] = {
     {0,0,3},
     {1,3,2},
@@ -853,7 +853,7 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //UINT16 num_vertices;
 //UINT16 num_segments;
 
-//tFixVector *vertices=0;
+//CFixVector *vertices=0;
 //segment *Segments ()[MAX_SEGMENTS2];
 //object *Objects ()[MAX_OBJECTS];
 //UINT8 *vertexStatus=0; //MAX_VERTICES

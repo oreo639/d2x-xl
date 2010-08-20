@@ -41,7 +41,7 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 //-----------------------------------------------------------------------
 #define W(p)   (*((INT16 *)(p)))
 #define WP(p)  ((INT16 *)(p))
-#define VP(p)  ((VMS_VECTOR *)(p))
+#define VP(p)  ((CFixVector *)(p))
 #define calcNormal(a,b)
 #define glNormal3fv(a)
 #define glColor3ub(a,b,c)
@@ -62,7 +62,7 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 static MODEL gModel;
 static UINT8 *gModelData;
 static CGameObject * gpObject;
-static VMS_VECTOR gOffset;
+static CFixVector gOffset;
 static INT16 glow_num = -1;
 static double normal[3];	// Storage for calculated surface normal
 static POLY *panel;
@@ -174,7 +174,7 @@ void CMineView::DrawModel()
 void CMineView::SetModelPoints(INT32 start, INT32 end) 
 {
   CGameObject *objP = gpObject;
-  tFixVector pt;
+  CFixVector pt;
   INT32 i;
   for (i=start;i<end;i++) {
 	FIX x0 = gModel.points[i].x;
@@ -256,7 +256,7 @@ void CMineView::InterpModelData(UINT8 *p)
 			// 2  UINT16      n_points       number of points
 			// 4  UINT16      start_point    starting point
 			// 6  UINT16      unknown
-			// 8  VMS_VECTOR  pts[n_points]  x,y,z data
+			// 8  CFixVector  pts[n_points]  x,y,z data
 			case OP_DEFP_START: {
 				pt0 = W(p+4);
 				n_points = W(p+2);
@@ -270,13 +270,13 @@ void CMineView::InterpModelData(UINT8 *p)
 					gModel.points[pt+pt0].z = VP(p+8)[pt].z + gOffset.z;
 				}
 				SetModelPoints(pt0,pt0+n_points);
-				p += W(p+2)*sizeof (VMS_VECTOR) + 8;
+				p += W(p+2)*sizeof (CFixVector) + 8;
 				break;
 			}
 			// Flat Shaded Polygon:
 			// 2  UINT16     n_verts
-			// 4  VMS_VECTOR vector1
-			// 16 VMS_VECTOR vector2
+			// 4  CFixVector vector1
+			// 16 CFixVector vector2
 			// 28 UINT16     color
 			// 30 UINT16     verts[n_verts]
 			case OP_FLATPOLY: {
@@ -296,8 +296,8 @@ void CMineView::InterpModelData(UINT8 *p)
 			}
 			// Texture Mapped Polygon:
 			// 2  UINT16     n_verts
-			// 4  VMS_VECTOR vector1
-			// 16 VMS_VECTOR vector2
+			// 4  CFixVector vector1
+			// 16 CFixVector vector2
 			// 28 UINT16     nBaseTex
 			// 30 UINT16     verts[n_verts]
 			// -- UVL        uvls[n_verts]
@@ -322,8 +322,8 @@ void CMineView::InterpModelData(UINT8 *p)
 			}
 			// Sort by Normal
 			// 2  UINT16      unknown
-			// 4  VMS_VECTOR  Front Model normal
-			// 16 VMS_VECTOR  Back Model normal
+			// 4  CFixVector  Front Model normal
+			// 16 CFixVector  Back Model normal
 			// 28 UINT16      Front Model Offset
 			// 30 UINT16      Back Model Offset
 			case OP_SORTNORM: {
@@ -345,7 +345,7 @@ void CMineView::InterpModelData(UINT8 *p)
 			}
 			// Call a Sub Object
 			// 2  UINT16     n_anims
-			// 4  VMS_VECTOR offset
+			// 4  CFixVector offset
 			// 16 UINT16     model offset
 			case OP_SUBCALL: {
 				assert(W(p+16)>0);

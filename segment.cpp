@@ -19,9 +19,9 @@
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-double CMine::CalcLength(tFixVector *center1, tFixVector *center2)
+double CMine::CalcLength(CFixVector *center1, CFixVector *center2)
 {
-	tFixVector direction; 
+	CFixVector direction; 
 
 	// calculate distance vector between the centers
 	direction.x = center1->x - center2->x; 
@@ -338,25 +338,17 @@ void CMine::DeleteVertex(INT16 nDeletedVert)
 {
 	INT16 nVertex, nSegment; 
 
-	theApp.SetModified (TRUE); 
-	// fill in gap in vertex array and status
-	memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount ()-1 - nDeletedVert) * sizeof (tFixVector));
-	memcpy (VertStatus (nDeletedVert), VertStatus (nDeletedVert + 1), (VertCount ()-1 - nDeletedVert) * sizeof (*VertStatus ()));
-/*
-	for (nVertex = nDeletedVert; nVertex < VertCount ()-1; nVertex++) {
-		memcpy(&vertices [nVertex], &vertices [nVertex + 1], sizeof (tFixVector)); 
-		*VertStatus (nVertex] = *VertStatus (nVertex + 1]; 
-	}
-*/
-	// update anyone pointing to this vertex
-	CSegment *segP = Segments ();
-	for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-		for (nVertex = 0; nVertex < 8; nVertex++)
-			if (segP->verts [nVertex] > nDeletedVert)
-				segP->verts [nVertex]--; 
-
-	// update number of vertices
-	VertCount ()--; 
+theApp.SetModified (TRUE); 
+// fill in gap in vertex array and status
+memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount ()-1 - nDeletedVert) * sizeof (CFixVector));
+// update anyone pointing to this vertex
+CSegment *segP = Segments ();
+for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+	for (nVertex = 0; nVertex < 8; nVertex++)
+		if (segP->verts [nVertex] > nDeletedVert)
+			segP->verts [nVertex]--; 
+// update number of vertices
+VertCount ()--; 
 }
 
 // -------------------------------------------------------------------------- 
@@ -370,14 +362,14 @@ void CMine::DeleteUnusedVertices()
 	INT16 nVertex, nSegment, point; 
 
 for (nVertex = 0; nVertex < VertCount (); nVertex++)
-	*VertStatus (nVertex) &= ~NEW_MASK; 
+	Vertices (nVertex)->Unmark (~NEW_MASK); 
 // mark all used verts
 CSegment *segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
-		*VertStatus (segP->verts [point]) |= NEW_MASK; 
+		Vertices (segP->verts [point])->Mark (NEW_MASK); 
 for (nVertex = VertCount ()-1; nVertex >= 0; nVertex--)
-	if (!(*VertStatus (nVertex) & NEW_MASK))
+	if (!(Vertices (nVertex)->Marked (NEW_MASK)))
 		DeleteVertex(nVertex); 
 }
 
@@ -523,15 +515,14 @@ currSeg->sides [nCurrSide].nOvlTex = 0;
 memset (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
  
 // update number of Segments () and vertices and clear vertexStatus
-SegCount ()++; 
-memset (VertStatus (VertCount ()), 0, 4 * sizeof (*VertStatus ()));
-VertCount () += 4;
-
+SegCount ()++;
+for (int i = 0; i < 4; i++)
+	Vertices (VertCount ()++)->m_status = 0;
 
 // link the new segment with any touching Segments ()
 CSegment *pSeg = Segments ();
-tFixVector *vNewSeg = Vertices (Segments (nNewSeg)->verts [0]);
-tFixVector *vSeg;
+CFixVector *vNewSeg = Vertices (Segments (nNewSeg)->verts [0]);
+CFixVector *vSeg;
 for (nSegment = 0; nSegment < SegCount (); nSegment++, pSeg++) {
 	if (nSegment!= nNewSeg) {
 		// first check to see if Segments () are any where near each other
@@ -574,8 +565,8 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	double length; 
 	INT16 nVertex; 
 	INT16 i; 
-	tFixVector center, opp_center, orthog; 
-	tFixVector *vert, new_center; 
+	CFixVector center, opp_center, orthog; 
+	CFixVector *vert, new_center; 
 
 	currSeg = Segments (Current ()->nSegment); 
 
@@ -841,7 +832,7 @@ bool CMine::LinkSegments (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 si
 {
 	CSegment *seg1, *seg2; 
 	INT16 i, j; 
-	tFixVector v1 [4], v2 [4]; 
+	CFixVector v1 [4], v2 [4]; 
 	INT16 fail;
 	tVertMatch match [4]; 
 
@@ -948,7 +939,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 		newVertex = seg2->verts [side_vert [sidenum2][match [i].i]]; 
 
 		// if either vert was marked, then mark the new vert
-		*VertStatus (newVertex) |= *VertStatus (oldVertex) & MARKED_MASK; 
+		Vertices (newVertex)->Mark (VertStatus (oldVertex) & MARKED_MASK); 
 
 		// update all Segments () that use this vertex
 		if (oldVertex != newVertex) {
@@ -966,10 +957,10 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 // calculate_segment_center()
 // ------------------------------------------------------------------------- 
 
-void CMine::CalcSegCenter(tFixVector &pos, INT16 nSegment) 
+void CMine::CalcSegCenter(CFixVector &pos, INT16 nSegment) 
 {
   INT16	*nVerts =Segments (nSegment)->verts; 
-  tFixVector *vert;
+  CFixVector *vert;
   
 memset (&pos, 0, sizeof (pos));
 INT32 i;
@@ -1021,9 +1012,8 @@ bool CMine::SideIsMarked (INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
 CSegment *segP = Segments (nSegment);
-INT32 i;
-for (i = 0;  i < 4; i++) {
-	if (!(*VertStatus (segP->verts [side_vert [nSide][i]]) & MARKED_MASK))
+for (INT32 i = 0; i < 4; i++) {
+	if (!(Vertices (segP->verts [side_vert [nSide][i]])->Marked (MARKED_MASK)))
 		return false;
 	}
 return true;
@@ -1032,9 +1022,8 @@ return true;
 bool CMine::SegmentIsMarked (INT16 nSegment)
 {
 CSegment *segP = Segments (nSegment);
-INT32 i;
-for (i = 0;  i < 8; i++)
-	if (!(*VertStatus (segP->verts [i]) & MARKED_MASK))
+for (INT32 i = 0;  i < 8; i++)
+	if (!(Vertices (segP->verts [i])->Marked (MARKED_MASK)))
 		return false;
 return true;
 }
@@ -1072,15 +1061,16 @@ if (bCubeMark)
 else {
 	// set i to n_points if all verts are marked
 	for (i = 0; i < n_points; i++)
-		if (!(*VertStatus (p [i]) & MARKED_MASK)) break; 
+		if (!(Vertices (p [i])->Marked (MARKED_MASK)))
+			break; 
 		// if all verts are marked, then unmark them
 	if (i== n_points)
 		for (i = 0; i < n_points; i++)
-			*VertStatus (p [i]) &= ~MARKED_MASK; 
+			Vertices (p [i])->Unmark (MARKED_MASK); 
 	else
 		// otherwise mark all the points
 		for (i = 0; i < n_points; i++)
-			*VertStatus (p [i]) |= MARKED_MASK; 
+			Vertices (p [i])->Mark (MARKED_MASK); 
 		UpdateMarkedCubes(); 
 	}
 theApp.MineView ()->Refresh (); 
@@ -1102,12 +1092,12 @@ void CMine::MarkSegment(INT16 nSegment)
 	// ..first clear all marked verts
 	INT16 nVertex; 
 	for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++)
-		*VertStatus (nVertex) &= ~MARKED_MASK; 
+		Vertices (nVertex)->Unmark (); 
 	// ..then mark all verts for marked Segments ()
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
 		if (segP->wall_bitmask & MARKED_MASK)
 			for (nVertex = 0; nVertex < 8; nVertex++)
-				*VertStatus (segP->verts [nVertex]) |=  MARKED_MASK; 
+				Vertices (segP->verts [nVertex])->Mark (); 
 }
 
 // -------------------------------------------------------------------------- 
@@ -1119,31 +1109,32 @@ void CMine::UpdateMarkedCubes()
 	INT32 i; 
 	// mark all cubes which have all 8 verts marked
 	for (i = 0, segP = Segments (); i < SegCount (); i++, segP++)
-		if ((*VertStatus (segP->verts [0]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [1]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [2]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [3]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [4]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [5]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [6]) & MARKED_MASK) &&
-			 (*VertStatus (segP->verts [7]) & MARKED_MASK))
-			segP->wall_bitmask |= MARKED_MASK; 
+		if (Vertices (segP->verts [0])->Marked () &&
+			 Vertices (segP->verts [1])->Marked () &&
+			 Vertices (segP->verts [2])->Marked () &&
+			 Vertices (segP->verts [3])->Marked () &&
+			 Vertices (segP->verts [4])->Marked () &&
+			 Vertices (segP->verts [5])->Marked () &&
+			 Vertices (segP->verts [6])->Marked () &&
+			 Vertices (segP->verts [7])->Marked ())
+			segP->wallFlags.Mark (); 
 		else
-			segP->wall_bitmask &= ~MARKED_MASK; 
+			segP->wallFlags.Unmark (); 
 }
 
 //========================================================================== 
 // MENU - Mark all cubes
 //========================================================================== 
-void CMine::MarkAll() {
+
+void CMine::MarkAll() 
+{
 	INT32 i; 
-	for (i = 0; i < SegCount (); i++) {
-		Segments (i)->wall_bitmask |= MARKED_MASK; 
-	}
-	for (i = 0; i < VertCount (); i++) {
-		*VertStatus (i) |= MARKED_MASK; 
-	}
-	theApp.MineView ()->Refresh (); 
+
+for (i = 0; i < SegCount (); i++) 
+	Segments (i)->wallFlags.Mark (); 
+for (i = 0; i < VertCount (); i++) {
+	Vertices (i)->Mark (); 
+theApp.MineView ()->Refresh (); 
 }
 
 //========================================================================== 
@@ -1178,7 +1169,7 @@ segP->child_bitmask &= ~(1 << nSide);
 CSide *sideP = segP->sides + nSide;
 sideP->nBaseTex = 0; 
 sideP->nOvlTex = 0; 
-uvl *uvls = sideP->uvls;
+CUVL *uvls = sideP->uvls;
 double scale = pTextures [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
 INT32 i;
 for (i = 0; i < 4; i++, uvls++) {
@@ -1331,7 +1322,7 @@ segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]] = VertCount ();
 segP->wall_bitmask &= ~MARKED_MASK; 
 
 // update total number of vertices
-*VertStatus (VertCount ()++) = 0; 
+Vertices (VertCount ()++).Status () = 0; 
 
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++)
@@ -1343,7 +1334,6 @@ for (nSide = 0; nSide < 6; nSide++)
 
 	UnlinkChild(Current ()->nSegment, nSide); 
 
-//  *VertStatus (VertCount ()-1] &= ~DELETED_MASK; 
 SetLinesToDraw(); 
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
@@ -1416,7 +1406,7 @@ for (i = 0; i < 2; i++)
 		segP->verts [line_vert [linenum][i]] = VertCount (); 
 		segP->wall_bitmask &= ~MARKED_MASK; 
 		// update total number of vertices
-		*VertStatus (VertCount ()++) = 0; 
+		Vertices (VertCount ()++).Status () = 0; 
 		}
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++) {
@@ -1426,7 +1416,6 @@ for (nSide = 0; nSide < 6; nSide++) {
 		UnlinkChild (Current ()->nSegment, nSide); 
 		}
 	}
-//  *VertStatus (VertCount ()-1] &= ~DELETED_MASK; 
 SetLinesToDraw(); 
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
@@ -1515,7 +1504,7 @@ if (!solidify) {
 			segP->wall_bitmask &= ~MARKED_MASK; 
 
 			// update total number of vertices
-			*VertStatus (VertCount ()++) = 0; 
+			VertStatus (VertCount ()++) = 0; 
 			}
 		}
 	INT32 nSide;
@@ -1754,7 +1743,7 @@ nNewSeg = Current ()->nSegment;
 nNewSide = Current ()->nSide; 
 CSegment *pSeg = Segments (),
 			 *pNewSeg = Segments (nNewSeg);
-tFixVector *vSeg, 
+CFixVector *vSeg, 
 			  *vNewSeg = Vertices (pNewSeg->verts [0]);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, pSeg) {
 	if (nSegment != nNewSeg) {
@@ -1796,7 +1785,7 @@ void CMine::JoinSegments(INT32 solidify)
 	CSegment *segP; 
 	CSegment *seg1, *seg2; 
 	INT16 h, i, j, nSide, nNewSeg, nSegment; 
-	tFixVector v1 [4], v2 [4]; 
+	CFixVector v1 [4], v2 [4]; 
 	double radius, min_radius, max_radius, dx, dy, dz, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
@@ -2227,7 +2216,7 @@ for (i = 0; i < 4; i++) {
 // set v to x axis and u to negative u axis to match default (u, v)
 // (remember to scale by dividing by 640)
 CSide *sideP = Segments (nSegment)->sides + nSide;
-uvl *uvls = sideP->uvls;
+CUVL *uvls = sideP->uvls;
 #if UV_DEBUG
 switch (x) {
 	case 0:
@@ -2668,7 +2657,7 @@ bool CMine::SplitSegment ()
 	INT16			nSegment, childSegNum;
 	INT16			nSide, oppSideNum, childSideNum;
 	INT16			vertNum, nWall;
-	tFixVector	segCenter, *v, *segVert, *centerSegVert;
+	CFixVector	segCenter, *v, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
 	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};
@@ -2904,6 +2893,7 @@ return wallFlags;
 
 INT32 CSegment::Read (FILE* fp, int nLevelType, int nLevelVersion)
 {
+return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -3011,6 +3001,7 @@ if (nBaseTex & 0x8000) {
 	nBaseTex &= ~0x8000;
 	nOvlTex = read_INT16 (fp);
 	}
+return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -3036,6 +3027,7 @@ UINT32 CUVL::Read (FILE* fp)
 u = write_INT16 ();
 v = write_INT16 ();
 l = write_INT16 ();
+return 1;
 }
 
 // ------------------------------------------------------------------------

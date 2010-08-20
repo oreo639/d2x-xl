@@ -437,7 +437,7 @@ void CMine::CalcAverageCornerLight (bool bAll)
 // smooth corner light by averaging all corners which share a vertex
 theApp.SetModified (TRUE);
 for (nVertex = 0; nVertex < VertCount (); nVertex++) {
-	if (bAll || (*VertStatus (nVertex) & MARKED_MASK)) {
+	if (bAll || (Vertices (i)->Marked ())) {
 		max_brightness = 0;
 		count = 0;
 		// find all Segments () which share this point
@@ -502,7 +502,7 @@ theApp.SetModified (TRUE);
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
 			INT32 nVertex = segP->verts [pt];
-			if (bAll || (*VertStatus (nVertex) & MARKED_MASK)) {
+			if (bAll || (Vertices (i)->Marked ())) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
 					if ((segP->children [nSide] < 0) || (segP->sides [nSide].nWall < wallCount)) {
@@ -521,7 +521,7 @@ theApp.SetModified (TRUE);
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
 			INT32 nVertex = segP->verts [pt];
-			if ((max_brightness [nVertex].count > 0) && (bAll || (*VertStatus (nVertex) & MARKED_MASK))) {
+			if ((max_brightness [nVertex].count > 0) && (bAll || (Vertices (i)->Marked ()))) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
 					if ((segP->children [nSide] < 0) || (segP->sides [nSide].nWall < wallCount)) {
@@ -660,7 +660,7 @@ void CMine::Illuminate (
 	CSegment*		segP = Segments ();
 	double			effect[4];
 	// find orthogonal angle of source segment
-	tFixVector		A;
+	CFixVector		A;
 
 //fLightScale /= 100.0;
 CalcOrthoVector (A,nSourceSeg, nSourceSide);
@@ -670,7 +670,7 @@ A.y = -A.y;
 A.z = -A.z;
 
 // calculate the center of the source segment
-tFixVector source_center;
+CFixVector source_center;
 CalcCenter (source_center,nSourceSeg,nSourceSide);
 // mark those Segments () within N children of current cube
 
@@ -720,7 +720,7 @@ INT32 nSegCount = SegCount ();
 			continue;
 #endif
 		// setup source corner vertex for length calculation later
-		tFixVector source_corner[4];
+		CFixVector source_corner[4];
 		INT32 j;
 		for (j = 0; j < 4; j++) {
 			INT32 nVertex = side_vert [nSourceSide][j];
@@ -748,7 +748,7 @@ INT32 nSegCount = SegCount ();
 	//		CBRK (psc->index > 0);
 			// if the child side is the same as the source side, then set light and continue
 			if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-				uvl*		uvlP = childSegP->sides [nChildSide].uvls;
+				CUVL*		uvlP = childSegP->sides [nChildSide].uvls;
 				UINT32	vBr, lBr;
 
 				theApp.SetModified (TRUE);
@@ -768,7 +768,7 @@ INT32 nSegCount = SegCount ();
 	//		CBRK (nChildSeg == 1 && nChildSide == 2);
 			if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 					UINT32	vBr, lBr;	//vertex brightness, light brightness
-					uvl		*uvlP = childSegP->sides [nChildSide].uvls;
+					CUVL		*uvlP = childSegP->sides [nChildSide].uvls;
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
@@ -954,7 +954,7 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 				}
 
-			tFixVector A,source_center;
+			CFixVector A,source_center;
 			INT32 CLightDeltaValueIndex_num;
 
 			// get index number and increment total number of lightDeltaIndices
@@ -1004,7 +1004,7 @@ fLightScale = 1.0; ///= 100.0;
 	#endif
 
 			// setup source corner vertex for length calculation later
-			tFixVector source_corner[4];
+			CFixVector source_corner[4];
 			for (INT32 j = 0; j < 4; j++) {
 				UINT8 nVertex = side_vert[nSourceSide][j];
 				INT32 h = srcSegP->verts[nVertex];
@@ -1274,13 +1274,13 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 
 //--------------------------------------------------------------------------
 
-bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, tFixVector& source_center, 
-									 tFixVector *source_corner, tFixVector& A, double *effect,
+bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
+									 CFixVector *source_corner, CFixVector& A, double *effect,
 									 double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
-tFixVector B,center;
+CFixVector B,center;
 CalcCenter (center,nSegment,nSide);
 B.x = center.x - source_center.x;
 B.y = center.y - source_center.y;
@@ -1315,7 +1315,7 @@ if (!bIgnoreAngle) {
 	}
 INT32 i, j;
 for (j = 0; j < 4; j++) {
-	tFixVector corner;
+	CFixVector corner;
 	INT32 nVertex = side_vert[nSide][j];
 	INT32 h = segP->verts[nVertex];
 	corner.x = Vertices (h)->x;

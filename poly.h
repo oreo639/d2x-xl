@@ -7,12 +7,12 @@
 #define MAX_POLY_POINTS       13
 #define MIN_POLY_POINTS       3
 #define MAX_POLY_MODEL_SIZE   32000
-#define UVL uvl
+#define UVL CUVL
 
 typedef struct {
   UINT16     n_verts;
-  VMS_VECTOR offset;
-  VMS_VECTOR normal;
+  CFixVector offset;
+  CFixVector normal;
   UINT16     nBaseTex;
   UINT16     color;
   UINT16     glow_num;
@@ -22,7 +22,7 @@ typedef struct {
 
 typedef struct {
   UINT16      n_points;
-  VMS_VECTOR  points[MAX_POLY_MODEL_POINTS];
+  CFixVector  points[MAX_POLY_MODEL_POINTS];
   UINT16      n_polys;
   POLY        *polys;
 } MODEL;
@@ -32,7 +32,7 @@ typedef struct {
 
 void interp_model_data(
     void *model_data,
-    VMS_VECTOR *offset,
+    CFixVector *offset,
     MODEL *model,
     UINT16 call_level
 );

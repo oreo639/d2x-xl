@@ -1148,7 +1148,7 @@ void CObjectTool::OnReset ()
 {
 if (!GetMine ())
 	return;
-tFixMatrix *orient;
+CFixMatrix *orient;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (m_mine->Current ()->nObject == m_mine->GameInfo ().objects.count) {

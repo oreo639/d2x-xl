@@ -711,7 +711,7 @@ void CMine::Default()
 		}
 
 	CSegment& segP = *Segments ();
-	tFixVector *vert = Vertices ();
+	CFixVector *vert = Vertices ();
 
 	segP.sides [0].nWall = NO_WALL (this);
 	segP.sides [0].nBaseTex = 0;
@@ -880,7 +880,7 @@ SegCount () = 0;
 
 // initialize vertices
 for (i = 0; i < MAX_VERTICES (this); i++) {
-	*VertStatus (i) &= ~MARKED_MASK;
+	Vertices (i)->Unmark ();
 }
 VertCount () = 0;
 
@@ -899,73 +899,12 @@ GameInfo ().lightDeltaValues.count = 0;
 }
 
 // ------------------------------------------------------------------------
-
-void CColor::Read (FILE *fp, int nLevelVersion)
-{
-index = read_INT8 (fp);
-if (nLevelVersion < nNewVersion) {
-	color.r = read_DOUBLE (fp);
-	color.g = read_DOUBLE (fp);
-	color.b = read_DOUBLE (fp);
-	}
-else {
-	color.r = double (read_INT32 (fp)) / double (0x7fffffff);
-	color.g = double (read_INT32 (fp)) / double (0x7fffffff);
-	color.b = double (read_INT32 (fp)) / double (0x7fffffff);
-	}
-}
-
-// ------------------------------------------------------------------------
-
-void CColor::Write (FILE *fp)
-{
-write_INT8 (index, fp);
-write_INT32 (INT32 (color.r * 0x7fffffff + 0.5), fp);
-write_INT32 (INT32 (color.g * 0x7fffffff + 0.5), fp);
-write_INT32 (INT32 (color.b * 0x7fffffff + 0.5), fp);
-}
-
-//--------------------------------------------------------------------------
-
-INT32 CMine::WriteColorMap (FILE *fColorMap)
-{
-SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
-return 0;
-}
-
-//--------------------------------------------------------------------------
-
-INT32 CMine::ReadColorMap (FILE *fColorMap)
-{
-LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
-return 0;
-}
-
-// ------------------------------------------------------------------------
-
-void CMine::LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp)
-{
-if (LevelVersion () > nFirstVersion) { 
-	for (; nColors; nColors--, pc++)
-		pc->Read (fp, LevelVersion ());
-	}
-}
-
-// ------------------------------------------------------------------------
-
-void CMine::SaveColors (CColor *pc, INT32 nColors, FILE *fp)
-{
-for (; nColors; nColors--, pc++)
-	pc->Write (fp);
-}
-
-// ------------------------------------------------------------------------
 // LoadMineDataCompiled()
 //
 // ACTION - Reads a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
+INT16 CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
 {
 	INT16    i, nSegment, nSide; /** was INT32 */
 	UINT8    version;
@@ -975,15 +914,9 @@ INT16 CMine::LoadMineDataCompiled(FILE *loadFile, bool bNewMine)
 	UINT16   n_segments;
 
 // read version (1 byte)
-fread(&version, sizeof (UINT8), 1, loadFile);
-//  if(version!= COMPILED_MINE_VERSION){
-//    sprintf_s (message, sizeof (message),  "Version incorrect (%d)\n", version);
-//    ErrorMsg (message);
-//  }
-
+version = UINT8 (read_INT8 (fp));
 // read number of vertices (2 bytes)
-fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
-n_vertices = temp_UINT16;
+n_vertices = UINT16 (read_INT16 (fp));
 if (n_vertices > MAX_VERTICES3) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
 	ErrorMsg (message);
@@ -994,8 +927,7 @@ if (((IsD1File ()) && (n_vertices > MAX_VERTICES1)) ||
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
-fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
-n_segments = temp_UINT16;
+n_segments = UINT16 (read_INT16 (fp));
 if (n_segments > MAX_SEGMENTS3) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 	ErrorMsg (message);
@@ -1006,19 +938,21 @@ if (((IsD1File ()) && (n_segments > MAX_SEGMENTS1)) ||
 	ErrorMsg ("Warning: Too many Segments for this level version");
 
 // if we are happy with the number of verts and Segments (), then proceed...
-ClearMineData();
+ClearMineData ();
 VertCount () = n_vertices;
 SegCount () = n_segments;
 
 // read all vertices
-fread(Vertices (), sizeof (tFixVector), VertCount (), loadFile);
+for (i = 0; i < VertCount (); i++)
+	Vertices (i)->Read (fp);
+
 if (n_vertices != VertCount ()) {
-	fseek(loadFile, sizeof (tFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
+	fseek(fp, sizeof (CFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
 	}
 
 // unmark all vertices while we are here...
 for (i = 0; i < VertCount (); i++) {
-	*VertStatus (i) &= ~MARKED_MASK;
+	Vertices (i)->Unmark ();
 	}
 
 // read segment information
@@ -1026,36 +960,36 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 	INT16   bit; /** was INT32 */
 	CSegment *segP = Segments (nSegment);
 	if (IsD2XLevel ()) {
-		fread(&segP->owner, sizeof (UINT8), 1, loadFile);
-		fread(&segP->group, sizeof (INT8), 1, loadFile);
+		fread(&segP->owner, sizeof (UINT8), 1, fp);
+		fread(&segP->group, sizeof (INT8), 1, fp);
 		}
 	else {
 		segP->owner = -1;
 		segP->group = -1;
 		}
 	// read in child mask (1 byte)
-	fread(&bit_mask, sizeof (UINT8), 1, loadFile);
+	fread(&bit_mask, sizeof (UINT8), 1, fp);
 	segP->child_bitmask = bit_mask;
 
 	// read 0 to 6 children (0 to 12 bytes)
 	for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
 		if (bit_mask & (1 << bit)) {
-			fread(&segP->children [bit], sizeof (INT16), 1, loadFile);
+			fread(&segP->children [bit], sizeof (INT16), 1, fp);
 		} else {
 			segP->children [bit] =-1;
 		}
 	}
 
 	// read vertex numbers (16 bytes)
-	fread(segP->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, loadFile);
+	fread(segP->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, fp);
 
 	if (IsD1File ()) {
 		// read special info (0 to 4 bytes)
 		if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
-			fread(&segP->function, sizeof(UINT8), 1, loadFile);
-			fread(&segP->nMatCen, sizeof(INT8), 1, loadFile);
-			fread(&segP->value, sizeof(INT8), 1, loadFile);
-			fread(&segP->s2_flags, sizeof(UINT8), 1, loadFile);
+			fread(&segP->function, sizeof(UINT8), 1, fp);
+			fread(&segP->nMatCen, sizeof(INT8), 1, fp);
+			fread(&segP->value, sizeof(INT8), 1, fp);
+			fread(&segP->s2_flags, sizeof(UINT8), 1, fp);
 		} else {
 			segP->owner = -1;
 			segP->group = -1;
@@ -1066,24 +1000,24 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 		segP->s2_flags = 0;  // d1 doesn't use this number, so zero it
 
 		// read static light (2 bytes)
-		fread(&temp_UINT16, sizeof (temp_UINT16), 1, loadFile);
+		fread(&temp_UINT16, sizeof (temp_UINT16), 1, fp);
 		segP->static_light = ((FIX)temp_UINT16) << 4;
 	}
 
 	// read the wall bit mask
-	fread(&bit_mask, sizeof (UINT8), 1, loadFile);
+	fread(&bit_mask, sizeof (UINT8), 1, fp);
 
 	// read in wall numbers (0 to 6 bytes)
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		if (bit_mask & (1 << nSide)) {
 			if (LevelVersion () < 13) {
 				UINT8	nWall;
-				fread(&nWall, sizeof (UINT8), 1, loadFile);
+				fread(&nWall, sizeof (UINT8), 1, fp);
 				segP->sides [nSide].nWall = nWall;
 				}
 			else {
 				UINT16	nWall;
-				fread(&nWall, sizeof (UINT16), 1, loadFile);
+				fread(&nWall, sizeof (UINT16), 1, fp);
 				segP->sides [nSide].nWall = nWall;
 				}
 			} 
@@ -1096,24 +1030,24 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)   {
 		if ((segP->children [nSide]==-1) || (bit_mask & (1 << nSide))) {
 			//  read in texture 1 number
-			fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
+			fread(&temp_UINT16, sizeof (UINT16), 1, fp);
 			segP->sides [nSide].nBaseTex = temp_UINT16 & 0x7fff;
 			//   read in texture 2 number
 			if (!(temp_UINT16 & 0x8000)) {
 				segP->sides [nSide].nOvlTex = 0;
 			} else {
-				fread(&temp_UINT16, sizeof (UINT16), 1, loadFile);
+				fread(&temp_UINT16, sizeof (UINT16), 1, fp);
 				segP->sides [nSide].nOvlTex = temp_UINT16;
 				temp_UINT16 &= 0x1fff;
 				if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES (this)))
 					segP->sides [nSide].nOvlTex = 0;
 			}
 
-			//   read uvl numbers
+			//   read CUVL numbers
 			for (i = 0; i < 4; i++)   {
-				fread(&segP->sides [nSide].uvls [i].u, sizeof (INT16), 1, loadFile);
-				fread(&segP->sides [nSide].uvls [i].v, sizeof (INT16), 1, loadFile);
-				fread(&segP->sides [nSide].uvls [i].l, sizeof (INT16), 1, loadFile);
+				fread(&segP->sides [nSide].uvls [i].u, sizeof (INT16), 1, fp);
+				fread(&segP->sides [nSide].uvls [i].v, sizeof (INT16), 1, fp);
+				fread(&segP->sides [nSide].uvls [i].l, sizeof (INT16), 1, fp);
 			}
 		} else {
 			segP->sides [nSide].nBaseTex = 0;
@@ -1131,17 +1065,17 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 		CSegment *segP = Segments ();
 		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// read special info (8 bytes)
-			fread(&segP->function, sizeof(UINT8), 1, loadFile);
-			fread(&segP->nMatCen, sizeof(INT8), 1, loadFile);
-			fread(&segP->value, sizeof(INT8), 1, loadFile);
-			fread(&segP->s2_flags, sizeof(UINT8), 1, loadFile);
+			fread(&segP->function, sizeof(UINT8), 1, fp);
+			fread(&segP->nMatCen, sizeof(INT8), 1, fp);
+			fread(&segP->value, sizeof(INT8), 1, fp);
+			fread(&segP->s2_flags, sizeof(UINT8), 1, fp);
 			if (LevelVersion () <= 20)
 				segP->Upgrade ();
 			else {
-				fread(&segP->props, sizeof(UINT8), 1, loadFile);
-				fread(segP->damage, sizeof(INT16), 2, loadFile);
+				fread(&segP->props, sizeof(UINT8), 1, fp);
+				fread(segP->damage, sizeof(INT16), 2, fp);
 				}
-			fread(&segP->static_light, sizeof(FIX), 1, loadFile);
+			fread(&segP->static_light, sizeof(FIX), 1, fp);
 			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
 				segP->function = SEGMENT_FUNC_NONE;
 				segP->value = 0;
@@ -1150,14 +1084,20 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 			}
 		}
 	if (LevelVersion () == 9) {
-		fread(LightColors (), sizeof (CColor), SegCount () * 6, loadFile); //skip obsolete side colors 
-		fread(LightColors (), sizeof (CColor), SegCount () * 6, loadFile);
-		fread(VertexColors (), sizeof (CColor), VertCount (), loadFile);
+#if 1
+		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+		LoadColors (VertexColors (), VertCount (), 9, 15, fp);
+#else
+		fread (LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
+		fread (LightColors (), sizeof (CColor), SegCount () * 6, fp);
+		fread (VertexColors (), sizeof (CColor), VertCount (), fp);
+#endif
 		}
 	else if (LevelVersion () > 9) {
-		LoadColors (VertexColors (), VertCount (), 9, 15, loadFile);
-		LoadColors (LightColors (), SegCount () * 6, 9, 14, loadFile);
-		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, loadFile);
+		LoadColors (VertexColors (), VertCount (), 9, 15, fp);
+		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
 		}
 if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
@@ -1977,7 +1917,7 @@ return;
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcOrthoVector(tFixVector &result, INT16 nSegment, INT16 nSide)
+void CMine::CalcOrthoVector(CFixVector &result, INT16 nSegment, INT16 nSide)
 {
 	struct dvector a, b, c;
 	double length;
@@ -1990,8 +1930,8 @@ void CMine::CalcOrthoVector(tFixVector &result, INT16 nSegment, INT16 nSide)
 
     vertnum1 =Segments (nSegment)->verts [side_vert [nSide] [0]];
     vertnum2 =Segments (nSegment)->verts [side_vert [nSide] [1]];
-	 tFixVector *v1 = Vertices (vertnum1);
-	 tFixVector *v2 = Vertices (vertnum2);
+	 CFixVector *v1 = Vertices (vertnum1);
+	 CFixVector *v2 = Vertices (vertnum2);
     a.x = (double)(v2->x - v1->x);
     a.y = (double)(v2->y - v1->y);
     a.z = (double)(v2->z - v1->z);
@@ -2022,12 +1962,12 @@ void CMine::CalcOrthoVector(tFixVector &result, INT16 nSegment, INT16 nSide)
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcCenter(tFixVector &center, INT16 nSegment, INT16 nSide)
+void CMine::CalcCenter(CFixVector &center, INT16 nSegment, INT16 nSide)
 {
 	INT32 i;
 
 	center.x = center.y = center.z = 0;
-	tFixVector *v;
+	CFixVector *v;
 	CSegment *segP = Segments (nSegment);
 	for (i = 0; i < 4; i++) {
 		v = Vertices (segP->verts [side_vert [nSide][i]]);

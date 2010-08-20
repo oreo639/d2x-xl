@@ -34,9 +34,9 @@ public:
 	void Multiply(double A[4][4], double B[4][4]);
 	void Calculate(double movex, double movey, double movez);
 	void CalculateInverse(double movex, double movey, double movez);
-	void SetPoint(tFixVector *vert, APOINT *apoint);
-	void UnsetPoint(tFixVector *vert, APOINT *apoint);
-	INT32 CheckNormal(CGameObject *objP, tFixVector *a, tFixVector *b);
+	void SetPoint(CFixVector *vert, APOINT *apoint);
+	void UnsetPoint(CFixVector *vert, APOINT *apoint);
+	INT32 CheckNormal(CGameObject *objP, CFixVector *a, CFixVector *b);
 	inline double Aspect (void) { return (double) _viewHeight / (double) _viewWidth; }
 	inline double Scale (void) { return _scale; }
 	void Push (void);

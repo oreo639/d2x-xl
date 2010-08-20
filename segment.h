@@ -7,18 +7,17 @@ class CUVL {
 public:
 	INT16 u, v, l; 
 
-	INT32 Read (FILE* fp);
-	void Write (FILE* fp);
-} 
-
-class CSide {
-public:
-	UINT16	nWall;		// (was INT16) Index into Walls array, which wall (probably door) is on this side 
-	INT16		nBaseTex;	// Index into array of textures specified in bitmaps.bin 
-	INT16		nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
-	CUVL		uvls [4];   // uvl coordinates at each point 
-	INT32 Read (FILE* fp);
-	void Write (FILE* fp);
+	inline INT32 Read (FILE* fp) {
+		u = read_INT16 (fp);
+		v = read_INT16 (fp);
+		l = read_INT16 (fp);
+		return 1;
+		}
+	inline void Write (FILE* fp) {
+		write_INT16 (u, fp);
+		write_INT16 (v, fp);
+		write_INT16 (l, fp);
+		}
 };
 
 typedef struct rgbColor {
@@ -26,9 +25,23 @@ typedef struct rgbColor {
 } rgbColor;
 
 class CColor {
-	public:
-		UINT8		index;
-		rgbColor	color;
+public:
+	UINT8		index;
+	rgbColor	color;
+
+	INT32 Read (FILE* fp);
+	void Write (FILE* fp);
+};
+
+class CSide {
+public:
+	UINT16	nWall;		// (was INT16) Index into Walls array, which wall (probably door) is on this side 
+	INT16		nBaseTex;	// Index into array of textures specified in bitmaps.bin 
+	INT16		nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
+	CUVL		uvls [4];   // CUVL coordinates at each point 
+
+	INT32 Read (FILE* fp);
+	void Write (FILE* fp);
 };
 
 class CSegment {
@@ -44,8 +57,8 @@ public:
 	UINT8		s2_flags;			// New for Descent 2
 	INT16		damage [2];
 	FIX		static_light;		// average static light in segment 
-	UINT8		child_bitmask;		// bit0 to 5: children, bit6: unused, bit7: special 
-	UINT8		wall_bitmask;		// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
+	CStatusMask	childFlags;		// bit0 to 5: children, bit6: unused, bit7: special 
+	CStatusMask	wallFlags;		// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
 	INT16		nIndex;				// used for cut & paste to help link children 
 	INT16		map_bitmask;		// which lines are drawn when displaying wireframe 
 	INT8		owner;
@@ -55,7 +68,12 @@ public:
 	void Upgrade (void);
 	INT32 Read (FILE* fp, bool bD2X);
 	void Write (FILE* fp, bool bD2X);
-	
+	void WriteExtras (FILE* fp, int nLevelType, bool bExtras);
+
+private:
+	UINT8 ReadWalls (FILE* fp, int nLevelVersion);
+	UINT8 WriteWalls (FILE* fp, int nLevelVersion);
+
 };
 
 #endif //__segment_h

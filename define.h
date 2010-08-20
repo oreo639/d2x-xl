@@ -81,9 +81,6 @@
 // #define MAX_SUBMODELS   10  // I guessed at this value (BAA)
 
 // allow all caps types for vectors
-#define VMS_VECTOR tFixVector
-#define VMS_ANGVEC tAngleVector
-
 #define RDL_FILE  0
 #define RL2_FILE  1
 

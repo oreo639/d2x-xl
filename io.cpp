@@ -83,49 +83,6 @@ return (return_value);
 }
 
 //------------------------------------------------------------------------
-// read_matrix ()
-//
-//  ACTION - Reads a matrix structure from a file.
-//------------------------------------------------------------------------
-
-tFixMatrix *read_matrix (tFixMatrix *matrix,FILE *fp) 
-{
-read_vector (&matrix->rvec,fp);
-read_vector (&matrix->uvec,fp);
-read_vector (&matrix->fvec,fp);
-return (matrix);
-}
-
-//------------------------------------------------------------------------
-// read_vector ()
-//
-// ACTION - Reads a vector structure from a file.
-//------------------------------------------------------------------------
-
-tFixVector *read_vector (tFixVector *vector,FILE *fp) 
-{
-fread (&vector->x, sizeof (FIX), 1, fp);
-fread (&vector->y, sizeof (FIX), 1, fp);
-fread (&vector->z, sizeof (FIX), 1, fp);
-return (vector);
-}
-
-//------------------------------------------------------------------------
-// read_angvec ()
-//
-// ACTION - Reads a vector structure from a file.
-//
-//------------------------------------------------------------------------
-
-tAngleVector *read_angvec (tAngleVector *vector,FILE *fp) 
-{
-fread (&vector->p, sizeof (FIXANG), 1, fp);
-fread (&vector->b, sizeof (FIXANG), 1, fp);
-fread (&vector->h, sizeof (FIXANG), 1, fp);
-return (vector);
-}
-
-//------------------------------------------------------------------------
 // write_INT32 ()
 //
 // ACTION - Writes a 32 bit word to a file.
@@ -182,48 +139,6 @@ FIXANG write_FIXANG (FIXANG value,FILE *fp)
 {
 fwrite (&value, sizeof (FIXANG), 1, fp);
 return (value);
-}
-
-//------------------------------------------------------------------------
-// write_matrix ()
-//
-// ACTION - Writes a matrix structure to a file.
-//------------------------------------------------------------------------
-
-tFixMatrix *write_matrix (tFixMatrix *matrix,FILE *fp) 
-{
-write_vector (&matrix->rvec,fp);
-write_vector (&matrix->uvec,fp);
-write_vector (&matrix->fvec,fp);
-return (matrix);
-}
-
-//------------------------------------------------------------------------
-// write_vector ()
-//
-// ACTION - Writes a vector structure to a file.
-//------------------------------------------------------------------------
-
-tFixVector *write_vector (tFixVector *vector,FILE *fp) 
-{
-fwrite (&vector->x, sizeof (FIX), 1, fp);
-fwrite (&vector->y, sizeof (FIX), 1, fp);
-fwrite (&vector->z, sizeof (FIX), 1, fp);
-return (vector);
-}
-
-//------------------------------------------------------------------------
-// write_angvec ()
-//
-// ACTION - Writes a vector structure to a file.
-//------------------------------------------------------------------------
-
-tAngleVector *write_angvec (tAngleVector *vector,FILE *fp) 
-{
-fwrite (&vector->p, sizeof (FIXANG), 1, fp);
-fwrite (&vector->b, sizeof (FIXANG), 1, fp);
-fwrite (&vector->h, sizeof (FIXANG), 1, fp);
-return (vector);
 }
 
                         /*---------------------------*/

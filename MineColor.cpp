@@ -39,6 +39,7 @@ else {
 	color.g = double (read_INT32 (fp)) / double (0x7fffffff);
 	color.b = double (read_INT32 (fp)) / double (0x7fffffff);
 	}
+return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -49,22 +50,6 @@ write_INT8 (index, fp);
 write_INT32 (INT32 (color.r * 0x7fffffff + 0.5), fp);
 write_INT32 (INT32 (color.g * 0x7fffffff + 0.5), fp);
 write_INT32 (INT32 (color.b * 0x7fffffff + 0.5), fp);
-}
-
-//--------------------------------------------------------------------------
-
-INT32 CMine::WriteColorMap (FILE *fColorMap)
-{
-SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
-return 0;
-}
-
-//--------------------------------------------------------------------------
-
-INT32 CMine::ReadColorMap (FILE *fColorMap)
-{
-LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
-return 0;
 }
 
 // ------------------------------------------------------------------------
@@ -85,5 +70,21 @@ for (; nColors; nColors--, pc++)
 	pc->Write (fp);
 }
 
+//--------------------------------------------------------------------------
 
+INT32 CMine::ReadColorMap (FILE *fColorMap)
+{
+LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
+return 0;
+}
+
+//--------------------------------------------------------------------------
+
+INT32 CMine::WriteColorMap (FILE *fColorMap)
+{
+SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
+return 0;
+}
+
+//--------------------------------------------------------------------------
 //eof mine.cpp

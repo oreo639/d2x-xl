@@ -312,7 +312,7 @@ void CMatrix::CalculateInverse(double movex, double movey, double movez)
 // SetPoint()
 //--------------------------------------------------------------------------
 
-void CMatrix::SetPoint(tFixVector *vert, APOINT *apoint) 
+void CMatrix::SetPoint(CFixVector *vert, APOINT *apoint) 
 {
 	double x,y,z,x1,y1,z1,x2,y2,z2,x3,y3;
 	
@@ -362,7 +362,7 @@ void CMatrix::SetPoint(tFixVector *vert, APOINT *apoint)
 //			     unset_point()
 //--------------------------------------------------------------------------
 
-void CMatrix::UnsetPoint(tFixVector *vert,APOINT *apoint) 
+void CMatrix::UnsetPoint(CFixVector *vert,APOINT *apoint) 
 {
   double x,y,z,x1,y1,z1,x2,y2,z2,x3,y3;
 
@@ -393,7 +393,7 @@ void CMatrix::UnsetPoint(tFixVector *vert,APOINT *apoint)
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-INT32 CMatrix::CheckNormal(CGameObject *objP, tFixVector *a, tFixVector *b) 
+INT32 CMatrix::CheckNormal(CGameObject *objP, CFixVector *a, CFixVector *b) 
 {
   double ax,ay,az;
   double bx,by,bz;

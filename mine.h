@@ -17,7 +17,7 @@ extern INT8 point_sides[8][3];
 extern INT8 point_corners[8][3];
 extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
 extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
-extern uvl default_uvls[4];
+extern CUVL default_uvls[4];
 
 // Copyright (C) 1997 Bryan Aamot
 //**************************************************************************
@@ -30,17 +30,17 @@ typedef struct tMineData {
 	INT32							m_reactor_time;
 	INT32							m_reactor_strength;
 	INT32							m_secret_cubenum;
-	tFixMatrix					m_secret_orient;
+	CFixMatrix					m_secret_orient;
 	
 	// robot data
-	ROBOT_INFO					Robot_info[MAX_ROBOT_TYPES];
+	ROBOT_INFO					Robot_info [MAX_ROBOT_TYPES];
 	
 	// structure data
 	UINT16						numVertices;
-	tFixVector					vertices[MAX_VERTICES3];
+	CVertex						vertices [MAX_VERTICES3];
 	
 	UINT16						numSegments;
-	CSegment					segments[MAX_SEGMENTS3];
+	CSegment						segments [MAX_SEGMENTS3];
 	CColor 						lightColors [MAX_SEGMENTS3][6];
 	CColor						texColors [MAX_D2_TEXTURES];
 	CColor 						sideColors [MAX_SEGMENTS3][6];
@@ -127,10 +127,10 @@ public:
 public:
 	inline MINE_DATA& MineData ()
 		{ return m_mineData; }
-	inline tFixVector *Vertices (INT32 i = 0)
+	inline CVertex *Vertices (INT32 i = 0)
 		{ return MineData ().vertices + i; }
-	inline UINT8 *VertStatus (INT32 i = 0)
-		{ return MineData ().vertexStatus + i; }
+	inline UINT8& VertStatus (INT32 i = 0)
+		{ return Vertices (i)->m_status; }
 	inline CSegment *Segments (INT32 i = 0)
 		{ return MineData ().segments + i; }
 	inline CColor *VertexColors (INT32 i = 0)
@@ -183,7 +183,7 @@ public:
 		{ return MineData ().m_reactor_strength; }
 	inline INT32& SecretCubeNum ()
 		{ return MineData ().m_secret_cubenum; }
-	inline tFixMatrix& SecretOrient ()
+	inline CFixMatrix& SecretOrient ()
 		{ return MineData ().m_secret_orient; }
 	inline CSelection* &Current ()
 		{ return MineData ().current; }
@@ -253,7 +253,7 @@ public:
 	bool  AddSegment();
 	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
-	void	CalcSegCenter(tFixVector &pos,INT16 nSegment);
+	void	CalcSegCenter(CFixVector &pos,INT16 nSegment);
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
@@ -284,9 +284,9 @@ public:
 	void SplitLines();
 	void SplitPoints();
 
-	void CalcOrthoVector (tFixVector &result,INT16 nSegment,INT16 nSide);
-	void CalcCenter (tFixVector &center,INT16 nSegment,INT16 nSide);
-	double CalcLength (tFixVector *center1, tFixVector *center2);
+	void CalcOrthoVector (CFixVector &result,INT16 nSegment,INT16 nSide);
+	void CalcCenter (CFixVector &center,INT16 nSegment,INT16 nSide);
+	double CalcLength (CFixVector *center1, CFixVector *center2);
 
 	INT32 IsLight(INT32 nBaseTex);
 	INT32 IsWall (INT16 nSegment = -1, INT16 nSide = -1);
@@ -309,8 +309,8 @@ public:
 	void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
 	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
-	bool CalcSideLights (INT32 nSegment, INT32 nSide, tFixVector& source_center, 
-								tFixVector *source_corner, tFixVector& A, double *effect,
+	bool CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
+								CFixVector *source_corner, CFixVector& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);
 
 	void FixChildren();
@@ -342,9 +342,9 @@ public:
 	bool SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
-	void RotateVmsVector(tFixVector *vector,double angle,char axis); 
-	void RotateVmsMatrix(tFixMatrix *matrix,double angle,char axis); 
-	void RotateVertex(tFixVector *vertex, tFixVector *orgin, tFixVector *normal, double angle); 
+	void RotateVmsVector (CFixVector *vector, double angle, char axis); 
+	void RotateVmsMatrix (CFixMatrix *matrix, double angle, char axis); 
+	void RotateVertex (CFixVector *vertex, CFixVector *orgin, CFixVector *normal, double angle); 
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 

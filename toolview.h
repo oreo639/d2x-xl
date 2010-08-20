@@ -253,7 +253,7 @@ class CDiagTool : public CToolDlg
 							   INT32 nSegment = -1, INT32 nSide = -1, INT32 linenum = -1, INT32 pointnum = -1, 
 							   INT32 childnum = -1, INT32 nWall = -1, INT32 nTrigger = -1, INT32 objnum = -1);
 		double CalcFlatnessRatio (INT16 nSegment, INT16 nSide);
-		double CalcDistance (tFixVector *v1,tFixVector *v2,tFixVector *v3);
+		double CalcDistance (CFixVector *v1,CFixVector *v2,CFixVector *v3);
 		double CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3);
 		void ClearBugList ();
 		INT32 CheckId (CGameObject *objP);
@@ -964,7 +964,7 @@ class CTextureTool : public CTexToolDlg
 								last_mode;
 		INT32					save_texture1,
 								save_texture2;
-		uvl					save_uvls[4];
+		CUVL					save_uvls[4];
 //		INT32					frame [2];
 		double				m_lights [4];
 //		CWnd					m_textureWnd;

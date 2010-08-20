@@ -24,7 +24,7 @@ bool CMine::EditGeoFwd (void)
 {
   double x,y,z;
   double radius;
-  tFixVector center,opp_center;
+  CFixVector center,opp_center;
   INT32 i;
 /* calculate center of current side */
  center.x = center.y = center.z = 0;
@@ -64,7 +64,7 @@ if (radius > (F1_0/10)) {
 	z /= radius;
 	}
 else {
-	tFixVector direction;
+	CFixVector direction;
 	CalcOrthoVector(direction,Current ()->nSegment,Current ()->nSide);
 	x = (double)direction.x/(double)F1_0;
 	y = (double)direction.y/(double)F1_0;
@@ -86,7 +86,7 @@ else {
 
 bool CMine::EditGeoBack (void) 
 {
-  tFixVector center,opp_center;
+  CFixVector center,opp_center;
   double x,y,z,radius;
   INT32 i;
 
@@ -132,7 +132,7 @@ z = center.z - opp_center.z;
 		};
 	CSegment *segP;
 	INT16 point0,point1;
-	tFixVector *vector0,*vector1;
+	CFixVector *vector0,*vector1;
 	bool ok_to_move;
 
 ok_to_move = TRUE;
@@ -193,7 +193,7 @@ else {
 		z /= radius;
 		} 
 	else {
-		tFixVector direction;
+		CFixVector direction;
 		CalcOrthoVector(direction,Current ()->nSegment,Current ()->nSide);
 		x = (double)direction.x/(double)F1_0;
 		y = (double)direction.y/(double)F1_0;
@@ -286,7 +286,7 @@ bool CMine::RotateSelection (double angle, bool perpendicular)
 INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
 CSegment *segP = Segments (nSegment);
-tFixVector center,opp_center;
+CFixVector center,opp_center;
 INT32 i,pts [4];
 
 switch (m_selectMode){
@@ -402,7 +402,7 @@ switch (m_selectMode) {
 
 	case BLOCK_MODE:
 		theApp.SetModified (TRUE);
-		tFixVector max_pt, min_pt, center, *verts;
+		CFixVector max_pt, min_pt, center, *verts;
 		UINT8 *vstats;
 		max_pt.x = -0x7fffffffL;
 		max_pt.y = -0x7fffffffL;
@@ -448,12 +448,12 @@ return false;
 
 bool CMine::MovePoints(INT32 pt0, INT32 pt1) 
 {
-	tFixVector *vector0,*vector1,delta;
+	CFixVector *vector0,*vector1,delta;
 	INT32 point0,point1;
 	double length;
 	INT32 point;
 	INT32 i;
-	tFixVector *vect;
+	CFixVector *vect;
 
 point0  = side_vert [Current ()->nSide][CURRENT_POINT(pt0)];
 point1  = side_vert [Current ()->nSide][CURRENT_POINT(pt1)];
@@ -561,7 +561,7 @@ else
 	else if (inc & 1)
 		inc++;
 
-tFixVector *v1 = Vertices (segP->verts [point0]),
+CFixVector *v1 = Vertices (segP->verts [point0]),
 			  *v2 = Vertices (segP->verts [point1]);
 // figure out direction to modify line
 x = v1->x - v2->x;
@@ -745,12 +745,12 @@ bool CMine::SpinSelection (double angle)
 	INT32 nSide = Current ()->nSide;
 	CSegment *segP = Segments (nSegment);
 	CGameObject *objP;
-	tFixVector center,opp_center;
+	CFixVector center,opp_center;
 	INT16 i;
 
 #ifdef SPIN_RELATIVE
 	double xspin,yspin,zspin;
-	tFixVector rel [3];
+	CFixVector rel [3];
 #endif
 
 /* calculate segment pointer */
@@ -847,7 +847,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		theApp.SetModified (TRUE);
-		tFixMatrix *orient;
+		CFixMatrix *orient;
 		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->orient;
 		switch (nSide) {
 			case 0:
@@ -955,9 +955,9 @@ return true;
     }
   };
 
- void CMine::RotateVmsVector (tFixVector *vector,double angle,char axis) 
+ void CMine::RotateVmsVector (CFixVector *vector,double angle,char axis) 
 {
-  tFixVector n;
+  CFixVector n;
 
   vms m,vect;
   vect.x = vector->x;
@@ -993,9 +993,9 @@ return true;
 // RotateVmsMatrix
 //-----------------------------------------------------------------------------
 
-void CMine::RotateVmsMatrix (tFixMatrix *matrix,double angle,char axis) 
+void CMine::RotateVmsMatrix (CFixMatrix *matrix,double angle,char axis) 
 {
-  tFixMatrix new_vms;
+  CFixMatrix new_vms;
   double cosx,sinx;
 
   cosx = cos(angle);
@@ -1070,7 +1070,7 @@ void CMine::RotateVmsMatrix (tFixMatrix *matrix,double angle,char axis)
 
 ***************************************************************************/
 
-void CMine::RotateVertex(tFixVector *vertex, tFixVector *origin, tFixVector *normal, double angle) 
+void CMine::RotateVertex(CFixVector *vertex, CFixVector *origin, CFixVector *normal, double angle) 
 {
 
   double z_spin,y_spin;

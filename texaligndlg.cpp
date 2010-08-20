@@ -254,7 +254,7 @@ if (m_mine->IsWall ()) {
 	// fill in texture
 	DrawAlignment (pDC);
 	pDC->SelectObject (hRgn);
-	// draw uvl
+	// draw CUVL
 	pDC->SelectObject (hPenCurrentSide);
 	pDC->MoveTo (m_apts [3].x, m_apts [3].y);
 	for (i=0;i<4;i++)

@@ -46,7 +46,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	INT16				i, j, test;
 	INT16				origVertCount, k;
 	FIX				x,y,z;
-	tFixVector		origin,vect;
+	CFixVector		origin,vect;
 	struct dvector x_prime, y_prime, z_prime;
 	struct dvector x_pprime, y_pprime, z_pprime;
 	double			length;
@@ -305,7 +305,7 @@ while(!feof(fBlk)) {
 				&segP->children [3],&segP->children [4],&segP->children [5]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
-		fscanf_s (fBlk, "  tFixVector %hd %ld %ld %ld\n", &test, &vect.x, &vect.y, &vect.z);
+		fscanf_s (fBlk, "  CFixVector %hd %ld %ld %ld\n", &test, &vect.x, &vect.y, &vect.z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
 			return (0);
@@ -317,7 +317,7 @@ while(!feof(fBlk)) {
 		z = origin.z + (FIX)((double) vect.x * z_pprime.x + (double) vect.y * z_pprime.y + (double) vect.z * z_pprime.z);
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		tFixVector *vert = Vertices (origVertCount);
+		CFixVector *vert = Vertices (origVertCount);
 		for (k = origVertCount; k < VertCount (); k++, vert++)
 			if (vert->x == x && vert->y == y && vert->z == z) {
 				segP->verts [i] = k;
@@ -326,7 +326,7 @@ while(!feof(fBlk)) {
 		// else make a new vertex
 		if (k == VertCount ()) {
 			nVertex = VertCount ();
-			*VertStatus (nVertex) |= NEW_MASK;
+			Vertices (nVertex)->Mark (NEW_MASK);
 			segP->verts [i] = nVertex;
 			Vertices (nVertex)->x = x;
 			Vertices (nVertex)->y = y;
@@ -438,7 +438,7 @@ void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/)
 	CSide			*sideP;
 	CWall			*wallP;
 	INT16				i,j;
-	tFixVector		origin;
+	CFixVector		origin;
 	struct dvector	x_prime,y_prime,z_prime,vect;
 	INT16				nVertex;
 	double			length;
@@ -573,7 +573,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			vect.x = (double) (Vertices (nVertex)->x - origin.x);
 			vect.y = (double) (Vertices (nVertex)->y - origin.y);
 			vect.z = (double) (Vertices (nVertex)->z - origin.z);
-			fprintf (fBlk, "  tFixVector %d %ld %ld %ld\n",i,
+			fprintf (fBlk, "  CFixVector %d %ld %ld %ld\n",i,
 						(FIX)(vect.x*x_prime.x + vect.y*x_prime.y + vect.z*x_prime.z),
 						(FIX)(vect.x*y_prime.x + vect.y*y_prime.y + vect.z*y_prime.z),
 						(FIX)(vect.x*z_prime.x + vect.y*z_prime.y + vect.z*z_prime.z));
@@ -881,8 +881,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							tFixVector *v1 = Vertices (segP ->verts [0]);
-							tFixVector *v2 = Vertices (seg2->verts [0]);
+							CFixVector *v1 = Vertices (segP ->verts [0]);
+							CFixVector *v2 = Vertices (seg2->verts [0]);
 							if (labs (v1->x - v2->x) < 0xA00000L &&
 								 labs (v1->y - v2->y) < 0xA00000L &&
 								 labs (v1->z - v2->z) < 0xA00000L) {
