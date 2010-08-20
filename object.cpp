@@ -741,6 +741,15 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+void CObjVClipInfo::Write (FILE *fp, INT32 version)
+{
+write_INT32 (vclip_num, fp);
+write_FIX (frametime, fp);
+write_INT8 (framenum, fp);
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CSmokeInfo::Read (FILE *fp, INT32 version)
 {
 nLife = read_INT32 (fp);
@@ -755,6 +764,25 @@ nSide = read_INT8 (fp);
 nType = (version < 18) ? 0 : read_INT8 (fp);
 bEnabled = (version < 19) ? 1 : read_INT8 (fp);
 return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CSmokeInfo::Write (FILE *fp, INT32 version)
+{
+write_INT32 (nLife, fp);
+write_INT32 (nSize [0], fp);
+write_INT32 (nParts, fp);
+write_INT32 (nSpeed, fp);
+write_INT32 (nDrift, fp);
+write_INT32 (nBrightness, fp);
+for (int i = 0; i < 4; i++)
+	write_INT8 (color [i], fp);
+write_INT8 (nSide, fp);
+if (version >= 18) 
+	write_INT8 (nSide, fp);
+if (version >= 19)
+	write_INT8 (bEnabled, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -788,12 +816,50 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+void CLightningInfo::Write (FILE *fp, INT32 version)
+{
+write_INT32 (nLife, fp);
+write_INT32 (nDelay, fp);
+write_INT32 (nLength, fp);
+write_INT32 (nAmplitude, fp);
+write_INT32 (nOffset, fp);
+write_INT16 (nLightnings, fp);
+write_INT16 (nId, fp);
+write_INT16 (nTarget, fp);
+write_INT16 (nNodes, fp);
+write_INT16 (nChildren, fp);
+write_INT16 (nSteps, fp);
+write_INT8 (nAngle, fp);
+write_INT8 (nStyle, fp);
+write_INT8 (nSmoothe, fp);
+write_INT8 (bClamp, fp);
+write_INT8 (bPlasma, fp);
+write_INT8 (bSound, fp);
+write_INT8 (bRandom, fp);
+write_INT8 (bInPlane, fp);
+for (int i = 0; i < 4; i++)
+	write_INT8 (color [i], fp);
+if (version >= 19)
+ write_INT8 (bEnabled, fp);
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CSoundInfo::Read (FILE *fp, INT32 version)
 {
 fread (szFilename, 1, sizeof (szFilename), fp);
 nVolume = read_INT32 (fp);
 bEnabled = (version < 19) ? 1 : read_INT8 (fp);
 return 1;
+}
+// ------------------------------------------------------------------------
+
+void CSoundInfo::Write (FILE *fp, INT32 version)
+{
+fwrite (szFilename, 1, sizeof (szFilename), fp);
+write_INT32 (nVolume, fp);
+if (version >= 19)
+	write_INT8 (bEnabled, fp);
 }
 // ------------------------------------------------------------------------
 
