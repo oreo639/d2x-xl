@@ -5505,10 +5505,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\cfile.cpp"
-					>
-				</File>
-				<File
 					RelativePath="global.cpp"
 					>
 					<FileConfiguration
