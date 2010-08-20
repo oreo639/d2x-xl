@@ -1406,7 +1406,7 @@ for (i = 0; i < 2; i++)
 		segP->verts [line_vert [linenum][i]] = VertCount (); 
 		segP->wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
-		Vertices (VertCount ()++).Status () = 0; 
+		VertStatus (VertCount ()++) = 0; 
 		}
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++) {
@@ -2880,7 +2880,7 @@ damage [1] = 0;
 
 UINT8 CSegment::ReadWalls (FILE* fp, int nLevelVersion)
 {
-	UINT8 wallFlags = read_UINT8 (fp);
+	UINT8 wallFlags = UINT8 (read_INT8 (fp));
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
@@ -2904,7 +2904,7 @@ UINT8 CSegment::WriteWalls (FILE* fp, int nLevelVersion)
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if(sides [i].nWall < GameInfo ().walls.count) 
+	if(sides [i].nWall < theApp.GetMine ()->GameInfo ().walls.count) 
 		wallFlags |= (1 << i);
 	}
 write_INT8 (wallFlags, fp);
@@ -2912,7 +2912,7 @@ write_INT8 (wallFlags, fp);
 // write wall numbers
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (wallFlags & (1 << i)) {
-		if (nLevelVersion () >= 13)
+		if (nLevelVersion >= 13)
 			write_INT16 (sides [i].nWall, fp);
 		else
 			write_INT8 (INT8 (sides [i].nWall), fp);
@@ -2933,7 +2933,8 @@ if (bExtras) {
 	}
 if (nLevelType == 2) {
 	write_INT8 (props, fp);
-	write_INT8 (damage, fp);
+	write_INT16 (damage [0], fp);
+	write_INT16 (damage [1], fp);
 	}
 write_FIX (static_light, fp);
 }
@@ -2951,27 +2952,27 @@ if (nLevelType == 2) {
 
 #if 1
 childFlags = 0;
-for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if(segP->children [nSide] != -1) {
-		childFlags |= (1 << nSide);
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	if(children [i] != -1) {
+		childFlags |= (1 << i);
 		}
 	}
 if (m_fileType== RDL_FILE) {
-	if (segP->function != 0) { // if this is a special cube
+	if (function != 0) { // if this is a special cube
 		childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 	}
 #endif
-write_UINT8 (childFlags, fp);
+write_INT8 (childFlags, fp);
 
 // write children numbers (0 to 6 bytes)
-for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
-	if (childFlags & (1 << bit)) {
-		write_INT16 (children [bit], fp);
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	if (childFlags & (1 << i)) {
+		write_INT16 (children [i], fp);
 	}
 
 // write vertex numbers (16 bytes)
-for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
+for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	write_INT16 (verts [i], fp);
 
 // write special info (0 to 4 bytes)
@@ -2984,10 +2985,10 @@ if (nLevelType == 0)
 	WriteExtras (fp, nLevelType, (childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // calculate wall bit mask
-UINT8 wallFlags = WriteWalls ();
+UINT8 wallFlags = WriteWalls (fp, nLevelVersion);
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)   {
-	if ((segP->children [i] == -1) || (wallFlags & (1 << i))) 
-		segP->side [i].Write (fp);
+	if ((children [i] == -1) || (wallFlags & (1 << i))) 
+		side [i].Write (fp);
 }
 
 // ------------------------------------------------------------------------

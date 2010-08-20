@@ -127,29 +127,29 @@ public:
 	inline const UINT8 operator| (UINT8 other) const { return m_status | other; }
 	inline const UINT8 operator^ (UINT8 other) const { return m_status ^ other; }
 
-	inline CStatusMask& operator&= (CStatusMask other) { 
+	inline CStatusMask& operator&= (CStatusMask& other) { 
 		m_status &= other.m_status;
-		return this;
+		return *this;
 		}
 
-	inline CStatusMask& operator|= (CStatusMask other) { 
+	inline CStatusMask& operator|= (CStatusMask& other) { 
 		m_status |= other.m_status;
-		return this;
+		return *this;
 		}
 
-	inline CStatusMask& operator^= (CStatusMask other) { 
+	inline CStatusMask& operator^= (CStatusMask& other) { 
 		m_status ^= other.m_status;
-		return this;
+		return *this;
 		}
 
-	inline CStatusMask& operator= (CStatusMask other) { 
+	inline CStatusMask& operator= (CStatusMask& other) { 
 		m_status = other.m_status;
-		return this;
+		return *this;
 		}
 
-	inline const UINT8 operator& (CStatusMask other) const { return m_status & other.m_status; }
-	inline const UINT8 operator| (CStatusMask other) const { return m_status | other.m_status; }
-	inline const UINT8 operator^ (CStatusMask other) const { return m_status ^ other.m_status; }
+	inline const UINT8 operator& (CStatusMask& other) const { return m_status & other.m_status; }
+	inline const UINT8 operator| (CStatusMask& other) const { return m_status | other.m_status; }
+	inline const UINT8 operator^ (CStatusMask& other) const { return m_status ^ other.m_status; }
 
 	inline INT32 Read (FILE* fp) { 
 		m_status = UINT8 (read_INT8 (fp));
