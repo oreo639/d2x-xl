@@ -636,6 +636,7 @@ public:
 };
 
 class CSmokeInfo {
+public:
 	INT32			nLife;
 	INT32			nSize [2];
 	INT32			nParts;
@@ -717,8 +718,8 @@ public:
 
 	//movement info, determined by MOVEMENT_TYPE 
 	union {
-		CObjPhysicsInfo	phys_info; // a physics object 
-		CFixVector			spin_rate; // for spinning objects 
+		CObjPhysicsInfo	physInfo; // a physics object 
+		CFixVector			spinRate; // for spinning objects 
 		} mType;
 
 	//control info, determined by CONTROL_TYPE 

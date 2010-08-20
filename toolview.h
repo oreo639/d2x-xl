@@ -479,10 +479,10 @@ class CObjectTool : public CToolDlg
 class CEffectTool : public CToolDlg
 {
 	public:
-		CGameObject				*m_obj;
-		tSmokeInfo			m_smoke;
-		tLightningInfo		m_lightning;
-		tSoundInfo			m_sound;
+		CGameObject*		m_obj;
+		CSmokeInfo			m_smoke;
+		CLightningInfo		m_lightning;
+		CSoundInfo			m_sound;
 		INT32					m_nBufferId;
 
 		CEffectTool (CPropertySheet *pParent = NULL);

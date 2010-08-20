@@ -166,8 +166,8 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
   objP->orient.fvec.z = F1_0;
   objP->size          = PLAYER_SIZE;
   objP->shields       = DEFAULT_SHIELD;
-  objP->rtype.pobj_info.model_num = PLAYER_CLIP_NUMBER;
-  objP->rtype.pobj_info.tmap_override = -1;
+  objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
+  objP->rType.polyModelInfo.tmap_override = -1;
   objP->contains_type = 0;
   objP->contains_id = 0;
   objP->contains_count = 0;
@@ -191,26 +191,26 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 objP = Objects () + Current ()->nObject;
 id = objP->id;
-memset (&objP->mtype, 0, sizeof (objP->mtype));
+memset (&objP->mType, 0, sizeof (objP->mType));
 memset (&objP->cType, 0, sizeof (objP->cType));
-memset (&objP->rtype, 0, sizeof (objP->rtype));
+memset (&objP->rType, 0, sizeof (objP->rType));
 switch (type) {
-	case OBJ_ROBOT    : // an evil enemy
+	case OBJ_ROBOT: // an evil enemy
 	  objP->control_type  = CT_AI;
 	  objP->movement_type = MT_PHYSICS;
 	  objP->render_type   = RT_POLYOBJ;
 	  objP->size          = robot_size[id];
 	  objP->shields       = robot_shield[id];
-	  objP->rtype.pobj_info.model_num = robot_clip[id];
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
-	  objP->cType.ai_info.behavior = AIB_NORMAL;
+	  objP->rType.polyModelInfo.model_num = robot_clip[id];
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
+	  objP->cType.aiInfo.behavior = AIB_NORMAL;
 	  break;
 
 	case OBJ_HOSTAGE  : // a hostage you need to rescue
 	  objP->control_type = CT_POWERUP;
 	  objP->movement_type = MT_NONE;
 	  objP->render_type   = RT_HOSTAGE;
-	  objP->rtype.CObjVClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
+	  objP->rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
 	  break;
@@ -225,8 +225,8 @@ switch (type) {
 	  objP->render_type   = RT_POLYOBJ;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
-	  objP->rtype.pobj_info.model_num = PLAYER_CLIP_NUMBER;
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to normal
+	  objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
 	  break;
 
 	case OBJ_WEAPON   : // a poly-type weapon
@@ -235,24 +235,24 @@ switch (type) {
 	  objP->render_type   = RT_POLYOBJ;
 	  objP->size          = WEAPON_SIZE;
 	  objP->shields       = WEAPON_SHIELD;
-	  objP->rtype.pobj_info.model_num = MINE_CLIP_NUMBER;
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to normal
-	  objP->mtype.phys_info.mass      = 65536L;
-	  objP->mtype.phys_info.drag      = 2162;
-	  objP->mtype.phys_info.rotvel.x  = 0;
-	  objP->mtype.phys_info.rotvel.y  = 46482L;  // don't know exactly what to put here
-	  objP->mtype.phys_info.rotvel.z  = 0;
-	  objP->mtype.phys_info.flags     = 260;
-	  objP->cType.CObjLaserInfo.parent_type      = 5;
-	  objP->cType.CObjLaserInfo.parent_num       = 146; // don't know exactly what to put here
-	  objP->cType.CObjLaserInfo.parent_signature = 146; // don't know exactly what to put here
+	  objP->rType.polyModelInfo.model_num = MINE_CLIP_NUMBER;
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
+	  objP->mType.physInfo.mass      = 65536L;
+	  objP->mType.physInfo.drag      = 2162;
+	  objP->mType.physInfo.rotvel.x  = 0;
+	  objP->mType.physInfo.rotvel.y  = 46482L;  // don't know exactly what to put here
+	  objP->mType.physInfo.rotvel.z  = 0;
+	  objP->mType.physInfo.flags     = 260;
+	  objP->cType.laserInfo.parent_type      = 5;
+	  objP->cType.laserInfo.parent_num       = 146; // don't know exactly what to put here
+	  objP->cType.laserInfo.parent_signature = 146; // don't know exactly what to put here
 	  break;
 
 	case OBJ_POWERUP  : // a powerup you can pick up
 	  objP->control_type  = CT_POWERUP;
 	  objP->movement_type = MT_NONE;
 	  objP->render_type   = RT_POWERUP;
-	  objP->rtype.CObjVClipInfo.vclip_num = powerup_clip[id];
+	  objP->rType.vClipInfo.vclip_num = powerup_clip[id];
 	  objP->size          = powerup_size[id];
 	  objP->shields       = DEFAULT_SHIELD;
 	  break;
@@ -264,7 +264,7 @@ switch (type) {
 	  objP->size          = REACTOR_SIZE;
 	  objP->shields       = REACTOR_SHIELD;
 	  if (IsD1File ())
-			objP->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
+			objP->rType.polyModelInfo.model_num = REACTOR_CLIP_NUMBER;
 	  else {
 		INT32 model;
 		switch (id) {
@@ -276,9 +276,9 @@ switch (type) {
 		  case 6:  model = 105; break;
 		  default: model = 97;  break; // level 1's reactor
 		}
-		objP->rtype.pobj_info.model_num = model;
+		objP->rType.polyModelInfo.model_num = model;
 	  }
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  break;
 
 	case OBJ_COOP     : // a cooperative player object
@@ -287,8 +287,8 @@ switch (type) {
 	  objP->render_type   = RT_POLYOBJ;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
-	  objP->rtype.pobj_info.model_num = COOP_CLIP_NUMBER;
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
+	  objP->rType.polyModelInfo.model_num = COOP_CLIP_NUMBER;
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  break;
 
 	case OBJ_CAMBOT:
@@ -299,9 +299,9 @@ switch (type) {
 	  objP->render_type   = RT_POLYOBJ;
 	  objP->size          = robot_size[0];
 	  objP->shields       = DEFAULT_SHIELD;
-	  objP->rtype.pobj_info.model_num = robot_clip [0];
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
-	  objP->cType.ai_info.behavior = AIB_STILL;
+	  objP->rType.polyModelInfo.model_num = robot_clip [0];
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
+	  objP->cType.aiInfo.behavior = AIB_STILL;
 	  break;
 
 	case OBJ_EXPLOSION:
@@ -310,9 +310,9 @@ switch (type) {
 	  objP->render_type   = RT_POWERUP;
 	  objP->size          = robot_size[0];
 	  objP->shields       = DEFAULT_SHIELD;
-	  objP->rtype.CObjVClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
-	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
-	  objP->cType.ai_info.behavior = AIB_STILL;
+	  objP->rType.vClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
+	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
+	  objP->cType.aiInfo.behavior = AIB_STILL;
 	  break;
 
 	case OBJ_EFFECT:
@@ -655,7 +655,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-INT32 CObjObjVClipInfo::Read (FILE *fp, INT32 version)
+INT32 CObjVClipInfo::Read (FILE *fp, INT32 version)
 {
 vclip_num = read_INT32 (fp);
 frametime = read_FIX (fp);
@@ -691,11 +691,11 @@ contains_count = read_INT8 (fp);
 
 	switch (movement_type) {
     case MT_PHYSICS:
-		mtype.phys_info.Read (fp, version);
+		mType.physInfo.Read (fp, version);
 		break;
 
     case MT_SPINNING:
-		read_vector (&mtype.spin_rate, fp);
+		read_vector (&mType.spinRate, fp);
 		break;
 
     case MT_NONE:
@@ -719,7 +719,7 @@ contains_count = read_INT8 (fp);
 			cType.lightInfo.Read (fp, version);
 			break;
 		case CT_POWERUP:
-			cType.powerup_info.Read (fp, version);
+			cType.powerupInfo.Read (fp, version);
 			break;
 		case CT_NONE:
 		case CT_FLYING:
@@ -756,48 +756,48 @@ contains_count = read_INT8 (fp);
 		break;
 
 	case RT_SMOKE:
-		rtype.smokeInfo.nLife = read_INT32 (fp);
-		rtype.smokeInfo.nSize [0] = read_INT32 (fp);
-		rtype.smokeInfo.nParts = read_INT32 (fp);
-		rtype.smokeInfo.nSpeed = read_INT32 (fp);
-		rtype.smokeInfo.nDrift = read_INT32 (fp);
-		rtype.smokeInfo.nBrightness = read_INT32 (fp);
+		rType.smokeInfo.nLife = read_INT32 (fp);
+		rType.smokeInfo.nSize [0] = read_INT32 (fp);
+		rType.smokeInfo.nParts = read_INT32 (fp);
+		rType.smokeInfo.nSpeed = read_INT32 (fp);
+		rType.smokeInfo.nDrift = read_INT32 (fp);
+		rType.smokeInfo.nBrightness = read_INT32 (fp);
 		for (i = 0; i < 4; i++)
-			rtype.smokeInfo.color [i] = read_INT8 (fp);
-		rtype.smokeInfo.nSide = read_INT8 (fp);
-		rtype.smokeInfo.nType = (levelVersion < 18) ? 0 : read_INT8 (fp);
-		rtype.smokeInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+			rType.smokeInfo.color [i] = read_INT8 (fp);
+		rType.smokeInfo.nSide = read_INT8 (fp);
+		rType.smokeInfo.nType = (levelVersion < 18) ? 0 : read_INT8 (fp);
+		rType.smokeInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
 		break;
 
 	case RT_LIGHTNING:
-		rtype.lightningInfo.nLife = read_INT32 (fp);
-		rtype.lightningInfo.nDelay = read_INT32 (fp);
-		rtype.lightningInfo.nLength = read_INT32 (fp);
-		rtype.lightningInfo.nAmplitude = read_INT32 (fp);
-		rtype.lightningInfo.nOffset = read_INT32 (fp);
-		rtype.lightningInfo.nLightnings = read_INT16 (fp);
-		rtype.lightningInfo.nId = read_INT16 (fp);
-		rtype.lightningInfo.nTarget = read_INT16 (fp);
-		rtype.lightningInfo.nNodes = read_INT16 (fp);
-		rtype.lightningInfo.nChildren = read_INT16 (fp);
-		rtype.lightningInfo.nSteps = read_INT16 (fp);
-		rtype.lightningInfo.nAngle = read_INT8 (fp);
-		rtype.lightningInfo.nStyle = read_INT8 (fp);
-		rtype.lightningInfo.nSmoothe = read_INT8 (fp);
-		rtype.lightningInfo.bClamp = read_INT8 (fp);
-		rtype.lightningInfo.bPlasma = read_INT8 (fp);
-		rtype.lightningInfo.bSound = read_INT8 (fp);
-		rtype.lightningInfo.bRandom = read_INT8 (fp);
-		rtype.lightningInfo.bInPlane = read_INT8 (fp);
+		rType.lightningInfo.nLife = read_INT32 (fp);
+		rType.lightningInfo.nDelay = read_INT32 (fp);
+		rType.lightningInfo.nLength = read_INT32 (fp);
+		rType.lightningInfo.nAmplitude = read_INT32 (fp);
+		rType.lightningInfo.nOffset = read_INT32 (fp);
+		rType.lightningInfo.nLightnings = read_INT16 (fp);
+		rType.lightningInfo.nId = read_INT16 (fp);
+		rType.lightningInfo.nTarget = read_INT16 (fp);
+		rType.lightningInfo.nNodes = read_INT16 (fp);
+		rType.lightningInfo.nChildren = read_INT16 (fp);
+		rType.lightningInfo.nSteps = read_INT16 (fp);
+		rType.lightningInfo.nAngle = read_INT8 (fp);
+		rType.lightningInfo.nStyle = read_INT8 (fp);
+		rType.lightningInfo.nSmoothe = read_INT8 (fp);
+		rType.lightningInfo.bClamp = read_INT8 (fp);
+		rType.lightningInfo.bPlasma = read_INT8 (fp);
+		rType.lightningInfo.bSound = read_INT8 (fp);
+		rType.lightningInfo.bRandom = read_INT8 (fp);
+		rType.lightningInfo.bInPlane = read_INT8 (fp);
 		for (i = 0; i < 4; i++)
-			rtype.lightningInfo.color [i] = read_INT8 (fp);
-		rtype.lightningInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+			rType.lightningInfo.color [i] = read_INT8 (fp);
+		rType.lightningInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
 		break;
 
 	case RT_SOUND:
-		fread (rtype.soundInfo.szFilename, 1, sizeof (rtype.soundInfo.szFilename), fp);
-		rtype.soundInfo.nVolume = read_INT32 (fp);
-		rtype.soundInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		fread (rType.soundInfo.szFilename, 1, sizeof (rType.soundInfo.szFilename), fp);
+		rType.soundInfo.nVolume = read_INT32 (fp);
+		rType.soundInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
 		break;
 
 	default:
@@ -837,19 +837,19 @@ if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
 
 	switch (movement_type) {
     case MT_PHYSICS:
-		write_vector (&mtype.phys_info.velocity, fp);
-		write_vector (&mtype.phys_info.thrust, fp);
-		write_FIX (mtype.phys_info.mass, fp);
-		write_FIX (mtype.phys_info.drag, fp);
-		write_FIX (mtype.phys_info.brakes, fp);
-		write_vector (&mtype.phys_info.rotvel, fp);
-		write_vector (&mtype.phys_info.rotthrust, fp);
-		write_FIXANG (mtype.phys_info.turnroll, fp);
-		write_INT16 (mtype.phys_info.flags, fp);
+		write_vector (&mType.physInfo.velocity, fp);
+		write_vector (&mType.physInfo.thrust, fp);
+		write_FIX (mType.physInfo.mass, fp);
+		write_FIX (mType.physInfo.drag, fp);
+		write_FIX (mType.physInfo.brakes, fp);
+		write_vector (&mType.physInfo.rotvel, fp);
+		write_vector (&mType.physInfo.rotthrust, fp);
+		write_FIXANG (mType.physInfo.turnroll, fp);
+		write_INT16 (mType.physInfo.flags, fp);
 		break;
 
     case MT_SPINNING:
-		write_vector (&mtype.spin_rate, fp);
+		write_vector (&mType.spinRate, fp);
 		break;
 
     case MT_NONE:
@@ -862,38 +862,38 @@ if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	switch (control_type) {
 	case CT_AI: {
 		INT16 i;
-		write_INT8 (cType.ai_info.behavior, fp);
+		write_INT8 (cType.aiInfo.behavior, fp);
 		for (i = 0; i < MAX_AI_FLAGS; i++)
-			write_INT8 (cType.ai_info.flags [i], fp);
-		write_INT16 (cType.ai_info.hide_segment, fp);
-		write_INT16 (cType.ai_info.hide_index, fp);
-		write_INT16 (cType.ai_info.path_length, fp);
-		write_INT16 (cType.ai_info.cur_path_index, fp);
+			write_INT8 (cType.aiInfo.flags [i], fp);
+		write_INT16 (cType.aiInfo.hide_segment, fp);
+		write_INT16 (cType.aiInfo.hide_index, fp);
+		write_INT16 (cType.aiInfo.path_length, fp);
+		write_INT16 (cType.aiInfo.cur_path_index, fp);
 		if (theApp.GetMine ()->IsD1File ()) {
-			write_INT16 (cType.ai_info.follow_path_start_seg, fp);
-			write_INT16 (cType.ai_info.follow_path_end_seg, fp);
+			write_INT16 (cType.aiInfo.follow_path_start_seg, fp);
+			write_INT16 (cType.aiInfo.follow_path_end_seg, fp);
 		}
 		break;
 				}
     case CT_EXPLOSION:
-		write_FIX (cType.expl_info.spawn_time, fp);
-		write_FIX (cType.expl_info.delete_time, fp);
-		write_INT16 (cType.expl_info.delete_objnum, fp);
+		write_FIX (cType.explInfo.spawn_time, fp);
+		write_FIX (cType.explInfo.delete_time, fp);
+		write_INT16 (cType.explInfo.delete_objnum, fp);
 		break;
 
     case CT_WEAPON:
-		write_INT16 (cType.CObjLaserInfo.parent_type, fp);
-		write_INT16 (cType.CObjLaserInfo.parent_num, fp);
-		write_INT32 (cType.CObjLaserInfo.parent_signature, fp);
+		write_INT16 (cType.laserInfo.parent_type, fp);
+		write_INT16 (cType.laserInfo.parent_num, fp);
+		write_INT32 (cType.laserInfo.parent_signature, fp);
 		break;
 
     case CT_LIGHT:
-		write_FIX (cType.CObjLightInfo.intensity, fp);
+		write_FIX (cType.lightInfo.intensity, fp);
 		break;
 
     case CT_POWERUP:
 		if (version >= 25) {
-			write_INT32 (cType.CObjPowerupInfo.count, fp);
+			write_INT32 (cType.powerupInfo.count, fp);
 		}
 		break;
 
@@ -925,12 +925,12 @@ if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
 		INT16 i;
 		INT32 tmo;
 
-		write_INT32 (rtype.pobj_info.model_num, fp);
+		write_INT32 (rType.polyModelInfo.model_num, fp);
 		for (i = 0; i < MAX_SUBMODELS; i++) {
-			write_angvec (&rtype.pobj_info.anim_angles [i], fp);
+			write_angvec (&rType.polyModelInfo.anim_angles [i], fp);
 		}
-		write_INT32 (rtype.pobj_info.subobj_flags, fp);
-		tmo = rtype.pobj_info.tmap_override;
+		write_INT32 (rType.polyModelInfo.subobj_flags, fp);
+		tmo = rType.polyModelInfo.tmap_override;
 		write_INT32 (tmo, fp);
 		break;
 					 }
@@ -938,57 +938,57 @@ if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		write_INT32 (rtype.CObjVClipInfo.vclip_num, fp);
-		write_FIX (rtype.CObjVClipInfo.frametime, fp);
-		write_INT8 (rtype.CObjVClipInfo.framenum, fp);
+		write_INT32 (rType.vClipInfo.vclip_num, fp);
+		write_FIX (rType.vClipInfo.frametime, fp);
+		write_INT8 (rType.vClipInfo.framenum, fp);
 		break;
 
 	case RT_LASER:
 		break;
 
 	case RT_SMOKE:
-		write_INT32 (rtype.smokeInfo.nLife, fp);
-		write_INT32 (rtype.smokeInfo.nSize [0], fp);
-		write_INT32 (rtype.smokeInfo.nParts, fp);
-		write_INT32 (rtype.smokeInfo.nSpeed, fp);
-		write_INT32 (rtype.smokeInfo.nDrift, fp);
-		write_INT32 (rtype.smokeInfo.nBrightness, fp);
+		write_INT32 (rType.smokeInfo.nLife, fp);
+		write_INT32 (rType.smokeInfo.nSize [0], fp);
+		write_INT32 (rType.smokeInfo.nParts, fp);
+		write_INT32 (rType.smokeInfo.nSpeed, fp);
+		write_INT32 (rType.smokeInfo.nDrift, fp);
+		write_INT32 (rType.smokeInfo.nBrightness, fp);
 		for (i = 0; i < 4; i++)
-			write_INT8 (rtype.smokeInfo.color [i], fp);
-		write_INT8 (rtype.smokeInfo.nSide, fp);
-		write_INT8 (rtype.smokeInfo.nType, fp);
-		write_INT8 (rtype.smokeInfo.bEnabled, fp);
+			write_INT8 (rType.smokeInfo.color [i], fp);
+		write_INT8 (rType.smokeInfo.nSide, fp);
+		write_INT8 (rType.smokeInfo.nType, fp);
+		write_INT8 (rType.smokeInfo.bEnabled, fp);
 		break;
 
 	case RT_LIGHTNING:
-		write_INT32 (rtype.lightningInfo.nLife, fp);
-		write_INT32 (rtype.lightningInfo.nDelay, fp);
-		write_INT32 (rtype.lightningInfo.nLength, fp);
-		write_INT32 (rtype.lightningInfo.nAmplitude, fp);
-		write_INT32 (rtype.lightningInfo.nOffset, fp);
-		write_INT16 (rtype.lightningInfo.nLightnings, fp);
-		write_INT16 (rtype.lightningInfo.nId, fp);
-		write_INT16 (rtype.lightningInfo.nTarget, fp);
-		write_INT16 (rtype.lightningInfo.nNodes, fp);
-		write_INT16 (rtype.lightningInfo.nChildren, fp);
-		write_INT16 (rtype.lightningInfo.nSteps, fp);
-		write_INT8 (rtype.lightningInfo.nAngle, fp);
-		write_INT8 (rtype.lightningInfo.nStyle, fp);
-		write_INT8 (rtype.lightningInfo.nSmoothe, fp);
-		write_INT8 (rtype.lightningInfo.bClamp, fp);
-		write_INT8 (rtype.lightningInfo.bPlasma, fp);
-		write_INT8 (rtype.lightningInfo.bSound, fp);
-		write_INT8 (rtype.lightningInfo.bRandom, fp);
-		write_INT8 (rtype.lightningInfo.bInPlane, fp);
+		write_INT32 (rType.lightningInfo.nLife, fp);
+		write_INT32 (rType.lightningInfo.nDelay, fp);
+		write_INT32 (rType.lightningInfo.nLength, fp);
+		write_INT32 (rType.lightningInfo.nAmplitude, fp);
+		write_INT32 (rType.lightningInfo.nOffset, fp);
+		write_INT16 (rType.lightningInfo.nLightnings, fp);
+		write_INT16 (rType.lightningInfo.nId, fp);
+		write_INT16 (rType.lightningInfo.nTarget, fp);
+		write_INT16 (rType.lightningInfo.nNodes, fp);
+		write_INT16 (rType.lightningInfo.nChildren, fp);
+		write_INT16 (rType.lightningInfo.nSteps, fp);
+		write_INT8 (rType.lightningInfo.nAngle, fp);
+		write_INT8 (rType.lightningInfo.nStyle, fp);
+		write_INT8 (rType.lightningInfo.nSmoothe, fp);
+		write_INT8 (rType.lightningInfo.bClamp, fp);
+		write_INT8 (rType.lightningInfo.bPlasma, fp);
+		write_INT8 (rType.lightningInfo.bSound, fp);
+		write_INT8 (rType.lightningInfo.bRandom, fp);
+		write_INT8 (rType.lightningInfo.bInPlane, fp);
 		for (i = 0; i < 4; i++)
-			write_INT8 (rtype.lightningInfo.color [i], fp);
-		write_INT8 (rtype.lightningInfo.bEnabled, fp);
+			write_INT8 (rType.lightningInfo.color [i], fp);
+		write_INT8 (rType.lightningInfo.bEnabled, fp);
 		break;
 
 	case RT_SOUND:
-		fwrite (rtype.soundInfo.szFilename, 1, sizeof (rtype.soundInfo.szFilename), fp);
-		write_INT32 (rtype.soundInfo.nVolume, fp);
-		write_INT8 (rtype.soundInfo.bEnabled, fp);
+		fwrite (rType.soundInfo.szFilename, 1, sizeof (rType.soundInfo.szFilename), fp);
+		write_INT32 (rType.soundInfo.nVolume, fp);
+		write_INT8 (rType.soundInfo.bEnabled, fp);
 		break;
 
 	default:
