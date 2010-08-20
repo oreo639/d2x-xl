@@ -499,11 +499,11 @@ CSegment *segP = m_mine->CurrSeg ();
 theApp.SetModified (TRUE);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
 	segP->children [m_nSide] = -2;
-	segP->child_bitmask |= (1 << m_nSide);
+	segP->childFlags |= (1 << m_nSide);
 	}
 else {
 	segP->children[m_nSide] = -1;
-	segP->child_bitmask &= ~(1 << m_nSide);
+	segP->childFlags &= ~(1 << m_nSide);
 	}
 }
 
@@ -549,7 +549,7 @@ UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = m_mine->Segments ();
 	for (INT16 nSegNum = 0; nSegNum < m_mine->SegCount (); nSegNum++, segP++)
-		if (segP->wall_bitmask & MARKED_MASK)
+		if (segP->wallFlags & MARKED_MASK)
 			segP->owner = m_nOwner;
 	}
 else 					
@@ -575,7 +575,7 @@ UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = m_mine->Segments ();
 	for (INT16 nSegNum = 0; nSegNum < m_mine->SegCount (); nSegNum++, segP++)
-		if (segP->wall_bitmask & MARKED_MASK)
+		if (segP->wallFlags & MARKED_MASK)
 			segP->group = m_nGroup;
 	}
 else 					
@@ -613,7 +613,7 @@ else {
 	}
 segP = m_mine->Segments (nMinSeg);
 for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
-	if (bMarked && !(segP->wall_bitmask & MARKED_MASK))
+	if (bMarked && !(segP->wallFlags & MARKED_MASK))
 		continue;
 	m_nType = segP->function;
 	switch(nType) {
@@ -762,9 +762,9 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		m_nType = nType;
 		m_mine->CurrSeg ()->function = nType;
 		if (nType == SEGMENT_FUNC_NONE)
-			m_mine->CurrSeg ()->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
+			m_mine->CurrSeg ()->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 		else
-			m_mine->CurrSeg ()->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
+			m_mine->CurrSeg ()->childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 #endif
 	}

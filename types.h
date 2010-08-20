@@ -57,6 +57,7 @@ void Write (FILE* fp) {
 class CFixVector {
 public:
 	FIX x, y, z;
+	CFixVector () : x(0), y(0), z(0) {}
 	CFixVector (FIX x, FIX y, FIX z) : x(x), y(y), z(z) {}
 	CFixVector (CFixVector& v) : x(v.x), y(v.y), z(v.z) {}
 
@@ -97,15 +98,65 @@ public:
 	UINT8	m_status;
 
 	inline UINT8 Status () { return m_status; }
+	inline void Set (UINT8 mask = 0) { m_status = mask; }
 	inline void Mark (UINT8 flags = MARKED_MASK) { m_status |= flags; }
 	inline void Unmark (UINT8 flags = MARKED_MASK) { m_status &= ~flags; }
 	inline bool Marked (UINT8 flags = MARKED_MASK) { return (m_status & flags) != 0; }
+
+	inline UINT8& operator&= (UINT8 mask) { 
+		m_status &= mask;
+		return m_status;
+		}
+
+	inline UINT8& operator|= (UINT8 mask) { 
+		m_status |= mask;
+		return m_status;
+		}
+
+	inline UINT8& operator^= (UINT8 mask) { 
+		m_status ^= mask;
+		return m_status;
+		}
+
+	inline UINT8& operator= (UINT8 mask) { 
+		m_status = mask;
+		return m_status;
+		}
+
+	inline const UINT8 operator& (UINT8 other) const { return m_status & other; }
+	inline const UINT8 operator| (UINT8 other) const { return m_status | other; }
+	inline const UINT8 operator^ (UINT8 other) const { return m_status ^ other; }
+
+	inline CStatusMask& operator&= (CStatusMask other) { 
+		m_status &= other.m_status;
+		return this;
+		}
+
+	inline CStatusMask& operator|= (CStatusMask other) { 
+		m_status |= other.m_status;
+		return this;
+		}
+
+	inline CStatusMask& operator^= (CStatusMask other) { 
+		m_status ^= other.m_status;
+		return this;
+		}
+
+	inline CStatusMask& operator= (CStatusMask other) { 
+		m_status = other.m_status;
+		return this;
+		}
+
+	inline const UINT8 operator& (CStatusMask other) const { return m_status & other.m_status; }
+	inline const UINT8 operator| (CStatusMask other) const { return m_status | other.m_status; }
+	inline const UINT8 operator^ (CStatusMask other) const { return m_status ^ other.m_status; }
+
 	inline INT32 Read (FILE* fp) { 
 		m_status = UINT8 (read_INT8 (fp));
 		return 1;
 		}
-	inline void Write (FILE* fp)
-	{
+
+	inline void Write (FILE* fp) {
 		write_INT8 (INT8 (m_status), fp);
 	}
 };

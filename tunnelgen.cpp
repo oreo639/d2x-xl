@@ -437,7 +437,7 @@ else {
 			segP->children [opp_side [spline_side1]] = spline_segment1;
 			segP->children [spline_side1] = SegCount ()+1;
 			Segments (spline_segment1)->children [spline_side1] = SegCount ();
-			Segments (spline_segment1)->child_bitmask |= (1<<spline_side1);
+			Segments (spline_segment1)->childFlags |= (1<<spline_side1);
 			} 
 		else if (spline<n_splines-1) {
 			segP->children [opp_side [spline_side1]] = SegCount ()-1;
@@ -447,16 +447,16 @@ else {
 			segP->children [opp_side [spline_side1]] = SegCount ()-1;
 			segP->children [spline_side1] = spline_segment2;
 			Segments (spline_segment2)->children [spline_side2] = SegCount ();
-			Segments (spline_segment2)->child_bitmask |= (1<<spline_side2);
+			Segments (spline_segment2)->childFlags |= (1<<spline_side2);
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
-		segP->child_bitmask = (1<<spline_side1) | (1<<opp_side [spline_side1]);
+		segP->childFlags = (1<<spline_side1) | (1<<opp_side [spline_side1]);
 		segP->owner = -1;
 		segP->group = -1;
 		segP->function = 0;
 		segP->nMatCen = -1;
 		segP->value = -1;
-		segP->wall_bitmask = 0; // make sure segment is not marked
+		segP->wallFlags = 0; // make sure segment is not marked
 		SegCount ()++;
 		}
 	theApp.UnlockUndo ();

@@ -159,7 +159,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 	}
 
 	// update segment flags
-	delSegP->wall_bitmask &= (~MARKED_MASK); 
+	delSegP->wallFlags.Unmark (); 
 
 	// unlink any children with this segment number
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
@@ -174,7 +174,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 
 				// remove child number and update child bitmask
 				segP->children [child] =-1; 
-				segP->child_bitmask &= ~(1 << child); 
+				segP->childFlags.Unmark (1 << child); 
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->sides + child;
@@ -202,7 +202,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all children with real numbers
 		for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-				if (segP->child_bitmask & (1 << child)
+				if (segP->childFlags.Marked (1 << child)
 					&& segP->children [child] >= 0 && segP->children [child] < SegCount ()) { // debug fix
 					childSegP = &Segments () [segP->children [child]]; 
 					segP->children [child] = childSegP->nIndex; 
@@ -402,9 +402,9 @@ segP->group = -1;
 segP->function = 0; 
 segP->nMatCen = -1; 
 segP->value = -1; 
-segP->child_bitmask = 0;
+segP->childFlags.Set ();
 // define Walls ()
-segP->wall_bitmask = 0; // unmarked cube
+segP->wallFlags.Set (); // unmarked cube
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	segP->sides [nSide].nWall = NO_WALL (this); 
 	segP->sides [nSide].nBaseTex =
@@ -476,9 +476,9 @@ segP->verts [side_vert [nCurrSide][3]] = new_verts [3];
 
 InitSegment (nNewSeg);
 // define children and special child
-segP->child_bitmask = 1 << opp_side [nCurrSide]; /* only opposite side connects to current_segment */
+segP->childFlags.Set (1 << opp_side [nCurrSide]); /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	segP->children [i] = (segP->child_bitmask & (1 << i)) ? Current ()->nSegment : -1;
+	segP->children [i] = segP->childFlags.Marked (1 << i) ? Current ()->nSegment : -1;
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -509,7 +509,7 @@ if (index != -1) {
 
 // update current segment
 currSeg->children [nCurrSide] = nNewSeg; 
-currSeg->child_bitmask |= (1 << nCurrSide); 
+currSeg->childFlags.Mark (1 << nCurrSide); 
 currSeg->sides [nCurrSide].nBaseTex = 0; 
 currSeg->sides [nCurrSide].nOvlTex = 0; 
 memset (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
@@ -915,7 +915,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 	INT16 nSegment, nVertex, oldVertex, newVertex; 
 
 	seg1->children [sidenum1] = segnum2; 
-	seg1->child_bitmask |= (1 << sidenum1); 
+	seg1->childFlags |= (1 << sidenum1); 
 	seg1->sides [sidenum1].nBaseTex = 0; 
 	seg1->sides [sidenum1].nOvlTex = 0; 
 	for (i = 0; i < 4; i++) {
@@ -924,7 +924,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 		seg1->sides [sidenum1].uvls [i].l = 0; 
 	}
 	seg2->children [sidenum2] = segnum1; 
-	seg2->child_bitmask |= (1 << sidenum2); 
+	seg2->childFlags |= (1 << sidenum2); 
 	seg2->sides [sidenum2].nBaseTex = 0; 
 	seg2->sides [sidenum2].nOvlTex = 0; 
 	for (i = 0; i < 4; i++) {
@@ -1086,7 +1086,7 @@ void CMine::MarkSegment(INT16 nSegment)
 {
   CSegment *segP = Segments () + nSegment; 
 
-	segP->wall_bitmask ^= MARKED_MASK; /* flip marked bit */
+	segP->wallFlags ^= MARKED_MASK; /* flip marked bit */
 
 	// update vertices's marked status
 	// ..first clear all marked verts
@@ -1095,7 +1095,7 @@ void CMine::MarkSegment(INT16 nSegment)
 		Vertices (nVertex)->Unmark (); 
 	// ..then mark all verts for marked Segments ()
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
-		if (segP->wall_bitmask & MARKED_MASK)
+		if (segP->wallFlags & MARKED_MASK)
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				Vertices (segP->verts [nVertex])->Mark (); 
 }
@@ -1132,7 +1132,7 @@ void CMine::MarkAll()
 
 for (i = 0; i < SegCount (); i++) 
 	Segments (i)->wallFlags.Mark (); 
-for (i = 0; i < VertCount (); i++) {
+for (i = 0; i < VertCount (); i++) 
 	Vertices (i)->Mark (); 
 theApp.MineView ()->Refresh (); 
 }
@@ -1144,10 +1144,10 @@ void CMine::UnmarkAll() {
 	INT32 i; 
 	CSegment *segP = Segments ();
 	for (i = 0; i < MAX_SEGMENTS (this); i++, segP++)
-		segP->wall_bitmask &= ~MARKED_MASK; 
-	UINT8 *stat = VertStatus ();
+		segP->wallFlags &= ~MARKED_MASK; 
+	UINT8& stat = VertStatus ();
 	for (i = 0; i < MAX_VERTICES (this); i++, stat++)
-		*stat &= ~MARKED_MASK; 
+		stat &= ~MARKED_MASK; 
 	theApp.MineView ()->Refresh (); 
 }
 
@@ -1165,7 +1165,7 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 CSegment *segP = Segments () + nSegment; 
 segP->children [nSide] =-1; 
-segP->child_bitmask &= ~(1 << nSide); 
+segP->childFlags &= ~(1 << nSide); 
 CSide *sideP = segP->sides + nSide;
 sideP->nBaseTex = 0; 
 sideP->nOvlTex = 0; 
@@ -1319,10 +1319,10 @@ Vertices (VertCount ()).z = Vertices (vert).z;
 // replace existing point with new point
 segP = Segments (Current ()->nSegment); 
 segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
-segP->wall_bitmask &= ~MARKED_MASK; 
+segP->wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
-Vertices (VertCount ()++).Status () = 0; 
+VertStatus (VertCount ()++) = 0; 
 
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++)
@@ -1404,7 +1404,7 @@ for (i = 0; i < 2; i++)
 		// replace existing points with new points
 		linenum = side_line [Current ()->nSide][Current ()->nLine]; 
 		segP->verts [line_vert [linenum][i]] = VertCount (); 
-		segP->wall_bitmask &= ~MARKED_MASK; 
+		segP->wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
 		Vertices (VertCount ()++).Status () = 0; 
 		}
@@ -1501,7 +1501,7 @@ if (!solidify) {
 			*/
 			// replace existing points with new points
 			segP->verts [side_vert [nSide][i]] = VertCount (); 
-			segP->wall_bitmask &= ~MARKED_MASK; 
+			segP->wallFlags &= ~MARKED_MASK; 
 
 			// update total number of vertices
 			VertStatus (VertCount ()++) = 0; 
@@ -1758,9 +1758,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, pSeg) {
 					// if these Segments () were linked, then unlink them
 					if (pNewSeg->children [nNewSide]== nSegment && pSeg->children [nSide]== nNewSeg) {
 						pNewSeg->children [nNewSide] =-1; 
-						pNewSeg->child_bitmask &= ~(1 << nNewSide); 
+						pNewSeg->childFlags &= ~(1 << nNewSide); 
 						pSeg->children [nSide] =-1; 
-						pSeg->child_bitmask &= ~(1 << nSide); 
+						pSeg->childFlags &= ~(1 << nSide); 
 						}
 					}
 				}
@@ -2049,16 +2049,16 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define children and special child
 // first clear all sides
-segP->child_bitmask = 0; 
+segP->childFlags = 0; 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
 	segP->children [i] =-1; 
 
 // now define two sides:
 // near side has opposite side number cube 1
-segP->child_bitmask |= (1 << (opp_side [cur1->nSide])); 
+segP->childFlags |= (1 << (opp_side [cur1->nSide])); 
 segP->children [opp_side [cur1->nSide]] = cur1->nSegment; 
 // far side has same side number as cube 1
-segP->child_bitmask |= (1 << cur1->nSide); 
+segP->childFlags |= (1 << cur1->nSide); 
 segP->children [cur1->nSide] = cur2->nSegment; 
 segP->owner = -1;
 segP->group = -1;
@@ -2073,7 +2073,7 @@ for (i = 0; i < 4; i++) {
 	}
 
 // define Walls ()
-segP->wall_bitmask = 0; // unmarked
+segP->wallFlags = 0; // unmarked
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 	segP->sides [nSide].nWall = NO_WALL (this); 
 
@@ -2103,7 +2103,7 @@ segP->static_light = seg1->static_light;
 
 // update cur segment
 seg1->children [cur1->nSide] = nNewSeg; 
-seg1->child_bitmask |= (1 << cur1->nSide); 
+seg1->childFlags |= (1 << cur1->nSide); 
 SetTexture (cur1->nSegment, cur1->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
 	seg1->sides [cur1->nSide].uvls [i].u = 0; 
@@ -2111,7 +2111,7 @@ for (i = 0; i < 4; i++) {
 	seg1->sides [cur1->nSide].uvls [i].l = 0; 
 	}
 seg2->children [cur2->nSide] = nNewSeg; 
-seg2->child_bitmask |= (1 << cur2->nSide); 
+seg2->childFlags |= (1 << cur2->nSide); 
 SetTexture (cur2->nSegment, cur2->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
 	seg2->sides [cur2->nSide].uvls [i].u = 0; 
@@ -2275,7 +2275,7 @@ INT16 CMine::MarkedSegmentCount (bool bCheck)
 	INT32	nSegment, nCount; 
 	CSegment *segP = Segments ();
 for (nSegment = SegCount (), nCount = 0; nSegment; nSegment--, segP++)
-	if (segP->wall_bitmask & MARKED_MASK)
+	if (segP->wallFlags & MARKED_MASK)
 		if (bCheck)
 			return 1; 
 		else
@@ -2752,7 +2752,7 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 		}
 	InitSegment (nSegment);
 	if ((segP->children [nSide] = centerSegP->children [nSide]) > -1) {
-		segP->child_bitmask |= (1 << nSide);
+		segP->childFlags |= (1 << nSide);
 		for (childSegP = Segments (segP->children [nSide]), childSideNum = 0;
 			  childSideNum < 6; 
 			  childSideNum++)
@@ -2762,9 +2762,9 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 				}
 			}
 	segP->children [oppSideNum] = nCenterSeg;
-	segP->child_bitmask |= (1 << oppSideNum);
+	segP->childFlags |= (1 << oppSideNum);
 	centerSegP->children [nSide] = nSegment;
-	centerSegP->child_bitmask |= (1 << nSide);
+	centerSegP->childFlags |= (1 << nSide);
 	nWall = centerSegP->sides [nSide].nWall;
 	segP->sides [nSide].nWall = nWall;
 	if ((nWall >= 0) && (nWall != NO_WALL (this))) {
@@ -2807,9 +2807,9 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 					}
 				if (h == 4) {
 					segP->children [nSide] = SegCount () + childSegNum;
-					segP->child_bitmask |= (1 << nSide);
+					segP->childFlags |= (1 << nSide);
 					childSegP->children [childSideNum] = SegCount () + nSegment;
-					childSegP->child_bitmask |= (1 << childSideNum);
+					childSegP->childFlags |= (1 << childSideNum);
 					break;
 					}
 				}
@@ -2950,23 +2950,23 @@ if (nLevelType == 2) {
 	}
 
 #if 1
-child_bitmask = 0;
+childFlags = 0;
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if(segP->children [nSide] != -1) {
-		child_bitmask |= (1 << nSide);
+		childFlags |= (1 << nSide);
 		}
 	}
 if (m_fileType== RDL_FILE) {
 	if (segP->function != 0) { // if this is a special cube
-		child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
+		childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 	}
 #endif
-write_UINT8 (child_bitmask, fp);
+write_UINT8 (childFlags, fp);
 
 // write children numbers (0 to 6 bytes)
 for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
-	if (child_bitmask & (1 << bit)) {
+	if (childFlags & (1 << bit)) {
 		write_INT16 (children [bit], fp);
 	}
 
@@ -2978,10 +2978,10 @@ for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 if ((function == SEGMENT_FUNC_ROBOTMAKER) && (nMatCen == -1)) {
 	function = SEGMENT_FUNC_NONE;
 	value = 0;
-	child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
+	childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 	}
 if (nLevelType == 0)
-	WriteExtras (fp, nLevelType, (child_bitmask & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
+	WriteExtras (fp, nLevelType, (childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // calculate wall bit mask
 UINT8 wallFlags = WriteWalls ();

@@ -20,7 +20,7 @@ INT16 nOppSeg, nOppSide;
 CSegment *segP = Segments (nSegment);
 CSide *sideP = segP->sides;
 double scale = pTextures [m_fileType][nTexture].Scale (nTexture);
-segP->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
+segP->childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 	if (segP->children [nSide] == -1) {
@@ -140,7 +140,7 @@ else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 			}
 		}
 	}
-segP->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
+segP->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 segP->function = SEGMENT_FUNC_NONE;
 }
 
@@ -155,7 +155,7 @@ theApp.LockUndo ();
 UndefineSegment (nSegment);
 CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 segP->function = type;
-segP->child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
+segP->childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();

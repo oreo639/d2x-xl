@@ -704,7 +704,7 @@ switch (m_selectMode) {
 						Vertices (i)->x += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
 					if (objP->nSegment >= 0)
-						if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+						if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
 							objP->pos.x += inc;
 				break;
 			case 'Y':
@@ -713,7 +713,7 @@ switch (m_selectMode) {
 						Vertices (i)->y += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
 					if (objP->nSegment >= 0)
-						if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+						if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
 							objP->pos.y += inc;
 				break;
 			case 'Z':
@@ -722,7 +722,7 @@ switch (m_selectMode) {
 						Vertices (i)->z += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
 					if (objP->nSegment >= 0)
-						if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+						if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
 							objP->pos.z += inc;
 				break;
 		}
@@ -931,7 +931,7 @@ switch (m_selectMode) {
 		// rotate Objects () within marked cubes
 		objP = Objects ();
 		for (i = GameInfo ().objects.count; i; i--, objP++)
-			if (Segments (objP->nSegment)->wall_bitmask & MARKED_MASK)
+			if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
 				RotateVertex(&objP->pos, &center, &opp_center, angle);
 		break;
 	}

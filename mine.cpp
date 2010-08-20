@@ -830,8 +830,8 @@ void CMine::Default()
 	segP.value =-1;
 	segP.s2_flags = 0;
 	segP.static_light = 263152L;
-	segP.child_bitmask = 0;
-	segP.wall_bitmask = 0;
+	segP.childFlags = 0;
+	segP.wallFlags = 0;
 	segP.nIndex = 0;
 	segP.map_bitmask = 0;
 
@@ -875,7 +875,7 @@ void CMine::ClearMineData()
 	// initialize Segments ()
 CSegment *segP = Segments ();
 for (i = 0; i < MAX_SEGMENTS (this); i++, segP++)
-	segP->wall_bitmask &= ~MARKED_MASK;
+	segP->wallFlags &= ~MARKED_MASK;
 SegCount () = 0;
 
 // initialize vertices
@@ -969,7 +969,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 		}
 	// read in child mask (1 byte)
 	fread(&bit_mask, sizeof (UINT8), 1, fp);
-	segP->child_bitmask = bit_mask;
+	segP->childFlags = bit_mask;
 
 	// read 0 to 6 children (0 to 12 bytes)
 	for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
@@ -1079,7 +1079,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
 			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
 				segP->function = SEGMENT_FUNC_NONE;
 				segP->value = 0;
-				segP->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
+				segP->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 				}
 			}
 		}

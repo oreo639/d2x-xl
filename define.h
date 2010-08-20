@@ -216,8 +216,8 @@
 #define DEFAULT_POINT   0 // point of the current side (0..3) 
 #define DEFAULT_OBJECT  0
 
-#define MARKED_MASK  0x80 // used on wall_bitmask & vertexStatus 
-#define DELETED_MASK 0x40 // used on wall_bitmask & vertexStatus 
+#define MARKED_MASK  0x80 // used on wallFlags & vertexStatus 
+#define DELETED_MASK 0x40 // used on wallFlags & vertexStatus 
 #define NEW_MASK     0x20 // used on vertexStatus                
 
 #define MAX_SEGMENTS1 800  // descent 1 max # of cubes

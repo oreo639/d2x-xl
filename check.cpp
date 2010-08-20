@@ -58,7 +58,7 @@ bool CDiagTool::MarkSegment (INT16 nSegment)
 {
 if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()))
 	return false;
-m_mine->Segments (nSegment)->wall_bitmask &= ~MARKED_MASK;
+m_mine->Segments (nSegment)->wallFlags &= ~MARKED_MASK;
 m_mine->MarkSegment (nSegment);
 return true;
 }
@@ -1680,7 +1680,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			}
 			// Make sure there is a child to the segment
 		if (wallP->type != WALL_OVERLAY) {
-			if (!(m_mine->Segments (wallP->m_nSegment)->child_bitmask & (1<< wallP->m_nSide))) {
+			if (!(m_mine->Segments (wallP->m_nSegment)->childFlags & (1<< wallP->m_nSide))) {
 				sprintf_s (message, sizeof (message),
 							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
 							nWall,wallP->m_nSegment);

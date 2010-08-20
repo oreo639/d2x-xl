@@ -369,7 +369,7 @@ void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
 theApp.SetModified (TRUE);
 fLight /= 100.0;
 for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++) {
-	if (bAll || (segP->wall_bitmask & MARKED_MASK)) {
+	if (bAll || (segP->wallFlags & MARKED_MASK)) {
 		if (!bDynCubeLights)
 			segP->static_light = nLight;
 		else {
@@ -405,7 +405,7 @@ scale = fLight / 100.0; // 100.0% = normal
 	//#pragma omp for
 	for (segNum = 0; segNum < segCount; segNum++) {
 		CSegment* segP = Segments (segNum);
-		if (bAll || (segP->wall_bitmask & MARKED_MASK)) {
+		if (bAll || (segP->wallFlags & MARKED_MASK)) {
 			for (INT32 j = 0; j < 6; j++) {
 				for (INT32 i = 0; i < 4; i++) {
 					double l = ((double) ((UINT16) segP->sides [j].uvls [i].l)) * scale;
@@ -556,7 +556,7 @@ theApp.LockUndo ();
 if (bAll)
 	memset (VertexColors (), 0, sizeof (MineData ().vertexColors));
 for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
-	if (bAll || (segP->wall_bitmask & MARKED_MASK))
+	if (bAll || (segP->wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 			INT32 i;
 			for (i = 0; i < 4; i++) {
@@ -893,7 +893,7 @@ fLightScale = 1.0; ///= 100.0;
 			continue;
 		CSegment* srcSegP = Segments (nSourceSeg);
 		// skip if not marked unless we are automatically saving
-		if  (!(srcSegP->wall_bitmask & MARKED_MASK) && !force) 
+		if  (!(srcSegP->wallFlags & MARKED_MASK) && !force) 
 			continue;
 		// loop on all sides
 		for (INT32 nSourceSide = 0; nSourceSide < 6; nSourceSide++) {

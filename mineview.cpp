@@ -969,7 +969,7 @@ void CMineView::DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum
 			m_viewPoints [nVert].x + 4,
 			m_viewPoints [nVert].y + 4);
 			}
-		if (segP->wall_bitmask & MARKED_MASK) {
+		if (segP->wallFlags & MARKED_MASK) {
 			m_pDC->SelectObject (m_penCyan);
 			DrawCubeQuick (segP);
 			} 
@@ -999,7 +999,7 @@ void CMineView::DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum
 			}
 		} 
 	else {
-		if (segP->wall_bitmask & MARKED_MASK)
+		if (segP->wallFlags & MARKED_MASK)
 			m_pDC->SelectObject (m_penHiCyan);
 		else if (nSegment == mine->Current ()->nSegment)
 			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
@@ -1505,7 +1505,7 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 	if (!clear_it) {
 		for (i = 0; i < mine->SegCount (); i++) {
 			segP = mine->Segments () + i;
-			if (segP->wall_bitmask & MARKED_MASK) {
+			if (segP->wallFlags & MARKED_MASK) {
 				m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
 				DrawCubeQuick (segP);
 				}
@@ -1580,7 +1580,7 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 	INT16 linenum = m_Current->nPoint;
 	INT16 pointnum = m_Current->nPoint;
 
-	if (segP->wall_bitmask & MARKED_MASK) {
+	if (segP->wallFlags & MARKED_MASK) {
 		m_pDC->SelectObject(m_penCyan);
 	}
 	else

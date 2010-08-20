@@ -1122,7 +1122,7 @@ objP = m_mine->Objects ();
 bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
 INT32 nDeleted = 0;
 for (INT32 h = m_mine->GameInfo ().objects.count, i = 0; i < h; ) {
-	if ((objP->type == nType) && (objP->id == nId) && (bAll || (m_mine->Segments (objP->nSegment)->wall_bitmask &= MARKED_MASK))) {
+	if ((objP->type == nType) && (objP->id == nId) && (bAll || (m_mine->Segments (objP->nSegment)->wallFlags &= MARKED_MASK))) {
 		m_mine->DeleteObject (i);
 		nDeleted++;
 		h--;
