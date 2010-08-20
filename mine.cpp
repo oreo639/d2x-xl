@@ -30,7 +30,10 @@ CMine* theMine = NULL;
 // CMine - CMine
 //==========================================================================
 
-CMine::CMine() {}
+CMine::CMine() 
+{ 
+Initialize();
+}
 
 void CMine::Initialize (void)
 {
@@ -90,7 +93,6 @@ Default ();
 
 void CMine::Reset (void)
 {
-Initialize();
 /*
   INT16 i;
 	FIX maxx, maxy, maxz, minx, miny, minz;
