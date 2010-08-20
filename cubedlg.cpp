@@ -70,6 +70,7 @@ Reset ();
 
 void CSegmentTool::Reset ()
 {
+if (!theMine) return;
 m_nSegment =
 m_nSide =
 m_nPoint = 0;
@@ -107,6 +108,9 @@ pcb->SetCurSel (m_nSegment);
 
 BOOL CSegmentTool::OnInitDialog ()
 {
+if (!(theMine && CToolDlg::OnInitDialog ()))
+	return;
+
 	static char* pszCubeFuncs [] = {
 		"None",
 		"Fuel Center",
@@ -122,7 +126,6 @@ BOOL CSegmentTool::OnInitDialog ()
 		"Equip Maker"
 		};
 
-CToolDlg::OnInitDialog ();
 CComboBox *pcb = CBType ();
 pcb->ResetContent ();
 
@@ -146,6 +149,7 @@ return TRUE;
 
 void CSegmentTool::DoDataExchange (CDataExchange *pDX)
 {
+if (!theMine) return;
 DDX_CBIndex (pDX, IDC_CUBE_CUBENO, m_nSegment);
 //DDX_CBIndex (pDX, IDC_CUBE_TYPE, m_nType);
 SelectItemData (CBType (), m_nType);

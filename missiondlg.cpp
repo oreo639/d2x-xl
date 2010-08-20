@@ -58,7 +58,7 @@ m_missionData.numSecrets = 0;
 
 BOOL CMissionTool::OnInitDialog ()
 {
-if (!CToolDlg::OnInitDialog ())
+if (!(theMine && CToolDlg::OnInitDialog ()))
    return FALSE;
 BuildLevelList ();
 m_bInited = true;

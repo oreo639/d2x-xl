@@ -281,7 +281,8 @@ char *pszBossTypes [] = {"none", "Boss 1", "Boss 2", "Red Fatty", "Water Boss", 
 
 BOOL CObjectTool::OnInitDialog ()
 {
-CToolDlg::OnInitDialog ();
+if (!(theMine && CToolDlg::OnInitDialog ()))
+	return FALSE;
 CreateImgWnd (&m_showObjWnd, IDC_OBJ_SHOW);
 CreateImgWnd (&m_showSpawnWnd, IDC_OBJ_SHOW_SPAWN);
 CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);

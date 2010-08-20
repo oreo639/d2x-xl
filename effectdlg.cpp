@@ -121,7 +121,8 @@ SelectItemData (cbEffects, curSel);
 
 BOOL CEffectTool::OnInitDialog ()
 {
-CToolDlg::OnInitDialog ();
+if (!(theMine && CToolDlg::OnInitDialog ()))
+	return;
 INT32 i, nId;
 for (nId = IDC_SMOKE_LIFE; nId <= IDC_SMOKE_BRIGHTNESS; nId++) {
 	InitSlider (nId, 1, 10);

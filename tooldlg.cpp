@@ -288,7 +288,8 @@ if (m_bInited) {
 
 BOOL CTexToolDlg::OnInitDialog ()
 {
-CToolDlg::OnInitDialog ();
+if (!(theMine && CToolDlg::OnInitDialog ()))
+	return FALSE;
 CreateImgWnd (&m_textureWnd, m_nTexWndId);
 return TRUE;
 }

@@ -69,7 +69,7 @@ m_bShowLightSource = 0;
 
 BOOL CLightTool::OnInitDialog ()
 {
-if (!CToolDlg::OnInitDialog ())
+if (!(theMine && CToolDlg::OnInitDialog ()))
 	return FALSE;
 InitSlider (IDC_LIGHT_RENDER_DEPTH, 1, 10);
 InitSlider (IDC_LIGHT_DELTA_RENDER_DEPTH, 1, 10);

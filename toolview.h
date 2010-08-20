@@ -96,9 +96,9 @@ class CToolDlg : public CPropertyPage
 		~CToolDlg ()
 			{ m_pParent = NULL; m_bInited = false; }
       virtual BOOL OnInitDialog () 
-			{ return CPropertyPage::OnInitDialog (); }
+			{ return (theMine != NULL) && CPropertyPage::OnInitDialog (); }
       virtual BOOL OnSetActive () {
-			if (!CPropertyPage::OnSetActive ())
+			if ((theMine == NULL) || !CPropertyPage::OnSetActive ())
 				return FALSE;
          UpdateData (FALSE);
          return TRUE;

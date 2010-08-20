@@ -56,7 +56,8 @@ m_iTarget = -1;
 
 BOOL CReactorTool::OnInitDialog ()
 {
-CToolDlg::OnInitDialog ();
+if (!(theMine && CToolDlg::OnInitDialog ()))
+	return FALSE;
 // Descent only uses the first control center, #0
 m_bInited = TRUE;
 return TRUE;

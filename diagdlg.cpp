@@ -56,7 +56,7 @@ ClearBugList ();
 
 BOOL CDiagTool::OnInitDialog ()
 {
-if (!CToolDlg::OnInitDialog ())
+if (!(theMine && CToolDlg::OnInitDialog ()))
    return FALSE;
 CListCtrl& plc = LVStats ()->GetListCtrl ();
 CRect rc;
@@ -168,6 +168,7 @@ return nUsed;
 
 void CDiagTool::Reset (void)
 {
+if (!theMine) return;
 if (!Inited ())
 	return;
 ClearBugList ();
@@ -222,6 +223,7 @@ plc.SetItemText (15, 2, ItemText (MAX_TEXTURES));
 
 void CDiagTool::DoDataExchange (CDataExchange * pDX)
 {
+if (!theMine) return;
 DDX_Check (pDX, IDC_DIAG_FIXBUGS, m_bAutoFixBugs);
 DDX_Check (pDX, IDC_DIAG_WARNINGS, m_bShowWarnings);
 }
