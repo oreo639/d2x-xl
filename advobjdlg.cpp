@@ -55,7 +55,7 @@ CAdvObjTool::CAdvObjTool (CPropertySheet *pParent)
 BOOL CAdvObjTool::OnInitDialog ()
 {
 if (!(theMine && CToolDlg::OnInitDialog ()))
-	return;
+	return FALSE;
 
 m_bInited = true;
 return TRUE;

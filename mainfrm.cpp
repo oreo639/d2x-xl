@@ -1775,8 +1775,8 @@ m_nEditFunc = -1;
 
 BOOL CEditTool::OnInitDialog ()
 {
-if (!(theMine && CToolDlg::OnInitDialog ()))
-	return;
+if (!CDialog::OnInitDialog ())
+	return FALSE;
 
 for (INT32 i = 0; i < 10; i++)
 	m_btns [i].AutoLoad (IDC_EDITGEO7 + i, this);
