@@ -859,7 +859,7 @@ write_INT8 (bEnabled, fp);
 }
 // ------------------------------------------------------------------------
 
-INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
+virtual INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
 {
 type = read_INT8 (fp);
 id = read_INT8 (fp);

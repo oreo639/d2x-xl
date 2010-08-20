@@ -1097,7 +1097,7 @@ else {  /*load mine filename */
 	//  gamesave_num_org_robots = 0;
 	//  gamesave_num_players = 0;
 
-#if 1
+#if 0
 	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (), -1, MAX_OBJECTS (this), "Objects"))
 		return -1;
 #else
@@ -1111,9 +1111,8 @@ else {  /*load mine filename */
 			GameInfo ().objects.count = MAX_OBJECTS (this);
 			}
 		else {
-			CGameObject *objP = Objects ();
-			for (i = 0; i < GameInfo ().objects.count; i++, objP++) {
-				objP->Read (loadfile, GameInfo ().fileinfo.version);
+			for (int i = 0; i < GameInfo ().objects.count; i++) {
+				Objects (i)->Read (loadfile, GameInfo ().fileinfo.version);
 				//      objP->signature = object_next_signature++;
 				//    verify_object(objP);
 				}
