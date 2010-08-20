@@ -585,6 +585,21 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+void CObjPhysicsInfo::Write (FILE *fp, INT32 version)
+{
+velocity.Write (fp);
+thrust.Write (fp);
+write_FIX (mass, fp);
+write_FIX (drag, fp);
+write_FIX (brakes, fp);
+rotvel.Write (fp);
+rotthrust.Write (fp);
+write_FIXANG (turnroll, fp);
+write_INT16 (flags, fp);
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CObjAIInfo::Read (FILE *fp, INT32 version)
 {
 behavior = read_INT8 (fp);
@@ -603,6 +618,23 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+void CObjAIInfo::Write (FILE *fp, INT32 version)
+{
+write_INT8 (behavior, fp);
+for (int i = 0; i < MAX_AI_FLAGS; i++)
+	write_INT8 (flags [i], fp);
+write_INT16 (hide_segment, fp);
+write_INT16 (hide_index, fp);
+write_INT16 (path_length, fp);
+write_INT16 (cur_path_index, fp);
+if (theApp.IsD1File ()) {
+	write_INT16 (follow_path_start_seg, fp);
+	write_INT16 (follow_path_end_seg, fp);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CObjExplosionInfo::Read (FILE *fp, INT32 version)
 {
 spawn_time = read_FIX (fp);
@@ -612,6 +644,15 @@ next_attach =
 prev_attach = 
 attach_parent =-1;
 return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CObjExplosionInfo::Write (FILE *fp, INT32 version)
+{
+write_FIX (spawn_time, fp);
+write_FIX (delete_time, fp);
+write_INT16 (delete_objnum, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -626,10 +667,27 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+void CObjLaserInfo::Write (FILE *fp, INT32 version)
+{
+write_INT16 (parent_type, fp);
+write_INT16 (parent_num, fp);
+write_INT32 (parent_signature, fp);
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CObjPowerupInfo::Read (FILE *fp, INT32 version)
 {
 count = (version >= 25) ? read_INT32 (fp) : 1;
 return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CObjPowerupInfo::Write (FILE *fp, INT32 version)
+{
+if (version >= 25) 
+	write_INT32 (count, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -642,15 +700,33 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+void CObjLightInfo::Write (FILE *fp, INT32 version)
+{
+write_FIX (intensity, fp);
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CObjPolyModelInfo::Read (FILE *fp, INT32 version)
 {
 model_num = read_INT32 (fp);
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	read_angvec (&anim_angles [i], fp);
+	anim_angles [i].Read (fp);
 subobj_flags = read_INT32 (fp);
 tmap_override = read_INT32 (fp);
 alt_textures = 0;
 return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CObjPolyModelInfo::Write (FILE *fp, INT32 version)
+{
+write_INT32 (model_num, fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	anim_angles [i].Write (fp);
+write_INT32 (subobj_flags, fp);
+write_INT32 (tmap_override, fp);
 }
 
 // ------------------------------------------------------------------------
