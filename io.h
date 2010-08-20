@@ -13,12 +13,12 @@ INT8 write_INT8 (INT8 value, FILE *fp);
 FIX write_FIX (FIX value, FILE *fp);
 FIXANG write_FIXANG (FIXANG value, FILE *fp);
 
-#define read_matrix(_m, fp)	(_m)->Read (fp)
+#define read_matrix(_m, fp) (_m)->Read (fp)
 #define read_vector(_v, fp) (_v)->Read (fp)
-#define read_angvec (_a, fp)	(_a)->Read (fp)
-#define write_matrix(_m, fp)	(_m)->Write (fp)
+#define read_angvec(_a, fp) (_a)->Read (fp)
+#define write_matrix(_m, fp) (_m)->Write (fp)
 #define write_vector(_v, fp) (_v)->Write (fp)
-#define write_angvec (_a, fp)	(_a)->Write (fp)
+#define write_angvec(_a, fp) (_a)->Write (fp)
 
 LPSTR FSplit (LPSTR fullName, LPSTR pathName, LPSTR fileName, LPSTR extName);
 char *TimeStr (char *pszTime, INT32 nDestSize);

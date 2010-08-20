@@ -403,7 +403,6 @@ switch (m_selectMode) {
 	case BLOCK_MODE:
 		theApp.SetModified (TRUE);
 		CFixVector max_pt, min_pt, center, *verts;
-		UINT8 *vstats;
 		max_pt.x = -0x7fffffffL;
 		max_pt.y = -0x7fffffffL;
 		max_pt.z = -0x7fffffffL;
@@ -411,10 +410,10 @@ switch (m_selectMode) {
 		min_pt.y =  0x7fffffffL;
 		min_pt.z =  0x7fffffffL;
 		verts = Vertices ();
-		vstats = VertStatus ();
+		UINT8& vstats = VertStatus ();
 		j = 0;
 		for (i = VertCount (), j = 0; j < i; j++, verts++, vstats++)
-			if (*vstats & MARKED_MASK) {
+			if (vstats & MARKED_MASK) {
 				max_pt.x = max (max_pt.x, verts->x);
 				max_pt.y = max (max_pt.y, verts->y);
 				max_pt.z = max (max_pt.z, verts->z);
@@ -429,7 +428,7 @@ switch (m_selectMode) {
 		verts = Vertices ();
 		vstats = VertStatus ();
 		for (i = VertCount (), j = 0; j < i; j++, verts++, vstats++)
-			if (*vstats & MARKED_MASK) {
+			if (vstats & MARKED_MASK) {
 				verts->x = center.x + (long) ((verts->x - center.x) * scale);
 				verts->y = center.y + (long) ((verts->y - center.y) * scale);
 				verts->z = center.z + (long) ((verts->z - center.z) * scale);
@@ -526,7 +525,7 @@ switch (m_selectMode){
 	case BLOCK_MODE:
 		bool bMoved = false;
 		for (i = 0; i < MAX_VERTICES (this); i++) {
-			if (*VertStatus (i) & MARKED_MASK) {
+			if (VertStatus (i) & MARKED_MASK) {
 				Vertices (i)->x += delta.x;
 				Vertices (i)->y += delta.y;
 				Vertices (i)->z += delta.z;
@@ -700,7 +699,7 @@ switch (m_selectMode) {
 		switch (axis) {
 			case 'X':
 				for (i = 0; i < MAX_VERTICES (this); i++)
-					if (*VertStatus (i) & MARKED_MASK)
+					if (VertStatus (i) & MARKED_MASK)
 						Vertices (i)->x += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
 					if (objP->nSegment >= 0)
@@ -709,7 +708,7 @@ switch (m_selectMode) {
 				break;
 			case 'Y':
 				for (i = 0; i < MAX_VERTICES (this); i++)
-					if (*VertStatus (i) & MARKED_MASK)
+					if (VertStatus (i) & MARKED_MASK)
 						Vertices (i)->y += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
 					if (objP->nSegment >= 0)
@@ -718,7 +717,7 @@ switch (m_selectMode) {
 				break;
 			case 'Z':
 				for (i = 0; i < MAX_VERTICES (this); i++)
-					if (*VertStatus (i) & MARKED_MASK)
+					if (VertStatus (i) & MARKED_MASK)
 						Vertices (i)->z += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
 					if (objP->nSegment >= 0)
@@ -926,7 +925,7 @@ switch (m_selectMode) {
 		opp_center.z /= 4;
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
-			if (*VertStatus (i) & MARKED_MASK)
+			if (VertStatus (i) & MARKED_MASK)
 				RotateVertex(Vertices (i),&center,&opp_center,angle);
 		// rotate Objects () within marked cubes
 		objP = Objects ();

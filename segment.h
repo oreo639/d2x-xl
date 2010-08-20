@@ -42,7 +42,7 @@ public:
 	INT16		nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
 	CUVL		uvls [4];   // CUVL coordinates at each point 
 
-	INT32 Read (FILE* fp);
+	INT32 Read (FILE* fp, bool bTextured);
 	void Write (FILE* fp);
 };
 
