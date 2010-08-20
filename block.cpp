@@ -274,18 +274,18 @@ while(!feof(fBlk)) {
 				switch (o.movement_type) {
 					case MT_PHYSICS:
 						fscanf_s (fBlk, "            velocity %ld %ld %ld\n", 
-								  &o.phys_info.velocity.x, &o.phys_info.velocity.y, &o.phys_info.velocity.z);
+								  &o.physInfo.velocity.x, &o.physInfo.velocity.y, &o.physInfo.velocity.z);
 						fscanf_s (fBlk, "            thrust %ld %ld %ld\n", 
-								  &o.phys_info.thrust.x, &o.phys_info.thrust.y, &o.phys_info.thrust.z);
-						fscanf_s (fBlk, "            mass %ld\n", &o.phys_info.mass);
-						fscanf_s (fBlk, "            drag %ld\n", &o.phys_info.drag);
-						fscanf_s (fBlk, "            brakes %ld\n", &o.phys_info.brakes);
+								  &o.physInfo.thrust.x, &o.physInfo.thrust.y, &o.physInfo.thrust.z);
+						fscanf_s (fBlk, "            mass %ld\n", &o.physInfo.mass);
+						fscanf_s (fBlk, "            drag %ld\n", &o.physInfo.drag);
+						fscanf_s (fBlk, "            brakes %ld\n", &o.physInfo.brakes);
 						fscanf_s (fBlk, "            rotvel %ld %ld %ld\n", 
-								  &o.phys_info.rotvel.x, &o.phys_info.rotvel.y, &o.phys_info.rotvel.z);
+								  &o.physInfo.rotvel.x, &o.physInfo.rotvel.y, &o.physInfo.rotvel.z);
 						fscanf_s (fBlk, "            rotthrust %ld %ld %ld\n", 
-								  &o.phys_info.rotthrust.x, &o.phys_info.rotthrust.y, &o.phys_info.rotthrust.z);
-						fscanf_s (fBlk, "            turnroll %hd\n", &o.phys_info.turnroll);
-						fscanf_s (fBlk, "            flags %hd\n", &o.phys_info.flags);
+								  &o.physInfo.rotthrust.x, &o.physInfo.rotthrust.y, &o.physInfo.rotthrust.z);
+						fscanf_s (fBlk, "            turnroll %hd\n", &o.physInfo.turnroll);
+						fscanf_s (fBlk, "            flags %hd\n", &o.physInfo.flags);
 						break;
 					case MT_SPIN:
 						fscanf_s (fBlk, "            spinrate %ld %ld %ld\n", 

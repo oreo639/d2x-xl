@@ -2199,9 +2199,9 @@ CGameObject *objP = mine->CurrObj ();
 if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
 mine->Other ()->nObject = mine->Current ()->nObject;
-if (nTarget = objP->rtype.lightningInfo.nTarget)
+if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = mine->Objects (); i < mine->GameInfo ().objects.count; i++, objP++)
-		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rtype.lightningInfo.nId == nTarget)) {
+		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			mine->Other ()->nObject = i;
 			break;
 			return;

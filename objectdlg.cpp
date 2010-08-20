@@ -594,8 +594,8 @@ m_nSpawnQty = objP->contains_count;
 //SelectItemData (CBObjProps (), (objP->type == OBJ_ROBOT) && (objP->id < N_D2_ROBOT_TYPES) ? objP->id: -1);
 if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT)) {
 	INT32 index =
-		((objP->ctype.ai_info.behavior == AIB_RUN_FROM) && (objP->ctype.ai_info.flags [4] & 0x02)) ? // smart bomb flag
-		8 : objP->ctype.ai_info.behavior - 0x80;
+		((objP->cType.aiInfo.behavior == AIB_RUN_FROM) && (objP->cType.aiInfo.flags [4] & 0x02)) ? // smart bomb flag
+		8 : objP->cType.aiInfo.behavior - 0x80;
 	CBObjAI ()->SetCurSel (index);
 	}
 else
@@ -836,7 +836,7 @@ INT16 tnum = 0, tnum2 = -1;
 if (objP->render_type != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
-	tnum = (INT16) m_mine->CurrObj ()->rtype.pobj_info.tmap_override;
+	tnum = (INT16) m_mine->CurrObj ()->rType.polyModelInfo.tmap_override;
 	if ((tnum < 0) || (tnum >= ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
@@ -1390,7 +1390,7 @@ switch (objP->type) {
 
 	case OBJ_CNTRLCEN:
 		objP->id = nCurSel; // + (IsD2File ());
-		objP->rtype.CObjVClipInfo.vclip_num = nCurSel;
+		objP->rType.vClipInfo.vclip_num = nCurSel;
 		break;
 
 	default:
@@ -1402,20 +1402,20 @@ switch (objP->type) {
 		id = (objP->id < MAX_POWERUP_IDS_D2) ? objP->id : POW_AMMORACK;
 		objP->size = powerup_size [id];
 		objP->shields = DEFAULT_SHIELD;
-		objP->rtype.CObjVClipInfo.vclip_num = powerup_clip [id];
+		objP->rType.vClipInfo.vclip_num = powerup_clip [id];
 		break;
 
 	case OBJ_ROBOT:
 		objP->size = robot_size [objP->id];
 		objP->shields = robot_shield [objP->id];
-		objP->rtype.pobj_info.model_num = robot_clip [objP->id];
+		objP->rType.polyModelInfo.model_num = robot_clip [objP->id];
 		break;
 
 	case OBJ_CNTRLCEN:
 		objP->size = REACTOR_SIZE;
 		objP->shields = REACTOR_SHIELD;
 		if (theApp.IsD1File ())
-			objP->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
+			objP->rType.polyModelInfo.model_num = REACTOR_CLIP_NUMBER;
 		else {
 			INT32 model;
 			switch(objP->id) {
@@ -1427,32 +1427,32 @@ switch (objP->type) {
 				case 6: model = 105; break;
 				default: model = 97; break; // level 1's reactor
 				}
-			objP->rtype.pobj_info.model_num = model;
+			objP->rType.polyModelInfo.model_num = model;
 		}
 		break;
 
 	case OBJ_PLAYER:
 		objP->size = PLAYER_SIZE;
 		objP->shields = DEFAULT_SHIELD;
-		objP->rtype.pobj_info.model_num = PLAYER_CLIP_NUMBER;
+		objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
 		break;
 
 	case OBJ_WEAPON:
 		objP->size = WEAPON_SIZE;
 		objP->shields = WEAPON_SHIELD;
-		objP->rtype.pobj_info.model_num = MINE_CLIP_NUMBER;
+		objP->rType.polyModelInfo.model_num = MINE_CLIP_NUMBER;
 		break;
 
 	case OBJ_COOP:
 		objP->size = PLAYER_SIZE;
 		objP->shields = DEFAULT_SHIELD;
-		objP->rtype.pobj_info.model_num = COOP_CLIP_NUMBER;
+		objP->rType.polyModelInfo.model_num = COOP_CLIP_NUMBER;
 		break;
 
 	case OBJ_HOSTAGE:
 		objP->size = PLAYER_SIZE;
 		objP->shields = DEFAULT_SHIELD;
-		objP->rtype.CObjVClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
+		objP->rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
 		break;
 	}
 m_mine->SortObjects ();
@@ -1548,13 +1548,13 @@ if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT)) {
  	INT32 index = CBObjAI ()->GetCurSel ();
 	if (index == 8) {
 		index = AIB_RUN_FROM;
-		objP->ctype.ai_info.flags [4] |= 2; // smart bomb flag
+		objP->cType.aiInfo.flags [4] |= 2; // smart bomb flag
 		}
 	else {
 		index += 0x80;
-		objP->ctype.ai_info.flags [4] &= ~2;
+		objP->cType.aiInfo.flags [4] &= ~2;
 		}
-	objP->ctype.ai_info.behavior = index;
+	objP->cType.aiInfo.behavior = index;
 	}
 else
 	CBObjAI ()->SetCurSel (1); // Normal
@@ -1575,7 +1575,7 @@ CGameObject *objP = m_mine->CurrObj ();
 if (objP->render_type == RT_POLYOBJ) {
 	theApp.SetModified (TRUE);
 	INT32 index = CBObjTexture ()->GetCurSel ();
-	objP->rtype.pobj_info.tmap_override = 
+	objP->rType.polyModelInfo.tmap_override = 
 		(index > 0) ? (INT16)CBObjTexture ()->GetItemData (index): -1;
 	Refresh ();
 	}

@@ -108,7 +108,7 @@ for (i = 0; i < m_mine->GameInfo ().objects.count; i++, objP++) {
 	if (objP->id == SMOKE_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Smoke");
 	else if (objP->id == LIGHTNING_ID)
-		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", objP->rtype.lightningInfo.nId, i);
+		sprintf_s (szEffect, sizeof (szEffect), "Lightning %d (%d)", objP->rType.lightningInfo.nId, i);
 	else if (objP->id == SOUND_ID)
 		sprintf_s (szEffect, sizeof (szEffect), "Sound (%d)", i);
 	else
@@ -162,56 +162,56 @@ CGameObject *objP = m_mine->CurrObj ();
 if (objP->type != OBJ_EFFECT)
 	return;
 if (objP->id == SMOKE_ID) {
-	objP->rtype.smokeInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rtype.smokeInfo.bEnabled);
-	DDX_Slider (pDX, IDC_SMOKE_LIFE, objP->rtype.smokeInfo.nLife);
-	DDX_Slider (pDX, IDC_SMOKE_SIZE, objP->rtype.smokeInfo.nSize [0]);
-	DDX_Slider (pDX, IDC_SMOKE_DENSITY, objP->rtype.smokeInfo.nParts);
-	DDX_Slider (pDX, IDC_SMOKE_SPEED, objP->rtype.smokeInfo.nSpeed);
-	DDX_Slider (pDX, IDC_SMOKE_DRIFT, objP->rtype.smokeInfo.nDrift);
-	DDX_Slider (pDX, IDC_SMOKE_BRIGHTNESS, objP->rtype.smokeInfo.nBrightness);
+	objP->rType.smokeInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.smokeInfo.bEnabled);
+	DDX_Slider (pDX, IDC_SMOKE_LIFE, objP->rType.smokeInfo.nLife);
+	DDX_Slider (pDX, IDC_SMOKE_SIZE, objP->rType.smokeInfo.nSize [0]);
+	DDX_Slider (pDX, IDC_SMOKE_DENSITY, objP->rType.smokeInfo.nParts);
+	DDX_Slider (pDX, IDC_SMOKE_SPEED, objP->rType.smokeInfo.nSpeed);
+	DDX_Slider (pDX, IDC_SMOKE_DRIFT, objP->rType.smokeInfo.nDrift);
+	DDX_Slider (pDX, IDC_SMOKE_BRIGHTNESS, objP->rType.smokeInfo.nBrightness);
 	INT32 i;
 	for (i = 0; i < 4; i++)
-		DDX_Text (pDX, IDC_SMOKE_RED + i, objP->rtype.smokeInfo.color [i]);
-	objP->rtype.smokeInfo.nSide = (char) DDX_Int (pDX, IDC_SMOKE_SIDE, (INT32) objP->rtype.smokeInfo.nSide);
+		DDX_Text (pDX, IDC_SMOKE_RED + i, objP->rType.smokeInfo.color [i]);
+	objP->rType.smokeInfo.nSide = (char) DDX_Int (pDX, IDC_SMOKE_SIDE, (INT32) objP->rType.smokeInfo.nSide);
 	if (pDX->m_bSaveAndValidate)
-		objP->rtype.smokeInfo.nType = CBType ()->GetCurSel ();
+		objP->rType.smokeInfo.nType = CBType ()->GetCurSel ();
 	else
-		CBType ()->SetCurSel (objP->rtype.smokeInfo.nType);
+		CBType ()->SetCurSel (objP->rType.smokeInfo.nType);
 	}
 else if (objP->id == LIGHTNING_ID) {
-	objP->rtype.lightningInfo.nId = DDX_Int (pDX, IDC_LIGHTNING_ID, objP->rtype.lightningInfo.nId);
-	objP->rtype.lightningInfo.nTarget = DDX_Int (pDX, IDC_LIGHTNING_TARGET, objP->rtype.lightningInfo.nTarget);
-	objP->rtype.lightningInfo.nLightnings = DDX_Int (pDX, IDC_LIGHTNING_BOLTS, objP->rtype.lightningInfo.nLightnings);
-	objP->rtype.lightningInfo.nNodes = DDX_Int (pDX, IDC_LIGHTNING_NODES, objP->rtype.lightningInfo.nNodes);
-	objP->rtype.lightningInfo.nChildren = DDX_Int (pDX, IDC_LIGHTNING_CHILDREN, objP->rtype.lightningInfo.nChildren);
-	objP->rtype.lightningInfo.nLife = DDX_Int (pDX, IDC_LIGHTNING_LIFE, objP->rtype.lightningInfo.nLife);
-	objP->rtype.lightningInfo.nDelay = DDX_Int (pDX, IDC_LIGHTNING_DELAY, objP->rtype.lightningInfo.nDelay);
-	objP->rtype.lightningInfo.nLength = DDX_Int (pDX, IDC_LIGHTNING_LENGTH, objP->rtype.lightningInfo.nLength);
-	objP->rtype.lightningInfo.nAmplitude = DDX_Int (pDX, IDC_LIGHTNING_AMPLITUDE, objP->rtype.lightningInfo.nAmplitude);
-	objP->rtype.lightningInfo.nSteps = DDX_Int (pDX, IDC_LIGHTNING_SPEED, objP->rtype.lightningInfo.nSteps);
-	objP->rtype.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, objP->rtype.lightningInfo.nAngle);
-	objP->rtype.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, objP->rtype.lightningInfo.nOffset);
+	objP->rType.lightningInfo.nId = DDX_Int (pDX, IDC_LIGHTNING_ID, objP->rType.lightningInfo.nId);
+	objP->rType.lightningInfo.nTarget = DDX_Int (pDX, IDC_LIGHTNING_TARGET, objP->rType.lightningInfo.nTarget);
+	objP->rType.lightningInfo.nLightnings = DDX_Int (pDX, IDC_LIGHTNING_BOLTS, objP->rType.lightningInfo.nLightnings);
+	objP->rType.lightningInfo.nNodes = DDX_Int (pDX, IDC_LIGHTNING_NODES, objP->rType.lightningInfo.nNodes);
+	objP->rType.lightningInfo.nChildren = DDX_Int (pDX, IDC_LIGHTNING_CHILDREN, objP->rType.lightningInfo.nChildren);
+	objP->rType.lightningInfo.nLife = DDX_Int (pDX, IDC_LIGHTNING_LIFE, objP->rType.lightningInfo.nLife);
+	objP->rType.lightningInfo.nDelay = DDX_Int (pDX, IDC_LIGHTNING_DELAY, objP->rType.lightningInfo.nDelay);
+	objP->rType.lightningInfo.nLength = DDX_Int (pDX, IDC_LIGHTNING_LENGTH, objP->rType.lightningInfo.nLength);
+	objP->rType.lightningInfo.nAmplitude = DDX_Int (pDX, IDC_LIGHTNING_AMPLITUDE, objP->rType.lightningInfo.nAmplitude);
+	objP->rType.lightningInfo.nSteps = DDX_Int (pDX, IDC_LIGHTNING_SPEED, objP->rType.lightningInfo.nSteps);
+	objP->rType.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, objP->rType.lightningInfo.nAngle);
+	objP->rType.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, objP->rType.lightningInfo.nOffset);
 	INT32 i;
 	for (i = 0; i < 4; i++)
-		DDX_Text (pDX, IDC_LIGHTNING_RED + i, objP->rtype.lightningInfo.color [i]);
-	objP->rtype.lightningInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rtype.lightningInfo.bEnabled);
-	objP->rtype.lightningInfo.nSmoothe = DDX_Flag (pDX, IDC_LIGHTNING_SMOOTHE, objP->rtype.lightningInfo.nSmoothe);
-	objP->rtype.lightningInfo.bClamp = DDX_Flag (pDX, IDC_LIGHTNING_CLAMP, objP->rtype.lightningInfo.bClamp);
-	objP->rtype.lightningInfo.bSound = DDX_Flag (pDX, IDC_LIGHTNING_SOUND, objP->rtype.lightningInfo.bSound);
-	objP->rtype.lightningInfo.bPlasma = DDX_Flag (pDX, IDC_LIGHTNING_PLASMA, objP->rtype.lightningInfo.bPlasma);
-	objP->rtype.lightningInfo.bRandom = DDX_Flag (pDX, IDC_LIGHTNING_RANDOM, objP->rtype.lightningInfo.bRandom);
-	objP->rtype.lightningInfo.bInPlane = DDX_Flag (pDX, IDC_LIGHTNING_INPLANE, objP->rtype.lightningInfo.bInPlane);
+		DDX_Text (pDX, IDC_LIGHTNING_RED + i, objP->rType.lightningInfo.color [i]);
+	objP->rType.lightningInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.lightningInfo.bEnabled);
+	objP->rType.lightningInfo.nSmoothe = DDX_Flag (pDX, IDC_LIGHTNING_SMOOTHE, objP->rType.lightningInfo.nSmoothe);
+	objP->rType.lightningInfo.bClamp = DDX_Flag (pDX, IDC_LIGHTNING_CLAMP, objP->rType.lightningInfo.bClamp);
+	objP->rType.lightningInfo.bSound = DDX_Flag (pDX, IDC_LIGHTNING_SOUND, objP->rType.lightningInfo.bSound);
+	objP->rType.lightningInfo.bPlasma = DDX_Flag (pDX, IDC_LIGHTNING_PLASMA, objP->rType.lightningInfo.bPlasma);
+	objP->rType.lightningInfo.bRandom = DDX_Flag (pDX, IDC_LIGHTNING_RANDOM, objP->rType.lightningInfo.bRandom);
+	objP->rType.lightningInfo.bInPlane = DDX_Flag (pDX, IDC_LIGHTNING_INPLANE, objP->rType.lightningInfo.bInPlane);
 	if (pDX->m_bSaveAndValidate)
-		objP->rtype.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
+		objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 	else {
-		CBStyle ()->SetCurSel (objP->rtype.lightningInfo.nStyle + 1);
+		CBStyle ()->SetCurSel (objP->rType.lightningInfo.nStyle + 1);
 		HiliteTarget ();
 		}
 	}
 else if (objP->id == SOUND_ID) {
-	objP->rtype.soundInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rtype.soundInfo.bEnabled);
-	DDX_Text (pDX, IDC_SOUND_FILE, objP->rtype.soundInfo.szFilename, sizeof (objP->rtype.soundInfo.szFilename));
-	DDX_Slider (pDX, IDC_SOUND_VOLUME, objP->rtype.soundInfo.nVolume);
+	objP->rType.soundInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.soundInfo.bEnabled);
+	DDX_Text (pDX, IDC_SOUND_FILE, objP->rType.soundInfo.szFilename, sizeof (objP->rType.soundInfo.szFilename));
+	DDX_Slider (pDX, IDC_SOUND_VOLUME, objP->rType.soundInfo.nVolume);
 	}
 }
 
@@ -288,7 +288,7 @@ CGameObject *objP = m_mine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = SMOKE_ID;
 objP->render_type = RT_SMOKE;
-memset (&objP->rtype.smokeInfo, 0, sizeof (objP->rtype.smokeInfo));
+memset (&objP->rType.smokeInfo, 0, sizeof (objP->rType.smokeInfo));
 Refresh ();
 theApp.MineView ()->Refresh ();
 }
@@ -305,7 +305,7 @@ CGameObject *objP = m_mine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = LIGHTNING_ID;
 objP->render_type = RT_LIGHTNING;
-memset (&objP->rtype.lightningInfo, 0, sizeof (objP->rtype.lightningInfo));
+memset (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
 Refresh ();
 theApp.MineView ()->Refresh ();
 }
@@ -322,8 +322,8 @@ CGameObject *objP = m_mine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = SOUND_ID;
 objP->render_type = RT_SOUND;
-*objP->rtype.soundInfo.szFilename = '\0';
-objP->rtype.soundInfo.nVolume = 10;
+*objP->rType.soundInfo.szFilename = '\0';
+objP->rType.soundInfo.nVolume = 10;
 Refresh ();
 theApp.MineView ()->Refresh ();
 }
@@ -366,11 +366,11 @@ if (objP->type != OBJ_EFFECT) {
 	}
 m_nBufferId = objP->id;
 if (m_nBufferId == SMOKE_ID)
-	m_smoke = objP->rtype.smokeInfo;
+	m_smoke = objP->rType.smokeInfo;
 else if (m_nBufferId == LIGHTNING_ID)
-	m_lightning = objP->rtype.lightningInfo;
+	m_lightning = objP->rType.lightningInfo;
 else if (m_nBufferId == SOUND_ID)
-	m_sound = objP->rtype.soundInfo;
+	m_sound = objP->rType.soundInfo;
 }
 
 //------------------------------------------------------------------------
@@ -389,11 +389,11 @@ if (objP->id != m_nBufferId) {
 	return;
 	}
 if (objP->id == SMOKE_ID)
-	objP->rtype.smokeInfo = m_smoke;
+	objP->rType.smokeInfo = m_smoke;
 else if (objP->id == LIGHTNING_ID)
-	objP->rtype.lightningInfo = m_lightning;
+	objP->rType.lightningInfo = m_lightning;
 else if (objP->id == SOUND_ID)
-	objP->rtype.soundInfo = m_sound;
+	objP->rType.soundInfo = m_sound;
 Refresh ();
 }
 
@@ -414,11 +414,11 @@ INT32 i;
 for (i = m_mine->ObjCount (); i; i--, objP++)
 	if ((objP->type == OBJ_EFFECT) && (objP->id == m_nBufferId) && (bAll || m_mine->SegmentIsMarked (objP->nSegment)))
 		if (m_nBufferId == SMOKE_ID)
-			objP->rtype.smokeInfo = m_smoke;
+			objP->rType.smokeInfo = m_smoke;
 		else if (m_nBufferId == LIGHTNING_ID)
-			objP->rtype.lightningInfo = m_lightning;
+			objP->rType.lightningInfo = m_lightning;
 		else if (m_nBufferId == SOUND_ID)
-			objP->rtype.soundInfo = m_sound;
+			objP->rType.soundInfo = m_sound;
 Refresh ();
 }
 
@@ -445,7 +445,7 @@ void CEffectTool::OnSetStyle ()
 if (!GetMine ())
 	return;
 CGameObject *objP = m_mine->CurrObj ();
-objP->rtype.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
+objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 //Refresh ();
 }
 
@@ -462,9 +462,9 @@ CGameObject *objP = m_mine->CurrObj ();
 if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
 m_mine->Other ()->nObject = m_mine->Current ()->nObject;
-if (nTarget = objP->rtype.lightningInfo.nTarget)
+if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++, objP++)
-		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rtype.lightningInfo.nId == nTarget)) {
+		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			m_mine->Other ()->nObject = i;
 			break;
 			return;

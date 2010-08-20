@@ -332,13 +332,13 @@ for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i+
 // fix clip numbers for poly Objects () (except robots)
 	switch (objP->type) {
 		case OBJ_PLAYER   : // the player on the console
-			objP->rtype.pobj_info.model_num = D2_PLAYER_CLIP_NUMBER;
+			objP->rType.polyModelInfo.model_num = D2_PLAYER_CLIP_NUMBER;
 			break;
 		case OBJ_CNTRLCEN : // the control center
-			objP->rtype.pobj_info.model_num = D2_REACTOR_CLIP_NUMBER;
+			objP->rType.polyModelInfo.model_num = D2_REACTOR_CLIP_NUMBER;
 			break;
 		case OBJ_COOP     : // a cooperative player object
-			objP->rtype.pobj_info.model_num = D2_COOP_CLIP_NUMBER;
+			objP->rType.polyModelInfo.model_num = D2_COOP_CLIP_NUMBER;
 			break;
 		}
 	}

@@ -246,7 +246,7 @@ if (nFlags & MK_SHIFT) {
 	CGameObject *objP = mine->Objects () + mine->Current ()->nObject;
    if (objP->render_type != RT_POLYOBJ) 
 		return;
-	objP->rtype.pobj_info.tmap_override = nBaseTex;
+	objP->rType.polyModelInfo.tmap_override = nBaseTex;
   } 
 else if (nFlags & MK_CONTROL) {
 	theApp.ToolView ()->TriggerTool ()->SetTexture (nBaseTex, -1);
