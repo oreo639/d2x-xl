@@ -221,7 +221,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		}
 
 		// replace all trigger segP numbers with real numbers
-		for (i = NumTriggers (), trigP = Triggers (); i; i--, trigP++) {
+		for (i = NumTriggers (), trigP = Triggers (0); i; i--, trigP++) {
 			for (j = 0; j < trigP->m_count; j++) {
 				if (SegCount () > (nSegment = trigP->Segment (j)))
 					trigP->Segment (j) = Segments (nSegment)->nIndex; 
@@ -233,7 +233,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 			}
 
 		// replace all trigger segP numbers with real numbers
-		for (i = NumObjTriggers (), trigP = ObjTriggers (); i; i--, trigP++) {
+		for (i = NumObjTriggers (), trigP = ObjTriggers (0); i; i--, trigP++) {
 			for (j = 0; j < trigP->m_count; j++) {
 				if (SegCount () > (nSegment = trigP->Segment (j)))
 					trigP->Segment (j) = Segments (nSegment)->nIndex; 
@@ -338,7 +338,7 @@ void CMine::DeleteVertex(INT16 nDeletedVert)
 
 theApp.SetModified (TRUE); 
 // fill in gap in vertex array and status
-memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices ()));
+memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices (0)));
 // update anyone pointing to this vertex
 CSegment *segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
@@ -518,20 +518,19 @@ for (int i = 0; i < 4; i++)
 	Vertices (VertCount ()++)->m_status = 0;
 
 // link the new segment with any touching Segments ()
-CSegment *pSeg = Segments ();
 CFixVector *vNewSeg = Vertices (Segments (nNewSeg)->verts [0]);
 CFixVector *vSeg;
-for (nSegment = 0; nSegment < SegCount (); nSegment++, pSeg++) {
+for (nSegment = 0; nSegment < SegCount (); nSegment++) {
 	if (nSegment!= nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (pSeg->verts [0]);
+		vSeg = Vertices (Segments (nSegment) ->verts [0]);
 		if (labs (vNewSeg->x - vSeg->x) < 0xA00000L &&
 			 labs (vNewSeg->y - vSeg->y) < 0xA00000L &&
 			 labs (vNewSeg->z - vSeg->z) < 0xA00000L)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
-					LinkSegments(nNewSeg,nNewSide,nSegment,nSide,3*F1_0);
+					LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3 * F1_0);
 		}
 	}
 // auto align textures new segment
@@ -830,7 +829,7 @@ bool CMine::LinkSegments (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 si
 {
 	CSegment *seg1, *seg2; 
 	INT16 i, j; 
-	CFixVector v1 [4], v2 [4]; 
+	CVertex v1 [4], v2 [4]; 
 	INT16 fail;
 	tVertMatch match [4]; 
 
@@ -844,14 +843,14 @@ if (seg1->children [sidenum1]!=-1 || seg2->children [sidenum2]!=-1)
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = seg1->verts [side_vert [sidenum1][i]];
-	memcpy (v1 + i, Vertices (nVertex), sizeof (*Vertices ()));
+	memcpy (&v1 [i], Vertices (nVertex), sizeof (CVertex));
 /*
 	v1 [i].x = Vertices (nVertex)->x; 
 	v1 [i].y = Vertices (nVertex)->y; 
 	v1 [i].z = Vertices (nVertex)->z; 
 */
 	nVertex = seg2->verts [side_vert [sidenum2][i]];
-	memcpy (v2 + i, Vertices (nVertex), sizeof (*Vertices ()));
+	memcpy (&v2 [i], Vertices (nVertex), sizeof (CVertex));
 /*
 	v2 [i].x = Vertices (nVertex)->x; 
 	v2 [i].y = Vertices (nVertex)->y; 
@@ -868,7 +867,7 @@ for (i = 0; i < 4; i++)
 			 labs (v1 [i].y - v2 [j].y) < margin &&
 			 labs (v1 [i].z - v2 [j].z) < margin)
 			if (match [j].i != -1) // if this vertex already matched another vertex then abort
-				return FALSE; 
+				return false; 
 			else
 				match [j].i = i;  // remember which vertex it matched
 /*
@@ -1197,7 +1196,7 @@ INT32 child_segnum = parent_seg->children [nSide];
 // does this side have a child?
 if (child_segnum < 0 || child_segnum >= SegCount ())
 	return;
-CSegment *child_seg = Segments () + child_segnum; 
+CSegment *child_seg = Segments (0) + child_segnum; 
 // yes, see if child has a side which points to the parent
 INT32 child_sidenum;
 for (child_sidenum = 0; child_sidenum < 6; child_sidenum++)
@@ -1308,7 +1307,7 @@ if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES)
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 // create a new point (copy of other vertex)
-memcpy (Vertices (VertCount ()), Vertices (vert), sizeof (*Vertices ()));
+memcpy (Vertices (VertCount ()), Vertices (vert), sizeof (*Vertices (0)));
 /*
 Vertices (VertCount ()).x = Vertices (vert).x; 
 Vertices (VertCount ()).y = Vertices (vert).y; 
@@ -1393,7 +1392,7 @@ segP = Segments (Current ()->nSegment);
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (found [i]) {
-		memcpy (Vertices (VertCount ()), Vertices (vert [i]), sizeof (*Vertices ()));
+		memcpy (Vertices (VertCount ()), Vertices (vert [i]), sizeof (*Vertices (0)));
 		/*
 		vertices [VertCount ()].x = vertices [vert [i]].x; 
 		vertices [VertCount ()].y = vertices [vert [i]].y; 
@@ -1491,7 +1490,7 @@ if (!solidify) {
 	// create new points (copy of other vertices)
 	for (i = 0; i < 4; i++) {
 		if (found [i]) {
-			memcpy (Vertices (VertCount ()), Vertices (vert [i]), sizeof (*Vertices ()));
+			memcpy (Vertices (VertCount ()), Vertices (vert [i]), sizeof (*Vertices (0)));
 			/*
 			vertices [VertCount ()].x = vertices [vert [i]].x; 
 			vertices [VertCount ()].y = vertices [vert [i]].y; 
@@ -1554,14 +1553,14 @@ if (Current1 ().nSegment== Current2 ().nSegment) {
 	}
 
 if (Current () == &Current1 ()) {
-	seg1 = Segments () + Current1 ().nSegment; 
-	seg2 = Segments () + Current2 ().nSegment; 
+	seg1 = Segments (0) + Current1 ().nSegment; 
+	seg2 = Segments (0) + Current2 ().nSegment; 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	}
 else {
-	seg1 = Segments () + Current2 ().nSegment; 
-	seg2 = Segments () + Current1 ().nSegment; 
+	seg1 = Segments (0) + Current2 ().nSegment; 
+	seg2 = Segments (0) + Current1 ().nSegment; 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1622,14 +1621,14 @@ if (Current1 ().nSegment == Current2 ().nSegment) {
 	}
 
 if (Current ()== &Current1 ()) {
-	seg1 = Segments () + Current1 ().nSegment; 
-	seg2 = Segments () + Current2 ().nSegment; 
+	seg1 = Segments (0) + Current1 ().nSegment; 
+	seg2 = Segments (0) + Current2 ().nSegment; 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	} 
 else {
-	seg1 = Segments () + Current2 ().nSegment; 
-	seg2 = Segments () + Current1 ().nSegment; 
+	seg1 = Segments (0) + Current2 ().nSegment; 
+	seg2 = Segments (0) + Current1 ().nSegment; 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1739,26 +1738,26 @@ INT16 nNewSide, nSide, nSegment, nNewSeg;
 
 nNewSeg = Current ()->nSegment; 
 nNewSide = Current ()->nSide; 
-CSegment *pSeg = Segments (),
+CSegment *segP = Segments (0),
 			*pNewSeg = Segments (nNewSeg);
-CFixVector	*vSeg, 
+CVertex	*vSeg, 
 			*vNewSeg = Vertices (pNewSeg->verts [0]);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, pSeg) {
+for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (pSeg->verts [0]);
+		vSeg = Vertices (segP->verts [0]);
 		if (fabs ((double) (vNewSeg->x - vSeg->x)) < 0xA00000L &&
 		    fabs ((double) (vNewSeg->y - vSeg->y)) < 0xA00000L &&
 		    fabs ((double) (vNewSeg->z - vSeg->z)) < 0xA00000L) {
 			for (nSide = 0; nSide < 6; nSide++) {
 				if (!LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3*F1_0)) {
 					// if these Segments () were linked, then unlink them
-					if (pNewSeg->children [nNewSide]== nSegment && pSeg->children [nSide]== nNewSeg) {
+					if (pNewSeg->children [nNewSide]== nSegment && segP->children [nSide]== nNewSeg) {
 						pNewSeg->children [nNewSide] =-1; 
 						pNewSeg->childFlags &= ~(1 << nNewSide); 
-						pSeg->children [nSide] =-1; 
-						pSeg->childFlags &= ~(1 << nSide); 
+						segP->children [nSide] =-1; 
+						segP->childFlags &= ~(1 << nSide); 
 						}
 					}
 				}
@@ -1783,7 +1782,7 @@ void CMine::JoinSegments(INT32 solidify)
 	CSegment *segP; 
 	CSegment *seg1, *seg2; 
 	INT16 h, i, j, nSide, nNewSeg, nSegment; 
-	CFixVector v1 [4], v2 [4]; 
+	CVertex v1 [4], v2 [4]; 
 	double radius, min_radius, max_radius, dx, dy, dz, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
@@ -1809,7 +1808,7 @@ if (solidify) {
 	seg1 = Segments (cur1->nSegment); 
 	for (i = 0; i < 4; i++) {
 #if 1
-		memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (*Vertices ()));
+		memcpy (&v1 [i], Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (CVertex));
 #else
 		INT32 nVertex = seg1->verts [side_vert [cur1->nSide][i]];
 		v1 [i].x = Vertices (nVertex)->x; 
@@ -1818,14 +1817,14 @@ if (solidify) {
 #endif
 		}
 	minTotalRad = 1e300;
-	for (nSegment = 0, seg2 = Segments (); nSegment < SegCount (); nSegment++, seg2++) {
+	for (nSegment = 0, seg2 = Segments (0); nSegment < SegCount (); nSegment++, seg2++) {
 		if (nSegment== cur1->nSegment)
 			continue; 
 		for (nSide = 0; nSide < 6; nSide++) {
 			fail = FALSE; 
 			for (i = 0; i < 4; i++) {
 #if 1
-				memcpy (v2 + i, Vertices (seg2->verts[side_vert[nSide][i]]), sizeof (*Vertices ()));
+				memcpy (&v2 [i], Vertices (seg2->verts[side_vert[nSide][i]]), sizeof (CVertex));
 #else
 				INT32 nVertex = seg2->verts [side_vert [nSide][i]];
 				v2 [i].x = Vertices (nVertex)->x; 
@@ -1935,8 +1934,8 @@ seg2 = Segments (cur2->nSegment);
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (v1 + i, Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (*Vertices ())); 
-	memcpy (v2 + i, Vertices (seg2->verts [side_vert [cur2->nSide][i]]), sizeof (*Vertices ())); 
+	memcpy (&v1 [i], Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v2 [i], Vertices (seg2->verts [side_vert [cur2->nSide][i]]), sizeof (CVertex)); 
 /*
 	v1 [i].x = vertices [seg1->verts [side_vert [cur1->nSide][i]]].x; 
 	v1 [i].y = vertices [seg1->verts [side_vert [cur1->nSide][i]]].y; 
@@ -2153,7 +2152,7 @@ void CMine::SetUV (INT16 nSegment, INT16 nSide, INT16 x, INT16 y, double dummy)
 // 0, 1, 2, 3 represent B, C, D, E coordinate transformations
 
 // copy side's four points into A
-INT32 h = sizeof (*Vertices ());
+INT32 h = sizeof (*Vertices (0));
 for (i = 0; i < 4; i++) {
 	nVertex = Segments (nSegment)->verts [side_vert [nSide][i]]; 
 	A [i].x = Vertices (nVertex)->x; 
@@ -2651,7 +2650,7 @@ else {
 bool CMine::SplitSegment ()
 {
 	CSegment	*centerSegP = CurrSeg (), *segP, *childSegP;
-	INT16			nCenterSeg = INT16 (centerSegP - Segments ());
+	INT16			nCenterSeg = INT16 (centerSegP - Segments (0));
 	INT16			nSegment, childSegNum;
 	INT16			nSide, oppSideNum, childSideNum;
 	INT16			vertNum, nWall;

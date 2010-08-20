@@ -83,7 +83,7 @@ if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (nSegment, i);
 		CSegment *s;
-		for (i = SegCount (), s = Segments (); i; i--, s++)
+		for (i = SegCount (), s = Segments (0); i; i--, s++)
 			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (s->nMatCen == nMatCens)) {
 				s->nMatCen = nDelMatCen;
 				break;
@@ -108,7 +108,7 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 			DeleteTriggerTargets (nSegment, i);
 		CSegment *s;
 		nDelMatCen += (INT32) GameInfo ().botgen.count;
-		for (i = SegCount (), s = Segments (); i; i--, s++)
+		for (i = SegCount (), s = Segments (0); i; i--, s++)
 			if ((s->function == SEGMENT_FUNC_EQUIPMAKER) && (s->nMatCen == nMatCens)) {
 				s->nMatCen = nDelMatCen;
 				break;

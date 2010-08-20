@@ -561,7 +561,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 			for (i = 0; i < 4; i++) {
 				sideP->uvls [i].l = 0;
 				if (!bAll)
-					MEMSET (VertexColors (segP->verts [side_vert [nSide][i]]).Clear ();
+					VertexColors (segP->verts [side_vert [nSide][i]])->Clear ();
 				}
 			}
 

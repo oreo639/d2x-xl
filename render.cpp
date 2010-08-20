@@ -138,7 +138,7 @@ void TextureMap(INT32 resolution,
 	
 	// TEMPORARY
 	INT32 inc_resolution = 1<<resolution;
-	CSideKey face (INT16 (segment - theMine->Segments ()), nSide);
+	CSideKey face (INT16 (segment - theMine->Segments (0)), nSide);
 	INT16 flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
 	INT16 dscan_light,scan_light;
 	INT16 light[4];

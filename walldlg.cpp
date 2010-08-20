@@ -290,7 +290,7 @@ else {
 	else
 		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (INT32)m_pWall [0]->nTrigger);
 
-	m_nWall [0] = INT32 (m_pWall [0] - theMine->Walls ());
+	m_nWall [0] = INT32 (m_pWall [0] - theMine->Walls (0));
 	GetOtherWall ();
 	m_nSegment = m_pWall [0]->m_nSegment;
 	m_nSide = m_pWall [0]->m_nSide + 1;

@@ -1208,7 +1208,7 @@ theApp.MineView ()->RefreshObject (old_object, new_object);
 
 bool CObjectTool::SetPlayerId (CGameObject *objP, INT32 objType, INT32 *ids, INT32 numIds, char *pszError)
 {
-CGameObject *o = theMine->Objects ();
+CGameObject *o = theMine->Objects (0);
 INT32		i, n = 0;
 
 for (i = theMine->ObjCount (); i && (n < numIds); i--, o++)

@@ -606,11 +606,11 @@ void CTriggerTool::OnAddTrigger ()
 m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ();
 if (m_nClass) {
 	m_pTrigger = theMine->AddObjTrigger (-1, m_nType);
-	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - theMine->ObjTriggers ()) : -1; 
+	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - theMine->ObjTriggers (0)) : -1; 
 	}
 else {
 	m_pTrigger = theMine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - theMine->Triggers ()) : -1;
+	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - theMine->Triggers (0)) : -1;
 	}
 // Redraw trigger window
 Refresh ();

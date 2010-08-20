@@ -35,18 +35,18 @@ return (pi->id < pm->id) ? -1 : (pi->id > pm->id) ? 1 : 0;
 
 INT16 CMine::FindObjBySig (INT16 signature)
 {
-	CGameObject*	objP = Objects ();
+	CGameObject*	objP = Objects (0);
 
 for (INT16 i = ObjCount (); i; i--, objP++)
 	if (objP->signature == signature)
-		return INT16 (objP - Objects ());
+		return INT16 (objP - Objects (0));
 return -1;
 }
 
 
 void CMine::RenumberTriggerTargetObjs (void)
 {
-	CTrigger*	trigP = Triggers ();
+	CTrigger*	trigP = Triggers (0);
 
 for (INT32 i = TriggerCount (); i; i--, trigP++) {
 	for (INT32 j = 0; j < trigP->m_count; ) {
@@ -67,7 +67,7 @@ for (INT32 i = TriggerCount (); i; i--, trigP++) {
 
 void CMine::RenumberObjTriggers (void)
 {
-	CTrigger*	trigP = ObjTriggers ();
+	CTrigger*	trigP = ObjTriggers (0);
 	INT32			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
@@ -189,7 +189,7 @@ void CMine::SetObjectData (INT8 type)
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-objP = Objects () + Current ()->nObject;
+objP = Objects (0) + Current ()->nObject;
 id = objP->id;
 MEMSET (&objP->mType, 0, sizeof (objP->mType));
 MEMSET (&objP->cType, 0, sizeof (objP->cType));
@@ -360,7 +360,7 @@ type = (new_type == OBJ_NONE) ? CurrObj ()->type : new_type;
 // Set the id if it's a player or coop
 //------------------------------------------------------
 if (type == OBJ_PLAYER || type == OBJ_COOP) {
-	objP = Objects ();
+	objP = Objects (0);
 	for (objnum = GameInfo ().objects.count; objnum; objnum--, objP++)
 		if (objP->type == type) {
 			id = objP->id;
@@ -396,7 +396,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (GameInfo ().objects.count == 0) {
-	MakeObject (Objects (), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
+	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
 	GameInfo ().objects.count = 1;
 	objnum = 0;
 	}

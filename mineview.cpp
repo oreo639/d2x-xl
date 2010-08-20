@@ -802,7 +802,7 @@ void CMineView::CalcSegDist (void)
 	CSegment	*segI, *segJ;
 	INT16			*segRef = new INT16 [segNum];
 
-for (i = segNum, segI = theMine->Segments (); i; i--, segI++)
+for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->nIndex = -1;
 segRef [0] = theMine->Current ()->nSegment;	
 theMine->CurrSeg ()->nIndex = 0;
@@ -1673,9 +1673,9 @@ void CMineView::DrawLine(CSegment *segP,INT16 vert1,INT16 vert2)
 
 void CMineView::DrawWalls(void) 
 {
-	CWall		*walls = theMine->Walls ();
-	CSegment	*segments = theMine->Segments ();
-	CFixVector	*vertices = theMine->Vertices ();
+	CWall		*walls = theMine->Walls (0);
+	CSegment	*segments = theMine->Segments (0);
+	CVertex	*vertices = theMine->Vertices (0);
 	CSegment	*segP;
 	INT16 i,j;
 	INT16 x_max = m_viewWidth * 2;
@@ -2275,7 +2275,7 @@ if (theMine->m_bSplineActive)
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   INT16 vertex = theMine->Segments () [theMine->Current ()->nSegment].verts [side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint]];
+   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].verts [side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", theMine->Vertices (vertex)->x, theMine->Vertices (vertex)->y, theMine->Vertices (vertex)->z);
 	strcat_s (message, sizeof (message), szCoord);
@@ -2677,7 +2677,7 @@ void CMineView::CenterMine()
 //	CDlcDoc* pDoc = GetDocument();
 //	ASSERT_VALID(pDoc);
 
-	CFixVector *verts;
+	CVertex *verts;
 	INT32 maxx = 0;
 	INT32 minx = 0;
 	INT32 maxy = 0;
@@ -2686,7 +2686,7 @@ void CMineView::CenterMine()
 	INT32 minz = 0;
 
 	INT32 i;
-	verts = theMine->Vertices ();
+	verts = theMine->Vertices (0);
 	for (i=0;i<theMine->VertCount ();i++, verts++) {
 		maxx = max(maxx, verts->x);
 		minx = min(minx, verts->x);
@@ -2733,7 +2733,7 @@ Refresh (false);
 void CMineView::CenterCube()
 {
 	CSegment& segP = theMine->Segments (0) [m_Current->nSegment];
-	CFixVector *vMine = theMine->Vertices ();
+	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = segP.verts;
 
 	m_movex = -((double)vMine [segP.verts [0]].x
@@ -3317,7 +3317,7 @@ return true;
 void CMineView::CalcSegmentCenter(CFixVector& pos,INT16 nSegment) 
 {
 CSegment *segP = theMine->Segments (0) + nSegment;
-CFixVector *vMine = theMine->Vertices ();
+CVertex *vMine = theMine->Vertices (0);
 INT16 *vSeg = segP->verts;
 pos.x  =
    (vMine [vSeg [0]].x
@@ -3553,7 +3553,7 @@ void CMineView::FinishDrag (void)
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
 point1 = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-vert1 = theMine->Segments () [theMine->Current ()->nSegment].verts [point1];
+vert1 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point1];
 // find point to merge with
 for (i = 0; i < theMine->VertCount (); i++) {
 	xPoint = m_viewPoints [i].x;
@@ -3572,7 +3572,7 @@ if (count == 1) {
 // make sure new vert is not one of the current cube's verts
 	for (i=0;i<8;i++) {
 		if (i!=point1) {
-			vert2 = theMine->Segments () [theMine->Current ()->nSegment].verts [i];
+			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [i];
 			if (new_vert==vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
@@ -3583,7 +3583,7 @@ if (count == 1) {
 	// make sure the new line lengths are close enough
 		for (i=0;i<3;i++) {
 			point2 = connect_points [point1] [i];
-			vert2 = theMine->Segments () [theMine->Current ()->nSegment].verts [point2];
+			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point2];
 			if (theMine->CalcLength (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
@@ -3760,7 +3760,7 @@ if (child <= -1) {
 		}
 	}
 if (child > -1) {
-	childseg = theMine->Segments () + child;
+	childseg = theMine->Segments (0) + child;
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
 		if (childseg->children [nSide] == theMine->Current ()->nSegment) {

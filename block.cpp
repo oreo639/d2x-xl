@@ -46,7 +46,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	INT16				i, j, test;
 	INT16				origVertCount, k;
 	FIX				x,y,z;
-	CFixVector		origin,vect;
+	CVertex			origin, vect;
 	struct dvector x_prime, y_prime, z_prime;
 	struct dvector x_pprime, y_pprime, z_pprime;
 	double			length;
@@ -61,7 +61,7 @@ origVertCount = VertCount ();
 segP = CurrSeg ();
 nSide = Current ()->nSide;
 nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(0)]];
-origin = Vertices (nVertex);
+memcpy (&origin, Vertices (nVertex), sizeof (CVertex));
 /*
 origin.x = Vertices (nVertex)->x;
 origin.y = Vertices (nVertex)->y;
@@ -865,7 +865,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		//  segment's offset number, otherwise set it to -1
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (segP->childFlags & (1 << child)) {
-				seg2 = Segments ();
+				seg2 = Segments (0);
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
 					if (segP->children [child] == ~seg2->nIndex) {
 						segP->children [child] = seg_offset;
@@ -875,7 +875,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				if (seg_offset == SegCount ()) { // no child found
 					ResetSide (nSegment,child);
 					// auto link the new segment with any touching Segments ()
-					seg2 = Segments ();
+					seg2 = Segments (0);
 					INT32 segnum2, sidenum2;
 					for (segnum2 = 0; segnum2 < SegCount (); segnum2++, seg2++) {
 						if (nSegment != segnum2) {

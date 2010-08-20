@@ -532,7 +532,7 @@ UINT8 pad = DefRobotInfo (i)->pad [0];
 DefRobotInfo (i)->pad [0] = RobotInfo (i)->pad [0]; //make sure it's equal for the comparison
 if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're different
 	// find a robot of that type
-	for (j = GameInfo ().objects.count, objP = Objects (); j; j--, objP++)
+	for (j = GameInfo ().objects.count, objP = Objects (0); j; j--, objP++)
 		if ((objP->type == OBJ_ROBOT) && (objP->id == i))
 			break;
 	if (j) // found one

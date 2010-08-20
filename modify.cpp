@@ -402,18 +402,18 @@ switch (m_selectMode) {
 
 	case BLOCK_MODE:
 		theApp.SetModified (TRUE);
-		CFixVector max_pt, min_pt, center, *verts;
+		CFixVector max_pt, min_pt, center;
+		CVertex* verts;
 		max_pt.x = -0x7fffffffL;
 		max_pt.y = -0x7fffffffL;
 		max_pt.z = -0x7fffffffL;
 		min_pt.x =  0x7fffffffL;
 		min_pt.y =  0x7fffffffL;
 		min_pt.z =  0x7fffffffL;
-		verts = Vertices ();
-		UINT8& vstats = VertStatus ();
+		verts = Vertices (0);
 		j = 0;
-		for (i = VertCount (), j = 0; j < i; j++, verts++, vstats++)
-			if (vstats & MARKED_MASK) {
+		for (i = VertCount (), j = 0; j < i; j++, verts++)
+			if (verts->m_status & MARKED_MASK) {
 				max_pt.x = max (max_pt.x, verts->x);
 				max_pt.y = max (max_pt.y, verts->y);
 				max_pt.z = max (max_pt.z, verts->z);
@@ -425,10 +425,9 @@ switch (m_selectMode) {
 		center.y = (max_pt.y + min_pt.y) / 2;
 		center.z = (max_pt.z + min_pt.z) / 2;
 		double scale = ((double)(20*F1_0) + (double)inc)/(double)(20*F1_0);
-		verts = Vertices ();
-		vstats = VertStatus ();
-		for (i = VertCount (), j = 0; j < i; j++, verts++, vstats++)
-			if (vstats & MARKED_MASK) {
+		verts = Vertices (0);
+		for (i = VertCount (), j = 0; j < i; j++, verts++)
+			if (verts->m_status & MARKED_MASK) {
 				verts->x = center.x + (long) ((verts->x - center.x) * scale);
 				verts->y = center.y + (long) ((verts->y - center.y) * scale);
 				verts->z = center.z + (long) ((verts->z - center.z) * scale);
@@ -695,7 +694,7 @@ switch (m_selectMode) {
 	break;
 
 	case BLOCK_MODE:
-		CGameObject *objP = Objects ();
+		CGameObject *objP = Objects (0);
 		switch (axis) {
 			case 'X':
 				for (i = 0; i < MAX_VERTICES; i++)
@@ -928,7 +927,7 @@ switch (m_selectMode) {
 			if (VertStatus (i) & MARKED_MASK)
 				RotateVertex(Vertices (i),&center,&opp_center,angle);
 		// rotate Objects () within marked cubes
-		objP = Objects ();
+		objP = Objects (0);
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
 				RotateVertex(&objP->pos, &center, &opp_center, angle);

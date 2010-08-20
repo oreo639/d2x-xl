@@ -283,7 +283,7 @@ GetCurrent (nSegment, nSide);
 CWall *wallP;
 INT32 nWall;
 
-for (wallP = Walls (), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++)
+for (wallP = Walls (0), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++)
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide))
 		return wallP;
 return NULL;
@@ -330,7 +330,7 @@ CWall *wallP = FindWall (nSegment, nSide);
 if (!wallP || ((wallP->type != WALL_DOOR) && (wallP->type != WALL_BLASTABLE)))
 	return true;
 
-CSide *sideP = Segments () [nSegment].sides + nSide;
+CSide *sideP = Segments (0) [nSegment].sides + nSide;
 
 if (FindClip (wallP, sideP->nOvlTex) >= 0)
 	return true;

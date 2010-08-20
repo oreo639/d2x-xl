@@ -959,7 +959,7 @@ bool CDiagTool::CheckTriggers ()
 	CTrigger *trigP = theMine->Triggers (0);
 	INT32 wallCount = theMine->GameInfo ().walls.count;
 	CWall *wallP;
-	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers ();
+	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers (0);
 
 	// make sure trigP is linked to exactly one wallP
 for (i = 0; i < reactorTrigger->m_count; i++)
@@ -991,7 +991,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
 						break; // found it
 				// if did not find it
-				if (i>=theMine->ReactorTriggers ()->m_count) {
+				if (i>=theMine->ReactorTriggers (0)->m_count) {
 					if (m_bAutoFixBugs) {
 						theMine->AutoLinkExitToReactor ();
 						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
@@ -1768,7 +1768,7 @@ for (vStat = theMine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
 			if (nVertex < --theMine->VertCount ())
-				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->VertCount () - nVertex) * sizeof (*theMine->Vertices ()));
+				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->VertCount () - nVertex) * sizeof (*theMine->Vertices (0)));
 			CSegment *segP = theMine->Segments (0);
 			for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)

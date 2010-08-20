@@ -701,7 +701,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 			if (segP->children [nSide] < 0)	// assume no wall if no child segment at the current side
 				continue;
-			childseg = theMine->Segments () + segP->children [nSide];
+			childseg = theMine->Segments (0) + segP->children [nSide];
 			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it

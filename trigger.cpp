@@ -219,7 +219,7 @@ if (nTrigger >= GameInfo ().triggers.count)
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-CWall *wallP = Walls ();
+CWall *wallP = Walls (0);
 for (i = GameInfo ().walls.count; i; i--, wallP++)
 	if ((wallP->nTrigger != NO_TRIGGER) && (wallP->nTrigger > nTrigger))
 		wallP->nTrigger--;
@@ -231,7 +231,7 @@ for (i = GameInfo ().walls.count; i; i--, wallP++)
 // remove trigger from array
 //for (i=nTrigger;i<GameInfo ().triggers.count-1;i++)
 // update number of Triggers ()
-CTrigger *trigP = Triggers ();
+CTrigger *trigP = Triggers (0);
 for (i = NumTriggers (); i; i--, trigP++)
 	if (trigP->type >= TT_MASTER)
 		DeleteTriggerTarget (trigP, nSegment, nSide, false);
@@ -298,12 +298,12 @@ for (i = 0; i < NumObjTriggers (); i++)
 INT16 CMine::FindTriggerWall (INT16 *nTrigger, INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
-CWall *wallP = Walls ();
+CWall *wallP = Walls (0);
 INT32 nWall;
 for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++) {
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide)) {
 		*nTrigger = wallP->nTrigger;
-		return INT16 (wallP - Walls ());
+		return INT16 (wallP - Walls (0));
 		}
 	}
 *nTrigger = NO_TRIGGER;
@@ -312,11 +312,11 @@ return GameInfo ().walls.count;
 
 INT16 CMine::FindTriggerWall (INT16 nTrigger)
 {
-CWall *wallP = Walls ();
+CWall *wallP = Walls (0);
 INT32 nWall;
 for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++)
 	if (wallP->nTrigger == nTrigger)
-		return INT16 (wallP - Walls ());
+		return INT16 (wallP - Walls (0));
 return GameInfo ().walls.count;
 }
 
@@ -339,7 +339,7 @@ return -1;
 
 INT16 CMine::FindTriggerTarget (INT16 nTrigger, INT16 nSegment, INT16 nSide)
 {
-	CTrigger *trigP = Triggers ();
+	CTrigger *trigP = Triggers (0);
 	CSideKey key = CSideKey (nSegment, nSide);
 	INT32 i, j;
 
@@ -479,13 +479,13 @@ while (i)
 
 INT16 CMine::FindObjTriggerTarget (INT16 nTrigger, INT16 nSegment, INT16 nSide)
 {
-CTrigger *t = ObjTriggers ();
+CTrigger *trigP = ObjTriggers (0);
 CSideKey key = CSideKey (nSegment, nSide);
 INT32 i, j;
 
-for (i = nTrigger; i < NumObjTriggers (); i++, t++)
-	for (j = 0; j < t->m_count; j++)
-		if (-1 < (i = t->Find (key)))
+for (i = nTrigger; i < NumObjTriggers (); i++, trigP++)
+	for (j = 0; j < trigP->m_count; j++)
+		if (-1 < (i = trigP->Find (key)))
 			return i;
 return -1;
 }

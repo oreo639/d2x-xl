@@ -397,7 +397,7 @@ else {
 			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES))
 				DEBUGMSG (" Tunnel generator: Vertex number out of range.")
 			else
-				memcpy (Vertices (VertCount ()), Vertices (nVertex - j), sizeof (*Vertices ()));
+				memcpy (Vertices (VertCount ()), Vertices (nVertex - j), sizeof (*Vertices (0)));
 /*
 			vertices [VertCount ()].x = vertices [nVertex-j].x;
 			vertices [VertCount ()].y = vertices [nVertex-j].y;
