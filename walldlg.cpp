@@ -437,7 +437,7 @@ void CWallTool::OnDeleteWallAll ()
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CSegment *segP = theMine->Segments ();
+CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;

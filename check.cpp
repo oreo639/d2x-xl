@@ -421,7 +421,7 @@ return true;
 bool CDiagTool::CheckSegTypes () 
 {
 	INT16	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
-	CSegment	*segP = theMine->Segments ();
+	CSegment	*segP = theMine->Segments (0);
 
 for (i = theMine->SegCount (); i; i--, segP++)
 	switch (segP->function) {
@@ -465,7 +465,7 @@ bool CDiagTool::CheckSegments ()
   INT16 i,j;
   double angle,flatness;
   INT16 match[4];
-  CSegment *segP = theMine->Segments ();
+  CSegment *segP = theMine->Segments (0);
 
   // check Segments ()
   //--------------------------------------------------------------
@@ -622,7 +622,7 @@ bool CDiagTool::CheckObjects ()
 	INT32				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
 	CFixVector			center;
 	double			x, y, z, radius, max_radius, object_radius;
-	CGameObject*	objP = theMine->Objects ();
+	CGameObject*	objP = theMine->Objects (0);
 	CGameObject*	pPlayer = NULL;
 	INT32				objCount = theMine->GameInfo ().objects.count;
 	CSegment*		segP;
@@ -835,7 +835,7 @@ if (theMine->Objects (0)->type != OBJ_PLAYER || theMine->Objects (0)->id != 0) {
 	MEMSET (nPlayers, 0, sizeof (nPlayers));
 	bFix = 0;
 	// count each
-	objP = theMine->Objects ();
+	objP = theMine->Objects (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
 		if (objP->type == OBJ_PLAYER) {
 			nPlayers [0]++;
@@ -861,7 +861,7 @@ if (m_bAutoFixBugs) {
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
-	objP = theMine->Objects ();
+	objP = theMine->Objects (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
 		if (objP->type == OBJ_PLAYER) {
 			if ((bFix & 1) && (objP->id >= 0) && (objP->id < MAX_PLAYERS))
@@ -899,7 +899,7 @@ else if (nPlayers [1] > 3) {
 
   // make sure there is only one control center
 count = 0;
-objP = theMine->Objects ();
+objP = theMine->Objects (0);
 for (nObject=0;nObject<objCount;nObject++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	type = objP->type;
@@ -956,7 +956,7 @@ bool CDiagTool::CheckTriggers ()
 	LBBugs ()->AddString ("[Triggers]");
 	INT32 segCount = theMine->SegCount ();
 	INT32 trigCount = theMine->GameInfo ().triggers.count;
-	CTrigger *trigP = theMine->Triggers ();
+	CTrigger *trigP = theMine->Triggers (0);
 	INT32 wallCount = theMine->GameInfo ().walls.count;
 	CWall *wallP;
 	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers ();
@@ -980,7 +980,7 @@ for (i = 0; i < reactorTrigger->m_count; i++)
 for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	count = 0;
-	wallP = theMine->Walls ();
+	wallP = theMine->Walls (0);
 	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		if (wallP->nTrigger == nTrigger) {
 			// if exit, make sure it is linked to CReactorTrigger
@@ -1025,7 +1025,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	}
 
 INT16 trigSeg, trigSide;
-trigP = theMine->Triggers ();
+trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	nWall = theMine->FindTriggerWall (nTrigger);
@@ -1168,7 +1168,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 
 // make sure there is exactly one exit and its linked to the CReactorTrigger
 count = 0;
-trigP = theMine->Triggers ();
+trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	nWall = theMine->FindTriggerWall (nTrigger);
@@ -1239,7 +1239,7 @@ return h;
 
 void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
 {
-	CSegment*		segP = theMine->Segments ();
+	CSegment*		segP = theMine->Segments (0);
 	INT16				n, h, i, j = theMine->SegCount ();
 
 MEMSET (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
@@ -1260,7 +1260,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType)
 {
-	CSegment*	segP = theMine->Segments ();
+	CSegment*	segP = theMine->Segments (0);
 	INT16			h, i, j = theMine->SegCount ();
 	INT8			n;
 
@@ -1310,7 +1310,7 @@ INT16 CDiagTool::AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refLi
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
-	CSegment*	segP = theMine->Segments ();
+	CSegment*	segP = theMine->Segments (0);
 	INT16			h, i, j = theMine->SegCount ();
 	INT8			n;
 
@@ -1339,7 +1339,7 @@ INT16 CDiagTool::CleanupMatCens (INT16* refList, CRobotMaker* matCenP, INT16 nMa
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
-	CSegment*	segP = theMine->Segments ();
+	CSegment*	segP = theMine->Segments (0);
 	
 for (INT32 i = 0; i < nMatCens; i) {
 	if (refList [i] < 0) 
@@ -1363,7 +1363,7 @@ bool CDiagTool::CheckBotGens (void)
 	INT16					h = theMine->SegCount (), i, nSegment = 0;
 	bool					bOk = true;
 	INT16					nMatCenSegs, nMatCens = INT16 (theMine->GameInfo ().botgen.count);
-	CSegment*			segP = theMine->Segments ();
+	CSegment*			segP = theMine->Segments (0);
 	CRobotMaker*		matCenP = theMine->BotGens (0);
 	INT16					segList [MAX_NUM_MATCENS2];
 	INT16					refList [MAX_NUM_MATCENS2];
@@ -1430,7 +1430,7 @@ bool CDiagTool::CheckWalls ()
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
 	CSide *sideP;
-	CWall *wallP = theMine->Walls (), *w, *ow;
+	CWall *wallP = theMine->Walls (0), *w, *ow;
 	INT32 segCount = theMine->SegCount ();
 	UINT8 wallFixed [MAX_WALLS2];
 
@@ -1440,7 +1440,7 @@ bool CDiagTool::CheckWalls ()
 
 MEMSET (wallFixed, 0, sizeof (wallFixed));
 *message = '\0';
-for (nSegment = 0, segP = theMine->Segments (); nSegment < segCount; nSegment++, segP++) {
+for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		nWall = sideP->nWall;
 		if ((nWall < 0) || (nWall >= wallCount) || (nWall >= maxWalls)) {
@@ -1699,7 +1699,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	}
 
 	// make sure segP's wall points back to the segment
-segP = theMine->Segments ();
+segP = theMine->Segments (0);
 for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	sideP = segP->sides;
@@ -1757,7 +1757,7 @@ for (nVertex = theMine->VertCount (); nVertex; nVertex--, vStat++)
 	vStat &= ~NEW_MASK;
 
 // mark all used verts
-CSegment *segP = theMine->Segments ();
+CSegment *segP = theMine->Segments (0);
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		theMine->VertStatus (segP->verts [point]) |= NEW_MASK;
@@ -1769,7 +1769,7 @@ for (vStat = theMine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 		if (m_bAutoFixBugs) {
 			if (nVertex < --theMine->VertCount ())
 				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->VertCount () - nVertex) * sizeof (*theMine->Vertices ()));
-			CSegment *segP = theMine->Segments ();
+			CSegment *segP = theMine->Segments (0);
 			for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
 					if (segP->verts [point] >= nVertex)

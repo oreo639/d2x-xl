@@ -242,7 +242,7 @@ void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = theMine->Objects () + theMine->Current ()->nObject;
+	CGameObject *objP = theMine->Objects (0) + theMine->Current ()->nObject;
    if (objP->render_type != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.tmap_override = nBaseTex;
@@ -394,7 +394,7 @@ else {
 
 	MEMSET (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 	m_nTextures [0] = 0;
-	for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++)
+	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
 			UINT16 nWall = segP->sides[nSide].nWall;
 			if ((segP->children [nSide] == -1) ||

@@ -255,7 +255,7 @@ if (GetOppositeSide (nOppSeg, nOppSide, Walls (nWall)->m_nSegment, Walls (nWall)
 	}
 // update all Segments () that point to Walls () higher than deleted one
 // and unlink all Segments () that point to deleted wall
-for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
+for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++)
 		if (sideP->nWall >= GameInfo ().walls.count)
 			sideP->nWall = NO_WALL;

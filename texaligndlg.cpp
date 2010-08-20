@@ -675,7 +675,7 @@ void CTextureTool::OnAlignResetMarked ()
 UpdateData (TRUE);
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (theMine->SideIsMarked (nSegment, nSide)) {
 			if ((segP->children [nSide] == -1) || 
@@ -715,7 +715,7 @@ if (!theMine->GotMarkedSides ()) {
 	}
 else {
 	theApp.LockUndo ();
-	for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++) {
+	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 			if (theMine->SideIsMarked (nSegment, nSide)) {
 				for (i = 0; i < 4; i++) {
@@ -737,7 +737,7 @@ void CTextureTool::AlignChildren (INT16 nSegment, INT16 nSide, bool bStart)
 {
 // set all segment sides as not aligned yet
 if (bStart) {
-	CSegment *segP = theMine->Segments ();
+	CSegment *segP = theMine->Segments (0);
 	INT32 i;
 	for (i = theMine->SegCount (); i; i--, segP++)
 		 segP->nIndex = 0; // all six sides not aligned yet
@@ -754,7 +754,7 @@ void CTextureTool::OnAlignAll (void)
 {
 // set all segment sides as not aligned yet
 	CSegment	*currSeg = theMine->CurrSeg (),
-					*segP = theMine->Segments ();
+					*segP = theMine->Segments (0);
 	CSide		*sideP = theMine->CurrSide (),
 					*childSideP;
 	INT16			nSegment, 
@@ -766,9 +766,9 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 bool bAll = !theMine->GotMarkedSegments ();
-for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++)
+for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
 	 segP->nIndex = 0;
-for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 	if (segP->nIndex)
 		continue;
 	childSideP = segP->sides + nSide;

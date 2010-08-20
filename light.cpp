@@ -367,7 +367,7 @@ void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
 
 theApp.SetModified (TRUE);
 fLight /= 100.0;
-for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++) {
+for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
 	if (bAll || (segP->wallFlags & MARKED_MASK)) {
 		if (!bDynCubeLights)
 			segP->static_light = nLight;
@@ -554,7 +554,7 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
 	VertexColors ().Clear ();
-for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
+for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 	if (bAll || (segP->wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 			INT32 i;
@@ -568,7 +568,7 @@ for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 // Calculate cube side corner light values
 // for each marked side in the level
 // (range: 0 = min, 0x8000 = max)
-for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
+for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || SideIsMarked (nSegment, nSide)))
 			continue;
@@ -656,7 +656,7 @@ void CMine::Illuminate (
 	bool bAll, 
 	bool bCopyTexLights) 
 {
-	CSegment*		segP = Segments ();
+	CSegment*		segP = Segments (0);
 	double			effect[4];
 	// find orthogonal angle of source segment
 	CFixVector			A;

@@ -96,7 +96,7 @@ void CEffectTool::LoadEffectList ()
 
 cbEffects->ResetContent ();
 CGameObject *curObj = theMine->CurrObj (),
-			*objP = theMine->Objects ();
+			*objP = theMine->Objects (0);
 INT32 i;
 for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	if (objP->type != OBJ_EFFECT)
@@ -385,7 +385,7 @@ if (m_nBufferId < 0) {
 	ErrorMsg ("No effect data currently available (copy data first)");
 	return;
 	}
-CGameObject *objP = theMine->Objects ();
+CGameObject *objP = theMine->Objects (0);
 boolean bAll = !theMine->GotMarkedSegments ();
 
 INT32 i;
@@ -435,7 +435,7 @@ if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
 theMine->Other ()->nObject = theMine->Current ()->nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = theMine->Objects (); i < theMine->GameInfo ().objects.count; i++, objP++)
+	for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++)
 		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			theMine->Other ()->nObject = i;
 			break;

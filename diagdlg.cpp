@@ -90,7 +90,7 @@ return szText;
 
 void CDiagTool::CountObjects (void)
 {
-CGameObject *objP = theMine->Objects ();
+CGameObject *objP = theMine->Objects (0);
 MEMSET (m_nObjects, 0, sizeof (m_nObjects));
 MEMSET (m_nContained, 0, sizeof (m_nContained));
 INT32 i, j;
@@ -138,7 +138,7 @@ for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 
 INT32 CDiagTool::CountTextures (void)
 {
-	CSegment *segP = theMine->Segments ();
+	CSegment *segP = theMine->Segments (0);
 	CSide *sideP;
 	char bUsed [(MAX_D2_TEXTURES + 7) / 8];
 	INT32 t, i, j, h = theMine->GameInfo ().walls.count;

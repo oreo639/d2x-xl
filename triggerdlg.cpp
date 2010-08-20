@@ -643,7 +643,7 @@ void CTriggerTool::OnDeleteTriggerAll ()
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CSegment *segP = theMine->Segments ();
+CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
@@ -688,7 +688,7 @@ if (m_nClass) {
 	theMine->Current ()->nObject = theMine->ObjTriggers (m_nTrigger)->nObject;
 	}
 else {
-	for (nWall = 0, wallP = theMine->Walls (); nWall < theMine->GameInfo ().walls.count; nWall++, wallP++)
+	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->GameInfo ().walls.count; nWall++, wallP++)
 		if (wallP->nTrigger == m_nTrigger)
 			break;
 	if (nWall >= theMine->GameInfo ().walls.count) {

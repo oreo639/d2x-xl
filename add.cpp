@@ -66,7 +66,7 @@ void CMine::UndefineSegment (INT16 nSegment)
 {
 	CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 
-nSegment = INT16 (segP - Segments ());
+nSegment = INT16 (segP - Segments (0));
 if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
 	// remove matcen
 	INT32 nMatCens = (INT32) GameInfo ().botgen.count;
@@ -169,7 +169,7 @@ return true;
 bool CMine::AddReactor (INT16 nSegment, bool bCreate, bool bSetDefTextures) 
 {
 #if 0
-for (segP = Segments (), i = SegCount (); i; i--, segP++)
+for (segP = Segments (0), i = SegCount (); i; i--, segP++)
 	if (segP->function == SEGMENT_FUNC_CONTROLCEN) {
 		if (!bExpertMode)
 			ErrorMsg ("There is already a reactor in this mine.");

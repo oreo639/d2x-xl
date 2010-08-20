@@ -837,7 +837,7 @@ void CMineView::DrawWireFrame (bool bPartial)
 
 CalcSegDist ();
 m_pDC->SelectObject(m_penGray);
-for (nSegment=0, segP = theMine->Segments ();nSegment<theMine->SegCount ();nSegment++, segP++) {
+for (nSegment=0, segP = theMine->Segments (0);nSegment<theMine->SegCount ();nSegment++, segP++) {
 	if (!Visible (segP))
 		continue;
 	DrawCube (segP, bPartial);
@@ -904,7 +904,7 @@ if (m_viewMineFlags & eViewMineShading && (light_index = PalettePtr ()))
 	light_index += 256*5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()
-for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (iVertex = 0, zMax = LONG_MIN; iVertex < MAX_VERTICES_PER_SEGMENT; iVertex++)
 		if (zMax < (z = m_viewPoints [segP->verts [iVertex]].z))
 			zMax = z;
@@ -1499,7 +1499,7 @@ void CMineView::DrawMarkedCubes (INT16 clear_it)
 	// draw marked/special Segments () and Walls ()
 	if (!clear_it) {
 		for (i = 0; i < theMine->SegCount (); i++) {
-			segP = theMine->Segments () + i;
+			segP = theMine->Segments (0) + i;
 			if (segP->wallFlags & MARKED_MASK) {
 				m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
 				DrawCubeQuick (segP);
@@ -1893,7 +1893,7 @@ void CMineView::DrawOctagon(INT16 nSide, INT16 nSegment)
 
 	if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
 	  POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
-	  segP = theMine->Segments () + nSegment;
+	  segP = theMine->Segments (0) + nSegment;
 	  for (j=0;j<4;j++) {
 	    corners [j].x = m_viewPoints [segP->verts [side_vert [nSide] [j]]].x;
 	    corners [j].y = m_viewPoints [segP->verts [side_vert [nSide] [j]]].y;
@@ -2195,7 +2195,7 @@ if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
 theMine->Other ()->nObject = theMine->Current ()->nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = theMine->Objects (); i < theMine->GameInfo ().objects.count; i++, objP++)
+	for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++)
 		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			theMine->Other ()->nObject = i;
 			break;
@@ -2222,7 +2222,7 @@ if (theApp.IsD2File ()) {
 		}
 	}
 HiliteTarget ();
-CGameObject *objP = theMine->Objects ();
+CGameObject *objP = theMine->Objects (0);
 for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 	if (ViewObject (objP))
 		DrawObject (j, 0);
@@ -2732,7 +2732,7 @@ Refresh (false);
 
 void CMineView::CenterCube()
 {
-	CSegment& segP = theMine->Segments () [m_Current->nSegment];
+	CSegment& segP = theMine->Segments (0) [m_Current->nSegment];
 	CFixVector *vMine = theMine->Vertices ();
 	INT16 *vSeg = segP.verts;
 
@@ -2772,7 +2772,7 @@ void CMineView::CenterObject()
 	ASSERT_VALID(pDoc);
 	if (!pDoc) return;
 
-	CGameObject& objP = theMine->Objects () [m_Current->nObject];
+	CGameObject& objP = theMine->Objects (0) [m_Current->nObject];
 	m_movex = (INT16)(-(objP.pos.x)/0x10000L);
 	m_movey = (INT16)(-(objP.pos.y)/0x10000L);
 	m_movez = (INT16)(-(objP.pos.z)/0x10000L);
@@ -3074,7 +3074,7 @@ bool CMineView::VertexVisible (INT32 v)
 
 if (!m_nViewDist)
 	return true;
-for (i = theMine->SegCount (), segP = theMine->Segments (); i; i--, segP++)
+for (i = theMine->SegCount (), segP = theMine->Segments (0); i; i--, segP++)
 	for (j = 0; j < MAX_VERTICES_PER_SEGMENT; j++)
 		if ((segP->verts [j] == v) && Visible (segP))
 			return true;
@@ -3316,7 +3316,7 @@ return true;
 
 void CMineView::CalcSegmentCenter(CFixVector& pos,INT16 nSegment) 
 {
-CSegment *segP = theMine->Segments () + nSegment;
+CSegment *segP = theMine->Segments (0) + nSegment;
 CFixVector *vMine = theMine->Vertices ();
 INT16 *vSeg = segP->verts;
 pos.x  =
@@ -3737,7 +3737,7 @@ void CMineView::ForwardCube (INT32 dir)
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
-segP = theMine->Segments () + theMine->Current ()->nSegment;
+segP = theMine->Segments (0) + theMine->Current ()->nSegment;
 child = segP->children [bFwd ? theMine->Current ()->nSide: opp_side [theMine->Current ()->nSide]];
 if (child <= -1) {
 	// first try to find a non backwards route

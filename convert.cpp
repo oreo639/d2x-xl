@@ -77,7 +77,7 @@ INT16	nSeg,	nSide, nTextures;
 INT16 tnum [2], segCount = theMine->SegCount ();
 char	szName [80];
 INT32 h;
-CSegment *segP = theMine->Segments ();
+CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 // add textures that have been used to Texture 1 combo box
 for (nSeg = segCount; nSeg; nSeg--, segP++) {
@@ -211,7 +211,7 @@ void CConvertDlg::OnOK ()
   CSegment *segP;
   CSide		*sideP;
   CWall		*wallP;
-  CTrigger	*trigger;
+  CTrigger	*trigP;
   CGameObject	*objP;
   INT16		nSegment, nSide, d1Texture, mode,
 				segCount = theMine->SegCount (),
@@ -225,7 +225,7 @@ texture_resource = D2_TEXTURE_STRING_TABLE;
 theMine->LoadPalette ();
 
   // convert textures
-for (nSegment = 0, segP = theMine->Segments (); nSegment < segCount; nSegment++, segP++) {
+for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
 	segP->s2_flags = 0;
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++) {
 		if ((segP->children [nSide] == -1) || (segP->sides [nSide].nWall < wallCount)) {
@@ -250,32 +250,32 @@ for (nSegment = 0, segP = theMine->Segments (); nSegment < segCount; nSegment++,
 
 // defined D2 wall parameters
 //--------------------------------------
-for (i = 0, wallP = theMine->Walls (); i < wallCount; i++, wallP++) {
+for (i = 0, wallP = theMine->Walls (0); i < wallCount; i++, wallP++) {
 	wallP->controlling_trigger = 0;
 	wallP->cloak_value = 0;
 	}
 
-// change trigger type and flags
+// change trigP type and flags
 //-------------------------------------------
-for (i = 0, trigger = theMine->Triggers (); i < theMine->GameInfo ().triggers.count; i++, trigger++) {
-	switch (trigger->flags) {
+for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.count; i++, trigP++) {
+	switch (trigP->flags) {
 		case TRIGGER_CONTROL_DOORS:
-			trigger->type = TT_OPEN_DOOR;
+			trigP->type = TT_OPEN_DOOR;
 			break;
 		case TRIGGER_EXIT:
-			trigger->type = TT_EXIT;
+			trigP->type = TT_EXIT;
 			break;
 		case TRIGGER_MATCEN:
-			trigger->type = TT_MATCEN;
+			trigP->type = TT_MATCEN;
 			break;
 		case TRIGGER_ILLUSION_OFF:
-			trigger->type = TT_ILLUSION_OFF;
+			trigP->type = TT_ILLUSION_OFF;
 			break;
 		case TRIGGER_ILLUSION_ON:
-			trigger->type = TT_ILLUSION_ON;
+			trigP->type = TT_ILLUSION_ON;
 			break;
 		case TRIGGER_SECRET_EXIT:
-			trigger->type = TT_SECRET_EXIT;
+			trigP->type = TT_SECRET_EXIT;
 			break;
 
 		// unsupported types
@@ -284,20 +284,20 @@ for (i = 0, trigger = theMine->Triggers (); i < theMine->GameInfo ().triggers.co
 		case TRIGGER_SHIELD_DAMAGE:
 		case TRIGGER_ENERGY_DRAIN:
 		default:
-			DEBUGMSG (" Level converter: Unsupported trigger type; trigger deleted")
+			DEBUGMSG (" Level converter: Unsupported trigP type; trigP deleted")
 			theMine->DeleteTrigger (i);
 			i--;
-			trigger--;
+			trigP--;
 			continue;
 		}
-	trigger->flags = 0;
+	trigP->flags = 0;
 	}
 
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
 	theMine->BotGens (i)->objFlags [1] = 0;
-	for (j = 0, segP = theMine->Segments (); j <= segCount; j++, segP++)
+	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == i))
 				theMine->BotGens (i)->nFuelCen = (INT16)(segP->value);
 	}
@@ -306,7 +306,7 @@ for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
 //-----------------------------------------------
 for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
 	theMine->EquipGens (i)->objFlags [1] = 0;
-	for (j = 0, segP = theMine->Segments (); j <= segCount; j++, segP++)
+	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->function == SEGMENT_FUNC_EQUIPMAKER) && (segP->nMatCen == i))
 				theMine->EquipGens (i)->nFuelCen = (INT16)(segP->value);
 	}
@@ -314,7 +314,7 @@ for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
 // Objects ()
 //-----------------------------------------------
 
-for (i = 0, objP = theMine->Objects (); i < theMine->GameInfo ().objects.count; i++, objP++) {
+for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++) {
 // fix clip numbers for poly Objects () (except robots)
 	switch (objP->type) {
 		case OBJ_PLAYER   : // the player on the console

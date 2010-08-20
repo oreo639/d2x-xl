@@ -452,7 +452,7 @@ INT16 type;
 
 // update object list box
 CBObjNo ()->ResetContent ();
-CGameObject *objP = theMine->Objects ();
+CGameObject *objP = theMine->Objects (0);
 INT32 i;
 for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	switch(objP->type) {
@@ -983,9 +983,9 @@ switch(type) {
 			}
 #if 0//def _DEBUG // hack to fix bogus powerup ids
 		CGameObject *objP;
-		for (i = 0, objP = theMine->Objects (); i < theMine->ObjCount (); i++, objP++)
+		for (i = 0, objP = theMine->Objects (0); i < theMine->ObjCount (); i++, objP++)
 			if ((objP->type == OBJ_POWERUP) && (xlat [objP->id] == -1)) {
-				for (i = 0, objP = theMine->Objects (); i < theMine->ObjCount (); i++, objP++)
+				for (i = 0, objP = theMine->Objects (0); i < theMine->ObjCount (); i++, objP++)
 					if (objP->type == OBJ_POWERUP)
 						objP->id = xlat [objP->id]; 
 				break;
@@ -1092,7 +1092,7 @@ theApp.MineView ()->DelayRefresh (true);
 CGameObject *objP = theMine->CurrObj ();
 INT32 nType = objP->type;
 INT32 nId = objP->id;
-objP = theMine->Objects ();
+objP = theMine->Objects (0);
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 nDeleted = 0;
 for (INT32 h = theMine->GameInfo ().objects.count, i = 0; i < h; ) {
@@ -1292,7 +1292,7 @@ INT32 CObjectTool::GetObjectsOfAKind (INT32 nType, CGameObject *objList [])
 	INT32 i, nObjects = 0;
 	CGameObject *objP;
 
-for (i = theMine->GameInfo ().objects.count, objP = theMine->Objects (); i; i--, objP++)
+for (i = theMine->GameInfo ().objects.count, objP = theMine->Objects (0); i; i--, objP++)
 	if (objP->type == nType)
 		objList [nObjects++] = objP;
 return nObjects;
@@ -1726,7 +1726,7 @@ if (nType < 0)
 if (nId < 0)
 	nId =  theMine->CurrObj ()->id;
 INT32 nCount = 0;
-CGameObject *objP = theMine->Objects ();
+CGameObject *objP = theMine->Objects (0);
 INT32 i;
 for (i = theMine->GameInfo ().objects.count; i; i--, objP++)
 	if ((objP->type == nType) && ((objP->type == OBJ_PLAYER) || (objP->type == OBJ_COOP) || (objP->id == nId))) 

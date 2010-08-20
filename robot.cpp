@@ -539,7 +539,7 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're d
 		bFound = true;
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
-		for (j = SegCount (), segP = Segments (); j; j--, segP++)
+		for (j = SegCount (), segP = Segments (0); j; j--, segP++)
 			if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
 				INT32 matcen = segP->nMatCen;
 				if ((i < 32) ?

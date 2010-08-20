@@ -321,7 +321,7 @@ void CTextureTool::SetWallColor (void)
 if (theMine->UseTexColors ()) {
 	INT16			nSegment, nSide;
 	INT16			nBaseTex = theMine->CurrSide ()->nBaseTex;
-	CSegment	*segP = theMine->Segments ();
+	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	CWall			*wallP;
 	bool			bAll = !theMine->GotMarkedSides ();

@@ -136,7 +136,7 @@ z = center.z - opp_center.z;
 	bool ok_to_move;
 
 ok_to_move = TRUE;
-segP = Segments () + Current ()->nSegment;
+segP = Segments (0) + Current ()->nSegment;
 switch (m_selectMode) {
 	case POINT_MODE:
 		point0 = line_vert [orthog_line [Current ()->nSide][Current ()->nPoint]][0];

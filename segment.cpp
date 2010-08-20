@@ -161,7 +161,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 	delSegP->wallFlags &= ~MARKED_MASK; 
 
 	// unlink any children with this segment number
-	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
+	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (segP->children [child]== nDelSeg) {
 
@@ -193,12 +193,12 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 
 		// mark each segment with it's real number
 		real_segnum = 0; 
-		for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
+		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 			if(nDelSeg != nSegment)
 				segP->nIndex = real_segnum++; 
 
 		// replace all children with real numbers
-		for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
+		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 				if (segP->childFlags & (1 << child)
 					&& segP->children [child] >= 0 && segP->children [child] < SegCount ()) { // debug fix
@@ -1092,7 +1092,7 @@ void CMine::MarkSegment(INT16 nSegment)
 	for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 		VertStatus (nVertex) &= ~MARKED_MASK; 
 	// ..then mark all verts for marked Segments ()
-	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
+	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 		if (segP->wallFlags & MARKED_MASK)
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				VertStatus (segP->verts [nVertex]) |= MARKED_MASK; 
@@ -1106,7 +1106,7 @@ void CMine::UpdateMarkedCubes()
 	CSegment *segP; 
 	INT32 i; 
 	// mark all cubes which have all 8 verts marked
-	for (i = 0, segP = Segments (); i < SegCount (); i++, segP++)
+	for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
 		if ((VertStatus (segP->verts [0]) & MARKED_MASK) &&
 			 (VertStatus (segP->verts [1]) & MARKED_MASK) &&
 			 (VertStatus (segP->verts [2]) & MARKED_MASK) &&
@@ -1289,7 +1289,7 @@ vert = segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]];
 
 // check to see if current point is shared by any other cubes
 found = FALSE; 
-segP = Segments ();
+segP = Segments (0);
 for (nSegment = 0; (nSegment < SegCount ()) && !found; nSegment++, segP++)
 	if (nSegment != Current ()->nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
@@ -1367,7 +1367,7 @@ for (i = 0; i < 2; i++) {
 	vert [i] = Segments (Current ()->nSegment)->verts [line_vert [linenum][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
-	segP = Segments ();
+	segP = Segments (0);
 	for (nSegment = 0; (nSegment < SegCount ()) && !found [i]; nSegment++, segP++) {
 		if (nSegment != Current ()->nSegment) {
 			for (nVertex = 0; nVertex < 8; nVertex++) {
@@ -1455,7 +1455,7 @@ if (child_segnum == -1) {
 for (i = 0; i < 4; i++)
 	vert [i] = segP->verts [side_vert [nSide][i]]; 
 	// check to see if current points are shared by any other cubes
-for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
+for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	if (nSegment != Current ()->nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = FALSE;
@@ -1713,7 +1713,7 @@ void CMine::SetLinesToDraw()
   CSegment *segP; 
   INT16 nSegment, nSide; 
 
-for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++) {
+for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
 	segP->map_bitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -2576,7 +2576,7 @@ nMatCens = 0;
 for (i = 0; i < GameInfo ().botgen.count; i++) {
 	nSegment = BotGens (i)->nSegment; 
 	if (nSegment >= 0) {
-		segP = Segments () + nSegment; 
+		segP = Segments (0) + nSegment; 
 		segP->value = i; 
 		if (segP->function== SEGMENT_FUNC_ROBOTMAKER)
 			segP->nMatCen = nMatCens++; 
@@ -2585,7 +2585,7 @@ for (i = 0; i < GameInfo ().botgen.count; i++) {
 
 // number "value"
 value = 0; 
-for (i = 0, segP = Segments (); i < SegCount (); i++, segP++)
+for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
 	if (segP->function== SEGMENT_FUNC_NONE)
 		segP->value = 0; 
 	else
@@ -2604,7 +2604,7 @@ nMatCens = 0;
 for (i = 0; i < GameInfo ().equipgen.count; i++) {
 	nSegment = EquipGens (i)->nSegment; 
 	if (nSegment >= 0) {
-		segP = Segments () + nSegment; 
+		segP = Segments (0) + nSegment; 
 		segP->value = i; 
 		if (segP->function== SEGMENT_FUNC_EQUIPMAKER)
 			segP->nMatCen = nMatCens++; 
@@ -2613,7 +2613,7 @@ for (i = 0; i < GameInfo ().equipgen.count; i++) {
 
 // number "value"
 value = 0; 
-for (i = 0, segP = Segments (); i < SegCount (); i++, segP++)
+for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
 	if (segP->function== SEGMENT_FUNC_NONE)
 		segP->value = 0; 
 	else

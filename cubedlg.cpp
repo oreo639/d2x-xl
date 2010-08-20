@@ -83,8 +83,8 @@ m_nLight = 0;
 m_nLastCube =
 m_nLastSide = -1;
 m_bSetDefTexture = 0;
-m_nOwner = theMine->Segments ()->owner;
-m_nGroup = theMine->Segments ()->group;
+m_nOwner = theMine->Segments (0)->owner;
+m_nGroup = theMine->Segments (0)->group;
 MEMSET (m_nCoord, 0, sizeof (m_nCoord));
 }
 
@@ -314,7 +314,7 @@ void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
 void CSegmentTool::SetDefTexture (INT16 nTexture)
 {
-CSegment *segP = theMine->Segments () + m_nSegment;
+CSegment *segP = theMine->Segments (0) + m_nSegment;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	INT32 i;
 	for (i = 0; i < 6; i++)
@@ -356,13 +356,13 @@ SelectItemData (CBType (), m_nType);
 OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
-CTrigger *trigP = theMine->Triggers ();
+CTrigger *trigP = theMine->Triggers (0);
 INT32 nTrigger;
 for (nTrigger = 0; nTrigger < theMine->GameInfo ().triggers.count; nTrigger++, trigP++) {
 	for (i = 0; i < trigP->m_count; i++) {
 		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
-			CWall *wallP = theMine->Walls ();
+			CWall *wallP = theMine->Walls (0);
 			INT32 nWall;
 			for (nWall = 0; nWall < theMine->GameInfo ().walls.count ;nWall++, wallP++) {
 				if (wallP->nTrigger == nTrigger) 
@@ -377,7 +377,7 @@ for (nTrigger = 0; nTrigger < theMine->GameInfo ().triggers.count; nTrigger++, t
 		}
 	}
 // show if this is cube/side is trigPed by the control_center
-CReactorTrigger* reactorTrigger = theMine->ReactorTriggers ();
+CReactorTrigger* reactorTrigger = theMine->ReactorTriggers (0);
 INT32 control;
 for (control = 0; control < MAX_REACTOR_TRIGGERS; control++, reactorTrigger++) {
 	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide))) {
@@ -513,7 +513,7 @@ theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
-	CSegment *segP = theMine->Segments ();
+	CSegment *segP = theMine->Segments (0);
 	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
 		if (segP->wallFlags & MARKED_MASK)
 			segP->owner = m_nOwner;
@@ -536,7 +536,7 @@ theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
-	CSegment *segP = theMine->Segments ();
+	CSegment *segP = theMine->Segments (0);
 	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
 		if (segP->wallFlags & MARKED_MASK)
 			segP->group = m_nGroup;
@@ -568,7 +568,7 @@ if (bMarked) {
 	nMaxSeg = theMine->SegCount ();
 	}
 else {
-	nMinSeg = INT32 (theMine->CurrSeg () - theMine->Segments ());
+	nMinSeg = INT32 (theMine->CurrSeg () - theMine->Segments (0));
 	nMaxSeg = nMinSeg + 1;
 	}
 segP = theMine->Segments (nMinSeg);

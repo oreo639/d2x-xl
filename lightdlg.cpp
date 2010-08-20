@@ -182,7 +182,7 @@ UpdateData (TRUE);
 nVertexLight = (INT32) (m_fVertexLight * f1_0 / 100.0);
 
 	INT16			nSegment, nSide, nVertex, i;
-	CSegment	*segP = theMine->Segments ();
+	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false;
 

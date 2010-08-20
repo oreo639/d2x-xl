@@ -892,7 +892,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 	return;
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
-	CSegment *segP = theMine->Segments ();
+	CSegment *segP = theMine->Segments (0);
 INT32 nSegment;
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
     segP->nIndex = 0;
@@ -914,7 +914,7 @@ if (!(m_bUse1st || m_bUse2nd))
 
 	INT16			nSegment,
 					nSide;
-	CSegment	*segP = theMine->Segments ();
+	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false,
 					bAll = !theMine->GotMarkedSides ();
@@ -956,7 +956,7 @@ if (!(m_bUse1st || m_bUse2nd))
 
 	INT16			nSegment,
 					nSide;
-	CSegment	*segP = theMine->Segments ();
+	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false,
 					bAll = !theMine->GotMarkedSides ();
@@ -1066,7 +1066,7 @@ bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16
   // find vert numbers for the line's two end points
 point0 = line_vert[side_line[start_side][linenum]][0];
 point1 = line_vert[side_line[start_side][linenum]][1];
-segP = theMine->Segments () + start_segment;
+segP = theMine->Segments (0) + start_segment;
 vert0  = segP->verts[point0];
 vert1  = segP->verts[point1];
 
@@ -1075,7 +1075,7 @@ childnum = segP->children[nSide];
 if (childnum < 0 || childnum >= theMine->SegCount ())
 	return false;
 for (childs_side=0;childs_side<6;childs_side++) {
-	segP = theMine->Segments () + childnum;
+	segP = theMine->Segments (0) + childnum;
 	if ((segP->children[childs_side] == -1) ||
 	    (segP->sides[childs_side].nWall < theMine->GameInfo ().walls.count)) {
 		for (childs_line=0;childs_line<4;childs_line++) {

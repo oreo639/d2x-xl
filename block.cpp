@@ -61,7 +61,7 @@ origVertCount = VertCount ();
 segP = CurrSeg ();
 nSide = Current ()->nSide;
 nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(0)]];
-memcpy (&origin, Vertices (nVertex), sizeof (*Vertices ()));
+origin = Vertices (nVertex);
 /*
 origin.x = Vertices (nVertex)->x;
 origin.y = Vertices (nVertex)->y;
@@ -400,7 +400,7 @@ for (i = nNewTriggers; i; i--) {
 		if (trigger->Segment (j) >= 0)
 			trigger->Segment (j) = xlatSegNum [trigger->Segment (j)];
 		else if (trigger->m_count == 1) {
-			DeleteTrigger (INT16 (trigger - Triggers ()));
+			DeleteTrigger (INT16 (trigger - Triggers (0)));
 			i--;
 			}
 		else {
@@ -498,7 +498,7 @@ z_prime.z /= length;
   DebugMsg(message);
 #endif
 
-segP = Segments ();
+segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->wallFlags & MARKED_MASK) {
 		fprintf (fBlk, "segment %d\n",nSegment);
@@ -844,7 +844,7 @@ strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-segP = Segments ();
+segP = Segments (0);
 for (nSegment = 0;nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->nIndex = nSegment;
 	segP->wallFlags &= ~MARKED_MASK;
@@ -858,7 +858,7 @@ for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
 count = ReadSegmentInfo (fBlk);
 
 // fix up the new Segments () children
-segP = Segments ();
+segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->nIndex < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
@@ -904,7 +904,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 for (nVertex=0;nVertex<MAX_VERTICES;nVertex++)
 	VertStatus (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
-segP = Segments ();
+segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	segP->nIndex = nSegment;
 /*
