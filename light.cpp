@@ -52,7 +52,7 @@ if (theApp.GetMine ())
 	TEXTURE_LIGHT	*pTexLights = (theApp.IsD1File ()) ? d1_texture_light : d2_texture_light;
 	INT32				i = ((theApp.IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
 
-memset (lightMap, 0, sizeof (lightMap));
+MEMSET (lightMap, 0, sizeof (lightMap));
 while (i) {
 	--i;
 	CBRK (pTexLights [i].nBaseTex == 0);
@@ -491,7 +491,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
   INT32 nSegment, segCount = SegCount (), wallCount = GameInfo ().walls.count;
   tAvgCornerLight* max_brightness = new tAvgCornerLight [VertCount ()];
 
-memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
+MEMSET (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
 
 // smooth corner light by averaging all corners which share a vertex
 theApp.SetModified (TRUE);
@@ -554,7 +554,7 @@ void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
-	memset (VertexColors (), 0, sizeof (MineData ().vertexColors));
+	MEMSET (VertexColors (), 0, sizeof (MineData ().vertexColors));
 for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 	if (bAll || (segP->wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -562,7 +562,7 @@ for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 			for (i = 0; i < 4; i++) {
 				sideP->uvls [i].l = 0;
 				if (!bAll)
-					memset (VertexColors (segP->verts [side_vert [nSide][i]]), 0, sizeof (CColor));
+					MEMSET (VertexColors (segP->verts [side_vert [nSide][i]]), 0, sizeof (CColor));
 				}
 			}
 
@@ -576,7 +576,7 @@ for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP+
 		if ((segP->children [nSide] >= 0) && !VisibleWall (sideP->nWall))
 			continue;
 		if (bCopyTexLights)
-			memset (LightColor (nSegment, nSide, false), 0, sizeof (CColor));
+			MEMSET (LightColor (nSegment, nSide, false), 0, sizeof (CColor));
 		brightness = 0;
 		texture_num = sideP->nBaseTex;
 		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES (this)))
@@ -680,7 +680,7 @@ CalcCenter (source_center, nSourceSeg, nSourceSide);
 segP = Segments (nSourceSeg);
 #if 1//def _OPENMP
 INT16* visited = new INT16 [SegCount ()];
-memset (visited, 0xff, SegCount () * sizeof (*visited));
+MEMSET (visited, 0xff, SegCount () * sizeof (*visited));
 SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
 visited [nSourceSeg] = m_lightRenderDepth;
 #else
@@ -992,7 +992,7 @@ fLightScale = 1.0; ///= 100.0;
 			//       Segments () do not have lights)
 	#if 1
 			INT16* visited = new INT16 [nSegCount];
-			memset (visited, 0xff, nSegCount * sizeof (*visited));
+			MEMSET (visited, 0xff, nSegCount * sizeof (*visited));
 			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth, visited);
 			visited [nSourceSeg] = recursion_depth;
 	#else

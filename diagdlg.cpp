@@ -91,8 +91,8 @@ return szText;
 void CDiagTool::CountObjects (void)
 {
 CGameObject *objP = m_mine->Objects ();
-memset (m_nObjects, 0, sizeof (m_nObjects));
-memset (m_nContained, 0, sizeof (m_nContained));
+MEMSET (m_nObjects, 0, sizeof (m_nObjects));
+MEMSET (m_nContained, 0, sizeof (m_nContained));
 INT32 i, j;
 for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 	switch(objP->type) {
@@ -144,7 +144,7 @@ INT32 CDiagTool::CountTextures (void)
 	INT32 t, i, j, h = m_mine->GameInfo ().walls.count;
 	INT32 nUsed = 0;
 
-memset (bUsed, 0, sizeof (bUsed));
+MEMSET (bUsed, 0, sizeof (bUsed));
 for (i = m_mine->SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
 		if ((segP->children [j] == -1) || (sideP->nWall < h)) {

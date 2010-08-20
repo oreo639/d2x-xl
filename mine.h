@@ -122,7 +122,8 @@ public:
 public:
 	CMine();
 	~CMine();
-	void Reset ();
+	void Initialize (void);
+	void Reset (void);
 	
 public:
 	inline MINE_DATA& MineData ()
@@ -540,5 +541,7 @@ inline INT32 MAX_LIGHT_DELTA_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? 
 inline INT32 MAX_LIGHT_DELTA_VALUES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_VALUES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X; }
 
 #define NO_WALL(m) MAX_WALLS(m)
+
+extern CMine theMine;
 
 #endif //__mine_h

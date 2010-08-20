@@ -130,7 +130,7 @@ z_pprime.z = - y_prime.x*x_prime.y + x_prime.x*y_prime.y;
 #endif
 
 nNewSegs = 0;
-memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
+MEMSET (xlatSegNum, 0xff, sizeof (xlatSegNum));
 while(!feof(fBlk)) {
 	if (SegCount () >= MAX_SEGMENTS (this)) {
 		ErrorMsg ("No more free segments");
@@ -173,8 +173,8 @@ while(!feof(fBlk)) {
 			if (sideP->nWall != NO_WALL (this)) {
 				CWall w;
 				CTrigger t;
-				memset (&w, 0, sizeof (w));
-				memset (&t, 0, sizeof (t));
+				MEMSET (&w, 0, sizeof (w));
+				MEMSET (&t, 0, sizeof (t));
 				fscanf_s (fBlk, "        segment %ld\n", &w.m_nSegment);
 				fscanf_s (fBlk, "        side %ld\n", &w.m_nSide);
 				fscanf_s (fBlk, "        hps %ld\n", &w.hps);
@@ -225,7 +225,7 @@ while(!feof(fBlk)) {
 			fscanf_s (fBlk, "    object_num %hd\n",&segObjCount);
 			while (segObjCount) {
 				CGameObject o;
-				memset (&o, 0, sizeof (o));
+				MEMSET (&o, 0, sizeof (o));
 				fscanf_s (fBlk, "            signature %hd\n", &o.signature);
 				fscanf_s (fBlk, "            type %d\n", &byteBuf);
 				o.type = (INT8) byteBuf;
@@ -634,7 +634,7 @@ if (!BrowseForFile (FALSE,
 #else
   // Initialize data for fBlk open dialog
   OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof (OPENFILENAME));
+  MEMSET(&ofn, 0, sizeof (OPENFILENAME));
   ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = HWindow;
   ofn.lpstrFilter = "DMB Block File\0*.blk\0";
@@ -727,7 +727,7 @@ else {
 #else
   // Initialize data for fBlk open dialog
   OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof (OPENFILENAME));
+  MEMSET(&ofn, 0, sizeof (OPENFILENAME));
   ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = HWindow;
   ofn.lpstrFilter = "DLE-XP Block File\0*.blk\0";
@@ -785,7 +785,7 @@ if (!BrowseForFile (TRUE,
 	return;
 #else
   OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof (OPENFILENAME));
+  MEMSET(&ofn, 0, sizeof (OPENFILENAME));
   ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = HWindow;
   ofn.lpstrFilter = "DLE-XP Block File\0*.blk\0";

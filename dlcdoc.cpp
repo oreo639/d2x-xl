@@ -157,16 +157,16 @@ class CNewFileDlg : public CDialog {
 
 CDlcDoc::CDlcDoc()
 {
-m_mine = new CMine;
+m_mine = GetMine ();//new CMine;
 m_bInitDocument = true;
 *m_szFile = '\0';
 *m_szSubFile = '\0';
-memset (&missionData, 0, sizeof (missionData));
+MEMSET (&missionData, 0, sizeof (missionData));
 }
 
 CDlcDoc::~CDlcDoc()
 {
-	delete m_mine;
+	//delete m_mine;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ if (d.DoModal () == IDOK) {
 	m_mine->Reset ();
 	m_mine->SetLinesToDraw ();
 	theApp.MineView ()->ResetView (true);
-	memset (&missionData, 0, sizeof (missionData));
+	MEMSET (&missionData, 0, sizeof (missionData));
 	CreateLightMap ();
 	theApp.TextureView ()->Setup ();
 	theApp.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
@@ -357,7 +357,7 @@ if (strstr (pszFile, ".hog")) {
 	FSplit (pszFile, m_startFolder , NULL, NULL);
 	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder );
 	err = m_mine->Load (m_szTmpFile, true);
-	memset (&missionData, 0, sizeof (missionData));
+	MEMSET (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
 	}
 else {

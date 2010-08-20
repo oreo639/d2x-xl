@@ -91,7 +91,7 @@ else {
 	m_nOwner = -1;
 	m_nGroup = -1;
 	}
-memset (m_nCoord, 0, sizeof (m_nCoord));
+MEMSET (m_nCoord, 0, sizeof (m_nCoord));
 }
 
                         /*--------------------------*/

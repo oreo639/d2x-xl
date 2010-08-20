@@ -1,6 +1,8 @@
 #ifndef _DEFINE_H
 #define _DEFINE_H
 
+#define MEMSET(a,b,c)
+
 // Copyright (C) 1997 Bryan Aamot
 
 //#define HUGE

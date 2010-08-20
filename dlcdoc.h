@@ -38,6 +38,7 @@ public:
 		{ return m_szFile; }
 	inline char *SubFile ()
 		{ return m_szSubFile; }
+	inline CMine* GetMine (void) { return &theMine; }
 public:
 // Overrides
 	// ClassWizard generated virtual function overrides

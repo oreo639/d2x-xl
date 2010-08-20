@@ -24,11 +24,15 @@
 
 #define ENABLE_TEXT_DUMP 0
 
+CMine theMine;
+
 //==========================================================================
 // CMine - CMine
 //==========================================================================
 
-CMine::CMine()
+CMine::CMine() {}
+
+void CMine::Initialize (void)
 {
 	VertCount () = 0;
 	SegCount () = 0;
@@ -51,7 +55,7 @@ CMine::CMine()
 	m_nNoLightDeltas = 2;
 	m_lightRenderDepth = MAX_LIGHT_DEPTH;
 	m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-	memset (RobotInfo (), 0, sizeof (ROBOT_INFO));
+	MEMSET (RobotInfo (), 0, sizeof (ROBOT_INFO));
 //	LoadPalette ();
 	m_bSortObjects = TRUE;
 	m_bVertigo = false;
@@ -76,8 +80,9 @@ Default ();
 // CMine - init_data()
 //==========================================================================
 
-void CMine::Reset ()
+void CMine::Reset (void)
 {
+Initialize();
 /*
   INT16 i;
 	FIX maxx, maxy, maxz, minx, miny, minz;
@@ -167,8 +172,8 @@ bool bNewMine = false;
 // first disable curve generator
 m_bSplineActive = FALSE;
 
-memset (LightColors (), 0, sizeof (MineData ().lightColors));
-memset (VertexColors (), 0, sizeof (MineData ().sideColors));
+MEMSET (LightColors (), 0, sizeof (MineData ().lightColors));
+MEMSET (VertexColors (), 0, sizeof (MineData ().sideColors));
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
 if (filename_passed && *filename_passed)
@@ -1218,7 +1223,7 @@ else {  /*load mine filename */
 			SortObjTriggers ();
 		else {
 			NumObjTriggers () = 0;
-			memset (ObjTriggers (), 0, sizeof (CTrigger) * MAX_OBJ_TRIGGERS);
+			MEMSET (ObjTriggers (), 0, sizeof (CTrigger) * MAX_OBJ_TRIGGERS);
 			}
 		}
 

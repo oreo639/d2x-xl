@@ -989,7 +989,7 @@ switch(type) {
 
 	case OBJ_POWERUP: // a powerup you can pick up
 		INT32 xlat [100];
-		memset (xlat, 0xff, sizeof (xlat));
+		MEMSET (xlat, 0xff, sizeof (xlat));
 		h = pcb->AddString ("(none)");
 		pcb->SetItemData (h, -1);
 		for (i = 0; i < MAX_POWERUP_IDS; i++) {

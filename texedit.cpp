@@ -903,7 +903,7 @@ void CTextureEdit::OnLoad ()
   bool bFuncRes;
 
   sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
-  memset (&ofn, 0, sizeof (OPENFILENAME));
+  MEMSET (&ofn, 0, sizeof (OPENFILENAME));
   ofn.lStructSize = sizeof (OPENFILENAME);
   ofn.hwndOwner = m_hWnd;
   ofn.lpstrFilter = "all files\0*.bmp;*.tga\0bitmap files\0*.bmp\0TGA files\0*.tga\0";
@@ -979,7 +979,7 @@ void CTextureEdit::SaveTGA (FILE *file)
 	tBGRA			c;
 	tRGBA			*pc;
 
-memset (&h, 0, sizeof (h));
+MEMSET (&h, 0, sizeof (h));
 h.imageType = 2;
 h.width = m_nWidth;
 h.height = m_nHeight;
@@ -1006,7 +1006,7 @@ OPENFILENAME ofn;
 char szFile[256] = "\0";
 FILE *file;
 
-memset(&ofn, 0, sizeof (OPENFILENAME));
+MEMSET(&ofn, 0, sizeof (OPENFILENAME));
 
 ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = m_hWnd;

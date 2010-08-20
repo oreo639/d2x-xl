@@ -411,7 +411,7 @@ if (m_bUpdate) {
 #else
 	CDlcDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	if (!(pDoc && pDoc->m_mine)) 
+	if (!(pDoc && pDoc->GetMine ())) 
 		return;
 	bool bPartial = false;
 
@@ -628,8 +628,8 @@ if (bEnableDeltaShading = bEnable) {
 		m_nFrameRate = nFrameRate;
 	if (bShowLightSource != -1)
 		m_bShowLightSource = bShowLightSource;
-	memset (lightTimers, 0, sizeof (lightTimers));
-	memset (lightStatus, 0xff, sizeof (lightStatus));
+	MEMSET (lightTimers, 0, sizeof (lightTimers));
+	MEMSET (lightStatus, 0xff, sizeof (lightStatus));
 	}
 else if (m_lightTimer != -1) {
 	KillTimer (m_lightTimer);
@@ -786,7 +786,7 @@ glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 glLoadIdentity ();
 #else
 if (m_DIB)
-	memset(m_pvBits, 0, m_viewWidth * m_viewHeight * m_viewDepth);
+	MEMSET(m_pvBits, 0, m_viewWidth * m_viewHeight * m_viewDepth);
 else {
 	CRect rect;
 	GetClientRect(rect);
@@ -1436,7 +1436,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 		UINT16 nWall = NO_WALL (m_mine);
 
 		for (nSide=0; nSide<6; nSide++) {
-			pWall = ((nWall = segP->sides [nSide].nWall) == NO_WALL (m_mine)) ? NULL : ((CDlcDoc*) GetDocument ())->m_mine->Walls () + nWall;
+			pWall = ((nWall = segP->sides [nSide].nWall) == NO_WALL (m_mine)) ? NULL : ((CDlcDoc*) GetDocument ())->GetMine ()->Walls () + nWall;
 			if ((segP->children [nSide] == -1) ||
 				(pWall && (pWall->type != WALL_OPEN) && ((pWall->type != WALL_CLOAKED) || pWall->cloak_value))
 				)
@@ -2787,8 +2787,8 @@ void CMineView::CenterObject()
 	CDlcDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc) return;
-	if (!pDoc->m_mine) return;
-	CMine *mine = pDoc->m_mine;
+	CMine *mine = pDoc->GetMine ();
+	if (!mine) return;
 
 	CGameObject& objP = mine->Objects () [m_Current->nObject];
 	m_movex = (INT16)(-(objP.pos.x)/0x10000L);
@@ -4065,7 +4065,7 @@ glDepthFunc (GL_LEQUAL);
 glEnable (GL_ALPHA_TEST);
 glAlphaFunc (GL_GEQUAL, 0.5);	
 glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-memset (glHandles, 0, sizeof (glHandles));		
+MEMSET (glHandles, 0, sizeof (glHandles));		
 GLFitToView ();
 #if OGL_ORTHO == 0
 SetViewPoints ();
@@ -4387,7 +4387,7 @@ return TRUE;
 GLvoid CMineView::GLReset (GLvoid)
 {
 glDeleteTextures (910, glHandles);
-memset (glHandles, 0, sizeof (glHandles));
+MEMSET (glHandles, 0, sizeof (glHandles));
 glPalette = NULL;
 glInit = false;
 }

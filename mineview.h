@@ -197,7 +197,8 @@ protected: // create from serialization only
 public:
 	CDlcDoc* GetDocument();
 	inline CMine *GetMine () 
-		{ return m_mine = GetDocument () ? GetDocument ()->m_mine : NULL; }
+		//{ return m_mine = GetDocument () ? GetDocument ()->m_mine : NULL; }
+		{ return &theMine; }
 
 // Operations
 public:
