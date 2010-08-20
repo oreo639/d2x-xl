@@ -157,6 +157,7 @@ class CNewFileDlg : public CDialog {
 
 CDlcDoc::CDlcDoc()
 {
+theMine = new CMine;
 m_bInitDocument = true;
 *m_szFile = '\0';
 *m_szSubFile = '\0';

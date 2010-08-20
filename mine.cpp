@@ -75,6 +75,7 @@ m_pHxmExtraData = NULL;
 m_nHxmExtraDataSize = 0;
 m_bUseTexColors = false;
 LoadDefaultLightAndColor ();
+Default ();
 //	strcpy (descent2_path, "d:\\games\\descent\\d2\\");
 }
 
