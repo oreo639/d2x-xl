@@ -329,7 +329,7 @@ class CDynamicArray : public CQuickSort < _T > {
 
 		inline void Pos (UINT32 pos) { m_data.pos = pos % m_data.length; }
 
-		size_t Read (CFileManager& cf, UINT32 nCount = 0, UINT32 nOffset = 0) { 
+		size_t Read (FILE* fp, UINT32 nCount = 0, UINT32 nOffset = 0) { 
 			if (!m_data.buffer)
 				return -1;
 			if (nOffset >= m_data.length)
@@ -338,10 +338,10 @@ class CDynamicArray : public CQuickSort < _T > {
 				nCount = m_data.length - nOffset;
 			else if (nCount > m_data.length - nOffset)
 				nCount = m_data.length - nOffset;
-			return cf.Read (m_data.buffer + nOffset, sizeof (_T), nCount);
+			return INT32 (fread (m_data.buffer + nOffset, sizeof (_T), nCount));
 			}
 
-		size_t Write (CFileManager& cf, UINT32 nCount = 0, UINT32 nOffset = 0) { 
+		size_t Write (FILE* fp, UINT32 nCount = 0, UINT32 nOffset = 0) { 
 			if (!m_data.buffer)
 				return -1;
 			if (nOffset >= m_data.length)
@@ -350,7 +350,7 @@ class CDynamicArray : public CQuickSort < _T > {
 				nCount = m_data.length - nOffset;
 			else if (nCount > m_data.length - nOffset)
 				nCount = m_data.length - nOffset;
-			return cf.Write (m_data.buffer + nOffset, sizeof (_T), nCount);
+			return INT32 (fwrite (m_data.buffer + nOffset, sizeof (_T), nCount));
 			}
 
 		inline void SetWrap (bool bWrap) { m_data.bWrap = bWrap; }

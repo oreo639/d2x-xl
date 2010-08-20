@@ -340,7 +340,7 @@ theApp.SetModified (TRUE);
 // fill in gap in vertex array and status
 memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices ()));
 // update anyone pointing to this vertex
-CSegment *segP = Segments ();
+CSegment *segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (nVertex = 0; nVertex < 8; nVertex++)
 		if (segP->verts [nVertex] > nDeletedVert)
@@ -362,7 +362,7 @@ void CMine::DeleteUnusedVertices (void)
 for (nVertex = 0; nVertex < VertCount (); nVertex++)
 	VertStatus (nVertex) &= ~NEW_MASK; 
 // mark all used verts
-CSegment *segP = Segments ();
+CSegment *segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
 		VertStatus (segP->verts [point]) |= NEW_MASK; 
@@ -941,7 +941,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 
 		// update all Segments () that use this vertex
 		if (oldVertex != newVertex) {
-			CSegment *segP = Segments ();
+			CSegment *segP = Segments (0);
 			for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 				for (nVertex = 0; nVertex < 8; nVertex++)
 					if (segP->verts [nVertex] == oldVertex)
@@ -1082,7 +1082,7 @@ theApp.MineView ()->Refresh ();
 // -------------------------------------------------------------------------- 
 void CMine::MarkSegment(INT16 nSegment)
 {
-  CSegment *segP = Segments () + nSegment; 
+  CSegment *segP = Segments (0) + nSegment; 
 
 	segP->wallFlags ^= MARKED_MASK; /* flip marked bit */
 
@@ -1140,7 +1140,7 @@ theApp.MineView ()->Refresh ();
 //========================================================================== 
 void CMine::UnmarkAll() {
 	INT32 i; 
-	CSegment *segP = Segments ();
+	CSegment *segP = Segments (0);
 	for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 		segP->wallFlags &= ~MARKED_MASK; 
 	UINT8& stat = VertStatus ();
@@ -1161,7 +1161,7 @@ if (nSegment < 0 || nSegment >= SegCount ())
 	return; 
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
-CSegment *segP = Segments () + nSegment; 
+CSegment *segP = Segments (0) + nSegment; 
 segP->children [nSide] =-1; 
 segP->childFlags &= ~(1 << nSide); 
 CSide *sideP = segP->sides + nSide;
@@ -2271,7 +2271,7 @@ return false;
 INT16 CMine::MarkedSegmentCount (bool bCheck)
 {
 	INT32	nSegment, nCount; 
-	CSegment *segP = Segments ();
+	CSegment *segP = Segments (0);
 for (nSegment = SegCount (), nCount = 0; nSegment; nSegment--, segP++)
 	if (segP->wallFlags & MARKED_MASK)
 		if (bCheck)

@@ -376,7 +376,7 @@ return true;
 INT32 CMine::FuelCenterCount (void)
 {
 INT32 n_fuelcen = 0;
-CSegment *segP = Segments ();
+CSegment *segP = Segments (0);
 INT32 i;
 for (i = 0; i < SegCount (); i++, segP++)
 	if ((segP->function == SEGMENT_FUNC_FUELCEN) || (segP->function == SEGMENT_FUNC_REPAIRCEN))
@@ -392,7 +392,7 @@ bool CMine::AddFuelCenter (INT16 nSegment, UINT8 nType, bool bCreate, bool bSetD
 {
 // count number of fuel centers
 INT32 n_fuelcen = FuelCenterCount ();
-CSegment *segP = Segments ();
+CSegment *segP = Segments (0);
 if (n_fuelcen >= MAX_NUM_FUELCENS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;

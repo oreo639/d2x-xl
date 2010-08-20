@@ -440,7 +440,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 		max_brightness = 0;
 		count = 0;
 		// find all Segments () which share this point
-		CSegment *segP = Segments ();
+		CSegment *segP = Segments (0);
 		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			for (pt = 0; pt < 8; pt++) {
 				if (segP->verts[pt] == nVertex) {
@@ -466,7 +466,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 		if (count > 0) {
 			theApp.SetModified (TRUE);
 			//	max_brightness = min(max_brightness,0x8000L);
-			CSegment *segP = Segments ();
+			CSegment *segP = Segments (0);
 			for (nSegment=0;nSegment<SegCount ();nSegment++, segP++) {
 				for (pt=0;pt<8;pt++) {
 					if (segP->verts[pt] == nVertex) {
@@ -553,7 +553,7 @@ void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
-	MEMSET (VertexColors (), 0, sizeof (MineData ().vertexColors));
+	VertexColors ().Clear ();
 for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 	if (bAll || (segP->wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -561,7 +561,7 @@ for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 			for (i = 0; i < 4; i++) {
 				sideP->uvls [i].l = 0;
 				if (!bAll)
-					MEMSET (VertexColors (segP->verts [side_vert [nSide][i]]), 0, sizeof (CColor));
+					MEMSET (VertexColors (segP->verts [side_vert [nSide][i]]).Clear ();
 				}
 			}
 
@@ -1176,7 +1176,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion
 {
 	INT16			nSide, child, nImprove = 0;
 	UINT16		nWall;
-	CSegment	*segP = Segments () + nSegment;
+	CSegment	*segP = Segments (0) + nSegment;
 	CSegment	*prevSeg = NULL;
 	bool			bMarkChildren = false;
 
@@ -1227,7 +1227,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion
 {
 	INT16			nSide, child, nImprove = 0;
 	UINT16		nWall;
-	CSegment	*segP = Segments () + nSegment;
+	CSegment	*segP = Segments (0) + nSegment;
 	CSegment	*prevSeg = NULL;
 	bool			bMarkChildren = false;
 

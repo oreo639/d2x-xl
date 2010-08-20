@@ -145,7 +145,7 @@ Initialize();
 
 void CMine::ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew)
 {
-CSegment *segP = Segments ();
+CSegment *segP = Segments (0);
 CSide *sideP;
 INT32 i, j;
 
@@ -631,7 +631,7 @@ if (!data)
 
 FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-memcpy (RobotInfo (), DefRobotInfo (), sizeof (ROBOT_INFO) * N_robot_types);
+RobotInfo () = DefRobotInfo ();
 texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
 FILE *file;
 fopen_s (&file, message, "wb");
@@ -665,7 +665,7 @@ INT16 CMine::FixIndexValues()
 	INT16 	check_err;
 
 	check_err = 0;
-	CSegment *segP = Segments ();
+	CSegment *segP = Segments (0);
 	for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			// check wall numbers
@@ -688,7 +688,7 @@ INT16 CMine::FixIndexValues()
 			}
 		}
 	}
-	CWall *wallP = Walls ();
+	CWall *wallP = Walls (0);
 	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++) {
 		// check nSegment
 		if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
@@ -718,8 +718,8 @@ void CMine::Default()
 		m_nHxmExtraDataSize = 0;
 		}
 
-	CSegment& segP = *Segments ();
-	CFixVector *vert = Vertices ();
+	CSegment& segP = *Segments (0);
+	CFixVector *vert = Vertices (0);
 
 	segP.sides [0].nWall = NO_WALL;
 	segP.sides [0].nBaseTex = 0;
@@ -881,7 +881,7 @@ void CMine::ClearMineData()
 	INT16 i;
 
 	// initialize Segments ()
-CSegment *segP = Segments ();
+CSegment *segP = Segments (0);
 for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 	segP->wallFlags &= ~MARKED_MASK;
 SegCount () = 0;
@@ -968,9 +968,9 @@ if (IsD2File ())
 
 if (LevelVersion () == 9) {
 #if 1
-	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-	LoadColors (VertexColors (), VertCount (), 9, 15, fp);
+	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
+	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
+	LoadColors (VertexColors (0), VertCount (), 9, 15, fp);
 #else
 	fread (LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
 	fread (LightColors (), sizeof (CColor), SegCount () * 6, fp);
@@ -978,9 +978,9 @@ if (LevelVersion () == 9) {
 #endif
 	}
 else if (LevelVersion () > 9) {
-	LoadColors (VertexColors (), VertCount (), 9, 15, fp);
-	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-	LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
+	LoadColors (VertexColors (0), VertCount (), 9, 15, fp);
+	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
+	LoadColors (TexColors (0), MAX_D2_TEXTURES, 10, 16, fp);
 	}
 if (GameInfo ().objects.count > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
@@ -1104,8 +1104,8 @@ else {  /*load mine filename */
 	//  gamesave_num_org_robots = 0;
 	//  gamesave_num_players = 0;
 
-#if 0
-	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (), -1, MAX_OBJECTS, "Objects"))
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
 		return -1;
 #else
 	if (GameInfo ().objects.offset > -1) {
@@ -1130,7 +1130,7 @@ else {  /*load mine filename */
 	// note: Wall size will automatically strip last two items
 
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().walls, Walls (), 20, MAX_WALLS, "Walls"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
 		return -1;
 #else
 	if ((GameInfo ().walls.offset > -1) && !fseek(loadfile, GameInfo ().walls.offset, SEEK_SET)) {
@@ -1154,7 +1154,7 @@ else {  /*load mine filename */
 	//==================== = READ DOOR INFO============================
 	// note: not used for D1 or D2 since doors.count is always 0
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().doors, ActiveDoors (), 20, MAX_DOORS, "Doors"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
 		return -1;
 #else
 	if ((GameInfo ().doors.offset > -1) && !fseek(loadfile, GameInfo ().doors.offset, SEEK_SET)) {
@@ -1178,7 +1178,7 @@ else {  /*load mine filename */
 	//==================== READ TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().triggers, Triggers (), -1, MAX_TRIGGERS, "Triggers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
 		return -1;
 	if (GameInfo ().triggers.offset > -1) {
 #else
@@ -1232,7 +1232,7 @@ else {  /*load mine filename */
 	//================ READ CONTROL CENTER TRIGGER INFO============== =
 	// note: same for D1 and D2
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().control, ReactorTriggers (), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
 		return -1;
 #else
 	if (GameInfo ().control.offset > -1) {
@@ -1253,7 +1253,7 @@ else {  /*load mine filename */
 	//================ READ MATERIALIZATION CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().botgen, BotGens (), -1, MAX_ROBOT_MAKERS, "Robot makers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
 		return -1;
 #else
 	if (GameInfo ().botgen.offset > -1) {
@@ -1276,7 +1276,7 @@ else {  /*load mine filename */
 	//================ READ EQUIPMENT CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().equipgen, EquipGens (), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 		return -1;
 #else
 	if (GameInfo ().equipgen.offset > -1) {
@@ -1304,7 +1304,7 @@ else {  /*load mine filename */
 		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().lightDeltaIndices.count);
 		//    DEBUGMSG(message);
 #if 1
-		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaIndices, LightDeltaIndex (), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices"))
+		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34)))
 			return -1;
 #else
 		if (GameInfo ().lightDeltaIndices.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
@@ -1330,7 +1330,7 @@ else {  /*load mine filename */
 		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().lightDeltaValues.count);
 		//    DEBUGMSG(message);
 #if 1
-		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaValues, LightDeltaValues (), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
+		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaValues, LightDeltaValues (0), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
 			return -1;
 #else
 		if (GameInfo ().lightDeltaValues.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
@@ -1598,9 +1598,9 @@ if (IsD2File ()) {
   }
 
 if (IsD2XLevel ()) {
-	SaveColors (VertexColors (), VertCount (), save_file);
-	SaveColors (LightColors (), SegCount () * 6, save_file);
-	SaveColors (TexColors (), MAX_D2_TEXTURES, save_file);
+	SaveColors (VertexColors (0), VertCount (), save_file);
+	SaveColors (LightColors (0), SegCount () * 6, save_file);
+	SaveColors (TexColors (0), MAX_D2_TEXTURES, save_file);
 	}
 return 0;
 }
@@ -1733,7 +1733,9 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	GameInfo ().doors.offset = ftell(savefile);
 	if (GameInfo ().fileinfo.version >= 20)
 //	for (i = 0; i < GameInfo ().doors.count; i++)
-			fwrite(ActiveDoors (i), TotalSize (GameInfo ().doors), 1, savefile);
+		for (i = 0; i < GameInfo ().doors.count; i++)
+			ActiveDoors (i)->Write (savefile, GameInfo ().fileinfo.version);
+			//fwrite(ActiveDoors (i), TotalSize (GameInfo ().doors), 1, savefile);
 
 	//==================== WRITE TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
@@ -1754,30 +1756,33 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//================ WRITE CONTROL CENTER TRIGGER INFO============== =
 	// note: same for D1 and D2
 	GameInfo ().control.offset = ftell(savefile);
-	//for (i = 0; i < GameInfo ().control.count; i++)
-		fwrite(ReactorTriggers (), TotalSize (GameInfo ().control), 1, savefile);
+	for (i = 0; i < GameInfo ().control.count; i++)
+		ReactorTriggers (i)->Write (savefile, GameInfo ().fileinfo.version);
+		//fwrite(ReactorTriggers (), TotalSize (GameInfo ().control), 1, savefile);
 
 	//================ WRITE MATERIALIZATION CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
 	GameInfo ().botgen.offset = ftell(savefile);
-	if (IsD2File ())
-		fwrite(BotGens (), TotalSize (GameInfo ().botgen), 1, savefile);
-	else {
+	//if (IsD2File ())
+	//	fwrite(BotGens (), TotalSize (GameInfo ().botgen), 1, savefile);
+	//else 
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
-			write_INT32 (BotGens (i)->objFlags[0], savefile);
-			// skip robot_flags2
-			write_FIX  (BotGens (i)->hitPoints, savefile);
-			write_FIX  (BotGens (i)->interval, savefile);
-			write_INT16(BotGens (i)->nSegment, savefile);
-			write_INT16(BotGens (i)->nFuelCen, savefile);
-		}
+			BotGens (i)->Write (savefile, GameInfo ().fileinfo.version);
+			//write_INT32 (BotGens (i)->objFlags[0], savefile);
+			//// skip robot_flags2
+			//write_FIX  (BotGens (i)->hitPoints, savefile);
+			//write_FIX  (BotGens (i)->interval, savefile);
+			//write_INT16(BotGens (i)->nSegment, savefile);
+			//write_INT16(BotGens (i)->nFuelCen, savefile);
 	}
 
 	//================ WRITE EQUIPMENT CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
 	GameInfo ().equipgen.offset = ftell(savefile);
 	if (IsD2File ())
-		fwrite(EquipGens (), TotalSize (GameInfo ().equipgen), 1, savefile);
+		for (i = 0; i < GameInfo ().botgen.count; i++) 
+			EquipGens (i)->Write (savefile, GameInfo ().fileinfo.version);
+		//fwrite(EquipGens (), TotalSize (GameInfo ().equipgen), 1, savefile);
 
 	//============== CALCULATE DELTA LIGHT DATA============ =
 	if (IsD2File ())
@@ -1789,18 +1794,21 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
 		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
 	if (IsD2File ())
-		fwrite(LightDeltaIndex (), TotalSize (GameInfo ().lightDeltaIndices), 1, savefile);
+		for (i = 0; i < GameInfo ().lightDeltaIndices.count; i++) 
+			LightDeltaIndex (i)->Write (savefile, GameInfo ().fileinfo.version, (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34));
+		//fwrite(LightDeltaIndex (), TotalSize (GameInfo ().lightDeltaIndices), 1, savefile);
 
 	//================ = WRITE DELTA LIGHTS==================
 	// note: D2 only
 	GameInfo ().lightDeltaValues.offset = ftell(savefile);
 	if (IsD2File ()) {
-		CLightDeltaValue *dl, temp_dl;
-		dl = LightDeltaValues ();
+		//CLightDeltaValue *dl, temp_dl;
+		//dl = LightDeltaValues ();
 		for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
-			memcpy(&temp_dl, dl, (INT16)(GameInfo ().lightDeltaValues.size));
-			fwrite(&temp_dl, (INT16)(GameInfo ().lightDeltaValues.size), 1, savefile);
-			dl++;
+			LightDeltaValues (i)->Write (savefile, GameInfo ().fileinfo.version);
+			//memcpy(&temp_dl, dl, (INT16)(GameInfo ().lightDeltaValues.size));
+			//fwrite(&temp_dl, (INT16)(GameInfo ().lightDeltaValues.size), 1, savefile);
+			//dl++;
 		}
 	}
 
@@ -1824,7 +1832,7 @@ void CMine::UpdateDeltaLights ()
 {
 return;
 	bool found = FALSE;
-	CSegment *segP = Segments ();
+	CSegment *segP = Segments (0);
 	INT32 nSegment;
 	for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		INT32 nSide;

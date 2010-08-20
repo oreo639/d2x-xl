@@ -1841,7 +1841,7 @@ void CMineView::DrawLights (void)
 	      INT32 index = LightDeltaIndex () [i].index+j;
 	      nSide = LightDeltaValues () [index].nSide;
 			nSegment  = LightDeltaValues () [index].nSegment;
-	      segment *segP = Segments () [nSegment];
+	      segment *segP = Segments (0) [nSegment];
 	      light_dest = segment_center_xy(nSide,nSegment);
 			for (k=0;k<4;k++)  {
 				POINT corner;

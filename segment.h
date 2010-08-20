@@ -33,6 +33,10 @@ public:
 
 	INT32 Read (FILE *fp, bool bNewFormat);
 	void Write (FILE* fp);
+	void Clear (void) {
+		index = 0;
+		color.r = color.g = color.b = 0;
+		}
 };
 
 class CSide {

@@ -25,6 +25,23 @@ extern CUVL default_uvls[4];
 // CLASS - Level
 //**************************************************************************
 
+typedef CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > robotInfoList;
+typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
+typedef CStaticArray< CSegment, MAX_SEGMENTS3 > segmentList;
+typedef CStaticArray< typedef CStaticArray< CColor, 6 >, MAX_SEGMENTS3 > lightColorList;
+typedef CStaticArray< CColor, MAX_D2_TEXTURES > texColorList;
+typedef CStaticArray< CColor, MAX_VERTICES3 > vertexColorList;
+typedef CStaticArray< CWall, MAX_WALLS3 > wallList;
+typedef CStaticArray< CActiveDoor, MAX_DOORS > activeDoorList;
+typedef CStaticArray< CTrigger, MAX_TRIGGERS2 > triggerList;
+typedef CStaticArray< CTrigger, MAX_OBJ_TRIGGERS > objTriggerList;
+typedef CStaticArray< CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggerList;
+typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS2 > robotMakerList;
+typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
+typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
+typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
+typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
+
 typedef struct tMineData {
 	CGameInfo					gameInfo;
 	
@@ -34,54 +51,54 @@ typedef struct tMineData {
 	CFixMatrix					m_secret_orient;
 	
 	// robot data
-	//ROBOT_INFO					robotInfo [MAX_ROBOT_TYPES];
-	CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > robotInfo;
+	//ROBOT_INFO				robotInfo [MAX_ROBOT_TYPES];
+	robotInfoList				robotInfo;
 	
 	// structure data
 	UINT16						numVertices;
-	//CVertex						vertices [MAX_VERTICES3];
-	CStaticArray< CVertex, MAX_VERTICES3 > vertices;
+	//CVertex					vertices [MAX_VERTICES3];
+	vertexList					vertices;
 	
 	UINT16						numSegments;
-	//CSegment						segments [MAX_SEGMENTS3];
-	CStaticArray< CSegment, MAX_SEGMENTS3 > segments;
-	//CColor 						lightColors [MAX_SEGMENTS3][6];
-	CStaticArray< CStaticArray< CColor, 6 >, MAX_SEGMENTS3 > lightColors;
+	//CSegment					segments [MAX_SEGMENTS3];
+	segmentList					segments;
+	//CColor 					lightColors [MAX_SEGMENTS3][6];
+	lightColorList				lightColors;
 	//CColor						texColors [MAX_D2_TEXTURES];
-	CStaticArray< CColor, MAX_D2_TEXTURES > texColors;
+	texColorList				texColors;
 	//CColor						vertexColors [MAX_VERTICES3];
-	CStaticArray< CColor, MAX_VERTICES3 > vertexColors;
+	vertexColorList			vertexColors;
 	
-	//CWall							walls[MAX_WALLS3];
-	CStaticArray < CWall, MAX_WALLS3 > walls;
-	//CActiveDoor					activeDoors[MAX_DOORS];
-	CStaticArray < CActiveDoor, MAX_DOORS > activeDoors;
-	//CTrigger						triggers[MAX_TRIGGERS2];
-	CStaticArray < CTrigger, MAX_TRIGGERS2 > triggers;
-	//CTrigger						objTriggers[MAX_OBJ_TRIGGERS];
-	CStaticArray < CTrigger, MAX_OBJ_TRIGGERS > objTriggers;
+	//CWall						walls[MAX_WALLS3];
+	wallList						walls;
+	//CActiveDoor				activeDoors[MAX_DOORS];
+	activeDoorList				activeDoors;
+	//CTrigger					triggers[MAX_TRIGGERS2];
+	triggerList					triggers;
+	//CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
+	objTriggerList				objTriggers;
 	INT32							numObjTriggers;
 	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
-	CStaticArray < CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggers;
-	//CRobotMaker					robotMakers[MAX_NUM_MATCENS2];
-	CStaticArray < CRobotMaker, MAX_NUM_MATCENS2 > robotMakers;
-	//CRobotMaker					equipMakers[MAX_NUM_MATCENS2];
-	CStaticArray < CRobotMaker, MAX_NUM_MATCENS2 > equipMakers;
+	reactorTriggerList		reactorTriggers;
+	//CRobotMaker				robotMakers[MAX_NUM_MATCENS2];
+	robotMakerList				robotMakers;
+	//CRobotMaker				equipMakers[MAX_NUM_MATCENS2];
+	robotMakerList				equipMakers;
 	
 	// object data
-	//CGameObject					objects[MAX_OBJECTS2];
-	CStaticArray< CGameObject, MAX_OBJECTS2 > objects;
+	//CGameObject				objects[MAX_OBJECTS2];
+	objectList					objects;
 	
 	// light data
-	//CLightDeltaIndex			lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
-	CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndices;
-	//CLightDeltaValue			lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
-	CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValues;
+	//CLightDeltaIndex		lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
+	lightDeltaIndexList		lightDeltaIndices;
+	//CLightDeltaValue		lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
+	lightDeltaValueList		lightDeltaValues;
 	
 	// flickering light
 	INT16							m_nFlickeringLights;
-	//CFlickeringLight			flickeringLights[MAX_FLICKERING_LIGHTS];
-	CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLights;
+	//CFlickeringLight		flickeringLights[MAX_FLICKERING_LIGHTS];
+	flickeringLightList		flickeringLights;
 
 	CSelection					current1;
 	CSelection					current2;
@@ -98,8 +115,8 @@ public:
 	char							m_currentLevelName [256];	
 	CGameFileInfo				gameFileInfo;
 	MINE_DATA					m_mineData;
-	//ROBOT_INFO					m_defaultRobotInfo [MAX_ROBOT_TYPES];
-	CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > m_defaultRobotInfo;
+	//ROBOT_INFO				m_defaultRobotInfo [MAX_ROBOT_TYPES];
+	robotInfoList				m_defaultRobotInfo;
 	// textures and palettes
 //	HGLOBAL						texture_handle[MAX_D2_TEXTURES];
 	HPALETTE						m_paletteHandle;
@@ -144,38 +161,67 @@ public:
 public:
 	inline MINE_DATA& MineData ()
 		{ return m_mineData; }
-	inline CVertex *Vertices (INT32 i = 0)
+
+	inline vertexList& Vertices (void)
+		{ return MineData ().vertices; }
+	inline segmentList& Segments (void)
+		{ return MineData ().segments; }
+	inline vertexColorList& VertexColors (void)
+		{ return MineData ().vertexColors; }
+	inline wallList& Walls (void)
+		{ return MineData ().walls; }
+	inline triggerList& Triggers (void)
+		{ return MineData ().triggers; }
+	inline objTriggerList& ObjTriggers (void)
+		{ return MineData ().objTriggers; }
+	inline objectList& Objects (void)
+		{ return MineData ().objects; }
+	inline robotMakerList& BotGens (void)
+		{ return MineData ().robotMakers; }
+	inline robotMakerList& EquipGens (void)
+		{ return MineData ().equipMakers; }
+	inline reactorTriggerList& ReactorTriggers (void)
+		{ return MineData ().reactorTriggers; }
+	inline activeDoorList& ActiveDoors (void)
+		{ return MineData ().activeDoors; }
+	inline robotInfoList& RobotInfo (void)
+		{ return MineData ().robotInfo; }
+	inline robotInfoList& DefRobotInfo (void)
+		{ return m_defaultRobotInfo; }
+
+	inline CVertex *Vertices (INT32 i)
 		{ return MineData ().vertices + i; }
 	inline UINT8& VertStatus (INT32 i = 0)
 		{ return Vertices (i)->m_status; }
-	inline CSegment *Segments (INT32 i = 0)
+	inline CSegment *Segments (INT32 i)
 		{ return MineData ().segments + i; }
-	inline CColor *VertexColors (INT32 i = 0)
+	inline CColor *VertexColors (INT32 i)
 		{ return &(MineData ().vertexColors [i]); }
-	inline CWall *Walls (INT32 i = 0)
+	inline CWall *Walls (INT32 i)
 		{ return MineData ().walls + i; }
-	inline CTrigger *Triggers (INT32 i = 0)
+	inline CTrigger *Triggers (INT32 i)
 		{ return MineData ().triggers + i; }
 	inline INT32 &NumTriggers ()
 		{ return GameInfo ().triggers.count; }
-	inline CTrigger *ObjTriggers (INT32 i = 0)
+	inline CTrigger *ObjTriggers (INT32 i)
 		{ return MineData ().objTriggers + i; }
 	inline INT32& NumObjTriggers ()
 		{ return MineData ().numObjTriggers; }
-	inline CGameObject *Objects (INT32 i = 0)
+	inline CGameObject *Objects (INT32 i)
 		{ return MineData ().objects + i; }
-	inline CRobotMaker *BotGens (INT32 i = 0)
+	inline CRobotMaker *BotGens (INT32 i)
 		{ return MineData ().robotMakers + i; }
-	inline CRobotMaker *EquipGens (INT32 i = 0)
+	inline CRobotMaker *EquipGens (INT32 i)
 		{ return MineData ().equipMakers + i; }
-	inline CReactorTrigger *ReactorTriggers (INT32 i = 0)
+	inline CReactorTrigger *ReactorTriggers (INT32 i)
 		{ return MineData ().reactorTriggers + i; }
-	inline CActiveDoor *ActiveDoors (INT32 i = 0)
+	inline CActiveDoor *ActiveDoors (INT32 i)
 		{ return MineData ().activeDoors + i; }
-	inline ROBOT_INFO *RobotInfo (INT32 i = 0)
+	inline ROBOT_INFO *RobotInfo (INT32 i)
 		{ return MineData ().robotInfo + i; }
-	inline ROBOT_INFO *DefRobotInfo (INT32 i = 0)
+	inline ROBOT_INFO *DefRobotInfo (INT32 i)
 		{ return m_defaultRobotInfo + i; }
+
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
 	inline UINT16& SegCount ()

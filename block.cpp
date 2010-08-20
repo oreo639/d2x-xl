@@ -664,7 +664,7 @@ WriteSegmentInfo (fBlk, 0);
 // the SegCount () will be decremented for each nSegment in loop.
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-CSegment *segP = Segments () + SegCount ();
+CSegment *segP = Segments (0) + SegCount ();
 for (nSegment = SegCount () - 1; nSegment; nSegment--)
     if ((--segP)->wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
