@@ -445,6 +445,7 @@ m_disableDrawing = TRUE;
 
 fseek(fp, minedata_offset, SEEK_SET);
 mine_err = LoadMineDataCompiled(fp, bNewMine);
+int fPos = ftell (fp);
 FlickerLightCount () = nLights;
 
 if (mine_err != 0) {
@@ -904,7 +905,7 @@ GameInfo ().lightDeltaValues.count = 0;
 // ACTION - Reads a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-#if 1
+#if 0
 
 INT16 CMine::LoadMineDataCompiled(FILE *fp, bool bNewMine)
 {
@@ -1153,7 +1154,7 @@ for (i = 0; i < VertCount (); i++)
 	Vertices (i)->Read (fp);
 
 if (n_vertices != VertCount ()) 
-	fseek(fp, sizeof (CFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
+	fseek(fp, sizeof (CFixVector) * (n_vertices - VertCount ()), SEEK_CUR);
 
 // unmark all vertices while we are here...
 for (i = 0; i < VertCount (); i++) 
@@ -2002,7 +2003,7 @@ return;
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcOrthoVector(CFixVector &result, INT16 nSegment, INT16 nSide)
+void CMine::CalcOrthoVector(CFixVector& result, INT16 nSegment, INT16 nSide)
 {
 	struct dvector a, b, c;
 	double length;
@@ -2047,7 +2048,7 @@ void CMine::CalcOrthoVector(CFixVector &result, INT16 nSegment, INT16 nSide)
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcCenter(CFixVector &center, INT16 nSegment, INT16 nSide)
+void CMine::CalcCenter(CFixVector& center, INT16 nSegment, INT16 nSide)
 {
 	INT32 i;
 

@@ -253,7 +253,7 @@ public:
 	bool  AddSegment();
 	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
-	void	CalcSegCenter(CFixVector &pos,INT16 nSegment);
+	void	CalcSegCenter(CFixVector& pos,INT16 nSegment);
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
@@ -284,9 +284,9 @@ public:
 	void SplitLines();
 	void SplitPoints();
 
-	void CalcOrthoVector (CFixVector &result,INT16 nSegment,INT16 nSide);
-	void CalcCenter (CFixVector &center,INT16 nSegment,INT16 nSide);
-	double CalcLength (CFixVector *center1, CFixVector *center2);
+	void CalcOrthoVector (CFixVector& result,INT16 nSegment,INT16 nSide);
+	void CalcCenter (CFixVector& center,INT16 nSegment,INT16 nSide);
+	double CalcLength (CFixVector* center1, CFixVector* center2);
 
 	INT32 IsLight(INT32 nBaseTex);
 	INT32 IsWall (INT16 nSegment = -1, INT16 nSide = -1);
@@ -310,7 +310,7 @@ public:
 	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
 	bool CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
-								CFixVector *source_corner, CFixVector& A, double *effect,
+								CFixVector* source_corner, CFixVector& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);
 
 	void FixChildren();
@@ -342,9 +342,9 @@ public:
 	bool SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
-	void RotateVmsVector (CFixVector *vector, double angle, char axis); 
+	void RotateVmsVector (CFixVector* vector, double angle, char axis); 
 	void RotateVmsMatrix (CFixMatrix *matrix, double angle, char axis); 
-	void RotateVertex (CFixVector *vertex, CFixVector *orgin, CFixVector *normal, double angle); 
+	void RotateVertex (CFixVector* vertex, CFixVector* orgin, CFixVector* normal, double angle); 
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 

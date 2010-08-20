@@ -660,7 +660,7 @@ void CMine::Illuminate (
 	CSegment*		segP = Segments ();
 	double			effect[4];
 	// find orthogonal angle of source segment
-	CFixVector		A;
+	CFixVector			A;
 
 //fLightScale /= 100.0;
 CalcOrthoVector (A,nSourceSeg, nSourceSide);
@@ -671,7 +671,7 @@ A.z = -A.z;
 
 // calculate the center of the source segment
 CFixVector source_center;
-CalcCenter (source_center,nSourceSeg,nSourceSide);
+CalcCenter (source_center, nSourceSeg, nSourceSide);
 // mark those Segments () within N children of current cube
 
 // set child numbers
@@ -954,15 +954,15 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 				}
 
-			CFixVector A,source_center;
-			INT32 CLightDeltaValueIndex_num;
+			CFixVector	A, source_center;
+			INT32		lightDeltaIndexCount;
 
 			// get index number and increment total number of lightDeltaIndices
 	//#pragma omp critical
 			{
-			CLightDeltaValueIndex_num = INT32 (GameInfo ().lightDeltaIndices.count++);
+			lightDeltaIndexCount = INT32 (GameInfo ().lightDeltaIndices.count++);
 			}
-			CLightDeltaIndex *pdli = LightDeltaIndex (CLightDeltaValueIndex_num);
+			CLightDeltaIndex *pdli = LightDeltaIndex (lightDeltaIndexCount);
 			if (bD2XLights) {
 				pdli->m_nSegment = nSourceSeg;
 				pdli->m_nSide = nSourceSide;
@@ -1275,12 +1275,12 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 //--------------------------------------------------------------------------
 
 bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
-									 CFixVector *source_corner, CFixVector& A, double *effect,
+									 CFixVector* source_corner, CFixVector& A, double *effect,
 									 double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
-CFixVector B,center;
+CFixVector	B,center;
 CalcCenter (center,nSegment,nSide);
 B.x = center.x - source_center.x;
 B.y = center.y - source_center.y;

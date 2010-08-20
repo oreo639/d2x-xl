@@ -317,7 +317,7 @@ while(!feof(fBlk)) {
 		z = origin.z + (FIX)((double) vect.x * z_pprime.x + (double) vect.y * z_pprime.y + (double) vect.z * z_pprime.z);
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CFixVector *vert = Vertices (origVertCount);
+		CFixVector* vert = Vertices (origVertCount);
 		for (k = origVertCount; k < VertCount (); k++, vert++)
 			if (vert->x == x && vert->y == y && vert->z == z) {
 				segP->verts [i] = k;
@@ -881,8 +881,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							CFixVector *v1 = Vertices (segP ->verts [0]);
-							CFixVector *v2 = Vertices (seg2->verts [0]);
+							CFixVector* v1 = Vertices (segP ->verts [0]);
+							CFixVector* v2 = Vertices (seg2->verts [0]);
 							if (labs (v1->x - v2->x) < 0xA00000L &&
 								 labs (v1->y - v2->y) < 0xA00000L &&
 								 labs (v1->z - v2->z) < 0xA00000L) {

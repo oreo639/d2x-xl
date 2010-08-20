@@ -32,7 +32,7 @@ typedef struct {
 
 void interp_model_data(
     void *model_data,
-    CFixVector *offset,
+    CFixVector* offset,
     MODEL *model,
     UINT16 call_level
 );

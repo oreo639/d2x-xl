@@ -122,13 +122,13 @@ theApp.MineView ()->Refresh ();
 
 double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide) 
 {
-  INT16 nVertex[4],i;
-  CFixVector midpoint1, midpoint2;
-  double length1,length2,ave_length, mid_length;
-  double ratio1,ratio2;
-	CFixVector *vert [4];
+  INT16		nVertex[4],i;
+  CFixVector		midpoint1, midpoint2;
+  double			length1,length2,ave_length, mid_length;
+  double			ratio1,ratio2;
+	CFixVector*		vert [4];
   // copy vertnums into an array
-	CSegment *segP = m_mine->Segments (nSegment);
+	CSegment*	segP = m_mine->Segments (nSegment);
   for (i=0;i<4;i++) {
     nVertex[i] = segP->verts[side_vert[nSide][i]];
 	 vert [i] = m_mine->Vertices (nVertex [i]);
@@ -175,7 +175,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
 // Action - calculates the distance from a line to a point
 //--------------------------------------------------------------------------
 
-double CDiagTool::CalcDistance (CFixVector *v1,CFixVector *v2,CFixVector *v3)
+double CDiagTool::CalcDistance (CFixVector* v1,CFixVector* v2,CFixVector* v3)
 {
   dvector A,B,B2;
   double c,a2,distance;
@@ -217,10 +217,10 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
   dvector line1,line2,line3,orthog;
   double ratio;
   double dot_product, magnitude1, magnitude2,angle;
-  CFixVector *v0 = m_mine->Vertices (vert0);
-  CFixVector *v1 = m_mine->Vertices (vert1);
-  CFixVector *v2 = m_mine->Vertices (vert2);
-  CFixVector *v3 = m_mine->Vertices (vert3);
+  CFixVector* v0 = m_mine->Vertices (vert0);
+  CFixVector* v1 = m_mine->Vertices (vert1);
+  CFixVector* v2 = m_mine->Vertices (vert2);
+  CFixVector* v3 = m_mine->Vertices (vert3);
       // define lines
       line1.x = ((double) v1->x - (double) v0->x)/F1_0;
       line1.y = ((double) v1->y - (double) v0->y)/F1_0;
@@ -636,40 +636,40 @@ bool CDiagTool::CheckObjects ()
 if (!GetMine ())
 	return false;
 
-	INT32 h,objectnum,type,id,count,players [16 + MAX_COOP_PLAYERS],nSegment,flags,corner, nPlayers [2], bFix;
-  CFixVector center;
-  double x,y,z,radius, max_radius,object_radius;
-  CGameObject *objP = m_mine->Objects ();
-	CGameObject *pPlayer = NULL;
-  INT32	objCount = m_mine->GameInfo ().objects.count;
-  CSegment *segP;
+	INT32				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
+	CFixVector			center;
+	double			x, y, z, radius, max_radius, object_radius;
+	CGameObject*	objP = m_mine->Objects ();
+	CGameObject*	pPlayer = NULL;
+	INT32				objCount = m_mine->GameInfo ().objects.count;
+	CSegment*		segP;
 
 INT16 sub_errors = m_nErrors [0];
 INT16 sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Objects]");
-for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
+for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check segment range
 	nSegment = objP->nSegment;
 	if (nSegment < 0 || nSegment >= m_mine->SegCount ()) {
 		if (m_bAutoFixBugs) {
 			objP->nSegment = nSegment = 0;
-			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",objectnum,nSegment);
+			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
 			}
 		else
-			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,nSegment=%d)",objectnum,nSegment);
-		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, objectnum))
+			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
+		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
 
 	if (nSegment < 0 || nSegment >= m_mine->SegCount ()) {
 		if (m_bAutoFixBugs) {
 			objP->nSegment = 0;
-			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",objectnum,nSegment);
+			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
 			}
 		else
-			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,nSegment=%d)",objectnum,nSegment);
-		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, objectnum))
+			sprintf_s (message, sizeof (message),"ERROR: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
+		if (UpdateStats (message, 1, -1, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
 
@@ -680,7 +680,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
     // from center and make sure it is less than max corner.
     center.x = center.y = center.z = 0;
     for (corner=0;corner<8;corner++) {
-		 CFixVector *v = m_mine->Vertices (segP->verts[corner]);
+		 CFixVector* v = m_mine->Vertices (segP->verts[corner]);
       center.x += v->x;
       center.y += v->y;
       center.z += v->z;
@@ -688,7 +688,7 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
     center.x /= 8; center.y /= 8; center.z /= 8;
     max_radius = 0;
     for (corner=0;corner<8;corner++) {
-		 CFixVector *v = m_mine->Vertices (segP->verts[corner]);
+		 CFixVector* v = m_mine->Vertices (segP->verts[corner]);
       x = v->x - center.x;
       y = v->y - center.y;
       z = v->z - center.z;
@@ -700,8 +700,8 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
     z = objP->pos.z - center.z;
 	object_radius = sqrt (x*x + y*y + z*z);
     if ((object_radius > max_radius) && (objP->type != OBJ_EFFECT)) {
-      sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",objectnum,nSegment);
-      if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, objectnum))
+      sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",nObject,nSegment);
+      if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
 
@@ -710,22 +710,22 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 	if (flags != 0) {
 		if (m_bAutoFixBugs) {
 			objP->flags = 0;
-			sprintf_s (message, sizeof (message),"FIXED: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
+			sprintf_s (message, sizeof (message),"FIXED: Flags for object non-zero (object=%d,flags=%d)",nObject,flags);
 			}
 		else
-			sprintf_s (message, sizeof (message),"ERROR: Flags for object non-zero (object=%d,flags=%d)",objectnum,flags);
-      if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, objectnum)) 
+			sprintf_s (message, sizeof (message),"ERROR: Flags for object non-zero (object=%d,flags=%d)",nObject,flags);
+      if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject)) 
 			return true;
     }
 
     // check type range
 	 if ((objP->id < 0) || (objP->id > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",objectnum, objP->id);
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",nObject, objP->id);
 			objP->id = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",objectnum, objP->id);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",nObject, objP->id);
 		}
 	type = objP->type;
     switch (type) {
@@ -734,30 +734,30 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 			  pPlayer = objP;
 			if (objP->id >= MAX_PLAYERS (m_mine)) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",objectnum, objP->id);
+					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",nObject, objP->id);
 				objP->id = MAX_PLAYERS (m_mine) - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",objectnum, objP->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->id);
 			}
 	  case OBJ_COOP:
 		  if (objP->id > 2) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",objectnum, objP->id);
+				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->id);
 				objP->id = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",objectnum, objP->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->id);
 			}
 			break;
 	  case OBJ_EFFECT:
 		  if (objP->id > SOUND_ID) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",objectnum, objP->id);
+				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->id);
 				objP->id = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",objectnum, objP->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->id);
 			}
 			break;
 	  case OBJ_ROBOT:
@@ -774,12 +774,12 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 				break;
 	  default:
 		 if (m_bAutoFixBugs) {
-			 m_mine->DeleteObject (objectnum);
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object type (object=%d,type=%d)",objectnum,type);
+			 m_mine->DeleteObject (nObject);
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object type (object=%d,type=%d)",nObject,type);
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object type (object=%d,type=%d)",objectnum,type);
-		if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, objectnum))
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object type (object=%d,type=%d)",nObject,type);
+		if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
     id = objP->id;
@@ -787,10 +787,10 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
     // check id range
     if (h = CheckId (objP)) {
 		 if (h == 2)
-	      sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",objectnum,id);
+	      sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id=%d)",nObject,id);
 		else
-	      sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",objectnum,id);
-      if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, objectnum)) 
+	      sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id=%d)",nObject,id);
+      if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) 
 			return true;
     }
 
@@ -799,11 +799,11 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
 			objP->contains_count = 0;
-		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
+		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",nObject,count);
 			}
 		else
-		  sprintf_s (message, sizeof (message),"WARNING: Spawn count must be >= -1 (object=%d,count=%d)",objectnum,count);
-      if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, objectnum)) 
+		  sprintf_s (message, sizeof (message),"WARNING: Spawn count must be >= -1 (object=%d,count=%d)",nObject,count);
+      if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) 
 			return true;
     }
 
@@ -813,16 +813,16 @@ for (objectnum = 0;objectnum < objCount ; objectnum++, objP++) {
 	  if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 		if (m_bAutoFixBugs) {
 			objP->contains_type = OBJ_POWERUP;
-			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",objectnum,type);
+			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",nObject,type);
 			}
 		else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",objectnum,type);
-	if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, objectnum)) return true;
+			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
+	if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 	  }
 	  id = objP->contains_id;
 	  // check contains id range
 	  if (CheckId (objP)) {
-	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",objectnum,id);
+	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
 	if (UpdateStats (message,0,1)) return true;
 	  }
 	}
@@ -836,12 +836,12 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 		memcpy (pPlayer, m_mine->Objects (0), sizeof (CGameObject));
 		memcpy (m_mine->Objects (0), pPlayer, sizeof (CGameObject));
 		strcpy_s (message, sizeof (message), "FIXED: Object 0 was not Player 0.");
-		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, objectnum))
+		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
 	else {
 		strcpy_s (message, sizeof (message), "WARNING: Object 0 is not Player 0.");
-		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, objectnum))
+		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
 		}
 	}
@@ -853,15 +853,15 @@ if (m_mine->Objects (0)->type != OBJ_PLAYER || m_mine->Objects (0)->id != 0) {
 	bFix = 0;
 	// count each
 	objP = m_mine->Objects ();
-	for (objectnum = 0; objectnum < objCount; objectnum++, objP++) {
+	for (nObject = 0; nObject < objCount; nObject++, objP++) {
 		if (objP->type == OBJ_PLAYER) {
 			nPlayers [0]++;
-			if (CheckAndFixPlayer (0, MAX_PLAYERS (m_mine), objectnum, players))
+			if (CheckAndFixPlayer (0, MAX_PLAYERS (m_mine), nObject, players))
 				bFix |= 1;
 			}
 		else if (objP->type == OBJ_COOP) {
 			nPlayers [1]++;
-			if (CheckAndFixPlayer (0, 3, objectnum, players + MAX_PLAYERS (m_mine)))
+			if (CheckAndFixPlayer (0, 3, nObject, players + MAX_PLAYERS (m_mine)))
 				bFix |= 2;
 			}
 		}
@@ -879,7 +879,7 @@ if (m_bAutoFixBugs) {
 				players [id] = ++i;
 		}
 	objP = m_mine->Objects ();
-	for (objectnum = 0; objectnum < objCount; objectnum++, objP++) {
+	for (nObject = 0; nObject < objCount; nObject++, objP++) {
 		if (objP->type == OBJ_PLAYER) {
 			if ((bFix & 1) && (objP->id >= 0) && (objP->id < MAX_PLAYERS (m_mine)))
 				objP->id = players [objP->id] - 1;
@@ -917,22 +917,22 @@ else if (nPlayers [1] > 3) {
   // make sure there is only one control center
 count = 0;
 objP = m_mine->Objects ();
-for (objectnum=0;objectnum<objCount;objectnum++, objP++) {
+for (nObject=0;nObject<objCount;nObject++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	type = objP->type;
 	if (type == OBJ_CNTRLCEN) {
 		if (m_mine->Segments (objP->nSegment)->function != SEGMENT_FUNC_CONTROLCEN) {
 			if (m_bAutoFixBugs && m_mine->AddRobotMaker (objP->nSegment, false, false))
-				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",objectnum,objP->nSegment);
+				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->nSegment);
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",objectnum,objP->nSegment);
-			if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, objectnum))
+				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->nSegment);
+			if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
 		count++;
 		if (count > 1) {
-			sprintf_s (message, sizeof (message),"WARNING: More than one Reactor found (object=%d)",objectnum);
-			if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, objectnum))
+			sprintf_s (message, sizeof (message),"WARNING: More than one Reactor found (object=%d)",nObject);
+			if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 				return true;
 			}
 		}

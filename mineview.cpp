@@ -1963,10 +1963,9 @@ if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
 		}
 	}
 m_pDC->SelectObject (m_penBlue);
-j = MAX_VERTICES (mine) - 1;
-CFixVector *verts = mine->Vertices (j);
-for (h = n_splines * 4, i = 0; i < h; i++, j--, verts--)
-	m_matrix.SetPoint (verts, m_viewPoints + j);
+j = MAX_VERTICES (mine);
+for (h = n_splines * 4, i = 0; i < h; i++, j--)
+	m_matrix.SetPoint (mine->Vertices (--j), m_viewPoints + j);
 CSegment *segP = mine->Segments (MAX_SEGMENTS (mine) - 1);
 for (i = 0; i < n_splines; i++, segP--)
 	DrawCubeQuick (segP);
@@ -1980,7 +1979,7 @@ for (i = 0; i < n_splines; i++, segP--)
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
-void TransformModelPoint (CFixVector &dest, APOINT &src, CFixMatrix &orient, CFixVector offs)
+void TransformModelPoint (CFixVector& dest, APOINT &src, CFixMatrix &orient, CFixVector offs)
 {
 dest.x = (orient.rvec.x * (FIX)src.x + orient.uvec.x * (FIX)src.y + orient.fvec.x * (FIX)src.z);
 dest.y = (orient.rvec.y * (FIX)src.x +	orient.uvec.y * (FIX)src.y + orient.fvec.y * (FIX)src.z);
@@ -2500,10 +2499,9 @@ InitViewDimensions ();
 if (bSetViewInfo)
 	m_matrix.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = m_mine->VertCount ();
-CFixVector *v = m_mine->Vertices (i);
 APOINT *a = m_viewPoints + i;
 for (; i--; ) {
-	m_matrix.SetPoint (--v, --a);
+	m_matrix.SetPoint (m_mine->Vertices (--i), --a);
 	x = a->x;
 	y = a->y;
 	z = a->z;
@@ -3346,7 +3344,7 @@ return true;
 // calculate_segment_center()
 //-------------------------------------------------------------------------
 
-void CMineView::CalcSegmentCenter(CFixVector &pos,INT16 nSegment) 
+void CMineView::CalcSegmentCenter(CFixVector& pos,INT16 nSegment) 
 {
 if (!GetMine ())
 	return;

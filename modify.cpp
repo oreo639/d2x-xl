@@ -132,7 +132,7 @@ z = center.z - opp_center.z;
 		};
 	CSegment *segP;
 	INT16 point0,point1;
-	CFixVector *vector0,*vector1;
+	CFixVector* vector0,*vector1;
 	bool ok_to_move;
 
 ok_to_move = TRUE;
@@ -447,12 +447,12 @@ return false;
 
 bool CMine::MovePoints(INT32 pt0, INT32 pt1) 
 {
-	CFixVector *vector0,*vector1,delta;
+	CFixVector* vector0,*vector1,delta;
 	INT32 point0,point1;
 	double length;
 	INT32 point;
 	INT32 i;
-	CFixVector *vect;
+	CFixVector* vect;
 
 point0  = side_vert [Current ()->nSide][CURRENT_POINT(pt0)];
 point1  = side_vert [Current ()->nSide][CURRENT_POINT(pt1)];
@@ -560,7 +560,7 @@ else
 	else if (inc & 1)
 		inc++;
 
-CFixVector *v1 = Vertices (segP->verts [point0]),
+CFixVector* v1 = Vertices (segP->verts [point0]),
 			  *v2 = Vertices (segP->verts [point1]);
 // figure out direction to modify line
 x = v1->x - v2->x;
@@ -954,7 +954,7 @@ return true;
     }
   };
 
- void CMine::RotateVmsVector (CFixVector *vector,double angle,char axis) 
+ void CMine::RotateVmsVector (CFixVector* vector,double angle,char axis) 
 {
   CFixVector n;
 
@@ -1069,7 +1069,7 @@ void CMine::RotateVmsMatrix (CFixMatrix *matrix,double angle,char axis)
 
 ***************************************************************************/
 
-void CMine::RotateVertex(CFixVector *vertex, CFixVector *origin, CFixVector *normal, double angle) 
+void CMine::RotateVertex(CFixVector* vertex, CFixVector* origin, CFixVector* normal, double angle) 
 {
 
   double z_spin,y_spin;

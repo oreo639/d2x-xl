@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-double CMine::CalcLength(CFixVector *center1, CFixVector *center2)
+double CMine::CalcLength(CFixVector* center1, CFixVector* center2)
 {
 	CFixVector direction; 
 
@@ -338,7 +338,7 @@ void CMine::DeleteVertex(INT16 nDeletedVert)
 
 theApp.SetModified (TRUE); 
 // fill in gap in vertex array and status
-memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount ()-1 - nDeletedVert) * sizeof (CFixVector));
+memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices ()));
 // update anyone pointing to this vertex
 CSegment *segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
@@ -955,7 +955,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 // calculate_segment_center()
 // ------------------------------------------------------------------------- 
 
-void CMine::CalcSegCenter(CFixVector &pos, INT16 nSegment) 
+void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment) 
 {
   INT16	*nVerts =Segments (nSegment)->verts; 
   CFixVector *vert;
@@ -1740,9 +1740,9 @@ INT16 nNewSide, nSide, nSegment, nNewSeg;
 nNewSeg = Current ()->nSegment; 
 nNewSide = Current ()->nSide; 
 CSegment *pSeg = Segments (),
-			 *pNewSeg = Segments (nNewSeg);
-CFixVector *vSeg, 
-			  *vNewSeg = Vertices (pNewSeg->verts [0]);
+			*pNewSeg = Segments (nNewSeg);
+CFixVector	*vSeg, 
+			*vNewSeg = Vertices (pNewSeg->verts [0]);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, pSeg) {
 	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
@@ -2655,7 +2655,7 @@ bool CMine::SplitSegment ()
 	INT16			nSegment, childSegNum;
 	INT16			nSide, oppSideNum, childSideNum;
 	INT16			vertNum, nWall;
-	CFixVector	segCenter, *v, *segVert, *centerSegVert;
+	CFixVector		segCenter, *v, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
 	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};
@@ -3068,6 +3068,8 @@ if (bTextured) {
 		if ((nOvlTex & 0x1FFF) == 0)
 			nOvlTex = 0;
 		}
+	else
+		nOvlTex = 0;
 	for (int i = 0; i < 4; i++)
 		uvls [i].Read (fp);
 	}

@@ -99,7 +99,7 @@ INT32 file_type = RL2_FILE;
 INT16	     num_static_lights=0;
 
 char string[256];
-INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
+INT16 nSplineSeg1,nSplineSeg2,nSplineSide1,nSplineSide2;
 char spline_error_message[] = "You must exit spline creation before preforming this function";
 CFixVector spline_points[MAX_SPLINES];
 CFixVector points[4];
@@ -853,7 +853,7 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //UINT16 num_vertices;
 //UINT16 num_segments;
 
-//CFixVector *vertices=0;
+//CFixVector* vertices=0;
 //segment *Segments ()[MAX_SEGMENTS2];
 //object *Objects ()[MAX_OBJECTS];
 //UINT8 *vertexStatus=0; //MAX_VERTICES

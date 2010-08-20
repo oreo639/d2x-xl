@@ -373,7 +373,7 @@ public:
 
 	bool SelectCurrentSegment(INT16 direction,long mouse_x, long mouse_y);
 	void SelectCurrentObject(long mouse_x, long mouse_y);
-	void CalcSegmentCenter(CFixVector &pos,INT16 nSegment);
+	void CalcSegmentCenter(CFixVector& pos,INT16 nSegment);
 	void RefreshObject(INT16 old_object, INT16 new_object);
 	void MarkRubberBandedVertices (void);
 	BOOL DrawRubberBox ();

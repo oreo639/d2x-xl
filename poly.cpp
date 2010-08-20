@@ -41,7 +41,7 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 //-----------------------------------------------------------------------
 #define W(p)   (*((INT16 *)(p)))
 #define WP(p)  ((INT16 *)(p))
-#define VP(p)  ((CFixVector *)(p))
+#define VP(p)  ((CFixVector* )(p))
 #define calcNormal(a,b)
 #define glNormal3fv(a)
 #define glColor3ub(a,b,c)

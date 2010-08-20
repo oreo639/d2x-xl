@@ -84,7 +84,7 @@ double Blend(INT32 i, INT32 n, double u) {
 //-------------------------------------------------------------------------
 //   BezierFcn(pt,u,n,p [] []) - sets (x,y,z) for u=#/segs based on points p
 //-------------------------------------------------------------------------
-void BezierFcn(CFixVector *pt, double u, INT32 npts, CFixVector *p) {
+void BezierFcn(CFixVector* pt, double u, INT32 npts, CFixVector* p) {
   INT32 i;
   double b;
   pt->x = 0;
@@ -138,7 +138,7 @@ if (index != 0) {
 // SpinPoint () - spin on y-axis then z-axis
 //--------------------------------------------------------------------------
 
-void SpinPoint (CFixVector *point,double y_spin,double z_spin) 
+void SpinPoint (CFixVector* point,double y_spin,double z_spin) 
 {
   double tx,ty,tz;
   tx      =   point->x*cos(y_spin) - point->z*sin(y_spin);
@@ -153,7 +153,7 @@ void SpinPoint (CFixVector *point,double y_spin,double z_spin)
 // SpinBackPoint () - spin on z-axis then y-axis
 //--------------------------------------------------------------------------
 
-void SpinBackPoint (CFixVector *point,double y_spin,double z_spin) 
+void SpinBackPoint (CFixVector* point,double y_spin,double z_spin) 
 {
   double tx,ty,tz;
   tx      =   point->x*cos(-z_spin) + point->y*sin(-z_spin);
@@ -188,7 +188,7 @@ INT32 CMine::MatchingSide (INT32 j)
 //--------------------------------------------------------------------------
 
 void RectPoints(double angle,double radius,
-                  CFixVector *vertex,CFixVector *orgin,CFixVector *normal) 
+                  CFixVector* vertex,CFixVector* orgin,CFixVector* normal) 
 {
   double y_spin,z_spin;
   double nx,ny,nz;
@@ -266,7 +266,7 @@ void RectPoints(double angle,double radius,
 //--------------------------------------------------------------------------
 
 void PolarPoints (double *angle,double *radius,
-		  CFixVector *vertex,CFixVector *orgin,CFixVector *normal) 
+		  CFixVector* vertex,CFixVector* orgin,CFixVector* normal) 
 {
   double z_spin,y_spin;
   double vx,vy,vz,nx,ny,nz;
@@ -310,13 +310,14 @@ void PolarPoints (double *angle,double *radius,
 //          automatically.
 //==========================================================================
 
-void CMine::TunnelGenerator() {
+void CMine::TunnelGenerator (void) 
+{
 
 //  UpdateUndoBuffer(0);
 
-double length;
-INT32 i,j,nVertex,spline;
-CSegment *segP;
+double		length;
+INT32			i, j, nVertex, spline;
+CSegment*	segP;
 
 if (!m_bSplineActive) {
 	m_nMaxSplines = MAX_SEGMENTS (this) - SegCount ();
@@ -338,15 +339,15 @@ if (!m_bSplineActive) {
 					"on sides which do not have cubes attached.");
 		return;
 		}
-	spline_segment1 = Current1 ().nSegment;
-	spline_segment2 = Current2 ().nSegment;
-	spline_side1 = Current1 ().nSide;
-	spline_side2 = Current2 ().nSide;
+	nSplineSeg1 = Current1 ().nSegment;
+	nSplineSeg2 = Current2 ().nSegment;
+	nSplineSide1 = Current1 ().nSide;
+	nSplineSide2 = Current2 ().nSide;
 	// define 4 data points for spline to work from
 	// center of current cube
-	CalcCenter (points [0],spline_segment1,spline_side1);
+	CalcCenter (points [0],nSplineSeg1,nSplineSide1);
 	// center of other cube
-	CalcCenter (points [3],spline_segment2,spline_side2);
+	CalcCenter (points [3],nSplineSeg2,nSplineSide2);
 	// calculate length between cubes
 	length = CalcLength (points, points + 3);
 	// base spline length on distance between cubes
@@ -391,7 +392,6 @@ else {
 		// use last "n_spline" segments
 		nVertex = (MAX_VERTICES (this)-1)-(spline*4);
 		for (j = 0; j < 4; j++) {
-		//	  memcpy(&vertices [VertCount ()],&vertices [nVertex-j],sizeof (CFixVector));
 			if (VertCount () >= MAX_VERTICES (this))
 				DEBUGMSG (" Tunnel generator: Vertex count out of range.")
 			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES (this)))
@@ -404,22 +404,22 @@ else {
 			vertices [VertCount ()].z = vertices [nVertex-j].z;
 */
 			if (spline == 0) {         // 1st segment
-				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
-				segP->verts [opp_side_vert [spline_side1] [j]] = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
+				segP->verts [side_vert [nSplineSide1] [j]] = VertCount ();
+				segP->verts [opp_side_vert [nSplineSide1] [j]] = Segments (nSplineSeg1)->verts [side_vert [nSplineSide1] [j]];
 				VertStatus (VertCount ()++) = 0;
 				}
 			else if(spline < n_splines - 1) { // center segments
-				segP->verts [side_vert [spline_side1] [j]] = VertCount ();
-				segP->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4;
+				segP->verts [side_vert [nSplineSide1] [j]] = VertCount ();
+				segP->verts [opp_side_vert [nSplineSide1] [j]] = VertCount () - 4;
 				VertStatus (VertCount ()++) = 0;
 				}
 			else {          // last segment
-				segP->verts [side_vert [spline_side1] [j]] = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
-				segP->verts [opp_side_vert [spline_side1] [j]] = VertCount () - 4 + j;
+				segP->verts [side_vert [nSplineSide1] [j]] = Segments (nSplineSeg2)->verts [side_vert [nSplineSide2] [MatchingSide (j)]];
+				segP->verts [opp_side_vert [nSplineSide1] [j]] = VertCount () - 4 + j;
 				}
 			}
 		// fix twisted segments
-		UntwistSegment (SegCount (), spline_side1);
+		UntwistSegment (SegCount (), nSplineSide1);
 		// define children and sides (textures and nWall)
 		for (j = 0; j < 6; j++) {
 			segP->children [j] = -1;
@@ -434,23 +434,23 @@ else {
 			SetUV (SegCount (),j,0,0,0);
 			}
 		if (spline==0) {
-			segP->children [opp_side [spline_side1]] = spline_segment1;
-			segP->children [spline_side1] = SegCount ()+1;
-			Segments (spline_segment1)->children [spline_side1] = SegCount ();
-			Segments (spline_segment1)->childFlags |= (1<<spline_side1);
+			segP->children [opp_side [nSplineSide1]] = nSplineSeg1;
+			segP->children [nSplineSide1] = SegCount ()+1;
+			Segments (nSplineSeg1)->children [nSplineSide1] = SegCount ();
+			Segments (nSplineSeg1)->childFlags |= (1<<nSplineSide1);
 			} 
 		else if (spline<n_splines-1) {
-			segP->children [opp_side [spline_side1]] = SegCount ()-1;
-			segP->children [spline_side1] = SegCount ()+1;
+			segP->children [opp_side [nSplineSide1]] = SegCount ()-1;
+			segP->children [nSplineSide1] = SegCount ()+1;
 			}
 		else {
-			segP->children [opp_side [spline_side1]] = SegCount ()-1;
-			segP->children [spline_side1] = spline_segment2;
-			Segments (spline_segment2)->children [spline_side2] = SegCount ();
-			Segments (spline_segment2)->childFlags |= (1<<spline_side2);
+			segP->children [opp_side [nSplineSide1]] = SegCount ()-1;
+			segP->children [nSplineSide1] = nSplineSeg2;
+			Segments (nSplineSeg2)->children [nSplineSide2] = SegCount ();
+			Segments (nSplineSeg2)->childFlags |= (1<<nSplineSide2);
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
-		segP->childFlags = (1<<spline_side1) | (1<<opp_side [spline_side1]);
+		segP->childFlags = (1<<nSplineSide1) | (1<<opp_side [nSplineSide1]);
 		segP->owner = -1;
 		segP->group = -1;
 		segP->function = 0;
@@ -474,10 +474,10 @@ void CMine::IncreaseSpline()
 
 //UpdateUndoBuffer(0);
 
-if (Current ()->nSegment == spline_segment1)
+if (Current ()->nSegment == nSplineSeg1)
 	if (m_splineLength1 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength1 += SPLINE_INTERVAL;
-if (Current ()->nSegment == spline_segment2)
+if (Current ()->nSegment == nSplineSeg2)
 	if (m_splineLength2 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength2 += SPLINE_INTERVAL;
 theApp.MineView ()->Refresh ();
@@ -492,10 +492,10 @@ void CMine::DecreaseSpline()
 
 //  UpdateUndoBuffer(0);
 
-if (Current ()->nSegment == spline_segment1)
+if (Current ()->nSegment == nSplineSeg1)
 	if (m_splineLength1 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength1 -= SPLINE_INTERVAL;
-if (Current ()->nSegment == spline_segment2)
+if (Current ()->nSegment == nSplineSeg2)
 	if (m_splineLength2 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength2 -= SPLINE_INTERVAL;
 theApp.MineView ()->Refresh ();
@@ -508,7 +508,7 @@ theApp.MineView ()->Refresh ();
 //       the display is redrawn.
 //-------------------------------------------------------------------------
 
-void CMine::CalcSpline () 
+void CMine::CalcSpline (void) 
 {
   double length;
   double angle;
@@ -516,7 +516,6 @@ void CMine::CalcSpline ()
   CSegment *segP;
   INT16 nVertex;
   CFixVector vertex;
-//  CFixVector opp_center;
   double theta [2] [4],radius [2] [4]; // polor coordinates of sides
   double delta_angle [4];
   CFixVector rel_side_pts [2] [4]; // side points reletave to center of side 1
@@ -524,21 +523,20 @@ void CMine::CalcSpline ()
   CFixVector rel_spline_pts [MAX_SPLINES];
   double y,z;
   double y_spin,z_spin;
-//  double tx,ty,tz;
 
   // center of both cubes
-  CalcCenter (points [0],spline_segment1,spline_side1);
-  CalcCenter (points [3],spline_segment2,spline_side2);
+  CalcCenter (points [0],nSplineSeg1,nSplineSide1);
+  CalcCenter (points [3],nSplineSeg2,nSplineSide2);
 
   // point orthogonal to center of current cube
-  CalcOrthoVector (points [1],spline_segment1,spline_side1);
+  CalcOrthoVector (points [1],nSplineSeg1,nSplineSide1);
   points [1].x = m_splineLength1*points [1].x + points [0].x;
   points [1].y = m_splineLength1*points [1].y + points [0].y;
   points [1].z = m_splineLength1*points [1].z + points [0].z;
 
 
   // point orthogonal to center of other cube
-  CalcOrthoVector (points [2],spline_segment2,spline_side2);
+  CalcOrthoVector (points [2],nSplineSeg2,nSplineSide2);
   points [2].x = m_splineLength2*points [2].x + points [3].x;
   points [2].y = m_splineLength2*points [2].y + points [3].y;
   points [2].z = m_splineLength2*points [2].z + points [3].z;
@@ -559,18 +557,18 @@ void CMine::CalcSpline ()
     rel_pts [i].y = points [i].y - points [0].y;
     rel_pts [i].z = points [i].z - points [0].z;
   }
-  segP = Segments (spline_segment1);
-  CFixVector *vert;
+  segP = Segments (nSplineSeg1);
+  CFixVector* vert;
   for (i=0;i<4;i++) {
-    nVertex = side_vert [spline_side1] [i];
+    nVertex = side_vert [nSplineSide1] [i];
 	 vert = Vertices (segP->verts [nVertex]);
     rel_side_pts [0] [i].x = vert->x - points [0].x;
     rel_side_pts [0] [i].y = vert->y - points [0].y;
     rel_side_pts [0] [i].z = vert->z - points [0].z;
   }
-  segP = Segments (spline_segment2);
+  segP = Segments (nSplineSeg2);
   for (i=0;i<4;i++) {
-    nVertex = side_vert [spline_side2] [i];
+    nVertex = side_vert [nSplineSide2] [i];
 	 vert = Vertices (segP->verts [nVertex]);
     rel_side_pts [1] [i].x = vert->x - points [0].x;
     rel_side_pts [1] [i].y = vert->y - points [0].y;
@@ -674,17 +672,17 @@ void CMine::CalcSpline ()
     nVertex = MAX_VERTICES (this) - 1 - i * 4;
     for (j = 0; j < 4; j++) {
       if (i == 0) {         // 1st segment
-	  segP->verts [side_vert [spline_side1] [j]] = nVertex - j;
-	  segP->verts [opp_side_vert [spline_side1] [j]]
-	    = Segments (spline_segment1)->verts [side_vert [spline_side1] [j]];
+	  segP->verts [side_vert [nSplineSide1] [j]] = nVertex - j;
+	  segP->verts [opp_side_vert [nSplineSide1] [j]]
+	    = Segments (nSplineSeg1)->verts [side_vert [nSplineSide1] [j]];
       } else {
 	if(i<n_splines-1) { // center segments
-	  segP->verts [side_vert [spline_side1] [j]] = nVertex - j;
-	  segP->verts [opp_side_vert [spline_side1] [j]] = nVertex + 4 - j;
+	  segP->verts [side_vert [nSplineSide1] [j]] = nVertex - j;
+	  segP->verts [opp_side_vert [nSplineSide1] [j]] = nVertex + 4 - j;
 	} else {          // last segment
-	  segP->verts [side_vert [spline_side1] [j]]
-	    = Segments (spline_segment2)->verts [side_vert [spline_side2] [MatchingSide (j)]];
-	  segP->verts [opp_side_vert [spline_side1] [j]] = nVertex + 4 - j;
+	  segP->verts [side_vert [nSplineSide1] [j]]
+	    = Segments (nSplineSeg2)->verts [side_vert [nSplineSide2] [MatchingSide (j)]];
+	  segP->verts [opp_side_vert [nSplineSide1] [j]] = nVertex + 4 - j;
         }
       }
     }
@@ -692,7 +690,7 @@ void CMine::CalcSpline ()
 
   // fix twisted segments
   for (i=0;i<n_splines;i++) {
-    UntwistSegment ((MAX_SEGMENTS (this)-1)-i,spline_side1);
+    UntwistSegment ((MAX_SEGMENTS (this)-1)-i,nSplineSide1);
   }
 }
 
