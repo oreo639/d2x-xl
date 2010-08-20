@@ -267,7 +267,9 @@ public:
 	inline CColor *GetTexColor (INT16 nBaseTex, bool bIsTranspWall = false)	
 		{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : NULL; }
 	CColor *LightColor (INT32 i = 0, INT32 j = 0, bool bUseTexColors = true);
-	inline CColor *LightColors (INT32 i = 0, INT32 j = 0)
+	inline lightColorList& LightColors ()
+		{ return MineData ().lightColors; }
+	inline CColor *LightColors (INT32 i, INT32 j = 0)
 		{ return MineData ().lightColors [i] + j; }
 	inline CColor *CurrLightColor ()
 		{ return LightColor (Current ()->nSegment, Current ()->nSide); }
