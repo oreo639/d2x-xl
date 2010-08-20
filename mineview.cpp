@@ -2500,8 +2500,9 @@ if (bSetViewInfo)
 	m_matrix.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = m_mine->VertCount ();
 APOINT *a = m_viewPoints + i;
+CVertex* verts = m_mine->Vertices (i);
 for (; i--; ) {
-	m_matrix.SetPoint (m_mine->Vertices (--i), --a);
+	m_matrix.SetPoint (--verts, --a);
 	x = a->x;
 	y = a->y;
 	z = a->z;

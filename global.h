@@ -73,7 +73,7 @@ extern CLightDeltaIndex *lightDeltaIndices;
 extern CLightDeltaValue *CLightDeltaValues;
 extern INT16 num_static_lights;
 extern char string[256];
-extern INT16 spline_segment1,spline_segment2,spline_side1,spline_side2;
+extern INT16 nSplineSeg1,nSplineSeg2,nSplineSide1,nSplineSide2;
 extern char spline_error_message[];
 extern CFixVector spline_points[MAX_SPLINES];
 extern CFixVector points[4];
@@ -148,26 +148,6 @@ extern INT8 point_sides[8][3];
 extern INT8 point_corners[8][3];
 
 extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
-
-/* Global Variables */
-//extern UINT16 num_vertices;
-//extern UINT16 num_segments;
-
-//extern CFixVector FAR *vertices;
-//extern segment far *segments[MAX_SEGMENTS2];
-//extern object far *objects[MAX_OBJECTS];
-//extern UINT8 *vertexStatus;
-
-//extern char m_currentLevelName[256];
-
-//extern wall *walls; // MAX_WALLS
-//extern CActiveDoor active_doors[MAX_DOORS];
-//extern trigger *triggers; // MAX_TRIGGERS
-//extern CReactorTrigger reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
-//extern CRobotMaker robot_centers[MAX_NUM_MATCENS];
-
-//extern game_top_info game_top_fileinfo;
-//extern game_info game_fileinfo;
 
 /* debug data */
 extern UINT32 debug_offset2;
