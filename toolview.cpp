@@ -45,7 +45,7 @@ CToolView::CToolView ()
 	: CWnd ()
 {
 m_bRecalcLayout = FALSE;
-m_cubeTool = NULL;
+m_segmentTool = NULL;
 m_wallTool = NULL;
 m_triggerTool = NULL;
 m_textureTool = NULL;
@@ -75,8 +75,8 @@ if (m_pTools) {
 	delete m_pTools;
 	m_pTools = NULL;
 	}
-if (m_cubeTool)
-	delete m_cubeTool;
+if (m_segmentTool)
+	delete m_segmentTool;
 if (m_wallTool)
 	delete m_wallTool;
 if (m_triggerTool)
@@ -105,7 +105,7 @@ if (m_txtFilterTool)
 
 								/*---------------------------*/
 
-void CToolView::Refresh ()
+void CToolView::Refresh (void)
 {
 if (!theMine) 
 	return;
@@ -120,8 +120,8 @@ else if (p == m_wallTool)
 	m_wallTool->Refresh ();
 else if (p == m_triggerTool)
 	m_triggerTool->Refresh ();
-else if (p == m_cubeTool)
-	m_cubeTool->Refresh ();
+else if (p == m_segmentTool)
+	m_segmentTool->Refresh ();
 else if (p == m_objectTool)
 	m_objectTool->Refresh ();
 else if (p == m_effectTool)
@@ -143,20 +143,20 @@ void CToolView::Setup (void)
 if (!m_pTools)
 	return;
 m_textureTool = new CTextureTool (m_pTools);
-m_cubeTool = new CSegmentTool (m_pTools);
+m_segmentTool = new CSegmentTool (m_pTools);
 m_wallTool = new CWallTool (m_pTools);
 m_triggerTool = new CTriggerTool (m_pTools);
-m_lightTool = new CLightTool (m_pTools);
 m_objectTool = new CObjectTool (m_pTools);
 m_effectTool = new CEffectTool (m_pTools);
 m_advObjTool = new CAdvObjTool (m_pTools);
+m_lightTool = new CLightTool (m_pTools);
 m_reactorTool = new CReactorTool (m_pTools);
 m_missionTool = new CMissionTool (m_pTools);
 m_diagTool = new CDiagTool (m_pTools);
-m_prefsDlg = new CPrefsDlg (m_pTools);
 m_txtFilterTool = new CTxtFilterTool (m_pTools);
+m_prefsDlg = new CPrefsDlg (m_pTools);
 m_pTools->AddPage (m_textureTool);
-m_pTools->AddPage (m_cubeTool);
+m_pTools->AddPage (m_segmentTool);
 m_pTools->AddPage (m_wallTool);
 m_pTools->AddPage (m_triggerTool);
 m_pTools->AddPage (m_objectTool);
@@ -168,7 +168,7 @@ m_pTools->AddPage (m_missionTool);
 m_pTools->AddPage (m_diagTool);
 m_pTools->AddPage (m_txtFilterTool);
 m_pTools->AddPage (m_prefsDlg);
-m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0);
+//m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0);
 }
 
                         /*--------------------------*/
@@ -350,6 +350,8 @@ RecalcLayout ();
 
 void CToolView::RecalcLayout (INT32 nToolMode, INT32 nTextureMode)
 {
+if (!theMine) return;
+
 	CRect	rc;
 	CSize	paneSize;
 

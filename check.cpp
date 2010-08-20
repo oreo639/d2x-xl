@@ -67,6 +67,8 @@ return true;
 
 void CDiagTool::OnShowBug (void)
 {
+if (!theMine) return;
+
 	bool bCurSeg;
 	CWall *wallP;
 	INT32 nWall;
@@ -342,6 +344,8 @@ INT32 CDiagTool::CheckId (CGameObject *objP)
 
 void CDiagTool::OnCheckMine ()
 {
+if (!theMine) return;
+
 UpdateData (TRUE);
 ClearBugList ();
 m_bCheckMsgs = true;
@@ -420,6 +424,9 @@ return true;
 
 bool CDiagTool::CheckSegTypes () 
 {
+if (!theMine) 
+	return false;
+
 	INT16	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
 	CSegment	*segP = theMine->Segments (0);
 
@@ -460,6 +467,9 @@ return false;
 
 bool CDiagTool::CheckSegments () 
 {
+if (!theMine) 
+	return false;
+
   INT16 nSegment,nSide,child,sidenum2,pointnum;
   INT16 vert0,vert1,vert2,vert3;
   INT16 i,j;
@@ -590,6 +600,9 @@ return false;
 
 bool CDiagTool::CheckAndFixPlayer (INT32 nMin, INT32 nMax, INT32 nObject, INT32* players)
 {
+if (!theMine) 
+	return false;
+
 INT32 id = theMine->Objects (nObject)->id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
@@ -619,6 +632,9 @@ return true;
 
 bool CDiagTool::CheckObjects () 
 {
+if (!theMine) 
+	return false;
+
 	INT32				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
 	CFixVector			center;
 	double			x, y, z, radius, max_radius, object_radius;
@@ -947,6 +963,9 @@ return false;
 
 bool CDiagTool::CheckTriggers ()
  {
+if (!theMine) 
+	return false;
+
 	INT32 count, nTrigger, deltrignum, nWall, i;
 	INT32 nSegment, nSide, linknum;
 	INT16 nOppSeg, nOppSide;
@@ -1360,6 +1379,9 @@ return nMatCens;
 
 bool CDiagTool::CheckBotGens (void)
 {
+if (!theMine) 
+	return false;
+
 	INT16					h = theMine->SegCount (), i, nSegment = 0;
 	bool					bOk = true;
 	INT16					nMatCenSegs, nMatCens = INT16 (theMine->GameInfo ().botgen.count);
@@ -1423,8 +1445,11 @@ return theMine->Walls (nWall);
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckWalls () 
+bool CDiagTool::CheckWalls (void) 
 {
+if (!theMine) 
+	return false;
+
 	INT16 nSegment,nSide;
 	UINT16 nWall, wallCount = theMine->GameInfo ().walls.count, 
 			 maxWalls = MAX_WALLS;
@@ -1743,6 +1768,9 @@ return false;
 
 bool CDiagTool::CheckVertices () 
 {
+if (!theMine) 
+	return false;
+
 //  bool found;
   INT32 nSegment,nVertex,point;
   INT32 nUnused = 0;

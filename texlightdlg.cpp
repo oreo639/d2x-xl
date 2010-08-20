@@ -187,6 +187,7 @@ for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 
 void CTextureTool::UpdateLightWnd (void)
 {
+if (!theMine) return;
 CWall *pWall = theMine->CurrWall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)

@@ -56,6 +56,8 @@ pImgWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 
 BOOL CConvertDlg::OnInitDialog () 
 {
+if (!theMine) return FALSE;
+
 CDialog::OnInitDialog ();
 
 CreateImgWnd (&m_showD1, IDC_CONVERT_SHOWD1);
@@ -207,6 +209,8 @@ Refresh ();
 
 void CConvertDlg::OnOK () 
 {
+if (!theMine) return;
+
   INT16		i,j;
   CSegment *segP;
   CSide		*sideP;

@@ -36,6 +36,15 @@ void CMine::Initialize (void)
 {
 	VertCount () = 0;
 	SegCount () = 0;
+	Segments ().Clear ();
+	Vertices ().Clear ();
+	Walls ().Clear ();
+	Triggers ().Clear ();
+	ObjTriggers ().Clear ();
+	ReactorTriggers ().Clear ();
+	VertexColors ().Clear ();
+	BotGens ().Clear ();
+	EquipGens ().Clear ();
 	m_levelVersion = 7;
 	m_fileType = RL2_FILE;
 	m_dlcLogPalette = 0;

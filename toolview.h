@@ -96,7 +96,7 @@ class CToolDlg : public CPropertyPage
 		~CToolDlg ()
 			{ m_pParent = NULL; m_bInited = false; }
       virtual BOOL OnInitDialog () 
-			{ return (theMine != NULL) && CPropertyPage::OnInitDialog (); }
+			{ return CPropertyPage::OnInitDialog (); }
       virtual BOOL OnSetActive () {
 			if ((theMine == NULL) || !CPropertyPage::OnSetActive ())
 				return FALSE;
@@ -221,7 +221,7 @@ class CDiagTool : public CToolDlg
 		INT32			m_nCountDown;
 		INT32			m_nSecretReturn;
 		char			m_szTarget [40];
-		INT32			m_nObjects [8];
+		INT32			m_nObjects [16];
 		INT32			m_nContained [2];
 		INT32			m_nErrors [2];
 		INT32			m_bAutoFixBugs;
@@ -1270,7 +1270,7 @@ class CToolView : public CWnd {
 		DECLARE_DYNCREATE(CToolView)
 
 		CPropertySheet	*m_pTools;
-		CSegmentTool		*m_cubeTool;
+		CSegmentTool	*m_segmentTool;
 		CWallTool		*m_wallTool;
 		CTriggerTool	*m_triggerTool;
 		CTextureTool	*m_textureTool;
@@ -1330,7 +1330,7 @@ class CToolView : public CWnd {
 		inline void EditPrefs ()
 			{ SetActive (12); }
 		inline CSegmentTool *CubeTool ()
-			{ return m_cubeTool; }
+			{ return m_segmentTool; }
 		inline CTextureTool *TextureTool ()
 			{ return m_textureTool; }
 		inline CWallTool *WallTool ()

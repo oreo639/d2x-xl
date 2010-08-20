@@ -246,6 +246,8 @@ BOOL CDlcApp::InitInstance()
 	m_server.UpdateRegistry(OAT_DISPATCH_OBJECT);
 	COleObjectFactory::UpdateRegistryAll();
 
+	theMine = new CMine;
+	theMine->Initialize ();
 	//theMine->Initialize ();
 	//theMine->Default ();
 	// Dispatch commands specified on the command line
@@ -253,10 +255,8 @@ BOOL CDlcApp::InitInstance()
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
 
-	//memset (pTextures, 0, sizeof (pTextures));
-	theMine = new CMine;
-	theMine->Initialize ();
 	theMine->Default ();
+	//memset (pTextures, 0, sizeof (pTextures));
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();
 	// The one and only window has been initialized, so show and update it.

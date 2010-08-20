@@ -1145,6 +1145,9 @@ static MyBMI my_bmi;
 
 bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 nSegment, INT32 nSide, INT32 texture1, INT32 texture2, INT32 xOffset, INT32 yOffset)
 {
+if (!theMine) 
+	return false;
+
 	CDC			*pDC = pWnd->GetDC ();
 
 if (!pDC)

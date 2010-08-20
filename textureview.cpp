@@ -76,6 +76,7 @@ if (m_penCyan)
 
 void CTextureView::Refresh (bool bRepaint) 
 {
+if (!theMine) return;
 if (bRepaint) {
 	InvalidateRect (NULL, TRUE);
 	UpdateWindow ();
@@ -90,6 +91,7 @@ if (!m_bDelayRefresh) {
 
 void CTextureView::Reset () 
 {
+if (!theMine) return;
 FreeTextureHandles ();
 Refresh ();
 }
@@ -237,6 +239,8 @@ Refresh ();
 
 void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 {
+if (!theMine) return;
+
 	INT16 nBaseTex;
 
 if (PickTexture (point, nBaseTex))
@@ -262,6 +266,8 @@ theApp.SetModified (TRUE);
 
 void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 {
+if (!theMine) return;
+
 	CSide *sideP = theMine->CurrSide ();
 	INT16	nBaseTex;
 
@@ -287,6 +293,9 @@ theApp.SetModified (TRUE);
 
 INT32 CTextureView::PickTexture(CPoint &point,INT16 &nBaseTex) 
 {
+if (!theMine) 
+	return 1;
+
 //if (!m_pTextures)
 //	return 0;
 
@@ -426,6 +435,8 @@ else {
 
 void CTextureView::RecalcLayout () 
 {
+if (!theMine) return;
+
 	CRect rect;
 	GetClientRect(rect);
 
@@ -533,7 +544,7 @@ void CTextureView::RecalcLayout ()
 
 								/*---------------------------*/
 
-void CTextureView::Setup() 
+void CTextureView::Setup (void) 
 {
   char name[20];
   INT32 i;
@@ -583,6 +594,9 @@ CrtTxtMap ();
 
 afx_msg BOOL CTextureView::OnEraseBkgnd (CDC* pDC)
 {
+if (!theMine) 
+	return FALSE;
+
    CRect    rc;
    CBrush   bkGnd, * pOldBrush;
    CPoint   pt (0,0);

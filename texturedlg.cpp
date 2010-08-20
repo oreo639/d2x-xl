@@ -213,7 +213,7 @@ BOOL CTextureTool::OnInitDialog ()
 {
 	CRect	rc;
 
-if (!(theMine && CToolDlg::OnInitDialog ()))
+if (!CToolDlg::OnInitDialog ())
    return FALSE;
 /*
 m_btnZoomIn.SubclassDlgItem (IDC_TEXALIGN_ZOOMIN, this);
@@ -331,6 +331,8 @@ if (pDX->m_bSaveAndValidate && *szBrightness) {
 
 void CTextureTool::LoadTextureListBoxes () 
 {
+if (!theMine) return;
+
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			name [80];
 	INT32			bShowFrames;
@@ -377,6 +379,8 @@ for (iTexture = 0; iTexture < nTextures; iTexture++) {
 
 bool CTextureTool::SideHasLight (void)
 {
+if (!theMine) return false;
+
 if	((theMine->IsLight (theMine->CurrSide ()->nBaseTex) != -1) ||
 	 (((theMine->CurrSide ()->nOvlTex & 0x3fff) != 0) &&
 	  (theMine->IsLight (theMine->CurrSide ()->nOvlTex & 0x3fff) != -1)))
@@ -411,7 +415,8 @@ else {
 
 void CTextureTool::OnPaint ()
 {
-if (!theMine) return;
+//if (!theMine) 
+	return;
 CTexToolDlg::OnPaint ();
 #if TEXTOOLDLG == 0
 UpdateTextureWnd ();
@@ -546,6 +551,8 @@ UpdatePaletteWnd ();
 
 void CTextureTool::RefreshTextureWnd ()
 {
+if (!theMine) return;
+
 #if TEXTOOLDLG
 if (!CTexToolDlg::Refresh ())
 #else
@@ -759,6 +766,8 @@ else
 
 void CTextureTool::SelectTexture (INT32 nIdC, bool bFirst)
 {
+if (!theMine) return;
+
 	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	INT32			index = pcb->GetCurSel ();
@@ -780,6 +789,8 @@ theApp.MineView ()->Refresh ();
 
 void CTextureTool::OnSetLight () 
 {
+if (!theMine) return;
+
 UpdateData (TRUE);
 CSide *sideP = theMine->CurrSide ();
 INT16 mode = sideP->nOvlTex & 0xc000;
@@ -820,6 +831,8 @@ Refresh ();
 
 void CTextureTool::OnSaveTexture () 
 {
+if (!theMine) return;
+
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			t1Name [20],
 					t2Name [20];
@@ -866,6 +879,8 @@ Refresh ();
 
 void CTextureTool::OnPasteSide () 
 {
+if (!theMine) return;
+
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
@@ -888,6 +903,8 @@ theApp.MineView ()->Refresh ();
 
 void CTextureTool::OnPasteTouching ()
 {
+if (!theMine) return;
+
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
@@ -911,6 +928,8 @@ theApp.MineView ()->Refresh ();
 
 void CTextureTool::OnPasteMarked () 
 {
+if (!theMine) return;
+
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
@@ -953,6 +972,8 @@ theApp.MineView ()->Refresh ();
 
 void CTextureTool::OnReplace () 
 {
+if (!theMine) return;
+
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
@@ -997,6 +1018,8 @@ theApp.MineView ()->Refresh ();
 
 void CTextureTool::PasteTexture (INT16 nSegment, INT16 nSide, INT16 nDepth) 
 {
+if (!theMine) return;
+
 if (nDepth <= 0) 
 	return;
 

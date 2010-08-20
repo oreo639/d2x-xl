@@ -84,6 +84,8 @@ return TRUE;
 
 void CLightTool::DoDataExchange (CDataExchange * pDX)
 {
+if (!theMine) return;
+
 DDX_Check (pDX, IDC_LIGHT_ILLUMINATE, m_bIlluminate);
 DDX_Check (pDX, IDC_LIGHT_AVGCORNERLIGHT, m_bAvgCornerLight);
 DDX_Check (pDX, IDC_LIGHT_SCALE, m_bScaleLight);
@@ -111,6 +113,8 @@ DDX_Check (pDX, IDC_LIGHT_COPYTEXLIGHTS, m_bCopyTexLights);
 
 void CLightTool::OnOK ()
 {
+if (!theMine) return;
+
 	bool		bAll;
 
 UpdateData (TRUE);
@@ -156,6 +160,8 @@ theApp.MineView ()->EnableDeltaShading (bEnableDeltaShading, m_deltaLightFrameRa
 
 void CLightTool::OnShowDelta ()
 {
+if (!theMine) return;
+
 if (!::IsWindow(m_hWnd))
 	return;
 UpdateData (TRUE);
@@ -174,6 +180,8 @@ theApp.MineView ()->Refresh ();
 
 void CLightTool::OnSetVertexLight ()
 {
+if (!theMine) return;
+
 	INT32	nVertexLight;
 
 if (!::IsWindow(m_hWnd))
@@ -182,8 +190,8 @@ UpdateData (TRUE);
 nVertexLight = (INT32) (m_fVertexLight * f1_0 / 100.0);
 
 	INT16			nSegment, nSide, nVertex, i;
-	CSegment	*segP = theMine->Segments (0);
-	CSide		*sideP;
+	CSegment*	segP = theMine->Segments (0);
+	CSide*		sideP;
 	bool			bChange = false;
 
 bool bUndo = theApp.SetModified (TRUE);

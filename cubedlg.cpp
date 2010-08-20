@@ -71,6 +71,7 @@ Reset ();
 void CSegmentTool::Reset ()
 {
 if (!theMine) return;
+
 m_nSegment =
 m_nSide =
 m_nPoint = 0;
@@ -150,6 +151,7 @@ return TRUE;
 void CSegmentTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!theMine) return;
+
 DDX_CBIndex (pDX, IDC_CUBE_CUBENO, m_nSegment);
 //DDX_CBIndex (pDX, IDC_CUBE_TYPE, m_nType);
 SelectItemData (CBType (), m_nType);
@@ -955,6 +957,7 @@ theApp.MineView ()->Refresh ();
 
 void CSegmentTool::OnTriggerDetails ()
 {
+if (!theMine) return;
 if (!LBTriggers ()->GetCount ())
 	return;
 INT32 i = LBTriggers ()->GetCurSel ();
