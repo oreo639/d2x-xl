@@ -18,6 +18,8 @@ public:
 		write_INT16 (v, fp);
 		write_INT16 (l, fp);
 		}
+
+	inline void Clear (void) { u = v = l = 0; }
 };
 
 typedef struct rgbColor {
@@ -29,7 +31,7 @@ public:
 	UINT8		index;
 	rgbColor	color;
 
-	INT32 Read (FILE *fp, int nLevelVersion);
+	INT32 Read (FILE *fp, bool bNewFormat);
 	void Write (FILE* fp);
 };
 

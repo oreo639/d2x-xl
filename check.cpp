@@ -1788,7 +1788,7 @@ for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 nVertex = m_mine->VertCount () - 1;
 for (vStat = m_mine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 	theApp.MainFrame ()->Progress ().StepIt ();
-	if (!(*vStat & NEW_MASK)) {
+	if (!(vStat & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
 			if (nVertex < --m_mine->VertCount ())
@@ -1802,8 +1802,8 @@ for (vStat = m_mine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 		}
 	}
 vStat = m_mine->VertStatus ();
-for (nVertex= m_mine->VertCount (); nVertex; nVertex--, vStat++)
-	*vStat &= ~NEW_MASK;
+for (nVertex = m_mine->VertCount (); nVertex; nVertex--, vStat++)
+	vStat &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)
 		sprintf_s (message, sizeof (message),"FIXED: %d unused vertices found", nUnused);

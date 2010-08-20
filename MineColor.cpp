@@ -26,18 +26,18 @@
 
 // ------------------------------------------------------------------------
 
-INT32 CColor::Read (FILE *fp, int nLevelVersion)
+INT32 CColor::Read (FILE *fp, bool bNewFormat)
 {
 index = read_INT8 (fp);
-if (nLevelVersion < nNewVersion) {
-	color.r = read_DOUBLE (fp);
-	color.g = read_DOUBLE (fp);
-	color.b = read_DOUBLE (fp);
-	}
-else {
+if (bNewFormat) {
 	color.r = double (read_INT32 (fp)) / double (0x7fffffff);
 	color.g = double (read_INT32 (fp)) / double (0x7fffffff);
 	color.b = double (read_INT32 (fp)) / double (0x7fffffff);
+	}
+else {
+	color.r = read_DOUBLE (fp);
+	color.g = read_DOUBLE (fp);
+	color.b = read_DOUBLE (fp);
 	}
 return 1;
 }
@@ -58,7 +58,7 @@ void CMine::LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nN
 {
 if (LevelVersion () > nFirstVersion) { 
 	for (; nColors; nColors--, pc++)
-		pc->Read (fp, LevelVersion ());
+		pc->Read (fp, LevelVersion () >= nNewVersion);
 	}
 }
 
