@@ -153,7 +153,7 @@ m_advObjTool = new CAdvObjTool (m_pTools);
 m_reactorTool = new CReactorTool (m_pTools);
 m_missionTool = new CMissionTool (m_pTools);
 m_diagTool = new CDiagTool (m_pTools);
-m_prefsDlg  = CPrefsDlg (m_pTools);
+m_prefsDlg = new CPrefsDlg (m_pTools);
 m_txtFilterTool = new CTxtFilterTool (m_pTools);
 m_pTools->AddPage (m_textureTool);
 m_pTools->AddPage (m_cubeTool);
