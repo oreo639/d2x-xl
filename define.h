@@ -278,7 +278,7 @@
 #define MAX_STUCK_OBJECTS	         32
 #define MAX_SIDES_PER_SEGMENT			6
 #define MAX_VERTICES_PER_SEGMENT		8
-#define MAX_AI_FLAGS						11 // This MUST cause word (4 bytes) alignment in ai_static, allowing for one byte mode 
+#define MAX_AI_FLAGS						11 // This MUST cause word (4 bytes) alignment in CObjAIInfo, allowing for one byte mode 
 #define MAX_SUBMODELS					10 // I guessed at this value (BAA) 
 
 // wall numbers 

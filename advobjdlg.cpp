@@ -206,9 +206,9 @@ switch (pObj->render_type) {
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		m_model = pObj->rtype.vclip_info.vclip_num;
-		m_frame = pObj->rtype.vclip_info.frametime;
-		m_frameNo = pObj->rtype.vclip_info.framenum;
+		m_model = pObj->rtype.CObjVClipInfo.vclip_num;
+		m_frame = pObj->rtype.CObjVClipInfo.frametime;
+		m_frameNo = pObj->rtype.CObjVClipInfo.framenum;
 		break;
 	case RT_LASER:
 	case RT_NONE:

@@ -531,79 +531,111 @@ public:
 	CGameItemInfo		equipgen;
 };
 
-typedef struct physics_info {
-  CFixVector velocity;   /*velocity vector of this object */
-  CFixVector thrust;     /*constant force applied to this object */
-  FIX        mass;       /*the mass of this object */
-  FIX        drag;       /*how fast this slows down */
-  FIX        brakes;     /*how much brakes applied */
-  CFixVector rotvel;     /*rotational velecity (angles) */
-  CFixVector rotthrust;  /*rotational acceleration */
-  FIXANG     turnroll;   /*rotation caused by turn banking */
-  UINT16     flags;      /*misc physics flags */
-} physics_info;
+class CObjPhysicsInfo {
+public:
+	CFixVector velocity;   /*velocity vector of this object */
+	CFixVector thrust;     /*constant force applied to this object */
+	FIX        mass;       /*the mass of this object */
+	FIX        drag;       /*how fast this slows down */
+	FIX        brakes;     /*how much brakes applied */
+	CFixVector rotvel;     /*rotational velecity (angles) */
+	CFixVector rotthrust;  /*rotational acceleration */
+	FIXANG     turnroll;   /*rotation caused by turn banking */
+	UINT16     flags;      /*misc physics flags */
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
 /*stuctures for different kinds of simulation */
 
-typedef struct laser_info {
-  INT16 parent_type;     /* The type of the parent of this object */
-  INT16 parent_num;      /* The object's parent's number */
-  INT32 parent_signature;/* The object's parent's signature... */
-  FIX   creation_time;   /*  Absolute time of creation. */
-  INT8  last_hitobj;     /*  For persistent weapons (survive object collision), object it most recently hit. */
-  INT8  track_goal;      /*  Object this object is tracking. */
-  FIX   multiplier;      /*  Power if this is a fusion bolt (or other super weapon to be added). */
-} laser_info;
+class CObjLaserInfo {
+public:
+	INT16 parent_type;     /* The type of the parent of this object */
+	INT16 parent_num;      /* The object's parent's number */
+	INT32 parent_signature;/* The object's parent's signature... */
+	FIX   creation_time;   /*  Absolute time of creation. */
+	INT8  last_hitobj;     /*  For persistent weapons (survive object collision), object it most recently hit. */
+	INT8  track_goal;      /*  Object this object is tracking. */
+	FIX   multiplier;      /*  Power if this is a fusion bolt (or other super weapon to be added). */
 
-typedef struct explosion_info {
-  FIX   spawn_time;     /* when lifeleft is < this, spawn another */
-  FIX   delete_time;    /* when to delete object */
-  INT8  delete_objnum;  /* and what object to delete */
-  INT8  attach_parent;  /* explosion is attached to this object */
-  INT8  prev_attach;    /* previous explosion in attach list */
-  INT8  next_attach;    /* next explosion in attach list */
-} explosion_info;
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
-typedef struct light_info {
+class CObjExplosionInfo {
+public:
+	FIX   spawn_time;     /* when lifeleft is < this, spawn another */
+	FIX   delete_time;    /* when to delete object */
+	INT8  delete_objnum;  /* and what object to delete */
+	INT8  attach_parent;  /* explosion is attached to this object */
+	INT8  prev_attach;    /* previous explosion in attach list */
+	INT8  next_attach;    /* next explosion in attach list */
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
+
+class CObjLightInfo {
+public:
   FIX  intensity;    /*how bright the light is */
-} light_info;
 
-typedef struct powerup_info {
-  INT32  count;      /*how many/much we pick up (vulcan cannon only?) */
-} powerup_info;
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
-typedef struct vclip_info {
-  INT32  vclip_num;
-  FIX  frametime;
-  INT8  framenum;
-} vclip_info;
+class CObjPowerupInfo {
+public:
+	INT32  count;      /*how many/much we pick up (vulcan cannon only?) */
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
+
+class CObjVClipInfo {
+public:
+	INT32 vclip_num;
+	FIX	frametime;
+	INT8	framenum;
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
 /*structures for different kinds of rendering */
 
-typedef struct polyobj_info {
-  INT32      model_num;        /*which polygon model */
-  CAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
-  INT32      subobj_flags;     /*specify which subobjs to draw */
-  INT32      tmap_override;    /*if this is not -1, map all face to this */
-  INT8       alt_textures;     /*if not -1, use these textures instead */
-} polyobj_info;
+class CObjPolyModelInfo {
+public:
+	INT32      model_num;        /*which polygon model */
+	CAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
+	INT32      subobj_flags;     /*specify which subobjs to draw */
+	INT32      tmap_override;    /*if this is not -1, map all face to this */
+	INT8       alt_textures;     /*if not -1, use these textures instead */
 
-typedef struct ai_static {
-  UINT8  behavior;            /*  */
-  INT8   flags[MAX_AI_FLAGS]; /* various flags, meaning defined by constants */
-  INT16  hide_segment;        /*  Segment to go to for hiding. */
-  INT16  hide_index;          /*  Index in Path_seg_points */
-  INT16  path_length;         /*  Length of hide path. */
-  INT16  cur_path_index;      /*  Current index in path. */
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
-  INT16  follow_path_start_seg;  /*  Start segment for robot which follows path. */
-  INT16  follow_path_end_seg;    /*  End segment for robot which follows path. */
+class CObjAIInfo {
+public:
+	UINT8  behavior;            /*  */
+	INT8   flags[MAX_AI_FLAGS]; /* various flags, meaning defined by constants */
+	INT16  hide_segment;        /*  Segment to go to for hiding. */
+	INT16  hide_index;          /*  Index in Path_seg_points */
+	INT16  path_length;         /*  Length of hide path. */
+	INT16  cur_path_index;      /*  Current index in path. */
 
-  INT32  danger_laser_signature;
-  INT16  danger_laser_num;
-} ai_static;
+	INT16  follow_path_start_seg;  /*  Start segment for robot which follows path. */
+	INT16  follow_path_end_seg;    /*  End segment for robot which follows path. */
 
-typedef struct tSmokeInfo {
+	INT32  danger_laser_signature;
+	INT16  danger_laser_num;
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
+
+class CSmokeInfo {
 	INT32			nLife;
 	INT32			nSize [2];
 	INT32			nParts;
@@ -614,7 +646,10 @@ typedef struct tSmokeInfo {
 	char			nSide;
 	char			nType;
 	char			bEnabled;
-} tSmokeInfo;
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
 class CLightningInfo {
 public:
@@ -639,14 +674,20 @@ public:
 	char			bInPlane;
 	char			bEnabled;
 	UINT8			color [4];
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
 };
 
-
-typedef struct tSoundInfo {
+class CSoundInfo {
+public:
 	INT32			nVolume;
 	char			szFilename [40];
 	char			bEnabled;
-} tSoundInfo;
+
+	INT32 Read (FILE* fp, INT32 version);
+	void Write (FILE* fp, INT32 version);
+};
 
 class CGameItem {
 public:
@@ -676,27 +717,27 @@ public:
 
 	//movement info, determined by MOVEMENT_TYPE 
 	union {
-		physics_info	phys_info; // a physics object 
-		CFixVector		spin_rate; // for spinning objects 
-		} mtype;
+		CObjPhysicsInfo	phys_info; // a physics object 
+		CFixVector			spin_rate; // for spinning objects 
+		} mType;
 
 	//control info, determined by CONTROL_TYPE 
 	union {
-		laser_info     laser_info;
-		explosion_info expl_info;   //NOTE: debris uses this also 
-		ai_static      ai_info;
-		light_info     light_info;  //why put this here?  Didn't know what else to do with it. 
-		powerup_info   powerup_info;
-		} ctype;
+		CObjLaserInfo     laserInfo;
+		CObjExplosionInfo explInfo;   //NOTE: debris uses this also 
+		CObjAIInfo			aiInfo;
+		CObjLightInfo     lightInfo;  //why put this here?  Didn't know what else to do with it. 
+		CObjPowerupInfo   powerupInfo;
+		} cType;
 
 	//render info, determined by RENDER_TYPE 
 	union {
-		polyobj_info	pobj_info;     //polygon model 
-		vclip_info		vclip_info;    //vclip 
-		tSmokeInfo		smokeInfo;
-		tLightningInfo	lightningInfo;
-		tSoundInfo		soundInfo;
-		} rtype;
+		CObjPolyModelInfo	polyModelInfo;     //polygon model 
+		CObjVClipInfo		vClipInfo;    //vclip 
+		CSmokeInfo			smokeInfo;
+		CLightningInfo		lightningInfo;
+		CSoundInfo			soundInfo;
+		} rType;
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);

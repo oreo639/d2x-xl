@@ -83,7 +83,7 @@ SortObjTriggers ();
 
 void CMine::QSortObjects (INT16 left, INT16 right)
 {
-	CGameObject	median = *Objects ((left + right) / 2);
+	CGameObject	median = *Objects ( (left + right) / 2);
 	INT16	l = left, r = right;
 
 do {
@@ -117,7 +117,7 @@ void CMine::SortObjects ()
 {
 	INT32	i, j;
 
-if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
+if (m_bSortObjects && ( (i = GameInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
 		Objects (j)->signature = j;
 	QSortObjects (0, i - 1);
@@ -127,7 +127,7 @@ if (m_bSortObjects && ((i = GameInfo ().objects.count) > 1)) {
 }
 
 //------------------------------------------------------------------------
-// make_object()
+// make_object ()
 //
 // Action - Defines a standard object (currently assumed to be a player)
 //------------------------------------------------------------------------
@@ -139,7 +139,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
   CalcSegCenter (location,nSegment);
-  memset(objP,0,sizeof (CGameObject));
+  memset (objP,0,sizeof (CGameObject));
   objP->signature = 0;
   objP->type = type;
   if (type==OBJ_WEAPON) {
@@ -176,7 +176,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
 }
 
 //------------------------------------------------------------------------
-// set_object_data()
+// set_object_data ()
 //
 // Action - Sets control type, movement type, render type
 // 	    size, and shields (also model_num & texture if robot)
@@ -191,9 +191,9 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 objP = Objects () + Current ()->nObject;
 id = objP->id;
-memset(&objP->mtype, 0, sizeof (objP->mtype));
-memset(&objP->ctype, 0, sizeof (objP->ctype));
-memset(&objP->rtype, 0, sizeof (objP->rtype));
+memset (&objP->mtype, 0, sizeof (objP->mtype));
+memset (&objP->cType, 0, sizeof (objP->cType));
+memset (&objP->rtype, 0, sizeof (objP->rtype));
 switch (type) {
 	case OBJ_ROBOT    : // an evil enemy
 	  objP->control_type  = CT_AI;
@@ -203,14 +203,14 @@ switch (type) {
 	  objP->shields       = robot_shield[id];
 	  objP->rtype.pobj_info.model_num = robot_clip[id];
 	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
-	  objP->ctype.ai_info.behavior = AIB_NORMAL;
+	  objP->cType.ai_info.behavior = AIB_NORMAL;
 	  break;
 
 	case OBJ_HOSTAGE  : // a hostage you need to rescue
 	  objP->control_type = CT_POWERUP;
 	  objP->movement_type = MT_NONE;
 	  objP->render_type   = RT_HOSTAGE;
-	  objP->rtype.vclip_info.vclip_num = HOSTAGE_CLIP_NUMBER;
+	  objP->rtype.CObjVClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
 	  break;
@@ -243,16 +243,16 @@ switch (type) {
 	  objP->mtype.phys_info.rotvel.y  = 46482L;  // don't know exactly what to put here
 	  objP->mtype.phys_info.rotvel.z  = 0;
 	  objP->mtype.phys_info.flags     = 260;
-	  objP->ctype.laser_info.parent_type      = 5;
-	  objP->ctype.laser_info.parent_num       = 146; // don't know exactly what to put here
-	  objP->ctype.laser_info.parent_signature = 146; // don't know exactly what to put here
+	  objP->cType.CObjLaserInfo.parent_type      = 5;
+	  objP->cType.CObjLaserInfo.parent_num       = 146; // don't know exactly what to put here
+	  objP->cType.CObjLaserInfo.parent_signature = 146; // don't know exactly what to put here
 	  break;
 
 	case OBJ_POWERUP  : // a powerup you can pick up
 	  objP->control_type  = CT_POWERUP;
 	  objP->movement_type = MT_NONE;
 	  objP->render_type   = RT_POWERUP;
-	  objP->rtype.vclip_info.vclip_num = powerup_clip[id];
+	  objP->rtype.CObjVClipInfo.vclip_num = powerup_clip[id];
 	  objP->size          = powerup_size[id];
 	  objP->shields       = DEFAULT_SHIELD;
 	  break;
@@ -267,7 +267,7 @@ switch (type) {
 			objP->rtype.pobj_info.model_num = REACTOR_CLIP_NUMBER;
 	  else {
 		INT32 model;
-		switch(id) {
+		switch (id) {
 		  case 1:  model = 95;  break;
 		  case 2:  model = 97;  break;
 		  case 3:  model = 99;  break;
@@ -301,7 +301,7 @@ switch (type) {
 	  objP->shields       = DEFAULT_SHIELD;
 	  objP->rtype.pobj_info.model_num = robot_clip [0];
 	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
-	  objP->ctype.ai_info.behavior = AIB_STILL;
+	  objP->cType.ai_info.behavior = AIB_STILL;
 	  break;
 
 	case OBJ_EXPLOSION:
@@ -310,9 +310,9 @@ switch (type) {
 	  objP->render_type   = RT_POWERUP;
 	  objP->size          = robot_size[0];
 	  objP->shields       = DEFAULT_SHIELD;
-	  objP->rtype.vclip_info.vclip_num = VCLIP_BIG_EXPLOSION;
+	  objP->rtype.CObjVClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
 	  objP->rtype.pobj_info.tmap_override = -1; // set texture to none
-	  objP->ctype.ai_info.behavior = AIB_STILL;
+	  objP->cType.ai_info.behavior = AIB_STILL;
 	  break;
 
 	case OBJ_EFFECT:
@@ -327,7 +327,7 @@ switch (type) {
 }
 
 //------------------------------------------------------------------------
-// copy_object()
+// copy_object ()
 //
 // Action - Copies the current object to a new object
 //          If object is a player or coop, it chooses the next available id
@@ -428,7 +428,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP)
 // set object data if new object being added
 if (new_type != OBJ_NONE) {
 	objP->type = new_type;
-	SetObjectData(objP->type);
+	SetObjectData (objP->type);
 	}
 // set the contents to zero
 objP->contains_type = 0;
@@ -442,7 +442,7 @@ return TRUE;
 }
 
 //------------------------------------------------------------------------
-// DeleteObject()
+// DeleteObject ()
 //------------------------------------------------------------------------
 
 void CMine::DeleteObject (INT16 nDelObj)
@@ -513,7 +513,7 @@ switch (type) {
 	if (IsD1File ())
 		object_number = 67;
 	else
-		switch(id) {
+		switch (id) {
 			case 1: object_number = 68; break;
 			case 2: object_number = 69; break;
 			case 3: object_number = 70; break;
@@ -530,7 +530,7 @@ switch (type) {
 		object_number = 75;
 		break;
 	case OBJ_POWERUP:
-		if ((id >= 0) && (id < MAX_POWERUP_IDS) && (powerup_lookup[id] >= 0))
+		if ( (id >= 0) && (id < MAX_POWERUP_IDS) && (powerup_lookup[id] >= 0))
 			object_number = 76 + powerup_lookup[id];
 		break;
 	default:
@@ -541,12 +541,12 @@ CDC *pDC = pWnd->GetDC ();
 CRect rc;
 pWnd->GetClientRect (rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
-if ((object_number >= 0) && (object_number <= 129)) {
+if ( (object_number >= 0) && (object_number <= 129)) {
 	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", object_number);
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	HRSRC hFind = FindResource (hInst, message, RT_BITMAP);
 	HGLOBAL hGlobal = LoadResource (hInst, hFind);
-	char *pRes = (char *)LockResource(hGlobal);
+	char *pRes = (char *)LockResource (hGlobal);
 	BITMAPINFO *bmi = (BITMAPINFO *)pRes;
 	if (bmi) {	//if not, there is a problem in the resource file
 		INT32 ncolors = (INT32)bmi->bmiHeader.biClrUsed;
@@ -557,7 +557,7 @@ if ((object_number >= 0) && (object_number <= 129)) {
 		INT32 height = (INT32)bmi->bmiHeader.biHeight;
 		INT32 xoffset = (64 - width) / 2;
 		INT32 yoffset = (64 - height) / 2;
-		SetDIBitsToDevice(pDC->m_hDC, xoffset,yoffset,width,height,0,0,
+		SetDIBitsToDevice (pDC->m_hDC, xoffset,yoffset,width,height,0,0,
 								0, height,pImage, bmi, DIB_RGB_COLORS);
 		}
 	FreeResource (hGlobal);
@@ -569,45 +569,133 @@ pWnd->UpdateWindow ();
 
 // ------------------------------------------------------------------------
 
+INT32 CObjPhysicsInfo::Read (FILE *fp, INT32 version)
+{
+read_vector (&velocity, fp);
+read_vector (&thrust, fp);
+mass = read_FIX (fp);
+drag = read_FIX (fp);
+brakes = read_FIX (fp);
+read_vector (&rotvel, fp);
+read_vector (&rotthrust, fp);
+turnroll = read_FIXANG (fp);
+flags = read_INT16 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjAIInfo::Read (FILE *fp, INT32 version)
+{
+behavior = read_INT8 (fp);
+for (int i = 0; i < MAX_AI_FLAGS; i++)
+	flags [i] = read_INT8 (fp);
+hide_segment = read_INT16 (fp);
+hide_index = read_INT16 (fp);
+path_length = read_INT16 (fp);
+cur_path_index = read_INT16 (fp);
+if (theApp.IsD1File ()) {
+	follow_path_start_seg = read_INT16 (fp);
+	follow_path_end_seg = read_INT16 (fp);
+	}
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjExplosionInfo::Read (FILE *fp, INT32 version)
+{
+spawn_time = read_FIX (fp);
+delete_time = read_FIX (fp);
+delete_objnum = (UINT8)read_INT16 (fp);
+next_attach = 
+prev_attach = 
+attach_parent =-1;
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjLaserInfo::Read (FILE *fp, INT32 version)
+{
+parent_type = read_INT16 (fp);
+parent_num = read_INT16 (fp);
+parent_signature = read_INT32 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjPowerupInfo::Read (FILE *fp, INT32 version)
+{
+count = (version >= 25) ? read_INT32 (fp) : 1;
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjLightInfo::Read (FILE *fp, INT32 version)
+{
+intensity = read_FIX (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjPolyModelInfo::Read (FILE *fp, INT32 version)
+{
+model_num = read_INT32 (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	read_angvec (&anim_angles [i], fp);
+subobj_flags = read_INT32 (fp);
+tmap_override = read_INT32 (fp);
+alt_textures = 0;
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CObjObjVClipInfo::Read (FILE *fp, INT32 version)
+{
+vclip_num = read_INT32 (fp);
+frametime = read_FIX (fp);
+framenum = read_INT8 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
 {
 	INT32 i, levelVersion = theApp.LevelVersion ();
 
-	type = read_INT8(fp);
-	id = read_INT8(fp);
-	control_type = read_INT8(fp);
-	movement_type = read_INT8(fp);
-	render_type = read_INT8(fp);
-	flags = read_INT8(fp);
-	if (version > 37)
-		multiplayer = read_INT8(fp);
-	else
-		multiplayer = 0;
-	nSegment = read_INT16(fp);
-	read_vector(&pos, fp);
-	read_matrix(&orient, fp);
-	size = read_FIX(fp);
-	shields = read_FIX(fp);
-	read_vector(&last_pos, fp);
-	contains_type = read_INT8(fp);
-	contains_id = read_INT8(fp);
-	contains_count = read_INT8(fp);
+type = read_INT8 (fp);
+id = read_INT8 (fp);
+control_type = read_INT8 (fp);
+movement_type = read_INT8 (fp);
+render_type = read_INT8 (fp);
+flags = read_INT8 (fp);
+if (version > 37)
+	multiplayer = read_INT8 (fp);
+else
+	multiplayer = 0;
+nSegment = read_INT16 (fp);
+read_vector (&pos, fp);
+read_matrix (&orient, fp);
+size = read_FIX (fp);
+shields = read_FIX (fp);
+read_vector (&last_pos, fp);
+contains_type = read_INT8 (fp);
+contains_id = read_INT8 (fp);
+contains_count = read_INT8 (fp);
 
 	switch (movement_type) {
     case MT_PHYSICS:
-		read_vector(&mtype.phys_info.velocity, fp);
-		read_vector(&mtype.phys_info.thrust, fp);
-		mtype.phys_info.mass = read_FIX(fp);
-		mtype.phys_info.drag = read_FIX(fp);
-		mtype.phys_info.brakes = read_FIX(fp);
-		read_vector(&mtype.phys_info.rotvel, fp);
-		read_vector(&mtype.phys_info.rotthrust, fp);
-		mtype.phys_info.turnroll = read_FIXANG(fp);
-		mtype.phys_info.flags = read_INT16(fp);
+		mtype.phys_info.Read (fp, version);
 		break;
 
     case MT_SPINNING:
-		read_vector(&mtype.spin_rate, fp);
+		read_vector (&mtype.spin_rate, fp);
 		break;
 
     case MT_NONE:
@@ -618,66 +706,35 @@ INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag)
 	}
 
 	switch (control_type) {
-    case CT_AI: {
-		INT16 i;
-		ctype.ai_info.behavior = read_INT8(fp);
-		for (i = 0; i < MAX_AI_FLAGS; i++) {
-			ctype.ai_info.flags [i] = read_INT8(fp);
+		case CT_AI:
+			cType.aiInfo.Read (fp, version);
+			break;
+		case CT_EXPLOSION:
+			cType.explInfo.Read (fp, version);
+			break;
+		case CT_WEAPON:
+			cType.laserInfo.Read (fp, version);
+			break;
+		case CT_LIGHT:
+			cType.lightInfo.Read (fp, version);
+			break;
+		case CT_POWERUP:
+			cType.powerup_info.Read (fp, version);
+			break;
+		case CT_NONE:
+		case CT_FLYING:
+		case CT_DEBRIS:
+			break;
+		case CT_SLEW:    /*the player is generally saved as slew */
+			break;
+		case CT_CNTRLCEN:
+			break;
+		case CT_MORPH:
+		case CT_FLYTHROUGH:
+		case CT_REPAIRCEN:
+			default:
+			break;
 		}
-		ctype.ai_info.hide_segment = read_INT16(fp);
-		ctype.ai_info.hide_index = read_INT16(fp);
-		ctype.ai_info.path_length = read_INT16(fp);
-		ctype.ai_info.cur_path_index = read_INT16(fp);
-		if (theApp.IsD1File ()) {
-			ctype.ai_info.follow_path_start_seg = read_INT16(fp);
-			ctype.ai_info.follow_path_end_seg = read_INT16(fp);
-		}
-		break;
-				}
-    case CT_EXPLOSION:
-		ctype.expl_info.spawn_time = read_FIX(fp);
-		ctype.expl_info.delete_time = read_FIX(fp);
-		ctype.expl_info.delete_objnum = (UINT8)read_INT16(fp);
-		ctype.expl_info.next_attach = ctype.expl_info.prev_attach = ctype.expl_info.attach_parent =-1;
-		break;
-
-    case CT_WEAPON:
-		ctype.laser_info.parent_type = read_INT16(fp);
-		ctype.laser_info.parent_num = read_INT16(fp);
-		ctype.laser_info.parent_signature = read_INT32(fp);
-		break;
-
-    case CT_LIGHT:
-		ctype.light_info.intensity = read_FIX(fp);
-		break;
-
-    case CT_POWERUP:
-		if (version >= 25) {
-			ctype.powerup_info.count = read_INT32(fp);
-		} else {
-			ctype.powerup_info.count = 1;
-			//      if (id== POW_VULCAN_WEAPON)
-			//          ctype.powerup_info.count = VULCAN_WEAPON_AMMO_AMOUNT;
-		}
-		break;
-
-    case CT_NONE:
-    case CT_FLYING:
-    case CT_DEBRIS:
-		break;
-
-    case CT_SLEW:    /*the player is generally saved as slew */
-		break;
-
-    case CT_CNTRLCEN:
-		break;
-
-    case CT_MORPH:
-    case CT_FLYTHROUGH:
-    case CT_REPAIRCEN:
-    default:
-		break;
-	}
 
 	switch (render_type) {
     case RT_NONE:
@@ -685,16 +742,6 @@ INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag)
 
     case RT_MORPH:
     case RT_POLYOBJ: {
-		INT16 i;
-		INT32 tmo;
-		rtype.pobj_info.model_num = read_INT32(fp);
-		for (i = 0; i < MAX_SUBMODELS; i++) {
-			read_angvec(&rtype.pobj_info.anim_angles [i], fp);
-		}
-		rtype.pobj_info.subobj_flags = read_INT32(fp);
-		tmo = read_INT32(fp);
-		rtype.pobj_info.tmap_override = tmo;
-		rtype.pobj_info.alt_textures = 0;
 		break;
 					 }
 
@@ -702,10 +749,7 @@ INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag)
     case RT_HOSTAGE:
     case RT_POWERUP:
     case RT_FIREBALL:
-		rtype.vclip_info.vclip_num = read_INT32(fp);
-		rtype.vclip_info.frametime = read_FIX(fp);
-		rtype.vclip_info.framenum = read_INT8(fp);
-
+		rType.vClipInfo.Read (fp, version);
 		break;
 
     case RT_LASER:
@@ -764,48 +808,48 @@ return 1;
 }
 
 // ------------------------------------------------------------------------
-// WriteObject()
+// WriteObject ()
 // ------------------------------------------------------------------------
 
 void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
 {
-if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
+if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
 	INT32 i;
-	write_INT8(type, fp);
-	write_INT8(id, fp);
-	write_INT8(control_type, fp);
-	write_INT8(movement_type, fp);
-	write_INT8(render_type, fp);
-	write_INT8(flags, fp);
+	write_INT8 (type, fp);
+	write_INT8 (id, fp);
+	write_INT8 (control_type, fp);
+	write_INT8 (movement_type, fp);
+	write_INT8 (render_type, fp);
+	write_INT8 (flags, fp);
 	if (version > 36)
-		write_INT8(multiplayer, fp);
-	write_INT16(nSegment, fp);
-	write_vector(&pos, fp);
-	write_matrix(&orient, fp);
-	write_FIX(size, fp);
-	write_FIX(shields, fp);
-	write_vector(&last_pos, fp);
-	write_INT8(contains_type, fp);
-	write_INT8(contains_id, fp);
-	write_INT8(contains_count, fp);
+		write_INT8 (multiplayer, fp);
+	write_INT16 (nSegment, fp);
+	write_vector (&pos, fp);
+	write_matrix (&orient, fp);
+	write_FIX (size, fp);
+	write_FIX (shields, fp);
+	write_vector (&last_pos, fp);
+	write_INT8 (contains_type, fp);
+	write_INT8 (contains_id, fp);
+	write_INT8 (contains_count, fp);
 
 	switch (movement_type) {
     case MT_PHYSICS:
-		write_vector(&mtype.phys_info.velocity, fp);
-		write_vector(&mtype.phys_info.thrust, fp);
-		write_FIX(mtype.phys_info.mass, fp);
-		write_FIX(mtype.phys_info.drag, fp);
-		write_FIX(mtype.phys_info.brakes, fp);
-		write_vector(&mtype.phys_info.rotvel, fp);
-		write_vector(&mtype.phys_info.rotthrust, fp);
-		write_FIXANG(mtype.phys_info.turnroll, fp);
-		write_INT16(mtype.phys_info.flags, fp);
+		write_vector (&mtype.phys_info.velocity, fp);
+		write_vector (&mtype.phys_info.thrust, fp);
+		write_FIX (mtype.phys_info.mass, fp);
+		write_FIX (mtype.phys_info.drag, fp);
+		write_FIX (mtype.phys_info.brakes, fp);
+		write_vector (&mtype.phys_info.rotvel, fp);
+		write_vector (&mtype.phys_info.rotthrust, fp);
+		write_FIXANG (mtype.phys_info.turnroll, fp);
+		write_INT16 (mtype.phys_info.flags, fp);
 		break;
 
     case MT_SPINNING:
-		write_vector(&mtype.spin_rate, fp);
+		write_vector (&mtype.spin_rate, fp);
 		break;
 
     case MT_NONE:
@@ -818,38 +862,38 @@ if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	switch (control_type) {
 	case CT_AI: {
 		INT16 i;
-		write_INT8(ctype.ai_info.behavior, fp);
+		write_INT8 (cType.ai_info.behavior, fp);
 		for (i = 0; i < MAX_AI_FLAGS; i++)
-			write_INT8(ctype.ai_info.flags [i], fp);
-		write_INT16(ctype.ai_info.hide_segment, fp);
-		write_INT16(ctype.ai_info.hide_index, fp);
-		write_INT16(ctype.ai_info.path_length, fp);
-		write_INT16(ctype.ai_info.cur_path_index, fp);
-		if (theApp.GetMine()->IsD1File ()) {
-			write_INT16(ctype.ai_info.follow_path_start_seg, fp);
-			write_INT16(ctype.ai_info.follow_path_end_seg, fp);
+			write_INT8 (cType.ai_info.flags [i], fp);
+		write_INT16 (cType.ai_info.hide_segment, fp);
+		write_INT16 (cType.ai_info.hide_index, fp);
+		write_INT16 (cType.ai_info.path_length, fp);
+		write_INT16 (cType.ai_info.cur_path_index, fp);
+		if (theApp.GetMine ()->IsD1File ()) {
+			write_INT16 (cType.ai_info.follow_path_start_seg, fp);
+			write_INT16 (cType.ai_info.follow_path_end_seg, fp);
 		}
 		break;
 				}
     case CT_EXPLOSION:
-		write_FIX(ctype.expl_info.spawn_time, fp);
-		write_FIX(ctype.expl_info.delete_time, fp);
-		write_INT16(ctype.expl_info.delete_objnum, fp);
+		write_FIX (cType.expl_info.spawn_time, fp);
+		write_FIX (cType.expl_info.delete_time, fp);
+		write_INT16 (cType.expl_info.delete_objnum, fp);
 		break;
 
     case CT_WEAPON:
-		write_INT16(ctype.laser_info.parent_type, fp);
-		write_INT16(ctype.laser_info.parent_num, fp);
-		write_INT32 (ctype.laser_info.parent_signature, fp);
+		write_INT16 (cType.CObjLaserInfo.parent_type, fp);
+		write_INT16 (cType.CObjLaserInfo.parent_num, fp);
+		write_INT32 (cType.CObjLaserInfo.parent_signature, fp);
 		break;
 
     case CT_LIGHT:
-		write_FIX(ctype.light_info.intensity, fp);
+		write_FIX (cType.CObjLightInfo.intensity, fp);
 		break;
 
     case CT_POWERUP:
 		if (version >= 25) {
-			write_INT32 (ctype.powerup_info.count, fp);
+			write_INT32 (cType.CObjPowerupInfo.count, fp);
 		}
 		break;
 
@@ -883,7 +927,7 @@ if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
 
 		write_INT32 (rtype.pobj_info.model_num, fp);
 		for (i = 0; i < MAX_SUBMODELS; i++) {
-			write_angvec(&rtype.pobj_info.anim_angles [i], fp);
+			write_angvec (&rtype.pobj_info.anim_angles [i], fp);
 		}
 		write_INT32 (rtype.pobj_info.subobj_flags, fp);
 		tmo = rtype.pobj_info.tmap_override;
@@ -894,9 +938,9 @@ if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		write_INT32 (rtype.vclip_info.vclip_num, fp);
-		write_FIX(rtype.vclip_info.frametime, fp);
-		write_INT8(rtype.vclip_info.framenum, fp);
+		write_INT32 (rtype.CObjVClipInfo.vclip_num, fp);
+		write_FIX (rtype.CObjVClipInfo.frametime, fp);
+		write_INT8 (rtype.CObjVClipInfo.framenum, fp);
 		break;
 
 	case RT_LASER:

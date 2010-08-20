@@ -1390,7 +1390,7 @@ switch (objP->type) {
 
 	case OBJ_CNTRLCEN:
 		objP->id = nCurSel; // + (IsD2File ());
-		objP->rtype.vclip_info.vclip_num = nCurSel;
+		objP->rtype.CObjVClipInfo.vclip_num = nCurSel;
 		break;
 
 	default:
@@ -1402,7 +1402,7 @@ switch (objP->type) {
 		id = (objP->id < MAX_POWERUP_IDS_D2) ? objP->id : POW_AMMORACK;
 		objP->size = powerup_size [id];
 		objP->shields = DEFAULT_SHIELD;
-		objP->rtype.vclip_info.vclip_num = powerup_clip [id];
+		objP->rtype.CObjVClipInfo.vclip_num = powerup_clip [id];
 		break;
 
 	case OBJ_ROBOT:
@@ -1452,7 +1452,7 @@ switch (objP->type) {
 	case OBJ_HOSTAGE:
 		objP->size = PLAYER_SIZE;
 		objP->shields = DEFAULT_SHIELD;
-		objP->rtype.vclip_info.vclip_num = HOSTAGE_CLIP_NUMBER;
+		objP->rtype.CObjVClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
 		break;
 	}
 m_mine->SortObjects ();
