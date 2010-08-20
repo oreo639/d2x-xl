@@ -694,6 +694,7 @@ class CGameItem {
 public:
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 class CGameObject : public CGameItem {
@@ -742,6 +743,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 class CSideKey {
@@ -789,6 +791,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 class CCloakingWall : public CGameItem {    // NEW for Descent 2
@@ -801,6 +804,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 /*
@@ -873,6 +877,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version, bool bObjTrigger);
 	virtual void Write (FILE *fp, INT32 version, bool bObjTrigger);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
@@ -883,6 +888,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
@@ -893,6 +899,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version, bool bD2X);
 	virtual void Write (FILE *fp, INT32 version, bool bD2X);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 //extern CLightDeltaIndex    Dl_indices[MAX_LIGHT_DELTA_INDICES];

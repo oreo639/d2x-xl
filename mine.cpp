@@ -1003,11 +1003,12 @@ if (GameInfo ().fileinfo.version < nMinVersion) {
 	}
 
 for (int i = 0; i < info.count; i++) {
-	if (!items [i].Read (fp, GameInfo ().fileinfo.version, bFlag)) {
+	if (!items->Read (fp, GameInfo ().fileinfo.version, bFlag)) {
 		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
 		ErrorMsg (message);
 		return -1;
 		}
+	items = items->Next ();
 	}
 return info.count;
 }
