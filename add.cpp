@@ -206,7 +206,7 @@ return true;
 bool CMine::AddEquipMaker (INT16 nSegment, bool bCreate, bool bSetDefTextures) 
 {
 INT32 n_matcen = (INT32) GameInfo ().equipgen.count;
-if (n_matcen >= MAX_NUM_MATCENS (this)) {
+if (n_matcen >= MAX_ROBOT_MAKERS (this)) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
@@ -244,7 +244,7 @@ return true;
 bool CMine::AddRobotMaker (INT16 nSegment, bool bCreate, bool bSetDefTextures) 
 {
 INT32 n_matcen = (INT32) GameInfo ().botgen.count;
-if (n_matcen >= MAX_NUM_MATCENS (this)) {
+if (n_matcen >= MAX_ROBOT_MAKERS (this)) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}

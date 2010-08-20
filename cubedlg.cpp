@@ -404,7 +404,7 @@ for (nTrigger = 0; nTrigger < m_mine->GameInfo ().triggers.count; nTrigger++, tr
 // show if this is cube/side is trigPed by the control_center
 CReactorTrigger* reactorTrigger = m_mine->ReactorTriggers ();
 INT32 control;
-for (control = 0; control < MAX_CONTROL_CENTER_TRIGGERS; control++, reactorTrigger++) {
+for (control = 0; control < MAX_REACTOR_TRIGGERS; control++, reactorTrigger++) {
 	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide))) {
 		LBTriggers ()->AddString ("Reactor");
 		break;

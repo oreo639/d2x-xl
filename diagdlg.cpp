@@ -208,7 +208,7 @@ for (i = 0; i < 8; i++)
 plc.SetItemText (15, 1, ItemText (CountTextures ()));
 plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS (m_mine)));
 plc.SetItemText (1, 2, ItemText (MAX_VERTICES (m_mine)));
-plc.SetItemText (2, 2, ItemText (MAX_NUM_MATCENS (m_mine)));
+plc.SetItemText (2, 2, ItemText (MAX_ROBOT_MAKERS (m_mine)));
 plc.SetItemText (3, 2, ItemText (MAX_NUM_FUELCENS (m_mine)));
 plc.SetItemText (4, 2, ItemText (MAX_WALLS (m_mine)));
 plc.SetItemText (5, 2, ItemText (MAX_TRIGGERS (m_mine)));

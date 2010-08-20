@@ -647,7 +647,13 @@ typedef struct tSoundInfo {
 	char			bEnabled;
 } tSoundInfo;
 
-class CGameObject {
+class CGameItem {
+public:
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+};
+
+class CGameObject : public CGameItem {
 public:
 	INT16			signature;     // reduced size to save memory 
 	INT8			type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
@@ -691,8 +697,8 @@ public:
 		tSoundInfo		soundInfo;
 		} rtype;
 
-	void Read (FILE *fp, INT32 version);
-	void Write (FILE *fp, INT32 version);
+	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
 class CSideKey {
@@ -707,12 +713,6 @@ public:
 	inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
 	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
 	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
-};
-
-class CGameItem {
-public:
-	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
-	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
 };
 
 class CWall : public CSideKey, public CGameItem {
@@ -737,7 +737,7 @@ public:
 	void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
 };
 
-class CActiveDoor : CGameItem {
+class CActiveDoor : public CGameItem {
 public:
   INT32		n_parts;	   // for linked walls
   INT16		nFrontWall[2]; // front wall numbers for this door
@@ -748,7 +748,7 @@ public:
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
-class CCloakingWall : CGameItem {    // NEW for Descent 2
+class CCloakingWall : public CGameItem {    // NEW for Descent 2
 public:
 	INT16		nFrontWall;	  // front wall numbers for this door
 	INT16		nBackWall; 	  // back wall numbers for this door
@@ -843,7 +843,7 @@ public:
 };
 
 // Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
-class CLightDeltaIndex : public CSideKey {
+class CLightDeltaIndex : public CSideKey, public CGameItem {
 public:
 	UINT16 count;
 	UINT16 index;

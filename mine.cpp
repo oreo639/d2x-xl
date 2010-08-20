@@ -1021,7 +1021,6 @@ return info.count;
 
 INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine) 
 {
-	INT32 i;
 	INT32 start_offset;
 
 start_offset = ftell(loadfile);
@@ -1097,12 +1096,16 @@ else {  /*load mine filename */
 	//  gamesave_num_org_robots = 0;
 	//  gamesave_num_players = 0;
 
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (), -1, MAX_OBJECTS (this), "Objects"))
+		return -1;
+#else
 	if (GameInfo ().objects.offset > -1) {
 		if (fseek(loadfile, GameInfo ().objects.offset, SEEK_SET))
 			ErrorMsg ("Error seeking to objects.");
-		else if (GameInfo ().objects.count > MAX_OBJECTS2) {
+		else if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of objects (%ld/%d) exceeded", 
-					  GameInfo ().objects.count, MAX_OBJECTS2);
+					  GameInfo ().objects.count, MAX_OBJECTS (this));
 			ErrorMsg (message);
 			GameInfo ().objects.count = MAX_OBJECTS (this);
 			}
@@ -1115,12 +1118,12 @@ else {  /*load mine filename */
 				}
 			}
 		}
-
+#endif
 	//==================== = READ WALL INFO============================
 	// note: Wall size will automatically strip last two items
 
 #if 1
-	if (!LoadGameItem (loadfile, GameInfo ().walls, Walls (), 20, MAX_WALLS (this), "Walls"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().walls, Walls (), 20, MAX_WALLS (this), "Walls"))
 		return -1;
 #else
 	if ((GameInfo ().walls.offset > -1) && !fseek(loadfile, GameInfo ().walls.offset, SEEK_SET)) {
@@ -1143,6 +1146,10 @@ else {  /*load mine filename */
 #endif
 	//==================== = READ DOOR INFO============================
 	// note: not used for D1 or D2 since doors.count is always 0
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().doors, ActiveDoors (), 20, MAX_DOORS, "Doors"))
+		return -1;
+#else
 	if ((GameInfo ().doors.offset > -1) && !fseek(loadfile, GameInfo ().doors.offset, SEEK_SET)) {
 		if (GameInfo ().doors.count > MAX_DOORS) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of doors (%ld/%d) exceeded", GameInfo ().doors.count, MAX_DOORS);
@@ -1160,19 +1167,26 @@ else {  /*load mine filename */
 				}
 			}
 		}
-
+#endif
 	//==================== READ TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().triggers, Triggers (), -1, MAX_TRIGGERS (this), "Triggers"))
+		return -1;
+	if (GameInfo ().triggers.offset > -1) {
+#else
 	if (GameInfo ().triggers.offset > -1) {
 		if (GameInfo ().triggers.count > MAX_TRIGGERS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of triggers (%ld/%d) exceeded",
 				GameInfo ().triggers.count, MAX_TRIGGERS (this));
 			ErrorMsg (message);
 			GameInfo ().triggers.count = MAX_TRIGGERS (this);
-		}
+			}
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
 			for (i = 0; i < GameInfo ().triggers.count; i++)
 				Triggers (i)->Read (loadfile, GameInfo ().fileinfo.version, false);
+		}
+#endif
 		INT32 bObjTriggersOk = 1;
 		if (GameInfo ().fileinfo.version >= 33) {
 			INT32 i = ftell (loadfile);
@@ -1206,16 +1220,20 @@ else {  /*load mine filename */
 			NumObjTriggers () = 0;
 			memset (ObjTriggers (), 0, sizeof (CTrigger) * MAX_OBJ_TRIGGERS);
 			}
-	}
+		}
 
 	//================ READ CONTROL CENTER TRIGGER INFO============== =
 	// note: same for D1 and D2
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().control, ReactorTriggers (), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
+		return -1;
+#else
 	if (GameInfo ().control.offset > -1) {
-		if (GameInfo ().control.count > MAX_CONTROL_CENTER_TRIGGERS) {
+		if (GameInfo ().control.count > MAX_REACTOR_TRIGGERS) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of control center Triggers () (%ld, %d) exceeded",
-				GameInfo ().control.count, MAX_CONTROL_CENTER_TRIGGERS);
+				GameInfo ().control.count, MAX_REACTOR_TRIGGERS);
 			ErrorMsg (message);
-			GameInfo ().control.count = MAX_CONTROL_CENTER_TRIGGERS;
+			GameInfo ().control.count = MAX_REACTOR_TRIGGERS;
 		}
 		if (!fseek(loadfile, GameInfo ().control.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().control.count; i++)
@@ -1224,15 +1242,19 @@ else {  /*load mine filename */
 				}
 			}
 		}
-
+#endif
 	//================ READ MATERIALIZATION CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().botgen, BotGens (), -1, MAX_ROBOT_MAKERS (this), "Robot makers"))
+		return -1;
+#else
 	if (GameInfo ().botgen.offset > -1) {
-		if (GameInfo ().botgen.count > MAX_NUM_MATCENS (this)) {
+		if (GameInfo ().botgen.count > MAX_ROBOT_MAKERS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
-				GameInfo ().botgen.count, MAX_NUM_MATCENS (this));
+				GameInfo ().botgen.count, MAX_ROBOT_MAKERS (this));
 			ErrorMsg (message);
-			GameInfo ().botgen.count = MAX_NUM_MATCENS (this);
+			GameInfo ().botgen.count = MAX_ROBOT_MAKERS (this);
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
@@ -1243,15 +1265,19 @@ else {  /*load mine filename */
 				}
 			}
 		}
-
+#endif
 	//================ READ EQUIPMENT CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
+#if 1
+	if (0 > LoadGameItem (loadfile, GameInfo ().equipgen, EquipGens (), -1, MAX_ROBOT_MAKERS (this), "Equipment makers"))
+		return -1;
+#else
 	if (GameInfo ().equipgen.offset > -1) {
-		if (GameInfo ().equipgen.count > MAX_NUM_MATCENS (this)) {
+		if (GameInfo ().equipgen.count > MAX_ROBOT_MAKERS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
-				GameInfo ().equipgen.count, MAX_NUM_MATCENS (this));
+				GameInfo ().equipgen.count, MAX_ROBOT_MAKERS (this));
 			ErrorMsg (message);
-			GameInfo ().equipgen.count = MAX_NUM_MATCENS (this);
+			GameInfo ().equipgen.count = MAX_ROBOT_MAKERS (this);
 		}
 		if (!fseek(loadfile, GameInfo ().equipgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().equipgen.count; i++) {
@@ -1264,12 +1290,16 @@ else {  /*load mine filename */
 				}
 			}
 		}
-
+#endif
 	//================ READ DELTA LIGHT INFO============== =
 	// note: D2 only
 	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().lightDeltaIndices.count);
 		//    DEBUGMSG(message);
+#if 1
+		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaIndices, LightDeltaIndex (), -1, MAX_LIGHT_DELTA_INDICES (this), "Light delta indices"))
+			return -1;
+#else
 		if (GameInfo ().lightDeltaIndices.count > MAX_LIGHT_DELTA_INDICES (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
 				GameInfo ().lightDeltaIndices.count, MAX_LIGHT_DELTA_INDICES (this));
@@ -1285,13 +1315,17 @@ else {  /*load mine filename */
 					}
 				}
 			}
+#endif
 		}
-
 	//==================== READ DELTA LIGHTS==================== =
 	// note: D2 only
 	if (IsD2File ()) {
 		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().lightDeltaValues.count);
 		//    DEBUGMSG(message);
+#if 1
+		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaValues, LightDeltaValues (), -1, MAX_LIGHT_DELTA_VALUES (this), "Light delta values"))
+			return -1;
+#else
 		if (GameInfo ().lightDeltaValues.count > MAX_LIGHT_DELTA_VALUES (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
 				GameInfo ().lightDeltaValues.count, MAX_LIGHT_DELTA_VALUES (this));
@@ -1312,8 +1346,10 @@ else {  /*load mine filename */
 					}
 				}
 			}
+#endif
 		}
-	return 0;
+
+return 0;
 }
 
 // ------------------------------------------------------------------------

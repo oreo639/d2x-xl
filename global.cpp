@@ -863,8 +863,8 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //wall *Walls (); //MAX_WALLS
 //CActiveDoor active_doors[MAX_DOORS];
 //trigger *Triggers ();// MAX_TRIGGERS;
-//CReactorTrigger reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
-//CRobotMaker robot_centers[MAX_NUM_MATCENS];
+//CReactorTrigger reactorTriggers[MAX_REACTOR_TRIGGERS];
+//CRobotMaker robot_centers[MAX_ROBOT_MAKERS];
 
 //CGameFileInfo gameFileInfo;
 //CGameInfo GameInfo ();

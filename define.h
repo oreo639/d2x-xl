@@ -262,7 +262,7 @@
 #define MAX_DOORS2                90 // Maximum number of open doors Descent 2
 
 #define MAX_DOORS                    1
-#define MAX_CONTROL_CENTER_TRIGGERS 10
+#define MAX_REACTOR_TRIGGERS 10
 #define MAX_NUM_MATCENS1				20
 #define MAX_NUM_MATCENS2				100
 #define MAX_WALL_SWITCHES           50

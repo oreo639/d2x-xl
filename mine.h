@@ -53,7 +53,7 @@ typedef struct tMineData {
 	CTrigger						triggers[MAX_TRIGGERS2];
 	CTrigger						objTriggers[MAX_OBJ_TRIGGERS];
 	INT32							numObjTriggers;
-	CReactorTrigger			reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
+	CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
 	CRobotMaker					robot_centers[MAX_NUM_MATCENS2];
 	CRobotMaker					equip_centers[MAX_NUM_MATCENS2];
 	
@@ -535,7 +535,7 @@ inline INT32 MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM
 inline INT32 MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_REPAIRCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
 inline INT32 MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_PLAYERS_D2X : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
 inline INT32 ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? MAX_ROBOT_IDS_TOTAL : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
-inline INT32 MAX_NUM_MATCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_MATCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
+inline INT32 MAX_ROBOT_MAKERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_MATCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
 inline INT32 MAX_LIGHT_DELTA_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_INDICES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X; }
 inline INT32 MAX_LIGHT_DELTA_VALUES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_VALUES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X; }
 

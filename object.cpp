@@ -569,7 +569,7 @@ pWnd->UpdateWindow ();
 
 // ------------------------------------------------------------------------
 
-void CGameObject::Read (FILE *fp, INT32 version) 
+INT32 CGameObject::Read (FILE *fp, INT32 version) 
 {
 	INT32 i, levelVersion = theApp.LevelVersion ();
 
@@ -759,6 +759,8 @@ void CGameObject::Read (FILE *fp, INT32 version)
 	default:
 		break;
 	}
+
+return 1;
 }
 
 // ------------------------------------------------------------------------
