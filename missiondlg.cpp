@@ -110,7 +110,7 @@ void CMissionTool::DoDataExchange (CDataExchange * pDX)
 	INT32	nSecret;
 
 DDX_Text (pDX, IDC_MISSION_NAME, m_missionData.missionName, sizeof (m_missionData.missionName));
-DDX_Text (pDX, IDC_LEVEL_NAME, GetMine ()->LevelName (), GetMine ()->LevelNameSize ());
+DDX_Text (pDX, IDC_LEVEL_NAME, theMine->LevelName (), theMine->LevelNameSize ());
 DDX_Radio (pDX, IDC_MISSION_MULTIPLAYER, m_missionData.missionType);
 for (i = 0; i < 8; i++)
 	DDX_Text (pDX, IDC_MISSION_EDITORS + i, m_missionData.missionInfo [i], sizeof (m_missionData.missionInfo [i]));

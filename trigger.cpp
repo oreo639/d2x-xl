@@ -125,7 +125,7 @@ if (nTrigger != NO_TRIGGER) {
 	ErrorMsg ("There is already a trigger on this side");
 	return NULL;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS (this)) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return NULL;
 	}
@@ -134,7 +134,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (CurrSide ()->nWall >= GameInfo ().walls.count) {
 	if (bAutoAddWall) {
-		if (GameInfo ().walls.count >= MAX_WALLS (this)) {
+		if (GameInfo ().walls.count >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
 			return NULL;
 			}

@@ -93,7 +93,6 @@ protected: // create from serialization only
 
 	CSplitterWnd	*m_pSplitter;
 	// member variables
-	CMine			*m_mine;
 	INT32			m_viewHeight;	// in pixels
 	INT32			m_viewWidth;	// in pixels
 	INT32			m_viewDepth;	// in bytes
@@ -196,9 +195,6 @@ protected: // create from serialization only
 // Attributes
 public:
 	CDlcDoc* GetDocument();
-	inline CMine *GetMine () 
-		//{ return m_mine = GetDocument () ? GetDocument ()->m_mine : NULL; }
-		{ return &theMine; }
 
 // Operations
 public:
@@ -253,11 +249,11 @@ public:
 	void	ClearView();
 	void	ResetView (bool bRefresh = false);
 	bool	InitViewDimensions (void);
-	void	DrawWireFrame(CMine *mine, bool bPartial);
-	void	DrawTextureMappedCubes(CMine *mine);
-	void	DrawMarkedCubes (CMine *mine, INT16 clear_it = 0);
+	void	DrawWireFrame(bool bPartial);
+	void	DrawTextureMappedCubes(void);
+	void	DrawMarkedCubes (INT16 clear_it = 0);
 	void	DrawCube(CSegment *segP, bool bPartial);
-	void	DrawCube (CMine *mine, INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it = 0);
+	void	DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it = 0);
 	void	DrawCubePartial (CSegment *segP);
 	void	DrawCubeQuick(CSegment *segP, bool bPartial = false);
 	void	DrawCubeTextured(CSegment *segP, UINT8* light_index);
@@ -268,15 +264,15 @@ public:
 	void	DrawLine (CDTexture *pTx, POINT pt0, POINT pt1, UINT8 color);
 	void	DrawAnimDirArrows (INT16 texture1, CDTexture *pTx);
 
-	void	DrawWalls (CMine *mine);
-	void	DrawLights (CMine *mine);
-	void	DrawOctagon(CMine *mine, INT16 nSide, INT16 nSegment);
-	void	DrawObject (CMine *mine,INT16 objnum,INT16 clear_it = 0);
-	void	DrawObjects (CMine *mine, INT16 clear_it = 0);
-	void	DrawHighlight (CMine *mine, INT16 clear_it = 0);
-	void  DrawSpline (CMine *mine);
+	void	DrawWalls (void);
+	void	DrawLights (void);
+	void	DrawOctagon(INT16 nSide, INT16 nSegment);
+	void	DrawObject (INT16 objnum, INT16 clear_it = 0);
+	void	DrawObjects (INT16 clear_it = 0);
+	void	DrawHighlight (INT16 clear_it = 0);
+	void  DrawSpline (void);
 
-	INT32	SetupModel(CMine *mine, CGameObject *objP); // poly.c
+	INT32	SetupModel(CGameObject *objP); // poly.c
 	void	SetModelPoints(INT32 start, INT32 end);
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
@@ -302,7 +298,7 @@ public:
 	void	SetViewMineFlags(UINT32 mask);
 	void	SetViewObjectFlags(UINT32 mask);
 	void	SetSelectMode(UINT32 mode);
-	void CalcSegDist (CMine *mine);
+	void CalcSegDist (void);
 	bool	InRange (INT16 *pv, INT16 i);
 
 	void NextPoint (INT32 dir = 1);
@@ -323,7 +319,7 @@ public:
 	void PrevObject ();
 	void NextCubeElement (INT32 dir = 1);
 	void PrevCubeElement ();
-	void HiliteTarget (CMine *mine);
+	void HiliteTarget (void);
 
 	void Refresh (bool bAll = true);
 	void EnableDeltaShading (INT32 bEnable, INT32 nFrameRate, INT32 bShowLightSource);
@@ -381,7 +377,7 @@ public:
 	void UpdateRubberRect (CPoint pt);
 	void ResetRubberRect ();
 	BOOL UpdateDragPos ();
-	void HighlightDrag (CMine *mine, INT16 nVert, long x, long y);
+	void HighlightDrag (INT16 nVert, long x, long y);
 	BOOL CMineView::DrawDragPos (void);
 	void FinishDrag (void);
 

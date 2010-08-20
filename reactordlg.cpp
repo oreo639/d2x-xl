@@ -66,7 +66,7 @@ return TRUE;
 
 void CReactorTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
 DDX_Text (pDX, IDC_REACTOR_COUNTDOWN, m_nCountDown);
 DDX_Text (pDX, IDC_REACTOR_SECRETRETURN, m_nSecretReturn);
@@ -95,8 +95,6 @@ CToolDlg::EnableControls (IDC_REACTOR_COUNTDOWN, IDC_REACTOR_SECRETRETURN, bEnab
 
 void CReactorTool::InitLBTargets ()
 {
-if (!GetMine ())
-	return;
 CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
@@ -123,14 +121,12 @@ plb->SetCurSel (m_iTarget);
 
 void CReactorTool::Refresh ()
 {
-if (!m_bInited)
-	return;
-if (!GetMine ())
+if (!(m_bInited && theMine))
 	return;
 EnableControls (theApp.IsD2File ());
-m_pTrigger = GetMine ()->ReactorTriggers (m_nTrigger);
-m_nCountDown = m_mine->ReactorTime ();
-m_nSecretReturn = m_mine->SecretCubeNum ();
+m_pTrigger = theMine->ReactorTriggers (m_nTrigger);
+m_nCountDown = theMine->ReactorTime ();
+m_nSecretReturn = theMine->SecretCubeNum ();
 InitLBTargets ();
 OnSetTarget ();
 UpdateData (FALSE);
@@ -142,15 +138,13 @@ UpdateData (FALSE);
 
 void CReactorTool::OnCountDown () 
 {
-if (!GetMine ())
-	return;
 char szVal [5];
 ::GetWindowText (GetDlgItem (IDC_REACTOR_COUNTDOWN)->m_hWnd, szVal, sizeof (szVal));
 if (!*szVal)
 	return;
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-m_mine->ReactorTime () = m_nCountDown;
+theMine->ReactorTime () = m_nCountDown;
 }
 
 //------------------------------------------------------------------------
@@ -159,15 +153,13 @@ m_mine->ReactorTime () = m_nCountDown;
 
 void CReactorTool::OnSecretReturn () 
 {
-if (!GetMine ())
-	return;
 char szVal [5];
 ::GetWindowText (GetDlgItem (IDC_REACTOR_SECRETRETURN)->m_hWnd, szVal, sizeof (szVal));
 if (!*szVal)
 	return;
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-m_mine->SecretCubeNum () = m_nSecretReturn;
+theMine->SecretCubeNum () = m_nSecretReturn;
 }
 
 //------------------------------------------------------------------------
@@ -176,8 +168,6 @@ m_mine->SecretCubeNum () = m_nSecretReturn;
 
 void CReactorTool::AddTarget (INT16 nSegment, INT16 nSide) 
 {
-if (!GetMine ())
-	return;
 m_targets = m_pTrigger->m_count;
 if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Reactor tool: No more targets possible for this trigger.");
@@ -201,12 +191,10 @@ Refresh ();
 
 void CReactorTool::OnAddTarget () 
 {
-if (!GetMine ())
-	return;
 INT32 nSegment, nSide;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d,%d", &nSegment, &nSide);
-if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()) || (nSide < 1) || (nSide > 6))
+if ((nSegment < 0) || (nSegment >= theMine->SegCount ()) || (nSide < 1) || (nSide > 6))
 	return;
 AddTarget (nSegment, nSide);
 }
@@ -215,9 +203,7 @@ AddTarget (nSegment, nSide);
 
 void CReactorTool::OnAddWallTarget ()
 {
-if (!GetMine ())
-	return;
-CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
+CSelection *other = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 () : &theMine->Current1 ();
 INT32 i = FindTarget (other->nSegment, other->nSide);
 if (i >= 0)
 	return;
@@ -254,9 +240,7 @@ return m_pTrigger->Find (nSegment, nSide);
 
 void CReactorTool::OnDeleteWallTarget ()
 {
-if (!GetMine ())
-	return;
-CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
+CSelection *other = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 () : &theMine->Current1 ();
 INT32 i = FindTarget (other->nSegment, other->nSide);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
@@ -274,8 +258,6 @@ OnDeleteTarget ();
 
 void CReactorTool::OnSetTarget () 
 {
-if (!GetMine ())
-	return;
 // get affected cube/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
@@ -283,14 +265,14 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTr
 	return;
 
 INT16 nSegment = m_pTrigger->Segment (m_iTarget);
-if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()))
+if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
 	 return;
 INT16 nSide = m_pTrigger->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 
-CSelection *other = m_mine->Other ();
-if ((m_mine->Current ()->nSegment == nSegment) && (m_mine->Current ()->nSide == nSide))
+CSelection *other = theMine->Other ();
+if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide == nSide))
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);

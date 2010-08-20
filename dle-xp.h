@@ -92,22 +92,15 @@ public:
 	inline CMineView *MineView ()
 		{ CMainFrame *h; return (h = MainFrame ()) ? h->MineView () : NULL; }
 	inline CTextureView *TextureView ()
-		{ CMainFrame* h; return (h = MainFrame ()) ? h ->TextureView () : NULL; }
+		{ CMainFrame* h; return (h = MainFrame ()) ? h->TextureView () : NULL; }
 	inline CToolView *ToolView ()
 		{ CMainFrame* h; return (h = MainFrame ()) ? MainFrame ()->ToolView () : NULL; }
 	inline CDlcDoc *GetDocument ()
 		{ CMineView *h; return (h = MineView ()) ? h->GetDocument () : NULL; }
-	inline CMine *GetMine ()
-		//{ CDlcDoc *h; return (h = GetDocument ()) ? h->m_mine : NULL; }
-		{ return &theMine; }
-	inline int FileType (void) { 
-		CMine* m = GetMine ();
-		return m ? m->FileType () : RL2_FILE;
-		}
-	inline int LevelVersion (void) { 
-		CMine* m = GetMine ();
-		return m ? m->LevelVersion () : 7;
-		}
+	inline int FileType (void) 
+		{ return theMine->FileType (); }
+	inline int LevelVersion (void) 
+		{ return theMine->LevelVersion (); }
 	inline bool IsD1File (void) { return FileType () == RDL_FILE; }
 	inline bool IsD2File (void) { return FileType () != RDL_FILE; }
 	inline CWnd *TexturePane ()

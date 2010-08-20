@@ -136,7 +136,7 @@ class CNewFileDlg : public CDialog {
 			}
       virtual BOOL OnInitDialog () {
 			CDialog::OnInitDialog ();
-			if (!theApp.GetMine ()->m_bVertigo)
+			if (!theMine->m_bVertigo)
 				GetDlgItem (IDC_D2VLEVEL)->EnableWindow (FALSE);
 			return TRUE;
 			}
@@ -157,7 +157,6 @@ class CNewFileDlg : public CDialog {
 
 CDlcDoc::CDlcDoc()
 {
-m_mine = GetMine ();//new CMine;
 m_bInitDocument = true;
 *m_szFile = '\0';
 *m_szSubFile = '\0';
@@ -166,7 +165,6 @@ MEMSET (&missionData, 0, sizeof (missionData));
 
 CDlcDoc::~CDlcDoc()
 {
-	//delete m_mine;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -206,13 +204,11 @@ BOOL CDlcDoc::OnNewDocument()
 {
 if (!CDocument::OnNewDocument())
 	return FALSE;
-if (!m_mine) 
-	return FALSE;
 *m_szFile = '\0';
 *m_szSubFile = '\0';
 if (m_bInitDocument) {
 	m_bInitDocument = false;
-	m_mine->Load ();
+	theMine->Load ();
 	}
 else
 	CreateNewLevel ();
@@ -229,44 +225,44 @@ strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
 
 CNewFileDlg	d (theApp.MainFrame (), new_level_name, &newFileType);
 if (d.DoModal () == IDOK) {
-	m_mine->Default ();
+	theMine->Default ();
 	theApp.MineView ()->Reset ();
 	theApp.TextureView ()->Reset ();
 	theApp.ToolView ()->Reset ();
 //		InitRobotData();
 
 	*m_szFile = '\0';
-	m_mine->SetFileType (newFileType);
+	theMine->SetFileType (newFileType);
 	switch (newFileType) {
 		case 0:
-			m_mine->SetFileType (0);
+			theMine->SetFileType (0);
 			break;
 		case 1:
 		case 2:
 		case 3:
-			m_mine->SetFileType (1);
+			theMine->SetFileType (1);
 			break;
 		}
-	m_mine->Load ();
+	theMine->Load ();
 	switch (newFileType) {
 		case 0:
-			m_mine->SetLevelVersion (1);
+			theMine->SetLevelVersion (1);
 			break;
 		case 1:
-			m_mine->SetLevelVersion (7);
+			theMine->SetLevelVersion (7);
 			break;
 		case 2:
-			m_mine->SetLevelVersion (8);
+			theMine->SetLevelVersion (8);
 			break;
 		case 3:
-			m_mine->UpdateLevelVersion ();
-			m_mine->ConvertWallNum (MAX_WALLS2, MAX_WALLS3
+			theMine->UpdateLevelVersion ();
+			theMine->ConvertWallNum (MAX_WALLS2, MAX_WALLS3
 				);
 		}
 	*m_szSubFile = '\0';
-	strcpy_s (m_mine->LevelName (), m_mine->LevelNameSize (), new_level_name);
-	m_mine->Reset ();
-	m_mine->SetLinesToDraw ();
+	strcpy_s (theMine->LevelName (), theMine->LevelNameSize (), new_level_name);
+	theMine->Reset ();
+	theMine->SetLinesToDraw ();
 	theApp.MineView ()->ResetView (true);
 	MEMSET (&missionData, 0, sizeof (missionData));
 	CreateLightMap ();
@@ -323,8 +319,6 @@ BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile)
 	INT32 err = 0;
 	char szFile [256], szSubFile [256];
 
-if (!m_mine) 
-	return FALSE;
 if (bEnableDeltaShading)
 	theApp.ToolView ()->LightTool ()->OnShowDelta ();
 if (!SaveIfModified ())
@@ -356,18 +350,18 @@ if (strstr (pszFile, ".hog")) {
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
 	FSplit (pszFile, m_startFolder , NULL, NULL);
 	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder );
-	err = m_mine->Load (m_szTmpFile, true);
+	err = theMine->Load (m_szTmpFile, true);
 	MEMSET (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
 	}
 else {
 		char szExt [256];
 
-	err = m_mine->Load (pszFile);
+	err = theMine->Load (pszFile);
 	FSplit (pszFile, NULL, pszSubFile, szExt);
 	strcat_s (pszSubFile, 256, szExt);
 	}
-m_mine->Reset ();
+theMine->Reset ();
 theApp.TextureView ()->Setup ();
 theApp.MineView ()->DelayRefresh (true);
 theApp.MineView ()->Reset ();
@@ -398,8 +392,6 @@ return false;
 #else
 	INT32 err = 0;
 
-if (!m_mine)
-	return false;
 theApp.ToolView ()->Refresh ();
 CountCustomTextures ();
 if (bEnableDeltaShading)
@@ -415,7 +407,7 @@ if (bSaveAs && !BrowseForFile (m_szFile, FALSE))
 if (strstr (m_szFile, ".hog"))
 	err = SaveToHog (m_szFile, m_szSubFile, bSaveAs);
 else
-	err = m_mine->Save (m_szFile);
+	err = theMine->Save (m_szFile);
 SetModifiedFlag (err != 0);
 if (!err) {
 	UpdateCaption ();
@@ -501,224 +493,224 @@ if (p) {
 
 void CDlcDoc::OnInsertCube() 
 {
-if (m_mine) m_mine->AddSegment ();
+theMine->AddSegment ();
 }
 
 void CDlcDoc::OnDeleteCube() 
 {
-if (m_mine) m_mine->DeleteSegment();
+theMine->DeleteSegment();
 }
 
 void CDlcDoc::OnInsertCubeReactor ()
 {
-if (m_mine) m_mine->AddReactor ();
+theMine->AddReactor ();
 }
 
 void CDlcDoc::OnInsertCubeRobotMaker ()
 {
-if (m_mine) m_mine->AddRobotMaker ();
+theMine->AddRobotMaker ();
 }
 
 void CDlcDoc::OnInsertCubeFuelCenter ()
 {
-if (m_mine) m_mine->AddFuelCenter ();
+theMine->AddFuelCenter ();
 }
 
 void CDlcDoc::OnInsertCubeRepairCenter ()
 {
-if (m_mine) m_mine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
+theMine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
 void CDlcDoc::OnInsertDoorNormal ()
 {
-if (m_mine) m_mine->AddAutoDoor ();
+theMine->AddAutoDoor ();
 }
 
 void CDlcDoc::OnInsertDoorPrison ()
 {
-if (m_mine) m_mine->AddPrisonDoor ();
+theMine->AddPrisonDoor ();
 }
 
 void CDlcDoc::OnInsertDoorGuideBot ()
 {
-if (m_mine) m_mine->AddGuideBotDoor ();
+theMine->AddGuideBotDoor ();
 }
 
 void CDlcDoc::OnInsertDoorExit ()
 {
-if (m_mine) m_mine->AddNormalExit ();
+theMine->AddNormalExit ();
 }
 
 void CDlcDoc::OnInsertDoorSecretExit ()
 {
-if (m_mine) m_mine->AddSecretExit ();
+theMine->AddSecretExit ();
 }
 
 void CDlcDoc::OnInsertTriggerOpenDoor ()
 {
-if (m_mine) m_mine->AddOpenDoorTrigger ();
+theMine->AddOpenDoorTrigger ();
 }
 
 void CDlcDoc::OnInsertTriggerRobotMaker ()
 {
-if (m_mine) m_mine->AddRobotMakerTrigger ();
+theMine->AddRobotMakerTrigger ();
 }
 
 void CDlcDoc::OnInsertTriggerShieldDrain ()
 {
-if (m_mine) m_mine->AddShieldTrigger ();
+theMine->AddShieldTrigger ();
 }
 
 void CDlcDoc::OnInsertTriggerEnergyDrain ()
 {
-if (m_mine) m_mine->AddEnergyTrigger ();
+theMine->AddEnergyTrigger ();
 }
 
 void CDlcDoc::OnInsertTriggerControlPanel ()
 {
-if (m_mine) m_mine->AddUnlockTrigger ();
+theMine->AddUnlockTrigger ();
 }
 
 void CDlcDoc::OnInsertWallFuelCells ()
 {
-if (m_mine) m_mine->AddFuelCell ();
+theMine->AddFuelCell ();
 }
 
 void CDlcDoc::OnInsertWallIllusion ()
 {
-if (m_mine) m_mine->AddIllusionaryWall ();
+theMine->AddIllusionaryWall ();
 }
 
 void CDlcDoc::OnInsertWallForceField ()
 {
-if (m_mine) m_mine->AddForceField ();
+theMine->AddForceField ();
 }
 
 void CDlcDoc::OnInsertWallFan ()
 {
-if (m_mine) m_mine->AddFan ();
+theMine->AddFan ();
 }
 
 void CDlcDoc::OnInsertWallGrate ()
 {
-if (m_mine) m_mine->AddGrate ();
+theMine->AddGrate ();
 }
 
 void CDlcDoc::OnInsertWallWaterfall ()
 {
-if (m_mine) m_mine->AddWaterFall ();
+theMine->AddWaterFall ();
 }
 
 void CDlcDoc::OnInsertWallLavafall ()
 {
-if (m_mine) m_mine->AddLavaFall ();
+theMine->AddLavaFall ();
 }
 
 void CDlcDoc::OnInsertObjectPlayer ()
 {
-if (m_mine) m_mine->CopyObject (OBJ_PLAYER);
+theMine->CopyObject (OBJ_PLAYER);
 }
 
 void CDlcDoc::OnInsertObjectCoopPlayer ()
 {
-if (m_mine) m_mine->CopyObject (OBJ_COOP);
+theMine->CopyObject (OBJ_COOP);
 }
 
 void CDlcDoc::OnInsertObjectPlayerCopy ()
 {
-if (m_mine) 
-	m_mine->CopyObject (OBJ_NONE);
+
+	theMine->CopyObject (OBJ_NONE);
 }
 
 void CDlcDoc::OnInsertObjectRobot ()
 {
-if (m_mine && m_mine->CopyObject (OBJ_ROBOT)) {
-	m_mine->CurrObj ()->id = 3; // class 1 drone
-	m_mine->SetObjectData (m_mine->CurrObj ()->type);
+if (theMine->CopyObject (OBJ_ROBOT)) {
+	theMine->CurrObj ()->id = 3; // class 1 drone
+	theMine->SetObjectData (theMine->CurrObj ()->type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectWeapon ()
 {
-if (m_mine && m_mine->CopyObject (OBJ_WEAPON)) {
-	m_mine->CurrObj ()->id = 3; // laser
-	m_mine->SetObjectData (m_mine->CurrObj ()->type);
+if (theMine->CopyObject (OBJ_WEAPON)) {
+	theMine->CurrObj ()->id = 3; // laser
+	theMine->SetObjectData (theMine->CurrObj ()->type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectPowerup ()
 {
-if (m_mine && m_mine->CopyObject (OBJ_POWERUP)) {
-	m_mine->CurrObj ()->id = 1; // energy boost
-	m_mine->SetObjectData (m_mine->CurrObj ()->type);
+if (theMine->CopyObject (OBJ_POWERUP)) {
+	theMine->CurrObj ()->id = 1; // energy boost
+	theMine->SetObjectData (theMine->CurrObj ()->type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectGuideBot ()
 {
-if (m_mine && m_mine->CopyObject (OBJ_ROBOT)) {
-	m_mine->CurrObj ()->id = 33; // guide bot
-	m_mine->SetObjectData (m_mine->CurrObj ()->type);
+if (theMine->CopyObject (OBJ_ROBOT)) {
+	theMine->CurrObj ()->id = 33; // guide bot
+	theMine->SetObjectData (theMine->CurrObj ()->type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectReactor ()
 {
-if (m_mine && m_mine->CopyObject (OBJ_CNTRLCEN)) {
-	m_mine->CurrObj ()->id = 2; // standard reactor
-	m_mine->SetObjectData (m_mine->CurrObj ()->type);
+if (theMine->CopyObject (OBJ_CNTRLCEN)) {
+	theMine->CurrObj ()->id = 2; // standard reactor
+	theMine->SetObjectData (theMine->CurrObj ()->type);
 	}
 }
 
 void CDlcDoc::OnDeleteObject ()
 {
-if (m_mine && (QueryMsg ("Are you sure you want to delete this object?") == IDYES))
-	m_mine->DeleteObject ();
+if ((QueryMsg ("Are you sure you want to delete this object?") == IDYES))
+	theMine->DeleteObject ();
 }
 
 void CDlcDoc::OnDeleteWall ()
 {
-if (m_mine) m_mine->DeleteWall ();
+theMine->DeleteWall ();
 }
 
 void CDlcDoc::OnDeleteTrigger ()
 {
-if (m_mine) m_mine->DeleteTrigger ();
+theMine->DeleteTrigger ();
 }
 
 void CDlcDoc::OnCutBlock ()
 {
-if (m_mine) m_mine->CutBlock ();
+theMine->CutBlock ();
 }
 
 void CDlcDoc::OnCopyBlock ()
 {
-if (m_mine) m_mine->CopyBlock ();
+theMine->CopyBlock ();
 }
 
 void CDlcDoc::OnQuickCopyBlock ()
 {
-if (m_mine) m_mine->CopyBlock ("dle_temp.blx");
+theMine->CopyBlock ("dle_temp.blx");
 }
 
 void CDlcDoc::OnPasteBlock ()
 {
-if (m_mine) m_mine->PasteBlock ();
+theMine->PasteBlock ();
 }
 
 void CDlcDoc::OnQuickPasteBlock ()
 {
-if (m_mine) m_mine->QuickPasteBlock ();
+theMine->QuickPasteBlock ();
 }
 
 void CDlcDoc::OnDeleteBlock ()
 {
-if (m_mine) m_mine->DeleteBlock ();
+theMine->DeleteBlock ();
 }
 
 void CDlcDoc::OnCopyOtherCube ()
 {
-if (m_mine) m_mine->CopyOtherCube ();
+theMine->CopyOtherCube ();
 }
 
 
@@ -737,7 +729,7 @@ void CDlcDoc::SetMyText(LPCTSTR string)
 #if 0
 void CDlcDoc::OnFileTest() 
 {
-	CParser parser(m_mine);
+	CParser parser();
 	
 	parser.RunScript();
 	

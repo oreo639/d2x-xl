@@ -246,7 +246,7 @@ if (m_pDC)
 	return false;
 if (!(m_pDC = GetDC ()))
 	 return false;
-m_pOldPal = m_pDC->SelectPalette (theApp.GetMine ()->m_currentPalette, FALSE);
+m_pOldPal = m_pDC->SelectPalette (theMine->m_currentPalette, FALSE);
 m_pDC->RealizePalette ();
 return true;
 }
@@ -364,7 +364,7 @@ m_bgColor = 1; // white
 m_lBtnDown  = FALSE;
 m_rBtnDown = FALSE;
 m_bModified = FALSE;
-m_iTexture = theApp.GetMine ()->CurrSide ()->nBaseTex;
+m_iTexture = theMine->CurrSide ()->nBaseTex;
 if (m_iTexture >= MAX_D2_TEXTURES)
 	m_iTexture = 0;
 m_pTx = pTextures [theApp.FileType ()] + m_iTexture;
@@ -525,7 +525,7 @@ if (m_pDC)
 if (!(m_pDC = pWnd->GetDC ()))
 	 return false;
 m_pPaintWnd = pWnd;
-m_pOldPal = m_pDC->SelectPalette (theApp.GetMine ()->m_currentPalette, FALSE);
+m_pOldPal = m_pDC->SelectPalette (theMine->m_currentPalette, FALSE);
 m_pDC->RealizePalette ();
 return true;
 }
@@ -752,7 +752,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	fread(palette,sizeof (RGBQUAD),palette_size,file);
 
 	// read the logical palette entries
-	theApp.GetMine ()->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
+	theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 
 	// check color palette
 	INT32 i;

@@ -320,12 +320,12 @@ INT32			i, j, nVertex, spline;
 CSegment*	segP;
 
 if (!m_bSplineActive) {
-	m_nMaxSplines = MAX_SEGMENTS (this) - SegCount ();
+	m_nMaxSplines = MAX_SEGMENTS - SegCount ();
 	if (m_nMaxSplines > MAX_SPLINES)
 		m_nMaxSplines = MAX_SPLINES;
 	else if (m_nMaxSplines < 3) {
-//	if ((VertCount () + 3 /*MAX_SPLINES*/ * 4 > MAX_VERTICES (this)) ||
-//		 (SegCount () + 3 /*MAX_SPLINES*/ > MAX_SEGMENTS (this))) {
+//	if ((VertCount () + 3 /*MAX_SPLINES*/ * 4 > MAX_VERTICES) ||
+//		 (SegCount () + 3 /*MAX_SPLINES*/ > MAX_SEGMENTS)) {
 		ErrorMsg ("Insufficient number of free vertices and/or segments\n"
 					"to use the tunnel generator.");
 		return;
@@ -390,11 +390,11 @@ else {
 		// copy current segment
 		*segP = *Segments (Current ()->nSegment);
 		// use last "n_spline" segments
-		nVertex = (MAX_VERTICES (this)-1)-(spline*4);
+		nVertex = (MAX_VERTICES - 1) - spline * 4;
 		for (j = 0; j < 4; j++) {
-			if (VertCount () >= MAX_VERTICES (this))
+			if (VertCount () >= MAX_VERTICES)
 				DEBUGMSG (" Tunnel generator: Vertex count out of range.")
-			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES (this)))
+			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES))
 				DEBUGMSG (" Tunnel generator: Vertex number out of range.")
 			else
 				memcpy (Vertices (VertCount ()), Vertices (nVertex - j), sizeof (*Vertices ()));
@@ -425,7 +425,7 @@ else {
 			segP->children [j] = -1;
 			segP->sides [j].nBaseTex = 0;
 			segP->sides [j].nOvlTex = 0;
-			segP->sides [j].nWall = NO_WALL (this);
+			segP->sides [j].nWall = NO_WALL;
 			for (i=0;i<4;i++) {
 //	    segP->sides [j].uvls [i].u = default_uvls [i].u;
 //	    segP->sides [j].uvls [i].v = default_uvls [i].v;
@@ -650,7 +650,7 @@ void CMine::CalcSpline (void)
   // calculate segment verticies as weighted average between the two sides
   // then spin verticies in the direction of the segment vector
   for (i=0;i<n_splines;i++) {
-    nVertex = (MAX_VERTICES (this)-1)-(i*4);
+    nVertex = (MAX_VERTICES-1)-(i*4);
     for (j=0;j<4;j++) {
 	   vert = Vertices (nVertex - j);
       angle  = ((float)i/(float)n_splines) * delta_angle [j] + theta [0] [j];
@@ -668,8 +668,8 @@ void CMine::CalcSpline (void)
   // define segment vert numbers
   for (i=0;i<n_splines;i++) {
     // use last "n_spline" segments
-    segP = Segments (MAX_SEGMENTS (this) - 1 - i);
-    nVertex = MAX_VERTICES (this) - 1 - i * 4;
+    segP = Segments (MAX_SEGMENTS - 1 - i);
+    nVertex = MAX_VERTICES - 1 - i * 4;
     for (j = 0; j < 4; j++) {
       if (i == 0) {         // 1st segment
 	  segP->verts [side_vert [nSplineSide1] [j]] = nVertex - j;
@@ -690,7 +690,7 @@ void CMine::CalcSpline (void)
 
   // fix twisted segments
   for (i=0;i<n_splines;i++) {
-    UntwistSegment ((MAX_SEGMENTS (this)-1)-i,nSplineSide1);
+    UntwistSegment ((MAX_SEGMENTS-1)-i,nSplineSide1);
   }
 }
 

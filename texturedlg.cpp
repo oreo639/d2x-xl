@@ -336,22 +336,21 @@ void CTextureTool::LoadTextureListBoxes ()
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 
-GetMine ();
 bShowFrames = GetCheck (IDC_TEXTURE_SHOWFRAMES);
 
-INT16 texture1 = m_mine ? m_mine->CurrSide ()->nBaseTex : 0;
-INT16 texture2 = m_mine ? m_mine->CurrSide ()->nOvlTex & 0x3fff : 0;
+INT16 texture1 = theMine->CurrSide ()->nBaseTex;
+INT16 texture2 = theMine->CurrSide ()->nOvlTex & 0x3fff;
 
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES (m_mine)))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 	texture2 = 0;
 
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (m_mine && theApp.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (m_mine && theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (theApp.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -376,11 +375,11 @@ for (iTexture = 0; iTexture < nTextures; iTexture++) {
 
 bool CTextureTool::SideHasLight (void)
 {
-if	((m_mine->IsLight (m_mine->CurrSide ()->nBaseTex) != -1) ||
-	 (((m_mine->CurrSide ()->nOvlTex & 0x3fff) != 0) &&
-	  (m_mine->IsLight (m_mine->CurrSide ()->nOvlTex & 0x3fff) != -1)))
+if	((theMine->IsLight (theMine->CurrSide ()->nBaseTex) != -1) ||
+	 (((theMine->CurrSide ()->nOvlTex & 0x3fff) != 0) &&
+	  (theMine->IsLight (theMine->CurrSide ()->nOvlTex & 0x3fff) != -1)))
 	return true;
-CWall *pWall = m_mine->CurrWall ();
+CWall *pWall = theMine->CurrWall ();
 return pWall && (pWall->type == WALL_TRANSPARENT);
 
 }
@@ -390,7 +389,7 @@ return pWall && (pWall->type == WALL_TRANSPARENT);
 
 void CTextureTool::UpdatePaletteWnd (void)
 {
-if (/*!nLayout && (m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
+if (/*!nLayout && (theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 	EnableControls (IDC_TEXLIGHT_PALETTE + 1, IDC_TEXLIGHT_COLOR, TRUE);
 	m_paletteWnd.ShowWindow (SW_SHOW);
 	m_paletteWnd.DrawPalette ();
@@ -435,9 +434,7 @@ INT32 lightIdxFromMode [4] = {0, 3, 2, 1};
 
 void CTextureTool::Refresh ()
 {
-if (!m_bInited)
-	return;
-if (!GetMine ())
+if (!(m_bInited && theMine))
 	return;
 //Beep (1000,100);
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
@@ -462,20 +459,20 @@ m_frame [0] = 0;
 m_frame [1] = 0;
 #endif
 
-segP = m_mine->CurrSeg ();
-sideP = m_mine->CurrSide ();
-color = m_mine->CurrLightColor ();
-INT32 nSide = m_mine->Current ()->nSide;
+segP = theMine->CurrSeg ();
+sideP = theMine->CurrSide ();
+color = theMine->CurrLightColor ();
+INT32 nSide = theMine->Current ()->nSide;
 texture1 = sideP->nBaseTex;
 texture2 = sideP->nOvlTex & 0x3fff;
-pWall = m_mine->CurrWall ();
+pWall = theMine->CurrWall ();
 m_nColorIndex = (pWall && (pWall->type == WALL_TRANSPARENT)) ? pWall->cloak_value : color->index;
 m_rgbColor.peRed = (char) (255.0 * color->color.r);
 m_rgbColor.peGreen = (char) (255.0 * color->color.g);
 m_rgbColor.peBlue = (char) (255.0 * color->color.b);
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES (m_mine)))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 	texture2 = 0;
 GetBrightness ((m_bUse2nd && !m_bUse1st) ? texture2 : texture1);
 mode = sideP->nOvlTex & 0xc000;
@@ -507,7 +504,7 @@ if (segP->children [nSide]==-1)
 	bShowTexture = TRUE;
 else {
 	UINT16 nWall = sideP->nWall;
-	bShowTexture = (nWall < m_mine->GameInfo ().walls.count);
+	bShowTexture = (nWall < theMine->GameInfo ().walls.count);
 	}
 if (bShowTexture) {
 	if ((texture1!=last_texture1) || (texture2!=last_texture2) || (mode!=last_mode)) {
@@ -627,10 +624,7 @@ return CToolDlg::OnKillActive ();
 
 void CTextureTool::AnimateTexture (void)
 {
-if (!GetMine ())
-	return;
-
-	CSegment *segP = m_mine->CurrSeg ();
+	CSegment *segP = theMine->CurrSeg ();
 
 	UINT16 texture [2];
 	static INT32 scroll_offset_x = 0;
@@ -639,14 +633,14 @@ if (!GetMine ())
 	INT32 x,y;
 	static INT32 old_x,old_y;
 
-	CSide	*sideP = m_mine->CurrSide ();
+	CSide	*sideP = theMine->CurrSide ();
 
 texture [0] = sideP->nBaseTex & 0x3fff;
 texture [1] = sideP->nOvlTex;
 
 // if texture1 is a scrolling texture, then offset the textures and
 // redraw them, then return
-bScroll = m_mine->ScrollSpeed (texture [0], &x, &y);
+bScroll = theMine->ScrollSpeed (texture [0], &x, &y);
 if (bScroll) {
 	DrawTexture (texture [0], texture [1], scroll_offset_x, scroll_offset_y);
 	if (old_x != x || old_y != y) {
@@ -668,11 +662,11 @@ scroll_offset_y = 0;
 // abort if this is not a wall
 #ifndef _DEBUG
 UINT16 nWall = sideP->nWall;
-if (nWall >= m_mine->GameInfo ().walls.count)
+if (nWall >= theMine->GameInfo ().walls.count)
 	return;
 
 // abort if this wall is not a door
-if (m_mine->Walls () [nWall].type != WALL_DOOR)
+if (theMine->Walls () [nWall].type != WALL_DOOR)
 	return;
 #endif
 	INT32 i;
@@ -762,10 +756,7 @@ else
 
 void CTextureTool::SelectTexture (INT32 nIdC, bool bFirst)
 {
-if (!GetMine ())
-	return;
-
-	CSide		*sideP = m_mine->CurrSide ();
+	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	INT32			index = pcb->GetCurSel ();
 	
@@ -774,9 +765,9 @@ if (index <= 0)
 else {
 	INT16 texture = (INT16) pcb->GetItemData (index);
 	if (bFirst)
-		m_mine->SetTexture (-1, -1, texture, -1);
+		theMine->SetTexture (-1, -1, texture, -1);
 	else
-		m_mine->SetTexture (-1, -1, -1, texture);
+		theMine->SetTexture (-1, -1, -1, texture);
 	}
 Refresh ();
 theApp.MineView ()->Refresh ();
@@ -786,10 +777,8 @@ theApp.MineView ()->Refresh ();
 
 void CTextureTool::OnSetLight () 
 {
-if (!GetMine ())
-	return;
 UpdateData (TRUE);
-CSide *sideP = m_mine->CurrSide ();
+CSide *sideP = theMine->CurrSide ();
 INT16 mode = sideP->nOvlTex & 0xc000;
 INT32 i, j;
 for (i = 0; i < 4; i++) {
@@ -828,13 +817,10 @@ Refresh ();
 
 void CTextureTool::OnSaveTexture () 
 {
-if (!GetMine ())
-	return;
-
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			t1Name [20],
 					t2Name [20];
-	CSide		*sideP = m_mine->CurrSide ();
+	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb;
 
 save_texture1 = sideP->nBaseTex & 0x3fff;
@@ -880,14 +866,12 @@ void CTextureTool::OnPasteSide ()
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
-if (!GetMine ())
-	return;
 
-	CSide *sideP = m_mine->CurrSide ();
+	CSide *sideP = theMine->CurrSide ();
 
 //CheckForDoor ();
 theApp.SetModified (TRUE);
-m_mine->SetTexture (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, 
+theMine->SetTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 INT32 i;
 for (i = 0; i < 4; i++)
@@ -904,19 +888,17 @@ void CTextureTool::OnPasteTouching ()
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
-if (!GetMine ())
-	return;
 if (save_texture1 == -1 || save_texture2 == -1)
 	return;
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
-	CSegment *segP = m_mine->Segments ();
+	CSegment *segP = theMine->Segments ();
 INT32 nSegment;
-for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
+for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
     segP->nIndex = 0;
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-PasteTexture (m_mine->Current ()->nSegment, m_mine->Current ()->nSide, 100);
+PasteTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 100);
 theApp.UnlockUndo ();
 Refresh ();
 theApp.MineView ()->Refresh ();
@@ -929,15 +911,13 @@ void CTextureTool::OnPasteMarked ()
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
-if (!GetMine ())
-	return;
 
 	INT16			nSegment,
 					nSide;
-	CSegment	*segP = m_mine->Segments ();
+	CSegment	*segP = theMine->Segments ();
 	CSide		*sideP;
 	bool			bChange = false,
-					bAll = !m_mine->GotMarkedSides ();
+					bAll = !theMine->GotMarkedSides ();
 
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
@@ -945,12 +925,12 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
-for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
-		if (bAll || m_mine->SideIsMarked (nSegment, nSide)) {
+		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
 			if (segP->children [nSide] == -1) {
 				bChange = true;
-				m_mine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+				theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 				INT32 i;
 				for (i = 0; i < 4; i++)
 					sideP->uvls [i].l = save_uvls [i].l;
@@ -973,15 +953,13 @@ void CTextureTool::OnReplace ()
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
-if (!GetMine ())
-	return;
 
 	INT16			nSegment,
 					nSide;
-	CSegment	*segP = m_mine->Segments ();
+	CSegment	*segP = theMine->Segments ();
 	CSide		*sideP;
 	bool			bChange = false,
-					bAll = !m_mine->GotMarkedSides ();
+					bAll = !theMine->GotMarkedSides ();
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
@@ -989,16 +967,16 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
-for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++)
+for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++)
-		if (bAll || m_mine->SideIsMarked (nSegment, nSide)) {
+		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
 			if (m_bUse1st && (sideP->nBaseTex != last_texture1))
 				continue;
 			if (m_bUse2nd && ((sideP->nOvlTex & 0x3FFF) != last_texture2))
 				continue;
-			if ((segP->children [nSide] >= 0) && (sideP->nWall == NO_WALL (m_mine)))
+			if ((segP->children [nSide] >= 0) && (sideP->nWall == NO_WALL))
 				 continue;
-			if (m_mine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
+			if (theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
 //			INT32 i;
 //			for (i = 0; i < 4; i++)
@@ -1019,10 +997,7 @@ void CTextureTool::PasteTexture (INT16 nSegment, INT16 nSide, INT16 nDepth)
 if (nDepth <= 0) 
 	return;
 
-if (!GetMine ())
-	return;
-
-	CSegment	*segP = m_mine->Segments (nSegment);
+	CSegment	*segP = theMine->Segments (nSegment);
 	CSide		*sideP = segP->sides + nSide;
 	INT16			old_texture1, 
 					old_texture2;
@@ -1031,14 +1006,14 @@ if (!GetMine ())
 // remember these texture for a comparison below
 old_texture1 = sideP->nBaseTex;
 old_texture2 = sideP->nOvlTex;
-if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES (m_mine)))
+if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES))
 	old_texture1 = 0;
-if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES (m_mine)))
+if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES))
 	old_texture2 = 0;
 // mark segment as "pasted"
 segP->nIndex = 1;
 // paste texture
-m_mine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 for (i = 0; i < 4; i++)
 	sideP->uvls [i].l = save_uvls [i].l;
 
@@ -1047,7 +1022,7 @@ for (i = 0; i < 4; i++) {
 	INT16 adj_segnum, adj_sidenum;
 	if (GetAdjacentSide (nSegment, nSide, i, &adj_segnum, &adj_sidenum)) {
 		// if adj matches and its not "pasted" yet
-		segP = m_mine->Segments (adj_segnum);
+		segP = theMine->Segments (adj_segnum);
 		sideP = segP->sides + adj_sidenum;
 #if 0
 		if (segP->nIndex)
@@ -1073,9 +1048,6 @@ for (i = 0; i < 4; i++) {
 bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16 linenum,
 												INT16 *adj_segnum, INT16 *adj_sidenum) 
 {
-if (!GetMine ())
-	return false;
-
 	CSegment *segP;
 	INT16 nSide,childnum;
 	INT16 point0,point1,vert0,vert1;
@@ -1094,18 +1066,18 @@ if (!GetMine ())
   // find vert numbers for the line's two end points
 point0 = line_vert[side_line[start_side][linenum]][0];
 point1 = line_vert[side_line[start_side][linenum]][1];
-segP = m_mine->Segments () + start_segment;
+segP = theMine->Segments () + start_segment;
 vert0  = segP->verts[point0];
 vert1  = segP->verts[point1];
 
 nSide = side_child[start_side][linenum];
 childnum = segP->children[nSide];
-if (childnum < 0 || childnum >= m_mine->SegCount ())
+if (childnum < 0 || childnum >= theMine->SegCount ())
 	return false;
 for (childs_side=0;childs_side<6;childs_side++) {
-	segP = m_mine->Segments () + childnum;
+	segP = theMine->Segments () + childnum;
 	if ((segP->children[childs_side] == -1) ||
-	    (segP->sides[childs_side].nWall < m_mine->GameInfo ().walls.count)) {
+	    (segP->sides[childs_side].nWall < theMine->GameInfo ().walls.count)) {
 		for (childs_line=0;childs_line<4;childs_line++) {
 			// find vert numbers for the line's two end points
 			childs_point0 = line_vert[side_line[childs_side][childs_line]][0];

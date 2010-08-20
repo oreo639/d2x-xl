@@ -53,7 +53,7 @@ if (segP->sides [nSide].nWall < GameInfo ().walls.count) {
 	return NULL;
 	}
 
-if ((nWall = GameInfo ().walls.count) >= MAX_WALLS (this)) {
+if ((nWall = GameInfo ().walls.count) >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls () reached");
 	return NULL;
 	}
@@ -258,11 +258,11 @@ if (GetOppositeSide (nOppSeg, nOppSide, Walls (nWall)->m_nSegment, Walls (nWall)
 for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++)
 		if (sideP->nWall >= GameInfo ().walls.count)
-			sideP->nWall = NO_WALL (this);
+			sideP->nWall = NO_WALL;
 		else if (sideP->nWall > nWall)
 			sideP->nWall--;
 		else if (sideP->nWall == nWall) {
-			sideP->nWall = NO_WALL (this);
+			sideP->nWall = NO_WALL;
 			DeleteTriggerTargets (nSegment, nSide); //delete this wall from all Triggers () that target it
 			}
 // move remaining Walls () in place of deleted wall

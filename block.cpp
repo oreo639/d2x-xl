@@ -13,7 +13,7 @@
 #include "io.h"
 #include "hogmanager.h"
 
-#define CURRENT_POINT(a) ((theApp.GetMine ()->Current ()->nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((theMine->Current ()->nPoint + (a))&0x03)
 
 char *BLOCKOP_HINT =
 	"The block of cubes will be saved relative to the current cube.\n"
@@ -132,12 +132,12 @@ z_pprime.z = - y_prime.x*x_prime.y + x_prime.x*y_prime.y;
 nNewSegs = 0;
 MEMSET (xlatSegNum, 0xff, sizeof (xlatSegNum));
 while(!feof(fBlk)) {
-	if (SegCount () >= MAX_SEGMENTS (this)) {
+	if (SegCount () >= MAX_SEGMENTS) {
 		ErrorMsg ("No more free segments");
 		return (nNewSegs);
 		}
 // abort if there are not at least 8 vertices free
-	if (MAX_VERTICES (this) - VertCount () < 8) {
+	if (MAX_VERTICES - VertCount () < 8) {
 		ErrorMsg ("No more free vertices");
 		return(nNewSegs);
 		}
@@ -159,7 +159,7 @@ while(!feof(fBlk)) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
-		sideP->nWall = NO_WALL (this);
+		sideP->nWall = NO_WALL;
 		fscanf_s (fBlk, "    tmap_num %hd\n",&sideP->nBaseTex);
 		fscanf_s (fBlk, "    tmap_num2 %hd\n",&sideP->nOvlTex);
 		for (j = 0; j < 4; j++)
@@ -170,7 +170,7 @@ while(!feof(fBlk)) {
 		if (bExtBlkFmt) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
 			sideP->nWall = (UINT16) byteBuf;
-			if (sideP->nWall != NO_WALL (this)) {
+			if (sideP->nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
 				MEMSET (&w, 0, sizeof (w));
@@ -192,7 +192,7 @@ while(!feof(fBlk)) {
 				w.cloak_value = byteBuf;
 				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
 				w.nTrigger = byteBuf;
-				if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS (this))) {
+				if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS)) {
 					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
 					t.type = byteBuf;
 					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
@@ -205,9 +205,9 @@ while(!feof(fBlk)) {
 						fscanf_s (fBlk, "			        side %hd\n", &t [iTarget].m_nSide);
 						}
 					}
-				if (GameInfo ().walls.count < MAX_WALLS (this)) {
-					if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS (this))) {
-						if (GameInfo ().triggers.count >= MAX_TRIGGERS (this))
+				if (GameInfo ().walls.count < MAX_WALLS) {
+					if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS)) {
+						if (GameInfo ().triggers.count >= MAX_TRIGGERS)
 							w.nTrigger = NO_TRIGGER;
 						else {
 							w.nTrigger = GameInfo ().triggers.count++;
@@ -515,7 +515,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				}
 			if (bExtBlkFmt) {
 				fprintf (fBlk, "    nWall %d\n", 
-							(sideP->nWall < GameInfo ().walls.count) ? sideP->nWall : NO_WALL (this));
+							(sideP->nWall < GameInfo ().walls.count) ? sideP->nWall : NO_WALL);
 				if (sideP->nWall < GameInfo ().walls.count) {
 					wallP = Walls (sideP->nWall);
 					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
@@ -539,7 +539,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 								count++;
 #if 0
 						if (trigger->m_count && !count)	// no targets in marked area
-							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS (this));
+							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS);
 						else 
 #endif
 							{
@@ -845,13 +845,13 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 segP = Segments ();
-for (nSegment = 0;nSegment < MAX_SEGMENTS (this); nSegment++, segP++) {
+for (nSegment = 0;nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->nIndex = nSegment;
 	segP->wallFlags &= ~MARKED_MASK;
 	}
 
 // unmark all vertices
-for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++) {
+for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
 	VertStatus (nVertex) &= ~MARKED_MASK;
 	VertStatus (nVertex) &= ~NEW_MASK;
 	}
@@ -901,7 +901,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		}
 	}
 // clear all new vertices as such
-for (nVertex=0;nVertex<MAX_VERTICES (this);nVertex++)
+for (nVertex=0;nVertex<MAX_VERTICES;nVertex++)
 	VertStatus (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
 segP = Segments ();

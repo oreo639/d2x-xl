@@ -97,7 +97,6 @@ CWallTool::~CWallTool ()
 
 void CWallTool::Reset ()
 {
-m_mine = NULL;
 m_nSegment = 0;
 m_nSide = 1;
 m_nTrigger = 0;
@@ -137,7 +136,6 @@ BOOL CWallTool::OnInitDialog ()
 		"Transparent"
 		};
 
-	GetMine ();
 	CComboBox *pcb;
 
 CTexToolDlg::OnInitDialog ();
@@ -171,12 +169,10 @@ return TRUE;
 
 void CWallTool::InitCBWallNo ()
 {
-if (!GetMine ())
-	return;
 CComboBox *pcb = CBWallNo ();
 pcb->ResetContent ();
 INT32 i;
-for (i = 0; i < m_mine->GameInfo ().walls.count; i++) {
+for (i = 0; i < theMine->GameInfo ().walls.count; i++) {
 	_itoa_s (i, message, sizeof (message), 10);
 	pcb->AddString (message);
 	}
@@ -187,7 +183,7 @@ pcb->SetCurSel (m_nWall [0]);
 
 void CWallTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
 DDX_Text (pDX, IDC_WALL_CUBE, m_nSegment);
 DDX_Text (pDX, IDC_WALL_SIDE, m_nSide);
@@ -254,16 +250,14 @@ void CWallTool::Refresh ()
 {
 if (m_bDelayRefresh)
 	return;
-if (!m_bInited)
-	return;
-if (!GetMine ())
+if (!(m_bInited && theMine))
 	return;
 
 InitCBWallNo ();
-if (!(m_pWall [0] = m_mine->FindWall ())) {
+if (!(m_pWall [0] = theMine->FindWall ())) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (m_mine->CurrSeg ()->children [m_mine->Current ()->nSide] >= 0)
+	if (theMine->CurrSeg ()->children [theMine->Current ()->nSide] >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);
@@ -296,11 +290,11 @@ else {
 	else
 		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (INT32)m_pWall [0]->nTrigger);
 
-	m_nWall [0] = INT32 (m_pWall [0] - m_mine->Walls ());
+	m_nWall [0] = INT32 (m_pWall [0] - theMine->Walls ());
 	GetOtherWall ();
 	m_nSegment = m_pWall [0]->m_nSegment;
 	m_nSide = m_pWall [0]->m_nSide + 1;
-	m_nTrigger = (m_pWall [0]->nTrigger < m_mine->GameInfo ().triggers.count) ? m_pWall [0]->nTrigger : -1;
+	m_nTrigger = (m_pWall [0]->nTrigger < theMine->GameInfo ().triggers.count) ? m_pWall [0]->nTrigger : -1;
 	m_nType = m_pWall [0]->type;
 	m_nClip = m_pWall [0]->nClip;
 	m_nStrength = ((double) m_pWall [0]->hps) / F1_0;
@@ -324,7 +318,7 @@ else {
 		m_bKeys [i] = ((m_pWall [0]->keys & (1 << i)) != 0);
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
-		i = m_mine->Segments (m_defWall.m_nSegment)->sides [m_defWall.m_nSide].nBaseTex;
+		i = theMine->Segments (m_defWall.m_nSegment)->sides [m_defWall.m_nSide].nBaseTex;
 		if (m_defWall.type == WALL_CLOAKED)
 			m_defOvlTexture = i;
 		else
@@ -337,9 +331,9 @@ else {
    }
 GetDlgItem (IDC_WALL_BOTHSIDES)->EnableWindow (TRUE);
 GetDlgItem (IDC_WALL_OTHERSIDE)->EnableWindow (TRUE);
-GetDlgItem (IDC_WALL_WALLNO)->EnableWindow (GetMine ()->GameInfo ().walls.count > 0);
+GetDlgItem (IDC_WALL_WALLNO)->EnableWindow (theMine->GameInfo ().walls.count > 0);
 CTexToolDlg::Refresh ();
-CToolDlg::EnableControls (IDC_WALL_DELETEALL, IDC_WALL_DELETEALL, GetMine ()->GameInfo ().walls.count > 0);
+CToolDlg::EnableControls (IDC_WALL_DELETEALL, IDC_WALL_DELETEALL, theMine->GameInfo ().walls.count > 0);
 CBWallNo ()->SetCurSel (m_nWall [0]);
 UpdateData (FALSE);
 }
@@ -350,8 +344,6 @@ UpdateData (FALSE);
 
 void CWallTool::OnAddWall ()
 {
-if (!GetMine ())
-	return;
 
 CWall *wallP;
 CSegment *segP [2];
@@ -362,24 +354,24 @@ INT16 nSide [2];
 bool bRefresh = false;
 
 m_bDelayRefresh = true;
-segP [0] = m_mine->CurrSeg ();
-sideP [0] = m_mine->CurrSide ();
-nSegment [0] = m_mine->Current ()->nSegment;
-nSide [0] = m_mine->Current ()->nSide;
-if (m_mine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
-	segP [1] = m_mine->Segments (nSegment [1]);
+segP [0] = theMine->CurrSeg ();
+sideP [0] = theMine->CurrSide ();
+nSegment [0] = theMine->Current ()->nSegment;
+nSide [0] = theMine->Current ()->nSide;
+if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
+	segP [1] = theMine->Segments (nSegment [1]);
 	sideP [1] = segP [1]->sides + nSide [1];
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (sideP [bSide]->nWall < m_mine->GameInfo ().walls.count)
+	if (sideP [bSide]->nWall < theMine->GameInfo ().walls.count)
 		ErrorMsg ("There is already a wall at that side of the current cube.");
-	else if (m_mine->GameInfo ().walls.count >= MAX_WALLS (m_mine))
+	else if (theMine->GameInfo ().walls.count >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
 		if ((theApp.IsD2File ()) && (segP [bSide]->children [nSide [bSide]] == -1))
-			m_mine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
-		else if (wallP = m_mine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
+			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
+		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
 			if (wallP->type == m_defWall.type) {
 				wallP->hps = m_defWall.hps;
@@ -420,12 +412,12 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
 		nWall--;
 	if (nWall >= 0) {
 		m_bDelayRefresh = true;
-		m_mine->DeleteWall ((UINT16) nWall);
+		theMine->DeleteWall ((UINT16) nWall);
 		m_bDelayRefresh = false;
 		bRefresh = true;
 		}
 	else if (!bExpertMode)
-		if (m_mine->GameInfo ().walls.count == 0)
+		if (theMine->GameInfo ().walls.count == 0)
 			ErrorMsg ("There are no walls in this mine.");
 		else
 			ErrorMsg ("There is no wall at this side of the current cube.");
@@ -442,22 +434,20 @@ if (bRefresh) {
 
 void CWallTool::OnDeleteWallAll () 
 {
-if (!GetMine ())
-	return;
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CSegment *segP = m_mine->Segments ();
+CSegment *segP = theMine->Segments ();
 CSide *sideP;
-bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
+bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
-for (i = m_mine->SegCount (); i; i--, segP++) {
+for (i = theMine->SegCount (); i; i--, segP++) {
 	sideP = segP->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
-		if (sideP->nWall >= MAX_WALLS (m_mine))
+		if (sideP->nWall >= MAX_WALLS)
 			continue;
-		if (bAll || m_mine->SideIsMarked (i, j)) {
-			m_mine->DeleteWall (sideP->nWall);
+		if (bAll || theMine->SideIsMarked (i, j)) {
+			theMine->DeleteWall (sideP->nWall);
 			nDeleted++;
 			}
 		}
@@ -485,23 +475,18 @@ theApp.MineView ()->SelectOtherSide ();
 
 CWall *CWallTool::GetOtherWall (void)
 {
-if (!GetMine ())
-	return m_pWall [1] = NULL;
-
 INT16 nOppSeg, nOppSide;
 
-if (!m_mine->GetOppositeSide (nOppSeg, nOppSide))
+if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = NULL;
-m_nWall [1] = m_mine->Segments (nOppSeg)->sides [nOppSide].nWall;
-return m_pWall [1] = (m_nWall [1] < m_mine->GameInfo ().walls.count ? m_mine->Walls (m_nWall [1]) : NULL);
+m_nWall [1] = theMine->Segments (nOppSeg)->sides [nOppSide].nWall;
+return m_pWall [1] = (m_nWall [1] < theMine->GameInfo ().walls.count ? theMine->Walls (m_nWall [1]) : NULL);
 }
 
                         /*--------------------------*/
 
 bool CWallTool::GetWalls ()
 {
-if (!GetMine ())
-	return false;
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 if (m_nWall [0] < 0) {
 	m_nWall [1] = -1;
@@ -509,8 +494,8 @@ if (m_nWall [0] < 0) {
 	m_pWall [1] = NULL;
 	return false;
 	}
-m_pWall [0] = m_mine->Walls (m_nWall [0]);
-m_mine->SetCurrent (m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
+m_pWall [0] = theMine->Walls (m_nWall [0]);
+theMine->SetCurrent (m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
 m_nTrigger = m_pWall [0]->nTrigger;
 GetOtherWall ();
 return true;
@@ -539,29 +524,29 @@ GetWalls ();
 nType = INT32 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType > WALL_CLOSED) && theApp.IsD1File ()) 
 	return;
-if ((nType > WALL_CLOAKED) && (m_mine->IsStdLevel ())) 
+if ((nType > WALL_CLOAKED) && (theMine->IsStdLevel ())) 
 	return;
 
 m_defWall.type = m_nType = nType;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
-m_pWall [0] = m_mine->Walls (m_nWall [0]);
+m_pWall [0] = theMine->Walls (m_nWall [0]);
 */
-segP [0] = m_mine->CurrSeg ();
-sideP [0] = m_mine->CurrSide ();
-nSegment [0] = m_mine->Current ()->nSegment;
-nSide [0] = m_mine->Current ()->nSide;
-if (m_mine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
-	segP [1] = m_mine->Segments (nSegment [1]);
+segP [0] = theMine->CurrSeg ();
+sideP [0] = theMine->CurrSide ();
+nSegment [0] = theMine->Current ()->nSegment;
+nSide [0] = theMine->Current ()->nSide;
+if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
+	segP [1] = theMine->Segments (nSegment [1]);
 	sideP [1] = segP [1]->sides + nSide [1];
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if ((wallP = m_pWall [bSide]) && sideP [bSide]) {
 		INT16 nBaseTex  = sideP [bSide]->nBaseTex;
 		INT16 nOvlTex = sideP [bSide]->nOvlTex;
-		m_mine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
+		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
 		if ((wallP->type == WALL_OPEN) || (wallP->type == WALL_CLOSED))
-			m_mine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
+			theMine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
 //		else if ((wallP->type == WALL_CLOAKED) || (wallP->type == WALL_TRANSPARENT))
 //			wallP->cloak_value = m_defWall.cloak_value;
 		}
@@ -577,21 +562,21 @@ void CWallTool::OnSetClip ()
 	CWall	*wallP;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
-m_pWall [0] = m_mine->Walls () + m_nWall [0];
+m_pWall [0] = theMine->Walls () + m_nWall [0];
 */
 GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_pWall [bSide])
 		if ((wallP->type == WALL_BLASTABLE) || (wallP->type == WALL_DOOR)) {
-			if (m_nWall [bSide] < m_mine->GameInfo ().walls.count) {
+			if (m_nWall [bSide] < theMine->GameInfo ().walls.count) {
 				theApp.SetModified (TRUE);
 				theApp.LockUndo ();
 				nClip = clipList [m_nClip];
 				wallP->nClip = nClip;
 				// define door textures based on clip number
 				if (wallP->nClip >= 0)
-					m_mine->SetWallTextures (m_nWall [bSide], m_defTexture);
+					theMine->SetWallTextures (m_nWall [bSide], m_defTexture);
 				theApp.UnlockUndo ();
 				theApp.MineView ()->Refresh ();
 				Refresh ();
@@ -728,86 +713,62 @@ pScrollBar->SetScrollPos (nPos, TRUE);
 
 void CWallTool::OnAddDoorNormal ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddAutoDoor (m_defDoor.nClip, m_defDoorTexture);
+theMine->AddAutoDoor (m_defDoor.nClip, m_defDoorTexture);
 }
 
 void CWallTool::OnAddDoorExit ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddNormalExit ();
+theMine->AddNormalExit ();
 }
 
 void CWallTool::OnAddDoorSecretExit ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddSecretExit ();
+theMine->AddSecretExit ();
 }
 
 void CWallTool::OnAddDoorPrison ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddPrisonDoor ();
+theMine->AddPrisonDoor ();
 }
 
 void CWallTool::OnAddDoorGuideBot ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddGuideBotDoor ();
+theMine->AddGuideBotDoor ();
 }
 
 void CWallTool::OnAddWallFuelCell ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddFuelCell ();
+theMine->AddFuelCell ();
 }
 
 void CWallTool::OnAddWallIllusion ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddIllusionaryWall ();
+theMine->AddIllusionaryWall ();
 }
 
 void CWallTool::OnAddWallForceField ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddForceField ();
+theMine->AddForceField ();
 }
 
 void CWallTool::OnAddWallFan ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddFan ();
+theMine->AddFan ();
 }
 
 void CWallTool::OnAddWallGrate ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddGrate ();
+theMine->AddGrate ();
 }
 
 void CWallTool::OnAddWallWaterfall ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddWaterFall ();
+theMine->AddWaterFall ();
 }
 
 void CWallTool::OnAddWallLavafall ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddLavaFall ();
+theMine->AddLavaFall ();
 }
 
 void CWallTool::OnBothSides ()

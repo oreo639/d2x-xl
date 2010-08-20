@@ -24,7 +24,7 @@
 
 #define ENABLE_TEXT_DUMP 0
 
-CMine theMine;
+CMine* theMine = NULL;
 
 //==========================================================================
 // CMine - CMine
@@ -165,6 +165,9 @@ for (i = SegCount (); i; i--, segP++)
 
 INT16 CMine::Load (const char *filename_passed, bool bLoadFromHog)
 {
+if (!theMine)
+	return 0;
+
 char filename [256];
 INT16 check_err;
 bool bNewMine = false;
@@ -173,7 +176,7 @@ bool bNewMine = false;
 m_bSplineActive = FALSE;
 
 MEMSET (LightColors (), 0, sizeof (MineData ().lightColors));
-MEMSET (VertexColors (), 0, sizeof (MineData ().sideColors));
+MEMSET (VertexColors (), 0, sizeof (MineData ().vertexColors));
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
 if (filename_passed && *filename_passed)
@@ -667,9 +670,8 @@ INT16 CMine::FixIndexValues()
 		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			// check wall numbers
 			CSide& side = segP->sides [nSide];
-			if (side.nWall >= GameInfo ().walls.count &&
-				side.nWall != NO_WALL (this)) {
-				side.nWall = NO_WALL (this);
+			if (side.nWall >= GameInfo ().walls.count && side.nWall != NO_WALL) {
+				side.nWall = NO_WALL;
 				check_err |= (1 << 0);
 			}
 			// check children
@@ -719,7 +721,7 @@ void CMine::Default()
 	CSegment& segP = *Segments ();
 	CFixVector *vert = Vertices ();
 
-	segP.sides [0].nWall = NO_WALL (this);
+	segP.sides [0].nWall = NO_WALL;
 	segP.sides [0].nBaseTex = 0;
 	segP.sides [0].nOvlTex = 0;
 	segP.sides [0].uvls [0].u = 0;
@@ -735,7 +737,7 @@ void CMine::Default()
 	segP.sides [0].uvls [3].v = 0;
 	segP.sides [0].uvls [3].l = 0x8000U;
 
-	segP.sides [1].nWall = NO_WALL (this);
+	segP.sides [1].nWall = NO_WALL;
 	segP.sides [1].nBaseTex = 263;
 	segP.sides [1].nOvlTex = 264;
 	segP.sides [1].uvls [0].u = 0;
@@ -751,7 +753,7 @@ void CMine::Default()
 	segP.sides [1].uvls [3].v = 0;
 	segP.sides [1].uvls [3].l = 0x8000U;
 
-	segP.sides [2].nWall = NO_WALL (this);
+	segP.sides [2].nWall = NO_WALL;
 	segP.sides [2].nBaseTex = 0;
 	segP.sides [2].nOvlTex = 0;
 	segP.sides [2].uvls [0].u = 0;
@@ -767,7 +769,7 @@ void CMine::Default()
 	segP.sides [2].uvls [3].v = 0;
 	segP.sides [2].uvls [3].l = 0x8000U;
 
-	segP.sides [3].nWall = NO_WALL (this);
+	segP.sides [3].nWall = NO_WALL;
 	segP.sides [3].nBaseTex = 270;
 	segP.sides [3].nOvlTex = 0;
 	segP.sides [3].uvls [0].u = 0;
@@ -783,7 +785,7 @@ void CMine::Default()
 	segP.sides [3].uvls [3].v = 0;
 	segP.sides [3].uvls [3].l = 11678;
 
-	segP.sides [4].nWall = NO_WALL (this);
+	segP.sides [4].nWall = NO_WALL;
 	segP.sides [4].nBaseTex = 0;
 	segP.sides [4].nOvlTex = 0;
 	segP.sides [4].uvls [0].u = 0;
@@ -799,7 +801,7 @@ void CMine::Default()
 	segP.sides [4].uvls [3].v = 0;
 	segP.sides [4].uvls [3].l = 0x8000U;
 
-	segP.sides [5].nWall = NO_WALL (this);
+	segP.sides [5].nWall = NO_WALL;
 	segP.sides [5].nBaseTex = 0;
 	segP.sides [5].nOvlTex = 0;
 	segP.sides [5].uvls [0].u = 0;
@@ -880,12 +882,12 @@ void CMine::ClearMineData()
 
 	// initialize Segments ()
 CSegment *segP = Segments ();
-for (i = 0; i < MAX_SEGMENTS (this); i++, segP++)
+for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 	segP->wallFlags &= ~MARKED_MASK;
 SegCount () = 0;
 
 // initialize vertices
-for (i = 0; i < MAX_VERTICES (this); i++) {
+for (i = 0; i < MAX_VERTICES; i++) {
 	VertStatus (i) &= ~MARKED_MASK;
 }
 VertCount () = 0;
@@ -980,7 +982,7 @@ else if (LevelVersion () > 9) {
 	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
 	LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
 	}
-if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
+if (GameInfo ().objects.count > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
 			  GameInfo ().objects.count, MAX_OBJECTS2);
 	ErrorMsg (message);
@@ -1103,17 +1105,17 @@ else {  /*load mine filename */
 	//  gamesave_num_players = 0;
 
 #if 0
-	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (), -1, MAX_OBJECTS (this), "Objects"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (), -1, MAX_OBJECTS, "Objects"))
 		return -1;
 #else
 	if (GameInfo ().objects.offset > -1) {
 		if (fseek(loadfile, GameInfo ().objects.offset, SEEK_SET))
 			ErrorMsg ("Error seeking to objects.");
-		else if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
+		else if (GameInfo ().objects.count > MAX_OBJECTS) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of objects (%ld/%d) exceeded", 
-					  GameInfo ().objects.count, MAX_OBJECTS (this));
+					  GameInfo ().objects.count, MAX_OBJECTS);
 			ErrorMsg (message);
-			GameInfo ().objects.count = MAX_OBJECTS (this);
+			GameInfo ().objects.count = MAX_OBJECTS;
 			}
 		else {
 			for (int i = 0; i < GameInfo ().objects.count; i++) {
@@ -1128,14 +1130,14 @@ else {  /*load mine filename */
 	// note: Wall size will automatically strip last two items
 
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().walls, Walls (), 20, MAX_WALLS (this), "Walls"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().walls, Walls (), 20, MAX_WALLS, "Walls"))
 		return -1;
 #else
 	if ((GameInfo ().walls.offset > -1) && !fseek(loadfile, GameInfo ().walls.offset, SEEK_SET)) {
-		if (GameInfo ().walls.count > MAX_WALLS (this)) {
-			sprintf_s (message, sizeof (message),  "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS (this));
+		if (GameInfo ().walls.count > MAX_WALLS) {
+			sprintf_s (message, sizeof (message),  "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS);
 			ErrorMsg (message);
-			GameInfo ().walls.count = MAX_WALLS (this);
+			GameInfo ().walls.count = MAX_WALLS;
 			}
 		else if (GameInfo ().fileinfo.version < 20)
 			ErrorMsg ("Wall version < 20, walls not loaded");
@@ -1176,16 +1178,16 @@ else {  /*load mine filename */
 	//==================== READ TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().triggers, Triggers (), -1, MAX_TRIGGERS (this), "Triggers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().triggers, Triggers (), -1, MAX_TRIGGERS, "Triggers"))
 		return -1;
 	if (GameInfo ().triggers.offset > -1) {
 #else
 	if (GameInfo ().triggers.offset > -1) {
-		if (GameInfo ().triggers.count > MAX_TRIGGERS (this)) {
+		if (GameInfo ().triggers.count > MAX_TRIGGERS) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of triggers (%ld/%d) exceeded",
-				GameInfo ().triggers.count, MAX_TRIGGERS (this));
+				GameInfo ().triggers.count, MAX_TRIGGERS);
 			ErrorMsg (message);
-			GameInfo ().triggers.count = MAX_TRIGGERS (this);
+			GameInfo ().triggers.count = MAX_TRIGGERS;
 			}
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
 			for (i = 0; i < GameInfo ().triggers.count; i++)
@@ -1251,15 +1253,15 @@ else {  /*load mine filename */
 	//================ READ MATERIALIZATION CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().botgen, BotGens (), -1, MAX_ROBOT_MAKERS (this), "Robot makers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().botgen, BotGens (), -1, MAX_ROBOT_MAKERS, "Robot makers"))
 		return -1;
 #else
 	if (GameInfo ().botgen.offset > -1) {
-		if (GameInfo ().botgen.count > MAX_ROBOT_MAKERS (this)) {
+		if (GameInfo ().botgen.count > MAX_ROBOT_MAKERS) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
-				GameInfo ().botgen.count, MAX_ROBOT_MAKERS (this));
+				GameInfo ().botgen.count, MAX_ROBOT_MAKERS);
 			ErrorMsg (message);
-			GameInfo ().botgen.count = MAX_ROBOT_MAKERS (this);
+			GameInfo ().botgen.count = MAX_ROBOT_MAKERS;
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
@@ -1274,15 +1276,15 @@ else {  /*load mine filename */
 	//================ READ EQUIPMENT CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
 #if 1
-	if (0 > LoadGameItem (loadfile, GameInfo ().equipgen, EquipGens (), -1, MAX_ROBOT_MAKERS (this), "Equipment makers"))
+	if (0 > LoadGameItem (loadfile, GameInfo ().equipgen, EquipGens (), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 		return -1;
 #else
 	if (GameInfo ().equipgen.offset > -1) {
-		if (GameInfo ().equipgen.count > MAX_ROBOT_MAKERS (this)) {
+		if (GameInfo ().equipgen.count > MAX_ROBOT_MAKERS) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of robot centers (%ld/%d) exceeded",
-				GameInfo ().equipgen.count, MAX_ROBOT_MAKERS (this));
+				GameInfo ().equipgen.count, MAX_ROBOT_MAKERS);
 			ErrorMsg (message);
-			GameInfo ().equipgen.count = MAX_ROBOT_MAKERS (this);
+			GameInfo ().equipgen.count = MAX_ROBOT_MAKERS;
 		}
 		if (!fseek(loadfile, GameInfo ().equipgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().equipgen.count; i++) {
@@ -1302,15 +1304,15 @@ else {  /*load mine filename */
 		//    sprintf_s (message, sizeof (message),  "Number of delta light indices = %ld", GameInfo ().lightDeltaIndices.count);
 		//    DEBUGMSG(message);
 #if 1
-		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaIndices, LightDeltaIndex (), -1, MAX_LIGHT_DELTA_INDICES (this), "Light delta indices"))
+		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaIndices, LightDeltaIndex (), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices"))
 			return -1;
 #else
 		if (GameInfo ().lightDeltaIndices.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
-			if (GameInfo ().lightDeltaIndices.count > MAX_LIGHT_DELTA_INDICES (this)) {
+			if (GameInfo ().lightDeltaIndices.count > MAX_LIGHT_DELTA_INDICES) {
 				sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
-					GameInfo ().lightDeltaIndices.count, MAX_LIGHT_DELTA_INDICES (this));
+					GameInfo ().lightDeltaIndices.count, MAX_LIGHT_DELTA_INDICES);
 				ErrorMsg (message);
-				GameInfo ().lightDeltaIndices.count = MAX_LIGHT_DELTA_INDICES (this);
+				GameInfo ().lightDeltaIndices.count = MAX_LIGHT_DELTA_INDICES;
 				}
 			else if (!fseek(loadfile, GameInfo ().lightDeltaIndices.offset, SEEK_SET)) {
 				bool bD2X = (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34);
@@ -1328,15 +1330,15 @@ else {  /*load mine filename */
 		//    sprintf_s (message, sizeof (message),  "Number of delta light values = %ld", GameInfo ().lightDeltaValues.count);
 		//    DEBUGMSG(message);
 #if 1
-		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaValues, LightDeltaValues (), -1, MAX_LIGHT_DELTA_VALUES (this), "Light delta values"))
+		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaValues, LightDeltaValues (), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
 			return -1;
 #else
 		if (GameInfo ().lightDeltaValues.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
-			if (GameInfo ().lightDeltaValues.count > MAX_LIGHT_DELTA_VALUES (this)) {
+			if (GameInfo ().lightDeltaValues.count > MAX_LIGHT_DELTA_VALUES) {
 				sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
-					GameInfo ().lightDeltaValues.count, MAX_LIGHT_DELTA_VALUES (this));
+					GameInfo ().lightDeltaValues.count, MAX_LIGHT_DELTA_VALUES);
 				ErrorMsg (message);
-				GameInfo ().lightDeltaValues.count = MAX_LIGHT_DELTA_VALUES (this);
+				GameInfo ().lightDeltaValues.count = MAX_LIGHT_DELTA_VALUES;
 				}
 			else if (!fseek(loadfile, GameInfo ().lightDeltaValues.offset, SEEK_SET)) {
 				for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
@@ -1366,9 +1368,6 @@ return 0;
 INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 {
 #if 1 //DEMO == 0
-#ifdef _DEBUG
-	CMine *mine = theApp.GetMine ();
-#endif
 	FILE * save_file;
 	char filename [256];
 	INT32 minedata_offset, gamedata_offset, hostagetext_offset;
@@ -1910,5 +1909,4 @@ void CMine::CalcCenter(CFixVector& center, INT16 nSegment, INT16 nSide)
 	}
 }
 
-CMine* GetMine (CMine* m) { return m ? m : theApp.GetMine (); }
 //eof mine.cpp

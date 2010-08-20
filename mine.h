@@ -1,6 +1,7 @@
 #ifndef __mine_h
 #define __mine_h
 
+#include "carray.h"
 #include "types.h"
 #include "segment.h"
 
@@ -33,40 +34,54 @@ typedef struct tMineData {
 	CFixMatrix					m_secret_orient;
 	
 	// robot data
-	ROBOT_INFO					Robot_info [MAX_ROBOT_TYPES];
+	//ROBOT_INFO					robotInfo [MAX_ROBOT_TYPES];
+	CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > robotInfo;
 	
 	// structure data
 	UINT16						numVertices;
-	CVertex						vertices [MAX_VERTICES3];
+	//CVertex						vertices [MAX_VERTICES3];
+	CStaticArray< CVertex, MAX_VERTICES3 > vertices;
 	
 	UINT16						numSegments;
-	CSegment						segments [MAX_SEGMENTS3];
-	CColor 						lightColors [MAX_SEGMENTS3][6];
-	CColor						texColors [MAX_D2_TEXTURES];
-	CColor 						sideColors [MAX_SEGMENTS3][6];
-	CColor						vertexColors [MAX_VERTICES3];
+	//CSegment						segments [MAX_SEGMENTS3];
+	CStaticArray< CSegment, MAX_SEGMENTS3 > segments;
+	//CColor 						lightColors [MAX_SEGMENTS3][6];
+	CStaticArray< CStaticArray< CColor, 6 >, MAX_SEGMENTS3 > lightColors;
+	//CColor						texColors [MAX_D2_TEXTURES];
+	CStaticArray< CColor, MAX_D2_TEXTURES > texColors;
+	//CColor						vertexColors [MAX_VERTICES3];
+	CStaticArray< vertexColors, MAX_VERTICES3 > vertexColors;
 	
-	UINT8							vertexStatus[MAX_VERTICES3];
-	
-	CWall							walls[MAX_WALLS3];
-	CActiveDoor					active_doors[MAX_DOORS];
-	CTrigger						triggers[MAX_TRIGGERS2];
-	CTrigger						objTriggers[MAX_OBJ_TRIGGERS];
+	//CWall							walls[MAX_WALLS3];
+	CStaticArray < CWall, MAX_WALLS3 > walls;
+	//CActiveDoor					activeDoors[MAX_DOORS];
+	CStaticArray < CActiveDoor, MAX_DOORS > ;
+	//CTrigger						triggers[MAX_TRIGGERS2];
+	CStaticArray < CTrigger, MAX_TRIGGERS2 > triggers;
+	//CTrigger						objTriggers[MAX_OBJ_TRIGGERS];
+	CStaticArray < objTriggers, MAX_OBJ_TRIGGERS > objTriggers;
 	INT32							numObjTriggers;
-	CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
-	CRobotMaker					robot_centers[MAX_NUM_MATCENS2];
-	CRobotMaker					equip_centers[MAX_NUM_MATCENS2];
+	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
+	CStaticArray < CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggers;
+	//CRobotMaker					robotMakers[MAX_NUM_MATCENS2];
+	CStaticArray < CRobotMaker, MAX_NUM_MATCENS2 > robotMakers;
+	//CRobotMaker					equipMakers[MAX_NUM_MATCENS2];
+	CStaticArray < CRobotMaker, MAX_NUM_MATCENS2 > equipMakers;
 	
 	// object data
-	CGameObject					objects[MAX_OBJECTS2];
+	//CGameObject					objects[MAX_OBJECTS2];
+	CStaticArray< CGameObject, MAX_OBJECTS > objects;
 	
 	// light data
-	CLightDeltaIndex			lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
-	CLightDeltaValue			lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
+	//CLightDeltaIndex			lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
+	CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndices;
+	//CLightDeltaValue			lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
+	CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValues;
 	
 	// flickering light
 	INT16							m_nFlickeringLights;
-	CFlickeringLight			flickeringLights[MAX_FLICKERING_LIGHTS];
+	//CFlickeringLight			flickeringLights[MAX_FLICKERING_LIGHTS];
+	CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLights;
 
 	CSelection					current1;
 	CSelection					current2;
@@ -83,7 +98,8 @@ public:
 	char							m_currentLevelName [256];	
 	CGameFileInfo				gameFileInfo;
 	MINE_DATA					m_mineData;
-	ROBOT_INFO					m_defaultRobotInfo [MAX_ROBOT_TYPES];
+	//ROBOT_INFO					m_defaultRobotInfo [MAX_ROBOT_TYPES];
+	CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > m_defaultRobotInfo;
 	// textures and palettes
 //	HGLOBAL						texture_handle[MAX_D2_TEXTURES];
 	HPALETTE						m_paletteHandle;
@@ -149,15 +165,15 @@ public:
 	inline CGameObject *Objects (INT32 i = 0)
 		{ return MineData ().objects + i; }
 	inline CRobotMaker *BotGens (INT32 i = 0)
-		{ return MineData ().robot_centers + i; }
+		{ return MineData ().robotMakers + i; }
 	inline CRobotMaker *EquipGens (INT32 i = 0)
-		{ return MineData ().equip_centers + i; }
+		{ return MineData ().equipMakers + i; }
 	inline CReactorTrigger *ReactorTriggers (INT32 i = 0)
 		{ return MineData ().reactorTriggers + i; }
 	inline CActiveDoor *ActiveDoors (INT32 i = 0)
-		{ return MineData ().active_doors + i; }
+		{ return MineData ().activeDoors + i; }
 	inline ROBOT_INFO *RobotInfo (INT32 i = 0)
-		{ return MineData ().Robot_info + i; }
+		{ return MineData ().robotInfo + i; }
 	inline ROBOT_INFO *DefRobotInfo (INT32 i = 0)
 		{ return m_defaultRobotInfo + i; }
 	inline CGameInfo& GameInfo ()
@@ -522,26 +538,22 @@ private:
 	void SortDLIndex (INT32 left, INT32 right);
 	};
 
-CMine* GetMine (CMine* m);
+#define MAX_SEGMENTS (theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3)
+#define MAX_VERTICES (theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3)
+#define MAX_WALLS (theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3)
+#define MAX_TEXTURES (theMine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)
+#define MAX_TRIGGERS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2)
+#define MAX_OBJECTS (theMine->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2)
+#define MAX_NUM_FUELCENS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2)
+#define MAX_NUM_REPAIRCENS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2)
+#define MAX_PLAYERS (theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+#define ROBOT_IDS2 ((theMine->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL)
+#define MAX_ROBOT_MAKERS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2)
+#define MAX_LIGHT_DELTA_INDICES ((theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
+#define MAX_LIGHT_DELTA_VALUES ((theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
 
-#define GET_MINE(m) (m = GetMine(m))
+#define NO_WALL MAX_WALLS
 
-inline INT32 MAX_SEGMENTS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_SEGMENTS3 : m->IsD1File () ? MAX_SEGMENTS1  : m->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
-inline INT32 MAX_VERTICES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_VERTICES3 : m->IsD1File () ? MAX_VERTICES1 : m->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
-inline INT32 MAX_WALLS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_WALLS3 : m->IsD1File () ? MAX_WALLS1 : (m->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3; }
-inline INT32 MAX_TEXTURES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_D2_TEXTURES : m->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
-inline INT32 MAX_TRIGGERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_TRIGGERS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
-inline INT32 MAX_OBJECTS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_OBJECTS2 : m->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
-inline INT32 MAX_NUM_FUELCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_FUELCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
-inline INT32 MAX_NUM_REPAIRCENS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_REPAIRCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
-inline INT32 MAX_PLAYERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_PLAYERS_D2X : m->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
-inline INT32 ROBOT_IDS2 (CMine* m = NULL) { return !GET_MINE (m) ? MAX_ROBOT_IDS_TOTAL : (m->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL; }
-inline INT32 MAX_ROBOT_MAKERS (CMine* m = NULL) { return !GET_MINE (m) ? MAX_NUM_MATCENS2 : (m->IsD1File () || (m->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
-inline INT32 MAX_LIGHT_DELTA_INDICES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_INDICES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X; }
-inline INT32 MAX_LIGHT_DELTA_VALUES (CMine* m = NULL) { return !GET_MINE (m) ? MAX_LIGHT_DELTA_VALUES_D2X : (m->IsD1File () || m->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X; }
-
-#define NO_WALL(m) MAX_WALLS(m)
-
-extern CMine theMine;
+extern CMine* theMine;
 
 #endif //__mine_h

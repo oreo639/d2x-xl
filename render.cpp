@@ -134,14 +134,12 @@ void TextureMap(INT32 resolution,
 	double w;
 	UINT8 *ptr;
 	CUVL *uvls;
-	CMine *mine = theApp.GetMine ();
-	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo.version >= 34);
-	
+	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
 	
 	// TEMPORARY
 	INT32 inc_resolution = 1<<resolution;
-	CSideKey face (INT16 (segment - mine->Segments ()), nSide);
-	INT16 flick_light = mine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
+	CSideKey face (INT16 (segment - theMine->Segments ()), nSide);
+	INT16 flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
 	INT16 dscan_light,scan_light;
 	INT16 light[4];
 	UINT16 bmWidth2;
@@ -202,15 +200,15 @@ for (i=0;i<4;i++) {
 	// first make sure we have allocated space for delta lights
 if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
-	INT32 dlIdxCount = mine->GameInfo ().lightDeltaIndices.count;
+	INT32 dlIdxCount = theMine->GameInfo ().lightDeltaIndices.count;
 	CLightDeltaValue* CLightDeltaValues;
 	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
-		 (lightDeltaIndices = mine->LightDeltaIndex ()) &&
-		 (CLightDeltaValues = mine->LightDeltaValues ())) {
+		 (lightDeltaIndices = theMine->LightDeltaIndex ()) &&
+		 (CLightDeltaValues = theMine->LightDeltaValues ())) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i <dlIdxCount; i++, dli++) {
-//				if (dli->nSegment == mine->current->segment) {
+//				if (dli->nSegment == theMine->current->segment) {
 			// loop on each delta light till the segment/side is found
 				CLightDeltaValue *dl = CLightDeltaValues + dli->index;
 				h = dli->count;

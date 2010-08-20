@@ -346,7 +346,7 @@ bool CMine::CopyObject (UINT8 new_type, INT16 nSegment)
 	UINT8 type;
 	INT16 i,count;
 
-if (GameInfo ().objects.count >= MAX_OBJECTS (this)) {
+if (GameInfo ().objects.count >= MAX_OBJECTS) {
 	ErrorMsg ("The maximum number of objects has already been reached.");
 	return false;
 	}
@@ -364,24 +364,24 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 	for (objnum = GameInfo ().objects.count; objnum; objnum--, objP++)
 		if (objP->type == type) {
 			id = objP->id;
-			if (id >= 0 && id < (MAX_PLAYERS (this) + MAX_COOP_PLAYERS))
+			if (id >= 0 && id < (MAX_PLAYERS + MAX_COOP_PLAYERS))
 				ids[id]++;
 			}
 	if (type == OBJ_PLAYER) {
-		for (id = 0; (id <= MAX_PLAYERS (this)) && ids[id]; id++)
+		for (id = 0; (id <= MAX_PLAYERS) && ids[id]; id++)
 				;// loop until 1st id with 0
-		if (id > MAX_PLAYERS (this)) {
+		if (id > MAX_PLAYERS) {
 				char szMsg [80];
 
-			sprintf_s (szMsg, sizeof (szMsg), "There are already %d players in the mine", MAX_PLAYERS (this));
+			sprintf_s (szMsg, sizeof (szMsg), "There are already %d players in the mine", MAX_PLAYERS);
 			ErrorMsg (szMsg);
 			return FALSE;
 			}
 		}
 	else {
-		for (id = MAX_PLAYERS (this); (id < MAX_PLAYERS (this) + MAX_COOP_PLAYERS) && ids[id]; id++)
+		for (id = MAX_PLAYERS; (id < MAX_PLAYERS + MAX_COOP_PLAYERS) && ids[id]; id++)
 			;// loop until 1st id with 0
-		if (id > MAX_PLAYERS (this) + MAX_COOP_PLAYERS) {
+		if (id > MAX_PLAYERS + MAX_COOP_PLAYERS) {
 				char szMsg [80];
 
 			sprintf_s (szMsg, sizeof (szMsg), "There are already %d cooperative players in the mine", MAX_COOP_PLAYERS);
@@ -959,7 +959,7 @@ return 1;
 
 void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
 {
-if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
+if (theMine->IsStdLevel () && (type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
 write_INT8 (type, fp);

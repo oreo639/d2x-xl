@@ -36,7 +36,7 @@ INT32 preferences = 0;
 LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 UINT32       N_robot_types=0;
-//ROBOT_INFO   *Robot_info;     // MAX_ROBOT_TYPES
+//ROBOT_INFO   *robotInfo;     // MAX_ROBOT_TYPES
 
 #if ALLOCATE_POLYOBJECT
 UINT32       N_robot_joints=0;
@@ -861,10 +861,10 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //char m_currentLevelName[256];
 
 //wall *Walls (); //MAX_WALLS
-//CActiveDoor active_doors[MAX_DOORS];
+//CActiveDoor activeDoors[MAX_DOORS];
 //trigger *Triggers ();// MAX_TRIGGERS;
 //CReactorTrigger reactorTriggers[MAX_REACTOR_TRIGGERS];
-//CRobotMaker robot_centers[MAX_ROBOT_MAKERS];
+//CRobotMaker robotMakers[MAX_ROBOT_MAKERS];
 
 //CGameFileInfo gameFileInfo;
 //CGameInfo GameInfo ();

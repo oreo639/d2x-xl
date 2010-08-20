@@ -115,14 +115,12 @@ void CTriggerTool::LoadTextureListBoxes ()
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 
-GetMine ();
-
 INT16 texture1 = Texture1 ();
 INT16 texture2 = Texture2 ();
 
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES (m_mine)))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES (m_mine)))
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 	texture2 = 0;
 
 cbTexture1->ResetContent ();
@@ -252,9 +250,8 @@ void CTriggerTool::DoDataExchange (CDataExchange *pDX)
 {
 	static char *pszSmokeParams [] = {"life", "speed", "density", "volume", "drift", "", "", "brightness"};
 
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
-GetMine ();
 DDX_CBIndex (pDX, IDC_TRIGGER_TRIGGERNO, m_nTrigger);
 DDX_CBIndex (pDX, IDC_TRIGGER_D2TYPE, m_nType);
 if (pDX->m_bSaveAndValidate)
@@ -339,8 +336,8 @@ return CTexToolDlg::OnKillActive ();
 
 void CTriggerTool::EnableControls (BOOL bEnable)
 {
-CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, m_mine->LevelVersion () >= 12);
-CToolDlg::EnableControls (IDC_TRIGGER_SHOW_OBJ, IDC_TRIGGER_SHOW_OBJ, m_mine->LevelVersion () >= 12);
+CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, theMine->LevelVersion () >= 12);
+CToolDlg::EnableControls (IDC_TRIGGER_SHOW_OBJ, IDC_TRIGGER_SHOW_OBJ, theMine->LevelVersion () >= 12);
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO + 1, IDC_TRIGGER_ADD_CONTROLPANEL, bEnable);
 CToolDlg::EnableControls (IDC_TRIGGER_SLIDER, IDC_TRIGGER_SLIDER, bEnable && TriggerHasSlider ());
 CToolDlg::EnableControls (IDC_TRIGGER_STRENGTH, IDC_TRIGGER_STRENGTH, bEnable && (m_nType != TT_SPEEDBOOST) && (m_nType != TT_CHANGE_TEXTURE));
@@ -354,15 +351,13 @@ CToolDlg::EnableControls (IDC_TRIGGER_SHOW_TEXTURE, IDC_TRIGGER_TEXTURE2, bEnabl
 
 INT32 CTriggerTool::NumTriggers ()
 {
-return m_nClass ? m_mine->NumObjTriggers () : m_mine->GameInfo ().triggers.count;
+return m_nClass ? theMine->NumObjTriggers () : theMine->GameInfo ().triggers.count;
 }
 
 								/*--------------------------*/
 
 void CTriggerTool::InitCBTriggerNo ()
 {
-if (!GetMine ())
-	return;
 CComboBox *pcb = CBTriggerNo ();
 pcb->ResetContent ();
 INT32 i, j = NumTriggers ();
@@ -377,8 +372,6 @@ pcb->SetCurSel (m_nTrigger);
 
 void CTriggerTool::InitLBTargets ()
 {
-if (!GetMine ())
-	return;
 CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
@@ -410,11 +403,11 @@ if (m_nTrigger == -1) {
 	ClearObjWindow ();
 	}	
 else if (m_nClass) {
-	m_pTrigger = m_mine->ObjTriggers (m_nTrigger);
+	m_pTrigger = theMine->ObjTriggers (m_nTrigger);
 	DrawObjectImage ();
 	}
 else {
-	m_pTrigger = m_mine->Triggers (m_nTrigger);
+	m_pTrigger = theMine->Triggers (m_nTrigger);
 	ClearObjWindow ();
 	}
 }
@@ -437,9 +430,9 @@ if (pDC) {
 void CTriggerTool::DrawObjectImage ()
 {
 if (m_nClass) {
-	CGameObject *objP = m_mine->CurrObj ();
+	CGameObject *objP = theMine->CurrObj ();
 	if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT) || (objP->type == OBJ_MONSTERBALL) || (objP->type == OBJ_SMOKE))
-		m_mine->DrawObject (&m_showObjWnd, objP->type, objP->id);
+		theMine->DrawObject (&m_showObjWnd, objP->type, objP->id);
 	}
 }
 
@@ -459,10 +452,10 @@ if (!m_bFindTrigger)
 	nTrigger = m_nTrigger;
 else {
 	if (m_nClass) {
-		if (m_mine->Current ()->nObject == m_mine->ObjTriggers (m_nTrigger)->nObject)
+		if (theMine->Current ()->nObject == theMine->ObjTriggers (m_nTrigger)->nObject)
 			return false;
-		for (INT32 i = 0, j = m_mine->NumObjTriggers (); j; j--, i++) {
-			if (m_mine->Current ()->nObject == m_mine->ObjTriggers (i)->nObject) {
+		for (INT32 i = 0, j = theMine->NumObjTriggers (); j; j--, i++) {
+			if (theMine->Current ()->nObject == theMine->ObjTriggers (i)->nObject) {
 				m_nTrigger = i;
 				return false;
 				}
@@ -472,10 +465,10 @@ else {
 		}
 	else {
 		// use current side's trigger
-		UINT16 nWall = m_mine->FindTriggerWall (&nTrigger);
+		UINT16 nWall = theMine->FindTriggerWall (&nTrigger);
 		m_nTrigger = (nTrigger == NO_TRIGGER) ? -1 : nTrigger;
 		// if found, proceed
-		if ((m_nTrigger == -1) || (nWall >= m_mine->GameInfo ().walls.count))
+		if ((m_nTrigger == -1) || (nWall >= theMine->GameInfo ().walls.count))
 			return false;
 		}
 	}
@@ -488,9 +481,7 @@ return true;
 
 void CTriggerTool::Refresh ()
 {
-if (!m_bInited)
-	return;
-if (!GetMine ())
+if (!(m_bInited && theMine))
 	return;
 
 	INT32			i;
@@ -571,12 +562,12 @@ if (m_nTrigger != -1) {
 	}
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumTriggers () > 0);
 CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumTriggers () > 0);
-sideP = m_mine->OtherSide ();
+sideP = theMine->OtherSide ();
 CTexToolDlg::Refresh (sideP->nBaseTex, sideP->nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
 	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
 else
-	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, MAX_TEXTURES (m_mine));
+	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, MAX_TEXTURES);
 UpdateData (FALSE);
 }
 
@@ -596,13 +587,11 @@ Refresh ();
 
 void CTriggerTool::OnObjectTrigger (void)
 {
-if (!GetMine ())
-	return;
 m_nStdTrigger = m_nTrigger;
 m_pStdTrigger = m_pTrigger;
 m_nClass = 1;
 UpdateData (FALSE);
-m_pTrigger = m_mine->ObjTriggers (m_nTrigger);
+m_pTrigger = theMine->ObjTriggers (m_nTrigger);
 m_nTrigger = m_nObjTrigger;
 Refresh ();
 }
@@ -613,18 +602,15 @@ Refresh ();
 
 void CTriggerTool::OnAddTrigger ()
 {
-if (!GetMine ())
-	return;
-
 //m_nTrigger = nTrigger;
 m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ();
 if (m_nClass) {
-	m_pTrigger = m_mine->AddObjTrigger (-1, m_nType);
-	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - m_mine->ObjTriggers ()) : -1; 
+	m_pTrigger = theMine->AddObjTrigger (-1, m_nType);
+	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - theMine->ObjTriggers ()) : -1; 
 	}
 else {
-	m_pTrigger = m_mine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - m_mine->Triggers ()) : -1;
+	m_pTrigger = theMine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
+	m_nTrigger = m_pTrigger ? INT32 (m_pTrigger - theMine->Triggers ()) : -1;
 	}
 // Redraw trigger window
 Refresh ();
@@ -637,14 +623,12 @@ theApp.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTrigger () 
 {
-if (!GetMine ())
-	return;
 // check to see if trigger already exists on wall
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nClass)
-	m_mine->DeleteObjTrigger (m_nTrigger);
+	theMine->DeleteObjTrigger (m_nTrigger);
 else
-	m_mine->DeleteTrigger (m_nTrigger);
+	theMine->DeleteTrigger (m_nTrigger);
 // Redraw trigger window
 Refresh ();
 theApp.MineView ()->Refresh ();
@@ -656,25 +640,23 @@ theApp.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTriggerAll () 
 {
-if (!GetMine ())
-	return;
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
-CSegment *segP = m_mine->Segments ();
+CSegment *segP = theMine->Segments ();
 CSide *sideP;
-bool bAll = (m_mine->MarkedSegmentCount (true) == 0);
+bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
-for (i = m_mine->SegCount (); i; i--, segP++) {
+for (i = theMine->SegCount (); i; i--, segP++) {
 	sideP = segP->sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
-		if (sideP->nWall >= MAX_WALLS (m_mine))
+		if (sideP->nWall >= MAX_WALLS)
 			continue;
-		CWall *wallP = m_mine->Walls (sideP->nWall);
+		CWall *wallP = theMine->Walls (sideP->nWall);
 		if (wallP->nTrigger >= NumTriggers ())
 			continue;
-		if (bAll || m_mine->SideIsMarked (i, j)) {
-			m_mine->DeleteTrigger (wallP->nTrigger);
+		if (bAll || theMine->SideIsMarked (i, j)) {
+			theMine->DeleteTrigger (wallP->nTrigger);
 			nDeleted++;
 			}
 		}
@@ -695,9 +677,6 @@ else
 
 void CTriggerTool::OnSetTrigger ()
 {
-if (!GetMine ())
-	return;
-
 UINT16 nWall;
 CWall *wallP;
 
@@ -706,26 +685,26 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= NumTriggers ()))
 	return;
 if (m_nClass) {
-	m_mine->Current ()->nObject = m_mine->ObjTriggers (m_nTrigger)->nObject;
+	theMine->Current ()->nObject = theMine->ObjTriggers (m_nTrigger)->nObject;
 	}
 else {
-	for (nWall = 0, wallP = m_mine->Walls (); nWall < m_mine->GameInfo ().walls.count; nWall++, wallP++)
+	for (nWall = 0, wallP = theMine->Walls (); nWall < theMine->GameInfo ().walls.count; nWall++, wallP++)
 		if (wallP->nTrigger == m_nTrigger)
 			break;
-	if (nWall >= m_mine->GameInfo ().walls.count) {
+	if (nWall >= theMine->GameInfo ().walls.count) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((wallP->m_nSegment >= m_mine->SegCount ()) || (wallP->m_nSegment < 0) || 
+	if ((wallP->m_nSegment >= theMine->SegCount ()) || (wallP->m_nSegment < 0) || 
 		 (wallP->m_nSide < 0) || (wallP->m_nSide > 5)) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((m_mine->Current ()->nSegment != wallP->m_nSegment) ||
-		 (m_mine->Current ()->nSide != wallP->m_nSide)) {
-		m_mine->SetCurrent (wallP->m_nSegment, wallP->m_nSide);
+	if ((theMine->Current ()->nSegment != wallP->m_nSegment) ||
+		 (theMine->Current ()->nSide != wallP->m_nSide)) {
+		theMine->SetCurrent (wallP->m_nSegment, wallP->m_nSide);
 		}
 	}
 SetTriggerPtr ();
@@ -741,14 +720,12 @@ theApp.MineView ()->Refresh ();
 
 void CTriggerTool::OnSetType ()
 {
-if (!GetMine ())
-	return;
 INT32 nType = INT32 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if ((nType == TT_SMOKE_BRIGHTNESS) || ((nType >= TT_SMOKE_LIFE) && (nType <= TT_SMOKE_DRIFT))) {
 	ErrorMsg ("This trigger type is not supported any more.\nYou can use the effects tool to edit smoke emitters.");
 	return;
 	}
-if ((nType >= TT_TELEPORT) && (m_mine->IsStdLevel ())) {
+if ((nType >= TT_TELEPORT) && (theMine->IsStdLevel ())) {
 	SelectItemData (CBType (), m_nType);
 	return;
 	}
@@ -768,8 +745,6 @@ Refresh ();
 
 void CTriggerTool::OnStrength () 
 {
-if (!GetMine ())
-	return;
 UpdateData (TRUE);
 if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TEXTURE))
 	return;
@@ -785,8 +760,6 @@ m_pTrigger->value = (INT32) (m_nStrength * F1_0);
 
 void CTriggerTool::OnTime () 
 {
-if (!GetMine ())
-	return;
 UpdateData (TRUE);
 if (m_nTrigger == -1)
 	return;
@@ -801,8 +774,6 @@ m_pTrigger->time = m_nTime;
 
 bool CTriggerTool::OnD1Flag (INT32 i, INT32 j)
 {
-if (!GetMine ())	
-	return false;
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return false;
@@ -827,8 +798,6 @@ return m_bD1Flags [i] != 0;
 
 void CTriggerTool::OnD2Flag (INT32 i, INT32 j)
 {
-if (!GetMine ())	
-	return;
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
@@ -874,8 +843,6 @@ void CTriggerTool::OnD2Flag7 () { OnD2Flag (6); }
 
 void CTriggerTool::AddTarget (INT16 nSegment, INT16 nSide) 
 {
-if (!GetMine ())
-	return;
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
@@ -903,8 +870,6 @@ Refresh ();
 
 void CTriggerTool::OnAddTarget () 
 {
-if (!GetMine ())
-	return;
 INT32 nSegment, nSide;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d, %d", &nSegment, &nSide);
@@ -914,7 +879,7 @@ if (nSide < 0)
 	nSide = 0;
 else if (nSide > 6)
 	nSide = 6;
-if (nSegment > ((nSide == 0) ? m_mine->ObjCount () : m_mine->SegCount ()))
+if (nSegment > ((nSide == 0) ? theMine->ObjCount () : theMine->SegCount ()))
 	return;
 AddTarget (nSegment, nSide);
 }
@@ -923,9 +888,7 @@ AddTarget (nSegment, nSide);
 
 void CTriggerTool::OnAddWallTarget ()
 {
-if (!GetMine ())
-	return;
-CSelection *other = (m_mine->Current () == &m_mine->Current1 ()) ? &m_mine->Current2 () : &m_mine->Current1 ();
+CSelection *other = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 () : &theMine->Current1 ();
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
@@ -933,7 +896,7 @@ SetTriggerPtr ();
 if ((theApp.IsD1File ()) ? 
 	 (m_pTrigger->flags & TRIGGER_MATCEN) != 0 : 
 	 (m_pTrigger->type == TT_MATCEN) && 
-	 (m_mine->Segments (other->nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
+	 (theMine->Segments (other->nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}
@@ -947,13 +910,11 @@ AddTarget (other->nSegment, other->nSide + 1);
 
 void CTriggerTool::OnAddObjTarget ()
 {
-if (!GetMine ())
-	return;
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-AddTarget (m_mine->Current ()->nObject, 0);
+AddTarget (theMine->Current ()->nObject, 0);
 }
 
 //------------------------------------------------------------------------
@@ -993,8 +954,6 @@ return m_pTrigger->Find (nSegment, nSide);
 
 void CTriggerTool::OnSetTarget () 
 {
-if (!GetMine ())
-	return;
 INT16 nTrigger;
 if (!FindTrigger (nTrigger))
 	return;
@@ -1005,14 +964,14 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->m_count))
 	return;
 INT16 nSegment = m_pTrigger->Segment (m_iTarget);
-if ((nSegment < 0) || (nSegment >= m_mine->SegCount ()))
+if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
 	 return;
 INT16 nSide = m_pTrigger->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 
-CSelection *other = m_mine->Other ();
-if ((m_mine->Current ()->nSegment == nSegment) && (m_mine->Current ()->nSide == nSide))
+CSelection *other = theMine->Other ();
+if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide == nSide))
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);
@@ -1023,25 +982,21 @@ theApp.MineView ()->Refresh ();
 
 void CTriggerTool::OnCopyTrigger ()
 {
-if (!GetMine ())
-	return;
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-m_defTrigger = m_mine->Triggers () [m_nTrigger];
+m_defTrigger = theMine->Triggers () [m_nTrigger];
 }
 
                         /*--------------------------*/
 
 void CTriggerTool::OnPasteTrigger ()
 {
-if (!GetMine ())
-	return;
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 theApp.SetModified (TRUE);
-m_mine->Triggers () [m_nTrigger] = m_defTrigger;
+theMine->Triggers () [m_nTrigger] = m_defTrigger;
 Refresh ();
 theApp.MineView ()->Refresh ();
 }
@@ -1050,45 +1005,35 @@ theApp.MineView ()->Refresh ();
 
 afx_msg void CTriggerTool::OnAddOpenDoor ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddOpenDoorTrigger ();
+theMine->AddOpenDoorTrigger ();
 }
 
                         /*--------------------------*/
 
 afx_msg void CTriggerTool::OnAddRobotMaker ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddRobotMakerTrigger ();
+theMine->AddRobotMakerTrigger ();
 }
 
                         /*--------------------------*/
 
 afx_msg void CTriggerTool::OnAddShieldDrain ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddShieldTrigger ();
+theMine->AddShieldTrigger ();
 }
 
                         /*--------------------------*/
 
 afx_msg void CTriggerTool::OnAddEnergyDrain ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddEnergyTrigger ();
+theMine->AddEnergyTrigger ();
 }
 
                         /*--------------------------*/
 
 afx_msg void CTriggerTool::OnAddControlPanel ()
 {
-if (!GetMine ())
-	return;
-m_mine->AddUnlockTrigger ();
+theMine->AddUnlockTrigger ();
 }
 
                         /*--------------------------*/
@@ -1102,10 +1047,7 @@ return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_p
 
 void CTriggerTool::SelectTexture (INT32 nIdC, bool bFirst)
 {
-if (!GetMine ())
-	return;
-
-	CSide		*sideP = m_mine->CurrSide ();
+	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	INT32			index = pcb->GetCurSel ();
 	

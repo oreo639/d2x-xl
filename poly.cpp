@@ -85,7 +85,7 @@ FIX MultiplyFix(FIX a, FIX b) {
 // Action - sets the global handle used when drawing polygon models
 //-----------------------------------------------------------------------
 
-INT32 CMineView::SetupModel(CMine *mine, CGameObject *objP) 
+INT32 CMineView::SetupModel(CGameObject *objP) 
 {
   gOffset.x = 0;
   gOffset.y = 0;
@@ -197,7 +197,7 @@ void CMineView::SetModelPoints(INT32 start, INT32 end)
 	pt.y += objP->pos.y;
 	pt.z += objP->pos.z;
 
-	// now that points are relative to mine, set screen xy points (poly_xy)
+	// now that points are relative to set screen xy points (poly_xy)
 	m_matrix.SetPoint(&pt,poly_xy + i);
   }
 }

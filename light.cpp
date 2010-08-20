@@ -46,8 +46,7 @@ return -1;
 void CreateLightMap (void)
 {
 #if 1
-if (theApp.GetMine ())
-	theApp.GetMine ()->LoadDefaultLightAndColor ();
+theMine->LoadDefaultLightAndColor ();
 #else
 	TEXTURE_LIGHT	*pTexLights = (theApp.IsD1File ()) ? d1_texture_light : d2_texture_light;
 	INT32				i = ((theApp.IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
@@ -125,7 +124,7 @@ return 0;
 #	else
 	UINT8 result;
 
-if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES (this)) {
+if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
 	if (theApp.IsD1File ()) {
 		for (i=0;i<NUM_LIGHTS_D1;i++)
 			if (nBaseTex <= d1_texture_light[i].nBaseTex) 
@@ -351,7 +350,7 @@ return false;
 
 bool CMine::VisibleWall (UINT16 nWall)
 {
-if (nWall == NO_WALL (this))
+if (nWall == NO_WALL)
 	return false;
 CWall	*wallP = Walls (nWall);
 return (wallP->type != WALL_OPEN);
@@ -579,10 +578,10 @@ for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP+
 			MEMSET (LightColor (nSegment, nSide, false), 0, sizeof (CColor));
 		brightness = 0;
 		texture_num = sideP->nBaseTex;
-		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES (this)))
+		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (texture_num));
 		texture_num = sideP->nOvlTex & 0x3fff;
-		if ((texture_num > 0) && (texture_num < MAX_TEXTURES (this)))
+		if ((texture_num > 0) && (texture_num < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (texture_num));
 		if (brightness > 0)
 			Illuminate (nSegment, nSide, (UINT32) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
@@ -942,7 +941,7 @@ fLightScale = 1.0; ///= 100.0;
 				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
 				continue;
 
-			if (GameInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES (this)) {
+			if (GameInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES) {
 //#pragma omp critical
 				{
 				if (++nErrors == 1) {
@@ -1051,7 +1050,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
+						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1083,7 +1082,7 @@ fLightScale = 1.0; ///= 100.0;
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES (this)) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
+							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {

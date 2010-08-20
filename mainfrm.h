@@ -157,9 +157,6 @@ public:
 		{ return m_toolView; }
 	inline CDlcDoc *GetDocument ()
 		{ return MineView ()->GetDocument (); }
-	inline CMine *GetMine ()
-		//{ return GetDocument ()->m_mine; }
-		{ return &theMine; }
 	inline CWnd *TexturePane ()
 		{ return nLayout ? m_splitter2.GetPane (1,0) : m_splitter1.GetPane (0,0); }
 	inline CWnd *MinePane ()

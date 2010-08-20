@@ -25,7 +25,6 @@ CConvertDlg::CConvertDlg (CWnd *pParent)
 	: CDialog (IDD_CONVERT, pParent)
 {
 m_bInited = false;
-m_mine = NULL;
 }
 
 //------------------------------------------------------------------------
@@ -39,13 +38,6 @@ if (m_bInited) {
 	m_showD2.DestroyWindow ();
 	}
 CDialog::EndDialog (nResult);
-}
-
-                        /*--------------------------*/
-
-CMine *CConvertDlg::GetMine (void)
-{
-return m_mine = theApp.GetMine (); 
 }
 
                         /*--------------------------*/
@@ -64,9 +56,6 @@ pImgWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 
 BOOL CConvertDlg::OnInitDialog () 
 {
-if (!GetMine ())
-	return FALSE;
-
 CDialog::OnInitDialog ();
 
 CreateImgWnd (&m_showD1, IDC_CONVERT_SHOWD1);
@@ -85,10 +74,10 @@ if (!m_pTextures)
 
 CComboBox *pcb = CBD1 ();
 INT16	nSeg,	nSide, nTextures;
-INT16 tnum [2], segCount = m_mine->SegCount ();
+INT16 tnum [2], segCount = theMine->SegCount ();
 char	szName [80];
 INT32 h;
-CSegment *segP = m_mine->Segments ();
+CSegment *segP = theMine->Segments ();
 CSide *sideP;
 // add textures that have been used to Texture 1 combo box
 for (nSeg = segCount; nSeg; nSeg--, segP++) {
@@ -139,7 +128,7 @@ Refresh ();
 
 void CConvertDlg::Refresh () 
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
 
 	INT16 texture1,texture2;
@@ -160,15 +149,15 @@ else
 	nError = GetLastError ();
 #endif
 fileTypeBackup = theApp.FileType ();
-m_mine->SetFileType (RL2_FILE);
-m_mine->LoadPalette ();
+theMine->SetFileType (RL2_FILE);
+theMine->LoadPalette ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
-m_mine->SetFileType (RDL_FILE);
-m_mine->LoadPalette ();
+theMine->SetFileType (RDL_FILE);
+theMine->LoadPalette ();
 PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
 
   // restore file type (should always be RDL_TYPE)
-  theApp.GetMine ()->SetFileType (fileTypeBackup);
+  theMine->SetFileType (fileTypeBackup);
 }
 
 //------------------------------------------------------------------------
@@ -218,9 +207,6 @@ Refresh ();
 
 void CConvertDlg::OnOK () 
 {
-if (!GetMine ())
-	return;
-
   INT16		i,j;
   CSegment *segP;
   CSide		*sideP;
@@ -228,18 +214,18 @@ if (!GetMine ())
   CTrigger	*trigger;
   CGameObject	*objP;
   INT16		nSegment, nSide, d1Texture, mode,
-				segCount = m_mine->SegCount (),
-				wallCount = m_mine->GameInfo ().walls.count;
+				segCount = theMine->SegCount (),
+				wallCount = theMine->GameInfo ().walls.count;
 
 FreeTextureHandles ();
 theApp.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
-m_mine->SetFileType (RL2_FILE);
+theMine->SetFileType (RL2_FILE);
 texture_resource = D2_TEXTURE_STRING_TABLE;
-m_mine->LoadPalette ();
+theMine->LoadPalette ();
 
   // convert textures
-for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, segP++) {
+for (nSegment = 0, segP = theMine->Segments (); nSegment < segCount; nSegment++, segP++) {
 	segP->s2_flags = 0;
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++) {
 		if ((segP->children [nSide] == -1) || (segP->sides [nSide].nWall < wallCount)) {
@@ -264,14 +250,14 @@ for (nSegment = 0, segP = m_mine->Segments (); nSegment < segCount; nSegment++, 
 
 // defined D2 wall parameters
 //--------------------------------------
-for (i = 0, wallP = m_mine->Walls (); i < wallCount; i++, wallP++) {
+for (i = 0, wallP = theMine->Walls (); i < wallCount; i++, wallP++) {
 	wallP->controlling_trigger = 0;
 	wallP->cloak_value = 0;
 	}
 
 // change trigger type and flags
 //-------------------------------------------
-for (i = 0, trigger = m_mine->Triggers (); i < m_mine->GameInfo ().triggers.count; i++, trigger++) {
+for (i = 0, trigger = theMine->Triggers (); i < theMine->GameInfo ().triggers.count; i++, trigger++) {
 	switch (trigger->flags) {
 		case TRIGGER_CONTROL_DOORS:
 			trigger->type = TT_OPEN_DOOR;
@@ -299,7 +285,7 @@ for (i = 0, trigger = m_mine->Triggers (); i < m_mine->GameInfo ().triggers.coun
 		case TRIGGER_ENERGY_DRAIN:
 		default:
 			DEBUGMSG (" Level converter: Unsupported trigger type; trigger deleted")
-			m_mine->DeleteTrigger (i);
+			theMine->DeleteTrigger (i);
 			i--;
 			trigger--;
 			continue;
@@ -309,26 +295,26 @@ for (i = 0, trigger = m_mine->Triggers (); i < m_mine->GameInfo ().triggers.coun
 
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < m_mine->GameInfo ().botgen.count; i++) {
-	m_mine->BotGens (i)->objFlags [1] = 0;
-	for (j = 0, segP = m_mine->Segments (); j <= segCount; j++, segP++)
+for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
+	theMine->BotGens (i)->objFlags [1] = 0;
+	for (j = 0, segP = theMine->Segments (); j <= segCount; j++, segP++)
 		if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == i))
-				m_mine->BotGens (i)->nFuelCen = (INT16)(segP->value);
+				theMine->BotGens (i)->nFuelCen = (INT16)(segP->value);
 	}
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < m_mine->GameInfo ().equipgen.count; i++) {
-	m_mine->EquipGens (i)->objFlags [1] = 0;
-	for (j = 0, segP = m_mine->Segments (); j <= segCount; j++, segP++)
+for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
+	theMine->EquipGens (i)->objFlags [1] = 0;
+	for (j = 0, segP = theMine->Segments (); j <= segCount; j++, segP++)
 		if ((segP->function == SEGMENT_FUNC_EQUIPMAKER) && (segP->nMatCen == i))
-				m_mine->EquipGens (i)->nFuelCen = (INT16)(segP->value);
+				theMine->EquipGens (i)->nFuelCen = (INT16)(segP->value);
 	}
 
 // Objects ()
 //-----------------------------------------------
 
-for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++, objP++) {
+for (i = 0, objP = theMine->Objects (); i < theMine->GameInfo ().objects.count; i++, objP++) {
 // fix clip numbers for poly Objects () (except robots)
 	switch (objP->type) {
 		case OBJ_PLAYER   : // the player on the console
@@ -345,32 +331,32 @@ for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i+
 
 // d2 light data and indicies
 //--------------------------------------------
-m_mine->GameInfo ().lightDeltaIndices.count = 0;
-m_mine->GameInfo ().lightDeltaValues.count = 0;
-m_mine->FlickerLightCount () = 0;
-m_mine->AutoAdjustLight (50.0, true);
-m_mine->CalcAverageCornerLight (true);
-m_mine->ScaleCornerLight (100.0, true);
-m_mine->SetCubeLight (50.0, true);
-m_mine->CalcDeltaLightData (50.0, (INT32) true);
+theMine->GameInfo ().lightDeltaIndices.count = 0;
+theMine->GameInfo ().lightDeltaValues.count = 0;
+theMine->FlickerLightCount () = 0;
+theMine->AutoAdjustLight (50.0, true);
+theMine->CalcAverageCornerLight (true);
+theMine->ScaleCornerLight (100.0, true);
+theMine->SetCubeLight (50.0, true);
+theMine->CalcDeltaLightData (50.0, (INT32) true);
 
 // d2 reactor and secret cube
 //----------------------------------------------
-m_mine->ReactorTime () = 0x1e;
-m_mine->ReactorStrength () = 0xffffffffL;
-m_mine->SecretCubeNum () = 0L;
+theMine->ReactorTime () = 0x1e;
+theMine->ReactorStrength () = 0xffffffffL;
+theMine->SecretCubeNum () = 0L;
 
-m_mine->SecretOrient ().rvec.x = F1_0;
-m_mine->SecretOrient ().rvec.y = 0L;
-m_mine->SecretOrient ().rvec.z = 0L;
+theMine->SecretOrient ().rvec.x = F1_0;
+theMine->SecretOrient ().rvec.y = 0L;
+theMine->SecretOrient ().rvec.z = 0L;
 
-m_mine->SecretOrient ().uvec.x = 0L;
-m_mine->SecretOrient ().uvec.y = 0L;
-m_mine->SecretOrient ().uvec.z = F1_0;
+theMine->SecretOrient ().uvec.x = 0L;
+theMine->SecretOrient ().uvec.y = 0L;
+theMine->SecretOrient ().uvec.z = F1_0;
 
-m_mine->SecretOrient ().fvec.x = 0L;
-m_mine->SecretOrient ().fvec.y = F1_0;
-m_mine->SecretOrient ().fvec.z = 0L;
+theMine->SecretOrient ().fvec.x = 0L;
+theMine->SecretOrient ().fvec.y = F1_0;
+theMine->SecretOrient ().fvec.z = 0L;
 theApp.MineView ()->ResetView (true);
 CDialog::OnOK ();
 }

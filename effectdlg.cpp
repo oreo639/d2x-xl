@@ -94,13 +94,11 @@ void CEffectTool::LoadEffectList ()
 	char			szEffect [100];
 	INT32			index, curSel = 0;
 
-GetMine ();
-
 cbEffects->ResetContent ();
-CGameObject *curObj = m_mine->CurrObj (),
-			*objP = m_mine->Objects ();
+CGameObject *curObj = theMine->CurrObj (),
+			*objP = theMine->Objects ();
 INT32 i;
-for (i = 0; i < m_mine->GameInfo ().objects.count; i++, objP++) {
+for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	if (objP->type != OBJ_EFFECT)
 		continue;
 	if (objP == curObj)
@@ -154,11 +152,9 @@ return TRUE;
 
 void CEffectTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 if (objP->type != OBJ_EFFECT)
 	return;
 if (objP->id == SMOKE_ID) {
@@ -235,11 +231,9 @@ return CToolDlg::OnKillActive ();
 
 void CEffectTool::EnableControls (BOOL bEnable)
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (objP->type == OBJ_EFFECT) && (objP->id == SMOKE_ID));
 CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID));
 CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (objP->type == OBJ_EFFECT) && (objP->id == SOUND_ID));
@@ -251,9 +245,7 @@ CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (objP->type == OBJ_E
 
 void CEffectTool::Refresh ()
 {
-if (!m_bInited)
-	return;
-if (!GetMine ())
+if (!(m_bInited && theMine))
 	return;
 
 EnableControls (true);
@@ -267,12 +259,12 @@ UpdateData (FALSE);
 
 bool CEffectTool::AddEffect ()
 {
-if (m_mine->GameInfo ().objects.count >= MAX_OBJECTS (m_mine)) {
+if (theMine->GameInfo ().objects.count >= MAX_OBJECTS) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return false;
 	}
 UpdateData (TRUE);
-m_mine->CopyObject (OBJ_EFFECT);
+theMine->CopyObject (OBJ_EFFECT);
 return true;
 }
 
@@ -280,11 +272,9 @@ return true;
 
 void CEffectTool::OnAddSmoke ()
 {
-if (!GetMine ())
-	return;
 if (!AddEffect ())
 	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = SMOKE_ID;
 objP->render_type = RT_SMOKE;
@@ -297,11 +287,9 @@ theApp.MineView ()->Refresh ();
 
 void CEffectTool::OnAddLightning ()
 {
-if (!GetMine ())
-	return;
 if (!AddEffect ())
 	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = LIGHTNING_ID;
 objP->render_type = RT_LIGHTNING;
@@ -314,11 +302,9 @@ theApp.MineView ()->Refresh ();
 
 void CEffectTool::OnAddSound ()
 {
-if (!GetMine ())
-	return;
 if (!AddEffect ())
 	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = SOUND_ID;
 objP->render_type = RT_SOUND;
@@ -332,22 +318,20 @@ theApp.MineView ()->Refresh ();
 
 void CEffectTool::OnDelete ()
 {
-if (!GetMine ())
-	return;
-if (m_mine->Current ()->nObject == m_mine->GameInfo ().objects.count) {
+if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-if (m_mine->GameInfo ().objects.count == 1) {
+if (theMine->GameInfo ().objects.count == 1) {
 	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
-if (m_mine->CurrObj ()->type != OBJ_EFFECT) {
+if (theMine->CurrObj ()->type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
 	}
 if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
-	m_mine->DeleteObject ();
+	theMine->DeleteObject ();
 	Refresh ();
 	theApp.MineView ()->Refresh (false);
 	}
@@ -357,9 +341,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CEffectTool::OnCopy ()
 {
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 if (objP->type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -377,9 +359,7 @@ else if (m_nBufferId == SOUND_ID)
 
 void CEffectTool::OnPaste ()
 {
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 if (objP->type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -405,14 +385,12 @@ if (m_nBufferId < 0) {
 	ErrorMsg ("No effect data currently available (copy data first)");
 	return;
 	}
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->Objects ();
-boolean bAll = !m_mine->GotMarkedSegments ();
+CGameObject *objP = theMine->Objects ();
+boolean bAll = !theMine->GotMarkedSegments ();
 
 INT32 i;
-for (i = m_mine->ObjCount (); i; i--, objP++)
-	if ((objP->type == OBJ_EFFECT) && (objP->id == m_nBufferId) && (bAll || m_mine->SegmentIsMarked (objP->nSegment)))
+for (i = theMine->ObjCount (); i; i--, objP++)
+	if ((objP->type == OBJ_EFFECT) && (objP->id == m_nBufferId) && (bAll || theMine->SegmentIsMarked (objP->nSegment)))
 		if (m_nBufferId == SMOKE_ID)
 			objP->rType.smokeInfo = m_smoke;
 		else if (m_nBufferId == LIGHTNING_ID)
@@ -426,9 +404,7 @@ Refresh ();
 
 void CEffectTool::OnSetObject ()
 {
-if (!GetMine ())
-	return;
-INT16 nOld = m_mine->Current ()->nObject;
+INT16 nOld = theMine->Current ()->nObject;
 INT16 nNew = INT16 (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
@@ -442,9 +418,7 @@ if (nOld != nNew) {
 
 void CEffectTool::OnSetStyle ()
 {
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 //Refresh ();
 }
@@ -456,16 +430,14 @@ void CEffectTool::HiliteTarget (void)
 #if 0
 	INT32 i, nTarget;
 
-if (!GetMine ())
-	return;
-CGameObject *objP = m_mine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
-m_mine->Other ()->nObject = m_mine->Current ()->nObject;
+theMine->Other ()->nObject = theMine->Current ()->nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = m_mine->Objects (); i < m_mine->GameInfo ().objects.count; i++, objP++)
+	for (i = 0, objP = theMine->Objects (); i < theMine->GameInfo ().objects.count; i++, objP++)
 		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			m_mine->Other ()->nObject = i;
+			theMine->Other ()->nObject = i;
 			break;
 			return;
 			}

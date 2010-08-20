@@ -90,11 +90,11 @@ return szText;
 
 void CDiagTool::CountObjects (void)
 {
-CGameObject *objP = m_mine->Objects ();
+CGameObject *objP = theMine->Objects ();
 MEMSET (m_nObjects, 0, sizeof (m_nObjects));
 MEMSET (m_nContained, 0, sizeof (m_nContained));
 INT32 i, j;
-for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
+for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 	switch(objP->type) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
@@ -138,14 +138,14 @@ for (i = m_mine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 
 INT32 CDiagTool::CountTextures (void)
 {
-	CSegment *segP = m_mine->Segments ();
+	CSegment *segP = theMine->Segments ();
 	CSide *sideP;
 	char bUsed [(MAX_D2_TEXTURES + 7) / 8];
-	INT32 t, i, j, h = m_mine->GameInfo ().walls.count;
+	INT32 t, i, j, h = theMine->GameInfo ().walls.count;
 	INT32 nUsed = 0;
 
 MEMSET (bUsed, 0, sizeof (bUsed));
-for (i = m_mine->SegCount (); i; i--, segP++)
+for (i = theMine->SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
 		if ((segP->children [j] == -1) || (sideP->nWall < h)) {
 			t = sideP->nBaseTex;
@@ -171,18 +171,14 @@ void CDiagTool::Reset (void)
 if (!Inited ())
 	return;
 ClearBugList ();
-if (GetMine ())
-	m_mine->UnmarkAll ();
+theMine->UnmarkAll ();
 }
                         /*--------------------------*/
 
 void CDiagTool::Refresh (void)
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
-if (!GetMine ())
-	return;
-
 	CListCtrl& plc = LVStats ()->GetListCtrl ();
 	LPSTR	*psz;
 	INT32 i;
@@ -196,30 +192,30 @@ plc.DeleteAllItems ();
 for (psz = szItems, i = 0; *psz; psz++, i++)
 	plc.InsertItem (i, *psz);
 CountObjects ();
-plc.SetItemText (0, 1, ItemText (m_mine->SegCount ()));
-plc.SetItemText (1, 1, ItemText (m_mine->VertCount ()));
-plc.SetItemText (2, 1, ItemText (m_mine->RobotMakerCount ()));
-plc.SetItemText (3, 1, ItemText (m_mine->FuelCenterCount ()));
-plc.SetItemText (4, 1, ItemText (m_mine->WallCount ()));
-plc.SetItemText (5, 1, ItemText (m_mine->TriggerCount ()));
-plc.SetItemText (6, 1, ItemText (m_mine->ObjectCount ()));
+plc.SetItemText (0, 1, ItemText (theMine->SegCount ()));
+plc.SetItemText (1, 1, ItemText (theMine->VertCount ()));
+plc.SetItemText (2, 1, ItemText (theMine->RobotMakerCount ()));
+plc.SetItemText (3, 1, ItemText (theMine->FuelCenterCount ()));
+plc.SetItemText (4, 1, ItemText (theMine->WallCount ()));
+plc.SetItemText (5, 1, ItemText (theMine->TriggerCount ()));
+plc.SetItemText (6, 1, ItemText (theMine->ObjectCount ()));
 for (i = 0; i < 8; i++)
 	plc.SetItemText (7 + i, 1, ItemText (m_nObjects [i]));
 plc.SetItemText (15, 1, ItemText (CountTextures ()));
-plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS (m_mine)));
-plc.SetItemText (1, 2, ItemText (MAX_VERTICES (m_mine)));
-plc.SetItemText (2, 2, ItemText (MAX_ROBOT_MAKERS (m_mine)));
-plc.SetItemText (3, 2, ItemText (MAX_NUM_FUELCENS (m_mine)));
-plc.SetItemText (4, 2, ItemText (MAX_WALLS (m_mine)));
-plc.SetItemText (5, 2, ItemText (MAX_TRIGGERS (m_mine)));
-plc.SetItemText (6, 2, ItemText (MAX_OBJECTS (m_mine)));
+plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS));
+plc.SetItemText (1, 2, ItemText (MAX_VERTICES));
+plc.SetItemText (2, 2, ItemText (MAX_ROBOT_MAKERS));
+plc.SetItemText (3, 2, ItemText (MAX_NUM_FUELCENS));
+plc.SetItemText (4, 2, ItemText (MAX_WALLS));
+plc.SetItemText (5, 2, ItemText (MAX_TRIGGERS));
+plc.SetItemText (6, 2, ItemText (MAX_OBJECTS));
 plc.SetItemText (7, 2, ItemText (m_nContained [0], "cont"));
 plc.SetItemText (9, 2, ItemText (8));
 plc.SetItemText (10, 2, ItemText (3));
 plc.SetItemText (11, 2, ItemText (m_nContained [1], "cont"));
 plc.SetItemText (13, 2, ItemText (3));
 plc.SetItemText (14, 2, ItemText (1));
-plc.SetItemText (15, 2, ItemText (MAX_TEXTURES (m_mine)));
+plc.SetItemText (15, 2, ItemText (MAX_TEXTURES));
 }
 
                         /*--------------------------*/
@@ -263,7 +259,7 @@ UpdateData (TRUE);
 
 INT32 CDiagTool::AddMessage (const char *pszMsg, INT32 nMaxMsgs, bool bCheckMsg)
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return -1;
 if (bCheckMsg != m_bCheckMsgs) {
 	ClearBugList ();

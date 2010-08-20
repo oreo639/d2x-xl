@@ -246,12 +246,17 @@ BOOL CDlcApp::InitInstance()
 	m_server.UpdateRegistry(OAT_DISPATCH_OBJECT);
 	COleObjectFactory::UpdateRegistryAll();
 
+	//theMine->Initialize ();
+	//theMine->Default ();
 	// Dispatch commands specified on the command line
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNew;
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
 
-	MEMSET (pTextures, 0, sizeof (pTextures));
+	//MEMSET (pTextures, 0, sizeof (pTextures));
+	theMine = new CMine;
+	theMine->Initialize ();
+	theMine->Default ();
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();
 	// The one and only window has been initialized, so show and update it.
@@ -611,13 +616,12 @@ else
 
 bool CUndoList::Update (bool bForce)
 {
-	CMine *mine = theApp.GetMine ();
 	tUndoBuffer	*p;
 
 if (!m_enabled || m_delay)
 	return false;
 if (!bForce && m_head &&
-	 !memcmp (&m_current->undoBuffer, &mine->MineData (), sizeof (struct tMineData)))
+	 !memcmp (&m_current->undoBuffer, &theMine->MineData (), sizeof (struct tMineData)))
 	return true;
 if (m_current != m_tail) {
 	if (m_current)
@@ -647,7 +651,7 @@ else if (m_head) {
 else
 	return false;
 m_tail->nextBuf = NULL;
-memcpy (&m_tail->undoBuffer, &mine->MineData (), sizeof (struct tMineData));
+memcpy (&m_tail->undoBuffer, &theMine->MineData (), sizeof (struct tMineData));
 m_current = m_tail;
 return true;
 }
@@ -678,7 +682,7 @@ if (!m_current)
 	return false;
 if (m_current != m_head)
 	m_current = m_current->prevBuf;
-memcpy (&theApp.GetMine ()->MineData (), &m_current->undoBuffer, sizeof (struct tMineData));
+memcpy (&theMine->MineData (), &m_current->undoBuffer, sizeof (struct tMineData));
 return true;
 }
 
@@ -694,7 +698,7 @@ if (m_current)
 	m_current = m_current->nextBuf;
 else
 	m_current = m_head;
-memcpy (&theApp.GetMine ()->MineData (), &m_current->undoBuffer, sizeof (struct tMineData));
+memcpy (&theMine->MineData (), &m_current->undoBuffer, sizeof (struct tMineData));
 if (m_current == m_tail)
 	Truncate ();
 return true;

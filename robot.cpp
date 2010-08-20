@@ -32,7 +32,7 @@
 // Globals used
 //
 //  N_robot_types
-//  Robot_info[MAX_ROBOT_TYPES]
+//  robotInfo[MAX_ROBOT_TYPES]
 //
 //  N_robot_joints
 //  Robot_joints[MAX_ROBOT_JOINTS]
@@ -311,7 +311,7 @@ abort:
 // Globals used
 //
 //  N_robot_types
-//  Robot_info[MAX_ROBOT_TYPES]
+//  robotInfo[MAX_ROBOT_TYPES]
 //
 //  N_robot_joints
 //  Robot_joints[MAX_ROBOT_JOINTS]
@@ -404,7 +404,7 @@ return 1;
 // Globals used
 //
 //  N_robot_types
-//  Robot_info[MAX_ROBOT_TYPES]
+//  robotInfo[MAX_ROBOT_TYPES]
 //------------------------------------------------------------------------
 
 INT32 CMine::WriteHxmFile(FILE *fp) 
@@ -478,7 +478,7 @@ void CMine::InitRobotData()
 
 
 //------------------------------------------------------------------------
-// ReadRobotResource() - reads robot.hxm from resource data into Robot_info[]
+// ReadRobotResource() - reads robot.hxm from resource data into robotInfo[]
 //
 // if robot_number == -1, then it reads all robots
 //------------------------------------------------------------------------

@@ -16,6 +16,6 @@ void TextureMap(INT32 resolution,
 double dround_off(double value, double round);
 /*
 double CalcLength(CFixVector& center1,CFixVector& center2);
-void CalcCenter(CMine &mine, CFixVector& center,INT16 nSegment,INT16 nSide);
-void CalcOrthoVector(CMine *mine, CFixVector& result,INT16 nSegment,INT16 nSide);
+void CalcCenter(CMine &CFixVector& center,INT16 nSegment,INT16 nSide);
+void CalcOrthoVector(CFixVector& result,INT16 nSegment,INT16 nSide);
 */

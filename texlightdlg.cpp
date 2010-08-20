@@ -83,8 +83,6 @@ void CTextureTool::UpdateLight (void)
 
 if (m_iLight < 0)
 	return;
-if (!GetMine ())
-	return;
 UINT32 nLightMask = 0;
 INT32 i;
 for (i = 0; i < 32; i++)
@@ -92,14 +90,14 @@ for (i = 0; i < 32; i++)
 		nLightMask |= (1 << i);
 bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-if (m_mine->FlickeringLights (m_iLight)->mask != nLightMask) {
+if (theMine->FlickeringLights (m_iLight)->mask != nLightMask) {
 	bChange = true;
-	m_mine->FlickeringLights (m_iLight)->mask = nLightMask;
+	theMine->FlickeringLights (m_iLight)->mask = nLightMask;
 	}
 long nDelay = (m_nLightDelay * F1_0 /*- F0_5*/) / 1000;
-if (m_mine->FlickeringLights (m_iLight)->delay != nDelay) {
+if (theMine->FlickeringLights (m_iLight)->delay != nDelay) {
 	bChange = true;
-	m_mine->FlickeringLights (m_iLight)->delay = nDelay;
+	theMine->FlickeringLights (m_iLight)->delay = nDelay;
 	}
 if (bChange)
 	theApp.UnlockUndo ();
@@ -189,20 +187,18 @@ for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 
 void CTextureTool::UpdateLightWnd (void)
 {
-if (!GetMine ())
-	return;
-CWall *pWall = m_mine->CurrWall ();
+CWall *pWall = theMine->CurrWall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
-	if (m_mine->IsD2XLevel ())
-		MEMSET (m_mine->CurrLightColor (), 0, sizeof (CColor));
+	if (theMine->IsD2XLevel ())
+		MEMSET (theMine->CurrLightColor (), 0, sizeof (CColor));
 	}
 else {
 	if (!m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = TRUE);
-	if (m_mine->IsD2XLevel ()) {
-		CColor *plc = m_mine->CurrLightColor ();
+	if (theMine->IsD2XLevel ()) {
+		CColor *plc = theMine->CurrLightColor ();
 		if (!plc->index) {	// set light color to white for new lights
 			plc->index = 255;
 			plc->color.r =
@@ -211,18 +207,18 @@ else {
 			}
 		}
 	}
-m_iLight = m_mine->GetFlickeringLight ();
+m_iLight = theMine->GetFlickeringLight ();
 if (m_iLight < 0) {
 	OnLightOff ();
 	return;
 	}
 
-long nLightMask = m_mine->FlickeringLights (m_iLight)->mask;
+long nLightMask = theMine->FlickeringLights (m_iLight)->mask;
 INT32 i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
 m_szLight [32] = '\0';
-SetLightButtons (m_szLight, (INT32) (((1000 * m_mine->FlickeringLights (m_iLight)->delay + F0_5) / F1_0)));
+SetLightButtons (m_szLight, (INT32) (((1000 * theMine->FlickeringLights (m_iLight)->delay + F0_5) / F1_0)));
 }
 
                         /*--------------------------*/
@@ -255,7 +251,7 @@ void CTextureTool::OnAddLight ()
 {
 if (m_iLight >= 0)
 	INFOMSG (" There is already a flickering light.")
-else if (0 <= (m_iLight = GetMine ()->AddFlickeringLight (-1, -1, 0xAAAAAAAAL, F1_0 / 4))) {
+else if (0 <= (m_iLight = theMine->AddFlickeringLight (-1, -1, 0xAAAAAAAAL, F1_0 / 4))) {
 	UpdateLightWnd ();
 	theApp.MineView ()->Refresh ();
 	}
@@ -267,7 +263,7 @@ void CTextureTool::OnDeleteLight ()
 {
 if (m_iLight < 0)
 	INFOMSG (" There is no flickering light.")
-else if (GetMine ()->DeleteFlickeringLight ()) {
+else if (theMine->DeleteFlickeringLight ()) {
 	m_iLight = -1;
 	UpdateLightWnd ();
 	theApp.MineView ()->Refresh ();
@@ -322,22 +318,22 @@ void CTextureTool::OnLight32 () { ToggleLight (32); }
 
 void CTextureTool::SetWallColor (void)
 {
-if (m_mine->UseTexColors ()) {
+if (theMine->UseTexColors ()) {
 	INT16			nSegment, nSide;
-	INT16			nBaseTex = m_mine->CurrSide ()->nBaseTex;
-	CSegment	*segP = m_mine->Segments ();
+	INT16			nBaseTex = theMine->CurrSide ()->nBaseTex;
+	CSegment	*segP = theMine->Segments ();
 	CSide		*sideP;
 	CWall			*wallP;
-	bool			bAll = !m_mine->GotMarkedSides ();
+	bool			bAll = !theMine->GotMarkedSides ();
 
-	for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
+	for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 			if (sideP->nWall < 0)
 				continue;
-			wallP = m_mine->Walls (sideP->nWall);
+			wallP = theMine->Walls (sideP->nWall);
 			if (wallP->type != WALL_TRANSPARENT)
 				continue;
-			if (!(bAll || m_mine->SideIsMarked (nSegment, nSide)))
+			if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 				continue;
 			if (sideP->nBaseTex != nBaseTex)
 				continue;
@@ -351,23 +347,20 @@ if (m_mine->UseTexColors ()) {
 
 void CTextureTool::OnLButtonDown (UINT nFlags, CPoint point)
 {
-if (!GetMine ())
-	return;
-
 	CRect		rcPal;
 
-if (/*(m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
+if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 	GetCtrlClientRect (&m_paletteWnd, rcPal);
 	if (PtInRect (rcPal, point)) {
 		point.x -= rcPal.left;
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
-			CWall *pWall = m_mine->CurrWall ();
+			CWall *pWall = theMine->CurrWall ();
 			if (pWall && (pWall->type == WALL_TRANSPARENT)) {
 				pWall->cloak_value = m_nColorIndex;
 				SetWallColor ();
 				}
-			CColor *psc = m_mine->CurrLightColor ();
+			CColor *psc = theMine->CurrLightColor ();
 			if (psc->index = m_nColorIndex) {
 				psc->color.r = (double) m_rgbColor.peRed / 255.0;
 				psc->color.g = (double) m_rgbColor.peGreen / 255.0;
@@ -380,8 +373,8 @@ if (/*(m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				}
 			//if (!pWall || (pWall->type != WALL_TRANSPARENT)) 
 				{
-				m_mine->SetTexColor (m_mine->CurrSide ()->nBaseTex, psc);
-				m_mine->SetTexColor (m_mine->CurrSide ()->nOvlTex, psc);
+				theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
+				theMine->SetTexColor (theMine->CurrSide ()->nOvlTex, psc);
 				}
 			UpdateData (FALSE);
 			UpdatePaletteWnd ();
@@ -403,7 +396,7 @@ cc.rgbResult = RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue);
 cc.lpCustColors = m_custColors;
 cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;
 if (ChooseColor (&cc)) {
-	CColor *psc = m_mine->CurrLightColor ();
+	CColor *psc = theMine->CurrLightColor ();
 	psc->index = m_nColorIndex = 255;
 	m_rgbColor.peBlue = ((BYTE) (cc.rgbResult >> 16)) & 0xFF;
 	m_rgbColor.peGreen = ((BYTE) (cc.rgbResult >> 8)) & 0xFF;
@@ -411,8 +404,8 @@ if (ChooseColor (&cc)) {
 	psc->color.r = (double) m_rgbColor.peRed / 255.0;
 	psc->color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->color.b = (double) m_rgbColor.peBlue / 255.0;
-	m_mine->SetTexColor (m_mine->CurrSide ()->nBaseTex, psc);
-	m_mine->SetTexColor (m_mine->CurrSide ()->nOvlTex, psc);
+	theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
+	theMine->SetTexColor (theMine->CurrSide ()->nOvlTex, psc);
 	UpdatePaletteWnd ();
 	}
 }

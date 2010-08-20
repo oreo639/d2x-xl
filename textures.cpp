@@ -67,7 +67,7 @@ if (!sysPal) {
 	ErrorMsg ("Not enough memory for palette.");
 	return false;
 	}
-theApp.GetMine ()->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
+theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 
 INT32 nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
 INT32 h = nSize, i = 0, k, x, y;
@@ -179,9 +179,9 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0,
 	mode     = nOvlTex & 0xC000;
 	for (i = 0; i < 2; i++) {
 #if 0	
-	ASSERT (textures [i] < MAX_TEXTURES ());
+	ASSERT (textures [i] < MAX_TEXTURES);
 #endif
-if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES ()))
+if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	textures [i] = 0;
 	// buffer textures if not already buffered
 	pTx [i] = pTextures [fileType] + textures [i];
@@ -1002,13 +1002,9 @@ return 0;
 
 void FreeTextureHandles (bool bDeleteModified) 
 {
-	CMine* mineP = theApp.GetMine ();
-
-	if (!mineP)
-		return;
   // free any textures that have been buffered
 	INT32 i, j;
-	INT32 fileType = mineP->FileType ();
+	INT32 fileType = theMine->FileType ();
 
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_D2_TEXTURES; i++) {
@@ -1149,11 +1145,6 @@ static MyBMI my_bmi;
 
 bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 nSegment, INT32 nSide, INT32 texture1, INT32 texture2, INT32 xOffset, INT32 yOffset)
 {
-	CMine			*mine;
-
-if (!(mine = theApp.GetMine ()))
-	return false;
-
 	CDC			*pDC = pWnd->GetDC ();
 
 if (!pDC)
@@ -1166,8 +1157,8 @@ if (!pDC)
 	char			szFile [256];
 	BITMAP		bm;
 	CDC			memDC;
-	CSegment	*segP;
-	CSide		*sideP;
+	CSegment*	segP;
+	CSide*		sideP;
 	INT16			nWall;
 	bool			bShowTexture = true;
 	char			*path = (theApp.IsD1File ()) ? descent_path : descent2_path;
@@ -1176,21 +1167,21 @@ CRect	rc;
 pWnd->GetClientRect (rc);
 
 if (texture1 < 0) {
-	segP = (nSegment < 0) ? mine->CurrSeg () : mine->Segments (nSegment);
-	sideP = (nSide < 0) ? mine->CurrSide () : segP->sides + nSide;
-	INT32 nSide = mine->Current ()->nSide;
+	segP = (nSegment < 0) ? theMine->CurrSeg () : theMine->Segments (nSegment);
+	sideP = (nSide < 0) ? theMine->CurrSide () : segP->sides + nSide;
+	INT32 nSide = theMine->Current ()->nSide;
 	texture1 = sideP->nBaseTex;
 	texture2 = sideP->nOvlTex & 0x1fff;
 	if (segP->children [nSide] == -1)
 		bShowTexture = TRUE;
 	else {
 		nWall = sideP->nWall;
-		bShowTexture = (nWall < mine->GameInfo ().walls.count);
+		bShowTexture = (nWall < theMine->GameInfo ().walls.count);
 		}
 	}
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES () + 10))
+if ((texture1 < 0) || (texture1 >= MAX_TEXTURES + 10))
 	bShowTexture = false;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES ()))	// this allows to suppress bitmap display by 
+if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))	// this allows to suppress bitmap display by 
 	bShowTexture = false;									// passing 0 for texture 1 and -1 for texture2
 
 if (bShowTexture) {
@@ -1208,7 +1199,7 @@ if (bShowTexture) {
 		CDTexture	tx (bmBuf);
 		if (DefineTexture (texture1, texture2, &tx, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
-		CPalette *pOldPalette = pDC->SelectPalette (mine->m_currentPalette, FALSE);
+		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
 		pDC->RealizePalette ();
 		INT32 caps = pDC->GetDeviceCaps (RASTERCAPS);
 		if (caps & RC_DIBTODEV) {

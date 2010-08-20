@@ -41,7 +41,6 @@ CToolDlg::CToolDlg (UINT nIdTemplate, CPropertySheet *pParent)
 	: CPropertyPage (nIdTemplate, 0)
 {
 m_pParent = pParent; 
-m_mine = NULL; 
 m_bInited = false; 
 EnableToolTips (true);
 }
@@ -129,13 +128,6 @@ INT32 CToolDlg::GetCheck (INT32 nIdC)
 	CButton	*pb;
 
 return (pb = (CButton *) GetDlgItem (nIdC)) ? pb->GetCheck () : FALSE;
-}
-
-                        /*--------------------------*/
-
-CMine *CToolDlg::GetMine ()
-{
-return (m_mine = theApp.GetMine ()); 
 }
 
 								/*--------------------------*/
@@ -312,18 +304,16 @@ return TRUE;
 
 bool CTexToolDlg::Refresh (INT16 nBaseTex, INT16 nOvlTex, INT16 nVisible)
 {
-if (!GetMine ())
-	return false;
 m_frame [0] = 0;
 m_frame [1] = 0;
 if (nVisible < 0)
 	nVisible = (INT16) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		INT16 nSegment = m_bOtherSeg ? m_mine->Other ()->nSegment : m_mine->Current ()->nSegment;
-		INT16 nSide = m_bOtherSeg ? m_mine->Other ()->nSide : m_mine->Current ()->nSide;
-		if (nVisible = m_mine->IsWall (nSegment, nSide)) {
-			CSide *sideP = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
+		INT16 nSegment = m_bOtherSeg ? theMine->Other ()->nSegment : theMine->Current ()->nSegment;
+		INT16 nSide = m_bOtherSeg ? theMine->Other ()->nSide : theMine->Current ()->nSide;
+		if (nVisible = theMine->IsWall (nSegment, nSide)) {
+			CSide *sideP = m_bOtherSeg ? theMine->OtherSide () : theMine->CurrSide ();
 			nBaseTex = sideP->nBaseTex;
 			nOvlTex = sideP->nOvlTex & 0x3fff;
 			}
@@ -331,7 +321,7 @@ if (nVisible > 0) {
 	}
 if (nVisible > 0)
 	return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, nBaseTex, nOvlTex);
-return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES (m_mine));
+return PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
 }
 
                         /*--------------------------*/
@@ -340,11 +330,11 @@ void CTexToolDlg::OnPaint ()
 {
 CToolDlg::OnPaint ();
 if (TextureIsVisible ()) {
-	CSide *sideP = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
+	CSide *sideP = m_bOtherSeg ? theMine->OtherSide () : theMine->CurrSide ();
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, sideP->nBaseTex, sideP->nOvlTex & 0x1fff);
 	}
 else
-	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES (m_mine));
+	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
 m_textureWnd.InvalidateRect (NULL);
 m_textureWnd.UpdateWindow ();
 }
@@ -379,23 +369,21 @@ void CTexToolDlg::AnimateTexture (void)
 {
 if (!TextureIsVisible ())
 	return;
-if (!GetMine ())
-	return;
 
-	CSegment *segP = m_bOtherSeg ? m_mine->OtherSeg () : m_mine->CurrSeg ();
+	CSegment *segP = m_bOtherSeg ? theMine->OtherSeg () : theMine->CurrSeg ();
 
 	UINT16 texture [2];
 	INT32 bScroll;
 	INT32 x,y;
 
-	CSide	*sideP = m_bOtherSeg ? m_mine->OtherSide () : m_mine->CurrSide ();
+	CSide	*sideP = m_bOtherSeg ? theMine->OtherSide () : theMine->CurrSide ();
 
 texture [0] = sideP->nBaseTex & 0x3fff;
 texture [1] = sideP->nOvlTex;
 
 // if texture1 is a scrolling texture, then offset the textures and
 // redraw them, then return
-bScroll = m_mine->ScrollSpeed (texture [0], &x, &y);
+bScroll = theMine->ScrollSpeed (texture [0], &x, &y);
 if (bScroll) {
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, texture [0], texture [1], scroll_offset_x, scroll_offset_y);
 //	DrawTexture (texture [0], texture [1], scroll_offset_x, scroll_offset_y);
@@ -418,11 +406,11 @@ scroll_offset_y = 0;
 // abort if this is not a wall
 #ifndef _DEBUG
 UINT16 nWall = sideP->nWall;
-if (nWall >= m_mine->GameInfo ().walls.count)
+if (nWall >= theMine->GameInfo ().walls.count)
 	return;
 
 // abort if this wall is not a door
-//if (m_mine->Walls (nWall)->type != WALL_DOOR)
+//if (theMine->Walls (nWall)->type != WALL_DOOR)
 //	return;
 #endif
 	INT32 i;

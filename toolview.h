@@ -56,7 +56,6 @@ class CConvertDlg : public CDialog
 {
 	public:
 		bool			m_bInited;
-		CMine			*m_mine;
 		CWnd			m_showD1;
 		CWnd			m_showD2;
 		HINSTANCE	m_hInst;
@@ -70,7 +69,6 @@ class CConvertDlg : public CDialog
 		void CreateImgWnd (CWnd *pImgWnd, INT32 nIdC);
 		void Reset ();
 		void Refresh ();
-		CMine *GetMine ();
 		afx_msg void OnPaint ();
 		afx_msg void OnSetD1 ();
 		afx_msg void OnSetD2 ();
@@ -92,12 +90,11 @@ class CToolDlg : public CPropertyPage
    protected:
       CPropertySheet *  m_pParent;
 	public:
-		CMine *m_mine;
 		bool	m_bInited;
 
 		CToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = NULL);
 		~CToolDlg ()
-			{ m_pParent = NULL; m_mine = NULL; m_bInited = false; }
+			{ m_pParent = NULL; m_bInited = false; }
       virtual BOOL OnInitDialog () 
 			{ return CPropertyPage::OnInitDialog (); }
       virtual BOOL OnSetActive () {
@@ -117,7 +114,6 @@ class CToolDlg : public CPropertyPage
 		INT32 GetCheck (INT32 nIdC);
 		INT32 CBAddString (CComboBox *pcb, char *str);
 		void SelectItemData (CComboBox *pcb, INT32 nItemData);
-		CMine *GetMine ();
 		void EnableControls (INT32 nIdFirst, INT32 nIdLast, BOOL bEnable);
 #if 0
 		INT32 OnToolHitTest (CPoint point, TOOLINFO* pTI);

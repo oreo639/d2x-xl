@@ -345,7 +345,6 @@ bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile)
 	char*		pszExt;
 	INT32		index = -1;
 	bool		funcRes = false;
-	CMine*	mine = theApp.GetMine ();
 
 if (!pszFile)
 	pszFile = m_pszFile;
@@ -371,7 +370,7 @@ if (!(fTmp && fSrc)) {
 // set subfile name
 fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
 size_t fPos = ftell (fSrc);
-if (mine->LoadMineSigAndType (fSrc))
+if (theMine->LoadMineSigAndType (fSrc))
 	goto errorExit;
 fseek (fSrc, long (fPos), SEEK_SET);
 while (size > 0) {
@@ -428,7 +427,7 @@ if (pszExt) {
 		}
 	}
 
-//MEMSET (mine->TexColors (), 0, sizeof (mine->MineData ().texColors));
+//MEMSET (theMine->TexColors (), 0, sizeof (theMine->MineData ().texColors));
 sprintf_s (pszExt, 5, ".clr");
 if (pszSubFile)
 	FindFileData (pszFile, message, &size, &offset);
@@ -442,7 +441,7 @@ else {
 if ((size >= 0) && (offset >= 0)) {
 	fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
 	INT32 h = ftell (fSrc);
-	mine->ReadColorMap (fSrc);
+	theMine->ReadColorMap (fSrc);
 	h = ftell (fSrc) - h;
 	}
 // read custom textures if a pog file exists
@@ -482,11 +481,10 @@ if (pszExt) {
 		}
 	if ((size >= 0) && (offset >= 0)) {
 		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		theApp.GetMine ()->ReadHxmFile (fSrc, size);
-		CMine *mine = theApp.GetMine ();
+		theMine->ReadHxmFile (fSrc, size);
 		INT32 i, count;
 		for (i = 0, count = 0; i < (INT32) N_robot_types;i++)
-			if (mine->RobotInfo (i)->pad [0])
+			if (theMine->RobotInfo (i)->pad [0])
 				count++;
 		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);
 		DEBUGMSG (message);
@@ -1159,7 +1157,6 @@ INT32 MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveA
 	char szTmp[256], szBase [13];
 	INT32 custom_robots = 0;
 	INT32 custom_textures = 0;
-	CMine *mine = theApp.GetMine ();
 
 // create HOG file which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
 strcpy_s (filename, sizeof (filename), hogFilename);
@@ -1223,7 +1220,7 @@ if (IsD2File ()) {
 	}
 #endif
 
-if (mine->HasCustomLightMap ()) {
+if (theMine->HasCustomLightMap ()) {
 	FSplit (hogFilename, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
 	fopen_s (&fTmp, szTmp, "wb");
@@ -1238,12 +1235,12 @@ if (mine->HasCustomLightMap ()) {
 		_unlink (szTmp);
 		}
 	}
-if (mine->HasCustomLightColors ()) {
+if (theMine->HasCustomLightColors ()) {
 	FSplit (hogFilename, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
 	fopen_s (&fTmp, szTmp, "wb");
 	if (fTmp) {
-		if (!mine->WriteColorMap (fTmp)) {
+		if (!theMine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (szBase, sizeof (szBase), "%s.clr", szBaseName);
 			WriteSubFile (hogfile, szTmp, szBase);
@@ -1294,7 +1291,7 @@ if (HasCustomTextures ()) {
 		}
 	}
 // if robot info has changed, ask if user wants to create a hxm file
-if (theApp.GetMine ()->HasCustomRobots ()) {
+if (theMine->HasCustomRobots ()) {
 	if (bExpertMode ||
 		 QueryMsg ("This level contains custom robot settings.\n"
 					  "Would you like save these changes into the HOG file?\n\n"
@@ -1304,7 +1301,7 @@ if (theApp.GetMine ()->HasCustomRobots ()) {
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 		fopen_s (&fTmp, szTmp, "wb");
 		if (fTmp) {
-			if (!theApp.GetMine ()->WriteHxmFile (fTmp)) {
+			if (!theMine->WriteHxmFile (fTmp)) {
 				sprintf_s (szBase, sizeof (szBase), "%s.hxm", szBaseName);
 				WriteSubFile (hogfile, szTmp, szBase);
 				custom_robots = 1;
@@ -1327,7 +1324,6 @@ INT32 SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs)
 	FILE	*fTmp;
 	char szTmp [256], subName [256];
 	char *psz;
-	CMine *mine = theApp.GetMine ();
 
 _strlwr_s (szHogFile, 256);
 psz = strstr (szHogFile, "new.");
@@ -1361,7 +1357,7 @@ fopen_s (&file, szHogFile, "rb");
 if (!file) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
-	theApp.GetMine ()->Save (szTmp);
+	theMine->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, true);
 	}
 fseek (file,3,SEEK_SET); // skip "HOG"
@@ -1409,7 +1405,7 @@ else {
 if (bQuickSave) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
-	theApp.GetMine ()->Save (szTmp);
+	theMine->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, bSaveAs);
 //	MySetCaption (szHogFile);
 	}
@@ -1435,10 +1431,10 @@ if (!file) {
 fseek (file, 0, SEEK_END);
 FSplit (szHogFile, szTmp, NULL, NULL);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
-theApp.GetMine ()->Save (szTmp, true);
+theMine->Save (szTmp, true);
 WriteSubFile (file, szTmp, szSubFile);
 
-if (mine->HasCustomLightMap ()) {
+if (theMine->HasCustomLightMap ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
 	fopen_s (&fTmp, szTmp, "wb");
@@ -1457,12 +1453,12 @@ if (mine->HasCustomLightMap ()) {
 	if (!bOk)
 		ErrorMsg ("Error writing custom light map.");
 	}
-if (mine->HasCustomLightColors ()) {
+if (theMine->HasCustomLightColors ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
 	fopen_s (&fTmp, szTmp, "wb");
 	if (fTmp) {
-		if (!mine->WriteColorMap (fTmp)) {
+		if (!theMine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (subName, sizeof (subName), "%s.clr", base);
 			WriteSubFile (file, szTmp, subName);
@@ -1491,13 +1487,13 @@ if (HasCustomTextures ()) {
 		ErrorMsg ("Error writing custom textures.");
 	}
 
-if (theApp.GetMine ()->HasCustomRobots ()) {
+if (theMine->HasCustomRobots ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
-		if (!theApp.GetMine ()->WriteHxmFile (fTmp)) {
+		if (!theMine->WriteHxmFile (fTmp)) {
 			sprintf_s (subName, sizeof (subName), "%s.hxm", base);
 			WriteSubFile (file, szTmp, subName);
 			bOk = true;

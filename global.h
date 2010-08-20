@@ -31,7 +31,7 @@ extern INT32 preferences;
 extern LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 extern LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 extern UINT32        N_robot_types;
-//extern ROBOT_INFO   *Robot_info;
+//extern ROBOT_INFO   *robotInfo;
 #if ALLOCATE_POLYOBJECT
 extern UINT32        N_robot_joints;
 extern UINT32        N_polygon_models;

@@ -41,12 +41,12 @@ for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 		}
 	else if (nTexture >= 0) {
 		if (walltype >= 0) {
-			if ((GameInfo ().walls.count < MAX_WALLS (this)) &&
+			if ((GameInfo ().walls.count < MAX_WALLS) &&
 				 (Segments (nSegment)->sides [nSide].nWall >= GameInfo ().walls.count))
 				AddWall (nSegment, nSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
-			if ((GameInfo ().walls.count < MAX_WALLS (this)) &&
+			if ((GameInfo ().walls.count < MAX_WALLS) &&
 				 GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
 				 (Segments (nOppSeg)->sides [nOppSide].nWall >= GameInfo ().walls.count))
 				AddWall (nOppSeg, nOppSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
@@ -206,7 +206,7 @@ return true;
 bool CMine::AddEquipMaker (INT16 nSegment, bool bCreate, bool bSetDefTextures) 
 {
 INT32 n_matcen = (INT32) GameInfo ().equipgen.count;
-if (n_matcen >= MAX_ROBOT_MAKERS (this)) {
+if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
@@ -244,7 +244,7 @@ return true;
 bool CMine::AddRobotMaker (INT16 nSegment, bool bCreate, bool bSetDefTextures) 
 {
 INT32 n_matcen = (INT32) GameInfo ().botgen.count;
-if (n_matcen >= MAX_ROBOT_MAKERS (this)) {
+if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}
@@ -393,7 +393,7 @@ bool CMine::AddFuelCenter (INT16 nSegment, UINT8 nType, bool bCreate, bool bSetD
 // count number of fuel centers
 INT32 n_fuelcen = FuelCenterCount ();
 CSegment *segP = Segments ();
-if (n_fuelcen >= MAX_NUM_FUELCENS (this)) {
+if (n_fuelcen >= MAX_NUM_FUELCENS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
 	}
@@ -410,7 +410,7 @@ if (bCreate && !AddSegment ()) {
 	}	
 INT32 new_segment = Current ()->nSegment;
 Current ()->nSegment = last_segment;
-if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS (this)))
+if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS))
 	AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
 Current ()->nSegment = new_segment;
 if (!((nType == SEGMENT_FUNC_FUELCEN) ?
@@ -441,7 +441,7 @@ if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count + 1 >= MAX_WALLS (this)) {
+if (GameInfo ().walls.count + 1 >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls reached");
 	return false;
 	}
@@ -595,11 +595,11 @@ if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS (this) - 1) {
+if (GameInfo ().walls.count >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -638,11 +638,11 @@ if (IsD1File ()) {
     AddExit (TT_SECRET_EXIT);
 	 return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS (this)) {
+if (GameInfo ().walls.count >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -678,11 +678,11 @@ if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS (this) - 1) {
+if (GameInfo ().walls.count >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS (this) - 1) {
+if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}

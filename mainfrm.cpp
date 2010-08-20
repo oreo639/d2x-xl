@@ -668,17 +668,17 @@ m_paneMode = 0;
 
 void CMainFrame::OnEditMark() 
 {
-GetMine ()->Mark();
+theMine->Mark();
 }
 
 void CMainFrame::OnEditMarkAll() 
 {
-GetMine ()->MarkAll();
+theMine->MarkAll();
 }
 
 void CMainFrame::OnEditUnmarkAll() 
 {
-GetMine ()->UnmarkAll();
+theMine->UnmarkAll();
 }
 
 void CMainFrame::OnEditTexture() 
@@ -744,7 +744,7 @@ ToolView ()->EditReactor ();
 void CMainFrame::OnTunnelGenerator () 
 {
 ShowTools ();
-GetMine ()->TunnelGenerator ();
+theMine->TunnelGenerator ();
 }
 
 void CMainFrame::OnTxtFilters () 
@@ -755,12 +755,12 @@ ToolView ()->TextureFilter ();
 
 void CMainFrame::OnIncSpline () 
 {
-GetMine ()->IncreaseSpline ();
+theMine->IncreaseSpline ();
 }
 
 void CMainFrame::OnDecSpline () 
 {
-GetMine ()->DecreaseSpline ();
+theMine->DecreaseSpline ();
 }
 
 void CMainFrame::OnRedraw() 
@@ -877,42 +877,42 @@ void CMainFrame::OnViewUsedTextures()
 
 void CMainFrame::OnJoinPoints ()
 {
-GetMine ()->JoinPoints ();
+theMine->JoinPoints ();
 }
 
 void CMainFrame::OnJoinLines ()
 {
-GetMine ()->JoinLines ();
+theMine->JoinLines ();
 }
 
 void CMainFrame::OnJoinSides ()
 {
-GetMine ()->JoinSegments ();
+theMine->JoinSegments ();
 }
 
 void CMainFrame::OnJoinCurrentSide ()
 {
-GetMine ()->JoinSegments (1);
+theMine->JoinSegments (1);
 }
 
 void CMainFrame::OnSplitPoints ()
 {
-GetMine ()->SplitPoints ();
+theMine->SplitPoints ();
 }
 
 void CMainFrame::OnSplitLines ()
 {
-GetMine ()->SplitLines ();
+theMine->SplitLines ();
 }
 
 void CMainFrame::OnSplitSides ()
 {
-GetMine ()->SplitSegments ();
+theMine->SplitSegments ();
 }
 
 void CMainFrame::OnSplitCurrentSide ()
 {
-GetMine ()->SplitSegments (1);
+theMine->SplitSegments (1);
 }
 
 void CMainFrame::UpdateInsModeButtons (INT16 mode)
@@ -1321,7 +1321,7 @@ void CMainFrame::OnUpdateViewTexturemapped(CCmdUI* pCmdUI)
 
 bool CMainFrame::EditGeoFwd (void)
 {
-if (!GetMine ()->EditGeoFwd ())
+if (!theMine->EditGeoFwd ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1329,7 +1329,7 @@ return true;
 
 bool CMainFrame::EditGeoUp (void)
 {
-if (!GetMine ()->EditGeoUp ())
+if (!theMine->EditGeoUp ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1337,7 +1337,7 @@ return true;
 
 bool CMainFrame::EditGeoBack (void)
 {
-if (!GetMine ()->EditGeoBack ())
+if (!theMine->EditGeoBack ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1345,7 +1345,7 @@ return true;
 
 bool CMainFrame::EditGeoRotLeft (void)
 {
-if (!GetMine ()->EditGeoRotLeft ())
+if (!theMine->EditGeoRotLeft ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1353,7 +1353,7 @@ return true;
 
 bool CMainFrame::EditGeoGrow (void)
 {
-if (!GetMine ()->EditGeoGrow ())
+if (!theMine->EditGeoGrow ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1361,7 +1361,7 @@ return true;
 
 bool CMainFrame::EditGeoRotRight (void)
 {
-if (!GetMine ()->EditGeoRotRight ())
+if (!theMine->EditGeoRotRight ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1369,7 +1369,7 @@ return true;
 
 bool CMainFrame::EditGeoLeft (void)
 {
-if (!GetMine ()->EditGeoLeft ())
+if (!theMine->EditGeoLeft ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1377,7 +1377,7 @@ return true;
 
 bool CMainFrame::EditGeoDown (void)
 {
-if (!GetMine ()->EditGeoDown ())
+if (!theMine->EditGeoDown ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1385,7 +1385,7 @@ return true;
 
 bool CMainFrame::EditGeoRight (void)
 {
-if (!GetMine ()->EditGeoRight ())
+if (!theMine->EditGeoRight ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1393,7 +1393,7 @@ return true;
 
 bool CMainFrame::EditGeoShrink (void)
 {
-if (!GetMine ()->EditGeoShrink ())
+if (!theMine->EditGeoShrink ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1587,40 +1587,40 @@ void CMainFrame::OnConvert ()
 {
 	CConvertDlg	d;
 
-if (GetMine ()->IsD1File ()) {
+if (theMine->IsD1File ()) {
 	if (d.DoModal () == IDOK) {
 		MineView ()->Refresh ();
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Descent 2 level")
 		else
 			ErrorMsg ("Mine converted to a Descent 2 level.");
-		GetMine ()->ConvertWallNum (MAX_WALLS1 + 1, MAX_WALLS2 + 1);
+		theMine->ConvertWallNum (MAX_WALLS1 + 1, MAX_WALLS2 + 1);
 		}
 	}
 else {
-	if (GetMine ()->LevelVersion () < 8) {
-		GetMine ()->SetLevelVersion (8);
+	if (theMine->LevelVersion () < 8) {
+		theMine->SetLevelVersion (8);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a Vertigo level.");
 		}
-	else if (GetMine ()->LevelVersion () < LEVEL_VERSION) {
-		GetMine ()->SetLevelVersion (LEVEL_VERSION);
+	else if (theMine->LevelVersion () < LEVEL_VERSION) {
+		theMine->SetLevelVersion (LEVEL_VERSION);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a D2X-XL level")
 		else
 			ErrorMsg ("Mine converted to a D2X-XL level.");
-		GetMine ()->ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
-		GetMine ()->NumObjTriggers () = 0;
+		theMine->ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
+		theMine->NumObjTriggers () = 0;
 		}
 	else {
-		GetMine ()->SetLevelVersion (7);
+		theMine->SetLevelVersion (7);
 		if (bExpertMode)
 			INFOMSG (" Mine converted to a non-Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a non-Vertigo level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
-		GetMine ()->ConvertWallNum (MAX_WALLS3 + 1, MAX_WALLS2 + 1);
+		theMine->ConvertWallNum (MAX_WALLS3 + 1, MAX_WALLS2 + 1);
 		}
 	}
 }

@@ -54,7 +54,7 @@ void CMine::DeleteSegmentWalls (INT16 nSegment)
 
 INT32 i;
 for (i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
-	if (sideP->nWall != NO_WALL (this))
+	if (sideP->nWall != NO_WALL)
 		DeleteWall (sideP->nWall); 
 }
 
@@ -103,7 +103,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (child >= 0 && child < SegCount ()) {
 		INT16	oppSegNum, oppSideNum;
 		GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
-		if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL (this))
+		if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL)
 			DeleteWall (Segments (oppSegNum)->sides [oppSideNum].nWall); 
 			}
 		}
@@ -404,7 +404,7 @@ segP->childFlags = 0;
 // define Walls ()
 segP->wallFlags = 0; // unmarked cube
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	segP->sides [nSide].nWall = NO_WALL (this); 
+	segP->sides [nSide].nWall = NO_WALL; 
 	segP->sides [nSide].nBaseTex =
 	segP->sides [nSide].nOvlTex = 0; 
 	INT32 i;
@@ -432,11 +432,11 @@ if (m_bSplineActive) {
 
 currSeg = Segments (Current ()->nSegment); 
 
-if (SegCount () >= MAX_SEGMENTS (this)) {
+if (SegCount () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
 	return FALSE;
 	}
-if (SegCount () >= MAX_SEGMENTS (this)) {
+if (SegCount () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
@@ -1089,7 +1089,7 @@ void CMine::MarkSegment(INT16 nSegment)
 	// update vertices's marked status
 	// ..first clear all marked verts
 	INT16 nVertex; 
-	for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++)
+	for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 		VertStatus (nVertex) &= ~MARKED_MASK; 
 	// ..then mark all verts for marked Segments ()
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
@@ -1141,10 +1141,10 @@ theApp.MineView ()->Refresh ();
 void CMine::UnmarkAll() {
 	INT32 i; 
 	CSegment *segP = Segments ();
-	for (i = 0; i < MAX_SEGMENTS (this); i++, segP++)
+	for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 		segP->wallFlags &= ~MARKED_MASK; 
 	UINT8& stat = VertStatus ();
-	for (i = 0; i < MAX_VERTICES (this); i++, stat++)
+	for (i = 0; i < MAX_VERTICES; i++, stat++)
 		stat &= ~MARKED_MASK; 
 	theApp.MineView ()->Refresh (); 
 }
@@ -1278,7 +1278,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (VertCount () > (MAX_VERTICES (this) - 1)) {
+if (VertCount () > (MAX_VERTICES - 1)) {
 	ErrorMsg ("Cannot unjoin these points because the\n"
 				"maximum number of points is reached."); 
 	return; 
@@ -1355,7 +1355,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (VertCount () > (MAX_VERTICES (this) - 2)) {
+if (VertCount () > (MAX_VERTICES - 2)) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot unjoin these lines because\nthere are not enought points left."); 
 	return; 
@@ -1474,7 +1474,7 @@ for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP+
 
 found:
 
-if (!solidify && (VertCount () > (MAX_VERTICES (this) - nFound))) {
+if (!solidify && (VertCount () > (MAX_VERTICES - nFound))) {
 	ErrorMsg ("Cannot unjoin this side because\nthere are not enough vertices left."); 
 	return; 
 	}
@@ -1703,7 +1703,7 @@ theApp.UnlockUndo ();
 //			  set_lines_to_draw()
 //
 //  ACTION - Determines which lines will be shown when drawing 3d image of
-//           the mine->  This helps speed up drawing by avoiding drawing lines
+//           the theMine->  This helps speed up drawing by avoiding drawing lines
 //           multiple times.
 //
 // -------------------------------------------------------------------------- 
@@ -2035,7 +2035,7 @@ if (QueryMsg("Are you sure you want to create a new cube which\n"
 //  nNewSeg = first_free_segment(); 
 //  if (nNewSeg== -1) {
 nNewSeg = SegCount (); 
-if (!(SegCount () < MAX_SEGMENTS (this))) {
+if (!(SegCount () < MAX_SEGMENTS)) {
 	if (!bExpertMode)
 		ErrorMsg ("The maximum number of Segments () has been reached.\n"
 					"Cannot add any more Segments ()."); 
@@ -2073,7 +2073,7 @@ for (i = 0; i < 4; i++) {
 // define Walls ()
 segP->wallFlags = 0; // unmarked
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
-	segP->sides [nSide].nWall = NO_WALL (this); 
+	segP->sides [nSide].nWall = NO_WALL; 
 
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -2660,7 +2660,7 @@ bool CMine::SplitSegment ()
 	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};
 
-if (SegCount () >= MAX_SEGMENTS (this) - 6) {
+if (SegCount () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
@@ -2765,9 +2765,9 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 	centerSegP->childFlags |= (1 << nSide);
 	nWall = centerSegP->sides [nSide].nWall;
 	segP->sides [nSide].nWall = nWall;
-	if ((nWall >= 0) && (nWall != NO_WALL (this))) {
+	if ((nWall >= 0) && (nWall != NO_WALL)) {
 		Walls (nWall)->m_nSegment = nSegment;
-		centerSegP->sides [nSide].nWall = NO_WALL (this);
+		centerSegP->sides [nSide].nWall = NO_WALL;
 		}
 	}
 // relocate center segment vertex indices
@@ -2952,7 +2952,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 							? (nLevelVersion < 13) 
 								? UINT16 (read_INT8 (fp)) 
 								: UINT16 (read_INT16 (fp)) 
-							: NO_WALL (theApp.GetMine ());
+							: NO_WALL;
 
 // read in textures and uvls (0 to 60 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
@@ -2968,7 +2968,7 @@ UINT8 CSegment::WriteWalls (FILE* fp, int nLevelVersion)
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if(sides [i].nWall < theApp.GetMine ()->GameInfo ().walls.count) 
+	if(sides [i].nWall < theMine->GameInfo ().walls.count) 
 		wallFlags |= (1 << i);
 	}
 write_INT8 (wallFlags, fp);

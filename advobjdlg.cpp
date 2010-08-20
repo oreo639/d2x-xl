@@ -54,8 +54,6 @@ CAdvObjTool::CAdvObjTool (CPropertySheet *pParent)
 
 BOOL CAdvObjTool::OnInitDialog ()
 {
-if (!GetMine ())
-	return FALSE;
 CToolDlg::OnInitDialog ();
 m_bInited = true;
 return TRUE;
@@ -93,12 +91,10 @@ DDX_Text (pDX, IDC_ADVOBJ_FRAMENO, m_frameNo);
 
 void CAdvObjTool::OnAccept (void)
 {
-if (!m_bInited)
-	return;
-if (!GetMine ())
+if (!(m_bInited && theMine))
 	return;
 UpdateData (TRUE);
-CGameObject *pObj = m_mine->CurrObj ();
+CGameObject *pObj = theMine->CurrObj ();
 pObj->mType.physInfo.mass = m_mass;
 pObj->mType.physInfo.drag = m_drag;
 pObj->mType.physInfo.brakes = m_brakes;
@@ -138,15 +134,13 @@ return CToolDlg::OnSetActive ();
 
 void CAdvObjTool::Refresh ()
 {
-if (!m_bInited)
+if (!(m_bInited && theMine))
 	return;
-if (!GetMine ())
-	return;
-if (!m_mine->GameInfo ().objects.count) {
+if (!theMine->GameInfo ().objects.count) {
 	EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, FALSE);
 	return;
 	}
-CGameObject *pObj = m_mine->CurrObj ();
+CGameObject *pObj = theMine->CurrObj ();
 EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, TRUE);
 m_size = pObj->size;
 m_shields = pObj->shields;

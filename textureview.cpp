@@ -237,13 +237,12 @@ Refresh ();
 
 void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	CMine	*mine = theApp.GetMine ();
 	INT16 nBaseTex;
 
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = mine->Objects () + mine->Current ()->nObject;
+	CGameObject *objP = theMine->Objects () + theMine->Current ()->nObject;
    if (objP->render_type != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.tmap_override = nBaseTex;
@@ -253,7 +252,7 @@ else if (nFlags & MK_CONTROL) {
 	theApp.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	mine->SetTexture (-1, -1, nBaseTex, -1);
+	theMine->SetTexture (-1, -1, nBaseTex, -1);
 	Refresh ();
 	}
 theApp.SetModified (TRUE);
@@ -263,8 +262,7 @@ theApp.SetModified (TRUE);
 
 void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	CMine	*mine = theApp.GetMine ();
-	CSide *sideP = mine->CurrSide ();
+	CSide *sideP = theMine->CurrSide ();
 	INT16	nBaseTex;
 
 if (PickTexture (point, nBaseTex))
@@ -274,7 +272,7 @@ if (nFlags & MK_CONTROL) {
 	theApp.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	mine->SetTexture (-1, -1, -1, nBaseTex);
+	theMine->SetTexture (-1, -1, -1, nBaseTex);
 	Refresh ();
 	}
 theApp.SetModified (TRUE);
@@ -392,17 +390,16 @@ if (bShowAll) {
 	}
 else {
 	UINT16 nSegment,nSide;
-	CMine	*mine = theApp.GetMine ();
 	CSegment *segP;
 
 	MEMSET (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 	m_nTextures [0] = 0;
-	for (nSegment = 0, segP = mine->Segments (); nSegment < mine->SegCount (); nSegment++, segP++)
+	for (nSegment = 0, segP = theMine->Segments (); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
 			UINT16 nWall = segP->sides[nSide].nWall;
 			if ((segP->children [nSide] == -1) ||
-				 (nWall < mine->GameInfo ().walls.count && 
-				  mine->Walls (nWall)->type != WALL_OPEN)) {
+				 (nWall < theMine->GameInfo ().walls.count && 
+				  theMine->Walls (nWall)->type != WALL_OPEN)) {
 				INT32 t = segP->sides [nSide].nBaseTex;
 				INT32 i = TextureIndex (t);
 				INT32 j = TexFilterIndex (t);
@@ -437,7 +434,6 @@ void CTextureView::RecalcLayout ()
 
   INT32 nOffset = 0;
   m_bShowAll = ((m_viewFlags & eViewMineUsedTextures) == 0);
-  CMine	*mine = theApp.GetMine ();
 
   if (!(m_viewSpace.cx && m_viewSpace.cy))
 		return;
@@ -467,8 +463,8 @@ void CTextureView::RecalcLayout ()
 		}
 	SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
   // figure out position of current texture
-  INT32 nBaseTex = mine->CurrSide ()->nBaseTex;
-  INT32 nOvlTex = mine->CurrSide ()->nOvlTex & 0x3fff; // strip rotation info
+  INT32 nBaseTex = theMine->CurrSide ()->nBaseTex;
+  INT32 nOvlTex = theMine->CurrSide ()->nOvlTex & 0x3fff; // strip rotation info
   CDTexture tx (bmBuf);
 
 	CDC *pDC = GetDC();
@@ -480,7 +476,7 @@ void CTextureView::RecalcLayout ()
 	bmi = MakeBitmap();
 
       // realize pallette for 256 color displays
-	CPalette *oldPalette = pDC->SelectPalette(mine->m_currentPalette, FALSE);
+	CPalette *oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 	pDC->RealizePalette();
 	pDC->SetStretchBltMode(STRETCH_DELETESCANS);
 	INT32 x=0;

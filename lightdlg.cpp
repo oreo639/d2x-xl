@@ -111,28 +111,27 @@ DDX_Check (pDX, IDC_LIGHT_COPYTEXLIGHTS, m_bCopyTexLights);
 
 void CLightTool::OnOK ()
 {
-	CMine	*mine = theApp.GetMine ();
 	bool		bAll;
 
 UpdateData (TRUE);
 // make sure there are marked blocks
-mine->m_nNoLightDeltas = m_nNoLightDeltas;
-mine->m_lightRenderDepth = m_lightRenderDepth;
-mine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
-if (bAll = !mine->GotMarkedSides ())
+theMine->m_nNoLightDeltas = m_nNoLightDeltas;
+theMine->m_lightRenderDepth = m_lightRenderDepth;
+theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
+if (bAll = !theMine->GotMarkedSides ())
 	INFOMSG (" light processing entire mine");
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (m_bIlluminate)
-	mine->AutoAdjustLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
+	theMine->AutoAdjustLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
 if (m_bAvgCornerLight)
-	mine->CalcAverageCornerLight (bAll);
+	theMine->CalcAverageCornerLight (bAll);
 if (m_bScaleLight)
-	mine->ScaleCornerLight (m_fLightScale, bAll);
+	theMine->ScaleCornerLight (m_fLightScale, bAll);
 if (m_bCubeLight)
-	mine->SetCubeLight (m_fCubeLight, (INT32) bAll, m_bDynCubeLights != 0);
+	theMine->SetCubeLight (m_fCubeLight, (INT32) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
-	mine->CalcDeltaLightData (m_fDeltaLight, (INT32) bAll);
+	theMine->CalcDeltaLightData (m_fDeltaLight, (INT32) bAll);
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
 }
@@ -181,20 +180,19 @@ if (!::IsWindow(m_hWnd))
 	return;
 UpdateData (TRUE);
 nVertexLight = (INT32) (m_fVertexLight * f1_0 / 100.0);
-m_mine = theApp.GetMine ();
 
 	INT16			nSegment, nSide, nVertex, i;
-	CSegment	*segP = m_mine->Segments ();
+	CSegment	*segP = theMine->Segments ();
 	CSide		*sideP;
 	bool			bChange = false;
 
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			nVertex = segP->verts [side_vert [nSide][i]];
-			if (m_mine->VertStatus (nVertex) & MARKED_MASK) {
+			if (theMine->VertStatus (nVertex) & MARKED_MASK) {
 				sideP->uvls [i].l = nVertexLight;
 				bChange = true;
 				}
@@ -212,7 +210,7 @@ theApp.MineView ()->Refresh ();
 
 void CLightTool::OnDefaultLightAndColor ()
 {
-theApp.GetMine ()->LoadDefaultLightAndColor ();
+theMine->LoadDefaultLightAndColor ();
 }
 
                         /*--------------------------*/

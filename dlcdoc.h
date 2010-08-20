@@ -21,7 +21,6 @@ protected: // create from serialization only
 // Member variables
 public:
 // Attributes
-	CMine*		m_mine;
 	bool			m_bInitDocument;
 	char			m_szFile [256];
 	char			m_szSubFile [256];
@@ -38,7 +37,6 @@ public:
 		{ return m_szFile; }
 	inline char *SubFile ()
 		{ return m_szSubFile; }
-	inline CMine* GetMine (void) { return &theMine; }
 public:
 // Overrides
 	// ClassWizard generated virtual function overrides
