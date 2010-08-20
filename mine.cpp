@@ -1300,14 +1300,14 @@ else {  /*load mine filename */
 		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaIndices, LightDeltaIndex (), -1, MAX_LIGHT_DELTA_INDICES (this), "Light delta indices"))
 			return -1;
 #else
-		if (GameInfo ().lightDeltaIndices.count > MAX_LIGHT_DELTA_INDICES (this)) {
-			sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
-				GameInfo ().lightDeltaIndices.count, MAX_LIGHT_DELTA_INDICES (this));
-			ErrorMsg (message);
-			GameInfo ().lightDeltaIndices.count = MAX_LIGHT_DELTA_INDICES (this);
-			}
 		if (GameInfo ().lightDeltaIndices.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
-			if (!fseek(loadfile, GameInfo ().lightDeltaIndices.offset, SEEK_SET)) {
+			if (GameInfo ().lightDeltaIndices.count > MAX_LIGHT_DELTA_INDICES (this)) {
+				sprintf_s (message, sizeof (message),  "Error: Max number of delta light indices (%ld/%d) exceeded",
+					GameInfo ().lightDeltaIndices.count, MAX_LIGHT_DELTA_INDICES (this));
+				ErrorMsg (message);
+				GameInfo ().lightDeltaIndices.count = MAX_LIGHT_DELTA_INDICES (this);
+				}
+			else if (!fseek(loadfile, GameInfo ().lightDeltaIndices.offset, SEEK_SET)) {
 				bool bD2X = (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34);
 				for (i = 0; i < GameInfo ().lightDeltaIndices.count; i++) {
 					if (!LightDeltaIndex (i)->Read (loadfile, 0, bD2X)) 
@@ -1326,16 +1326,14 @@ else {  /*load mine filename */
 		if (0 > LoadGameItem (loadfile, GameInfo ().lightDeltaValues, LightDeltaValues (), -1, MAX_LIGHT_DELTA_VALUES (this), "Light delta values"))
 			return -1;
 #else
-		if (GameInfo ().lightDeltaValues.count > MAX_LIGHT_DELTA_VALUES (this)) {
-			sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
-				GameInfo ().lightDeltaValues.count, MAX_LIGHT_DELTA_VALUES (this));
-			ErrorMsg (message);
-			GameInfo ().lightDeltaValues.count = MAX_LIGHT_DELTA_VALUES (this);
-			}
 		if (GameInfo ().lightDeltaValues.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
-			if (!fseek(loadfile, GameInfo ().lightDeltaValues.offset, SEEK_SET)) {
-				CLightDeltaValue *dl, temp_dl;
-				dl = LightDeltaValues ();
+			if (GameInfo ().lightDeltaValues.count > MAX_LIGHT_DELTA_VALUES (this)) {
+				sprintf_s (message, sizeof (message),  "Error: Max number of delta light values (%ld/%d) exceeded",
+					GameInfo ().lightDeltaValues.count, MAX_LIGHT_DELTA_VALUES (this));
+				ErrorMsg (message);
+				GameInfo ().lightDeltaValues.count = MAX_LIGHT_DELTA_VALUES (this);
+				}
+			else if (!fseek(loadfile, GameInfo ().lightDeltaValues.offset, SEEK_SET)) {
 				for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
 					if (!LightDeltaValues (i)->Read (loadfile)) {
 						ErrorMsg ("Error reading delta light values from mine.cpp");
