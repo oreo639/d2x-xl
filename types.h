@@ -616,7 +616,8 @@ typedef struct tSmokeInfo {
 	char			bEnabled;
 } tSmokeInfo;
 
-typedef struct tLightningInfo {
+class CLightningInfo {
+public:
 	INT32			nLife;
 	INT32			nDelay;
 	INT32			nLength;
@@ -638,7 +639,7 @@ typedef struct tLightningInfo {
 	char			bInPlane;
 	char			bEnabled;
 	UINT8			color [4];
-} tLightningInfo;
+};
 
 
 typedef struct tSoundInfo {

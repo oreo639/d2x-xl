@@ -569,7 +569,7 @@ pWnd->UpdateWindow ();
 
 // ------------------------------------------------------------------------
 
-INT32 CGameObject::Read (FILE *fp, INT32 version) 
+INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
 {
 	INT32 i, levelVersion = theApp.LevelVersion ();
 
@@ -767,7 +767,7 @@ return 1;
 // WriteObject()
 // ------------------------------------------------------------------------
 
-void CGameObject::Write (FILE *fp, INT32 version)
+void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
 {
 if (theApp.GetMine()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object

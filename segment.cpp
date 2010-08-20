@@ -3100,7 +3100,7 @@ for (int i = 0; i < 4; i++)
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-INT32 CLightDeltaValue::Read (FILE *fp)
+INT32 CLightDeltaValue::Read (FILE *fp, INT32 version, bool bFlag)
 {
 m_nSegment = read_INT16 (fp);
 m_nSide = INT16 (read_INT8 (fp));
@@ -3111,7 +3111,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CLightDeltaValue::Write (FILE *fp)
+void CLightDeltaValue::Write (FILE *fp, INT32 version, bool bFlag)
 {
 write_INT16 (m_nSegment, fp);
 write_INT8 (INT8 (m_nSide), fp);
@@ -3121,7 +3121,7 @@ for (int i = 0; i < 4; i++)
 
 // ------------------------------------------------------------------------
 
-INT32 CLightDeltaIndex::Read (FILE *fp, bool bD2X)
+INT32 CLightDeltaIndex::Read (FILE *fp, INT32 version, bool bD2X)
 {
 m_nSegment = read_INT16 (fp);
 UINT16 h = read_INT16 (fp);
@@ -3139,7 +3139,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CLightDeltaIndex::Write (FILE *fp, bool bD2X)
+void CLightDeltaIndex::Write (FILE *fp, INT32 version, bool bD2X)
 {
 write_INT16 (m_nSegment, fp);
 if (bD2X)
@@ -3151,7 +3151,7 @@ write_INT16 (index, fp);
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-INT32 CRobotMaker::Read (FILE *fp, INT32 version)
+INT32 CRobotMaker::Read (FILE *fp, INT32 version, bool bFlag)
 {
 objFlags [0] = read_INT32 (fp);
 if (theApp.IsD2File ())
@@ -3165,7 +3165,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CRobotMaker::Write (FILE *fp, INT32 version)
+void CRobotMaker::Write (FILE *fp, INT32 version, bool bFlag)
 {
 write_INT32 (objFlags [0], fp);
 if (theApp.IsD2File ())
