@@ -2933,6 +2933,23 @@ return wallFlags;
 
 // ------------------------------------------------------------------------
 
+void CSegment::WriteExtras (FILE* fp, int nLevelType, bool bExtras)
+{
+if (bExtras) {
+	write_INT8 (function, fp);
+	write_INT8 (nMatCen, fp);
+	write_INT8 (value, fp);
+	write_INT8 (s2_flags, fp);
+	}
+if (nLevelType == 2) {
+	write_INT8 (props, fp);
+	write_INT8 (damage, fp);
+	}
+write_FIX (static_light, fp);
+}
+
+// ------------------------------------------------------------------------
+
 void CSegment::Write (FILE* fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
@@ -2966,17 +2983,15 @@ for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
 // write vertex numbers (16 bytes)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	write_INT16 (verts [i], fp);
+
 // write special info (0 to 4 bytes)
-if (nLevelType == 0) {
-	if (child_bitmask & (1 << MAX_SIDES_PER_SEGMENT)) {
-		write_INT8 (function, fp);
-		write_INT8 (nMatCen, fp);
-		write_INT8 (value, fp);
-		write_INT8 (s2_flags, fp);
-		}
-	// write static light (2 bytes)
-	write_INT16 (INT16 (static_light >> 4), fp);
+if ((function == SEGMENT_FUNC_ROBOTMAKER) && (nMatCen == -1)) {
+	function = SEGMENT_FUNC_NONE;
+	value = 0;
+	child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
 	}
+if (nLevelType == 0)
+	WriteExtras (fp, nLevelType, (child_bitmask & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // calculate wall bit mask
 UINT8 wallFlags = WriteWalls ();

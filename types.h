@@ -32,9 +32,21 @@ typedef unsigned long LONGWORD;
 typedef long FIX;	/*16 bits INT32, 16 bits frac */
 typedef INT16 FIXANG;	/*angles */
 
-typedef struct tFixVector {
-  FIX x,y,z;
-} tFixVector;
+class CFixVector {
+public:
+	FIX x, y, z;
+
+	inline INT32 Read (FILE* fp) { 
+		read_FIX (x, fp);
+		read_FIX (y, fp);
+		read_FIX (z, fp);
+		}
+	void Write (FILE* fp) { 
+		write_FIX (x, fp);
+		write_FIX (y, fp);
+		write_FIX (z, fp);
+		}
+}
 
 typedef struct tAngleVector {
   FIXANG p,b,h;

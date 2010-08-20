@@ -867,6 +867,7 @@ void CMine::Default()
 // ------------------------------------------------------------------------
 // ClearMineData()
 // ------------------------------------------------------------------------
+
 void CMine::ClearMineData() 
 {
 	INT16 i;
@@ -899,29 +900,63 @@ GameInfo ().lightDeltaValues.count = 0;
 
 // ------------------------------------------------------------------------
 
-void CMine::ReadColor (CColor *pc, FILE *loadFile)
+void CColor::Read (FILE *fp, int nLevelVersion)
 {
-	INT32	c;
+index = read_INT8 (fp);
+if (nLevelVersion < nNewVersion) {
+	color.r = read_DOUBLE (fp);
+	color.g = read_DOUBLE (fp);
+	color.b = read_DOUBLE (fp);
+	}
+else {
+	color.r = double (read_INT32 (fp)) / double (0x7fffffff);
+	color.g = double (read_INT32 (fp)) / double (0x7fffffff);
+	color.b = double (read_INT32 (fp)) / double (0x7fffffff);
+	}
+}
 
-fread (&pc->index, sizeof (pc->index), 1, loadFile);
-fread (&c, sizeof (c), 1, loadFile);
-pc->color.r = (double) c / (double) 0x7fffffff;
-fread (&c, sizeof (c), 1, loadFile);
-pc->color.g = (double) c / (double) 0x7fffffff;
-fread (&c, sizeof (c), 1, loadFile);
-pc->color.b = (double) c / (double) 0x7fffffff;
+// ------------------------------------------------------------------------
+
+void CColor::Write (FILE *fp)
+{
+write_INT8 (index, fp);
+write_INT32 (INT32 (color.r * 0x7fffffff + 0.5), fp);
+write_INT32 (INT32 (color.g * 0x7fffffff + 0.5), fp);
+write_INT32 (INT32 (color.b * 0x7fffffff + 0.5), fp);
+}
+
+//--------------------------------------------------------------------------
+
+INT32 CMine::WriteColorMap (FILE *fColorMap)
+{
+SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
+return 0;
+}
+
+//--------------------------------------------------------------------------
+
+INT32 CMine::ReadColorMap (FILE *fColorMap)
+{
+LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
+return 0;
 }
 
 // ------------------------------------------------------------------------
 
 void CMine::LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp)
 {
-if (LevelVersion () > nFirstVersion)
-	if (LevelVersion () < nNewVersion)
-		fread (pc, sizeof (CColor), nColors, fp);
-	else
-		for (; nColors; nColors--, pc++)
-			ReadColor (pc, fp);
+if (LevelVersion () > nFirstVersion) { 
+	for (; nColors; nColors--, pc++)
+		pc->Read (fp, LevelVersion ());
+	}
+}
+
+// ------------------------------------------------------------------------
+
+void CMine::SaveColors (CColor *pc, INT32 nColors, FILE *fp)
+{
+for (; nColors; nColors--, pc++)
+	pc->Write (fp);
 }
 
 // ------------------------------------------------------------------------
@@ -1620,21 +1655,6 @@ if (HasCustomRobots () && !bSaveToHog) {
 
 // ------------------------------------------------------------------------
 
-void CMine::SaveColor (CColor *pc, FILE *save_file)
-{
-	INT32	c;
-
-fwrite (&pc->index, sizeof (pc->index), 1, save_file);
-c = (INT32) (pc->color.r * 0x7fffffff + 0.5);
-fwrite (&c, sizeof (c), 1, save_file);
-c = (INT32) (pc->color.g * 0x7fffffff + 0.5);
-fwrite (&c, sizeof (c), 1, save_file);
-c = (INT32) (pc->color.b * 0x7fffffff + 0.5);
-fwrite (&c, sizeof (c), 1, save_file);
-}
-
-// ------------------------------------------------------------------------
-
 void CMine::SortDLIndex (INT32 left, INT32 right)
 {
 	INT32	l = left,
@@ -1675,101 +1695,42 @@ if (r > left)
 }
 
 // ------------------------------------------------------------------------
-
-void CMine::SaveColors (CColor *pc, INT32 nColors, FILE *fp)
-{
-for (; nColors; nColors--, pc++)
-	SaveColor (pc, fp);
-}
-
-//--------------------------------------------------------------------------
-
-INT32 CMine::WriteColorMap (FILE *fColorMap)
-{
-SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
-return 0;
-}
-
-//--------------------------------------------------------------------------
-
-INT32 CMine::ReadColorMap (FILE *fColorMap)
-{
-LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
-return 0;
-}
-
-// ------------------------------------------------------------------------
 // SaveMineDataCompiled()
 //
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 INT16 CMine::SaveMineDataCompiled(FILE *save_file)
 {
-	INT16    i, nSegment, nSide; /** was INT32 */
-	UINT16   temp_UINT16;
-	UINT8 bitmask;
+	int	i;
+// write version (1 byte)
+write_INT8 (COMPILED_MINE_VERSION, save_file);
 
-	//============================== = Writing part==============================
+// write no. of vertices (2 bytes)
+write_INT16 (VertCount (), save_file);
 
-	// write version (1 byte)
-	write_INT8(COMPILED_MINE_VERSION, save_file);
+// write number of Segments () (2 bytes)
+write_INT16 (SegCount (), save_file);
 
-	// write no. of vertices (2 bytes)
-	write_INT16(VertCount (), save_file);
+// write all vertices
+for (int i = 0; i VertCount (); i++)
+	Vertices (i)->Write (save_file);
 
-	// write number of Segments () (2 bytes)
-	write_INT16(SegCount (), save_file);
+// write segment information
+for (nSegment = 0; nSegment < SegCount (); nSegment++)  
+	Segments (nSegment)->Write (save_file, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
 
-	// write all vertices
-	fwrite(Vertices (), sizeof (tFixVector), VertCount (), save_file);
-
-	// write segment information
-	for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
-		INT16   bit;
-
-#if 0
-		INT32 off;
-		off = ftell(save_file);
-		if (nSegment < 10) {
-			sprintf_s (message, sizeof (message),  "offset = %#08lx, nSegment = ", off, nSegment);
-			INFOMSG (message);
-		}
-#endif
-
-
-		CSegment *segP = Segments (nSegment);
-
-		Segments (nSegment)->Write (save_file, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
-		// write textures and uvls
-	  }
-
-  // for Descent 2, save special info here
-  if (IsD2File ()) {
-	  CSegment *segP = Segments ();
-	  for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)   {
-		  // write special info (8 bytes)
-			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
-				segP->function = SEGMENT_FUNC_NONE;
-				segP->value = 0;
-				segP->child_bitmask &= ~(1 << MAX_SIDES_PER_SEGMENT);
-				}
-			fwrite(&segP->function, sizeof(UINT8), 1, save_file);
-			fwrite(&segP->nMatCen, sizeof(INT8), 1, save_file);
-			fwrite(&segP->value, sizeof(INT8), 1, save_file);
-			fwrite(&segP->s2_flags, sizeof(UINT8), 1, save_file);
-			if (IsD2XLevel ()) {
-				fwrite(&segP->props, sizeof(UINT8), 1, save_file);
-				fwrite(segP->damage, sizeof(INT16), 2, save_file);
-				}
-			fwrite(&segP->static_light, sizeof(FIX), 1, save_file);
-	  }
-	if (IsD2XLevel ()) {
-		SaveColors (VertexColors (), VertCount (), save_file);
-		SaveColors (LightColors (), SegCount () * 6, save_file);
-		SaveColors (TexColors (), MAX_D2_TEXTURES, save_file);
-		}
+// for Descent 2, save special info here
+if (IsD2File ()) {
+  for (nSegment = 0; nSegment < SegCount (); nSegment++)  
+	  Segments (nSegment)->WriteExtras (save_file, IsD2XLevel () ? 2 : 1, true);
   }
-  return 0;
+
+if (IsD2XLevel ()) {
+	SaveColors (VertexColors (), VertCount (), save_file);
+	SaveColors (LightColors (), SegCount () * 6, save_file);
+	SaveColors (TexColors (), MAX_D2_TEXTURES, save_file);
+	}
+return 0;
 }
 
 // ------------------------------------------------------------------------

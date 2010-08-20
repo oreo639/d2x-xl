@@ -5,95 +5,124 @@
 #include "io.h"
 
 //------------------------------------------------------------------------
-// read_INT32()
+// read_INT32 ()
 //
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
-INT32 read_INT32(FILE *load_file) {
-  INT32 return_value=0;
-  fread( &return_value, sizeof (INT32), 1, load_file );
-  return(return_value);
+
+INT32 read_DOUBLE (FILE *fp) 
+{
+DOUBLE return_value=0;
+fread (&return_value, sizeof (DOUBLE), 1, fp);
+return (return_value);
 }
 
 //------------------------------------------------------------------------
-// read_INT16()
+// read_INT32 ()
+//
+// ACTION - Reads a 32 bit word from a file.
+//------------------------------------------------------------------------
+
+INT32 read_INT32 (FILE *fp) 
+{
+INT32 return_value=0;
+fread (&return_value, sizeof (INT32), 1, fp);
+return (return_value);
+}
+
+//------------------------------------------------------------------------
+// read_INT16 ()
 //
 // ACTION - Reads a 16 bit word from a file.
 //------------------------------------------------------------------------
-INT16 read_INT16(FILE *load_file) {
-  INT16 return_value=0;
-  fread( &return_value, sizeof (INT16), 1, load_file );
-  return(return_value);
+
+INT16 read_INT16 (FILE *fp) 
+{
+INT16 return_value=0;
+fread (&return_value, sizeof (INT16), 1, fp);
+return (return_value);
 }
 
 //------------------------------------------------------------------------
-// read_INT8()
+// read_INT8 ()
 //
 // ACTION - Reads a 8 bit word from a file.
 //------------------------------------------------------------------------
-INT8 read_INT8(FILE *load_file) {
-  INT8 return_value=0;
-  fread( &return_value, sizeof (INT8), 1, load_file );
-  return(return_value);
+
+INT8 read_INT8 (FILE *fp) 
+{
+INT8 return_value=0;
+fread (&return_value, sizeof (INT8), 1, fp);
+return (return_value);
 }
 
 //------------------------------------------------------------------------
-// read_FIX()
+// read_FIX ()
 //
 //  ACTION - Reads a FIX word from a file.
 //------------------------------------------------------------------------
-FIX read_FIX(FILE *load_file) {
-  FIX return_value=0;
-  fread( &return_value, sizeof (FIX), 1, load_file );
-  return(return_value);
+
+FIX read_FIX (FILE *fp) 
+{
+FIX return_value=0;
+fread (&return_value, sizeof (FIX), 1, fp);
+return (return_value);
 }
 
 //------------------------------------------------------------------------
-// read_FIXANG()
+// read_FIXANG ()
 //
 // ACTION - Reads a FIXANG word from a file.
 //------------------------------------------------------------------------
-FIXANG read_FIXANG(FILE *load_file) {
-  FIXANG return_value=0;
-  fread( &return_value, sizeof (FIXANG), 1, load_file );
-  return(return_value);
+
+FIXANG read_FIXANG (FILE *fp) 
+{
+FIXANG return_value=0;
+fread (&return_value, sizeof (FIXANG), 1, fp);
+return (return_value);
 }
 
 //------------------------------------------------------------------------
-// read_matrix()
+// read_matrix ()
 //
 //  ACTION - Reads a matrix structure from a file.
 //------------------------------------------------------------------------
-tFixMatrix *read_matrix(tFixMatrix *matrix,FILE *load_file) {
-  read_vector(&matrix->rvec,load_file );
-  read_vector(&matrix->uvec,load_file );
-  read_vector(&matrix->fvec,load_file );
-  return(matrix);
+
+tFixMatrix *read_matrix (tFixMatrix *matrix,FILE *fp) 
+{
+read_vector (&matrix->rvec,fp);
+read_vector (&matrix->uvec,fp);
+read_vector (&matrix->fvec,fp);
+return (matrix);
 }
 
 //------------------------------------------------------------------------
-// read_vector()
+// read_vector ()
 //
 // ACTION - Reads a vector structure from a file.
 //------------------------------------------------------------------------
-tFixVector *read_vector(tFixVector *vector,FILE *load_file) {
-  fread( &vector->x, sizeof (FIX), 1, load_file );
-  fread( &vector->y, sizeof (FIX), 1, load_file );
-  fread( &vector->z, sizeof (FIX), 1, load_file );
-  return(vector);
+
+tFixVector *read_vector (tFixVector *vector,FILE *fp) 
+{
+fread (&vector->x, sizeof (FIX), 1, fp);
+fread (&vector->y, sizeof (FIX), 1, fp);
+fread (&vector->z, sizeof (FIX), 1, fp);
+return (vector);
 }
 
 //------------------------------------------------------------------------
-// read_angvec()
+// read_angvec ()
 //
 // ACTION - Reads a vector structure from a file.
 //
 //------------------------------------------------------------------------
-tAngleVector *read_angvec(tAngleVector *vector,FILE *load_file) {
-  fread( &vector->p, sizeof (FIXANG), 1, load_file );
-  fread( &vector->b, sizeof (FIXANG), 1, load_file );
-  fread( &vector->h, sizeof (FIXANG), 1, load_file );
-  return(vector);
+
+tAngleVector *read_angvec (tAngleVector *vector,FILE *fp) 
+{
+fread (&vector->p, sizeof (FIXANG), 1, fp);
+fread (&vector->b, sizeof (FIXANG), 1, fp);
+fread (&vector->h, sizeof (FIXANG), 1, fp);
+return (vector);
 }
 
 //------------------------------------------------------------------------
@@ -101,85 +130,100 @@ tAngleVector *read_angvec(tAngleVector *vector,FILE *load_file) {
 //
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
-INT32 write_INT32 (INT32 value,FILE *save_file) {
-  fwrite(&value, sizeof (INT32), 1, save_file );
-  return(value);
+
+INT32 write_INT32 (INT32 value,FILE *fp) 
+{
+fwrite (&value, sizeof (INT32), 1, fp);
+return (value);
 }
 
 //------------------------------------------------------------------------
-// write_INT16()
+// write_INT16 ()
 //
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
-INT16 write_INT16(INT16 value,FILE *save_file) {
-  fwrite(&value, sizeof (INT16), 1, save_file );
-  return(value);
+
+INT16 write_INT16 (INT16 value,FILE *fp) 
+{
+fwrite (&value, sizeof (INT16), 1, fp);
+return (value);
 }
 
 //------------------------------------------------------------------------
-// write_INT8()
+// write_INT8 ()
 //
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
-INT8 write_INT8(INT8 value,FILE *save_file) {
-  fwrite( &value, sizeof (INT8), 1, save_file );
-  return(value);
+
+INT8 write_INT8 (INT8 value,FILE *fp) 
+{
+fwrite (&value, sizeof (INT8), 1, fp);
+return (value);
 }
 
 //------------------------------------------------------------------------
-// write_FIX()
+// write_FIX ()
 //
 // ACTION - Writes a FIX word to a file.
 //------------------------------------------------------------------------
-FIX write_FIX(FIX value,FILE *save_file) {
-  fwrite( &value, sizeof (FIX), 1, save_file );
-  return(value);
+FIX write_FIX (FIX value,FILE *fp) 
+{
+fwrite (&value, sizeof (FIX), 1, fp);
+return (value);
 }
 
 //------------------------------------------------------------------------
-// write_FIXANG()
+// write_FIXANG ()
 //
 // ACTION - Writes a FIXANG word to a file.
 //------------------------------------------------------------------------
-FIXANG write_FIXANG(FIXANG value,FILE *save_file) {
-  fwrite( &value, sizeof (FIXANG), 1, save_file );
-  return(value);
+
+FIXANG write_FIXANG (FIXANG value,FILE *fp) 
+{
+fwrite (&value, sizeof (FIXANG), 1, fp);
+return (value);
 }
 
 //------------------------------------------------------------------------
-// write_matrix()
+// write_matrix ()
 //
 // ACTION - Writes a matrix structure to a file.
 //------------------------------------------------------------------------
-tFixMatrix *write_matrix(tFixMatrix *matrix,FILE *save_file) {
-  write_vector(&matrix->rvec,save_file );
-  write_vector(&matrix->uvec,save_file );
-  write_vector(&matrix->fvec,save_file );
-  return(matrix);
+
+tFixMatrix *write_matrix (tFixMatrix *matrix,FILE *fp) 
+{
+write_vector (&matrix->rvec,fp);
+write_vector (&matrix->uvec,fp);
+write_vector (&matrix->fvec,fp);
+return (matrix);
 }
 
 //------------------------------------------------------------------------
-// write_vector()
+// write_vector ()
 //
 // ACTION - Writes a vector structure to a file.
 //------------------------------------------------------------------------
-tFixVector *write_vector(tFixVector *vector,FILE *save_file) {
-  fwrite( &vector->x, sizeof (FIX), 1, save_file );
-  fwrite( &vector->y, sizeof (FIX), 1, save_file );
-  fwrite( &vector->z, sizeof (FIX), 1, save_file );
-  return(vector);
+
+tFixVector *write_vector (tFixVector *vector,FILE *fp) 
+{
+fwrite (&vector->x, sizeof (FIX), 1, fp);
+fwrite (&vector->y, sizeof (FIX), 1, fp);
+fwrite (&vector->z, sizeof (FIX), 1, fp);
+return (vector);
 }
 
 //------------------------------------------------------------------------
-// write_angvec()
+// write_angvec ()
 //
 // ACTION - Writes a vector structure to a file.
 //------------------------------------------------------------------------
-tAngleVector *write_angvec(tAngleVector *vector,FILE *save_file) {
-  fwrite( &vector->p, sizeof (FIXANG), 1, save_file );
-  fwrite( &vector->b, sizeof (FIXANG), 1, save_file );
-  fwrite( &vector->h, sizeof (FIXANG), 1, save_file );
-  return(vector);
+
+tAngleVector *write_angvec (tAngleVector *vector,FILE *fp) 
+{
+fwrite (&vector->p, sizeof (FIXANG), 1, fp);
+fwrite (&vector->b, sizeof (FIXANG), 1, fp);
+fwrite (&vector->h, sizeof (FIXANG), 1, fp);
+return (vector);
 }
 
                         /*---------------------------*/
@@ -208,7 +252,7 @@ memcpy (fn, fullName, l + 1);
 if (pathName)
    *pathName = 0;
 for (s = fn + l; (s != fn); --s) {
-   if ((*s == ':') || (*s == '\\')) {
+   if ( (*s == ':') || (*s == '\\')) {
       CopyIoName (pathName, fn, (UINT16) (s - fn) + 1, 256);
       memmove (fn, s + 1, strlen (s));
       break;
@@ -216,7 +260,7 @@ for (s = fn + l; (s != fn); --s) {
    }
 
 for (s = fn + strlen (fn); (s != fn); --s)
-   if ((*s == '.') || (*s == ':') || (*s == '\\'))
+   if ( (*s == '.') || (*s == ':') || (*s == '\\'))
       break;
 if (*s == '.') {
    CopyIoName (extName, s, (UINT16) strlen (s), 256);

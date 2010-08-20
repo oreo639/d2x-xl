@@ -5899,6 +5899,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\MineColor.cpp"
+					>
+				</File>
+				<File
 					RelativePath="MODIFY.CPP"
 					>
 					<FileConfiguration
