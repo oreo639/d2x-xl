@@ -289,7 +289,7 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	HINSTANCE hInst = AfxGetInstanceHandle();
 	UINT8* palette = 0;
 
-	FILE* loadFile = 0;
+	FILE* fp = 0;
 	INT32 sig = 0;
 	INT32 minedata_offset = 0;
 	INT32 gamedata_offset = 0;
@@ -300,31 +300,31 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	INT16 nLights = 0;
 
 m_changesMade = 0;
-fopen_s (&loadFile, filename, "rb");
+fopen_s (&fp, filename, "rb");
 
-if (!loadFile) {
+if (!fp) {
 	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
 	ErrorMsg (message);
 	return -1;
 	}
 	//  strcpy(gamesave_current_filename, filename);
-if (LoadMineSigAndType (loadFile))
+if (LoadMineSigAndType (fp))
 	return -1;
 // read mine data offset
-minedata_offset = read_INT32 (loadFile);
+minedata_offset = read_INT32 (fp);
 // read game data offset
-gamedata_offset = read_INT32 (loadFile);
+gamedata_offset = read_INT32 (fp);
 
 // don't bother reading  hostagetext_offset since
 // for Descent 1 files since we dont use it anyway
-// hostagetext_offset = read_INT32(loadFile);
+// hostagetext_offset = read_INT32(fp);
 
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
-		read_INT16(loadFile);
-		read_INT16(loadFile);
-		read_INT16(loadFile);
-		read_INT8(loadFile);
+		read_INT16(fp);
+		read_INT16(fp);
+		read_INT16(fp);
+		read_INT8(fp);
 		}
 	}
 
@@ -333,7 +333,7 @@ if (IsD2File ()) {
 		// read palette file name
 		INT32 i;
 		for (i = 0; i < 15; i++) {
-			palette_name [i] = fgetc(loadFile);
+			palette_name [i] = fgetc(fp);
 			if (palette_name [i]== 0x0a) {
 				palette_name [i] = NULL;
 				break;
@@ -409,8 +409,8 @@ FreeResource(hGlobal);
 // read descent 2 reactor information
 nLights = 0;
 if (IsD2File ()) {
-	ReactorTime () = read_INT32(loadFile); // base control center explosion time
-	ReactorStrength () = read_INT32(loadFile); // reactor strength
+	ReactorTime () = read_INT32(fp); // base control center explosion time
+	ReactorStrength () = read_INT32(fp); // reactor strength
 
 #if 0
 	sprintf_s (message, sizeof (message),  "Reactor time=%ld, Reactor strength=%ld, Secret Cube #=%ld",
@@ -419,9 +419,9 @@ if (IsD2File ()) {
 #endif
 
 	if (LevelVersion () > 6) {
-		nLights = (INT16)read_INT32(loadFile);
+		nLights = (INT16)read_INT32(fp);
 		if (nLights > 0 && FlickerLightCount () <= MAX_FLICKERING_LIGHTS) {
-			fread(FlickeringLights (), sizeof (CFlickeringLight), nLights, loadFile);
+			fread(FlickeringLights (), sizeof (CFlickeringLight), nLights, fp);
 			} 
 		else {
 			if (nLights != 0) {
@@ -436,25 +436,25 @@ if (IsD2File ()) {
 	//    DEBUGMSG(message);
 
 	// read secret cube number
-	SecretCubeNum () = read_INT32(loadFile);
+	SecretCubeNum () = read_INT32(fp);
 	// read secret cube orientation?
-	read_matrix(&SecretOrient (), loadFile);
+	read_matrix(&SecretOrient (), fp);
 	}
 
 m_disableDrawing = TRUE;
 
-fseek(loadFile, minedata_offset, SEEK_SET);
-mine_err = LoadMineDataCompiled(loadFile, bNewMine);
+fseek(fp, minedata_offset, SEEK_SET);
+mine_err = LoadMineDataCompiled(fp, bNewMine);
 FlickerLightCount () = nLights;
 
 if (mine_err != 0) {
 	ErrorMsg ("Error loading mine data");
-	fclose(loadFile);
+	fclose(fp);
 	return(2);
 }
 
-fseek(loadFile, gamedata_offset, SEEK_SET);
-game_err = LoadGameData(loadFile, bNewMine);
+fseek(fp, gamedata_offset, SEEK_SET);
+game_err = LoadGameData(fp, bNewMine);
 
 if (game_err != 0) {
 	ErrorMsg ("Error loading game data");
@@ -468,7 +468,7 @@ if (game_err != 0) {
 	GameInfo ().equipgen.count = 0;
 	GameInfo ().lightDeltaIndices.count = 0;
 	GameInfo ().lightDeltaValues.count = 0;
-	fclose(loadFile);
+	fclose(fp);
 	return(3);
 	}
 
@@ -478,17 +478,17 @@ load_end:
 	return_code = 0;
 load_pog:
 
-	fclose(loadFile);
+	fclose(fp);
 if (!bLoadFromHog && (IsD2File ())) {
 	ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, 256 - (ps - filename), ".pog");
 	else
 		strcat_s (filename, 256, ".pog");
-	fopen_s (&loadFile, filename, "rb");
-	if (loadFile) {
-		ReadPog (loadFile);
-		fclose (loadFile);
+	fopen_s (&fp, filename, "rb");
+	if (fp) {
+		ReadPog (fp);
+		fclose (fp);
 		}
 	ReadHamFile ();
 #if 0
@@ -523,10 +523,10 @@ if (!bLoadFromHog && (IsD2File ())) {
 		strcpy_s (filename, 256 - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, 256, ".hxm");
-	fopen_s (&loadFile, filename, "rb");
-	if (loadFile) {
-		ReadHxmFile (loadFile, -1);
-		fclose (loadFile);
+	fopen_s (&fp, filename, "rb");
+	if (fp) {
+		ReadHxmFile (fp, -1);
+		fclose (fp);
 		}
 	}
 SortObjects ();
@@ -904,6 +904,214 @@ GameInfo ().lightDeltaValues.count = 0;
 // ACTION - Reads a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
+#if 1
+
+INT16 CMine::LoadMineDataCompiled(FILE *fp, bool bNewMine)
+{
+	INT16    i, segnum, sidenum; /** was INT32 */
+	UINT8    version;
+	UINT16   temp_UINT16;
+	UINT8    bit_mask;
+	UINT16   n_vertices;
+	UINT16   n_segments;
+
+	// read version (1 byte)
+	fread(&version, sizeof (UINT8), 1, fp);
+	//  if(version!= COMPILED_MINE_VERSION){
+	//    sprintf_s (message, sizeof (message),  "Version incorrect (%d)\n", version);
+	//    ErrorMsg (message);
+	//  }
+
+	// read number of vertices (2 bytes)
+	fread(&temp_UINT16, sizeof (UINT16), 1, fp);
+	n_vertices = temp_UINT16;
+	if (n_vertices > MAX_VERTICES3) {
+		sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
+		ErrorMsg (message);
+		return(1);
+		}
+	if (((m_fileType == RDL_FILE) && (n_vertices > MAX_VERTICES1)) ||
+		 ((m_fileType != RDL_FILE) && (m_levelVersion < 9) && (n_vertices > MAX_VERTICES2)))
+		ErrorMsg ("Warning: Too many vertices for this level version");
+
+	// read number of Segments () (2 bytes)
+	fread(&temp_UINT16, sizeof (UINT16), 1, fp);
+	n_segments = temp_UINT16;
+	if (n_segments > MAX_SEGMENTS3) {
+		sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
+		ErrorMsg (message);
+		return(2);
+	}
+	if (((m_fileType == RDL_FILE) && (n_segments > MAX_SEGMENTS1)) ||
+		 ((m_fileType != RDL_FILE) && (m_levelVersion < 9) && (n_segments > MAX_SEGMENTS2)))
+		ErrorMsg ("Warning: Too many Segments for this level version");
+
+	// if we are happy with the number of verts and Segments (), then proceed...
+	ClearMineData();
+	VertCount () = n_vertices;
+	SegCount () = n_segments;
+
+	// read all vertices
+// read all vertices
+for (i = 0; i < VertCount (); i++)
+	Vertices (i)->Read (fp);
+
+if (n_vertices != VertCount ()) 
+	fseek(fp, sizeof (CFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
+
+	// unmark all vertices while we are here...
+	for (i = 0; i < VertCount (); i++) {
+		VertStatus (i) &= ~MARKED_MASK;
+	}
+
+	// read segment information
+	for (segnum = 0; segnum < SegCount (); segnum++)   {
+		INT16   bit; /** was INT32 */
+		CSegment *seg = Segments (segnum);
+		if (m_levelVersion >= 9) {
+			fread(&seg->owner, sizeof (UINT8), 1, fp);
+			fread(&seg->group, sizeof (INT8), 1, fp);
+			}
+		else {
+			seg->owner = -1;
+			seg->group = -1;
+			}
+		// read in child mask (1 byte)
+		fread(&bit_mask, sizeof (UINT8), 1, fp);
+		seg->childFlags = bit_mask;
+
+		// read 0 to 6 children (0 to 12 bytes)
+		for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
+			if (bit_mask & (1 << bit)) {
+				fread(&seg->children [bit], sizeof (INT16), 1, fp);
+			} else {
+				seg->children [bit] =-1;
+			}
+		}
+
+		// read vertex numbers (16 bytes)
+		fread(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, fp);
+
+		if (m_fileType == RDL_FILE) {
+			// read special info (0 to 4 bytes)
+			if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
+				fread(&seg->function, sizeof(UINT8), 1, fp);
+				fread(&seg->nMatCen, sizeof(INT8), 1, fp);
+				fread(&seg->value, sizeof(INT8), 1, fp);
+				fread(&seg->s2_flags, sizeof(UINT8), 1, fp);
+			} else {
+				seg->owner = -1;
+				seg->group = -1;
+				seg->function = 0;
+				seg->nMatCen =-1;
+				seg->value = 0;
+			}
+			seg->s2_flags = 0;  // d1 doesn't use this number, so zero it
+
+			// read static light (2 bytes)
+			fread(&temp_UINT16, sizeof (temp_UINT16), 1, fp);
+			seg->static_light = ((FIX)temp_UINT16) << 4;
+		}
+
+		// read the wall bit mask
+		fread(&bit_mask, sizeof (UINT8), 1, fp);
+
+		// read in wall numbers (0 to 6 bytes)
+		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
+			if (bit_mask & (1 << sidenum)) {
+				if (m_levelVersion < 13) {
+					UINT8	nWall;
+					fread(&nWall, sizeof (UINT8), 1, fp);
+					seg->sides [sidenum].nWall = nWall;
+					}
+				else {
+					UINT16	nWall;
+					fread(&nWall, sizeof (UINT16), 1, fp);
+					seg->sides [sidenum].nWall = nWall;
+					}
+				} 
+			else {
+				seg->sides [sidenum].nWall = NO_WALL (this);
+			}
+		}
+
+		// read in textures and uvls (0 to 60 bytes)
+		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)   {
+			if ((seg->children [sidenum]==-1) || (bit_mask & (1 << sidenum))) {
+				//  read in texture 1 number
+				fread(&temp_UINT16, sizeof (UINT16), 1, fp);
+				seg->sides [sidenum].nBaseTex = temp_UINT16 & 0x7fff;
+				//   read in texture 2 number
+				if (!(temp_UINT16 & 0x8000)) {
+					seg->sides [sidenum].nOvlTex = 0;
+				} else {
+					fread(&temp_UINT16, sizeof (UINT16), 1, fp);
+					seg->sides [sidenum].nOvlTex = temp_UINT16;
+					temp_UINT16 &= 0x1fff;
+					if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES (this)))
+						seg->sides [sidenum].nOvlTex = 0;
+				}
+
+				//   read uvl numbers
+				for (i = 0; i < 4; i++)   {
+					fread(&seg->sides [sidenum].uvls [i].u, sizeof (INT16), 1, fp);
+					fread(&seg->sides [sidenum].uvls [i].v, sizeof (INT16), 1, fp);
+					fread(&seg->sides [sidenum].uvls [i].l, sizeof (INT16), 1, fp);
+				}
+			} else {
+				seg->sides [sidenum].nBaseTex = 0;
+				seg->sides [sidenum].nOvlTex = 0;
+				for (i = 0; i < 4; i++)   {
+					seg->sides [sidenum].uvls [i].u = 0;
+					seg->sides [sidenum].uvls [i].v = 0;
+					seg->sides [sidenum].uvls [i].l = 0;
+				}
+			}
+		}
+	}
+
+	if (m_fileType != RDL_FILE) {
+		CSegment *seg = Segments ();
+		for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
+			// read special info (8 bytes)
+			fread(&seg->function, sizeof(UINT8), 1, fp);
+			fread(&seg->nMatCen, sizeof(INT8), 1, fp);
+			fread(&seg->value, sizeof(INT8), 1, fp);
+			fread(&seg->s2_flags, sizeof(UINT8), 1, fp);
+			if (m_levelVersion <= 20)
+				seg->Upgrade ();
+			else {
+				fread(&seg->props, sizeof(UINT8), 1, fp);
+				fread(seg->damage, sizeof(INT16), 2, fp);
+				}
+			fread(&seg->static_light, sizeof(FIX), 1, fp);
+			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == -1)) {
+				seg->function = SEGMENT_FUNC_NONE;
+				seg->value = 0;
+				seg->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
+				}
+			}
+		}
+	if (m_levelVersion == 9) {
+		fread(LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
+		fread(LightColors (), sizeof (CColor), SegCount () * 6, fp);
+		fread(VertexColors (), sizeof (CColor), VertCount (), fp);
+		}
+	else if (m_levelVersion > 9) {
+		LoadColors (VertexColors (), VertCount (), 9, 15, fp);
+		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
+		}
+if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
+	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
+			  GameInfo ().objects.count, MAX_OBJECTS2);
+	ErrorMsg (message);
+	}
+return 0;
+}
+
+#else
+
 INT16 CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
 {
 	INT32    i; 
@@ -981,6 +1189,8 @@ if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
 	}
 return 0;
 }
+
+#endif
 
 // ------------------------------------------------------------------------
 // LoadGameData()

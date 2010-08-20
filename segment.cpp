@@ -3065,6 +3065,8 @@ if (bTextured) {
 	if (nBaseTex & 0x8000) {
 		nBaseTex &= ~0x8000;
 		nOvlTex = read_INT16 (fp);
+		if ((nOvlTex & 0x1FFF) == 0)
+			nOvlTex = 0;
 		}
 	for (int i = 0; i < 4; i++)
 		uvls [i].Read (fp);
