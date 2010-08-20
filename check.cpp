@@ -1775,26 +1775,24 @@ bool CDiagTool::CheckVertices ()
   INT16 sub_warnings = m_nErrors [1];
   LBBugs ()->AddString ("[Misc]");
 
-  UINT8 *vStat = m_mine->VertStatus ();
+  UINT8& vStat = m_mine->VertStatus ();
 
-for (nVertex= m_mine->VertCount (); nVertex; nVertex--, vStat++)
-	*vStat &= ~NEW_MASK;
+for (nVertex = m_mine->VertCount (); nVertex; nVertex--, vStat++)
+	vStat &= ~NEW_MASK;
 
 // mark all used verts
 CSegment *segP = m_mine->Segments ();
 for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
-		*m_mine->VertStatus (segP->verts [point]) |= NEW_MASK;
+		m_mine->VertStatus (segP->verts [point]) |= NEW_MASK;
 nVertex = m_mine->VertCount () - 1;
 for (vStat = m_mine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	if (!(*vStat & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
-			if (nVertex < --m_mine->VertCount ()) {
+			if (nVertex < --m_mine->VertCount ())
 				memcpy (m_mine->Vertices (nVertex), m_mine->Vertices (nVertex + 1), (m_mine->VertCount () - nVertex) * sizeof (*m_mine->Vertices ()));
-				memcpy (m_mine->VertStatus (nVertex), m_mine->VertStatus (nVertex + 1), (m_mine->VertCount () - nVertex) * sizeof (*m_mine->VertStatus ()));
-				}
 			CSegment *segP = m_mine->Segments ();
 			for (nSegment = m_mine->SegCount (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)

@@ -880,7 +880,7 @@ SegCount () = 0;
 
 // initialize vertices
 for (i = 0; i < MAX_VERTICES (this); i++) {
-	Vertices (i) &= ~);
+	VertStatus (i) &= ~MARKED_MASK;
 }
 VertCount () = 0;
 
@@ -946,14 +946,12 @@ SegCount () = n_segments;
 for (i = 0; i < VertCount (); i++)
 	Vertices (i)->Read (fp);
 
-if (n_vertices != VertCount ()) {
+if (n_vertices != VertCount ()) 
 	fseek(fp, sizeof (CFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
-	}
 
 // unmark all vertices while we are here...
-for (i = 0; i < VertCount (); i++) {
-	Vertices (i) &= ~);
-	}
+for (i = 0; i < VertCount (); i++) 
+	VertStatus (i) &= ~MARKED_MASK;
 
 // read segment information
 for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
@@ -1652,17 +1650,17 @@ write_INT16 (VertCount (), save_file);
 write_INT16 (SegCount (), save_file);
 
 // write all vertices
-for (int i = 0; i VertCount (); i++)
+for (int i = 0; i < VertCount (); i++)
 	Vertices (i)->Write (save_file);
 
 // write segment information
-for (nSegment = 0; nSegment < SegCount (); nSegment++)  
-	Segments (nSegment)->Write (save_file, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+for (i = 0; i < SegCount (); i++)  
+	Segments (i)->Write (save_file, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
 
 // for Descent 2, save special info here
 if (IsD2File ()) {
-  for (nSegment = 0; nSegment < SegCount (); nSegment++)  
-	  Segments (nSegment)->WriteExtras (save_file, IsD2XLevel () ? 2 : 1, true);
+  for (i = 0; i < SegCount (); i++)  
+	  Segments (i)->WriteExtras (save_file, IsD2XLevel () ? 2 : 1, true);
   }
 
 if (IsD2XLevel ()) {

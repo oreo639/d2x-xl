@@ -194,7 +194,7 @@ for (nSegment = 0; nSegment < m_mine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			nVertex = segP->verts [side_vert [nSide][i]];
-			if (*m_mine->VertStatus (nVertex) & MARKED_MASK) {
+			if (m_mine->VertStatus (nVertex) & MARKED_MASK) {
 				sideP->uvls [i].l = nVertexLight;
 				bChange = true;
 				}

@@ -10,7 +10,7 @@
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
 
-INT32 read_DOUBLE (FILE *fp) 
+DOUBLE read_DOUBLE (FILE *fp) 
 {
 DOUBLE return_value=0;
 fread (&return_value, sizeof (DOUBLE), 1, fp);

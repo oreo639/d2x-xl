@@ -326,7 +326,7 @@ while(!feof(fBlk)) {
 		// else make a new vertex
 		if (k == VertCount ()) {
 			nVertex = VertCount ();
-			Vertices (nVertex) != NEW_MASK);
+			VertStatus (nVertex) |= NEW_MASK;
 			segP->verts [i] = nVertex;
 			Vertices (nVertex)->x = x;
 			Vertices (nVertex)->y = y;
@@ -336,7 +336,7 @@ while(!feof(fBlk)) {
 		}
 	// mark vertices
 	for (i = 0; i < 8; i++)
-		*VertStatus (segP->verts [i]) |= MARKED_MASK;
+		VertStatus (segP->verts [i]) |= MARKED_MASK;
 	fscanf_s (fBlk, "  static_light %ld\n",&segP->static_light);
 	if (bExtBlkFmt) {
 		fscanf_s (fBlk, "  special %d\n", &byteBuf);
@@ -852,8 +852,8 @@ for (nSegment = 0;nSegment < MAX_SEGMENTS (this); nSegment++, segP++) {
 
 // unmark all vertices
 for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++) {
-	*VertStatus (nVertex) &= ~MARKED_MASK;
-	*VertStatus (nVertex) &= ~NEW_MASK;
+	VertStatus (nVertex) &= ~MARKED_MASK;
+	VertStatus (nVertex) &= ~NEW_MASK;
 	}
 count = ReadSegmentInfo (fBlk);
 
@@ -902,7 +902,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	}
 // clear all new vertices as such
 for (nVertex=0;nVertex<MAX_VERTICES (this);nVertex++)
-	*VertStatus (nVertex) &= ~NEW_MASK;
+	VertStatus (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
 segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)

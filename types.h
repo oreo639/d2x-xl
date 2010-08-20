@@ -86,7 +86,7 @@ public:
 		return 1;
 	}
 
-	inline INT32 Write (FILE* fp) { 
+	inline void Write (FILE* fp) { 
 		rvec.Write (fp);
 		uvec.Write (fp);
 		fvec.Write (fp);

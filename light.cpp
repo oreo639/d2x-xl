@@ -502,7 +502,7 @@ theApp.SetModified (TRUE);
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
 			INT32 nVertex = segP->verts [pt];
-			if (bAll || (Vertices (i)->Marked ())) {
+			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
 					if ((segP->children [nSide] < 0) || (segP->sides [nSide].nWall < wallCount)) {
@@ -521,7 +521,7 @@ theApp.SetModified (TRUE);
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
 			INT32 nVertex = segP->verts [pt];
-			if ((max_brightness [nVertex].count > 0) && (bAll || (Vertices (i)->Marked ()))) {
+			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
 					if ((segP->children [nSide] < 0) || (segP->sides [nSide].nWall < wallCount)) {

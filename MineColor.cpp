@@ -26,7 +26,7 @@
 
 // ------------------------------------------------------------------------
 
-void CColor::Read (FILE *fp, int nLevelVersion)
+INT32 CColor::Read (FILE *fp, int nLevelVersion)
 {
 index = read_INT8 (fp);
 if (nLevelVersion < nNewVersion) {

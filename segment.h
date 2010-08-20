@@ -29,7 +29,7 @@ public:
 	UINT8		index;
 	rgbColor	color;
 
-	INT32 Read (FILE* fp);
+	INT32 Read (FILE *fp, int nLevelVersion);
 	void Write (FILE* fp);
 };
 

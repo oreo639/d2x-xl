@@ -1565,7 +1565,7 @@ void CMineView::DrawMarkedCubes (CMine *mine, INT16 clear_it)
 	else
 		m_pDC->SelectObject (m_penCyan);
 	for (i=0;i<mine->VertCount ();i++)
-		if (*mine->VertStatus (i) & MARKED_MASK)
+		if (mine->VertStatus (i) & MARKED_MASK)
 			if (IN_RANGE(m_viewPoints [i].x,x_max) && IN_RANGE(m_viewPoints [i].y,y_max))
 				m_pDC->Rectangle(m_viewPoints [i].x - 4, m_viewPoints [i].y - 4, m_viewPoints [i].x + 4, m_viewPoints [i].y + 4);
 }
@@ -3119,9 +3119,9 @@ for (i = 0; i < m_mine->VertCount (); i++, pa++) {
 		 BETWEEN (m_clickPos.y, y, m_releasePos.y) &&
 		 VertexVisible (i)) {
 		if (m_clickState & MK_SHIFT)
-			*m_mine->VertStatus (i) &= ~MARKED_MASK;
+			m_mine->VertStatus (i) &= ~MARKED_MASK;
 		else
-			*m_mine->VertStatus (i) |= MARKED_MASK;
+			m_mine->VertStatus (i) |= MARKED_MASK;
 		m_bUpdate = true;
 		}
 	}
