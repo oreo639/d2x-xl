@@ -2889,6 +2889,34 @@ return wallFlags;
 
 // ------------------------------------------------------------------------
 
+void CSegment::ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras)
+{
+if (bExtras) {
+	function = read_INT8 (fp);
+	nMatCen = read_INT8 (fp);
+	value = read_INT8 (fp);
+	read_INT8 (fp);
+	}
+else {
+	function = 0;
+	nMatCen = -1;
+	value = 0;
+	}
+s2_flags = 0;  // d1 doesn't use this number, so zero it
+if (nLevelType == 2) {
+	props = read_INT8 (fp);
+	if (nLevelVersion < 20)
+		Upgrade ();
+	else {
+		damage [0] = read_INT16 (fp);
+		damage [1] = read_INT16 (fp);
+		}
+	}
+static_light = read_FIX (fp);
+}
+
+// ------------------------------------------------------------------------
+
 INT32 CSegment::Read (FILE* fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
@@ -2912,22 +2940,8 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	verts [i] = read_INT16 (fp);
 
-if (nLevelVersion == 0) {
-	if (childFlags & (1 << MAX_SIDES_PER_SEGMENT)) {
-		function = read_INT8 (fp);
-		nMatCen = read_INT8 (fp);
-		value = read_INT8 (fp);
-		read_INT8 (fp);
-		} 
-	else {
-		function = 0;
-		nMatCen = -1;
-		value = 0;
-		}
-	s2_flags = 0;  // d1 doesn't use this number, so zero it
-	// read static light (2 bytes)
-	static_light = FIX (read_INT16 (fp)) << 4;
-	}
+if (nLevelVersion == 0)
+	ReadExtras (0, nLevelType, nLevelVersion, (childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // read the wall bit mask
 wallFlags = UINT8 (read_INT8 (fp));

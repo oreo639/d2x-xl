@@ -69,6 +69,7 @@ public:
 public:
 	void Upgrade (void);
 	INT32 Read (FILE* fp, int nLevelType, int nLevelVersion);
+	void ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras);
 	void Write (FILE* fp, int nLevelType, int nLevelVersion);
 	void WriteExtras (FILE* fp, int nLevelType, bool bExtras);
 

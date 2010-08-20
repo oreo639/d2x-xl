@@ -906,10 +906,8 @@ GameInfo ().lightDeltaValues.count = 0;
 
 INT16 CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
 {
-	INT16    i, nSegment, nSide; /** was INT32 */
+	INT32    i; 
 	UINT8    version;
-	UINT16   temp_UINT16;
-	UINT8    bit_mask;
 	UINT16   n_vertices;
 	UINT16   n_segments;
 
@@ -954,149 +952,28 @@ for (i = 0; i < VertCount (); i++)
 	VertStatus (i) &= ~MARKED_MASK;
 
 // read segment information
-for (nSegment = 0; nSegment < SegCount (); nSegment++)   {
-	INT16   bit; /** was INT32 */
-	CSegment *segP = Segments (nSegment);
-	if (IsD2XLevel ()) {
-		fread(&segP->owner, sizeof (UINT8), 1, fp);
-		fread(&segP->group, sizeof (INT8), 1, fp);
-		}
-	else {
-		segP->owner = -1;
-		segP->group = -1;
-		}
-	// read in child mask (1 byte)
-	fread(&bit_mask, sizeof (UINT8), 1, fp);
-	segP->childFlags = bit_mask;
+for (i = 0; i < SegCount (); i++)   
+	Segments (i)->Read (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+if (IsD2File ()) 
+	for (i = 0; i < SegCount (); i++)   
+		Segments (i)->ReadExtras (fp, IsD2XLevel () ? 2 : 1, LevelVersion(), true);
 
-	// read 0 to 6 children (0 to 12 bytes)
-	for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
-		if (bit_mask & (1 << bit)) {
-			fread(&segP->children [bit], sizeof (INT16), 1, fp);
-		} else {
-			segP->children [bit] =-1;
-		}
-	}
-
-	// read vertex numbers (16 bytes)
-	fread(segP->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, fp);
-
-	if (IsD1File ()) {
-		// read special info (0 to 4 bytes)
-		if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
-			fread(&segP->function, sizeof(UINT8), 1, fp);
-			fread(&segP->nMatCen, sizeof(INT8), 1, fp);
-			fread(&segP->value, sizeof(INT8), 1, fp);
-			fread(&segP->s2_flags, sizeof(UINT8), 1, fp);
-		} else {
-			segP->owner = -1;
-			segP->group = -1;
-			segP->function = 0;
-			segP->nMatCen =-1;
-			segP->value = 0;
-		}
-		segP->s2_flags = 0;  // d1 doesn't use this number, so zero it
-
-		// read static light (2 bytes)
-		fread(&temp_UINT16, sizeof (temp_UINT16), 1, fp);
-		segP->static_light = ((FIX)temp_UINT16) << 4;
-	}
-
-	// read the wall bit mask
-	fread(&bit_mask, sizeof (UINT8), 1, fp);
-
-	// read in wall numbers (0 to 6 bytes)
-	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		if (bit_mask & (1 << nSide)) {
-			if (LevelVersion () < 13) {
-				UINT8	nWall;
-				fread(&nWall, sizeof (UINT8), 1, fp);
-				segP->sides [nSide].nWall = nWall;
-				}
-			else {
-				UINT16	nWall;
-				fread(&nWall, sizeof (UINT16), 1, fp);
-				segP->sides [nSide].nWall = nWall;
-				}
-			} 
-		else {
-			segP->sides [nSide].nWall = NO_WALL (this);
-			}
-		}
-
-	// read in textures and uvls (0 to 60 bytes)
-	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)   {
-		if ((segP->children [nSide]==-1) || (bit_mask & (1 << nSide))) {
-			//  read in texture 1 number
-			fread(&temp_UINT16, sizeof (UINT16), 1, fp);
-			segP->sides [nSide].nBaseTex = temp_UINT16 & 0x7fff;
-			//   read in texture 2 number
-			if (!(temp_UINT16 & 0x8000)) {
-				segP->sides [nSide].nOvlTex = 0;
-			} else {
-				fread(&temp_UINT16, sizeof (UINT16), 1, fp);
-				segP->sides [nSide].nOvlTex = temp_UINT16;
-				temp_UINT16 &= 0x1fff;
-				if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES (this)))
-					segP->sides [nSide].nOvlTex = 0;
-			}
-
-			//   read CUVL numbers
-			for (i = 0; i < 4; i++)   {
-				fread(&segP->sides [nSide].uvls [i].u, sizeof (INT16), 1, fp);
-				fread(&segP->sides [nSide].uvls [i].v, sizeof (INT16), 1, fp);
-				fread(&segP->sides [nSide].uvls [i].l, sizeof (INT16), 1, fp);
-			}
-		} else {
-			segP->sides [nSide].nBaseTex = 0;
-			segP->sides [nSide].nOvlTex = 0;
-			for (i = 0; i < 4; i++)   {
-				segP->sides [nSide].uvls [i].u = 0;
-				segP->sides [nSide].uvls [i].v = 0;
-				segP->sides [nSide].uvls [i].l = 0;
-				}
-			}
-		}
-	}
-
-	if (IsD2File ()) {
-		CSegment *segP = Segments ();
-		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
-			// read special info (8 bytes)
-			fread(&segP->function, sizeof(UINT8), 1, fp);
-			fread(&segP->nMatCen, sizeof(INT8), 1, fp);
-			fread(&segP->value, sizeof(INT8), 1, fp);
-			fread(&segP->s2_flags, sizeof(UINT8), 1, fp);
-			if (LevelVersion () <= 20)
-				segP->Upgrade ();
-			else {
-				fread(&segP->props, sizeof(UINT8), 1, fp);
-				fread(segP->damage, sizeof(INT16), 2, fp);
-				}
-			fread(&segP->static_light, sizeof(FIX), 1, fp);
-			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == -1)) {
-				segP->function = SEGMENT_FUNC_NONE;
-				segP->value = 0;
-				segP->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
-				}
-			}
-		}
-	if (LevelVersion () == 9) {
+if (LevelVersion () == 9) {
 #if 1
-		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-		LoadColors (VertexColors (), VertCount (), 9, 15, fp);
+	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+	LoadColors (VertexColors (), VertCount (), 9, 15, fp);
 #else
-		fread (LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
-		fread (LightColors (), sizeof (CColor), SegCount () * 6, fp);
-		fread (VertexColors (), sizeof (CColor), VertCount (), fp);
+	fread (LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
+	fread (LightColors (), sizeof (CColor), SegCount () * 6, fp);
+	fread (VertexColors (), sizeof (CColor), VertCount (), fp);
 #endif
-		}
-	else if (LevelVersion () > 9) {
-		LoadColors (VertexColors (), VertCount (), 9, 15, fp);
-		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
-		}
+	}
+else if (LevelVersion () > 9) {
+	LoadColors (VertexColors (), VertCount (), 9, 15, fp);
+	LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
+	LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
+	}
 if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
 			  GameInfo ().objects.count, MAX_OBJECTS2);
