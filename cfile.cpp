@@ -71,7 +71,7 @@ if (szExt) {
 
 //------------------------------------------------------------------------------
 
-void CFile::ChangeFilenameExtension (char *dest, const char *src, const char *newExt)
+void CFileManager::ChangeFilenameExtension (char *dest, const char *src, const char *newExt)
 {
 	INT32 i;
 
@@ -92,7 +92,7 @@ if (i < FILENAME_LEN - 5) {
 
 // ----------------------------------------------------------------------------
 
-FILE *CFile::GetFileHandle (const char *filename, const char *folder, const char *mode) 
+FILE *CFileManager::GetFileHandle (const char *filename, const char *folder, const char *mode) 
 {
 	FILE	*fp;
 	char	fn [FILENAME_LEN];
@@ -117,13 +117,13 @@ return fp;
 }
 
 // ----------------------------------------------------------------------------
-// CFile::EoF () Tests for end-of-file on a stream
+// CFileManager::EoF () Tests for end-of-file on a stream
 //
 // returns a nonzero value after the first read operation that attempts to read
 // past the end of the file. It returns 0 if the current position is not end of file.
 // There is no error return.
 
-INT32 CFile::EoF (void)
+INT32 CFileManager::EoF (void)
 {
 #if DBG
 if (!m_cf.file)
@@ -134,14 +134,14 @@ return (m_cf.rawPosition >= m_cf.size);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Error (void)
+INT32 CFileManager::Error (void)
 {
 return nFileError;
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Exist (const char *filename, const char *folder) 
+INT32 CFileManager::Exist (const char *filename, const char *folder) 
 {
 	FILE	*fp;
 	char	*pfn = const_cast<char*> (filename);
@@ -155,7 +155,7 @@ return 0;
 
 // ----------------------------------------------------------------------------
 // Deletes a file.
-INT32 CFile::Delete (const char *filename, const char* folder)
+INT32 CFileManager::Delete (const char *filename, const char* folder)
 {
 	char	fn [FILENAME_LEN];
 
@@ -169,7 +169,7 @@ sprintf_s (fn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", filename);
 
 // ----------------------------------------------------------------------------
 // Rename a file.
-INT32 CFile::Rename (const char *oldname, const char *newname, const char *folder)
+INT32 CFileManager::Rename (const char *oldname, const char *newname, const char *folder)
 {
 	char	fno [FILENAME_LEN], fnn [FILENAME_LEN];
 
@@ -184,7 +184,7 @@ sprintf_s (fnn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", newname);
 
 // ----------------------------------------------------------------------------
 // Make a directory.
-INT32 CFile::MkDir (const char *pathname)
+INT32 CFileManager::MkDir (const char *pathname)
 {
 #if defined (_WIN32_WCE) || defined (_WIN32)
 return !CreateDirectory (pathname, NULL);
@@ -209,7 +209,7 @@ return size;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Open (const char *filename, const char *folder, const char *mode) 
+INT32 CFileManager::Open (const char *filename, const char *folder, const char *mode) 
 {
 	INT32	length = -1;
 	FILE	*fp = NULL;
@@ -230,7 +230,7 @@ return 1;
 
 // ----------------------------------------------------------------------------
 
-void CFile::Init (void) 
+void CFileManager::Init (void) 
 {
 memset (&m_cf, 0, sizeof (m_cf)); 
 m_cf.rawPosition = -1; 
@@ -238,7 +238,7 @@ m_cf.rawPosition = -1;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Length (void) 
+INT32 CFileManager::Length (void) 
 {
 return m_cf.size;
 }
@@ -249,7 +249,7 @@ return m_cf.size;
 // returns:   number of full elements actually written
 //
 //
-INT32 CFile::Write (const void *buf, INT32 nElemSize, INT32 nElemCount)
+INT32 CFileManager::Write (const void *buf, INT32 nElemSize, INT32 nElemCount)
 {
 	INT32 nWritten;
 
@@ -265,12 +265,12 @@ return nWritten;
 }
 
 // ----------------------------------------------------------------------------
-// CFile::PutC () writes a character to a file
+// CFileManager::PutC () writes a character to a file
 //
 // returns:   success ==> returns character written
 //            error   ==> EOF
 //
-INT32 CFile::PutC (INT32 c)
+INT32 CFileManager::PutC (INT32 c)
 {
 	INT32 char_written;
 
@@ -281,7 +281,7 @@ return char_written;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::GetC (void) 
+INT32 CFileManager::GetC (void) 
 {
 	INT32 c;
 
@@ -294,12 +294,12 @@ return c;
 }
 
 // ----------------------------------------------------------------------------
-// CFile::PutS () writes a string to a file
+// CFileManager::PutS () writes a string to a file
 //
 // returns:   success ==> non-negative value
 //            error   ==> EOF
 //
-INT32 CFile::PutS (const char *str)
+INT32 CFileManager::PutS (const char *str)
 {
 	INT32 ret;
 
@@ -310,7 +310,7 @@ return ret;
 
 // ----------------------------------------------------------------------------
 
-char * CFile::GetS (char * buf, size_t n) 
+char * CFileManager::GetS (char * buf, size_t n) 
 {
 	char * t = buf;
 	size_t i;
@@ -346,7 +346,7 @@ return  t;
 
 // ----------------------------------------------------------------------------
 
-size_t CFile::Read (void *buf, size_t elSize, size_t nElems) 
+size_t CFileManager::Read (void *buf, size_t elSize, size_t nElems) 
 {
 UINT32 i, size = (INT32) (elSize * nElems);
 
@@ -360,14 +360,14 @@ return i / elSize;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Tell (void) 
+INT32 CFileManager::Tell (void) 
 {
 return m_cf.rawPosition;
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Seek (size_t offset, INT32 whence) 
+INT32 CFileManager::Seek (size_t offset, INT32 whence) 
 {
 if (!m_cf.size)
 	return -1;
@@ -394,7 +394,7 @@ return c;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Close (void)
+INT32 CFileManager::Close (void)
 {
 	INT32 result;
 
@@ -408,90 +408,90 @@ return result;
 }
 
 // ----------------------------------------------------------------------------
-// routines to read basic data types from CFile::ILE's.  Put here to
+// routines to read basic data types from CFileManager::ILE's.  Put here to
 // simplify mac/pc reading from cfiles.
 
-INT32 CFile::ReadInt (void)
+INT32 CFileManager::ReadInt (void)
 {
 	INT32 i;
 
 Read (&i, sizeof (i), 1);
-//Error ("Error reading INT32 in CFile::ReadInt ()");
+//Error ("Error reading INT32 in CFileManager::ReadInt ()");
 return INTEL_INT (i);
 }
 
 // ----------------------------------------------------------------------------
 
-UINT32 CFile::ReadUInt (void)
+UINT32 CFileManager::ReadUInt (void)
 {
 	UINT32 i;
 
 Read (&i, sizeof (i), 1);
-//Error ("Error reading INT32 in CFile::ReadInt ()");
+//Error ("Error reading INT32 in CFileManager::ReadInt ()");
 return INTEL_INT (i);
 }
 
 // ----------------------------------------------------------------------------
 
-INT16 CFile::ReadShort (void)
+INT16 CFileManager::ReadShort (void)
 {
 	INT16 s;
 
 Read (&s, sizeof (s), 1);
-//Error ("Error reading INT16 in CFile::ReadShort ()");
+//Error ("Error reading INT16 in CFileManager::ReadShort ()");
 return INTEL_SHORT (s);
 }
 
 // ----------------------------------------------------------------------------
 
-UINT16 CFile::ReadUShort (void)
+UINT16 CFileManager::ReadUShort (void)
 {
 	UINT16 s;
 
 Read (&s, sizeof (s), 1);
-//Error ("Error reading INT16 in CFile::ReadShort ()");
+//Error ("Error reading INT16 in CFileManager::ReadShort ()");
 return INTEL_SHORT (s);
 }
 
 // ----------------------------------------------------------------------------
 
-INT8 CFile::ReadByte (void)
+INT8 CFileManager::ReadByte (void)
 {
 	INT8 b;
 
 if (Read (&b, sizeof (b), 1) != 1)
 	return nFileError;
-//Error ("Error reading byte in CFile::ReadByte ()");
+//Error ("Error reading byte in CFileManager::ReadByte ()");
 return b;
 }
 
 // ----------------------------------------------------------------------------
 
-UINT8 CFile::ReadUByte (void)
+UINT8 CFileManager::ReadUByte (void)
 {
 	UINT8 b;
 
 if (Read (&b, sizeof (b), 1) != 1)
 	return nFileError;
-//Error ("Error reading byte in CFile::ReadByte ()");
+//Error ("Error reading byte in CFileManager::ReadByte ()");
 return b;
 }
 
 // ----------------------------------------------------------------------------
 
-float CFile::ReadFloat (void)
+float CFileManager::ReadFloat (void)
 {
 	float f;
 
 Read (&f, sizeof (f), 1) ;
-//Error ("Error reading float in CFile::ReadFloat ()");
+//Error ("Error reading float in CFileManager::ReadFloat ()");
 return INTEL_FLOAT (f);
 }
 
 // ----------------------------------------------------------------------------
 //Read and return a double (64 bits)
 //Throws an exception of nType (nFileError *) if the OS returns an error on read
-double CFile::ReadDouble (void)
+double CFileManager::ReadDouble (void)
 {
 	double d;
 
@@ -501,30 +501,30 @@ return INTEL_DOUBLE (d);
 
 // ----------------------------------------------------------------------------
 
-FIX CFile::ReadFix (void)
+FIX CFileManager::ReadFix (void)
 {
 	FIX f;
 
 Read (&f, sizeof (f), 1) ;
-//Error ("Error reading FIX in CFile::ReadFix ()");
+//Error ("Error reading FIX in CFileManager::ReadFix ()");
 return (FIX) INTEL_INT ((INT32) f);
 return f;
 }
 
 // ----------------------------------------------------------------------------
 
-FIXANG CFile::ReadFixAng (void)
+FIXANG CFileManager::ReadFixAng (void)
 {
 	FIXANG f;
 
 Read (&f, 2, 1);
-//Error ("Error reading FIXANG in CFile::ReadFixAng ()");
+//Error ("Error reading FIXANG in CFileManager::ReadFixAng ()");
 return (FIXANG) INTEL_SHORT ((INT32) f);
 }
 
 // ----------------------------------------------------------------------------
 
-void CFile::ReadVector (CFixVector& v) 
+void CFileManager::ReadVector (CFixVector& v) 
 {
 v.x = ReadFix ();
 v.y = ReadFix ();
@@ -533,7 +533,7 @@ v.z = ReadFix ();
 
 // ----------------------------------------------------------------------------
 
-void CFile::ReadAngVec (CAngleVector& v)
+void CFileManager::ReadAngVec (CAngleVector& v)
 {
 v.p = ReadFixAng ();
 v.b = ReadFixAng ();
@@ -542,7 +542,7 @@ v.h = ReadFixAng ();
 
 // ----------------------------------------------------------------------------
 
-void CFile::ReadMatrix (CFixMatrix& m)
+void CFileManager::ReadMatrix (CFixMatrix& m)
 {
 ReadVector (m.rvec);
 ReadVector (m.uvec);
@@ -552,7 +552,7 @@ ReadVector (m.fvec);
 
 // ----------------------------------------------------------------------------
 
-void CFile::ReadString (char *buf, INT32 n)
+void CFileManager::ReadString (char *buf, INT32 n)
 {
 	char c;
 
@@ -568,7 +568,7 @@ do {
 // ----------------------------------------------------------------------------
 // equivalent write functions of above read functions follow
 
-INT32 CFile::WriteInt (INT32 i)
+INT32 CFileManager::WriteInt (INT32 i)
 {
 i = INTEL_INT (i);
 return Write (&i, sizeof (i), 1);
@@ -576,7 +576,7 @@ return Write (&i, sizeof (i), 1);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::WriteShort (INT16 s)
+INT32 CFileManager::WriteShort (INT16 s)
 {
 s = INTEL_SHORT (s);
 return Write(&s, sizeof (s), 1);
@@ -584,14 +584,14 @@ return Write(&s, sizeof (s), 1);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::WriteByte (INT8 b)
+INT32 CFileManager::WriteByte (INT8 b)
 {
 return Write (&b, sizeof (b), 1);
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::WriteFloat (float f)
+INT32 CFileManager::WriteFloat (float f)
 {
 f = INTEL_FLOAT (f);
 return Write (&f, sizeof (f), 1);
@@ -600,7 +600,7 @@ return Write (&f, sizeof (f), 1);
 // ----------------------------------------------------------------------------
 //Read and return a double (64 bits)
 //Throws an exception of nType (nFileError *) if the OS returns an error on read
-INT32 CFile::WriteDouble (double d)
+INT32 CFileManager::WriteDouble (double d)
 {
 d = INTEL_DOUBLE (d);
 return Write (&d, sizeof (d), 1);
@@ -608,7 +608,7 @@ return Write (&d, sizeof (d), 1);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::WriteFix (FIX x)
+INT32 CFileManager::WriteFix (FIX x)
 {
 x = INTEL_INT (x);
 return Write (&x, sizeof (x), 1);
@@ -616,7 +616,7 @@ return Write (&x, sizeof (x), 1);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::WriteFixAng (FIXANG a)
+INT32 CFileManager::WriteFixAng (FIXANG a)
 {
 a = INTEL_SHORT (a);
 return Write (&a, sizeof (a), 1);
@@ -624,7 +624,7 @@ return Write (&a, sizeof (a), 1);
 
 // ----------------------------------------------------------------------------
 
-void CFile::WriteVector (const CFixVector& v)
+void CFileManager::WriteVector (const CFixVector& v)
 {
 WriteFix (v.x);
 WriteFix (v.y);
@@ -633,7 +633,7 @@ WriteFix (v.z);
 
 // ----------------------------------------------------------------------------
 
-void CFile::WriteAngVec (const CAngleVector& v)
+void CFileManager::WriteAngVec (const CAngleVector& v)
 {
 WriteFixAng (v.p);
 WriteFixAng (v.b);
@@ -642,7 +642,7 @@ WriteFixAng (v.h);
 
 // ----------------------------------------------------------------------------
 
-void CFile::WriteMatrix (const CFixMatrix& m)
+void CFileManager::WriteMatrix (const CFixMatrix& m)
 {
 WriteVector (m.rvec);
 WriteVector (m.uvec);
@@ -652,7 +652,7 @@ WriteVector (m.fvec);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::WriteString (const char *buf)
+INT32 CFileManager::WriteString (const char *buf)
 {
 if (buf && *buf && Write (buf, (INT32) strlen (buf), 1))
 	return (INT32) WriteByte (0);   // write out NULL termination
@@ -661,7 +661,7 @@ return 0;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFile::Extract (const char *filename, const char *folder, const char *szDestName)
+INT32 CFileManager::Extract (const char *filename, const char *folder, const char *szDestName)
 {
 	FILE		*fp;
 	char		szDest [FILENAME_LEN], fn [FILENAME_LEN];
@@ -703,10 +703,10 @@ return 1;
 
 #define COPY_BUF_SIZE 65536
 
-INT32 CFile::Copy (const char *pszSrc, const char *pszDest)
+INT32 CFileManager::Copy (const char *pszSrc, const char *pszDest)
 {
 	INT8	buf [COPY_BUF_SIZE];
-	CFile	cf;
+	CFileManager	cf;
 
 if (!cf.Open (pszDest, gameFolders.szSaveDir, "wb"))
 	return -1;
@@ -735,7 +735,7 @@ return 0;
 
 // ----------------------------------------------------------------------------
 
-char *CFile::ReadData (const char *filename, const char *folder)
+char *CFileManager::ReadData (const char *filename, const char *folder)
 {
 	char		*pData = NULL;
 	size_t	nSize;
@@ -755,7 +755,7 @@ return pData;
 
 // ----------------------------------------------------------------------------
 
-void CFile::SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt)
+void CFileManager::SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt)
 {
 	INT32	h = 0, i, j, l = (INT32) strlen (szFullPath) - 1;
 
@@ -792,7 +792,7 @@ if (szFile) {
 
 // ----------------------------------------------------------------------------
 
-time_t CFile::Date (const char *filename, const char *folder)
+time_t CFileManager::Date (const char *filename, const char *folder)
 {
 	struct stat statbuf;
 

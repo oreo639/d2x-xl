@@ -579,7 +579,7 @@ UINT32 nSize = 0;
 UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
-BOOL bCustom = memcmp (MineData ().texColors, dataP, sizeof (MineData ().texColors)) != 0;
+BOOL bCustom = memcmp (MineData ().texColors.Buffer (), dataP, MineData ().texColors.Size ()) != 0;
 FreeResource (hGlobal);
 return bCustom;
 }
@@ -596,7 +596,7 @@ if (!dataP)
 INT32 i = nSize / (3 * sizeof (INT32) + sizeof (UINT8));
 if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
 	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
-for (CColor *pc = MineData ().texColors; i; i--, pc++) {
+for (CColor *pc = MineData ().texColors.Buffer (); i; i--, pc++) {
 	pc->index = *dataP++;
 	pc->color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
 	dataP += sizeof (INT32);

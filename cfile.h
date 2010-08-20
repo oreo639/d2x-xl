@@ -39,7 +39,7 @@ class CFilename {
 	};
 
 
-typedef struct CFILE {
+typedef struct CFILE_INFO {
 	FILE		*file;
 	char		*filename;
 	INT32		size;
@@ -47,13 +47,13 @@ typedef struct CFILE {
 	INT32		rawPosition;
 } CFILE;
 
-class CFile {
+class CFileManager {
 	private:
-		CFILE	m_cf;
+		CFILE_INFO	m_cf;
 
 	public:
-		CFile () { Init (); }
-		~CFile () { Close (); };
+		CFileManager () { Init (); }
+		~CFileManager () { Close (); };
 		void Init (void);
 		INT32 Open (const char *filename, const char *folder, const char *mode);
 		INT32 Length (void);							// Returns actual size of file...

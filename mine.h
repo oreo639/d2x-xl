@@ -50,16 +50,16 @@ typedef struct tMineData {
 	//CColor						texColors [MAX_D2_TEXTURES];
 	CStaticArray< CColor, MAX_D2_TEXTURES > texColors;
 	//CColor						vertexColors [MAX_VERTICES3];
-	CStaticArray< vertexColors, MAX_VERTICES3 > vertexColors;
+	CStaticArray< CColor, MAX_VERTICES3 > vertexColors;
 	
 	//CWall							walls[MAX_WALLS3];
 	CStaticArray < CWall, MAX_WALLS3 > walls;
 	//CActiveDoor					activeDoors[MAX_DOORS];
-	CStaticArray < CActiveDoor, MAX_DOORS > ;
+	CStaticArray < CActiveDoor, MAX_DOORS > activeDoors;
 	//CTrigger						triggers[MAX_TRIGGERS2];
 	CStaticArray < CTrigger, MAX_TRIGGERS2 > triggers;
 	//CTrigger						objTriggers[MAX_OBJ_TRIGGERS];
-	CStaticArray < objTriggers, MAX_OBJ_TRIGGERS > objTriggers;
+	CStaticArray < CTrigger, MAX_OBJ_TRIGGERS > objTriggers;
 	INT32							numObjTriggers;
 	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
 	CStaticArray < CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggers;
@@ -70,7 +70,7 @@ typedef struct tMineData {
 	
 	// object data
 	//CGameObject					objects[MAX_OBJECTS2];
-	CStaticArray< CGameObject, MAX_OBJECTS > objects;
+	CStaticArray< CGameObject, MAX_OBJECTS2 > objects;
 	
 	// light data
 	//CLightDeltaIndex			lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
