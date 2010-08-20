@@ -779,10 +779,8 @@ write_INT32 (nBrightness, fp);
 for (int i = 0; i < 4; i++)
 	write_INT8 (color [i], fp);
 write_INT8 (nSide, fp);
-if (version >= 18) 
-	write_INT8 (nSide, fp);
-if (version >= 19)
-	write_INT8 (bEnabled, fp);
+write_INT8 (nSide, fp);
+write_INT8 (bEnabled, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -839,8 +837,7 @@ write_INT8 (bRandom, fp);
 write_INT8 (bInPlane, fp);
 for (int i = 0; i < 4; i++)
 	write_INT8 (color [i], fp);
-if (version >= 19)
- write_INT8 (bEnabled, fp);
+write_INT8 (bEnabled, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -858,8 +855,7 @@ void CSoundInfo::Write (FILE *fp, INT32 version)
 {
 fwrite (szFilename, 1, sizeof (szFilename), fp);
 write_INT32 (nVolume, fp);
-if (version >= 19)
-	write_INT8 (bEnabled, fp);
+write_INT8 (bEnabled, fp);
 }
 // ------------------------------------------------------------------------
 
@@ -966,184 +962,93 @@ void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
 if (theApp.GetMine ()->IsStdLevel () && (type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
-	INT32 i;
-	write_INT8 (type, fp);
-	write_INT8 (id, fp);
-	write_INT8 (control_type, fp);
-	write_INT8 (movement_type, fp);
-	write_INT8 (render_type, fp);
-	write_INT8 (flags, fp);
-	if (version > 36)
-		write_INT8 (multiplayer, fp);
-	write_INT16 (nSegment, fp);
-	write_vector (&pos, fp);
-	write_matrix (&orient, fp);
-	write_FIX (size, fp);
-	write_FIX (shields, fp);
-	write_vector (&last_pos, fp);
-	write_INT8 (contains_type, fp);
-	write_INT8 (contains_id, fp);
-	write_INT8 (contains_count, fp);
+write_INT8 (type, fp);
+write_INT8 (id, fp);
+write_INT8 (control_type, fp);
+write_INT8 (movement_type, fp);
+write_INT8 (render_type, fp);
+write_INT8 (flags, fp);
+write_INT8 (multiplayer, fp);
+write_INT16 (nSegment, fp);
+write_vector (&pos, fp);
+write_matrix (&orient, fp);
+write_FIX (size, fp);
+write_FIX (shields, fp);
+write_vector (&last_pos, fp);
+write_INT8 (contains_type, fp);
+write_INT8 (contains_id, fp);
+write_INT8 (contains_count, fp);
 
-	switch (movement_type) {
-    case MT_PHYSICS:
-		write_vector (&mType.physInfo.velocity, fp);
-		write_vector (&mType.physInfo.thrust, fp);
-		write_FIX (mType.physInfo.mass, fp);
-		write_FIX (mType.physInfo.drag, fp);
-		write_FIX (mType.physInfo.brakes, fp);
-		write_vector (&mType.physInfo.rotvel, fp);
-		write_vector (&mType.physInfo.rotthrust, fp);
-		write_FIXANG (mType.physInfo.turnroll, fp);
-		write_INT16 (mType.physInfo.flags, fp);
+switch (movement_type) {
+	case MT_PHYSICS:
+		mType.physInfo.Write (fp, version);
 		break;
-
-    case MT_SPINNING:
-		write_vector (&mType.spinRate, fp);
+	case MT_SPINNING:
+		mType.spinRate.Write (fp);
 		break;
-
-    case MT_NONE:
+	case MT_NONE:
 		break;
-
-    default:
+	default:
 		break;
 	}
 
-	switch (control_type) {
-	case CT_AI: {
-		INT16 i;
-		write_INT8 (cType.aiInfo.behavior, fp);
-		for (i = 0; i < MAX_AI_FLAGS; i++)
-			write_INT8 (cType.aiInfo.flags [i], fp);
-		write_INT16 (cType.aiInfo.hide_segment, fp);
-		write_INT16 (cType.aiInfo.hide_index, fp);
-		write_INT16 (cType.aiInfo.path_length, fp);
-		write_INT16 (cType.aiInfo.cur_path_index, fp);
-		if (theApp.GetMine ()->IsD1File ()) {
-			write_INT16 (cType.aiInfo.follow_path_start_seg, fp);
-			write_INT16 (cType.aiInfo.follow_path_end_seg, fp);
-		}
+switch (control_type) {
+	case CT_AI:
+		cType.aiInfo.Write (fp, version);
 		break;
-				}
-    case CT_EXPLOSION:
-		write_FIX (cType.explInfo.spawn_time, fp);
-		write_FIX (cType.explInfo.delete_time, fp);
-		write_INT16 (cType.explInfo.delete_objnum, fp);
+	case CT_EXPLOSION:
+		cType.explInfo.Write (fp, version);
 		break;
-
-    case CT_WEAPON:
-		write_INT16 (cType.laserInfo.parent_type, fp);
-		write_INT16 (cType.laserInfo.parent_num, fp);
-		write_INT32 (cType.laserInfo.parent_signature, fp);
+	case CT_WEAPON:
+		cType.laserInfo.Write (fp, version);
 		break;
-
-    case CT_LIGHT:
-		write_FIX (cType.lightInfo.intensity, fp);
+	case CT_LIGHT:
+		cType.lightInfo.Write (fp, version);
 		break;
-
-    case CT_POWERUP:
-		if (version >= 25) {
-			write_INT32 (cType.powerupInfo.count, fp);
-		}
+	case CT_POWERUP:
+		cType.powerupInfo.Write (fp, version);
 		break;
-
-
-    case CT_NONE:
-    case CT_FLYING:
-    case CT_DEBRIS:
+	case CT_NONE:
+	case CT_FLYING:
+	case CT_DEBRIS:
 		break;
-
-    case CT_SLEW:    /*the player is generally saved as slew */
+	case CT_SLEW:    /*the player is generally saved as slew */
 		break;
-
 	case CT_CNTRLCEN:
 		break;
-
-    case CT_MORPH:
-    case CT_FLYTHROUGH:
-    case CT_REPAIRCEN:
-    default:
+	case CT_MORPH:
+	case CT_FLYTHROUGH:
+	case CT_REPAIRCEN:
+		default:
 		break;
 	}
 
-	switch (render_type) {
-    case RT_NONE:
+switch (render_type) {
+	case RT_NONE:
 		break;
-
-    case RT_MORPH:
-    case RT_POLYOBJ: {
-		INT16 i;
-		INT32 tmo;
-
-		write_INT32 (rType.polyModelInfo.model_num, fp);
-		for (i = 0; i < MAX_SUBMODELS; i++) {
-			write_angvec (&rType.polyModelInfo.anim_angles [i], fp);
-		}
-		write_INT32 (rType.polyModelInfo.subobj_flags, fp);
-		tmo = rType.polyModelInfo.tmap_override;
-		write_INT32 (tmo, fp);
-		break;
-					 }
+	case RT_MORPH:
+	case RT_POLYOBJ:
+		rType.polyModelInfo.Write (fp, version);
+	break;
 	case RT_WEAPON_VCLIP:
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		write_INT32 (rType.vClipInfo.vclip_num, fp);
-		write_FIX (rType.vClipInfo.frametime, fp);
-		write_INT8 (rType.vClipInfo.framenum, fp);
+		rType.vClipInfo.Write (fp, version);
 		break;
-
 	case RT_LASER:
 		break;
-
 	case RT_SMOKE:
-		write_INT32 (rType.smokeInfo.nLife, fp);
-		write_INT32 (rType.smokeInfo.nSize [0], fp);
-		write_INT32 (rType.smokeInfo.nParts, fp);
-		write_INT32 (rType.smokeInfo.nSpeed, fp);
-		write_INT32 (rType.smokeInfo.nDrift, fp);
-		write_INT32 (rType.smokeInfo.nBrightness, fp);
-		for (i = 0; i < 4; i++)
-			write_INT8 (rType.smokeInfo.color [i], fp);
-		write_INT8 (rType.smokeInfo.nSide, fp);
-		write_INT8 (rType.smokeInfo.nType, fp);
-		write_INT8 (rType.smokeInfo.bEnabled, fp);
+		rType.smokeInfo.Write (fp, version);
 		break;
-
 	case RT_LIGHTNING:
-		write_INT32 (rType.lightningInfo.nLife, fp);
-		write_INT32 (rType.lightningInfo.nDelay, fp);
-		write_INT32 (rType.lightningInfo.nLength, fp);
-		write_INT32 (rType.lightningInfo.nAmplitude, fp);
-		write_INT32 (rType.lightningInfo.nOffset, fp);
-		write_INT16 (rType.lightningInfo.nLightnings, fp);
-		write_INT16 (rType.lightningInfo.nId, fp);
-		write_INT16 (rType.lightningInfo.nTarget, fp);
-		write_INT16 (rType.lightningInfo.nNodes, fp);
-		write_INT16 (rType.lightningInfo.nChildren, fp);
-		write_INT16 (rType.lightningInfo.nSteps, fp);
-		write_INT8 (rType.lightningInfo.nAngle, fp);
-		write_INT8 (rType.lightningInfo.nStyle, fp);
-		write_INT8 (rType.lightningInfo.nSmoothe, fp);
-		write_INT8 (rType.lightningInfo.bClamp, fp);
-		write_INT8 (rType.lightningInfo.bPlasma, fp);
-		write_INT8 (rType.lightningInfo.bSound, fp);
-		write_INT8 (rType.lightningInfo.bRandom, fp);
-		write_INT8 (rType.lightningInfo.bInPlane, fp);
-		for (i = 0; i < 4; i++)
-			write_INT8 (rType.lightningInfo.color [i], fp);
-		write_INT8 (rType.lightningInfo.bEnabled, fp);
+		rType.lightningInfo.Write (fp, version);
 		break;
-
 	case RT_SOUND:
-		fwrite (rType.soundInfo.szFilename, 1, sizeof (rType.soundInfo.szFilename), fp);
-		write_INT32 (rType.soundInfo.nVolume, fp);
-		write_INT8 (rType.soundInfo.bEnabled, fp);
+		rType.soundInfo.Write (fp, version);
 		break;
-
 	default:
 		break;
-
 	}
 }
 
