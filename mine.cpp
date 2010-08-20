@@ -880,7 +880,7 @@ SegCount () = 0;
 
 // initialize vertices
 for (i = 0; i < MAX_VERTICES (this); i++) {
-	Vertices (i)->Unmark ();
+	Vertices (i) &= ~);
 }
 VertCount () = 0;
 
@@ -952,7 +952,7 @@ if (n_vertices != VertCount ()) {
 
 // unmark all vertices while we are here...
 for (i = 0; i < VertCount (); i++) {
-	Vertices (i)->Unmark ();
+	Vertices (i) &= ~);
 	}
 
 // read segment information

@@ -159,7 +159,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 	}
 
 	// update segment flags
-	delSegP->wallFlags.Unmark (); 
+	delSegP->wallFlags &= ~MARKED_MASK; 
 
 	// unlink any children with this segment number
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
@@ -173,8 +173,8 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 				}
 
 				// remove child number and update child bitmask
-				segP->children [child] =-1; 
-				segP->childFlags.Unmark (1 << child); 
+				segP->children [child] = -1; 
+				segP->childFlags &= ~(1 << child); 
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->sides + child;
@@ -202,7 +202,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all children with real numbers
 		for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-				if (segP->childFlags.Marked (1 << child)
+				if (segP->childFlags & (1 << child)
 					&& segP->children [child] >= 0 && segP->children [child] < SegCount ()) { // debug fix
 					childSegP = &Segments () [segP->children [child]]; 
 					segP->children [child] = childSegP->nIndex; 
@@ -357,19 +357,19 @@ VertCount ()--;
 // ACTION - Deletes unused vertices
 // -------------------------------------------------------------------------- 
 
-void CMine::DeleteUnusedVertices()
+void CMine::DeleteUnusedVertices (void)
 {
 	INT16 nVertex, nSegment, point; 
 
 for (nVertex = 0; nVertex < VertCount (); nVertex++)
-	Vertices (nVertex)->Unmark (~NEW_MASK); 
+	VertStatus (nVertex) &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = Segments ();
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
-		Vertices (segP->verts [point])->Mark (NEW_MASK); 
+		VertStatus (segP->verts [point]) |= NEW_MASK; 
 for (nVertex = VertCount ()-1; nVertex >= 0; nVertex--)
-	if (!(Vertices (nVertex)->Marked (NEW_MASK)))
+	if (!(VertStatus (nVertex) & NEW_MASK))
 		DeleteVertex(nVertex); 
 }
 
@@ -402,9 +402,9 @@ segP->group = -1;
 segP->function = 0; 
 segP->nMatCen = -1; 
 segP->value = -1; 
-segP->childFlags.Set ();
+segP->childFlags = 0;
 // define Walls ()
-segP->wallFlags.Set (); // unmarked cube
+segP->wallFlags = 0; // unmarked cube
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	segP->sides [nSide].nWall = NO_WALL (this); 
 	segP->sides [nSide].nBaseTex =
@@ -476,9 +476,9 @@ segP->verts [side_vert [nCurrSide][3]] = new_verts [3];
 
 InitSegment (nNewSeg);
 // define children and special child
-segP->childFlags.Set (1 << opp_side [nCurrSide]); /* only opposite side connects to current_segment */
+segP->childFlags = 1 << opp_side [nCurrSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	segP->children [i] = segP->childFlags.Marked (1 << i) ? Current ()->nSegment : -1;
+	segP->children [i] = (segP->childFlags & (1 << i)) ? Current ()->nSegment : -1;
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -509,7 +509,7 @@ if (index != -1) {
 
 // update current segment
 currSeg->children [nCurrSide] = nNewSeg; 
-currSeg->childFlags.Mark (1 << nCurrSide); 
+currSeg->childFlags |= (1 << nCurrSide); 
 currSeg->sides [nCurrSide].nBaseTex = 0; 
 currSeg->sides [nCurrSide].nOvlTex = 0; 
 memset (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
@@ -939,7 +939,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 		newVertex = seg2->verts [side_vert [sidenum2][match [i].i]]; 
 
 		// if either vert was marked, then mark the new vert
-		Vertices (newVertex)->Mark (VertStatus (oldVertex) & MARKED_MASK); 
+		VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
 
 		// update all Segments () that use this vertex
 		if (oldVertex != newVertex) {
@@ -1013,7 +1013,7 @@ bool CMine::SideIsMarked (INT16 nSegment, INT16 nSide)
 GetCurrent (nSegment, nSide);
 CSegment *segP = Segments (nSegment);
 for (INT32 i = 0; i < 4; i++) {
-	if (!(Vertices (segP->verts [side_vert [nSide][i]])->Marked (MARKED_MASK)))
+	if (!(VertStatus (segP->verts [side_vert [nSide][i]]) & MARKED_MASK))
 		return false;
 	}
 return true;
@@ -1023,7 +1023,7 @@ bool CMine::SegmentIsMarked (INT16 nSegment)
 {
 CSegment *segP = Segments (nSegment);
 for (INT32 i = 0;  i < 8; i++)
-	if (!(Vertices (segP->verts [i])->Marked (MARKED_MASK)))
+	if (!(VertStatus (segP->verts [i]) & MARKED_MASK))
 		return false;
 return true;
 }
@@ -1061,16 +1061,16 @@ if (bCubeMark)
 else {
 	// set i to n_points if all verts are marked
 	for (i = 0; i < n_points; i++)
-		if (!(Vertices (p [i])->Marked (MARKED_MASK)))
+		if (!(VertStatus (p [i]) & MARKED_MASK))
 			break; 
 		// if all verts are marked, then unmark them
 	if (i== n_points)
 		for (i = 0; i < n_points; i++)
-			Vertices (p [i])->Unmark (MARKED_MASK); 
+			VertStatus (p [i]) &= ~MARKED_MASK; 
 	else
 		// otherwise mark all the points
 		for (i = 0; i < n_points; i++)
-			Vertices (p [i])->Mark (MARKED_MASK); 
+			VertStatus (p [i]) |= MARKED_MASK; 
 		UpdateMarkedCubes(); 
 	}
 theApp.MineView ()->Refresh (); 
@@ -1092,12 +1092,12 @@ void CMine::MarkSegment(INT16 nSegment)
 	// ..first clear all marked verts
 	INT16 nVertex; 
 	for (nVertex = 0; nVertex < MAX_VERTICES (this); nVertex++)
-		Vertices (nVertex)->Unmark (); 
+		VertStatus (nVertex) &= ~MARKED_MASK; 
 	// ..then mark all verts for marked Segments ()
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++)
 		if (segP->wallFlags & MARKED_MASK)
 			for (nVertex = 0; nVertex < 8; nVertex++)
-				Vertices (segP->verts [nVertex])->Mark (); 
+				VertStatus (segP->verts [nVertex]) |= MARKED_MASK; 
 }
 
 // -------------------------------------------------------------------------- 
@@ -1109,17 +1109,17 @@ void CMine::UpdateMarkedCubes()
 	INT32 i; 
 	// mark all cubes which have all 8 verts marked
 	for (i = 0, segP = Segments (); i < SegCount (); i++, segP++)
-		if (Vertices (segP->verts [0])->Marked () &&
-			 Vertices (segP->verts [1])->Marked () &&
-			 Vertices (segP->verts [2])->Marked () &&
-			 Vertices (segP->verts [3])->Marked () &&
-			 Vertices (segP->verts [4])->Marked () &&
-			 Vertices (segP->verts [5])->Marked () &&
-			 Vertices (segP->verts [6])->Marked () &&
-			 Vertices (segP->verts [7])->Marked ())
-			segP->wallFlags.Mark (); 
+		if ((VertStatus (segP->verts [0]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [1]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [2]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [3]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [4]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [5]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [6]) & MARKED_MASK) &&
+			 (VertStatus (segP->verts [7]) & MARKED_MASK))
+			segP->wallFlags |= MARKED_MASK; 
 		else
-			segP->wallFlags.Unmark (); 
+			segP->wallFlags &= ~MARKED_MASK; 
 }
 
 //========================================================================== 
@@ -1131,9 +1131,9 @@ void CMine::MarkAll()
 	INT32 i; 
 
 for (i = 0; i < SegCount (); i++) 
-	Segments (i)->wallFlags.Mark (); 
+	Segments (i)->wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
-	Vertices (i)->Mark (); 
+	VertStatus (i) |= MARKED_MASK; 
 theApp.MineView ()->Refresh (); 
 }
 
@@ -2966,10 +2966,9 @@ if (m_fileType== RDL_FILE) {
 write_INT8 (childFlags, fp);
 
 // write children numbers (0 to 6 bytes)
-for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if (childFlags & (1 << i)) {
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
+	if (childFlags & (1 << i)) 
 		write_INT16 (children [i], fp);
-	}
 
 // write vertex numbers (16 bytes)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
@@ -2986,16 +2985,16 @@ if (nLevelType == 0)
 
 // calculate wall bit mask
 UINT8 wallFlags = WriteWalls (fp, nLevelVersion);
-for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)   {
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	if ((children [i] == -1) || (wallFlags & (1 << i))) 
-		side [i].Write (fp);
+		sides [i].Write (fp);
 }
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-void CSide::Read (FILE* fp)
+INT32 CSide::Read (FILE* fp)
 {
 nBaseTex = read_INT16 (fp);
 if (nBaseTex & 0x8000) {
@@ -3010,34 +3009,13 @@ return 1;
 void CSide::Write (FILE* fp)
 {
 if (nOvlTex == 0)
-	write_INT16 (nBaseTex);
+	write_INT16 (nBaseTex, fp);
 else {
-	write_INT16 (nBaseTex | 0x8000);
-	write_INT16 (nOvlTex);
+	write_INT16 (nBaseTex | 0x8000, fp);
+	write_INT16 (nOvlTex, fp);
 	}
 for (int i = 0; i < 4; i++)
 	uvls [i].Write (fp);
-}
-
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-
-UINT32 CUVL::Read (FILE* fp)
-{
-u = write_INT16 ();
-v = write_INT16 ();
-l = write_INT16 ();
-return 1;
-}
-
-// ------------------------------------------------------------------------
-
-void CUVL::Write (FILE* fp)
-{
-write_INT16 (u);
-write_INT16 (v);
-write_INT16 (l);
 }
 
 // ------------------------------------------------------------------------

@@ -57,8 +57,8 @@ public:
 	UINT8		s2_flags;			// New for Descent 2
 	INT16		damage [2];
 	FIX		static_light;		// average static light in segment 
-	CStatusMask	childFlags;		// bit0 to 5: children, bit6: unused, bit7: special 
-	CStatusMask	wallFlags;		// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
+	UINT8		childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
+	UINT8		wallFlags;			// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
 	INT16		nIndex;				// used for cut & paste to help link children 
 	INT16		map_bitmask;		// which lines are drawn when displaying wireframe 
 	INT8		owner;

@@ -37,8 +37,8 @@ typedef INT16 FIXANG;	/*angles */
 class CAngleVector {
 public:
 	FIXANG p, b, h;
-	CAngleVector (FIXANG p, FIXANG b, FIXANG h) : p(p), b(b), h(h) {}
-	CAngleVector (CAngleVector& a) : p(a.p), b(a.b), h(a.h) {}
+	//CAngleVector (FIXANG p, FIXANG b, FIXANG h) : p(p), b(b), h(h) {}
+	//CAngleVector (CAngleVector& a) : p(a.p), b(a.b), h(a.h) {}
 
 inline INT32 Read (FILE* fp) { 
 	p = read_FIXANG (fp);
@@ -57,9 +57,9 @@ void Write (FILE* fp) {
 class CFixVector {
 public:
 	FIX x, y, z;
-	CFixVector () : x(0), y(0), z(0) {}
-	CFixVector (FIX x, FIX y, FIX z) : x(x), y(y), z(z) {}
-	CFixVector (CFixVector& v) : x(v.x), y(v.y), z(v.z) {}
+	//CFixVector () : x(0), y(0), z(0) {}
+	//CFixVector (FIX x, FIX y, FIX z) : x(x), y(y), z(z) {}
+	//CFixVector (CFixVector& v) : x(v.x), y(v.y), z(v.z) {}
 
 inline INT32 Read (FILE* fp) { 
 	x = read_FIX (fp);
@@ -93,6 +93,7 @@ public:
 	}
 };
 
+#if 0
 class CStatusMask {
 public:
 	UINT8	m_status;
@@ -160,8 +161,13 @@ public:
 		write_INT8 (INT8 (m_status), fp);
 	}
 };
+#endif
 
-class CVertex : public CFixVector, public CStatusMask {};
+class CVertex : public CFixVector {
+public:
+	UINT8 m_status;
+	CVertex () : m_status(0) {}
+};
 
 typedef struct {
   UINT16 index;

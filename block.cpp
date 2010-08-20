@@ -326,7 +326,7 @@ while(!feof(fBlk)) {
 		// else make a new vertex
 		if (k == VertCount ()) {
 			nVertex = VertCount ();
-			Vertices (nVertex)->Mark (NEW_MASK);
+			Vertices (nVertex) != NEW_MASK);
 			segP->verts [i] = nVertex;
 			Vertices (nVertex)->x = x;
 			Vertices (nVertex)->y = y;
