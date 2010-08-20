@@ -41,10 +41,10 @@ typedef struct tMineData {
 	
 	UINT16						numSegments;
 	CSegment					segments[MAX_SEGMENTS3];
-	CDColor 						lightColors [MAX_SEGMENTS3][6];
-	CDColor						texColors [MAX_D2_TEXTURES];
-	CDColor 						sideColors [MAX_SEGMENTS3][6];
-	CDColor						vertexColors [MAX_VERTICES3];
+	CColor 						lightColors [MAX_SEGMENTS3][6];
+	CColor						texColors [MAX_D2_TEXTURES];
+	CColor 						sideColors [MAX_SEGMENTS3][6];
+	CColor						vertexColors [MAX_VERTICES3];
 	
 	UINT8							vertexStatus[MAX_VERTICES3];
 	
@@ -133,7 +133,7 @@ public:
 		{ return MineData ().vertexStatus + i; }
 	inline CSegment *Segments (INT32 i = 0)
 		{ return MineData ().segments + i; }
-	inline CDColor *VertexColors (INT32 i = 0)
+	inline CColor *VertexColors (INT32 i = 0)
 		{ return &(MineData ().vertexColors [i]); }
 	inline CWall *Walls (INT32 i = 0)
 		{ return MineData ().walls + i; }
@@ -193,20 +193,20 @@ public:
 		{ return MineData ().current2; }
 	inline CSelection *Other (void)
 		{ return (Current () == &Current2 ()) ? &Current1 () : &Current2 (); }
-	inline CDColor *TexColors (INT32 i = 0)
+	inline CColor *TexColors (INT32 i = 0)
 		{ return MineData ().texColors + (i & 0x3fff); }
 	inline bool& UseTexColors (void)
 		{ return m_bUseTexColors; }
-	inline void SetTexColor (INT16 nBaseTex, CDColor *pc)	{
+	inline void SetTexColor (INT16 nBaseTex, CColor *pc)	{
 		if (UseTexColors () && (IsLight (nBaseTex) != -1))
 			*TexColors (nBaseTex) = *pc;
 		}
-	inline CDColor *GetTexColor (INT16 nBaseTex, bool bIsTranspWall = false)	
+	inline CColor *GetTexColor (INT16 nBaseTex, bool bIsTranspWall = false)	
 		{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : NULL; }
-	CDColor *LightColor (INT32 i = 0, INT32 j = 0, bool bUseTexColors = true);
-	inline CDColor *LightColors (INT32 i = 0, INT32 j = 0)
+	CColor *LightColor (INT32 i = 0, INT32 j = 0, bool bUseTexColors = true);
+	inline CColor *LightColors (INT32 i = 0, INT32 j = 0)
 		{ return MineData ().lightColors [i] + j; }
-	inline CDColor *CurrLightColor ()
+	inline CColor *CurrLightColor ()
 		{ return LightColor (Current ()->nSegment, Current ()->nSide); }
 
 	inline INT32 LevelVersion (void) { return m_levelVersion; }
@@ -306,7 +306,7 @@ public:
 	void ScaleCornerLight (double fLight, bool bAll = false);
 	void CalcAverageCornerLight (bool bAll = false);
 	void AutoAdjustLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);
-	void BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr);
+	void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
 	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
 	bool CalcSideLights (INT32 nSegment, INT32 nSide, tFixVector& source_center, 
@@ -501,10 +501,10 @@ private:
 	INT32 ReadHamFile(char *fname = NULL, INT32 type = NORMAL_HAM);
 	void ReadPigTextureTable();
 	void ReadRobotResource(INT32 robot_number);
-	void ReadColor (CDColor *pc, FILE *load_file);
-	void SaveColor (CDColor *pc, FILE *save_file);
-	void LoadColors (CDColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
-	void SaveColors (CDColor *pc, INT32 nColors, FILE *fp);
+	void ReadColor (CColor *pc, FILE *load_file);
+	void SaveColor (CColor *pc, FILE *save_file);
+	void LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
+	void SaveColors (CColor *pc, INT32 nColors, FILE *fp);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);
 	INT16 LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);

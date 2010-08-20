@@ -11,7 +11,7 @@
 #include "global.h"
 #include "toolview.h"
 #include "io.h"
-#include "file.h"
+#include "hogmanager.h"
 
 #define CURRENT_POINT(a) ((theApp.GetMine ()->Current ()->nPoint + (a))&0x03)
 

@@ -196,13 +196,13 @@ if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
 	if (m_mine->IsD2XLevel ())
-		memset (m_mine->CurrLightColor (), 0, sizeof (CDColor));
+		memset (m_mine->CurrLightColor (), 0, sizeof (CColor));
 	}
 else {
 	if (!m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = TRUE);
 	if (m_mine->IsD2XLevel ()) {
-		CDColor *plc = m_mine->CurrLightColor ();
+		CColor *plc = m_mine->CurrLightColor ();
 		if (!plc->index) {	// set light color to white for new lights
 			plc->index = 255;
 			plc->color.r =
@@ -367,7 +367,7 @@ if (/*(m_mine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				pWall->cloak_value = m_nColorIndex;
 				SetWallColor ();
 				}
-			CDColor *psc = m_mine->CurrLightColor ();
+			CColor *psc = m_mine->CurrLightColor ();
 			if (psc->index = m_nColorIndex) {
 				psc->color.r = (double) m_rgbColor.peRed / 255.0;
 				psc->color.g = (double) m_rgbColor.peGreen / 255.0;
@@ -403,7 +403,7 @@ cc.rgbResult = RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue);
 cc.lpCustColors = m_custColors;
 cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;
 if (ChooseColor (&cc)) {
-	CDColor *psc = m_mine->CurrLightColor ();
+	CColor *psc = m_mine->CurrLightColor ();
 	psc->index = m_nColorIndex = 255;
 	m_rgbColor.peBlue = ((BYTE) (cc.rgbResult >> 16)) & 0xFF;
 	m_rgbColor.peGreen = ((BYTE) (cc.rgbResult >> 8)) & 0xFF;

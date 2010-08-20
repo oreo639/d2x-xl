@@ -562,7 +562,7 @@ for (nSegment = SegCount (), segP = Segments (); nSegment; nSegment--, segP++)
 			for (i = 0; i < 4; i++) {
 				sideP->uvls [i].l = 0;
 				if (!bAll)
-					memset (VertexColors (segP->verts [side_vert [nSide][i]]), 0, sizeof (CDColor));
+					memset (VertexColors (segP->verts [side_vert [nSide][i]]), 0, sizeof (CColor));
 				}
 			}
 
@@ -576,7 +576,7 @@ for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP+
 		if ((segP->children [nSide] >= 0) && !VisibleWall (sideP->nWall))
 			continue;
 		if (bCopyTexLights)
-			memset (LightColor (nSegment, nSide, false), 0, sizeof (CDColor));
+			memset (LightColor (nSegment, nSide, false), 0, sizeof (CColor));
 		brightness = 0;
 		texture_num = sideP->nBaseTex;
 		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES (this)))
@@ -600,7 +600,7 @@ theApp.UnlockUndo ();
 // srcBr: source brightness (remaining brightness at current vertex/side)
 // destBr: vertex/side brightness
 
-void CMine::BlendColors (CDColor *psc, CDColor *pdc, double srcBr, double destBr)
+void CMine::BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr)
 {
 if (destBr)
 	destBr /= 65536.0;
@@ -691,7 +691,7 @@ SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth);
 segP->nIndex = m_lightRenderDepth;
 #endif
 
-CDColor *plc = LightColor (nSourceSeg, nSourceSide);
+CColor *plc = LightColor (nSourceSeg, nSourceSide);
 if (!plc->index) {
 	plc->index = 255;
 	plc->color.r =
@@ -699,7 +699,7 @@ if (!plc->index) {
 	plc->color.b = 1.0;
 	}
 if (UseTexColors () && bCopyTexLights) {
-	CDColor	*psc = LightColor (nSourceSeg, nSourceSide, false);
+	CColor	*psc = LightColor (nSourceSeg, nSourceSide, false);
 	*psc = *plc;
 	}
 bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != NULL;
@@ -753,7 +753,7 @@ INT32 nSegCount = SegCount ();
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CDColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
+					CColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
 					vBr = (UINT16) uvlP->l;
 					lBr = (UINT32) (brightness * fLightScale);
 					BlendColors (plc, pvc, lBr, vBr);
@@ -772,7 +772,7 @@ INT32 nSegCount = SegCount ();
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CDColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
+					CColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
 					vBr = (UINT16) uvlP->l;
 					lBr = (UINT16) (brightness * effect [j] / 32);
 					BlendColors (plc, pvc, lBr, vBr);
@@ -1340,13 +1340,13 @@ return (effect [0] != 0 || effect [1] != 0 || effect [2] != 0 || effect [3] != 0
 
 //--------------------------------------------------------------------------
 
-CDColor *CMine::LightColor (INT32 i, INT32 j, bool bUseTexColors) 
+CColor *CMine::LightColor (INT32 i, INT32 j, bool bUseTexColors) 
 { 
 if (bUseTexColors && UseTexColors ()) {
 	CWall *pWall = SideWall (i, j);
 	//if (!pWall || (pWall->type != WALL_TRANSPARENT)) 
 		{	//always use a side color for transp. walls
-		CDColor *pc;
+		CColor *pc;
 		INT16 t = Segments (i)->sides [j].nOvlTex & 0x3fff;
 		if ((t > 0) && (pc = GetTexColor (t)))
 			return pc;

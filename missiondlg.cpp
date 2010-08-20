@@ -14,7 +14,7 @@
 #include "global.h"
 #include "render.h"
 #include "io.h"
-#include "file.h"
+#include "hogmanager.h"
 
 #include <math.h>
 

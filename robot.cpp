@@ -12,7 +12,7 @@
 #include "global.h"
 #include "toolview.h"
 #include "io.h"
-#include "file.h"
+#include "hogmanager.h"
 
 //------------------------------------------------------------------------
 // ReadHamFile()

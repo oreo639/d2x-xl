@@ -13,7 +13,7 @@
 #include "global.h"
 #include "parser.h"
 #include "io.h"
-#include "file.h"
+#include "hogmanager.h"
 #include "light.h"
 #include "textures.h"
 

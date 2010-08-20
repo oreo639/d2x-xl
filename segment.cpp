@@ -50,7 +50,7 @@ double CMine::dround_off(double value, double round) {
 
 void CMine::DeleteSegmentWalls (INT16 nSegment)
 {
-	CSide *sideP =Segments (nSegment)->sides; 
+	CSide *sideP = Segments (nSegment)->sides; 
 
 INT32 i;
 for (i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
@@ -60,61 +60,58 @@ for (i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
+
 void CMine::DeleteSegment(INT16 nDelSeg)
 {
-	CSegment	*segP, *deleted_seg; 
-	CSegment	*seg2; 
+	CSegment			*segP, *delSegP, *childSegP; 
 	CGameObject		*objP; 
-	CTrigger	*trigP;
-	UINT16		nSegment, real_segnum; 
-	INT16			child; 
-	//  UINT8 vert_check = 0;  // a 1 means that the vertex is being used by another segment
-	INT16			i, j; 
-	//  INT16 vert, unused_vert; 
+	CTrigger			*trigP;
+	UINT16			nSegment, real_segnum; 
+	INT16				child; 
+	INT16				i, j; 
 
-	if (SegCount () < 2)
-		return; 
-	if (nDelSeg < 0)
-		nDelSeg = Current ()->nSegment; 
-	if (nDelSeg < 0 || nDelSeg >= SegCount ()) 
-		return; 
+if (SegCount () < 2)
+	return; 
+if (nDelSeg < 0)
+	nDelSeg = Current ()->nSegment; 
+if (nDelSeg < 0 || nDelSeg >= SegCount ()) 
+	return; 
 
-	theApp.SetModified (TRUE);
-	theApp.LockUndo ();
-	deleted_seg = Segments (nDelSeg); 
-	UndefineSegment (nDelSeg);
+theApp.SetModified (TRUE);
+theApp.LockUndo ();
+delSegP = Segments (nDelSeg); 
+UndefineSegment (nDelSeg);
 
-	// delete any flickering lights that use this segment
-	INT32 nSide;
-	for (nSide = 0; nSide < 6; nSide++) {
-		DeleteTriggerTargets (nDelSeg, nSide); 
-		INT16 index = GetFlickeringLight(nDelSeg, nSide); 
-		if (index != -1) {
-			FlickerLightCount ()--; 
-			// put last light in place of deleted light
-			memcpy(FlickeringLights (index), FlickeringLights (FlickerLightCount ()), 
-				sizeof (CFlickeringLight)); 
+// delete any flickering lights that use this segment
+for (INT32 nSide = 0; nSide < 6; nSide++) {
+	DeleteTriggerTargets (nDelSeg, nSide); 
+	INT16 index = GetFlickeringLight(nDelSeg, nSide); 
+	if (index != -1) {
+		FlickerLightCount ()--; 
+		// put last light in place of deleted light
+		memcpy(FlickeringLights (index), FlickeringLights (FlickerLightCount ()), 
+			sizeof (CFlickeringLight)); 
 		}
 	}
 
 	// delete any Walls () within segment (if defined)
-	DeleteSegmentWalls (nDelSeg); 
+DeleteSegmentWalls (nDelSeg); 
 
-	// delete any Walls () on child Segments () that connect to this segment
-	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-		child = deleted_seg->children [i]; 
-		if (child >= 0 && child < SegCount ()) {
-			INT16	oppSegNum, oppSideNum;
-			GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
-			if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL (this))
-				DeleteWall (Segments (oppSegNum)->sides [oppSideNum].nWall); 
+// delete any Walls () on child Segments () that connect to this segment
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	child = delSegP->children [i]; 
+	if (child >= 0 && child < SegCount ()) {
+		INT16	oppSegNum, oppSideNum;
+		GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
+		if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL (this))
+			DeleteWall (Segments (oppSegNum)->sides [oppSideNum].nWall); 
 			}
 		}
 
 	// delete any Objects () within segment
-	for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
-		if (Objects (i)->nSegment == nDelSeg) {
-			DeleteObject(i); 
+for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
+	if (Objects (i)->nSegment == nDelSeg) {
+		DeleteObject(i); 
 		}
 	}
 #if 0 // done by UndefineSegment ()
@@ -162,7 +159,7 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 	}
 
 	// update segment flags
-	deleted_seg->wall_bitmask &= (~MARKED_MASK); 
+	delSegP->wall_bitmask &= (~MARKED_MASK); 
 
 	// unlink any children with this segment number
 	for (nSegment = 0, segP = Segments (); nSegment < SegCount (); nSegment++, segP++) {
@@ -180,14 +177,14 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 				segP->child_bitmask &= ~(1 << child); 
 
 				// define textures, (u, v) and light
-				CSide *sideP = deleted_seg->sides + child;
+				CSide *sideP = delSegP->sides + child;
 				SetTexture (nSegment, child, sideP->nBaseTex, sideP->nOvlTex); 
 				SetUV (nSegment, child, 0, 0, 0); 
 				double scale = pTextures [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
 				for (i = 0; i < 4; i++) {
 					segP->sides [child].uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
 					segP->sides [child].uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
-					segP->sides [child].uvls [i].l = deleted_seg->sides [child].uvls [i].l; 
+					segP->sides [child].uvls [i].l = delSegP->sides [child].uvls [i].l; 
 				}
 			}
 		}
@@ -207,8 +204,8 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 				if (segP->child_bitmask & (1 << child)
 					&& segP->children [child] >= 0 && segP->children [child] < SegCount ()) { // debug fix
-					seg2 = &Segments () [segP->children [child]]; 
-					segP->children [child] = seg2->nIndex; 
+					childSegP = &Segments () [segP->children [child]]; 
+					segP->children [child] = childSegP->nIndex; 
 				}
 			}
 		}
@@ -303,13 +300,13 @@ void CMine::DeleteSegment(INT16 nDelSeg)
 #if 1
 		if (INT32 segC = (--SegCount () - nDelSeg)) {
 			memcpy (Segments (nDelSeg), Segments (nDelSeg + 1), segC * sizeof (CSegment));
-			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CDColor));
+			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CColor));
 			}
 #else
 		for (nSegment = nDelSeg; nSegment < (SegCount ()-1); nSegment++) {
 			segP = Segments (nSegment); 
-			seg2 = Segments (nSegment + 1); 
-			memcpy(segP, seg2, sizeof (CSegment)); 
+			childSegP = Segments (nSegment + 1); 
+			memcpy(segP, childSegP, sizeof (CSegment)); 
 			}
   SegCount ()-- ; 
 #endif
@@ -2889,32 +2886,154 @@ damage [1] = 0;
 }
 
 // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
-INT32 CRobotMaker::Read (FILE *fp, INT32 version)
+UINT8 CSegment::ReadWalls (FILE* fp, int nLevelVersion)
 {
-objFlags [0] = read_INT32 (fp);
-if (theApp.IsD2File ())
-	objFlags [1] = read_INT32 (fp);
-hitPoints = read_FIX (fp);
-interval = read_FIX (fp);
-nSegment = read_INT16 (fp);
-nFuelCen = read_INT16 (fp);
-return 1;
+	UINT8 wallFlags = read_UINT8 (fp);
+	int	i;
+
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
+	if (wallFlags &= (1 << i)) 
+		sides [i].nWall = (nLevelVersion >= 13) ? read_INT16 (fp) : INT16 (read_INT8 (fp));
+return wallFlags;
 }
 
 // ------------------------------------------------------------------------
 
-void CRobotMaker::Write (FILE *fp, INT32 version)
+INT32 CSegment::Read (FILE* fp, int nLevelType, int nLevelVersion)
 {
-write_INT32 (objFlags [0], fp);
-if (theApp.IsD2File ())
-	write_INT32 (objFlags [1], fp);
-write_FIX (hitPoints, fp);
-write_FIX (interval, fp);
-write_INT16 (nSegment, fp);
-write_INT16 (nFuelCen, fp);
 }
 
+// ------------------------------------------------------------------------
+
+UINT8 CSegment::WriteWalls (FILE* fp, int nLevelVersion)
+{
+	UINT8 wallFlags = 0;
+	int	i;
+
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	if(sides [i].nWall < GameInfo ().walls.count) 
+		wallFlags |= (1 << i);
+	}
+write_INT8 (wallFlags, fp);
+
+// write wall numbers
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	if (wallFlags & (1 << i)) {
+		if (nLevelVersion () >= 13)
+			write_INT16 (sides [i].nWall, fp);
+		else
+			write_INT8 (INT8 (sides [i].nWall), fp);
+		}
+	}
+return wallFlags;
+}
+
+// ------------------------------------------------------------------------
+
+void CSegment::Write (FILE* fp, int nLevelType, int nLevelVersion)
+{
+	int	i;
+
+if (nLevelType == 2) {
+	write_INT8 (owner, fp);
+	write_INT8 (group, fp);
+	}
+
+#if 1
+child_bitmask = 0;
+for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+	if(segP->children [nSide] != -1) {
+		child_bitmask |= (1 << nSide);
+		}
+	}
+if (m_fileType== RDL_FILE) {
+	if (segP->function != 0) { // if this is a special cube
+		child_bitmask |= (1 << MAX_SIDES_PER_SEGMENT);
+		}
+	}
+#endif
+write_UINT8 (child_bitmask, fp);
+
+// write children numbers (0 to 6 bytes)
+for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
+	if (child_bitmask & (1 << bit)) {
+		write_INT16 (children [bit], fp);
+	}
+
+// write vertex numbers (16 bytes)
+for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
+	write_INT16 (verts [i], fp);
+// write special info (0 to 4 bytes)
+if (nLevelType == 0) {
+	if (child_bitmask & (1 << MAX_SIDES_PER_SEGMENT)) {
+		write_INT8 (function, fp);
+		write_INT8 (nMatCen, fp);
+		write_INT8 (value, fp);
+		write_INT8 (s2_flags, fp);
+		}
+	// write static light (2 bytes)
+	write_INT16 (INT16 (static_light >> 4), fp);
+	}
+
+// calculate wall bit mask
+UINT8 wallFlags = WriteWalls ();
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)   {
+	if ((segP->children [i] == -1) || (wallFlags & (1 << i))) 
+		segP->side [i].Write (fp);
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+void CSide::Read (FILE* fp)
+{
+nBaseTex = read_INT16 (fp);
+if (nBaseTex & 0x8000) {
+	nBaseTex &= ~0x8000;
+	nOvlTex = read_INT16 (fp);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+void CSide::Write (FILE* fp)
+{
+if (nOvlTex == 0)
+	write_INT16 (nBaseTex);
+else {
+	write_INT16 (nBaseTex | 0x8000);
+	write_INT16 (nOvlTex);
+	}
+for (int i = 0; i < 4; i++)
+	uvls [i].Write (fp);
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+UINT32 CUVL::Read (FILE* fp)
+{
+u = write_INT16 ();
+v = write_INT16 ();
+l = write_INT16 ();
+}
+
+// ------------------------------------------------------------------------
+
+void CUVL::Write (FILE* fp)
+{
+write_INT16 (u);
+write_INT16 (v);
+write_INT16 (l);
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
 INT32 CLightDeltaValue::Read (FILE *fp)
@@ -2962,6 +3081,35 @@ write_INT16 (m_nSegment, fp);
 if (bD2X)
 	write_INT16 (bD2X ? (m_nSide & 3) | (count << 3) : (m_nSide % 256 + count * 256), fp);
 write_INT16 (index, fp);
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+INT32 CRobotMaker::Read (FILE *fp, INT32 version)
+{
+objFlags [0] = read_INT32 (fp);
+if (theApp.IsD2File ())
+	objFlags [1] = read_INT32 (fp);
+hitPoints = read_FIX (fp);
+interval = read_FIX (fp);
+nSegment = read_INT16 (fp);
+nFuelCen = read_INT16 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CRobotMaker::Write (FILE *fp, INT32 version)
+{
+write_INT32 (objFlags [0], fp);
+if (theApp.IsD2File ())
+	write_INT32 (objFlags [1], fp);
+write_FIX (hitPoints, fp);
+write_FIX (interval, fp);
+write_INT16 (nSegment, fp);
+write_INT16 (nFuelCen, fp);
 }
 
 // ------------------------------------------------------------------------

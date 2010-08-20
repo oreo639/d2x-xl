@@ -449,7 +449,7 @@ if (!GetMine ())
 	CSegment	*segP;
 	CSide		*sideP;
 	CWall		*pWall;
-	CDColor		*color;
+	CColor		*color;
 // enable buttons as required
 /*
 EditButton->EnableWindow((IsD1File () || path [0] == NULL) ? FALSE: TRUE);
