@@ -741,6 +741,8 @@ public:
 		CSoundInfo			soundInfo;
 		} rType;
 
+	//CGameObject () { memset (this, 0, sizeof (*this)); }
+
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual CGameItem* Next (void) { return this + 1; }
