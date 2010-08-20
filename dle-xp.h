@@ -98,9 +98,9 @@ public:
 	inline CDlcDoc *GetDocument ()
 		{ CMineView *h; return (h = MineView ()) ? h->GetDocument () : NULL; }
 	inline int FileType (void) 
-		{ return theMine->FileType (); }
+		{ return theMine ? theMine->FileType (): RL2_FILE; }
 	inline int LevelVersion (void) 
-		{ return theMine->LevelVersion (); }
+		{ return theMine ? theMine->LevelVersion () : 7; }
 	inline bool IsD1File (void) { return FileType () == RDL_FILE; }
 	inline bool IsD2File (void) { return FileType () != RDL_FILE; }
 	inline CWnd *TexturePane ()

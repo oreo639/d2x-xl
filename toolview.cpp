@@ -107,6 +107,9 @@ if (m_txtFilterTool)
 
 void CToolView::Refresh ()
 {
+if (!theMine) 
+	return;
+
 	CPropertyPage	*p = m_pTools->GetActivePage ();
 
 if (p == m_prefsDlg)
@@ -139,32 +142,32 @@ void CToolView::Setup (void)
 {
 if (!m_pTools)
 	return;
-m_cubeTool = new CSegmentTool (m_pTools);
-m_wallTool = new CWallTool (m_pTools);
-m_triggerTool = new CTriggerTool (m_pTools);
-m_textureTool = new CTextureTool (m_pTools);
-m_lightTool = new CLightTool (m_pTools);
-m_objectTool = new CObjectTool (m_pTools);
-m_effectTool = new CEffectTool (m_pTools);
-m_advObjTool = new CAdvObjTool (m_pTools);
-m_reactorTool = new CReactorTool (m_pTools);
-m_missionTool = new CMissionTool (m_pTools);
-m_diagTool = new CDiagTool (m_pTools);
-m_prefsDlg = new CPrefsDlg (m_pTools);
-m_txtFilterTool = new CTxtFilterTool (m_pTools);
-m_pTools->AddPage (m_textureTool);
-m_pTools->AddPage (m_cubeTool);
-m_pTools->AddPage (m_wallTool);
-m_pTools->AddPage (m_triggerTool);
-m_pTools->AddPage (m_objectTool);
-m_pTools->AddPage (m_effectTool);
-m_pTools->AddPage (m_advObjTool);
-m_pTools->AddPage (m_lightTool);
-m_pTools->AddPage (m_reactorTool);
-m_pTools->AddPage (m_missionTool);
-m_pTools->AddPage (m_diagTool);
-m_pTools->AddPage (m_txtFilterTool);
-m_pTools->AddPage (m_prefsDlg);
+//m_textureTool = new CTextureTool (m_pTools);
+//m_cubeTool = new CSegmentTool (m_pTools);
+//m_wallTool = new CWallTool (m_pTools);
+//m_triggerTool = new CTriggerTool (m_pTools);
+//m_lightTool = new CLightTool (m_pTools);
+//m_objectTool = new CObjectTool (m_pTools);
+//m_effectTool = new CEffectTool (m_pTools);
+//m_advObjTool = new CAdvObjTool (m_pTools);
+//m_reactorTool = new CReactorTool (m_pTools);
+//m_missionTool = new CMissionTool (m_pTools);
+//m_diagTool = new CDiagTool (m_pTools);
+//m_prefsDlg  = CPrefsDlg (m_pTools);
+//m_txtFilterTool = new CTxtFilterTool (m_pTools);
+//m_pTools->AddPage (m_textureTool);
+//m_pTools->AddPage (m_cubeTool);
+//m_pTools->AddPage (m_wallTool);
+//m_pTools->AddPage (m_triggerTool);
+//m_pTools->AddPage (m_objectTool);
+//m_pTools->AddPage (m_effectTool);
+//m_pTools->AddPage (m_advObjTool);
+//m_pTools->AddPage (m_lightTool);
+//m_pTools->AddPage (m_reactorTool);
+//m_pTools->AddPage (m_missionTool);
+//m_pTools->AddPage (m_diagTool);
+//m_pTools->AddPage (m_txtFilterTool);
+//m_pTools->AddPage (m_prefsDlg);
 //m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0);
 }
 

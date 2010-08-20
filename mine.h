@@ -586,19 +586,19 @@ private:
 	void SortDLIndex (INT32 left, INT32 right);
 	};
 
-#define MAX_SEGMENTS (theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3)
-#define MAX_VERTICES (theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3)
-#define MAX_WALLS (theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3)
-#define MAX_TEXTURES (theMine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)
-#define MAX_TRIGGERS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2)
-#define MAX_OBJECTS (theMine->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2)
-#define MAX_NUM_FUELCENS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2)
-#define MAX_NUM_REPAIRCENS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2)
-#define MAX_PLAYERS (theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
-#define ROBOT_IDS2 ((theMine->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL)
-#define MAX_ROBOT_MAKERS ((theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2)
-#define MAX_LIGHT_DELTA_INDICES ((theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
-#define MAX_LIGHT_DELTA_VALUES ((theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
+#define MAX_SEGMENTS (!theMine ? MAX_SEGMENTS3 : theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3)
+#define MAX_VERTICES (!theMine ? MAX_VERTICES3 : theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3)
+#define MAX_WALLS (!theMine ? MAX_WALLS3 : theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3)
+#define MAX_TEXTURES (!theMine ? MAX_D2_TEXTURES : theMine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)
+#define MAX_TRIGGERS (!theMine ? MAX_TRIGGERS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2)
+#define MAX_OBJECTS (!theMine ? MAX_OBJECTS2 : theMine->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2)
+#define MAX_NUM_FUELCENS ((!theMine ? MAX_NUM_FUELCENS2 : theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2)
+#define MAX_NUM_REPAIRCENS (!theMine ? MAX_NUM_REPAIRCENS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2)
+#define MAX_PLAYERS (!theMine ? MAX_PLAYERS_D2X : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+#define ROBOT_IDS2 (!theMine ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL)
+#define MAX_ROBOT_MAKERS (!theMine ? MAX_NUM_MATCENS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2)
+#define MAX_LIGHT_DELTA_INDICES (!theMine ? MAX_LIGHT_DELTA_INDICES_D2X : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
+#define MAX_LIGHT_DELTA_VALUES ((!theMine  ? MAX_LIGHT_DELTA_VALUES_D2X : theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
 
 #define NO_WALL MAX_WALLS
 

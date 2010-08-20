@@ -395,6 +395,8 @@ if (m_nMineCenter == 2) {
 
 void CMineView::OnDraw (CDC* pViewDC)
 {
+if (!theMine) return;
+
 #if OGL_RENDERING
 if (m_bUpdate) {
 	GLRenderScene ();
@@ -1136,6 +1138,7 @@ if (left < r)
 
 void CMineView::DrawCubeQuick	(CSegment *segP, bool bPartial)
 {
+if (!theMine) return;
 if (!Visible (segP))
 	return;
 
@@ -2476,6 +2479,8 @@ for (i = theMine->VertCount (); i; i--, a++) {
 
 void CMineView::SetViewPoints (CRect *pRC, bool bSetViewInfo)
 {
+if (!theMine) return;
+
 	CRect		rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
 	long		i, 
 				x, y, z,
@@ -2547,6 +2552,8 @@ m_maxViewPoint.z = (INT16) maxZ;
 
 INT32 CMineView::FitToView (void)
 {
+if (!theMine) return 1;
+
 	CRect			rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
 	double		zoomX, zoomY, zoom;
 	INT32			dx, dy;
@@ -2674,6 +2681,8 @@ void CMineView::AlignSide()
 
 void CMineView::CenterMine()
 {
+if (!theMine) return;
+
 //	CDlcDoc* pDoc = GetDocument();
 //	ASSERT_VALID(pDoc);
 
@@ -2732,6 +2741,8 @@ Refresh (false);
 
 void CMineView::CenterCube()
 {
+if (!theMine) return;
+
 	CSegment& segP = theMine->Segments (0) [m_Current->nSegment];
 	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = segP.verts;
@@ -2768,6 +2779,8 @@ Refresh (false);
 
 void CMineView::CenterObject()
 {
+if (!theMine) return;
+
 	CDlcDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc) return;
@@ -3040,6 +3053,8 @@ CWnd::InvalidateRect (lpRect, bErase);
 
 void CMineView::Refresh (bool bAll)
 {
+if (!theMine) return;
+
 	static bool bRefreshing = false;
 
 if (!(bRefreshing || m_nDelayRefresh)) {
@@ -3085,6 +3100,8 @@ return false;
 
 void CMineView::MarkRubberBandedVertices (void)
 {
+if (!theMine) return;
+
 	APOINT	*pa = m_viewPoints;
 	INT32		x, y;
 
@@ -3352,6 +3369,8 @@ pos.z  =
                         
 BOOL CMineView::DrawRubberBox ()
 {
+if (!theMine) return FALSE;
+
 	static CRect	prevRect (0, 0, 0, 0);
       
 if (m_mouseState != eMouseStateRubberBand)
@@ -3383,6 +3402,8 @@ return TRUE;
                         
 void CMineView::UpdateRubberRect (CPoint pt)
 {
+if (!theMine) return;
+
 if (m_mouseState == eMouseStateZoom)
 	return;
 if (m_mouseState == eMouseStateDrag)
@@ -3424,6 +3445,8 @@ if (rc != m_rubberRect) {
                         
 void CMineView::ResetRubberRect ()
 {
+if (!theMine) return;
+
 ReleaseCapture ();
 InvalidateRect (&m_rubberRect, FALSE);
 UpdateWindow ();
@@ -3435,6 +3458,8 @@ m_rubberRect.top = m_rubberRect.bottom = 0;
                         
 BOOL CMineView::UpdateDragPos ()
 {
+if (!theMine) return FALSE;
+
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
@@ -3460,6 +3485,8 @@ return TRUE;
                         
 void CMineView::HighlightDrag (INT16 nVert, long x, long y) 
 {
+if (!theMine) return;
+
 m_pDC->SelectObject((HBRUSH) GetStockObject (NULL_BRUSH));
 //m_pDC->SetROP2 (R2_NOT);
 m_pDC->SetROP2 (R2_NOT);
@@ -3492,6 +3519,8 @@ UpdateWindow ();
                         
 BOOL CMineView::DrawDragPos (void)
 {
+if (!theMine) return FALSE;
+
 if (m_mouseState != eMouseStateDrag)
 	return FALSE;
 if (m_lastMousePos == m_lastDragPos)
@@ -3542,6 +3571,8 @@ return TRUE;
                         
 void CMineView::FinishDrag (void)
 {
+if (!theMine) return;
+
 //ReleaseCapture ();
 	INT32		m_changesMade = 1;
 	INT32		i, new_vert, count = 0;

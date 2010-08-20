@@ -396,7 +396,8 @@ if (m_bEditorTB)
 	OnEditorToolbar ();
 #endif
 theApp.SaveLayout ();
-ToolView ()->PrefsDlg ()->SaveAppSettings ();
+if (ToolView ()->PrefsDlg ())
+	ToolView ()->PrefsDlg ()->SaveAppSettings ();
 CFrameWnd::OnClose ();
 }
 

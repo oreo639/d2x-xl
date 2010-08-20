@@ -266,7 +266,8 @@ BOOL CDlcApp::InitInstance()
 	MainFrame ()->FixToolBars ();
 	LoadLayout ();
 	MainFrame ()->ToolView ()->RecalcLayout (MainFrame ()->m_toolMode, MainFrame ()->m_textureMode);
-	MainFrame ()->ToolView ()->PrefsDlg ()->SetAppSettings ();
+	if (ToolView ()->PrefsDlg ())
+		MainFrame ()->ToolView ()->PrefsDlg ()->SetAppSettings ();
 	MainFrame ()->UpdateWindow ();
 	if (m_bSplashScreen || DEMO) {
 		CAboutDlg aboutDlg (100);
@@ -274,7 +275,8 @@ BOOL CDlcApp::InitInstance()
 		}
 	if (*cmdInfo.m_strFileName)
 		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), NULL /*"*"*/);
-	ToolView ()->PrefsDlg ()->SetAppSettings (true);
+	if (ToolView ()->PrefsDlg ())
+		ToolView ()->PrefsDlg ()->SetAppSettings (true);
 	return TRUE;
 }
 
@@ -450,6 +452,8 @@ WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 
 void CDlcApp::SaveLayout ()
 {
+if (!theMine) return;
+
 	CRect	rc;
 
 MainFrame ()->GetWindowRect (rc);
@@ -484,13 +488,16 @@ WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
 
 void CDlcApp::LoadLayout ()
 {
+if (!theMine) return;
+
 	CRect	rc, tbrc;
 	UINT h = AFX_IDW_DOCKBAR_TOP;
 
 MainFrame ()->m_toolMode = GetPrivateProfileInt ("DLE-XP", "ToolMode", 1, INIFILE);
 MainFrame ()->m_textureMode = GetPrivateProfileInt ("DLE-XP", "TextureMode", 1, INIFILE);
 MainFrame ()->m_paneMode = ((MainFrame ()->m_toolMode == 2) && (MainFrame ()->m_textureMode == 2)) ? 2 : 0;
-ToolView ()->DiagTool ()->m_bAutoFixBugs = GetPrivateProfileInt ("DLE-XP", "AutoFixBugs", 1, INIFILE);
+if (ToolView ()->DiagTool ())
+	ToolView ()->DiagTool ()->m_bAutoFixBugs = GetPrivateProfileInt ("DLE-XP", "AutoFixBugs", 1, INIFILE);
 rc.left = GetPrivateProfileInt ("DLE-XP", "xWin", 0, INIFILE);
 rc.top = GetPrivateProfileInt ("DLE-XP", "yWin", 0, INIFILE);
 rc.right = rc.left + GetPrivateProfileInt ("DLE-XP", "cxWin", 0, INIFILE);

@@ -325,7 +325,7 @@ if (!SaveIfModified ())
 	return FALSE;
 if (bBrowseForFile && !BrowseForFile (m_szFile, TRUE))
 	return FALSE;
-if (theApp.ToolView ())
+if (theApp.ToolView () && theApp.ToolView ()->DiagTool ())
 	theApp.ToolView ()->DiagTool ()->Reset ();
 if (!pszFile)
 	pszFile = m_szFile;

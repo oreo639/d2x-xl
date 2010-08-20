@@ -294,6 +294,8 @@ return TRUE;
 
 void CTextureTool::DoDataExchange (CDataExchange *pDX)
 {
+if (!theMine) return;
+
 	INT32		i, nBrightness;
 	char		szBrightness [20];
 
@@ -409,6 +411,7 @@ else {
 
 void CTextureTool::OnPaint ()
 {
+if (!theMine) return;
 CTexToolDlg::OnPaint ();
 #if TEXTOOLDLG == 0
 UpdateTextureWnd ();
