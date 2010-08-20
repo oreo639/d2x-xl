@@ -139,7 +139,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
   CalcSegCenter (location,nSegment);
-  MEMSET (objP,0,sizeof (CGameObject));
+  memset (objP,0,sizeof (CGameObject));
   objP->signature = 0;
   objP->type = type;
   if (type==OBJ_WEAPON) {
@@ -191,9 +191,9 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 objP = Objects (0) + Current ()->nObject;
 id = objP->id;
-MEMSET (&objP->mType, 0, sizeof (objP->mType));
-MEMSET (&objP->cType, 0, sizeof (objP->cType));
-MEMSET (&objP->rType, 0, sizeof (objP->rType));
+memset (&objP->mType, 0, sizeof (objP->mType));
+memset (&objP->cType, 0, sizeof (objP->cType));
+memset (&objP->rType, 0, sizeof (objP->rType));
 switch (type) {
 	case OBJ_ROBOT: // an evil enemy
 	  objP->control_type  = CT_AI;

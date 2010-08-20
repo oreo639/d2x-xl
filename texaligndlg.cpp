@@ -296,7 +296,7 @@ offset.y = (INT32) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 // set up logical palette
 oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 pDC->RealizePalette();
-MEMSET(tx.m_pDataBM, 0, sizeof (bmBuf));
+memset(tx.m_pDataBM, 0, sizeof (bmBuf));
 if (DefineTexture (sideP->nBaseTex, sideP->nOvlTex, &tx, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (DefineTexture failed)");
 	return;

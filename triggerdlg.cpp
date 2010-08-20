@@ -164,8 +164,8 @@ m_targets = 0;
 m_iTarget = -1;
 m_nSliderValue = 10;
 m_bFindTrigger = true;
-MEMSET (m_bD1Flags, 0, sizeof (m_bD1Flags));
-MEMSET (m_bD2Flags, 0, sizeof (m_bD2Flags));
+memset (m_bD1Flags, 0, sizeof (m_bD1Flags));
+memset (m_bD2Flags, 0, sizeof (m_bD2Flags));
 *m_szTarget = '\0';
 }
 

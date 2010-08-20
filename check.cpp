@@ -558,7 +558,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 						break;
 					}					
 				if (sidenum2 < MAX_SIDES_PER_SEGMENT) {
-					MEMSET (match, 0, sizeof (match));
+					memset (match, 0, sizeof (match));
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
 							if (theMine->Segments (nSegment)->verts[side_vert[nSide][i]] ==
@@ -831,8 +831,8 @@ if (theMine->Objects (0)->type != OBJ_PLAYER || theMine->Objects (0)->id != 0) {
 
 	// make sure there is the proper number of players and coops
 	// reset count to zero
-	MEMSET (players, 0, sizeof (players));
-	MEMSET (nPlayers, 0, sizeof (nPlayers));
+	memset (players, 0, sizeof (players));
+	memset (nPlayers, 0, sizeof (nPlayers));
 	bFix = 0;
 	// count each
 	objP = theMine->Objects (0);
@@ -1242,7 +1242,7 @@ void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker
 	CSegment*		segP = theMine->Segments (0);
 	INT16				n, h, i, j = theMine->SegCount ();
 
-MEMSET (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
+memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
 for (h = i = 0; i < j; i++, segP++) {
 	if (segP->function == UINT8 (nSpecialType)) {
 		n = segP->nMatCen;
@@ -1438,7 +1438,7 @@ bool CDiagTool::CheckWalls ()
 	INT16 sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Walls]");
 
-MEMSET (wallFixed, 0, sizeof (wallFixed));
+memset (wallFixed, 0, sizeof (wallFixed));
 *message = '\0';
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {

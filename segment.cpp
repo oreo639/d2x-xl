@@ -413,7 +413,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	SetUV (nSegment, nSide, 0, 0, 0); 
 	}
 segP->static_light = 0; 
-MEMSET (segP->children, 0xFF, sizeof (segP->children));
+memset (segP->children, 0xFF, sizeof (segP->children));
 }
 
 // -------------------------------------------------------------------------- 
@@ -490,7 +490,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			} 
 		}
 	else {
-		MEMSET (segP->sides [nSide].uvls, 0, sizeof (segP->sides [nSide].uvls));
+		memset (segP->sides [nSide].uvls, 0, sizeof (segP->sides [nSide].uvls));
 		}
 	}
 
@@ -510,7 +510,7 @@ currSeg->children [nCurrSide] = nNewSeg;
 currSeg->childFlags |= (1 << nCurrSide); 
 currSeg->sides [nCurrSide].nBaseTex = 0; 
 currSeg->sides [nCurrSide].nOvlTex = 0; 
-MEMSET (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
+memset (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
  
 // update number of Segments () and vertices and clear vertexStatus
 SegCount ()++;
@@ -959,7 +959,7 @@ void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment)
   INT16	*nVerts =Segments (nSegment)->verts; 
   CFixVector *vert;
   
-MEMSET (&pos, 0, sizeof (pos));
+memset (&pos, 0, sizeof (pos));
 INT32 i;
 for (i = 0; i < 8; i++) {
 	vert = Vertices (nVerts [i]);
@@ -2677,7 +2677,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 VertCount () = h;
 #endif
 // compute segment center
-MEMSET (&segCenter, 0, sizeof (segCenter));
+memset (&segCenter, 0, sizeof (segCenter));
 for (i = 0; i < 8; i++) {
 	v = Vertices (centerSegP->verts [i]);
 	segCenter.x += v->x;
@@ -2689,7 +2689,7 @@ segCenter.y /= 8;
 segCenter.z /= 8;
 // add center segment
 // compute center segment vertices
-MEMSET (bVertDone, 0, sizeof (bVertDone));
+memset (bVertDone, 0, sizeof (bVertDone));
 for (nSide = 0; nSide < 6; nSide++) {
 	for (vertNum = 0; vertNum < 4; vertNum++) {
 		j = side_vert [nSide][vertNum];
@@ -2770,7 +2770,7 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 		}
 	}
 // relocate center segment vertex indices
-MEMSET (bVertDone, 0, sizeof (bVertDone));
+memset (bVertDone, 0, sizeof (bVertDone));
 for (nSide = 0; nSide < 6; nSide++) {
 	for (vertNum = 0; vertNum < 4; vertNum++) {
 		j = side_vert [nSide][vertNum];

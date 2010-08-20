@@ -85,7 +85,7 @@ m_nLastSide = -1;
 m_bSetDefTexture = 0;
 m_nOwner = theMine->Segments (0)->owner;
 m_nGroup = theMine->Segments (0)->group;
-MEMSET (m_nCoord, 0, sizeof (m_nCoord));
+memset (m_nCoord, 0, sizeof (m_nCoord));
 }
 
                         /*--------------------------*/

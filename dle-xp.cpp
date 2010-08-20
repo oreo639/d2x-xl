@@ -253,7 +253,7 @@ BOOL CDlcApp::InitInstance()
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
 
-	//MEMSET (pTextures, 0, sizeof (pTextures));
+	//memset (pTextures, 0, sizeof (pTextures));
 	theMine = new CMine;
 	theMine->Initialize ();
 	theMine->Default ();

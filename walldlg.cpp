@@ -70,7 +70,7 @@ END_MESSAGE_MAP ()
 CWallTool::CWallTool (CPropertySheet *pParent)
 	: CTexToolDlg (nLayout ? IDD_WALLDATA2 : IDD_WALLDATA, pParent, IDC_WALL_SHOW, 5, RGB (0,0,0))
 {
-MEMSET (&m_defWall, 0, sizeof (m_defWall));
+memset (&m_defWall, 0, sizeof (m_defWall));
 m_defWall.type = WALL_DOOR;
 m_defWall.flags = WALL_DOOR_AUTO;
 m_defWall.keys = KEY_NONE;
@@ -106,8 +106,8 @@ m_nClip = 0;
 m_nStrength = 0;
 m_nCloak = 0;
 m_bFlyThrough = 0;
-MEMSET (m_bKeys, 0, sizeof (m_bKeys));
-MEMSET (m_bFlags, 0, sizeof (m_bFlags));
+memset (m_bKeys, 0, sizeof (m_bKeys));
+memset (m_bFlags, 0, sizeof (m_bFlags));
 *m_szMsg = '\0';
 }
 
@@ -591,7 +591,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 void CWallTool::OnKey (INT32 i) 
 {
 GetWalls ();
-MEMSET (m_bKeys, 0, sizeof (m_bKeys));
+memset (m_bKeys, 0, sizeof (m_bKeys));
 m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {

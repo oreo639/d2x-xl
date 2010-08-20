@@ -156,7 +156,7 @@ m_nLightTime = 1.0;
 m_iLight = -1;
 m_nHighlight = -1;
 *m_szTextureBuf = '\0';
-MEMSET (m_szLight, 0, sizeof (m_szLight));
+memset (m_szLight, 0, sizeof (m_szLight));
 m_bLightEnabled = TRUE;
 m_bIgnorePlane = FALSE;
 m_nColorIndex = -1;
@@ -564,7 +564,7 @@ void CTextureTool::DrawTexture (INT16 texture1, INT16 texture2, INT32 x0, INT32 
 	CDC	*pDC = m_textureWnd.GetDC ();
 	CDTexture tx (bmBuf);
 
-MEMSET (bitmap_array,0,sizeof (bitmap_array));
+memset (bitmap_array,0,sizeof (bitmap_array));
 if (DefineTexture(texture1,texture2,&tx,x0,y0))
 	return;
 BITMAPINFO *bmi;

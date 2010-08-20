@@ -192,7 +192,7 @@ if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
 	if (theMine->IsD2XLevel ())
-		MEMSET (theMine->CurrLightColor (), 0, sizeof (CColor));
+		memset (theMine->CurrLightColor (), 0, sizeof (CColor));
 	}
 else {
 	if (!m_bLightEnabled)
@@ -389,7 +389,7 @@ void CTextureTool::ChooseRGBColor (void)
 {
 	CHOOSECOLOR	cc;
 
-MEMSET (&cc, 0, sizeof (cc));
+memset (&cc, 0, sizeof (cc));
 cc.lStructSize = sizeof (cc);
 cc.hwndOwner = theApp.MainFrame ()->m_hWnd;
 cc.rgbResult = RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue);

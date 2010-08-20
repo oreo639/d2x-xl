@@ -427,7 +427,7 @@ if (pszExt) {
 		}
 	}
 
-//MEMSET (theMine->TexColors (), 0, sizeof (theMine->MineData ().texColors));
+//memset (theMine->TexColors (), 0, sizeof (theMine->MineData ().texColors));
 sprintf_s (pszExt, 5, ".clr");
 if (pszSubFile)
 	FindFileData (pszFile, message, &size, &offset);
@@ -532,7 +532,7 @@ if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
 
 		// Set all structure members to zero.
 		OPENFILENAME ofn;
-		MEMSET(&ofn, 0, sizeof (OPENFILENAME));
+		memset(&ofn, 0, sizeof (OPENFILENAME));
 		ofn.lStructSize = sizeof (OPENFILENAME);
 		ofn.hwndOwner = HWindow;
 		ofn.lpstrFilter = "All Files\0*.*\0";
@@ -595,7 +595,7 @@ fseek (hogfile, offset, SEEK_SET);
 if (!fread (&lh, sizeof (lh), 1, hogfile))
 	ErrorMsg ("Cannot read from HOG file");
 else {
-	MEMSET(lh.name, 0, sizeof (lh.name));
+	memset(lh.name, 0, sizeof (lh.name));
 	buf[12] = NULL;
 	_strlwr_s (buf, sizeof (buf));
 	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
@@ -653,7 +653,7 @@ if (!BrowseForFile (TRUE, (IsD1File ()) ? "rdl" : "rl2", szFile,
 	return;
 #else
 	OPENFILENAME ofn;
-MEMSET(&ofn, 0, sizeof (OPENFILENAME));
+memset(&ofn, 0, sizeof (OPENFILENAME));
 ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = GetSafeHwnd ();
 ofn.lpstrFilter = "Descent Level\0*.rdl\0"
@@ -753,7 +753,7 @@ ExportSubFile (m_pszFile, szFile, offset, lh.size);
 #else //0
 // Set al structure members to zero.
 	OPENFILENAME ofn;
-MEMSET(&ofn, 0, sizeof (OPENFILENAME));
+memset(&ofn, 0, sizeof (OPENFILENAME));
 ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = GetSafeHwnd ();
 ofn.lpstrFilter = "All Files\0*.*\0";
@@ -1116,7 +1116,7 @@ if (!fSrc) {
 	return -1;
 	}
 // write szLevel (13 chars, null filled)
-MEMSET (&lh, 0, sizeof (lh));
+memset (&lh, 0, sizeof (lh));
 strncpy_s (lh.name, sizeof (lh.name), szLevel, 12);
 _strlwr_s (lh.name, sizeof (lh.name));
 // calculate then write size
@@ -1179,7 +1179,7 @@ szBaseName[12] = NULL; // make sure it is null terminated
 pszNameEnd = strrchr((char *)szBaseName,'.');
 if (!pszNameEnd)
 	pszNameEnd = szBaseName + strlen ((char *)szBaseName);
-MEMSET (pszNameEnd, 0, 12 - INT32 (pszNameEnd - szBaseName));
+memset (pszNameEnd, 0, 12 - INT32 (pszNameEnd - szBaseName));
 // write rdl file
 if (*szSubFile) {
 	for (pszExtStart = szSubFile; *pszExtStart && (*pszExtStart != '.'); pszExtStart++)
@@ -1556,7 +1556,7 @@ if (!fMsn) {
 	DEBUGMSG (" Hog manager: Mission file not found.");
 	return -1;
 	}
-MEMSET (missionData.comment, 0, sizeof (missionData.comment));
+memset (missionData.comment, 0, sizeof (missionData.comment));
 l = 0;
 while (fgets (szBuf, sizeof (szBuf), fMsn)) {
 	if ((psz = strstr (szBuf, "\r\n")) || (psz = strchr (szBuf, '\n')))	//replace cr/lf
@@ -1721,7 +1721,7 @@ INT32 MakeMissionFile (char *pszFile, char *pszSubFile, INT32 bCustomTextures, I
 	char	szBaseName [256];
 	char	szTime [20];
 
-//MEMSET (&missionData, 0, sizeof (missionData));
+//memset (&missionData, 0, sizeof (missionData));
 FSplit (pszSubFile, NULL, szBaseName, NULL);
 if (!*missionData.missionName)
 	strcpy_s (missionData.missionName, sizeof (missionData.missionName), szBaseName);

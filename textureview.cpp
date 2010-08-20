@@ -373,9 +373,9 @@ void CTextureView::FilterTextures (UINT8 *pFilter, BOOL bShowAll)
 {
 if (bShowAll) {
 	if (m_nTxtFilter == 0xFFFFFFFF)
-		MEMSET (pFilter, 0xFF, (MAX_D2_TEXTURES + 7) / 8);
+		memset (pFilter, 0xFF, (MAX_D2_TEXTURES + 7) / 8);
 	else {
-		MEMSET (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
+		memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 		m_nTextures [0] = 0;
 		INT32 i, f = m_nTxtFilter & ~TXT_MOVE;
 		for (i = 0; i < m_nTextures [1]; i++) {
@@ -392,7 +392,7 @@ else {
 	UINT16 nSegment,nSide;
 	CSegment *segP;
 
-	MEMSET (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
+	memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 	m_nTextures [0] = 0;
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {

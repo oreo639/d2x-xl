@@ -278,7 +278,7 @@ CGameObject *objP = theMine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = SMOKE_ID;
 objP->render_type = RT_SMOKE;
-MEMSET (&objP->rType.smokeInfo, 0, sizeof (objP->rType.smokeInfo));
+memset (&objP->rType.smokeInfo, 0, sizeof (objP->rType.smokeInfo));
 Refresh ();
 theApp.MineView ()->Refresh ();
 }
@@ -293,7 +293,7 @@ CGameObject *objP = theMine->CurrObj ();
 objP->type = OBJ_EFFECT;
 objP->id = LIGHTNING_ID;
 objP->render_type = RT_LIGHTNING;
-MEMSET (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
+memset (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
 Refresh ();
 theApp.MineView ()->Refresh ();
 }

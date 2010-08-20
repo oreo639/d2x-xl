@@ -55,7 +55,7 @@ void CMine::Initialize (void)
 	m_nNoLightDeltas = 2;
 	m_lightRenderDepth = MAX_LIGHT_DEPTH;
 	m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-	MEMSET (RobotInfo (), 0, sizeof (ROBOT_INFO));
+	RobotInfo ().Clear ();
 //	LoadPalette ();
 	m_bSortObjects = TRUE;
 	m_bVertigo = false;
@@ -175,8 +175,8 @@ bool bNewMine = false;
 // first disable curve generator
 m_bSplineActive = FALSE;
 
-MEMSET (LightColors (), 0, sizeof (MineData ().lightColors));
-MEMSET (VertexColors (), 0, sizeof (MineData ().vertexColors));
+LightColors ().Clear ();
+VertexColors ().Clear ();
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
 if (filename_passed && *filename_passed)
@@ -1225,7 +1225,7 @@ else {  /*load mine filename */
 			SortObjTriggers ();
 		else {
 			NumObjTriggers () = 0;
-			MEMSET (ObjTriggers (), 0, sizeof (CTrigger) * MAX_OBJ_TRIGGERS);
+			ObjTriggers ().Clear ();
 			}
 		}
 

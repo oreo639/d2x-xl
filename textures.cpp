@@ -86,7 +86,7 @@ for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 }
 #else
 if (bConverted = (UINT8 *) malloc ((nSize + 7) / 8))
-	MEMSET (bConverted, 0, (nSize + 7) / 8);
+	memset (bConverted, 0, (nSize + 7) / 8);
 
 nextPixel:
 
@@ -581,7 +581,7 @@ for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
 				free (expandBuf);
 				return -1;
 				}	
-			MEMSET (pDest, c, l);
+			memset (pDest, c, l);
 			pDest += l;
 			}
 		}

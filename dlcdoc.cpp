@@ -160,7 +160,7 @@ CDlcDoc::CDlcDoc()
 m_bInitDocument = true;
 *m_szFile = '\0';
 *m_szSubFile = '\0';
-MEMSET (&missionData, 0, sizeof (missionData));
+memset (&missionData, 0, sizeof (missionData));
 }
 
 CDlcDoc::~CDlcDoc()
@@ -264,7 +264,7 @@ if (d.DoModal () == IDOK) {
 	theMine->Reset ();
 	theMine->SetLinesToDraw ();
 	theApp.MineView ()->ResetView (true);
-	MEMSET (&missionData, 0, sizeof (missionData));
+	memset (&missionData, 0, sizeof (missionData));
 	CreateLightMap ();
 	theApp.TextureView ()->Setup ();
 	theApp.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
@@ -351,7 +351,7 @@ if (strstr (pszFile, ".hog")) {
 	FSplit (pszFile, m_startFolder , NULL, NULL);
 	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder );
 	err = theMine->Load (m_szTmpFile, true);
-	MEMSET (&missionData, 0, sizeof (missionData));
+	memset (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
 	}
 else {
