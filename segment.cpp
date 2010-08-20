@@ -148,15 +148,14 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
 				// move last segment into this spot
 				ReactorTriggers (i)->Delete (j);
+				}
 			}
 		}
-	}
 
 	// update secret cube number if out of range now
 	nSegment = (UINT16) SecretCubeNum (); 
-	if (nSegment >= SegCount () || nSegment== nDelSeg) {
+	if (nSegment >= SegCount () || nSegment== nDelSeg)
 		SecretCubeNum () = 0; 
-	}
 
 	// update segment flags
 	delSegP->wallFlags &= ~MARKED_MASK; 
@@ -168,9 +167,8 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 
 				// subtract by 1 if segment is above deleted segment
 				Current ()->nSegment = nSegment; 
-				if (nSegment > nDelSeg) {
+				if (nSegment > nDelSeg) 
 					Current ()->nSegment--; 
-				}
 
 				// remove child number and update child bitmask
 				segP->children [child] = -1; 
@@ -2937,10 +2935,10 @@ wallFlags = UINT8 (read_INT8 (fp));
 // read in wall numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	sides [i].nWall = (wallFlags & (1 << i)) 
-							? UINT16 ((nLevelVersion < 13) 
-								? read_INT8 (fp) 
-								: read_INT16 (fp) 
-							: NO_WALL (this);
+							? (nLevelVersion < 13) 
+								? UINT16 (read_INT8 (fp)) 
+								: UINT16 (read_INT16 (fp)) 
+							: NO_WALL (theApp.GetMine ());
 
 // read in textures and uvls (0 to 60 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
@@ -3009,7 +3007,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		childFlags |= (1 << i);
 		}
 	}
-if (m_fileType== RDL_FILE) {
+if (nLevelType == 0) {
 	if (function != 0) { // if this is a special cube
 		childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
