@@ -415,7 +415,7 @@ else {
 
 void CTextureTool::OnPaint ()
 {
-//if (!theMine) 
+if (!theMine) 
 	return;
 CTexToolDlg::OnPaint ();
 #if TEXTOOLDLG == 0
