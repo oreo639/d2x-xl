@@ -665,20 +665,71 @@ return 1;
 
 // ------------------------------------------------------------------------
 
+INT32 CSmokeInfo::Read (FILE *fp, INT32 version)
+{
+nLife = read_INT32 (fp);
+nSize [0] = read_INT32 (fp);
+nParts = read_INT32 (fp);
+nSpeed = read_INT32 (fp);
+nDrift = read_INT32 (fp);
+nBrightness = read_INT32 (fp);
+for (int i = 0; i < 4; i++)
+	color [i] = read_INT8 (fp);
+nSide = read_INT8 (fp);
+nType = (version < 18) ? 0 : read_INT8 (fp);
+bEnabled = (version < 19) ? 1 : read_INT8 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CLightningInfo::Read (FILE *fp, INT32 version)
+{
+nLife = read_INT32 (fp);
+nDelay = read_INT32 (fp);
+nLength = read_INT32 (fp);
+nAmplitude = read_INT32 (fp);
+nOffset = read_INT32 (fp);
+nLightnings = read_INT16 (fp);
+nId = read_INT16 (fp);
+nTarget = read_INT16 (fp);
+nNodes = read_INT16 (fp);
+nChildren = read_INT16 (fp);
+nSteps = read_INT16 (fp);
+nAngle = read_INT8 (fp);
+nStyle = read_INT8 (fp);
+nSmoothe = read_INT8 (fp);
+bClamp = read_INT8 (fp);
+bPlasma = read_INT8 (fp);
+bSound = read_INT8 (fp);
+bRandom = read_INT8 (fp);
+bInPlane = read_INT8 (fp);
+for (int i = 0; i < 4; i++)
+	color [i] = read_INT8 (fp);
+bEnabled = (version < 19) ? 1 : read_INT8 (fp);
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+INT32 CSoundInfo::Read (FILE *fp, INT32 version)
+{
+fread (szFilename, 1, sizeof (szFilename), fp);
+nVolume = read_INT32 (fp);
+bEnabled = (version < 19) ? 1 : read_INT8 (fp);
+return 1;
+}
+// ------------------------------------------------------------------------
+
 INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
 {
-	INT32 i, levelVersion = theApp.LevelVersion ();
-
 type = read_INT8 (fp);
 id = read_INT8 (fp);
 control_type = read_INT8 (fp);
 movement_type = read_INT8 (fp);
 render_type = read_INT8 (fp);
 flags = read_INT8 (fp);
-if (version > 37)
-	multiplayer = read_INT8 (fp);
-else
-	multiplayer = 0;
+multiplayer = (version > 37) ? read_INT8 (fp) : 0;
 nSegment = read_INT16 (fp);
 read_vector (&pos, fp);
 read_matrix (&orient, fp);
@@ -689,119 +740,76 @@ contains_type = read_INT8 (fp);
 contains_id = read_INT8 (fp);
 contains_count = read_INT8 (fp);
 
-	switch (movement_type) {
-    case MT_PHYSICS:
+switch (movement_type) {
+	case MT_PHYSICS:
 		mType.physInfo.Read (fp, version);
 		break;
-
-    case MT_SPINNING:
+	case MT_SPINNING:
 		read_vector (&mType.spinRate, fp);
 		break;
-
-    case MT_NONE:
+	case MT_NONE:
 		break;
-
-    default:
+	default:
 		break;
 	}
 
-	switch (control_type) {
-		case CT_AI:
-			cType.aiInfo.Read (fp, version);
-			break;
-		case CT_EXPLOSION:
-			cType.explInfo.Read (fp, version);
-			break;
-		case CT_WEAPON:
-			cType.laserInfo.Read (fp, version);
-			break;
-		case CT_LIGHT:
-			cType.lightInfo.Read (fp, version);
-			break;
-		case CT_POWERUP:
-			cType.powerupInfo.Read (fp, version);
-			break;
-		case CT_NONE:
-		case CT_FLYING:
-		case CT_DEBRIS:
-			break;
-		case CT_SLEW:    /*the player is generally saved as slew */
-			break;
-		case CT_CNTRLCEN:
-			break;
-		case CT_MORPH:
-		case CT_FLYTHROUGH:
-		case CT_REPAIRCEN:
-			default:
-			break;
-		}
-
-	switch (render_type) {
-    case RT_NONE:
+switch (control_type) {
+	case CT_AI:
+		cType.aiInfo.Read (fp, version);
 		break;
-
-    case RT_MORPH:
-    case RT_POLYOBJ: {
+	case CT_EXPLOSION:
+		cType.explInfo.Read (fp, version);
 		break;
-					 }
-
-    case RT_WEAPON_VCLIP:
-    case RT_HOSTAGE:
-    case RT_POWERUP:
-    case RT_FIREBALL:
-		rType.vClipInfo.Read (fp, version);
+	case CT_WEAPON:
+		cType.laserInfo.Read (fp, version);
 		break;
-
-    case RT_LASER:
+	case CT_LIGHT:
+		cType.lightInfo.Read (fp, version);
 		break;
+	case CT_POWERUP:
+		cType.powerupInfo.Read (fp, version);
+		break;
+	case CT_NONE:
+	case CT_FLYING:
+	case CT_DEBRIS:
+		break;
+	case CT_SLEW:    /*the player is generally saved as slew */
+		break;
+	case CT_CNTRLCEN:
+		break;
+	case CT_MORPH:
+	case CT_FLYTHROUGH:
+	case CT_REPAIRCEN:
+		default:
+		break;
+	}
 
+switch (render_type) {
+	case RT_NONE:
+		break;
+	case RT_MORPH:
+	case RT_POLYOBJ: 
+		rType.polyModelInfo.Read (fp, version);
+		break;
+	case RT_WEAPON_VCLIP:
+	case RT_HOSTAGE:
+	case RT_POWERUP:
+	case RT_FIREBALL:
+		rType.vClipInfo.Read (fp, theApp.LevelVersion ());
+		break;
+	case RT_LASER:
+		break;
 	case RT_SMOKE:
-		rType.smokeInfo.nLife = read_INT32 (fp);
-		rType.smokeInfo.nSize [0] = read_INT32 (fp);
-		rType.smokeInfo.nParts = read_INT32 (fp);
-		rType.smokeInfo.nSpeed = read_INT32 (fp);
-		rType.smokeInfo.nDrift = read_INT32 (fp);
-		rType.smokeInfo.nBrightness = read_INT32 (fp);
-		for (i = 0; i < 4; i++)
-			rType.smokeInfo.color [i] = read_INT8 (fp);
-		rType.smokeInfo.nSide = read_INT8 (fp);
-		rType.smokeInfo.nType = (levelVersion < 18) ? 0 : read_INT8 (fp);
-		rType.smokeInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		rType.smokeInfo.Read (fp, theApp.LevelVersion ());
 		break;
-
 	case RT_LIGHTNING:
-		rType.lightningInfo.nLife = read_INT32 (fp);
-		rType.lightningInfo.nDelay = read_INT32 (fp);
-		rType.lightningInfo.nLength = read_INT32 (fp);
-		rType.lightningInfo.nAmplitude = read_INT32 (fp);
-		rType.lightningInfo.nOffset = read_INT32 (fp);
-		rType.lightningInfo.nLightnings = read_INT16 (fp);
-		rType.lightningInfo.nId = read_INT16 (fp);
-		rType.lightningInfo.nTarget = read_INT16 (fp);
-		rType.lightningInfo.nNodes = read_INT16 (fp);
-		rType.lightningInfo.nChildren = read_INT16 (fp);
-		rType.lightningInfo.nSteps = read_INT16 (fp);
-		rType.lightningInfo.nAngle = read_INT8 (fp);
-		rType.lightningInfo.nStyle = read_INT8 (fp);
-		rType.lightningInfo.nSmoothe = read_INT8 (fp);
-		rType.lightningInfo.bClamp = read_INT8 (fp);
-		rType.lightningInfo.bPlasma = read_INT8 (fp);
-		rType.lightningInfo.bSound = read_INT8 (fp);
-		rType.lightningInfo.bRandom = read_INT8 (fp);
-		rType.lightningInfo.bInPlane = read_INT8 (fp);
-		for (i = 0; i < 4; i++)
-			rType.lightningInfo.color [i] = read_INT8 (fp);
-		rType.lightningInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		rType.lightningInfo.Read (fp, theApp.LevelVersion ());
 		break;
-
 	case RT_SOUND:
-		fread (rType.soundInfo.szFilename, 1, sizeof (rType.soundInfo.szFilename), fp);
-		rType.soundInfo.nVolume = read_INT32 (fp);
-		rType.soundInfo.bEnabled = (levelVersion < 19) ? 1 : read_INT8 (fp);
+		rType.soundInfo.Read (fp, theApp.LevelVersion ());
 		break;
-
 	default:
-		break;
+	break;
 	}
 
 return 1;
