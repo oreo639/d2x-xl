@@ -866,8 +866,8 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 //CReactorTrigger reactorTriggers[MAX_CONTROL_CENTER_TRIGGERS];
 //CRobotMaker robot_centers[MAX_NUM_MATCENS];
 
-//game_top_info game_top_fileinfo;
-//game_info GameInfo ();
+//CGameFileInfo gameFileInfo;
+//CGameInfo GameInfo ();
 
 
 

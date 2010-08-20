@@ -363,7 +363,7 @@ if (!bExpertMode &&
 
 // ------------------------------------------------------------------------
 
-INT32 CWall::Read (FILE* fp, INT32 version)
+INT32 CWall::Read (FILE* fp, INT32 version, bool bFlag)
 {
 m_nSegment = read_INT32 (fp);
 m_nSide = read_INT32 (fp); 
@@ -382,7 +382,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CWall::Write (FILE* fp, INT32 version)
+void CWall::Write (FILE* fp, INT32 version, bool bFlag)
 {
 write_INT32 (m_nSegment, fp);
 write_INT32 (m_nSide, fp); 
@@ -404,7 +404,7 @@ write_INT8 (cloak_value, fp);
 
 // ------------------------------------------------------------------------
 
-INT32 CActiveDoor::Read (FILE *fp, INT32 version)
+INT32 CActiveDoor::Read (FILE *fp, INT32 version, bool bFlag)
 {
 n_parts = read_INT32 (fp);
 nFrontWall [0] = read_INT16 (fp);
@@ -417,7 +417,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CActiveDoor::Write (FILE *fp, INT32 version)
+void CActiveDoor::Write (FILE *fp, INT32 version, bool bFlag)
 {
 write_INT32 (n_parts, fp);
 write_INT16 (nFrontWall[0], fp);

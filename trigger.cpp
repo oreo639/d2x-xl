@@ -492,7 +492,7 @@ return -1;
 
 // ------------------------------------------------------------------------
 
-void CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
+INT32 CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
 {
 	INT32	i;
 
@@ -528,6 +528,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSegment = read_INT16(fp);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSide = read_INT16(fp);
+return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -563,7 +564,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 //------------------------------------------------------------------------
 
-INT32 CReactorTrigger::Read (FILE *fp, INT32 version)
+INT32 CReactorTrigger::Read (FILE *fp, INT32 version, bool bFlag)
 {
 	int	i;
 
@@ -577,7 +578,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-void CReactorTrigger::Write (FILE *fp, INT32 version)
+void CReactorTrigger::Write (FILE *fp, INT32 version, bool bFlag)
 {
 	int	i;
 

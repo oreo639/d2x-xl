@@ -453,41 +453,83 @@ struct sub {
   INT32 size;
 };
 
-typedef struct game_top_info {
-  UINT16  fileinfo_signature;
-  UINT16  fileinfo_version;
-  INT32   fileinfo_size;
-} game_top_info;    /* Should be same as first two fields below... */
+class CGameFileInfo {
+public:
+	UINT16  signature;
+	UINT16  version;
+	INT32   size;
 
-typedef struct player_item_info {
+	INT32 Read (FILE* fp) {
+		signature = read_INT16 (fp);
+		version = read_INT16 (fp);
+		size = read_INT32 (fp);
+		return 1;
+		}
+
+	void Write (FILE* fp) {
+		write_INT16 (signature, fp);
+		write_INT16 (version, fp);
+		write_INT32 (size, fp);
+		}
+};
+
+class CPlayerItemInfo {
+public:
 	INT32	 offset;
 	INT32  size;
-} player_item_info;
 
-typedef struct game_item_info {
+	CPlayerItemInfo () { offset = -1, size = 0; }
+	INT32 Read (FILE* fp) {
+		offset = read_INT32 (fp);
+		size  = read_INT32 (fp);
+		return 1;
+		}
+
+	void Write (FILE* fp) {
+		write_INT32 (offset, fp);
+		write_INT32 (size, fp);
+		}
+};
+
+class CGameItemInfo {
+public:
 	INT32	 offset;
 	INT32	 count;
 	INT32  size;
-} game_item_info;
 
-typedef struct game_info {
-  UINT16  fileinfo_signature;
-  UINT16  fileinfo_version;
-  INT32   fileinfo_size;
-  char    mine_filename[15];
-  INT32   level;
-  player_item_info player;
-  game_item_info	objects;
-  game_item_info	walls;
-  game_item_info	doors;
-  game_item_info	triggers;
-  game_item_info	links;
-  game_item_info	control;
-  game_item_info	botgen;
-  game_item_info	lightDeltaIndices;
-  game_item_info	lightDeltaValues;
-  game_item_info	equipgen;
-} game_info;
+	CGameItemInfo () { offset = -1, count = size = 0; }
+
+	INT32 Read (FILE* fp) {
+		offset = read_INT32 (fp);
+		count = read_INT32 (fp);
+		size  = read_INT32 (fp);
+		return 1;
+		}
+
+	void Write (FILE* fp) {
+		write_INT32 (offset, fp);
+		write_INT32 (count, fp);
+		write_INT32 (size, fp);
+		}
+};
+
+class CGameInfo {
+public:
+	CGameFileInfo		fileinfo;
+	char					mine_filename[15];
+	INT32					level;
+	CPlayerItemInfo	player;
+	CGameItemInfo		objects;
+	CGameItemInfo		walls;
+	CGameItemInfo		doors;
+	CGameItemInfo		triggers;
+	CGameItemInfo		links;
+	CGameItemInfo		control;
+	CGameItemInfo		botgen;
+	CGameItemInfo		lightDeltaIndices;
+	CGameItemInfo		lightDeltaValues;
+	CGameItemInfo		equipgen;
+};
 
 typedef struct physics_info {
   CFixVector velocity;   /*velocity vector of this object */
@@ -667,7 +709,13 @@ public:
 	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
 };
 
-class CWall : public CSideKey {
+class CGameItem {
+public:
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+};
+
+class CWall : public CSideKey, public CGameItem {
 public:
 	FIX		hps;            /* "Hit points" of the wall.  */
 	INT32		linkedWall;		 /* number of linked wall */
@@ -685,22 +733,22 @@ public:
 		// Don't try to use it in the editor.  You will be sorry!
 	INT8		cloak_value;	// if this wall is cloaked, the fade value
 
-	INT32 Read (FILE* fp, INT32 version);
-	void Write (FILE* fp, INT32 version);
+	INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false);
+	void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
 };
 
-class CActiveDoor {
+class CActiveDoor : CGameItem {
 public:
   INT32		n_parts;	   // for linked walls
   INT16		nFrontWall[2]; // front wall numbers for this door
   INT16		nBackWall[2];  // back wall numbers for this door
   FIX			time;		   // how long been opening, closing, waiting
 
-	INT32 Read (FILE *fp, INT32 version);
-	void Write (FILE *fp, INT32 version);
+	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
-class CCloakingWall {    // NEW for Descent 2
+class CCloakingWall : CGameItem {    // NEW for Descent 2
 public:
 	INT16		nFrontWall;	  // front wall numbers for this door
 	INT16		nBackWall; 	  // back wall numbers for this door
@@ -708,8 +756,8 @@ public:
 	FIX		back_ls[4];	  // back wall saved light values
 	FIX		time;		  // how long been cloaking or decloaking
 
-	INT32 Read (FILE *fp, INT32 version);
-	void Write (FILE *fp, INT32 version);
+	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
 /*
@@ -769,7 +817,7 @@ public:
 
 };
 
-class CTrigger : public CTriggerTargets {
+class CTrigger : public CTriggerTargets, public CGameItem {
 public:
 	UINT8		type;
 	UINT16	flags;
@@ -780,18 +828,18 @@ public:
 
 	//inline CSideKey& operator[](UINT32 i) { return targets [i]; }
 
-	void Read (FILE *fp, INT32 version, bool bObjTrigger);
-	void Write (FILE *fp, INT32 version, bool bObjTrigger);
+	virtual INT32 Read (FILE *fp, INT32 version, bool bObjTrigger);
+	virtual void Write (FILE *fp, INT32 version, bool bObjTrigger);
 };
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
 // Light cast upon vert_light vertices in nSegment:nSide by some light
-class CLightDeltaValue : public CSideKey {
+class CLightDeltaValue : public CSideKey, public CGameItem {
 public:
 	UINT8 vert_light [4];
 
-	INT32 Read (FILE *fp);
-	void Write (FILE *fp);
+	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
 // Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
@@ -800,8 +848,8 @@ public:
 	UINT16 count;
 	UINT16 index;
 
-	INT32 Read (FILE *fp, bool bD2X);
-	void Write (FILE *fp, bool bD2X);
+	virtual INT32 Read (FILE *fp, INT32 version, bool bD2X);
+	virtual void Write (FILE *fp, INT32 version, bool bD2X);
 };
 
 //extern CLightDeltaIndex    Dl_indices[MAX_LIGHT_DELTA_INDICES];
@@ -809,13 +857,13 @@ public:
 //extern INT32	     Num_static_lights;
 
 
-class CReactorTrigger : public CTriggerTargets {
+class CReactorTrigger : public CTriggerTargets, public CGameItem {
 public:
-	INT32 Read (FILE *fp, INT32 version);
-	void Write (FILE *fp, INT32 version);
+	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
+	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
-class CRobotMaker {
+class CRobotMaker : public CGameItem {
 public:
 	INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */
 	//  INT32  robot_flags2;// Additional 32 robots for Descent 2
@@ -824,8 +872,8 @@ public:
 	INT16  nSegment;      /* Segment this is attached to. */
 	INT16  nFuelCen; /* Index in fuelcen array. */
 
-	INT32 Read (FILE *fp, INT32 version);
-	void Write (FILE *fp, INT32 version);
+	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
+	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
 };
 
 
@@ -873,9 +921,9 @@ typedef struct {
 
 class CFlickeringLight : public CSideKey {
 public:
-	UINT32 mask;           // bits with 1 = on, 0 = off
+	UINT32 mask;    // bits with 1 = on, 0 = off
 	FIX timer;		 // always set to 0
-	FIX delay;             // time for each bit in mask (INT32 seconds)
+	FIX delay;      // time for each bit in mask (INT32 seconds)
 };
 
 typedef struct {

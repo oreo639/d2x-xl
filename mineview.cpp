@@ -538,7 +538,7 @@ bool CMineView::SetLightStatus (void)
 	CFlickeringLight *pfl = mine->FlickeringLights ();
 	LIGHT_STATUS *pls;
 	bool bChange = false;
-	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo_version >= 34);
+	bool bD2XLights = (mine->LevelVersion () >= 15) && (mine->GameInfo ().fileinfo.version >= 34);
 	INT16 nSrcSide, nSrcSeg, nSegment, nSide;
 
 CLightDeltaValue *dll = mine->LightDeltaValues ();

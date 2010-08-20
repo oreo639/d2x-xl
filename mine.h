@@ -25,7 +25,7 @@ extern CUVL default_uvls[4];
 //**************************************************************************
 
 typedef struct tMineData {
-	game_info					game_fileinfo;
+	CGameInfo					gameInfo;
 	
 	INT32							m_reactor_time;
 	INT32							m_reactor_strength;
@@ -81,7 +81,7 @@ public:
 	INT32							m_fileType;
 	INT32							m_levelVersion;
 	char							m_currentLevelName [256];	
-	game_top_info				game_top_fileinfo;
+	CGameFileInfo				gameFileInfo;
 	MINE_DATA					m_mineData;
 	ROBOT_INFO					m_defaultRobotInfo [MAX_ROBOT_TYPES];
 	// textures and palettes
@@ -159,8 +159,8 @@ public:
 		{ return MineData ().Robot_info + i; }
 	inline ROBOT_INFO *DefRobotInfo (INT32 i = 0)
 		{ return m_defaultRobotInfo + i; }
-	inline game_info& GameInfo ()
-		{ return MineData ().game_fileinfo; }
+	inline CGameInfo& GameInfo ()
+		{ return MineData ().gameInfo; }
 	inline UINT16& SegCount ()
 		{ return MineData ().numSegments; }
 	inline INT32& ObjCount ()
@@ -175,7 +175,7 @@ public:
 		{ return MineData ().flickeringLights + i; }
 	inline INT16& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
-	long TotalSize (game_item_info& gii)
+	long TotalSize (CGameItemInfo& gii)
 		{ return (long) gii.size * (long) gii.count; }
 	inline INT32& ReactorTime ()
 		{ return MineData ().m_reactor_time; }
@@ -505,6 +505,7 @@ private:
 	void SaveColor (CColor *pc, FILE *save_file);
 	void LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
 	void SaveColors (CColor *pc, INT32 nColors, FILE *fp);
+	INT32 LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);
 	INT16 LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);

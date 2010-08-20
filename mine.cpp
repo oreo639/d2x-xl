@@ -444,7 +444,7 @@ if (IsD2File ()) {
 m_disableDrawing = TRUE;
 
 fseek(fp, minedata_offset, SEEK_SET);
-mine_err = LoadMineDataCompiled(fp, bNewMine);
+mine_err = LoadMineDataCompiled (fp, bNewMine);
 int fPos = ftell (fp);
 FlickerLightCount () = nLights;
 
@@ -905,214 +905,6 @@ GameInfo ().lightDeltaValues.count = 0;
 // ACTION - Reads a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-#if 0
-
-INT16 CMine::LoadMineDataCompiled(FILE *fp, bool bNewMine)
-{
-	INT16    i, segnum, sidenum; /** was INT32 */
-	UINT8    version;
-	UINT16   temp_UINT16;
-	UINT8    bit_mask;
-	UINT16   n_vertices;
-	UINT16   n_segments;
-
-	// read version (1 byte)
-	fread(&version, sizeof (UINT8), 1, fp);
-	//  if(version!= COMPILED_MINE_VERSION){
-	//    sprintf_s (message, sizeof (message),  "Version incorrect (%d)\n", version);
-	//    ErrorMsg (message);
-	//  }
-
-	// read number of vertices (2 bytes)
-	fread(&temp_UINT16, sizeof (UINT16), 1, fp);
-	n_vertices = temp_UINT16;
-	if (n_vertices > MAX_VERTICES3) {
-		sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
-		ErrorMsg (message);
-		return(1);
-		}
-	if (((m_fileType == RDL_FILE) && (n_vertices > MAX_VERTICES1)) ||
-		 ((m_fileType != RDL_FILE) && (m_levelVersion < 9) && (n_vertices > MAX_VERTICES2)))
-		ErrorMsg ("Warning: Too many vertices for this level version");
-
-	// read number of Segments () (2 bytes)
-	fread(&temp_UINT16, sizeof (UINT16), 1, fp);
-	n_segments = temp_UINT16;
-	if (n_segments > MAX_SEGMENTS3) {
-		sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
-		ErrorMsg (message);
-		return(2);
-	}
-	if (((m_fileType == RDL_FILE) && (n_segments > MAX_SEGMENTS1)) ||
-		 ((m_fileType != RDL_FILE) && (m_levelVersion < 9) && (n_segments > MAX_SEGMENTS2)))
-		ErrorMsg ("Warning: Too many Segments for this level version");
-
-	// if we are happy with the number of verts and Segments (), then proceed...
-	ClearMineData();
-	VertCount () = n_vertices;
-	SegCount () = n_segments;
-
-	// read all vertices
-// read all vertices
-for (i = 0; i < VertCount (); i++)
-	Vertices (i)->Read (fp);
-
-if (n_vertices != VertCount ()) 
-	fseek(fp, sizeof (CFixVector)*(n_vertices - VertCount ()), SEEK_CUR);
-
-	// unmark all vertices while we are here...
-	for (i = 0; i < VertCount (); i++) {
-		VertStatus (i) &= ~MARKED_MASK;
-	}
-
-	// read segment information
-	for (segnum = 0; segnum < SegCount (); segnum++)   {
-		INT16   bit; /** was INT32 */
-		CSegment *seg = Segments (segnum);
-		if (m_levelVersion >= 9) {
-			fread(&seg->owner, sizeof (UINT8), 1, fp);
-			fread(&seg->group, sizeof (INT8), 1, fp);
-			}
-		else {
-			seg->owner = -1;
-			seg->group = -1;
-			}
-		// read in child mask (1 byte)
-		fread(&bit_mask, sizeof (UINT8), 1, fp);
-		seg->childFlags = bit_mask;
-
-		// read 0 to 6 children (0 to 12 bytes)
-		for (bit = 0; bit < MAX_SIDES_PER_SEGMENT; bit++) {
-			if (bit_mask & (1 << bit)) {
-				fread(&seg->children [bit], sizeof (INT16), 1, fp);
-			} else {
-				seg->children [bit] =-1;
-			}
-		}
-
-		// read vertex numbers (16 bytes)
-		fread(seg->verts, sizeof (INT16), MAX_VERTICES_PER_SEGMENT, fp);
-
-		if (m_fileType == RDL_FILE) {
-			// read special info (0 to 4 bytes)
-			if (bit_mask & (1 << MAX_SIDES_PER_SEGMENT)) {
-				fread(&seg->function, sizeof(UINT8), 1, fp);
-				fread(&seg->nMatCen, sizeof(INT8), 1, fp);
-				fread(&seg->value, sizeof(INT8), 1, fp);
-				fread(&seg->s2_flags, sizeof(UINT8), 1, fp);
-			} else {
-				seg->owner = -1;
-				seg->group = -1;
-				seg->function = 0;
-				seg->nMatCen =-1;
-				seg->value = 0;
-			}
-			seg->s2_flags = 0;  // d1 doesn't use this number, so zero it
-
-			// read static light (2 bytes)
-			fread(&temp_UINT16, sizeof (temp_UINT16), 1, fp);
-			seg->static_light = ((FIX)temp_UINT16) << 4;
-		}
-
-		// read the wall bit mask
-		fread(&bit_mask, sizeof (UINT8), 1, fp);
-
-		// read in wall numbers (0 to 6 bytes)
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++) {
-			if (bit_mask & (1 << sidenum)) {
-				if (m_levelVersion < 13) {
-					UINT8	nWall;
-					fread(&nWall, sizeof (UINT8), 1, fp);
-					seg->sides [sidenum].nWall = nWall;
-					}
-				else {
-					UINT16	nWall;
-					fread(&nWall, sizeof (UINT16), 1, fp);
-					seg->sides [sidenum].nWall = nWall;
-					}
-				} 
-			else {
-				seg->sides [sidenum].nWall = NO_WALL (this);
-			}
-		}
-
-		// read in textures and uvls (0 to 60 bytes)
-		for (sidenum = 0; sidenum < MAX_SIDES_PER_SEGMENT; sidenum++)   {
-			if ((seg->children [sidenum]==-1) || (bit_mask & (1 << sidenum))) {
-				//  read in texture 1 number
-				fread(&temp_UINT16, sizeof (UINT16), 1, fp);
-				seg->sides [sidenum].nBaseTex = temp_UINT16 & 0x7fff;
-				//   read in texture 2 number
-				if (!(temp_UINT16 & 0x8000)) {
-					seg->sides [sidenum].nOvlTex = 0;
-				} else {
-					fread(&temp_UINT16, sizeof (UINT16), 1, fp);
-					seg->sides [sidenum].nOvlTex = temp_UINT16;
-					temp_UINT16 &= 0x1fff;
-					if ((temp_UINT16 == 0) ||(temp_UINT16 >= MAX_TEXTURES (this)))
-						seg->sides [sidenum].nOvlTex = 0;
-				}
-
-				//   read uvl numbers
-				for (i = 0; i < 4; i++)   {
-					fread(&seg->sides [sidenum].uvls [i].u, sizeof (INT16), 1, fp);
-					fread(&seg->sides [sidenum].uvls [i].v, sizeof (INT16), 1, fp);
-					fread(&seg->sides [sidenum].uvls [i].l, sizeof (INT16), 1, fp);
-				}
-			} else {
-				seg->sides [sidenum].nBaseTex = 0;
-				seg->sides [sidenum].nOvlTex = 0;
-				for (i = 0; i < 4; i++)   {
-					seg->sides [sidenum].uvls [i].u = 0;
-					seg->sides [sidenum].uvls [i].v = 0;
-					seg->sides [sidenum].uvls [i].l = 0;
-				}
-			}
-		}
-	}
-
-	if (m_fileType != RDL_FILE) {
-		CSegment *seg = Segments ();
-		for (segnum = 0; segnum < SegCount (); segnum++, seg++) {
-			// read special info (8 bytes)
-			fread(&seg->function, sizeof(UINT8), 1, fp);
-			fread(&seg->nMatCen, sizeof(INT8), 1, fp);
-			fread(&seg->value, sizeof(INT8), 1, fp);
-			fread(&seg->s2_flags, sizeof(UINT8), 1, fp);
-			if (m_levelVersion <= 20)
-				seg->Upgrade ();
-			else {
-				fread(&seg->props, sizeof(UINT8), 1, fp);
-				fread(seg->damage, sizeof(INT16), 2, fp);
-				}
-			fread(&seg->static_light, sizeof(FIX), 1, fp);
-			if ((seg->function == SEGMENT_FUNC_ROBOTMAKER) && (seg->nMatCen == -1)) {
-				seg->function = SEGMENT_FUNC_NONE;
-				seg->value = 0;
-				seg->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
-				}
-			}
-		}
-	if (m_levelVersion == 9) {
-		fread(LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
-		fread(LightColors (), sizeof (CColor), SegCount () * 6, fp);
-		fread(VertexColors (), sizeof (CColor), VertCount (), fp);
-		}
-	else if (m_levelVersion > 9) {
-		LoadColors (VertexColors (), VertCount (), 9, 15, fp);
-		LoadColors (LightColors (), SegCount () * 6, 9, 14, fp);
-		LoadColors (TexColors (), MAX_D2_TEXTURES, 10, 16, fp);
-		}
-if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
-	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-			  GameInfo ().objects.count, MAX_OBJECTS2);
-	ErrorMsg (message);
-	}
-return 0;
-}
-
-#else
-
 INT16 CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
 {
 	INT32    i; 
@@ -1191,7 +983,34 @@ if (GameInfo ().objects.count > MAX_OBJECTS (this)) {
 return 0;
 }
 
-#endif
+// ------------------------------------------------------------------------
+
+INT32 CMine::LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
+{
+if ((info.offset < 0) || (info.count < 1))
+	return 0;
+if (fseek (fp, info.offset, SEEK_SET))
+	return -1;
+if (info.count > nMaxCount) {
+	sprintf_s (message, sizeof (message),  "Error: Too many %s (%d/%d)", pszItem, info.count, nMaxCount);
+	ErrorMsg (message);
+	return -1;
+	}
+if (GameInfo ().fileinfo.version < nMinVersion) {
+	sprintf_s (message, sizeof (message), "%s version < %d, walls not loaded", pszItem, nMinVersion);
+	ErrorMsg (message);
+	return 0;
+	}
+
+for (int i = 0; i < info.count; i++) {
+	if (!items [i].Read (fp, GameInfo ().fileinfo.version, bFlag)) {
+		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
+		ErrorMsg (message);
+		return -1;
+		}
+	}
+return info.count;
+}
 
 // ------------------------------------------------------------------------
 // LoadGameData()
@@ -1205,82 +1024,68 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 	INT32 i;
 	INT32 start_offset;
 
-	start_offset = ftell(loadfile);
+start_offset = ftell(loadfile);
 
-	// Set default values
-	GameInfo ().objects.count = 0;
-	GameInfo ().walls.count = 0;
-	GameInfo ().doors.count = 0;
-	GameInfo ().triggers.count = 0;
-	GameInfo ().control.count = 0;
-	GameInfo ().botgen.count = 0;
-	GameInfo ().equipgen.count = 0;
-	GameInfo ().lightDeltaIndices.count = 0;
-	GameInfo ().lightDeltaValues.count = 0;
+// Set default values
+GameInfo ().objects.count = 0;
+GameInfo ().walls.count = 0;
+GameInfo ().doors.count = 0;
+GameInfo ().triggers.count = 0;
+GameInfo ().control.count = 0;
+GameInfo ().botgen.count = 0;
+GameInfo ().equipgen.count = 0;
+GameInfo ().lightDeltaIndices.count = 0;
+GameInfo ().lightDeltaValues.count = 0;
 
-	GameInfo ().objects.offset =-1;
-	GameInfo ().walls.offset =-1;
-	GameInfo ().doors.offset =-1;
-	GameInfo ().triggers.offset =-1;
-	GameInfo ().control.offset =-1;
-	GameInfo ().botgen.offset =-1;
-	GameInfo ().equipgen.offset =-1;
-	GameInfo ().lightDeltaIndices.offset =-1;
-	GameInfo ().lightDeltaValues.offset =-1;
+GameInfo ().objects.offset =-1;
+GameInfo ().walls.offset =-1;
+GameInfo ().doors.offset =-1;
+GameInfo ().triggers.offset =-1;
+GameInfo ().control.offset =-1;
+GameInfo ().botgen.offset =-1;
+GameInfo ().equipgen.offset =-1;
+GameInfo ().lightDeltaIndices.offset =-1;
+GameInfo ().lightDeltaValues.offset =-1;
 
-	//==================== = READ FILE INFO========================
+//==================== = READ FILE INFO========================
 
-	// Read in game_top_fileinfo to get size of saved fileinfo.
-	if (fseek(loadfile, start_offset, SEEK_SET)) {
-		ErrorMsg ("Error seeking in mine.cpp");
-		return -1;
+// Read in gameFileInfo to get size of saved fileinfo.
+if (fseek(loadfile, start_offset, SEEK_SET)) {
+	ErrorMsg ("Error seeking in mine.cpp");
+	return -1;
 	}
-	if (fread(&game_top_fileinfo, sizeof (game_top_fileinfo), 1, loadfile) != 1) {
-		ErrorMsg ("Error reading game info in mine.cpp");
-		return -1;
+if (fread(&gameFileInfo, sizeof (gameFileInfo), 1, loadfile) != 1) {
+	ErrorMsg ("Error reading game info in mine.cpp");
+	return -1;
 	}
-	// Check signature
-	if (game_top_fileinfo.fileinfo_signature != 0x6705) {
-		ErrorMsg ("Game data signature incorrect");
-		return -1;
+// Check signature
+if (gameFileInfo.signature != 0x6705) {
+	ErrorMsg ("Game data signature incorrect");
+	return -1;
 	}
-	// Check version number
-	//  if (game_top_fileinfo.fileinfo_version < GAME_COMPATIBLE_VERSION)
-	//    return -1;
+// Check version number
+//  if (gameFileInfo.version < GAME_COMPATIBLE_VERSION)
+//    return -1;
 
-	// Now, Read in the fileinfo
-	if (fseek(loadfile, start_offset, SEEK_SET)) {
-		ErrorMsg ("Error seeking to game info in mine.cpp");
-		return -1;
+// Now, Read in the fileinfo
+if (fseek(loadfile, start_offset, SEEK_SET)) {
+	ErrorMsg ("Error seeking to game info in mine.cpp");
+	return -1;
 	}
-	if (fread(&GameInfo (), (INT16)game_top_fileinfo.fileinfo_size, 1, loadfile)!= 1) {
-		ErrorMsg ("Error reading game info from mine.cpp");
-		return -1;
+if (fread(&GameInfo (), (INT16)gameFileInfo.size, 1, loadfile)!= 1) {
+	ErrorMsg ("Error reading game info from mine.cpp");
+	return -1;
 	}
-	if (GameInfo ().fileinfo_version < 14) 
-		m_currentLevelName [0] = 0;
-	else {  /*load mine filename */
-		char *p;
-		for (p = m_currentLevelName; ; p++) {
-			*p = fgetc(loadfile);
-			if (*p== '\n') *p = 0;
-			if (*p== 0) break;
-			}
+if (GameInfo ().fileinfo.version < 14) 
+	m_currentLevelName [0] = 0;
+else {  /*load mine filename */
+	char *p;
+	for (p = m_currentLevelName; ; p++) {
+		*p = fgetc(loadfile);
+		if (*p== '\n') *p = 0;
+		if (*p== 0) break;
 		}
-
-#if 0
-	if (GameInfo ().fileinfo_version >= 19) {  /*load pof names */
-		names.offset = ftell(loadfile);
-		fread(&n_save_pof_names, 2, 1, loadfile);
-		n_total_names = (GameInfo ().player.offset - names.offset)/13;
-		if (n_total_names > 100) {
-			sprintf_s (message, sizeof (message),  "Exceeded maximum number of total pof names (100 max)");
-			ErrorMsg (message);
-			n_total_names = 100;
-			}
-		fread(save_pof_names, n_total_names, 13, loadfile);
 	}
-#endif
 
 	//==================== = READ PLAYER INFO==========================
 	//  object_next_signature = 0;
@@ -1304,34 +1109,38 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		else {
 			CGameObject *objP = Objects ();
 			for (i = 0; i < GameInfo ().objects.count; i++, objP++) {
-				objP->Read (loadfile, GameInfo ().fileinfo_version);
+				objP->Read (loadfile, GameInfo ().fileinfo.version);
 				//      objP->signature = object_next_signature++;
 				//    verify_object(objP);
+				}
 			}
 		}
-	}
 
 	//==================== = READ WALL INFO============================
 	// note: Wall size will automatically strip last two items
 
+#if 1
+	if (!LoadGameItem (loadfile, GameInfo ().walls, Walls (), 20, MAX_WALLS (this), "Walls"))
+		return -1;
+#else
 	if ((GameInfo ().walls.offset > -1) && !fseek(loadfile, GameInfo ().walls.offset, SEEK_SET)) {
 		if (GameInfo ().walls.count > MAX_WALLS (this)) {
 			sprintf_s (message, sizeof (message),  "Error: Max number of walls (%d/%d) exceeded", GameInfo ().walls.count, MAX_WALLS (this));
 			ErrorMsg (message);
 			GameInfo ().walls.count = MAX_WALLS (this);
 			}
-		else if (GameInfo ().fileinfo_version < 20)
+		else if (GameInfo ().fileinfo.version < 20)
 			ErrorMsg ("Wall version < 20, walls not loaded");
 		else if (GameInfo ().walls.count) {
 			for (i = 0; i < GameInfo ().walls.count; i++) {
-				if (!Walls (i)->Read (loadfile, GameInfo ().fileinfo_version)) {
+				if (!Walls (i)->Read (loadfile, GameInfo ().fileinfo.version)) {
 					ErrorMsg ("Error reading walls from mine.cpp");
 					break;
 					}
 				}
 			}
 		}
-
+#endif
 	//==================== = READ DOOR INFO============================
 	// note: not used for D1 or D2 since doors.count is always 0
 	if ((GameInfo ().doors.offset > -1) && !fseek(loadfile, GameInfo ().doors.offset, SEEK_SET)) {
@@ -1340,13 +1149,13 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			ErrorMsg (message);
 			GameInfo ().doors.count = MAX_DOORS;
 			}
-		else if (GameInfo ().fileinfo_version < 20)
+		else if (GameInfo ().fileinfo.version < 20)
 			ErrorMsg ("Door version < 20, doors not loaded");
 		else if (sizeof (*ActiveDoors (i)) != GameInfo ().doors.size)
 			ErrorMsg ("Error: Door size incorrect");
 		else if (GameInfo ().doors.count) {
 			for (i = 0; i < GameInfo ().doors.count; i++) {
-				if (!ActiveDoors ()->Read (loadfile, GameInfo ().fileinfo_version))
+				if (!ActiveDoors ()->Read (loadfile, GameInfo ().fileinfo.version))
 					ErrorMsg ("Error reading doors.");
 				}
 			}
@@ -1363,9 +1172,9 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().triggers.offset, SEEK_SET)) 
 			for (i = 0; i < GameInfo ().triggers.count; i++)
-				Triggers (i)->Read (loadfile, GameInfo ().fileinfo_version, false);
+				Triggers (i)->Read (loadfile, GameInfo ().fileinfo.version, false);
 		INT32 bObjTriggersOk = 1;
-		if (GameInfo ().fileinfo_version >= 33) {
+		if (GameInfo ().fileinfo.version >= 33) {
 			INT32 i = ftell (loadfile);
 			if (fread (&NumObjTriggers (), sizeof (INT32), 1, loadfile) != 1) {
 				ErrorMsg ("Error reading object triggers from mine.");
@@ -1373,8 +1182,8 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 				}
 			else {
 				for (i = 0; i < NumObjTriggers (); i++)
-					ObjTriggers (i)->Read (loadfile, GameInfo ().fileinfo_version, true);
-				if (GameInfo ().fileinfo_version >= 40) {
+					ObjTriggers (i)->Read (loadfile, GameInfo ().fileinfo.version, true);
+				if (GameInfo ().fileinfo.version >= 40) {
 					for (i = 0; i < NumObjTriggers (); i++)
 						ObjTriggers (i)->nObject = read_INT16 (loadfile);
 					}
@@ -1384,7 +1193,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 						read_INT16 (loadfile);
 						ObjTriggers (i)->nObject = read_INT16 (loadfile);
 						}
-					if (GameInfo ().fileinfo_version < 36)
+					if (GameInfo ().fileinfo.version < 36)
 						fseek (loadfile, 700 * sizeof (INT16), SEEK_CUR);
 					else
 						fseek (loadfile, 2 * sizeof (INT16) * read_INT16 (loadfile), SEEK_CUR);
@@ -1410,12 +1219,11 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().control.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().control.count; i++)
-				if (!ReactorTriggers (i)->Read (loadfile, GameInfo ().fileinfo_version)) {
+				if (!ReactorTriggers (i)->Read (loadfile, GameInfo ().fileinfo.version)) {
 					ErrorMsg ("Error reading control center triggers from mine.cpp");
-//					break;
 				}
+			}
 		}
-	}
 
 	//================ READ MATERIALIZATION CENTER INFO============== =
 	// note: added robot_flags2 for Descent 2
@@ -1428,7 +1236,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		}
 		if (!fseek(loadfile, GameInfo ().botgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().botgen.count; i++) {
-				if (!BotGens (i)->Read (loadfile, GameInfo ().fileinfo_version)) {
+				if (!BotGens (i)->Read (loadfile, GameInfo ().fileinfo.version)) {
 					ErrorMsg ("Error reading botgens from mine.cpp");
 					break;
 					}
@@ -1448,7 +1256,7 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 		if (!fseek(loadfile, GameInfo ().equipgen.offset, SEEK_SET))  {
 			for (i = 0; i < GameInfo ().equipgen.count; i++) {
 				if (IsD2File ()) {
-					if (fread(EquipGens (i), (INT16)GameInfo ().equipgen.size, 1, loadfile)!= 1) {
+					if (!EquipGens (i)->Read (loadfile, GameInfo ().fileinfo.version)) {
 						ErrorMsg ("Error reading equipgens from mine.cpp");
 						break;
 						}
@@ -1470,9 +1278,9 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 			}
 		if (GameInfo ().lightDeltaIndices.offset > -1 && GameInfo ().lightDeltaIndices.count > 0) {
 			if (!fseek(loadfile, GameInfo ().lightDeltaIndices.offset, SEEK_SET)) {
-				bool bD2X = (LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34);
+				bool bD2X = (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34);
 				for (i = 0; i < GameInfo ().lightDeltaIndices.count; i++) {
-					if (!LightDeltaIndex (i)->Read (loadfile, bD2X)) 
+					if (!LightDeltaIndex (i)->Read (loadfile, 0, bD2X)) 
 					ErrorMsg ("Error reading delta light indices from mine.cpp");
 					}
 				}
@@ -1812,20 +1620,20 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//  GameInfo ().lightDeltaValues.count = 0; // D2
 
 	if (m_fileType== RDL_FILE) {
-		GameInfo ().fileinfo_signature = 0x6705;
-		GameInfo ().fileinfo_version = 25;
-		GameInfo ().fileinfo_size = 119;
+		GameInfo ().fileinfo.signature = 0x6705;
+		GameInfo ().fileinfo.version = 25;
+		GameInfo ().fileinfo.size = 119;
 		GameInfo ().level = 0;
 		}
 	else {
-		GameInfo ().fileinfo_signature = 0x6705;
-		GameInfo ().fileinfo_version = (LevelVersion () < 13) ? 31 : 40;
-		GameInfo ().fileinfo_size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
+		GameInfo ().fileinfo.signature = 0x6705;
+		GameInfo ().fileinfo.version = (LevelVersion () < 13) ? 31 : 40;
+		GameInfo ().fileinfo.size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
 		GameInfo ().level = 0;
 	}
 
-	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo_size, 1, savefile);
-	if (GameInfo ().fileinfo_version >= 14) {  /*save mine filename */
+	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, savefile);
+	if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
 		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName), savefile);
 	}
 	if (IsD2File ()) {
@@ -1871,21 +1679,21 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// note: same for D1 and D2
 	GameInfo ().objects.offset = ftell(savefile);
 	for (i = 0; i < GameInfo ().objects.count; i++)
-		Objects (i)->Write (savefile, GameInfo ().fileinfo_version);
+		Objects (i)->Write (savefile, GameInfo ().fileinfo.version);
 
 	//==================== = WRITE WALL INFO============================
 	// note: Wall size will automatically strip last two items
 	//       when saving D1 level
 	GameInfo ().walls.offset = ftell(savefile);
-	if (GameInfo ().fileinfo_version >= 20) {
+	if (GameInfo ().fileinfo.version >= 20) {
 		for (i = 0; i < GameInfo ().walls.count; i++)
-			Walls (i)->Write (savefile, GameInfo ().fileinfo_version);
+			Walls (i)->Write (savefile, GameInfo ().fileinfo.version);
 	}
 
 	//==================== = WRITE DOOR INFO============================
 	// note: not used for D1 or D2 since doors.count is always 0
 	GameInfo ().doors.offset = ftell(savefile);
-	if (GameInfo ().fileinfo_version >= 20)
+	if (GameInfo ().fileinfo.version >= 20)
 //	for (i = 0; i < GameInfo ().doors.count; i++)
 			fwrite(ActiveDoors (i), TotalSize (GameInfo ().doors), 1, savefile);
 
@@ -1893,13 +1701,13 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	// note: order different for D2 levels but size is the same
 	GameInfo ().triggers.offset = ftell(savefile);
 	for (i = 0; i < GameInfo ().triggers.count; i++)
-		Triggers (i)->Write (savefile, GameInfo ().fileinfo_version, false);
+		Triggers (i)->Write (savefile, GameInfo ().fileinfo.version, false);
 	if (LevelVersion () >= 12) {
 		write_INT32 (NumObjTriggers (), savefile);
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
-				ObjTriggers (i)->Write (savefile, GameInfo ().fileinfo_version, true);
+				ObjTriggers (i)->Write (savefile, GameInfo ().fileinfo.version, true);
 			for (i = 0; i < NumObjTriggers (); i++)
 				write_INT16 (ObjTriggers (i)->nObject, savefile);
 			}
@@ -1940,7 +1748,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	//================ WRITE DELTA LIGHT INFO============== =
 	// note: D2 only
 	GameInfo ().lightDeltaIndices.offset = ftell(savefile);
-	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo_version >= 34))
+	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
 		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
 	if (IsD2File ())
 		fwrite(LightDeltaIndex (), TotalSize (GameInfo ().lightDeltaIndices), 1, savefile);
@@ -1962,7 +1770,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 
 	//==================== = UPDATE FILE INFO OFFSETS====================== =
 	fseek(savefile, start_offset, SEEK_SET);
-	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo_size, 1, savefile);
+	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, savefile);
 
 	//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
 	fseek(savefile, end_offset, SEEK_SET);
