@@ -70,54 +70,47 @@ typedef struct tMineData {
 	CFixMatrix					m_secret_orient;
 	
 	// robot data
-	//ROBOT_INFO				robotInfo [MAX_ROBOT_TYPES];
 	robotInfoList				robotInfo;
 	
 	// structure data
 	UINT16						numVertices;
-	//CVertex					vertices [MAX_VERTICES3];
 	vertexList					vertices;
-	
 	UINT16						numSegments;
-	//CSegment					segments [MAX_SEGMENTS3];
 	segmentList					segments;
-	//CColor 					lightColors [MAX_SEGMENTS3][6];
 	lightColorList				lightColors;
-	//CColor						texColors [MAX_D2_TEXTURES];
 	texColorList				texColors;
-	//CColor						vertexColors [MAX_VERTICES3];
 	vertexColorList			vertexColors;
-	
-	//CWall						walls[MAX_WALLS3];
 	wallList						walls;
-	//CActiveDoor				activeDoors[MAX_DOORS];
 	activeDoorList				activeDoors;
-	//CTrigger					triggers[MAX_TRIGGERS2];
 	triggerList					triggers;
-	//CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
 	objTriggerList				objTriggers;
 	INT32							numObjTriggers;
-	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
 	reactorTriggerList		reactorTriggers;
-	//CRobotMaker				robotMakers[MAX_NUM_MATCENS2];
 	robotMakerList				robotMakers;
-	//CRobotMaker				equipMakers[MAX_NUM_MATCENS2];
 	robotMakerList				equipMakers;
-	
-	// object data
-	//CGameObject				objects[MAX_OBJECTS2];
 	objectList					objects;
-	
-	// light data
-	//CLightDeltaIndex		lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
 	lightDeltaIndexList		lightDeltaIndices;
-	//CLightDeltaValue		lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
 	lightDeltaValueList		lightDeltaValues;
-	
-	// flickering light
 	INT16							m_nFlickeringLights;
-	//CFlickeringLight		flickeringLights[MAX_FLICKERING_LIGHTS];
 	flickeringLightList		flickeringLights;
+
+	//ROBOT_INFO				robotInfo [MAX_ROBOT_TYPES];
+	//CVertex					vertices [MAX_VERTICES3];
+	//CSegment					segments [MAX_SEGMENTS3];
+	//CColor 					lightColors [MAX_SEGMENTS3][6];
+	//CColor						texColors [MAX_D2_TEXTURES];
+	//CColor						vertexColors [MAX_VERTICES3];
+	//CWall						walls[MAX_WALLS3];
+	//CActiveDoor				activeDoors[MAX_DOORS];
+	//CTrigger					triggers[MAX_TRIGGERS2];
+	//CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
+	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
+	//CRobotMaker				robotMakers[MAX_NUM_MATCENS2];
+	//CRobotMaker				equipMakers[MAX_NUM_MATCENS2];
+	//CGameObject				objects[MAX_OBJECTS2];
+	//CLightDeltaIndex		lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
+	//CLightDeltaValue		lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
+	//CFlickeringLight		flickeringLights[MAX_FLICKERING_LIGHTS];
 
 	CSelection					current1;
 	CSelection					current2;
