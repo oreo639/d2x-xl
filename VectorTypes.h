@@ -103,6 +103,8 @@ inline const CFixVector& operator+= (const CFixVector other);
 inline const CFixVector& operator-= (const CFixVector other);
 inline const CFixVector& operator*= (const FIX n);
 inline const CFixVector& operator/= (const FIX n);
+inline const CFixVector& operator*= (const DOUBLE n);
+inline const CFixVector& operator/= (const DOUBLE n);
 inline const CFixVector operator+ (const CFixVector& other) const;
 inline const CFixVector operator- (const CFixVector& other) const;
 inline const CFixVector operator- (void) const;
@@ -110,10 +112,10 @@ inline const CFixVector operator>> (const FIX n);
 inline const CFixVector operator<< (const FIX n);
 inline const CFixVector& operator>>= (const FIX n);
 inline const CFixVector& operator<<= (const FIX n);
-inline const CFixVector operator* (CFixVector& other);
-inline const CFixVector operator/ (CFixVector& other);
-inline const CFixVector operator* (FIX n);
-inline const CFixVector operator/ (FIX n);
+inline const CFixVector operator* (CFixVector& other) const;
+inline const CFixVector operator/ (CFixVector& other) const;
+inline const CFixVector operator* (FIX n) const;
+inline const CFixVector operator/ (FIX n) const;
 inline const FIX operator^ (CFixVector& other);
 };
 
@@ -255,11 +257,25 @@ inline const CFixVector& CFixVector::operator/= (const FIX n) {
 	return *this;
 	}
 
-inline const CFixVector CFixVector::operator* (const FIX n) {
+inline const CFixVector& CFixVector::operator*= (const DOUBLE n) {
+	v.x = FIX (Round ((double) v.x * n)),
+	v.y = FIX (Round ((double) v.y * n)),
+	v.z = FIX (Round ((double) v.z * n));
+	return *this;
+	}
+
+inline const CFixVector& CFixVector::operator/= (const DOUBLE n) {
+	v.x = FIX (Round ((double) v.x / n)),
+	v.y = FIX (Round ((double) v.y / n)),
+	v.z = FIX (Round ((double) v.z / n));
+	return *this;
+	}
+
+inline const CFixVector CFixVector::operator* (const FIX n) const {
 	return CFixVector (v.x * n, v.y * n, v.z * n);
 	}
 
-inline const CFixVector CFixVector::operator/ (const FIX n) {
+inline const CFixVector CFixVector::operator/ (const FIX n) const {
 	return CFixVector (v.x / n, v.y / n, v.z / n);
 	}
 
@@ -281,11 +297,11 @@ inline const CFixVector& CFixVector::operator<<= (const FIX n) {
 	return *this;
 	}
 
-inline const CFixVector CFixVector::operator* (CFixVector& other) {
+inline const CFixVector CFixVector::operator* (CFixVector& other) const {
 	return CFixVector (v.x * other.v.x, v.y * other.v.y, v.z * other.v.z);
 	}
 
-inline const CFixVector CFixVector::operator/ (CFixVector& other) {
+inline const CFixVector CFixVector::operator/ (CFixVector& other) const {
 	return CFixVector (v.x / other.v.x, v.y / other.v.y, v.z / other.v.z);
 	}
 

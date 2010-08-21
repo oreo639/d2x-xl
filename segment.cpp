@@ -606,13 +606,13 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			a = (A [0] + A [1] + A [2] + A [3]); 
 			a /= 4;
 			for (i = 0; i < 4; i++)
-				A [i] += (newCenter - a); 
+				A [i] += (CDoubleVector (newCenter) - a); 
 	
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
 				//nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				nVertex = new_verts [i];
-				*Vertices (nVertex) = CDoubleVector (A [i]); 
+				*Vertices (nVertex) = CFixVector (A [i]); 
 				}
 			}
 		break; 
@@ -627,13 +627,15 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			length = CalcLength (&center, &opp_center) / F1_0; 
 
 			// scale the vector
-			orthog = CFixVector (CDoubleVector (orthog) * length);
+			orthog *= length;
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
 				INT32 v1 = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				INT32 v2 = new_verts [i];
-				*Vertices (v2) = orthog + *Vertices (v1); 
+				Vertices (v2)->v.x = orthog.v.x + Vertices (v1)->v.x; 
+				Vertices (v2)->v.y = orthog.v.y + Vertices (v1)->v.y; 
+				Vertices (v2)->v.z = orthog.v.z + Vertices (v1)->v.z; 
 				}
 			}
 		break; 
@@ -694,11 +696,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// now reverse rotations
 			for (i = 4; i < 8; i++) 
-				D [i].Set (E [i].v.x, E [i].v.y * cos(- angle3) + E [i].v.z * sin(- angle3), -E [i].v.y * sin(- angle3) + E [i].v.z * cos(- angle3); 
+				D [i].Set (E [i].v.x, E [i].v.y * cos(-angle3) + E [i].v.z * sin(-angle3), -E [i].v.y * sin(-angle3) + E [i].v.z * cos(-angle3)); 
 			for (i = 4; i < 8; i++) 
-				C [i].Set (D [i].v.x * cos(- angle2) + D [i].v.y * sin(- angle2), -D [i].v.x * sin(- angle2) + D [i].v.y * cos(- angle2), D [i].v.z); 
+				C [i].Set (D [i].v.x * cos(-angle2) + D [i].v.y * sin(-angle2), -D [i].v.x * sin(-angle2) + D [i].v.y * cos(-angle2), D [i].v.z); 
 			for (i = 4; i < 8; i++) 
-				B [i].Set (C [i].v.x, C [i].v.y * cos(- angle1) + C [i].v.z * sin(- angle1), -C [i].v.y * sin(- angle1) + C [i].v.z * cos(- angle1)); 
+				B [i].Set (C [i].v.x, C [i].v.y * cos(-angle1) + C [i].v.z * sin(-angle1), -C [i].v.y * sin(-angle1) + C [i].v.z * cos(-angle1)); 
 	
 			// and translate back
 			nVertex = currSeg->verts [side_vert [Current ()->nSide][0]]; 
@@ -855,14 +857,13 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment) 
 {
   INT16	*nVerts =Segments (nSegment)->verts; 
-  CFixVector *vert;
   
 memset (&pos, 0, sizeof (pos));
 INT32 i;
 for (i = 0; i < 8; i++) {
 	pos += *Vertices (nVerts [i]);
 	}
-pos /= 8;
+pos /= FIX (8);
 /*
   pos.x  = 
       (Vertices (verts [0])->x
@@ -1640,9 +1641,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
 		vSeg = Vertices (segP->verts [0]);
-		if (fabs ((double) (vNewSeg->x - vSeg->x)) < 0xA00000L &&
-		    fabs ((double) (vNewSeg->y - vSeg->y)) < 0xA00000L &&
-		    fabs ((double) (vNewSeg->z - vSeg->z)) < 0xA00000L) {
+		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 0xA00000L &&
+		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 0xA00000L &&
+		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 0xA00000L) {
 			for (nSide = 0; nSide < 6; nSide++) {
 				if (!LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3*F1_0)) {
 					// if these Segments () were linked, then unlink them
@@ -1676,7 +1677,7 @@ void CMine::JoinSegments(INT32 solidify)
 	CSegment *seg1, *seg2; 
 	INT16 h, i, j, nSide, nNewSeg, nSegment; 
 	CVertex v1 [4], v2 [4]; 
-	double radius, min_radius, max_radius, dx, dy, dz, totalRad, minTotalRad; 
+	double radius, min_radius, max_radius, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
 	CSelection *cur1, *cur2, my_cube; 
@@ -2025,11 +2026,7 @@ if ((sideP->nOvlTex & 0x3fff) > 0)
 
 void CMine::SetUV (INT16 nSegment, INT16 nSide, INT16 x, INT16 y, double dummy)
 {
-	struct vector {
-		double x, y, z; 
-		}; 
-
-	struct vector A [4], B [4], C [4], D [4], E [4]; 
+	CDoubleVector A [4], B [4], C [4], D [4], E [4]; 
 	INT32 i, nVertex; 
 	double angle; 
 
@@ -2040,27 +2037,19 @@ void CMine::SetUV (INT16 nSegment, INT16 nSide, INT16 x, INT16 y, double dummy)
 INT32 h = sizeof (*Vertices (0));
 for (i = 0; i < 4; i++) {
 	nVertex = Segments (nSegment)->verts [side_vert [nSide][i]]; 
-	A [i].x = Vertices (nVertex)->x; 
-	A [i].y = Vertices (nVertex)->y; 
-	A [i].z = Vertices (nVertex)->z; 
+	A [i] = CDoubleVector (*Vertices (nVertex)); 
 	}
 
 // subtract point 0 from all points in A to form B points
-for (i = 0; i < 4; i++) {
-	B [i].x = A [i].x - A [0].x; 
-	B [i].y = A [i].y - A [0].y; 
-	B [i].z = A [i].z - A [0].z; 
-	}
+for (i = 0; i < 4; i++) 
+	B [i] = A [i] - A [0]; 
 
 // calculate angle to put point 1 in x - y plane by spinning on x - axis
 // then rotate B points on x - axis to form C points.
 // check to see if on x - axis already
-angle = atan3(B [1].z, B [1].y); 
-for (i = 0; i < 4; i++) {
-	C [i].x = B [i].x; 
-	C [i].y = B [i].y * cos(angle) + B [i].z * sin(angle); 
-	C [i].z = -B [i].y * sin(angle) + B [i].z * cos(angle); 
-	}
+angle = atan3(B [1].v.z, B [1].v.y); 
+for (i = 0; i < 4; i++) 
+	C [i].Set (B [i].v.x, B [i].v.y * cos(angle) + B [i].v.z * sin(angle), -B [i].v.y * sin(angle) + B [i].v.z * cos(angle)); 
 
 #if UV_DEBUG
 if (abs((INT32)C [1].z) != 0) {
@@ -2072,11 +2061,9 @@ if (abs((INT32)C [1].z) != 0) {
 // calculate angle to put point 1 on x axis by spinning on z - axis
 // then rotate C points on z - axis to form D points
 // check to see if on z - axis already
-angle = atan3(C [1].y, C [1].x); 
+angle = atan3(C [1].v.y, C [1].v.x); 
 for (i = 0; i < 4; i++) {
-	D [i].x = C [i].x * cos(angle) + C [i].y * sin(angle); 
-	D [i].y = -C [i].x * sin(angle) + C [i].y * cos(angle); 
-	D [i].z = C [i].z; 
+	D [i].Set (C [i].v.x * cos(angle) + C [i].v.y * sin(angle), -C [i].v.x * sin(angle) + C [i].v.y * cos(angle), C [i].v.z); 
 	}
 #if UV_DEBUG
 if (abs((INT32)D [1].y) != 0) {
@@ -2087,12 +2074,9 @@ if (abs((INT32)D [1].y) != 0) {
 // calculate angle to put point 2 in x - y plane by spinning on x - axis
 // the rotate D points on x - axis to form E points
 // check to see if on x - axis already
-angle = atan3(D [2].z, D [2].y); 
-for (i = 0; i < 4; i++) {
-	E [i].x = D [i].x; 
-	E [i].y = D [i].y * cos(angle) + D [i].z * sin(angle); 
-	E [i].z = -D [i].y * sin(angle) + D [i].z * cos(angle); 
-	}
+angle = atan3(D [2].v.z, D [2].v.y); 
+for (i = 0; i < 4; i++) 
+	E [i].Set (D [i].v.x, D [i].v.y * cos(angle) + D [i].v.z * sin(angle), -D [i].v.y * sin(angle) + D [i].v.z * cos(angle)); 
 
 // now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
 // set v to x axis and u to negative u axis to match default (u, v)
@@ -2131,8 +2115,8 @@ theApp.SetModified (TRUE);
 LoadSideTextures (nSegment, nSide);
 double scale = 1.0; //pTextures [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
-	uvls->v = (INT16) ((y + (E [i].x / 640)) / scale); 
-	uvls->u = (INT16) ((x - (E [i].y / 640)) / scale); 
+	uvls->v = (INT16) ((y + (E [i].v.x / 640)) / scale); 
+	uvls->u = (INT16) ((x - (E [i].v.y / 640)) / scale); 
 	}
 #endif
 }
@@ -2539,7 +2523,7 @@ bool CMine::SplitSegment ()
 	INT16			nSegment, childSegNum;
 	INT16			nSide, oppSideNum, childSideNum;
 	INT16			vertNum, nWall;
-	CFixVector		segCenter, *v, *segVert, *centerSegVert;
+	CFixVector	segCenter, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
 	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};
@@ -2565,7 +2549,7 @@ VertCount () = h;
 memset (&segCenter, 0, sizeof (segCenter));
 for (i = 0; i < 8; i++)
 	segCenter += *Vertices (centerSegP->verts [i]);
-segCenter /= 8;
+segCenter /= FIX (8);
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
@@ -2577,7 +2561,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 		bVertDone [j] = true;
 		centerSegVert = Vertices (centerSegP->verts [j]);
 		segVert = Vertices (h + j);
-		*segVert = (*centerSegVert + *segCenter) / 2;
+		*segVert = (*centerSegVert + segCenter) / 2;
 		//centerSegP->verts [j] = h + j;
 		}
 	}
