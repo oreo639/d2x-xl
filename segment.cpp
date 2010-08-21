@@ -19,23 +19,10 @@
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-double CMine::CalcLength(CFixVector* center1, CFixVector* center2)
+double CMine::CalcLength (CFixVector* center1, CFixVector* center2)
 {
-	CFixVector direction; 
-
-	// calculate distance vector between the centers
-	direction.x = center1->x - center2->x; 
-	direction.y = center1->y - center2->y; 
-	direction.z = center1->z - center2->z; 
-
-	// calculate the length of the new cube
-	return (sqrt((double)direction.x*(double)direction.x
-		 +  (double)direction.y*(double)direction.y
-		 +  (double)direction.z*(double)direction.z)); 
+return Distance (CDoubleVector (center1), CDoubleVector (center2));
 }
-
-// ----------------------------------------------------------------- 
-// ----------------------------------------------------------------- 
 
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
@@ -53,7 +40,7 @@ for (i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-void CMine::DeleteSegment(INT16 nDelSeg)
+void CMine::DeleteSegment (INT16 nDelSeg)
 {
 	CSegment			*segP, *delSegP, *childSegP; 
 	CGameObject		*objP; 

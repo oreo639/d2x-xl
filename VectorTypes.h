@@ -387,6 +387,11 @@ inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector&
 	return Normalize (CrossProduct (p1 - p0, p2 - p1));
 	}
 
+inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
+	CDoubleVector v = p0 - p1;
+	return v.Mag ();
+	}
+
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------

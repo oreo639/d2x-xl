@@ -1883,10 +1883,11 @@ CFixVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 	UINT8*		sideVertP = &side_vert [nSide][0];
 	CFixVector	v;
 
-for (INT32 i = 0; i < 4; i++) {
+for (INT32 i = 0; i < 4; i++)
 	v += *Vertices (sideIndexP [sideVertP [i]]);
 v /= 4;
 return v;
 }
 
+// --------------------------------------------------------------------------
 //eof mine.cpp
