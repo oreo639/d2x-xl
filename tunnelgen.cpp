@@ -622,32 +622,31 @@ void CMine::CalcSpline (void)
   }
 
   // define segment vert numbers
-  for (i=0;i<n_splines;i++) {
-    // use last "n_spline" segments
-    segP = Segments (MAX_SEGMENTS - 1 - i);
-    nVertex = MAX_VERTICES - 1 - i * 4;
-    for (j = 0; j < 4; j++) {
-      if (i == 0) {         // 1st segment
-	  segP->verts [side_vert [nSplineSide1][j]] = nVertex - j;
-	  segP->verts [opp_side_vert [nSplineSide1][j]]
-	    = Segments (nSplineSeg1)->verts [side_vert [nSplineSide1][j]];
-      } else {
-	if(i<n_splines-1) { // center segments
-	  segP->verts [side_vert [nSplineSide1][j]] = nVertex - j;
-	  segP->verts [opp_side_vert [nSplineSide1][j]] = nVertex + 4 - j;
-	} else {          // last segment
-	  segP->verts [side_vert [nSplineSide1][j]]
-	    = Segments (nSplineSeg2)->verts [side_vert [nSplineSide2][MatchingSide (j)]];
-	  segP->verts [opp_side_vert [nSplineSide1][j]] = nVertex + 4 - j;
-        }
-      }
-    }
-  }
+for (i=0;i<n_splines;i++) {
+	// use last "n_spline" segments
+	segP = Segments (MAX_SEGMENTS - 1 - i);
+	nVertex = MAX_VERTICES - 1 - i * 4;
+	for (j = 0; j < 4; j++) {
+		if (i == 0) {         // 1st segment
+			segP->verts [side_vert [nSplineSide1][j]] = nVertex - j;
+			segP->verts [opp_side_vert [nSplineSide1][j]] = Segments (nSplineSeg1)->verts [side_vert [nSplineSide1][j]];
+			}
+		else {
+			if(i < n_splines - 1) { // center segments
+				segP->verts [side_vert [nSplineSide1][j]] = nVertex - j;
+				segP->verts [opp_side_vert [nSplineSide1][j]] = nVertex + 4 - j;
+				} 
+			else {          // last segment
+				segP->verts [side_vert [nSplineSide1][j]] = Segments (nSplineSeg2)->verts [side_vert [nSplineSide2][MatchingSide (j)]];
+				segP->verts [opp_side_vert [nSplineSide1][j]] = nVertex + 4 - j;
+				}
+			}
+		}
+	}
 
   // fix twisted segments
-  for (i=0;i<n_splines;i++) {
-    UntwistSegment ((MAX_SEGMENTS-1)-i,nSplineSide1);
-  }
+for (i = 0; i < n_splines; i++)
+	UntwistSegment ((MAX_SEGMENTS - 1) - i, nSplineSide1);
 }
 
 //eof tunnelgen.cpp
