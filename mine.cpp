@@ -30,6 +30,8 @@ CMine* theMine = NULL;
 // CMine - CMine
 //==========================================================================
 
+#define CLEAR(_b)	memset (_b, 0, sizeof (_b))
+
 CMine::CMine() 
 { 
 Initialize();
@@ -49,6 +51,16 @@ ReactorTriggers ().Clear ();
 VertexColors ().Clear ();
 BotGens ().Clear ();
 EquipGens ().Clear ();
+#else
+CLEAR (Segments ());
+CLEAR (Vertices ());
+CLEAR (Walls ());
+CLEAR (Triggers ());
+CLEAR (ObjTriggers ());
+CLEAR (ReactorTriggers ());
+CLEAR (VertexColors ());
+CLEAR (BotGens ());
+CLEAR (EquipGens ());
 #endif
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
@@ -750,7 +762,7 @@ void CMine::Default()
 		}
 
 	CSegment& segP = *Segments (0);
-	CFixVector *vert = Vertices (0);
+	CVertex *vert = Vertices (0);
 
 	segP.sides [0].nWall = NO_WALL;
 	segP.sides [0].nBaseTex = 0;
@@ -874,30 +886,31 @@ void CMine::Default()
 	segP.nIndex = 0;
 	segP.map_bitmask = 0;
 
-	vert [0].x = 10*F1_0;
-	vert [0].y = 10*F1_0;
-	vert [0].z = - 10*F1_0;
-	vert [1].x = 10*F1_0;
-	vert [1].y = - 10*F1_0;
-	vert [1].z = - 10*F1_0;
-	vert [2].x = - 10*F1_0;
-	vert [2].y = - 10*F1_0;
-	vert [2].z = - 10*F1_0;
-	vert [3].x = - 10*F1_0;
-	vert [3].y = 10*F1_0;
-	vert [3].z = - 10*F1_0;
-	vert [4].x = 10*F1_0;
-	vert [4].y = 10*F1_0;
-	vert [4].z = 10*F1_0;
-	vert [5].x = 10*F1_0;
-	vert [5].y = - 10*F1_0;
-	vert [5].z = 10*F1_0;
-	vert [6].x = - 10*F1_0;
-	vert [6].y = - 10*F1_0;
-	vert [6].z = 10*F1_0;
-	vert [7].x = - 10*F1_0;
-	vert [7].y = 10*F1_0;
-	vert [7].z = 10*F1_0;
+	vert [0] = CVertex (10 * F1_0, 10 * F1_0, -10 * F1_0);
+	vert [0].v.x = 10*F1_0;
+	vert [0].v.y = 10*F1_0;
+	vert [0].v.z = - 10*F1_0;
+	vert [1].v.x = 10*F1_0;
+	vert [1].v.y = - 10*F1_0;
+	vert [1].v.z = - 10*F1_0;
+	vert [2].v.x = - 10*F1_0;
+	vert [2].v.y = - 10*F1_0;
+	vert [2].v.z = - 10*F1_0;
+	vert [3].v.x = - 10*F1_0;
+	vert [3].v.y = 10*F1_0;
+	vert [3].v.z = - 10*F1_0;
+	vert [4].v.x = 10*F1_0;
+	vert [4].v.y = 10*F1_0;
+	vert [4].v.z = 10*F1_0;
+	vert [5].v.x = 10*F1_0;
+	vert [5].v.y = - 10*F1_0;
+	vert [5].v.z = 10*F1_0;
+	vert [6].v.x = - 10*F1_0;
+	vert [6].v.y = - 10*F1_0;
+	vert [6].v.z = 10*F1_0;
+	vert [7].v.x = - 10*F1_0;
+	vert [7].v.y = 10*F1_0;
+	vert [7].v.z = 10*F1_0;
 
 	SegCount () = 1;
 	VertCount () = 8;
@@ -1852,59 +1865,59 @@ void CMine::CalcOrthoVector(CFixVector& result, INT16 nSegment, INT16 nSide)
 {
 	struct dvector a, b, c;
 	double length;
-	INT16 vertnum1, vertnum2;
+	INT16 nVertex1, nVertex2;
     // calculate orthogonal vector from lines which intersect point 0
     //
     //       |x  y  z |
     // AxB = |ax ay az|= x(aybz - azby), y(azbx - axbz), z(axby - aybx)
     //       |bx by bz|
 
-    vertnum1 =Segments (nSegment)->verts [side_vert [nSide] [0]];
-    vertnum2 =Segments (nSegment)->verts [side_vert [nSide] [1]];
-	 CFixVector *v1 = Vertices (vertnum1);
-	 CFixVector *v2 = Vertices (vertnum2);
-    a.x = (double)(v2->x - v1->x);
-    a.y = (double)(v2->y - v1->y);
-    a.z = (double)(v2->z - v1->z);
-    vertnum1 =Segments (nSegment)->verts [side_vert [nSide] [0]];
-    vertnum2 =Segments (nSegment)->verts [side_vert [nSide] [3]];
-	 v1 = Vertices (vertnum1);
-	 v2 = Vertices (vertnum2);
-    b.x = (double)(v2->x - v1->x);
-    b.y = (double)(v2->y - v1->y);
-    b.z = (double)(v2->z - v1->z);
+nVertex1 = Segments (nSegment)->verts [side_vert [nSide] [0]];
+nVertex2 = Segments (nSegment)->verts [side_vert [nSide] [1]];
+CFixVector *v1 = Vertices (nVertex1);
+CFixVector *v2 = Vertices (nVertex2);
+a.x = double (v2->v.x - v1->v.x);
+a.y = double (v2->v.y - v1->v.y);
+a.z = double (v2->v.z - v1->v.z);
+nVertex1 = Segments (nSegment)->verts [side_vert [nSide] [0]];
+nVertex2 = Segments (nSegment)->verts [side_vert [nSide] [3]];
+v1 = Vertices (nVertex1);
+v2 = Vertices (nVertex2);
+b.x = double (v2->v.x - v1->v.x);
+b.y = double (v2->v.y - v1->v.y);
+b.z = double (v2->v.z - v1->v.z);
 
-    c.x = a.y*b.z - a.z*b.y;
-    c.y = a.z*b.x - a.x*b.z;
-    c.z = a.x*b.y - a.y*b.x;
+c.x = a.y * b.z - a.z * b.y;
+c.y = a.z * b.x - a.x * b.z;
+c.z = a.x * b.y - a.y * b.x;
 
     // normalize the vector
-    length = sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
-    if (length>0) {
-		c.x /= length;
-		c.y /= length;
-		c.z /= length;
-    }
+length = sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
+if (length > 0) {
+	c.x /= length;
+	c.y /= length;
+	c.z /= length;
+	}
 
-    result.x = (long) dround_off (-c.x * 0x10000L, 1.0);
-    result.y = (long) dround_off (-c.y * 0x10000L, 1.0);
-    result.z = (long) dround_off (-c.z * 0x10000L, 1.0);
+result = CFixVector ((FIX) dround_off (-c.x * 0x10000L, 1.0),
+							(FIX) dround_off (-c.y * 0x10000L, 1.0),
+							(FIX) dround_off (-c.z * 0x10000L, 1.0));
 }
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-void CMine::CalcCenter(CFixVector& center, INT16 nSegment, INT16 nSide)
+
+void CMine::CalcCenter (CFixVector& center, INT16 nSegment, INT16 nSide)
 {
 	INT32 i;
 
-	center.x = center.y = center.z = 0;
-	CFixVector *v;
-	CSegment *segP = Segments (nSegment);
-	for (i = 0; i < 4; i++) {
-		v = Vertices (segP->verts [side_vert [nSide][i]]);
-		center.x += (v->x) >> 2;
-		center.y += (v->y) >> 2;
-		center.z += (v->z) >> 2;
+center.Clear ();
+CSegment *segP = Segments (nSegment);
+
+for (i = 0; i < 4; i++) {
+	CVertex v = *Vertices (segP->verts [side_vert [nSide][i]]);
+	v >>= 2;
+	center += v;
 	}
 }
 

@@ -2693,53 +2693,51 @@ if (!theMine) return;
 	INT32 miny = 0;
 	INT32 maxz = 0;
 	INT32 minz = 0;
-
 	INT32 i;
-	verts = theMine->Vertices (0);
-	for (i=0;i<theMine->VertCount ();i++, verts++) {
-		maxx = max(maxx, verts->x);
-		minx = min(minx, verts->x);
-		maxy = max(maxy, verts->y);
-		miny = min(miny, verts->y);
-		maxz = max(maxz, verts->z);
-		minz = min(minz, verts->z);
+
+verts = theMine->Vertices (0);
+for (i = 0; i < theMine->VertCount ();i++, verts++) {
+	maxx = max(maxx, verts->x);
+	minx = min(minx, verts->x);
+	maxy = max(maxy, verts->y);
+	miny = min(miny, verts->y);
+	maxz = max(maxz, verts->z);
+	minz = min(minz, verts->z);
 	}
-	INT16 max_x = (INT16)(maxx / F1_0);
-	INT16 max_y = (INT16)(maxy / F1_0);
-	INT16 max_z = (INT16)(maxz / F1_0);
-	INT16 min_x = (INT16)(minx / F1_0);
-	INT16 min_y = (INT16)(miny / F1_0);
-	INT16 min_z = (INT16)(minz / F1_0);
+INT16 max_x = (INT16)(maxx / F1_0);
+INT16 max_y = (INT16)(maxy / F1_0);
+INT16 max_z = (INT16)(maxz / F1_0);
+INT16 min_x = (INT16)(minx / F1_0);
+INT16 min_y = (INT16)(miny / F1_0);
+INT16 min_z = (INT16)(minz / F1_0);
 
-	m_spinx = M_PI/4.f;
-	m_spiny = M_PI/4.f;
-	m_spinz = 0.0;
-	m_movex = -(max_x + min_x)/2.f;
-	m_movey = -(max_y + min_y)/2.f;
-	m_movez = -(max_z + min_z)/2.f;
-	INT32 factor;
-	INT32 max_all = max(max(max_x-min_x, max_y-min_y), max_z-min_z)/20;
-	if (max_all < 2)      factor = 14;
-	else if (max_all < 4) factor = 10;
-	else if (max_all < 8) factor = 8;
-	else if (max_all < 12) factor = 5;
-	else if (max_all < 16) factor = 3;
-	else if (max_all < 32) factor = 2;
-	else factor = 1;
-	m_sizex = .1f * (double)pow(1.2,factor);
-	m_sizey = m_sizex;
-	m_sizez = m_sizex;
-	m_matrix.Set(
-		m_movex, m_movey, m_movez,
-		m_sizex, m_sizey, m_sizez,
-		m_spinx, m_spiny, m_spinz);
-
+m_spinx = M_PI/4.f;
+m_spiny = M_PI/4.f;
+m_spinz = 0.0;
+m_movex = -(max_x + min_x)/2.f;
+m_movey = -(max_y + min_y)/2.f;
+m_movez = -(max_z + min_z)/2.f;
+INT32 factor;
+INT32 max_all = max(max(max_x-min_x, max_y-min_y), max_z-min_z)/20;
+if (max_all < 2)      factor = 14;
+else if (max_all < 4) factor = 10;
+else if (max_all < 8) factor = 8;
+else if (max_all < 12) factor = 5;
+else if (max_all < 16) factor = 3;
+else if (max_all < 32) factor = 2;
+else factor = 1;
+m_sizex = .1f * (double)pow(1.2,factor);
+m_sizey = m_sizex;
+m_sizez = m_sizex;
+m_matrix.Set (m_movex, m_movey, m_movez,
+				  m_sizex, m_sizey, m_sizez,
+				  m_spinx, m_spiny, m_spinz);
 Refresh (false);
 }
 
                         /*--------------------------*/
 
-void CMineView::CenterCube()
+void CMineView::CenterCube (void)
 {
 if (!theMine) return;
 
@@ -2747,30 +2745,30 @@ if (!theMine) return;
 	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = segP.verts;
 
-	m_movex = -((double)vMine [segP.verts [0]].x
-		 +(double)vMine [vSeg [1]].x
-		 +(double)vMine [vSeg [2]].x
-		 +(double)vMine [vSeg [3]].x
-		 +(double)vMine [vSeg [4]].x
-		 +(double)vMine [vSeg [5]].x
-		 +(double)vMine [vSeg [6]].x
-		 +(double)vMine [vSeg [7]].x)/(double)0x80000L;
-	m_movey = -((double)vMine [vSeg [0]].y
-		 +(double)vMine [vSeg [1]].y
-		 +(double)vMine [vSeg [2]].y
-		 +(double)vMine [vSeg [3]].y
-		 +(double)vMine [vSeg [4]].y
-		 +(double)vMine [vSeg [5]].y
-		 +(double)vMine [vSeg [6]].y
-		 +(double)vMine [vSeg [7]].y)/(double)0x80000L;
-	m_movez = -((double)vMine [vSeg [0]].z
-		 +(double)vMine [vSeg [1]].z
-		 +(double)vMine [vSeg [2]].z
-		 +(double)vMine [vSeg [3]].z
-		 +(double)vMine [vSeg [4]].z
-		 +(double)vMine [vSeg [5]].z
-		 +(double)vMine [vSeg [6]].z
-		 +(double)vMine [vSeg [7]].z)/(double)0x80000L;
+m_movex = -(double (vMine [segP.verts [0]].x) +
+			   double (vMine [vSeg [1]].x) +
+			   double (vMine [vSeg [2]].x) +
+			   double (vMine [vSeg [3]].x) +
+			   double (vMine [vSeg [4]].x) +
+			   double (vMine [vSeg [5]].x) +
+			   double (vMine [vSeg [6]].x) +
+			   double (vMine [vSeg [7]].x)) / double (0x80000L);
+m_movey = -(double (vMine [vSeg [0]].y) + 
+			   double (vMine [vSeg [1]].y) + 
+			   double (vMine [vSeg [2]].y) + 
+			   double (vMine [vSeg [3]].y) + 
+			   double (vMine [vSeg [4]].y) + 
+			   double (vMine [vSeg [5]].y) + 
+			   double (vMine [vSeg [6]].y) + 
+			   double (vMine [vSeg [7]].y)) / double (0x80000L;
+m_movez = -(double (vMine [vSeg [0]].z) + 
+			   double (vMine [vSeg [1]].z) + 
+			   double (vMine [vSeg [2]].z) + 
+			   double (vMine [vSeg [3]].z) + 
+			   double (vMine [vSeg [4]].z) + 
+			   double (vMine [vSeg [5]].z) + 
+			   double (vMine [vSeg [6]].z) + 
+			   double (vMine [vSeg [7]].z)) / double (0x80000L;
 
 Refresh (false);
 }

@@ -34,44 +34,131 @@ typedef INT16 FIXANG;	/*angles */
 
 #include "io.h"
 
-class CAngleVector {
+typedef struct tAngleVector {
 public:
 	FIXANG p, b, h;
-	//CAngleVector (FIXANG p, FIXANG b, FIXANG h) : p(p), b(b), h(h) {}
-	//CAngleVector (CAngleVector& a) : p(a.p), b(a.b), h(a.h) {}
+} tAngleVector;
 
-inline INT32 Read (FILE* fp) { 
-	p = read_FIXANG (fp);
-	b = read_FIXANG (fp);
-	h = read_FIXANG (fp);
-	return 1;
-	}
+class CAngleVector {
+public:
+	tAngleVector	v;
 
-void Write (FILE* fp) { 
-	write_FIXANG (p, fp);
-	write_FIXANG (b, fp);
-	write_FIXANG (h, fp);
-	}
+	CAngleVector () { v.p = 0, v.b = 0, v.h = 0; }
+	CAngleVector (FIXANG p, FIXANG b, FIXANG h) { v.p = p, v.b = b, v.h = h; }
+	CAngleVector (tAngleVector& _v) { v.p = _v.p, v.b = _v.b, v.h = _v.h; }
+	CAngleVector (CAngleVector& _v) { v.p = _v.v.p, v.b = _v.v.b, v.h = _v.v.h; }
+	void Set (FIXANG p, FIXANG b, FIXANG h) { v.p = p, v.b = b, v.h = h; }
+	void Clear (void) { Set (0,0,0); }
+
+	inline INT32 Read (FILE* fp) { 
+		v.p = read_FIXANG (fp);
+		v.b = read_FIXANG (fp);
+		v.h = read_FIXANG (fp);
+		return 1;
+		}
+
+	void Write (FILE* fp) { 
+		write_FIXANG (v.p, fp);
+		write_FIXANG (v.b, fp);
+		write_FIXANG (v.h, fp);
+		}
+
+	inline const CAngleVector& operator= (CAngleVector& other) { 
+		v.p = other.v.p, v.b = other.v.b, other.v.h = other.v.h; 
+		return *this;
+		}
+	inline const CAngleVector& operator= (tAngleVector& other) { 
+		v.p = other.p, v.b = other.b, v.h = other.h; 
+		return *this;
+		}
+};
+
+struct tFixVector {
+public:
+	FIX x, y, z;
 };
 
 class CFixVector {
 public:
-	FIX x, y, z;
-	//CFixVector () : x(0), y(0), z(0) {}
-	//CFixVector (FIX x, FIX y, FIX z) : x(x), y(y), z(z) {}
-	//CFixVector (CFixVector& v) : x(v.x), y(v.y), z(v.z) {}
+	tFixVector	v;
+	//FIX x, y, z;
+	CFixVector ()  { v.x = 0, v.y = 0, v.z = 0; }
+	CFixVector (FIX x, FIX y, FIX z) { v.x = x, v.y = y, v.z = z; }
+	CFixVector (tFixVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
+	CFixVector (CFixVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
+	void Set (FIX x, FIX y, FIX z) { v.x = x, v.y = y, v.z = z; }
+	void Clear (void) { Set (0,0,0); }
+
 
 inline INT32 Read (FILE* fp) { 
-	x = read_FIX (fp);
-	y = read_FIX (fp);
-	z = read_FIX (fp);
+	v.x = read_FIX (fp);
+	v.y = read_FIX (fp);
+	v.z = read_FIX (fp);
 	return 1;
 	}
 
 void Write (FILE* fp) { 
-	write_FIX (x, fp);
-	write_FIX (y, fp);
-	write_FIX (z, fp);
+	write_FIX (v.x, fp);
+	write_FIX (v.y, fp);
+	write_FIX (v.z, fp);
+	}
+
+inline const CFixVector& operator= (tFixVector& other) { 
+	v.x = other.x, v.y = other.y, v.z = other.z; 
+	return *this;
+	}
+
+inline const CFixVector& operator= (CFixVector& other) { 
+	v.x = other.v.x, v.y = other.v.y, v.z = other.v.z; 
+	return *this;
+	}
+
+inline const CFixVector& operator+= (CFixVector& other) {
+	v.x += other.v.x, v.y += other.v.y, v.z += other.v.z; 
+	return *this;
+	}
+
+inline const CFixVector& operator-= (CFixVector& other) {
+	v.x -= other.v.x, v.y -= other.v.y, v.z -= other.v.z; 
+	return *this;
+	}
+
+inline const CFixVector operator+ (CFixVector& other) {
+	return CFixVector (v.x + other.v.x, v.y + other.v.y, v.z + other.v.z);
+	}
+
+inline const CFixVector operator- (CFixVector& other) {
+	return CFixVector (v.x - other.v.x, v.y - other.v.y, v.z - other.v.z);
+	}
+
+inline const CFixVector operator*= (FIX n) {
+	return CFixVector (v.x * n, v.y * n, v.z * n);
+	}
+
+inline const CFixVector operator/= (FIX n) {
+	return CFixVector (v.x / n, v.y / n, v.z / n);
+	}
+
+inline const CFixVector operator>> (FIX n) {
+	return CFixVector (v.x >> n, v.y >> n, v.z >> n);
+	}
+
+inline const CFixVector operator<< (FIX n) {
+	return CFixVector (v.x << n, v.y << n, v.z << n);
+	}
+
+inline const CFixVector& operator>>= (FIX n) {
+	v.x >>= n, v.y >>= n, v.z >>= n;
+	return *this;
+	}
+
+inline const CFixVector& operator<<= (FIX n) {
+	v.x <<= n, v.y <<= n, v.z <<= n;
+	return *this;
+	}
+
+inline const CFixVector operator* (CFixVector& other) {
+	return CFixVector (v.x * other.v.x, v.y * other.v.y, v.z * other.v.z);
 	}
 };
 
@@ -167,6 +254,9 @@ class CVertex : public CFixVector {
 public:
 	UINT8 m_status;
 	CVertex () : m_status(0) {}
+	CVertex (FIX x, FIX y, FIX z) : CFixVector (x, y, z) { m_status = 0; }
+	CVertex (tFixVector& _v) : CFixVector (_v) { m_status = 0; }
+	CVertex (CFixVector& _v) : CFixVector (_v) { m_status = 0; }
 };
 
 typedef struct {
@@ -535,13 +625,13 @@ public:
 
 class CObjPhysicsInfo {
 public:
-	CFixVector velocity;   /*velocity vector of this object */
-	CFixVector thrust;     /*constant force applied to this object */
+	tFixVector velocity;   /*velocity vector of this object */
+	tFixVector thrust;     /*constant force applied to this object */
 	FIX        mass;       /*the mass of this object */
 	FIX        drag;       /*how fast this slows down */
 	FIX        brakes;     /*how much brakes applied */
-	CFixVector rotvel;     /*rotational velecity (angles) */
-	CFixVector rotthrust;  /*rotational acceleration */
+	tFixVector rotvel;     /*rotational velecity (angles) */
+	tFixVector rotthrust;  /*rotational acceleration */
 	FIXANG     turnroll;   /*rotation caused by turn banking */
 	UINT16     flags;      /*misc physics flags */
 
@@ -609,7 +699,7 @@ public:
 class CObjPolyModelInfo {
 public:
 	INT32      model_num;        /*which polygon model */
-	CAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
+	tAngleVector anim_angles[MAX_SUBMODELS];  /*angles for each subobject */
 	INT32      subobj_flags;     /*specify which subobjs to draw */
 	INT32      tmap_override;    /*if this is not -1, map all face to this */
 	INT8       alt_textures;     /*if not -1, use these textures instead */
@@ -722,7 +812,7 @@ public:
 	//movement info, determined by MOVEMENT_TYPE 
 	union {
 		CObjPhysicsInfo	physInfo; // a physics object 
-		CFixVector			spinRate; // for spinning objects 
+		tFixVector			spinRate; // for spinning objects 
 		} mType;
 
 	//control info, determined by CONTROL_TYPE 
