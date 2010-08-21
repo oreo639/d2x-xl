@@ -1124,15 +1124,6 @@ else {  /*load mine filename */
 		}
 	}
 
-	//==================== = READ PLAYER INFO==========================
-	//  object_next_signature = 0;
-	// 116 bytes of data "GUILE", "BIG_RED", or "RACER_X" + NULL + junk
-	// use this area to store version of DMB
-
-	//==================== = READ OBJECT INFO==========================
-	// note: same for D1 and D2
-	//  gamesave_num_org_robots = 0;
-	//  gamesave_num_players = 0;
 
 #if 1
 	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
