@@ -5743,6 +5743,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\LoadMine.cpp"
+					>
+				</File>
+				<File
 					RelativePath="Matrix.cpp"
 					>
 					<FileConfiguration
@@ -6369,6 +6373,10 @@
 							PreprocessorDefinitions=""
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\SaveMine.cpp"
+					>
 				</File>
 				<File
 					RelativePath="Segment.cpp"
