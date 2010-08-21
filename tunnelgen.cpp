@@ -319,17 +319,17 @@ if (!m_bSplineActive) {
 	// calculate length between cubes
 	length = CalcLength (points, points + 3);
 	// base spline length on distance between cubes
-	m_splineLength1 = (INT16) (length/0x30000L);
+	m_splineLength1 = (INT16) (length / (3 * F1_0));
 	if (m_splineLength1 < MIN_SPLINE_LENGTH)
 		m_splineLength1 = MIN_SPLINE_LENGTH;
 	if (m_splineLength1 > MAX_SPLINE_LENGTH)
 		m_splineLength1 = MAX_SPLINE_LENGTH;
-	m_splineLength2 = (INT16) (length/0x30000L);
+	m_splineLength2 = (INT16) (length / (3 * F1_0));
 	if (m_splineLength2 < MIN_SPLINE_LENGTH)
 		m_splineLength2 = MIN_SPLINE_LENGTH;
 	if (m_splineLength2 > MAX_SPLINE_LENGTH)
 		m_splineLength2 = MAX_SPLINE_LENGTH;
-	if (length < 50*F1_0) {
+	if (length < 50 * F1_0) {
 		ErrorMsg ("End points of tunnel are too close.\n\n"
 					"Hint: Select two sides which are further apart\n"
 					"using the spacebar and left/right arrow keys,\n"
@@ -394,7 +394,7 @@ else {
 			segP->sides [j].nBaseTex = 0;
 			segP->sides [j].nOvlTex = 0;
 			segP->sides [j].nWall = NO_WALL;
-			for (i=0;i<4;i++) {
+			for (i = 0; i < 4; i++) {
 //	    segP->sides [j].uvls [i].u = default_uvls [i].u;
 //	    segP->sides [j].uvls [i].v = default_uvls [i].v;
 				segP->sides [j].uvls [i].l = (UINT16) DEFAULT_LIGHTING;
@@ -523,13 +523,13 @@ void CMine::CalcSpline (void)
   }
   segP = Segments (nSplineSeg1);
   CVertex* vert;
-  for (i=0;i<4;i++) {
+  for (i = 0; i < 4; i++) {
     nVertex = side_vert [nSplineSide1][i];
 	 vert = Vertices (segP->verts [nVertex]);
     rel_side_pts [0][i] = *vert - points [0];
   }
   segP = Segments (nSplineSeg2);
-  for (i=0;i<4;i++) {
+  for (i = 0; i < 4; i++) {
     nVertex = side_vert [nSplineSide2][i];
 	 vert = Vertices (segP->verts [nVertex]);
     rel_side_pts [1][i] = *vert - points [0];
@@ -543,7 +543,7 @@ void CMine::CalcSpline (void)
   z_spin =   atan3(rel_pts [1].v.y, rel_pts [1].v.x*cos(y_spin)-rel_pts [1].v.z*sin(y_spin)); // to x axis
 
   // spin all points reletave to first face (rotation)
-  for (i=0;i<4;i++) {
+  for (i = 0; i < 4; i++) {
     SpinPoint (rel_pts + i,y_spin,z_spin);
     for (j=0;j<2;j++) {
       SpinPoint (rel_side_pts [j] + i,y_spin,z_spin);
@@ -554,7 +554,7 @@ void CMine::CalcSpline (void)
   }
 
   // determine polar coordinates of the 1st side (simply y,z coords)
-  for (i=0;i<4;i++) {
+  for (i = 0; i < 4; i++) {
     theta [0][i] = atan3(rel_side_pts [0][i].v.z,rel_side_pts [0][i].v.y);
     y = (float) rel_side_pts [0][i].v.y;
     z = (float) rel_side_pts [0][i].v.z;
@@ -562,7 +562,7 @@ void CMine::CalcSpline (void)
   }
 
   // determine polar coordinates of the 2nd side by rotating to x-axis first
-  for (i=0;i<4;i++) {
+  for (i = 0; i < 4; i++) {
     // flip orthoginal vector to point into cube
     vertex.Set (-(rel_pts [2].v.x-rel_pts [3].v.x) + rel_pts [3].v.x,
 					 -(rel_pts [2].v.y-rel_pts [3].v.y) + rel_pts [3].v.y,

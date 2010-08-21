@@ -21,7 +21,7 @@
 
 double CMine::CalcLength (CFixVector* center1, CFixVector* center2)
 {
-return Distance (center1, center2);
+return Distance (*center1, *center2);
 }
 
 // -------------------------------------------------------------------------- 
@@ -504,9 +504,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
 		vSeg = Vertices (Segments (nSegment) ->verts [0]);
-		if (labs (vNewSeg->x - vSeg->x) < 0xA00000L &&
-			 labs (vNewSeg->y - vSeg->y) < 0xA00000L &&
-			 labs (vNewSeg->z - vSeg->z) < 0xA00000L)
+		if (labs (vNewSeg->v.x - vSeg->v.x) < 0xA00000L &&
+			 labs (vNewSeg->v.y - vSeg->v.y) < 0xA00000L &&
+			 labs (vNewSeg->v.z - vSeg->v.z) < 0xA00000L)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
 					LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3 * F1_0);
@@ -535,14 +535,15 @@ return TRUE;
 
 void CMine::DefineVertices (INT16 new_verts [4])
 {
-	CSegment *currSeg; 
-	CDoubleVector A [8], B [8], C [8], D [8], E [8], a, b, c, d; 
-	double angle1, angle2, angle3; 
-	double length; 
-	INT16 nVertex; 
-	INT16 i; 
-	CFixVector center, opp_center, orthog; 
-	CFixVector *vert, new_center; 
+	CSegment*		currSeg; 
+	CDoubleVector	A [8], B [8], C [8], D [8], E [8], a, b, c, d, v; 
+	double			angle1, angle2, angle3; 
+	double			length; 
+	INT16				nVertex; 
+	INT16				i; 
+	CFixVector		center, opp_center, orthog; 
+	CVertex*			vert;
+	CFixVector		newCenter; 
 
 	currSeg = Segments (Current ()->nSegment); 
 
@@ -561,14 +562,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			length = 20; 
 
 			// scale the vector
-			orthog.x = (long) ((double) orthog.x * length); 
-			orthog.y = (long) ((double) orthog.y * length); 
-			orthog.z = (long) ((double) orthog.z * length); 
+			v = CDoubleVector (orthog) * length;
+			orthog = CFixVector (v); 
 
 			// figure out new center
-			new_center.x = center.x + orthog.x; 
-			new_center.y = center.y + orthog.y; 
-			new_center.z = center.z + orthog.z; 
+			newCenter = center + orthog; 
 
 			// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 			double factor; 
@@ -576,137 +574,84 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			// point 0
 			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]];
 			vert = Vertices (nVertex);
-			a.x = orthog.x + vert->x; 
-			a.y = orthog.y + vert->y; 
-			a.z = orthog.z + vert->z; 
+			a = orthog + *vert; 
 
 			// point 1
 			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]; 
 			vert = Vertices (nVertex);
-			b.x = orthog.x + vert->x; 
-			b.y = orthog.y + vert->y; 
-			b.z = orthog.z + vert->z; 
+			b = orthog + *vert; 
 
 			// center
-			c.x = (a.x + b.x) / 2; 
-			c.y = (a.y + b.y) / 2; 
-			c.z = (a.z + b.z) / 2; 
+			c = a + b;
+			c /= 2; 
 
 			// vector from center to point0 and its length
-			d.x = a.x - c.x; 
-			d.y = a.y - c.y; 
-			d.z = a.z - c.z; 
-			length = sqrt(d.x*d.x + d.y*d.y + d.z*d.z); 
+			d = a - c; 
+			length = d.Mag (); 
 
 			// factor to mul
-			if (length > 0) {
-				factor = 10.0*F1_0 /length; 
-			} else {
-				factor = 1.0; 
-			}
+			factor = (length > 0) ? 10.0 * F1_0 /length : 1.0; 
 
 			// set point 0
-			A [CURRENT_POINT(0)].x = (c.x + factor * d.x); 
-			A [CURRENT_POINT(0)].y = (c.y + factor * d.y); 
-			A [CURRENT_POINT(0)].z = (c.z + factor * d.z); 
-
+			A [CURRENT_POINT(0)] = c + (d * factor); 
 			// set point 1
-			A [CURRENT_POINT(1)].x = (c.x - factor * d.x); 
-			A [CURRENT_POINT(1)].y = (c.y - factor * d.y); 
-			A [CURRENT_POINT(1)].z = (c.z - factor * d.z); 
-
+			A [CURRENT_POINT(1)] = c - (d * factor); 
 			// point 2 is orthogonal to the vector 01 and the orthog vector
-			a.x = orthog.x; 
-			a.y = orthog.y; 
-			a.z = orthog.z; 
-			b.x = A [CURRENT_POINT(0)].x - A [CURRENT_POINT(1)].x; 
-			b.y = A [CURRENT_POINT(0)].y - A [CURRENT_POINT(1)].y; 
-			b.z = A [CURRENT_POINT(0)].z - A [CURRENT_POINT(1)].z; 
-			c.x = a.y*b.z - a.z*b.y; 
-			c.y = a.z*b.x - a.x*b.z; 
-			c.z = a.x*b.y - a.y*b.x; 
+			c = Normal (A [CURRENT_POINT(0)], A [CURRENT_POINT(1)], orthog);
 			// normalize the vector
-			length = sqrt(c.x*c.x + c.y*c.y + c.z*c.z); 
-			if (length>0) {
-				c.x /= length; 
-				c.y /= length; 
-				c.z /= length; 
-			}
-			A [CURRENT_POINT(2)].x = A [CURRENT_POINT(1)].x + c.x * 20*F1_0; 
-			A [CURRENT_POINT(2)].y = A [CURRENT_POINT(1)].y + c.y * 20*F1_0; 
-			A [CURRENT_POINT(2)].z = A [CURRENT_POINT(1)].z + c.z * 20*F1_0; 
+			A [CURRENT_POINT(2)] = A [CURRENT_POINT(1)] + (c * (20 * F1_0)); 
+			A [CURRENT_POINT(3)] = A [CURRENT_POINT(0)] + (c * (20 * F1_0)); 
 
-			A [CURRENT_POINT(3)].x = A [CURRENT_POINT(0)].x + c.x * 20*F1_0; 
-			A [CURRENT_POINT(3)].y = A [CURRENT_POINT(0)].y + c.y * 20*F1_0; 
-			A [CURRENT_POINT(3)].z = A [CURRENT_POINT(0)].z + c.z * 20*F1_0; 
-
-			// now center the side along about the new_center
-			a.x = (A [0].x + A [1].x + A [2].x + A [3].x)/4; 
-			a.y = (A [0].y + A [1].y + A [2].y + A [3].y)/4; 
-			a.z = (A [0].z + A [1].z + A [2].z + A [3].z)/4; 
-			for (i = 0; i < 4; i++) {
-				A [i].x += new_center.x - a.x; 
-				A [i].y += new_center.y - a.y; 
-				A [i].z += new_center.z - a.z; 
-			}
-
+			// now center the side along about the newCenter
+			a = (A [0] + A [1] + A [2] + A [3]); 
+			a /= 4;
+			for (i = 0; i < 4; i++)
+				A [i] += (newCenter - a); 
+	
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
 				//nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				nVertex = new_verts [i];
-				Vertices (nVertex)->x = (long) dround_off(A [i].x, 1.0); 
-				Vertices (nVertex)->y = (long) dround_off(A [i].y, 1.0); 
-				Vertices (nVertex)->z = (long) dround_off(A [i].z, 1.0); 
+				*Vertices (nVertex) = CDoubleVector (A [i]); 
+				}
 			}
-		}
 		break; 
 		// METHOD 2: orghogonal with right angle on new side
 		case(EXTEND):
 		{
-			center = CalcSegCenter(Current ()->nSegment, Current ()->nSide); 
-			opp_center = CalcSegCenter(Current ()->nSegment, opp_side [Current ()->nSide]); 
+			center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
+			opp_center = CalcSideCenter (Current ()->nSegment, opp_side [Current ()->nSide]); 
 			orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
 
 			// calculate the length of the new cube
-			length = CalcLength (&center, &opp_center) / 0x10000L; 
+			length = CalcLength (&center, &opp_center) / F1_0; 
 
 			// scale the vector
-			orthog.x = (long) ((double) orthog.x * length); 
-			orthog.y = (long) ((double) orthog.y * length); 
-			orthog.z = (long) ((double) orthog.z * length); 
+			orthog = CFixVector (CDoubleVector (orthog) * length);
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
 				INT32 v1 = currSeg->verts [side_vert [Current ()->nSide][i]]; 
 				INT32 v2 = new_verts [i];
-				Vertices (v2)->x = orthog.x + Vertices (v1)->x; 
-				Vertices (v2)->y = orthog.y + Vertices (v1)->y; 
-				Vertices (v2)->z = orthog.z + Vertices (v1)->z; 
+				*Vertices (v2) = orthog + *Vertices (v1); 
+				}
 			}
-		}
 		break; 
 
 		// METHOD 3: mirror relative to plane of side
 		case(MIRROR):
-		{
+			{
 			// copy side's four points into A
 			for (i = 0; i < 4; i++) {
 				nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
-				A [i].x = Vertices (nVertex)->x; 
-				A [i].y = Vertices (nVertex)->y; 
-				A [i].z = Vertices (nVertex)->z; 
+				A [i] = CDoubleVector (*Vertices (nVertex)); 
 				nVertex = currSeg->verts [opp_side_vert [Current ()->nSide][i]]; 
-				A [i + 4].x = Vertices (nVertex)->x; 
-				A [i + 4].y = Vertices (nVertex)->y; 
-				A [i + 4].z = Vertices (nVertex)->z; 
-			}
+				A [i + 4] = CDoubleVector (*Vertices (nVertex)); 
+				}
 
 			// subtract point 0 from all points in A to form B points
-			for (i = 0; i < 8; i++) {
-				B [i].x = A [i].x - A [0].x; 
-				B [i].y = A [i].y - A [0].y; 
-				B [i].z = A [i].z - A [0].z; 
-			}
+			for (i = 0; i < 8; i++)
+				B [i] = A [i] - A [0]; 
 
 			// calculate angle to put point 1 in x - y plane by spinning on x - axis
 			// then rotate B points on x - axis to form C points.
@@ -714,12 +659,10 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			//    if (B [1].z== B [1].y) {
 			//      angle1 = PI/4; 
 			//    } else {
-			angle1 = atan3(B [1].z, B [1].y); 
+			angle1 = atan3(B [1].v.z, B [1].v.y); 
 			//    }
 			for (i = 0; i < 8; i++) {
-				C [i].x = B [i].x; 
-				C [i].y = B [i].y * cos(angle1) + B [i].z * sin(angle1); 
-				C [i].z = - B [i].y * sin(angle1) + B [i].z * cos(angle1); 
+				C [i].Set (B [i].v.x, B [i].v.y * cos(angle1) + B [i].v.z * sin(angle1), -B [i].v.y * sin(angle1) + B [i].v.z * cos(angle1)); 
 			}
 
 			// calculate angle to put point 1 on x axis by spinning on z - axis
@@ -728,13 +671,10 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			//    if (C [1].y== C [1].x) {
 			//      angle2 = PI/4; 
 			//    } else {
-			angle2 = atan3(C [1].y, C [1].x); 
+			angle2 = atan3(C [1].v.y, C [1].v.x); 
 			//    }
-			for (i = 0; i < 8; i++) {
-				D [i].x = C [i].x * cos(angle2) + C [i].y * sin(angle2); 
-				D [i].y = - C [i].x * sin(angle2) + C [i].y * cos(angle2); 
-				D [i].z = C [i].z; 
-			}
+			for (i = 0; i < 8; i++)
+				D [i].Set (C [i].v.x * cos(angle2) + C [i].v.y * sin(angle2), -C [i].v.x * sin(angle2) + C [i].v.y * cos(angle2), C [i].v.z); 
 
 			// calculate angle to put point 2 in x - y plane by spinning on x - axis
 			// the rotate D points on x - axis to form E points
@@ -742,52 +682,33 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			//    if (D [2].z== D [2].y) {
 			//      angle3 = PI/4; 
 			//    } else {
-			angle3 = atan3(D [2].z, D [2].y); 
+			angle3 = atan3(D [2].v.z, D [2].v.y); 
 			//    }
-			for (i = 0; i < 8; i++) {
-				E [i].x = D [i].x; 
-				E [i].y = D [i].y * cos(angle3) + D [i].z * sin(angle3); 
-				E [i].z = - D [i].y * sin(angle3) + D [i].z * cos(angle3); 
-			}
+			for (i = 0; i < 8; i++) 
+				E [i].Set (D [i].v.x, D [i].v.y * cos(angle3) + D [i].v.z * sin(angle3), -D [i].v.y * sin(angle3) + D [i].v.z * cos(angle3)); 
 
 			// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
 			// mirror new points on z axis
-			for (i = 4; i < 8; i++) {
-				E [i].z = - E [i].z; 
-			}
+			for (i = 4; i < 8; i++)
+				E [i] = -E [i]; 
 
 			// now reverse rotations
-			for (i = 4; i < 8; i++) {
-				D [i].x = E [i].x; 
-				D [i].y = E [i].y * cos(- angle3) + E [i].z * sin(- angle3); 
-				D [i].z = - E [i].y * sin(- angle3) + E [i].z * cos(- angle3); 
-			}
-			for (i = 4; i < 8; i++) {
-				C [i].x = D [i].x * cos(- angle2) + D [i].y * sin(- angle2); 
-				C [i].y = - D [i].x * sin(- angle2) + D [i].y * cos(- angle2); 
-				C [i].z = D [i].z; 
-			}
-			for (i = 4; i < 8; i++) {
-				B [i].x = C [i].x; 
-				B [i].y = C [i].y * cos(- angle1) + C [i].z * sin(- angle1); 
-				B [i].z = - C [i].y * sin(- angle1) + C [i].z * cos(- angle1); 
-			}
+			for (i = 4; i < 8; i++) 
+				D [i].Set (E [i].v.x, E [i].v.y * cos(- angle3) + E [i].v.z * sin(- angle3), -E [i].v.y * sin(- angle3) + E [i].v.z * cos(- angle3); 
+			for (i = 4; i < 8; i++) 
+				C [i].Set (D [i].v.x * cos(- angle2) + D [i].v.y * sin(- angle2), -D [i].v.x * sin(- angle2) + D [i].v.y * cos(- angle2), D [i].v.z); 
+			for (i = 4; i < 8; i++) 
+				B [i].Set (C [i].v.x, C [i].v.y * cos(- angle1) + C [i].v.z * sin(- angle1), -C [i].v.y * sin(- angle1) + C [i].v.z * cos(- angle1)); 
+	
 			// and translate back
 			nVertex = currSeg->verts [side_vert [Current ()->nSide][0]]; 
-			for (i = 4; i < 8; i++) {
-				A [i].x = B [i].x + Vertices (nVertex)->x; 
-				A [i].y = B [i].y + Vertices (nVertex)->y; 
-				A [i].z = B [i].z + Vertices (nVertex)->z; 
-			}
+			for (i = 4; i < 8; i++) 
+				A [i] = B [i] + CDoubleVector (*Vertices (nVertex)); 
 
-			for (i = 0; i < 4; i++) {
-				INT32 nVertex = new_verts [i];
-				Vertices (nVertex)->x = (long) dround_off(A [i + 4].x, 1.0); 
-				Vertices (nVertex)->y = (long) dround_off(A [i + 4].y, 1.0); 
-				Vertices (nVertex)->z = (long) dround_off(A [i + 4].z, 1.0); 
+			for (i = 0; i < 4; i++)
+				*Vertices (new_verts [i]) = CFixVector (A [i + 4]); 
 			}
 		}
-	}
 }
 
 // -------------------------------------------------------------------------- 
@@ -840,9 +761,9 @@ for (i = 0; i < 4; i++) {
 fail = 0;   // assume test will pass for now
 for (i = 0; i < 4; i++)
 	for (j = 0; j < 4; j++)
-		if (labs (v1 [i].x - v2 [j].x) < margin &&
-			 labs (v1 [i].y - v2 [j].y) < margin &&
-			 labs (v1 [i].z - v2 [j].z) < margin)
+		if (labs (v1 [i].v.x - v2 [j].v.x) < margin &&
+			 labs (v1 [i].v.y - v2 [j].v.y) < margin &&
+			 labs (v1 [i].v.z - v2 [j].v.z) < margin)
 			if (match [j].i != -1) // if this vertex already matched another vertex then abort
 				return false; 
 			else
@@ -939,14 +860,9 @@ void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment)
 memset (&pos, 0, sizeof (pos));
 INT32 i;
 for (i = 0; i < 8; i++) {
-	vert = Vertices (nVerts [i]);
-	pos.x += vert->x;
-	pos.y += vert->y;
-	pos.z += vert->z;
+	pos += *Vertices (nVerts [i]);
 	}
-pos.x /= 8;
-pos.y /= 8;
-pos.z /= 8;
+pos /= 8;
 /*
   pos.x  = 
       (Vertices (verts [0])->x
@@ -1615,12 +1531,12 @@ for (i = 0; i < 2; i++) {
 	v1 = vert1 [i] = seg1->verts [line_vert [linenum][i]]; 
 	linenum = side_line [cur2->nSide][cur2->nLine]; 
 	v2 = vert2 [i] = seg2->verts [line_vert [linenum][i]]; 
-	v1x [i] = Vertices (v1)->x; 
-	v1y [i] = Vertices (v1)->y; 
-	v1z [i] = Vertices (v1)->z; 
-	v2x [i] = Vertices (v2)->x; 
-	v2y [i] = Vertices (v2)->y; 
-	v2z [i] = Vertices (v2)->z; 
+	v1x [i] = Vertices (v1)->v.x; 
+	v1y [i] = Vertices (v1)->v.y; 
+	v1z [i] = Vertices (v1)->v.z; 
+	v2x [i] = Vertices (v2)->v.x; 
+	v2y [i] = Vertices (v2)->v.y; 
+	v2z [i] = Vertices (v2)->v.z; 
 	match [i] =-1; 
 	}
 
@@ -1817,10 +1733,7 @@ if (solidify) {
 				for (j = 0, h = -1; j < 4; j++) {
 					if (match [j].b)
 						continue;
-					dx = (double) v1 [i].x - (double) v2 [j].x;
-					dy = (double) v1 [i].y - (double) v2 [j].y;
-					dz = (double) v1 [i].z - (double) v2 [j].z;
-					radius = sqrt (dx * dx + dy * dy + dz * dz);
+					radius = Distance (v1 [i], v2 [j]);
 					if ((radius <= 10.0 * F1_0) && (radius < match [i].d)) {
 						h = j;  // remember which vertex it matched
 						match [i].d = radius;
@@ -1928,10 +1841,7 @@ for (i = 0; i < 4; i++) {
 for (i = 0; i < 4; i++) {
 	min_radius = JOIN_DISTANCE; 
 	for (j = 0; j < 4; j++) {
-		dx = (double) v1 [i].x - (double) v2 [j].x;
-		dy = (double) v1 [i].y - (double) v2 [j].y;
-		dz = (double) v1 [i].z - (double) v2 [j].z;
-		radius = sqrt(dx * dx + dy * dy + dz * dz);
+		radius = Distance (v1 [i], v2 [j]);
 		if (radius < min_radius) {
 			min_radius = radius; 
 			match [i].i = j;  // remember which vertex it matched
@@ -1973,9 +1883,7 @@ min_radius = JOIN_DISTANCE;
 max_radius = 0; 
 for (i = 0; i < 4; i++) {
 	j = match [i].i; 
-	radius = sqrt(((double)v1 [i].x - (double)v2 [j].x) * ((double)v1 [i].x - (double)v2 [j].x)
-				 +  ((double)v1 [i].y - (double)v2 [j].y) * ((double)v1 [i].y - (double)v2 [j].y)
-				 +  ((double)v1 [i].z - (double)v2 [j].z) * ((double)v1 [i].z - (double)v2 [j].z)); 
+	radius = Distance (v1 [i], v2 [j]);
 	min_radius = min(min_radius, radius); 
 	max_radius = max(max_radius, radius); 
 	}
@@ -2655,15 +2563,9 @@ VertCount () = h;
 #endif
 // compute segment center
 memset (&segCenter, 0, sizeof (segCenter));
-for (i = 0; i < 8; i++) {
-	v = Vertices (centerSegP->verts [i]);
-	segCenter.x += v->x;
-	segCenter.y += v->y;
-	segCenter.z += v->z;
-	}
-segCenter.x /= 8;
-segCenter.y /= 8;
-segCenter.z /= 8;
+for (i = 0; i < 8; i++)
+	segCenter += *Vertices (centerSegP->verts [i]);
+segCenter /= 8;
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
@@ -2675,9 +2577,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 		bVertDone [j] = true;
 		centerSegVert = Vertices (centerSegP->verts [j]);
 		segVert = Vertices (h + j);
-		segVert->x = (centerSegVert->x + segCenter.x) / 2;
-		segVert->y = (centerSegVert->y + segCenter.y) / 2;
-		segVert->z = (centerSegVert->z + segCenter.z) / 2;
+		*segVert = (*centerSegVert + *segCenter) / 2;
 		//centerSegP->verts [j] = h + j;
 		}
 	}

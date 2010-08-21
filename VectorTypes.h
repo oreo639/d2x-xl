@@ -380,7 +380,8 @@ inline CDoubleVector Perpendicular (const CDoubleVector& p0, const CDoubleVector
 	}
 
 inline const CDoubleVector Normalize (CDoubleVector v) { 
-	return v / v.Mag (); 
+	double m = v.Mag ();
+	return (m != 0.0) ? v / m : CDoubleVector (0.0, 0.0, 0.0); 
 	}
 
 inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
