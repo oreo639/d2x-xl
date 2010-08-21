@@ -208,6 +208,18 @@ if (r > left)
 }
 
 // ------------------------------------------------------------------------
+
+INT32 CMine::SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
+{
+info.offset = ftell (fp);
+for (int i = 0; i < info.count; i++) {
+	items->Write (fp, GameInfo ().fileinfo.version, bFlag);
+	items = items->Next ();
+	}
+return info.count;
+}
+									
+// ------------------------------------------------------------------------
 // SaveMineDataCompiled()
 //
 // ACTION - Writes a mine data portion of RDL file.
@@ -252,7 +264,7 @@ return 0;
 //  ACTION - Saves the player, object, wall, door, trigger, and
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
-INT16 CMine::SaveGameData(FILE *savefile)
+INT16 CMine::SaveGameData(FILE *fp)
 {
 #if 1 //!DEMO
 	HINSTANCE hInst = AfxGetInstanceHandle();
@@ -260,7 +272,7 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	INT32 i;
 	INT32 startOffset, endOffset;
 
-	startOffset = ftell(savefile);
+	startOffset = ftell(fp);
 
 	//==================== = WRITE FILE INFO========================
 
@@ -311,14 +323,14 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		GameInfo ().level = 0;
 	}
 
-	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, savefile);
+	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, fp);
 	if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
-		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName), savefile);
+		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName), fp);
 	}
 	if (IsD2File ()) {
-		fwrite("\n", 1, 1, savefile); // write an end - of - line
+		fwrite("\n", 1, 1, fp); // write an end - of - line
 	} else {
-		fwrite("", 1, 1, savefile);   // write a null
+		fwrite("", 1, 1, fp);   // write a null
 	}
 
 	// write pof names from resource file
@@ -331,14 +343,14 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		n_save_pof_names = 166;
 		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES2), "RC_DATA")))
 			return 1;
-		fwrite(&n_save_pof_names, 2, 1, savefile);   // write # of POF names
+		fwrite(&n_save_pof_names, 2, 1, fp);   // write # of POF names
 		}
 	else {
 		n_save_pof_names = 78;
 		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES1), "RC_DATA")))
 			return 1;
 		n_pofs = 25;   // Don't know exactly what this value is for or why it is 25?
-		fwrite(&n_pofs, 2, 1, savefile);
+		fwrite(&n_pofs, 2, 1, fp);
 		}
 	hGlobal = LoadResource(hInst, hRes);
 	ASSERT(hGlobal);
@@ -346,153 +358,143 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	save_pof_names = (UINT8 *) LockResource(hGlobal);
 	ASSERT(save_pof_names);
 
-	fwrite(save_pof_names, n_save_pof_names, 13, savefile); // 13 characters each
+	fwrite(save_pof_names, n_save_pof_names, 13, fp); // 13 characters each
 	FreeResource(hGlobal);
 
 	//==================== = WRITE PLAYER INFO==========================
-	GameInfo ().player.offset = ftell(savefile);
+	GameInfo ().player.offset = ftell(fp);
 	char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
-	fwrite(str, strlen (str) + 1, 1, savefile);
+	fwrite(str, strlen (str) + 1, 1, fp);
 
 	//==================== = WRITE OBJECT INFO==========================
 	// note: same for D1 and D2
-	GameInfo ().objects.offset = ftell(savefile);
+#if 1
+	SaveGameItem (fp, GameInfo ().objects, Objects ());
+#else
+	GameInfo ().objects.offset = ftell(fp);
 	for (i = 0; i < GameInfo ().objects.count; i++)
-		Objects (i)->Write (savefile, GameInfo ().fileinfo.version);
-
+		Objects (i)->Write (fp, GameInfo ().fileinfo.version);
+#endif
 	//==================== = WRITE WALL INFO============================
 	// note: Wall size will automatically strip last two items
 	//       when saving D1 level
-	GameInfo ().walls.offset = ftell(savefile);
 	if (GameInfo ().fileinfo.version >= 20) {
+#if 1
+	SaveGameItem (fp, GameInfo ().walls, Walls ());
+#else
+		GameInfo ().walls.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().walls.count; i++)
-			Walls (i)->Write (savefile, GameInfo ().fileinfo.version);
-	}
+			Walls (i)->Write (fp, GameInfo ().fileinfo.version);
+#endif
+		}
 
 	//==================== = WRITE DOOR INFO============================
 	// note: not used for D1 or D2 since doors.count is always 0
-	GameInfo ().doors.offset = ftell(savefile);
-	if (GameInfo ().fileinfo.version >= 20)
-//	for (i = 0; i < GameInfo ().doors.count; i++)
+	if (GameInfo ().fileinfo.version >= 20) {
+#if 1
+	SaveGameItem (fp, GameInfo ().doors, ActiveDoors ());
+#else
+		GameInfo ().doors.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().doors.count; i++)
-			ActiveDoors (i)->Write (savefile, GameInfo ().fileinfo.version);
-			//fwrite(ActiveDoors (i), TotalSize (GameInfo ().doors), 1, savefile);
+			ActiveDoors (i)->Write (fp, GameInfo ().fileinfo.version);
+#endif
+		}
 
 	//==================== WRITE TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
-	GameInfo ().triggers.offset = ftell(savefile);
+#if 1
+	SaveGameItem (fp, GameInfo ().triggers, Triggers ());
+#else
+	GameInfo ().triggers.offset = ftell(fp);
 	for (i = 0; i < GameInfo ().triggers.count; i++)
-		Triggers (i)->Write (savefile, GameInfo ().fileinfo.version, false);
+		Triggers (i)->Write (fp, GameInfo ().fileinfo.version, false);
+#endif
 	if (LevelVersion () >= 12) {
-		write_INT32 (NumObjTriggers (), savefile);
+		write_INT32 (NumObjTriggers (), fp);
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
-				ObjTriggers (i)->Write (savefile, GameInfo ().fileinfo.version, true);
+				ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				write_INT16 (ObjTriggers (i)->nObject, savefile);
+				write_INT16 (ObjTriggers (i)->nObject, fp);
 			}
 		}
 
 	//================ WRITE CONTROL CENTER TRIGGER INFO============== =
 	// note: same for D1 and D2
-	GameInfo ().control.offset = ftell(savefile);
+#if 1
+	SaveGameItem (fp, GameInfo ().control, ReactorTriggers ());
+#else
+	GameInfo ().control.offset = ftell(fp);
 	for (i = 0; i < GameInfo ().control.count; i++)
-		ReactorTriggers (i)->Write (savefile, GameInfo ().fileinfo.version);
-		//fwrite(ReactorTriggers (), TotalSize (GameInfo ().control), 1, savefile);
-
+		ReactorTriggers (i)->Write (fp, GameInfo ().fileinfo.version);
+		//fwrite(ReactorTriggers (), TotalSize (GameInfo ().control), 1, fp);
+#endif
 	//================ WRITE MATERIALIZATION CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
-	GameInfo ().botgen.offset = ftell(savefile);
+#if 1
+	SaveGameItem (fp, GameInfo ().botgen, BotGens ());
+#else
+	GameInfo ().botgen.offset = ftell(fp);
 	//if (IsD2File ())
-	//	fwrite(BotGens (), TotalSize (GameInfo ().botgen), 1, savefile);
+	//	fwrite(BotGens (), TotalSize (GameInfo ().botgen), 1, fp);
 	//else 
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
-			BotGens (i)->Write (savefile, GameInfo ().fileinfo.version);
-			//write_INT32 (BotGens (i)->objFlags[0], savefile);
+			BotGens (i)->Write (fp, GameInfo ().fileinfo.version);
+			//write_INT32 (BotGens (i)->objFlags[0], fp);
 			//// skip robot_flags2
-			//write_FIX  (BotGens (i)->hitPoints, savefile);
-			//write_FIX  (BotGens (i)->interval, savefile);
-			//write_INT16(BotGens (i)->nSegment, savefile);
-			//write_INT16(BotGens (i)->nFuelCen, savefile);
+			//write_FIX  (BotGens (i)->hitPoints, fp);
+			//write_FIX  (BotGens (i)->interval, fp);
+			//write_INT16(BotGens (i)->nSegment, fp);
+			//write_INT16(BotGens (i)->nFuelCen, fp);
 	}
-
+#endif
 	//================ WRITE EQUIPMENT CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
-	GameInfo ().equipgen.offset = ftell(savefile);
-	if (IsD2File ())
+	if (IsD2File ()) {
+#if 1
+	SaveGameItem (fp, GameInfo ().equipgen, EquipGens ());
+#else
+		GameInfo ().equipgen.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().botgen.count; i++) 
-			EquipGens (i)->Write (savefile, GameInfo ().fileinfo.version);
-		//fwrite(EquipGens (), TotalSize (GameInfo ().equipgen), 1, savefile);
-
-	//============== CALCULATE DELTA LIGHT DATA============ =
-	if (IsD2File ())
-		UpdateDeltaLights ();
-
+			EquipGens (i)->Write (fp, GameInfo ().fileinfo.version);
+		//fwrite(EquipGens (), TotalSize (GameInfo ().equipgen), 1, fp);
+#endif
 	//================ WRITE DELTA LIGHT INFO============== =
-	// note: D2 only
-	GameInfo ().lightDeltaIndices.offset = ftell(savefile);
-	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
-		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
-	if (IsD2File ())
+		if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
+			SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
+#if 1
+		SaveGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex ());
+		SaveGameItem (fp, GameInfo ().lightDeltaValues, LightDeltaValues ());
+#else
+		GameInfo ().lightDeltaIndices.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().lightDeltaIndices.count; i++) 
-			LightDeltaIndex (i)->Write (savefile, GameInfo ().fileinfo.version, (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34));
-		//fwrite(LightDeltaIndex (), TotalSize (GameInfo ().lightDeltaIndices), 1, savefile);
-
+			LightDeltaIndex (i)->Write (fp, GameInfo ().fileinfo.version, (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34));
+		//fwrite(LightDeltaIndex (), TotalSize (GameInfo ().lightDeltaIndices), 1, fp);
 	//================ = WRITE DELTA LIGHTS==================
 	// note: D2 only
-	GameInfo ().lightDeltaValues.offset = ftell(savefile);
-	if (IsD2File ()) {
 		//CLightDeltaValue *dl, temp_dl;
 		//dl = LightDeltaValues ();
+		GameInfo ().lightDeltaValues.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().lightDeltaValues.count; i++) {
-			LightDeltaValues (i)->Write (savefile, GameInfo ().fileinfo.version);
+			LightDeltaValues (i)->Write (fp, GameInfo ().fileinfo.version);
 			//memcpy(&temp_dl, dl, (INT16)(GameInfo ().lightDeltaValues.size));
-			//fwrite(&temp_dl, (INT16)(GameInfo ().lightDeltaValues.size), 1, savefile);
+			//fwrite(&temp_dl, (INT16)(GameInfo ().lightDeltaValues.size), 1, fp);
 			//dl++;
+			}
+#endif
 		}
-	}
 
-	endOffset = ftell(savefile);
+	endOffset = ftell(fp);
 
 	//==================== = UPDATE FILE INFO OFFSETS====================== =
-	fseek(savefile, startOffset, SEEK_SET);
-	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, savefile);
+	fseek(fp, startOffset, SEEK_SET);
+	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, fp);
 
 	//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
-	fseek(savefile, endOffset, SEEK_SET);
+	fseek(fp, endOffset, SEEK_SET);
 #endif //DEMO
 	return(0);
-}
-
-
-// ------------------------------------------------------------------------
-// UpdateDeltaLights ()
-// ------------------------------------------------------------------------
-void CMine::UpdateDeltaLights ()
-{
-return;
-	bool found = FALSE;
-	CSegment *segP = Segments (0);
-	INT32 nSegment;
-	for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
-		INT32 nSide;
-		for (nSide = 0; nSide < 6; nSide++) {
-			INT16 tmapnum2 = segP->sides [nSide].nOvlTex & 0x1fff;
-			if (IsLight(tmapnum2) != -1) {
-				found = TRUE;
-				break;
-			}
-		}
-		if (found) break;
-	}
-	if (found) {
-		if (QueryMsg("Would you like to update the delta light values?\n\n"
-			"Note: These values are used for blinking, \n"
-			"exploding, and trigger controlled lights.\n")== IDYES) {
-			CalcDeltaLightData(1.0, 1);
-		}
-	}
 }
 
 // --------------------------------------------------------------------------

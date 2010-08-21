@@ -583,6 +583,7 @@ private:
 	void LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
 	void SaveColors (CColor *pc, INT32 nColors, FILE *fp);
 	INT32 LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
+	INT32 SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag = false);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);
 	INT16 LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 	INT16 LoadGameData(FILE *loadfile, bool bNewMine);
