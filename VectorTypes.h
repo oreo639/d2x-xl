@@ -103,8 +103,8 @@ inline const CFixVector& operator+= (const CFixVector other);
 inline const CFixVector& operator-= (const CFixVector other);
 inline const CFixVector& operator*= (const FIX n);
 inline const CFixVector& operator/= (const FIX n);
-inline const CFixVector operator+ (const CFixVector& other);
-inline const CFixVector operator- (const CFixVector& other);
+inline const CFixVector operator+ (const CFixVector& other) const;
+inline const CFixVector operator- (const CFixVector& other) const;
 inline const CFixVector operator- (void) const;
 inline const CFixVector operator>> (const FIX n);
 inline const CFixVector operator<< (const FIX n);
@@ -233,11 +233,11 @@ inline const CFixVector& CFixVector::operator-= (const CFixVector other) {
 	return *this;
 	}
 
-inline const CFixVector CFixVector::operator+ (const CFixVector& other) {
+inline const CFixVector CFixVector::operator+ (const CFixVector& other) const {
 	return CFixVector (v.x + other.v.x, v.y + other.v.y, v.z + other.v.z);
 	}
 
-inline const CFixVector CFixVector::operator- (const CFixVector& other) {
+inline const CFixVector CFixVector::operator- (const CFixVector& other) const {
 	return CFixVector (v.x - other.v.x, v.y - other.v.y, v.z - other.v.z);
 	}
 
@@ -390,6 +390,11 @@ inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector&
 inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
 	CDoubleVector v = p0 - p1;
 	return v.Mag ();
+	}
+
+inline FIX Distance (const CFixVector& p0, const CFixVector& p1) {
+	CFixVector v = p0 - p1;
+	return FIX (Round (CDoubleVector (v).Mag ()));
 	}
 
 // --------------------------------------------------------------------------
