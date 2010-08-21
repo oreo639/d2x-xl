@@ -497,7 +497,9 @@ public:
 	INT32	 count;
 	INT32  size;
 
-	CGameItemInfo () { offset = -1, count = size = 0; }
+	CGameItemInfo () { Reset (); }
+
+	void Reset (void) { offset = -1, count = size = 0; } 
 
 	INT32 Read (FILE* fp) {
 		offset = read_INT32 (fp);

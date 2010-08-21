@@ -1064,25 +1064,15 @@ INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine)
 start_offset = ftell(loadfile);
 
 // Set default values
-GameInfo ().objects.count = 0;
-GameInfo ().walls.count = 0;
-GameInfo ().doors.count = 0;
-GameInfo ().triggers.count = 0;
-GameInfo ().control.count = 0;
-GameInfo ().botgen.count = 0;
-GameInfo ().equipgen.count = 0;
-GameInfo ().lightDeltaIndices.count = 0;
-GameInfo ().lightDeltaValues.count = 0;
-
-GameInfo ().objects.offset =-1;
-GameInfo ().walls.offset =-1;
-GameInfo ().doors.offset =-1;
-GameInfo ().triggers.offset =-1;
-GameInfo ().control.offset =-1;
-GameInfo ().botgen.offset =-1;
-GameInfo ().equipgen.offset =-1;
-GameInfo ().lightDeltaIndices.offset =-1;
-GameInfo ().lightDeltaValues.offset =-1;
+GameInfo ().objects.Reset ();
+GameInfo ().walls.Reset ();
+GameInfo ().doors.Reset ();
+GameInfo ().triggers.Reset ();
+GameInfo ().control.Reset ();
+GameInfo ().botgen.Reset ();
+GameInfo ().equipgen.Reset ();
+GameInfo ().lightDeltaIndices.Reset ();
+GameInfo ().lightDeltaValues.Reset ();
 
 //==================== = READ FILE INFO========================
 
@@ -1124,6 +1114,7 @@ else {  /*load mine filename */
 		}
 	}
 
+//===================== READ OBJECT INFO=======================
 
 #if 1
 	if (0 > LoadGameItem (loadfile, GameInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
@@ -1147,7 +1138,7 @@ else {  /*load mine filename */
 			}
 		}
 #endif
-	//==================== = READ WALL INFO============================
+	//===================== READ WALL INFO============================
 	// note: Wall size will automatically strip last two items
 
 #if 1
@@ -1172,7 +1163,7 @@ else {  /*load mine filename */
 			}
 		}
 #endif
-	//==================== = READ DOOR INFO============================
+	//===================== READ DOOR INFO============================
 	// note: not used for D1 or D2 since doors.count is always 0
 #if 1
 	if (0 > LoadGameItem (loadfile, GameInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
