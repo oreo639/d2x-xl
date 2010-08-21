@@ -6832,6 +6832,10 @@
 					RelativePath="Types.h"
 					>
 				</File>
+				<File
+					RelativePath=".\VectorTypes.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

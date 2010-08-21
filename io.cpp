@@ -141,6 +141,18 @@ fwrite (&value, sizeof (FIXANG), 1, fp);
 return (value);
 }
 
+//------------------------------------------------------------------------
+// write_DOUBLE ()
+//
+// ACTION - Writes a double to a file.
+//------------------------------------------------------------------------
+
+DOUBLE write_DOUBLE (DOUBLE value,FILE *fp) 
+{
+fwrite (&value, sizeof (DOUBLE), 1, fp);
+return (value);
+}
+
                         /*---------------------------*/
 
 static char *CopyIoName (char *dest, char *src, UINT16 srcLen, UINT16 destSize)

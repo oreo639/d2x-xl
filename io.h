@@ -12,6 +12,7 @@ INT16 write_INT16 (INT16 value, FILE *fp);
 INT8 write_INT8 (INT8 value, FILE *fp);
 FIX write_FIX (FIX value, FILE *fp);
 FIXANG write_FIXANG (FIXANG value, FILE *fp);
+DOUBLE write_DOUBLE (DOUBLE value,FILE *fp);
 
 #define read_matrix(_m, fp) (_m)->Read (fp)
 #define read_vector(_v, fp) (_v)->Read (fp)

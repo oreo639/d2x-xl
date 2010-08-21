@@ -1862,7 +1862,7 @@ return;
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-void CMine::CalcOrthoVector(CFixVector& result, INT16 nSegment, INT16 nSide)
+void CMine::CalcOrthoVector (CFixVector& result, INT16 nSegment, INT16 nSide)
 {
 	struct dvector a, b, c;
 	double length;
@@ -1872,16 +1872,18 @@ void CMine::CalcOrthoVector(CFixVector& result, INT16 nSegment, INT16 nSide)
     //       |x  y  z |
     // AxB = |ax ay az|= x(aybz - azby), y(azbx - axbz), z(axby - aybx)
     //       |bx by bz|
+	CSegment*	segP = Segments (nSegment);
+	UINT8*		sideVertP = &side_vert [nSide][0];
 
-nVertex1 = Segments (nSegment)->verts [side_vert [nSide] [0]];
-nVertex2 = Segments (nSegment)->verts [side_vert [nSide] [1]];
+nVertex1 = segP->verts [sideVertP [0]];
+nVertex2 = segP->verts [sideVertP [1]];
 CFixVector *v1 = Vertices (nVertex1);
 CFixVector *v2 = Vertices (nVertex2);
 a.x = double (v2->v.x - v1->v.x);
 a.y = double (v2->v.y - v1->v.y);
 a.z = double (v2->v.z - v1->v.z);
-nVertex1 = Segments (nSegment)->verts [side_vert [nSide] [0]];
-nVertex2 = Segments (nSegment)->verts [side_vert [nSide] [3]];
+nVertex1 = segP->verts [sideVertP [0]];
+nVertex2 = segP->verts [sideVertP [3]];
 v1 = Vertices (nVertex1);
 v2 = Vertices (nVertex2);
 b.x = double (v2->v.x - v1->v.x);
