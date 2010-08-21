@@ -355,6 +355,8 @@ return TRUE;
 
 void CObjectTool::DoDataExchange (CDataExchange *pDX)
 {
+if (!HaveData (pDX)) 
+	return;
 DDX_Text (pDX, IDC_OBJ_SPAWN_QTY, m_nSpawnQty);
 DDX_Text (pDX, IDC_OBJ_INFO, m_szInfo, sizeof (m_szInfo));
 if (!pDX->m_bSaveAndValidate) {

@@ -67,7 +67,7 @@ return TRUE;
 
 void CReactorTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!(m_bInited && theMine))
+if (!HaveData (pDX)) 
 	return;
 DDX_Text (pDX, IDC_REACTOR_COUNTDOWN, m_nCountDown);
 DDX_Text (pDX, IDC_REACTOR_SECRETRETURN, m_nSecretReturn);

@@ -84,8 +84,8 @@ return TRUE;
 
 void CLightTool::DoDataExchange (CDataExchange * pDX)
 {
-if (!theMine) return;
-
+if (!HaveData (pDX)) 
+	return;
 DDX_Check (pDX, IDC_LIGHT_ILLUMINATE, m_bIlluminate);
 DDX_Check (pDX, IDC_LIGHT_AVGCORNERLIGHT, m_bAvgCornerLight);
 DDX_Check (pDX, IDC_LIGHT_SCALE, m_bScaleLight);

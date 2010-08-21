@@ -294,7 +294,8 @@ return TRUE;
 
 void CTextureTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!theMine) return;
+if (!HaveData (pDX)) 
+	return;
 
 	INT32		i, nBrightness;
 	char		szBrightness [20];

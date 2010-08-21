@@ -192,6 +192,9 @@ if (::IsWindow (m_hWnd) && !m_bNoRefresh) {
 
 void CPrefsDlg::DoDataExchange (CDataExchange * pDX)
 {
+if (!HaveData (pDX)) 
+	return;
+
 	INT32	h, i;
 
 DDX_Text (pDX, IDC_PREFS_PATH_D1PIG, m_d1Path, sizeof (m_d1Path));

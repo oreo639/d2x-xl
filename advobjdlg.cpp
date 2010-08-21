@@ -65,6 +65,8 @@ return TRUE;
 
 void CAdvObjTool::DoDataExchange (CDataExchange * pDX)
 {
+if (!HaveData (pDX)) 
+	return;
 DDX_Text (pDX, IDC_ADVOBJ_MASS, m_mass);
 DDX_Text (pDX, IDC_ADVOBJ_DRAG, m_drag);
 DDX_Text (pDX, IDC_ADVOBJ_BRAKES, m_brakes);

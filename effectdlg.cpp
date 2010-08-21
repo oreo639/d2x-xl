@@ -155,7 +155,7 @@ return TRUE;
 
 void CEffectTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!(m_bInited && theMine))
+if (!HaveData (pDX)) 
 	return;
 CGameObject *objP = theMine->CurrObj ();
 if (objP->type != OBJ_EFFECT)

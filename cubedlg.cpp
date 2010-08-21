@@ -150,7 +150,8 @@ return TRUE;
 
 void CSegmentTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!theMine) return;
+if (!HaveData (pDX)) 
+	return;
 
 DDX_CBIndex (pDX, IDC_CUBE_CUBENO, m_nSegment);
 //DDX_CBIndex (pDX, IDC_CUBE_TYPE, m_nType);

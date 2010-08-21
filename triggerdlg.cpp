@@ -248,10 +248,11 @@ return
 
 void CTriggerTool::DoDataExchange (CDataExchange *pDX)
 {
+if (!HaveData (pDX)) 
+	return;
+
 	static char *pszSmokeParams [] = {"life", "speed", "density", "volume", "drift", "", "", "brightness"};
 
-if (!(m_bInited && theMine))
-	return;
 DDX_CBIndex (pDX, IDC_TRIGGER_TRIGGERNO, m_nTrigger);
 DDX_CBIndex (pDX, IDC_TRIGGER_D2TYPE, m_nType);
 if (pDX->m_bSaveAndValidate)

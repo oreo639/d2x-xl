@@ -223,7 +223,8 @@ plc.SetItemText (15, 2, ItemText (MAX_TEXTURES));
 
 void CDiagTool::DoDataExchange (CDataExchange * pDX)
 {
-if (!theMine) return;
+if (!HaveData (pDX)) 
+	return;
 DDX_Check (pDX, IDC_DIAG_FIXBUGS, m_bAutoFixBugs);
 DDX_Check (pDX, IDC_DIAG_WARNINGS, m_bShowWarnings);
 }

@@ -104,6 +104,9 @@ for (j = 0; j < m_missionData.numSecrets; i++, j++)
 
 void CMissionTool::DoDataExchange (CDataExchange * pDX)
 {
+if (!HaveData (pDX)) 
+	return;
+
 	INT32	h, i, j;
 	char	szSecret [13], szError [80];
 	char	*psz;

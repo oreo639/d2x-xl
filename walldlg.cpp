@@ -183,7 +183,7 @@ pcb->SetCurSel (m_nWall [0]);
 
 void CWallTool::DoDataExchange (CDataExchange *pDX)
 {
-if (!(m_bInited && theMine))
+if (!HaveData (pDX)) 
 	return;
 DDX_Text (pDX, IDC_WALL_CUBE, m_nSegment);
 DDX_Text (pDX, IDC_WALL_SIDE, m_nSide);

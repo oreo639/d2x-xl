@@ -146,6 +146,9 @@ tCtrlMap ctrlMap [] = {
 
 void CTxtFilterTool::DoDataExchange (CDataExchange *pDX)
 {
+if (!HaveData (pDX)) 
+	return;
+
 	INT32		h, i;
 
 for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {

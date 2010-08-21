@@ -253,6 +253,7 @@ BOOL CDlcApp::InitInstance()
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
 
+	theMine = new CMine;
 	//memset (pTextures, 0, sizeof (pTextures));
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();

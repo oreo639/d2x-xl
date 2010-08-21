@@ -55,12 +55,11 @@ theApp.MineView ()->Refresh (false);
 
                         /*--------------------------*/
 
-void CTextureTool::RefreshAlignWnd () 
+void CTextureTool::RefreshAlignWnd (void) 
 {
 	INT32			x, y, i, uv;
-	CSegment	*segP,
-					*childSeg;
-	CSide		*sideP;
+	CSegment*	segP, * childSeg;
+	CSide*		sideP;
 	INT32			nSide,
 					nLine;
 	CPen			hPenAxis, 

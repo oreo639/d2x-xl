@@ -91,10 +91,11 @@ class CToolDlg : public CPropertyPage
       CPropertySheet *  m_pParent;
 	public:
 		bool	m_bInited;
+		bool	m_bHaveData;
 
 		CToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = NULL);
 		~CToolDlg ()
-			{ m_pParent = NULL; m_bInited = false; }
+			{ m_pParent = NULL; m_bInited = m_bHaveData = false; }
       virtual BOOL OnInitDialog () 
 			{ return CPropertyPage::OnInitDialog (); }
       virtual BOOL OnSetActive () {
@@ -104,6 +105,13 @@ class CToolDlg : public CPropertyPage
          return TRUE;
          };
       virtual void DoDataExchange (CDataExchange * pDX) {};
+		inline bool HaveData (CDataExchange * pDX) { 
+			if (!(theMine && m_bInited))
+				return false;
+			if (!pDX->m_bSaveAndValidate)
+				m_bHaveData = true;
+			return m_bHaveData;
+			}
 		void Refresh (void)
 			{ UpdateData (FALSE); }
 		void DDX_Double (CDataExchange * pDX, INT32 nIDC, double& fVal, double min = 1, double max = 0, LPSTR pszFmt = "%1.2f", LPSTR pszErrMsg = NULL);

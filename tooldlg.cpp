@@ -41,7 +41,8 @@ CToolDlg::CToolDlg (UINT nIdTemplate, CPropertySheet *pParent)
 	: CPropertyPage (nIdTemplate, 0)
 {
 m_pParent = pParent; 
-m_bInited = false; 
+m_bInited = false;
+m_bHaveData = false;
 EnableToolTips (true);
 }
 
