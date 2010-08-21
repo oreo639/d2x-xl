@@ -39,6 +39,7 @@ void CMine::Initialize (void)
 {
 VertCount () = 0;
 SegCount () = 0;
+#if 0
 Segments ().Clear ();
 Vertices ().Clear ();
 Walls ().Clear ();
@@ -48,6 +49,7 @@ ReactorTriggers ().Clear ();
 VertexColors ().Clear ();
 BotGens ().Clear ();
 EquipGens ().Clear ();
+#endif
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
 m_dlcLogPalette = 0;
@@ -67,7 +69,11 @@ GameInfo ().lightDeltaValues.count = 0;
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
+#if 0
 RobotInfo ().Clear ();
+#else
+memset (RobotInfo (), 0, sizeof (RobotInfo ()));
+#endif
 //	LoadPalette ();
 m_bSortObjects = TRUE;
 m_bVertigo = false;
@@ -186,8 +192,13 @@ bool bNewMine = false;
 // first disable curve generator
 m_bSplineActive = FALSE;
 
+#if 0
 LightColors ().Clear ();
 VertexColors ().Clear ();
+#else
+memset (LightColors (), 0, sizeof (LightColors ()));
+memset (VertexColors (), 0, sizeof (VertexColors ()));
+#endif
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
 if (filename_passed && *filename_passed)
@@ -590,7 +601,11 @@ UINT32 nSize = 0;
 UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
+#if 0
 BOOL bCustom = memcmp (MineData ().texColors.Buffer (), dataP, MineData ().texColors.Size ()) != 0;
+#else
+BOOL bCustom = memcmp (MineData ().texColors.Buffer (), dataP, sizeof (MineData ().TexColors ())) != 0;
+#endif
 FreeResource (hGlobal);
 return bCustom;
 }
@@ -642,7 +657,11 @@ if (!data)
 
 FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
+#if 0
 RobotInfo () = DefRobotInfo ();
+#else
+memcpy (RobotInfo (), DefRobotInfo (), sizeof (RobotInfo ()));
+#endif
 texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
 FILE *file;
 fopen_s (&file, message, "wb");

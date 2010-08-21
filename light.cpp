@@ -553,7 +553,11 @@ void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
+#if 0
 	VertexColors ().Clear ();
+#else
+	memset (VertexColors (), 0, sizeof (VertexColors ()));
+#endif
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 	if (bAll || (segP->wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -1353,7 +1357,7 @@ if (bUseTexColors && UseTexColors ()) {
 			return pc;
 		}
 	}	
-return MineData ().lightColors [i] + j; 
+return &MineData ().lightColors [i][j]; 
 }
 
 //--------------------------------------------------------------------------

@@ -25,6 +25,7 @@ extern CUVL default_uvls[4];
 // CLASS - Level
 //**************************************************************************
 
+#if 0
 typedef CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
 typedef CStaticArray< CSegment, MAX_SEGMENTS3 > segmentList;
@@ -41,6 +42,24 @@ typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
+#else
+typedef ROBOT_INFO robotInfoList [MAX_ROBOT_TYPES];
+typedef CVertex vertexList [MAX_VERTICES3];
+typedef CSegment segmentList [MAX_SEGMENTS3];
+typedef CColor lightColorList [MAX_SEGMENTS3][6];
+typedef CColor texColorList [MAX_D2_TEXTURES];
+typedef CColor vertexColorList [MAX_VERTICES3];
+typedef CWall wallList [MAX_WALLS3];
+typedef CActiveDoor activeDoorList [MAX_DOORS];
+typedef CTrigger triggerList [MAX_TRIGGERS2];
+typedef CTrigger objTriggerList [MAX_OBJ_TRIGGERS];
+typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
+typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS2];
+typedef CGameObject objectList [MAX_OBJECTS2];
+typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
+typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
+typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
+#endif
 
 typedef struct tMineData {
 	CGameInfo					gameInfo;
