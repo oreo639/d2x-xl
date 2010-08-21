@@ -177,7 +177,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
 
 double CDiagTool::CalcDistance (CFixVector* v1,CFixVector* v2,CFixVector* v3)
 {
-  dvector A,B,B2;
+  CDoubleVector A,B,B2;
   double c,a2,distance;
 
   // normalize all points to vector 1
@@ -214,7 +214,7 @@ double CDiagTool::CalcDistance (CFixVector* v1,CFixVector* v2,CFixVector* v3)
 
 double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3) 
 {
-  dvector line1,line2,line3,orthog;
+  CDoubleVector line1,line2,line3,orthog;
   double ratio;
   double dot_product, magnitude1, magnitude2,angle;
   CFixVector* v0 = theMine->Vertices (vert0);

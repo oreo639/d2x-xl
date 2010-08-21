@@ -666,7 +666,7 @@ void CMine::Illuminate (
 	CFixVector			A;
 
 //fLightScale /= 100.0;
-CalcOrthoVector (A,nSourceSeg, nSourceSide);
+CalcSideNormal (A,nSourceSeg, nSourceSide);
 // remember to flip the sign since we want it to point inward
 A.x = -A.x;
 A.y = -A.y;
@@ -674,7 +674,7 @@ A.z = -A.z;
 
 // calculate the center of the source segment
 CFixVector source_center;
-CalcCenter (source_center, nSourceSeg, nSourceSide);
+source_center = CalcSideCenter (nSourceSeg, nSourceSide);
 // mark those Segments () within N children of current cube
 
 // set child numbers
@@ -979,14 +979,14 @@ fLightScale = 1.0; ///= 100.0;
 			pdli->index = (INT16)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
-			CalcOrthoVector(A,nSourceSeg,nSourceSide);
+			CalcSideNormal(A,nSourceSeg,nSourceSide);
 			// remember to flip the sign since we want it to point inward
 			A.x = -A.x;
 			A.y = -A.y;
 			A.z = -A.z;
 
 			// calculate the center of the source segment
-			CalcCenter (source_center, nSourceSeg, nSourceSide);
+			source_center = CalcSideCenter (nSourceSeg, nSourceSide);
 
 			// mark those Segments () within N children of current cube
 			//(note: this is done once per light instead of once per segment
@@ -1284,7 +1284,7 @@ bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_cent
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
 CFixVector	B,center;
-CalcCenter (center,nSegment,nSide);
+center = CalcSideCenter (nSegment, nSide);
 B.x = center.x - source_center.x;
 B.y = center.y - source_center.y;
 B.z = center.z - source_center.z;

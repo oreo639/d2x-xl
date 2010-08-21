@@ -1862,64 +1862,31 @@ return;
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-void CMine::CalcOrthoVector (CFixVector& result, INT16 nSegment, INT16 nSide)
+CFixVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
 {
-	struct dvector a, b, c;
-	double length;
-	INT16 nVertex1, nVertex2;
-    // calculate orthogonal vector from lines which intersect point 0
-    //
-    //       |x  y  z |
-    // AxB = |ax ay az|= x(aybz - azby), y(azbx - axbz), z(axby - aybx)
-    //       |bx by bz|
-	CSegment*	segP = Segments (nSegment);
-	UINT8*		sideVertP = &side_vert [nSide][0];
+	INT16*			sideIndexP = Segments (nSegment)->verts;
+	UINT8*			sideVertP = &side_vert [nSide][0];
+	CDoubleVector	v;
 
-nVertex1 = segP->verts [sideVertP [0]];
-nVertex2 = segP->verts [sideVertP [1]];
-CFixVector *v1 = Vertices (nVertex1);
-CFixVector *v2 = Vertices (nVertex2);
-a.x = double (v2->v.x - v1->v.x);
-a.y = double (v2->v.y - v1->v.y);
-a.z = double (v2->v.z - v1->v.z);
-nVertex1 = segP->verts [sideVertP [0]];
-nVertex2 = segP->verts [sideVertP [3]];
-v1 = Vertices (nVertex1);
-v2 = Vertices (nVertex2);
-b.x = double (v2->v.x - v1->v.x);
-b.y = double (v2->v.y - v1->v.y);
-b.z = double (v2->v.z - v1->v.z);
-
-c.x = a.y * b.z - a.z * b.y;
-c.y = a.z * b.x - a.x * b.z;
-c.z = a.x * b.y - a.y * b.x;
-
-    // normalize the vector
-length = sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
-if (length > 0) {
-	c.x /= length;
-	c.y /= length;
-	c.z /= length;
-	}
-
-result = CFixVector ((FIX) dround_off (-c.x * 0x10000L, 1.0),
-							(FIX) dround_off (-c.y * 0x10000L, 1.0),
-							(FIX) dround_off (-c.z * 0x10000L, 1.0));
+v = Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
+			   CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [1]]))), 
+			   CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [3]]))));
+return CFixVector (v);
 }
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-void CMine::CalcCenter (CFixVector& center, INT16 nSegment, INT16 nSide)
+CFixVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 {
-center.Clear ();
-CSegment *segP = Segments (nSegment);
+	INT16*		sideIndexP = Segments (nSegment)->verts;
+	UINT8*		sideVertP = &side_vert [nSide][0];
+	CFixVector	v;
 
 for (INT32 i = 0; i < 4; i++) {
-	CFixVector v = *Vertices (segP->verts [side_vert [nSide][i]]);
-	v >>= 2;
-	center += v;
-	}
+	v += *Vertices (sideIndexP [sideVertP [i]]);
+v /= 4;
+return v;
 }
 
 //eof mine.cpp

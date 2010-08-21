@@ -330,7 +330,7 @@ public:
 	bool  AddSegment();
 	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
 	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
-	void	CalcSegCenter(CFixVector& pos,INT16 nSegment);
+	void	CalcSegCenter (CFixVector& pos, INT16 nSegment);
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
@@ -361,8 +361,8 @@ public:
 	void SplitLines();
 	void SplitPoints();
 
-	void CalcOrthoVector (CFixVector& result,INT16 nSegment,INT16 nSide);
-	void CalcCenter (CFixVector& center,INT16 nSegment,INT16 nSide);
+	CFixVector CalcSideNormal (INT16 nSegment, INT16 nSide);
+	CFixVector CalcSideCenter (INT16 nSegment, INT16 nSide);
 	double CalcLength (CFixVector* center1, CFixVector* center2);
 
 	INT32 IsLight(INT32 nBaseTex);

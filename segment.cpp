@@ -36,14 +36,6 @@ double CMine::CalcLength(CFixVector* center1, CFixVector* center2)
 
 // ----------------------------------------------------------------- 
 // ----------------------------------------------------------------- 
-double CMine::dround_off(double value, double round) {
-	if (value >= 0) {
-		value += round/2; 
-	} else {
-		value -= round/2; 
-	}
-	return value; 
-}
 
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
@@ -557,7 +549,7 @@ return TRUE;
 void CMine::DefineVertices (INT16 new_verts [4])
 {
 	CSegment *currSeg; 
-	struct dvector A [8], B [8], C [8], D [8], E [8], a, b, c, d; 
+	CDoubleVector A [8], B [8], C [8], D [8], E [8], a, b, c, d; 
 	double angle1, angle2, angle3; 
 	double length; 
 	INT16 nVertex; 
@@ -574,10 +566,10 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	{
 		case(ORTHOGONAL):
 		{
-			CalcCenter(center, Current ()->nSegment, Current ()->nSide); 
-			CalcCenter(opp_center, Current ()->nSegment, opp_side [Current ()->nSide]); 
+			CalcSegCenter(center, Current ()->nSegment, Current ()->nSide); 
+			CalcSegCenter(opp_center, Current ()->nSegment, opp_side [Current ()->nSide]); 
 
-			CalcOrthoVector(orthog, Current ()->nSegment, Current ()->nSide); 
+			CalcSideNormal(orthog, Current ()->nSegment, Current ()->nSide); 
 
 			// set the length of the new cube to be one standard cube length
 			length = 20; 
@@ -685,10 +677,10 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		// METHOD 2: orghogonal with right angle on new side
 		case(EXTEND):
 		{
-			CalcCenter(center, Current ()->nSegment, Current ()->nSide); 
-			CalcCenter(opp_center, Current ()->nSegment, opp_side [Current ()->nSide]); 
+			CalcSegCenter(center, Current ()->nSegment, Current ()->nSide); 
+			CalcSegCenter(opp_center, Current ()->nSegment, opp_side [Current ()->nSide]); 
 
-			CalcOrthoVector(orthog, Current ()->nSegment, Current ()->nSide); 
+			CalcSideNormal(orthog, Current ()->nSegment, Current ()->nSide); 
 
 			// calculate the length of the new cube
 			length = CalcLength(&center, &opp_center) / 0x10000L; 

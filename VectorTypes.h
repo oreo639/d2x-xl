@@ -12,6 +12,13 @@ class CDoubleVector;
 class CFixMatrix;
 
 // --------------------------------------------------------------------------
+
+inline double Round (double value, double round = 1.0) 
+{
+return (value >= 0) ? value + round / 2.0 : value - round / 2.0;
+}
+
+// --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
@@ -70,7 +77,7 @@ public:
 	CFixVector ()  { v.x = 0, v.y = 0, v.z = 0; }
 	CFixVector (FIX x, FIX y, FIX z) { v.x = x, v.y = y, v.z = z; }
 	CFixVector (tFixVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
-	CFixVector (CFixVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
+	CFixVector (CDoubleVector& _v); 
 	void Set (FIX x, FIX y, FIX z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
 
@@ -98,6 +105,7 @@ inline const CFixVector& operator*= (const FIX n);
 inline const CFixVector& operator/= (const FIX n);
 inline const CFixVector operator+ (const CFixVector& other);
 inline const CFixVector operator- (const CFixVector& other);
+inline const CFixVector operator- (void) const;
 inline const CFixVector operator>> (const FIX n);
 inline const CFixVector operator<< (const FIX n);
 inline const CFixVector& operator>>= (const FIX n);
@@ -124,7 +132,8 @@ public:
 	//DOUBLE x, y, z;
 	CDoubleVector ()  { v.x = 0, v.y = 0, v.z = 0; }
 	CDoubleVector (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
-	//CDoubleVector (tDoubleVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
+	CDoubleVector (tDoubleVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
+	CDoubleVector (CFixVector& _v);
 	//CDoubleVector (CDoubleVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
 	void Set (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
@@ -153,6 +162,7 @@ inline const CDoubleVector& operator*= (const DOUBLE n);
 inline const CDoubleVector& operator/= (const DOUBLE n);
 inline const CDoubleVector operator+ (const CDoubleVector& other) const;
 inline const CDoubleVector operator- (const CDoubleVector& other) const;
+inline const CDoubleVector operator- (void) const;
 inline const CDoubleVector operator* (CDoubleVector& other);
 inline const CDoubleVector operator/ (CDoubleVector& other);
 inline const CDoubleVector operator* (DOUBLE n);
@@ -188,6 +198,10 @@ public:
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
+
+CFixVector::CFixVector (CDoubleVector& _v) { 
+	v.x = FIX (Round (_v.v.x)), v.y = FIX (Round (_v.v.y)), v.z = FIX (Round (_v.v.z)); 
+}
 
 inline const CFixVector& CFixVector::operator= (const tFixVector& other) { 
 	v.x = other.x, v.y = other.y, v.z = other.z; 
@@ -225,6 +239,10 @@ inline const CFixVector CFixVector::operator+ (const CFixVector& other) {
 
 inline const CFixVector CFixVector::operator- (const CFixVector& other) {
 	return CFixVector (v.x - other.v.x, v.y - other.v.y, v.z - other.v.z);
+	}
+
+inline const CFixVector CFixVector::operator- (void) const {
+	return CFixVector (-v.x, -v.y, -v.z);
 	}
 
 inline const CFixVector& CFixVector::operator*= (const FIX n) {
@@ -277,6 +295,10 @@ inline const FIX CFixVector::operator^ (CFixVector& other) {
 
 // --------------------------------------------------------------------------
 
+CDoubleVector::CDoubleVector (CFixVector& _v) { 
+	v.x = DOUBLE (_v.v.x), v.y = DOUBLE (_v.v.y), v.z = DOUBLE (_v.v.z); 
+}
+
 inline const CDoubleVector& CDoubleVector::operator= (const tDoubleVector& other) { 
 	v.x = other.x, v.y = other.y, v.z = other.z; 
 	return *this;
@@ -315,6 +337,10 @@ inline const CDoubleVector CDoubleVector::operator- (const CDoubleVector& other)
 	return CDoubleVector (v.x - other.v.x, v.y - other.v.y, v.z - other.v.z);
 	}
 
+inline const CDoubleVector CDoubleVector::operator- (void) const {
+	return CDoubleVector (-v.x, -v.y, -v.z);
+	}
+
 inline const CDoubleVector& CDoubleVector::operator*= (const DOUBLE n) {
 	v.x *= n, v.y *= n, v.z *= n;
 	return *this;
@@ -346,7 +372,7 @@ inline const DOUBLE CDoubleVector::operator^ (CDoubleVector& other) {
 	}
 
 inline const CDoubleVector CrossProduct (const CDoubleVector& v0, const CDoubleVector& v1) {
-	return CDoubleVector (v0.v.y * v1.v.z + -v0.v.z * v1.v.y, v0.v.z * v1.v.x + -v0.v.x * v1.v.z, v0.v.x * v1.v.y + -v0.v.y * v1.v.x);
+	return CDoubleVector (v0.v.y * v1.v.z - v0.v.z * v1.v.y, v0.v.z * v1.v.x - v0.v.x * v1.v.z, v0.v.x * v1.v.y - v0.v.y * v1.v.x);
 	}
 
 inline CDoubleVector Perpendicular (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {

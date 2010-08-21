@@ -47,8 +47,8 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	INT16				origVertCount, k;
 	FIX				x,y,z;
 	CVertex			origin, vect;
-	struct dvector x_prime, y_prime, z_prime;
-	struct dvector x_pprime, y_pprime, z_pprime;
+	CDoubleVector x_prime, y_prime, z_prime;
+	CDoubleVector x_pprime, y_pprime, z_pprime;
 	double			length;
 	INT16				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	INT16				xlatSegNum [MAX_SEGMENTS3];
@@ -439,7 +439,7 @@ void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/)
 	CWall			*wallP;
 	INT16				i,j;
 	CFixVector		origin;
-	struct dvector	x_prime,y_prime,z_prime,vect;
+	CDoubleVector	x_prime,y_prime,z_prime,vect;
 	INT16				nVertex;
 	double			length;
 

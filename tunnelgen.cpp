@@ -345,9 +345,9 @@ if (!m_bSplineActive) {
 	nSplineSide2 = Current2 ().nSide;
 	// define 4 data points for spline to work from
 	// center of current cube
-	CalcCenter (points [0],nSplineSeg1,nSplineSide1);
+	points [0] = CalcSideCenter (nSplineSeg1, nSplineSide1);
 	// center of other cube
-	CalcCenter (points [3],nSplineSeg2,nSplineSide2);
+	points [3] = CalcSideCenter (nSplineSeg2, nSplineSide2);
 	// calculate length between cubes
 	length = CalcLength (points, points + 3);
 	// base spline length on distance between cubes
@@ -525,34 +525,34 @@ void CMine::CalcSpline (void)
   double y_spin,z_spin;
 
   // center of both cubes
-  CalcCenter (points [0],nSplineSeg1,nSplineSide1);
-  CalcCenter (points [3],nSplineSeg2,nSplineSide2);
+  points [0] = CalcSideCenter (nSplineSeg1, nSplineSide1);
+  points [3] = CalcSideCenter (nSplineSeg2, nSplineSide2);
 
   // point orthogonal to center of current cube
-  CalcOrthoVector (points [1],nSplineSeg1,nSplineSide1);
-  points [1].x = m_splineLength1*points [1].x + points [0].x;
-  points [1].y = m_splineLength1*points [1].y + points [0].y;
-  points [1].z = m_splineLength1*points [1].z + points [0].z;
+  CalcSideNormal (points [1], nSplineSeg1, nSplineSide1);
+  points [1].x = m_splineLength1 * points [1].x + points [0].x;
+  points [1].y = m_splineLength1 * points [1].y + points [0].y;
+  points [1].z = m_splineLength1 * points [1].z + points [0].z;
 
 
   // point orthogonal to center of other cube
-  CalcOrthoVector (points [2],nSplineSeg2,nSplineSide2);
-  points [2].x = m_splineLength2*points [2].x + points [3].x;
-  points [2].y = m_splineLength2*points [2].y + points [3].y;
-  points [2].z = m_splineLength2*points [2].z + points [3].z;
+  CalcSideNormal (points [2], nSplineSeg2, nSplineSide2);
+  points [2].x = m_splineLength2 * points [2].x + points [3].x;
+  points [2].y = m_splineLength2 * points [2].y + points [3].y;
+  points [2].z = m_splineLength2 * points [2].z + points [3].z;
 
   // calculate number of segments (min=1)
   length = CalcLength (points,points + 3);
-  n_splines = (INT32)(abs(m_splineLength1)+abs(m_splineLength2))/20 + (INT32)(length / (40.0*(double)0x10000L));
-  n_splines = min(n_splines, m_nMaxSplines-1);
+  n_splines = (INT32)(abs (m_splineLength1) + abs (m_splineLength2)) / 20 + (INT32)(length / (40.0 * (double) 0x10000L));
+  n_splines = min (n_splines, m_nMaxSplines - 1);
 
   // calculate spline points
-  for (i=0;i<=n_splines;i++) {
-    BezierFcn (&spline_points [i], (double)i / (double)n_splines, 4, points);
+  for (i = 0; i <= n_splines; i++) {
+    BezierFcn (&spline_points [i], (double) i / (double) n_splines, 4, points);
   }
 
   // make all points reletave to first face (translation)
-  for (i=0;i<4;i++) {
+  for (i = 0; i < 4; i++) {
     rel_pts [i].x = points [i].x - points [0].x;
     rel_pts [i].y = points [i].y - points [0].y;
     rel_pts [i].z = points [i].z - points [0].z;

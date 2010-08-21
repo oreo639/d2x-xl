@@ -65,7 +65,7 @@ if (radius > (F1_0/10)) {
 	}
 else {
 	CFixVector direction;
-	CalcOrthoVector(direction,Current ()->nSegment,Current ()->nSide);
+	CalcSideNormal(direction,Current ()->nSegment,Current ()->nSide);
 	x = (double)direction.x/(double)F1_0;
 	y = (double)direction.y/(double)F1_0;
 	z = (double)direction.z/(double)F1_0;
@@ -194,7 +194,7 @@ else {
 		} 
 	else {
 		CFixVector direction;
-		CalcOrthoVector(direction,Current ()->nSegment,Current ()->nSide);
+		CalcSideNormal(direction,Current ()->nSegment,Current ()->nSide);
 		x = (double)direction.x/(double)F1_0;
 		y = (double)direction.y/(double)F1_0;
 		z = (double)direction.z/(double)F1_0;

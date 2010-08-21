@@ -1740,8 +1740,8 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			CFixVector center,orthog,vector;
 			APOINT point;
 
-		theMine->CalcCenter (center, walls [i].m_nSegment, walls [i].m_nSide);
-		theMine->CalcOrthoVector(orthog, walls [i].m_nSegment, walls [i].m_nSide);
+		center = theMine->CalcSideCenter (center, walls [i].m_nSegment, walls [i].m_nSide);
+		orthog = theMine->CalcSideNormal(walls [i].m_nSegment, walls [i].m_nSide);
 		vector.x = center.x - orthog.x;
 		vector.y = center.y - orthog.y;
 		vector.z = center.z - orthog.z;
@@ -2288,18 +2288,18 @@ else {
 	strcat_s (message, sizeof (message), "  cube size: ");
 	CFixVector center1,center2;
    double length;
-   theMine->CalcCenter (center1, theMine->Current ()->nSegment,0);
-	theMine->CalcCenter (center2, theMine->Current ()->nSegment,2);
+   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 0);
+	center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 2);
    length = theMine->CalcLength(&center1,&center2) / F1_0;
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   theMine->CalcCenter (center1, theMine->Current ()->nSegment,1);
-   theMine->CalcCenter (center2, theMine->Current ()->nSegment,3);
+   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 1);
+   center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 3);
 	length = theMine->CalcLength(&center1,&center2) / F1_0;
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   theMine->CalcCenter (center1, theMine->Current ()->nSegment,4);
-   theMine->CalcCenter (center2, theMine->Current ()->nSegment,5);
+   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 4);
+   center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 5);
    length = theMine->CalcLength(&center1,&center2) / F1_0;
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}

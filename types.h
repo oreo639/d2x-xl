@@ -383,10 +383,6 @@ public:
 	INT16 nObject;
 };
 
-struct dvector {
-  double x,y,z;
-};
-
 struct level_header {
   char name[13];
   INT32 size;
