@@ -186,7 +186,7 @@ if (!theMine)
 	return 0;
 
 char filename [256];
-INT16 check_err;
+INT16 checkErr;
 bool bNewMine = false;
 
 // first disable curve generator
@@ -224,9 +224,9 @@ if (!bNewMine && (IsD2XLevel ()) && (LevelOutdated ())) {
 	UpdateLevelVersion ();
 	}
 //CalcDeltaLightData ();
-check_err = FixIndexValues();
-if (check_err != 0) {
-	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", check_err);
+checkErr = FixIndexValues();
+if (checkErr != 0) {
+	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", checkErr);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
 			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
@@ -321,9 +321,9 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 
 	FILE* fp = 0;
 	INT32 sig = 0;
-	INT32 minedata_offset = 0;
-	INT32 gamedata_offset = 0;
-	INT32 mine_err, game_err = 0;
+	INT32 minedataOffset = 0;
+	INT32 gamedataOffset = 0;
+	INT32 mineErr, gameErr = 0;
 	INT32	return_code = 0;
 	char	palette_name [256];
 	char*	ps;
@@ -341,13 +341,13 @@ if (!fp) {
 if (LoadMineSigAndType (fp))
 	return -1;
 // read mine data offset
-minedata_offset = read_INT32 (fp);
+minedataOffset = read_INT32 (fp);
 // read game data offset
-gamedata_offset = read_INT32 (fp);
+gamedataOffset = read_INT32 (fp);
 
-// don't bother reading  hostagetext_offset since
+// don't bother reading  hostagetextOffset since
 // for Descent 1 files since we dont use it anyway
-// hostagetext_offset = read_INT32(fp);
+// hostagetextOffset = read_INT32(fp);
 
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
@@ -449,12 +449,13 @@ if (IsD2File ()) {
 #endif
 
 	if (LevelVersion () > 6) {
-		nLights = (INT16)read_INT32(fp);
-		if (nLights > 0 && FlickerLightCount () <= MAX_FLICKERING_LIGHTS) {
-			fread(FlickeringLights (), sizeof (CFlickeringLight), nLights, fp);
+		FlickerLightCount () = INT16 (read_INT32 (fp));
+		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_FLICKERING_LIGHTS)) {
+			for (INT32 i = 0; i < FlickerLightCount (); i++)
+				FlickeringLights (i)->Read (fp);
 			} 
 		else {
-			if (nLights != 0) {
+			if (FlickerLightCount () != 0) {
 				ErrorMsg ("Error reading flickering lights");
 				nLights = 0;
 				}
@@ -473,21 +474,21 @@ if (IsD2File ()) {
 
 m_disableDrawing = TRUE;
 
-fseek(fp, minedata_offset, SEEK_SET);
-mine_err = LoadMineDataCompiled (fp, bNewMine);
+fseek(fp, minedataOffset, SEEK_SET);
+mineErr = LoadMineDataCompiled (fp, bNewMine);
 int fPos = ftell (fp);
 FlickerLightCount () = nLights;
 
-if (mine_err != 0) {
+if (mineErr != 0) {
 	ErrorMsg ("Error loading mine data");
 	fclose(fp);
 	return(2);
 }
 
-fseek(fp, gamedata_offset, SEEK_SET);
-game_err = LoadGameData(fp, bNewMine);
+fseek(fp, gamedataOffset, SEEK_SET);
+gameErr = LoadGameData(fp, bNewMine);
 
-if (game_err != 0) {
+if (gameErr != 0) {
 	ErrorMsg ("Error loading game data");
 	// reset "howmany"
 	GameInfo ().objects.count = 0;
@@ -692,9 +693,9 @@ INT16 CMine::FixIndexValues()
 {
 	INT16 	nSegment, nSide, nVertex;
 	UINT16	nWall;
-	INT16 	check_err;
+	INT16 	checkErr;
 
-	check_err = 0;
+	checkErr = 0;
 	CSegment *segP = Segments (0);
 	for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -702,19 +703,19 @@ INT16 CMine::FixIndexValues()
 			CSide& side = segP->sides [nSide];
 			if (side.nWall >= GameInfo ().walls.count && side.nWall != NO_WALL) {
 				side.nWall = NO_WALL;
-				check_err |= (1 << 0);
+				checkErr |= (1 << 0);
 			}
 			// check children
 			if (segP->children [nSide] < - 2 || segP->children [nSide] >(INT16)SegCount ()) {
 				segP->children [nSide] =-1;
-				check_err |= (1 << 1);
+				checkErr |= (1 << 1);
 			}
 		}
 		// check verts
 		for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
 			if (segP->verts [nVertex] < 0 || segP->verts [nVertex] >= VertCount ()) {
 				segP->verts [nVertex] = 0;  // this will cause a bad looking picture
-				check_err |= (1 << 2);      // but it will prevent a crash
+				checkErr |= (1 << 2);      // but it will prevent a crash
 			}
 		}
 	}
@@ -723,15 +724,15 @@ INT16 CMine::FixIndexValues()
 		// check nSegment
 		if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
 			wallP->m_nSegment = 0;
-			check_err |= (1 << 3);
+			checkErr |= (1 << 3);
 		}
 		// check nSide
 		if (wallP->m_nSide < 0 || wallP->m_nSide > 5) {
 			wallP->m_nSide = 0;
-			check_err |= (1 << 4);
+			checkErr |= (1 << 4);
 		}
 	}
-	return check_err;
+	return checkErr;
 }
 
 // ------------------------------------------------------------------------
@@ -1059,9 +1060,9 @@ return info.count;
 
 INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine) 
 {
-	INT32 start_offset;
+	INT32 startOffset;
 
-start_offset = ftell(loadfile);
+startOffset = ftell(loadfile);
 
 // Set default values
 GameInfo ().objects.Reset ();
@@ -1077,7 +1078,7 @@ GameInfo ().lightDeltaValues.Reset ();
 //==================== = READ FILE INFO========================
 
 // Read in gameFileInfo to get size of saved fileinfo.
-if (fseek(loadfile, start_offset, SEEK_SET)) {
+if (fseek(loadfile, startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
@@ -1095,7 +1096,7 @@ if (gameFileInfo.signature != 0x6705) {
 //    return -1;
 
 // Now, Read in the fileinfo
-if (fseek(loadfile, start_offset, SEEK_SET)) {
+if (fseek(loadfile, startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking to game info in mine.cpp");
 	return -1;
 	}
@@ -1383,162 +1384,136 @@ return 0;
 
 INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
 {
-#if 1 //DEMO == 0
-	FILE * save_file;
-	char filename [256];
-	INT32 minedata_offset, gamedata_offset, hostagetext_offset;
-	INT32 mine_err, game_err;
+	FILE*	fp;
+	char	filename [256];
+	INT32 minedataOffset, gamedataOffset, hostagetextOffset;
+	INT32 mineErr, gameErr;
+	INT32	i;
 
-	//  if (disable_saves) {
-	//    ErrorMsg ("Saves disabled, contact Bryan Aamot for your security number.");
-	//  }
-	strcpy_s (filename, sizeof (filename), filename_passed);
+strcpy_s (filename, sizeof (filename), filename_passed);
+if (fopen_s (&fp, filename, "wb")) 
+	return(1);
 
-	//  if (disable_saves) return 0;
-	fopen_s (&save_file, filename, "wb");
-	if (!save_file) {
-		//    sprintf_s (message, sizeof (message),  "Can't open save file < %s>", filename);
-		//    show_message(str, RED, 1, 1);
-		return(1);
+m_changesMade = 0;
+
+// write file signature
+write_INT32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', fp); // signature
+
+// always save as version 7 or greater if its a D2 level
+// otherwise, blinking lights will not work.
+if (LevelVersion () < 7 && IsD2File ()) {
+	SetLevelVersion (7);
+}
+if ((IsD2XLevel ()) && (LevelOutdated ())) {
+	UpdateLevelVersion ();
+	//if (LevelVersion () < 15)
+		ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
 	}
 
-	m_changesMade = 0;
+// write version
+write_INT32 (LevelVersion (), fp);
+write_INT32 (0, fp); // minedataOffset (temporary)
+write_INT32 (0, fp); // gamedataOffset (temporary)
 
-	// write file signature
-	write_INT32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', save_file); // signature
-
-	// always save as version 7 or greater if its a D2 level
-	// otherwise, blinking lights will not work.
-	if (LevelVersion () < 7 && IsD2File ()) {
-		SetLevelVersion (7);
-	}
-	if ((IsD2XLevel ()) && (LevelOutdated ())) {
-		UpdateLevelVersion ();
-		//if (LevelVersion () < 15)
-			ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
-		}
-
-	// write version
-	write_INT32 (LevelVersion (), save_file);
-
-	write_INT32 (0, save_file); // minedata_offset (temporary)
-	write_INT32 (0, save_file); // gamedata_offset (temporary)
-
-
-	if (IsD2File ()) {
-		if (LevelVersion () >= 8) {
-			write_INT16(rand(), save_file);
-			write_INT16(rand(), save_file);
-			write_INT16(rand(), save_file);
-			write_INT8((INT8)rand(), save_file);
-		}
+if (IsD2File ()&& (LevelVersion () >= 8)) {
+	write_INT16(rand(), fp);
+	write_INT16(rand(), fp);
+	write_INT16(rand(), fp);
+	write_INT8((INT8)rand(), fp);
 	}
 
-	if (m_fileType== RDL_FILE) {
-		write_INT32 (0, save_file); // hostagetext_offset (temporary)
-	} else {
-
-		// save palette name
-		char *name = strrchr(descent2_path, '\\');
-		if (!name) {
-			name = descent2_path; // point to 1st char if no slash found
-		} else {
-			name++;               // point to character after slash
-		}
-		char palette_name [15];
-		strncpy_s (palette_name, sizeof (palette_name), name, 12);
-		palette_name [13] = NULL;  // null terminate just in case
-		// replace extension with *.256
-		if (strlen ((char *)palette_name) > 4) {
-			strcpy_s (&palette_name [strlen ((char *) palette_name) - 4], 5, ".256");
-		} else {
-			strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
-		}
-		_strupr_s (palette_name, sizeof (palette_name));
-		strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
-		fwrite (palette_name, strlen ((char *)palette_name), 1, save_file);
+if (m_fileType== RDL_FILE)
+	write_INT32 (0, fp); // hostagetextOffset (temporary)
+else {
+	// save palette name
+	char *name = strrchr(descent2_path, '\\');
+	if (!name) 
+		name = descent2_path; // point to 1st char if no slash found
+	else
+		name++;               // point to character after slash
+	char palette_name [15];
+	strncpy_s (palette_name, sizeof (palette_name), name, 12);
+	palette_name [13] = NULL;  // null terminate just in case
+	// replace extension with *.256
+	if (strlen ((char *)palette_name) > 4)
+		strcpy_s (&palette_name [strlen ((char *) palette_name) - 4], 5, ".256");
+	else
+		strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
+	_strupr_s (palette_name, sizeof (palette_name));
+	strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
+	fwrite (palette_name, strlen ((char *)palette_name), 1, fp);
 	}
 
-	// write reactor info
-	if (IsD2File ()) {
-		// read descent 2 reactor information
-		write_INT32 (ReactorTime (), save_file);
-		write_INT32 (ReactorStrength (), save_file);
+// write reactor info
+if (IsD2File ()) {
+	// read descent 2 reactor information
+	write_INT32 (ReactorTime (), fp);
+	write_INT32 (ReactorStrength (), fp);
+	// flickering light new for version 7
+	if (FlickerLightCount () > MAX_FLICKERING_LIGHTS) 
+		FlickerLightCount () = MAX_FLICKERING_LIGHTS;
+	write_INT32 (FlickerLightCount (), fp);
+	for (i = 0; i < FlickerLightCount (); i++)
+		FlickeringLights (i)->Write (fp);
 
-		// flickering light new for version 7
-		write_INT32 (FlickerLightCount (), save_file);
-		if (FlickerLightCount () > MAX_FLICKERING_LIGHTS) {
-			FlickerLightCount () = MAX_FLICKERING_LIGHTS;
-		}
-		if (FlickerLightCount () > 0) {
-			fwrite(FlickeringLights (), sizeof (CFlickeringLight), FlickerLightCount (), save_file);
-		}
-
-		// write secret cube number
-		write_INT32 (SecretCubeNum (), save_file);
-
-		// write secret cube orientation?
-		write_matrix(&SecretOrient (), save_file);
-
+	// write secret cube number
+	write_INT32 (SecretCubeNum (), fp);
+	// write secret cube orientation?
+	write_matrix(&SecretOrient (), fp);
+	}
+// save mine data
+minedataOffset = ftell(fp);
+if (0 > (mineErr = SaveMineDataCompiled (fp))) {
+	fclose(fp);
+	ErrorMsg ("Error saving mine data");
+	return(2);
 	}
 
-	// save mine data
-	minedata_offset = ftell(save_file);
-	mine_err = SaveMineDataCompiled(save_file);
-
-	if (mine_err== -1) {
-		fclose(save_file);
-		ErrorMsg ("Error saving mine data");
-		return(2);
+// save game data
+gamedataOffset = ftell(fp);
+if (0 > (gameErr = SaveGameData(fp))) {
+	fclose(fp);
+	ErrorMsg ("Error saving game data");
+	return(3);
 	}
 
-	// save game data
-	gamedata_offset = ftell(save_file);
-	game_err = SaveGameData(save_file);
+// save hostage data
+hostagetextOffset = ftell(fp);
+// leave hostage text empty
 
-	if (game_err== -1) {
-		fclose(save_file);
-		ErrorMsg ("Error saving game data");
-		return(3);
-	}
+// now and go back to beginning of file and save offsets
+fseek(fp, 2*sizeof (INT32), SEEK_SET);
+write_INT32 (minedataOffset, fp);    // gamedataOffset
+write_INT32 (gamedataOffset, fp);    // gamedataOffset
+if (m_fileType== RDL_FILE) 
+	write_INT32 (hostagetextOffset, fp); // hostagetextOffset
+fclose(fp);
 
-	// save hostage data
-	hostagetext_offset = ftell(save_file);
-	// leave hostage text empty
-
-	// now and go back to beginning of file and save offsets
-	fseek(save_file, 2*sizeof (INT32), SEEK_SET);
-	write_INT32 (minedata_offset, save_file);    // gamedata_offset
-	write_INT32 (gamedata_offset, save_file);    // gamedata_offset
-	if (m_fileType== RDL_FILE) {
-		write_INT32 (hostagetext_offset, save_file); // hostagetext_offset
-	}
-
-	fclose(save_file);
 if (HasCustomTextures () && !bSaveToHog) {
 	char* ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
 	else
 		strcat_s (filename, sizeof (filename), ".pog");
-	fopen_s (&save_file, filename, "wb");
-	if (save_file) {
-		CreatePog (save_file);
-		fclose (save_file);
+	fopen_s (&fp, filename, "wb");
+	if (fp) {
+		CreatePog (fp);
+		fclose (fp);
 		}
 	}
+
 if (HasCustomRobots () && !bSaveToHog) {
 	char* ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, sizeof (filename), ".hxm");
-	fopen_s (&save_file, filename, "wb");
-	if (save_file)
-		WriteHxmFile (save_file);
+	fopen_s (&fp, filename, "wb");
+	if (fp)
+		WriteHxmFile (fp);
 	}
-#endif //DEMO
-	return 0;
+
+return 0;
 }
 
 // ------------------------------------------------------------------------
@@ -1587,36 +1562,36 @@ if (r > left)
 //
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
-INT16 CMine::SaveMineDataCompiled(FILE *save_file)
+INT16 CMine::SaveMineDataCompiled(FILE *fp)
 {
 	int	i;
 // write version (1 byte)
-write_INT8 (COMPILED_MINE_VERSION, save_file);
+write_INT8 (COMPILED_MINE_VERSION, fp);
 
 // write no. of vertices (2 bytes)
-write_INT16 (VertCount (), save_file);
+write_INT16 (VertCount (), fp);
 
 // write number of Segments () (2 bytes)
-write_INT16 (SegCount (), save_file);
+write_INT16 (SegCount (), fp);
 
 // write all vertices
 for (int i = 0; i < VertCount (); i++)
-	Vertices (i)->Write (save_file);
+	Vertices (i)->Write (fp);
 
 // write segment information
 for (i = 0; i < SegCount (); i++)  
-	Segments (i)->Write (save_file, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+	Segments (i)->Write (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
 
 // for Descent 2, save special info here
 if (IsD2File ()) {
   for (i = 0; i < SegCount (); i++)  
-	  Segments (i)->WriteExtras (save_file, IsD2XLevel () ? 2 : 1, true);
+	  Segments (i)->WriteExtras (fp, IsD2XLevel () ? 2 : 1, true);
   }
 
 if (IsD2XLevel ()) {
-	SaveColors (VertexColors (0), VertCount (), save_file);
-	SaveColors (LightColors (0), SegCount () * 6, save_file);
-	SaveColors (TexColors (0), MAX_D2_TEXTURES, save_file);
+	SaveColors (VertexColors (0), VertCount (), fp);
+	SaveColors (LightColors (0), SegCount () * 6, fp);
+	SaveColors (TexColors (0), MAX_D2_TEXTURES, fp);
 	}
 return 0;
 }
@@ -1633,9 +1608,9 @@ INT16 CMine::SaveGameData(FILE *savefile)
 	HINSTANCE hInst = AfxGetInstanceHandle();
 
 	INT32 i;
-	INT32 start_offset, end_offset;
+	INT32 startOffset, endOffset;
 
-	start_offset = ftell(savefile);
+	startOffset = ftell(savefile);
 
 	//==================== = WRITE FILE INFO========================
 
@@ -1828,14 +1803,14 @@ INT16 CMine::SaveGameData(FILE *savefile)
 		}
 	}
 
-	end_offset = ftell(savefile);
+	endOffset = ftell(savefile);
 
 	//==================== = UPDATE FILE INFO OFFSETS====================== =
-	fseek(savefile, start_offset, SEEK_SET);
+	fseek(savefile, startOffset, SEEK_SET);
 	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, savefile);
 
 	//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
-	fseek(savefile, end_offset, SEEK_SET);
+	fseek(savefile, endOffset, SEEK_SET);
 #endif //DEMO
 	return(0);
 }

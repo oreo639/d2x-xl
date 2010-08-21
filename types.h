@@ -762,6 +762,16 @@ public:
 	inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
 	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
 	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
+
+	INT32 Read (FILE* fp) {
+		m_nSegment = read_INT16 (fp);
+		m_nSide = read_INT16 (fp);
+		return 1;
+		}
+	void Write (FILE* fp) {
+		write_INT16 (m_nSegment, fp);
+		write_INT16 (m_nSide, fp);
+		}
 };
 
 class CWall : public CSideKey, public CGameItem {
@@ -981,6 +991,20 @@ public:
 	UINT32 mask;    // bits with 1 = on, 0 = off
 	FIX timer;		 // always set to 0
 	FIX delay;      // time for each bit in mask (INT32 seconds)
+
+	INT32 Read (FILE* fp) {
+		CSideKey::Read (fp);
+		mask = read_INT32 (fp);
+		timer = read_FIX (fp);
+		delay = read_FIX (fp);
+		return 1;
+		}
+	void Write (FILE* fp) {
+		CSideKey::Write (fp);
+		write_INT32 (mask, fp);
+		write_FIX (timer, fp);
+		write_FIX (delay, fp);
+		}
 };
 
 typedef struct {
