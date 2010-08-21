@@ -498,13 +498,13 @@ void CMine::CalcSpline (void)
 
   // point orthogonal to center of current cube
   points [1] = CalcSideNormal (nSplineSeg1, nSplineSide1);
-  points [1] *= m_splineLength1;
+  points [1] *= FIX (m_splineLength1);
   points [1] += points [0];
 
 
   // point orthogonal to center of other cube
   points [2] = CalcSideNormal (nSplineSeg2, nSplineSide2);
-  points [2] *= m_splineLength2;
+  points [2] *= FIX (m_splineLength2);
   points [2] += points [3];
 
   // calculate number of segments (min=1)
