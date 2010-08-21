@@ -782,6 +782,7 @@ public:
 
 	INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 class CActiveDoor : public CGameItem {
@@ -913,6 +914,7 @@ class CReactorTrigger : public CTriggerTargets, public CGameItem {
 public:
 	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 class CRobotMaker : public CGameItem {
@@ -926,6 +928,7 @@ public:
 
 	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 
