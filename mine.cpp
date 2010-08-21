@@ -1861,6 +1861,7 @@ return;
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
+
 void CMine::CalcOrthoVector(CFixVector& result, INT16 nSegment, INT16 nSide)
 {
 	struct dvector a, b, c;
@@ -1909,13 +1910,11 @@ result = CFixVector ((FIX) dround_off (-c.x * 0x10000L, 1.0),
 
 void CMine::CalcCenter (CFixVector& center, INT16 nSegment, INT16 nSide)
 {
-	INT32 i;
-
 center.Clear ();
 CSegment *segP = Segments (nSegment);
 
-for (i = 0; i < 4; i++) {
-	CVertex v = *Vertices (segP->verts [side_vert [nSide][i]]);
+for (INT32 i = 0; i < 4; i++) {
+	CFixVector v = *Vertices (segP->verts [side_vert [nSide][i]]);
 	v >>= 2;
 	center += v;
 	}
