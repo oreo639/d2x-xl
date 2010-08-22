@@ -1128,26 +1128,10 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
-	orient->rVec.x = F1_0;
-	orient->rVec.y = 0L;
-	orient->rVec.z = 0L;
-	orient->uVec.x = 0L;
-	orient->uVec.y = 0L;
-	orient->uVec.z = F1_0;
-	orient->fVec.x = 0L;
-	orient->fVec.y = F1_0;
-	orient->fVec.z = 0L;
+	orient->Set (F1_0, 0, 0, 0, 0, F1_0, 0, F1_0, 0);
 } else {
 	orient = &theMine->CurrObj ()->orient;
-	orient->rVec.x = F1_0;
-	orient->rVec.y = 0L;
-	orient->rVec.z = 0L;
-	orient->uVec.x = 0L;
-	orient->uVec.y = F1_0;
-	orient->uVec.z = 0L;
-	orient->fVec.x = 0L;
-	orient->fVec.y = 0L;
-	orient->fVec.z = F1_0;
+	orient->Set (F1_0, 0, 0, F1_0, 0, 0, 0, 0, F1_0);
 	}
 theApp.UnlockUndo ();
 Refresh ();
@@ -1185,8 +1169,8 @@ else {
 	for (i = 0; i < theMine->GameInfo ().objects.count;i++)
 		if (theMine->Objects (i)->nSegment == theMine->Current ()->nSegment)
 			count++;
-	objP->pos.y += count*2*F1_0;
-	objP->last_pos.y += count*2*F1_0;
+	objP->pos.v.y += count * 2 * F1_0;
+	objP->last_pos.v.y += count * 2 * F1_0;
 	objP->nSegment = theMine->Current ()->nSegment;
 	Refresh ();
 	theApp.MineView ()->Refresh (false);
