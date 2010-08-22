@@ -414,7 +414,7 @@ else
 // read texture header
 if (theApp.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + data_offset +
-				(long) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
+				(FIX) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
 	w = d2_ptexture.xsize + ((d2_ptexture.wh_extra & 0xF) << 8);
@@ -422,7 +422,7 @@ if (theApp.IsD2File ()) {
 	}
 else {
 	offset = sizeof (PIG_HEADER) + data_offset + 
-				(long) (texture_table[index]-1) * sizeof (ptexture);
+				(FIX) (texture_table[index]-1) * sizeof (ptexture);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
 	ptexture.name [sizeof (ptexture.name) - 1] = '\0';

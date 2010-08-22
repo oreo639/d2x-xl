@@ -181,19 +181,19 @@ inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
 
 class CFixMatrix {
 public:
-	CFixVector rvec, uvec, fvec;
+	CFixVector rVec, uVec, fVec;
 
 	inline INT32 Read (FILE* fp) { 
-		rvec.Read (fp);
-		uvec.Read (fp);
-		fvec.Read (fp);
+		rVec.Read (fp);
+		uVec.Read (fp);
+		fVec.Read (fp);
 		return 1;
 	}
 
 	inline void Write (FILE* fp) { 
-		rvec.Write (fp);
-		uvec.Write (fp);
-		fvec.Write (fp);
+		rVec.Write (fp);
+		uVec.Write (fp);
+		fVec.Write (fp);
 	}
 };
 

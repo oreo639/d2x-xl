@@ -335,10 +335,10 @@ if (m_nMineCenter == 2) {
 	INT32 i, j;
 	for (i=-60;i<=60;i+=30) {
 		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0*cos((double)i*(M_PI/180.0)));
-			circle.z = (FIX)(5*F1_0*sin((double)i*(M_PI/180.0)));
-			circle.x = (FIX)(scale*cos((double)j*(M_PI/180.0)) );
-			circle.y = (FIX)(scale*sin((double)j*(M_PI/180.0)) );
+			double scale = (FIX)(5*F1_0 * cos ((double)i*(M_PI/180.0)));
+			circle.z = (FIX)(5*F1_0 * sin ((double)i*(M_PI/180.0)));
+			circle.x = (FIX)(scale * cos ((double)j*(M_PI/180.0)) );
+			circle.y = (FIX)(scale * sin ((double)j*(M_PI/180.0)) );
 			circle.x -= (FIX)(m_matrix.M[1][0] * F1_0);
 			circle.y -= (FIX)(m_matrix.M[2][0] * F1_0);
 			circle.z -= (FIX)(m_matrix.M[3][0] * F1_0);
@@ -354,10 +354,10 @@ if (m_nMineCenter == 2) {
 	m_pDC->SelectObject (m_penGreen);
 	for (i=-60;i<=60;i+=30) {
 		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0*cos((double)i*(M_PI/180.0)));
-			circle.y = (FIX)(5*F1_0*sin((double)i*(M_PI/180.0)));
-			circle.z = (FIX)(scale*cos((double)j*(M_PI/180.0)) );
-			circle.x = (FIX)(scale*sin((double)j*(M_PI/180.0)) );
+			double scale = (FIX)(5*F1_0 * cos ((double)i*(M_PI/180.0)));
+			circle.y = (FIX)(5*F1_0 * sin ((double)i*(M_PI/180.0)));
+			circle.z = (FIX)(scale * cos ((double)j*(M_PI/180.0)) );
+			circle.x = (FIX)(scale * sin ((double)j*(M_PI/180.0)) );
 			circle.x -= (FIX)(m_matrix.M[1][0] * F1_0);
 			circle.y -= (FIX)(m_matrix.M[2][0] * F1_0);
 			circle.z -= (FIX)(m_matrix.M[3][0] * F1_0);
@@ -373,10 +373,10 @@ if (m_nMineCenter == 2) {
 	m_pDC->SelectObject (m_penGray);
 	for (i=-60;i<=60;i+=30) {
 		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0*cos((double)i*(M_PI/180.0)));
-			circle.x    = (FIX)(5*F1_0*sin((double)i*(M_PI/180.0)));
-			circle.y = (FIX)(scale*cos((double)j*(M_PI/180.0)) );
-			circle.z = (FIX)(scale*sin((double)j*(M_PI/180.0)) );
+			double scale = (FIX)(5*F1_0 * cos ((double)i*(M_PI/180.0)));
+			circle.x    = (FIX)(5*F1_0 * sin ((double)i*(M_PI/180.0)));
+			circle.y = (FIX)(scale * cos ((double)j*(M_PI/180.0)) );
+			circle.z = (FIX)(scale * sin ((double)j*(M_PI/180.0)) );
 			circle.x -= (FIX)(m_matrix.M[1][0] * F1_0);
 			circle.y -= (FIX)(m_matrix.M[2][0] * F1_0);
 			circle.z -= (FIX)(m_matrix.M[3][0] * F1_0);
@@ -1786,9 +1786,9 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			length /= F1_0;
 			if (length < 1.0) 
 				length = 1.0;
-			vector.x = (long) ((double) vector.x / length);
-			vector.y = (long) ((double) vector.y / length);
-			vector.z = (long) ((double) vector.z / length);
+			vector.x = (FIX) ((double) vector.x / length);
+			vector.y = (FIX) ((double) vector.y / length);
+			vector.z = (FIX) ((double) vector.z / length);
 
 			fin.x = center.x + 2*orthog.x + vector.x;
 			fin.y = center.y + 2*orthog.y + vector.y;
@@ -1979,9 +1979,9 @@ for (i = 0; i < n_splines; i++, segP--)
 
 void TransformModelPoint (CFixVector& dest, APOINT &src, CFixMatrix &orient, CFixVector offs)
 {
-dest.x = (orient.rvec.x * (FIX)src.x + orient.uvec.x * (FIX)src.y + orient.fvec.x * (FIX)src.z);
-dest.y = (orient.rvec.y * (FIX)src.x +	orient.uvec.y * (FIX)src.y + orient.fvec.y * (FIX)src.z);
-dest.z = (orient.rvec.z * (FIX)src.x + orient.uvec.z * (FIX)src.y + orient.fvec.z * (FIX)src.z);
+dest.x = (orient.rVec.x * (FIX)src.x + orient.uVec.x * (FIX)src.y + orient.fVec.x * (FIX)src.z);
+dest.y = (orient.rVec.y * (FIX)src.x +	orient.uVec.y * (FIX)src.y + orient.fVec.y * (FIX)src.z);
+dest.z = (orient.rVec.z * (FIX)src.x + orient.uVec.z * (FIX)src.y + orient.fVec.z * (FIX)src.z);
 dest.x += offs.x;
 dest.y += offs.y;
 dest.z += offs.z;
@@ -2017,15 +2017,15 @@ else {
 	objP = &temp_obj;
 	objP->type = -1;
 	// theMine->secret_orient = Objects () [0]->orient;
-	objP->orient.rvec.x = -theMine->SecretOrient ().rvec.x;
-	objP->orient.rvec.y = -theMine->SecretOrient ().rvec.y;
-	objP->orient.rvec.z = -theMine->SecretOrient ().rvec.z;
-	objP->orient.uvec.x =  theMine->SecretOrient ().fvec.x;
-	objP->orient.uvec.y =  theMine->SecretOrient ().fvec.y;
-	objP->orient.uvec.z =  theMine->SecretOrient ().fvec.z;
-	objP->orient.fvec.x =  theMine->SecretOrient ().uvec.x;
-	objP->orient.fvec.y =  theMine->SecretOrient ().uvec.y;
-	objP->orient.fvec.z =  theMine->SecretOrient ().uvec.z;
+	objP->orient.rVec.x = -theMine->SecretOrient ().rVec.x;
+	objP->orient.rVec.y = -theMine->SecretOrient ().rVec.y;
+	objP->orient.rVec.z = -theMine->SecretOrient ().rVec.z;
+	objP->orient.uVec.x =  theMine->SecretOrient ().fVec.x;
+	objP->orient.uVec.y =  theMine->SecretOrient ().fVec.y;
+	objP->orient.uVec.z =  theMine->SecretOrient ().fVec.z;
+	objP->orient.fVec.x =  theMine->SecretOrient ().uVec.x;
+	objP->orient.fVec.y =  theMine->SecretOrient ().uVec.y;
+	objP->orient.fVec.z =  theMine->SecretOrient ().uVec.z;
 	// objP->orient =  theMine->secret_orient;
 	UINT16 nSegment = (UINT16)theMine->SecretCubeNum ();
 	if (nSegment >= theMine->SegCount ())

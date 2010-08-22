@@ -350,17 +350,17 @@ theMine->ReactorTime () = 0x1e;
 theMine->ReactorStrength () = 0xffffffffL;
 theMine->SecretCubeNum () = 0L;
 
-theMine->SecretOrient ().rvec.x = F1_0;
-theMine->SecretOrient ().rvec.y = 0L;
-theMine->SecretOrient ().rvec.z = 0L;
+theMine->SecretOrient ().rVec.x = F1_0;
+theMine->SecretOrient ().rVec.y = 0L;
+theMine->SecretOrient ().rVec.z = 0L;
 
-theMine->SecretOrient ().uvec.x = 0L;
-theMine->SecretOrient ().uvec.y = 0L;
-theMine->SecretOrient ().uvec.z = F1_0;
+theMine->SecretOrient ().uVec.x = 0L;
+theMine->SecretOrient ().uVec.y = 0L;
+theMine->SecretOrient ().uVec.z = F1_0;
 
-theMine->SecretOrient ().fvec.x = 0L;
-theMine->SecretOrient ().fvec.y = F1_0;
-theMine->SecretOrient ().fvec.z = 0L;
+theMine->SecretOrient ().fVec.x = 0L;
+theMine->SecretOrient ().fVec.y = F1_0;
+theMine->SecretOrient ().fVec.z = 0L;
 theApp.MineView ()->ResetView (true);
 CDialog::OnOK ();
 }

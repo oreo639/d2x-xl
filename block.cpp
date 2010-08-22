@@ -243,9 +243,9 @@ while(!feof(fBlk)) {
 				fscanf_s (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
 				memcpy (&o.last_pos, &o.pos, sizeof (o.pos));
 				fscanf_s (fBlk, "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
-													&o.orient.rvec.x, &o.orient.rvec.y, &o.orient.rvec.z,
-													&o.orient.uvec.x, &o.orient.uvec.y, &o.orient.uvec.z,
-													&o.orient.fvec.x, &o.orient.fvec.y, &o.orient.fvec.z);
+													&o.orient.rVec.x, &o.orient.rVec.y, &o.orient.rVec.z,
+													&o.orient.uVec.x, &o.orient.uVec.y, &o.orient.uVec.z,
+													&o.orient.fVec.x, &o.orient.fVec.y, &o.orient.fVec.z);
 				fscanf_s (fBlk, "            nSegment %hd\n", &o.nSegment);
 				fscanf_s (fBlk, "            size %ld\n", &o.size);
 				fscanf_s (fBlk, "            shields %ld\n", &o.shields);

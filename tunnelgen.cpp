@@ -203,14 +203,14 @@ else
 spinAxis = 'Y';
 
 // start by defining vertex in rectangular coordinates (xz plane)
-v.Set (0, (FIX) (radius * cos(angle)), (FIX) (radius * sin(angle)));
+v.Set (0, (FIX) (radius * cos (angle)), (FIX) (radius * sin (angle)));
 
 switch(spinAxis) {
  case 'Y':
    // calculate angles to normalize direction
    // spin on y axis to get into the y-z plane
    y_spin = - atan3(n.v.z,n.v.x);
-   v1.Set (n.v.x*cos(y_spin) - n.v.z*sin(y_spin), n.v.y, n.v.x*sin(y_spin) + n.v.z*cos(y_spin));
+   v1.Set (n.v.x * cos (y_spin) - n.v.z * sin (y_spin), n.v.y, n.v.x * sin (y_spin) + n.v.z * cos (y_spin));
    // spin on z to get on the x axis
    z_spin = atan3(v1.v.y,v1.v.x);
    // spin vertex back in negative direction (z first then y)
@@ -222,11 +222,11 @@ switch(spinAxis) {
    // calculate angles to normalize direction
    // spin on z axis to get into the x-z plane
    z_spin = atan3(n.v.y,n.v.x);
-   v1.Set (n.v.x * cos(z_spin) + n.v.y * sin(z_spin), -n.v.x * sin(z_spin) + n.v.y * cos(z_spin), n.v.z);
+   v1.Set (n.v.x * cos (z_spin) + n.v.y * sin (z_spin), -n.v.x * sin (z_spin) + n.v.y * cos (z_spin), n.v.z);
    // spin on y to get on the x axis
    y_spin = -atan3(v1.v.z,v1.v.x);
    // spin vertex back in negative direction (y first then z)
-   v2.Set ((double) v.v.x * cos(-y_spin) - (double) v.v.z * sin (-y_spin), double (v.v.y), (double) v.v.x * sin(-y_spin) + (double) v.v.z * cos (-y_spin));
+   v2.Set ((double) v.v.x * cos (-y_spin) - (double) v.v.z * sin (-y_spin), double (v.v.y), (double) v.v.x * sin (-y_spin) + (double) v.v.z * cos (-y_spin));
    v1.Set (v2.v.x * cos (-z_spin) + v2.v.y * sin (-z_spin), -v2.v.x * sin (-z_spin) + v2.v.y * cos (-z_spin), v2.v.z);
    break;
 	}
@@ -253,18 +253,18 @@ void PolarPoints (double *angle, double *radius, CFixVector* vertex, CFixVector*
   // calculate angles to normalize direction
   // spin on z axis to get into the x-z plane
 z_spin = atan3(ny,nx);
-x1 = nx*cos(z_spin) + ny*sin(z_spin);
+x1 = nx * cos (z_spin) + ny * sin (z_spin);
 z1 = nz;
 
 // spin on y to get on the x axis
 y_spin = -atan3(z1,x1);
 // spin vertex (spin on z then y)
-x1 = vx*cos(z_spin) + vy*sin(z_spin);
-y1 = -vx*sin(z_spin) + vy*cos(z_spin);
+x1 = vx * cos (z_spin) + vy * sin (z_spin);
+y1 = -vx * sin (z_spin) + vy * cos (z_spin);
 z1 = vz;
-//  x2 =   x1*cos(y_spin) - z1*sin(y_spin);
+//  x2 =   x1 * cos (y_spin) - z1 * sin (y_spin);
 y2 = y1;
-z2 = x1*sin(y_spin) + z1*cos(y_spin);
+z2 = x1 * sin (y_spin) + z1 * cos (y_spin);
 // convert to polar
 *radius = sqrt(y2*y2 + z2*z2);  // ignore any x offset
 *angle = atan3(z2,y2);
@@ -540,7 +540,7 @@ void CMine::CalcSpline (void)
 
   // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
   y_spin = - atan3(rel_pts [1].v.z, rel_pts [1].v.x                                     ); // to y-z plane
-  z_spin =   atan3(rel_pts [1].v.y, rel_pts [1].v.x*cos(y_spin)-rel_pts [1].v.z*sin(y_spin)); // to x axis
+  z_spin =   atan3(rel_pts [1].v.y, rel_pts [1].v.x * cos (y_spin)-rel_pts [1].v.z * sin (y_spin)); // to x axis
 
   // spin all points reletave to first face (rotation)
   for (i = 0; i < 4; i++) {

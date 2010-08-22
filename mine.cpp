@@ -380,7 +380,7 @@ GameInfo ().lightDeltaValues.Reset ();
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CFixVector CMine::CalcSideNormal (INT16 nSegment = -1, INT16 nSide = -1)
+CFixVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
 {
 if (nSegment < 0)
 	nSegment = Current ()->nSegment;

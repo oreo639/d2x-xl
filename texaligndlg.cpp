@@ -428,8 +428,8 @@ for (i = 0; i < 4; i++) {
 		radius = sqrt(x*x + y*y);
 		a = atan3 (y,x) - angle;			// add rotation
 		// convert back to rectangular coordinates
-		x = radius * cos(a);
-		y = radius * sin(a);
+		x = radius * cos (a);
+		y = radius * sin (a);
 		sideP->uvls[i].u = (INT16) x;
 		sideP->uvls[i].v = (INT16) y;
 		}

@@ -361,7 +361,7 @@ return (wallP->type != WALL_OPEN);
 
 void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
 {
-	long nLight = (long) (fLight * 65536); //24.0 * 327.68);
+	long nLight = (FIX) (fLight * 65536); //24.0 * 327.68);
 	CSegment *segP;
 	INT32	h, i, j, l, c, nSegment;
 
@@ -812,7 +812,7 @@ delete[] visited;
 //
 //	where,
 //
-// 		angle = acos(A dot B / |A|*|B|)
+// 		angle = acos (A dot B / |A|*|B|)
 //		A = vector orthogonal to light source side
 //		B = vector from center of light source side to effected side.
 //		distance is from center of light souce to effected side's corner
@@ -1309,7 +1309,7 @@ if (!bIgnoreAngle) {
 		if (ratio < -1.0 || ratio > (double)1.0)
 			angle = (199.0 * M_PI)/180.0;  // force a failure
 		else
-			angle = acos(ratio);
+			angle = acos (ratio);
 		}
 	// if angle is less than 110 degrees
 	// then we found a match

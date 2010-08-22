@@ -541,7 +541,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	double			length; 
 	INT16				nVertex; 
 	INT16				i; 
-	CFixVector		center, opp_center, orthog; 
+	CFixVector		center, oppCenter, orthog; 
 	CVertex*			vertP;
 	CFixVector		newCenter; 
 
@@ -555,7 +555,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		case(ORTHOGONAL):
 		{
 			center = CalcSideCenter(Current ()->nSegment, Current ()->nSide); 
-			opp_center = CalcSideCenter(Current ()->nSegment, opp_side [Current ()->nSide]); 
+			oppCenter = CalcSideCenter(Current ()->nSegment, opp_side [Current ()->nSide]); 
 			orthog = CalcSideNormal(Current ()->nSegment, Current ()->nSide); 
 
 			// set the length of the new cube to be one standard cube length
@@ -615,11 +615,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		case(EXTEND):
 		{
 			center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
-			opp_center = CalcSideCenter (Current ()->nSegment, opp_side [Current ()->nSide]); 
+			oppCenter = CalcSideCenter (Current ()->nSegment, opp_side [Current ()->nSide]); 
 			orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
 
 			// calculate the length of the new cube
-			length = CalcLength (&center, &opp_center) / F1_0; 
+			length = CalcLength (&center, &oppCenter) / F1_0; 
 
 			// scale the vector
 			orthog *= length;
@@ -659,7 +659,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			angle1 = atan3(B [1].v.z, B [1].v.y); 
 			//    }
 			for (i = 0; i < 8; i++) {
-				C [i].Set (B [i].v.x, B [i].v.y * cos(angle1) + B [i].v.z * sin(angle1), -B [i].v.y * sin(angle1) + B [i].v.z * cos(angle1)); 
+				C [i].Set (B [i].v.x, B [i].v.y * cos (angle1) + B [i].v.z * sin (angle1), -B [i].v.y * sin (angle1) + B [i].v.z * cos (angle1)); 
 			}
 
 			// calculate angle to put point 1 on x axis by spinning on z - axis
@@ -671,7 +671,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			angle2 = atan3(C [1].v.y, C [1].v.x); 
 			//    }
 			for (i = 0; i < 8; i++)
-				D [i].Set (C [i].v.x * cos(angle2) + C [i].v.y * sin(angle2), -C [i].v.x * sin(angle2) + C [i].v.y * cos(angle2), C [i].v.z); 
+				D [i].Set (C [i].v.x * cos (angle2) + C [i].v.y * sin (angle2), -C [i].v.x * sin (angle2) + C [i].v.y * cos (angle2), C [i].v.z); 
 
 			// calculate angle to put point 2 in x - y plane by spinning on x - axis
 			// the rotate D points on x - axis to form E points
@@ -682,7 +682,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			angle3 = atan3(D [2].v.z, D [2].v.y); 
 			//    }
 			for (i = 0; i < 8; i++) 
-				E [i].Set (D [i].v.x, D [i].v.y * cos(angle3) + D [i].v.z * sin(angle3), -D [i].v.y * sin(angle3) + D [i].v.z * cos(angle3)); 
+				E [i].Set (D [i].v.x, D [i].v.y * cos (angle3) + D [i].v.z * sin (angle3), -D [i].v.y * sin (angle3) + D [i].v.z * cos (angle3)); 
 
 			// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
 			// mirror new points on z axis
@@ -691,11 +691,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// now reverse rotations
 			for (i = 4; i < 8; i++) 
-				D [i].Set (E [i].v.x, E [i].v.y * cos(-angle3) + E [i].v.z * sin(-angle3), -E [i].v.y * sin(-angle3) + E [i].v.z * cos(-angle3)); 
+				D [i].Set (E [i].v.x, E [i].v.y * cos (-angle3) + E [i].v.z * sin (-angle3), -E [i].v.y * sin (-angle3) + E [i].v.z * cos (-angle3)); 
 			for (i = 4; i < 8; i++) 
-				C [i].Set (D [i].v.x * cos(-angle2) + D [i].v.y * sin(-angle2), -D [i].v.x * sin(-angle2) + D [i].v.y * cos(-angle2), D [i].v.z); 
+				C [i].Set (D [i].v.x * cos (-angle2) + D [i].v.y * sin (-angle2), -D [i].v.x * sin (-angle2) + D [i].v.y * cos (-angle2), D [i].v.z); 
 			for (i = 4; i < 8; i++) 
-				B [i].Set (C [i].v.x, C [i].v.y * cos(-angle1) + C [i].v.z * sin(-angle1), -C [i].v.y * sin(-angle1) + C [i].v.z * cos(-angle1)); 
+				B [i].Set (C [i].v.x, C [i].v.y * cos (-angle1) + C [i].v.z * sin (-angle1), -C [i].v.y * sin (-angle1) + C [i].v.z * cos (-angle1)); 
 	
 			// and translate back
 			nVertex = currSeg->verts [side_vert [Current ()->nSide][0]]; 
@@ -2044,7 +2044,7 @@ for (i = 0; i < 4; i++)
 // check to see if on x - axis already
 angle = atan3(B [1].v.z, B [1].v.y); 
 for (i = 0; i < 4; i++) 
-	C [i].Set (B [i].v.x, B [i].v.y * cos(angle) + B [i].v.z * sin(angle), -B [i].v.y * sin(angle) + B [i].v.z * cos(angle)); 
+	C [i].Set (B [i].v.x, B [i].v.y * cos (angle) + B [i].v.z * sin (angle), -B [i].v.y * sin (angle) + B [i].v.z * cos (angle)); 
 
 #if UV_DEBUG
 if (abs((INT32)C [1].z) != 0) {
@@ -2058,7 +2058,7 @@ if (abs((INT32)C [1].z) != 0) {
 // check to see if on z - axis already
 angle = atan3(C [1].v.y, C [1].v.x); 
 for (i = 0; i < 4; i++) {
-	D [i].Set (C [i].v.x * cos(angle) + C [i].v.y * sin(angle), -C [i].v.x * sin(angle) + C [i].v.y * cos(angle), C [i].v.z); 
+	D [i].Set (C [i].v.x * cos (angle) + C [i].v.y * sin (angle), -C [i].v.x * sin (angle) + C [i].v.y * cos (angle), C [i].v.z); 
 	}
 #if UV_DEBUG
 if (abs((INT32)D [1].y) != 0) {
@@ -2071,7 +2071,7 @@ if (abs((INT32)D [1].y) != 0) {
 // check to see if on x - axis already
 angle = atan3(D [2].v.z, D [2].v.y); 
 for (i = 0; i < 4; i++) 
-	E [i].Set (D [i].v.x, D [i].v.y * cos(angle) + D [i].v.z * sin(angle), -D [i].v.y * sin(angle) + D [i].v.z * cos(angle)); 
+	E [i].Set (D [i].v.x, D [i].v.y * cos (angle) + D [i].v.z * sin (angle), -D [i].v.y * sin (angle) + D [i].v.z * cos (angle)); 
 
 // now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
 // set v to x axis and u to negative u axis to match default (u, v)
@@ -2273,8 +2273,8 @@ for (linenum = 0; linenum < 4; linenum++) {
 					length = sqrt((double)childSide->uvls [i].u*(double)childSide->uvls [i].u +
 									  (double)childSide->uvls [i].v*(double)childSide->uvls [i].v); 
 					angle -= (cangle - sangle); 
-					childSide->uvls [i].u = (INT16)(length*cos(angle)); 
-					childSide->uvls [i].v = (INT16)(length*sin(angle)); 
+					childSide->uvls [i].u = (INT16)(length * cos (angle)); 
+					childSide->uvls [i].v = (INT16)(length * sin (angle)); 
 					}
 				// now translate all the childs (u, v) coords to parent point0
 				for (i = 0; i < 4; i++) {

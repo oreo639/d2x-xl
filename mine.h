@@ -251,7 +251,7 @@ public:
 	inline INT16& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (CGameItemInfo& gii)
-		{ return (long) gii.size * (long) gii.count; }
+		{ return (FIX) gii.size * (FIX) gii.count; }
 	inline INT32& ReactorTime ()
 		{ return MineData ().m_reactor_time; }
 	inline INT32& ReactorStrength ()
@@ -361,8 +361,8 @@ public:
 	void SplitLines();
 	void SplitPoints();
 
-	CFixVector CalcSideNormal (INT16 nSegment, INT16 nSide);
-	CFixVector CalcSideCenter (INT16 nSegment, INT16 nSide);
+	CFixVector CalcSideNormal (INT16 nSegment = -1, INT16 nSide = -1);
+	CFixVector CalcSideCenter (INT16 nSegment = -1, INT16 nSide = -1);
 	double CalcLength (CFixVector* center1, CFixVector* center2);
 
 	INT32 IsLight(INT32 nBaseTex);
@@ -420,7 +420,7 @@ public:
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
 	void RotateVmsVector (CFixVector* vector, double angle, char axis); 
-	void RotateVmsMatrix (CFixMatrix *matrix, double angle, char axis); 
+	void RotateMatrix (CFixMatrix *matrix, double angle, char axis); 
 	void RotateVertex (CFixVector* vertex, CFixVector* orgin, CFixVector* normal, double angle); 
 	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);

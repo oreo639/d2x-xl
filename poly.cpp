@@ -180,15 +180,15 @@ void CMineView::SetModelPoints(INT32 start, INT32 end)
 	FIX z0 = gModel.points[i].z;
 
 	// rotate point using Objects () rotation matrix
-	pt.x = (MultiplyFix(objP->orient.rvec.x,x0)
-			+ MultiplyFix(objP->orient.uvec.x,y0)
-			+ MultiplyFix(objP->orient.fvec.x,z0));
-	pt.y = (MultiplyFix(objP->orient.rvec.y,x0)
-			+ MultiplyFix(objP->orient.uvec.y,y0)
-			+ MultiplyFix(objP->orient.fvec.y,z0));
-	pt.z = (MultiplyFix(objP->orient.rvec.z,x0)
-			+ MultiplyFix(objP->orient.uvec.z,y0)
-			+ MultiplyFix(objP->orient.fvec.z,z0));
+	pt.x = (MultiplyFix(objP->orient.rVec.x,x0)
+			+ MultiplyFix(objP->orient.uVec.x,y0)
+			+ MultiplyFix(objP->orient.fVec.x,z0));
+	pt.y = (MultiplyFix(objP->orient.rVec.y,x0)
+			+ MultiplyFix(objP->orient.uVec.y,y0)
+			+ MultiplyFix(objP->orient.fVec.y,z0));
+	pt.z = (MultiplyFix(objP->orient.rVec.z,x0)
+			+ MultiplyFix(objP->orient.uVec.z,y0)
+			+ MultiplyFix(objP->orient.fVec.z,z0));
 
 	// set point to be in world coordinates
 	pt.x += objP->pos.x;

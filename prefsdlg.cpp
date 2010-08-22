@@ -414,7 +414,7 @@ if (!bInitApp) {
 	theApp.MineView ()->Refresh (false);
 	}
 angle_rate = m_rotateRates [m_iRotateRate];
-move_rate = (long) (m_moveRate * 0x10000L);
+move_rate = (FIX) (m_moveRate * 0x10000L);
 bExpertMode = (m_bExpertMode != 0);
 theMine->UseTexColors () = m_bUseTexColors != 0;
 if (!bInitApp)

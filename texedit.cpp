@@ -862,8 +862,8 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 			UINT8 byte;
 
 			if (bmih.biBitCount == 4) {
-				long offset = (long)v*(long)width + (long)u / 2;
-				fseek(file,(long)bmfh.bfOffBits + offset,SEEK_SET);
+				long offset = (FIX)v*(FIX)width + (FIX)u / 2;
+				fseek(file,(FIX)bmfh.bfOffBits + offset,SEEK_SET);
 				fread(&byte,1,1,file);
 				if (!(u&1))
 					byte >>=4;
@@ -871,7 +871,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
 			else {
-				fseek(file,(long)bmfh.bfOffBits + (long)v*(long)width + (long)u,SEEK_SET);
+				fseek(file,(FIX)bmfh.bfOffBits + (FIX)v*(FIX)width + (FIX)u,SEEK_SET);
 				fread(&byte,1,1,file);
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}

@@ -165,7 +165,7 @@ for (INT32	i = 0; i < 3; i++) {
 		m_nCoord [i] = -0x7fff;
 	else if (m_nCoord [i] > 0x7fff)
 		m_nCoord [i] = 0x7fff;
-//	DDV_MinMaxInt (pDX, (long) m_nCoord [i], -0x7fff, 0x7fff);
+//	DDV_MinMaxInt (pDX, (FIX) m_nCoord [i], -0x7fff, 0x7fff);
 	}
 
 INT32 i;
@@ -378,7 +378,7 @@ for (nTrigger = 0; nTrigger < theMine->GameInfo ().triggers.count; nTrigger++, t
 			if (nWall < theMine->GameInfo ().walls.count) {
 				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wallP->m_nSegment, (INT32) wallP->m_nSide + 1);
 				INT32 h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (long) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
+				LBTriggers ()->SetItemData (h, (FIX) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
 				}
 			}
 		}

@@ -235,7 +235,7 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
       orthog.x = - (line1.y*line2.z - line1.z*line2.y);
       orthog.y = - (line1.z*line2.x - line1.x*line2.z);
       orthog.z = - (line1.x*line2.y - line1.y*line2.x);
-      // use dot product to determine angle A dot B = |A|*|B|*cos (angle)
+      // use dot product to determine angle A dot B = |A|*|B| * cos (angle)
       // therfore: angle = acos (A dot B / |A|*|B|)
       dot_product = line3.x*orthog.x
 		  + line3.y*orthog.y
