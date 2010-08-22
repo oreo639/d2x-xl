@@ -135,7 +135,7 @@ public:
 	CDoubleVector ()  { v.x = 0, v.y = 0, v.z = 0; }
 	CDoubleVector (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
 	CDoubleVector (tDoubleVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
-	CDoubleVector (CFixVector& _v);
+	CDoubleVector (CFixVector _v);
 	//CDoubleVector (CDoubleVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
 	void Set (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
@@ -311,7 +311,7 @@ inline const FIX CFixVector::operator^ (CFixVector& other) {
 
 // --------------------------------------------------------------------------
 
-CDoubleVector::CDoubleVector (CFixVector& _v) { 
+CDoubleVector::CDoubleVector (CFixVector _v) { 
 	v.x = DOUBLE (_v.v.x), v.y = DOUBLE (_v.v.y), v.z = DOUBLE (_v.v.z); 
 }
 
@@ -404,7 +404,7 @@ inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector&
 	return Normalize (CrossProduct (p1 - p0, p2 - p1));
 	}
 
-inline const DOUBLE Normal (const CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
+inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
 	normal = CrossProduct (p1 - p0, p2 - p1);
 	DOUBLE m = normal.Mag ();
 	if (m > 0.0)

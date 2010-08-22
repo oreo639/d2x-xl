@@ -542,7 +542,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	INT16				nVertex; 
 	INT16				i; 
 	CFixVector		center, opp_center, orthog; 
-	CVertex*			vert;
+	CVertex*			vertP;
 	CFixVector		newCenter; 
 
 	currSeg = Segments (Current ()->nSegment); 
@@ -570,14 +570,12 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 			// point 0
-			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]];
-			vert = Vertices (nVertex);
-			a = orthog + *vert; 
+			vertP = Vertices (currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]]);
+			a = orthog + *vertP; 
 
 			// point 1
-			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]; 
-			vert = Vertices (nVertex);
-			b = orthog + *vert; 
+			vertP = Vertices (currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]);
+			b = orthog + *vertP; 
 
 			// center
 			c = Average (a + b);
@@ -587,7 +585,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			length = d.Mag (); 
 
 			// factor to mul
-			double factor = (length > 0) ? 10.0 * F1_0 /length : 1.0; 
+			double factor = (length > 0) ? 10.0 * F1_0 / length : 1.0; 
 
 			// set point 0
 			A [CURRENT_POINT(0)] = c + (d * factor); 
