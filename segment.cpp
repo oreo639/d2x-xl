@@ -569,8 +569,6 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			newCenter = center + orthog; 
 
 			// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
-			double factor; 
-
 			// point 0
 			nVertex = currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]];
 			vert = Vertices (nVertex);
@@ -582,15 +580,14 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			b = orthog + *vert; 
 
 			// center
-			c = a + b;
-			c /= 2; 
+			c = Average (a + b);
 
 			// vector from center to point0 and its length
 			d = a - c; 
 			length = d.Mag (); 
 
 			// factor to mul
-			factor = (length > 0) ? 10.0 * F1_0 /length : 1.0; 
+			double factor = (length > 0) ? 10.0 * F1_0 /length : 1.0; 
 
 			// set point 0
 			A [CURRENT_POINT(0)] = c + (d * factor); 

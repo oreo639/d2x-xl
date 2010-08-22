@@ -52,7 +52,7 @@ if (radius > (F1_0 / 10)) {
 	}
 else {
 	CFixVector direction;
-	direction = CalcSideNormal(Current ()->nSegment,Current ()->nSide);
+	direction = CalcSideNormal (Current ()->nSegment, Current ()->nSide);
 	v = CDoubleVector (direction) / (double) F1_0;
 	}
 
@@ -696,27 +696,14 @@ switch (m_selectMode) {
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
 		//       |bx by bz|
-		CDoubleVector	a, b, c;
-		CFixVector		v;
-		double			length;
-		INT16				nVertex1,nVertex2;
-
-		nVertex1 = segP->verts [side_vert [nSide][0]];
-		nVertex2 = segP->verts [side_vert [nSide][1]];
-		CDoubleVector a (*Vertices (nVertex2) - );
-		nVertex3 = segP->verts [side_vert [nSide][3]];
-		CDoubleVector b = (*Vertices (nVertex3) - *Vertices (nVertex1));
-		length = Normal (c,
-							  CDoubleVector (*Vertices (segP->verts [side_vert [nSide][0]])),
-							  CDoubleVector (*Vertices (segP->verts [side_vert [nSide][1]])),
-							  CDoubleVector (*Vertices (segP->verts [side_vert [nSide][3]])));
+		n = CalcSideNormal ();
 		// normalize the vector
 		// set sign (since vert numbers for most sides don't follow right-handed convention)
 		if (nSide!=1 && nSide!=5) {
-			c = -c;
+			n = -n;
 			}
 		// set opposite center
-		opp_center = center + CFixVector (c * F1_0);
+		opp_center = center + CFixVector (n * F1_0);
 		/* rotate points around a line */
 		for (i = 0; i < 4; i++)
 			RotateVertex(Vertices (segP->verts [side_vert [nSide][i]]), &center,&opp_center,angle);

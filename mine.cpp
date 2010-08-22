@@ -380,8 +380,13 @@ GameInfo ().lightDeltaValues.Reset ();
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CFixVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
+CFixVector CMine::CalcSideNormal (INT16 nSegment = -1, INT16 nSide = -1)
 {
+if (nSegment < 0)
+	nSegment = Current ()->nSegment;
+if (nSide < 0)
+	nSegment = Current ()->nSide;
+
 	INT16*			sideIndexP = Segments (nSegment)->verts;
 	UINT8*			sideVertP = &side_vert [nSide][0];
 	CDoubleVector	v;
