@@ -1163,8 +1163,10 @@ if (bPartial) {
 			side [i].y = m_viewPoints [segP->verts [side_vert [nSide] [i]]].y; 
 			}
 		CFixVector a,b;
-		a = side [1] - side [0];
-		b = side [3] - side [0];
+		a.v.x = side [1].x - side [0].x;
+		a.v.y = side [1].y - side [0].y;
+		b.v.x = side [3].x - side [0].x;
+		b.v.y = side [3].y - side [0].y;
 		if (a.v.x * b.v.y < a.v.y * b.v.x)
 			m_pDC->SelectObject((HPEN)GetStockObject(WHITE_PEN));
 		else
@@ -1439,11 +1441,11 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 				APOINT& p3 = m_viewPoints [segP->verts [side_vert [nSide] [3]]];
 
 				CFixVector a,b;
-				a.x = p1.x - p0.x;
-				a.y = p1.y - p0.y;
-				b.x = p3.x - p0.x;
-				b.y = p3.y - p0.y;
-				if (a.x*b.y > a.y*b.x) {
+				a.v.x = p1.x - p0.x;
+				a.v.y = p1.y - p0.y;
+				b.v.x = p3.x - p0.x;
+				b.v.y = p3.y - p0.y;
+				if (a.v.x * b.v.y > a.v.y * b.v.x) {
 					INT16 texture1 = segP->sides [nSide].nBaseTex;
 					INT16 texture2 = segP->sides [nSide].nOvlTex;
 					if (!DefineTexture (texture1, texture2, &tx, 0, 0)) {
@@ -1756,8 +1758,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 
 			// direction toward center of line 0 from center
 			UINT8 *svp = &side_vert [walls [i].m_nSide][0];
-			vector = vertices [segP->verts [svp [0]]] + vertices [segP->verts [svp [1]]];
-			vector /= 2;
+			vector = Average (vertices [segP->verts [svp [0]]], vertices [segP->verts [svp [1]]]);
 			vector -= center;
 			vector.Normalize ();
 
@@ -1947,12 +1948,8 @@ for (i = 0; i < n_splines; i++, segP--)
 
 void TransformModelPoint (CFixVector& dest, APOINT &src, CFixMatrix &orient, CFixVector offs)
 {
-dest.x = (orient.rVec.x * (FIX)src.x + orient.uVec.x * (FIX)src.y + orient.fVec.x * (FIX)src.z);
-dest.y = (orient.rVec.y * (FIX)src.x +	orient.uVec.y * (FIX)src.y + orient.fVec.y * (FIX)src.z);
-dest.z = (orient.rVec.z * (FIX)src.x + orient.uVec.z * (FIX)src.y + orient.fVec.z * (FIX)src.z);
-dest.x += offs.x;
-dest.y += offs.y;
-dest.z += offs.z;
+dest = orient * src;
+dest += offs;
 }
 
 
@@ -1985,15 +1982,9 @@ else {
 	objP = &temp_obj;
 	objP->type = -1;
 	// theMine->secret_orient = Objects () [0]->orient;
-	objP->orient.rVec.x = -theMine->SecretOrient ().rVec.x;
-	objP->orient.rVec.y = -theMine->SecretOrient ().rVec.y;
-	objP->orient.rVec.z = -theMine->SecretOrient ().rVec.z;
-	objP->orient.uVec.x =  theMine->SecretOrient ().fVec.x;
-	objP->orient.uVec.y =  theMine->SecretOrient ().fVec.y;
-	objP->orient.uVec.z =  theMine->SecretOrient ().fVec.z;
-	objP->orient.fVec.x =  theMine->SecretOrient ().uVec.x;
-	objP->orient.fVec.y =  theMine->SecretOrient ().uVec.y;
-	objP->orient.fVec.z =  theMine->SecretOrient ().uVec.z;
+	objP->orient.rVec = -theMine->SecretOrient ().rVec;
+	objP->orient.uVec =  theMine->SecretOrient ().fVec;
+	objP->orient.fVec =  theMine->SecretOrient ().uVec;
 	// objP->orient =  theMine->secret_orient;
 	UINT16 nSegment = (UINT16)theMine->SecretCubeNum ();
 	if (nSegment >= theMine->SegCount ())

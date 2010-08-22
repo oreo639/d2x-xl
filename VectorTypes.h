@@ -134,6 +134,7 @@ inline const CFixVector operator/ (FIX n) const;
 inline const FIX operator^ (const CFixVector& other) const;
 
 inline const FIX Mag (void);
+inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
 };
 
 // --------------------------------------------------------------------------
