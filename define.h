@@ -47,8 +47,6 @@ inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
 
 inline double Round (double value, double round = 1.0) { return (value >= 0) ? value + round / 2.0 : value - round / 2.0; }
 
-inline Radians (double a) { return a * (PI / 180.0); }
-
 //	-----------------------------------------------------------------------------------------------------------
 
 #define X2D(_f)	((double) _f / 65536.0)
@@ -207,6 +205,8 @@ inline Radians (double a) { return a * (PI / 180.0); }
 #define PI	3.141592653589793240
 #define TWOPI (2*PI)
 #define RAD2DEG (180/PI)
+
+inline double Radians (double a) { return a * (PI / 180.0); }
 
 // macro modes 
 #define MACRO_OFF      0

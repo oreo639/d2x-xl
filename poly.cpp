@@ -194,7 +194,7 @@ for (INT32 i = start; i < end; i++) {
 	pt += objP->pos;
 
 	// now that points are relative to set screen xy points (poly_xy)
-	m_matrix.Project (&pt, poly_xy + i);
+	m_view.Project (&pt, poly_xy + i);
   }
 }
 
@@ -210,7 +210,7 @@ void CMineView::DrawPoly(POLY *p)
 {
   INT32 i,j;
 
-if (m_matrix.CheckNormal (gpObject, &p->offset, &p->normal)) {
+if (m_view.CheckNormal (gpObject, &p->offset, &p->normal)) {
 	POINT aPoints[MAX_POLY_POINTS];
 	for (i = 0; i < p->n_verts; i++) {
 		j = p->verts[i];
@@ -314,7 +314,7 @@ void CMineView::InterpModelData(UINT8 *p)
 				assert(W(p+2)==0);
 				assert(W(p+28)>0);
 				assert(W(p+30)>0);
-				if ( m_matrix.CheckNormal(gpObject, VP(p+4),VP(p+16)) ) {
+				if ( m_view.CheckNormal(gpObject, VP(p+4),VP(p+16)) ) {
 				  InterpModelData(p + W(p+28));
 				  InterpModelData(p + W(p+30));
 				} else {
