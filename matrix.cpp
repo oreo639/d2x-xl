@@ -284,17 +284,12 @@ void CViewMatrix::Set (
 	double xSize, double ySize, double zSize,
 	double xSpin, double ySpin, double zSpin) 
 {
-
-	double divisor;
-	
-	/* calculate matrix values for spin z then y then x */
-	
-m_move.Set (xMove, yMove, zMove);
+m_move [0].Set (xMove, yMove, zMove);
 
 CDoubleVector sinSpin (sin (xSpin), sin (ySpin), sin (zSpin));
 CDoubleVector cosSpin (cos (xSpin), cos (ySpin), cos (zSpin));
 
-m_mat.Set (xSize * cosSpin.v.z * cosSpin.v.y, 
+m_mat [0].Set (xSize * cosSpin.v.z * cosSpin.v.y, 
 			  ySize * sinSpin.v.z * cosSpin.v.y, 
 			  -zSize * sinSpin.v.y,
 			  -xSize * sinSpin.v.z * cosSpin.v.x + xSize * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
@@ -303,8 +298,8 @@ m_mat.Set (xSize * cosSpin.v.z * cosSpin.v.y,
 			  xSize * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - xSize * sinSpin.v.z * sinSpin.v.x,
 			  ySize * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - ySize * cosSpin.v.z * sinSpin.v.x,
 			  zSize * cosSpin.v.y * cosSpin.v.x);
-m_invMat = m_mat.Inverse ();
-m_invMove = m_invMat * m_move;
+m_invMat [0] = m_mat [0].Inverse ();
+m_invMove [0] = m_invMat [0] * m_move [0];
 }
 
 //--------------------------------------------------------------------------
@@ -331,8 +326,10 @@ m_angles [i] += a;
 
 void CViewMatrix::Push (void)
 {
-m_matSave = m_mat;
-m_invMatSave = m_invMatat;
+m_mat [1] = m_mat [0];
+m_invMat [1] = m_invMat [0];
+m_move [1] = m_move [0];
+m_invMove [1] = m_invMove [0];
 memcpy (m_angleSave, m_angleSave, sizeof (m_angleSave));
 m_scaleSave = m_scale;
 }
@@ -341,8 +338,10 @@ m_scaleSave = m_scale;
 
 void CViewMatrix::Pop (void)
 {
-m_mat = m_matSave;
-m_invMat = m_invMatSave;
+m_mat [0] = m_mat [1];
+m_invMat [0] = m_invMat [1];
+m_move [0] = m_move [1];
+m_invMove [0] = m_invMove [1];
 memcpy (m_angleSave, m_angleSave, sizeof (m_angleSave));
 m_scale = m_scaleSave;
 }
@@ -359,7 +358,7 @@ Rotate ('Z', -m_angleSave [2]);
 Set (0,0,0,1,1,1,0,0,0);
 #endif
 Scale (m_scale);
-Calculate (Msave [1][0], Msave [2][0], Msave [3][0]);
+Calculate (m_move [1].v.x, m_move [1].v.y, m_move [1].v.z);
 }
 
 //--------------------------------------------------------------------------
@@ -369,7 +368,7 @@ void CViewMatrix::Rotate (char axis, double angle)
 if (angle) {
 	double cosa = (double) cos (angle);
 	double sina = (double) sin (angle);
-	CDoubleMatrix m;
+	CDoubleMatrix m, r;
 	switch(axis) {
 		default:
 		case 'X':
@@ -385,7 +384,8 @@ if (angle) {
 			RotateAngle (2, angle);
 			break;
 		}
-	Multiply (IM,S); // rotate relative to screen
+	r = m_invMat [0];
+	m_invMat [0] = r * m;
 	}
 }
 
@@ -395,8 +395,9 @@ if (angle) {
 
 void CViewMatrix::Scale (double scale) 
 {
-CDoubleMatrix m (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, scale);
-Multiply (IM,S);
+CDoubleMatrix s (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, scale);
+CDoubleMatrix r = m_invMat [0];
+m_invMat [0] = r * s;
 m_scale *= scale;
 }
 
@@ -404,32 +405,32 @@ m_scale *= scale;
 // Multiply()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Multiply(double A[4][4], double B[4][4]) 
-{
-	double T[4][4];
-	
-	T[1][1] = A[1][1]*B[1][1]+A[1][2]*B[2][1]+A[1][3]*B[3][1];
-	T[2][1] = A[2][1]*B[1][1]+A[2][2]*B[2][1]+A[2][3]*B[3][1];
-	T[3][1] = A[3][1]*B[1][1]+A[3][2]*B[2][1]+A[3][3]*B[3][1];
-	
-	T[1][2] = A[1][1]*B[1][2]+A[1][2]*B[2][2]+A[1][3]*B[3][2];
-	T[2][2] = A[2][1]*B[1][2]+A[2][2]*B[2][2]+A[2][3]*B[3][2];
-	T[3][2] = A[3][1]*B[1][2]+A[3][2]*B[2][2]+A[3][3]*B[3][2];
-	
-	T[1][3] = A[1][1]*B[1][3]+A[1][2]*B[2][3]+A[1][3]*B[3][3];
-	T[2][3] = A[2][1]*B[1][3]+A[2][2]*B[2][3]+A[2][3]*B[3][3];
-	T[3][3] = A[3][1]*B[1][3]+A[3][2]*B[2][3]+A[3][3]*B[3][3];
-	
-	A[1][1] = T[1][1];
-	A[1][2] = T[1][2];
-	A[1][3] = T[1][3];
-	A[2][1] = T[2][1];
-	A[2][2] = T[2][2];
-	A[2][3] = T[2][3];
-	A[3][1] = T[3][1];
-	A[3][2] = T[3][2];
-	A[3][3] = T[3][3];
-}
+//void CViewMatrix::Multiply(double A[4][4], double B[4][4]) 
+//{
+//	double T[4][4];
+//	
+//	T[1][1] = A[1][1]*B[1][1]+A[1][2]*B[2][1]+A[1][3]*B[3][1];
+//	T[2][1] = A[2][1]*B[1][1]+A[2][2]*B[2][1]+A[2][3]*B[3][1];
+//	T[3][1] = A[3][1]*B[1][1]+A[3][2]*B[2][1]+A[3][3]*B[3][1];
+//	
+//	T[1][2] = A[1][1]*B[1][2]+A[1][2]*B[2][2]+A[1][3]*B[3][2];
+//	T[2][2] = A[2][1]*B[1][2]+A[2][2]*B[2][2]+A[2][3]*B[3][2];
+//	T[3][2] = A[3][1]*B[1][2]+A[3][2]*B[2][2]+A[3][3]*B[3][2];
+//	
+//	T[1][3] = A[1][1]*B[1][3]+A[1][2]*B[2][3]+A[1][3]*B[3][3];
+//	T[2][3] = A[2][1]*B[1][3]+A[2][2]*B[2][3]+A[2][3]*B[3][3];
+//	T[3][3] = A[3][1]*B[1][3]+A[3][2]*B[2][3]+A[3][3]*B[3][3];
+//	
+//	A[1][1] = T[1][1];
+//	A[1][2] = T[1][2];
+//	A[1][3] = T[1][3];
+//	A[2][1] = T[2][1];
+//	A[2][2] = T[2][2];
+//	A[2][3] = T[2][3];
+//	A[3][1] = T[3][1];
+//	A[3][2] = T[3][2];
+//	A[3][3] = T[3][3];
+//}
 
 //--------------------------------------------------------------------------
 // Calculate()
@@ -437,8 +438,8 @@ void CViewMatrix::Multiply(double A[4][4], double B[4][4])
 
 void CViewMatrix::Calculate (double xMove, double yMove, double zMove) 
 {
-m_mat = m_invMat.Inverse ();
-m_move.Set (xMove, yMove, zMove);
+m_mat [0] = m_invMat [0].Inverse ();
+m_move [0].Set (xMove, yMove, zMove);
 }
 
 //--------------------------------------------------------------------------
@@ -447,8 +448,8 @@ m_move.Set (xMove, yMove, zMove);
 
 void CViewMatrix::CalculateInverse (double xMove, double yMove, double zMove) 
 {
-m_invMat = m_mat.Inverse ();
-m_invMove = m_invMat * m_move;
+m_invMat [0] = m_mat [0].Inverse ();
+m_invMove [0] = m_invMat [0] * m_move [0];
 }
 
 //--------------------------------------------------------------------------
@@ -457,16 +458,16 @@ m_invMove = m_invMat * m_move;
 
 void CViewMatrix::SetPoint (CFixVector* vertex, APOINT *apoint) 
 {
-	CDoubleVector	v (vertex), r;
+	CDoubleVector	v (*vertex), r;
 
 v += m_move;
-r = m_mat * v;
+r = m_mat [0] * v;
 double scale = 5.0;
 if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
 	scale *= m_depthPerception / (r.v.z + m_depthPerception);
 r *= CDoubleVector (scale, scale, 1.0);
-apoint->x = (INT16) ((FIX) (r.v.x + _viewWidth) % 32767);
-apoint->y = (INT16) ((FIX) (_viewHeight - r.v.y) % 32767);
+apoint->x = (INT16) ((FIX) (r.v.x + m_viewWidth) % 32767);
+apoint->y = (INT16) ((FIX) (m_viewHeight - r.v.y) % 32767);
 apoint->z = (INT16) r.v.z;
 }
 
@@ -479,7 +480,7 @@ void CViewMatrix::UnsetPoint (CFixVector* vertex, APOINT *apoint)
 CDoubleVector v (double (apoint->x - x_center), double (y_center - apoint->y), double (apoint->z));
 double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
 v *= CDoubleVector (scale, scale, 1.0);
-CDoubleVector r = m_invMat * v;
+CDoubleVector r = m_invMat [0] * v;
 r -= m_move;
 *vertex = r;
 }
@@ -494,7 +495,7 @@ CFixVector _b = objP->orient * *b;
 _a += objP->pos;
 _a += m_move;
 _b += _a;
-return Dot (fVec, _a) > Dot (fVec, _b);
+return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
 }
 
 // -----------------------------------------------------------------------------

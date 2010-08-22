@@ -8,9 +8,10 @@
 class CViewMatrix
 {
 public:
-	CDoubleMatrix	m_mat, m_matSave;
-	CDoubleMatrix	m_invMat, m_invMatSave;
-	CDoubleVector	m_move, m_invMove;
+	CDoubleMatrix	m_mat [2];
+	CDoubleMatrix	m_invMat [2];
+	CDoubleVector	m_move [2];
+	CDoubleVector	m_invMove [2];
 
 private:
 	double m_depthPerception;
