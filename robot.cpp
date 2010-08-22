@@ -167,17 +167,17 @@ else if (type == EXTENDED_HAM)  {
       for (j = 0; j < pm.n_models; j++) {
 	fprintf(file,"submodel_ptrs[%d]    = %#08lx\n",j,pm.submodel_ptrs[j]);
 	fprintf(file,"submodel_offsets[%d] = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_offsets[j].x,pm.submodel_offsets[j].y,pm.submodel_offsets[j].z);
+		pm.submodel_offsets[j].v.x,pm.submodel_offsets[j].v.y,pm.submodel_offsets[j].v.z);
 	fprintf(file,"submodel_norms[%d]   = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_norms[j].x,pm.submodel_norms[j].y,pm.submodel_norms[j].z);
+		pm.submodel_norms[j].v.x,pm.submodel_norms[j].v.y,pm.submodel_norms[j].v.z);
 	fprintf(file,"submodel_pnts[%d]    = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_pnts[j].x,pm.submodel_pnts[j].y,pm.submodel_pnts[j].z);
+		pm.submodel_pnts[j].v.x,pm.submodel_pnts[j].v.y,pm.submodel_pnts[j].v.z);
 	fprintf(file,"submodel_rads[%d]    = %#08lx\n",j,pm.submodel_rads[j]);
 	fprintf(file,"submodel_parents[%d] = %d\n",j,pm.submodel_parents[j]);
 	fprintf(file,"submodel_mins[%d]    = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_mins[j].x,pm.submodel_mins[j].y,pm.submodel_mins[j].z);
+		pm.submodel_mins[j].v.x,pm.submodel_mins[j].v.y,pm.submodel_mins[j].v.z);
 	fprintf(file,"submodel_maxs[%d]    = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_maxs[j].x,pm.submodel_maxs[j].y,pm.submodel_maxs[j].z);
+		pm.submodel_maxs[j].v.x,pm.submodel_maxs[j].v.y,pm.submodel_maxs[j].v.z);
       }
       fprintf(file,"mins            = %#08lx %#08lx %#08lx\n",pm.mins.x,pm.mins.y,pm.mins.z);
       fprintf(file,"maxs            = %#08lx %#08lx %#08lx\n",pm.maxs.x,pm.maxs.y,pm.maxs.z);

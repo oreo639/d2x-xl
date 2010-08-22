@@ -22,61 +22,47 @@
 
 bool CMine::EditGeoFwd (void)
 {
-  double x,y,z;
-  double radius;
-  CFixVector center,opp_center;
-  INT32 i;
+  double				radius;
+  CFixVector		center, opp_center;
+  CDoubleVector	v;
+  INT32				i;
 /* calculate center of current side */
- center.x = center.y = center.z = 0;
+
  for (i = 0; i < 4; i++) {
 	 INT32 nVertex = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
-   center.x += Vertices (nVertex)->x;
-   center.y += Vertices (nVertex)->y;
-   center.z += Vertices (nVertex)->z;
+   center += *Vertices (nVertex);
  }
-center.x /= 4;
-center.y /= 4;
-center.z /= 4;
+center /= FIX (4);
 
 // calculate center of opposite of current side
 opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
-   opp_center.x += Vertices (nVertex)->x;
-   opp_center.y += Vertices (nVertex)->y;
-   opp_center.z += Vertices (nVertex)->z;
+   opp_center += *Vertices (nVertex);
 	}
-opp_center.x /= 4;
-opp_center.y /= 4;
-opp_center.z /= 4;
+opp_center /= FIX (4);
 
 // normalize vector
- x = center.x - opp_center.x;
- y = center.y - opp_center.y;
- z = center.z - opp_center.z;
+v = CDoubleVector (center - opp_center);
 
 // normalize direction
- radius = sqrt(x*x + y*y + z*z);
+radius = v.Mag ();
 
-if (radius > (F1_0/10)) {
-	x /= radius;
-	y /= radius;
-	z /= radius;
+if (radius > (F1_0 / 10)) {
+	v /= radius;
 	}
 else {
 	CFixVector direction;
 	CalcSideNormal(direction,Current ()->nSegment,Current ()->nSide);
-	x = (double)direction.x/(double)F1_0;
-	y = (double)direction.y/(double)F1_0;
-	z = (double)direction.z/(double)F1_0;
+	v = CDoubleVector (direction) / (double) F1_0;
 	}
 
 // move on x, y, and z
  theApp.SetModified (TRUE);
  theApp.LockUndo ();
- MoveOn('X', (INT32) (x*move_rate));
- MoveOn('Y', (INT32) (y*move_rate));
- MoveOn('Z', (INT32) (z*move_rate));
+ MoveOn('X', (INT32) (v.v.x * move_rate));
+ MoveOn('Y', (INT32) (v.v.y * move_rate));
+ MoveOn('Z', (INT32) (v.v.z * move_rate));
  theApp.UnlockUndo ();
  return true;
 }
@@ -194,7 +180,7 @@ else {
 		} 
 	else {
 		CFixVector direction;
-		CalcSideNormal(direction,Current ()->nSegment,Current ()->nSide);
+		direction = CalcSideNormal(Current ()->nSegment,Current ()->nSide);
 		x = (double)direction.x/(double)F1_0;
 		y = (double)direction.y/(double)F1_0;
 		z = (double)direction.z/(double)F1_0;
@@ -314,19 +300,11 @@ switch (m_selectMode){
 			pts [3] = 3;
 			}
 		// calculate center opp side line 0
-		opp_center.x = (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]])->x +
-							 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->x) / 2;
-		opp_center.y = (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]])->y +
-							 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->y) / 2;
-		opp_center.z = (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]])->z +
-							 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->z) / 2;
+		opp_center = Average (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]]),
+									 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->x);
 		// calculate center opp side line 2
-		center.x = (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]])->x +
-						Vertices (segP->verts [opp_side_vert [nSide][pts [3]]])->x) / 2;
-		center.y = (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]])->y +
-						Vertices (segP->verts [opp_side_vert [nSide][pts [3]]])->y) / 2;
-		center.z = (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]])->z +
-						Vertices (segP->verts [opp_side_vert [nSide][pts [3]]])->z) / 2;
+		center = Average (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]]),
+								Vertices (segP->verts [opp_side_vert [nSide][pts [3]]]));
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
 			RotateVertex (Vertices (segP->verts [side_vert [nSide][i]]),

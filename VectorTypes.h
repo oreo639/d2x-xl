@@ -414,6 +414,12 @@ inline FIX Distance (const CFixVector& p0, const CFixVector& p1) {
 	return FIX (Round (CDoubleVector (v).Mag ()));
 	}
 
+inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
+	CFixVector v = p0 + p1;
+	v /= FIX (2);
+	return v;
+	}
+
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------

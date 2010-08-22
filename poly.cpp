@@ -87,9 +87,7 @@ FIX MultiplyFix(FIX a, FIX b) {
 
 INT32 CMineView::SetupModel(CGameObject *objP) 
 {
-  gOffset.x = 0;
-  gOffset.y = 0;
-  gOffset.z = 0;
+  gOffset.x.Clear ();
   gModel.n_points = 0;
   glow_num = -1;
   gpObject = objP;
