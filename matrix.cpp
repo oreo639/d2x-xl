@@ -180,6 +180,7 @@ double sbch = sinb * cosh;
 rVec.Set (cbch + sinp * sbsh, sinb * cosp, sinp * sbch - cbsh);
 uVec.Set (sinp * cbsh - sbch, cosb * cosp, sbsh + sinp * cbch);
 fVec.Set (sinh * cosp, cosh * cosp, -sinp);
+return *this;
 }
 
 // -----------------------------------------------------------------------------
@@ -460,7 +461,7 @@ void CViewMatrix::SetPoint (CFixVector* vertex, APOINT *apoint)
 {
 	CDoubleVector	v (*vertex), r;
 
-v += m_move;
+v += m_move [0];
 r = m_mat [0] * v;
 double scale = 5.0;
 if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
@@ -481,7 +482,7 @@ CDoubleVector v (double (apoint->x - x_center), double (y_center - apoint->y), d
 double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
 v *= CDoubleVector (scale, scale, 1.0);
 CDoubleVector r = m_invMat [0] * v;
-r -= m_move;
+r -= m_move [0];
 *vertex = r;
 }
 
@@ -493,9 +494,9 @@ INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b)
 CFixVector _a = objP->orient * *a;
 CFixVector _b = objP->orient * *b;
 _a += objP->pos;
-_a += m_move;
+_a += m_move [0];
 _b += _a;
-return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
+return Dot (m_mat [0].fVec, CDoubleVector (_a)) > Dot (m_mat [0].fVec, CDoubleVector (_b));
 }
 
 // -----------------------------------------------------------------------------

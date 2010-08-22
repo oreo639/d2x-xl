@@ -126,8 +126,8 @@ inline const CFixVector operator>> (const FIX n);
 inline const CFixVector operator<< (const FIX n);
 inline const CFixVector& operator>>= (const FIX n);
 inline const CFixVector& operator<<= (const FIX n);
-inline const CFixVector operator* (CFixVector& other) const;
-inline const CFixVector operator/ (CFixVector& other) const;
+inline const CFixVector operator* (CFixVector other) const;
+inline const CFixVector operator/ (CFixVector other) const;
 inline const CFixVector operator* (FIX n) const;
 inline const CFixVector operator/ (FIX n) const;
 inline const FIX operator^ (const CFixVector& other) const;
@@ -178,11 +178,13 @@ inline const CDoubleVector& operator+= (const CDoubleVector other);
 inline const CDoubleVector& operator-= (const CDoubleVector other);
 inline const CDoubleVector& operator*= (const DOUBLE n);
 inline const CDoubleVector& operator/= (const DOUBLE n);
+inline const CDoubleVector& operator*= (const CDoubleVector other);
+inline const CDoubleVector& operator/= (const CDoubleVector other);
 inline const CDoubleVector operator+ (const CDoubleVector& other) const;
 inline const CDoubleVector operator- (const CDoubleVector& other) const;
 inline const CDoubleVector operator- (void) const;
-inline const CDoubleVector operator* (CDoubleVector& other);
-inline const CDoubleVector operator/ (CDoubleVector& other);
+inline const CDoubleVector operator* (CDoubleVector other) const;
+inline const CDoubleVector operator/ (CDoubleVector other) const;
 inline const CDoubleVector operator* (DOUBLE n);
 inline const CDoubleVector operator/ (DOUBLE n);
 inline const DOUBLE operator^ (const CDoubleVector& other) const;
@@ -291,11 +293,11 @@ inline const CFixVector& CFixVector::operator<<= (const FIX n) {
 	return *this;
 	}
 
-inline const CFixVector CFixVector::operator* (CFixVector& other) const {
+inline const CFixVector CFixVector::operator* (CFixVector other) const {
 	return CFixVector (FixMul (v.x, other.v.x), FixMul (v.y, other.v.y), FixMul (v.z, other.v.z));
 	}
 
-inline const CFixVector CFixVector::operator/ (CFixVector& other) const {
+inline const CFixVector CFixVector::operator/ (CFixVector other) const {
 	return CFixVector (FixDiv (v.x, other.v.x), FixDiv (v.y, other.v.y), FixDiv (v.z, other.v.z));
 	}
 
@@ -361,6 +363,16 @@ inline const CDoubleVector& CDoubleVector::operator/= (const DOUBLE n) {
 	return *this;
 	}
 
+inline const CDoubleVector& CDoubleVector::operator*= (const CDoubleVector other) {
+	v.x *= other.v.x, v.y *= other.v.y, v.z *= other.v.z;
+	return *this;
+	}
+
+inline const CDoubleVector& CDoubleVector::operator/= (const CDoubleVector other) {
+	v.x /= other.v.x, v.y /= other.v.y, v.z /= other.v.z;
+	return *this;
+	}
+
 inline const CDoubleVector CDoubleVector::operator/ (const DOUBLE n) {
 	return CDoubleVector (v.x / n, v.y / n, v.z / n);
 	}
@@ -369,11 +381,11 @@ inline const CDoubleVector CDoubleVector::operator* (const DOUBLE n) {
 	return CDoubleVector (v.x * n, v.y * n, v.z * n);
 	}
 
-inline const CDoubleVector CDoubleVector::operator* (CDoubleVector& other) {
+inline const CDoubleVector CDoubleVector::operator* (CDoubleVector other) const {
 	return CDoubleVector (v.x * other.v.x, v.y * other.v.y, v.z * other.v.z);
 	}
 
-inline const CDoubleVector CDoubleVector::operator/ (CDoubleVector& other) {
+inline const CDoubleVector CDoubleVector::operator/ (CDoubleVector other) const {
 	return CDoubleVector (v.x / other.v.x, v.y / other.v.y, v.z / other.v.z);
 	}
 
