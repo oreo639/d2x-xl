@@ -454,10 +454,10 @@ m_invMove [0] = m_invMat [0] * m_move [0];
 }
 
 //--------------------------------------------------------------------------
-// SetPoint()
+// Project()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::SetPoint (CFixVector* vertex, APOINT *apoint) 
+void CViewMatrix::Project (CFixVector* vertex, APOINT *apoint) 
 {
 	CDoubleVector	v (*vertex), r;
 

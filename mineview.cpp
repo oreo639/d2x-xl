@@ -190,8 +190,8 @@ m_sizex = 1.0f;
 m_sizey = 1.0f;
 m_sizez = 1.0f;
 
-// calculate transformation m_matrix based on move, size, and spin
-m_matrix.Set(m_movex, m_movey, m_movez,
+// calculate transformation m_view based on move, size, and spin
+m_view.Set(m_movex, m_movey, m_movez,
 				 m_sizex, m_sizey, m_sizez,
 				 m_spinx, m_spiny, m_spinz);
 m_lightTimer =
@@ -333,17 +333,16 @@ if (m_nMineCenter == 2) {
 
 	m_pDC->SelectObject (m_penCyan);
 	INT32 i, j;
-	for (i=-60;i<=60;i+=30) {
-		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0 * cos ((double)i*(M_PI/180.0)));
-			circle.z = (FIX)(5*F1_0 * sin ((double)i*(M_PI/180.0)));
-			circle.x = (FIX)(scale * cos ((double)j*(M_PI/180.0)) );
-			circle.y = (FIX)(scale * sin ((double)j*(M_PI/180.0)) );
-			circle.x -= (FIX)(m_matrix.M[1][0] * F1_0);
-			circle.y -= (FIX)(m_matrix.M[2][0] * F1_0);
-			circle.z -= (FIX)(m_matrix.M[3][0] * F1_0);
-			m_matrix.SetPoint (&circle,&pt);
-			if (j==0)
+	for (i = -60; i <= 60; i += 30) {
+		for (j = 0; j <= 360; j += 15) {
+			double scale = (FIX)(5*F1_0 * cos (Radians (i)));
+			circle.Set ((FIX)(scale * cos (Radians (j))),
+							(FIX)(scale * sin (Radians (j))),
+							(FIX)(5*F1_0 * sin (Radians (i)))
+							);
+			circle -= CFixVector (m_view.m_move [0]);
+			m_view.Project (&circle, &pt);
+			if (j == 0)
 				m_pDC->MoveTo (pt.x,pt.y);
 			else if (pt.z <= 0)
 				m_pDC->LineTo (pt.x,pt.y);
@@ -354,14 +353,13 @@ if (m_nMineCenter == 2) {
 	m_pDC->SelectObject (m_penGreen);
 	for (i=-60;i<=60;i+=30) {
 		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0 * cos ((double)i*(M_PI/180.0)));
-			circle.y = (FIX)(5*F1_0 * sin ((double)i*(M_PI/180.0)));
-			circle.z = (FIX)(scale * cos ((double)j*(M_PI/180.0)) );
-			circle.x = (FIX)(scale * sin ((double)j*(M_PI/180.0)) );
-			circle.x -= (FIX)(m_matrix.M[1][0] * F1_0);
-			circle.y -= (FIX)(m_matrix.M[2][0] * F1_0);
-			circle.z -= (FIX)(m_matrix.M[3][0] * F1_0);
-			m_matrix.SetPoint (&circle,&pt);
+			double scale = (FIX)(5*F1_0 * cos (Radians (i)));
+			circle.Set ((FIX)(scale * cos (Radians (j))),
+							(FIX)(5*F1_0 * sin (Radians (i))),
+							(FIX)(scale * sin (Radians (j)))
+							);
+			circle -= CFixVector (m_view.m_move [0]);
+			m_view.Project (&circle,&pt);
 			if (j==0)
 				m_pDC->MoveTo (pt.x,pt.y);
 			else if (pt.z <= 0)
@@ -371,16 +369,15 @@ if (m_nMineCenter == 2) {
 			}
 		}
 	m_pDC->SelectObject (m_penGray);
-	for (i=-60;i<=60;i+=30) {
-		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0 * cos ((double)i*(M_PI/180.0)));
-			circle.x    = (FIX)(5*F1_0 * sin ((double)i*(M_PI/180.0)));
-			circle.y = (FIX)(scale * cos ((double)j*(M_PI/180.0)) );
-			circle.z = (FIX)(scale * sin ((double)j*(M_PI/180.0)) );
-			circle.x -= (FIX)(m_matrix.M[1][0] * F1_0);
-			circle.y -= (FIX)(m_matrix.M[2][0] * F1_0);
-			circle.z -= (FIX)(m_matrix.M[3][0] * F1_0);
-			m_matrix.SetPoint (&circle,&pt);
+	for (i = -60; i <= 60; i += 30) {
+		for (j = 0; j <= 360; j += 15) {
+			double scale = (FIX)(5 * F1_0 * cos (Radians (i)));
+			circle.Set ((FIX)(5*F1_0 * sin (Radians (i))),
+							(FIX)(scale * cos (Radians (j))),
+							(FIX)(scale * sin (Radians (j)))
+							);
+			circle -= CFixVector (m_view.m_move [0]);
+			m_view.Project (&circle, &pt);
 			if (j==0)
 				m_pDC->MoveTo (pt.x,pt.y);
 			else if (pt.z <= 0)
@@ -436,11 +433,11 @@ if (m_bUpdate) {
 
 		m_xRenderOffs = m_bHScroll ? GetScrollPos (SB_HORZ) - m_xScrollCenter: 0;
 		m_yRenderOffs = m_bVScroll ? GetScrollPos (SB_VERT) - m_yScrollCenter: 0;
-		// Calculate m_matrix M based on IM and "move x,y,z"
-		//m_matrix.Calculate(m_movex, m_movey, m_movez);
+		// Calculate m_view M based on IM and "move x,y,z"
+		//m_view.Calculate(m_movex, m_movey, m_movez);
 
-		// Set view m_matrix misc. information
-		//m_matrix.SetViewInfo(m_depthPerception, m_viewWidth, m_viewHeight);
+		// Set view m_view misc. information
+		//m_view.SetViewInfo(m_depthPerception, m_viewWidth, m_viewHeight);
 		SetViewPoints ();
 		ShiftViewPoints ();
 		// make a local copy the mine's selection
@@ -1745,7 +1742,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 		vector.x = center.x - orthog.x;
 		vector.y = center.y - orthog.y;
 		vector.z = center.z - orthog.z;
-		m_matrix.SetPoint(&vector,&point);
+		m_view.Project(&vector,&point);
 		for (j=0;j<4;j++) {
 			m_pDC->MoveTo(point.x,point.y);
 			m_pDC->LineTo(m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].x,
@@ -1759,11 +1756,11 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			vector.x = center.x - 3*orthog.x;
 			vector.y = center.y - 3*orthog.y;
 			vector.z = center.z - 3*orthog.z;
-			m_matrix.SetPoint(&vector,&arrowstart_point);
+			m_view.Project(&vector,&arrowstart_point);
 			vector.x = center.x + 3*orthog.x;
 			vector.y = center.y + 3*orthog.y;
 			vector.z = center.z + 3*orthog.z;
-			m_matrix.SetPoint(&vector,&arrowend_point);
+			m_view.Project(&vector,&arrowend_point);
 
 			// direction toward center of line 0 from center
 			UINT8 *svp = &side_vert [walls [i].m_nSide][0];
@@ -1793,12 +1790,12 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			fin.x = center.x + 2*orthog.x + vector.x;
 			fin.y = center.y + 2*orthog.y + vector.y;
 			fin.z = center.z + 2*orthog.z + vector.z;
-			m_matrix.SetPoint(&fin,&arrow1_point);
+			m_view.Project(&fin,&arrow1_point);
 
 			fin.x = center.x + 2*orthog.x - vector.x;
 			fin.y = center.y + 2*orthog.y - vector.y;
 			fin.z = center.z + 2*orthog.z - vector.z;
-			m_matrix.SetPoint(&fin,&arrow2_point);
+			m_view.Project(&fin,&arrow2_point);
 
 			// draw arrow
 			m_pDC->MoveTo(arrowstart_point.x,arrowstart_point.y);
@@ -1940,22 +1937,22 @@ m_pDC->SelectObject (m_penRed);
 m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 theMine->CalcSpline ();
 APOINT point;
-m_matrix.SetPoint (&points[1],&point);
+m_view.Project (&points[1],&point);
 if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
-	m_matrix.SetPoint (&points[0],&point);
+	m_view.Project (&points[0],&point);
 	if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
 		m_pDC->MoveTo (point.x,point.y);
-		m_matrix.SetPoint (&points[1],&point);
+		m_view.Project (&points[1],&point);
 		m_pDC->LineTo (point.x,point.y);
 		m_pDC->Ellipse (point.x - 4,point.y - 4,point.x+4, point.y+4);
 		}
 	}
-m_matrix.SetPoint (&points[2],&point);
+m_view.Project (&points[2],&point);
 if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
-	m_matrix.SetPoint (&points[3],&point);
+	m_view.Project (&points[3],&point);
 	if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
 		m_pDC->MoveTo (point.x,point.y);
-		m_matrix.SetPoint (&points[2],&point);
+		m_view.Project (&points[2],&point);
 		m_pDC->LineTo (point.x,point.y);
 		m_pDC->Ellipse (point.x - 4,point.y - 4,point.x+4, point.y+4);
 		}
@@ -1963,7 +1960,7 @@ if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
 m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES;
 for (h = n_splines * 4, i = 0; i < h; i++, j--)
-	m_matrix.SetPoint (theMine->Vertices (--j), m_viewPoints + j);
+	m_view.Project (theMine->Vertices (--j), m_viewPoints + j);
 CSegment *segP = theMine->Segments (MAX_SEGMENTS - 1);
 for (i = 0; i < n_splines; i++, segP--)
 	DrawCubeQuick (segP);
@@ -2085,7 +2082,7 @@ switch (clear_it) {
 //CBRK (objnum == 45);
 for (poly = 0; poly < MAX_POLY; poly++) {
 	::TransformModelPoint (pt [poly], object_shape [poly], objP->orient, objP->pos);
-	m_matrix.SetPoint (pt + poly, poly_draw + poly);
+	m_view.Project (pt + poly, poly_draw + poly);
 	}
 
 // figure out world coordinates
@@ -2131,12 +2128,12 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 	pt [2] = objP->pos;
 	pt [1].x -= objP->size;
 	pt [2].x += objP->size;
-	m_matrix.SetPoint (pt, poly_draw);
-	m_matrix.Push ();
-	m_matrix.Unrotate ();
-	m_matrix.SetPoint (pt + 1, poly_draw + 1);
-	m_matrix.SetPoint (pt + 2, poly_draw + 2);
-	m_matrix.Pop ();
+	m_view.Project (pt, poly_draw);
+	m_view.Push ();
+	m_view.Unrotate ();
+	m_view.Project (pt + 1, poly_draw + 1);
+	m_view.Project (pt + 2, poly_draw + 2);
+	m_view.Pop ();
 	d = (poly_draw [2].x - poly_draw [1].x);
 	if (d < 24)
 		d = 24;
@@ -2427,7 +2424,7 @@ for (; nSteps; nSteps--) {
 //	m_sizex *= zoom;
 //	m_sizey *= zoom;
 	m_sizez *= zoom;
-	m_matrix.Scale (1.0 / zoom);
+	m_view.Scale (1.0 / zoom);
 	}
 Refresh (false);
 }
@@ -2488,18 +2485,18 @@ if (!theMine) return;
 				maxX = LONG_MIN, maxY = LONG_MIN, maxZ = LONG_MIN;
 
 #if 0 //OGL_RENDERING
-m_matrix.Calculate (0,0,0); // let OpenGL do the translation
+m_view.Calculate (0,0,0); // let OpenGL do the translation
 #else
-m_matrix.Calculate (m_movex, m_movey, m_movez);
+m_view.Calculate (m_movex, m_movey, m_movez);
 #endif
 InitViewDimensions ();
 if (bSetViewInfo)
-	m_matrix.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
+	m_view.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = theMine->VertCount ();
 APOINT *a = m_viewPoints + i;
 CVertex* verts = theMine->Vertices (i);
 for (; i--; ) {
-	m_matrix.SetPoint (--verts, --a);
+	m_view.Project (--verts, --a);
 	x = a->x;
 	y = a->y;
 	z = a->z;
@@ -2564,7 +2561,7 @@ DelayRefresh (true);
 m_movex = 0.0;
 m_movey = 0.0;
 m_movez = 0.0;
-m_matrix.SetViewInfo (10000, m_viewWidth, m_viewHeight);
+m_view.SetViewInfo (10000, m_viewWidth, m_viewHeight);
 SetViewPoints (&rc, false);
 CRect	crc;
 GetClientRect (crc);
@@ -2574,7 +2571,7 @@ zoomY = (double) crc.Height () / (double) rc.Height ();
 zoom = (zoomX < zoomY) ? zoomX: zoomY;
 Zoom (1, zoom);
 for (;;) {
-	m_matrix.SetViewInfo (depth_perception, m_viewWidth, m_viewHeight);
+	m_view.SetViewInfo (depth_perception, m_viewWidth, m_viewHeight);
 	SetViewPoints (&rc);
 	if ((rc.Width () <= crc.Width ()) && (rc.Height () <= crc.Height ()))
 		break;
@@ -2631,7 +2628,7 @@ sprintf_s (message, sizeof (message), "ROTATE (%1.2f°)", glAngle [i]);
 INFOMSG (message);
 glRotated (glAngle [i], glRotMat [i][0], glRotMat [i][1], glRotMat [i][2]);
 #else
-m_matrix.Rotate (direction, 2 * angle); // * ((double) move_rate / 0x10000L));
+m_view.Rotate (direction, 2 * angle); // * ((double) move_rate / 0x10000L));
 a += 2 * angle;// * PI;
 if (a < -360)
 	a += 360;
@@ -2664,9 +2661,9 @@ else if (i == 2)
 else if (i == 2)
 	m_movez -= value;
 # else
-m_movex -= (double) value * m_matrix.IM [1][++i];  /* move view point */
-m_movey -= (double) value * m_matrix.IM [2][i];
-m_movez -= (double) value * m_matrix.IM [3][i];
+m_movex -= (double) value * m_view.IM [1][++i];  /* move view point */
+m_movey -= (double) value * m_view.IM [2][i];
+m_movez -= (double) value * m_view.IM [3][i];
 # endif
 #endif
 Refresh (false);
@@ -2729,7 +2726,7 @@ else factor = 1;
 m_sizex = .1f * (double)pow(1.2,factor);
 m_sizey = m_sizex;
 m_sizez = m_sizex;
-m_matrix.Set (m_movex, m_movey, m_movez,
+m_view.Set (m_movex, m_movey, m_movez,
 				  m_sizex, m_sizey, m_sizez,
 				  m_spinx, m_spiny, m_spinz);
 Refresh (false);
@@ -3193,7 +3190,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_matrix.SetPoint(&objP->pos, &pt);
+		m_view.Project(&objP->pos, &pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;
@@ -3634,7 +3631,7 @@ else {
 	apoint.x = (INT16) xPos;
 	apoint.y = (INT16) yPos;
 	apoint.z = m_viewPoints [vert1].z;
-	m_matrix.UnsetPoint(theMine->Vertices (vert1), &apoint);
+	m_view.UnsetPoint(theMine->Vertices (vert1), &apoint);
 	}
 Refresh ();
 }
@@ -4322,7 +4319,7 @@ glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #if 1
 if (glInit) {
 	glInit = false;
-	//m_matrix.Rotate ('Y', -(PI/2));
+	//m_view.Rotate ('Y', -(PI/2));
 	GLFitToView ();
 	}
 CRect rc;

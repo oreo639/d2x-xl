@@ -151,7 +151,7 @@ protected: // create from serialization only
 	double		m_spiny;
 	double		m_spinz;
 	double		m_depthPerception;
-	CViewMatrix		m_matrix;
+	CViewMatrix		m_view;
 
 	double		M[4][4];  /* 4x4 matrix used in coordinate transformation */
 	double		IM[4][4]; /* inverse matrix of M[4][4] */

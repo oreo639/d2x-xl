@@ -47,6 +47,8 @@ inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
 
 inline double Round (double value, double round = 1.0) { return (value >= 0) ? value + round / 2.0 : value - round / 2.0; }
 
+inline Radians (double a) { return a * (PI / 180.0); }
+
 //	-----------------------------------------------------------------------------------------------------------
 
 #define X2D(_f)	((double) _f / 65536.0)

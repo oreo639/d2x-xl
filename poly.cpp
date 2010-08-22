@@ -194,7 +194,7 @@ for (INT32 i = start; i < end; i++) {
 	pt += objP->pos;
 
 	// now that points are relative to set screen xy points (poly_xy)
-	m_matrix.SetPoint (&pt, poly_xy + i);
+	m_matrix.Project (&pt, poly_xy + i);
   }
 }
 
