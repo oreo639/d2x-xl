@@ -128,7 +128,7 @@ inline const CFixVector operator* (CFixVector& other) const;
 inline const CFixVector operator/ (CFixVector& other) const;
 inline const CFixVector operator* (FIX n) const;
 inline const CFixVector operator/ (FIX n) const;
-inline const DOUBLE operator^ (const CFixVector& other) const;
+inline const FIX operator^ (const CFixVector& other) const;
 };
 
 // --------------------------------------------------------------------------
@@ -256,7 +256,7 @@ inline const CFixVector& CFixVector::operator*= (const DOUBLE n) {
 	return *this;
 	}
 
-inline const CFixVector& CFixVector::operator/= (const (FIX) n) {
+inline const CFixVector& CFixVector::operator/= (const DOUBLE n) {
 	v.x = (FIX) Round ((double) v.x / n),
 	v.y = (FIX) Round ((double) v.y / n),
 	v.z = (FIX) Round ((double) v.z / n);
@@ -725,7 +725,7 @@ return m;
 
 //------------------------------------------------------------------------------
 
-inline CDoubleMatrix CDoubleMatrix::Transpose (void)
+const CDoubleMatrix CDoubleMatrix::Transpose (void)
 {
 CDoubleMatrix m;
 ::Transpose (m, *this);
