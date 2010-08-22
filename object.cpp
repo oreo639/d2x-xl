@@ -151,19 +151,11 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
   objP->movement_type = MT_PHYSICS;
   objP->render_type   = RT_POLYOBJ;
   objP->flags         = 0;
-  objP->nSegment        = Current ()->nSegment;
-  objP->pos.x         = location.x;
-  objP->pos.y         = location.y;
-  objP->pos.z         = location.z;
-  objP->orient.rVec.x = F1_0;
-  objP->orient.rVec.y = 0;
-  objP->orient.rVec.z = 0;
-  objP->orient.uVec.x = 0;
-  objP->orient.uVec.y = F1_0;
-  objP->orient.uVec.z = 0;
-  objP->orient.fVec.x = 0;
-  objP->orient.fVec.y = 0;
-  objP->orient.fVec.z = F1_0;
+  objP->nSegment      = Current ()->nSegment;
+  objP->pos				 = location;
+  objP->orient.rVec.Set (F1_0, 0, 0);
+  objP->orient.uVec.Set (0, F1_0, 0);
+  objP->orient.fVec.Set (0, 0, F1_0);
   objP->size          = PLAYER_SIZE;
   objP->shields       = DEFAULT_SHIELD;
   objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
@@ -411,17 +403,15 @@ objP->flags = 0;                                      // new: 1/27/97
 objP->nSegment = Current ()->nSegment;
 // set object position in the center of the cube for now
 CalcSegCenter (objP->pos,Current ()->nSegment);
-objP->last_pos.x = objP->pos.x;
-objP->last_pos.y = objP->pos.y;
-objP->last_pos.z = objP->pos.z;
+objP->last_pos = objP->pos;
 Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
 for (i = 0; i < GameInfo ().objects.count - 1; i++)
 	if (Objects (i)->nSegment == Current ()->nSegment)
 		count++;
-objP->pos.y += count*2*F1_0;
-objP->last_pos.y += count*2*F1_0;
+objP->pos.v.y += count * 2 * F1_0;
+objP->last_pos.v.y += count * 2 * F1_0;
 // set the id if new object is a player or a coop
 if (type == OBJ_PLAYER || type == OBJ_COOP)
 	objP->id = (INT8) id;

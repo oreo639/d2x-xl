@@ -35,6 +35,20 @@ return (FIX) ((double) n / (double) m * 65536.0);
 typedef struct tAngleVector {
 public:
 	FIXANG p, b, h;
+
+inline INT32 Read (FILE* fp) { 
+	p = read_FIXANG (fp);
+	b = read_FIXANG (fp);
+	h = read_FIXANG (fp);
+	return 1;
+	}
+
+inline void Write (FILE* fp) { 
+	write_FIXANG (p, fp);
+	write_FIXANG (b, fp);
+	write_FIXANG (h, fp);
+	}
+
 } tAngleVector;
 
 class CAngleVector {
@@ -48,18 +62,8 @@ public:
 	void Set (FIXANG p, FIXANG b, FIXANG h) { v.p = p, v.b = b, v.h = h; }
 	void Clear (void) { Set (0,0,0); }
 
-	inline INT32 Read (FILE* fp) { 
-		v.p = read_FIXANG (fp);
-		v.b = read_FIXANG (fp);
-		v.h = read_FIXANG (fp);
-		return 1;
-		}
-
-	void Write (FILE* fp) { 
-		write_FIXANG (v.p, fp);
-		write_FIXANG (v.b, fp);
-		write_FIXANG (v.h, fp);
-		}
+	inline INT32 Read (FILE* fp) { return v.Read (fp); }
+	inline void Write (FILE* fp) { v.Write (fp); }
 
 	inline const CAngleVector& operator= (CAngleVector& other) { 
 		v.p = other.v.p, v.b = other.v.b, other.v.h = other.v.h; 
@@ -78,6 +82,19 @@ public:
 struct tFixVector {
 public:
 	FIX x, y, z;
+
+inline INT32 Read (FILE* fp) { 
+	x = read_FIX (fp);
+	y = read_FIX (fp);
+	z = read_FIX (fp);
+	return 1;
+	}
+
+inline void Write (FILE* fp) { 
+	write_FIX (x, fp);
+	write_FIX (y, fp);
+	write_FIX (z, fp);
+	}
 };
 
 class CFixVector {
@@ -92,18 +109,8 @@ public:
 	void Clear (void) { Set (0,0,0); }
 
 
-inline INT32 Read (FILE* fp) { 
-	v.x = read_FIX (fp);
-	v.y = read_FIX (fp);
-	v.z = read_FIX (fp);
-	return 1;
-	}
-
-void Write (FILE* fp) { 
-	write_FIX (v.x, fp);
-	write_FIX (v.y, fp);
-	write_FIX (v.z, fp);
-	}
+inline INT32 Read (FILE* fp) { return v.Read (fp); }
+inline void Write (FILE* fp) { v.Write (fp); }
 
 inline const CFixVector& operator= (const tFixVector& other);
 inline const CFixVector& operator= (const CFixVector& other);
@@ -136,6 +143,19 @@ inline const FIX operator^ (CFixVector& other);
 struct tDoubleVector {
 public:
 	DOUBLE x, y, z;
+
+inline INT32 Read (FILE* fp) { 
+	x = read_DOUBLE (fp);
+	y = read_DOUBLE (fp);
+	z = read_DOUBLE (fp);
+	return 1;
+	}
+
+inline void Write (FILE* fp) { 
+	write_DOUBLE (x, fp);
+	write_DOUBLE (y, fp);
+	write_DOUBLE (z, fp);
+	}
 };
 
 class CDoubleVector {
@@ -150,19 +170,8 @@ public:
 	void Set (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
 
-
-inline INT32 Read (FILE* fp) { 
-	v.x = read_DOUBLE (fp);
-	v.y = read_DOUBLE (fp);
-	v.z = read_DOUBLE (fp);
-	return 1;
-	}
-
-void Write (FILE* fp) { 
-	write_DOUBLE (v.x, fp);
-	write_DOUBLE (v.y, fp);
-	write_DOUBLE (v.z, fp);
-	}
+inline INT32 Read (FILE* fp) { return v.Read (fp); }
+inline void Write (FILE* fp) { v.Write (fp); }
 
 inline const CDoubleVector& operator= (const tDoubleVector& other);
 inline const CDoubleVector& operator= (const CDoubleVector& other);
