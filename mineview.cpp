@@ -1163,11 +1163,9 @@ if (bPartial) {
 			side [i].y = m_viewPoints [segP->verts [side_vert [nSide] [i]]].y; 
 			}
 		CFixVector a,b;
-		a.x = side [1].x - side [0].x;
-		a.y = side [1].y - side [0].y;
-		b.x = side [3].x - side [0].x;
-		b.y = side [3].y - side [0].y;
-		if (a.x*b.y < a.y*b.x)
+		a = side [1] - side [0];
+		b = side [3] - side [0];
+		if (a.v.x * b.v.y < a.v.y * b.v.x)
 			m_pDC->SelectObject((HPEN)GetStockObject(WHITE_PEN));
 		else
 			m_pDC->SelectObject(m_penGray);
@@ -1460,7 +1458,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 }
 
 //--------------------------------------------------------------------------
-//                        draw_segment_points()
+//                        draw_segmentPoints()
 //--------------------------------------------------------------------------
 
 void CMineView::DrawCubePoints (CSegment *segP)
@@ -1737,72 +1735,45 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			CFixVector center,orthog,vector;
 			APOINT point;
 
-		center = theMine->CalcSideCenter (center, walls [i].m_nSegment, walls [i].m_nSide);
-		orthog = theMine->CalcSideNormal(walls [i].m_nSegment, walls [i].m_nSide);
-		vector.x = center.x - orthog.x;
-		vector.y = center.y - orthog.y;
-		vector.z = center.z - orthog.z;
-		m_view.Project(&vector,&point);
-		for (j=0;j<4;j++) {
-			m_pDC->MoveTo(point.x,point.y);
-			m_pDC->LineTo(m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].x,
+		center = theMine->CalcSideCenter (walls [i].m_nSegment, walls [i].m_nSide);
+		orthog = theMine->CalcSideNormal (walls [i].m_nSegment, walls [i].m_nSide);
+		vector = center - orthog;
+		m_view.Project (&vector,&point);
+		for (j = 0; j < 4; j++) {
+			m_pDC->MoveTo (point.x,point.y);
+			m_pDC->LineTo (m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].x,
 			m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].y);
 			}
 		if (walls [i].nTrigger != NO_TRIGGER) {
-				APOINT arrowstart_point,arrowend_point,arrow1_point,arrow2_point;
+				APOINT arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
 				CFixVector fin;
 
 			// calculate arrow points
-			vector.x = center.x - 3*orthog.x;
-			vector.y = center.y - 3*orthog.y;
-			vector.z = center.z - 3*orthog.z;
-			m_view.Project(&vector,&arrowstart_point);
-			vector.x = center.x + 3*orthog.x;
-			vector.y = center.y + 3*orthog.y;
-			vector.z = center.z + 3*orthog.z;
-			m_view.Project(&vector,&arrowend_point);
+			vector = center - (orthog * 3);
+			m_view.Project(&vector,&arrowStartPoint);
+			vector = center + (orthog * 3);
+			m_view.Project(&vector,&arrowEndPoint);
 
 			// direction toward center of line 0 from center
 			UINT8 *svp = &side_vert [walls [i].m_nSide][0];
-			vector.x  = vertices [segP->verts [svp [0]]].x;
-			vector.x += vertices [segP->verts [svp [1]]].x;
-			vector.x /= 2;
-			vector.y  = vertices [segP->verts [svp [0]]].y;
-			vector.y += vertices [segP->verts [svp [1]]].y;
-			vector.y /= 2;
-			vector.z  = vertices [segP->verts [svp [0]]].z;
-			vector.z += vertices [segP->verts [svp [1]]].z;
-			vector.z /= 2;
-			vector.x -= center.x;
-			vector.y -= center.y;
-			vector.z -= center.z;
-			double length;
-			length = my_sqrt((double)vector.x*(double)vector.x
-								+ (double)vector.y*(double)vector.y
-								+ (double)vector.z*(double)vector.z);
-			length /= F1_0;
-			if (length < 1.0) 
-				length = 1.0;
-			vector.x = (FIX) ((double) vector.x / length);
-			vector.y = (FIX) ((double) vector.y / length);
-			vector.z = (FIX) ((double) vector.z / length);
+			vector = vertices [segP->verts [svp [0]]] + vertices [segP->verts [svp [1]]];
+			vector /= 2;
+			vector -= center;
+			vector.Normalize ();
 
-			fin.x = center.x + 2*orthog.x + vector.x;
-			fin.y = center.y + 2*orthog.y + vector.y;
-			fin.z = center.z + 2*orthog.z + vector.z;
-			m_view.Project(&fin,&arrow1_point);
-
-			fin.x = center.x + 2*orthog.x - vector.x;
-			fin.y = center.y + 2*orthog.y - vector.y;
-			fin.z = center.z + 2*orthog.z - vector.z;
-			m_view.Project(&fin,&arrow2_point);
+			fin = (orthog * 2);
+			fin += center;
+			fin += vector;
+			m_view.Project(&fin,&arrow1Point);
+			fin -= vector * 2;
+			m_view.Project(&fin,&arrow2Point);
 
 			// draw arrow
-			m_pDC->MoveTo(arrowstart_point.x,arrowstart_point.y);
-			m_pDC->LineTo(arrowend_point.x,arrowend_point.y);
-			m_pDC->LineTo(arrow1_point.x,arrow1_point.y);
-			m_pDC->MoveTo(arrowend_point.x,arrowend_point.y);
-			m_pDC->LineTo(arrow2_point.x,arrow2_point.y);
+			m_pDC->MoveTo (arrowStartPoint.x, arrowStartPoint.y);
+			m_pDC->LineTo (arrowEndPoint.x, arrowEndPoint.y);
+			m_pDC->LineTo (arrow1Point.x, arrow1Point.y);
+			m_pDC->MoveTo (arrowEndPoint.x, arrowEndPoint.y);
+			m_pDC->LineTo (arrow2Point.x, arrow2Point.y);
 			}
 		}
 	}
@@ -3491,7 +3462,7 @@ CRect	rc (x, y, x, y);
 INT32 i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
-	INT16 nVert2 = connect_points [nVert] [i];
+	INT16 nVert2 = connectPoints [nVert] [i];
 	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].x;
 	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
@@ -3608,7 +3579,7 @@ if (count == 1) {
 	if (i==8 && new_vert!=vert1) {
 	// make sure the new line lengths are close enough
 		for (i=0;i<3;i++) {
-			point2 = connect_points [point1] [i];
+			point2 = connectPoints [point1] [i];
 			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point2];
 			if (theMine->CalcLength (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
 				ErrorMsg ("Cannot move this point so far away.");

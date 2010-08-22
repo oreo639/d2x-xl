@@ -132,6 +132,8 @@ inline const CFixVector operator/ (CFixVector other) const;
 inline const CFixVector operator* (FIX n) const;
 inline const CFixVector operator/ (FIX n) const;
 inline const FIX operator^ (const CFixVector& other) const;
+
+inline const FIX Mag (void);
 };
 
 // --------------------------------------------------------------------------
@@ -310,6 +312,8 @@ inline const CFixVector CFixVector::operator/ (CFixVector other) const {
 inline const FIX CFixVector::operator^ (const CFixVector& other) const {
 	return FIX ((double (v.x) * double (other.v.x) + double (v.y) * double (other.v.y) + double (v.z) * double (other.v.z)) / 65536.0);
 	}
+
+inline const FIX CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag ()); }
 
 // --------------------------------------------------------------------------
 
