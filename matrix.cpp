@@ -9,197 +9,383 @@
 #include "global.h"
 #include "matrix.h"
 
-CMatrix::CMatrix () 
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+CFixMatrix::CFixMatrix ()
 {
-Set (0,0,0,1,1,1,0,0,0);
-_scale = 1;
-_angles [0] = 
-_angles [1] =
-_angles [2] = 0;
+rVec.Set (F1_0, 0, 0);
+uVec.Set (0, F1_0, 0);
+fVec.Set (0, 0, F1_0);
 }
 
-//--------------------------------------------------------------------------
-// SetViewInfo
-//--------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-void CMatrix::SetViewInfo(double depthPerception, INT16 viewWidth, INT16 viewHeight)
+CFixMatrix::CFixMatrix (FIX x1, FIX y1, FIX z1, FIX x2, FIX y2, FIX z2, FIX x3, FIX y3, FIX z3)
 {
-	_depthPerception = depthPerception;
-	_viewWidth = viewWidth / 2;
-	_viewHeight = viewHeight / 2;
+Set (x1, y1, z1, x2, y2, z2, x3, y3, z3);
+}
+
+// -----------------------------------------------------------------------------
+
+CFixMatrix& CFixMatrix::Set (FIX x1, FIX y1, FIX z1, FIX x2, FIX y2, FIX z2, FIX x3, FIX y3, FIX z3)
+{
+rVec.Set (x1, y1, z1);
+uVec.Set (x2, y2, z2);
+fVec.Set (x3, y3, z3);
+return *this;
+}
+
+// -----------------------------------------------------------------------------
+
+CFixMatrix::CFixMatrix (FIX sinp, FIX cosp, FIX sinb, FIX cosb, FIX sinh, FIX cosh)
+{
+Set (sinp, cosp, sinb, cosb, sinh, cosh);
+}
+
+// -----------------------------------------------------------------------------
+
+CFixMatrix& CFixMatrix::Set (FIX sinp, FIX cosp, FIX sinb, FIX cosb, FIX sinh, FIX cosh)
+{
+double sbsh = sinb * sinh;
+double cbch = cosb * cosh;
+double cbsh = cosb * sinh;
+double sbch = sinb * cosh;
+rVec.v.x = (FIX) ( cbch + sinp * sbsh);
+uVec.v.z = (FIX) ( sbsh + sinp * cbch);
+uVec.v.x = (FIX) ( sinp * cbsh - sbch);
+rVec.v.z = (FIX) ( sinp * sbch - cbsh);
+fVec.v.x = (FIX) ( sinh * cosp);		
+rVec.v.y = (FIX) ( sinb * cosp);		
+uVec.v.y = (FIX) ( cosb * cosp);		
+fVec.v.z = (FIX) ( cosh * cosp);		
+fVec.v.y = (FIX) -sinp;				
+return *this;
+}
+
+// -----------------------------------------------------------------------------
+
+CFixMatrix CFixMatrix::Mul (const CFixMatrix& other) 
+{
+	CFixVector v;
+	CFixMatrix m;
+
+v.Set (rVec.v.x, uVec.v.x, fVec.v.x);
+m.rVec.v.x = v ^ other.rVec;
+m.uVec.v.x = v ^ other.uVec;
+m.fVec.v.x = v ^ other.fVec;
+v.Set (rVec.v.y, uVec.v.y, fVec.v.y);
+m.rVec.v.y = v ^ other.rVec;
+m.uVec.v.y = v ^ other.uVec;
+m.fVec.v.y = v ^ other.fVec;
+v.Set (rVec.v.z, uVec.v.z, fVec.v.z);
+m.rVec.v.z = v ^ other.rVec;
+m.uVec.v.z = v ^ other.uVec;
+m.fVec.v.z = v ^ other.fVec;
+return m;
+}
+
+// -----------------------------------------------------------------------------
+
+const FIX CFixMatrix::Det (void) 
+{
+FIX det = FixMul (rVec.v.x, FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y));
+det += FixMul (rVec.v.y, FixMul (uVec.v.z, fVec.v.x) - FixMul (uVec.v.x, fVec.v.z));
+det += FixMul (rVec.v.z, FixMul (uVec.v.x, fVec.v.y) - FixMul (uVec.v.y, fVec.v.x));
+return det;
+}
+
+// -----------------------------------------------------------------------------
+
+const CFixMatrix CFixMatrix::Inverse (void) 
+{
+	CFixMatrix m;
+
+FIX det = Det ();
+if (det != 0) {
+	m.rVec.v.x = FixDiv (FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y), det);
+	m.rVec.v.y = FixDiv (FixMul (rVec.v.z, fVec.v.y) - FixMul (rVec.v.y, fVec.v.z), det);
+	m.rVec.v.z = FixDiv (FixMul (rVec.v.y, uVec.v.z) - FixMul (rVec.v.z, uVec.v.y), det);
+	m.uVec.v.x = FixDiv (FixMul (uVec.v.z, fVec.v.x) - FixMul (uVec.v.x, fVec.v.z), det);
+	m.uVec.v.y = FixDiv (FixMul (rVec.v.x, fVec.v.z) - FixMul (rVec.v.z, fVec.v.x), det);
+	m.uVec.v.z = FixDiv (FixMul (rVec.v.z, uVec.v.x) - FixMul (rVec.v.x, uVec.v.z), det);
+	m.fVec.v.x = FixDiv (FixMul (uVec.v.x, fVec.v.y) - FixMul (uVec.v.y, fVec.v.x), det);
+	m.fVec.v.y = FixDiv (FixMul (rVec.v.y, fVec.v.x) - FixMul (rVec.v.x, fVec.v.y), det);
+	m.fVec.v.z = FixDiv (FixMul (rVec.v.x, uVec.v.y) - FixMul (rVec.v.y, uVec.v.x), det);
+	}
+return m;
+}
+
+// -----------------------------------------------------------------------------
+
+CFixMatrix& Transpose (CFixMatrix& dest, CFixMatrix& src)
+{
+dest.rVec.v.x = src.rVec.v.x;
+dest.uVec.v.x = src.rVec.v.y;
+dest.fVec.v.x = src.rVec.v.z;
+dest.rVec.v.y = src.uVec.v.x;
+dest.uVec.v.y = src.uVec.v.y;
+dest.fVec.v.y = src.uVec.v.z;
+dest.rVec.v.z = src.fVec.v.x;
+dest.uVec.v.z = src.fVec.v.y;
+dest.fVec.v.z = src.fVec.v.z;
+return dest;
+}
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix::CDoubleMatrix ()
+{
+rVec.Set (1.0, 0.0, 0.0);
+uVec.Set (0.0, 1.0, 0.0);
+fVec.Set (0.0, 0.0, 1.0);
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix::CDoubleMatrix (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3)
+{
+Set (x1, y1, z1, x2, y2, z2, x3, y3, z3);
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix& CDoubleMatrix::Set (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3)
+{
+rVec.Set (x1, y1, z1);
+uVec.Set (x2, y2, z2);
+fVec.Set (x3, y3, z3);
+return *this;
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix::CDoubleMatrix (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh)
+{
+Set (sinp, cosp, sinb, cosb, sinh, cosh);
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix& CDoubleMatrix::Set (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh)
+{
+double sbsh = sinb * sinh;
+double cbch = cosb * cosh;
+double cbsh = cosb * sinh;
+double sbch = sinb * cosh;
+
+rVec.Set (cbch + sinp * sbsh, sinb * cosp, sinp * sbch - cbsh);
+uVec.Set (sinp * cbsh - sbch, cosb * cosp, sbsh + sinp * cbch);
+fVec.Set (sinh * cosp, cosh * cosp, -sinp);
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix CDoubleMatrix::Mul (const CDoubleMatrix& other) 
+{
+	CDoubleVector v;
+	CDoubleMatrix m;
+
+v.Set (rVec.v.x, uVec.v.x, fVec.v.x);
+m.rVec.v.x = v ^ other.rVec;
+m.uVec.v.x = v ^ other.uVec;
+m.fVec.v.x = v ^ other.fVec;
+v.Set (rVec.v.y, uVec.v.y, fVec.v.y);
+m.rVec.v.y = v ^ other.rVec;
+m.uVec.v.y = v ^ other.uVec;
+m.fVec.v.y = v ^ other.fVec;
+v.Set (rVec.v.z, uVec.v.z, fVec.v.z);
+m.rVec.v.z = v ^ other.rVec;
+m.uVec.v.z = v ^ other.uVec;
+m.fVec.v.z = v ^ other.fVec;
+return m;
+}
+
+// -----------------------------------------------------------------------------
+
+const double CDoubleMatrix::Det (void) 
+{
+double det = rVec.v.x * (uVec.v.y * fVec.v.z - uVec.v.z * fVec.v.y);
+det += rVec.v.y * (uVec.v.z * fVec.v.x - uVec.v.x * fVec.v.z);
+det += rVec.v.z * (uVec.v.x * fVec.v.y - uVec.v.y * fVec.v.x);
+return det;
+}
+
+// -----------------------------------------------------------------------------
+
+const CDoubleMatrix CDoubleMatrix::Inverse (void) 
+{
+	CDoubleMatrix m;
+
+double det = Det ();
+if (det != 0.0) {
+	m.rVec.v.x = (uVec.v.y * fVec.v.z - uVec.v.z * fVec.v.y) / det;
+	m.rVec.v.y = (rVec.v.z * fVec.v.y - rVec.v.y * fVec.v.z) / det;
+	m.rVec.v.z = (rVec.v.y * uVec.v.z - rVec.v.z * uVec.v.y) / det;
+	m.uVec.v.x = (uVec.v.z * fVec.v.x - uVec.v.x * fVec.v.z) / det;
+	m.uVec.v.y = (rVec.v.x * fVec.v.z - rVec.v.z * fVec.v.x) / det;
+	m.uVec.v.z = (rVec.v.z * uVec.v.x - rVec.v.x * uVec.v.z) / det;
+	m.fVec.v.x = (uVec.v.x * fVec.v.y - uVec.v.y * fVec.v.x) / det;
+	m.fVec.v.y = (rVec.v.y * fVec.v.x - rVec.v.x * fVec.v.y) / det;
+	m.fVec.v.z = (rVec.v.x * uVec.v.y - rVec.v.y * uVec.v.x) / det;
+	}
+return m;
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleMatrix& Transpose (CDoubleMatrix& dest, CDoubleMatrix& src)
+{
+dest.rVec.v.x = src.rVec.v.x;
+dest.uVec.v.x = src.rVec.v.y;
+dest.fVec.v.x = src.rVec.v.z;
+dest.rVec.v.y = src.uVec.v.x;
+dest.uVec.v.y = src.uVec.v.y;
+dest.fVec.v.y = src.uVec.v.z;
+dest.rVec.v.z = src.fVec.v.x;
+dest.uVec.v.z = src.fVec.v.y;
+dest.fVec.v.z = src.fVec.v.z;
+return dest;
+}
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+CViewMatrix::CViewMatrix () 
+{
+Set (0,0,0,1,1,1,0,0,0);
+m_scale = 1;
+m_angleSave [0] = 
+m_angleSave [1] =
+m_angleSave [2] = 0;
+}
+
+// -----------------------------------------------------------------------------
+// SetViewInfo
+// -----------------------------------------------------------------------------
+
+void CViewMatrix::SetViewInfo (double depthPerception, INT16 viewWidth, INT16 viewHeight)
+{
+m_depthPerception = depthPerception;
+m_viewWidth = viewWidth / 2;
+m_viewHeight = viewHeight / 2;
 }
 
 //--------------------------------------------------------------------------
 // Set()
 //--------------------------------------------------------------------------
 
-void CMatrix::Set (
-	double movex, double movey, double movez, 
-	double sizex, double sizey, double sizez,
-	double spinx, double spiny, double spinz) 
+void CViewMatrix::Set (
+	double xMove, double yMove, double zMove, 
+	double xSize, double ySize, double zSize,
+	double xSpin, double ySpin, double zSpin) 
 {
 
 	double divisor;
 	
 	/* calculate matrix values for spin z then y then x */
 	
-	M[0][0] = 1;
-	M[0][1] = 0;
-	M[0][2] = 0;
-	M[0][3] = 0;
-	
-	M[1][0] = movex;
-	M[2][0] = movey;
-	M[3][0] = movez;
-	
-	M[1][1] = (double) ( sizex * cos (spinz) * cos (spiny));
-	M[1][2] = (double) ( sizey * sin (spinz) * cos (spiny));
-	M[1][3] = (double) (-sizez * sin (spiny));
-	M[2][1] = (double) (-sizex * sin (spinz) * cos (spinx)) +
-				 (double) ( sizex * cos (spinz) * sin (spiny) * sin (spinx));
-	M[2][2] = (double) ( sizey * sin (spinz) * sin (spiny) * sin (spinx)) +
-				 (double) (+sizey * cos (spinz) * cos (spinx));
-	M[2][3] = (double) ( sizez * cos (spiny) * sin (spinx));
-	M[3][1] = (double) ( sizex * cos (spinz) * sin (spiny) * cos (spinx)) +
-				 (double) (-sizex * sin (spinz) * sin (spinx));
-	M[3][2] = (double) ( sizey * sin (spinz) * sin (spiny) * cos (spinx)) +
-				 (double) (-sizey * cos (spinz) * sin (spinx));
-	M[3][3] = (double) ( sizez * cos (spiny) * cos (spinx));
-	
-	IM[0][0] = 1;
-	IM[0][1] = 0;
-	IM[0][2] = 0;
-	IM[0][3] = 0;
-	
-	divisor  = 
-		  M[1][1] * (M[3][2] * M[2][3] - M[2][2] * M[3][3])
-		+ M[2][1] * (M[1][2] * M[3][3] - M[3][2] * M[1][3])
-		+ M[3][1] * (M[2][2] * M[1][3] - M[1][2] * M[2][3]);
-	if (divisor != 0) { 
-		IM[1][1] = (M[3][2] * M[2][3] - M[2][2] * M[3][3]) / divisor;
-		IM[1][2] = (M[1][2] * M[3][3] - M[3][2] * M[1][3]) / divisor;
-		IM[1][3] = (M[2][2] * M[1][3] - M[1][2] * M[2][3]) / divisor;
-		IM[2][1] = (M[2][1] * M[3][3] - M[3][1] * M[2][3]) / divisor;
-		IM[2][2] = (M[3][1] * M[1][3] - M[1][1] * M[3][3]) / divisor;
-		IM[2][3] = (M[1][1] * M[2][3] - M[2][1] * M[1][3]) / divisor;
-		IM[3][1] = (M[3][1] * M[2][2] - M[2][1] * M[3][2]) / divisor;
-		IM[3][2] = (M[1][1] * M[3][2] - M[3][1] * M[1][2]) / divisor;
-		IM[3][3] = (M[2][1] * M[1][2] - M[1][1] * M[2][2]) / divisor;
-	}
-	IM[1][0] = movex * IM[1][1] + movey * IM[1][2] + movez * IM[1][3];
-	IM[2][0] = movex * IM[2][1] + movey * IM[2][2] + movez * IM[2][3];
-	IM[3][0] = movex * IM[3][1] + movey * IM[3][2] + movez * IM[3][3];
-	
+m_move.Set (xMove, yMove, zMove);
+
+CDoubleVector sinSpin (sin (xSpin), sin (ySpin), sin (zSpin));
+CDoubleVector cosSpin (cos (xSpin), cos (ySpin), cos (zSpin));
+
+m_mat.Set (xSize * cosSpin.v.z * cosSpin.v.y, 
+			  ySize * sinSpin.v.z * cosSpin.v.y, 
+			  -zSize * sinSpin.v.y,
+			  -xSize * sinSpin.v.z * cosSpin.v.x + xSize * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
+			  ySize * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + ySize * cosSpin.v.z * cosSpin.v.x,
+			  zSize * cosSpin.v.y * sinSpin.v.x,
+			  xSize * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - xSize * sinSpin.v.z * sinSpin.v.x,
+			  ySize * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - ySize * cosSpin.v.z * sinSpin.v.x,
+			  zSize * cosSpin.v.y * cosSpin.v.x);
+m_invMat = m_mat.Inverse ();
+m_invMove = m_invMat * m_move;
 }
 
 //--------------------------------------------------------------------------
 // Rotate()
 //--------------------------------------------------------------------------
 
-void CMatrix::ClampAngle (INT32 i)
+void CViewMatrix::ClampAngle (INT32 i)
 {
-if (_angles [i] < 0)
-	_angles [i] += (INT32) (-_angles [i] / 360) * 360;
+if (m_angleSave [i] < 0)
+	m_angleSave [i] += (INT32) (-m_angleSave [i] / 360) * 360;
 else
-	_angles [i] -= (INT32) (_angles [i] / 360) * 360;
+	m_angleSave [i] -= (INT32) (m_angleSave [i] / 360) * 360;
 }
 
 //--------------------------------------------------------------------------
 
-void CMatrix::RotateAngle (INT32 i, double a)
+void CViewMatrix::RotateAngle (INT32 i, double a)
 {
-_angles [i] += a;
+m_angles [i] += a;
 //ClampAngle (i);
 }
 
 //--------------------------------------------------------------------------
 
-void CMatrix::Push (void)
+void CViewMatrix::Push (void)
 {
-memcpy (Msave, M, sizeof (M));
-memcpy (IMsave, IM, sizeof (IM));
-memcpy (_angleSave, _angles, sizeof (_angles));
-_scaleSave = _scale;
+m_matSave = m_mat;
+m_invMatSave = m_invMatat;
+memcpy (m_angleSave, m_angleSave, sizeof (m_angleSave));
+m_scaleSave = m_scale;
 }
 
 //--------------------------------------------------------------------------
 
-void CMatrix::Pop (void)
+void CViewMatrix::Pop (void)
 {
-memcpy (M, Msave, sizeof (M));
-memcpy (IM, IMsave, sizeof (IM));
-memcpy (_angles, _angleSave, sizeof (_angles));
-_scale = _scaleSave;
+m_mat = m_matSave;
+m_invMat = m_invMatSave;
+memcpy (m_angleSave, m_angleSave, sizeof (m_angleSave));
+m_scale = m_scaleSave;
 }
 
 //--------------------------------------------------------------------------
 
-void CMatrix::Unrotate (void)
+void CViewMatrix::Unrotate (void)
 {
 #if 0
-Rotate ('X', -_angles [0]);
-Rotate ('Y', -_angles [1]);
-Rotate ('Z', -_angles [2]);
+Rotate ('X', -m_angleSave [0]);
+Rotate ('Y', -m_angleSave [1]);
+Rotate ('Z', -m_angleSave [2]);
 #else
 Set (0,0,0,1,1,1,0,0,0);
 #endif
-Scale (_scale);
+Scale (m_scale);
 Calculate (Msave [1][0], Msave [2][0], Msave [3][0]);
 }
 
 //--------------------------------------------------------------------------
 
-void CMatrix::Rotate(char axis, double angle) 
+void CViewMatrix::Rotate (char axis, double angle) 
 {
 if (angle) {
-	double cosa = (double)cos (angle);
-	double sina = (double)sin (angle);
-	double S[4][4];
+	double cosa = (double) cos (angle);
+	double sina = (double) sin (angle);
+	CDoubleMatrix m;
 	switch(axis) {
-    default:
-    case 'X':
-		S[2][3] = sina;
-		S[3][2] = -sina; 
-		S[2][2] =
-		S[3][3] = cosa;
-		S[1][2] =
-		S[1][3] =
-		S[2][1] =
-		S[3][1] = 0.f; 
-		S[1][1] = 1.f; 
-		RotateAngle (0, angle);
-		break;
-    case 'Y':
-		S[1][3] = -sina;
-		S[3][1] = sina; 
-		S[1][1] = 
-		S[3][3] = cosa;
-		S[1][2] = 
-		S[2][1] = 
-		S[2][3] = 
-		S[3][2] = 0.f; 
-		S[2][2] = 1.f; 
-		RotateAngle (1, angle);
-		break;
-    case 'Z':
-		S[1][2] = sina; 
-		S[2][1] = -sina; 
-		S[1][1] = 
-		S[2][2] = cosa; 
-		S[1][3] = 
-		S[2][3] = 
-		S[3][1] = 
-		S[3][2] = 0.f; 
-		S[3][3] = 1.f;
-		RotateAngle (2, angle);
-		break;
-	}
-#if 1
-	Multiply(IM,S); // rotate relative to screen
-#else
-	Multiply(M,S); // rotate relative to x,y,z axii
-	CalculateInverse();
-#endif
+		default:
+		case 'X':
+			m.Set (1.0, 0.0, 0.0, 0.0, cosa, sina, 0.0, -sina, cosa);
+			RotateAngle (0, angle);
+			break;
+		case 'Y':
+			m.Set (cosa, 0.0, -sina, 0.0, 1.0, 0.0, sina, 0.0, cosa);
+			RotateAngle (1, angle);
+			break;
+		case 'Z':
+			m.Set (cosa, sina, 0.0, -sina, cosa, 0.0, 0.0, 0.0, 0.0);
+			RotateAngle (2, angle);
+			break;
+		}
+	Multiply (IM,S); // rotate relative to screen
 	}
 }
 
@@ -207,28 +393,18 @@ if (angle) {
 // Scale()
 //--------------------------------------------------------------------------
 
-void CMatrix::Scale(double scale) 
+void CViewMatrix::Scale (double scale) 
 {
-	double S[4][4];
-
-	S[1][1] = scale; 
-	S[1][2] = 0; 
-	S[1][3] = 0;
-	S[2][1] = 0; 
-	S[2][2] = scale; 
-	S[2][3] = 0;
-	S[3][1] = 0; 
-	S[3][2] = 0; 
-	S[3][3] = scale;
-	Multiply(IM,S);
-	_scale *= scale;
+CDoubleMatrix m (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, scale);
+Multiply (IM,S);
+m_scale *= scale;
 }
 
 //--------------------------------------------------------------------------
 // Multiply()
 //--------------------------------------------------------------------------
 
-void CMatrix::Multiply(double A[4][4], double B[4][4]) 
+void CViewMatrix::Multiply(double A[4][4], double B[4][4]) 
 {
 	double T[4][4];
 	
@@ -259,183 +435,67 @@ void CMatrix::Multiply(double A[4][4], double B[4][4])
 // Calculate()
 //--------------------------------------------------------------------------
 
-void CMatrix::Calculate(double movex, double movey, double movez) 
+void CViewMatrix::Calculate (double xMove, double yMove, double zMove) 
 {
-	double divisor;
-	
-	divisor  = IM[1][1]*(IM[3][2]*IM[2][3]-IM[2][2]*IM[3][3])
-				+ IM[2][1]*(IM[1][2]*IM[3][3]-IM[3][2]*IM[1][3])
-				+ IM[3][1]*(IM[2][2]*IM[1][3]-IM[1][2]*IM[2][3]);
-	if (divisor != 0) {
-		M[1][1] = (IM[3][2]*IM[2][3]-IM[2][2]*IM[3][3])/divisor;
-		M[1][2] = (IM[1][2]*IM[3][3]-IM[3][2]*IM[1][3])/divisor;
-		M[1][3] = (IM[2][2]*IM[1][3]-IM[1][2]*IM[2][3])/divisor;
-		M[2][1] = (IM[2][1]*IM[3][3]-IM[3][1]*IM[2][3])/divisor;
-		M[2][2] = (IM[3][1]*IM[1][3]-IM[1][1]*IM[3][3])/divisor;
-		M[2][3] = (IM[1][1]*IM[2][3]-IM[2][1]*IM[1][3])/divisor;
-		M[3][1] = (IM[3][1]*IM[2][2]-IM[2][1]*IM[3][2])/divisor;
-		M[3][2] = (IM[1][1]*IM[3][2]-IM[3][1]*IM[1][2])/divisor;
-		M[3][3] = (IM[2][1]*IM[1][2]-IM[1][1]*IM[2][2])/divisor;
-	}
-	M[1][0] = movex;
-	M[2][0] = movey;
-	M[3][0] = movez;
+m_mat = m_invMat.Inverse ();
+m_move.Set (xMove, yMove, zMove);
 }
 
 //--------------------------------------------------------------------------
 // CalculateInverse()
 //--------------------------------------------------------------------------
 
-void CMatrix::CalculateInverse(double movex, double movey, double movez) 
+void CViewMatrix::CalculateInverse (double xMove, double yMove, double zMove) 
 {
-	double divisor;
-	divisor  = M[1][1]*(M[3][2]*M[2][3]-M[2][2]*M[3][3])
-				+ M[2][1]*(M[1][2]*M[3][3]-M[3][2]*M[1][3])
-				+ M[3][1]*(M[2][2]*M[1][3]-M[1][2]*M[2][3]);
-	if (divisor != 0) {
-		IM[1][1] = (M[3][2]*M[2][3]-M[2][2]*M[3][3])/divisor;
-		IM[1][2] = (M[1][2]*M[3][3]-M[3][2]*M[1][3])/divisor;
-		IM[1][3] = (M[2][2]*M[1][3]-M[1][2]*M[2][3])/divisor;
-		IM[2][1] = (M[2][1]*M[3][3]-M[3][1]*M[2][3])/divisor;
-		IM[2][2] = (M[3][1]*M[1][3]-M[1][1]*M[3][3])/divisor;
-		IM[2][3] = (M[1][1]*M[2][3]-M[2][1]*M[1][3])/divisor;
-		IM[3][1] = (M[3][1]*M[2][2]-M[2][1]*M[3][2])/divisor;
-		IM[3][2] = (M[1][1]*M[3][2]-M[3][1]*M[1][2])/divisor;
-		IM[3][3] = (M[2][1]*M[1][2]-M[1][1]*M[2][2])/divisor;
-	}
-	IM[1][0] = movex*IM[1][1] + movey*IM[1][2]+ movez*IM[1][3];
-	IM[2][0] = movex*IM[2][1] + movey*IM[2][2]+ movez*IM[2][3];
-	IM[3][0] = movex*IM[3][1] + movey*IM[3][2]+ movez*IM[3][3];
+m_invMat = m_mat.Inverse ();
+m_invMove = m_invMat * m_move;
 }
 
 //--------------------------------------------------------------------------
 // SetPoint()
 //--------------------------------------------------------------------------
 
-void CMatrix::SetPoint(CFixVector* vert, APOINT *apoint) 
+void CViewMatrix::SetPoint (CFixVector* vertex, APOINT *apoint) 
 {
-	double x,y,z,x1,y1,z1,x2,y2,z2,x3,y3;
-	
-	// translation
-	x = M[1][0] + X2D (vert->v.x);
-	y = M[2][0] + X2D (vert->v.y);
-	z = M[3][0] + X2D (vert->v.z);
-	
-	// rotation
-	x1 = M[1][1] * x + M[1][2] * y + M[1][3] * z;
-	y1 = M[2][1] * x + M[2][2] * y + M[2][3] * z;
-	z1 = M[3][1] * x + M[3][2] * y + M[3][3] * z;
-	
-	// scaling
-	x2 = x1*5;
-	y2 = y1*5;
-	z2 = z1;
-	
-	// unrotate TEST ONLY
-	/***
-	x = scrn[n].x;
-	y = scrn[n].y;
-	z = scrn[n].z;
-	scrn[n].x = IM[1][1]*x + IM[1][2]*y + IM[1][3]*z;
-	scrn[n].y = IM[2][1]*x + IM[2][2]*y + IM[2][3]*z;
-	scrn[n].z = IM[3][1]*x + IM[3][2]*y + IM[3][3]*z;
-	***/
-	
-	// add perspective
-	if ((_depthPerception < 10000) && (z2 > -_depthPerception)) {
-		x3 = (x2 * (double) _depthPerception) / (z2 + (double) _depthPerception);
-		y3 = (y2 * (double) _depthPerception) / (z2 + (double) _depthPerception);
-		} 
-	else {
-		x3 = x2; //10000;
-		y3 = y2; //10000;
-	}
-	
-	/* adjust for screen */
-//	x3      *= aspect_ratio;
-	apoint->x  = (INT16) ((FIX) (x3 + _viewWidth) % 32767);
-	apoint->y  = (INT16) ((FIX) (_viewHeight - y3) % 32767);
-	apoint->z  = (INT16) z2;
+	CDoubleVector	v (vertex), r;
+
+v += m_move;
+r = m_mat * v;
+double scale = 5.0;
+if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
+	scale *= m_depthPerception / (r.v.z + m_depthPerception);
+r *= CDoubleVector (scale, scale, 1.0);
+apoint->x = (INT16) ((FIX) (r.v.x + _viewWidth) % 32767);
+apoint->y = (INT16) ((FIX) (_viewHeight - r.v.y) % 32767);
+apoint->z = (INT16) r.v.z;
 }
 
 //--------------------------------------------------------------------------
 //			     unset_point()
 //--------------------------------------------------------------------------
 
-void CMatrix::UnsetPoint(CFixVector* vert, APOINT *apoint) 
+void CViewMatrix::UnsetPoint (CFixVector* vertex, APOINT *apoint) 
 {
-  double x,y,z,x1,y1,z1,x2,y2,z2,x3,y3;
-
-  // unadjust for screen
-  z2 = apoint->z;
-  y3 = y_center - apoint->y;
-  x3 = apoint->x - x_center;
-  //x3 /= aspect_ratio;
-
-  // remove perspective
-  x2 = x3 * (z2 + depth_perception) / depth_perception;
-  y2 = y3 * (z2 + depth_perception) / depth_perception;
-  // unscale
-  x1 = x2 / 5;
-  y1 = y2 / 5;
-  z1 = z2;
-
-  // unrotate
-  x = IM[1][1]*x1 + IM[1][2]*y1 + IM[1][3]*z1;
-  y = IM[2][1]*x1 + IM[2][2]*y1 + IM[2][3]*z1;
-  z = IM[3][1]*x1 + IM[3][2]*y1 + IM[3][3]*z1;
-
-  // untranslate
-  vert->x = (FIX) ((x - M[1][0]) * 0x10000L);
-  vert->y = (FIX) ((y - M[2][0]) * 0x10000L);
-  vert->z = (FIX) ((z - M[3][0]) * 0x10000L);
+CDoubleVector v (double (apoint->x - x_center), double (y_center - apoint->y), double (apoint->z));
+double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
+v *= CDoubleVector (scale, scale, 1.0);
+CDoubleVector r = m_invMat * v;
+r -= m_move;
+*vertex = r;
 }
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-INT32 CMatrix::CheckNormal(CGameObject *objP, CFixVector* a, CFixVector* b) 
+
+INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b) 
 {
-  double ax,ay,az;
-  double bx,by,bz;
-  double x,y,z;
-  double z1,z2;
-
-  // rotate point using Objects () rotation matrix
-  ax =  (double)objP->v.orient.rVec.v.x * (double)a->v.x
-		+ (double)objP->v.orient.uVec.v.x * (double)a->v.y
-		+ (double)objP->v.orient.fVec.v.x * (double)a->v.z;
-  ay =  (double)objP->v.orient.rVec.v.y * (double)a->v.x
-		+ (double)objP->v.orient.uVec.v.y * (double)a->v.y
-		+ (double)objP->v.orient.fVec.v.y * (double)a->v.z;
-  az =  (double)objP->v.orient.rVec.v.z * (double)a->v.x
-		+ (double)objP->v.orient.uVec.v.z * (double)a->v.y
-		+ (double)objP->v.orient.fVec.v.z * (double)a->v.z;
-  bx =  (double)objP->v.orient.rVec.v.x * (double)b->v.x
-		+ (double)objP->v.orient.uVec.v.x * (double)b->v.y
-		+ (double)objP->v.orient.fVec.v.x * (double)b->v.z;
-  by =  (double)objP->v.orient.rVec.v.y * (double)b->v.x
-		+ (double)objP->v.orient.uVec.v.y * (double)b->v.y
-		+ (double)objP->v.orient.fVec.v.y * (double)b->v.z;
-  bz =  (double)objP->v.orient.rVec.v.z * (double)b->v.x
-		+ (double)objP->v.orient.uVec.v.z * (double)b->v.y
-		+ (double)objP->v.orient.fVec.v.z * (double)b->v.z;
-
-  // set point to be in world coordinates
-  ax += objP->pos.v.x;
-  ay += objP->pos.v.y;
-  az += objP->pos.v.z;
-  bx += ax;
-  by += ay;
-  bz += az;
-
-  x  = M[1][0] + ax / F1_0;
-  y  = M[2][0] + ay / F1_0;
-  z  = M[3][0] + az / F1_0;
-  z1 = M[3][1]*x + M[3][2]*y + M[3][3]*z;
-  x  = M[1][0] + bx / F1_0;
-  y  = M[2][0] + by / F1_0;
-  z  = M[3][0] + bz / F1_0;
-  z2 = M[3][1]*x + M[3][2]*y + M[3][3]*z;
-
-  return (z1 > z2);
+CFixVector _a = objP->orient * *a;
+CFixVector _b = objP->orient * *b;
+_a += objP->pos;
+_a += m_move;
+_b += _a;
+return Dot (fVec, _a) > Dot (fVec, _b);
 }
+
+// -----------------------------------------------------------------------------
+// eof

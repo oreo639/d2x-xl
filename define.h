@@ -49,8 +49,8 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 
 //	-----------------------------------------------------------------------------------------------------------
 
-#define F2D(_f)	((double) _f / 65536.0)
-#define D2F(_f)	((FIX) Round (_f * 65536.0))
+#define X2D(_f)	((double) _f / 65536.0)
+#define D2X(_f)	((FIX) Round (_f * 65536.0))
 
 #define JOIN_DISTANCE (20*20*F1_0)
 
