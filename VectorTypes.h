@@ -109,7 +109,7 @@ public:
 inline INT32 Read (FILE* fp) { return v.Read (fp); }
 inline void Write (FILE* fp) { v.Write (fp); }
 
-inline const bool operator== (const tFixVector other);
+inline const bool operator== (const CFixVector other);
 inline const CFixVector& operator= (const tFixVector& other);
 inline const CFixVector& operator= (const CFixVector& other);
 inline const CFixVector& operator= (const tDoubleVector& other);
@@ -171,7 +171,7 @@ public:
 inline INT32 Read (FILE* fp) { return v.Read (fp); }
 inline void Write (FILE* fp) { v.Write (fp); }
 
-inline const bool operator== (const tDoubleVector other);
+inline const bool operator== (const CDoubleVector other);
 inline const CDoubleVector& operator= (const tDoubleVector& other);
 inline const CDoubleVector& operator= (const CDoubleVector& other);
 inline const CDoubleVector& operator= (const tFixVector& other);
@@ -208,7 +208,7 @@ inline const CFixVector& CFixVector::operator= (const tFixVector& other) {
 	return *this;
 	}
 
-inline const bool operator== (const tFixVector other) {
+inline const bool CFixVector::operator== (const CFixVector other) {
 	return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
 }
 
@@ -317,7 +317,7 @@ CDoubleVector::CDoubleVector (CFixVector _v) {
 	v.x = X2D (_v.v.x), v.y = X2D (_v.v.y), v.z = X2D (_v.v.z); 
 }
 
-inline const bool operator== (const tDoubleVector other) {
+inline const bool CDoubleVector::operator== (const CDoubleVector other) {
 	return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
 }
 
