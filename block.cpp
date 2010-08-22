@@ -45,10 +45,9 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	INT16				nSegment, nSide, nVertex;
 	INT16				i, j, test;
 	INT16				origVertCount, k;
-	CVertex			origin, vVertex;
+	CFixVector		origin, vVertex;
 	CDoubleVector	xPrime, yPrime, zPrime, v;
 	CDoubleVector	xAxis, yAxis, zAxis;
-	double			length;
 	INT16				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	INT16				xlatSegNum [MAX_SEGMENTS3];
 	INT32				byteBuf;
@@ -80,15 +79,15 @@ yPrime.Normalize ();
 zPrime.Normalize ();
 
 // now take the determinant
-xAxis.Set (yPrime.y * zPrime.z - zPrime.y * yPrime.z, 
-			  zPrime.y * xPrime.z - xPrime.y * zPrime.z, 
-			  xPrime.y * yPrime.z - yPrime.y * xPrime.z);
-yAxis.Set (zPrime.x * yPrime.z - yPrime.x * zPrime.z, 
-			  xPrime.x * zPrime.z - zPrime.x * xPrime.z,
-			  yPrime.x * xPrime.z - xPrime.x * yPrime.z);
-zAxis.Set (yPrime.x * zPrime.y - zPrime.x * yPrime.y,
-			  zPrime.x * xPrime.y - xPrime.x * zPrime.y,
-			  xPrime.x * yPrime.y - yPrime.x * xPrime.y);
+xAxis.Set (yPrime.v.y * zPrime.v.z - zPrime.v.y * yPrime.v.z, 
+			  zPrime.v.y * xPrime.v.z - xPrime.v.y * zPrime.v.z, 
+			  xPrime.v.y * yPrime.v.z - yPrime.v.y * xPrime.v.z);
+yAxis.Set (zPrime.v.x * yPrime.v.z - yPrime.v.x * zPrime.v.z, 
+			  xPrime.v.x * zPrime.v.z - zPrime.v.x * xPrime.v.z,
+			  yPrime.v.x * xPrime.v.z - xPrime.v.x * yPrime.v.z);
+zAxis.Set (yPrime.v.x * zPrime.v.y - zPrime.v.x * yPrime.v.y,
+			  zPrime.v.x * xPrime.v.y - xPrime.v.x * zPrime.v.y,
+			  xPrime.v.x * yPrime.v.y - yPrime.v.x * xPrime.v.y);
 
 #if 0
   sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
@@ -290,13 +289,12 @@ while(!feof(fBlk)) {
 			}
 		// each vertex relative to the origin has a x', y', and z' component
 		// adjust vertices relative to origin
-		v.x = origin.x + vVertex ^ CFixVector (xAxis);
-		v.y = origin.y + vVertex ^ CFixVector (xAxis);
-		v.z = origin.z + vVertex ^ CFixVector (xAxis);
+		v.Set (vVertex ^ CFixVector (xAxis), vVertex ^ CFixVector (xAxis), vVertex ^ CFixVector (xAxis));
+		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CVertexVector* vertP = Vertices (origVertCount);
-		for (k = origVertCount; k < VertCount (); k++, vert++)
+		CVertex* vertP = Vertices (origVertCount);
+		for (k = origVertCount; k < VertCount (); k++, vertP++)
 			if (*vertP == v) {
 				segP->verts [i] = k;
 				break;
@@ -306,7 +304,7 @@ while(!feof(fBlk)) {
 			nVertex = VertCount ();
 			VertStatus (nVertex) |= NEW_MASK;
 			segP->verts [i] = nVertex;
-			*Vertices (nVertex) = v;
+			*Vertices (nVertex) = CFixVector (v);
 			VertCount ()++;
 			}
 		}
@@ -410,14 +408,13 @@ return (nNewSegs);
 void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/) 
 {
 	INT16				nSegment;
-	CSegment		*segP;
-	CSide			*sideP;
-	CWall			*wallP;
+	CSegment			*segP;
+	CSide				*sideP;
+	CWall				*wallP;
 	INT16				i,j;
 	CFixVector		origin;
-	CDoubleVector	x_prime,y_prime,z_prime,vect;
+	CDoubleVector	xPrime,yPrime,zPrime,vVertex;
 	INT16				nVertex;
-	double			length;
 
 #if DEMO
 ErrorMsg ("You cannot save a mine in the demo.");
@@ -426,51 +423,28 @@ return;
 // set origin
 segP = CurrSeg ();
 nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
-origin.x = Vertices (nVertex)->x;
-origin.y = Vertices (nVertex)->y;
-origin.z = Vertices (nVertex)->z;
+origin = *Vertices (nVertex);
 
 // set x'
 nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
-x_prime.x = (double)(Vertices (nVertex)->x - origin.x);
-x_prime.y = (double)(Vertices (nVertex)->y - origin.y);
-x_prime.z = (double)(Vertices (nVertex)->z - origin.z);
+xPrime = *Vertices (nVertex) - origin;
 
 // calculate y'
 nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
-vect.x = (double)(Vertices (nVertex)->x - origin.x);
-vect.y = (double)(Vertices (nVertex)->y - origin.y);
-vect.z = (double)(Vertices (nVertex)->z - origin.z);
-y_prime.x = x_prime.y*vect.z - x_prime.z*vect.y;
-y_prime.y = x_prime.z*vect.x - x_prime.x*vect.z;
-y_prime.z = x_prime.x*vect.y - x_prime.y*vect.x;
-
-// calculate z'
-z_prime.x = x_prime.y*y_prime.z - x_prime.z*y_prime.y;
-z_prime.y = x_prime.z*y_prime.x - x_prime.x*y_prime.z;
-z_prime.z = x_prime.x*y_prime.y - x_prime.y*y_prime.x;
-
-// normalize all
-length = sqrt(x_prime.x*x_prime.x + x_prime.y*x_prime.y + x_prime.z*x_prime.z);
-x_prime.x /= length;
-x_prime.y /= length;
-x_prime.z /= length;
-length = sqrt(y_prime.x*y_prime.x + y_prime.y*y_prime.y + y_prime.z*y_prime.z);
-y_prime.x /= length;
-y_prime.y /= length;
-y_prime.z /= length;
-length = sqrt(z_prime.x*z_prime.x + z_prime.y*z_prime.y + z_prime.z*z_prime.z);
-z_prime.x /= length;
-z_prime.y /= length;
-z_prime.z /= length;
+vVertex = *Vertices (nVertex) - origin;
+yPrime = CrossProduct (xPrime, vVertex);
+zPrime = CrossProduct (xPrime, yPrime);
+xPrime.Normalize ();
+yPrime.Normalize ();
+zPrime.Normalize ();
 
 #if 0
   sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
 		  "y'=(%0.3f,%0.3f,%0.3f)\n"
 		  "z'=(%0.3f,%0.3f,%0.3f)\n",
-		  (float)x_prime.x,(float)x_prime.y,(float)x_prime.z,
-		  (float)y_prime.x,(float)y_prime.y,(float)y_prime.z,
-		  (float)z_prime.x,(float)z_prime.y,(float)z_prime.z);
+		  (float)xPrime.x,(float)xPrime.y,(float)xPrime.z,
+		  (float)yPrime.x,(float)yPrime.y,(float)yPrime.z,
+		  (float)zPrime.x,(float)zPrime.y,(float)zPrime.z);
   DebugMsg(message);
 #endif
 
@@ -544,15 +518,13 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// each vertex relative to the origin has a x', y', and z' component
 			// which is a constant (k) times the axis
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
-			//                       A is the axis unit vector (always 1)
+			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->verts [i];
-			vect.x = (double) (Vertices (nVertex)->x - origin.x);
-			vect.y = (double) (Vertices (nVertex)->y - origin.y);
-			vect.z = (double) (Vertices (nVertex)->z - origin.z);
+			vVertex = *Vertices (nVertex) - origin;
 			fprintf (fBlk, "  CFixVector %d %ld %ld %ld\n",i,
-						(FIX)(vect.x*x_prime.x + vect.y*x_prime.y + vect.z*x_prime.z),
-						(FIX)(vect.x*y_prime.x + vect.y*y_prime.y + vect.z*y_prime.z),
-						(FIX)(vect.x*z_prime.x + vect.y*z_prime.y + vect.z*z_prime.z));
+									D2X (vVertex ^ xPrime),
+									D2X (vVertex ^ yPrime),
+									D2X (vVertex ^ zPrime));
 			}
 		fprintf (fBlk, "  static_light %ld\n",segP->static_light);
 		if (bExtBlkFmt) {
@@ -859,9 +831,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 							// use x, y, and z coordinate of first point of each segment for comparison
 							CFixVector* v1 = Vertices (segP ->verts [0]);
 							CFixVector* v2 = Vertices (seg2->verts [0]);
-							if (labs (v1->x - v2->x) < 0xA00000L &&
-								 labs (v1->y - v2->y) < 0xA00000L &&
-								 labs (v1->z - v2->z) < 0xA00000L) {
+							if (labs (v1->v.x - v2->v.x) < 0xA00000L &&
+								 labs (v1->v.y - v2->v.y) < 0xA00000L &&
+								 labs (v1->v.z - v2->v.z) < 0xA00000L) {
 								for (sidenum2 = 0;sidenum2 < 6; sidenum2++) {
 									LinkSegments (nSegment, child, segnum2, sidenum2, 3 * F1_0);
 									}
