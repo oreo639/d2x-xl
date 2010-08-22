@@ -18,6 +18,16 @@ inline double Round (double value, double round = 1.0)
 return (value >= 0) ? value + round / 2.0 : value - round / 2.0;
 }
 
+inline FIX FixMul (FIX n, FIX m)
+{
+return (FIX) ((double) n * (double) m / 65536.0);
+}
+
+inline FIX FixDiv (FIX n, FIX m)
+{
+return (FIX) ((double) n / (double) m * 65536.0);
+}
+
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
@@ -248,12 +258,12 @@ inline const CFixVector CFixVector::operator- (void) const {
 	}
 
 inline const CFixVector& CFixVector::operator*= (const FIX n) {
-	v.x *= n, v.y *= n, v.z *= n;
+	v.x = FixMul (v.x, n), v.y = FixMul (v.y, n), v.z = FixMul (v.z, n);
 	return *this;
 	}
 
 inline const CFixVector& CFixVector::operator/= (const FIX n) {
-	v.x /= n, v.y /= n, v.z /= n;
+	v.x = FixDiv (v.x, n), v.y = FixDiv (v.y, n), v.z = FixDiv (v.z, n);
 	return *this;
 	}
 
@@ -272,11 +282,11 @@ inline const CFixVector& CFixVector::operator/= (const DOUBLE n) {
 	}
 
 inline const CFixVector CFixVector::operator* (const FIX n) const {
-	return CFixVector (v.x * n, v.y * n, v.z * n);
+	return CFixVector (FixMul (v.x, n), FixMul (v.y, n), FixMul (v.z, n));
 	}
 
 inline const CFixVector CFixVector::operator/ (const FIX n) const {
-	return CFixVector (v.x / n, v.y / n, v.z / n);
+	return CFixVector (FixDiv (v.x , n), FixDiv (v.y , n), FixDiv (v.z , n));
 	}
 
 inline const CFixVector CFixVector::operator>> (const FIX n) {
@@ -298,11 +308,11 @@ inline const CFixVector& CFixVector::operator<<= (const FIX n) {
 	}
 
 inline const CFixVector CFixVector::operator* (CFixVector& other) const {
-	return CFixVector (v.x * other.v.x, v.y * other.v.y, v.z * other.v.z);
+	return CFixVector (FixMul (v.x, other.v.x), FixMul (v.y, other.v.y), FixMul (v.z, other.v.z));
 	}
 
 inline const CFixVector CFixVector::operator/ (CFixVector& other) const {
-	return CFixVector (v.x / other.v.x, v.y / other.v.y, v.z / other.v.z);
+	return CFixVector (FixDiv (v.x, other.v.x), FixDiv (v.y, other.v.y), FixDiv (v.z, other.v.z));
 	}
 
 inline const FIX CFixVector::operator^ (CFixVector& other) {

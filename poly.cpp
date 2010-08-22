@@ -87,7 +87,7 @@ FIX MultiplyFix(FIX a, FIX b) {
 
 INT32 CMineView::SetupModel(CGameObject *objP) 
 {
-  gOffset.x.Clear ();
+  gOffset.Clear ();
   gModel.n_points = 0;
   glow_num = -1;
   gpObject = objP;
@@ -171,32 +171,30 @@ void CMineView::DrawModel()
 
 void CMineView::SetModelPoints(INT32 start, INT32 end) 
 {
-  CGameObject *objP = gpObject;
-  CFixVector pt;
-  INT32 i;
-  for (i=start;i<end;i++) {
-	FIX x0 = gModel.points[i].x;
-	FIX y0 = gModel.points[i].y;
-	FIX z0 = gModel.points[i].z;
+CGameObject *objP = gpObject;
+CFixVector pt;
+
+for (INT32 i = start; i < end; i++) {
+	FIX x0 = gModel.points[i].v.x;
+	FIX y0 = gModel.points[i].v.y;
+	FIX z0 = gModel.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
-	pt.x = (MultiplyFix(objP->orient.rVec.x,x0)
-			+ MultiplyFix(objP->orient.uVec.x,y0)
-			+ MultiplyFix(objP->orient.fVec.x,z0));
-	pt.y = (MultiplyFix(objP->orient.rVec.y,x0)
-			+ MultiplyFix(objP->orient.uVec.y,y0)
-			+ MultiplyFix(objP->orient.fVec.y,z0));
-	pt.z = (MultiplyFix(objP->orient.rVec.z,x0)
-			+ MultiplyFix(objP->orient.uVec.z,y0)
-			+ MultiplyFix(objP->orient.fVec.z,z0));
+	pt.v.x = MultiplyFix (objP->orient.rVec.v.x, x0)
+				+ MultiplyFix (objP->orient.uVec.v.x, y0)
+				+ MultiplyFix (objP->orient.fVec.v.x, z0);
+	pt.v.y = MultiplyFix (objP->orient.rVec.v.y, x0)
+				+ MultiplyFix (objP->orient.uVec.v.y, y0)
+				+ MultiplyFix (objP->orient.fVec.v.y, z0);
+	pt.v.z = MultiplyFix (objP->orient.rVec.v.z, x0)
+				+ MultiplyFix (objP->orient.uVec.v.z, y0)
+				+ MultiplyFix (objP->orient.fVec.v.z, z0);
 
 	// set point to be in world coordinates
-	pt.x += objP->pos.x;
-	pt.y += objP->pos.y;
-	pt.z += objP->pos.z;
+	pt += objP->pos;
 
 	// now that points are relative to set screen xy points (poly_xy)
-	m_matrix.SetPoint(&pt,poly_xy + i);
+	m_matrix.SetPoint (&pt, poly_xy + i);
   }
 }
 
@@ -207,33 +205,20 @@ void CMineView::SetModelPoints(INT32 start, INT32 end)
 // Action - Draws a polygon if it is facing the outward.
 //          Used global device context handle set by SetupModel()
 //-----------------------------------------------------------------------
-void CMineView::DrawPoly(POLY *p) {
+
+void CMineView::DrawPoly(POLY *p) 
+{
   INT32 i,j;
-  if (m_matrix.CheckNormal(gpObject, &p->offset,&p->normal)) {
-#if 1
+
+if (m_matrix.CheckNormal (gpObject, &p->offset, &p->normal)) {
 	POINT aPoints[MAX_POLY_POINTS];
-	for (i=0;i<p->n_verts;i++) {
-	  j = p->verts[i];
-	  aPoints[i].x = poly_xy[j].x;
-	  aPoints[i].y = poly_xy[j].y;
-	}
+	for (i = 0; i < p->n_verts; i++) {
+		j = p->verts[i];
+		aPoints [i].x = poly_xy [j].x;
+		aPoints [i].y = poly_xy [j].y;
+		}
 	m_pDC->Polygon(aPoints, p->n_verts);
-#else
-	for (i=0;i<p->n_verts;i++) {
-	  j = p->verts[i];
-	  if (i==0) {
-		m_pDC->MoveTo(poly_xy[j].x,poly_xy[j].y);
-	  } else {
-		m_pDC->LineTo(poly_xy[j].x+1,poly_xy[j].y+1);
-		m_pDC->LineTo(poly_xy[j].x+1,poly_xy[j].y-1);
-		m_pDC->LineTo(poly_xy[j].x-1,poly_xy[j].y-1);
-		m_pDC->LineTo(poly_xy[j].x-1,poly_xy[j].y+1);
-	  }
 	}
-	j = p->verts[0];
-	m_pDC->LineTo(poly_xy[j].x,poly_xy[j].y);
-#endif
-  }
 }
 
 //-----------------------------------------------------------------------
@@ -263,9 +248,7 @@ void CMineView::InterpModelData(UINT8 *p)
 				assert(gModel.n_points < MAX_POLY_MODEL_POINTS);
 				assert(pt0+n_points < MAX_POLY_MODEL_POINTS);
 				for (pt=0;pt< n_points;pt++) {
-					gModel.points[pt+pt0].x = VP(p+8)[pt].x + gOffset.x;
-					gModel.points[pt+pt0].y = VP(p+8)[pt].y + gOffset.y;
-					gModel.points[pt+pt0].z = VP(p+8)[pt].z + gOffset.z;
+					gModel.points [pt+pt0] = VP(p+8)[pt] + gOffset;
 				}
 				SetModelPoints(pt0,pt0+n_points);
 				p += W(p+2)*sizeof (CFixVector) + 8;
@@ -280,8 +263,8 @@ void CMineView::InterpModelData(UINT8 *p)
 			case OP_FLATPOLY: {
 				panel = &gModel.polys[gModel.n_polys];
 				panel->n_verts = W(p+2);
-				panel->offset   = *VP(p+4);
-				panel->normal   = *VP(p+16);
+				panel->offset = *VP(p+4);
+				panel->normal = *VP(p+16);
 				for (pt=0;pt<panel->n_verts;pt++) {
 					panel->verts[pt] = WP(p+30)[pt];
 				}
@@ -348,13 +331,9 @@ void CMineView::InterpModelData(UINT8 *p)
 			case OP_SUBCALL: {
 				assert(W(p+16)>0);
 				/* = VP(p+4) */
-				gOffset.x += VP(p+4)->x;
-				gOffset.y += VP(p+4)->y;
-				gOffset.z += VP(p+4)->z;
+				gOffset += *VP(p+4);
 				InterpModelData(p + W(p+16));
-				gOffset.x -= VP(p+4)->x;
-				gOffset.y -= VP(p+4)->y;
-				gOffset.z -= VP(p+4)->z;
+				gOffset -= *VP(p+4);
 				p += 20;
 				break;
 			}

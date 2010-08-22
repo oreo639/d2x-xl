@@ -161,30 +161,30 @@ else if (type == EXTENDED_HAM)  {
   fopen_s (&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
   if (file) {
     for (i=0; i<t; i++ ) {
-      fread(&pm, sizeof (POLYMODEL), 1, fp );
-      fprintf(file,"n_models        = %ld\n",pm.n_models);
-      fprintf(file,"model_data_size = %ld\n",pm.model_data_size);
+      fread(&pm,  sizeof (POLYMODEL),  1,  fp );
+      fprintf (file, "n_models        = %ld\n", pm.n_models);
+      fprintf (file, "model_data_size = %ld\n", pm.model_data_size);
       for (j = 0; j < pm.n_models; j++) {
-	fprintf(file,"submodel_ptrs[%d]    = %#08lx\n",j,pm.submodel_ptrs[j]);
-	fprintf(file,"submodel_offsets[%d] = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_offsets[j].v.x,pm.submodel_offsets[j].v.y,pm.submodel_offsets[j].v.z);
-	fprintf(file,"submodel_norms[%d]   = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_norms[j].v.x,pm.submodel_norms[j].v.y,pm.submodel_norms[j].v.z);
-	fprintf(file,"submodel_pnts[%d]    = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_pnts[j].v.x,pm.submodel_pnts[j].v.y,pm.submodel_pnts[j].v.z);
-	fprintf(file,"submodel_rads[%d]    = %#08lx\n",j,pm.submodel_rads[j]);
-	fprintf(file,"submodel_parents[%d] = %d\n",j,pm.submodel_parents[j]);
-	fprintf(file,"submodel_mins[%d]    = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_mins[j].v.x,pm.submodel_mins[j].v.y,pm.submodel_mins[j].v.z);
-	fprintf(file,"submodel_maxs[%d]    = %#08lx %#08lx %#08lx\n",j,
-		pm.submodel_maxs[j].v.x,pm.submodel_maxs[j].v.y,pm.submodel_maxs[j].v.z);
+	fprintf (file, "submodel_ptrs[%d]    = %#08lx\n", j, pm.submodel_ptrs[j]);
+	fprintf (file, "submodel_offsets[%d] = %#08lx %#08lx %#08lx\n", j, 
+				pm.submodel_offsets[j].v.x, pm.submodel_offsets[j].v.y, pm.submodel_offsets[j].v.z);
+	fprintf (file, "submodel_norms[%d]   = %#08lx %#08lx %#08lx\n", j, 
+				pm.submodel_norms[j].v.x, pm.submodel_norms[j].v.y, pm.submodel_norms[j].v.z);
+	fprintf (file, "submodel_pnts[%d]    = %#08lx %#08lx %#08lx\n", j, 
+				pm.submodel_pnts[j].v.x, pm.submodel_pnts[j].v.y, pm.submodel_pnts[j].v.z);
+	fprintf (file, "submodel_rads[%d]    = %#08lx\n", j, pm.submodel_rads[j]);
+	fprintf (file, "submodel_parents[%d] = %d\n", j, pm.submodel_parents[j]);
+	fprintf (file, "submodel_mins[%d]    = %#08lx %#08lx %#08lx\n", j, 
+				pm.submodel_mins[j].v.x, pm.submodel_mins[j].v.y, pm.submodel_mins[j].v.z);
+	fprintf (file, "submodel_maxs[%d]    = %#08lx %#08lx %#08lx\n", j, 
+		pm.submodel_maxs[j].v.x, pm.submodel_maxs[j].v.y, pm.submodel_maxs[j].v.z);
       }
-      fprintf(file,"mins            = %#08lx %#08lx %#08lx\n",pm.mins.x,pm.mins.y,pm.mins.z);
-      fprintf(file,"maxs            = %#08lx %#08lx %#08lx\n",pm.maxs.x,pm.maxs.y,pm.maxs.z);
-      fprintf(file,"rad             = %ld\n",pm.rad);
-      fprintf(file,"n_textures      = %d\n",pm.n_textures);
-      fprintf(file,"first_texture   = %d\n",pm.first_texture);
-      fprintf(file,"simpler_model   = %d\n\n",pm.simpler_model);
+      fprintf (file, "mins            = %#08lx %#08lx %#08lx\n", pm.mins.v.x, pm.mins.v.y, pm.mins.v.z);
+      fprintf (file, "maxs            = %#08lx %#08lx %#08lx\n", pm.maxs.v.x, pm.maxs.v.y, pm.maxs.v.z);
+      fprintf (file, "rad             = %ld\n", pm.rad);
+      fprintf (file, "n_textures      = %d\n", pm.n_textures);
+      fprintf (file, "first_texture   = %d\n", pm.first_texture);
+      fprintf (file, "simpler_model   = %d\n\n", pm.simpler_model);
     }
     fclose(file);
   }
