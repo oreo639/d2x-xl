@@ -663,15 +663,11 @@ void CMine::Illuminate (
 	CSegment*		segP = Segments (0);
 	double			effect[4];
 	// find orthogonal angle of source segment
-	CFixVector			A;
+	CFixVector		A;
 
 //fLightScale /= 100.0;
-CalcSideNormal (A,nSourceSeg, nSourceSide);
+A = -CalcSideNormal (nSourceSeg, nSourceSide);
 // remember to flip the sign since we want it to point inward
-A.x = -A.x;
-A.y = -A.y;
-A.z = -A.z;
-
 // calculate the center of the source segment
 CFixVector source_center;
 source_center = CalcSideCenter (nSourceSeg, nSourceSide);
@@ -728,9 +724,7 @@ INT32 nSegCount = SegCount ();
 		for (j = 0; j < 4; j++) {
 			INT32 nVertex = side_vert [nSourceSide][j];
 			INT32 h = segP->verts [nVertex];
-			source_corner[j].x = Vertices (h)->x;
-			source_corner[j].y = Vertices (h)->y;
-			source_corner[j].z = Vertices (h)->z;
+			source_corner[j] = *Vertices (h);
 			}
 		// loop on child sides
 		INT32 nChildSide;
@@ -979,11 +973,7 @@ fLightScale = 1.0; ///= 100.0;
 			pdli->index = (INT16)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
-			CalcSideNormal(A,nSourceSeg,nSourceSide);
-			// remember to flip the sign since we want it to point inward
-			A.x = -A.x;
-			A.y = -A.y;
-			A.z = -A.z;
+			A = -CalcSideNormal(nSourceSeg,nSourceSide);
 
 			// calculate the center of the source segment
 			source_center = CalcSideCenter (nSourceSeg, nSourceSide);
@@ -1011,9 +1001,7 @@ fLightScale = 1.0; ///= 100.0;
 			for (INT32 j = 0; j < 4; j++) {
 				UINT8 nVertex = side_vert[nSourceSide][j];
 				INT32 h = srcSegP->verts[nVertex];
-				source_corner[j].x = Vertices (h)->x;
-				source_corner[j].y = Vertices (h)->y;
-				source_corner[j].z = Vertices (h)->z;
+				source_corner[j] = *Vertices (h);
 				}
 
 			// loop on child Segments ()
@@ -1278,30 +1266,22 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 //--------------------------------------------------------------------------
 
 bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
-									 CFixVector* source_corner, CFixVector& A, double *effect,
+									 CFixVector* source_corner, CFixVector& vertex, double *effect,
 									 double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
-CFixVector	B,center;
-center = CalcSideCenter (nSegment, nSide);
-B.x = center.x - source_center.x;
-B.y = center.y - source_center.y;
-B.z = center.z - source_center.z;
+CDoubleVector center = CalcSideCenter (nSegment, nSide);
+CDoubleVector A = vertex;
+CDoubleVector B = center - source_center;
 
 // calculate angle between vectors (use dot product equation)
 if (!bIgnoreAngle) {
-	double ratio,angle;
-	double A_dot_B = (double)A.x * (double)B.x
-						+ (double)A.y * (double)B.y
-						+ (double)A.z * (double)B.z;
-	double mag_A = my_sqrt( (double)A.x*(double)A.x
-						+(double)A.y*(double)A.y
-						+(double)A.z*(double)A.z);
-	double mag_B = my_sqrt( (double)B.x*(double)B.x
-						+(double)B.y*(double)B.y
-						+(double)B.z*(double)B.z);
-	if (mag_A == 0 || mag_B == 0)
+	double ratio, angle;
+	double A_dot_B = A ^ B;
+	double mag_A = A.Mag ();
+	double mag_B = B.Mag ();
+	if (mag_A == 0.0 || mag_B == 0.0)
 		angle = (200.0 * M_PI)/180.0; // force a failure
 	else {
 		ratio = A_dot_B/(mag_A * mag_B);
@@ -1321,9 +1301,7 @@ for (j = 0; j < 4; j++) {
 	CFixVector corner;
 	INT32 nVertex = side_vert[nSide][j];
 	INT32 h = segP->verts[nVertex];
-	corner.x = Vertices (h)->x;
-	corner.y = Vertices (h)->y;
-	corner.z = Vertices (h)->z;
+	corner = *Vertices (h);
 	double length = 20.0 * m_lightRenderDepth;
 	for (i = 0; i < 4; i++)
 		length = min (length, CalcLength (source_corner + i, &corner) / F1_0);

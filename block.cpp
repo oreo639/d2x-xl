@@ -45,10 +45,9 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	INT16				nSegment, nSide, nVertex;
 	INT16				i, j, test;
 	INT16				origVertCount, k;
-	FIX				x,y,z;
-	CVertex			origin, vect;
-	CDoubleVector x_prime, y_prime, z_prime;
-	CDoubleVector x_pprime, y_pprime, z_pprime;
+	CVertex			origin, vVertex;
+	CDoubleVector	xPrime, yPrime, zPrime, v;
+	CDoubleVector	xAxis, yAxis, zAxis;
 	double			length;
 	INT16				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	INT16				xlatSegNum [MAX_SEGMENTS3];
@@ -69,63 +68,42 @@ origin.z = Vertices (nVertex)->z;
 */
 // set x'
 nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(1)]];
-x_prime.x = (double)(Vertices (nVertex)->x - origin.x);
-x_prime.y = (double)(Vertices (nVertex)->y - origin.y);
-x_prime.z = (double)(Vertices (nVertex)->z - origin.z);
+xPrime = *Vertices (nVertex) - origin;
 
 // calculate y'
 nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(3)]];
-vect.x = (FIX)(Vertices (nVertex)->x - origin.x);
-vect.y = (FIX)(Vertices (nVertex)->y - origin.y);
-vect.z = (FIX)(Vertices (nVertex)->z - origin.z);
-y_prime.x = x_prime.y*vect.z - x_prime.z*vect.y;
-y_prime.y = x_prime.z*vect.x - x_prime.x*vect.z;
-y_prime.z = x_prime.x*vect.y - x_prime.y*vect.x;
+vVertex = *Vertices (nVertex) - origin;
+yPrime = CrossProduct (xPrime, CDoubleVector (vVertex));
+zPrime = CrossProduct (xPrime, yPrime);
+xPrime.Normalize ();
+yPrime.Normalize ();
+zPrime.Normalize ();
 
-// calculate z'
-z_prime.x = x_prime.y*y_prime.z - x_prime.z*y_prime.y;
-z_prime.y = x_prime.z*y_prime.x - x_prime.x*y_prime.z;
-z_prime.z = x_prime.x*y_prime.y - x_prime.y*y_prime.x;
-
-// normalize all
-length = sqrt(x_prime.x*x_prime.x + x_prime.y*x_prime.y + x_prime.z*x_prime.z);
-x_prime.x /= length;
-x_prime.y /= length;
-x_prime.z /= length;
-length = sqrt(y_prime.x*y_prime.x + y_prime.y*y_prime.y + y_prime.z*y_prime.z);
-y_prime.x /= length;
-y_prime.y /= length;
-y_prime.z /= length;
-length = sqrt(z_prime.x*z_prime.x + z_prime.y*z_prime.y + z_prime.z*z_prime.z);
-z_prime.x /= length;
-z_prime.y /= length;
-z_prime.z /= length;
-
-// now take the determinent
-x_pprime.x = - z_prime.y*y_prime.z + y_prime.y*z_prime.z;
-x_pprime.y = - x_prime.y*z_prime.z + z_prime.y*x_prime.z;
-x_pprime.z = - y_prime.y*x_prime.z + x_prime.y*y_prime.z;
-y_pprime.x = - y_prime.x*z_prime.z + z_prime.x*y_prime.z;
-y_pprime.y = - z_prime.x*x_prime.z + x_prime.x*z_prime.z;
-y_pprime.z = - x_prime.x*y_prime.z + y_prime.x*x_prime.z;
-z_pprime.x = - z_prime.x*y_prime.y + y_prime.x*z_prime.y;
-z_pprime.y = - x_prime.x*z_prime.y + z_prime.x*x_prime.y;
-z_pprime.z = - y_prime.x*x_prime.y + x_prime.x*y_prime.y;
+// now take the determinant
+xAxis.Set (yPrime.y * zPrime.z - zPrime.y * yPrime.z, 
+			  zPrime.y * xPrime.z - xPrime.y * zPrime.z, 
+			  xPrime.y * yPrime.z - yPrime.y * xPrime.z);
+yAxis.Set (zPrime.x * yPrime.z - yPrime.x * zPrime.z, 
+			  xPrime.x * zPrime.z - zPrime.x * xPrime.z,
+			  yPrime.x * xPrime.z - xPrime.x * yPrime.z);
+zAxis.Set (yPrime.x * zPrime.y - zPrime.x * yPrime.y,
+			  zPrime.x * xPrime.y - xPrime.x * zPrime.y,
+			  xPrime.x * yPrime.y - yPrime.x * xPrime.y);
 
 #if 0
   sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
 		  "y'=(%0.3f,%0.3f,%0.3f)\n"
 		  "z'=(%0.3f,%0.3f,%0.3f)\n",
-		  (float)x_prime.x,(float)x_prime.y,(float)x_prime.z,
-		  (float)y_prime.x,(float)y_prime.y,(float)y_prime.z,
-		  (float)z_prime.x,(float)z_prime.y,(float)z_prime.z);
+		  (float)xPrime.x,(float)xPrime.y,(float)xPrime.z,
+		  (float)yPrime.x,(float)yPrime.y,(float)yPrime.z,
+		  (float)zPrime.x,(float)zPrime.y,(float)zPrime.z);
   DebugMsg(message);
   sprintf_s (message, sizeof (message), "x''=(%0.3f,%0.3f,%0.3f)\n"
 		  "y''=(%0.3f,%0.3f,%0.3f)\n"
 		  "z''=(%0.3f,%0.3f,%0.3f)\n",
-		  (float)x_pprime.x,(float)x_pprime.y,(float)x_pprime.z,
-		  (float)y_pprime.x,(float)y_pprime.y,(float)y_pprime.z,
-		  (float)z_pprime.x,(float)z_pprime.y,(float)z_pprime.z);
+		  (float)xAxis.x,(float)xAxis.y,(float)xAxis.z,
+		  (float)yAxis.x,(float)yAxis.y,(float)yAxis.z,
+		  (float)zAxis.x,(float)zAxis.y,(float)zAxis.z);
   DebugMsg(message);
 #endif
 
@@ -305,21 +283,21 @@ while(!feof(fBlk)) {
 				&segP->children [3],&segP->children [4],&segP->children [5]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
-		fscanf_s (fBlk, "  CFixVector %hd %ld %ld %ld\n", &test, &vect.x, &vect.y, &vect.z);
+		fscanf_s (fBlk, "  CFixVector %hd %ld %ld %ld\n", &test, &vVertex.v.x, &vVertex.v.y, &vVertex.v.z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
 			return (0);
 			}
 		// each vertex relative to the origin has a x', y', and z' component
 		// adjust vertices relative to origin
-		x = origin.x + (FIX)((double) vect.x * x_pprime.x + (double) vect.y * x_pprime.y + (double) vect.z * x_pprime.z);
-		y = origin.y + (FIX)((double) vect.x * y_pprime.x + (double) vect.y * y_pprime.y + (double) vect.z * y_pprime.z);
-		z = origin.z + (FIX)((double) vect.x * z_pprime.x + (double) vect.y * z_pprime.y + (double) vect.z * z_pprime.z);
+		v.x = origin.x + vVertex ^ CFixVector (xAxis);
+		v.y = origin.y + vVertex ^ CFixVector (xAxis);
+		v.z = origin.z + vVertex ^ CFixVector (xAxis);
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CFixVector* vert = Vertices (origVertCount);
+		CVertexVector* vertP = Vertices (origVertCount);
 		for (k = origVertCount; k < VertCount (); k++, vert++)
-			if (vert->x == x && vert->y == y && vert->z == z) {
+			if (*vertP == v) {
 				segP->verts [i] = k;
 				break;
 				}
@@ -328,9 +306,7 @@ while(!feof(fBlk)) {
 			nVertex = VertCount ();
 			VertStatus (nVertex) |= NEW_MASK;
 			segP->verts [i] = nVertex;
-			Vertices (nVertex)->x = x;
-			Vertices (nVertex)->y = y;
-			Vertices (nVertex)->z = z;
+			*Vertices (nVertex) = v;
 			VertCount ()++;
 			}
 		}

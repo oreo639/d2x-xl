@@ -578,7 +578,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			b = orthog + *vertP; 
 
 			// center
-			c = Average (a + b);
+			c = Average (a, b);
 
 			// vector from center to point0 and its length
 			d = a - c; 
