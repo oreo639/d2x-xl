@@ -35,15 +35,14 @@ bool CMine::EditGeoFwd (void)
 center /= FIX (4);
 
 // calculate center of opposite of current side
-opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
    opp_center += *Vertices (nVertex);
 	}
 opp_center /= FIX (4);
-
+center -= opp_center;
 // normalize vector
-v = CDoubleVector (center - opp_center);
+v = CDoubleVector (center);
 
 // normalize direction
 radius = v.Mag ();
@@ -53,7 +52,7 @@ if (radius > (F1_0 / 10)) {
 	}
 else {
 	CFixVector direction;
-	CalcSideNormal(direction,Current ()->nSegment,Current ()->nSide);
+	direction = CalcSideNormal(Current ()->nSegment,Current ()->nSide);
 	v = CDoubleVector (direction) / (double) F1_0;
 	}
 
@@ -72,38 +71,27 @@ else {
 
 bool CMine::EditGeoBack (void) 
 {
-  CFixVector center,opp_center;
-  double x,y,z,radius;
-  INT32 i;
+  CFixVector		center, opp_center;
+  CDoubleVector	v;
+  double				radius;
+  INT32				i;
 
 /* calculate center of current side */
-center.x = center.y = center.z = 0;
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->verts [side_vert [Current ()->nSide][i]];
-	center.x += Vertices (nVertex)->x;
-	center.y += Vertices (nVertex)->y;
-	center.z += Vertices (nVertex)->z;
+	center += *Vertices (nVertex);
 	}
-center.x /= 4;
-center.y /= 4;
-center.z /= 4;
+center >>= 2;
 
 // calculate center of oppisite current side
-opp_center.x = opp_center.y = opp_center.z = 0;
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->verts [opp_side_vert [Current ()->nSide][i]];
-	opp_center.x += Vertices (nVertex)->x;
-	opp_center.y += Vertices (nVertex)->y;
-	opp_center.z += Vertices (nVertex)->z;
+	opp_center += *Vertices (nVertex);
 	}
-opp_center.x /= 4;
-opp_center.y /= 4;
-opp_center.z /= 4;
+opp_center >>= 2;
 
 // normalize vector
-x = center.x - opp_center.x;
-y = center.y - opp_center.y;
-z = center.z - opp_center.z;
+v = CDoubleVecto (center - opp_center);
 
 // make sure distance is positive to prevent
 // cube from turning inside out
@@ -174,23 +162,20 @@ if ((radius-move_rate) < F1_0 / 4) {
 else {
 	// normalize direction
 	if (radius > (F1_0/10)) {
-		x /= radius;
-		y /= radius;
-		z /= radius;
+		v /= radius;
 		} 
 	else {
 		CFixVector direction;
 		direction = CalcSideNormal(Current ()->nSegment,Current ()->nSide);
-		x = (double)direction.x/(double)F1_0;
-		y = (double)direction.y/(double)F1_0;
-		z = (double)direction.z/(double)F1_0;
+		v = CDoubleVector (direction);
+		v /= (double)F1_0;
 		}
 	// move on x, y, and z
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
-	MoveOn('X',(INT32) (-x*move_rate));
-	MoveOn('Y',(INT32) (-y*move_rate));
-	MoveOn('Z',(INT32) (-z*move_rate));
+	MoveOn('X',(INT32) (-v.v.x * move_rate));
+	MoveOn('Y',(INT32) (-v.v.y * move_rate));
+	MoveOn('Z',(INT32) (-v.v.z * move_rate));
 	theApp.UnlockUndo ();
 	}
 theApp.SetModified (TRUE);
@@ -301,7 +286,7 @@ switch (m_selectMode){
 			}
 		// calculate center opp side line 0
 		opp_center = Average (Vertices (segP->verts [opp_side_vert [nSide][pts [0]]]),
-									 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]])->x);
+									 Vertices (segP->verts [opp_side_vert [nSide][pts [1]]]));
 		// calculate center opp side line 2
 		center = Average (Vertices (segP->verts [opp_side_vert [nSide][pts [2]]]),
 								Vertices (segP->verts [opp_side_vert [nSide][pts [3]]]));
@@ -382,33 +367,23 @@ switch (m_selectMode) {
 		theApp.SetModified (TRUE);
 		CFixVector max_pt, min_pt, center;
 		CVertex* verts;
-		max_pt.x = -0x7fffffffL;
-		max_pt.y = -0x7fffffffL;
-		max_pt.z = -0x7fffffffL;
-		min_pt.x =  0x7fffffffL;
-		min_pt.y =  0x7fffffffL;
-		min_pt.z =  0x7fffffffL;
+		max_pt.Set (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL);
+		min_pt.Set (0x7fffffffL, 0x7fffffffL, 0x7fffffffL);
 		verts = Vertices (0);
 		j = 0;
 		for (i = VertCount (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
-				max_pt.x = max (max_pt.x, verts->x);
-				max_pt.y = max (max_pt.y, verts->y);
-				max_pt.z = max (max_pt.z, verts->z);
-				min_pt.x = min (min_pt.x, verts->x);
-				min_pt.y = min (min_pt.y, verts->y);
-				min_pt.z = min (min_pt.z, verts->z);
+				max_pt = Max (max_pt, *verts);
+				min_pt = Min (min_pt, *verts);
 				}
-		center.x = (max_pt.x + min_pt.x) / 2;
-		center.y = (max_pt.y + min_pt.y) / 2;
-		center.z = (max_pt.z + min_pt.z) / 2;
+		center = Average (max_pt + min_pt);
 		double scale = ((double)(20*F1_0) + (double)inc)/(double)(20*F1_0);
 		verts = Vertices (0);
 		for (i = VertCount (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
-				verts->x = center.x + (long) ((verts->x - center.x) * scale);
-				verts->y = center.y + (long) ((verts->y - center.y) * scale);
-				verts->z = center.z + (long) ((verts->z - center.z) * scale);
+				*verts -= center;
+				*verts *= scale;
+				*verts += center;
 				}
 	return true;
 	}
@@ -424,12 +399,12 @@ return false;
 
 bool CMine::MovePoints(INT32 pt0, INT32 pt1) 
 {
-	CFixVector* vector0,*vector1,delta;
-	INT32 point0,point1;
-	double length;
-	INT32 point;
-	INT32 i;
-	CFixVector* vect;
+	CFixVector* vector0, * vector1, delta;
+	INT32			point0, point1;
+	double		length;
+	INT32			point;
+	INT32			i;
+	CVertex*		vertP;
 
 point0  = side_vert [Current ()->nSide][CURRENT_POINT(pt0)];
 point1  = side_vert [Current ()->nSide][CURRENT_POINT(pt1)];
@@ -437,65 +412,47 @@ vector0 = Vertices (Segments (Current ()->nSegment)->verts [point0]);
 vector1 = Vertices (Segments (Current ()->nSegment)->verts [point1]);
 length  = CalcLength(vector0,vector1);
 if (length >= F1_0) {
-	delta.x = (FIX)(((double)(vector1->x - vector0->x) * (double)move_rate)/length);
-	delta.y = (FIX)(((double)(vector1->y - vector0->y) * (double)move_rate)/length);
-	delta.z = (FIX)(((double)(vector1->z - vector0->z) * (double)move_rate)/length);
+	delta = *vector1 - *vector0;
+	CDoubleVector d (delta);
+	d *= (double)move_rate / length;
+	delta = CFixVector (d);
 	} 
 else {
-	delta.x = move_rate;
-	delta.y = 0;
-	delta.z = 0;
+	delta.Set (move_rate, 0, 0);
 	}
 
 switch (m_selectMode){
 	case POINT_MODE:
 		point = side_vert [Current ()->nSide][CURRENT_POINT(0)];
-		vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
-		vect->x += delta.x;
-		vect->y += delta.y;
-		vect->z += delta.z;
+		*Vertices (Segments (Current ()->nSegment)->verts [point]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
 	case LINE_MODE:
 		point = side_vert [Current ()->nSide][CURRENT_POINT(0)];
-		vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
-		vect->x += delta.x;
-		vect->y += delta.y;
-		vect->z += delta.z;
+		*Vertices (Segments (Current ()->nSegment)->verts [point]) += delta;
 		point = side_vert [Current ()->nSide][CURRENT_POINT(1)];
-		vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
-		vect->x += delta.x;
-		vect->y += delta.y;
-		vect->z += delta.z;
+		*Vertices (Segments (Current ()->nSegment)->verts [point]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
 			point = side_vert [Current ()->nSide][i];
-			vect  = Vertices (Segments (Current ()->nSegment)->verts [point]);
-			vect->x += delta.x;
-			vect->y += delta.y;
-			vect->z += delta.z;
+			*Vertices (Segments (Current ()->nSegment)->verts [point]) += delta;
 			}
 		theApp.SetModified (TRUE);
 		break;
 
 	case CUBE_MODE:
 		for (i = 0; i < 8; i++) {
-			vect = Vertices (Segments (Current ()->nSegment)->verts [i]);
-			vect->x += delta.x;
-			vect->y += delta.y;
-			vect->z += delta.z;
+			*Vertices (Segments (Current ()->nSegment)->verts [i]) += delta;
 			}
 		theApp.SetModified (TRUE);
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->pos.x += delta.x;
-		CurrObj ()->pos.y += delta.y;
-		CurrObj ()->pos.z += delta.z;
+		CurrObj ()->pos += delta;
 		theApp.SetModified (TRUE);
 		break;
 
@@ -503,9 +460,7 @@ switch (m_selectMode){
 		bool bMoved = false;
 		for (i = 0; i < MAX_VERTICES; i++) {
 			if (VertStatus (i) & MARKED_MASK) {
-				Vertices (i)->x += delta.x;
-				Vertices (i)->y += delta.y;
-				Vertices (i)->z += delta.z;
+				*Vertices (i) += delta;
 				bMoved = true;
 				}
 			}
@@ -523,7 +478,6 @@ return true;
 
 bool CMine::SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc) 
 {
-double x,y,z,radius;
 
 // round a bit
 if (inc > 0)
@@ -539,32 +493,23 @@ else
 
 CFixVector* v1 = Vertices (segP->verts [point0]),
 			  *v2 = Vertices (segP->verts [point1]);
+double			radius;
+CDoubleVector	v (v1 - v2);
 // figure out direction to modify line
-x = v1->x - v2->x;
-y = v1->y - v2->y;
-z = v1->z - v2->z;
 // normalize direction
-radius = sqrt (x*x + y*y + z*z);
+radius = v.Mag ();
 if (radius > (double) F1_0* (double) F1_0 - inc) 
 	return false;
 if ((inc < 0) && (radius <= (double)-inc*3)) 
 	return false;
 if (radius == 0) 
 	return false;
-x /= radius;
-y /= radius;
-z /= radius;
+v /= radius;
 // multiply by increment value
-x *= inc;
-y *= inc;
-z *= inc;
+v *= inc;
 // update vertices
-v1->x += (INT32)x;
-v1->y += (INT32)y;
-v1->z += (INT32)z;
-v2->x -= (INT32)x;
-v2->y -= (INT32)y;
-v2->z -= (INT32)z;
+v1 += CFixVector (v);
+v2 -= CFixVector (v);
 return true;
 }
 
@@ -742,52 +687,36 @@ switch (m_selectMode) {
 	case SIDE_MODE: // spin side around its center in the plane of the side
 		// calculate center of current side
 		theApp.SetModified (TRUE);
-		center.x = center.y = center.z = 0;
+		center.Clear ();
 		for (i = 0; i < 4; i++) {
-			center.x += Vertices (segP->verts [side_vert [nSide][i]])->x;
-			center.y += Vertices (segP->verts [side_vert [nSide][i]])->y;
-			center.z += Vertices (segP->verts [side_vert [nSide][i]])->z;
+			center += *Vertices (segP->verts [side_vert [nSide][i]]);
 			}
-		center.x /= 4;
-		center.y /= 4;
-		center.z /= 4;
+		center.x >>= 2;
 		// calculate orthogonal vector from lines which intersect point 0
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
 		//       |bx by bz|
-		struct vector {double x,y,z;};
-		struct vector a,b,c;
-		double length;
-		INT16 nVertex1,nVertex2;
+		CDoubleVector	a, b, c;
+		CFixVector		v;
+		double			length;
+		INT16				nVertex1,nVertex2;
 
 		nVertex1 = segP->verts [side_vert [nSide][0]];
 		nVertex2 = segP->verts [side_vert [nSide][1]];
-		a.x = (double)(Vertices (nVertex2)->x - Vertices (nVertex1)->x);
-		a.y = (double)(Vertices (nVertex2)->y - Vertices (nVertex1)->y);
-		a.z = (double)(Vertices (nVertex2)->z - Vertices (nVertex1)->z);
-		nVertex1 = segP->verts [side_vert [nSide][0]];
-		nVertex2 = segP->verts [side_vert [nSide][3]];
-		b.x = (double)(Vertices (nVertex2)->x - Vertices (nVertex1)->x);
-		b.y = (double)(Vertices (nVertex2)->y - Vertices (nVertex1)->y);
-		b.z = (double)(Vertices (nVertex2)->z - Vertices (nVertex1)->z);
-		c.x = a.y*b.z - a.z*b.y;
-		c.y = a.z*b.x - a.x*b.z;
-		c.z = a.x*b.y - a.y*b.x;
+		CDoubleVector a (*Vertices (nVertex2) - );
+		nVertex3 = segP->verts [side_vert [nSide][3]];
+		CDoubleVector b = (*Vertices (nVertex3) - *Vertices (nVertex1));
+		length = Normal (c,
+							  CDoubleVector (*Vertices (segP->verts [side_vert [nSide][0]])),
+							  CDoubleVector (*Vertices (segP->verts [side_vert [nSide][1]])),
+							  CDoubleVector (*Vertices (segP->verts [side_vert [nSide][3]])));
 		// normalize the vector
-		length = sqrt(c.x*c.x + c.y*c.y + c.z*c.z);
-		c.x /= length;
-		c.y /= length;
-		c.z /= length;
 		// set sign (since vert numbers for most sides don't follow right-handed convention)
 		if (nSide!=1 && nSide!=5) {
-			c.x = -c.x;
-			c.y = -c.y;
-			c.z = -c.z;
+			c = -c;
 			}
 		// set opposite center
-		opp_center.x = center.x + (FIX)(0x10000L*c.x);
-		opp_center.y = center.y + (FIX)(0x10000L*c.y);
-		opp_center.z = center.z + (FIX)(0x10000L*c.z);
+		opp_center = center + CFixVector (c * F1_0);
 		/* rotate points around a line */
 		for (i = 0; i < 4; i++)
 			RotateVertex(Vertices (segP->verts [side_vert [nSide][i]]), &center,&opp_center,angle);
@@ -797,25 +726,17 @@ switch (m_selectMode) {
 	case CUBE_MODE:	// spin cube around the center of the cube using screen's perspective
 		// calculate center of current cube
 		theApp.SetModified (TRUE);
-		center.x = center.y = center.z = 0;
+		center.Clear ();
 		for (i = 0; i < 8; i++) {
-			center.x += Vertices (segP->verts [i])->x;
-			center.y += Vertices (segP->verts [i])->y;
-			center.z += Vertices (segP->verts [i])->z;
+			center += *Vertices (segP->verts [i]);
 			}
-		center.x /= 8;
-		center.y /= 8;
-		center.z /= 8;
+		center >>= 3;
 		// calculate center of oppisite current side
-		opp_center.x = opp_center.y = opp_center.z = 0;
+		opp_center.Clear ();
 		for (i = 0; i < 4; i++) {
-			opp_center.x += Vertices (segP->verts [opp_side_vert [nSide][i]])->x;
-			opp_center.y += Vertices (segP->verts [opp_side_vert [nSide][i]])->y;
-			opp_center.z += Vertices (segP->verts [opp_side_vert [nSide][i]])->z;
+			opp_center += *Vertices (segP->verts [opp_side_vert [nSide][i]]);
 			}
-		opp_center.x /= 4;
-		opp_center.y /= 4;
-		opp_center.z /= 4;
+		opp_center >>= 2;
 		// rotate points about a point
 		for (i = 0; i < 8; i++)
 			RotateVertex(Vertices (segP->verts [i]),&center,&opp_center,angle);
@@ -881,34 +802,26 @@ switch (m_selectMode) {
 	case BLOCK_MODE:
 		theApp.SetModified (TRUE);
 		// calculate center of current cube
-		center.x = center.y = center.z = 0;
+		center.Clear ();
 		for (i = 0; i < 8; i++) {
-			center.x += Vertices (segP->verts [i])->x;
-			center.y += Vertices (segP->verts [i])->y;
-			center.z += Vertices (segP->verts [i])->z;
+			center += *Vertices (segP->verts [i]);
 			}
-		center.x /= 8;
-		center.y /= 8;
-		center.z /= 8;
+		center >>= 3;
 		// calculate center of oppisite current side
-		opp_center.x = opp_center.y = opp_center.z = 0;
+		opp_center.Clear ();
 		for (i = 0; i < 4; i++) {
-			opp_center.x += Vertices (segP->verts [opp_side_vert [nSide][i]])->x;
-			opp_center.y += Vertices (segP->verts [opp_side_vert [nSide][i]])->y;
-			opp_center.z += Vertices (segP->verts [opp_side_vert [nSide][i]])->z;
+			opp_center += *Vertices (segP->verts [opp_side_vert [nSide][i]]);
 			}
-		opp_center.x /= 4;
-		opp_center.y /= 4;
-		opp_center.z /= 4;
+		opp_center.x >>= 2;
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
 			if (VertStatus (i) & MARKED_MASK)
-				RotateVertex(Vertices (i),&center,&opp_center,angle);
+				RotateVertex(Vertices (i), &center, &opp_center, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
-				RotateVertex(&objP->pos, &center, &opp_center, angle);
+				RotateVertex (&objP->pos, &center, &opp_center, angle);
 		break;
 	}
 return true;
@@ -935,18 +848,18 @@ return true;
 {
   CFixVector n;
 
-  vms m,vect;
-  vect.x = vector->x;
-  vect.y = vector->y;
-  vect.z = vector->z;
+  vms m,vertP;
+  vertP.x = vector->x;
+  vertP.y = vector->y;
+  vertP.z = vector->z;
   switch(axis) {
     case 'x':
-      m.x = (long) (vect.x*cos(angle) + vect.y*sin(angle));
-      m.y = (long) (-vect.x*sin(angle) + vect.y*cos(angle));
-      vect = m;
-      vector->x = vect.x;
-      vector->y = vect.y;
-      vector->z = vect.z;
+      m.x = (long) (vertP.x*cos(angle) + vertP.y*sin(angle));
+      m.y = (long) (-vertP.x*sin(angle) + vertP.y*cos(angle));
+      vertP = m;
+      vector->x = vertP.x;
+      vector->y = vertP.y;
+      vector->z = vertP.z;
 //      vector->x = n.x;
 //      vector->y = n.y;
       break;

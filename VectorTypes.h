@@ -396,12 +396,20 @@ inline CDoubleVector Perpendicular (const CDoubleVector& p0, const CDoubleVector
 	}
 
 inline const CDoubleVector Normalize (CDoubleVector v) { 
-	double m = v.Mag ();
+	DOUBLE m = v.Mag ();
 	return (m != 0.0) ? v / m : CDoubleVector (0.0, 0.0, 0.0); 
 	}
 
 inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
 	return Normalize (CrossProduct (p1 - p0, p2 - p1));
+	}
+
+inline const DOUBLE Normal (const CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
+	normal = CrossProduct (p1 - p0, p2 - p1);
+	DOUBLE m = normal.Mag ();
+	if (m > 0.0)
+		normal *= m;
+	return m;
 	}
 
 inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
@@ -418,6 +426,14 @@ inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
 	CFixVector v = p0 + p1;
 	v /= FIX (2);
 	return v;
+	}
+
+inline CFixVector Min (const CFixVector& v0, const CFixVector& v1) {
+	return CFixVector(min (v0.v.x, v1.v.x), min (v0.v.y, v1.v.y), min (v0.v.z, v1.v.z));
+	}
+
+inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
+	return CFixVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
 	}
 
 // --------------------------------------------------------------------------
