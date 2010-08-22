@@ -408,7 +408,7 @@ CFixVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 
 for (INT32 i = 0; i < 4; i++)
 	v += *Vertices (sideIndexP [sideVertP [i]]);
-v /= 4;
+v >>= 2;
 return v;
 }
 

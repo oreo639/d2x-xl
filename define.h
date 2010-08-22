@@ -38,6 +38,20 @@
 #define F0_5   f0_5
 #define F0_1   f0_1
 
+//	-----------------------------------------------------------------------------------------------------------
+
+template<typename _T> 
+inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
+
+//	-----------------------------------------------------------------------------------------------------------
+
+inline double Round (double value, double round = 1.0) { return (value >= 0) ? value + round / 2.0 : value - round / 2.0; }
+
+//	-----------------------------------------------------------------------------------------------------------
+
+#define F2D(_f)	((double) _f / 65536.0)
+#define D2F(_f)	((FIX) Round (_f * 65536.0))
+
 #define JOIN_DISTANCE (20*20*F1_0)
 
 #define PREFS_SHOW_POINT_COORDINATES 1
