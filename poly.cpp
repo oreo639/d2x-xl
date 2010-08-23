@@ -402,7 +402,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 	UINT16     model_dataSize[MAX_POLYGON_MODELS];
 	POLYMODEL  polyModel;
 	POLYMODEL  save_model;
-	ROBOT_INFO robot_info;
+	CRobotInfo robot_info;
 	UINT32     model_num;
 
 	switch (objP->m_info.type) {
@@ -449,14 +449,14 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 				if (objP->m_info.type == OBJ_ROBOT) {
 					for (i=0;i<n;i++) {
 						if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
-							fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
+							fread(&robot_info,sizeof (CRobotInfo),1,file);// read robot info
 							model_num = robot_info.model_num;
 						} else {
-							fseek(file,sizeof (ROBOT_INFO),SEEK_CUR);   // skip robot info
+							fseek(file,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 						}
 					}
 				} else {
-					fseek(file,n * sizeof (ROBOT_INFO),SEEK_CUR);
+					fseek(file,n * sizeof (CRobotInfo),SEEK_CUR);
 				}
 				n  = read_UINTW(file);                         // n_robot_joints
 				fseek(file,n * sizeof (JOINTPOS),SEEK_CUR);     // robot_joints
@@ -503,14 +503,14 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		if (objP->m_info.type == OBJ_ROBOT) {
 			for (i=0;i<n;i++) {
 				if (i == (UINT32) objP->m_info.id) {
-					fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
+					fread(&robot_info,sizeof (CRobotInfo),1,file);// read robot info
 					model_num = robot_info.model_num;
 				} else {
-					fseek(file,sizeof (ROBOT_INFO),SEEK_CUR);   // skip robot info
+					fseek(file,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 				}
 			}
 		} else {
-			fseek(file,n * sizeof (ROBOT_INFO),SEEK_CUR);
+			fseek(file,n * sizeof (CRobotInfo),SEEK_CUR);
 		}
 		n = read_UINTW(file);                          // n_robot_joints
 		fseek(file,n * sizeof (JOINTPOS),SEEK_CUR);     // robot joints

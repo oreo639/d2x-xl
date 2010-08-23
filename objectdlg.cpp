@@ -611,7 +611,7 @@ theApp.MineView ()->Refresh (FALSE);
 void CObjectTool::RefreshRobot ()
 {
   INT32 i,j, nType;
-  ROBOT_INFO rInfo;
+  CRobotInfo rInfo;
 
   // get selection
 if ((nType = object_list [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
@@ -728,7 +728,7 @@ SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((INT32) (rInfo.contentsCount / SliderFactor
 void CObjectTool::UpdateRobot ()
 {
   INT32 i,j;
-  ROBOT_INFO rInfo;
+  CRobotInfo rInfo;
 
   // get selection
 i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
@@ -1529,7 +1529,7 @@ void CObjectTool::OnDefault ()
 if (object_list [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
 INT32 i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-memcpy (theMine->RobotInfo (i), theMine->DefRobotInfo (i), sizeof (ROBOT_INFO));
+memcpy (theMine->RobotInfo (i), theMine->DefRobotInfo (i), sizeof (CRobotInfo));
 Refresh ();
 }
 
@@ -1597,7 +1597,7 @@ INT32 i = CBContType ()->GetCurSel ();
 if (0 > i)
 	return;
 INT32 j = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-ROBOT_INFO *rInfo = theMine->RobotInfo (j);
+CRobotInfo *rInfo = theMine->RobotInfo (j);
 rInfo->contentsType = (UINT8) CBContType ()->GetItemData (i);
 RefreshRobot ();
 }

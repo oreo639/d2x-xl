@@ -42,86 +42,88 @@ typedef struct {
   INT16  offset;
 } JOINTLIST;
 
-typedef struct {
-  INT32	      model_num;		  // which polygon model?
-  CFixVector	gun_points[MAX_GUNS];	  // where each gun model is
-  UINT8			gun_submodels[MAX_GUNS];  // which submodel is each gun in?
+class CRobotInfo : public CGameItem {
+	public:
+		INT32	      model_num;		  // which polygon model?
+		CFixVector	gun_points[MAX_GUNS];	  // where each gun model is
+		UINT8			gun_submodels[MAX_GUNS];  // which submodel is each gun in?
 
-  INT16 		exp1_vclip_num;
-  INT16		exp1_sound_num;
+		INT16 		exp1_vclip_num;
+		INT16			exp1_sound_num;
 
-  INT16 		exp2_vclip_num;
-  INT16		exp2_sound_num;
+		INT16 		exp2_vclip_num;
+		INT16			exp2_sound_num;
 
-  INT8		weapon_type;
-  INT8		weapon_type2;		  // Secondary weapon number, -1 means none, otherwise gun #0 fires this weapon.
-  INT8		n_guns;			  // how many different gun positions
-  INT8		contentsId;		  // ID of powerup this robot can contain.
+		INT8			weapon_type;
+		INT8			weapon_type2;		  // Secondary weapon number, -1 means none, otherwise gun #0 fires this weapon.
+		INT8			n_guns;			  // how many different gun positions
+		INT8			contentsId;		  // ID of powerup this robot can contain.
 
-  INT8		contentsCount;		  // Max number of things this instance can contain.
-  INT8		contentsProb;		  // Probability that this instance will contain something in N/16
-  INT8		contentsType;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
-  INT8		kamikaze;		  // !0 means commits suicide when hits you, strength thereof. 0 means no.
+		INT8			contentsCount;		  // Max number of things this instance can contain.
+		INT8			contentsProb;		  // Probability that this instance will contain something in N/16
+		INT8			contentsType;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
+		INT8			kamikaze;		  // !0 means commits suicide when hits you, strength thereof. 0 means no.
 
-  INT16		score_value;		  // Score from this robot.
-  INT8		badass;			  // Dies with badass explosion, and strength thereof, 0 means NO.
-  INT8		energy_drain;		  // Points of energy drained at each collision.
+		INT16			score_value;		  // Score from this robot.
+		INT8			badass;			  // Dies with badass explosion, and strength thereof, 0 means NO.
+		INT8			energy_drain;		  // Points of energy drained at each collision.
 
-  FIX		lighting;		  // should this be here or with polygon model?
-  FIX		strength;		  // Initial shields of robot
+		FIX			lighting;		  // should this be here or with polygon model?
+		FIX			strength;		  // Initial shields of robot
 
-  FIX		mass;			  // how heavy is this thing?
-  FIX		drag;			  // how much drag does it have?
+		FIX			mass;			  // how heavy is this thing?
+		FIX			drag;			  // how much drag does it have?
 
-  FIX		field_of_view[NDL];	  // compare this value with forward_vector.dot.vector_to_player,
-					  // ..if field_of_view <, then robot can see player
-  FIX		firing_wait[NDL];	  // time in seconds between shots
-  FIX		firing_wait2[NDL];	  // time in seconds between shots
-  FIX		turn_time[NDL];		  // time in seconds to rotate 360 degrees in a dimension
-// -- unused, mk, 05/25/95	FIX		fire_power[NDL];   // damage done by a hit from this robot
-// -- unused, mk, 05/25/95	FIX		shield[NDL];	   // shield strength of this robot
-  FIX		max_speed[NDL];		  // maximum speed attainable by this robot
-  FIX		circle_distance[NDL];	  // distance at which robot circles player
+		FIX			field_of_view[NDL];// compare this value with forward_vector.dot.vector_to_player,
+						  // ..if field_of_view <, then robot can see player
+		FIX			firing_wait[NDL];	// time in seconds between shots
+		FIX			firing_wait2[NDL];// time in seconds between shots
+		FIX			turn_time[NDL];	// time in seconds to rotate 360 degrees in a dimension
+		FIX			max_speed[NDL];	// maximum speed attainable by this robot
+		FIX			circle_distance[NDL];	  // distance at which robot circles player
 
-  INT8		rapidfire_count[NDL];	  // number of shots fired rapidly
-  INT8		evade_speed[NDL];	  // rate at which robot can evade shots, 0=none, 4=very fast
-  INT8		cloak_type;		  // 0=never, 1=always, 2=except-when-firing
-  INT8		attack_type;		  // 0=firing, 1=charge (like green guy)
+		INT8			rapidfire_count[NDL];	  // number of shots fired rapidly
+		INT8			evade_speed[NDL];	// rate at which robot can evade shots, 0=none, 4=very fast
+		INT8			cloak_type;			// 0=never, 1=always, 2=except-when-firing
+		INT8			attack_type;		// 0=firing, 1=charge (like green guy)
 
-  UINT8		see_sound;		  // sound robot makes when it first sees the player
-  UINT8		attack_sound;		  // sound robot makes when it attacks the player
-  UINT8		claw_sound;		  // sound robot makes as it claws you (attack_type should be 1)
-  UINT8		taunt_sound;		  // sound robot makes after you die
+		UINT8			see_sound;			// sound robot makes when it first sees the player
+		UINT8			attack_sound;		// sound robot makes when it attacks the player
+		UINT8			claw_sound;			// sound robot makes as it claws you (attack_type should be 1)
+		UINT8			taunt_sound;		// sound robot makes after you die
 
-  INT8		boss_flag;		  // 0 = not boss, 1 = boss.  Is that surprising?
-  INT8		companion;		  // Companion robot, leads you to things.
-  INT8		smart_blobs;		  // how many smart blobs are emitted when this guy dies!
-  INT8		energy_blobs;		  // how many smart blobs are emitted when this guy gets hit by energy weapon!
+		INT8			boss_flag;			// 0 = not boss, 1 = boss.  Is that surprising?
+		INT8			companion;			// Companion robot, leads you to things.
+		INT8			smart_blobs;		// how many smart blobs are emitted when this guy dies!
+		INT8			energy_blobs;		// how many smart blobs are emitted when this guy gets hit by energy weapon!
 
-  INT8		thief;			  // !0 means this guy can steal when he collides with you!
-  INT8		pursuit;		  // !0 means pursues player after he goes around a corner.
-					  // ..4 = 4/2 pursue up to 4/2 seconds after becoming invisible if up to 4
-					  // ..segments away
-  INT8		lightcast;		  // Amount of light cast. 1 is default.  10 is very large.
-  INT8		death_roll;		  // 0 = dies without death roll. !0 means does death roll, larger = faster
-					  // ..and louder
+		INT8			thief;				// !0 means this guy can steal when he collides with you!
+		INT8			pursuit;				// !0 means pursues player after he goes around a corner.
+												// ..4 = 4/2 pursue up to 4/2 seconds after becoming invisible if up to 4
+												// ..segments away
+		INT8			lightcast;			// Amount of light cast. 1 is default.  10 is very large.
+		INT8			death_roll;			// 0 = dies without death roll. !0 means does death roll, larger = faster
+						  // ..and louder
 
-  //boss_flag, companion, thief, & pursuit probably should also be bits in the flags byte.
-  UINT8		flags;			  // misc properties
-  UINT8		pad[3];			  // alignment
+		//boss_flag, companion, thief, & pursuit probably should also be bits in the flags byte.
+		UINT8			flags;				// misc properties
+		UINT8			pad[3];				// alignment
 
-  UINT8		deathroll_sound;	  // if has deathroll, what sound?
-  UINT8		glow;			  // apply this light to robot itself. stored as 4:4 FIXed-point
-  UINT8		behavior;		  // Default behavior.
-  UINT8		aim;			  // 255 = perfect, less = more likely to miss.  0 != random, would look stupid.
-					  // ..0=45 degree spread.  Specify in bitmaps.tbl in range 0.0..1.0
+		UINT8			deathroll_sound;	// if has deathroll, what sound?
+		UINT8			glow;					// apply this light to robot itself. stored as 4:4 FIXed-point
+		UINT8			behavior;			// Default behavior.
+		UINT8			aim;					// 255 = perfect, less = more likely to miss.  0 != random, would look stupid.
+												// ..0=45 degree spread.  Specify in bitmaps.tbl in range 0.0..1.0
+		//animation info
+		JOINTLIST		anim_states[MAX_GUNS+1][N_ANIM_STATES];
+		INT32			always_0xabcd;		  // debugging
 
-  //animation info
-  JOINTLIST anim_states[MAX_GUNS+1][N_ANIM_STATES];
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; }
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {}
+	virtual void Clear (void) { memset (this, 0, sizeof (*this)); }
 
-  INT32		always_0xabcd;		  // debugging
-
-} ROBOT_INFO;
+};
 
 typedef struct {
   INT16 jointnum;

@@ -36,7 +36,7 @@ INT32 preferences = 0;
 LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
 UINT32       N_robot_types=0;
-//ROBOT_INFO   *robotInfo;     // MAX_ROBOT_TYPES
+//CRobotInfo   *robotInfo;     // MAX_ROBOT_TYPES
 
 #if ALLOCATE_POLYOBJECT
 UINT32       N_robot_joints=0;

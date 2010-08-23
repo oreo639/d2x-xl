@@ -1328,7 +1328,7 @@ if (bUseTexColors && UseTexColors ()) {
 			return pc;
 		}
 	}	
-return &MineData ().lightColors [i][j]; 
+return LightColor (i, j); 
 }
 
 //--------------------------------------------------------------------------

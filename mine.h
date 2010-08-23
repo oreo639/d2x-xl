@@ -31,10 +31,10 @@ extern CUVL default_uvls[4];
 
 #if USE_DYN_ARRAYS
 
-typedef CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > robotInfoList;
+typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
 typedef CStaticArray< CSegment, MAX_SEGMENTS3 > segmentList;
-typedef CStaticArray< typedef CStaticArray< CColor, 6 >, MAX_SEGMENTS3 > lightColorList;
+typedef CStaticArray< CColor, MAX_SEGMENTS3 * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_D2_TEXTURES > texColorList;
 typedef CStaticArray< CColor, MAX_VERTICES3 > vertexColorList;
 typedef CStaticArray< CWall, MAX_WALLS3 > wallList;
@@ -55,7 +55,7 @@ typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 
 #else
 
-typedef ROBOT_INFO robotInfoList [MAX_ROBOT_TYPES];
+typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
 typedef CVertex vertexList [MAX_VERTICES3];
 typedef CSegment segmentList [MAX_SEGMENTS3];
 typedef CColor lightColorList [MAX_SEGMENTS3][6];
@@ -113,7 +113,7 @@ typedef struct tMineData {
 	flickeringLightList		flickeringLights;
 	textureList					textures;
 
-	//ROBOT_INFO				robotInfo [MAX_ROBOT_TYPES];
+	//CRobotInfo				robotInfo [MAX_ROBOT_TYPES];
 	//CVertex					vertices [MAX_VERTICES3];
 	//CSegment					segments [MAX_SEGMENTS3];
 	//CColor 					lightColors [MAX_SEGMENTS3][6];
@@ -146,7 +146,7 @@ public:
 	char							m_currentLevelName [256];	
 	CGameFileInfo				gameFileInfo;
 	MINE_DATA					m_mineData;
-	//ROBOT_INFO				m_defaultRobotInfo [MAX_ROBOT_TYPES];
+	//CRobotInfo				m_defaultRobotInfo [MAX_ROBOT_TYPES];
 	robotInfoList				m_defaultRobotInfo;
 	// textures and palettes
 //	HGLOBAL						texture_handle[MAX_D2_TEXTURES];
@@ -256,9 +256,9 @@ public:
 		{ return MineData ().reactorTriggers + i; }
 	inline CActiveDoor *ActiveDoors (INT32 i)
 		{ return MineData ().activeDoors + i; }
-	inline ROBOT_INFO *RobotInfo (INT32 i)
+	inline CRobotInfo *RobotInfo (INT32 i)
 		{ return MineData ().robotInfo + i; }
-	inline ROBOT_INFO *DefRobotInfo (INT32 i)
+	inline CRobotInfo *DefRobotInfo (INT32 i)
 		{ return m_defaultRobotInfo + i; }
 	inline CLightDeltaIndex *LightDeltaIndex (INT32 i)
 		{ return MineData ().lightDeltaIndices + i; }
@@ -311,7 +311,7 @@ public:
 	inline lightColorList& LightColors ()
 		{ return MineData ().lightColors; }
 	inline CColor *LightColors (INT32 i, INT32 j = 0)
-		{ return MineData ().lightColors [i] + j; }
+		{ return &MineData ().lightColors [i * 6 + j]; }
 	inline CColor *CurrLightColor ()
 		{ return LightColor (Current ()->nSegment, Current ()->nSide); }
 
