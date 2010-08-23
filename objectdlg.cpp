@@ -686,7 +686,7 @@ SelectItemData (CBSoundDeath (), (INT32) rInfo.m_info.deathRollSound);
 SelectItemData (CBObjClassAI (), (INT32) rInfo.m_info.behavior);
 SelectItemData (CBExplType (), (INT32) rInfo.m_info.expl [1].nClip);
 SelectItemData (CBContType (), (INT32) rInfo.m_info.contents.type);
-INT8 m_info.bossFlag = (rInfo.m_info.bossFlag < 0) ? -rInfo.m_info.bossFlag : rInfo.m_info.bossFlag;
+INT8 bossFlag = (rInfo.m_info.bossFlag < 0) ? -rInfo.m_info.bossFlag : rInfo.m_info.bossFlag;
 SelectItemData (CBBossType (), (INT32) (bossFlag < 21) ? bossFlag : bossFlag - 18);
 // update check boxes
 BtnCtrl (IDC_OBJ_AI_KAMIKAZE)->SetCheck (rInfo.m_info.kamikaze);
@@ -706,7 +706,7 @@ SlCtrl (IDC_OBJ_STRENGTH)->SetPos (fix_log (rInfo.m_info.strength));
 SlCtrl (IDC_OBJ_MASS)->SetPos (fix_log (rInfo.m_info.mass));
 SlCtrl (IDC_OBJ_DRAG)->SetPos ((INT32) (rInfo.m_info.drag / SliderFactor (IDC_OBJ_DRAG)));
 SlCtrl (IDC_OBJ_EBLOBS)->SetPos ((INT32) (rInfo.m_info.energyBlobs / SliderFactor (IDC_OBJ_EBLOBS)));
-SlCtrl (IDC_OBJ_LIGHT)->SetPos ((INT32) (rInfo.m_info.lightcast / SliderFactor (IDC_OBJ_LIGHT)));
+SlCtrl (IDC_OBJ_LIGHT)->SetPos ((INT32) (rInfo.m_info.lightCast / SliderFactor (IDC_OBJ_LIGHT)));
 SlCtrl (IDC_OBJ_GLOW)->SetPos ((INT32) (rInfo.m_info.glow / SliderFactor (IDC_OBJ_GLOW)));
 SlCtrl (IDC_OBJ_AIM)->SetPos ((INT32) ((rInfo.m_info.aim + 1) / SliderFactor (IDC_OBJ_AIM)));
 SlCtrl (IDC_OBJ_FOV)->SetPos ((INT32) (rInfo.m_info.combat [j].fieldOfView / SliderFactor (IDC_OBJ_FOV)));
@@ -737,23 +737,23 @@ if (i < 0 || i >= ROBOT_IDS2)
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *theMine->RobotInfo (i);
 theApp.SetModified (TRUE);
-rInfo.pad [0] |= 1;
+rInfo.m_info.bCustom |= 1;
 rInfo.m_info.scoreValue = (INT32) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
 rInfo.m_info.strength = (INT32) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
 rInfo.m_info.mass = (INT32) fix_exp (SlCtrl (IDC_OBJ_MASS)->GetPos ());
 rInfo.m_info.drag = (INT32) (SlCtrl (IDC_OBJ_DRAG)->GetPos () * SliderFactor (IDC_OBJ_DRAG));
 rInfo.m_info.energyBlobs = (INT32) (SlCtrl (IDC_OBJ_EBLOBS)->GetPos ()  * SliderFactor (IDC_OBJ_EBLOBS));
-rInfo.m_info.lightcast = (INT32) (SlCtrl (IDC_OBJ_LIGHT)->GetPos () * SliderFactor (IDC_OBJ_LIGHT));
+rInfo.m_info.lightCast = (INT32) (SlCtrl (IDC_OBJ_LIGHT)->GetPos () * SliderFactor (IDC_OBJ_LIGHT));
 rInfo.m_info.glow = (INT32) (SlCtrl (IDC_OBJ_GLOW)->GetPos () * SliderFactor (IDC_OBJ_GLOW));
 rInfo.m_info.aim = (INT32) ((SlCtrl (IDC_OBJ_AIM)->GetPos ()) * SliderFactor (IDC_OBJ_AIM)) - 1;
-rInfo.m_info.combat.fieldOfView = (INT32) (SlCtrl (IDC_OBJ_FOV)->GetPos () * SliderFactor (IDC_OBJ_FOV));
-rInfo.m_info.combat.firingWait [0] = (INT32) (SlCtrl (IDC_OBJ_FIREWAIT1)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT1));
-rInfo.m_info.combat.firingWait [1] = (INT32) (SlCtrl (IDC_OBJ_FIREWAIT2)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT2));
-rInfo.m_info.combat.turnTime = (INT32) (SlCtrl (IDC_OBJ_TURNTIME)->GetPos () * SliderFactor (IDC_OBJ_TURNTIME));
-rInfo.m_info.combat.maxSpeed = (INT32) (SlCtrl (IDC_OBJ_MAXSPEED)->GetPos () * SliderFactor (IDC_OBJ_MAXSPEED));
-rInfo.m_info.combat.circleDistance = (INT32) (SlCtrl (IDC_OBJ_CIRCLEDIST)->GetPos () * SliderFactor (IDC_OBJ_CIRCLEDIST));
-rInfo.m_info.combat.rapidFire = (INT32) (SlCtrl (IDC_OBJ_FIRESPEED)->GetPos () * SliderFactor (IDC_OBJ_FIRESPEED));
-rInfo.m_info.combat.evadeSpeed = (INT32) (SlCtrl (IDC_OBJ_EVADESPEED)->GetPos () * SliderFactor (IDC_OBJ_EVADESPEED));
+rInfo.m_info.combat [j].fieldOfView = (INT32) (SlCtrl (IDC_OBJ_FOV)->GetPos () * SliderFactor (IDC_OBJ_FOV));
+rInfo.m_info.combat [j].firingWait [0] = (INT32) (SlCtrl (IDC_OBJ_FIREWAIT1)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT1));
+rInfo.m_info.combat [j].firingWait [1] = (INT32) (SlCtrl (IDC_OBJ_FIREWAIT2)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT2));
+rInfo.m_info.combat [j].turnTime = (INT32) (SlCtrl (IDC_OBJ_TURNTIME)->GetPos () * SliderFactor (IDC_OBJ_TURNTIME));
+rInfo.m_info.combat [j].maxSpeed = (INT32) (SlCtrl (IDC_OBJ_MAXSPEED)->GetPos () * SliderFactor (IDC_OBJ_MAXSPEED));
+rInfo.m_info.combat [j].circleDistance = (INT32) (SlCtrl (IDC_OBJ_CIRCLEDIST)->GetPos () * SliderFactor (IDC_OBJ_CIRCLEDIST));
+rInfo.m_info.combat [j].rapidFire = (INT32) (SlCtrl (IDC_OBJ_FIRESPEED)->GetPos () * SliderFactor (IDC_OBJ_FIRESPEED));
+rInfo.m_info.combat [j].evadeSpeed = (INT32) (SlCtrl (IDC_OBJ_EVADESPEED)->GetPos () * SliderFactor (IDC_OBJ_EVADESPEED));
 rInfo.m_info.deathRoll = (INT32) (SlCtrl (IDC_OBJ_DEATHROLL)->GetPos () * SliderFactor (IDC_OBJ_DEATHROLL));
 rInfo.m_info.badass = (INT32) (SlCtrl (IDC_OBJ_EXPLSIZE)->GetPos () * SliderFactor (IDC_OBJ_EXPLSIZE));
 rInfo.m_info.contents.prob = (INT32) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
@@ -797,7 +797,7 @@ if (0 <= (index = CBSoundClaw ()->GetCurSel ()))
 if (0 <= (index = CBSoundDeath ()->GetCurSel ()))
 	rInfo.m_info.deathRollSound = (UINT8) CBSoundDeath ()->GetItemData (index);
 if (0 <= (index = CBObjClassAI ()->GetCurSel ()))
-	rInfo.behavior = (UINT8) CBObjClassAI ()->GetItemData (index);
+	rInfo.m_info.behavior = (UINT8) CBObjClassAI ()->GetItemData (index);
 if (0 <= (index = CBExplType ()->GetCurSel ()))
 	rInfo.m_info.expl [1].nClip = (UINT8) CBExplType ()->GetItemData (index);
 if (0 <= (index = CBContType ()->GetCurSel ()))
