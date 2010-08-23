@@ -6817,6 +6817,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\object.h"
+					>
+				</File>
+				<File
 					RelativePath="palette.h"
 					>
 				</File>

@@ -1,5 +1,5 @@
-#ifndef DMB_TYPES_H
-#define DMB_TYPES_H
+#ifndef OBJECT_TYPES_H
+#define OBJECT_TYPES_H
 
 #include "define.h"
 
@@ -220,10 +220,6 @@ typedef struct {
 //  CFixVector min, max;
 } POLYMODEL;
 
-typedef struct {
-  INT16 x,y,z;
-} APOINT;
-
 class CObjPhysicsInfo {
 public:
 	tFixVector velocity;   /*velocity vector of this object */
@@ -383,21 +379,6 @@ public:
 	void Write (FILE* fp, INT32 version);
 };
 
-class CGameItem {
-public:
-	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
-	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
-	virtual void Clear (void) = 0;
-	virtual CGameItem* Next (void) { return this + 1; }
-	inline void Clear (int count) { 
-		CGameItem* i = this;
-		while (count--) {
-			Clear ();
-			i = i->Next ();
-			}
-		}
-};
-
 typedef struct tObjContentsInfo {
 	INT8			type; //  Type of object this object contains (eg, spider contains powerup) 
 	INT8			id;   //  ID of object this object contains (eg, id = blue type = key) 
@@ -457,5 +438,5 @@ public:
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
-#endif // DMB_TYPES_H
+#endif // OBJECT_TYPES_H
 

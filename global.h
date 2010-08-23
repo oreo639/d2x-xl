@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "segment.h"
+#include "object.h"
 
 extern INT32 m_changesMade;
 extern bool bExpertMode;

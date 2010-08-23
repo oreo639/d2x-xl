@@ -4,6 +4,7 @@
 #include "carray.h"
 #include "types.h"
 #include "segment.h"
+#include "object.h"
 #include "textures.h"
 
 #define MAX_LIGHT_DEPTH 6
