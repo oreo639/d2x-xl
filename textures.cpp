@@ -6,15 +6,13 @@
 #include "palette.h"
 #include "dle-xp.h"
 
-CDTexture pTextures [2][MAX_D2_TEXTURES];
-
 struct tExtraTexture;
 
 typedef struct tExtraTexture	*pExtraTexture;
 
 struct tExtraTexture {
 	pExtraTexture	pNext;
-	CDTexture		texture;
+	CTexture		texture;
 	UINT16			texture_index;
 } tExtraTexture;
 
@@ -157,7 +155,7 @@ return true;
 //          The next time that texture is used, the handle will be defined.
 //------------------------------------------------------------------------
 
-INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0, INT32 y0) 
+INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, INT32 y0) 
 {
 	typedef struct tFrac {
 		INT32	c, d;
@@ -168,7 +166,7 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0,
 	INT32			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
 	INT32			rc; // return code
-	CDTexture	*pTx [2];
+	CTexture	*pTx [2];
 	UINT8			*bmBuf = pDestTx->m_pDataBM;
 	UINT8			c;
 	INT32			fileType = theApp.FileType ();
@@ -184,7 +182,7 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0,
 if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	textures [i] = 0;
 	// buffer textures if not already buffered
-	pTx [i] = pTextures [fileType] + textures [i];
+	pTx [i] = theMine->Textures () [fileType] + textures [i];
 	if (!(pTx [i]->m_pDataBM && pTx [i]->m_bValid))
 		if (rc = pTx [i]->Read (textures [i]))
 			return (rc);
@@ -335,7 +333,7 @@ return 0;
 // Changes - Y axis flipped to since DIBs have zero in lower left corner
 //------------------------------------------------------------------------
 
-INT32 CDTexture::Read (INT16 index) 
+INT32 CTexture::Read (INT16 index) 
 {
 	UINT8				xsize[200];
 	UINT8				line[320],*line_ptr;
@@ -524,7 +522,7 @@ return (rc);
 
 //------------------------------------------------------------------------
 
-double CDTexture::Scale (INT16 index)
+double CTexture::Scale (INT16 index)
 {
 if (!m_width)
 	if (index < 0)
@@ -616,7 +614,7 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	INT32			row;
 	UINT16		nUnknownTextures, nMissingTextures;
 	bool			bExtraTexture;
-	CDTexture	*pTx;
+	CTexture	*pTx;
 	INT32			fileType = theApp.FileType ();
 
 // make sure this is descent 2 fTextures
@@ -710,7 +708,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		texture1 = 0;
 		}
 	else
-		pTx = pTextures [fileType];
+		pTx = theMine->Textures () [fileType];
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {
@@ -784,7 +782,7 @@ return rc;
 
 //-----------------------------------------------------------------------------
 
-void WritePogTextureHeader (FILE *pDestPigFile, CDTexture *pTexture, INT32 nTexture, UINT32& nOffset)
+void WritePogTextureHeader (FILE *pDestPigFile, CTexture *pTexture, INT32 nTexture, UINT32& nOffset)
 {
 	D2_PIG_TEXTURE d2texture;
 	UINT8 *pSrc;
@@ -821,7 +819,7 @@ fwrite (&d2texture, sizeof (D2_PIG_TEXTURE), 1, pDestPigFile);
 
 //-----------------------------------------------------------------------------
 
-bool WritePogTexture (FILE *pDestPigFile, CDTexture *pTexture)
+bool WritePogTexture (FILE *pDestPigFile, CTexture *pTexture)
 {
 	UINT8		*pSrc = pTexture->m_nFormat ? (UINT8*) pTexture->m_pDataTGA : pTexture->m_pDataBM;
 
@@ -943,7 +941,7 @@ d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
 d2_file_header.version      = 0x00000001L;
 d2_file_header.num_textures = 0;
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [fileType][i].m_bModified) {
+	if (theMine->Textures () [fileType][i].m_bModified) {
 		d2_file_header.num_textures++;
 		}
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -952,7 +950,7 @@ fwrite (&d2_file_header, sizeof (D2_PIG_HEADER), 1, outPigFile);
 
 // write list of textures
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [fileType][i].m_bModified)
+	if (theMine->Textures () [fileType][i].m_bModified)
 		fwrite (texture_table + i, sizeof (UINT16), 1, outPigFile);
 
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -961,8 +959,8 @@ for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 // write texture headers
 num = 0;
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [fileType][i].m_bModified)
-		WritePogTextureHeader (outPigFile, pTextures [fileType] + i, num++, nOffset);
+	if (theMine->Textures () [fileType][i].m_bModified)
+		WritePogTextureHeader (outPigFile, theMine->Textures () [fileType] + i, num++, nOffset);
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
 	WritePogTextureHeader (outPigFile, &pxTx->texture, num, nOffset);
 
@@ -974,8 +972,8 @@ DEBUGMSG (message);
 //-----------------------------------------
 rc = 8;
 for (i=0;i<MAX_D2_TEXTURES;i++)
-	if (pTextures [fileType][i].m_bModified && 
-		 !WritePogTexture (outPigFile, pTextures [fileType] + i))
+	if (theMine->Textures () [fileType][i].m_bModified && 
+		 !WritePogTexture (outPigFile, theMine->Textures () [fileType] + i))
 		goto abort;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 	if (!WritePogTexture (outPigFile, &pxTx->texture))
@@ -1008,18 +1006,18 @@ void FreeTextureHandles (bool bDeleteModified)
 
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_D2_TEXTURES; i++) {
-		if (!bDeleteModified && pTextures [j][i].m_bModified)
+		if (!bDeleteModified && theMine->Textures () [j][i].m_bModified)
 			continue;
-		if (pTextures [j][i].m_pDataBM) {
-			free (pTextures [j][i].m_pDataBM);
-			pTextures [j][i].m_pDataBM = NULL;
+		if (theMine->Textures () [j][i].m_pDataBM) {
+			free (theMine->Textures () [j][i].m_pDataBM);
+			theMine->Textures () [j][i].m_pDataBM = NULL;
 			}
-		if (pTextures [j][i].m_pDataTGA) {
-			free (pTextures [j][i].m_pDataTGA);
-			pTextures [j][i].m_pDataTGA = NULL;
+		if (theMine->Textures () [j][i].m_pDataTGA) {
+			free (theMine->Textures () [j][i].m_pDataTGA);
+			theMine->Textures () [j][i].m_pDataTGA = NULL;
 			}
-		pTextures [fileType][i].m_bModified = FALSE;
-		pTextures [fileType][i].m_nFormat = 0;
+		theMine->Textures () [fileType][i].m_bModified = FALSE;
+		theMine->Textures () [fileType][i].m_nFormat = 0;
 		}
 pExtraTexture	p;
 while (extraTextures) {
@@ -1037,7 +1035,7 @@ BOOL HasCustomTextures ()
 	INT32 fileType = theApp.FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [fileType][i].m_bModified)
+	if (theMine->Textures () [fileType][i].m_bModified)
 		return TRUE;
 return FALSE;
 }
@@ -1050,7 +1048,7 @@ INT32 CountCustomTextures ()
 	INT32 fileType = theApp.FileType ();
 
 for (i = 0; i < MAX_D2_TEXTURES; i++)
-	if (pTextures [fileType][i].m_bModified)
+	if (theMine->Textures () [fileType][i].m_bModified)
 		count++;
 return count;
 }
@@ -1199,7 +1197,7 @@ if (bShowTexture) {
 	else
 		data_offset = -1;  // pig file not found
 	if (data_offset > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CDTexture	tx (bmBuf);
+		CTexture	tx (bmBuf);
 		if (DefineTexture (texture1, texture2, &tx, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);

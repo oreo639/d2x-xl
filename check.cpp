@@ -302,9 +302,9 @@ INT32 CDiagTool::CheckId (CGameObject *objP)
 //
 //--------------------------------------------------------------------------
 
-void CDiagTool::OnCheckMine ()
+void CDiagTool::OnCheckMine (void)
 {
-if (!theMine) return;
+CHECKMINE;
 
 UpdateData (TRUE);
 ClearBugList ();
@@ -425,7 +425,7 @@ return false;
 //    valid cubes geometry
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckSegments () 
+bool CDiagTool::CheckSegments (void) 
 {
 if (!theMine) 
 	return false;

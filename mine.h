@@ -4,6 +4,7 @@
 #include "carray.h"
 #include "types.h"
 #include "segment.h"
+#include "textures.h"
 
 #define MAX_LIGHT_DEPTH 6
 
@@ -45,6 +46,7 @@ typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
+typedef CStaticArray< CStaticArray< CTexture, 2>, MAX_D2_TEXTURES> textureList;
 
 #define CLEAR(_b) (_b).Clear ()
 #define ASSIGN(_a,_b) (_a) = (_b)
@@ -68,6 +70,7 @@ typedef CGameObject objectList [MAX_OBJECTS2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
+typedef CTexture textureList [2][MAX_D2_TEXTURES];
 
 #define CLEAR(_b)	memset (_b, 0, sizeof (_b))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
@@ -107,6 +110,7 @@ typedef struct tMineData {
 	lightDeltaValueList		lightDeltaValues;
 	INT16							m_nFlickeringLights;
 	flickeringLightList		flickeringLights;
+	textureList					textures;
 
 	//ROBOT_INFO				robotInfo [MAX_ROBOT_TYPES];
 	//CVertex					vertices [MAX_VERTICES3];
@@ -220,6 +224,8 @@ public:
 		{ return MineData ().lightDeltaValues; }
 	inline flickeringLightList FlickeringLights ()
 		{ return MineData ().flickeringLights; }
+	inline textureList Textures ()
+		{ return MineData ().textures; }
 
 	inline CVertex *Vertices (INT32 i)
 		{ return MineData ().vertices + i; }
@@ -259,6 +265,8 @@ public:
 		{ return MineData ().lightDeltaValues + i; }
 	inline CFlickeringLight *FlickeringLights (INT32 i)
 		{ return MineData ().flickeringLights + i; }
+	inline CTexture* Textures (INT32 i)
+		{ return &MineData ().textures [i][0]; }
 
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
@@ -636,5 +644,9 @@ private:
 #define NO_WALL MAX_WALLS
 
 extern CMine* theMine;
+
+#define CHECKMINE			if (!theMine) return;
+#define CHECKMINEV(_v)	if (!theMine) return (_v);
+#define CHECKMINEF		CHECKMINE(FALSE);
 
 #endif //__mine_h

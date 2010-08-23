@@ -38,8 +38,8 @@ static UINT8	rgbBuf [64*64*4];
 static GLuint	glHandles [910];
 static UINT8	*glPalette = NULL;
 static BOOL		glFitToView = FALSE;
-static INT32		glMinZ = 1;
-static INT32		glMaxZ = 1;
+static INT32	glMinZ = 1;
+static INT32	glMaxZ = 1;
 static bool		glInit = true;
 #endif
 
@@ -1238,7 +1238,7 @@ else {	//!bPartial
 // works for all glAngle
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine (CDTexture *pTx, POINT pt0, POINT pt1, UINT8 color) 
+void CMineView::DrawLine (CTexture *pTx, POINT pt0, POINT pt1, UINT8 color) 
 {
 	INT32 i,x,y;
 	INT32 dx = pt1.x - pt0.x;
@@ -1350,7 +1350,7 @@ else
 // DrawAnimDirArrows()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawAnimDirArrows (INT16 texture1, CDTexture *pTx)
+void CMineView::DrawAnimDirArrows (INT16 texture1, CTexture *pTx)
 {
 	INT32 sx,sy;
 	INT32 bScroll = theMine->ScrollSpeed (texture1, &sx, &sy);
@@ -1411,7 +1411,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 	{
 
 		INT32 resolution = 0;
-		CDTexture tx (bmBuf);
+		CTexture tx (bmBuf);
 		UINT8 *pm_viewPointsMem = (UINT8 *)m_pvBits;
 		UINT16 width = m_viewWidth;
 		UINT16 height = m_viewHeight;
@@ -4075,7 +4075,7 @@ if (!GLInitPalette ())
 	return;
 nTexture &= 0x1FFF; 
 if (!glHandles [nTexture]) {
-	CDTexture tx (bmBuf);
+	CTexture tx (bmBuf);
 	DefineTexture (nTexture, 0, &tx, 0, 0);
 	DrawAnimDirArrows (nTexture, &tx);
 	// create RGBA bitmap from source bitmap

@@ -476,7 +476,7 @@ if (!theMine) return;
   // figure out position of current texture
   INT32 nBaseTex = theMine->CurrSide ()->nBaseTex;
   INT32 nOvlTex = theMine->CurrSide ()->nOvlTex & 0x3fff; // strip rotation info
-  CDTexture tx (bmBuf);
+  CTexture tx (bmBuf);
 
 	CDC *pDC = GetDC();
 	if (!pDC) {

@@ -45,7 +45,7 @@ class CTextureEdit : public CDialog
 		CWnd			m_textureWnd;
 		CPaletteWnd	m_paletteWnd;
 		CWnd			m_layerWnd;
-		CDTexture	m_texture;
+		CTexture	m_texture;
 		UINT8			*m_bitmap,
 						*m_backupBM;
 		tRGBA			*m_tga,
@@ -60,7 +60,7 @@ class CTextureEdit : public CDialog
 		CDC			*m_pDC;
 		CWnd			*m_pPaintWnd;
 		CPalette		*m_pOldPal;
-		CDTexture	*m_pTx;
+		CTexture	*m_pTx;
 		UINT32		m_nWidth,
 						m_nHeight,
 						m_nSize,

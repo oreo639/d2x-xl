@@ -38,7 +38,7 @@ typedef struct tBGR {
 	unsigned char	r, g, b;
 } tBGR;
 
-class CDTexture
+class CTexture
 {
 public:
 	UINT8		*m_pDataBM;
@@ -47,10 +47,10 @@ public:
 	BOOLEAN	m_bModified, m_bExtData, m_bValid;
 	UINT8		m_nFormat;	// 0: Bitmap, 1: TGA (RGB)
 
-	CDTexture(UINT8 *pData = NULL) 
+	CTexture(UINT8 *pData = NULL) 
 		: m_pDataBM (pData) 
 		{ m_pDataTGA = NULL, m_nFormat = 0, m_bValid = m_bModified = FALSE, m_bExtData = (pData != NULL); }
-	~CDTexture() {
+	~CTexture() {
 		if (!m_bExtData) {
 			delete m_pDataBM;
 			if (m_pDataTGA)
@@ -63,7 +63,7 @@ public:
 };
 
 
-INT32 DefineTexture(INT16 nBaseTex,INT16 nOvlTex, CDTexture *pDestTx, INT32 x0, INT32 y0);
+INT32 DefineTexture(INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, INT32 y0);
 void RgbFromIndex (INT32 nIndex, PALETTEENTRY *pRGB);
 BITMAPINFO *MakeBitmap(void);
 BOOL HasCustomTextures ();
@@ -75,7 +75,5 @@ bool PaintTexture (CWnd *pWnd, INT32 bkColor = -1,
 						 INT32 nSegment = -1, INT32 nSide = -1, INT32 texture1 = -1, INT32 texture2 = 0,
 						 INT32 xOffset = 0, INT32 yOffset = 0);
 bool TGA2Bitmap (tRGBA *pTGA, UINT8 *pBM, INT32 nWidth, INT32 nHeight);
-
-extern CDTexture pTextures [2][MAX_D2_TEXTURES];
 
 #endif //__textures_h

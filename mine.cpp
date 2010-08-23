@@ -32,7 +32,6 @@ CMine* theMine = NULL;
 
 CMine::CMine() 
 { 
-Initialize();
 }
 
 void CMine::Initialize (void)

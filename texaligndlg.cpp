@@ -285,7 +285,7 @@ if (!m_bShowTexture)
 	INT32			h, i, j, x, y;
 	POINT			offset;
 	CSide		*sideP = theMine->CurrSide ();
-	CDTexture	tx (bmBuf);
+	CTexture	tx (bmBuf);
 	UINT16		scale;
 
 // read scroll bar
@@ -699,7 +699,7 @@ UpdateAlignWnd ();
 void CTextureTool::OnAlignStretch2Fit ()
 {
 	CSide*		sideP = theMine->CurrSide ();
-	UINT32		scale = 1; //pTextures [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
+	UINT32		scale = 1; //theMine->Textures () [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
 	CSegment*	segP;
 	INT16			nSegment, nSide;
 	INT32			i;

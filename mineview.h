@@ -257,8 +257,8 @@ public:
 
 	void	DrawCurrentCube(CSegment *segP, bool bPartial);
 	void	DrawLine(CSegment *segP,INT16 vert1,INT16 vert2);
-	void	DrawLine (CDTexture *pTx, POINT pt0, POINT pt1, UINT8 color);
-	void	DrawAnimDirArrows (INT16 texture1, CDTexture *pTx);
+	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, UINT8 color);
+	void	DrawAnimDirArrows (INT16 texture1, CTexture *pTx);
 
 	void	DrawWalls (void);
 	void	DrawLights (void);

@@ -252,9 +252,9 @@ BOOL CDlcApp::InitInstance()
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNew;
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
-
-	theMine = new CMine;
-	//memset (pTextures, 0, sizeof (pTextures));
+	theMine->Initialize ();
+	//theMine = new CMine;
+	//memset (theMine->Textures (), 0, sizeof (theMine->Textures ()));
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();
 	// The one and only window has been initialized, so show and update it.
