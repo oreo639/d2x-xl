@@ -28,14 +28,16 @@ typedef struct rgbColor {
 	double	r, g, b;
 } rgbColor;
 
-class CColor {
+class CColor : public CGameItem {
 public:
 	UINT8		index;
 	rgbColor	color;
 
-	INT32 Read (FILE *fp, bool bNewFormat);
-	void Write (FILE* fp);
-	void Clear (void) {
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false);
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
+
+	virtual void Clear (void) {
 		index = 0;
 		color.r = color.g = color.b = 0;
 		}

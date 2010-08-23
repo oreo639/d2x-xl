@@ -105,13 +105,36 @@ public:
 };
 #endif
 
-class CVertex : public CFixVector {
+class CGameItem {
+public:
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+	virtual void Clear (void) = 0;
+	void Reset (int count) { 
+		CGameItem* i = this;
+		while (count--) {
+			Clear ();
+			i = i->Next ();
+			}
+		}
+};
+
+class CVertex : public CFixVector, public CGameItem {
 public:
 	UINT8 m_status;
 	CVertex () : m_status(0) {}
 	CVertex (FIX x, FIX y, FIX z) : CFixVector (x, y, z) { m_status = 0; }
 	CVertex (tFixVector& _v) : CFixVector (_v) { m_status = 0; }
 	CVertex (CFixVector& _v) : CFixVector (_v) { m_status = 0; }
+
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) {}
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {}
+	virtual void Clear (void) { 
+		m_status = 0;
+		this->CFixVector::Clear ();
+		}
 };
 
 typedef struct {
@@ -316,21 +339,6 @@ public:
 
 	void Clear (void) {
 		m_nSegment = m_nSide = -1;
-		}
-};
-
-class CGameItem {
-public:
-	virtual CGameItem* Next (void) { return this + 1; }
-	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
-	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
-	virtual void Clear (void) = 0;
-	void Clear (int count) { 
-		CGameItem* i = this;
-		while (count--) {
-			Clear ();
-			i = i->Next ();
-			}
 		}
 };
 

@@ -26,7 +26,7 @@
 
 // ------------------------------------------------------------------------
 
-INT32 CColor::Read (FILE *fp, bool bNewFormat)
+virtual INT32 Read (FILE* fp, INT32 version, bool bNewFormat)
 {
 index = read_INT8 (fp);
 if (bNewFormat) {
@@ -44,7 +44,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CColor::Write (FILE *fp)
+void CColor::Write (FILE* fp, INT32 version = 0, bool bFlag = false) 
 {
 write_INT8 (index, fp);
 write_INT32 (INT32 (color.r * 0x7fffffff + 0.5), fp);
