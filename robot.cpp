@@ -386,8 +386,8 @@ else if (type == EXTENDED_HAM)  {
 	 t = N_robot_types - t0;
 //    goto abort;
   }
-  fread(RobotInfo (t0), sizeof (CRobotInfo), t, fp );
-  memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof (CRobotInfo) * t);
+  fread(RobotInfo (t0), sizeof (tRobotInfo), t, fp );
+  memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof (tRobotInfo) * t);
 
   // skip joints weapons, and powerups
   //----------------------------------
@@ -620,10 +620,10 @@ for (j=0;j<t;j++) {
 		ErrorMsg (message);
 		goto abort;
 		}
-	fread(&rInfo, sizeof (CRobotInfo), 1, fp );
+	fread(&rInfo, sizeof (tRobotInfo), 1, fp );
 	// compare this to existing data
-	if (memcmp(&rInfo,RobotInfo (i),sizeof (CRobotInfo)) != 0) {
-		memcpy(RobotInfo (i),&rInfo,sizeof (CRobotInfo));
+	if (memcmp(&rInfo,RobotInfo (i),sizeof (tRobotInfo)) != 0) {
+		memcpy(RobotInfo (i),&rInfo,sizeof (tRobotInfo));
 		RobotInfo (i)->m_info.bCustom = 1; // mark as custom
 		}
 	}
@@ -760,9 +760,9 @@ void CMine::ReadRobotResource(INT32 robot_number)
     ptr += sizeof (UINT32);
     // copy the robot info for one robot, or all robots
     if (j==robot_number || robot_number == -1) {
-      memcpy(RobotInfo (i), ptr, sizeof (CRobotInfo));
+      memcpy(RobotInfo (i), ptr, sizeof (tRobotInfo));
     }
-    ptr += sizeof (CRobotInfo);
+    ptr += sizeof (tRobotInfo);
   }
   FreeResource(hResource);
 }
@@ -783,7 +783,7 @@ if (!RobotInfo (i)->m_info.bCustom) //changed?
 	// check if actually different from defaults
 UINT8 bCustom = DefRobotInfo (i)->m_info.bCustom;
 DefRobotInfo (i)->m_info.bCustom = RobotInfo (i)->m_info.bCustom; //make sure it's equal for the comparison
-if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (CRobotInfo))) { //they're different
+if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (tRobotInfo))) { //they're different
 	// find a robot of that type
 	for (j = GameInfo ().objects.count, objP = Objects (0); j; j--, objP++)
 		if ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id == i))

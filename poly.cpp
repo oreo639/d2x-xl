@@ -15,10 +15,10 @@
 #include "poly.h"
 #include "io.h"
 /*
-extern HPEN hPenRed,hPenDkRed,hPenGreen,hPenDkGreen,hPenBlue,hPenCyan,hPenDkCyan,
-	 hPenMagenta,hPenYellow,hPenDkYellow,hPenOrange,hPenGold,hPenGray,
+extern HPEN hPenRed, hPenDkRed, hPenGreen, hPenDkGreen, hPenBlue, hPenCyan, hPenDkCyan, 
+	 hPenMagenta, hPenYellow, hPenDkYellow, hPenOrange, hPenGold, hPenGray, 
 	 hPenLtGray;
-extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
+extern HRGN hrgnBackground, hrgnLowerBar, hrgnTopBar, hrgnAll;
 */
 //-----------------------------------------------------------------------
 // CONSTANTS
@@ -39,14 +39,14 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 //-----------------------------------------------------------------------
 // MACROS
 //-----------------------------------------------------------------------
-#define W(p)   (*((INT16 *)(p)))
-#define WP(p)  ((INT16 *)(p))
-#define VP(p)  ((CFixVector* )(p))
-#define calcNormal(a,b)
+#define W(p)   (*((INT16 *) (p)))
+#define WP(p)  ((INT16 *) (p))
+#define VP(p)  ((CFixVector*) (p))
+#define calcNormal(a, b)
 #define glNormal3fv(a)
-#define glColor3ub(a,b,c)
+#define glColor3ub(a, b, c)
 #define glBegin(a)
-#define glVertex3i(x,y,z)
+#define glVertex3i(x, y, z)
 #define glEnd()
 #define glTexCoord2fv(a)
 
@@ -66,26 +66,26 @@ static CFixVector gOffset;
 static INT16 glow_num = -1;
 static double normal[3];	// Storage for calculated surface normal
 static POLY *panel;
-static INT32 pt,pt0,n_points;
+static INT32 pt, pt0, n_points;
 static INT32 last_object_type = -1;
 static INT32 last_object_id = -1;
 static APOINT poly_xy[MAX_POLY_MODEL_POINTS];
 
 //-----------------------------------------------------------------------
-// FIX MultiplyFix()
+// FIX MultiplyFix ()
 //-----------------------------------------------------------------------
 
-FIX MultiplyFix(FIX a, FIX b) {
-  return (FIX) ((double(a) * double(b))/F1_0);
+FIX MultiplyFix (FIX a, FIX b) {
+  return (FIX) ((double (a) * double (b))/F1_0);
 }
 
 //-----------------------------------------------------------------------
-// SetupModel()
+// SetupModel ()
 //
 // Action - sets the global handle used when drawing polygon models
 //-----------------------------------------------------------------------
 
-INT32 CMineView::SetupModel(CGameObject *objP) 
+INT32 CMineView::SetupModel (CGameObject *objP) 
 {
   gOffset.Clear ();
   gModel.n_points = 0;
@@ -112,10 +112,10 @@ if (!gModelData) {
 // read model data if necessary
 if (last_object_type != objP->m_info.type || last_object_id != objP->m_info.id) {
 	gModelData[0] = OP_EOF;
-	strcpy_s(filename, sizeof (filename), descent2_path);
-	char *slash = strrchr (filename,'\\');
+	strcpy_s (filename, sizeof (filename), descent2_path);
+	char *slash = strrchr (filename, '\\');
 	if (slash)
-		*(slash+1) = NULL;
+		* (slash+1) = NULL;
 	else
 		filename[0] = NULL;
 	if ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES)) {
@@ -136,7 +136,7 @@ if (last_object_type != objP->m_info.type || last_object_id != objP->m_info.id) 
 #endif		
 		goto abort;
 		}
-	if (ReadModelData(file,objP)) {
+	if (ReadModelData (file, objP)) {
 #if 0		
 		DEBUGMSG ("SetupModel: Couldn't read model data.");
 #endif		
@@ -150,26 +150,26 @@ rc = 0;
 abort:
 
 if (file) 
-	fclose(file);
+	fclose (file);
 return rc;
 }
 
 //-----------------------------------------------------------------------
-// DrawModel()
+// DrawModel ()
 //-----------------------------------------------------------------------
 
-void CMineView::DrawModel() 
+void CMineView::DrawModel () 
 {
-  InterpModelData(gModelData);
+  InterpModelData (gModelData);
 }
 
 //-----------------------------------------------------------------------
-// set_model_points()
+// set_model_points ()
 //
 // Rotates, translates, then sets screen points (xy) for 3d model points
 //-----------------------------------------------------------------------
 
-void CMineView::SetModelPoints(INT32 start, INT32 end) 
+void CMineView::SetModelPoints (INT32 start, INT32 end) 
 {
 CGameObject *objP = gpObject;
 CFixVector pt;
@@ -203,12 +203,12 @@ for (INT32 i = start; i < end; i++) {
 // draw_poly
 //
 // Action - Draws a polygon if it is facing the outward.
-//          Used global device context handle set by SetupModel()
+//          Used global device context handle set by SetupModel ()
 //-----------------------------------------------------------------------
 
-void CMineView::DrawPoly(POLY *p) 
+void CMineView::DrawPoly (POLY *p) 
 {
-  INT32 i,j;
+  INT32 i, j;
 
 if (m_view.CheckNormal (gpObject, &p->offset, &p->normal)) {
 	POINT aPoints[MAX_POLY_POINTS];
@@ -217,7 +217,7 @@ if (m_view.CheckNormal (gpObject, &p->offset, &p->normal)) {
 		aPoints [i].x = poly_xy [j].x;
 		aPoints [i].y = poly_xy [j].y;
 		}
-	m_pDC->Polygon(aPoints, p->n_verts);
+	m_pDC->Polygon (aPoints, p->n_verts);
 	}
 }
 
@@ -228,30 +228,30 @@ if (m_view.CheckNormal (gpObject, &p->offset, &p->normal)) {
 //
 //-----------------------------------------------------------------------
 
-void CMineView::InterpModelData(UINT8 *p) 
+void CMineView::InterpModelData (UINT8 *p) 
 {
-	assert(p);
-	assert(gModel.polys);
+	assert (p);
+	assert (gModel.polys);
 
-	while (W(p) != OP_EOF) {
-		switch (W(p)) {
+	while (W (p) != OP_EOF) {
+		switch (W (p)) {
 			// Point Definitions with Start Offset:
 			// 2  UINT16      n_points       number of points
 			// 4  UINT16      start_point    starting point
 			// 6  UINT16      unknown
-			// 8  CFixVector  pts[n_points]  x,y,z data
+			// 8  CFixVector  pts[n_points]  x, y, z data
 			case OP_DEFP_START: {
-				pt0 = W(p+4);
-				n_points = W(p+2);
+				pt0 = W (p+4);
+				n_points = W (p+2);
 				gModel.n_points += n_points;
-				assert(W(p+6)==0);
-				assert(gModel.n_points < MAX_POLY_MODEL_POINTS);
-				assert(pt0+n_points < MAX_POLY_MODEL_POINTS);
+				assert (W (p+6)==0);
+				assert (gModel.n_points < MAX_POLY_MODEL_POINTS);
+				assert (pt0+n_points < MAX_POLY_MODEL_POINTS);
 				for (pt=0;pt< n_points;pt++) {
-					gModel.points [pt+pt0] = VP(p+8)[pt] + gOffset;
+					gModel.points [pt+pt0] = VP (p+8)[pt] + gOffset;
 				}
-				SetModelPoints(pt0,pt0+n_points);
-				p += W(p+2)*sizeof (CFixVector) + 8;
+				SetModelPoints (pt0, pt0+n_points);
+				p += W (p+2)*sizeof (CFixVector) + 8;
 				break;
 			}
 			// Flat Shaded Polygon:
@@ -262,16 +262,16 @@ void CMineView::InterpModelData(UINT8 *p)
 			// 30 UINT16     verts[n_verts]
 			case OP_FLATPOLY: {
 				panel = &gModel.polys[gModel.n_polys];
-				panel->n_verts = W(p+2);
-				panel->offset = *VP(p+4);
-				panel->normal = *VP(p+16);
+				panel->n_verts = W (p+2);
+				panel->offset = *VP (p+4);
+				panel->normal = *VP (p+16);
 				for (pt=0;pt<panel->n_verts;pt++) {
-					panel->verts[pt] = WP(p+30)[pt];
+					panel->verts[pt] = WP (p+30)[pt];
 				}
-				assert(panel->n_verts>=MIN_POLY_POINTS);
-				assert(panel->n_verts<=MAX_POLY_POINTS);
-				assert(gModel.n_polys < MAX_POLYS);
-				DrawPoly(panel);
+				assert (panel->n_verts>=MIN_POLY_POINTS);
+				assert (panel->n_verts<=MAX_POLY_POINTS);
+				assert (gModel.n_polys < MAX_POLYS);
+				DrawPoly (panel);
 				p += 30 + ((panel->n_verts&~1)+1)*2;
 				break;
 			}
@@ -284,20 +284,20 @@ void CMineView::InterpModelData(UINT8 *p)
 			// -- UVL        uvls[n_verts]
 			case OP_TMAPPOLY: {
 				panel = &gModel.polys[gModel.n_polys];
-				panel->n_verts  = W(p+2);
-				assert(panel->n_verts>=MIN_POLY_POINTS);
-				assert(panel->n_verts<=MAX_POLY_POINTS);
-				assert(gModel.n_polys < MAX_POLYS);
-				panel->offset   = *VP(p+4);
-				panel->normal   = *VP(p+16);
+				panel->n_verts  = W (p+2);
+				assert (panel->n_verts>=MIN_POLY_POINTS);
+				assert (panel->n_verts<=MAX_POLY_POINTS);
+				assert (gModel.n_polys < MAX_POLYS);
+				panel->offset   = *VP (p+4);
+				panel->normal   = *VP (p+16);
 				panel->color    = -1;
-				panel->nBaseTex = W(p+28);
+				panel->nBaseTex = W (p+28);
 				panel->glow_num = glow_num;
 				for (pt=0;pt<panel->n_verts;pt++) {
-					panel->verts[pt] = WP(p+30)[pt];
+					panel->verts[pt] = WP (p+30)[pt];
 				}
 				p += 30 + ((panel->n_verts&~1)+1)*2;
-				DrawPoly(panel);
+				DrawPoly (panel);
 				p += panel->n_verts * 12;
 				break;
 			}
@@ -308,18 +308,18 @@ void CMineView::InterpModelData(UINT8 *p)
 			// 28 UINT16      Front Model Offset
 			// 30 UINT16      Back Model Offset
 			case OP_SORTNORM: {
-				/* = W(p+2); */
-				/* = W(p+4); */
-				/* = W(p+16); */
-				assert(W(p+2)==0);
-				assert(W(p+28)>0);
-				assert(W(p+30)>0);
-				if ( m_view.CheckNormal(gpObject, VP(p+4),VP(p+16)) ) {
-				  InterpModelData(p + W(p+28));
-				  InterpModelData(p + W(p+30));
+				/* = W (p+2); */
+				/* = W (p+4); */
+				/* = W (p+16); */
+				assert (W (p+2)==0);
+				assert (W (p+28)>0);
+				assert (W (p+30)>0);
+				if ( m_view.CheckNormal (gpObject, VP (p+4), VP (p+16)) ) {
+				  InterpModelData (p + W (p+28));
+				  InterpModelData (p + W (p+30));
 				} else {
-				  InterpModelData(p + W(p+30));
-				  InterpModelData(p + W(p+28));
+				  InterpModelData (p + W (p+30));
+				  InterpModelData (p + W (p+28));
 				}
 				p += 32;
 				break;
@@ -329,23 +329,23 @@ void CMineView::InterpModelData(UINT8 *p)
 			// 4  CFixVector offset
 			// 16 UINT16     model offset
 			case OP_SUBCALL: {
-				assert(W(p+16)>0);
-				/* = VP(p+4) */
-				gOffset += *VP(p+4);
-				InterpModelData(p + W(p+16));
-				gOffset -= *VP(p+4);
+				assert (W (p+16)>0);
+				/* = VP (p+4) */
+				gOffset += *VP (p+4);
+				InterpModelData (p + W (p+16));
+				gOffset -= *VP (p+4);
 				p += 20;
 				break;
 			}
 			// Glow Number for Next Poly
 			// 2 UINTW  Glow_Value
 			case OP_GLOW: {
-				glow_num = W(p+2);
+				glow_num = W (p+2);
 				p += 4;
 				break;
 			}
 			default: {
-				assert(0);
+				assert (0);
 			}
 		}
 	}
@@ -353,19 +353,19 @@ void CMineView::InterpModelData(UINT8 *p)
 }
 
 //--------------------------------------------------------------------------
-// read_UINTW()
+// read_UINTW ()
 //
 // Reads a UINT32 number and converts it UINTW (16 or 32 bit)
 //--------------------------------------------------------------------------
-UINTW read_UINTW(FILE *fp) {
+UINTW read_UINTW (FILE *fp) {
   UINT32 value;
-  fread(&value, sizeof (UINT32), 1, fp);
-  assert(value <= 0xffff);
+  fread (&value, sizeof (UINT32), 1, fp);
+  assert (value <= 0xffff);
   return (UINTW)value;
 }
 
 //-----------------------------------------------------------------------
-// ReadModelData();
+// ReadModelData ();
 //-----------------------------------------------------------------------
 
 #define FREAD(b)	fread (&b, sizeof (b), 1, file)
@@ -390,152 +390,155 @@ FREAD (polyModel.rad);
 FREAD (polyModel.n_textures);
 FREAD (polyModel.first_texture);
 FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, nModel+1 else)
-assert(polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
+assert (polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
 }
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData(FILE *fp, CGameObject *objP) 
+INT32 CMineView::ReadModelData (FILE *fp, CGameObject *objP) 
 {
 	UINT32     id;
-	UINT32     i,n;
+	UINT32     i, n;
 	UINT16     model_dataSize[MAX_POLYGON_MODELS];
 	POLYMODEL  polyModel;
 	POLYMODEL  save_model;
 	CRobotInfo robotInfo;
 	UINT32     nModel;
 
-	switch (objP->m_info.type) {
-		case OBJ_PLAYER:
-		case OBJ_COOP:
-			nModel = D2_PLAYER_CLIP_NUMBER;
-			break;
-		case OBJ_WEAPON:
-			nModel = MINE_CLIP_NUMBER;
-			break;
-		case OBJ_CNTRLCEN:
-			switch(objP->m_info.id) {
-				case 1:  nModel = 95;  break;
-				case 2:  nModel = 97;  break;
-				case 3:  nModel = 99;  break;
-				case 4:  nModel = 101; break;
-				case 5:  nModel = 103; break;
-				case 6:  nModel = 105; break;
-				default: nModel = 97;  break; // level 1's reactor
-			}
-			break;
-			// if it is a robot, then read the id from the HAM fp
+switch (objP->m_info.type) {
+	case OBJ_PLAYER:
+	case OBJ_COOP:
+		nModel = D2_PLAYER_CLIP_NUMBER;
+		break;
+	case OBJ_WEAPON:
+		nModel = MINE_CLIP_NUMBER;
+		break;
+	case OBJ_CNTRLCEN:
+		switch (objP->m_info.id) {
+			case 1:  nModel = 95;  break;
+			case 2:  nModel = 97;  break;
+			case 3:  nModel = 99;  break;
+			case 4:  nModel = 101; break;
+			case 5:  nModel = 103; break;
+			case 6:  nModel = 105; break;
+			default: nModel = 97;  break; // level 1's reactor
+		}
+		break;
 	}
 
-	if ((objP->m_info.type == OBJ_CAMBOT) || ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES))) {
-		struct level_header level;
-		char data[3];
-		long position;
+if ((objP->m_info.type == OBJ_CAMBOT) || ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES))) {
+	struct level_header level;
+	char data[3];
+	long position;
 
-		fread(data,3,1,fp); // verify signature "DHF"
-		if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') return 1;
-		position = 3;
-		while(!feof(fp)) {
-			fseek(fp,position,SEEK_SET);
-			if (fread(&level,sizeof (struct level_header),1,fp) != 1) return 1;
-			if (level.size > 10000000L || level.size < 0) return 1;
-			if (strcmp(level.name,"d2x.ham") == 0) {
-				id = read_INT32(fp);	  					   // read id
-				if (id != 0x5848414DL) return 1;
-				read_UINTW(fp);                              // read version
-				n  = read_UINTW(fp);                         // n_weapon_types
-				fseek(fp,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon_info
-				n  = read_UINTW(fp);                         // n_robot_types
-				if (objP->m_info.type == OBJ_ROBOT) {
-					for (i = 0; i < n; i++) {
-						if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
-							robotInfo.Read (fp);
-							nModel = robotInfo.m_info.nModel;
-						} else {
-							fseek(fp,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
+	fread (data, 3, 1, fp); // verify signature "DHF"
+	if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') return 1;
+	position = 3;
+	while (!feof (fp)) {
+		fseek (fp, position, SEEK_SET);
+		if (fread (&level, sizeof (struct level_header), 1, fp) != 1) return 1;
+		if (level.size > 10000000L || level.size < 0) return 1;
+		if (strcmp (level.name, "d2x.ham") == 0) {
+			id = read_INT32 (fp);	  					   // read id
+			if (id != 0x5848414DL) return 1;
+			read_UINTW (fp);                              // read version
+			n  = read_UINTW (fp);                         // n_weapon_types
+			fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
+			n  = read_UINTW (fp);                         // n_robot_types
+			if (objP->m_info.type == OBJ_ROBOT) {
+				for (i = 0; i < n; i++) {
+					if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
+						robotInfo.Read (fp);
+						nModel = robotInfo.m_info.nModel;
 						}
+					else
+						fseek (fp, sizeof (tRobotInfo), SEEK_CUR);   // skip robot info
 					}
-				} else {
-					fseek(fp,n * sizeof (CRobotInfo),SEEK_CUR);
 				}
-				n  = read_UINTW(fp);                         // n_robot_joints
-				fseek(fp,n * sizeof (JOINTPOS),SEEK_CUR);     // robot_joints
-				break;
+			else
+				fseek (fp, n * sizeof (tRobotInfo), SEEK_CUR);
+			n  = read_UINTW (fp);                         // n_robot_joints
+			fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
+			break;
 			}
-			position += sizeof (struct level_header) + level.size;
+		position += sizeof (struct level_header) + level.size;
 		}
-		n = read_UINTW(fp);                          // n_polyModels
-		assert(n<=MAX_POLYGON_MODELS);
-		for (i = 0; i < n; i++) {
-			ReadPolyModel (polyModel, fp);
-			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
-			if (i==(UINT32) (nModel - N_D2_POLYGON_MODELS))
-				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
+	n = read_UINTW (fp);                          // n_polyModels
+	assert (n<=MAX_POLYGON_MODELS);
+	for (i = 0; i < n; i++) {
+		ReadPolyModel (polyModel, fp);
+		model_dataSize[i] = (UINT16)polyModel.model_dataSize;
+		if (i== (UINT32) (nModel - N_D2_POLYGON_MODELS))
+			memcpy (&save_model, &polyModel, sizeof (POLYMODEL));
 		}
-		for (i=0;i<n;i++) {
-			if (i==(UINT32) (nModel - N_D2_POLYGON_MODELS)) {
-				fread(gModelData, model_dataSize[i],1,fp);
-				break; // were done!
-			} else {
-				fseek(fp , model_dataSize[i],SEEK_CUR);
+	for (i=0;i<n;i++) {
+		if (i== (UINT32) (nModel - N_D2_POLYGON_MODELS)) {
+			fread (gModelData, model_dataSize[i], 1, fp);
+			break; // were done!
 			}
-		}
-	} else {
-		id = read_INT32(fp);	  					   // read id
-		if (id != 0x214d4148L) {
-//			printf("Not a HAM fp");
-			return 1;
-		}
-		read_UINTW(fp);                              // read version
-		n  = read_UINTW(fp);                         // n_tmap_info
-		fseek(fp,n * sizeof (UINT16),SEEK_CUR); // bitmap_indicies
-		fseek(fp,n * sizeof (TMAP_INFO),SEEK_CUR);    // tmap_info
-		n = read_UINTW(fp);                          // n_sounds
-		fseek(fp,n * sizeof (UINT8),SEEK_CUR);        // sounds
-		fseek(fp,n * sizeof (UINT8),SEEK_CUR);        // alt_sounds
-		n = read_UINTW(fp);                          // n_vclips
-		fseek(fp,n * sizeof (VCLIP),SEEK_CUR);        // video clips
-		n = read_UINTW(fp);                          // n_eclips
-		fseek(fp,n * sizeof (ECLIP),SEEK_CUR);        // effect clips
-		n = read_UINTW(fp);                          // n_wclips
-		fseek(fp,n * sizeof (WCLIP),SEEK_CUR);        // weapon clips
-		n = read_UINTW(fp);                          // n_robots
-		if (objP->m_info.type == OBJ_ROBOT) {
-			for (i=0;i<n;i++) {
-				if (i == (UINT32) objP->m_info.id) {
-					robotInfo.Read (fp);
-					nModel = robotInfo.m_info.nModel;
-				} else {
-					fseek(fp,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
-				}
-			}
-		} else {
-			fseek(fp,n * sizeof (CRobotInfo),SEEK_CUR);
-		}
-		n = read_UINTW(fp);                          // n_robot_joints
-		fseek(fp,n * sizeof (JOINTPOS),SEEK_CUR);     // robot joints
-		n = read_UINTW(fp);                          // n_weapon
-		fseek(fp,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon info
-		n = read_UINTW(fp);                          // n_powerups
-		fseek(fp,n * sizeof (POWERUP_TYPE_INFO),SEEK_CUR); // powerup info
-		n = read_UINTW(fp);                          // n_polyModels
-		assert(n<=MAX_POLYGON_MODELS);
-		for (i=0;i<n;i++) {
-			ReadPolyModel (polyModel, fp);
-			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
-			if (i==(UINT32) nModel) {
-				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
-			}
-		}
-		for (i=0;i<n;i++) {
-			if (i==(UINT32) nModel) {
-				fread(gModelData, model_dataSize[i],1,fp);
-				break; // were done!
-			} else {
-				fseek(fp , model_dataSize[i],SEEK_CUR);
-			}
+		else
+			fseek (fp , model_dataSize[i], SEEK_CUR);
 		}
 	}
-	return 0;
+else {
+	id = read_INT32 (fp);	  					   // read id
+	if (id != 0x214d4148L) {
+//			printf ("Not a HAM fp");
+		return 1;
+		}
+	read_UINTW (fp);                              // read version
+	n  = read_UINTW (fp);                         // n_tmap_info
+	fseek (fp, n * sizeof (UINT16), SEEK_CUR); // bitmap_indicies
+	fseek (fp, n * sizeof (TMAP_INFO), SEEK_CUR);    // tmap_info
+	n = read_UINTW (fp);                          // n_sounds
+	fseek (fp, n * sizeof (UINT8), SEEK_CUR);        // sounds
+	fseek (fp, n * sizeof (UINT8), SEEK_CUR);        // alt_sounds
+	n = read_UINTW (fp);                          // n_vclips
+	fseek (fp, n * sizeof (VCLIP), SEEK_CUR);        // video clips
+	n = read_UINTW (fp);                          // n_eclips
+	fseek (fp, n * sizeof (ECLIP), SEEK_CUR);        // effect clips
+	n = read_UINTW (fp);                          // n_wclips
+	fseek (fp, n * sizeof (WCLIP), SEEK_CUR);        // weapon clips
+	n = read_UINTW (fp);                          // n_robots
+	if (objP->m_info.type == OBJ_ROBOT) {
+		for (i = 0; i < n; i++) {
+			if (i == (UINT32) objP->m_info.id) {
+				robotInfo.Read (fp);
+				nModel = robotInfo.m_info.nModel;
+				}
+			else {
+				fseek (fp, sizeof (tRobotInfo), SEEK_CUR);   // skip robot info
+				}
+			}
+		}
+	else {
+		fseek (fp, n * sizeof (tRobotInfo), SEEK_CUR);
+		}
+	n = read_UINTW (fp);                          // n_robot_joints
+	fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
+	n = read_UINTW (fp);                          // n_weapon
+	fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon info
+	n = read_UINTW (fp);                          // n_powerups
+	fseek (fp, n * sizeof (POWERUP_TYPE_INFO), SEEK_CUR); // powerup info
+	n = read_UINTW (fp);                          // n_polyModels
+	assert (n<=MAX_POLYGON_MODELS);
+	for (i=0;i<n;i++) {
+		ReadPolyModel (polyModel, fp);
+		model_dataSize[i] = (UINT16)polyModel.model_dataSize;
+		if (i== (UINT32) nModel) {
+			memcpy (&save_model, &polyModel, sizeof (POLYMODEL));
+			}
+		}
+	for (i=0;i<n;i++) {
+		if (i== (UINT32) nModel) {
+			fread (gModelData, model_dataSize[i], 1, fp);
+			break; // were done!
+			}
+		else {
+			fseek (fp , model_dataSize[i], SEEK_CUR);
+		}
+	}
+}
+return 0;
 }
 

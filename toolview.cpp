@@ -137,10 +137,10 @@ else if (p == m_diagTool)
 
 								/*---------------------------*/
 
-void CToolView::Setup (void)
+int CToolView::Setup (void)
 {
 if (!m_pTools)
-	return;
+	return -1;
 m_textureTool = new CTextureTool (m_pTools);
 m_segmentTool = new CSegmentTool (m_pTools);
 m_wallTool = new CWallTool (m_pTools);
@@ -167,7 +167,10 @@ m_pTools->AddPage (m_missionTool);
 m_pTools->AddPage (m_diagTool);
 m_pTools->AddPage (m_txtFilterTool);
 m_pTools->AddPage (m_prefsDlg);
-//m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0);
+if (!m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0))
+	return -1;
+CalcToolSize ();
+return 0;
 }
 
                         /*--------------------------*/
@@ -175,12 +178,9 @@ m_pTools->AddPage (m_prefsDlg);
 INT32 CToolView::OnCreate (LPCREATESTRUCT lpCreateStruct) 
 {
 if (CWnd::OnCreate (lpCreateStruct) == -1)
-		return -1;
-Setup ();
-if (!m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0))
 	return -1;
-CalcToolSize ();
 return 0;
+//return Setup ();
 }
 
                         /*--------------------------*/

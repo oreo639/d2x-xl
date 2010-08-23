@@ -1529,7 +1529,7 @@ void CObjectTool::OnDefault ()
 if (object_list [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
 INT32 i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-memcpy (theMine->RobotInfo (i), theMine->DefRobotInfo (i), sizeof (CRobotInfo));
+memcpy (theMine->RobotInfo (i), theMine->DefRobotInfo (i), sizeof (tRobotInfo));
 Refresh ();
 }
 

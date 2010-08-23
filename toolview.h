@@ -1294,7 +1294,7 @@ class CToolView : public CWnd {
 
 		CToolView ();
 		~CToolView ();
-		void Setup ();
+		int Setup ();
 		void Reset () {};
 		afx_msg INT32 OnCreate (LPCREATESTRUCT lpCreateStruct);
 		afx_msg void OnDestroy (void);

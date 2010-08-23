@@ -598,6 +598,7 @@ if (nLayout) {
 	m_splitter2.SetColumnInfo (0, rc.Width (), 0);
 	SetActiveView ((CView*) m_splitter2.GetPane (0,0)); 
 	m_toolView = (CToolView *) m_splitter1.GetPane (0,0);
+	m_toolView->Setup ();
 	m_mineView = (CMineView *) m_splitter2.GetPane (0,0);
 	m_textureView = (CTextureView *) m_splitter2.GetPane (1,0);
 	}

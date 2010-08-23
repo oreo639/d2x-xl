@@ -1,6 +1,10 @@
 #ifndef __robot_h
 #define __robot_h
 
+#ifdef _WIN32
+#pragma pack (push, 1)
+#endif
+
 //describes a list of joint positions
 typedef struct tJointList {
 public:
@@ -121,5 +125,9 @@ class CRobotInfo : public CGameItem {
 };
 
 BOOL HasCustomRobots ();
+
+#ifdef _WIN32
+#pragma pack (pop)
+#endif
 
 #endif //__robot_h

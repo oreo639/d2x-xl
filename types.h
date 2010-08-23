@@ -151,7 +151,7 @@ typedef struct {
   INT16	slide_u, slide_v;   //slide rates of texture, stored in 8:8 FIX
 } TMAP_INFO;
 
-typedef struct {
+typedef struct VCLIP {
   FIX		play_time;  //total time (in seconds) of clip
   INT32	num_frames;
   FIX		frame_time; //time (in seconds) of each frame
@@ -161,7 +161,7 @@ typedef struct {
   FIX		light_value;
 } VCLIP;
 
-typedef struct {
+typedef struct ECLIP {
   VCLIP   vc;			   //imbedded vclip
   FIX		 time_left;		   //for sequencing
   INT32	 frame_count;		   //for sequencing
@@ -177,7 +177,7 @@ typedef struct {
   INT32	 nSegment,nSide;	//what segP & side, for one-shot clips
 } ECLIP;
 
-typedef struct {
+typedef struct WCLIP {
   FIX		 play_time;
   INT16	 num_frames;
   INT16	 frames[MAX_CLIP_FRAMES2];

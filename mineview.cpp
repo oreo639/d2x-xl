@@ -1487,72 +1487,72 @@ void CMineView::DrawMarkedCubes (INT16 clear_it)
 	INT16 i;
 
 	// draw marked/special Segments () and Walls ()
-	if (!clear_it) {
-		for (i = 0; i < theMine->SegCount (); i++) {
-			segP = theMine->Segments (0) + i;
-			if (segP->m_info.wallFlags & MARKED_MASK) {
-				m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
-				DrawCubeQuick (segP);
-				}
-			else {
-				//    if (show_special) {
-				if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextureMapped) ) {
-					switch(segP->m_info.function) {
-					case SEGMENT_FUNC_FUELCEN:
-					case SEGMENT_FUNC_SPEEDBOOST:
-						m_pDC->SelectObject (m_penYellow);
-						DrawCubeQuick (segP);
+if (!clear_it) {
+	for (i = 0; i < theMine->SegCount (); i++) {
+		segP = theMine->Segments (i);
+		if (segP->m_info.wallFlags & MARKED_MASK) {
+			m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
+			DrawCubeQuick (segP);
+			}
+		else {
+			//    if (show_special) {
+			if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextureMapped) ) {
+				switch(segP->m_info.function) {
+				case SEGMENT_FUNC_FUELCEN:
+				case SEGMENT_FUNC_SPEEDBOOST:
+					m_pDC->SelectObject (m_penYellow);
+					DrawCubeQuick (segP);
+					break;
+				case SEGMENT_FUNC_CONTROLCEN:
+					m_pDC->SelectObject (m_penOrange);
+					DrawCubeQuick (segP);
+					break;
+				case SEGMENT_FUNC_REPAIRCEN:
+					m_pDC->SelectObject (m_penLtBlue);
+					DrawCubeQuick (segP);
+					break;
+				case SEGMENT_FUNC_ROBOTMAKER:
+				case SEGMENT_FUNC_EQUIPMAKER:
+					m_pDC->SelectObject (m_penMagenta);
+					DrawCubeQuick (segP);
+					break;
+				case SEGMENT_FUNC_GOAL_BLUE:
+				case SEGMENT_FUNC_TEAM_BLUE:
+					m_pDC->SelectObject (m_penBlue);
+					DrawCubeQuick (segP);
+					break;
+				case SEGMENT_FUNC_GOAL_RED:
+				case SEGMENT_FUNC_TEAM_RED:
+					m_pDC->SelectObject (m_penRed);
+					DrawCubeQuick (segP);
+					break;
+				default:
+					if (segP->m_info.props & SEGMENT_PROP_WATER)
+						m_pDC->SelectObject (m_penMedBlue);
+					else if (segP->m_info.props & SEGMENT_PROP_LAVA)
+						m_pDC->SelectObject (m_penMedRed);
+					else
 						break;
-					case SEGMENT_FUNC_CONTROLCEN:
-						m_pDC->SelectObject (m_penOrange);
-						DrawCubeQuick (segP);
-						break;
-					case SEGMENT_FUNC_REPAIRCEN:
-						m_pDC->SelectObject (m_penLtBlue);
-						DrawCubeQuick (segP);
-						break;
-					case SEGMENT_FUNC_ROBOTMAKER:
-					case SEGMENT_FUNC_EQUIPMAKER:
-						m_pDC->SelectObject (m_penMagenta);
-						DrawCubeQuick (segP);
-						break;
-					case SEGMENT_FUNC_GOAL_BLUE:
-					case SEGMENT_FUNC_TEAM_BLUE:
-						m_pDC->SelectObject (m_penBlue);
-						DrawCubeQuick (segP);
-						break;
-					case SEGMENT_FUNC_GOAL_RED:
-					case SEGMENT_FUNC_TEAM_RED:
-						m_pDC->SelectObject (m_penRed);
-						DrawCubeQuick (segP);
-						break;
-					default:
-						if (segP->m_info.props & SEGMENT_PROP_WATER)
-							m_pDC->SelectObject (m_penMedBlue);
-						else if (segP->m_info.props & SEGMENT_PROP_LAVA)
-							m_pDC->SelectObject (m_penMedRed);
-						else
-							break;
-						DrawCubeQuick (segP);
-						break;
+					DrawCubeQuick (segP);
+					break;
 					}
 				}
 			}
 		}
 	}
 
-	// draw a square around all marked points
-	m_pDC->SelectObject((HBRUSH)GetStockObject(NULL_BRUSH));
-	if (clear_it)
-		m_pDC->SelectObject(GetStockObject(BLACK_PEN));
-	else if (SelectMode (eSelectBlock)) // && edit_mode != EDIT_OFF) {
-		m_pDC->SelectObject (m_penRed);
-	else
-		m_pDC->SelectObject (m_penCyan);
-	for (i=0;i<theMine->VertCount ();i++)
-		if (theMine->VertStatus (i) & MARKED_MASK)
-			if (IN_RANGE(m_viewPoints [i].x,x_max) && IN_RANGE(m_viewPoints [i].y,y_max))
-				m_pDC->Rectangle(m_viewPoints [i].x - 4, m_viewPoints [i].y - 4, m_viewPoints [i].x + 4, m_viewPoints [i].y + 4);
+// draw a square around all marked points
+m_pDC->SelectObject((HBRUSH)GetStockObject(NULL_BRUSH));
+if (clear_it)
+	m_pDC->SelectObject(GetStockObject(BLACK_PEN));
+else if (SelectMode (eSelectBlock)) // && edit_mode != EDIT_OFF) {
+	m_pDC->SelectObject (m_penRed);
+else
+	m_pDC->SelectObject (m_penCyan);
+for (i=0;i<theMine->VertCount ();i++)
+	if (theMine->VertStatus (i) & MARKED_MASK)
+		if (IN_RANGE(m_viewPoints [i].x,x_max) && IN_RANGE(m_viewPoints [i].y,y_max))
+			m_pDC->Rectangle(m_viewPoints [i].x - 4, m_viewPoints [i].y - 4, m_viewPoints [i].x + 4, m_viewPoints [i].y + 4);
 }
 
 //--------------------------------------------------------------------------
@@ -2198,7 +2198,7 @@ if (theMine->SegCount ()==0)
 if (!clear_it) {
 	DrawObjects (clear_it);
 //	if (/*!(preferences & PREFS_HIDE_MARKED_BLOCKS) ||*/ SelectMode (eSelectBlock))
-		DrawMarkedCubes(clear_it);
+	DrawMarkedCubes(clear_it);
   }
 
 // draw highlighted Segments () (other first, then current)

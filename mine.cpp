@@ -83,6 +83,7 @@ m_pHxmExtraData = NULL;
 m_nHxmExtraDataSize = 0;
 m_bUseTexColors = false;
 LoadDefaultLightAndColor ();
+Reset ();
 Default ();
 //	strcpy (descent2_path, "d:\\games\\descent\\d2\\");
 }
@@ -102,6 +103,7 @@ Default ();
 
 void CMine::Reset (void)
 {
+Current () = &Current1 ();
 Current1 ().nSegment = DEFAULT_SEGMENT;
 Current1 ().nPoint = DEFAULT_POINT;
 Current1 ().nLine = DEFAULT_LINE;

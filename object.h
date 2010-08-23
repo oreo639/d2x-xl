@@ -60,7 +60,7 @@ typedef struct {
   INT8	weapon_vclip;		// Vclip to render for the weapon, itself.
   INT16	wall_hit_sound;		// What sound for impact with wall
 
-  INT8	destructable;		// If !0, this weapon can be destroyed by another weapon.
+  INT8	destructible;		// If !0, this weapon can be destroyed by another weapon.
   INT8	matter;			// Flag: set if this object is matter (as opposed to energy)
   INT8	bounce;			// 1==always bounces, 2=bounces twice
   INT8	homing_flag;		// Set if this weapon can home in on a target.
@@ -88,7 +88,7 @@ typedef struct {
   FIX		light;					// Amount of light this weapon casts.
   FIX		lifetime;				// Lifetime in seconds of this weapon.
   FIX		damageRadius;			// Radius of damage caused by weapon, used for missiles (not lasers) to apply to damage to things it did not hit
-  UINT16	picture [1];			// a picture and a hires picture of the weapon for the cockpit 
+  UINT16	picture [2];			// a picture and a hires picture of the weapon for the cockpit 
 } WEAPON_INFO;
 
 typedef struct {
