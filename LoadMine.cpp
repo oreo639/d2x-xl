@@ -493,46 +493,6 @@ return 1;
 }
 
 // ------------------------------------------------------------------------
-// Create()
-//
-// Action: makes a new level from the resource file
-// ------------------------------------------------------------------------
-
-INT16 CMine::CreateNewLevel (void)
-{
-HGLOBAL hGlobal;
-UINT32 nResSize;
-UINT8 *data = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_NEW_RDL : IDR_NEW_RL2), hGlobal, nResSize);
-if (!data)
-	return 0;
-// copy data to a file
-
-FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
-sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-#if 0
-RobotInfo () = DefRobotInfo ();
-#else
-memcpy (RobotInfo (), DefRobotInfo (), sizeof (RobotInfo ()));
-#endif
-texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-FILE *file;
-fopen_s (&file, message, "wb");
-if (file) {
-	size_t nBytes = fwrite(data, sizeof (UINT8), (UINT16)nResSize, file);
-	fclose (file);
-	FreeResource (hGlobal);
-	if (nBytes != nResSize)
-		return 1;
-	NumObjTriggers () = 0;
-	return 0;
-	} 
-else {
-	FreeResource (hGlobal);
-	return 2;
-	}
-}
-
-// ------------------------------------------------------------------------
 // FixIndexValues()
 //
 // Action - This routine attempts to fix array index values to prevent
