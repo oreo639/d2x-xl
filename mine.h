@@ -28,7 +28,7 @@ extern CUVL default_uvls[4];
 // CLASS - Level
 //**************************************************************************
 
-#define USE_DYN_ARRAYS 1
+#define USE_DYN_ARRAYS _DEBUG
 
 #if USE_DYN_ARRAYS
 
