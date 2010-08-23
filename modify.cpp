@@ -447,7 +447,7 @@ switch (m_selectMode){
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->pos += delta;
+		CurrObj ()->m_info.pos += delta;
 		theApp.SetModified (TRUE);
 		break;
 
@@ -579,21 +579,21 @@ switch (m_selectMode) {
 					Vertices (segP->m_info.verts [i])->v.x += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++)
 					if (Objects (i)->m_info.nSegment == nSegment)
-						Objects (i)->pos.v.x += inc;
+						Objects (i)->m_info.pos.v.x += inc;
 				break;
 			case 'Y':
 				for (i = 0; i < 8; i++)
 					Vertices (segP->m_info.verts [i])->v.y += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
 					if (Objects (i)->m_info.nSegment == nSegment)
-						Objects (i)->pos.v.y += inc;
+						Objects (i)->m_info.pos.v.y += inc;
 				break;
 			case 'Z':
 				for (i = 0; i < 8; i++)
 					Vertices (segP->m_info.verts [i])->v.z += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
 					if (Objects (i)->m_info.nSegment == nSegment) 
-						Objects (i)->pos.v.z += inc;
+						Objects (i)->m_info.pos.v.z += inc;
 				break;
 			}
 	break;
@@ -601,13 +601,13 @@ switch (m_selectMode) {
 	case OBJECT_MODE:
 		switch (axis) {
 			case 'X':
-				CurrObj ()->pos.v.x += inc;
+				CurrObj ()->m_info.pos.v.x += inc;
 				break;
 			case 'Y':
-				CurrObj ()->pos.v.y += inc;
+				CurrObj ()->m_info.pos.v.y += inc;
 				break;
 			case 'Z':
-				CurrObj ()->pos.v.z += inc;
+				CurrObj ()->m_info.pos.v.z += inc;
 				break;
 		}
 	break;
@@ -725,7 +725,7 @@ switch (m_selectMode) {
 	case OBJECT_MODE:	// spin object vector
 		theApp.SetModified (TRUE);
 		CFixMatrix *orient;
-		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->orient;
+		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
 		switch (nSide) {
 			case 0:
 				RotateMatrix(orient,angle,'x');

@@ -213,7 +213,7 @@ if (bEnableDeltaShading) {
 				CLightDeltaValue *dlP = theMine->LightDeltaValues (dli->m_info.index);
 				h = dli->m_info.count;
 				for (j = 0; j < h; j++, dlP++) {
-					if (*dl == face) {
+					if (*dlP == face) {
 						for (k = 0; k < 4; k++) {
 							INT16 dlight = dlP->m_info.vertLight [k];
 							if (dlight >= 0x20)

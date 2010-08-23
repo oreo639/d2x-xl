@@ -421,9 +421,9 @@ if (new_type != OBJ_NONE) {
 	SetObjectData (objP->m_info.type);
 	}
 // set the contents to zero
-objP->contents.type = 0;
-objP->contents.id = 0;
-objP->contents.count = 0;
+objP->m_info.contents.type = 0;
+objP->m_info.contents.id = 0;
+objP->m_info.contents.count = 0;
 SortObjects ();
 theApp.MineView ()->Refresh (false);
 theApp.ToolView ()->ObjectTool ()->Refresh ();

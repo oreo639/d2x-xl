@@ -79,7 +79,7 @@ typedef struct tSegment {
 	INT8		group;
 } tSegment;
 
-class CSegment {
+class CSegment : CGameItem {
 public:
 	tSegment	m_info;
 	CSide		m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
@@ -98,6 +98,8 @@ public:
 	void Setup (void);
 	void SetUV (INT16 nSide, INT16 x, INT16 y);
 
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
 private:
 	UINT8 ReadWalls (FILE* fp, int nLevelVersion);
 	UINT8 WriteWalls (FILE* fp, int nLevelVersion);

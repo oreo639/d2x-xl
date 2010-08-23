@@ -98,24 +98,24 @@ void CAdvObjTool::OnAccept (void)
 if (!(m_bInited && theMine))
 	return;
 UpdateData (TRUE);
-CGameObject *pObj = theMine->CurrObj ();
-pObj->mType.physInfo.mass = m_mass;
-pObj->mType.physInfo.drag = m_drag;
-pObj->mType.physInfo.brakes = m_brakes;
-pObj->mType.physInfo.turnroll = m_turnRoll;
-pObj->mType.physInfo.flags = m_flags;
-pObj->mType.physInfo.velocity.x = m_vx;
-pObj->mType.physInfo.velocity.y = m_vy;
-pObj->mType.physInfo.velocity.z = m_vz;
-pObj->mType.physInfo.thrust.x = m_tx;
-pObj->mType.physInfo.thrust.y = m_ty;
-pObj->mType.physInfo.thrust.z = m_tz;
-pObj->mType.physInfo.rotvel.x = m_rvx;
-pObj->mType.physInfo.rotvel.y = m_rvy;
-pObj->mType.physInfo.rotvel.z = m_rvz;
-pObj->mType.physInfo.rotthrust.x = m_rtx;
-pObj->mType.physInfo.rotthrust.y = m_rty;
-pObj->mType.physInfo.rotthrust.z = m_rtz;
+CGameObject *objP = theMine->CurrObj ();
+objP->mType.physInfo.mass = m_mass;
+objP->mType.physInfo.drag = m_drag;
+objP->mType.physInfo.brakes = m_brakes;
+objP->mType.physInfo.turnroll = m_turnRoll;
+objP->mType.physInfo.flags = m_flags;
+objP->mType.physInfo.velocity.x = m_vx;
+objP->mType.physInfo.velocity.y = m_vy;
+objP->mType.physInfo.velocity.z = m_vz;
+objP->mType.physInfo.thrust.x = m_tx;
+objP->mType.physInfo.thrust.y = m_ty;
+objP->mType.physInfo.thrust.z = m_tz;
+objP->mType.physInfo.rotvel.x = m_rvx;
+objP->mType.physInfo.rotvel.y = m_rvy;
+objP->mType.physInfo.rotvel.z = m_rvz;
+objP->mType.physInfo.rotthrust.x = m_rtx;
+objP->mType.physInfo.rotthrust.y = m_rty;
+objP->mType.physInfo.rotthrust.z = m_rtz;
 }
 
 								/*--------------------------*/
@@ -144,29 +144,29 @@ if (!theMine->GameInfo ().objects.count) {
 	EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, FALSE);
 	return;
 	}
-CGameObject *pObj = theMine->CurrObj ();
+CGameObject *objP = theMine->CurrObj ();
 EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, TRUE);
-m_size = pObj->size;
-m_shields = pObj->shields;
-switch (pObj->movementType) {
+m_size = objP->m_info.size;
+m_shields = objP->m_info.shields;
+switch (objP->movementType) {
 	case MT_PHYSICS:	
-		m_mass = pObj->mType.physInfo.mass;
-		m_drag = pObj->mType.physInfo.drag;
-		m_brakes = pObj->mType.physInfo.brakes;
-		m_turnRoll = pObj->mType.physInfo.turnroll;
-		m_flags = pObj->mType.physInfo.flags;
-		m_vx = pObj->mType.physInfo.velocity.x;
-		m_vy = pObj->mType.physInfo.velocity.y;
-		m_vz = pObj->mType.physInfo.velocity.z;
-		m_tx = pObj->mType.physInfo.thrust.x;
-		m_ty = pObj->mType.physInfo.thrust.y;
-		m_tz = pObj->mType.physInfo.thrust.z;
-		m_rvx = pObj->mType.physInfo.rotvel.x;
-		m_rvy = pObj->mType.physInfo.rotvel.y;
-		m_rvz = pObj->mType.physInfo.rotvel.z;
-		m_rtx = pObj->mType.physInfo.rotthrust.x;
-		m_rty = pObj->mType.physInfo.rotthrust.y;
-		m_rtz = pObj->mType.physInfo.rotthrust.z;
+		m_mass = objP->mType.physInfo.mass;
+		m_drag = objP->mType.physInfo.drag;
+		m_brakes = objP->mType.physInfo.brakes;
+		m_turnRoll = objP->mType.physInfo.turnroll;
+		m_flags = objP->mType.physInfo.flags;
+		m_vx = objP->mType.physInfo.velocity.x;
+		m_vy = objP->mType.physInfo.velocity.y;
+		m_vz = objP->mType.physInfo.velocity.z;
+		m_tx = objP->mType.physInfo.thrust.x;
+		m_ty = objP->mType.physInfo.thrust.y;
+		m_tz = objP->mType.physInfo.thrust.z;
+		m_rvx = objP->mType.physInfo.rotvel.x;
+		m_rvy = objP->mType.physInfo.rotvel.y;
+		m_rvz = objP->mType.physInfo.rotvel.z;
+		m_rtx = objP->mType.physInfo.rotthrust.x;
+		m_rty = objP->mType.physInfo.rotthrust.y;
+		m_rtz = objP->mType.physInfo.rotthrust.z;
 		break;
 	case MT_SPINNING:
 	case MT_NONE:
@@ -192,10 +192,10 @@ switch (pObj->movementType) {
 		break;
 	}
 
-switch (pObj->renderType) {
+switch (objP->renderType) {
 	case RT_MORPH:
 	case RT_POLYOBJ:
-		m_model = pObj->rType.polyModelInfo.model_num;
+		m_model = objP->rType.polyModelInfo.model_num;
 		m_frame = 0;
 		m_frameNo = 0;
 		EnableControls (IDC_ADVOBJ_FRAME, IDC_ADVOBJ_FRAMENO, FALSE);
@@ -204,9 +204,9 @@ switch (pObj->renderType) {
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		m_model = pObj->rType.vClipInfo.vclip_num;
-		m_frame = pObj->rType.vClipInfo.frametime;
-		m_frameNo = pObj->rType.vClipInfo.framenum;
+		m_model = objP->rType.vClipInfo.vclip_num;
+		m_frame = objP->rType.vClipInfo.frametime;
+		m_frameNo = objP->rType.vClipInfo.framenum;
 		break;
 	case RT_LASER:
 	case RT_NONE:

@@ -324,7 +324,7 @@ INT16 CMine::FindTriggerObject (INT16 *nTrigger)
 	INT16 nObject = Current ()->nObject;
 
 for (INT32 i = 0; i < NumObjTriggers (); i++)
-	if (ObjTriggers (i)->nObject == nObject) {
+	if (ObjTriggers (i)->m_info.nObject == nObject) {
 		*nTrigger = i;
 		return nObject;
 		}
@@ -493,8 +493,6 @@ return -1;
 
 INT32 CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
 {
-	INT32	i;
-
 if (theApp.IsD2File ()) {
 	m_info.type = read_INT8(fp);
 	m_info.flags = bObjTrigger ? read_INT16(fp) : (UINT16) read_INT8(fp);
@@ -520,6 +518,7 @@ else {
 		m_count = MAX_TRIGGER_TARGETS;
 	}
 ReadTargets (fp);
+//INT32	i;
 //for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 //	m_targets [i].m_nSegment = read_INT16(fp);
 //for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
@@ -531,8 +530,6 @@ return 1;
 
 void CTrigger::Write (FILE *fp, INT32 version, bool bObjTrigger)
 {
-	INT32	i;
-
 if (theApp.IsD2File ()) {
 	write_INT8 (m_info.type, fp);
 	if (bObjTrigger)
@@ -553,6 +550,7 @@ else {
 	write_INT16 (m_count, fp);
 	}
 WriteTargets (fp);
+//INT32	i;
 //for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 //	write_INT16 (m_targets [i].m_nSegment, fp);
 //for (i = 0; i < MAX_TRIGGER_TARGETS; i++)

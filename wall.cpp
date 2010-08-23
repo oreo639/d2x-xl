@@ -166,7 +166,7 @@ wallP->m_info.flags = 0;
 wallP->m_info.state = 0;
 wallP->m_info.keys = 0;
 //  wallP->pad = 0;
-wallP->m_info.controlling_trigger = 0;
+wallP->m_info.controllingTrigger = 0;
 
 // set uvls of new texture
 UINT32	scale = (UINT32) theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
@@ -375,7 +375,7 @@ m_info.state = UINT8 (read_INT8 (fp));
 m_info.nTrigger = UINT8 (read_INT8 (fp));       
 m_info.nClip = UINT8 (read_INT8 (fp));      
 m_info.keys = UINT8 (read_INT8 (fp));          
-m_info.controlling_trigger = read_INT8 (fp);
+m_info.controllingTrigger = read_INT8 (fp);
 m_info.cloak_value = read_INT8 (fp);
 return 1;
 }
@@ -397,7 +397,7 @@ write_INT8 (m_info.state, fp);
 write_INT8 (m_info.nTrigger, fp);       
 write_INT8 (m_info.nClip, fp);      
 write_INT8 (m_info.keys, fp);          
-write_INT8 (m_info.controlling_trigger, fp);
+write_INT8 (m_info.controllingTrigger, fp);
 write_INT8 (m_info.cloak_value, fp);
 }
 
