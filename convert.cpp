@@ -56,8 +56,6 @@ pImgWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 
 BOOL CConvertDlg::OnInitDialog () 
 {
-if (!theMine) return FALSE;
-
 CDialog::OnInitDialog ();
 
 CreateImgWnd (&m_showD1, IDC_CONVERT_SHOWD1);

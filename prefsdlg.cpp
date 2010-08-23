@@ -368,6 +368,7 @@ WritePrivateProfileInt ("TextureFilter", theApp.TextureView ()->TextureFilter ()
 
 void CPrefsDlg::SetAppSettings (bool bInitApp)
 {
+CHECKMINE;
 if (m_bInvalid)
 	return;
 _strlwr_s (m_d1Path, sizeof (m_d1Path));

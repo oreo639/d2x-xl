@@ -5358,7 +5358,7 @@ END
 //
 
 IDR_MAINFRAME_OLD       BITMAP                  "resource/bitmaps/Toolbar.bmp"
-IDR_MAIN_TOOLBAR        BITMAP                  "resource/bitmaps/toolbar2.bmp"
+IDR_MAINFRAME           BITMAP                  "resource/bitmaps/toolbar2.bmp"
 NO_PIG_BITMAP           BITMAP                  "resource/bitmaps/nopig.bmp"
 NO_TEXTURE_BITMAP       BITMAP                  "resource/bitmaps/none.bmp"
 WRONG_PIG_BITMAP        BITMAP                  "resource/bitmaps/oldpig.bmp"
@@ -5635,7 +5635,7 @@ BEGIN
     BUTTON      ID_APP_ABOUT
 END
 
-IDR_MAIN_TOOLBAR TOOLBAR  19, 19
+IDR_MAINFRAME TOOLBAR  19, 19
 BEGIN
     BUTTON      ID_OPENFILE
     BUTTON      ID_SAVEFILE

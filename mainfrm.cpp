@@ -416,7 +416,7 @@ INT32 CMainFrame::CreateToolBars (bool bToolBar, bool bEditBar)
 EnableDocking (DOCKING_STYLE);
 if (bToolBar && !IsWindow (m_toolBar.m_hWnd)) {
 	if (!m_toolBar.CreateEx (this, TBSTYLE_FLAT, TOOLBAR_STYLE) || 
-		 !m_toolBar.LoadToolBar(IDR_MAIN_TOOLBAR)) {
+		 !m_toolBar.LoadToolBar(IDR_MAINFRAME)) {
 		TRACE0("Failed to create toolbar\n");
 		return -1;      // fail to create
 		}

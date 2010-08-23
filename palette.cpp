@@ -150,7 +150,7 @@ LPCTSTR PaletteResource (void)
 	char		szFile [256];
 
 INT32 id = IDR_GROUPA_256;
-if (theMine->IsD1File ())
+if (theMine && theMine->IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
 FSplit (descent2_path, NULL, szFile, NULL);
 for (ppe = palExt; *(ppe->szFile); ppe++)

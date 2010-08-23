@@ -32,7 +32,8 @@ CMine* theMine = NULL;
 
 CMine::CMine() 
 { 
-//Initialize ();
+//memset (this, 0, sizeof (*this));
+Initialize ();
 }
 
 void CMine::Initialize (void)
@@ -74,6 +75,7 @@ GameInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
+m_currentPalette = NULL;
 LoadPalette ();
 m_bSortObjects = TRUE;
 m_bVertigo = false;

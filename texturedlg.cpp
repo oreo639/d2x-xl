@@ -213,7 +213,7 @@ BOOL CTextureTool::OnInitDialog ()
 {
 	CRect	rc;
 
-if (!CToolDlg::OnInitDialog ())
+if (!(theMine && CToolDlg::OnInitDialog ()))
    return FALSE;
 /*
 m_btnZoomIn.SubclassDlgItem (IDC_TEXALIGN_ZOOMIN, this);
