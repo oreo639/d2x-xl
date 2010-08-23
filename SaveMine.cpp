@@ -416,7 +416,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 			for (i = 0; i < NumObjTriggers (); i++)
 				ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				write_INT16 (ObjTriggers (i)->nObject, fp);
+				write_INT16 (ObjTriggers (i)->m_info.nObject, fp);
 			}
 		}
 

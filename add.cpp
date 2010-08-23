@@ -129,11 +129,11 @@ else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wallP = GetWall (nSegment, nSide)) && 
-			 (wallP->type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File () ? 322 : 333)))
-			DeleteWall (sideP->nWall);
+			 (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File () ? 322 : 333)))
+			DeleteWall (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		if (GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
-			 (wallP = GetWall (nSegment, nSide)) && (wallP->type == WALL_ILLUSION)) {
+			 (wallP = GetWall (nSegment, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 			oppSideP = Segments (nOppSeg)->m_sides + nOppSide;
 			if (oppSideP->nBaseTex == (IsD1File () ? 322 : 333))
 				DeleteWall (oppSideP->nWall);
@@ -732,7 +732,7 @@ if (nWall >= GameInfo ().walls.count) {
 	return false;
 	}
 // automatically change the trigger type to open if not a door
-if (Walls (nWall)->type != WALL_DOOR)
+if (Walls (nWall)->m_info.type != WALL_DOOR)
 	trigger_type = TT_OPEN_WALL;
 return AutoAddTrigger (wall_type, wall_flags, trigger_type);
 }

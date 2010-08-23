@@ -289,7 +289,7 @@ CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);
 InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
-CBInit (CBSpawnType (), (char**) object_names, contains_list, NULL, MAX_CONTAINS_NUMBER, 0, true);
+CBInit (CBSpawnType (), (char**) object_names, contents.list, NULL, MAX_CONTAINS_NUMBER, 0, true);
 CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
@@ -319,7 +319,7 @@ for (psz = pszBossTypes; *psz; psz++) {
 	}
 CGameObject *objP = theMine->CurrObj ();
 //CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1);
-//SelectItemData (CBObjProps (), (objP->type == OBJ_ROBOT) && (objP->id < N_D2_ROBOT_TYPES) ? objP->id: -1);
+//SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
 CBInit (CBExplType (), (char **) "explosion", NULL, exp2_vclip_num_table, MAX_EXP2_VCLIP_NUM_TABLE, 2);
 CBInit (CBWeapon1 (), (char **) 7000, NULL, NULL, MAX_WEAPON_TYPES, 3, true);
 CBInit (CBWeapon2 (), (char **) 7000, NULL, NULL, MAX_WEAPON_TYPES, 3, true);
@@ -458,27 +458,27 @@ CBObjNo ()->ResetContent ();
 CGameObject *objP = theMine->Objects (0);
 INT32 i;
 for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
-	switch(objP->type) {
+	switch(objP->m_info.type) {
 		case OBJ_ROBOT: /* an evil enemy */
-			LoadString (hInst, ROBOT_STRING_TABLE + objP->id, string, sizeof (string));
+			LoadString (hInst, ROBOT_STRING_TABLE + objP->m_info.id, string, sizeof (string));
 			break;
 		case OBJ_HOSTAGE: // a hostage you need to rescue
 			sprintf_s (string, sizeof (string), "Hostage");
 			break;
 		case OBJ_PLAYER: // the player on the console
-			sprintf_s (string, sizeof (string), "Player #%d", objP->id + 1);
+			sprintf_s (string, sizeof (string), "Player #%d", objP->m_info.id + 1);
 			break;
 		case OBJ_WEAPON: //
 			strcpy_s (string, sizeof (string), "Red Mine");
 			break;
 		case OBJ_POWERUP: // a powerup you can pick up
-			LoadString (hInst, POWERUP_STRING_TABLE + powerupIdStrXlat [objP->id], string, sizeof (string));
+			LoadString (hInst, POWERUP_STRING_TABLE + powerupIdStrXlat [objP->m_info.id], string, sizeof (string));
 			break;
 		case OBJ_CNTRLCEN: // a control center */
 			sprintf_s (string, sizeof (string), "Reactor");
 			break;
 		case OBJ_COOP: // a cooperative player object
-			sprintf_s (string, sizeof (string), "Coop Player #%d", objP->id + 1);
+			sprintf_s (string, sizeof (string), "Coop Player #%d", objP->m_info.id + 1);
 			break;
 		case OBJ_CAMBOT: // a camera */
 			sprintf_s (string, sizeof (string), "Camera");
@@ -503,7 +503,7 @@ for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	}
 // add secret object to list
 for (i = 0; i < theMine->GameInfo ().triggers.count; i++)
-	if (theMine->Triggers (i)->type == TT_SECRET_EXIT) {
+	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
 		CBObjNo ()->AddString ("secret object");
 		break;
 		}
@@ -542,22 +542,22 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 // dialog.
 objP = theMine->CurrObj ();
 sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->m_info.nSegment);
-if (/*(object_selection [objP->type] == 0) &&*/ theMine->RobotInfo (objP->id)->pad [0])
+if (/*(object_selection [objP->m_info.type] == 0) &&*/ theMine->RobotInfo (objP->m_info.id)->pad [0])
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
-CBObjType ()->SetCurSel (object_selection [objP->type]);
-SetObjectId (CBObjId (), objP->type, objP->id);
+CBObjType ()->SetCurSel (object_selection [objP->m_info.type]);
+SetObjectId (CBObjId (), objP->m_info.type, objP->m_info.id);
 
 // ungray most buttons and combo boxes
 CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, TRUE);
 CToolDlg::EnableControls (IDC_OBJ_MULTIPLAYER, IDC_OBJ_MULTIPLAYER, TRUE);
 
 // gray contains and behavior if not a robot type object
-if (objP->type != OBJ_ROBOT) {
+if (objP->m_info.type != OBJ_ROBOT) {
 //	CBObjProps ()->EnableWindow (FALSE);
 	CToolDlg::EnableControls (IDC_OBJ_SPAWN_TYPE, IDC_OBJ_SPAWN_QTY, FALSE);
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
-	if (objP->type != OBJ_POWERUP)
+	if (objP->m_info.type != OBJ_POWERUP)
 		CToolDlg::EnableControls (IDC_OBJ_MULTIPLAYER, IDC_OBJ_MULTIPLAYER, FALSE);
 	for (i = IDC_OBJ_SOUND_EXPLODE; i <= IDC_OBJ_SOUND_DEATH; i++)
 		CBCtrl (i)->SetCurSel (-1);
@@ -569,7 +569,7 @@ else {
 	}
 
 // gray texture override if not a poly object
-if (objP->render_type != RT_POLYOBJ)
+if (objP->renderType != RT_POLYOBJ)
 	CBObjTexture ()->EnableWindow (FALSE);
 
 // gray edit if this is an RDL file
@@ -577,7 +577,7 @@ if (theApp.IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
-type = (objP->contains_type == -1) ? MAX_CONTAINS_NUMBER : contains_selection [objP->contains_type];
+type = (objP->contents.type == -1) ? MAX_CONTAINS_NUMBER : contents.selection [objP->contents.type];
 //if (type == -1)
 //	type = MAX_CONTAINS_NUMBER;
 
@@ -585,10 +585,10 @@ CBSpawnType ()->SetCurSel (type + 1);
 BtnCtrl (IDC_OBJ_MULTIPLAYER)->SetCheck (theMine->CurrObj ()->multiplayer);
 theMine->CurrObj ()->multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
 //SelectItemData (CBSpawnType (), type);
-SetObjectId (CBSpawnId (), objP->contains_type, objP->contains_id, 1);
-m_nSpawnQty = objP->contains_count;
-//SelectItemData (CBObjProps (), (objP->type == OBJ_ROBOT) && (objP->id < N_D2_ROBOT_TYPES) ? objP->id: -1);
-if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT)) {
+SetObjectId (CBSpawnId (), objP->contents.type, objP->contents.id, 1);
+m_nSpawnQty = objP->contents.count;
+//SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
+if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 	INT32 index =
 		((objP->cType.aiInfo.behavior == AIB_RUN_FROM) && (objP->cType.aiInfo.flags [4] & 0x02)) ? // smart bomb flag
 		8 : objP->cType.aiInfo.behavior - 0x80;
@@ -596,7 +596,7 @@ if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT)) {
 	}
 else
 	CBObjAI ()->SetCurSel (1); // Normal
-m_bEndsLevel = (objP->type == OBJ_ROBOT) && (theMine->RobotInfo (objP->id)->boss_flag > 0);
+m_bEndsLevel = (objP->m_info.type == OBJ_ROBOT) && (theMine->RobotInfo (objP->m_info.id)->boss_flag > 0);
 RefreshRobot ();
 UpdateSliders ();
 DrawObjectImages ();
@@ -666,7 +666,7 @@ i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 rInfo = *theMine->RobotInfo (i);
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
-switch (rInfo.contains_type) {
+switch (rInfo.contents.type) {
 	case OBJ_ROBOT: /* an evil enemy */
 		CBInit (CBContId (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1, true);
 		break;
@@ -675,7 +675,7 @@ switch (rInfo.contains_type) {
 		break;
 	}
 // update list boxes
-SelectItemData (CBContId (), (INT32) rInfo.contains_id);
+SelectItemData (CBContId (), (INT32) rInfo.contents.id);
 SelectItemData (CBWeapon1 (), (INT32) (rInfo.weapon_type ? rInfo.weapon_type : -1));
 SelectItemData (CBWeapon2 (), (INT32) rInfo.weapon_type2);
 SelectItemData (CBSoundExpl (), (INT32) rInfo.exp2_sound_num);
@@ -685,7 +685,7 @@ SelectItemData (CBSoundClaw (), (INT32) rInfo.claw_sound);
 SelectItemData (CBSoundDeath (), (INT32) rInfo.deathroll_sound);
 SelectItemData (CBObjClassAI (), (INT32) rInfo.behavior);
 SelectItemData (CBExplType (), (INT32) rInfo.exp2_vclip_num);
-SelectItemData (CBContType (), (INT32) rInfo.contains_type);
+SelectItemData (CBContType (), (INT32) rInfo.contents.type);
 INT8 boss_flag = (rInfo.boss_flag < 0) ? -rInfo.boss_flag : rInfo.boss_flag;
 SelectItemData (CBBossType (), (INT32) (boss_flag < 21) ? boss_flag : boss_flag - 18);
 // update check boxes
@@ -719,8 +719,8 @@ SlCtrl (IDC_OBJ_FIRESPEED)->SetPos ((INT32) (rInfo.rapidfire_count [j] / SliderF
 SlCtrl (IDC_OBJ_EVADESPEED)->SetPos ((INT32) (rInfo.evade_speed [j] / SliderFactor (IDC_OBJ_EVADESPEED)));
 SlCtrl (IDC_OBJ_DEATHROLL)->SetPos ((INT32) (rInfo.death_roll / SliderFactor (IDC_OBJ_DEATHROLL)));
 SlCtrl (IDC_OBJ_EXPLSIZE)->SetPos ((INT32) (rInfo.badass / SliderFactor (IDC_OBJ_EXPLSIZE)));
-SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((INT32) (rInfo.contains_prob / SliderFactor (IDC_OBJ_CONT_PROB)));
-SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((INT32) (rInfo.contains_count / SliderFactor (IDC_OBJ_CONT_COUNT)));
+SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((INT32) (rInfo.contents.prob / SliderFactor (IDC_OBJ_CONT_PROB)));
+SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((INT32) (rInfo.contents.count / SliderFactor (IDC_OBJ_CONT_COUNT)));
 }
   
                         /*--------------------------*/
@@ -756,8 +756,8 @@ rInfo.rapidfire_count [j] = (INT32) (SlCtrl (IDC_OBJ_FIRESPEED)->GetPos () * Sli
 rInfo.evade_speed [j] = (INT32) (SlCtrl (IDC_OBJ_EVADESPEED)->GetPos () * SliderFactor (IDC_OBJ_EVADESPEED));
 rInfo.death_roll = (INT32) (SlCtrl (IDC_OBJ_DEATHROLL)->GetPos () * SliderFactor (IDC_OBJ_DEATHROLL));
 rInfo.badass = (INT32) (SlCtrl (IDC_OBJ_EXPLSIZE)->GetPos () * SliderFactor (IDC_OBJ_EXPLSIZE));
-rInfo.contains_prob = (INT32) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
-rInfo.contains_count = (INT32) (SlCtrl (IDC_OBJ_CONT_COUNT)->GetPos () * SliderFactor (IDC_OBJ_CONT_COUNT));
+rInfo.contents.prob = (INT32) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
+rInfo.contents.count = (INT32) (SlCtrl (IDC_OBJ_CONT_COUNT)->GetPos () * SliderFactor (IDC_OBJ_CONT_COUNT));
 
 rInfo.kamikaze = BtnCtrl (IDC_OBJ_AI_KAMIKAZE)->GetCheck ();
 rInfo.companion = BtnCtrl (IDC_OBJ_AI_COMPANION)->GetCheck ();
@@ -801,9 +801,9 @@ if (0 <= (index = CBObjClassAI ()->GetCurSel ()))
 if (0 <= (index = CBExplType ()->GetCurSel ()))
 	rInfo.exp2_vclip_num = (UINT8) CBExplType ()->GetItemData (index);
 if (0 <= (index = CBContType ()->GetCurSel ()))
-	rInfo.contains_type = (UINT8) CBContType ()->GetItemData (index);
+	rInfo.contents.type = (UINT8) CBContType ()->GetItemData (index);
 if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
-	rInfo.contains_id = (UINT8) CBContId ()->GetItemData (index);
+	rInfo.contents.id = (UINT8) CBContId ()->GetItemData (index);
 *theMine->RobotInfo (i) = rInfo;
 }
 
@@ -821,7 +821,7 @@ pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 #endif
 INT16 tnum = 0, tnum2 = -1;
 
-if (objP->render_type != RT_POLYOBJ)
+if (objP->renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (INT16) theMine->CurrObj ()->rType.polyModelInfo.tmap_override;
@@ -871,8 +871,8 @@ PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, -1, -1, tnum, tnum2);
 void CObjectTool::DrawObjectImages () 
 {
 CGameObject *objP = theMine->CurrObj ();
-theMine->DrawObject (&m_showObjWnd, objP->type, objP->id);
-theMine->DrawObject (&m_showSpawnWnd, objP->contains_type, objP->contains_id);
+theMine->DrawObject (&m_showObjWnd, objP->m_info.type, objP->m_info.id);
+theMine->DrawObject (&m_showSpawnWnd, objP->contents.type, objP->contents.id);
 }
 
 
@@ -987,10 +987,10 @@ switch(type) {
 #if 0//def _DEBUG // hack to fix bogus powerup ids
 		CGameObject *objP;
 		for (i = 0, objP = theMine->Objects (0); i < theMine->ObjCount (); i++, objP++)
-			if ((objP->type == OBJ_POWERUP) && (xlat [objP->id] == -1)) {
+			if ((objP->m_info.type == OBJ_POWERUP) && (xlat [objP->m_info.id] == -1)) {
 				for (i = 0, objP = theMine->Objects (0); i < theMine->ObjCount (); i++, objP++)
-					if (objP->type == OBJ_POWERUP)
-						objP->id = xlat [objP->id]; 
+					if (objP->m_info.type == OBJ_POWERUP)
+						objP->m_info.id = xlat [objP->m_info.id]; 
 				break;
 				}
 #endif
@@ -1093,13 +1093,13 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 CGameObject *objP = theMine->CurrObj ();
-INT32 nType = objP->type;
-INT32 nId = objP->id;
+INT32 nType = objP->m_info.type;
+INT32 nId = objP->m_info.id;
 objP = theMine->Objects (0);
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 nDeleted = 0;
 for (INT32 h = theMine->GameInfo ().objects.count, i = 0; i < h; ) {
-	if ((objP->type == nType) && (objP->id == nId) && (bAll || (theMine->Segments (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
+	if ((objP->m_info.type == nType) && (objP->m_info.id == nId) && (bAll || (theMine->Segments (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
 		theMine->DeleteObject (i);
 		nDeleted++;
 		h--;
@@ -1163,14 +1163,14 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count)
 	theMine->SecretCubeNum () = theMine->Current ()->nSegment;
 else {
 	CGameObject *objP = theMine->CurrObj ();
-	theMine->CalcSegCenter (objP->pos, theMine->Current ()->nSegment);
+	theMine->CalcSegCenter (objP->m_info.pos, theMine->Current ()->nSegment);
 	// bump position over if this is not the first object in the cube
 	INT32 i, count = 0;
 	for (i = 0; i < theMine->GameInfo ().objects.count;i++)
 		if (theMine->Objects (i)->m_info.nSegment == theMine->Current ()->nSegment)
 			count++;
-	objP->pos.v.y += count * 2 * F1_0;
-	objP->last_pos.v.y += count * 2 * F1_0;
+	objP->m_info.pos.v.y += count * 2 * F1_0;
+	objP->lastPos.v.y += count * 2 * F1_0;
 	objP->m_info.nSegment = theMine->Current ()->nSegment;
 	Refresh ();
 	theApp.MineView ()->Refresh (false);
@@ -1199,7 +1199,7 @@ CGameObject *o = theMine->Objects (0);
 INT32		i, n = 0;
 
 for (i = theMine->ObjCount (); i && (n < numIds); i--, o++)
-	if (o->type == objType)
+	if (o->m_info.type == objType)
 		ids [n++] = -1;
 if (n == numIds) {
 	ErrorMsg (pszError);
@@ -1207,7 +1207,7 @@ if (n == numIds) {
 	}
 for (i = 0; i < numIds; i++)
 	if (ids [i] >= 0) {
-		objP->id = ids [i];
+		objP->m_info.id = ids [i];
 		break;
 		}
 return true;
@@ -1247,23 +1247,23 @@ switch (selection) {
 		break;
 
 	case OBJ_WEAPON:
-		objP->id = SMALLMINE_ID;
+		objP->m_info.id = SMALLMINE_ID;
 		break;
 
 	case OBJ_CNTRLCEN:
-		objP->id = theApp.IsD1File () ? 0: 2;
+		objP->m_info.id = theApp.IsD1File () ? 0: 2;
 		break;
 
 	case OBJ_EXPLOSION:
-		objP->id = 0;
+		objP->m_info.id = 0;
 		break;
 
 	default:
-		objP->id = 0;
+		objP->m_info.id = 0;
 	}
-objP->type = selection;
+objP->m_info.type = selection;
 SetObjectId (CBObjId (), selection, 0);
-theMine->SetObjectData (objP->type);
+theMine->SetObjectData (objP->m_info.type);
 Refresh ();
 theApp.MineView ()->Refresh (false);
 }
@@ -1280,7 +1280,7 @@ INT32 CObjectTool::GetObjectsOfAKind (INT32 nType, CGameObject *objList [])
 	CGameObject *objP;
 
 for (i = theMine->GameInfo ().objects.count, objP = theMine->Objects (0); i; i--, objP++)
-	if (objP->type == nType)
+	if (objP->m_info.type == nType)
 		objList [nObjects++] = objP;
 return nObjects;
 }
@@ -1289,7 +1289,7 @@ return nObjects;
 
 void CObjectTool::SetNewObjId (CGameObject *objP, INT32 nType, INT32 nId, INT32 nMaxId)
 {
-if (nId = objP->id)
+if (nId = objP->m_info.id)
 	return;
 
 	INT32 nObjects = ObjOfAKindCount (nType);
@@ -1298,17 +1298,17 @@ CGameObject **objList = new CGameObject* [nObjects];
 GetObjectsOfAKind (nType, objList);
 if ((nMaxId > 0) && (nId >= nMaxId)) {
 	nId = nMaxId;
-	if (nId == objP->id)
+	if (nId == objP->m_info.id)
 		return;
 	}
 // find object that currently has id nCurSel and swap ids
 INT32 i;
 for (i = 0; i < nObjects; i++)
 	if (objList [i]->id == nId) {
-		objList [i]->id = objP->id;
+		objList [i]->id = objP->m_info.id;
 		break;
 		}
-objP->id = nId;
+objP->m_info.id = nId;
 delete objList;
 }
 
@@ -1324,7 +1324,7 @@ INT32 nCurSel = INT32 (pcb->GetItemData (pcb->GetCurSel ()));
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-switch (objP->type) {
+switch (objP->m_info.type) {
 	case OBJ_PLAYER:
 		SetNewObjId (objP, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
 		break;
@@ -1334,30 +1334,30 @@ switch (objP->type) {
 		break;
 
 	case OBJ_WEAPON:
-		objP->id = SMALLMINE_ID;
+		objP->m_info.id = SMALLMINE_ID;
 		break;
 
 	case OBJ_CNTRLCEN:
-		objP->id = nCurSel; // + (IsD2File ());
+		objP->m_info.id = nCurSel; // + (IsD2File ());
 		objP->rType.vClipInfo.vclip_num = nCurSel;
 		break;
 
 	default:
-		objP->id = nCurSel;
+		objP->m_info.id = nCurSel;
 	}
 
-switch (objP->type) {
+switch (objP->m_info.type) {
 	case OBJ_POWERUP:
-		id = (objP->id < MAX_POWERUP_IDS_D2) ? objP->id : POW_AMMORACK;
+		id = (objP->m_info.id < MAX_POWERUP_IDS_D2) ? objP->m_info.id : POW_AMMORACK;
 		objP->size = powerup_size [id];
 		objP->shields = DEFAULT_SHIELD;
 		objP->rType.vClipInfo.vclip_num = powerup_clip [id];
 		break;
 
 	case OBJ_ROBOT:
-		objP->size = robot_size [objP->id];
-		objP->shields = robot_shield [objP->id];
-		objP->rType.polyModelInfo.model_num = robot_clip [objP->id];
+		objP->size = robot_size [objP->m_info.id];
+		objP->shields = robot_shield [objP->m_info.id];
+		objP->rType.polyModelInfo.model_num = robot_clip [objP->m_info.id];
 		break;
 
 	case OBJ_CNTRLCEN:
@@ -1367,7 +1367,7 @@ switch (objP->type) {
 			objP->rType.polyModelInfo.model_num = REACTOR_CLIP_NUMBER;
 		else {
 			INT32 model;
-			switch(objP->id) {
+			switch(objP->m_info.id) {
 				case 1: model = 95; break;
 				case 2: model = 97; break;
 				case 3: model = 99; break;
@@ -1405,7 +1405,7 @@ switch (objP->type) {
 		break;
 	}
 theMine->SortObjects ();
-SelectItemData (pcb, objP->id);
+SelectItemData (pcb, objP->m_info.id);
 theApp.UnlockUndo ();
 Refresh ();
 }
@@ -1418,7 +1418,7 @@ void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-theMine->CurrObj ()->contains_count = m_nSpawnQty;
+theMine->CurrObj ()->contents.count = m_nSpawnQty;
 Refresh ();
 }
 
@@ -1434,13 +1434,13 @@ theApp.SetModified (TRUE);
 theApp.UnlockUndo ();
 INT32 i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
-	objP->contains_count = 0;
-	objP->contains_type = -1;
-	objP->contains_id = -1;
+	objP->contents.count = 0;
+	objP->contents.type = -1;
+	objP->contents.id = -1;
 	}
 else {
-	objP->contains_type = 
-	selection = contains_list [i];
+	objP->contents.type = 
+	selection = contents.list [i];
 	SetObjectId (CBSpawnId (),selection,0,1);
 	UpdateData (TRUE);
 	if (m_nSpawnQty < 1) {
@@ -1462,16 +1462,16 @@ void CObjectTool::OnSetSpawnId ()
 CGameObject *objP = theMine->CurrObj ();
 
 theApp.SetModified (TRUE);
-if (objP->contains_count < -1)
-	objP->contains_count = -1;
+if (objP->contents.count < -1)
+	objP->contents.count = -1;
 INT32 i = CBSpawnType ()->GetCurSel () - 1;
-if ((i > -1) && (objP->contains_count > 0)) {
-	objP->contains_type = contains_list [i];
-	objP->contains_id = (INT8) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
+if ((i > -1) && (objP->contents.count > 0)) {
+	objP->contents.type = contents.list [i];
+	objP->contents.id = (INT8) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
 	}
 else {
-	objP->contains_type = -1;
-	objP->contains_id = -1;
+	objP->contents.type = -1;
+	objP->contents.id = -1;
 	}
 Refresh ();
 theApp.SetModified (TRUE);
@@ -1485,7 +1485,7 @@ void CObjectTool::OnSetObjAI ()
 {
 theApp.SetModified (TRUE);
 CGameObject *objP = theMine->CurrObj ();
-if ((objP->type == OBJ_ROBOT) || (objP->type == OBJ_CAMBOT)) {
+if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
  	INT32 index = CBObjAI ()->GetCurSel ();
 	if (index == 8) {
 		index = AIB_RUN_FROM;
@@ -1511,7 +1511,7 @@ void CObjectTool::OnSetTexture ()
 {
 CGameObject *objP = theMine->CurrObj ();
 
-if (objP->render_type == RT_POLYOBJ) {
+if (objP->renderType == RT_POLYOBJ) {
 	theApp.SetModified (TRUE);
 	INT32 index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.tmap_override = 
@@ -1598,7 +1598,7 @@ if (0 > i)
 	return;
 INT32 j = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 ROBOT_INFO *rInfo = theMine->RobotInfo (j);
-rInfo->contains_type = (UINT8) CBContType ()->GetItemData (i);
+rInfo->contents.type = (UINT8) CBContType ()->GetItemData (i);
 RefreshRobot ();
 }
 
@@ -1709,14 +1709,14 @@ if (theMine->m_bSortObjects = BtnCtrl (IDC_OBJ_SORT)->GetCheck ()) {
 INT32 CObjectTool::ObjOfAKindCount (INT32 nType, INT32 nId)
 {
 if (nType < 0)
-	nType = theMine->CurrObj ()->type;
+	nType = theMine->CurrObj ()->m_info.type;
 if (nId < 0)
 	nId =  theMine->CurrObj ()->id;
 INT32 nCount = 0;
 CGameObject *objP = theMine->Objects (0);
 INT32 i;
 for (i = theMine->GameInfo ().objects.count; i; i--, objP++)
-	if ((objP->type == nType) && ((objP->type == OBJ_PLAYER) || (objP->type == OBJ_COOP) || (objP->id == nId))) 
+	if ((objP->m_info.type == nType) && ((objP->m_info.type == OBJ_PLAYER) || (objP->m_info.type == OBJ_COOP) || (objP->m_info.id == nId))) 
 		nCount++;
 return nCount;
 }

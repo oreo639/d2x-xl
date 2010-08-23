@@ -58,7 +58,7 @@ origVertCount = VertCount ();
 // set origin
 segP = CurrSeg ();
 nSide = Current ()->nSide;
-nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(0)]];
+nVertex = segP->verts [sideVertTable [nSide][CURRENT_POINT(0)]];
 memcpy (&origin, Vertices (nVertex), sizeof (CVertex));
 /*
 origin.x = Vertices (nVertex)->x;
@@ -66,11 +66,11 @@ origin.y = Vertices (nVertex)->y;
 origin.z = Vertices (nVertex)->z;
 */
 // set x'
-nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(1)]];
+nVertex = segP->verts [sideVertTable [nSide][CURRENT_POINT(1)]];
 xPrime = *Vertices (nVertex) - origin;
 
 // calculate y'
-nVertex = segP->verts [side_vert [nSide][CURRENT_POINT(3)]];
+nVertex = segP->verts [sideVertTable [nSide][CURRENT_POINT(3)]];
 vVertex = *Vertices (nVertex) - origin;
 yPrime = CrossProduct (xPrime, CDoubleVector (vVertex));
 zPrime = CrossProduct (xPrime, yPrime);
@@ -136,7 +136,7 @@ while(!feof(fBlk)) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
-		sideP->nWall = NO_WALL;
+		sideP->m_info.nWall = NO_WALL;
 		fscanf_s (fBlk, "    tmap_num %hd\n",&sideP->m_info.nBaseTex);
 		fscanf_s (fBlk, "    tmap_num2 %hd\n",&sideP->m_info.nOvlTex);
 		for (j = 0; j < 4; j++)
@@ -146,8 +146,8 @@ while(!feof(fBlk)) {
 						&sideP->m_info.uvls [j].l);
 		if (bExtBlkFmt) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
-			sideP->nWall = (UINT16) byteBuf;
-			if (sideP->nWall != NO_WALL) {
+			sideP->m_info.nWall = (UINT16) byteBuf;
+			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
 				memset (&w, 0, sizeof (w));
@@ -193,9 +193,9 @@ while(!feof(fBlk)) {
 							}
 						}
 					nNewWalls++;
-					sideP->nWall = GameInfo ().walls.count++;
+					sideP->m_info.nWall = GameInfo ().walls.count++;
 					w.m_nSegment = nSegment;
-					*Walls (sideP->nWall) = w;
+					*Walls (sideP->m_info.nWall) = w;
 					}
 				}
 #if 0
@@ -208,17 +208,17 @@ while(!feof(fBlk)) {
 				o.type = (INT8) byteBuf;
 				fscanf_s (fBlk, "            id %d\n", &byteBuf);
 				o.id = (INT8) byteBuf;
-				fscanf_s (fBlk, "            control_type %d\n", &byteBuf);
-				o.control_type = (UINT8) byteBuf;
-				fscanf_s (fBlk, "            movement_type %d\n", &byteBuf);
-				o.movement_type = (UINT8) byteBuf;
-				fscanf_s (fBlk, "            render_type %d\n", &byteBuf);
-				o.render_type = (UINT8) byteBuf;
+				fscanf_s (fBlk, "            controlType %d\n", &byteBuf);
+				o.controlType = (UINT8) byteBuf;
+				fscanf_s (fBlk, "            movementType %d\n", &byteBuf);
+				o.movementType = (UINT8) byteBuf;
+				fscanf_s (fBlk, "            renderType %d\n", &byteBuf);
+				o.renderType = (UINT8) byteBuf;
 				fscanf_s (fBlk, "            flags %d\n", &byteBuf);
 				o.flags = (UINT8) byteBuf;
 				o.nSegment = nSegment;
 				fscanf_s (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
-				memcpy (&o.last_pos, &o.pos, sizeof (o.pos));
+				memcpy (&o.lastPos, &o.pos, sizeof (o.pos));
 				fscanf_s (fBlk, "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
 													&o.orient.rVec.x, &o.orient.rVec.y, &o.orient.rVec.z,
 													&o.orient.uVec.x, &o.orient.uVec.y, &o.orient.uVec.z,
@@ -226,12 +226,12 @@ while(!feof(fBlk)) {
 				fscanf_s (fBlk, "            nSegment %hd\n", &o.nSegment);
 				fscanf_s (fBlk, "            size %ld\n", &o.size);
 				fscanf_s (fBlk, "            shields %ld\n", &o.shields);
-				fscanf_s (fBlk, "            contains_type %d\n", &byteBuf);
-				o.contains_type = (INT8) byteBuf;
-				fscanf_s (fBlk, "            contains_id %d\n", &byteBuf);
-				o.contains_id = (INT8) byteBuf;
-				fscanf_s (fBlk, "            contains_count %d\n", &byteBuf);
-				o.contains_count = (INT8) byteBuf;
+				fscanf_s (fBlk, "            contents.type %d\n", &byteBuf);
+				o.contents.type = (INT8) byteBuf;
+				fscanf_s (fBlk, "            contents.id %d\n", &byteBuf);
+				o.contents.id = (INT8) byteBuf;
+				fscanf_s (fBlk, "            contents.count %d\n", &byteBuf);
+				o.contents.count = (INT8) byteBuf;
 				switch (o.type) {
 					case OBJ_POWERUP:
 					case OBJ_HOSTAGE:
@@ -245,10 +245,10 @@ while(!feof(fBlk)) {
 						// has poly model;
 						break;
 					}
-				switch (o.control_type) {
+				switch (o.controlType) {
 					case :
 					}
-				switch (o.movement_type) {
+				switch (o.movementType) {
 					case MT_PHYSICS:
 						fscanf_s (fBlk, "            velocity %ld %ld %ld\n", 
 								  &o.physInfo.velocity.x, &o.physInfo.velocity.y, &o.physInfo.velocity.z);
@@ -269,7 +269,7 @@ while(!feof(fBlk)) {
 								  &o.spin_rate.x, &o.spin_rate.y, &o.spin_rate.z);
 						break;
 					}
-				switch (o.render_type) {
+				switch (o.renderType) {
 					case :
 						break;
 					}
@@ -422,15 +422,15 @@ return;
 #endif
 // set origin
 segP = CurrSeg ();
-nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(0)]];
+nVertex = segP->verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]];
 origin = *Vertices (nVertex);
 
 // set x'
-nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(1)]];
+nVertex = segP->verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]];
 xPrime = *Vertices (nVertex) - origin;
 
 // calculate y'
-nVertex = segP->verts[side_vert[Current ()->nSide][CURRENT_POINT(3)]];
+nVertex = segP->verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]];
 vVertex = *Vertices (nVertex) - origin;
 yPrime = CrossProduct (xPrime, vVertex);
 zPrime = CrossProduct (xPrime, yPrime);
@@ -465,22 +465,22 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				}
 			if (bExtBlkFmt) {
 				fprintf (fBlk, "    nWall %d\n", 
-							(sideP->nWall < GameInfo ().walls.count) ? sideP->nWall : NO_WALL);
-				if (sideP->nWall < GameInfo ().walls.count) {
-					wallP = Walls (sideP->nWall);
+							(sideP->m_info.nWall < GameInfo ().walls.count) ? sideP->m_info.nWall : NO_WALL);
+				if (sideP->m_info.nWall < GameInfo ().walls.count) {
+					wallP = Walls (sideP->m_info.nWall);
 					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
 					fprintf (fBlk, "        side %d\n", wallP->m_nSide);
 					fprintf (fBlk, "        hps %d\n", wallP->hps);
-					fprintf (fBlk, "        type %d\n", wallP->type);
-					fprintf (fBlk, "        flags %d\n", wallP->flags);
+					fprintf (fBlk, "        type %d\n", wallP->m_info.type);
+					fprintf (fBlk, "        flags %d\n", wallP->m_info.flags);
 					fprintf (fBlk, "        state %d\n", wallP->state);
 					fprintf (fBlk, "        nClip %d\n", wallP->nClip);
 					fprintf (fBlk, "        keys %d\n", wallP->keys);
 					fprintf (fBlk, "        cloak %d\n", wallP->cloak_value);
-					if ((wallP->nTrigger < 0) || (wallP->nTrigger >= GameInfo ().triggers.count))
+					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= GameInfo ().triggers.count))
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
-						CTrigger *trigger = Triggers (wallP->nTrigger);
+						CTrigger *trigger = Triggers (wallP->m_info.nTrigger);
 						INT32 iTarget;
 						INT32 count = 0;
 						// count trigger targets in marked area
@@ -493,9 +493,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						else 
 #endif
 							{
-							fprintf (fBlk, "        trigger %d\n", wallP->nTrigger);
-							fprintf (fBlk, "			    type %d\n", trigger->type);
-							fprintf (fBlk, "			    flags %ld\n", trigger->flags);
+							fprintf (fBlk, "        trigger %d\n", wallP->m_info.nTrigger);
+							fprintf (fBlk, "			    type %d\n", trigger->m_info.type);
+							fprintf (fBlk, "			    flags %ld\n", trigger->m_info.flags);
 							fprintf (fBlk, "			    value %ld\n", trigger->value);
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
 							fprintf (fBlk, "			    count %d\n", count);

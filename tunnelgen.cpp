@@ -33,7 +33,7 @@ INT32 _matherr (struct exception *e) {
   sprintf_s (message, sizeof (message),"DMB has detected a math error\n"
 		   "%s (%8g,%8g): %s\n\n"
 		   "Press OK to continue, or Cancel to close DMB",
-		    e->name, e->arg1, e->arg2, whyS [e->type - 1]);
+		    e->name, e->arg1, e->arg2, whyS [e->m_info.type - 1]);
   if (MessageBox(NULL, message,"Descent Level Editor XP - Error",
 	    MB_ICONEXCLAMATION|MB_OKCANCEL+MB_TASKMODAL) == IDCANCEL) {
     if (QueryMsg("Are you sure you want to abort DLE-XP?") == IDYES) {
@@ -113,8 +113,8 @@ void CMine::UntwistSegment (INT16 nSegment,INT16 nSide)
 segP = Segments (nSegment);
 // calculate length from point 0 to opp_points
 for (j=0;j<4;j++) {
-	len = CalcLength (Vertices (segP->verts [side_vert [nSide][0]]),
-							Vertices (segP->verts [opp_side_vert [nSide][j]]));
+	len = CalcLength (Vertices (segP->m_info.verts [sideVertTable [nSide][0]]),
+							Vertices (segP->m_info.verts [oppSideVertTable [nSide][j]]));
 	if (j==0) {
 		min_len = len;
 		index = 0;
@@ -127,9 +127,9 @@ for (j=0;j<4;j++) {
 // swap verts if index != 0
 if (index != 0) {
 	for (j=0;j<4;j++)
-		verts [j] = segP->verts [opp_side_vert [nSide][(j+index)%4]];
+		verts [j] = segP->m_info.verts [oppSideVertTable [nSide][(j+index)%4]];
 	for (j=0;j<4;j++)
-		segP->verts [opp_side_vert [nSide][j]] = verts [j];
+		segP->m_info.verts [oppSideVertTable [nSide][j]] = verts [j];
 	}
 }
 
@@ -372,18 +372,18 @@ else {
 			vertices [VertCount ()].z = vertices [nVertex-j].z;
 */
 			if (spline == 0) {         // 1st segment
-				segP->verts [side_vert [nSplineSide1][j]] = VertCount ();
-				segP->verts [opp_side_vert [nSplineSide1][j]] = Segments (nSplineSeg1)->verts [side_vert [nSplineSide1][j]];
+				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = VertCount ();
+				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = Segments (nSplineSeg1)->m_info.verts [sideVertTable [nSplineSide1][j]];
 				VertStatus (VertCount ()++) = 0;
 				}
 			else if(spline < n_splines - 1) { // center segments
-				segP->verts [side_vert [nSplineSide1][j]] = VertCount ();
-				segP->verts [opp_side_vert [nSplineSide1][j]] = VertCount () - 4;
+				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = VertCount ();
+				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = VertCount () - 4;
 				VertStatus (VertCount ()++) = 0;
 				}
 			else {          // last segment
-				segP->verts [side_vert [nSplineSide1][j]] = Segments (nSplineSeg2)->verts [side_vert [nSplineSide2][MatchingSide (j)]];
-				segP->verts [opp_side_vert [nSplineSide1][j]] = VertCount () - 4 + j;
+				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = Segments (nSplineSeg2)->m_info.verts [sideVertTable [nSplineSide2][MatchingSide (j)]];
+				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = VertCount () - 4 + j;
 				}
 			}
 		// fix twisted segments
@@ -397,33 +397,33 @@ else {
 			for (i = 0; i < 4; i++) {
 //	    segP->m_sides [j].uvls [i].u = default_uvls [i].u;
 //	    segP->m_sides [j].uvls [i].v = default_uvls [i].v;
-				segP->m_sides [j].uvls [i].l = (UINT16) DEFAULT_LIGHTING;
+				segP->m_sides [j].m_info.uvls [i].l = (UINT16) DEFAULT_LIGHTING;
 				}
-			SetUV (SegCount (),j,0,0,0);
+			segP->SetUV (j,0,0);
 			}
 		if (spline==0) {
-			segP->m_info.children [opp_side [nSplineSide1]] = nSplineSeg1;
+			segP->m_info.children [oppSideTable [nSplineSide1]] = nSplineSeg1;
 			segP->m_info.children [nSplineSide1] = SegCount ()+1;
 			Segments (nSplineSeg1)->m_info.children [nSplineSide1] = SegCount ();
 			Segments (nSplineSeg1)->m_info.childFlags |= (1<<nSplineSide1);
 			} 
-		else if (spline<n_splines-1) {
-			segP->m_info.children [opp_side [nSplineSide1]] = SegCount ()-1;
+		else if (spline < n_splines-1) {
+			segP->m_info.children [oppSideTable [nSplineSide1]] = SegCount ()-1;
 			segP->m_info.children [nSplineSide1] = SegCount ()+1;
 			}
 		else {
-			segP->m_info.children [opp_side [nSplineSide1]] = SegCount ()-1;
+			segP->m_info.children [oppSideTable [nSplineSide1]] = SegCount ()-1;
 			segP->m_info.children [nSplineSide1] = nSplineSeg2;
 			Segments (nSplineSeg2)->m_info.children [nSplineSide2] = SegCount ();
 			Segments (nSplineSeg2)->m_info.childFlags |= (1<<nSplineSide2);
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
-		segP->m_info.childFlags = (1<<nSplineSide1) | (1<<opp_side [nSplineSide1]);
-		segP->owner = -1;
-		segP->group = -1;
-		segP->function = 0;
-		segP->nMatCen = -1;
-		segP->value = -1;
+		segP->m_info.childFlags = (1 << nSplineSide1) | (1 << oppSideTable [nSplineSide1]);
+		segP->m_info.owner = -1;
+		segP->m_info.group = -1;
+		segP->m_info.function = 0;
+		segP->m_info.nMatCen = -1;
+		segP->m_info.value = -1;
 		segP->m_info.wallFlags = 0; // make sure segment is not marked
 		SegCount ()++;
 		}
@@ -524,14 +524,14 @@ void CMine::CalcSpline (void)
   segP = Segments (nSplineSeg1);
   CVertex* vert;
   for (i = 0; i < 4; i++) {
-    nVertex = side_vert [nSplineSide1][i];
-	 vert = Vertices (segP->verts [nVertex]);
+    nVertex = sideVertTable [nSplineSide1][i];
+	 vert = Vertices (segP->m_info.verts [nVertex]);
     rel_side_pts [0][i] = *vert - points [0];
   }
   segP = Segments (nSplineSeg2);
   for (i = 0; i < 4; i++) {
-    nVertex = side_vert [nSplineSide2][i];
-	 vert = Vertices (segP->verts [nVertex]);
+    nVertex = sideVertTable [nSplineSide2][i];
+	 vert = Vertices (segP->m_info.verts [nVertex]);
     rel_side_pts [1][i] = *vert - points [0];
   }
   for (i=0;i<n_splines;i++) {
@@ -628,17 +628,17 @@ for (i=0;i<n_splines;i++) {
 	nVertex = MAX_VERTICES - 1 - i * 4;
 	for (j = 0; j < 4; j++) {
 		if (i == 0) {         // 1st segment
-			segP->verts [side_vert [nSplineSide1][j]] = nVertex - j;
-			segP->verts [opp_side_vert [nSplineSide1][j]] = Segments (nSplineSeg1)->verts [side_vert [nSplineSide1][j]];
+			segP->m_info.verts [sideVertTable [nSplineSide1][j]] = nVertex - j;
+			segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = Segments (nSplineSeg1)->m_info.verts [sideVertTable [nSplineSide1][j]];
 			}
 		else {
 			if(i < n_splines - 1) { // center segments
-				segP->verts [side_vert [nSplineSide1][j]] = nVertex - j;
-				segP->verts [opp_side_vert [nSplineSide1][j]] = nVertex + 4 - j;
+				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = nVertex - j;
+				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = nVertex + 4 - j;
 				} 
 			else {          // last segment
-				segP->verts [side_vert [nSplineSide1][j]] = Segments (nSplineSeg2)->verts [side_vert [nSplineSide2][MatchingSide (j)]];
-				segP->verts [opp_side_vert [nSplineSide1][j]] = nVertex + 4 - j;
+				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = Segments (nSplineSeg2)->m_info.verts [sideVertTable [nSplineSide2][MatchingSide (j)]];
+				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = nVertex + 4 - j;
 				}
 			}
 		}

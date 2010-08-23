@@ -247,7 +247,7 @@ if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
 	CGameObject *objP = theMine->Objects (0) + theMine->Current ()->nObject;
-   if (objP->render_type != RT_POLYOBJ) 
+   if (objP->renderType != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.tmap_override = nBaseTex;
   } 
@@ -408,7 +408,7 @@ else {
 			UINT16 nWall = segP->m_sides[nSide].m_info.nWall;
 			if ((segP->m_info.children [nSide] == -1) ||
 				 (nWall < theMine->GameInfo ().walls.count && 
-				  theMine->Walls (nWall)->type != WALL_OPEN)) {
+				  theMine->Walls (nWall)->m_info.type != WALL_OPEN)) {
 				INT32 t = segP->m_sides [nSide].m_info.nBaseTex;
 				INT32 i = TextureIndex (t);
 				INT32 j = TexFilterIndex (t);

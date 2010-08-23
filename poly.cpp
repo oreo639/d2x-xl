@@ -110,7 +110,7 @@ if (!gModelData) {
 	}
 
 // read model data if necessary
-if (last_object_type != objP->type || last_object_id != objP->id) {
+if (last_object_type != objP->m_info.type || last_object_id != objP->m_info.id) {
 	gModelData[0] = OP_EOF;
 	strcpy_s(filename, sizeof (filename), descent2_path);
 	char *slash = strrchr (filename,'\\');
@@ -118,14 +118,14 @@ if (last_object_type != objP->type || last_object_id != objP->id) {
 		*(slash+1) = NULL;
 	else
 		filename[0] = NULL;
-	if ((objP->type == OBJ_ROBOT) && (objP->id >= N_D2_ROBOT_TYPES)) {
+	if ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES)) {
 		char *psz = strstr (filename, "data");
 		if (psz)
 			*psz = '\0';
 		}
-	strcat_s (filename, sizeof (filename), ((objP->type == OBJ_ROBOT) && (objP->id >= N_D2_ROBOT_TYPES)) 
+	strcat_s (filename, sizeof (filename), ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES)) 
 				 ? "data\\d2x-xl.hog" 
-	          : (objP->type == OBJ_CAMBOT) 
+	          : (objP->m_info.type == OBJ_CAMBOT) 
 				   ? "cambot.hxm" 
 					: "descent2.ham");
 	fopen_s (&file, filename, "rb");
@@ -142,8 +142,8 @@ if (last_object_type != objP->type || last_object_id != objP->id) {
 #endif		
 		goto abort;
 		}
-	last_object_type = objP->type;
-	last_object_id = objP->id;
+	last_object_type = objP->m_info.type;
+	last_object_id = objP->m_info.id;
 	}
 rc = 0;
 
@@ -180,18 +180,18 @@ for (INT32 i = start; i < end; i++) {
 	FIX z0 = gModel.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
-	pt.v.x = MultiplyFix (objP->orient.rVec.v.x, x0)
-				+ MultiplyFix (objP->orient.uVec.v.x, y0)
-				+ MultiplyFix (objP->orient.fVec.v.x, z0);
-	pt.v.y = MultiplyFix (objP->orient.rVec.v.y, x0)
-				+ MultiplyFix (objP->orient.uVec.v.y, y0)
-				+ MultiplyFix (objP->orient.fVec.v.y, z0);
-	pt.v.z = MultiplyFix (objP->orient.rVec.v.z, x0)
-				+ MultiplyFix (objP->orient.uVec.v.z, y0)
-				+ MultiplyFix (objP->orient.fVec.v.z, z0);
+	pt.v.x = MultiplyFix (objP->m_info.orient.rVec.v.x, x0)
+				+ MultiplyFix (objP->m_info.orient.uVec.v.x, y0)
+				+ MultiplyFix (objP->m_info.orient.fVec.v.x, z0);
+	pt.v.y = MultiplyFix (objP->m_info.orient.rVec.v.y, x0)
+				+ MultiplyFix (objP->m_info.orient.uVec.v.y, y0)
+				+ MultiplyFix (objP->m_info.orient.fVec.v.y, z0);
+	pt.v.z = MultiplyFix (objP->m_info.orient.rVec.v.z, x0)
+				+ MultiplyFix (objP->m_info.orient.uVec.v.z, y0)
+				+ MultiplyFix (objP->m_info.orient.fVec.v.z, z0);
 
 	// set point to be in world coordinates
-	pt += objP->pos;
+	pt += objP->m_info.pos;
 
 	// now that points are relative to set screen xy points (poly_xy)
 	m_view.Project (&pt, poly_xy + i);
@@ -405,7 +405,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 	ROBOT_INFO robot_info;
 	UINT32     model_num;
 
-	switch (objP->type) {
+	switch (objP->m_info.type) {
 		case OBJ_PLAYER:
 		case OBJ_COOP:
 			model_num = D2_PLAYER_CLIP_NUMBER;
@@ -414,7 +414,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 			model_num = MINE_CLIP_NUMBER;
 			break;
 		case OBJ_CNTRLCEN:
-			switch(objP->id) {
+			switch(objP->m_info.id) {
 				case 1:  model_num = 95;  break;
 				case 2:  model_num = 97;  break;
 				case 3:  model_num = 99;  break;
@@ -427,7 +427,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 			// if it is a robot, then read the id from the HAM file
 	}
 
-	if ((objP->type == OBJ_CAMBOT) || ((objP->type == OBJ_ROBOT) && (objP->id >= N_D2_ROBOT_TYPES))) {
+	if ((objP->m_info.type == OBJ_CAMBOT) || ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES))) {
 		struct level_header level;
 		char data[3];
 		long position;
@@ -446,9 +446,9 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 				n  = read_UINTW(file);                         // n_weapon_types
 				fseek(file,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon_info
 				n  = read_UINTW(file);                         // n_robot_types
-				if (objP->type == OBJ_ROBOT) {
+				if (objP->m_info.type == OBJ_ROBOT) {
 					for (i=0;i<n;i++) {
-						if (i == (UINT32) (objP->id - N_D2_ROBOT_TYPES)) {
+						if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
 							fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
 							model_num = robot_info.model_num;
 						} else {
@@ -500,9 +500,9 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		n = read_UINTW(file);                          // n_wclips
 		fseek(file,n * sizeof (WCLIP),SEEK_CUR);        // weapon clips
 		n = read_UINTW(file);                          // n_robots
-		if (objP->type == OBJ_ROBOT) {
+		if (objP->m_info.type == OBJ_ROBOT) {
 			for (i=0;i<n;i++) {
-				if (i == (UINT32) objP->id) {
+				if (i == (UINT32) objP->m_info.id) {
 					fread(&robot_info,sizeof (ROBOT_INFO),1,file);// read robot info
 					model_num = robot_info.model_num;
 				} else {

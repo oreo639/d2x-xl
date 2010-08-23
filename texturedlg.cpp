@@ -387,7 +387,7 @@ if	((theMine->IsLight (theMine->CurrSide ()->nBaseTex) != -1) ||
 	  (theMine->IsLight (theMine->CurrSide ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
 CWall *pWall = theMine->CurrWall ();
-return pWall && (pWall->type == WALL_TRANSPARENT);
+return pWall && (pWall->m_info.type == WALL_TRANSPARENT);
 
 }
 
@@ -475,7 +475,7 @@ INT32 nSide = theMine->Current ()->nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 pWall = theMine->CurrWall ();
-m_nColorIndex = (pWall && (pWall->type == WALL_TRANSPARENT)) ? pWall->cloak_value : color->index;
+m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->cloak_value : color->index;
 m_rgbColor.peRed = (char) (255.0 * color->color.r);
 m_rgbColor.peGreen = (char) (255.0 * color->color.g);
 m_rgbColor.peBlue = (char) (255.0 * color->color.b);
@@ -512,7 +512,7 @@ for (i = 0; i < 4; i++) {
 if (segP->m_info.children [nSide]==-1)
 	bShowTexture = TRUE;
 else {
-	UINT16 nWall = sideP->nWall;
+	UINT16 nWall = sideP->m_info.nWall;
 	bShowTexture = (nWall < theMine->GameInfo ().walls.count);
 	}
 if (bShowTexture) {
@@ -672,7 +672,7 @@ scroll_offset_y = 0;
 
 // abort if this is not a wall
 #ifndef _DEBUG
-UINT16 nWall = sideP->nWall;
+UINT16 nWall = sideP->m_info.nWall;
 if (nWall >= theMine->GameInfo ().walls.count)
 	return;
 
@@ -999,7 +999,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
 				continue;
 			if (m_bUse2nd && ((sideP->m_info.nOvlTex & 0x3FFF) != last_texture2))
 				continue;
-			if ((segP->m_info.children [nSide] >= 0) && (sideP->nWall == NO_WALL))
+			if ((segP->m_info.children [nSide] >= 0) && (sideP->m_info.nWall == NO_WALL))
 				 continue;
 			if (theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
@@ -1091,8 +1091,8 @@ bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16
 
   // figure out which side of child shares two points w/ start_side
   // find vert numbers for the line's two end points
-point0 = line_vert[side_line[start_side][linenum]][0];
-point1 = line_vert[side_line[start_side][linenum]][1];
+point0 = lineVertTable[sideLineTable[start_side][linenum]][0];
+point1 = lineVertTable[sideLineTable[start_side][linenum]][1];
 segP = theMine->Segments (0) + start_segment;
 vert0  = segP->verts[point0];
 vert1  = segP->verts[point1];
@@ -1107,8 +1107,8 @@ for (childs_side=0;childs_side<6;childs_side++) {
 	    (segP->m_sides[childs_side].m_info.nWall < theMine->GameInfo ().walls.count)) {
 		for (childs_line=0;childs_line<4;childs_line++) {
 			// find vert numbers for the line's two end points
-			childs_point0 = line_vert[side_line[childs_side][childs_line]][0];
-			childs_point1 = line_vert[side_line[childs_side][childs_line]][1];
+			childs_point0 = lineVertTable[sideLineTable[childs_side][childs_line]][0];
+			childs_point1 = lineVertTable[sideLineTable[childs_side][childs_line]][1];
 			childs_vert0  = segP->verts[childs_point0];
 			childs_vert1  = segP->verts[childs_point1];
 			// if points of child's line == corresponding points of parent

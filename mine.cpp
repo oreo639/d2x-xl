@@ -131,8 +131,8 @@ INT32 i, j;
 
 for (i = SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->m_sides; j < 6; j++, sideP++)
-		if (sideP->nWall >= wNumOld)
-			sideP->nWall = wNumNew;
+		if (sideP->m_info.nWall >= wNumOld)
+			sideP->m_info.nWall = wNumNew;
 }
 
 
@@ -382,7 +382,7 @@ if (nSide < 0)
 	nSegment = Current ()->nSide;
 
 	INT16*			sideIndexP = Segments (nSegment)->verts;
-	UINT8*			sideVertP = &side_vert [nSide][0];
+	UINT8*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
 v = Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
@@ -397,7 +397,7 @@ return CFixVector (v);
 CFixVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 {
 	INT16*		sideIndexP = Segments (nSegment)->verts;
-	UINT8*		sideVertP = &side_vert [nSide][0];
+	UINT8*		sideVertP = &sideVertTable [nSide][0];
 	CFixVector	v;
 
 for (INT32 i = 0; i < 4; i++)

@@ -353,7 +353,7 @@ bool CMine::VisibleWall (UINT16 nWall)
 if (nWall == NO_WALL)
 	return false;
 CWall	*wallP = Walls (nWall);
-return (wallP->type != WALL_OPEN);
+return (wallP->m_info.type != WALL_OPEN);
 }
 
 //--------------------------------------------------------------------------
@@ -446,8 +446,8 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 				if (segP->verts[pt] == nVertex) {
 					// add all the uvls for this point
 					for (i = 0; i < 3; i++) {
-						nSide = point_sides[pt][i];
-						uvnum = point_corners[pt][i];
+						nSide = pointSideTable[pt][i];
+						uvnum = pointCornerTable[pt][i];
 						if ((segP->m_info.children[nSide] < 0) || 
 							 (segP->m_sides[nSide].m_info.nWall < GameInfo ().walls.count)) {
 #if 1
@@ -471,8 +471,8 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 				for (pt=0;pt<8;pt++) {
 					if (segP->verts[pt] == nVertex) {
 						for (i=0;i<3;i++) {
-							nSide = point_sides[pt][i];
-							uvnum = point_corners[pt][i];
+							nSide = pointSideTable[pt][i];
+							uvnum = pointCornerTable[pt][i];
 							if ((segP->m_info.children[nSide] < 0) || 
 								 (segP->m_sides[nSide].m_info.nWall < GameInfo ().walls.count)) {
 								segP->m_sides[nSide].uvls[uvnum].l = max_brightness;
@@ -503,9 +503,9 @@ theApp.SetModified (TRUE);
 			INT32 nVertex = segP->verts [pt];
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
 				for (INT32 i = 0; i < 3; i++) {
-					INT32 nSide = point_sides [pt][i];
+					INT32 nSide = pointSideTable [pt][i];
 					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
-						INT32 uvnum = point_corners [pt][i];
+						INT32 uvnum = pointCornerTable [pt][i];
 						if (max_brightness [nVertex].light < UINT16 (segP->m_sides [nSide].uvls [uvnum].l))
 							max_brightness [nVertex].light = UINT16 (segP->m_sides [nSide].uvls [uvnum].l);
 						max_brightness [nVertex].count++;
@@ -522,9 +522,9 @@ theApp.SetModified (TRUE);
 			INT32 nVertex = segP->verts [pt];
 			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
 				for (INT32 i = 0; i < 3; i++) {
-					INT32 nSide = point_sides [pt][i];
+					INT32 nSide = pointSideTable [pt][i];
 					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
-						INT32 uvnum = point_corners [pt][i];
+						INT32 uvnum = pointCornerTable [pt][i];
 						segP->m_sides [nSide].uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
 						}
 					}
@@ -561,7 +561,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 			for (i = 0; i < 4; i++) {
 				sideP->m_info.uvls [i].l = 0;
 				if (!bAll)
-					VertexColors (segP->verts [side_vert [nSide][i]])->Clear ();
+					VertexColors (segP->verts [sideVertTable [nSide][i]])->Clear ();
 				}
 			}
 
@@ -572,7 +572,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || SideIsMarked (nSegment, nSide)))
 			continue;
-		if ((segP->m_info.children [nSide] >= 0) && !VisibleWall (sideP->nWall))
+		if ((segP->m_info.children [nSide] >= 0) && !VisibleWall (sideP->m_info.nWall))
 			continue;
 		if (bCopyTexLights)
 			memset (LightColor (nSegment, nSide, false), 0, sizeof (CColor));
@@ -718,7 +718,7 @@ INT32 nSegCount = SegCount ();
 		CFixVector source_corner[4];
 		INT32 j;
 		for (j = 0; j < 4; j++) {
-			INT32 nVertex = side_vert [nSourceSide][j];
+			INT32 nVertex = sideVertTable [nSourceSide][j];
 			INT32 h = segP->verts [nVertex];
 			source_corner[j] = *Vertices (h);
 			}
@@ -734,7 +734,7 @@ INT32 nSegCount = SegCount ();
 				if (nWall >= GameInfo ().walls.count)
 					continue;
 					// .. or its not a door ..
-				if (Walls (nWall)->type == WALL_OPEN)
+				if (Walls (nWall)->m_info.type == WALL_OPEN)
 					continue;
 				}
 
@@ -746,7 +746,7 @@ INT32 nSegCount = SegCount ();
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
+					CColor *pvc = VertexColors (childSegP->verts [sideVertTable [nChildSide][j]]);
 					vBr = (UINT16) uvlP->l;
 					lBr = (UINT32) (brightness * fLightScale);
 					BlendColors (plc, pvc, lBr, vBr);
@@ -765,7 +765,7 @@ INT32 nSegCount = SegCount ();
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CColor *pvc = VertexColors (childSegP->verts [side_vert [nChildSide][j]]);
+					CColor *pvc = VertexColors (childSegP->verts [sideVertTable [nChildSide][j]]);
 					vBr = (UINT16) uvlP->l;
 					lBr = (UINT16) (brightness * effect [j] / 32);
 					BlendColors (plc, pvc, lBr, vBr);
@@ -902,7 +902,7 @@ fLightScale = 1.0; ///= 100.0;
 			// than can make the wall appear/disappear, calculate delta lights for it
 			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != NULL)) &&
 				 ((nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
-				INT8 trigtype = Triggers (nTrigger)->type;
+				INT8 trigtype = Triggers (nTrigger)->m_info.type;
 				bCalcDeltas =
 					(trigtype == TT_ILLUSION_OFF) ||
 					(trigtype == TT_ILLUSION_ON) ||
@@ -924,7 +924,7 @@ fLightScale = 1.0; ///= 100.0;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
 				INT32 nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide);
-				if ((nTrigger >= 0) && (Triggers (nTrigger)->type >= TT_LIGHT_OFF))
+				if ((nTrigger >= 0) && (Triggers (nTrigger)->m_info.type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas)
@@ -932,7 +932,7 @@ fLightScale = 1.0; ///= 100.0;
 
 			INT16 srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
 			if ((srcSegP->m_info.children [nSourceSide] != -1) &&
-				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
+				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->m_info.type == WALL_OPEN)))
 				continue;
 
 			if (GameInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES) {
@@ -995,7 +995,7 @@ fLightScale = 1.0; ///= 100.0;
 			// setup source corner vertex for length calculation later
 			CFixVector source_corner[4];
 			for (INT32 j = 0; j < 4; j++) {
-				UINT8 nVertex = side_vert[nSourceSide][j];
+				UINT8 nVertex = sideVertTable[nSourceSide][j];
 				INT32 h = srcSegP->verts[nVertex];
 				source_corner[j] = *Vertices (h);
 				}
@@ -1023,7 +1023,7 @@ fLightScale = 1.0; ///= 100.0;
 						if (nWall >= GameInfo ().walls.count)
 							continue;
 						// .. or its not a door ..
-						if (Walls (nWall)->type == WALL_OPEN) 
+						if (Walls (nWall)->m_info.type == WALL_OPEN) 
 							continue; // don't put light because there is no texture here
 						}
 					// don't affect non-flickering light emitting textures (e.g. lava)
@@ -1173,7 +1173,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
+	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
 	child = segP->m_info.children [nSide];
@@ -1199,7 +1199,7 @@ if (!bMarkChildren || (recursion_level == 1))
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
+	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
 	child = segP->m_info.children [nSide];
@@ -1224,7 +1224,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
+	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
 	child = segP->m_info.children [nSide];
@@ -1250,7 +1250,7 @@ if (!bMarkChildren || (recursion_level == 1))
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
+	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
 	child = segP->m_info.children [nSide];
@@ -1295,7 +1295,7 @@ if (!bIgnoreAngle) {
 INT32 i, j;
 for (j = 0; j < 4; j++) {
 	CFixVector corner;
-	INT32 nVertex = side_vert[nSide][j];
+	INT32 nVertex = sideVertTable[nSide][j];
 	INT32 h = segP->verts[nVertex];
 	corner = *Vertices (h);
 	double length = 20.0 * m_lightRenderDepth;
@@ -1321,13 +1321,13 @@ CColor *CMine::LightColor (INT32 i, INT32 j, bool bUseTexColors)
 { 
 if (bUseTexColors && UseTexColors ()) {
 	CWall *pWall = SideWall (i, j);
-	//if (!pWall || (pWall->type != WALL_TRANSPARENT)) 
+	//if (!pWall || (pWall->m_info.type != WALL_TRANSPARENT)) 
 		{	//always use a side color for transp. walls
 		CColor *pc;
 		INT16 t = Segments (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
 		if ((t > 0) && (pc = GetTexColor (t)))
 			return pc;
-		if (pc = GetTexColor (Segments (i)->m_sides [j].m_info.nBaseTex, pWall && (pWall->type == WALL_TRANSPARENT)))
+		if (pc = GetTexColor (Segments (i)->m_sides [j].m_info.nBaseTex, pWall && (pWall->m_info.type == WALL_TRANSPARENT)))
 			return pc;
 		}
 	}	

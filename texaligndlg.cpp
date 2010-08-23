@@ -179,8 +179,8 @@ if (theMine->IsWall ()) {
 		pDC->SelectObject (hPenGrid);
 		for (nChildLine=0;nChildLine<4;nChildLine++) {
 			// find vert numbers for the line's two end points
-			point0 = line_vert [side_line [nSide][nChildLine]][0];
-			point1 = line_vert [side_line [nSide][nChildLine]][1];
+			point0 = lineVertTable [sideLineTable [nSide][nChildLine]][0];
+			point1 = lineVertTable [sideLineTable [nSide][nChildLine]][1];
 			vert0  = segP->verts [point0];
 			vert1  = segP->verts [point1];
 
@@ -198,8 +198,8 @@ if (theMine->IsWall ()) {
 						 (childSideP->nBaseTex == sideP->m_info.nBaseTex)) {
 						for (childs_line=0;childs_line<4;childs_line++) {
 							// find vert numbers for the line's two end points
-							childs_point0 = line_vert [side_line [childs_side][childs_line]][0];
-							childs_point1 = line_vert [side_line [childs_side][childs_line]][1];
+							childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0];
+							childs_point1 = lineVertTable [sideLineTable [childs_side][childs_line]][1];
 							childs_vert0  = childSeg->verts [childs_point0];
 							childs_vert1  = childSeg->verts [childs_point1];
 							// if both points of line == either point of parent

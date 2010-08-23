@@ -255,7 +255,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-m_nVertex = theMine->CurrSeg ()->verts[side_vert[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+m_nVertex = theMine->CurrSeg ()->verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 theMine->Vertices (m_nVertex)->Set ((FIX) (m_nCoord [0] * 0x10000L), (FIX) (m_nCoord [1] * 0x10000L), (FIX) (m_nCoord [2] * 0x10000L));
 theApp.MineView ()->Refresh (false);
 }
@@ -265,7 +265,7 @@ theApp.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-m_nVertex = theMine->CurrSeg ()->verts[side_vert[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+m_nVertex = theMine->CurrSeg ()->verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
 m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
 m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
@@ -377,7 +377,7 @@ for (nTrigger = 0; nTrigger < theMine->GameInfo ().triggers.count; nTrigger++, t
 			CWall *wallP = theMine->Walls (0);
 			INT32 nWall;
 			for (nWall = 0; nWall < theMine->GameInfo ().walls.count ;nWall++, wallP++) {
-				if (wallP->nTrigger == nTrigger) 
+				if (wallP->m_info.nTrigger == nTrigger) 
 					break;
 				}
 			if (nWall < theMine->GameInfo ().walls.count) {
@@ -726,11 +726,11 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				continue;
 			// if there is a wall and it's a fuel cell delete it
 			if ((wall = theMine->GetWall (nSegNum, nSide)) && 
-				 (wallP->type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333))
-				theMine->DeleteWall (sideP->nWall);
+				 (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333))
+				theMine->DeleteWall (sideP->m_info.nWall);
 			// if there is a wall at the opposite side and it's a fuel cell delete it
 			if (theMine->GetOppositeSide (nOppSeg, nOppSide, nSegNum, nSide) &&
-				 (wall = theMine->GetWall (nSegNum, nSide)) && (wallP->type == WALL_ILLUSION)) {
+				 (wall = theMine->GetWall (nSegNum, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 				oppside = theMine->Segments (nOppSeg)->m_sides + nOppSide;
 				if (oppsideP->nBaseTex == (IsD1File ()) ? 322 : 333)
 					theMine->DeleteWall (oppsideP->nWall);

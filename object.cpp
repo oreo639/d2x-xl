@@ -23,8 +23,8 @@ static INT16 sortObjType [MAX_OBJECT_TYPES] = {7, 8, 5, 4, 0, 2, 9, 3, 10, 6, 11
 
 INT32 CMine::QCmpObjects (CGameObject *pi, CGameObject *pm)
 {
-	INT16 ti = sortObjType [pi->type];
-	INT16 tm = sortObjType [pm->type];
+	INT16 ti = sortObjType [pi->m_info.type];
+	INT16 tm = sortObjType [pm->m_info.type];
 if (ti < tm)
 	return -1;
 if (ti > tm)
@@ -38,7 +38,7 @@ INT16 CMine::FindObjBySig (INT16 signature)
 	CGameObject*	objP = Objects (0);
 
 for (INT16 i = ObjCount (); i; i--, objP++)
-	if (objP->signature == signature)
+	if (objP->m_info.signature == signature)
 		return INT16 (objP - Objects (0));
 return -1;
 }
@@ -71,7 +71,7 @@ void CMine::RenumberObjTriggers (void)
 	INT32			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
-	trigP->nObject = FindObjBySig (trigP->nObject);
+	trigP->m_info.nObject = FindObjBySig (trigP->nObject);
 i = NumObjTriggers ();
 while (i) {
 	if (ObjTriggers (--i)->nObject < 0)
@@ -119,7 +119,7 @@ void CMine::SortObjects ()
 
 if (m_bSortObjects && ( (i = GameInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
-		Objects (j)->signature = j;
+		Objects (j)->m_info.signature = j;
 	QSortObjects (0, i - 1);
 	RenumberObjTriggers ();
 	RenumberTriggerTargetObjs ();
@@ -140,29 +140,29 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
 	theApp.LockUndo ();
   CalcSegCenter (location,nSegment);
   memset (objP,0,sizeof (CGameObject));
-  objP->signature = 0;
-  objP->type = type;
+  objP->m_info.signature = 0;
+  objP->m_info.type = type;
   if (type==OBJ_WEAPON) {
-	objP->id = SMALLMINE_ID;
+	objP->m_info.id = SMALLMINE_ID;
   } else {
-	objP->id = 0;
+	objP->m_info.id = 0;
   }
-  objP->control_type = CT_NONE; /* player 0 only */
-  objP->movement_type = MT_PHYSICS;
-  objP->render_type   = RT_POLYOBJ;
-  objP->flags         = 0;
-  objP->m_info.nSegment      = Current ()->nSegment;
-  objP->pos				 = location;
-  objP->orient.rVec.Set (F1_0, 0, 0);
-  objP->orient.uVec.Set (0, F1_0, 0);
-  objP->orient.fVec.Set (0, 0, F1_0);
-  objP->size          = PLAYER_SIZE;
-  objP->shields       = DEFAULT_SHIELD;
+  objP->m_info.controlType = CT_NONE; /* player 0 only */
+  objP->m_info.movementType = MT_PHYSICS;
+  objP->m_info.renderType = RT_POLYOBJ;
+  objP->m_info.flags	= 0;
+  objP->m_info.nSegment = Current ()->nSegment;
+  objP->m_info.pos = location;
+  objP->m_info.orient.rVec.Set (F1_0, 0, 0);
+  objP->m_info.orient.uVec.Set (0, F1_0, 0);
+  objP->m_info.orient.fVec.Set (0, 0, F1_0);
+  objP->m_info.size = PLAYER_SIZE;
+  objP->m_info.shields = DEFAULT_SHIELD;
   objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
   objP->rType.polyModelInfo.tmap_override = -1;
-  objP->contains_type = 0;
-  objP->contains_id = 0;
-  objP->contains_count = 0;
+  objP->m_info.contents.type = 0;
+  objP->m_info.contents.id = 0;
+  objP->m_info.contents.count = 0;
 	theApp.UnlockUndo ();
   return;
 }
@@ -182,15 +182,15 @@ void CMine::SetObjectData (INT8 type)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 objP = Objects (0) + Current ()->nObject;
-id = objP->id;
+id = objP->m_info.id;
 memset (&objP->mType, 0, sizeof (objP->mType));
 memset (&objP->cType, 0, sizeof (objP->cType));
 memset (&objP->rType, 0, sizeof (objP->rType));
 switch (type) {
 	case OBJ_ROBOT: // an evil enemy
-	  objP->control_type  = CT_AI;
-	  objP->movement_type = MT_PHYSICS;
-	  objP->render_type   = RT_POLYOBJ;
+	  objP->controlType  = CT_AI;
+	  objP->movementType = MT_PHYSICS;
+	  objP->renderType   = RT_POLYOBJ;
 	  objP->size          = robot_size[id];
 	  objP->shields       = robot_shield[id];
 	  objP->rType.polyModelInfo.model_num = robot_clip[id];
@@ -199,22 +199,22 @@ switch (type) {
 	  break;
 
 	case OBJ_HOSTAGE  : // a hostage you need to rescue
-	  objP->control_type = CT_POWERUP;
-	  objP->movement_type = MT_NONE;
-	  objP->render_type   = RT_HOSTAGE;
+	  objP->controlType = CT_POWERUP;
+	  objP->movementType = MT_NONE;
+	  objP->renderType   = RT_HOSTAGE;
 	  objP->rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
 	  break;
 
 	case OBJ_PLAYER   : // the player on the console
-	  if (objP->id == 0) {
-		objP->control_type = CT_NONE; /* player 0 only */
+	  if (objP->m_info.id == 0) {
+		objP->controlType = CT_NONE; /* player 0 only */
 	  } else {
-		objP->control_type = CT_SLEW; /* all other players */
+		objP->controlType = CT_SLEW; /* all other players */
 	  }
-	  objP->movement_type = MT_PHYSICS;
-	  objP->render_type   = RT_POLYOBJ;
+	  objP->movementType = MT_PHYSICS;
+	  objP->renderType   = RT_POLYOBJ;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
 	  objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
@@ -222,9 +222,9 @@ switch (type) {
 	  break;
 
 	case OBJ_WEAPON   : // a poly-type weapon
-	  objP->control_type  = CT_WEAPON;
-	  objP->movement_type = MT_PHYSICS;
-	  objP->render_type   = RT_POLYOBJ;
+	  objP->controlType  = CT_WEAPON;
+	  objP->movementType = MT_PHYSICS;
+	  objP->renderType   = RT_POLYOBJ;
 	  objP->size          = WEAPON_SIZE;
 	  objP->shields       = WEAPON_SHIELD;
 	  objP->rType.polyModelInfo.model_num = MINE_CLIP_NUMBER;
@@ -241,18 +241,18 @@ switch (type) {
 	  break;
 
 	case OBJ_POWERUP  : // a powerup you can pick up
-	  objP->control_type  = CT_POWERUP;
-	  objP->movement_type = MT_NONE;
-	  objP->render_type   = RT_POWERUP;
+	  objP->controlType  = CT_POWERUP;
+	  objP->movementType = MT_NONE;
+	  objP->renderType   = RT_POWERUP;
 	  objP->rType.vClipInfo.vclip_num = powerup_clip[id];
 	  objP->size          = powerup_size[id];
 	  objP->shields       = DEFAULT_SHIELD;
 	  break;
 
 	case OBJ_CNTRLCEN : // the reactor
-	  objP->control_type = CT_CNTRLCEN;
-	  objP->movement_type = MT_NONE;
-	  objP->render_type   = RT_POLYOBJ;
+	  objP->controlType = CT_CNTRLCEN;
+	  objP->movementType = MT_NONE;
+	  objP->renderType   = RT_POLYOBJ;
 	  objP->size          = REACTOR_SIZE;
 	  objP->shields       = REACTOR_SHIELD;
 	  if (IsD1File ())
@@ -274,9 +274,9 @@ switch (type) {
 	  break;
 
 	case OBJ_COOP     : // a cooperative player object
-	  objP->control_type = CT_NONE;
-	  objP->movement_type = MT_PHYSICS;
-	  objP->render_type   = RT_POLYOBJ;
+	  objP->controlType = CT_NONE;
+	  objP->movementType = MT_PHYSICS;
+	  objP->renderType   = RT_POLYOBJ;
 	  objP->size          = PLAYER_SIZE;
 	  objP->shields       = DEFAULT_SHIELD;
 	  objP->rType.polyModelInfo.model_num = COOP_CLIP_NUMBER;
@@ -286,9 +286,9 @@ switch (type) {
 	case OBJ_CAMBOT:
 	case OBJ_SMOKE:
 	case OBJ_MONSTERBALL:
-	  objP->control_type  = CT_AI;
-	  objP->movement_type = MT_NONE;
-	  objP->render_type   = RT_POLYOBJ;
+	  objP->controlType  = CT_AI;
+	  objP->movementType = MT_NONE;
+	  objP->renderType   = RT_POLYOBJ;
 	  objP->size          = robot_size[0];
 	  objP->shields       = DEFAULT_SHIELD;
 	  objP->rType.polyModelInfo.model_num = robot_clip [0];
@@ -297,9 +297,9 @@ switch (type) {
 	  break;
 
 	case OBJ_EXPLOSION:
-	  objP->control_type  = CT_POWERUP;
-	  objP->movement_type = MT_NONE;
-	  objP->render_type   = RT_POWERUP;
+	  objP->controlType  = CT_POWERUP;
+	  objP->movementType = MT_NONE;
+	  objP->renderType   = RT_POWERUP;
 	  objP->size          = robot_size[0];
 	  objP->shields       = DEFAULT_SHIELD;
 	  objP->rType.vClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
@@ -308,9 +308,9 @@ switch (type) {
 	  break;
 
 	case OBJ_EFFECT:
-	  objP->control_type  = CT_NONE;
-	  objP->movement_type = MT_NONE;
-	  objP->render_type   = RT_NONE;
+	  objP->controlType  = CT_NONE;
+	  objP->movementType = MT_NONE;
+	  objP->renderType   = RT_NONE;
 	  objP->size          = f1_0;
 	  objP->shields       = DEFAULT_SHIELD;
 
@@ -346,7 +346,7 @@ if (GameInfo ().objects.count >= MAX_OBJECTS) {
 // otherwise use the type passed as the parameter "new_type"
 //--------------------------------------------------------------
 
-type = (new_type == OBJ_NONE) ? CurrObj ()->type : new_type;
+type = (new_type == OBJ_NONE) ? CurrObj ()->m_info.type : new_type;
 
 // Make sure it is ok to add another object of this type
 // Set the id if it's a player or coop
@@ -354,8 +354,8 @@ type = (new_type == OBJ_NONE) ? CurrObj ()->type : new_type;
 if (type == OBJ_PLAYER || type == OBJ_COOP) {
 	objP = Objects (0);
 	for (objnum = GameInfo ().objects.count; objnum; objnum--, objP++)
-		if (objP->type == type) {
-			id = objP->id;
+		if (objP->m_info.type == type) {
+			id = objP->m_info.id;
 			if (id >= 0 && id < (MAX_PLAYERS + MAX_COOP_PLAYERS))
 				ids[id]++;
 			}
@@ -399,31 +399,31 @@ else {
 	current_obj = CurrObj ();
 	memcpy (objP, current_obj, sizeof (CGameObject));
 	}
-objP->flags = 0;                                      // new: 1/27/97
+objP->m_info.flags = 0;                                      // new: 1/27/97
 objP->m_info.nSegment = Current ()->nSegment;
 // set object position in the center of the cube for now
-CalcSegCenter (objP->pos,Current ()->nSegment);
-objP->last_pos = objP->pos;
+CalcSegCenter (objP->m_info.pos,Current ()->nSegment);
+objP->lastPos = objP->m_info.pos;
 Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
 for (i = 0; i < GameInfo ().objects.count - 1; i++)
 	if (Objects (i)->m_info.nSegment == Current ()->nSegment)
 		count++;
-objP->pos.v.y += count * 2 * F1_0;
-objP->last_pos.v.y += count * 2 * F1_0;
+objP->m_info.pos.v.y += count * 2 * F1_0;
+objP->lastPos.v.y += count * 2 * F1_0;
 // set the id if new object is a player or a coop
 if (type == OBJ_PLAYER || type == OBJ_COOP)
-	objP->id = (INT8) id;
+	objP->m_info.id = (INT8) id;
 // set object data if new object being added
 if (new_type != OBJ_NONE) {
-	objP->type = new_type;
-	SetObjectData (objP->type);
+	objP->m_info.type = new_type;
+	SetObjectData (objP->m_info.type);
 	}
 // set the contents to zero
-objP->contains_type = 0;
-objP->contains_id = 0;
-objP->contains_count = 0;
+objP->contents.type = 0;
+objP->contents.id = 0;
+objP->contents.count = 0;
 SortObjects ();
 theApp.MineView ()->Refresh (false);
 theApp.ToolView ()->ObjectTool ()->Refresh ();
@@ -459,7 +459,7 @@ theApp.LockUndo ();
 DeleteObjTriggers (nDelObj);
 INT32 i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
-	Objects (i)->signature = i;
+	Objects (i)->m_info.signature = i;
 if (nDelObj < --j)
 	memcpy (Objects () + nDelObj, Objects () + nDelObj + 1, (GameInfo ().objects.count - nDelObj) * sizeof (CGameObject));
 GameInfo ().objects.count = j;
@@ -853,9 +853,9 @@ INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag)
 {
 type = read_INT8 (fp);
 id = read_INT8 (fp);
-control_type = read_INT8 (fp);
-movement_type = read_INT8 (fp);
-render_type = read_INT8 (fp);
+controlType = read_INT8 (fp);
+movementType = read_INT8 (fp);
+renderType = read_INT8 (fp);
 flags = read_INT8 (fp);
 multiplayer = (version > 37) ? read_INT8 (fp) : 0;
 nSegment = read_INT16 (fp);
@@ -863,12 +863,12 @@ read_vector (&pos, fp);
 read_matrix (&orient, fp);
 size = read_FIX (fp);
 shields = read_FIX (fp);
-read_vector (&last_pos, fp);
-contains_type = read_INT8 (fp);
-contains_id = read_INT8 (fp);
-contains_count = read_INT8 (fp);
+read_vector (&lastPos, fp);
+contents.type = read_INT8 (fp);
+contents.id = read_INT8 (fp);
+contents.count = read_INT8 (fp);
 
-switch (movement_type) {
+switch (movementType) {
 	case MT_PHYSICS:
 		mType.physInfo.Read (fp, version);
 		break;
@@ -881,7 +881,7 @@ switch (movement_type) {
 		break;
 	}
 
-switch (control_type) {
+switch (controlType) {
 	case CT_AI:
 		cType.aiInfo.Read (fp, version);
 		break;
@@ -912,7 +912,7 @@ switch (control_type) {
 		break;
 	}
 
-switch (render_type) {
+switch (renderType) {
 	case RT_NONE:
 		break;
 	case RT_MORPH:
@@ -954,9 +954,9 @@ if (theMine->IsStdLevel () && (type >= OBJ_CAMBOT))
 
 write_INT8 (type, fp);
 write_INT8 (id, fp);
-write_INT8 (control_type, fp);
-write_INT8 (movement_type, fp);
-write_INT8 (render_type, fp);
+write_INT8 (controlType, fp);
+write_INT8 (movementType, fp);
+write_INT8 (renderType, fp);
 write_INT8 (flags, fp);
 write_INT8 (multiplayer, fp);
 write_INT16 (nSegment, fp);
@@ -964,12 +964,12 @@ write_vector (&pos, fp);
 write_matrix (&orient, fp);
 write_FIX (size, fp);
 write_FIX (shields, fp);
-write_vector (&last_pos, fp);
-write_INT8 (contains_type, fp);
-write_INT8 (contains_id, fp);
-write_INT8 (contains_count, fp);
+write_vector (&lastPos, fp);
+write_INT8 (contents.type, fp);
+write_INT8 (contents.id, fp);
+write_INT8 (contents.count, fp);
 
-switch (movement_type) {
+switch (movementType) {
 	case MT_PHYSICS:
 		mType.physInfo.Write (fp, version);
 		break;
@@ -982,7 +982,7 @@ switch (movement_type) {
 		break;
 	}
 
-switch (control_type) {
+switch (controlType) {
 	case CT_AI:
 		cType.aiInfo.Write (fp, version);
 		break;
@@ -1013,7 +1013,7 @@ switch (control_type) {
 		break;
 	}
 
-switch (render_type) {
+switch (renderType) {
 	case RT_NONE:
 		break;
 	case RT_MORPH:

@@ -504,9 +504,9 @@ r -= m_move [0];
 
 INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b) 
 {
-CFixVector _a = objP->orient * *a;
-CFixVector _b = objP->orient * *b;
-_a += objP->pos;
+CFixVector _a = objP->m_info.orient * *a;
+CFixVector _b = objP->m_info.orient * *b;
+_a += objP->m_info.pos;
 _a += m_move [0];
 _b += _a;
 return Dot (m_mat [0].fVec, CDoubleVector (_a)) > Dot (m_mat [0].fVec, CDoubleVector (_b));

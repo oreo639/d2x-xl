@@ -13,7 +13,7 @@
 #include "mainfrm.h"
 #include "mineview.h"
 
-extern UINT8 side_vert[6][4];
+extern UINT8 sideVertTable [6][4];
 INT32 bEnableDeltaShading = 0;
 
 //-----------------------------------------------------------------
@@ -27,11 +27,11 @@ return (value >= 0) ? value + round / 2 : value - round / 2;
 //------------------------------------------------------------------------
 // multiply_matrix()
 //------------------------------------------------------------------------
-void multiply_matrix (double C[3][3], double A[3][3], double B[3][3]) 
+void multiply_matrix (double C [3][3], double A [3][3], double B [3][3]) 
 {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++)	{
-      C[i][j] = A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j];
+      C [i][j] = A [i][0] * B [0][j] + A [i][1] * B [1][j] + A [i][2] * B [2][j];
     }
   }
 }
@@ -39,23 +39,23 @@ void multiply_matrix (double C[3][3], double A[3][3], double B[3][3])
 //------------------------------------------------------------------------
 // scale_matrix()
 //------------------------------------------------------------------------
-void scale_matrix (double A[3][3], double scale) 
+void scale_matrix (double A [3][3], double scale) 
 {
   INT32 i,j;
-  double B[3][3]; // temporary copy of A
-  double C[3][3]; // scale matrix
+  double B [3][3]; // temporary copy of A
+  double C [3][3]; // scale matrix
 
-  // copy matrix and clear C[][] while were at it
+  // copy matrix and clear C [][] while were at it
   for (i=0;i<3;i++) {
     for (j=0;j<3;j++)	{
-      B[i][j] = A[i][j];
-      C[i][j] = 0;
+      B [i][j] = A [i][j];
+      C [i][j] = 0;
     }
   }
   // set scale matrix
-  C[0][0] = scale;
-  C[1][1] = scale;
-  C[2][2] = 1.0;
+  C [0][0] = scale;
+  C [1][1] = scale;
+  C [2][2] = 1.0;
 
   // multiply A=B*C
   multiply_matrix(A,B,C);
@@ -64,46 +64,46 @@ void scale_matrix (double A[3][3], double scale)
 //------------------------------------------------------------------------
 // adjoint_matrix()
 //------------------------------------------------------------------------
-void adjoint_matrix(double A[3][3],double B[3][3]) 
+void adjoint_matrix(double A [3][3],double B [3][3]) 
 {
-    B[0][0] = A[1][1]*A[2][2] - A[1][2]*A[2][1];
-    B[0][1] = A[0][2]*A[2][1] - A[0][1]*A[2][2];
-    B[0][2] = A[0][1]*A[1][2] - A[0][2]*A[1][1];
-    B[1][0] = A[1][2]*A[2][0] - A[1][0]*A[2][2];
-    B[1][1] = A[0][0]*A[2][2] - A[0][2]*A[2][0];
-    B[1][2] = A[0][2]*A[1][0] - A[0][0]*A[1][2];
-    B[2][0] = A[1][0]*A[2][1] - A[1][1]*A[2][0];
-    B[2][1] = A[0][1]*A[2][0] - A[0][0]*A[2][1];
-    B[2][2] = A[0][0]*A[1][1] - A[0][1]*A[1][0];
+    B [0][0] = A [1][1]*A [2][2] - A [1][2]*A [2][1];
+    B [0][1] = A [0][2]*A [2][1] - A [0][1]*A [2][2];
+    B [0][2] = A [0][1]*A [1][2] - A [0][2]*A [1][1];
+    B [1][0] = A [1][2]*A [2][0] - A [1][0]*A [2][2];
+    B [1][1] = A [0][0]*A [2][2] - A [0][2]*A [2][0];
+    B [1][2] = A [0][2]*A [1][0] - A [0][0]*A [1][2];
+    B [2][0] = A [1][0]*A [2][1] - A [1][1]*A [2][0];
+    B [2][1] = A [0][1]*A [2][0] - A [0][0]*A [2][1];
+    B [2][2] = A [0][0]*A [1][1] - A [0][1]*A [1][0];
 }
 
 //------------------------------------------------------------------------
 // define_square2quad_matrix()
 //------------------------------------------------------------------------
-void square2quad_matrix(double A[3][3],POINT a[4]) 
+void square2quad_matrix(double A [3][3],POINT a [4]) 
 {
     double dx1,dx2,dx3,dy1,dy2,dy3; // temporary storage variables
     double w;
 
     // infer "unity square" to "quad" prespective transformation
     // see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 
-    dx1 = a[1].x - a[2].x;
-    dx2 = a[3].x - a[2].x;
-    dx3 = a[0].x - a[1].x + a[2].x - a[3].x;
-    dy1 = a[1].y - a[2].y;
-    dy2 = a[3].y - a[2].y;
-    dy3 = a[0].y - a[1].y + a[2].y - a[3].y;
+    dx1 = a [1].x - a [2].x;
+    dx2 = a [3].x - a [2].x;
+    dx3 = a [0].x - a [1].x + a [2].x - a [3].x;
+    dy1 = a [1].y - a [2].y;
+    dy2 = a [3].y - a [2].y;
+    dy3 = a [0].y - a [1].y + a [2].y - a [3].y;
     w = (dx1*dy2 - dx2*dy1);
     if (w==0) w=1;
-    A[0][2] = (dx3*dy2 - dx2*dy3) / w;
-    A[1][2] = (dx1*dy3 - dx3*dy1) / w;
-    A[0][0] = a[1].x - a[0].x + A[0][2]*a[1].x;
-    A[1][0] = a[3].x - a[0].x + A[1][2]*a[3].x;
-    A[2][0] = a[0].x;
-    A[0][1] = a[1].y - a[0].y + A[0][2]*a[1].y;
-    A[1][1] = a[3].y - a[0].y + A[1][2]*a[3].y;
-    A[2][1] = a[0].y;
-    A[2][2] = 1;
+    A [0][2] = (dx3*dy2 - dx2*dy3) / w;
+    A [1][2] = (dx1*dy3 - dx3*dy1) / w;
+    A [0][0] = a [1].x - a [0].x + A [0][2]*a [1].x;
+    A [1][0] = a [3].x - a [0].x + A [1][2]*a [3].x;
+    A [2][0] = a [0].x;
+    A [0][1] = a [1].y - a [0].y + A [0][2]*a [1].y;
+    A [1][1] = a [3].y - a [0].y + A [1][2]*a [3].y;
+    A [2][1] = a [0].y;
+    A [2][2] = 1;
 }
 
 //--------------------------------------------------------------------------
@@ -112,7 +112,7 @@ void square2quad_matrix(double A[3][3],POINT a[4])
 // TextureMap()
 //------------------------------------------------------------------------
 void TextureMap(INT32 resolution,
-				CSegment *segment,
+				CSegment *segP,
 				INT16 nSide,
 				UINT8 *bmData,
 				UINT16 bmWidth,
@@ -128,9 +128,9 @@ void TextureMap(INT32 resolution,
 	INT32 h, i, j, k;
 	INT32 x, y;
 	LONG yi,  yj;
-	POINT a[4];
+	POINT a [4];
 	POINT minpt, maxpt;
-	double A[3][3], IA[3][3], B[3][3], UV[3][3]; // transformation matrices
+	double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	double w;
 	UINT8 *ptr;
 	CUVL *uvls;
@@ -138,10 +138,10 @@ void TextureMap(INT32 resolution,
 	
 	// TEMPORARY
 	INT32 inc_resolution = 1<<resolution;
-	CSideKey face (INT16 (segment - theMine->Segments (0)), nSide);
+	CSideKey face (INT16 (segP - theMine->Segments (0)), nSide);
 	INT16 flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
 	INT16 dscan_light,scan_light;
-	INT16 light[4];
+	INT16 light [4];
 	UINT16 bmWidth2;
 	bool bEnableShading = (light_index != NULL);
 
@@ -151,29 +151,29 @@ bmWidth2 = bmWidth / 2;
 // define 4 corners of texture to be displayed on the screen
 for (i=0;i<4;i++) {
 	INT16 nVertex;
-	nVertex = segment->verts[side_vert[nSide][i]];
-	a[i].x = scrn[nVertex].x;
-	a[i].y = scrn[nVertex].y;
+	nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
+	a [i].x = scrn [nVertex].x;
+	a [i].y = scrn [nVertex].y;
 	}
 	
 	// determin min/max points
 minpt.x = minpt.y = 10000; // some number > any screen resolution
 maxpt.x = maxpt.y = 0;
-for (i=0;i<4;i++) {
-	minpt.x = min(minpt.x,a[i].x);
-	maxpt.x = max(maxpt.x,a[i].x);
-	minpt.y = min(minpt.y,a[i].y);
-	maxpt.y = max(maxpt.y,a[i].y);
+for (i = 0; i < 4; i++) {
+	minpt.x = min (minpt.x, a [i].x);
+	maxpt.x = max (maxpt.x, a [i].x);
+	minpt.y = min (minpt.y, a [i].y);
+	maxpt.y = max (maxpt.y, a [i].y);
 	}
 
 	// clip min/max with screen min/max
-minpt.x = max(minpt.x, 0);
-maxpt.x = min(maxpt.x, width);
-minpt.y = max(minpt.y, 0);
-maxpt.y = min(maxpt.y, height);
+minpt.x = max (minpt.x, 0);
+maxpt.x = min (maxpt.x, width);
+minpt.y = max (minpt.y, 0);
+maxpt.y = min (maxpt.y, height);
 
 // fill in texture
-POINT b[4];  // Descent's (u,v) coordinates for textures
+POINT b [4];  // Descent's (u,v) coordinates for textures
 
 // map unit square into texture coordinate
 square2quad_matrix(A,a);
@@ -181,19 +181,19 @@ square2quad_matrix(A,a);
 // calculate adjoint matrix (same as inverse)
 adjoint_matrix(A,IA);
 
-// store uv coordinates into b[]
-uvls = segment->m_sides[nSide].uvls;
-for (i=0;i<4;i++) {
-	b[i].x = uvls[i].u;
-	b[i].y = uvls[i].v;
+// store uv coordinates into b []
+uvls = segP->m_sides [nSide].m_info.uvls;
+for (i = 0; i < 4; i++) {
+	b [i].x = uvls [i].u;
+	b [i].y = uvls [i].v;
 	}
 	
 	// define texture light
 for (i=0;i<4;i++) {
-	light[i] = uvls[i].l;
+	light [i] = uvls [i].l;
 	// clip light
-	if (light[i] & 0x8000){
-		light[i] = 0x7fff;
+	if (light [i] & 0x8000){
+		light [i] = 0x7fff;
 		}
 	}
 	// reduce texture light if current side is on a delta light
@@ -208,22 +208,22 @@ if (bEnableDeltaShading) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i <dlIdxCount; i++, dli++) {
-//				if (dli->m_info.nSegment == theMine->current->segment) {
-			// loop on each delta light till the segment/side is found
-				CLightDeltaValue *dl = theMine->LightDeltaValues (dli->index);
-				h = dli->count;
+//				if (dli->m_info.nSegment == theMine->current->segP) {
+			// loop on each delta light till the segP/side is found
+				CLightDeltaValue *dl = theMine->LightDeltaValues (dli->m_info.index);
+				h = dli->m_info.count;
 				for (j = 0; j < h; j++, dl++) {
 					if (*dl == face) {
 						for (k = 0; k < 4; k++) {
-							INT16 dlight = dl->vert_light[k];
+							INT16 dlight = dlm_info.vertLight [k];
 							if (dlight >= 0x20)
 								dlight = 0x7fff;
 							else
 								dlight <<= 10;
-							if (light[k] > dlight)
-								light[k] -= dlight;
+							if (light [k] > dlight)
+								light [k] -= dlight;
 							else
-								light[k] = 0;
+								light [k] = 0;
 							}
 						}
 //					}
@@ -247,26 +247,26 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 	for (i=0;i<4;i++) {
 		// if line intersects this y then update x0 & x1
 		j = (i+1)&3; // j = other point of line
-		yi = a[i].y;
-		yj = a[j].y;
+		yi = a [i].y;
+		yj = a [j].y;
 		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
 			w = yi - yj;
 			if (w != 0) { // avoid divide by zero
 				x = (INT32)((
-					(double)a[i].x * ((double)y - (double)yj) -
-					(double)a[j].x * ((double)y - (double)yi)
+					(double)a [i].x * ((double)y - (double)yj) -
+					(double)a [j].x * ((double)y - (double)yi)
 					) / w);
 				if (x<x0) {
 					scan_light = (INT32)((
-						(double)light[i] * ((double)y - (double)yj) -
-						(double)light[j] * ((double)y - (double)yi)
+						(double)light [i] * ((double)y - (double)yj) -
+						(double)light [j] * ((double)y - (double)yi)
 						) / w);
 					x0 = x;
 				}
 				if (x>x1) {
 					dscan_light = (INT32)((
-						(double)light[i] * ((double)y - (double)yj) -
-						(double)light[j] * ((double)y - (double)yi)
+						(double)light [i] * ((double)y - (double)yj) -
+						(double)light [j] * ((double)y - (double)yi)
 						) / w);
 					x1 = x;
 				}
@@ -296,18 +296,18 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 				x1 = end_x;
 
 			scale = (double) max (bmWidth, bmHeight);
-			h = B[1][2]*(double)y + B[2][2];
+			h = B [1][2]*(double)y + B [2][2];
 			x0d = (double)x0;
 			x1d = (double)x1;
-			w0 = (B[0][2]*x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
-			w1 = (B[0][2]*x1d + h) / scale;
+			w0 = (B [0][2]*x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
+			w1 = (B [0][2]*x1d + h) / scale;
 			if (fabs(w0)>0.0001 && fabs(w1)>0.0001) {
-				h = B[1][0]*(double)y + B[2][0];
-				u0 = (B[0][0]*x0d + h) / w0;
-				u1 = (B[0][0]*x1d + h) / w1;
-				h = B[1][1]*(double)y + B[2][1];
-				v0 = (B[0][1]*x0d + h) / w0;
-				v1 = (B[0][1]*x1d + h) / w1;
+				h = B [1][0]*(double)y + B [2][0];
+				u0 = (B [0][0]*x0d + h) / w0;
+				u1 = (B [0][0]*x1d + h) / w1;
+				h = B [1][1]*(double)y + B [2][1];
+				v0 = (B [0][1]*x0d + h) / w0;
+				v1 = (B [0][1]*x1d + h) / w1;
 				
 				// use 22.10 integer math
 				// the 22 allows for large texture bitmap sizes
@@ -342,9 +342,9 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						if (bEnableShading) {
 #if 0
 							// TEXTURE_MAP_LIGHT_HIRES
-							UINT8 temp1 = descent_side_colors[nSide];
+							UINT8 temp1 = descent_side_colors [nSide];
 							while (k--) {
-								*pixelP++ = light_index[temp1 + ((scan_light / 4) & 0x1f00)];
+								*pixelP++ = light_index [temp1 + ((scan_light / 4) & 0x1f00)];
 								scan_light += dscan_light;
 								}
 #else
@@ -356,7 +356,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 								v%=m;
 								temp = bmData [(u / 1024) + ((v / vd) & vm)];
 								if (temp<254) {
-									temp = light_index[temp + ((scan_light / 4) & 0x1f00)];
+									temp = light_index [temp + ((scan_light / 4) & 0x1f00)];
 									*pixelP = temp;
 									}
 								pixelP++;
@@ -367,7 +367,7 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						else {
 							// TEXTURE_MAP_NOLIGHT_HIRES
 #if 0
-							UINT8 temp = descent_side_colors[nSide];
+							UINT8 temp = descent_side_colors [nSide];
 							while (k--) {
 								*pixelP++ = temp;
 								}
@@ -392,10 +392,10 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						if (bEnableShading) {
 							// TEXTURE_MAP_LIGHT_LOWRES
 #if 0
-							UINT8 temp1 = descent_side_colors[nSide];
+							UINT8 temp1 = descent_side_colors [nSide];
 							while (k--) {
-								pixelP[0] = 
-								pixelP[1] = light_index[temp1 + ((scan_light / 4) & 0x1f00)];
+								pixelP [0] = 
+								pixelP [1] = light_index [temp1 + ((scan_light / 4) & 0x1f00)];
 								pixelP += 2;
 								scan_light += dscan_light;
 								}
@@ -408,9 +408,9 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 								v%=m;
 								temp = bmData [(u / 1024) + ((v / vd) & vm)];
 								if (temp<254) {
-									temp = light_index[temp + ((scan_light / 4) & 0x1f00)];
-									pixelP[0] = 
-									pixelP[1] = temp;
+									temp = light_index [temp + ((scan_light / 4) & 0x1f00)];
+									pixelP [0] = 
+									pixelP [1] = temp;
 									}
 								pixelP += 2;
 								scan_light += dscan_light;
@@ -420,10 +420,10 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 						else {
 							// TEXTURE_MAP_NOLIGHT_LOWRES
 #if 0
-							UINT8 emp = descent_side_colors[nSide];
+							UINT8 emp = descent_side_colors [nSide];
 							while (k--) {
-								pixelP[0] = 
-								pixelP[1] = temp;
+								pixelP [0] = 
+								pixelP [1] = temp;
 								pixelP += 2;
 								}
 #else
@@ -435,8 +435,8 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 								v%=m;
 								temp = bmData [(u / 1024) + ((v / vd) & vm)];
 								if (temp<254) {
-									pixelP[0] =
-									pixelP[1] = temp;
+									pixelP [0] =
+									pixelP [1] = temp;
 									}
 								pixelP += 2;
 								} while (--k);

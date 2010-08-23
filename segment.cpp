@@ -419,20 +419,20 @@ segP = Segments (nNewSeg);
 DefineVertices (new_verts); 
 
 // define vert numbers for common side
-segP->m_info.verts [opp_side_vert [nCurrSide][0]] = currSeg->m_info.verts [side_vert [nCurrSide][0]]; 
-segP->m_info.verts [opp_side_vert [nCurrSide][1]] = currSeg->m_info.verts [side_vert [nCurrSide][1]]; 
-segP->m_info.verts [opp_side_vert [nCurrSide][2]] = currSeg->m_info.verts [side_vert [nCurrSide][2]]; 
-segP->m_info.verts [opp_side_vert [nCurrSide][3]] = currSeg->m_info.verts [side_vert [nCurrSide][3]]; 
+segP->m_info.verts [oppSideVertTable [nCurrSide][0]] = currSeg->m_info.verts [sideVertTable [nCurrSide][0]]; 
+segP->m_info.verts [oppSideVertTable [nCurrSide][1]] = currSeg->m_info.verts [sideVertTable [nCurrSide][1]]; 
+segP->m_info.verts [oppSideVertTable [nCurrSide][2]] = currSeg->m_info.verts [sideVertTable [nCurrSide][2]]; 
+segP->m_info.verts [oppSideVertTable [nCurrSide][3]] = currSeg->m_info.verts [sideVertTable [nCurrSide][3]]; 
 
 // define vert numbers for new side
-segP->m_info.verts [side_vert [nCurrSide][0]] = new_verts [0]; 
-segP->m_info.verts [side_vert [nCurrSide][1]] = new_verts [1]; 
-segP->m_info.verts [side_vert [nCurrSide][2]] = new_verts [2]; 
-segP->m_info.verts [side_vert [nCurrSide][3]] = new_verts [3]; 
+segP->m_info.verts [sideVertTable [nCurrSide][0]] = new_verts [0]; 
+segP->m_info.verts [sideVertTable [nCurrSide][1]] = new_verts [1]; 
+segP->m_info.verts [sideVertTable [nCurrSide][2]] = new_verts [2]; 
+segP->m_info.verts [sideVertTable [nCurrSide][3]] = new_verts [3]; 
 
 InitSegment (nNewSeg);
 // define children and special child
-segP->m_info.childFlags = 1 << opp_side [nCurrSide]; /* only opposite side connects to current_segment */
+segP->m_info.childFlags = 1 << oppSideTable [nCurrSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 	segP->m_info.children [i] = (segP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1;
 
@@ -534,7 +534,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		case(ORTHOGONAL):
 		{
 			center = CalcSideCenter(Current ()->nSegment, Current ()->nSide); 
-			oppCenter = CalcSideCenter(Current ()->nSegment, opp_side [Current ()->nSide]); 
+			oppCenter = CalcSideCenter(Current ()->nSegment, oppSideTable [Current ()->nSide]); 
 			orthog = CalcSideNormal(Current ()->nSegment, Current ()->nSide); 
 
 			// set the length of the new cube to be one standard cube length
@@ -549,11 +549,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 			// point 0
-			vertP = Vertices (currSeg->m_info.verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]]);
+			vertP = Vertices (currSeg->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(0)]]);
 			a = orthog + *vertP; 
 
 			// point 1
-			vertP = Vertices (currSeg->m_info.verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]);
+			vertP = Vertices (currSeg->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(1)]]);
 			b = orthog + *vertP; 
 
 			// center
@@ -584,7 +584,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				//nVertex = currSeg->m_info.verts [side_vert [Current ()->nSide][i]]; 
+				//nVertex = currSeg->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
 				nVertex = new_verts [i];
 				*Vertices (nVertex) = CFixVector (A [i]); 
 				}
@@ -594,7 +594,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 		case(EXTEND):
 		{
 			center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
-			oppCenter = CalcSideCenter (Current ()->nSegment, opp_side [Current ()->nSide]); 
+			oppCenter = CalcSideCenter (Current ()->nSegment, oppSideTable [Current ()->nSide]); 
 			orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
 
 			// calculate the length of the new cube
@@ -605,7 +605,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				INT32 v1 = currSeg->m_info.verts [side_vert [Current ()->nSide][i]]; 
+				INT32 v1 = currSeg->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
 				INT32 v2 = new_verts [i];
 				Vertices (v2)->v.x = orthog.v.x + Vertices (v1)->v.x; 
 				Vertices (v2)->v.y = orthog.v.y + Vertices (v1)->v.y; 
@@ -619,9 +619,9 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			{
 			// copy side's four points into A
 			for (i = 0; i < 4; i++) {
-				nVertex = currSeg->m_info.verts [side_vert [Current ()->nSide][i]]; 
+				nVertex = currSeg->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
 				A [i] = CDoubleVector (*Vertices (nVertex)); 
-				nVertex = currSeg->m_info.verts [opp_side_vert [Current ()->nSide][i]]; 
+				nVertex = currSeg->m_info.verts [oppSideVertTable [Current ()->nSide][i]]; 
 				A [i + 4] = CDoubleVector (*Vertices (nVertex)); 
 				}
 
@@ -677,7 +677,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 				B [i].Set (C [i].v.x, C [i].v.y * cos (-angle1) + C [i].v.z * sin (-angle1), -C [i].v.y * sin (-angle1) + C [i].v.z * cos (-angle1)); 
 	
 			// and translate back
-			nVertex = currSeg->m_info.verts [side_vert [Current ()->nSide][0]]; 
+			nVertex = currSeg->m_info.verts [sideVertTable [Current ()->nSide][0]]; 
 			for (i = 4; i < 8; i++) 
 				A [i] = B [i] + CDoubleVector (*Vertices (nVertex)); 
 
@@ -716,14 +716,14 @@ if (seg1->m_info.children [sidenum1]!=-1 || seg2->m_info.children [sidenum2]!=-1
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = seg1->m_info.verts [side_vert [sidenum1][i]];
+	INT32 nVertex = seg1->m_info.verts [sideVertTable [sidenum1][i]];
 	memcpy (&v1 [i], Vertices (nVertex), sizeof (CVertex));
 /*
 	v1 [i].x = Vertices (nVertex)->x; 
 	v1 [i].y = Vertices (nVertex)->y; 
 	v1 [i].z = Vertices (nVertex)->z; 
 */
-	nVertex = seg2->m_info.verts [side_vert [sidenum2][i]];
+	nVertex = seg2->m_info.verts [sideVertTable [sidenum2][i]];
 	memcpy (&v2 [i], Vertices (nVertex), sizeof (CVertex));
 /*
 	v2 [i].x = Vertices (nVertex)->x; 
@@ -806,8 +806,8 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 
 	// merge vertices
 	for (i = 0; i < 4; i++) {
-		oldVertex = seg1->m_info.verts [side_vert [sidenum1][i]]; 
-		newVertex = seg2->m_info.verts [side_vert [sidenum2][match [i].i]]; 
+		oldVertex = seg1->m_info.verts [sideVertTable [sidenum1][i]]; 
+		newVertex = seg2->m_info.verts [sideVertTable [sidenum2][match [i].i]]; 
 
 		// if either vert was marked, then mark the new vert
 		VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
@@ -878,7 +878,7 @@ bool CMine::SideIsMarked (INT16 nSegment, INT16 nSide)
 GetCurrent (nSegment, nSide);
 CSegment *segP = Segments (nSegment);
 for (INT32 i = 0; i < 4; i++) {
-	if (!(VertStatus (segP->m_info.verts [side_vert [nSide][i]]) & MARKED_MASK))
+	if (!(VertStatus (segP->m_info.verts [sideVertTable [nSide][i]]) & MARKED_MASK))
 		return false;
 	}
 return true;
@@ -905,17 +905,17 @@ void CMine::Mark()
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
 		n_points = 1; 
-		p [0] = segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
+		p [0] = segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; 
 		break; 
 	case eSelectLine:
 		n_points = 2; 
-		p [0] = segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
-		p [1] = segP->m_info.verts [side_vert [Current ()->nSide][(Current ()->nPoint + 1)&3]]; 
+		p [0] = segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; 
+		p [1] = segP->m_info.verts [sideVertTable [Current ()->nSide][(Current ()->nPoint + 1)&3]]; 
 		break; 
 	case eSelectSide:
 		n_points = 4; 
 		for (i = 0; i < n_points; i++)
-			p [i] = segP->m_info.verts [side_vert [Current ()->nSide][i]]; 
+			p [i] = segP->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
 		break; 
 	default:
 		bCubeMark = true; 
@@ -1075,8 +1075,8 @@ if (child_sidenum < 6) {
 	INT16 pv [4], cv [4]; // (INT16 names given for clarity)
 	INT32 i;
 	for (i = 0; i < 4; i++) {
-		pv [i] = parent_seg->m_info.verts [side_vert [nSide][i]]; // parent vert
-		cv [i] = child_seg->m_info.verts [side_vert [child_sidenum][i]]; // child vert
+		pv [i] = parent_seg->m_info.verts [sideVertTable [nSide][i]]; // parent vert
+		cv [i] = child_seg->m_info.verts [sideVertTable [child_sidenum][i]]; // child vert
 		}
 	// if they share all four vertices..
 	// note: assumes verts increase clockwise looking outward
@@ -1110,7 +1110,7 @@ bool CMine::IsPointOfSide (CSegment *segP, INT32 nSide, INT32 pointnum)
 	INT32	i;
 
 for (i = 0; i < 4; i++)
-	if (side_vert [nSide][i] == pointnum)
+	if (sideVertTable [nSide][i] == pointnum)
 		return true;
 return false;
 }
@@ -1122,7 +1122,7 @@ bool CMine::IsLineOfSide (CSegment *segP, INT32 nSide, INT32 linenum)
 	INT32	i;
 
 for (i = 0; i < 2; i++)
-	if (!IsPointOfSide (segP, nSide, line_vert [linenum][i]))
+	if (!IsPointOfSide (segP, nSide, lineVertTable [linenum][i]))
 		return false;
 return true;
 }
@@ -1152,7 +1152,7 @@ if (VertCount () > (MAX_VERTICES - 1)) {
 	}
 
 segP = Segments (Current ()->nSegment); 
-vert = segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
+vert = segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 found = FALSE; 
@@ -1183,7 +1183,7 @@ Vertices (VertCount ()).z = Vertices (vert).z;
 */
 // replace existing point with new point
 segP = Segments (Current ()->nSegment); 
-segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
+segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
 segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
@@ -1191,9 +1191,9 @@ VertStatus (VertCount ()++) = 0;
 
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++)
-	if (IsPointOfSide (segP, nSide, segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]) &&
+	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]) &&
 		 GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, nSide)) {
-		UnlinkChild (segP->m_info.children [nSide], opp_side [nSide]);
+		UnlinkChild (segP->m_info.children [nSide], oppSideTable [nSide]);
 		UnlinkChild (Current ()->nSegment, nSide); 
 		}
 
@@ -1230,8 +1230,8 @@ if (VertCount () > (MAX_VERTICES - 2)) {
 
 segP = Segments (Current ()->nSegment); 
 for (i = 0; i < 2; i++) {
-	linenum = side_line [Current ()->nSide][Current ()->nLine]; 
-	vert [i] = Segments (Current ()->nSegment)->m_info.verts [line_vert [linenum][i]]; 
+	linenum = sideLineTable [Current ()->nSide][Current ()->nLine]; 
+	vert [i] = Segments (Current ()->nSegment)->m_info.verts [lineVertTable [linenum][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
 	segP = Segments (0);
@@ -1267,8 +1267,8 @@ for (i = 0; i < 2; i++)
 		vertices [VertCount ()].z = vertices [vert [i]].z; 
 		*/
 		// replace existing points with new points
-		linenum = side_line [Current ()->nSide][Current ()->nLine]; 
-		segP->m_info.verts [line_vert [linenum][i]] = VertCount (); 
+		linenum = sideLineTable [Current ()->nSide][Current ()->nLine]; 
+		segP->m_info.verts [lineVertTable [linenum][i]] = VertCount (); 
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
 		VertStatus (VertCount ()++) = 0; 
@@ -1320,7 +1320,7 @@ if (child_segnum == -1) {
 	}
 
 for (i = 0; i < 4; i++)
-	vert [i] = segP->m_info.verts [side_vert [nSide][i]]; 
+	vert [i] = segP->m_info.verts [sideVertTable [nSide][i]]; 
 	// check to see if current points are shared by any other cubes
 for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	if (nSegment != Current ()->nSegment)
@@ -1365,7 +1365,7 @@ if (!solidify) {
 			vertices [VertCount ()].z = vertices [vert [i]].z; 
 			*/
 			// replace existing points with new points
-			segP->m_info.verts [side_vert [nSide][i]] = VertCount (); 
+			segP->m_info.verts [sideVertTable [nSide][i]] = VertCount (); 
 			segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 			// update total number of vertices
@@ -1374,7 +1374,7 @@ if (!solidify) {
 		}
 	INT32 nSide;
 	for (nSide = 0; nSide < 6; nSide++)
-		if (nSide != opp_side [nSide])
+		if (nSide != oppSideTable [nSide])
 			UnlinkChild (Current ()->nSegment, nSide); 
 	SetLinesToDraw(); 
 	INFOMSG (" Four new points were made for the current side."); 
@@ -1432,8 +1432,8 @@ else {
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
-vert1 = seg1->m_info.verts [side_vert [cur1->nSide][cur1->nPoint]]; 
-vert2 = seg2->m_info.verts [side_vert [cur2->nSide][cur2->nPoint]]; 
+vert1 = seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]]; 
+vert2 = seg2->m_info.verts [sideVertTable [cur2->nSide][cur2->nPoint]]; 
 // make sure verts are different
 if (vert1== vert2) {
 	ErrorMsg ("These points are already joined."); 
@@ -1451,7 +1451,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 // define vert numbers
-seg1->m_info.verts [side_vert [cur1->nSide][cur1->nPoint]] = vert2; 
+seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]] = vert2; 
 // delete any unused vertices
 //  delete_unused_vertices(); 
 FixChildren(); 
@@ -1502,10 +1502,10 @@ else {
 	}
 
 for (i = 0; i < 2; i++) {
-	linenum = side_line [cur1->nSide][cur1->nLine]; 
-	v1 = vert1 [i] = seg1->m_info.verts [line_vert [linenum][i]]; 
-	linenum = side_line [cur2->nSide][cur2->nLine]; 
-	v2 = vert2 [i] = seg2->m_info.verts [line_vert [linenum][i]]; 
+	linenum = sideLineTable [cur1->nSide][cur1->nLine]; 
+	v1 = vert1 [i] = seg1->m_info.verts [lineVertTable [linenum][i]]; 
+	linenum = sideLineTable [cur2->nSide][cur2->nLine]; 
+	v2 = vert2 [i] = seg2->m_info.verts [lineVertTable [linenum][i]]; 
 	v1x [i] = Vertices (v1)->v.x; 
 	v1y [i] = Vertices (v1)->v.y; 
 	v1z [i] = Vertices (v1)->v.z; 
@@ -1556,8 +1556,8 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
-	linenum = side_line [cur1->nSide][cur1->nLine]; 
-	seg1->m_info.verts [line_vert [linenum][i]] = vert2 [match [i]]; 
+	linenum = sideLineTable [cur1->nSide][cur1->nLine]; 
+	seg1->m_info.verts [lineVertTable [linenum][i]] = vert2 [match [i]]; 
 	}
 FixChildren(); 
 SetLinesToDraw(); 
@@ -1585,10 +1585,10 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		if (segP->m_info.children [nSide] > -1) { // -1 = no child,  - 2 = outside of world
-			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][0])); 
-			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][1])); 
-			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][2])); 
-			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][3])); 
+			segP->m_info.map_bitmask &= ~(1 << (sideLineTable [nSide][0])); 
+			segP->m_info.map_bitmask &= ~(1 << (sideLineTable [nSide][1])); 
+			segP->m_info.map_bitmask &= ~(1 << (sideLineTable [nSide][2])); 
+			segP->m_info.map_bitmask &= ~(1 << (sideLineTable [nSide][3])); 
 			}
 		}
 	}
@@ -1676,9 +1676,9 @@ if (solidify) {
 	seg1 = Segments (cur1->nSegment); 
 	for (i = 0; i < 4; i++) {
 #if 1
-		memcpy (&v1 [i], Vertices (seg1->m_info.verts [side_vert [cur1->nSide][i]]), sizeof (CVertex));
+		memcpy (&v1 [i], Vertices (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex));
 #else
-		INT32 nVertex = seg1->m_info.verts [side_vert [cur1->nSide][i]];
+		INT32 nVertex = seg1->m_info.verts [sideVertTable [cur1->nSide][i]];
 		v1 [i].x = Vertices (nVertex)->x; 
 		v1 [i].y = Vertices (nVertex)->y; 
 		v1 [i].z = Vertices (nVertex)->z; 
@@ -1692,9 +1692,9 @@ if (solidify) {
 			fail = FALSE; 
 			for (i = 0; i < 4; i++) {
 #if 1
-				memcpy (&v2 [i], Vertices (seg2->m_info.verts[side_vert[nSide][i]]), sizeof (CVertex));
+				memcpy (&v2 [i], Vertices (seg2->m_info.verts[sideVertTable[nSide][i]]), sizeof (CVertex));
 #else
-				INT32 nVertex = seg2->m_info.verts [side_vert [nSide][i]];
+				INT32 nVertex = seg2->m_info.verts [sideVertTable [nSide][i]];
 				v2 [i].x = Vertices (nVertex)->x; 
 				v2 [i].y = Vertices (nVertex)->y; 
 				v2 [i].z = Vertices (nVertex)->z; 
@@ -1799,15 +1799,15 @@ seg2 = Segments (cur2->nSegment);
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (&v1 [i], Vertices (seg1->m_info.verts [side_vert [cur1->nSide][i]]), sizeof (CVertex)); 
-	memcpy (&v2 [i], Vertices (seg2->m_info.verts [side_vert [cur2->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v1 [i], Vertices (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v2 [i], Vertices (seg2->m_info.verts [sideVertTable [cur2->nSide][i]]), sizeof (CVertex)); 
 /*
-	v1 [i].x = vertices [seg1->m_info.verts [side_vert [cur1->nSide][i]]].x; 
-	v1 [i].y = vertices [seg1->m_info.verts [side_vert [cur1->nSide][i]]].y; 
-	v1 [i].z = vertices [seg1->m_info.verts [side_vert [cur1->nSide][i]]].z; 
-	v2 [i].x = vertices [seg2->m_info.verts [side_vert [cur2->nSide][i]]].x; 
-	v2 [i].y = vertices [seg2->m_info.verts [side_vert [cur2->nSide][i]]].y; 
-	v2 [i].z = vertices [seg2->m_info.verts [side_vert [cur2->nSide][i]]].z; 
+	v1 [i].x = vertices [seg1->m_info.verts [sideVertTable [cur1->nSide][i]]].x; 
+	v1 [i].y = vertices [seg1->m_info.verts [sideVertTable [cur1->nSide][i]]].y; 
+	v1 [i].z = vertices [seg1->m_info.verts [sideVertTable [cur1->nSide][i]]].z; 
+	v2 [i].x = vertices [seg2->m_info.verts [sideVertTable [cur2->nSide][i]]].x; 
+	v2 [i].y = vertices [seg2->m_info.verts [sideVertTable [cur2->nSide][i]]].y; 
+	v2 [i].z = vertices [seg2->m_info.verts [sideVertTable [cur2->nSide][i]]].z; 
 */
 	match [i].i = -1; 
 	}
@@ -1912,8 +1912,8 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
 
 // now define two sides:
 // near side has opposite side number cube 1
-segP->m_info.childFlags |= (1 << (opp_side [cur1->nSide])); 
-segP->m_info.children [opp_side [cur1->nSide]] = cur1->nSegment; 
+segP->m_info.childFlags |= (1 << (oppSideTable [cur1->nSide])); 
+segP->m_info.children [oppSideTable [cur1->nSide]] = cur1->nSegment; 
 // far side has same side number as cube 1
 segP->m_info.childFlags |= (1 << cur1->nSide); 
 segP->m_info.children [cur1->nSide] = cur2->nSegment; 
@@ -1925,8 +1925,8 @@ segP->m_info.value =-1;
 
 // define vert numbers
 for (i = 0; i < 4; i++) {
-	segP->m_info.verts [opp_side_vert [cur1->nSide][i]] = seg1->m_info.verts [side_vert [cur1->nSide][i]]; 
-	segP->m_info.verts [side_vert [cur1->nSide][i]] = seg2->m_info.verts [side_vert [cur2->nSide][match [i].i]]; 
+	segP->m_info.verts [oppSideVertTable [cur1->nSide][i]] = seg1->m_info.verts [sideVertTable [cur1->nSide][i]]; 
+	segP->m_info.verts [sideVertTable [cur1->nSide][i]] = seg2->m_info.verts [sideVertTable [cur2->nSide][match [i].i]]; 
 	}
 
 // define Walls ()
@@ -2092,8 +2092,8 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 for (linenum = 0; linenum < 4; linenum++) {
 	// find vert numbers for the line's two end points
-	point0 = line_vert [side_line [start_side][linenum]][0]; 
-	point1 = line_vert [side_line [start_side][linenum]][1]; 
+	point0 = lineVertTable [sideLineTable [start_side][linenum]][0]; 
+	point1 = lineVertTable [sideLineTable [start_side][linenum]][1]; 
 	vert0  = segP->m_info.verts [point0]; 
 	vert1  = segP->m_info.verts [point1]; 
 	// check child for this line
@@ -2121,8 +2121,8 @@ for (linenum = 0; linenum < 4; linenum++) {
 			continue;
 		for (childs_line = 0; childs_line < 4; childs_line++) {
 			// find vert numbers for the line's two end points
-			childs_point0 = line_vert [side_line [childs_side][childs_line]][0]; 
-			childs_point1 = line_vert [side_line [childs_side][childs_line]][1]; 
+			childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0]; 
+			childs_point1 = lineVertTable [sideLineTable [childs_side][childs_line]][1]; 
 			childs_vert0  = childSeg->m_info.verts [childs_point0]; 
 			childs_vert1  = childSeg->m_info.verts [childs_point1]; 
 			// if points of child's line== corresponding points of parent
@@ -2390,7 +2390,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 	if (segP->m_info.children [nSide] < 0)
 		continue;
 	for (vertNum = 0; vertNum < 4; vertNum++, h++)
-		*Vertices (h) = *Vertices (segP->m_info.verts [side_vert [nSide][vertNum]]);
+		*Vertices (h) = *Vertices (segP->m_info.verts [sideVertTable [nSide][vertNum]]);
 	}
 VertCount () = h;
 #endif
@@ -2404,7 +2404,7 @@ segCenter /= FIX (8);
 memset (bVertDone, 0, sizeof (bVertDone));
 for (nSide = 0; nSide < 6; nSide++) {
 	for (vertNum = 0; vertNum < 4; vertNum++) {
-		j = side_vert [nSide][vertNum];
+		j = sideVertTable [nSide][vertNum];
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
@@ -2421,38 +2421,38 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 	segP = Segments (nSegment);
 	oppSideNum = oppSides [nSide];
 	for (vertNum = 0; vertNum < 4; vertNum++) {
-		i = side_vert [nSide][vertNum];
+		i = sideVertTable [nSide][vertNum];
 		segP->m_info.verts [i] = centerSegP->m_info.verts [i];
 #if 0
-		j = side_vert [oppSideNum][vertNum];
+		j = sideVertTable [oppSideNum][vertNum];
 		segP->m_info.verts [j] = h + i;
 #else
 		if ((nSide & 1) || (nSide >= 4)) {
-			i = line_vert [side_line [nSide][0]][0];
-			j = line_vert [side_line [oppSideNum][2]][0];
+			i = lineVertTable [sideLineTable [nSide][0]][0];
+			j = lineVertTable [sideLineTable [oppSideNum][2]][0];
 			segP->m_info.verts [j] = h + i;
-			i = line_vert [side_line [nSide][0]][1];
-			j = line_vert [side_line [oppSideNum][2]][1];
+			i = lineVertTable [sideLineTable [nSide][0]][1];
+			j = lineVertTable [sideLineTable [oppSideNum][2]][1];
 			segP->m_info.verts [j] = h + i;
-			i = line_vert [side_line [nSide][2]][0];
-			j = line_vert [side_line [oppSideNum][0]][0];
+			i = lineVertTable [sideLineTable [nSide][2]][0];
+			j = lineVertTable [sideLineTable [oppSideNum][0]][0];
 			segP->m_info.verts [j] = h + i;
-			i = line_vert [side_line [nSide][2]][1];
-			j = line_vert [side_line [oppSideNum][0]][1];
+			i = lineVertTable [sideLineTable [nSide][2]][1];
+			j = lineVertTable [sideLineTable [oppSideNum][0]][1];
 			segP->m_info.verts [j] = h + i;
 			}
 		else {
-			i = line_vert [side_line [nSide][0]][0];
-			j = line_vert [side_line [oppSideNum][2]][1];
+			i = lineVertTable [sideLineTable [nSide][0]][0];
+			j = lineVertTable [sideLineTable [oppSideNum][2]][1];
 			segP->m_info.verts [j] = h + i;
-			i = line_vert [side_line [nSide][0]][1];
-			j = line_vert [side_line [oppSideNum][2]][0];
+			i = lineVertTable [sideLineTable [nSide][0]][1];
+			j = lineVertTable [sideLineTable [oppSideNum][2]][0];
 			segP->m_info.verts [j] = h + i;
-			i = line_vert [side_line [nSide][2]][0];
-			j = line_vert [side_line [oppSideNum][0]][1];
+			i = lineVertTable [sideLineTable [nSide][2]][0];
+			j = lineVertTable [sideLineTable [oppSideNum][0]][1];
 			segP->m_info.verts [j] = h + i;
-			i = line_vert [side_line [nSide][2]][1];
-			j = line_vert [side_line [oppSideNum][0]][0];
+			i = lineVertTable [sideLineTable [nSide][2]][1];
+			j = lineVertTable [sideLineTable [oppSideNum][0]][0];
 			segP->m_info.verts [j] = h + i;
 			}
 #endif
@@ -2483,7 +2483,7 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 memset (bVertDone, 0, sizeof (bVertDone));
 for (nSide = 0; nSide < 6; nSide++) {
 	for (vertNum = 0; vertNum < 4; vertNum++) {
-		j = side_vert [nSide][vertNum];
+		j = sideVertTable [nSide][vertNum];
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
@@ -2504,9 +2504,9 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 					continue;
 				h = 0;
 				for (i = 0; i < 4; i++) {
-					k = segP->m_info.verts [side_vert [nSide][i]];
+					k = segP->m_info.verts [sideVertTable [nSide][i]];
 					for (j = 0; j < 4; j++) {
-						if (k == childSegP->m_info.verts [side_vert [childSideNum][j]]) {
+						if (k == childSegP->m_info.verts [sideVertTable [childSideNum][j]]) {
 							h++;
 							break;
 							}
@@ -2798,7 +2798,7 @@ void CSegment::SetUV (INT16 nSide, INT16 x, INT16 y)
 // copy side's four points into A
 
 for (i = 0; i < 4; i++) {
-	nVertex = m_info.verts [side_vert [nSide][i]]; 
+	nVertex = m_info.verts [sideVertTable [nSide][i]]; 
 	A [i] = CDoubleVector (*theMine->Vertices (nVertex)); 
 	}
 

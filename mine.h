@@ -9,14 +9,14 @@
 #define MAX_LIGHT_DEPTH 6
 
 // external data
-extern UINT8 side_vert[6][4];
-extern UINT8 opp_side[6];
-extern UINT8 opp_side_vert[6][4];
-extern UINT8 line_vert[12][2];
-extern UINT8 side_line[6][4];
-extern UINT8 connectPoints[8][3];
-extern INT8 point_sides[8][3];
-extern INT8 point_corners[8][3];
+extern UINT8 sideVertTable[6][4];
+extern UINT8 oppSideTable[6];
+extern UINT8 oppSideVertTable[6][4];
+extern UINT8 lineVertTable[12][2];
+extern UINT8 sideLineTable[6][4];
+extern UINT8 connectPointTable[8][3];
+extern INT8 pointSideTable[8][3];
+extern INT8 pointCornerTable[8][3];
 extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
 extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 extern CUVL default_uvls[4];
@@ -368,7 +368,7 @@ public:
 	inline CSide *CurrSide ()
 		{ return CurrSeg ()->m_sides + Current ()->nSide; }
 	inline INT16 CurrVert ()
-		{ return CurrSeg ()->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; }
+		{ return CurrSeg ()->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; }
 	inline CGameObject *CurrObj ()
 		{ return Objects () + Current ()->nObject; }
 	void Mark ();

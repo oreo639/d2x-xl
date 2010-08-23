@@ -95,10 +95,10 @@ memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 INT32 i, j;
 for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
-	switch(objP->type) {
+	switch(objP->m_info.type) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
-			m_nContained [0] += objP->contains_count;
+			m_nContained [0] += objP->contents.count;
 			break;
 		case OBJ_HOSTAGE:
 			m_nObjects [1]++;
@@ -113,13 +113,13 @@ for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 			m_nObjects [4]++;
 			break;
 		case OBJ_POWERUP:
-			switch (powerup_types [objP->id]) {
+			switch (powerup_types [objP->m_info.id]) {
 				case POWERUP_WEAPON_MASK:
 					m_nObjects [4]++;
 					break;
 				case POWERUP_POWERUP_MASK:
 					m_nObjects [5]++;
-					m_nContained [1] += objP->contains_count;
+					m_nContained [1] += objP->contents.count;
 					break;
 				case POWERUP_KEY_MASK:
 					m_nObjects [6]++;
@@ -147,7 +147,7 @@ INT32 CDiagTool::CountTextures (void)
 memset (bUsed, 0, sizeof (bUsed));
 for (i = theMine->SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->m_sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
-		if ((segP->m_info.children [j] == -1) || (sideP->nWall < h)) {
+		if ((segP->m_info.children [j] == -1) || (sideP->m_info.nWall < h)) {
 			t = sideP->m_info.nBaseTex;
 //			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
 			if ((t >= 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {

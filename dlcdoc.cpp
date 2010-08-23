@@ -629,7 +629,7 @@ void CDlcDoc::OnInsertObjectRobot ()
 {
 if (theMine->CopyObject (OBJ_ROBOT)) {
 	theMine->CurrObj ()->id = 3; // class 1 drone
-	theMine->SetObjectData (theMine->CurrObj ()->type);
+	theMine->SetObjectData (theMine->CurrObj ()->m_info.type);
 	}
 }
 
@@ -637,7 +637,7 @@ void CDlcDoc::OnInsertObjectWeapon ()
 {
 if (theMine->CopyObject (OBJ_WEAPON)) {
 	theMine->CurrObj ()->id = 3; // laser
-	theMine->SetObjectData (theMine->CurrObj ()->type);
+	theMine->SetObjectData (theMine->CurrObj ()->m_info.type);
 	}
 }
 
@@ -645,7 +645,7 @@ void CDlcDoc::OnInsertObjectPowerup ()
 {
 if (theMine->CopyObject (OBJ_POWERUP)) {
 	theMine->CurrObj ()->id = 1; // energy boost
-	theMine->SetObjectData (theMine->CurrObj ()->type);
+	theMine->SetObjectData (theMine->CurrObj ()->m_info.type);
 	}
 }
 
@@ -653,7 +653,7 @@ void CDlcDoc::OnInsertObjectGuideBot ()
 {
 if (theMine->CopyObject (OBJ_ROBOT)) {
 	theMine->CurrObj ()->id = 33; // guide bot
-	theMine->SetObjectData (theMine->CurrObj ()->type);
+	theMine->SetObjectData (theMine->CurrObj ()->m_info.type);
 	}
 }
 
@@ -661,7 +661,7 @@ void CDlcDoc::OnInsertObjectReactor ()
 {
 if (theMine->CopyObject (OBJ_CNTRLCEN)) {
 	theMine->CurrObj ()->id = 2; // standard reactor
-	theMine->SetObjectData (theMine->CurrObj ()->type);
+	theMine->SetObjectData (theMine->CurrObj ()->m_info.type);
 	}
 }
 

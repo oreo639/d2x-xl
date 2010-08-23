@@ -547,12 +547,12 @@ INT32 RLEExpand (D2_PIG_TEXTURE *bmP, UINT8 *texBuf)
 	UINT16 nLineSize;
 
 bufSize = bmP->xsize * bmP->ysize;
-if (!(bmP->flags & BM_FLAG_RLE))
+if (!(bmP->m_info.flags & BM_FLAG_RLE))
 	return bufSize;
 if (!(expandBuf = (UINT8 *) malloc (bufSize)))
 	return -1;
 
-bBigRLE = (bmP->flags & BM_FLAG_RLE_BIG) != 0;
+bBigRLE = (bmP->m_info.flags & BM_FLAG_RLE_BIG) != 0;
 if (bBigRLE)
 	pSrc = texBuf + 4 + 2 * bmP->ysize;
 else
@@ -586,7 +586,7 @@ for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
 	}
 l = (INT32) (pDest - expandBuf);
 memcpy (texBuf, expandBuf, l);
-bmP->flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
+bmP->m_info.flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
 free (expandBuf);
 return l;
 }
@@ -604,7 +604,7 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	HGLOBAL		hGlobal = 0;
 	UINT32		*n_textures = 0;
 	UINT16		*texture_table;
-	UINT16		texture1;
+	UINT16		nBaseTex;
 	UINT16		*xlatTbl = NULL;
 	INT32			tWidth, tHeight, tSize;
 	UINT32		offset, hdrOffset, bmpOffset, hdrSize, xlatTblSize;
@@ -672,10 +672,10 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 	// read texture index
 	UINT16 texture_index = xlatTbl [tnum];
 	// look it up in the list of textures
-	for (texture1 = 0; texture1 < MAX_D2_TEXTURES; texture1++)
-		if (texture_table [texture1] == texture_index)
+	for (nBaseTex = 0; nBaseTex < MAX_D2_TEXTURES; nBaseTex++)
+		if (texture_table [nBaseTex] == texture_index)
 			break;
-	bExtraTexture = (texture1 >= MAX_D2_TEXTURES);
+	bExtraTexture = (nBaseTex >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
 #if 1
 	fseek (fTextures, hdrOffset + tnum * sizeof (D2_PIG_TEXTURE), SEEK_SET);
@@ -705,41 +705,41 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		pxTx->texture_index = texture_index;
 		pxTx->texture.m_pDataBM = NULL;
 		pTx = &(pxTx->texture);
-		texture1 = 0;
+		nBaseTex = 0;
 		}
 	else
 		pTx = theMine->Textures (fileType);
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {
-		if (pTx [texture1].m_pDataBM)
-			delete pTx [texture1].m_pDataBM;
-		pTx [texture1].m_pDataBM = ptr;
+		if (pTx [nBaseTex].m_pDataBM)
+			delete pTx [nBaseTex].m_pDataBM;
+		pTx [nBaseTex].m_pDataBM = ptr;
 		if (d2texture.flags & 0x80) {
 			ptr = (UINT8*) malloc (tSize * sizeof (tRGBA));
 			if (ptr) {
-				pTx [texture1].m_pDataTGA = (tRGBA *) ptr;
-				pTx [texture1].m_nFormat = 1;
+				pTx [nBaseTex].m_pDataTGA = (tRGBA *) ptr;
+				pTx [nBaseTex].m_nFormat = 1;
 				}
 			else {
-				delete pTx [texture1].m_pDataBM;
+				delete pTx [nBaseTex].m_pDataBM;
 				continue;
 				}
 			}
 		else
-			pTx [texture1].m_nFormat = 0;
-		pTx [texture1].m_width = tWidth;
-		pTx [texture1].m_height = tHeight;
-		pTx [texture1].m_size = tSize;
-		pTx [texture1].m_bValid = 1;
+			pTx [nBaseTex].m_nFormat = 0;
+		pTx [nBaseTex].m_width = tWidth;
+		pTx [nBaseTex].m_height = tHeight;
+		pTx [nBaseTex].m_size = tSize;
+		pTx [nBaseTex].m_bValid = 1;
 		// read texture into memory (assume non-compressed)
 #if 1
 		fseek (fTextures, bmpOffset + d2texture.offset, SEEK_SET);
 #endif
-		if (pTx [texture1].m_nFormat) {
-			fread (ptr, pTx [texture1].m_size * sizeof (tRGBA), 1, fTextures);
-			pTx [texture1].m_bValid = 
-				TGA2Bitmap (pTx [texture1].m_pDataTGA, pTx [texture1].m_pDataBM, (INT32) tWidth, (INT32) tHeight);
+		if (pTx [nBaseTex].m_nFormat) {
+			fread (ptr, pTx [nBaseTex].m_size * sizeof (tRGBA), 1, fTextures);
+			pTx [nBaseTex].m_bValid = 
+				TGA2Bitmap (pTx [nBaseTex].m_pDataTGA, pTx [nBaseTex].m_pDataBM, (INT32) tWidth, (INT32) tHeight);
 			}
 		else {
 			if (d2texture.flags & BM_FLAG_RLE) {
@@ -755,7 +755,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 				}
 			}
 		if (!bExtraTexture)
-			pTx [texture1].m_bModified = TRUE;
+			pTx [nBaseTex].m_bModified = TRUE;
 		}
 	}
 if (nUnknownTextures) {
@@ -1137,7 +1137,7 @@ static MyBMI my_bmi;
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
 
-bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 nSegment, INT32 nSide, INT32 texture1, INT32 texture2, INT32 xOffset, INT32 yOffset)
+bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 nSegment, INT32 nSide, INT32 nBaseTex, INT32 nOvlTex, INT32 xOffset, INT32 yOffset)
 {
 if (!theMine) 
 	return false;
@@ -1163,23 +1163,23 @@ if (!pDC)
 CRect	rc;
 pWnd->GetClientRect (rc);
 
-if (texture1 < 0) {
+if (nBaseTex < 0) {
 	segP = (nSegment < 0) ? theMine->CurrSeg () : theMine->Segments (nSegment);
 	sideP = (nSide < 0) ? theMine->CurrSide () : segP->m_sides + nSide;
 	INT32 nSide = theMine->Current ()->nSide;
-	texture1 = sideP->m_info.nBaseTex;
-	texture2 = sideP->m_info.nOvlTex & 0x1fff;
+	nBaseTex = sideP->m_info.nBaseTex;
+	nOvlTex = sideP->m_info.nOvlTex & 0x1fff;
 	if (segP->m_info.children [nSide] == -1)
 		bShowTexture = TRUE;
 	else {
-		nWall = sideP->nWall;
+		nWall = sideP->m_info.nWall;
 		bShowTexture = (nWall < theMine->GameInfo ().walls.count);
 		}
 	}
-if ((texture1 < 0) || (texture1 >= MAX_TEXTURES + 10))
+if ((nBaseTex < 0) || (nBaseTex >= MAX_TEXTURES + 10))
 	bShowTexture = false;
-if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))	// this allows to suppress bitmap display by 
-	bShowTexture = false;									// passing 0 for texture 1 and -1 for texture2
+if ((nOvlTex < 0) || (nOvlTex >= MAX_TEXTURES))	// this allows to suppress bitmap display by 
+	bShowTexture = false;									// passing 0 for texture 1 and -1 for nOvlTex
 
 if (bShowTexture) {
 	// check pig file
@@ -1194,7 +1194,7 @@ if (bShowTexture) {
 		data_offset = -1;  // pig file not found
 	if (data_offset > 0x10000L) {  // pig file type is v1.4a or descent 2 type
 		CTexture	tx (bmBuf);
-		if (DefineTexture (texture1, texture2, &tx, xOffset, yOffset))
+		if (DefineTexture (nBaseTex, nOvlTex, &tx, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
 		pDC->RealizePalette ();

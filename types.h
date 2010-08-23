@@ -185,11 +185,11 @@ typedef struct {
   INT8		weapon_type;
   INT8		weapon_type2;		  // Secondary weapon number, -1 means none, otherwise gun #0 fires this weapon.
   INT8		n_guns;			  // how many different gun positions
-  INT8		contains_id;		  // ID of powerup this robot can contain.
+  INT8		contents.id;		  // ID of powerup this robot can contain.
 
-  INT8		contains_count;		  // Max number of things this instance can contain.
-  INT8		contains_prob;		  // Probability that this instance will contain something in N/16
-  INT8		contains_type;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
+  INT8		contents.count;		  // Max number of things this instance can contain.
+  INT8		contents.prob;		  // Probability that this instance will contain something in N/16
+  INT8		contents.type;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
   INT8		kamikaze;		  // !0 means commits suicide when hits you, strength thereof. 0 means no.
 
   INT16		score_value;		  // Score from this robot.
@@ -258,7 +258,7 @@ typedef struct {
 } JOINTPOS;
 
 typedef struct {
-  INT8	render_type;		// How to draw 0=laser, 1=blob, 2=object
+  INT8	renderType;		// How to draw 0=laser, 1=blob, 2=object
   INT8	persistent;		// 0 = dies when it hits something, 1 = continues (eg, fusion cannon)
   INT16	model_num;		// Model num if rendertype==2.
   INT16	model_num_inner;	// Model num of inner part if rendertype==2.
@@ -648,13 +648,19 @@ public:
 		}
 };
 
+typedef struct tObjContentsInfo {
+	INT8			type; //  Type of object this object contains (eg, spider contains powerup) 
+	INT8			id;   //  ID of object this object contains (eg, id = blue type = key) 
+	INT8			count;// number of objects of type:id this object contains 
+} tObjContentsInfo;
+
 typedef struct tGameObject {
 	INT16			signature;     // reduced size to save memory 
 	INT8			type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
 	INT8			id;            // which form of object...which powerup, robot, etc. 
-	UINT8			control_type;  // how this object is controlled 
-	UINT8			movement_type; // how this object moves 
-	UINT8			render_type;   //  how this object renders 
+	UINT8			controlType;  // how this object is controlled 
+	UINT8			movementType; // how this object moves 
+	UINT8			renderType;   //  how this object renders 
 	UINT8			flags;         // misc flags 
 	UINT8			multiplayer;   // object only available in multiplayer games 
 	INT16			nSegment;      // segment number containing object 
@@ -662,10 +668,8 @@ typedef struct tGameObject {
 	CFixMatrix	orient;        // orientation of object in world 
 	FIX			size;          // 3d size of object - for collision detection 
 	FIX			shields;       // Starts at maximum, when <0, object dies.. 
-	CFixVector	last_pos;      // where object was last frame 
-	INT8			contains_type; //  Type of object this object contains (eg, spider contains powerup) 
-	INT8			contains_id;   //  ID of object this object contains (eg, id = blue type = key) 
-	INT8			contains_count;// number of objects of type:id this object contains 
+	CFixVector	lastPos;			// where object was last frame 
+	tObjContentsInfo contents;
 } tGameObject;
 
 class CGameObject : public CGameItem {
@@ -727,7 +731,7 @@ public:
 		}
 
 	void Clear (void) {
-		m_nSegment = m_nSide = 0;
+		m_nSegment = m_nSide = -1;
 		}
 };
 
@@ -740,18 +744,18 @@ typedef struct tWall {
 	UINT8		nTrigger;       // Which trigger is associated with the wall.
 	INT8		nClip;          // Which  animation associated with the wall. 
 	UINT8		keys;           // which keys are required
+	// the following two Descent2 bytes replace the "INT16 pad" of Descent1
+	INT8		controlling_trigger; // which trigger causes something to happen here.
+	// Not like "trigger" above, which is the trigger on this wall.
+	//	Note: This gets stuffed at load time in gamemine.c.  
+	// Don't try to use it in the editor.  You will be sorry!
+	INT8		cloak_value;	// if this wall is cloaked, the fade value
 } tWall;
 
 class CWall : public CSideKey, public CGameItem {
 public:
 	tWall		m_info;
  
- // the following two Descent2 bytes replace the "INT16 pad" of Descent1
-	INT8		controlling_trigger; // which trigger causes something to happen here.
-		// Not like "trigger" above, which is the trigger on this wall.
-		//	Note: This gets stuffed at load time in gamemine.c.  
-		// Don't try to use it in the editor.  You will be sorry!
-	INT8		cloak_value;	// if this wall is cloaked, the fade value
 
 	INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
@@ -856,6 +860,20 @@ public:
 		for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			m_targets [i].Clear ();
 		}
+	inline INT32 ReadTargets (FILE* fp) {
+		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+			m_targets [i].m_nSegment = read_INT16(fp);
+		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+			m_targets [i].m_nSide = read_INT16(fp);
+		return 1;
+		}
+	inline void WriteTargets (FILE* fp) {
+		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+			write_INT16 (m_targets [i].m_nSegment, fp);
+		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+			write_INT16 (m_targets [i].m_nSide, fp);
+		return 1;
+		}
 
 };
 
@@ -873,13 +891,20 @@ public:
 	struct tTrigger m_info;
 	//inline CSideKey& operator[](UINT32 i) { return targets [i]; }
 
+	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE *fp, INT32 version, bool bObjTrigger);
 	virtual void Write (FILE *fp, INT32 version, bool bObjTrigger);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		CTriggerTargets::Clear ();
 		}
-	virtual CGameItem* Next (void) { return this + 1; }
+	void CTrigger::Setup (INT16 type, INT16 flags)
+	inline const bool operator< (const CTrigger& other) {
+		return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.nType < other.m_info.nType)); 
+		}
+	inline const bool operator> (const CTrigger& other) {
+		return (m_info.nObject > other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.nType > other.m_info.nType)); 
+		}
 };
 
 // New stuff, 10/14/95: For shooting out lights and monitors.

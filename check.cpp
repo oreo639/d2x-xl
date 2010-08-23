@@ -91,8 +91,8 @@ if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
 	theMine->Current ()->nPoint = pbp->nPoint;
 if ((pbp->nWall >= 0) && (pbp->nWall < theMine->GameInfo ().walls.count))
 	nWall = pbp->nWall;
-else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < theMine->GameInfo ().triggers.count))
-	nWall = theMine->FindTriggerWall (pbp->nTrigger);
+else if ((pbp->m_info.nTrigger >= 0) && (pbp->m_info.nTrigger < theMine->GameInfo ().triggers.count))
+	nWall = theMine->FindTriggerWall (pbp->m_info.nTrigger);
 else
 	nWall = -1;
 if ((nWall >= 0) && MarkSegment ((wallP = theMine->Walls (nWall))->m_nSegment))
@@ -130,7 +130,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
   // copy vertnums into an array
 	CSegment*	segP = theMine->Segments (nSegment);
   for (i=0;i<4;i++) {
-    nVertex[i] = segP->verts[side_vert[nSide][i]];
+    nVertex[i] = segP->verts[sideVertTable[nSide][i]];
 	 vert [i] = *theMine->Vertices (nVertex [i]);
   }
 
@@ -231,8 +231,8 @@ return fabs (angle);  // angle should be positive since acos returns 0 to PI but
 
 INT32 CDiagTool::CheckId (CGameObject *objP) 
 {
-	INT32 type = objP->type;
-	INT32 id = objP->id;
+	INT32 type = objP->m_info.type;
+	INT32 id = objP->m_info.id;
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
@@ -273,7 +273,7 @@ INT32 CDiagTool::CheckId (CGameObject *objP)
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		objP->id = theApp.IsD1File () ? 1 : 2;
+		objP->m_info.id = theApp.IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -287,7 +287,7 @@ INT32 CDiagTool::CheckId (CGameObject *objP)
 		if (id != SMALLMINE_ID) {
 			if (!m_bAutoFixBugs)
 				return 1;
-			objP->id = SMALLMINE_ID;
+			objP->m_info.id = SMALLMINE_ID;
 			return 2;
 		}
 	}
@@ -367,7 +367,7 @@ if (h >= 0) {
 	pbp->nLine = linenum;
 	pbp->nPoint = pointnum;
 	pbp->nWall = nWall;
-	pbp->nTrigger = nTrigger;
+	pbp->m_info.nTrigger = nTrigger;
 	pbp->nObject = objnum;
 	pbp->nChild = childnum;
 	LBBugs ()->SetItemDataPtr (h, (void *) pbp);
@@ -468,9 +468,9 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (pointnum = 0; pointnum < 8; pointnum++) {
 // define vert numbers
 		vert0 = segP->verts[pointnum];
-		vert1 = segP->verts[connectPoints[pointnum][0]];
-		vert2 = segP->verts[connectPoints[pointnum][1]];
-		vert3 = segP->verts[connectPoints[pointnum][2]];
+		vert1 = segP->verts[connectPointTable[pointnum][0]];
+		vert2 = segP->verts[connectPointTable[pointnum][1]];
+		vert3 = segP->verts[connectPointTable[pointnum][2]];
 		angle = CalcAngle (vert0,vert1,vert2,vert3);
 		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
 		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));
@@ -497,8 +497,8 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 // Check length of each line.
 #if 0
 	for (linenum=0;linenum<12;linenum++) {
-		length = theMine->CalcLength (theMine->Vertices (segP->verts[line_vert[linenum][0]]),
-											  theMine->Vertices (segP->verts[line_vert[linenum][1]]));
+		length = theMine->CalcLength (theMine->Vertices (segP->verts[lineVertTable[linenum][0]]),
+											  theMine->Vertices (segP->verts[lineVertTable[linenum][1]]));
 		if (length < (double)F1_0) {
 			sprintf_s (message, sizeof (message),"WARNING: Line length too INT16 (cube=%d,line=%d)",nSegment,linenum);
 			if (UpdateStats (message, 0, nSegment, -1, linenum))
@@ -531,8 +531,8 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 					memset (match, 0, sizeof (match));
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
-							if (theMine->Segments (nSegment)->verts[side_vert[nSide][i]] ==
-								 theMine->Segments (child)->verts[side_vert[sidenum2][j]])
+							if (theMine->Segments (nSegment)->verts[sideVertTable[nSide][i]] ==
+								 theMine->Segments (child)->verts[sideVertTable[sidenum2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
 						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,child=%d)",nSegment,nSide,child);
@@ -647,18 +647,18 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		 radius = Distance (*theMine->Vertices (segP->verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }
-	object_radius = Distance (objP->pos, center);
-   if ((object_radius > max_radius) && (objP->type != OBJ_EFFECT)) {
+	object_radius = Distance (objP->m_info.pos, center);
+   if ((object_radius > max_radius) && (objP->m_info.type != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",nObject,nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
 
     // check for non-zero flags (I don't know what these flags are for)
-   flags = objP->flags;
+   flags = objP->m_info.flags;
 	if (flags != 0) {
 		if (m_bAutoFixBugs) {
-			objP->flags = 0;
+			objP->m_info.flags = 0;
 			sprintf_s (message, sizeof (message),"FIXED: Flags for object non-zero (object=%d,flags=%d)",nObject,flags);
 			}
 		else
@@ -668,45 +668,45 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     }
 
     // check type range
-	 if ((objP->id < 0) || (objP->id > 255)) {
+	 if ((objP->m_info.id < 0) || (objP->m_info.id > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",nObject, objP->id);
-			objP->id = 0;
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",nObject, objP->m_info.id);
+			objP->m_info.id = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",nObject, objP->id);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",nObject, objP->m_info.id);
 		}
-	type = objP->type;
+	type = objP->m_info.type;
     switch (type) {
 	  case OBJ_PLAYER:
 		  if (!pPlayer)
 			  pPlayer = objP;
-			if (objP->id >= MAX_PLAYERS) {
+			if (objP->m_info.id >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",nObject, objP->id);
-				objP->id = MAX_PLAYERS - 1;
+					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",nObject, objP->m_info.id);
+				objP->m_info.id = MAX_PLAYERS - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->m_info.id);
 			}
 	  case OBJ_COOP:
-		  if (objP->id > 2) {
+		  if (objP->m_info.id > 2) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->id);
-				objP->id = 2;
+				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->m_info.id);
+				objP->m_info.id = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->m_info.id);
 			}
 			break;
 	  case OBJ_EFFECT:
-		  if (objP->id > SOUND_ID) {
+		  if (objP->m_info.id > SOUND_ID) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->id);
-				objP->id = 2;
+				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->m_info.id);
+				objP->m_info.id = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->m_info.id);
 			}
 			break;
 	  case OBJ_ROBOT:
@@ -731,7 +731,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
-    id = objP->id;
+    id = objP->m_info.id;
 
     // check id range
     if (h = CheckId (objP)) {
@@ -744,10 +744,10 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     }
 
 	// check contains count range
-    count = objP->contains_count;
+    count = objP->contents.count;
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
-			objP->contains_count = 0;
+			objP->contents.count = 0;
 		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",nObject,count);
 			}
 		else
@@ -758,17 +758,17 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 
     // check container type range
 	if (count > 0) {
-      type = objP->contains_type;
+      type = objP->contents.type;
 	  if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 		if (m_bAutoFixBugs) {
-			objP->contains_type = OBJ_POWERUP;
+			objP->contents.type = OBJ_POWERUP;
 			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",nObject,type);
 			}
 		else
 			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
 	if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 	  }
-	  id = objP->contains_id;
+	  id = objP->contents.id;
 	  // check contains id range
 	  if (CheckId (objP)) {
 	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
@@ -778,7 +778,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
   }
 
   // make sure object 0 is player 0; if not fix it
-if (theMine->Objects (0)->type != OBJ_PLAYER || theMine->Objects (0)->id != 0) {
+if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->id != 0) {
 	if (m_bAutoFixBugs) {
 		CGameObject h;
 		memcpy (&h, pPlayer, sizeof (CGameObject));
@@ -803,12 +803,12 @@ if (theMine->Objects (0)->type != OBJ_PLAYER || theMine->Objects (0)->id != 0) {
 	// count each
 	objP = theMine->Objects (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
-		if (objP->type == OBJ_PLAYER) {
+		if (objP->m_info.type == OBJ_PLAYER) {
 			nPlayers [0]++;
 			if (CheckAndFixPlayer (0, MAX_PLAYERS, nObject, players))
 				bFix |= 1;
 			}
-		else if (objP->type == OBJ_COOP) {
+		else if (objP->m_info.type == OBJ_COOP) {
 			nPlayers [1]++;
 			if (CheckAndFixPlayer (0, 3, nObject, players + MAX_PLAYERS))
 				bFix |= 2;
@@ -829,13 +829,13 @@ if (m_bAutoFixBugs) {
 		}
 	objP = theMine->Objects (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
-		if (objP->type == OBJ_PLAYER) {
-			if ((bFix & 1) && (objP->id >= 0) && (objP->id < MAX_PLAYERS))
-				objP->id = players [objP->id] - 1;
+		if (objP->m_info.type == OBJ_PLAYER) {
+			if ((bFix & 1) && (objP->m_info.id >= 0) && (objP->m_info.id < MAX_PLAYERS))
+				objP->m_info.id = players [objP->m_info.id] - 1;
 			}
-		else if (objP->type == OBJ_COOP) {
-			if ((bFix & 2) && (objP->id >= MAX_PLAYERS) && (objP->id < MAX_PLAYERS + MAX_COOP_PLAYERS))
-				objP->id = players [objP->id] - 1;
+		else if (objP->m_info.type == OBJ_COOP) {
+			if ((bFix & 2) && (objP->m_info.id >= MAX_PLAYERS) && (objP->m_info.id < MAX_PLAYERS + MAX_COOP_PLAYERS))
+				objP->m_info.id = players [objP->m_info.id] - 1;
 			}
 		}
 	}
@@ -868,7 +868,7 @@ count = 0;
 objP = theMine->Objects (0);
 for (nObject=0;nObject<objCount;nObject++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
-	type = objP->type;
+	type = objP->m_info.type;
 	if (type == OBJ_CNTRLCEN) {
 		if (theMine->Segments (objP->m_info.nSegment)->function != SEGMENT_FUNC_CONTROLCEN) {
 			if (m_bAutoFixBugs && theMine->AddRobotMaker (objP->m_info.nSegment, false, false))
@@ -951,10 +951,10 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	count = 0;
 	wallP = theMine->Walls (0);
 	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
-		if (wallP->nTrigger == nTrigger) {
+		if (wallP->m_info.nTrigger == nTrigger) {
 			// if exit, make sure it is linked to CReactorTrigger
-			INT32 tt = trigP->type;
-			INT32 tf = trigP->flags;
+			INT32 tt = trigP->m_info.type;
+			INT32 tf = trigP->m_info.flags;
 			if (theApp.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->m_count; i++)
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
@@ -1006,8 +1006,8 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	else
 		trigSeg = trigSide = -1;
 	// check number of links of trigP (only for
-	INT32 tt = trigP->type;
-	INT32 tf = trigP->flags;
+	INT32 tt = trigP->m_info.type;
+	INT32 tf = trigP->m_info.flags;
 	if (trigP->m_count == 0) {
 		if (theApp.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
@@ -1070,7 +1070,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				} else {
 					CSegment *segP = theMine->Segments (nSegment);
 					// check door opening trigP
-//						if (trigP->flags == TRIGGER_CONTROL_DOORS) {
+//						if (trigP->m_info.flags == TRIGGER_CONTROL_DOORS) {
 					if (theApp.IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
@@ -1122,7 +1122,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}
-//						if (trigP->flags == TRIGGER_MATCEN) {
+//						if (trigP->m_info.flags == TRIGGER_MATCEN) {
 					else if (theApp.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((segP->function != SEGMENT_FUNC_ROBOTMAKER) && (segP->function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
@@ -1148,8 +1148,8 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	else
 		trigSeg = trigSide = -1;
-	INT32 tt = trigP->type;
-	INT32 tf = trigP->flags;
+	INT32 tt = trigP->m_info.type;
+	INT32 tf = trigP->m_info.flags;
 	if (theApp.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
@@ -1163,7 +1163,7 @@ trigCount = theMine->NumObjTriggers ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	trigP = theMine->ObjTriggers (nTrigger);
-	if ((trigP->type != TT_MESSAGE) && (trigP->type != TT_SOUND) && (trigP->type != TT_COUNTDOWN) && !trigP->vcount) {
+	if ((trigP->m_info.type != TT_MESSAGE) && (trigP->m_info.type != TT_SOUND) && (trigP->m_info.type != TT_COUNTDOWN) && !trigP->vcount) {
 		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->nObject);
 		if (UpdateStats (message,0, nTrigger, trigP->nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}
@@ -1417,10 +1417,10 @@ memset (wallFixed, 0, sizeof (wallFixed));
 *message = '\0';
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-		nWall = sideP->nWall;
+		nWall = sideP->m_info.nWall;
 		if ((nWall < 0) || (nWall >= wallCount) || (nWall >= maxWalls)) {
 			if (nWall != NO_WALL)
-				sideP->nWall = NO_WALL;
+				sideP->m_info.nWall = NO_WALL;
 			continue;
 			}
 		w = theMine->Walls (nWall);
@@ -1430,10 +1430,10 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 							"FIXED: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							nSegment, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
-					sideP->nWall = NO_WALL;
+					sideP->m_info.nWall = NO_WALL;
 				else {
 					if (theMine->Segments (w->m_nSegment)->m_sides [w->m_nSide].m_info.nWall == nWall)
-						sideP->nWall = NO_WALL;
+						sideP->m_info.nWall = NO_WALL;
 					else {
 						w->m_nSegment = nSegment;
 						w->m_nSide = nSide;
@@ -1445,7 +1445,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits in wrong cube (cube=%d, wall=%d, parent=%d)",
 							nSegment, nWall, w->m_nSegment);
-			if (UpdateStats (message,1, nSegment, nSide, -1, -1, -1, sideP->nWall)) return true;
+			if (UpdateStats (message,1, nSegment, nSide, -1, -1, -1, sideP->m_info.nWall)) return true;
 			} 
 		else if (w->m_nSide != nSide) {
 			if (m_bAutoFixBugs) {
@@ -1453,15 +1453,15 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 							"FIXED: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							nSegment, nSide, nWall, w->m_nSegment);
 				if (wallFixed [nWall])
-					sideP->nWall = NO_WALL;
+					sideP->m_info.nWall = NO_WALL;
 				else {
 					ow = OppWall (nSegment, nSide);
-					if (ow && (ow->type == w->type)) {
+					if (ow && (ow->m_info.type == w->m_info.type)) {
 						segP->m_sides [w->m_nSide].m_info.nWall = NO_WALL;
 						w->m_nSide = nSide;
 						}
 					else if (segP->m_sides [w->m_nSide].m_info.nWall == nWall)
-						sideP->nWall = NO_WALL;
+						sideP->m_info.nWall = NO_WALL;
 					else
 						w->m_nSide = nSide;
 					wallFixed [nWall] = 1;
@@ -1471,17 +1471,17 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall sits at wrong side (cube=%d, side=%d, wall=%d, parent=%d)",
 							nSegment, nSide, nWall, w->m_nSegment);
-			if (UpdateStats (message,1, -1, -1, -1, -1, -1, sideP->nWall)) return true;
+			if (UpdateStats (message,1, -1, -1, -1, -1, -1, sideP->m_info.nWall)) return true;
 			}
 		} 
 	}
 for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wallP->type > (theApp.IsD1File () ? WALL_CLOSED : theMine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wallP->m_info.type > (theApp.IsD1File () ? WALL_CLOSED : theMine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
-					nWall,wallP->type);
+					nWall,wallP->m_info.type);
 		if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 		}
 		// check range of segment number that the wall points to
@@ -1501,7 +1501,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	else {
 		// check to make sure segment points back to wall
 		sideP = theMine->Segments (wallP->m_nSegment)->m_sides + wallP->m_nSide;
-		if (sideP->nWall != nWall) {
+		if (sideP->m_info.nWall != nWall) {
 			w = theMine->Walls (nWall);
 			if ((nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
 				if (m_bAutoFixBugs) {
@@ -1520,7 +1520,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				}
 			else {
 				if (m_bAutoFixBugs) {
-					sideP->nWall = nWall;
+					sideP->m_info.nWall = nWall;
 					sprintf_s (message, sizeof (message),
 								"FIXED: Cube does not reference wall which sits in it (wall=%d, cube=%d)",
 								nWall,wallP->m_nSegment);
@@ -1533,17 +1533,17 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				}
 			}
 			// make sure trigger number of wall is in range
-		if ((wallP->nTrigger != NO_TRIGGER) && (wallP->nTrigger >= theMine->GameInfo ().triggers.count)) {
+		if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger >= theMine->GameInfo ().triggers.count)) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)",
-							nWall, wallP->nTrigger);
-				wallP->nTrigger = NO_TRIGGER;
+							nWall, wallP->m_info.nTrigger);
+				wallP->m_info.nTrigger = NO_TRIGGER;
 				}
 			else
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)",
-							nWall, wallP->nTrigger);
+							nWall, wallP->m_info.nTrigger);
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 #if 1 // linked walls not supported in DLE-XP and D2X-XL
@@ -1611,7 +1611,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 #endif
 		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			// check wall nClip
-		if ((wallP->type == WALL_CLOAKED) && (wallP->cloak_value > 31)) {
+		if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->cloak_value > 31)) {
 			if (m_bAutoFixBugs) {
 				wallP->cloak_value = 31;
 				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", nWall);
@@ -1619,7 +1619,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			else
 				sprintf_s (message, sizeof (message), "ERROR: Wall has invalid cloak value (wall=%d)", nWall);
 			}
-		if ((wallP->type == WALL_BLASTABLE || wallP->type == WALL_DOOR) &&
+		if ((wallP->m_info.type == WALL_BLASTABLE || wallP->m_info.type == WALL_DOOR) &&
 			 (   wallP->nClip < 0
 			  || wallP->nClip == 2
 //			     || wallP->nClip == 7
@@ -1632,7 +1632,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 			// Make sure there is a child to the segment
-		if (wallP->type != WALL_OVERLAY) {
+		if (wallP->m_info.type != WALL_OVERLAY) {
 			if (!(theMine->Segments (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
 				sprintf_s (message, sizeof (message),
 							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
@@ -1643,7 +1643,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				nSegment = theMine->Segments (wallP->m_nSegment)->m_info.children[wallP->m_nSide];
 				CSegment *segP = theMine->Segments (nSegment);
 				if ((nSegment >= 0 && nSegment < theMine->SegCount ()) &&
-					 (wallP->type == WALL_DOOR || wallP->type == WALL_ILLUSION)) {
+					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
 						if (segP->m_info.children[nSide] == wallP->m_nSegment)
@@ -1659,7 +1659,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 							UINT16 wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
 								 ((wallP->nClip != theMine->Walls (wallnum2)->nClip
-									|| wallP->type != theMine->Walls (wallnum2)->type))) {
+									|| wallP->m_info.type != theMine->Walls (wallnum2)->m_info.type))) {
 								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
 											nWall,nSegment);
@@ -1679,11 +1679,11 @@ for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	sideP = segP->m_sides;
 	for (nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (sideP->nWall <	wallCount) {
-			nWall = sideP->nWall;
+		if (sideP->m_info.nWall <	wallCount) {
+			nWall = sideP->m_info.nWall;
 			if (nWall >= wallCount) {
 				if (m_bAutoFixBugs) {
-					sideP->nWall = wallCount;
+					sideP->m_info.nWall = wallCount;
 					sprintf_s (message, sizeof (message),"FIXED: Cube has an invalid wall number (wall=%d, cube=%d)",nWall,nSegment);
 					}
 				else

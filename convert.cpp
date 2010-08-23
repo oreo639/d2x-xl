@@ -262,24 +262,24 @@ for (i = 0, wallP = theMine->Walls (0); i < wallCount; i++, wallP++) {
 // change trigP type and flags
 //-------------------------------------------
 for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.count; i++, trigP++) {
-	switch (trigP->flags) {
+	switch (trigP->m_info.flags) {
 		case TRIGGER_CONTROL_DOORS:
-			trigP->type = TT_OPEN_DOOR;
+			trigP->m_info.type = TT_OPEN_DOOR;
 			break;
 		case TRIGGER_EXIT:
-			trigP->type = TT_EXIT;
+			trigP->m_info.type = TT_EXIT;
 			break;
 		case TRIGGER_MATCEN:
-			trigP->type = TT_MATCEN;
+			trigP->m_info.type = TT_MATCEN;
 			break;
 		case TRIGGER_ILLUSION_OFF:
-			trigP->type = TT_ILLUSION_OFF;
+			trigP->m_info.type = TT_ILLUSION_OFF;
 			break;
 		case TRIGGER_ILLUSION_ON:
-			trigP->type = TT_ILLUSION_ON;
+			trigP->m_info.type = TT_ILLUSION_ON;
 			break;
 		case TRIGGER_SECRET_EXIT:
-			trigP->type = TT_SECRET_EXIT;
+			trigP->m_info.type = TT_SECRET_EXIT;
 			break;
 
 		// unsupported types
@@ -294,7 +294,7 @@ for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.cou
 			trigP--;
 			continue;
 		}
-	trigP->flags = 0;
+	trigP->m_info.flags = 0;
 	}
 
 // set robot_center nFuelCen and robot_flags2
@@ -320,7 +320,7 @@ for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
 
 for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++) {
 // fix clip numbers for poly Objects () (except robots)
-	switch (objP->type) {
+	switch (objP->m_info.type) {
 		case OBJ_PLAYER   : // the player on the console
 			objP->rType.polyModelInfo.model_num = D2_PLAYER_CLIP_NUMBER;
 			break;

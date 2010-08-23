@@ -533,18 +533,18 @@ DefRobotInfo (i)->pad [0] = RobotInfo (i)->pad [0]; //make sure it's equal for t
 if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (ROBOT_INFO))) { //they're different
 	// find a robot of that type
 	for (j = GameInfo ().objects.count, objP = Objects (0); j; j--, objP++)
-		if ((objP->type == OBJ_ROBOT) && (objP->id == i))
+		if ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id == i))
 			break;
 	if (j) // found one
 		bFound = true;
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
 		for (j = SegCount (), segP = Segments (0); j; j--, segP++)
-			if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
-				INT32 matcen = segP->nMatCen;
+			if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
+				INT32 matcen = segP->m_info.nMatCen;
 				if ((i < 32) ?
-					 BotGens (matcen)->objFlags [0] & (1L << i) :
-					 BotGens (matcen)->objFlags [1] & (1L << (i-32)))
+					 BotGens (matcen)->m_info.objFlags [0] & (1L << i) :
+					 BotGens (matcen)->m_info.objFlags [1] & (1L << (i-32)))
 					break;
 				}
 		if (j) // found one

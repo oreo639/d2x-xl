@@ -154,7 +154,7 @@ pcb = CBClipNo ();
 pcb->ResetContent ();
 j = (theApp.IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
 for (i = 0; i < j; i++) {
-	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", clip_door_number [i]);
+	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", doorClipTable [i]);
 	pcb->AddString (m_szMsg);
 	}
 InitSlider (IDC_WALL_TRANSPARENCY, 0, 10);
@@ -270,12 +270,12 @@ else {
     // enable all
 	EnableControls (TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (FALSE);
-   if ((theApp.IsD2File ()) && (m_pWall [0]->type == WALL_TRANSPARENT))
+   if ((theApp.IsD2File ()) && (m_pWall [0]->m_info.type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_STRENGTH)->EnableWindow (FALSE);
 	else {
 		GetDlgItem (IDC_WALL_FLYTHROUGH)->EnableWindow (FALSE);
 		}
-   if ((theApp.IsD1File ()) || (m_pWall [0]->type == WALL_TRANSPARENT))
+   if ((theApp.IsD1File ()) || (m_pWall [0]->m_info.type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_CLOAK)->EnableWindow (FALSE);
 
     // enable buddy proof and switch checkboxes only if d2 level
@@ -285,17 +285,17 @@ else {
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
 		}
 	// update wall data
-	if (m_pWall [0]->nTrigger == NO_TRIGGER)
+	if (m_pWall [0]->m_info.nTrigger == NO_TRIGGER)
 		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, no trigger", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
 	else
-		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (INT32)m_pWall [0]->nTrigger);
+		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (INT32)m_pWall [0]->m_info.nTrigger);
 
 	m_nWall [0] = INT32 (m_pWall [0] - theMine->Walls (0));
 	GetOtherWall ();
 	m_nSegment = m_pWall [0]->m_nSegment;
 	m_nSide = m_pWall [0]->m_nSide + 1;
-	m_nTrigger = (m_pWall [0]->nTrigger < theMine->GameInfo ().triggers.count) ? m_pWall [0]->nTrigger : -1;
-	m_nType = m_pWall [0]->type;
+	m_nTrigger = (m_pWall [0]->m_info.nTrigger < theMine->GameInfo ().triggers.count) ? m_pWall [0]->m_info.nTrigger : -1;
+	m_nType = m_pWall [0]->m_info.type;
 	m_nClip = m_pWall [0]->nClip;
 	m_nStrength = ((double) m_pWall [0]->hps) / F1_0;
 	if (m_bFlyThrough = (m_nStrength < 0))
@@ -313,7 +313,7 @@ else {
 	m_nClip = i;
 	CBClipNo ()->SetCurSel ((i < D2_NUM_OF_CLIPS) ? i : 0);
 	for (i = 0; i < MAX_WALL_FLAGS; i++)
-		m_bFlags [i] = ((m_pWall [0]->flags & wall_flags [i]) != 0);
+		m_bFlags [i] = ((m_pWall [0]->m_info.flags & wall_flags [i]) != 0);
 	for (i = 0; i < 4; i++)
 		m_bKeys [i] = ((m_pWall [0]->keys & (1 << i)) != 0);
 	if (!m_bLock) {
@@ -373,11 +373,11 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
-			if (wallP->type == m_defWall.type) {
+			if (wallP->m_info.type == m_defWall.type) {
 				wallP->hps = m_defWall.hps;
 				wallP->cloak_value = m_defWall.cloak_value;
 				}
-			else if (wallP->type == WALL_CLOAKED) {
+			else if (wallP->m_info.type == WALL_CLOAKED) {
 				wallP->hps = 0;
 				wallP->cloak_value = 16;
 				}
@@ -444,10 +444,10 @@ INT32 i, j, nDeleted = 0;
 for (i = theMine->SegCount (); i; i--, segP++) {
 	sideP = segP->m_sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
-		if (sideP->nWall >= MAX_WALLS)
+		if (sideP->m_info.nWall >= MAX_WALLS)
 			continue;
 		if (bAll || theMine->SideIsMarked (i, j)) {
-			theMine->DeleteWall (sideP->nWall);
+			theMine->DeleteWall (sideP->m_info.nWall);
 			nDeleted++;
 			}
 		}
@@ -496,7 +496,7 @@ if (m_nWall [0] < 0) {
 	}
 m_pWall [0] = theMine->Walls (m_nWall [0]);
 theMine->SetCurrent (m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
-m_nTrigger = m_pWall [0]->nTrigger;
+m_nTrigger = m_pWall [0]->m_info.nTrigger;
 GetOtherWall ();
 return true;
 }
@@ -545,9 +545,9 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		INT16 nBaseTex  = sideP [bSide]->nBaseTex;
 		INT16 nOvlTex = sideP [bSide]->m_info.nOvlTex;
 		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
-		if ((wallP->type == WALL_OPEN) || (wallP->type == WALL_CLOSED))
+		if ((wallP->m_info.type == WALL_OPEN) || (wallP->m_info.type == WALL_CLOSED))
 			theMine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
-//		else if ((wallP->type == WALL_CLOAKED) || (wallP->type == WALL_TRANSPARENT))
+//		else if ((wallP->m_info.type == WALL_CLOAKED) || (wallP->m_info.type == WALL_TRANSPARENT))
 //			wallP->cloak_value = m_defWall.cloak_value;
 		}
 theApp.MineView ()->Refresh ();
@@ -568,7 +568,7 @@ GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_pWall [bSide])
-		if ((wallP->type == WALL_BLASTABLE) || (wallP->type == WALL_DOOR)) {
+		if ((wallP->m_info.type == WALL_BLASTABLE) || (wallP->m_info.type == WALL_DOOR)) {
 			if (m_nWall [bSide] < theMine->GameInfo ().walls.count) {
 				theApp.SetModified (TRUE);
 				theApp.LockUndo ();
@@ -609,9 +609,9 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		theApp.SetModified (TRUE);
 		if (m_bFlags [i])
-			m_pWall [bSide]->flags |= wall_flags [i];
+			m_pWall [bSide]->m_info.flags |= wall_flags [i];
 		else
-			m_pWall [bSide]->flags &= ~wall_flags [i];
+			m_pWall [bSide]->m_info.flags &= ~wall_flags [i];
 		Refresh ();
 		}
 }
@@ -640,7 +640,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		UpdateData (TRUE);
 		theApp.SetModified (TRUE);
 		m_pWall [bSide]->hps = (FIX) m_nStrength * F1_0;
-		if ((m_pWall [bSide]->type == WALL_TRANSPARENT) && m_bFlyThrough)
+		if ((m_pWall [bSide]->m_info.type == WALL_TRANSPARENT) && m_bFlyThrough)
 			m_pWall [bSide]->hps = -m_pWall [bSide]->hps;
 		}
 }
@@ -694,7 +694,7 @@ if (pScrollBar == TransparencySlider ()) {
 		nPos = 0;
 	else if (nPos > 10)
 		nPos = 10;
-	if  (m_pWall [0]->type == WALL_TRANSPARENT) {
+	if  (m_pWall [0]->m_info.type == WALL_TRANSPARENT) {
 		m_nStrength = nPos * 10;
 		UpdateData (FALSE);
 		OnStrength ();

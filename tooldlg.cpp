@@ -407,12 +407,12 @@ scroll_offset_y = 0;
 
 // abort if this is not a wall
 #ifndef _DEBUG
-UINT16 nWall = sideP->nWall;
+UINT16 nWall = sideP->m_info.nWall;
 if (nWall >= theMine->GameInfo ().walls.count)
 	return;
 
 // abort if this wall is not a door
-//if (theMine->Walls (nWall)->type != WALL_DOOR)
+//if (theMine->Walls (nWall)->m_info.type != WALL_DOOR)
 //	return;
 #endif
 	INT32 i;

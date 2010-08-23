@@ -22,23 +22,22 @@
 // Changes - now takes type instead of flag.
 //------------------------------------------------------------------------
 
-void CMine::InitTrigger (CTrigger *t, INT16 type, INT16 flags)
+void CTrigger::Setup (INT16 type, INT16 flags)
 {
-t->type = (INT8) type;
-t->flags = (INT8) flags;
+m_info.type = (INT8) type;
+m_info.flags = (INT8) flags;
 if (type == TT_SPEEDBOOST)
-	t->value = 10;
+	m_info.value = 10;
 else if ((type == TT_CHANGE_TEXTURE) || (type == TT_MASTER))
-	t->value = 0;
+	m_info.value = 0;
 else if ((type == TT_MESSAGE) || (type == TT_SOUND))
-	t->value = 1;
+	m_info.value = 1;
 else 	
-	t->value = 5 * F1_0; // 5% shield or energy damage
-t->time = -1;
-t->m_count = 0;
-for (INT32 i = 0; i < MAX_TRIGGER_TARGETS; i++) {
-	t->m_targets [i] = CSideKey (-1, -1);
-	}
+	m_info.value = 5 * F1_0; // 5% shield or energy damage
+m_info.time = -1;
+m_count = 0;
+for (INT32 i = 0; i < MAX_TRIGGER_TARGETS; i++)
+	m_targets [i].Clear ();
 }
 
 //------------------------------------------------------------------------
@@ -52,8 +51,8 @@ if (i < m)
 	return -1;
 if (i > m)
 	return 1;
-i = pi->type;
-m = pm->type;
+i = pi->m_info.type;
+m = pm->m_info.type;
 return (i < m) ? -1 : (i > m) ? 1 : 0;
 }
 
@@ -132,7 +131,7 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS) {
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-if (CurrSide ()->nWall >= GameInfo ().walls.count) {
+if (CurrSide ()->m_info.nWall >= GameInfo ().walls.count) {
 	if (bAutoAddWall) {
 		if (GameInfo ().walls.count >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
@@ -140,7 +139,7 @@ if (CurrSide ()->nWall >= GameInfo ().walls.count) {
 			}
 		nSegment = nSide = -1;
 		GetCurrent (nSegment, nSide);
-		if (!AddWall (-1, -1, (Segments (nSegment)->children [nSide] < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
+		if (!AddWall (-1, -1, (Segments (nSegment)->m_info.children [nSide] < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			theApp.ResetModified (bUndo);
 			return NULL;
@@ -190,7 +189,7 @@ nTrigger = (UINT16) GameInfo ().triggers.count;
 // set new trigger data
 InitTrigger (Triggers (nTrigger), type, flags);
 // link trigger to the wall
-Walls (nWall)->nTrigger = (UINT8) nTrigger;
+Walls (nWall)->m_info.nTrigger = (UINT8) nTrigger;
 // update number of Triggers ()
 GameInfo ().triggers.count++;
 AutoLinkExitToReactor();
@@ -208,10 +207,10 @@ void CMine::DeleteTrigger (INT16 nTrigger)
 	INT16	i, nSegment, nSide, nWall;
 
 if (nTrigger < 0) {
-	nWall = CurrSeg ()->sides [Current ()->nSide].m_info.nWall;
+	nWall = CurrSeg ()->m_sides [Current ()->nSide].m_info.nWall;
 	if (nWall >= GameInfo ().walls.count)
 		return;
-	nTrigger = Walls (nWall)->nTrigger;
+	nTrigger = Walls (nWall)->m_info.nTrigger;
 	}
 if (nTrigger >= GameInfo ().triggers.count)
 	return;
@@ -221,10 +220,10 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 CWall *wallP = Walls (0);
 for (i = GameInfo ().walls.count; i; i--, wallP++)
-	if ((wallP->nTrigger != NO_TRIGGER) && (wallP->nTrigger > nTrigger))
-		wallP->nTrigger--;
-	else if (wallP->nTrigger == nTrigger) {
-		wallP->nTrigger = NO_TRIGGER;
+	if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger > nTrigger))
+		wallP->m_info.nTrigger--;
+	else if (wallP->m_info.nTrigger == nTrigger) {
+		wallP->m_info.nTrigger = NO_TRIGGER;
 		nSegment = wallP->m_nSegment;
 		nSide = wallP->m_nSide;
 		}
@@ -233,7 +232,7 @@ for (i = GameInfo ().walls.count; i; i--, wallP++)
 // update number of Triggers ()
 CTrigger *trigP = Triggers (0);
 for (i = NumTriggers (); i; i--, trigP++)
-	if (trigP->type >= TT_MASTER)
+	if (trigP->m_info.type >= TT_MASTER)
 		DeleteTriggerTarget (trigP, nSegment, nSide, false);
 if (nTrigger < --GameInfo ().triggers.count)
 	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof (CTrigger));
@@ -302,7 +301,7 @@ CWall *wallP = Walls (0);
 INT32 nWall;
 for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++) {
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide)) {
-		*nTrigger = wallP->nTrigger;
+		*nTrigger = wallP->m_info.nTrigger;
 		return INT16 (wallP - Walls (0));
 		}
 	}
@@ -315,7 +314,7 @@ INT16 CMine::FindTriggerWall (INT16 nTrigger)
 CWall *wallP = Walls (0);
 INT32 nWall;
 for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++)
-	if (wallP->nTrigger == nTrigger)
+	if (wallP->m_info.nTrigger == nTrigger)
 		return INT16 (wallP - Walls (0));
 return GameInfo ().walls.count;
 }
@@ -391,11 +390,11 @@ for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
 // search for Walls () that have a exit of type trigger
 count =  reactorTrigger->m_count;
 for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
-	nTrigger = Walls (nWall)->nTrigger;
+	nTrigger = Walls (nWall)->m_info.nTrigger;
 	if (nTrigger >= 0 && nTrigger <GameInfo ().triggers.count) {
 		if (IsD1File () 
-			 ? Triggers (nTrigger)->flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
-			 : Triggers (nTrigger)->type == TT_EXIT || Triggers (nTrigger)->type == TT_SECRET_EXIT) {
+			 ? Triggers (nTrigger)->m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
+			 : Triggers (nTrigger)->m_info.type == TT_EXIT || Triggers (nTrigger)->m_info.type == TT_SECRET_EXIT) {
 			// see if cube,side is already on the list
 			face = *Walls (nWall);
 			found = FALSE;
@@ -421,11 +420,11 @@ CTrigger *CMine::AddObjTrigger (INT16 objnum, INT16 type)
 {
 if (objnum < 0)
 	objnum = Current ()->nObject;
-if ((Objects (objnum)->type != OBJ_ROBOT) && 
-	 (Objects (objnum)->type != OBJ_CAMBOT) &&
-	 (Objects (objnum)->type != OBJ_POWERUP) &&
-	 (Objects (objnum)->type != OBJ_HOSTAGE) &&
-	 (Objects (objnum)->type != OBJ_CNTRLCEN)) {
+if ((Objects (objnum)->m_info.type != OBJ_ROBOT) && 
+	 (Objects (objnum)->m_info.type != OBJ_CAMBOT) &&
+	 (Objects (objnum)->m_info.type != OBJ_POWERUP) &&
+	 (Objects (objnum)->m_info.type != OBJ_HOSTAGE) &&
+	 (Objects (objnum)->m_info.type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return NULL;
 	}
@@ -497,37 +496,38 @@ INT32 CTrigger::Read (FILE *fp, INT32 version, bool bObjTrigger)
 	INT32	i;
 
 if (theApp.IsD2File ()) {
-	type = read_INT8(fp);
-	flags = bObjTrigger ? read_INT16(fp) : (UINT16) read_INT8(fp);
+	m_info.type = read_INT8(fp);
+	m_info.flags = bObjTrigger ? read_INT16(fp) : (UINT16) read_INT8(fp);
 	m_count = read_INT8(fp);
 	read_INT8(fp);
-	value = read_FIX(fp);
+	m_info.value = read_FIX(fp);
 	if ((theApp.LevelVersion () < 21) && (type == TT_EXIT))
-		value = 0;
+		m_info.value = 0;
 	if ((version < 39) && (type == TT_MASTER))
-		value = 0;
-	time = read_FIX(fp);
+		m_info.value = 0;
+	m_info.time = read_FIX(fp);
 #ifdef _DEBUG
 	if (type == TT_DISABLE_TRIGGER)
 		type = type;
 #endif
 	}
 else {
-	type = read_INT8(fp);
-	flags = read_INT16(fp);
-	value = read_FIX(fp);
-	time = read_FIX(fp);
-	read_INT8(fp); //skip 8 bit value "link_num"
+	m_info.type = read_INT8(fp);
+	m_info.flags = read_INT16(fp);
+	m_info.value = read_FIX(fp);
+	m_info.time = read_FIX(fp);
+	m_info.read_INT8(fp); //skip 8 bit value "link_num"
 	m_count = INT8 (read_INT16(fp));
 	if (m_count < 0)
 		m_count = 0;
 	else if (m_count > MAX_TRIGGER_TARGETS)
 		m_count = MAX_TRIGGER_TARGETS;
 	}
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].m_nSegment = read_INT16(fp);
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].m_nSide = read_INT16(fp);
+ReadTargets (fp);
+//for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+//	m_targets [i].m_nSegment = read_INT16(fp);
+//for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+//	m_targets [i].m_nSide = read_INT16(fp);
 return 1;
 }
 
@@ -538,28 +538,29 @@ void CTrigger::Write (FILE *fp, INT32 version, bool bObjTrigger)
 	INT32	i;
 
 if (theApp.IsD2File ()) {
-	write_INT8 (type, fp);
+	write_INT8 (m_info.type, fp);
 	if (bObjTrigger)
-		write_INT16 (flags, fp);
+		write_INT16 (m_info.flags, fp);
 	else
-		write_INT8 (INT8 (flags), fp);
+		write_INT8 (INT8 (m_info.flags), fp);
 	write_INT8 (INT8 (m_count), fp);
 	write_INT8 (0, fp);
-	write_INT32 (value, fp);
-	write_INT32 (time, fp);
+	write_INT32 (m_info.value, fp);
+	write_INT32 (m_info.time, fp);
 	}
 else {
-	write_INT8 (type, fp);
-	write_INT16 (flags, fp);
-	write_INT32 (value, fp);
-	write_INT32 (time, fp);
+	write_INT8 (m_info.type, fp);
+	write_INT16 (m_info.flags, fp);
+	write_INT32 (m_info.value, fp);
+	write_INT32 (m_info.time, fp);
 	write_INT8 (INT8 (m_count), fp);
 	write_INT16 (m_count, fp);
 	}
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	write_INT16 (m_targets [i].m_nSegment, fp);
-for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	write_INT16 (m_targets [i].m_nSide, fp);
+WriteTargets (fp);
+//for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+//	write_INT16 (m_targets [i].m_nSegment, fp);
+//for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
+//	write_INT16 (m_targets [i].m_nSide, fp);
 }
 
 //------------------------------------------------------------------------

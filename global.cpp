@@ -120,16 +120,16 @@ UINT8 object_list[MAX_OBJECT_NUMBER] = {
 	OBJ_EFFECT
 };
 
-UINT8 contains_list[MAX_CONTAINS_NUMBER] = {
+UINT8 contents.list[MAX_CONTAINS_NUMBER] = {
 	OBJ_ROBOT,
 	OBJ_POWERUP
 };
 
-// the following array is used to select a list item by objP->type
+// the following array is used to select a list item by objP->m_info.type
 INT8 object_selection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,1,2,3,-1,4,-1,5,-1,-1,-1,-1,6,-1,7,8,9,10,11
 };
-INT8 contains_selection[MAX_OBJECT_TYPES] = {
+INT8 contents.selection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 };
 
@@ -416,7 +416,7 @@ FIX   move_rate = 0x10000L;
 double depth_perception = 1000.0;
 
 /* define points for a given side */
-UINT8 side_vert[6][4] = {
+UINT8 sideVertTable[6][4] = {
 	{7,6,2,3},
 	{0,4,7,3},
 	{0,1,5,4},
@@ -426,10 +426,10 @@ UINT8 side_vert[6][4] = {
 };
 
 /* define oppisite side of a given side */
-UINT8 opp_side[6] = {2,3,0,1,5,4};
+UINT8 oppSideTable[6] = {2,3,0,1,5,4};
 
 /* define points for the oppisite side of a given side */
-UINT8 opp_side_vert[6][4] = {
+UINT8 oppSideVertTable[6][4] = {
 	{4,5,1,0},
 	{1,5,6,2},
 	{3,2,6,7},
@@ -439,7 +439,7 @@ UINT8 opp_side_vert[6][4] = {
 };
 
 /* define 2 points for a given line */
-UINT8 line_vert[12][2] = {
+UINT8 lineVertTable[12][2] = {
 	{0,1},
 	{1,2},
 	{2,3},
@@ -455,7 +455,7 @@ UINT8 line_vert[12][2] = {
 };
 
 /* define lines for a given side */
-UINT8 side_line[6][4] = {
+UINT8 sideLineTable[6][4] = {
 	{7,10,2,11},//{2,11,7,10},
 	{4,8,11,3},//{3,11,8,4},
 	{0,9,5,4},//{0,9,5,4},
@@ -465,7 +465,7 @@ UINT8 side_line[6][4] = {
 };
 
 /* define 3 points which connect to a certain point */
-UINT8 connectPoints[8][3] = {
+UINT8 connectPointTable[8][3] = {
 	{1,3,4},
 	{2,0,5},
 	{3,1,6},
@@ -477,7 +477,7 @@ UINT8 connectPoints[8][3] = {
 };
 
 // side numbers for each point (3 sides touch each point)
-INT8 point_sides[8][3] = {
+INT8 pointSideTable[8][3] = {
     {1,2,5},
     {2,3,5},
     {0,3,5},
@@ -488,8 +488,8 @@ INT8 point_sides[8][3] = {
     {0,1,4}
 };
 
-// CUVL corner for point_sides above
-INT8 point_corners[8][3] = {
+// CUVL corner for pointSideTable above
+INT8 pointCornerTable[8][3] = {
     {0,0,3},
     {1,3,2},
     {2,0,1},
@@ -502,7 +502,7 @@ INT8 point_corners[8][3] = {
 
                         /*--------------------------*/
 
-UINT8 clip_door_number [D2_NUM_OF_CLIPS] = {
+UINT8 doorClipTable [D2_NUM_OF_CLIPS] = {
 	1, 1, 4, 5, 10,24, 8,11,13,12,14,17,     // 1/28/97
 	18,19,20,21,22,23,25,26,28,29,
 	30,31,32,33,34,35,36,37,38,39,

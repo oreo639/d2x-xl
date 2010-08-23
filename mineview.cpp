@@ -947,7 +947,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 	if (clear_it) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 		m_pDC->SelectObject (GetStockObject(BLACK_PEN)); // BLACK
-		INT32 nVert = segP->verts [side_vert [nSide] [pointnum]];
+		INT32 nVert = segP->verts [sideVertTable [nSide] [pointnum]];
 		if (IN_RANGE (m_viewPoints [nVert].x,x_max) &&
 			 IN_RANGE (m_viewPoints [nVert].y,y_max)) {
 			m_pDC->Ellipse(m_viewPoints [nVert].x - 4,
@@ -1010,18 +1010,18 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 				m_pDC->SelectObject (m_penHiGreen); // GREEN
 		else
 			m_pDC->SelectObject (m_penHiDkGreen);         // DARK_GREEN
-		if (IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [0]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [0]]].y,y_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [1]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [1]]].y,y_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [2]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [2]]].y,y_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [3]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [3]]].y,y_max))
-			 DrawLine (segP,side_vert [nSide] [0],side_vert [nSide] [1]);
-			 DrawLine (segP,side_vert [nSide] [1],side_vert [nSide] [2]);
-			 DrawLine (segP,side_vert [nSide] [2],side_vert [nSide] [3]);
-			 DrawLine (segP,side_vert [nSide] [3],side_vert [nSide] [0]);
+		if (IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [0]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [0]]].y,y_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [1]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [1]]].y,y_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [2]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [2]]].y,y_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [3]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [3]]].y,y_max))
+			 DrawLine (segP,sideVertTable [nSide] [0],sideVertTable [nSide] [1]);
+			 DrawLine (segP,sideVertTable [nSide] [1],sideVertTable [nSide] [2]);
+			 DrawLine (segP,sideVertTable [nSide] [2],sideVertTable [nSide] [3]);
+			 DrawLine (segP,sideVertTable [nSide] [3],sideVertTable [nSide] [0]);
 
 		// draw current line
 		// must draw in same order as segment to avoid leftover pixels on screen
@@ -1032,13 +1032,13 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 				m_pDC->SelectObject (m_penHiCyan);  // BLUE/CYAN
 		else
 			m_pDC->SelectObject (m_penDkCyan);  // BLUE/CYAN
-		if (IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [0]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [0]]].y,y_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [1]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [1]]].y,y_max))
+		if (IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [0]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [0]]].y,y_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [1]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [1]]].y,y_max))
 			DrawLine (segP,
-						 line_vert [side_line [nSide] [linenum]] [0],
-						 line_vert [side_line [nSide] [linenum]] [1]);
+						 lineVertTable [sideLineTable [nSide] [linenum]] [0],
+						 lineVertTable [sideLineTable [nSide] [linenum]] [1]);
 		}
 
 	// draw a circle around the current point
@@ -1051,12 +1051,12 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 				m_pDC->SelectObject (m_penHiCyan); // CYAN
 		else
 			m_pDC->SelectObject (m_penHiDkCyan); // CYAN
-		if (IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].y,y_max))
-			m_pDC->Ellipse(m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].x - 4,
-								m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].y - 4,
-								m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].x + 4,
-								m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].y + 4);
+		if (IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].y,y_max))
+			m_pDC->Ellipse(m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].x - 4,
+								m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].y - 4,
+								m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].x + 4,
+								m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].y + 4);
 		}
 }
 
@@ -1072,12 +1072,12 @@ if (!Visible (segP))
 	return;
 for (line=0;line<12;line++) {
 	if (segP->m_info.map_bitmask & (1<<line)) {
-      if (IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [0]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [0]]].y,y_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [1]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [1]]].y,y_max)) {
-			vert0 = line_vert [line] [0];
-			vert1 = line_vert [line] [1];
+      if (IN_RANGE(m_viewPoints [segP->verts [lineVertTable [line] [0]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [lineVertTable [line] [0]]].y,y_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [lineVertTable [line] [1]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->verts [lineVertTable [line] [1]]].y,y_max)) {
+			vert0 = lineVertTable [line] [0];
+			vert1 = lineVertTable [line] [1];
 			if (vert1>vert0) {
 				m_pDC->MoveTo (m_viewPoints [segP->verts [vert0]].x, m_viewPoints [segP->verts [vert0]].y);
 				m_pDC->LineTo (m_viewPoints [segP->verts [vert1]].x, m_viewPoints [segP->verts [vert1]].y);
@@ -1149,8 +1149,8 @@ if (bPartial) {
 		
 		POINT	side [4], line [2], vert;
 		for (i = 0; i < 4; i++) {
-			side [i].x = m_viewPoints [segP->verts [side_vert [nSide] [i]]].x; 
-			side [i].y = m_viewPoints [segP->verts [side_vert [nSide] [i]]].y; 
+			side [i].x = m_viewPoints [segP->verts [sideVertTable [nSide] [i]]].x; 
+			side [i].y = m_viewPoints [segP->verts [sideVertTable [nSide] [i]]].y; 
 			}
 		CFixVector a,b;
 		a.v.x = side [1].x - side [0].x;
@@ -1179,8 +1179,8 @@ if (bPartial) {
 					// check current child cube side for common line
 					// i.e. check each line for common vertices with the parent line
 					for (commonVerts = 0, chVertI = 0; (chVertI < 4) && (commonVerts < 2); chVertI++) {
-						vert.x = m_viewPoints [child->verts [side_vert [chSideI] [chVertI]]].x;
-						vert.y = m_viewPoints [child->verts [side_vert [chSideI] [chVertI]]].y;
+						vert.x = m_viewPoints [child->verts [sideVertTable [chSideI] [chVertI]]].x;
+						vert.y = m_viewPoints [child->verts [sideVertTable [chSideI] [chVertI]]].y;
 						INT32 h;
 						for (h = 0; h < 2; h++) {
 							if ((line [h].x == vert.x) && (line [h].y == vert.y)) {
@@ -1423,12 +1423,12 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 		for (nSide=0; nSide<6; nSide++) {
 			pWall = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
 			if ((segP->m_info.children [nSide] == -1) ||
-				(pWall && (pWall->type != WALL_OPEN) && ((pWall->type != WALL_CLOAKED) || pWall->cloak_value))
+				(pWall && (pWall->m_info.type != WALL_OPEN) && ((pWall->m_info.type != WALL_CLOAKED) || pWall->cloak_value))
 				)
 			{
-				APOINT& p0 = m_viewPoints [segP->verts [side_vert [nSide] [0]]];
-				APOINT& p1 = m_viewPoints [segP->verts [side_vert [nSide] [1]]];
-				APOINT& p3 = m_viewPoints [segP->verts [side_vert [nSide] [3]]];
+				APOINT& p0 = m_viewPoints [segP->verts [sideVertTable [nSide] [0]]];
+				APOINT& p1 = m_viewPoints [segP->verts [sideVertTable [nSide] [1]]];
+				APOINT& p3 = m_viewPoints [segP->verts [sideVertTable [nSide] [3]]];
 
 				CFixVector a,b;
 				a.v.x = p1.x - p0.x;
@@ -1591,19 +1591,19 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 
-	if (IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [0]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [0]]].y,y_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [1]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [1]]].y,y_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [2]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [2]]].y,y_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [3]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [3]]].y,y_max)) {
+	if (IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [0]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [0]]].y,y_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [1]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [1]]].y,y_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [2]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [2]]].y,y_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [3]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [3]]].y,y_max)) {
 
-		DrawLine(segP, side_vert [nSide] [0], side_vert [nSide] [1]);
-		DrawLine(segP, side_vert [nSide] [1], side_vert [nSide] [2]);
-		DrawLine(segP, side_vert [nSide] [2], side_vert [nSide] [3]);
-		DrawLine(segP, side_vert [nSide] [3], side_vert [nSide] [0]);
+		DrawLine(segP, sideVertTable [nSide] [0], sideVertTable [nSide] [1]);
+		DrawLine(segP, sideVertTable [nSide] [1], sideVertTable [nSide] [2]);
+		DrawLine(segP, sideVertTable [nSide] [2], sideVertTable [nSide] [3]);
+		DrawLine(segP, sideVertTable [nSide] [3], sideVertTable [nSide] [0]);
 	}
 
 	// draw current line
@@ -1614,13 +1614,13 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 		m_pDC->SelectObject(m_penCyan);  // BLUE/CYAN
 	}
 
-	if (IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [0]]].x,x_max) &&
-		IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [0]]].y,y_max) &&
-		IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [1]]].x,x_max) &&
-		IN_RANGE(m_viewPoints [segP->verts [line_vert [side_line [nSide] [linenum]] [1]]].y,y_max)   ) {
+	if (IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [0]]].x,x_max) &&
+		IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [0]]].y,y_max) &&
+		IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [1]]].x,x_max) &&
+		IN_RANGE(m_viewPoints [segP->verts [lineVertTable [sideLineTable [nSide] [linenum]] [1]]].y,y_max)   ) {
 
-		DrawLine(segP, line_vert [side_line [nSide] [linenum]] [0],
-			line_vert [side_line [nSide] [linenum]] [1]);
+		DrawLine(segP, lineVertTable [sideLineTable [nSide] [linenum]] [0],
+			lineVertTable [sideLineTable [nSide] [linenum]] [1]);
 	}
 
 	// draw a circle around the current point
@@ -1631,13 +1631,13 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 		m_pDC->SelectObject(m_penCyan); // CYAN
 	}
 
-	if (IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].x,x_max) &&
-		IN_RANGE(m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].y,y_max)     ) {
+	if (IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].x,x_max) &&
+		IN_RANGE(m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].y,y_max)     ) {
 
-		m_pDC->Ellipse(m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].x - 4,
-			m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].y - 4,
-			m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].x + 4,
-			m_viewPoints [segP->verts [side_vert [nSide] [pointnum]]].y + 4);
+		m_pDC->Ellipse(m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].x - 4,
+			m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].y - 4,
+			m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].x + 4,
+			m_viewPoints [segP->verts [sideVertTable [nSide] [pointnum]]].y + 4);
 	}
 }
 
@@ -1715,14 +1715,14 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			m_pDC->SelectObject(m_penLtGray);
 		}
 	j = walls [i].m_nSide;
-	if (IN_RANGE(m_viewPoints [segP->verts [side_vert [j][0]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][0]]].y,y_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][1]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][1]]].y,y_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][2]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][2]]].y,y_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][3]]].x,x_max) &&
-		 IN_RANGE(m_viewPoints [segP->verts [side_vert [j][3]]].y,y_max)) {
+	if (IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][0]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][0]]].y,y_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][1]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][1]]].y,y_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][2]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][2]]].y,y_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][3]]].x,x_max) &&
+		 IN_RANGE(m_viewPoints [segP->verts [sideVertTable [j][3]]].y,y_max)) {
 
 			CFixVector center,orthog,vector;
 			APOINT point;
@@ -1733,8 +1733,8 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 		m_view.Project (&vector,&point);
 		for (j = 0; j < 4; j++) {
 			m_pDC->MoveTo (point.x,point.y);
-			m_pDC->LineTo (m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].x,
-			m_viewPoints [segP->verts [side_vert [walls [i].m_nSide] [j]]].y);
+			m_pDC->LineTo (m_viewPoints [segP->verts [sideVertTable [walls [i].m_nSide] [j]]].x,
+			m_viewPoints [segP->verts [sideVertTable [walls [i].m_nSide] [j]]].y);
 			}
 		if (walls [i].nTrigger != NO_TRIGGER) {
 				APOINT arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
@@ -1747,7 +1747,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			m_view.Project(&vector,&arrowEndPoint);
 
 			// direction toward center of line 0 from center
-			UINT8 *svp = &side_vert [walls [i].m_nSide][0];
+			UINT8 *svp = &sideVertTable [walls [i].m_nSide][0];
 			vector = Average (vertices [segP->verts [svp [0]]], vertices [segP->verts [svp [1]]]);
 			vector -= center;
 			vector.Normalize ();
@@ -1812,8 +1812,8 @@ void CMineView::DrawLights (void)
 				l <<= 3;
 				m_pen m_penLight = CreatePen(PS_SOLID, 1, RGB(l,l,255-l));
 				SelectObject(m_pDC, m_penLight);
-				corner.x = m_viewPoints [segP->verts [side_vert [nSide] [k]]].x;
-				corner.y = m_viewPoints [segP->verts [side_vert [nSide] [k]]].y;
+				corner.x = m_viewPoints [segP->verts [sideVertTable [nSide] [k]]].x;
+				corner.y = m_viewPoints [segP->verts [sideVertTable [nSide] [k]]].y;
 				corner.x = (corner.x + light_dest.x)>>1;
 				corner.y = (corner.y + light_dest.y)>>1;
 				MoveTo(m_pDC,light_source.x,light_source.y);
@@ -1857,8 +1857,8 @@ void CMineView::DrawOctagon(INT16 nSide, INT16 nSegment)
 	  POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
 	  segP = theMine->Segments (0) + nSegment;
 	  for (j=0;j<4;j++) {
-	    corners [j].x = m_viewPoints [segP->verts [side_vert [nSide] [j]]].x;
-	    corners [j].y = m_viewPoints [segP->verts [side_vert [nSide] [j]]].y;
+	    corners [j].x = m_viewPoints [segP->verts [sideVertTable [nSide] [j]]].x;
+	    corners [j].y = m_viewPoints [segP->verts [sideVertTable [nSide] [j]]].y;
 	  }
 	  if (IN_RANGE(corners [0].x,x_max) && IN_RANGE(corners [0].y,y_max) &&
 		   IN_RANGE(corners [1].x,x_max) && IN_RANGE(corners [1].y,y_max) &&
@@ -1971,18 +1971,18 @@ if (objnum >=0 && objnum < theMine->GameInfo ().objects.count) {
 else {
 	// secret return
 	objP = &temp_obj;
-	objP->type = -1;
+	objP->m_info.type = -1;
 	// theMine->secret_orient = Objects () [0]->orient;
-	objP->orient.rVec = -theMine->SecretOrient ().rVec;
-	objP->orient.uVec =  theMine->SecretOrient ().fVec;
-	objP->orient.fVec =  theMine->SecretOrient ().uVec;
-	// objP->orient =  theMine->secret_orient;
+	objP->m_info.orient.rVec = -theMine->SecretOrient ().rVec;
+	objP->m_info.orient.uVec =  theMine->SecretOrient ().fVec;
+	objP->m_info.orient.fVec =  theMine->SecretOrient ().uVec;
+	// objP->m_info.orient =  theMine->secret_orient;
 	UINT16 nSegment = (UINT16)theMine->SecretCubeNum ();
 	if (nSegment >= theMine->SegCount ())
 		nSegment = 0;
 	if (!Visible (theMine->Segments (nSegment)))
 		return;
-	theMine->CalcSegCenter(objP->pos,nSegment); // define objP->position
+	theMine->CalcSegCenter(objP->m_info.pos,nSegment); // define objP->position
 	}
 
 switch (clear_it) {
@@ -1991,7 +1991,7 @@ switch (clear_it) {
 		if (m_selectMode == OBJECT_MODE && objnum == theMine->Current ()->nObject) 
 			m_pDC->SelectObject(m_penRed); // RED
 		else {
-			switch(objP->type) {
+			switch(objP->m_info.type) {
 				case OBJ_ROBOT: /* an evil enemy */
 				case OBJ_CAMBOT: /* an evil enemy */
 				case OBJ_EXPLOSION:
@@ -2034,7 +2034,7 @@ switch (clear_it) {
 // then translate object
 //CBRK (objnum == 45);
 for (poly = 0; poly < MAX_POLY; poly++) {
-	::TransformModelPoint (pt [poly], object_shape [poly], objP->orient, objP->pos);
+	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_info.orient, objP->m_info.pos);
 	m_view.Project (pt + poly, poly_draw + poly);
 	}
 
@@ -2048,9 +2048,9 @@ for (i = 0; i < 6; i++)
 
 if ((theApp.IsD2File ()) &&
 	 (objnum == theMine->Current ()->nObject) &&
-	 (objP->type != OBJ_CAMBOT) && (objP->type != OBJ_MONSTERBALL) && 
-	 (objP->type != OBJ_EXPLOSION) && (objP->type != OBJ_SMOKE) && (objP->type != OBJ_EFFECT) &&
-	 (objP->render_type == RT_POLYOBJ) &&
+	 (objP->m_info.type != OBJ_CAMBOT) && (objP->m_info.type != OBJ_MONSTERBALL) && 
+	 (objP->m_info.type != OBJ_EXPLOSION) && (objP->m_info.type != OBJ_SMOKE) && (objP->m_info.type != OBJ_EFFECT) &&
+	 (objP->renderType == RT_POLYOBJ) &&
 	 !SetupModel(objP)) {
 	if (clear_it)
 		m_pDC->SelectObject(GetStockObject(BLACK_PEN));
@@ -2078,7 +2078,7 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 
 	pt [0] =
 	pt [1] =
-	pt [2] = objP->pos;
+	pt [2] = objP->m_info.pos;
 	pt [1].v.x -= objP->size;
 	pt [2].v.x += objP->size;
 	m_view.Project (pt, poly_draw);
@@ -2104,7 +2104,7 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 
 bool CMineView::ViewObject (CGameObject *objP)
 {
-switch(objP->type) {
+switch(objP->m_info.type) {
 	case OBJ_ROBOT:
 	case OBJ_CAMBOT:
 	case OBJ_SMOKE:
@@ -2121,7 +2121,7 @@ switch(objP->type) {
 	case OBJ_WEAPON:
 		return ViewObject (eViewObjectsWeapons);
 	case OBJ_POWERUP:
-		switch (powerup_types [objP->id]) {
+		switch (powerup_types [objP->m_info.id]) {
 			case POWERUP_WEAPON_MASK:
 				return ViewObject (eViewObjectsWeapons);
 			case POWERUP_POWERUP_MASK:
@@ -2144,12 +2144,12 @@ void CMineView::HiliteTarget (void)
 	INT32 i, nTarget;
 
 CGameObject *objP = theMine->CurrObj ();
-if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
+if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 theMine->Other ()->nObject = theMine->Current ()->nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++)
-		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
+		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			theMine->Other ()->nObject = i;
 			break;
 			return;
@@ -2169,7 +2169,7 @@ INT32 i, j;
 if (theApp.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < theMine->GameInfo ().triggers.count; i++)
-	if (theMine->Triggers (i)->type == TT_SECRET_EXIT) {
+	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
 		DrawObject ((INT16)theMine->GameInfo ().objects.count, 0);
 		break; // only draw one secret exit
 		}
@@ -2228,7 +2228,7 @@ if (theMine->m_bSplineActive)
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].verts [side_vert [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].verts [sideVertTable [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);
@@ -2261,7 +2261,7 @@ _itoa_s ((currSide = theMine->Current ()->nSide) + 1, message + strlen (message)
 strcat_s (message, sizeof (message), " point:");
 _itoa_s (currPoint = theMine->Current ()->nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa_s (theMine->CurrSeg ()->verts [side_vert [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSeg ()->verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
@@ -3068,7 +3068,7 @@ closest_radius = 1.0E30;
 INT32 enable_secret = FALSE;
 if (theApp.IsD2File ())
 	for(i=0;i<(INT16)theMine->GameInfo ().triggers.count;i++)
-		if (theMine->Triggers (i)->type ==TT_SECRET_EXIT) {
+		if (theMine->Triggers (i)->m_info.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
 			break;
 			}
@@ -3078,25 +3078,25 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 	// define temp object type and position for secret object selection
 	if (i == theMine->GameInfo ().objects.count && theApp.IsD2File () && enable_secret) {
 		objP = &temp_obj;
-		objP->type = OBJ_PLAYER;
+		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter(objP->pos, (UINT16)theMine->SecretCubeNum ());
+		CalcSegmentCenter(objP->m_info.pos, (UINT16)theMine->SecretCubeNum ());
 		}
 	else
 		objP = theMine->Objects (i);
 #if 0
-	switch(objP->type) {
+	switch(objP->m_info.type) {
 		case OBJ_WEAPON:
 			if (ViewObject (eViewObjectsPowerups | eViewObjectsWeapons)) {
 				drawable = TRUE;
 				}
 		case OBJ_POWERUP:
-			if (ViewObject (powerup_types [objP->id])) {
+			if (ViewObject (powerup_types [objP->m_info.id])) {
 				drawable = TRUE;
 				}
 			break;
 		default:
-			if(ViewObject (1<<objP->type))
+			if(ViewObject (1<<objP->m_info.type))
 				drawable = TRUE;
 		}
 	if (drawable) 
@@ -3105,7 +3105,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_view.Project(&objP->pos, &pt);
+		m_view.Project(&objP->m_info.pos, &pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;
@@ -3177,7 +3177,7 @@ do {
 		continue;
 	for (i = 0; i < 6; i++) {
 		for (j = 0; j < 4; j++)
-			sideVerts [j] = m_viewPoints [segP->verts [side_vert [i][j]]];
+			sideVerts [j] = m_viewPoints [segP->verts [sideVertTable [i][j]]];
 		for (j = 0; j < 4; j++) {
 			x = sideVerts [j].x;
 			y = sideVerts [j].y;
@@ -3356,7 +3356,7 @@ if (!theMine) return FALSE;
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
-	INT16 nVert = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+	INT16 nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
 	INT16 v = theMine->CurrSeg ()->verts [nVert];
 	INT16 x = m_viewPoints [v].x;
 	INT16 y = m_viewPoints [v].y;
@@ -3389,7 +3389,7 @@ CRect	rc (x, y, x, y);
 INT32 i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
-	INT16 nVert2 = connectPoints [nVert] [i];
+	INT16 nVert2 = connectPointTable [nVert] [i];
 	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].x;
 	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
@@ -3423,7 +3423,7 @@ if (m_lastMousePos == m_lastDragPos)
 	INT16 x, y;
 	INT32 i;
 
-nVert = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
 
 // unhighlight last point and lines drawing
 HighlightDrag (nVert, m_lastDragPos.x, m_lastDragPos.y);
@@ -3476,7 +3476,7 @@ if (!theMine) return;
 
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
-point1 = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+point1 = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
 vert1 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point1];
 // find point to merge with
 for (i = 0; i < theMine->VertCount (); i++) {
@@ -3506,7 +3506,7 @@ if (count == 1) {
 	if (i==8 && new_vert!=vert1) {
 	// make sure the new line lengths are close enough
 		for (i=0;i<3;i++) {
-			point2 = connectPoints [point1] [i];
+			point2 = connectPointTable [point1] [i];
 			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point2];
 			if (theMine->CalcLength (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
 				ErrorMsg ("Cannot move this point so far away.");
@@ -3662,13 +3662,13 @@ void CMineView::ForwardCube (INT32 dir)
 
 DrawHighlight (1);
 segP = theMine->Segments (0) + theMine->Current ()->nSegment;
-child = segP->m_info.children [bFwd ? theMine->Current ()->nSide: opp_side [theMine->Current ()->nSide]];
+child = segP->m_info.children [bFwd ? theMine->Current ()->nSide: oppSideTable [theMine->Current ()->nSide]];
 if (child <= -1) {
 	// first try to find a non backwards route
 	for (nSide=0;nSide<6;nSide++) {
 		if (segP->m_info.children [nSide] != m_lastSegment && segP->m_info.children [nSide] > -1) {
 			child = segP->m_info.children [nSide];
-			theMine->Current ()->nSide =  bFwd ? nSide: opp_side [nSide];
+			theMine->Current ()->nSide =  bFwd ? nSide: oppSideTable [nSide];
 			break;
 			}
 		}
@@ -3677,7 +3677,7 @@ if (child <= -1) {
 		for (nSide=0;nSide<6;nSide++) {
 			if (segP->m_info.children [nSide] > -1) {
 				child = segP->m_info.children [nSide];
-				theMine->Current ()->nSide = bFwd ? nSide: opp_side [nSide];
+				theMine->Current ()->nSide = bFwd ? nSide: oppSideTable [nSide];
 				break;
 				}
 			}			
@@ -3688,7 +3688,7 @@ if (child > -1) {
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
 		if (childseg->m_info.children [nSide] == theMine->Current ()->nSegment) {
-			theMine->Current ()->nSide =  bFwd ? opp_side [nSide]: nSide;
+			theMine->Current ()->nSide =  bFwd ? oppSideTable [nSide]: nSide;
 			break;
 			}
 		}
@@ -4149,10 +4149,10 @@ for (i = 0; i < 4; i++) {
 			break;
 		}
 #if OGL_MAPPED
-	a = m_viewPoints + segP->verts [side_vert [nSide][j]];
+	a = m_viewPoints + segP->verts [sideVertTable [nSide][j]];
 	glVertex3f ((double) a->x, (double) a->y, (double) a->z);
 #else
-	v = verts + segP->verts [side_vert [nSide][i]];
+	v = verts + segP->verts [sideVertTable [nSide][i]];
 	glVertex3f (f2fl (v->x), f2fl (v->y), f2fl (v->z));
 #endif
 	j = (j + 1) % 4;
@@ -4173,12 +4173,12 @@ if (sideP->m_info.nBaseTex < 0)
 	return;
 CWall *pWall = (nWall == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->v.theMine->Walls (nWall);
 if ((segP->m_info.children [nSide] > -1) &&
-	 (!pWall || (pWall->type == WALL_OPEN) || ((pWall->type == WALL_CLOAKED) && !pWall->cloak_value)))
+	 (!pWall || (pWall->m_info.type == WALL_OPEN) || ((pWall->m_info.type == WALL_CLOAKED) && !pWall->cloak_value)))
 	return;
 #if OGL_MAPPED
-APOINT& p0 = m_viewPoints [segP->verts [side_vert [nSide] [0]]];
-APOINT& p1 = m_viewPoints [segP->verts [side_vert [nSide] [1]]];
-APOINT& p3 = m_viewPoints [segP->verts [side_vert [nSide] [3]]];
+APOINT& p0 = m_viewPoints [segP->verts [sideVertTable [nSide] [0]]];
+APOINT& p1 = m_viewPoints [segP->verts [sideVertTable [nSide] [1]]];
+APOINT& p3 = m_viewPoints [segP->verts [sideVertTable [nSide] [3]]];
 
 CFixVector a,b;
 a.x = p1.x - p0.x;
@@ -4188,9 +4188,9 @@ b.y = p3.y - p0.y;
 if (a.x*b.y > a.y*b.x)
 	return;
 #else
-CFixVector *p0 = verts + segP->verts [side_vert [nSide] [0]];
-CFixVector *p1 = verts + segP->verts [side_vert [nSide] [1]];
-CFixVector *p3 = verts + segP->verts [side_vert [nSide] [3]];
+CFixVector *p0 = verts + segP->verts [sideVertTable [nSide] [0]];
+CFixVector *p1 = verts + segP->verts [sideVertTable [nSide] [1]];
+CFixVector *p3 = verts + segP->verts [sideVertTable [nSide] [3]];
 
 CFixVector a,b;
 a.x = p1->x - p0->x;

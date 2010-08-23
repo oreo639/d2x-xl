@@ -734,7 +734,7 @@ else {  /*load mine filename */
 		else {
 			for (int i = 0; i < GameInfo ().objects.count; i++) {
 				Objects (i)->Read (loadfile, GameInfo ().fileinfo.version);
-				//      objP->signature = object_next_signature++;
+				//      objP->m_info.signature = object_next_signature++;
 				//    verify_object(objP);
 				}
 			}

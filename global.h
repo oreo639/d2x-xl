@@ -80,9 +80,9 @@ extern CFixVector points[4];
 extern INT16 n_splines;
 //extern INT16 spline_active;
 extern UINT8 object_list[MAX_OBJECT_NUMBER];
-extern UINT8 contains_list[MAX_CONTAINS_NUMBER];
+extern UINT8 contents.list[MAX_CONTAINS_NUMBER];
 extern INT8 object_selection[MAX_OBJECT_TYPES];
-extern INT8 contains_selection[MAX_OBJECT_TYPES];
+extern INT8 contents.selection[MAX_OBJECT_TYPES];
 extern UINT8 robot_clip[MAX_ROBOT_IDS_TOTAL];
 extern UINT8 powerup_clip[MAX_POWERUP_IDS2];
 extern char *ai_options[MAX_D2_AI_OPTIONS];
@@ -138,16 +138,16 @@ extern double M[4][4];  /* 4x4 matrix used in coordinate transformation */
 extern double IM[4][4]; /* inverse matrix of M[4][4] */
 extern double depth_perception;
 
-extern UINT8 side_vert[6][4];
-extern UINT8 opp_side[6];
-extern UINT8 opp_side_vert[6][4];
-extern UINT8 line_vert[12][2];
-extern UINT8 side_line[6][4];
-extern UINT8 connectPoints[8][3];
-extern INT8 point_sides[8][3];
-extern INT8 point_corners[8][3];
+extern UINT8 sideVertTable[6][4];
+extern UINT8 oppSideTable[6];
+extern UINT8 oppSideVertTable[6][4];
+extern UINT8 lineVertTable[12][2];
+extern UINT8 sideLineTable[6][4];
+extern UINT8 connectPointTable[8][3];
+extern INT8 pointSideTable[8][3];
+extern INT8 pointCornerTable[8][3];
 
-extern UINT8 clip_door_number [D2_NUM_OF_CLIPS];
+extern UINT8 doorClipTable [D2_NUM_OF_CLIPS];
 
 /* debug data */
 extern UINT32 debug_offset2;

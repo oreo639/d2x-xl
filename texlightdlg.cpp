@@ -329,10 +329,10 @@ if (theMine->UseTexColors ()) {
 
 	for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-			if (sideP->nWall < 0)
+			if (sideP->m_info.nWall < 0)
 				continue;
-			wallP = theMine->Walls (sideP->nWall);
-			if (wallP->type != WALL_TRANSPARENT)
+			wallP = theMine->Walls (sideP->m_info.nWall);
+			if (wallP->m_info.type != WALL_TRANSPARENT)
 				continue;
 			if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 				continue;
@@ -357,7 +357,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
 			CWall *pWall = theMine->CurrWall ();
-			if (pWall && (pWall->type == WALL_TRANSPARENT)) {
+			if (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) {
 				pWall->cloak_value = m_nColorIndex;
 				SetWallColor ();
 				}
@@ -372,7 +372,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				psc->color.g =
 				psc->color.b = 1.0;
 				}
-			//if (!pWall || (pWall->type != WALL_TRANSPARENT)) 
+			//if (!pWall || (pWall->m_info.type != WALL_TRANSPARENT)) 
 				{
 				theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
 				theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
