@@ -169,6 +169,7 @@ Reset ();
 
 void CMineView::Reset ()
 {
+CHECKMINE;
 m_viewWidth = m_viewHeight = m_viewDepth = 0;	// force OnDraw to initialize these
 theMine->SetSplineActive (false);
 m_bUpdate = true;
@@ -382,7 +383,7 @@ if (m_nMineCenter == 2) {
 
 void CMineView::OnDraw (CDC* pViewDC)
 {
-if (!theMine) return;
+CHECKMINE;
 
 #if OGL_RENDERING
 if (m_bUpdate) {
@@ -479,6 +480,8 @@ m_bUpdate = false;
 
 afx_msg void CMineView::OnPaint ()
 {
+CHECKMINE;
+
 	CRect	rc;
 	CDC	*pDC;
 	PAINTSTRUCT	ps;
@@ -494,6 +497,8 @@ EndPaint (&ps);
 
 void CMineView::AdvanceLightTick (void)
 {
+CHECKMINE;
+
 	LIGHT_TIMER *ltP = lightTimers;
 	CFlickeringLight *flP = theMine->FlickeringLights (0);
 	INT32 i, light_delay;
@@ -527,8 +532,8 @@ bool CMineView::SetLightStatus (void)
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
 	INT16 nSrcSide, nSrcSeg, nSegment, nSide;
 
-CLightDeltaValue *dll = theMine->LightDeltaValues (0);
-if (!dll)
+CLightDeltaValue *ldv = theMine->LightDeltaValues (0);
+if (!ldv)
 	return false;
 // search delta light index to see if current side has a light
 pls = lightStatus [0];
@@ -549,10 +554,10 @@ for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, dliP++) {
 	j = theMine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
-	dll = theMine->LightDeltaValues (dliP->m_info.index);
-	for (; i; i--, dll++) {
-		nSegment = dll->m_nSegment;
-		nSide = dll->m_nSide;
+	ldv = theMine->LightDeltaValues (dliP->m_info.index);
+	for (; i; i--, ldv++) {
+		nSegment = ldv->m_nSegment;
+		nSide = ldv->m_nSide;
 		if (m_bShowLightSource) {
 			if ((nSegment != nSrcSide) || (nSide != nSrcSeg)) 
 				continue;
@@ -576,6 +581,8 @@ return bChange;
 
 void CMineView::OnTimer (UINT_PTR nIdEvent)
 {
+CHECKMINE;
+
 if (nIdEvent == 4) {
 	if (m_mouseState == eMouseStateButtonDown) {
 		m_mouseState = eMouseStateSelect;
@@ -787,6 +794,8 @@ else {
 
 void CMineView::CalcSegDist (void)
 {
+CHECKMINE;
+
 	INT32			h, i, j, c, nDist, segNum = theMine->SegCount (), sideNum;
 	CSegment	*segI, *segJ;
 	INT16			*segRef = new INT16 [segNum];
@@ -821,6 +830,8 @@ delete segRef;
 
 void CMineView::DrawWireFrame (bool bPartial)
 {
+CHECKMINE;
+
 	INT32			nSegment;
 	CSegment	*segP;
 
@@ -882,6 +893,8 @@ if (left < r)
 
 void CMineView::DrawTextureMappedCubes (void)
 {
+CHECKMINE;
+
 	UINT32 nSegment;
 	INT16	 iVertex;
 	INT32	 z, zMax;
@@ -936,6 +949,8 @@ DrawCubeQuick (segP, bPartial);
 
 void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it) 
 {
+CHECKMINE;
+
 	CSegment *segP = theMine->Segments (nSegment);
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
@@ -1064,7 +1079,10 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 //			 draw_partial_segment()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubePartial (CSegment *segP) {
+void CMineView::DrawCubePartial (CSegment *segP) 
+{
+CHECKMINE;
+
   INT16 line;
   INT16 vert0,vert1;
 
@@ -1125,7 +1143,8 @@ if (left < r)
 
 void CMineView::DrawCubeQuick	(CSegment *segP, bool bPartial)
 {
-if (!theMine) return;
+CHECKMINE;
+
 if (!Visible (segP))
 	return;
 
@@ -1240,6 +1259,8 @@ else {	//!bPartial
 
 void CMineView::DrawLine (CTexture *pTx, POINT pt0, POINT pt1, UINT8 color) 
 {
+CHECKMINE;
+
 	INT32 i,x,y;
 	INT32 dx = pt1.x - pt0.x;
 	INT32 dy = pt1.y - pt0.y;
@@ -1388,6 +1409,7 @@ DrawLine (pTx, pt [0], pt [3], 1);
 
 void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index) 
 {
+CHECKMINE;
 
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
@@ -1455,6 +1477,8 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 
 void CMineView::DrawCubePoints (CSegment *segP)
 {
+CHECKMINE;
+
 	INT16		*pv = segP->m_info.verts;
 	COLORREF	color = RGB (128,128,128);
 	INT32		h, i;
@@ -1481,6 +1505,8 @@ pDC->SetPixel (m_viewPoints [segP.verts [7]].x, m_viewPoints [segP.verts [7]].y,
 
 void CMineView::DrawMarkedCubes (INT16 clear_it) 
 {
+CHECKMINE;
+
 	CSegment	*segP;
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
@@ -1561,6 +1587,8 @@ for (i=0;i<theMine->VertCount ();i++)
 
 void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 {
+CHECKMINE;
+
 	INT16 nSide = m_Current->nSide;
 	INT16 linenum = m_Current->nPoint;
 	INT16 pointnum = m_Current->nPoint;
@@ -1649,12 +1677,14 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 
 void CMineView::DrawLine(CSegment *segP,INT16 vert1,INT16 vert2) 
 {
-	if (vert2 > vert1) {
-		m_pDC->MoveTo(m_viewPoints [segP->m_info.verts [vert1]].x, m_viewPoints [segP->m_info.verts [vert1]].y);
-		m_pDC->LineTo(m_viewPoints [segP->m_info.verts [vert2]].x, m_viewPoints [segP->m_info.verts [vert2]].y);
-	} else {
-		m_pDC->MoveTo(m_viewPoints [segP->m_info.verts [vert2]].x, m_viewPoints [segP->m_info.verts [vert2]].y);
-		m_pDC->LineTo(m_viewPoints [segP->m_info.verts [vert1]].x, m_viewPoints [segP->m_info.verts [vert1]].y);
+CHECKMINE;
+if (vert2 > vert1) {
+	m_pDC->MoveTo(m_viewPoints [segP->m_info.verts [vert1]].x, m_viewPoints [segP->m_info.verts [vert1]].y);
+	m_pDC->LineTo(m_viewPoints [segP->m_info.verts [vert2]].x, m_viewPoints [segP->m_info.verts [vert2]].y);
+	} 
+else {
+	m_pDC->MoveTo(m_viewPoints [segP->m_info.verts [vert2]].x, m_viewPoints [segP->m_info.verts [vert2]].y);
+	m_pDC->LineTo(m_viewPoints [segP->m_info.verts [vert1]].x, m_viewPoints [segP->m_info.verts [vert1]].y);
 	}
 }
 //--------------------------------------------------------------------------
@@ -1663,6 +1693,8 @@ void CMineView::DrawLine(CSegment *segP,INT16 vert1,INT16 vert2)
 
 void CMineView::DrawWalls(void) 
 {
+CHECKMINE;
+
 	CWall		*walls = theMine->Walls (0);
 	CSegment	*segments = theMine->Segments (0);
 	CVertex	*vertices = theMine->Vertices (0);
@@ -1775,9 +1807,9 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 
 void CMineView::DrawLights (void) 
 {
-  INT16 i;
+CHECKMINE;
 
-  if (!m_pDC) return;
+if (!m_pDC) return;
 
 #if 0
   INT16 j, k;
@@ -1835,7 +1867,7 @@ void CMineView::DrawLights (void)
 
   // find flickering light from
 CFlickeringLight* flP = theMine->FlickeringLights (0);
-for (i = 0; i < theMine->FlickerLightCount (); i++, flP++)
+for (INT i = 0; i < theMine->FlickerLightCount (); i++, flP++)
 	if (Visible (theMine->Segments (flP->m_nSegment)))
 	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
 }
@@ -1848,41 +1880,42 @@ for (i = 0; i < theMine->FlickerLightCount (); i++, flP++)
 
 void CMineView::DrawOctagon(INT16 nSide, INT16 nSegment) 
 {
+CHECKMINE;
+
 	CSegment *segP;
 	INT16 j;
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 
-	if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
-	  POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
-	  segP = theMine->Segments (0) + nSegment;
-	  for (j=0;j<4;j++) {
-	    corners [j].x = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].x;
-	    corners [j].y = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].y;
-	  }
-	  if (IN_RANGE(corners [0].x,x_max) && IN_RANGE(corners [0].y,y_max) &&
-		   IN_RANGE(corners [1].x,x_max) && IN_RANGE(corners [1].y,y_max) &&
-	      IN_RANGE(corners [2].x,x_max) && IN_RANGE(corners [2].y,y_max) &&
-	      IN_RANGE(corners [3].x,x_max) && IN_RANGE(corners [3].y,y_max)   ) {
-
-	    center.x = (corners [0].x + corners [1].x + corners [2].x + corners [3].x)>>2;
-	    center.y = (corners [0].y + corners [1].y + corners [2].y + corners [3].y)>>2;
-		for (j=0;j<4;j++) {
-	      INT32 k = (j+1) & 0x03;
+if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
+	POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
+	segP = theMine->Segments (0) + nSegment;
+	for (j=0;j<4;j++) {
+		corners [j].x = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].x;
+		corners [j].y = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].y;
+		}
+	if (IN_RANGE(corners [0].x,x_max) && IN_RANGE(corners [0].y,y_max) &&
+		 IN_RANGE(corners [1].x,x_max) && IN_RANGE(corners [1].y,y_max) &&
+		 IN_RANGE(corners [2].x,x_max) && IN_RANGE(corners [2].y,y_max) &&
+		 IN_RANGE(corners [3].x,x_max) && IN_RANGE(corners [3].y,y_max)) {
+		center.x = (corners [0].x + corners [1].x + corners [2].x + corners [3].x)>>2;
+		center.y = (corners [0].y + corners [1].y + corners [2].y + corners [3].y)>>2;
+		for (j = 0; j < 4; j++) {
+			INT32 k = (j+1) & 0x03;
 			line_centers [j].x = (corners [j].x + corners [k].x) >> 1;
-	      line_centers [j].y = (corners [j].y + corners [k].y) >> 1;
-	      diamond [j].x = (line_centers [j].x + center.x) >> 1;
-	      diamond [j].y = (line_centers [j].y + center.y) >> 1;
-	      fortyfive [j].x = ((corners [j].x-center.x)*7)/20 + center.x;
-	      fortyfive [j].y = ((corners [j].y-center.y)*7)/20 + center.y;
-	    }
-	    // draw octagon
-	    m_pDC->MoveTo(diamond [3].x,diamond [3].y);
-	    for (j=0;j<4;j++) {
-	      m_pDC->LineTo(fortyfive [j].x,fortyfive [j].y);
-		  m_pDC->LineTo(diamond [j].x,diamond [j].y);
-	    }
-	  }
+			line_centers [j].y = (corners [j].y + corners [k].y) >> 1;
+			diamond [j].x = (line_centers [j].x + center.x) >> 1;
+			diamond [j].y = (line_centers [j].y + center.y) >> 1;
+			fortyfive [j].x = ((corners [j].x-center.x)*7)/20 + center.x;
+			fortyfive [j].y = ((corners [j].y-center.y)*7)/20 + center.y;
+			}
+		// draw octagon
+		m_pDC->MoveTo(diamond [3].x,diamond [3].y);
+		for (j = 0; j < 4; j++) {
+			m_pDC->LineTo(fortyfive [j].x,fortyfive [j].y);
+			m_pDC->LineTo(diamond [j].x,diamond [j].y);
+			}
+		}
 	}
 }
 
@@ -1946,6 +1979,8 @@ dest += offs;
 
 void CMineView::DrawObject(INT16 objnum,INT16 clear_it) 
 {
+CHECKMINE;
+
 	INT16 poly;
 	CGameObject *objP;
 	CFixVector pt [MAX_POLY];
@@ -2162,6 +2197,8 @@ if (nTarget = objP->rType.lightningInfo.nTarget)
 
 void CMineView::DrawObjects (INT16 clear_it) 
 {
+CHECKMINE;
+
 if (!ViewObject ())
 	return;
 
@@ -2187,6 +2224,8 @@ for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 
 void CMineView::DrawHighlight(INT16 clear_it) 
 {
+CHECKMINE;
+
 	INT16	currSide, currPoint;
 //	INT16 i;
 //	RECT rect;

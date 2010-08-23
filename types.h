@@ -129,8 +129,8 @@ public:
 	CVertex (CFixVector& _v) : CFixVector (_v) { m_status = 0; }
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; }
-	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {}
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return v.Read (fp); }
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) { v.Write (fp); }
 	virtual void Clear (void) { 
 		m_status = 0;
 		this->CFixVector::Clear ();

@@ -2611,12 +2611,12 @@ else {
 	m_info.nMatCen = -1;
 	m_info.value = 0;
 	}
-m_info.s2_flags = 0;  // d1 doesn't use this number, so zero it
-if (nLevelType == 2) {
-	m_info.props = read_INT8 (fp);
+m_info.s2_flags = 0;  
+if (nLevelType) {
 	if (nLevelVersion < 20)
 		Upgrade ();
 	else {
+		m_info.props = read_INT8 (fp);
 		m_info.damage [0] = read_INT16 (fp);
 		m_info.damage [1] = read_INT16 (fp);
 		}
@@ -2630,7 +2630,7 @@ INT32 CSegment::Read (FILE* fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
 
-if (nLevelType == 2) {
+if (nLevelVersion >= 9) {
 	m_info.owner = read_INT8 (fp);
 	m_info.group = read_INT8 (fp);
 	}
@@ -2658,12 +2658,11 @@ m_info.wallFlags = UINT8 (read_INT8 (fp));
 // read in wall numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	m_sides [i].m_info.nWall = (m_info.wallFlags & (1 << i)) 
-								? (nLevelVersion < 13) 
-									? UINT16 (read_INT8 (fp)) 
-									: UINT16 (read_INT16 (fp)) 
-								: NO_WALL;
+										? UINT16 ((nLevelVersion < 13) ? read_INT8 (fp) : read_INT16 (fp))
+										: NO_WALL;
 
 // read in textures and uvls (0 to 60 bytes)
+size_t fPos = ftell (fp);
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	m_sides [i].Read (fp, (m_info.children [i] == -1) || ((m_info.wallFlags & (1 << i)) != 0));
 return 1;

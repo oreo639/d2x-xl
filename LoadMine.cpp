@@ -196,36 +196,33 @@ gamedataOffset = read_INT32 (fp);
 // for Descent 1 files since we dont use it anyway
 // hostagetextOffset = read_INT32(fp);
 
+// read palette name *.256
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
-		read_INT16(fp);
-		read_INT16(fp);
-		read_INT16(fp);
-		read_INT8(fp);
+		read_INT16 (fp);
+		read_INT16 (fp);
+		read_INT16 (fp);
+		read_INT8 (fp);
 		}
-	}
-
-// read palette name *.256
-	if (IsD2File ()) {
-		// read palette file name
-		INT32 i;
-		for (i = 0; i < 15; i++) {
-			palette_name [i] = fgetc(fp);
-			if (palette_name [i]== 0x0a) {
-				palette_name [i] = NULL;
-				break;
-				}
+	// read palette file name
+	INT32 i;
+	for (i = 0; i < 15; i++) {
+		palette_name [i] = fgetc(fp);
+		if (palette_name [i]== 0x0a) {
+			palette_name [i] = NULL;
+			break;
 			}
-		// replace extension with .pig
-		if (i >= 4) {
-			palette_name [strlen ((char *)palette_name) - 4] = NULL;
-			strcat_s (palette_name, sizeof (palette_name), ".PIG");
-			}
-		// try to find new pig file in same directory as Current () pig file
-		// 1) cut off old name
+		}
+	// replace extension with .pig
+	if (i >= 4) {
+		palette_name [strlen ((char *)palette_name) - 4] = NULL;
+		strcat_s (palette_name, sizeof (palette_name), ".PIG");
+		}
+	// try to find new pig file in same directory as Current () pig file
+	// 1) cut off old name
 	if (!bNewMine) {
 		if (descent2_path [0] != NULL) {
-			char *path = strrchr(descent2_path, '\\');
+			char *path = strrchr (descent2_path, '\\');
 			if (!path) {
 				descent2_path [0] = NULL;
 				} 
@@ -240,61 +237,14 @@ if (IsD2File ()) {
 		}
 	}
 
-#if 1
 if (return_code = LoadPalette ())
 	goto load_end;
-#else
-// set palette
-palette = PalettePtr ();
-ASSERT(palette);
-if (!palette) 
-	goto load_end;
-
-// redefine logical palette entries if memory for it is allocated
-m_dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
-if (m_dlcLogPalette) {
-	m_dlcLogPalette->palVersion = 0x300;
-	m_dlcLogPalette->palNumEntries = 256;
-	INT32 i;
-#if 0
-	for (i = 0; i < 256; ++i) {
-		m_dlcLogPalette->palPalEntry [i].peRed = *palette++;
-		m_dlcLogPalette->palPalEntry [i].peGreen = *palette++;
-		m_dlcLogPalette->palPalEntry [i].peBlue = *palette++;
-		m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED; palette++;
-		}
-#else
-	for (i = 0; i < 256;++i) {
-		m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
-		m_dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
-		m_dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
-		m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
-		}
-#endif
-	// now recreate the global Palette
-	if (m_currentPalette) {
-		delete m_currentPalette;
-		m_currentPalette = new CPalette ();
-		m_currentPalette->CreatePalette (m_dlcLogPalette);
-//			::DeleteObject(m_currentPalette);
-//			m_currentPalette = CreatePalette(m_dlcLogPalette);
-		}
-	}
-FreeResource(hGlobal);
-#endif //0
 
 // read descent 2 reactor information
 nLights = 0;
 if (IsD2File ()) {
-	ReactorTime () = read_INT32(fp); // base control center explosion time
-	ReactorStrength () = read_INT32(fp); // reactor strength
-
-#if 0
-	sprintf_s (message, sizeof (message),  "Reactor time=%ld, Reactor strength=%ld, Secret Cube #=%ld",
-		ReactorTime (), ReactorStrength (), SecretCubeNum ());
-	INFOMSG(message);
-#endif
-
+	ReactorTime () = read_INT32 (fp); // base control center explosion time
+	ReactorStrength () = read_INT32 (fp); // reactor strength
 	if (LevelVersion () > 6) {
 		FlickerLightCount () = INT16 (read_INT32 (fp));
 		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_FLICKERING_LIGHTS)) {
@@ -321,7 +271,7 @@ if (IsD2File ()) {
 
 m_disableDrawing = TRUE;
 
-fseek(fp, minedataOffset, SEEK_SET);
+fseek (fp, minedataOffset, SEEK_SET);
 mineErr = LoadMineDataCompiled (fp, bNewMine);
 int fPos = ftell (fp);
 FlickerLightCount () = nLights;
@@ -582,6 +532,7 @@ SegCount () = n_segments;
 
 // read all vertices
 CVertex* vertP = Vertices (0);
+size_t fPos = ftell (fp);
 for (i = 0; i < VertCount (); i++, vertP++) {
 	vertP->Read (fp);
 	vertP->m_status = 0;

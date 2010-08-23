@@ -209,12 +209,14 @@ if (!CDocument::OnNewDocument())
 	return FALSE;
 *m_szFile = '\0';
 *m_szSubFile = '\0';
-if (m_bInitDocument) {
-	m_bInitDocument = false;
-	theMine->Load ();
+if (theMine) {
+	if (m_bInitDocument) {
+		m_bInitDocument = false;
+		theMine->Load ();
+		}
+	else
+		CreateNewLevel ();
 	}
-else
-	CreateNewLevel ();
 return TRUE;
 }
 

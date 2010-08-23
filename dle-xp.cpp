@@ -254,6 +254,7 @@ BOOL CDlcApp::InitInstance()
 		return FALSE;
 	if (!theMine)
 		theMine = new CMine;
+	theMine->Load ();
 	//memset (theMine->Textures (), 0, sizeof (theMine->Textures ()));
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();
