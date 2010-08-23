@@ -708,7 +708,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		texture1 = 0;
 		}
 	else
-		pTx = theMine->Textures () [fileType];
+		pTx = theMine->Textures (fileType);
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {

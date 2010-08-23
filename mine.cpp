@@ -58,6 +58,8 @@ CLEAR (ReactorTriggers ());
 CLEAR (VertexColors ());
 CLEAR (BotGens ());
 CLEAR (EquipGens ());
+CLEAR (Textures () [0]);
+CLEAR (Textures () [1]);
 #endif
 m_levelVersion = 7;
 m_fileType = RL2_FILE;

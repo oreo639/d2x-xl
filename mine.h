@@ -46,7 +46,7 @@ typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
-typedef CStaticArray< CStaticArray< CTexture, 2>, MAX_D2_TEXTURES> textureList;
+typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 
 #define CLEAR(_b) (_b).Clear ()
 #define ASSIGN(_a,_b) (_a) = (_b)
@@ -265,8 +265,8 @@ public:
 		{ return MineData ().lightDeltaValues + i; }
 	inline CFlickeringLight *FlickeringLights (INT32 i)
 		{ return MineData ().flickeringLights + i; }
-	inline CTexture* Textures (INT32 i)
-		{ return &MineData ().textures [i][0]; }
+	inline CTexture* Textures (INT32 i, INT32 j = 0)
+		{ return &MineData ().textures [i][j]; }
 
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
