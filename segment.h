@@ -79,7 +79,7 @@ typedef struct tSegment {
 	INT8		group;
 } tSegment;
 
-class CSegment : CGameItem {
+class CSegment : public CGameItem {
 public:
 	tSegment	m_info;
 	CSide		m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 

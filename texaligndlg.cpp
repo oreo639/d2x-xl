@@ -295,7 +295,7 @@ offset.y = (INT32) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 // set up logical palette
 oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 pDC->RealizePalette();
-memset(tx.m_pDataBM, 0, sizeof (bmBuf));
+memset(tx.m_info.bmDataP, 0, sizeof (bmBuf));
 if (DefineTexture (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tx, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (DefineTexture failed)");
 	return;
@@ -307,7 +307,7 @@ for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
 		i=((INT32)(((((x-(m_centerPt.x+offset.x))+128)*2)/m_zoom))&63)*scale;
 		j=((INT32)(((((y-(m_centerPt.y+offset.y))+128)*2)/m_zoom))&63)*scale;
-		pDC->SetPixel(x, y, h=PALETTEINDEX(tx.m_pDataBM[(tx.m_width-j)*tx.m_width+i]));
+		pDC->SetPixel(x, y, h=PALETTEINDEX(tx.m_info.bmDataP[(tx.m_width-j)*tx.m_width+i]));
 		}
 	}
 DeleteObject(hRgn);

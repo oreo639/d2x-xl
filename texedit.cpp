@@ -368,7 +368,7 @@ m_iTexture = theMine->CurrSide ()->m_info.nBaseTex;
 if (m_iTexture >= MAX_D2_TEXTURES)
 	m_iTexture = 0;
 m_pTx = theMine->Textures (theApp.FileType (), m_iTexture);
-if (!(m_pTx->m_pDataBM && m_pTx->m_bValid)) {
+if (!(m_pTx->m_info.bmDataP && m_pTx->m_bValid)) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
@@ -380,13 +380,13 @@ if (!m_bitmap) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
 	}
-memcpy (m_bitmap, m_pTx->m_pDataBM, m_nSize);
+memcpy (m_bitmap, m_pTx->m_info.bmDataP, m_nSize);
 m_tga = new tRGBA [2048 * 2048];
 if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
 	}
 else if (m_nFormat = m_pTx->m_nFormat)
-	memcpy (m_tga, m_pTx->m_pDataTGA, m_nSize * sizeof (tRGBA));
+	memcpy (m_tga, m_pTx->m_info.tgaDataP, m_nSize * sizeof (tRGBA));
 m_backupBM = new UINT8 [2048 * 2048];
 m_backupTGA = new tRGBA [2048 * 2048];
 if (!(m_backupBM && m_backupTGA))
@@ -458,19 +458,19 @@ if ((m_pTx->m_width != m_nWidth) || (m_pTx->m_height != m_nHeight) || (m_pTx->m_
 		DEBUGMSG (" Texture tool: Not enough memory for the new texture");
 		EndDialog (IDCANCEL);
 		}
-	delete m_pTx->m_pDataBM;
-	if (m_pTx->m_pDataTGA)
-		delete m_pTx->m_pDataTGA;
-	m_pTx->m_pDataTGA = pDataTGA;
-	m_pTx->m_pDataBM = pDataBM;
+	delete m_pTx->m_info.bmDataP;
+	if (m_pTx->m_info.tgaDataP)
+		delete m_pTx->m_info.tgaDataP;
+	m_pTx->m_info.tgaDataP = pDataTGA;
+	m_pTx->m_info.bmDataP = pDataBM;
 	m_pTx->m_width = m_nWidth;
 	m_pTx->m_height = m_nHeight;
 	m_pTx->m_size = m_nSize;
 	m_pTx->m_nFormat = (unsigned char) m_nFormat;
 	}
-memcpy (m_pTx->m_pDataBM, m_bitmap, m_pTx->m_size);
+memcpy (m_pTx->m_info.bmDataP, m_bitmap, m_pTx->m_size);
 if (m_pTx->m_nFormat)
-	memcpy (m_pTx->m_pDataTGA, m_tga, m_pTx->m_size * sizeof (tRGBA));
+	memcpy (m_pTx->m_info.tgaDataP, m_tga, m_pTx->m_size * sizeof (tRGBA));
 m_pTx->m_bModified = m_bModified;
 CDialog::OnOK ();
 }
@@ -1068,7 +1068,7 @@ if (QueryMsg("Are you sure you want to restore this texture\n"
 	Backup ();
 	m_pTx->m_bModified = m_bModified = FALSE;
 	m_pTx->Read (m_iTexture);
-	memcpy (m_bitmap, m_pTx->m_pDataBM, m_pTx->m_size);
+	memcpy (m_bitmap, m_pTx->m_info.bmDataP, m_pTx->m_size);
 	m_nWidth = m_pTx->m_width;
 	m_nHeight = m_pTx->m_height;
 	m_nSize = m_pTx->m_size;

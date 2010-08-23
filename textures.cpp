@@ -167,7 +167,7 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, 
 	tFrac			scale, scale2;
 	INT32			rc; // return code
 	CTexture	*pTx [2];
-	UINT8			*bmBuf = pDestTx->m_pDataBM;
+	UINT8			*bmBuf = pDestTx->m_info.bmDataP;
 	UINT8			c;
 	INT32			fileType = theApp.FileType ();
 
@@ -183,7 +183,7 @@ if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	textures [i] = 0;
 	// buffer textures if not already buffered
 	pTx [i] = theMine->Textures (fileType, textures [i]);
-	if (!(pTx [i]->m_pDataBM && pTx [i]->m_bValid))
+	if (!(pTx [i]->m_info.bmDataP && pTx [i]->m_bValid))
 		if (rc = pTx [i]->Read (textures [i]))
 			return (rc);
 	}
@@ -193,7 +193,7 @@ pDestTx->m_width = pTx [0]->m_width;
 pDestTx->m_height = pTx [0]->m_height;
 pDestTx->m_size = pTx [0]->m_size;
 pDestTx->m_bValid = 1;
-ptr = pTx [0]->m_pDataBM;
+ptr = pTx [0]->m_info.bmDataP;
 //CBRK (textures [0] == 220);
 if (ptr) {
 	// if not rotated, then copy directly
@@ -221,7 +221,7 @@ if (ptr) {
 
 if (textures [1] == 0)
 	return 0;
-if (!(ptr = pTx [1]->m_pDataBM))
+if (!(ptr = pTx [1]->m_info.bmDataP))
 	return 0;
 if (pTx [0]->m_width == pTx [1]->m_width)
 	scale.c = scale.d = 1;
@@ -451,17 +451,17 @@ else {
 	}
 
 // allocate data if necessary
-if (m_pDataBM && ((m_width != w) || (m_height != h))) {
-	delete m_pDataBM;
-	m_pDataBM = NULL;
+if (m_info.bmDataP && ((m_width != w) || (m_height != h))) {
+	delete m_info.bmDataP;
+	m_info.bmDataP = NULL;
 	}
-if (m_pDataTGA) {
-	delete m_pDataTGA;
-	m_pDataTGA = NULL;
+if (m_info.tgaDataP) {
+	delete m_info.tgaDataP;
+	m_info.tgaDataP = NULL;
 	}
-if (m_pDataBM == NULL)
-	m_pDataBM = new UINT8 [s];
-if (m_pDataBM == NULL) {
+if (m_info.bmDataP == NULL)
+	m_info.bmDataP = new UINT8 [s];
+if (m_info.bmDataP == NULL) {
 	rc = 1;
 	goto abort;
 	}
@@ -481,13 +481,13 @@ if (d2_ptexture.flags & 0x08) {
 				runvalue = *line_ptr++;
 				for (j=0;j<runcount;j++) {
 					if (x<w) {
-						m_pDataBM[y*w+x] = runvalue;
+						m_info.bmDataP[y*w+x] = runvalue;
 						x++;
 						}
 					}
 				}
 			else {
-				m_pDataBM[y*w+x] = byte;
+				m_info.bmDataP[y*w+x] = byte;
 				x++;
 				}
 			}
@@ -496,13 +496,13 @@ if (d2_ptexture.flags & 0x08) {
 else {
 	for (y=h-1;y>=0;y--) {
 #if 1
-		fread (m_pDataBM + y * w, w, 1, fTextures);
+		fread (m_info.bmDataP + y * w, w, 1, fTextures);
 #else
 		fread (line,w,1,fTextures);
 		line_ptr = line;
 		for (x=0;x<w;x++) {
 			byte = *line_ptr++;
-			m_pDataBM[y*w+x] = byte;
+			m_info.bmDataP[y*w+x] = byte;
 			}
 #endif
 		}
@@ -703,7 +703,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		pxTx->pNext = extraTextures;
 		extraTextures = pxTx;
 		pxTx->texture_index = texture_index;
-		pxTx->texture.m_pDataBM = NULL;
+		pxTx->texture.m_info.bmDataP = NULL;
 		pTx = &(pxTx->texture);
 		nBaseTex = 0;
 		}
@@ -712,17 +712,17 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {
-		if (pTx [nBaseTex].m_pDataBM)
-			delete pTx [nBaseTex].m_pDataBM;
-		pTx [nBaseTex].m_pDataBM = ptr;
+		if (pTx [nBaseTex].m_info.bmDataP)
+			delete pTx [nBaseTex].m_info.bmDataP;
+		pTx [nBaseTex].m_info.bmDataP = ptr;
 		if (d2texture.flags & 0x80) {
 			ptr = (UINT8*) malloc (tSize * sizeof (tRGBA));
 			if (ptr) {
-				pTx [nBaseTex].m_pDataTGA = (tRGBA *) ptr;
+				pTx [nBaseTex].m_info.tgaDataP = (tRGBA *) ptr;
 				pTx [nBaseTex].m_nFormat = 1;
 				}
 			else {
-				delete pTx [nBaseTex].m_pDataBM;
+				delete pTx [nBaseTex].m_info.bmDataP;
 				continue;
 				}
 			}
@@ -739,7 +739,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		if (pTx [nBaseTex].m_nFormat) {
 			fread (ptr, pTx [nBaseTex].m_size * sizeof (tRGBA), 1, fTextures);
 			pTx [nBaseTex].m_bValid = 
-				TGA2Bitmap (pTx [nBaseTex].m_pDataTGA, pTx [nBaseTex].m_pDataBM, (INT32) tWidth, (INT32) tHeight);
+				TGA2Bitmap (pTx [nBaseTex].m_info.tgaDataP, pTx [nBaseTex].m_info.bmDataP, (INT32) tWidth, (INT32) tHeight);
 			}
 		else {
 			if (d2texture.flags & BM_FLAG_RLE) {
@@ -805,7 +805,7 @@ nOffset += (d2texture.flags & 0x80) ? pTexture->m_size * 4: pTexture->m_size;
 
 // check for transparency and super transparency
 if (!pTexture->m_nFormat)
-	if (pSrc = (UINT8 *) pTexture->m_pDataBM) {
+	if (pSrc = (UINT8 *) pTexture->m_info.bmDataP) {
 		UINT32 j;
 		for (j = 0; j < pTexture->m_size; j++, pSrc++) {
 			if (*pSrc == 255) 
@@ -821,7 +821,7 @@ fwrite (&d2texture, sizeof (D2_PIG_TEXTURE), 1, pDestPigFile);
 
 bool WritePogTexture (FILE *pDestPigFile, CTexture *pTexture)
 {
-	UINT8		*pSrc = pTexture->m_nFormat ? (UINT8*) pTexture->m_pDataTGA : pTexture->m_pDataBM;
+	UINT8		*pSrc = pTexture->m_nFormat ? (UINT8*) pTexture->m_info.tgaDataP : pTexture->m_info.bmDataP;
 
 if (!pSrc) {
 	DEBUGMSG (" POG manager: Couldn't lock texture data.");
@@ -1004,13 +1004,13 @@ for (i = 0; i < 2; i++) {
 	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
 		if (!bDeleteModified && texP->m_bModified)
 			continue;
-		if (texP->m_pDataBM) {
-			free (texP->m_pDataBM);
-			texP->m_pDataBM = NULL;
+		if (texP->m_info.bmDataP) {
+			free (texP->m_info.bmDataP);
+			texP->m_info.bmDataP = NULL;
 			}
-		if (texP->m_pDataTGA) {
-			free (texP->m_pDataTGA);
-			texP->m_pDataTGA = NULL;
+		if (texP->m_info.tgaDataP) {
+			free (texP->m_info.tgaDataP);
+			texP->m_info.tgaDataP = NULL;
 			}
 		texP->m_bModified = FALSE;
 		texP->m_nFormat = 0;

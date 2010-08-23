@@ -38,28 +38,33 @@ typedef struct tBGR {
 	unsigned char	r, g, b;
 } tBGR;
 
-class CTexture
-{
-public:
-	UINT8		*m_pDataBM;
-	tRGBA		*m_pDataTGA;
-	UINT32	m_width, m_height, m_size;
-	BOOLEAN	m_bModified, m_bExtData, m_bValid;
-	UINT8		m_nFormat;	// 0: Bitmap, 1: TGA (RGB)
+typedef struct tTexture {
+	UINT8*	bmDataP;
+	tRGBA*	tgaDataP;
+	UINT32	width, height, size;
+	BOOLEAN	bModified, bExtData, bValid;
+	UINT8		nFormat;	// 0: Bitmap, 1: TGA (RGB)
+} tTexture;
 
-	CTexture(UINT8 *pData = NULL) 
-		: m_pDataBM (pData) 
-		{ m_pDataTGA = NULL, m_nFormat = 0, m_bValid = m_bModified = FALSE, m_bExtData = (pData != NULL); }
+class CTexture : public CGameItem {
+public:
+	tTexture	m_info;
+
+	CTexture(UINT8 *dataP = NULL) {
+		Clear ();
+		m_info.bmDataP = pData; 
+		}
 	~CTexture() {
 		if (!m_bExtData) {
-			delete m_pDataBM;
-			if (m_pDataTGA)
-				delete m_pDataTGA;
+			delete m_info.bmDataP;
+			if (m_info.tgaDataP)
+				delete m_info.tgaDataP;
 			}
 		}
 
 	INT32 Read (INT16 index);
 	double Scale (INT16 index = -1);
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info));
 };
 
 
