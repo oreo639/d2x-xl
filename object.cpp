@@ -158,7 +158,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
   objP->m_info.orient.fVec.Set (0, 0, F1_0);
   objP->m_info.size = PLAYER_SIZE;
   objP->m_info.shields = DEFAULT_SHIELD;
-  objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
+  objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
   objP->rType.polyModelInfo.tmap_override = -1;
   objP->m_info.contents.type = 0;
   objP->m_info.contents.id = 0;
@@ -171,7 +171,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
 // set_object_data ()
 //
 // Action - Sets control type, movement type, render type
-// 	    size, and shields (also model_num & texture if robot)
+// 	    size, and shields (also nModel & texture if robot)
 //------------------------------------------------------------------------
 
 void CMine::SetObjectData (INT8 type) 
@@ -193,7 +193,7 @@ switch (type) {
 	  objP->m_info.renderType   = RT_POLYOBJ;
 	  objP->m_info.size          = robotSize[id];
 	  objP->m_info.shields       = robot_shield[id];
-	  objP->rType.polyModelInfo.model_num = robotClip[id];
+	  objP->rType.polyModelInfo.nModel = robotClip[id];
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  objP->cType.aiInfo.behavior = AIB_NORMAL;
 	  break;
@@ -217,7 +217,7 @@ switch (type) {
 	  objP->m_info.renderType   = RT_POLYOBJ;
 	  objP->m_info.size          = PLAYER_SIZE;
 	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
+	  objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
 	  break;
 
@@ -227,7 +227,7 @@ switch (type) {
 	  objP->m_info.renderType   = RT_POLYOBJ;
 	  objP->m_info.size          = WEAPON_SIZE;
 	  objP->m_info.shields       = WEAPON_SHIELD;
-	  objP->rType.polyModelInfo.model_num = MINE_CLIP_NUMBER;
+	  objP->rType.polyModelInfo.nModel = MINE_CLIP_NUMBER;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
 	  objP->mType.physInfo.mass      = 65536L;
 	  objP->mType.physInfo.drag      = 2162;
@@ -256,7 +256,7 @@ switch (type) {
 	  objP->m_info.size          = REACTOR_SIZE;
 	  objP->m_info.shields       = REACTOR_SHIELD;
 	  if (IsD1File ())
-			objP->rType.polyModelInfo.model_num = REACTOR_CLIP_NUMBER;
+			objP->rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
 	  else {
 		INT32 model;
 		switch (id) {
@@ -268,7 +268,7 @@ switch (type) {
 		  case 6:  model = 105; break;
 		  default: model = 97;  break; // level 1's reactor
 		}
-		objP->rType.polyModelInfo.model_num = model;
+		objP->rType.polyModelInfo.nModel = model;
 	  }
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  break;
@@ -279,7 +279,7 @@ switch (type) {
 	  objP->m_info.renderType   = RT_POLYOBJ;
 	  objP->m_info.size          = PLAYER_SIZE;
 	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.model_num = COOP_CLIP_NUMBER;
+	  objP->rType.polyModelInfo.nModel = COOP_CLIP_NUMBER;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  break;
 
@@ -291,7 +291,7 @@ switch (type) {
 	  objP->m_info.renderType   = RT_POLYOBJ;
 	  objP->m_info.size          = robotSize[0];
 	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.model_num = robotClip [0];
+	  objP->rType.polyModelInfo.nModel = robotClip [0];
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  objP->cType.aiInfo.behavior = AIB_STILL;
 	  break;
@@ -699,7 +699,7 @@ write_FIX (intensity, fp);
 
 INT32 CObjPolyModelInfo::Read (FILE *fp, INT32 version)
 {
-model_num = read_INT32 (fp);
+nModel = read_INT32 (fp);
 for (int i = 0; i < MAX_SUBMODELS; i++)
 	anim_angles [i].Read (fp);
 subobj_flags = read_INT32 (fp);
@@ -712,7 +712,7 @@ return 1;
 
 void CObjPolyModelInfo::Write (FILE *fp, INT32 version)
 {
-write_INT32 (model_num, fp);
+write_INT32 (nModel, fp);
 for (int i = 0; i < MAX_SUBMODELS; i++)
 	anim_angles [i].Write (fp);
 write_INT32 (subobj_flags, fp);

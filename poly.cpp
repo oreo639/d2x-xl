@@ -31,7 +31,7 @@ extern HRGN hrgnBackground,hrgnLowerBar,hrgnTopBar,hrgnAll;
 #define OP_RODBM      5	/* rod bitmap               (not used) */
 #define OP_SUBCALL    6	/* call a subobject                    */
 #define OP_DEFP_START 7	/* defpoints with start                */
-#define OP_GLOW       8	/* glow value for next poly            */
+#define OP_GLOW       8	/* m_info.glow value for next poly            */
 
 #define MAX_INTERP_COLORS 100
 #define MAX_POINTS_PER_POLY 25
@@ -389,7 +389,7 @@ FREAD (polyModel.maxs);				  // min, max for whole model
 FREAD (polyModel.rad);
 FREAD (polyModel.n_textures);
 FREAD (polyModel.first_texture);
-FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, model_num+1 else)
+FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, nModel+1 else)
 assert(polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
 }
 
@@ -403,25 +403,25 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 	POLYMODEL  polyModel;
 	POLYMODEL  save_model;
 	CRobotInfo robot_info;
-	UINT32     model_num;
+	UINT32     nModel;
 
 	switch (objP->m_info.type) {
 		case OBJ_PLAYER:
 		case OBJ_COOP:
-			model_num = D2_PLAYER_CLIP_NUMBER;
+			nModel = D2_PLAYER_CLIP_NUMBER;
 			break;
 		case OBJ_WEAPON:
-			model_num = MINE_CLIP_NUMBER;
+			nModel = MINE_CLIP_NUMBER;
 			break;
 		case OBJ_CNTRLCEN:
 			switch(objP->m_info.id) {
-				case 1:  model_num = 95;  break;
-				case 2:  model_num = 97;  break;
-				case 3:  model_num = 99;  break;
-				case 4:  model_num = 101; break;
-				case 5:  model_num = 103; break;
-				case 6:  model_num = 105; break;
-				default: model_num = 97;  break; // level 1's reactor
+				case 1:  nModel = 95;  break;
+				case 2:  nModel = 97;  break;
+				case 3:  nModel = 99;  break;
+				case 4:  nModel = 101; break;
+				case 5:  nModel = 103; break;
+				case 6:  nModel = 105; break;
+				default: nModel = 97;  break; // level 1's reactor
 			}
 			break;
 			// if it is a robot, then read the id from the HAM file
@@ -450,7 +450,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 					for (i=0;i<n;i++) {
 						if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
 							fread(&robot_info,sizeof (CRobotInfo),1,file);// read robot info
-							model_num = robot_info.model_num;
+							nModel = robot_info.nModel;
 						} else {
 							fseek(file,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 						}
@@ -469,11 +469,11 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		for (i = 0; i < n; i++) {
 			ReadPolyModel (polyModel, file);
 			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
-			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS))
+			if (i==(UINT32) (nModel - N_D2_POLYGON_MODELS))
 				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 		}
 		for (i=0;i<n;i++) {
-			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS)) {
+			if (i==(UINT32) (nModel - N_D2_POLYGON_MODELS)) {
 				fread(gModelData, model_dataSize[i],1,file);
 				break; // were done!
 			} else {
@@ -504,7 +504,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 			for (i=0;i<n;i++) {
 				if (i == (UINT32) objP->m_info.id) {
 					fread(&robot_info,sizeof (CRobotInfo),1,file);// read robot info
-					model_num = robot_info.model_num;
+					nModel = robot_info.nModel;
 				} else {
 					fseek(file,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 				}
@@ -523,12 +523,12 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		for (i=0;i<n;i++) {
 			ReadPolyModel (polyModel, file);
 			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
-			if (i==(UINT32) model_num) {
+			if (i==(UINT32) nModel) {
 				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 			}
 		}
 		for (i=0;i<n;i++) {
-			if (i==(UINT32) model_num) {
+			if (i==(UINT32) nModel) {
 				fread(gModelData, model_dataSize[i],1,file);
 				break; // were done!
 			} else {

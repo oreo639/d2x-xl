@@ -15,6 +15,199 @@
 #include "hogmanager.h"
 
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+void tRobotGunInfo::Read (FILE* fp) {
+	points.Read (fp);
+	subModels = UINT8 (read_INT8 (fp));
+	}
+
+void tRobotGunInfo::Write (FILE* fp) {
+	points.Write (fp);
+	write_INT8 ((INT8) subModels, fp);
+	}
+
+//------------------------------------------------------------------------
+
+void tRobotExplInfo::Read (FILE* fp) {
+	nClip = read_INT16 (fp);
+	nSound = read_INT16 (fp);
+	}
+
+void tRobotExplInfo::Write (FILE* fp) {
+	write_INT16 (nClip , fp);
+	write_INT16 (nSound, fp);
+	}
+
+//------------------------------------------------------------------------
+
+void tRobotContentsInfo::Read (FILE* fp) {
+	id = read_INT8 (fp);
+	count = read_INT8 (fp);
+	prob = read_INT8 (fp);
+	type = read_INT8 (fp);
+	}
+
+void tRobotContentsInfo::Write (FILE* fp) {
+	write_INT8 (id, fp);
+	write_INT8 (count, fp);
+	write_INT8 (prob, fp);
+	write_INT8 (type, fp);
+	}
+
+//------------------------------------------------------------------------
+
+void tRobotSoundInfo::Read (FILE* fp) {
+	see = (UINT8) read_INT8 (fp);
+	attack = (UINT8) read_INT8 (fp);
+	claw = (UINT8) read_INT8 (fp);
+	taunt = (UINT8) read_INT8 (fp);
+	}
+
+void tRobotSoundInfo::Write (FILE* fp) {
+	write_INT8 ((INT8) see, fp);
+	write_INT8 ((INT8) attack, fp);
+	write_INT8 ((INT8) claw, fp);
+	write_INT8 ((INT8) taunt, fp);
+	}
+
+//------------------------------------------------------------------------
+
+void tRobotCombatInfo::Read (FILE* fp, int nField) {
+	switch (nField) {
+		case 0:
+			fieldOfView = read_FIX (fp);
+			break;
+		case 1:
+			firingWait [0] = read_FIX (fp);
+			break;
+		case 2:
+			firingWait [1] = read_FIX (fp);
+			break;
+		case 3:
+			turnTime = read_FIX (fp);
+			break;
+		case 4:
+			maxSpeed = read_FIX (fp);
+			break;
+		case 5:
+			circleDistance = read_FIX (fp);
+			break;
+		case 6:
+			rapidFire = read_INT8 (fp);
+			break;
+		case 7:
+			evadeSpeed = read_INT8 (fp);
+			break;
+		}
+	}
+
+void tRobotCombatInfo::Write (FILE* fp, int nField) {
+	switch (nField) {
+		case 0:
+			write_FIX (fieldOfView, fp);
+			break;
+		case 1:
+			write_FIX (firingWait [0], fp);
+			break;
+		case 2:
+			write_FIX (firingWait [1], fp);
+			break;
+		case 3:
+			write_FIX (turnTime, fp);
+			break;
+		case 4:
+			write_FIX (maxSpeed, fp);
+			break;
+		case 5:
+			write_FIX (circleDistance, fp);
+			break;
+		case 6:
+			write_INT8 (rapidFire, fp);
+			break;
+		case 7:
+			write_INT8 (evadeSpeed, fp);
+			break;
+		}
+	}
+
+//------------------------------------------------------------------------
+
+INT32 CRobotInfo::Read (FILE* fp, INT32 version, bool bFlag) 
+{ 
+	int i, j;
+
+m_info.nModel = read_INT32 (fp);
+for (i = 0; i < MAX_GUNS; i++)
+	m_info.guns [i].Read (fp);
+for (i = 0; i < 2; i++)
+	m_info.expl [i].Read (fp);
+for (i = 0; i < 2; i++)
+	m_info.weaponType [i] = read_INT8 (fp);
+m_info.n_guns = read_INT8 (fp);
+m_info.contents.Read (fp);
+m_info.kamikaze = read_INT8 (fp);
+m_info.scoreValue = read_INT16 (fp);
+m_info.badass = read_INT8 (fp);
+m_info.drainEnergy = read_INT8 (fp);
+m_info.lighting = read_FIX (fp);
+m_info.strength = read_FIX (fp);
+m_info.mass = read_FIX (fp);
+m_info.drag = read_FIX (fp);
+for (i = 0; i < 2; i++)
+	m_info.weaponType [i] = read_INT8 (fp);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 0);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 1);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 2);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 3);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 4);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 5);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 6);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Read (fp, 7);
+m_info.cloakType = read_INT8 (fp);
+m_info.attackType = read_INT8 (fp);
+m_info.sounds.Read (fp);
+m_info.bossFlag = read_INT8 (fp);
+m_info.companion = read_INT8 (fp);
+m_info.smartBlobs = read_INT8 (fp);
+m_info.energyBlobs = read_INT8 (fp);
+m_info.thief = read_INT8 (fp);
+m_info.pursuit = read_INT8 (fp);
+m_info.lightCast = read_INT8 (fp);
+m_info.deathRoll = read_INT8 (fp);
+m_info.flags = (UINT8) read_INT8 (fp);
+m_info.bCustom = read_INT8 (fp); // skip
+read_INT8 (fp); // skip
+read_INT8 (fp); // skip
+m_info.deathRollSound = (UINT8) read_INT8 (fp);
+m_info.glow = (UINT8) read_INT8 (fp);
+m_info.behavior = (UINT8) read_INT8 (fp);
+m_info.aim = (UINT8) read_INT8 (fp);
+for (i = 0; i <= MAX_GUNS; i++)
+	for (j = 0; j < N_ANIM_STATES; j++)
+		m_info.animStates [i][j].Read (fp);
+m_info.always_0xabcd = read_INT32 (fp);
+return 1; 
+}
+
+//------------------------------------------------------------------------
+
+void CRobotInfo::Write (FILE* fp, INT32 version, bool bFlag) 
+{
+}
+
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
 // ReadHamFile()
 //
 // Actions
@@ -371,7 +564,7 @@ for (j=0;j<t;j++) {
 	// compare this to existing data
 	if (memcmp(&rInfo,RobotInfo (i),sizeof (CRobotInfo)) != 0) {
 		memcpy(RobotInfo (i),&rInfo,sizeof (CRobotInfo));
-		RobotInfo (i)->pad[0] = 1; // mark as custom
+		RobotInfo (i)->m_info.bCustom = 1; // mark as custom
 		}
 	}
 
@@ -431,10 +624,10 @@ write_INT32 (1,fp);   // version 1
 // write robot information
 //------------------------
 write_INT32 (t,fp); // number of robot info structs stored
-for (i=0;i<N_robot_types;i++) {
-	if (RobotInfo (i)->pad [0]) {
-		write_INT32 ((UINT32)i,fp);
-		fwrite(RobotInfo (i), sizeof (CRobotInfo), 1, fp );
+for (i = 0; i < N_robot_types; i++) {
+	if (RobotInfo (i)->m_info.bCustom) {
+		write_INT32 ((UINT32) i, fp);
+		RobotInfo (i)->Write (fp);
 		}
 	}
 
@@ -520,16 +713,16 @@ void CMine::ReadRobotResource(INT32 robot_number)
 
 bool CMine::IsCustomRobot (INT32 i)
 {
-	bool	bFound = false;
-	CSegment *segP;
-	CGameObject *objP;
-	INT32 j;
+	bool				bFound = false;
+	CSegment*		segP;
+	CGameObject*	objP;
+	INT32				j;
 
-if (!RobotInfo (i)->pad [0]) //changed?
+if (!RobotInfo (i)->m_info.bCustom) //changed?
 	return false;
 	// check if actually different from defaults
-UINT8 pad = DefRobotInfo (i)->pad [0];
-DefRobotInfo (i)->pad [0] = RobotInfo (i)->pad [0]; //make sure it's equal for the comparison
+UINT8 bCustom = DefRobotInfo (i)->m_info.bCustom;
+DefRobotInfo (i)->m_info.bCustom = RobotInfo (i)->m_info.bCustom; //make sure it's equal for the comparison
 if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (CRobotInfo))) { //they're different
 	// find a robot of that type
 	for (j = GameInfo ().objects.count, objP = Objects (0); j; j--, objP++)
@@ -550,12 +743,12 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (CRobotInfo))) { //they're d
 		if (j) // found one
 			bFound = true;
 		else
-			RobotInfo (i)->pad [0] = 0; // no matcens or none producing that robot type
+			RobotInfo (i)->m_info.bCustom = 0; // no matcens or none producing that robot type
 		}
 	}
 else
-	RobotInfo (i)->pad [0] = 0; //same as default
-DefRobotInfo (i)->pad [0] = pad; //restore
+	RobotInfo (i)->m_info.bCustom = 0; //same as default
+DefRobotInfo (i)->m_info.bCustom = bCustom; //restore
 return bFound;
 }
 

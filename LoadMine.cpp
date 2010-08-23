@@ -517,7 +517,7 @@ INT16 CMine::FixIndexValues(void)
 		// check verts
 		for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
 			if (segP->m_info.verts [nVertex] < 0 || segP->m_info.verts [nVertex] >= VertCount ()) {
-				segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture
+				segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture [0]
 				checkErr |= (1 << 2);      // but it will prevent a crash
 			}
 		}

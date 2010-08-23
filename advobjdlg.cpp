@@ -195,7 +195,7 @@ switch (objP->m_info.movementType) {
 switch (objP->m_info.renderType) {
 	case RT_MORPH:
 	case RT_POLYOBJ:
-		m_model = objP->rType.polyModelInfo.model_num;
+		m_model = objP->rType.polyModelInfo.nModel;
 		m_frame = 0;
 		m_frameNo = 0;
 		EnableControls (IDC_ADVOBJ_FRAME, IDC_ADVOBJ_FRAMENO, FALSE);
