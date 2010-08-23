@@ -145,8 +145,8 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
 
   ratio1 = mid_length/ave_length;
 
-  length1 = CalcDistance (vert [1], vert [2], vert [3]);
-  length2 = CalcDistance (vert [1], vert [2], vert [0]);
+  length1 = CalcDistance (vert + 1, vert + 2, vert + 3);
+  length2 = CalcDistance (vert + 1, vert + 2, vert + 0);
   ave_length = (length1 + length2) / 2;
 
   midpoint1 = Average (vert [1], vert [2]);
@@ -167,12 +167,9 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
 
 double CDiagTool::CalcDistance (CFixVector* v1,CFixVector* v2,CFixVector* v3)
 {
-  CDoubleVector A,B,B2;
-  double c,a2,distance;
-
 // normalize all points to vector 1
-A = *v2 - *v1;
-B = *v3 - *v1;
+CDoubleVector A = *v2 - *v1;
+CDoubleVector B = *v3 - *v1;
 
 // use formula from page 505 of "Calculase and Analytical Geometry" Fifth Addition
 // by Tommas/Finney, Addison-Wesley Publishing Company, June 1981
@@ -180,10 +177,10 @@ B = *v3 - *v1;
 // B2 = B - ----- A
 //          A * A
 
-a2 = A ^ A;
-c = (a2 != 0) ? (B ^ A) / a2 : 0;
-B2 = B - (A * c);
-return B2.Mag ();
+double a2 = A ^ A;
+double c = (a2 != 0) ? (B ^ A) / a2 : 0;
+CDoubleVector C = B - (A * c);
+return C.Mag ();
 }
 
 //--------------------------------------------------------------------------
@@ -600,7 +597,7 @@ if (!theMine)
 
 	INT32				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
 	CFixVector			center;
-	double			x, y, z, radius, max_radius, object_radius;
+	double			radius, max_radius, object_radius;
 	CGameObject*	objP = theMine->Objects (0);
 	CGameObject*	pPlayer = NULL;
 	INT32				objCount = theMine->GameInfo ().objects.count;
@@ -647,7 +644,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     center >>= 3;
     max_radius = 0;
     for (corner=0;corner<8;corner++) {
-		 radius = Distance *theMine->Vertices (segP->verts[corner]), center);
+		 radius = Distance (*theMine->Vertices (segP->verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }
 	object_radius = Distance (objP->pos, center);

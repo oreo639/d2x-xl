@@ -204,10 +204,6 @@ inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CFixVector::CFixVector (CDoubleVector& _v) { 
-	v.x = D2X (_v.v.x), v.y = D2X (_v.v.y), v.z = D2X (_v.v.z); 
-}
-
 inline const CFixVector& CFixVector::operator= (const tFixVector& other) { 
 	v.x = other.x, v.y = other.y, v.z = other.z; 
 	return *this;
@@ -322,10 +318,6 @@ inline const FIX CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag 
 
 // --------------------------------------------------------------------------
 
-CDoubleVector::CDoubleVector (CFixVector _v) { 
-	v.x = X2D (_v.v.x), v.y = X2D (_v.v.y), v.z = X2D (_v.v.z); 
-}
-
 inline const bool CDoubleVector::operator== (const CDoubleVector other) {
 	return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
 }
@@ -415,25 +407,27 @@ inline const DOUBLE CDoubleVector::operator^ (const CDoubleVector& other) const 
 	}
 
 // --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
-inline const CDoubleVector CrossProduct (const CDoubleVector& v0, const CDoubleVector& v1) {
+static inline const CDoubleVector CrossProduct (const CDoubleVector& v0, const CDoubleVector& v1) {
 	return CDoubleVector (v0.v.y * v1.v.z - v0.v.z * v1.v.y, v0.v.z * v1.v.x - v0.v.x * v1.v.z, v0.v.x * v1.v.y - v0.v.y * v1.v.x);
 	}
 
-inline CDoubleVector Perpendicular (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
+static inline CDoubleVector Perpendicular (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
 	return CrossProduct (p1 - p0, p2 - p1);
 	}
 
-inline const CDoubleVector Normalize (CDoubleVector v) { 
+static inline const CDoubleVector Normalize (CDoubleVector v) { 
 	DOUBLE m = v.Mag ();
 	return (m != 0.0) ? v / m : CDoubleVector (0.0, 0.0, 0.0); 
 	}
 
-inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
+static inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
 	return Normalize (CrossProduct (p1 - p0, p2 - p1));
 	}
 
-inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
+static inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
 	normal = CrossProduct (p1 - p0, p2 - p1);
 	DOUBLE m = normal.Mag ();
 	if (m > 0.0)
@@ -441,41 +435,41 @@ inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p0, cons
 	return m;
 	}
 
-inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
+static inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
 	CDoubleVector v = p0 - p1;
 	return v.Mag ();
 	}
 
-inline DOUBLE Distance (const CFixVector& p0, const CFixVector& p1) {
+static inline DOUBLE Distance (const CFixVector& p0, const CFixVector& p1) {
 	CFixVector v = p0 - p1;
 	return DOUBLE (Round (CDoubleVector (v).Mag ()));
 	}
 
-inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
+static inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
 	CFixVector v = p0 + p1;
 	v /= FIX (2);
 	return v;
 	}
 
-inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVector& p1) {
+static inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVector& p1) {
 	CDoubleVector v = p0 + p1;
 	v /= DOUBLE (2);
 	return v;
 	}
 
-inline FIX Dot (const CFixVector& v0, const CFixVector& v1) {
+static inline FIX Dot (const CFixVector& v0, const CFixVector& v1) {
 	return FIX ((double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z)) / 65536.0);
 	}
 
-inline DOUBLE Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
+static inline DOUBLE Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
 	return double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z);
 	}
 
-inline CFixVector Min (const CFixVector& v0, const CFixVector& v1) {
+static inline CFixVector Min (const CFixVector& v0, const CFixVector& v1) {
 	return CFixVector(min (v0.v.x, v1.v.x), min (v0.v.y, v1.v.y), min (v0.v.z, v1.v.z));
 	}
 
-inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
+static inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
 	return CFixVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
 	}
 
