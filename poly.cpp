@@ -395,14 +395,14 @@ assert(polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP) 
+INT32 CMineView::ReadModelData(FILE *fp, CGameObject *objP) 
 {
 	UINT32     id;
 	UINT32     i,n;
 	UINT16     model_dataSize[MAX_POLYGON_MODELS];
 	POLYMODEL  polyModel;
 	POLYMODEL  save_model;
-	CRobotInfo robot_info;
+	CRobotInfo robotInfo;
 	UINT32     nModel;
 
 	switch (objP->m_info.type) {
@@ -424,7 +424,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 				default: nModel = 97;  break; // level 1's reactor
 			}
 			break;
-			// if it is a robot, then read the id from the HAM file
+			// if it is a robot, then read the id from the HAM fp
 	}
 
 	if ((objP->m_info.type == OBJ_CAMBOT) || ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES))) {
@@ -432,96 +432,96 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		char data[3];
 		long position;
 
-		fread(data,3,1,file); // verify signature "DHF"
+		fread(data,3,1,fp); // verify signature "DHF"
 		if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') return 1;
 		position = 3;
-		while(!feof(file)) {
-			fseek(file,position,SEEK_SET);
-			if (fread(&level,sizeof (struct level_header),1,file) != 1) return 1;
+		while(!feof(fp)) {
+			fseek(fp,position,SEEK_SET);
+			if (fread(&level,sizeof (struct level_header),1,fp) != 1) return 1;
 			if (level.size > 10000000L || level.size < 0) return 1;
 			if (strcmp(level.name,"d2x.ham") == 0) {
-				id = read_INT32(file);	  					   // read id
+				id = read_INT32(fp);	  					   // read id
 				if (id != 0x5848414DL) return 1;
-				read_UINTW(file);                              // read version
-				n  = read_UINTW(file);                         // n_weapon_types
-				fseek(file,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon_info
-				n  = read_UINTW(file);                         // n_robot_types
+				read_UINTW(fp);                              // read version
+				n  = read_UINTW(fp);                         // n_weapon_types
+				fseek(fp,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon_info
+				n  = read_UINTW(fp);                         // n_robot_types
 				if (objP->m_info.type == OBJ_ROBOT) {
-					for (i=0;i<n;i++) {
+					for (i = 0; i < n; i++) {
 						if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
-							fread(&robot_info,sizeof (CRobotInfo),1,file);// read robot info
-							nModel = robot_info.nModel;
+							robotInfo.Read (fp);
+							nModel = robotInfo.m_info.nModel;
 						} else {
-							fseek(file,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
+							fseek(fp,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 						}
 					}
 				} else {
-					fseek(file,n * sizeof (CRobotInfo),SEEK_CUR);
+					fseek(fp,n * sizeof (CRobotInfo),SEEK_CUR);
 				}
-				n  = read_UINTW(file);                         // n_robot_joints
-				fseek(file,n * sizeof (JOINTPOS),SEEK_CUR);     // robot_joints
+				n  = read_UINTW(fp);                         // n_robot_joints
+				fseek(fp,n * sizeof (JOINTPOS),SEEK_CUR);     // robot_joints
 				break;
 			}
 			position += sizeof (struct level_header) + level.size;
 		}
-		n = read_UINTW(file);                          // n_polyModels
+		n = read_UINTW(fp);                          // n_polyModels
 		assert(n<=MAX_POLYGON_MODELS);
 		for (i = 0; i < n; i++) {
-			ReadPolyModel (polyModel, file);
+			ReadPolyModel (polyModel, fp);
 			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
 			if (i==(UINT32) (nModel - N_D2_POLYGON_MODELS))
 				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) (nModel - N_D2_POLYGON_MODELS)) {
-				fread(gModelData, model_dataSize[i],1,file);
+				fread(gModelData, model_dataSize[i],1,fp);
 				break; // were done!
 			} else {
-				fseek(file , model_dataSize[i],SEEK_CUR);
+				fseek(fp , model_dataSize[i],SEEK_CUR);
 			}
 		}
 	} else {
-		id = read_INT32(file);	  					   // read id
+		id = read_INT32(fp);	  					   // read id
 		if (id != 0x214d4148L) {
-//			printf("Not a HAM file");
+//			printf("Not a HAM fp");
 			return 1;
 		}
-		read_UINTW(file);                              // read version
-		n  = read_UINTW(file);                         // n_tmap_info
-		fseek(file,n * sizeof (UINT16),SEEK_CUR); // bitmap_indicies
-		fseek(file,n * sizeof (TMAP_INFO),SEEK_CUR);    // tmap_info
-		n = read_UINTW(file);                          // n_sounds
-		fseek(file,n * sizeof (UINT8),SEEK_CUR);        // sounds
-		fseek(file,n * sizeof (UINT8),SEEK_CUR);        // alt_sounds
-		n = read_UINTW(file);                          // n_vclips
-		fseek(file,n * sizeof (VCLIP),SEEK_CUR);        // video clips
-		n = read_UINTW(file);                          // n_eclips
-		fseek(file,n * sizeof (ECLIP),SEEK_CUR);        // effect clips
-		n = read_UINTW(file);                          // n_wclips
-		fseek(file,n * sizeof (WCLIP),SEEK_CUR);        // weapon clips
-		n = read_UINTW(file);                          // n_robots
+		read_UINTW(fp);                              // read version
+		n  = read_UINTW(fp);                         // n_tmap_info
+		fseek(fp,n * sizeof (UINT16),SEEK_CUR); // bitmap_indicies
+		fseek(fp,n * sizeof (TMAP_INFO),SEEK_CUR);    // tmap_info
+		n = read_UINTW(fp);                          // n_sounds
+		fseek(fp,n * sizeof (UINT8),SEEK_CUR);        // sounds
+		fseek(fp,n * sizeof (UINT8),SEEK_CUR);        // alt_sounds
+		n = read_UINTW(fp);                          // n_vclips
+		fseek(fp,n * sizeof (VCLIP),SEEK_CUR);        // video clips
+		n = read_UINTW(fp);                          // n_eclips
+		fseek(fp,n * sizeof (ECLIP),SEEK_CUR);        // effect clips
+		n = read_UINTW(fp);                          // n_wclips
+		fseek(fp,n * sizeof (WCLIP),SEEK_CUR);        // weapon clips
+		n = read_UINTW(fp);                          // n_robots
 		if (objP->m_info.type == OBJ_ROBOT) {
 			for (i=0;i<n;i++) {
 				if (i == (UINT32) objP->m_info.id) {
-					fread(&robot_info,sizeof (CRobotInfo),1,file);// read robot info
-					nModel = robot_info.nModel;
+					fread(&robotInfo,sizeof (CRobotInfo),1,fp);// read robot info
+					nModel = robotInfo.nModel;
 				} else {
-					fseek(file,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
+					fseek(fp,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 				}
 			}
 		} else {
-			fseek(file,n * sizeof (CRobotInfo),SEEK_CUR);
+			fseek(fp,n * sizeof (CRobotInfo),SEEK_CUR);
 		}
-		n = read_UINTW(file);                          // n_robot_joints
-		fseek(file,n * sizeof (JOINTPOS),SEEK_CUR);     // robot joints
-		n = read_UINTW(file);                          // n_weapon
-		fseek(file,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon info
-		n = read_UINTW(file);                          // n_powerups
-		fseek(file,n * sizeof (POWERUP_TYPE_INFO),SEEK_CUR); // powerup info
-		n = read_UINTW(file);                          // n_polyModels
+		n = read_UINTW(fp);                          // n_robot_joints
+		fseek(fp,n * sizeof (JOINTPOS),SEEK_CUR);     // robot joints
+		n = read_UINTW(fp);                          // n_weapon
+		fseek(fp,n * sizeof (WEAPON_INFO),SEEK_CUR);  // weapon info
+		n = read_UINTW(fp);                          // n_powerups
+		fseek(fp,n * sizeof (POWERUP_TYPE_INFO),SEEK_CUR); // powerup info
+		n = read_UINTW(fp);                          // n_polyModels
 		assert(n<=MAX_POLYGON_MODELS);
 		for (i=0;i<n;i++) {
-			ReadPolyModel (polyModel, file);
+			ReadPolyModel (polyModel, fp);
 			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
 			if (i==(UINT32) nModel) {
 				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
@@ -529,10 +529,10 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) nModel) {
-				fread(gModelData, model_dataSize[i],1,file);
+				fread(gModelData, model_dataSize[i],1,fp);
 				break; // were done!
 			} else {
-				fseek(file , model_dataSize[i],SEEK_CUR);
+				fseek(fp , model_dataSize[i],SEEK_CUR);
 			}
 		}
 	}

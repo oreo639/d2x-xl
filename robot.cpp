@@ -735,9 +735,9 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (CRobotInfo))) { //they're d
 		for (j = SegCount (), segP = Segments (0); j; j--, segP++)
 			if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 				INT32 matcen = segP->m_info.nMatCen;
-				if ((i < 32) ?
-					 BotGens (matcen)->m_info.objFlags [0] & (1L << i) :
-					 BotGens (matcen)->m_info.objFlags [1] & (1L << (i-32)))
+				if ((i < 32) 
+					 ? BotGens (matcen)->m_info.objFlags [0] & (1L << i) 
+					 : BotGens (matcen)->m_info.objFlags [1] & (1L << (i-32)))
 					break;
 				}
 		if (j) // found one

@@ -484,7 +484,7 @@ if (pszExt) {
 		theMine->ReadHxmFile (fSrc, size);
 		INT32 i, count;
 		for (i = 0, count = 0; i < (INT32) N_robot_types;i++)
-			if (theMine->RobotInfo (i)->pad [0])
+			if (theMine->RobotInfo (i)->m_info.bCustom)
 				count++;
 		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);
 		DEBUGMSG (message);
