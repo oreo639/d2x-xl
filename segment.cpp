@@ -140,6 +140,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 	delSegP->wallFlags &= ~MARKED_MASK; 
 
 	// unlink any children with this segment number
+	CTexture* texP = theMine->Textures (m_fileType);
 	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (segP->children [child]== nDelSeg) {
@@ -157,7 +158,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 				CSide *sideP = delSegP->sides + child;
 				SetTexture (nSegment, child, sideP->nBaseTex, sideP->nOvlTex); 
 				SetUV (nSegment, child, 0, 0, 0); 
-				double scale = theMine->Textures () [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
+				double scale = texP [sideP->nBaseTex].Scale (sideP->nBaseTex);
 				for (i = 0; i < 4; i++) {
 					segP->sides [child].uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
 					segP->sides [child].uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
@@ -1056,7 +1057,7 @@ CSide *sideP = segP->sides + nSide;
 sideP->nBaseTex = 0; 
 sideP->nOvlTex = 0; 
 CUVL *uvls = sideP->uvls;
-double scale = theMine->Textures () [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
+double scale = theMine->Textures (m_fileType, sideP->nBaseTex)->Scale (sideP->nBaseTex);
 INT32 i;
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->u = (INT16) (default_uvls [i].u / scale); 
@@ -2010,9 +2011,9 @@ void CMine::LoadSideTextures (INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
 CSide	*sideP = Segments (nSegment)->sides + nSide;
-theMine->Textures () [m_fileType][sideP->nBaseTex].Read (sideP->nBaseTex);
+theMine->Textures (m_fileType, sideP->nBaseTex)->Read (sideP->nBaseTex);
 if ((sideP->nOvlTex & 0x3fff) > 0)
-	theMine->Textures () [m_fileType][sideP->nOvlTex & 0x3fff].Read (sideP->nOvlTex & 0x3fff);
+	theMine->Textures (m_fileType, sideP->nOvlTex & 0x3fff)->Read (sideP->nOvlTex & 0x3fff);
 }
 
 // ------------------------------------------------------------------------ 
@@ -2409,8 +2410,8 @@ if (!bChange) {
 	theApp.ResetModified (bUndo);
 	return false;
 	}
-theMine->Textures () [m_fileType][sideP->nBaseTex].Read (sideP->nBaseTex);
-theMine->Textures () [m_fileType][sideP->nOvlTex & 0x3fff].Read (sideP->nOvlTex & 0x3fff);
+theMine->Textures (m_fileType, sideP->nBaseTex)->Read (sideP->nBaseTex);
+theMine->Textures (m_fileType, sideP->nOvlTex & 0x3fff)->Read (sideP->nOvlTex & 0x3fff);
 #if 0
 if (((sideP->nOvlTex & 0x3fff) > 0) &&
     (theMine->Textures () [m_fileType][sideP->nBaseTex].m_size != 

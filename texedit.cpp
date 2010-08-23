@@ -367,7 +367,7 @@ m_bModified = FALSE;
 m_iTexture = theMine->CurrSide ()->nBaseTex;
 if (m_iTexture >= MAX_D2_TEXTURES)
 	m_iTexture = 0;
-m_pTx = theMine->Textures () [theApp.FileType ()] + m_iTexture;
+m_pTx = theMine->Textures (theApp.FileType (), m_iTexture);
 if (!(m_pTx->m_pDataBM && m_pTx->m_bValid)) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);

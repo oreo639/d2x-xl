@@ -19,7 +19,7 @@ INT16 nSegment = Current ()->nSegment;
 INT16 nOppSeg, nOppSide;
 CSegment *segP = Segments (nSegment);
 CSide *sideP = segP->sides;
-double scale = theMine->Textures () [m_fileType][nTexture].Scale (nTexture);
+double scale = theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
