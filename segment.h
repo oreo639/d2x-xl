@@ -92,7 +92,7 @@ public:
 	void ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras);
 	void Write (FILE* fp, int nLevelType, int nLevelVersion);
 	void WriteExtras (FILE* fp, int nLevelType, bool bExtras);
-	void Clear (void) { 
+	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		for (int i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 			m_sides [i].Clear ();
@@ -100,6 +100,7 @@ public:
 	void Setup (void);
 	void SetUV (INT16 nSide, INT16 x, INT16 y);
 
+	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
 private:
