@@ -163,7 +163,7 @@ else if (type == EXTENDED_HAM)  {
     for (i=0; i<t; i++ ) {
       fread(&pm,  sizeof (POLYMODEL),  1,  fp );
       fprintf (file, "n_models        = %ld\n", pm.n_models);
-      fprintf (file, "model_data_size = %ld\n", pm.model_data_size);
+      fprintf (file, "model_dataSize = %ld\n", pm.model_dataSize);
       for (j = 0; j < pm.n_models; j++) {
 	fprintf (file, "submodel_ptrs[%d]    = %#08lx\n", j, pm.submodel_ptrs[j]);
 	fprintf (file, "submodel_offsets[%d] = %#08lx %#08lx %#08lx\n", j, 
@@ -233,13 +233,13 @@ else if (type == EXTENDED_HAM)  {
     fread(&Polygon_model, sizeof (POLYMODEL), 1, fp );
   }
   for (i=t0; i<t0+t; i++ ) {
-    Polygon_models[i]->model_data = (UINT8 *) malloc((INT32)Polygon_models[i]->model_data_size);
+    Polygon_models[i]->model_data = (UINT8 *) malloc((INT32)Polygon_models[i]->model_dataSize);
 
     if (Polygon_models[i]->model_data == NULL ) {
       ErrorMsg ("Could not allocate memory for polymodel data");
       goto abort;
     }
-    fread( Polygon_models[i]->model_data, sizeof (UINT8), (INT16)Polygon_models[i]->model_data_size, fp );
+    fread( Polygon_models[i]->model_data, sizeof (UINT8), (INT16)Polygon_models[i]->model_dataSize, fp );
 //    g3_init_polygon_model(Polygon_models[i].model_data);
   }
 

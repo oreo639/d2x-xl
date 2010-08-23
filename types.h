@@ -145,11 +145,11 @@ typedef struct {
   INT16	 changing_wall_texture;	   //Which element of Textures array to replace.
   INT16	 changing_object_texture;  //Which element of ObjBitmapPtrs array to replace.
   INT32	 flags;			   //see above
-  INT32	 crit_clip;		   //use this clip instead of above one when mine critical
+  INT32	 critClip;		   //use this clip instead of above one when mine critical
   INT32	 dest_bm_num;		//use this bitmap when monitor destroyed
   INT32	 dest_vclip;		//what vclip to play when exploding
   INT32	 dest_eclip;		//what eclip to play when exploding
-  FIX	 dest_size;		//3d size of explosion
+  FIX	 destSize;		//3d size of explosion
   INT32	 sound_num;		//what sound this makes
   INT32	 nSegment,nSide;	//what segP & side, for one-shot clips
 } ECLIP;
@@ -185,11 +185,11 @@ typedef struct {
   INT8		weapon_type;
   INT8		weapon_type2;		  // Secondary weapon number, -1 means none, otherwise gun #0 fires this weapon.
   INT8		n_guns;			  // how many different gun positions
-  INT8		contents.id;		  // ID of powerup this robot can contain.
+  INT8		containsId;		  // ID of powerup this robot can contain.
 
-  INT8		contents.count;		  // Max number of things this instance can contain.
-  INT8		contents.prob;		  // Probability that this instance will contain something in N/16
-  INT8		contents.type;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
+  INT8		containsCount;		  // Max number of things this instance can contain.
+  INT8		containsProb;		  // Probability that this instance will contain something in N/16
+  INT8		containsType;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
   INT8		kamikaze;		  // !0 means commits suicide when hits you, strength thereof. 0 means no.
 
   INT16		score_value;		  // Score from this robot.
@@ -287,7 +287,7 @@ typedef struct {
   UINT8	flags;			// see values above
 
   INT8	flash;			// Flash effect
-  INT8	afterburner_size;	// Size of blobs in F1_0/16 units, specify in bitmaps.tbl as floating point.
+  INT8	afterburnerSize;	// Size of blobs in F1_0/16 units, specify in bitmaps.tbl as floating point.
 				// ..Player afterburner size = 2.5.
 
   INT8	children;		// ID of weapon to drop if this contains children.  -1 means no children.
@@ -300,9 +300,9 @@ typedef struct {
 
   UINT16 bitmap;		// Pointer to bitmap if rendertype==0 or 1.
 
-  FIX	blob_size;		// Size of blob if blob type
-  FIX	flash_size;		// How big to draw the flash
-  FIX	impact_size;		// How big of an impact
+  FIX	blobSize;		// Size of blob if blob type
+  FIX	flashSize;		// How big to draw the flash
+  FIX	impactSize;		// How big of an impact
   FIX	strength[NDL];		// How much damage it can inflict
   FIX	speed[NDL];		// How fast it can move, difficulty level based.
   FIX	mass;			// How much mass it has
@@ -331,7 +331,7 @@ typedef struct {
 //used to describe a polygon model
 typedef struct {
   INT32			n_models;
-  INT32 			model_data_size;
+  INT32 			model_dataSize;
   UINT8*			model_data;
   INT32 			submodel_ptrs[MAX_SUBMODELS];
   CFixVector 	submodel_offsets[MAX_SUBMODELS];
@@ -861,6 +861,7 @@ public:
 			m_targets [i].Clear ();
 		}
 	inline INT32 ReadTargets (FILE* fp) {
+		int i;
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			m_targets [i].m_nSegment = read_INT16(fp);
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
@@ -868,11 +869,11 @@ public:
 		return 1;
 		}
 	inline void WriteTargets (FILE* fp) {
+		int i;
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			write_INT16 (m_targets [i].m_nSegment, fp);
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			write_INT16 (m_targets [i].m_nSide, fp);
-		return 1;
 		}
 
 };
@@ -898,12 +899,12 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		CTriggerTargets::Clear ();
 		}
-	void CTrigger::Setup (INT16 type, INT16 flags)
+	void CTrigger::Setup (INT16 type, INT16 flags);
 	inline const bool operator< (const CTrigger& other) {
-		return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.nType < other.m_info.nType)); 
+		return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 
 		}
 	inline const bool operator> (const CTrigger& other) {
-		return (m_info.nObject > other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.nType > other.m_info.nType)); 
+		return (m_info.nObject > other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type > other.m_info.type)); 
 		}
 };
 

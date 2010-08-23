@@ -29,7 +29,7 @@ if (ti < tm)
 	return -1;
 if (ti > tm)
 	return 1;
-return (pi->id < pm->id) ? -1 : (pi->id > pm->id) ? 1 : 0;
+return (pi->m_info.id < pm->m_info.id) ? -1 : (pi->m_info.id > pm->m_info.id) ? 1 : 0;
 }
 
 
@@ -71,10 +71,10 @@ void CMine::RenumberObjTriggers (void)
 	INT32			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
-	trigP->m_info.nObject = FindObjBySig (trigP->nObject);
+	trigP->m_info.nObject = FindObjBySig (trigP->m_info.nObject);
 i = NumObjTriggers ();
 while (i) {
-	if (ObjTriggers (--i)->nObject < 0)
+	if (ObjTriggers (--i)->m_info.nObject < 0)
 		DeleteObjTrigger (i);
 	}
 SortObjTriggers ();
@@ -83,7 +83,7 @@ SortObjTriggers ();
 
 void CMine::QSortObjects (INT16 left, INT16 right)
 {
-	CGameObject	median = *Objects ( (left + right) / 2);
+	CGameObject	median = *Objects ((left + right) / 2);
 	INT16	l = left, r = right;
 
 do {
@@ -188,45 +188,45 @@ memset (&objP->cType, 0, sizeof (objP->cType));
 memset (&objP->rType, 0, sizeof (objP->rType));
 switch (type) {
 	case OBJ_ROBOT: // an evil enemy
-	  objP->controlType  = CT_AI;
-	  objP->movementType = MT_PHYSICS;
-	  objP->renderType   = RT_POLYOBJ;
-	  objP->size          = robot_size[id];
-	  objP->shields       = robot_shield[id];
-	  objP->rType.polyModelInfo.model_num = robot_clip[id];
+	  objP->m_info.controlType  = CT_AI;
+	  objP->m_info.movementType = MT_PHYSICS;
+	  objP->m_info.renderType   = RT_POLYOBJ;
+	  objP->m_info.size          = robotSize[id];
+	  objP->m_info.shields       = robot_shield[id];
+	  objP->rType.polyModelInfo.model_num = robotClip[id];
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  objP->cType.aiInfo.behavior = AIB_NORMAL;
 	  break;
 
 	case OBJ_HOSTAGE  : // a hostage you need to rescue
-	  objP->controlType = CT_POWERUP;
-	  objP->movementType = MT_NONE;
-	  objP->renderType   = RT_HOSTAGE;
+	  objP->m_info.controlType = CT_POWERUP;
+	  objP->m_info.movementType = MT_NONE;
+	  objP->m_info.renderType   = RT_HOSTAGE;
 	  objP->rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
-	  objP->size          = PLAYER_SIZE;
-	  objP->shields       = DEFAULT_SHIELD;
+	  objP->m_info.size          = PLAYER_SIZE;
+	  objP->m_info.shields       = DEFAULT_SHIELD;
 	  break;
 
 	case OBJ_PLAYER   : // the player on the console
 	  if (objP->m_info.id == 0) {
-		objP->controlType = CT_NONE; /* player 0 only */
+		objP->m_info.controlType = CT_NONE; /* player 0 only */
 	  } else {
-		objP->controlType = CT_SLEW; /* all other players */
+		objP->m_info.controlType = CT_SLEW; /* all other players */
 	  }
-	  objP->movementType = MT_PHYSICS;
-	  objP->renderType   = RT_POLYOBJ;
-	  objP->size          = PLAYER_SIZE;
-	  objP->shields       = DEFAULT_SHIELD;
+	  objP->m_info.movementType = MT_PHYSICS;
+	  objP->m_info.renderType   = RT_POLYOBJ;
+	  objP->m_info.size          = PLAYER_SIZE;
+	  objP->m_info.shields       = DEFAULT_SHIELD;
 	  objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
 	  break;
 
 	case OBJ_WEAPON   : // a poly-type weapon
-	  objP->controlType  = CT_WEAPON;
-	  objP->movementType = MT_PHYSICS;
-	  objP->renderType   = RT_POLYOBJ;
-	  objP->size          = WEAPON_SIZE;
-	  objP->shields       = WEAPON_SHIELD;
+	  objP->m_info.controlType  = CT_WEAPON;
+	  objP->m_info.movementType = MT_PHYSICS;
+	  objP->m_info.renderType   = RT_POLYOBJ;
+	  objP->m_info.size          = WEAPON_SIZE;
+	  objP->m_info.shields       = WEAPON_SHIELD;
 	  objP->rType.polyModelInfo.model_num = MINE_CLIP_NUMBER;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
 	  objP->mType.physInfo.mass      = 65536L;
@@ -241,20 +241,20 @@ switch (type) {
 	  break;
 
 	case OBJ_POWERUP  : // a powerup you can pick up
-	  objP->controlType  = CT_POWERUP;
-	  objP->movementType = MT_NONE;
-	  objP->renderType   = RT_POWERUP;
-	  objP->rType.vClipInfo.vclip_num = powerup_clip[id];
-	  objP->size          = powerup_size[id];
-	  objP->shields       = DEFAULT_SHIELD;
+	  objP->m_info.controlType  = CT_POWERUP;
+	  objP->m_info.movementType = MT_NONE;
+	  objP->m_info.renderType   = RT_POWERUP;
+	  objP->rType.vClipInfo.vclip_num = powerupClip[id];
+	  objP->m_info.size          = powerupSize[id];
+	  objP->m_info.shields       = DEFAULT_SHIELD;
 	  break;
 
 	case OBJ_CNTRLCEN : // the reactor
-	  objP->controlType = CT_CNTRLCEN;
-	  objP->movementType = MT_NONE;
-	  objP->renderType   = RT_POLYOBJ;
-	  objP->size          = REACTOR_SIZE;
-	  objP->shields       = REACTOR_SHIELD;
+	  objP->m_info.controlType = CT_CNTRLCEN;
+	  objP->m_info.movementType = MT_NONE;
+	  objP->m_info.renderType   = RT_POLYOBJ;
+	  objP->m_info.size          = REACTOR_SIZE;
+	  objP->m_info.shields       = REACTOR_SHIELD;
 	  if (IsD1File ())
 			objP->rType.polyModelInfo.model_num = REACTOR_CLIP_NUMBER;
 	  else {
@@ -274,11 +274,11 @@ switch (type) {
 	  break;
 
 	case OBJ_COOP     : // a cooperative player object
-	  objP->controlType = CT_NONE;
-	  objP->movementType = MT_PHYSICS;
-	  objP->renderType   = RT_POLYOBJ;
-	  objP->size          = PLAYER_SIZE;
-	  objP->shields       = DEFAULT_SHIELD;
+	  objP->m_info.controlType = CT_NONE;
+	  objP->m_info.movementType = MT_PHYSICS;
+	  objP->m_info.renderType   = RT_POLYOBJ;
+	  objP->m_info.size          = PLAYER_SIZE;
+	  objP->m_info.shields       = DEFAULT_SHIELD;
 	  objP->rType.polyModelInfo.model_num = COOP_CLIP_NUMBER;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  break;
@@ -286,33 +286,33 @@ switch (type) {
 	case OBJ_CAMBOT:
 	case OBJ_SMOKE:
 	case OBJ_MONSTERBALL:
-	  objP->controlType  = CT_AI;
-	  objP->movementType = MT_NONE;
-	  objP->renderType   = RT_POLYOBJ;
-	  objP->size          = robot_size[0];
-	  objP->shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.model_num = robot_clip [0];
+	  objP->m_info.controlType  = CT_AI;
+	  objP->m_info.movementType = MT_NONE;
+	  objP->m_info.renderType   = RT_POLYOBJ;
+	  objP->m_info.size          = robotSize[0];
+	  objP->m_info.shields       = DEFAULT_SHIELD;
+	  objP->rType.polyModelInfo.model_num = robotClip [0];
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  objP->cType.aiInfo.behavior = AIB_STILL;
 	  break;
 
 	case OBJ_EXPLOSION:
-	  objP->controlType  = CT_POWERUP;
-	  objP->movementType = MT_NONE;
-	  objP->renderType   = RT_POWERUP;
-	  objP->size          = robot_size[0];
-	  objP->shields       = DEFAULT_SHIELD;
+	  objP->m_info.controlType  = CT_POWERUP;
+	  objP->m_info.movementType = MT_NONE;
+	  objP->m_info.renderType   = RT_POWERUP;
+	  objP->m_info.size          = robotSize[0];
+	  objP->m_info.shields       = DEFAULT_SHIELD;
 	  objP->rType.vClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
 	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
 	  objP->cType.aiInfo.behavior = AIB_STILL;
 	  break;
 
 	case OBJ_EFFECT:
-	  objP->controlType  = CT_NONE;
-	  objP->movementType = MT_NONE;
-	  objP->renderType   = RT_NONE;
-	  objP->size          = f1_0;
-	  objP->shields       = DEFAULT_SHIELD;
+	  objP->m_info.controlType  = CT_NONE;
+	  objP->m_info.movementType = MT_NONE;
+	  objP->m_info.renderType   = RT_NONE;
+	  objP->m_info.size          = f1_0;
+	  objP->m_info.shields       = DEFAULT_SHIELD;
 
   }
 	theApp.UnlockUndo ();
@@ -403,7 +403,7 @@ objP->m_info.flags = 0;                                      // new: 1/27/97
 objP->m_info.nSegment = Current ()->nSegment;
 // set object position in the center of the cube for now
 CalcSegCenter (objP->m_info.pos,Current ()->nSegment);
-objP->lastPos = objP->m_info.pos;
+objP->m_info.lastPos = objP->m_info.pos;
 Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
@@ -411,7 +411,7 @@ for (i = 0; i < GameInfo ().objects.count - 1; i++)
 	if (Objects (i)->m_info.nSegment == Current ()->nSegment)
 		count++;
 objP->m_info.pos.v.y += count * 2 * F1_0;
-objP->lastPos.v.y += count * 2 * F1_0;
+objP->m_info.lastPos.v.y += count * 2 * F1_0;
 // set the id if new object is a player or a coop
 if (type == OBJ_PLAYER || type == OBJ_COOP)
 	objP->m_info.id = (INT8) id;
@@ -851,24 +851,24 @@ write_INT8 (bEnabled, fp);
 
 INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
 {
-type = read_INT8 (fp);
-id = read_INT8 (fp);
-controlType = read_INT8 (fp);
-movementType = read_INT8 (fp);
-renderType = read_INT8 (fp);
-flags = read_INT8 (fp);
-multiplayer = (version > 37) ? read_INT8 (fp) : 0;
-nSegment = read_INT16 (fp);
-read_vector (&pos, fp);
-read_matrix (&orient, fp);
-size = read_FIX (fp);
-shields = read_FIX (fp);
-read_vector (&lastPos, fp);
-contents.type = read_INT8 (fp);
-contents.id = read_INT8 (fp);
-contents.count = read_INT8 (fp);
+m_info.type = read_INT8 (fp);
+m_info.id = read_INT8 (fp);
+m_info.controlType = read_INT8 (fp);
+m_info.movementType = read_INT8 (fp);
+m_info.renderType = read_INT8 (fp);
+m_info.flags = read_INT8 (fp);
+m_info.multiplayer = (version > 37) ? read_INT8 (fp) : 0;
+m_info.nSegment = read_INT16 (fp);
+m_info.pos.Read (fp);
+m_info.orient.Read (fp);
+m_info.size = read_FIX (fp);
+m_info.shields = read_FIX (fp);
+m_info.read_vector (&lastPos, fp);
+m_info.contents.type = read_INT8 (fp);
+m_info.contents.id = read_INT8 (fp);
+m_info.contents.count = read_INT8 (fp);
 
-switch (movementType) {
+switch (m_info.movementType) {
 	case MT_PHYSICS:
 		mType.physInfo.Read (fp, version);
 		break;
@@ -881,7 +881,7 @@ switch (movementType) {
 		break;
 	}
 
-switch (controlType) {
+switch (m_info.controlType) {
 	case CT_AI:
 		cType.aiInfo.Read (fp, version);
 		break;
@@ -912,7 +912,7 @@ switch (controlType) {
 		break;
 	}
 
-switch (renderType) {
+switch (m_info.renderType) {
 	case RT_NONE:
 		break;
 	case RT_MORPH:
@@ -952,24 +952,24 @@ void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
 if (theMine->IsStdLevel () && (type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
-write_INT8 (type, fp);
-write_INT8 (id, fp);
-write_INT8 (controlType, fp);
-write_INT8 (movementType, fp);
-write_INT8 (renderType, fp);
-write_INT8 (flags, fp);
-write_INT8 (multiplayer, fp);
-write_INT16 (nSegment, fp);
-write_vector (&pos, fp);
-write_matrix (&orient, fp);
-write_FIX (size, fp);
-write_FIX (shields, fp);
-write_vector (&lastPos, fp);
-write_INT8 (contents.type, fp);
-write_INT8 (contents.id, fp);
-write_INT8 (contents.count, fp);
+write_INT8 (m_info.type, fp);
+write_INT8 (m_info.id, fp);
+write_INT8 (m_info.controlType, fp);
+write_INT8 (m_info.movementType, fp);
+write_INT8 (m_info.renderType, fp);
+write_INT8 (m_info.flags, fp);
+write_INT8 (m_info.multiplayer, fp);
+write_INT16 (m_info.nSegment, fp);
+m_info.pos.Write (fp);
+m_info.orient.Write (fp);
+write_FIX (m_info.size, fp);
+write_FIX (m_info.shields, fp);
+m_info.lastPos. Write (fp);
+write_INT8 (m_info.contents.type, fp);
+write_INT8 (m_info.contents.id, fp);
+write_INT8 (m_info.contents.count, fp);
 
-switch (movementType) {
+switch (m_info.movementType) {
 	case MT_PHYSICS:
 		mType.physInfo.Write (fp, version);
 		break;
@@ -982,7 +982,7 @@ switch (movementType) {
 		break;
 	}
 
-switch (controlType) {
+switch (m_info.controlType) {
 	case CT_AI:
 		cType.aiInfo.Write (fp, version);
 		break;
@@ -1013,7 +1013,7 @@ switch (controlType) {
 		break;
 	}
 
-switch (renderType) {
+switch (m_info.renderType) {
 	case RT_NONE:
 		break;
 	case RT_MORPH:

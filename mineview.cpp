@@ -2050,7 +2050,7 @@ if ((theApp.IsD2File ()) &&
 	 (objnum == theMine->Current ()->nObject) &&
 	 (objP->m_info.type != OBJ_CAMBOT) && (objP->m_info.type != OBJ_MONSTERBALL) && 
 	 (objP->m_info.type != OBJ_EXPLOSION) && (objP->m_info.type != OBJ_SMOKE) && (objP->m_info.type != OBJ_EFFECT) &&
-	 (objP->renderType == RT_POLYOBJ) &&
+	 (objP->m_info.renderType == RT_POLYOBJ) &&
 	 !SetupModel(objP)) {
 	if (clear_it)
 		m_pDC->SelectObject(GetStockObject(BLACK_PEN));
@@ -2079,8 +2079,8 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 	pt [0] =
 	pt [1] =
 	pt [2] = objP->m_info.pos;
-	pt [1].v.x -= objP->size;
-	pt [2].v.x += objP->size;
+	pt [1].v.x -= objP->m_info.size;
+	pt [2].v.x += objP->m_info.size;
 	m_view.Project (pt, poly_draw);
 	m_view.Push ();
 	m_view.Unrotate ();

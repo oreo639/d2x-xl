@@ -44,8 +44,8 @@ for (INT32 i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 INT32 CMine::QCmpObjTriggers (CTrigger *pi, CTrigger *pm)
 {
-	INT16 i = pi->nObject;
-	INT16 m = pm->nObject;
+	INT16 i = pi->m_info.nObject;
+	INT16 m = pm->m_info.nObject;
 
 if (i < m)
 	return -1;
@@ -436,7 +436,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 INT16 nTrigger = NumObjTriggers ();
 InitTrigger (ObjTriggers (nTrigger), type, 0);
-ObjTriggers (nTrigger)->nObject = objnum;
+ObjTriggers (nTrigger)->m_info.nObject = objnum;
 NumObjTriggers ()++;
 theApp.UnlockUndo ();
 SortObjTriggers ();
@@ -470,7 +470,7 @@ void CMine::DeleteObjTriggers (INT16 objnum)
 	INT16 i = NumObjTriggers ();
 	
 while (i)
-	if (ObjTriggers (--i)->nObject == objnum)
+	if (ObjTriggers (--i)->m_info.nObject == objnum)
 		DeleteObjTrigger (i);
 }
 
@@ -501,22 +501,18 @@ if (theApp.IsD2File ()) {
 	m_count = read_INT8(fp);
 	read_INT8(fp);
 	m_info.value = read_FIX(fp);
-	if ((theApp.LevelVersion () < 21) && (type == TT_EXIT))
+	if ((theApp.LevelVersion () < 21) && (m_info.type == TT_EXIT))
 		m_info.value = 0;
-	if ((version < 39) && (type == TT_MASTER))
+	if ((version < 39) && (m_info.type == TT_MASTER))
 		m_info.value = 0;
 	m_info.time = read_FIX(fp);
-#ifdef _DEBUG
-	if (type == TT_DISABLE_TRIGGER)
-		type = type;
-#endif
 	}
 else {
 	m_info.type = read_INT8(fp);
 	m_info.flags = read_INT16(fp);
 	m_info.value = read_FIX(fp);
 	m_info.time = read_FIX(fp);
-	m_info.read_INT8(fp); //skip 8 bit value "link_num"
+	read_INT8(fp); //skip 8 bit value "link_num"
 	m_count = INT8 (read_INT16(fp));
 	if (m_count < 0)
 		m_count = 0;

@@ -120,20 +120,20 @@ UINT8 object_list[MAX_OBJECT_NUMBER] = {
 	OBJ_EFFECT
 };
 
-UINT8 contents.list[MAX_CONTAINS_NUMBER] = {
+UINT8 contentsList[MAX_CONTAINS_NUMBER] = {
 	OBJ_ROBOT,
 	OBJ_POWERUP
 };
 
 // the following array is used to select a list item by objP->m_info.type
-INT8 object_selection[MAX_OBJECT_TYPES] = {
+INT8 objectSelection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,1,2,3,-1,4,-1,5,-1,-1,-1,-1,6,-1,7,8,9,10,11
 };
-INT8 contents.selection[MAX_OBJECT_TYPES] = {
+INT8 contentsSelection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 };
 
-UINT8 robot_clip[MAX_ROBOT_IDS_TOTAL] = {
+UINT8 robotClip[MAX_ROBOT_IDS_TOTAL] = {
 	0x00,0x02,0x03,0x05,0x07,0x09,0x0b,0x0d,
 	0x0e,0x10,0x12,0x13,0x14,0x15,0x16,0x18,
 	0x19,0x1b,0x1c,0x1e,0x20,0x22,0x24,0x26,
@@ -149,7 +149,7 @@ UINT8 robot_clip[MAX_ROBOT_IDS_TOTAL] = {
 // note1: 0 == not used,
 // note2: 100 and 101 are flags but will appear as shields
 //        in non multiplayer level
-UINT8 powerup_clip[MAX_POWERUP_IDS2] = {
+UINT8 powerupClip[MAX_POWERUP_IDS2] = {
 	36, 18, 19, 20, 24, 26, 25,  0,
 		0,  0, 34, 35, 51, 37, 38, 39,
 		40, 41, 42, 43, 44, 45, 46, 47,
@@ -162,7 +162,7 @@ char *ai_options[MAX_D2_AI_OPTIONS] = {
 	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
 };
 
-FIX powerup_size[MAX_POWERUP_IDS2] = {
+FIX powerupSize[MAX_POWERUP_IDS2] = {
 		0x28000L,0x30000L,0x28000L,0x40000L,0x30000L,0x30000L,0x30000L,0x30000L,
 		0x30000L,0x30000L,0x28000L,0x30000L,0x30000L,0x40000L,0x40000L,0x40000L,
 		0x40000L,0x30000L,0x28000L,0x30000L,0x28000L,0x30000L,0x1ccccL,0x20000L,
@@ -172,7 +172,7 @@ FIX powerup_size[MAX_POWERUP_IDS2] = {
 };
 
 
-FIX robot_size [MAX_ROBOT_IDS_TOTAL] = {
+FIX robotSize [MAX_ROBOT_IDS_TOTAL] = {
 		399147L,368925L,454202L,316909L,328097L,345407L,399147L,293412L,
 		300998L,308541L,246493L,283415L,283415L,227232L,200000L,598958L,
 		399147L,1597221L,290318L,345407L,323879L,339488L,294037L,1443273L,

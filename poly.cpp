@@ -373,7 +373,7 @@ UINTW read_UINTW(FILE *fp) {
 void CMineView::ReadPolyModel (POLYMODEL& polyModel, FILE *file) 
 {
 FREAD (polyModel.n_models);
-FREAD (polyModel.model_data_size);
+FREAD (polyModel.model_dataSize);
 fseek (file, sizeof (INT32), SEEK_CUR);
 polyModel.model_data = NULL;
 FREAD (polyModel.submodel_ptrs);
@@ -390,7 +390,7 @@ FREAD (polyModel.rad);
 FREAD (polyModel.n_textures);
 FREAD (polyModel.first_texture);
 FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, model_num+1 else)
-assert(polyModel.model_data_size <= MAX_POLY_MODEL_SIZE);
+assert(polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
 }
 
 //-----------------------------------------------------------------------
@@ -399,7 +399,7 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 {
 	UINT32     id;
 	UINT32     i,n;
-	UINT16     model_data_size[MAX_POLYGON_MODELS];
+	UINT16     model_dataSize[MAX_POLYGON_MODELS];
 	POLYMODEL  polyModel;
 	POLYMODEL  save_model;
 	ROBOT_INFO robot_info;
@@ -468,16 +468,16 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		assert(n<=MAX_POLYGON_MODELS);
 		for (i = 0; i < n; i++) {
 			ReadPolyModel (polyModel, file);
-			model_data_size[i] = (UINT16)polyModel.model_data_size;
+			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
 			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS))
 				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) (model_num - N_D2_POLYGON_MODELS)) {
-				fread(gModelData, model_data_size[i],1,file);
+				fread(gModelData, model_dataSize[i],1,file);
 				break; // were done!
 			} else {
-				fseek(file , model_data_size[i],SEEK_CUR);
+				fseek(file , model_dataSize[i],SEEK_CUR);
 			}
 		}
 	} else {
@@ -522,17 +522,17 @@ INT32 CMineView::ReadModelData(FILE *file, CGameObject *objP)
 		assert(n<=MAX_POLYGON_MODELS);
 		for (i=0;i<n;i++) {
 			ReadPolyModel (polyModel, file);
-			model_data_size[i] = (UINT16)polyModel.model_data_size;
+			model_dataSize[i] = (UINT16)polyModel.model_dataSize;
 			if (i==(UINT32) model_num) {
 				memcpy(&save_model,&polyModel,sizeof (POLYMODEL));
 			}
 		}
 		for (i=0;i<n;i++) {
 			if (i==(UINT32) model_num) {
-				fread(gModelData, model_data_size[i],1,file);
+				fread(gModelData, model_dataSize[i],1,file);
 				break; // were done!
 			} else {
-				fseek(file , model_data_size[i],SEEK_CUR);
+				fseek(file , model_dataSize[i],SEEK_CUR);
 			}
 		}
 	}

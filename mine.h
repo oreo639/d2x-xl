@@ -48,7 +48,7 @@ typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaV
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
 typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 
-#define CLEAR(_b) (_b)->Clear((_b).Length ())
+#define CLEAR(_b) (_b) [0].Clear((_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
 #define DATA(_b) (_b).Buffer ()
 

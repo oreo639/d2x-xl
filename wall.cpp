@@ -163,10 +163,10 @@ switch (type) {
 		break;
 	}
 wallP->m_info.flags = 0;
-wallP->state = 0;
+wallP->m_info.state = 0;
 wallP->m_info.keys = 0;
 //  wallP->pad = 0;
-wallP->controlling_trigger = 0;
+wallP->m_info.controlling_trigger = 0;
 
 // set uvls of new texture
 UINT32	scale = (UINT32) theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
@@ -406,12 +406,12 @@ write_INT8 (m_info.cloak_value, fp);
 
 INT32 CActiveDoor::Read (FILE *fp, INT32 version, bool bFlag)
 {
-n_parts = read_INT32 (fp);
-nFrontWall [0] = read_INT16 (fp);
-nFrontWall [1] = read_INT16 (fp);
-nBackWall [0] = read_INT16 (fp); 
-nBackWall [1] = read_INT16 (fp); 
-time = read_INT32 (fp);		  
+m_info.n_parts = read_INT32 (fp);
+m_info.nFrontWall [0] = read_INT16 (fp);
+m_info.nFrontWall [1] = read_INT16 (fp);
+m_info.nBackWall [0] = read_INT16 (fp); 
+m_info.nBackWall [1] = read_INT16 (fp); 
+m_info.time = read_INT32 (fp);		  
 return 1;
 }
 
@@ -419,12 +419,12 @@ return 1;
 
 void CActiveDoor::Write (FILE *fp, INT32 version, bool bFlag)
 {
-write_INT32 (n_parts, fp);
-write_INT16 (nFrontWall[0], fp);
-write_INT16 (nFrontWall[1], fp);
-write_INT16 (nBackWall[0], fp); 
-write_INT16 (nBackWall[1], fp); 
-write_INT32 (time, fp);		  
+write_INT32 (m_info.n_parts, fp);
+write_INT16 (m_info.nFrontWall[0], fp);
+write_INT16 (m_info.nFrontWall[1], fp);
+write_INT16 (m_info.nBackWall[0], fp); 
+write_INT16 (m_info.nBackWall[1], fp); 
+write_INT32 (m_info.time, fp);		  
 }
 
 // ------------------------------------------------------------------------

@@ -289,7 +289,7 @@ CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);
 InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
-CBInit (CBSpawnType (), (char**) object_names, contents.list, NULL, MAX_CONTAINS_NUMBER, 0, true);
+CBInit (CBSpawnType (), (char**) object_names, contentsList, NULL, MAX_CONTAINS_NUMBER, 0, true);
 CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
@@ -542,10 +542,10 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 // dialog.
 objP = theMine->CurrObj ();
 sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->m_info.nSegment);
-if (/*(object_selection [objP->m_info.type] == 0) &&*/ theMine->RobotInfo (objP->m_info.id)->pad [0])
+if (/*(objectSelection [objP->m_info.type] == 0) &&*/ theMine->RobotInfo (objP->m_info.id)->pad [0])
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
-CBObjType ()->SetCurSel (object_selection [objP->m_info.type]);
+CBObjType ()->SetCurSel (objectSelection [objP->m_info.type]);
 SetObjectId (CBObjId (), objP->m_info.type, objP->m_info.id);
 
 // ungray most buttons and combo boxes
@@ -569,7 +569,7 @@ else {
 	}
 
 // gray texture override if not a poly object
-if (objP->renderType != RT_POLYOBJ)
+if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->EnableWindow (FALSE);
 
 // gray edit if this is an RDL file
@@ -577,7 +577,7 @@ if (theApp.IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
-type = (objP->contents.type == -1) ? MAX_CONTAINS_NUMBER : contents.selection [objP->contents.type];
+type = (objP->contents.type == -1) ? MAX_CONTAINS_NUMBER : contentsSelection [objP->contents.type];
 //if (type == -1)
 //	type = MAX_CONTAINS_NUMBER;
 
@@ -821,7 +821,7 @@ pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 #endif
 INT16 tnum = 0, tnum2 = -1;
 
-if (objP->renderType != RT_POLYOBJ)
+if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (INT16) theMine->CurrObj ()->rType.polyModelInfo.tmap_override;
@@ -1170,7 +1170,7 @@ else {
 		if (theMine->Objects (i)->m_info.nSegment == theMine->Current ()->nSegment)
 			count++;
 	objP->m_info.pos.v.y += count * 2 * F1_0;
-	objP->lastPos.v.y += count * 2 * F1_0;
+	objP->m_info.lastPos.v.y += count * 2 * F1_0;
 	objP->m_info.nSegment = theMine->Current ()->nSegment;
 	Refresh ();
 	theApp.MineView ()->Refresh (false);
@@ -1349,20 +1349,20 @@ switch (objP->m_info.type) {
 switch (objP->m_info.type) {
 	case OBJ_POWERUP:
 		id = (objP->m_info.id < MAX_POWERUP_IDS_D2) ? objP->m_info.id : POW_AMMORACK;
-		objP->size = powerup_size [id];
-		objP->shields = DEFAULT_SHIELD;
-		objP->rType.vClipInfo.vclip_num = powerup_clip [id];
+		objP->m_info.size = powerupSize [id];
+		objP->m_info.shields = DEFAULT_SHIELD;
+		objP->rType.vClipInfo.vclip_num = powerupClip [id];
 		break;
 
 	case OBJ_ROBOT:
-		objP->size = robot_size [objP->m_info.id];
-		objP->shields = robot_shield [objP->m_info.id];
-		objP->rType.polyModelInfo.model_num = robot_clip [objP->m_info.id];
+		objP->m_info.size = robotSize [objP->m_info.id];
+		objP->m_info.shields = robot_shield [objP->m_info.id];
+		objP->rType.polyModelInfo.model_num = robotClip [objP->m_info.id];
 		break;
 
 	case OBJ_CNTRLCEN:
-		objP->size = REACTOR_SIZE;
-		objP->shields = REACTOR_SHIELD;
+		objP->m_info.size = REACTOR_SIZE;
+		objP->m_info.shields = REACTOR_SHIELD;
 		if (theApp.IsD1File ())
 			objP->rType.polyModelInfo.model_num = REACTOR_CLIP_NUMBER;
 		else {
@@ -1381,26 +1381,26 @@ switch (objP->m_info.type) {
 		break;
 
 	case OBJ_PLAYER:
-		objP->size = PLAYER_SIZE;
-		objP->shields = DEFAULT_SHIELD;
+		objP->m_info.size = PLAYER_SIZE;
+		objP->m_info.shields = DEFAULT_SHIELD;
 		objP->rType.polyModelInfo.model_num = PLAYER_CLIP_NUMBER;
 		break;
 
 	case OBJ_WEAPON:
-		objP->size = WEAPON_SIZE;
-		objP->shields = WEAPON_SHIELD;
+		objP->m_info.size = WEAPON_SIZE;
+		objP->m_info.shields = WEAPON_SHIELD;
 		objP->rType.polyModelInfo.model_num = MINE_CLIP_NUMBER;
 		break;
 
 	case OBJ_COOP:
-		objP->size = PLAYER_SIZE;
-		objP->shields = DEFAULT_SHIELD;
+		objP->m_info.size = PLAYER_SIZE;
+		objP->m_info.shields = DEFAULT_SHIELD;
 		objP->rType.polyModelInfo.model_num = COOP_CLIP_NUMBER;
 		break;
 
 	case OBJ_HOSTAGE:
-		objP->size = PLAYER_SIZE;
-		objP->shields = DEFAULT_SHIELD;
+		objP->m_info.size = PLAYER_SIZE;
+		objP->m_info.shields = DEFAULT_SHIELD;
 		objP->rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
 		break;
 	}
@@ -1440,7 +1440,7 @@ if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	}
 else {
 	objP->contents.type = 
-	selection = contents.list [i];
+	selection = contentsList [i];
 	SetObjectId (CBSpawnId (),selection,0,1);
 	UpdateData (TRUE);
 	if (m_nSpawnQty < 1) {
@@ -1466,7 +1466,7 @@ if (objP->contents.count < -1)
 	objP->contents.count = -1;
 INT32 i = CBSpawnType ()->GetCurSel () - 1;
 if ((i > -1) && (objP->contents.count > 0)) {
-	objP->contents.type = contents.list [i];
+	objP->contents.type = contentsList [i];
 	objP->contents.id = (INT8) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
 	}
 else {
@@ -1511,7 +1511,7 @@ void CObjectTool::OnSetTexture ()
 {
 CGameObject *objP = theMine->CurrObj ();
 
-if (objP->renderType == RT_POLYOBJ) {
+if (objP->m_info.renderType == RT_POLYOBJ) {
 	theApp.SetModified (TRUE);
 	INT32 index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.tmap_override = 

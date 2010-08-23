@@ -280,7 +280,7 @@ if (!AddEffect ())
 CGameObject *objP = theMine->CurrObj ();
 objP->m_info.type = OBJ_EFFECT;
 objP->m_info.id = SMOKE_ID;
-objP->renderType = RT_SMOKE;
+objP->m_info.renderType = RT_SMOKE;
 memset (&objP->rType.smokeInfo, 0, sizeof (objP->rType.smokeInfo));
 Refresh ();
 theApp.MineView ()->Refresh ();
@@ -295,7 +295,7 @@ if (!AddEffect ())
 CGameObject *objP = theMine->CurrObj ();
 objP->m_info.type = OBJ_EFFECT;
 objP->m_info.id = LIGHTNING_ID;
-objP->renderType = RT_LIGHTNING;
+objP->m_info.renderType = RT_LIGHTNING;
 memset (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
 Refresh ();
 theApp.MineView ()->Refresh ();
@@ -310,7 +310,7 @@ if (!AddEffect ())
 CGameObject *objP = theMine->CurrObj ();
 objP->m_info.type = OBJ_EFFECT;
 objP->m_info.id = SOUND_ID;
-objP->renderType = RT_SOUND;
+objP->m_info.renderType = RT_SOUND;
 *objP->rType.soundInfo.szFilename = '\0';
 objP->rType.soundInfo.nVolume = 10;
 Refresh ();

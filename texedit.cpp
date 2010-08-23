@@ -697,7 +697,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	BITMAPINFOHEADER bmih;
 	UINT8 color_map[256];
 	bool bFuncRes = false;
-	UINT32 x, y, width, palette_size;
+	UINT32 x, y, width, paletteSize;
 
    palette = (RGBQUAD *) malloc(256*sizeof (RGBQUAD));
 	if (!palette) {
@@ -745,18 +745,18 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	}
 
 	// read palette
-	palette_size = min((INT32)bmih.biClrUsed,256);
-	if (palette_size == 0) {
-	  palette_size = 1 << bmih.biBitCount;
+	paletteSize = min((INT32)bmih.biClrUsed,256);
+	if (paletteSize == 0) {
+	  paletteSize = 1 << bmih.biBitCount;
 	}
-	fread(palette,sizeof (RGBQUAD),palette_size,file);
+	fread(palette,sizeof (RGBQUAD),paletteSize,file);
 
 	// read the logical palette entries
 	theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 
 	// check color palette
 	INT32 i;
-	for (i = 0; i < INT32 (palette_size); i++) {
+	for (i = 0; i < INT32 (paletteSize); i++) {
 	  color_map [i] = i;
 	  if (palette [i].rgbRed != sysPal [i].peRed ||
 			palette [i].rgbGreen != sysPal [i].peGreen ||
@@ -764,7 +764,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 			break;
 	  }
 	}
-	if (i != INT32 (palette_size)) {
+	if (i != INT32 (paletteSize)) {
 		if (!bExpertMode)
 			ErrorMsg ("The palette of this bitmap file is not exactly the\n"
 					  "the same as the Descent palette. Therefore, some color\n"
@@ -773,7 +773,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 					  "the Descent textures to a file an use it as a starting point.\n"
 					  "If you plan to use transparencies, then you may want to start\n"
 					  "with the texture called 'empty'.");
-		for (i = 0; i < INT32 (palette_size); i++) {
+		for (i = 0; i < INT32 (paletteSize); i++) {
 			UINT32 closest_index = i;
 			if ((palette [i].rgbRed != sysPal [i].peRed) ||
 				 (palette [i].rgbGreen != sysPal [i].peGreen) ||

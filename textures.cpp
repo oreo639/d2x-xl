@@ -547,12 +547,12 @@ INT32 RLEExpand (D2_PIG_TEXTURE *bmP, UINT8 *texBuf)
 	UINT16 nLineSize;
 
 bufSize = bmP->xsize * bmP->ysize;
-if (!(bmP->m_info.flags & BM_FLAG_RLE))
+if (!(bmP->flags & BM_FLAG_RLE))
 	return bufSize;
 if (!(expandBuf = (UINT8 *) malloc (bufSize)))
 	return -1;
 
-bBigRLE = (bmP->m_info.flags & BM_FLAG_RLE_BIG) != 0;
+bBigRLE = (bmP->flags & BM_FLAG_RLE_BIG) != 0;
 if (bBigRLE)
 	pSrc = texBuf + 4 + 2 * bmP->ysize;
 else
@@ -586,7 +586,7 @@ for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
 	}
 l = (INT32) (pDest - expandBuf);
 memcpy (texBuf, expandBuf, l);
-bmP->m_info.flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
+bmP->flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
 free (expandBuf);
 return l;
 }
@@ -880,12 +880,12 @@ return true;
 // where N is the number of textures.
 //
 // Uncommpressed Texture data:
-//   UINT8  data[data_size];    // raw data
+//   UINT8  data[dataSize];    // raw data
 //
 // Commpressed Texture data:
-//   UINT32 total_size;      // including this long word and everything below
-//   UINT8  line_sizes[64];  // size of each line (in bytes)
-//   UINT8  data[data_size]; // run length encoded (RLE) data
+//   UINT32 totalSize;      // including this long word and everything below
+//   UINT8  lineSizes[64];  // size of each line (in bytes)
+//   UINT8  data[dataSize]; // run length encoded (RLE) data
 //
 // RLE definition:
 //
