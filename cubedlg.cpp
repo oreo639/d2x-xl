@@ -253,9 +253,7 @@ void CSegmentTool::OnSetCoord ()
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
 m_nVertex = theMine->CurrSeg ()->verts[side_vert[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
-theMine->Vertices (m_nVertex)->x = (FIX) (m_nCoord [0] * 0x10000L);
-theMine->Vertices (m_nVertex)->y = (FIX) (m_nCoord [1] * 0x10000L);
-theMine->Vertices (m_nVertex)->z = (FIX) (m_nCoord [2] * 0x10000L);
+theMine->Vertices (m_nVertex)->Set ((FIX) (m_nCoord [0] * 0x10000L), (FIX) (m_nCoord [1] * 0x10000L), (FIX) (m_nCoord [2] * 0x10000L));
 theApp.MineView ()->Refresh (false);
 }
 
@@ -264,9 +262,9 @@ theApp.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord ()
 {
 m_nVertex = theMine->CurrSeg ()->verts[side_vert[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
-m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->x / 0x10000L;
-m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->y / 0x10000L;
-m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->z / 0x10000L;
+m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
+m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
+m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
 UpdateData (FALSE);
 theApp.MineView ()->Refresh (false);
 }

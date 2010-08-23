@@ -122,29 +122,24 @@ theApp.MineView ()->Refresh ();
 
 double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide) 
 {
-  INT16		nVertex[4],i;
-  CFixVector		midpoint1, midpoint2;
+  INT16			nVertex[4],i;
+  CFixVector	midpoint1, midpoint2;
   double			length1,length2,ave_length, mid_length;
   double			ratio1,ratio2;
-	CFixVector*		vert [4];
+  CFixVector	vert [4];
   // copy vertnums into an array
 	CSegment*	segP = theMine->Segments (nSegment);
   for (i=0;i<4;i++) {
     nVertex[i] = segP->verts[side_vert[nSide][i]];
-	 vert [i] = theMine->Vertices (nVertex [i]);
+	 vert [i] = *theMine->Vertices (nVertex [i]);
   }
 
-  length1 = CalcDistance (vert [0], vert [1], vert [2]);
-  length2 = CalcDistance (vert [0], vert [1], vert [3]);
+  length1 = CalcDistance (vert + 0, vert + 1, vert + 2);
+  length2 = CalcDistance (vert + 0, vert + 1, vert + 3);
   ave_length = (length1 + length2) / 2;
 
-  midpoint1.x = (vert [0]->x + vert [1]->x) / 2;
-  midpoint1.y = (vert [0]->y + vert [1]->y) / 2;
-  midpoint1.z = (vert [0]->z + vert [1]->z) / 2;
-
-  midpoint2.x = (vert [2]->x + vert [3]->x) / 2;
-  midpoint2.y = (vert [2]->y + vert [3]->y) / 2;
-  midpoint2.z = (vert [2]->z + vert [3]->z) / 2;
+  midpoint1 = Average (vert [0], vert [1]);
+  midpoint2 = Average (vert [2], vert [3]);
 
   mid_length = theMine->CalcLength (&midpoint1, &midpoint2);
 
@@ -154,13 +149,8 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
   length2 = CalcDistance (vert [1], vert [2], vert [0]);
   ave_length = (length1 + length2) / 2;
 
-  midpoint1.x = (vert [1]->x + vert [2]->x) / 2;
-  midpoint1.y = (vert [1]->y + vert [2]->y) / 2;
-  midpoint1.z = (vert [1]->z + vert [2]->z) / 2;
-
-  midpoint2.x = (vert [3]->x + vert [0]->x) / 2;
-  midpoint2.y = (vert [3]->y + vert [0]->y) / 2;
-  midpoint2.z = (vert [3]->z + vert [0]->z) / 2;
+  midpoint1 = Average (vert [1], vert [2]);
+  midpoint2 = Average (vert [3], vert [0]);
 
   mid_length = theMine->CalcLength (&midpoint1, &midpoint2);
 
@@ -180,32 +170,20 @@ double CDiagTool::CalcDistance (CFixVector* v1,CFixVector* v2,CFixVector* v3)
   CDoubleVector A,B,B2;
   double c,a2,distance;
 
-  // normalize all points to vector 1
-  A.x = v2->x - v1->x;
-  A.y = v2->y - v1->y;
-  A.z = v2->z - v1->z;
-  B.x = v3->x - v1->x;
-  B.y = v3->y - v1->y;
-  B.z = v3->z - v1->z;
+// normalize all points to vector 1
+A = *v2 - *v1;
+B = *v3 - *v1;
 
-  // use formula from page 505 of "Calculase and Analytical Geometry" Fifth Addition
-  // by Tommas/Finney, Addison-Wesley Publishing Company, June 1981
-  //          B * A
-  // B2 = B - ----- A
-  //          A * A
+// use formula from page 505 of "Calculase and Analytical Geometry" Fifth Addition
+// by Tommas/Finney, Addison-Wesley Publishing Company, June 1981
+//          B * A
+// B2 = B - ----- A
+//          A * A
 
-  a2 = A.x*A.x + A.y*A.y + A.z*A.z;
-  if (a2 != 0) {
-    c = (B.x*A.x + B.y*A.y + B.z*A.z) / a2;
-  } else {
-    c = 0;
-  }
-  B2.x = B.x - c*A.x;
-  B2.y = B.y - c*A.y;
-  B2.z = B.z - c*A.z;
-
-  distance = sqrt (B2.x*B2.x + B2.y*B2.y + B2.z*B2.z);
-  return (distance);
+a2 = A ^ A;
+c = (a2 != 0) ? (B ^ A) / a2 : 0;
+B2 = B - (A * c);
+return B2.Mag ();
 }
 
 //--------------------------------------------------------------------------
@@ -222,42 +200,27 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
   CFixVector* v2 = theMine->Vertices (vert2);
   CFixVector* v3 = theMine->Vertices (vert3);
       // define lines
-      line1.x = ((double) v1->x - (double) v0->x)/F1_0;
-      line1.y = ((double) v1->y - (double) v0->y)/F1_0;
-      line1.z = ((double) v1->z - (double) v0->z)/F1_0;
-      line2.x = ((double) v2->x - (double) v0->x)/F1_0;
-      line2.y = ((double) v2->y - (double) v0->y)/F1_0;
-      line2.z = ((double) v2->z - (double) v0->z)/F1_0;
-      line3.x = ((double) v3->x - (double) v0->x)/F1_0;
-      line3.y = ((double) v3->y - (double) v0->y)/F1_0;
-      line3.z = ((double) v3->z - (double) v0->z)/F1_0;
-      // use cross product to calcluate orthogonal vector
-      orthog.x = - (line1.y*line2.z - line1.z*line2.y);
-      orthog.y = - (line1.z*line2.x - line1.x*line2.z);
-      orthog.z = - (line1.x*line2.y - line1.y*line2.x);
-      // use dot product to determine angle A dot B = |A|*|B| * cos (angle)
-      // therfore: angle = acos (A dot B / |A|*|B|)
-      dot_product = line3.x*orthog.x
-		  + line3.y*orthog.y
-		  + line3.z*orthog.z;
-      magnitude1 = sqrt ( line3.x*line3.x
-			+line3.y*line3.y
-			+line3.z*line3.z);
-      magnitude2 = sqrt ( orthog.x*orthog.x
-			+orthog.y*orthog.y
-			+orthog.z*orthog.z);
-      if (dot_product == 0 || magnitude1 == 0 || magnitude2 == 0) {
-        angle = (200.0 * M_PI)/180.0; 
-      } else {
+line1 = *v1 - *v0;
+line2 = *v2 - *v0;
+line3 = *v3 - *v0;
+// use cross product to calcluate orthogonal vector
+orthog = -CrossProduct (line1, line2);
+// use dot product to determine angle A dot B = |A|*|B| * cos (angle)
+// therfore: angle = acos (A dot B / |A|*|B|)
+dot_product = line3 ^ orthog;
+magnitude1 = line3.Mag ();
+magnitude2 = orthog.Mag ();
+if (dot_product == 0 || magnitude1 == 0 || magnitude2 == 0)
+	angle = (200.0 * M_PI)/180.0; 
+else {
 	ratio = dot_product/ (magnitude1*magnitude2);
 	ratio = ( (double) ( (INT32) (ratio*1000.0))) / 1000.0; // bug fix 9/21/96
-	if (ratio < -1.0 || ratio > (double)1.0) {
-	  angle = (199.0 * M_PI)/180.0;
-	} else {
-	  angle = acos (ratio);
-        }
-      }
-  return fabs (angle);  // angle should be positive since acos returns 0 to PI but why not be sure
+	if (ratio < -1.0 || ratio > (double)1.0) 
+		angle = (199.0 * M_PI)/180.0;
+	else
+		angle = acos (ratio);
+	}
+return fabs (angle);  // angle should be positive since acos returns 0 to PI but why not be sure
 }
 
 //--------------------------------------------------------------------------
@@ -677,28 +640,18 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     // find center of segment then find maximum distance
 	// of corner to center.  Calculate Objects () distance
     // from center and make sure it is less than max corner.
-    center.x = center.y = center.z = 0;
+    center.Clear ();
     for (corner=0;corner<8;corner++) {
-		 CFixVector* v = theMine->Vertices (segP->verts[corner]);
-      center.x += v->x;
-      center.y += v->y;
-      center.z += v->z;
+      center += *theMine->Vertices (segP->verts[corner]);
     }
-    center.x /= 8; center.y /= 8; center.z /= 8;
+    center >>= 3;
     max_radius = 0;
     for (corner=0;corner<8;corner++) {
-		 CFixVector* v = theMine->Vertices (segP->verts[corner]);
-      x = v->x - center.x;
-      y = v->y - center.y;
-      z = v->z - center.z;
-	  radius = sqrt (x*x + y*y + z*z);
-	  max_radius = max (max_radius,radius);
-    }
-    x = objP->pos.x - center.x;
-    y = objP->pos.y - center.y;
-    z = objP->pos.z - center.z;
-	object_radius = sqrt (x*x + y*y + z*z);
-    if ((object_radius > max_radius) && (objP->type != OBJ_EFFECT)) {
+		 radius = Distance *theMine->Vertices (segP->verts[corner]), center);
+		 max_radius = max (max_radius,radius);
+		 }
+	object_radius = Distance (objP->pos, center);
+   if ((object_radius > max_radius) && (objP->type != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",nObject,nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
