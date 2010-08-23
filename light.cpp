@@ -575,7 +575,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 		if ((segP->m_info.children [nSide] >= 0) && !VisibleWall (sideP->m_info.nWall))
 			continue;
 		if (bCopyTexLights)
-			memset (LightColor (nSegment, nSide, false), 0, sizeof (CColor));
+			LightColors (nSegment, nSide)->Clear ();
 		brightness = 0;
 		texture_num = sideP->m_info.nBaseTex;
 		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES))

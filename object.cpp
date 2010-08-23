@@ -139,7 +139,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
   CalcSegCenter (location,nSegment);
-  memset (objP,0,sizeof (CGameObject));
+  objP->Clear ();
   objP->m_info.signature = 0;
   objP->m_info.type = type;
   if (type==OBJ_WEAPON) {

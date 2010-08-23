@@ -193,7 +193,7 @@ if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
 	if (theMine->IsD2XLevel ())
-		memset (theMine->CurrLightColor (), 0, sizeof (CColor));
+		theMine->CurrLightColor ()->Clear ();
 	}
 else {
 	if (!m_bLightEnabled)

@@ -830,9 +830,9 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 
 void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment) 
 {
-  INT16	*nVerts =Segments (nSegment)->m_info.verts; 
+  INT16	*nVerts = Segments (nSegment)->m_info.verts; 
   
-memset (&pos, 0, sizeof (pos));
+pos.Clear ();
 INT32 i;
 for (i = 0; i < 8; i++) {
 	pos += *Vertices (nVerts [i]);
@@ -2395,7 +2395,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 VertCount () = h;
 #endif
 // compute segment center
-memset (&segCenter, 0, sizeof (segCenter));
+segCenter.Clear ();
 for (i = 0; i < 8; i++)
 	segCenter += *Vertices (centerSegP->m_info.verts [i]);
 segCenter /= FIX (8);

@@ -70,7 +70,7 @@ END_MESSAGE_MAP ()
 CWallTool::CWallTool (CPropertySheet *pParent)
 	: CTexToolDlg (nLayout ? IDD_WALLDATA2 : IDD_WALLDATA, pParent, IDC_WALL_SHOW, 5, RGB (0,0,0))
 {
-memset (&m_defWall, 0, sizeof (m_defWall));
+m_defWall.Clear ();
 m_defWall.m_info.type = WALL_DOOR;
 m_defWall.m_info.flags = WALL_DOOR_AUTO;
 m_defWall.m_info.keys = KEY_NONE;

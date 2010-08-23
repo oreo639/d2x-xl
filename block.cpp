@@ -149,8 +149,8 @@ while(!feof(fBlk)) {
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
-				memset (&w, 0, sizeof (w));
-				memset (&t, 0, sizeof (t));
+				w.Clear ();
+				t.Clear ();
 				fscanf_s (fBlk, "        segment %ld\n", &w.m_nSegment);
 				fscanf_s (fBlk, "        side %ld\n", &w.m_nSide);
 				fscanf_s (fBlk, "        hps %ld\n", &w.m_info.hps);
