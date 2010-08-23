@@ -289,7 +289,7 @@ if (!m_bShowTexture)
 	INT32			h, i, j, x, y;
 	POINT			offset;
 	CSide*		sideP = theMine->CurrSide ();
-	CTexture		tex (bmBuf, true);
+	CTexture		tex (bmBuf);
 	UINT16		scale;
 
 // read scroll bar

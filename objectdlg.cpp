@@ -840,7 +840,7 @@ else {
 		LoadString (hInst,texture_resource + tnum, message, sizeof (message));
 		CBObjTexture ()->SelectString (-1, message);
 		// and show bitmap
-		CTexture tx (bmBuf, true);
+		CTexture tx (bmBuf);
 		if (!DefineTexture(tnum,0,&tx,0,0)) {
 			CPalette * pOldPalette = pDC->SelectPalette(m_currentPalette, FALSE);
 			pDC->RealizePalette ();

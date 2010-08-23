@@ -107,8 +107,7 @@ if (m_txtFilterTool)
 
 void CToolView::Refresh (void)
 {
-if (!theMine) 
-	return;
+CHECKMINE;
 
 	CPropertyPage	*p = m_pTools->GetActivePage ();
 
@@ -156,19 +155,19 @@ m_diagTool = new CDiagTool (m_pTools);
 m_txtFilterTool = new CTxtFilterTool (m_pTools);
 m_prefsDlg = new CPrefsDlg (m_pTools);
 m_pTools->AddPage (m_textureTool);
-m_pTools->AddPage (m_segmentTool);
-m_pTools->AddPage (m_wallTool);
-m_pTools->AddPage (m_triggerTool);
-m_pTools->AddPage (m_objectTool);
-m_pTools->AddPage (m_effectTool);
-m_pTools->AddPage (m_advObjTool);
-m_pTools->AddPage (m_lightTool);
-m_pTools->AddPage (m_reactorTool);
-m_pTools->AddPage (m_missionTool);
-m_pTools->AddPage (m_diagTool);
-m_pTools->AddPage (m_txtFilterTool);
-m_pTools->AddPage (m_prefsDlg);
-//m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0);
+//m_pTools->AddPage (m_segmentTool);
+//m_pTools->AddPage (m_wallTool);
+//m_pTools->AddPage (m_triggerTool);
+//m_pTools->AddPage (m_objectTool);
+//m_pTools->AddPage (m_effectTool);
+//m_pTools->AddPage (m_advObjTool);
+//m_pTools->AddPage (m_lightTool);
+//m_pTools->AddPage (m_reactorTool);
+//m_pTools->AddPage (m_missionTool);
+//m_pTools->AddPage (m_diagTool);
+//m_pTools->AddPage (m_txtFilterTool);
+//m_pTools->AddPage (m_prefsDlg);
+m_pTools->Create (this, WS_CHILD | WS_VISIBLE, 0);
 }
 
                         /*--------------------------*/
@@ -350,8 +349,6 @@ RecalcLayout ();
 
 void CToolView::RecalcLayout (INT32 nToolMode, INT32 nTextureMode)
 {
-if (!theMine) return;
-
 	CRect	rc;
 	CSize	paneSize;
 

@@ -1005,11 +1005,11 @@ for (i = 0; i < 2; i++) {
 		if (!bDeleteModified && texP->m_info.bModified)
 			continue;
 		if (texP->m_info.bmDataP) {
-			free (texP->m_info.bmDataP);
+			delete texP->m_info.bmDataP;
 			texP->m_info.bmDataP = NULL;
 			}
 		if (texP->m_info.tgaDataP) {
-			free (texP->m_info.tgaDataP);
+			delete texP->m_info.tgaDataP;
 			texP->m_info.tgaDataP = NULL;
 			}
 		texP->m_info.bModified = FALSE;
@@ -1158,8 +1158,8 @@ if (!pDC)
 	CSegment*	segP;
 	CSide*		sideP;
 	INT16			nWall;
-	bool			bShowTexture = true;
-	char			*path = (theApp.IsD1File ()) ? descent_path : descent2_path;
+	bool			bShowTexture = true, bDescent1 = theApp.IsD1File ();
+	char			*path = bDescent1 ? descent_path : descent2_path;
 
 CRect	rc;
 pWnd->GetClientRect (rc);
@@ -1184,18 +1184,18 @@ if ((nOvlTex < 0) || (nOvlTex >= MAX_TEXTURES))	// this allows to suppress bitma
 
 if (bShowTexture) {
 	// check pig file
-	if (dataOffset [theApp.IsD1File ()] == 0) {
-		strcpy_s (szFile, sizeof (szFile), (theApp.IsD1File ()) ? descent_path : descent2_path);
+	if (dataOffset [bDescent1] == 0) {
+		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descent_path : descent2_path);
 		if (fopen_s (&fTextures, szFile, "rb"))
-			dataOffset [theApp.IsD1File ()] = -1;  // pig file not found
+			dataOffset [bDescent1] = -1;  // pig file not found
 		else {
 			fseek (fTextures, 0, SEEK_SET);
-			dataOffset [theApp.IsD1File ()] = read_INT32 (fTextures);  // determine type of pig file
+			dataOffset [bDescent1] = read_INT32 (fTextures);  // determine type of pig file
 			fclose (fTextures);
 			}
 		}
-	if (dataOffset [theApp.IsD1File ()] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CTexture	tex (bmBuf, true);
+	if (dataOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
+		CTexture	tex (bmBuf);
 		if (DefineTexture (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
@@ -1221,7 +1221,7 @@ if (bShowTexture) {
 		}
 	else {
 		HGDIOBJ hgdiobj1;
-		bmTexture.LoadBitmap ((dataOffset < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
+		bmTexture.LoadBitmap ((dataOffset [bDescent1] < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
 		bmTexture.GetObject (sizeof (BITMAP), &bm);
 		memDC.CreateCompatibleDC (pDC);
 		hgdiobj1 = memDC.SelectObject (bmTexture);

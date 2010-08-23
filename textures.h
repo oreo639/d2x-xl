@@ -52,11 +52,12 @@ class CTexture : public CGameItem {
 public:
 	tTexture	m_info;
 
-	CTexture (UINT8 *dataP = NULL, bool bExtData = false) {
+	CTexture (UINT8 *dataP = NULL) {
 		Clear ();
-		m_info.bmDataP = dataP; 
-		m_info.bExtData = bExtData;
+		m_info.bmDataP = dataP;
+		m_info.bExtData = dataP != NULL;
 		}
+
 	~CTexture() {
 		if (!m_info.bExtData) {
 			if (m_info.bmDataP) {

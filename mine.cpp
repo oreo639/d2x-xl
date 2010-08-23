@@ -32,24 +32,14 @@ CMine* theMine = NULL;
 
 CMine::CMine() 
 { 
-Initialize ();
+//Initialize ();
 }
 
 void CMine::Initialize (void)
 {
 VertCount () = 0;
 SegCount () = 0;
-#if 0
-Segments ().Clear ();
-Vertices ().Clear ();
-Walls ().Clear ();
-Triggers ().Clear ();
-ObjTriggers ().Clear ();
-ReactorTriggers ().Clear ();
-VertexColors ().Clear ();
-BotGens ().Clear ();
-EquipGens ().Clear ();
-#else
+#if 1
 CLEAR (Segments ());
 CLEAR (Objects ());
 CLEAR (Vertices ());
@@ -63,6 +53,7 @@ CLEAR (EquipGens ());
 CTexture* texP = Textures () [0].Buffer ();
 CLEAR (Textures () [0]);
 CLEAR (Textures () [1]);
+CLEAR (RobotInfo ());
 #endif
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
@@ -83,8 +74,7 @@ GameInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-CLEAR (RobotInfo ());
-//	LoadPalette ();
+LoadPalette ();
 m_bSortObjects = TRUE;
 m_bVertigo = false;
 m_pHxmExtraData = NULL;
