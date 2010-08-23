@@ -393,7 +393,7 @@ boolean bAll = !theMine->GotMarkedSegments ();
 
 INT32 i;
 for (i = theMine->ObjCount (); i; i--, objP++)
-	if ((objP->type == OBJ_EFFECT) && (objP->id == m_nBufferId) && (bAll || theMine->SegmentIsMarked (objP->nSegment)))
+	if ((objP->type == OBJ_EFFECT) && (objP->id == m_nBufferId) && (bAll || theMine->SegmentIsMarked (objP->m_info.nSegment)))
 		if (m_nBufferId == SMOKE_ID)
 			objP->rType.smokeInfo = m_smoke;
 		else if (m_nBufferId == LIGHTNING_ID)

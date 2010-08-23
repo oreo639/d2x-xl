@@ -92,7 +92,7 @@ void CMine::SortObjTriggers (void)
 
 if ((h = NumObjTriggers ()) > 1) {
 	for (UINT16 i = 0; i < h; i++)
-		ObjTriggers (i)->nIndex = i;
+		ObjTriggers (i)->m_info.nIndex = i;
 	QSortObjTriggers (0, h - 1);
 	}
 }
@@ -442,7 +442,7 @@ NumObjTriggers ()++;
 theApp.UnlockUndo ();
 SortObjTriggers ();
 for (UINT16 i = NumObjTriggers (); i; )
-	if (ObjTriggers (--i)->nIndex == nTrigger)
+	if (ObjTriggers (--i)->m_info.nIndex == nTrigger)
 		return ObjTriggers (i);
 return ObjTriggers (nTrigger);
 }

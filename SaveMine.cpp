@@ -186,7 +186,7 @@ do {
 		l++;
 		}
 	pr = LightDeltaIndex (r);
-	//while ((pr->nSegment > mSeg) || ((pr->nSegment == mSeg) && (pr->nSide > mSide))) {
+	//while ((pr->m_info.nSegment > mSeg) || ((pr->m_info.nSegment == mSeg) && (pr->nSide > mSide))) {
 	while (*pr > mKey) {
 		pr--;
 		r--;
@@ -445,7 +445,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 			//// skip robot_flags2
 			//write_FIX  (BotGens (i)->hitPoints, fp);
 			//write_FIX  (BotGens (i)->interval, fp);
-			//write_INT16(BotGens (i)->nSegment, fp);
+			//write_INT16(BotGens (i)->m_info.nSegment, fp);
 			//write_INT16(BotGens (i)->nFuelCen, fp);
 	}
 #endif

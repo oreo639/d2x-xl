@@ -29,12 +29,12 @@ return Distance (*center1, *center2);
 
 void CMine::DeleteSegmentWalls (INT16 nSegment)
 {
-	CSide *sideP = Segments (nSegment)->sides; 
+	CSide *sideP = Segments (nSegment)->m_sides; 
 
 INT32 i;
 for (i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
-	if (sideP->nWall != NO_WALL)
-		DeleteWall (sideP->nWall); 
+	if (sideP->m_info.nWall != NO_WALL)
+		DeleteWall (sideP->m_info.nWall); 
 }
 
 // -------------------------------------------------------------------------- 
@@ -78,25 +78,25 @@ DeleteSegmentWalls (nDelSeg);
 
 // delete any Walls () on child Segments () that connect to this segment
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	child = delSegP->children [i]; 
+	child = delSegP->m_info.children [i]; 
 	if (child >= 0 && child < SegCount ()) {
 		INT16	oppSegNum, oppSideNum;
 		GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
-		if (Segments (oppSegNum)->sides [oppSideNum].nWall != NO_WALL)
-			DeleteWall (Segments (oppSegNum)->sides [oppSideNum].nWall); 
+		if (Segments (oppSegNum)->m_sides [oppSideNum].m_info.nWall != NO_WALL)
+			DeleteWall (Segments (oppSegNum)->m_sides [oppSideNum].m_info.nWall); 
 			}
 		}
 
 	// delete any Objects () within segment
 for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
-	if (Objects (i)->nSegment == nDelSeg) {
+	if (Objects (i)->m_info.nSegment == nDelSeg) {
 		DeleteObject(i); 
 		}
 	}
 #if 0 // done by UndefineSegment ()
 	// delete any robot centers with this
 	for (i = (UINT16)GameInfo ().botgen.count - 1; i >= 0; i--) {
-		nSegment = BotGens (i)->nSegment; 
+		nSegment = BotGens (i)->m_info.nSegment; 
 		if (nSegment == nDelSeg) {
 			INT32 nMatCens = --GameInfo ().botgen.count; 
 			if (i < nMatCens)
@@ -106,7 +106,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 
 	// delete any equipment centers with this
 	for (i = (UINT16) GameInfo ().equipgen.count - 1; i >= 0; i--) {
-		nSegment = EquipGens (i)->nSegment; 
+		nSegment = EquipGens (i)->m_info.nSegment; 
 		if (nSegment == nDelSeg) {
 			GameInfo ().equipgen.count--; 
 			memcpy ((void *) EquipGens (i), (void *) EquipGens (i + 1), 
@@ -115,14 +115,14 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		}
 #endif
 	for (j = 0; j < GameInfo ().botgen.count; j++)
-		if (BotGens (i)->nSegment > nDelSeg)
-			BotGens (i)->nSegment--;
+		if (BotGens (i)->m_info.nSegment > nDelSeg)
+			BotGens (i)->m_info.nSegment--;
 	for (j = 0; j < GameInfo ().equipgen.count; j++)
-		if (EquipGens (i)->nSegment > nDelSeg)
-			EquipGens (i)->nSegment--;
+		if (EquipGens (i)->m_info.nSegment > nDelSeg)
+			EquipGens (i)->m_info.nSegment--;
 	// delete any control segP with this segment
 	for (i = (UINT16)GameInfo ().control.count - 1; i >= 0; i--) {
-		INT32 count = ReactorTriggers (i)->m_count; 
+		INT32 count = ReactorTriggers (i)->m_count;
 		for (j = count - 1; j > 0; j--) {
 			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
 				// move last segment into this spot
@@ -137,13 +137,13 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		SecretCubeNum () = 0; 
 
 	// update segment flags
-	delSegP->wallFlags &= ~MARKED_MASK; 
+	delSegP->m_info.wallFlags &= ~MARKED_MASK; 
 
 	// unlink any children with this segment number
 	CTexture* texP = theMine->Textures (m_fileType);
 	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (segP->children [child]== nDelSeg) {
+			if (segP->m_info.children [child]== nDelSeg) {
 
 				// subtract by 1 if segment is above deleted segment
 				Current ()->nSegment = nSegment; 
@@ -151,18 +151,18 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 					Current ()->nSegment--; 
 
 				// remove child number and update child bitmask
-				segP->children [child] = -1; 
-				segP->childFlags &= ~(1 << child); 
+				segP->m_info.children [child] = -1; 
+				segP->m_info.childFlags &= ~(1 << child); 
 
 				// define textures, (u, v) and light
-				CSide *sideP = delSegP->sides + child;
-				SetTexture (nSegment, child, sideP->nBaseTex, sideP->nOvlTex); 
+				CSide *sideP = delSegP->m_sides + child;
+				SetTexture (nSegment, child, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
 				SetUV (nSegment, child, 0, 0, 0); 
-				double scale = texP [sideP->nBaseTex].Scale (sideP->nBaseTex);
+				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
-					segP->sides [child].uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
-					segP->sides [child].uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
-					segP->sides [child].uvls [i].l = delSegP->sides [child].uvls [i].l; 
+					segP->m_sides [child].m_info.uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
+					segP->m_sides [child].m_info.uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
+					segP->m_sides [child].m_info.uvls [i].l = delSegP->m_sides [child].m_info.uvls [i].l; 
 				}
 			}
 		}
@@ -175,15 +175,15 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		real_segnum = 0; 
 		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 			if(nDelSeg != nSegment)
-				segP->nIndex = real_segnum++; 
+				segP->m_info.nIndex = real_segnum++; 
 
 		// replace all children with real numbers
 		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-				if (segP->childFlags & (1 << child)
-					&& segP->children [child] >= 0 && segP->children [child] < SegCount ()) { // debug fix
-					childSegP = &Segments () [segP->children [child]]; 
-					segP->children [child] = childSegP->nIndex; 
+				if (segP->m_info.childFlags & (1 << child)
+					&& segP->m_info.children [child] >= 0 && segP->m_info.children [child] < SegCount ()) { // debug fix
+					childSegP = Segments (segP->m_info.children [child]); 
+					segP->m_info.children [child] = childSegP->m_info.nIndex; 
 				}
 			}
 		}
@@ -193,7 +193,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 			nSegment = (INT16) Walls (i)->m_nSegment; 
 			if (nSegment < SegCount ()) {
 				segP = Segments (nSegment); 
-				Walls (i)->m_nSegment = segP->nIndex; 
+				Walls (i)->m_nSegment = segP->m_info.nIndex; 
 				} 
 			else {
 				Walls (i)->m_nSegment = 0; // fix wall segment number
@@ -204,7 +204,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		for (i = NumTriggers (), trigP = Triggers (0); i; i--, trigP++) {
 			for (j = 0; j < trigP->m_count; j++) {
 				if (SegCount () > (nSegment = trigP->Segment (j)))
-					trigP->Segment (j) = Segments (nSegment)->nIndex; 
+					trigP->Segment (j) = Segments (nSegment)->m_info.nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -216,7 +216,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		for (i = NumObjTriggers (), trigP = ObjTriggers (0); i; i--, trigP++) {
 			for (j = 0; j < trigP->m_count; j++) {
 				if (SegCount () > (nSegment = trigP->Segment (j)))
-					trigP->Segment (j) = Segments (nSegment)->nIndex; 
+					trigP->Segment (j) = Segments (nSegment)->m_info.nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -227,33 +227,33 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all object segP numbers with real numbers
 		for (i = 0; i < GameInfo ().objects.count; i++) {
 			objP = Objects (i); 
-			if (SegCount () > (nSegment = objP->nSegment))
-				objP->nSegment = Segments (nSegment)->nIndex; 
+			if (SegCount () > (nSegment = objP->m_info.nSegment))
+				objP->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
-				objP->nSegment = 0; // fix object segment number
+				objP->m_info.nSegment = 0; // fix object segment number
 			}
 
 		// replace robot centers segP numbers with real numbers
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
-			if (SegCount () > (nSegment = BotGens (i)->nSegment))
-				BotGens (i)->nSegment = Segments (nSegment)->nIndex; 
+			if (SegCount () > (nSegment = BotGens (i)->m_info.nSegment))
+				BotGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
-				BotGens (i)->nSegment = 0; // fix robot center nSegment
+				BotGens (i)->m_info.nSegment = 0; // fix robot center nSegment
 			}
 
 		// replace equipment centers segP numbers with real numbers
 		for (i = 0; i < GameInfo ().equipgen.count; i++) {
-			if (SegCount () > (nSegment = EquipGens (i)->nSegment))
-				EquipGens (i)->nSegment = Segments (nSegment)->nIndex; 
+			if (SegCount () > (nSegment = EquipGens (i)->m_info.nSegment))
+				EquipGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
-				EquipGens (i)->nSegment = 0; // fix robot center nSegment
+				EquipGens (i)->m_info.nSegment = 0; // fix robot center nSegment
 			}
 
 		// replace control segP numbers with real numbers
 		for (i = 0; i < GameInfo ().control.count; i++) {
 			for (j = 0; j < ReactorTriggers (i)->m_count; j++) {
 				if (SegCount () > (nSegment = ReactorTriggers (i)->Segment (j)))
-					ReactorTriggers (i)->Segment (j) = Segments (nSegment)->nIndex; 
+					ReactorTriggers (i)->Segment (j) = Segments (nSegment)->m_info.nIndex; 
 				else 
 					ReactorTriggers (i)->Segment (j) = 0; // fix control center segment number
 			}
@@ -262,14 +262,14 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 		// replace flickering light segP numbers with real numbers
 		for (i = 0; i < FlickerLightCount (); i++) {
 			if (SegCount () > (nSegment = FlickeringLights (i)->m_nSegment))
-				FlickeringLights (i)->m_nSegment = Segments (nSegment)->nIndex; 
+				FlickeringLights (i)->m_nSegment = Segments (nSegment)->m_info.nIndex; 
 			else 
 				FlickeringLights (i)->m_nSegment = 0; // fix object segment number
 			}
 
 		// replace secret cubenum with real number
 		if (SegCount () > (nSegment = (UINT16) SecretCubeNum ()))
-			SecretCubeNum () = Segments (nSegment)->nIndex; 
+			SecretCubeNum () = Segments (nSegment)->m_info.nIndex; 
 		else
 			SecretCubeNum () = 0; // fix secret cube number
 
@@ -312,7 +312,7 @@ theApp.UnlockUndo ();
 //	    Segments () vertices who's vertex is greater than the deleted vertex
 // -------------------------------------------------------------------------- 
 
-void CMine::DeleteVertex(INT16 nDeletedVert)
+void CMine::DeleteVertex (INT16 nDeletedVert)
 {
 	INT16 nVertex, nSegment; 
 
@@ -323,8 +323,8 @@ memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 
 CSegment *segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (nVertex = 0; nVertex < 8; nVertex++)
-		if (segP->verts [nVertex] > nDeletedVert)
-			segP->verts [nVertex]--; 
+		if (segP->m_info.verts [nVertex] > nDeletedVert)
+			segP->m_info.verts [nVertex]--; 
 // update number of vertices
 VertCount ()--; 
 }
@@ -345,8 +345,8 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++)
 CSegment *segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
-		VertStatus (segP->verts [point]) |= NEW_MASK; 
-for (nVertex = VertCount ()-1; nVertex >= 0; nVertex--)
+		VertStatus (segP->m_info.verts [point]) |= NEW_MASK; 
+for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
 	if (!(VertStatus (nVertex) & NEW_MASK))
 		DeleteVertex(nVertex); 
 }
@@ -371,29 +371,7 @@ for (nVertex = VertCount ()-1; nVertex >= 0; nVertex--)
 
 void CMine::InitSegment (INT16 nSegment)
 {
-	CSegment	*segP = Segments (nSegment);
-	INT16			nSide;
-
-// define special, etc..
-segP->owner = -1;
-segP->group = -1;
-segP->function = 0; 
-segP->nMatCen = -1; 
-segP->value = -1; 
-segP->childFlags = 0;
-// define Walls ()
-segP->wallFlags = 0; // unmarked cube
-for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	segP->sides [nSide].nWall = NO_WALL; 
-	segP->sides [nSide].nBaseTex =
-	segP->sides [nSide].nOvlTex = 0; 
-	INT32 i;
-	for (i = 0; i < 4; i++)
-		segP->sides [nSide].uvls [i].l = (UINT16) DEFAULT_LIGHTING; 
-	SetUV (nSegment, nSide, 0, 0, 0); 
-	}
-segP->static_light = 0; 
-memset (segP->children, 0xFF, sizeof (segP->children));
+Segments (nSegment)->Setup ();
 }
 
 // -------------------------------------------------------------------------- 
@@ -420,7 +398,7 @@ if (SegCount () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
-if (currSeg->children [nCurrSide] >= 0) {
+if (currSeg->m_info.children [nCurrSide] >= 0) {
 	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
 	return FALSE;
 	}
@@ -441,41 +419,41 @@ segP = Segments (nNewSeg);
 DefineVertices (new_verts); 
 
 // define vert numbers for common side
-segP->verts [opp_side_vert [nCurrSide][0]] = currSeg->verts [side_vert [nCurrSide][0]]; 
-segP->verts [opp_side_vert [nCurrSide][1]] = currSeg->verts [side_vert [nCurrSide][1]]; 
-segP->verts [opp_side_vert [nCurrSide][2]] = currSeg->verts [side_vert [nCurrSide][2]]; 
-segP->verts [opp_side_vert [nCurrSide][3]] = currSeg->verts [side_vert [nCurrSide][3]]; 
+segP->m_info.verts [opp_side_vert [nCurrSide][0]] = currSeg->m_info.verts [side_vert [nCurrSide][0]]; 
+segP->m_info.verts [opp_side_vert [nCurrSide][1]] = currSeg->m_info.verts [side_vert [nCurrSide][1]]; 
+segP->m_info.verts [opp_side_vert [nCurrSide][2]] = currSeg->m_info.verts [side_vert [nCurrSide][2]]; 
+segP->m_info.verts [opp_side_vert [nCurrSide][3]] = currSeg->m_info.verts [side_vert [nCurrSide][3]]; 
 
 // define vert numbers for new side
-segP->verts [side_vert [nCurrSide][0]] = new_verts [0]; 
-segP->verts [side_vert [nCurrSide][1]] = new_verts [1]; 
-segP->verts [side_vert [nCurrSide][2]] = new_verts [2]; 
-segP->verts [side_vert [nCurrSide][3]] = new_verts [3]; 
+segP->m_info.verts [side_vert [nCurrSide][0]] = new_verts [0]; 
+segP->m_info.verts [side_vert [nCurrSide][1]] = new_verts [1]; 
+segP->m_info.verts [side_vert [nCurrSide][2]] = new_verts [2]; 
+segP->m_info.verts [side_vert [nCurrSide][3]] = new_verts [3]; 
 
 InitSegment (nNewSeg);
 // define children and special child
-segP->childFlags = 1 << opp_side [nCurrSide]; /* only opposite side connects to current_segment */
+segP->m_info.childFlags = 1 << opp_side [nCurrSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	segP->children [i] = (segP->childFlags & (1 << i)) ? Current ()->nSegment : -1;
+	segP->m_info.children [i] = (segP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1;
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (segP->children [nSide] < 0) {
+	if (segP->m_info.children [nSide] < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if (currSeg->children [nSide] < 0 && currSeg->function == SEGMENT_FUNC_NONE) {
-			segP->sides [nSide].nBaseTex = currSeg->sides [nSide].nBaseTex; 
-			segP->sides [nSide].nOvlTex = currSeg->sides [nSide].nOvlTex; 
+		if (currSeg->m_info.children [nSide] < 0 && currSeg->m_info.function == SEGMENT_FUNC_NONE) {
+			segP->m_sides [nSide].m_info.nBaseTex = currSeg->m_sides [nSide].m_info.nBaseTex; 
+			segP->m_sides [nSide].m_info.nOvlTex = currSeg->m_sides [nSide].m_info.nOvlTex; 
 			for (i = 0; i < 4; i++) 
-				segP->sides [nSide].uvls [i].l = currSeg->sides [nSide].uvls [i].l; 
+				segP->m_sides [nSide].m_info.uvls [i].l = currSeg->m_sides [nSide].m_info.uvls [i].l; 
 			} 
 		}
 	else {
-		memset (segP->sides [nSide].uvls, 0, sizeof (segP->sides [nSide].uvls));
+		memset (segP->m_sides [nSide].m_info.uvls, 0, sizeof (segP->m_sides [nSide].m_info.uvls));
 		}
 	}
 
 // define static light
-segP->static_light = currSeg->static_light; 
+segP->m_info.static_light = currSeg->m_info.static_light; 
 
 // delete flickering light if it exists
 INT16 index = GetFlickeringLight (Current ()->nSegment, nCurrSide); 
@@ -486,11 +464,11 @@ if (index != -1) {
 	}
 
 // update current segment
-currSeg->children [nCurrSide] = nNewSeg; 
-currSeg->childFlags |= (1 << nCurrSide); 
-currSeg->sides [nCurrSide].nBaseTex = 0; 
-currSeg->sides [nCurrSide].nOvlTex = 0; 
-memset (currSeg->sides [nCurrSide].uvls, 0, sizeof (currSeg->sides [nCurrSide].uvls));
+currSeg->m_info.children [nCurrSide] = nNewSeg; 
+currSeg->m_info.childFlags |= (1 << nCurrSide); 
+currSeg->m_sides [nCurrSide].m_info.nBaseTex = 0; 
+currSeg->m_sides [nCurrSide].m_info.nOvlTex = 0; 
+memset (currSeg->m_sides [nCurrSide].m_info.uvls, 0, sizeof (currSeg->m_sides [nCurrSide].m_info.uvls));
  
 // update number of Segments () and vertices and clear vertexStatus
 SegCount ()++;
@@ -498,13 +476,13 @@ for (int i = 0; i < 4; i++)
 	Vertices (VertCount ()++)->m_status = 0;
 
 // link the new segment with any touching Segments ()
-CFixVector *vNewSeg = Vertices (Segments (nNewSeg)->verts [0]);
+CFixVector *vNewSeg = Vertices (Segments (nNewSeg)->m_info.verts [0]);
 CFixVector *vSeg;
 for (nSegment = 0; nSegment < SegCount (); nSegment++) {
 	if (nSegment!= nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (Segments (nSegment) ->verts [0]);
+		vSeg = Vertices (Segments (nSegment) ->m_info.verts [0]);
 		if (labs (vNewSeg->v.x - vSeg->v.x) < 0xA00000L &&
 			 labs (vNewSeg->v.y - vSeg->v.y) < 0xA00000L &&
 			 labs (vNewSeg->v.z - vSeg->v.z) < 0xA00000L)
@@ -571,11 +549,11 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 			// point 0
-			vertP = Vertices (currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]]);
+			vertP = Vertices (currSeg->m_info.verts [side_vert [Current ()->nSide][CURRENT_POINT(0)]]);
 			a = orthog + *vertP; 
 
 			// point 1
-			vertP = Vertices (currSeg->verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]);
+			vertP = Vertices (currSeg->m_info.verts [side_vert [Current ()->nSide][CURRENT_POINT(1)]]);
 			b = orthog + *vertP; 
 
 			// center
@@ -606,7 +584,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 	
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				//nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
+				//nVertex = currSeg->m_info.verts [side_vert [Current ()->nSide][i]]; 
 				nVertex = new_verts [i];
 				*Vertices (nVertex) = CFixVector (A [i]); 
 				}
@@ -627,7 +605,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 
 			// set the new vertices
 			for (i = 0; i < 4; i++) {
-				INT32 v1 = currSeg->verts [side_vert [Current ()->nSide][i]]; 
+				INT32 v1 = currSeg->m_info.verts [side_vert [Current ()->nSide][i]]; 
 				INT32 v2 = new_verts [i];
 				Vertices (v2)->v.x = orthog.v.x + Vertices (v1)->v.x; 
 				Vertices (v2)->v.y = orthog.v.y + Vertices (v1)->v.y; 
@@ -641,9 +619,9 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			{
 			// copy side's four points into A
 			for (i = 0; i < 4; i++) {
-				nVertex = currSeg->verts [side_vert [Current ()->nSide][i]]; 
+				nVertex = currSeg->m_info.verts [side_vert [Current ()->nSide][i]]; 
 				A [i] = CDoubleVector (*Vertices (nVertex)); 
-				nVertex = currSeg->verts [opp_side_vert [Current ()->nSide][i]]; 
+				nVertex = currSeg->m_info.verts [opp_side_vert [Current ()->nSide][i]]; 
 				A [i + 4] = CDoubleVector (*Vertices (nVertex)); 
 				}
 
@@ -699,7 +677,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 				B [i].Set (C [i].v.x, C [i].v.y * cos (-angle1) + C [i].v.z * sin (-angle1), -C [i].v.y * sin (-angle1) + C [i].v.z * cos (-angle1)); 
 	
 			// and translate back
-			nVertex = currSeg->verts [side_vert [Current ()->nSide][0]]; 
+			nVertex = currSeg->m_info.verts [side_vert [Current ()->nSide][0]]; 
 			for (i = 4; i < 8; i++) 
 				A [i] = B [i] + CDoubleVector (*Vertices (nVertex)); 
 
@@ -733,19 +711,19 @@ bool CMine::LinkSegments (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 si
 	seg2 = Segments (segnum2); 
 
 // don't link to a segment which already has a child
-if (seg1->children [sidenum1]!=-1 || seg2->children [sidenum2]!=-1)
+if (seg1->m_info.children [sidenum1]!=-1 || seg2->m_info.children [sidenum2]!=-1)
 	return FALSE; 
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = seg1->verts [side_vert [sidenum1][i]];
+	INT32 nVertex = seg1->m_info.verts [side_vert [sidenum1][i]];
 	memcpy (&v1 [i], Vertices (nVertex), sizeof (CVertex));
 /*
 	v1 [i].x = Vertices (nVertex)->x; 
 	v1 [i].y = Vertices (nVertex)->y; 
 	v1 [i].z = Vertices (nVertex)->z; 
 */
-	nVertex = seg2->verts [side_vert [sidenum2][i]];
+	nVertex = seg2->m_info.verts [side_vert [sidenum2][i]];
 	memcpy (&v2 [i], Vertices (nVertex), sizeof (CVertex));
 /*
 	v2 [i].x = Vertices (nVertex)->x; 
@@ -807,29 +785,29 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 	INT32 i; 
 	INT16 nSegment, nVertex, oldVertex, newVertex; 
 
-	seg1->children [sidenum1] = segnum2; 
-	seg1->childFlags |= (1 << sidenum1); 
-	seg1->sides [sidenum1].nBaseTex = 0; 
-	seg1->sides [sidenum1].nOvlTex = 0; 
+	seg1->m_info.children [sidenum1] = segnum2; 
+	seg1->m_info.childFlags |= (1 << sidenum1); 
+	seg1->m_sides [sidenum1].m_info.nBaseTex = 0; 
+	seg1->m_sides [sidenum1].m_info.nOvlTex = 0; 
 	for (i = 0; i < 4; i++) {
-		seg1->sides [sidenum1].uvls [i].u = 0; 
-		seg1->sides [sidenum1].uvls [i].v = 0; 
-		seg1->sides [sidenum1].uvls [i].l = 0; 
+		seg1->m_sides [sidenum1].m_info.uvls [i].u = 0; 
+		seg1->m_sides [sidenum1].m_info.uvls [i].v = 0; 
+		seg1->m_sides [sidenum1].m_info.uvls [i].l = 0; 
 	}
-	seg2->children [sidenum2] = segnum1; 
-	seg2->childFlags |= (1 << sidenum2); 
-	seg2->sides [sidenum2].nBaseTex = 0; 
-	seg2->sides [sidenum2].nOvlTex = 0; 
+	seg2->m_info.children [sidenum2] = segnum1; 
+	seg2->m_info.childFlags |= (1 << sidenum2); 
+	seg2->m_sides [sidenum2].m_info.nBaseTex = 0; 
+	seg2->m_sides [sidenum2].m_info.nOvlTex = 0; 
 	for (i = 0; i < 4; i++) {
-		seg2->sides [sidenum2].uvls [i].u = 0; 
-		seg2->sides [sidenum2].uvls [i].v = 0; 
-		seg2->sides [sidenum2].uvls [i].l = 0; 
+		seg2->m_sides [sidenum2].m_info.uvls [i].u = 0; 
+		seg2->m_sides [sidenum2].m_info.uvls [i].v = 0; 
+		seg2->m_sides [sidenum2].m_info.uvls [i].l = 0; 
 	}
 
 	// merge vertices
 	for (i = 0; i < 4; i++) {
-		oldVertex = seg1->verts [side_vert [sidenum1][i]]; 
-		newVertex = seg2->verts [side_vert [sidenum2][match [i].i]]; 
+		oldVertex = seg1->m_info.verts [side_vert [sidenum1][i]]; 
+		newVertex = seg2->m_info.verts [side_vert [sidenum2][match [i].i]]; 
 
 		// if either vert was marked, then mark the new vert
 		VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
@@ -839,8 +817,8 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 			CSegment *segP = Segments (0);
 			for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 				for (nVertex = 0; nVertex < 8; nVertex++)
-					if (segP->verts [nVertex] == oldVertex)
-						segP->verts [nVertex] = newVertex; 
+					if (segP->m_info.verts [nVertex] == oldVertex)
+						segP->m_info.verts [nVertex] = newVertex; 
 			// then delete the vertex
 			DeleteVertex (oldVertex); 
 		}
@@ -852,7 +830,7 @@ void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 siden
 
 void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment) 
 {
-  INT16	*nVerts =Segments (nSegment)->verts; 
+  INT16	*nVerts =Segments (nSegment)->m_info.verts; 
   
 memset (&pos, 0, sizeof (pos));
 INT32 i;
@@ -900,7 +878,7 @@ bool CMine::SideIsMarked (INT16 nSegment, INT16 nSide)
 GetCurrent (nSegment, nSide);
 CSegment *segP = Segments (nSegment);
 for (INT32 i = 0; i < 4; i++) {
-	if (!(VertStatus (segP->verts [side_vert [nSide][i]]) & MARKED_MASK))
+	if (!(VertStatus (segP->m_info.verts [side_vert [nSide][i]]) & MARKED_MASK))
 		return false;
 	}
 return true;
@@ -910,7 +888,7 @@ bool CMine::SegmentIsMarked (INT16 nSegment)
 {
 CSegment *segP = Segments (nSegment);
 for (INT32 i = 0;  i < 8; i++)
-	if (!(VertStatus (segP->verts [i]) & MARKED_MASK))
+	if (!(VertStatus (segP->m_info.verts [i]) & MARKED_MASK))
 		return false;
 return true;
 }
@@ -927,17 +905,17 @@ void CMine::Mark()
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
 		n_points = 1; 
-		p [0] = segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
+		p [0] = segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
 		break; 
 	case eSelectLine:
 		n_points = 2; 
-		p [0] = segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
-		p [1] = segP->verts [side_vert [Current ()->nSide][(Current ()->nPoint + 1)&3]]; 
+		p [0] = segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
+		p [1] = segP->m_info.verts [side_vert [Current ()->nSide][(Current ()->nPoint + 1)&3]]; 
 		break; 
 	case eSelectSide:
 		n_points = 4; 
 		for (i = 0; i < n_points; i++)
-			p [i] = segP->verts [side_vert [Current ()->nSide][i]]; 
+			p [i] = segP->m_info.verts [side_vert [Current ()->nSide][i]]; 
 		break; 
 	default:
 		bCubeMark = true; 
@@ -973,7 +951,7 @@ void CMine::MarkSegment(INT16 nSegment)
 {
   CSegment *segP = Segments (0) + nSegment; 
 
-	segP->wallFlags ^= MARKED_MASK; /* flip marked bit */
+	segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 
 	// update vertices's marked status
 	// ..first clear all marked verts
@@ -982,9 +960,9 @@ void CMine::MarkSegment(INT16 nSegment)
 		VertStatus (nVertex) &= ~MARKED_MASK; 
 	// ..then mark all verts for marked Segments ()
 	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
-		if (segP->wallFlags & MARKED_MASK)
+		if (segP->m_info.wallFlags & MARKED_MASK)
 			for (nVertex = 0; nVertex < 8; nVertex++)
-				VertStatus (segP->verts [nVertex]) |= MARKED_MASK; 
+				VertStatus (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
 }
 
 // -------------------------------------------------------------------------- 
@@ -996,17 +974,17 @@ void CMine::UpdateMarkedCubes()
 	INT32 i; 
 	// mark all cubes which have all 8 verts marked
 	for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
-		if ((VertStatus (segP->verts [0]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [1]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [2]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [3]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [4]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [5]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [6]) & MARKED_MASK) &&
-			 (VertStatus (segP->verts [7]) & MARKED_MASK))
-			segP->wallFlags |= MARKED_MASK; 
+		if ((VertStatus (segP->m_info.verts [0]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [1]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [2]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [3]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [4]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [5]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [6]) & MARKED_MASK) &&
+			 (VertStatus (segP->m_info.verts [7]) & MARKED_MASK))
+			segP->m_info.wallFlags |= MARKED_MASK; 
 		else
-			segP->wallFlags &= ~MARKED_MASK; 
+			segP->m_info.wallFlags &= ~MARKED_MASK; 
 }
 
 //========================================================================== 
@@ -1018,7 +996,7 @@ void CMine::MarkAll()
 	INT32 i; 
 
 for (i = 0; i < SegCount (); i++) 
-	Segments (i)->wallFlags |= MARKED_MASK; 
+	Segments (i)->m_info.wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
 	VertStatus (i) |= MARKED_MASK; 
 theApp.MineView ()->Refresh (); 
@@ -1031,7 +1009,7 @@ void CMine::UnmarkAll() {
 	INT32 i; 
 	CSegment *segP = Segments (0);
 	for (i = 0; i < MAX_SEGMENTS; i++, segP++)
-		segP->wallFlags &= ~MARKED_MASK; 
+		segP->m_info.wallFlags &= ~MARKED_MASK; 
 	UINT8& stat = VertStatus ();
 	for (i = 0; i < MAX_VERTICES; i++, stat++)
 		stat &= ~MARKED_MASK; 
@@ -1051,13 +1029,13 @@ if (nSegment < 0 || nSegment >= SegCount ())
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 CSegment *segP = Segments (0) + nSegment; 
-segP->children [nSide] =-1; 
-segP->childFlags &= ~(1 << nSide); 
-CSide *sideP = segP->sides + nSide;
-sideP->nBaseTex = 0; 
-sideP->nOvlTex = 0; 
-CUVL *uvls = sideP->uvls;
-double scale = theMine->Textures (m_fileType, sideP->nBaseTex)->Scale (sideP->nBaseTex);
+segP->m_info.children [nSide] =-1; 
+segP->m_info.childFlags &= ~(1 << nSide); 
+CSide *sideP = segP->m_sides + nSide;
+sideP->m_info.nBaseTex = 0; 
+sideP->m_info.nOvlTex = 0; 
+CUVL *uvls = sideP->m_info.uvls;
+double scale = theMine->Textures (m_fileType, sideP->m_info.nBaseTex)->Scale (sideP->m_info.nBaseTex);
 INT32 i;
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->u = (INT16) (default_uvls [i].u / scale); 
@@ -1082,7 +1060,7 @@ void CMine::UnlinkChild (INT16 parent_segnum, INT16 nSide)
 // loop on each side of the parent
 //	INT32 nSide;
 //  for (nSide = 0; nSide < 6; nSide++) {
-INT32 child_segnum = parent_seg->children [nSide]; 
+INT32 child_segnum = parent_seg->m_info.children [nSide]; 
 // does this side have a child?
 if (child_segnum < 0 || child_segnum >= SegCount ())
 	return;
@@ -1090,15 +1068,15 @@ CSegment *child_seg = Segments (0) + child_segnum;
 // yes, see if child has a side which points to the parent
 INT32 child_sidenum;
 for (child_sidenum = 0; child_sidenum < 6; child_sidenum++)
-	if (child_seg->children [child_sidenum]== parent_segnum) break; 
+	if (child_seg->m_info.children [child_sidenum]== parent_segnum) break; 
 // if we found the matching side
 if (child_sidenum < 6) {
 // define vert numbers for comparison
 	INT16 pv [4], cv [4]; // (INT16 names given for clarity)
 	INT32 i;
 	for (i = 0; i < 4; i++) {
-		pv [i] = parent_seg->verts [side_vert [nSide][i]]; // parent vert
-		cv [i] = child_seg->verts [side_vert [child_sidenum][i]]; // child vert
+		pv [i] = parent_seg->m_info.verts [side_vert [nSide][i]]; // parent vert
+		cv [i] = child_seg->m_info.verts [side_vert [child_sidenum][i]]; // child vert
 		}
 	// if they share all four vertices..
 	// note: assumes verts increase clockwise looking outward
@@ -1174,7 +1152,7 @@ if (VertCount () > (MAX_VERTICES - 1)) {
 	}
 
 segP = Segments (Current ()->nSegment); 
-vert = segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
+vert = segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 found = FALSE; 
@@ -1182,7 +1160,7 @@ segP = Segments (0);
 for (nSegment = 0; (nSegment < SegCount ()) && !found; nSegment++, segP++)
 	if (nSegment != Current ()->nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
-			if (segP->verts [nVertex] == vert) {
+			if (segP->m_info.verts [nVertex] == vert) {
 				found = TRUE; 
 				break; 
 				}
@@ -1205,17 +1183,17 @@ Vertices (VertCount ()).z = Vertices (vert).z;
 */
 // replace existing point with new point
 segP = Segments (Current ()->nSegment); 
-segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
-segP->wallFlags &= ~MARKED_MASK; 
+segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
+segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
 VertStatus (VertCount ()++) = 0; 
 
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++)
-	if (IsPointOfSide (segP, nSide, segP->verts [side_vert [Current ()->nSide][Current ()->nPoint]]) &&
+	if (IsPointOfSide (segP, nSide, segP->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]) &&
 		 GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, nSide)) {
-		UnlinkChild (segP->children [nSide], opp_side [nSide]);
+		UnlinkChild (segP->m_info.children [nSide], opp_side [nSide]);
 		UnlinkChild (Current ()->nSegment, nSide); 
 		}
 
@@ -1253,14 +1231,14 @@ if (VertCount () > (MAX_VERTICES - 2)) {
 segP = Segments (Current ()->nSegment); 
 for (i = 0; i < 2; i++) {
 	linenum = side_line [Current ()->nSide][Current ()->nLine]; 
-	vert [i] = Segments (Current ()->nSegment)->verts [line_vert [linenum][i]]; 
+	vert [i] = Segments (Current ()->nSegment)->m_info.verts [line_vert [linenum][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
 	segP = Segments (0);
 	for (nSegment = 0; (nSegment < SegCount ()) && !found [i]; nSegment++, segP++) {
 		if (nSegment != Current ()->nSegment) {
 			for (nVertex = 0; nVertex < 8; nVertex++) {
-				if (segP->verts [nVertex] == vert [i]) {
+				if (segP->m_info.verts [nVertex] == vert [i]) {
 					found [i] = TRUE; 
 					break; 
 					}
@@ -1290,8 +1268,8 @@ for (i = 0; i < 2; i++)
 		*/
 		// replace existing points with new points
 		linenum = side_line [Current ()->nSide][Current ()->nLine]; 
-		segP->verts [line_vert [linenum][i]] = VertCount (); 
-		segP->wallFlags &= ~MARKED_MASK; 
+		segP->m_info.verts [line_vert [linenum][i]] = VertCount (); 
+		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
 		VertStatus (VertCount ()++) = 0; 
 		}
@@ -1335,21 +1313,21 @@ if (m_bSplineActive) {
 segP = CurrSeg (); 
 if (nSide < 0)
 	nSide = Current ()->nSide;
-INT32 child_segnum = segP->children [nSide]; 
+INT32 child_segnum = segP->m_info.children [nSide]; 
 if (child_segnum == -1) {
 	ErrorMsg ("The current side is not connected to another cube"); 
 	return; 
 	}
 
 for (i = 0; i < 4; i++)
-	vert [i] = segP->verts [side_vert [nSide][i]]; 
+	vert [i] = segP->m_info.verts [side_vert [nSide][i]]; 
 	// check to see if current points are shared by any other cubes
 for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	if (nSegment != Current ()->nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = FALSE;
 			for (nVertex = 0; nVertex < 8; nVertex++)
-				if (segP->verts [nVertex] == vert [i]) {
+				if (segP->m_info.verts [nVertex] == vert [i]) {
 					found [i] = TRUE;
 					if (++nFound == 4)
 						goto found;
@@ -1387,8 +1365,8 @@ if (!solidify) {
 			vertices [VertCount ()].z = vertices [vert [i]].z; 
 			*/
 			// replace existing points with new points
-			segP->verts [side_vert [nSide][i]] = VertCount (); 
-			segP->wallFlags &= ~MARKED_MASK; 
+			segP->m_info.verts [side_vert [nSide][i]] = VertCount (); 
+			segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 			// update total number of vertices
 			VertStatus (VertCount ()++) = 0; 
@@ -1407,7 +1385,7 @@ else {
 	// yes, see if child has a side which points to the parent
 	INT32 child_sidenum;
 	for (child_sidenum = 0; child_sidenum < 6; child_sidenum++)
-		if (child_seg->children [child_sidenum]== Current ()->nSegment) 
+		if (child_seg->m_info.children [child_sidenum]== Current ()->nSegment) 
 			break; 
 	// if we found the matching side
 	if (child_sidenum < 6)
@@ -1454,8 +1432,8 @@ else {
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
-vert1 = seg1->verts [side_vert [cur1->nSide][cur1->nPoint]]; 
-vert2 = seg2->verts [side_vert [cur2->nSide][cur2->nPoint]]; 
+vert1 = seg1->m_info.verts [side_vert [cur1->nSide][cur1->nPoint]]; 
+vert2 = seg2->m_info.verts [side_vert [cur2->nSide][cur2->nPoint]]; 
 // make sure verts are different
 if (vert1== vert2) {
 	ErrorMsg ("These points are already joined."); 
@@ -1473,7 +1451,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 // define vert numbers
-seg1->verts [side_vert [cur1->nSide][cur1->nPoint]] = vert2; 
+seg1->m_info.verts [side_vert [cur1->nSide][cur1->nPoint]] = vert2; 
 // delete any unused vertices
 //  delete_unused_vertices(); 
 FixChildren(); 
@@ -1525,9 +1503,9 @@ else {
 
 for (i = 0; i < 2; i++) {
 	linenum = side_line [cur1->nSide][cur1->nLine]; 
-	v1 = vert1 [i] = seg1->verts [line_vert [linenum][i]]; 
+	v1 = vert1 [i] = seg1->m_info.verts [line_vert [linenum][i]]; 
 	linenum = side_line [cur2->nSide][cur2->nLine]; 
-	v2 = vert2 [i] = seg2->verts [line_vert [linenum][i]]; 
+	v2 = vert2 [i] = seg2->m_info.verts [line_vert [linenum][i]]; 
 	v1x [i] = Vertices (v1)->v.x; 
 	v1y [i] = Vertices (v1)->v.y; 
 	v1z [i] = Vertices (v1)->v.z; 
@@ -1579,7 +1557,7 @@ theApp.LockUndo ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
 	linenum = side_line [cur1->nSide][cur1->nLine]; 
-	seg1->verts [line_vert [linenum][i]] = vert2 [match [i]]; 
+	seg1->m_info.verts [line_vert [linenum][i]] = vert2 [match [i]]; 
 	}
 FixChildren(); 
 SetLinesToDraw(); 
@@ -1606,7 +1584,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 	segP->map_bitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		if (segP->children [nSide] > -1) { // -1 = no child,  - 2 = outside of world
+		if (segP->m_info.children [nSide] > -1) { // -1 = no child,  - 2 = outside of world
 			segP->map_bitmask &= ~(1 << (side_line [nSide][0])); 
 			segP->map_bitmask &= ~(1 << (side_line [nSide][1])); 
 			segP->map_bitmask &= ~(1 << (side_line [nSide][2])); 
@@ -1631,23 +1609,23 @@ nNewSide = Current ()->nSide;
 CSegment *segP = Segments (0),
 			*pNewSeg = Segments (nNewSeg);
 CVertex	*vSeg, 
-			*vNewSeg = Vertices (pNewSeg->verts [0]);
+			*vNewSeg = Vertices (pNewSeg->m_info.verts [0]);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (segP->verts [0]);
+		vSeg = Vertices (segP->m_info.verts [0]);
 		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 0xA00000L &&
 		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 0xA00000L &&
 		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 0xA00000L) {
 			for (nSide = 0; nSide < 6; nSide++) {
 				if (!LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3*F1_0)) {
 					// if these Segments () were linked, then unlink them
-					if (pNewSeg->children [nNewSide]== nSegment && segP->children [nSide]== nNewSeg) {
-						pNewSeg->children [nNewSide] =-1; 
-						pNewSeg->childFlags &= ~(1 << nNewSide); 
-						segP->children [nSide] =-1; 
-						segP->childFlags &= ~(1 << nSide); 
+					if (pNewSeg->m_info.children [nNewSide]== nSegment && segP->m_info.children [nSide]== nNewSeg) {
+						pNewSeg->m_info.children [nNewSide] =-1; 
+						pNewSeg->m_info.childFlags &= ~(1 << nNewSide); 
+						segP->m_info.children [nSide] =-1; 
+						segP->m_info.childFlags &= ~(1 << nSide); 
 						}
 					}
 				}
@@ -1685,7 +1663,7 @@ if (m_bSplineActive) {
 
 // figure out "other' cube
 if (solidify) {
-	if (Segments (Current ()->nSegment)->children [Current ()->nSide] != -1) {
+	if (Segments (Current ()->nSegment)->m_info.children [Current ()->nSide] != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
@@ -1698,9 +1676,9 @@ if (solidify) {
 	seg1 = Segments (cur1->nSegment); 
 	for (i = 0; i < 4; i++) {
 #if 1
-		memcpy (&v1 [i], Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (CVertex));
+		memcpy (&v1 [i], Vertices (seg1->m_info.verts [side_vert [cur1->nSide][i]]), sizeof (CVertex));
 #else
-		INT32 nVertex = seg1->verts [side_vert [cur1->nSide][i]];
+		INT32 nVertex = seg1->m_info.verts [side_vert [cur1->nSide][i]];
 		v1 [i].x = Vertices (nVertex)->x; 
 		v1 [i].y = Vertices (nVertex)->y; 
 		v1 [i].z = Vertices (nVertex)->z; 
@@ -1714,9 +1692,9 @@ if (solidify) {
 			fail = FALSE; 
 			for (i = 0; i < 4; i++) {
 #if 1
-				memcpy (&v2 [i], Vertices (seg2->verts[side_vert[nSide][i]]), sizeof (CVertex));
+				memcpy (&v2 [i], Vertices (seg2->m_info.verts[side_vert[nSide][i]]), sizeof (CVertex));
 #else
-				INT32 nVertex = seg2->verts [side_vert [nSide][i]];
+				INT32 nVertex = seg2->m_info.verts [side_vert [nSide][i]];
 				v2 [i].x = Vertices (nVertex)->x; 
 				v2 [i].y = Vertices (nVertex)->y; 
 				v2 [i].z = Vertices (nVertex)->z; 
@@ -1821,15 +1799,15 @@ seg2 = Segments (cur2->nSegment);
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (&v1 [i], Vertices (seg1->verts [side_vert [cur1->nSide][i]]), sizeof (CVertex)); 
-	memcpy (&v2 [i], Vertices (seg2->verts [side_vert [cur2->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v1 [i], Vertices (seg1->m_info.verts [side_vert [cur1->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v2 [i], Vertices (seg2->m_info.verts [side_vert [cur2->nSide][i]]), sizeof (CVertex)); 
 /*
-	v1 [i].x = vertices [seg1->verts [side_vert [cur1->nSide][i]]].x; 
-	v1 [i].y = vertices [seg1->verts [side_vert [cur1->nSide][i]]].y; 
-	v1 [i].z = vertices [seg1->verts [side_vert [cur1->nSide][i]]].z; 
-	v2 [i].x = vertices [seg2->verts [side_vert [cur2->nSide][i]]].x; 
-	v2 [i].y = vertices [seg2->verts [side_vert [cur2->nSide][i]]].y; 
-	v2 [i].z = vertices [seg2->verts [side_vert [cur2->nSide][i]]].z; 
+	v1 [i].x = vertices [seg1->m_info.verts [side_vert [cur1->nSide][i]]].x; 
+	v1 [i].y = vertices [seg1->m_info.verts [side_vert [cur1->nSide][i]]].y; 
+	v1 [i].z = vertices [seg1->m_info.verts [side_vert [cur1->nSide][i]]].z; 
+	v2 [i].x = vertices [seg2->m_info.verts [side_vert [cur2->nSide][i]]].x; 
+	v2 [i].y = vertices [seg2->m_info.verts [side_vert [cur2->nSide][i]]].y; 
+	v2 [i].z = vertices [seg2->m_info.verts [side_vert [cur2->nSide][i]]].z; 
 */
 	match [i].i = -1; 
 	}
@@ -1928,74 +1906,74 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define children and special child
 // first clear all sides
-segP->childFlags = 0; 
+segP->m_info.childFlags = 0; 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
-	segP->children [i] =-1; 
+	segP->m_info.children [i] =-1; 
 
 // now define two sides:
 // near side has opposite side number cube 1
-segP->childFlags |= (1 << (opp_side [cur1->nSide])); 
-segP->children [opp_side [cur1->nSide]] = cur1->nSegment; 
+segP->m_info.childFlags |= (1 << (opp_side [cur1->nSide])); 
+segP->m_info.children [opp_side [cur1->nSide]] = cur1->nSegment; 
 // far side has same side number as cube 1
-segP->childFlags |= (1 << cur1->nSide); 
-segP->children [cur1->nSide] = cur2->nSegment; 
-segP->owner = -1;
-segP->group = -1;
-segP->function = 0; 
-segP->nMatCen =-1; 
-segP->value =-1; 
+segP->m_info.childFlags |= (1 << cur1->nSide); 
+segP->m_info.children [cur1->nSide] = cur2->nSegment; 
+segP->m_info.owner = -1;
+segP->m_info.group = -1;
+segP->m_info.function = 0; 
+segP->m_info.nMatCen =-1; 
+segP->m_info.value =-1; 
 
 // define vert numbers
 for (i = 0; i < 4; i++) {
-	segP->verts [opp_side_vert [cur1->nSide][i]] = seg1->verts [side_vert [cur1->nSide][i]]; 
-	segP->verts [side_vert [cur1->nSide][i]] = seg2->verts [side_vert [cur2->nSide][match [i].i]]; 
+	segP->m_info.verts [opp_side_vert [cur1->nSide][i]] = seg1->m_info.verts [side_vert [cur1->nSide][i]]; 
+	segP->m_info.verts [side_vert [cur1->nSide][i]] = seg2->m_info.verts [side_vert [cur2->nSide][match [i].i]]; 
 	}
 
 // define Walls ()
-segP->wallFlags = 0; // unmarked
+segP->m_info.wallFlags = 0; // unmarked
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
-	segP->sides [nSide].nWall = NO_WALL; 
+	segP->m_sides [nSide].m_info.nWall = NO_WALL; 
 
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (segP->children [nSide]==-1) {
-		SetTexture (nNewSeg, nSide, seg1->sides [cur1->nSide].nBaseTex, seg1->sides [cur1->nSide].nOvlTex); 
+	if (segP->m_info.children [nSide] == -1) {
+		SetTexture (nNewSeg, nSide, seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
 //        for (i = 0; i < 4; i++) {
-//	  segP->sides [nSide].uvls [i].u = seg1->sides [cur1->nSide].uvls [i].u; 
-//	  segP->sides [nSide].uvls [i].v = seg1->sides [cur1->nSide].uvls [i].v; 
-//	  segP->sides [nSide].uvls [i].l = seg1->sides [cur1->nSide].uvls [i].l; 
+//	  segP->m_sides [nSide].m_info.uvls [i].u = seg1->m_sides [cur1->nSide].m_info.uvls [i].u; 
+//	  segP->m_sides [nSide].m_info.uvls [i].v = seg1->m_sides [cur1->nSide].m_info.uvls [i].v; 
+//	  segP->m_sides [nSide].m_info.uvls [i].l = seg1->m_sides [cur1->nSide].m_info.uvls [i].l; 
 //        }
 		SetUV (nNewSeg, nSide, 0, 0, 0); 
 		}
 	else {
 		SetTexture (nNewSeg, nSide, 0, 0); 
 		for (i = 0; i < 4; i++) {
-			segP->sides [nSide].uvls [i].u = 0; 
-			segP->sides [nSide].uvls [i].v = 0; 
-			segP->sides [nSide].uvls [i].l = 0; 
+			segP->m_sides [nSide].m_info.uvls [i].u = 0; 
+			segP->m_sides [nSide].m_info.uvls [i].v = 0; 
+			segP->m_sides [nSide].m_info.uvls [i].l = 0; 
 			}
 		}
 	}
 
 // define static light
-segP->static_light = seg1->static_light; 
+segP->m_info.static_light = seg1->m_info.static_light; 
 
 // update cur segment
-seg1->children [cur1->nSide] = nNewSeg; 
-seg1->childFlags |= (1 << cur1->nSide); 
+seg1->m_info.children [cur1->nSide] = nNewSeg; 
+seg1->m_info.childFlags |= (1 << cur1->nSide); 
 SetTexture (cur1->nSegment, cur1->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
-	seg1->sides [cur1->nSide].uvls [i].u = 0; 
-	seg1->sides [cur1->nSide].uvls [i].v = 0; 
-	seg1->sides [cur1->nSide].uvls [i].l = 0; 
+	seg1->m_sides [cur1->nSide].m_info.uvls [i].u = 0; 
+	seg1->m_sides [cur1->nSide].m_info.uvls [i].v = 0; 
+	seg1->m_sides [cur1->nSide].m_info.uvls [i].l = 0; 
 	}
-seg2->children [cur2->nSide] = nNewSeg; 
-seg2->childFlags |= (1 << cur2->nSide); 
+seg2->m_info.children [cur2->nSide] = nNewSeg; 
+seg2->m_info.childFlags |= (1 << cur2->nSide); 
 SetTexture (cur2->nSegment, cur2->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
-	seg2->sides [cur2->nSide].uvls [i].u = 0; 
-	seg2->sides [cur2->nSide].uvls [i].v = 0; 
-	seg2->sides [cur2->nSide].uvls [i].l = 0; 
+	seg2->m_sides [cur2->nSide].m_info.uvls [i].u = 0; 
+	seg2->m_sides [cur2->nSide].m_info.uvls [i].v = 0; 
+	seg2->m_sides [cur2->nSide].m_info.uvls [i].l = 0; 
 	}
 
 // update number of Segments () and vertices
@@ -2010,112 +1988,15 @@ theApp.MineView ()->Refresh ();
 void CMine::LoadSideTextures (INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
-CSide	*sideP = Segments (nSegment)->sides + nSide;
-theMine->Textures (m_fileType, sideP->nBaseTex)->Read (sideP->nBaseTex);
-if ((sideP->nOvlTex & 0x3fff) > 0)
-	theMine->Textures (m_fileType, sideP->nOvlTex & 0x3fff)->Read (sideP->nOvlTex & 0x3fff);
+CSide	*sideP = Segments (nSegment)->m_sides + nSide;
+theMine->Textures (m_fileType, sideP->m_info.nBaseTex)->Read (sideP->m_info.nBaseTex);
+if ((sideP->m_info.nOvlTex & 0x3fff) > 0)
+	theMine->Textures (m_fileType, sideP->m_info.nOvlTex & 0x3fff)->Read (sideP->m_info.nOvlTex & 0x3fff);
 }
 
 // ------------------------------------------------------------------------ 
 // Mine - SetUV ()
 // ------------------------------------------------------------------------ 
-
-void CMine::SetUV (INT16 nSegment, INT16 nSide, INT16 x, INT16 y, double dummy)
-{
-	CDoubleVector A [4], B [4], C [4], D [4], E [4]; 
-	INT32 i, nVertex; 
-	double angle; 
-
-// for testing, x is used to tell how far to convert vector
-// 0, 1, 2, 3 represent B, C, D, E coordinate transformations
-
-// copy side's four points into A
-INT32 h = sizeof (*Vertices (0));
-for (i = 0; i < 4; i++) {
-	nVertex = Segments (nSegment)->verts [side_vert [nSide][i]]; 
-	A [i] = CDoubleVector (*Vertices (nVertex)); 
-	}
-
-// subtract point 0 from all points in A to form B points
-for (i = 0; i < 4; i++) 
-	B [i] = A [i] - A [0]; 
-
-// calculate angle to put point 1 in x - y plane by spinning on x - axis
-// then rotate B points on x - axis to form C points.
-// check to see if on x - axis already
-angle = atan3(B [1].v.z, B [1].v.y); 
-for (i = 0; i < 4; i++) 
-	C [i].Set (B [i].v.x, B [i].v.y * cos (angle) + B [i].v.z * sin (angle), -B [i].v.y * sin (angle) + B [i].v.z * cos (angle)); 
-
-#if UV_DEBUG
-if (abs((INT32)C [1].z) != 0) {
-	sprintf_s (message, sizeof (message),  "SetUV: point 1 not in x/y plane\n(%f); angle = %f", (float)C [1].z, (float)angle); 
-	DEBUGMSG (message); 
-	}
-#endif
-
-// calculate angle to put point 1 on x axis by spinning on z - axis
-// then rotate C points on z - axis to form D points
-// check to see if on z - axis already
-angle = atan3(C [1].v.y, C [1].v.x); 
-for (i = 0; i < 4; i++) {
-	D [i].Set (C [i].v.x * cos (angle) + C [i].v.y * sin (angle), -C [i].v.x * sin (angle) + C [i].v.y * cos (angle), C [i].v.z); 
-	}
-#if UV_DEBUG
-if (abs((INT32)D [1].y) != 0) {
-	DEBUGMSG (" SetUV: Point 1 not in x axis"); 
-	}
-#endif
-
-// calculate angle to put point 2 in x - y plane by spinning on x - axis
-// the rotate D points on x - axis to form E points
-// check to see if on x - axis already
-angle = atan3(D [2].v.z, D [2].v.y); 
-for (i = 0; i < 4; i++) 
-	E [i].Set (D [i].v.x, D [i].v.y * cos (angle) + D [i].v.z * sin (angle), -D [i].v.y * sin (angle) + D [i].v.z * cos (angle)); 
-
-// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
-// set v to x axis and u to negative u axis to match default (u, v)
-// (remember to scale by dividing by 640)
-CSide *sideP = Segments (nSegment)->sides + nSide;
-CUVL *uvls = sideP->uvls;
-#if UV_DEBUG
-switch (x) {
-	case 0:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (B [i].x/640); 
-			uvls [i].u = - (B [i].y/640); 
-			}
-		break; 
-	case 1:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (C [i].x/640); 
-			uvls [i].u = 0x400/10 - (C [i].y/640); 
-			}
-		break; 
-	case 2:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (D [i].x/640); 
-			uvls [i].u = 2*0x400/10 - (D [i].y/640); 
-			}
-		break; 
-	case 3:
-		for (i = 0; i < 4; i++) {
-			uvls [i].v = (E [i].x/640); 
-			uvls [i].u = 3*0x400/10 - (E [i].y/640); 
-			}
-	break; 
-	}
-#else
-theApp.SetModified (TRUE); 
-LoadSideTextures (nSegment, nSide);
-double scale = 1.0; //theMine->Textures () [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
-for (i = 0; i < 4; i++, uvls++) {
-	uvls->v = (INT16) ((y + (E [i].v.x / 640)) / scale); 
-	uvls->u = (INT16) ((x - (E [i].v.y / 640)) / scale); 
-	}
-#endif
-}
 
                         /* -------------------------- */
 
@@ -2137,7 +2018,7 @@ INT16 CMine::MarkedSegmentCount (bool bCheck)
 	INT32	nSegment, nCount; 
 	CSegment *segP = Segments (0);
 for (nSegment = SegCount (), nCount = 0; nSegment; nSegment--, segP++)
-	if (segP->wallFlags & MARKED_MASK)
+	if (segP->m_info.wallFlags & MARKED_MASK)
 		if (bCheck)
 			return 1; 
 		else
@@ -2150,8 +2031,8 @@ return nCount;
 INT32 CMine::IsWall (INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide); 
-return (Segments (nSegment)->children [nSide]== -1) ||
-		 (Segments (nSegment)->sides [nSide].nWall < GameInfo ().walls.count); 
+return (Segments (nSegment)->m_info.children [nSide]== -1) ||
+		 (Segments (nSegment)->m_sides [nSide].m_info.nWall < GameInfo ().walls.count); 
 }
 
                         /* -------------------------- */
@@ -2186,7 +2067,7 @@ INT32 CMine::AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_ch
 {
 	CSegment *segP = Segments (start_segment); 
 	CSegment *childSeg; 
-	CSide *sideP = segP->sides + start_side; 
+	CSide *sideP = segP->m_sides + start_side; 
 	CSide *childSide; 
 
 	INT32 return_code =-1; 
@@ -2213,8 +2094,8 @@ for (linenum = 0; linenum < 4; linenum++) {
 	// find vert numbers for the line's two end points
 	point0 = line_vert [side_line [start_side][linenum]][0]; 
 	point1 = line_vert [side_line [start_side][linenum]][1]; 
-	vert0  = segP->verts [point0]; 
-	vert1  = segP->verts [point1]; 
+	vert0  = segP->m_info.verts [point0]; 
+	vert1  = segP->m_info.verts [point1]; 
 	// check child for this line
 	if (start_segment == only_child) {
 		nSide = start_side;
@@ -2222,7 +2103,7 @@ for (linenum = 0; linenum < 4; linenum++) {
 		}
 	else {
 		nSide = side_child [start_side][linenum]; 
-		childnum = segP->children [nSide]; 
+		childnum = segP->m_info.children [nSide]; 
 		}
 	childSeg = Segments (childnum); 
 	if ((childnum < 0) || ((only_child != -1) && (childnum != only_child)))
@@ -2236,14 +2117,14 @@ for (linenum = 0; linenum < 4; linenum++) {
 		// ignore children of different textures (or no texture)
 		if (!IsWall (childnum, childs_side))
 			continue;
-		if (childSeg->sides [childs_side].nBaseTex != sideP->nBaseTex)
+		if (childSeg->m_sides [childs_side].m_info.nBaseTex != sideP->m_info.nBaseTex)
 			continue;
 		for (childs_line = 0; childs_line < 4; childs_line++) {
 			// find vert numbers for the line's two end points
 			childs_point0 = line_vert [side_line [childs_side][childs_line]][0]; 
 			childs_point1 = line_vert [side_line [childs_side][childs_line]][1]; 
-			childs_vert0  = childSeg->verts [childs_point0]; 
-			childs_vert1  = childSeg->verts [childs_point1]; 
+			childs_vert0  = childSeg->m_info.verts [childs_point0]; 
+			childs_vert1  = childSeg->m_info.verts [childs_point1]; 
 			// if points of child's line== corresponding points of parent
 			if (!((childs_vert0 == vert1 && childs_vert1 == vert0) ||
 					(childs_vert0 == vert0 && childs_vert1 == vert1)))
@@ -2251,50 +2132,50 @@ for (linenum = 0; linenum < 4; linenum++) {
 			// now we know the child's side & line which touches the parent
 			// child:  childnum, childs_side, childs_line, childs_point0, childs_point1
 			// parent: start_segment, start_side, linenum, point0, point1
-			childSide = childSeg->sides + childs_side; 
+			childSide = childSeg->m_sides + childs_side; 
 			if (bAlign1st) {
 				// now translate all the childs (u, v) coords so child_point1 is at zero
-				u0 = childSide->uvls [(childs_line + 1)&3].u; 
-				v0 = childSide->uvls [(childs_line + 1)&3].v; 
+				u0 = childSide->m_info.uvls [(childs_line + 1)&3].u; 
+				v0 = childSide->m_info.uvls [(childs_line + 1)&3].v; 
 				for (i = 0; i < 4; i++) {
-					childSide->uvls [i].u -= u0; 
-					childSide->uvls [i].v -= v0; 
+					childSide->m_info.uvls [i].u -= u0; 
+					childSide->m_info.uvls [i].v -= v0; 
 					}
 				// find difference between parent point0 and child point1
-				u0 = childSide->uvls [(childs_line + 1)&3].u - sideP->uvls [linenum].u; 
-				v0 = childSide->uvls [(childs_line + 1)&3].v - sideP->uvls [linenum].v; 
+				u0 = childSide->m_info.uvls [(childs_line + 1)&3].u - sideP->m_info.uvls [linenum].u; 
+				v0 = childSide->m_info.uvls [(childs_line + 1)&3].v - sideP->m_info.uvls [linenum].v; 
 				// find the angle formed by the two lines
-				sangle = atan3(sideP->uvls [(linenum + 1)&3].v - sideP->uvls [linenum].v, 
-				sideP->uvls [(linenum + 1)&3].u - sideP->uvls [linenum].u); 
-				cangle = atan3(childSide->uvls [childs_line].v - childSide->uvls [(childs_line + 1)&3].v, 
-									childSide->uvls [childs_line].u - childSide->uvls [(childs_line + 1)&3].u); 
+				sangle = atan3(sideP->m_info.uvls [(linenum + 1)&3].v - sideP->m_info.uvls [linenum].v, 
+				sideP->m_info.uvls [(linenum + 1)&3].u - sideP->m_info.uvls [linenum].u); 
+				cangle = atan3(childSide->m_info.uvls [childs_line].v - childSide->m_info.uvls [(childs_line + 1)&3].v, 
+									childSide->m_info.uvls [childs_line].u - childSide->m_info.uvls [(childs_line + 1)&3].u); 
 				// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
 				for (i = 0; i < 4; i++) {
-					angle = atan3(childSide->uvls [i].v, childSide->uvls [i].u); 
-					length = sqrt((double)childSide->uvls [i].u*(double)childSide->uvls [i].u +
-									  (double)childSide->uvls [i].v*(double)childSide->uvls [i].v); 
+					angle = atan3(childSide->m_info.uvls [i].v, childSide->m_info.uvls [i].u); 
+					length = sqrt((double)childSide->m_info.uvls [i].u*(double)childSide->m_info.uvls [i].u +
+									  (double)childSide->m_info.uvls [i].v*(double)childSide->m_info.uvls [i].v); 
 					angle -= (cangle - sangle); 
-					childSide->uvls [i].u = (INT16)(length * cos (angle)); 
-					childSide->uvls [i].v = (INT16)(length * sin (angle)); 
+					childSide->m_info.uvls [i].u = (INT16)(length * cos (angle)); 
+					childSide->m_info.uvls [i].v = (INT16)(length * sin (angle)); 
 					}
 				// now translate all the childs (u, v) coords to parent point0
 				for (i = 0; i < 4; i++) {
-					childSide->uvls [i].u -= u0; 
-					childSide->uvls [i].v -= v0; 
+					childSide->m_info.uvls [i].u -= u0; 
+					childSide->m_info.uvls [i].v -= v0; 
 					}
 				// modulo points by 0x800 (== 64 pixels)
-				u0 = childSide->uvls [0].u/0x800; 
-				v0 = childSide->uvls [0].v/0x800; 
+				u0 = childSide->m_info.uvls [0].u/0x800; 
+				v0 = childSide->m_info.uvls [0].v/0x800; 
 				for (i = 0; i < 4; i++) {
-					childSide->uvls [i].u -= u0*0x800; 
-					childSide->uvls [i].v -= v0*0x800; 
+					childSide->m_info.uvls [i].u -= u0*0x800; 
+					childSide->m_info.uvls [i].v -= v0*0x800; 
 					}
 				if (only_child != -1)
 					return_code = childs_side; 
 				}
-			if (bAlign2nd && sideP->nOvlTex && childSide->nOvlTex) {
+			if (bAlign2nd && sideP->m_info.nOvlTex && childSide->m_info.nOvlTex) {
 				INT32 r;
-				switch (sideP->nOvlTex & 0xC000) {
+				switch (sideP->m_info.nOvlTex & 0xC000) {
 					case 0:
 						r = 0;
 						break;
@@ -2311,18 +2192,18 @@ for (linenum = 0; linenum < 4; linenum++) {
 				INT32 h = (INT32) (fabs (angle) * 180.0 / PI / 90 + 0.5); 
 //				h +=(childs_line + linenum + 2) % 4; //(childs_line > linenum) ? childs_line - linenum : linenum - childs_line;
 				h = (h + r) % 4;
-				childSide->nOvlTex &= ~0xC000;
+				childSide->m_info.nOvlTex &= ~0xC000;
 				switch (h) {
 					case 0:
 						break;
 					case 1:
-						childSide->nOvlTex |= 0xC000;
+						childSide->m_info.nOvlTex |= 0xC000;
 						break;
 					case 2:
-						childSide->nOvlTex |= 0x8000;
+						childSide->m_info.nOvlTex |= 0x8000;
 						break;
 					case 3:
-						childSide->nOvlTex |= 0x4000;
+						childSide->m_info.nOvlTex |= 0x4000;
 						break;
 					}
 				}
@@ -2352,7 +2233,7 @@ if (nSegment < 0 || nSegment >= SegCount ())
 	return false; 
 if (nSide < 0 || nSide >= 6)
 	return false; 
-childseg =Segments (nSegment)->children [nSide]; 
+childseg =Segments (nSegment)->m_info.children [nSide]; 
 if (childseg < 0 || childseg >= SegCount ())
 	return false; 
 for (childside = 0; childside < 6; childside++) {
@@ -2372,7 +2253,7 @@ CSide *CMine::OppSide ()
 INT16 nOppSeg, nOppSide;
 if (!GetOppositeSide (nOppSeg, nOppSide))
 	return NULL;
-return Segments (nOppSeg)->sides + nOppSide;
+return Segments (nOppSeg)->m_sides + nOppSide;
 }
 
                         /* -------------------------- */
@@ -2387,43 +2268,43 @@ theApp.LockUndo ();
 GetCurrent (nSegment, nSide); 
 if (tmapnum2 == nTexture)
    tmapnum2 = 0; 
-CSide *sideP = Segments (nSegment)->sides + nSide; 
-if ((nTexture >= 0) && (nTexture != sideP->nBaseTex)) {
-	sideP->nBaseTex = nTexture; 
-	if (nTexture == (sideP->nOvlTex & 0x3fff)) {
-		sideP->nOvlTex = 0; 
+CSide *sideP = Segments (nSegment)->m_sides + nSide; 
+if ((nTexture >= 0) && (nTexture != sideP->m_info.nBaseTex)) {
+	sideP->m_info.nBaseTex = nTexture; 
+	if (nTexture == (sideP->m_info.nOvlTex & 0x3fff)) {
+		sideP->m_info.nOvlTex = 0; 
 		}
 	bChange = true; 
 	}
 if (tmapnum2 >= 0) {
-	if (tmapnum2 == sideP->nBaseTex)
+	if (tmapnum2 == sideP->m_info.nBaseTex)
 		tmapnum2 = 0; 
 	if (tmapnum2) {
-		sideP->nOvlTex &= ~(0x3fff);	//preserve light settings
-		sideP->nOvlTex |= tmapnum2; 
+		sideP->m_info.nOvlTex &= ~(0x3fff);	//preserve light settings
+		sideP->m_info.nOvlTex |= tmapnum2; 
 		}
 	else
-		sideP->nOvlTex = 0; 
+		sideP->m_info.nOvlTex = 0; 
 	bChange = true; 
 	}
 if (!bChange) {
 	theApp.ResetModified (bUndo);
 	return false;
 	}
-theMine->Textures (m_fileType, sideP->nBaseTex)->Read (sideP->nBaseTex);
-theMine->Textures (m_fileType, sideP->nOvlTex & 0x3fff)->Read (sideP->nOvlTex & 0x3fff);
+theMine->Textures (m_fileType, sideP->m_info.nBaseTex)->Read (sideP->m_info.nBaseTex);
+theMine->Textures (m_fileType, sideP->m_info.nOvlTex & 0x3fff)->Read (sideP->m_info.nOvlTex & 0x3fff);
 #if 0
-if (((sideP->nOvlTex & 0x3fff) > 0) &&
-    (theMine->Textures () [m_fileType][sideP->nBaseTex].m_size != 
-	  theMine->Textures () [m_fileType][sideP->nOvlTex & 0x3fff].m_size))
-	sideP->nOvlTex = 0;
+if (((sideP->m_info.nOvlTex & 0x3fff) > 0) &&
+    (theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].m_size != 
+	  theMine->Textures () [m_fileType][sideP->m_info.nOvlTex & 0x3fff].m_size))
+	sideP->m_info.nOvlTex = 0;
 #endif
-if ((IsLight (sideP->nBaseTex)== -1) && (IsLight (sideP->nOvlTex & 0x3fff)== -1))
+if ((IsLight (sideP->m_info.nBaseTex)== -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff)== -1))
 	DeleteFlickeringLight (nSegment, nSide); 
 if (!WallClipFromTexture (nSegment, nSide))
 	CheckForDoor (nSegment, nSide); 
 theApp.UnlockUndo (); 
-sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->nBaseTex & 0x3fff, sideP->nOvlTex & 0x3fff); 
+sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x3fff, sideP->m_info.nOvlTex & 0x3fff); 
 INFOMSG (message); 
 return true;
 }
@@ -2438,22 +2319,22 @@ void CMine::RenumberBotGens ()
 // number "matcen"
 nMatCens = 0; 
 for (i = 0; i < GameInfo ().botgen.count; i++) {
-	nSegment = BotGens (i)->nSegment; 
+	nSegment = BotGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = Segments (0) + nSegment; 
-		segP->value = i; 
-		if (segP->function== SEGMENT_FUNC_ROBOTMAKER)
-			segP->nMatCen = nMatCens++; 
+		segP->m_info.value = i; 
+		if (segP->m_info.function== SEGMENT_FUNC_ROBOTMAKER)
+			segP->m_info.nMatCen = nMatCens++; 
 		}
 	}
 
 // number "value"
 value = 0; 
 for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
-	if (segP->function== SEGMENT_FUNC_NONE)
-		segP->value = 0; 
+	if (segP->m_info.function== SEGMENT_FUNC_NONE)
+		segP->m_info.value = 0; 
 	else
-		segP->value = value++; 
+		segP->m_info.value = value++; 
 }
 
                         /* -------------------------- */
@@ -2466,22 +2347,22 @@ void CMine::RenumberEquipGens ()
 // number "matcen"
 nMatCens = 0; 
 for (i = 0; i < GameInfo ().equipgen.count; i++) {
-	nSegment = EquipGens (i)->nSegment; 
+	nSegment = EquipGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = Segments (0) + nSegment; 
-		segP->value = i; 
-		if (segP->function== SEGMENT_FUNC_EQUIPMAKER)
-			segP->nMatCen = nMatCens++; 
+		segP->m_info.value = i; 
+		if (segP->m_info.function== SEGMENT_FUNC_EQUIPMAKER)
+			segP->m_info.nMatCen = nMatCens++; 
 		}
 	}
 
 // number "value"
 value = 0; 
 for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
-	if (segP->function== SEGMENT_FUNC_NONE)
-		segP->value = 0; 
+	if (segP->m_info.function== SEGMENT_FUNC_NONE)
+		segP->m_info.value = 0; 
 	else
-		segP->value = value++; 
+		segP->m_info.value = value++; 
 }
 
                         /* -------------------------- */
@@ -2499,8 +2380,8 @@ theApp.LockUndo ();
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++)
 	if (SetTexture (nSegment, nSide, 
-						 otherSeg->sides [nSide].nBaseTex, 
-						 otherSeg->sides [nSide].nOvlTex))
+						 otherSeg->m_sides [nSide].m_info.nBaseTex, 
+						 otherSeg->m_sides [nSide].m_info.nOvlTex))
 		bChange = true;
 if (!bChange)
 	theApp.ResetModified (bUndo);
@@ -2534,17 +2415,17 @@ h = VertCount ();
 #if 0
 // isolate segment
 for (nSide = 0; nSide < 6; nSide++) {
-	if (segP->children [nSide] < 0)
+	if (segP->m_info.children [nSide] < 0)
 		continue;
 	for (vertNum = 0; vertNum < 4; vertNum++, h++)
-		*Vertices (h) = *Vertices (segP->verts [side_vert [nSide][vertNum]]);
+		*Vertices (h) = *Vertices (segP->m_info.verts [side_vert [nSide][vertNum]]);
 	}
 VertCount () = h;
 #endif
 // compute segment center
 memset (&segCenter, 0, sizeof (segCenter));
 for (i = 0; i < 8; i++)
-	segCenter += *Vertices (centerSegP->verts [i]);
+	segCenter += *Vertices (centerSegP->m_info.verts [i]);
 segCenter /= FIX (8);
 // add center segment
 // compute center segment vertices
@@ -2555,10 +2436,10 @@ for (nSide = 0; nSide < 6; nSide++) {
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
-		centerSegVert = Vertices (centerSegP->verts [j]);
+		centerSegVert = Vertices (centerSegP->m_info.verts [j]);
 		segVert = Vertices (h + j);
 		*segVert = (*centerSegVert + segCenter) / 2;
-		//centerSegP->verts [j] = h + j;
+		//centerSegP->m_info.verts [j] = h + j;
 		}
 	}
 VertCount () = h + 8;
@@ -2569,61 +2450,61 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 	oppSideNum = oppSides [nSide];
 	for (vertNum = 0; vertNum < 4; vertNum++) {
 		i = side_vert [nSide][vertNum];
-		segP->verts [i] = centerSegP->verts [i];
+		segP->m_info.verts [i] = centerSegP->m_info.verts [i];
 #if 0
 		j = side_vert [oppSideNum][vertNum];
-		segP->verts [j] = h + i;
+		segP->m_info.verts [j] = h + i;
 #else
 		if ((nSide & 1) || (nSide >= 4)) {
 			i = line_vert [side_line [nSide][0]][0];
 			j = line_vert [side_line [oppSideNum][2]][0];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			i = line_vert [side_line [nSide][0]][1];
 			j = line_vert [side_line [oppSideNum][2]][1];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			i = line_vert [side_line [nSide][2]][0];
 			j = line_vert [side_line [oppSideNum][0]][0];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			i = line_vert [side_line [nSide][2]][1];
 			j = line_vert [side_line [oppSideNum][0]][1];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			}
 		else {
 			i = line_vert [side_line [nSide][0]][0];
 			j = line_vert [side_line [oppSideNum][2]][1];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			i = line_vert [side_line [nSide][0]][1];
 			j = line_vert [side_line [oppSideNum][2]][0];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			i = line_vert [side_line [nSide][2]][0];
 			j = line_vert [side_line [oppSideNum][0]][1];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			i = line_vert [side_line [nSide][2]][1];
 			j = line_vert [side_line [oppSideNum][0]][0];
-			segP->verts [j] = h + i;
+			segP->m_info.verts [j] = h + i;
 			}
 #endif
 		}
 	InitSegment (nSegment);
-	if ((segP->children [nSide] = centerSegP->children [nSide]) > -1) {
-		segP->childFlags |= (1 << nSide);
-		for (childSegP = Segments (segP->children [nSide]), childSideNum = 0;
+	if ((segP->m_info.children [nSide] = centerSegP->m_info.children [nSide]) > -1) {
+		segP->m_info.childFlags |= (1 << nSide);
+		for (childSegP = Segments (segP->m_info.children [nSide]), childSideNum = 0;
 			  childSideNum < 6; 
 			  childSideNum++)
-			if (childSegP->children [childSideNum] == nCenterSeg) {
-				childSegP->children [childSideNum] = nSegment;
+			if (childSegP->m_info.children [childSideNum] == nCenterSeg) {
+				childSegP->m_info.children [childSideNum] = nSegment;
 				break;
 				}
 			}
-	segP->children [oppSideNum] = nCenterSeg;
-	segP->childFlags |= (1 << oppSideNum);
-	centerSegP->children [nSide] = nSegment;
-	centerSegP->childFlags |= (1 << nSide);
-	nWall = centerSegP->sides [nSide].nWall;
-	segP->sides [nSide].nWall = nWall;
+	segP->m_info.children [oppSideNum] = nCenterSeg;
+	segP->m_info.childFlags |= (1 << oppSideNum);
+	centerSegP->m_info.children [nSide] = nSegment;
+	centerSegP->m_info.childFlags |= (1 << nSide);
+	nWall = centerSegP->m_sides [nSide].m_info.nWall;
+	segP->m_sides [nSide].m_info.nWall = nWall;
 	if ((nWall >= 0) && (nWall != NO_WALL)) {
 		Walls (nWall)->m_nSegment = nSegment;
-		centerSegP->sides [nSide].nWall = NO_WALL;
+		centerSegP->m_sides [nSide].m_info.nWall = NO_WALL;
 		}
 	}
 // relocate center segment vertex indices
@@ -2634,36 +2515,36 @@ for (nSide = 0; nSide < 6; nSide++) {
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
-		centerSegP->verts [j] = h + j;
+		centerSegP->m_info.verts [j] = h + j;
 		}
 	}
 // join adjacent sides of the segments surrounding the center segment
 #if 1
 for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
-		if (segP->children [nSide] >= 0)
+		if (segP->m_info.children [nSide] >= 0)
 			continue;
 		for (childSegNum = nSegment + 1, childSegP = Segments (SegCount () + childSegNum); 
 			  childSegNum < 6; 
 			  childSegNum++, childSegP++) {
 			for (childSideNum = 0; childSideNum < 6; childSideNum++) {
-				if (childSegP->children [childSideNum] >= 0)
+				if (childSegP->m_info.children [childSideNum] >= 0)
 					continue;
 				h = 0;
 				for (i = 0; i < 4; i++) {
-					k = segP->verts [side_vert [nSide][i]];
+					k = segP->m_info.verts [side_vert [nSide][i]];
 					for (j = 0; j < 4; j++) {
-						if (k == childSegP->verts [side_vert [childSideNum][j]]) {
+						if (k == childSegP->m_info.verts [side_vert [childSideNum][j]]) {
 							h++;
 							break;
 							}
 						}
 					}
 				if (h == 4) {
-					segP->children [nSide] = SegCount () + childSegNum;
-					segP->childFlags |= (1 << nSide);
-					childSegP->children [childSideNum] = SegCount () + nSegment;
-					childSegP->childFlags |= (1 << childSideNum);
+					segP->m_info.children [nSide] = SegCount () + childSegNum;
+					segP->m_info.childFlags |= (1 << nSide);
+					childSegP->m_info.children [childSideNum] = SegCount () + nSegment;
+					childSegP->m_info.childFlags |= (1 << childSideNum);
 					break;
 					}
 				}
@@ -2722,10 +2603,10 @@ static UINT8 segPropsFromType [] = {
 
 void CSegment::Upgrade (void)
 {
-props = segPropsFromType [function];
-function = segFuncFromType [function];
-damage [0] =
-damage [1] = 0;
+m_info.props = segPropsFromType [m_info.function];
+m_info.function = segFuncFromType [m_info.function];
+m_info.damage [0] =
+m_info.damage [1] = 0;
 }
 
 // ------------------------------------------------------------------------
@@ -2739,7 +2620,7 @@ UINT8 CSegment::ReadWalls (FILE* fp, int nLevelVersion)
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (wallFlags &= (1 << i)) 
-		sides [i].nWall = (nLevelVersion >= 13) ? read_INT16 (fp) : INT16 (read_INT8 (fp));
+		sides [i].m_info.nWall = (nLevelVersion >= 13) ? read_INT16 (fp) : INT16 (read_INT8 (fp));
 return wallFlags;
 }
 
@@ -2748,27 +2629,27 @@ return wallFlags;
 void CSegment::ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras)
 {
 if (bExtras) {
-	function = read_INT8 (fp);
-	nMatCen = read_INT8 (fp);
-	value = read_INT8 (fp);
+	m_info.function = read_INT8 (fp);
+	m_info.nMatCen = read_INT8 (fp);
+	m_info.value = read_INT8 (fp);
 	read_INT8 (fp);
 	}
 else {
-	function = 0;
-	nMatCen = -1;
-	value = 0;
+	m_info.function = 0;
+	m_info.nMatCen = -1;
+	m_info.value = 0;
 	}
-s2_flags = 0;  // d1 doesn't use this number, so zero it
+m_info.s2_flags = 0;  // d1 doesn't use this number, so zero it
 if (nLevelType == 2) {
-	props = read_INT8 (fp);
+	m_info.props = read_INT8 (fp);
 	if (nLevelVersion < 20)
 		Upgrade ();
 	else {
-		damage [0] = read_INT16 (fp);
-		damage [1] = read_INT16 (fp);
+		m_info.damage [0] = read_INT16 (fp);
+		m_info.damage [1] = read_INT16 (fp);
 		}
 	}
-static_light = read_FIX (fp);
+m_info.static_light = read_FIX (fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2778,41 +2659,41 @@ INT32 CSegment::Read (FILE* fp, int nLevelType, int nLevelVersion)
 	int	i;
 
 if (nLevelType == 2) {
-	owner = read_INT8 (fp);
-	group = read_INT8 (fp);
+	m_info.owner = read_INT8 (fp);
+	m_info.group = read_INT8 (fp);
 	}
 else {
-	owner = -1;
-	group = -1;
+	m_info.owner = -1;
+	m_info.group = -1;
 	}
 // read in child mask (1 byte)
-childFlags = UINT8 (read_INT8 (fp));
+m_info.childFlags = UINT8 (read_INT8 (fp));
 
 // read 0 to 6 children (0 to 12 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-	children [i] = (childFlags & (1 << i)) ? read_INT16 (fp) : -1;
+	m_info.children [i] = (childFlags & (1 << i)) ? read_INT16 (fp) : -1;
 
 // read vertex numbers (16 bytes)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	verts [i] = read_INT16 (fp);
+	m_info.verts [i] = read_INT16 (fp);
 
 if (nLevelVersion == 0)
-	ReadExtras (0, nLevelType, nLevelVersion, (childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
+	ReadExtras (0, nLevelType, nLevelVersion, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // read the wall bit mask
-wallFlags = UINT8 (read_INT8 (fp));
+m_info.wallFlags = UINT8 (read_INT8 (fp));
 
 // read in wall numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	sides [i].nWall = (wallFlags & (1 << i)) 
-							? (nLevelVersion < 13) 
-								? UINT16 (read_INT8 (fp)) 
-								: UINT16 (read_INT16 (fp)) 
-							: NO_WALL;
+	m_sides [i].m_info.nWall = (m_info.wallFlags & (1 << i)) 
+								? (nLevelVersion < 13) 
+									? UINT16 (read_INT8 (fp)) 
+									: UINT16 (read_INT16 (fp)) 
+								: NO_WALL;
 
 // read in textures and uvls (0 to 60 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
-	sides [i].Read (fp, (children [i] == -1) || ((wallFlags & (1 << i)) != 0));
+	m_sides [i].Read (fp, (m_info.children [i] == -1) || ((m_info.wallFlags & (1 << i)) != 0));
 return 1;
 }
 
@@ -2820,25 +2701,25 @@ return 1;
 
 UINT8 CSegment::WriteWalls (FILE* fp, int nLevelVersion)
 {
-	UINT8 wallFlags = 0;
 	int	i;
 
+m_info.wallFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if(sides [i].nWall < theMine->GameInfo ().walls.count) 
-		wallFlags |= (1 << i);
+	if(sides [i].m_info.nWall < theMine->GameInfo ().walls.count) 
+		m_info.wallFlags |= (1 << i);
 	}
-write_INT8 (wallFlags, fp);
+write_INT8 (m_info.wallFlags, fp);
 
 // write wall numbers
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if (wallFlags & (1 << i)) {
+	if (m_info.wallFlags & (1 << i)) {
 		if (nLevelVersion >= 13)
-			write_INT16 (sides [i].nWall, fp);
+			write_INT16 (m_sides [i].m_info.nWall, fp);
 		else
-			write_INT8 (INT8 (sides [i].nWall), fp);
+			write_INT8 (INT8 (m_sides [i].m_info.nWall), fp);
 		}
 	}
-return wallFlags;
+return m_info.wallFlags;
 }
 
 // ------------------------------------------------------------------------
@@ -2846,17 +2727,17 @@ return wallFlags;
 void CSegment::WriteExtras (FILE* fp, int nLevelType, bool bExtras)
 {
 if (bExtras) {
-	write_INT8 (function, fp);
-	write_INT8 (nMatCen, fp);
-	write_INT8 (value, fp);
-	write_INT8 (s2_flags, fp);
+	write_INT8 (m_info.function, fp);
+	write_INT8 (m_info.nMatCen, fp);
+	write_INT8 (m_info.value, fp);
+	write_INT8 (m_info.s2_flags, fp);
 	}
 if (nLevelType == 2) {
-	write_INT8 (props, fp);
-	write_INT16 (damage [0], fp);
-	write_INT16 (damage [1], fp);
+	write_INT8 (m_info.props, fp);
+	write_INT16 (m_info.damage [0], fp);
+	write_INT16 (m_info.damage [1], fp);
 	}
-write_FIX (static_light, fp);
+write_FIX (m_info.static_light, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2866,48 +2747,167 @@ void CSegment::Write (FILE* fp, int nLevelType, int nLevelVersion)
 	int	i;
 
 if (nLevelType == 2) {
-	write_INT8 (owner, fp);
-	write_INT8 (group, fp);
+	write_INT8 (m_info.owner, fp);
+	write_INT8 (m_info.group, fp);
 	}
 
 #if 1
-childFlags = 0;
+m_info.childFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if(children [i] != -1) {
-		childFlags |= (1 << i);
+		m_info.childFlags |= (1 << i);
 		}
 	}
 if (nLevelType == 0) {
 	if (function != 0) { // if this is a special cube
-		childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
+		m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 	}
 #endif
-write_INT8 (childFlags, fp);
+write_INT8 (m_info.childFlags, fp);
 
 // write children numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (childFlags & (1 << i)) 
-		write_INT16 (children [i], fp);
+		write_INT16 (m_info.children [i], fp);
 
 // write vertex numbers (16 bytes)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	write_INT16 (verts [i], fp);
+	write_INT16 (m_info.verts [i], fp);
 
 // write special info (0 to 4 bytes)
-if ((function == SEGMENT_FUNC_ROBOTMAKER) && (nMatCen == -1)) {
-	function = SEGMENT_FUNC_NONE;
-	value = 0;
-	childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
+if ((m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (m_info.nMatCen == -1)) {
+	m_info.function = SEGMENT_FUNC_NONE;
+	m_info.value = 0;
+	m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 	}
 if (nLevelType == 0)
-	WriteExtras (fp, nLevelType, (childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
+	WriteExtras (fp, nLevelType, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // calculate wall bit mask
-UINT8 wallFlags = WriteWalls (fp, nLevelVersion);
+WriteWalls (fp, nLevelVersion);
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
-	if ((children [i] == -1) || (wallFlags & (1 << i))) 
-		sides [i].Write (fp);
+	if ((m_info.children [i] == -1) || (m_info.wallFlags & (1 << i))) 
+		m_sides [i].Write (fp);
+}
+
+// ------------------------------------------------------------------------
+
+void CSegment::Setup (void)
+{
+	int i;
+
+m_info.owner = -1;
+m_info.group = -1;
+m_info.function = 0; 
+m_info.nMatCen = -1; 
+m_info.value = -1; 
+m_info.childFlags = 0;
+wallFlags = 0; 
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	m_sides [i].Setup (); 
+	SetUV (i, 0, 0, 0); 
+	}
+m_info.static_light = 0; 
+memset (m_info.children, 0xFF, sizeof (m_info.children));
+}
+
+// ------------------------------------------------------------------------
+
+void CSegment::SetUV (INT16 nSide, INT16 x, INT16 y)
+{
+	CDoubleVector A [4], B [4], C [4], D [4], E [4]; 
+	INT32 i, nVertex; 
+	double angle; 
+
+// for testing, x is used to tell how far to convert vector
+// 0, 1, 2, 3 represent B, C, D, E coordinate transformations
+
+// copy side's four points into A
+
+for (i = 0; i < 4; i++) {
+	nVertex = m_info.verts [side_vert [nSide][i]]; 
+	A [i] = CDoubleVector (*Vertices (nVertex)); 
+	}
+
+// subtract point 0 from all points in A to form B points
+for (i = 0; i < 4; i++) 
+	B [i] = A [i] - A [0]; 
+
+// calculate angle to put point 1 in x - y plane by spinning on x - axis
+// then rotate B points on x - axis to form C points.
+// check to see if on x - axis already
+angle = atan3 (B [1].v.z, B [1].v.y); 
+for (i = 0; i < 4; i++) 
+	C [i].Set (B [i].v.x, B [i].v.y * cos (angle) + B [i].v.z * sin (angle), -B [i].v.y * sin (angle) + B [i].v.z * cos (angle)); 
+
+#if UV_DEBUG
+if (abs((INT32)C [1].z) != 0) {
+	sprintf_s (message, sizeof (message),  "SetUV: point 1 not in x/y plane\n(%f); angle = %f", (float)C [1].z, (float)angle); 
+	DEBUGMSG (message); 
+	}
+#endif
+
+// calculate angle to put point 1 on x axis by spinning on z - axis
+// then rotate C points on z - axis to form D points
+// check to see if on z - axis already
+angle = atan3 (C [1].v.y, C [1].v.x); 
+for (i = 0; i < 4; i++) {
+	D [i].Set (C [i].v.x * cos (angle) + C [i].v.y * sin (angle), -C [i].v.x * sin (angle) + C [i].v.y * cos (angle), C [i].v.z); 
+	}
+#if UV_DEBUG
+if (abs((INT32)D [1].y) != 0) {
+	DEBUGMSG (" SetUV: Point 1 not in x axis"); 
+	}
+#endif
+
+// calculate angle to put point 2 in x - y plane by spinning on x - axis
+// the rotate D points on x - axis to form E points
+// check to see if on x - axis already
+angle = atan3 (D [2].v.z, D [2].v.y); 
+for (i = 0; i < 4; i++) 
+	E [i].Set (D [i].v.x, D [i].v.y * cos (angle) + D [i].v.z * sin (angle), -D [i].v.y * sin (angle) + D [i].v.z * cos (angle)); 
+
+// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
+// set v to x axis and u to negative u axis to match default (u, v)
+// (remember to scale by dividing by 640)
+CUVL *uvls = m_sides [nSide].m_info.uvls;
+#if UV_DEBUG
+switch (x) {
+	case 0:
+		for (i = 0; i < 4; i++) {
+			uvls [i].v = (B [i].x/640); 
+			uvls [i].u = - (B [i].y/640); 
+			}
+		break; 
+	case 1:
+		for (i = 0; i < 4; i++) {
+			uvls [i].v = (C [i].x/640); 
+			uvls [i].u = 0x400/10 - (C [i].y/640); 
+			}
+		break; 
+	case 2:
+		for (i = 0; i < 4; i++) {
+			uvls [i].v = (D [i].x/640); 
+			uvls [i].u = 2*0x400/10 - (D [i].y/640); 
+			}
+		break; 
+	case 3:
+		for (i = 0; i < 4; i++) {
+			uvls [i].v = (E [i].x/640); 
+			uvls [i].u = 3*0x400/10 - (E [i].y/640); 
+			}
+	break; 
+	}
+#else
+theApp.SetModified (TRUE); 
+LoadSideTextures (nSegment, nSide);
+double scale = 1.0; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
+for (i = 0; i < 4; i++, uvls++) {
+	uvls->v = (INT16) ((y + (E [i].v.x / 640)) / scale); 
+	uvls->u = (INT16) ((x - (E [i].v.y / 640)) / scale); 
+	}
+#endif
 }
 
 // ------------------------------------------------------------------------
@@ -2917,23 +2917,23 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 INT32 CSide::Read (FILE* fp, bool bTextured)
 {
 if (bTextured) {
-	nBaseTex = read_INT16 (fp);
-	if (nBaseTex & 0x8000) {
-		nOvlTex = read_INT16 (fp);
-		if ((nOvlTex & 0x1FFF) == 0)
-			nOvlTex = 0;
+	m_info.nBaseTex = read_INT16 (fp);
+	if (m_info.nBaseTex & 0x8000) {
+		m_info.nOvlTex = read_INT16 (fp);
+		if ((m_info.nOvlTex & 0x1FFF) == 0)
+			m_info.nOvlTex = 0;
 		}
 	else
-		nOvlTex = 0;
-	nBaseTex &= 0x1FFF;
+		m_info.nOvlTex = 0;
+	m_info.nBaseTex &= 0x1FFF;
 	for (int i = 0; i < 4; i++)
-		uvls [i].Read (fp);
+		m_info.uvls [i].Read (fp);
 	}
 else {
-	nBaseTex = 0;
-	nOvlTex = 0;
+	m_info.nBaseTex = 0;
+	m_info.nOvlTex = 0;
 	for (int i = 0; i < 4; i++)
-		uvls [i].Clear ();
+		m_info.uvls [i].Clear ();
 	}
 return 1;
 }
@@ -2942,14 +2942,41 @@ return 1;
 
 void CSide::Write (FILE* fp)
 {
-if (nOvlTex == 0)
-	write_INT16 (nBaseTex, fp);
+if (m_info.nOvlTex == 0)
+	write_INT16 (m_info.nBaseTex, fp);
 else {
-	write_INT16 (nBaseTex | 0x8000, fp);
-	write_INT16 (nOvlTex, fp);
+	write_INT16 (m_info.nBaseTex | 0x8000, fp);
+	write_INT16 (m_info.nOvlTex, fp);
 	}
 for (int i = 0; i < 4; i++)
-	uvls [i].Write (fp);
+	m_info.uvls [i].Write (fp);
+}
+
+// ------------------------------------------------------------------------
+
+void CSide::Setup (void)
+{
+m_info.nWall = NO_WALL; 
+m_info.nBaseTex =
+m_info.nOvlTex = 0; 
+for (int i = 0; i < 4; i++)
+	m_sides [i].m_info.uvls [i].l = (UINT16) DEFAULT_LIGHTING; 
+}
+
+// ------------------------------------------------------------------------ 
+
+void CSide::LoadTextures (void)
+{
+theMine->Textures (theMine->m_fileType, m_info.nBaseTex)->Read (m_info.nBaseTex);
+if ((m_info.nOvlTex & 0x3fff) > 0)
+	theMine->Textures (theMine->m_fileType, m_info.nOvlTex & 0x3fff)->Read (m_info.nOvlTex & 0x3fff);
+}
+
+// ------------------------------------------------------------------------
+
+CWall* CSide::Wall (void)
+{ 
+return (m_info.nWall == NO_WALL) ? NULL : theMine->Walls (m_info.nWall); 
 }
 
 // ------------------------------------------------------------------------
@@ -2961,7 +2988,7 @@ INT32 CLightDeltaValue::Read (FILE *fp, INT32 version, bool bFlag)
 m_nSegment = read_INT16 (fp);
 m_nSide = INT16 (read_INT8 (fp));
 for (int i = 0; i < 4; i++)
-	vert_light [i] = read_INT8 (fp);
+	m_info.vertLight [i] = read_INT8 (fp);
 return 1;
 }
 
@@ -2972,7 +2999,7 @@ void CLightDeltaValue::Write (FILE *fp, INT32 version, bool bFlag)
 write_INT16 (m_nSegment, fp);
 write_INT8 (INT8 (m_nSide), fp);
 for (int i = 0; i < 4; i++)
-	write_INT8 (vert_light [i], fp);
+	write_INT8 (m_info.vertLight [i], fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2983,13 +3010,13 @@ m_nSegment = read_INT16 (fp);
 UINT16 h = read_INT16 (fp);
 if (bD2X) {
 	m_nSide = h & 3;
-	count = h >> 3;
+	m_info.count = h >> 3;
 	}
 else {
 	m_nSide = h % 256;
-	count = h / 256;
+	m_info.count = h / 256;
 	}
-index = read_INT16 (fp);
+m_info.index = read_INT16 (fp);
 return 1;
 }
 
@@ -2999,8 +3026,8 @@ void CLightDeltaIndex::Write (FILE *fp, INT32 version, bool bD2X)
 {
 write_INT16 (m_nSegment, fp);
 if (bD2X)
-	write_INT16 (bD2X ? (m_nSide & 3) | (count << 3) : (m_nSide % 256 + count * 256), fp);
-write_INT16 (index, fp);
+	write_INT16 (bD2X ? (m_nSide & 3) | (m_info.count << 3) : (m_nSide % 256 + m_info.count * 256), fp);
+write_INT16 (m_info.index, fp);
 }
 
 // ------------------------------------------------------------------------

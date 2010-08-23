@@ -229,11 +229,11 @@ public:
 		(m_nViewDist < 20) ? 10 + 2 * (m_nViewDist - 10) : 30 + 3 * (m_nViewDist - 20);
 		}
 	inline bool Visible (CSegment *segP) {
-		if ((segP->function == SEGMENT_FUNC_SKYBOX) && !ViewFlag (eViewMineSkyBox))
+		if ((segP->m_info.function == SEGMENT_FUNC_SKYBOX) && !ViewFlag (eViewMineSkyBox))
 			return false;
 		if (!m_nViewDist)
 			return true;
-		return (segP->nIndex >= 0) && (segP->nIndex <= ViewDist ()); 
+		return (segP->m_info.nIndex >= 0) && (segP->m_info.nIndex <= ViewDist ()); 
 		}
 	void DrawMineCenter (CDC *pViewDC);
 	bool VertexVisible (INT32 v);

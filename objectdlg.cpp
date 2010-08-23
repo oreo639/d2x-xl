@@ -541,7 +541,7 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 // otherwise (non-secret object), setup the rest of the
 // dialog.
 objP = theMine->CurrObj ();
-sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->nSegment);
+sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->m_info.nSegment);
 if (/*(object_selection [objP->type] == 0) &&*/ theMine->RobotInfo (objP->id)->pad [0])
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
@@ -1099,7 +1099,7 @@ objP = theMine->Objects (0);
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 nDeleted = 0;
 for (INT32 h = theMine->GameInfo ().objects.count, i = 0; i < h; ) {
-	if ((objP->type == nType) && (objP->id == nId) && (bAll || (theMine->Segments (objP->nSegment)->wallFlags &= MARKED_MASK))) {
+	if ((objP->type == nType) && (objP->id == nId) && (bAll || (theMine->Segments (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
 		theMine->DeleteObject (i);
 		nDeleted++;
 		h--;
@@ -1167,11 +1167,11 @@ else {
 	// bump position over if this is not the first object in the cube
 	INT32 i, count = 0;
 	for (i = 0; i < theMine->GameInfo ().objects.count;i++)
-		if (theMine->Objects (i)->nSegment == theMine->Current ()->nSegment)
+		if (theMine->Objects (i)->m_info.nSegment == theMine->Current ()->nSegment)
 			count++;
 	objP->pos.v.y += count * 2 * F1_0;
 	objP->last_pos.v.y += count * 2 * F1_0;
-	objP->nSegment = theMine->Current ()->nSegment;
+	objP->m_info.nSegment = theMine->Current ()->nSegment;
 	Refresh ();
 	theApp.MineView ()->Refresh (false);
 	}

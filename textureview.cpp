@@ -405,11 +405,11 @@ else {
 	m_nTextures [0] = 0;
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
-			UINT16 nWall = segP->sides[nSide].nWall;
-			if ((segP->children [nSide] == -1) ||
+			UINT16 nWall = segP->m_sides[nSide].nWall;
+			if ((segP->m_info.children [nSide] == -1) ||
 				 (nWall < theMine->GameInfo ().walls.count && 
 				  theMine->Walls (nWall)->type != WALL_OPEN)) {
-				INT32 t = segP->sides [nSide].nBaseTex;
+				INT32 t = segP->m_sides [nSide].m_info.nBaseTex;
 				INT32 i = TextureIndex (t);
 				INT32 j = TexFilterIndex (t);
 				if ((i >= 0) && !BITSET (pFilter, i) && 
@@ -418,7 +418,7 @@ else {
 					m_nTextures [0]++;
 					}
 //					pFilter[t/8] |= (1<<(t&7));
-				t = segP->sides [nSide].nOvlTex & 0x3fff;
+				t = segP->m_sides [nSide].m_info.nOvlTex & 0x3fff;
 				i = TextureIndex (t);
 				j = TexFilterIndex (t);
 				if ((t > 0) && !BITSET (pFilter, i)) {
@@ -475,7 +475,7 @@ if (!theMine) return;
 	SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
   // figure out position of current texture
   INT32 nBaseTex = theMine->CurrSide ()->nBaseTex;
-  INT32 nOvlTex = theMine->CurrSide ()->nOvlTex & 0x3fff; // strip rotation info
+  INT32 nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
   CTexture tx (bmBuf);
 
 	CDC *pDC = GetDC();

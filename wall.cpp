@@ -33,22 +33,22 @@ CSegment *segP = Segments (nSegment);
 
 // if wall is an overlay, make sure there is no child
 if (type < 0)
-	type = (segP->children [nSide] == -1) ? WALL_OVERLAY : WALL_OPEN;
+	type = (segP->m_info.children [nSide] == -1) ? WALL_OVERLAY : WALL_OPEN;
 if (type == WALL_OVERLAY) {
-	if (segP->children [nSide] != -1) {
+	if (segP->m_info.children [nSide] != -1) {
 		ErrorMsg ("Switches can only be put on solid sides.");
 		return NULL;
 		}
 	}
 else {
 	// otherwise make sure there is a child
-	if (segP->children [nSide] < 0) {
+	if (segP->m_info.children [nSide] < 0) {
 		ErrorMsg ("This side must be attached to an other cube before a wall can be added.");
 		return NULL;
 		}
 	}
 
-if (segP->sides [nSide].nWall < GameInfo ().walls.count) {
+if (segP->m_sides [nSide].nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side.");
 	return NULL;
 	}
@@ -61,7 +61,7 @@ if ((nWall = GameInfo ().walls.count) >= MAX_WALLS) {
 // link wall to segment/side
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-segP->sides [nSide].nWall = nWall;
+segP->m_sides [nSide].nWall = nWall;
 DefineWall (nSegment, nSide, nWall, (UINT8) type, nClip, nTexture, false);
 Walls (nWall)->flags = flags;
 Walls (nWall)->keys = keys;
@@ -80,7 +80,7 @@ bool CMine::GetOppositeWall (INT16& nOppWall, INT16 nSegment, INT16 nSide)
 
 if (!GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide))
 	return false;
-nOppWall = Segments (nOppSeg)->sides [nOppSide].nWall;
+nOppWall = Segments (nOppSeg)->m_sides [nOppSide].nWall;
 return true;
 }
 
@@ -100,7 +100,7 @@ GetCurrent (nSegment, nSide);
 
 	INT32 i;
 	CSegment *segP = Segments (nSegment);
-	CSide *sideP = segP->sides + nSide;
+	CSide *sideP = segP->m_sides + nSide;
 	CWall *wallP = Walls (nWall);
 
 theApp.SetModified (TRUE);
@@ -171,9 +171,9 @@ wallP->controlling_trigger = 0;
 // set uvls of new texture
 UINT32	scale = (UINT32) theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
 for (i = 0;i<4;i++) {
-	sideP->uvls [i].u = default_uvls [i].u / scale;
-	sideP->uvls [i].v = default_uvls [i].v / scale;
-	sideP->uvls [i].l = default_uvls [i].l;
+	sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
+	sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
+	sideP->m_info.uvls [i].l = default_uvls [i].l;
 	}
 SetUV (nSegment, nSide, 0, 0, 0);
 theApp.UnlockUndo ();
@@ -202,23 +202,23 @@ static INT16 d2_wall_texture [D2_N_WALL_TEXTURES] [2] = {
 	};
 
 CWall *wallP = Walls (nWall);
-CSide *sideP = Segments (wallP->m_nSegment)->sides + (INT16) wallP->m_nSide;
+CSide *sideP = Segments (wallP->m_nSegment)->m_sides + (INT16) wallP->m_nSide;
 INT8 nClip = wallP->nClip;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if ((wallP->type == WALL_DOOR) || (wallP->type == WALL_BLASTABLE))
 	if (IsD1File ()) {
-		sideP->nBaseTex = wall_texture [nClip] [0];
-		sideP->nOvlTex = wall_texture [nClip] [1];
+		sideP->m_info.nBaseTex = wall_texture [nClip] [0];
+		sideP->m_info.nOvlTex = wall_texture [nClip] [1];
 		} 
 	else {
-		sideP->nBaseTex = d2_wall_texture [nClip] [0];
-		sideP->nOvlTex = d2_wall_texture [nClip] [1];
+		sideP->m_info.nBaseTex = d2_wall_texture [nClip] [0];
+		sideP->m_info.nOvlTex = d2_wall_texture [nClip] [1];
 		}
 else if (nTexture >= 0) {
-	sideP->nBaseTex = nTexture;
-	sideP->nOvlTex = 0;
+	sideP->m_info.nBaseTex = nTexture;
+	sideP->m_info.nOvlTex = 0;
 	}
 else
 	return;
@@ -249,14 +249,14 @@ if ((nTrigger > -1) && (nTrigger < GameInfo ().triggers.count))
 	DeleteTrigger (nTrigger); 
 // remove references to the deleted wall
 if (GetOppositeSide (nOppSeg, nOppSide, Walls (nWall)->m_nSegment, Walls (nWall)->m_nSide)) {
-	INT16 nOppWall = Segments (nOppSeg)->sides [nOppSide].nWall;
+	INT16 nOppWall = Segments (nOppSeg)->m_sides [nOppSide].nWall;
 	if ((nOppWall >= 0) && (nOppWall < GameInfo ().walls.count))
 		Walls (nOppWall)->linkedWall = -1;
 	}
 // update all Segments () that point to Walls () higher than deleted one
 // and unlink all Segments () that point to deleted wall
 for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
-	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++)
+	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
 		if (sideP->nWall >= GameInfo ().walls.count)
 			sideP->nWall = NO_WALL;
 		else if (sideP->nWall > nWall)
@@ -317,7 +317,7 @@ return -1;
 CWall *CMine::GetWall (INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
-UINT16 nWall = Segments (nSegment)->sides [nSide].nWall;
+UINT16 nWall = Segments (nSegment)->m_sides [nSide].nWall;
 return (nWall < GameInfo ().walls.count) ? Walls (nWall) : NULL;
 }
 
@@ -332,9 +332,9 @@ if (!wallP || ((wallP->type != WALL_DOOR) && (wallP->type != WALL_BLASTABLE)))
 
 CSide *sideP = Segments (0) [nSegment].sides + nSide;
 
-if (FindClip (wallP, sideP->nOvlTex) >= 0)
+if (FindClip (wallP, sideP->m_info.nOvlTex) >= 0)
 	return true;
-if (FindClip (wallP, sideP->nBaseTex) >= 0)
+if (FindClip (wallP, sideP->m_info.nBaseTex) >= 0)
 	return true;
 return false;
 }
@@ -347,7 +347,7 @@ void CMine::CheckForDoor (INT16 nSegment, INT16 nSide)
 {
 GetCurrent (nSegment, nSide);
 // put up a warning if changing a door's texture
-UINT16 nWall = Segments (nSegment)->sides [nSide].nWall;
+UINT16 nWall = Segments (nSegment)->m_sides [nSide].nWall;
 
 if (!bExpertMode &&
     (nWall < GameInfo ().walls.count) &&

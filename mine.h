@@ -48,7 +48,7 @@ typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaV
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
 typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 
-#define CLEAR(_b) ClearGameItem (_b, (_b).Length ())
+#define CLEAR(_b) (_b)->Clear((_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
 #define DATA(_b) (_b).Buffer ()
 
@@ -72,7 +72,7 @@ typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 typedef CTexture textureList [2][MAX_D2_TEXTURES];
 
-#define CLEAR(_b)	ClearGameItem (_b, sizeof (_b))
+#define CLEAR(_b)	(_b)->Clear (sizeof (_b))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
 #define DATA(_b) (_b)
 
@@ -362,13 +362,13 @@ public:
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)
-		{ INT32 w = Segments (i)->sides [j].nWall; return (w < 0) ? NULL : Walls (w); }
+		{ INT32 w = Segments (i)->m_sides [j].m_info.nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CWall *CurrWall ()
-		{ INT32 w = CurrSide ()->nWall; return (w < 0) ? NULL : Walls (w); }
+		{ INT32 w = CurrSide ()->m_info.nWall; return (w < 0) ? NULL : Walls (w); }
 	inline CSide *CurrSide ()
-		{ return CurrSeg ()->sides + Current ()->nSide; }
+		{ return CurrSeg ()->m_sides + Current ()->nSide; }
 	inline INT16 CurrVert ()
-		{ return CurrSeg ()->verts [side_vert [Current ()->nSide][Current ()->nPoint]]; }
+		{ return CurrSeg ()->m_info.verts [side_vert [Current ()->nSide][Current ()->nPoint]]; }
 	inline CGameObject *CurrObj ()
 		{ return Objects () + Current ()->nObject; }
 	void Mark ();
@@ -542,7 +542,7 @@ public:
 	inline CSegment *OtherSeg (void)
 		{ return Segments () + Other ()->nSegment; }
 	inline CSide *OtherSide (void)
-		{ return OtherSeg ()->sides + Other ()->nSide; }
+		{ return OtherSeg ()->m_sides + Other ()->nSide; }
 	inline void SetCurrent (INT16 nSegment = -1, INT16 nSide = -1, INT16 nLine = -1, INT16 nPoint = -1) {
 		if (nSegment >= 0) Current ()->nSegment = nSegment;
 		if (nSide >= 0) Current ()->nSide = nSide;

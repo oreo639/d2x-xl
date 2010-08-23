@@ -18,37 +18,37 @@ if (nTexture < 0)
 INT16 nSegment = Current ()->nSegment;
 INT16 nOppSeg, nOppSide;
 CSegment *segP = Segments (nSegment);
-CSide *sideP = segP->sides;
+CSide *sideP = segP->m_sides;
 double scale = theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
-segP->childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
+segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (segP->children [nSide] == -1) {
+	if (segP->m_info.children [nSide] == -1) {
 		SetTexture (nSegment, nSide, nTexture, 0);
 	/*
-		sideP->uvls [0].l = 0x8000;
-		sideP->uvls [1].l = 0x8000;
-		sideP->uvls [2].l = 0x8000;
-		sideP->uvls [3].l = 0x8000;
+		sideP->m_info.uvls [0].l = 0x8000;
+		sideP->m_info.uvls [1].l = 0x8000;
+		sideP->m_info.uvls [2].l = 0x8000;
+		sideP->m_info.uvls [3].l = 0x8000;
 	*/
 		INT32 i;
 		for (i = 0; i < 4; i++) {
-			sideP->uvls [i].u = (INT16) ((double) default_uvls [i].u / scale);
-			sideP->uvls [i].v = (INT16) ((double) default_uvls [i].v / scale);
-			sideP->uvls [i].l = default_uvls [i].l;
+			sideP->m_info.uvls [i].u = (INT16) ((double) default_uvls [i].u / scale);
+			sideP->m_info.uvls [i].v = (INT16) ((double) default_uvls [i].v / scale);
+			sideP->m_info.uvls [i].l = default_uvls [i].l;
 			}
 		SetUV (nSegment, nSide, 0, 0, 0);
 		}
 	else if (nTexture >= 0) {
 		if (walltype >= 0) {
 			if ((GameInfo ().walls.count < MAX_WALLS) &&
-				 (Segments (nSegment)->sides [nSide].nWall >= GameInfo ().walls.count))
+				 (Segments (nSegment)->m_sides [nSide].nWall >= GameInfo ().walls.count))
 				AddWall (nSegment, nSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
 			if ((GameInfo ().walls.count < MAX_WALLS) &&
 				 GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
-				 (Segments (nOppSeg)->sides [nOppSide].nWall >= GameInfo ().walls.count))
+				 (Segments (nOppSeg)->m_sides [nOppSide].nWall >= GameInfo ().walls.count))
 				AddWall (nOppSeg, nOppSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
@@ -118,29 +118,29 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 	}
 else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childseg;
-	CSide *oppSideP, *sideP = segP->sides;
+	CSide *oppSideP, *sideP = segP->m_sides;
 	CWall *wallP;
 	INT16 nOppSeg, nOppSide;
 	for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (segP->children [nSide] < 0)	// assume no wall if no child segment at the current side
+		if (segP->m_info.children [nSide] < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childseg = Segments (segP->children [nSide]);
+		childseg = Segments (segP->m_info.children [nSide]);
 		if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wallP = GetWall (nSegment, nSide)) && 
-			 (wallP->type == WALL_ILLUSION) && (sideP->nBaseTex == (IsD1File () ? 322 : 333)))
+			 (wallP->type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File () ? 322 : 333)))
 			DeleteWall (sideP->nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		if (GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
 			 (wallP = GetWall (nSegment, nSide)) && (wallP->type == WALL_ILLUSION)) {
-			oppSideP = Segments (nOppSeg)->sides + nOppSide;
+			oppSideP = Segments (nOppSeg)->m_sides + nOppSide;
 			if (oppSideP->nBaseTex == (IsD1File () ? 322 : 333))
 				DeleteWall (oppSideP->nWall);
 			}
 		}
 	}
-segP->childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
+segP->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 segP->function = SEGMENT_FUNC_NONE;
 }
 
@@ -155,7 +155,7 @@ theApp.LockUndo ();
 UndefineSegment (nSegment);
 CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 segP->function = type;
-segP->childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
+segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
@@ -226,7 +226,7 @@ EquipGens (n_matcen)->objFlags [0] = 0;
 EquipGens (n_matcen)->objFlags [1] = 0;
 EquipGens (n_matcen)->hitPoints = 0;
 EquipGens (n_matcen)->interval = 0;
-EquipGens (n_matcen)->nSegment = nSegment;
+EquipGens (n_matcen)->m_info.nSegment = nSegment;
 EquipGens (n_matcen)->nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->value = 
 Segments (Current ()->nSegment)->nMatCen = n_matcen;
@@ -264,7 +264,7 @@ BotGens (n_matcen)->objFlags [0] = 8;
 BotGens (n_matcen)->objFlags [1] = 0;
 BotGens (n_matcen)->hitPoints = 0;
 BotGens (n_matcen)->interval = 0;
-BotGens (n_matcen)->nSegment = nSegment;
+BotGens (n_matcen)->m_info.nSegment = nSegment;
 BotGens (n_matcen)->nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->value = 
 Segments (Current ()->nSegment)->nMatCen = n_matcen;
@@ -590,7 +590,7 @@ return AddExit (TT_EXIT);
 bool CMine::AddExit (INT16 type) 
 {
 
-UINT16 nWall = Segments (Current ()->nSegment)->sides [Current ()->nSide].nWall;
+UINT16 nWall = Segments (Current ()->nSegment)->m_sides [Current ()->nSide].nWall;
 if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -724,7 +724,7 @@ return false;
 bool CMine::AddDoorTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
 CSegment* otherSegP = OtherSeg ();
-UINT16 nWall = otherSegP->sides [Other ()->nSide].nWall;
+UINT16 nWall = otherSegP->m_sides [Other ()->nSide].nWall;
 if (nWall >= GameInfo ().walls.count) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
 				"Hint: Select a wall using the 'other cube' and\n"

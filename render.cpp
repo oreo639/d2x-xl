@@ -182,7 +182,7 @@ square2quad_matrix(A,a);
 adjoint_matrix(A,IA);
 
 // store uv coordinates into b[]
-uvls = segment->sides[nSide].uvls;
+uvls = segment->m_sides[nSide].uvls;
 for (i=0;i<4;i++) {
 	b[i].x = uvls[i].u;
 	b[i].y = uvls[i].v;
@@ -208,7 +208,7 @@ if (bEnableDeltaShading) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i <dlIdxCount; i++, dli++) {
-//				if (dli->nSegment == theMine->current->segment) {
+//				if (dli->m_info.nSegment == theMine->current->segment) {
 			// loop on each delta light till the segment/side is found
 				CLightDeltaValue *dl = theMine->LightDeltaValues (dli->index);
 				h = dli->count;

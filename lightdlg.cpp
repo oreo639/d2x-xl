@@ -197,11 +197,11 @@ nVertexLight = (INT32) (m_fVertexLight * f1_0 / 100.0);
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
-	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
+	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			nVertex = segP->verts [side_vert [nSide][i]];
 			if (theMine->VertStatus (nVertex) & MARKED_MASK) {
-				sideP->uvls [i].l = nVertexLight;
+				sideP->m_info.uvls [i].l = nVertexLight;
 				bChange = true;
 				}
 			}

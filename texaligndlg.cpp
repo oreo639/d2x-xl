@@ -147,8 +147,8 @@ for (x= -32 * y; x < 32 * y; x += 32) {
 if (theMine->IsWall ()) {
 	// define array of screen points for (u,v) coordinates
 	for (i = 0; i < 4; i++) {
-		x = offset.x + m_centerPt.x + (INT32)(m_zoom*(double)sideP->uvls[i].u/64.0);
-		y = offset.y + m_centerPt.y + (INT32)(m_zoom*(double)sideP->uvls[i].v/64.0);
+		x = offset.x + m_centerPt.x + (INT32)(m_zoom*(double)sideP->m_info.uvls[i].u/64.0);
+		y = offset.y + m_centerPt.y + (INT32)(m_zoom*(double)sideP->m_info.uvls[i].v/64.0);
 		m_apts [i].x = x;
 		m_apts [i].y = y;
 		if (i==0) {
@@ -186,16 +186,16 @@ if (theMine->IsWall ()) {
 
 			// check child for this line 
 			nChildSide = side_child[nSide][nChildLine];
-			nChild = segP->children[nChildSide];
+			nChild = segP->m_info.children[nChildSide];
 			childSeg = theMine->Segments (0) + nChild;
 			if (nChild > -1) {
 
 				// figure out which side of child shares two points w/ current->side
 				for (childs_side = 0; childs_side < 6; childs_side++) {
 					// ignore children of different textures (or no texture)
-					CSide *childSideP = childSeg->sides + childs_side;
+					CSide *childSideP = childSeg->m_sides + childs_side;
 					if (theMine->IsWall (nChild, childs_side) &&
-						 (childSideP->nBaseTex == sideP->nBaseTex)) {
+						 (childSideP->nBaseTex == sideP->m_info.nBaseTex)) {
 						for (childs_line=0;childs_line<4;childs_line++) {
 							// find vert numbers for the line's two end points
 							childs_point0 = line_vert [side_line [childs_side][childs_line]][0];
@@ -211,8 +211,8 @@ if (theMine->IsWall ()) {
 								// ..of the texture size in order to make it line up on the screen
 								// start by copying points into an array
 								for (i = 0; i < 4; i++) {
-									x = offset.x + m_centerPt.x + (INT32)(m_zoom*(double)childSideP->uvls[i].u/64.0);
-									y = offset.y + m_centerPt.y + (INT32)(m_zoom*(double)childSideP->uvls[i].v/64.0);
+									x = offset.x + m_centerPt.x + (INT32)(m_zoom*(double)childSideP->m_info.uvls[i].u/64.0);
+									y = offset.y + m_centerPt.y + (INT32)(m_zoom*(double)childSideP->m_info.uvls[i].v/64.0);
 									child_pts[i].x = x;
 									child_pts[i].y = y;
 									}
@@ -296,7 +296,7 @@ offset.y = (INT32) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 pDC->RealizePalette();
 memset(tx.m_pDataBM, 0, sizeof (bmBuf));
-if (DefineTexture (sideP->nBaseTex, sideP->nOvlTex, &tx, 0, 0)) {
+if (DefineTexture (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tx, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (DefineTexture failed)");
 	return;
 	}
@@ -325,20 +325,20 @@ UpdateData (TRUE);
 	INT32 i,	delta;
 	CSide	*sideP = theMine->CurrSide ();
 
-if (delta = (INT32) (sideP->uvls [theMine->Current ()->nPoint].u - m_alignX / UV_FACTOR)) {
+if (delta = (INT32) (sideP->m_info.uvls [theMine->Current ()->nPoint].u - m_alignX / UV_FACTOR)) {
 	UpdateData (TRUE);
 	theApp.SetModified (TRUE);
 	switch (theApp.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->uvls[theMine->Current ()->nPoint].u -= delta;
+			sideP->m_info.uvls[theMine->Current ()->nPoint].u -= delta;
 			break;
 		case LINE_MODE:
-			sideP->uvls[theMine->Current ()->nLine].u -= delta;
-			sideP->uvls[(theMine->Current ()->nLine+1)&3].u -= delta;
+			sideP->m_info.uvls[theMine->Current ()->nLine].u -= delta;
+			sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].u -= delta;
 			break;
 		default:
 			for (i = 0; i < 4; i++)
-				sideP->uvls[i].u -= delta;
+				sideP->m_info.uvls[i].u -= delta;
 		}  
 	UpdateAlignWnd ();
 	}
@@ -353,20 +353,20 @@ UpdateData (TRUE);
 	INT32 i, delta;
 	CSide	*sideP = theMine->CurrSide ();
 
-if (delta = (INT32) (sideP->uvls [theMine->Current ()->nPoint].v - m_alignY / UV_FACTOR)) {
+if (delta = (INT32) (sideP->m_info.uvls [theMine->Current ()->nPoint].v - m_alignY / UV_FACTOR)) {
 	UpdateData (TRUE);
 	theApp.SetModified (TRUE);
 	switch (theApp.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->uvls[theMine->Current ()->nPoint].v -= delta;
+			sideP->m_info.uvls[theMine->Current ()->nPoint].v -= delta;
 			break;
 		case LINE_MODE:
-			sideP->uvls[theMine->Current ()->nLine].v -= delta;
-			sideP->uvls[(theMine->Current ()->nLine+1)&3].v -= delta;
+			sideP->m_info.uvls[theMine->Current ()->nLine].v -= delta;
+			sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].v -= delta;
 			break;
 		default:
 			for (i = 0; i < 4; i++)
-				sideP->uvls[i].v -= delta;
+				sideP->m_info.uvls[i].v -= delta;
 		}  
 	UpdateAlignWnd ();
 	}
@@ -381,8 +381,8 @@ UpdateData (TRUE);
 	double delta,dx,dy,angle;
 	CSide	*sideP = theMine->CurrSide ();
 
-dx = sideP->uvls[1].u - sideP->uvls[0].u;
-dy = sideP->uvls[1].v - sideP->uvls[0].v;
+dx = sideP->m_info.uvls[1].u - sideP->m_info.uvls[0].u;
+dy = sideP->m_info.uvls[1].v - sideP->m_info.uvls[0].v;
 angle = (dx || dy) ? atan3 (dy,dx) - M_PI_2 : 0;
 delta = angle - m_alignAngle * PI / 180.0;
 RotateUV (delta, FALSE);
@@ -394,17 +394,17 @@ void CTextureTool::RefreshAlignment ()
 {
 CSide * sideP = theMine->CurrSide ();
 
-m_alignX = (double) sideP->uvls [theMine->Current ()->nPoint].u * UV_FACTOR;
-m_alignY = (double) sideP->uvls [theMine->Current ()->nPoint].v * UV_FACTOR;
+m_alignX = (double) sideP->m_info.uvls [theMine->Current ()->nPoint].u * UV_FACTOR;
+m_alignY = (double) sideP->m_info.uvls [theMine->Current ()->nPoint].v * UV_FACTOR;
 
-double dx = sideP->uvls [1].u - sideP->uvls [0].u;
-double dy = sideP->uvls [1].v - sideP->uvls [0].v;
+double dx = sideP->m_info.uvls [1].u - sideP->m_info.uvls [0].u;
+double dy = sideP->m_info.uvls [1].v - sideP->m_info.uvls [0].v;
 m_alignAngle = ((dx || dy) ? atan3 (dy,dx) - M_PI_2 : 0) * 180.0 / M_PI;
 if (m_alignAngle < 0)
 	m_alignAngle += 360.0;
 else if (m_alignAngle > 360)
 	m_alignAngle -= 360.0;
-INT32 h = sideP->nOvlTex & 0xC000;
+INT32 h = sideP->m_info.nOvlTex & 0xC000;
 for (m_alignRot2nd = 0; m_alignRot2nd < 4; m_alignRot2nd++)
 	if (rotMasks [m_alignRot2nd] == h)
 		break;
@@ -422,16 +422,16 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 for (i = 0; i < 4; i++) {
 	// convert to polar coordinates
-	x = sideP->uvls[i].u;
-	y = sideP->uvls[i].v;
+	x = sideP->m_info.uvls[i].u;
+	y = sideP->m_info.uvls[i].v;
 	if (x || y) {
 		radius = sqrt(x*x + y*y);
 		a = atan3 (y,x) - angle;			// add rotation
 		// convert back to rectangular coordinates
 		x = radius * cos (a);
 		y = radius * sin (a);
-		sideP->uvls[i].u = (INT16) x;
-		sideP->uvls[i].v = (INT16) y;
+		sideP->m_info.uvls[i].u = (INT16) x;
+		sideP->m_info.uvls[i].v = (INT16) y;
 		}
 	}
 if (bUpdate)
@@ -454,15 +454,15 @@ switch (theApp.MineView ()->GetSelectMode ()) {
 		break;
 	case LINE_MODE:
 		l = theMine->Current ()->nLine;
-		h = sideP->uvls [l].u;
-		sideP->uvls [l].u = sideP->uvls [(l + 1) & 3].u;
-		sideP->uvls [(l + 1) & 3].u = h;
+		h = sideP->m_info.uvls [l].u;
+		sideP->m_info.uvls [l].u = sideP->m_info.uvls [(l + 1) & 3].u;
+		sideP->m_info.uvls [(l + 1) & 3].u = h;
 		break;
 	default:
 		for (i = 0; i < 2; i++) {
-			h = sideP->uvls[i].u;
-			sideP->uvls[i].u = sideP->uvls[i + 2].u;
-			sideP->uvls[i + 2].u = h;
+			h = sideP->m_info.uvls[i].u;
+			sideP->m_info.uvls[i].u = sideP->m_info.uvls[i + 2].u;
+			sideP->m_info.uvls[i + 2].u = h;
 			}
 	}
 UpdateData (FALSE);
@@ -484,15 +484,15 @@ switch (theApp.MineView ()->GetSelectMode ()) {
 		break;
 	case LINE_MODE:
 		l = theMine->Current ()->nLine;
-		h = sideP->uvls [l].v;
-		sideP->uvls [l].v = sideP->uvls [(l + 1) & 3].v;
-		sideP->uvls [(l + 1) & 3].v = h;
+		h = sideP->m_info.uvls [l].v;
+		sideP->m_info.uvls [l].v = sideP->m_info.uvls [(l + 1) & 3].v;
+		sideP->m_info.uvls [(l + 1) & 3].v = h;
 		break;
 	default:
 		for (i = 0; i < 2; i++) {
-			h = sideP->uvls[i].v;
-			sideP->uvls[i].v = sideP->uvls[i + 2].v;
-			sideP->uvls[i + 2].v = h;
+			h = sideP->m_info.uvls[i].v;
+			sideP->m_info.uvls[i].v = sideP->m_info.uvls[i + 2].v;
+			sideP->m_info.uvls[i + 2].v = h;
 			}
 	}
 UpdateData (FALSE);
@@ -512,17 +512,17 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->uvls[theMine->Current ()->nPoint].u += (INT16) delta;
+		sideP->m_info.uvls[theMine->Current ()->nPoint].u += (INT16) delta;
 		break;
 	case LINE_MODE:
-		sideP->uvls[theMine->Current ()->nLine].u += (INT16) delta;
-		sideP->uvls[(theMine->Current ()->nLine+1)&3].u += (INT16) delta;
+		sideP->m_info.uvls[theMine->Current ()->nLine].u += (INT16) delta;
+		sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].u += (INT16) delta;
 		break;
 	default:
 		for (i=0;i<4;i++)
-			sideP->uvls[i].u += (INT16) delta;
+			sideP->m_info.uvls[i].u += (INT16) delta;
 	}
-m_alignX = (double) sideP->uvls [theMine->Current ()->nPoint].u * UV_FACTOR;
+m_alignX = (double) sideP->m_info.uvls [theMine->Current ()->nPoint].u * UV_FACTOR;
 UpdateData (FALSE);
 theApp.SetModified (TRUE);
 UpdateAlignWnd ();
@@ -540,17 +540,17 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 switch (theApp.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->uvls[theMine->Current ()->nPoint].v += (INT16) delta;
+		sideP->m_info.uvls[theMine->Current ()->nPoint].v += (INT16) delta;
 		break;
 	case LINE_MODE:
-		sideP->uvls[theMine->Current ()->nLine].v += (INT16) delta;
-		sideP->uvls[(theMine->Current ()->nLine+1)&3].v += (INT16) delta;
+		sideP->m_info.uvls[theMine->Current ()->nLine].v += (INT16) delta;
+		sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].v += (INT16) delta;
 		break;
 	default:
 		for (i=0;i<4;i++)
-			sideP->uvls[i].v += (INT16) delta;
+			sideP->m_info.uvls[i].v += (INT16) delta;
 	}
-m_alignY = (double)sideP->uvls[theMine->Current ()->nPoint].v * UV_FACTOR;
+m_alignY = (double)sideP->m_info.uvls[theMine->Current ()->nPoint].v * UV_FACTOR;
 UpdateData (FALSE);
 theApp.SetModified (TRUE);
 UpdateAlignWnd ();
@@ -622,10 +622,10 @@ void CTextureTool::OnHShrink ()
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-sideP->uvls [0].u -= (INT16) delta;
-sideP->uvls[1].u -= (INT16) delta;
-sideP->uvls [2].u += (INT16) delta;
-sideP->uvls[3].u += (INT16) delta;
+sideP->m_info.uvls [0].u -= (INT16) delta;
+sideP->m_info.uvls[1].u -= (INT16) delta;
+sideP->m_info.uvls [2].u += (INT16) delta;
+sideP->m_info.uvls[3].u += (INT16) delta;
 UpdateAlignWnd ();
 }
 
@@ -639,10 +639,10 @@ void CTextureTool::OnVShrink ()
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-sideP->uvls [0].v += (INT16) delta;
-sideP->uvls[3].v += (INT16) delta;
-sideP->uvls [1].v -= (INT16) delta;
-sideP->uvls[2].v -= (INT16) delta;
+sideP->m_info.uvls [0].v += (INT16) delta;
+sideP->m_info.uvls[3].v += (INT16) delta;
+sideP->m_info.uvls [1].v -= (INT16) delta;
+sideP->m_info.uvls[2].v -= (INT16) delta;
 UpdateAlignWnd ();
 }
 
@@ -677,9 +677,9 @@ theApp.LockUndo ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (theMine->SideIsMarked (nSegment, nSide)) {
-			if ((segP->children [nSide] == -1) || 
-				 (segP->sides [nSide].nWall < nWalls)) {
-				segP->sides [nSide].nOvlTex &= 0x3fff; // rotate 0
+			if ((segP->m_info.children [nSide] == -1) || 
+				 (segP->m_sides [nSide].nWall < nWalls)) {
+				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
 				theMine->SetUV (nSegment,nSide,0,0,0);
 				bModified = TRUE;
 				}
@@ -699,7 +699,7 @@ UpdateAlignWnd ();
 void CTextureTool::OnAlignStretch2Fit ()
 {
 	CSide*		sideP = theMine->CurrSide ();
-	UINT32		scale = 1; //theMine->Textures () [m_fileType][sideP->nBaseTex].Scale (sideP->nBaseTex);
+	UINT32		scale = 1; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 	CSegment*	segP;
 	INT16			nSegment, nSide;
 	INT32			i;
@@ -708,18 +708,18 @@ UpdateData (TRUE);
 theApp.SetModified (TRUE);
 if (!theMine->GotMarkedSides ()) {
 	for (i = 0; i < 4; i++) {
-		sideP->uvls [i].u = default_uvls [i].u / scale;
-		sideP->uvls [i].v = default_uvls [i].v / scale;
+		sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
+		sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
 		}
 	}
 else {
 	theApp.LockUndo ();
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
-		for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
+		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 			if (theMine->SideIsMarked (nSegment, nSide)) {
 				for (i = 0; i < 4; i++) {
-					sideP->uvls [i].u = default_uvls [i].u / scale;
-					sideP->uvls [i].v = default_uvls [i].v / scale;
+					sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
+					sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
 					}
 				}
 			}
@@ -739,10 +739,10 @@ if (bStart) {
 	CSegment *segP = theMine->Segments (0);
 	INT32 i;
 	for (i = theMine->SegCount (); i; i--, segP++)
-		 segP->nIndex = 0; // all six sides not aligned yet
+		 segP->m_info.nIndex = 0; // all six sides not aligned yet
 	}
 // mark current side as aligned
-theMine->Segments (nSegment)->nIndex = 1;
+theMine->Segments (nSegment)->m_info.nIndex = 1;
 // call recursive function which aligns one at a time
 AlignChildTextures (nSegment, nSide, MAX_SEGMENTS);
 }
@@ -766,32 +766,32 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 bool bAll = !theMine->GotMarkedSegments ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
-	 segP->nIndex = 0;
+	 segP->m_info.nIndex = 0;
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
-	if (segP->nIndex)
+	if (segP->m_info.nIndex)
 		continue;
-	childSideP = segP->sides + nSide;
-	if (m_bUse1st && (sideP->nBaseTex != childSideP->nBaseTex))
+	childSideP = segP->m_sides + nSide;
+	if (m_bUse1st && (sideP->m_info.nBaseTex != childSideP->nBaseTex))
 		continue;
-	if (m_bUse2nd && (sideP->nOvlTex != childSideP->nOvlTex))
+	if (m_bUse2nd && (sideP->m_info.nOvlTex != childSideP->m_info.nOvlTex))
 		continue;
 	if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 		continue;
 	if (nSegment != theMine->Current ()->nSegment) {
 		theMine->SetUV (nSegment, nSide, 0, 0, 0);
-		sangle = atan3 (sideP->uvls [(nChildLine + 1) & 3].v - sideP->uvls [nChildLine].v, 
-							 sideP->uvls [(nChildLine + 1) & 3].u - sideP->uvls [nChildLine].u); 
-		cangle = atan3 (childSideP->uvls [nChildLine].v - childSideP->uvls [(nChildLine + 1) & 3].v, 
-							 childSideP->uvls [nChildLine].u - childSideP->uvls [(nChildLine + 1) & 3].u); 
+		sangle = atan3 (sideP->m_info.uvls [(nChildLine + 1) & 3].v - sideP->m_info.uvls [nChildLine].v, 
+							 sideP->m_info.uvls [(nChildLine + 1) & 3].u - sideP->m_info.uvls [nChildLine].u); 
+		cangle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) & 3].v, 
+							 childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) & 3].u); 
 		// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
 		INT32 i;
 		for (i = 0; i < 4; i++) {
-			angle = atan3 (childSideP->uvls [i].v, childSideP->uvls [i].u); 
-			length = sqrt ((double)childSideP->uvls [i].u * (double) childSideP->uvls [i].u +
-								(double)childSideP->uvls [i].v * (double) childSideP->uvls [i].v); 
+			angle = atan3 (childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
+			length = sqrt ((double)childSideP->m_info.uvls [i].u * (double) childSideP->m_info.uvls [i].u +
+								(double)childSideP->m_info.uvls [i].v * (double) childSideP->m_info.uvls [i].v); 
 			angle -= (cangle - sangle); 
-			childSideP->uvls [i].u = (INT16) (length * cos (angle)); 
-			childSideP->uvls [i].v = (INT16) (length * sin (angle)); 
+			childSideP->m_info.uvls [i].u = (INT16) (length * cos (angle)); 
+			childSideP->m_info.uvls [i].v = (INT16) (length * sin (angle)); 
 			}
 		}
 	AlignChildren (nSegment, nSide, false);
@@ -848,7 +848,7 @@ if (nDepth <= 0)
 if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
 	return;
 segP = theMine->Segments (nSegment);
-if (segP->nIndex < 0)
+if (segP->m_info.nIndex < 0)
 	return;
 
 	INT16			*childList = new INT16 [theMine->SegCount ()];
@@ -858,49 +858,49 @@ if (!childList)
 	return;
 
 childList [tos++] = nSegment;
-segP->nIndex = nSide;
+segP->m_info.nIndex = nSide;
 
 if (m_bIgnorePlane) {
-	sideP = segP->sides + nSide;
-	nBaseTex = sideP->nBaseTex;
+	sideP = segP->m_sides + nSide;
+	nBaseTex = sideP->m_info.nBaseTex;
 	bAlignedSides = 1 << nSide;
 	h = theMine->AlignTextures (nSegment, nSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 	for (nLine = 0; nLine < 4; nLine++) {
 		child_sidenum = side_child[nSide][nLine];
 		if (!(bAlignedSides & (1 << child_sidenum))) {
 			bAlignedSides |= (1 << child_sidenum);
-			childSideP = segP->sides + child_sidenum;
+			childSideP = segP->m_sides + child_sidenum;
 			if (childSideP->nBaseTex == nBaseTex)
 				theMine->AlignTextures (nSegment, child_sidenum, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 			}
 		}
 	if (h >= 0) {
-		for (child_sidenum = 0, childSideP = segP->sides; child_sidenum < 6; child_sidenum++, childSideP++) {
+		for (child_sidenum = 0, childSideP = segP->m_sides; child_sidenum < 6; child_sidenum++, childSideP++) {
 			if (childSideP->nBaseTex == nBaseTex) {
 				for (nLine = 0; nLine < 4; nLine++) {
-					child_segnum = segP->children [side_child[child_sidenum][nLine]];
+					child_segnum = segP->m_info.children [side_child[child_sidenum][nLine]];
 					if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 						continue;
 					childSeg = theMine->Segments (child_segnum);
-					if (childSeg->nIndex != 0)
+					if (childSeg->m_info.nIndex != 0)
 						continue;
 					h = theMine->AlignTextures (nSegment, child_sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
-					childSeg->nIndex = h + 1;
+					childSeg->m_info.nIndex = h + 1;
 					}
 				}
 			}
 		}
-	segP->nIndex = -1;
+	segP->m_info.nIndex = -1;
 	--nDepth;
-	for (nSide = 0, childSideP = segP->sides; nSide < 6; nSide++, childSideP++) {
-//			if (childSideP->nBaseTex != sideP->nBaseTex)
+	for (nSide = 0, childSideP = segP->m_sides; nSide < 6; nSide++, childSideP++) {
+//			if (childSideP->nBaseTex != sideP->m_info.nBaseTex)
 //				continue;
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->children [side_child[nSide][nLine]];
+			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
 			if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
-			child_sidenum = childSeg->nIndex - 1;
+			child_sidenum = childSeg->m_info.nIndex - 1;
 			if (child_sidenum < 0)
 				continue;
 			AlignChildTextures (child_segnum, child_sidenum, nDepth);
@@ -911,28 +911,28 @@ else {
 	while (pos < tos) {
 		nSegment = childList [pos++];
 		segP = theMine->Segments (nSegment);
-		nSide = segP->nIndex;
-		segP->nIndex = -1;
+		nSide = segP->m_info.nIndex;
+		segP->m_info.nIndex = -1;
 		for (nLine = 0; nLine < 4; nLine++) {
 			if (nSide < 0)
 				continue;
-			child_segnum = segP->children [side_child[nSide][nLine]];
+			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
 			if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
-			if (childSeg->nIndex)
+			if (childSeg->m_info.nIndex)
 				continue;
-			childSeg->nIndex = theMine->AlignTextures (nSegment, nSide, child_segnum, m_bUse1st, m_bUse2nd, 0);
-			if (childSeg->nIndex >= 0)
+			childSeg->m_info.nIndex = theMine->AlignTextures (nSegment, nSide, child_segnum, m_bUse1st, m_bUse2nd, 0);
+			if (childSeg->m_info.nIndex >= 0)
 				childList [tos++] = child_segnum;
 			}
 /*
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->children [side_child[nSide][nLine]];
+			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
 			if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
-			child_sidenum = childSeg->nIndex;
+			child_sidenum = childSeg->m_info.nIndex;
 			if (child_sidenum < 0)
 				continue;
 			AlignChildTextures (child_segnum, child_sidenum, --nDepth);
@@ -969,10 +969,10 @@ void CTextureTool::Rot2nd (INT32 iAngle)
 {
 	CSide *sideP = theMine->CurrSide ();
  
-if ((sideP->nOvlTex & 0x1fff) && ((sideP->nOvlTex & 0xc000) != rotMasks [iAngle])) {
+if ((sideP->m_info.nOvlTex & 0x1fff) && ((sideP->m_info.nOvlTex & 0xc000) != rotMasks [iAngle])) {
 	theApp.SetModified (TRUE);
-	sideP->nOvlTex &= ~0xc000;
-   sideP->nOvlTex |= rotMasks [iAngle];
+	sideP->m_info.nOvlTex &= ~0xc000;
+   sideP->m_info.nOvlTex |= rotMasks [iAngle];
 	m_alignRot2nd = iAngle;
 	UpdateData (FALSE);
 	UpdateAlignWnd ();

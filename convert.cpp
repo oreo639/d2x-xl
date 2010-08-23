@@ -83,9 +83,9 @@ CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 // add textures that have been used to Texture 1 combo box
 for (nSeg = segCount; nSeg; nSeg--, segP++) {
-	for (sideP = segP->sides, nSide = 6; nSide; nSide--, sideP++) {
-		tnum [0] = sideP->nBaseTex;
-		tnum [1] = sideP->nOvlTex & 0x1fff;
+	for (sideP = segP->m_sides, nSide = 6; nSide; nSide--, sideP++) {
+		tnum [0] = sideP->m_info.nBaseTex;
+		tnum [1] = sideP->m_info.nOvlTex & 0x1fff;
 		INT32 i;
 		for (i = 0; i < 2; i++) {
 			if (tnum [i] != -1) {
@@ -231,22 +231,22 @@ theMine->LoadPalette ();
   // convert textures
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
 	segP->s2_flags = 0;
-	for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++) {
-		if ((segP->children [nSide] == -1) || (segP->sides [nSide].nWall < wallCount)) {
-			d1Texture = segP->sides [nSide].nBaseTex;
+	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
+		if ((segP->m_info.children [nSide] == -1) || (segP->m_sides [nSide].nWall < wallCount)) {
+			d1Texture = segP->m_sides [nSide].m_info.nBaseTex;
 			if ((d1Texture >= 0) && (d1Texture < MAX_D1_TEXTURES))
-				segP->sides[nSide].nBaseTex = m_pTextures [d1Texture];
+				segP->m_sides[nSide].m_info.nBaseTex = m_pTextures [d1Texture];
 			else { 
 				DEBUGMSG (" Level converter: Invalid texture 1 found")
-				segP->sides [nSide].nBaseTex = 0;
+				segP->m_sides [nSide].m_info.nBaseTex = 0;
 				}
-			d1Texture = segP->sides [nSide].nOvlTex & 0x1fff;
-			mode = segP->sides[nSide].nOvlTex & 0xc000;
+			d1Texture = segP->m_sides [nSide].m_info.nOvlTex & 0x1fff;
+			mode = segP->m_sides[nSide].m_info.nOvlTex & 0xc000;
 			if (d1Texture > 0 && d1Texture < MAX_D1_TEXTURES)
-				segP->sides [nSide].nOvlTex = m_pTextures [d1Texture] | mode;
+				segP->m_sides [nSide].m_info.nOvlTex = m_pTextures [d1Texture] | mode;
 			else if (d1Texture < 0) {
 				DEBUGMSG (" Level converter: Invalid texture 2 found")
-				segP->sides [nSide].nOvlTex = 0;
+				segP->m_sides [nSide].m_info.nOvlTex = 0;
 				}
 			}
 		}

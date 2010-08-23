@@ -328,7 +328,7 @@ if (theMine->UseTexColors ()) {
 	bool			bAll = !theMine->GotMarkedSides ();
 
 	for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
-		for (nSide = 0, sideP = segP->sides; nSide < 6; nSide++, sideP++) {
+		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 			if (sideP->nWall < 0)
 				continue;
 			wallP = theMine->Walls (sideP->nWall);
@@ -336,7 +336,7 @@ if (theMine->UseTexColors ()) {
 				continue;
 			if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 				continue;
-			if (sideP->nBaseTex != nBaseTex)
+			if (sideP->m_info.nBaseTex != nBaseTex)
 				continue;
 			wallP->cloak_value = m_nColorIndex;
 			}
@@ -375,7 +375,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 			//if (!pWall || (pWall->type != WALL_TRANSPARENT)) 
 				{
 				theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
-				theMine->SetTexColor (theMine->CurrSide ()->nOvlTex, psc);
+				theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
 				}
 			UpdateData (FALSE);
 			UpdatePaletteWnd ();
@@ -406,7 +406,7 @@ if (ChooseColor (&cc)) {
 	psc->color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->color.b = (double) m_rgbColor.peBlue / 255.0;
 	theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
-	theMine->SetTexColor (theMine->CurrSide ()->nOvlTex, psc);
+	theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
 	UpdatePaletteWnd ();
 	}
 }

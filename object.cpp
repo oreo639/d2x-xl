@@ -151,7 +151,7 @@ void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment)
   objP->movement_type = MT_PHYSICS;
   objP->render_type   = RT_POLYOBJ;
   objP->flags         = 0;
-  objP->nSegment      = Current ()->nSegment;
+  objP->m_info.nSegment      = Current ()->nSegment;
   objP->pos				 = location;
   objP->orient.rVec.Set (F1_0, 0, 0);
   objP->orient.uVec.Set (0, F1_0, 0);
@@ -400,7 +400,7 @@ else {
 	memcpy (objP, current_obj, sizeof (CGameObject));
 	}
 objP->flags = 0;                                      // new: 1/27/97
-objP->nSegment = Current ()->nSegment;
+objP->m_info.nSegment = Current ()->nSegment;
 // set object position in the center of the cube for now
 CalcSegCenter (objP->pos,Current ()->nSegment);
 objP->last_pos = objP->pos;
@@ -408,7 +408,7 @@ Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
 for (i = 0; i < GameInfo ().objects.count - 1; i++)
-	if (Objects (i)->nSegment == Current ()->nSegment)
+	if (Objects (i)->m_info.nSegment == Current ()->nSegment)
 		count++;
 objP->pos.v.y += count * 2 * F1_0;
 objP->last_pos.v.y += count * 2 * F1_0;

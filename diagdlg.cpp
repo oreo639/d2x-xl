@@ -146,15 +146,15 @@ INT32 CDiagTool::CountTextures (void)
 
 memset (bUsed, 0, sizeof (bUsed));
 for (i = theMine->SegCount (); i; i--, segP++)
-	for (j = 0, sideP = segP->sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
-		if ((segP->children [j] == -1) || (sideP->nWall < h)) {
-			t = sideP->nBaseTex;
+	for (j = 0, sideP = segP->m_sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
+		if ((segP->m_info.children [j] == -1) || (sideP->nWall < h)) {
+			t = sideP->m_info.nBaseTex;
 //			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
 			if ((t >= 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;
 				bUsed [t >> 3] |= (1 << (t & 7));
 				}
-			t = sideP->nOvlTex;
+			t = sideP->m_info.nOvlTex;
 //			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
 			if ((t > 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;

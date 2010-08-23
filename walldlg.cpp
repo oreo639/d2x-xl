@@ -257,7 +257,7 @@ InitCBWallNo ();
 if (!(m_pWall [0] = theMine->FindWall ())) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (theMine->CurrSeg ()->children [theMine->Current ()->nSide] >= 0)
+	if (theMine->CurrSeg ()->m_info.children [theMine->Current ()->nSide] >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);
@@ -318,7 +318,7 @@ else {
 		m_bKeys [i] = ((m_pWall [0]->keys & (1 << i)) != 0);
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
-		i = theMine->Segments (m_defWall.m_nSegment)->sides [m_defWall.m_nSide].nBaseTex;
+		i = theMine->Segments (m_defWall.m_nSegment)->m_sides [m_defWall.m_nSide].m_info.nBaseTex;
 		if (m_defWall.type == WALL_CLOAKED)
 			m_defOvlTexture = i;
 		else
@@ -360,7 +360,7 @@ nSegment [0] = theMine->Current ()->nSegment;
 nSide [0] = theMine->Current ()->nSide;
 if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = theMine->Segments (nSegment [1]);
-	sideP [1] = segP [1]->sides + nSide [1];
+	sideP [1] = segP [1]->m_sides + nSide [1];
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
@@ -369,7 +369,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	else if (theMine->GameInfo ().walls.count >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((theApp.IsD2File ()) && (segP [bSide]->children [nSide [bSide]] == -1))
+		if ((theApp.IsD2File ()) && (segP [bSide]->m_info.children [nSide [bSide]] == -1))
 			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
@@ -442,7 +442,7 @@ CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
 for (i = theMine->SegCount (); i; i--, segP++) {
-	sideP = segP->sides;
+	sideP = segP->m_sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->nWall >= MAX_WALLS)
 			continue;
@@ -479,7 +479,7 @@ INT16 nOppSeg, nOppSide;
 
 if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = NULL;
-m_nWall [1] = theMine->Segments (nOppSeg)->sides [nOppSide].nWall;
+m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].nWall;
 return m_pWall [1] = (m_nWall [1] < theMine->GameInfo ().walls.count ? theMine->Walls (m_nWall [1]) : NULL);
 }
 
@@ -538,12 +538,12 @@ nSegment [0] = theMine->Current ()->nSegment;
 nSide [0] = theMine->Current ()->nSide;
 if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = theMine->Segments (nSegment [1]);
-	sideP [1] = segP [1]->sides + nSide [1];
+	sideP [1] = segP [1]->m_sides + nSide [1];
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if ((wallP = m_pWall [bSide]) && sideP [bSide]) {
 		INT16 nBaseTex  = sideP [bSide]->nBaseTex;
-		INT16 nOvlTex = sideP [bSide]->nOvlTex;
+		INT16 nOvlTex = sideP [bSide]->m_info.nOvlTex;
 		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
 		if ((wallP->type == WALL_OPEN) || (wallP->type == WALL_CLOSED))
 			theMine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);

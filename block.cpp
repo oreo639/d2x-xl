@@ -122,13 +122,13 @@ while(!feof(fBlk)) {
 	segP = Segments (nSegment);
 	segP->owner = -1;
 	segP->group = -1;
-	fscanf_s (fBlk, "segment %hd\n", &segP->nIndex);
-	xlatSegNum [segP->nIndex] = nSegment;
+	fscanf_s (fBlk, "segment %hd\n", &segP->m_info.nIndex);
+	xlatSegNum [segP->m_info.nIndex] = nSegment;
 	// invert segment number so its children can be children can be fixed later
-	segP->nIndex = ~segP->nIndex;
+	segP->m_info.nIndex = ~segP->m_info.nIndex;
 
 	// read in side information 
-	sideP = segP->sides;
+	sideP = segP->m_sides;
 	INT32 nSide;
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
@@ -137,13 +137,13 @@ while(!feof(fBlk)) {
 			return (0);
 			}
 		sideP->nWall = NO_WALL;
-		fscanf_s (fBlk, "    tmap_num %hd\n",&sideP->nBaseTex);
-		fscanf_s (fBlk, "    tmap_num2 %hd\n",&sideP->nOvlTex);
+		fscanf_s (fBlk, "    tmap_num %hd\n",&sideP->m_info.nBaseTex);
+		fscanf_s (fBlk, "    tmap_num2 %hd\n",&sideP->m_info.nOvlTex);
 		for (j = 0; j < 4; j++)
 			fscanf_s (fBlk, "    uvls %hd %hd %hd\n",
-						&sideP->uvls [j].u,
-						&sideP->uvls [j].v,
-						&sideP->uvls [j].l);
+						&sideP->m_info.uvls [j].u,
+						&sideP->m_info.uvls [j].v,
+						&sideP->m_info.uvls [j].l);
 		if (bExtBlkFmt) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
 			sideP->nWall = (UINT16) byteBuf;
@@ -278,8 +278,8 @@ while(!feof(fBlk)) {
 			}
 		}
 	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n",
-				&segP->children [0],&segP->children [1],&segP->children [2],
-				&segP->children [3],&segP->children [4],&segP->children [5]);
+				&segP->m_info.children [0],&segP->m_info.children [1],&segP->m_info.children [2],
+				&segP->m_info.children [3],&segP->m_info.children [4],&segP->m_info.children [5]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
 		fscanf_s (fBlk, "  CFixVector %hd %ld %ld %ld\n", &test, &vVertex.v.x, &vVertex.v.y, &vVertex.v.z);
@@ -311,7 +311,7 @@ while(!feof(fBlk)) {
 	// mark vertices
 	for (i = 0; i < 8; i++)
 		VertStatus (segP->verts [i]) |= MARKED_MASK;
-	fscanf_s (fBlk, "  static_light %ld\n",&segP->static_light);
+	fscanf_s (fBlk, "  static_light %ld\n",&segP->m_info.static_light);
 	if (bExtBlkFmt) {
 		fscanf_s (fBlk, "  special %d\n", &byteBuf);
 		segP->function = byteBuf;
@@ -320,9 +320,9 @@ while(!feof(fBlk)) {
 		fscanf_s (fBlk, "  value %d\n", &byteBuf);
 		segP->value = byteBuf;
 		fscanf_s (fBlk, "  childFlags %d\n", &byteBuf);
-		segP->childFlags = byteBuf;
+		segP->m_info.childFlags = byteBuf;
 		fscanf_s (fBlk, "  wallFlags %d\n", &byteBuf);
-		segP->wallFlags = byteBuf;
+		segP->m_info.wallFlags = byteBuf;
 		switch (segP->function) {
 			case SEGMENT_FUNC_FUELCEN:
 				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
@@ -354,15 +354,15 @@ while(!feof(fBlk)) {
 		segP->value = -1;
 		}
 	//        fscanf_s (fBlk, "  childFlags %d\n",&test);
-	//        segP->childFlags = test & 0x3f;
+	//        segP->m_info.childFlags = test & 0x3f;
 	//        fscanf_s (fBlk, "  wallFlags %d\n",&test);
-	//        segP->wallFlags  = (test & 0x3f) | MARKED_MASK;
-	segP->wallFlags = MARKED_MASK; // no other bits
+	//        segP->m_info.wallFlags  = (test & 0x3f) | MARKED_MASK;
+	segP->m_info.wallFlags = MARKED_MASK; // no other bits
 	// calculate childFlags
-	segP->childFlags = 0;
+	segP->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-		if (segP->children [i] >= 0)
-		segP->childFlags |= (1 << i);
+		if (segP->m_info.children [i] >= 0)
+		segP->m_info.childFlags |= (1 << i);
 	SegCount ()++;
 	nNewSegs++;
 	}
@@ -450,18 +450,18 @@ zPrime.Normalize ();
 
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
-	if (segP->wallFlags & MARKED_MASK) {
+	if (segP->m_info.wallFlags & MARKED_MASK) {
 		fprintf (fBlk, "segment %d\n",nSegment);
-		sideP = segP->sides;
+		sideP = segP->m_sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
 			fprintf (fBlk, "  side %d\n",i);
-			fprintf (fBlk, "    tmap_num %d\n",sideP->nBaseTex);
-			fprintf (fBlk, "    tmap_num2 %d\n",sideP->nOvlTex);
+			fprintf (fBlk, "    tmap_num %d\n",sideP->m_info.nBaseTex);
+			fprintf (fBlk, "    tmap_num2 %d\n",sideP->m_info.nOvlTex);
 			for (j = 0; j < 4; j++) {
 				fprintf (fBlk, "    uvls %d %d %d\n",
-				sideP->uvls [j].u,
-				sideP->uvls [j].v,
-				sideP->uvls [j].l);
+				sideP->m_info.uvls [j].u,
+				sideP->m_info.uvls [j].v,
+				sideP->m_info.uvls [j].l);
 				}
 			if (bExtBlkFmt) {
 				fprintf (fBlk, "    nWall %d\n", 
@@ -485,7 +485,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						INT32 count = 0;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
-							if (Segments (trigger->Segment (iTarget))->wallFlags & MARKED_MASK)
+							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
 #if 0
 						if (trigger->m_count && !count)	// no targets in marked area
@@ -500,7 +500,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 							fprintf (fBlk, "			    timer %d\n", trigger->time);
 							fprintf (fBlk, "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
-								if (Segments (trigger->Segment (iTarget))->wallFlags & MARKED_MASK) {
+								if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
 									fprintf (fBlk, "			        segP %d\n", trigger->Segment (iTarget));
 									fprintf (fBlk, "			        side %d\n", trigger->Side (iTarget));
 									}
@@ -511,7 +511,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			}
 		fprintf (fBlk, "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fBlk, " %d", segP->children [i]);
+			fprintf (fBlk, " %d", segP->m_info.children [i]);
 		fprintf (fBlk, "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
@@ -526,13 +526,13 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 									D2X (vVertex ^ yPrime),
 									D2X (vVertex ^ zPrime));
 			}
-		fprintf (fBlk, "  static_light %ld\n",segP->static_light);
+		fprintf (fBlk, "  static_light %ld\n",segP->m_info.static_light);
 		if (bExtBlkFmt) {
 			fprintf (fBlk, "  special %d\n",segP->function);
 			fprintf (fBlk, "  nMatCen %d\n",segP->nMatCen);
 			fprintf (fBlk, "  value %d\n",segP->value);
-			fprintf (fBlk, "  childFlags %d\n",segP->childFlags);
-			fprintf (fBlk, "  wallFlags %d\n",segP->wallFlags);
+			fprintf (fBlk, "  childFlags %d\n",segP->m_info.childFlags);
+			fprintf (fBlk, "  wallFlags %d\n",segP->m_info.wallFlags);
 			}
 		}
 	}
@@ -614,7 +614,7 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 CSegment *segP = Segments (0) + SegCount ();
 for (nSegment = SegCount () - 1; nSegment; nSegment--)
-    if ((--segP)->wallFlags & MARKED_MASK) {
+    if ((--segP)->m_info.wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
 		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
@@ -794,8 +794,8 @@ theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 segP = Segments (0);
 for (nSegment = 0;nSegment < MAX_SEGMENTS; nSegment++, segP++) {
-	segP->nIndex = nSegment;
-	segP->wallFlags &= ~MARKED_MASK;
+	segP->m_info.nIndex = nSegment;
+	segP->m_info.wallFlags &= ~MARKED_MASK;
 	}
 
 // unmark all vertices
@@ -808,15 +808,15 @@ count = ReadSegmentInfo (fBlk);
 // fix up the new Segments () children
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
-	if (segP->nIndex < 0) {  // if segment was just inserted
+	if (segP->m_info.nIndex < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
 		//  segment's offset number, otherwise set it to -1
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (segP->childFlags & (1 << child)) {
+			if (segP->m_info.childFlags & (1 << child)) {
 				seg2 = Segments (0);
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
-					if (segP->children [child] == ~seg2->nIndex) {
-						segP->children [child] = seg_offset;
+					if (segP->m_info.children [child] == ~seg2->m_info.nIndex) {
+						segP->m_info.children [child] = seg_offset;
 						break;
 						}
 					}
@@ -843,7 +843,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					}
 				} 
 			else {
-				segP->children [child] = -1; // force child to agree with bitmask
+				segP->m_info.children [child] = -1; // force child to agree with bitmask
 				}
 			}
 		}
@@ -854,7 +854,7 @@ for (nVertex=0;nVertex<MAX_VERTICES;nVertex++)
 // now set all seg_numbers
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-	segP->nIndex = nSegment;
+	segP->m_info.nIndex = nSegment;
 /*
 if (option != 1) {
 	sprintf_s (message, sizeof (message)," Block tool: %d blocks pasted.",count);
@@ -926,10 +926,10 @@ if (QueryMsg("Are you sure you want to delete the marked cubes?")!=IDYES)
 	return;
 
 for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--)
-	if (Segments (nSegment)->wallFlags & MARKED_MASK) {
+	if (Segments (nSegment)->m_info.wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
-		if (Objects (0)->nSegment != nSegment)
+		if (Objects (0)->m_info.nSegment != nSegment)
 			DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
 // wrap back then forward to make sure segment is valid

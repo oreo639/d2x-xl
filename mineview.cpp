@@ -792,22 +792,22 @@ void CMineView::CalcSegDist (void)
 	INT16			*segRef = new INT16 [segNum];
 
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
-	segI->nIndex = -1;
+	segI->m_info.nIndex = -1;
 segRef [0] = theMine->Current ()->nSegment;	
-theMine->CurrSeg ()->nIndex = 0;
+theMine->CurrSeg ()->m_info.nIndex = 0;
 i = 1;
 h = j = 0;
 for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 	for (h = i; j < h; j++) {
 		segI = theMine->Segments (segRef [j]);
 		for (sideNum = 0; sideNum < 6; sideNum++) {
-			c = segI->children [sideNum];
+			c = segI->m_info.children [sideNum];
 			if (c < 0) 
 				continue;
 			segJ = theMine->Segments (c);
-			if (segJ->nIndex != -1)
+			if (segJ->m_info.nIndex != -1)
 				continue;
-			segJ->nIndex = nDist;
+			segJ->m_info.nIndex = nDist;
 			segRef [i++] = c;
 			}
 		}
@@ -830,7 +830,7 @@ for (nSegment=0, segP = theMine->Segments (0);nSegment<theMine->SegCount ();nSeg
 	if (!Visible (segP))
 		continue;
 	DrawCube (segP, bPartial);
-	if (nSegment == m_Current->nSegment) {
+	if (nSegment == m_Current->m_info.nSegment) {
 		DrawCurrentCube (segP, bPartial);
 		m_pDC->SelectObject (m_penGray);
 		}
@@ -955,7 +955,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 			m_viewPoints [nVert].x + 4,
 			m_viewPoints [nVert].y + 4);
 			}
-		if (segP->wallFlags & MARKED_MASK) {
+		if (segP->m_info.wallFlags & MARKED_MASK) {
 			m_pDC->SelectObject (m_penCyan);
 			DrawCubeQuick (segP);
 			} 
@@ -985,7 +985,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 			}
 		} 
 	else {
-		if (segP->wallFlags & MARKED_MASK)
+		if (segP->m_info.wallFlags & MARKED_MASK)
 			m_pDC->SelectObject (m_penHiCyan);
 		else if (nSegment == theMine->Current ()->nSegment)
 			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
@@ -1144,7 +1144,7 @@ for (i = 0; i < 8; i++, pv++) {
 if (bPartial) {
 	UINT32 nSide;
 	for (nSide=0; nSide<6; nSide++) {
-		if (segP->children [nSide] >= 0)
+		if (segP->m_info.children [nSide] >= 0)
 			continue;
 		
 		POINT	side [4], line [2], vert;
@@ -1170,9 +1170,9 @@ if (bPartial) {
 			// check child cubes
 			commonVerts = 0;
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
-				if (segP->children [chSegI] < 0)
+				if (segP->m_info.children [chSegI] < 0)
 					continue;
-				child = theMine->Segments (segP->children [chSegI]);
+				child = theMine->Segments (segP->m_info.children [chSegI]);
 				// walk through child cube's sides
 				commonVerts = 0;
 				for (chSideI = 0; (chSideI < 6) && (commonVerts < 2); chSideI++) {
@@ -1421,8 +1421,8 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 		UINT16 nWall = NO_WALL;
 
 		for (nSide=0; nSide<6; nSide++) {
-			pWall = ((nWall = segP->sides [nSide].nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
-			if ((segP->children [nSide] == -1) ||
+			pWall = ((nWall = segP->m_sides [nSide].nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
+			if ((segP->m_info.children [nSide] == -1) ||
 				(pWall && (pWall->type != WALL_OPEN) && ((pWall->type != WALL_CLOAKED) || pWall->cloak_value))
 				)
 			{
@@ -1436,8 +1436,8 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 				b.v.x = p3.x - p0.x;
 				b.v.y = p3.y - p0.y;
 				if (a.v.x * b.v.y > a.v.y * b.v.x) {
-					INT16 texture1 = segP->sides [nSide].nBaseTex;
-					INT16 texture2 = segP->sides [nSide].nOvlTex;
+					INT16 texture1 = segP->m_sides [nSide].m_info.nBaseTex;
+					INT16 texture2 = segP->m_sides [nSide].m_info.nOvlTex;
 					if (!DefineTexture (texture1, texture2, &tx, 0, 0)) {
 						DrawAnimDirArrows (texture1, &tx);
 						TextureMap (resolution, segP, nSide, tx.m_pDataBM, tx.m_width, tx.m_height, 
@@ -1490,7 +1490,7 @@ void CMineView::DrawMarkedCubes (INT16 clear_it)
 	if (!clear_it) {
 		for (i = 0; i < theMine->SegCount (); i++) {
 			segP = theMine->Segments (0) + i;
-			if (segP->wallFlags & MARKED_MASK) {
+			if (segP->m_info.wallFlags & MARKED_MASK) {
 				m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
 				DrawCubeQuick (segP);
 				}
@@ -1565,7 +1565,7 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 	INT16 linenum = m_Current->nPoint;
 	INT16 pointnum = m_Current->nPoint;
 
-	if (segP->wallFlags & MARKED_MASK) {
+	if (segP->m_info.wallFlags & MARKED_MASK) {
 		m_pDC->SelectObject(m_penCyan);
 	}
 	else
@@ -1965,7 +1965,7 @@ void CMineView::DrawObject(INT16 objnum,INT16 clear_it)
 //  m_pDC->SelectObject(hrgnBackground);
 if (objnum >=0 && objnum < theMine->GameInfo ().objects.count) {
 	objP = theMine->Objects (objnum);
-	if (!Visible (theMine->Segments (objP->nSegment)))
+	if (!Visible (theMine->Segments (objP->m_info.nSegment)))
 		return;
 	}
 else {
@@ -2267,7 +2267,7 @@ strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
 _itoa_s (theMine->CurrSide ()->nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
-_itoa_s (theMine->CurrSide ()->nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSide ()->m_info.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_size.v.x) / log (1.2);
@@ -2673,7 +2673,7 @@ void CMineView::CenterCube (void)
 {
 if (!theMine) return;
 
-	CSegment& segP = theMine->Segments (0) [m_Current->nSegment];
+	CSegment& segP = theMine->Segments (0) [m_Current->m_info.nSegment];
 	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = segP.verts;
 
@@ -3662,12 +3662,12 @@ void CMineView::ForwardCube (INT32 dir)
 
 DrawHighlight (1);
 segP = theMine->Segments (0) + theMine->Current ()->nSegment;
-child = segP->children [bFwd ? theMine->Current ()->nSide: opp_side [theMine->Current ()->nSide]];
+child = segP->m_info.children [bFwd ? theMine->Current ()->nSide: opp_side [theMine->Current ()->nSide]];
 if (child <= -1) {
 	// first try to find a non backwards route
 	for (nSide=0;nSide<6;nSide++) {
-		if (segP->children [nSide] != m_lastSegment && segP->children [nSide] > -1) {
-			child = segP->children [nSide];
+		if (segP->m_info.children [nSide] != m_lastSegment && segP->m_info.children [nSide] > -1) {
+			child = segP->m_info.children [nSide];
 			theMine->Current ()->nSide =  bFwd ? nSide: opp_side [nSide];
 			break;
 			}
@@ -3675,8 +3675,8 @@ if (child <= -1) {
 	// then settle for any way out
 	if (nSide == 6) {
 		for (nSide=0;nSide<6;nSide++) {
-			if (segP->children [nSide] > -1) {
-				child = segP->children [nSide];
+			if (segP->m_info.children [nSide] > -1) {
+				child = segP->m_info.children [nSide];
 				theMine->Current ()->nSide = bFwd ? nSide: opp_side [nSide];
 				break;
 				}
@@ -3687,7 +3687,7 @@ if (child > -1) {
 	childseg = theMine->Segments (0) + child;
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
-		if (childseg->children [nSide] == theMine->Current ()->nSegment) {
+		if (childseg->m_info.children [nSide] == theMine->Current ()->nSegment) {
 			theMine->Current ()->nSide =  bFwd ? opp_side [nSide]: nSide;
 			break;
 			}
@@ -4110,7 +4110,7 @@ if (!glHandles [nTexture]) {
 void CMineView::GLRenderTexture (INT16 nSegment, INT16 nSide, INT16 nTexture)
 {
 	CSegment *segP = theMine->Segments (nSegment);
-	CSide *sideP = segP->sides + nSide;
+	CSide *sideP = segP->m_sides + nSide;
 	CUVL *uvls;
 	double l;
 #if OGL_MAPPED
@@ -4131,7 +4131,7 @@ glBindTexture (GL_TEXTURE_2D, glHandles [nTexture & 0x1FFF]);
 glBegin (GL_TRIANGLE_FAN);
 INT32 i;
 for (i = 0; i < 4; i++) {
-	uvls = sideP->uvls + j;
+	uvls = sideP->m_info.uvls + j;
 	l = (bShaded ? uvls->l: F1_0) / UV_FACTOR;
 	glColor3d (l,l,l);
 	switch (h) {
@@ -4165,14 +4165,14 @@ glEnd ();
 void CMineView::GLRenderFace (INT16 nSegment, INT16 nSide)
 {
 	CSegment *segP = theMine->Segments (nSegment);
-	CSide *sideP = segP->sides + nSide;
+	CSide *sideP = segP->m_sides + nSide;
 	CFixVector *verts = theMine->Vertices ();
-	UINT16 nWall = segP->sides [nSide].nWall;
+	UINT16 nWall = segP->m_sides [nSide].nWall;
 
-if (sideP->nBaseTex < 0)
+if (sideP->m_info.nBaseTex < 0)
 	return;
 CWall *pWall = (nWall == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->v.theMine->Walls (nWall);
-if ((segP->children [nSide] > -1) &&
+if ((segP->m_info.children [nSide] > -1) &&
 	 (!pWall || (pWall->type == WALL_OPEN) || ((pWall->type == WALL_CLOAKED) && !pWall->cloak_value)))
 	return;
 #if OGL_MAPPED
@@ -4200,9 +4200,9 @@ b.y = p3->y - p0->y;
 if (a.x*b.y > a.y*b.x)
 	return;
 #endif
-GLRenderTexture (nSegment, nSide, sideP->nBaseTex);
-if (sideP->nOvlTex)
-	GLRenderTexture (nSegment, nSide, sideP->nOvlTex);
+GLRenderTexture (nSegment, nSide, sideP->m_info.nBaseTex);
+if (sideP->m_info.nOvlTex)
+	GLRenderTexture (nSegment, nSide, sideP->m_info.nOvlTex);
 }
 
                         /*--------------------------*/

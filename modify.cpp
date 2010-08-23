@@ -578,21 +578,21 @@ switch (m_selectMode) {
 				for (i = 0; i < 8; i++)
 					Vertices (segP->verts [i])->v.x += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++)
-					if (Objects (i)->nSegment == nSegment)
+					if (Objects (i)->m_info.nSegment == nSegment)
 						Objects (i)->pos.v.x += inc;
 				break;
 			case 'Y':
 				for (i = 0; i < 8; i++)
 					Vertices (segP->verts [i])->v.y += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
-					if (Objects (i)->nSegment == nSegment)
+					if (Objects (i)->m_info.nSegment == nSegment)
 						Objects (i)->pos.v.y += inc;
 				break;
 			case 'Z':
 				for (i = 0; i < 8; i++)
 					Vertices (segP->verts [i])->v.z += inc;
 				for (i = 0; i < GameInfo ().objects.count; i++) 
-					if (Objects (i)->nSegment == nSegment) 
+					if (Objects (i)->m_info.nSegment == nSegment) 
 						Objects (i)->pos.v.z += inc;
 				break;
 			}
@@ -620,8 +620,8 @@ switch (m_selectMode) {
 					if (VertStatus (i) & MARKED_MASK)
 						Vertices (i)->v.x += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
-					if (objP->nSegment >= 0)
-						if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
+					if (objP->m_info.nSegment >= 0)
+						if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
 							objP->pos.v.x += inc;
 				break;
 			case 'Y':
@@ -629,8 +629,8 @@ switch (m_selectMode) {
 					if (VertStatus (i) & MARKED_MASK)
 						Vertices (i)->v.y += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
-					if (objP->nSegment >= 0)
-						if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
+					if (objP->m_info.nSegment >= 0)
+						if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
 							objP->pos.v.y += inc;
 				break;
 			case 'Z':
@@ -638,8 +638,8 @@ switch (m_selectMode) {
 					if (VertStatus (i) & MARKED_MASK)
 						Vertices (i)->v.z += inc;
 				for (i = GameInfo ().objects.count; i; i--, objP++)
-					if (objP->nSegment >= 0)
-						if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
+					if (objP->m_info.nSegment >= 0)
+						if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
 							objP->pos.v.z += inc;
 				break;
 		}
@@ -800,7 +800,7 @@ switch (m_selectMode) {
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
 		for (i = GameInfo ().objects.count; i; i--, objP++)
-			if (Segments (objP->nSegment)->wallFlags & MARKED_MASK)
+			if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
 				RotateVertex (&objP->pos, &center, &oppCenter, angle);
 		break;
 	}

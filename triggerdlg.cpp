@@ -564,7 +564,7 @@ if (m_nTrigger != -1) {
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumTriggers () > 0);
 CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumTriggers () > 0);
 sideP = theMine->OtherSide ();
-CTexToolDlg::Refresh (sideP->nBaseTex, sideP->nOvlTex, 1);
+CTexToolDlg::Refresh (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
 	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
 else
@@ -649,7 +649,7 @@ CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 INT32 i, j, nDeleted = 0;
 for (i = theMine->SegCount (); i; i--, segP++) {
-	sideP = segP->sides;
+	sideP = segP->m_sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->nWall >= MAX_WALLS)
 			continue;
@@ -897,14 +897,14 @@ SetTriggerPtr ();
 if ((theApp.IsD1File ()) ? 
 	 (m_pTrigger->flags & TRIGGER_MATCEN) != 0 : 
 	 (m_pTrigger->type == TT_MATCEN) && 
-	 (theMine->Segments (other->nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
+	 (theMine->Segments (other->m_info.nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}
-INT32 i = FindTarget (other->nSegment, other->nSide);
+INT32 i = FindTarget (other->m_info.nSegment, other->nSide);
 if (i > -1)
 	return;
-AddTarget (other->nSegment, other->nSide + 1);
+AddTarget (other->m_info.nSegment, other->nSide + 1);
 }
 
                         /*--------------------------*/
@@ -974,7 +974,7 @@ if ((nSide < 0) || (nSide > 5))
 CSelection *other = theMine->Other ();
 if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide == nSide))
 	return;
-other->nSegment = m_pTrigger->Segment (m_iTarget);
+other->m_info.nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);
 theApp.MineView ()->Refresh ();
 }

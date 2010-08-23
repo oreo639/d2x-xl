@@ -639,6 +639,13 @@ public:
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
 	virtual CGameItem* Next (void) { return this + 1; }
+	inline void Clear (int count) { 
+		CGameItem* i = this;
+		while (count--) {
+			Clear ();
+			i = i->Next ();
+			}
+		}
 };
 
 typedef struct tGameObject {
@@ -803,52 +810,51 @@ typedef struct {
 //extern char	Wall_names[7][10]; // New for Descent 2
 
 typedef struct tTriggerTargets {
-	INT16		count;
-	CSideKey	targets [MAX_TRIGGER_TARGETS];
 } tTriggerTargets;
 
 class CTriggerTargets {
 public:
-	tTriggerTargets m_info;
+	INT16		m_count;
+	CSideKey	m_targets [MAX_TRIGGER_TARGETS];
 
-	CTriggerTargets () : m_info.count (0) {}
+	CTriggerTargets () { m_count = 0; }
 
-	inline CSideKey& operator[](UINT32 i) { return m_info.targets [i]; }
+	inline CSideKey& operator[](UINT32 i) { return m_targets [i]; }
 
 	inline INT16 Add (CSideKey key) {
-		if (m_info.count < sizeof (m_info.targets) / sizeof (m_info.targets [0]))
-			m_info.targets [m_info.count] = key;
-		return m_info.count++;
+		if (m_count < sizeof (m_targets) / sizeof (m_targets [0]))
+			m_targets [m_count] = key;
+		return m_count++;
 		}
 	inline INT16 Add (INT16 nSegment, INT16 nSide) { return Add (CSideKey (nSegment, nSide)); }
 
 	inline INT16 Delete (int i = -1) {
 		if (i < 0)
-			i = m_info.count - 1;
-		if ((m_info.count > 0) && (i < --m_info.count)) {
-			int l = m_info.count - i;
+			i = m_count - 1;
+		if ((m_count > 0) && (i < --m_count)) {
+			int l = m_count - i;
 			if (l)
-				memcpy (m_info.targets + i, m_info.targets + i + 1, l * sizeof (m_info.targets [0]));
-			m_info.targets [m_info.count] = CSideKey (0,0);
+				memcpy (m_targets + i, m_targets + i + 1, l * sizeof (m_targets [0]));
+			m_targets [m_count] = CSideKey (0,0);
 			}
-		return m_info.count;
+		return m_count;
 		}	
 
-	inline INT16 Pop (void) { return Delete (m_info.count - 1); }
+	inline INT16 Pop (void) { return Delete (m_count - 1); }
 
 	inline int Find (CSideKey key) { 
-		for (int i = 0; i < m_info.count; i++)
-			if (m_info.targets [i] == key)
+		for (int i = 0; i < m_count; i++)
+			if (m_targets [i] == key)
 				return i;
 		return -1;
 		}
 	inline int Find (INT16 nSegment, INT16 nSide) { return Find (CSideKey (nSegment, nSide)); }
-	inline INT16& Segment (UINT32 i) { return m_info.targets [i].m_info.nSegment; }
-	inline INT16& Side (UINT32 i) { return m_info.targets [i].m_info.nSide; }
+	inline INT16& Segment (UINT32 i) { return m_targets [i].m_nSegment; }
+	inline INT16& Side (UINT32 i) { return m_targets [i].m_nSide; }
 	void Clear (void) { 
-		m_info.count = 0;
+		m_count = 0;
 		for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			m_info.targets [i].Clear ();
+			m_targets [i].Clear ();
 		}
 
 };
@@ -943,7 +949,7 @@ public:
 
 	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
-	virtual void Clear (void) { CTriggerTargets::Clear (); }
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
@@ -1002,16 +1008,16 @@ public:
 
 	INT32 Read (FILE* fp) {
 		CSideKey::Read (fp);
-		mask = read_INT32 (fp);
-		timer = read_FIX (fp);
-		delay = read_FIX (fp);
+		m_info.mask = read_INT32 (fp);
+		m_info.timer = read_FIX (fp);
+		m_info.delay = read_FIX (fp);
 		return 1;
 		}
 	void Write (FILE* fp) {
 		CSideKey::Write (fp);
-		write_INT32 (mask, fp);
-		write_FIX (timer, fp);
-		write_FIX (delay, fp);
+		write_INT32 (m_info.mask, fp);
+		write_FIX (m_info.timer, fp);
+		write_FIX (m_info.delay, fp);
 		}
 	void Clear (void) {
 		memset (&m_info, 0, sizeof (m_info));

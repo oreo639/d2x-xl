@@ -1165,11 +1165,11 @@ pWnd->GetClientRect (rc);
 
 if (texture1 < 0) {
 	segP = (nSegment < 0) ? theMine->CurrSeg () : theMine->Segments (nSegment);
-	sideP = (nSide < 0) ? theMine->CurrSide () : segP->sides + nSide;
+	sideP = (nSide < 0) ? theMine->CurrSide () : segP->m_sides + nSide;
 	INT32 nSide = theMine->Current ()->nSide;
-	texture1 = sideP->nBaseTex;
-	texture2 = sideP->nOvlTex & 0x1fff;
-	if (segP->children [nSide] == -1)
+	texture1 = sideP->m_info.nBaseTex;
+	texture2 = sideP->m_info.nOvlTex & 0x1fff;
+	if (segP->m_info.children [nSide] == -1)
 		bShowTexture = TRUE;
 	else {
 		nWall = sideP->nWall;

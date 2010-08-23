@@ -3,6 +3,8 @@
 #ifndef __segment_h
 #define __segment_h
 
+#include "define.h"
+
 class CUVL {
 public:
 	INT16 u, v, l; 
@@ -39,21 +41,26 @@ public:
 		}
 };
 
-class CSide {
-public:
+typedef struct tSide {
 	UINT16	nWall;		// (was INT16) Index into Walls array, which wall (probably door) is on this side 
 	INT16		nBaseTex;	// Index into array of textures specified in bitmaps.bin 
 	INT16		nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
 	CUVL		uvls [4];   // CUVL coordinates at each point 
+} tSide;
+
+class CSide {
+public:
+	tSide m_info;
 
 	INT32 Read (FILE* fp, bool bTextured);
 	void Write (FILE* fp);
+	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+	void Setup (void);
+	void LoadTextures (void);
+	CWall* Wall (void);
 };
 
-class CSegment {
-public:
-
-	CSide		sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
+typedef struct tSegment {
 	INT16		children [MAX_SIDES_PER_SEGMENT];	// indices of 6 children segments, front, left, top, right, bottom, back 
 	INT16		verts [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
 	UINT8		function;			// special property of a segment (such as damaging, trigger, etc.) 
@@ -69,6 +76,12 @@ public:
 	INT16		map_bitmask;		// which lines are drawn when displaying wireframe 
 	INT8		owner;
 	INT8		group;
+} tSegment;
+
+class CSegment {
+public:
+	tSegment	m_info;
+	CSide		m_sides [MAX_SIDES_PER_SEGMENT];		// 6 sides 
 
 public:
 	void Upgrade (void);
@@ -76,6 +89,12 @@ public:
 	void ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras);
 	void Write (FILE* fp, int nLevelType, int nLevelVersion);
 	void WriteExtras (FILE* fp, int nLevelType, bool bExtras);
+	void Clear (void) { 
+		memset (&m_info, 0, sizeof (m_info)); 
+		for (int i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
+			m_sides [i].Clear ();
+		}
+	void Setup (void);
 
 private:
 	UINT8 ReadWalls (FILE* fp, int nLevelVersion);

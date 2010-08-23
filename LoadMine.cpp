@@ -503,14 +503,14 @@ INT16 CMine::FixIndexValues(void)
 	for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			// check wall numbers
-			CSide& side = segP->sides [nSide];
+			CSide& side = segP->m_sides [nSide];
 			if (side.nWall >= GameInfo ().walls.count && side.nWall != NO_WALL) {
 				side.nWall = NO_WALL;
 				checkErr |= (1 << 0);
 			}
 			// check children
-			if (segP->children [nSide] < - 2 || segP->children [nSide] >(INT16)SegCount ()) {
-				segP->children [nSide] =-1;
+			if (segP->m_info.children [nSide] < - 2 || segP->m_info.children [nSide] >(INT16)SegCount ()) {
+				segP->m_info.children [nSide] =-1;
 				checkErr |= (1 << 1);
 			}
 		}

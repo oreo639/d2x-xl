@@ -854,16 +854,16 @@ class CTriggerTool : public CTexToolDlg
 		inline CComboBox *CBTexture2 ()
 			{ return CBCtrl(IDC_TRIGGER_TEXTURE2); }
 		inline INT16 Texture1 (void)
-			{ return (INT16) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->value & 0xffff : 0); }
+			{ return (INT16) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->m_info.value & 0xffff : 0); }
 		inline INT16 Texture2 (void)
-			{ return (INT16) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->value >> 16 : 0); }
+			{ return (INT16) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->m_info.value >> 16 : 0); }
 		inline void SetTexture (INT16 texture1, INT16 texture2) {
 			if ((m_nTrigger >= 0) && m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) {
 				if (texture1 < 0)
 					texture1 = Texture1 ();
 				if (texture2 < 0)
 					texture2 = Texture2 ();
-				m_pTrigger->value = (FIX) (texture2 << 16) + (FIX) texture1; 
+				m_pTrigger->m_info.value = (FIX) (texture2 << 16) + (FIX) texture1; 
 				}
 			}
 

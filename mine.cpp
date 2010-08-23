@@ -130,7 +130,7 @@ CSide *sideP;
 INT32 i, j;
 
 for (i = SegCount (); i; i--, segP++)
-	for (j = 0, sideP = segP->sides; j < 6; j++, sideP++)
+	for (j = 0, sideP = segP->m_sides; j < 6; j++, sideP++)
 		if (sideP->nWall >= wNumOld)
 			sideP->nWall = wNumNew;
 }
@@ -190,8 +190,8 @@ CSegment& segP = *Segments (0);
 CVertex *vert = Vertices (0);
 
 segP.sides [0].nWall = NO_WALL;
-segP.sides [0].nBaseTex = 0;
-segP.sides [0].nOvlTex = 0;
+segP.sides [0].m_info.nBaseTex = 0;
+segP.sides [0].m_info.nOvlTex = 0;
 segP.sides [0].uvls [0].u = 0;
 segP.sides [0].uvls [0].v = 0;
 segP.sides [0].uvls [0].l = 0x8000U;
@@ -206,8 +206,8 @@ segP.sides [0].uvls [3].v = 0;
 segP.sides [0].uvls [3].l = 0x8000U;
 
 segP.sides [1].nWall = NO_WALL;
-segP.sides [1].nBaseTex = 263;
-segP.sides [1].nOvlTex = 264;
+segP.sides [1].m_info.nBaseTex = 263;
+segP.sides [1].m_info.nOvlTex = 264;
 segP.sides [1].uvls [0].u = 0;
 segP.sides [1].uvls [0].v = 0;
 segP.sides [1].uvls [0].l = 0x8000U;
@@ -222,8 +222,8 @@ segP.sides [1].uvls [3].v = 0;
 segP.sides [1].uvls [3].l = 0x8000U;
 
 segP.sides [2].nWall = NO_WALL;
-segP.sides [2].nBaseTex = 0;
-segP.sides [2].nOvlTex = 0;
+segP.sides [2].m_info.nBaseTex = 0;
+segP.sides [2].m_info.nOvlTex = 0;
 segP.sides [2].uvls [0].u = 0;
 segP.sides [2].uvls [0].v = 0;
 segP.sides [2].uvls [0].l = 0x8000U;
@@ -238,8 +238,8 @@ segP.sides [2].uvls [3].v = 0;
 segP.sides [2].uvls [3].l = 0x8000U;
 
 segP.sides [3].nWall = NO_WALL;
-segP.sides [3].nBaseTex = 270;
-segP.sides [3].nOvlTex = 0;
+segP.sides [3].m_info.nBaseTex = 270;
+segP.sides [3].m_info.nOvlTex = 0;
 segP.sides [3].uvls [0].u = 0;
 segP.sides [3].uvls [0].v = 0;
 segP.sides [3].uvls [0].l = 11678;
@@ -254,8 +254,8 @@ segP.sides [3].uvls [3].v = 0;
 segP.sides [3].uvls [3].l = 11678;
 
 segP.sides [4].nWall = NO_WALL;
-segP.sides [4].nBaseTex = 0;
-segP.sides [4].nOvlTex = 0;
+segP.sides [4].m_info.nBaseTex = 0;
+segP.sides [4].m_info.nOvlTex = 0;
 segP.sides [4].uvls [0].u = 0;
 segP.sides [4].uvls [0].v = 0;
 segP.sides [4].uvls [0].l = 0x8000U;
@@ -270,8 +270,8 @@ segP.sides [4].uvls [3].v = 0;
 segP.sides [4].uvls [3].l = 0x8000U;
 
 segP.sides [5].nWall = NO_WALL;
-segP.sides [5].nBaseTex = 0;
-segP.sides [5].nOvlTex = 0;
+segP.sides [5].m_info.nBaseTex = 0;
+segP.sides [5].m_info.nOvlTex = 0;
 segP.sides [5].uvls [0].u = 0;
 segP.sides [5].uvls [0].v = 0;
 segP.sides [5].uvls [0].l = 24576;
@@ -352,7 +352,7 @@ void CMine::ClearMineData()
 // initialize Segments ()
 CSegment *segP = Segments (0);
 for (i = 0; i < MAX_SEGMENTS; i++, segP++)
-	segP->wallFlags &= ~MARKED_MASK;
+	segP->m_info.wallFlags &= ~MARKED_MASK;
 SegCount () = 0;
 // initialize vertices
 for (i = 0; i < MAX_VERTICES; i++) 
