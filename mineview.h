@@ -138,18 +138,13 @@ protected: // create from serialization only
 	CPen*			m_penHiLtGray;
 	CPen*			m_penHiMagenta;
 
-	INT16			m_x0;
-	INT16			m_y0;
-	INT16			m_z0;
-	double		m_movex;
-	double		m_movey;
-	double		m_movez;
-	double		m_sizex;
-	double		m_sizey;
-	double		m_sizez;
-	double		m_spinx;
-	double		m_spiny;
-	double		m_spinz;
+	//INT16			m_x0;
+	//INT16			m_y0;
+	//INT16			m_z0;
+	CFixVector		m_center;
+	CDoubleVector	m_move;
+	CDoubleVector	m_size;
+	CDoubleVector	m_spin;
 	double		m_depthPerception;
 	CViewMatrix		m_view;
 

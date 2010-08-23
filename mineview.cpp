@@ -180,20 +180,13 @@ m_lastSegment = 0;
 m_x0 = 0;
 m_y0 = 0;
 m_z0 = 0;
-m_spinx = M_PI/4.0;
-m_spiny = M_PI/4.0;
-m_spinz = 0.0;
-m_movex = 0.0f;
-m_movey = 0.0f;
-m_movez = 0.0f;
-m_sizex = 1.0f;
-m_sizey = 1.0f;
-m_sizez = 1.0f;
+m_center.Clear ();
+m_spin.Set (M_PI / 4.0, M_PI / 4.0, 0.0);
+m_move.Clear ();
+m_size.Set (1.0, 1.0, 1.0);
 
 // calculate transformation m_view based on move, size, and spin
-m_view.Set(m_movex, m_movey, m_movez,
-				 m_sizex, m_sizey, m_sizez,
-				 m_spinx, m_spiny, m_spinz);
+m_view.Set(m_move, m_size, m_spin);
 m_lightTimer =
 m_selectTimer = -1;
 m_nFrameRate = 100;
@@ -319,10 +312,10 @@ void CMineView::DrawMineCenter (CDC *pViewDC)
 {
 if (m_nMineCenter == 1) {
 	m_pDC->SelectObject(GetStockObject (WHITE_PEN));
-	m_pDC->MoveTo (x_center,y_center-(INT32)(10.0*m_sizey)+1);
-	m_pDC->LineTo (x_center,y_center+(INT32)(10.0*m_sizey)+1);
-	m_pDC->MoveTo (x_center-(INT32)(10.0*m_sizex/**aspect_ratio*/)+1,y_center);
-	m_pDC->LineTo (x_center+(INT32)(10.0*m_sizex/**aspect_ratio*/)+1,y_center);
+	m_pDC->MoveTo (x_center,y_center-(INT32)(10.0*m_size.v.y)+1);
+	m_pDC->LineTo (x_center,y_center+(INT32)(10.0*m_size.v.y)+1);
+	m_pDC->MoveTo (x_center-(INT32)(10.0*m_size.v.x/**aspect_ratio*/)+1,y_center);
+	m_pDC->LineTo (x_center+(INT32)(10.0*m_size.v.x/**aspect_ratio*/)+1,y_center);
 	}
 if (m_nMineCenter == 2) {
 	// draw a globe
@@ -1948,7 +1941,8 @@ for (i = 0; i < n_splines; i++, segP--)
 
 void TransformModelPoint (CFixVector& dest, APOINT &src, CFixMatrix &orient, CFixVector offs)
 {
-dest = orient * src;
+CFixVector v (src.x, src.y, src.z);
+dest = orient * v;
 dest += offs;
 }
 
@@ -2278,7 +2272,7 @@ strcat_s (message, sizeof (message), " 2nd:");
 _itoa_s (theMine->CurrSide ()->nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
-double zoom_factor = log (10 * m_sizex) / log (1.2);
+double zoom_factor = log (10 * m_size.v.x) / log (1.2);
 if (zoom_factor > 0) 
 	zoom_factor += 0.5;
 else
@@ -2370,7 +2364,7 @@ INT32 CMineView::ZoomFactor (INT32 nSteps, double min, double max)
 double zoom;
 INT32 i;
 
-for (zoom = log(10*m_sizex), i = 0; i < nSteps; i++) {
+for (zoom = log(10*m_size.v.x), i = 0; i < nSteps; i++) {
 	zoom /= log (1.2);
 	if ((zoom < min) || (zoom > max))
 		return i;
@@ -2383,9 +2377,9 @@ return nSteps; //(INT32) ((zoom > 0) ? zoom + 0.5: zoom - 0.5);
 void CMineView::Zoom (INT32 nSteps, double zoom)
 {
 for (; nSteps; nSteps--) {
-//	m_sizex *= zoom;
-//	m_sizey *= zoom;
-	m_sizez *= zoom;
+//	m_size.v.x *= zoom;
+//	m_size.v.y *= zoom;
+	m_size.v.z *= zoom;
 	m_view.Scale (1.0 / zoom);
 	}
 Refresh (false);
@@ -2520,9 +2514,7 @@ if (!theMine) return 1;
 DelayRefresh (true);
 //CenterMine ();
 //SetViewPoints (&rc);
-m_movex = 0.0;
-m_movey = 0.0;
-m_movez = 0.0;
+m_move.Clear ();
 m_view.SetViewInfo (10000, m_viewWidth, m_viewHeight);
 SetViewPoints (&rc, false);
 CRect	crc;
@@ -2608,9 +2600,9 @@ void CMineView::Pan (char direction, INT32 value)
 {
 if (!value)
 	return;
-INT32 i = direction - 'X';
-if ((i < 0) || (i > 2))
-	i = 0;
+INT32 i = direction - 'X' + 1;
+if ((i < 1) || (i > 3))
+	i = 1;
 #if 0 //OGL_RENDERING
 glPan [i] += (double) value * 1.9;
 glTranslated (glPan [0], glPan [1], glPan [2]);
@@ -2623,9 +2615,7 @@ else if (i == 2)
 else if (i == 2)
 	m_movez -= value;
 # else
-m_movex -= (double) value * m_view.IM [1][++i];  /* move view point */
-m_movey -= (double) value * m_view.IM [2][i];
-m_movez -= (double) value * m_view.IM [3][i];
+m_move -= CDoubleVector (m_view.m_intMat [0].rVec [i], m_view.m_intMat [0].uVec [i], m_view.m_intMat [0].fVec [i]) * value;
 # endif
 #endif
 Refresh (false);
@@ -2646,51 +2636,36 @@ if (!theMine) return;
 //	ASSERT_VALID(pDoc);
 
 	CVertex *verts;
-	INT32 maxx = 0;
-	INT32 minx = 0;
-	INT32 maxy = 0;
-	INT32 miny = 0;
-	INT32 maxz = 0;
-	INT32 minz = 0;
+	CFixVector	vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 	INT32 i;
 
 verts = theMine->Vertices (0);
 for (i = 0; i < theMine->VertCount ();i++, verts++) {
-	maxx = max(maxx, verts->x);
-	minx = min(minx, verts->x);
-	maxy = max(maxy, verts->y);
-	miny = min(miny, verts->y);
-	maxz = max(maxz, verts->z);
-	minz = min(minz, verts->z);
+	vMin = Min (vMin, *verts);
+	vMax = Max (vMax, *verts);
 	}
-INT16 max_x = (INT16)(maxx / F1_0);
-INT16 max_y = (INT16)(maxy / F1_0);
-INT16 max_z = (INT16)(maxz / F1_0);
-INT16 min_x = (INT16)(minx / F1_0);
-INT16 min_y = (INT16)(miny / F1_0);
-INT16 min_z = (INT16)(minz / F1_0);
-
-m_spinx = M_PI/4.f;
-m_spiny = M_PI/4.f;
-m_spinz = 0.0;
-m_movex = -(max_x + min_x)/2.f;
-m_movey = -(max_y + min_y)/2.f;
-m_movez = -(max_z + min_z)/2.f;
-INT32 factor;
-INT32 max_all = max(max(max_x-min_x, max_y-min_y), max_z-min_z)/20;
-if (max_all < 2)      factor = 14;
-else if (max_all < 4) factor = 10;
-else if (max_all < 8) factor = 8;
-else if (max_all < 12) factor = 5;
-else if (max_all < 16) factor = 3;
-else if (max_all < 32) factor = 2;
-else factor = 1;
-m_sizex = .1f * (double)pow(1.2,factor);
-m_sizey = m_sizex;
-m_sizez = m_sizex;
-m_view.Set (m_movex, m_movey, m_movez,
-				  m_sizex, m_sizey, m_sizez,
-				  m_spinx, m_spiny, m_spinz);
+m_spin.Set (M_PI / 4.0, M_PI / 4.0, 0.0);
+m_move = CDoubleVector (Average (vMin, vMax));
+CDoubleVector v = vMax - vMin;
+INT32 maxVal = INT32 (max (max (v.v.x, v.v.y), v.v.z) / 20);
+double factor;
+if (maxVal < 2)      
+	factor = 14;
+else if (maxVal < 4) 
+	factor = 10;
+else if (maxVal < 8) 
+	factor = 8;
+else if (maxVal < 12) 
+	factor = 5;
+else if (maxVal < 16) 
+	factor = 3;
+else if (maxVal < 32) 
+	factor = 2;
+else 
+	factor = 1;
+factor = 0.1 * pow (1.2, (double) factor);
+m_size.Set (factor, factor, factor);
+m_view.Set (m_move, m_size, m_spin);
 Refresh (false);
 }
 
@@ -2704,31 +2679,14 @@ if (!theMine) return;
 	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = segP.verts;
 
-m_movex = -(double (vMine [segP.verts [0]].x) +
-			   double (vMine [vSeg [1]].x) +
-			   double (vMine [vSeg [2]].x) +
-			   double (vMine [vSeg [3]].x) +
-			   double (vMine [vSeg [4]].x) +
-			   double (vMine [vSeg [5]].x) +
-			   double (vMine [vSeg [6]].x) +
-			   double (vMine [vSeg [7]].x)) / double (0x80000L);
-m_movey = -(double (vMine [vSeg [0]].y) + 
-			   double (vMine [vSeg [1]].y) + 
-			   double (vMine [vSeg [2]].y) + 
-			   double (vMine [vSeg [3]].y) + 
-			   double (vMine [vSeg [4]].y) + 
-			   double (vMine [vSeg [5]].y) + 
-			   double (vMine [vSeg [6]].y) + 
-			   double (vMine [vSeg [7]].y)) / double (0x80000L;
-m_movez = -(double (vMine [vSeg [0]].z) + 
-			   double (vMine [vSeg [1]].z) + 
-			   double (vMine [vSeg [2]].z) + 
-			   double (vMine [vSeg [3]].z) + 
-			   double (vMine [vSeg [4]].z) + 
-			   double (vMine [vSeg [5]].z) + 
-			   double (vMine [vSeg [6]].z) + 
-			   double (vMine [vSeg [7]].z)) / double (0x80000L;
-
+m_move = -(double (vMine [segP.verts [0]]) +
+			  double (vMine [vSeg [1]]) +
+			  double (vMine [vSeg [2]]) +
+			  double (vMine [vSeg [3]]) +
+			  double (vMine [vSeg [4]]) +
+			  double (vMine [vSeg [5]]) +
+			  double (vMine [vSeg [6]]) +
+			  double (vMine [vSeg [7]])) / 8.0;
 Refresh (false);
 }
 
@@ -2738,15 +2696,11 @@ void CMineView::CenterObject()
 {
 if (!theMine) return;
 
-	CDlcDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc) return;
+CDlcDoc* pDoc = GetDocument();
+ASSERT_VALID(pDoc);
+if (!pDoc) return;
 
-	CGameObject& objP = theMine->Objects (0) [m_Current->nObject];
-	m_movex = (INT16)(-(objP.pos.x)/0x10000L);
-	m_movey = (INT16)(-(objP.pos.y)/0x10000L);
-	m_movez = (INT16)(-(objP.pos.z)/0x10000L);
-
+m_move = -theMine->Objects (m_Current->nObject)->pos;
 Refresh (false);
 }
 
@@ -2754,7 +2708,7 @@ Refresh (false);
 
 void CMineView::SetViewOption(eViewOptions option)
 {
-	m_viewOption = option;
+m_viewOption = option;
 Refresh ();
 }
 
