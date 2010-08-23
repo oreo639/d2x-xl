@@ -500,7 +500,7 @@ inline double Radians (double a) { return a * (PI / 180.0); }
 #define WID_TRANSILLUSORY_WALL	7	// 1/1/1 transparent illusory wall 
 #define WID_EXTERNAL					8	// 0/0/0/1 don't see it, dont fly through it 
 
-#define WALL_IS_DOORWAY(segP,side) (((segP)->m_info.children[(side)] == -1) ? WID_RENDER_FLAG : ((segP)->m_info.children[(side)] == -2) ? WID_EXTERNAL_FLAG : ((segP)->m_sides[(side)].nWall == -1) ? (WID_FLY_FLAG|WID_RENDPAST_FLAG) : wall_is_doorway((segP), (side)))
+#define WALL_IS_DOORWAY(segP,side) (((segP)->m_info.children[(side)] == -1) ? WID_RENDER_FLAG : ((segP)->m_info.children[(side)] == -2) ? WID_EXTERNAL_FLAG : ((segP)->m_sides[(side)].m_info.nWall == -1) ? (WID_FLY_FLAG|WID_RENDPAST_FLAG) : wall_is_doorway((segP), (side)))
 
 //Object types 
 #define OBJ_NONE         255  // unused object 

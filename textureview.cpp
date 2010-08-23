@@ -405,7 +405,7 @@ else {
 	m_nTextures [0] = 0;
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
-			UINT16 nWall = segP->m_sides[nSide].nWall;
+			UINT16 nWall = segP->m_sides[nSide].m_info.nWall;
 			if ((segP->m_info.children [nSide] == -1) ||
 				 (nWall < theMine->GameInfo ().walls.count && 
 				  theMine->Walls (nWall)->type != WALL_OPEN)) {

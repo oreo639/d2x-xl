@@ -2258,48 +2258,20 @@ return Segments (nOppSeg)->m_sides + nOppSide;
 
                         /* -------------------------- */
 
-bool CMine::SetTexture (INT16 nSegment, INT16 nSide, INT16 nTexture, INT16 tmapnum2)
+bool CMine::SetTexture (INT16 nSegment, INT16 nSide, INT16 nBaseTex, INT16 nOvlTex)
 {
 	bool bUndo, bChange = false;
-	CTexture pTx [2];
 
 bUndo = theApp.SetModified (TRUE); 
 theApp.LockUndo (); 
 GetCurrent (nSegment, nSide); 
-if (tmapnum2 == nTexture)
-   tmapnum2 = 0; 
 CSide *sideP = Segments (nSegment)->m_sides + nSide; 
-if ((nTexture >= 0) && (nTexture != sideP->m_info.nBaseTex)) {
-	sideP->m_info.nBaseTex = nTexture; 
-	if (nTexture == (sideP->m_info.nOvlTex & 0x3fff)) {
-		sideP->m_info.nOvlTex = 0; 
-		}
-	bChange = true; 
-	}
-if (tmapnum2 >= 0) {
-	if (tmapnum2 == sideP->m_info.nBaseTex)
-		tmapnum2 = 0; 
-	if (tmapnum2) {
-		sideP->m_info.nOvlTex &= ~(0x3fff);	//preserve light settings
-		sideP->m_info.nOvlTex |= tmapnum2; 
-		}
-	else
-		sideP->m_info.nOvlTex = 0; 
-	bChange = true; 
-	}
+bChange = sideP->SetTexture (nBaseTex, nOvlTex);
 if (!bChange) {
 	theApp.ResetModified (bUndo);
 	return false;
 	}
-theMine->Textures (m_fileType, sideP->m_info.nBaseTex)->Read (sideP->m_info.nBaseTex);
-theMine->Textures (m_fileType, sideP->m_info.nOvlTex & 0x3fff)->Read (sideP->m_info.nOvlTex & 0x3fff);
-#if 0
-if (((sideP->m_info.nOvlTex & 0x3fff) > 0) &&
-    (theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].m_size != 
-	  theMine->Textures () [m_fileType][sideP->m_info.nOvlTex & 0x3fff].m_size))
-	sideP->m_info.nOvlTex = 0;
-#endif
-if ((IsLight (sideP->m_info.nBaseTex)== -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff)== -1))
+if ((IsLight (sideP->m_info.nBaseTex) == -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
 	DeleteFlickeringLight (nSegment, nSide); 
 if (!WallClipFromTexture (nSegment, nSide))
 	CheckForDoor (nSegment, nSide); 
@@ -2970,6 +2942,37 @@ void CSide::LoadTextures (void)
 theMine->Textures (theMine->m_fileType, m_info.nBaseTex)->Read (m_info.nBaseTex);
 if ((m_info.nOvlTex & 0x3fff) > 0)
 	theMine->Textures (theMine->m_fileType, m_info.nOvlTex & 0x3fff)->Read (m_info.nOvlTex & 0x3fff);
+}
+
+// ------------------------------------------------------------------------
+
+bool CSide::SetTexture (INT16 nBaseTex, INT16 nOvlTex)
+{
+	bool bChange = false;
+
+if (nOvlTex == nBaseTex)
+   nOvlTex = 0; 
+if ((nBaseTex >= 0) && (nBaseTex != m_info.nBaseTex)) {
+	m_info.nBaseTex = nBaseTex; 
+	if (nBaseTex == (m_info.nOvlTex & 0x3fff)) {
+		m_info.nOvlTex = 0; 
+		}
+	bChange = true; 
+	}
+if (nOvlTex >= 0) {
+	if (nOvlTex == m_info.nBaseTex)
+		nOvlTex = 0; 
+	if (nOvlTex) {
+		m_info.nOvlTex &= ~(0x3fff);	//preserve light settings
+		m_info.nOvlTex |= nOvlTex; 
+		}
+	else
+		m_info.nOvlTex = 0; 
+	bChange = true; 
+	}
+if (bChange)
+	LoadTextures ();
+return bChange;
 }
 
 // ------------------------------------------------------------------------

@@ -1421,7 +1421,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 		UINT16 nWall = NO_WALL;
 
 		for (nSide=0; nSide<6; nSide++) {
-			pWall = ((nWall = segP->m_sides [nSide].nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
+			pWall = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
 			if ((segP->m_info.children [nSide] == -1) ||
 				(pWall && (pWall->type != WALL_OPEN) && ((pWall->type != WALL_CLOAKED) || pWall->cloak_value))
 				)
@@ -4167,7 +4167,7 @@ void CMineView::GLRenderFace (INT16 nSegment, INT16 nSide)
 	CSegment *segP = theMine->Segments (nSegment);
 	CSide *sideP = segP->m_sides + nSide;
 	CFixVector *verts = theMine->Vertices ();
-	UINT16 nWall = segP->m_sides [nSide].nWall;
+	UINT16 nWall = segP->m_sides [nSide].m_info.nWall;
 
 if (sideP->m_info.nBaseTex < 0)
 	return;

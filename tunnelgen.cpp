@@ -393,7 +393,7 @@ else {
 			segP->m_info.children [j] = -1;
 			segP->m_sides [j].m_info.nBaseTex = 0;
 			segP->m_sides [j].m_info.nOvlTex = 0;
-			segP->m_sides [j].nWall = NO_WALL;
+			segP->m_sides [j].m_info.nWall = NO_WALL;
 			for (i = 0; i < 4; i++) {
 //	    segP->m_sides [j].uvls [i].u = default_uvls [i].u;
 //	    segP->m_sides [j].uvls [i].v = default_uvls [i].v;

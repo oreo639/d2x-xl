@@ -42,13 +42,13 @@ for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 	else if (nTexture >= 0) {
 		if (walltype >= 0) {
 			if ((GameInfo ().walls.count < MAX_WALLS) &&
-				 (Segments (nSegment)->m_sides [nSide].nWall >= GameInfo ().walls.count))
+				 (Segments (nSegment)->m_sides [nSide].m_info.nWall >= GameInfo ().walls.count))
 				AddWall (nSegment, nSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
 			if ((GameInfo ().walls.count < MAX_WALLS) &&
 				 GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
-				 (Segments (nOppSeg)->m_sides [nOppSide].nWall >= GameInfo ().walls.count))
+				 (Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall >= GameInfo ().walls.count))
 				AddWall (nOppSeg, nOppSide, (UINT8) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
@@ -590,7 +590,7 @@ return AddExit (TT_EXIT);
 bool CMine::AddExit (INT16 type) 
 {
 
-UINT16 nWall = Segments (Current ()->nSegment)->m_sides [Current ()->nSide].nWall;
+UINT16 nWall = Segments (Current ()->nSegment)->m_sides [Current ()->nSide].m_info.nWall;
 if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -724,7 +724,7 @@ return false;
 bool CMine::AddDoorTrigger (INT16 wall_type, UINT16 wall_flags, UINT16 trigger_type) 
 {
 CSegment* otherSegP = OtherSeg ();
-UINT16 nWall = otherSegP->m_sides [Other ()->nSide].nWall;
+UINT16 nWall = otherSegP->m_sides [Other ()->nSide].m_info.nWall;
 if (nWall >= GameInfo ().walls.count) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
 				"Hint: Select a wall using the 'other cube' and\n"

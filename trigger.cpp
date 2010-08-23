@@ -208,7 +208,7 @@ void CMine::DeleteTrigger (INT16 nTrigger)
 	INT16	i, nSegment, nSide, nWall;
 
 if (nTrigger < 0) {
-	nWall = CurrSeg ()->sides [Current ()->nSide].nWall;
+	nWall = CurrSeg ()->sides [Current ()->nSide].m_info.nWall;
 	if (nWall >= GameInfo ().walls.count)
 		return;
 	nTrigger = Walls (nWall)->nTrigger;

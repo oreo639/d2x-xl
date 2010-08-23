@@ -479,7 +479,7 @@ INT16 nOppSeg, nOppSide;
 
 if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = NULL;
-m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].nWall;
+m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 return m_pWall [1] = (m_nWall [1] < theMine->GameInfo ().walls.count ? theMine->Walls (m_nWall [1]) : NULL);
 }
 

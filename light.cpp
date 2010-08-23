@@ -245,7 +245,7 @@ return true;
 // returns index if found, -1 if not in the list
 //------------------------------------------------------------------------
 
-INT32 CMine::IsLight(INT32 nBaseTex) 
+INT32 CMine::IsLight (INT32 nBaseTex) 
 {
 #if 1
 return (lightMap [nBaseTex & 0x3fff] > 0) ? 0 : -1;
@@ -377,7 +377,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 			for (j = 0; j < 6; j++) {
 				for (i = 0; i < 4; i++) {
 					h = (UINT16) segP->m_sides [j].uvls [i].l;
-					if (h || ((segP->m_info.children [j] == -1) && !VisibleWall (segP->m_sides [j].nWall))) {
+					if (h || ((segP->m_info.children [j] == -1) && !VisibleWall (segP->m_sides [j].m_info.nWall))) {
 						l += h;
 						c++;
 						}
@@ -449,7 +449,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 						nSide = point_sides[pt][i];
 						uvnum = point_corners[pt][i];
 						if ((segP->m_info.children[nSide] < 0) || 
-							 (segP->m_sides[nSide].nWall < GameInfo ().walls.count)) {
+							 (segP->m_sides[nSide].m_info.nWall < GameInfo ().walls.count)) {
 #if 1
 							max_brightness = max(max_brightness,(UINT16)segP->m_sides[nSide].uvls[uvnum].l);
 #else
@@ -474,7 +474,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 							nSide = point_sides[pt][i];
 							uvnum = point_corners[pt][i];
 							if ((segP->m_info.children[nSide] < 0) || 
-								 (segP->m_sides[nSide].nWall < GameInfo ().walls.count)) {
+								 (segP->m_sides[nSide].m_info.nWall < GameInfo ().walls.count)) {
 								segP->m_sides[nSide].uvls[uvnum].l = max_brightness;
 								}
 							}
@@ -504,7 +504,7 @@ theApp.SetModified (TRUE);
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
-					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].nWall < wallCount)) {
+					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 						INT32 uvnum = point_corners [pt][i];
 						if (max_brightness [nVertex].light < UINT16 (segP->m_sides [nSide].uvls [uvnum].l))
 							max_brightness [nVertex].light = UINT16 (segP->m_sides [nSide].uvls [uvnum].l);
@@ -523,7 +523,7 @@ theApp.SetModified (TRUE);
 			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = point_sides [pt][i];
-					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].nWall < wallCount)) {
+					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 						INT32 uvnum = point_corners [pt][i];
 						segP->m_sides [nSide].uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
 						}
@@ -729,7 +729,7 @@ INT32 nSegCount = SegCount ();
 			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
 				continue;
 			if (childSegP->m_info.children [nChildSide] >= 0) {
-				UINT16 nWall = childSegP->m_sides [nChildSide].nWall;
+				UINT16 nWall = childSegP->m_sides [nChildSide].m_info.nWall;
 				// .. but there is no wall ..
 				if (nWall >= GameInfo ().walls.count)
 					continue;
@@ -930,7 +930,7 @@ fLightScale = 1.0; ///= 100.0;
 			if (!bCalcDeltas)
 				continue;
 
-			INT16 srcwall = srcSegP->m_sides [nSourceSide].nWall;
+			INT16 srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
 			if ((srcSegP->m_info.children [nSourceSide] != -1) &&
 				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->type == WALL_OPEN)))
 				continue;
@@ -1018,7 +1018,7 @@ fLightScale = 1.0; ///= 100.0;
 				for (INT32 nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
 					if (childSegP->m_info.children[nChildSide] >= 0) {
-						UINT16 nWall = childSegP->m_sides[nChildSide].nWall;
+						UINT16 nWall = childSegP->m_sides[nChildSide].m_info.nWall;
 						// .. if there is no wall ..
 						if (nWall >= GameInfo ().walls.count)
 							continue;
@@ -1171,7 +1171,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion
 // mark each child if child number is lower
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
-	nWall = segP->m_sides [nSide].nWall;
+	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
 	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
 		continue;
@@ -1198,7 +1198,7 @@ if (!bMarkChildren || (recursion_level == 1))
 // check each side of this segment for more children
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
-	nWall = segP->m_sides [nSide].nWall;
+	nWall = segP->m_sides [nSide].m_info.nWall;
 	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
 		continue;
 	// check child
@@ -1222,7 +1222,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion
 // mark each child if child number is lower
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
-	nWall = segP->m_sides [nSide].nWall;
+	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
 	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
 		continue;
@@ -1249,7 +1249,7 @@ if (!bMarkChildren || (recursion_level == 1))
 // check each side of this segment for more children
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
-	nWall = segP->m_sides [nSide].nWall;
+	nWall = segP->m_sides [nSide].m_info.nWall;
 	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->type == WALL_DOOR))
 		continue;
 	// check child

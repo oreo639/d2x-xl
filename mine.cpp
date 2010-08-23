@@ -189,7 +189,7 @@ if (m_pHxmExtraData) {
 CSegment& segP = *Segments (0);
 CVertex *vert = Vertices (0);
 
-segP.sides [0].nWall = NO_WALL;
+segP.sides [0].m_info.nWall = NO_WALL;
 segP.sides [0].m_info.nBaseTex = 0;
 segP.sides [0].m_info.nOvlTex = 0;
 segP.sides [0].uvls [0].u = 0;
@@ -205,7 +205,7 @@ segP.sides [0].uvls [3].u = - 2048;
 segP.sides [0].uvls [3].v = 0;
 segP.sides [0].uvls [3].l = 0x8000U;
 
-segP.sides [1].nWall = NO_WALL;
+segP.sides [1].m_info.nWall = NO_WALL;
 segP.sides [1].m_info.nBaseTex = 263;
 segP.sides [1].m_info.nOvlTex = 264;
 segP.sides [1].uvls [0].u = 0;
@@ -221,7 +221,7 @@ segP.sides [1].uvls [3].u = - 2048;
 segP.sides [1].uvls [3].v = 0;
 segP.sides [1].uvls [3].l = 0x8000U;
 
-segP.sides [2].nWall = NO_WALL;
+segP.sides [2].m_info.nWall = NO_WALL;
 segP.sides [2].m_info.nBaseTex = 0;
 segP.sides [2].m_info.nOvlTex = 0;
 segP.sides [2].uvls [0].u = 0;
@@ -237,7 +237,7 @@ segP.sides [2].uvls [3].u = - 2048;
 segP.sides [2].uvls [3].v = 0;
 segP.sides [2].uvls [3].l = 0x8000U;
 
-segP.sides [3].nWall = NO_WALL;
+segP.sides [3].m_info.nWall = NO_WALL;
 segP.sides [3].m_info.nBaseTex = 270;
 segP.sides [3].m_info.nOvlTex = 0;
 segP.sides [3].uvls [0].u = 0;
@@ -253,7 +253,7 @@ segP.sides [3].uvls [3].u = - 2048;
 segP.sides [3].uvls [3].v = 0;
 segP.sides [3].uvls [3].l = 11678;
 
-segP.sides [4].nWall = NO_WALL;
+segP.sides [4].m_info.nWall = NO_WALL;
 segP.sides [4].m_info.nBaseTex = 0;
 segP.sides [4].m_info.nOvlTex = 0;
 segP.sides [4].uvls [0].u = 0;
@@ -269,7 +269,7 @@ segP.sides [4].uvls [3].u = - 2043;
 segP.sides [4].uvls [3].v = 0;
 segP.sides [4].uvls [3].l = 0x8000U;
 
-segP.sides [5].nWall = NO_WALL;
+segP.sides [5].m_info.nWall = NO_WALL;
 segP.sides [5].m_info.nBaseTex = 0;
 segP.sides [5].m_info.nOvlTex = 0;
 segP.sides [5].uvls [0].u = 0;

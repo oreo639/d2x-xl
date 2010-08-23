@@ -678,7 +678,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (theMine->SideIsMarked (nSegment, nSide)) {
 			if ((segP->m_info.children [nSide] == -1) || 
-				 (segP->m_sides [nSide].nWall < nWalls)) {
+				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
 				theMine->SetUV (nSegment,nSide,0,0,0);
 				bModified = TRUE;

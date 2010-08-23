@@ -933,7 +933,7 @@ if (!theMine)
 	// make sure trigP is linked to exactly one wallP
 for (i = 0; i < reactorTrigger->m_count; i++)
 	if ((reactorTrigger->Segment (i) >= segCount) ||
-		(theMine->Segments (reactorTrigger->Segment (i))->m_sides [reactorTrigger->Side (i)].nWall >= wallCount)) {
+		(theMine->Segments (reactorTrigger->Segment (i))->m_sides [reactorTrigger->Side (i)].m_info.nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
 			reactorTrigger->Delete (i);
 			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigP target.");
@@ -1075,7 +1075,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigP points to a wallP if it controls doors
-						if (segP->m_sides[nSide].nWall >= wallCount) {
+						if (segP->m_sides[nSide].m_info.nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
 								if (theMine->DeleteTargetFromTrigger (trigP, linknum))
 									linknum--;
@@ -1096,7 +1096,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						else {
-							if (theMine->Segments (nOppSeg)->m_sides [nOppSide].nWall >= wallCount) {
+							if (theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall >= wallCount) {
 								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 								}
@@ -1107,7 +1107,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
 							  ) {
 						// make sure trigP points to a wallP if it controls doors
-						if (segP->m_sides [nSide].nWall >= wallCount) {
+						if (segP->m_sides [nSide].m_info.nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
 								if (theMine->DeleteTargetFromTrigger (trigP, linknum))
 									linknum--;
@@ -1386,7 +1386,7 @@ CWall *CDiagTool::OppWall (UINT16 nSegment, UINT16 nSide)
 
 if (!theMine->GetOppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
 	return NULL;
-nWall = theMine->Segments (oppSegnum)->m_sides [oppSidenum].nWall;
+nWall = theMine->Segments (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
 if ((nWall < 0) || (nWall > MAX_WALLS))
 	return NULL;
 return theMine->Walls (nWall);
@@ -1432,7 +1432,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				if (wallFixed [nWall])
 					sideP->nWall = NO_WALL;
 				else {
-					if (theMine->Segments (w->m_nSegment)->m_sides [w->m_nSide].nWall == nWall)
+					if (theMine->Segments (w->m_nSegment)->m_sides [w->m_nSide].m_info.nWall == nWall)
 						sideP->nWall = NO_WALL;
 					else {
 						w->m_nSegment = nSegment;
@@ -1457,10 +1457,10 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				else {
 					ow = OppWall (nSegment, nSide);
 					if (ow && (ow->type == w->type)) {
-						segP->m_sides [w->m_nSide].nWall = NO_WALL;
+						segP->m_sides [w->m_nSide].m_info.nWall = NO_WALL;
 						w->m_nSide = nSide;
 						}
-					else if (segP->m_sides [w->m_nSide].nWall == nWall)
+					else if (segP->m_sides [w->m_nSide].m_info.nWall == nWall)
 						sideP->nWall = NO_WALL;
 					else
 						w->m_nSide = nSide;
@@ -1565,7 +1565,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			if (m_bAutoFixBugs) {
 				INT16	oppSeg, oppSide, invLinkedWall = wallP->linkedWall;
 				if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-					wallP->linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].nWall;
+					wallP->linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
 					if ((wallP->linkedWall < -1) || (wallP->linkedWall >= wallCount))
 						wallP->linkedWall = -1;
 					sprintf_s (message, sizeof (message),
@@ -1581,7 +1581,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		else if (wallP->linkedWall >= 0) {
 			INT16	oppSeg, oppSide;
 			if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-				INT16 oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].nWall;
+				INT16 oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
@@ -1649,14 +1649,14 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 						if (segP->m_info.children[nSide] == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
-						if (segP->m_sides[nSide].nWall >= theMine->GameInfo ().walls.count) {
+						if (segP->m_sides[nSide].m_info.nWall >= theMine->GameInfo ().walls.count) {
 							sprintf_s (message, sizeof (message),
 										"WARNING: No matching wall for this wall (wall=%d, cube=%d)", 
 										nWall,nSegment);
 							if (UpdateStats (message,0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 							} 
 						else {
-							UINT16 wallnum2 = segP->m_sides[nSide].nWall;
+							UINT16 wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
 								 ((wallP->nClip != theMine->Walls (wallnum2)->nClip
 									|| wallP->type != theMine->Walls (wallnum2)->type))) {

@@ -57,6 +57,7 @@ public:
 	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	void Setup (void);
 	void LoadTextures (void);
+	bool SetTexture (INT16 nBaseTex, INT16 nOvlTex);
 	CWall* Wall (void);
 };
 
