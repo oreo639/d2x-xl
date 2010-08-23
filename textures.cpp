@@ -166,7 +166,7 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, 
 	INT32			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
 	INT32			rc; // return code
-	CTexture	*pTx [2];
+	CTexture*	texP [2];
 	UINT8			*bmBuf = pDestTx->m_info.bmDataP;
 	UINT8			c;
 	INT32			fileType = theApp.FileType ();
@@ -182,34 +182,34 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, 
 if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	textures [i] = 0;
 	// buffer textures if not already buffered
-	pTx [i] = theMine->Textures (fileType, textures [i]);
-	if (!(pTx [i]->m_info.bmDataP && pTx [i]->m_info.bValid))
-		if (rc = pTx [i]->Read (textures [i]))
+	texP [i] = theMine->Textures (fileType, textures [i]);
+	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
+		if (rc = texP [i]->Read (textures [i]))
 			return (rc);
 	}
 	
 	// Define bmBuf based on texture numbers and rotation
-pDestTx->m_info.width = pTx [0]->m_info.width;
-pDestTx->m_info.height = pTx [0]->m_info.height;
-pDestTx->m_info.size = pTx [0]->m_info.size;
+pDestTx->m_info.width = texP [0]->m_info.width;
+pDestTx->m_info.height = texP [0]->m_info.height;
+pDestTx->m_info.size = texP [0]->m_info.size;
 pDestTx->m_info.bValid = 1;
-ptr = pTx [0]->m_info.bmDataP;
+ptr = texP [0]->m_info.bmDataP;
 //CBRK (textures [0] == 220);
 if (ptr) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
-		memcpy (bmBuf, ptr, pTx [0]->m_info.size);
+		memcpy (bmBuf, ptr, texP [0]->m_info.size);
 	else {
 		// otherwise, copy bit by bit
-		w = pTx [0]->m_info.width;
+		w = texP [0]->m_info.width;
 #if 1
 		INT32	l1 = y0 * w + x0;
-		INT32	l2 = pTx [0]->m_info.size - l1;
+		INT32	l2 = texP [0]->m_info.size - l1;
 		memcpy (bmBuf, ptr + l1, l2);
 		memcpy (bmBuf + l2, ptr, l1);
 #else
 		UINT8		*dest = bmBuf;
-		h = w;//pTx [0]->m_info.height;
+		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++)
 				*dest++ = ptr [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
@@ -221,24 +221,24 @@ if (ptr) {
 
 if (textures [1] == 0)
 	return 0;
-if (!(ptr = pTx [1]->m_info.bmDataP))
+if (!(ptr = texP [1]->m_info.bmDataP))
 	return 0;
-if (pTx [0]->m_info.width == pTx [1]->m_info.width)
+if (texP [0]->m_info.width == texP [1]->m_info.width)
 	scale.c = scale.d = 1;
-else if (pTx [0]->m_info.width < pTx [1]->m_info.width) {
-	scale.c = pTx [1]->m_info.width / pTx [0]->m_info.width;
+else if (texP [0]->m_info.width < texP [1]->m_info.width) {
+	scale.c = texP [1]->m_info.width / texP [0]->m_info.width;
 	scale.d = 1;
 	}
-else if (pTx [0]->m_info.width > pTx [1]->m_info.width) {
-	scale.d = pTx [0]->m_info.width / pTx [1]->m_info.width;
+else if (texP [0]->m_info.width > texP [1]->m_info.width) {
+	scale.d = texP [0]->m_info.width / texP [1]->m_info.width;
 	scale.c = 1;
 	}
 scale2.c = scale.c * scale.c;
 scale2.d = scale.d * scale.d;
 offs = 0;
-w = pTx [1]->m_info.width / scale.c * scale.d;
-h = w;//pTx [1]->m_info.height / scale.c * scale.d;
-s = (pTx [1]->m_info.width * pTx [1]->m_info.width)/*pTx [1]->m_info.size*/ / scale2.c * scale2.d;
+w = texP [1]->m_info.width / scale.c * scale.d;
+h = w;//texP [1]->m_info.height / scale.c * scale.d;
+s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
 if (!(x0 || y0)) {
 	UINT8 *dest, *dest2;
 	if (mode == 0x0000) {
@@ -614,7 +614,7 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	INT32			row;
 	UINT16		nUnknownTextures, nMissingTextures;
 	bool			bExtraTexture;
-	CTexture	*pTx;
+	CTexture	*texP;
 	INT32			fileType = theApp.FileType ();
 
 // make sure this is descent 2 fTextures
@@ -704,42 +704,42 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		extraTextures = pxTx;
 		pxTx->texture_index = texture_index;
 		pxTx->texture.m_info.bmDataP = NULL;
-		pTx = &(pxTx->texture);
+		texP = &(pxTx->texture);
 		nBaseTex = 0;
 		}
 	else
-		pTx = theMine->Textures (fileType);
+		texP = theMine->Textures (fileType);
 // allocate memory for texture if not already
 	ptr = (UINT8*) malloc (tWidth * tHeight);
 	if (ptr) {
-		if (pTx [nBaseTex].m_info.bmDataP)
-			delete pTx [nBaseTex].m_info.bmDataP;
-		pTx [nBaseTex].m_info.bmDataP = ptr;
+		if (texP [nBaseTex].m_info.bmDataP)
+			delete texP [nBaseTex].m_info.bmDataP;
+		texP [nBaseTex].m_info.bmDataP = ptr;
 		if (d2texture.flags & 0x80) {
 			ptr = (UINT8*) malloc (tSize * sizeof (tRGBA));
 			if (ptr) {
-				pTx [nBaseTex].m_info.tgaDataP = (tRGBA *) ptr;
-				pTx [nBaseTex].m_info.nFormat = 1;
+				texP [nBaseTex].m_info.tgaDataP = (tRGBA *) ptr;
+				texP [nBaseTex].m_info.nFormat = 1;
 				}
 			else {
-				delete pTx [nBaseTex].m_info.bmDataP;
+				delete texP [nBaseTex].m_info.bmDataP;
 				continue;
 				}
 			}
 		else
-			pTx [nBaseTex].m_info.nFormat = 0;
-		pTx [nBaseTex].m_info.width = tWidth;
-		pTx [nBaseTex].m_info.height = tHeight;
-		pTx [nBaseTex].m_info.size = tSize;
-		pTx [nBaseTex].m_info.bValid = 1;
+			texP [nBaseTex].m_info.nFormat = 0;
+		texP [nBaseTex].m_info.width = tWidth;
+		texP [nBaseTex].m_info.height = tHeight;
+		texP [nBaseTex].m_info.size = tSize;
+		texP [nBaseTex].m_info.bValid = 1;
 		// read texture into memory (assume non-compressed)
 #if 1
 		fseek (fTextures, bmpOffset + d2texture.offset, SEEK_SET);
 #endif
-		if (pTx [nBaseTex].m_info.nFormat) {
-			fread (ptr, pTx [nBaseTex].m_info.size * sizeof (tRGBA), 1, fTextures);
-			pTx [nBaseTex].m_info.bValid = 
-				TGA2Bitmap (pTx [nBaseTex].m_info.tgaDataP, pTx [nBaseTex].m_info.bmDataP, (INT32) tWidth, (INT32) tHeight);
+		if (texP [nBaseTex].m_info.nFormat) {
+			fread (ptr, texP [nBaseTex].m_info.size * sizeof (tRGBA), 1, fTextures);
+			texP [nBaseTex].m_info.bValid = 
+				TGA2Bitmap (texP [nBaseTex].m_info.tgaDataP, texP [nBaseTex].m_info.bmDataP, (INT32) tWidth, (INT32) tHeight);
 			}
 		else {
 			if (d2texture.flags & BM_FLAG_RLE) {
@@ -755,7 +755,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 				}
 			}
 		if (!bExtraTexture)
-			pTx [nBaseTex].m_info.bModified = TRUE;
+			texP [nBaseTex].m_info.bModified = TRUE;
 		}
 	}
 if (nUnknownTextures) {
@@ -1195,8 +1195,8 @@ if (bShowTexture) {
 			}
 		}
 	if (dataOffset [theApp.IsD1File ()] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CTexture	tx (bmBuf, true);
-		if (DefineTexture (nBaseTex, nOvlTex, &tx, xOffset, yOffset))
+		CTexture	tex (bmBuf, true);
+		if (DefineTexture (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
 		pDC->RealizePalette ();
@@ -1206,16 +1206,16 @@ if (bShowTexture) {
 			if (!bmi)
 				return false;
 			bmi->bmiHeader.biWidth = 
-			bmi->bmiHeader.biHeight = tx.m_info.width;
-			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tx.m_info.width, tx.m_info.width,
+			bmi->bmiHeader.biHeight = tex.m_info.width;
+			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
 					        	 (void *) bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 		else {
-			double scale = tx.Scale ();
+			double scale = tex.Scale ();
 			UINT32 x, y;
-			for (x = 0; x < tx.m_info.width; x = (INT32) (x + scale))
-				for (y = 0; y < tx.m_info.width; y = (INT32) (y + scale))
-					pDC->SetPixel ((INT16) (x / scale), (INT16) (y / scale), PALETTEINDEX (bmBuf [y*tx.m_info.width+x]));
+			for (x = 0; x < tex.m_info.width; x = (INT32) (x + scale))
+				for (y = 0; y < tex.m_info.width; y = (INT32) (y + scale))
+					pDC->SetPixel ((INT16) (x / scale), (INT16) (y / scale), PALETTEINDEX (bmBuf [y*tex.m_info.width+x]));
 			}
 		pDC->SelectPalette (pOldPalette, FALSE);
 		}
