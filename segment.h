@@ -99,6 +99,7 @@ public:
 private:
 	UINT8 ReadWalls (FILE* fp, int nLevelVersion);
 	UINT8 WriteWalls (FILE* fp, int nLevelVersion);
+	void SetUV (INT16 nSide, INT16 x, INT16 y);
 
 };
 

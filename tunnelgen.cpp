@@ -424,7 +424,7 @@ else {
 		segP->function = 0;
 		segP->nMatCen = -1;
 		segP->value = -1;
-		segP->wallFlags = 0; // make sure segment is not marked
+		segP->m_info.wallFlags = 0; // make sure segment is not marked
 		SegCount ()++;
 		}
 	theApp.UnlockUndo ();

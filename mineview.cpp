@@ -1071,7 +1071,7 @@ void CMineView::DrawCubePartial (CSegment *segP) {
 if (!Visible (segP))
 	return;
 for (line=0;line<12;line++) {
-	if (segP->map_bitmask & (1<<line)) {
+	if (segP->m_info.map_bitmask & (1<<line)) {
       if (IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [0]]].x,x_max) &&
 			 IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [0]]].y,y_max) &&
 			 IN_RANGE(m_viewPoints [segP->verts [line_vert [line] [1]]].x,x_max) &&

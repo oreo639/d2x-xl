@@ -532,7 +532,7 @@ UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
 	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
-		if (segP->wallFlags & MARKED_MASK)
+		if (segP->m_info.wallFlags & MARKED_MASK)
 			segP->owner = m_nOwner;
 	}
 else 					
@@ -557,7 +557,7 @@ UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
 	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
-		if (segP->wallFlags & MARKED_MASK)
+		if (segP->m_info.wallFlags & MARKED_MASK)
 			segP->group = m_nGroup;
 	}
 else 					
@@ -593,7 +593,7 @@ else {
 	}
 CSegment* segP = theMine->Segments (nMinSeg);
 for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
-	if (bMarked && !(segP->wallFlags & MARKED_MASK))
+	if (bMarked && !(segP->m_info.wallFlags & MARKED_MASK))
 		continue;
 	m_nType = segP->function;
 	switch(nType) {

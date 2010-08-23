@@ -1581,14 +1581,14 @@ void CMine::SetLinesToDraw()
   INT16 nSegment, nSide; 
 
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
-	segP->map_bitmask |= 0xFFF; 
+	segP->m_info.map_bitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		if (segP->m_info.children [nSide] > -1) { // -1 = no child,  - 2 = outside of world
-			segP->map_bitmask &= ~(1 << (side_line [nSide][0])); 
-			segP->map_bitmask &= ~(1 << (side_line [nSide][1])); 
-			segP->map_bitmask &= ~(1 << (side_line [nSide][2])); 
-			segP->map_bitmask &= ~(1 << (side_line [nSide][3])); 
+			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][0])); 
+			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][1])); 
+			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][2])); 
+			segP->m_info.map_bitmask &= ~(1 << (side_line [nSide][3])); 
 			}
 		}
 	}
@@ -2224,7 +2224,7 @@ return return_code;
 
 bool CMine::GetOppositeSide (INT16& nOppSeg, INT16& nOppSide, INT16 nSegment, INT16 nSide)
 {
-  INT16 childseg, childside; 
+  INT16 nChildSeg, nChildSide; 
 
 nOppSeg = 0; 
 nOppSide = 0; 
@@ -2233,13 +2233,13 @@ if (nSegment < 0 || nSegment >= SegCount ())
 	return false; 
 if (nSide < 0 || nSide >= 6)
 	return false; 
-childseg =Segments (nSegment)->m_info.children [nSide]; 
-if (childseg < 0 || childseg >= SegCount ())
+nChildSeg = Segments (nSegment)->m_info.children [nSide]; 
+if (nChildSeg < 0 || nChildSeg >= SegCount ())
 	return false; 
-for (childside = 0; childside < 6; childside++) {
-	if (Segments () [childseg].children [childside]== nSegment) {
-		nOppSeg = childseg; 
-		nOppSide = childside; 
+for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+	if (Segments (nChildSeg)->m_info.children [nChildSide] == nSegment) {
+		nOppSeg = nChildSeg; 
+		nOppSide = nChildSide; 
 		return true; 
 		}
 	}
@@ -2619,8 +2619,8 @@ UINT8 CSegment::ReadWalls (FILE* fp, int nLevelVersion)
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	if (wallFlags &= (1 << i)) 
-		sides [i].m_info.nWall = (nLevelVersion >= 13) ? read_INT16 (fp) : INT16 (read_INT8 (fp));
+	if (m_info.wallFlags &= (1 << i)) 
+		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? read_INT16 (fp) : INT16 (read_INT8 (fp));
 return wallFlags;
 }
 
@@ -2671,7 +2671,7 @@ m_info.childFlags = UINT8 (read_INT8 (fp));
 
 // read 0 to 6 children (0 to 12 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-	m_info.children [i] = (childFlags & (1 << i)) ? read_INT16 (fp) : -1;
+	m_info.children [i] = (m_info.childFlags & (1 << i)) ? read_INT16 (fp) : -1;
 
 // read vertex numbers (16 bytes)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
@@ -2705,7 +2705,7 @@ UINT8 CSegment::WriteWalls (FILE* fp, int nLevelVersion)
 
 m_info.wallFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if(sides [i].m_info.nWall < theMine->GameInfo ().walls.count) 
+	if (m_sides [i].m_info.nWall < theMine->GameInfo ().walls.count) 
 		m_info.wallFlags |= (1 << i);
 	}
 write_INT8 (m_info.wallFlags, fp);
@@ -2754,12 +2754,12 @@ if (nLevelType == 2) {
 #if 1
 m_info.childFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if(children [i] != -1) {
+	if (m_info.children [i] != -1) {
 		m_info.childFlags |= (1 << i);
 		}
 	}
 if (nLevelType == 0) {
-	if (function != 0) { // if this is a special cube
+	if (m_info.function != 0) { // if this is a special cube
 		m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 	}
@@ -2768,7 +2768,7 @@ write_INT8 (m_info.childFlags, fp);
 
 // write children numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	if (childFlags & (1 << i)) 
+	if (m_info.childFlags & (1 << i)) 
 		write_INT16 (m_info.children [i], fp);
 
 // write vertex numbers (16 bytes)
@@ -2803,10 +2803,10 @@ m_info.function = 0;
 m_info.nMatCen = -1; 
 m_info.value = -1; 
 m_info.childFlags = 0;
-wallFlags = 0; 
+m_info.wallFlags = 0; 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	m_sides [i].Setup (); 
-	SetUV (i, 0, 0, 0); 
+	SetUV (i, 0, 0); 
 	}
 m_info.static_light = 0; 
 memset (m_info.children, 0xFF, sizeof (m_info.children));
@@ -2827,7 +2827,7 @@ void CSegment::SetUV (INT16 nSide, INT16 x, INT16 y)
 
 for (i = 0; i < 4; i++) {
 	nVertex = m_info.verts [side_vert [nSide][i]]; 
-	A [i] = CDoubleVector (*Vertices (nVertex)); 
+	A [i] = CDoubleVector (*theMine->Vertices (nVertex)); 
 	}
 
 // subtract point 0 from all points in A to form B points
@@ -2901,7 +2901,7 @@ switch (x) {
 	}
 #else
 theApp.SetModified (TRUE); 
-LoadSideTextures (nSegment, nSide);
+m_sides [nSide].LoadTextures ();
 double scale = 1.0; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->v = (INT16) ((y + (E [i].v.x / 640)) / scale); 
@@ -2960,7 +2960,7 @@ m_info.nWall = NO_WALL;
 m_info.nBaseTex =
 m_info.nOvlTex = 0; 
 for (int i = 0; i < 4; i++)
-	m_sides [i].m_info.uvls [i].l = (UINT16) DEFAULT_LIGHTING; 
+	m_info.uvls [i].l = (UINT16) DEFAULT_LIGHTING; 
 }
 
 // ------------------------------------------------------------------------ 
