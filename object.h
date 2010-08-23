@@ -46,7 +46,7 @@ public:
 		n_joints = read_INT16 (fp);
 		offset = read_INT16 (fp);
 		}
-	void write (FILE* fp) {
+	void Write (FILE* fp) {
 		 write_INT16 (n_joints, fp);
 		 write_INT16 (offset, fp);
 		}

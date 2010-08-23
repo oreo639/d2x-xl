@@ -185,9 +185,9 @@ m_info.pursuit = read_INT8 (fp);
 m_info.lightCast = read_INT8 (fp);
 m_info.deathRoll = read_INT8 (fp);
 m_info.flags = (UINT8) read_INT8 (fp);
-m_info.bCustom = read_INT8 (fp); // skip
-read_INT8 (fp); // skip
-read_INT8 (fp); // skip
+m_info.bCustom = read_INT8 (fp); 
+m_info.pad [0] = read_INT8 (fp); 
+m_info.pad [1] = read_INT8 (fp); 
 m_info.deathRollSound = (UINT8) read_INT8 (fp);
 m_info.glow = (UINT8) read_INT8 (fp);
 m_info.behavior = (UINT8) read_INT8 (fp);
@@ -203,6 +203,66 @@ return 1;
 
 void CRobotInfo::Write (FILE* fp, INT32 version, bool bFlag) 
 {
+	int i, j;
+
+write_INT32 (m_info.nModel, fp);
+for (i = 0; i < MAX_GUNS; i++)
+	m_info.guns [i].Write (fp);
+for (i = 0; i < 2; i++)
+	m_info.expl [i].Write (fp);
+for (i = 0; i < 2; i++)
+	write_INT8 (m_info.weaponType [i], fp);
+write_INT8 (m_info.n_guns, fp);
+m_info.contents.Write (fp);
+write_INT8 (m_info.kamikaze, fp);
+write_INT16 (m_info.scoreValue, fp);
+write_INT8 (m_info.badass, fp);
+write_INT8 (m_info.drainEnergy, fp);
+write_FIX (m_info.lighting, fp);
+write_FIX (m_info.strength, fp);
+write_FIX (m_info.mass, fp);
+write_FIX (m_info.drag, fp);
+for (i = 0; i < 2; i++)
+	write_INT8 (m_info.weaponType [i], fp);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 0);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 1);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 2);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 3);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 4);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 5);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 6);
+for (i = 0; i < NDL; i++)
+	m_info.combat [i].Write (fp, 7);
+write_INT8 (m_info.cloakType, fp);
+write_INT8 (m_info.attackType, fp);
+m_info.sounds.Write (fp);
+write_INT8 (m_info.bossFlag, fp);
+write_INT8 (m_info.companion, fp);
+write_INT8 (m_info.smartBlobs, fp);
+write_INT8 (m_info.energyBlobs, fp);
+write_INT8 (m_info.thief, fp);
+write_INT8 (m_info.pursuit, fp);
+write_INT8 (m_info.lightCast, fp);
+write_INT8 (m_info.deathRoll, fp);
+write_INT8 (m_info.flags, fp);
+write_INT8 (m_info.bCustom, fp); // skip
+write_INT8 (m_info.pad [1], fp); // skip
+write_INT8 (m_info.pad [2], fp); // skip
+(UINT8) write_INT8 (m_info.deathRollSound, fp);
+(UINT8) write_INT8 (m_info.glow, fp);
+(UINT8) write_INT8 (m_info.behavior, fp);
+(UINT8) write_INT8 (m_info.aim, fp);
+for (i = 0; i <= MAX_GUNS; i++)
+	for (j = 0; j < N_ANIM_STATES; j++)
+		m_info.animStates [i][j].Write (fp);
+write_INT32 (m_info.always_0xabcd, fp);
 }
 
 //------------------------------------------------------------------------
