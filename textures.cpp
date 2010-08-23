@@ -600,22 +600,22 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	D2_PIG_HEADER	d2FileHeader;
 	D2_PIG_TEXTURE d2texture;
 
-	HRSRC			hFind = 0;
-	HGLOBAL		hGlobal = 0;
-	UINT32*		textureCount = 0;
-	UINT16		*textureTable;
-	UINT16		nBaseTex;
-	UINT16		*xlatTbl = NULL;
-	INT32			tWidth, tHeight, tSize;
-	UINT32		offset, hdrOffset, bmpOffset, hdrSize, xlatTblSize;
-	INT32			rc; // return code;
-	INT32			nTexture;
-	UINT8			*ptr;
-	INT32			row;
-	UINT16		nUnknownTextures, nMissingTextures;
-	bool			bExtraTexture;
-	CTexture	*texP;
-	INT32			fileType = theApp.FileType ();
+	HRSRC				hFind = 0;
+	HGLOBAL			hGlobal = 0;
+	UINT32*			textureCount = 0;
+	UINT16*			textureTable;
+	UINT16			nBaseTex;
+	UINT16*			xlatTbl = NULL;
+	INT32				tWidth, tHeight, tSize;
+	UINT32			offset, hdrOffset, bmpOffset, hdrSize, xlatTblSize;
+	INT32				rc; // return code;
+	INT32				nTexture;
+	UINT8*			ptr;
+	INT32				row;
+	UINT16			nUnknownTextures, nMissingTextures;
+	bool				bExtraTexture;
+	CTexture*		texP;
+	INT32				fileType = theApp.FileType ();
 
 // make sure this is descent 2 fTextures
 if (theApp.IsD1File ()) {
@@ -695,7 +695,7 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 		continue;
 		}
 	if (bExtraTexture) {
-		pExtraTexture	extraTexP = new pExtraTexture;
+			pExtraTexture extraTexP = new struct tExtraTexture;
 		if (!extraTexP) {
 			nUnknownTextures++;
 			continue;
@@ -710,7 +710,7 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 	else
 		texP = theMine->Textures (fileType, nTexture);
 // allocate memory for texture if not already
-	if (!(ptr = new UINT8 [tWidth * tHeight]))
+	if (!(ptr = new UINT8 [tSize]))
 		continue;
 	if (!bExtraTexture)
 		texP->Dispose ();
@@ -998,25 +998,25 @@ void FreeTextureHandles (bool bDeleteModified)
 	INT32 i, j;
 	INT32 fileType = theMine->FileType ();
 
-//for (i = 0; i < 2; i++) {
-//	CTexture* texP = theMine->Textures (i);
-//	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
-//		if (!bDeleteModified && texP->m_info.bModified)
-//			continue;
-//		if (texP->m_info.bmDataP) {
-//			if (!texP->m_info.bExtData)
-//				delete texP->m_info.bmDataP;
-//			texP->m_info.bmDataP = NULL;
-//			}
-//		if (texP->m_info.tgaDataP) {
-//			if (!texP->m_info.bExtData)
-//				delete texP->m_info.tgaDataP;
-//			texP->m_info.tgaDataP = NULL;
-//			}
-//		texP->m_info.bModified = FALSE;
-//		texP->m_info.nFormat = 0;
-//		}
-//	}
+for (i = 0; i < 2; i++) {
+	CTexture* texP = theMine->Textures (i);
+	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
+		if (!bDeleteModified && texP->m_info.bModified)
+			continue;
+		if (texP->m_info.bmDataP) {
+			if (!texP->m_info.bExtData)
+				delete texP->m_info.bmDataP;
+			texP->m_info.bmDataP = NULL;
+			}
+		if (texP->m_info.tgaDataP) {
+			if (!texP->m_info.bExtData)
+				delete texP->m_info.tgaDataP;
+			texP->m_info.tgaDataP = NULL;
+			}
+		texP->m_info.bModified = FALSE;
+		texP->m_info.nFormat = 0;
+		}
+	}
 pExtraTexture	p;
 while (extraTextures) {
 	p = extraTextures;
