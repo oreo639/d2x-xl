@@ -148,8 +148,9 @@ protected: // create from serialization only
 	double		m_depthPerception;
 	CViewMatrix		m_view;
 
-	double		M[4][4];  /* 4x4 matrix used in coordinate transformation */
-	double		IM[4][4]; /* inverse matrix of M[4][4] */
+	CDoubleMatrix	m_mat, m_invMat;
+	//double		M[4][4];  /* 4x4 matrix used in coordinate transformation */
+	//double		IM[4][4]; /* inverse matrix of M[4][4] */
 //	double		depth_perception;
 	APOINT		m_viewPoints [MAX_VERTICES3];
 	APOINT		m_minViewPoint;

@@ -177,9 +177,6 @@ m_lastMouseState = eMouseStateIdle;
 m_selectMode = eSelectSide;
 m_lastSegment = 0;
 
-m_x0 = 0;
-m_y0 = 0;
-m_z0 = 0;
 m_center.Clear ();
 m_spin.Set (M_PI / 4.0, M_PI / 4.0, 0.0);
 m_move.Clear ();
@@ -635,7 +632,7 @@ BOOL CMineView::SetWindowPos(const CWnd *pWndInsertAfter, INT32 x, INT32 y, INT3
 	GetClientRect (rc);
 
 if ((rc.Width () != cx) || (rc.Height () != cy))
-	theApp.MainFrame ()->ResetPaneMode ();
+	theApp.MainFrame ()->v.ResetPaneMode ();
 return CView::SetWindowPos (pWndInsertAfter, x, y, cx, cy, nFlags);
 }
 
@@ -796,8 +793,8 @@ void CMineView::CalcSegDist (void)
 
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->nIndex = -1;
-segRef [0] = theMine->Current ()->nSegment;	
-theMine->CurrSeg ()->nIndex = 0;
+segRef [0] = theMine->Current ()->v.nSegment;	
+theMine->CurrSeg ()->v.nIndex = 0;
 i = 1;
 h = j = 0;
 for (nDist = 1; (j < segNum) && (h < i); nDist++) {
@@ -990,7 +987,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 	else {
 		if (segP->wallFlags & MARKED_MASK)
 			m_pDC->SelectObject (m_penHiCyan);
-		else if (nSegment == theMine->Current ()->nSegment)
+		else if (nSegment == theMine->Current ()->v.nSegment)
 			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);         // RED
 			else
@@ -1006,7 +1003,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 	// draw current side
 	// must draw in same order as segment to avoid leftover pixels on screen
 	if (!clear_it) {
-		if (nSegment == theMine->Current ()->nSegment)
+		if (nSegment == theMine->Current ()->v.nSegment)
 			if (SelectMode (eSelectSide)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);        // RED
 			else
@@ -1028,7 +1025,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 
 		// draw current line
 		// must draw in same order as segment to avoid leftover pixels on screen
-		if (nSegment == theMine->Current ()->nSegment)
+		if (nSegment == theMine->Current ()->v.nSegment)
 			if (SelectMode (eSelectLine)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);  // RED
 			else 
@@ -1047,7 +1044,7 @@ void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 point
 	// draw a circle around the current point
 	if (!clear_it) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
-		if (nSegment == theMine->Current ()->nSegment)
+		if (nSegment == theMine->Current ()->v.nSegment)
 			if (SelectMode (eSelectPoint)) //  && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed); // RED
 			else
@@ -1991,7 +1988,7 @@ else {
 switch (clear_it) {
 	case 0: // normal
 	case 1: // gray
-		if (m_selectMode == OBJECT_MODE && objnum == theMine->Current ()->nObject) 
+		if (m_selectMode == OBJECT_MODE && objnum == theMine->Current ()->v.nObject) 
 			m_pDC->SelectObject(m_penRed); // RED
 		else {
 			switch(objP->type) {
@@ -2050,7 +2047,7 @@ for (i = 0; i < 6; i++)
 		return;
 
 if ((theApp.IsD2File ()) &&
-	 (objnum == theMine->Current ()->nObject) &&
+	 (objnum == theMine->Current ()->v.nObject) &&
 	 (objP->type != OBJ_CAMBOT) && (objP->type != OBJ_MONSTERBALL) && 
 	 (objP->type != OBJ_EXPLOSION) && (objP->type != OBJ_SMOKE) && (objP->type != OBJ_EFFECT) &&
 	 (objP->render_type == RT_POLYOBJ) &&
@@ -2064,7 +2061,7 @@ else {
 	m_pDC->MoveTo (poly_draw [0].x,poly_draw [0].y);
 	for (poly = 0; poly < 6; poly++)
 		m_pDC->LineTo (poly_draw [poly].x, poly_draw [poly].y);
-	if (objnum == theMine->Current ()->nObject) {
+	if (objnum == theMine->Current ()->v.nObject) {
 		INT32 dx,dy;
 		for (dx = -1; dx < 2; dx++) {
 			for (dy = -1; dy < 2; dy++) {
@@ -2075,15 +2072,15 @@ else {
 			}
 		}
 	}
-if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nObject)) {
+if ((objnum == theMine->Current ()->v.nObject) || (objnum == theMine->Other ()->v.nObject)) {
 	CPen     pen, *pOldPen;
 	INT32		d;
 
 	pt [0] =
 	pt [1] =
 	pt [2] = objP->pos;
-	pt [1].x -= objP->size;
-	pt [2].x += objP->size;
+	pt [1].v.x -= objP->size;
+	pt [2].v.x += objP->size;
 	m_view.Project (pt, poly_draw);
 	m_view.Push ();
 	m_view.Unrotate ();
@@ -2093,7 +2090,7 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 	d = (poly_draw [2].x - poly_draw [1].x);
 	if (d < 24)
 		d = 24;
-	pen.CreatePen (PS_SOLID, 2, (objnum == theMine->Current ()->nObject) ? RGB (255,0,0) : RGB (255,208,0));
+	pen.CreatePen (PS_SOLID, 2, (objnum == theMine->Current ()->v.nObject) ? RGB (255,0,0) : RGB (255,208,0));
 	pOldPen = m_pDC->SelectObject (&pen);
 	m_pDC->SelectObject ((HBRUSH)GetStockObject(HOLLOW_BRUSH));
 	m_pDC->Ellipse (poly_draw [0].x - d, poly_draw [0].y - d, poly_draw [0].x + d, poly_draw [0].y + d);
@@ -2149,11 +2146,11 @@ void CMineView::HiliteTarget (void)
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->type != OBJ_EFFECT) || (objP->id != LIGHTNING_ID))
 	return;
-theMine->Other ()->nObject = theMine->Current ()->nObject;
+theMine->Other ()->v.nObject = theMine->Current ()->v.nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++)
 		if ((objP->type == OBJ_EFFECT) && (objP->id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			theMine->Other ()->nObject = i;
+			theMine->Other ()->v.nObject = i;
 			break;
 			return;
 			}
@@ -2172,7 +2169,7 @@ INT32 i, j;
 if (theApp.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < theMine->GameInfo ().triggers.count; i++)
-	if (theMine->Triggers (i)->type == TT_SECRET_EXIT) {
+	if (theMine->Triggers (i)->v.type == TT_SECRET_EXIT) {
 		DrawObject ((INT16)theMine->GameInfo ().objects.count, 0);
 		break; // only draw one secret exit
 		}
@@ -2231,9 +2228,10 @@ if (theMine->m_bSplineActive)
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].verts [side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint]];
+   INT16 vertex = theMine->Segments (0) [theMine->Current ()->v.nSegment].verts [side_vert [theMine->Current ()->v.nSide][theMine->Current ()->v.nPoint]];
 	char	szCoord [20];
-	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", theMine->Vertices (vertex)->x, theMine->Vertices (vertex)->y, theMine->Vertices (vertex)->z);
+	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
+				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);
 	strcat_s (message, sizeof (message), szCoord);
 	}
 else {
@@ -2241,35 +2239,35 @@ else {
 	strcat_s (message, sizeof (message), "  cube size: ");
 	CFixVector center1,center2;
    double length;
-   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 0);
-	center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 2);
+   center1 = theMine->CalcSideCenter (theMine->Current ()->v.nSegment, 0);
+	center2 = theMine->CalcSideCenter (theMine->Current ()->v.nSegment, 2);
    length = theMine->CalcLength(&center1,&center2) / F1_0;
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 1);
-   center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 3);
+   center1 = theMine->CalcSideCenter (theMine->Current ()->v.nSegment, 1);
+   center2 = theMine->CalcSideCenter (theMine->Current ()->v.nSegment, 3);
 	length = theMine->CalcLength(&center1,&center2) / F1_0;
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 4);
-   center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 5);
+   center1 = theMine->CalcSideCenter (theMine->Current ()->v.nSegment, 4);
+   center2 = theMine->CalcSideCenter (theMine->Current ()->v.nSegment, 5);
    length = theMine->CalcLength(&center1,&center2) / F1_0;
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  cube:");
-_itoa_s (theMine->Current ()->nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->Current ()->v.nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " side:");
-_itoa_s ((currSide = theMine->Current ()->nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s ((currSide = theMine->Current ()->v.nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " point:");
-_itoa_s (currPoint = theMine->Current ()->nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (currPoint = theMine->Current ()->v.nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa_s (theMine->CurrSeg ()->verts [side_vert [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSeg ()->v.verts [side_vert [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
-_itoa_s (theMine->CurrSide ()->nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSide ()->v.nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
-_itoa_s (theMine->CurrSide ()->nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSide ()->v.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_size.v.x) / log (1.2);
@@ -2350,7 +2348,7 @@ aspect_ratio = (double) rc.Height () / (double) rc.Width ();
 x_max = 8*right;
 y_max = 8*bottom;
 //if (theApp.MainFrame () && ((m_viewWidth != cx) || (m_viewHeight != cy)))
-//	theApp.MainFrame ()->ResetPaneMode ();
+//	theApp.MainFrame ()->v.ResetPaneMode ();
 CView::OnSize (nType, cx, cy);
 m_bUpdate = true;
 }
@@ -2443,7 +2441,7 @@ if (!theMine) return;
 #if 0 //OGL_RENDERING
 m_view.Calculate (0,0,0); // let OpenGL do the translation
 #else
-m_view.Calculate (m_movex, m_movey, m_movez);
+m_view.Calculate (m_move.v.x, m_movev.y, m_movev.z);
 #endif
 InitViewDimensions ();
 if (bSetViewInfo)
@@ -2665,7 +2663,7 @@ else
 	factor = 1;
 factor = 0.1 * pow (1.2, (double) factor);
 m_size.Set (factor, factor, factor);
-m_view.Set (m_move, m_size, m_spin);
+m_view..m_mat.Set (m_move, m_size, m_spin);
 Refresh (false);
 }
 
@@ -2679,14 +2677,14 @@ if (!theMine) return;
 	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = segP.verts;
 
-m_move = -(double (vMine [segP.verts [0]]) +
-			  double (vMine [vSeg [1]]) +
-			  double (vMine [vSeg [2]]) +
-			  double (vMine [vSeg [3]]) +
-			  double (vMine [vSeg [4]]) +
-			  double (vMine [vSeg [5]]) +
-			  double (vMine [vSeg [6]]) +
-			  double (vMine [vSeg [7]])) / 8.0;
+m_move = -(vMine [vSeg [0]] +
+			  vMine [vSeg [1]] +
+			  vMine [vSeg [2]] +
+			  vMine [vSeg [3]] +
+			  vMine [vSeg [4]] +
+			  vMine [vSeg [5]] +
+			  vMine [vSeg [6]] +
+			  vMine [vSeg [7]] / 8.0;
 Refresh (false);
 }
 
@@ -2700,7 +2698,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -theMine->Objects (m_Current->nObject)->pos;
+m_move = -theMine->Objects (m_Current->nObject)->v.pos;
 Refresh (false);
 }
 
@@ -2750,7 +2748,7 @@ void CMineView::SetViewObjectFlags(UINT32 mask)
 void CMineView::SetSelectMode(UINT32 mode)
 {
 theMine->SetSelectMode ((INT16) mode);
-theApp.MainFrame ()->UpdateSelectButtons ((eSelectModes) mode);
+theApp.MainFrame ()->v.UpdateSelectButtons ((eSelectModes) mode);
 m_selectMode = mode; 
 Refresh (false);
 }
@@ -2760,7 +2758,7 @@ Refresh (false);
 BOOL CMineView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 {
 //if (m_bUpdateCursor) {
-//::SetCursor (AfxGetApp()->LoadStandardCursor (nIdCursors [m_mouseState]));
+//::SetCursor (AfxGetApp()->v.LoadStandardCursor (nIdCursors [m_mouseState]));
 //	return TRUE;
 //	}
 return CView::OnSetCursor (pWnd, nHitTest, message);
@@ -2973,8 +2971,8 @@ if (!(bRefreshing || m_nDelayRefresh)) {
 	InvalidateRect (NULL, TRUE);
 //	SetFocus ();
 	if (bAll && (m_mouseState == eMouseStateIdle)) {
-		theApp.ToolView ()->Refresh ();
-		theApp.TextureView ()->Refresh ();
+		theApp.ToolView ()->v.Refresh ();
+		theApp.TextureView ()->v.Refresh ();
 //		UpdateWindow ();
 		}
 	m_bUpdate = true;
@@ -3040,8 +3038,8 @@ if (m_bUpdate) {
 //==========================================================================
 void CMineView::RefreshObject(INT16 old_object, INT16 new_object) 
 {
-theMine->Current ()->nObject = new_object;
-theApp.ToolView ()->Refresh ();
+theMine->Current ()->v.nObject = new_object;
+theApp.ToolView ()->v.Refresh ();
 Refresh (false);
 }
 
@@ -3069,7 +3067,7 @@ closest_radius = 1.0E30;
 INT32 enable_secret = FALSE;
 if (theApp.IsD2File ())
 	for(i=0;i<(INT16)theMine->GameInfo ().triggers.count;i++)
-		if (theMine->Triggers (i)->type ==TT_SECRET_EXIT) {
+		if (theMine->Triggers (i)->v.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
 			break;
 			}
@@ -3120,7 +3118,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 	}
 
 // unhighlight current object and select next object
-i = theMine->Current ()->nObject;
+i = theMine->Current ()->v.nObject;
 RefreshObject(i, closest_object);
 }
 
@@ -3167,7 +3165,7 @@ bool CMineView::SelectCurrentSegment (INT16 direction, long xMouse, long yMouse)
 
 /* find next segment which is within the cursor position */
 GetClientRect (rc);
-next_segment = cur_segment = theMine->Current ()->nSegment;
+next_segment = cur_segment = theMine->Current ()->v.nSegment;
 mousePos.x = (INT16) xMouse;
 mousePos.y = (INT16) yMouse;
 mousePos.z = 0;
@@ -3232,8 +3230,8 @@ foundSeg:
 
 if (!bFound)
 	return false;
-theMine->Current ()->nSegment = next_segment;
-theApp.ToolView ()->Refresh ();
+theMine->Current ()->v.nSegment = next_segment;
+theApp.ToolView ()->v.Refresh ();
 Refresh ();
 return true;
 }
@@ -3247,33 +3245,15 @@ void CMineView::CalcSegmentCenter(CFixVector& pos,INT16 nSegment)
 CSegment *segP = theMine->Segments (0) + nSegment;
 CVertex *vMine = theMine->Vertices (0);
 INT16 *vSeg = segP->verts;
-pos.x  =
-   (vMine [vSeg [0]].x
-   +vMine [vSeg [1]].x
-   +vMine [vSeg [2]].x
-   +vMine [vSeg [3]].x
-   +vMine [vSeg [4]].x
-   +vMine [vSeg [5]].x
-   +vMine [vSeg [6]].x
-   +vMine [vSeg [7]].x)/8;
-pos.y  =
-   (vMine [vSeg [0]].y
-   +vMine [vSeg [1]].y
-   +vMine [vSeg [2]].y
-   +vMine [vSeg [3]].y
-   +vMine [vSeg [4]].y
-   +vMine [vSeg [5]].y
-   +vMine [vSeg [6]].y
-   +vMine [vSeg [7]].y)/8;
-pos.z  =
-   (vMine [vSeg [0]].z
-   +vMine [vSeg [1]].z
-   +vMine [vSeg [2]].z
-   +vMine [vSeg [3]].z
-   +vMine [vSeg [4]].z
-   +vMine [vSeg [5]].z
-   +vMine [vSeg [6]].z
-   +vMine [vSeg [7]].z)/8;
+pos  =
+   (vMine [vSeg [0]]
+   +vMine [vSeg [1]]
+   +vMine [vSeg [2]]
+   +vMine [vSeg [3]]
+   +vMine [vSeg [4]]
+   +vMine [vSeg [5]]
+   +vMine [vSeg [6]]
+   +vMine [vSeg [7]]) >> 3;
 }
 
                         /*--------------------------*/
@@ -3374,8 +3354,8 @@ if (!theMine) return FALSE;
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
-	INT16 nVert = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-	INT16 v = theMine->CurrSeg ()->verts [nVert];
+	INT16 nVert = side_vert [theMine->Current ()->v.nSide] [theMine->Current ()->v.nPoint];
+	INT16 v = theMine->CurrSeg ()->v.verts [nVert];
 	INT16 x = m_viewPoints [v].x;
 	INT16 y = m_viewPoints [v].y;
 
@@ -3408,8 +3388,8 @@ INT32 i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
 	INT16 nVert2 = connectPoints [nVert] [i];
-	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].x;
-	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].y;
+	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->v.verts [nVert2]].x;
+	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->v.verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
 	if (rc.left > x2)
 		rc.left = x2;
@@ -3441,7 +3421,7 @@ if (m_lastMousePos == m_lastDragPos)
 	INT16 x, y;
 	INT32 i;
 
-nVert = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+nVert = side_vert [theMine->Current ()->v.nSide] [theMine->Current ()->v.nPoint];
 
 // unhighlight last point and lines drawing
 HighlightDrag (nVert, m_lastDragPos.x, m_lastDragPos.y);
@@ -3494,8 +3474,8 @@ if (!theMine) return;
 
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
-point1 = side_vert [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-vert1 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point1];
+point1 = side_vert [theMine->Current ()->v.nSide] [theMine->Current ()->v.nPoint];
+vert1 = theMine->Segments (0) [theMine->Current ()->v.nSegment].verts [point1];
 // find point to merge with
 for (i = 0; i < theMine->VertCount (); i++) {
 	xPoint = m_viewPoints [i].x;
@@ -3514,7 +3494,7 @@ if (count == 1) {
 // make sure new vert is not one of the current cube's verts
 	for (i=0;i<8;i++) {
 		if (i!=point1) {
-			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [i];
+			vert2 = theMine->Segments (0) [theMine->Current ()->v.nSegment].verts [i];
 			if (new_vert==vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
@@ -3525,7 +3505,7 @@ if (count == 1) {
 	// make sure the new line lengths are close enough
 		for (i=0;i<3;i++) {
 			point2 = connectPoints [point1] [i];
-			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point2];
+			vert2 = theMine->Segments (0) [theMine->Current ()->v.nSegment].verts [point2];
 			if (theMine->CalcLength (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
@@ -3533,7 +3513,7 @@ if (count == 1) {
 			}
 		if (i==3) { //
 			// replace origional vertex with new vertex
-			theMine->Segments () [theMine->Current ()->nSegment].verts [point1] = new_vert;
+			theMine->Segments () [theMine->Current ()->v.nSegment].verts [point1] = new_vert;
 			// all unused vertices
 			theMine->DeleteUnusedVertices();
 			theMine->FixChildren();
@@ -3561,8 +3541,8 @@ void CMineView::NextPoint(INT32 dir)
 //if (!theMine->SplineActive ())
 //	DrawHighlight (1);
 //if (m_selectMode==POINT_MODE)
-wrap(&theMine->Current ()->nPoint,dir,0,4-1);
-theMine->Current ()->nLine = theMine->Current ()->nPoint;
+wrap(&theMine->Current ()->v.nPoint,dir,0,4-1);
+theMine->Current ()->v.nLine = theMine->Current ()->v.nPoint;
 Refresh ();
 //SetSelectMode (POINT_MODE);
 }
@@ -3581,7 +3561,7 @@ NextPoint (-1);
 //==========================================================================
 void CMineView::NextSide (INT32 dir) 
 {
-wrap(&theMine->Current ()->nSide,dir,0,6-1);
+wrap(&theMine->Current ()->v.nSide,dir,0,6-1);
 Refresh (true);
 //SetSelectMode (SIDE_MODE);
 }
@@ -3599,7 +3579,7 @@ NextSide (-1);
 //==========================================================================
 void CMineView::NextSide2 (INT32 dir)
 {
-wrap(&theMine->Current ()->nSide,dir,0,6-1);
+wrap(&theMine->Current ()->v.nSide,dir,0,6-1);
 Refresh ();
 }
 
@@ -3614,8 +3594,8 @@ NextSide2 (-1);
 
 void CMineView::NextLine (INT32 dir) 
 {
-wrap (&theMine->Current ()->nLine, dir, 0, 4-1);
-theMine->Current ()->nPoint = theMine->Current ()->nLine;
+wrap (&theMine->Current ()->v.nLine, dir, 0, 4-1);
+theMine->Current ()->v.nPoint = theMine->Current ()->v.nLine;
 Refresh ();
 //SetSelectMode (LINE_MODE);
 }
@@ -3641,14 +3621,14 @@ if (theMine->SegCount () <= 0)
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
 	//if (m_selectMode == CUBE_MODE)
-		wrap (&theMine->Current ()->nSegment,dir,0, theMine->SegCount () - 1);
+		wrap (&theMine->Current ()->v.nSegment,dir,0, theMine->SegCount () - 1);
 	Refresh (true);
 	//SetSelectMode (CUBE_MODE);
 	DrawHighlight (0);
 	}
 else {
 	//if (m_selectMode == CUBE_MODE)
-		wrap (&theMine->Current ()->nSegment, dir, 0, theMine->SegCount () - 1);
+		wrap (&theMine->Current ()->v.nSegment, dir, 0, theMine->SegCount () - 1);
 	Refresh (true);
 	//SetSelectMode (CUBE_MODE);
 	}
@@ -3679,14 +3659,14 @@ void CMineView::ForwardCube (INT32 dir)
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
-segP = theMine->Segments (0) + theMine->Current ()->nSegment;
-child = segP->children [bFwd ? theMine->Current ()->nSide: opp_side [theMine->Current ()->nSide]];
+segP = theMine->Segments (0) + theMine->Current ()->v.nSegment;
+child = segP->children [bFwd ? theMine->Current ()->v.nSide: opp_side [theMine->Current ()->v.nSide]];
 if (child <= -1) {
 	// first try to find a non backwards route
 	for (nSide=0;nSide<6;nSide++) {
 		if (segP->children [nSide] != m_lastSegment && segP->children [nSide] > -1) {
 			child = segP->children [nSide];
-			theMine->Current ()->nSide =  bFwd ? nSide: opp_side [nSide];
+			theMine->Current ()->v.nSide =  bFwd ? nSide: opp_side [nSide];
 			break;
 			}
 		}
@@ -3695,7 +3675,7 @@ if (child <= -1) {
 		for (nSide=0;nSide<6;nSide++) {
 			if (segP->children [nSide] > -1) {
 				child = segP->children [nSide];
-				theMine->Current ()->nSide = bFwd ? nSide: opp_side [nSide];
+				theMine->Current ()->v.nSide = bFwd ? nSide: opp_side [nSide];
 				break;
 				}
 			}			
@@ -3705,19 +3685,19 @@ if (child > -1) {
 	childseg = theMine->Segments (0) + child;
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
-		if (childseg->children [nSide] == theMine->Current ()->nSegment) {
-			theMine->Current ()->nSide =  bFwd ? opp_side [nSide]: nSide;
+		if (childseg->children [nSide] == theMine->Current ()->v.nSegment) {
+			theMine->Current ()->v.nSide =  bFwd ? opp_side [nSide]: nSide;
 			break;
 			}
 		}
-	m_lastSegment = theMine->Current ()->nSegment;
+	m_lastSegment = theMine->Current ()->v.nSegment;
 	if (0) {//!ViewOption (eViewPartialLines)) {
 		// DrawHighlight (1);
-		theMine->Current ()->nSegment = child;
+		theMine->Current ()->v.nSegment = child;
 		// DrawHighlight (0);
 		} 
 	else {
-		theMine->Current ()->nSegment = child;
+		theMine->Current ()->v.nSegment = child;
 		Refresh (true);
 		}
 	}
@@ -3741,7 +3721,7 @@ void CMineView::SelectOtherCube ()
 {
 theMine->Current () = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 (): &theMine->Current1 ();
 Refresh (true);
-//theApp.ToolView ()->CubeTool ()->Refresh ();
+//theApp.ToolView ()->v.CubeTool ()->v.Refresh ();
 }
 
 
@@ -3753,10 +3733,10 @@ INT16 nOppSeg, nOppSide;
 if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
 	return false;
 
-theMine->Current ()->nSegment = nOppSeg;
-theMine->Current ()->nSide = nOppSide;
+theMine->Current ()->v.nSegment = nOppSeg;
+theMine->Current ()->v.nSide = nOppSide;
 Refresh (true);
-//theApp.ToolView ()->CubeTool ()->Refresh ();
+//theApp.ToolView ()->v.CubeTool ()->v.Refresh ();
 return true;
 }
 
@@ -3766,8 +3746,8 @@ return true;
 
 void CMineView::NextObject (INT32 dir) 
 {
-  INT16 old_object = theMine->Current ()->nObject;
-  INT16 new_object = theMine->Current ()->nObject;
+  INT16 old_object = theMine->Current ()->v.nObject;
+  INT16 new_object = theMine->Current ()->v.nObject;
 
 //  DrawHighlight (1);
 if (theMine->GameInfo ().objects.count > 1) {
@@ -3822,7 +3802,7 @@ BOOL CMineView::OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt)
 
 GetWindowRect (rc);
 if ((pt.x < rc.left) || (pt.x >= rc.right) || (pt.y < rc.top) || (pt.y >= rc.bottom))
-	return theApp.TextureView ()->OnMouseWheel (nFlags, zDelta, pt);
+	return theApp.TextureView ()->v.OnMouseWheel (nFlags, zDelta, pt);
 if (zDelta > 0)
 	ZoomIn (zDelta / WHEEL_DELTA);
 else
@@ -3834,16 +3814,16 @@ return 0;
 
 void CMineView::OnSelectPrevTab ()
 {
-theApp.MainFrame ()->ShowTools ();
-theApp.ToolView ()->PrevTab ();
+theApp.MainFrame ()->v.ShowTools ();
+theApp.ToolView ()->v.PrevTab ();
 }
 
                         /*--------------------------*/
 
 void CMineView::OnSelectNextTab ()
 {
-theApp.MainFrame ()->ShowTools ();
-theApp.ToolView ()->NextTab ();
+theApp.MainFrame ()->v.ShowTools ();
+theApp.ToolView ()->v.NextTab ();
 }
 
                         /*--------------------------*/
@@ -4189,7 +4169,7 @@ void CMineView::GLRenderFace (INT16 nSegment, INT16 nSide)
 
 if (sideP->nBaseTex < 0)
 	return;
-CWall *pWall = (nWall == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->theMine->Walls (nWall);
+CWall *pWall = (nWall == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->v.theMine->Walls (nWall);
 if ((segP->children [nSide] > -1) &&
 	 (!pWall || (pWall->type == WALL_OPEN) || ((pWall->type == WALL_CLOAKED) && !pWall->cloak_value)))
 	return;

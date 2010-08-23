@@ -508,9 +508,9 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (pointnum = 0; pointnum < 8; pointnum++) {
 // define vert numbers
 		vert0 = segP->verts[pointnum];
-		vert1 = segP->verts[connect_points[pointnum][0]];
-		vert2 = segP->verts[connect_points[pointnum][1]];
-		vert3 = segP->verts[connect_points[pointnum][2]];
+		vert1 = segP->verts[connectPoints[pointnum][0]];
+		vert2 = segP->verts[connectPoints[pointnum][1]];
+		vert3 = segP->verts[connectPoints[pointnum][2]];
 		angle = CalcAngle (vert0,vert1,vert2,vert3);
 		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
 		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));

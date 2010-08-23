@@ -13,7 +13,7 @@ extern UINT8 opp_side[6];
 extern UINT8 opp_side_vert[6][4];
 extern UINT8 line_vert[12][2];
 extern UINT8 side_line[6][4];
-extern UINT8 connect_points[8][3];
+extern UINT8 connectPoints[8][3];
 extern INT8 point_sides[8][3];
 extern INT8 point_corners[8][3];
 extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];

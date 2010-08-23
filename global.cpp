@@ -467,7 +467,7 @@ UINT8 side_line[6][4] = {
 };
 
 /* define 3 points which connect to a certain point */
-UINT8 connect_points[8][3] = {
+UINT8 connectPoints[8][3] = {
 	{1,3,4},
 	{2,0,5},
 	{3,1,6},
