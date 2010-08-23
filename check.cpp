@@ -391,7 +391,7 @@ if (!theMine)
 	CSegment	*segP = theMine->Segments (0);
 
 for (i = theMine->SegCount (); i; i--, segP++)
-	switch (segP->function) {
+	switch (segP->m_info.function) {
 		case SEGMENT_FUNC_ROBOTMAKER:
 			nBotGens++;
 			break;
@@ -450,14 +450,14 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 //	and an orthogonal vector of L1 and L2 (called V1), the angle
 //	between L3 and V1 must be less than PI/2.
 //
-	if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
+	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 		if ((segP->nMatCen >= theMine->GameInfo ().botgen.count) || (theMine->BotGens (segP->nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
 			}
 		}
-	if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
+	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
 		if ((segP->nMatCen >= theMine->GameInfo ().equipgen.count) || (theMine->EquipGens (segP->nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
@@ -744,10 +744,10 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     }
 
 	// check contains count range
-    count = objP->contents.count;
+    count = objP->m_info.contents.count;
 	if (count < -1) {
 		if (m_bAutoFixBugs) {
-			objP->contents.count = 0;
+			objP->m_info.contents.count = 0;
 		  sprintf_s (message, sizeof (message),"FIXED: Spawn count must be >= -1 (object=%d,count=%d)",nObject,count);
 			}
 		else
@@ -758,17 +758,17 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 
     // check container type range
 	if (count > 0) {
-      type = objP->contents.type;
+      type = objP->m_info.contents.type;
 	  if (type != OBJ_ROBOT && type != OBJ_POWERUP) {
 		if (m_bAutoFixBugs) {
-			objP->contents.type = OBJ_POWERUP;
+			objP->m_info.contents.type = OBJ_POWERUP;
 			sprintf_s (message, sizeof (message),"FIXED: Illegal contained type (object=%d,contains=%d)",nObject,type);
 			}
 		else
 			sprintf_s (message, sizeof (message),"WARNING: Illegal contained type (object=%d,contains=%d)",nObject,type);
 	if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject)) return true;
 	  }
-	  id = objP->contents.id;
+	  id = objP->m_info.contents.id;
 	  // check contains id range
 	  if (CheckId (objP)) {
 	sprintf_s (message, sizeof (message),"WARNING: Illegal contains id (object=%d,contains id=%d)",nObject,id);
@@ -1124,7 +1124,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						}
 //						if (trigP->m_info.flags == TRIGGER_MATCEN) {
 					else if (theApp.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
-						if ((segP->function != SEGMENT_FUNC_ROBOTMAKER) && (segP->function != SEGMENT_FUNC_EQUIPMAKER)) {
+						if ((segP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
@@ -1213,7 +1213,7 @@ void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->function == UINT8 (nSpecialType)) {
+	if (segP->m_info.function == UINT8 (nSpecialType)) {
 		n = segP->nMatCen;
 		if ((n >= 0) && (n < nMatCens) && (refList [n] >= 0)) {
 			if (matCenP [n].nSegment == i)
@@ -1234,7 +1234,7 @@ INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList,
 	INT8			n;
 
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->function != UINT8 (nSpecialType))
+	if (segP->m_info.function != UINT8 (nSpecialType))
 		continue;
 	n = segP->nMatCen;
 	if ((n < 0) || (n >= nMatCens)) {
@@ -1284,7 +1284,7 @@ if (!m_bAutoFixBugs)
 	INT8			n;
 
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->function != UINT8 (nSpecialType))
+	if (segP->m_info.function != UINT8 (nSpecialType))
 		continue;
 	n = segP->nMatCen;
 	if (n >= 0)

@@ -95,9 +95,9 @@ if (theMine->FlickeringLights (m_iLight)->m_info.mask != nLightMask) {
 	theMine->FlickeringLights (m_iLight)->m_info.mask = nLightMask;
 	}
 long nDelay = (m_nLightDelay * F1_0 /*- F0_5*/) / 1000;
-if (theMine->FlickeringLights (m_iLight)->delay != nDelay) {
+if (theMine->FlickeringLights (m_iLight)->m_info.delay != nDelay) {
 	bChange = true;
-	theMine->FlickeringLights (m_iLight)->delay = nDelay;
+	theMine->FlickeringLights (m_iLight)->m_info.delay = nDelay;
 	}
 if (bChange)
 	theApp.UnlockUndo ();
@@ -188,7 +188,7 @@ for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 void CTextureTool::UpdateLightWnd (void)
 {
 if (!theMine) return;
-CWall *pWall = theMine->CurrWall ();
+CWall *wallP = theMine->CurrWall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
@@ -219,7 +219,7 @@ INT32 i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
 m_szLight [32] = '\0';
-SetLightButtons (m_szLight, (INT32) (((1000 * theMine->FlickeringLights (m_iLight)->delay + F0_5) / F1_0)));
+SetLightButtons (m_szLight, (INT32) (((1000 * theMine->FlickeringLights (m_iLight)->m_info.delay + F0_5) / F1_0)));
 }
 
                         /*--------------------------*/
@@ -356,9 +356,9 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.x -= rcPal.left;
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
-			CWall *pWall = theMine->CurrWall ();
-			if (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) {
-				pWall->cloakValue = m_nColorIndex;
+			CWall *wallP = theMine->CurrWall ();
+			if (wallP && (wallP->m_info.type == WALL_TRANSPARENT)) {
+				wallP->m_info.cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}
 			CColor *psc = theMine->CurrLightColor ();
@@ -372,9 +372,9 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				psc->color.g =
 				psc->color.b = 1.0;
 				}
-			//if (!pWall || (pWall->m_info.type != WALL_TRANSPARENT)) 
+			//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
 				{
-				theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
+				theMine->SetTexColor (theMine->CurrSide ()->m_info.nBaseTex, psc);
 				theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
 				}
 			UpdateData (FALSE);

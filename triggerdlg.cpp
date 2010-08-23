@@ -526,7 +526,7 @@ if (m_nTrigger != -1) {
 	EnableControls (TRUE);
 	if (!m_nClass)
 		GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (FALSE);
-	m_nTime = m_pTrigger->time;
+	m_nTime = m_pTrigger->m_info.time;
 	m_targets = m_pTrigger->m_count;
 	InitLBTargets ();
 	//TriggerCubeSideList ();
@@ -686,7 +686,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= NumTriggers ()))
 	return;
 if (m_nClass) {
-	theMine->Current ()->nObject = theMine->ObjTriggers (m_nTrigger)->nObject;
+	theMine->Current ()->nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
 	}
 else {
 	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->GameInfo ().walls.count; nWall++, wallP++)
@@ -896,7 +896,7 @@ if (m_nTrigger == -1)
 SetTriggerPtr ();
 if ((theApp.IsD1File ()) 
 	 ? (m_pTrigger->m_info.flags & TRIGGER_MATCEN) != 0 
-	 : (m_pTrigger->m_info.type == TT_MATCEN) && (theMine->Segments (other->m_info.nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
+	 : (m_pTrigger->m_info.type == TT_MATCEN) && (theMine->Segments (other->nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
 	) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
@@ -974,7 +974,7 @@ if ((nSide < 0) || (nSide > 5))
 CSelection *other = theMine->Other ();
 if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide == nSide))
 	return;
-other->m_info.nSegment = m_pTrigger->Segment (m_iTarget);
+other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);
 theApp.MineView ()->Refresh ();
 }

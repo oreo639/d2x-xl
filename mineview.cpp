@@ -494,20 +494,20 @@ EndPaint (&ps);
 
 void CMineView::AdvanceLightTick (void)
 {
-	LIGHT_TIMER *plt = lightTimers;
-	CFlickeringLight *pfl = theMine->FlickeringLights (0);
+	LIGHT_TIMER *ltP = lightTimers;
+	CFlickeringLight *flP = theMine->FlickeringLights (0);
 	INT32 i, light_delay;
 
-for (i = theMine->FlickerLightCount (); i; i--, pfl++, plt++) {
-	light_delay = (pfl->delay * 100 /*+ F0_5*/) / F1_0;
+for (i = theMine->FlickerLightCount (); i; i--, flP++, ltP++) {
+	light_delay = (flP->m_info.delay * 100 /*+ F0_5*/) / F1_0;
 	if (light_delay) {
-		if (++plt->ticks == light_delay) {
-			plt->ticks = 0;
-			plt->impulse = (plt->impulse + 1) % 32;
+		if (++ltP->ticks == light_delay) {
+			ltP->ticks = 0;
+			ltP->impulse = (ltP->impulse + 1) % 32;
 			}
 		}
 	else
-		plt->impulse = (plt->impulse + 1) % 32;
+		ltP->impulse = (ltP->impulse + 1) % 32;
 	}
 }
 
@@ -519,9 +519,9 @@ static INT32 qqq1 = -1, qqq2 = 0;
 bool CMineView::SetLightStatus (void)
 {
 	INT32 h, i, j;
-	CLightDeltaIndex *pdli = theMine->LightDeltaIndex (0);
-	LIGHT_TIMER *plt;
-	CFlickeringLight *pfl = theMine->FlickeringLights (0);
+	CLightDeltaIndex *dliP = theMine->LightDeltaIndex (0);
+	LIGHT_TIMER *ltP;
+	CFlickeringLight *flP = theMine->FlickeringLights (0);
 	LIGHT_STATUS *pls;
 	bool bChange = false;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
@@ -535,21 +535,21 @@ pls = lightStatus [0];
 for (i = theMine->SegCount (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
-for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, pdli++) {
+for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, dliP++) {
 	if (bD2XLights) {
-		nSrcSide = pdli->m_nSegment;
-		nSrcSeg = pdli->m_nSide;
-		i = pdli->count;
+		nSrcSide = dliP->m_nSegment;
+		nSrcSeg = dliP->m_nSide;
+		i = dliP->m_info.count;
 		}
 	else {
-		nSrcSide = pdli->m_nSegment;
-		nSrcSeg = pdli->m_nSide;
-		i = pdli->count;
+		nSrcSide = dliP->m_nSegment;
+		nSrcSeg = dliP->m_nSide;
+		i = dliP->m_info.count;
 		}	
 	j = theMine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
-	dll = theMine->LightDeltaValues (pdli->index);
+	dll = theMine->LightDeltaValues (dliP->m_info.index);
 	for (; i; i--, dll++) {
 		nSegment = dll->m_nSegment;
 		nSide = dll->m_nSide;
@@ -563,8 +563,8 @@ for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, pdli++) {
 			 (0 <= theMine->GetFlickeringLight (nSegment, nSide)))
 			continue;
 		pls = lightStatus [nSegment] + nSide;
-		plt = lightTimers + j;
-		pls->bIsOn = (pfl [j].mask & (1 << lightTimers [j].impulse)) != 0;
+		ltP = lightTimers + j;
+		pls->bIsOn = (flP [j].m_info.mask & (1 << lightTimers [j].impulse)) != 0;
 		if (pls->bWasOn != pls->bIsOn)
 			bChange = true;
 		}
@@ -830,7 +830,7 @@ for (nSegment=0, segP = theMine->Segments (0);nSegment<theMine->SegCount ();nSeg
 	if (!Visible (segP))
 		continue;
 	DrawCube (segP, bPartial);
-	if (nSegment == m_Current->m_info.nSegment) {
+	if (nSegment == m_Current->nSegment) {
 		DrawCurrentCube (segP, bPartial);
 		m_pDC->SelectObject (m_penGray);
 		}
@@ -1132,7 +1132,7 @@ if (!Visible (segP))
 	INT16 x_max = m_viewWidth * 2;
 	INT16 y_max = m_viewHeight * 2;
 	INT32	chSegI, chSideI, chVertI, i, j, commonVerts;
-	CSegment	*child;
+	CSegment	*childP;
 	INT16 *pv = segP->m_info.verts;
 
 for (i = 0; i < 8; i++, pv++) {
@@ -1162,25 +1162,25 @@ if (bPartial) {
 		else
 			m_pDC->SelectObject(m_penGray);
 		// draw each line of the current side separately
-		// only draw if there is no child cube of the current cube with a common side
+		// only draw if there is no childP cube of the current cube with a common side
 		for (i = 0; i < 4; i++) {
 			for (j = 0; j < 2; j++)
 				line [j] = side [(i+j)%4];
 
-			// check child cubes
+			// check childP cubes
 			commonVerts = 0;
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
 				if (segP->m_info.children [chSegI] < 0)
 					continue;
-				child = theMine->Segments (segP->m_info.children [chSegI]);
-				// walk through child cube's sides
+				childP = theMine->Segments (segP->m_info.children [chSegI]);
+				// walk through childP cube's sides
 				commonVerts = 0;
 				for (chSideI = 0; (chSideI < 6) && (commonVerts < 2); chSideI++) {
-					// check current child cube side for common line
+					// check current childP cube side for common line
 					// i.e. check each line for common vertices with the parent line
 					for (commonVerts = 0, chVertI = 0; (chVertI < 4) && (commonVerts < 2); chVertI++) {
-						vert.x = m_viewPoints [child->verts [sideVertTable [chSideI] [chVertI]]].x;
-						vert.y = m_viewPoints [child->verts [sideVertTable [chSideI] [chVertI]]].y;
+						vert.x = m_viewPoints [childP->m_info.verts [sideVertTable [chSideI] [chVertI]]].x;
+						vert.y = m_viewPoints [childP->m_info.verts [sideVertTable [chSideI] [chVertI]]].y;
 						INT32 h;
 						for (h = 0; h < 2; h++) {
 							if ((line [h].x == vert.x) && (line [h].y == vert.y)) {
@@ -1423,7 +1423,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 		for (nSide=0; nSide<6; nSide++) {
 			pWall = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
 			if ((segP->m_info.children [nSide] == -1) ||
-				(pWall && (pWall->m_info.type != WALL_OPEN) && ((pWall->m_info.type != WALL_CLOAKED) || pWall->cloakValue))
+				(pWall && (pWall->m_info.type != WALL_OPEN) && ((pWall->m_info.type != WALL_CLOAKED) || pWall->m_info.cloakValue))
 				)
 			{
 				APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [0]]];
@@ -1497,7 +1497,7 @@ void CMineView::DrawMarkedCubes (INT16 clear_it)
 			else {
 				//    if (show_special) {
 				if (ViewFlag (eViewMineSpecial) && !(m_viewOption == eViewTextureMapped) ) {
-					switch(segP->function) {
+					switch(segP->m_info.function) {
 					case SEGMENT_FUNC_FUELCEN:
 					case SEGMENT_FUNC_SPEEDBOOST:
 						m_pDC->SelectObject (m_penYellow);
@@ -1527,9 +1527,9 @@ void CMineView::DrawMarkedCubes (INT16 clear_it)
 						DrawCubeQuick (segP);
 						break;
 					default:
-						if (segP->props & SEGMENT_PROP_WATER)
+						if (segP->m_info.props & SEGMENT_PROP_WATER)
 							m_pDC->SelectObject (m_penMedBlue);
-						else if (segP->props & SEGMENT_PROP_LAVA)
+						else if (segP->m_info.props & SEGMENT_PROP_LAVA)
 							m_pDC->SelectObject (m_penMedRed);
 						else
 							break;
@@ -1677,7 +1677,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 	segP = segments + (INT32)walls [i].m_nSegment;
 	if (!Visible (segP))
 		continue;
-	switch(walls [i].type) {
+	switch (walls [i].m_info.type) {
 		case WALL_NORMAL:
 			m_pDC->SelectObject(m_penLtGray);
 			break;
@@ -1685,7 +1685,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			m_pDC->SelectObject(m_penLtGray);
 			break;
 		case WALL_DOOR:
-			switch(walls [i].keys) {
+			switch(walls [i].m_info.keys) {
 				case KEY_NONE:
 					m_pDC->SelectObject(m_penLtGray);
 					break;
@@ -1736,7 +1736,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			m_pDC->LineTo (m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide] [j]]].x,
 			m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide] [j]]].y);
 			}
-		if (walls [i].nTrigger != NO_TRIGGER) {
+		if (walls [i].m_info.nTrigger != NO_TRIGGER) {
 				APOINT arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
 				CFixVector fin;
 
@@ -1834,10 +1834,10 @@ void CMineView::DrawLights (void)
   m_pDC->SelectObject(m_penYellow);
 
   // find flickering light from
-CFlickeringLight* pfl = theMine->FlickeringLights (0);
-for (i = 0; i < theMine->FlickerLightCount (); i++, pfl++)
-	if (Visible (theMine->Segments (pfl->m_nSegment)))
-	   DrawOctagon(pfl->m_nSide, pfl->m_nSegment);
+CFlickeringLight* flP = theMine->FlickeringLights (0);
+for (i = 0; i < theMine->FlickerLightCount (); i++, flP++)
+	if (Visible (theMine->Segments (flP->m_nSegment)))
+	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
 }
 
 //------------------------------------------------------------------------
@@ -2228,7 +2228,7 @@ if (theMine->m_bSplineActive)
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].verts [sideVertTable [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [sideVertTable [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);
@@ -2261,11 +2261,11 @@ _itoa_s ((currSide = theMine->Current ()->nSide) + 1, message + strlen (message)
 strcat_s (message, sizeof (message), " point:");
 _itoa_s (currPoint = theMine->Current ()->nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa_s (theMine->CurrSeg ()->verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSeg ()->m_info.verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
-_itoa_s (theMine->CurrSide ()->nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (theMine->CurrSide ()->m_info.nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
 _itoa_s (theMine->CurrSide ()->m_info.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
@@ -2673,9 +2673,9 @@ void CMineView::CenterCube (void)
 {
 if (!theMine) return;
 
-	CSegment& segP = theMine->Segments (0) [m_Current->m_info.nSegment];
+	CSegment& seg = theMine->Segments (0) [m_Current->m_info.nSegment];
 	CVertex *vMine = theMine->Vertices (0);
-	INT16 *vSeg = segP.verts;
+	INT16 *vSeg = seg.m_info.verts;
 
 m_move = -(vMine [vSeg [0]] +
 			  vMine [vSeg [1]] +
@@ -3357,7 +3357,7 @@ if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
 	INT16 nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-	INT16 v = theMine->CurrSeg ()->verts [nVert];
+	INT16 v = theMine->CurrSeg ()->m_info.verts [nVert];
 	INT16 x = m_viewPoints [v].x;
 	INT16 y = m_viewPoints [v].y;
 
@@ -3390,8 +3390,8 @@ INT32 i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
 	INT16 nVert2 = connectPointTable [nVert] [i];
-	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].x;
-	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->verts [nVert2]].y;
+	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->m_info.verts [nVert2]].x;
+	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->m_info.verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
 	if (rc.left > x2)
 		rc.left = x2;
@@ -3515,7 +3515,7 @@ if (count == 1) {
 			}
 		if (i==3) { //
 			// replace origional vertex with new vertex
-			theMine->Segments () [theMine->Current ()->nSegment].verts [point1] = new_vert;
+			theMine->Segments () [theMine->Current ()->nSegment].m_info.verts [point1] = new_vert;
 			// all unused vertices
 			theMine->DeleteUnusedVertices();
 			theMine->FixChildren();

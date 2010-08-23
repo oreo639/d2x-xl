@@ -72,10 +72,10 @@ if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 	INT32 nMatCens = (INT32) GameInfo ().botgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
-		INT32 nDelMatCen = segP->nMatCen;
+		INT32 nDelMatCen = segP->m_info.nMatCen;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (CRobotMaker));
-			BotGens (nDelMatCen)->nFuelCen = nDelMatCen;
+			BotGens (nDelMatCen)->m_info.nFuelCen = nDelMatCen;
 			segP->m_info.nMatCen = -1;
 			}
 		GameInfo ().botgen.count--;
@@ -89,17 +89,17 @@ if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 				break;
 				}
 		}
-	segP->nMatCen = -1;
+	segP->m_info.nMatCen = -1;
 	}
 if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
 	// remove matcen
 	INT32 nMatCens = (INT32) GameInfo ().equipgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
-		INT32 nDelMatCen = segP->nMatCen;
+		INT32 nDelMatCen = segP->m_info.nMatCen;
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (CRobotMaker));
-			EquipGens (nDelMatCen)->nFuelCen = nDelMatCen;
+			EquipGens (nDelMatCen)->m_info.nFuelCen = nDelMatCen;
 			segP->m_info.nMatCen = -1;
 			}
 		GameInfo ().equipgen.count--;
@@ -114,7 +114,7 @@ if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
 				break;
 			}
 		}
-	segP->nMatCen = -1;
+	segP->m_info.nMatCen = -1;
 	}
 else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childSegP;
@@ -136,7 +136,7 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 			 (wallP = GetWall (nSegment, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 			oppSideP = Segments (nOppSeg)->m_sides + nOppSide;
 			if (oppSideP->m_info.nBaseTex == (IsD1File () ? 322 : 333))
-				DeleteWall (oppSideP->nWall);
+				DeleteWall (oppSideP->m_info.nWall);
 			}
 		}
 	}
@@ -191,7 +191,7 @@ if (bCreate) {
 		theApp.ResetModified (bUndo);
 		return false; 
 		}	
-	CurrObj ()->id = (IsD1File ()) ? 0 : 2;
+	CurrObj ()->m_info.id = (IsD1File ()) ? 0 : 2;
 	AutoLinkExitToReactor ();
 	}
 theApp.UnlockUndo ();
@@ -264,7 +264,7 @@ BotGens (n_matcen)->m_info.objFlags [0] = 8;
 BotGens (n_matcen)->m_info.objFlags [1] = 0;
 BotGens (n_matcen)->m_info.hitPoints = 0;
 BotGens (n_matcen)->m_info.interval = 0;
-BotGens (n_matcen)->m_info.m_info.nSegment = nSegment;
+BotGens (n_matcen)->m_info.nSegment = nSegment;
 BotGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
@@ -436,7 +436,7 @@ bool CMine::AddDoor (UINT8 type, UINT8 flags, UINT8 keys, INT8 nClip, INT16 nTex
   INT16 	nOppSeg, nOppSide;
   UINT16 nWall;
 
-nWall = CurrSide ()->nWall;
+nWall = CurrSide ()->m_info.nWall;
 if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -608,7 +608,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	Walls () [GameInfo ().walls.count-1].nClip = 10;
+	Walls () [GameInfo ().walls.count-1].m_info.nClip = 10;
 	SetTexture (Current ()->nSegment, Current ()->nSide, 0, (IsD1File ()) ? 444 : 508);
 	AddTrigger (GameInfo ().walls.count - 1, type);
 // add a new wall and trigger to the opposite segment/side
@@ -616,7 +616,7 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKE
 	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
 		AddWall (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		Walls () [GameInfo ().walls.count - 1].nClip = 10;
+		Walls () [GameInfo ().walls.count - 1].m_info.nClip = 10;
 		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
 		theApp.UnlockUndo ();
@@ -673,7 +673,7 @@ return false;
 
 bool CMine::GetTriggerResources (UINT16& nWall)
 {
-nWall = CurrSide ()->nWall;
+nWall = CurrSide ()->m_info.nWall;
 if (nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -753,7 +753,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 bool CMine::AddRobotMakerTrigger () 
 {
 CSegment *otherSegP = OtherSeg ();
-if (otherSegP->function != SEGMENT_FUNC_ROBOTMAKER) {
+if (otherSegP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

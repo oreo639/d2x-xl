@@ -296,11 +296,11 @@ else {
 	m_nSide = m_pWall [0]->m_nSide + 1;
 	m_nTrigger = (m_pWall [0]->m_info.nTrigger < theMine->GameInfo ().triggers.count) ? m_pWall [0]->m_info.nTrigger : -1;
 	m_nType = m_pWall [0]->m_info.type;
-	m_nClip = m_pWall [0]->nClip;
-	m_nStrength = ((double) m_pWall [0]->hps) / F1_0;
+	m_nClip = m_pWall [0]->m_info.nClip;
+	m_nStrength = ((double) m_pWall [0]->m_info.hps) / F1_0;
 	if (m_bFlyThrough = (m_nStrength < 0))
 		m_nStrength = -m_nStrength;
-	m_nCloak = ((double) (m_pWall [0]->cloakValue % 32)) * 100.0 / 31.0;
+	m_nCloak = ((double) (m_pWall [0]->m_info.cloakValue % 32)) * 100.0 / 31.0;
 	CBWallNo ()->SetCurSel (m_nWall [0]);
 	//CBType ()->SetCurSel (m_nType);
 	SelectItemData (CBType (), m_nType);
@@ -319,7 +319,7 @@ else {
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
 		i = theMine->Segments (m_defWall.m_nSegment)->m_sides [m_defWall.m_nSide].m_info.nBaseTex;
-		if (m_defWall.type == WALL_CLOAKED)
+		if (m_defWall.m_info.type == WALL_CLOAKED)
 			m_defOvlTexture = i;
 		else
 			m_defTexture = i;
@@ -364,18 +364,18 @@ if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0]))
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (sideP [bSide]->nWall < theMine->GameInfo ().walls.count)
+	if (sideP [bSide]->m_info.nWall < theMine->GameInfo ().walls.count)
 		ErrorMsg ("There is already a wall at that side of the current cube.");
 	else if (theMine->GameInfo ().walls.count >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
 		if ((theApp.IsD2File ()) && (segP [bSide]->m_info.children [nSide [bSide]] == -1))
 			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
-		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
-													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
-			if (wallP->m_info.type == m_defWall.type) {
-				wallP->m_info.hps = m_defWall.hps;
-				wallP->m_info.cloakValue = m_defWall.cloakValue;
+		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.m_info.type, m_defWall.m_info.flags, 
+													m_defWall.m_info.keys, m_defWall.m_info.nClip, m_defTexture)) {
+			if (wallP->m_info.type == m_defWall.m_info.type) {
+				wallP->m_info.hps = m_defWall.m_info.hps;
+				wallP->m_info.cloakValue = m_defWall.m_info.cloakValue;
 				}
 			else if (wallP->m_info.type == WALL_CLOAKED) {
 				wallP->m_info.hps = 0;
@@ -596,7 +596,7 @@ m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		theApp.SetModified (TRUE);
-		m_pWall [bSide]->keys = (1 << i);
+		m_pWall [bSide]->m_info.keys = (1 << i);
 		Refresh ();
 		}
 }

@@ -98,7 +98,7 @@ for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
-			m_nContained [0] += objP->contents.count;
+			m_nContained [0] += objP->m_info.contents.count;
 			break;
 		case OBJ_HOSTAGE:
 			m_nObjects [1]++;
@@ -119,7 +119,7 @@ for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 					break;
 				case POWERUP_POWERUP_MASK:
 					m_nObjects [5]++;
-					m_nContained [1] += objP->contents.count;
+					m_nContained [1] += objP->m_info.contents.count;
 					break;
 				case POWERUP_KEY_MASK:
 					m_nObjects [6]++;

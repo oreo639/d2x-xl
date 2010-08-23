@@ -206,8 +206,8 @@ if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 	}
 theApp.SetModified (TRUE);
 CFlickeringLight *flP = FlickeringLights (FlickerLightCount ());
-flP->m_info.m_nSegment = nSegment;
-flP->m_info.m_nSide = nSide;
+flP->m_nSegment = nSegment;
+flP->m_nSide = nSide;
 flP->m_info.delay = time;
 flP->m_info.timer = time;
 flP->m_info.mask = mask;
@@ -267,9 +267,9 @@ return (IsD1File ()) ?
 		t = d2_texture_light;
 		}
 	for (; i; i--, t++)
-		if (nBaseTex <= t->nBaseTex)
+		if (nBaseTex <= t->m_info.nBaseTex)
 			break;
-	if (nBaseTex == t->nBaseTex)
+	if (nBaseTex == t->m_info.nBaseTex)
 		return t - ((IsD1File ()) ? d1_texture_light : d2_texture_light);
 	return -1;
 #	if 0
@@ -966,7 +966,7 @@ fLightScale = 1.0; ///= 100.0;
 				dliP->m_nSide = nSourceSide;
 				dliP->m_info.count = 0; // will be incremented below
 				}
-			dliP->index = (INT16)GameInfo ().lightDeltaValues.count;
+			dliP->m_info.index = (INT16)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
 			A = -CalcSideNormal(nSourceSeg,nSourceSide);

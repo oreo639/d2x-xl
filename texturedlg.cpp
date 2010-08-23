@@ -382,7 +382,7 @@ bool CTextureTool::SideHasLight (void)
 {
 if (!theMine) return false;
 
-if	((theMine->IsLight (theMine->CurrSide ()->nBaseTex) != -1) ||
+if	((theMine->IsLight (theMine->CurrSide ()->m_info.nBaseTex) != -1) ||
 	 (((theMine->CurrSide ()->m_info.nOvlTex & 0x3fff) != 0) &&
 	  (theMine->IsLight (theMine->CurrSide ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
@@ -475,7 +475,7 @@ INT32 nSide = theMine->Current ()->nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 pWall = theMine->CurrWall ();
-m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->cloakValue : color->index;
+m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->m_info.cloakValue : color->index;
 m_rgbColor.peRed = (char) (255.0 * color->color.r);
 m_rgbColor.peGreen = (char) (255.0 * color->color.g);
 m_rgbColor.peBlue = (char) (255.0 * color->color.b);

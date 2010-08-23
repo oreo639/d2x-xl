@@ -291,7 +291,7 @@ void CMineView::InterpModelData(UINT8 *p)
 				panel->offset   = *VP(p+4);
 				panel->normal   = *VP(p+16);
 				panel->color    = -1;
-				panel->nBaseTex = W(p+28);
+				panel->m_info.nBaseTex = W(p+28);
 				panel->glow_num = glow_num;
 				for (pt=0;pt<panel->n_verts;pt++) {
 					panel->verts[pt] = WP(p+30)[pt];

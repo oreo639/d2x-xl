@@ -577,16 +577,16 @@ if (theApp.IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
-type = (objP->contents.type == -1) ? MAX_CONTAINS_NUMBER : contentsSelection [objP->contents.type];
+type = (objP->m_info.contents.type == -1) ? MAX_CONTAINS_NUMBER : contentsSelection [objP->m_info.contents.type];
 //if (type == -1)
 //	type = MAX_CONTAINS_NUMBER;
 
 CBSpawnType ()->SetCurSel (type + 1);
-BtnCtrl (IDC_OBJ_MULTIPLAYER)->SetCheck (theMine->CurrObj ()->multiplayer);
-theMine->CurrObj ()->multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
+BtnCtrl (IDC_OBJ_MULTIPLAYER)->SetCheck (theMine->CurrObj ()->m_info.multiplayer);
+theMine->CurrObj ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
 //SelectItemData (CBSpawnType (), type);
-SetObjectId (CBSpawnId (), objP->contents.type, objP->contents.id, 1);
-m_nSpawnQty = objP->contents.count;
+SetObjectId (CBSpawnId (), objP->m_info.contents.type, objP->m_info.contents.id, 1);
+m_nSpawnQty = objP->m_info.contents.count;
 //SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 	INT32 index =
@@ -872,7 +872,7 @@ void CObjectTool::DrawObjectImages ()
 {
 CGameObject *objP = theMine->CurrObj ();
 theMine->DrawObject (&m_showObjWnd, objP->m_info.type, objP->m_info.id);
-theMine->DrawObject (&m_showSpawnWnd, objP->contents.type, objP->contents.id);
+theMine->DrawObject (&m_showSpawnWnd, objP->m_info.contents.type, objP->m_info.contents.id);
 }
 
 
@@ -1304,8 +1304,8 @@ if ((nMaxId > 0) && (nId >= nMaxId)) {
 // find object that currently has id nCurSel and swap ids
 INT32 i;
 for (i = 0; i < nObjects; i++)
-	if (objList [i]->id == nId) {
-		objList [i]->id = objP->m_info.id;
+	if (objList [i]->m_info.id == nId) {
+		objList [i]->m_info.id = objP->m_info.id;
 		break;
 		}
 objP->m_info.id = nId;
@@ -1434,12 +1434,12 @@ theApp.SetModified (TRUE);
 theApp.UnlockUndo ();
 INT32 i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
-	objP->contents.count = 0;
-	objP->contents.type = -1;
-	objP->contents.id = -1;
+	objP->m_info.contents.count = 0;
+	objP->m_info.contents.type = -1;
+	objP->m_info.contents.id = -1;
 	}
 else {
-	objP->contents.type = 
+	objP->m_info.contents.type = 
 	selection = contentsList [i];
 	SetObjectId (CBSpawnId (),selection,0,1);
 	UpdateData (TRUE);
@@ -1462,16 +1462,16 @@ void CObjectTool::OnSetSpawnId ()
 CGameObject *objP = theMine->CurrObj ();
 
 theApp.SetModified (TRUE);
-if (objP->contents.count < -1)
-	objP->contents.count = -1;
+if (objP->m_info.contents.count < -1)
+	objP->m_info.contents.count = -1;
 INT32 i = CBSpawnType ()->GetCurSel () - 1;
-if ((i > -1) && (objP->contents.count > 0)) {
-	objP->contents.type = contentsList [i];
-	objP->contents.id = (INT8) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
+if ((i > -1) && (objP->m_info.contents.count > 0)) {
+	objP->m_info.contents.type = contentsList [i];
+	objP->m_info.contents.id = (INT8) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
 	}
 else {
-	objP->contents.type = -1;
-	objP->contents.id = -1;
+	objP->m_info.contents.type = -1;
+	objP->m_info.contents.id = -1;
 	}
 Refresh ();
 theApp.SetModified (TRUE);
@@ -1690,7 +1690,7 @@ UpdateRobot ();
 
 afx_msg void CObjectTool::OnMultiplayer ()
 {
-theMine->CurrObj ()->multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
+theMine->CurrObj ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck ();
 Refresh ();
 }
 
@@ -1711,7 +1711,7 @@ INT32 CObjectTool::ObjOfAKindCount (INT32 nType, INT32 nId)
 if (nType < 0)
 	nType = theMine->CurrObj ()->m_info.type;
 if (nId < 0)
-	nId =  theMine->CurrObj ()->id;
+	nId =  theMine->CurrObj ()->m_info.id;
 INT32 nCount = 0;
 CGameObject *objP = theMine->Objects (0);
 INT32 i;

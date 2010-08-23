@@ -168,13 +168,13 @@ while(!feof(fBlk)) {
 				w.m_info.cloakValue = byteBuf;
 				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
 				w.m_info.nTrigger = byteBuf;
-				if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS)) {
+				if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
 					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
-					t.type = byteBuf;
+					t.m_info.type = byteBuf;
 					fscanf_s (fBlk, "			    flags %hd\n", &t.m_info.flags);
 					fscanf_s (fBlk, "			    value %ld\n", &t.m_info.value);
 					fscanf_s (fBlk, "			    timer %d\n", &t.m_info.time);
-					fscanf_s (fBlk, "			    count %hd\n", &t.m_info.m_count);
+					fscanf_s (fBlk, "			    count %hd\n", &t.m_count);
 					INT32 iTarget;
 					for (iTarget = 0; iTarget < t.m_count; iTarget++) {
 						fscanf_s (fBlk, "			        segP %hd\n", &t [iTarget].m_nSegment);
@@ -182,13 +182,13 @@ while(!feof(fBlk)) {
 						}
 					}
 				if (GameInfo ().walls.count < MAX_WALLS) {
-					if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS)) {
+					if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
 						if (GameInfo ().triggers.count >= MAX_TRIGGERS)
-							w.nTrigger = NO_TRIGGER;
+							w.m_info.nTrigger = NO_TRIGGER;
 						else {
-							w.nTrigger = GameInfo ().triggers.count++;
+							w.m_info.nTrigger = GameInfo ().triggers.count++;
 							++nNewTriggers;
-							*Triggers (w.nTrigger) = t;
+							*Triggers (w.m_info.nTrigger) = t;
 							}
 						}
 					nNewWalls++;
@@ -319,9 +319,9 @@ while(!feof(fBlk)) {
 		fscanf_s (fBlk, "  value %d\n", &byteBuf);
 		segP->m_info.value = byteBuf;
 		fscanf_s (fBlk, "  childFlags %d\n", &byteBuf);
-		segP->m_info.m_info.childFlags = byteBuf;
+		segP->m_info.childFlags = byteBuf;
 		fscanf_s (fBlk, "  wallFlags %d\n", &byteBuf);
-		segP->m_info.m_info.wallFlags = byteBuf;
+		segP->m_info.wallFlags = byteBuf;
 		switch (segP->m_info.function) {
 			case SEGMENT_FUNC_FUELCEN:
 				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
@@ -470,8 +470,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
 					fprintf (fBlk, "        side %d\n", wallP->m_nSide);
 					fprintf (fBlk, "        hps %d\n", wallP->m_info.hps);
-					fprintf (fBlk, "        type %d\n", wallP->m_info.m_info.type);
-					fprintf (fBlk, "        flags %d\n", wallP->m_info.m_info.flags);
+					fprintf (fBlk, "        type %d\n", wallP->m_info.type);
+					fprintf (fBlk, "        flags %d\n", wallP->m_info.flags);
 					fprintf (fBlk, "        state %d\n", wallP->m_info.state);
 					fprintf (fBlk, "        nClip %d\n", wallP->m_info.nClip);
 					fprintf (fBlk, "        keys %d\n", wallP->m_info.keys);
@@ -527,9 +527,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			}
 		fprintf (fBlk, "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
-			fprintf (fBlk, "  special %d\n",segP->function);
-			fprintf (fBlk, "  nMatCen %d\n",segP->nMatCen);
-			fprintf (fBlk, "  value %d\n",segP->value);
+			fprintf (fBlk, "  special %d\n",segP->m_info.function);
+			fprintf (fBlk, "  nMatCen %d\n",segP->m_info.nMatCen);
+			fprintf (fBlk, "  value %d\n",segP->m_info.value);
 			fprintf (fBlk, "  childFlags %d\n",segP->m_info.childFlags);
 			fprintf (fBlk, "  wallFlags %d\n",segP->m_info.wallFlags);
 			}

@@ -210,7 +210,7 @@ return CToolDlg::OnSetActive ();
 bool CSegmentTool::IsBotMaker (CSegment *segP)
 {
 return 
-	(segP->function == SEGMENT_FUNC_ROBOTMAKER) &&
+	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
 	(segP->nMatCen >= 0) &&
 	(segP->nMatCen < theMine->GameInfo ().botgen.count);
 }
@@ -220,7 +220,7 @@ return
 bool CSegmentTool::IsEquipMaker (CSegment *segP)
 {
 return 
-	(segP->function == SEGMENT_FUNC_EQUIPMAKER) &&
+	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
 	(segP->nMatCen >= 0) &&
 	(segP->nMatCen < theMine->GameInfo ().equipgen.count);
 }
@@ -357,10 +357,10 @@ m_bEndOfExit = (segP->m_info.children [theMine->Current ()->nSide] == -2);
 m_nSegment = theMine->Current ()->nSegment;
 m_nSide = theMine->Current ()->nSide;
 m_nPoint = theMine->Current ()->nPoint;
-m_nType = segP->function;
+m_nType = segP->m_info.function;
 m_nDamage [0] = segP->damage [0];
 m_nDamage [1] = segP->damage [1];
-m_nProps = segP->props;
+m_nProps = segP->m_info.props;
 m_nOwner = segP->owner;
 m_nGroup = segP->group;
 //CBType ()->SetCurSel (m_nType);
@@ -595,7 +595,7 @@ CSegment* segP = theMine->Segments (nMinSeg);
 for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 	if (bMarked && !(segP->m_info.wallFlags & MARKED_MASK))
 		continue;
-	m_nType = segP->function;
+	m_nType = segP->m_info.function;
 	switch(nType) {
 		// check to see if we are adding a robot maker
 		case SEGMENT_FUNC_ROBOTMAKER:
@@ -732,7 +732,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (theMine->GetOppositeSide (nOppSeg, nOppSide, nSegNum, nSide) &&
 				 (wall = theMine->GetWall (nSegNum, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 				oppside = theMine->Segments (nOppSeg)->m_sides + nOppSide;
-				if (oppsideP->nBaseTex == (IsD1File ()) ? 322 : 333)
+				if (oppsideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333)
 					theMine->DeleteWall (oppsideP->nWall);
 				}
 			}

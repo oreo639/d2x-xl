@@ -302,7 +302,7 @@ for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.cou
 for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
 	theMine->BotGens (i)->objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
-		if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == i))
+		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == i))
 				theMine->BotGens (i)->nFuelCen = (INT16)(segP->value);
 	}
 
@@ -311,7 +311,7 @@ for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
 for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
 	theMine->EquipGens (i)->objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
-		if ((segP->function == SEGMENT_FUNC_EQUIPMAKER) && (segP->nMatCen == i))
+		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->nMatCen == i))
 				theMine->EquipGens (i)->nFuelCen = (INT16)(segP->value);
 	}
 

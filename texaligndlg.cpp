@@ -195,7 +195,7 @@ if (theMine->IsWall ()) {
 					// ignore children of different textures (or no texture)
 					CSide *childSideP = childSeg->m_sides + childs_side;
 					if (theMine->IsWall (nChild, childs_side) &&
-						 (childSideP->nBaseTex == sideP->m_info.nBaseTex)) {
+						 (childSideP->m_info.nBaseTex == sideP->m_info.nBaseTex)) {
 						for (childs_line=0;childs_line<4;childs_line++) {
 							// find vert numbers for the line's two end points
 							childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0];
@@ -771,7 +771,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 	if (segP->m_info.nIndex)
 		continue;
 	childSideP = segP->m_sides + nSide;
-	if (m_bUse1st && (sideP->m_info.nBaseTex != childSideP->nBaseTex))
+	if (m_bUse1st && (sideP->m_info.nBaseTex != childSideP->m_info.nBaseTex))
 		continue;
 	if (m_bUse2nd && (sideP->m_info.nOvlTex != childSideP->m_info.nOvlTex))
 		continue;
@@ -870,13 +870,13 @@ if (m_bIgnorePlane) {
 		if (!(bAlignedSides & (1 << child_sidenum))) {
 			bAlignedSides |= (1 << child_sidenum);
 			childSideP = segP->m_sides + child_sidenum;
-			if (childSideP->nBaseTex == nBaseTex)
+			if (childSideP->m_info.nBaseTex == nBaseTex)
 				theMine->AlignTextures (nSegment, child_sidenum, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 			}
 		}
 	if (h >= 0) {
 		for (child_sidenum = 0, childSideP = segP->m_sides; child_sidenum < 6; child_sidenum++, childSideP++) {
-			if (childSideP->nBaseTex == nBaseTex) {
+			if (childSideP->m_info.nBaseTex == nBaseTex) {
 				for (nLine = 0; nLine < 4; nLine++) {
 					child_segnum = segP->m_info.children [side_child[child_sidenum][nLine]];
 					if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
@@ -893,7 +893,7 @@ if (m_bIgnorePlane) {
 	segP->m_info.nIndex = -1;
 	--nDepth;
 	for (nSide = 0, childSideP = segP->m_sides; nSide < 6; nSide++, childSideP++) {
-//			if (childSideP->nBaseTex != sideP->m_info.nBaseTex)
+//			if (childSideP->m_info.nBaseTex != sideP->m_info.nBaseTex)
 //				continue;
 		for (nLine = 0; nLine < 4; nLine++) {
 			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
