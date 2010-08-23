@@ -167,9 +167,8 @@ Reset ();
 
                         /*--------------------------*/
 
-void CMineView::Reset ()
+void CMineView::Reset (void)
 {
-CHECKMINE;
 m_viewWidth = m_viewHeight = m_viewDepth = 0;	// force OnDraw to initialize these
 theMine->SetSplineActive (false);
 m_bUpdate = true;
@@ -2637,8 +2636,8 @@ void CMineView::Pan (char direction, INT32 value)
 {
 if (!value)
 	return;
-INT32 i = direction - 'X' + 1;
-if ((i < 1) || (i > 3))
+INT32 i = direction - 'X';
+if ((i < 0) || (i > 2))
 	i = 1;
 #if 0 //OGL_RENDERING
 glPan [i] += (double) value * 1.9;

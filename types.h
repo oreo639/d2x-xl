@@ -114,7 +114,7 @@ public:
 	void Reset (int count) { 
 		CGameItem* i = this;
 		while (count--) {
-			Clear ();
+			//Clear ();
 			i = i->Next ();
 			}
 		}
@@ -606,7 +606,7 @@ typedef struct {
 typedef struct {
   INT32 signature;
   INT32 version;
-  INT32 num_textures;
+  INT32 textureCount;
 } D2_PIG_HEADER;
 
 typedef struct {

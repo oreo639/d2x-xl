@@ -357,7 +357,6 @@ else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
 FreeTextureHandles ();
 
-
 FSplit (pszFile, szTmp, NULL, NULL);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 fopen_s (&fTmp, szTmp, "wb");

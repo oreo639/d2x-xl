@@ -435,7 +435,7 @@ else if (type == EXTENDED_HAM)  {
       fprintf (file, "mins            = %#08lx %#08lx %#08lx\n", pm.mins.v.x, pm.mins.v.y, pm.mins.v.z);
       fprintf (file, "maxs            = %#08lx %#08lx %#08lx\n", pm.maxs.v.x, pm.maxs.v.y, pm.maxs.v.z);
       fprintf (file, "rad             = %ld\n", pm.rad);
-      fprintf (file, "n_textures      = %d\n", pm.n_textures);
+      fprintf (file, "textureCount      = %d\n", pm.textureCount);
       fprintf (file, "first_texture   = %d\n", pm.first_texture);
       fprintf (file, "simpler_model   = %d\n\n", pm.simpler_model);
     }

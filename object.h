@@ -113,7 +113,7 @@ typedef struct {
   CFixVector   submodel_maxs[MAX_SUBMODELS];
   CFixVector 	mins, maxs;			  // min, max for whole model
   FIX				rad;
-  UINT8			n_textures;
+  UINT8			textureCount;
   UINT16			first_texture;
   UINT8			simpler_model;			  // alternate model with less detail (0 if none, nModel+1 else)
 //  CFixVector min, max;

@@ -13,7 +13,7 @@ typedef struct tExtraTexture	*pExtraTexture;
 struct tExtraTexture {
 	pExtraTexture	pNext;
 	CTexture		texture;
-	UINT16			texture_index;
+	UINT16			textureIndex;
 } tExtraTexture;
 
 pExtraTexture	extraTextures = NULL;
@@ -341,7 +341,7 @@ INT32 CTexture::Read (INT16 index)
 	PIG_TEXTURE		ptexture;
 	D2_PIG_TEXTURE d2_ptexture;
 	PIG_HEADER		file_header;
-	D2_PIG_HEADER	d2_file_header;
+	D2_PIG_HEADER	d2FileHeader;
 	INT32				offset,dataOffset;
 	INT16				x,y,w,h,s;
 	UINT8				byte,runcount,runvalue;
@@ -349,7 +349,7 @@ INT32 CTexture::Read (INT16 index)
 	INT16				linenum;
 	HRSRC				hFind = 0;
 	HGLOBAL			hGlobal = 0;
-	INT16				*texture_table;
+	INT16				*textureTable;
 	INT32				rc;
 	INT16				*texture_ptr;
 	FILE				*fTextures = NULL;
@@ -387,7 +387,7 @@ if (!hGlobal) {
 	}
 // first long is number of textures
 texture_ptr = (INT16 *)LockResource (hGlobal);
-texture_table = texture_ptr + 2;
+textureTable = texture_ptr + 2;
 
 fopen_s (&fTextures, path, "rb");
 if (!fTextures) {
@@ -405,14 +405,14 @@ else if (dataOffset < 0x10000L)
 	dataOffset = 0;
 fseek (fTextures,dataOffset,SEEK_SET);
 if (theApp.IsD2File ())
-	fread (&d2_file_header, sizeof (d2_file_header), 1, fTextures);
+	fread (&d2FileHeader, sizeof (d2FileHeader), 1, fTextures);
 else
 	fread (&file_header, sizeof (file_header), 1, fTextures);
 
 // read texture header
 if (theApp.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + dataOffset +
-				(FIX) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
+				(FIX) (textureTable[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
 	w = d2_ptexture.xsize + ((d2_ptexture.wh_extra & 0xF) << 8);
@@ -420,7 +420,7 @@ if (theApp.IsD2File ()) {
 	}
 else {
 	offset = sizeof (PIG_HEADER) + dataOffset + 
-				(FIX) (texture_table[index]-1) * sizeof (ptexture);
+				(FIX) (textureTable[index]-1) * sizeof (ptexture);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
 	ptexture.name [sizeof (ptexture.name) - 1] = '\0';
@@ -440,7 +440,7 @@ s = w * h;
 // seek to data
 if (theApp.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + dataOffset
-	+ d2_file_header.num_textures * sizeof (D2_PIG_TEXTURE)
+	+ d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE)
 	+ d2_ptexture.offset;
 	}
 else {
@@ -597,19 +597,19 @@ return l;
 
 INT32 ReadPog (FILE *fTextures, UINT32 nFileSize) 
 {
-	D2_PIG_HEADER	d2_file_header;
+	D2_PIG_HEADER	d2FileHeader;
 	D2_PIG_TEXTURE d2texture;
 
 	HRSRC			hFind = 0;
 	HGLOBAL		hGlobal = 0;
-	UINT32		*n_textures = 0;
-	UINT16		*texture_table;
+	UINT32*		textureCount = 0;
+	UINT16		*textureTable;
 	UINT16		nBaseTex;
 	UINT16		*xlatTbl = NULL;
 	INT32			tWidth, tHeight, tSize;
 	UINT32		offset, hdrOffset, bmpOffset, hdrSize, xlatTblSize;
 	INT32			rc; // return code;
-	INT32			tnum;
+	INT32			nTexture;
 	UINT8			*ptr;
 	INT32			row;
 	UINT16		nUnknownTextures, nMissingTextures;
@@ -641,44 +641,44 @@ if (!hGlobal) {
 	rc = 3;
 	goto abort;
 	}
-n_textures = (UINT32 *)LockResource (hGlobal);
-texture_table = (UINT16 *) (n_textures + 1);     // first long is number of textures
+textureCount = (UINT32 *)LockResource (hGlobal);
+textureTable = (UINT16 *) (textureCount + 1);     // first long is number of textures
 
 // read file header
-fread (&d2_file_header, sizeof (D2_PIG_HEADER), 1, fTextures);
-if (d2_file_header.signature != 0x474f5044L) {  // 'DPOG'
+fread (&d2FileHeader, sizeof (D2_PIG_HEADER), 1, fTextures);
+if (d2FileHeader.signature != 0x474f5044L) {  // 'DPOG'
 	ErrorMsg ("Invalid pog file - reading from hog file");
 	rc = 4;
 	goto abort;
 	}
 FreeTextureHandles ();
-sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures",d2_file_header.num_textures);
+sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures",d2FileHeader.textureCount);
 DEBUGMSG (message);
-xlatTbl = new UINT16 [d2_file_header.num_textures];
+xlatTbl = new UINT16 [d2FileHeader.textureCount];
 if (!xlatTbl) {
 	rc = 5;
 	goto abort;
 	}
-xlatTblSize = d2_file_header.num_textures * sizeof (UINT16);
+xlatTblSize = d2FileHeader.textureCount * sizeof (UINT16);
 offset = ftell (fTextures);
 fread (xlatTbl, xlatTblSize, 1, fTextures);
 // loop for each custom texture
 nUnknownTextures = 0;
 nMissingTextures = 0;
 hdrOffset = offset + xlatTblSize;
-hdrSize = xlatTblSize + d2_file_header.num_textures * sizeof (D2_PIG_TEXTURE);
+hdrSize = xlatTblSize + d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE);
 bmpOffset = offset + hdrSize;
-for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
+for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 	// read texture index
-	UINT16 texture_index = xlatTbl [tnum];
+	UINT16 textureIndex = xlatTbl [nTexture];
 	// look it up in the list of textures
 	for (nBaseTex = 0; nBaseTex < MAX_D2_TEXTURES; nBaseTex++)
-		if (texture_table [nBaseTex] == texture_index)
+		if (textureTable [nBaseTex] == textureIndex)
 			break;
 	bExtraTexture = (nBaseTex >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
 #if 1
-	fseek (fTextures, hdrOffset + tnum * sizeof (D2_PIG_TEXTURE), SEEK_SET);
+	fseek (fTextures, hdrOffset + nTexture * sizeof (D2_PIG_TEXTURE), SEEK_SET);
 #endif
 	if (fread (&d2texture, sizeof (D2_PIG_TEXTURE), 1, fTextures) != 1)
 		break;
@@ -695,68 +695,67 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 		continue;
 		}
 	if (bExtraTexture) {
-		pExtraTexture	pxTx = (pExtraTexture) malloc (sizeof (*pxTx));
-		if (!pxTx) {
+		pExtraTexture	extraTexP = new pExtraTexture;
+		if (!extraTexP) {
 			nUnknownTextures++;
 			continue;
 			}
-		pxTx->pNext = extraTextures;
-		extraTextures = pxTx;
-		pxTx->texture_index = texture_index;
-		pxTx->texture.m_info.bmDataP = NULL;
-		texP = &(pxTx->texture);
+		extraTexP->pNext = extraTextures;
+		extraTextures = extraTexP;
+		extraTexP->textureIndex = textureIndex;
+		extraTexP->texture.m_info.bmDataP = NULL;
+		texP = &(extraTexP->texture);
 		nBaseTex = 0;
 		}
 	else
-		texP = theMine->Textures (fileType);
+		texP = theMine->Textures (fileType, nTexture);
 // allocate memory for texture if not already
-	ptr = (UINT8*) malloc (tWidth * tHeight);
-	if (ptr) {
-		if (texP [nBaseTex].m_info.bmDataP)
-			delete texP [nBaseTex].m_info.bmDataP;
-		texP [nBaseTex].m_info.bmDataP = ptr;
-		if (d2texture.flags & 0x80) {
-			ptr = (UINT8*) malloc (tSize * sizeof (tRGBA));
-			if (ptr) {
-				texP [nBaseTex].m_info.tgaDataP = (tRGBA *) ptr;
-				texP [nBaseTex].m_info.nFormat = 1;
-				}
-			else {
-				delete texP [nBaseTex].m_info.bmDataP;
-				continue;
-				}
-			}
-		else
-			texP [nBaseTex].m_info.nFormat = 0;
-		texP [nBaseTex].m_info.width = tWidth;
-		texP [nBaseTex].m_info.height = tHeight;
-		texP [nBaseTex].m_info.size = tSize;
-		texP [nBaseTex].m_info.bValid = 1;
-		// read texture into memory (assume non-compressed)
-#if 1
-		fseek (fTextures, bmpOffset + d2texture.offset, SEEK_SET);
-#endif
-		if (texP [nBaseTex].m_info.nFormat) {
-			fread (ptr, texP [nBaseTex].m_info.size * sizeof (tRGBA), 1, fTextures);
-			texP [nBaseTex].m_info.bValid = 
-				TGA2Bitmap (texP [nBaseTex].m_info.tgaDataP, texP [nBaseTex].m_info.bmDataP, (INT32) tWidth, (INT32) tHeight);
+	if (!(ptr = new UINT8 [tWidth * tHeight]))
+		continue;
+	if (!bExtraTexture)
+		texP->Dispose ();
+	texP->m_info.bmDataP = ptr;
+	if (d2texture.flags & 0x80) {
+		ptr = new UINT8 [tSize * sizeof (tRGBA)];
+		if (ptr) {
+			texP->m_info.tgaDataP = (tRGBA *) ptr;
+			texP->m_info.nFormat = 1;
 			}
 		else {
-			if (d2texture.flags & BM_FLAG_RLE) {
-				fread (ptr, tSize, 1, fTextures);
-				RLEExpand (&d2texture, ptr);
-				}
-			else {
-				UINT8 *p = ptr + tWidth * (tHeight - 1); // point to last row of bitmap
-				for (row = 0; row < tHeight; row++) {
-					fread (p, tWidth, 1, fTextures);
-					p -= tWidth;
-					}
+			texP->Dispose ();
+			continue;
+			}
+		}
+	else
+		texP->m_info.nFormat = 0;
+	texP->m_info.width = tWidth;
+	texP->m_info.height = tHeight;
+	texP->m_info.size = tSize;
+	texP->m_info.bValid = 1;
+	// read texture into memory (assume non-compressed)
+#if 1
+	fseek (fTextures, bmpOffset + d2texture.offset, SEEK_SET);
+#endif
+	if (texP->m_info.nFormat) {
+		fread (ptr, texP->m_info.size * sizeof (tRGBA), 1, fTextures);
+		texP->m_info.bValid = 
+			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (INT32) tWidth, (INT32) tHeight);
+		}
+	else {
+		if (d2texture.flags & BM_FLAG_RLE) {
+			fread (ptr, tSize, 1, fTextures);
+			RLEExpand (&d2texture, ptr);
+			}
+		else {
+			UINT8 *p = ptr + tWidth * (tHeight - 1); // point to last row of bitmap
+			for (row = 0; row < tHeight; row++) {
+				fread (p, tWidth, 1, fTextures);
+				p -= tWidth;
 				}
 			}
-		if (!bExtraTexture)
-			texP [nBaseTex].m_info.bModified = TRUE;
 		}
+	if (!bExtraTexture)
+		texP->m_info.bModified = TRUE;
 	}
 if (nUnknownTextures) {
 	sprintf_s (message, sizeof (message), " Pog manager: %d unknown textures found.", nUnknownTextures);
@@ -773,7 +772,7 @@ abort:
 
 if (xlatTbl)
 	delete xlatTbl;
-if (n_textures) 
+if (textureCount) 
 	GlobalUnlock (hGlobal);  // no need to unlock it but what the heck
 if (hGlobal) 
 	FreeResource (hGlobal);
@@ -898,14 +897,14 @@ return true;
 INT32 CreatePog (FILE *outPigFile) 
 {
 	INT32 rc; // return code;
-	D2_PIG_HEADER d2_file_header;
+	D2_PIG_HEADER d2FileHeader;
 	HRSRC hFind = 0;
 	HGLOBAL hGlobal = 0;
-	UINT32 *n_textures = 0, nOffset = 0;
-	UINT16 *texture_table;
+	UINT32 *textureCount = 0, nOffset = 0;
+	UINT16 *textureTable;
 	INT32 i;
 	INT32 num;
-	pExtraTexture	pxTx;
+	pExtraTexture	extraTexP;
 	CTexture* texP;
 	INT32	fileType = theApp.FileType ();
 
@@ -931,39 +930,39 @@ if (!hGlobal) {
 	rc = 6;
 	goto abort;
 	}
-n_textures = (UINT32 *)LockResource (hGlobal);
-texture_table = (UINT16 *) (n_textures + 1);     // first long is number of textures
+textureCount = (UINT32 *)LockResource (hGlobal);
+textureTable = (UINT16 *) (textureCount + 1);     // first long is number of textures
 
 sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 
 // write file  header
-d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
-d2_file_header.version      = 0x00000001L;
-d2_file_header.num_textures = 0;
+d2FileHeader.signature    = 0x474f5044L; /* 'DPOG' */
+d2FileHeader.version      = 0x00000001L;
+d2FileHeader.textureCount = 0;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_info.bModified)
-		d2_file_header.num_textures++;
-for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
-	d2_file_header.num_textures++;
-fwrite (&d2_file_header, sizeof (D2_PIG_HEADER), 1, outPigFile);
+		d2FileHeader.textureCount++;
+for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
+	d2FileHeader.textureCount++;
+fwrite (&d2FileHeader, sizeof (D2_PIG_HEADER), 1, outPigFile);
 
 // write list of textures
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_info.bModified)
-		fwrite (texture_table + i, sizeof (UINT16), 1, outPigFile);
+		fwrite (textureTable + i, sizeof (UINT16), 1, outPigFile);
 
-for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
-	fwrite (&pxTx->texture_index, sizeof (UINT16), 1, outPigFile);
+for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
+	fwrite (&extraTexP->textureIndex, sizeof (UINT16), 1, outPigFile);
 
 // write texture headers
 num = 0;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_info.bModified)
 		WritePogTextureHeader (outPigFile, texP, num++, nOffset);
-for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
-	WritePogTextureHeader (outPigFile, &pxTx->texture, num, nOffset);
+for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext, num++)
+	WritePogTextureHeader (outPigFile, &extraTexP->texture, num, nOffset);
 
-sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",d2_file_header.num_textures);
+sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",d2FileHeader.textureCount);
 DEBUGMSG (message);
 
 //-----------------------------------------
@@ -973,8 +972,8 @@ rc = 8;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_info.bModified && !WritePogTexture (outPigFile, texP))
 		goto abort;
-for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
-	if (!WritePogTexture (outPigFile, &pxTx->texture))
+for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
+	if (!WritePogTexture (outPigFile, &extraTexP->texture))
 		goto abort;
 
 rc = 0; // return success
@@ -982,7 +981,7 @@ rc = 0; // return success
 abort:
 if (outPigFile) 
 	fclose (outPigFile);
-if (n_textures) 
+if (textureCount) 
 	GlobalUnlock (hGlobal);  // no need to unlock it but what the heck
 if (hGlobal) 
 	FreeResource (hGlobal);
@@ -999,23 +998,25 @@ void FreeTextureHandles (bool bDeleteModified)
 	INT32 i, j;
 	INT32 fileType = theMine->FileType ();
 
-for (i = 0; i < 2; i++) {
-	CTexture* texP = theMine->Textures (i);
-	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
-		if (!bDeleteModified && texP->m_info.bModified)
-			continue;
-		if (texP->m_info.bmDataP) {
-			delete texP->m_info.bmDataP;
-			texP->m_info.bmDataP = NULL;
-			}
-		if (texP->m_info.tgaDataP) {
-			delete texP->m_info.tgaDataP;
-			texP->m_info.tgaDataP = NULL;
-			}
-		texP->m_info.bModified = FALSE;
-		texP->m_info.nFormat = 0;
-		}
-	}
+//for (i = 0; i < 2; i++) {
+//	CTexture* texP = theMine->Textures (i);
+//	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
+//		if (!bDeleteModified && texP->m_info.bModified)
+//			continue;
+//		if (texP->m_info.bmDataP) {
+//			if (!texP->m_info.bExtData)
+//				delete texP->m_info.bmDataP;
+//			texP->m_info.bmDataP = NULL;
+//			}
+//		if (texP->m_info.tgaDataP) {
+//			if (!texP->m_info.bExtData)
+//				delete texP->m_info.tgaDataP;
+//			texP->m_info.tgaDataP = NULL;
+//			}
+//		texP->m_info.bModified = FALSE;
+//		texP->m_info.nFormat = 0;
+//		}
+//	}
 pExtraTexture	p;
 while (extraTextures) {
 	p = extraTextures;

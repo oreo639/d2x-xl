@@ -58,18 +58,17 @@ public:
 		m_info.bExtData = dataP != NULL;
 		}
 
-	~CTexture() {
+	inline void Dispose (void) {
 		if (!m_info.bExtData) {
-			if (m_info.bmDataP) {
+			if (m_info.bmDataP)
 				delete m_info.bmDataP;
-				m_info.bmDataP = NULL;
-				}
-			if (m_info.tgaDataP) {
+			if (m_info.tgaDataP)
 				delete m_info.tgaDataP;
-				m_info.tgaDataP = NULL;
-				}
 			}
+		Clear ();
 		}
+
+	~CTexture() { Dispose (); }
 
 	INT32 Read (INT16 index);
 	double Scale (INT16 index = -1);

@@ -387,7 +387,7 @@ FREAD (polyModel.submodel_maxs);
 FREAD (polyModel.mins);
 FREAD (polyModel.maxs);				  // min, max for whole model
 FREAD (polyModel.rad);
-FREAD (polyModel.n_textures);
+FREAD (polyModel.textureCount);
 FREAD (polyModel.first_texture);
 FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, nModel+1 else)
 assert (polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
