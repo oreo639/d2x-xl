@@ -940,7 +940,7 @@ sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
 d2_file_header.version      = 0x00000001L;
 d2_file_header.num_textures = 0;
-for (i = 0, texP = Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_bModified)
 		d2_file_header.num_textures++;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -948,7 +948,7 @@ for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 fwrite (&d2_file_header, sizeof (D2_PIG_HEADER), 1, outPigFile);
 
 // write list of textures
-for (i = 0, texP = Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_bModified)
 		fwrite (texture_table + i, sizeof (UINT16), 1, outPigFile);
 
@@ -957,7 +957,7 @@ for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 
 // write texture headers
 num = 0;
-for (i = 0, texP = Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_bModified)
 		WritePogTextureHeader (outPigFile, texP, num++, nOffset);
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
@@ -970,7 +970,7 @@ DEBUGMSG (message);
 // write textures (non-compressed)
 //-----------------------------------------
 rc = 8;
-for (i = 0, texP = Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_bModified && !WritePogTexture (outPigFile, texP))
 		goto abort;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
