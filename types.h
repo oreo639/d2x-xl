@@ -114,7 +114,7 @@ public:
 	void Reset (int count) { 
 		CGameItem* i = this;
 		while (count--) {
-			//Clear ();
+			Clear ();
 			i = i->Next ();
 			}
 		}

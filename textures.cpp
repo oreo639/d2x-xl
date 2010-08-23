@@ -344,7 +344,7 @@ INT32 CTexture::Read (INT16 index)
 	D2_PIG_HEADER	d2FileHeader;
 	INT32				offset,dataOffset;
 	INT16				x,y,w,h,s;
-	UINT8				byte,runcount,runvalue;
+	UINT8				byteVal, runcount, runvalue;
 	INT32				nSize;
 	INT16				linenum;
 	HRSRC				hFind = 0;
@@ -389,21 +389,20 @@ if (!hGlobal) {
 texture_ptr = (INT16 *)LockResource (hGlobal);
 textureTable = texture_ptr + 2;
 
-fopen_s (&fTextures, path, "rb");
-if (!fTextures) {
+if (fopen_s (&fTextures, path, "rb")) {
 	DEBUGMSG (" Reading texture: Texture file not found.");
 	rc = 1;
 	goto abort;
 	}
 
 // read fTextures header
-fseek (fTextures,0,SEEK_SET);
+fseek (fTextures, 0, SEEK_SET);
 dataOffset = read_INT32 (fTextures);
 if (dataOffset == 0x47495050L) /* 'PPIG' Descent 2 type */
 	dataOffset = 0;
 else if (dataOffset < 0x10000L)
 	dataOffset = 0;
-fseek (fTextures,dataOffset,SEEK_SET);
+fseek (fTextures, dataOffset, SEEK_SET);
 if (theApp.IsD2File ())
 	fread (&d2FileHeader, sizeof (d2FileHeader), 1, fTextures);
 else
@@ -413,15 +412,14 @@ else
 if (theApp.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + dataOffset +
 				(FIX) (textureTable[index]-1) * sizeof (D2_PIG_TEXTURE);
-	fseek (fTextures,offset,SEEK_SET);
+	fseek (fTextures, offset, SEEK_SET);
 	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
 	w = d2_ptexture.xsize + ((d2_ptexture.wh_extra & 0xF) << 8);
 	h = d2_ptexture.ysize + ((d2_ptexture.wh_extra & 0xF0) << 4);
 	}
 else {
-	offset = sizeof (PIG_HEADER) + dataOffset + 
-				(FIX) (textureTable[index]-1) * sizeof (ptexture);
-	fseek (fTextures,offset,SEEK_SET);
+	offset = sizeof (PIG_HEADER) + dataOffset + (FIX) (textureTable [index] - 1) * sizeof (ptexture);
+	fseek (fTextures, offset, SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
 	ptexture.name [sizeof (ptexture.name) - 1] = '\0';
 	// copy d1 texture into d2 texture struct
@@ -439,26 +437,21 @@ s = w * h;
 
 // seek to data
 if (theApp.IsD2File ()) {
-	offset = sizeof (D2_PIG_HEADER) + dataOffset
-	+ d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE)
-	+ d2_ptexture.offset;
+	offset = sizeof (D2_PIG_HEADER) 
+				+ dataOffset
+				+ d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE)
+				+ d2_ptexture.offset;
 	}
 else {
-	offset =  sizeof (PIG_HEADER) + dataOffset
-	+ file_header.number_of_textures * sizeof (PIG_TEXTURE)
-	+ file_header.number_of_sounds   * sizeof (PIG_SOUND)
-	+ d2_ptexture.offset;
+	offset = sizeof (PIG_HEADER) + dataOffset
+				+ file_header.number_of_textures * sizeof (PIG_TEXTURE)
+				+ file_header.number_of_sounds   * sizeof (PIG_SOUND)
+				+ d2_ptexture.offset;
 	}
 
 // allocate data if necessary
-if (m_info.bmDataP && ((m_info.width != w) || (m_info.height != h))) {
-	delete m_info.bmDataP;
-	m_info.bmDataP = NULL;
-	}
-if (m_info.tgaDataP) {
-	delete m_info.tgaDataP;
-	m_info.tgaDataP = NULL;
-	}
+if (m_info.bmDataP && ((m_info.width != w) || (m_info.height != h)))
+	Dispose ();
 if (m_info.bmDataP == NULL)
 	m_info.bmDataP = new UINT8 [s];
 if (m_info.bmDataP == NULL) {
@@ -466,28 +459,28 @@ if (m_info.bmDataP == NULL) {
 	goto abort;
 	}
 m_info.nFormat = 0;
-fseek (fTextures,offset,SEEK_SET);
+fseek (fTextures, offset, SEEK_SET);
 if (d2_ptexture.flags & 0x08) {
-	fread (&nSize,1,sizeof (INT32),fTextures);
-	fread (xsize,d2_ptexture.ysize,1,fTextures);
+	fread (&nSize, 1, sizeof (INT32), fTextures);
+	fread (xsize, d2_ptexture.ysize, 1, fTextures);
 	linenum = 0;
-	for (y=h-1;y>=0;y--) {
-		fread (line,xsize[linenum++],1,fTextures);
+	for (y = h - 1; y >= 0; y--) {
+		fread (line, xsize[linenum++], 1, fTextures);
 		line_ptr = line;
-			for (x=0;x<w;) {
-			byte = *line_ptr++;
-			if ((byte & 0xe0) == 0xe0) {
-				runcount = byte & 0x1f;
+			for (x = 0; x < w;) {
+			byteVal = *line_ptr++;
+			if ((byteVal & 0xe0) == 0xe0) {
+				runcount = byteVal & 0x1f;
 				runvalue = *line_ptr++;
-				for (j=0;j<runcount;j++) {
-					if (x<w) {
-						m_info.bmDataP[y*w+x] = runvalue;
+				for (j = 0; j < runcount; j++) {
+					if (x < w) {
+						m_info.bmDataP [y * w + x] = runvalue;
 						x++;
 						}
 					}
 				}
 			else {
-				m_info.bmDataP[y*w+x] = byte;
+				m_info.bmDataP [y * w + x] = byteVal;
 				x++;
 				}
 			}
@@ -501,8 +494,8 @@ else {
 		fread (line,w,1,fTextures);
 		line_ptr = line;
 		for (x=0;x<w;x++) {
-			byte = *line_ptr++;
-			m_info.bmDataP[y*w+x] = byte;
+			byteVal = *line_ptr++;
+			m_info.bmDataP[y*w+x] = byteVal;
 			}
 #endif
 		}
@@ -1013,7 +1006,8 @@ for (i = 0; i < 2; i++) {
 				delete texP->m_info.tgaDataP;
 			texP->m_info.tgaDataP = NULL;
 			}
-		texP->m_info.bModified = FALSE;
+		texP->m_info.bExtData = false;
+		texP->m_info.bModified = false;
 		texP->m_info.nFormat = 0;
 		}
 	}
