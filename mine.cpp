@@ -51,6 +51,7 @@ BotGens ().Clear ();
 EquipGens ().Clear ();
 #else
 CLEAR (Segments ());
+CLEAR (Objects ());
 CLEAR (Vertices ());
 CLEAR (Walls ());
 CLEAR (Triggers ());
@@ -59,6 +60,7 @@ CLEAR (ReactorTriggers ());
 CLEAR (VertexColors ());
 CLEAR (BotGens ());
 CLEAR (EquipGens ());
+CTexture* texP = Textures () [0].Buffer ();
 CLEAR (Textures () [0]);
 CLEAR (Textures () [1]);
 #endif
@@ -402,6 +404,16 @@ for (INT32 i = 0; i < 4; i++)
 	v += *Vertices (sideIndexP [sideVertP [i]]);
 v >>= 2;
 return v;
+}
+
+// ------------------------------------------------------------------------
+
+void CMine::ClearGameItem (CGameItem* items, int nCount)
+{
+for (int i = 0; i < nCount; i++) {
+	items->Clear ();
+	items = items->Next ();
+	}
 }
 
 // --------------------------------------------------------------------------

@@ -440,13 +440,13 @@ class CStaticArray : public CDynamicArray < _T > {
 			};
 
 	protected:
-		CStaticArrayData< _T, length > m_data;
+		CStaticArrayData< _T, length > m_staticData;
 
 	public:
 		CStaticArray () { Create (length); }
 
 		_T *Create (UINT32 _length) { 
-			this->SetBuffer (m_data.buffer, 2, _length); 
+			this->SetBuffer (m_staticData.buffer, 2, _length); 
 			return m_data.buffer;
 			}
 		void Destroy (void) { }

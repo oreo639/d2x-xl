@@ -3009,13 +3009,13 @@ write_INT16 (index, fp);
 
 INT32 CRobotMaker::Read (FILE *fp, INT32 version, bool bFlag)
 {
-objFlags [0] = read_INT32 (fp);
+m_info.objFlags [0] = read_INT32 (fp);
 if (theApp.IsD2File ())
-	objFlags [1] = read_INT32 (fp);
-hitPoints = read_FIX (fp);
-interval = read_FIX (fp);
-nSegment = read_INT16 (fp);
-nFuelCen = read_INT16 (fp);
+	m_info.objFlags [1] = read_INT32 (fp);
+m_info.hitPoints = read_FIX (fp);
+m_info.interval = read_FIX (fp);
+m_info.nSegment = read_INT16 (fp);
+m_info.nFuelCen = read_INT16 (fp);
 return 1;
 }
 
@@ -3023,13 +3023,13 @@ return 1;
 
 void CRobotMaker::Write (FILE *fp, INT32 version, bool bFlag)
 {
-write_INT32 (objFlags [0], fp);
+write_INT32 (m_info.objFlags [0], fp);
 if (theApp.IsD2File ())
-	write_INT32 (objFlags [1], fp);
-write_FIX (hitPoints, fp);
-write_FIX (interval, fp);
-write_INT16 (nSegment, fp);
-write_INT16 (nFuelCen, fp);
+	write_INT32 (m_info.objFlags [1], fp);
+write_FIX (m_info.hitPoints, fp);
+write_FIX (m_info.interval, fp);
+write_INT16 (m_info.nSegment, fp);
+write_INT16 (m_info.nFuelCen, fp);
 }
 
 // ------------------------------------------------------------------------

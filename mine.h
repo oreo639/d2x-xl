@@ -48,7 +48,7 @@ typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaV
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
 typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 
-#define CLEAR(_b) (_b).Clear ()
+#define CLEAR(_b) ClearGameItem (_b, (_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
 #define DATA(_b) (_b).Buffer ()
 
@@ -72,7 +72,7 @@ typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 typedef CTexture textureList [2][MAX_D2_TEXTURES];
 
-#define CLEAR(_b)	memset (_b, 0, sizeof (_b))
+#define CLEAR(_b)	ClearGameItem (_b, sizeof (_b))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
 #define DATA(_b) (_b)
 
@@ -610,6 +610,7 @@ private:
 	void SaveColor (CColor *pc, FILE *save_file);
 	void LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp);
 	void SaveColors (CColor *pc, INT32 nColors, FILE *fp);
+	void ClearGameItem (CGameItem* items, int nCount);
 	INT32 LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
 	INT32 SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag = false);
 	INT16 LoadMineDataCompiled (FILE *load_file, bool bNewMine);

@@ -637,11 +637,11 @@ class CGameItem {
 public:
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
+	virtual void Clear (void) = 0;
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
-class CGameObject : public CGameItem {
-public:
+typedef struct tGameObject {
 	INT16			signature;     // reduced size to save memory 
 	INT8			type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
 	INT8			id;            // which form of object...which powerup, robot, etc. 
@@ -659,7 +659,11 @@ public:
 	INT8			contains_type; //  Type of object this object contains (eg, spider contains powerup) 
 	INT8			contains_id;   //  ID of object this object contains (eg, id = blue type = key) 
 	INT8			contains_count;// number of objects of type:id this object contains 
+} tGameObject;
 
+class CGameObject : public CGameItem {
+public:
+	tGameObject	m_info;
 	//movement info, determined by MOVEMENT_TYPE 
 	union {
 		CObjPhysicsInfo	physInfo; // a physics object 
@@ -688,6 +692,7 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
@@ -713,18 +718,26 @@ public:
 		write_INT16 (m_nSegment, fp);
 		write_INT16 (m_nSide, fp);
 		}
+
+	void Clear (void) {
+		m_nSegment = m_nSide = 0;
+		}
 };
+
+typedef struct tWall {
+	FIX		hps;            // "Hit points" of the wall. 
+	INT32		linkedWall;		 // number of linked wall
+	UINT8		type;           // What kind of special wall.
+	UINT16	flags;          // Flags for the wall.    
+	UINT8		state;          // Opening, closing, etc.
+	UINT8		nTrigger;       // Which trigger is associated with the wall.
+	INT8		nClip;          // Which  animation associated with the wall. 
+	UINT8		keys;           // which keys are required
+} tWall;
 
 class CWall : public CSideKey, public CGameItem {
 public:
-	FIX		hps;            /* "Hit points" of the wall.  */
-	INT32		linkedWall;		 /* number of linked wall */
-	UINT8		type;           /* What kind of special wall. */
-	UINT16	flags;          /* Flags for the wall.     */
-	UINT8		state;          /* Opening, closing, etc. */
-	UINT8		nTrigger;       /* Which trigger is associated with the wall. */
-	INT8		nClip;          /* Which  animation associated with the wall.  */
-	UINT8		keys;           /* which keys are required */
+	tWall		m_info;
  
  // the following two Descent2 bytes replace the "INT16 pad" of Descent1
 	INT8		controlling_trigger; // which trigger causes something to happen here.
@@ -735,31 +748,42 @@ public:
 
 	INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
-class CActiveDoor : public CGameItem {
-public:
-  INT32		n_parts;	   // for linked walls
+typedef struct tActiveDoor {
+	INT32		n_parts;	   // for linked walls
   INT16		nFrontWall[2]; // front wall numbers for this door
   INT16		nBackWall[2];  // back wall numbers for this door
   FIX			time;		   // how long been opening, closing, waiting
+} tActiveDoor;
+
+class CActiveDoor : public CGameItem {
+public:
+	tActiveDoor	m_info;
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
+typedef struct tCloakingWall {
+	INT16		nFrontWall;		// front wall numbers for this door
+	INT16		nBackWall; 		// back wall numbers for this door
+	FIX		front_ls[4]; 	// front wall saved light values
+	FIX		back_ls[4];		// back wall saved light values
+	FIX		time;				// how long been cloaking or decloaking
+} tCloakingWall;
+
 class CCloakingWall : public CGameItem {    // NEW for Descent 2
 public:
-	INT16		nFrontWall;	  // front wall numbers for this door
-	INT16		nBackWall; 	  // back wall numbers for this door
-	FIX		front_ls[4]; 	  // front wall saved light values
-	FIX		back_ls[4];	  // back wall saved light values
-	FIX		time;		  // how long been cloaking or decloaking
+	tCloakingWall m_info;
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
@@ -778,83 +802,116 @@ typedef struct {
 
 //extern char	Wall_names[7][10]; // New for Descent 2
 
+typedef struct tTriggerTargets {
+	INT16		count;
+	CSideKey	targets [MAX_TRIGGER_TARGETS];
+} tTriggerTargets;
+
 class CTriggerTargets {
 public:
-	INT16		m_count;
-	CSideKey	m_targets [MAX_TRIGGER_TARGETS];
+	tTriggerTargets m_info;
 
-	CTriggerTargets () : m_count (0) {}
+	CTriggerTargets () : m_info.count (0) {}
 
-	inline CSideKey& operator[](UINT32 i) { return m_targets [i]; }
+	inline CSideKey& operator[](UINT32 i) { return m_info.targets [i]; }
 
 	inline INT16 Add (CSideKey key) {
-		if (m_count < sizeof (m_targets) / sizeof (m_targets [0]))
-			m_targets [m_count] = key;
-		return m_count++;
+		if (m_info.count < sizeof (m_info.targets) / sizeof (m_info.targets [0]))
+			m_info.targets [m_info.count] = key;
+		return m_info.count++;
 		}
 	inline INT16 Add (INT16 nSegment, INT16 nSide) { return Add (CSideKey (nSegment, nSide)); }
 
 	inline INT16 Delete (int i = -1) {
 		if (i < 0)
-			i = m_count - 1;
-		if ((m_count > 0) && (i < --m_count)) {
-			int l = m_count - i;
+			i = m_info.count - 1;
+		if ((m_info.count > 0) && (i < --m_info.count)) {
+			int l = m_info.count - i;
 			if (l)
-				memcpy (m_targets + i, m_targets + i + 1, l * sizeof (m_targets [0]));
-			m_targets [m_count] = CSideKey (0,0);
+				memcpy (m_info.targets + i, m_info.targets + i + 1, l * sizeof (m_info.targets [0]));
+			m_info.targets [m_info.count] = CSideKey (0,0);
 			}
-		return m_count;
+		return m_info.count;
 		}	
 
-	inline INT16 Pop (void) { return Delete (m_count - 1); }
+	inline INT16 Pop (void) { return Delete (m_info.count - 1); }
 
 	inline int Find (CSideKey key) { 
-		for (int i = 0; i < m_count; i++)
-			if (m_targets [i] == key)
+		for (int i = 0; i < m_info.count; i++)
+			if (m_info.targets [i] == key)
 				return i;
 		return -1;
 		}
 	inline int Find (INT16 nSegment, INT16 nSide) { return Find (CSideKey (nSegment, nSide)); }
-	inline INT16& Segment (UINT32 i) { return m_targets [i].m_nSegment; }
-	inline INT16& Side (UINT32 i) { return m_targets [i].m_nSide; }
+	inline INT16& Segment (UINT32 i) { return m_info.targets [i].m_info.nSegment; }
+	inline INT16& Side (UINT32 i) { return m_info.targets [i].m_info.nSide; }
+	void Clear (void) { 
+		m_info.count = 0;
+		for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
+			m_info.targets [i].Clear ();
+		}
 
 };
 
-class CTrigger : public CTriggerTargets, public CGameItem {
-public:
+typedef struct tTrigger {
 	UINT8		type;
 	UINT16	flags;
 	INT16		nObject;
 	FIX		value;
 	FIX		time;
 	UINT16	nIndex;
+} tTrigger;
 
+class CTrigger : public CTriggerTargets, public CGameItem {
+public:
+	struct tTrigger m_info;
 	//inline CSideKey& operator[](UINT32 i) { return targets [i]; }
 
 	virtual INT32 Read (FILE *fp, INT32 version, bool bObjTrigger);
 	virtual void Write (FILE *fp, INT32 version, bool bObjTrigger);
+	virtual void Clear (void) { 
+		memset (&m_info, 0, sizeof (m_info)); 
+		CTriggerTargets::Clear ();
+		}
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
 // Light cast upon vert_light vertices in nSegment:nSide by some light
+
+typedef struct tLightDeltaValue {
+	UINT8 vertLight [4];
+} tLightDeltaValue;
+
 class CLightDeltaValue : public CSideKey, public CGameItem {
 public:
-	UINT8 vert_light [4];
+	tLightDeltaValue m_info;
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { 
+		memset (&m_info, 0, sizeof (m_info)); 
+		CSideKey::Clear ();
+		}
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
-class CLightDeltaIndex : public CSideKey, public CGameItem {
-public:
+typedef struct tLightDeltaIndex {
 	UINT16 count;
 	UINT16 index;
+} tLightDeltaIndex;
+
+class CLightDeltaIndex : public CSideKey, public CGameItem {
+public:
+	tLightDeltaIndex m_info;
 
 	virtual INT32 Read (FILE *fp, INT32 version, bool bD2X);
 	virtual void Write (FILE *fp, INT32 version, bool bD2X);
+	virtual void Clear (void) { 
+		memset (&m_info, 0, sizeof (m_info)); 
+		CSideKey::Clear ();
+		}
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
@@ -867,20 +924,26 @@ class CReactorTrigger : public CTriggerTargets, public CGameItem {
 public:
 	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { CTriggerTargets::Clear (); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
-class CRobotMaker : public CGameItem {
-public:
+typedef struct tRobotMaker {
 	INT32  objFlags [2]; /* Up to 32 different Descent 1 robots */
 	//  INT32  robot_flags2;// Additional 32 robots for Descent 2
 	FIX    hitPoints;  /* How hard it is to destroy this particular matcen */
 	FIX    interval;    /* Interval between materializations */
 	INT16  nSegment;      /* Segment this is attached to. */
 	INT16  nFuelCen; /* Index in fuelcen array. */
+} tRobotMaker;
+
+class CRobotMaker : public CGameItem {
+public:
+	tRobotMaker	m_info;
 
 	INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
+	virtual void Clear (void) { CTriggerTargets::Clear (); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 
@@ -927,11 +990,15 @@ typedef struct {
   INT16 number;
 } TEXTURE;
 
-class CFlickeringLight : public CSideKey {
-public:
+typedef struct tFlickeringLight {
 	UINT32 mask;    // bits with 1 = on, 0 = off
 	FIX timer;		 // always set to 0
 	FIX delay;      // time for each bit in mask (INT32 seconds)
+} tFlickeringLight;
+
+class CFlickeringLight : public CSideKey {
+public:
+	tFlickeringLight m_info;
 
 	INT32 Read (FILE* fp) {
 		CSideKey::Read (fp);
@@ -945,6 +1012,10 @@ public:
 		write_INT32 (mask, fp);
 		write_FIX (timer, fp);
 		write_FIX (delay, fp);
+		}
+	void Clear (void) {
+		memset (&m_info, 0, sizeof (m_info));
+		CSideKey::Clear ();
 		}
 };
 
