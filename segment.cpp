@@ -453,7 +453,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	}
 
 // define static light
-segP->m_info.static_light = currSeg->m_info.static_light; 
+segP->m_info.staticLight = currSeg->m_info.staticLight; 
 
 // delete flickering light if it exists
 INT16 index = GetFlickeringLight (Current ()->nSegment, nCurrSide); 
@@ -1956,7 +1956,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	}
 
 // define static light
-segP->m_info.static_light = seg1->m_info.static_light; 
+segP->m_info.staticLight = seg1->m_info.staticLight; 
 
 // update cur segment
 seg1->m_info.children [cur1->nSide] = nNewSeg; 
@@ -2621,7 +2621,7 @@ if (nLevelType == 2) {
 		m_info.damage [1] = read_INT16 (fp);
 		}
 	}
-m_info.static_light = read_FIX (fp);
+m_info.staticLight = read_FIX (fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2709,7 +2709,7 @@ if (nLevelType == 2) {
 	write_INT16 (m_info.damage [0], fp);
 	write_INT16 (m_info.damage [1], fp);
 	}
-write_FIX (m_info.static_light, fp);
+write_FIX (m_info.staticLight, fp);
 }
 
 // ------------------------------------------------------------------------
@@ -2780,7 +2780,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	m_sides [i].Setup (); 
 	SetUV (i, 0, 0); 
 	}
-m_info.static_light = 0; 
+m_info.staticLight = 0; 
 memset (m_info.children, 0xFF, sizeof (m_info.children));
 }
 

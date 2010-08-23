@@ -343,7 +343,7 @@ if (!theMine) return;
 
 bShowFrames = GetCheck (IDC_TEXTURE_SHOWFRAMES);
 
-INT16 texture1 = theMine->CurrSide ()->nBaseTex;
+INT16 texture1 = theMine->CurrSide ()->m_info.nBaseTex;
 INT16 texture2 = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff;
 
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
@@ -475,7 +475,7 @@ INT32 nSide = theMine->Current ()->nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 pWall = theMine->CurrWall ();
-m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->cloak_value : color->index;
+m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->cloakValue : color->index;
 m_rgbColor.peRed = (char) (255.0 * color->color.r);
 m_rgbColor.peGreen = (char) (255.0 * color->color.g);
 m_rgbColor.peBlue = (char) (255.0 * color->color.b);
@@ -1094,8 +1094,8 @@ bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16
 point0 = lineVertTable[sideLineTable[start_side][linenum]][0];
 point1 = lineVertTable[sideLineTable[start_side][linenum]][1];
 segP = theMine->Segments (0) + start_segment;
-vert0  = segP->verts[point0];
-vert1  = segP->verts[point1];
+vert0  = segP->m_info.verts[point0];
+vert1  = segP->m_info.verts[point1];
 
 nSide = side_child[start_side][linenum];
 childnum = segP->m_info.children[nSide];
@@ -1109,8 +1109,8 @@ for (childs_side=0;childs_side<6;childs_side++) {
 			// find vert numbers for the line's two end points
 			childs_point0 = lineVertTable[sideLineTable[childs_side][childs_line]][0];
 			childs_point1 = lineVertTable[sideLineTable[childs_side][childs_line]][1];
-			childs_vert0  = segP->verts[childs_point0];
-			childs_vert1  = segP->verts[childs_point1];
+			childs_vert0  = segP->m_info.verts[childs_point0];
+			childs_vert1  = segP->m_info.verts[childs_point1];
 			// if points of child's line == corresponding points of parent
 			if (childs_vert0 == vert1 && childs_vert1 == vert0 ||
 				childs_vert0 == vert0 && childs_vert1 == vert1) {

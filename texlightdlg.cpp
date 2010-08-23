@@ -90,9 +90,9 @@ for (i = 0; i < 32; i++)
 		nLightMask |= (1 << i);
 bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
-if (theMine->FlickeringLights (m_iLight)->mask != nLightMask) {
+if (theMine->FlickeringLights (m_iLight)->m_info.mask != nLightMask) {
 	bChange = true;
-	theMine->FlickeringLights (m_iLight)->mask = nLightMask;
+	theMine->FlickeringLights (m_iLight)->m_info.mask = nLightMask;
 	}
 long nDelay = (m_nLightDelay * F1_0 /*- F0_5*/) / 1000;
 if (theMine->FlickeringLights (m_iLight)->delay != nDelay) {
@@ -214,7 +214,7 @@ if (m_iLight < 0) {
 	return;
 	}
 
-long nLightMask = theMine->FlickeringLights (m_iLight)->mask;
+long nLightMask = theMine->FlickeringLights (m_iLight)->m_info.mask;
 INT32 i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
@@ -321,9 +321,9 @@ void CTextureTool::SetWallColor (void)
 {
 if (theMine->UseTexColors ()) {
 	INT16			nSegment, nSide;
-	INT16			nBaseTex = theMine->CurrSide ()->nBaseTex;
-	CSegment	*segP = theMine->Segments (0);
-	CSide		*sideP;
+	INT16			nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
+	CSegment*	segP = theMine->Segments (0);
+	CSide*		sideP;
 	CWall			*wallP;
 	bool			bAll = !theMine->GotMarkedSides ();
 
@@ -338,7 +338,7 @@ if (theMine->UseTexColors ()) {
 				continue;
 			if (sideP->m_info.nBaseTex != nBaseTex)
 				continue;
-			wallP->cloak_value = m_nColorIndex;
+			wallP->m_info.cloakValue = m_nColorIndex;
 			}
 		}
 	}
@@ -358,7 +358,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
 			CWall *pWall = theMine->CurrWall ();
 			if (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) {
-				pWall->cloak_value = m_nColorIndex;
+				pWall->cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}
 			CColor *psc = theMine->CurrLightColor ();
@@ -405,7 +405,7 @@ if (ChooseColor (&cc)) {
 	psc->color.r = (double) m_rgbColor.peRed / 255.0;
 	psc->color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->color.b = (double) m_rgbColor.peBlue / 255.0;
-	theMine->SetTexColor (theMine->CurrSide ()->nBaseTex, psc);
+	theMine->SetTexColor (theMine->CurrSide ()->m_info.nBaseTex, psc);
 	theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
 	UpdatePaletteWnd ();
 	}

@@ -130,7 +130,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
   // copy vertnums into an array
 	CSegment*	segP = theMine->Segments (nSegment);
   for (i=0;i<4;i++) {
-    nVertex[i] = segP->verts[sideVertTable[nSide][i]];
+    nVertex[i] = segP->m_info.verts[sideVertTable[nSide][i]];
 	 vert [i] = *theMine->Vertices (nVertex [i]);
   }
 
@@ -467,10 +467,10 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 
 	for (pointnum = 0; pointnum < 8; pointnum++) {
 // define vert numbers
-		vert0 = segP->verts[pointnum];
-		vert1 = segP->verts[connectPointTable[pointnum][0]];
-		vert2 = segP->verts[connectPointTable[pointnum][1]];
-		vert3 = segP->verts[connectPointTable[pointnum][2]];
+		vert0 = segP->m_info.verts[pointnum];
+		vert1 = segP->m_info.verts[connectPointTable[pointnum][0]];
+		vert2 = segP->m_info.verts[connectPointTable[pointnum][1]];
+		vert3 = segP->m_info.verts[connectPointTable[pointnum][2]];
 		angle = CalcAngle (vert0,vert1,vert2,vert3);
 		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
 		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));
@@ -497,8 +497,8 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 // Check length of each line.
 #if 0
 	for (linenum=0;linenum<12;linenum++) {
-		length = theMine->CalcLength (theMine->Vertices (segP->verts[lineVertTable[linenum][0]]),
-											  theMine->Vertices (segP->verts[lineVertTable[linenum][1]]));
+		length = theMine->CalcLength (theMine->Vertices (segP->m_info.verts[lineVertTable[linenum][0]]),
+											  theMine->Vertices (segP->m_info.verts[lineVertTable[linenum][1]]));
 		if (length < (double)F1_0) {
 			sprintf_s (message, sizeof (message),"WARNING: Line length too INT16 (cube=%d,line=%d)",nSegment,linenum);
 			if (UpdateStats (message, 0, nSegment, -1, linenum))
@@ -639,12 +639,12 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     // from center and make sure it is less than max corner.
     center.Clear ();
     for (corner=0;corner<8;corner++) {
-      center += *theMine->Vertices (segP->verts[corner]);
+      center += *theMine->Vertices (segP->m_info.verts[corner]);
     }
     center >>= 3;
     max_radius = 0;
     for (corner=0;corner<8;corner++) {
-		 radius = Distance (*theMine->Vertices (segP->verts[corner]), center);
+		 radius = Distance (*theMine->Vertices (segP->m_info.verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }
 	object_radius = Distance (objP->m_info.pos, center);
@@ -1611,9 +1611,9 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 #endif
 		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			// check wall nClip
-		if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->cloak_value > 31)) {
+		if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->cloakValue > 31)) {
 			if (m_bAutoFixBugs) {
-				wallP->cloak_value = 31;
+				wallP->cloakValue = 31;
 				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", nWall);
 					}
 			else
@@ -1738,7 +1738,7 @@ for (nVertex = theMine->VertCount (); nVertex; nVertex--, vStat++)
 CSegment *segP = theMine->Segments (0);
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
-		theMine->VertStatus (segP->verts [point]) |= NEW_MASK;
+		theMine->VertStatus (segP->m_info.verts [point]) |= NEW_MASK;
 nVertex = theMine->VertCount () - 1;
 for (vStat = theMine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 	theApp.MainFrame ()->Progress ().StepIt ();
@@ -1750,8 +1750,8 @@ for (vStat = theMine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 			CSegment *segP = theMine->Segments (0);
 			for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
-					if (segP->verts [point] >= nVertex)
-						segP->verts [point]--;
+					if (segP->m_info.verts [point] >= nVertex)
+						segP->m_info.verts [point]--;
 			}
 		}
 	}

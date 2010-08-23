@@ -504,8 +504,8 @@ INT16 CMine::FixIndexValues(void)
 		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			// check wall numbers
 			CSide& side = segP->m_sides [nSide];
-			if (side.nWall >= GameInfo ().walls.count && side.nWall != NO_WALL) {
-				side.nWall = NO_WALL;
+			if (side.m_info.nWall >= GameInfo ().walls.count && side.m_info.nWall != NO_WALL) {
+				side.m_info.nWall = NO_WALL;
 				checkErr |= (1 << 0);
 			}
 			// check children
@@ -516,8 +516,8 @@ INT16 CMine::FixIndexValues(void)
 		}
 		// check verts
 		for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-			if (segP->verts [nVertex] < 0 || segP->verts [nVertex] >= VertCount ()) {
-				segP->verts [nVertex] = 0;  // this will cause a bad looking picture
+			if (segP->m_info.verts [nVertex] < 0 || segP->m_info.verts [nVertex] >= VertCount ()) {
+				segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture
 				checkErr |= (1 << 2);      // but it will prevent a crash
 			}
 		}
@@ -820,13 +820,13 @@ else {  /*load mine filename */
 					ObjTriggers (i)->Read (loadfile, GameInfo ().fileinfo.version, true);
 				if (GameInfo ().fileinfo.version >= 40) {
 					for (i = 0; i < NumObjTriggers (); i++)
-						ObjTriggers (i)->nObject = read_INT16 (loadfile);
+						ObjTriggers (i)->m_info.nObject = read_INT16 (loadfile);
 					}
 				else {
 					for (i = 0; i < NumObjTriggers (); i++) {
 						read_INT16 (loadfile);
 						read_INT16 (loadfile);
-						ObjTriggers (i)->nObject = read_INT16 (loadfile);
+						ObjTriggers (i)->m_info.nObject = read_INT16 (loadfile);
 						}
 					if (GameInfo ().fileinfo.version < 36)
 						fseek (loadfile, 700 * sizeof (INT16), SEEK_CUR);

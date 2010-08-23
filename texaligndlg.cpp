@@ -181,8 +181,8 @@ if (theMine->IsWall ()) {
 			// find vert numbers for the line's two end points
 			point0 = lineVertTable [sideLineTable [nSide][nChildLine]][0];
 			point1 = lineVertTable [sideLineTable [nSide][nChildLine]][1];
-			vert0  = segP->verts [point0];
-			vert1  = segP->verts [point1];
+			vert0  = segP->m_info.verts [point0];
+			vert1  = segP->m_info.verts [point1];
 
 			// check child for this line 
 			nChildSide = side_child[nSide][nChildLine];

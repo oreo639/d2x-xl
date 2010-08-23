@@ -403,7 +403,7 @@ if (!LBTriggers()->GetCount()) {
 	LBTriggers()->AddString ("none");
 	}
 
-m_nLight = ((double) segP->m_info.static_light) / (24 * 327.68);
+m_nLight = ((double) segP->m_info.staticLight) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
 if (IsBotMaker (segP)) {
@@ -780,7 +780,7 @@ void CSegmentTool::OnLight ()
 {
 CHECKMINE;
 UpdateData (TRUE);
-theMine->CurrSeg ()->m_info.static_light = (FIX) (m_nLight * 24 * 327.68);
+theMine->CurrSeg ()->m_info.staticLight = (FIX) (m_nLight * 24 * 327.68);
 theApp.SetModified (TRUE);
 }
 

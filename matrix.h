@@ -2,8 +2,7 @@
 #ifndef __matrix_h
 #define __matrix_h
 
-#include "define.h"
-#include "VectorTypes.h"
+#include "global.h"
 
 class CViewMatrix
 {

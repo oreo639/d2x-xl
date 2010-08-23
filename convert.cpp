@@ -256,7 +256,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 //--------------------------------------
 for (i = 0, wallP = theMine->Walls (0); i < wallCount; i++, wallP++) {
 	wallP->controlling_trigger = 0;
-	wallP->cloak_value = 0;
+	wallP->cloakValue = 0;
 	}
 
 // change trigP type and flags

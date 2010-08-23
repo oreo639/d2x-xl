@@ -71,11 +71,11 @@ CWallTool::CWallTool (CPropertySheet *pParent)
 	: CTexToolDlg (nLayout ? IDD_WALLDATA2 : IDD_WALLDATA, pParent, IDC_WALL_SHOW, 5, RGB (0,0,0))
 {
 memset (&m_defWall, 0, sizeof (m_defWall));
-m_defWall.type = WALL_DOOR;
-m_defWall.flags = WALL_DOOR_AUTO;
-m_defWall.keys = KEY_NONE;
-m_defWall.nClip = -1;
-m_defWall.cloak_value = 16; //50%
+m_defWall.m_info.type = WALL_DOOR;
+m_defWall.m_info.flags = WALL_DOOR_AUTO;
+m_defWall.m_info.keys = KEY_NONE;
+m_defWall.m_info.nClip = -1;
+m_defWall.m_info.cloakValue = 16; //50%
 m_defDoorTexture = -1;
 m_defTexture = -1;
 m_defOvlTexture = 414;
@@ -300,7 +300,7 @@ else {
 	m_nStrength = ((double) m_pWall [0]->hps) / F1_0;
 	if (m_bFlyThrough = (m_nStrength < 0))
 		m_nStrength = -m_nStrength;
-	m_nCloak = ((double) (m_pWall [0]->cloak_value % 32)) * 100.0 / 31.0;
+	m_nCloak = ((double) (m_pWall [0]->cloakValue % 32)) * 100.0 / 31.0;
 	CBWallNo ()->SetCurSel (m_nWall [0]);
 	//CBType ()->SetCurSel (m_nType);
 	SelectItemData (CBType (), m_nType);
@@ -374,16 +374,16 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.type, m_defWall.flags, 
 													m_defWall.keys, m_defWall.nClip, m_defTexture)) {
 			if (wallP->m_info.type == m_defWall.type) {
-				wallP->hps = m_defWall.hps;
-				wallP->cloak_value = m_defWall.cloak_value;
+				wallP->m_info.hps = m_defWall.hps;
+				wallP->m_info.cloakValue = m_defWall.cloakValue;
 				}
 			else if (wallP->m_info.type == WALL_CLOAKED) {
-				wallP->hps = 0;
-				wallP->cloak_value = 16;
+				wallP->m_info.hps = 0;
+				wallP->m_info.cloakValue = 16;
 				}
 			else {
-				wallP->hps = 0;
-				wallP->cloak_value = 31;
+				wallP->m_info.hps = 0;
+				wallP->m_info.cloakValue = 31;
 				}
 			}
 			// update main window
@@ -542,13 +542,13 @@ if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0]))
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if ((wallP = m_pWall [bSide]) && sideP [bSide]) {
-		INT16 nBaseTex  = sideP [bSide]->nBaseTex;
+		INT16 nBaseTex  = sideP [bSide]->m_info.nBaseTex;
 		INT16 nOvlTex = sideP [bSide]->m_info.nOvlTex;
 		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
 		if ((wallP->m_info.type == WALL_OPEN) || (wallP->m_info.type == WALL_CLOSED))
 			theMine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
 //		else if ((wallP->m_info.type == WALL_CLOAKED) || (wallP->m_info.type == WALL_TRANSPARENT))
-//			wallP->cloak_value = m_defWall.cloak_value;
+//			wallP->m_info.cloakValue = m_defWall.cloakValue;
 		}
 theApp.MineView ()->Refresh ();
 Refresh ();
@@ -573,9 +573,9 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				theApp.SetModified (TRUE);
 				theApp.LockUndo ();
 				nClip = clipList [m_nClip];
-				wallP->nClip = nClip;
+				wallP->m_info.nClip = nClip;
 				// define door textures based on clip number
-				if (wallP->nClip >= 0)
+				if (wallP->m_info.nClip >= 0)
 					theMine->SetWallTextures (m_nWall [bSide], m_defTexture);
 				theApp.UnlockUndo ();
 				theApp.MineView ()->Refresh ();
@@ -583,7 +583,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				}
 			}
 		else
-			wallP->nClip = -1;
+			wallP->m_info.nClip = -1;
 }
 
                         /*--------------------------*/
@@ -639,9 +639,9 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
 		theApp.SetModified (TRUE);
-		m_pWall [bSide]->hps = (FIX) m_nStrength * F1_0;
+		m_pWall [bSide]->m_info.hps = (FIX) m_nStrength * F1_0;
 		if ((m_pWall [bSide]->m_info.type == WALL_TRANSPARENT) && m_bFlyThrough)
-			m_pWall [bSide]->hps = -m_pWall [bSide]->hps;
+			m_pWall [bSide]->m_info.hps = -m_pWall [bSide]->m_info.hps;
 		}
 }
 
@@ -653,8 +653,8 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
 		theApp.SetModified (TRUE);
-		m_defWall.cloak_value =
-		m_pWall [bSide]->cloak_value = (INT8) (m_nCloak * 31.0 / 100.0) % 32;
+		m_defWall.m_info.cloakValue =
+		m_pWall [bSide]->m_info.cloakValue = (INT8) (m_nCloak * 31.0 / 100.0) % 32;
 		}
 	else
 		INFOMSG ("wall not found");
@@ -713,7 +713,7 @@ pScrollBar->SetScrollPos (nPos, TRUE);
 
 void CWallTool::OnAddDoorNormal ()
 {
-theMine->AddAutoDoor (m_defDoor.nClip, m_defDoorTexture);
+theMine->AddAutoDoor (m_defDoor.m_info.nClip, m_defDoorTexture);
 }
 
 void CWallTool::OnAddDoorExit ()

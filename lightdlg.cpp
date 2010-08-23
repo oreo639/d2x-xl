@@ -199,7 +199,7 @@ theApp.LockUndo ();
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
-			nVertex = segP->verts [sideVertTable [nSide][i]];
+			nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
 			if (theMine->VertStatus (nVertex) & MARKED_MASK) {
 				sideP->m_info.uvls [i].l = nVertexLight;
 				bChange = true;

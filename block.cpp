@@ -58,7 +58,7 @@ origVertCount = VertCount ();
 // set origin
 segP = CurrSeg ();
 nSide = Current ()->nSide;
-nVertex = segP->verts [sideVertTable [nSide][CURRENT_POINT(0)]];
+nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]];
 memcpy (&origin, Vertices (nVertex), sizeof (CVertex));
 /*
 origin.x = Vertices (nVertex)->x;
@@ -66,11 +66,11 @@ origin.y = Vertices (nVertex)->y;
 origin.z = Vertices (nVertex)->z;
 */
 // set x'
-nVertex = segP->verts [sideVertTable [nSide][CURRENT_POINT(1)]];
+nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]];
 xPrime = *Vertices (nVertex) - origin;
 
 // calculate y'
-nVertex = segP->verts [sideVertTable [nSide][CURRENT_POINT(3)]];
+nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]];
 vVertex = *Vertices (nVertex) - origin;
 yPrime = CrossProduct (xPrime, CDoubleVector (vVertex));
 zPrime = CrossProduct (xPrime, yPrime);
@@ -120,8 +120,8 @@ while(!feof(fBlk)) {
 		}
 	nSegment = SegCount ();
 	segP = Segments (nSegment);
-	segP->owner = -1;
-	segP->group = -1;
+	segP->m_info.owner = -1;
+	segP->m_info.group = -1;
 	fscanf_s (fBlk, "segment %hd\n", &segP->m_info.nIndex);
 	xlatSegNum [segP->m_info.nIndex] = nSegment;
 	// invert segment number so its children can be children can be fixed later
@@ -129,8 +129,7 @@ while(!feof(fBlk)) {
 
 	// read in side information 
 	sideP = segP->m_sides;
-	INT32 nSide;
-	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+	for (INT32 nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
 		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
@@ -154,28 +153,28 @@ while(!feof(fBlk)) {
 				memset (&t, 0, sizeof (t));
 				fscanf_s (fBlk, "        segment %ld\n", &w.m_nSegment);
 				fscanf_s (fBlk, "        side %ld\n", &w.m_nSide);
-				fscanf_s (fBlk, "        hps %ld\n", &w.hps);
+				fscanf_s (fBlk, "        hps %ld\n", &w.m_info.hps);
 				fscanf_s (fBlk, "        type %d\n", &byteBuf);
-				w.type = byteBuf;
+				w.m_info.type = byteBuf;
 				fscanf_s (fBlk, "        flags %d\n", &byteBuf);
-				w.flags = byteBuf;
+				w.m_info.flags = byteBuf;
 				fscanf_s (fBlk, "        state %d\n", &byteBuf);
-				w.state = byteBuf;
+				w.m_info.state = byteBuf;
 				fscanf_s (fBlk, "        nClip %d\n", &byteBuf);
-				w.nClip = byteBuf;
+				w.m_info.nClip = byteBuf;
 				fscanf_s (fBlk, "        keys %d\n", &byteBuf);
-				w.keys = byteBuf;
+				w.m_info.keys = byteBuf;
 				fscanf_s (fBlk, "        cloak %d\n", &byteBuf);
-				w.cloak_value = byteBuf;
+				w.m_info.cloakValue = byteBuf;
 				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
-				w.nTrigger = byteBuf;
+				w.m_info.nTrigger = byteBuf;
 				if ((w.nTrigger >= 0) && (w.nTrigger < MAX_TRIGGERS)) {
 					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
 					t.type = byteBuf;
-					fscanf_s (fBlk, "			    flags %hd\n", &t.flags);
-					fscanf_s (fBlk, "			    value %ld\n", &t.value);
-					fscanf_s (fBlk, "			    timer %d\n", &t.time);
-					fscanf_s (fBlk, "			    count %hd\n", &t.m_count);
+					fscanf_s (fBlk, "			    flags %hd\n", &t.m_info.flags);
+					fscanf_s (fBlk, "			    value %ld\n", &t.m_info.value);
+					fscanf_s (fBlk, "			    timer %d\n", &t.m_info.time);
+					fscanf_s (fBlk, "			    count %hd\n", &t.m_info.m_count);
 					INT32 iTarget;
 					for (iTarget = 0; iTarget < t.m_count; iTarget++) {
 						fscanf_s (fBlk, "			        segP %hd\n", &t [iTarget].m_nSegment);
@@ -296,62 +295,62 @@ while(!feof(fBlk)) {
 		CVertex* vertP = Vertices (origVertCount);
 		for (k = origVertCount; k < VertCount (); k++, vertP++)
 			if (*vertP == v) {
-				segP->verts [i] = k;
+				segP->m_info.verts [i] = k;
 				break;
 				}
 		// else make a new vertex
 		if (k == VertCount ()) {
 			nVertex = VertCount ();
 			VertStatus (nVertex) |= NEW_MASK;
-			segP->verts [i] = nVertex;
+			segP->m_info.verts [i] = nVertex;
 			*Vertices (nVertex) = CFixVector (v);
 			VertCount ()++;
 			}
 		}
 	// mark vertices
 	for (i = 0; i < 8; i++)
-		VertStatus (segP->verts [i]) |= MARKED_MASK;
-	fscanf_s (fBlk, "  static_light %ld\n",&segP->m_info.static_light);
+		VertStatus (segP->m_info.verts [i]) |= MARKED_MASK;
+	fscanf_s (fBlk, "  staticLight %ld\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
 		fscanf_s (fBlk, "  special %d\n", &byteBuf);
-		segP->function = byteBuf;
+		segP->m_info.function = byteBuf;
 		fscanf_s (fBlk, "  nMatCen %d\n", &byteBuf);
-		segP->nMatCen = byteBuf;
+		segP->m_info.nMatCen = byteBuf;
 		fscanf_s (fBlk, "  value %d\n", &byteBuf);
-		segP->value = byteBuf;
+		segP->m_info.value = byteBuf;
 		fscanf_s (fBlk, "  childFlags %d\n", &byteBuf);
-		segP->m_info.childFlags = byteBuf;
+		segP->m_info.m_info.childFlags = byteBuf;
 		fscanf_s (fBlk, "  wallFlags %d\n", &byteBuf);
-		segP->m_info.wallFlags = byteBuf;
-		switch (segP->function) {
+		segP->m_info.m_info.wallFlags = byteBuf;
+		switch (segP->m_info.function) {
 			case SEGMENT_FUNC_FUELCEN:
 				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
-					segP->function = 0;
+					segP->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_REPAIRCEN:
 				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_REPAIRCEN, false, false))
-					segP->function = 0;
+					segP->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_ROBOTMAKER:
 				if (!AddRobotMaker (nSegment, false, false))
-					segP->function = 0;
+					segP->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_EQUIPMAKER:
 				if (!AddEquipMaker (nSegment, false, false))
-					segP->function = 0;
+					segP->m_info.function = 0;
 				break;
 			case SEGMENT_FUNC_CONTROLCEN:
 				if (!AddReactor (nSegment, false, false))
-					segP->function = 0;
+					segP->m_info.function = 0;
 				break;
 			default:
 				break;
 			}
 		}
 	else {
-		segP->function = 0;
-		segP->nMatCen = -1;
-		segP->value = -1;
+		segP->m_info.function = 0;
+		segP->m_info.nMatCen = -1;
+		segP->m_info.value = -1;
 		}
 	//        fscanf_s (fBlk, "  childFlags %d\n",&test);
 	//        segP->m_info.childFlags = test & 0x3f;
@@ -422,15 +421,15 @@ return;
 #endif
 // set origin
 segP = CurrSeg ();
-nVertex = segP->verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]];
+nVertex = segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]];
 origin = *Vertices (nVertex);
 
 // set x'
-nVertex = segP->verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]];
+nVertex = segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]];
 xPrime = *Vertices (nVertex) - origin;
 
 // calculate y'
-nVertex = segP->verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]];
+nVertex = segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]];
 vVertex = *Vertices (nVertex) - origin;
 yPrime = CrossProduct (xPrime, vVertex);
 zPrime = CrossProduct (xPrime, yPrime);
@@ -470,13 +469,13 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					wallP = Walls (sideP->m_info.nWall);
 					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
 					fprintf (fBlk, "        side %d\n", wallP->m_nSide);
-					fprintf (fBlk, "        hps %d\n", wallP->hps);
-					fprintf (fBlk, "        type %d\n", wallP->m_info.type);
-					fprintf (fBlk, "        flags %d\n", wallP->m_info.flags);
-					fprintf (fBlk, "        state %d\n", wallP->state);
-					fprintf (fBlk, "        nClip %d\n", wallP->nClip);
-					fprintf (fBlk, "        keys %d\n", wallP->keys);
-					fprintf (fBlk, "        cloak %d\n", wallP->cloak_value);
+					fprintf (fBlk, "        hps %d\n", wallP->m_info.hps);
+					fprintf (fBlk, "        type %d\n", wallP->m_info.m_info.type);
+					fprintf (fBlk, "        flags %d\n", wallP->m_info.m_info.flags);
+					fprintf (fBlk, "        state %d\n", wallP->m_info.state);
+					fprintf (fBlk, "        nClip %d\n", wallP->m_info.nClip);
+					fprintf (fBlk, "        keys %d\n", wallP->m_info.keys);
+					fprintf (fBlk, "        cloak %d\n", wallP->m_info.cloakValue);
 					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= GameInfo ().triggers.count))
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
@@ -496,8 +495,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 							fprintf (fBlk, "        trigger %d\n", wallP->m_info.nTrigger);
 							fprintf (fBlk, "			    type %d\n", trigger->m_info.type);
 							fprintf (fBlk, "			    flags %ld\n", trigger->m_info.flags);
-							fprintf (fBlk, "			    value %ld\n", trigger->value);
-							fprintf (fBlk, "			    timer %d\n", trigger->time);
+							fprintf (fBlk, "			    value %ld\n", trigger->m_info.value);
+							fprintf (fBlk, "			    timer %d\n", trigger->m_info.time);
 							fprintf (fBlk, "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 								if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
@@ -519,14 +518,14 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// which is a constant (k) times the axis
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vVertexor (always 1)
-			nVertex = segP->verts [i];
+			nVertex = segP->m_info.verts [i];
 			vVertex = *Vertices (nVertex) - origin;
 			fprintf (fBlk, "  CFixVector %d %ld %ld %ld\n",i,
 									D2X (vVertex ^ xPrime),
 									D2X (vVertex ^ yPrime),
 									D2X (vVertex ^ zPrime));
 			}
-		fprintf (fBlk, "  static_light %ld\n",segP->m_info.static_light);
+		fprintf (fBlk, "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
 			fprintf (fBlk, "  special %d\n",segP->function);
 			fprintf (fBlk, "  nMatCen %d\n",segP->nMatCen);
@@ -829,8 +828,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							CFixVector* v1 = Vertices (segP ->verts [0]);
-							CFixVector* v2 = Vertices (seg2->verts [0]);
+							CFixVector* v1 = Vertices (segP ->m_info.verts [0]);
+							CFixVector* v2 = Vertices (seg2->m_info.verts [0]);
 							if (labs (v1->v.x - v2->v.x) < 0xA00000L &&
 								 labs (v1->v.y - v2->v.y) < 0xA00000L &&
 								 labs (v1->v.z - v2->v.z) < 0xA00000L) {

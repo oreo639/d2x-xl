@@ -474,7 +474,7 @@ if (!theMine) return;
 		}
 	SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
   // figure out position of current texture
-  INT32 nBaseTex = theMine->CurrSide ()->nBaseTex;
+  INT32 nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
   INT32 nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
   CTexture tx (bmBuf);
 

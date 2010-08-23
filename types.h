@@ -348,7 +348,7 @@ typedef struct tWall {
 	// Not like "trigger" above, which is the trigger on this wall.
 	//	Note: This gets stuffed at load time in gamemine.c.  
 	// Don't try to use it in the editor.  You will be sorry!
-	INT8		cloak_value;	// if this wall is cloaked, the fade value
+	INT8		cloakValue;	// if this wall is cloaked, the fade value
 } tWall;
 
 class CWall : public CSideKey, public CGameItem {

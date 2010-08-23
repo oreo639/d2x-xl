@@ -186,7 +186,7 @@ if (m_pHxmExtraData) {
 	m_nHxmExtraDataSize = 0;
 	}
 
-CSegment& segP = *Segments (0);
+CSegment& seg = *Segments (0);
 CVertex *vert = Vertices (0);
 
 seg.m_sides [0].m_info.nWall = NO_WALL;
@@ -305,7 +305,7 @@ seg.function = 0;
 seg.nMatCen =-1;
 seg.value =-1;
 seg.s2_flags = 0;
-seg.static_light = 263152L;
+seg.staticLight = 263152L;
 seg.childFlags = 0;
 seg.wallFlags = 0;
 seg.nIndex = 0;

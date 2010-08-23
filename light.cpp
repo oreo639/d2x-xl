@@ -30,7 +30,7 @@ INT32 FindLight (INT32 nTexture, TEXTURE_LIGHT *pTexLights, INT32 nLights)
 
 while (l <= r) {
 	m = (l + r) / 2;
-	t = pTexLights [m].m_info.nBaseTex;
+	t = pTexLights [m].nBaseTex;
 	if (nTexture > t)
 		l = m + 1;
 	else if (nTexture < t)
@@ -195,9 +195,9 @@ if (FlickerLightCount () >= MAX_FLICKERING_LIGHTS) {
 		}
 	return -1;
 	}
-INT16 nTexture = CurrSide ()->nBaseTex & 0x1fff;
-INT16 tmapnum2 = CurrSide ()->m_info.nOvlTex & 0x1fff;
-if ((IsLight (nTexture) == -1) && (IsLight (tmapnum2) == -1)) {
+INT16 nBaseTex = CurrSide ()->m_info.nBaseTex & 0x1fff;
+INT16 nOvlTex = CurrSide ()->m_info.nOvlTex & 0x1fff;
+if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 	if (!bExpertMode)
 		ErrorMsg ("Blinking lights can only be added to a side\n"
 					"that has a Texture with \" - light\" at the\n"
@@ -205,12 +205,12 @@ if ((IsLight (nTexture) == -1) && (IsLight (tmapnum2) == -1)) {
 	return -1;
 	}
 theApp.SetModified (TRUE);
-CFlickeringLight *pfl = FlickeringLights (FlickerLightCount ());
-pfl->m_nSegment = nSegment;
-pfl->m_nSide = nSide;
-pfl->delay = time;
-pfl->timer = time;
-pfl->mask = mask;
+CFlickeringLight *flP = FlickeringLights (FlickerLightCount ());
+flP->m_info.m_nSegment = nSegment;
+flP->m_info.m_nSide = nSide;
+flP->m_info.delay = time;
+flP->m_info.timer = time;
+flP->m_info.mask = mask;
 return ++FlickerLightCount ();
 }
 
@@ -370,20 +370,20 @@ fLight /= 100.0;
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
 		if (!bDynCubeLights)
-			segP->m_info.static_light = nLight;
+			segP->m_info.staticLight = nLight;
 		else {
 			l = 0;
 			c = 0;
 			for (j = 0; j < 6; j++) {
 				for (i = 0; i < 4; i++) {
-					h = (UINT16) segP->m_sides [j].uvls [i].l;
+					h = (UINT16) segP->m_sides [j].m_info.uvls [i].l;
 					if (h || ((segP->m_info.children [j] == -1) && !VisibleWall (segP->m_sides [j].m_info.nWall))) {
 						l += h;
 						c++;
 						}
 					}
 				}
-			segP->m_info.static_light = (FIX) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
+			segP->m_info.staticLight = (FIX) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
 			}
 		}
 	}
@@ -407,10 +407,10 @@ scale = fLight / 100.0; // 100.0% = normal
 		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
 			for (INT32 j = 0; j < 6; j++) {
 				for (INT32 i = 0; i < 4; i++) {
-					double l = ((double) ((UINT16) segP->m_sides [j].uvls [i].l)) * scale;
+					double l = ((double) ((UINT16) segP->m_sides [j].m_info.uvls [i].l)) * scale;
 					l = min (l, 0x8000);
 					l = max (l, 0);
-					segP->m_sides [j].uvls [i].l = (UINT16) l;
+					segP->m_sides [j].m_info.uvls [i].l = (UINT16) l;
 					}
 				}
 			}
@@ -443,7 +443,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 		CSegment *segP = Segments (0);
 		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			for (pt = 0; pt < 8; pt++) {
-				if (segP->verts[pt] == nVertex) {
+				if (segP->m_info.verts[pt] == nVertex) {
 					// add all the uvls for this point
 					for (i = 0; i < 3; i++) {
 						nSide = pointSideTable[pt][i];
@@ -451,10 +451,10 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 						if ((segP->m_info.children[nSide] < 0) || 
 							 (segP->m_sides[nSide].m_info.nWall < GameInfo ().walls.count)) {
 #if 1
-							max_brightness = max(max_brightness,(UINT16)segP->m_sides[nSide].uvls[uvnum].l);
+							max_brightness = max(max_brightness,(UINT16)segP->m_sides[nSide].m_info.uvls[uvnum].l);
 #else
-							if (max_brightness < (UINT16)segP->m_sides[nSide].uvls[uvnum].l)
-								max_brightness = (UINT16)segP->m_sides[nSide].uvls[uvnum].l;
+							if (max_brightness < (UINT16)segP->m_sides[nSide].m_info.uvls[uvnum].l)
+								max_brightness = (UINT16)segP->m_sides[nSide].m_info.uvls[uvnum].l;
 #endif
 							count++;
 							}
@@ -469,13 +469,13 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++) {
 			CSegment *segP = Segments (0);
 			for (nSegment=0;nSegment<SegCount ();nSegment++, segP++) {
 				for (pt=0;pt<8;pt++) {
-					if (segP->verts[pt] == nVertex) {
+					if (segP->m_info.verts[pt] == nVertex) {
 						for (i=0;i<3;i++) {
 							nSide = pointSideTable[pt][i];
 							uvnum = pointCornerTable[pt][i];
 							if ((segP->m_info.children[nSide] < 0) || 
 								 (segP->m_sides[nSide].m_info.nWall < GameInfo ().walls.count)) {
-								segP->m_sides[nSide].uvls[uvnum].l = max_brightness;
+								segP->m_sides[nSide].m_info.uvls[uvnum].l = max_brightness;
 								}
 							}
 						}
@@ -500,14 +500,14 @@ theApp.SetModified (TRUE);
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
-			INT32 nVertex = segP->verts [pt];
+			INT32 nVertex = segP->m_info.verts [pt];
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = pointSideTable [pt][i];
 					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 						INT32 uvnum = pointCornerTable [pt][i];
-						if (max_brightness [nVertex].light < UINT16 (segP->m_sides [nSide].uvls [uvnum].l))
-							max_brightness [nVertex].light = UINT16 (segP->m_sides [nSide].uvls [uvnum].l);
+						if (max_brightness [nVertex].light < UINT16 (segP->m_sides [nSide].m_info.uvls [uvnum].l))
+							max_brightness [nVertex].light = UINT16 (segP->m_sides [nSide].m_info.uvls [uvnum].l);
 						max_brightness [nVertex].count++;
 						}
 					}
@@ -519,13 +519,13 @@ theApp.SetModified (TRUE);
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = Segments (nSegment);
 		for (INT32 pt = 0; pt < 8; pt++) {
-			INT32 nVertex = segP->verts [pt];
+			INT32 nVertex = segP->m_info.verts [pt];
 			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
 				for (INT32 i = 0; i < 3; i++) {
 					INT32 nSide = pointSideTable [pt][i];
 					if ((segP->m_info.children [nSide] < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 						INT32 uvnum = pointCornerTable [pt][i];
-						segP->m_sides [nSide].uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
+						segP->m_sides [nSide].m_info.uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
 						}
 					}
 				}
@@ -561,7 +561,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 			for (i = 0; i < 4; i++) {
 				sideP->m_info.uvls [i].l = 0;
 				if (!bAll)
-					VertexColors (segP->verts [sideVertTable [nSide][i]])->Clear ();
+					VertexColors (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
 				}
 			}
 
@@ -719,7 +719,7 @@ INT32 nSegCount = SegCount ();
 		INT32 j;
 		for (j = 0; j < 4; j++) {
 			INT32 nVertex = sideVertTable [nSourceSide][j];
-			INT32 h = segP->verts [nVertex];
+			INT32 h = segP->m_info.verts [nVertex];
 			source_corner[j] = *Vertices (h);
 			}
 		// loop on child sides
@@ -741,12 +741,12 @@ INT32 nSegCount = SegCount ();
 	//		CBRK (psc->index > 0);
 			// if the child side is the same as the source side, then set light and continue
 			if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-				CUVL*		uvlP = childSegP->m_sides [nChildSide].uvls;
+				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 				UINT32	vBr, lBr;
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CColor *pvc = VertexColors (childSegP->verts [sideVertTable [nChildSide][j]]);
+					CColor *pvc = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
 					vBr = (UINT16) uvlP->l;
 					lBr = (UINT32) (brightness * fLightScale);
 					BlendColors (plc, pvc, lBr, vBr);
@@ -761,11 +761,11 @@ INT32 nSegCount = SegCount ();
 	//		CBRK (nChildSeg == 1 && nChildSide == 2);
 			if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 					UINT32	vBr, lBr;	//vertex brightness, light brightness
-					CUVL		*uvlP = childSegP->m_sides [nChildSide].uvls;
+					CUVL		*uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CColor *pvc = VertexColors (childSegP->verts [sideVertTable [nChildSide][j]]);
+					CColor *pvc = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
 					vBr = (UINT16) uvlP->l;
 					lBr = (UINT16) (brightness * effect [j] / 32);
 					BlendColors (plc, pvc, lBr, vBr);
@@ -847,16 +847,16 @@ INT32 CMine::FindDeltaLight (INT16 nSegment, INT16 nSide, INT16 *pi)
 {
 	INT32	i = pi ? *pi : 0;
 	INT32	j	= (INT32)GameInfo ().lightDeltaIndices.count++;
-	CLightDeltaIndex	*pdli = LightDeltaIndex (0);
+	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
 if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34)) {
-	for (; i < j; i++, pdli++)
-		if ((pdli->m_nSegment == nSegment) && (pdli->m_nSide = (UINT8) nSide))
+	for (; i < j; i++, dliP++)
+		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (UINT8) nSide))
 			return i;
 	}
 else {
-	for (; i < j; i++, pdli++)
-		if ((pdli->m_nSegment == nSegment) && (pdli->m_nSide = (UINT8) nSide))
+	for (; i < j; i++, dliP++)
+		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (UINT8) nSide))
 			return i;
 	}
 return -1;
@@ -955,18 +955,18 @@ fLightScale = 1.0; ///= 100.0;
 			{
 			lightDeltaIndexCount = INT32 (GameInfo ().lightDeltaIndices.count++);
 			}
-			CLightDeltaIndex *pdli = LightDeltaIndex (lightDeltaIndexCount);
+			CLightDeltaIndex *dliP = LightDeltaIndex (lightDeltaIndexCount);
 			if (bD2XLights) {
-				pdli->m_nSegment = nSourceSeg;
-				pdli->m_nSide = nSourceSide;
-				pdli->count = 0; // will be incremented below
+				dliP->m_nSegment = nSourceSeg;
+				dliP->m_nSide = nSourceSide;
+				dliP->m_info.count = 0; // will be incremented below
 				}
 			else {
-				pdli->m_nSegment = nSourceSeg;
-				pdli->m_nSide = nSourceSide;
-				pdli->count = 0; // will be incremented below
+				dliP->m_nSegment = nSourceSeg;
+				dliP->m_nSide = nSourceSide;
+				dliP->m_info.count = 0; // will be incremented below
 				}
-			pdli->index = (INT16)GameInfo ().lightDeltaValues.count;
+			dliP->index = (INT16)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
 			A = -CalcSideNormal(nSourceSeg,nSourceSide);
@@ -995,8 +995,8 @@ fLightScale = 1.0; ///= 100.0;
 			// setup source corner vertex for length calculation later
 			CFixVector source_corner[4];
 			for (INT32 j = 0; j < 4; j++) {
-				UINT8 nVertex = sideVertTable[nSourceSide][j];
-				INT32 h = srcSegP->verts[nVertex];
+				UINT8 nVertex = sideVertTable [nSourceSide][j];
+				INT32 h = srcSegP->m_info.verts [nVertex];
 				source_corner[j] = *Vertices (h);
 				}
 
@@ -1038,7 +1038,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
+						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (dliP->m_info.count == (bD2XLights ? 8191 : 255))) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1056,21 +1056,18 @@ fLightScale = 1.0; ///= 100.0;
 						}
 						dl->m_nSegment = nChildSeg;
 						dl->m_nSide = nChildSide;
-						dl->vert_light [0] =
-						dl->vert_light [1] =
-						dl->vert_light [2] =
-						dl->vert_light [3] = (UINT8) min (32, 32 * fLightScale);
-						if (bD2XLights)
-							pdli->count++;
-						else
-							pdli->count++;
+						dl->m_info.vertLight [0] =
+						dl->m_info.vertLight [1] =
+						dl->m_info.vertLight [2] =
+						dl->m_info.vertLight [3] = (UINT8) min (32, 32 * fLightScale);
+						dliP->m_info.count++;
 						continue;
 						}
 
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
-							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? pdli->count == 8191 : pdli->count == 255)) {
+							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {
@@ -1090,11 +1087,11 @@ fLightScale = 1.0; ///= 100.0;
 							dl->m_nSide = nChildSide;
 							INT32 iCorner;
 							for (iCorner = 0; iCorner < 4; iCorner++)
-								dl->vert_light [iCorner] = (UINT8) min(32, effect [iCorner]);
+								dl->m_info.vertLight [iCorner] = (UINT8) min(32, effect [iCorner]);
 							if (bD2XLights)
-								pdli->count++;
+								dliP->m_info.count++;
 							else
-								pdli->count++;
+								dliP->m_info.count++;
 							}
 						}
 					}
@@ -1296,7 +1293,7 @@ INT32 i, j;
 for (j = 0; j < 4; j++) {
 	CFixVector corner;
 	INT32 nVertex = sideVertTable[nSide][j];
-	INT32 h = segP->verts[nVertex];
+	INT32 h = segP->m_info.verts[nVertex];
 	corner = *Vertices (h);
 	double length = 20.0 * m_lightRenderDepth;
 	for (i = 0; i < 4; i++)

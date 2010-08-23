@@ -863,7 +863,7 @@ m_info.pos.Read (fp);
 m_info.orient.Read (fp);
 m_info.size = read_FIX (fp);
 m_info.shields = read_FIX (fp);
-m_info.read_vector (&lastPos, fp);
+m_info.lastPos.Read (fp);
 m_info.contents.type = read_INT8 (fp);
 m_info.contents.id = read_INT8 (fp);
 m_info.contents.count = read_INT8 (fp);
@@ -949,7 +949,7 @@ return 1;
 
 void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
 {
-if (theMine->IsStdLevel () && (type >= OBJ_CAMBOT))
+if (theMine->IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
 write_INT8 (m_info.type, fp);

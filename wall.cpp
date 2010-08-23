@@ -149,11 +149,11 @@ switch (type) {
 		break;
 
 	case WALL_CLOAKED:
-		wallP->m_info.cloak_value = 17;
+		wallP->m_info.cloakValue = 17;
 		break;
 
 	case WALL_TRANSPARENT:
-		wallP->m_info.cloak_value = 0;
+		wallP->m_info.cloakValue = 0;
 		break;
 
 	default:
@@ -376,7 +376,7 @@ m_info.nTrigger = UINT8 (read_INT8 (fp));
 m_info.nClip = UINT8 (read_INT8 (fp));      
 m_info.keys = UINT8 (read_INT8 (fp));          
 m_info.controllingTrigger = read_INT8 (fp);
-m_info.cloak_value = read_INT8 (fp);
+m_info.cloakValue = read_INT8 (fp);
 return 1;
 }
 
@@ -398,7 +398,7 @@ write_INT8 (m_info.nTrigger, fp);
 write_INT8 (m_info.nClip, fp);      
 write_INT8 (m_info.keys, fp);          
 write_INT8 (m_info.controllingTrigger, fp);
-write_INT8 (m_info.cloak_value, fp);
+write_INT8 (m_info.cloakValue, fp);
 }
 
 

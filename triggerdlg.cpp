@@ -453,10 +453,10 @@ if (!m_bFindTrigger)
 	nTrigger = m_nTrigger;
 else {
 	if (m_nClass) {
-		if (theMine->Current ()->nObject == theMine->ObjTriggers (m_nTrigger)->nObject)
+		if (theMine->Current ()->nObject == theMine->ObjTriggers (m_nTrigger)->m_info.nObject)
 			return false;
 		for (INT32 i = 0, j = theMine->NumObjTriggers (); j; j--, i++) {
-			if (theMine->Current ()->nObject == theMine->ObjTriggers (i)->nObject) {
+			if (theMine->Current ()->nObject == theMine->ObjTriggers (i)->m_info.nObject) {
 				m_nTrigger = i;
 				return false;
 				}
@@ -544,20 +544,20 @@ if (m_nTrigger != -1) {
 		m_bD2Flags [6] = ((m_pTrigger->m_info.flags & TF_SILENT) != 0);
 		m_bD2Flags [7] = ((m_pTrigger->m_info.flags & TF_AUTOPLAY) != 0);
 		if (m_nType == TT_SPEEDBOOST)
-			m_nSliderValue = m_pTrigger->value;
+			m_nSliderValue = m_pTrigger->m_info.value;
 		if (m_nType == TT_TELEPORT)
-			m_nSliderValue = m_pTrigger->value;
+			m_nSliderValue = m_pTrigger->m_info.value;
 		if (m_nType == TT_SPAWN_BOT)
-			m_nSliderValue = m_pTrigger->value;
+			m_nSliderValue = m_pTrigger->m_info.value;
 		else if (m_nType != TT_CHANGE_TEXTURE)
-			m_nStrength = (double) m_pTrigger->value / F1_0;
+			m_nStrength = (double) m_pTrigger->m_info.value / F1_0;
 		}
 	else {
 		CBType ()->EnableWindow (FALSE);
 		CToolDlg::EnableControls (IDC_TRIGGER_NOMESSAGE, IDC_TRIGGER_ONESHOT, FALSE);
 		for (i = 0; i < MAX_TRIGGER_FLAGS; i++)
 			m_bD1Flags [i] = ((m_pTrigger->m_info.flags & triggerFlagsD1 [i]) != 0);
-		m_nStrength = (double) m_pTrigger->value / F1_0;
+		m_nStrength = (double) m_pTrigger->m_info.value / F1_0;
 		}
 	OnSetTarget ();
 	}
@@ -752,7 +752,7 @@ if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TE
 SetTriggerPtr ();
 theApp.SetModified (TRUE);
 UpdateData (FALSE);
-m_pTrigger->value = (INT32) (m_nStrength * F1_0);
+m_pTrigger->m_info.value = (INT32) (m_nStrength * F1_0);
 }
 
 //------------------------------------------------------------------------
@@ -766,7 +766,7 @@ if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
 theApp.SetModified (TRUE);
-m_pTrigger->time = m_nTime;
+m_pTrigger->m_info.time = m_nTime;
 }
 
 //------------------------------------------------------------------------
@@ -894,17 +894,17 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-if ((theApp.IsD1File ()) ? 
-	 (m_pTrigger->m_info.flags & TRIGGER_MATCEN) != 0 : 
-	 (m_pTrigger->m_info.type == TT_MATCEN) && 
-	 (theMine->Segments (other->m_info.nSegment)->function != SEGMENT_FUNC_ROBOTMAKER)) {
+if ((theApp.IsD1File ()) 
+	 ? (m_pTrigger->m_info.flags & TRIGGER_MATCEN) != 0 
+	 : (m_pTrigger->m_info.type == TT_MATCEN) && (theMine->Segments (other->m_info.nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
+	) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
 	}
-INT32 i = FindTarget (other->m_info.nSegment, other->nSide);
+INT32 i = FindTarget (other->nSegment, other->nSide);
 if (i > -1)
 	return;
-AddTarget (other->m_info.nSegment, other->nSide + 1);
+AddTarget (other->nSegment, other->nSide + 1);
 }
 
                         /*--------------------------*/
@@ -1112,7 +1112,7 @@ if (pScrollBar == SpeedBoostSlider ()) {
 		nPos = 1;
 	else if (nPos > 10)
 		nPos = 10;
-	m_nSliderValue = m_pTrigger->value = nPos;
+	m_nSliderValue = m_pTrigger->m_info.value = nPos;
 	UpdateData (FALSE);
 #if 0
 	pScrollBar->SetScrollPos (nPos, TRUE);

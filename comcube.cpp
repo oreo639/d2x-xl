@@ -10,12 +10,12 @@
 
 STDMETHODIMP CComCube::get_StaticLight(long* pRetVal)
 {
-	*pRetVal = _pCube->m_info.static_light;
+	*pRetVal = _pCube->m_info.staticLight;
 	return S_OK;
 }
 
 STDMETHODIMP CComCube::put_StaticLight(long val)
 {
-	_pCube->m_info.static_light = val;
+	_pCube->m_info.staticLight = val;
 	return S_OK;
 }

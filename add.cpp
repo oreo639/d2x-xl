@@ -67,7 +67,7 @@ void CMine::UndefineSegment (INT16 nSegment)
 	CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 
 nSegment = INT16 (segP - Segments (0));
-if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
+if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 	// remove matcen
 	INT32 nMatCens = (INT32) GameInfo ().botgen.count;
 	if (nMatCens > 0) {
@@ -76,7 +76,7 @@ if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (BotGens (nDelMatCen), BotGens (nMatCens), sizeof (CRobotMaker));
 			BotGens (nDelMatCen)->nFuelCen = nDelMatCen;
-			segP->nMatCen = -1;
+			segP->m_info.nMatCen = -1;
 			}
 		GameInfo ().botgen.count--;
 		INT32 i;
@@ -84,14 +84,14 @@ if (segP->function == SEGMENT_FUNC_ROBOTMAKER) {
 			DeleteTriggerTargets (nSegment, i);
 		CSegment *s;
 		for (i = SegCount (), s = Segments (0); i; i--, s++)
-			if ((segP->function == SEGMENT_FUNC_ROBOTMAKER) && (s->nMatCen == nMatCens)) {
-				s->nMatCen = nDelMatCen;
+			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (s->m_info.nMatCen == nMatCens)) {
+				s->m_info.nMatCen = nDelMatCen;
 				break;
 				}
 		}
 	segP->nMatCen = -1;
 	}
-if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
+if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
 	// remove matcen
 	INT32 nMatCens = (INT32) GameInfo ().equipgen.count;
 	if (nMatCens > 0) {
@@ -100,7 +100,7 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
 			memcpy (EquipGens (nDelMatCen), EquipGens (nMatCens), sizeof (CRobotMaker));
 			EquipGens (nDelMatCen)->nFuelCen = nDelMatCen;
-			segP->nMatCen = -1;
+			segP->m_info.nMatCen = -1;
 			}
 		GameInfo ().equipgen.count--;
 		INT32 i;
@@ -109,23 +109,23 @@ if (segP->function == SEGMENT_FUNC_EQUIPMAKER) {
 		CSegment *s;
 		nDelMatCen += (INT32) GameInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (0); i; i--, s++)
-			if ((s->function == SEGMENT_FUNC_EQUIPMAKER) && (s->nMatCen == nMatCens)) {
-				s->nMatCen = nDelMatCen;
+			if ((s->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (s->m_info.nMatCen == nMatCens)) {
+				s->m_info.nMatCen = nDelMatCen;
 				break;
 			}
 		}
 	segP->nMatCen = -1;
 	}
-else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
-	CSegment *childseg;
+else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
+	CSegment *childSegP;
 	CSide *oppSideP, *sideP = segP->m_sides;
 	CWall *wallP;
 	INT16 nOppSeg, nOppSide;
 	for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (segP->m_info.children [nSide] < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childseg = Segments (segP->m_info.children [nSide]);
-		if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
+		childSegP = Segments (segP->m_info.children [nSide]);
+		if (childSegP->m_info.function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
 		if ((wallP = GetWall (nSegment, nSide)) && 
@@ -135,13 +135,13 @@ else if (segP->function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 		if (GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
 			 (wallP = GetWall (nSegment, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 			oppSideP = Segments (nOppSeg)->m_sides + nOppSide;
-			if (oppSideP->nBaseTex == (IsD1File () ? 322 : 333))
+			if (oppSideP->m_info.nBaseTex == (IsD1File () ? 322 : 333))
 				DeleteWall (oppSideP->nWall);
 			}
 		}
 	}
 segP->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
-segP->function = SEGMENT_FUNC_NONE;
+segP->m_info.function = SEGMENT_FUNC_NONE;
 }
 
 //==========================================================================
@@ -154,7 +154,7 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 UndefineSegment (nSegment);
 CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
-segP->function = type;
+segP->m_info.function = type;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
 theApp.UnlockUndo ();
@@ -170,7 +170,7 @@ bool CMine::AddReactor (INT16 nSegment, bool bCreate, bool bSetDefTextures)
 {
 #if 0
 for (segP = Segments (0), i = SegCount (); i; i--, segP++)
-	if (segP->function == SEGMENT_FUNC_CONTROLCEN) {
+	if (segP->m_info.function == SEGMENT_FUNC_CONTROLCEN) {
 		if (!bExpertMode)
 			ErrorMsg ("There is already a reactor in this mine.");
 		return false;
@@ -222,14 +222,14 @@ if (!DefineSegment (nSegment, SEGMENT_FUNC_EQUIPMAKER, -1)) {
 	theApp.MineView ()->DelayRefresh (false);
 	return false; 
 	}	
-EquipGens (n_matcen)->objFlags [0] = 0;
-EquipGens (n_matcen)->objFlags [1] = 0;
-EquipGens (n_matcen)->hitPoints = 0;
-EquipGens (n_matcen)->interval = 0;
+EquipGens (n_matcen)->m_info.objFlags [0] = 0;
+EquipGens (n_matcen)->m_info.objFlags [1] = 0;
+EquipGens (n_matcen)->m_info.hitPoints = 0;
+EquipGens (n_matcen)->m_info.interval = 0;
 EquipGens (n_matcen)->m_info.nSegment = nSegment;
-EquipGens (n_matcen)->nFuelCen = n_matcen;
-Segments (Current ()->nSegment)->value = 
-Segments (Current ()->nSegment)->nMatCen = n_matcen;
+EquipGens (n_matcen)->m_info.nFuelCen = n_matcen;
+Segments (Current ()->nSegment)->m_info.value = 
+Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
 GameInfo ().equipgen.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
@@ -260,14 +260,14 @@ if (!DefineSegment (nSegment, SEGMENT_FUNC_ROBOTMAKER,  bSetDefTextures ? (IsD1F
 	theApp.MineView ()->DelayRefresh (false);
 	return false; 
 	}	
-BotGens (n_matcen)->objFlags [0] = 8;
-BotGens (n_matcen)->objFlags [1] = 0;
-BotGens (n_matcen)->hitPoints = 0;
-BotGens (n_matcen)->interval = 0;
-BotGens (n_matcen)->m_info.nSegment = nSegment;
-BotGens (n_matcen)->nFuelCen = n_matcen;
-Segments (Current ()->nSegment)->value = 
-Segments (Current ()->nSegment)->nMatCen = n_matcen;
+BotGens (n_matcen)->m_info.objFlags [0] = 8;
+BotGens (n_matcen)->m_info.objFlags [1] = 0;
+BotGens (n_matcen)->m_info.hitPoints = 0;
+BotGens (n_matcen)->m_info.interval = 0;
+BotGens (n_matcen)->m_info.m_info.nSegment = nSegment;
+BotGens (n_matcen)->m_info.nFuelCen = n_matcen;
+Segments (Current ()->nSegment)->m_info.value = 
+Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
 GameInfo ().botgen.count++;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
@@ -379,7 +379,7 @@ INT32 n_fuelcen = 0;
 CSegment *segP = Segments (0);
 INT32 i;
 for (i = 0; i < SegCount (); i++, segP++)
-	if ((segP->function == SEGMENT_FUNC_FUELCEN) || (segP->function == SEGMENT_FUNC_REPAIRCEN))
+	if ((segP->m_info.function == SEGMENT_FUNC_FUELCEN) || (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		n_fuelcen++;
 return n_fuelcen;
 }
