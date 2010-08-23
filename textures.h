@@ -56,6 +56,8 @@ public:
 		Clear ();
 		m_info.bmDataP = dataP;
 		m_info.bExtData = dataP != NULL;
+		if (dataP != NULL)
+			m_info.bExtData = true;
 		}
 
 	inline void Dispose (void) {

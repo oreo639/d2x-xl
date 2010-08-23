@@ -610,11 +610,11 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	CTexture*		texP;
 	INT32				fileType = theApp.FileType ();
 
+return 1;
 // make sure this is descent 2 fTextures
 if (theApp.IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
-	rc = 1;
-	goto abort;
+	return 1;
 	}
 
 //--------------------------------------------------------------------
@@ -622,10 +622,10 @@ if (theApp.IsD1File ()) {
 //--------------------------------------------------------------------
 // get pointer to texture table from resource fTextures
 //	hFind	 = FindResource (hInst,"TEXTURE_DATA2", "RC_DATA");
-hFind = FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
+hFind = FindResource (hInst, MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
 if (!hFind) {
 	DEBUGMSG (" POG manager: Texture resource not found.");
-	rc = 2;
+	return 2;
 	goto abort;
 	}
 hGlobal = LoadResource (hInst, hFind);
@@ -701,7 +701,7 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 		nBaseTex = 0;
 		}
 	else
-		texP = theMine->Textures (fileType, nTexture);
+		texP = theMine->Textures (fileType, nBaseTex);
 // allocate memory for texture if not already
 	if (!(ptr = new UINT8 [tSize]))
 		continue;
@@ -989,33 +989,18 @@ void FreeTextureHandles (bool bDeleteModified)
 {
   // free any textures that have been buffered
 	INT32 i, j;
-	INT32 fileType = theMine->FileType ();
 
-for (i = 0; i < 2; i++) {
-	CTexture* texP = theMine->Textures (i);
-	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
-		if (!bDeleteModified && texP->m_info.bModified)
-			continue;
-		if (texP->m_info.bmDataP) {
-			if (!texP->m_info.bExtData)
-				delete texP->m_info.bmDataP;
-			texP->m_info.bmDataP = NULL;
-			}
-		if (texP->m_info.tgaDataP) {
-			if (!texP->m_info.bExtData)
-				delete texP->m_info.tgaDataP;
-			texP->m_info.tgaDataP = NULL;
-			}
-		texP->m_info.bExtData = false;
-		texP->m_info.bModified = false;
-		texP->m_info.nFormat = 0;
-		}
-	}
-pExtraTexture	p;
+//for (i = 0; i < 2; i++) {
+//	CTexture* texP = theMine->Textures (i);
+//	for (j = MAX_D2_TEXTURES; j; j--, texP++)
+//		if (bDeleteModified || !texP->m_info.bModified)
+//			texP->Dispose ();
+//	}
+pExtraTexture p;
 while (extraTextures) {
 	p = extraTextures;
 	extraTextures = p->pNext;
-	free (p);
+	delete p;
 	}
 }
 

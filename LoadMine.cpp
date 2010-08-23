@@ -43,8 +43,8 @@ bool bNewMine = false;
 // first disable curve generator
 m_bSplineActive = FALSE;
 
-CLEAR (LightColors ());
-CLEAR (VertexColors ());
+//CLEAR (LightColors ());
+//CLEAR (VertexColors ());
 
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();

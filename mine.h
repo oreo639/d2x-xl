@@ -28,7 +28,7 @@ extern CUVL default_uvls[4];
 // CLASS - Level
 //**************************************************************************
 
-#define USE_DYN_ARRAYS 1
+#define USE_DYN_ARRAYS 0
 
 #if USE_DYN_ARRAYS
 
@@ -59,7 +59,7 @@ typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
 typedef CVertex vertexList [MAX_VERTICES3];
 typedef CSegment segmentList [MAX_SEGMENTS3];
-typedef CColor lightColorList [MAX_SEGMENTS3][6];
+typedef CColor lightColorList [MAX_SEGMENTS3 * 6];
 typedef CColor texColorList [MAX_D2_TEXTURES];
 typedef CColor vertexColorList [MAX_VERTICES3];
 typedef CWall wallList [MAX_WALLS3];
@@ -74,7 +74,7 @@ typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 typedef CTexture textureList [2][MAX_D2_TEXTURES];
 
-#define CLEAR(_b)	(_b)->Clear (sizeof (_b))
+#define CLEAR(_b)	(_b)->Clear (sizeof (_b) / sizeof (_b [0]))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
 #define DATA(_b) (_b)
 
@@ -224,9 +224,9 @@ public:
 		{ return MineData ().lightDeltaIndices; }
 	inline lightDeltaValueList& LightDeltaValues ()
 		{ return MineData ().lightDeltaValues; }
-	inline flickeringLightList FlickeringLights ()
+	inline flickeringLightList& FlickeringLights ()
 		{ return MineData ().flickeringLights; }
-	inline textureList Textures ()
+	inline textureList& Textures ()
 		{ return MineData ().textures; }
 
 	inline CVertex *Vertices (INT32 i)
