@@ -434,7 +434,7 @@ if (m_bUpdate) {
 		m_Current = theMine->Current ();
 
 		// draw the level
-		switch(m_viewOption)		{
+		switch(m_viewOption)	{
 			case eViewAllLines:
 				DrawWireFrame(false);
 				break;
