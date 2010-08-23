@@ -573,7 +573,7 @@ void CTextureTool::DrawTexture (INT16 texture1, INT16 texture2, INT32 x0, INT32 
 	x_offset = 0;
 	y_offset = 0;
 	CDC	*pDC = m_textureWnd.GetDC ();
-	CTexture tx (bmBuf);
+	CTexture tx (bmBuf, true);
 
 memset (bitmap_array,0,sizeof (bitmap_array));
 if (DefineTexture(texture1,texture2,&tx,x0,y0))

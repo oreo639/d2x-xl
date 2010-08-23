@@ -1328,7 +1328,7 @@ if (bUseTexColors && UseTexColors ()) {
 			return pc;
 		}
 	}	
-return LightColor (i, j); 
+return LightColors (i, j); 
 }
 
 //--------------------------------------------------------------------------

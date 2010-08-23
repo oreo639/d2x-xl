@@ -1411,7 +1411,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 	{
 
 		INT32 resolution = 0;
-		CTexture tx (bmBuf);
+		CTexture tx (bmBuf, true);
 		UINT8 *pm_viewPointsMem = (UINT8 *)m_pvBits;
 		UINT16 width = m_viewWidth;
 		UINT16 height = m_viewHeight;
@@ -4075,7 +4075,7 @@ if (!GLInitPalette ())
 	return;
 nTexture &= 0x1FFF; 
 if (!glHandles [nTexture]) {
-	CTexture tx (bmBuf);
+	CTexture tx (bmBuf, true);
 	DefineTexture (nTexture, 0, &tx, 0, 0);
 	DrawAnimDirArrows (nTexture, &tx);
 	// create RGBA bitmap from source bitmap

@@ -47,6 +47,7 @@ return (value / round) * round;
 
 void CTextureTool::UpdateAlignWnd (void)
 {
+CHECKMINE;
 RefreshAlignWnd ();
 m_alignWnd.InvalidateRect (NULL);
 m_alignWnd.UpdateWindow ();
@@ -57,6 +58,8 @@ theApp.MineView ()->Refresh (false);
 
 void CTextureTool::RefreshAlignWnd (void) 
 {
+CHECKMINE;
+
 	INT32			x, y, i, uv;
 	CSegment*	segP, * childSeg;
 	CSide*		sideP;
@@ -277,6 +280,7 @@ DeleteObject(hPenGrid);
 
 void CTextureTool::DrawAlignment (CDC *pDC)
 {
+CHECKMINE;
 if (!m_bShowTexture)
 	return;
 
@@ -284,8 +288,8 @@ if (!m_bShowTexture)
 	CRgn			hRgn;
 	INT32			h, i, j, x, y;
 	POINT			offset;
-	CSide		*sideP = theMine->CurrSide ();
-	CTexture	tx (bmBuf);
+	CSide*		sideP = theMine->CurrSide ();
+	CTexture		tex (bmBuf, true);
 	UINT16		scale;
 
 // read scroll bar
@@ -295,19 +299,19 @@ offset.y = (INT32) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 // set up logical palette
 oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 pDC->RealizePalette();
-memset(tx.m_info.bmDataP, 0, sizeof (bmBuf));
-if (DefineTexture (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tx, 0, 0)) {
+memset (tex.m_info.bmDataP, 0, sizeof (bmBuf));
+if (DefineTexture (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (DefineTexture failed)");
 	return;
 	}
 hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);
 pDC->SelectObject (&hRgn);
-scale = min (tx.m_info.width, tx.m_info.height) / 64;
+scale = min (tex.m_info.width, tex.m_info.height) / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
 		i=((INT32)(((((x-(m_centerPt.x+offset.x))+128)*2)/m_zoom))&63)*scale;
 		j=((INT32)(((((y-(m_centerPt.y+offset.y))+128)*2)/m_zoom))&63)*scale;
-		pDC->SetPixel(x, y, h=PALETTEINDEX(tx.m_info.bmDataP[(tx.m_info.width-j)*tx.m_info.width+i]));
+		pDC->SetPixel(x, y, h=PALETTEINDEX(tex.m_info.bmDataP[(tex.m_info.width-j)*tex.m_info.width+i]));
 		}
 	}
 DeleteObject(hRgn);
