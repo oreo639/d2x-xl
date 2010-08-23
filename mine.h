@@ -28,7 +28,7 @@ extern CUVL default_uvls[4];
 // CLASS - Level
 //**************************************************************************
 
-#define USE_DYN_ARRAYS 0
+#define USE_DYN_ARRAYS 1
 
 #if USE_DYN_ARRAYS
 
@@ -74,7 +74,7 @@ typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 typedef CTexture textureList [2][MAX_D2_TEXTURES];
 
-#define CLEAR(_b)	//(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
+#define CLEAR(_b)	(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
 #define DATA(_b) (_b)
 
