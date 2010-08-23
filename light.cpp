@@ -154,7 +154,7 @@ return (result);
 INT16 CMine::GetFlickeringLight (INT16 nSegment, INT16 nSide) 
 {
 GetCurrent (nSegment, nSide);
-CFlickeringLight *pfl = FlickeringLights ();
+CFlickeringLight *pfl = FlickeringLights (0);
 INT32 i;
 for (i = FlickerLightCount (); i; i--, pfl++)
 	if ((pfl->m_nSegment == nSegment) && (pfl->m_nSide == nSide))
@@ -553,11 +553,7 @@ void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights)
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (bAll)
-#if 0
-	VertexColors ().Clear ();
-#else
-	memset (VertexColors (), 0, sizeof (VertexColors ()));
-#endif
+	CLEAR (VertexColors ());
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 	if (bAll || (segP->wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -851,7 +847,7 @@ INT32 CMine::FindDeltaLight (INT16 nSegment, INT16 nSide, INT16 *pi)
 {
 	INT32	i = pi ? *pi : 0;
 	INT32	j	= (INT32)GameInfo ().lightDeltaIndices.count++;
-	CLightDeltaIndex	*pdli = LightDeltaIndex ();
+	CLightDeltaIndex	*pdli = LightDeltaIndex (0);
 
 if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34)) {
 	for (; i < j; i++, pdli++)

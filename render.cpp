@@ -201,16 +201,16 @@ for (i=0;i<4;i++) {
 if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
 	INT32 dlIdxCount = theMine->GameInfo ().lightDeltaIndices.count;
-	CLightDeltaValue* CLightDeltaValues;
+	CLightDeltaValue* lightDeltaValues;
 	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
-		 (lightDeltaIndices = theMine->LightDeltaIndex ()) &&
-		 (CLightDeltaValues = theMine->LightDeltaValues ())) {
+		 (lightDeltaIndices = theMine->LightDeltaIndex (0)) &&
+		 (lightDeltaValues = theMine->LightDeltaValues (0))) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i <dlIdxCount; i++, dli++) {
 //				if (dli->nSegment == theMine->current->segment) {
 			// loop on each delta light till the segment/side is found
-				CLightDeltaValue *dl = CLightDeltaValues + dli->index;
+				CLightDeltaValue *dl = LightDeltaValues (dli->index);
 				h = dli->count;
 				for (j = 0; j < h; j++, dl++) {
 					if (*dl == face) {

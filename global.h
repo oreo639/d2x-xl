@@ -70,7 +70,7 @@ extern INT32 ScrnWidth;
 extern INT32 ScrnHeight;
 extern INT32 m_fileType;
 extern CLightDeltaIndex *lightDeltaIndices;
-extern CLightDeltaValue *CLightDeltaValues;
+extern CLightDeltaValue *lightDeltaValues;
 extern INT16 num_static_lights;
 extern char string[256];
 extern INT16 nSplineSeg1,nSplineSeg2,nSplineSide1,nSplineSide2;

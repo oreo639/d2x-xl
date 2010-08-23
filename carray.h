@@ -364,6 +364,30 @@ class CDynamicArray : public CQuickSort < _T > {
 			if (m_data.buffer) 
 				CQuickSort<_T>::SortDescending (m_data.buffer, left, (right >= 0) ? right : m_data.length - 1);
 			}
+
+		inline size_t Find (_T key) {
+			for (UINT32 i = 0; i < m_data.length; i++)
+				if (key == m_data.buffer [i])
+					return 0;
+			return -1;
+			}
+
+		inline size_t FindSorted (_T key) {
+			size_t i = 0, j = size_t (m_data.length);
+			_T t;
+			do {
+				m = (i + j) / 2;
+				t = m_data.buffer [m];
+				if (key < t)
+					r = m - 1;
+				else if (key > t)
+					l = m + 1;
+				else
+					return m;
+			} while (i <= j);
+			return -1;
+			}
+
 #ifdef _WIN32
 		inline void SortAscending (comparator compare, INT32 left = 0, INT32 right = -1) {
 			if (m_data.buffer) 

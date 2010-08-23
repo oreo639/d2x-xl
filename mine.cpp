@@ -30,8 +30,6 @@ CMine* theMine = NULL;
 // CMine - CMine
 //==========================================================================
 
-#define CLEAR(_b)	memset (_b, 0, sizeof (_b))
-
 CMine::CMine() 
 { 
 Initialize();
@@ -81,11 +79,7 @@ GameInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-#if 0
-RobotInfo ().Clear ();
-#else
-memset (RobotInfo (), 0, sizeof (RobotInfo ()));
-#endif
+CLEAR (RobotInfo ());
 //	LoadPalette ();
 m_bSortObjects = TRUE;
 m_bVertigo = false;
@@ -155,11 +149,7 @@ if (!data)
 
 FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-#if 0
-RobotInfo () = DefRobotInfo ();
-#else
-memcpy (RobotInfo (), DefRobotInfo (), sizeof (RobotInfo ()));
-#endif
+ASSIGN (RobotInfo (), DefRobotInfo ());
 texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
 FILE *file;
 fopen_s (&file, message, "wb");

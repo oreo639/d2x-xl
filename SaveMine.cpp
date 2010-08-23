@@ -369,7 +369,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	//==================== = WRITE OBJECT INFO==========================
 	// note: same for D1 and D2
 #if 1
-	SaveGameItem (fp, GameInfo ().objects, Objects ());
+	SaveGameItem (fp, GameInfo ().objects, DATA (Objects ()));
 #else
 	GameInfo ().objects.offset = ftell(fp);
 	for (i = 0; i < GameInfo ().objects.count; i++)
@@ -380,7 +380,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	//       when saving D1 level
 	if (GameInfo ().fileinfo.version >= 20) {
 #if 1
-	SaveGameItem (fp, GameInfo ().walls, Walls ());
+	SaveGameItem (fp, GameInfo ().walls, DATA (Walls ()));
 #else
 		GameInfo ().walls.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().walls.count; i++)
@@ -392,7 +392,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	// note: not used for D1 or D2 since doors.count is always 0
 	if (GameInfo ().fileinfo.version >= 20) {
 #if 1
-	SaveGameItem (fp, GameInfo ().doors, ActiveDoors ());
+	SaveGameItem (fp, GameInfo ().doors, DATA (ActiveDoors ()));
 #else
 		GameInfo ().doors.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().doors.count; i++)
@@ -403,7 +403,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	//==================== WRITE TRIGGER INFO==========================
 	// note: order different for D2 levels but size is the same
 #if 1
-	SaveGameItem (fp, GameInfo ().triggers, Triggers ());
+	SaveGameItem (fp, GameInfo ().triggers, DATA (Triggers ()));
 #else
 	GameInfo ().triggers.offset = ftell(fp);
 	for (i = 0; i < GameInfo ().triggers.count; i++)
@@ -423,7 +423,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	//================ WRITE CONTROL CENTER TRIGGER INFO============== =
 	// note: same for D1 and D2
 #if 1
-	SaveGameItem (fp, GameInfo ().control, ReactorTriggers ());
+	SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
 #else
 	GameInfo ().control.offset = ftell(fp);
 	for (i = 0; i < GameInfo ().control.count; i++)
@@ -433,7 +433,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	//================ WRITE MATERIALIZATION CENTERS INFO============== =
 	// note: added robot_flags2 for Descent 2
 #if 1
-	SaveGameItem (fp, GameInfo ().botgen, BotGens ());
+	SaveGameItem (fp, GameInfo ().botgen, DATA (BotGens ()));
 #else
 	GameInfo ().botgen.offset = ftell(fp);
 	//if (IsD2File ())
@@ -453,7 +453,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	// note: added robot_flags2 for Descent 2
 	if (IsD2File ()) {
 #if 1
-	SaveGameItem (fp, GameInfo ().equipgen, EquipGens ());
+	SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
 #else
 		GameInfo ().equipgen.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().botgen.count; i++) 
@@ -464,8 +464,8 @@ INT16 CMine::SaveGameData(FILE *fp)
 		if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
 			SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
 #if 1
-		SaveGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex ());
-		SaveGameItem (fp, GameInfo ().lightDeltaValues, LightDeltaValues ());
+		SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
+		SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
 #else
 		GameInfo ().lightDeltaIndices.offset = ftell(fp);
 		for (i = 0; i < GameInfo ().lightDeltaIndices.count; i++) 

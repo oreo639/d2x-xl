@@ -495,7 +495,7 @@ EndPaint (&ps);
 void CMineView::AdvanceLightTick (void)
 {
 	LIGHT_TIMER *plt = lightTimers;
-	CFlickeringLight *pfl = theMine->FlickeringLights ();
+	CFlickeringLight *pfl = theMine->FlickeringLights (0);
 	INT32 i, light_delay;
 
 for (i = theMine->FlickerLightCount (); i; i--, pfl++, plt++) {
@@ -519,15 +519,15 @@ static INT32 qqq1 = -1, qqq2 = 0;
 bool CMineView::SetLightStatus (void)
 {
 	INT32 h, i, j;
-	CLightDeltaIndex *pdli = theMine->LightDeltaIndex ();
+	CLightDeltaIndex *pdli = theMine->LightDeltaIndex (0);
 	LIGHT_TIMER *plt;
-	CFlickeringLight *pfl = theMine->FlickeringLights ();
+	CFlickeringLight *pfl = theMine->FlickeringLights (0);
 	LIGHT_STATUS *pls;
 	bool bChange = false;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
 	INT16 nSrcSide, nSrcSeg, nSegment, nSide;
 
-CLightDeltaValue *dll = theMine->LightDeltaValues ();
+CLightDeltaValue *dll = theMine->LightDeltaValues (0);
 if (!dll)
 	return false;
 // search delta light index to see if current side has a light
@@ -1834,7 +1834,7 @@ void CMineView::DrawLights (void)
   m_pDC->SelectObject(m_penYellow);
 
   // find flickering light from
-CFlickeringLight* pfl = theMine->FlickeringLights ();
+CFlickeringLight* pfl = theMine->FlickeringLights (0);
 for (i = 0; i < theMine->FlickerLightCount (); i++, pfl++)
 	if (Visible (theMine->Segments (pfl->m_nSegment)))
 	   DrawOctagon(pfl->m_nSide, pfl->m_nSegment);

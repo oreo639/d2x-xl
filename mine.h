@@ -25,7 +25,10 @@ extern CUVL default_uvls[4];
 // CLASS - Level
 //**************************************************************************
 
-#if 0
+#define USE_DYN_ARRAYS 1
+
+#if USE_DYN_ARRAYS
+
 typedef CStaticArray< ROBOT_INFO, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
 typedef CStaticArray< CSegment, MAX_SEGMENTS3 > segmentList;
@@ -42,7 +45,13 @@ typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
+
+#define CLEAR(_b) (_b).Clear ()
+#define ASSIGN(_a,_b) (_a) = (_b)
+#define DATA(_b) (_b).Buffer ()
+
 #else
+
 typedef ROBOT_INFO robotInfoList [MAX_ROBOT_TYPES];
 typedef CVertex vertexList [MAX_VERTICES3];
 typedef CSegment segmentList [MAX_SEGMENTS3];
@@ -59,6 +68,11 @@ typedef CGameObject objectList [MAX_OBJECTS2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
+
+#define CLEAR(_b)	memset (_b, 0, sizeof (_b))
+#define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
+#define DATA(_b) (_b)
+
 #endif
 
 typedef struct tMineData {
@@ -200,6 +214,12 @@ public:
 		{ return MineData ().robotInfo; }
 	inline robotInfoList& DefRobotInfo (void)
 		{ return m_defaultRobotInfo; }
+	inline lightDeltaIndexList& LightDeltaIndex ()
+		{ return MineData ().lightDeltaIndices; }
+	inline lightDeltaValueList& LightDeltaValues ()
+		{ return MineData ().lightDeltaValues; }
+	inline flickeringLightList FlickeringLights ()
+		{ return MineData ().flickeringLights; }
 
 	inline CVertex *Vertices (INT32 i)
 		{ return MineData ().vertices + i; }
@@ -233,6 +253,12 @@ public:
 		{ return MineData ().robotInfo + i; }
 	inline ROBOT_INFO *DefRobotInfo (INT32 i)
 		{ return m_defaultRobotInfo + i; }
+	inline CLightDeltaIndex *LightDeltaIndex (INT32 i)
+		{ return MineData ().lightDeltaIndices + i; }
+	inline CLightDeltaValue *LightDeltaValues (INT32 i)
+		{ return MineData ().lightDeltaValues + i; }
+	inline CFlickeringLight *FlickeringLights (INT32 i)
+		{ return MineData ().flickeringLights + i; }
 
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
@@ -242,12 +268,6 @@ public:
 		{ return GameInfo ().objects.count; }
 	inline UINT16& VertCount ()
 		{ return MineData ().numVertices; }
-	inline CLightDeltaIndex *LightDeltaIndex (INT32 i = 0)
-		{ return MineData ().lightDeltaIndices + i; }
-	inline CLightDeltaValue *LightDeltaValues (INT32 i = 0)
-		{ return MineData ().lightDeltaValues + i; }
-	inline CFlickeringLight *FlickeringLights (INT32 i = 0)
-		{ return MineData ().flickeringLights + i; }
 	inline INT16& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (CGameItemInfo& gii)

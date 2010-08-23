@@ -43,13 +43,9 @@ bool bNewMine = false;
 // first disable curve generator
 m_bSplineActive = FALSE;
 
-#if 0
-LightColors ().Clear ();
-VertexColors ().Clear ();
-#else
-memset (LightColors (), 0, sizeof (LightColors ()));
-memset (VertexColors (), 0, sizeof (VertexColors ()));
-#endif
+CLEAR (LightColors ());
+CLEAR (VertexColors ());
+
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
 if (filename_passed && *filename_passed)
@@ -453,11 +449,7 @@ UINT32 nSize = 0;
 UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
-#if 0
-BOOL bCustom = memcmp (MineData ().texColors.Buffer (), dataP, MineData ().texColors.Size ()) != 0;
-#else
-BOOL bCustom = memcmp (MineData ().texColors, dataP, sizeof (MineData ().texColors)) != 0;
-#endif
+BOOL bCustom = memcmp (DATA (MineData ().texColors), dataP, sizeof (MineData ().texColors)) != 0;
 FreeResource (hGlobal);
 return bCustom;
 }
@@ -474,7 +466,7 @@ if (!dataP)
 INT32 i = nSize / (3 * sizeof (INT32) + sizeof (UINT8));
 if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
 	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
-for (CColor *pc = MineData ().texColors/*.Buffer ()*/; i; i--, pc++) {
+for (CColor *pc = DATA (MineData ().texColors); i; i--, pc++) {
 	pc->index = *dataP++;
 	pc->color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
 	dataP += sizeof (INT32);
@@ -847,11 +839,7 @@ else {  /*load mine filename */
 			SortObjTriggers ();
 		else {
 			NumObjTriggers () = 0;
-#if 0
-			ObjTriggers ().Clear ();
-#else
-			memset (ObjTriggers (), 0, sizeof (ObjTriggers ()));
-#endif
+			CLEAR (ObjTriggers ());
 			}
 		}
 
