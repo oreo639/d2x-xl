@@ -3,7 +3,7 @@
 
 #include "Types.h"
 
-extern UINT8 bmBuf [2048 * 2048 * 4];
+extern UINT8 bmBuf [512 * 512 * 32 * 4];
 
 typedef struct {
     byte  identSize;          // size of ID field that follows 18 byte header (0 usually)
@@ -44,7 +44,7 @@ typedef struct tTexture {
 	UINT8*	bmDataP;
 	tRGBA*	tgaDataP;
 	UINT32	width, height, size;
-	BOOLEAN	bModified, bExtData, bValid;
+	bool		bModified, bExtData, bValid;
 	UINT8		nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
 
@@ -52,15 +52,21 @@ class CTexture : public CGameItem {
 public:
 	tTexture	m_info;
 
-	CTexture(UINT8 *dataP = NULL) {
+	CTexture (UINT8 *dataP = NULL, bool bExtData = false) {
 		Clear ();
 		m_info.bmDataP = dataP; 
+		m_info.bExtData = bExtData;
 		}
 	~CTexture() {
 		if (!m_info.bExtData) {
-			delete m_info.bmDataP;
-			if (m_info.tgaDataP)
+			if (m_info.bmDataP) {
+				delete m_info.bmDataP;
+				m_info.bmDataP = NULL;
+				}
+			if (m_info.tgaDataP) {
 				delete m_info.tgaDataP;
+				m_info.tgaDataP = NULL;
+				}
 			}
 		}
 

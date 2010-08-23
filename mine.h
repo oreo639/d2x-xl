@@ -4,6 +4,7 @@
 #include "carray.h"
 #include "types.h"
 #include "segment.h"
+#include "robot.h"
 #include "object.h"
 #include "textures.h"
 

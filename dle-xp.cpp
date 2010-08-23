@@ -217,7 +217,7 @@ BOOL CDlcApp::InitInstance()
 	//  The COleTemplateServer creates new documents on behalf
 	//  of requesting OLE containers by using information
 	//  specified in the document template.
-	m_server.ConnectTemplate(clsid, m_pDlcDoc, TRUE);
+	//m_server.ConnectTemplate(clsid, m_pDlcDoc, TRUE);
 	// Note: SDI applications register server Objects () only if /Embedding
 	//   or /Automation is present on the command line.
 
@@ -225,26 +225,26 @@ BOOL CDlcApp::InitInstance()
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
-    _Module.UpdateRegistryFromResource(IDR_DLE_XP, TRUE);
-	_Module.RegisterServer(TRUE);
+ //   _Module.UpdateRegistryFromResource(IDR_DLE_XP, TRUE);
+	//_Module.RegisterServer(TRUE);
 
-	// Check to see if launched as OLE server
-	if (cmdInfo.m_bRunEmbedded || cmdInfo.m_bRunAutomated)
-	{
-		// Register all OLE server (factories) as running.  This enables the
-		//  OLE libraries to create Objects () from other applications.
-		COleTemplateServer::RegisterAll();
-		_Module.RegisterClassObjects(CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE);
+	//// Check to see if launched as OLE server
+	//if (cmdInfo.m_bRunEmbedded || cmdInfo.m_bRunAutomated)
+	//{
+	//	// Register all OLE server (factories) as running.  This enables the
+	//	//  OLE libraries to create Objects () from other applications.
+	//	COleTemplateServer::RegisterAll();
+	//	_Module.RegisterClassObjects(CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE);
 
 
-		// Application was run with /Embedding or /Automation.  Don't show the
-		//  main window in this case.
-		return TRUE;
-	}
+	//	// Application was run with /Embedding or /Automation.  Don't show the
+	//	//  main window in this case.
+	//	return TRUE;
+	//}
 	// When a server application is launched stand-alone, it is a good idea
 	//  to update the system registry in case it has been damaged.
-	m_server.UpdateRegistry(OAT_DISPATCH_OBJECT);
-	COleObjectFactory::UpdateRegistryAll();
+	//m_server.UpdateRegistry(OAT_DISPATCH_OBJECT);
+	//COleObjectFactory::UpdateRegistryAll();
 
 	//theMine->Initialize ();
 	//theMine->Default ();
@@ -252,7 +252,7 @@ BOOL CDlcApp::InitInstance()
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNew;
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
-	//theMine = new CMine;
+	theMine = new CMine;
 	//memset (theMine->Textures (), 0, sizeof (theMine->Textures ()));
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();

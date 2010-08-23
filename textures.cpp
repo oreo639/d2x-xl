@@ -18,7 +18,7 @@ struct tExtraTexture {
 
 pExtraTexture	extraTextures = NULL;
 
-UINT8 bmBuf [2048 * 2048 * 4];
+UINT8 bmBuf [512 * 512 * 32 * 4];
 
 //------------------------------------------------------------------------
 
@@ -342,7 +342,7 @@ INT32 CTexture::Read (INT16 index)
 	D2_PIG_TEXTURE d2_ptexture;
 	PIG_HEADER		file_header;
 	D2_PIG_HEADER	d2_file_header;
-	INT32				offset,data_offset;
+	INT32				offset,dataOffset;
 	INT16				x,y,w,h,s;
 	UINT8				byte,runcount,runvalue;
 	INT32				nSize;
@@ -398,12 +398,12 @@ if (!fTextures) {
 
 // read fTextures header
 fseek (fTextures,0,SEEK_SET);
-data_offset = read_INT32 (fTextures);
-if (data_offset == 0x47495050L) /* 'PPIG' Descent 2 type */
-	data_offset = 0;
-else if (data_offset < 0x10000L)
-	data_offset = 0;
-fseek (fTextures,data_offset,SEEK_SET);
+dataOffset = read_INT32 (fTextures);
+if (dataOffset == 0x47495050L) /* 'PPIG' Descent 2 type */
+	dataOffset = 0;
+else if (dataOffset < 0x10000L)
+	dataOffset = 0;
+fseek (fTextures,dataOffset,SEEK_SET);
 if (theApp.IsD2File ())
 	fread (&d2_file_header, sizeof (d2_file_header), 1, fTextures);
 else
@@ -411,7 +411,7 @@ else
 
 // read texture header
 if (theApp.IsD2File ()) {
-	offset = sizeof (D2_PIG_HEADER) + data_offset +
+	offset = sizeof (D2_PIG_HEADER) + dataOffset +
 				(FIX) (texture_table[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
@@ -419,7 +419,7 @@ if (theApp.IsD2File ()) {
 	h = d2_ptexture.ysize + ((d2_ptexture.wh_extra & 0xF0) << 4);
 	}
 else {
-	offset = sizeof (PIG_HEADER) + data_offset + 
+	offset = sizeof (PIG_HEADER) + dataOffset + 
 				(FIX) (texture_table[index]-1) * sizeof (ptexture);
 	fseek (fTextures,offset,SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
@@ -439,12 +439,12 @@ s = w * h;
 
 // seek to data
 if (theApp.IsD2File ()) {
-	offset = sizeof (D2_PIG_HEADER) + data_offset
+	offset = sizeof (D2_PIG_HEADER) + dataOffset
 	+ d2_file_header.num_textures * sizeof (D2_PIG_TEXTURE)
 	+ d2_ptexture.offset;
 	}
 else {
-	offset =  sizeof (PIG_HEADER) + data_offset
+	offset =  sizeof (PIG_HEADER) + dataOffset
 	+ file_header.number_of_textures * sizeof (PIG_TEXTURE)
 	+ file_header.number_of_sounds   * sizeof (PIG_SOUND)
 	+ d2_ptexture.offset;
@@ -1142,6 +1142,8 @@ bool PaintTexture (CWnd *pWnd, INT32 bkColor, INT32 nSegment, INT32 nSide, INT32
 if (!theMine) 
 	return false;
 
+	static INT32 dataOffset [2] = {0, 0};
+
 	CDC			*pDC = pWnd->GetDC ();
 
 if (!pDC)
@@ -1150,7 +1152,6 @@ if (!pDC)
 	HINSTANCE	hInst = AfxGetApp ()->m_hInstance;
 	CBitmap		bmTexture;
 	FILE			*fTextures = NULL;
-	INT32			data_offset;
 	char			szFile [256];
 	BITMAP		bm;
 	CDC			memDC;
@@ -1183,17 +1184,18 @@ if ((nOvlTex < 0) || (nOvlTex >= MAX_TEXTURES))	// this allows to suppress bitma
 
 if (bShowTexture) {
 	// check pig file
-	strcpy_s (szFile, sizeof (szFile), (theApp.IsD1File ()) ? descent_path : descent2_path);
-	fopen_s (&fTextures, szFile, "rb");
-	if (fTextures) {
-		fseek (fTextures, 0, SEEK_SET);
-		data_offset = read_INT32 (fTextures);  // determine type of pig file
-		fclose (fTextures);
+	if (dataOffset [theApp.IsD1File ()] == 0) {
+		strcpy_s (szFile, sizeof (szFile), (theApp.IsD1File ()) ? descent_path : descent2_path);
+		if (fopen_s (&fTextures, szFile, "rb"))
+			dataOffset [theApp.IsD1File ()] = -1;  // pig file not found
+		else {
+			fseek (fTextures, 0, SEEK_SET);
+			dataOffset [theApp.IsD1File ()] = read_INT32 (fTextures);  // determine type of pig file
+			fclose (fTextures);
+			}
 		}
-	else
-		data_offset = -1;  // pig file not found
-	if (data_offset > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CTexture	tx (bmBuf);
+	if (dataOffset [theApp.IsD1File ()] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
+		CTexture	tx (bmBuf, true);
 		if (DefineTexture (nBaseTex, nOvlTex, &tx, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
@@ -1219,7 +1221,7 @@ if (bShowTexture) {
 		}
 	else {
 		HGDIOBJ hgdiobj1;
-		bmTexture.LoadBitmap ((data_offset < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
+		bmTexture.LoadBitmap ((dataOffset < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
 		bmTexture.GetObject (sizeof (BITMAP), &bm);
 		memDC.CreateCompatibleDC (pDC);
 		hgdiobj1 = memDC.SelectObject (bmTexture);
