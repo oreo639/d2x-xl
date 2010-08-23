@@ -610,7 +610,6 @@ INT32 ReadPog (FILE *fTextures, UINT32 nFileSize)
 	CTexture*		texP;
 	INT32				fileType = theApp.FileType ();
 
-return 1;
 // make sure this is descent 2 fTextures
 if (theApp.IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
