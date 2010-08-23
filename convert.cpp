@@ -230,7 +230,7 @@ theMine->LoadPalette ();
 
   // convert textures
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
-	segP->s2_flags = 0;
+	segP->m_info.s2_flags = 0;
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
 		if ((segP->m_info.children [nSide] == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 			d1Texture = segP->m_sides [nSide].m_info.nBaseTex;
@@ -255,8 +255,8 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 // defined D2 wall parameters
 //--------------------------------------
 for (i = 0, wallP = theMine->Walls (0); i < wallCount; i++, wallP++) {
-	wallP->controlling_trigger = 0;
-	wallP->cloakValue = 0;
+	wallP->m_info.controllingTrigger = 0;
+	wallP->m_info.cloakValue = 0;
 	}
 
 // change trigP type and flags
@@ -300,19 +300,19 @@ for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.cou
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
-	theMine->BotGens (i)->objFlags [1] = 0;
+	theMine->BotGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
-		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->nMatCen == i))
-				theMine->BotGens (i)->nFuelCen = (INT16)(segP->value);
+		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == i))
+				theMine->BotGens (i)->m_info.nFuelCen = (INT16)(segP->m_info.value);
 	}
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
-	theMine->EquipGens (i)->objFlags [1] = 0;
+	theMine->EquipGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
-		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->nMatCen == i))
-				theMine->EquipGens (i)->nFuelCen = (INT16)(segP->value);
+		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nMatCen == i))
+				theMine->EquipGens (i)->m_info.nFuelCen = (INT16)(segP->m_info.value);
 	}
 
 // Objects ()

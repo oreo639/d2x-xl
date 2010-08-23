@@ -56,11 +56,11 @@ typedef struct {
   INT8		weapon_type;
   INT8		weapon_type2;		  // Secondary weapon number, -1 means none, otherwise gun #0 fires this weapon.
   INT8		n_guns;			  // how many different gun positions
-  INT8		containsId;		  // ID of powerup this robot can contain.
+  INT8		contentsId;		  // ID of powerup this robot can contain.
 
-  INT8		containsCount;		  // Max number of things this instance can contain.
-  INT8		containsProb;		  // Probability that this instance will contain something in N/16
-  INT8		containsType;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
+  INT8		contentsCount;		  // Max number of things this instance can contain.
+  INT8		contentsProb;		  // Probability that this instance will contain something in N/16
+  INT8		contentsType;		  // Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
   INT8		kamikaze;		  // !0 means commits suicide when hits you, strength thereof. 0 means no.
 
   INT16		score_value;		  // Score from this robot.

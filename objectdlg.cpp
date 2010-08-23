@@ -666,7 +666,7 @@ i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 rInfo = *theMine->RobotInfo (i);
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
-switch (rInfo.contents.type) {
+switch (rInfo.contentsType) {
 	case OBJ_ROBOT: /* an evil enemy */
 		CBInit (CBContId (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1, true);
 		break;
@@ -675,7 +675,7 @@ switch (rInfo.contents.type) {
 		break;
 	}
 // update list boxes
-SelectItemData (CBContId (), (INT32) rInfo.contents.id);
+SelectItemData (CBContId (), (INT32) rInfo.contentsId);
 SelectItemData (CBWeapon1 (), (INT32) (rInfo.weapon_type ? rInfo.weapon_type : -1));
 SelectItemData (CBWeapon2 (), (INT32) rInfo.weapon_type2);
 SelectItemData (CBSoundExpl (), (INT32) rInfo.exp2_sound_num);
@@ -685,7 +685,7 @@ SelectItemData (CBSoundClaw (), (INT32) rInfo.claw_sound);
 SelectItemData (CBSoundDeath (), (INT32) rInfo.deathroll_sound);
 SelectItemData (CBObjClassAI (), (INT32) rInfo.behavior);
 SelectItemData (CBExplType (), (INT32) rInfo.exp2_vclip_num);
-SelectItemData (CBContType (), (INT32) rInfo.contents.type);
+SelectItemData (CBContType (), (INT32) rInfo.contentsType);
 INT8 boss_flag = (rInfo.boss_flag < 0) ? -rInfo.boss_flag : rInfo.boss_flag;
 SelectItemData (CBBossType (), (INT32) (boss_flag < 21) ? boss_flag : boss_flag - 18);
 // update check boxes
@@ -719,8 +719,8 @@ SlCtrl (IDC_OBJ_FIRESPEED)->SetPos ((INT32) (rInfo.rapidfire_count [j] / SliderF
 SlCtrl (IDC_OBJ_EVADESPEED)->SetPos ((INT32) (rInfo.evade_speed [j] / SliderFactor (IDC_OBJ_EVADESPEED)));
 SlCtrl (IDC_OBJ_DEATHROLL)->SetPos ((INT32) (rInfo.death_roll / SliderFactor (IDC_OBJ_DEATHROLL)));
 SlCtrl (IDC_OBJ_EXPLSIZE)->SetPos ((INT32) (rInfo.badass / SliderFactor (IDC_OBJ_EXPLSIZE)));
-SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((INT32) (rInfo.contents.prob / SliderFactor (IDC_OBJ_CONT_PROB)));
-SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((INT32) (rInfo.contents.count / SliderFactor (IDC_OBJ_CONT_COUNT)));
+SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((INT32) (rInfo.contentsProb / SliderFactor (IDC_OBJ_CONT_PROB)));
+SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((INT32) (rInfo.contentsCount / SliderFactor (IDC_OBJ_CONT_COUNT)));
 }
   
                         /*--------------------------*/
@@ -756,8 +756,8 @@ rInfo.rapidfire_count [j] = (INT32) (SlCtrl (IDC_OBJ_FIRESPEED)->GetPos () * Sli
 rInfo.evade_speed [j] = (INT32) (SlCtrl (IDC_OBJ_EVADESPEED)->GetPos () * SliderFactor (IDC_OBJ_EVADESPEED));
 rInfo.death_roll = (INT32) (SlCtrl (IDC_OBJ_DEATHROLL)->GetPos () * SliderFactor (IDC_OBJ_DEATHROLL));
 rInfo.badass = (INT32) (SlCtrl (IDC_OBJ_EXPLSIZE)->GetPos () * SliderFactor (IDC_OBJ_EXPLSIZE));
-rInfo.contents.prob = (INT32) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
-rInfo.contents.count = (INT32) (SlCtrl (IDC_OBJ_CONT_COUNT)->GetPos () * SliderFactor (IDC_OBJ_CONT_COUNT));
+rInfo.contentsProb = (INT32) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
+rInfo.contentsCount = (INT32) (SlCtrl (IDC_OBJ_CONT_COUNT)->GetPos () * SliderFactor (IDC_OBJ_CONT_COUNT));
 
 rInfo.kamikaze = BtnCtrl (IDC_OBJ_AI_KAMIKAZE)->GetCheck ();
 rInfo.companion = BtnCtrl (IDC_OBJ_AI_COMPANION)->GetCheck ();
@@ -801,9 +801,9 @@ if (0 <= (index = CBObjClassAI ()->GetCurSel ()))
 if (0 <= (index = CBExplType ()->GetCurSel ()))
 	rInfo.exp2_vclip_num = (UINT8) CBExplType ()->GetItemData (index);
 if (0 <= (index = CBContType ()->GetCurSel ()))
-	rInfo.contents.type = (UINT8) CBContType ()->GetItemData (index);
+	rInfo.contentsType = (UINT8) CBContType ()->GetItemData (index);
 if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
-	rInfo.contents.id = (UINT8) CBContId ()->GetItemData (index);
+	rInfo.contentsId = (UINT8) CBContId ()->GetItemData (index);
 *theMine->RobotInfo (i) = rInfo;
 }
 
@@ -1130,7 +1130,7 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (F1_0, 0, 0, 0, 0, F1_0, 0, F1_0, 0);
 } else {
-	orient = &theMine->CurrObj ()->orient;
+	orient = &theMine->CurrObj ()->m_info.orient;
 	orient->Set (F1_0, 0, 0, F1_0, 0, 0, 0, 0, F1_0);
 	}
 theApp.UnlockUndo ();
@@ -1418,7 +1418,7 @@ void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-theMine->CurrObj ()->contents.count = m_nSpawnQty;
+theMine->CurrObj ()->m_info.contents.count = m_nSpawnQty;
 Refresh ();
 }
 
@@ -1598,7 +1598,7 @@ if (0 > i)
 	return;
 INT32 j = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 ROBOT_INFO *rInfo = theMine->RobotInfo (j);
-rInfo->contents.type = (UINT8) CBContType ()->GetItemData (i);
+rInfo->contentsType = (UINT8) CBContType ()->GetItemData (i);
 RefreshRobot ();
 }
 

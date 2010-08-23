@@ -200,8 +200,8 @@ if (theMine->IsWall ()) {
 							// find vert numbers for the line's two end points
 							childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0];
 							childs_point1 = lineVertTable [sideLineTable [childs_side][childs_line]][1];
-							childs_vert0  = childSeg->verts [childs_point0];
-							childs_vert1  = childSeg->verts [childs_point1];
+							childs_vert0  = childSeg->m_info.verts [childs_point0];
+							childs_vert1  = childSeg->m_info.verts [childs_point1];
 							// if both points of line == either point of parent
 							if ((childs_vert0 == vert0 && childs_vert1 == vert1) ||
 								 (childs_vert0 == vert1 && childs_vert1 == vert0)) {

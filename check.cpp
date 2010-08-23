@@ -80,8 +80,8 @@ tBugPos *pbp = (tBugPos *) LBBugs ()->GetItemDataPtr (i);
 if (!pbp)
 	return;
 theMine->UnmarkAll ();
-if (bCurSeg = MarkSegment (pbp->m_info.nSegment))
-	theMine->Current ()->nSegment = pbp->m_info.nSegment;
+if (bCurSeg = MarkSegment (pbp->nSegment))
+	theMine->Current ()->nSegment = pbp->nSegment;
 MarkSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
 	theMine->Current ()->nSide = pbp->nSide;
@@ -91,8 +91,8 @@ if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
 	theMine->Current ()->nPoint = pbp->nPoint;
 if ((pbp->nWall >= 0) && (pbp->nWall < theMine->GameInfo ().walls.count))
 	nWall = pbp->nWall;
-else if ((pbp->m_info.nTrigger >= 0) && (pbp->m_info.nTrigger < theMine->GameInfo ().triggers.count))
-	nWall = theMine->FindTriggerWall (pbp->m_info.nTrigger);
+else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < theMine->GameInfo ().triggers.count))
+	nWall = theMine->FindTriggerWall (pbp->nTrigger);
 else
 	nWall = -1;
 if ((nWall >= 0) && MarkSegment ((wallP = theMine->Walls (nWall))->m_nSegment))
@@ -362,12 +362,12 @@ if (h >= 0) {
 	tBugPos *pbp = new tBugPos;
 	if (!pbp)
 		return false;
-	pbp->m_info.nSegment = nSegment;
+	pbp->nSegment = nSegment;
 	pbp->nSide = nSide;
 	pbp->nLine = linenum;
 	pbp->nPoint = pointnum;
 	pbp->nWall = nWall;
-	pbp->m_info.nTrigger = nTrigger;
+	pbp->nTrigger = nTrigger;
 	pbp->nObject = objnum;
 	pbp->nChild = childnum;
 	LBBugs ()->SetItemDataPtr (h, (void *) pbp);
@@ -451,14 +451,14 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->nMatCen >= theMine->GameInfo ().botgen.count) || (theMine->BotGens (segP->nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->GameInfo ().botgen.count) || (theMine->BotGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
 			}
 		}
 	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((segP->nMatCen >= theMine->GameInfo ().equipgen.count) || (theMine->EquipGens (segP->nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->GameInfo ().equipgen.count) || (theMine->EquipGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
@@ -531,8 +531,8 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 					memset (match, 0, sizeof (match));
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
-							if (theMine->Segments (nSegment)->verts[sideVertTable[nSide][i]] ==
-								 theMine->Segments (child)->verts[sideVertTable[sidenum2][j]])
+							if (theMine->Segments (nSegment)->m_info.verts[sideVertTable[nSide][i]] ==
+								 theMine->Segments (child)->m_info.verts[sideVertTable[sidenum2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
 						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,child=%d)",nSegment,nSide,child);
@@ -563,7 +563,7 @@ bool CDiagTool::CheckAndFixPlayer (INT32 nMin, INT32 nMax, INT32 nObject, INT32*
 if (!theMine) 
 	return false;
 
-INT32 id = theMine->Objects (nObject)->id;
+INT32 id = theMine->Objects (nObject)->m_info.id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
 else if (players [id])
@@ -575,8 +575,8 @@ else {
 if (m_bAutoFixBugs) {
 	for (id = nMin; (id < nMax) && players [id]; id++)
 		;
-	theMine->Objects (nObject)->id = (id < nMax) ? id : nMax - 1;
-	players [theMine->Objects (nObject)->id]++;
+	theMine->Objects (nObject)->m_info.id = (id < nMax) ? id : nMax - 1;
+	players [theMine->Objects (nObject)->m_info.id]++;
 	}
 return true;
 }
@@ -778,7 +778,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
   }
 
   // make sure object 0 is player 0; if not fix it
-if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->id != 0) {
+if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->m_info.id != 0) {
 	if (m_bAutoFixBugs) {
 		CGameObject h;
 		memcpy (&h, pPlayer, sizeof (CGameObject));
@@ -870,7 +870,7 @@ for (nObject=0;nObject<objCount;nObject++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	type = objP->m_info.type;
 	if (type == OBJ_CNTRLCEN) {
-		if (theMine->Segments (objP->m_info.nSegment)->function != SEGMENT_FUNC_CONTROLCEN) {
+		if (theMine->Segments (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_CONTROLCEN) {
 			if (m_bAutoFixBugs && theMine->AddRobotMaker (objP->m_info.nSegment, false, false))
 				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
 			else
@@ -1163,9 +1163,9 @@ trigCount = theMine->NumObjTriggers ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
 	trigP = theMine->ObjTriggers (nTrigger);
-	if ((trigP->m_info.type != TT_MESSAGE) && (trigP->m_info.type != TT_SOUND) && (trigP->m_info.type != TT_COUNTDOWN) && !trigP->vcount) {
-		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->nObject);
-		if (UpdateStats (message,0, nTrigger, trigP->nObject, -1, -1, -1, -1, nTrigger)) return true;
+	if ((trigP->m_info.type != TT_MESSAGE) && (trigP->m_info.type != TT_SOUND) && (trigP->m_info.type != TT_COUNTDOWN) && !trigP->m_count) {
+		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->m_info.nObject);
+		if (UpdateStats (message,0, nTrigger, trigP->m_info.nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}
 	}
 if (count < 1) {
@@ -1189,7 +1189,7 @@ INT8 CDiagTool::FindMatCen (CRobotMaker* matCenP, INT16 nSegment, INT16* refList
 if (refList) {
 	for (i = 0; i < j; i++) {
 		if (refList [i] >= 0) {
-			if (matCenP [i].objFlags [0] || matCenP [i].objFlags [1])
+			if (matCenP [i].m_info.objFlags [0] || matCenP [i].m_info.objFlags [1])
 				return i;
 			h = i;
 			}
@@ -1197,7 +1197,7 @@ if (refList) {
 	}
 else {
 	for (i = 0; i < j; i++) {
-		if (matCenP [i].nSegment == nSegment)
+		if (matCenP [i].m_info.nSegment == nSegment)
 			return i;
 		}
 	}
@@ -1214,9 +1214,9 @@ void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
 for (h = i = 0; i < j; i++, segP++) {
 	if (segP->m_info.function == UINT8 (nSpecialType)) {
-		n = segP->nMatCen;
+		n = segP->m_info.nMatCen;
 		if ((n >= 0) && (n < nMatCens) && (refList [n] >= 0)) {
-			if (matCenP [n].nSegment == i)
+			if (matCenP [n].m_info.nSegment == i)
 				refList [n] = -1;
 			else
 				refList [n]++;
@@ -1236,28 +1236,28 @@ INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList,
 for (h = i = 0; i < j; i++, segP++) {
 	if (segP->m_info.function != UINT8 (nSpecialType))
 		continue;
-	n = segP->nMatCen;
+	n = segP->m_info.nMatCen;
 	if ((n < 0) || (n >= nMatCens)) {
 		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (m_bAutoFixBugs)
-			n = segP->nMatCen = INT8 (FindMatCen (matCenP, i));
+			n = segP->m_info.nMatCen = INT8 (FindMatCen (matCenP, i));
 		}
 	else if (matCenP [n].nSegment != i) {
 		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (m_bAutoFixBugs) {
 			n = INT8 (FindMatCen (matCenP, i));
 			if (n >= 0) {
-				segP->nMatCen = n;
+				segP->m_info.nMatCen = n;
 				refList [n] = -1;
 				}
 			else {
-				n = segP->nMatCen;
+				n = segP->m_info.nMatCen;
 				if (refList [n] >= 0) {
-					matCenP [n].nSegment = i;
+					matCenP [n].m_info.nSegment = i;
 					refList [n] = -1;
 					}
 				else
-					segP->nMatCen = -1;
+					segP->m_info.nMatCen = -1;
 				}
 			}
 		}
@@ -1286,13 +1286,13 @@ if (!m_bAutoFixBugs)
 for (h = i = 0; i < j; i++, segP++) {
 	if (segP->m_info.function != UINT8 (nSpecialType))
 		continue;
-	n = segP->nMatCen;
+	n = segP->m_info.nMatCen;
 	if (n >= 0)
 		continue;
 	n = FindMatCen (matCenP, i, refList);
 	if (n >= 0) {
-		segP->nMatCen = n;
-		matCenP [n].nSegment = i;
+		segP->m_info.nMatCen = n;
+		matCenP [n].m_info.nSegment = i;
 		refList [n] = -1;
 		}
 	else if (m_bAutoFixBugs)
@@ -1316,8 +1316,8 @@ for (INT32 i = 0; i < nMatCens; i) {
 	else {
 		if (i < --nMatCens) {
 			matCenP [i] = matCenP [nMatCens];
-			matCenP [i].nFuelCen =
-			segP [matCenP [i].nSegment].nMatCen = i;
+			matCenP [i].m_info.nFuelCen =
+			segP [matCenP [i].m_info.nSegment].m_info.nMatCen = i;
 			refList [i] = refList [nMatCens];
 			}
 		}
@@ -1341,7 +1341,7 @@ if (!theMine)
 	INT16					refList [MAX_NUM_MATCENS2];
 
 for (i = 0; i < nMatCens; i++)
-	matCenP [i].nFuelCen = i;
+	matCenP [i].m_info.nFuelCen = i;
 CountMatCenRefs (SEGMENT_FUNC_ROBOTMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
 AssignMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens);
@@ -1365,7 +1365,7 @@ bool CDiagTool::CheckEquipGens (void)
 	INT16					refList [MAX_NUM_MATCENS2];
 
 for (i = 0; i < nMatCens; i++)
-	matCenP [i].nFuelCen = i;
+	matCenP [i].m_info.nFuelCen = i;
 CountMatCenRefs (SEGMENT_FUNC_EQUIPMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
 AssignMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens);
@@ -1547,38 +1547,38 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 #if 1 // linked walls not supported in DLE-XP and D2X-XL
-		if (wallP->linkedWall != -1) {
-			INT16 invLinkedWall = wallP->linkedWall;
+		if (wallP->m_info.linkedWall != -1) {
+			INT16 invLinkedWall = wallP->m_info.linkedWall;
 			if (m_bAutoFixBugs) {
-				wallP->linkedWall = -1;
+				wallP->m_info.linkedWall = -1;
 				sprintf_s (message, sizeof (message),
 							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-							  nWall, invLinkedWall, wallP->linkedWall);
+							  nWall, invLinkedWall, wallP->m_info.linkedWall);
 				}
 			else
 				sprintf_s (message, sizeof (message),
 							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-							  nWall, invLinkedWall, wallP->linkedWall);
+							  nWall, invLinkedWall, wallP->m_info.linkedWall);
 			}
 #else
-		if ((wallP->linkedWall < -1) || (wallP->linkedWall >= wallCount)) {
+		if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount)) {
 			if (m_bAutoFixBugs) {
-				INT16	oppSeg, oppSide, invLinkedWall = wallP->linkedWall;
+				INT16	oppSeg, oppSide, invLinkedWall = wallP->m_info.linkedWall;
 				if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-					wallP->linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
-					if ((wallP->linkedWall < -1) || (wallP->linkedWall >= wallCount))
-						wallP->linkedWall = -1;
+					wallP->m_info.linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
+					if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount))
+						wallP->m_info.linkedWall = -1;
 					sprintf_s (message, sizeof (message),
 						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-						nWall, invLinkedWall, wallP->linkedWall);
+						nWall, invLinkedWall, wallP->m_info.linkedWall);
 					}
 				}
 			else
 				sprintf_s (message, sizeof (message),
 					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)",
-					nWall,wallP->linkedWall);
+					nWall,wallP->m_info.linkedWall);
 			}
-		else if (wallP->linkedWall >= 0) {
+		else if (wallP->m_info.linkedWall >= 0) {
 			INT16	oppSeg, oppSide;
 			if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 				INT16 oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
@@ -1586,49 +1586,49 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, theMine->Walls (wallP->linkedWall)->m_info.nSegment, theMine->Walls (wallP->linkedWall)->nSide);
+						nWall, theMine->Walls (wallP->m_info.linkedWall)->m_info.nSegment, theMine->Walls (wallP->m_info.linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wallP->linkedWall = -1;
+							wallP->m_info.linkedWall = -1;
 					}
-				else if (wallP->linkedWall != oppWall) {
+				else if (wallP->m_info.linkedWall != oppWall) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, theMine->Walls (wallP->linkedWall)->m_info.nSegment, theMine->Walls (wallP->linkedWall)->nSide);
+						nWall, theMine->Walls (wallP->m_info.linkedWall)->m_info.nSegment, theMine->Walls (wallP->m_info.linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wallP->linkedWall = oppWall;
+							wallP->m_info.linkedWall = oppWall;
 					}
 				}
 			else {
 				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
-					nWall, theMine->Walls (wallP->linkedWall)->m_info.nSegment, theMine->Walls (wallP->linkedWall)->nSide);
+					nWall, theMine->Walls (wallP->m_info.linkedWall)->m_info.nSegment, theMine->Walls (wallP->m_info.linkedWall)->nSide);
 				if (m_bAutoFixBugs)
-					wallP->linkedWall = -1;
+					wallP->m_info.linkedWall = -1;
 				}
 			}
 #endif
 		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			// check wall nClip
-		if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->cloakValue > 31)) {
+		if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->m_info.cloakValue > 31)) {
 			if (m_bAutoFixBugs) {
-				wallP->cloakValue = 31;
+				wallP->m_info.cloakValue = 31;
 				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", nWall);
 					}
 			else
 				sprintf_s (message, sizeof (message), "ERROR: Wall has invalid cloak value (wall=%d)", nWall);
 			}
 		if ((wallP->m_info.type == WALL_BLASTABLE || wallP->m_info.type == WALL_DOOR) &&
-			 (   wallP->nClip < 0
-			  || wallP->nClip == 2
-//			     || wallP->nClip == 7
-			  || wallP->nClip == 8
-			  || (theApp.IsD1File () && wallP->nClip > 25)
-			  || (theApp.IsD2File () && wallP->nClip > 50))) {
+			 (   wallP->m_info.nClip < 0
+			  || wallP->m_info.nClip == 2
+//			     || wallP->m_info.nClip == 7
+			  || wallP->m_info.nClip == 8
+			  || (theApp.IsD1File () && wallP->m_info.nClip > 25)
+			  || (theApp.IsD2File () && wallP->m_info.nClip > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
-						nWall,wallP->nClip);
+						nWall,wallP->m_info.nClip);
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 			// Make sure there is a child to the segment
@@ -1658,7 +1658,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 						else {
 							UINT16 wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
-								 ((wallP->nClip != theMine->Walls (wallnum2)->nClip
+								 ((wallP->m_info.nClip != theMine->Walls (wallnum2)->nClip
 									|| wallP->m_info.type != theMine->Walls (wallnum2)->m_info.type))) {
 								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",

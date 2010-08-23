@@ -148,7 +148,7 @@ CGameObject *objP = theMine->CurrObj ();
 EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, TRUE);
 m_size = objP->m_info.size;
 m_shields = objP->m_info.shields;
-switch (objP->movementType) {
+switch (objP->m_info.movementType) {
 	case MT_PHYSICS:	
 		m_mass = objP->mType.physInfo.mass;
 		m_drag = objP->mType.physInfo.drag;
@@ -192,7 +192,7 @@ switch (objP->movementType) {
 		break;
 	}
 
-switch (objP->renderType) {
+switch (objP->m_info.renderType) {
 	case RT_MORPH:
 	case RT_POLYOBJ:
 		m_model = objP->rType.polyModelInfo.model_num;

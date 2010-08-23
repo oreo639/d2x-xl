@@ -315,7 +315,7 @@ else {
 	for (i = 0; i < MAX_WALL_FLAGS; i++)
 		m_bFlags [i] = ((m_pWall [0]->m_info.flags & wall_flags [i]) != 0);
 	for (i = 0; i < 4; i++)
-		m_bKeys [i] = ((m_pWall [0]->keys & (1 << i)) != 0);
+		m_bKeys [i] = ((m_pWall [0]->m_info.keys & (1 << i)) != 0);
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
 		i = theMine->Segments (m_defWall.m_nSegment)->m_sides [m_defWall.m_nSide].m_info.nBaseTex;
@@ -527,7 +527,7 @@ if ((nType > WALL_CLOSED) && theApp.IsD1File ())
 if ((nType > WALL_CLOAKED) && (theMine->IsStdLevel ())) 
 	return;
 
-m_defWall.type = m_nType = nType;
+m_defWall.m_info.type = m_nType = nType;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
 m_pWall [0] = theMine->Walls (m_nWall [0]);
@@ -544,7 +544,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if ((wallP = m_pWall [bSide]) && sideP [bSide]) {
 		INT16 nBaseTex  = sideP [bSide]->m_info.nBaseTex;
 		INT16 nOvlTex = sideP [bSide]->m_info.nOvlTex;
-		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->nClip, -1, true);
+		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->m_info.nClip, -1, true);
 		if ((wallP->m_info.type == WALL_OPEN) || (wallP->m_info.type == WALL_CLOSED))
 			theMine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
 //		else if ((wallP->m_info.type == WALL_CLOAKED) || (wallP->m_info.type == WALL_TRANSPARENT))

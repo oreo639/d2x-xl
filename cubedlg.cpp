@@ -85,8 +85,8 @@ m_nLight = 0;
 m_nLastCube =
 m_nLastSide = -1;
 m_bSetDefTexture = 0;
-m_nOwner = theMine->Segments (0)->owner;
-m_nGroup = theMine->Segments (0)->group;
+m_nOwner = theMine->Segments (0)->m_info.owner;
+m_nGroup = theMine->Segments (0)->m_info.group;
 memset (m_nCoord, 0, sizeof (m_nCoord));
 }
 
@@ -211,8 +211,8 @@ bool CSegmentTool::IsBotMaker (CSegment *segP)
 {
 return 
 	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
-	(segP->nMatCen >= 0) &&
-	(segP->nMatCen < theMine->GameInfo ().botgen.count);
+	(segP->m_info.nMatCen >= 0) &&
+	(segP->m_info.nMatCen < theMine->GameInfo ().botgen.count);
 }
 
                         /*--------------------------*/
@@ -221,8 +221,8 @@ bool CSegmentTool::IsEquipMaker (CSegment *segP)
 {
 return 
 	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
-	(segP->nMatCen >= 0) &&
-	(segP->nMatCen < theMine->GameInfo ().equipgen.count);
+	(segP->m_info.nMatCen >= 0) &&
+	(segP->m_info.nMatCen < theMine->GameInfo ().equipgen.count);
 }
 
                         /*--------------------------*/
@@ -255,7 +255,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
-m_nVertex = theMine->CurrSeg ()->verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+m_nVertex = theMine->CurrSeg ()->m_info.verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 theMine->Vertices (m_nVertex)->Set ((FIX) (m_nCoord [0] * 0x10000L), (FIX) (m_nCoord [1] * 0x10000L), (FIX) (m_nCoord [2] * 0x10000L));
 theApp.MineView ()->Refresh (false);
 }
@@ -265,7 +265,7 @@ theApp.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-m_nVertex = theMine->CurrSeg ()->verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+m_nVertex = theMine->CurrSeg ()->m_info.verts [sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
 m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
 m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
@@ -283,7 +283,7 @@ if (Prop (nProp)->GetCheck ())
 	m_nProps |= 1 << nProp;
 else
 	m_nProps &= ~(1 << nProp);
-theMine->CurrSeg ()->props = m_nProps;
+theMine->CurrSeg ()->m_info.props = m_nProps;
 }
 
 void CSegmentTool::OnProp1 () { OnProp (0); }
@@ -358,11 +358,11 @@ m_nSegment = theMine->Current ()->nSegment;
 m_nSide = theMine->Current ()->nSide;
 m_nPoint = theMine->Current ()->nPoint;
 m_nType = segP->m_info.function;
-m_nDamage [0] = segP->damage [0];
-m_nDamage [1] = segP->damage [1];
+m_nDamage [0] = segP->m_info.damage [0];
+m_nDamage [1] = segP->m_info.damage [1];
 m_nProps = segP->m_info.props;
-m_nOwner = segP->owner;
-m_nGroup = segP->group;
+m_nOwner = segP->m_info.owner;
+m_nGroup = segP->m_info.group;
 //CBType ()->SetCurSel (m_nType);
 SelectItemData (CBType (), m_nType);
 OnResetCoord ();
@@ -407,14 +407,14 @@ m_nLight = ((double) segP->m_info.staticLight) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
 if (IsBotMaker (segP)) {
-	INT32 nMatCen = segP->nMatCen;
+	INT32 nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
 	char		szObj [80];
 	INT32		objFlags [2];
 	for (i = 0; i < 2; i++)
-		objFlags [i] = theMine->BotGens (nMatCen)->objFlags [i];
+		objFlags [i] = theMine->BotGens (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
@@ -433,14 +433,14 @@ if (IsBotMaker (segP)) {
 		}
 	}
 else if (IsEquipMaker (segP)) {
-	INT32 nMatCen = segP->nMatCen;
+	INT32 nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
 	char		szObj [80];
 	INT32		objFlags [2];
 	for (i = 0; i < 2; i++)
-		objFlags [i] = theMine->EquipGens (nMatCen)->objFlags [i];
+		objFlags [i] = theMine->EquipGens (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
@@ -533,7 +533,7 @@ if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
 	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
 		if (segP->m_info.wallFlags & MARKED_MASK)
-			segP->owner = m_nOwner;
+			segP->m_info.owner = m_nOwner;
 	}
 else 					
 	theMine->CurrSeg ()->owner = m_nOwner;
@@ -558,7 +558,7 @@ if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
 	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
 		if (segP->m_info.wallFlags & MARKED_MASK)
-			segP->group = m_nGroup;
+			segP->m_info.group = m_nGroup;
 	}
 else 					
 	theMine->CurrSeg ()->group = m_nGroup;
@@ -790,7 +790,7 @@ void CSegmentTool::OnDamage (INT32 i)
 {
 CHECKMINE;
 UpdateData (TRUE);
-theMine->CurrSeg ()->damage [i] = m_nDamage [i];
+theMine->CurrSeg ()->m_info.damage [i] = m_nDamage [i];
 theApp.SetModified (TRUE);
 }
 
@@ -835,12 +835,12 @@ void CSegmentTool::AddBot ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->nMatCen;
+INT32 matcen = segP->m_info.nMatCen;
 char szObj [80];
 INT32 i = FindBot (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->BotGens (matcen)->objFlags [i / 32] |= (1L << (i % 32));
+theMine->BotGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 INT32 h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
@@ -858,12 +858,12 @@ void CSegmentTool::AddEquip ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->nMatCen;
+INT32 matcen = segP->m_info.nMatCen;
 char szObj [80];
 INT32 i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS2))
 	return;
-theMine->EquipGens (matcen)->objFlags [i / 32] |= (1L << (i % 32));
+theMine->EquipGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 INT32 h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
@@ -895,12 +895,12 @@ void CSegmentTool::DeleteBot ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->nMatCen;
+INT32 matcen = segP->m_info.nMatCen;
 char szObj [80];
 INT32 i = FindBot (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->BotGens (matcen)->objFlags [i / 32] &= ~(1L << (i % 32));
+theMine->BotGens (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 INT32 h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
@@ -918,12 +918,12 @@ void CSegmentTool::DeleteEquip ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->nMatCen;
+INT32 matcen = segP->m_info.nMatCen;
 char szObj [80];
 INT32 i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->EquipGens (matcen)->objFlags [i / 32] &= ~(1L << (i % 32));
+theMine->EquipGens (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 INT32 h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);

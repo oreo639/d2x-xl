@@ -2673,7 +2673,7 @@ void CMineView::CenterCube (void)
 {
 if (!theMine) return;
 
-	CSegment& seg = theMine->Segments (0) [m_Current->m_info.nSegment];
+	CSegment& seg = theMine->Segments (0) [m_Current->nSegment];
 	CVertex *vMine = theMine->Vertices (0);
 	INT16 *vSeg = seg.m_info.verts;
 
@@ -2699,7 +2699,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -theMine->Objects (m_Current->nObject)->pos;
+m_move = -theMine->Objects (m_Current->nObject)->m_info.pos;
 Refresh (false);
 }
 
@@ -3477,7 +3477,7 @@ if (!theMine) return;
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
 point1 = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-vert1 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point1];
+vert1 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [point1];
 // find point to merge with
 for (i = 0; i < theMine->VertCount (); i++) {
 	xPoint = m_viewPoints [i].x;
@@ -3496,7 +3496,7 @@ if (count == 1) {
 // make sure new vert is not one of the current cube's verts
 	for (i=0;i<8;i++) {
 		if (i!=point1) {
-			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [i];
+			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [i];
 			if (new_vert==vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
@@ -3507,7 +3507,7 @@ if (count == 1) {
 	// make sure the new line lengths are close enough
 		for (i=0;i<3;i++) {
 			point2 = connectPointTable [point1] [i];
-			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].verts [point2];
+			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [point2];
 			if (theMine->CalcLength (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
@@ -4173,7 +4173,7 @@ if (sideP->m_info.nBaseTex < 0)
 	return;
 CWall *pWall = (nWall == NO_WALL) ? NULL: ((CDlcDoc*) GetDocument ())->v.theMine->Walls (nWall);
 if ((segP->m_info.children [nSide] > -1) &&
-	 (!pWall || (pWall->m_info.type == WALL_OPEN) || ((pWall->m_info.type == WALL_CLOAKED) && !pWall->cloakValue)))
+	 (!pWall || (pWall->m_info.type == WALL_OPEN) || ((pWall->m_info.type == WALL_CLOAKED) && !pWall->m_info.cloakValue)))
 	return;
 #if OGL_MAPPED
 APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [0]]];

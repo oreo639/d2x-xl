@@ -381,7 +381,7 @@ if (nSegment < 0)
 if (nSide < 0)
 	nSegment = Current ()->nSide;
 
-	INT16*			sideIndexP = Segments (nSegment)->verts;
+	INT16*			sideIndexP = Segments (nSegment)->m_info.verts;
 	UINT8*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
@@ -396,7 +396,7 @@ return CFixVector (v);
 
 CFixVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 {
-	INT16*		sideIndexP = Segments (nSegment)->verts;
+	INT16*		sideIndexP = Segments (nSegment)->m_info.verts;
 	UINT8*		sideVertP = &sideVertTable [nSide][0];
 	CFixVector	v;
 

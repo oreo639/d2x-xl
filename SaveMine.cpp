@@ -441,7 +441,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	//else 
 		for (i = 0; i < GameInfo ().botgen.count; i++) {
 			BotGens (i)->Write (fp, GameInfo ().fileinfo.version);
-			//write_INT32 (BotGens (i)->objFlags[0], fp);
+			//write_INT32 (BotGens (i)->m_info.objFlags[0], fp);
 			//// skip robot_flags2
 			//write_FIX  (BotGens (i)->hitPoints, fp);
 			//write_FIX  (BotGens (i)->interval, fp);
