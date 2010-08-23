@@ -503,8 +503,8 @@ INT32 CMineView::ReadModelData(FILE *fp, CGameObject *objP)
 		if (objP->m_info.type == OBJ_ROBOT) {
 			for (i=0;i<n;i++) {
 				if (i == (UINT32) objP->m_info.id) {
-					fread(&robotInfo,sizeof (CRobotInfo),1,fp);// read robot info
-					nModel = robotInfo.nModel;
+					robotInfo.Read (fp);
+					nModel = robotInfo.m_info.nModel;
 				} else {
 					fseek(fp,sizeof (CRobotInfo),SEEK_CUR);   // skip robot info
 				}
