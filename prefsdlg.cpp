@@ -143,7 +143,7 @@ SaveAppSettings ();
 
 BOOL CPrefsDlg::OnInitDialog ()
 {
-if (!(theMine && CToolDlg::OnInitDialog ()))
+if (!CToolDlg::OnInitDialog ())
    return FALSE;
 m_btnBrowseD1PIG.AutoLoad (IDC_PREFS_BROWSE_D1PIG, this);
 m_btnBrowseD2PIG.AutoLoad (IDC_PREFS_BROWSE_D2PIG, this);

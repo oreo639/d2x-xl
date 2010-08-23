@@ -99,7 +99,7 @@ BOOL CTxtFilterTool::OnInitDialog ()
 {
 	CRect	rc;
 
-if (!(theMine && CToolDlg::OnInitDialog ()))
+if (!CToolDlg::OnInitDialog ())
    return FALSE;
 m_bInited = TRUE;
 return TRUE;

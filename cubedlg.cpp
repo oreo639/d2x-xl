@@ -110,7 +110,7 @@ pcb->SetCurSel (m_nSegment);
 
 BOOL CSegmentTool::OnInitDialog ()
 {
-if (!(theMine && CToolDlg::OnInitDialog ()))
+if (!CToolDlg::OnInitDialog ())
 	return FALSE;
 
 	static char* pszCubeFuncs [] = {

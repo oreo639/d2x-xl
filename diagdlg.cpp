@@ -56,7 +56,7 @@ ClearBugList ();
 
 BOOL CDiagTool::OnInitDialog ()
 {
-if (!(theMine && CToolDlg::OnInitDialog ()))
+if (!CToolDlg::OnInitDialog ())
    return FALSE;
 CListCtrl& plc = LVStats ()->GetListCtrl ();
 CRect rc;

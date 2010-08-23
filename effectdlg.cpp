@@ -123,7 +123,7 @@ SelectItemData (cbEffects, curSel);
 
 BOOL CEffectTool::OnInitDialog ()
 {
-if (!(theMine && CToolDlg::OnInitDialog ()))
+if (!CToolDlg::OnInitDialog ())
 	return FALSE;
 INT32 i, nId;
 for (nId = IDC_SMOKE_LIFE; nId <= IDC_SMOKE_BRIGHTNESS; nId++) {
