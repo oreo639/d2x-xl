@@ -210,7 +210,7 @@ if (bEnableDeltaShading) {
 		for (i = 0; i <dlIdxCount; i++, dli++) {
 //				if (dli->nSegment == theMine->current->segment) {
 			// loop on each delta light till the segment/side is found
-				CLightDeltaValue *dl = LightDeltaValues (dli->index);
+				CLightDeltaValue *dl = theMine->LightDeltaValues (dli->index);
 				h = dli->count;
 				for (j = 0; j < h; j++, dl++) {
 					if (*dl == face) {
