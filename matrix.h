@@ -25,10 +25,12 @@ private:
 
 public:
 	CViewMatrix ();
-	void Set(
-	double xMove, double yMove, double zMove, 
-	double xSize, double ySize, double zSize,
-	double xSpin, double ySpin, double zSpin);
+	void Set (CDoubleVector vMove, CDoubleVector vSize, CDoubleVector vSpin);
+	inline void Set (
+		double xMove, double yMove, double zMove, 
+		double xSize, double ySize, double zSize,
+		double xSpin, double ySpin, double zSpin)
+	{ Set (CDoubleVector (xMove, yMove, zMove), CDoubleVector (xSize, ySize, zSize), CDoubleVector (xSpin, ySpin, zSpin)); }
 
 	void SetViewInfo(double depthPerception, INT16 viewWidth, INT16 viewHeight);
 

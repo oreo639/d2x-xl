@@ -280,25 +280,22 @@ m_viewHeight = viewHeight / 2;
 // Set()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Set (
-	double xMove, double yMove, double zMove, 
-	double xSize, double ySize, double zSize,
-	double xSpin, double ySpin, double zSpin) 
+void CViewMatrix::Set (CDoubleVector vMove, CDoubleVector vSize, CDoubleVector vSpin)
 {
-m_move [0].Set (xMove, yMove, zMove);
+m_move [0] = vMove;
 
-CDoubleVector sinSpin (sin (xSpin), sin (ySpin), sin (zSpin));
-CDoubleVector cosSpin (cos (xSpin), cos (ySpin), cos (zSpin));
+CDoubleVector sinSpin (sin (vSpin.v.x), sin (vSpin.v.y), sin (vSpin.v.z));
+CDoubleVector cosSpin (cos (vSpin.v.x), cos (vSpin.v.y), cos (vSpin.v.z));
 
-m_mat [0].Set (xSize * cosSpin.v.z * cosSpin.v.y, 
-			  ySize * sinSpin.v.z * cosSpin.v.y, 
-			  -zSize * sinSpin.v.y,
-			  -xSize * sinSpin.v.z * cosSpin.v.x + xSize * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
-			  ySize * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + ySize * cosSpin.v.z * cosSpin.v.x,
-			  zSize * cosSpin.v.y * sinSpin.v.x,
-			  xSize * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - xSize * sinSpin.v.z * sinSpin.v.x,
-			  ySize * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - ySize * cosSpin.v.z * sinSpin.v.x,
-			  zSize * cosSpin.v.y * cosSpin.v.x);
+m_mat [0].Set (vSize.v.x * cosSpin.v.z * cosSpin.v.y, 
+				   vSize.v.y * sinSpin.v.z * cosSpin.v.y, 
+				   -vSize.v.z * sinSpin.v.y,
+				   -vSize.v.x * sinSpin.v.z * cosSpin.v.x + vSize.v.x * cosSpin.v.z * sinSpin.v.y * sinSpin.v.x,
+				   vSize.v.y * sinSpin.v.z * sinSpin.v.y * sinSpin.v.x + vSize.v.y * cosSpin.v.z * cosSpin.v.x,
+				   vSize.v.z * cosSpin.v.y * sinSpin.v.x,
+				   vSize.v.x * cosSpin.v.z * sinSpin.v.y * cosSpin.v.x - vSize.v.x * sinSpin.v.z * sinSpin.v.x,
+				   vSize.v.y * sinSpin.v.z * sinSpin.v.y * cosSpin.v.x - vSize.v.y * cosSpin.v.z * sinSpin.v.x,
+				   vSize.v.z * cosSpin.v.y * cosSpin.v.x);
 m_invMat [0] = m_mat [0].Inverse ();
 m_invMove [0] = m_invMat [0] * m_move [0];
 }
