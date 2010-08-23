@@ -990,12 +990,12 @@ void FreeTextureHandles (bool bDeleteModified)
   // free any textures that have been buffered
 	INT32 i, j;
 
-//for (i = 0; i < 2; i++) {
-//	CTexture* texP = theMine->Textures (i);
-//	for (j = MAX_D2_TEXTURES; j; j--, texP++)
-//		if (bDeleteModified || !texP->m_info.bModified)
-//			texP->Dispose ();
-//	}
+for (i = 0; i < 2; i++) {
+	CTexture* texP = theMine->Textures (i);
+	for (j = MAX_D2_TEXTURES; j; j--, texP++)
+		if (bDeleteModified || !texP->m_info.bModified)
+			texP->Dispose ();
+	}
 pExtraTexture p;
 while (extraTextures) {
 	p = extraTextures;
