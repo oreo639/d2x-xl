@@ -1440,7 +1440,7 @@ void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index)
 					INT16 texture2 = segP->m_sides [nSide].m_info.nOvlTex;
 					if (!DefineTexture (texture1, texture2, &tx, 0, 0)) {
 						DrawAnimDirArrows (texture1, &tx);
-						TextureMap (resolution, segP, nSide, tx.m_info.bmDataP, tx.m_width, tx.m_height, 
+						TextureMap (resolution, segP, nSide, tx.m_info.bmDataP, tx.m_info.width, tx.m_info.height, 
 									   light_index, pm_viewPointsMem, m_viewPoints, width, height, rowOffset);
 					}
 				}
