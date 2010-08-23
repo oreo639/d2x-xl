@@ -581,22 +581,22 @@ VertCount () = n_vertices;
 SegCount () = n_segments;
 
 // read all vertices
-for (i = 0; i < VertCount (); i++)
-	Vertices (i)->Read (fp);
+CVertex* vertP = Vertices (0);
+for (i = 0; i < VertCount (); i++, vertP++) {
+	vertP->Read (fp);
+	vertP->m_status = 0;
+	}
 
 if (n_vertices != VertCount ()) 
 	fseek(fp, sizeof (CFixVector) * (n_vertices - VertCount ()), SEEK_CUR);
 
-// unmark all vertices while we are here...
-for (i = 0; i < VertCount (); i++) 
-	VertStatus (i) &= ~MARKED_MASK;
-
 // read segment information
-for (i = 0; i < SegCount (); i++)   
-	Segments (i)->Read (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
-if (IsD2File ()) 
-	for (i = 0; i < SegCount (); i++)   
-		Segments (i)->ReadExtras (fp, IsD2XLevel () ? 2 : 1, LevelVersion(), true);
+CSegment *segP;
+for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)   
+	segP->Read (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+if (IsD2File ())
+	for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)   
+		segP->ReadExtras (fp, IsD2XLevel () ? 2 : 1, LevelVersion(), true);
 
 if (LevelVersion () == 9) {
 #if 1
