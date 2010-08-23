@@ -536,7 +536,7 @@ if (bMarked) {
 			segP->m_info.owner = m_nOwner;
 	}
 else 					
-	theMine->CurrSeg ()->owner = m_nOwner;
+	theMine->CurrSeg ()->m_info.owner = m_nOwner;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
 }
@@ -561,7 +561,7 @@ if (bMarked) {
 			segP->m_info.group = m_nGroup;
 	}
 else 					
-	theMine->CurrSeg ()->group = m_nGroup;
+	theMine->CurrSeg ()->m_info.group = m_nGroup;
 theApp.UnlockUndo ();
 theApp.MineView ()->DelayRefresh (false);
 }

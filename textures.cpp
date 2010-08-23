@@ -183,33 +183,33 @@ if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	textures [i] = 0;
 	// buffer textures if not already buffered
 	pTx [i] = theMine->Textures (fileType, textures [i]);
-	if (!(pTx [i]->m_info.bmDataP && pTx [i]->m_bValid))
+	if (!(pTx [i]->m_info.bmDataP && pTx [i]->m_info.bValid))
 		if (rc = pTx [i]->Read (textures [i]))
 			return (rc);
 	}
 	
 	// Define bmBuf based on texture numbers and rotation
-pDestTx->m_width = pTx [0]->m_width;
-pDestTx->m_height = pTx [0]->m_height;
-pDestTx->m_size = pTx [0]->m_size;
-pDestTx->m_bValid = 1;
+pDestTx->m_info.width = pTx [0]->m_info.width;
+pDestTx->m_info.height = pTx [0]->m_info.height;
+pDestTx->m_info.size = pTx [0]->m_info.size;
+pDestTx->m_info.bValid = 1;
 ptr = pTx [0]->m_info.bmDataP;
 //CBRK (textures [0] == 220);
 if (ptr) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
-		memcpy (bmBuf, ptr, pTx [0]->m_size);
+		memcpy (bmBuf, ptr, pTx [0]->m_info.size);
 	else {
 		// otherwise, copy bit by bit
-		w = pTx [0]->m_width;
+		w = pTx [0]->m_info.width;
 #if 1
 		INT32	l1 = y0 * w + x0;
-		INT32	l2 = pTx [0]->m_size - l1;
+		INT32	l2 = pTx [0]->m_info.size - l1;
 		memcpy (bmBuf, ptr + l1, l2);
 		memcpy (bmBuf + l2, ptr, l1);
 #else
 		UINT8		*dest = bmBuf;
-		h = w;//pTx [0]->m_height;
+		h = w;//pTx [0]->m_info.height;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++)
 				*dest++ = ptr [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
@@ -223,22 +223,22 @@ if (textures [1] == 0)
 	return 0;
 if (!(ptr = pTx [1]->m_info.bmDataP))
 	return 0;
-if (pTx [0]->m_width == pTx [1]->m_width)
+if (pTx [0]->m_info.width == pTx [1]->m_info.width)
 	scale.c = scale.d = 1;
-else if (pTx [0]->m_width < pTx [1]->m_width) {
-	scale.c = pTx [1]->m_width / pTx [0]->m_width;
+else if (pTx [0]->m_info.width < pTx [1]->m_info.width) {
+	scale.c = pTx [1]->m_info.width / pTx [0]->m_info.width;
 	scale.d = 1;
 	}
-else if (pTx [0]->m_width > pTx [1]->m_width) {
-	scale.d = pTx [0]->m_width / pTx [1]->m_width;
+else if (pTx [0]->m_info.width > pTx [1]->m_info.width) {
+	scale.d = pTx [0]->m_info.width / pTx [1]->m_info.width;
 	scale.c = 1;
 	}
 scale2.c = scale.c * scale.c;
 scale2.d = scale.d * scale.d;
 offs = 0;
-w = pTx [1]->m_width / scale.c * scale.d;
-h = w;//pTx [1]->m_height / scale.c * scale.d;
-s = (pTx [1]->m_width * pTx [1]->m_width)/*pTx [1]->m_size*/ / scale2.c * scale2.d;
+w = pTx [1]->m_info.width / scale.c * scale.d;
+h = w;//pTx [1]->m_info.height / scale.c * scale.d;
+s = (pTx [1]->m_info.width * pTx [1]->m_info.width)/*pTx [1]->m_info.size*/ / scale2.c * scale2.d;
 if (!(x0 || y0)) {
 	UINT8 *dest, *dest2;
 	if (mode == 0x0000) {
@@ -355,7 +355,7 @@ INT32 CTexture::Read (INT16 index)
 	FILE				*fTextures = NULL;
 	char				path [256];
 	
-if (m_bModified)
+if (m_info.bModified)
 	return 0;
 strcpy_s (path, sizeof (path), (theApp.IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
@@ -451,7 +451,7 @@ else {
 	}
 
 // allocate data if necessary
-if (m_info.bmDataP && ((m_width != w) || (m_height != h))) {
+if (m_info.bmDataP && ((m_info.width != w) || (m_info.height != h))) {
 	delete m_info.bmDataP;
 	m_info.bmDataP = NULL;
 	}
@@ -465,7 +465,7 @@ if (m_info.bmDataP == NULL) {
 	rc = 1;
 	goto abort;
 	}
-m_nFormat = 0;
+m_info.nFormat = 0;
 fseek (fTextures,offset,SEEK_SET);
 if (d2_ptexture.flags & 0x08) {
 	fread (&nSize,1,sizeof (INT32),fTextures);
@@ -508,10 +508,10 @@ else {
 		}
 	}
 fclose (fTextures);
-m_width = w;
-m_height = h;
-m_size = s;
-m_bValid = 1;
+m_info.width = w;
+m_info.height = h;
+m_info.size = s;
+m_info.bValid = 1;
 return (0);
 
 abort:
@@ -524,12 +524,12 @@ return (rc);
 
 double CTexture::Scale (INT16 index)
 {
-if (!m_width)
+if (!m_info.width)
 	if (index < 0)
 		return 1.0;
 	else
 		Read (index);
-return m_width ? (double) m_width / 64.0 : 1.0;
+return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 }
 
 //------------------------------------------------------------------------------
@@ -719,7 +719,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 			ptr = (UINT8*) malloc (tSize * sizeof (tRGBA));
 			if (ptr) {
 				pTx [nBaseTex].m_info.tgaDataP = (tRGBA *) ptr;
-				pTx [nBaseTex].m_nFormat = 1;
+				pTx [nBaseTex].m_info.nFormat = 1;
 				}
 			else {
 				delete pTx [nBaseTex].m_info.bmDataP;
@@ -727,18 +727,18 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 				}
 			}
 		else
-			pTx [nBaseTex].m_nFormat = 0;
-		pTx [nBaseTex].m_width = tWidth;
-		pTx [nBaseTex].m_height = tHeight;
-		pTx [nBaseTex].m_size = tSize;
-		pTx [nBaseTex].m_bValid = 1;
+			pTx [nBaseTex].m_info.nFormat = 0;
+		pTx [nBaseTex].m_info.width = tWidth;
+		pTx [nBaseTex].m_info.height = tHeight;
+		pTx [nBaseTex].m_info.size = tSize;
+		pTx [nBaseTex].m_info.bValid = 1;
 		// read texture into memory (assume non-compressed)
 #if 1
 		fseek (fTextures, bmpOffset + d2texture.offset, SEEK_SET);
 #endif
-		if (pTx [nBaseTex].m_nFormat) {
-			fread (ptr, pTx [nBaseTex].m_size * sizeof (tRGBA), 1, fTextures);
-			pTx [nBaseTex].m_bValid = 
+		if (pTx [nBaseTex].m_info.nFormat) {
+			fread (ptr, pTx [nBaseTex].m_info.size * sizeof (tRGBA), 1, fTextures);
+			pTx [nBaseTex].m_info.bValid = 
 				TGA2Bitmap (pTx [nBaseTex].m_info.tgaDataP, pTx [nBaseTex].m_info.bmDataP, (INT32) tWidth, (INT32) tHeight);
 			}
 		else {
@@ -755,7 +755,7 @@ for (tnum = 0; tnum < d2_file_header.num_textures; tnum++) {
 				}
 			}
 		if (!bExtraTexture)
-			pTx [nBaseTex].m_bModified = TRUE;
+			pTx [nBaseTex].m_info.bModified = TRUE;
 		}
 	}
 if (nUnknownTextures) {
@@ -789,25 +789,25 @@ void WritePogTextureHeader (FILE *pDestPigFile, CTexture *pTexture, INT32 nTextu
 
 sprintf_s (d2texture.name, sizeof (d2texture.name), "new%04d", nTexture);
 d2texture.dflags = 0;
-d2texture.flags = pTexture->m_nFormat ? 0x80 : 0;
-d2texture.xsize = pTexture->m_width % 256;
-if ((d2texture.flags & 0x80) && (pTexture->m_width > 256)) {
-	d2texture.wh_extra = (pTexture->m_width >> 8);
-	d2texture.ysize = pTexture->m_height / pTexture->m_width;
+d2texture.flags = pTexture->m_info.nFormat ? 0x80 : 0;
+d2texture.xsize = pTexture->m_info.width % 256;
+if ((d2texture.flags & 0x80) && (pTexture->m_info.width > 256)) {
+	d2texture.wh_extra = (pTexture->m_info.width >> 8);
+	d2texture.ysize = pTexture->m_info.height / pTexture->m_info.width;
 	}
 else {
-	d2texture.ysize = pTexture->m_height % 256;
-	d2texture.wh_extra = (pTexture->m_width >> 8) | ((pTexture->m_height >> 4) & 0xF0);
+	d2texture.ysize = pTexture->m_info.height % 256;
+	d2texture.wh_extra = (pTexture->m_info.width >> 8) | ((pTexture->m_info.height >> 4) & 0xF0);
 	}
 d2texture.avg_color = 0;
 d2texture.offset = nOffset;
-nOffset += (d2texture.flags & 0x80) ? pTexture->m_size * 4: pTexture->m_size;
+nOffset += (d2texture.flags & 0x80) ? pTexture->m_info.size * 4: pTexture->m_info.size;
 
 // check for transparency and super transparency
-if (!pTexture->m_nFormat)
+if (!pTexture->m_info.nFormat)
 	if (pSrc = (UINT8 *) pTexture->m_info.bmDataP) {
 		UINT32 j;
-		for (j = 0; j < pTexture->m_size; j++, pSrc++) {
+		for (j = 0; j < pTexture->m_info.size; j++, pSrc++) {
 			if (*pSrc == 255) 
 				d2texture.flags |= BM_FLAG_TRANSPARENT;
 			if (*pSrc == 254) 
@@ -821,16 +821,16 @@ fwrite (&d2texture, sizeof (D2_PIG_TEXTURE), 1, pDestPigFile);
 
 bool WritePogTexture (FILE *pDestPigFile, CTexture *pTexture)
 {
-	UINT8		*pSrc = pTexture->m_nFormat ? (UINT8*) pTexture->m_info.tgaDataP : pTexture->m_info.bmDataP;
+	UINT8		*pSrc = pTexture->m_info.nFormat ? (UINT8*) pTexture->m_info.tgaDataP : pTexture->m_info.bmDataP;
 
 if (!pSrc) {
 	DEBUGMSG (" POG manager: Couldn't lock texture data.");
 	return false;
 	}
-if (pTexture->m_nFormat) {
+if (pTexture->m_info.nFormat) {
 #if 0
-	INT32 w = pTexture->m_width;
-	INT32 h = pTexture->m_height;
+	INT32 w = pTexture->m_info.width;
+	INT32 h = pTexture->m_info.height;
 	tBGRA	bgra;
 
 	pSrc += w * (h - 1) * 4;
@@ -846,12 +846,12 @@ if (pTexture->m_nFormat) {
 		pSrc -= 2 * w * 4;
 		}
 #else
-	fwrite (pSrc, pTexture->m_width * pTexture->m_height * sizeof (tRGBA), 1, pDestPigFile);
+	fwrite (pSrc, pTexture->m_info.width * pTexture->m_info.height * sizeof (tRGBA), 1, pDestPigFile);
 #endif
 	}
 else {
-	UINT16 w = pTexture->m_width;
-	UINT16 h = pTexture->m_height;
+	UINT16 w = pTexture->m_info.width;
+	UINT16 h = pTexture->m_info.height;
 	pSrc += w * (h - 1); // point to last row of bitmap
 	INT32 row;
 	for (row = 0; row < h; row++) {
@@ -941,7 +941,7 @@ d2_file_header.signature    = 0x474f5044L; /* 'DPOG' */
 d2_file_header.version      = 0x00000001L;
 d2_file_header.num_textures = 0;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
-	if (texP->m_bModified)
+	if (texP->m_info.bModified)
 		d2_file_header.num_textures++;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 	d2_file_header.num_textures++;
@@ -949,7 +949,7 @@ fwrite (&d2_file_header, sizeof (D2_PIG_HEADER), 1, outPigFile);
 
 // write list of textures
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
-	if (texP->m_bModified)
+	if (texP->m_info.bModified)
 		fwrite (texture_table + i, sizeof (UINT16), 1, outPigFile);
 
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
@@ -958,7 +958,7 @@ for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 // write texture headers
 num = 0;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
-	if (texP->m_bModified)
+	if (texP->m_info.bModified)
 		WritePogTextureHeader (outPigFile, texP, num++, nOffset);
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext, num++)
 	WritePogTextureHeader (outPigFile, &pxTx->texture, num, nOffset);
@@ -971,7 +971,7 @@ DEBUGMSG (message);
 //-----------------------------------------
 rc = 8;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
-	if (texP->m_bModified && !WritePogTexture (outPigFile, texP))
+	if (texP->m_info.bModified && !WritePogTexture (outPigFile, texP))
 		goto abort;
 for (pxTx = extraTextures; pxTx; pxTx = pxTx->pNext)
 	if (!WritePogTexture (outPigFile, &pxTx->texture))
@@ -1002,7 +1002,7 @@ void FreeTextureHandles (bool bDeleteModified)
 for (i = 0; i < 2; i++) {
 	CTexture* texP = theMine->Textures (i);
 	for (j = MAX_D2_TEXTURES; j; j--, texP++) {
-		if (!bDeleteModified && texP->m_bModified)
+		if (!bDeleteModified && texP->m_info.bModified)
 			continue;
 		if (texP->m_info.bmDataP) {
 			free (texP->m_info.bmDataP);
@@ -1012,8 +1012,8 @@ for (i = 0; i < 2; i++) {
 			free (texP->m_info.tgaDataP);
 			texP->m_info.tgaDataP = NULL;
 			}
-		texP->m_bModified = FALSE;
-		texP->m_nFormat = 0;
+		texP->m_info.bModified = FALSE;
+		texP->m_info.nFormat = 0;
 		}
 	}
 pExtraTexture	p;
@@ -1031,7 +1031,7 @@ BOOL HasCustomTextures ()
 CTexture* texP = theMine->Textures (theApp.FileType ());
 
 for (INT32 i = MAX_D2_TEXTURES; i; i--, texP++)
-	if (texP->m_bModified)
+	if (texP->m_info.bModified)
 		return TRUE;
 return FALSE;
 }
@@ -1044,7 +1044,7 @@ INT32 CountCustomTextures ()
 	CTexture*	texP = theMine->Textures (theApp.FileType ());
 
 for (INT32 i = MAX_D2_TEXTURES; i; i--, texP++)
-	if (texP->m_bModified)
+	if (texP->m_info.bModified)
 		count++;
 return count;
 }
@@ -1204,16 +1204,16 @@ if (bShowTexture) {
 			if (!bmi)
 				return false;
 			bmi->bmiHeader.biWidth = 
-			bmi->bmiHeader.biHeight = tx.m_width;
-			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tx.m_width, tx.m_width,
+			bmi->bmiHeader.biHeight = tx.m_info.width;
+			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tx.m_info.width, tx.m_info.width,
 					        	 (void *) bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 		else {
 			double scale = tx.Scale ();
 			UINT32 x, y;
-			for (x = 0; x < tx.m_width; x = (INT32) (x + scale))
-				for (y = 0; y < tx.m_width; y = (INT32) (y + scale))
-					pDC->SetPixel ((INT16) (x / scale), (INT16) (y / scale), PALETTEINDEX (bmBuf [y*tx.m_width+x]));
+			for (x = 0; x < tx.m_info.width; x = (INT32) (x + scale))
+				for (y = 0; y < tx.m_info.width; y = (INT32) (y + scale))
+					pDC->SetPixel ((INT16) (x / scale), (INT16) (y / scale), PALETTEINDEX (bmBuf [y*tx.m_info.width+x]));
 			}
 		pDC->SelectPalette (pOldPalette, FALSE);
 		}

@@ -1242,7 +1242,7 @@ for (h = i = 0; i < j; i++, segP++) {
 		if (m_bAutoFixBugs)
 			n = segP->m_info.nMatCen = INT8 (FindMatCen (matCenP, i));
 		}
-	else if (matCenP [n].nSegment != i) {
+	else if (matCenP [n].m_info.nSegment != i) {
 		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (m_bAutoFixBugs) {
 			n = INT8 (FindMatCen (matCenP, i));
@@ -1658,8 +1658,8 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 						else {
 							UINT16 wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
-								 ((wallP->m_info.nClip != theMine->Walls (wallnum2)->nClip
-									|| wallP->m_info.type != theMine->Walls (wallnum2)->m_info.type))) {
+								 ((wallP->m_info.nClip != theMine->Walls (wallnum2)->m_info.nClip ||
+									wallP->m_info.type != theMine->Walls (wallnum2)->m_info.type))) {
 								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
 											nWall,nSegment);

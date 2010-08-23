@@ -1,6 +1,8 @@
 #ifndef __textures_h
 #define __textures_h
 
+#include "Types.h"
+
 extern UINT8 bmBuf [2048 * 2048 * 4];
 
 typedef struct {
@@ -52,10 +54,10 @@ public:
 
 	CTexture(UINT8 *dataP = NULL) {
 		Clear ();
-		m_info.bmDataP = pData; 
+		m_info.bmDataP = dataP; 
 		}
 	~CTexture() {
-		if (!m_bExtData) {
+		if (!m_info.bExtData) {
 			delete m_info.bmDataP;
 			if (m_info.tgaDataP)
 				delete m_info.tgaDataP;
@@ -64,7 +66,11 @@ public:
 
 	INT32 Read (INT16 index);
 	double Scale (INT16 index = -1);
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info));
+
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
+	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
 

@@ -368,13 +368,13 @@ m_iTexture = theMine->CurrSide ()->m_info.nBaseTex;
 if (m_iTexture >= MAX_D2_TEXTURES)
 	m_iTexture = 0;
 m_pTx = theMine->Textures (theApp.FileType (), m_iTexture);
-if (!(m_pTx->m_info.bmDataP && m_pTx->m_bValid)) {
+if (!(m_pTx->m_info.bmDataP && m_pTx->m_info.bValid)) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
-m_nWidth = m_pTx->m_width;
-m_nHeight = m_pTx->m_height;
-m_nSize = m_pTx->m_size;
+m_nWidth = m_pTx->m_info.width;
+m_nHeight = m_pTx->m_info.height;
+m_nSize = m_pTx->m_info.size;
 m_bitmap = new UINT8 [2048 * 2048];
 if (!m_bitmap) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
@@ -385,7 +385,7 @@ m_tga = new tRGBA [2048 * 2048];
 if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
 	}
-else if (m_nFormat = m_pTx->m_nFormat)
+else if (m_nFormat = m_pTx->m_info.nFormat)
 	memcpy (m_tga, m_pTx->m_info.tgaDataP, m_nSize * sizeof (tRGBA));
 m_backupBM = new UINT8 [2048 * 2048];
 m_backupTGA = new tRGBA [2048 * 2048];
@@ -450,7 +450,7 @@ else if (PtInRect (rcPal, point)) {
 
 void CTextureEdit::OnOK ()
 {
-if ((m_pTx->m_width != m_nWidth) || (m_pTx->m_height != m_nHeight) || (m_pTx->m_nFormat != m_nFormat)) {
+if ((m_pTx->m_info.width != m_nWidth) || (m_pTx->m_info.height != m_nHeight) || (m_pTx->m_info.nFormat != m_nFormat)) {
 	UINT8 *pDataBM = new UINT8 [m_nWidth * m_nHeight];
 	tRGBA  *pDataTGA = m_nFormat ? new tRGBA [m_nWidth * m_nHeight] : NULL;
 
@@ -463,15 +463,15 @@ if ((m_pTx->m_width != m_nWidth) || (m_pTx->m_height != m_nHeight) || (m_pTx->m_
 		delete m_pTx->m_info.tgaDataP;
 	m_pTx->m_info.tgaDataP = pDataTGA;
 	m_pTx->m_info.bmDataP = pDataBM;
-	m_pTx->m_width = m_nWidth;
-	m_pTx->m_height = m_nHeight;
-	m_pTx->m_size = m_nSize;
-	m_pTx->m_nFormat = (unsigned char) m_nFormat;
+	m_pTx->m_info.width = m_nWidth;
+	m_pTx->m_info.height = m_nHeight;
+	m_pTx->m_info.size = m_nSize;
+	m_pTx->m_info.nFormat = (unsigned char) m_nFormat;
 	}
-memcpy (m_pTx->m_info.bmDataP, m_bitmap, m_pTx->m_size);
-if (m_pTx->m_nFormat)
-	memcpy (m_pTx->m_info.tgaDataP, m_tga, m_pTx->m_size * sizeof (tRGBA));
-m_pTx->m_bModified = m_bModified;
+memcpy (m_pTx->m_info.bmDataP, m_bitmap, m_pTx->m_info.size);
+if (m_pTx->m_info.nFormat)
+	memcpy (m_pTx->m_info.tgaDataP, m_tga, m_pTx->m_info.size * sizeof (tRGBA));
+m_pTx->m_info.bModified = m_bModified;
 CDialog::OnOK ();
 }
 
@@ -1066,12 +1066,12 @@ void CTextureEdit::OnDefault (void)
 if (QueryMsg("Are you sure you want to restore this texture\n"
 				 "back to its original texture\n") == IDYES) {
 	Backup ();
-	m_pTx->m_bModified = m_bModified = FALSE;
+	m_pTx->m_info.bModified = m_bModified = FALSE;
 	m_pTx->Read (m_iTexture);
-	memcpy (m_bitmap, m_pTx->m_info.bmDataP, m_pTx->m_size);
-	m_nWidth = m_pTx->m_width;
-	m_nHeight = m_pTx->m_height;
-	m_nSize = m_pTx->m_size;
+	memcpy (m_bitmap, m_pTx->m_info.bmDataP, m_pTx->m_info.size);
+	m_nWidth = m_pTx->m_info.width;
+	m_nHeight = m_pTx->m_info.height;
+	m_nSize = m_pTx->m_info.size;
 	m_nFormat = 0;
 	Refresh ();
 	}

@@ -501,10 +501,10 @@ if (!theMine) return;
 		if (nOffset &&	--nOffset)
 			continue;
 		if (!DefineTexture (m_mapViewToTxt [i], 0, &tx, 0, 0)) {
-			bmi->bmiHeader.biWidth = tx.m_width;
-			bmi->bmiHeader.biHeight = tx.m_width;
+			bmi->bmiHeader.biWidth = tx.m_info.width;
+			bmi->bmiHeader.biHeight = tx.m_info.width;
 			StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
-								m_iconSize.cx, m_iconSize.cy, 0, 0, tx.m_width, tx.m_width, 
+								m_iconSize.cx, m_iconSize.cy, 0, 0, tx.m_info.width, tx.m_info.width, 
 								(void *)tx.m_info.bmDataP, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 	// pick color for box drawn around texture

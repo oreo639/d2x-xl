@@ -321,11 +321,11 @@ public:
 
 class CGameItem {
 public:
+	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
-	virtual CGameItem* Next (void) { return this + 1; }
-	inline void Clear (int count) { 
+	void Clear (int count) { 
 		CGameItem* i = this;
 		while (count--) {
 			Clear ();

@@ -302,12 +302,12 @@ if (DefineTexture (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tx, 0, 0)) {
 	}
 hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);
 pDC->SelectObject (&hRgn);
-scale = min (tx.m_width, tx.m_height) / 64;
+scale = min (tx.m_info.width, tx.m_info.height) / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
 		i=((INT32)(((((x-(m_centerPt.x+offset.x))+128)*2)/m_zoom))&63)*scale;
 		j=((INT32)(((((y-(m_centerPt.y+offset.y))+128)*2)/m_zoom))&63)*scale;
-		pDC->SetPixel(x, y, h=PALETTEINDEX(tx.m_info.bmDataP[(tx.m_width-j)*tx.m_width+i]));
+		pDC->SetPixel(x, y, h=PALETTEINDEX(tx.m_info.bmDataP[(tx.m_info.width-j)*tx.m_info.width+i]));
 		}
 	}
 DeleteObject(hRgn);
