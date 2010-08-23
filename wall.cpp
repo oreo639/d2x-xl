@@ -175,7 +175,7 @@ for (i = 0;i<4;i++) {
 	sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
 	sideP->m_info.uvls [i].l = default_uvls [i].l;
 	}
-SetUV (nSegment, nSide, 0, 0, 0);
+Segments (nSegment)->SetUV (nSide, 0, 0);
 theApp.UnlockUndo ();
 }
 

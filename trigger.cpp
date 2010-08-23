@@ -187,7 +187,7 @@ else
 
 nTrigger = (UINT16) GameInfo ().triggers.count;
 // set new trigger data
-InitTrigger (Triggers (nTrigger), type, flags);
+Triggers (nTrigger)->Setup (type, flags);
 // link trigger to the wall
 Walls (nWall)->m_info.nTrigger = (UINT8) nTrigger;
 // update number of Triggers ()
@@ -435,7 +435,7 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 INT16 nTrigger = NumObjTriggers ();
-InitTrigger (ObjTriggers (nTrigger), type, 0);
+ObjTriggers (nTrigger)->Setup (type, 0);
 ObjTriggers (nTrigger)->m_info.nObject = objnum;
 NumObjTriggers ()++;
 theApp.UnlockUndo ();

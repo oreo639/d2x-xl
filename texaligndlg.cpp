@@ -653,7 +653,7 @@ void CTextureTool::OnAlignReset ()
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-theMine->SetUV (theMine->Current ()->nSegment, theMine->Current ()->nSide, 0, 0, 0);
+theMine->CurrSeg ()->SetUV (theMine->Current ()->nSide, 0, 0);
 m_alignX = 0;
 m_alignY = 0;
 m_alignAngle = 0;
@@ -680,7 +680,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 			if ((segP->m_info.children [nSide] == -1) || 
 				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
-				theMine->SetUV (nSegment,nSide,0,0,0);
+				theMine->Segments (nSegment)->SetUV (nSide,0,0);
 				bModified = TRUE;
 				}
 			}
@@ -778,7 +778,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 	if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 		continue;
 	if (nSegment != theMine->Current ()->nSegment) {
-		theMine->SetUV (nSegment, nSide, 0, 0, 0);
+		theMine->Segments (nSegment)->SetUV (nSide, 0, 0);
 		sangle = atan3 (sideP->m_info.uvls [(nChildLine + 1) & 3].v - sideP->m_info.uvls [nChildLine].v, 
 							 sideP->m_info.uvls [(nChildLine + 1) & 3].u - sideP->m_info.uvls [nChildLine].u); 
 		cangle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) & 3].v, 

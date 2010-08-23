@@ -37,7 +37,7 @@ for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
 			sideP->m_info.uvls [i].v = (INT16) ((double) default_uvls [i].v / scale);
 			sideP->m_info.uvls [i].l = default_uvls [i].l;
 			}
-		SetUV (nSegment, nSide, 0, 0, 0);
+		Segments (nSegment)->SetUV (nSide, 0, 0);
 		}
 	else if (nTexture >= 0) {
 		if (walltype >= 0) {

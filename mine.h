@@ -451,7 +451,7 @@ public:
 	void RotateVmsVector (CFixVector* vector, double angle, char axis); 
 	void RotateMatrix (CFixMatrix *matrix, double angle, char axis); 
 	void RotateVertex (CFixVector* vertex, CFixVector* orgin, CFixVector* normal, double angle); 
-	void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
+	//void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 
 	CWall *AddWall (INT16 nSegment, INT16 nSide, INT16 type, UINT16 flags, UINT8 keys, INT8 nClip, INT16 nTexture);

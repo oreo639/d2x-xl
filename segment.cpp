@@ -157,7 +157,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + child;
 				SetTexture (nSegment, child, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
-				SetUV (nSegment, child, 0, 0, 0); 
+				Segments (nSegment)->SetUV (child, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
 					segP->m_sides [child].m_info.uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
@@ -1943,7 +1943,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 //	  segP->m_sides [nSide].m_info.uvls [i].v = seg1->m_sides [cur1->nSide].m_info.uvls [i].v; 
 //	  segP->m_sides [nSide].m_info.uvls [i].l = seg1->m_sides [cur1->nSide].m_info.uvls [i].l; 
 //        }
-		SetUV (nNewSeg, nSide, 0, 0, 0); 
+		Segments (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
 	else {
 		SetTexture (nNewSeg, nSide, 0, 0); 
