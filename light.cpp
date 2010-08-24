@@ -543,11 +543,11 @@ delete[] max_brightness;
 void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
 	INT32			nSegment;
-	INT32			texture_num;
+	INT32			nTexture;
 	INT32			nSide;
 	UINT32		brightness;
-	CSegment	*segP;
-	CSide		*sideP;
+	CSegment*	segP;
+	CSide*		sideP;
 
 // clear all lighting on marked cubes
 theApp.SetModified (TRUE);
@@ -577,12 +577,12 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 		if (bCopyTexLights)
 			LightColors (nSegment, nSide)->Clear ();
 		brightness = 0;
-		texture_num = sideP->m_info.nBaseTex;
-		if ((texture_num >= 0) && (texture_num < MAX_TEXTURES))
-			brightness = max (brightness, LightWeight (texture_num));
-		texture_num = sideP->m_info.nOvlTex & 0x3fff;
-		if ((texture_num > 0) && (texture_num < MAX_TEXTURES))
-			brightness = max (brightness, LightWeight (texture_num));
+		nTexture = sideP->m_info.nBaseTex;
+		if ((nTexture >= 0) && (nTexture < MAX_TEXTURES))
+			brightness = max (brightness, LightWeight (nTexture));
+		nTexture = sideP->m_info.nOvlTex & 0x3fff;
+		if ((nTexture > 0) && (nTexture < MAX_TEXTURES))
+			brightness = max (brightness, LightWeight (nTexture));
 		if (brightness > 0)
 			Illuminate (nSegment, nSide, (UINT32) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
 		}
@@ -1317,14 +1317,14 @@ return (effect [0] != 0 || effect [1] != 0 || effect [2] != 0 || effect [3] != 0
 CColor *CMine::LightColor (INT32 i, INT32 j, bool bUseTexColors) 
 { 
 if (bUseTexColors && UseTexColors ()) {
-	CWall *pWall = SideWall (i, j);
-	//if (!pWall || (pWall->m_info.type != WALL_TRANSPARENT)) 
+	CWall *wallP = SideWall (i, j);
+	//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
 		{	//always use a side color for transp. walls
 		CColor *pc;
 		INT16 t = Segments (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
 		if ((t > 0) && (pc = GetTexColor (t)))
 			return pc;
-		if (pc = GetTexColor (Segments (i)->m_sides [j].m_info.nBaseTex, pWall && (pWall->m_info.type == WALL_TRANSPARENT)))
+		if (pc = GetTexColor (Segments (i)->m_sides [j].m_info.nBaseTex, wallP && (wallP->m_info.type == WALL_TRANSPARENT)))
 			return pc;
 		}
 	}	

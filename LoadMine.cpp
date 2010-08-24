@@ -174,7 +174,6 @@ INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	INT32	return_code = 0;
 	char	palette_name [256];
 	char*	ps;
-	INT16 nLights = 0;
 
 m_changesMade = 0;
 fopen_s (&fp, filename, "rb");
@@ -187,6 +186,7 @@ if (!fp) {
 	//  strcpy(gamesave_current_filename, filename);
 if (LoadMineSigAndType (fp))
 	return -1;
+ClearMineData ();
 // read mine data offset
 minedataOffset = read_INT32 (fp);
 // read game data offset
@@ -241,7 +241,6 @@ if (return_code = LoadPalette ())
 	goto load_end;
 
 // read descent 2 reactor information
-nLights = 0;
 if (IsD2File ()) {
 	ReactorTime () = read_INT32 (fp); // base control center explosion time
 	ReactorStrength () = read_INT32 (fp); // reactor strength
@@ -254,7 +253,7 @@ if (IsD2File ()) {
 		else {
 			if (FlickerLightCount () != 0) {
 				ErrorMsg ("Error reading flickering lights");
-				nLights = 0;
+				FlickerLightCount () = 0;
 				}
 			}
 		}
@@ -274,7 +273,6 @@ m_disableDrawing = TRUE;
 fseek (fp, minedataOffset, SEEK_SET);
 mineErr = LoadMineDataCompiled (fp, bNewMine);
 int fPos = ftell (fp);
-FlickerLightCount () = nLights;
 
 if (mineErr != 0) {
 	ErrorMsg ("Error loading mine data");
@@ -414,8 +412,13 @@ UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 :
 if (!dataP)
 	return 0;
 INT32 i = nSize / (3 * sizeof (INT32) + sizeof (UINT8));
+#if USE_DYN_ARRAYS
+if (i > (int) MineData ().texColors.Length ())
+	i = (int) MineData ().texColors.Length ();
+#else
 if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
 	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
+#endif
 for (CColor *colorP = DATA (MineData ().texColors); i; i--, colorP++) {
 	colorP->m_info.index = *dataP++;
 	colorP->m_info.color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
@@ -526,7 +529,7 @@ if (((IsD1File ()) && (n_segments > MAX_SEGMENTS1)) ||
 	ErrorMsg ("Warning: Too many Segments for this level version");
 
 // if we are happy with the number of verts and Segments (), then proceed...
-ClearMineData ();
+//ClearMineData ();
 VertCount () = n_vertices;
 SegCount () = n_segments;
 
