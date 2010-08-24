@@ -523,7 +523,8 @@ static INT32 qqq1 = -1, qqq2 = 0;
 bool CMineView::SetLightStatus (void)
 {
 	INT32 h, i, j;
-	CLightDeltaIndex *dliP = theMine->LightDeltaIndex (0);
+	CLightDeltaIndex *ldiP = theMine->LightDeltaIndex (0);
+	CLightDeltaValue *ldvP;
 	LIGHT_TIMER *ltP;
 	CFlickeringLight *flP = theMine->FlickeringLights (0);
 	LIGHT_STATUS *pls;
@@ -531,32 +532,23 @@ bool CMineView::SetLightStatus (void)
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
 	INT16 nSrcSide, nSrcSeg, nSegment, nSide;
 
-CLightDeltaValue *ldv = theMine->LightDeltaValues (0);
-if (!ldv)
-	return false;
 // search delta light index to see if current side has a light
 pls = lightStatus [0];
 for (i = theMine->SegCount (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
-for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, dliP++) {
-	if (bD2XLights) {
-		nSrcSide = dliP->m_nSegment;
-		nSrcSeg = dliP->m_nSide;
-		i = dliP->m_info.count;
-		}
-	else {
-		nSrcSide = dliP->m_nSegment;
-		nSrcSeg = dliP->m_nSide;
-		i = dliP->m_info.count;
-		}	
+for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, ldiP++) {
+	nSrcSide = ldiP->m_nSegment;
+	nSrcSeg = ldiP->m_nSide;
 	j = theMine->GetFlickeringLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
-	ldv = theMine->LightDeltaValues (dliP->m_info.index);
-	for (; i; i--, ldv++) {
-		nSegment = ldv->m_nSegment;
-		nSide = ldv->m_nSide;
+	if (j >= MAX_FLICKERING_LIGHTS)
+		continue;	//shouldn't happen 
+	ldvP = theMine->LightDeltaValues (ldiP->m_info.index);
+	for (i = ldiP->m_info.count; i; i--, ldvP++) {
+		nSegment = ldvP->m_nSegment;
+		nSide = ldvP->m_nSide;
 		if (m_bShowLightSource) {
 			if ((nSegment != nSrcSide) || (nSide != nSrcSeg)) 
 				continue;

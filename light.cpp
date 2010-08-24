@@ -1314,10 +1314,9 @@ for (INT32 j = 0; j < 4; j++) {
 		length = min (length, CalcLength (sourceCorners  + i, &corner));
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
-	effect [j] = 32;
+	effect [j] = fLightScale;
 	if (length > 1.0)//if (length < 20.0 * m_lightRenderDepth) // (roughly 4 standard cube lengths)
 		effect [j] /= (length * length);
-	effect [j] *= fLightScale;
 //	else
 //		effect [j] = 0;
 	}

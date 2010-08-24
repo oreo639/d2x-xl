@@ -2988,7 +2988,8 @@ return (m_info.nWall == NO_WALL) ? NULL : theMine->Walls (m_info.nWall);
 INT32 CLightDeltaValue::Read (FILE *fp, INT32 version, bool bFlag)
 {
 m_nSegment = read_INT16 (fp);
-m_nSide = INT16 (read_INT8 (fp));
+m_nSide = read_INT8 (fp);
+read_INT8 (fp);
 for (int i = 0; i < 4; i++)
 	m_info.vertLight [i] = read_INT8 (fp);
 return 1;
@@ -3000,6 +3001,7 @@ void CLightDeltaValue::Write (FILE *fp, INT32 version, bool bFlag)
 {
 write_INT16 (m_nSegment, fp);
 write_INT8 (INT8 (m_nSide), fp);
+write_INT8 (0, fp);
 for (int i = 0; i < 4; i++)
 	write_INT8 (m_info.vertLight [i], fp);
 }
