@@ -28,16 +28,16 @@
 
 INT32 CColor::Read (FILE* fp, INT32 version, bool bNewFormat)
 {
-index = read_INT8 (fp);
+m_info.index = read_INT8 (fp);
 if (bNewFormat) {
-	color.r = double (read_INT32 (fp)) / double (0x7fffffff);
-	color.g = double (read_INT32 (fp)) / double (0x7fffffff);
-	color.b = double (read_INT32 (fp)) / double (0x7fffffff);
+	m_info.color.r = double (read_INT32 (fp)) / double (0x7fffffff);
+	m_info.color.g = double (read_INT32 (fp)) / double (0x7fffffff);
+	m_info.color.b = double (read_INT32 (fp)) / double (0x7fffffff);
 	}
 else {
-	color.r = read_DOUBLE (fp);
-	color.g = read_DOUBLE (fp);
-	color.b = read_DOUBLE (fp);
+	m_info.color.r = read_DOUBLE (fp);
+	m_info.color.g = read_DOUBLE (fp);
+	m_info.color.b = read_DOUBLE (fp);
 	}
 return 1;
 }
@@ -46,10 +46,10 @@ return 1;
 
 void CColor::Write (FILE* fp, INT32 version, bool bFlag) 
 {
-write_INT8 (index, fp);
-write_INT32 (INT32 (color.r * 0x7fffffff + 0.5), fp);
-write_INT32 (INT32 (color.g * 0x7fffffff + 0.5), fp);
-write_INT32 (INT32 (color.b * 0x7fffffff + 0.5), fp);
+write_INT8 (m_info.index, fp);
+write_INT32 (INT32 (m_info.color.r * 0x7fffffff + 0.5), fp);
+write_INT32 (INT32 (m_info.color.g * 0x7fffffff + 0.5), fp);
+write_INT32 (INT32 (m_info.color.b * 0x7fffffff + 0.5), fp);
 }
 
 // ------------------------------------------------------------------------

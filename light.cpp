@@ -614,27 +614,27 @@ else
 	return;
 //#pragma omp critical
 	{
-	if (pdc->index) {
-		pdc->color.r += psc->color.r * srcBr;
-		pdc->color.g += psc->color.g * srcBr;
-		pdc->color.b += psc->color.b * srcBr;
-		double cMax = pdc->color.r;
-			if (cMax < pdc->color.g)
-				cMax = pdc->color.g;
-			if (cMax < pdc->color. b)
-				cMax = pdc->color. b;
+	if (pdc->m_info.index) {
+		pdc->m_info.color.r += psc->m_info.color.r * srcBr;
+		pdc->m_info.color.g += psc->m_info.color.g * srcBr;
+		pdc->m_info.color.b += psc->m_info.color.b * srcBr;
+		double cMax = pdc->m_info.color.r;
+			if (cMax < pdc->m_info.color.g)
+				cMax = pdc->m_info.color.g;
+			if (cMax < pdc->m_info.color. b)
+				cMax = pdc->m_info.color. b;
 			if (cMax > 1) {
-				pdc->color.r /= cMax;
-				pdc->color.g /= cMax;
-				pdc->color.b /= cMax;
+				pdc->m_info.color.r /= cMax;
+				pdc->m_info.color.g /= cMax;
+				pdc->m_info.color.b /= cMax;
 				}
 		}
 	else {
 		if (destBr) {
-			pdc->index = 1;
-			pdc->color.r = psc->color.r * destBr;
-			pdc->color.g = psc->color.g * destBr;
-			pdc->color.b = psc->color.b * destBr;
+			pdc->m_info.index = 1;
+			pdc->m_info.color.r = psc->m_info.color.r * destBr;
+			pdc->m_info.color.g = psc->m_info.color.g * destBr;
+			pdc->m_info.color.b = psc->m_info.color.b * destBr;
 			}
 		else
 			*pdc = *psc;
@@ -687,11 +687,11 @@ segP->m_info.nIndex = m_lightRenderDepth;
 #endif
 
 CColor *plc = LightColor (nSourceSeg, nSourceSide);
-if (!plc->index) {
-	plc->index = 255;
-	plc->color.r =
-	plc->color.g =
-	plc->color.b = 1.0;
+if (!plc->m_info.index) {
+	plc->m_info.index = 255;
+	plc->m_info.color.r =
+	plc->m_info.color.g =
+	plc->m_info.color.b = 1.0;
 	}
 if (UseTexColors () && bCopyTexLights) {
 	CColor	*psc = LightColor (nSourceSeg, nSourceSide, false);
@@ -738,7 +738,7 @@ INT32 nSegCount = SegCount ();
 					continue;
 				}
 
-	//		CBRK (psc->index > 0);
+	//		CBRK (psc->m_info.index > 0);
 			// if the child side is the same as the source side, then set light and continue
 			if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
 				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;

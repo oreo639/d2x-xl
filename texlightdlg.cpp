@@ -200,11 +200,11 @@ else {
 		EnableLightControls (m_bLightEnabled = TRUE);
 	if (theMine->IsD2XLevel ()) {
 		CColor *plc = theMine->CurrLightColor ();
-		if (!plc->index) {	// set light color to white for new lights
-			plc->index = 255;
-			plc->color.r =
-			plc->color.g =
-			plc->color.b = 1.0;
+		if (!plc->m_info.index) {	// set light color to white for new lights
+			plc->m_info.index = 255;
+			plc->m_info.color.r =
+			plc->m_info.color.g =
+			plc->m_info.color.b = 1.0;
 			}
 		}
 	}
@@ -362,15 +362,15 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				SetWallColor ();
 				}
 			CColor *psc = theMine->CurrLightColor ();
-			if (psc->index = m_nColorIndex) {
-				psc->color.r = (double) m_rgbColor.peRed / 255.0;
-				psc->color.g = (double) m_rgbColor.peGreen / 255.0;
-				psc->color.b = (double) m_rgbColor.peBlue / 255.0;
+			if (psc->m_info.index = m_nColorIndex) {
+				psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
+				psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
+				psc->m_info.color.b = (double) m_rgbColor.peBlue / 255.0;
 				}
 			else {
-				psc->color.r =
-				psc->color.g =
-				psc->color.b = 1.0;
+				psc->m_info.color.r =
+				psc->m_info.color.g =
+				psc->m_info.color.b = 1.0;
 				}
 			//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
 				{
@@ -398,13 +398,13 @@ cc.lpCustColors = m_custColors;
 cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;
 if (ChooseColor (&cc)) {
 	CColor *psc = theMine->CurrLightColor ();
-	psc->index = m_nColorIndex = 255;
+	psc->m_info.index = m_nColorIndex = 255;
 	m_rgbColor.peBlue = ((BYTE) (cc.rgbResult >> 16)) & 0xFF;
 	m_rgbColor.peGreen = ((BYTE) (cc.rgbResult >> 8)) & 0xFF;
 	m_rgbColor.peRed = ((BYTE) cc.rgbResult) & 0xFF;
-	psc->color.r = (double) m_rgbColor.peRed / 255.0;
-	psc->color.g = (double) m_rgbColor.peGreen / 255.0;
-	psc->color.b = (double) m_rgbColor.peBlue / 255.0;
+	psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
+	psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
+	psc->m_info.color.b = (double) m_rgbColor.peBlue / 255.0;
 	theMine->SetTexColor (theMine->CurrSide ()->m_info.nBaseTex, psc);
 	theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
 	UpdatePaletteWnd ();

@@ -28,19 +28,20 @@ typedef struct rgbColor {
 	double	r, g, b;
 } rgbColor;
 
-class CColor : public CGameItem {
-public:
+typedef struct tColor {
 	UINT8		index;
 	rgbColor	color;
+} tColor;
+
+class CColor : public CGameItem {
+public:
+	tColor	m_info;
 
 	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false);
 
-	virtual void Clear (void) {
-		index = 0;
-		color.r = color.g = color.b = 0;
-		}
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
 typedef struct tSide {

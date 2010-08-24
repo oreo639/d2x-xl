@@ -416,13 +416,13 @@ if (!dataP)
 INT32 i = nSize / (3 * sizeof (INT32) + sizeof (UINT8));
 if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
 	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
-for (CColor *pc = DATA (MineData ().texColors); i; i--, pc++) {
-	pc->index = *dataP++;
-	pc->color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
+for (CColor *colorP = DATA (MineData ().texColors); i; i--, colorP++) {
+	colorP->m_info.index = *dataP++;
+	colorP->m_info.color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
 	dataP += sizeof (INT32);
-	pc->color.g = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
+	colorP->m_info.color.g = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
 	dataP += sizeof (INT32);
-	pc->color.b = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
+	colorP->m_info.color.b = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
 	dataP += sizeof (INT32);
 	}
 FreeResource (hGlobal);

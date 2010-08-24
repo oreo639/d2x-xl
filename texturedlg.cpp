@@ -452,10 +452,10 @@ if (!(m_bInited && theMine))
 	INT16			texture1, texture2, mode;
 	bool			bShowTexture;
 	INT32			i, j;
-	CSegment	*segP;
-	CSide		*sideP;
-	CWall		*pWall;
-	CColor		*color;
+	CSegment*	segP;
+	CSide*		sideP;
+	CWall*		pWall;
+	CColor*		colorP;
 // enable buttons as required
 /*
 EditButton->EnableWindow((IsD1File () || path [0] == NULL) ? FALSE: TRUE);
@@ -470,15 +470,15 @@ m_frame [1] = 0;
 
 segP = theMine->CurrSeg ();
 sideP = theMine->CurrSide ();
-color = theMine->CurrLightColor ();
+colorP = theMine->CurrLightColor ();
 INT32 nSide = theMine->Current ()->nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 pWall = theMine->CurrWall ();
-m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->m_info.cloakValue : color->index;
-m_rgbColor.peRed = (char) (255.0 * color->color.r);
-m_rgbColor.peGreen = (char) (255.0 * color->color.g);
-m_rgbColor.peBlue = (char) (255.0 * color->color.b);
+m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->m_info.cloakValue : colorP->m_info.index;
+m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
+m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
+m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
 if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
