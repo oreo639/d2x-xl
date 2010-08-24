@@ -83,6 +83,8 @@ void CTextureTool::UpdateLight (void)
 
 if (m_iLight < 0)
 	return;
+if (m_iLight >= MAX_FLICKERING_LIGHTS)
+	return;
 UINT32 nLightMask = 0;
 INT32 i;
 for (i = 0; i < 32; i++)

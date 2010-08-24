@@ -155,7 +155,7 @@ return true;
 //          The next time that texture is used, the handle will be defined.
 //------------------------------------------------------------------------
 
-INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, INT32 y0) 
+INT32 DefineTexture (INT16 nBaseTex, INT16 nOvlTex, CTexture *destTexP, INT32 x0, INT32 y0) 
 {
 	typedef struct tFrac {
 		INT32	c, d;
@@ -167,7 +167,7 @@ INT32 DefineTexture (INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, 
 	tFrac			scale, scale2;
 	INT32			rc; // return code
 	CTexture*	texP [2];
-	UINT8			*bmBuf = pDestTx->m_info.bmDataP;
+	UINT8			*bmBuf = destTexP->m_info.bmDataP;
 	UINT8			c;
 	INT32			fileType = theApp.FileType ();
 
@@ -189,10 +189,10 @@ if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	}
 	
 	// Define bmBuf based on texture numbers and rotation
-pDestTx->m_info.width = texP [0]->m_info.width;
-pDestTx->m_info.height = texP [0]->m_info.height;
-pDestTx->m_info.size = texP [0]->m_info.size;
-pDestTx->m_info.bValid = 1;
+destTexP->m_info.width = texP [0]->m_info.width;
+destTexP->m_info.height = texP [0]->m_info.height;
+destTexP->m_info.size = texP [0]->m_info.size;
+destTexP->m_info.bValid = 1;
 ptr = texP [0]->m_info.bmDataP;
 //CBRK (textures [0] == 220);
 if (ptr) {

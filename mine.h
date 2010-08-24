@@ -112,7 +112,6 @@ typedef struct tMineData {
 	lightDeltaValueList		lightDeltaValues;
 	INT16							m_nFlickeringLights;
 	flickeringLightList		flickeringLights;
-	textureList					textures;
 
 	//CRobotInfo				robotInfo [MAX_ROBOT_TYPES];
 	//CVertex					vertices [MAX_VERTICES3];
@@ -154,6 +153,7 @@ public:
 	HPALETTE						m_paletteHandle;
 	CPalette*					m_currentPalette;
 	LPLOGPALETTE				m_dlcLogPalette;
+	textureList					textures;
 	
 	// strings
 	char				message[256];
@@ -227,7 +227,7 @@ public:
 	inline flickeringLightList& FlickeringLights ()
 		{ return MineData ().flickeringLights; }
 	inline textureList& Textures ()
-		{ return MineData ().textures; }
+		{ return textures; }
 
 	inline CVertex *Vertices (INT32 i)
 		{ return MineData ().vertices + i; }
@@ -268,7 +268,7 @@ public:
 	inline CFlickeringLight *FlickeringLights (INT32 i)
 		{ return MineData ().flickeringLights + i; }
 	inline CTexture* Textures (INT32 i, INT32 j = 0)
-		{ return &MineData ().textures [i][j]; }
+		{ return &textures [i][j]; }
 
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
