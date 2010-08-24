@@ -391,8 +391,8 @@ public:
 	void SplitLines();
 	void SplitPoints();
 
-	CFixVector CalcSideNormal (INT16 nSegment = -1, INT16 nSide = -1);
-	CFixVector CalcSideCenter (INT16 nSegment = -1, INT16 nSide = -1);
+	CDoubleVector CalcSideNormal (INT16 nSegment = -1, INT16 nSide = -1);
+	CDoubleVector CalcSideCenter (INT16 nSegment = -1, INT16 nSide = -1);
 	double CalcLength (CFixVector* center1, CFixVector* center2);
 
 	INT32 IsLight(INT32 nBaseTex);

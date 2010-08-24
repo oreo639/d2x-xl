@@ -376,11 +376,11 @@ Segments (nSegment)->Setup ();
 
 // -------------------------------------------------------------------------- 
 
-bool CMine::AddSegment ()
+bool CMine::AddSegment (void)
 {
-	CSegment *segP, *currSeg; 
+	CSegment *newSegP, *curSegP; 
 	INT16 i, nNewSeg, nNewSide, nCurrSide = Current ()->nSide; 
-	INT16 new_verts [4]; 
+	INT16 newVerts [4]; 
 	INT16 nSegment, nSide; 
 
 if (m_bSplineActive) {
@@ -388,7 +388,7 @@ if (m_bSplineActive) {
 	return FALSE; 
 	}
 
-currSeg = Segments (Current ()->nSegment); 
+curSegP = Segments (Current ()->nSegment); 
 
 if (SegCount () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
@@ -398,7 +398,7 @@ if (SegCount () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
-if (currSeg->m_info.children [nCurrSide] >= 0) {
+if (curSegP->m_info.children [nCurrSide] >= 0) {
 	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
 	return FALSE;
 	}
@@ -406,54 +406,54 @@ if (currSeg->m_info.children [nCurrSide] >= 0) {
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 // get new verts
-new_verts [0] = VertCount () + 0; 
-new_verts [1] = VertCount () + 1; 
-new_verts [2] = VertCount () + 2; 
-new_verts [3] = VertCount () + 3; 
+newVerts [0] = VertCount (); 
+newVerts [1] = newVerts [0] + 1; 
+newVerts [2] = newVerts [0] + 2; 
+newVerts [3] = newVerts [0] + 3; 
 
 // get new segment
 nNewSeg = SegCount (); 
-segP = Segments (nNewSeg); 
+newSegP = Segments (nNewSeg); 
 
 // define vertices
-DefineVertices (new_verts); 
+DefineVertices (newVerts); 
 
 // define vert numbers for common side
-segP->m_info.verts [oppSideVertTable [nCurrSide][0]] = currSeg->m_info.verts [sideVertTable [nCurrSide][0]]; 
-segP->m_info.verts [oppSideVertTable [nCurrSide][1]] = currSeg->m_info.verts [sideVertTable [nCurrSide][1]]; 
-segP->m_info.verts [oppSideVertTable [nCurrSide][2]] = currSeg->m_info.verts [sideVertTable [nCurrSide][2]]; 
-segP->m_info.verts [oppSideVertTable [nCurrSide][3]] = currSeg->m_info.verts [sideVertTable [nCurrSide][3]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurrSide][0]] = curSegP->m_info.verts [sideVertTable [nCurrSide][0]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurrSide][1]] = curSegP->m_info.verts [sideVertTable [nCurrSide][1]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurrSide][2]] = curSegP->m_info.verts [sideVertTable [nCurrSide][2]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurrSide][3]] = curSegP->m_info.verts [sideVertTable [nCurrSide][3]]; 
 
 // define vert numbers for new side
-segP->m_info.verts [sideVertTable [nCurrSide][0]] = new_verts [0]; 
-segP->m_info.verts [sideVertTable [nCurrSide][1]] = new_verts [1]; 
-segP->m_info.verts [sideVertTable [nCurrSide][2]] = new_verts [2]; 
-segP->m_info.verts [sideVertTable [nCurrSide][3]] = new_verts [3]; 
+newSegP->m_info.verts [sideVertTable [nCurrSide][0]] = newVerts [0]; 
+newSegP->m_info.verts [sideVertTable [nCurrSide][1]] = newVerts [1]; 
+newSegP->m_info.verts [sideVertTable [nCurrSide][2]] = newVerts [2]; 
+newSegP->m_info.verts [sideVertTable [nCurrSide][3]] = newVerts [3]; 
 
 InitSegment (nNewSeg);
 // define children and special child
-segP->m_info.childFlags = 1 << oppSideTable [nCurrSide]; /* only opposite side connects to current_segment */
+newSegP->m_info.childFlags = 1 << oppSideTable [nCurrSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	segP->m_info.children [i] = (segP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1;
+	newSegP->m_info.children [i] = (newSegP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1;
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (segP->m_info.children [nSide] < 0) {
+	if (newSegP->m_info.children [nSide] < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if (currSeg->m_info.children [nSide] < 0 && currSeg->m_info.function == SEGMENT_FUNC_NONE) {
-			segP->m_sides [nSide].m_info.nBaseTex = currSeg->m_sides [nSide].m_info.nBaseTex; 
-			segP->m_sides [nSide].m_info.nOvlTex = currSeg->m_sides [nSide].m_info.nOvlTex; 
+		if ((curSegP->m_info.children [nSide] < 0) && (curSegP->m_info.function == SEGMENT_FUNC_NONE)) {
+			newSegP->m_sides [nSide].m_info.nBaseTex = curSegP->m_sides [nSide].m_info.nBaseTex; 
+			newSegP->m_sides [nSide].m_info.nOvlTex = curSegP->m_sides [nSide].m_info.nOvlTex; 
 			for (i = 0; i < 4; i++) 
-				segP->m_sides [nSide].m_info.uvls [i].l = currSeg->m_sides [nSide].m_info.uvls [i].l; 
+				newSegP->m_sides [nSide].m_info.uvls [i].l = curSegP->m_sides [nSide].m_info.uvls [i].l; 
 			} 
 		}
 	else {
-		memset (segP->m_sides [nSide].m_info.uvls, 0, sizeof (segP->m_sides [nSide].m_info.uvls));
+		memset (newSegP->m_sides [nSide].m_info.uvls, 0, sizeof (newSegP->m_sides [nSide].m_info.uvls));
 		}
 	}
 
 // define static light
-segP->m_info.staticLight = currSeg->m_info.staticLight; 
+newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete flickering light if it exists
 INT16 index = GetFlickeringLight (Current ()->nSegment, nCurrSide); 
@@ -464,11 +464,11 @@ if (index != -1) {
 	}
 
 // update current segment
-currSeg->m_info.children [nCurrSide] = nNewSeg; 
-currSeg->m_info.childFlags |= (1 << nCurrSide); 
-currSeg->m_sides [nCurrSide].m_info.nBaseTex = 0; 
-currSeg->m_sides [nCurrSide].m_info.nOvlTex = 0; 
-memset (currSeg->m_sides [nCurrSide].m_info.uvls, 0, sizeof (currSeg->m_sides [nCurrSide].m_info.uvls));
+curSegP->m_info.children [nCurrSide] = nNewSeg; 
+curSegP->m_info.childFlags |= (1 << nCurrSide); 
+curSegP->m_sides [nCurrSide].m_info.nBaseTex = 0; 
+curSegP->m_sides [nCurrSide].m_info.nOvlTex = 0; 
+memset (curSegP->m_sides [nCurrSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nCurrSide].m_info.uvls));
  
 // update number of Segments () and vertices and clear vertexStatus
 SegCount ()++;
@@ -476,19 +476,19 @@ for (int i = 0; i < 4; i++)
 	Vertices (VertCount ()++)->m_status = 0;
 
 // link the new segment with any touching Segments ()
-CFixVector *vNewSeg = Vertices (Segments (nNewSeg)->m_info.verts [0]);
+CFixVector *vNewSeg = Vertices (newSegP->m_info.verts [0]);
 CFixVector *vSeg;
 for (nSegment = 0; nSegment < SegCount (); nSegment++) {
-	if (nSegment!= nNewSeg) {
+	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (Segments (nSegment) ->m_info.verts [0]);
+		vSeg = Vertices (Segments (nSegment)->m_info.verts [0]);
 		if (labs (vNewSeg->v.x - vSeg->v.x) < 0xA00000L &&
 			 labs (vNewSeg->v.y - vSeg->v.y) < 0xA00000L &&
 			 labs (vNewSeg->v.z - vSeg->v.z) < 0xA00000L)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
-					LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3 * F1_0);
+					LinkSegments (nNewSeg, nNewSide, nSegment, nSide, 3 * F1_0);
 		}
 	}
 // auto align textures new segment
@@ -512,179 +512,139 @@ return TRUE;
 
 #define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
 
-void CMine::DefineVertices (INT16 new_verts [4])
+void CMine::DefineVertices (INT16 newVerts [4])
 {
-	CSegment*		currSeg; 
+	CSegment*		curSegP; 
 	CDoubleVector	A [8], B [8], C [8], D [8], E [8], a, b, c, d, v; 
 	double			angle1, angle2, angle3; 
 	double			length; 
 	INT16				nVertex; 
 	INT16				i; 
-	CFixVector		center, oppCenter, orthog; 
-	CVertex*			vertP;
-	CFixVector		newCenter; 
+	CDoubleVector	center, oppCenter, newCenter, orthog; 
 
-	currSeg = Segments (Current ()->nSegment); 
+curSegP = Segments (Current ()->nSegment); 
 
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
 // TODO:
 //	INT32 add_segment_mode = ORTHOGONAL; 
-	switch (add_segment_mode)
-	{
-		case(ORTHOGONAL):
+switch (add_segment_mode) {
+	case (ORTHOGONAL):
 		{
-			center = CalcSideCenter(Current ()->nSegment, Current ()->nSide); 
-			oppCenter = CalcSideCenter(Current ()->nSegment, oppSideTable [Current ()->nSide]); 
-			orthog = CalcSideNormal(Current ()->nSegment, Current ()->nSide); 
-
-			// set the length of the new cube to be one standard cube length
-			length = 20; 
-
-			// scale the vector
-			v = CDoubleVector (orthog) * length;
-			orthog = CFixVector (v); 
-
-			// figure out new center
-			newCenter = center + orthog; 
-
-			// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
-			// point 0
-			vertP = Vertices (currSeg->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(0)]]);
-			a = orthog + *vertP; 
-
-			// point 1
-			vertP = Vertices (currSeg->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(1)]]);
-			b = orthog + *vertP; 
-
-			// center
-			c = Average (a, b);
-
-			// vector from center to point0 and its length
-			d = a - c; 
-			length = d.Mag (); 
-
-			// factor to mul
-			double factor = (length > 0) ? 10.0 * F1_0 / length : 1.0; 
-
-			// set point 0
-			A [CURRENT_POINT(0)] = c + (d * factor); 
-			// set point 1
-			A [CURRENT_POINT(1)] = c - (d * factor); 
-			// point 2 is orthogonal to the vector 01 and the orthog vector
-			c = -Normal (A [CURRENT_POINT(0)], A [CURRENT_POINT(1)], orthog);
-			// normalize the vector
-			A [CURRENT_POINT(2)] = A [CURRENT_POINT(1)] + (c * (20 * F1_0)); 
-			A [CURRENT_POINT(3)] = A [CURRENT_POINT(0)] + (c * (20 * F1_0)); 
-
-			// now center the side along about the newCenter
-			a = (A [0] + A [1] + A [2] + A [3]); 
-			a /= 4;
-			for (i = 0; i < 4; i++)
-				A [i] += (CDoubleVector (newCenter) - a); 
-	
-			// set the new vertices
-			for (i = 0; i < 4; i++) {
-				//nVertex = currSeg->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
-				nVertex = new_verts [i];
-				*Vertices (nVertex) = CFixVector (A [i]); 
-				}
-			}
-		break; 
-		// METHOD 2: orghogonal with right angle on new side
-		case(EXTEND):
-		{
-			center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
-			oppCenter = CalcSideCenter (Current ()->nSegment, oppSideTable [Current ()->nSide]); 
-			orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
-
-			// calculate the length of the new cube
-			length = CalcLength (&center, &oppCenter) / F1_0; 
-
-			// scale the vector
-			orthog *= length;
-
-			// set the new vertices
-			for (i = 0; i < 4; i++) {
-				INT32 v1 = currSeg->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
-				INT32 v2 = new_verts [i];
-				Vertices (v2)->v.x = orthog.v.x + Vertices (v1)->v.x; 
-				Vertices (v2)->v.y = orthog.v.y + Vertices (v1)->v.y; 
-				Vertices (v2)->v.z = orthog.v.z + Vertices (v1)->v.z; 
-				}
-			}
-		break; 
-
-		// METHOD 3: mirror relative to plane of side
-		case(MIRROR):
-			{
-			// copy side's four points into A
-			for (i = 0; i < 4; i++) {
-				nVertex = currSeg->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
-				A [i] = CDoubleVector (*Vertices (nVertex)); 
-				nVertex = currSeg->m_info.verts [oppSideVertTable [Current ()->nSide][i]]; 
-				A [i + 4] = CDoubleVector (*Vertices (nVertex)); 
-				}
-
-			// subtract point 0 from all points in A to form B points
-			for (i = 0; i < 8; i++)
-				B [i] = A [i] - A [0]; 
-
-			// calculate angle to put point 1 in x - y plane by spinning on x - axis
-			// then rotate B points on x - axis to form C points.
-			// check to see if on x - axis already
-			//    if (B [1].z== B [1].y) {
-			//      angle1 = PI/4; 
-			//    } else {
-			angle1 = atan3(B [1].v.z, B [1].v.y); 
-			//    }
-			for (i = 0; i < 8; i++) {
-				C [i].Set (B [i].v.x, B [i].v.y * cos (angle1) + B [i].v.z * sin (angle1), -B [i].v.y * sin (angle1) + B [i].v.z * cos (angle1)); 
-			}
-
-			// calculate angle to put point 1 on x axis by spinning on z - axis
-			// then rotate C points on z - axis to form D points
-			// check to see if on z - axis already
-			//    if (C [1].y== C [1].x) {
-			//      angle2 = PI/4; 
-			//    } else {
-			angle2 = atan3(C [1].v.y, C [1].v.x); 
-			//    }
-			for (i = 0; i < 8; i++)
-				D [i].Set (C [i].v.x * cos (angle2) + C [i].v.y * sin (angle2), -C [i].v.x * sin (angle2) + C [i].v.y * cos (angle2), C [i].v.z); 
-
-			// calculate angle to put point 2 in x - y plane by spinning on x - axis
-			// the rotate D points on x - axis to form E points
-			// check to see if on x - axis already
-			//    if (D [2].z== D [2].y) {
-			//      angle3 = PI/4; 
-			//    } else {
-			angle3 = atan3(D [2].v.z, D [2].v.y); 
-			//    }
-			for (i = 0; i < 8; i++) 
-				E [i].Set (D [i].v.x, D [i].v.y * cos (angle3) + D [i].v.z * sin (angle3), -D [i].v.y * sin (angle3) + D [i].v.z * cos (angle3)); 
-
-			// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
-			// mirror new points on z axis
-			for (i = 4; i < 8; i++)
-				E [i] = -E [i]; 
-
-			// now reverse rotations
-			for (i = 4; i < 8; i++) 
-				D [i].Set (E [i].v.x, E [i].v.y * cos (-angle3) + E [i].v.z * sin (-angle3), -E [i].v.y * sin (-angle3) + E [i].v.z * cos (-angle3)); 
-			for (i = 4; i < 8; i++) 
-				C [i].Set (D [i].v.x * cos (-angle2) + D [i].v.y * sin (-angle2), -D [i].v.x * sin (-angle2) + D [i].v.y * cos (-angle2), D [i].v.z); 
-			for (i = 4; i < 8; i++) 
-				B [i].Set (C [i].v.x, C [i].v.y * cos (-angle1) + C [i].v.z * sin (-angle1), -C [i].v.y * sin (-angle1) + C [i].v.z * cos (-angle1)); 
-	
-			// and translate back
-			nVertex = currSeg->m_info.verts [sideVertTable [Current ()->nSide][0]]; 
-			for (i = 4; i < 8; i++) 
-				A [i] = B [i] + CDoubleVector (*Vertices (nVertex)); 
-
-			for (i = 0; i < 4; i++)
-				*Vertices (new_verts [i]) = CFixVector (A [i + 4]); 
+		center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
+		oppCenter = CalcSideCenter (Current ()->nSegment, oppSideTable [Current ()->nSide]); 
+		orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
+		// set the length of the new cube to be one standard cube length
+		// scale the vector
+		orthog *= 20; 
+		// figure out new center
+		newCenter = center + orthog; 
+		// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
+		// point 0
+		a = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(0)]]); 
+		// point 1
+		b = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(1)]]); 
+		// center
+		c = Average (a, b);
+		// vector from center to point0 and its length
+		d = a - c; 
+		length = d.Mag (); 
+		// factor to mul
+		double factor = (length > 0) ? 10.0 / length : 1.0; 
+		// set point 0
+		A [CURRENT_POINT(0)] = c + (d * factor); 
+		// set point 1
+		A [CURRENT_POINT(1)] = c - (d * factor); 
+		// point 2 is orthogonal to the vector 01 and the orthog vector
+		c = -Normal (A [CURRENT_POINT(0)], A [CURRENT_POINT(1)], orthog);
+		// normalize the vector
+		A [CURRENT_POINT(2)] = A [CURRENT_POINT(1)] + (c * 20); 
+		A [CURRENT_POINT(3)] = A [CURRENT_POINT(0)] + (c * 20); 
+		// now center the side along about the newCenter
+		a = (A [0] + A [1] + A [2] + A [3]); 
+		a /= 4;
+		for (i = 0; i < 4; i++)
+			A [i] += (CDoubleVector (newCenter) - a); 
+		// set the new vertices
+		for (i = 0; i < 4; i++) {
+			//nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
+			nVertex = newVerts [i];
+			*Vertices (nVertex) = CFixVector (A [i]); 
 			}
 		}
+	break; 
+
+	// METHOD 2: orghogonal with right angle on new side
+	case (EXTEND):
+		{
+		center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
+		oppCenter = CalcSideCenter (Current ()->nSegment, oppSideTable [Current ()->nSide]); 
+		orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
+		// calculate the length of the new cube
+		orthog *= Distance (center, oppCenter); 
+		// set the new vertices
+		for (i = 0; i < 4; i++) {
+			CFixVector v = *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]);
+			v += orthog;
+			*Vertices (newVerts [i]) = v; 
+			}
+		}
+	break; 
+
+	// METHOD 3: mirror relative to plane of side
+	case(MIRROR):
+		{
+		// copy side's four points into A
+		INT16 nSide = Current ()->nSide;
+		for (i = 0; i < 4; i++) {
+			A [i] = *Vertices ( curSegP->m_info.verts [sideVertTable [nSide][i]]); 
+			A [i + 4] = *Vertices (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
+			}
+
+		// subtract point 0 from all points in A to form B points
+		for (i = 0; i < 8; i++)
+			B [i] = A [i] - A [0]; 
+
+		// calculate angle to put point 1 in x - y plane by spinning on x - axis
+		// then rotate B points on x - axis to form C points.
+		// check to see if on x - axis already
+		angle1 = atan3 (B [1].v.z, B [1].v.y); 
+		for (i = 0; i < 8; i++)
+			C [i].Set (B [i].v.x, B [i].v.y * cos (angle1) + B [i].v.z * sin (angle1), -B [i].v.y * sin (angle1) + B [i].v.z * cos (angle1)); 
+		// calculate angle to put point 1 on x axis by spinning on z - axis
+		// then rotate C points on z - axis to form D points
+		// check to see if on z - axis already
+		angle2 = atan3 (C [1].v.y, C [1].v.x); 
+		for (i = 0; i < 8; i++)
+			D [i].Set (C [i].v.x * cos (angle2) + C [i].v.y * sin (angle2), -C [i].v.x * sin (angle2) + C [i].v.y * cos (angle2), C [i].v.z); 
+
+		// calculate angle to put point 2 in x - y plane by spinning on x - axis
+		// the rotate D points on x - axis to form E points
+		// check to see if on x - axis already
+		angle3 = atan3 (D [2].v.z, D [2].v.y); 
+		for (i = 0; i < 8; i++) 
+			E [i].Set (D [i].v.x, D [i].v.y * cos (angle3) + D [i].v.z * sin (angle3), -D [i].v.y * sin (angle3) + D [i].v.z * cos (angle3)); 
+
+		// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
+		// mirror new points on z axis
+		for (i = 4; i < 8; i++)
+			E [i] = -E [i]; 
+		// now reverse rotations
+		for (i = 4; i < 8; i++) 
+			D [i].Set (E [i].v.x, E [i].v.y * cos (-angle3) + E [i].v.z * sin (-angle3), -E [i].v.y * sin (-angle3) + E [i].v.z * cos (-angle3)); 
+		for (i = 4; i < 8; i++) 
+			C [i].Set (D [i].v.x * cos (-angle2) + D [i].v.y * sin (-angle2), -D [i].v.x * sin (-angle2) + D [i].v.y * cos (-angle2), D [i].v.z); 
+		for (i = 4; i < 8; i++) 
+			B [i].Set (C [i].v.x, C [i].v.y * cos (-angle1) + C [i].v.z * sin (-angle1), -C [i].v.y * sin (-angle1) + C [i].v.z * cos (-angle1)); 
+
+		// and translate back
+		nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][0]]; 
+		for (i = 4; i < 8; i++) 
+			A [i] = B [i] + CDoubleVector (*Vertices (nVertex)); 
+
+		for (i = 0; i < 4; i++)
+			*Vertices (newVerts [i]) = CFixVector (A [i + 4]); 
+		}
+	}
 }
 
 // -------------------------------------------------------------------------- 
@@ -692,45 +652,43 @@ void CMine::DefineVertices (INT16 new_verts [4])
 //
 //  Action - checks 2 Segments () and 2 sides to see if the vertices are identical
 //           If they are, then the segment sides are linked and the vertices
-//           are removed (sidenum1 is the extra side).
+//           are removed (nSide1 is the extra side).
 //
 //  Change - no longer links if segment already has a child
 //           no longer links Segments () if vert numbers are not in the right order
 //
 // -------------------------------------------------------------------------- 
 
-bool CMine::LinkSegments (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 sidenum2, FIX margin)
+bool CMine::LinkSegments (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, FIX margin)
 {
-	CSegment *seg1, *seg2; 
-	INT16 i, j; 
-	CVertex v1 [4], v2 [4]; 
-	INT16 fail;
-	tVertMatch match [4]; 
+	CSegment		* seg1, * seg2; 
+	INT16			i, j; 
+	CFixVector	v1 [4], v2 [4]; 
+	INT16			fail;
+	tVertMatch	match [4]; 
 
-	seg1 = Segments (segnum1); 
-	seg2 = Segments (segnum2); 
+	seg1 = Segments (nSegment1); 
+	seg2 = Segments (nSegment2); 
 
 // don't link to a segment which already has a child
-if (seg1->m_info.children [sidenum1]!=-1 || seg2->m_info.children [sidenum2]!=-1)
+if (seg1->m_info.children [nSide1]!=-1 || seg2->m_info.children [nSide2]!=-1)
 	return FALSE; 
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = seg1->m_info.verts [sideVertTable [sidenum1][i]];
-	memcpy (&v1 [i], Vertices (nVertex), sizeof (CVertex));
+	v1 [i] = *Vertices (seg1->m_info.verts [sideVertTable [nSide1][i]]);
 /*
 	v1 [i].x = Vertices (nVertex)->x; 
 	v1 [i].y = Vertices (nVertex)->y; 
 	v1 [i].z = Vertices (nVertex)->z; 
 */
-	nVertex = seg2->m_info.verts [sideVertTable [sidenum2][i]];
-	memcpy (&v2 [i], Vertices (nVertex), sizeof (CVertex));
+	v2 [i] = *Vertices (seg2->m_info.verts [sideVertTable [nSide2][i]]);
 /*
 	v2 [i].x = Vertices (nVertex)->x; 
 	v2 [i].y = Vertices (nVertex)->y; 
 	v2 [i].z = Vertices (nVertex)->z; 
 */
-	match [i].i =-1; 
+	match [i].i = -1; 
 }
 
 // check to see if all 4 vertices match exactly one of each of the 4 other cube's vertices
@@ -756,7 +714,9 @@ for (i = 0; i < 4; i++)
 */
 if (match [0].i == -1)
 	return FALSE;
+
 static INT32 matches [][4] = {{0,3,2,1},{1,0,3,2},{2,1,0,3},{3,2,1,0}};
+
 for (i = 1; i < 4; i++)
 	if (match [i].i != matches [match [0].i][i])
 		return FALSE;
@@ -768,7 +728,7 @@ else if ((match [0] == 2) && (match [1] != 1 || match [2] != 0 || match [3] != 3
 else if ((match [0] == 3) && (match [1] != 2 || match [2] != 1 || match [3] != 0)) fail = 1; 
 */
 // if not failed and match found for each
-LinkSides (segnum1, sidenum1, segnum2, sidenum2, match); 
+LinkSides (nSegment1, nSide1, nSegment2, nSide2, match); 
 return TRUE; 
 }
 
@@ -777,53 +737,53 @@ return TRUE;
 // LinkSides()
 // -------------------------------------------------------------------------- 
 
-void CMine::LinkSides (INT16 segnum1, INT16 sidenum1, INT16 segnum2, INT16 sidenum2, tVertMatch match [4]) 
+void CMine::LinkSides (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, tVertMatch match [4]) 
 {
-	CSegment *seg1, *seg2; 
-	seg1 = Segments (segnum1); 
-	seg2 = Segments (segnum2); 
-	INT32 i; 
-	INT16 nSegment, nVertex, oldVertex, newVertex; 
+	CSegment*	seg1 = Segments (nSegment1); 
+	CSegment*	seg2 = Segments (nSegment2); 
+	INT16			nSegment, nVertex, oldVertex, newVertex; 
+	INT32			i; 
 
-	seg1->m_info.children [sidenum1] = segnum2; 
-	seg1->m_info.childFlags |= (1 << sidenum1); 
-	seg1->m_sides [sidenum1].m_info.nBaseTex = 0; 
-	seg1->m_sides [sidenum1].m_info.nOvlTex = 0; 
-	for (i = 0; i < 4; i++) {
-		seg1->m_sides [sidenum1].m_info.uvls [i].u = 0; 
-		seg1->m_sides [sidenum1].m_info.uvls [i].v = 0; 
-		seg1->m_sides [sidenum1].m_info.uvls [i].l = 0; 
+seg1->m_info.children [nSide1] = nSegment2; 
+seg1->m_info.childFlags |= (1 << nSide1); 
+seg1->m_sides [nSide1].m_info.nBaseTex = 0; 
+seg1->m_sides [nSide1].m_info.nOvlTex = 0; 
+for (i = 0; i < 4; i++) {
+	seg1->m_sides [nSide1].m_info.uvls [i].u = 0; 
+	seg1->m_sides [nSide1].m_info.uvls [i].v = 0; 
+	seg1->m_sides [nSide1].m_info.uvls [i].l = 0; 
+}
+seg2->m_info.children [nSide2] = nSegment1; 
+seg2->m_info.childFlags |= (1 << nSide2); 
+seg2->m_sides [nSide2].m_info.nBaseTex = 0; 
+seg2->m_sides [nSide2].m_info.nOvlTex = 0; 
+for (i = 0; i < 4; i++) {
+	seg2->m_sides [nSide2].m_info.uvls [i].u = 0; 
+	seg2->m_sides [nSide2].m_info.uvls [i].v = 0; 
+	seg2->m_sides [nSide2].m_info.uvls [i].l = 0; 
 	}
-	seg2->m_info.children [sidenum2] = segnum1; 
-	seg2->m_info.childFlags |= (1 << sidenum2); 
-	seg2->m_sides [sidenum2].m_info.nBaseTex = 0; 
-	seg2->m_sides [sidenum2].m_info.nOvlTex = 0; 
-	for (i = 0; i < 4; i++) {
-		seg2->m_sides [sidenum2].m_info.uvls [i].u = 0; 
-		seg2->m_sides [sidenum2].m_info.uvls [i].v = 0; 
-		seg2->m_sides [sidenum2].m_info.uvls [i].l = 0; 
-	}
 
-	// merge vertices
-	for (i = 0; i < 4; i++) {
-		oldVertex = seg1->m_info.verts [sideVertTable [sidenum1][i]]; 
-		newVertex = seg2->m_info.verts [sideVertTable [sidenum2][match [i].i]]; 
+// merge vertices
+for (i = 0; i < 4; i++) {
+	oldVertex = seg1->m_info.verts [sideVertTable [nSide1][i]]; 
+	newVertex = seg2->m_info.verts [sideVertTable [nSide2][match [i].i]]; 
 
-		// if either vert was marked, then mark the new vert
-		VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
+	// if either vert was marked, then mark the new vert
+	VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
 
-		// update all Segments () that use this vertex
-		if (oldVertex != newVertex) {
-			CSegment *segP = Segments (0);
-			for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-				for (nVertex = 0; nVertex < 8; nVertex++)
-					if (segP->m_info.verts [nVertex] == oldVertex)
-						segP->m_info.verts [nVertex] = newVertex; 
-			// then delete the vertex
-			DeleteVertex (oldVertex); 
+	// update all Segments () that use this vertex
+	if (oldVertex != newVertex) {
+		CSegment *segP = Segments (0);
+		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+			for (nVertex = 0; nVertex < 8; nVertex++)
+				if (segP->m_info.verts [nVertex] == oldVertex)
+					segP->m_info.verts [nVertex] = newVertex; 
+		// then delete the vertex
+		DeleteVertex (oldVertex); 
 		}
 	}
 }
+
 // ------------------------------------------------------------------------- 
 // calculate_segment_center()
 // ------------------------------------------------------------------------- 

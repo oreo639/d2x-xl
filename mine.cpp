@@ -366,7 +366,7 @@ GameInfo ().lightDeltaValues.Reset ();
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CFixVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
+CDoubleVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
 {
 if (nSegment < 0)
 	nSegment = Current ()->nSegment;
@@ -377,24 +377,23 @@ if (nSide < 0)
 	UINT8*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
-v = -Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
-			    CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [1]]))), 
-			    CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [3]]))));
-return CFixVector (v);
+return -Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
+					 CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [1]]))), 
+					 CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [3]]))));
 }
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CFixVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
+CDoubleVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 {
-	INT16*		sideIndexP = Segments (nSegment)->m_info.verts;
-	UINT8*		sideVertP = &sideVertTable [nSide][0];
-	CFixVector	v;
+	INT16*			sideIndexP = Segments (nSegment)->m_info.verts;
+	UINT8*			sideVertP = &sideVertTable [nSide][0];
+	CDoubleVector	v;
 
 for (INT32 i = 0; i < 4; i++)
 	v += *Vertices (sideIndexP [sideVertP [i]]);
-v >>= 2;
+v /= 4;
 return v;
 }
 
