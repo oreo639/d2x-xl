@@ -519,11 +519,12 @@ void CMine::DefineVertices (INT16 newVerts [4])
 	double			angle1, angle2, angle3; 
 	double			length; 
 	INT16				nVertex; 
-	INT16				i; 
+	INT16				i, points [4]; 
 	CDoubleVector	center, oppCenter, newCenter, orthog; 
 
 curSegP = Segments (Current ()->nSegment); 
-
+for (i = 0; i < 4; i++)
+	points [i] = CURRENT_POINT(i);
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
 // TODO:
 //	INT32 add_segment_mode = ORTHOGONAL; 
@@ -551,19 +552,21 @@ switch (add_segment_mode) {
 		// factor to mul
 		double factor = (length > 0) ? 10.0 / length : 1.0; 
 		// set point 0
-		A [CURRENT_POINT(0)] = c + (d * factor); 
+		d *= factor;
+		A [points [0]] = c + d; 
 		// set point 1
-		A [CURRENT_POINT(1)] = c - (d * factor); 
+		A [points [1]] = c - d; 
 		// point 2 is orthogonal to the vector 01 and the orthog vector
-		c = -Normal (A [CURRENT_POINT(0)], A [CURRENT_POINT(1)], orthog);
+		c = -CrossProduct (A [points [0]] - A [points [1]], orthog);
+		c.Normalize ();
 		// normalize the vector
-		A [CURRENT_POINT(2)] = A [CURRENT_POINT(1)] + (c * 20); 
-		A [CURRENT_POINT(3)] = A [CURRENT_POINT(0)] + (c * 20); 
+		A [points [2]] = A [points [1]] + (c * 20); 
+		A [points [3]] = A [points [0]] + (c * 20); 
 		// now center the side along about the newCenter
 		a = (A [0] + A [1] + A [2] + A [3]); 
 		a /= 4;
 		for (i = 0; i < 4; i++)
-			A [i] += (CDoubleVector (newCenter) - a); 
+			A [i] += (newCenter - a); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
 			//nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
