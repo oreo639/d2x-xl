@@ -377,9 +377,9 @@ if (nSide < 0)
 	UINT8*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
-v = Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
-			   CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [1]]))), 
-			   CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [3]]))));
+v = -Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
+			    CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [1]]))), 
+			    CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [3]]))));
 return CFixVector (v);
 }
 

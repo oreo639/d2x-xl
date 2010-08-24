@@ -571,7 +571,7 @@ void CMine::DefineVertices (INT16 new_verts [4])
 			// set point 1
 			A [CURRENT_POINT(1)] = c - (d * factor); 
 			// point 2 is orthogonal to the vector 01 and the orthog vector
-			c = Normal (A [CURRENT_POINT(0)], A [CURRENT_POINT(1)], orthog);
+			c = -Normal (A [CURRENT_POINT(0)], A [CURRENT_POINT(1)], orthog);
 			// normalize the vector
 			A [CURRENT_POINT(2)] = A [CURRENT_POINT(1)] + (c * (20 * F1_0)); 
 			A [CURRENT_POINT(3)] = A [CURRENT_POINT(0)] + (c * (20 * F1_0)); 
