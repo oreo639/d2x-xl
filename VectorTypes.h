@@ -424,11 +424,11 @@ static inline const CDoubleVector Normalize (CDoubleVector v) {
 	}
 
 static inline const CDoubleVector Normal (const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
-	return Normalize (CrossProduct (p1 - p0, p2 - p1));
+	return Normalize (CrossProduct (p1 - p0, p2 - p0));
 	}
 
 static inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
-	normal = CrossProduct (p1 - p0, p2 - p1);
+	normal = CrossProduct (p1 - p0, p2 - p0);
 	DOUBLE m = normal.Mag ();
 	if (m > 0.0)
 		normal *= m;
