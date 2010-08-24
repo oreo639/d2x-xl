@@ -545,7 +545,7 @@ bool CMine::SpinSelection (double angle)
 	INT32				nSide = Current ()->nSide;
 	CSegment*		segP = Segments (nSegment);
 	CGameObject*	objP;
-	CFixVector		center, oppCenter, n;
+	CFixVector		center, oppCenter, normal;
 	INT16				i;
 
 #ifdef SPIN_RELATIVE
@@ -575,13 +575,13 @@ switch (m_selectMode) {
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
 		//       |bx by bz|
-		n = CalcSideNormal ();
+		normal = CalcSideNormal ();
 		// normalize the vector
 		// set sign (since vert numbers for most sides don't follow right-handed convention)
 		if ((nSide != 1) && (nSide != 5))
-			n = -n;
+			normal = -normal;
 		// set opposite center
-		oppCenter = center + CFixVector (n * F1_0);
+		oppCenter = center + normal;
 		/* rotate points around a line */
 		for (i = 0; i < 4; i++)
 			RotateVertex (Vertices (segP->m_info.verts [sideVertTable [nSide][i]]), &center, &oppCenter, angle);
@@ -787,9 +787,8 @@ switch (axis) {
 void CMine::RotateVertex (CFixVector* vertex, CFixVector* origin, CFixVector* normal, double angle) 
 {
 
-  double z_spin, y_spin;
-  double x1, y1, z1, x2, y2, z2, x3, y3, z3;
-  CDoubleVector	v, n;
+  double				z_spin, y_spin, h;
+  CDoubleVector	v, n, v1, v2, v3;
 
   // translate coordanites to origin
 v = CDoubleVector (*vertex - *origin);
@@ -798,42 +797,22 @@ n = CDoubleVector (*normal - *origin);
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane
 z_spin = (n.v.y == n.v.x) ? PI/4 : atan2 (n.v.y, n.v.x);
-x1 = n.v.x * cos (z_spin) + n.v.y * sin (z_spin);
-z1 = n.v.z;
+h = n.v.x * cos (z_spin) + n.v.y * sin (z_spin);
 // spin on y to get on the x axis
-y_spin = (z1 == x1) ? PI/4 : -atan2(z1, x1);
+y_spin = (n.v.z == h) ? PI/4 : -atan2(n.v.z, h);
+
 // normalize vertex (spin on z then y)
-x1 = v.v.x * cos (z_spin) + v.v.y * sin (z_spin);
-y1 = -v.v.x * sin (z_spin) + v.v.y * cos (z_spin);
-z1 = v.v.z;
-
-x2 = x1 * cos (y_spin) - z1 * sin (y_spin);
-y2 = y1;
-z2 = x1 * sin (y_spin) + z1 * cos (y_spin);
-
-// spin x
-x3 = x2;
-y3 = y2 * cos (angle) + z2 * sin (angle);
-z3 = -y2 * sin (angle) + z2 * cos (angle);
-
+v1.Set (v.v.x * cos (z_spin) + v.v.y * sin (z_spin), v.v.y * cos (z_spin) - v.v.x * sin (z_spin), v.v.z);
+v2.Set (v1.v.x * cos (y_spin) - v1.v.z * sin (y_spin), v1.v.y, v1.v.x * sin (y_spin) + v1.v.z * cos (y_spin));
+v3.Set (v2.v.x, v2.v.y * cos (angle) + v2.v.z * sin (angle), v2.v.z * cos (angle) - v2.v.y * sin (angle));
 // spin back in negative direction (y first then z)
-x2 = x3 * cos (-y_spin) - z3 * sin (-y_spin);
-y2 = y3;
-z2 = x3 * sin (-y_spin) + z3 * cos (-y_spin);
+y_spin = -y_spin;
+v2.Set (v3.v.x * cos (y_spin) - v3.v.z * sin (y_spin), v3.v.y, v3.v.x * sin (y_spin) + v3.v.z * cos (y_spin));
+z_spin = -z_spin;
+v1.Set (v2.v.x * cos (z_spin) + v2.v.y * sin (z_spin), v2.v.y * cos (z_spin) - v2.v.x * sin (z_spin), v2.v.z);
 
-x1 = x2 * cos (-z_spin) + y2 * sin (-z_spin);
-y1 = -x2 * sin (-z_spin) + y2 * cos (-z_spin);
-z1 = z2;
-
-// translate back
-vertex->v.x = (FIX) (x1 + origin->v.x);
-vertex->v.y = (FIX) (y1 + origin->v.y);
-vertex->v.z = (FIX) (z2 + origin->v.z);
-
-// round off values
-// round_off(&vertex->x,grid);
-// round_off(&vertex->y,grid);
-// round_off(&vertex->z,grid);
+*vertex = v1;
+*vertex += *origin;
 }
 
 // eof modify.cpp
