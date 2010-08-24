@@ -3567,7 +3567,7 @@ else {
 	apoint.x = (INT16) xPos;
 	apoint.y = (INT16) yPos;
 	apoint.z = m_viewPoints [vert1].z;
-	m_view.UnsetPoint(theMine->Vertices (vert1), &apoint);
+	m_view.Unproject(theMine->Vertices (vert1), &apoint);
 	}
 Refresh ();
 }

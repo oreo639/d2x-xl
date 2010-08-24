@@ -39,7 +39,7 @@ public:
 	void Calculate (double xMove, double yMove, double zMove);
 	void CalculateInverse (double xMove, double yMove, double zMove);
 	void Project (CFixVector* vert, APOINT *apoint);
-	void UnsetPoint (CFixVector* vert, APOINT *apoint);
+	void Unproject (CFixVector* vert, APOINT *apoint);
 	INT32 CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b);
 	inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
 	inline double Scale (void) { return m_scale [0]; }

@@ -206,18 +206,18 @@ CDoubleMatrix CDoubleMatrix::Mul (const CDoubleMatrix& other)
 	CDoubleVector v;
 	CDoubleMatrix m;
 
-v.Set (rVec.v.x, uVec.v.x, fVec.v.x);
-m.rVec.v.x = v ^ other.rVec;
-m.uVec.v.x = v ^ other.uVec;
-m.fVec.v.x = v ^ other.fVec;
-v.Set (rVec.v.y, uVec.v.y, fVec.v.y);
-m.rVec.v.y = v ^ other.rVec;
-m.uVec.v.y = v ^ other.uVec;
-m.fVec.v.y = v ^ other.fVec;
-v.Set (rVec.v.z, uVec.v.z, fVec.v.z);
-m.rVec.v.z = v ^ other.rVec;
-m.uVec.v.z = v ^ other.uVec;
-m.fVec.v.z = v ^ other.fVec;
+v.Set (other.rVec.v.x, other.uVec.v.x, other.fVec.v.x);
+m.rVec.v.x = v ^ rVec;
+m.uVec.v.x = v ^ uVec;
+m.fVec.v.x = v ^ fVec;
+v.Set (other.rVec.v.y, other.uVec.v.y, other.fVec.v.y);
+m.rVec.v.y = v ^ rVec;
+m.uVec.v.y = v ^ uVec;
+m.fVec.v.y = v ^ fVec;
+v.Set (other.rVec.v.z, other.uVec.v.z, other.fVec.v.z);
+m.rVec.v.z = v ^ rVec;
+m.uVec.v.z = v ^ uVec;
+m.fVec.v.z = v ^ fVec;
 return m;
 }
 
@@ -226,7 +226,7 @@ return m;
 const double CDoubleMatrix::Det (void) 
 {
 return rVec.v.x * (fVec.v.y * uVec.v.z - uVec.v.y * fVec.v.z) +
-		 uVec.v.y * (rVec.v.y * fVec.v.z - fVec.v.z * rVec.v.z) +
+		 uVec.v.x * (rVec.v.y * fVec.v.z - fVec.v.y * rVec.v.z) +
 		 fVec.v.x * (uVec.v.y * rVec.v.z - rVec.v.y * uVec.v.z);
 }
 
@@ -241,9 +241,11 @@ if (det != 0.0) {
 	m.rVec.v.x = (fVec.v.y * uVec.v.z - uVec.v.y * fVec.v.z) / det;
 	m.rVec.v.y = (rVec.v.y * fVec.v.z - fVec.v.y * rVec.v.z) / det;
 	m.rVec.v.z = (uVec.v.y * rVec.v.z - rVec.v.y * uVec.v.z) / det;
+
 	m.uVec.v.x = (uVec.v.x * fVec.v.z - fVec.v.x * uVec.v.z) / det;
 	m.uVec.v.y = (fVec.v.x * rVec.v.z - rVec.v.x * fVec.v.z) / det;
-	m.uVec.v.z = (rVec.v.x * uVec.v.z - fVec.v.x * rVec.v.z) / det;
+	m.uVec.v.z = (rVec.v.x * uVec.v.z - uVec.v.x * rVec.v.z) / det;
+
 	m.fVec.v.x = (fVec.v.x * uVec.v.y - uVec.v.x * fVec.v.y) / det;
 	m.fVec.v.y = (rVec.v.x * fVec.v.y - fVec.v.x * rVec.v.y) / det;
 	m.fVec.v.z = (uVec.v.x * rVec.v.y - rVec.v.x * uVec.v.y) / det;
@@ -488,7 +490,7 @@ apoint->z = (INT16) r.v.z;
 //			     unset_point()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::UnsetPoint (CFixVector* vertex, APOINT *apoint) 
+void CViewMatrix::Unproject (CFixVector* vertex, APOINT *apoint) 
 {
 CDoubleVector v (double (apoint->x - x_center), double (y_center - apoint->y), double (apoint->z));
 double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
