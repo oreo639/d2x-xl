@@ -143,7 +143,7 @@ pcb->AddString ("Neutral");
 pcb->AddString ("Unowned");
 pcb->AddString ("Blue Team");
 pcb->AddString ("Red Team");
-m_bInited = TRUE;
+m_bInited = true;
 return TRUE;
 }
 

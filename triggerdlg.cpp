@@ -230,7 +230,7 @@ INT32 i;
 for (i = 1; i <= 10; i++)
 	SlCtrl (IDC_TRIGGER_SLIDER)->SetTic (i);
 LoadTextureListBoxes ();
-m_bInited = TRUE;
+m_bInited = true;
 return TRUE;
 }
 

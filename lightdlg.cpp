@@ -77,6 +77,7 @@ InitSlider (IDC_LIGHT_DELTA_FRAMERATE, 10, 100);
 INT32 i;
 for (i = 20; i < 100; i += 10)
 	SlCtrl (IDC_LIGHT_DELTA_FRAMERATE)->SetTic (i);
+m_bInited = true;
 return TRUE;
 }
 

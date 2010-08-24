@@ -169,6 +169,7 @@ SetAppSettings ();
 #else
 m_bInvalid = false;
 #endif
+m_bInited = true;
 return TRUE;
 }
 
