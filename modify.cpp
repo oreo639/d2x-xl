@@ -32,14 +32,14 @@ bool CMine::EditGeoFwd (void)
 	 INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
    center += *Vertices (nVertex);
  }
-center /= FIX (4);
+center /= 4.0;
 
 // calculate center of opposite of current side
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
    oppCenter += *Vertices (nVertex);
 	}
-oppCenter /= FIX (4);
+oppCenter /= 4.0;
 center -= oppCenter;
 // normalize vector
 v = CDoubleVector (center);
@@ -395,14 +395,16 @@ return false;
 
 bool CMine::MovePoints (INT32 pt0, INT32 pt1) 
 {
-	CFixVector	* vector0, * vector1, delta;
+	CFixVector	delta;
 	double		length;
 	INT32			i;
 	CSegment*	segP = Segments (Current ()->nSegment);
 	UINT8*		sideVertP = sideVertTable [Current ()->nSide];
+	INT16			p0 = sideVertP [CURRENT_POINT(pt0)];
+	INT16			p1 = sideVertP [CURRENT_POINT(pt1)];
 
-delta = *Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt0)]]) -
-		  *Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt1)]]);
+delta = *Vertices (segP->m_info.verts [p1]) -
+		  *Vertices (segP->m_info.verts [p0]);
 length = delta.Mag ();
 if (length < F1_0) 
 	delta.Set (move_rate, 0, 0);
@@ -411,13 +413,13 @@ else
 
 switch (m_selectMode){
 	case POINT_MODE:
-		*Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(0)]]) += delta;
+		*Vertices (segP->m_info.verts [p0]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
 	case LINE_MODE:
-		*Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(0)]]) += delta;
-		*Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(1)]]) += delta;
+		*Vertices (segP->m_info.verts [p0]) += delta;
+		*Vertices (segP->m_info.verts [p1]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 

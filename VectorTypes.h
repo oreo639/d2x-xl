@@ -474,7 +474,7 @@ static inline DOUBLE Distance (const CFixVector& p0, const CFixVector& p1) {
 
 static inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
 	CFixVector v = p0 + p1;
-	v /= FIX (2);
+	v /= 2.0;
 	return v;
 	}
 #endif

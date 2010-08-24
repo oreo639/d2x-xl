@@ -802,7 +802,7 @@ INT32 i;
 for (i = 0; i < 8; i++) {
 	pos += *Vertices (nVerts [i]);
 	}
-pos /= FIX (8);
+pos /= 8.0;
 /*
   pos.x  = 
       (Vertices (verts [0])->x
@@ -2363,7 +2363,7 @@ VertCount () = h;
 segCenter.Clear ();
 for (i = 0; i < 8; i++)
 	segCenter += *Vertices (centerSegP->m_info.verts [i]);
-segCenter /= FIX (8);
+segCenter /= 8.0;
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
