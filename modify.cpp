@@ -28,10 +28,10 @@ bool CMine::EditGeoFwd (void)
   INT32				i;
 /* calculate center of current side */
 
- for (i = 0; i < 4; i++) {
-	 INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
+for (i = 0; i < 4; i++) {
+	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
    center += *Vertices (nVertex);
- }
+	 }
 center /= 4.0;
 
 // calculate center of opposite of current side
@@ -40,6 +40,7 @@ for (i = 0; i < 4; i++) {
    oppCenter += *Vertices (nVertex);
 	}
 oppCenter /= 4.0;
+
 center -= oppCenter;
 // normalize vector
 v = CDoubleVector (center);
@@ -47,21 +48,16 @@ v = CDoubleVector (center);
 // normalize direction
 radius = v.Mag ();
 
-if (radius > (F1_0 / 10)) {
+if (radius > 0.1)
 	v /= radius;
-	}
-else {
-	CFixVector direction;
-	direction = CalcSideNormal (Current ()->nSegment, Current ()->nSide);
-	v = CDoubleVector (direction) / (double) F1_0;
-	}
+else
+	v = CalcSideNormal (Current ()->nSegment, Current ()->nSide);
 
 // move on x, y, and z
  theApp.SetModified (TRUE);
  theApp.LockUndo ();
- MoveOn('X', (INT32) (v.v.x * move_rate));
- MoveOn('Y', (INT32) (v.v.y * move_rate));
- MoveOn('Z', (INT32) (v.v.z * move_rate));
+ v *= move_rate;
+ MoveOn (v);
  theApp.UnlockUndo ();
  return true;
 }
@@ -105,46 +101,47 @@ CDoubleVector v (center - oppCenter);
 	CSegment *segP;
 	INT16 point0,point1;
 	CFixVector* vector0,*vector1;
-	bool ok_to_move;
+	bool okToMove;
 
-ok_to_move = TRUE;
+okToMove = TRUE;
 segP = Segments (0) + Current ()->nSegment;
+UINT8* sideNormalP = sideNormalTable [Current ()->nSide];
 switch (m_selectMode) {
 	case POINT_MODE:
-		point0 = lineVertTable [sideNormalTable [Current ()->nSide][Current ()->nPoint]][0];
-		point1 = lineVertTable [sideNormalTable [Current ()->nSide][Current ()->nPoint]][1];
+		point0 = lineVertTable [sideNormalP [Current ()->nPoint]][0];
+		point1 = lineVertTable [sideNormalP [Current ()->nPoint]][1];
 		vector0 = Vertices (segP->m_info.verts [point0]);
 		vector1 = Vertices (segP->m_info.verts [point1]);
 		if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-		ok_to_move = FALSE;
+		okToMove = FALSE;
 		}
 		break;
 
 	case LINE_MODE:
-		for (i=0;i<2;i++) {
-			point0 = lineVertTable [sideNormalTable [Current ()->nSide][(Current ()->nLine+i)%4]][0];
-			point1 = lineVertTable [sideNormalTable [Current ()->nSide][(Current ()->nLine+i)%4]][1];
+		for (i = 0; i < 2; i++) {
+			point0 = lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][0];
+			point1 = lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][1];
 			vector0 = Vertices (segP->m_info.verts [point0]);
 			vector1 = Vertices (segP->m_info.verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-			ok_to_move = FALSE;
+			okToMove = FALSE;
 			}
 		}
 	break;
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
-			point0 = lineVertTable [sideNormalTable [Current ()->nSide][i]][0];
-			point1 = lineVertTable [sideNormalTable [Current ()->nSide][i]][1];
+			point0 = lineVertTable [sideNormalP [i]][0];
+			point1 = lineVertTable [sideNormalP [i]][1];
 			vector0 = Vertices (segP->m_info.verts [point0]);
 			vector1 = Vertices (segP->m_info.verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-			ok_to_move = FALSE;
+			okToMove = FALSE;
 			}
 		}
 		break;
 	}
-if (!ok_to_move) {
+if (!okToMove) {
 	ErrorMsg ("Too small to move in that direction");
 	return false;
 	}
@@ -159,21 +156,15 @@ if ((radius - move_rate) < F1_0 / 4) {
 	}
 else {
 	// normalize direction
-	if (radius > (F1_0/10)) {
+	if (radius > 0.1) 
 		v /= radius;
-		} 
-	else {
-		CFixVector direction;
-		direction = CalcSideNormal(Current ()->nSegment,Current ()->nSide);
-		v = CDoubleVector (direction);
-		v /= (double)F1_0;
-		}
+	else 
+		v = CalcSideNormal (Current ()->nSegment,Current ()->nSide);
 	// move on x, y, and z
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
-	MoveOn('X',(INT32) (-v.v.x * move_rate));
-	MoveOn('Y',(INT32) (-v.v.y * move_rate));
-	MoveOn('Z',(INT32) (-v.v.z * move_rate));
+	v *= -move_rate;
+	MoveOn (v);
 	theApp.UnlockUndo ();
 	}
 theApp.SetModified (TRUE);
@@ -500,7 +491,7 @@ return true;
 				MoveOn()
 ***************************************************************************/
 
-bool CMine::MoveOn (char axis,INT32 inc) 
+bool CMine::MoveOn (CFixVector inc) 
 {
 INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
@@ -512,125 +503,42 @@ INT16 i;
 theApp.SetModified (TRUE);
 switch (m_selectMode) {
 	case POINT_MODE:
-		switch (axis) {
-			case 'X':
-				Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]])->v.x += inc;
-				break;
-			case 'Y':
-				Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]])->v.y += inc;
-				break;
-			case 'Z':
-				Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]])->v.z += inc;
-				break;
-			}
+		*Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += inc;
 		break;
 
 	case LINE_MODE:
-		switch (axis) {
-			case 'X':
-				Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]])->v.x += inc;
-				Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]])->v.x += inc;
-				break;
-			case 'Y':
-				Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]])->v.y += inc;
-				Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]])->v.y += inc;
-				break;
-			case 'Z':
-				Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]])->v.z += inc;
-				Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]])->v.z += inc;
-				break;
-			}
+		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]) += inc;
+		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]) += inc;
 		break;
 
 	case SIDE_MODE:
-		switch (axis) {
-			case 'X':
-			for (i = 0; i < 4; i++)
-				Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->v.x += inc;
-			break;
-		case 'Y':
-			for (i = 0; i < 4; i++)
-				Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->v.y += inc;
-			break;
-		case 'Z':
-			for (i = 0; i < 4; i++)
-				Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->v.z += inc;
-			break;
-		}
+		for (i = 0; i < 4; i++)
+			*Vertices (segP->m_info.verts [sideVertTable [nSide][i]]) += inc;
 		break;
 
 	case CUBE_MODE:
-		switch (axis) {
-			case 'X':
-				for (i = 0; i < 8; i++)
-					Vertices (segP->m_info.verts [i])->v.x += inc;
-				for (i = 0; i < GameInfo ().objects.count; i++)
-					if (Objects (i)->m_info.nSegment == nSegment)
-						Objects (i)->m_info.pos.v.x += inc;
-				break;
-			case 'Y':
-				for (i = 0; i < 8; i++)
-					Vertices (segP->m_info.verts [i])->v.y += inc;
-				for (i = 0; i < GameInfo ().objects.count; i++) 
-					if (Objects (i)->m_info.nSegment == nSegment)
-						Objects (i)->m_info.pos.v.y += inc;
-				break;
-			case 'Z':
-				for (i = 0; i < 8; i++)
-					Vertices (segP->m_info.verts [i])->v.z += inc;
-				for (i = 0; i < GameInfo ().objects.count; i++) 
-					if (Objects (i)->m_info.nSegment == nSegment) 
-						Objects (i)->m_info.pos.v.z += inc;
-				break;
-			}
-	break;
+		for (i = 0; i < 8; i++)
+			*Vertices (segP->m_info.verts [i]) += inc;
+		for (i = 0; i < GameInfo ().objects.count; i++)
+			if (Objects (i)->m_info.nSegment == nSegment)
+				Objects (i)->m_info.pos += inc;
+		break;
 
 	case OBJECT_MODE:
-		switch (axis) {
-			case 'X':
-				CurrObj ()->m_info.pos.v.x += inc;
-				break;
-			case 'Y':
-				CurrObj ()->m_info.pos.v.y += inc;
-				break;
-			case 'Z':
-				CurrObj ()->m_info.pos.v.z += inc;
-				break;
-		}
+		CurrObj ()->m_info.pos += inc;
+		break;
 	break;
 
 	case BLOCK_MODE:
 		CGameObject *objP = Objects (0);
-		switch (axis) {
-			case 'X':
-				for (i = 0; i < MAX_VERTICES; i++)
-					if (VertStatus (i) & MARKED_MASK)
-						Vertices (i)->v.x += inc;
-				for (i = GameInfo ().objects.count; i; i--, objP++)
-					if (objP->m_info.nSegment >= 0)
-						if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-							objP->m_info.pos.v.x += inc;
-				break;
-			case 'Y':
-				for (i = 0; i < MAX_VERTICES; i++)
-					if (VertStatus (i) & MARKED_MASK)
-						Vertices (i)->v.y += inc;
-				for (i = GameInfo ().objects.count; i; i--, objP++)
-					if (objP->m_info.nSegment >= 0)
-						if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-							objP->m_info.pos.v.y += inc;
-				break;
-			case 'Z':
-				for (i = 0; i < MAX_VERTICES; i++)
-					if (VertStatus (i) & MARKED_MASK)
-						Vertices (i)->v.z += inc;
-				for (i = GameInfo ().objects.count; i; i--, objP++)
-					if (objP->m_info.nSegment >= 0)
-						if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-							objP->m_info.pos.v.z += inc;
-				break;
-		}
-	break;
+		for (i = 0; i < MAX_VERTICES; i++)
+			if (VertStatus (i) & MARKED_MASK)
+				*Vertices (i) += inc;
+		for (i = GameInfo ().objects.count; i; i--, objP++)
+			if (objP->m_info.nSegment >= 0)
+				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
+					objP->m_info.pos += inc;
+		break;
 	}
 return true;
 }
