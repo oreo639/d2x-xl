@@ -99,46 +99,34 @@ CDoubleVector v (center - oppCenter);
 		{11,10,9,4}
 		};
 	CSegment *segP;
-	INT16 point0,point1;
-	CFixVector* vector0,*vector1;
-	bool okToMove;
+	bool		okToMove = true;
 
-okToMove = TRUE;
 segP = Segments (0) + Current ()->nSegment;
 UINT8* sideNormalP = sideNormalTable [Current ()->nSide];
 switch (m_selectMode) {
 	case POINT_MODE:
-		point0 = lineVertTable [sideNormalP [Current ()->nPoint]][0];
-		point1 = lineVertTable [sideNormalP [Current ()->nPoint]][1];
-		vector0 = Vertices (segP->m_info.verts [point0]);
-		vector1 = Vertices (segP->m_info.verts [point1]);
-		if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-		okToMove = FALSE;
-		}
+		if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][0]]), 
+						  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][1]]))
+			 - move_rate < F1_0 / 4) 
+			okToMove = false;
 		break;
 
 	case LINE_MODE:
 		for (i = 0; i < 2; i++) {
-			point0 = lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][0];
-			point1 = lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][1];
-			vector0 = Vertices (segP->m_info.verts [point0]);
-			vector1 = Vertices (segP->m_info.verts [point1]);
-			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-			okToMove = FALSE;
+			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][0]]), 
+							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][1]]))
+				 - move_rate < F1_0 / 4) 
+				okToMove = false;
 			}
-		}
 	break;
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
-			point0 = lineVertTable [sideNormalP [i]][0];
-			point1 = lineVertTable [sideNormalP [i]][1];
-			vector0 = Vertices (segP->m_info.verts [point0]);
-			vector1 = Vertices (segP->m_info.verts [point1]);
-			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
-			okToMove = FALSE;
+			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [i]][0]]), 
+							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [i]][1]]))
+				 - move_rate < F1_0 / 4) 
+			okToMove = false;
 			}
-		}
 		break;
 	}
 if (!okToMove) {
@@ -147,7 +135,7 @@ if (!okToMove) {
 	}
 
 double radius = v.Mag ();
-if ((radius - move_rate) < F1_0 / 4) {
+if ((radius - move_rate) < 0.25) {
 	if (m_selectMode == POINT_MODE || m_selectMode == LINE_MODE || m_selectMode == SIDE_MODE) {
 		ErrorMsg ("Cannot make cube any smaller\n"
 		"Cube must be greater or equal to 1.0 units wide.");
