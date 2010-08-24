@@ -14,8 +14,8 @@ public:
 
 private:
 	double m_depthPerception;
-	double m_scale, m_scaleSave;
-	double m_angles [3], m_angleSave [3];
+	double m_scale [2];
+	double m_angles [2][3];
 	INT16 m_viewWidth;
 	INT16 m_viewHeight;
 
@@ -42,7 +42,7 @@ public:
 	void UnsetPoint (CFixVector* vert, APOINT *apoint);
 	INT32 CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b);
 	inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
-	inline double Scale (void) { return m_scale; }
+	inline double Scale (void) { return m_scale [0]; }
 	void Push (void);
 	void Pop (void);
 	void Unrotate (void);

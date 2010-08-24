@@ -412,7 +412,7 @@ void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/)
 	CWall				*wallP;
 	INT16				i,j;
 	CFixVector		origin;
-	CDoubleVector	xPrime,yPrime,zPrime,vVertex;
+	CDoubleVector	xPrime, yPrime, zPrime, vVertex;
 	INT16				nVertex;
 
 #if DEMO

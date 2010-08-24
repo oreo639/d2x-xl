@@ -58,7 +58,7 @@ m_reactorTool = NULL;
 m_diagTool = NULL;
 m_prefsDlg = NULL;
 m_txtFilterTool = NULL;
-m_pTools = new CPropertySheet ();
+m_pTools = NULL;
 m_scrollOffs [0] = 0;
 m_scrollPage [0] = 0;
 m_scrollRange [0] = 0;
@@ -109,6 +109,9 @@ void CToolView::Refresh (void)
 {
 CHECKMINE;
 
+if (!m_pTools)
+	return;
+
 	CPropertyPage	*p = m_pTools->GetActivePage ();
 
 if (p == m_prefsDlg)
@@ -139,8 +142,9 @@ else if (p == m_diagTool)
 
 int CToolView::Setup (void)
 {
-if (!m_pTools)
-	return -1;
+if (m_pTools)
+	return 0;
+m_pTools = new CPropertySheet ();
 m_textureTool = new CTextureTool (m_pTools);
 m_segmentTool = new CSegmentTool (m_pTools);
 m_wallTool = new CWallTool (m_pTools);

@@ -154,10 +154,10 @@ return (result);
 INT16 CMine::GetFlickeringLight (INT16 nSegment, INT16 nSide) 
 {
 GetCurrent (nSegment, nSide);
-CFlickeringLight *pfl = FlickeringLights (0);
+CFlickeringLight *flP = FlickeringLights (0);
 INT32 i;
-for (i = FlickerLightCount (); i; i--, pfl++)
-	if ((pfl->m_nSegment == nSegment) && (pfl->m_nSide == nSide))
+for (i = FlickerLightCount (); i; i--, flP++)
+	if ((flP->m_nSegment == nSegment) && (flP->m_nSide == nSide))
 		break;
 if (i > 0)
 	return FlickerLightCount () - i;
@@ -220,7 +220,7 @@ return ++FlickerLightCount ();
 // removes a flickering light if it exists
 //------------------------------------------------------------------------
 
-bool CMine::DeleteFlickeringLight(INT16 nSegment, INT16 nSide) 
+bool CMine::DeleteFlickeringLight (INT16 nSegment, INT16 nSide) 
 {
 if (nSegment < 0)
 	nSegment = Current ()->nSegment;

@@ -275,10 +275,10 @@ return dest;
 CViewMatrix::CViewMatrix () 
 {
 Set (0,0,0,1,1,1,0,0,0);
-m_scale = 1;
-m_angleSave [0] = 
-m_angleSave [1] =
-m_angleSave [2] = 0;
+m_scale [0] = 1;
+m_angles [1] [0] = 
+m_angles [1] [1] =
+m_angles [1] [2] = 0;
 }
 
 // -----------------------------------------------------------------------------
@@ -322,17 +322,17 @@ m_invMove [0] = m_invMat [0] * m_move [0];
 
 void CViewMatrix::ClampAngle (INT32 i)
 {
-if (m_angleSave [i] < 0)
-	m_angleSave [i] += (INT32) (-m_angleSave [i] / 360) * 360;
+if (m_angles [1] [i] < 0)
+	m_angles [1] [i] += (INT32) (-m_angles [1] [i] / 360) * 360;
 else
-	m_angleSave [i] -= (INT32) (m_angleSave [i] / 360) * 360;
+	m_angles [1] [i] -= (INT32) (m_angles [1] [i] / 360) * 360;
 }
 
 //--------------------------------------------------------------------------
 
 void CViewMatrix::RotateAngle (INT32 i, double a)
 {
-m_angles [i] += a;
+m_angles [0] [i] += a;
 //ClampAngle (i);
 }
 
@@ -344,8 +344,8 @@ m_mat [1] = m_mat [0];
 m_invMat [1] = m_invMat [0];
 m_move [1] = m_move [0];
 m_invMove [1] = m_invMove [0];
-memcpy (m_angleSave, m_angleSave, sizeof (m_angleSave));
-m_scaleSave = m_scale;
+memcpy (m_angles [0], m_angles [1], sizeof (m_angles [1]));
+m_scale [1] = m_scale [0];
 }
 
 //--------------------------------------------------------------------------
@@ -356,8 +356,8 @@ m_mat [0] = m_mat [1];
 m_invMat [0] = m_invMat [1];
 m_move [0] = m_move [1];
 m_invMove [0] = m_invMove [1];
-memcpy (m_angleSave, m_angleSave, sizeof (m_angleSave));
-m_scale = m_scaleSave;
+memcpy (m_angles [1], m_angles [0], sizeof (m_angles [1]));
+m_scale [0] = m_scale [1];
 }
 
 //--------------------------------------------------------------------------
@@ -365,13 +365,13 @@ m_scale = m_scaleSave;
 void CViewMatrix::Unrotate (void)
 {
 #if 0
-Rotate ('X', -m_angleSave [0]);
-Rotate ('Y', -m_angleSave [1]);
-Rotate ('Z', -m_angleSave [2]);
+Rotate ('X', -m_angles [1] [0]);
+Rotate ('Y', -m_angles [1] [1]);
+Rotate ('Z', -m_angles [1] [2]);
 #else
 Set (0,0,0,1,1,1,0,0,0);
 #endif
-Scale (m_scale);
+Scale (m_scale [0]);
 Calculate (m_move [1].v.x, m_move [1].v.y, m_move [1].v.z);
 }
 
@@ -394,7 +394,7 @@ if (angle) {
 			RotateAngle (1, angle);
 			break;
 		case 'Z':
-			m.Set (cosa, sina, 0.0, -sina, cosa, 0.0, 0.0, 0.0, 0.0);
+			m.Set (cosa, sina, 0.0, -sina, cosa, 0.0, 0.0, 0.0, 1.0);
 			RotateAngle (2, angle);
 			break;
 		}
@@ -412,7 +412,7 @@ void CViewMatrix::Scale (double scale)
 CDoubleMatrix s (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, scale);
 CDoubleMatrix r = m_invMat [0];
 m_invMat [0] = r * s;
-m_scale *= scale;
+m_scale [0] *= scale;
 }
 
 //--------------------------------------------------------------------------
