@@ -292,6 +292,7 @@ BOOL CTexToolDlg::OnInitDialog ()
 if (!CToolDlg::OnInitDialog ())
 	return FALSE;
 CreateImgWnd (&m_textureWnd, m_nTexWndId);
+m_bInited = true;
 return TRUE;
 }
 

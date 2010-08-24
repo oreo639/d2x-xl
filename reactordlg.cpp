@@ -59,7 +59,7 @@ BOOL CReactorTool::OnInitDialog ()
 if (!CToolDlg::OnInitDialog ())
 	return FALSE;
 // Descent only uses the first control center, #0
-m_bInited = TRUE;
+m_bInited = true;
 return TRUE;
 }
 

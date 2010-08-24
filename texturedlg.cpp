@@ -286,7 +286,7 @@ m_nLightTimer = -1;
 m_nEditTimer = -1;
 UpdateLightWnd ();
 UpdateData (FALSE);
-m_bInited = TRUE;
+m_bInited = true;
 return TRUE;
 }
 
