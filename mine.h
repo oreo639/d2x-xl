@@ -416,6 +416,7 @@ public:
 	void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
 	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
+	void IlluminateSide (CSegment* segP, INT16 nSide, UINT32 brightness, CColor* lightColorP, double* effect, double fLightScale);
 	bool CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
 								CFixVector* source_corner, CFixVector& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);

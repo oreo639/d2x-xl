@@ -599,46 +599,66 @@ theApp.UnlockUndo ();
 // srcBr: source brightness (remaining brightness at current vertex/side)
 // destBr: vertex/side brightness
 
-void CMine::BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr)
+void CMine::BlendColors (CColor *srcColorP, CColor *destColorP, double srcBrightness, double destBrightness)
 {
-if (destBr)
-	destBr /= 65536.0;
+if (destBrightness)
+	destBrightness /= 65536.0;
 else {
-	if (srcBr)
-		*pdc = *psc;
+	if (srcBrightness)
+		*destColorP = *srcColorP;
 	return;
 	}
-if (srcBr)
-	srcBr /= 65536.0;
+if (srcBrightness)
+	srcBrightness /= 65536.0;
 else
 	return;
 //#pragma omp critical
 	{
-	if (pdc->m_info.index) {
-		pdc->m_info.color.r += psc->m_info.color.r * srcBr;
-		pdc->m_info.color.g += psc->m_info.color.g * srcBr;
-		pdc->m_info.color.b += psc->m_info.color.b * srcBr;
-		double cMax = pdc->m_info.color.r;
-			if (cMax < pdc->m_info.color.g)
-				cMax = pdc->m_info.color.g;
-			if (cMax < pdc->m_info.color. b)
-				cMax = pdc->m_info.color. b;
+	if (destColorP->m_info.index) {
+		destColorP->m_info.color.r += srcColorP->m_info.color.r * srcBrightness;
+		destColorP->m_info.color.g += srcColorP->m_info.color.g * srcBrightness;
+		destColorP->m_info.color.b += srcColorP->m_info.color.b * srcBrightness;
+		double cMax = destColorP->m_info.color.r;
+			if (cMax < destColorP->m_info.color.g)
+				cMax = destColorP->m_info.color.g;
+			if (cMax < destColorP->m_info.color. b)
+				cMax = destColorP->m_info.color. b;
 			if (cMax > 1) {
-				pdc->m_info.color.r /= cMax;
-				pdc->m_info.color.g /= cMax;
-				pdc->m_info.color.b /= cMax;
+				destColorP->m_info.color.r /= cMax;
+				destColorP->m_info.color.g /= cMax;
+				destColorP->m_info.color.b /= cMax;
 				}
 		}
 	else {
-		if (destBr) {
-			pdc->m_info.index = 1;
-			pdc->m_info.color.r = psc->m_info.color.r * destBr;
-			pdc->m_info.color.g = psc->m_info.color.g * destBr;
-			pdc->m_info.color.b = psc->m_info.color.b * destBr;
+		if (destBrightness) {
+			destColorP->m_info.index = 1;
+			destColorP->m_info.color.r = srcColorP->m_info.color.r * destBrightness;
+			destColorP->m_info.color.g = srcColorP->m_info.color.g * destBrightness;
+			destColorP->m_info.color.b = srcColorP->m_info.color.b * destBrightness;
 			}
 		else
-			*pdc = *psc;
+			*destColorP = *srcColorP;
 		}
+	}
+}
+
+//--------------------------------------------------------------------------
+
+void CMine::IlluminateSide (CSegment* segP, INT16 nSide, UINT32 brightness, CColor* lightColorP, double* effect, double fLightScale)
+{
+CUVL*		uvlP = segP->m_sides [nSide].m_info.uvls;
+UINT32	vertBrightness, lightBrightness;
+UINT8*	sideVerts = sideVertTable [nSide];
+
+theApp.SetModified (TRUE);
+for (INT32 i = 0; i < 4; i++, uvlP++) {
+	CColor* vertColorP = VertexColors (segP->m_info.verts [sideVerts [i]]);
+	vertBrightness = (UINT16) uvlP->l;
+	lightBrightness = (UINT32) (brightness * (effect ? effect [i] : fLightScale));
+	BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
+	vertBrightness += lightBrightness;
+	vertBrightness = min (0x8000, vertBrightness);
+	uvlP->l = (UINT16) vertBrightness;
 	}
 }
 
@@ -648,25 +668,19 @@ else
 static INT32 qqq1 = -1, qqq2 = 0;
 #endif
 
-void CMine::Illuminate (
-	INT16 nSourceSeg, 
-	INT16 nSourceSide, 
-	UINT32 brightness, 
-	double fLightScale, 
-	bool bAll, 
-	bool bCopyTexLights) 
+void CMine::Illuminate (INT16 nSourceSeg, INT16 nSourceSide, UINT32 brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
 {
-	CSegment*		segP = Segments (0);
-	double			effect[4];
+	CSegment*	segP = Segments (0);
+	double		effect [4];
 	// find orthogonal angle of source segment
-	CFixVector		A;
+	CFixVector	A;
 
 //fLightScale /= 100.0;
 A = -CalcSideNormal (nSourceSeg, nSourceSide);
 // remember to flip the sign since we want it to point inward
 // calculate the center of the source segment
-CFixVector source_center;
-source_center = CalcSideCenter (nSourceSeg, nSourceSide);
+CFixVector sourceCenter;
+sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
 // mark those Segments () within N children of current cube
 
 // set child numbers
@@ -686,16 +700,16 @@ SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth);
 segP->m_info.nIndex = m_lightRenderDepth;
 #endif
 
-CColor *plc = LightColor (nSourceSeg, nSourceSide);
-if (!plc->m_info.index) {
-	plc->m_info.index = 255;
-	plc->m_info.color.r =
-	plc->m_info.color.g =
-	plc->m_info.color.b = 1.0;
+CColor *lightColorP = LightColor (nSourceSeg, nSourceSide);
+if (!lightColorP->m_info.index) {
+	lightColorP->m_info.index = 255;
+	lightColorP->m_info.color.r =
+	lightColorP->m_info.color.g =
+	lightColorP->m_info.color.b = 1.0;
 	}
 if (UseTexColors () && bCopyTexLights) {
-	CColor	*psc = LightColor (nSourceSeg, nSourceSide, false);
-	*psc = *plc;
+	CColor* segColorP = LightColor (nSourceSeg, nSourceSide, false);
+	*segColorP = *lightColorP;
 	}
 bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != NULL;
 // loop on child Segments ()
@@ -715,16 +729,12 @@ INT32 nSegCount = SegCount ();
 			continue;
 #endif
 		// setup source corner vertex for length calculation later
-		CFixVector source_corner[4];
-		INT32 j;
-		for (j = 0; j < 4; j++) {
-			INT32 nVertex = sideVertTable [nSourceSide][j];
-			INT32 h = segP->m_info.verts [nVertex];
-			source_corner[j] = *Vertices (h);
-			}
+		CFixVector sourceCorners [4];
+		UINT8* sideVerts = sideVertTable [nSourceSide];
+		for (INT32 j = 0; j < 4; j++)
+			sourceCorners [j] = *Vertices (segP->m_info.verts [sideVerts [j]]);
 		// loop on child sides
-		INT32 nChildSide;
-		for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+		for (INT32 nChildSide = 0; nChildSide < 6; nChildSide++) {
 			// if side has a child..
 			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
 				continue;
@@ -738,41 +748,49 @@ INT32 nSegCount = SegCount ();
 					continue;
 				}
 
-	//		CBRK (psc->m_info.index > 0);
+	//		CBRK (segColorP->m_info.index > 0);
 			// if the child side is the same as the source side, then set light and continue
-			if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
+			if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg)) {
+#if 1
+				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, NULL, fLightScale);
+#else
 				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
-				UINT32	vBr, lBr;
+				UINT32	vertBrightness, lightBrightness;
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CColor *pvc = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
-					vBr = (UINT16) uvlP->l;
-					lBr = (UINT32) (brightness * fLightScale);
-					BlendColors (plc, pvc, lBr, vBr);
-					vBr += lBr;
-					vBr = min (0x8000, vBr);
-					uvlP->l = (UINT16) vBr;
+					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
+					vertBrightness = (UINT16) uvlP->l;
+					lightBrightness = (UINT32) (brightness * fLightScale);
+					BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
+					vertBrightness += lightBrightness;
+					vertBrightness = min (0x8000, vertBrightness);
+					uvlP->l = (UINT16) vertBrightness;
 					}
+#endif
 				continue;
 				}
 
 			// calculate vector between center of source segment and center of child
 	//		CBRK (nChildSeg == 1 && nChildSide == 2);
-			if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
-					UINT32	vBr, lBr;	//vertex brightness, light brightness
+			if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
+#if 1
+				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, effect, fLightScale);
+#else
+					UINT32	vertBrightness, lightBrightness;	//vertex brightness, light brightness
 					CUVL		*uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 
 				theApp.SetModified (TRUE);
 				for (INT32 j = 0; j < 4; j++, uvlP++) {
-					CColor *pvc = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
-					vBr = (UINT16) uvlP->l;
-					lBr = (UINT16) (brightness * effect [j] / 32);
-					BlendColors (plc, pvc, lBr, vBr);
-					vBr += lBr;
-					vBr = min (0x8000, vBr);
-					uvlP->l = (UINT16) vBr;
+					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
+					vertBrightness = (UINT16) uvlP->l;
+					lightBrightness = (UINT16) (brightness * effect [j] / 32);
+					BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
+					vertBrightness += lightBrightness;
+					vertBrightness = min (0x8000, vertBrightness);
+					uvlP->l = (UINT16) vertBrightness;
 					}
+#endif
 				}
 			}
 		}
@@ -947,7 +965,7 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 				}
 
-			CFixVector	A, source_center;
+			CFixVector	A, sourceCenter;
 			INT32		lightDeltaIndexCount;
 
 			// get index number and increment total number of lightDeltaIndices
@@ -972,7 +990,7 @@ fLightScale = 1.0; ///= 100.0;
 			A = -CalcSideNormal(nSourceSeg,nSourceSide);
 
 			// calculate the center of the source segment
-			source_center = CalcSideCenter (nSourceSeg, nSourceSide);
+			sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
 
 			// mark those Segments () within N children of current cube
 			//(note: this is done once per light instead of once per segment
@@ -993,11 +1011,11 @@ fLightScale = 1.0; ///= 100.0;
 	#endif
 
 			// setup source corner vertex for length calculation later
-			CFixVector source_corner[4];
+			CFixVector sourceCorners [4];
 			for (INT32 j = 0; j < 4; j++) {
 				UINT8 nVertex = sideVertTable [nSourceSide][j];
 				INT32 h = srcSegP->m_info.verts [nVertex];
-				source_corner[j] = *Vertices (h);
+				sourceCorners [j] = *Vertices (h);
 				}
 
 			// loop on child Segments ()
@@ -1065,7 +1083,7 @@ fLightScale = 1.0; ///= 100.0;
 						}
 
 					// calculate vector between center of source segment and center of child
-						if (CalcSideLights (nChildSeg, nChildSide, source_center, source_corner, A, effect, fLightScale, bWall)) {
+						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
 							theApp.SetModified (TRUE);
 							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
@@ -1258,15 +1276,15 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 
 //--------------------------------------------------------------------------
 
-bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
-									 CFixVector* source_corner, CFixVector& vertex, double *effect,
+bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& sourceCenter, 
+									 CFixVector* sourceCorners , CFixVector& vertex, double *effect,
 									 double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
 CDoubleVector center = CalcSideCenter (nSegment, nSide);
 CDoubleVector A = vertex;
-CDoubleVector B = center - source_center;
+CDoubleVector B = center - sourceCenter;
 
 // calculate angle between vectors (use dot product equation)
 if (!bIgnoreAngle) {
@@ -1297,7 +1315,7 @@ for (j = 0; j < 4; j++) {
 	corner = *Vertices (h);
 	double length = 20.0 * m_lightRenderDepth;
 	for (i = 0; i < 4; i++)
-		length = min (length, CalcLength (source_corner + i, &corner) / F1_0);
+		length = min (length, CalcLength (sourceCorners  + i, &corner) / F1_0);
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
 	effect [j] = 32;

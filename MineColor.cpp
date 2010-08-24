@@ -56,9 +56,11 @@ write_INT32 (INT32 (m_info.color.b * 0x7fffffff + 0.5), fp);
 
 void CMine::LoadColors (CColor *pc, INT32 nColors, INT32 nFirstVersion, INT32 nNewVersion, FILE *fp)
 {
+	bool bNewFormat = LevelVersion () >= nNewVersion;
+
 if (LevelVersion () > nFirstVersion) { 
 	for (; nColors; nColors--, pc++)
-		pc->Read (fp, LevelVersion () >= nNewVersion);
+		pc->Read (fp, 0, bNewFormat);
 	}
 }
 
