@@ -358,8 +358,8 @@ public:
 	void InitSegment (INT16 segNum);
 	bool SplitSegment ();
 	bool  AddSegment();
-	bool  LinkSegments(INT16 segnum1,INT16 sidenum1, INT16 segnum2,INT16 sidenum2, FIX margin);
-	void  LinkSides(INT16 segnum1,INT16 sidenum1,INT16 segnum2,INT16 sidenum2, tVertMatch match[4]);
+	bool  LinkSegments(INT16 nSegment1, INT16 nSide1, INT16 nSegment2,INT16 nSide2, FIX margin);
+	void  LinkSides(INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, tVertMatch match[4]);
 	void	CalcSegCenter (CFixVector& pos, INT16 nSegment);
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
@@ -404,9 +404,9 @@ public:
 	void CalcDeltaLightData (double fLightScale = 1.0, INT32 force = 1);
 	INT32 FindDeltaLight (INT16 nSegment, INT16 nSide, INT16 *pi = NULL);
 	UINT8 LightWeight(INT16 nBaseTex);
-	INT16 GetFlickeringLight(INT16 nSegment = -1, INT16 nSide = -1);
-	INT16 AddFlickeringLight( INT16 nSegment = -1, INT16 nSide = -1, UINT32 mask = 0xAAAAAAAA, FIX time = 0x10000 / 4);
-	bool DeleteFlickeringLight(INT16 nSegment = -1, INT16 nSide = -1);
+	INT16 GetFlickeringLight (INT16 nSegment = -1, INT16 nSide = -1);
+	INT16 AddFlickeringLight (INT16 nSegment = -1, INT16 nSide = -1, UINT32 mask = 0xAAAAAAAA, FIX time = 0x10000 / 4);
+	bool DeleteFlickeringLight (INT16 nSegment = -1, INT16 nSide = -1);
 	INT32 IsExplodingLight(INT32 nBaseTex);
 	bool VisibleWall (UINT16 nWall);
 	void SetCubeLight (double fLight, bool bAll = false, bool bDynCubeLights = false);

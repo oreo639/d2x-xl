@@ -471,7 +471,7 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc) 
+bool CMine::SizeLine (CSegment *segP, INT32 point0, INT32 point1, INT32 inc) 
 {
 
 // round a bit
@@ -488,20 +488,18 @@ else
 
 CFixVector	*v1 = Vertices (segP->m_info.verts [point0]),
 				*v2 = Vertices (segP->m_info.verts [point1]);
-double		radius;
+double		radius, delta = X2D (inc);
 CDoubleVector	v (*v1 - *v2);
 // figure out direction to modify line
 // normalize direction
 radius = v.Mag ();
-if (radius > (double) F1_0* (double) F1_0 - inc) 
+if (radius > (double) F1_0 - delta) 
 	return false;
-if ((inc < 0) && (radius <= (double)-inc*3)) 
+if ((delta < 0.0) && (radius <= -delta * 3.0)) 
 	return false;
-if (radius == 0) 
+if (radius == 0.0)
 	return false;
-v /= radius;
-// multiply by increment value
-v *= inc;
+v *= delta / radius;
 // update vertices
 CFixVector h (v);
 *v1 += h;

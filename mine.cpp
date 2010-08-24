@@ -368,10 +368,7 @@ GameInfo ().lightDeltaValues.Reset ();
 
 CDoubleVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
 {
-if (nSegment < 0)
-	nSegment = Current ()->nSegment;
-if (nSide < 0)
-	nSegment = Current ()->nSide;
+GetCurrent (nSegment, nSide);
 
 	INT16*			sideIndexP = Segments (nSegment)->m_info.verts;
 	UINT8*			sideVertP = &sideVertTable [nSide][0];
@@ -387,6 +384,8 @@ return -Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]
 
 CDoubleVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
 {
+GetCurrent (nSegment, nSide);
+
 	INT16*			sideIndexP = Segments (nSegment)->m_info.verts;
 	UINT8*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;

@@ -516,7 +516,6 @@ void CMine::DefineVertices (INT16 newVerts [4])
 {
 	CSegment*		curSegP; 
 	CDoubleVector	A [8], B [8], C [8], D [8], E [8], a, b, c, d, v; 
-	double			angle1, angle2, angle3; 
 	double			length; 
 	INT16				nVertex; 
 	INT16				i, points [4]; 
@@ -599,7 +598,7 @@ switch (add_segment_mode) {
 		// copy side's four points into A
 		INT16 nSide = Current ()->nSide;
 		for (i = 0; i < 4; i++) {
-			A [i] = *Vertices ( curSegP->m_info.verts [sideVertTable [nSide][i]]); 
+			A [i] = *Vertices (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
 			A [i + 4] = *Vertices (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
 			}
 
@@ -610,34 +609,37 @@ switch (add_segment_mode) {
 		// calculate angle to put point 1 in x - y plane by spinning on x - axis
 		// then rotate B points on x - axis to form C points.
 		// check to see if on x - axis already
-		angle1 = atan3 (B [1].v.z, B [1].v.y); 
+		double angle1 = atan3 (B [1].v.z, B [1].v.y); 
 		for (i = 0; i < 8; i++)
-			C [i].Set (B [i].v.x, B [i].v.y * cos (angle1) + B [i].v.z * sin (angle1), -B [i].v.y * sin (angle1) + B [i].v.z * cos (angle1)); 
+			C [i].Set (B [i].v.x, B [i].v.y * cos (angle1) + B [i].v.z * sin (angle1), B [i].v.z * cos (angle1) - B [i].v.y * sin (angle1)); 
 		// calculate angle to put point 1 on x axis by spinning on z - axis
 		// then rotate C points on z - axis to form D points
 		// check to see if on z - axis already
-		angle2 = atan3 (C [1].v.y, C [1].v.x); 
+		double angle2 = atan3 (C [1].v.y, C [1].v.x); 
 		for (i = 0; i < 8; i++)
-			D [i].Set (C [i].v.x * cos (angle2) + C [i].v.y * sin (angle2), -C [i].v.x * sin (angle2) + C [i].v.y * cos (angle2), C [i].v.z); 
+			D [i].Set (C [i].v.x * cos (angle2) + C [i].v.y * sin (angle2), C [i].v.y * cos (angle2) - C [i].v.x * sin (angle2), C [i].v.z); 
 
 		// calculate angle to put point 2 in x - y plane by spinning on x - axis
 		// the rotate D points on x - axis to form E points
 		// check to see if on x - axis already
-		angle3 = atan3 (D [2].v.z, D [2].v.y); 
+		double angle3 = atan3 (D [2].v.z, D [2].v.y); 
 		for (i = 0; i < 8; i++) 
-			E [i].Set (D [i].v.x, D [i].v.y * cos (angle3) + D [i].v.z * sin (angle3), -D [i].v.y * sin (angle3) + D [i].v.z * cos (angle3)); 
+			E [i].Set (D [i].v.x, D [i].v.y * cos (angle3) + D [i].v.z * sin (angle3), D [i].v.z * cos (angle3) - D [i].v.y * sin (angle3)); 
 
 		// now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
 		// mirror new points on z axis
 		for (i = 4; i < 8; i++)
-			E [i] = -E [i]; 
+			E [i].v.z = -E [i].v.z; 
 		// now reverse rotations
+		angle3 = -angle3;
 		for (i = 4; i < 8; i++) 
-			D [i].Set (E [i].v.x, E [i].v.y * cos (-angle3) + E [i].v.z * sin (-angle3), -E [i].v.y * sin (-angle3) + E [i].v.z * cos (-angle3)); 
+			D [i].Set (E [i].v.x, E [i].v.y * cos (angle3) + E [i].v.z * sin (angle3), E [i].v.z * cos (angle3) - E [i].v.y * sin (angle3)); 
+		angle2 = -angle2;
 		for (i = 4; i < 8; i++) 
-			C [i].Set (D [i].v.x * cos (-angle2) + D [i].v.y * sin (-angle2), -D [i].v.x * sin (-angle2) + D [i].v.y * cos (-angle2), D [i].v.z); 
+			C [i].Set (D [i].v.x * cos (angle2) + D [i].v.y * sin (angle2), D [i].v.y * cos (angle2) - D [i].v.x * sin (angle2), D [i].v.z); 
+		angle1 = -angle1;
 		for (i = 4; i < 8; i++) 
-			B [i].Set (C [i].v.x, C [i].v.y * cos (-angle1) + C [i].v.z * sin (-angle1), -C [i].v.y * sin (-angle1) + C [i].v.z * cos (-angle1)); 
+			B [i].Set (C [i].v.x, C [i].v.y * cos (angle1) + C [i].v.z * sin (angle1), C [i].v.z * cos (angle1) - C [i].v.y * sin (angle1)); 
 
 		// and translate back
 		nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][0]]; 
