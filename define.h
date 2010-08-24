@@ -18,25 +18,34 @@
 #define M_PI	3.141592653589793240
 #define M_PI_2	(M_PI / 2.0)
 
+#define FIX_IS_DOUBLE 0
+
+#define I2X(_i)	((FIX) ((_i) * 65536))
+#define X2I(_i)	((INT32) (((_i) + I2X (1) / 2) / I2X (1)))
+
 //Some handy constants 
-#define f0_0   0
-#define f1_0   0x10000L
-#define f2_0   0x20000L
-#define f3_0   0x30000L
-#define f10_0  0xa0000L
+#define f0_5   (I2X(1) / 2)
+#define f1_0   I2X(1)
+#define f2_0   I2X(2)
+#define f3_0   I2X(3)
+#define f10_0  I2X(10)
 
-#define f0_5   0x8000
 
-#define f0_1   0x199a
-
-#define F0_0   f0_0
+#define F0_5   f0_5
 #define F1_0   f1_0
 #define F2_0   f2_0
 #define F3_0   f3_0
 #define F10_0  f10_0
 
-#define F0_5   f0_5
-#define F0_1   f0_1
+#if FIX_IS_DOUBLE
+
+#define xabs(_i)	fabs(_i)
+
+#else
+
+#define xabs(_i)	labs(_i)
+
+#endif
 
 //	-----------------------------------------------------------------------------------------------------------
 
@@ -301,15 +310,15 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define MAX_SUBMODELS					10 // I guessed at this value (BAA) 
 
 // wall numbers 
-#define WLEFT               0
-#define WTOP                1
-#define WRIGHT              2
-#define WBOTTOM             3
-#define WBACK               4
-#define WFRONT              5
+#define WLEFT								0
+#define WTOP								1
+#define WRIGHT								2
+#define WBOTTOM							3
+#define WBACK								4
+#define WFRONT								5
 
 // misc 
-#define DEFAULT_LIGHTING    F0_5      // (F1_0/2) 
+#define DEFAULT_LIGHTING				F0_5      // (F1_0/2) 
 
 // Trigger flags for Descent 1
 #define	TRIGGER_CONTROL_DOORS		1	// Control Trigger 

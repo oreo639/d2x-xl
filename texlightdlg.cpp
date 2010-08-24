@@ -89,7 +89,7 @@ UINT32 nLightMask = 0;
 for (INT32 i = 0; i < 32; i++)
 	if (m_szLight [i] == '1')
 		nLightMask |= (1 << i);
-long nDelay = (m_nLightDelay * F1_0 /*- F0_5*/) / 1000;
+long nDelay = I2X (m_nLightDelay) / 1000;
 
 CFlickeringLight* flP = theMine->FlickeringLights (m_iLight);
 if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
@@ -99,7 +99,7 @@ if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
 	flP->m_info.delay = nDelay;
 	theApp.UnlockUndo ();
 	}
-m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
+//m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }
 
                         /*--------------------------*/

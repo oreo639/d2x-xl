@@ -830,10 +830,10 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 							// use x, y, and z coordinate of first point of each segment for comparison
 							CFixVector* v1 = Vertices (segP ->m_info.verts [0]);
 							CFixVector* v2 = Vertices (seg2->m_info.verts [0]);
-							if (labs (v1->v.x - v2->v.x) < 0xA00000L &&
-								 labs (v1->v.y - v2->v.y) < 0xA00000L &&
-								 labs (v1->v.z - v2->v.z) < 0xA00000L) {
-								for (sidenum2 = 0;sidenum2 < 6; sidenum2++) {
+							if (xabs (v1->v.x - v2->v.x) < I2X(10) &&
+								 xabs (v1->v.y - v2->v.y) < I2X(10) &&
+								 xabs (v1->v.z - v2->v.z) < I2X(10)) {
+								for (sidenum2 = 0; sidenum2 < 6; sidenum2++) {
 									LinkSegments (nSegment, child, segnum2, sidenum2, 3 * F1_0);
 									}
 								}
@@ -848,7 +848,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		}
 	}
 // clear all new vertices as such
-for (nVertex=0;nVertex<MAX_VERTICES;nVertex++)
+for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	VertStatus (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
 segP = Segments (0);

@@ -180,22 +180,12 @@ for (INT32 i = start; i < end; i++) {
 	FIX z0 = gModel.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
-	pt.v.x = MultiplyFix (objP->m_info.orient.rVec.v.x, x0)
-				+ MultiplyFix (objP->m_info.orient.uVec.v.x, y0)
-				+ MultiplyFix (objP->m_info.orient.fVec.v.x, z0);
-	pt.v.y = MultiplyFix (objP->m_info.orient.rVec.v.y, x0)
-				+ MultiplyFix (objP->m_info.orient.uVec.v.y, y0)
-				+ MultiplyFix (objP->m_info.orient.fVec.v.y, z0);
-	pt.v.z = MultiplyFix (objP->m_info.orient.rVec.v.z, x0)
-				+ MultiplyFix (objP->m_info.orient.uVec.v.z, y0)
-				+ MultiplyFix (objP->m_info.orient.fVec.v.z, z0);
-
+	pt = objP->m_info.orient * gModel.points [i];
 	// set point to be in world coordinates
 	pt += objP->m_info.pos;
-
 	// now that points are relative to set screen xy points (poly_xy)
 	m_view.Project (&pt, poly_xy + i);
-  }
+	}
 }
 
 

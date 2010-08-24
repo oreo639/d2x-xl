@@ -3278,15 +3278,15 @@ CSegment *segP = theMine->Segments (0) + nSegment;
 CVertex *vMine = theMine->Vertices (0);
 INT16 *vSeg = segP->m_info.verts;
 pos  =
-   (vMine [vSeg [0]]
-   +vMine [vSeg [1]]
-   +vMine [vSeg [2]]
-   +vMine [vSeg [3]]
-   +vMine [vSeg [4]]
-   +vMine [vSeg [5]]
-   +vMine [vSeg [6]]
-   +vMine [vSeg [7]]);
-pos >>= 3;
+   vMine [vSeg [0]] +
+   vMine [vSeg [1]] +
+   vMine [vSeg [2]] +
+   vMine [vSeg [3]] +
+   vMine [vSeg [4]] +
+   vMine [vSeg [5]] +
+   vMine [vSeg [6]] +
+   vMine [vSeg [7]];
+pos /= 8.0;
 }
 
                         /*--------------------------*/

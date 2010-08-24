@@ -79,14 +79,14 @@ for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
 	center += *Vertices (nVertex);
 	}
-center >>= 2;
+center /= 4.0;
 
 // calculate center of oppisite current side
 for (i = 0; i < 4; i++) {
 	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
 	oppCenter += *Vertices (nVertex);
 	}
-oppCenter >>= 2;
+oppCenter /= 4.0;
 
 // normalize vector
 CDoubleVector v (center - oppCenter);
@@ -685,7 +685,7 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++) {
 			center += *Vertices (segP->m_info.verts [sideVertTable [nSide][i]]);
 			}
-		center >>= 2;
+		center /= 4.0;
 		// calculate orthogonal vector from lines which intersect point 0
 		//       |x  y  z |
 		// AxB = |ax ay az| = x(aybz-azby), y(azbx-axbz), z(axby-aybx)
@@ -709,12 +709,12 @@ switch (m_selectMode) {
 		center.Clear ();
 		for (i = 0; i < 8; i++) 
 			center += *Vertices (segP->m_info.verts [i]);
-		center >>= 3;
+		center /= 8.0;
 		// calculate center of oppisite current side
 		oppCenter.Clear ();
 		for (i = 0; i < 4; i++) 
 			oppCenter += *Vertices (segP->m_info.verts [oppSideVertTable [nSide][i]]);
-		oppCenter >>= 2;
+		oppCenter /= 4.0;
 		// rotate points about a point
 		for (i = 0; i < 8; i++)
 			RotateVertex (Vertices (segP->m_info.verts [i]),&center,&oppCenter,angle);
@@ -784,13 +784,13 @@ switch (m_selectMode) {
 		for (i = 0; i < 8; i++) {
 			center += *Vertices (segP->m_info.verts [i]);
 			}
-		center >>= 3;
+		center /= 8.0;
 		// calculate center of oppisite current side
 		oppCenter.Clear ();
 		for (i = 0; i < 4; i++) {
 			oppCenter += *Vertices (segP->m_info.verts [oppSideVertTable [nSide][i]]);
 			}
-		oppCenter >>= 2;
+		oppCenter /= 4.0;
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
 			if (VertStatus (i) & MARKED_MASK)

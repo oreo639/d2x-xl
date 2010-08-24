@@ -13,8 +13,6 @@ struct tDoubleVector;
 class CDoubleVector;
 class CFixMatrix;
 
-#define FIX_IS_DOUBLE 1
-
 // --------------------------------------------------------------------------
 
 inline FIX FixMul (FIX n, FIX m)
