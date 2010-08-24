@@ -447,7 +447,7 @@ public:
 	bool RotateSelection(double angle, bool perpendicular); 
 	bool SizeItem (INT32 inc); 
 	bool MovePoints (INT32 pt0, INT32 pt1); 
-	bool SizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
+	bool ResizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 
 	bool SpinSelection(double angle); 
 	void RotateVmsVector (CFixVector* vector, double angle, char axis); 

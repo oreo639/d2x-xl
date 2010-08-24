@@ -217,7 +217,7 @@ return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate, FALSE) : Move
 
 bool CMine::EditGeoRight (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection(angle_rate,TRUE) : MovePoints(3,0);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angle_rate,TRUE) : MovePoints(3,0);
 }
 
 //------------------------------------------------------------------------
@@ -225,7 +225,7 @@ return (m_selectMode == SIDE_MODE) ? RotateSelection(angle_rate,TRUE) : MovePoin
 
 bool CMine::EditGeoLeft (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection(-angle_rate,TRUE) : MovePoints(0,3);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate,TRUE) : MovePoints(0,3);
 }
 
 //------------------------------------------------------------------------
@@ -334,7 +334,7 @@ switch (m_selectMode) {
 	case LINE_MODE:
 		point [0] = lineVertTable [sideLineTable [Current ()->nSide][Current ()->nLine]][0];
 		point [1] = lineVertTable [sideLineTable [Current ()->nSide][Current ()->nLine]][1];
-		return SizeLine (segP,point [0],point [1],inc);
+		return ResizeLine (segP, point [0], point [1], inc);
 
 	case SIDE_MODE:
 		theApp.SetModified (TRUE);
@@ -342,8 +342,8 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [Current ()->nSide][i];
 		// enlarge the diagonals
-		result = SizeLine(segP,point [0],point [2],(INT32) (inc*sqrt(2.0))) &&
-				   SizeLine(segP,point [1],point [3],(INT32) (inc*sqrt(2.0)));
+		result = ResizeLine (segP, point [0], point [2], (INT32) (inc*sqrt(2.0))) &&
+				   ResizeLine (segP, point [1], point [3], (INT32) (inc*sqrt(2.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -351,10 +351,10 @@ switch (m_selectMode) {
 		// enlarge the diagonals
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
-		result = SizeLine(segP,0,6,(INT32) (inc*sqrt(3.0))) &&
-				   SizeLine(segP,1,7,(INT32) (inc*sqrt(3.0))) &&
-					SizeLine(segP,2,4,(INT32) (inc*sqrt(3.0))) &&
-					SizeLine(segP,3,5,(INT32) (inc*sqrt(3.0)));
+		result = ResizeLine (segP, 0, 6, (INT32) (inc*sqrt(3.0))) &&
+				   ResizeLine (segP, 1, 7, (INT32) (inc*sqrt(3.0))) &&
+					ResizeLine (segP, 2, 4, (INT32) (inc*sqrt(3.0))) &&
+					ResizeLine (segP, 3, 5, (INT32) (inc*sqrt(3.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -393,18 +393,16 @@ return false;
 // of the current line.
 //--------------------------------------------------------------------------
 
-bool CMine::MovePoints(INT32 pt0, INT32 pt1) 
+bool CMine::MovePoints (INT32 pt0, INT32 pt1) 
 {
-	CFixVector* vector0, * vector1, delta;
-	INT32			point0, point1;
+	CFixVector	* vector0, * vector1, delta;
 	double		length;
-	INT32			point;
 	INT32			i;
+	CSegment*	segP = Segments (Current ()->nSegment);
+	UINT8*		sideVertP = sideVertTable [Current ()->nSide];
 
-point0 = sideVertTable [Current ()->nSide][CURRENT_POINT(pt0)];
-point1 = sideVertTable [Current ()->nSide][CURRENT_POINT(pt1)];
-vector0 = Vertices (Segments (Current ()->nSegment)->m_info.verts [point0]);
-vector1 = Vertices (Segments (Current ()->nSegment)->m_info.verts [point1]);
+vector0 = Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt0)]]);
+vector1 = Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt1)]]);
 length = Distance(*vector0, *vector1);
 if (length >= F1_0) {
 	delta = *vector1 - *vector0;
@@ -416,33 +414,28 @@ else {
 	delta.Set (move_rate, 0, 0);
 	}
 
+
 switch (m_selectMode){
 	case POINT_MODE:
-		point = sideVertTable [Current ()->nSide][CURRENT_POINT(0)];
-		*Vertices (Segments (Current ()->nSegment)->m_info.verts [point]) += delta;
+		*Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(0)]]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
 	case LINE_MODE:
-		point = sideVertTable [Current ()->nSide][CURRENT_POINT(0)];
-		*Vertices (Segments (Current ()->nSegment)->m_info.verts [point]) += delta;
-		point = sideVertTable [Current ()->nSide][CURRENT_POINT(1)];
-		*Vertices (Segments (Current ()->nSegment)->m_info.verts [point]) += delta;
+		*Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(0)]]) += delta;
+		*Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(1)]]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
 	case SIDE_MODE:
-		for (i = 0; i < 4; i++) {
-			point = sideVertTable [Current ()->nSide][i];
-			*Vertices (Segments (Current ()->nSegment)->m_info.verts [point]) += delta;
-			}
+		for (i = 0; i < 4; i++)
+			*Vertices (segP->m_info.verts [sideVertP [i]]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
 	case CUBE_MODE:
-		for (i = 0; i < 8; i++) {
-			*Vertices (Segments (Current ()->nSegment)->m_info.verts [i]) += delta;
-			}
+		for (i = 0; i < 8; i++) 
+			*Vertices (segP->m_info.verts [i]) += delta;
 		theApp.SetModified (TRUE);
 		break;
 
@@ -466,12 +459,12 @@ return true;
 }
 
 //--------------------------------------------------------------------------
-//     				SizeLine()
+//     				ResizeLine()
 //
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::SizeLine (CSegment *segP, INT32 point0, INT32 point1, INT32 inc) 
+bool CMine::ResizeLine (CSegment *segP, INT32 point0, INT32 point1, INT32 inc) 
 {
 
 // round a bit
