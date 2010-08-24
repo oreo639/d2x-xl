@@ -2109,14 +2109,14 @@ for (nLine = 0; nLine < 4; nLine++) {
 				v0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].v - sideP->m_info.uvls [nLine].v; 
 				// find the angle formed by the two lines
 				sangle = atan3(sideP->m_info.uvls [(nLine + 1) % 4].v - sideP->m_info.uvls [nLine].v, 
-				sideP->m_info.uvls [(nLine + 1) % 4].u - sideP->m_info.uvls [nLine].u); 
+									sideP->m_info.uvls [(nLine + 1) % 4].u - sideP->m_info.uvls [nLine].u); 
 				cangle = atan3(childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) % 4].v, 
 									childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) % 4].u); 
 				// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
 				for (i = 0; i < 4; i++) {
 					angle = atan3(childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
-					length = sqrt((double)childSideP->m_info.uvls [i].u*(double)childSideP->m_info.uvls [i].u +
-									  (double)childSideP->m_info.uvls [i].v*(double)childSideP->m_info.uvls [i].v); 
+					length = sqrt((double) childSideP->m_info.uvls [i].u * (double) childSideP->m_info.uvls [i].u +
+									  (double) childSideP->m_info.uvls [i].v * (double) childSideP->m_info.uvls [i].v); 
 					angle -= (cangle - sangle); 
 					childSideP->m_info.uvls [i].u = (INT16)(length * cos (angle)); 
 					childSideP->m_info.uvls [i].v = (INT16)(length * sin (angle)); 
@@ -2127,8 +2127,8 @@ for (nLine = 0; nLine < 4; nLine++) {
 					childSideP->m_info.uvls [i].v -= v0; 
 					}
 				// modulo points by 0x800 (== 64 pixels)
-				u0 = childSideP->m_info.uvls [0].u/0x800; 
-				v0 = childSideP->m_info.uvls [0].v/0x800; 
+				u0 = childSideP->m_info.uvls [0].u / 0x800; 
+				v0 = childSideP->m_info.uvls [0].v / 0x800; 
 				for (i = 0; i < 4; i++) {
 					childSideP->m_info.uvls [i].u -= u0*0x800; 
 					childSideP->m_info.uvls [i].v -= v0*0x800; 
@@ -2152,7 +2152,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 						r = 3;
 						break;
 					}
-				INT32 h = (INT32) (Radians (fabs (angle)) / 90 + 0.5); 
+				INT32 h = (INT32) (Degrees (fabs (angle)) / 90 + 0.5); 
 //				h +=(nChildLine + nLine + 2) % 4; //(nChildLine > nLine) ? nChildLine - nLine : nLine - nChildLine;
 				h = (h + r) % 4;
 				childSideP->m_info.nOvlTex &= ~0xC000;

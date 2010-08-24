@@ -207,6 +207,7 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define RAD2DEG (180/PI)
 
 inline double Radians (double a) { return a * (PI / 180.0); }
+inline double Degrees (double a) { return a * (180.0 / PI); }
 
 // macro modes 
 #define MACRO_OFF      0
