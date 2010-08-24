@@ -232,14 +232,14 @@ return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate,TRUE) : MovePo
 //------------------------------------------------------------------------
 bool CMine::EditGeoGrow (void) 
 {
-return SizeItem (move_rate);
+return ResizeItem (move_rate);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 bool CMine::EditGeoShrink (void) 
 {
-return SizeItem (-move_rate);
+return ResizeItem (-move_rate);
 }
 
 //------------------------------------------------------------------------
@@ -311,7 +311,7 @@ return true;
 }
 
 //***************************************************************************
-//			SizeItem()
+//			ResizeItem()
 //
 // need to prevent reduction through zero
 // absolute value of shorts line to size must be greater
@@ -319,7 +319,7 @@ return true;
 //
 //***************************************************************************
 
-bool CMine::SizeItem (INT32 inc) 
+bool CMine::ResizeItem (INT32 inc) 
 {
 	INT32 nSegment = Current ()->nSegment;
 	INT32 nSide = Current ()->nSide;
@@ -401,19 +401,13 @@ bool CMine::MovePoints (INT32 pt0, INT32 pt1)
 	CSegment*	segP = Segments (Current ()->nSegment);
 	UINT8*		sideVertP = sideVertTable [Current ()->nSide];
 
-vector0 = Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt0)]]);
-vector1 = Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt1)]]);
-length = Distance(*vector0, *vector1);
-if (length >= F1_0) {
-	delta = *vector1 - *vector0;
-	CDoubleVector d (delta);
-	d *= (double) move_rate / length;
-	delta = CFixVector (d);
-	} 
-else {
+delta = *Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt0)]]) -
+		  *Vertices (segP->m_info.verts [sideVertP [CURRENT_POINT(pt1)]]);
+length = delta.Mag ();
+if (length < F1_0) 
 	delta.Set (move_rate, 0, 0);
-	}
-
+else
+	delta *= ((double) move_rate / length);
 
 switch (m_selectMode){
 	case POINT_MODE:

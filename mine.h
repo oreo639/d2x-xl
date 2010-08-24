@@ -445,7 +445,7 @@ public:
 	bool EditGeoGrow (void); 
 	bool EditGeoShrink (void); 
 	bool RotateSelection(double angle, bool perpendicular); 
-	bool SizeItem (INT32 inc); 
+	bool ResizeItem (INT32 inc); 
 	bool MovePoints (INT32 pt0, INT32 pt1); 
 	bool ResizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (char axis,INT32 inc); 

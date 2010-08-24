@@ -469,7 +469,7 @@ static inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
 
 static inline DOUBLE Distance (const CFixVector& p0, const CFixVector& p1) {
 	CFixVector v = p0 - p1;
-	return DOUBLE (Round (CDoubleVector (v).Mag ()));
+	return D2X (CDoubleVector (v).Mag ());
 	}
 
 static inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
