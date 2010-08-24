@@ -2750,19 +2750,17 @@ memset (m_info.children, 0xFF, sizeof (m_info.children));
 
 void CSegment::SetUV (INT16 nSide, INT16 x, INT16 y)
 {
-	CDoubleVector A [4], B [4], C [4], D [4], E [4]; 
-	INT32 i, nVertex; 
-	double angle; 
+	CDoubleVector	A [4], B [4], C [4], D [4], E [4]; 
+	INT32				i; 
+	double			angle, sinAngle, cosAngle; 
 
 // for testing, x is used to tell how far to convert vector
 // 0, 1, 2, 3 represent B, C, D, E coordinate transformations
 
 // copy side's four points into A
 
-for (i = 0; i < 4; i++) {
-	nVertex = m_info.verts [sideVertTable [nSide][i]]; 
-	A [i] = CDoubleVector (*theMine->Vertices (nVertex)); 
-	}
+for (i = 0; i < 4; i++)
+	A [i] = CDoubleVector (*theMine->Vertices (m_info.verts [sideVertTable [nSide][i]])); 
 
 // subtract point 0 from all points in A to form B points
 for (i = 0; i < 4; i++) 
@@ -2772,8 +2770,10 @@ for (i = 0; i < 4; i++)
 // then rotate B points on x - axis to form C points.
 // check to see if on x - axis already
 angle = atan3 (B [1].v.z, B [1].v.y); 
+sinAngle = sin (angle);
+cosAngle = cos (angle);
 for (i = 0; i < 4; i++) 
-	C [i].Set (B [i].v.x, B [i].v.y * cos (angle) + B [i].v.z * sin (angle), -B [i].v.y * sin (angle) + B [i].v.z * cos (angle)); 
+	C [i].Set (B [i].v.x, B [i].v.y * cosAngle + B [i].v.z * sinAngle, -B [i].v.y * sinAngle + B [i].v.z * cosAngle); 
 
 #if UV_DEBUG
 if (abs((INT32)C [1].z) != 0) {
@@ -2786,8 +2786,10 @@ if (abs((INT32)C [1].z) != 0) {
 // then rotate C points on z - axis to form D points
 // check to see if on z - axis already
 angle = atan3 (C [1].v.y, C [1].v.x); 
+sinAngle = sin (angle);
+cosAngle = cos (angle);
 for (i = 0; i < 4; i++) {
-	D [i].Set (C [i].v.x * cos (angle) + C [i].v.y * sin (angle), -C [i].v.x * sin (angle) + C [i].v.y * cos (angle), C [i].v.z); 
+	D [i].Set (C [i].v.x * cosAngle + C [i].v.y * sinAngle, -C [i].v.x * sinAngle + C [i].v.y * cosAngle, C [i].v.z); 
 	}
 #if UV_DEBUG
 if (abs((INT32)D [1].y) != 0) {
@@ -2838,8 +2840,8 @@ theApp.SetModified (TRUE);
 m_sides [nSide].LoadTextures ();
 double scale = 1.0; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
-	uvls->v = (INT16) ((y + (E [i].v.x / 640)) / scale); 
-	uvls->u = (INT16) ((x - (E [i].v.y / 640)) / scale); 
+	uvls->v = (INT16) ((y + D2X (E [i].v.x / 640)) / scale); 
+	uvls->u = (INT16) ((x - D2X (E [i].v.y / 640)) / scale); 
 	}
 #endif
 }
