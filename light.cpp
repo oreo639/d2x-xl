@@ -1311,7 +1311,7 @@ for (INT32 j = 0; j < 4; j++) {
 	corner = *Vertices (h);
 	double length = 20.0 * m_lightRenderDepth;
 	for (INT32 i = 0; i < 4; i++)
-		length = min (length, CalcLength (sourceCorners  + i, &corner) / F1_0);
+		length = min (length, CalcLength (sourceCorners  + i, &corner));
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
 	effect [j] = 32;
