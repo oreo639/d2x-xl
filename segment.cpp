@@ -3013,7 +3013,7 @@ INT32 CLightDeltaIndex::Read (FILE *fp, INT32 version, bool bD2X)
 m_nSegment = read_INT16 (fp);
 if (bD2X) {
 	UINT16 h = read_INT16 (fp);
-	m_nSide = h & 3;
+	m_nSide = h & 7;
 	m_info.count = h >> 3;
 	}
 else {
@@ -3030,7 +3030,7 @@ void CLightDeltaIndex::Write (FILE *fp, INT32 version, bool bD2X)
 {
 write_INT16 (m_nSegment, fp);
 if (bD2X)
-	write_INT16 ((m_nSide & 3) | (m_info.count << 3), fp);
+	write_INT16 ((m_nSide & 7) | (m_info.count << 3), fp);
 else {
 	write_INT8 (INT8 (m_nSide), fp);
 	write_INT8 (INT8 (m_info.count), fp);
