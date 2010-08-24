@@ -59,7 +59,7 @@ origVertCount = VertCount ();
 segP = CurrSeg ();
 nSide = Current ()->nSide;
 nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]];
-memcpy (&origin, Vertices (nVertex), sizeof (CVertex));
+origin = *Vertices (nVertex);
 /*
 origin.x = Vertices (nVertex)->x;
 origin.y = Vertices (nVertex)->y;
