@@ -56,7 +56,7 @@ else
 // move on x, y, and z
  theApp.SetModified (TRUE);
  theApp.LockUndo ();
- v *= move_rate;
+ v *= X2D (move_rate);
  MoveOn (v);
  theApp.UnlockUndo ();
  return true;
@@ -135,7 +135,7 @@ if (!okToMove) {
 	}
 
 double radius = v.Mag ();
-if ((radius - move_rate) < 0.25) {
+if ((radius - X2D (move_rate)) < 0.25) {
 	if (m_selectMode == POINT_MODE || m_selectMode == LINE_MODE || m_selectMode == SIDE_MODE) {
 		ErrorMsg ("Cannot make cube any smaller\n"
 		"Cube must be greater or equal to 1.0 units wide.");
@@ -151,7 +151,7 @@ else {
 	// move on x, y, and z
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
-	v *= -move_rate;
+	v *= -X2D (move_rate);
 	MoveOn (v);
 	theApp.UnlockUndo ();
 	}
