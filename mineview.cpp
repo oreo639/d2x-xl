@@ -550,14 +550,15 @@ for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, ldiP++) {
 		nSegment = ldvP->m_nSegment;
 		nSide = ldvP->m_nSide;
 		if (m_bShowLightSource) {
-			if ((nSegment != nSrcSide) || (nSide != nSrcSeg)) 
+			if ((nSegment != nSrcSeg) || (nSide != nSrcSide)) 
 				continue;
 			if (0 > theMine->GetFlickeringLight (nSegment, nSide))
 				continue;
 			}
-		else if (((nSegment != nSrcSide) || (nSide != nSrcSeg)) &&
-			 (0 <= theMine->GetFlickeringLight (nSegment, nSide)))
-			continue;
+		else {
+			if (((nSegment != nSrcSeg) || (nSide != nSrcSide)) && (0 <= theMine->GetFlickeringLight (nSegment, nSide)))
+				continue;
+			}
 		pls = lightStatus [nSegment] + nSide;
 		ltP = lightTimers + j;
 		pls->bIsOn = (flP [j].m_info.mask & (1 << lightTimers [j].impulse)) != 0;

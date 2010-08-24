@@ -45,8 +45,7 @@ rc.InflateRect (-3, -4);
 rc.left += 2;
 rc.right++;
 CDC *pDC = pb->GetDC ();
-COLORREF	color = 
-	pb->GetCheck () ? RGB (0,0,0) : RGB (196,196,196);
+COLORREF	color = pb->GetCheck () ? RGB (0,0,0) : RGB (196,196,196);
 CBrush br;
 br.CreateSolidBrush (color);
 CBrush *pOldBrush = pDC->SelectObject (&br);
@@ -85,26 +84,21 @@ if (m_iLight < 0)
 	return;
 if (m_iLight >= MAX_FLICKERING_LIGHTS)
 	return;
+
 UINT32 nLightMask = 0;
-INT32 i;
-for (i = 0; i < 32; i++)
+for (INT32 i = 0; i < 32; i++)
 	if (m_szLight [i] == '1')
 		nLightMask |= (1 << i);
-bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-if (theMine->FlickeringLights (m_iLight)->m_info.mask != nLightMask) {
-	bChange = true;
-	theMine->FlickeringLights (m_iLight)->m_info.mask = nLightMask;
-	}
 long nDelay = (m_nLightDelay * F1_0 /*- F0_5*/) / 1000;
-if (theMine->FlickeringLights (m_iLight)->m_info.delay != nDelay) {
-	bChange = true;
-	theMine->FlickeringLights (m_iLight)->m_info.delay = nDelay;
-	}
-if (bChange)
+
+CFlickeringLight* flP = theMine->FlickeringLights (m_iLight);
+if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
+	bUndo = theApp.SetModified (TRUE);
+	theApp.LockUndo ();
+	flP->m_info.mask = nLightMask;
+	flP->m_info.delay = nDelay;
 	theApp.UnlockUndo ();
-else
-	theApp.ResetModified (bUndo);
+	}
 m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }
 
@@ -189,7 +183,8 @@ for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 
 void CTextureTool::UpdateLightWnd (void)
 {
-if (!theMine) return;
+CHECKMINE;
+
 CWall *wallP = theMine->CurrWall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)

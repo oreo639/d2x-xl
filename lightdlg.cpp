@@ -181,7 +181,7 @@ theApp.MineView ()->Refresh ();
 
 void CLightTool::OnSetVertexLight ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 	INT32	nVertexLight;
 
