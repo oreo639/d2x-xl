@@ -13,6 +13,8 @@ struct tDoubleVector;
 class CDoubleVector;
 class CFixMatrix;
 
+#define FIX_IS_DOUBLE 1
+
 // --------------------------------------------------------------------------
 
 inline FIX FixMul (FIX n, FIX m)
@@ -76,6 +78,13 @@ public:
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
+#if FIX_IS_DOUBLE
+
+#define tFixVector	tDoubleVector	
+#define CFixVector	CDoubleVector	
+
+#else
+
 struct tFixVector {
 public:
 	FIX x, y, z;
@@ -138,6 +147,8 @@ inline const FIX Mag (void);
 inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
 };
 
+#endif
+
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
@@ -147,16 +158,16 @@ public:
 	DOUBLE x, y, z;
 
 inline INT32 Read (FILE* fp) { 
-	x = read_DOUBLE (fp);
-	y = read_DOUBLE (fp);
-	z = read_DOUBLE (fp);
+	x = X2D (read_FIX (fp));
+	y = X2D (read_FIX (fp));
+	z = X2D (read_FIX (fp));
 	return 1;
 	}
 
 inline void Write (FILE* fp) { 
-	write_DOUBLE (x, fp);
-	write_DOUBLE (y, fp);
-	write_DOUBLE (z, fp);
+	write_DOUBLE (D2X (x), fp);
+	write_DOUBLE (D2X (y), fp);
+	write_DOUBLE (D2X (z), fp);
 	}
 };
 
@@ -167,7 +178,9 @@ public:
 	CDoubleVector ()  { v.x = 0, v.y = 0, v.z = 0; }
 	CDoubleVector (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
 	CDoubleVector (tDoubleVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
+#if !FIX_IS_DOUBLE
 	CDoubleVector (CFixVector _v);
+#endif
 	//CDoubleVector (CDoubleVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
 	void Set (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
@@ -179,8 +192,10 @@ inline const bool operator== (const CDoubleVector other);
 inline DOUBLE& CDoubleVector::operator[] (const size_t i);
 inline const CDoubleVector& operator= (const tDoubleVector& other);
 inline const CDoubleVector& operator= (const CDoubleVector& other);
+#if !FIX_IS_DOUBLE
 inline const CDoubleVector& operator= (const tFixVector& other);
 inline const CDoubleVector& operator= (const CFixVector& other);
+#endif
 inline const CDoubleVector& operator+= (const CDoubleVector other);
 inline const CDoubleVector& operator-= (const CDoubleVector other);
 inline const CDoubleVector& operator*= (const DOUBLE n);
@@ -203,6 +218,8 @@ inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
+
+#if !FIX_IS_DOUBLE
 
 inline const CFixVector& CFixVector::operator= (const tFixVector& other) { 
 	v.x = other.x, v.y = other.y, v.z = other.z; 
@@ -316,6 +333,8 @@ inline const FIX CFixVector::operator^ (const CFixVector& other) const {
 
 inline const FIX CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag ()); }
 
+#endif
+
 // --------------------------------------------------------------------------
 
 inline const bool CDoubleVector::operator== (const CDoubleVector other) {
@@ -334,6 +353,7 @@ inline const CDoubleVector& CDoubleVector::operator= (const CDoubleVector& other
 	return *this;
 	}
 
+#if !FIX_IS_DOUBLE
 inline const CDoubleVector& CDoubleVector::operator= (const tFixVector& other) { 
 	v.x = X2D (other.x), v.y = X2D (other.y), v.z = X2D (other.z); 
 	return *this;
@@ -343,6 +363,7 @@ inline const CDoubleVector& CDoubleVector::operator= (const CFixVector& other) {
 	v.x = X2D (other.v.x), v.y = X2D (other.v.y), v.z = X2D (other.v.z); 
 	return *this;
 	}
+#endif
 
 inline const CDoubleVector& CDoubleVector::operator+= (const CDoubleVector other) {
 	v.x += other.v.x, v.y += other.v.y, v.z += other.v.z; 
@@ -435,9 +456,17 @@ static inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p
 	return m;
 	}
 
-static inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
-	CDoubleVector v = p0 - p1;
-	return v.Mag ();
+#if !FIX_IS_DOUBLE
+static inline FIX Dot (const CFixVector& v0, const CFixVector& v1) {
+	return FIX ((double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z)) / 65536.0);
+	}
+
+static inline CFixVector Min (const CFixVector& v0, const CFixVector& v1) {
+	return CFixVector(min (v0.v.x, v1.v.x), min (v0.v.y, v1.v.y), min (v0.v.z, v1.v.z));
+	}
+
+static inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
+	return CFixVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
 	}
 
 static inline DOUBLE Distance (const CFixVector& p0, const CFixVector& p1) {
@@ -450,6 +479,24 @@ static inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
 	v /= FIX (2);
 	return v;
 	}
+#endif
+
+static inline DOUBLE Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
+	return double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z);
+	}
+
+static inline CDoubleVector Min (const CDoubleVector& v0, const CDoubleVector& v1) {
+	return CDoubleVector(min (v0.v.x, v1.v.x), min (v0.v.y, v1.v.y), min (v0.v.z, v1.v.z));
+	}
+
+static inline CDoubleVector Max (const CDoubleVector& v0, const CDoubleVector& v1) {
+	return CDoubleVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
+	}
+
+static inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
+	CDoubleVector v = p0 - p1;
+	return v.Mag ();
+	}
 
 static inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVector& p1) {
 	CDoubleVector v = p0 + p1;
@@ -457,25 +504,15 @@ static inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVecto
 	return v;
 	}
 
-static inline FIX Dot (const CFixVector& v0, const CFixVector& v1) {
-	return FIX ((double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z)) / 65536.0);
-	}
-
-static inline DOUBLE Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
-	return double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z);
-	}
-
-static inline CFixVector Min (const CFixVector& v0, const CFixVector& v1) {
-	return CFixVector(min (v0.v.x, v1.v.x), min (v0.v.y, v1.v.y), min (v0.v.z, v1.v.z));
-	}
-
-static inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
-	return CFixVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
-	}
-
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
+
+#if FIX_IS_DOUBLE
+
+#define CFixMatrix	CDoubleMatrix
+
+#else
 
 class CFixMatrix {
 public:
@@ -552,6 +589,8 @@ inline const CFixVector CFixMatrix::operator* (const CFixVector& v)
 {
 return CFixVector (v ^ rVec, v ^ uVec, v ^ fVec);
 }
+
+#endif
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------

@@ -94,7 +94,7 @@ CDoubleVector v (center - oppCenter);
 // make sure distance is positive to prevent
 // cube from turning inside out
 // defines line orthogonal to a side at a point
-	UINT8 orthog_line [6][4] = {
+	UINT8 sideNormalTable [6][4] = {
 		{8,6,1,3},
 		{0,5,7,2},
 		{3,1,6,8},
@@ -111,8 +111,8 @@ ok_to_move = TRUE;
 segP = Segments (0) + Current ()->nSegment;
 switch (m_selectMode) {
 	case POINT_MODE:
-		point0 = lineVertTable [orthog_line [Current ()->nSide][Current ()->nPoint]][0];
-		point1 = lineVertTable [orthog_line [Current ()->nSide][Current ()->nPoint]][1];
+		point0 = lineVertTable [sideNormalTable [Current ()->nSide][Current ()->nPoint]][0];
+		point1 = lineVertTable [sideNormalTable [Current ()->nSide][Current ()->nPoint]][1];
 		vector0 = Vertices (segP->m_info.verts [point0]);
 		vector1 = Vertices (segP->m_info.verts [point1]);
 		if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
@@ -122,8 +122,8 @@ switch (m_selectMode) {
 
 	case LINE_MODE:
 		for (i=0;i<2;i++) {
-			point0 = lineVertTable [orthog_line [Current ()->nSide][(Current ()->nLine+i)%4]][0];
-			point1 = lineVertTable [orthog_line [Current ()->nSide][(Current ()->nLine+i)%4]][1];
+			point0 = lineVertTable [sideNormalTable [Current ()->nSide][(Current ()->nLine+i)%4]][0];
+			point1 = lineVertTable [sideNormalTable [Current ()->nSide][(Current ()->nLine+i)%4]][1];
 			vector0 = Vertices (segP->m_info.verts [point0]);
 			vector1 = Vertices (segP->m_info.verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {
@@ -134,8 +134,8 @@ switch (m_selectMode) {
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
-			point0 = lineVertTable [orthog_line [Current ()->nSide][i]][0];
-			point1 = lineVertTable [orthog_line [Current ()->nSide][i]][1];
+			point0 = lineVertTable [sideNormalTable [Current ()->nSide][i]][0];
+			point1 = lineVertTable [sideNormalTable [Current ()->nSide][i]][1];
 			vector0 = Vertices (segP->m_info.verts [point0]);
 			vector1 = Vertices (segP->m_info.verts [point1]);
 			if (CalcLength(vector0,vector1) - move_rate < F1_0 / 4) {

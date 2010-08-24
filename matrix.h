@@ -31,7 +31,7 @@ public:
 		double xSpin, double ySpin, double zSpin)
 	{ Set (CDoubleVector (xMove, yMove, zMove), CDoubleVector (xSize, ySize, zSize), CDoubleVector (xSpin, ySpin, zSpin)); }
 
-	void SetViewInfo(double depthPerception, INT16 viewWidth, INT16 viewHeight);
+	void SetViewInfo (double depthPerception, INT16 viewWidth, INT16 viewHeight);
 
 	void Rotate (char axis, double angle);
 	void Scale (double scale);
