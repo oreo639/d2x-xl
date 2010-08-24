@@ -773,7 +773,7 @@ INT32 nSegCount = SegCount ();
 
 			// calculate vector between center of source segment and center of child
 	//		CBRK (nChildSeg == 1 && nChildSide == 2);
-			if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
+			if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, effect, fLightScale, bWall)) {
 #if 1
 				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, effect, fLightScale);
 #else
@@ -1276,9 +1276,9 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 
 //--------------------------------------------------------------------------
 
-bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& sourceCenter, 
-									 CFixVector* sourceCorners , CFixVector& vertex, double *effect,
-									 double fLightScale, bool bIgnoreAngle)
+bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, 
+									 CFixVector& sourceCenter, CFixVector* sourceCorners, CFixVector& vertex, 
+									 double* effect, double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
@@ -1293,28 +1293,24 @@ if (!bIgnoreAngle) {
 	double mag_A = A.Mag ();
 	double mag_B = B.Mag ();
 	if (mag_A == 0.0 || mag_B == 0.0)
-		angle = (200.0 * M_PI)/180.0; // force a failure
-	else {
-		ratio = A_dot_B/(mag_A * mag_B);
-		ratio = ((double)((INT32)(ratio*1000.0))) / 1000.0;
-		if (ratio < -1.0 || ratio > (double)1.0)
-			angle = (199.0 * M_PI)/180.0;  // force a failure
-		else
-			angle = acos (ratio);
-		}
-	// if angle is less than 110 degrees
+		return false;
+	ratio = A_dot_B / (mag_A * mag_B);
+	ratio = ((double) ((INT32) (ratio * 1000.0))) / 1000.0;
+	if (ratio < -1.0 || ratio > 1.0) 
+		return false;
+	angle = acos (ratio);  // force a failure
+	// if angle is less than 180 degrees
 	// then we found a match
-	if (angle >= (180.0 * M_PI)/180.0)
+	if (angle >= Radians (180.0))
 		return false;
 	}
-INT32 i, j;
-for (j = 0; j < 4; j++) {
+for (INT32 j = 0; j < 4; j++) {
 	CFixVector corner;
 	INT32 nVertex = sideVertTable[nSide][j];
 	INT32 h = segP->m_info.verts[nVertex];
 	corner = *Vertices (h);
 	double length = 20.0 * m_lightRenderDepth;
-	for (i = 0; i < 4; i++)
+	for (INT32 i = 0; i < 4; i++)
 		length = min (length, CalcLength (sourceCorners  + i, &corner) / F1_0);
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
