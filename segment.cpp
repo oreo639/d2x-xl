@@ -1117,12 +1117,12 @@ return false;
 
 // -------------------------------------------------------------------------- 
 
-bool CMine::IsLineOfSide (CSegment *segP, INT32 nSide, INT32 linenum)
+bool CMine::IsLineOfSide (CSegment *segP, INT32 nSide, INT32 nLine)
 {
 	INT32	i;
 
 for (i = 0; i < 2; i++)
-	if (!IsPointOfSide (segP, nSide, lineVertTable [linenum][i]))
+	if (!IsPointOfSide (segP, nSide, lineVertTable [nLine][i]))
 		return false;
 return true;
 }
@@ -1215,7 +1215,7 @@ INFOMSG("A new point was made for the current point.");
 void CMine::SplitLines() 
 {
   CSegment *segP; 
-  INT16 vert [2], nSegment, nVertex, linenum, nOppSeg, nOppSide, i; 
+  INT16 vert [2], nSegment, nVertex, nLine, nOppSeg, nOppSide, i; 
   bool found [2]; 
 
 if (m_bSplineActive) {
@@ -1230,8 +1230,8 @@ if (VertCount () > (MAX_VERTICES - 2)) {
 
 segP = Segments (Current ()->nSegment); 
 for (i = 0; i < 2; i++) {
-	linenum = sideLineTable [Current ()->nSide][Current ()->nLine]; 
-	vert [i] = Segments (Current ()->nSegment)->m_info.verts [lineVertTable [linenum][i]]; 
+	nLine = sideLineTable [Current ()->nSide][Current ()->nLine]; 
+	vert [i] = Segments (Current ()->nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
 	segP = Segments (0);
@@ -1267,15 +1267,15 @@ for (i = 0; i < 2; i++)
 		vertices [VertCount ()].z = vertices [vert [i]].z; 
 		*/
 		// replace existing points with new points
-		linenum = sideLineTable [Current ()->nSide][Current ()->nLine]; 
-		segP->m_info.verts [lineVertTable [linenum][i]] = VertCount (); 
+		nLine = sideLineTable [Current ()->nSide][Current ()->nLine]; 
+		segP->m_info.verts [lineVertTable [nLine][i]] = VertCount (); 
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
 		VertStatus (VertCount ()++) = 0; 
 		}
 INT32 nSide;
 for (nSide = 0; nSide < 6; nSide++) {
-	if (IsLineOfSide (segP, nSide, linenum) && 
+	if (IsLineOfSide (segP, nSide, nLine) && 
 		 GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, nSide)) {
 		UnlinkChild (nOppSeg, nOppSide);
 		UnlinkChild (Current ()->nSegment, nSide); 
@@ -1471,7 +1471,7 @@ void CMine::JoinLines()
   double distance, min_radius; 
   INT32 v1, v2, vert1 [2], vert2 [2]; 
   INT16 match [2]; 
-  INT16 i, j, linenum; 
+  INT16 i, j, nLine; 
   bool fail; 
   CSelection *cur1, *cur2; 
 
@@ -1502,10 +1502,10 @@ else {
 	}
 
 for (i = 0; i < 2; i++) {
-	linenum = sideLineTable [cur1->nSide][cur1->nLine]; 
-	v1 = vert1 [i] = seg1->m_info.verts [lineVertTable [linenum][i]]; 
-	linenum = sideLineTable [cur2->nSide][cur2->nLine]; 
-	v2 = vert2 [i] = seg2->m_info.verts [lineVertTable [linenum][i]]; 
+	nLine = sideLineTable [cur1->nSide][cur1->nLine]; 
+	v1 = vert1 [i] = seg1->m_info.verts [lineVertTable [nLine][i]]; 
+	nLine = sideLineTable [cur2->nSide][cur2->nLine]; 
+	v2 = vert2 [i] = seg2->m_info.verts [lineVertTable [nLine][i]]; 
 	v1x [i] = Vertices (v1)->v.x; 
 	v1y [i] = Vertices (v1)->v.y; 
 	v1z [i] = Vertices (v1)->v.z; 
@@ -1556,8 +1556,8 @@ theApp.SetModified (TRUE);
 theApp.LockUndo ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
-	linenum = sideLineTable [cur1->nSide][cur1->nLine]; 
-	seg1->m_info.verts [lineVertTable [linenum][i]] = vert2 [match [i]]; 
+	nLine = sideLineTable [cur1->nSide][cur1->nLine]; 
+	seg1->m_info.verts [lineVertTable [nLine][i]] = vert2 [match [i]]; 
 	}
 FixChildren(); 
 SetLinesToDraw(); 
@@ -2063,23 +2063,23 @@ return 1;
 
                         /* -------------------------- */
 
-INT32 CMine::AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
+INT32 CMine::AlignTextures (INT16 nStartSeg, INT16 nStartSide, INT16 nOnlyChildSeg, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
 {
-	CSegment *segP = Segments (start_segment); 
-	CSegment *childSeg; 
-	CSide *sideP = segP->m_sides + start_side; 
-	CSide *childSide; 
+	CSegment*	segP = Segments (nStartSeg); 
+	CSegment*	childSegP; 
+	CSide*		sideP = segP->m_sides + nStartSide; 
+	CSide*		childSideP; 
 
-	INT32 return_code =-1; 
-	INT16 i; 
-	INT16 nSide, childnum, linenum; 
-	INT16 point0, point1, vert0, vert1; 
-	INT16 childs_side, childs_line; 
-	INT16 childs_point0, childs_point1, childs_vert0, childs_vert1; 
-	INT16 u0, v0; 
-	double sangle, cangle; 
-	double angle, length; 
-	static INT32 side_child [6][4] = {
+	INT32			return_code = -1; 
+	INT16			i; 
+	INT16			nSide, nChildSeg, nLine; 
+	INT16			point0, point1, vert0, vert1; 
+	INT16			nChildSide, nChildLine; 
+	INT16			nChildPoint0, nChildPoint1, nChildVert0, nChildVert1; 
+	INT16			u0, v0; 
+	double		sangle, cangle, angle, length; 
+
+	static INT32 sideChildTable [6][4] = {
 		{4, 3, 5, 1}, //{5, 1, 4, 3}, 
 		{2, 4, 0, 5}, //{5, 0, 4, 2}, 
 		{5, 3, 4, 1}, //{5, 3, 4, 1}, 
@@ -2090,90 +2090,90 @@ INT32 CMine::AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_ch
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
-for (linenum = 0; linenum < 4; linenum++) {
+for (nLine = 0; nLine < 4; nLine++) {
 	// find vert numbers for the line's two end points
-	point0 = lineVertTable [sideLineTable [start_side][linenum]][0]; 
-	point1 = lineVertTable [sideLineTable [start_side][linenum]][1]; 
+	point0 = lineVertTable [sideLineTable [nStartSide][nLine]][0]; 
+	point1 = lineVertTable [sideLineTable [nStartSide][nLine]][1]; 
 	vert0  = segP->m_info.verts [point0]; 
 	vert1  = segP->m_info.verts [point1]; 
 	// check child for this line
-	if (start_segment == only_child) {
-		nSide = start_side;
-		childnum = start_segment;
+	if (nStartSeg == nOnlyChildSeg) {
+		nSide = nStartSide;
+		nChildSeg = nStartSeg;
 		}
 	else {
-		nSide = side_child [start_side][linenum]; 
-		childnum = segP->m_info.children [nSide]; 
+		nSide = sideChildTable [nStartSide][nLine]; 
+		nChildSeg = segP->m_info.children [nSide]; 
 		}
-	childSeg = Segments (childnum); 
-	if ((childnum < 0) || ((only_child != -1) && (childnum != only_child)))
+	if ((nChildSeg < 0) || ((nOnlyChildSeg != -1) && (nChildSeg != nOnlyChildSeg)))
 		continue;
-	// figure out which side of child shares two points w/ start_side
-	for (childs_side = 0; childs_side < 6; childs_side++) {
-		if ((start_segment == only_child) && (childs_side == start_side))
+	childSegP = Segments (nChildSeg); 
+	// figure out which side of child shares two points w/ nStartSide
+	for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+		if ((nStartSeg == nOnlyChildSeg) && (nChildSide == nStartSide))
 			continue;
-		if (bAlignedSides & (1 << childs_side))
+		if (bAlignedSides & (1 << nChildSide))
 			continue;
 		// ignore children of different textures (or no texture)
-		if (!IsWall (childnum, childs_side))
+		if (!IsWall (nChildSeg, nChildSide))
 			continue;
-		if (childSeg->m_sides [childs_side].m_info.nBaseTex != sideP->m_info.nBaseTex)
+		if (childSegP->m_sides [nChildSide].m_info.nBaseTex != sideP->m_info.nBaseTex)
 			continue;
-		for (childs_line = 0; childs_line < 4; childs_line++) {
+		for (nChildLine = 0; nChildLine < 4; nChildLine++) {
 			// find vert numbers for the line's two end points
-			childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0]; 
-			childs_point1 = lineVertTable [sideLineTable [childs_side][childs_line]][1]; 
-			childs_vert0  = childSeg->m_info.verts [childs_point0]; 
-			childs_vert1  = childSeg->m_info.verts [childs_point1]; 
+			nChildPoint0 = lineVertTable [sideLineTable [nChildSide][nChildLine]][0]; 
+			nChildPoint1 = lineVertTable [sideLineTable [nChildSide][nChildLine]][1]; 
+			nChildVert0  = childSegP->m_info.verts [nChildPoint0]; 
+			nChildVert1  = childSegP->m_info.verts [nChildPoint1]; 
 			// if points of child's line== corresponding points of parent
-			if (!((childs_vert0 == vert1 && childs_vert1 == vert0) ||
-					(childs_vert0 == vert0 && childs_vert1 == vert1)))
+			if (!((nChildVert0 == vert1 && nChildVert1 == vert0) ||
+					(nChildVert0 == vert0 && nChildVert1 == vert1)))
 				continue;
 			// now we know the child's side & line which touches the parent
-			// child:  childnum, childs_side, childs_line, childs_point0, childs_point1
-			// parent: start_segment, start_side, linenum, point0, point1
-			childSide = childSeg->m_sides + childs_side; 
+			// child:  nChildSeg, nChildSide, nChildLine, nChildPoint0, nChildPoint1
+			// parent: nStartSeg, nStartSide, nLine, point0, point1
+			childSideP = childSegP->m_sides + nChildSide; 
 			if (bAlign1st) {
 				// now translate all the childs (u, v) coords so child_point1 is at zero
-				u0 = childSide->m_info.uvls [(childs_line + 1)&3].u; 
-				v0 = childSide->m_info.uvls [(childs_line + 1)&3].v; 
+				u0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].u; 
+				v0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].v; 
 				for (i = 0; i < 4; i++) {
-					childSide->m_info.uvls [i].u -= u0; 
-					childSide->m_info.uvls [i].v -= v0; 
+					childSideP->m_info.uvls [i].u -= u0; 
+					childSideP->m_info.uvls [i].v -= v0; 
 					}
 				// find difference between parent point0 and child point1
-				u0 = childSide->m_info.uvls [(childs_line + 1)&3].u - sideP->m_info.uvls [linenum].u; 
-				v0 = childSide->m_info.uvls [(childs_line + 1)&3].v - sideP->m_info.uvls [linenum].v; 
+				u0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].u - sideP->m_info.uvls [nLine].u; 
+				v0 = childSideP->m_info.uvls [(nChildLine + 1) % 4].v - sideP->m_info.uvls [nLine].v; 
 				// find the angle formed by the two lines
-				sangle = atan3(sideP->m_info.uvls [(linenum + 1)&3].v - sideP->m_info.uvls [linenum].v, 
-				sideP->m_info.uvls [(linenum + 1)&3].u - sideP->m_info.uvls [linenum].u); 
-				cangle = atan3(childSide->m_info.uvls [childs_line].v - childSide->m_info.uvls [(childs_line + 1)&3].v, 
-									childSide->m_info.uvls [childs_line].u - childSide->m_info.uvls [(childs_line + 1)&3].u); 
+				sangle = atan3(sideP->m_info.uvls [(nLine + 1) % 4].v - sideP->m_info.uvls [nLine].v, 
+				sideP->m_info.uvls [(nLine + 1) % 4].u - sideP->m_info.uvls [nLine].u); 
+				cangle = atan3(childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) % 4].v, 
+									childSideP->m_info.uvls [nChildLine].u - childSideP->m_info.uvls [(nChildLine + 1) % 4].u); 
 				// now rotate childs (u, v) coords around child_point1 (cangle - sangle)
 				for (i = 0; i < 4; i++) {
-					angle = atan3(childSide->m_info.uvls [i].v, childSide->m_info.uvls [i].u); 
-					length = sqrt((double)childSide->m_info.uvls [i].u*(double)childSide->m_info.uvls [i].u +
-									  (double)childSide->m_info.uvls [i].v*(double)childSide->m_info.uvls [i].v); 
+					angle = atan3(childSideP->m_info.uvls [i].v, childSideP->m_info.uvls [i].u); 
+					length = sqrt((double)childSideP->m_info.uvls [i].u*(double)childSideP->m_info.uvls [i].u +
+									  (double)childSideP->m_info.uvls [i].v*(double)childSideP->m_info.uvls [i].v); 
 					angle -= (cangle - sangle); 
-					childSide->m_info.uvls [i].u = (INT16)(length * cos (angle)); 
-					childSide->m_info.uvls [i].v = (INT16)(length * sin (angle)); 
+					childSideP->m_info.uvls [i].u = (INT16)(length * cos (angle)); 
+					childSideP->m_info.uvls [i].v = (INT16)(length * sin (angle)); 
 					}
 				// now translate all the childs (u, v) coords to parent point0
 				for (i = 0; i < 4; i++) {
-					childSide->m_info.uvls [i].u -= u0; 
-					childSide->m_info.uvls [i].v -= v0; 
+					childSideP->m_info.uvls [i].u -= u0; 
+					childSideP->m_info.uvls [i].v -= v0; 
 					}
 				// modulo points by 0x800 (== 64 pixels)
-				u0 = childSide->m_info.uvls [0].u/0x800; 
-				v0 = childSide->m_info.uvls [0].v/0x800; 
+				u0 = childSideP->m_info.uvls [0].u/0x800; 
+				v0 = childSideP->m_info.uvls [0].v/0x800; 
 				for (i = 0; i < 4; i++) {
-					childSide->m_info.uvls [i].u -= u0*0x800; 
-					childSide->m_info.uvls [i].v -= v0*0x800; 
+					childSideP->m_info.uvls [i].u -= u0*0x800; 
+					childSideP->m_info.uvls [i].v -= v0*0x800; 
 					}
-				if (only_child != -1)
-					return_code = childs_side; 
+				if (nOnlyChildSeg != -1)
+					return_code = nChildSide; 
 				}
-			if (bAlign2nd && sideP->m_info.nOvlTex && childSide->m_info.nOvlTex) {
+			if (bAlign2nd && sideP->m_info.nOvlTex && childSideP->m_info.nOvlTex) {
 				INT32 r;
 				switch (sideP->m_info.nOvlTex & 0xC000) {
 					case 0:
@@ -2189,21 +2189,21 @@ for (linenum = 0; linenum < 4; linenum++) {
 						r = 3;
 						break;
 					}
-				INT32 h = (INT32) (fabs (angle) * 180.0 / PI / 90 + 0.5); 
-//				h +=(childs_line + linenum + 2) % 4; //(childs_line > linenum) ? childs_line - linenum : linenum - childs_line;
+				INT32 h = (INT32) (Radians (fabs (angle)) / 90 + 0.5); 
+//				h +=(nChildLine + nLine + 2) % 4; //(nChildLine > nLine) ? nChildLine - nLine : nLine - nChildLine;
 				h = (h + r) % 4;
-				childSide->m_info.nOvlTex &= ~0xC000;
+				childSideP->m_info.nOvlTex &= ~0xC000;
 				switch (h) {
 					case 0:
 						break;
 					case 1:
-						childSide->m_info.nOvlTex |= 0xC000;
+						childSideP->m_info.nOvlTex |= 0xC000;
 						break;
 					case 2:
-						childSide->m_info.nOvlTex |= 0x8000;
+						childSideP->m_info.nOvlTex |= 0x8000;
 						break;
 					case 3:
-						childSide->m_info.nOvlTex |= 0x4000;
+						childSideP->m_info.nOvlTex |= 0x4000;
 						break;
 					}
 				}
