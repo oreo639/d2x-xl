@@ -60,7 +60,6 @@ extern HRGN hrgnBackground, hrgnLowerBar, hrgnTopBar, hrgnAll;
 // globals
 //-----------------------------------------------------------------------
 static CGameObject* renderObject;
-static CPolyModel* renderModel;
 static tModelRenderData modelRenderData;
 static CVertex renderOffset;
 static INT16 glow_num = -1;
@@ -70,6 +69,8 @@ static INT32 pt, pt0, n_points;
 static INT32 lastObjectType = -1;
 static INT32 lastObjectId = -1;
 static APOINT poly_xy [MAX_POLYMODEL_POINTS];
+
+CPolyModel* renderModel;
 
 //-----------------------------------------------------------------------
 // FIX MultiplyFix ()
@@ -85,8 +86,8 @@ FIX MultiplyFix (FIX a, FIX b) {
 
 void CMineView::DrawModel () 
 {
-if (m_renderModel)
-	m_renderModel->Draw (&m_view, m_pDC);
+if (renderModel)
+	renderModel->Draw (&m_view, m_pDC);
 }
 
 //-----------------------------------------------------------------------
@@ -284,6 +285,7 @@ if (bRenderData) {
 else {
 	m_info.nModels = read_INT32 (fp);
 	m_info.dataSize = read_INT32 (fp);
+	read_INT32 (fp);
 	m_info.renderData = NULL;
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].ptr = read_INT32 (fp);
@@ -319,7 +321,6 @@ INT32 CMineView::ReadModelData (char* filename, bool bCustom)
 
 if (fopen_s (&fp, filename, "rb"))
 	return 1;
-
 
 	UINT32	id;
 	UINT32	i, n;
@@ -398,6 +399,7 @@ else {
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
 		m_polyModels [i].Read (fp);
+	n = ftell (fp);
 	for (i = 0; i < n; i++) 
 		m_polyModels [i].Read (fp, true);
 	}

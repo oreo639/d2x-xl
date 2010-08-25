@@ -185,7 +185,6 @@ protected: // create from serialization only
 	INT32			m_nMineCenter;
 
 	CPolyModel	m_polyModels [MAX_POLYGON_MODELS];
-	CPolyModel*	m_renderModel;
 
 
 #if OGL_RENDERING
