@@ -436,7 +436,7 @@ public:
 	bool ResizeItem (double delta); 
 	bool MovePoints (INT32 pt0, INT32 pt1); 
 	bool ResizeLine (CSegment *segP, INT32 point0, INT32 point1, double delta); 
-	bool MoveOn (CFixVector inc); 
+	bool MoveOn (CDoubleVector delta); 
 	bool SpinSelection (double angle); 
 	//void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);

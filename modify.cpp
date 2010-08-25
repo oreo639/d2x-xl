@@ -477,7 +477,7 @@ return true;
 				MoveOn()
 ***************************************************************************/
 
-bool CMine::MoveOn (CFixVector delta) 
+bool CMine::MoveOn (CDoubleVector delta) 
 {
 INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
