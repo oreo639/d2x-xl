@@ -217,7 +217,7 @@ while (W (p) != OP_EOF) {
 			/* = W (p+2); */
 			/* = W (p+4); */
 			/* = W (p+16); */
-			if (m_view->CheckNormal (renderObject, VP (p+4), VP (p+16))) {
+			if (m_view->CheckNormal (renderObject, *VP (p+4), *VP (p+16))) {
 			  Render (p + W (p+28));
 			  Render (p + W (p+30));
 				}
