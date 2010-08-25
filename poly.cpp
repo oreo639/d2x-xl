@@ -329,7 +329,6 @@ if (bCustom) {
 	struct level_header level;
 	char data[3];
 	long position;
-	UINT32 nRobots, nModels;
 
 	fread (data, 3, 1, fp); // verify signature "DHF"
 	if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
@@ -353,8 +352,8 @@ if (bCustom) {
 			read_UINTW (fp);                              // read version
 			n = read_UINTW (fp);                         // n_weapon_types
 			fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
-			nRobots = read_UINTW (fp);                         // n_robot_types
-			for (i = 0; i < nRobots; i++)
+			n = read_UINTW (fp);                         // n_robot_types
+			for (i = 0; i < n; i++)
 				theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
 			n  = read_UINTW (fp);                         // n_robot_joints
 			fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
@@ -362,17 +361,12 @@ if (bCustom) {
 			}
 		position += sizeof (struct level_header) + level.size;
 		}
-	nModels = read_UINTW (fp);                          // n_curModels
+	n = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
-	for (i = 0; i < nModels; i++) 
-		if (i < nRobots)
-			m_polyModels [theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->m_info.nModel].Read (fp);
-		else {
-			CPolyModel pm;
-			pm.Read (fp);
-			}	
-	for (i = 0; i < nModels; i++) 
-		m_polyModels [theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->m_info.nModel].Read (fp, true);
+	for (i = 0; i < n; i++) 
+		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp);
+	for (i = 0; i < n; i++) 
+		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp, true);
 	}
 else {
 	id = read_INT32 (fp);	  					   // read id
@@ -406,9 +400,9 @@ else {
 	n = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		m_polyModels [theMine->RobotInfo (i)->m_info.nModel].Read (fp);
+		m_polyModels [i].Read (fp);
 	for (i = 0; i < n; i++) 
-		m_polyModels [theMine->RobotInfo (i)->m_info.nModel].Read (fp, true);
+		m_polyModels [i].Read (fp, true);
 	}
 fclose (fp);
 return 0;
