@@ -1964,7 +1964,7 @@ for (i = 0; i < n_splines; i++, segP--)
 
 void TransformModelPoint (CVertex& dest, APOINT &src, CDoubleMatrix &orient, CVertex offs)
 {
-CFixVector v (src.x, src.y, src.z);
+CDoubleVector v (src.x, src.y, src.z);
 dest = orient * v;
 dest += offs;
 }
