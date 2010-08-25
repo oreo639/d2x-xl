@@ -162,7 +162,7 @@ m_glDC = NULL;
 #endif
 m_nViewDist = 0;
 m_depthPerception = 10000.0f;
-m_renderModel = NULL;
+renderModel = NULL;
 Reset ();
 }
 
