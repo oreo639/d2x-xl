@@ -172,7 +172,7 @@ void CMineView::DrawModel ()
 void CMineView::SetModelPoints (INT32 start, INT32 end) 
 {
 CGameObject *objP = gpObject;
-CFixVector pt;
+CVertex		pt;
 
 for (INT32 i = start; i < end; i++) {
 	FIX x0 = gModel.points[i].v.x;
@@ -184,7 +184,7 @@ for (INT32 i = start; i < end; i++) {
 	// set point to be in world coordinates
 	pt += objP->m_info.pos;
 	// now that points are relative to set screen xy points (poly_xy)
-	m_view.Project (&pt, poly_xy + i);
+	m_view.Project (pt, poly_xy [i]);
 	}
 }
 

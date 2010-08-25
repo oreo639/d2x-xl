@@ -303,7 +303,7 @@ while(!feof(fBlk)) {
 			nVertex = VertCount ();
 			VertStatus (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
-			*Vertices (nVertex) = CFixVector (v);
+			*Vertices (nVertex) = v;
 			VertCount ()++;
 			}
 		}
@@ -828,11 +828,11 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							CFixVector* v1 = Vertices (segP ->m_info.verts [0]);
-							CFixVector* v2 = Vertices (seg2->m_info.verts [0]);
-							if (xabs (v1->v.x - v2->v.x) < I2X(10) &&
-								 xabs (v1->v.y - v2->v.y) < I2X(10) &&
-								 xabs (v1->v.z - v2->v.z) < I2X(10)) {
+							CVertex* v1 = Vertices (segP ->m_info.verts [0]);
+							CVertex* v2 = Vertices (seg2->m_info.verts [0]);
+							if (fabs (v1->v.x - v2->v.x) < 10.0 &&
+								 fabs (v1->v.y - v2->v.y) < 10.0 &&
+								 fabs (v1->v.z - v2->v.z) < 10.0) {
 								for (sidenum2 = 0; sidenum2 < 6; sidenum2++) {
 									LinkSegments (nSegment, child, segnum2, sidenum2, 3 * F1_0);
 									}

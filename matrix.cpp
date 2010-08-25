@@ -23,15 +23,15 @@ CFixVector::CFixVector (CDoubleVector& _v) {
 //  Rotates a vertex around a center point perpendicular to direction vector.
 // -----------------------------------------------------------------------------
 
-void CFixVector::Rotate (CFixVector* origin, CFixVector* normal, double angle) 
+void CFixVector::Rotate (CFixVector& origin, CFixVector& normal, double angle) 
 {
 
   double				zSpin, ySpin, h;
   CDoubleVector	v0, v1, v2, v3, vn;
 
   // translate coordanites to origin
-v0 = CDoubleVector (*this - *origin);
-vn = CDoubleVector (*normal - *origin);
+v0 = CDoubleVector (*this - origin);
+vn = CDoubleVector (normal - origin);
 
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane
@@ -50,7 +50,7 @@ v2.Set (v3.v.x * cos (ySpin) - v3.v.z * sin (ySpin), v3.v.y, v3.v.x * sin (ySpin
 zSpin = -zSpin;
 v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), v2.v.y * cos (zSpin) - v2.v.x * sin (zSpin), v2.v.z);
 
-v1 += *origin;
+v1 += origin;
 *this = CFixVector (v1);
 }
 
@@ -60,6 +60,41 @@ v1 += *origin;
 
 CDoubleVector::CDoubleVector (CFixVector _v) { 
 	v.x = X2D (_v.v.x), v.y = X2D (_v.v.y), v.z = X2D (_v.v.z); 
+}
+
+// -----------------------------------------------------------------------------
+//  Rotates a vertex around a center point perpendicular to direction vector.
+// -----------------------------------------------------------------------------
+
+void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle) 
+{
+
+  double				zSpin, ySpin, h;
+  CDoubleVector	v0, v1, v2, v3, vn;
+
+  // translate coordanites to origin
+v0 = CDoubleVector (*this - origin);
+vn = CDoubleVector (normal - origin);
+
+// calculate angles to normalize direction
+// spin on z axis to get into the x-z plane
+zSpin = (vn.v.y == vn.v.x) ? PI/4 : atan2 (vn.v.y, vn.v.x);
+h = vn.v.x * cos (zSpin) + vn.v.y * sin (zSpin);
+// spin on y to get on the x axis
+ySpin = (vn.v.z == h) ? PI/4 : -atan2(vn.v.z, h);
+
+// normalize vertex (spin on z then y)
+v1.Set (v0.v.x * cos (zSpin) + v0.v.y * sin (zSpin), v0.v.y * cos (zSpin) - v0.v.x * sin (zSpin), v0.v.z);
+v2.Set (v1.v.x * cos (ySpin) - v1.v.z * sin (ySpin), v1.v.y, v1.v.x * sin (ySpin) + v1.v.z * cos (ySpin));
+v3.Set (v2.v.x, v2.v.y * cos (angle) + v2.v.z * sin (angle), v2.v.z * cos (angle) - v2.v.y * sin (angle));
+// spin back in negative direction (y first then z)
+ySpin = -ySpin;
+v2.Set (v3.v.x * cos (ySpin) - v3.v.z * sin (ySpin), v3.v.y, v3.v.x * sin (ySpin) + v3.v.z * cos (ySpin));
+zSpin = -zSpin;
+v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), v2.v.y * cos (zSpin) - v2.v.x * sin (zSpin), v2.v.z);
+
+v1 += origin;
+*this = v1;
 }
 
 // -----------------------------------------------------------------------------
@@ -568,7 +603,7 @@ m_invMove [0] = m_invMat [0] * m_move [0];
 // Project()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Project (CFixVector* vertex, APOINT *apoint) 
+void CViewMatrix::Project (CVertex& vertex, APOINT& apoint) 
 {
 	CDoubleVector	v (*vertex), r;
 
@@ -578,18 +613,18 @@ double scale = 5.0;
 if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
 	scale *= m_depthPerception / (r.v.z + m_depthPerception);
 r *= CDoubleVector (scale, scale, 1.0);
-apoint->x = (INT16) ((FIX) (r.v.x + m_viewWidth) % 32767);
-apoint->y = (INT16) ((FIX) (m_viewHeight - r.v.y) % 32767);
-apoint->z = (INT16) r.v.z;
+apoint.x = (INT16) ((FIX) (r.v.x + m_viewWidth) % 32767);
+apoint.y = (INT16) ((FIX) (m_viewHeight - r.v.y) % 32767);
+apoint.z = (INT16) r.v.z;
 }
 
 //--------------------------------------------------------------------------
 //			     unset_point()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::Unproject (CFixVector* vertex, APOINT *apoint) 
+void CViewMatrix::Unproject (CVertex& vertex, APOINT& apoint) 
 {
-CDoubleVector v (double (apoint->x - x_center), double (y_center - apoint->y), double (apoint->z));
+CDoubleVector v (double (apoint.x - x_center), double (y_center - apoint.y), double (apoint.z));
 double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
 v *= CDoubleVector (scale, scale, 1.0);
 CDoubleVector r = m_invMat [0] * v;

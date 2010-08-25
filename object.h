@@ -285,20 +285,20 @@ typedef struct tObjContentsInfo {
 } tObjContentsInfo;
 
 typedef struct tGameObject {
-	INT16			signature;     // reduced size to save memory 
-	INT8			type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
-	INT8			id;            // which form of object...which powerup, robot, etc. 
-	UINT8			controlType;  // how this object is controlled 
-	UINT8			movementType; // how this object moves 
-	UINT8			renderType;   //  how this object renders 
-	UINT8			flags;         // misc flags 
-	UINT8			multiplayer;   // object only available in multiplayer games 
-	INT16			nSegment;      // segment number containing object 
-	CFixVector	pos;           // absolute x,y,z coordinate of center of object 
-	CFixMatrix	orient;        // orientation of object in world 
-	FIX			size;          // 3d size of object - for collision detection 
-	FIX			shields;       // Starts at maximum, when <0, object dies.. 
-	CFixVector	lastPos;			// where object was last frame 
+	INT16				signature;     // reduced size to save memory 
+	INT8				type;          // what type of object this is... robot, weapon, hostage, powerup, fireball 
+	INT8				id;            // which form of object...which powerup, robot, etc. 
+	UINT8				controlType;  // how this object is controlled 
+	UINT8				movementType; // how this object moves 
+	UINT8				renderType;   //  how this object renders 
+	UINT8				flags;         // misc flags 
+	UINT8				multiplayer;   // object only available in multiplayer games 
+	INT16				nSegment;      // segment number containing object 
+	CDoubleVector	pos;           // absolute x,y,z coordinate of center of object 
+	CDoubleMatrix	orient;        // orientation of object in world 
+	FIX				size;          // 3d size of object - for collision detection 
+	FIX				shields;       // Starts at maximum, when <0, object dies.. 
+	CDoubleVector	lastPos;			// where object was last frame 
 	tObjContentsInfo contents;
 } tGameObject;
 

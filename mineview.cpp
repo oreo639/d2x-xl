@@ -318,17 +318,17 @@ if (m_nMineCenter == 2) {
 	// draw a globe
 	// 5 circles around each axis at angles of 30, 60, 90, 120, and 150
 	// each circle has 18 points
-	CFixVector circle;
+	CVertex circle;
 	APOINT pt;
 
 	m_pDC->SelectObject (m_penCyan);
 	INT32 i, j;
 	for (i = -60; i <= 60; i += 30) {
 		for (j = 0; j <= 360; j += 15) {
-			double scale = (FIX)(5*F1_0 * cos (Radians (i)));
+			double scale = (FIX)(5 * cos (Radians (i)));
 			circle.Set ((FIX)(scale * cos (Radians (j))),
 							(FIX)(scale * sin (Radians (j))),
-							(FIX)(5*F1_0 * sin (Radians (i)))
+							(FIX)(5 * sin (Radians (i)))
 							);
 			circle -= CFixVector (m_view.m_move [0]);
 			m_view.Project (&circle, &pt);
@@ -341,11 +341,11 @@ if (m_nMineCenter == 2) {
 			}
 		}
 	m_pDC->SelectObject (m_penGreen);
-	for (i=-60;i<=60;i+=30) {
-		for (j=0;j<=360;j+=15) {
-			double scale = (FIX)(5*F1_0 * cos (Radians (i)));
+	for (i = -60; i <= 60; i += 30) {
+		for (j = 0; j <= 360; j += 15) {
+			double scale = (FIX)(5 * cos (Radians (i)));
 			circle.Set ((FIX)(scale * cos (Radians (j))),
-							(FIX)(5*F1_0 * sin (Radians (i))),
+							(FIX)(5 * sin (Radians (i))),
 							(FIX)(scale * sin (Radians (j)))
 							);
 			circle -= CFixVector (m_view.m_move [0]);
@@ -361,8 +361,8 @@ if (m_nMineCenter == 2) {
 	m_pDC->SelectObject (m_penGray);
 	for (i = -60; i <= 60; i += 30) {
 		for (j = 0; j <= 360; j += 15) {
-			double scale = (FIX)(5 * F1_0 * cos (Radians (i)));
-			circle.Set ((FIX)(5*F1_0 * sin (Radians (i))),
+			double scale = (FIX)(5 * cos (Radians (i)));
+			circle.Set ((FIX)(5 * sin (Radians (i))),
 							(FIX)(scale * cos (Radians (j))),
 							(FIX)(scale * sin (Radians (j)))
 							);
@@ -1748,13 +1748,13 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 		 IN_RANGE(m_viewPoints [segP->m_info.verts [sideVertTable [j][3]]].x,x_max) &&
 		 IN_RANGE(m_viewPoints [segP->m_info.verts [sideVertTable [j][3]]].y,y_max)) {
 
-			CFixVector center,orthog,vector;
-			APOINT point;
+			CVertex	center, orthog, vector;
+			APOINT	point;
 
 		center = theMine->CalcSideCenter (walls [i].m_nSegment, walls [i].m_nSide);
 		orthog = theMine->CalcSideNormal (walls [i].m_nSegment, walls [i].m_nSide);
 		vector = center - orthog;
-		m_view.Project (&vector,&point);
+		m_view.Project (&vector, &point);
 		for (j = 0; j < 4; j++) {
 			m_pDC->MoveTo (point.x,point.y);
 			m_pDC->LineTo (m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide] [j]]].x,
@@ -1762,13 +1762,13 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			}
 		if (walls [i].m_info.nTrigger != NO_TRIGGER) {
 				APOINT arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
-				CFixVector fin;
+				CVertex fin;
 
 			// calculate arrow points
 			vector = center - (orthog * 3);
-			m_view.Project(&vector,&arrowStartPoint);
+			m_view.Project (&vector,&arrowStartPoint);
 			vector = center + (orthog * 3);
-			m_view.Project(&vector,&arrowEndPoint);
+			m_view.Project (&vector,&arrowEndPoint);
 
 			// direction toward center of line 0 from center
 			UINT8 *svp = &sideVertTable [walls [i].m_nSide][0];
@@ -1779,9 +1779,9 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			fin = (orthog * 2);
 			fin += center;
 			fin += vector;
-			m_view.Project(&fin,&arrow1Point);
+			m_view.Project (&fin, &arrow1Point);
 			fin -= vector * 2;
-			m_view.Project(&fin,&arrow2Point);
+			m_view.Project (&fin, &arrow2Point);
 
 			// draw arrow
 			m_pDC->MoveTo (arrowStartPoint.x, arrowStartPoint.y);
@@ -1924,24 +1924,24 @@ m_pDC->SelectObject (m_penRed);
 m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 theMine->CalcSpline ();
 APOINT point;
-m_view.Project (&points[1],&point);
-if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
-	m_view.Project (&points[0],&point);
-	if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
-		m_pDC->MoveTo (point.x,point.y);
-		m_view.Project (&points[1],&point);
-		m_pDC->LineTo (point.x,point.y);
-		m_pDC->Ellipse (point.x - 4,point.y - 4,point.x+4, point.y+4);
+m_view.Project (points [1], &point);
+if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
+	m_view.Project (points [0], &point);
+	if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
+		m_pDC->MoveTo (point.x, point.y);
+		m_view.Project (points [1], &point);
+		m_pDC->LineTo (point.x, point.y);
+		m_pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
 		}
 	}
-m_view.Project (&points[2],&point);
-if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
-	m_view.Project (&points[3],&point);
-	if (IN_RANGE(point.x,x_max) && IN_RANGE(point.y,y_max)){
-		m_pDC->MoveTo (point.x,point.y);
-		m_view.Project (&points[2],&point);
-		m_pDC->LineTo (point.x,point.y);
-		m_pDC->Ellipse (point.x - 4,point.y - 4,point.x+4, point.y+4);
+m_view.Project (points [2], &point);
+if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
+	m_view.Project (points [3], &point);
+	if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
+		m_pDC->MoveTo (point.x, point.y);
+		m_view.Project (points [2], &point);
+		m_pDC->LineTo (point.x, point.y);
+		m_pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
 		}
 	}
 m_pDC->SelectObject (m_penBlue);
@@ -2062,7 +2062,7 @@ switch (clear_it) {
 //CBRK (objnum == 45);
 for (poly = 0; poly < MAX_POLY; poly++) {
 	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_info.orient, objP->m_info.pos);
-	m_view.Project (pt + poly, poly_draw + poly);
+	m_view.Project (pt [poly], poly_draw [poly]);
 	}
 
 // figure out world coordinates
@@ -2665,7 +2665,7 @@ if (!theMine) return;
 //	ASSERT_VALID(pDoc);
 
 	CVertex *verts;
-	CFixVector	vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
+	CVertex	vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 	INT32 i;
 
 verts = theMine->Vertices (0);
@@ -3136,7 +3136,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_view.Project(&objP->m_info.pos, &pt);
+		m_view.Project (&objP->m_info.pos, &pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;
@@ -3528,7 +3528,7 @@ if (count == 1) {
 	for (i=0;i<8;i++) {
 		if (i!=point1) {
 			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [i];
-			if (new_vert==vert2) {
+			if (new_vert == vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
 				}
@@ -3539,7 +3539,7 @@ if (count == 1) {
 		for (i=0;i<3;i++) {
 			point2 = connectPointTable [point1] [i];
 			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [point2];
-			if (theMine->CalcLength (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0*(double)F1_0) {
+			if (Distance (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
 				}
@@ -3548,9 +3548,9 @@ if (count == 1) {
 			// replace origional vertex with new vertex
 			theMine->Segments () [theMine->Current ()->nSegment].m_info.verts [point1] = new_vert;
 			// all unused vertices
-			theMine->DeleteUnusedVertices();
-			theMine->FixChildren();
-			theMine->SetLinesToDraw();
+			theMine->DeleteUnusedVertices ();
+			theMine->FixChildren ();
+			theMine->SetLinesToDraw ();
 			}
 		}	
 	}

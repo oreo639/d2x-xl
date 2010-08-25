@@ -192,10 +192,10 @@ double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3)
   CDoubleVector line1,line2,line3,orthog;
   double ratio;
   double dot_product, magnitude1, magnitude2,angle;
-  CFixVector* v0 = theMine->Vertices (vert0);
-  CFixVector* v1 = theMine->Vertices (vert1);
-  CFixVector* v2 = theMine->Vertices (vert2);
-  CFixVector* v3 = theMine->Vertices (vert3);
+  CVertex* v0 = theMine->Vertices (vert0);
+  CVertex* v1 = theMine->Vertices (vert1);
+  CVertex* v2 = theMine->Vertices (vert2);
+  CVertex* v3 = theMine->Vertices (vert3);
       // define lines
 line1 = *v1 - *v0;
 line2 = *v2 - *v0;
@@ -596,7 +596,7 @@ if (!theMine)
 	return false;
 
 	INT32				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
-	CFixVector			center;
+	CVertex			center;
 	double			radius, max_radius, object_radius;
 	CGameObject*	objP = theMine->Objects (0);
 	CGameObject*	pPlayer = NULL;
@@ -638,12 +638,12 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	// of corner to center.  Calculate Objects () distance
     // from center and make sure it is less than max corner.
     center.Clear ();
-    for (corner=0;corner<8;corner++) {
+    for (corner = 0; corner < 8; corner++) {
       center += *theMine->Vertices (segP->m_info.verts[corner]);
     }
-    center >>= 3;
+    center /= 8.0;
     max_radius = 0;
-    for (corner=0;corner<8;corner++) {
+    for (corner = 0; corner < 8; corner++) {
 		 radius = Distance (*theMine->Vertices (segP->m_info.verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }

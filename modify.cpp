@@ -231,11 +231,11 @@ return ResizeItem (-move_rate);
 
 bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
-INT32 nSegment = Current ()->nSegment;
-INT32 nSide = Current ()->nSide;
-CSegment *segP = Segments (nSegment);
-CFixVector center,oppCenter;
-INT32 i,pts [4];
+	INT32			nSegment = Current ()->nSegment;
+	INT32			nSide = Current ()->nSide;
+	CSegment*	segP = Segments (nSegment);
+	CVertex		center, oppCenter;
+	INT32			i, pts [4];
 
 switch (m_selectMode){
 	case POINT_MODE:
@@ -269,7 +269,7 @@ switch (m_selectMode){
 								*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [3]]]));
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
-			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (&center, &oppCenter, angle);
+			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
 		theApp.UnlockUndo ();	
 		break;
 	
@@ -341,9 +341,9 @@ switch (m_selectMode) {
 
 	case BLOCK_MODE:
 		theApp.SetModified (TRUE);
-		CFixVector max_pt (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL), 
-					  min_pt (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
-					  center;
+		CVertex	max_pt (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL), 
+					min_pt (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
+					center;
 		CVertex* verts = Vertices (0);
 		for (i = VertCount (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
@@ -453,9 +453,9 @@ else
 	else if (inc & 1)
 		inc++;
 
-CFixVector	*v1 = Vertices (segP->m_info.verts [point0]),
-				*v2 = Vertices (segP->m_info.verts [point1]);
-double		radius, delta = X2D (inc);
+CVertex	*v1 = Vertices (segP->m_info.verts [point0]),
+			*v2 = Vertices (segP->m_info.verts [point1]);
+double	radius, delta = X2D (inc);
 CDoubleVector	v (*v1 - *v2);
 // figure out direction to modify line
 // normalize direction
@@ -544,7 +544,7 @@ bool CMine::SpinSelection (double angle)
 	INT32				nSide = Current ()->nSide;
 	CSegment*		segP = Segments (nSegment);
 	CGameObject*	objP;
-	CFixVector		center, oppCenter, normal;
+	CVertex			center, oppCenter, normal;
 	INT16				i;
 
 #ifdef SPIN_RELATIVE
@@ -583,7 +583,7 @@ switch (m_selectMode) {
 		oppCenter = center + normal;
 		/* rotate points around a line */
 		for (i = 0; i < 4; i++)
-			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (&center, &oppCenter, angle);
+			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
 		break;
 
 	case CUBE_MODE:	// spin cube around the center of the cube using screen's perspective
@@ -600,7 +600,7 @@ switch (m_selectMode) {
 		oppCenter /= 4.0;
 		// rotate points about a point
 		for (i = 0; i < 8; i++)
-			Vertices (segP->m_info.verts [i])->Rotate (&center, &oppCenter, angle);
+			Vertices (segP->m_info.verts [i])->Rotate (center, oppCenter, angle);
 		break;
 
 	case OBJECT_MODE:	// spin object vector
@@ -646,12 +646,12 @@ switch (m_selectMode) {
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
 			if (VertStatus (i) & MARKED_MASK)
-				Vertices (i)->Rotate (&center, &oppCenter, angle);
+				Vertices (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-				objP->m_info.pos.Rotate (&center, &oppCenter, angle);
+				objP->m_info.pos.Rotate (center, oppCenter, angle);
 		break;
 	}
 return true;

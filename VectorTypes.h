@@ -143,7 +143,7 @@ inline const FIX operator^ (const CFixVector& other) const;
 
 inline const FIX Mag (void);
 inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
-void Rotate (CFixVector* origin, CFixVector* normal, double angle);
+void Rotate (CFixVector& origin, CFixVector& normal, double angle);
 };
 
 #endif
@@ -212,6 +212,7 @@ inline const DOUBLE operator^ (const CDoubleVector& other) const;
 
 inline const DOUBLE Mag (void) { return sqrt (v.x * v.x + v.y * v.y + v.z * v.z); }
 inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
+void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
 };
 
 // --------------------------------------------------------------------------

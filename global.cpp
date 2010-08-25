@@ -96,14 +96,14 @@ INT32 ScrnHeight = 0;
 INT32 file_type = RL2_FILE;
 INT16	     num_static_lights=0;
 
-char string[256];
-INT16 nSplineSeg1,nSplineSeg2,nSplineSide1,nSplineSide2;
-char spline_error_message[] = "You must exit spline creation before preforming this function";
-CFixVector spline_points[MAX_SPLINES];
-CFixVector points[4];
-INT16 n_splines=0;
-INT16 spline_length1=20,spline_length2=20;
-INT16 spline_active=0;
+char		string [256];
+INT16		nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
+char		spline_error_message []  =  "You must exit spline creation before preforming this function";
+CVertex	spline_points [MAX_SPLINES];
+CVertex	points [4];
+INT16		n_splines = 0;
+INT16		spline_length1 = 20, spline_length2 = 20;
+INT16		spline_active = 0;
 
 UINT8 object_list[MAX_OBJECT_NUMBER] = {
 	OBJ_ROBOT,

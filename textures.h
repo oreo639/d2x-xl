@@ -60,7 +60,7 @@ public:
 			m_info.bExtData = true;
 		}
 
-	inline void Dispose (void) {
+	inline void Release (void) {
 		if (!m_info.bExtData) {
 			if (m_info.bmDataP)
 				delete m_info.bmDataP;
@@ -70,7 +70,7 @@ public:
 		Clear ();
 		}
 
-	~CTexture() { Dispose (); }
+	~CTexture() { Release (); }
 
 	INT32 Read (INT16 index);
 	double Scale (INT16 index = -1);

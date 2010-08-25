@@ -451,7 +451,7 @@ else {
 
 // allocate data if necessary
 if (m_info.bmDataP && ((m_info.width != w) || (m_info.height != h)))
-	Dispose ();
+	Release ();
 if (m_info.bmDataP == NULL)
 	m_info.bmDataP = new UINT8 [s];
 if (m_info.bmDataP == NULL) {
@@ -705,7 +705,7 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 	if (!(ptr = new UINT8 [tSize]))
 		continue;
 	if (!bExtraTexture)
-		texP->Dispose ();
+		texP->Release ();
 	texP->m_info.bmDataP = ptr;
 	if (d2texture.flags & 0x80) {
 		ptr = new UINT8 [tSize * sizeof (tRGBA)];
@@ -714,7 +714,7 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 			texP->m_info.nFormat = 1;
 			}
 		else {
-			texP->Dispose ();
+			texP->Release ();
 			continue;
 			}
 		}
@@ -993,7 +993,7 @@ for (i = 0; i < 2; i++) {
 	CTexture* texP = theMine->Textures (i);
 	for (j = MAX_D2_TEXTURES; j; j--, texP++)
 		if (bDeleteModified || !texP->m_info.bModified)
-			texP->Dispose ();
+			texP->Release ();
 	}
 pExtraTexture p;
 while (extraTextures) {
