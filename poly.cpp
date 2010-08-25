@@ -340,7 +340,7 @@ if (bCustom) {
 				fclose (fp);
 				return 1;
 				}
-		if (!strcmp (level.name, "d2x.ham")) {
+		if (!strcmp (level.name, szSubFile)) {
 			id = read_INT32 (fp);	  					   // read id
 			if (id != 0x5848414DL) {
 				fclose (fp);
