@@ -315,7 +315,7 @@ return 1;
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData (char* filename, bool bCustom) 
+INT32 CMineView::ReadModelData (char* filename, char *szSubFile, bool bCustom) 
 {
 	FILE*		fp;
 
@@ -476,13 +476,8 @@ if (bCustom) {
 	if (psz)
 		*psz = '\0';
 	}
-strcat_s (filename, sizeof (filename), 
-			 bCustom
-			 ? "data\\d2x-xl.hog" 
-          : (objP->m_info.type == OBJ_CAMBOT) 
-			   ? "cambot.hxm" 
-				: "descent2.ham");
-if (ReadModelData (filename, bCustom))
+strcat_s (filename, sizeof (filename), bCustom ? "data\\d2x-xl.hog" : "descent2.ham");
+if (ReadModelData (filename, bCustom ? "d2x-xl.hxm" : "", bCustom))
 	renderModel = NULL;
 return renderModel == NULL;
 }

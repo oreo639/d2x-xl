@@ -277,7 +277,7 @@ public:
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
 	void	DrawPoly (tModelRenderData *p);
-	INT32 ReadModelData (char* filename, bool bCustom = false);
+	INT32 ReadModelData (char* filename, char* szSubFile, bool bCustom = false);
 	//void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
 
 	// view control functions
