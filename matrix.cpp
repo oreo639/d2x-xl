@@ -20,6 +20,41 @@ CFixVector::CFixVector (CDoubleVector& _v) {
 }
 
 // -----------------------------------------------------------------------------
+//  Rotates a vertex around a center point perpendicular to direction vector.
+// -----------------------------------------------------------------------------
+
+void CFixVector::Rotate (CFixVector* origin, CFixVector* normal, double angle) 
+{
+
+  double				zSpin, ySpin, h;
+  CDoubleVector	v0, v1, v2, v3, vn;
+
+  // translate coordanites to origin
+v0 = CDoubleVector (*this - *origin);
+v2 = CDoubleVector (*normal - *origin);
+
+// calculate angles to normalize direction
+// spin on z axis to get into the x-z plane
+zSpin = (vn.v.y == vn.v.x) ? PI/4 : atan2 (vn.v.y, vn.v.x);
+h = vn.v.x * cos (zSpin) + vn.v.y * sin (zSpin);
+// spin on y to get on the x axis
+ySpin = (vn.v.z == h) ? PI/4 : -atan2(vn.v.z, h);
+
+// normalize vertex (spin on z then y)
+v1.Set (v0.v.x * cos (zSpin) + v0.v.y * sin (zSpin), v0.v.y * cos (zSpin) - v0.v.x * sin (zSpin), v0.v.z);
+v2.Set (v1.v.x * cos (ySpin) - v1.v.z * sin (ySpin), v1.v.y, v1.v.x * sin (ySpin) + v1.v.z * cos (ySpin));
+v3.Set (v2.v.x, v2.v.y * cos (angle) + v2.v.z * sin (angle), v2.v.z * cos (angle) - v2.v.y * sin (angle));
+// spin back in negative direction (y first then z)
+ySpin = -ySpin;
+v2.Set (v3.v.x * cos (ySpin) - v3.v.z * sin (ySpin), v3.v.y, v3.v.x * sin (ySpin) + v3.v.z * cos (ySpin));
+zSpin = -zSpin;
+v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), v2.v.y * cos (zSpin) - v2.v.x * sin (zSpin), v2.v.z);
+
+v1 += *origin;
+*this = CFixVector (v1);
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
@@ -150,6 +185,64 @@ dest.uVec.v.z = src.fVec.v.y;
 dest.fVec.v.z = src.fVec.v.z;
 return dest;
 }
+
+// -----------------------------------------------------------------------------
+
+void CFixMatrix::Rotate (double angle, char axis) 
+{
+double cosX = cos (angle);
+double sinX = sin (angle);
+
+CFixMatrix mRot;
+
+switch (axis) {
+	case 'x':
+		// spin x
+		//	1	0	0
+		//	0	cos	sin
+		//	0	-sin	cos
+		//
+		mRot.uVec.Set ((FIX) (uVec.v.x * cosX + fVec.v.x * sinX), 
+					      (FIX) (uVec.v.y * cosX + fVec.v.y * sinX),
+						   (FIX) (uVec.v.z * cosX + fVec.v.z * sinX));
+		mRot.fVec.Set ((FIX) (-uVec.v.x * sinX + fVec.v.x * cosX),
+							(FIX) (-uVec.v.y * sinX + fVec.v.y * cosX),
+							(FIX) (-uVec.v.z * sinX + fVec.v.z * cosX));
+		uVec = mRot.uVec;
+		fVec = mRot.fVec;
+		break;
+	case 'y':
+		// spin y
+		//	cos	0	-sin
+		//	0	1	0
+		//	sin	0	cos
+		//
+		mRot.rVec.Set ((FIX) (rVec.v.x * cosX - fVec.v.x * sinX), 
+							(FIX) (rVec.v.y * cosX - fVec.v.y * sinX), 
+							(FIX) (rVec.v.z * cosX - fVec.v.z * sinX));
+		mRot.fVec.Set ((FIX) (rVec.v.x * sinX + fVec.v.x * cosX), 
+							(FIX) (rVec.v.y * sinX + fVec.v.y * cosX),
+							(FIX) (rVec.v.z * sinX + fVec.v.z * cosX));
+		rVec = mRot.rVec;
+		fVec = mRot.fVec;
+		break;
+	case 'z':
+		// spin z
+		//	cos	sin	0
+		//	-sin	cos	0
+		//	0	0	1
+		mRot.rVec.Set ((FIX) (rVec.v.x * cosX + uVec.v.x * sinX),
+							(FIX) (rVec.v.y * cosX + uVec.v.y * sinX),
+							(FIX) (rVec.v.z * cosX + uVec.v.z * sinX));
+		mRot.uVec.Set ((FIX) (-rVec.v.x * sinX + uVec.v.x * cosX,
+							(FIX) (-rVec.v.y * sinX + uVec.v.y * cosX),
+							(FIX) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		rVec = mRot.rVec;
+		uVec = mRot.uVec;
+		break;
+	}
+}
+
 
 #endif
 

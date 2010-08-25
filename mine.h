@@ -450,9 +450,6 @@ public:
 	bool ResizeLine (CSegment *segP,INT32 point0,INT32 point1,INT32 inc); 
 	bool MoveOn (CFixVector inc); 
 	bool SpinSelection(double angle); 
-	void RotateVmsVector (CFixVector* vector, double angle, char axis); 
-	void RotateMatrix (CFixMatrix *matrix, double angle, char axis); 
-	void RotateVertex (CFixVector* vertex, CFixVector* orgin, CFixVector* normal, double angle); 
 	//void SetUV (INT16 segment, INT16 side, INT16 x, INT16 y, double angle);
 	void LoadSideTextures (INT16 segNum, INT16 sideNum);
 

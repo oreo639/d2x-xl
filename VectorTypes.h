@@ -143,6 +143,7 @@ inline const FIX operator^ (const CFixVector& other) const;
 
 inline const FIX Mag (void);
 inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
+void Rotate (CFixVector* origin, CFixVector* normal, double angle);
 };
 
 #endif
@@ -555,6 +556,7 @@ public:
 
 	const FIX Det (void);
 	const CFixMatrix Inverse (void);
+	void CFixMatrix::Rotate (double angle, char axis);
 	inline const CFixMatrix Transpose (void);
 };
 

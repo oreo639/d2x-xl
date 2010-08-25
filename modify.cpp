@@ -269,7 +269,7 @@ switch (m_selectMode){
 								*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [3]]]));
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
-			RotateVertex (Vertices (segP->m_info.verts [sideVertTable [nSide][i]]), &center, &oppCenter, angle);
+			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (&center, &oppCenter, angle);
 		theApp.UnlockUndo ();	
 		break;
 	
@@ -577,13 +577,13 @@ switch (m_selectMode) {
 		normal = CalcSideNormal ();
 		// normalize the vector
 		// set sign (since vert numbers for most sides don't follow right-handed convention)
-		if ((nSide != 1) && (nSide != 5))
+		if ((nSide == 0) || (nSide == 1) || (nSide == 5))
 			normal = -normal;
 		// set opposite center
 		oppCenter = center + normal;
 		/* rotate points around a line */
 		for (i = 0; i < 4; i++)
-			RotateVertex (Vertices (segP->m_info.verts [sideVertTable [nSide][i]]), &center, &oppCenter, angle);
+			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (&center, &oppCenter, angle);
 		break;
 
 
@@ -601,7 +601,7 @@ switch (m_selectMode) {
 		oppCenter /= 4.0;
 		// rotate points about a point
 		for (i = 0; i < 8; i++)
-			RotateVertex (Vertices (segP->m_info.verts [i]),&center,&oppCenter,angle);
+			Vertices (segP->m_info.verts [i])->Rotate (&center, &oppCenter, angle);
 		break;
 
 	case OBJECT_MODE:	// spin object vector
@@ -610,55 +610,24 @@ switch (m_selectMode) {
 		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
 		switch (nSide) {
 			case 0:
-				RotateMatrix(orient,angle,'x');
+				orient->Rotate (angle, 'x');
 				break;
 			case 2:
-				RotateMatrix(orient,-angle,'x');
+				orient->Rotate (-angle, 'x');
 				break;
 			case 1:
-				RotateMatrix(orient,-angle,'y');
+				orient->Rotate (-angle, 'y');
 				break;
 			case 3:
-				RotateMatrix(orient,angle,'y');
+				orient->Rotate (angle, 'y');
 				break;
 			case 4:
-				RotateMatrix(orient,angle,'z');
+				orient->Rotate (angle, 'z');
 				break;
 			case 5:
-				RotateMatrix(orient,-angle,'z');
+				orient->Rotate (-angle, 'z');
 				break;
 			}
-#ifdef SPIN_RELATIVE
-		// calculate angles to spin the side into the x-y plane
-		// use points 0,1, and 2 of the side
-		// make point0 the origin
-		// and get coordinates of points 1 and 2 relative to point 0
-		for (i=0;i<3;i++) {
-			rel [i].x = vertices [segP->m_info.verts [sideVertTable [nSide][i]]].x - vertices [segP->m_info.verts [sideVertTable [nSide][0]]].x;
-			rel [i].y = vertices [segP->m_info.verts [sideVertTable [nSide][i]]].y - vertices [segP->m_info.verts [sideVertTable [nSide][0]]].y;
-			rel [i].z = vertices [segP->m_info.verts [sideVertTable [nSide][i]]].z - vertices [segP->m_info.verts [sideVertTable [nSide][0]]].z;
-			}
-		// calculate z-axis spin angle to rotate point1 so it lies in x-y plane
-		zspin = (rel [1].x==rel [1].y) ? PI/4 : atan2(rel [1].y,rel [1].x);
-		// spin all 3 points on z axis
-		for (i=0;i<3;i++)
-			RotateVmsVector(&rel [i],zspin,'z');
-		// calculate y-axis spin angle to rotate point1 so it lies on x axis
-		yspin = (rel [1].z==rel [1].x) ? PI/4 : atan2(rel [1].z,rel [1].x);
-		// spin points 1 and 2 on y axis (don't need to spin point 0 since it is at 0,0,0)
-		for (i=1;i<=2;i++)
-			RotateVmsVector(&rel [i],yspin,'y');
-		// calculate x-axis spin angle to rotate point2 so it lies in x-y plane
-		xspin = (rel [2].z==rel [2].y) ? PI/4 : atan2(rel [2].z,rel [2].y);
-		// spin points 2 on x axis (don't need to spin point 1 since it is on the x-axis
-		RotateVmsVector(&rel [2],xspin,'x');
-		RotateMatrix(&objP->m_info.orient,zspin,'z');
-		RotateMatrix(&objP->m_info.orient,yspin,'y');
-		RotateMatrix(&objP->m_info.orient,xspin,'x');
-		RotateMatrix(&objP->m_info.orient,-xspin,'x');
-		RotateMatrix(&objP->m_info.orient,-yspin,'y');
-		RotateMatrix(&objP->m_info.orient,-zspin,'z');
-#endif //SPIN_RELATIVE
 		break;
 
 	case BLOCK_MODE:
@@ -678,140 +647,15 @@ switch (m_selectMode) {
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
 			if (VertStatus (i) & MARKED_MASK)
-				RotateVertex(Vertices (i), &center, &oppCenter, angle);
+				Vertices (i)->Rotate (&center, &oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-				RotateVertex (&objP->m_info.pos, &center, &oppCenter, angle);
+				objP->m_info.pos.Rotate (&center, &oppCenter, angle);
 		break;
 	}
 return true;
-}
-
-
-//-----------------------------------------------------------------------------
-// RotateVmsVector
-//-----------------------------------------------------------------------------
-
- void CMine::RotateVmsVector (CFixVector* vector,double angle,char axis) 
-{
-  CFixVector n, m, v;
-
-v = *vector;
-switch(axis) {
- case 'x':
-   vector->v.x = (FIX) (vector->v.x * cos (angle) + vector->v.y * sin (angle));
-   vector->v.y = (FIX) (-vector->v.x * sin (angle) + vector->v.y * cos (angle));
-   break;
- case 'y':
-   vector->v.x = (FIX) (vector->v.x * cos (angle) - vector->v.z * sin (angle));
-   vector->v.z = (FIX) (vector->v.x * sin (angle) + vector->v.z * cos (angle));
-   break;
- case 'z':
-   vector->v.y = (FIX) (vector->v.y * cos (angle) + vector->v.z * sin (angle));
-   vector->v.z = (FIX) (-vector->v.y * sin (angle) + vector->v.z * cos (angle));
-   break;
-  }
-}
-
-//-----------------------------------------------------------------------------
-// RotateMatrix
-//-----------------------------------------------------------------------------
-
-void CMine::RotateMatrix (CFixMatrix* m, double angle, char axis) 
-{
-double cosx = cos (angle);
-double sinx = sin (angle);
-
-CFixMatrix mRot;
-
-switch (axis) {
-	case 'x':
-		// spin x
-		//	1	0	0
-		//	0	cos	sin
-		//	0	-sin	cos
-		//
-		mRot.uVec.v.x = (FIX) (m->uVec.v.x * cosx + m->fVec.v.x * sinx);
-		mRot.uVec.v.y = (FIX) (m->uVec.v.y * cosx + m->fVec.v.y * sinx);
-		mRot.uVec.v.z = (FIX) (m->uVec.v.z * cosx + m->fVec.v.z * sinx);
-		mRot.fVec.v.x = (FIX) (-m->uVec.v.x * sinx + m->fVec.v.x * cosx);
-		mRot.fVec.v.y = (FIX) (-m->uVec.v.y * sinx + m->fVec.v.y * cosx);
-		mRot.fVec.v.z = (FIX) (-m->uVec.v.z * sinx + m->fVec.v.z * cosx);
-		m->uVec = mRot.uVec;
-		m->fVec = mRot.fVec;
-		break;
-	case 'y':
-		// spin y
-		//	cos	0	-sin
-		//	0	1	0
-		//	sin	0	cos
-		//
-		mRot.rVec.v.x = (FIX) (m->rVec.v.x * cosx - m->fVec.v.x * sinx);
-		mRot.rVec.v.y = (FIX) (m->rVec.v.y * cosx - m->fVec.v.y * sinx);
-		mRot.rVec.v.z = (FIX) (m->rVec.v.z * cosx - m->fVec.v.z * sinx);
-		mRot.fVec.v.x = (FIX) (m->rVec.v.x * sinx + m->fVec.v.x * cosx);
-		mRot.fVec.v.y = (FIX) (m->rVec.v.y * sinx + m->fVec.v.y * cosx);
-		mRot.fVec.v.z = (FIX) (m->rVec.v.z * sinx + m->fVec.v.z * cosx);
-		m->rVec = mRot.rVec;
-		m->fVec = mRot.fVec;
-		break;
-	case 'z':
-		// spin z
-		//	cos	sin	0
-		//	-sin	cos	0
-		//	0	0	1
-		mRot.rVec.v.x = (FIX) (m->rVec.v.x * cosx + m->uVec.v.x * sinx);
-		mRot.rVec.v.y = (FIX) (m->rVec.v.y * cosx + m->uVec.v.y * sinx);
-		mRot.rVec.v.z = (FIX) (m->rVec.v.z * cosx + m->uVec.v.z * sinx);
-		mRot.uVec.v.x = (FIX) (-m->rVec.v.x * sinx + m->uVec.v.x * cosx);
-		mRot.uVec.v.y = (FIX) (-m->rVec.v.y * sinx + m->uVec.v.y * cosx);
-		mRot.uVec.v.z = (FIX) (-m->rVec.v.z * sinx + m->uVec.v.z * cosx);
-		m->rVec = mRot.rVec;
-		m->uVec = mRot.uVec;
-		break;
-	}
-}
-
-
-/***************************************************************************
-                           RotateVertex
-
-  ACTION - Rotates a vertex around a center point perpendicular to direction
-		   vector.
-
-***************************************************************************/
-
-void CMine::RotateVertex (CFixVector* vertex, CFixVector* origin, CFixVector* normal, double angle) 
-{
-
-  double				z_spin, y_spin, h;
-  CDoubleVector	v, n, v1, v2, v3;
-
-  // translate coordanites to origin
-v = CDoubleVector (*vertex - *origin);
-n = CDoubleVector (*normal - *origin);
-
-// calculate angles to normalize direction
-// spin on z axis to get into the x-z plane
-z_spin = (n.v.y == n.v.x) ? PI/4 : atan2 (n.v.y, n.v.x);
-h = n.v.x * cos (z_spin) + n.v.y * sin (z_spin);
-// spin on y to get on the x axis
-y_spin = (n.v.z == h) ? PI/4 : -atan2(n.v.z, h);
-
-// normalize vertex (spin on z then y)
-v1.Set (v.v.x * cos (z_spin) + v.v.y * sin (z_spin), v.v.y * cos (z_spin) - v.v.x * sin (z_spin), v.v.z);
-v2.Set (v1.v.x * cos (y_spin) - v1.v.z * sin (y_spin), v1.v.y, v1.v.x * sin (y_spin) + v1.v.z * cos (y_spin));
-v3.Set (v2.v.x, v2.v.y * cos (angle) + v2.v.z * sin (angle), v2.v.z * cos (angle) - v2.v.y * sin (angle));
-// spin back in negative direction (y first then z)
-y_spin = -y_spin;
-v2.Set (v3.v.x * cos (y_spin) - v3.v.z * sin (y_spin), v3.v.y, v3.v.x * sin (y_spin) + v3.v.z * cos (y_spin));
-z_spin = -z_spin;
-v1.Set (v2.v.x * cos (z_spin) + v2.v.y * sin (z_spin), v2.v.y * cos (z_spin) - v2.v.x * sin (z_spin), v2.v.z);
-
-*vertex = v1;
-*vertex += *origin;
 }
 
 // eof modify.cpp
