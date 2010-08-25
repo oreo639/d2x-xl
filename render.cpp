@@ -85,18 +85,12 @@ void adjoint_matrix(double A [3][3],double B [3][3])
 //------------------------------------------------------------------------
 // TextureMap()
 //------------------------------------------------------------------------
-void TextureMap (INT32 resolution,
-					   CSegment *segP,
-						INT16 nSide,
-						UINT8 *bmData,
-						UINT16 bmWidth,
-						UINT16 bmHeight,
-						UINT8 *light_index,
-						UINT8 *pScrnMem,
-						APOINT* scrn,
-						UINT16 width,
-						UINT16 height,
-						UINT16 rowOffset)
+
+void TextureMap (CSegment *segment, INT16 nSide,
+					  UINT8 *bmData, UINT16 bmWidth, UINT16 bmHeight,
+					  UINT8 *light_index,
+					  UINT8 *pScrnMem, APOINT* scrn,
+					  UINT16 width, UINT16 height, UINT16 rowOffset)
 {
 	
 	INT32 h, i, j, k;
@@ -112,7 +106,6 @@ void TextureMap (INT32 resolution,
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
 	
 	// TEMPORARY
-	INT32 inc_resolution = 1<<resolution;
 	CSideKey face (INT16 (segP - theMine->Segments (0)), nSide);
 	INT16 flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
 	INT16 dscan_light,scan_light;
@@ -216,7 +209,7 @@ UV.Square2Quad (b);
 UV.Scale (1.0 / 2048.0);
 //multiply_matrix (B, IA, UV);
 B = IA * UV;
-for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
+for (y = minpt.y; y < maxpt.y; y ++) {
 	INT32 x0, x1;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilaterial
@@ -255,7 +248,6 @@ for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
 		double u0, u1, v0, v1, w0, w1, h, scale, x0d, x1d;
 		UINT32 u, v, du, dv, m, vd, vm, dx;
 		dscan_light = (dscan_light - scan_light)/(x1-x0);
-		dscan_light <<= resolution;
 		
 		// loop for every 32 bytes
 		INT32 end_x = x1;
@@ -292,87 +284,46 @@ for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
 				if (!dx)
 					dx = 1;
 				du = ((UINT32) (((u1 - u0) * 1024.0) / dx) % m);
-				du <<= resolution;
 				// v0 & v1 swapped since bmData is flipped
 				dv = ((UINT32) (((v0 - v1) * 1024.0) / dx) % m);
-				dv <<= resolution;
 				u = ((UINT32) (u0 * 1024.0)) % m;
 				v = ((UINT32) (-v0 * 1024.0)) % m;
 				vd = 1024 / bmHeight;
 				vm = bmWidth * (bmHeight - 1);
 				
-				if (resolution) 
-					x0 &= ~1; // round down if low res
 				ptr = pScrnMem + (UINT32)(height - y - 1) * (UINT32) rowOffset + x0;
 				
-				INT32 k = (x1 - x0) >> resolution;
+				INT32 k = (x1 - x0);
 				if (y < (height-1) && k > 0)  {
 					UINT8 *pixelP;
 					pixelP = ptr;
-					if (resolution == 0) {
-						if (bEnableShading) {
-							int scanLightOffset = ((scan_light / 4) & 0x1f00);
-							do {
-								u += du;
-								u %= m;
-								v += dv;
-								v %= m;
-								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp < 254) {
-									temp = light_index [temp + scanLightOffset];
-									*pixelP = temp;
-									}
-								pixelP++;
-								scan_light += dscan_light;
-								} while (--k);
-							} 
-						else {
-							do {
-								u += du;
-								u %= m;
-								v += dv;
-								v %= m;
-								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp < 254)
-									*pixelP = temp;
-								pixelP++;
-								} while (--k);
-							}
+					if (bEnableShading) {
+						int scanLightOffset = ((scan_light / 4) & 0x1f00);
+						do {
+							u += du;
+							u %= m;
+							v += dv;
+							v %= m;
+							UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							if (temp < 254) {
+								temp = light_index [temp + scanLightOffset];
+								*pixelP = temp;
+								}
+							pixelP++;
+							scan_light += dscan_light;
+							} while (--k);
 						} 
 					else {
-						// if doing a splash, define multiple points as the same color
-						if (bEnableShading) {
-							int scanLightOffset = ((scan_light / 4) & 0x1f00);
-							do {
-								u += du;
-								u %= m;
-								v += dv;
-								v %= m;
-								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp < 254) {
-									temp = light_index [temp + scanLightOffset];
-									pixelP [0] = 
-									pixelP [1] = temp;
-									}
-								pixelP += 2;
-								scan_light += dscan_light;
-								} while (--k);
-							} 
-						else {
-							// TEXTURE_MAP_NOLIGHT_LOWRES
-							do {
-								u += du;
-								v += dv;
-								u %= m;
-								v %= m;
-								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp < 254) {
-									pixelP [0] =
-									pixelP [1] = temp;
-									}
-								pixelP += 2;
-								} while (--k);
-							}
+						do {
+							u += du;
+							u %= m;
+							v += dv;
+							v %= m;
+							UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							if (temp < 254)
+								*pixelP = temp;
+							pixelP++;
+							} while (--k);
 						}
 					}
 				}

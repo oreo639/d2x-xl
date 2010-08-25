@@ -1425,25 +1425,24 @@ CHECKMINE;
 		IN_RANGE(m_viewPoints [segP->m_info.verts [7]].y,y_max)   )
 	{
 
-		INT32 resolution = 0;
-		CTexture tx (bmBuf);
+		CTexture tex (bmBuf);
 		UINT8 *pm_viewPointsMem = (UINT8 *)m_pvBits;
 		UINT16 width = m_viewWidth;
 		UINT16 height = m_viewHeight;
 		UINT16 rowOffset = (m_viewWidth + 3) & ~3;
 		UINT16 nSide = 5;
-		CWall *pWall;
+		CWall *wallP;
 		UINT16 nWall = NO_WALL;
 
-		for (nSide=0; nSide<6; nSide++) {
-			pWall = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
+		for (nSide = 0; nSide < 6; nSide++) {
+			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
 			if ((segP->m_info.children [nSide] == -1) ||
-				(pWall && (pWall->m_info.type != WALL_OPEN) && ((pWall->m_info.type != WALL_CLOAKED) || pWall->m_info.cloakValue))
+				(wallP && (wallP->m_info.type != WALL_OPEN) && ((wallP->m_info.type != WALL_CLOAKED) || wallP->m_info.cloakValue))
 				)
 			{
-				APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [0]]];
-				APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [1]]];
-				APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [3]]];
+				APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];
+				APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][1]]];
+				APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][3]]];
 
 				CFixVector a,b;
 				a.v.x = p1.x - p0.x;
@@ -1453,9 +1452,9 @@ CHECKMINE;
 				if (a.v.x * b.v.y > a.v.y * b.v.x) {
 					INT16 texture1 = segP->m_sides [nSide].m_info.nBaseTex;
 					INT16 texture2 = segP->m_sides [nSide].m_info.nOvlTex;
-					if (!DefineTexture (texture1, texture2, &tx, 0, 0)) {
-						DrawAnimDirArrows (texture1, &tx);
-						TextureMap (resolution, segP, nSide, tx.m_info.bmDataP, tx.m_info.width, tx.m_info.height, 
+					if (!DefineTexture (texture1, texture2, &tex, 0, 0)) {
+						DrawAnimDirArrows (texture1, &tex);
+						TextureMap (segP, nSide, tex.m_info.bmDataP, tex.m_info.width, tex.m_info.height, 
 									   light_index, pm_viewPointsMem, m_viewPoints, width, height, rowOffset);
 					}
 				}
