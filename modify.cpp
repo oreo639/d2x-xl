@@ -297,7 +297,7 @@ return true;
 //
 //***************************************************************************
 
-bool CMine::ResizeItem (INT32 inc) 
+bool CMine::ResizeItem (double delta) 
 {
 	INT32 nSegment = Current ()->nSegment;
 	INT32 nSide = Current ()->nSide;
@@ -312,7 +312,7 @@ switch (m_selectMode) {
 	case LINE_MODE:
 		point [0] = lineVertTable [sideLineTable [Current ()->nSide][Current ()->nLine]][0];
 		point [1] = lineVertTable [sideLineTable [Current ()->nSide][Current ()->nLine]][1];
-		return ResizeLine (segP, point [0], point [1], inc);
+		return ResizeLine (segP, point [0], point [1], delta);
 
 	case SIDE_MODE:
 		theApp.SetModified (TRUE);
@@ -320,8 +320,8 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [Current ()->nSide][i];
 		// enlarge the diagonals
-		result = ResizeLine (segP, point [0], point [2], (INT32) (inc*sqrt(2.0))) &&
-				   ResizeLine (segP, point [1], point [3], (INT32) (inc*sqrt(2.0)));
+		result = ResizeLine (segP, point [0], point [2], (INT32) (delta*sqrt(2.0))) &&
+				   ResizeLine (segP, point [1], point [3], (INT32) (delta*sqrt(2.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -329,10 +329,10 @@ switch (m_selectMode) {
 		// enlarge the diagonals
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
-		result = ResizeLine (segP, 0, 6, (INT32) (inc*sqrt(3.0))) &&
-				   ResizeLine (segP, 1, 7, (INT32) (inc*sqrt(3.0))) &&
-					ResizeLine (segP, 2, 4, (INT32) (inc*sqrt(3.0))) &&
-					ResizeLine (segP, 3, 5, (INT32) (inc*sqrt(3.0)));
+		result = ResizeLine (segP, 0, 6, (INT32) (delta*sqrt(3.0))) &&
+				   ResizeLine (segP, 1, 7, (INT32) (delta*sqrt(3.0))) &&
+					ResizeLine (segP, 2, 4, (INT32) (delta*sqrt(3.0))) &&
+					ResizeLine (segP, 3, 5, (INT32) (delta*sqrt(3.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -351,7 +351,7 @@ switch (m_selectMode) {
 				min_pt = Min (min_pt, *verts);
 				}
 		center = Average (max_pt, min_pt);
-		double scale = ((double)(20*F1_0) + (double)inc)/(double)(20*F1_0);
+		double scale = ((double)(20*F1_0) + (double)delta)/(double)(20*F1_0);
 		verts = Vertices (0);
 		for (i = VertCount (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
@@ -373,13 +373,13 @@ return false;
 
 bool CMine::MovePoints (INT32 pt0, INT32 pt1) 
 {
-	CFixVector	delta;
-	double		length;
-	INT32			i;
-	CSegment*	segP = Segments (Current ()->nSegment);
-	UINT8*		sideVertP = sideVertTable [Current ()->nSide];
-	INT16			p0 = sideVertP [CURRENT_POINT(pt0)];
-	INT16			p1 = sideVertP [CURRENT_POINT(pt1)];
+	CDoubleVector	delta;
+	double			length;
+	INT32				i;
+	CSegment*		segP = Segments (Current ()->nSegment);
+	UINT8*			sideVertP = sideVertTable [Current ()->nSide];
+	INT16				p0 = sideVertP [CURRENT_POINT(pt0)];
+	INT16				p1 = sideVertP [CURRENT_POINT(pt1)];
 
 delta = *Vertices (segP->m_info.verts [p1]) - *Vertices (segP->m_info.verts [p0]);
 length = delta.Mag ();
@@ -437,9 +437,9 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::ResizeLine (CSegment *segP, INT32 point0, INT32 point1, INT32 inc) 
+bool CMine::ResizeLine (CSegment *segP, INT32 point0, INT32 point1, double delta) 
 {
-
+#if 0
 // round a bit
 if (inc > 0)
 	if (inc & 0xf)
@@ -451,10 +451,10 @@ else
 		inc--;
 	else if (inc & 1)
 		inc++;
-
+#endif
 CVertex	*v1 = Vertices (segP->m_info.verts [point0]),
 			*v2 = Vertices (segP->m_info.verts [point1]);
-double	radius, delta = X2D (inc);
+double	radius;
 CDoubleVector	v (*v1 - *v2);
 // figure out direction to modify line
 // normalize direction
