@@ -126,7 +126,7 @@ public:
 	CVertex () : m_status(0) {}
 	CVertex (DOUBLE x, DOUBLE y, DOUBLE z) : CDoubleVector (x, y, z) { m_status = 0; }
 	CVertex (tDoubleVector& _v) : CDoubleVector (_v) { m_status = 0; }
-	//CVertex (CDoubleVector& _v) : CDoubleVector (_v) { m_status = 0; }
+	CVertex (CDoubleVector _v) : CDoubleVector (_v) { m_status = 0; }
 
 	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return v.Read (fp); }

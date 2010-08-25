@@ -123,7 +123,7 @@ for (INT32 i = start; i < end; i++) {
 
 void tModelRenderPoly::Draw (CViewMatrix* view, CDC* pDC) 
 {
-if (view->CheckNormal (renderObject, &offset, &normal)) {
+if (view->CheckNormal (renderObject, offset, normal)) {
 	  INT32 i, j;
 
 	POINT aPoints [MAX_POLYMODEL_POLY_POINTS];
@@ -217,7 +217,7 @@ while (W (p) != OP_EOF) {
 			/* = W (p+2); */
 			/* = W (p+4); */
 			/* = W (p+16); */
-			if (m_view->CheckNormal (renderObject, CDoubleVector (VP (p+4)), CDoubleVector (VP (p+16)))) {
+			if (m_view->CheckNormal (renderObject, VP (p+4), VP (p+16))) {
 			  Render (p + W (p+28));
 			  Render (p + W (p+30));
 				}

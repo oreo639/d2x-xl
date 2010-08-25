@@ -41,6 +41,7 @@ public:
 	void Project (CVertex& vert, APOINT& apoint);
 	void Unproject (CVertex& vert, APOINT& apoint);
 	INT32 CheckNormal (CGameObject *objP, CVertex& a, CVertex& b);
+	INT32 CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b);
 	inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
 	inline double Scale (void) { return m_scale [0]; }
 	void Push (void);

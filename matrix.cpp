@@ -698,14 +698,20 @@ CVertex _b = objP->m_info.orient * b;
 _a += objP->m_info.pos;
 _a += m_move [0];
 _b += _a;
-return Dot (m_mat [0].fVec, CDoubleVector (_a)) > Dot (m_mat [0].fVec, CDoubleVector (_b));
+return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
 }
 
 // -----------------------------------------------------------------------------
 
-//INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
-//{
-//}
+INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
+{
+CVertex _a = objP->m_info.orient * CDoubleVector (a);
+CVertex _b = objP->m_info.orient * CDoubleVector (b);
+_a += objP->m_info.pos;
+_a += m_move [0];
+_b += _a;
+return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
+}
 
 // -----------------------------------------------------------------------------
 // eof
