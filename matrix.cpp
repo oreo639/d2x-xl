@@ -234,7 +234,7 @@ switch (axis) {
 		mRot.rVec.Set ((FIX) (rVec.v.x * cosX + uVec.v.x * sinX),
 							(FIX) (rVec.v.y * cosX + uVec.v.y * sinX),
 							(FIX) (rVec.v.z * cosX + uVec.v.z * sinX));
-		mRot.uVec.Set ((FIX) (-rVec.v.x * sinX + uVec.v.x * cosX,
+		mRot.uVec.Set ((FIX) (-rVec.v.x * sinX + uVec.v.x * cosX),
 							(FIX) (-rVec.v.y * sinX + uVec.v.y * cosX),
 							(FIX) (-rVec.v.z * sinX + uVec.v.z * cosX));
 		rVec = mRot.rVec;
