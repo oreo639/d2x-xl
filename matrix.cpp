@@ -681,7 +681,7 @@ apoint.z = (INT16) r.v.z;
 void CViewMatrix::Unproject (CVertex& vertex, APOINT& apoint) 
 {
 CDoubleVector v (double (apoint.x - x_center), double (y_center - apoint.y), double (apoint.z));
-double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
+double scale = (v.v.z + depthPerception) / depthPerception / 5.0;
 v *= CDoubleVector (scale, scale, 1.0);
 CDoubleVector r = m_invMat [0] * v;
 r -= m_move [0];

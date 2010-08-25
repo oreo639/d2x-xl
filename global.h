@@ -134,10 +134,10 @@ extern double movex, movey, movez;
 extern INT16 max_x, min_x, max_y, min_y, max_z, min_z;
 extern double sizex,sizey,sizez;
 extern double angleRate;
-extern FIX   moveRate;
-extern double M[4][4];  /* 4x4 matrix used in coordinate transformation */
-extern double IM[4][4]; /* inverse matrix of M[4][4] */
-extern double depth_perception;
+extern double moveRate;
+//extern double M[4][4];  /* 4x4 matrix used in coordinate transformation */
+//extern double IM[4][4]; /* inverse matrix of M[4][4] */
+extern double depthPerception;
 
 extern UINT8 sideVertTable[6][4];
 extern UINT8 oppSideTable[6];

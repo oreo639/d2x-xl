@@ -324,7 +324,7 @@ m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
 m_nMaxUndo = theApp.m_undoList.GetMaxSize ();
 for (i = 0; i < 4; i++)
-	if (depth_perception == m_depthPerceptions [i]) {
+	if (depthPerception == m_depthPerceptions [i]) {
 		m_iDepthPerception = i;
 		break;
 		}
@@ -408,8 +408,8 @@ theApp.MineView ()->m_nViewDist = m_nViewDist;
 theApp.MineView ()->SetViewMineFlags (m_mineViewFlags);
 theApp.MineView ()->SetViewObjectFlags (m_objViewFlags);
 theApp.TextureView ()->SetViewFlags (m_texViewFlags);
-depth_perception = m_depthPerceptions [m_iDepthPerception];
-theApp.MineView ()->DepthPerception () = depth_perception;
+depthPerception = m_depthPerceptions [m_iDepthPerception];
+theApp.MineView ()->DepthPerception () = depthPerception;
 *(theApp.MineView ()->MineCenter ()) = m_nMineCenter;
 if (!bInitApp) {
 	theApp.MineView ()->DelayRefresh (false);

@@ -2555,7 +2555,7 @@ zoomY = (double) crc.Height () / (double) rc.Height ();
 zoom = (zoomX < zoomY) ? zoomX: zoomY;
 Zoom (1, zoom);
 for (;;) {
-	m_view.SetViewInfo (depth_perception, m_viewWidth, m_viewHeight);
+	m_view.SetViewInfo (depthPerception, m_viewWidth, m_viewHeight);
 	SetViewPoints (&rc);
 	if ((rc.Width () <= crc.Width ()) && (rc.Height () <= crc.Height ()))
 		break;
