@@ -608,7 +608,6 @@ private:
 	INT16 SaveGameData(FILE *savefile);
 	void ClearMineData();
 	void UpdateDeltaLights ();
-	double dround_off(double value, double round);
 	void SetSegmentChildNum(CSegment *pRoot, INT16 nSegment,INT16 recursion_level);
 	void SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion_level, INT16* visited);
 	void UnlinkSeg (CSegment *pSegment, CSegment *pRoot);
