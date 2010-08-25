@@ -586,7 +586,6 @@ switch (m_selectMode) {
 			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (&center, &oppCenter, angle);
 		break;
 
-
 	case CUBE_MODE:	// spin cube around the center of the cube using screen's perspective
 		// calculate center of current cube
 		theApp.SetModified (TRUE);
