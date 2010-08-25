@@ -329,9 +329,13 @@ if (bCustom) {
 	struct level_header level;
 	char data[3];
 	long position;
+	UINT32 nRobots, nModels;
 
 	fread (data, 3, 1, fp); // verify signature "DHF"
-	if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') return 1;
+	if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
+		fclose (fp);
+		return 1;
+		}
 	position = 3;
 	while (!feof (fp)) {
 		fseek (fp, position, SEEK_SET);
@@ -347,10 +351,10 @@ if (bCustom) {
 				return 1;
 				}
 			read_UINTW (fp);                              // read version
-			n  = read_UINTW (fp);                         // n_weapon_types
+			n = read_UINTW (fp);                         // n_weapon_types
 			fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
-			n  = read_UINTW (fp);                         // n_robot_types
-			for (i = 0; i < n; i++)
+			nRobots = read_UINTW (fp);                         // n_robot_types
+			for (i = 0; i < nRobots; i++)
 				theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
 			n  = read_UINTW (fp);                         // n_robot_joints
 			fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
@@ -358,12 +362,17 @@ if (bCustom) {
 			}
 		position += sizeof (struct level_header) + level.size;
 		}
-	n = read_UINTW (fp);                          // n_curModels
+	nModels = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
-	for (i = 0; i < n; i++) 
-		m_polyModels [N_D2_ROBOT_TYPES + i].Read (fp);
-	for (i = 0; i < n; i++) 
-		m_polyModels [N_D2_ROBOT_TYPES + i].Read (fp, true);
+	for (i = 0; i < nModels; i++) 
+		if (i < nRobots)
+			m_polyModels [theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->m_info.nModel].Read (fp);
+		else {
+			CPolyModel pm;
+			pm.Read (fp);
+			}	
+	for (i = 0; i < nModels; i++) 
+		m_polyModels [theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->m_info.nModel].Read (fp, true);
 	}
 else {
 	id = read_INT32 (fp);	  					   // read id
@@ -388,7 +397,6 @@ else {
 	n = read_UINTW (fp);                          // n_robots
 	for (i = 0; i < n; i++) 
 		theMine->RobotInfo (i)->Read (fp);
-	n = ftell (fp);
 	n = read_UINTW (fp);                          // n_robot_joints
 	fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
 	n = read_UINTW (fp);                          // n_weapon
@@ -398,10 +406,9 @@ else {
 	n = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		m_polyModels [i].Read (fp);
-	n = ftell (fp);
+		m_polyModels [theMine->RobotInfo (i)->m_info.nModel].Read (fp);
 	for (i = 0; i < n; i++) 
-		m_polyModels [i].Read (fp, true);
+		m_polyModels [theMine->RobotInfo (i)->m_info.nModel].Read (fp, true);
 	}
 fclose (fp);
 return 0;
@@ -436,7 +443,8 @@ switch (objP->m_info.type) {
 		}
 		break;
 	case OBJ_ROBOT:
-		nModel = theMine->RobotInfo ((objP->m_info.id >= N_D2_ROBOT_TYPES) ? objP->m_info.id - N_D2_ROBOT_TYPES : objP->m_info.id)->m_info.nModel;
+		nModel = theMine->RobotInfo ((objP->m_info.id >= N_D2_ROBOT_TYPES) ? objP->m_info.id /*- N_D2_ROBOT_TYPES*/ : objP->m_info.id)->m_info.nModel;
+		break;
 	default:
 		return NULL;
 	}
@@ -469,15 +477,15 @@ if (slash)
 else
 	filename[0] = '\0';
 
-bool bCustom = true; //(objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES);
+bool bCustom = (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES);
 
 if (bCustom) {
 	char *psz = strstr (filename, "data");
 	if (psz)
 		*psz = '\0';
 	}
-strcat_s (filename, sizeof (filename), bCustom ? "data\\d2x-xl.hog" : "descent2.ham");
-if (ReadModelData (filename, bCustom ? "d2x-xl.hxm" : "", bCustom))
+strcat_s (filename, sizeof (filename), bCustom ? "missions\\d2x.hog" : "descent2.ham");
+if (ReadModelData (filename, bCustom ? "d2x.ham" : "", bCustom))
 	renderModel = NULL;
 return renderModel == NULL;
 }

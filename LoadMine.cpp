@@ -332,12 +332,12 @@ if (!bLoadFromHog && (IsD2File ())) {
 		FSplit (descent2_path, szHogFile, NULL, NULL);
 		if (p = strstr (szHogFile, "data"))
 			*p = '\0';
-		strcat_s (szHogFile, sizeof (szHogFile), "missions\\hog");
-		if (FindFileData (szHogFile, "ham", &nSize, &nPos, FALSE)) {
+		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
+		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
 			FSplit (descent2_path, szHamFile, NULL, NULL);
 			if (p = strstr (szHamFile, "data"))
 				*p = '\0';
-			strcat_s (szHamFile, sizeof (szHamFile), "missions\\ham");
+			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
 			if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
 				m_bVertigo = ReadHamFile (szHamFile, EXTENDED_HAM) == 0;
 				_unlink (szHamFile);

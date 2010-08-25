@@ -327,17 +327,17 @@ if (type == NORMAL_HAM)  {
 		}
 	read_INT32(fp); // version (0x00000007)
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof (UINT16)*t,SEEK_CUR);
-	fseek(fp,sizeof (TMAP_INFO)*t,SEEK_CUR);
+	fseek (fp, sizeof (UINT16) * t, SEEK_CUR);
+	fseek (fp, sizeof (TMAP_INFO) * t, SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof (UINT8)*t,SEEK_CUR);
-	fseek(fp,sizeof (UINT8)*t,SEEK_CUR);
+	fseek (fp, sizeof (UINT8) * t, SEEK_CUR);
+	fseek (fp, sizeof (UINT8) * t, SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof (VCLIP)*t,SEEK_CUR);
+	fseek (fp, sizeof (VCLIP) * t, SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof (ECLIP)*t,SEEK_CUR);
+	fseek (fp, sizeof (ECLIP) * t, SEEK_CUR);
 	t = (INT16) read_INT32(fp);
-	fseek(fp,sizeof (WCLIP)*t,SEEK_CUR);
+	fseek (fp, sizeof (WCLIP) * t, SEEK_CUR);
 	}
 else if (type == EXTENDED_HAM)  {
 	id = read_INT32(fp); // "HAM!"
@@ -351,20 +351,22 @@ else if (type == EXTENDED_HAM)  {
 	fseek (fp, t * sizeof (WEAPON_INFO), SEEK_CUR); //skip weapon info
 	}
 
-  // read robot information
-  //------------------------
-  t = (INT16) read_INT32(fp);
-  t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_TYPES;
-  N_robot_types = t0 + t;
-  if (N_robot_types > MAX_ROBOT_TYPES) {
-    sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_TYPES-N_D2_ROBOT_TYPES);
-    ErrorMsg (message);
-	 N_robot_types = MAX_ROBOT_TYPES;
-	 t = N_robot_types - t0;
-//    goto abort;
-  }
-  RobotInfo (t0)->Read (fp);
-  *DefRobotInfo (t0) = *RobotInfo (t0);
+	// read robot information
+	//------------------------
+	t = (INT16) read_INT32(fp);
+	t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_TYPES;
+	N_robot_types = t0 + t;
+	if (N_robot_types > MAX_ROBOT_TYPES) {
+		sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_TYPES-N_D2_ROBOT_TYPES);
+		ErrorMsg (message);
+		N_robot_types = MAX_ROBOT_TYPES;
+		t = N_robot_types - t0;
+		//    goto abort;
+		}
+	for (; t; t--, t0++) {
+		RobotInfo (t0)->Read (fp);
+		*DefRobotInfo (t0) = *RobotInfo (t0);
+		}
   //memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof (tRobotInfo) * t);
 
   // skip joints weapons, and powerups
@@ -386,47 +388,6 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-#if 0
-  INT16 i, j;
-  FILE *fp;
-  fopen_s (&fp, "d:\\bc\\dlc2data\\poly.dat", "wt");
-  if (fp) {
-    for (i = 0; i < t; i++ ) {
-      fread(&pm,  sizeof (tPolyModel),  1,  fp );
-      fprintf (fp, "n_models        = %ld\n", pmm_info.nModels);
-      fprintf (fp, "model_dataSize = %ld\n", pm.m_info.modelDataSize);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_ptrs[%d]    = %#08lx\n", j, pm.m_info.submodel [i].ptr [j]);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_offsets[%d] = %#08lx %#08lx %#08lx\n", j, 
-						pm.m_info.submodel [i].offset [j].v.x, pm.m_info.submodel [i].offset [j].v.y, pm.m_info.submodel [i].offset [j].v.z);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_norms[%d]   = %#08lx %#08lx %#08lx\n", j, 
-						pm.m_info.submodel [i].norm [j].v.x, pm.m_info.submodel [i].norm [j].v.y, pm.m_info.submodel [i].norm [j].v.z);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_pnts[%d]    = %#08lx %#08lx %#08lx\n", j, 
-						pm.m_info.submodel [i].pnt [j].v.x, pm.m_info.submodel [i].pnt [j].v.y, pm.m_info.submodel [i].pnt [j].v.z);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_rads[%d]    = %#08lx\n", j, pm.m_info.submodel [i].rad [j]);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_parents[%d] = %d\n", j, pm.m_info.submodel [i].parent [j]);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_mins[%d]    = %#08lx %#08lx %#08lx\n", j, 
-						pm.m_info.submodel [i].min [j].v.x, pm.m_info.submodel [i].min [j].v.y, pm.m_info.submodel [i].min [j].v.z);
-      for (j = 0; j < pmm_info.nModels; j++) {
-			fprintf (fp, "submodel_maxs[%d]    = %#08lx %#08lx %#08lx\n", j, 
-						pm.m_info.submodel [i].max [j].v.x, pm.m_info.submodel [i].max [j].v.y, pm.m_info.submodel [i].max [j].v.z);
-			}
-      fprintf (fp, "mins            = %#08lx %#08lx %#08lx\n", pm.mins.v.x, pm.mins.v.y, pm.mins.v.z);
-      fprintf (fp, "maxs            = %#08lx %#08lx %#08lx\n", pm.maxs.v.x, pm.maxs.v.y, pm.maxs.v.z);
-      fprintf (fp, "rad             = %ld\n", pm.rad);
-      fprintf (fp, "textureCount      = %d\n", pm.textureCount);
-      fprintf (fp, "first_texture   = %d\n", pm.first_texture);
-      fprintf (fp, "simpler_model   = %d\n\n", pm.simpler_model);
-    }
-    fclose(fp);
-  }
-#endif
 #if ALLOCATE_tPolyModelS
   // read joint information
   //-----------------------
@@ -598,17 +559,17 @@ read_INT32(fp); // version (0x00000001)
 // read robot information
 //------------------------
 t = (UINT16) read_INT32(fp);
-for (j=0;j<t;j++) {
-	i = (UINT16)read_INT32(fp);
-	if (i>=N_robot_types) {
-		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].",i,N_robot_types-1);
+for (j = 0; j < t; j++) {
+	i = (UINT16) read_INT32(fp);
+	if (i >= N_robot_types) {
+		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, N_robot_types - 1);
 		ErrorMsg (message);
 		goto abort;
 		}
-	fread(&rInfo, sizeof (tRobotInfo), 1, fp );
+	rInfo.Read (fp);
 	// compare this to existing data
-	if (memcmp(&rInfo,RobotInfo (i),sizeof (tRobotInfo)) != 0) {
-		memcpy(RobotInfo (i),&rInfo,sizeof (tRobotInfo));
+	if (memcmp (&rInfo, RobotInfo (i), sizeof (tRobotInfo)) != 0) {
+		memcpy (RobotInfo (i), &rInfo, sizeof (tRobotInfo));
 		RobotInfo (i)->m_info.bCustom = 1; // mark as custom
 		}
 	}

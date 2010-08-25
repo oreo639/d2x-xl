@@ -183,9 +183,11 @@ protected: // create from serialization only
 					m_yRenderOffs;
 	INT32			m_nViewDist;
 	INT32			m_nMineCenter;
-
+#if USE_DYN_ARRAYS
+	CStaticArray< CPolyModel, MAX_POLYGON_MODELS > m_polyModels;
+#else
 	CPolyModel	m_polyModels [MAX_POLYGON_MODELS];
-
+#endif
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context
