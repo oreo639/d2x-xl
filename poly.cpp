@@ -469,14 +469,15 @@ if (slash)
 else
 	filename[0] = '\0';
 
-bool bCustom = (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES);
+bool bCustom = true; //(objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES);
 
 if (bCustom) {
 	char *psz = strstr (filename, "data");
 	if (psz)
 		*psz = '\0';
 	}
-strcat_s (filename, sizeof (filename), ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES)) 
+strcat_s (filename, sizeof (filename), 
+			 bCustom
 			 ? "data\\d2x-xl.hog" 
           : (objP->m_info.type == OBJ_CAMBOT) 
 			   ? "cambot.hxm" 
