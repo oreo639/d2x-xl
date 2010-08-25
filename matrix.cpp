@@ -31,7 +31,7 @@ void CFixVector::Rotate (CFixVector* origin, CFixVector* normal, double angle)
 
   // translate coordanites to origin
 v0 = CDoubleVector (*this - *origin);
-v2 = CDoubleVector (*normal - *origin);
+vn = CDoubleVector (*normal - *origin);
 
 // calculate angles to normalize direction
 // spin on z axis to get into the x-z plane

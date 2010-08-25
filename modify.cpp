@@ -478,7 +478,7 @@ return true;
 				MoveOn()
 ***************************************************************************/
 
-bool CMine::MoveOn (CFixVector inc) 
+bool CMine::MoveOn (CFixVector delta) 
 {
 INT32 nSegment = Current ()->nSegment;
 INT32 nSide = Current ()->nSide;
@@ -490,29 +490,29 @@ INT16 i;
 theApp.SetModified (TRUE);
 switch (m_selectMode) {
 	case POINT_MODE:
-		*Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += inc;
+		*Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += delta;
 		break;
 
 	case LINE_MODE:
-		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]) += inc;
-		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]) += inc;
+		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]) += delta;
+		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]) += delta;
 		break;
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++)
-			*Vertices (segP->m_info.verts [sideVertTable [nSide][i]]) += inc;
+			*Vertices (segP->m_info.verts [sideVertTable [nSide][i]]) += delta;
 		break;
 
 	case CUBE_MODE:
 		for (i = 0; i < 8; i++)
-			*Vertices (segP->m_info.verts [i]) += inc;
+			*Vertices (segP->m_info.verts [i]) += delta;
 		for (i = 0; i < GameInfo ().objects.count; i++)
 			if (Objects (i)->m_info.nSegment == nSegment)
-				Objects (i)->m_info.pos += inc;
+				Objects (i)->m_info.pos += delta;
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->m_info.pos += inc;
+		CurrObj ()->m_info.pos += delta;
 		break;
 	break;
 
@@ -520,11 +520,11 @@ switch (m_selectMode) {
 		CGameObject *objP = Objects (0);
 		for (i = 0; i < MAX_VERTICES; i++)
 			if (VertStatus (i) & MARKED_MASK)
-				*Vertices (i) += inc;
+				*Vertices (i) += delta;
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
 				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-					objP->m_info.pos += inc;
+					objP->m_info.pos += delta;
 		break;
 	}
 return true;
@@ -577,7 +577,7 @@ switch (m_selectMode) {
 		normal = CalcSideNormal ();
 		// normalize the vector
 		// set sign (since vert numbers for most sides don't follow right-handed convention)
-		if ((nSide == 0) || (nSide == 1) || (nSide == 5))
+		if ((nSide < 2) || (nSide > 4))
 			normal = -normal;
 		// set opposite center
 		oppCenter = center + normal;
