@@ -310,10 +310,10 @@ void CMineView::DrawMineCenter (CDC *pViewDC)
 {
 if (m_nMineCenter == 1) {
 	m_pDC->SelectObject(GetStockObject (WHITE_PEN));
-	m_pDC - >MoveTo (x_center, y_center - (INT32) (10.0 * m_size.v.y) + 1);
-	m_pDC - >LineTo (x_center, y_center + (INT32) (10.0 * m_size.v.y) + 1);
-	m_pDC - >MoveTo (x_center - (INT32) (10.0 * m_size.v.x) + 1, y_center);
-	m_pDC - >LineTo (x_center + (INT32) (10.0 * m_size.v.x) + 1, y_center);
+	m_pDC->MoveTo (x_center, y_center - (INT32) (10.0 * m_size.v.y) + 1);
+	m_pDC->LineTo (x_center, y_center + (INT32) (10.0 * m_size.v.y) + 1);
+	m_pDC->MoveTo (x_center - (INT32) (10.0 * m_size.v.x) + 1, y_center);
+	m_pDC->LineTo (x_center + (INT32) (10.0 * m_size.v.x) + 1, y_center);
 	}
 else if (m_nMineCenter == 2) {
 	// draw a globe

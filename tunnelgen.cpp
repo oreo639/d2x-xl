@@ -46,29 +46,30 @@ INT32 _matherr (struct exception *e) {
 //-------------------------------------------------------------------------
 //   Faculty (q) - returns n! (n factorial)
 //-------------------------------------------------------------------------
-long Faculty (INT32 n) {
-  long i;
-  INT32 j;
 
-  i=1;
-  for (j=n;j>=2;j--) {
-    i *= j;
-  }
-  return i;
+long Faculty (INT32 n) 
+{
+long i = 1;
+
+for (INT32 j = n; j >= 2; j--) 
+	i *= j;
+return i;
 }
 
 //-------------------------------------------------------------------------
 //   Coeff(n,i) - returns n!/(i!*(n-i)!)
 //-------------------------------------------------------------------------
-double Coeff(INT32 n, INT32 i) {
-  return ((double)Faculty (n)/((double)Faculty (i)*(double)Faculty (n-i)));
+
+double Coeff(INT32 n, INT32 i) 
+{
+return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
 }
 
 //-------------------------------------------------------------------------
 //   Blend(i,n,u) - returns a weighted coefficient for each point in a spline
 //-------------------------------------------------------------------------
 
-double Blend(INT32 i, INT32 n, double u) 
+double Blend (INT32 i, INT32 n, double u) 
 {
 #if 1
 double partial = pow (Coeff (n, i), i + 1) * pow (1 - u, n - i + 1);
@@ -141,15 +142,15 @@ if (index != 0) {
 // SpinPoint () - spin on y-axis then z-axis
 //--------------------------------------------------------------------------
 
-void SpinPoint (CFixVector* point, double y_spin, double z_spin) 
+void SpinPoint (CVertex* point, double y_spin, double z_spin) 
 {
 double tx,ty,tz;
 tx = point->v.x * cos (y_spin) - point->v.z * sin (y_spin);
 ty = point->v.y;
 tz = point->v.x * sin (y_spin) + point->v.z * cos (y_spin);
-point->v.x = (FIX) (tx * cos (z_spin) + ty * sin (z_spin));
-point->v.y = (FIX) (-tx * sin (z_spin) + ty * cos (z_spin));
-point->v.z = (FIX) (tz);
+point->v.x = (tx * cos (z_spin) + ty * sin (z_spin));
+point->v.y = (-tx * sin (z_spin) + ty * cos (z_spin));
+point->v.z = (tz);
 }
 
 //--------------------------------------------------------------------------
@@ -163,9 +164,9 @@ void SpinBackPoint (CVertex* point, double y_spin, double z_spin)
 tx = point->v.x * cos (-z_spin) + point->v.y * sin (-z_spin);
 ty = -point->v.x * sin (-z_spin) + point->v.y * cos (-z_spin);
 tz = point->v.z;
-point->v.x = (FIX) (tx * cos (-y_spin) - tz * sin (-y_spin));
-point->v.y = (FIX) (ty);
-point->v.z = (FIX) (tx * sin (-y_spin) + tz * cos (-y_spin));
+point->v.x = (tx * cos (-y_spin) - tz * sin (-y_spin));
+point->v.y = (ty);
+point->v.z = (tx * sin (-y_spin) + tz * cos (-y_spin));
 }
 
 //--------------------------------------------------------------------------
@@ -191,12 +192,11 @@ return ret [offset][j];
 // Changes - Chooses axis to normalizes on based on "normal" direction
 //--------------------------------------------------------------------------
 
-CFixVector RectPoints (double angle, double radius, CFixVector* origin, CFixVector* normal) 
+CFixVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
 {
-  double				y_spin,z_spin;
-  char				spinAxis;
-  CFixVector		v = *normal - *origin;
-  CDoubleVector	n (v), v1, v2;
+  double			y_spin,z_spin;
+  char			spinAxis;
+  CVertex		v, n = *normal - *origin, v1, v2;
 
   // translate coordanites to orgin
   // choose rotation order
@@ -207,31 +207,35 @@ else
 spinAxis = 'Y';
 
 // start by defining vertex in rectangular coordinates (xz plane)
-v.Set (0, (FIX) (radius * cos (angle)), (FIX) (radius * sin (angle)));
+v.Set (0, radius * cos (angle), radius * sin (angle));
 
 switch(spinAxis) {
  case 'Y':
    // calculate angles to normalize direction
    // spin on y axis to get into the y-z plane
-   y_spin = - atan3(n.v.z,n.v.x);
+   y_spin = -atan3 (n.v.z, n.v.x);
    v1.Set (n.v.x * cos (y_spin) - n.v.z * sin (y_spin), n.v.y, n.v.x * sin (y_spin) + n.v.z * cos (y_spin));
    // spin on z to get on the x axis
-   z_spin = atan3(v1.v.y,v1.v.x);
+   z_spin = atan3 (v1.v.y,v1.v.x);
    // spin vertex back in negative direction (z first then y)
-   v2.Set ((double) v.v.x * cos (-z_spin) + (double) v.v.y * sin (-z_spin), (double) -v.v.x * sin (-z_spin) + (double) v.v.y * cos (-z_spin), double (v.v.z));
-   v1.Set (v2.v.x * cos (-y_spin) - v2.v.z * sin (-y_spin), v2.v.y, v2.v.x * sin (-y_spin) + v2.v.z * cos (-y_spin));
+	z_spin = -z_spin;
+   v2.Set ((double) v.v.x * cos (z_spin) + (double) v.v.y * sin (z_spin), (double) -v.v.x * sin (z_spin) + (double) v.v.y * cos (z_spin), double (v.v.z));
+	y_spin = -y_spin;
+   v1.Set (v2.v.x * cos (y_spin) - v2.v.z * sin (y_spin), v2.v.y, v2.v.x * sin (y_spin) + v2.v.z * cos (y_spin));
    break;
 
  case 'Z':
    // calculate angles to normalize direction
    // spin on z axis to get into the x-z plane
-   z_spin = atan3(n.v.y,n.v.x);
+   z_spin = atan3 (n.v.y, n.v.x);
    v1.Set (n.v.x * cos (z_spin) + n.v.y * sin (z_spin), -n.v.x * sin (z_spin) + n.v.y * cos (z_spin), n.v.z);
    // spin on y to get on the x axis
-   y_spin = -atan3(v1.v.z,v1.v.x);
+   y_spin = -atan3 (v1.v.z,v1.v.x);
    // spin vertex back in negative direction (y first then z)
-   v2.Set ((double) v.v.x * cos (-y_spin) - (double) v.v.z * sin (-y_spin), double (v.v.y), (double) v.v.x * sin (-y_spin) + (double) v.v.z * cos (-y_spin));
-   v1.Set (v2.v.x * cos (-z_spin) + v2.v.y * sin (-z_spin), -v2.v.x * sin (-z_spin) + v2.v.y * cos (-z_spin), v2.v.z);
+	y_spin = -y_spin;
+   v2.Set ((double) v.v.x * cos (y_spin) - (double) v.v.z * sin (y_spin), double (v.v.y), (double) v.v.x * sin (y_spin) + (double) v.v.z * cos (y_spin));
+	z_spin = -z_spin;
+   v1.Set (v2.v.x * cos (z_spin) + v2.v.y * sin (z_spin), -v2.v.x * sin (z_spin) + v2.v.y * cos (z_spin), v2.v.z);
    break;
 	}
 v = *normal + CFixVector (v1);
@@ -241,27 +245,27 @@ return v;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-void PolarPoints (double *angle, double *radius, CFixVector* vertex, CFixVector* orgin, CFixVector* normal) 
+void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* orgin, CVertex* normal) 
 {
   double z_spin,y_spin;
-  double vx,vy,vz,nx,ny,nz;
   double x1,y1,z1,y2,z2;
   // translate coordanites to orgin
-  vx = vertex->v.x - orgin->v.x;
-  vy = vertex->v.y - orgin->v.y;
-  vz = vertex->v.z - orgin->v.z;
-  nx = normal->v.x - orgin->v.x;
-  ny = normal->v.y - orgin->v.y;
-  nz = normal->v.z - orgin->v.z;
+	double vx = vertex->v.x - orgin->v.x;
+	double vy = vertex->v.y - orgin->v.y;
+	double vz = vertex->v.z - orgin->v.z;
+	double nx = normal->v.x - orgin->v.x;
+	double ny = normal->v.y - orgin->v.y;
+	double nz = normal->v.z - orgin->v.z;
 
   // calculate angles to normalize direction
   // spin on z axis to get into the x-z plane
-z_spin = atan3(ny,nx);
+z_spin = atan3 (ny,nx);
+
 x1 = nx * cos (z_spin) + ny * sin (z_spin);
 z1 = nz;
 
 // spin on y to get on the x axis
-y_spin = -atan3(z1,x1);
+y_spin = -atan3 (z1,x1);
 // spin vertex (spin on z then y)
 x1 = vx * cos (z_spin) + vy * sin (z_spin);
 y1 = -vx * sin (z_spin) + vy * cos (z_spin);
@@ -271,7 +275,7 @@ y2 = y1;
 z2 = x1 * sin (y_spin) + z1 * cos (y_spin);
 // convert to polar
 *radius = sqrt(y2*y2 + z2*z2);  // ignore any x offset
-*angle = atan3(z2,y2);
+*angle = atan3 (z2,y2);
 }
 
 //==========================================================================
@@ -487,12 +491,12 @@ void CMine::CalcSpline (void)
   INT32 i,j;
   CSegment *segP;
   INT16 nVertex;
-  CFixVector vertex;
+  CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];
-  CFixVector rel_side_pts [2][4]; // side points reletave to center of side 1
-  CFixVector rel_pts [4]; // 4 points of spline reletave to 1st point
-  CFixVector rel_spline_pts [MAX_SPLINES];
+  CVertex rel_side_pts [2][4]; // side points reletave to center of side 1
+  CVertex rel_pts [4]; // 4 points of spline reletave to 1st point
+  CVertex rel_spline_pts [MAX_SPLINES];
   double y,z;
   double y_spin,z_spin;
 
@@ -502,7 +506,7 @@ void CMine::CalcSpline (void)
 
   // point orthogonal to center of current cube
   points [1] = CalcSideNormal (nSplineSeg1, nSplineSide1);
-  points [1] *= FIX (m_splineLength1);
+  points [1] *= m_splineLength1;
   points [1] += points [0];
 
 
@@ -513,7 +517,7 @@ void CMine::CalcSpline (void)
 
   // calculate number of segments (min=1)
   length = Distance (*points, points [3]);
-  n_splines = (INT32)(abs (m_splineLength1) + abs (m_splineLength2)) / 20 + (INT32)(length / (40.0 * (double) 0x10000L));
+  n_splines = (INT32) ((abs (m_splineLength1) + abs (m_splineLength2)) / 20 + length / 40.0);
   n_splines = min (n_splines, m_nMaxSplines - 1);
 
   // calculate spline points
@@ -541,8 +545,8 @@ void CMine::CalcSpline (void)
   }
 
   // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-  y_spin = - atan3(rel_pts [1].v.z, rel_pts [1].v.x                                     ); // to y-z plane
-  z_spin =   atan3(rel_pts [1].v.y, rel_pts [1].v.x * cos (y_spin)-rel_pts [1].v.z * sin (y_spin)); // to x axis
+  y_spin = - atan3 (rel_pts [1].v.z, rel_pts [1].v.x                                     ); // to y-z plane
+  z_spin =   atan3 (rel_pts [1].v.y, rel_pts [1].v.x * cos (y_spin)-rel_pts [1].v.z * sin (y_spin)); // to x axis
 
   // spin all points reletave to first face (rotation)
   for (i = 0; i < 4; i++) {
@@ -557,7 +561,7 @@ void CMine::CalcSpline (void)
 
   // determine polar coordinates of the 1st side (simply y,z coords)
   for (i = 0; i < 4; i++) {
-    theta [0][i] = atan3(rel_side_pts [0][i].v.z,rel_side_pts [0][i].v.y);
+    theta [0][i] = atan3 (rel_side_pts [0][i].v.z,rel_side_pts [0][i].v.y);
     y = (float) rel_side_pts [0][i].v.y;
     z = (float) rel_side_pts [0][i].v.z;
     radius [0][i] = sqrt(y*y + z*z);
@@ -569,7 +573,7 @@ void CMine::CalcSpline (void)
     vertex.Set (-(rel_pts [2].v.x-rel_pts [3].v.x) + rel_pts [3].v.x,
 					 -(rel_pts [2].v.y-rel_pts [3].v.y) + rel_pts [3].v.y,
 					 -(rel_pts [2].v.z-rel_pts [3].v.z) + rel_pts [3].v.z);
-    PolarPoints (&theta [1][i],&radius [1][i],&rel_side_pts [1][i],&rel_pts [3],&vertex);
+    PolarPoints (&theta [1][i], &radius [1][i], &rel_side_pts [1][i], &rel_pts [3], &vertex);
   }
 
   // figure out the angle differences to be in range (-pi to pi)
