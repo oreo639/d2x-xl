@@ -407,7 +407,7 @@ void CDoubleMatrix::Rotate (double angle, char axis)
 double cosX = cos (angle);
 double sinX = sin (angle);
 
-CFixMatrix mRot;
+CDoubleMatrix mRot;
 
 switch (axis) {
 	case 'x':
@@ -691,7 +691,7 @@ vertex = r;
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 
-INT32 CViewMatrix::CheckNormal (CGameObject *objP, CVertex& a, CVertex6 b) 
+INT32 CViewMatrix::CheckNormal (CGameObject *objP, CVertex& a, CVertex& b) 
 {
 CVertex _a = objP->m_info.orient * a;
 CVertex _b = objP->m_info.orient * b;

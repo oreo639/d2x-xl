@@ -145,7 +145,7 @@ protected: // create from serialization only
 	CDoubleVector	m_move;
 	CDoubleVector	m_size;
 	CDoubleVector	m_spin;
-	double		m_depthPerception;
+	double			m_depthPerception;
 	CViewMatrix		m_view;
 
 	CDoubleMatrix	m_mat, m_invMat;
@@ -183,6 +183,10 @@ protected: // create from serialization only
 					m_yRenderOffs;
 	INT32			m_nViewDist;
 	INT32			m_nMineCenter;
+
+	CPolyModel	m_polyModels [MAX_POLYGON_MODELS];
+	CPolyModel*	m_renderModel;
+
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context
@@ -274,7 +278,7 @@ public:
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
 	void	DrawPoly (tModelRenderData *p);
-	INT32	ReadModelData(char* filename, CGameObject *objP);
+	INT32 ReadModelData (char* filename, bool bCustom = false);
 	//void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
 
 	// view control functions

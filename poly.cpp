@@ -85,8 +85,8 @@ FIX MultiplyFix (FIX a, FIX b) {
 
 void CMineView::DrawModel () 
 {
-renderModel.Draw ();
-InterpModelData (renderModelData);
+if (m_renderModel)
+	m_renderModel->Draw ();
 }
 
 //-----------------------------------------------------------------------
@@ -95,10 +95,9 @@ InterpModelData (renderModelData);
 // Rotates, translates, then sets screen points (xy) for 3d model points
 //-----------------------------------------------------------------------
 
-void CMineView::SetModelPoints (INT32 start, INT32 end) 
+void CPolyModel::SetModelPoints (INT32 start, INT32 end) 
 {
-CGameObject *objP = renderObject;
-CVertex		pt;
+	CVertex	pt;
 
 for (INT32 i = start; i < end; i++) {
 	//FIX x0 = modelRenderData.points[i].v.x;
@@ -106,11 +105,11 @@ for (INT32 i = start; i < end; i++) {
 	//FIX z0 = modelRenderData.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
-	pt = objP->m_info.orient * modelRenderData.points [i];
+	pt = renderObject->m_info.orient * modelRenderData.points [i];
 	// set point to be in world coordinates
-	pt += objP->m_info.pos;
+	pt += renderObject->m_info.pos;
 	// now that points are relative to set screen xy points (poly_xy)
-	m_view.Project (pt, poly_xy [i]);
+	m_view->Project (pt, poly_xy [i]);
 	}
 }
 
@@ -122,10 +121,19 @@ for (INT32 i = start; i < end; i++) {
 //          Used global device context handle set by SetupModel ()
 //-----------------------------------------------------------------------
 
-void CMineView::DrawPoly (tModelRenderPoly* p) 
+void tModelRenderPoly::Draw (CViewMatrix* view, CDC* pDC) 
 {
-if (m_view.CheckNormal (renderObject, &p->m_info.offset, &p->m_info.normal)) 
-	p->Draw (m_pDC);
+if (view->CheckNormal (renderObject, &m_info.offset, &m_info.normal)) {
+	  INT32 i, j;
+
+	POINT aPoints [MAX_POLYMODEL_POLY_POINTS];
+	for (i = 0; i < n_verts; i++) {
+		j = m_info.verts [i];
+		aPoints [i].x = poly_xy [j].x;
+		aPoints [i].y = poly_xy [j].y;
+		}
+	pDC->Polygon (aPoints, n_verts);
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -170,7 +178,7 @@ while (W (p) != OP_EOF) {
 			faceP->normal = *VP (p+16);
 			for (pt = 0; pt < faceP->n_verts; pt++) 
 				faceP->verts[pt] = WP (p+30)[pt];
-			DrawPoly (faceP);
+			faceP->Draw (m_view, m_pDC);
 			p += 30 + ((faceP->n_verts&~1)+1)*2;
 			break;
 			}
@@ -195,7 +203,7 @@ while (W (p) != OP_EOF) {
 			for (pt = 0; pt < faceP->n_verts; pt++) 
 				faceP->verts[pt] = WP (p+30)[pt];
 			p += 30 + ((faceP->n_verts&~1)+1)*2;
-			DrawPoly (faceP);
+			faceP->Draw (m_view, m_pDC);
 			p += faceP->n_verts * 12;
 			break;
 			}
@@ -209,13 +217,13 @@ while (W (p) != OP_EOF) {
 			/* = W (p+2); */
 			/* = W (p+4); */
 			/* = W (p+16); */
-			if ( m_view.CheckNormal (renderObject, VP (p+4), VP (p+16)) ) {
-			  InterpModelData (p + W (p+28));
-			  InterpModelData (p + W (p+30));
+			if (m_view->CheckNormal (renderObject, VP (p+4), VP (p+16)) ) {
+			  Render (p + W (p+28));
+			  Render (p + W (p+30));
 				}
 			else {
-			  InterpModelData (p + W (p+30));
-			  InterpModelData (p + W (p+28));
+			  Render (p + W (p+30));
+			  Render (p + W (p+28));
 				}
 			p += 32;
 			break;
@@ -226,7 +234,7 @@ while (W (p) != OP_EOF) {
 		// 16 UINT16     model offset
 		case OP_SUBCALL: {
 			renderOffset += *VP (p+4);
-			InterpModelData (p + W (p+16));
+			Render (p + W (p+16));
 			renderOffset -= *VP (p+4);
 			p += 20;
 			break;
@@ -269,14 +277,14 @@ INT32 CPolyModel::Read (FILE* fp, bool bRenderData)
 {
 if (bRenderData) {
 	Release ();
-	if (!(m_info.bRenderData = new UINT8 [m_info.dataSize]))
+	if (!(m_info.renderData = new UINT8 [m_info.dataSize]))
 		return 0;
 	return fread (m_info.renderData, m_info.dataSize, 1, fp) == 1;
 	}
 else {
 	m_info.nModels = read_INT32 (fp);
 	m_info.dataSize = read_INT32 (fp);
-	m_info.data = NULL;
+	m_info.renderData = NULL;
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].ptr = read_INT32 (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -305,54 +313,11 @@ return 1;
 
 //-----------------------------------------------------------------------
 
-static bool ReadRenderModelData (FILE* fp, int nModels, int nId, bool bReadAll)
-{
-int skip = 0;
-for (int i = 0; i < nModels; i++) {
-	if (i == nId) {
-		if (skip)
-			fseek (fp, skip, SEEK_CUR);
-		if (bReadAll)
-			skip = 0;
-		else
-			return fread (renderModelData, modelDataSize [i], 1, fp) == 1;
-		}
-	else
-		skip += modelDataSize [i];
-	}
-if (skip)
-	fseek (fp, skip, SEEK_CUR);
-return bReadAll;
-}
-
-//-----------------------------------------------------------------------
-
-static int ReadRobotInfo (FILE* fp, int nRobots, int nId)
-{
-int nModel = -1;
-int skip = 0;
-for (i = 0; i < n; i++) {
-	if (i == (UINT32) (objP->m_info.id - N_D2_ROBOT_TYPES)) {
-		if (skip)
-			fseek (fp, skip, SEEK_CUR);
-		robotInfo.Read (fp);
-		nModel = robotInfo.m_info.nModel;
-		}
-	else
-		skip += sizeof (tRobotInfo);
-	}
-if (skip)
-	fseek (fp, skip, SEEK_CUR);
-return nModel;
-}
-
-//-----------------------------------------------------------------------
-
 INT32 CMineView::ReadModelData (char* filename, bool bCustom = false) 
 {
 	FILE*		fp;
 
-if (fopen_s (&file, filename, "rb"))
+if (fopen_s (&fp, filename, "rb"))
 	return 1;
 
 
@@ -385,7 +350,7 @@ if (bCustom) {
 			fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
 			n  = read_UINTW (fp);                         // n_robot_types
 			for (i = 0; i < n; i++)
-				RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
+				theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
 			n  = read_UINTW (fp);                         // n_robot_joints
 			fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
 			break;
@@ -395,9 +360,9 @@ if (bCustom) {
 	n = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		polyModels [N_D2_ROBOT_TYPES + i].Read (fp);
+		m_polyModels [N_D2_ROBOT_TYPES + i].Read (fp);
 	for (i = 0; i < n; i++) 
-		polyModels [N_D2_ROBOT_TYPES + i].Read (fp, true);
+		m_polyModels [N_D2_ROBOT_TYPES + i].Read (fp, true);
 	}
 else {
 	id = read_INT32 (fp);	  					   // read id
@@ -420,7 +385,7 @@ else {
 	fseek (fp, n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
 	n = read_UINTW (fp);                          // n_robots
 	for (i = 0; i < n; i++) 
-		RobotInfo (i)->Read (fp);
+		theMine->RobotInfo (i)->Read (fp);
 	n = read_UINTW (fp);                          // n_robot_joints
 	fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
 	n = read_UINTW (fp);                          // n_weapon
@@ -430,9 +395,9 @@ else {
 	n = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		polyModels [i].Read (fp);
+		m_polyModels [i].Read (fp);
 	for (i = 0; i < n; i++) 
-		polyModels [i].Read (fp, true);
+		m_polyModels [i].Read (fp, true);
 	}
 fclose (fp);
 return 0;
@@ -442,6 +407,9 @@ return 0;
 
 CPolyModel* CMineView::RenderModel (CGameObject* objP)
 {
+if (!theMine)
+	return NULL;
+
 	UINT32 nModel;
 
 switch (objP->m_info.type) {
@@ -464,11 +432,11 @@ switch (objP->m_info.type) {
 		}
 		break;
 	case OBJ_ROBOT:
-		nModel = RobotInfo ((objP->m_info.id >= N_D2_ROBOT_TYPES) ? objP->m_info.id - N_D2_ROBOT_TYPES : objP->m_info.id)->m_info.nModel;
+		nModel = theMine->RobotInfo ((objP->m_info.id >= N_D2_ROBOT_TYPES) ? objP->m_info.id - N_D2_ROBOT_TYPES : objP->m_info.id)->m_info.nModel;
 	default:
 		return NULL;
 	}
-return polyModels + nModel;
+return m_polyModels + nModel;
 }
 
 //-----------------------------------------------------------------------
@@ -483,10 +451,12 @@ renderOffset.Clear ();
 modelRenderData.n_points = 0;
 glow_num = -1;
 
-if (!renderModel = RenderModel (renderObject = objP))
+if (NULL == (renderModel = RenderModel (renderObject = objP)))
 	return 1;
-if (renderModel->m_data.renderData)
+if (renderModel->m_info.renderData)
 	return 0;
+
+  char filename[256];
 
 strcpy_s (filename, sizeof (filename), descent2_path);
 char *slash = strrchr (filename, '\\');
@@ -516,15 +486,6 @@ return renderModel == NULL;
 
 void tModelRenderPoly::Draw (CDC* pDC) 
 {
-  INT32 i, j;
-
-POINT aPoints [MAX_POLYMODEL_POLY_POINTS];
-for (i = 0; i < m_info.n_verts; i++) {
-	j = m_info.verts [i];
-	aPoints [i].x = poly_xy [j].x;
-	aPoints [i].y = poly_xy [j].y;
-	}
-pDC->Polygon (aPoints, m_info.n_verts);
 }
 
 //-----------------------------------------------------------------------

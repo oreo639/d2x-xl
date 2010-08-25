@@ -19,7 +19,7 @@ public:
 	UINT16		verts [MAX_POLYMODEL_POLY_POINTS];
 	tUVL			uvls [MAX_POLYMODEL_POLY_POINTS];
 
-	void Draw (CDC* pDC);
+	void Draw (CViewMatrix* view, CDC* pDC);
 } tModelRenderPoly;
 
 typedef struct tModelRenderData {
@@ -56,7 +56,9 @@ typedef struct tPolyModel {
 
 class CPolyModel {
 public:
-	tPolyModel	m_info;
+	tPolyModel		m_info;
+	CViewMatrix*	m_view;
+	CDC*				m_pDC;
 
 	CPolyModel () { Clear (); }
 	~CPolyModel () { Release (); }
@@ -71,11 +73,17 @@ public:
 		}
 	void Read (FILE* fp, bool bRenderData = false);
 	void Write (FILE* fp, bool bRenderData = false);
-	void Render (void);
-	inline void CPolyModel::Draw (void) {
-		if (m_data.renderData)
-			Render (m_data.renderData);
+	inline void CPolyModel::Draw (CViewMatrix* view, CDC* pDC) {
+		if (m_info.renderData) {
+			m_view = view;
+			m_pDC = pDC;
+			Render (m_info.renderData);
+			}
 		}
+
+	private:
+		void SetModelPoints (INT32 start, INT32 end);
+		void Render (UINT8* p);
 };
 
 //void interp_model_data (void *model_data, CFixVector* offset, tModelRenderData *model, UINT16 call_level) ;

@@ -7,6 +7,7 @@
 #include "robot.h"
 #include "object.h"
 #include "textures.h"
+#include "poly.h"
 
 #define MAX_LIGHT_DEPTH 6
 
@@ -21,7 +22,7 @@ extern INT8 pointSideTable[8][3];
 extern INT8 pointCornerTable[8][3];
 extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
 extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
-extern CUVL default_uvls[4];
+extern tUVL default_uvls[4];
 
 // Copyright (C) 1997 Bryan Aamot
 //**************************************************************************
@@ -151,7 +152,6 @@ public:
 	CPalette*		m_currentPalette;
 	LPLOGPALETTE	m_dlcLogPalette;
 	textureList		textures;
-	CPolyModel		polyModels [MAX_POLYGON_MODELS];
 	
 	// strings
 	char				message[256];

@@ -544,6 +544,7 @@ bool CMine::SpinSelection (double angle)
 	INT32				nSide = Current ()->nSide;
 	CSegment*		segP = Segments (nSegment);
 	CGameObject*	objP;
+	CDoubleMatrix* orient;
 	CVertex			center, oppCenter, normal;
 	INT16				i;
 
@@ -605,7 +606,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		theApp.SetModified (TRUE);
-		CDoubleMatrix* orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
+		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');
