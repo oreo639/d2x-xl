@@ -791,7 +791,8 @@ CHECKMINE;
 
 	INT32			h, i, j, c, nDist, segNum = theMine->SegCount (), sideNum;
 	CSegment	*segI, *segJ;
-	INT16			*segRef = new INT16 [segNum];
+
+	static INT16 segRef [MAX_SEGMENTS3];
 
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->m_info.nIndex = -1;
@@ -814,7 +815,6 @@ for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 			}
 		}
 	}
-delete segRef;
 }
 
 //----------------------------------------------------------------------------

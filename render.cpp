@@ -112,18 +112,18 @@ void square2quad_matrix(double A [3][3],POINT a [4])
 //------------------------------------------------------------------------
 // TextureMap()
 //------------------------------------------------------------------------
-void TextureMap(INT32 resolution,
-				CSegment *segP,
-				INT16 nSide,
-				UINT8 *bmData,
-				UINT16 bmWidth,
-				UINT16 bmHeight,
-				UINT8 *light_index,
-				UINT8 *pScrnMem,
-				APOINT* scrn,
-				UINT16 width,
-				UINT16 height,
-				UINT16 rowOffset)
+void TextureMap (INT32 resolution,
+					   CSegment *segP,
+						INT16 nSide,
+						UINT8 *bmData,
+						UINT16 bmWidth,
+						UINT16 bmHeight,
+						UINT8 *light_index,
+						UINT8 *pScrnMem,
+						APOINT* scrn,
+						UINT16 width,
+						UINT16 height,
+						UINT16 rowOffset)
 {
 	
 	INT32 h, i, j, k;
@@ -150,9 +150,8 @@ bmHeight = bmWidth;
 bmWidth2 = bmWidth / 2;
 
 // define 4 corners of texture to be displayed on the screen
-for (i=0;i<4;i++) {
-	INT16 nVertex;
-	nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
+for (i = 0; i < 4; i++) {
+	INT16 nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
 	a [i].x = scrn [nVertex].x;
 	a [i].y = scrn [nVertex].y;
 	}
@@ -190,7 +189,7 @@ for (i = 0; i < 4; i++) {
 	}
 	
 	// define texture light
-for (i=0;i<4;i++) {
+for (i = 0; i < 4; i++) {
 	light [i] = uvls [i].l;
 	// clip light
 	if (light [i] & 0x8000){
@@ -236,39 +235,30 @@ if (bEnableDeltaShading) {
 	// uv of 0x800 = 64 pixels in texture
 	// therefore uv of 32 = 1 pixel
 square2quad_matrix(UV,b);
-scale_matrix(UV,1.0/2048.0);
-multiply_matrix(B,IA,UV);
-for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
-	INT32 x0,x1;
+scale_matrix (UV, 1.0 / 2048.0);
+multiply_matrix (B, IA, UV);
+for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
+	INT32 x0, x1;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
 	x0 = maxpt.x; // start out w/ min point all the way to the right
 	x1 = minpt.x; // and max point to the left
-	for (i=0;i<4;i++) {
+	for (i = 0; i < 4; i++) {
 		// if line intersects this y then update x0 & x1
-		j = (i+1)&3; // j = other point of line
+		j = (i + 1) % 4; // j = other point of line
 		yi = a [i].y;
 		yj = a [j].y;
 		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
 			w = yi - yj;
-			if (w != 0) { // avoid divide by zero
-				x = (INT32)((
-					(double)a [i].x * ((double)y - (double)yj) -
-					(double)a [j].x * ((double)y - (double)yi)
-					) / w);
-				if (x<x0) {
-					scan_light = (INT32)((
-						(double)light [i] * ((double)y - (double)yj) -
-						(double)light [j] * ((double)y - (double)yi)
-						) / w);
+			if (w != 0.0) { // avoid divide by zero
+				x = (INT32)(((double) a [i].x * ((double) y - (double) yj) - (double) a [j].x * ((double)  y - (double)  yi)) / w);
+				if (x < x0) {
+					scan_light = (INT32)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x0 = x;
 				}
 				if (x>x1) {
-					dscan_light = (INT32)((
-						(double)light [i] * ((double)y - (double)yj) -
-						(double)light [j] * ((double)y - (double)yi)
-						) / w);
+					dscan_light = (INT32)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x1 = x;
 				}
 			}
@@ -276,21 +266,21 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 	} // end for
 	
 	// clip
-	x0 = max(x0, minpt.x);
-	x1 = min(x1, maxpt.x);
+	x0 = max (x0, minpt.x);
+	x1 = min (x1, maxpt.x);
 	
 	// Instead of finding every point using the matrix transformation,
 	// just define the end points and delta values then simply
 	// add the delta values to u and v
-	if (fabs((double) (x0 - x1)) >= 1) {
-		double u0,u1,v0,v1,w0,w1, h, scale, x0d, x1d;
-		UINT32 u,v,du,dv, m,vd,vm,dx;
+	if (fabs ((double) (x0 - x1)) >= 1.0) {
+		double u0, u1, v0, v1, w0, w1, h, scale, x0d, x1d;
+		UINT32 u, v, du, dv, m, vd, vm, dx;
 		dscan_light = (dscan_light - scan_light)/(x1-x0);
 		dscan_light <<= resolution;
 		
 		// loop for every 32 bytes
 		INT32 end_x = x1;
-		for (;x0 < end_x ;x0 += bmWidth2) {
+		for (; x0 < end_x ; x0 += bmWidth2) {
 			if (end_x - x0 > bmWidth2)
 				x1 = bmWidth2 + x0;
 			else
@@ -333,115 +323,75 @@ for (y=minpt.y;y<maxpt.y;y+=inc_resolution) {
 				
 				if (resolution) 
 					x0 &= ~1; // round down if low res
-				ptr = pScrnMem + (UINT32)(height-y-1) * (UINT32)rowOffset + x0;
+				ptr = pScrnMem + (UINT32)(height - y - 1) * (UINT32) rowOffset + x0;
 				
-				INT32 k = (x1-x0)>>resolution;
-				if (y<(height-1) && k>0)  {
+				INT32 k = (x1 - x0) >> resolution;
+				if (y < (height-1) && k > 0)  {
 					UINT8 *pixelP;
 					pixelP = ptr;
 					if (resolution == 0) {
 						if (bEnableShading) {
-#if 0
-							// TEXTURE_MAP_LIGHT_HIRES
-							UINT8 temp1 = descent_side_colors [nSide];
-							while (k--) {
-								*pixelP++ = light_index [temp1 + ((scan_light / 4) & 0x1f00)];
-								scan_light += dscan_light;
-								}
-#else
+							int scanLightOffset = ((scan_light / 4) & 0x1f00);
 							do {
-								UINT8 temp;
-								u+=du;
-								u%=m;
-								v+=dv;
-								v%=m;
-								temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp<254) {
-									temp = light_index [temp + ((scan_light / 4) & 0x1f00)];
+								u += du;
+								u %= m;
+								v += dv;
+								v %= m;
+								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+								if (temp < 254) {
+									temp = light_index [temp + scanLightOffset];
 									*pixelP = temp;
 									}
 								pixelP++;
 								scan_light += dscan_light;
 								} while (--k);
-#endif
 							} 
 						else {
-							// TEXTURE_MAP_NOLIGHT_HIRES
-#if 0
-							UINT8 temp = descent_side_colors [nSide];
-							while (k--) {
-								*pixelP++ = temp;
-								}
-#else
 							do {
-								UINT8 temp;
-								u+=du;
-								u%=m;
-								v+=dv;
-								v%=m;
-								temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp<254) {
+								u += du;
+								u %= m;
+								v += dv;
+								v %= m;
+								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+								if (temp < 254)
 									*pixelP = temp;
-								}
 								pixelP++;
 								} while (--k);
-#endif
 							}
 						} 
 					else {
 						// if doing a splash, define multiple points as the same color
 						if (bEnableShading) {
-							// TEXTURE_MAP_LIGHT_LOWRES
-#if 0
-							UINT8 temp1 = descent_side_colors [nSide];
-							while (k--) {
-								pixelP [0] = 
-								pixelP [1] = light_index [temp1 + ((scan_light / 4) & 0x1f00)];
-								pixelP += 2;
-								scan_light += dscan_light;
-								}
-#else
+							int scanLightOffset = ((scan_light / 4) & 0x1f00);
 							do {
-								UINT8 temp;
-								u+=du;
-								u%=m;
-								v+=dv;
-								v%=m;
-								temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp<254) {
-									temp = light_index [temp + ((scan_light / 4) & 0x1f00)];
+								u += du;
+								u %= m;
+								v += dv;
+								v %= m;
+								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+								if (temp < 254) {
+									temp = light_index [temp + scanLightOffset];
 									pixelP [0] = 
 									pixelP [1] = temp;
 									}
 								pixelP += 2;
 								scan_light += dscan_light;
 								} while (--k);
-#endif
 							} 
 						else {
 							// TEXTURE_MAP_NOLIGHT_LOWRES
-#if 0
-							UINT8 emp = descent_side_colors [nSide];
-							while (k--) {
-								pixelP [0] = 
-								pixelP [1] = temp;
-								pixelP += 2;
-								}
-#else
 							do {
-								UINT8 temp;
-								u+=du;
-								v+=dv;
-								u%=m;
-								v%=m;
-								temp = bmData [(u / 1024) + ((v / vd) & vm)];
-								if (temp<254) {
+								u += du;
+								v += dv;
+								u %= m;
+								v %= m;
+								UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+								if (temp < 254) {
 									pixelP [0] =
 									pixelP [1] = temp;
 									}
 								pixelP += 2;
 								} while (--k);
-#endif
 							}
 						}
 					}
