@@ -668,7 +668,7 @@ bool CMine::LinkSegments (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 
 {
 	CSegment		* seg1, * seg2; 
 	INT16			i, j; 
-	CFixVector	v1 [4], v2 [4]; 
+	CVertex		v1 [4], v2 [4]; 
 	INT16			fail;
 	tVertMatch	match [4]; 
 

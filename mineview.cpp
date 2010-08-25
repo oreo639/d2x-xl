@@ -3273,7 +3273,7 @@ return true;
 // calculate_segment_center()
 //-------------------------------------------------------------------------
 
-void CalcSegmentCenter (CVertex& pos, INT16 nSegment)
+void CMineView::CalcSegmentCenter (CVertex& pos, INT16 nSegment)
 {
 CSegment *segP = theMine->Segments (nSegment);
 CVertex *vMine = theMine->Vertices (0);
