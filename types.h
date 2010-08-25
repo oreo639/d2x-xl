@@ -136,8 +136,14 @@ public:
 		this->CDoubleVector::Clear ();
 		}
 
-	inline const CVertex& operator= (const CVertex& other) { v = other.v, m_status = other.m_status; }
-	inline const CVertex& operator= (const CDoubleVector& other) { v = other.v; }
+	inline const CVertex& operator= (const CVertex& other) { 
+		v = other.v, m_status = other.m_status; 
+		return *this;
+		}
+	inline const CVertex& operator= (const CDoubleVector& other) { 
+		v = other.v; 
+		return *this;
+		}
 };
 
 typedef struct {

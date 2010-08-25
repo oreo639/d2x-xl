@@ -360,7 +360,7 @@ public:
 	bool  AddSegment();
 	bool  LinkSegments(INT16 nSegment1, INT16 nSide1, INT16 nSegment2,INT16 nSide2, FIX margin);
 	void  LinkSides(INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, tVertMatch match[4]);
-	void	CalcSegCenter (CFixVector& pos, INT16 nSegment);
+	void	CalcSegCenter (CVertex& pos, INT16 nSegment);
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (INT32 i = 0, INT32 j = 0)

@@ -793,7 +793,7 @@ for (i = 0; i < 4; i++) {
 // calculate_segment_center()
 // ------------------------------------------------------------------------- 
 
-void CMine::CalcSegCenter(CFixVector& pos, INT16 nSegment) 
+void CMine::CalcSegCenter (CVertex& pos, INT16 nSegment) 
 {
   INT16	*nVerts = Segments (nSegment)->m_info.verts; 
   

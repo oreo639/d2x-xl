@@ -1123,7 +1123,8 @@ else
 
 void CObjectTool::OnReset () 
 {
-CFixMatrix *orient;
+CDoubleMatrix *orient;
+
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {

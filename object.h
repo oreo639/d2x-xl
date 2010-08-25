@@ -294,11 +294,11 @@ typedef struct tGameObject {
 	UINT8				flags;         // misc flags 
 	UINT8				multiplayer;   // object only available in multiplayer games 
 	INT16				nSegment;      // segment number containing object 
-	CDoubleVector	pos;           // absolute x,y,z coordinate of center of object 
+	CVertex			pos;           // absolute x,y,z coordinate of center of object 
 	CDoubleMatrix	orient;        // orientation of object in world 
 	FIX				size;          // 3d size of object - for collision detection 
 	FIX				shields;       // Starts at maximum, when <0, object dies.. 
-	CDoubleVector	lastPos;			// where object was last frame 
+	CVertex			lastPos;			// where object was last frame 
 	tObjContentsInfo contents;
 } tGameObject;
 

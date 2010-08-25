@@ -331,7 +331,7 @@ if (m_nMineCenter == 2) {
 							(FIX)(5 * sin (Radians (i)))
 							);
 			circle -= CFixVector (m_view.m_move [0]);
-			m_view.Project (&circle, &pt);
+			m_view.Project (circle, pt);
 			if (j == 0)
 				m_pDC->MoveTo (pt.x,pt.y);
 			else if (pt.z <= 0)
@@ -349,7 +349,7 @@ if (m_nMineCenter == 2) {
 							(FIX)(scale * sin (Radians (j)))
 							);
 			circle -= CFixVector (m_view.m_move [0]);
-			m_view.Project (&circle,&pt);
+			m_view.Project (circle, pt);
 			if (j==0)
 				m_pDC->MoveTo (pt.x,pt.y);
 			else if (pt.z <= 0)
@@ -367,7 +367,7 @@ if (m_nMineCenter == 2) {
 							(FIX)(scale * sin (Radians (j)))
 							);
 			circle -= CFixVector (m_view.m_move [0]);
-			m_view.Project (&circle, &pt);
+			m_view.Project (circle, pt);
 			if (j==0)
 				m_pDC->MoveTo (pt.x,pt.y);
 			else if (pt.z <= 0)
@@ -1754,7 +1754,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 		center = theMine->CalcSideCenter (walls [i].m_nSegment, walls [i].m_nSide);
 		orthog = theMine->CalcSideNormal (walls [i].m_nSegment, walls [i].m_nSide);
 		vector = center - orthog;
-		m_view.Project (&vector, &point);
+		m_view.Project (vector, point);
 		for (j = 0; j < 4; j++) {
 			m_pDC->MoveTo (point.x,point.y);
 			m_pDC->LineTo (m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide] [j]]].x,
@@ -1766,9 +1766,9 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 
 			// calculate arrow points
 			vector = center - (orthog * 3);
-			m_view.Project (&vector,&arrowStartPoint);
+			m_view.Project (vector, arrowStartPoint);
 			vector = center + (orthog * 3);
-			m_view.Project (&vector,&arrowEndPoint);
+			m_view.Project (vector, arrowEndPoint);
 
 			// direction toward center of line 0 from center
 			UINT8 *svp = &sideVertTable [walls [i].m_nSide][0];
@@ -1779,9 +1779,9 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			fin = (orthog * 2);
 			fin += center;
 			fin += vector;
-			m_view.Project (&fin, &arrow1Point);
+			m_view.Project (fin, arrow1Point);
 			fin -= vector * 2;
-			m_view.Project (&fin, &arrow2Point);
+			m_view.Project (fin, arrow2Point);
 
 			// draw arrow
 			m_pDC->MoveTo (arrowStartPoint.x, arrowStartPoint.y);
@@ -1924,22 +1924,22 @@ m_pDC->SelectObject (m_penRed);
 m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 theMine->CalcSpline ();
 APOINT point;
-m_view.Project (points [1], &point);
+m_view.Project (points [1], point);
 if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
-	m_view.Project (points [0], &point);
+	m_view.Project (points [0], point);
 	if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 		m_pDC->MoveTo (point.x, point.y);
-		m_view.Project (points [1], &point);
+		m_view.Project (points [1], point);
 		m_pDC->LineTo (point.x, point.y);
 		m_pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
 		}
 	}
 m_view.Project (points [2], &point);
 if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
-	m_view.Project (points [3], &point);
+	m_view.Project (points [3], point);
 	if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 		m_pDC->MoveTo (point.x, point.y);
-		m_view.Project (points [2], &point);
+		m_view.Project (points [2], point);
 		m_pDC->LineTo (point.x, point.y);
 		m_pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
 		}
@@ -1947,7 +1947,7 @@ if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES;
 for (h = n_splines * 4, i = 0; i < h; i++, j--)
-	m_view.Project (theMine->Vertices (--j), m_viewPoints + j);
+	m_view.Project (theMine->Vertices (--j), m_viewPoints [j]);
 CSegment *segP = theMine->Segments (MAX_SEGMENTS - 1);
 for (i = 0; i < n_splines; i++, segP--)
 	DrawCubeQuick (segP);
@@ -1961,7 +1961,7 @@ for (i = 0; i < n_splines; i++, segP--)
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
-void TransformModelPoint (CFixVector& dest, APOINT &src, CFixMatrix &orient, CFixVector offs)
+void TransformModelPoint (CVertex& dest, APOINT &src, CDoubleMatrix &orient, CVertex offs)
 {
 CFixVector v (src.x, src.y, src.z);
 dest = orient * v;
@@ -1973,11 +1973,11 @@ void CMineView::DrawObject(INT16 objnum,INT16 clear_it)
 {
 CHECKMINE;
 
-	INT16 poly;
-	CGameObject *objP;
-	CFixVector pt [MAX_POLY];
-	APOINT poly_draw [MAX_POLY];
-	APOINT object_shape [MAX_POLY] = {
+	INT16				poly;
+	CGameObject*	objP;
+	CVertex			pt [MAX_POLY];
+	APOINT			poly_draw [MAX_POLY];
+	APOINT			object_shape [MAX_POLY] = {
 		{ 0,  4, -4},
 		{ 0,  0, -4},
 		{ 0,  0,  4},
@@ -2481,7 +2481,7 @@ i = theMine->VertCount ();
 APOINT *a = m_viewPoints + i;
 CVertex* verts = theMine->Vertices (i);
 for (; i--; ) {
-	m_view.Project (--verts, --a);
+	m_view.Project (*(--verts), *(--a));
 	x = a->x;
 	y = a->y;
 	z = a->z;
@@ -3111,7 +3111,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter(objP->m_info.pos, (UINT16)theMine->SecretCubeNum ());
+		CalcSegmentCenter (objP->m_info.pos, (UINT16)theMine->SecretCubeNum ());
 		}
 	else
 		objP = theMine->Objects (i);
@@ -3136,7 +3136,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_view.Project (&objP->m_info.pos, &pt);
+		m_view.Project (objP->m_info.pos, &pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;
@@ -3272,9 +3272,9 @@ return true;
 // calculate_segment_center()
 //-------------------------------------------------------------------------
 
-void CMineView::CalcSegmentCenter(CFixVector& pos,INT16 nSegment) 
+void CalcSegmentCenter (CVertex& pos, INT16 nSegment)
 {
-CSegment *segP = theMine->Segments (0) + nSegment;
+CSegment *segP = theMine->Segments (nSegment);
 CVertex *vMine = theMine->Vertices (0);
 INT16 *vSeg = segP->m_info.verts;
 pos  =
@@ -3560,7 +3560,7 @@ else {
 	apoint.x = (INT16) xPos;
 	apoint.y = (INT16) yPos;
 	apoint.z = m_viewPoints [vert1].z;
-	m_view.Unproject(theMine->Vertices (vert1), &apoint);
+	m_view.Unproject (*theMine->Vertices (vert1), apoint);
 	}
 Refresh ();
 }

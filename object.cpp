@@ -134,37 +134,33 @@ if (m_bSortObjects && ( (i = GameInfo ().objects.count) > 1)) {
 
 void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment) 
 {
-  CFixVector location;
+  CVertex	location;
 
-	theApp.SetModified (TRUE);
-	theApp.LockUndo ();
-  CalcSegCenter (location,nSegment);
-  objP->Clear ();
-  objP->m_info.signature = 0;
-  objP->m_info.type = type;
-  if (type==OBJ_WEAPON) {
-	objP->m_info.id = SMALLMINE_ID;
-  } else {
-	objP->m_info.id = 0;
-  }
-  objP->m_info.controlType = CT_NONE; /* player 0 only */
-  objP->m_info.movementType = MT_PHYSICS;
-  objP->m_info.renderType = RT_POLYOBJ;
-  objP->m_info.flags	= 0;
-  objP->m_info.nSegment = Current ()->nSegment;
-  objP->m_info.pos = location;
-  objP->m_info.orient.rVec.Set (F1_0, 0, 0);
-  objP->m_info.orient.uVec.Set (0, F1_0, 0);
-  objP->m_info.orient.fVec.Set (0, 0, F1_0);
-  objP->m_info.size = PLAYER_SIZE;
-  objP->m_info.shields = DEFAULT_SHIELD;
-  objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
-  objP->rType.polyModelInfo.tmap_override = -1;
-  objP->m_info.contents.type = 0;
-  objP->m_info.contents.id = 0;
-  objP->m_info.contents.count = 0;
-	theApp.UnlockUndo ();
-  return;
+theApp.SetModified (TRUE);
+theApp.LockUndo ();
+CalcSegCenter (location,nSegment);
+objP->Clear ();
+objP->m_info.signature = 0;
+objP->m_info.type = type;
+objP->m_info.id = (type == OBJ_WEAPON) ? SMALLMINE_ID : 0;
+objP->m_info.controlType = CT_NONE; /* player 0 only */
+objP->m_info.movementType = MT_PHYSICS;
+objP->m_info.renderType = RT_POLYOBJ;
+objP->m_info.flags	= 0;
+objP->m_info.nSegment = Current ()->nSegment;
+objP->m_info.pos = location;
+objP->m_info.orient.rVec.Set (F1_0, 0, 0);
+objP->m_info.orient.uVec.Set (0, F1_0, 0);
+objP->m_info.orient.fVec.Set (0, 0, F1_0);
+objP->m_info.size = PLAYER_SIZE;
+objP->m_info.shields = DEFAULT_SHIELD;
+objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
+objP->rType.polyModelInfo.tmap_override = -1;
+objP->m_info.contents.type = 0;
+objP->m_info.contents.id = 0;
+objP->m_info.contents.count = 0;
+theApp.UnlockUndo ();
+return;
 }
 
 //------------------------------------------------------------------------
@@ -402,7 +398,7 @@ else {
 objP->m_info.flags = 0;                                      // new: 1/27/97
 objP->m_info.nSegment = Current ()->nSegment;
 // set object position in the center of the cube for now
-CalcSegCenter (objP->m_info.pos,Current ()->nSegment);
+CalcSegCenter (objP->m_info.pos, Current ()->nSegment);
 objP->m_info.lastPos = objP->m_info.pos;
 Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube

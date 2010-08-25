@@ -605,7 +605,7 @@ m_invMove [0] = m_invMat [0] * m_move [0];
 
 void CViewMatrix::Project (CVertex& vertex, APOINT& apoint) 
 {
-	CDoubleVector	v (*vertex), r;
+	CDoubleVector	r, v = vertex;
 
 v += m_move [0];
 r = m_mat [0] * v;
@@ -637,8 +637,8 @@ r -= m_move [0];
 
 INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b) 
 {
-CFixVector _a = objP->m_info.orient * *a;
-CFixVector _b = objP->m_info.orient * *b;
+CVertex _a = objP->m_info.orient * *a;
+CVertex _b = objP->m_info.orient * *b;
 _a += objP->m_info.pos;
 _a += m_move [0];
 _b += _a;
