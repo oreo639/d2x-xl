@@ -268,13 +268,14 @@ public:
 	void	DrawHighlight (INT16 clear_it = 0);
 	void  DrawSpline (void);
 
+	CPolyModel* RenderModel (CGameObject* objP);
 	INT32	SetupModel(CGameObject *objP); // poly.c
 	void	SetModelPoints(INT32 start, INT32 end);
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
-	void	DrawPoly(tRenderModel *p);
-	INT32	ReadModelData(FILE *file, CGameObject *objP);
-	void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
+	void	DrawPoly (tModelRenderData *p);
+	INT32	ReadModelData(char* filename, CGameObject *objP);
+	//void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
 
 	// view control functions
 	void	Zoom(INT32 nSteps, double zoom);
@@ -366,7 +367,7 @@ public:
 
 	bool SelectCurrentSegment(INT16 direction,long mouse_x, long mouse_y);
 	void SelectCurrentObject(long mouse_x, long mouse_y);
-	void CalcSegmentCenter (CVertex& pos,INT16 nSegment);
+	void CalcSegmentCenter (CVertex& pos, INT16 nSegment);
 	void RefreshObject(INT16 old_object, INT16 new_object);
 	void MarkRubberBandedVertices (void);
 	BOOL DrawRubberBox ();

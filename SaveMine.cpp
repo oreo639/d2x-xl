@@ -109,7 +109,7 @@ if (IsD2File ()) {
 	// write secret cube number
 	write_INT32 (SecretCubeNum (), fp);
 	// write secret cube orientation?
-	write_matrix(&SecretOrient (), fp);
+	SecretOrient ().Write (fp);
 	}
 // save mine data
 minedataOffset = ftell(fp);

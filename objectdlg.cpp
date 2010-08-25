@@ -1123,16 +1123,16 @@ else
 
 void CObjectTool::OnReset () 
 {
-CFixMatrix* orient;
+CDoubleMatrix* orient;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
-	orient->Set (F1_0, 0, 0, 0, 0, F1_0, 0, F1_0, 0);
+	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
 	orient = &theMine->CurrObj ()->m_info.orient;
-	orient->Set (F1_0, 0, 0, F1_0, 0, 0, 0, 0, F1_0);
+	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
 theApp.UnlockUndo ();
 Refresh ();

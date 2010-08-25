@@ -278,7 +278,6 @@ switch (axis) {
 	}
 }
 
-
 #endif
 
 // -----------------------------------------------------------------------------
@@ -399,6 +398,63 @@ dest.rVec.v.z = src.fVec.v.x;
 dest.uVec.v.z = src.fVec.v.y;
 dest.fVec.v.z = src.fVec.v.z;
 return dest;
+}
+
+// -----------------------------------------------------------------------------
+
+void CDoubleMatrix::Rotate (double angle, char axis) 
+{
+double cosX = cos (angle);
+double sinX = sin (angle);
+
+CFixMatrix mRot;
+
+switch (axis) {
+	case 'x':
+		// spin x
+		//	1	0	0
+		//	0	cos	sin
+		//	0	-sin	cos
+		//
+		mRot.uVec.Set (uVec.v.x * cosX + fVec.v.x * sinX, 
+					      uVec.v.y * cosX + fVec.v.y * sinX,
+						   uVec.v.z * cosX + fVec.v.z * sinX);
+		mRot.fVec.Set (-uVec.v.x * sinX + fVec.v.x * cosX,
+							-uVec.v.y * sinX + fVec.v.y * cosX,
+							-uVec.v.z * sinX + fVec.v.z * cosX);
+		uVec = mRot.uVec;
+		fVec = mRot.fVec;
+		break;
+	case 'y':
+		// spin y
+		//	cos	0	-sin
+		//	0	1	0
+		//	sin	0	cos
+		//
+		mRot.rVec.Set (rVec.v.x * cosX - fVec.v.x * sinX, 
+							rVec.v.y * cosX - fVec.v.y * sinX, 
+							rVec.v.z * cosX - fVec.v.z * sinX);
+		mRot.fVec.Set (rVec.v.x * sinX + fVec.v.x * cosX, 
+							rVec.v.y * sinX + fVec.v.y * cosX,
+							rVec.v.z * sinX + fVec.v.z * cosX);
+		rVec = mRot.rVec;
+		fVec = mRot.fVec;
+		break;
+	case 'z':
+		// spin z
+		//	cos	sin	0
+		//	-sin	cos	0
+		//	0	0	1
+		mRot.rVec.Set ((FIX) (rVec.v.x * cosX + uVec.v.x * sinX),
+							(FIX) (rVec.v.y * cosX + uVec.v.y * sinX),
+							(FIX) (rVec.v.z * cosX + uVec.v.z * sinX));
+		mRot.uVec.Set ((FIX) (-rVec.v.x * sinX + uVec.v.x * cosX),
+							(FIX) (-rVec.v.y * sinX + uVec.v.y * cosX),
+							(FIX) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		rVec = mRot.rVec;
+		uVec = mRot.uVec;
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------------

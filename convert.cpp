@@ -348,7 +348,7 @@ theMine->ReactorTime () = 0x1e;
 theMine->ReactorStrength () = 0xffffffffL;
 theMine->SecretCubeNum () = 0L;
 
-theMine->SecretOrient ().Set (F1_0, 0, 0, 0, 0, F1_0, 0, F1_0, 0);
+theMine->SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 theApp.MineView ()->ResetView (true);
 CDialog::OnOK ();
 }

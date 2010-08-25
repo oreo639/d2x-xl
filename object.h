@@ -98,40 +98,6 @@ typedef struct {
   FIX		light;			// amount of light cast by this powerup, set in bitmaps.tbl
 } POWERUP_TYPE_INFO;
 
-typedef struct tSubModel {
-  INT32 			ptr;
-  CFixVector 	offset;
-  CFixVector 	norm;		// norm for sep plane
-  CFixVector 	pnt;		// point on sep plane
-  FIX 			rad;		// radius for each submodel
-  UINT8 			parent;  // what is parent for each submodel
-  CFixVector 	vMin;
-  CFixVector   vMax;
-} tSubModel;
-
-//used to describe a polygon model
-typedef struct tPolyModel {
-  INT32			nModels;
-  INT32 			dataSize;
-  UINT8*			data;
-  tSubModel		subModels [MAX_SUBMODELS];
-  CFixVector 	vMin, vMax;			  // min, max for whole model
-  FIX				rad;
-  UINT8			textureCount;
-  UINT16			firstTexture;
-  UINT8			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
-//  CFixVector min, max;
-} tPolyModel;
-
-class CPolyModel {
-public:
-	tPolyModel	m_info;
-
-	void Read (FILE* fp);
-	void Write (FILE* fp);
-};
-
-
 class CObjPhysicsInfo {
 public:
 	tFixVector velocity;   /*velocity vector of this object */

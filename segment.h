@@ -5,10 +5,13 @@
 
 #include "define.h"
 
-class CUVL {
+typedef struct tUVL {
 public:
 	INT16 u, v, l; 
+} tUVL;
 
+class CUVL : public tUVL {
+public:
 	inline INT32 Read (FILE* fp) {
 		u = read_INT16 (fp);
 		v = read_INT16 (fp);

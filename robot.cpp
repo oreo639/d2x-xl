@@ -308,11 +308,12 @@ write_INT32 (m_info.always_0xabcd, fp);
 
 INT32 CMine::ReadHamFile(char *pszFile, INT32 type) 
 {
-  FILE *fp;
-  INT16 t,t0;
-  UINT32 id;
-  tPolyModel pm;
-  char szFile [256];
+  FILE*			fp;
+  INT16			t, t0;
+  UINT32			id;
+  CPolyModel	pm;
+  char			szFile [256];
+
   static char d2HamSig [4] = {'H','A','M','!'};
   static char d2xHamSig [4] = {'M','A','H','X'};
 
@@ -328,7 +329,7 @@ if (!pszFile) {
 	pszFile = szFile;
 	}
 
-  pm.n_models = 0;
+  pm.m_info.nModels = 0;
   fopen_s (&fp, pszFile, "rb");
   if (!fp) {
     sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", pszFile);
@@ -386,8 +387,9 @@ else if (type == EXTENDED_HAM)  {
 	 t = N_robot_types - t0;
 //    goto abort;
   }
-  fread(RobotInfo (t0), sizeof (tRobotInfo), t, fp );
-  memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof (tRobotInfo) * t);
+  RobotInfo (t0)->Read (fp);
+  *DefRobotInfo (t0) = *RobotInfo (t0);
+  //memcpy (DefRobotInfo (t0), RobotInfo (t0), sizeof (tRobotInfo) * t);
 
   // skip joints weapons, and powerups
   //----------------------------------
@@ -408,40 +410,47 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-
+#if 0
   INT16 i, j;
-  FILE *file;
-  fopen_s (&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
-  if (file) {
-    for (i=0; i<t; i++ ) {
+  FILE *fp;
+  fopen_s (&fp, "d:\\bc\\dlc2data\\poly.dat", "wt");
+  if (fp) {
+    for (i = 0; i < t; i++ ) {
       fread(&pm,  sizeof (tPolyModel),  1,  fp );
-      fprintf (file, "n_models        = %ld\n", pm.n_models);
-      fprintf (file, "model_dataSize = %ld\n", pm.model_dataSize);
-      for (j = 0; j < pm.n_models; j++) {
-	fprintf (file, "submodel_ptrs[%d]    = %#08lx\n", j, pm.submodel_ptrs[j]);
-	fprintf (file, "submodel_offsets[%d] = %#08lx %#08lx %#08lx\n", j, 
-				pm.submodel_offsets[j].v.x, pm.submodel_offsets[j].v.y, pm.submodel_offsets[j].v.z);
-	fprintf (file, "submodel_norms[%d]   = %#08lx %#08lx %#08lx\n", j, 
-				pm.submodel_norms[j].v.x, pm.submodel_norms[j].v.y, pm.submodel_norms[j].v.z);
-	fprintf (file, "submodel_pnts[%d]    = %#08lx %#08lx %#08lx\n", j, 
-				pm.submodel_pnts[j].v.x, pm.submodel_pnts[j].v.y, pm.submodel_pnts[j].v.z);
-	fprintf (file, "submodel_rads[%d]    = %#08lx\n", j, pm.submodel_rads[j]);
-	fprintf (file, "submodel_parents[%d] = %d\n", j, pm.submodel_parents[j]);
-	fprintf (file, "submodel_mins[%d]    = %#08lx %#08lx %#08lx\n", j, 
-				pm.submodel_mins[j].v.x, pm.submodel_mins[j].v.y, pm.submodel_mins[j].v.z);
-	fprintf (file, "submodel_maxs[%d]    = %#08lx %#08lx %#08lx\n", j, 
-		pm.submodel_maxs[j].v.x, pm.submodel_maxs[j].v.y, pm.submodel_maxs[j].v.z);
-      }
-      fprintf (file, "mins            = %#08lx %#08lx %#08lx\n", pm.mins.v.x, pm.mins.v.y, pm.mins.v.z);
-      fprintf (file, "maxs            = %#08lx %#08lx %#08lx\n", pm.maxs.v.x, pm.maxs.v.y, pm.maxs.v.z);
-      fprintf (file, "rad             = %ld\n", pm.rad);
-      fprintf (file, "textureCount      = %d\n", pm.textureCount);
-      fprintf (file, "first_texture   = %d\n", pm.first_texture);
-      fprintf (file, "simpler_model   = %d\n\n", pm.simpler_model);
+      fprintf (fp, "n_models        = %ld\n", pmm_info.nModels);
+      fprintf (fp, "model_dataSize = %ld\n", pm.m_info.modelDataSize);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_ptrs[%d]    = %#08lx\n", j, pm.m_info.submodel [i].ptr [j]);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_offsets[%d] = %#08lx %#08lx %#08lx\n", j, 
+						pm.m_info.submodel [i].offset [j].v.x, pm.m_info.submodel [i].offset [j].v.y, pm.m_info.submodel [i].offset [j].v.z);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_norms[%d]   = %#08lx %#08lx %#08lx\n", j, 
+						pm.m_info.submodel [i].norm [j].v.x, pm.m_info.submodel [i].norm [j].v.y, pm.m_info.submodel [i].norm [j].v.z);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_pnts[%d]    = %#08lx %#08lx %#08lx\n", j, 
+						pm.m_info.submodel [i].pnt [j].v.x, pm.m_info.submodel [i].pnt [j].v.y, pm.m_info.submodel [i].pnt [j].v.z);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_rads[%d]    = %#08lx\n", j, pm.m_info.submodel [i].rad [j]);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_parents[%d] = %d\n", j, pm.m_info.submodel [i].parent [j]);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_mins[%d]    = %#08lx %#08lx %#08lx\n", j, 
+						pm.m_info.submodel [i].min [j].v.x, pm.m_info.submodel [i].min [j].v.y, pm.m_info.submodel [i].min [j].v.z);
+      for (j = 0; j < pmm_info.nModels; j++) {
+			fprintf (fp, "submodel_maxs[%d]    = %#08lx %#08lx %#08lx\n", j, 
+						pm.m_info.submodel [i].max [j].v.x, pm.m_info.submodel [i].max [j].v.y, pm.m_info.submodel [i].max [j].v.z);
+			}
+      fprintf (fp, "mins            = %#08lx %#08lx %#08lx\n", pm.mins.v.x, pm.mins.v.y, pm.mins.v.z);
+      fprintf (fp, "maxs            = %#08lx %#08lx %#08lx\n", pm.maxs.v.x, pm.maxs.v.y, pm.maxs.v.z);
+      fprintf (fp, "rad             = %ld\n", pm.rad);
+      fprintf (fp, "textureCount      = %d\n", pm.textureCount);
+      fprintf (fp, "first_texture   = %d\n", pm.first_texture);
+      fprintf (fp, "simpler_model   = %d\n\n", pm.simpler_model);
     }
-    fclose(file);
+    fclose(fp);
   }
-
+#endif
 #if ALLOCATE_tPolyModelS
   // read joint information
   //-----------------------

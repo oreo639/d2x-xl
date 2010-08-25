@@ -2108,7 +2108,7 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 	pt [2] = objP->m_info.pos;
 	pt [1].v.x -= objP->m_info.size;
 	pt [2].v.x += objP->m_info.size;
-	m_view.Project (pt [0], poly_draw);
+	m_view.Project (pt [0], poly_draw [0]);
 	m_view.Push ();
 	m_view.Unrotate ();
 	m_view.Project (pt [1], poly_draw [1]);
@@ -3136,7 +3136,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_view.Project (objP->m_info.pos, &pt);
+		m_view.Project (objP->m_info.pos, pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;
@@ -3539,7 +3539,7 @@ if (count == 1) {
 		for (i=0;i<3;i++) {
 			point2 = connectPointTable [point1] [i];
 			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [point2];
-			if (Distance (theMine->Vertices (new_vert), theMine->Vertices (vert2)) >= 1000.0) {
+			if (Distance (*theMine->Vertices (new_vert), *theMine->Vertices (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
 				}

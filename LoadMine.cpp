@@ -265,7 +265,7 @@ if (IsD2File ()) {
 	// read secret cube number
 	SecretCubeNum () = read_INT32(fp);
 	// read secret cube orientation?
-	read_matrix(&SecretOrient (), fp);
+	SecretOrient ().Read (fp);
 	}
 
 m_disableDrawing = TRUE;

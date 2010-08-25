@@ -2,41 +2,78 @@
 #define __poly_h
 
 /* the followin numbers are set using the original D2 robots */
-#define MAX_POLY_MODEL_POINTS 416
-#define MAX_POLYS             300
-#define MAX_POLY_POINTS       13
-#define MIN_POLY_POINTS       3
-#define MAX_POLY_MODEL_SIZE   32000
-#define UVL CUVL
+#define MAX_POLYMODEL_POINTS			416
+#define MAX_POLYMODEL_POLYS			300
+#define MAX_POLYMODEL_POLY_POINTS   13
+#define MIN_POLYMODEL_POLY_POINTS	3
+#define MAX_POLY_MODEL_SIZE			32000
 
-typedef struct tRenderModelData {
+typedef struct tModelRenderPoly {
 public:
-	  UINT16			n_verts;
-	  CFixVector	offset;
-	  CFixVector	normal;
-	  UINT16			nBaseTex;
-	  UINT16			color;
-	  UINT16			glow_num;
-	  UINT16			verts [MAX_POLY_POINTS];
-	  UVL				uvls [MAX_POLY_POINTS];
+	UINT16		n_verts;
+	CVertex		offset;
+	CVertex		normal;
+	UINT16		nBaseTex;
+	UINT16		color;
+	UINT16		glow_num;
+	UINT16		verts [MAX_POLYMODEL_POLY_POINTS];
+	tUVL			uvls [MAX_POLYMODEL_POLY_POINTS];
 
-	void Read (FILE* fp);
-	void Write (FILE* fp);
-} tRenderModelData;
+	void Draw (CDC* pDC);
+} tModelRenderPoly;
 
-typedef struct tRenderModel {
-public:
+typedef struct tModelRenderData {
 	UINT16				n_points;
-	CVertex				points [MAX_POLY_MODEL_POINTS];
+	CVertex				points [MAX_POLYMODEL_POINTS];
 	UINT16				n_polys;
-	tRenderModelData*	modelData;
-} tRenderModel;
+	tModelRenderPoly	polys [MAX_POLYMODEL_POLYS];
+} tModelRenderData;
 
-void interp_model_data(
-    void *model_data,
-    CFixVector* offset,
-    MODEL *model,
-    UINT16 call_level
-);
+typedef struct tSubModel {
+  INT32 			ptr;
+  CFixVector 	offset;
+  CFixVector 	norm;		// norm for sep plane
+  CFixVector 	pnt;		// point on sep plane
+  FIX 			rad;		// radius for each submodel
+  UINT8 			parent;  // what is parent for each submodel
+  CFixVector 	vMin;
+  CFixVector   vMax;
+} tSubModel;
+
+//used to describe a polygon model
+typedef struct tPolyModel {
+  INT32			nModels;
+  INT32 			dataSize;
+  UINT8*			renderData;
+  tSubModel		subModels [MAX_SUBMODELS];
+  CFixVector 	vMin, vMax;			  // min, max for whole model
+  FIX				rad;
+  UINT8			textureCount;
+  UINT16			firstTexture;
+  UINT8			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
+//  CFixVector min, max;
+} tPolyModel;
+
+class CPolyModel {
+public:
+	tPolyModel	m_info;
+
+	CPolyModel () { Clear (); }
+	~CPolyModel () { Release (); }
+	inline void Clear (void) { 
+		memset (&m_info, 0, sizeof (m_info)); 
+		}
+	inline void Release (void) {
+		if (m_info.renderData) {
+			delete m_info.renderData;
+			m_info.renderData = NULL;
+			}
+		}
+	void Read (FILE* fp, bool bRenderData = false);
+	void Write (FILE* fp, bool bRenderData = false);
+	void Render (void);
+};
+
+//void interp_model_data (void *model_data, CFixVector* offset, tModelRenderData *model, UINT16 call_level) ;
 
 #endif //__poly_h

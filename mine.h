@@ -86,7 +86,7 @@ typedef struct tMineData {
 	INT32							m_reactor_time;
 	INT32							m_reactor_strength;
 	INT32							m_secret_cubenum;
-	CFixMatrix					m_secret_orient;
+	CDoubleMatrix				m_secret_orient;
 	
 	// robot data
 	robotInfoList				robotInfo;
@@ -141,41 +141,30 @@ class CMine {
 public:
 	
 	// level info
-	INT32							m_fileType;
-	INT32							m_levelVersion;
-	char							m_currentLevelName [256];	
-	CGameFileInfo				gameFileInfo;
-	MINE_DATA					m_mineData;
-	//CRobotInfo				m_defaultRobotInfo [MAX_ROBOT_TYPES];
-	robotInfoList				m_defaultRobotInfo;
-	// textures and palettes
-//	HGLOBAL						texture_handle[MAX_D2_TEXTURES];
-	HPALETTE						m_paletteHandle;
-	CPalette*					m_currentPalette;
-	LPLOGPALETTE				m_dlcLogPalette;
-	textureList					textures;
+	INT32				m_fileType;
+	INT32				m_levelVersion;
+	char				m_currentLevelName [256];	
+	CGameFileInfo	gameFileInfo;
+	MINE_DATA		m_mineData;
+	robotInfoList	m_defaultRobotInfo;
+	HPALETTE			m_paletteHandle;
+	CPalette*		m_currentPalette;
+	LPLOGPALETTE	m_dlcLogPalette;
+	textureList		textures;
+	CPolyModel		polyModels [MAX_POLYGON_MODELS];
 	
 	// strings
 	char				message[256];
 	char				m_startFolder [256];
-//	char				descent_path[256];
-//	char				descent2_path[256];
-//	char				levels_path[256];
-	
-	// selection
-	
-	// flags
 	INT16				m_selectMode;
 	INT32				m_disableDrawing;
 	INT32				m_changesMade;
-	
 	bool				m_bSplineActive;
 	BOOL				m_bSortObjects;
 	INT32				m_nMaxSplines;
 	INT32				m_nNoLightDeltas;
 	INT32				m_lightRenderDepth;
 	INT32				m_deltaLightRenderDepth;
-
 	char				m_szBlockFile [256];
 	INT16				m_splineLength1,
 						m_splineLength2;
@@ -288,7 +277,7 @@ public:
 		{ return MineData ().m_reactor_strength; }
 	inline INT32& SecretCubeNum ()
 		{ return MineData ().m_secret_cubenum; }
-	inline CFixMatrix& SecretOrient ()
+	inline CDoubleMatrix& SecretOrient ()
 		{ return MineData ().m_secret_orient; }
 	inline CSelection* &Current ()
 		{ return MineData ().current; }
