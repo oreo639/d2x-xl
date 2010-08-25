@@ -2001,16 +2001,16 @@ else {
 	objP = &temp_obj;
 	objP->m_info.type = -1;
 	// theMine->secret_orient = Objects () [0]->orient;
-	objP->m_info.orient.rVec = -theMine->SecretOrient ().rVec;
-	objP->m_info.orient.uVec =  theMine->SecretOrient ().fVec;
-	objP->m_info.orient.fVec =  theMine->SecretOrient ().uVec;
-	// objP->m_info.orient =  theMine->secret_orient;
+	objP->m_location.orient.rVec = -theMine->SecretOrient ().rVec;
+	objP->m_location.orient.uVec =  theMine->SecretOrient ().fVec;
+	objP->m_location.orient.fVec =  theMine->SecretOrient ().uVec;
+	// objP->m_location.orient =  theMine->secret_orient;
 	UINT16 nSegment = (UINT16)theMine->SecretCubeNum ();
 	if (nSegment >= theMine->SegCount ())
 		nSegment = 0;
 	if (!Visible (theMine->Segments (nSegment)))
 		return;
-	theMine->CalcSegCenter(objP->m_info.pos,nSegment); // define objP->position
+	theMine->CalcSegCenter (objP->m_location.pos, nSegment); // define objP->position
 	}
 
 switch (clear_it) {
@@ -2062,7 +2062,7 @@ switch (clear_it) {
 // then translate object
 //CBRK (objnum == 45);
 for (poly = 0; poly < MAX_POLY; poly++) {
-	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_info.orient, objP->m_info.pos);
+	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_location.orient, objP->m_location.pos);
 	m_view.Project (pt [poly], poly_draw [poly]);
 	}
 
@@ -2106,7 +2106,7 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 
 	pt [0] =
 	pt [1] =
-	pt [2] = objP->m_info.pos;
+	pt [2] = objP->m_location.pos;
 	pt [1].v.x -= objP->m_info.size;
 	pt [2].v.x += objP->m_info.size;
 	m_view.Project (pt [0], poly_draw [0]);
@@ -2731,7 +2731,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -theMine->Objects (m_Current->nObject)->m_info.pos;
+m_move = -theMine->Objects (m_Current->nObject)->m_location.pos;
 Refresh (false);
 }
 
@@ -3112,7 +3112,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter (objP->m_info.pos, (UINT16)theMine->SecretCubeNum ());
+		CalcSegmentCenter (objP->m_location.pos, (UINT16)theMine->SecretCubeNum ());
 		}
 	else
 		objP = theMine->Objects (i);
@@ -3137,7 +3137,7 @@ for (i=0;i<=theMine->GameInfo ().objects.count;i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_view.Project (objP->m_info.pos, pt);
+		m_view.Project (objP->m_location.pos, pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;

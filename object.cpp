@@ -148,10 +148,10 @@ objP->m_info.movementType = MT_PHYSICS;
 objP->m_info.renderType = RT_POLYOBJ;
 objP->m_info.flags	= 0;
 objP->m_info.nSegment = Current ()->nSegment;
-objP->m_info.pos = location;
-objP->m_info.orient.rVec.Set (F1_0, 0, 0);
-objP->m_info.orient.uVec.Set (0, F1_0, 0);
-objP->m_info.orient.fVec.Set (0, 0, F1_0);
+objP->m_location.pos = location;
+objP->m_location.orient.rVec.Set (F1_0, 0, 0);
+objP->m_location.orient.uVec.Set (0, F1_0, 0);
+objP->m_location.orient.fVec.Set (0, 0, F1_0);
 objP->m_info.size = PLAYER_SIZE;
 objP->m_info.shields = DEFAULT_SHIELD;
 objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
@@ -398,16 +398,16 @@ else {
 objP->m_info.flags = 0;                                      // new: 1/27/97
 objP->m_info.nSegment = Current ()->nSegment;
 // set object position in the center of the cube for now
-CalcSegCenter (objP->m_info.pos, Current ()->nSegment);
-objP->m_info.lastPos = objP->m_info.pos;
+CalcSegCenter (objP->m_location.pos, Current ()->nSegment);
+objP->m_location.lastPos = objP->m_location.pos;
 Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
 for (i = 0; i < GameInfo ().objects.count - 1; i++)
 	if (Objects (i)->m_info.nSegment == Current ()->nSegment)
 		count++;
-objP->m_info.pos.v.y += count * 2 * F1_0;
-objP->m_info.lastPos.v.y += count * 2 * F1_0;
+objP->m_location.pos.v.y += count * 2 * F1_0;
+objP->m_location.lastPos.v.y += count * 2 * F1_0;
 // set the id if new object is a player or a coop
 if (type == OBJ_PLAYER || type == OBJ_COOP)
 	objP->m_info.id = (INT8) id;
@@ -855,11 +855,11 @@ m_info.renderType = read_INT8 (fp);
 m_info.flags = read_INT8 (fp);
 m_info.multiplayer = (version > 37) ? read_INT8 (fp) : 0;
 m_info.nSegment = read_INT16 (fp);
-m_info.pos.Read (fp);
-m_info.orient.Read (fp);
+m_location.pos.Read (fp);
+m_location.orient.Read (fp);
 m_info.size = read_FIX (fp);
 m_info.shields = read_FIX (fp);
-m_info.lastPos.Read (fp);
+m_location.lastPos.Read (fp);
 m_info.contents.type = read_INT8 (fp);
 m_info.contents.id = read_INT8 (fp);
 m_info.contents.count = read_INT8 (fp);
@@ -956,11 +956,11 @@ write_INT8 (m_info.renderType, fp);
 write_INT8 (m_info.flags, fp);
 write_INT8 (m_info.multiplayer, fp);
 write_INT16 (m_info.nSegment, fp);
-m_info.pos.Write (fp);
-m_info.orient.Write (fp);
+m_location.pos.Write (fp);
+m_location.orient.Write (fp);
 write_FIX (m_info.size, fp);
 write_FIX (m_info.shields, fp);
-m_info.lastPos. Write (fp);
+m_location.lastPos. Write (fp);
 write_INT8 (m_info.contents.type, fp);
 write_INT8 (m_info.contents.id, fp);
 write_INT8 (m_info.contents.count, fp);

@@ -595,8 +595,9 @@ if (GameInfo ().fileinfo.version < nMinVersion) {
 	return 0;
 	}
 
+int nVersion =  GameInfo ().fileinfo.version;
 for (int i = 0; i < info.count; i++) {
-	if (!items->Read (fp, GameInfo ().fileinfo.version, bFlag)) {
+	if (!items->Read (fp, nVersion, bFlag)) {
 		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
 		ErrorMsg (message);
 		return -1;
@@ -613,7 +614,7 @@ return info.count;
 //          materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadGameData(FILE *loadfile, bool bNewMine) 
+INT16 CMine::LoadGameData (FILE *loadfile, bool bNewMine) 
 {
 	INT32 startOffset;
 

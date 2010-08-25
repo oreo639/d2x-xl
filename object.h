@@ -258,10 +258,24 @@ public:
 };
 
 typedef struct tObjContentsInfo {
+public:
 	INT8			type; //  Type of object this object contains (eg, spider contains powerup) 
 	INT8			id;   //  ID of object this object contains (eg, id = blue type = key) 
 	INT8			count;// number of objects of type:id this object contains 
 } tObjContentsInfo;
+
+typedef struct CObjLocationInfo {
+public:
+	CVertex			pos;           // absolute x,y,z coordinate of center of object 
+	CVertex			lastPos;			// where object was last frame 
+	CDoubleMatrix	orient;        // orientation of object in world 
+
+	inline void Clear (void) {
+		pos.Clear ();
+		lastPos.Clear ();
+		orient.Clear ();
+		}
+} tObjLocationInfo;
 
 typedef struct tGameObject {
 	INT16				signature;     // reduced size to save memory 
@@ -273,17 +287,15 @@ typedef struct tGameObject {
 	UINT8				flags;         // misc flags 
 	UINT8				multiplayer;   // object only available in multiplayer games 
 	INT16				nSegment;      // segment number containing object 
-	CVertex			pos;           // absolute x,y,z coordinate of center of object 
-	CDoubleMatrix	orient;        // orientation of object in world 
+	tObjContentsInfo contents;
 	FIX				size;          // 3d size of object - for collision detection 
 	FIX				shields;       // Starts at maximum, when <0, object dies.. 
-	CVertex			lastPos;			// where object was last frame 
-	tObjContentsInfo contents;
 } tGameObject;
 
 class CGameObject : public CGameItem {
 public:
-	tGameObject	m_info;
+	tGameObject			m_info;
+	CObjLocationInfo	m_location;
 	//movement info, determined by MOVEMENT_TYPE 
 	union {
 		CObjPhysicsInfo	physInfo; // a physics object 
@@ -312,7 +324,10 @@ public:
 
 	virtual INT32 Read (FILE *fp, INT32 version = 0, bool bFlag = false);
 	virtual void Write (FILE *fp, INT32 version = 0, bool bFlag = false);
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+	virtual void Clear (void) {
+		memset (&m_info, 0, sizeof (m_info)); 
+		m_location.Clear ();
+		}
 	virtual CGameItem* Next (void) { return this + 1; }
 };
 

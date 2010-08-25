@@ -1131,7 +1131,7 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
-	orient = &theMine->CurrObj ()->m_info.orient;
+	orient = &theMine->CurrObj ()->m_location.orient;
 	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
 theApp.UnlockUndo ();
@@ -1164,14 +1164,14 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count)
 	theMine->SecretCubeNum () = theMine->Current ()->nSegment;
 else {
 	CGameObject *objP = theMine->CurrObj ();
-	theMine->CalcSegCenter (objP->m_info.pos, theMine->Current ()->nSegment);
+	theMine->CalcSegCenter (objP->m_location.pos, theMine->Current ()->nSegment);
 	// bump position over if this is not the first object in the cube
 	INT32 i, count = 0;
 	for (i = 0; i < theMine->GameInfo ().objects.count;i++)
 		if (theMine->Objects (i)->m_info.nSegment == theMine->Current ()->nSegment)
 			count++;
-	objP->m_info.pos.v.y += count * 2 * F1_0;
-	objP->m_info.lastPos.v.y += count * 2 * F1_0;
+	objP->m_location.pos.v.y += count * 2 * F1_0;
+	objP->m_location.lastPos.v.y += count * 2 * F1_0;
 	objP->m_info.nSegment = theMine->Current ()->nSegment;
 	Refresh ();
 	theApp.MineView ()->Refresh (false);

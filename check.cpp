@@ -647,7 +647,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		 radius = Distance (*theMine->Vertices (segP->m_info.verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }
-	object_radius = Distance (objP->m_info.pos, center);
+	object_radius = Distance (objP->m_location.pos, center);
    if ((object_radius > max_radius) && (objP->m_info.type != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",nObject,nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))

@@ -614,7 +614,7 @@ public:
 		fVec.Write (fp);
 	}
 
-	CDoubleMatrix::CDoubleMatrix ();
+	CDoubleMatrix::CDoubleMatrix () { Clear (); }
 	CDoubleMatrix::CDoubleMatrix (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3);
 	CDoubleMatrix (CDoubleMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
 	CDoubleMatrix (CDoubleVector r, CDoubleVector u, CDoubleVector f) : rVec (r), uVec (u), fVec (f) {}
@@ -624,6 +624,7 @@ public:
 	//computes a matrix from a forward vector and an angle
 	CDoubleMatrix (CDoubleVector *v, FIXANG a);
 
+	void Clear (void);
 	CDoubleMatrix& Set (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3);
 	CDoubleMatrix& Set (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh);
 

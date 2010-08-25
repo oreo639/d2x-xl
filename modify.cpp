@@ -414,7 +414,7 @@ switch (m_selectMode){
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->m_info.pos += delta;
+		CurrObj ()->m_location.pos += delta;
 		theApp.SetModified (TRUE);
 		break;
 
@@ -508,11 +508,11 @@ switch (m_selectMode) {
 			*Vertices (segP->m_info.verts [i]) += delta;
 		for (i = 0; i < GameInfo ().objects.count; i++)
 			if (Objects (i)->m_info.nSegment == nSegment)
-				Objects (i)->m_info.pos += delta;
+				Objects (i)->m_location.pos += delta;
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->m_info.pos += delta;
+		CurrObj ()->m_location.pos += delta;
 		break;
 	break;
 
@@ -524,7 +524,7 @@ switch (m_selectMode) {
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
 				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-					objP->m_info.pos += delta;
+					objP->m_location.pos += delta;
 		break;
 	}
 return true;
@@ -606,7 +606,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		theApp.SetModified (TRUE);
-		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
+		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');
@@ -651,7 +651,7 @@ switch (m_selectMode) {
 		objP = Objects (0);
 		for (i = GameInfo ().objects.count; i; i--, objP++)
 			if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-				objP->m_info.pos.Rotate (center, oppCenter, angle);
+				objP->m_location.pos.Rotate (center, oppCenter, angle);
 		break;
 	}
 return true;

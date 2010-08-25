@@ -105,9 +105,9 @@ for (INT32 i = start; i < end; i++) {
 	//FIX z0 = modelRenderData.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
-	pt = renderObject->m_info.orient * modelRenderData.points [i];
+	pt = renderObject->m_location.orient * modelRenderData.points [i];
 	// set point to be in world coordinates
-	pt += renderObject->m_info.pos;
+	pt += renderObject->m_location.pos;
 	// now that points are relative to set screen xy points (poly_xy)
 	m_view->Project (pt, poly_xy [i]);
 	}
