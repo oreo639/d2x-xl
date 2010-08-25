@@ -383,6 +383,7 @@ else {
 	fseek (fp, n * sizeof (ECLIP), SEEK_CUR);     // effect clips
 	n = read_UINTW (fp);                          // n_wclips
 	fseek (fp, n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
+	n = ftell (fp);
 	n = read_UINTW (fp);                          // n_robots
 	for (i = 0; i < n; i++) 
 		theMine->RobotInfo (i)->Read (fp);

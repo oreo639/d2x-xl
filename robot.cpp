@@ -160,8 +160,6 @@ m_info.lighting = read_FIX (fp);
 m_info.strength = read_FIX (fp);
 m_info.mass = read_FIX (fp);
 m_info.drag = read_FIX (fp);
-for (i = 0; i < 2; i++)
-	m_info.weaponType [i] = read_INT8 (fp);
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Read (fp, j);
@@ -215,8 +213,6 @@ write_FIX (m_info.lighting, fp);
 write_FIX (m_info.strength, fp);
 write_FIX (m_info.mass, fp);
 write_FIX (m_info.drag, fp);
-for (i = 0; i < 2; i++)
-	write_INT8 (m_info.weaponType [i], fp);
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Write (fp, j);
