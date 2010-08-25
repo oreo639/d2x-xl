@@ -23,7 +23,7 @@
 bool CMine::EditGeoFwd (void)
 {
   double				radius;
-  CFixVector		center, oppCenter;
+  CVertex			center, oppCenter;
   CDoubleVector	v;
   INT32				i;
 /* calculate center of current side */
@@ -67,8 +67,8 @@ else
 
 bool CMine::EditGeoBack (void) 
 {
-  CFixVector	center, oppCenter;
-  INT32			i;
+  CVertex	center, oppCenter;
+  INT32		i;
 
 /* calculate center of current side */
 for (i = 0; i < 4; i++) {
@@ -467,9 +467,8 @@ if (radius == 0.0)
 	return false;
 v *= delta / radius;
 // update vertices
-CFixVector h (v);
-*v1 += h;
-*v2 -= h;
+*v1 += v;
+*v2 -= v;
 return true;
 }
 

@@ -331,7 +331,7 @@ if (m_nMineCenter == 2) {
 							(FIX)(scale * sin (Radians (j))),
 							(FIX)(5 * sin (Radians (i)))
 							);
-			circle -= CFixVector (m_view.m_move [0]);
+			circle -= m_view.m_move [0];
 			m_view.Project (circle, pt);
 			if (j == 0)
 				m_pDC->MoveTo (pt.x,pt.y);
@@ -349,7 +349,7 @@ if (m_nMineCenter == 2) {
 							(FIX)(5 * sin (Radians (i))),
 							(FIX)(scale * sin (Radians (j)))
 							);
-			circle -= CFixVector (m_view.m_move [0]);
+			circle -= m_view.m_move [0];
 			m_view.Project (circle, pt);
 			if (j==0)
 				m_pDC->MoveTo (pt.x,pt.y);
@@ -367,7 +367,7 @@ if (m_nMineCenter == 2) {
 							(FIX)(scale * cos (Radians (j))),
 							(FIX)(scale * sin (Radians (j)))
 							);
-			circle -= CFixVector (m_view.m_move [0]);
+			circle -= m_view.m_move [0];
 			m_view.Project (circle, pt);
 			if (j==0)
 				m_pDC->MoveTo (pt.x,pt.y);

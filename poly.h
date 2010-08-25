@@ -88,7 +88,6 @@ public:
 		void Render (UINT8* p);
 };
 
-//void interp_model_data (void *model_data, CFixVector* offset, tModelRenderData *model, UINT16 call_level) ;
 extern CPolyModel* renderModel;
 
 #endif //__poly_h

@@ -541,8 +541,8 @@ for (i = 0; i < VertCount (); i++, vertP++) {
 	vertP->m_status = 0;
 	}
 
-if (n_vertices != VertCount ()) 
-	fseek(fp, sizeof (CFixVector) * (n_vertices - VertCount ()), SEEK_CUR);
+//if (n_vertices != VertCount ()) 
+//	fseek(fp, sizeof (CFixVector) * (n_vertices - VertCount ()), SEEK_CUR);
 
 // read segment information
 CSegment *segP;

@@ -570,7 +570,7 @@ switch (add_segment_mode) {
 		for (i = 0; i < 4; i++) {
 			//nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
 			nVertex = newVerts [i];
-			*Vertices (nVertex) = CFixVector (A [i]); 
+			*Vertices (nVertex) = A [i]; 
 			}
 		}
 	break; 
@@ -585,7 +585,7 @@ switch (add_segment_mode) {
 		orthog *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			CFixVector v = *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]);
+			CDoubleVector v = *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]);
 			v += orthog;
 			*Vertices (newVerts [i]) = v; 
 			}
@@ -644,10 +644,10 @@ switch (add_segment_mode) {
 		// and translate back
 		nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][0]]; 
 		for (i = 4; i < 8; i++) 
-			A [i] = B [i] + CDoubleVector (*Vertices (nVertex)); 
+			A [i] = B [i] + *Vertices (nVertex); 
 
 		for (i = 0; i < 4; i++)
-			*Vertices (newVerts [i]) = CFixVector (A [i + 4]); 
+			*Vertices (newVerts [i]) = A [i + 4]; 
 		}
 	}
 }

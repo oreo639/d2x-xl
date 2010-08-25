@@ -141,7 +141,7 @@ protected: // create from serialization only
 	//INT16			m_x0;
 	//INT16			m_y0;
 	//INT16			m_z0;
-	CFixVector		m_center;
+	CDoubleVector	m_center;
 	CDoubleVector	m_move;
 	CDoubleVector	m_size;
 	CDoubleVector	m_spin;
