@@ -346,7 +346,7 @@ public:
 	void InitSegment (INT16 segNum);
 	bool SplitSegment ();
 	bool  AddSegment();
-	bool  LinkSegments(INT16 nSegment1, INT16 nSide1, INT16 nSegment2,INT16 nSide2, FIX margin);
+	bool  LinkSegments(INT16 nSegment1, INT16 nSide1, INT16 nSegment2,INT16 nSide2, double margin);
 	void  LinkSides(INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, tVertMatch match[4]);
 	void	CalcSegCenter (CVertex& pos, INT16 nSegment);
 	inline CSegment *CurrSeg ()
