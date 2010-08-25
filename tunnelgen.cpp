@@ -321,14 +321,14 @@ if (!m_bSplineActive) {
 	// center of other cube
 	points [3] = CalcSideCenter (nSplineSeg2, nSplineSide2);
 	// calculate length between cubes
-	length = Distance (*points, points + 3);
+	length = Distance (*points, points [3]);
 	// base spline length on distance between cubes
-	m_splineLength1 = (INT16) (length / (3 * F1_0));
+	m_splineLength1 = (length / 3);
 	if (m_splineLength1 < MIN_SPLINE_LENGTH)
 		m_splineLength1 = MIN_SPLINE_LENGTH;
 	if (m_splineLength1 > MAX_SPLINE_LENGTH)
 		m_splineLength1 = MAX_SPLINE_LENGTH;
-	m_splineLength2 = (INT16) (length / (3 * F1_0));
+	m_splineLength2 = (length / 3);
 	if (m_splineLength2 < MIN_SPLINE_LENGTH)
 		m_splineLength2 = MIN_SPLINE_LENGTH;
 	if (m_splineLength2 > MAX_SPLINE_LENGTH)
@@ -512,7 +512,7 @@ void CMine::CalcSpline (void)
   points [2] += points [3];
 
   // calculate number of segments (min=1)
-  length = Distance (*points, *points + 3);
+  length = Distance (*points, points [3]);
   n_splines = (INT32)(abs (m_splineLength1) + abs (m_splineLength2)) / 20 + (INT32)(length / (40.0 * (double) 0x10000L));
   n_splines = min (n_splines, m_nMaxSplines - 1);
 

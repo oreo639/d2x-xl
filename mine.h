@@ -165,7 +165,7 @@ public:
 	INT32				m_lightRenderDepth;
 	INT32				m_deltaLightRenderDepth;
 	char				m_szBlockFile [256];
-	INT16				m_splineLength1,
+	double			m_splineLength1,
 						m_splineLength2;
 	bool				m_bVertigo;
 	char*				m_pHxmExtraData;

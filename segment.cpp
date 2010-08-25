@@ -2375,7 +2375,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 		bVertDone [j] = true;
 		centerSegVert = Vertices (centerSegP->m_info.verts [j]);
 		segVert = Vertices (h + j);
-		*segVert = (*centerSegVert + segCenter) / 2;
+		*segVert = Average (*centerSegVert, segCenter);
 		//centerSegP->m_info.verts [j] = h + j;
 		}
 	}
