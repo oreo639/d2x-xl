@@ -85,6 +85,7 @@ FIX MultiplyFix (FIX a, FIX b) {
 
 void CMineView::DrawModel () 
 {
+renderModel.Draw ();
 InterpModelData (renderModelData);
 }
 
@@ -134,7 +135,7 @@ if (m_view.CheckNormal (renderObject, &p->m_info.offset, &p->m_info.normal))
 //
 //-----------------------------------------------------------------------
 
-void CMineView::InterpModelData (UINT8 *p) 
+void CPolyModel::Render (UINT8 *p) 
 {
 while (W (p) != OP_EOF) {
 	switch (W (p)) {
@@ -441,6 +442,8 @@ return 0;
 
 CPolyModel* CMineView::RenderModel (CGameObject* objP)
 {
+	UINT32 nModel;
+
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
 	case OBJ_COOP:
@@ -468,10 +471,6 @@ switch (objP->m_info.type) {
 return polyModels + nModel;
 }
 
-//-----------------------------------------------------------------------
-
-INT32 CMineView::ReadModelData (FILE *fp, CGameObject *objP) 
-{
 //-----------------------------------------------------------------------
 // SetupModel ()
 //

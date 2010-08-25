@@ -72,6 +72,10 @@ public:
 	void Read (FILE* fp, bool bRenderData = false);
 	void Write (FILE* fp, bool bRenderData = false);
 	void Render (void);
+	inline void CPolyModel::Draw (void) {
+		if (m_data.renderData)
+			Render (m_data.renderData);
+		}
 };
 
 //void interp_model_data (void *model_data, CFixVector* offset, tModelRenderData *model, UINT16 call_level) ;
