@@ -476,19 +476,19 @@ for (int i = 0; i < 4; i++)
 	Vertices (VertCount ()++)->m_status = 0;
 
 // link the new segment with any touching Segments ()
-CFixVector *vNewSeg = Vertices (newSegP->m_info.verts [0]);
-CFixVector *vSeg;
+CVertex *vNewSeg = Vertices (newSegP->m_info.verts [0]);
+CVertex *vSeg;
 for (nSegment = 0; nSegment < SegCount (); nSegment++) {
 	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
 		vSeg = Vertices (Segments (nSegment)->m_info.verts [0]);
-		if (labs (vNewSeg->v.x - vSeg->v.x) < 0xA00000L &&
-			 labs (vNewSeg->v.y - vSeg->v.y) < 0xA00000L &&
-			 labs (vNewSeg->v.z - vSeg->v.z) < 0xA00000L)
+		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
+			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
+			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
-					LinkSegments (nNewSeg, nNewSide, nSegment, nSide, 3 * F1_0);
+					LinkSegments (nNewSeg, nNewSide, nSegment, nSide, 3);
 		}
 	}
 // auto align textures new segment
@@ -664,7 +664,7 @@ switch (add_segment_mode) {
 //
 // -------------------------------------------------------------------------- 
 
-bool CMine::LinkSegments (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, FIX margin)
+bool CMine::LinkSegments (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 nSide2, double margin)
 {
 	CSegment		* seg1, * seg2; 
 	INT16			i, j; 
@@ -700,9 +700,9 @@ for (i = 0; i < 4; i++) {
 fail = 0;   // assume test will pass for now
 for (i = 0; i < 4; i++)
 	for (j = 0; j < 4; j++)
-		if (labs (v1 [i].v.x - v2 [j].v.x) < margin &&
-			 labs (v1 [i].v.y - v2 [j].v.y) < margin &&
-			 labs (v1 [i].v.z - v2 [j].v.z) < margin)
+		if (fabs (v1 [i].v.x - v2 [j].v.x) < margin &&
+			 fabs (v1 [i].v.y - v2 [j].v.y) < margin &&
+			 fabs (v1 [i].v.z - v2 [j].v.z) < margin)
 			if (match [j].i != -1) // if this vertex already matched another vertex then abort
 				return false; 
 			else
@@ -1405,7 +1405,7 @@ if (vert1== vert2) {
 	return; 
 	}
 // make sure there are distances are close enough
-distance = CalcLength(Vertices (vert1), Vertices (vert2)); 
+distance = Distance (*Vertices (vert1), *Vertices (vert2)); 
 if (distance > JOIN_DISTANCE) {
 	ErrorMsg ("Points are too far apart to join"); 
 	return; 
@@ -2332,12 +2332,12 @@ else {
 
 bool CMine::SplitSegment ()
 {
-	CSegment	*centerSegP = CurrSeg (), *segP, *childSegP;
+	CSegment*	centerSegP = CurrSeg (), *segP, *childSegP;
 	INT16			nCenterSeg = INT16 (centerSegP - Segments (0));
 	INT16			nSegment, childSegNum;
 	INT16			nSide, oppSideNum, childSideNum;
 	INT16			vertNum, nWall;
-	CFixVector	segCenter, *segVert, *centerSegVert;
+	CVertex		segCenter, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
 	INT32			h, i, j, k;
 	INT16			oppSides [6] = {2,3,0,1,5,4};

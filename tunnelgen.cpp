@@ -67,32 +67,36 @@ double Coeff(INT32 n, INT32 i) {
 //-------------------------------------------------------------------------
 //   Blend(i,n,u) - returns a weighted coefficient for each point in a spline
 //-------------------------------------------------------------------------
-double Blend(INT32 i, INT32 n, double u) {
-  double partial;
-  INT32 j;
 
-  partial = Coeff(n,i);
-  for(j=1;j<=i;j++) {
+double Blend(INT32 i, INT32 n, double u) 
+{
+#if 1
+double partial = pow (Coeff (n, i), i + 1) * pow (1 - u, n - i + 1);
+#else
+	double partial;
+	INT32 j;
+
+ partial = Coeff(n,i);
+ for (j = 1; j <= i; j++) 
     partial *= u;
-  }
-  for(j=1;j<=(n-i);j++) {
-    partial *= (1-u);
-  }
-  return partial;
+  
+for (j = 1; j <= (n - i); j++) 
+	partial *= (1-u);
+#endif
+return partial;
 }
 
 //-------------------------------------------------------------------------
 //   BezierFcn(pt,u,n,p [][]) - sets (x,y,z) for u=#/segs based on points p
 //-------------------------------------------------------------------------
-CFixVector BezierFcn (double u, INT32 npts, CFixVector* p) 
+
+CVertex BezierFcn (double u, INT32 npts, CVertex* p) 
 {
-CFixVector	v;
+CVertex v;
 
 for (INT32 i = 0; i < npts; i++) {
 	double b = Blend (i, npts - 1, u);
-	v.v.x += FIX (Round (p [i].v.x * b));
-	v.v.y += FIX (Round (p [i].v.y * b));
-	v.v.z += FIX (Round (p [i].v.z * b));
+	v += p [i] * b;
 	}
 return v;
 }
@@ -113,8 +117,8 @@ void CMine::UntwistSegment (INT16 nSegment,INT16 nSide)
 segP = Segments (nSegment);
 // calculate length from point 0 to opp_points
 for (j=0;j<4;j++) {
-	len = CalcLength (Vertices (segP->m_info.verts [sideVertTable [nSide][0]]),
-							Vertices (segP->m_info.verts [oppSideVertTable [nSide][j]]));
+	len = Distance (*Vertices (segP->m_info.verts [sideVertTable [nSide][0]]),
+						 *Vertices (segP->m_info.verts [oppSideVertTable [nSide][j]]));
 	if (j==0) {
 		min_len = len;
 		index = 0;
@@ -152,7 +156,7 @@ point->v.z = (FIX) (tz);
 // SpinBackPoint () - spin on z-axis then y-axis
 //--------------------------------------------------------------------------
 
-void SpinBackPoint (CFixVector* point, double y_spin, double z_spin) 
+void SpinBackPoint (CVertex* point, double y_spin, double z_spin) 
 {
   double tx, ty, tz;
 
@@ -317,7 +321,7 @@ if (!m_bSplineActive) {
 	// center of other cube
 	points [3] = CalcSideCenter (nSplineSeg2, nSplineSide2);
 	// calculate length between cubes
-	length = CalcLength (points, points + 3);
+	length = Distance (*points, points + 3);
 	// base spline length on distance between cubes
 	m_splineLength1 = (INT16) (length / (3 * F1_0));
 	if (m_splineLength1 < MIN_SPLINE_LENGTH)
@@ -508,7 +512,7 @@ void CMine::CalcSpline (void)
   points [2] += points [3];
 
   // calculate number of segments (min=1)
-  length = CalcLength (points,points + 3);
+  length = Distance (*points, *points + 3);
   n_splines = (INT32)(abs (m_splineLength1) + abs (m_splineLength2)) / 20 + (INT32)(length / (40.0 * (double) 0x10000L));
   n_splines = min (n_splines, m_nMaxSplines - 1);
 
@@ -524,14 +528,12 @@ void CMine::CalcSpline (void)
   segP = Segments (nSplineSeg1);
   CVertex* vert;
   for (i = 0; i < 4; i++) {
-    nVertex = sideVertTable [nSplineSide1][i];
-	 vert = Vertices (segP->m_info.verts [nVertex]);
+	 vert = Vertices (segP->m_info.verts [sideVertTable [nSplineSide1][i]]);
     rel_side_pts [0][i] = *vert - points [0];
   }
   segP = Segments (nSplineSeg2);
   for (i = 0; i < 4; i++) {
-    nVertex = sideVertTable [nSplineSide2][i];
-	 vert = Vertices (segP->m_info.verts [nVertex]);
+	 vert = Vertices (segP->m_info.verts [sideVertTable [nSplineSide2][i]]);
     rel_side_pts [1][i] = *vert - points [0];
   }
   for (i=0;i<n_splines;i++) {
@@ -607,15 +609,15 @@ void CMine::CalcSpline (void)
 
   // calculate segment verticies as weighted average between the two sides
   // then spin verticies in the direction of the segment vector
-  for (i=0;i<n_splines;i++) {
-    nVertex = (MAX_VERTICES-1)-(i*4);
-    for (j=0;j<4;j++) {
+  for (i = 0; i < n_splines; i++) {
+    nVertex = (MAX_VERTICES-1) - (i * 4);
+    for (j = 0; j < 4; j++) {
 	   vert = Vertices (nVertex - j);
       angle  = ((float)i/(float)n_splines) * delta_angle [j] + theta [0][j];
       length = ((float)i/(float)n_splines) * radius [1][MatchingSide (j)] + (((float)n_splines-(float)i)/(float)n_splines) * radius [0][j];
       *vert = RectPoints (angle, length, &rel_spline_pts [i], &rel_spline_pts [i+1]);
       // spin vertices
-      SpinBackPoint (vert,y_spin,z_spin);
+      SpinBackPoint (vert, y_spin, z_spin);
       // translate point back
       *vert += points [0];
     }
