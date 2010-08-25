@@ -17,10 +17,10 @@
 #include "hogmanager.h"
 #include "light.h"
 
-#ifdef ALLOCATE_POLYMODELS
-#undef ALLOCATE_POLYMODELS
+#ifdef ALLOCATE_tPolyModelS
+#undef ALLOCATE_tPolyModelS
 #endif
-#define ALLOCATE_POLYMODELS 0
+#define ALLOCATE_tPolyModelS 0
 
 #define ENABLE_TEXT_DUMP 0
 

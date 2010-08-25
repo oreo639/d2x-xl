@@ -629,16 +629,16 @@ double scale = (v.v.z + depth_perception) / depth_perception / 5.0;
 v *= CDoubleVector (scale, scale, 1.0);
 CDoubleVector r = m_invMat [0] * v;
 r -= m_move [0];
-*vertex = r;
+vertex = r;
 }
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 
-INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector* a, CFixVector* b) 
+INT32 CViewMatrix::CheckNormal (CGameObject *objP, CVertex& a, CVertex6 b) 
 {
-CVertex _a = objP->m_info.orient * *a;
-CVertex _b = objP->m_info.orient * *b;
+CVertex _a = objP->m_info.orient * a;
+CVertex _b = objP->m_info.orient * b;
 _a += objP->m_info.pos;
 _a += m_move [0];
 _b += _a;

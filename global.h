@@ -38,7 +38,7 @@ extern UINT32        N_robot_joints;
 extern UINT32        N_polygon_models;
 extern UINT32        N_object_bitmaps;
 extern JOINTPOS     *Robot_joints;
-extern POLYMODEL    *Polygon_models[MAX_POLYGON_MODELS];
+extern tPolyModel    *Polygon_models[MAX_POLYGON_MODELS];
 extern UINT32       *Dying_modelnums;
 extern UINT32       *Dead_modelnums;
 extern UINT16 *ObjBitmaps;

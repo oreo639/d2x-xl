@@ -605,8 +605,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		theApp.SetModified (TRUE);
-		CFixMatrix *orient;
-		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
+		CDoubleMatrix* orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_info.orient;
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');

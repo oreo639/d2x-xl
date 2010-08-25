@@ -43,7 +43,7 @@ UINT32       N_robot_joints=0;
 UINT32       N_polygon_models=0;
 UINT32       N_object_bitmaps=0;
 JOINTPOS     *Robot_joints;   // MAX_ROBOT_JOINTS
-POLYMODEL    *Polygon_models[MAX_POLYGON_MODELS];
+tPolyModel    *Polygon_models[MAX_POLYGON_MODELS];
 UINT32       *Dying_modelnums;// N_D2_POLYGON_MODELS
 UINT32       *Dead_modelnums; // N_D2_POLYGON_MODELS
 UINT16 *ObjBitmaps;     // MAX_OBJ_BITMAPS

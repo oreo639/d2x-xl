@@ -311,7 +311,7 @@ INT32 CMine::ReadHamFile(char *pszFile, INT32 type)
   FILE *fp;
   INT16 t,t0;
   UINT32 id;
-  POLYMODEL pm;
+  tPolyModel pm;
   char szFile [256];
   static char d2HamSig [4] = {'H','A','M','!'};
   static char d2xHamSig [4] = {'M','A','H','X'};
@@ -414,7 +414,7 @@ else if (type == EXTENDED_HAM)  {
   fopen_s (&file, "d:\\bc\\dlc2data\\poly.dat", "wt");
   if (file) {
     for (i=0; i<t; i++ ) {
-      fread(&pm,  sizeof (POLYMODEL),  1,  fp );
+      fread(&pm,  sizeof (tPolyModel),  1,  fp );
       fprintf (file, "n_models        = %ld\n", pm.n_models);
       fprintf (file, "model_dataSize = %ld\n", pm.model_dataSize);
       for (j = 0; j < pm.n_models; j++) {
@@ -442,7 +442,7 @@ else if (type == EXTENDED_HAM)  {
     fclose(file);
   }
 
-#if ALLOCATE_POLYMODELS
+#if ALLOCATE_tPolyModelS
   // read joint information
   //-----------------------
   t = (INT16) read_INT32(fp);
@@ -482,8 +482,8 @@ else if (type == EXTENDED_HAM)  {
     if (Polygon_models[i]->model_data != NULL ) {
       free((void *)Polygon_models[i]->model_data);
     }
-    fread(Polygon_models[i], sizeof (POLYMODEL), 1, fp );
-    fread(&Polygon_model, sizeof (POLYMODEL), 1, fp );
+    fread(Polygon_models[i], sizeof (tPolyModel), 1, fp );
+    fread(&Polygon_model, sizeof (tPolyModel), 1, fp );
   }
   for (i=t0; i<t0+t; i++ ) {
     Polygon_models[i]->model_data = (UINT8 *) malloc((INT32)Polygon_models[i]->model_dataSize);

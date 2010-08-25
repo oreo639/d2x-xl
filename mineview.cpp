@@ -1934,7 +1934,7 @@ if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 		m_pDC->Ellipse (point.x - 4, point.y - 4, point.x+4,  point.y+4);
 		}
 	}
-m_view.Project (points [2], &point);
+m_view.Project (points [2], point);
 if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 	m_view.Project (points [3], point);
 	if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
@@ -1947,7 +1947,7 @@ if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES;
 for (h = n_splines * 4, i = 0; i < h; i++, j--)
-	m_view.Project (theMine->Vertices (--j), m_viewPoints [j]);
+	m_view.Project (*theMine->Vertices (--j), m_viewPoints [j]);
 CSegment *segP = theMine->Segments (MAX_SEGMENTS - 1);
 for (i = 0; i < n_splines; i++, segP--)
 	DrawCubeQuick (segP);
@@ -2108,11 +2108,11 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 	pt [2] = objP->m_info.pos;
 	pt [1].v.x -= objP->m_info.size;
 	pt [2].v.x += objP->m_info.size;
-	m_view.Project (pt, poly_draw);
+	m_view.Project (pt [0], poly_draw);
 	m_view.Push ();
 	m_view.Unrotate ();
-	m_view.Project (pt + 1, poly_draw + 1);
-	m_view.Project (pt + 2, poly_draw + 2);
+	m_view.Project (pt [1], poly_draw [1]);
+	m_view.Project (pt [2], poly_draw [2]);
 	m_view.Pop ();
 	d = (poly_draw [2].x - poly_draw [1].x);
 	if (d < 24)

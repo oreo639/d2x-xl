@@ -1123,7 +1123,7 @@ else
 
 void CObjectTool::OnReset () 
 {
-CDoubleMatrix *orient;
+CFixMatrix* orient;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();

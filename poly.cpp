@@ -59,13 +59,13 @@ extern HRGN hrgnBackground, hrgnLowerBar, hrgnTopBar, hrgnAll;
 //-----------------------------------------------------------------------
 // globals
 //-----------------------------------------------------------------------
-static MODEL gModel;
-static UINT8 *gModelData;
+static tRenderModel renderModel;
+static UINT8* renderModelData;
 static CGameObject * gpObject;
 static CFixVector gOffset;
 static INT16 glow_num = -1;
 static double normal[3];	// Storage for calculated surface normal
-static POLY *panel;
+static tRenderModel *panel;
 static INT32 pt, pt0, n_points;
 static INT32 last_object_type = -1;
 static INT32 last_object_id = -1;
@@ -88,7 +88,7 @@ FIX MultiplyFix (FIX a, FIX b) {
 INT32 CMineView::SetupModel (CGameObject *objP) 
 {
   gOffset.Clear ();
-  gModel.n_points = 0;
+  renderModel.n_points = 0;
   glow_num = -1;
   gpObject = objP;
   INT32 rc = 1; // set return code to fail
@@ -96,22 +96,22 @@ INT32 CMineView::SetupModel (CGameObject *objP)
   char filename[256];
 
   // allocate memory if not already allocated
-if (gModel.polys == NULL)
-	gModel.polys = (POLY *) malloc (MAX_POLYS*sizeof (POLY));
-if (!gModel.polys) {
+if (renderModel.polys == NULL)
+	renderModel.polys = (tRenderModel *) malloc (MAX_POLYS*sizeof (tRenderModel));
+if (!renderModel.polys) {
 	DEBUGMSG ("SetupModel: Couldn't allocate model polygon.");
 	goto abort;
 	}
-if (gModelData == NULL)
-		gModelData = (UINT8 *) malloc (MAX_POLY_MODEL_SIZE);
-if (!gModelData) {
+if (renderModelData == NULL)
+		renderModelData = (UINT8 *) malloc (MAX_POLY_MODEL_SIZE);
+if (!renderModelData) {
 	DEBUGMSG ("SetupModel: Couldn't allocate model data.");
 	goto abort;
 	}
 
 // read model data if necessary
 if (last_object_type != objP->m_info.type || last_object_id != objP->m_info.id) {
-	gModelData[0] = OP_EOF;
+	renderModelData[0] = OP_EOF;
 	strcpy_s (filename, sizeof (filename), descent2_path);
 	char *slash = strrchr (filename, '\\');
 	if (slash)
@@ -160,7 +160,7 @@ return rc;
 
 void CMineView::DrawModel () 
 {
-  InterpModelData (gModelData);
+  InterpModelData (renderModelData);
 }
 
 //-----------------------------------------------------------------------
@@ -175,12 +175,12 @@ CGameObject *objP = gpObject;
 CVertex		pt;
 
 for (INT32 i = start; i < end; i++) {
-	FIX x0 = gModel.points[i].v.x;
-	FIX y0 = gModel.points[i].v.y;
-	FIX z0 = gModel.points[i].v.z;
+	FIX x0 = renderModel.points[i].v.x;
+	FIX y0 = renderModel.points[i].v.y;
+	FIX z0 = renderModel.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
-	pt = objP->m_info.orient * gModel.points [i];
+	pt = objP->m_info.orient * renderModel.points [i];
 	// set point to be in world coordinates
 	pt += objP->m_info.pos;
 	// now that points are relative to set screen xy points (poly_xy)
@@ -196,12 +196,12 @@ for (INT32 i = start; i < end; i++) {
 //          Used global device context handle set by SetupModel ()
 //-----------------------------------------------------------------------
 
-void CMineView::DrawPoly (POLY *p) 
+void CMineView::DrawPoly (tRenderModel *p) 
 {
   INT32 i, j;
 
 if (m_view.CheckNormal (gpObject, &p->offset, &p->normal)) {
-	POINT aPoints[MAX_POLY_POINTS];
+	POINT aPoints [MAX_POLY_POINTS];
 	for (i = 0; i < p->n_verts; i++) {
 		j = p->verts[i];
 		aPoints [i].x = poly_xy [j].x;
@@ -221,7 +221,7 @@ if (m_view.CheckNormal (gpObject, &p->offset, &p->normal)) {
 void CMineView::InterpModelData (UINT8 *p) 
 {
 	assert (p);
-	assert (gModel.polys);
+	assert (renderModel.polys);
 
 	while (W (p) != OP_EOF) {
 		switch (W (p)) {
@@ -233,12 +233,12 @@ void CMineView::InterpModelData (UINT8 *p)
 			case OP_DEFP_START: {
 				pt0 = W (p+4);
 				n_points = W (p+2);
-				gModel.n_points += n_points;
+				renderModel.n_points += n_points;
 				assert (W (p+6)==0);
-				assert (gModel.n_points < MAX_POLY_MODEL_POINTS);
+				assert (renderModel.n_points < MAX_POLY_MODEL_POINTS);
 				assert (pt0+n_points < MAX_POLY_MODEL_POINTS);
 				for (pt=0;pt< n_points;pt++) {
-					gModel.points [pt+pt0] = VP (p+8)[pt] + gOffset;
+					renderModel.points [pt+pt0] = VP (p+8)[pt] + gOffset;
 				}
 				SetModelPoints (pt0, pt0+n_points);
 				p += W (p+2)*sizeof (CFixVector) + 8;
@@ -251,7 +251,7 @@ void CMineView::InterpModelData (UINT8 *p)
 			// 28 UINT16     color
 			// 30 UINT16     verts[n_verts]
 			case OP_FLATPOLY: {
-				panel = &gModel.polys[gModel.n_polys];
+				panel = &renderModel.polys[renderModel.n_polys];
 				panel->n_verts = W (p+2);
 				panel->offset = *VP (p+4);
 				panel->normal = *VP (p+16);
@@ -260,7 +260,7 @@ void CMineView::InterpModelData (UINT8 *p)
 				}
 				assert (panel->n_verts>=MIN_POLY_POINTS);
 				assert (panel->n_verts<=MAX_POLY_POINTS);
-				assert (gModel.n_polys < MAX_POLYS);
+				assert (renderModel.n_polys < MAX_POLYS);
 				DrawPoly (panel);
 				p += 30 + ((panel->n_verts&~1)+1)*2;
 				break;
@@ -273,11 +273,11 @@ void CMineView::InterpModelData (UINT8 *p)
 			// 30 UINT16     verts[n_verts]
 			// -- UVL        uvls[n_verts]
 			case OP_TMAPPOLY: {
-				panel = &gModel.polys[gModel.n_polys];
+				panel = &renderModel.polys[renderModel.n_polys];
 				panel->n_verts  = W (p+2);
 				assert (panel->n_verts>=MIN_POLY_POINTS);
 				assert (panel->n_verts<=MAX_POLY_POINTS);
-				assert (gModel.n_polys < MAX_POLYS);
+				assert (renderModel.n_polys < MAX_POLYS);
 				panel->offset   = *VP (p+4);
 				panel->normal   = *VP (p+16);
 				panel->color    = -1;
@@ -360,40 +360,63 @@ UINTW read_UINTW (FILE *fp) {
 
 #define FREAD(b)	fread (&b, sizeof (b), 1, file)
 
-void CMineView::ReadPolyModel (POLYMODEL& polyModel, FILE *file) 
+void CPolyModel::Read (FILE* fp) 
 {
-FREAD (polyModel.n_models);
-FREAD (polyModel.model_dataSize);
-fseek (file, sizeof (INT32), SEEK_CUR);
-polyModel.model_data = NULL;
-FREAD (polyModel.submodel_ptrs);
-FREAD (polyModel.submodel_offsets);
-FREAD (polyModel.submodel_norms);	  // norm for sep plane
-FREAD (polyModel.submodel_pnts);	  // point on sep plane
-FREAD (polyModel.submodel_rads);	  // radius for each submodel
-FREAD (polyModel.submodel_parents);  // what is parent for each submodel
-FREAD (polyModel.submodel_mins);
-FREAD (polyModel.submodel_maxs);
-FREAD (polyModel.mins);
-FREAD (polyModel.maxs);				  // min, max for whole model
-FREAD (polyModel.rad);
-FREAD (polyModel.textureCount);
-FREAD (polyModel.first_texture);
-FREAD (polyModel.simpler_model);			  // alternate model with less detail (0 if none, nModel+1 else)
-assert (polyModel.model_dataSize <= MAX_POLY_MODEL_SIZE);
+m_info.nModels = read_INT32 (fp);
+m_info.dataSize = read_INT32 (fp);
+m_info.data = NULL;
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].ptr = read_INT32 (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].offset.Read (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].norm.Read (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].pnt.Read (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].rad = read_FIX (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].parent = read_UINT8 (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].vMin.Read (fp);
+for (int i = 0; i < MAX_SUBMODELS; i++)
+	m_info.subModels [i].vMax.Read (fp);
+m_info.vMin.Read (fp);
+m_info.vMax.Read (fp);
+m_info.rad = read_FIX (fp);
+m_info.textureCount = read_UINT8 (fp);
+m_info.firstTexture = read_UINT16 (fp);
+m_info.simplerModel = read_UINT8 (fp);
+}
+
+//-----------------------------------------------------------------------
+
+static void ReadRenderModelData (FILE* fp, int nModel)
+{
+int skip = 0;
+for (int i = 0; i < n; i++) {
+	if (i == nModel) {
+		if (skip)
+			fseek (fp, skip, SEEK_CUR);
+		fread (renderModelData, modelDataSize [i], 1, fp);
+		break; // were done!
+		}
+	else
+		skip += modelDataSize [i];
+	}
 }
 
 //-----------------------------------------------------------------------
 
 INT32 CMineView::ReadModelData (FILE *fp, CGameObject *objP) 
 {
-	UINT32     id;
-	UINT32     i, n;
-	UINT16     model_dataSize[MAX_POLYGON_MODELS];
-	POLYMODEL  polyModel;
-	POLYMODEL  save_model;
-	CRobotInfo robotInfo;
-	UINT32     nModel;
+	UINT32		id;
+	UINT32		i, n, skip;
+	UINT16		modelDataSize [MAX_POLYGON_MODELS];
+	tPolyModel  curModel;
+	tPolyModel  saveModel;
+	CRobotInfo	robotInfo;
+	UINT32		nModel;
 
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
@@ -453,22 +476,15 @@ if ((objP->m_info.type == OBJ_CAMBOT) || ((objP->m_info.type == OBJ_ROBOT) && (o
 			}
 		position += sizeof (struct level_header) + level.size;
 		}
-	n = read_UINTW (fp);                          // n_polyModels
-	assert (n<=MAX_POLYGON_MODELS);
+	n = read_UINTW (fp);                          // n_curModels
+	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) {
-		ReadPolyModel (polyModel, fp);
-		model_dataSize[i] = (UINT16)polyModel.model_dataSize;
-		if (i== (UINT32) (nModel - N_D2_POLYGON_MODELS))
-			memcpy (&save_model, &polyModel, sizeof (POLYMODEL));
+		ReadPolyModel (curModel, fp);
+		modelDataSize [i] = (UINT16)curModel.m_info.dataSize;
+		if (i == (UINT32) (nModel - N_D2_POLYGON_MODELS))
+			memcpy (&saveModel, &curModel, sizeof (tPolyModel));
 		}
-	for (i=0;i<n;i++) {
-		if (i== (UINT32) (nModel - N_D2_POLYGON_MODELS)) {
-			fread (gModelData, model_dataSize[i], 1, fp);
-			break; // were done!
-			}
-		else
-			fseek (fp , model_dataSize[i], SEEK_CUR);
-		}
+	ReadRenderModelData (fp, nModel - N_D2_POLYGON_MODELS);
 	}
 else {
 	id = read_INT32 (fp);	  					   // read id
@@ -510,25 +526,25 @@ else {
 	fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon info
 	n = read_UINTW (fp);                          // n_powerups
 	fseek (fp, n * sizeof (POWERUP_TYPE_INFO), SEEK_CUR); // powerup info
-	n = read_UINTW (fp);                          // n_polyModels
+	n = read_UINTW (fp);                          // n_curModels
 	assert (n<=MAX_POLYGON_MODELS);
 	for (i=0;i<n;i++) {
-		ReadPolyModel (polyModel, fp);
-		model_dataSize[i] = (UINT16)polyModel.model_dataSize;
+		ReadPolyModel (curModel, fp);
+		modelDataSize[i] = (UINT16)curModel.modelDataSize;
 		if (i== (UINT32) nModel) {
-			memcpy (&save_model, &polyModel, sizeof (POLYMODEL));
+			memcpy (&saveModel, &curModel, sizeof (tPolyModel));
 			}
 		}
-	for (i=0;i<n;i++) {
-		if (i== (UINT32) nModel) {
-			fread (gModelData, model_dataSize[i], 1, fp);
+	ReadRenderModelData (fp, nModel);
+	for (i = 0; i < n; i++) {
+		if (i == (UINT32) nModel) {
+			fread (renderModelData, modelDataSize[i], 1, fp);
 			break; // were done!
 			}
 		else {
-			fseek (fp , model_dataSize[i], SEEK_CUR);
+			fseek (fp , modelDataSize [i], SEEK_CUR);
 		}
 	}
 }
 return 0;
 }
-

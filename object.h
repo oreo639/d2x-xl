@@ -98,26 +98,39 @@ typedef struct {
   FIX		light;			// amount of light cast by this powerup, set in bitmaps.tbl
 } POWERUP_TYPE_INFO;
 
+typedef struct tSubModel {
+  INT32 			ptr;
+  CFixVector 	offset;
+  CFixVector 	norm;		// norm for sep plane
+  CFixVector 	pnt;		// point on sep plane
+  FIX 			rad;		// radius for each submodel
+  UINT8 			parent;  // what is parent for each submodel
+  CFixVector 	vMin;
+  CFixVector   vMax;
+} tSubModel;
+
 //used to describe a polygon model
-typedef struct {
-  INT32			n_models;
-  INT32 			model_dataSize;
-  UINT8*			model_data;
-  INT32 			submodel_ptrs[MAX_SUBMODELS];
-  CFixVector 	submodel_offsets[MAX_SUBMODELS];
-  CFixVector 	submodel_norms[MAX_SUBMODELS];	  // norm for sep plane
-  CFixVector 	submodel_pnts[MAX_SUBMODELS];	  // point on sep plane
-  FIX 			submodel_rads[MAX_SUBMODELS];	  // radius for each submodel
-  UINT8 			submodel_parents[MAX_SUBMODELS];  // what is parent for each submodel
-  CFixVector 	submodel_mins[MAX_SUBMODELS];
-  CFixVector   submodel_maxs[MAX_SUBMODELS];
-  CFixVector 	mins, maxs;			  // min, max for whole model
+typedef struct tPolyModel {
+  INT32			nModels;
+  INT32 			dataSize;
+  UINT8*			data;
+  tSubModel		subModels [MAX_SUBMODELS];
+  CFixVector 	vMin, vMax;			  // min, max for whole model
   FIX				rad;
   UINT8			textureCount;
-  UINT16			first_texture;
-  UINT8			simpler_model;			  // alternate model with less detail (0 if none, nModel+1 else)
+  UINT16			firstTexture;
+  UINT8			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
 //  CFixVector min, max;
-} POLYMODEL;
+} tPolyModel;
+
+class CPolyModel {
+public:
+	tPolyModel	m_info;
+
+	void Read (FILE* fp);
+	void Write (FILE* fp);
+};
+
 
 class CObjPhysicsInfo {
 public:

@@ -272,9 +272,9 @@ public:
 	void	SetModelPoints(INT32 start, INT32 end);
 	void	DrawModel();      // poly.c
 	void	InterpModelData(UINT8 *model_data); // poly.c
-	void	DrawPoly(POLY *p);
+	void	DrawPoly(tRenderModel *p);
 	INT32	ReadModelData(FILE *file, CGameObject *objP);
-	void	ReadPolyModel (POLYMODEL& polyModel, FILE *file);
+	void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
 
 	// view control functions
 	void	Zoom(INT32 nSteps, double zoom);
