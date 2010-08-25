@@ -164,9 +164,9 @@ inline INT32 Read (FILE* fp) {
 	}
 
 inline void Write (FILE* fp) { 
-	write_DOUBLE (D2X (x), fp);
-	write_DOUBLE (D2X (y), fp);
-	write_DOUBLE (D2X (z), fp);
+	write_FIX (D2X (x), fp);
+	write_FIX (D2X (y), fp);
+	write_FIX (D2X (z), fp);
 	}
 };
 
