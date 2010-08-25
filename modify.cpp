@@ -263,14 +263,13 @@ switch (m_selectMode){
 			}
 		// calculate center opp side line 0
 		oppCenter = Average (*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [0]]]),
-									 *Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [1]]]));
+									*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [1]]]));
 		// calculate center opp side line 2
 		center = Average (*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [2]]]),
 								*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [3]]]));
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
-			RotateVertex (Vertices (segP->m_info.verts [sideVertTable [nSide][i]]),
-							  &center, &oppCenter, angle);
+			RotateVertex (Vertices (segP->m_info.verts [sideVertTable [nSide][i]]), &center, &oppCenter, angle);
 		theApp.UnlockUndo ();	
 		break;
 	
