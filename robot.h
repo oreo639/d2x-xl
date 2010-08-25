@@ -25,8 +25,8 @@ typedef struct tRobotGunInfo {
 	CFixVector	points;
 	UINT8			subModels;
 
-	void Read (FILE* fp);
-	void Write (FILE* fp);
+	void Read (FILE* fp, int nField);
+	void Write (FILE* fp, int nField);
 } tRobotGunInfo;
 
 typedef struct tRobotExplInfo {

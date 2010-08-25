@@ -386,6 +386,7 @@ else {
 	n = read_UINTW (fp);                          // n_robots
 	for (i = 0; i < n; i++) 
 		theMine->RobotInfo (i)->Read (fp);
+	n = ftell (fp);
 	n = read_UINTW (fp);                          // n_robot_joints
 	fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
 	n = read_UINTW (fp);                          // n_weapon

@@ -18,14 +18,18 @@
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-void tRobotGunInfo::Read (FILE* fp) {
-	points.Read (fp);
-	subModels = UINT8 (read_INT8 (fp));
+void tRobotGunInfo::Read (FILE* fp, int nField) {
+	if (nField == 0)
+		points.Read (fp);
+	else
+		subModels = UINT8 (read_INT8 (fp));
 	}
 
-void tRobotGunInfo::Write (FILE* fp) {
-	points.Write (fp);
-	write_INT8 ((INT8) subModels, fp);
+void tRobotGunInfo::Write (FILE* fp, int nField) {
+	if (nField == 0)
+		points.Write (fp);
+	else
+		write_INT8 ((INT8) subModels, fp);
 	}
 
 //------------------------------------------------------------------------
@@ -139,8 +143,9 @@ INT32 CRobotInfo::Read (FILE* fp, INT32 version, bool bFlag)
 	int i, j;
 
 m_info.nModel = read_INT32 (fp);
-for (i = 0; i < MAX_GUNS; i++)
-	m_info.guns [i].Read (fp);
+for (j = 0; j < 2; j++)
+	for (i = 0; i < MAX_GUNS; i++)
+		m_info.guns [i].Read (fp, j);
 for (i = 0; i < 2; i++)
 	m_info.expl [i].Read (fp);
 for (i = 0; i < 2; i++)
@@ -157,22 +162,9 @@ m_info.mass = read_FIX (fp);
 m_info.drag = read_FIX (fp);
 for (i = 0; i < 2; i++)
 	m_info.weaponType [i] = read_INT8 (fp);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 0);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 1);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 2);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 3);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 4);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 5);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 6);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Read (fp, 7);
+for (j = 0; j < 8; j++)
+	for (i = 0; i < NDL; i++)
+		m_info.combat [i].Read (fp, j);
 m_info.cloakType = read_INT8 (fp);
 m_info.attackType = read_INT8 (fp);
 m_info.sounds.Read (fp);
@@ -206,8 +198,9 @@ void CRobotInfo::Write (FILE* fp, INT32 version, bool bFlag)
 	int i, j;
 
 write_INT32 (m_info.nModel, fp);
-for (i = 0; i < MAX_GUNS; i++)
-	m_info.guns [i].Write (fp);
+for (j = 0; j < 2; j++)
+	for (i = 0; i < MAX_GUNS; i++)
+		m_info.guns [i].Write (fp, j);
 for (i = 0; i < 2; i++)
 	m_info.expl [i].Write (fp);
 for (i = 0; i < 2; i++)
@@ -224,22 +217,9 @@ write_FIX (m_info.mass, fp);
 write_FIX (m_info.drag, fp);
 for (i = 0; i < 2; i++)
 	write_INT8 (m_info.weaponType [i], fp);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 0);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 1);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 2);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 3);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 4);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 5);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 6);
-for (i = 0; i < NDL; i++)
-	m_info.combat [i].Write (fp, 7);
+for (j = 0; j < 8; j++)
+	for (i = 0; i < NDL; i++)
+		m_info.combat [i].Write (fp, j);
 write_INT8 (m_info.cloakType, fp);
 write_INT8 (m_info.attackType, fp);
 m_info.sounds.Write (fp);
