@@ -121,7 +121,7 @@ extern INT16  show_powerups;
 extern INT16 select_mode;
 #endif
 extern INT16 edit_mode;
-extern CUVL   default_uvls[4];
+extern tUVL   default_uvls[4];
 extern char  *object_names[MAX_OBJECT_TYPES];
 extern UINT8 powerup_types[MAX_POWERUP_IDS2];
 extern char  wall_type_names[6][10];

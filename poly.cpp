@@ -86,7 +86,7 @@ FIX MultiplyFix (FIX a, FIX b) {
 void CMineView::DrawModel () 
 {
 if (m_renderModel)
-	m_renderModel->Draw ();
+	m_renderModel->Draw (&m_view, m_pDC);
 }
 
 //-----------------------------------------------------------------------
@@ -123,12 +123,12 @@ for (INT32 i = start; i < end; i++) {
 
 void tModelRenderPoly::Draw (CViewMatrix* view, CDC* pDC) 
 {
-if (view->CheckNormal (renderObject, &m_info.offset, &m_info.normal)) {
+if (view->CheckNormal (renderObject, &offset, &normal)) {
 	  INT32 i, j;
 
 	POINT aPoints [MAX_POLYMODEL_POLY_POINTS];
 	for (i = 0; i < n_verts; i++) {
-		j = m_info.verts [i];
+		j = verts [i];
 		aPoints [i].x = poly_xy [j].x;
 		aPoints [i].y = poly_xy [j].y;
 		}
@@ -217,7 +217,7 @@ while (W (p) != OP_EOF) {
 			/* = W (p+2); */
 			/* = W (p+4); */
 			/* = W (p+16); */
-			if (m_view->CheckNormal (renderObject, VP (p+4), VP (p+16)) ) {
+			if (m_view->CheckNormal (renderObject, CDoubleVector (VP (p+4)), CDoubleVector (VP (p+16)))) {
 			  Render (p + W (p+28));
 			  Render (p + W (p+30));
 				}
@@ -313,7 +313,7 @@ return 1;
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData (char* filename, bool bCustom = false) 
+INT32 CMineView::ReadModelData (char* filename, bool bCustom) 
 {
 	FILE*		fp;
 
@@ -480,12 +480,6 @@ strcat_s (filename, sizeof (filename), ((objP->m_info.type == OBJ_ROBOT) && (obj
 if (ReadModelData (filename, bCustom))
 	renderModel = NULL;
 return renderModel == NULL;
-}
-
-//-----------------------------------------------------------------------
-
-void tModelRenderPoly::Draw (CDC* pDC) 
-{
 }
 
 //-----------------------------------------------------------------------

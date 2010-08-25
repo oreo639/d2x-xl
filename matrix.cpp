@@ -702,4 +702,10 @@ return Dot (m_mat [0].fVec, CDoubleVector (_a)) > Dot (m_mat [0].fVec, CDoubleVe
 }
 
 // -----------------------------------------------------------------------------
+
+//INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
+//{
+//}
+
+// -----------------------------------------------------------------------------
 // eof

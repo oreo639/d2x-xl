@@ -1,6 +1,8 @@
 #ifndef __poly_h
 #define __poly_h
 
+#include "matrix.h"
+
 /* the followin numbers are set using the original D2 robots */
 #define MAX_POLYMODEL_POINTS			416
 #define MAX_POLYMODEL_POLYS			300
@@ -71,7 +73,7 @@ public:
 			m_info.renderData = NULL;
 			}
 		}
-	void Read (FILE* fp, bool bRenderData = false);
+	INT32 Read (FILE* fp, bool bRenderData = false);
 	void Write (FILE* fp, bool bRenderData = false);
 	inline void CPolyModel::Draw (CViewMatrix* view, CDC* pDC) {
 		if (m_info.renderData) {
