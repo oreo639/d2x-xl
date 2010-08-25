@@ -2612,7 +2612,7 @@ sprintf_s (message, sizeof (message), "ROTATE (%1.2f°)", glAngle [i]);
 INFOMSG (message);
 glRotated (glAngle [i], glRotMat [i][0], glRotMat [i][1], glRotMat [i][2]);
 #else
-m_view.Rotate (direction, 2 * angle); // * ((double) move_rate / 0x10000L));
+m_view.Rotate (direction, 2 * angle); // * ((double) moveRate / 0x10000L));
 a += 2 * angle;// * PI;
 if (a < -360)
 	a += 360;

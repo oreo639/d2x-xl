@@ -510,7 +510,7 @@ void CTextureTool::HAlign (INT32 dir)
 {
 	INT32		i;
 	CSide	*sideP = theMine->CurrSide ();
-	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom * dir;
+	double	delta = moveRate * (0x0800 / 8) / m_zoom * dir;
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
@@ -538,7 +538,7 @@ void CTextureTool::VAlign (INT32 dir)
 {
 	INT32		i;
 	CSide	*sideP = theMine->CurrSide ();
-	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom * dir;
+	double	delta = moveRate * (0x0800 / 8) / m_zoom * dir;
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
@@ -606,14 +606,14 @@ VAlign (1);
 
 void CTextureTool::OnAlignRotLeft (void)
 {
-RotateUV (angle_rate);
+RotateUV (angleRate);
 }
 
                         /*--------------------------*/
 
 void CTextureTool::OnAlignRotRight (void)
 {
-RotateUV (-angle_rate);
+RotateUV (-angleRate);
 }
 
                         /*--------------------------*/
@@ -622,7 +622,7 @@ void CTextureTool::OnHShrink ()
 {
 	INT32		i = theMine->Current ()->nPoint;
 	CSide	*sideP = theMine->CurrSide ();
-	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom ;
+	double	delta = moveRate * 256 / m_zoom ;
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
@@ -639,7 +639,7 @@ void CTextureTool::OnVShrink ()
 {
 	INT32		i = theMine->Current ()->nPoint;
 	CSide	*sideP = theMine->CurrSide ();
-	double	delta = ((double) move_rate / 0x10000L) * (0x0800 / 8) / m_zoom;
+	double	delta = moveRate * 256 / m_zoom;
 
 UpdateData (TRUE);
 theApp.SetModified (TRUE);

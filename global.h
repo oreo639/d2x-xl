@@ -133,8 +133,8 @@ extern double spinx,spiny,spinz;
 extern double movex, movey, movez;
 extern INT16 max_x, min_x, max_y, min_y, max_z, min_z;
 extern double sizex,sizey,sizez;
-extern double angle_rate;
-extern FIX   move_rate;
+extern double angleRate;
+extern FIX   moveRate;
 extern double M[4][4];  /* 4x4 matrix used in coordinate transformation */
 extern double IM[4][4]; /* inverse matrix of M[4][4] */
 extern double depth_perception;

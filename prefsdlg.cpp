@@ -329,11 +329,11 @@ for (i = 0; i < 4; i++)
 		break;
 		}
 for (i = 0; i < 5; i++)
-	if (angle_rate <= m_rotateRates [i]) {
+	if (angleRate <= m_rotateRates [i]) {
 		m_iRotateRate = i;
 		break;
 		}
-m_moveRate = (double) move_rate / 0x10000L;
+m_moveRate = moveRate;
 m_bUseTexColors = theMine->UseTexColors ();
 m_bSplashScreen = theApp.m_bSplashScreen;
 }
@@ -415,8 +415,8 @@ if (!bInitApp) {
 	theApp.MineView ()->DelayRefresh (false);
 	theApp.MineView ()->Refresh (false);
 	}
-angle_rate = m_rotateRates [m_iRotateRate];
-move_rate = (FIX) (m_moveRate * 0x10000L);
+angleRate = m_rotateRates [m_iRotateRate];
+moveRate = m_moveRate;
 bExpertMode = (m_bExpertMode != 0);
 theMine->UseTexColors () = m_bUseTexColors != 0;
 if (!bInitApp)

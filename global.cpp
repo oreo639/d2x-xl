@@ -411,8 +411,8 @@ double spinx,spiny,spinz;
 double movex, movey, movez;
 INT16 max_x, min_x, max_y, min_y, max_z, min_z;
 double sizex,sizey,sizez;
-double angle_rate = (double)PI / 16.f;
-FIX   move_rate = 0x10000L;
+double angleRate = (double)PI / 16.f;
+double moveRate = 1.0;
 double depth_perception = 1000.0;
 
 /* define points for a given side */

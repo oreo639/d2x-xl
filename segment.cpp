@@ -1580,11 +1580,11 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
 		vSeg = Vertices (segP->m_info.verts [0]);
-		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 0xA00000L &&
-		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 0xA00000L &&
-		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 0xA00000L) {
+		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 10.0 &&
+		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 10.0 &&
+		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 10.0) {
 			for (nSide = 0; nSide < 6; nSide++) {
-				if (!LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3*F1_0)) {
+				if (!LinkSegments(nNewSeg, nNewSide, nSegment, nSide, 3)) {
 					// if these Segments () were linked, then unlink them
 					if (pNewSeg->m_info.children [nNewSide]== nSegment && segP->m_info.children [nSide]== nNewSeg) {
 						pNewSeg->m_info.children [nNewSide] =-1; 
@@ -1674,7 +1674,7 @@ if (solidify) {
 					if (match [j].b)
 						continue;
 					radius = Distance (v1 [i], v2 [j]);
-					if ((radius <= 10.0 * F1_0) && (radius < match [i].d)) {
+					if ((radius <= 10.0) && (radius < match [i].d)) {
 						h = j;  // remember which vertex it matched
 						match [i].d = radius;
 						}
@@ -1839,7 +1839,7 @@ if (max_radius >= JOIN_DISTANCE) {
 
 // if Segments () are too close to put a new segment between them, 
 // then solidifyally link them together without asking
-if (min_radius <= 5*F1_0) {
+if (min_radius <= 5) {
 	theApp.SetModified (TRUE); 
 	theApp.LockUndo ();
 	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 

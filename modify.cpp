@@ -56,7 +56,7 @@ else
 // move on x, y, and z
  theApp.SetModified (TRUE);
  theApp.LockUndo ();
- v *= X2D (move_rate);
+ v *= moveRate;
  MoveOn (v);
  theApp.UnlockUndo ();
  return true;
@@ -107,7 +107,7 @@ switch (m_selectMode) {
 	case POINT_MODE:
 		if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][0]]), 
 						  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][1]]))
-			 - move_rate < F1_0 / 4) 
+			 - moveRate < 0.25) 
 			okToMove = false;
 		break;
 
@@ -115,7 +115,7 @@ switch (m_selectMode) {
 		for (i = 0; i < 2; i++) {
 			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][0]]), 
 							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][1]]))
-				 - move_rate < F1_0 / 4) 
+				 - moveRate < 0.25) 
 				okToMove = false;
 			}
 	break;
@@ -124,7 +124,7 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++) {
 			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [i]][0]]), 
 							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [i]][1]]))
-				 - move_rate < F1_0 / 4) 
+				 - moveRate < 0.25) 
 			okToMove = false;
 			}
 		break;
@@ -135,7 +135,7 @@ if (!okToMove) {
 	}
 
 double radius = v.Mag ();
-if ((radius - X2D (move_rate)) < 0.25) {
+if (radius - moveRate < 0.25) {
 	if (m_selectMode == POINT_MODE || m_selectMode == LINE_MODE || m_selectMode == SIDE_MODE) {
 		ErrorMsg ("Cannot make cube any smaller\n"
 		"Cube must be greater or equal to 1.0 units wide.");
@@ -151,7 +151,7 @@ else {
 	// move on x, y, and z
 	theApp.SetModified (TRUE);
 	theApp.LockUndo ();
-	v *= -X2D (move_rate);
+	v *= -moveRate;
 	MoveOn (v);
 	theApp.UnlockUndo ();
 	}
@@ -164,7 +164,7 @@ return true;
 
 bool CMine::EditGeoRotRight (void)
 {
-return SpinSelection (angle_rate);
+return SpinSelection (angleRate);
 }
 
 //------------------------------------------------------------------------
@@ -172,7 +172,7 @@ return SpinSelection (angle_rate);
 
 bool CMine::EditGeoRotLeft (void)
 {
-return SpinSelection (-angle_rate);
+return SpinSelection (-angleRate);
 }
 
 //------------------------------------------------------------------------
@@ -180,7 +180,7 @@ return SpinSelection (-angle_rate);
 
 bool CMine::EditGeoUp (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (angle_rate,FALSE) : MovePoints (1,0);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,FALSE) : MovePoints (1,0);
 }
 
 //------------------------------------------------------------------------
@@ -188,7 +188,7 @@ return (m_selectMode == SIDE_MODE) ? RotateSelection (angle_rate,FALSE) : MovePo
 
 bool CMine::EditGeoDown (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate, FALSE) : MovePoints (0,1);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (-angleRate, FALSE) : MovePoints (0,1);
 }
 
 //------------------------------------------------------------------------
@@ -196,7 +196,7 @@ return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate, FALSE) : Move
 
 bool CMine::EditGeoRight (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (angle_rate,TRUE) : MovePoints(3,0);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,TRUE) : MovePoints(3,0);
 }
 
 //------------------------------------------------------------------------
@@ -204,21 +204,21 @@ return (m_selectMode == SIDE_MODE) ? RotateSelection (angle_rate,TRUE) : MovePoi
 
 bool CMine::EditGeoLeft (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (-angle_rate,TRUE) : MovePoints(0,3);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (-angleRate,TRUE) : MovePoints(0,3);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 bool CMine::EditGeoGrow (void) 
 {
-return ResizeItem (move_rate);
+return ResizeItem (moveRate);
 }
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 bool CMine::EditGeoShrink (void) 
 {
-return ResizeItem (-move_rate);
+return ResizeItem (-moveRate);
 }
 
 //------------------------------------------------------------------------
@@ -381,13 +381,12 @@ bool CMine::MovePoints (INT32 pt0, INT32 pt1)
 	INT16			p0 = sideVertP [CURRENT_POINT(pt0)];
 	INT16			p1 = sideVertP [CURRENT_POINT(pt1)];
 
-delta = *Vertices (segP->m_info.verts [p1]) -
-		  *Vertices (segP->m_info.verts [p0]);
+delta = *Vertices (segP->m_info.verts [p1]) - *Vertices (segP->m_info.verts [p0]);
 length = delta.Mag ();
-if (length < F1_0) 
-	delta.Set (move_rate, 0, 0);
+if (length < 1.0) 
+	delta.Set (moveRate, 0, 0);
 else
-	delta *= ((double) move_rate / length);
+	delta *= ((double) moveRate / length);
 
 switch (m_selectMode){
 	case POINT_MODE:
