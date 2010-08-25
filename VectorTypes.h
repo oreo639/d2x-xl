@@ -642,7 +642,9 @@ public:
 	const DOUBLE Det (void);
 	const CDoubleMatrix Inverse (void);
 	inline const CDoubleMatrix Transpose (void);
-	void CDoubleMatrix::Rotate (double angle, char axis);
+	void Rotate (double angle, char axis);
+	void Scale (double scale);
+	void Square2Quad (POINT a [4]);
 };
 
 // --------------------------------------------------------------------------

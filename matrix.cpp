@@ -457,6 +457,42 @@ switch (axis) {
 	}
 }
 
+//------------------------------------------------------------------------
+
+void CDoubleMatrix::Square2Quad (POINT a [4]) 
+{
+// infer "unity square" to "quad" prespective transformation
+// see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 
+double dx1 = a [1].x - a [2].x;
+double dx2 = a [3].x - a [2].x;
+double dx3 = a [0].x - a [1].x + a [2].x - a [3].x;
+double dy1 = a [1].y - a [2].y;
+double dy2 = a [3].y - a [2].y;
+double dy3 = a [0].y - a [1].y + a [2].y - a [3].y;
+double w = (dx1 * dy2 - dx2 * dy1);
+if (w == 0.0) 
+	w = 1.0;
+
+rVec.v.z = (dx3 * dy2 - dx2 * dy3) / w;
+uVec.v.z = (dx1 * dy3 - dx3 * dy1) / w;
+rVec.v.x = a [1].x - a [0].x + rVec.v.z * a [1].x;
+uVec.v.x = a [3].x - a [0].x + uVec.v.z * a [3].x;
+fVec.v.x = a [0].x;
+rVec.v.y = a [1].y - a [0].y + rVec.v.z * a [1].y;
+uVec.v.y = a [3].y - a [0].y + uVec.v.z * a [3].y;
+fVec.v.y = a [0].y;
+fVec.v.z = 1;
+}
+
+//------------------------------------------------------------------------
+
+void CDoubleMatrix::Scale (double scale) 
+{
+CDoubleMatrix s, m = *this;
+s.Set (scale, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 1.0);
+*this = m * s;
+}
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

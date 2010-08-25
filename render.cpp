@@ -32,7 +32,7 @@ void multiply_matrix (double C [3][3], double A [3][3], double B [3][3])
 {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++)	{
-      C [i][j] = A [i][0] * B [0][j] + A [i][1] * B [1][j] + A [i][2] * B [2][j];
+      C [i][j] = A [i][0] * B[0][j] + A [i][1] * B[1][j] + A [i][2] * B[2][j];
     }
   }
 }
@@ -67,46 +67,19 @@ void scale_matrix (double A [3][3], double scale)
 //------------------------------------------------------------------------
 void adjoint_matrix(double A [3][3],double B [3][3]) 
 {
-    B [0][0] = A [1][1]*A [2][2] - A [1][2]*A [2][1];
-    B [0][1] = A [0][2]*A [2][1] - A [0][1]*A [2][2];
-    B [0][2] = A [0][1]*A [1][2] - A [0][2]*A [1][1];
-    B [1][0] = A [1][2]*A [2][0] - A [1][0]*A [2][2];
-    B [1][1] = A [0][0]*A [2][2] - A [0][2]*A [2][0];
-    B [1][2] = A [0][2]*A [1][0] - A [0][0]*A [1][2];
-    B [2][0] = A [1][0]*A [2][1] - A [1][1]*A [2][0];
-    B [2][1] = A [0][1]*A [2][0] - A [0][0]*A [2][1];
-    B [2][2] = A [0][0]*A [1][1] - A [0][1]*A [1][0];
+ B[0][0] = A[1][1]*A[2][2] - A[1][2]*A[2][1];
+ B[0][1] = A[0][2]*A[2][1] - A[0][1]*A[2][2];
+ B[0][2] = A[0][1]*A[1][2] - A[0][2]*A[1][1];
+ B[1][0] = A[1][2]*A[2][0] - A[1][0]*A[2][2];
+ B[1][1] = A[0][0]*A[2][2] - A[0][2]*A[2][0];
+ B[1][2] = A[0][2]*A[1][0] - A[0][0]*A[1][2];
+ B[2][0] = A[1][0]*A[2][1] - A[1][1]*A[2][0];
+ B[2][1] = A[0][1]*A[2][0] - A[0][0]*A[2][1];
+ B[2][2] = A[0][0]*A[1][1] - A[0][1]*A[1][0];
 }
 
 //------------------------------------------------------------------------
 // define_square2quad_matrix()
-//------------------------------------------------------------------------
-void square2quad_matrix(double A [3][3],POINT a [4]) 
-{
-    double dx1,dx2,dx3,dy1,dy2,dy3; // temporary storage variables
-    double w;
-
-    // infer "unity square" to "quad" prespective transformation
-    // see page 55-56 of Digital Image Warping by George Wolberg (3rd edition) 
-    dx1 = a [1].x - a [2].x;
-    dx2 = a [3].x - a [2].x;
-    dx3 = a [0].x - a [1].x + a [2].x - a [3].x;
-    dy1 = a [1].y - a [2].y;
-    dy2 = a [3].y - a [2].y;
-    dy3 = a [0].y - a [1].y + a [2].y - a [3].y;
-    w = (dx1*dy2 - dx2*dy1);
-    if (w==0) w=1;
-    A [0][2] = (dx3*dy2 - dx2*dy3) / w;
-    A [1][2] = (dx1*dy3 - dx3*dy1) / w;
-    A [0][0] = a [1].x - a [0].x + A [0][2]*a [1].x;
-    A [1][0] = a [3].x - a [0].x + A [1][2]*a [3].x;
-    A [2][0] = a [0].x;
-    A [0][1] = a [1].y - a [0].y + A [0][2]*a [1].y;
-    A [1][1] = a [3].y - a [0].y + A [1][2]*a [3].y;
-    A [2][1] = a [0].y;
-    A [2][2] = 1;
-}
-
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -131,7 +104,8 @@ void TextureMap (INT32 resolution,
 	LONG yi,  yj;
 	POINT a [4];
 	POINT minpt, maxpt;
-	double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
+	CDoubleMatrix A, IA, B, UV;
+	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	double w;
 	UINT8 *ptr;
 	CUVL *uvls;
@@ -176,10 +150,12 @@ maxpt.y = min (maxpt.y, height);
 POINT b [4];  // Descent's (u,v) coordinates for textures
 
 // map unit square into texture coordinate
-square2quad_matrix(A,a);
+//square2quad_matrix(A,a);
+A.Square2Quad (a);
 
 // calculate adjoint matrix (same as inverse)
-adjoint_matrix(A,IA);
+//adjoint_matrix(A,IA);
+IA = A.Inverse ();
 
 // store uv coordinates into b []
 uvls = segP->m_sides [nSide].m_info.uvls;
@@ -234,9 +210,12 @@ if (bEnableDeltaShading) {
 	// map unit square into uv coordinates
 	// uv of 0x800 = 64 pixels in texture
 	// therefore uv of 32 = 1 pixel
-square2quad_matrix(UV,b);
-scale_matrix (UV, 1.0 / 2048.0);
-multiply_matrix (B, IA, UV);
+//square2quad_matrix(UV,b);
+UV.Square2Quad (b);
+//scale_matrix (UV, 1.0 / 2048.0);
+UV.Scale (1.0 / 2048.0);
+//multiply_matrix (B, IA, UV);
+B = IA * UV;
 for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
 	INT32 x0, x1;
 	// Determine min and max x for this y.
@@ -287,18 +266,19 @@ for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
 				x1 = end_x;
 
 			scale = (double) max (bmWidth, bmHeight);
-			h = B [1][2]*(double)y + B [2][2];
-			x0d = (double)x0;
-			x1d = (double)x1;
-			w0 = (B [0][2]*x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
-			w1 = (B [0][2]*x1d + h) / scale;
+			//h = B.uVec[2]*(double) y + B.fVec[2];
+			h = B.uVec.v.z * (double) y + B.fVec.v.z;
+			x0d = (double) x0;
+			x1d = (double) x1;
+			w0 = (B.rVec[2] * x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
+			w1 = (B.rVec[2] * x1d + h) / scale;
 			if (fabs(w0)>0.0001 && fabs(w1)>0.0001) {
-				h = B [1][0]*(double)y + B [2][0];
-				u0 = (B [0][0]*x0d + h) / w0;
-				u1 = (B [0][0]*x1d + h) / w1;
-				h = B [1][1]*(double)y + B [2][1];
-				v0 = (B [0][1]*x0d + h) / w0;
-				v1 = (B [0][1]*x1d + h) / w1;
+				h = B.uVec.v.x * (double) y + B.fVec.v.x;
+				u0 = (B.rVec.v.x * x0d + h) / w0;
+				u1 = (B.rVec.v.x * x1d + h) / w1;
+				h = B.uVec.v.y * (double) y + B.fVec.v.y;
+				v0 = (B.rVec.v.y * x0d + h) / w0;
+				v1 = (B.rVec.v.y * x1d + h) / w1;
 				
 				// use 22.10 integer math
 				// the 22 allows for large texture bitmap sizes
@@ -311,10 +291,10 @@ for (y = minpt.y; y < maxpt.y; y += inc_resolution) {
 				dx = x1-x0;
 				if (!dx)
 					dx = 1;
-				du = ((UINT32) (((u1 - u0)*1024.0)/dx) % m);
+				du = ((UINT32) (((u1 - u0) * 1024.0) / dx) % m);
 				du <<= resolution;
 				// v0 & v1 swapped since bmData is flipped
-				dv = ((UINT32) (((v0 - v1)*1024.0)/dx) % m);
+				dv = ((UINT32) (((v0 - v1) * 1024.0) / dx) % m);
 				dv <<= resolution;
 				u = ((UINT32) (u0 * 1024.0)) % m;
 				v = ((UINT32) (-v0 * 1024.0)) % m;
