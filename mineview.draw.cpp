@@ -127,6 +127,72 @@ for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 	}
 }
 
+                        /*--------------------------*/
+
+void CMineView::DrawMineCenter (CDC *pViewDC)
+{
+if (m_nMineCenter == 1) {
+	m_pDC->SelectObject(GetStockObject (WHITE_PEN));
+	m_pDC->MoveTo (x_center, y_center - (INT32) (10.0 * m_size.v.y) + 1);
+	m_pDC->LineTo (x_center, y_center + (INT32) (10.0 * m_size.v.y) + 1);
+	m_pDC->MoveTo (x_center - (INT32) (10.0 * m_size.v.x) + 1, y_center);
+	m_pDC->LineTo (x_center + (INT32) (10.0 * m_size.v.x) + 1, y_center);
+	}
+else if (m_nMineCenter == 2) {
+	// draw a globe
+	// 5 circles around each axis at angles of 30, 60, 90, 120, and 150
+	// each circle has 18 points
+	CVertex circle;
+	APOINT pt;
+
+	m_pDC->SelectObject (m_penCyan);
+	INT32 i, j;
+	for (i = -60; i <= 60; i += 30) {
+		for (j = 0; j <= 360; j += 15) {
+			double scale = (5 * cos (Radians (i)));
+			circle.Set (scale * cos (Radians (j)), scale * sin (Radians (j)), 5 * sin (Radians (i)));
+			circle -= m_view.m_move [0];
+			m_view.Project (circle, pt);
+			if (j == 0)
+				m_pDC->MoveTo (pt.x,pt.y);
+			else if (pt.z <= 0)
+				m_pDC->LineTo (pt.x,pt.y);
+			else 
+				m_pDC->MoveTo (pt.x,pt.y);
+			}
+		}
+	m_pDC->SelectObject (m_penGreen);
+	for (i = -60; i <= 60; i += 30) {
+		for (j = 0; j <= 360; j += 15) {
+			double scale = (5 * cos (Radians (i)));
+			circle.Set (scale * cos (Radians (j)), 5 * sin (Radians (i)), scale * sin (Radians (j)));
+			circle -= m_view.m_move [0];
+			m_view.Project (circle, pt);
+			if (j == 0)
+				m_pDC->MoveTo (pt.x,pt.y);
+			else if (pt.z <= 0)
+				m_pDC->LineTo (pt.x,pt.y);
+			else 
+				m_pDC->MoveTo (pt.x,pt.y);
+			}
+		}
+	m_pDC->SelectObject (m_penGray);
+	for (i = -60; i <= 60; i += 30) {
+		for (j = 0; j <= 360; j += 15) {
+			double scale = (5 * cos (Radians (i)));
+			circle.Set (5 * sin (Radians (i)), scale * cos (Radians (j)), scale * sin (Radians (j)));
+			circle -= m_view.m_move [0];
+			m_view.Project (circle, pt);
+			if (j == 0)
+				m_pDC->MoveTo (pt.x,pt.y);
+			else if (pt.z <= 0)
+				m_pDC->LineTo (pt.x,pt.y);
+			else 
+				m_pDC->MoveTo (pt.x,pt.y);
+			}
+		}
+	}
+}
 //----------------------------------------------------------------------------
 // DrawWireFrame
 //----------------------------------------------------------------------------
