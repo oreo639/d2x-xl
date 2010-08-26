@@ -53,7 +53,6 @@ typedef struct tPolyModel {
   UINT8			textureCount;
   UINT16			firstTexture;
   UINT8			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
-//  CFixVector min, max;
 } tPolyModel;
 
 class CPolyModel {

@@ -45,7 +45,7 @@ INT16 CMine::ReadSegmentInfo (FILE *fBlk)
 	INT16				nSegment, nSide, nVertex;
 	INT16				i, j, test;
 	INT16				origVertCount, k;
-	CFixVector		origin, vVertex;
+	CVertex			origin, vVertex;
 	CDoubleVector	xPrime, yPrime, zPrime, v;
 	CDoubleVector	xAxis, yAxis, zAxis;
 	INT16				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
@@ -58,20 +58,11 @@ origVertCount = VertCount ();
 // set origin
 segP = CurrSeg ();
 nSide = Current ()->nSide;
-nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]];
-origin = *Vertices (nVertex);
-/*
-origin.x = Vertices (nVertex)->x;
-origin.y = Vertices (nVertex)->y;
-origin.z = Vertices (nVertex)->z;
-*/
+origin = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
 // set x'
-nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]];
-xPrime = *Vertices (nVertex) - origin;
-
+xPrime = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]]) - origin;
 // calculate y'
-nVertex = segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]];
-vVertex = *Vertices (nVertex) - origin;
+vVertex = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]]) - origin;
 yPrime = CrossProduct (xPrime, CDoubleVector (vVertex));
 zPrime = CrossProduct (xPrime, yPrime);
 xPrime.Normalize ();
@@ -281,14 +272,16 @@ while(!feof(fBlk)) {
 				&segP->m_info.children [3],&segP->m_info.children [4],&segP->m_info.children [5]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
-		fscanf_s (fBlk, "  CFixVector %hd %ld %ld %ld\n", &test, &vVertex.v.x, &vVertex.v.y, &vVertex.v.z);
+		FIX x, y, z;
+		fscanf_s (fBlk, "  vms_vector %hd %ld %ld %ld\n", &test, &x, &y, &z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
 			return (0);
 			}
 		// each vertex relative to the origin has a x', y', and z' component
 		// adjust vertices relative to origin
-		v.Set (vVertex ^ CFixVector (xAxis), vVertex ^ CFixVector (xAxis), vVertex ^ CFixVector (xAxis));
+		vVertex.Set (x, y, z);
+		v.Set (vVertex ^ xAxis, vVertex ^ xAxis, vVertex ^ xAxis);
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
@@ -411,7 +404,7 @@ void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/)
 	CSide				*sideP;
 	CWall				*wallP;
 	INT16				i,j;
-	CFixVector		origin;
+	CVertex			origin;
 	CDoubleVector	xPrime, yPrime, zPrime, vVertex;
 	INT16				nVertex;
 
@@ -421,16 +414,14 @@ return;
 #endif
 // set origin
 segP = CurrSeg ();
-nVertex = segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]];
-origin = *Vertices (nVertex);
+origin = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]]);
 
 // set x'
-nVertex = segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]];
-xPrime = *Vertices (nVertex) - origin;
+xPrime = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]]) - origin;
 
 // calculate y'
-nVertex = segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]];
-vVertex = *Vertices (nVertex) - origin;
+nVertex = ;
+vVertex = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]]) - origin;
 yPrime = CrossProduct (xPrime, vVertex);
 zPrime = CrossProduct (xPrime, yPrime);
 xPrime.Normalize ();
@@ -520,10 +511,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
 			vVertex = *Vertices (nVertex) - origin;
-			fprintf (fBlk, "  CFixVector %d %ld %ld %ld\n",i,
-									D2X (vVertex ^ xPrime),
-									D2X (vVertex ^ yPrime),
-									D2X (vVertex ^ zPrime));
+			fprintf (fBlk, "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ xPrime), D2X (vVertex ^ yPrime), D2X (vVertex ^ zPrime));
 			}
 		fprintf (fBlk, "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {

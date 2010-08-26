@@ -374,9 +374,7 @@ GetCurrent (nSegment, nSide);
 	UINT8*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
-return -Normal (CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [0]]))), 
-					 CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [1]]))), 
-					 CDoubleVector (CFixVector (*Vertices (sideIndexP [sideVertP [3]]))));
+return -Normal (*Vertices (sideIndexP [sideVertP [0]]), *Vertices (sideIndexP [sideVertP [1]]), *Vertices (sideIndexP [sideVertP [3]]));
 }
 
 // --------------------------------------------------------------------------

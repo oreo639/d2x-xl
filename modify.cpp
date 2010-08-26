@@ -546,11 +546,6 @@ bool CMine::SpinSelection (double angle)
 	CVertex			center, oppCenter, normal;
 	INT16				i;
 
-#ifdef SPIN_RELATIVE
-	double xspin,yspin,zspin;
-	CFixVector rel [3];
-#endif
-
 /* calculate segment pointer */
 switch (m_selectMode) {
 	case POINT_MODE:

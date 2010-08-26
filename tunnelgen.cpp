@@ -180,7 +180,7 @@ return ret [offset][j];
 // Changes - Chooses axis to normalizes on based on "normal" direction
 //--------------------------------------------------------------------------
 
-CFixVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
+CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
 {
   double			ySpin,zSpin;
   char			spinAxis;
@@ -226,7 +226,7 @@ switch(spinAxis) {
    v1.Set (v2.v.x * cos (zSpin) + v2.v.y * sin (zSpin), -v2.v.x * sin (zSpin) + v2.v.y * cos (zSpin), v2.v.z);
    break;
 	}
-v = *normal + CFixVector (v1);
+v = *normal + v1;
 return v;
 }
 
