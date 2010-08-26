@@ -160,8 +160,8 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 				Segments (nSegment)->SetUV (child, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
-					segP->m_sides [child].m_info.uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
-					segP->m_sides [child].m_info.uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
+					//segP->m_sides [child].m_info.uvls [i].u = (INT16) ((double) default_uvls [i].u / scale); 
+					//segP->m_sides [child].m_info.uvls [i].v = (INT16) ((double) default_uvls [i].v / scale); 
 					segP->m_sides [child].m_info.uvls [i].l = delSegP->m_sides [child].m_info.uvls [i].l; 
 				}
 			}

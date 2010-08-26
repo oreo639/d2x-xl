@@ -161,6 +161,7 @@ m_bLightEnabled = TRUE;
 m_bIgnorePlane = FALSE;
 m_nColorIndex = -1;
 m_nEditFunc = -1;
+m_bInitTextureListBoxes = true;
 }
 
                         /*--------------------------*/
@@ -330,9 +331,9 @@ if (pDX->m_bSaveAndValidate && *szBrightness) {
 
                         /*--------------------------*/
 
-void CTextureTool::LoadTextureListBoxes () 
+void CTextureTool::LoadTextureListBoxes (void) 
 {
-if (!theMine) return;
+CHECKMINE;
 
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			name [80];
@@ -441,10 +442,16 @@ m_textureWnd.UpdateWindow ();
 
 INT32 lightIdxFromMode [4] = {0, 3, 2, 1};
 
-void CTextureTool::Refresh ()
+void CTextureTool::Refresh (void)
 {
 if (!(m_bInited && theMine))
 	return;
+if (m_bInitTextureListBoxes) {
+	m_bInitTextureListBoxes = false;
+	LoadTextureListBoxes ();
+	}
+
+
 //Beep (1000,100);
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	CComboBox	*cbTexture1 = CBTexture1 ();

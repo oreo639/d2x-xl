@@ -1937,7 +1937,7 @@ if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 	}
 m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES;
-for (h = n_splines * 4, i = 0; i < h; i++, j--)
+for (h = n_splines * 4, i = 0; i < h; i++)
 	m_view.Project (*theMine->Vertices (--j), m_viewPoints [j]);
 CSegment *segP = theMine->Segments (MAX_SEGMENTS - 1);
 for (i = 0; i < n_splines; i++, segP--)

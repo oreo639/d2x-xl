@@ -71,7 +71,7 @@ return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
 double Blend (INT32 i, INT32 n, double u) 
 {
 #if 1
-double partial = pow (Coeff (n, i), i + 1) * pow (1 - u, n - i + 1);
+double partial = Coeff (n, i) * pow (u, i) * pow (1 - u, n - i);
 #else
 	double partial;
 	INT32 j;
@@ -335,10 +335,10 @@ if (!m_bSplineActive) {
 				  "spline segment.\n\n"
 				  "Press 'P' to rotate the point connections.\n\n"
 				  "Press 'G' or select Tools/Tunnel Generator when you are finished.");
-	m_bSplineActive = TRUE;
+	m_bSplineActive = true;
 	}
 else {
-	m_bSplineActive = FALSE;
+	m_bSplineActive = false;
 	// ask if user wants to keep the new spline
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) {
 		theApp.MineView ()->Refresh (false);
@@ -358,7 +358,7 @@ else {
 			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES))
 				DEBUGMSG (" Tunnel generator: Vertex number out of range.")
 			else
-				memcpy (Vertices (VertCount ()), Vertices (nVertex - j), sizeof (*Vertices (0)));
+				*Vertices (VertCount ()) = *Vertices (nVertex - j);
 /*
 			vertices [VertCount ()].x = vertices [nVertex-j].x;
 			vertices [VertCount ()].y = vertices [nVertex-j].y;
@@ -483,7 +483,7 @@ void CMine::CalcSpline (void)
   CVertex rel_pts [4]; // 4 points of spline reletave to 1st point
   CVertex rel_spline_pts [MAX_SPLINES];
   double y,z;
-  double y_spin,z_spin;
+  double ySpin,zSpin;
 
 // center of both cubes
 points [0] = CalcSideCenter (nSplineSeg1, nSplineSide1);
@@ -494,7 +494,7 @@ points [1] *= m_splineLength1;
 points [1] += points [0];
 // point orthogonal to center of other cube
 points [2] = CalcSideNormal (nSplineSeg2, nSplineSide2);
-points [2] *= FIX (m_splineLength2);
+points [2] *= m_splineLength2;
 points [2] += points [3];
 
 // calculate number of segments (min=1)
@@ -520,18 +520,18 @@ for (i = 0; i < n_splines; i++) {
 }
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
-y_spin = -atan3 (rel_pts [1].v.z, rel_pts [1].v.x); // to y-z plane
-z_spin = atan3 (rel_pts [1].v.y, rel_pts [1].v.x * cos (y_spin)-rel_pts [1].v.z * sin (y_spin)); // to x axis
+ySpin = -atan3 (rel_pts [1].v.z, rel_pts [1].v.x); // to y-z plane
+zSpin = atan3 (rel_pts [1].v.y, rel_pts [1].v.x * cos (ySpin)-rel_pts [1].v.z * sin (ySpin)); // to x axis
 
 // spin all points reletave to first face (rotation)
 for (i = 0; i < 4; i++) {
-	SpinPoint (rel_pts + i,y_spin,z_spin);
+	SpinPoint (rel_pts + i,ySpin,zSpin);
 	for (j = 0; j < 2; j++) 
-		SpinPoint (rel_side_pts [j] + i,y_spin,z_spin);
+		SpinPoint (rel_side_pts [j] + i,ySpin,zSpin);
 	}
 
 for (i = 0; i < n_splines; i++) 
-	SpinPoint (rel_spline_pts + i,y_spin,z_spin);
+	SpinPoint (rel_spline_pts + i,ySpin,zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
 for (i = 0; i < 4; i++) {
@@ -573,20 +573,20 @@ sprintf_s (message, sizeof (message), "theta [0] = %d,%d,%d,%d\n"
 "radius [0] = %d,%d,%d,%d\n"
 "radius [1] = %d,%d,%d,%d\n"
 "delta_angles = %d,%d,%d,%d\n"
-"y_spin = %d\n"
-"z_spin = %d",
+"ySpin = %d\n"
+"zSpin = %d",
 (INT32)(theta [0][0]*180/M_PI),(INT32)(theta [0][1]*180/M_PI),(INT32)(theta [0][2]*180/M_PI),(INT32)(theta [0][3]*180/M_PI),
 (INT32)(theta [1][0]*180/M_PI),(INT32)(theta [1][1]*180/M_PI),(INT32)(theta [1][2]*180/M_PI),(INT32)(theta [1][3]*180/M_PI),
 (INT32)(radius [0][0]*180/M_PI),(INT32)(radius [0][1]*180/M_PI),(INT32)(radius [0][2]*180/M_PI),(INT32)(radius [0][3]*180/M_PI),
 (INT32)(radius [1][0]*180/M_PI),(INT32)(radius [1][1]*180/M_PI),(INT32)(radius [1][2]*180/M_PI),(INT32)(radius [1][3]*180/M_PI),
 (INT32)(delta_angle [0]*180/M_PI),(INT32)(delta_angle [1]*180/M_PI),(INT32)(delta_angle [2]*180/M_PI),(INT32)(delta_angle [3]*180/M_PI),
-(INT32)(y_spin*180/M_PI),(INT32)(z_spin*180/M_PI)
+(INT32)(ySpin*180/M_PI),(INT32)(zSpin*180/M_PI)
 );
 DebugMsg(message);
 #endif
 
-// calculate segment verticies as weighted average between the two sides
-// then spin verticies in the direction of the segment vector
+// calculate segment vertices as weighted average between the two sides
+// then spin vertices in the direction of the segment vector
 for (i = 0; i < n_splines; i++) {
 	nVertex = (MAX_VERTICES-1) - (i * 4);
 	for (j = 0; j < 4; j++) {
@@ -595,7 +595,7 @@ for (i = 0; i < n_splines; i++) {
 		length = ((double) i / (double) n_splines) * radius [1][MatchingSide (j)] + (((double) n_splines- (double) i) / (double) n_splines) * radius [0][j];
 		*vert = RectPoints (angle, length, &rel_spline_pts [i], &rel_spline_pts [i+1]);
 		// spin vertices
-		SpinBackPoint (vert, y_spin, z_spin);
+		SpinBackPoint (vert, ySpin, zSpin);
 		// translate point back
 		*vert += points [0];
 		}

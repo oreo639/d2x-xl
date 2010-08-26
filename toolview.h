@@ -959,8 +959,9 @@ class CTextureTool : public CTexToolDlg
 		CBitmapButton		m_btnDelLight;
 		CBitmapButton		m_btnHFlip;
 		CBitmapButton		m_btnVFlip;
-
 		CPaletteWnd			m_paletteWnd;
+
+		bool					m_bInitTextureListBoxes;
 
 		char					m_szTextureBuf [100];
 		INT32					last_texture1,
