@@ -365,6 +365,7 @@ if (!(szError && *szError))
 if (!(m_bShowWarnings || !strstr (szError, "WARNING:")))
 	return true;
 INT32 h = AddMessage (szError, -1, true);
+UpdateStatsWidth (szError);
 if (h >= 0) {
 	tBugPos *pbp = new tBugPos;
 	if (!pbp)
@@ -384,6 +385,7 @@ m_nErrors [nErrorLevel]++;
 if (m_nErrors [0] < 1000 && m_nErrors [1] < 1000)
 	return false;
 LBBugs ()->AddString ("Maximum number of errors/warnings reached");
+UpdateStatsWidth (szError);
 return true;
 }
 
