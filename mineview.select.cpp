@@ -17,6 +17,199 @@
 #include <math.h>
 #include <time.h>
 
+//--------------------------------------------------------------------------
+//		       select_current_object()
+//
+//  ACTION - finds object pointed to by mouse then draws.
+//
+//--------------------------------------------------------------------------
+
+void CMineView::SelectCurrentObject (long xMouse, long yMouse) 
+{
+CGameObject *objP;
+INT16 closest_object;
+INT16 i;
+double radius,closest_radius;
+APOINT pt;
+CGameObject temp_obj;
+
+// default to object 0 but set radius very large
+closest_object = 0;
+closest_radius = 1.0E30;
+
+// if there is a secret exit, then enable it in search
+INT32 enable_secret = FALSE;
+if (theApp.IsD2File ())
+	for(i=0;i<(INT16)theMine->GameInfo ().triggers.count;i++)
+		if (theMine->Triggers (i)->m_info.type ==TT_SECRET_EXIT) {
+			enable_secret = TRUE;
+			break;
+			}
+
+for (i = 0; i <= theMine->GameInfo ().objects.count; i++) {
+	BOOL drawable = FALSE;
+	// define temp object type and position for secret object selection
+	if (i == theMine->GameInfo ().objects.count && theApp.IsD2File () && enable_secret) {
+		objP = &temp_obj;
+		objP->m_info.type = OBJ_PLAYER;
+		// define objP->position
+		CalcSegmentCenter (objP->m_location.pos, (UINT16)theMine->SecretCubeNum ());
+		}
+	else
+		objP = theMine->Objects (i);
+#if 0
+	switch(objP->m_info.type) {
+		case OBJ_WEAPON:
+			if (ViewObject (eViewObjectsPowerups | eViewObjectsWeapons)) {
+				drawable = TRUE;
+				}
+		case OBJ_POWERUP:
+			if (ViewObject (powerup_types [objP->m_info.id])) {
+				drawable = TRUE;
+				}
+			break;
+		default:
+			if(ViewObject (1<<objP->m_info.type))
+				drawable = TRUE;
+		}
+	if (drawable) 
+#else
+	if (ViewObject (objP))
+#endif
+		{
+		// translate object's position to screen coordinates
+		m_view.Project (objP->m_location.pos, pt);
+		// calculate radius^2 (don't bother to take square root)
+		double dx = (double)pt.x - (double)xMouse;
+		double dy = (double)pt.y - (double)yMouse;
+		radius = dx * dx + dy * dy;
+	// check to see if this object is closer than the closest so far
+		if (radius < closest_radius) {
+			closest_object = i;
+			closest_radius = radius;
+			}
+		}
+	}
+
+// unhighlight current object and select next object
+i = theMine->Current ()->nObject;
+RefreshObject(i, closest_object);
+}
+
+//--------------------------------------------------------------------------
+//		       select_current_segment()
+//
+//  ACTION - finds segment pointed to by mouse then draws.  Segment must have
+//         all points in screen region.
+//
+//  INPUT  - direction: must be a 1 or a -1
+//
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
+
+INT32 Side (APOINT &p0, APOINT &p1, APOINT &p2)
+{
+return ((INT32) p0.y - (INT32) p1.y) * ((INT32) p2.x - (INT32) p1.x)  - 
+		 ((INT32) p0.x - (INT32) p1.x) * ((INT32) p2.y - (INT32) p1.y);
+}
+
+//--------------------------------------------------------------------------
+
+bool PointInTriangle (APOINT &p, APOINT &a, APOINT &b, APOINT &c)
+{
+__int64 fab = Side (p, a, b);
+__int64 fbc = Side (p, b, c);
+__int64 fca = Side (p, c, a);
+return (fab * fbc > 0) && (fca * fbc > 0);
+}
+
+//--------------------------------------------------------------------------
+
+bool CMineView::SelectCurrentSegment (INT16 direction, long xMouse, long yMouse) 
+{
+  CSegment		*segP;
+  CRect			rc;
+//  extern INT16 xMouse,yMouse;
+  INT16			cur_segment, next_segment;
+  INT16			i, j;
+  INT32			x, y;
+  APOINT			sideVerts [4], mousePos;
+  bool			bFound = false;
+
+/* find next segment which is within the cursor position */
+GetClientRect (rc);
+next_segment = cur_segment = theMine->Current ()->nSegment;
+mousePos.x = (INT16) xMouse;
+mousePos.y = (INT16) yMouse;
+mousePos.z = 0;
+do {
+	wrap (&next_segment, direction, 0, theMine->SegCount () - 1); /* point to next segment */
+	segP = theMine->Segments (next_segment);
+	if (!Visible (segP))
+		continue;
+	for (i = 0; i < 6; i++) {
+		for (j = 0; j < 4; j++)
+			sideVerts [j] = m_viewPoints [segP->m_info.verts [sideVertTable [i][j]]];
+		for (j = 0; j < 4; j++) {
+			x = sideVerts [j].x;
+			y = sideVerts [j].y;
+			// allow segment selection if just one of its vertices is visible
+			if ((x >= rc.left) && (x <= rc.right) && (y >= rc.top) || (y <= rc.bottom)) {
+				sideVerts [j].z = 0;
+				if (PointInTriangle (mousePos, sideVerts [0], sideVerts [1], sideVerts [2])) {
+					bFound = true;
+					goto foundSeg;
+					}	
+				if (PointInTriangle (mousePos, sideVerts [0], sideVerts [2], sideVerts [3])) {
+					bFound = true;
+					goto foundSeg;
+					}	
+				}
+			}
+		}
+#if 0
+	xMin = yMin = 0x7fffffff;
+	xMax = yMax = -0x7fffffff;
+	bOnScreen = true;
+	for (i = 0; i < 8; i++) {
+		x = m_viewPoints [segP->m_info.verts [i]].x;
+		if ((x < rc.left) || (x > rc.right)) {
+			bOnScreen = false;
+			break;
+			}
+		y = m_viewPoints [segP->m_info.verts [i]].y;
+		if ((y < rc.top) || (y > rc.bottom)) {
+			bOnScreen = false;
+			break;
+			}
+		if (xMin > x)
+			xMin = x;
+		if (xMax < x)
+			xMax = x;
+		if (yMin > y)
+			yMin = y;
+		if (yMax < y)
+			yMax = y;
+		}
+	if (!bOnScreen)
+		continue;
+	if ((xMouse >= xMin) && (xMouse <= xMax) && (yMouse >= yMin) && (yMouse <= yMax))
+		break;
+#endif
+	}
+while (next_segment != cur_segment);
+
+foundSeg:
+
+if (!bFound)
+	return false;
+theMine->Current ()->nSegment = next_segment;
+theApp.ToolView ()->Refresh ();
+Refresh ();
+return true;
+}
+
 //==========================================================================
 // MENU - NextPoint
 //==========================================================================
