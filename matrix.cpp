@@ -739,7 +739,7 @@ return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
 
 // -----------------------------------------------------------------------------
 
-INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
+INT32 CViewMatrix::CheckNormal (CGameObject *objP, CDoubleVector& a, CDoubleVector& b) 
 {
 CVertex _a = objP->m_location.orient * CDoubleVector (a);
 CVertex _b = objP->m_location.orient * CDoubleVector (b);

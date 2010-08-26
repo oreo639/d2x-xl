@@ -847,26 +847,3 @@ tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
 	{{435, 901}, TXT_DOOR, 0}
 	};
 
-
-//UINT16 num_vertices;
-//UINT16 num_segments;
-
-//CFixVector* vertices=0;
-//segment *Segments ()[MAX_SEGMENTS2];
-//object *Objects ()[MAX_OBJECTS];
-//UINT8 *vertexStatus=0; //MAX_VERTICES
-
-//char m_currentLevelName[256];
-
-//wall *Walls (); //MAX_WALLS
-//CActiveDoor activeDoors[MAX_DOORS];
-//trigger *Triggers ();// MAX_TRIGGERS;
-//CReactorTrigger reactorTriggers[MAX_REACTOR_TRIGGERS];
-//CRobotMaker robotMakers[MAX_ROBOT_MAKERS];
-
-//CGameFileInfo gameFileInfo;
-//CGameInfo GameInfo ();
-
-
-
-
