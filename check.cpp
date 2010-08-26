@@ -350,7 +350,7 @@ dc.SelectObject(f);
 
 CSize sz = dc.GetTextExtent (s, _tcslen (s));
 sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
-if (sz.cx > m_statsWidth) { /* extend */
+if (sz.cx > m_statsWidth) 
 	LBBugs ()->SetHorizontalExtent (m_statsWidth = sz.cx);
 }
 
