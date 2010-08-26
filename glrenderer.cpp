@@ -1,5 +1,21 @@
 #if OGL_RENDERING
 
+# define OGL_MAPPED 1
+
+static HDC		glHDC;
+static double	glRotMat [3][3] = {{1,0,0},{0,1,0},{0,0,1}};
+static double	glAngle [3] = {0,0,0};
+static double	glPan [3] = {0,0,-500};
+static double	uvMap [4][2] = {{0.0,0.0},{0.0,1.0},{1.0,1.0},{1.0,0.0}};
+static UINT8	rgbBuf [64*64*4];
+static GLuint	glHandles [910];
+static UINT8	*glPalette = NULL;
+static BOOL		glFitToView = FALSE;
+static INT32	glMinZ = 1;
+static INT32	glMaxZ = 1;
+static bool		glInit = true;
+#endif
+
 // code from NeHe productions tutorials
 
                         /*--------------------------*/
