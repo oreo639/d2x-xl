@@ -1304,7 +1304,7 @@ for (INT32 j = 0; j < 4; j++) {
 	CVertex* corner = Vertices (segP->m_info.verts [sideVertTable [nSide][j]]);
 	double length = 20.0 * m_lightRenderDepth;
 	for (INT32 i = 0; i < 4; i++)
-		length = min (length, Distance (sourceCorners + i, corner));
+		length = min (length, Distance (sourceCorners [i], *corner));
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
 	effect [j] = fLightScale;

@@ -2263,17 +2263,17 @@ else {
    double length;
    center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 0);
 	center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 2);
-   length = Distance (&center1,&center2);
+   length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
    center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 1);
    center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 3);
-   length = Distance (&center1,&center2);
+   length = Distance (center1, center2);
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
    center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 4);
    center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 5);
-   length = Distance (&center1,&center2);
+   length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  cube:");

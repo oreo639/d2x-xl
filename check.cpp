@@ -122,7 +122,7 @@ theApp.MineView ()->Refresh ();
 
 double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide) 
 {
-  INT16		nVertex[4],i;
+  INT16		i;
   CVertex	midpoint1, midpoint2;
   double		length1, length2, ave_length, mid_length;
   double		ratio;
@@ -130,8 +130,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
   // copy vertnums into an array
 	CSegment*	segP = theMine->Segments (nSegment);
 
-for (i = 0; i < 4; i++) {
-//	nVertex[i] = ;
+for (i = 0; i < 4; i++)
 	vert [i] = *theMine->Vertices (segP->m_info.verts[sideVertTable[nSide][i]]);
 
 length1 = CalcDistance (vert + 0, vert + 1, vert + 2);
@@ -139,7 +138,7 @@ length2 = CalcDistance (vert + 0, vert + 1, vert + 3);
 ave_length = (length1 + length2) / 2;
 midpoint1 = Average (vert [0], vert [1]);
 midpoint2 = Average (vert [2], vert [3]);
-mid_length = Distance (midpoint1&, midpoint2&);
+mid_length = Distance (midpoint1, midpoint2);
 ratio = mid_length / ave_length;
 
 length1 = CalcDistance (vert + 1, vert + 2, vert + 3);
@@ -147,8 +146,8 @@ length2 = CalcDistance (vert + 1, vert + 2, vert + 0);
 ave_length = (length1 + length2) / 2;
 midpoint1 = Average (vert [1], vert [2]);
 midpoint2 = Average (vert [3], vert [0]);
-mid_length = theMine->CalcLength (&midpoint1, &midpoint2);
-return min (ratio1, mid_length / ave_length);
+mid_length = Distance (midpoint1, midpoint2);
+return min (ratio, mid_length / ave_length);
 }
 
 //--------------------------------------------------------------------------
