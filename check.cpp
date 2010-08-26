@@ -50,6 +50,7 @@ for (i = 0; i < h; i++) {
 plb->ResetContent ();
 m_nErrors [0] =
 m_nErrors [1] = 0;
+m_statsWidth = 0;
 }
 
                         /*--------------------------*/
@@ -338,6 +339,21 @@ if (m_bAutoFixBugs)
 // Parameters - error_msg = null terminated string w/ error message
 //              error     = set to a 1 if this is an error
 //              warning   = set to a 1 if this is a warning 
+//--------------------------------------------------------------------------
+
+void CDiagTool::UpdateStatsWidth (char* s)
+{
+	CClientDC dc(this);
+
+CFont * f = LBBugs ()->GetFont();
+dc.SelectObject(f);
+
+CSize sz = dc.GetTextExtent (s, _tcslen (s));
+sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+if (sz.cx > m_statsWidth) { /* extend */
+	LBBugs ()->SetHorizontalExtent (m_statsWidth = sz.cx);
+}
+
 //--------------------------------------------------------------------------
 
 bool CDiagTool::UpdateStats (char *szError, INT32 nErrorLevel, 

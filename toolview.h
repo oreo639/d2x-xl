@@ -236,6 +236,7 @@ class CDiagTool : public CToolDlg
 		INT32			m_bShowWarnings;
 		CReactorTrigger	*m_pTrigger;
 		bool			m_bCheckMsgs;
+		int			m_statsWidth;
 
 		CDiagTool (CPropertySheet *pParent = NULL);
 		~CDiagTool ();
@@ -253,6 +254,7 @@ class CDiagTool : public CToolDlg
 		afx_msg void OnFixBugs ();
 		afx_msg void OnShowWarnings ();
 		INT32 AddMessage (const char *pszMsg, INT32 nMaxMsgs = 100, bool bCheckMsg = false);
+		void UpdateStatsWidth (char* s);
 		bool UpdateStats (char *szError, INT32 nErrorLevel, 
 							   INT32 nSegment = -1, INT32 nSide = -1, INT32 linenum = -1, INT32 pointnum = -1, 
 							   INT32 childnum = -1, INT32 nWall = -1, INT32 nTrigger = -1, INT32 objnum = -1);

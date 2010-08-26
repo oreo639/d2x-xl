@@ -43,6 +43,7 @@ CDiagTool::CDiagTool (CPropertySheet *pParent)
 m_bAutoFixBugs = TRUE; 
 m_bShowWarnings = true;
 m_bCheckMsgs = false;
+m_statsWidth = 0;
 }
 
                         /*--------------------------*/
