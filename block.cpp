@@ -415,12 +415,9 @@ return;
 // set origin
 segP = CurrSeg ();
 origin = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]]);
-
 // set x'
 xPrime = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]]) - origin;
-
 // calculate y'
-nVertex = ;
 vVertex = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]]) - origin;
 yPrime = CrossProduct (xPrime, vVertex);
 zPrime = CrossProduct (xPrime, yPrime);
