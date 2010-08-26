@@ -122,41 +122,33 @@ theApp.MineView ()->Refresh ();
 
 double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide) 
 {
-  INT16			nVertex[4],i;
-  CFixVector	midpoint1, midpoint2;
-  double			length1,length2,ave_length, mid_length;
-  double			ratio1,ratio2;
-  CFixVector	vert [4];
+  INT16		nVertex[4],i;
+  CVertex	midpoint1, midpoint2;
+  double		length1, length2, ave_length, mid_length;
+  double		ratio;
+  CVertex	vert [4];
   // copy vertnums into an array
 	CSegment*	segP = theMine->Segments (nSegment);
-  for (i=0;i<4;i++) {
-    nVertex[i] = segP->m_info.verts[sideVertTable[nSide][i]];
-	 vert [i] = *theMine->Vertices (nVertex [i]);
-  }
 
-  length1 = CalcDistance (vert + 0, vert + 1, vert + 2);
-  length2 = CalcDistance (vert + 0, vert + 1, vert + 3);
-  ave_length = (length1 + length2) / 2;
+for (i = 0; i < 4; i++) {
+//	nVertex[i] = ;
+	vert [i] = *theMine->Vertices (segP->m_info.verts[sideVertTable[nSide][i]]);
 
-  midpoint1 = Average (vert [0], vert [1]);
-  midpoint2 = Average (vert [2], vert [3]);
+length1 = CalcDistance (vert + 0, vert + 1, vert + 2);
+length2 = CalcDistance (vert + 0, vert + 1, vert + 3);
+ave_length = (length1 + length2) / 2;
+midpoint1 = Average (vert [0], vert [1]);
+midpoint2 = Average (vert [2], vert [3]);
+mid_length = Distance (midpoint1&, midpoint2&);
+ratio = mid_length / ave_length;
 
-  mid_length = theMine->CalcLength (&midpoint1, &midpoint2);
-
-  ratio1 = mid_length/ave_length;
-
-  length1 = CalcDistance (vert + 1, vert + 2, vert + 3);
-  length2 = CalcDistance (vert + 1, vert + 2, vert + 0);
-  ave_length = (length1 + length2) / 2;
-
-  midpoint1 = Average (vert [1], vert [2]);
-  midpoint2 = Average (vert [3], vert [0]);
-
-  mid_length = theMine->CalcLength (&midpoint1, &midpoint2);
-
-  ratio2 = mid_length/ave_length;
-
-  return (min (ratio1,ratio2));
+length1 = CalcDistance (vert + 1, vert + 2, vert + 3);
+length2 = CalcDistance (vert + 1, vert + 2, vert + 0);
+ave_length = (length1 + length2) / 2;
+midpoint1 = Average (vert [1], vert [2]);
+midpoint2 = Average (vert [3], vert [0]);
+mid_length = theMine->CalcLength (&midpoint1, &midpoint2);
+return min (ratio1, mid_length / ave_length);
 }
 
 //--------------------------------------------------------------------------
@@ -165,7 +157,7 @@ double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide)
 // Action - calculates the distance from a line to a point
 //--------------------------------------------------------------------------
 
-double CDiagTool::CalcDistance (CFixVector* v1,CFixVector* v2,CFixVector* v3)
+double CDiagTool::CalcDistance (CVertex* v1, CVertex* v2, CVertex* v3)
 {
 // normalize all points to vector 1
 CDoubleVector A = *v2 - *v1;

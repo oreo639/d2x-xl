@@ -2259,21 +2259,21 @@ if (preferences & PREFS_SHOW_POINT_COORDINATES) {
 else {
    // calculate cube size (length between center point of opposing sides)
 	strcat_s (message, sizeof (message), "  cube size: ");
-	CFixVector center1,center2;
+	CDoubleVector center1,center2;
    double length;
    center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 0);
 	center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 2);
-   length = theMine->CalcLength(&center1,&center2) / F1_0;
+   length = Distance (&center1,&center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
    center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 1);
    center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 3);
-	length = theMine->CalcLength(&center1,&center2) / F1_0;
+   length = Distance (&center1,&center2);
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
    center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 4);
    center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 5);
-   length = theMine->CalcLength(&center1,&center2) / F1_0;
+   length = Distance (&center1,&center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  cube:");

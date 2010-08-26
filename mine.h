@@ -381,7 +381,7 @@ public:
 
 	CDoubleVector CalcSideNormal (INT16 nSegment = -1, INT16 nSide = -1);
 	CDoubleVector CalcSideCenter (INT16 nSegment = -1, INT16 nSide = -1);
-	double CalcLength (CFixVector* center1, CFixVector* center2);
+	//double CalcLength (CFixVector* center1, CFixVector* center2);
 
 	INT32 IsLight(INT32 nBaseTex);
 	INT32 IsWall (INT16 nSegment = -1, INT16 nSide = -1);
@@ -405,8 +405,8 @@ public:
 	void Illuminate (INT16 nSrcSide, INT16 nSrcSeg, UINT32 brightness, 
 						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
 	void IlluminateSide (CSegment* segP, INT16 nSide, UINT32 brightness, CColor* lightColorP, double* effect, double fLightScale);
-	bool CalcSideLights (INT32 nSegment, INT32 nSide, CFixVector& source_center, 
-								CFixVector* source_corner, CFixVector& A, double *effect,
+	bool CalcSideLights (INT32 nSegment, INT32 nSide, CVertex& source_center, 
+								CVertex* sourceCorner, CVertex& A, double *effect,
 								double fLightScale, bool bIgnoreAngle);
 
 	void FixChildren();

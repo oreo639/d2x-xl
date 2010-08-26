@@ -673,15 +673,11 @@ void CMine::Illuminate (INT16 nSourceSeg, INT16 nSourceSide, UINT32 brightness, 
 	CSegment*	segP = Segments (0);
 	double		effect [4];
 	// find orthogonal angle of source segment
-	CFixVector	A;
-
-//fLightScale /= 100.0;
-A = -CalcSideNormal (nSourceSeg, nSourceSide);
-// remember to flip the sign since we want it to point inward
-// calculate the center of the source segment
-CFixVector sourceCenter;
-sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
-// mark those Segments () within N children of current cube
+	CVertex A = -CalcSideNormal (nSourceSeg, nSourceSide);
+	// remember to flip the sign since we want it to point inward
+	// calculate the center of the source segment
+	CVertex sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
+	// mark those Segments () within N children of current cube
 
 // set child numbers
 //Segments ()[nSourceSeg].nIndex = m_lightRenderDepth;
@@ -729,7 +725,7 @@ INT32 nSegCount = SegCount ();
 			continue;
 #endif
 		// setup source corner vertex for length calculation later
-		CFixVector sourceCorners [4];
+		CVertex sourceCorners [4];
 		UINT8* sideVerts = sideVertTable [nSourceSide];
 		for (INT32 j = 0; j < 4; j++)
 			sourceCorners [j] = *Vertices (segP->m_info.verts [sideVerts [j]]);
@@ -965,7 +961,7 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 				}
 
-			CFixVector	A, sourceCenter;
+			CVertex	A, sourceCenter;
 			INT32		lightDeltaIndexCount;
 
 			// get index number and increment total number of lightDeltaIndices
@@ -987,7 +983,7 @@ fLightScale = 1.0; ///= 100.0;
 			dliP->m_info.index = (INT16)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
-			A = -CalcSideNormal(nSourceSeg,nSourceSide);
+			A = -CalcSideNormal (nSourceSeg,nSourceSide);
 
 			// calculate the center of the source segment
 			sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
@@ -1011,7 +1007,7 @@ fLightScale = 1.0; ///= 100.0;
 	#endif
 
 			// setup source corner vertex for length calculation later
-			CFixVector sourceCorners [4];
+			CVertex sourceCorners [4];
 			for (INT32 j = 0; j < 4; j++) {
 				UINT8 nVertex = sideVertTable [nSourceSide][j];
 				INT32 h = srcSegP->m_info.verts [nVertex];
@@ -1277,14 +1273,14 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 //--------------------------------------------------------------------------
 
 bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, 
-									 CFixVector& sourceCenter, CFixVector* sourceCorners, CFixVector& vertex, 
+									 CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
 									 double* effect, double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = Segments (nSegment);
 // calculate vector between center of source segment and center of child
-CDoubleVector center = CalcSideCenter (nSegment, nSide);
-CDoubleVector A = vertex;
-CDoubleVector B = center - sourceCenter;
+CVertex center = CalcSideCenter (nSegment, nSide);
+CVertex A = vertex;
+CVertex B = center - sourceCenter;
 
 // calculate angle between vectors (use dot product equation)
 if (!bIgnoreAngle) {
@@ -1305,13 +1301,10 @@ if (!bIgnoreAngle) {
 		return false;
 	}
 for (INT32 j = 0; j < 4; j++) {
-	CFixVector corner;
-	INT32 nVertex = sideVertTable[nSide][j];
-	INT32 h = segP->m_info.verts[nVertex];
-	corner = *Vertices (h);
+	CVertex* corner = Vertices (segP->m_info.verts [sideVertTable [nSide][j]]);
 	double length = 20.0 * m_lightRenderDepth;
 	for (INT32 i = 0; i < 4; i++)
-		length = min (length, CalcLength (sourceCorners  + i, &corner));
+		length = min (length, Distance (sourceCorners + i, corner));
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
 	effect [j] = fLightScale;
