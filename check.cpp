@@ -373,7 +373,7 @@ return true;
 
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckSegTypes () 
+bool CDiagTool::CheckSegTypes (void) 
 {
 if (!theMine) 
 	return false;
@@ -421,9 +421,9 @@ bool CDiagTool::CheckSegments (void)
 if (!theMine) 
 	return false;
 
-  INT16 nSegment,nSide,child,sidenum2,pointnum;
-  INT16 vert0,vert1,vert2,vert3;
-  INT16 i,j;
+  INT16 nSegment, nSide, child, sidenum2, pointnum;
+  INT16 vert0, vert1, vert2, vert3;
+  INT16 i, j;
   double angle,flatness;
   INT16 match[4];
   CSegment *segP = theMine->Segments (0);
@@ -1707,7 +1707,7 @@ return false;
 // make sure the mine has an exit
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckVertices () 
+bool CDiagTool::CheckVertices (void) 
 {
 if (!theMine) 
 	return false;
@@ -1720,20 +1720,18 @@ if (!theMine)
   INT16 sub_warnings = m_nErrors [1];
   LBBugs ()->AddString ("[Misc]");
 
-  UINT8& vStat = theMine->VertStatus ();
-
-for (nVertex = theMine->VertCount (); nVertex; nVertex--, vStat++)
-	vStat &= ~NEW_MASK;
+for (nVertex = theMine->VertCount (); nVertex; nVertex--)
+	theMine->VertStatus (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
 CSegment *segP = theMine->Segments (0);
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		theMine->VertStatus (segP->m_info.verts [point]) |= NEW_MASK;
-nVertex = theMine->VertCount () - 1;
-for (vStat = theMine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
+
+for (nVertex = theMine->VertCount (); nVertex > 0; ) {
 	theApp.MainFrame ()->Progress ().StepIt ();
-	if (!(vStat & NEW_MASK)) {
+	if (!(theMine->VertStatus (--nVertex) & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
 			if (nVertex < --theMine->VertCount ())
@@ -1746,9 +1744,8 @@ for (vStat = theMine->VertStatus (nVertex); nVertex >= 0; nVertex--, vStat--) {
 			}
 		}
 	}
-vStat = theMine->VertStatus ();
-for (nVertex = theMine->VertCount (); nVertex; nVertex--, vStat++)
-	vStat &= ~NEW_MASK;
+for (nVertex = theMine->VertCount (); nVertex; )
+	theMine->VertStatus (--nVertex) &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)
 		sprintf_s (message, sizeof (message),"FIXED: %d unused vertices found", nUnused);
