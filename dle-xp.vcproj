@@ -1779,6 +1779,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\mineview.select.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\mineview.transform.cpp"
 					>
 				</File>
