@@ -76,7 +76,7 @@ extern INT16 num_static_lights;
 extern char string [256];
 extern INT16 nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
 extern char spline_error_message [];
-extern CVertex spline_points [MAX_SPLINES];
+extern CVertex splinePoints [MAX_SPLINES];
 extern CVertex points [4];
 extern INT16 n_splines;
 //extern INT16 spline_active;
