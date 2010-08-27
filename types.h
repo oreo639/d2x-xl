@@ -604,7 +604,7 @@ typedef struct {
   byte dflags;  // bits 0-5 anim frame num, bit 6 abm flag
   byte xsize;   // low 8 bits here, 4 more bits in pad
   byte ysize;   // low 8 bits here, 4 more bits in pad
-  byte wh_extra;     // bits 0-3 xsize, bits 4-7 ysize
+  byte whExtra;     // bits 0-3 xsize, bits 4-7 ysize
   byte flags;   // see BM_FLAG_XXX in define.h
   byte avg_color;   // average color
   uint offset;

@@ -55,9 +55,7 @@ public:
 	CTexture (byte *dataP = NULL) {
 		Clear ();
 		m_info.bmDataP = dataP;
-		m_info.bExtData = dataP != NULL;
-		if (dataP != NULL)
-			m_info.bExtData = true;
+		m_info.bExtData = (dataP != NULL);
 		}
 
 	inline void Release (void) {

@@ -319,7 +319,7 @@ else {
 return 0;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // ReadTextureFromFile ()
 //
 // ACTION - defines a bitmap from a descent PIG fTextures.
@@ -414,8 +414,8 @@ if (theApp.IsD2File ()) {
 				(fix) (textureTable[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures, offset, SEEK_SET);
 	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
-	w = d2_ptexture.xsize + ((d2_ptexture.wh_extra & 0xF) << 8);
-	h = d2_ptexture.ysize + ((d2_ptexture.wh_extra & 0xF0) << 4);
+	w = d2_ptexture.xsize + ((d2_ptexture.whExtra & 0xF) << 8);
+	h = d2_ptexture.ysize + ((d2_ptexture.whExtra & 0xF0) << 4);
 	}
 else {
 	offset = sizeof (PIG_HEADER) + dataOffset + (fix) (textureTable [index] - 1) * sizeof (ptexture);
@@ -430,7 +430,7 @@ else {
 	d2_ptexture.flags = ptexture.flags;
 	d2_ptexture.avg_color = ptexture.avg_color;
 	d2_ptexture.offset = ptexture.offset;
-	d2_ptexture.wh_extra = (ptexture.dflags == 128) ? 1 : 0;
+	d2_ptexture.whExtra = (ptexture.dflags == 128) ? 1 : 0;
 	w = h = 64;
 	}
 s = w * h;
@@ -674,11 +674,11 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 #endif
 	if (fread (&d2texture, sizeof (D2_PIG_TEXTURE), 1, fTextures) != 1)
 		break;
-	tWidth = d2texture.xsize + ((d2texture.wh_extra & 0xF) << 8);
+	tWidth = d2texture.xsize + ((d2texture.whExtra & 0xF) << 8);
 	if ((d2texture.flags & 0x80) && (tWidth > 256))
 		tHeight = (int) d2texture.ysize * tWidth;
 	else
-		tHeight = d2texture.ysize + ((d2texture.wh_extra & 0xF0) << 4);
+		tHeight = d2texture.ysize + ((d2texture.whExtra & 0xF0) << 4);
 //	if (tWidth != 512 || tHeight != 512)
 //		continue;
 	tSize = tWidth * tHeight;
@@ -783,12 +783,12 @@ d2texture.dflags = 0;
 d2texture.flags = pTexture->m_info.nFormat ? 0x80 : 0;
 d2texture.xsize = pTexture->m_info.width % 256;
 if ((d2texture.flags & 0x80) && (pTexture->m_info.width > 256)) {
-	d2texture.wh_extra = (pTexture->m_info.width >> 8);
+	d2texture.whExtra = (pTexture->m_info.width >> 8);
 	d2texture.ysize = pTexture->m_info.height / pTexture->m_info.width;
 	}
 else {
 	d2texture.ysize = pTexture->m_info.height % 256;
-	d2texture.wh_extra = (pTexture->m_info.width >> 8) | ((pTexture->m_info.height >> 4) & 0xF0);
+	d2texture.whExtra = (pTexture->m_info.width >> 8) | ((pTexture->m_info.height >> 4) & 0xF0);
 	}
 d2texture.avg_color = 0;
 d2texture.offset = nOffset;
