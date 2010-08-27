@@ -310,6 +310,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Data\rc_data1.bin" />
+    <None Include="Resources\Levels\newlevel.mn2" />
+    <None Include="Resources\Levels\newlevel.msn" />
     <None Include="Resources\Palettes\alien1.256" />
     <None Include="Resources\Palettes\alien1.pal" />
     <None Include="Resources\Palettes\alien2.256" />
@@ -329,21 +332,10 @@
     <None Include="Resources\Palettes\groupa.pal" />
     <None Include="Resources\Palettes\ice.256" />
     <None Include="Resources\Palettes\ice.pal" />
-    <None Include="Resources\Data\level1.rl2" />
-    <None Include="Resources\Data\level1b.rl2" />
-    <None Include="Resources\Data\level1c.rl2" />
-    <None Include="Resources\Data\level1d.rl2" />
-    <None Include="Resources\Data\level1e.rl2" />
-    <None Include="Resources\Data\level1f.rl2" />
     <None Include="Resources\Data\light.dat" />
     <None Include="Resources\Data\light2.dat" />
-    <None Include="Resources\Data\new1.rl2" />
-    <None Include="Resources\Data\new2.rl2" />
-    <None Include="Resources\Data\new3.rl2" />
-    <None Include="Resources\Data\new_save.mn2" />
-    <None Include="Resources\Data\new_save.msn" />
-    <None Include="Resources\Data\new_save.rdl" />
-    <None Include="Resources\Data\new_save.rl2" />
+    <None Include="Resources\Levels\newlevel.rdl" />
+    <None Include="Resources\Levels\newlevel.rl2" />
     <None Include="Resources\Palettes\palette.256" />
     <None Include="Resources\Palettes\palette.pal" />
     <None Include="Resources\Data\pofs1.dat" />
