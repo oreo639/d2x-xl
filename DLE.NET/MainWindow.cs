@@ -30,7 +30,9 @@ namespace DLE.NET
         const float toolPaneWidth = 345.0f;
         const float texturePaneHeight = 200.0f;
 
-        public MainWindow()
+        //------------------------------------------------------------------------------
+
+        public MainWindow ()
         {
             InitializeComponent();
             m_renderWindow = new RenderWindow();
@@ -73,7 +75,9 @@ namespace DLE.NET
             m_deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
         }
 
-        private void Setup()
+        //------------------------------------------------------------------------------
+
+        private void Setup ()
         {
             m_renderWindow.Show(dockPanel, DockState.Document);
             m_segmentTool.Show(dockPanel, DockState.DockLeft);
@@ -93,7 +97,9 @@ namespace DLE.NET
             //m_textureList.Show(dockPanel, DockState.DockBottom);
         }
 
-        private IDockContent FindDocument(string text)
+        //------------------------------------------------------------------------------
+
+        private IDockContent FindDocument (string text)
         {
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -113,7 +119,9 @@ namespace DLE.NET
             }
         }
 
-        private IDockContent GetContentFromPersistString(string persistString)
+        //------------------------------------------------------------------------------
+
+        private IDockContent GetContentFromPersistString (string persistString)
         {
             if (persistString == typeof(SegmentTool).ToString())
                 return m_segmentTool;
@@ -127,7 +135,9 @@ namespace DLE.NET
                 return null;
         }
 
-        private void MainWindow_Load(object sender, EventArgs e)
+        //------------------------------------------------------------------------------
+
+        private void MainWindow_Load (object sender, EventArgs e)
         {
             string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
 
@@ -140,7 +150,9 @@ namespace DLE.NET
             }
          }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        //------------------------------------------------------------------------------
+
+        private void MainWindow_Closing (object sender, System.ComponentModel.CancelEventArgs e)
         {
             string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
             if (m_bSaveLayout)
@@ -149,7 +161,9 @@ namespace DLE.NET
                 File.Delete(configFile);
         }
 
-        private void tbLightTool_Click(object sender, EventArgs e)
+        //------------------------------------------------------------------------------
+
+        private void tbLightTool_Click (object sender, EventArgs e)
         {
             m_lightTool.Show();
         }

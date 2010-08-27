@@ -28,13 +28,19 @@ namespace DLE.NET
         sbyte		group;
         Side[]      sides = new Side [MAX_SIDES_PER_SEGMENT];
 
+        //------------------------------------------------------------------------------
+
         public override void Read (Stream fp, int version = 0, bool bFlag = false)
         {
         }
-        
+
+        //------------------------------------------------------------------------------
+
         public override void Write (Stream fp, int version = 0, bool bFlag = false)
         {
         }
+
+        //------------------------------------------------------------------------------
 
         public override void Clear ()
         {
@@ -55,10 +61,14 @@ namespace DLE.NET
                 sides [i].Clear ();
         }
 
+        //------------------------------------------------------------------------------
+
         public short Child (short nSide)
         {
             return sides [nSide].nChild;
         }
+
+        //------------------------------------------------------------------------------
 
         public short SetChild (short nSide, short nSegment)
         {

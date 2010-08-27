@@ -5,8 +5,10 @@ using System.Windows.Forms;
 
 namespace DLE.NET
 {
-    static class Program
+    public static class DLE
     {
+        public static GameMine theMine = new GameMine();
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

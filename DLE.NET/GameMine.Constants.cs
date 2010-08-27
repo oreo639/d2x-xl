@@ -40,18 +40,18 @@
 
         public const int MAX_SEGMENTS1 = 800;  // descent 1 max # of cubes
         public const int MAX_SEGMENTS2 = 900;  // descent 2 max # of cubes
-        public const int MAX_SEGMENTS3 = 8000; // D2X-XL max # of cubes
+        public const int SEGMENT_LIMIT = 8000; // D2X-XL max # of cubes
 
         public const int MAX_VERTICES1 = 2808; // descent 1 max # of vertices
         public const int MAX_VERTICES2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
-        public const int MAX_VERTICES3 = (MAX_SEGMENTS3 * 4 + 8); // descent 2 max # of vertices
+        public const int MAX_VERTICES3 = (SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
 
         public const int MAX_OBJECTS1 = 350;
         public const int MAX_OBJECTS2 = 2000;
 
         public const int MAX_WALLS1 = 175; // Maximum number of walls for Descent 1
         public const int MAX_WALLS2 = 255; // Maximum number of walls for Descent 2
-        public const int MAX_WALLS3 = 2047; // Maximum number of walls for Descent 2
+        public const int WALL_LIMIT = 2047; // Maximum number of walls for Descent 2
 
         public const int MAX_TRIGGERS1 = 100;
         public const int MAX_TRIGGERS2 = 254;
@@ -143,17 +143,16 @@
         public const int MAX_BRIGHTNESS = 0x20000;
 
         // pseudo constants
-        public int MAX_SEGMENTS () { return IsD1File () ? MAX_SEGMENTS1 : IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3; }
+        public int MAX_SEGMENTS () { return IsD1File () ? MAX_SEGMENTS1 : IsStdLevel () ? MAX_SEGMENTS2 : SEGMENT_LIMIT; }
         public int MAX_VERTICES () { return IsD1File () ? MAX_VERTICES1 : IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3; }
         public int MAX_OBJECTS () { return IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2; }
-        public int MAX_WALLS () { return IsD1File () ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : MAX_WALLS3; }
+        public int MAX_WALLS () { return IsD1File () ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : WALL_LIMIT; }
         public int NO_WALL () { return MAX_WALLS (); }
         public int MAX_TRIGGERS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2; }
         public int MAX_PLAYERS () { return IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X; }
         public int MAX_NUM_MATCENS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2; }
         public int MAX_NUM_FUELCENS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2; }
         public int MAX_NUM_REPAIRCENS () { return (IsD1File () || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2; }
-        public int MAX_TEXTURES () { return IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES; }
         public int PLAYER_CLIP_NUMBER () { return IsD1File () ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER; }
         public int COOP_CLIP_NUMBER () { return IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER; }
         public int REACTOR_CLIP_NUMBER () { return IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER; }
