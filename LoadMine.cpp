@@ -31,13 +31,13 @@
 //
 //==========================================================================
 
-INT16 CMine::Load (const char *filename_passed, bool bLoadFromHog)
+short CMine::Load (const char *filename_passed, bool bLoadFromHog)
 {
 if (!theMine)
 	return 0;
 
 char filename [256];
-INT16 checkErr;
+short checkErr;
 bool bNewMine = false;
 
 // first disable curve generator
@@ -95,12 +95,12 @@ return 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadPalette (void)
+short CMine::LoadPalette (void)
 {
 HINSTANCE hInst = AfxGetInstanceHandle();
 // set palette
 // make global palette
-UINT8 *palette = PalettePtr ();
+byte *palette = PalettePtr ();
 ASSERT(palette);
 if (!palette)
 	return 1;
@@ -112,7 +112,7 @@ if (!m_dlcLogPalette) {
 	}
 m_dlcLogPalette->palVersion = 0x300;
 m_dlcLogPalette->palNumEntries = 256;
-INT32 i;
+int i;
 for (i = 0; i < 256; ++i) {
 	m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
 	m_dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
@@ -130,9 +130,9 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadMineSigAndType (FILE* fp)
+short CMine::LoadMineSigAndType (FILE* fp)
 {
-INT32 sig = read_INT32 (fp);
+int sig = ReadInt32 (fp);
 if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	ErrorMsg ("Signature value incorrect.");
 	fclose (fp);
@@ -140,7 +140,7 @@ if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	}
 
 // read version
-SetLevelVersion (read_INT32 (fp));
+SetLevelVersion (ReadInt32 (fp));
 if (LevelVersion () == 1) {
 	SetFileType (RDL_FILE);
 	texture_resource = D1_TEXTURE_STRING_TABLE;
@@ -161,17 +161,17 @@ return 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
+short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 {
 	HINSTANCE hInst = AfxGetInstanceHandle();
-	UINT8* palette = 0;
+	byte* palette = 0;
 
 	FILE* fp = 0;
-	INT32 sig = 0;
-	INT32 minedataOffset = 0;
-	INT32 gamedataOffset = 0;
-	INT32 mineErr, gameErr = 0;
-	INT32	return_code = 0;
+	int sig = 0;
+	int minedataOffset = 0;
+	int gamedataOffset = 0;
+	int mineErr, gameErr = 0;
+	int	return_code = 0;
 	char	palette_name [256];
 	char*	ps;
 
@@ -188,24 +188,24 @@ if (LoadMineSigAndType (fp))
 	return -1;
 ClearMineData ();
 // read mine data offset
-minedataOffset = read_INT32 (fp);
+minedataOffset = ReadInt32 (fp);
 // read game data offset
-gamedataOffset = read_INT32 (fp);
+gamedataOffset = ReadInt32 (fp);
 
 // don't bother reading  hostagetextOffset since
 // for Descent 1 files since we dont use it anyway
-// hostagetextOffset = read_INT32(fp);
+// hostagetextOffset = ReadInt32(fp);
 
 // read palette name *.256
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
-		read_INT16 (fp);
-		read_INT16 (fp);
-		read_INT16 (fp);
-		read_INT8 (fp);
+		ReadInt16 (fp);
+		ReadInt16 (fp);
+		ReadInt16 (fp);
+		ReadInt8 (fp);
 		}
 	// read palette file name
-	INT32 i;
+	int i;
 	for (i = 0; i < 15; i++) {
 		palette_name [i] = fgetc(fp);
 		if (palette_name [i]== 0x0a) {
@@ -242,12 +242,12 @@ if (return_code = LoadPalette ())
 
 // read descent 2 reactor information
 if (IsD2File ()) {
-	ReactorTime () = read_INT32 (fp); // base control center explosion time
-	ReactorStrength () = read_INT32 (fp); // reactor strength
+	ReactorTime () = ReadInt32 (fp); // base control center explosion time
+	ReactorStrength () = ReadInt32 (fp); // reactor strength
 	if (LevelVersion () > 6) {
-		FlickerLightCount () = INT16 (read_INT32 (fp));
+		FlickerLightCount () = short (ReadInt32 (fp));
 		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_FLICKERING_LIGHTS)) {
-			for (INT32 i = 0; i < FlickerLightCount (); i++)
+			for (int i = 0; i < FlickerLightCount (); i++)
 				FlickeringLights (i)->Read (fp);
 			} 
 		else {
@@ -263,7 +263,7 @@ if (IsD2File ()) {
 	//    DEBUGMSG(message);
 
 	// read secret cube number
-	SecretCubeNum () = read_INT32(fp);
+	SecretCubeNum () = ReadInt32(fp);
 	// read secret cube orientation?
 	SecretOrient ().Read (fp);
 	}
@@ -362,7 +362,7 @@ return return_code;
 
 // ------------------------------------------------------------------------
 
-UINT8 *CMine::LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, UINT32& nResSize)
+byte *CMine::LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize)
 {
 HINSTANCE hInst = AfxGetInstanceHandle ();
 HRSRC hRes = FindResource (hInst, pszRes, "RC_DATA");
@@ -371,7 +371,7 @@ if (!hRes)
 if (!(hGlobal = LoadResource (hInst, hRes)))
 	return NULL;
 nResSize = SizeofResource (hInst, hRes);
-return (UINT8 *) LockResource (hGlobal);
+return (byte *) LockResource (hGlobal);
 }
 
 // ------------------------------------------------------------------------
@@ -379,8 +379,8 @@ return (UINT8 *) LockResource (hGlobal);
 BOOL CMine::HasCustomLightMap (void)
 {
 HGLOBAL hGlobal = 0;
-UINT32 nSize = 0;
-UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
+uint nSize = 0;
+byte *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
 BOOL bCustom = memcmp (lightMap, dataP, sizeof (lightMap)) != 0;
@@ -393,8 +393,8 @@ return bCustom;
 BOOL CMine::HasCustomLightColors (void)
 {
 HGLOBAL hGlobal = 0;
-UINT32 nSize = 0;
-UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
+uint nSize = 0;
+byte *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
 BOOL bCustom = memcmp (DATA (MineData ().texColors), dataP, sizeof (MineData ().texColors)) != 0;
@@ -404,14 +404,14 @@ return bCustom;
 
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadDefaultLightAndColor (void)
+short CMine::LoadDefaultLightAndColor (void)
 {
 HGLOBAL hGlobal = 0;
-UINT32 nSize = 0;
-UINT8 *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
+uint nSize = 0;
+byte *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
 if (!dataP)
 	return 0;
-INT32 i = nSize / (3 * sizeof (INT32) + sizeof (UINT8));
+int i = nSize / (3 * sizeof (int) + sizeof (byte));
 #if USE_DYN_ARRAYS
 if (i > (int) MineData ().texColors.Length ())
 	i = (int) MineData ().texColors.Length ();
@@ -421,12 +421,12 @@ if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
 #endif
 for (CColor *colorP = DATA (MineData ().texColors); i; i--, colorP++) {
 	colorP->m_info.index = *dataP++;
-	colorP->m_info.color.r = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (INT32);
-	colorP->m_info.color.g = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (INT32);
-	colorP->m_info.color.b = (double) *((INT32 *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (INT32);
+	colorP->m_info.color.r = (double) *((int *) dataP) / (double) 0x7fffffff;
+	dataP += sizeof (int);
+	colorP->m_info.color.g = (double) *((int *) dataP) / (double) 0x7fffffff;
+	dataP += sizeof (int);
+	colorP->m_info.color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
+	dataP += sizeof (int);
 	}
 FreeResource (hGlobal);
 dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
@@ -445,11 +445,11 @@ return 1;
 //
 // Returns - 0 if no error is detected
 // ------------------------------------------------------------------------
-INT16 CMine::FixIndexValues(void)
+short CMine::FixIndexValues(void)
 {
-	INT16 	nSegment, nSide, nVertex;
-	UINT16	nWall;
-	INT16 	checkErr;
+	short 	nSegment, nSide, nVertex;
+	ushort	nWall;
+	short 	checkErr;
 
 	checkErr = 0;
 	CSegment *segP = Segments (0);
@@ -462,7 +462,7 @@ INT16 CMine::FixIndexValues(void)
 				checkErr |= (1 << 0);
 			}
 			// check children
-			if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (INT16)SegCount ())) {
+			if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (short)SegCount ())) {
 				segP->SetChild (nSide, -1);
 				checkErr |= (1 << 1);
 			}
@@ -497,17 +497,17 @@ INT16 CMine::FixIndexValues(void)
 // ACTION - Reads a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
+short CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
 {
-	INT32    i; 
-	UINT8    version;
-	UINT16   n_vertices;
-	UINT16   n_segments;
+	int    i; 
+	byte    version;
+	ushort   n_vertices;
+	ushort   n_segments;
 
 // read version (1 byte)
-version = UINT8 (read_INT8 (fp));
+version = byte (ReadInt8 (fp));
 // read number of vertices (2 bytes)
-n_vertices = UINT16 (read_INT16 (fp));
+n_vertices = ushort (ReadInt16 (fp));
 if (n_vertices > MAX_VERTICES3) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
 	ErrorMsg (message);
@@ -518,7 +518,7 @@ if (((IsD1File ()) && (n_vertices > MAX_VERTICES1)) ||
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
-n_segments = UINT16 (read_INT16 (fp));
+n_segments = ushort (ReadInt16 (fp));
 if (n_segments > MAX_SEGMENTS3) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 	ErrorMsg (message);
@@ -575,7 +575,7 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-INT32 CMine::LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
+int CMine::LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
 {
 if ((info.offset < 0) || (info.count < 1))
 	return 0;
@@ -611,9 +611,9 @@ return info.count;
 //          materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
 
-INT16 CMine::LoadGameData (FILE *fp, bool bNewMine) 
+short CMine::LoadGameData (FILE *fp, bool bNewMine) 
 {
-	INT32 startOffset;
+	int startOffset;
 
 startOffset = ftell(fp);
 
@@ -653,7 +653,7 @@ if (fseek(fp, startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking to game info in mine.cpp");
 	return -1;
 	}
-if (fread(&GameInfo (), (INT16)gameFileInfo.size, 1, fp)!= 1) {
+if (fread(&GameInfo (), (short)gameFileInfo.size, 1, fp)!= 1) {
 	ErrorMsg ("Error reading game info from mine.cpp");
 	return -1;
 	}
@@ -677,10 +677,10 @@ else {  /*load mine filename */
 	if (0 > LoadGameItem (fp, GameInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
 		return -1;
 	if (GameInfo ().triggers.offset > -1) {
-		INT32 bObjTriggersOk = 1;
+		int bObjTriggersOk = 1;
 		if (GameInfo ().fileinfo.version >= 33) {
-			INT32 i = ftell (fp);
-			if (fread (&NumObjTriggers (), sizeof (INT32), 1, fp) != 1) {
+			int i = ftell (fp);
+			if (fread (&NumObjTriggers (), sizeof (int), 1, fp) != 1) {
 				ErrorMsg ("Error reading object triggers from mine.");
 				bObjTriggersOk = 0;
 				}
@@ -689,18 +689,18 @@ else {  /*load mine filename */
 					ObjTriggers (i)->Read (fp, GameInfo ().fileinfo.version, true);
 				if (GameInfo ().fileinfo.version >= 40) {
 					for (i = 0; i < NumObjTriggers (); i++)
-						ObjTriggers (i)->m_info.nObject = read_INT16 (fp);
+						ObjTriggers (i)->m_info.nObject = ReadInt16 (fp);
 					}
 				else {
 					for (i = 0; i < NumObjTriggers (); i++) {
-						read_INT16 (fp);
-						read_INT16 (fp);
-						ObjTriggers (i)->m_info.nObject = read_INT16 (fp);
+						ReadInt16 (fp);
+						ReadInt16 (fp);
+						ObjTriggers (i)->m_info.nObject = ReadInt16 (fp);
 						}
 					if (GameInfo ().fileinfo.version < 36)
-						fseek (fp, 700 * sizeof (INT16), SEEK_CUR);
+						fseek (fp, 700 * sizeof (short), SEEK_CUR);
 					else
-						fseek (fp, 2 * sizeof (INT16) * read_INT16 (fp), SEEK_CUR);
+						fseek (fp, 2 * sizeof (short) * ReadInt16 (fp), SEEK_CUR);
 					}
 				}
 			}

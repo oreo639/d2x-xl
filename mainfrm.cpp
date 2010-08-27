@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 double gRotateRate  = 3.1415927f / 32.0f;
-INT32 gMoveRate   = 10;
+int gMoveRate   = 10;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -231,7 +231,7 @@ theApp.MainFrame ()->SendMessage (WM_COMMAND, nMsg, NULL);
 void CExtToolBar::OnLButtonDown (UINT nFlags, CPoint pos)
 {
    CRect rc;
-   INT32   h, i;
+   int   h, i;
 
 GetWindowRect (rc);
 for (i = 0, h = GetToolBarCtrl ().GetButtonCount (); i < h; i++) {
@@ -290,10 +290,10 @@ CToolBar::OnMouseMove (nFlags, pos);
 
 								/*---------------------------*/
 
-INT32 CExtToolBar::Width ()
+int CExtToolBar::Width ()
 {
    CRect rc;
-   INT32   h, i, dx;
+   int   h, i, dx;
 
 GetWindowRect (rc);
 dx = 0;
@@ -402,7 +402,7 @@ CFrameWnd::OnClose ();
 }
 
 
-void CMainFrame::OnSize (UINT nType, INT32 cx, INT32 cy)
+void CMainFrame::OnSize (UINT nType, int cx, int cy)
 {
 CFrameWnd::OnSize (nType, cx, cy);
 if (ToolView ())
@@ -411,7 +411,7 @@ RecalcLayout (m_toolMode, m_textureMode);
 }
 
 
-INT32 CMainFrame::CreateToolBars (bool bToolBar, bool bEditBar)
+int CMainFrame::CreateToolBars (bool bToolBar, bool bEditBar)
 {
 EnableDocking (DOCKING_STYLE);
 if (bToolBar && !IsWindow (m_toolBar.m_hWnd)) {
@@ -452,10 +452,10 @@ if (bEditBar) {
 #endif
 }
 
-INT32 CMainFrame::CreateStatusBar ()
+int CMainFrame::CreateStatusBar ()
 {
 	UINT nId, nStyle;
-	INT32 cxWidth;
+	int cxWidth;
 
 if (!m_statusBar.Create (this) || 
 	 !m_statusBar.SetIndicators(indicators, sizeof (indicators)/sizeof (UINT))) {
@@ -476,7 +476,7 @@ return 0;
 }
 
 
-INT32 CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
 	return -1;
@@ -917,17 +917,17 @@ void CMainFrame::OnSplitCurrentSide ()
 theMine->SplitSegments (1);
 }
 
-void CMainFrame::UpdateInsModeButtons (INT16 mode)
+void CMainFrame::UpdateInsModeButtons (short mode)
 {
 	static char *szInsMode [] = {" insert: normal", " insert: extend", " insert: mirror"};
 
-INT32 i;
+int i;
 for (i = 0; i <= ID_INSMODE_MIRROR - ID_INSMODE_NORMAL; i++)
 	m_toolBar.GetToolBarCtrl ().CheckButton (ID_INSMODE_NORMAL + i, i == mode);
 InsModeMsg (szInsMode [mode]);
 }
 
-void CMainFrame::SetInsertMode (INT16 mode)
+void CMainFrame::SetInsertMode (short mode)
 {
 add_segment_mode = mode;
 UpdateInsModeButtons (mode);
@@ -1046,7 +1046,7 @@ void CMainFrame::UpdateSelectButtons (eSelectModes mode)
 {
 	static char *szSelMode [] = {" select: pos", " select: line", " select: side", " select: cube", " select: object", " select: block"};
 
-INT32 i;
+int i;
 for (i = 0; i <= ID_SEL_BLOCKMODE - ID_SEL_POINTMODE; i++)
 	m_toolBar.GetToolBarCtrl ().CheckButton (ID_SEL_POINTMODE + i, i == mode);
 SelModeMsg (szSelMode [mode]);
@@ -1630,7 +1630,7 @@ else {
 
                         /*--------------------------*/
 
-void CMainFrame::RecalcLayout (INT32 nToolMode, INT32 nTextureMode)
+void CMainFrame::RecalcLayout (int nToolMode, int nTextureMode)
 {
 	CRect	rc, rc0, rc1;
 
@@ -1662,7 +1662,7 @@ else {
 	if (nToolMode)
 		m_toolMode = nToolMode;
 	if (nTextureMode) {
-			INT32	nWidth = (nTextureMode == 1) ? (m_texPaneWidth < 0) ? CX_TEXTURES : m_texPaneWidth : 0;
+			int	nWidth = (nTextureMode == 1) ? (m_texPaneWidth < 0) ? CX_TEXTURES : m_texPaneWidth : 0;
 
 		if (nTextureMode == 2) {	//hide
 			TexturePane ()->GetWindowRect (rc);
@@ -1680,7 +1680,7 @@ CFrameWnd::RecalcLayout ();
 
                         /*--------------------------*/
 
-void CDlcSplitterWnd::RecalcLayout (INT32 nToolMode, INT32 nTextureMode)
+void CDlcSplitterWnd::RecalcLayout (int nToolMode, int nTextureMode)
 {
 if (theApp.MainFrame () && theApp.ToolView ()) {
 	CRect	rc, rc0, rc1;
@@ -1689,7 +1689,7 @@ if (theApp.MainFrame () && theApp.ToolView ()) {
 	GetPane (1,0)->GetWindowRect (rc1);
 	if (nLayout) {
 		if (nTextureMode) {
-				INT32	nHeight = (nTextureMode == 1) ? (m_texPaneHeight < 0) ? CY_TEXTURES : m_texPaneHeight : 0;
+				int	nHeight = (nTextureMode == 1) ? (m_texPaneHeight < 0) ? CY_TEXTURES : m_texPaneHeight : 0;
 
 			if (nTextureMode == 2)	//hide
 				m_texPaneHeight = rc1.Height ();
@@ -1721,7 +1721,7 @@ m_statusBar.SetPaneText (2, pszMsg);
 if (!(theApp.ToolView () && theApp.ToolView ()->DiagTool ()))
 	return;
 if (!theApp.ToolView ()->DiagTool ()->Inited ()) {
-	INT32 i = theApp.ToolView ()->m_pTools->GetActiveIndex ();
+	int i = theApp.ToolView ()->m_pTools->GetActiveIndex ();
 	theApp.ToolView ()->EditDiag ();
 	theApp.ToolView ()->SetActive (i);
 	}
@@ -1732,7 +1732,7 @@ theApp.ToolView ()->DiagTool ()->AddMessage (pszMsg, 100);
 
                         /*--------------------------*/
 
-bool CMainFrame::InitProgress (INT32 nMax)
+bool CMainFrame::InitProgress (int nMax)
 {
 CRect rc;
 m_statusBar.GetItemRect (2, &rc);
@@ -1780,7 +1780,7 @@ BOOL CEditTool::OnInitDialog ()
 if (!CDialog::OnInitDialog ())
 	return FALSE;
 
-for (INT32 i = 0; i < 10; i++)
+for (int i = 0; i < 10; i++)
 	m_btns [i].AutoLoad (IDC_EDITGEO7 + i, this);
 return TRUE;
 }
@@ -1931,7 +1931,7 @@ if ((m_nEditFunc == UINT (-1)) || (i >= 25)) {
 BOOL CEditTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	LPNMHDR	nmHdr = (LPNMHDR) lParam;
-	INT32		nMsg = nmHdr->code;
+	int		nMsg = nmHdr->code;
 
 if ((wParam < IDC_EDITGEO7) || (wParam > IDC_EDITGEO0))
 	return CWnd::OnNotify (wParam, lParam, pResult);

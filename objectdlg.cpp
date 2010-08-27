@@ -17,15 +17,15 @@
 #include "textures.h"
 
 typedef struct tSliderData {
-	INT32	nId;
-	INT32	nMin;
-	INT32	nMax;
+	int	nId;
+	int	nMin;
+	int	nMax;
 	long	nFactor;
 	char	**pszLabels;
 } tSliderData;
 
 // list box tables
-INT32 model_num_list [N_D2_ROBOT_TYPES] = {
+int model_num_list [N_D2_ROBOT_TYPES] = {
   0x00, 0x02, 0x04, 0x06, 0x08, 0x0a, 0x0c, 0x0e, 0x0f, 0x11,
   0x13, 0x14, 0x15, 0x16, 0x17, 0x19, 0x1a, 0x1c, 0x1d, 0x1f,
   0x21, 0x23, 0x25, 0x27, 0x28, 0x29, 0x2b, 0x2c, 0x2d, 0x2e,
@@ -36,12 +36,12 @@ INT32 model_num_list [N_D2_ROBOT_TYPES] = {
 };
 
 #define MAX_EXP2_VCLIP_NUM_TABLE 4
-UINT8 exp2_vclip_num_table [MAX_EXP2_VCLIP_NUM_TABLE] = {
+byte exp2_vclip_num_table [MAX_EXP2_VCLIP_NUM_TABLE] = {
 	0x00, 0x03, 0x07, 0x3c
 	};
 
 #define MAX_WEAPON_TYPE_TABLE 30
-UINT8 weapon_type_table [MAX_WEAPON_TYPE_TABLE] = {
+byte weapon_type_table [MAX_WEAPON_TYPE_TABLE] = {
 	0x00, 0x05, 0x06, 0x0a, 0x0b, 0x0e, 0x11, 0x14, 0x15, 0x16,
 	0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x29, 0x2a, 0x2b, 0x2c, 0x2d,
 	0x2e, 0x30, 0x32, 0x34, 0x35, 0x37, 0x39, 0x3a, 0x3c, 0x3d
@@ -52,7 +52,7 @@ UINT8 weapon_type_table [MAX_WEAPON_TYPE_TABLE] = {
 20: 46, 48, 50, 52, 53, 55, 57, 58, 60, 61
 */
 #define MAX_BEHAVIOR_TABLE 8
-UINT8 behavior_table [MAX_BEHAVIOR_TABLE] = {
+byte behavior_table [MAX_BEHAVIOR_TABLE] = {
 	AIB_STILL, AIB_NORMAL, AIB_GET_BEHIND, AIB_RUN_FROM, AIB_FOLLOW_PATH, AIB_STATION, AIB_SNIPE
 	};
 
@@ -65,9 +65,9 @@ char *szSkills [5] = {
 };
 
 char *pszExplosionIds [] = {"small explosion", "medium explosion", "big explosion", "huge explosion", "red blast"};
-INT32 nExplosionIds [] = {7, 58, 0, 60, 106};
+int nExplosionIds [] = {7, 58, 0, 60, 106};
 
-INT32 powerupIdStrXlat [MAX_POWERUP_IDS2];
+int powerupIdStrXlat [MAX_POWERUP_IDS2];
 
                         /*--------------------------*/
 
@@ -97,8 +97,8 @@ static tSliderData sliderData [] = {
 
                         /*--------------------------*/
 
-FIX fix_exp(INT32 x);
-INT32 fix_log(FIX x);
+fix fix_exp(int x);
+int fix_log(fix x);
 
                         /*--------------------------*/
 
@@ -169,14 +169,14 @@ if (m_bInited) {
 
                         /*--------------------------*/
 
-void CObjectTool::UpdateSliders (INT32 i)
+void CObjectTool::UpdateSliders (int i)
 {
 CWnd *pWnd;
 char szPos [10];
 char *pszPos;
-INT32 min = (i < 0) ? 0: i;
-INT32 max = (i < 0) ? sizeof (sliderData) / sizeof (tSliderData): i + 1;
-INT32 nPos;
+int min = (i < 0) ? 0: i;
+int max = (i < 0) ? sizeof (sliderData) / sizeof (tSliderData): i + 1;
+int nPos;
 tSliderData *psd = sliderData + min;
 for (i = min; i < max; i++, psd++) {
 	pWnd = GetDlgItem (psd->nId);
@@ -186,7 +186,7 @@ for (i = min; i < max; i++, psd++) {
 	else {
 		if (psd->nFactor > 0)
 			nPos *= psd->nFactor;
-		sprintf_s (szPos, sizeof (szPos), "%d", (INT32) nPos);
+		sprintf_s (szPos, sizeof (szPos), "%d", (int) nPos);
 		pszPos = szPos;
 		}
 	AfxSetWindowText (GetDlgItem (psd->nId + 1)->GetSafeHwnd (), pszPos);
@@ -197,9 +197,9 @@ for (i = min; i < max; i++, psd++) {
 
 void CObjectTool::InitSliders ()
 {
-INT32 h = sizeof (sliderData) / sizeof (tSliderData);
+int h = sizeof (sliderData) / sizeof (tSliderData);
 tSliderData *psd = sliderData;
-INT32 i;
+int i;
 for (i = 0; i < h; i++, psd++) {
 	InitSlider (psd->nId, psd->nMin, psd->nMax);
 	((CSliderCtrl *) GetDlgItem (psd->nId))->SetPos (psd->nMin);
@@ -208,9 +208,9 @@ for (i = 0; i < h; i++, psd++) {
 
                         /*--------------------------*/
 
-void CObjectTool::CBInit (CComboBox *pcb, char** pszNames, UINT8 *pIndex, UINT8 *pItemData, INT32 nMax, INT32 nType, bool bAddNone)
+void CObjectTool::CBInit (CComboBox *pcb, char** pszNames, byte *pIndex, byte *pItemData, int nMax, int nType, bool bAddNone)
 {
-	INT32 h, j, l;
+	int h, j, l;
 	HINSTANCE hInst;
 	char szLabel [100];
 	char *pszLabel;
@@ -227,7 +227,7 @@ if (bAddNone) {
 	j = pcb->AddString ("(none)");
 	pcb->SetItemData (j, -1);
 	}
-INT32 i;
+int i;
 for (i = 0; i < nMax; i++) {
 	switch (nType) {
 		case 0:
@@ -238,8 +238,8 @@ for (i = 0; i < nMax; i++) {
 			break;
 		case 1:
 			sprintf_s (szLabel, sizeof (szLabel), "%d: ", i);
-			l = INT32 (strlen (szLabel));
-			LoadString (hInst, INT32 (pszNames) + i, szLabel + l, sizeof (szLabel) - l);
+			l = int (strlen (szLabel));
+			LoadString (hInst, int (pszNames) + i, szLabel + l, sizeof (szLabel) - l);
 			h = i;
 			break;
 		case 2:
@@ -247,7 +247,7 @@ for (i = 0; i < nMax; i++) {
 			h = pIndex ? pIndex [i]: i;
 			break;
 		case 3:
-			LoadString (hInst, INT32 (pszNames) + i, szLabel, sizeof (szLabel));
+			LoadString (hInst, int (pszNames) + i, szLabel, sizeof (szLabel));
 			nErr = GetLastError ();
 			h = i;
 			break;
@@ -264,11 +264,11 @@ pcb->SetCurSel (0);
 
                         /*--------------------------*/
 
-double CObjectTool::SliderFactor (INT32 nId)
+double CObjectTool::SliderFactor (int nId)
 {
-INT32 h = sizeof (sliderData) / sizeof (tSliderData);
+int h = sizeof (sliderData) / sizeof (tSliderData);
 tSliderData *psd = sliderData;
-INT32 i;
+int i;
 for (i = 0; i < h; i++, psd++)
 	if (psd->nId == nId)
 		return (double) ((psd->nFactor < 0) ? -(psd->nFactor): psd->nFactor);
@@ -293,8 +293,8 @@ CBInit (CBSpawnType (), (char**) object_names, contentsList, NULL, MAX_CONTAINS_
 CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
-INT16 nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
-INT16 i, j;
+short nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
+short i, j;
 char sz [100], **psz;
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
 CComboBox *pcb = CBObjTexture ();
@@ -302,7 +302,7 @@ pcb->AddString ("(none)");
 for (i = 0; i < nTextures; i++) {
 	LoadString (hInst, texture_resource + i, sz, sizeof (sz));
 	if (!strstr((char *) sz, "frame")) {
-		INT32 index = pcb->AddString (sz);
+		int index = pcb->AddString (sz);
 		pcb->SetItemData(index++, i);
 		}
 	}
@@ -314,8 +314,8 @@ for (i = j = 0; i < MAX_POWERUP_IDS; i++) {
 pcb = CBBossType ();
 pcb->ResetContent ();
 for (psz = pszBossTypes; *psz; psz++) {
-	INT32 index = pcb->AddString (*psz);
-	pcb->SetItemData(index++, (INT32) (psz - pszBossTypes));
+	int index = pcb->AddString (*psz);
+	pcb->SetItemData(index++, (int) (psz - pszBossTypes));
 	}
 CGameObject *objP = theMine->CurrObj ();
 //CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1);
@@ -333,9 +333,9 @@ CBContType ()->SetItemData (i, -1);
 char szSound [100];
 for (i = 0; i < 196; i++) {
 	LoadString (hInst, 6000 + i, szSound,sizeof (szSound));
-	// INT32 nSound = (szSound [0] - '0') * 100 + (szSound [1] - '0') * 10 + (szSound [2] - '0');
-	INT32 nSound = atoi (szSound);
-	INT32 index = CBSoundExpl ()->AddString (szSound + 3);
+	// int nSound = (szSound [0] - '0') * 100 + (szSound [1] - '0') * 10 + (szSound [2] - '0');
+	int nSound = atoi (szSound);
+	int index = CBSoundExpl ()->AddString (szSound + 3);
 	CBSoundExpl ()->SetItemData (index, nSound);
 	index = CBSoundSee ()->AddString (szSound + 3);
 	CBSoundSee ()->SetItemData (index, nSound);
@@ -392,10 +392,10 @@ CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDT_OBJ_CONT_PROB, bEnable);
 
                         /*--------------------------*/
 
-INT32 CObjectTool::GetSliderData (CScrollBar *pScrollBar)
+int CObjectTool::GetSliderData (CScrollBar *pScrollBar)
 {
-INT32 h = sizeof (sliderData) / sizeof (tSliderData);
-INT32 i;
+int h = sizeof (sliderData) / sizeof (tSliderData);
+int i;
 for (i = 0; i < h; i++)
 	if (pScrollBar == (CScrollBar *) GetDlgItem (sliderData [i].nId))
 		return i;
@@ -406,11 +406,11 @@ return -1;
 
 void CObjectTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-INT32 i = GetSliderData (pScrollBar);
+int i = GetSliderData (pScrollBar);
 if (i < 0)
 	return;
 tSliderData *psd = sliderData + i;
-INT32 nPos = pScrollBar->GetScrollPos ();
+int nPos = pScrollBar->GetScrollPos ();
 switch (scrollCode) {
 	case SB_LINEUP:
 		nPos++;
@@ -451,12 +451,12 @@ if (!(m_bInited && theMine))
 	return;
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
 
-INT16 type;
+short type;
 
 // update object list box
 CBObjNo ()->ResetContent ();
 CGameObject *objP = theMine->Objects (0);
-INT32 i;
+int i;
 for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT: /* an evil enemy */
@@ -589,7 +589,7 @@ SetObjectId (CBSpawnId (), objP->m_info.contents.type, objP->m_info.contents.id,
 m_nSpawnQty = objP->m_info.contents.count;
 //SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
-	INT32 index =
+	int index =
 		((objP->cType.aiInfo.behavior == AIB_RUN_FROM) && (objP->cType.aiInfo.flags [4] & 0x02)) ? // smart bomb flag
 		8 : objP->cType.aiInfo.behavior - 0x80;
 	CBObjAI ()->SetCurSel (index);
@@ -610,7 +610,7 @@ theApp.MineView ()->Refresh (FALSE);
 
 void CObjectTool::RefreshRobot ()
 {
-  INT32 i,j, nType;
+  int i,j, nType;
   CRobotInfo rInfo;
 
   // get selection
@@ -662,7 +662,7 @@ if ((nType = object_list [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
 	SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos (0);
 	return;
 	}
-i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
+i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 rInfo = *theMine->RobotInfo (i);
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
@@ -675,19 +675,19 @@ switch (rInfo.m_info.contents.type) {
 		break;
 	}
 // update list boxes
-SelectItemData (CBContId (), (INT32) rInfo.m_info.contents.id);
-SelectItemData (CBWeapon1 (), (INT32) (rInfo.m_info.weaponType [0] ? rInfo.m_info.weaponType [0] : -1));
-SelectItemData (CBWeapon2 (), (INT32) rInfo.m_info.weaponType [1]);
-SelectItemData (CBSoundExpl (), (INT32) rInfo.m_info.expl [1].nSound);
-SelectItemData (CBSoundSee (), (INT32) rInfo.m_info.sounds.see);
-SelectItemData (CBSoundAttack (), (INT32) rInfo.m_info.sounds.attack);
-SelectItemData (CBSoundClaw (), (INT32) rInfo.m_info.sounds.claw);
-SelectItemData (CBSoundDeath (), (INT32) rInfo.m_info.deathRollSound);
-SelectItemData (CBObjClassAI (), (INT32) rInfo.m_info.behavior);
-SelectItemData (CBExplType (), (INT32) rInfo.m_info.expl [1].nClip);
-SelectItemData (CBContType (), (INT32) rInfo.m_info.contents.type);
-INT8 bossFlag = (rInfo.m_info.bossFlag < 0) ? -rInfo.m_info.bossFlag : rInfo.m_info.bossFlag;
-SelectItemData (CBBossType (), (INT32) (bossFlag < 21) ? bossFlag : bossFlag - 18);
+SelectItemData (CBContId (), (int) rInfo.m_info.contents.id);
+SelectItemData (CBWeapon1 (), (int) (rInfo.m_info.weaponType [0] ? rInfo.m_info.weaponType [0] : -1));
+SelectItemData (CBWeapon2 (), (int) rInfo.m_info.weaponType [1]);
+SelectItemData (CBSoundExpl (), (int) rInfo.m_info.expl [1].nSound);
+SelectItemData (CBSoundSee (), (int) rInfo.m_info.sounds.see);
+SelectItemData (CBSoundAttack (), (int) rInfo.m_info.sounds.attack);
+SelectItemData (CBSoundClaw (), (int) rInfo.m_info.sounds.claw);
+SelectItemData (CBSoundDeath (), (int) rInfo.m_info.deathRollSound);
+SelectItemData (CBObjClassAI (), (int) rInfo.m_info.behavior);
+SelectItemData (CBExplType (), (int) rInfo.m_info.expl [1].nClip);
+SelectItemData (CBContType (), (int) rInfo.m_info.contents.type);
+char bossFlag = (rInfo.m_info.bossFlag < 0) ? -rInfo.m_info.bossFlag : rInfo.m_info.bossFlag;
+SelectItemData (CBBossType (), (int) (bossFlag < 21) ? bossFlag : bossFlag - 18);
 // update check boxes
 BtnCtrl (IDC_OBJ_AI_KAMIKAZE)->SetCheck (rInfo.m_info.kamikaze);
 BtnCtrl (IDC_OBJ_AI_COMPANION)->SetCheck (rInfo.m_info.companion);
@@ -701,63 +701,63 @@ BtnCtrl (IDC_OBJ_BRIGHT)->SetCheck (rInfo.m_info.lighting);
 BtnCtrl (IDC_OBJ_CLOAKED)->SetCheck (rInfo.m_info.cloakType);
 
 // update scroll bars
-SlCtrl (IDC_OBJ_SCORE)->SetPos ((INT32) (rInfo.m_info.scoreValue / SliderFactor (IDC_OBJ_SCORE)));
+SlCtrl (IDC_OBJ_SCORE)->SetPos ((int) (rInfo.m_info.scoreValue / SliderFactor (IDC_OBJ_SCORE)));
 SlCtrl (IDC_OBJ_STRENGTH)->SetPos (fix_log (rInfo.m_info.strength));
 SlCtrl (IDC_OBJ_MASS)->SetPos (fix_log (rInfo.m_info.mass));
-SlCtrl (IDC_OBJ_DRAG)->SetPos ((INT32) (rInfo.m_info.drag / SliderFactor (IDC_OBJ_DRAG)));
-SlCtrl (IDC_OBJ_EBLOBS)->SetPos ((INT32) (rInfo.m_info.energyBlobs / SliderFactor (IDC_OBJ_EBLOBS)));
-SlCtrl (IDC_OBJ_LIGHT)->SetPos ((INT32) (rInfo.m_info.lightCast / SliderFactor (IDC_OBJ_LIGHT)));
-SlCtrl (IDC_OBJ_GLOW)->SetPos ((INT32) (rInfo.m_info.glow / SliderFactor (IDC_OBJ_GLOW)));
-SlCtrl (IDC_OBJ_AIM)->SetPos ((INT32) ((rInfo.m_info.aim + 1) / SliderFactor (IDC_OBJ_AIM)));
-SlCtrl (IDC_OBJ_FOV)->SetPos ((INT32) (rInfo.m_info.combat [j].fieldOfView / SliderFactor (IDC_OBJ_FOV)));
-SlCtrl (IDC_OBJ_FIREWAIT1)->SetPos ((INT32) (rInfo.m_info.combat [j].firingWait [0] / SliderFactor (IDC_OBJ_FIREWAIT1)));
-SlCtrl (IDC_OBJ_FIREWAIT2)->SetPos ((INT32) (rInfo.m_info.combat [j].firingWait [1] / SliderFactor (IDC_OBJ_FIREWAIT2)));
-SlCtrl (IDC_OBJ_TURNTIME)->SetPos ((INT32) (rInfo.m_info.combat [j].turnTime / SliderFactor (IDC_OBJ_TURNTIME)));
-SlCtrl (IDC_OBJ_MAXSPEED)->SetPos ((INT32) (rInfo.m_info.combat [j].maxSpeed / SliderFactor (IDC_OBJ_MAXSPEED)));
-SlCtrl (IDC_OBJ_CIRCLEDIST)->SetPos ((INT32) (rInfo.m_info.combat [j].circleDistance / SliderFactor (IDC_OBJ_CIRCLEDIST)));
-SlCtrl (IDC_OBJ_FIRESPEED)->SetPos ((INT32) (rInfo.m_info.combat [j].rapidFire / SliderFactor (IDC_OBJ_FIRESPEED)));
-SlCtrl (IDC_OBJ_EVADESPEED)->SetPos ((INT32) (rInfo.m_info.combat [j].evadeSpeed / SliderFactor (IDC_OBJ_EVADESPEED)));
-SlCtrl (IDC_OBJ_DEATHROLL)->SetPos ((INT32) (rInfo.m_info.deathRoll / SliderFactor (IDC_OBJ_DEATHROLL)));
-SlCtrl (IDC_OBJ_EXPLSIZE)->SetPos ((INT32) (rInfo.m_info.badass / SliderFactor (IDC_OBJ_EXPLSIZE)));
-SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((INT32) (rInfo.m_info.contents.prob / SliderFactor (IDC_OBJ_CONT_PROB)));
-SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((INT32) (rInfo.m_info.contents.count / SliderFactor (IDC_OBJ_CONT_COUNT)));
+SlCtrl (IDC_OBJ_DRAG)->SetPos ((int) (rInfo.m_info.drag / SliderFactor (IDC_OBJ_DRAG)));
+SlCtrl (IDC_OBJ_EBLOBS)->SetPos ((int) (rInfo.m_info.energyBlobs / SliderFactor (IDC_OBJ_EBLOBS)));
+SlCtrl (IDC_OBJ_LIGHT)->SetPos ((int) (rInfo.m_info.lightCast / SliderFactor (IDC_OBJ_LIGHT)));
+SlCtrl (IDC_OBJ_GLOW)->SetPos ((int) (rInfo.m_info.glow / SliderFactor (IDC_OBJ_GLOW)));
+SlCtrl (IDC_OBJ_AIM)->SetPos ((int) ((rInfo.m_info.aim + 1) / SliderFactor (IDC_OBJ_AIM)));
+SlCtrl (IDC_OBJ_FOV)->SetPos ((int) (rInfo.m_info.combat [j].fieldOfView / SliderFactor (IDC_OBJ_FOV)));
+SlCtrl (IDC_OBJ_FIREWAIT1)->SetPos ((int) (rInfo.m_info.combat [j].firingWait [0] / SliderFactor (IDC_OBJ_FIREWAIT1)));
+SlCtrl (IDC_OBJ_FIREWAIT2)->SetPos ((int) (rInfo.m_info.combat [j].firingWait [1] / SliderFactor (IDC_OBJ_FIREWAIT2)));
+SlCtrl (IDC_OBJ_TURNTIME)->SetPos ((int) (rInfo.m_info.combat [j].turnTime / SliderFactor (IDC_OBJ_TURNTIME)));
+SlCtrl (IDC_OBJ_MAXSPEED)->SetPos ((int) (rInfo.m_info.combat [j].maxSpeed / SliderFactor (IDC_OBJ_MAXSPEED)));
+SlCtrl (IDC_OBJ_CIRCLEDIST)->SetPos ((int) (rInfo.m_info.combat [j].circleDistance / SliderFactor (IDC_OBJ_CIRCLEDIST)));
+SlCtrl (IDC_OBJ_FIRESPEED)->SetPos ((int) (rInfo.m_info.combat [j].rapidFire / SliderFactor (IDC_OBJ_FIRESPEED)));
+SlCtrl (IDC_OBJ_EVADESPEED)->SetPos ((int) (rInfo.m_info.combat [j].evadeSpeed / SliderFactor (IDC_OBJ_EVADESPEED)));
+SlCtrl (IDC_OBJ_DEATHROLL)->SetPos ((int) (rInfo.m_info.deathRoll / SliderFactor (IDC_OBJ_DEATHROLL)));
+SlCtrl (IDC_OBJ_EXPLSIZE)->SetPos ((int) (rInfo.m_info.badass / SliderFactor (IDC_OBJ_EXPLSIZE)));
+SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((int) (rInfo.m_info.contents.prob / SliderFactor (IDC_OBJ_CONT_PROB)));
+SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((int) (rInfo.m_info.contents.count / SliderFactor (IDC_OBJ_CONT_COUNT)));
 }
   
                         /*--------------------------*/
 
 void CObjectTool::UpdateRobot ()
 {
-  INT32 i,j;
+  int i,j;
   CRobotInfo rInfo;
 
   // get selection
-i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
+i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *theMine->RobotInfo (i);
 theApp.SetModified (TRUE);
 rInfo.m_info.bCustom |= 1;
-rInfo.m_info.scoreValue = (INT32) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
-rInfo.m_info.strength = (INT32) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
-rInfo.m_info.mass = (INT32) fix_exp (SlCtrl (IDC_OBJ_MASS)->GetPos ());
-rInfo.m_info.drag = (INT32) (SlCtrl (IDC_OBJ_DRAG)->GetPos () * SliderFactor (IDC_OBJ_DRAG));
-rInfo.m_info.energyBlobs = (INT32) (SlCtrl (IDC_OBJ_EBLOBS)->GetPos ()  * SliderFactor (IDC_OBJ_EBLOBS));
-rInfo.m_info.lightCast = (INT32) (SlCtrl (IDC_OBJ_LIGHT)->GetPos () * SliderFactor (IDC_OBJ_LIGHT));
-rInfo.m_info.glow = (INT32) (SlCtrl (IDC_OBJ_GLOW)->GetPos () * SliderFactor (IDC_OBJ_GLOW));
-rInfo.m_info.aim = (INT32) ((SlCtrl (IDC_OBJ_AIM)->GetPos ()) * SliderFactor (IDC_OBJ_AIM)) - 1;
-rInfo.m_info.combat [j].fieldOfView = (INT32) (SlCtrl (IDC_OBJ_FOV)->GetPos () * SliderFactor (IDC_OBJ_FOV));
-rInfo.m_info.combat [j].firingWait [0] = (INT32) (SlCtrl (IDC_OBJ_FIREWAIT1)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT1));
-rInfo.m_info.combat [j].firingWait [1] = (INT32) (SlCtrl (IDC_OBJ_FIREWAIT2)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT2));
-rInfo.m_info.combat [j].turnTime = (INT32) (SlCtrl (IDC_OBJ_TURNTIME)->GetPos () * SliderFactor (IDC_OBJ_TURNTIME));
-rInfo.m_info.combat [j].maxSpeed = (INT32) (SlCtrl (IDC_OBJ_MAXSPEED)->GetPos () * SliderFactor (IDC_OBJ_MAXSPEED));
-rInfo.m_info.combat [j].circleDistance = (INT32) (SlCtrl (IDC_OBJ_CIRCLEDIST)->GetPos () * SliderFactor (IDC_OBJ_CIRCLEDIST));
-rInfo.m_info.combat [j].rapidFire = (INT32) (SlCtrl (IDC_OBJ_FIRESPEED)->GetPos () * SliderFactor (IDC_OBJ_FIRESPEED));
-rInfo.m_info.combat [j].evadeSpeed = (INT32) (SlCtrl (IDC_OBJ_EVADESPEED)->GetPos () * SliderFactor (IDC_OBJ_EVADESPEED));
-rInfo.m_info.deathRoll = (INT32) (SlCtrl (IDC_OBJ_DEATHROLL)->GetPos () * SliderFactor (IDC_OBJ_DEATHROLL));
-rInfo.m_info.badass = (INT32) (SlCtrl (IDC_OBJ_EXPLSIZE)->GetPos () * SliderFactor (IDC_OBJ_EXPLSIZE));
-rInfo.m_info.contents.prob = (INT32) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
-rInfo.m_info.contents.count = (INT32) (SlCtrl (IDC_OBJ_CONT_COUNT)->GetPos () * SliderFactor (IDC_OBJ_CONT_COUNT));
+rInfo.m_info.scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
+rInfo.m_info.strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
+rInfo.m_info.mass = (int) fix_exp (SlCtrl (IDC_OBJ_MASS)->GetPos ());
+rInfo.m_info.drag = (int) (SlCtrl (IDC_OBJ_DRAG)->GetPos () * SliderFactor (IDC_OBJ_DRAG));
+rInfo.m_info.energyBlobs = (int) (SlCtrl (IDC_OBJ_EBLOBS)->GetPos ()  * SliderFactor (IDC_OBJ_EBLOBS));
+rInfo.m_info.lightCast = (int) (SlCtrl (IDC_OBJ_LIGHT)->GetPos () * SliderFactor (IDC_OBJ_LIGHT));
+rInfo.m_info.glow = (int) (SlCtrl (IDC_OBJ_GLOW)->GetPos () * SliderFactor (IDC_OBJ_GLOW));
+rInfo.m_info.aim = (int) ((SlCtrl (IDC_OBJ_AIM)->GetPos ()) * SliderFactor (IDC_OBJ_AIM)) - 1;
+rInfo.m_info.combat [j].fieldOfView = (int) (SlCtrl (IDC_OBJ_FOV)->GetPos () * SliderFactor (IDC_OBJ_FOV));
+rInfo.m_info.combat [j].firingWait [0] = (int) (SlCtrl (IDC_OBJ_FIREWAIT1)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT1));
+rInfo.m_info.combat [j].firingWait [1] = (int) (SlCtrl (IDC_OBJ_FIREWAIT2)->GetPos () * SliderFactor (IDC_OBJ_FIREWAIT2));
+rInfo.m_info.combat [j].turnTime = (int) (SlCtrl (IDC_OBJ_TURNTIME)->GetPos () * SliderFactor (IDC_OBJ_TURNTIME));
+rInfo.m_info.combat [j].maxSpeed = (int) (SlCtrl (IDC_OBJ_MAXSPEED)->GetPos () * SliderFactor (IDC_OBJ_MAXSPEED));
+rInfo.m_info.combat [j].circleDistance = (int) (SlCtrl (IDC_OBJ_CIRCLEDIST)->GetPos () * SliderFactor (IDC_OBJ_CIRCLEDIST));
+rInfo.m_info.combat [j].rapidFire = (int) (SlCtrl (IDC_OBJ_FIRESPEED)->GetPos () * SliderFactor (IDC_OBJ_FIRESPEED));
+rInfo.m_info.combat [j].evadeSpeed = (int) (SlCtrl (IDC_OBJ_EVADESPEED)->GetPos () * SliderFactor (IDC_OBJ_EVADESPEED));
+rInfo.m_info.deathRoll = (int) (SlCtrl (IDC_OBJ_DEATHROLL)->GetPos () * SliderFactor (IDC_OBJ_DEATHROLL));
+rInfo.m_info.badass = (int) (SlCtrl (IDC_OBJ_EXPLSIZE)->GetPos () * SliderFactor (IDC_OBJ_EXPLSIZE));
+rInfo.m_info.contents.prob = (int) (SlCtrl (IDC_OBJ_CONT_PROB)->GetPos () * SliderFactor (IDC_OBJ_CONT_PROB));
+rInfo.m_info.contents.count = (int) (SlCtrl (IDC_OBJ_CONT_COUNT)->GetPos () * SliderFactor (IDC_OBJ_CONT_COUNT));
 
 rInfo.m_info.kamikaze = BtnCtrl (IDC_OBJ_AI_KAMIKAZE)->GetCheck ();
 rInfo.m_info.companion = BtnCtrl (IDC_OBJ_AI_COMPANION)->GetCheck ();
@@ -771,39 +771,39 @@ rInfo.m_info.lighting = BtnCtrl (IDC_OBJ_BRIGHT)->GetCheck ();
 rInfo.m_info.cloakType = BtnCtrl (IDC_OBJ_CLOAKED)->GetCheck ();
 
 // get list box changes
-INT32 index;
+int index;
 if (0 <= (index = CBBossType ()->GetCurSel ())) {
-	rInfo.m_info.bossFlag = (UINT8) CBBossType ()->GetItemData (index);
-	if ((rInfo.m_info.bossFlag = (UINT8) CBBossType ()->GetItemData (index)) > 2)
+	rInfo.m_info.bossFlag = (byte) CBBossType ()->GetItemData (index);
+	if ((rInfo.m_info.bossFlag = (byte) CBBossType ()->GetItemData (index)) > 2)
 			rInfo.m_info.bossFlag += 18;
 	if (!m_bEndsLevel)
 		rInfo.m_info.bossFlag = -rInfo.m_info.bossFlag;
 	}
 if (0 <= (index = CBWeapon1 ()->GetCurSel ())) {
-	rInfo.m_info.weaponType [0] = (UINT8) CBWeapon1 ()->GetItemData (index);
+	rInfo.m_info.weaponType [0] = (byte) CBWeapon1 ()->GetItemData (index);
 	if (rInfo.m_info.weaponType [0] < 0)
 		rInfo.m_info.weaponType [0] = 0;
 	}
 if (0 <= (index = CBWeapon2 ()->GetCurSel ()))
-	rInfo.m_info.weaponType [1] = (UINT8) CBWeapon2 ()->GetItemData (index);
+	rInfo.m_info.weaponType [1] = (byte) CBWeapon2 ()->GetItemData (index);
 if (0 <= (index = CBSoundExpl ()->GetCurSel ()))
-	rInfo.m_info.expl [1].nSound = (UINT8) CBSoundExpl ()->GetItemData (index);
+	rInfo.m_info.expl [1].nSound = (byte) CBSoundExpl ()->GetItemData (index);
 if (0 <= (index = CBSoundSee ()->GetCurSel ()))
-	rInfo.m_info.sounds.see = (UINT8) CBSoundSee ()->GetItemData (index);
+	rInfo.m_info.sounds.see = (byte) CBSoundSee ()->GetItemData (index);
 if (0 <= (index = CBSoundAttack ()->GetCurSel ()))
-	rInfo.m_info.sounds.attack = (UINT8) CBSoundAttack ()->GetItemData (index);
+	rInfo.m_info.sounds.attack = (byte) CBSoundAttack ()->GetItemData (index);
 if (0 <= (index = CBSoundClaw ()->GetCurSel ()))
-	rInfo.m_info.sounds.claw = (UINT8) CBSoundClaw ()->GetItemData (index);
+	rInfo.m_info.sounds.claw = (byte) CBSoundClaw ()->GetItemData (index);
 if (0 <= (index = CBSoundDeath ()->GetCurSel ()))
-	rInfo.m_info.deathRollSound = (UINT8) CBSoundDeath ()->GetItemData (index);
+	rInfo.m_info.deathRollSound = (byte) CBSoundDeath ()->GetItemData (index);
 if (0 <= (index = CBObjClassAI ()->GetCurSel ()))
-	rInfo.m_info.behavior = (UINT8) CBObjClassAI ()->GetItemData (index);
+	rInfo.m_info.behavior = (byte) CBObjClassAI ()->GetItemData (index);
 if (0 <= (index = CBExplType ()->GetCurSel ()))
-	rInfo.m_info.expl [1].nClip = (UINT8) CBExplType ()->GetItemData (index);
+	rInfo.m_info.expl [1].nClip = (byte) CBExplType ()->GetItemData (index);
 if (0 <= (index = CBContType ()->GetCurSel ()))
-	rInfo.m_info.contents.type = (UINT8) CBContType ()->GetItemData (index);
+	rInfo.m_info.contents.type = (byte) CBContType ()->GetItemData (index);
 if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
-	rInfo.m_info.contents.id = (UINT8) CBContId ()->GetItemData (index);
+	rInfo.m_info.contents.id = (byte) CBContId ()->GetItemData (index);
 *theMine->RobotInfo (i) = rInfo;
 }
 
@@ -819,12 +819,12 @@ CRect rc;
 m_showTextureWnd.GetClientRect (&rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 #endif
-INT16 tnum = 0, tnum2 = -1;
+short tnum = 0, tnum2 = -1;
 
 if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
-	tnum = (INT16) theMine->CurrObj ()->rType.polyModelInfo.tmap_override;
+	tnum = (short) theMine->CurrObj ()->rType.polyModelInfo.tmap_override;
 	if ((tnum < 0) || (tnum >= ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
@@ -880,13 +880,13 @@ theMine->DrawObject (&m_showSpawnWnd, objP->m_info.contents.type, objP->m_info.c
 // CObjectTool - Set Object Id Message
 //------------------------------------------------------------------------
 
-INT32 bbb = 1;
+int bbb = 1;
 
-void CObjectTool::SetObjectId (CComboBox *pcb, INT16 type, INT16 id, INT16 flag) 
+void CObjectTool::SetObjectId (CComboBox *pcb, short type, short id, short flag) 
 {
 	char str [40];
-	INT32 h, i, j;
-	INT16 max_robot_ids = flag 
+	int h, i, j;
+	short max_robot_ids = flag 
 								 ? theApp.IsD1File () 
 									? ROBOT_IDS1 
 									: 64 
@@ -900,7 +900,7 @@ switch(type) {
 	case OBJ_ROBOT: /* an evil enemy */
 		for (i = 0; i < max_robot_ids; i++) {
 			sprintf_s (string, sizeof (string), (i < 10) ? "%3d: ": "%d: ", i);
-			h = INT32 (strlen (string));
+			h = int (strlen (string));
 			LoadString (hInst, ROBOT_STRING_TABLE + i, string + h, sizeof (string) - h);
 			if (!strcmp (string, "(not used)"))
 				continue;
@@ -971,7 +971,7 @@ switch(type) {
 		break;
 
 	case OBJ_POWERUP: // a powerup you can pick up
-		INT32 xlat [100];
+		int xlat [100];
 		memset (xlat, 0xff, sizeof (xlat));
 		h = pcb->AddString ("(none)");
 		pcb->SetItemData (h, -1);
@@ -1093,12 +1093,12 @@ bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 CGameObject *objP = theMine->CurrObj ();
-INT32 nType = objP->m_info.type;
-INT32 nId = objP->m_info.id;
+int nType = objP->m_info.type;
+int nId = objP->m_info.id;
 objP = theMine->Objects (0);
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
-INT32 nDeleted = 0;
-for (INT32 h = theMine->GameInfo ().objects.count, i = 0; i < h; ) {
+int nDeleted = 0;
+for (int h = theMine->GameInfo ().objects.count, i = 0; i < h; ) {
 	if ((objP->m_info.type == nType) && (objP->m_info.id == nId) && (bAll || (theMine->Segments (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
 		theMine->DeleteObject (i);
 		nDeleted++;
@@ -1166,7 +1166,7 @@ else {
 	CGameObject *objP = theMine->CurrObj ();
 	theMine->CalcSegCenter (objP->m_location.pos, theMine->Current ()->nSegment);
 	// bump position over if this is not the first object in the cube
-	INT32 i, count = 0;
+	int i, count = 0;
 	for (i = 0; i < theMine->GameInfo ().objects.count;i++)
 		if (theMine->Objects (i)->m_info.nSegment == theMine->Current ()->nSegment)
 			count++;
@@ -1184,8 +1184,8 @@ else {
 
 void CObjectTool::OnSetObject ()
 {
-INT16 old_object = theMine->Current ()->nObject;
-INT16 new_object = CBObjNo ()->GetCurSel ();
+short old_object = theMine->Current ()->nObject;
+short new_object = CBObjNo ()->GetCurSel ();
 theApp.MineView ()->RefreshObject (old_object, new_object);
 //Refresh ();
 }
@@ -1194,10 +1194,10 @@ theApp.MineView ()->RefreshObject (old_object, new_object);
 //
 //------------------------------------------------------------------------
 
-bool CObjectTool::SetPlayerId (CGameObject *objP, INT32 objType, INT32 *ids, INT32 numIds, char *pszError)
+bool CObjectTool::SetPlayerId (CGameObject *objP, int objType, int *ids, int numIds, char *pszError)
 {
 CGameObject *o = theMine->Objects (0);
-INT32		i, n = 0;
+int		i, n = 0;
 
 for (i = theMine->ObjCount (); i && (n < numIds); i--, o++)
 	if (o->m_info.type == objType)
@@ -1221,7 +1221,7 @@ return true;
 void CObjectTool::OnSetObjType () 
 {
 CGameObject *objP = theMine->CurrObj ();
-INT32 selection = object_list [CBObjType ()->GetCurSel ()];
+int selection = object_list [CBObjType ()->GetCurSel ()];
 if (theApp.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
@@ -1231,9 +1231,9 @@ if ((selection == OBJ_SMOKE) || (selection == OBJ_EFFECT)) {
 	return;
 	}
 // set id
-INT32 playerIds [16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-INT32 coopIds [3];
-for (INT32 i = 0; i < 3; i++)
+int playerIds [16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+int coopIds [3];
+for (int i = 0; i < 3; i++)
 	coopIds [i] = MAX_PLAYERS + i;
 
 switch (selection) {
@@ -1275,9 +1275,9 @@ theApp.MineView ()->Refresh (false);
 // This routine resets the size, shield, vclip if the id changes.
 //------------------------------------------------------------------------
 
-INT32 CObjectTool::GetObjectsOfAKind (INT32 nType, CGameObject *objList [])
+int CObjectTool::GetObjectsOfAKind (int nType, CGameObject *objList [])
 {
-	INT32 i, nObjects = 0;
+	int i, nObjects = 0;
 	CGameObject *objP;
 
 for (i = theMine->GameInfo ().objects.count, objP = theMine->Objects (0); i; i--, objP++)
@@ -1288,12 +1288,12 @@ return nObjects;
 
 //------------------------------------------------------------------------
 
-void CObjectTool::SetNewObjId (CGameObject *objP, INT32 nType, INT32 nId, INT32 nMaxId)
+void CObjectTool::SetNewObjId (CGameObject *objP, int nType, int nId, int nMaxId)
 {
 if (nId = objP->m_info.id)
 	return;
 
-	INT32 nObjects = ObjOfAKindCount (nType);
+	int nObjects = ObjOfAKindCount (nType);
 
 CGameObject **objList = new CGameObject* [nObjects];
 GetObjectsOfAKind (nType, objList);
@@ -1303,7 +1303,7 @@ if ((nMaxId > 0) && (nId >= nMaxId)) {
 		return;
 	}
 // find object that currently has id nCurSel and swap ids
-INT32 i;
+int i;
 for (i = 0; i < nObjects; i++)
 	if (objList [i]->m_info.id == nId) {
 		objList [i]->m_info.id = objP->m_info.id;
@@ -1317,11 +1317,11 @@ delete objList;
 
 void CObjectTool::OnSetObjId ()
 {
-	INT32	id;
+	int	id;
 
 CGameObject *objP = theMine->CurrObj ();
 CComboBox *pcb = CBObjId ();
-INT32 nCurSel = INT32 (pcb->GetItemData (pcb->GetCurSel ()));
+int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -1367,7 +1367,7 @@ switch (objP->m_info.type) {
 		if (theApp.IsD1File ())
 			objP->rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
 		else {
-			INT32 model;
+			int model;
 			switch(objP->m_info.id) {
 				case 1: model = 95; break;
 				case 2: model = 97; break;
@@ -1430,10 +1430,10 @@ Refresh ();
 void CObjectTool::OnSetSpawnType () 
 {
 CGameObject *objP = theMine->CurrObj ();
-INT32 selection;
+int selection;
 theApp.SetModified (TRUE);
 theApp.UnlockUndo ();
-INT32 i = CBSpawnType ()->GetCurSel () - 1;
+int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
 	objP->m_info.contents.type = -1;
@@ -1465,10 +1465,10 @@ CGameObject *objP = theMine->CurrObj ();
 theApp.SetModified (TRUE);
 if (objP->m_info.contents.count < -1)
 	objP->m_info.contents.count = -1;
-INT32 i = CBSpawnType ()->GetCurSel () - 1;
+int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i > -1) && (objP->m_info.contents.count > 0)) {
 	objP->m_info.contents.type = contentsList [i];
-	objP->m_info.contents.id = (INT8) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
+	objP->m_info.contents.id = (char) CBSpawnId ()->GetItemData (CBSpawnId ()->GetCurSel ());
 	}
 else {
 	objP->m_info.contents.type = -1;
@@ -1487,7 +1487,7 @@ void CObjectTool::OnSetObjAI ()
 theApp.SetModified (TRUE);
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
- 	INT32 index = CBObjAI ()->GetCurSel ();
+ 	int index = CBObjAI ()->GetCurSel ();
 	if (index == 8) {
 		index = AIB_RUN_FROM;
 		objP->cType.aiInfo.flags [4] |= 2; // smart bomb flag
@@ -1514,9 +1514,9 @@ CGameObject *objP = theMine->CurrObj ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
 	theApp.SetModified (TRUE);
-	INT32 index = CBObjTexture ()->GetCurSel ();
+	int index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.tmap_override = 
-		(index > 0) ? (INT16)CBObjTexture ()->GetItemData (index): -1;
+		(index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;
 	Refresh ();
 	}
 }
@@ -1529,7 +1529,7 @@ void CObjectTool::OnDefault ()
 {
 if (object_list [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
-INT32 i = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
+int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 memcpy (theMine->RobotInfo (i), theMine->DefRobotInfo (i), sizeof (tRobotInfo));
 Refresh ();
 }
@@ -1594,12 +1594,12 @@ UpdateRobot ();
 
 afx_msg void CObjectTool::OnSetContType ()
 {
-INT32 i = CBContType ()->GetCurSel ();
+int i = CBContType ()->GetCurSel ();
 if (0 > i)
 	return;
-INT32 j = INT32 (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
+int j = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 CRobotInfo *rInfo = theMine->RobotInfo (j);
-rInfo->m_info.contents.type = (UINT8) CBContType ()->GetItemData (i);
+rInfo->m_info.contents.type = (byte) CBContType ()->GetItemData (i);
 RefreshRobot ();
 }
 
@@ -1707,15 +1707,15 @@ if (theMine->m_bSortObjects = BtnCtrl (IDC_OBJ_SORT)->GetCheck ()) {
 
                         /*--------------------------*/
 
-INT32 CObjectTool::ObjOfAKindCount (INT32 nType, INT32 nId)
+int CObjectTool::ObjOfAKindCount (int nType, int nId)
 {
 if (nType < 0)
 	nType = theMine->CurrObj ()->m_info.type;
 if (nId < 0)
 	nId =  theMine->CurrObj ()->m_info.id;
-INT32 nCount = 0;
+int nCount = 0;
 CGameObject *objP = theMine->Objects (0);
-INT32 i;
+int i;
 for (i = theMine->GameInfo ().objects.count; i; i--, objP++)
 	if ((objP->m_info.type == nType) && ((objP->m_info.type == OBJ_PLAYER) || (objP->m_info.type == OBJ_COOP) || (objP->m_info.id == nId))) 
 		nCount++;
@@ -1724,16 +1724,16 @@ return nCount;
 
                         /*--------------------------*/
 
-INT32 fix_log(FIX x) 
+int fix_log(fix x) 
 {
-return (x >= 1) ? (INT32) (log ((double) x) + 0.5): 0; // round (assume value is positive)
+return (x >= 1) ? (int) (log ((double) x) + 0.5): 0; // round (assume value is positive)
 }
 
                         /*--------------------------*/
 
-FIX fix_exp(INT32 x) 
+fix fix_exp(int x) 
 {
-return (x >= 0 && x <= 21) ? (FIX) (exp ((double) x) + 0.5): 1; // round (assume value is positive)
+return (x >= 0 && x <= 21) ? (fix) (exp ((double) x) + 0.5): 1; // round (assume value is positive)
 }
 
                         /*--------------------------*/

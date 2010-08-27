@@ -14,38 +14,38 @@
 #include "mainfrm.h"
 #include "mineview.h"
 
-extern UINT8 sideVertTable [6][4];
-INT32 bEnableDeltaShading = 0;
+extern byte sideVertTable [6][4];
+int bEnableDeltaShading = 0;
 
 //------------------------------------------------------------------------
 // TextureMap()
 //------------------------------------------------------------------------
 
-void TextureMap (CSegment *segP, INT16 nSide,
-					  UINT8 *bmData, UINT16 bmWidth, UINT16 bmHeight,
-					  UINT8 *light_index,
-					  UINT8 *pScrnMem, APOINT* scrn,
-					  UINT16 width, UINT16 height, UINT16 rowOffset)
+void TextureMap (CSegment *segP, short nSide,
+					  byte *bmData, ushort bmWidth, ushort bmHeight,
+					  byte *light_index,
+					  byte *pScrnMem, APOINT* scrn,
+					  ushort width, ushort height, ushort rowOffset)
 {
 	
-	INT32 h, i, j, k;
-	INT32 x, y;
+	int h, i, j, k;
+	int x, y;
 	LONG yi,  yj;
 	POINT a [4];
 	POINT minpt, maxpt;
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	double w;
-	UINT8 *ptr;
+	byte *ptr;
 	CUVL *uvls;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
 	
 	// TEMPORARY
-	CSideKey face (INT16 (segP - theMine->Segments (0)), nSide);
-	INT16 flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
-	INT16 dscan_light,scan_light;
-	INT16 light [4];
-	UINT16 bmWidth2;
+	CSideKey face (short (segP - theMine->Segments (0)), nSide);
+	short flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
+	short dscan_light,scan_light;
+	short light [4];
+	ushort bmWidth2;
 	bool bEnableShading = (light_index != NULL);
 
 bmHeight = bmWidth;
@@ -53,7 +53,7 @@ bmWidth2 = bmWidth / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
-	INT16 nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
+	short nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
 	a [i].x = scrn [nVertex].x;
 	a [i].y = scrn [nVertex].y;
 	}
@@ -104,7 +104,7 @@ for (i = 0; i < 4; i++) {
 	// first make sure we have allocated space for delta lights
 if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
-	INT32 dlIdxCount = theMine->GameInfo ().lightDeltaIndices.count;
+	int dlIdxCount = theMine->GameInfo ().lightDeltaIndices.count;
 	CLightDeltaValue* lightDeltaValues;
 	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
 		 (lightDeltaIndices = theMine->LightDeltaIndex (0)) &&
@@ -119,7 +119,7 @@ if (bEnableDeltaShading) {
 				for (j = 0; j < h; j++, dlP++) {
 					if (*dlP == face) {
 						for (k = 0; k < 4; k++) {
-							INT16 dlight = dlP->m_info.vertLight [k];
+							short dlight = dlP->m_info.vertLight [k];
 							if (dlight >= 0x20)
 								dlight = 0x7fff;
 							else
@@ -145,7 +145,7 @@ UV.Scale (1.0 / 2048.0);
 //multiply_matrix (B, IA, UV);
 B = IA * UV;
 for (y = minpt.y; y < maxpt.y; y ++) {
-	INT32 x0, x1;
+	int x0, x1;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
@@ -159,13 +159,13 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
 			w = yi - yj;
 			if (w != 0.0) { // avoid divide by zero
-				x = (INT32)(((double) a [i].x * ((double) y - (double) yj) - (double) a [j].x * ((double)  y - (double)  yi)) / w);
+				x = (int)(((double) a [i].x * ((double) y - (double) yj) - (double) a [j].x * ((double)  y - (double)  yi)) / w);
 				if (x < x0) {
-					scan_light = (INT32)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
+					scan_light = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x0 = x;
 				}
 				if (x>x1) {
-					dscan_light = (INT32)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
+					dscan_light = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x1 = x;
 				}
 			}
@@ -181,11 +181,11 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 	// add the delta values to u and v
 	if (fabs ((double) (x0 - x1)) >= 1.0) {
 		double u0, u1, v0, v1, w0, w1, h, scale, x0d, x1d;
-		UINT32 u, v, du, dv, m, vd, vm, dx;
+		uint u, v, du, dv, m, vd, vm, dx;
 		dscan_light = (dscan_light - scan_light)/(x1-x0);
 		
 		// loop for every 32 bytes
-		INT32 end_x = x1;
+		int end_x = x1;
 		for (; x0 < end_x ; x0 += bmWidth2) {
 			if (end_x - x0 > bmWidth2)
 				x1 = bmWidth2 + x0;
@@ -218,19 +218,19 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 				dx = x1-x0;
 				if (!dx)
 					dx = 1;
-				du = ((UINT32) (((u1 - u0) * 1024.0) / dx) % m);
+				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
 				// v0 & v1 swapped since bmData is flipped
-				dv = ((UINT32) (((v0 - v1) * 1024.0) / dx) % m);
-				u = ((UINT32) (u0 * 1024.0)) % m;
-				v = ((UINT32) (-v0 * 1024.0)) % m;
+				dv = ((uint) (((v0 - v1) * 1024.0) / dx) % m);
+				u = ((uint) (u0 * 1024.0)) % m;
+				v = ((uint) (-v0 * 1024.0)) % m;
 				vd = 1024 / bmHeight;
 				vm = bmWidth * (bmHeight - 1);
 				
-				ptr = pScrnMem + (UINT32)(height - y - 1) * (UINT32) rowOffset + x0;
+				ptr = pScrnMem + (uint)(height - y - 1) * (uint) rowOffset + x0;
 				
-				INT32 k = (x1 - x0);
+				int k = (x1 - x0);
 				if (y < (height-1) && k > 0)  {
-					UINT8 *pixelP;
+					byte *pixelP;
 					pixelP = ptr;
 					if (bEnableShading) {
 						int scanLightOffset = ((scan_light / 4) & 0x1f00);
@@ -239,7 +239,7 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							byte temp = bmData [(u / 1024) + ((v / vd) & vm)];
 							if (temp < 254) {
 								temp = light_index [temp + scanLightOffset];
 								*pixelP = temp;
@@ -254,7 +254,7 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 							u %= m;
 							v += dv;
 							v %= m;
-							UINT8 temp = bmData [(u / 1024) + ((v / vd) & vm)];
+							byte temp = bmData [(u / 1024) + ((v / vd) & vm)];
 							if (temp < 254)
 								*pixelP = temp;
 							pixelP++;

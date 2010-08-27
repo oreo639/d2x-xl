@@ -32,13 +32,13 @@
 // ACTION -  saves a level (.RDL) file to disk
 // ------------------------------------------------------------------------
 
-INT16 CMine::Save (const char * filename_passed, bool bSaveToHog)
+short CMine::Save (const char * filename_passed, bool bSaveToHog)
 {
 	FILE*	fp;
 	char	filename [256];
-	INT32 minedataOffset, gamedataOffset, hostagetextOffset;
-	INT32 mineErr, gameErr;
-	INT32	i;
+	int minedataOffset, gamedataOffset, hostagetextOffset;
+	int mineErr, gameErr;
+	int	i;
 
 strcpy_s (filename, sizeof (filename), filename_passed);
 if (fopen_s (&fp, filename, "wb")) 
@@ -47,7 +47,7 @@ if (fopen_s (&fp, filename, "wb"))
 m_changesMade = 0;
 
 // write file signature
-write_INT32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', fp); // signature
+WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', fp); // signature
 
 // always save as version 7 or greater if its a D2 level
 // otherwise, blinking lights will not work.
@@ -61,19 +61,19 @@ if ((IsD2XLevel ()) && (LevelOutdated ())) {
 	}
 
 // write version
-write_INT32 (LevelVersion (), fp);
-write_INT32 (0, fp); // minedataOffset (temporary)
-write_INT32 (0, fp); // gamedataOffset (temporary)
+WriteInt32 (LevelVersion (), fp);
+WriteInt32 (0, fp); // minedataOffset (temporary)
+WriteInt32 (0, fp); // gamedataOffset (temporary)
 
 if (IsD2File ()&& (LevelVersion () >= 8)) {
-	write_INT16(rand(), fp);
-	write_INT16(rand(), fp);
-	write_INT16(rand(), fp);
-	write_INT8((INT8)rand(), fp);
+	WriteInt16(rand(), fp);
+	WriteInt16(rand(), fp);
+	WriteInt16(rand(), fp);
+	WriteInt8((char)rand(), fp);
 	}
 
 if (m_fileType== RDL_FILE)
-	write_INT32 (0, fp); // hostagetextOffset (temporary)
+	WriteInt32 (0, fp); // hostagetextOffset (temporary)
 else {
 	// save palette name
 	char *name = strrchr(descent2_path, '\\');
@@ -97,17 +97,17 @@ else {
 // write reactor info
 if (IsD2File ()) {
 	// read descent 2 reactor information
-	write_INT32 (ReactorTime (), fp);
-	write_INT32 (ReactorStrength (), fp);
+	WriteInt32 (ReactorTime (), fp);
+	WriteInt32 (ReactorStrength (), fp);
 	// flickering light new for version 7
 	if (FlickerLightCount () > MAX_FLICKERING_LIGHTS) 
 		FlickerLightCount () = MAX_FLICKERING_LIGHTS;
-	write_INT32 (FlickerLightCount (), fp);
+	WriteInt32 (FlickerLightCount (), fp);
 	for (i = 0; i < FlickerLightCount (); i++)
 		FlickeringLights (i)->Write (fp);
 
 	// write secret cube number
-	write_INT32 (SecretCubeNum (), fp);
+	WriteInt32 (SecretCubeNum (), fp);
 	// write secret cube orientation?
 	SecretOrient ().Write (fp);
 	}
@@ -132,11 +132,11 @@ hostagetextOffset = ftell(fp);
 // leave hostage text empty
 
 // now and go back to beginning of file and save offsets
-fseek(fp, 2*sizeof (INT32), SEEK_SET);
-write_INT32 (minedataOffset, fp);    // gamedataOffset
-write_INT32 (gamedataOffset, fp);    // gamedataOffset
+fseek(fp, 2*sizeof (int), SEEK_SET);
+WriteInt32 (minedataOffset, fp);    // gamedataOffset
+WriteInt32 (gamedataOffset, fp);    // gamedataOffset
 if (m_fileType== RDL_FILE) 
-	write_INT32 (hostagetextOffset, fp); // hostagetextOffset
+	WriteInt32 (hostagetextOffset, fp); // hostagetextOffset
 fclose(fp);
 
 if (HasCustomTextures () && !bSaveToHog) {
@@ -168,12 +168,12 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-void CMine::SortDLIndex (INT32 left, INT32 right)
+void CMine::SortDLIndex (int left, int right)
 {
-	INT32	l = left,
+	int	l = left,
 			r = right,
 			m = (left + right) / 2;
-	INT16	mSeg = LightDeltaIndex (m)->m_nSegment, 
+	short	mSeg = LightDeltaIndex (m)->m_nSegment, 
 			mSide = LightDeltaIndex (m)->m_nSide;
 	CSideKey mKey = CSideKey (mSeg, mSide);
 	CLightDeltaIndex	*pl, *pr;
@@ -209,7 +209,7 @@ if (r > left)
 
 // ------------------------------------------------------------------------
 
-INT32 CMine::SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
+int CMine::SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
 {
 info.offset = ftell (fp);
 for (int i = 0; i < info.count; i++) {
@@ -224,17 +224,17 @@ return info.count;
 //
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
-INT16 CMine::SaveMineDataCompiled(FILE *fp)
+short CMine::SaveMineDataCompiled(FILE *fp)
 {
 	int	i;
 // write version (1 byte)
-write_INT8 (COMPILED_MINE_VERSION, fp);
+WriteInt8 (COMPILED_MINE_VERSION, fp);
 
 // write no. of vertices (2 bytes)
-write_INT16 (VertCount (), fp);
+WriteInt16 (VertCount (), fp);
 
 // write number of Segments () (2 bytes)
-write_INT16 (SegCount (), fp);
+WriteInt16 (SegCount (), fp);
 
 // write all vertices
 for (int i = 0; i < VertCount (); i++)
@@ -264,13 +264,13 @@ return 0;
 //  ACTION - Saves the player, object, wall, door, trigger, and
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
-INT16 CMine::SaveGameData(FILE *fp)
+short CMine::SaveGameData(FILE *fp)
 {
 #if 1 //!DEMO
 	HINSTANCE hInst = AfxGetInstanceHandle();
 
-	INT32 i;
-	INT32 startOffset, endOffset;
+	int i;
+	int startOffset, endOffset;
 
 	startOffset = ftell(fp);
 
@@ -302,7 +302,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 		GameInfo ().level = 0;
 	}
 
-	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, fp);
+	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1, fp);
 	if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
 		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName), fp);
 	}
@@ -315,8 +315,8 @@ INT16 CMine::SaveGameData(FILE *fp)
 	// write pof names from resource file
 	HRSRC     hRes;
 	HGLOBAL   hGlobal;
-	UINT8 *save_pof_names;
-	INT16 n_save_pof_names, n_pofs;
+	byte *save_pof_names;
+	short n_save_pof_names, n_pofs;
 
 	if (IsD2File ()) {
 		n_save_pof_names = 166;
@@ -334,7 +334,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 	hGlobal = LoadResource(hInst, hRes);
 	ASSERT(hGlobal);
 
-	save_pof_names = (UINT8 *) LockResource(hGlobal);
+	save_pof_names = (byte *) LockResource(hGlobal);
 	ASSERT(save_pof_names);
 
 	fwrite(save_pof_names, n_save_pof_names, 13, fp); // 13 characters each
@@ -352,13 +352,13 @@ INT16 CMine::SaveGameData(FILE *fp)
 	SaveGameItem (fp, GameInfo ().doors, DATA (ActiveDoors ()));
 	SaveGameItem (fp, GameInfo ().triggers, DATA (Triggers ()));
 	if (LevelVersion () >= 12) {
-		write_INT32 (NumObjTriggers (), fp);
+		WriteInt32 (NumObjTriggers (), fp);
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
 				ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				write_INT16 (ObjTriggers (i)->m_info.nObject, fp);
+				WriteInt16 (ObjTriggers (i)->m_info.nObject, fp);
 			}
 		}
 	SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
@@ -375,7 +375,7 @@ INT16 CMine::SaveGameData(FILE *fp)
 
 	//==================== = UPDATE FILE INFO OFFSETS====================== =
 	fseek(fp, startOffset, SEEK_SET);
-	fwrite(&GameInfo (), (INT16)GameInfo ().fileinfo.size, 1, fp);
+	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1, fp);
 
 	//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
 	fseek(fp, endOffset, SEEK_SET);

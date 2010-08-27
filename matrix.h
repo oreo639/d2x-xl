@@ -16,11 +16,11 @@ private:
 	double m_depthPerception;
 	double m_scale [2];
 	double m_angles [2][3];
-	INT16 m_viewWidth;
-	INT16 m_viewHeight;
+	short m_viewWidth;
+	short m_viewHeight;
 
-	void ClampAngle (INT32 i);
-	void RotateAngle (INT32 i, double a);
+	void ClampAngle (int i);
+	void RotateAngle (int i, double a);
 
 public:
 	CViewMatrix ();
@@ -31,7 +31,7 @@ public:
 		double xSpin, double ySpin, double zSpin)
 	{ Set (CDoubleVector (xMove, yMove, zMove), CDoubleVector (xSize, ySize, zSize), CDoubleVector (xSpin, ySpin, zSpin)); }
 
-	void SetViewInfo (double depthPerception, INT16 viewWidth, INT16 viewHeight);
+	void SetViewInfo (double depthPerception, short viewWidth, short viewHeight);
 
 	void Rotate (char axis, double angle);
 	void Scale (double scale);
@@ -40,8 +40,8 @@ public:
 	void CalculateInverse (double xMove, double yMove, double zMove);
 	void Project (CVertex& vert, APOINT& apoint);
 	void Unproject (CVertex& vert, APOINT& apoint);
-	INT32 CheckNormal (CGameObject *objP, CVertex& a, CVertex& b);
-	INT32 CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b);
+	int CheckNormal (CGameObject *objP, CVertex& a, CVertex& b);
+	int CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b);
 	inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
 	inline double Scale (void) { return m_scale [0]; }
 	void Push (void);

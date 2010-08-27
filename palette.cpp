@@ -13,14 +13,14 @@
 #include "io.h"
 #include "palette.h"
 
-UINT8 *pCustomPalette = NULL;
+byte *pCustomPalette = NULL;
 HGLOBAL hPalette;
 
 //------------------------------------------------------------------------
 
-INT32 Luminance (INT32 r, INT32 g, INT32 b)
+int Luminance (int r, int g, int b)
 {
-	INT32 minColor, maxColor;
+	int minColor, maxColor;
 
 if (r < g) {
 	minColor = (r < b) ? r : b;
@@ -35,14 +35,14 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-UINT8 FadeValue (UINT8 c, INT32 f)
+byte FadeValue (byte c, int f)
 {
-return (UINT8) (((INT32) c * f) / 34);
+return (byte) (((int) c * f) / 34);
 }
 
 //------------------------------------------------------------------------
 
-INT32 HasCustomPalette (void)
+int HasCustomPalette (void)
 {
 return pCustomPalette != NULL;
 }
@@ -59,16 +59,16 @@ if (pCustomPalette) {
 
 //------------------------------------------------------------------------
 
-INT32 ReadCustomPalette (FILE *fp, long fSize)
+int ReadCustomPalette (FILE *fp, long fSize)
 {
 FreeCustomPalette ();
 
-UINT8 *pCustomPalette = (UINT8 *) malloc (37 * 256);
+byte *pCustomPalette = (byte *) malloc (37 * 256);
 
 if (!pCustomPalette)
 	return 0;
 
-INT32 h = INT32 (fread (pCustomPalette, 37 * 256, 1, fp));
+int h = int (fread (pCustomPalette, 37 * 256, 1, fp));
 if (h == 37 * 256)
 	return 1;
 
@@ -77,11 +77,11 @@ if (h != 3 * 256) {
 	return 0;
 	}
 
-UINT8 *pFade = pCustomPalette + 3 * 256;
+byte *pFade = pCustomPalette + 3 * 256;
 
-INT32 i, j;
+int i, j;
 for (i = 0; i < 256; i++) {
-	UINT8	c = pCustomPalette [i];
+	byte	c = pCustomPalette [i];
 	for (j = 0; j < 34; j++)
 		pFade [j * 256 + i] = FadeValue (c, j + 1);
 	}
@@ -90,14 +90,14 @@ return 1;
 
 //------------------------------------------------------------------------
 
-INT32 WriteCustomPalette (FILE *fp)
+int WriteCustomPalette (FILE *fp)
 {
 return fwrite (pCustomPalette, 37 * 256, 1, fp) == 37 * 256;
 }
 
 //------------------------------------------------------------------------
 
-UINT8 * PalettePtr (void)
+byte * PalettePtr (void)
 {
 if (pCustomPalette)
 	return pCustomPalette;
@@ -108,7 +108,7 @@ if (!hResource)
 hPalette = LoadResource (hInst, hResource);
 if (!hPalette)
 	return NULL;
-return (UINT8 *) LockResource (hPalette);
+return (byte *) LockResource (hPalette);
 }
 
 //------------------------------------------------------------------------
@@ -134,7 +134,7 @@ LPCTSTR PaletteResource (void)
 {
 	typedef struct tPalExt {
 		char	szFile [256];
-		INT32	nIdPal;
+		int	nIdPal;
 	} tPalExt;
 
 	static tPalExt palExt [] = {
@@ -149,7 +149,7 @@ LPCTSTR PaletteResource (void)
 	tPalExt	*ppe;
 	char		szFile [256];
 
-INT32 id = IDR_GROUPA_256;
+int id = IDR_GROUPA_256;
 if (theMine && theMine->IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
 FSplit (descent2_path, NULL, szFile, NULL);

@@ -18,13 +18,13 @@
 // SortObjects ()
 //------------------------------------------------------------------------
 
-static INT16 sortObjType [MAX_OBJECT_TYPES] = {7, 8, 5, 4, 0, 2, 9, 3, 10, 6, 11, 12, 13, 14, 1, 16, 15, 17, 18, 19, 20};
+static short sortObjType [MAX_OBJECT_TYPES] = {7, 8, 5, 4, 0, 2, 9, 3, 10, 6, 11, 12, 13, 14, 1, 16, 15, 17, 18, 19, 20};
 
 
-INT32 CMine::QCmpObjects (CGameObject *pi, CGameObject *pm)
+int CMine::QCmpObjects (CGameObject *pi, CGameObject *pm)
 {
-	INT16 ti = sortObjType [pi->m_info.type];
-	INT16 tm = sortObjType [pm->m_info.type];
+	short ti = sortObjType [pi->m_info.type];
+	short tm = sortObjType [pm->m_info.type];
 if (ti < tm)
 	return -1;
 if (ti > tm)
@@ -33,13 +33,13 @@ return (pi->m_info.id < pm->m_info.id) ? -1 : (pi->m_info.id > pm->m_info.id) ? 
 }
 
 
-INT16 CMine::FindObjBySig (INT16 signature)
+short CMine::FindObjBySig (short signature)
 {
 	CGameObject*	objP = Objects (0);
 
-for (INT16 i = ObjCount (); i; i--, objP++)
+for (short i = ObjCount (); i; i--, objP++)
 	if (objP->m_info.signature == signature)
-		return INT16 (objP - Objects (0));
+		return short (objP - Objects (0));
 return -1;
 }
 
@@ -48,12 +48,12 @@ void CMine::RenumberTriggerTargetObjs (void)
 {
 	CTrigger*	trigP = Triggers (0);
 
-for (INT32 i = TriggerCount (); i; i--, trigP++) {
-	for (INT32 j = 0; j < trigP->m_count; ) {
+for (int i = TriggerCount (); i; i--, trigP++) {
+	for (int j = 0; j < trigP->m_count; ) {
 		if (trigP->Side (j) >= 0) 
 			j++;
 		else {
-			INT32 h = FindObjBySig (trigP->Segment (j));
+			int h = FindObjBySig (trigP->Segment (j));
 			if (h >= 0)
 				trigP->Side (j++) = h;
 			else if (j < --trigP->m_count) {
@@ -68,7 +68,7 @@ for (INT32 i = TriggerCount (); i; i--, trigP++) {
 void CMine::RenumberObjTriggers (void)
 {
 	CTrigger*	trigP = ObjTriggers (0);
-	INT32			i;
+	int			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
 	trigP->m_info.nObject = FindObjBySig (trigP->m_info.nObject);
@@ -81,10 +81,10 @@ SortObjTriggers ();
 }
 
 
-void CMine::QSortObjects (INT16 left, INT16 right)
+void CMine::QSortObjects (short left, short right)
 {
 	CGameObject	median = *Objects ((left + right) / 2);
-	INT16	l = left, r = right;
+	short	l = left, r = right;
 
 do {
 	while (QCmpObjects (Objects (l), &median) < 0)
@@ -115,7 +115,7 @@ if (left < r)
 
 void CMine::SortObjects ()
 {
-	INT32	i, j;
+	int	i, j;
 
 if (m_bSortObjects && ( (i = GameInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
@@ -132,7 +132,7 @@ if (m_bSortObjects && ( (i = GameInfo ().objects.count) > 1)) {
 // Action - Defines a standard object (currently assumed to be a player)
 //------------------------------------------------------------------------
 
-void CMine::MakeObject (CGameObject *objP, INT8 type, INT16 nSegment) 
+void CMine::MakeObject (CGameObject *objP, char type, short nSegment) 
 {
   CVertex	location;
 
@@ -170,10 +170,10 @@ return;
 // 	    size, and shields (also nModel & texture if robot)
 //------------------------------------------------------------------------
 
-void CMine::SetObjectData (INT8 type) 
+void CMine::SetObjectData (char type) 
 {
   CGameObject *objP;
-  INT32  id;
+  int  id;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -254,7 +254,7 @@ switch (type) {
 	  if (IsD1File ())
 			objP->rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
 	  else {
-		INT32 model;
+		int model;
 		switch (id) {
 		  case 1:  model = 95;  break;
 		  case 2:  model = 97;  break;
@@ -320,19 +320,19 @@ switch (type) {
 // Action - Copies the current object to a new object
 //          If object is a player or coop, it chooses the next available id
 //
-// Parameters - INT8 new_type = new type of object
+// Parameters - char new_type = new type of object
 //
 // Returns - TRUE upon success
 //
 //------------------------------------------------------------------------
 
-bool CMine::CopyObject (UINT8 new_type, INT16 nSegment) 
+bool CMine::CopyObject (byte new_type, short nSegment) 
 {
-	INT16 objnum,id;
-	INT16 ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0};
+	short objnum,id;
+	short ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0};
 	CGameObject *objP,*current_obj;
-	UINT8 type;
-	INT16 i,count;
+	byte type;
+	short i,count;
 
 if (GameInfo ().objects.count >= MAX_OBJECTS) {
 	ErrorMsg ("The maximum number of objects has already been reached.");
@@ -410,7 +410,7 @@ objP->m_location.pos.v.y += count * 2 * F1_0;
 objP->m_location.lastPos.v.y += count * 2 * F1_0;
 // set the id if new object is a player or a coop
 if (type == OBJ_PLAYER || type == OBJ_COOP)
-	objP->m_info.id = (INT8) id;
+	objP->m_info.id = (char) id;
 // set object data if new object being added
 if (new_type != OBJ_NONE) {
 	objP->m_info.type = new_type;
@@ -431,7 +431,7 @@ return TRUE;
 // DeleteObject ()
 //------------------------------------------------------------------------
 
-void CMine::DeleteObject (INT16 nDelObj)
+void CMine::DeleteObject (short nDelObj)
 {
 if (GameInfo ().objects.count == 0) {
 	if (!bExpertMode)
@@ -453,7 +453,7 @@ if (nDelObj == GameInfo ().objects.count) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 DeleteObjTriggers (nDelObj);
-INT32 i, j = GameInfo ().objects.count;
+int i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->m_info.signature = i;
 if (nDelObj < --j)
@@ -472,16 +472,16 @@ theApp.UnlockUndo ();
 /// CObjectTool - DrawObject
 //------------------------------------------------------------------------
 
-void CMine::DrawObject (CWnd *pWnd, INT32 type, INT32 id)
+void CMine::DrawObject (CWnd *pWnd, int type, int id)
 {
-	INT32 powerup_lookup[48] = {
+	int powerup_lookup[48] = {
 		 0, 1, 2, 3, 4, 5, 6,-1,-1,-1,
 		 7, 8, 9,10,11,12,13,14,15,16,
 		17,18,19,20,-1,21,-1,-1,22,23,
 		24,25,26,27,28,29,30,31,32,33,
 		34,35,36,37,38,39,40,41
 		};
-	INT32 object_number;
+	int object_number;
 
 // figure out object number based on object type and id
 object_number = -1; // assume that we can't find the object
@@ -535,14 +535,14 @@ if ( (object_number >= 0) && (object_number <= 129)) {
 	char *pRes = (char *)LockResource (hGlobal);
 	BITMAPINFO *bmi = (BITMAPINFO *)pRes;
 	if (bmi) {	//if not, there is a problem in the resource file
-		INT32 ncolors = (INT32)bmi->bmiHeader.biClrUsed;
+		int ncolors = (int)bmi->bmiHeader.biClrUsed;
 		if (ncolors == 0)
 			ncolors = 1 << (bmi->bmiHeader.biBitCount); // 256 colors for 8-bit data
 		char *pImage = pRes + sizeof (BITMAPINFOHEADER) + ncolors * 4;
-		INT32 width = (INT32)bmi->bmiHeader.biWidth;
-		INT32 height = (INT32)bmi->bmiHeader.biHeight;
-		INT32 xoffset = (64 - width) / 2;
-		INT32 yoffset = (64 - height) / 2;
+		int width = (int)bmi->bmiHeader.biWidth;
+		int height = (int)bmi->bmiHeader.biHeight;
+		int xoffset = (64 - width) / 2;
+		int yoffset = (64 - height) / 2;
 		SetDIBitsToDevice (pDC->m_hDC, xoffset,yoffset,width,height,0,0,
 								0, height,pImage, bmi, DIB_RGB_COLORS);
 		}
@@ -555,77 +555,77 @@ pWnd->UpdateWindow ();
 
 // ------------------------------------------------------------------------
 
-INT32 CObjPhysicsInfo::Read (FILE *fp, INT32 version)
+int CObjPhysicsInfo::Read (FILE *fp, int version)
 {
 read_vector (&velocity, fp);
 read_vector (&thrust, fp);
-mass = read_FIX (fp);
-drag = read_FIX (fp);
-brakes = read_FIX (fp);
+mass = ReadFix (fp);
+drag = ReadFix (fp);
+brakes = ReadFix (fp);
 read_vector (&rotvel, fp);
 read_vector (&rotthrust, fp);
-turnroll = read_FIXANG (fp);
-flags = read_INT16 (fp);
+turnroll = ReadFixAng (fp);
+flags = ReadInt16 (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPhysicsInfo::Write (FILE *fp, INT32 version)
+void CObjPhysicsInfo::Write (FILE *fp, int version)
 {
 velocity.Write (fp);
 thrust.Write (fp);
-write_FIX (mass, fp);
-write_FIX (drag, fp);
-write_FIX (brakes, fp);
+WriteFix (mass, fp);
+WriteFix (drag, fp);
+WriteFix (brakes, fp);
 rotvel.Write (fp);
 rotthrust.Write (fp);
-write_FIXANG (turnroll, fp);
-write_INT16 (flags, fp);
+WriteFixAng (turnroll, fp);
+WriteInt16 (flags, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjAIInfo::Read (FILE *fp, INT32 version)
+int CObjAIInfo::Read (FILE *fp, int version)
 {
-behavior = read_INT8 (fp);
+behavior = ReadInt8 (fp);
 for (int i = 0; i < MAX_AI_FLAGS; i++)
-	flags [i] = read_INT8 (fp);
-hide_segment = read_INT16 (fp);
-hide_index = read_INT16 (fp);
-path_length = read_INT16 (fp);
-cur_path_index = read_INT16 (fp);
+	flags [i] = ReadInt8 (fp);
+hide_segment = ReadInt16 (fp);
+hide_index = ReadInt16 (fp);
+path_length = ReadInt16 (fp);
+cur_path_index = ReadInt16 (fp);
 if (theApp.IsD1File ()) {
-	follow_path_start_seg = read_INT16 (fp);
-	follow_path_end_seg = read_INT16 (fp);
+	follow_path_start_seg = ReadInt16 (fp);
+	follow_path_end_seg = ReadInt16 (fp);
 	}
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjAIInfo::Write (FILE *fp, INT32 version)
+void CObjAIInfo::Write (FILE *fp, int version)
 {
-write_INT8 (behavior, fp);
+WriteInt8 (behavior, fp);
 for (int i = 0; i < MAX_AI_FLAGS; i++)
-	write_INT8 (flags [i], fp);
-write_INT16 (hide_segment, fp);
-write_INT16 (hide_index, fp);
-write_INT16 (path_length, fp);
-write_INT16 (cur_path_index, fp);
+	WriteInt8 (flags [i], fp);
+WriteInt16 (hide_segment, fp);
+WriteInt16 (hide_index, fp);
+WriteInt16 (path_length, fp);
+WriteInt16 (cur_path_index, fp);
 if (theApp.IsD1File ()) {
-	write_INT16 (follow_path_start_seg, fp);
-	write_INT16 (follow_path_end_seg, fp);
+	WriteInt16 (follow_path_start_seg, fp);
+	WriteInt16 (follow_path_end_seg, fp);
 	}
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjExplosionInfo::Read (FILE *fp, INT32 version)
+int CObjExplosionInfo::Read (FILE *fp, int version)
 {
-spawn_time = read_FIX (fp);
-delete_time = read_FIX (fp);
-delete_objnum = (UINT8)read_INT16 (fp);
+spawn_time = ReadFix (fp);
+delete_time = ReadFix (fp);
+delete_objnum = (byte)ReadInt16 (fp);
 next_attach = 
 prev_attach = 
 attach_parent =-1;
@@ -634,235 +634,235 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CObjExplosionInfo::Write (FILE *fp, INT32 version)
+void CObjExplosionInfo::Write (FILE *fp, int version)
 {
-write_FIX (spawn_time, fp);
-write_FIX (delete_time, fp);
-write_INT16 (delete_objnum, fp);
+WriteFix (spawn_time, fp);
+WriteFix (delete_time, fp);
+WriteInt16 (delete_objnum, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjLaserInfo::Read (FILE *fp, INT32 version)
+int CObjLaserInfo::Read (FILE *fp, int version)
 {
-parent_type = read_INT16 (fp);
-parent_num = read_INT16 (fp);
-parent_signature = read_INT32 (fp);
+parent_type = ReadInt16 (fp);
+parent_num = ReadInt16 (fp);
+parent_signature = ReadInt32 (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLaserInfo::Write (FILE *fp, INT32 version)
+void CObjLaserInfo::Write (FILE *fp, int version)
 {
-write_INT16 (parent_type, fp);
-write_INT16 (parent_num, fp);
-write_INT32 (parent_signature, fp);
+WriteInt16 (parent_type, fp);
+WriteInt16 (parent_num, fp);
+WriteInt32 (parent_signature, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjPowerupInfo::Read (FILE *fp, INT32 version)
+int CObjPowerupInfo::Read (FILE *fp, int version)
 {
-count = (version >= 25) ? read_INT32 (fp) : 1;
+count = (version >= 25) ? ReadInt32 (fp) : 1;
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPowerupInfo::Write (FILE *fp, INT32 version)
+void CObjPowerupInfo::Write (FILE *fp, int version)
 {
 if (version >= 25) 
-	write_INT32 (count, fp);
+	WriteInt32 (count, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjLightInfo::Read (FILE *fp, INT32 version)
+int CObjLightInfo::Read (FILE *fp, int version)
 {
-intensity = read_FIX (fp);
+intensity = ReadFix (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjLightInfo::Write (FILE *fp, INT32 version)
+void CObjLightInfo::Write (FILE *fp, int version)
 {
-write_FIX (intensity, fp);
+WriteFix (intensity, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjPolyModelInfo::Read (FILE *fp, INT32 version)
+int CObjPolyModelInfo::Read (FILE *fp, int version)
 {
-nModel = read_INT32 (fp);
+nModel = ReadInt32 (fp);
 for (int i = 0; i < MAX_SUBMODELS; i++)
 	anim_angles [i].Read (fp);
-subobj_flags = read_INT32 (fp);
-tmap_override = read_INT32 (fp);
+subobj_flags = ReadInt32 (fp);
+tmap_override = ReadInt32 (fp);
 alt_textures = 0;
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjPolyModelInfo::Write (FILE *fp, INT32 version)
+void CObjPolyModelInfo::Write (FILE *fp, int version)
 {
-write_INT32 (nModel, fp);
+WriteInt32 (nModel, fp);
 for (int i = 0; i < MAX_SUBMODELS; i++)
 	anim_angles [i].Write (fp);
-write_INT32 (subobj_flags, fp);
-write_INT32 (tmap_override, fp);
+WriteInt32 (subobj_flags, fp);
+WriteInt32 (tmap_override, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CObjVClipInfo::Read (FILE *fp, INT32 version)
+int CObjVClipInfo::Read (FILE *fp, int version)
 {
-vclip_num = read_INT32 (fp);
-frametime = read_FIX (fp);
-framenum = read_INT8 (fp);
+vclip_num = ReadInt32 (fp);
+frametime = ReadFix (fp);
+framenum = ReadInt8 (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CObjVClipInfo::Write (FILE *fp, INT32 version)
+void CObjVClipInfo::Write (FILE *fp, int version)
 {
-write_INT32 (vclip_num, fp);
-write_FIX (frametime, fp);
-write_INT8 (framenum, fp);
+WriteInt32 (vclip_num, fp);
+WriteFix (frametime, fp);
+WriteInt8 (framenum, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CSmokeInfo::Read (FILE *fp, INT32 version)
+int CSmokeInfo::Read (FILE *fp, int version)
 {
-nLife = read_INT32 (fp);
-nSize [0] = read_INT32 (fp);
-nParts = read_INT32 (fp);
-nSpeed = read_INT32 (fp);
-nDrift = read_INT32 (fp);
-nBrightness = read_INT32 (fp);
+nLife = ReadInt32 (fp);
+nSize [0] = ReadInt32 (fp);
+nParts = ReadInt32 (fp);
+nSpeed = ReadInt32 (fp);
+nDrift = ReadInt32 (fp);
+nBrightness = ReadInt32 (fp);
 for (int i = 0; i < 4; i++)
-	color [i] = read_INT8 (fp);
-nSide = read_INT8 (fp);
-nType = (version < 18) ? 0 : read_INT8 (fp);
-bEnabled = (version < 19) ? 1 : read_INT8 (fp);
+	color [i] = ReadInt8 (fp);
+nSide = ReadInt8 (fp);
+nType = (version < 18) ? 0 : ReadInt8 (fp);
+bEnabled = (version < 19) ? 1 : ReadInt8 (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CSmokeInfo::Write (FILE *fp, INT32 version)
+void CSmokeInfo::Write (FILE *fp, int version)
 {
-write_INT32 (nLife, fp);
-write_INT32 (nSize [0], fp);
-write_INT32 (nParts, fp);
-write_INT32 (nSpeed, fp);
-write_INT32 (nDrift, fp);
-write_INT32 (nBrightness, fp);
+WriteInt32 (nLife, fp);
+WriteInt32 (nSize [0], fp);
+WriteInt32 (nParts, fp);
+WriteInt32 (nSpeed, fp);
+WriteInt32 (nDrift, fp);
+WriteInt32 (nBrightness, fp);
 for (int i = 0; i < 4; i++)
-	write_INT8 (color [i], fp);
-write_INT8 (nSide, fp);
-write_INT8 (nSide, fp);
-write_INT8 (bEnabled, fp);
+	WriteInt8 (color [i], fp);
+WriteInt8 (nSide, fp);
+WriteInt8 (nSide, fp);
+WriteInt8 (bEnabled, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CLightningInfo::Read (FILE *fp, INT32 version)
+int CLightningInfo::Read (FILE *fp, int version)
 {
-nLife = read_INT32 (fp);
-nDelay = read_INT32 (fp);
-nLength = read_INT32 (fp);
-nAmplitude = read_INT32 (fp);
-nOffset = read_INT32 (fp);
-nLightnings = read_INT16 (fp);
-nId = read_INT16 (fp);
-nTarget = read_INT16 (fp);
-nNodes = read_INT16 (fp);
-nChildren = read_INT16 (fp);
-nSteps = read_INT16 (fp);
-nAngle = read_INT8 (fp);
-nStyle = read_INT8 (fp);
-nSmoothe = read_INT8 (fp);
-bClamp = read_INT8 (fp);
-bPlasma = read_INT8 (fp);
-bSound = read_INT8 (fp);
-bRandom = read_INT8 (fp);
-bInPlane = read_INT8 (fp);
+nLife = ReadInt32 (fp);
+nDelay = ReadInt32 (fp);
+nLength = ReadInt32 (fp);
+nAmplitude = ReadInt32 (fp);
+nOffset = ReadInt32 (fp);
+nLightnings = ReadInt16 (fp);
+nId = ReadInt16 (fp);
+nTarget = ReadInt16 (fp);
+nNodes = ReadInt16 (fp);
+nChildren = ReadInt16 (fp);
+nSteps = ReadInt16 (fp);
+nAngle = ReadInt8 (fp);
+nStyle = ReadInt8 (fp);
+nSmoothe = ReadInt8 (fp);
+bClamp = ReadInt8 (fp);
+bPlasma = ReadInt8 (fp);
+bSound = ReadInt8 (fp);
+bRandom = ReadInt8 (fp);
+bInPlane = ReadInt8 (fp);
 for (int i = 0; i < 4; i++)
-	color [i] = read_INT8 (fp);
-bEnabled = (version < 19) ? 1 : read_INT8 (fp);
+	color [i] = ReadInt8 (fp);
+bEnabled = (version < 19) ? 1 : ReadInt8 (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CLightningInfo::Write (FILE *fp, INT32 version)
+void CLightningInfo::Write (FILE *fp, int version)
 {
-write_INT32 (nLife, fp);
-write_INT32 (nDelay, fp);
-write_INT32 (nLength, fp);
-write_INT32 (nAmplitude, fp);
-write_INT32 (nOffset, fp);
-write_INT16 (nLightnings, fp);
-write_INT16 (nId, fp);
-write_INT16 (nTarget, fp);
-write_INT16 (nNodes, fp);
-write_INT16 (nChildren, fp);
-write_INT16 (nSteps, fp);
-write_INT8 (nAngle, fp);
-write_INT8 (nStyle, fp);
-write_INT8 (nSmoothe, fp);
-write_INT8 (bClamp, fp);
-write_INT8 (bPlasma, fp);
-write_INT8 (bSound, fp);
-write_INT8 (bRandom, fp);
-write_INT8 (bInPlane, fp);
+WriteInt32 (nLife, fp);
+WriteInt32 (nDelay, fp);
+WriteInt32 (nLength, fp);
+WriteInt32 (nAmplitude, fp);
+WriteInt32 (nOffset, fp);
+WriteInt16 (nLightnings, fp);
+WriteInt16 (nId, fp);
+WriteInt16 (nTarget, fp);
+WriteInt16 (nNodes, fp);
+WriteInt16 (nChildren, fp);
+WriteInt16 (nSteps, fp);
+WriteInt8 (nAngle, fp);
+WriteInt8 (nStyle, fp);
+WriteInt8 (nSmoothe, fp);
+WriteInt8 (bClamp, fp);
+WriteInt8 (bPlasma, fp);
+WriteInt8 (bSound, fp);
+WriteInt8 (bRandom, fp);
+WriteInt8 (bInPlane, fp);
 for (int i = 0; i < 4; i++)
-	write_INT8 (color [i], fp);
-write_INT8 (bEnabled, fp);
+	WriteInt8 (color [i], fp);
+WriteInt8 (bEnabled, fp);
 }
 
 // ------------------------------------------------------------------------
 
-INT32 CSoundInfo::Read (FILE *fp, INT32 version)
+int CSoundInfo::Read (FILE *fp, int version)
 {
 fread (szFilename, 1, sizeof (szFilename), fp);
-nVolume = read_INT32 (fp);
-bEnabled = (version < 19) ? 1 : read_INT8 (fp);
+nVolume = ReadInt32 (fp);
+bEnabled = (version < 19) ? 1 : ReadInt8 (fp);
 return 1;
 }
 // ------------------------------------------------------------------------
 
-void CSoundInfo::Write (FILE *fp, INT32 version)
+void CSoundInfo::Write (FILE *fp, int version)
 {
 fwrite (szFilename, 1, sizeof (szFilename), fp);
-write_INT32 (nVolume, fp);
-write_INT8 (bEnabled, fp);
+WriteInt32 (nVolume, fp);
+WriteInt8 (bEnabled, fp);
 }
 // ------------------------------------------------------------------------
 
-INT32 CGameObject::Read (FILE *fp, INT32 version, bool bFlag) 
+int CGameObject::Read (FILE *fp, int version, bool bFlag) 
 {
-m_info.type = read_INT8 (fp);
-m_info.id = read_INT8 (fp);
-m_info.controlType = read_INT8 (fp);
-m_info.movementType = read_INT8 (fp);
-m_info.renderType = read_INT8 (fp);
-m_info.flags = read_INT8 (fp);
-m_info.multiplayer = (version > 37) ? read_INT8 (fp) : 0;
-m_info.nSegment = read_INT16 (fp);
+m_info.type = ReadInt8 (fp);
+m_info.id = ReadInt8 (fp);
+m_info.controlType = ReadInt8 (fp);
+m_info.movementType = ReadInt8 (fp);
+m_info.renderType = ReadInt8 (fp);
+m_info.flags = ReadInt8 (fp);
+m_info.multiplayer = (version > 37) ? ReadInt8 (fp) : 0;
+m_info.nSegment = ReadInt16 (fp);
 m_location.pos.Read (fp);
 m_location.orient.Read (fp);
-m_info.size = read_FIX (fp);
-m_info.shields = read_FIX (fp);
+m_info.size = ReadFix (fp);
+m_info.shields = ReadFix (fp);
 m_location.lastPos.Read (fp);
-m_info.contents.type = read_INT8 (fp);
-m_info.contents.id = read_INT8 (fp);
-m_info.contents.count = read_INT8 (fp);
+m_info.contents.type = ReadInt8 (fp);
+m_info.contents.id = ReadInt8 (fp);
+m_info.contents.count = ReadInt8 (fp);
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:
@@ -943,27 +943,27 @@ return 1;
 // WriteObject ()
 // ------------------------------------------------------------------------
 
-void CGameObject::Write (FILE *fp, INT32 version, bool bFlag)
+void CGameObject::Write (FILE *fp, int version, bool bFlag)
 {
 if (theMine->IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
-write_INT8 (m_info.type, fp);
-write_INT8 (m_info.id, fp);
-write_INT8 (m_info.controlType, fp);
-write_INT8 (m_info.movementType, fp);
-write_INT8 (m_info.renderType, fp);
-write_INT8 (m_info.flags, fp);
-write_INT8 (m_info.multiplayer, fp);
-write_INT16 (m_info.nSegment, fp);
+WriteInt8 (m_info.type, fp);
+WriteInt8 (m_info.id, fp);
+WriteInt8 (m_info.controlType, fp);
+WriteInt8 (m_info.movementType, fp);
+WriteInt8 (m_info.renderType, fp);
+WriteInt8 (m_info.flags, fp);
+WriteInt8 (m_info.multiplayer, fp);
+WriteInt16 (m_info.nSegment, fp);
 m_location.pos.Write (fp);
 m_location.orient.Write (fp);
-write_FIX (m_info.size, fp);
-write_FIX (m_info.shields, fp);
+WriteFix (m_info.size, fp);
+WriteFix (m_info.shields, fp);
 m_location.lastPos. Write (fp);
-write_INT8 (m_info.contents.type, fp);
-write_INT8 (m_info.contents.id, fp);
-write_INT8 (m_info.contents.count, fp);
+WriteInt8 (m_info.contents.type, fp);
+WriteInt8 (m_info.contents.id, fp);
+WriteInt8 (m_info.contents.count, fp);
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:

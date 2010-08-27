@@ -93,9 +93,9 @@ protected: // create from serialization only
 
 	CSplitterWnd	*m_pSplitter;
 	// member variables
-	INT32			m_viewHeight;	// in pixels
-	INT32			m_viewWidth;	// in pixels
-	INT32			m_viewDepth;	// in bytes
+	int			m_viewHeight;	// in pixels
+	int			m_viewWidth;	// in pixels
+	int			m_viewDepth;	// in bytes
 	HBITMAP		m_DIB;
 	void			*m_pvBits;
 	CDC			m_DC;
@@ -103,11 +103,11 @@ protected: // create from serialization only
 	bool			m_bUpdate;
 	bool			m_bUpdateCursor;
 	bool			m_bDelayRefresh;
-	INT32			m_nDelayRefresh;
-	UINT32		m_viewObjectFlags;
-	UINT32		m_viewMineFlags;
-	UINT32		m_viewOption;
-	UINT32		m_selectMode;
+	int			m_nDelayRefresh;
+	uint		m_viewObjectFlags;
+	uint		m_viewMineFlags;
+	uint		m_viewOption;
+	uint		m_selectMode;
 	HCURSOR		m_hCursors [eMouseStateCount];
 
 	CSelection	*m_Current;
@@ -138,9 +138,9 @@ protected: // create from serialization only
 	CPen*			m_penHiLtGray;
 	CPen*			m_penHiMagenta;
 
-	//INT16			m_x0;
-	//INT16			m_y0;
-	//INT16			m_z0;
+	//short			m_x0;
+	//short			m_y0;
+	//short			m_z0;
 	CDoubleVector	m_center;
 	CDoubleVector	m_move;
 	CDoubleVector	m_size;
@@ -158,8 +158,8 @@ protected: // create from serialization only
 	APOINT		m_minVPIdx;
 	APOINT		m_maxVPIdx;
 
-	INT32			m_mouseState;
-	INT32			m_lastMouseState;
+	int			m_mouseState;
+	int			m_lastMouseState;
 	CPoint		m_lastMousePos;
 	CPoint		m_clickPos, 
 					m_releasePos,
@@ -167,22 +167,22 @@ protected: // create from serialization only
 					m_highlightPos;
 	UINT			m_clickState,
 					m_releaseState;
-	INT16			m_lastSegment;
+	short			m_lastSegment;
 	CRect			m_rubberRect;
 	UINT_PTR		m_lightTimer;
 	UINT_PTR		m_selectTimer;
-	INT32			m_nFrameRate;
-	INT32			m_bShowLightSource;
+	int			m_nFrameRate;
+	int			m_bShowLightSource;
 	bool			m_bHScroll,
 					m_bVScroll;
-	INT32			m_xScrollRange,
+	int			m_xScrollRange,
 					m_yScrollRange;
-	INT32			m_xScrollCenter,
+	int			m_xScrollCenter,
 					m_yScrollCenter;
-	INT32			m_xRenderOffs,
+	int			m_xRenderOffs,
 					m_yRenderOffs;
-	INT32			m_nViewDist;
-	INT32			m_nMineCenter;
+	int			m_nViewDist;
+	int			m_nMineCenter;
 #if USE_DYN_ARRAYS
 	CStaticArray< CPolyModel, MAX_POLYGON_MODELS > m_polyModels;
 #else
@@ -223,13 +223,13 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-	inline void SetViewDist (INT32 nViewDist) {
+	inline void SetViewDist (int nViewDist) {
 		if (m_nViewDist != nViewDist) {
 			m_nViewDist = nViewDist;
 			Refresh ();
 			}
 		}
-	inline INT32 ViewDist (void) {
+	inline int ViewDist (void) {
 		return (m_nViewDist <= 10) ? m_nViewDist : 
 		(m_nViewDist < 20) ? 10 + 2 * (m_nViewDist - 10) : 30 + 3 * (m_nViewDist - 20);
 		}
@@ -241,7 +241,7 @@ public:
 		return (segP->m_info.nIndex >= 0) && (segP->m_info.nIndex <= ViewDist ()); 
 		}
 	void DrawMineCenter (CDC *pViewDC);
-	bool VertexVisible (INT32 v);
+	bool VertexVisible (int v);
 	void SetViewPoints (CRect *pRC = NULL, bool bSetViewInfo = true);
 	void ShiftViewPoints ();
 	// drawing functions
@@ -252,44 +252,44 @@ public:
 	bool	InitViewDimensions (void);
 	void	DrawWireFrame(bool bPartial);
 	void	DrawTextureMappedCubes(void);
-	void	DrawMarkedCubes (INT16 clear_it = 0);
+	void	DrawMarkedCubes (short clear_it = 0);
 	void	DrawCube(CSegment *segP, bool bPartial);
-	void	DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it = 0);
+	void	DrawCube (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
 	void	DrawCubePartial (CSegment *segP);
 	void	DrawCubeQuick(CSegment *segP, bool bPartial = false);
-	void	DrawCubeTextured(CSegment *segP, UINT8* light_index);
+	void	DrawCubeTextured(CSegment *segP, byte* light_index);
 	void	DrawCubePoints (CSegment *segP);
 
 	void	DrawCurrentCube(CSegment *segP, bool bPartial);
-	void	DrawLine(CSegment *segP,INT16 vert1,INT16 vert2);
-	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, UINT8 color);
-	void	DrawAnimDirArrows (INT16 texture1, CTexture *pTx);
+	void	DrawLine(CSegment *segP,short vert1,short vert2);
+	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, byte color);
+	void	DrawAnimDirArrows (short texture1, CTexture *pTx);
 
 	void	DrawWalls (void);
 	void	DrawLights (void);
-	void	DrawOctagon(INT16 nSide, INT16 nSegment);
-	void	DrawObject (INT16 objnum, INT16 clear_it = 0);
-	void	DrawObjects (INT16 clear_it = 0);
-	void	DrawHighlight (INT16 clear_it = 0);
+	void	DrawOctagon(short nSide, short nSegment);
+	void	DrawObject (short objnum, short clear_it = 0);
+	void	DrawObjects (short clear_it = 0);
+	void	DrawHighlight (short clear_it = 0);
 	void  DrawSpline (void);
 
 	CPolyModel* RenderModel (CGameObject* objP);
-	INT32	SetupModel(CGameObject *objP); // poly.c
-	void	SetModelPoints(INT32 start, INT32 end);
+	int	SetupModel(CGameObject *objP); // poly.c
+	void	SetModelPoints(int start, int end);
 	void	DrawModel();      // poly.c
-	void	InterpModelData(UINT8 *model_data); // poly.c
+	void	InterpModelData(byte *model_data); // poly.c
 	void	DrawPoly (tModelRenderData *p);
-	INT32 ReadModelData (char* filename, char* szSubFile, bool bCustom = false);
+	int ReadModelData (char* filename, char* szSubFile, bool bCustom = false);
 	//void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
 
 	// view control functions
-	void	Zoom(INT32 nSteps, double zoom);
-	INT32	ZoomFactor (INT32 nSteps, double min, double max);
-	INT32	ZoomIn(INT32 nSteps = 1, bool bSlow = false);
-	INT32	ZoomOut(INT32 nSteps = 1, bool bSlow = false);
-	INT32	FitToView (void);
+	void	Zoom(int nSteps, double zoom);
+	int	ZoomFactor (int nSteps, double min, double max);
+	int	ZoomIn(int nSteps = 1, bool bSlow = false);
+	int	ZoomOut(int nSteps = 1, bool bSlow = false);
+	int	FitToView (void);
 	void	Rotate(char direction, double angle);
-	void	Pan(char direction, INT32 amount);
+	void	Pan(char direction, int amount);
 	void	AlignSide();
 	void	CenterMine();
 	void	CenterCube();
@@ -297,57 +297,57 @@ public:
 	void	SetViewOption(eViewOptions option);
 	void	ToggleViewMine(eMineViewFlags flag);
 	void	ToggleViewObjects(eObjectViewFlags mask);
-	void	SetViewMineFlags(UINT32 mask);
-	void	SetViewObjectFlags(UINT32 mask);
-	void	SetSelectMode(UINT32 mode);
+	void	SetViewMineFlags(uint mask);
+	void	SetViewObjectFlags(uint mask);
+	void	SetSelectMode(uint mode);
 	void CalcSegDist (void);
-	bool	InRange (INT16 *pv, INT16 i);
+	bool	InRange (short *pv, short i);
 
-	void NextPoint (INT32 dir = 1);
+	void NextPoint (int dir = 1);
 	void PrevPoint ();
-	void NextLine (INT32 dir = 1);
+	void NextLine (int dir = 1);
 	void PrevLine ();
-	void NextSide (INT32 dir = 1);
+	void NextSide (int dir = 1);
 	void PrevSide ();
-	void NextSide2 (INT32 dir = 1);
+	void NextSide2 (int dir = 1);
 	void PrevSide2 ();
-	void NextCube (INT32 dir = 1);
+	void NextCube (int dir = 1);
 	void PrevCube ();
-	void ForwardCube (INT32 dir = 1);
+	void ForwardCube (int dir = 1);
 	void BackwardsCube ();
 	void SelectOtherCube ();
 	bool SelectOtherSide ();
-	void NextObject (INT32 dir = 1);
+	void NextObject (int dir = 1);
 	void PrevObject ();
-	void NextCubeElement (INT32 dir = 1);
+	void NextCubeElement (int dir = 1);
 	void PrevCubeElement ();
 	void HiliteTarget (void);
 
 	void Refresh (bool bAll = true);
-	void EnableDeltaShading (INT32 bEnable, INT32 nFrameRate, INT32 bShowLightSource);
+	void EnableDeltaShading (int bEnable, int nFrameRate, int bShowLightSource);
 	void AdvanceLightTick (void);
 	bool SetLightStatus (void);
 	void Invalidate (BOOL bErase);
 	void InvalidateRect (LPCRECT lpRect, BOOL bErase);
 
 	bool ViewObject (CGameObject *objP);
-	inline bool ViewObject (UINT32 flag = 0)
+	inline bool ViewObject (uint flag = 0)
 		{ return flag ? ((m_viewObjectFlags & flag) != 0) : (m_viewObjectFlags != 0); }
-	inline bool ViewFlag (UINT32 flag = 0)
+	inline bool ViewFlag (uint flag = 0)
 		{ return flag ? (m_viewMineFlags & flag) != 0 : (m_viewMineFlags != 0); }
-	inline bool ViewOption (UINT32 option)
+	inline bool ViewOption (uint option)
 		{ return m_viewOption == option; }
-	inline bool SelectMode (UINT32 mode)
+	inline bool SelectMode (uint mode)
 		{ return m_selectMode == mode; }
-	inline UINT32 GetMineViewFlags ()
+	inline uint GetMineViewFlags ()
 		{ return m_viewMineFlags; }
-	inline UINT32 GetObjectViewFlags ()
+	inline uint GetObjectViewFlags ()
 		{ return m_viewObjectFlags; }
-	inline UINT32 GetViewOptions ()
+	inline uint GetViewOptions ()
 		{ return m_viewOption; }
-	inline UINT32 GetSelectMode ()
+	inline uint GetSelectMode ()
 		{ return m_selectMode; }
-	inline INT32 *MineCenter (void)
+	inline int *MineCenter (void)
 		{ return &m_nMineCenter; }
 	inline double &DepthPerception (void)
 		{ return m_depthPerception; }
@@ -358,11 +358,11 @@ public:
 			m_nDelayRefresh--;
 		}
 
-	void SetMouseState (INT32 newMouseState);
+	void SetMouseState (int newMouseState);
 	BOOL SetCursor (HCURSOR hCursor);
 //	void UpdateCursor (void);
 
-	inline void wrap (INT16 *x, INT16 delta,INT16 min,INT16 max) {
+	inline void wrap (short *x, short delta,short min,short max) {
 		*x += delta;
 		if (*x > max)
 			*x = min;
@@ -370,20 +370,20 @@ public:
 			*x = max;
 		}
 
-	bool SelectCurrentSegment(INT16 direction,long mouse_x, long mouse_y);
+	bool SelectCurrentSegment(short direction,long mouse_x, long mouse_y);
 	void SelectCurrentObject(long mouse_x, long mouse_y);
-	void CalcSegmentCenter (CVertex& pos, INT16 nSegment);
-	void RefreshObject(INT16 old_object, INT16 new_object);
+	void CalcSegmentCenter (CVertex& pos, short nSegment);
+	void RefreshObject(short old_object, short new_object);
 	void MarkRubberBandedVertices (void);
 	BOOL DrawRubberBox ();
 	void UpdateRubberRect (CPoint pt);
 	void ResetRubberRect ();
 	BOOL UpdateDragPos ();
-	void HighlightDrag (INT16 nVert, long x, long y);
+	void HighlightDrag (short nVert, long x, long y);
 	BOOL CMineView::DrawDragPos (void);
 	void FinishDrag (void);
 
-	BOOL SetWindowPos(const CWnd *pWndInsertAfter, INT32 x, INT32 y, INT32 cx, INT32 cy, UINT nFlags);
+	BOOL SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
 
 #if OGL_RENDERING
 	BOOL GLInit (GLvoid);
@@ -392,9 +392,9 @@ public:
 	GLvoid GLFitToView (GLvoid);
 	BOOL GLResizeScene (GLvoid);
 	BOOL GLRenderScene (GLvoid);
-	void GLRenderFace (INT16 nSegment, INT16 nSide);
-	void GLRenderTexture (INT16 nSegment, INT16 nSide, INT16 nTexture);
-	void GLCreateTexture (INT16 nTexture);
+	void GLRenderFace (short nSegment, short nSide);
+	void GLRenderTexture (short nSegment, short nSide, short nTexture);
+	void GLCreateTexture (short nTexture);
 	GLvoid GLKillWindow (GLvoid);
 	BOOL GLCreateWindow (CDC *pDC = NULL);
 #endif
@@ -407,7 +407,7 @@ protected:
 	afx_msg void OnDestroy ();
 	afx_msg void OnTimer (UINT_PTR nIdEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, INT32 cx, INT32 cy);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -415,7 +415,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnPaint ();
-	afx_msg BOOL OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt);
+	afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnSelectPrevTab ();
 	afx_msg void OnSelectNextTab ();
 	afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);

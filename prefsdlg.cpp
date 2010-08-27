@@ -157,7 +157,7 @@ m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags,
 m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
 m_nMaxUndo = GetPrivateProfileInt ("DLE-XP", "MaxUndo", MAX_UNDOS, INIFILE);
 InitSlider (IDC_PREFS_VIEWDIST, 0, MAX_VIEWDIST);
-INT32 i;
+int i;
 for (i = 0; i <= MAX_VIEWDIST; i++)
 	SlCtrl (IDC_PREFS_VIEWDIST)->SetTic (i);
 CComboBox *pcb = CBMineCenter ();
@@ -196,7 +196,7 @@ void CPrefsDlg::DoDataExchange (CDataExchange * pDX)
 if (!HaveData (pDX)) 
 	return;
 
-	INT32	h, i;
+	int	h, i;
 
 DDX_Text (pDX, IDC_PREFS_PATH_D1PIG, m_d1Path, sizeof (m_d1Path));
 DDX_Text (pDX, IDC_PREFS_PATH_D2PIG, m_d2Path, sizeof (m_d2Path));
@@ -276,7 +276,7 @@ return CToolDlg::OnSetActive ();
 bool CPrefsDlg::BrowseFile (LPSTR fileType, LPSTR fileName, LPSTR fileExt, BOOL bOpen)
 {
    char        s [256];
-   INT32         nResult;
+   int         nResult;
    char		   pn [256];
 
 strcpy_s (pn, sizeof (pn), fileName);
@@ -284,7 +284,7 @@ sprintf_s (s, sizeof (s), "%s (%s)|%s|all files (*.*)|*.*||", fileType, fileExt,
 CFileDialog d (bOpen, fileExt, pn, 0, s, this);
 d.m_ofn.hInstance = AfxGetInstanceHandle ();
 d.m_ofn.lpstrInitialDir = pn;
-if ((nResult = INT32 (d.DoModal ())) != IDOK)
+if ((nResult = int (d.DoModal ())) != IDOK)
 	return false;
 strcpy_s (fileName, 256, d.m_ofn.lpstrFile);
 return true;
@@ -292,7 +292,7 @@ return true;
 
                         /*--------------------------*/
 
-void CPrefsDlg::WritePrivateProfileInt (LPSTR szKey, INT32 nValue)
+void CPrefsDlg::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
 	char	szValue [20];
 
@@ -314,7 +314,7 @@ WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 
 void CPrefsDlg::GetAppSettings ()
 {
-	INT32	i;
+	int	i;
 
 strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
 strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
@@ -524,7 +524,7 @@ OnOK ();
 
                         /*--------------------------*/
 
-void CPrefsDlg::SetLayout (INT32 nLayout)
+void CPrefsDlg::SetLayout (int nLayout)
 {
 WritePrivateProfileInt ("Layout", nLayout);
 }
@@ -547,7 +547,7 @@ SetLayout (1);
 
 void CPrefsDlg::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	INT32	nPos = pScrollBar->GetScrollPos ();
+	int	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (pScrollBar == ViewDistSlider ()) {

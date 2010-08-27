@@ -92,10 +92,10 @@ void CMissionTool::BuildLevelList (void)
 	CListBox *plb = LBLevels ();
 
 plb->ResetContent ();
-INT32 i;
+int i;
 for (i = 0; i < m_missionData.numLevels; i++)
 	plb->AddString (m_missionData.levelList [i]);
-INT32 j;
+int j;
 for (j = 0; j < m_missionData.numSecrets; i++, j++)
 	plb->AddString (m_missionData.levelList [i]);
 }
@@ -107,10 +107,10 @@ void CMissionTool::DoDataExchange (CDataExchange * pDX)
 if (!HaveData (pDX)) 
 	return;
 
-	INT32	h, i, j;
+	int	h, i, j;
 	char	szSecret [13], szError [80];
 	char	*psz;
-	INT32	nSecret;
+	int	nSecret;
 
 DDX_Text (pDX, IDC_MISSION_NAME, m_missionData.missionName, sizeof (m_missionData.missionName));
 DDX_Text (pDX, IDC_LEVEL_NAME, theMine->LevelName (), theMine->LevelNameSize ());
@@ -198,7 +198,7 @@ LPSTR CMissionTool::FixLevelName (LPSTR pszName)
 
 if (psz = strchr (pszName, '.'))
 	*psz = '\0';
-INT32 l = INT32 (strlen (pszName));
+int l = int (strlen (pszName));
 if (l > 8)
 	pszName [8] = '\0';
 strcat_s (pszName, 256, theApp.IsD1File () ? ".rdl" : ".rl2");
@@ -216,7 +216,7 @@ UpdateData (TRUE);
 
 void CMissionTool::OnAdd ()
 {
-INT32 i = LBLevels ()->GetCurSel ();
+int i = LBLevels ()->GetCurSel ();
 
 UpdateData (TRUE);
 if (*m_szLevel) {
@@ -226,7 +226,7 @@ if (*m_szLevel) {
 		*psz = '\0';
 		FixLevelName (CopyLevelName (szLevel, m_szLevel));
 		FixLevelName (CopyLevelName (szSecret, psz + 1));
-		INT32 j = LBLevels ()->FindStringExact (-1, szSecret);
+		int j = LBLevels ()->FindStringExact (-1, szSecret);
 		if ((j == LB_ERR) && isdigit (*szSecret))
 			j = atoi (szSecret);
 		if (j == LB_ERR) {
@@ -247,7 +247,7 @@ if (*m_szLevel) {
 
 void CMissionTool::OnDelete ()
 {
-	INT32 i = LBLevels ()->GetCurSel ();
+	int i = LBLevels ()->GetCurSel ();
 
 if ((i >= 0) && (i < LBLevels ()->GetCount ()))
 	LBLevels ()->DeleteString (i);
@@ -257,7 +257,7 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ()))
 
 void CMissionTool::OnRename ()
 {
-	INT32 i = LBLevels ()->GetCurSel ();
+	int i = LBLevels ()->GetCurSel ();
 
 if ((i >= 0) && (i < LBLevels ()->GetCount ())) {
 	UpdateData (TRUE);
@@ -277,7 +277,7 @@ if ((i >= 0) && (i < LBLevels ()->GetCount ())) {
 
 void CMissionTool::OnUp ()
 {
-	INT32 i = LBLevels ()->GetCurSel ();
+	int i = LBLevels ()->GetCurSel ();
 
 if (i > 0) {
 	char	szLevel [26];
@@ -292,8 +292,8 @@ if (i > 0) {
 
 void CMissionTool::OnDown ()
 {
-	INT32 h = LBLevels ()->GetCount ();
-	INT32 i = LBLevels ()->GetCurSel ();
+	int h = LBLevels ()->GetCount ();
+	int i = LBLevels ()->GetCurSel ();
 
 if ((i >= 0) && (i < h - 1)) {
 	char	szLevel [26];
@@ -318,7 +318,7 @@ void CMissionTool::OnLoadLevel (void)
 {
 	char	szNewFile [256];
 
-INT32 i = LBLevels ()->GetCurSel ();
+int i = LBLevels ()->GetCurSel ();
 if (i >= LBLevels ()->GetCount ())
 	return;
 LBLevels ()->GetText (i, szNewFile);

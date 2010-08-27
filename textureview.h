@@ -22,57 +22,57 @@ class CTextureView : public CWnd {
 // structs
 		DECLARE_DYNCREATE(CTextureView)
 
-		INT32			*m_pTextures;
-		INT32			m_nTextures [2];
+		int			*m_pTextures;
+		int			m_nTextures [2];
 		CPen			*m_penCyan;
 		CSize			m_iconSize;
 		CSize			m_iconSpace;
 		CSize			m_viewSpace;
-		INT32			m_nRows [2];
-		UINT32		m_viewFlags;
+		int			m_nRows [2];
+		uint		m_viewFlags;
 		BOOL			m_bShowAll;
 		bool			m_bDelayRefresh;
-		INT16			m_mapTxtToView [MAX_D2_TEXTURES];
-		INT16			m_mapViewToTxt [MAX_D2_TEXTURES];
-		UINT32		m_nTxtFilter;
+		short			m_mapTxtToView [MAX_D2_TEXTURES];
+		short			m_mapViewToTxt [MAX_D2_TEXTURES];
+		uint		m_nTxtFilter;
 
 		CTextureView ();
 		~CTextureView ();
 		void Reset ();
-		void QSortTxtMap (INT16 left, INT16 right);
+		void QSortTxtMap (short left, short right);
 		void CrtTxtMap (void);
-		UINT32 TextureFilter (INT16 nTxt);
-		INT16 TexFilterIndex (INT16 nTxt);
-		INT32 QCmpTxtFilters (INT32 nTxt, INT32 mTxt, UINT32 mf, UINT32 mf2);
+		uint TextureFilter (short nTxt);
+		short TexFilterIndex (short nTxt);
+		int QCmpTxtFilters (int nTxt, int mTxt, uint mf, uint mf2);
 //		CTreeView	m_treeView;
-//		afx_msg INT32 CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
+//		afx_msg int CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);
 		afx_msg void OnPaint ();
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		afx_msg BOOL OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt);
+		afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
 		void Setup ();
 		void RecalcLayout ();
-		void FilterTextures(UINT8 *show_texture,BOOL show_all_textures);
-		INT32 TextureIndex(INT16 nBaseTex);
-		INT32 PickTexture(CPoint &point,INT16 &nBaseTex);
-//		INT32 ReadTextureFromFile(INT16 texture_number,UINT8 *bitmap_array);
-//		INT32 ReadPog(FILE *file);
+		void FilterTextures(byte *show_texture,BOOL show_all_textures);
+		int TextureIndex(short nBaseTex);
+		int PickTexture(CPoint &point,short &nBaseTex);
+//		int ReadTextureFromFile(short texture_number,byte *bitmap_array);
+//		int ReadPog(FILE *file);
 		void Refresh (bool bRepaint = true);
 		void ToggleViewFlag(eMineViewFlags flag) {
 			m_viewFlags ^= flag;
 			Refresh ();
 			}
-		void SetViewFlags (UINT32 flags) {
+		void SetViewFlags (uint flags) {
 			if (m_viewFlags != flags) {
 				m_viewFlags = flags; 
 				Refresh ();
 				}
 			}
-		inline UINT32 GetViewFlags ()
+		inline uint GetViewFlags ()
 			{ return m_viewFlags; }
-		inline UINT32& TextureFilter (void)
+		inline uint& TextureFilter (void)
 			{ return m_nTxtFilter; }
 		inline bool ShowAll ()
 			{ return m_bShowAll && (m_nTxtFilter == 0xFFFFFFFF); }

@@ -51,7 +51,7 @@ m_pTextures = NULL;
 m_nTextures [0] = 0;
 m_nTextures [1] = 0;
 m_penCyan = new CPen (PS_SOLID, 1, RGB (0,255,255));
-INT32 scale = TEXTURE_SCALE;
+int scale = TEXTURE_SCALE;
 m_iconSize.cx = 64 / scale;
 m_iconSize.cy = 64 / scale;
 m_iconSpace.cx = m_iconSize.cx + 6;
@@ -98,9 +98,9 @@ Refresh ();
 
 //------------------------------------------------------------------------
 
-INT16 CTextureView::TexFilterIndex (INT16 nTxt)
+short CTextureView::TexFilterIndex (short nTxt)
 {
-	INT16	m, l = 0, r = TEX_FILTER_SIZE - 1;
+	short	m, l = 0, r = TEX_FILTER_SIZE - 1;
 
 do {
 	m = (l + r) / 2;
@@ -117,19 +117,19 @@ return -1;
 
 //------------------------------------------------------------------------
 
-UINT32 CTextureView::TextureFilter (INT16 nTxt)
+uint CTextureView::TextureFilter (short nTxt)
 {
-	INT16	m = TexFilterIndex (nTxt);
+	short	m = TexFilterIndex (nTxt);
 
 return (m < 0) ? 0 : TEXTURE_FILTERS [m].nFilter;
 }
 
 //------------------------------------------------------------------------
 
-INT32 CTextureView::QCmpTxtFilters (INT32 nTxt, INT32 mTxt, UINT32 mf, UINT32 mf2)
+int CTextureView::QCmpTxtFilters (int nTxt, int mTxt, uint mf, uint mf2)
 {
-	INT16	n = TexFilterIndex (nTxt);
-	UINT32	nf = TEXTURE_FILTERS [n].nFilter,
+	short	n = TexFilterIndex (nTxt);
+	uint	nf = TEXTURE_FILTERS [n].nFilter,
 			nf2 = TEXTURE_FILTERS [n].n2ndFilter;
 
 //CBRK (((nf == TXT_DOOR) && (mf == TXT_SAND)) || ((mf == TXT_DOOR) && (nf == TXT_SAND)));
@@ -147,12 +147,12 @@ else
 
 //------------------------------------------------------------------------
 
-void CTextureView::QSortTxtMap (INT16 left, INT16 right)
+void CTextureView::QSortTxtMap (short left, short right)
 {
-	INT16		mTxt = m_mapViewToTxt [(left + right) / 2];
-	INT16		m = TexFilterIndex (mTxt);
-	UINT32	mf, mf2;
-	INT16		h, l = left, r = right;
+	short		mTxt = m_mapViewToTxt [(left + right) / 2];
+	short		m = TexFilterIndex (mTxt);
+	uint	mf, mf2;
+	short		h, l = left, r = right;
 
 mf = TEXTURE_FILTERS [m].nFilter;
 mf2 = TEXTURE_FILTERS [m].n2ndFilter;
@@ -183,7 +183,7 @@ if (left < r)
 void CTextureView::CrtTxtMap (void)
 {
 QSortTxtMap (0, m_nTextures [1] - 1);
-INT32 i;
+int i;
 for (i = 0; i < m_nTextures [1]; i++)
 	m_mapTxtToView [m_mapViewToTxt [i]] = i;
 }
@@ -241,7 +241,7 @@ void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 if (!theMine) return;
 
-	INT16 nBaseTex;
+	short nBaseTex;
 
 if (PickTexture (point, nBaseTex))
 	return;
@@ -269,7 +269,7 @@ void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 if (!theMine) return;
 
 	CSide *sideP = theMine->CurrSide ();
-	INT16	nBaseTex;
+	short	nBaseTex;
 
 if (PickTexture (point, nBaseTex))
 	return;
@@ -291,7 +291,7 @@ theApp.SetModified (TRUE);
 // If a match is found, nBaseTex is defined and 0 is returned
 //------------------------------------------------------------------------
 
-INT32 CTextureView::PickTexture(CPoint &point,INT16 &nBaseTex) 
+int CTextureView::PickTexture(CPoint &point,short &nBaseTex) 
 {
 if (!theMine) 
 	return 1;
@@ -308,17 +308,17 @@ if (!theMine)
 //	return 1;
 
 UINT nPos = GetScrollPos (SB_VERT);
-INT32 nOffset = nPos * m_viewSpace.cx;
-UINT8 pFilter [1 + MAX_D2_TEXTURES / 8];
+int nOffset = nPos * m_viewSpace.cx;
+byte pFilter [1 + MAX_D2_TEXTURES / 8];
 
 FilterTextures (pFilter, m_bShowAll);
-INT32 x = 0;
-INT32 y = 0;
+int x = 0;
+int y = 0;
 #if 1
 x = point.x / m_iconSpace.cx;
 y = point.y / m_iconSpace.cy;
-INT32 h = nOffset + y * m_viewSpace.cx + x + 1;
-INT32 i;
+int h = nOffset + y * m_viewSpace.cx + x + 1;
+int i;
 for (i = 0; i < m_nTextures [1]; i++) {
 	if (BITSET (pFilter, i)) //pFilter [i / 8] & (1 << (i & 7)))
 		if (!--h) {
@@ -327,7 +327,7 @@ for (i = 0; i < m_nTextures [1]; i++) {
 			}
 	}
 #else
-INT32 i;
+int i;
 for (i = nOffset; i < m_nTextures [1]; i++) {
 	if (BITSET (pFilter, i)) {
 		if ((point.x >= x * m_iconSpace.cx) && 
@@ -356,12 +356,12 @@ return 1; // return failure
 // returns -1 on failure
 //------------------------------------------------------------------------
 
-INT32 CTextureView::TextureIndex(INT16 nBaseTex) 
+int CTextureView::TextureIndex(short nBaseTex) 
 {
 #if 1
 return ((nBaseTex < 0) || (nBaseTex >= sizeof (m_mapTxtToView) / sizeof (m_mapTxtToView [0]))) ? 0 : m_mapTxtToView [nBaseTex];
 #else
-	INT32 i;
+	int i;
 
 nBaseTex &= 0x1fff;
 if (nBaseTex >= 0)
@@ -378,7 +378,7 @@ return (i == m_nTextures [1]) ? -1 : i;
 // Determines which textures to display based on which have been used
 //------------------------------------------------------------------------
 
-void CTextureView::FilterTextures (UINT8 *pFilter, BOOL bShowAll) 
+void CTextureView::FilterTextures (byte *pFilter, BOOL bShowAll) 
 {
 if (bShowAll) {
 	if (m_nTxtFilter == 0xFFFFFFFF)
@@ -386,10 +386,10 @@ if (bShowAll) {
 	else {
 		memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 		m_nTextures [0] = 0;
-		INT32 i, f = m_nTxtFilter & ~TXT_MOVE;
+		int i, f = m_nTxtFilter & ~TXT_MOVE;
 		for (i = 0; i < m_nTextures [1]; i++) {
-			INT32 t = m_mapViewToTxt [i];
-			INT32 j = TexFilterIndex (t);
+			int t = m_mapViewToTxt [i];
+			int j = TexFilterIndex (t);
 			if ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & f) {
 				SETBIT (pFilter, i);
 				m_nTextures [0]++;
@@ -398,20 +398,20 @@ if (bShowAll) {
 		}
 	}
 else {
-	UINT16 nSegment,nSide;
+	ushort nSegment,nSide;
 	CSegment *segP;
 
 	memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
 	m_nTextures [0] = 0;
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
-			UINT16 nWall = segP->m_sides[nSide].m_info.nWall;
+			ushort nWall = segP->m_sides[nSide].m_info.nWall;
 			if ((segP->Child (nSide) == -1) ||
 				 (nWall < theMine->GameInfo ().walls.count && 
 				  theMine->Walls (nWall)->m_info.type != WALL_OPEN)) {
-				INT32 t = segP->m_sides [nSide].m_info.nBaseTex;
-				INT32 i = TextureIndex (t);
-				INT32 j = TexFilterIndex (t);
+				int t = segP->m_sides [nSide].m_info.nBaseTex;
+				int i = TextureIndex (t);
+				int j = TexFilterIndex (t);
 				if ((i >= 0) && !BITSET (pFilter, i) && 
 					 ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & m_nTxtFilter)) {
 					SETBIT (pFilter, i);
@@ -443,13 +443,13 @@ if (!theMine) return;
 	m_viewSpace.cx = rect.Width () / m_iconSpace.cx;
 	m_viewSpace.cy = rect.Height () / m_iconSpace.cy;
 
-  INT32 nOffset = 0;
+  int nOffset = 0;
   m_bShowAll = ((m_viewFlags & eViewMineUsedTextures) == 0);
 
   if (!(m_viewSpace.cx && m_viewSpace.cy))
 		return;
 
-	UINT8 pFilter [(MAX_D2_TEXTURES + 7) / 8];
+	byte pFilter [(MAX_D2_TEXTURES + 7) / 8];
 	FilterTextures (pFilter, m_bShowAll);
 	m_nRows [ShowAll ()] = (m_nTextures [ShowAll ()] + m_viewSpace.cx - 1) / m_viewSpace.cx;
 
@@ -464,7 +464,7 @@ if (!theMine) return;
 	// otherwise, calculate the number of rows to skip
 		ShowScrollBar (SB_VERT,TRUE);
 		UINT nPos = GetScrollPos (SB_VERT);
-		INT32 i, j = nPos * m_viewSpace.cx; 
+		int i, j = nPos * m_viewSpace.cx; 
 		for (i = 0, nOffset = 0; (i < m_nTextures [1]); i++)
 			if (ShowAll () || BITSET (pFilter, i)) {
 				nOffset++;
@@ -474,8 +474,8 @@ if (!theMine) return;
 		}
 	SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
   // figure out position of current texture
-  INT32 nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
-  INT32 nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
+  int nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
+  int nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
   CTexture tx (bmBuf);
 
 	CDC *pDC = GetDC();
@@ -490,9 +490,9 @@ if (!theMine) return;
 	CPalette *oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 	pDC->RealizePalette();
 	pDC->SetStretchBltMode(STRETCH_DELETESCANS);
-	INT32 x=0;
-	INT32 y=0;
-	INT32 i;
+	int x=0;
+	int y=0;
+	int i;
 	for (i = 0; i < m_nTextures [1]; i++) {
 		if (!ShowAll ()) {
 			if (!BITSET (pFilter, i))
@@ -547,8 +547,8 @@ if (!theMine) return;
 void CTextureView::Setup (void) 
 {
   char name[20];
-  INT32 i;
-  INT32 nTextures, nFrames = 0;
+  int i;
+  int nTextures, nFrames = 0;
   HINSTANCE hInst = AfxGetApp()->m_hInstance;
 
   nTextures = theApp.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
@@ -567,7 +567,7 @@ for (i = 0; i < nTextures; i++) {
 #if 0
 if (m_pTextures)
 	free (m_pTextures);
-m_pTextures = (INT32 *) malloc (m_nTextures [1] * sizeof (INT32));
+m_pTextures = (int *) malloc (m_nTextures [1] * sizeof (int));
 if (m_pTextures) {
 	// fill in texture list
 #if 1
@@ -615,7 +615,7 @@ return 1;
 
 								/*---------------------------*/
 
-BOOL CTextureView::OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt)
+BOOL CTextureView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 {
 	CRect	rc;
 
@@ -623,7 +623,7 @@ GetWindowRect (rc);
 if ((pt.x < rc.left) || (pt.x >= rc.right) || (pt.y < rc.top) || (pt.y >= rc.bottom))
 	return 1;
 
-INT32 nPos = GetScrollPos (SB_VERT) - zDelta / WHEEL_DELTA;
+int nPos = GetScrollPos (SB_VERT) - zDelta / WHEEL_DELTA;
 
 if (nPos >= m_nRows [m_bShowAll])
 	nPos = m_nRows [m_bShowAll] - m_viewSpace.cy;

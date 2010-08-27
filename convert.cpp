@@ -31,7 +31,7 @@ m_bInited = false;
 // CConvertDlg - ~CConvertDlg (destructor)
 //------------------------------------------------------------------------
 
-void CConvertDlg::EndDialog (INT32 nResult) 
+void CConvertDlg::EndDialog (int nResult) 
 {
 if (m_bInited) {
 	m_showD1.DestroyWindow ();
@@ -42,7 +42,7 @@ CDialog::EndDialog (nResult);
 
                         /*--------------------------*/
 
-void CConvertDlg::CreateImgWnd (CWnd *pImgWnd, INT32 nIdC)
+void CConvertDlg::CreateImgWnd (CWnd *pImgWnd, int nIdC)
 {
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
@@ -68,15 +68,15 @@ if (!hFind)
 m_hTextures = LoadResource (m_hInst, hFind);
 if (!m_hTextures)
 	return FALSE;
-m_pTextures = (INT16 *) LockResource (m_hTextures);
+m_pTextures = (short *) LockResource (m_hTextures);
 if (!m_pTextures)
 	return FALSE;
 
 CComboBox *pcb = CBD1 ();
-INT16	nSeg,	nSide, nTextures;
-INT16 tnum [2], segCount = theMine->SegCount ();
+short	nSeg,	nSide, nTextures;
+short tnum [2], segCount = theMine->SegCount ();
 char	szName [80];
-INT32 h;
+int h;
 CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 // add textures that have been used to Texture 1 combo box
@@ -84,7 +84,7 @@ for (nSeg = segCount; nSeg; nSeg--, segP++) {
 	for (sideP = segP->m_sides, nSide = 6; nSide; nSide--, sideP++) {
 		tnum [0] = sideP->m_info.nBaseTex;
 		tnum [1] = sideP->m_info.nOvlTex & 0x1fff;
-		INT32 i;
+		int i;
 		for (i = 0; i < 2; i++) {
 			if (tnum [i] != -1) {
 				// read name of texture from Descent 1 texture resource
@@ -103,7 +103,7 @@ pcb->SetCurSel (0);
   // add complete set for Texture 2 combo box
 nTextures = theApp.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 pcb = CBD2 ();
-INT32 i;
+int i;
 for (i = 0; i < nTextures; i++) {
 // read szName of texture from Descent 2 texture resource
 	LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + i, szName, sizeof (szName));
@@ -131,8 +131,8 @@ void CConvertDlg::Refresh ()
 if (!(m_bInited && theMine))
 	return;
 
-	INT16 texture1,texture2;
-	INT16 fileTypeBackup;
+	short texture1,texture2;
+	short fileTypeBackup;
 #ifdef _DEBUG
 	DWORD nError;
 #endif
@@ -140,7 +140,7 @@ if (!(m_bInited && theMine))
 // find matching entry for Texture 1
 //  CBD1 ()->GetSelString (message,sizeof (message));
 //  texture1 = GetTextureID (message);
-texture1 = (INT16) (CBD1 ()->GetItemData (CBD1 ()->GetCurSel ()));
+texture1 = (short) (CBD1 ()->GetItemData (CBD1 ()->GetCurSel ()));
 texture2 = m_pTextures [texture1];
 if (LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + texture2, message, sizeof (message)))
 	CBD2 ()->SelectString (-1, message);
@@ -195,8 +195,8 @@ Refresh ();
 
 void CConvertDlg::OnSetD2 ()
 {
-INT16 texture1 = (INT16) (CBD1 ()->GetItemData (CBD1 ()->GetCurSel ()));
-INT16 texture2 = (INT16) (CBD2 ()->GetItemData (CBD2 ()->GetCurSel ()));
+short texture1 = (short) (CBD1 ()->GetItemData (CBD1 ()->GetCurSel ()));
+short texture2 = (short) (CBD2 ()->GetItemData (CBD2 ()->GetCurSel ()));
 m_pTextures [texture1] = texture2;
 Refresh ();
 }
@@ -209,13 +209,13 @@ void CConvertDlg::OnOK ()
 {
 if (!theMine) return;
 
-  INT16		i,j;
+  short		i,j;
   CSegment *segP;
   CSide		*sideP;
   CWall		*wallP;
   CTrigger	*trigP;
   CGameObject	*objP;
-  INT16		nSegment, nSide, d1Texture, mode,
+  short		nSegment, nSide, d1Texture, mode,
 				segCount = theMine->SegCount (),
 				wallCount = theMine->GameInfo ().walls.count;
 
@@ -228,7 +228,7 @@ theMine->LoadPalette ();
 
   // convert textures
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
-	segP->m_info.s2_flags = 0;
+	segP->m_info.s2Flags = 0;
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
 		if ((segP->Child (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 			d1Texture = segP->m_sides [nSide].m_info.nBaseTex;
@@ -301,7 +301,7 @@ for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
 	theMine->BotGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == i))
-				theMine->BotGens (i)->m_info.nFuelCen = (INT16)(segP->m_info.value);
+				theMine->BotGens (i)->m_info.nFuelCen = (short)(segP->m_info.value);
 	}
 
 // set equip_center nFuelCen and robot_flags2
@@ -310,7 +310,7 @@ for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
 	theMine->EquipGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nMatCen == i))
-				theMine->EquipGens (i)->m_info.nFuelCen = (INT16)(segP->m_info.value);
+				theMine->EquipGens (i)->m_info.nFuelCen = (short)(segP->m_info.value);
 	}
 
 // Objects ()
@@ -340,7 +340,7 @@ theMine->AutoAdjustLight (50.0, true);
 theMine->CalcAverageCornerLight (true);
 theMine->ScaleCornerLight (100.0, true);
 theMine->SetCubeLight (50.0, true);
-theMine->CalcDeltaLightData (50.0, (INT32) true);
+theMine->CalcDeltaLightData (50.0, (int) true);
 
 // d2 reactor and secret cube
 //----------------------------------------------

@@ -26,10 +26,10 @@ if (!theMine) return FALSE;
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
-	INT16 nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-	INT16 v = theMine->CurrSeg ()->m_info.verts [nVert];
-	INT16 x = m_viewPoints [v].x;
-	INT16 y = m_viewPoints [v].y;
+	short nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+	short v = theMine->CurrSeg ()->m_info.verts [nVert];
+	short x = m_viewPoints [v].x;
+	short y = m_viewPoints [v].y;
 
 if (m_mouseState == eMouseStateInitDrag) {
 	SetMouseState (eMouseStateDrag);
@@ -46,7 +46,7 @@ return TRUE;
 
                         /*--------------------------*/
                         
-void CMineView::HighlightDrag (INT16 nVert, long x, long y) 
+void CMineView::HighlightDrag (short nVert, long x, long y) 
 {
 if (!theMine) return;
 
@@ -56,12 +56,12 @@ m_pDC->SetROP2 (R2_NOT);
 m_pDC->Ellipse (x-4, y-4, x+4, y+4);
 
 CRect	rc (x, y, x, y);
-INT32 i;
+int i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
-	INT16 nVert2 = connectPointTable [nVert] [i];
-	INT16 x2 = m_viewPoints [theMine->CurrSeg ()->m_info.verts [nVert2]].x;
-	INT16 y2 = m_viewPoints [theMine->CurrSeg ()->m_info.verts [nVert2]].y;
+	short nVert2 = connectPointTable [nVert] [i];
+	short x2 = m_viewPoints [theMine->CurrSeg ()->m_info.verts [nVert2]].x;
+	short y2 = m_viewPoints [theMine->CurrSeg ()->m_info.verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
 	if (rc.left > x2)
 		rc.left = x2;
@@ -89,9 +89,9 @@ if (m_mouseState != eMouseStateDrag)
 if (m_lastMousePos == m_lastDragPos)
 	return FALSE;
 
-	INT16 nVert;
-	INT16 x, y;
-	INT32 i;
+	short nVert;
+	short x, y;
+	int i;
 
 nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
 
@@ -137,12 +137,12 @@ void CMineView::FinishDrag (void)
 if (!theMine) return;
 
 //ReleaseCapture ();
-	INT32		m_changesMade = 1;
-	INT32		i, new_vert, count = 0;
+	int		m_changesMade = 1;
+	int		i, new_vert, count = 0;
 	long		xPos,yPos;
-	INT16		xPoint,yPoint;
-	INT16		point1,vert1;
-	INT16		point2,vert2;
+	short		xPoint,yPoint;
+	short		point1,vert1;
+	short		point2,vert2;
 
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
@@ -196,8 +196,8 @@ if (count == 1) {
 else {
 	// no vertex found, just drop point along screen axii
 	APOINT apoint;
-	apoint.x = (INT16) xPos;
-	apoint.y = (INT16) yPos;
+	apoint.x = (short) xPos;
+	apoint.y = (short) yPos;
 	apoint.z = m_viewPoints [vert1].z;
 	m_view.Unproject (*theMine->Vertices (vert1), apoint);
 	}

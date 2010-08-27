@@ -42,9 +42,9 @@ class CFilename {
 typedef struct CFILE_INFO {
 	FILE		*file;
 	char		*filename;
-	INT32		size;
-	INT32		libOffset;
-	INT32		rawPosition;
+	int		size;
+	int		libOffset;
+	int		rawPosition;
 } CFILE;
 
 class CFileManager {
@@ -55,60 +55,60 @@ class CFileManager {
 		CFileManager () { Init (); }
 		~CFileManager () { Close (); };
 		void Init (void);
-		INT32 Open (const char *filename, const char *folder, const char *mode);
-		INT32 Length (void);							// Returns actual size of file...
+		int Open (const char *filename, const char *folder, const char *mode);
+		int Length (void);							// Returns actual size of file...
 		size_t Read (void *buf, size_t elsize, size_t nelem);
-		INT32 Close (void);
-		INT32 Size (const char *hogname, const char *folder);
-		INT32 Seek (size_t offset, INT32 where);
-		INT32 Tell (void);
+		int Close (void);
+		int Size (const char *hogname, const char *folder);
+		int Seek (size_t offset, int where);
+		int Tell (void);
 		char *GetS (char *buf, size_t n);
-		INT32 EoF (void);
-		INT32 Error (void);
-		INT32 Write (const void *buf, INT32 elsize, INT32 nelem);
-		INT32 GetC (void);
-		INT32 PutC (INT32 c);
-		INT32 PutS (const char *str);
+		int EoF (void);
+		int Error (void);
+		int Write (const void *buf, int elsize, int nelem);
+		int GetC (void);
+		int PutC (int c);
+		int PutS (const char *str);
 
-		inline INT32 Size (void) { return m_cf.size; }
+		inline int Size (void) { return m_cf.size; }
 
 		// prototypes for reading basic types from fp
-		INT32 ReadInt (void);
-		UINT32 ReadUInt (void);
-		INT16 ReadShort (void);
-		UINT16 ReadUShort (void);
-		INT8 ReadByte (void);
-		UINT8 ReadUByte (void);
-		FIX ReadFix (void);
-		FIXANG ReadFixAng (void);
+		int ReadInt (void);
+		uint ReadUInt (void);
+		short ReadShort (void);
+		ushort ReadUShort (void);
+		char ReadByte (void);
+		byte ReadUByte (void);
+		fix ReadFix (void);
+		fixang ReadFixAng (void);
 		void ReadVector (CFixVector& v);
 		void ReadAngVec (CAngleVector& v);
 		void ReadMatrix (CFixMatrix& v);
 		float ReadFloat (void);
 		double ReadDouble (void);
-		void ReadString (char *buf, INT32 n);
+		void ReadString (char *buf, int n);
 		char *ReadData (const char *filename, const char *folder);
 
-		INT32 WriteInt (INT32 i);
-		INT32 WriteFix (FIX x);
-		INT32 WriteShort (INT16 s);
-		INT32 WriteByte (INT8 u);
-		INT32 WriteFixAng (FIXANG a);
-		INT32 WriteFloat (float f);
-		INT32 WriteDouble (double d);
+		int WriteInt (int i);
+		int WriteFix (fix x);
+		int WriteShort (short s);
+		int WriteByte (char u);
+		int WriteFixAng (fixang a);
+		int WriteFloat (float f);
+		int WriteDouble (double d);
 		void WriteAngVec (const CAngleVector& v);
 		void WriteVector (const CFixVector& v);
 		void WriteMatrix (const CFixMatrix& m);
-		INT32 WriteString (const char *buf);
+		int WriteString (const char *buf);
 
-		INT32 Copy (const char *pszSrc, const char *pszDest);
-		INT32 Extract (const char *filename, const char *folder, const char *szDest);
+		int Copy (const char *pszSrc, const char *pszDest);
+		int Extract (const char *filename, const char *folder, const char *szDest);
 		time_t Date (const char *filename, const char *folder);
 
-		static INT32 Exist (const char *filename, const char *folder);	// Returns true if file exists on disk (1) or in hog (2).
-		static INT32 Delete (const char *filename, const char* folder);
-		static INT32 Rename (const char *oldname, const char *newname, const char *folder);
-		static INT32 MkDir (const char *pathname);
+		static int Exist (const char *filename, const char *folder);	// Returns true if file exists on disk (1) or in hog (2).
+		static int Delete (const char *filename, const char* folder);
+		static int Rename (const char *oldname, const char *newname, const char *folder);
+		static int MkDir (const char *pathname);
 		static FILE *GetFileHandle (const char *filename, const char *folder, const char *mode);
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
@@ -148,11 +148,11 @@ typedef struct tGameFolders {
 	char szTextureCacheDir [4][FILENAME_LEN];
 	char szTextureDir [4][FILENAME_LEN];
 	char szWallpaperDir [FILENAME_LEN];
-	INT32 bAltHogDirInited;
+	int bAltHogDirInited;
 } tGameFolders;
 
-INT32 GetAppFolder (const char *szRootDir, char *szFolder, const char *szName, const char *szFilter);
-char *GameDataFilename (char *pszFilename, const char *pszExt, INT32 nLevel, INT32 nType);
+int GetAppFolder (const char *szRootDir, char *szFolder, const char *szName, const char *szFilter);
+char *GameDataFilename (char *pszFilename, const char *pszExt, int nLevel, int nType);
 void MakeTexSubFolders (char* pszParentFolder);
 void MakeModFolders (const char* pszMission);
 void ResetModFolders (void);
@@ -162,7 +162,7 @@ char *UnicodeToAsc (char *str, const wchar_t *w_str);
 wchar_t *AscToUnicode (wchar_t *w_str, const char *str);
 #endif
 
-extern INT32 nCFileError;
+extern int nCFileError;
 extern tGameFolders	gameFolders;
 
 #ifdef _WIN32_WCE

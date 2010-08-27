@@ -39,8 +39,8 @@ extern HRGN hrgnBackground, hrgnLowerBar, hrgnTopBar, hrgnAll;
 //-----------------------------------------------------------------------
 // MACROS
 //-----------------------------------------------------------------------
-#define W(p)   (*((INT16 *) (p)))
-#define WP(p)  ((INT16 *) (p))
+#define W(p)   (*((short *) (p)))
+#define WP(p)  ((short *) (p))
 #define VP(p)  ((CFixVector*) (p))
 #define calcNormal(a, b)
 #define glNormal3fv(a)
@@ -50,7 +50,7 @@ extern HRGN hrgnBackground, hrgnLowerBar, hrgnTopBar, hrgnAll;
 #define glEnd()
 #define glTexCoord2fv(a)
 
-#define UINTW INT32
+#define UINTW int
 
 //-----------------------------------------------------------------------
 // local prototypes
@@ -62,22 +62,22 @@ extern HRGN hrgnBackground, hrgnLowerBar, hrgnTopBar, hrgnAll;
 static CGameObject* renderObject;
 static tModelRenderData modelRenderData;
 static CVertex renderOffset;
-static INT16 glow_num = -1;
+static short glow_num = -1;
 static CDoubleVector normal;	// Storage for calculated surface normal
 static tModelRenderPoly* faceP;
-static INT32 pt, pt0, n_points;
-static INT32 lastObjectType = -1;
-static INT32 lastObjectId = -1;
+static int pt, pt0, n_points;
+static int lastObjectType = -1;
+static int lastObjectId = -1;
 static APOINT poly_xy [MAX_POLYMODEL_POINTS];
 
 CPolyModel* renderModel;
 
 //-----------------------------------------------------------------------
-// FIX MultiplyFix ()
+// fix MultiplyFix ()
 //-----------------------------------------------------------------------
 
-FIX MultiplyFix (FIX a, FIX b) {
-  return (FIX) ((double (a) * double (b))/F1_0);
+fix MultiplyFix (fix a, fix b) {
+  return (fix) ((double (a) * double (b))/F1_0);
 }
 
 //-----------------------------------------------------------------------
@@ -96,14 +96,14 @@ if (renderModel)
 // Rotates, translates, then sets screen points (xy) for 3d model points
 //-----------------------------------------------------------------------
 
-void CPolyModel::SetModelPoints (INT32 start, INT32 end) 
+void CPolyModel::SetModelPoints (int start, int end) 
 {
 	CVertex	pt;
 
-for (INT32 i = start; i < end; i++) {
-	//FIX x0 = modelRenderData.points[i].v.x;
-	//FIX y0 = modelRenderData.points[i].v.y;
-	//FIX z0 = modelRenderData.points[i].v.z;
+for (int i = start; i < end; i++) {
+	//fix x0 = modelRenderData.points[i].v.x;
+	//fix y0 = modelRenderData.points[i].v.y;
+	//fix z0 = modelRenderData.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
 	pt = renderObject->m_location.orient * modelRenderData.points [i];
@@ -125,7 +125,7 @@ for (INT32 i = start; i < end; i++) {
 void tModelRenderPoly::Draw (CViewMatrix* view, CDC* pDC) 
 {
 if (view->CheckNormal (renderObject, offset, normal)) {
-	  INT32 i, j;
+	  int i, j;
 
 	POINT aPoints [MAX_POLYMODEL_POLY_POINTS];
 	for (i = 0; i < n_verts; i++) {
@@ -144,14 +144,14 @@ if (view->CheckNormal (renderObject, offset, normal)) {
 //
 //-----------------------------------------------------------------------
 
-void CPolyModel::Render (UINT8 *p) 
+void CPolyModel::Render (byte *p) 
 {
 while (W (p) != OP_EOF) {
 	switch (W (p)) {
 		// Point Definitions with Start Offset:
-		// 2  UINT16      n_points       number of points
-		// 4  UINT16      start_point    starting point
-		// 6  UINT16      unknown
+		// 2  ushort      n_points       number of points
+		// 4  ushort      start_point    starting point
+		// 6  ushort      unknown
 		// 8  CFixVector  pts[n_points]  x, y, z data
 		case OP_DEFP_START: {
 			pt0 = W (p+4);
@@ -167,11 +167,11 @@ while (W (p) != OP_EOF) {
 			break;
 			}
 		// Flat Shaded Polygon:
-		// 2  UINT16     n_verts
+		// 2  ushort     n_verts
 		// 4  CFixVector vector1
 		// 16 CFixVector vector2
-		// 28 UINT16     color
-		// 30 UINT16     verts[n_verts]
+		// 28 ushort     color
+		// 30 ushort     verts[n_verts]
 		case OP_FLATPOLY: {
 			faceP = &modelRenderData.polys[modelRenderData.n_polys];
 			faceP->n_verts = W (p+2);
@@ -184,11 +184,11 @@ while (W (p) != OP_EOF) {
 			break;
 			}
 		// Texture Mapped Polygon:
-		// 2  UINT16     n_verts
+		// 2  ushort     n_verts
 		// 4  CFixVector vector1
 		// 16 CFixVector vector2
-		// 28 UINT16     nBaseTex
-		// 30 UINT16     verts[n_verts]
+		// 28 ushort     nBaseTex
+		// 30 ushort     verts[n_verts]
 		// -- UVL        uvls[n_verts]
 		case OP_TMAPPOLY: {
 			faceP = &modelRenderData.polys[modelRenderData.n_polys];
@@ -209,11 +209,11 @@ while (W (p) != OP_EOF) {
 			break;
 			}
 		// Sort by Normal
-		// 2  UINT16      unknown
+		// 2  ushort      unknown
 		// 4  CFixVector  Front Model normal
 		// 16 CFixVector  Back Model normal
-		// 28 UINT16      Front Model Offset
-		// 30 UINT16      Back Model Offset
+		// 28 ushort      Front Model Offset
+		// 30 ushort      Back Model Offset
 		case OP_SORTNORM: {
 			/* = W (p+2); */
 			/* = W (p+4); */
@@ -230,9 +230,9 @@ while (W (p) != OP_EOF) {
 			break;
 			}
 		// Call a Sub Object
-		// 2  UINT16     n_anims
+		// 2  ushort     n_anims
 		// 4  CFixVector offset
-		// 16 UINT16     model offset
+		// 16 ushort     model offset
 		case OP_SUBCALL: {
 			renderOffset += *VP (p+4);
 			Render (p + W (p+16));
@@ -257,13 +257,13 @@ return;
 //--------------------------------------------------------------------------
 // read_UINTW ()
 //
-// Reads a UINT32 number and converts it UINTW (16 or 32 bit)
+// Reads a uint number and converts it UINTW (16 or 32 bit)
 //--------------------------------------------------------------------------
 
 UINTW read_UINTW (FILE *fp) 
 {
-UINT32 value;
-fread (&value, sizeof (UINT32), 1, fp);
+uint value;
+fread (&value, sizeof (uint), 1, fp);
 assert (value <= 0xffff);
 return (UINTW)value;
 }
@@ -274,21 +274,21 @@ return (UINTW)value;
 
 #define FREAD(b)	fread (&b, sizeof (b), 1, file)
 
-INT32 CPolyModel::Read (FILE* fp, bool bRenderData) 
+int CPolyModel::Read (FILE* fp, bool bRenderData) 
 {
 if (bRenderData) {
 	Release ();
-	if (!(m_info.renderData = new UINT8 [m_info.dataSize]))
+	if (!(m_info.renderData = new byte [m_info.dataSize]))
 		return 0;
 	return fread (m_info.renderData, m_info.dataSize, 1, fp) == 1;
 	}
 else {
-	m_info.nModels = read_INT32 (fp);
-	m_info.dataSize = read_INT32 (fp);
-	read_INT32 (fp);
+	m_info.nModels = ReadInt32 (fp);
+	m_info.dataSize = ReadInt32 (fp);
+	ReadInt32 (fp);
 	m_info.renderData = NULL;
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].ptr = read_INT32 (fp);
+		m_info.subModels [i].ptr = ReadInt32 (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].offset.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -296,34 +296,34 @@ else {
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].pnt.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].rad = read_FIX (fp);
+		m_info.subModels [i].rad = ReadFix (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].parent = (UINT8) read_INT8 (fp);
+		m_info.subModels [i].parent = (byte) ReadInt8 (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].vMin.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].vMax.Read (fp);
 	m_info.vMin.Read (fp);
 	m_info.vMax.Read (fp);
-	m_info.rad = read_FIX (fp);
-	m_info.textureCount = (UINT8) read_INT8 (fp);
-	m_info.firstTexture = (UINT16) read_INT16 (fp);
-	m_info.simplerModel = (UINT8) read_INT8 (fp);
+	m_info.rad = ReadFix (fp);
+	m_info.textureCount = (byte) ReadInt8 (fp);
+	m_info.firstTexture = (ushort) ReadInt16 (fp);
+	m_info.simplerModel = (byte) ReadInt8 (fp);
 	}
 return 1;
 }
 
 //-----------------------------------------------------------------------
 
-INT32 CMineView::ReadModelData (char* filename, char *szSubFile, bool bCustom) 
+int CMineView::ReadModelData (char* filename, char *szSubFile, bool bCustom) 
 {
 	FILE*		fp;
 
 if (fopen_s (&fp, filename, "rb"))
 	return 1;
 
-	UINT32	id;
-	UINT32	i, n;
+	uint	id;
+	uint	i, n;
 
 if (bCustom) {
 	struct level_header level;
@@ -344,7 +344,7 @@ if (bCustom) {
 				return 1;
 				}
 		if (!strcmp (level.name, szSubFile)) {
-			id = read_INT32 (fp);	  					   // read id
+			id = ReadInt32 (fp);	  					   // read id
 			if (id != 0x5848414DL) {
 				fclose (fp);
 				return 1;
@@ -369,18 +369,18 @@ if (bCustom) {
 		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp, true);
 	}
 else {
-	id = read_INT32 (fp);	  					   // read id
+	id = ReadInt32 (fp);	  					   // read id
 	if (id != 0x214d4148L) {
 		fclose (fp);
 		return 1;
 		}
 	read_UINTW (fp);                              // read version
 	n  = read_UINTW (fp);                         // n_tmap_info
-	fseek (fp, n * sizeof (UINT16), SEEK_CUR);	 // bitmap_indicies
+	fseek (fp, n * sizeof (ushort), SEEK_CUR);	 // bitmap_indicies
 	fseek (fp, n * sizeof (TMAP_INFO), SEEK_CUR); // tmap_info
 	n = read_UINTW (fp);                          // n_sounds
-	fseek (fp, n * sizeof (UINT8), SEEK_CUR);     // sounds
-	fseek (fp, n * sizeof (UINT8), SEEK_CUR);     // alt_sounds
+	fseek (fp, n * sizeof (byte), SEEK_CUR);     // sounds
+	fseek (fp, n * sizeof (byte), SEEK_CUR);     // alt_sounds
 	n = read_UINTW (fp);                          // n_vclips
 	fseek (fp, n * sizeof (VCLIP), SEEK_CUR);     // video clips
 	n = read_UINTW (fp);                          // n_eclips
@@ -415,7 +415,7 @@ CPolyModel* CMineView::RenderModel (CGameObject* objP)
 if (!theMine)
 	return NULL;
 
-	UINT32 nModel;
+	uint nModel;
 
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
@@ -451,7 +451,7 @@ return m_polyModels + nModel;
 // Action - sets the global handle used when drawing polygon models
 //-----------------------------------------------------------------------
 
-INT32 CMineView::SetupModel (CGameObject *objP) 
+int CMineView::SetupModel (CGameObject *objP) 
 {
 renderOffset.Clear ();
 modelRenderData.n_points = 0;

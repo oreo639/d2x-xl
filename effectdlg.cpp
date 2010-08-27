@@ -94,12 +94,12 @@ if (!theMine) return;
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	CComboBox	*cbEffects = CBEffects ();
 	char			szEffect [100];
-	INT32			index, curSel = 0;
+	int			index, curSel = 0;
 
 cbEffects->ResetContent ();
 CGameObject *curObj = theMine->CurrObj (),
 			*objP = theMine->Objects (0);
-INT32 i;
+int i;
 for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	if (objP->m_info.type != OBJ_EFFECT)
 		continue;
@@ -125,7 +125,7 @@ BOOL CEffectTool::OnInitDialog ()
 {
 if (!CToolDlg::OnInitDialog ())
 	return FALSE;
-INT32 i, nId;
+int i, nId;
 for (nId = IDC_SMOKE_LIFE; nId <= IDC_SMOKE_BRIGHTNESS; nId++) {
 	InitSlider (nId, 1, 10);
 	for (i = 1; i <= 10; i++)
@@ -168,10 +168,10 @@ if (objP->m_info.id == SMOKE_ID) {
 	DDX_Slider (pDX, IDC_SMOKE_SPEED, objP->rType.smokeInfo.nSpeed);
 	DDX_Slider (pDX, IDC_SMOKE_DRIFT, objP->rType.smokeInfo.nDrift);
 	DDX_Slider (pDX, IDC_SMOKE_BRIGHTNESS, objP->rType.smokeInfo.nBrightness);
-	INT32 i;
+	int i;
 	for (i = 0; i < 4; i++)
 		DDX_Text (pDX, IDC_SMOKE_RED + i, objP->rType.smokeInfo.color [i]);
-	objP->rType.smokeInfo.nSide = (char) DDX_Int (pDX, IDC_SMOKE_SIDE, (INT32) objP->rType.smokeInfo.nSide);
+	objP->rType.smokeInfo.nSide = (char) DDX_Int (pDX, IDC_SMOKE_SIDE, (int) objP->rType.smokeInfo.nSide);
 	if (pDX->m_bSaveAndValidate)
 		objP->rType.smokeInfo.nType = CBType ()->GetCurSel ();
 	else
@@ -190,7 +190,7 @@ else if (objP->m_info.id == LIGHTNING_ID) {
 	objP->rType.lightningInfo.nSteps = DDX_Int (pDX, IDC_LIGHTNING_SPEED, objP->rType.lightningInfo.nSteps);
 	objP->rType.lightningInfo.nAngle = DDX_Int (pDX, IDC_LIGHTNING_ANGLE, objP->rType.lightningInfo.nAngle);
 	objP->rType.lightningInfo.nOffset = DDX_Int (pDX, IDC_LIGHTNING_OFFSET, objP->rType.lightningInfo.nOffset);
-	INT32 i;
+	int i;
 	for (i = 0; i < 4; i++)
 		DDX_Text (pDX, IDC_LIGHTNING_RED + i, objP->rType.lightningInfo.color [i]);
 	objP->rType.lightningInfo.bEnabled = DDX_Flag (pDX, IDC_EFFECT_ENABLED, objP->rType.lightningInfo.bEnabled);
@@ -391,7 +391,7 @@ if (m_nBufferId < 0) {
 CGameObject *objP = theMine->Objects (0);
 boolean bAll = !theMine->GotMarkedSegments ();
 
-INT32 i;
+int i;
 for (i = theMine->ObjCount (); i; i--, objP++)
 	if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == m_nBufferId) && (bAll || theMine->SegmentIsMarked (objP->m_info.nSegment)))
 		if (m_nBufferId == SMOKE_ID)
@@ -407,8 +407,8 @@ Refresh ();
 
 void CEffectTool::OnSetObject ()
 {
-INT16 nOld = theMine->Current ()->nObject;
-INT16 nNew = INT16 (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
+short nOld = theMine->Current ()->nObject;
+short nNew = short (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
 	theApp.MineView ()->RefreshObject (nOld, nNew);
@@ -431,7 +431,7 @@ objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 void CEffectTool::HiliteTarget (void)
 {
 #if 0
-	INT32 i, nTarget;
+	int i, nTarget;
 
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
@@ -459,7 +459,7 @@ UpdateData (TRUE);
 
 bool CEffectTool::FindSlider (CScrollBar *pScrollBar)
 {
-for (INT32 i = IDC_SMOKE_LIFE; i <= IDC_SMOKE_BRIGHTNESS; i++)
+for (int i = IDC_SMOKE_LIFE; i <= IDC_SMOKE_BRIGHTNESS; i++)
 	if (pScrollBar == (CScrollBar *) GetDlgItem (i))
 		return true;
 if (pScrollBar == (CScrollBar *) GetDlgItem (IDC_SOUND_VOLUME))

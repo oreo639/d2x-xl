@@ -124,7 +124,7 @@ m_penHiBlue		= new CPen(PS_SOLID, 2, RGB(  0,  0,255));
 m_penHiYellow  = new CPen(PS_SOLID, 2, RGB(255,196,  0));
 m_penHiOrange  = new CPen(PS_SOLID, 2, RGB(255,128,  0));
 m_penHiMagenta = new CPen(PS_SOLID, 2, RGB(255,  0,255));
-INT32 i;
+int i;
 for (i = eMouseStateIdle; i < eMouseStateCount; i++)
 	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? NULL: theApp.m_hInstance, nIdCursors [i]);
 m_viewObjectFlags = eViewObjectsAll;
@@ -227,16 +227,16 @@ bool CMineView::UpdateScrollBars (void)
 return false;
 SetViewPoints ();
 
-	INT32		dx = m_maxViewPoint.x - m_minViewPoint.x + 1;
-	INT32		dy = m_minViewPoint.y - m_maxViewPoint.y + 1;
+	int		dx = m_maxViewPoint.x - m_minViewPoint.x + 1;
+	int		dy = m_minViewPoint.y - m_maxViewPoint.y + 1;
 	double	r;
 
 bool bHScroll = m_bHScroll;
 bool bVScroll = m_bVScroll;
-INT32 xScrollCenter = m_xScrollCenter;
-INT32 yScrollCenter = m_yScrollCenter;
-INT32 xScrollRange = m_xScrollRange;
-INT32 yScrollRange = m_yScrollRange;
+int xScrollCenter = m_xScrollCenter;
+int yScrollCenter = m_yScrollCenter;
+int xScrollRange = m_xScrollRange;
+int yScrollRange = m_yScrollRange;
 m_bHScroll = (dx > m_viewWidth);
 m_bVScroll = (dy > m_viewHeight);
 ShowScrollBar (SB_HORZ, m_bHScroll);
@@ -252,7 +252,7 @@ if (m_bHScroll) {
 		SetScrollPos (SB_HORZ, m_xScrollCenter = m_xScrollRange / 2, TRUE);
 	else if (xScrollRange != m_xScrollRange) {
 		r = (double) xScrollRange / (double) m_xScrollRange;
-		INT32 nPos = GetScrollPos (SB_HORZ);
+		int nPos = GetScrollPos (SB_HORZ);
 		nPos -= m_xScrollCenter;
 		m_xScrollCenter = m_xScrollRange / 2;
 		SetScrollPos (SB_HORZ, (UINT) (m_xScrollCenter + (double) nPos * r), TRUE);
@@ -271,7 +271,7 @@ if (m_bVScroll) {
 		SetScrollPos (SB_VERT, m_yScrollCenter = m_yScrollRange / 2, TRUE);
 	else if (yScrollRange != m_yScrollRange) {
 		r = (double) yScrollRange / (double) m_yScrollRange;
-		INT32 nPos = GetScrollPos (SB_VERT);
+		int nPos = GetScrollPos (SB_VERT);
 		nPos -= m_yScrollCenter;
 		m_yScrollCenter = m_yScrollRange / 2;
 		SetScrollPos (SB_VERT, (UINT) (m_yScrollCenter + (double) nPos * r), TRUE);
@@ -296,7 +296,7 @@ CHECKMINE;
 if (m_bUpdate) {
 	GLRenderScene ();
 	if (!SwapBuffers (glHDC)) {
-		INT32 err = GetLastError ();
+		int err = GetLastError ();
 	//	m_glDC = GetDC ();
 	//	glHDC = m_glDC->m_hDC;
 		GLKillWindow ();
@@ -408,7 +408,7 @@ CHECKMINE;
 
 	LIGHT_TIMER *ltP = lightTimers;
 	CFlickeringLight *flP = theMine->FlickeringLights (0);
-	INT32 i, light_delay;
+	int i, light_delay;
 
 for (i = theMine->FlickerLightCount (); i; i--, flP++, ltP++) {
 	light_delay = (flP->m_info.delay * 100 /*+ F0_5*/) / F1_0;
@@ -425,12 +425,12 @@ for (i = theMine->FlickerLightCount (); i; i--, flP++, ltP++) {
 
                         /*--------------------------*/
 #ifdef _DEBUG
-static INT32 qqq1 = -1, qqq2 = 0;
+static int qqq1 = -1, qqq2 = 0;
 #endif
 
 bool CMineView::SetLightStatus (void)
 {
-	INT32 h, i, j;
+	int h, i, j;
 	CLightDeltaIndex *ldiP = theMine->LightDeltaIndex (0);
 	CLightDeltaValue *ldvP;
 	LIGHT_TIMER *ltP;
@@ -438,7 +438,7 @@ bool CMineView::SetLightStatus (void)
 	LIGHT_STATUS *pls;
 	bool bChange = false;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
-	INT16 nSrcSide, nSrcSeg, nSegment, nSide;
+	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light
 pls = lightStatus [0];
@@ -513,7 +513,7 @@ else
 
 								/*---------------------------*/
 
-void CMineView::EnableDeltaShading (INT32 bEnable, INT32 nFrameRate, INT32 bShowLightSource)
+void CMineView::EnableDeltaShading (int bEnable, int nFrameRate, int bShowLightSource)
 {
 if (bEnableDeltaShading = bEnable) {
 	m_lightTimer = SetTimer (3, (UINT) (m_nFrameRate + 5) / 10, NULL);
@@ -532,7 +532,7 @@ else if (m_lightTimer != -1) {
 
 								/*---------------------------*/
 
-BOOL CMineView::SetWindowPos(const CWnd *pWndInsertAfter, INT32 x, INT32 y, INT32 cx, INT32 cy, UINT nFlags)
+BOOL CMineView::SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags)
 {
 	CRect	rc;
 
@@ -550,8 +550,8 @@ bool CMineView::InitViewDimensions (void)
 	CRect	rc;
 
 GetClientRect (rc);
-INT32 width = (rc.Width () + 3) & ~3; // long word align
-INT32 height = rc.Height ();
+int width = (rc.Width () + 3) & ~3; // long word align
+int height = rc.Height ();
 if ((m_viewWidth == width) && (m_viewHeight == height))
 	return false;
 m_viewWidth = width;
@@ -590,14 +590,14 @@ void CMineView::InitView (CDC *pViewDC)
 	m_pDC = pViewDC;
 #endif
 
-//	INT32 depth = m_pDC->GetDeviceCaps(BITSPIXEL) / 8;
-	INT32 depth = 1; // force 8-bit DIB
+//	int depth = m_pDC->GetDeviceCaps(BITSPIXEL) / 8;
+	int depth = 1; // force 8-bit DIB
 #if 0
 	// if view size is new, then reset dib and delete the current device context
 	CRect Rect;
 	GetClientRect(Rect);
-	INT32 width = Rect.Width (); //(Rect.Width() + 3) & ~3; // long word align
-	INT32 height = Rect.Height();
+	int width = Rect.Width (); //(Rect.Width() + 3) & ~3; // long word align
+	int height = Rect.Height();
 
 	if (width != m_viewWidth || height != m_viewHeight || depth != m_viewDepth) {
 #else
@@ -642,9 +642,9 @@ void CMineView::InitView (CDC *pViewDC)
 			mybmi.bmiHeader.biClrImportant      = 256;
 
 			// copy the bitmap palette
-			UINT8 *palette = PalettePtr ();
+			byte *palette = PalettePtr ();
 			if (palette) {
-				INT32 i, j;
+				int i, j;
 				for (i = j = 0; i < 256; i++) {
 					mybmi.bmiColors [i].rgbRed   = palette [j++]<<2;
 					mybmi.bmiColors [i].rgbGreen = palette [j++]<<2;
@@ -731,7 +731,7 @@ return false;
 
 void CMineView::HiliteTarget (void)
 {
-	INT32 i, nTarget;
+	int i, nTarget;
 
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
@@ -798,7 +798,7 @@ BOOL CMineView::OnEraseBkgnd(CDC* pDC)
 
                         /*--------------------------*/
 
-void CMineView::OnSize(UINT nType, INT32 cx, INT32 cy)
+void CMineView::OnSize(UINT nType, int cx, int cy)
 {
 	CRect	rc;
 
@@ -847,7 +847,7 @@ void CMineView::ToggleViewObjects(eObjectViewFlags mask)
 
                         /*--------------------------*/
 
-void CMineView::SetViewMineFlags(UINT32 mask)
+void CMineView::SetViewMineFlags(uint mask)
 {
 	m_viewMineFlags = mask;
 	Refresh ();
@@ -855,7 +855,7 @@ void CMineView::SetViewMineFlags(UINT32 mask)
 
                         /*--------------------------*/
 
-void CMineView::SetViewObjectFlags(UINT32 mask)
+void CMineView::SetViewObjectFlags(uint mask)
 {
 	m_viewObjectFlags = mask;
 	Refresh ();
@@ -863,9 +863,9 @@ void CMineView::SetViewObjectFlags(UINT32 mask)
 
                         /*--------------------------*/
 
-void CMineView::SetSelectMode (UINT32 mode)
+void CMineView::SetSelectMode (uint mode)
 {
-theMine->SetSelectMode ((INT16) mode);
+theMine->SetSelectMode ((short) mode);
 theApp.MainFrame ()->UpdateSelectButtons ((eSelectModes) mode);
 m_selectMode = mode; 
 Refresh (false);
@@ -888,13 +888,13 @@ BOOL CMineView::SetCursor (HCURSOR hCursor)
 {
 if (!hCursor) // || (hCursor == m_hCursor))
    return FALSE;
-::SetClassLong (GetSafeHwnd (), -12 /*INT32 (GCL_HCURSOR)*/, INT32 (hCursor));
+::SetClassLong (GetSafeHwnd (), -12 /*int (GCL_HCURSOR)*/, int (hCursor));
 return TRUE;
 }
                         
                         /*--------------------------*/
 
-void CMineView::SetMouseState (INT32 newMouseState)
+void CMineView::SetMouseState (int newMouseState)
 {
 if (newMouseState != m_mouseState) {
 	m_lastMouseState = m_mouseState;
@@ -949,7 +949,7 @@ if (change.x || change.y) {
 			if (nFlags & MK_CONTROL)
 				SetMouseState (eMouseStateZoom);
 			else {
-				INT32 v = theMine->CurrVert ();
+				int v = theMine->CurrVert ();
 				if ((abs (m_clickPos.x - m_viewPoints [v].x) < 5) && 
 					 (abs (m_clickPos.y - m_viewPoints [v].y) < 5)) {
 					SetMouseState (eMouseStateInitDrag);
@@ -1109,10 +1109,10 @@ Refresh ();
 
                         /*--------------------------*/
 
-bool CMineView::VertexVisible (INT32 v)
+bool CMineView::VertexVisible (int v)
 {
 	CSegment	*segP;
-	INT32			i, j;
+	int			i, j;
 
 if (!m_nViewDist)
 	return true;
@@ -1130,9 +1130,9 @@ void CMineView::MarkRubberBandedVertices (void)
 if (!theMine) return;
 
 	APOINT	*pa = m_viewPoints;
-	INT32		x, y;
+	int		x, y;
 
-INT32 i;
+int i;
 for (i = 0; i < theMine->VertCount (); i++, pa++) {
 	x = pa->x;
 	y = pa->y;
@@ -1155,7 +1155,7 @@ if (m_bUpdate) {
 //==========================================================================
 //==========================================================================
 
-void CMineView::RefreshObject(INT16 old_object, INT16 new_object) 
+void CMineView::RefreshObject(short old_object, short new_object) 
 {
 theMine->Current ()->nObject = new_object;
 theApp.ToolView ()->Refresh ();
@@ -1166,11 +1166,11 @@ Refresh (false);
 // calculate_segment_center()
 //-------------------------------------------------------------------------
 
-void CMineView::CalcSegmentCenter (CVertex& pos, INT16 nSegment)
+void CMineView::CalcSegmentCenter (CVertex& pos, short nSegment)
 {
 CSegment *segP = theMine->Segments (nSegment);
 CVertex *vMine = theMine->Vertices (0);
-INT16 *vSeg = segP->m_info.verts;
+short *vSeg = segP->m_info.verts;
 pos  =
    vMine [vSeg [0]] +
    vMine [vSeg [1]] +
@@ -1274,7 +1274,7 @@ m_rubberRect.top = m_rubberRect.bottom = 0;
 
 								/*---------------------------*/
 
-BOOL CMineView::OnMouseWheel (UINT nFlags, INT16 zDelta, CPoint pt)
+BOOL CMineView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 {
 	CRect	rc;
 
@@ -1343,7 +1343,7 @@ Refresh ();
 
 void CMineView::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-INT32 nPos = GetScrollPos (SB_VERT);
+int nPos = GetScrollPos (SB_VERT);
 CRect rect;
 GetClientRect(rect);
 

@@ -115,11 +115,11 @@ Current2 ().nObject = DEFAULT_OBJECT;
 theApp.ResetUndoBuffer ();
 }
 
-void CMine::ConvertWallNum (UINT16 wNumOld, UINT16 wNumNew)
+void CMine::ConvertWallNum (ushort wNumOld, ushort wNumNew)
 {
 CSegment *segP = Segments (0);
 CSide *sideP;
-INT32 i, j;
+int i, j;
 
 for (i = SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->m_sides; j < 6; j++, sideP++)
@@ -134,11 +134,11 @@ for (i = SegCount (); i; i--, segP++)
 // Action: makes a new level from the resource file
 // ------------------------------------------------------------------------
 
-INT16 CMine::CreateNewLevel (void)
+short CMine::CreateNewLevel (void)
 {
 HGLOBAL hGlobal;
-UINT32 nResSize;
-UINT8 *data = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_NEW_RDL : IDR_NEW_RL2), hGlobal, nResSize);
+uint nResSize;
+byte *data = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_NEW_RDL : IDR_NEW_RL2), hGlobal, nResSize);
 if (!data)
 	return 0;
 // copy data to a file
@@ -150,7 +150,7 @@ texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_T
 FILE *file;
 fopen_s (&file, message, "wb");
 if (file) {
-	size_t nBytes = fwrite(data, sizeof (UINT8), (UINT16)nResSize, file);
+	size_t nBytes = fwrite(data, sizeof (byte), (ushort)nResSize, file);
 	fclose (file);
 	FreeResource (hGlobal);
 	if (nBytes != nResSize)
@@ -296,7 +296,7 @@ seg.m_info.verts [7] = 7;
 seg.m_info.function = 0;
 seg.m_info.nMatCen = -1;
 seg.m_info.value = -1;
-seg.m_info.s2_flags = 0;
+seg.m_info.s2Flags = 0;
 seg.m_info.staticLight = 263152L;
 seg.m_info.childFlags = 0;
 seg.m_info.wallFlags = 0;
@@ -322,7 +322,7 @@ VertCount () = 8;
 
 void CMine::ClearMineData() 
 {
-	INT16 i;
+	short i;
 
 // initialize Segments ()
 CSegment *segP = Segments (0);
@@ -349,12 +349,12 @@ GameInfo ().lightDeltaValues.Reset ();
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CDoubleVector CMine::CalcSideNormal (INT16 nSegment, INT16 nSide)
+CDoubleVector CMine::CalcSideNormal (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 
-	INT16*			sideIndexP = Segments (nSegment)->m_info.verts;
-	UINT8*			sideVertP = &sideVertTable [nSide][0];
+	short*			sideIndexP = Segments (nSegment)->m_info.verts;
+	byte*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
 return -Normal (*Vertices (sideIndexP [sideVertP [0]]), *Vertices (sideIndexP [sideVertP [1]]), *Vertices (sideIndexP [sideVertP [3]]));
@@ -363,15 +363,15 @@ return -Normal (*Vertices (sideIndexP [sideVertP [0]]), *Vertices (sideIndexP [s
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 
-CDoubleVector CMine::CalcSideCenter (INT16 nSegment, INT16 nSide)
+CDoubleVector CMine::CalcSideCenter (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 
-	INT16*			sideIndexP = Segments (nSegment)->m_info.verts;
-	UINT8*			sideVertP = &sideVertTable [nSide][0];
+	short*			sideIndexP = Segments (nSegment)->m_info.verts;
+	byte*			sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
-for (INT32 i = 0; i < 4; i++)
+for (int i = 0; i < 4; i++)
 	v += *Vertices (sideIndexP [sideVertP [i]]);
 v /= 4.0;
 return v;

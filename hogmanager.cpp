@@ -29,10 +29,10 @@ char *VERTIGO_HINT =
 char cut_paste_filename [256] = "";
 
 // local prototypes
-INT32 read_block_file(char *name,INT32 option);
+int read_block_file(char *name,int option);
 void strip_extension(char *str);
 
-void DeleteSubFile (FILE *file, long size, long offset, INT32 num_entries, INT32 delete_index);
+void DeleteSubFile (FILE *file, long size, long offset, int num_entries, int delete_index);
 void ImportSubFile ();
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size);
 void RenameSubFile ();
@@ -40,11 +40,11 @@ void DeleteLevelSubFiles(FILE *file,char *name);
 
                          /*--------------------------*/
 
-static UINT8 dataBuf [65536];
+static byte dataBuf [65536];
 
                          /*--------------------------*/
 
-INT32 AddFileData (CListBox *plb, INT32 index, INT32 size, INT32 offset, INT32 fileno)
+int AddFileData (CListBox *plb, int index, int size, int offset, int fileno)
 {
 if (index == -1)
 	index = plb->GetCurSel ();
@@ -64,7 +64,7 @@ return index;
 
 void ClearFileList (CListBox *plb)
 {
-	INT32 i, h = plb->GetCount ();
+	int i, h = plb->GetCount ();
 	tHogFileData *pfd;
 
 for (i = 0; i < h; i++)
@@ -97,8 +97,8 @@ return TRUE;
 
 void CInputDialog::DoDataExchange (CDataExchange * pDX)
 {
-DDX_Text (pDX, IDC_INPDLG_PROMPT, m_pszPrompt, INT32 (strlen (m_pszPrompt)));
-DDX_Text (pDX, IDC_INPDLG_BUF, m_pszBuf, INT32 (m_nBufSize));
+DDX_Text (pDX, IDC_INPDLG_PROMPT, m_pszPrompt, int (strlen (m_pszPrompt)));
+DDX_Text (pDX, IDC_INPDLG_BUF, m_pszBuf, int (m_nBufSize));
 }
 
                          /*--------------------------*/
@@ -172,7 +172,7 @@ m_bShowAll = false;
 
                          /*--------------------------*/
 
-void CHogManager::EndDialog (INT32 nResult)
+void CHogManager::EndDialog (int nResult)
 {
 if (m_bInited)
 	ClearFileList ();
@@ -185,7 +185,7 @@ void CHogManager::Reset (void)
 {
 /*
 m_fileData.m_nFiles = 0;
-INT32 i;
+int i;
 for (i = 0; i < MAX_HOGFILES - 1; i++)
 	m_fileData.m_size [i] = i + 1;
 m_fileData.m_size [i] = -1;
@@ -250,7 +250,7 @@ void CHogManager::ClearFileList (void)
 
                          /*--------------------------*/
 
-INT32 CHogManager::DeleteFile (INT32 index)
+int CHogManager::DeleteFile (int index)
 {
 if (index == -1)
 	index = LBFiles ()->GetCurSel ();
@@ -265,11 +265,11 @@ return 0;
 
                          /*--------------------------*/
 
-INT32 CHogManager::AddFile (LPSTR pszName, long size, long offset, INT32 fileno)
+int CHogManager::AddFile (LPSTR pszName, long size, long offset, int fileno)
 {
 _strlwr_s (pszName, 256);
 
-	INT32 index = LBFiles ()->AddString (pszName);
+	int index = LBFiles ()->AddString (pszName);
 
 if (0 > AddFileData (index, size, offset, fileno))
 	return -1;
@@ -279,7 +279,7 @@ return 0;
 
                          /*--------------------------*/
 
-INT32 CHogManager::GetFileData (INT32 index, long *size, long *offset)
+int CHogManager::GetFileData (int index, long *size, long *offset)
 {
 if (index == -1)
 	index = LBFiles ()->GetCurSel ();
@@ -297,19 +297,19 @@ return pfd->m_fileno;
 
                          /*--------------------------*/
 
-INT32 CHogManager::AddFileData (INT32 index, long size, long offset, INT32 fileno)
+int CHogManager::AddFileData (int index, long size, long offset, int fileno)
 {
 return ::AddFileData (LBFiles (), index, size, offset, fileno);
 }
 
                          /*--------------------------*/
 
-INT32 CHogManager::FindFilename (LPSTR pszName)
+int CHogManager::FindFilename (LPSTR pszName)
 {
 	CListBox	*plb = LBFiles ();
 	char szName [256];
 
-INT32 h, i;
+int h, i;
 for (h = plb->GetCount (), i = 0; i < h; i++) {
 	plb->GetText (i, szName);
 	if (!_strcmpi (szName, pszName))
@@ -341,9 +341,9 @@ bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile)
 	FILE*		fTmp = NULL, *fSrc = NULL;
 	long		size,offset;
 	char		szTmp[256];
-	INT32		chunk;
+	int		chunk;
 	char*		pszExt;
-	INT32		index = -1;
+	int		index = -1;
 	bool		funcRes = false;
 
 if (!pszFile)
@@ -397,7 +397,7 @@ if (pszExt) {
 		}
 	if ((size > 0) || (offset >= 0)) {
 		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		INT32 h = ftell (fSrc);
+		int h = ftell (fSrc);
 		ReadCustomPalette (fSrc, size);
 		h = ftell (fSrc) - h;
 		}
@@ -420,7 +420,7 @@ if (pszExt) {
 		CreateLightMap ();
 	else {
 		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		INT32 h = ftell (fSrc);
+		int h = ftell (fSrc);
 		ReadLightMap (fSrc, size);
 		h = ftell (fSrc) - h;
 		}
@@ -439,7 +439,7 @@ else {
 	}
 if ((size >= 0) && (offset >= 0)) {
 	fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-	INT32 h = ftell (fSrc);
+	int h = ftell (fSrc);
 	theMine->ReadColorMap (fSrc);
 	h = ftell (fSrc) - h;
 	}
@@ -459,7 +459,7 @@ if (pszExt) {
 		}
 	if ((size > 0) && (offset >= 0)) {
 		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		INT32 h = ftell (fSrc);
+		int h = ftell (fSrc);
 		ReadPog (fSrc, size);
 		h = ftell (fSrc) - h;
 		}
@@ -481,8 +481,8 @@ if (pszExt) {
 	if ((size >= 0) && (offset >= 0)) {
 		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
 		theMine->ReadHxmFile (fSrc, size);
-		INT32 i, count;
-		for (i = 0, count = 0; i < (INT32) N_robot_types;i++)
+		int i, count;
+		for (i = 0, count = 0; i < (int) N_robot_types;i++)
 			if (theMine->RobotInfo (i)->m_info.bCustom)
 				count++;
 		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);
@@ -569,7 +569,7 @@ CDialog::OnOK ();
 void CHogManager::OnRename ()
 {
 	char buf[20];
-	INT32 index = LBFiles ()->GetCurSel ();
+	int index = LBFiles ()->GetCurSel ();
 
 if (index < 0)
 	return;
@@ -589,7 +589,7 @@ if (!hogfile) {
 	}
 long size, offset;
 level_header lh;
-INT32 fileno = GetFileData (index, &size, &offset);
+int fileno = GetFileData (index, &size, &offset);
 fseek (hogfile, offset, SEEK_SET);
 if (!fread (&lh, sizeof (lh), 1, hogfile))
 	ErrorMsg ("Cannot read from HOG file");
@@ -608,7 +608,7 @@ else {
 /*
 		index = LBFiles ()->GetCurSel ();
 		LBFiles ()->DeleteString (index);
-		INT32 i = LBFiles ()->AddString (lh.name);
+		int i = LBFiles ()->AddString (lh.name);
 		LBFiles ()->SetItemData (i, index);
 		LBFiles ()->SetCurSel (index);
 */
@@ -712,7 +712,7 @@ fclose(fDest);
 // update list boxes
 AddFile (lh.name, lh.size, offset, LBFiles ()->GetCount ());
 /*
-INT32 index = LBFiles ()->AddString (lh.name);
+int index = LBFiles ()->AddString (lh.name);
 AddFileData (index, lh.size, offset);
 LBFiles ()->SetCurSel (index);
 */
@@ -780,10 +780,10 @@ if (GetSaveFileName (&ofn))
 
 void CHogManager::OnDelete () 
 {
-	INT32 delete_index;
+	int delete_index;
 	long size;
 	long offset;
-	INT32 fileno;
+	int fileno;
 	FILE *hogFile = 0;
 	CListBox * plb = LBFiles ();
 
@@ -803,7 +803,7 @@ if (!bExpertMode) {
 	}
 #endif
 fileno = GetFileData (delete_index, &size, &offset);
-INT32 nFiles = plb->GetCount ();
+int nFiles = plb->GetCount ();
 // open hog hogFile for modification
 fopen_s (&hogFile, m_pszFile, "r+b");
 if (!hogFile) {
@@ -825,9 +825,9 @@ bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels
 	struct level_header *level;
 	char data [256];
 	long position;
-	UINT8 index;
+	byte index;
 	FILE *hog_file;
-	INT32 nFiles;
+	int nFiles;
 
 ClearFileList (plb);
 fopen_s (&hog_file, pszFile, "rb");
@@ -862,7 +862,7 @@ while (!feof (hog_file)) {
 									 strstr (level->name, ".lgt") || 
 									 strstr (level->name, ".clr") || 
 									 strstr (level->name, ".pal")))) {
-		INT32 i = plb->AddString (level->name);
+		int i = plb->AddString (level->name);
 		if (bGetFileData && (0 > AddFileData (plb, i, level->size, position, nFiles))) {
 			ErrorMsg ("Too many files in HOG file.");
 			fclose (hog_file);
@@ -900,7 +900,7 @@ bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOO
 	char data [256];
 	long position;
 	FILE *hog_file;
-	INT32 nFiles;
+	int nFiles;
 
 *nSize = -1;
 *nPos = -1;
@@ -988,16 +988,16 @@ return (size == 0);
 // delete_sub_file()
 //----------------------------------------------------------------------------
 
-void DeleteSubFile (FILE *file, long size, long offset, INT32 num_entries, INT32 delete_index) 
+void DeleteSubFile (FILE *file, long size, long offset, int num_entries, int delete_index) 
 {
-INT32 n_bytes;
+int n_bytes;
 // as long as we are not deleting the last item
 if (delete_index < num_entries - 1) {
 	// get size of chunk to remove from the file, then move everything
 	// down by that amount.
 	do {
 		fseek (file, offset + size, SEEK_SET);
-		n_bytes = INT32 (fread (dataBuf, 1, sizeof (dataBuf), file));
+		n_bytes = int (fread (dataBuf, 1, sizeof (dataBuf), file));
 		if (n_bytes <= 0)
 			break;
 		fseek (file, offset, SEEK_SET);
@@ -1031,14 +1031,14 @@ if (ext)
 void DeleteLevelSubFiles (FILE *file, char *base) 
 {
 struct region {
-	INT32 index;
-	INT32 offset;
-	INT32 size;
-	INT32 files;
+	int index;
+	int offset;
+	int size;
+	int files;
 	};
-	INT32 regnum = 0;
-	INT32 delete_index = 0;
-	INT32 num_entries = 0;
+	int regnum = 0;
+	int delete_index = 0;
+	int num_entries = 0;
 	region reg [MAX_REGNUM] = {{-1,0,0,0},{-1,0,0,0},{-1,0,0,0},{-1,0,0,0},{-1,0,0,0},{-1,0,0,0}};
 
 // figure out regions of the file to delete (3 regions max)
@@ -1102,7 +1102,7 @@ fclose (file);
 // write_sub_file()
 //==========================================================================
 
-INT32 WriteSubFile (FILE *fDest, char *szSrc, char *szLevel) 
+int WriteSubFile (FILE *fDest, char *szSrc, char *szLevel) 
 {
 	FILE *fSrc;
 	size_t n_bytes;
@@ -1147,15 +1147,15 @@ return lh.size + sizeof (lh);
 // Changes - now saves rl2 files
 //==========================================================================
 
-INT32 MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs) 
+int MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs) 
 {
 	FILE *hogfile, *fTmp;
 	char *name_start,*pszNameEnd, *pszExtStart;
 	char szBaseName[13];
 	char filename[256];
 	char szTmp[256], szBase [13];
-	INT32 custom_robots = 0;
-	INT32 custom_textures = 0;
+	int custom_robots = 0;
+	int custom_textures = 0;
 
 // create HOG file which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
 strcpy_s (filename, sizeof (filename), hogFilename);
@@ -1178,7 +1178,7 @@ szBaseName[12] = NULL; // make sure it is null terminated
 pszNameEnd = strrchr((char *)szBaseName,'.');
 if (!pszNameEnd)
 	pszNameEnd = szBaseName + strlen ((char *)szBaseName);
-memset (pszNameEnd, 0, 12 - INT32 (pszNameEnd - szBaseName));
+memset (pszNameEnd, 0, 12 - int (pszNameEnd - szBaseName));
 // write rdl file
 if (*szSubFile) {
 	for (pszExtStart = szSubFile; *pszExtStart && (*pszExtStart != '.'); pszExtStart++)
@@ -1318,7 +1318,7 @@ return 0;
 // MENU - Save
 //==========================================================================
 
-INT32 SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs) 
+int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs) 
 {
 	FILE	*fTmp;
 	char szTmp [256], subName [256];
@@ -1350,8 +1350,8 @@ if (!*szSubFile || psz) {
 FILE *file;
 // See if another level with the same name exists
 // and see if there are any other files here (ignore hxm and pog files)
-INT32 bOtherFilesFound = 0;
-INT32 bIdenticalLevelFound = 0;
+int bOtherFilesFound = 0;
+int bIdenticalLevelFound = 0;
 fopen_s (&file, szHogFile, "rb");
 if (!file) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
@@ -1381,7 +1381,7 @@ fclose(file);
 
 // if no other files found
 // then simply do a quick save
-INT32 bQuickSave = 0;
+int bQuickSave = 0;
 if (!bOtherFilesFound)
 	bQuickSave = 1;
 else if (bIdenticalLevelFound) {
@@ -1525,10 +1525,10 @@ static LPSTR *szTags [] = {szMissionName, szMissionInfo, szMissionType, szMissio
 
                          /*--------------------------*/
 
-INT32 atob (LPSTR psz, size_t nSize)
+int atob (LPSTR psz, size_t nSize)
 {
 _strlwr_s (psz, nSize);
-INT32 i;
+int i;
 for (i = 0; i < 2; i++)
 	if (!strcmp (psz, szBool [i]))
 		return i;
@@ -1537,13 +1537,13 @@ return 0;
 
                          /*--------------------------*/
 
-INT32 ReadMissionFile (char *pszFile) 
+int ReadMissionFile (char *pszFile) 
 {
 	FILE	*fMsn;
 	char  szMsn [256];
 	LPSTR	psz, *ppsz;
 	char	szTag [20], szValue [80], szBuf [100];
-	INT32	i, j, l;
+	int	i, j, l;
 
 strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
@@ -1566,7 +1566,7 @@ while (fgets (szBuf, sizeof (szBuf), fMsn)) {
 			l += 2;
 			}
 		strncpy_s (missionData.comment + l, sizeof (missionData.comment) - l, szBuf + 1, sizeof (missionData.comment) - l);
-		l += INT32 (strlen (szBuf + 1));
+		l += int (strlen (szBuf + 1));
 		continue;
 		}
 	else if (!(psz = strchr (szBuf, '=')))	// otherwise need <tag> '=' <value> format
@@ -1590,7 +1590,7 @@ while (fgets (szBuf, sizeof (szBuf), fMsn)) {
 	for (i = 0, j = -1; i < 8; i++)
 		for (ppsz = szTags [i]; *ppsz; ppsz++)
 			if (!strcmp (*ppsz, szTag)) {
-				j = INT32 (ppsz - szTags [i]);
+				j = int (ppsz - szTags [i]);
 				goto tagFound;
 				}
 	continue;
@@ -1621,7 +1621,7 @@ tagFound:
 			missionData.numLevels = atol (szValue);
 			for (i = 0; i < missionData.numLevels; i++) {
 				fgets (missionData.levelList [i], sizeof (missionData.levelList [i]), fMsn);
-				for (j = INT32 (strlen (missionData.levelList [i])); --j; )
+				for (j = int (strlen (missionData.levelList [i])); --j; )
 					if ((missionData.levelList [i][j] != '\r') &&
 						 (missionData.levelList [i][j] != '\n'))
 						break;
@@ -1646,11 +1646,11 @@ return 0;
 
                          /*--------------------------*/
 
-INT32 WriteMissionFile (char *pszFile, INT32 levelVersion, bool bSaveAs) 
+int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs) 
 {
 	FILE	*fMsn;
 	char  szMsn [256];
-	INT32	i, j;
+	int	i, j;
 
 strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
@@ -1715,7 +1715,7 @@ return 0;
 // make_mission_file()
 //==========================================================================
 
-INT32 MakeMissionFile (char *pszFile, char *pszSubFile, INT32 bCustomTextures, INT32 bCustomRobots, bool bSaveAs) 
+int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int bCustomRobots, bool bSaveAs) 
 {
 	char	szBaseName [256];
 	char	szTime [20];

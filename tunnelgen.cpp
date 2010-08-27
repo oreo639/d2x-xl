@@ -28,7 +28,7 @@ char *whyS [] = {
     "partial loss of significance"
 };
 
-INT32 _matherr (struct exception *e) {
+int _matherr (struct exception *e) {
   sprintf_s (message, sizeof (message),"DMB has detected a math error\n"
 		   "%s (%8g,%8g): %s\n\n"
 		   "Press OK to continue, or Cancel to close DMB",
@@ -46,11 +46,11 @@ INT32 _matherr (struct exception *e) {
 //   Faculty (q) - returns n! (n factorial)
 //-------------------------------------------------------------------------
 
-long Faculty (INT32 n) 
+long Faculty (int n) 
 {
 long i = 1;
 
-for (INT32 j = n; j >= 2; j--) 
+for (int j = n; j >= 2; j--) 
 	i *= j;
 return i;
 }
@@ -59,7 +59,7 @@ return i;
 //   Coeff(n,i) - returns n!/(i!*(n-i)!)
 //-------------------------------------------------------------------------
 
-double Coeff(INT32 n, INT32 i) 
+double Coeff(int n, int i) 
 {
 return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
 }
@@ -68,13 +68,13 @@ return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
 //   Blend(i,n,u) - returns a weighted coefficient for each point in a spline
 //-------------------------------------------------------------------------
 
-double Blend (INT32 i, INT32 n, double u) 
+double Blend (int i, int n, double u) 
 {
 #if 1
 double partial = Coeff (n, i) * pow (u, i) * pow (1 - u, n - i);
 #else
 	double partial;
-	INT32 j;
+	int j;
 
  partial = Coeff(n,i);
  for (j = 1; j <= i; j++) 
@@ -90,11 +90,11 @@ return partial;
 //   BezierFcn(pt,u,n,p [][]) - sets (x,y,z) for u=#/segs based on points p
 //-------------------------------------------------------------------------
 
-CVertex BezierFcn (double u, INT32 npts, CVertex* p) 
+CVertex BezierFcn (double u, int npts, CVertex* p) 
 {
 CVertex v;
 
-for (INT32 i = 0; i < npts; i++) {
+for (int i = 0; i < npts; i++) {
 	double b = Blend (i, npts - 1, u);
 	v += p [i] * b;
 	}
@@ -107,12 +107,12 @@ return v;
 // Action - swaps vertices of opposing side if cube is twisted
 //--------------------------------------------------------------------------
 
-void CMine::UntwistSegment (INT16 nSegment,INT16 nSide) 
+void CMine::UntwistSegment (short nSegment,short nSide) 
 {
   double		len, minLen = 1e10;
-  INT16		index,j;
+  short		index,j;
   CSegment*	segP;
-  INT16		verts [4];
+  short		verts [4];
 
 segP = Segments (nSegment);
 // calculate length from point 0 to opp_points
@@ -163,10 +163,10 @@ point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * 
 // Action - Returns matching side depending on the current points
 //--------------------------------------------------------------------------
 
-INT32 CMine::MatchingSide (INT32 j) 
+int CMine::MatchingSide (int j) 
 {
-  static INT32 ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
-  INT32 offset;
+  static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
+  int offset;
 
 offset = (4 + Current1 ().nPoint - Current2 ().nPoint) % 4;
 return ret [offset][j];
@@ -277,7 +277,7 @@ void CMine::TunnelGenerator (void)
 //  UpdateUndoBuffer(0);
 
 double		length;
-INT32			i, j, nVertex, spline;
+int			i, j, nVertex, spline;
 CSegment*	segP;
 
 if (!m_bSplineActive) {
@@ -390,7 +390,7 @@ else {
 			for (i = 0; i < 4; i++) {
 //	    segP->m_sides [j].uvls [i].u = default_uvls [i].u;
 //	    segP->m_sides [j].uvls [i].v = default_uvls [i].v;
-				segP->m_sides [j].m_info.uvls [i].l = (UINT16) DEFAULT_LIGHTING;
+				segP->m_sides [j].m_info.uvls [i].l = (ushort) DEFAULT_LIGHTING;
 				}
 			segP->SetUV (j,0,0);
 			}
@@ -470,9 +470,9 @@ void CMine::CalcSpline (void)
 {
   double length;
   double angle;
-  INT32 i,j;
+  int i,j;
   CSegment *segP;
-  INT16 nVertex;
+  short nVertex;
   CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];
@@ -496,7 +496,7 @@ points [2] += points [3];
 
 // calculate number of segments (min=1)
 length = Distance (*points, points [3]);
-n_splines = (INT32) ((fabs (m_splineLength1) + fabs (m_splineLength2)) / 20 + length / 40.0);
+n_splines = (int) ((fabs (m_splineLength1) + fabs (m_splineLength2)) / 20 + length / 40.0);
 n_splines = min (n_splines, m_nMaxSplines - 1);
 
 // calculate spline points
@@ -572,12 +572,12 @@ sprintf_s (message, sizeof (message), "theta [0] = %d,%d,%d,%d\n"
 "delta_angles = %d,%d,%d,%d\n"
 "ySpin = %d\n"
 "zSpin = %d",
-(INT32)(theta [0][0]*180/M_PI),(INT32)(theta [0][1]*180/M_PI),(INT32)(theta [0][2]*180/M_PI),(INT32)(theta [0][3]*180/M_PI),
-(INT32)(theta [1][0]*180/M_PI),(INT32)(theta [1][1]*180/M_PI),(INT32)(theta [1][2]*180/M_PI),(INT32)(theta [1][3]*180/M_PI),
-(INT32)(radius [0][0]*180/M_PI),(INT32)(radius [0][1]*180/M_PI),(INT32)(radius [0][2]*180/M_PI),(INT32)(radius [0][3]*180/M_PI),
-(INT32)(radius [1][0]*180/M_PI),(INT32)(radius [1][1]*180/M_PI),(INT32)(radius [1][2]*180/M_PI),(INT32)(radius [1][3]*180/M_PI),
-(INT32)(delta_angle [0]*180/M_PI),(INT32)(delta_angle [1]*180/M_PI),(INT32)(delta_angle [2]*180/M_PI),(INT32)(delta_angle [3]*180/M_PI),
-(INT32)(ySpin*180/M_PI),(INT32)(zSpin*180/M_PI)
+(int)(theta [0][0]*180/M_PI),(int)(theta [0][1]*180/M_PI),(int)(theta [0][2]*180/M_PI),(int)(theta [0][3]*180/M_PI),
+(int)(theta [1][0]*180/M_PI),(int)(theta [1][1]*180/M_PI),(int)(theta [1][2]*180/M_PI),(int)(theta [1][3]*180/M_PI),
+(int)(radius [0][0]*180/M_PI),(int)(radius [0][1]*180/M_PI),(int)(radius [0][2]*180/M_PI),(int)(radius [0][3]*180/M_PI),
+(int)(radius [1][0]*180/M_PI),(int)(radius [1][1]*180/M_PI),(int)(radius [1][2]*180/M_PI),(int)(radius [1][3]*180/M_PI),
+(int)(delta_angle [0]*180/M_PI),(int)(delta_angle [1]*180/M_PI),(int)(delta_angle [2]*180/M_PI),(int)(delta_angle [3]*180/M_PI),
+(int)(ySpin*180/M_PI),(int)(zSpin*180/M_PI)
 );
 DebugMsg(message);
 #endif

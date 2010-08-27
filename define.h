@@ -20,8 +20,8 @@
 
 #define FIX_IS_DOUBLE 0
 
-#define I2X(_i)	((FIX) ((_i) * 65536))
-#define X2I(_i)	((INT32) (((_i) + I2X (1) / 2) / I2X (1)))
+#define I2X(_i)	((fix) ((_i) * 65536))
+#define X2I(_i)	((int) (((_i) + I2X (1) / 2) / I2X (1)))
 
 //Some handy constants 
 #define f0_5   (I2X(1) / 2)
@@ -59,7 +59,7 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 //	-----------------------------------------------------------------------------------------------------------
 
 #define X2D(_f)	((double) _f / 65536.0)
-#define D2X(_f)	((FIX) Round (_f * 65536.0))
+#define D2X(_f)	((fix) Round (_f * 65536.0))
 
 #define JOIN_DISTANCE (20*20)
 
@@ -609,7 +609,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define MAX_BRIGHTNESS	0x20000
 
 #if defined(_DEBUG) && !defined(_M_IA64) && !defined(_M_AMD64)
-#	define BRK _asm INT32 3;
+#	define BRK _asm int 3;
 #	define CBRK(_cond)	if (_cond) BRK;
 #else
 #	define BRK

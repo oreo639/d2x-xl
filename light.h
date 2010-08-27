@@ -23,7 +23,7 @@ public:
 	void scale_corner_light(double fvalue);
 	void Apply();
 	void ShowDelta();
-	void set_illumination(INT16 nSegment, INT16 nSide, UINT32 brightness);
+	void set_illumination(short nSegment, short nSide, uint brightness);
 //	DECLARE_RESPONSE_TABLE( CLightDialog );
 };
 
@@ -39,8 +39,8 @@ public:
 //  CGroupBox *LightGroup;
   CStatic *BlackBox;
   CEdit *PatternEdit;
-  UINT32 test;
-  INT32 current_highlight;
+  uint test;
+  int current_highlight;
 
   CBlinkDialog(CWnd * AParent, LPSTR name);
   virtual void SetupWindow();
@@ -80,7 +80,7 @@ public:
   void light_button_msg30();
   void light_button_msg31();
   void light_button_msg32();
-  void handle_light_button(INT32);
+  void handle_light_button(int);
   void add_msg();
   void delete_msg();
   void RefreshData();
@@ -89,20 +89,20 @@ public:
 //DECLARE_RESPONSE_TABLE( CBlinkDialog );
 };
 
-void delete_flickering_light(UINT16 nSegment, UINT16 nSide);
-void add_flickering_light(UINT16 nSegment, UINT16 nSide, UINT32 mask,FIX time);
-INT16 get_flickering_light(UINT16 nSegment, UINT16 nSide);
+void delete_flickering_light(ushort nSegment, ushort nSide);
+void add_flickering_light(ushort nSegment, ushort nSide, uint mask,fix time);
+short get_flickering_light(ushort nSegment, ushort nSide);
 
-void set_segment_child_num(INT16 nSegment,INT16 recursion_level);
-UINT8 light_weight(INT16 nBaseTex);
-void calculate_CLightDeltaValue_data(double factor, INT32 force); // light.cpp
+void set_segment_child_num(short nSegment,short recursion_level);
+byte light_weight(short nBaseTex);
+void calculate_CLightDeltaValue_data(double factor, int force); // light.cpp
 void update_CLightDeltaValues(); // light.cpp
-INT32 is_light(INT32 value);
-INT32 is_exploding_light(INT32 value);
+int is_light(int value);
+int is_exploding_light(int value);
 void CreateLightMap (void);
-INT32 ReadLightMap (FILE *fLightMap, UINT32 nSize);
-INT32 WriteLightMap (FILE *fLightMap);
-INT32 WriteColorMap (FILE *fColorMap);
+int ReadLightMap (FILE *fLightMap, uint nSize);
+int WriteLightMap (FILE *fLightMap);
+int WriteColorMap (FILE *fColorMap);
 BOOL HasCustomLightMap (void);
 
 #endif

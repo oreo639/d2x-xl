@@ -22,13 +22,13 @@
 // Note: nClip & nTexture are used for call to DefineWall only.
 //--------------------------------------------------------------------------
 
-CWall *CMine::AddWall (INT16 nSegment,INT16 nSide,
-								INT16 type, UINT16 flags, UINT8 keys,
-								INT8 nClip, INT16 nTexture) 
+CWall *CMine::AddWall (short nSegment,short nSide,
+								short type, ushort flags, byte keys,
+								char nClip, short nTexture) 
 {
 GetCurrent (nSegment, nSide);
 
-UINT16 nWall;
+ushort nWall;
 CSegment *segP = Segments (nSegment);
 
 // if wall is an overlay, make sure there is no child
@@ -62,7 +62,7 @@ if ((nWall = GameInfo ().walls.count) >= MAX_WALLS) {
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
 segP->m_sides [nSide].m_info.nWall = nWall;
-DefineWall (nSegment, nSide, nWall, (UINT8) type, nClip, nTexture, false);
+DefineWall (nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
 Walls (nWall)->m_info.flags = flags;
 Walls (nWall)->m_info.keys = keys;
 // update number of Walls () in mine
@@ -74,9 +74,9 @@ return Walls (nWall);
 
 //--------------------------------------------------------------------------
 
-bool CMine::GetOppositeWall (INT16& nOppWall, INT16 nSegment, INT16 nSide)
+bool CMine::GetOppositeWall (short& nOppWall, short nSegment, short nSide)
 {
-	INT16 nOppSeg, nOppSide;
+	short nOppSeg, nOppSide;
 
 if (!GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide))
 	return false;
@@ -92,13 +92,13 @@ return true;
 //       if nClip == -2, then texture is applied to nOvlTex instead
 //--------------------------------------------------------------------------
 
-void CMine::DefineWall (INT16 nSegment, INT16 nSide, UINT16 nWall,
-								UINT8 type, INT8 nClip, INT16 nTexture,
+void CMine::DefineWall (short nSegment, short nSide, ushort nWall,
+								byte type, char nClip, short nTexture,
 								bool bRedefine) 
 {
 GetCurrent (nSegment, nSide);
 
-	INT32 i;
+	int i;
 	CSegment *segP = Segments (nSegment);
 	CSide *sideP = segP->m_sides + nSide;
 	CWall *wallP = Walls (nWall);
@@ -169,7 +169,7 @@ wallP->m_info.keys = 0;
 wallP->m_info.controllingTrigger = 0;
 
 // set uvls of new texture
-UINT32	scale = (UINT32) theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
+uint	scale = (uint) theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
 for (i = 0;i<4;i++) {
 	sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
 	sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
@@ -185,14 +185,14 @@ theApp.UnlockUndo ();
 // 1/27/97 - added wall01 and door08
 //--------------------------------------------------------------------------
 
-void CMine::SetWallTextures (UINT16 nWall, INT16 nTexture) 
+void CMine::SetWallTextures (ushort nWall, short nTexture) 
 {
-static INT16 wall_texture [N_WALL_TEXTURES][2] = {
+static short wall_texture [N_WALL_TEXTURES][2] = {
 	{371,0},{0,376},{0,0},  {0,387},{0,399},{413,0},{419,0},{0,424},  {0,0},{436,0},
 	{0,444},{0,459},{0,472},{486,0},{492,0},{500,0},{508,0},{515,0},{521,0},{529,0},
 	{536,0},{543,0},{0,550},{563,0},{570,0},{577,0}
 	};
-static INT16 d2_wall_texture [D2_N_WALL_TEXTURES][2] = {
+static short d2_wall_texture [D2_N_WALL_TEXTURES][2] = {
 	{435,0},{0,440},{0,0},{0,451},{0,463},{477,0},{483,0},{0,488},{0,0},  {500,0},
 	{0,508},{0,523},{0,536},{550,0},{556,0},{564,0},{572,0},{579,0},{585,0},{593,0},
 	{600,0},{608,0},{0,615},{628,0},{635,0},{642,0},{0,649},{664,0},{0,672},{0,687},
@@ -202,8 +202,8 @@ static INT16 d2_wall_texture [D2_N_WALL_TEXTURES][2] = {
 	};
 
 CWall *wallP = Walls (nWall);
-CSide *sideP = Segments (wallP->m_nSegment)->m_sides + (INT16) wallP->m_nSide;
-INT8 nClip = wallP->m_info.nClip;
+CSide *sideP = Segments (wallP->m_nSegment)->m_sides + (short) wallP->m_nSide;
+char nClip = wallP->m_info.nClip;
 
 theApp.SetModified (TRUE);
 theApp.LockUndo ();
@@ -230,10 +230,10 @@ theApp.MineView ()->Refresh ();
 // Mine - delete wall
 //--------------------------------------------------------------------------
 
-void CMine::DeleteWall (UINT16 nWall) 
+void CMine::DeleteWall (ushort nWall) 
 {
-	INT16 nTrigger;
-	INT16 nSegment, nSide, nOppSeg, nOppSide;
+	short nTrigger;
+	short nSegment, nSide, nOppSeg, nOppSide;
 	CSegment *segP;
 	CSide *sideP;
 
@@ -249,7 +249,7 @@ if ((nTrigger > -1) && (nTrigger < GameInfo ().triggers.count))
 	DeleteTrigger (nTrigger); 
 // remove references to the deleted wall
 if (GetOppositeSide (nOppSeg, nOppSide, Walls (nWall)->m_nSegment, Walls (nWall)->m_nSide)) {
-	INT16 nOppWall = Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
+	short nOppWall = Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 	if ((nOppWall >= 0) && (nOppWall < GameInfo ().walls.count))
 		Walls (nOppWall)->m_info.linkedWall = -1;
 	}
@@ -277,11 +277,11 @@ AutoLinkExitToReactor();
 
                         /*--------------------------*/
 
-CWall *CMine::FindWall (INT16 nSegment, INT16 nSide)
+CWall *CMine::FindWall (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 CWall *wallP;
-INT32 nWall;
+int nWall;
 
 for (wallP = Walls (0), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++)
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide))
@@ -291,7 +291,7 @@ return NULL;
 
                         /*--------------------------*/
 
-INT32 CMine::FindClip (CWall *wallP, INT16 nTexture)
+int CMine::FindClip (CWall *wallP, short nTexture)
 {
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	char szName [80], *ps;
@@ -300,7 +300,7 @@ LoadString (hInst, texture_resource + nTexture, szName, sizeof (szName));
 if (!strcmp (szName, "wall01 - anim"))
 	return wallP->m_info.nClip = 0;
 if (ps = strstr (szName, "door")) {
-	INT32 i, nDoor = atol (ps + 4);
+	int i, nDoor = atol (ps + 4);
 	for (i = 1; i < D2_NUM_OF_CLIPS; i++)
 		if (nDoor == doorClipTable [i]) {
 			wallP->m_info.nClip = clipList [i];
@@ -314,16 +314,16 @@ return -1;
 
                         /*--------------------------*/
 
-CWall *CMine::GetWall (INT16 nSegment, INT16 nSide)
+CWall *CMine::GetWall (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
-UINT16 nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
+ushort nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
 return (nWall < GameInfo ().walls.count) ? Walls (nWall) : NULL;
 }
 
                         /*--------------------------*/
 
-bool CMine::WallClipFromTexture (INT16 nSegment, INT16 nSide)
+bool CMine::WallClipFromTexture (short nSegment, short nSide)
 {
 CWall *wallP = FindWall (nSegment, nSide);
 
@@ -343,11 +343,11 @@ return false;
 // CheckForDoor()
 //------------------------------------------------------------------------
 
-void CMine::CheckForDoor (INT16 nSegment, INT16 nSide) 
+void CMine::CheckForDoor (short nSegment, short nSide) 
 {
 GetCurrent (nSegment, nSide);
 // put up a warning if changing a door's texture
-UINT16 nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
+ushort nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
 
 if (!bExpertMode &&
     (nWall < GameInfo ().walls.count) &&
@@ -363,68 +363,68 @@ if (!bExpertMode &&
 
 // ------------------------------------------------------------------------
 
-INT32 CWall::Read (FILE* fp, INT32 version, bool bFlag)
+int CWall::Read (FILE* fp, int version, bool bFlag)
 {
-m_nSegment = read_INT32 (fp);
-m_nSide = read_INT32 (fp); 
-m_info.hps = read_FIX (fp);
-m_info.linkedWall = read_INT32 (fp);
-m_info.type = UINT8 (read_INT8 (fp));
-m_info.flags = UINT16 ((version < 37) ? read_INT8 (fp) : read_INT16 (fp));         
-m_info.state = UINT8 (read_INT8 (fp));         
-m_info.nTrigger = UINT8 (read_INT8 (fp));       
-m_info.nClip = UINT8 (read_INT8 (fp));      
-m_info.keys = UINT8 (read_INT8 (fp));          
-m_info.controllingTrigger = read_INT8 (fp);
-m_info.cloakValue = read_INT8 (fp);
+m_nSegment = ReadInt32 (fp);
+m_nSide = ReadInt32 (fp); 
+m_info.hps = ReadFix (fp);
+m_info.linkedWall = ReadInt32 (fp);
+m_info.type = byte (ReadInt8 (fp));
+m_info.flags = ushort ((version < 37) ? ReadInt8 (fp) : ReadInt16 (fp));         
+m_info.state = byte (ReadInt8 (fp));         
+m_info.nTrigger = byte (ReadInt8 (fp));       
+m_info.nClip = byte (ReadInt8 (fp));      
+m_info.keys = byte (ReadInt8 (fp));          
+m_info.controllingTrigger = ReadInt8 (fp);
+m_info.cloakValue = ReadInt8 (fp);
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CWall::Write (FILE* fp, INT32 version, bool bFlag)
+void CWall::Write (FILE* fp, int version, bool bFlag)
 {
-write_INT32 (m_nSegment, fp);
-write_INT32 (m_nSide, fp); 
-write_FIX (m_info.hps, fp);
-write_INT32 (m_info.linkedWall, fp);
-write_INT8 (m_info.type, fp);
+WriteInt32 (m_nSegment, fp);
+WriteInt32 (m_nSide, fp); 
+WriteFix (m_info.hps, fp);
+WriteInt32 (m_info.linkedWall, fp);
+WriteInt8 (m_info.type, fp);
 if (version < 37) 
-	write_INT8 (INT8 (m_info.flags), fp);
+	WriteInt8 (char (m_info.flags), fp);
 else
-	write_INT16 (m_info.flags, fp);         
-write_INT8 (m_info.state, fp);         
-write_INT8 (m_info.nTrigger, fp);       
-write_INT8 (m_info.nClip, fp);      
-write_INT8 (m_info.keys, fp);          
-write_INT8 (m_info.controllingTrigger, fp);
-write_INT8 (m_info.cloakValue, fp);
+	WriteInt16 (m_info.flags, fp);         
+WriteInt8 (m_info.state, fp);         
+WriteInt8 (m_info.nTrigger, fp);       
+WriteInt8 (m_info.nClip, fp);      
+WriteInt8 (m_info.keys, fp);          
+WriteInt8 (m_info.controllingTrigger, fp);
+WriteInt8 (m_info.cloakValue, fp);
 }
 
 
 // ------------------------------------------------------------------------
 
-INT32 CActiveDoor::Read (FILE *fp, INT32 version, bool bFlag)
+int CActiveDoor::Read (FILE *fp, int version, bool bFlag)
 {
-m_info.n_parts = read_INT32 (fp);
-m_info.nFrontWall [0] = read_INT16 (fp);
-m_info.nFrontWall [1] = read_INT16 (fp);
-m_info.nBackWall [0] = read_INT16 (fp); 
-m_info.nBackWall [1] = read_INT16 (fp); 
-m_info.time = read_INT32 (fp);		  
+m_info.n_parts = ReadInt32 (fp);
+m_info.nFrontWall [0] = ReadInt16 (fp);
+m_info.nFrontWall [1] = ReadInt16 (fp);
+m_info.nBackWall [0] = ReadInt16 (fp); 
+m_info.nBackWall [1] = ReadInt16 (fp); 
+m_info.time = ReadInt32 (fp);		  
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CActiveDoor::Write (FILE *fp, INT32 version, bool bFlag)
+void CActiveDoor::Write (FILE *fp, int version, bool bFlag)
 {
-write_INT32 (m_info.n_parts, fp);
-write_INT16 (m_info.nFrontWall[0], fp);
-write_INT16 (m_info.nFrontWall[1], fp);
-write_INT16 (m_info.nBackWall[0], fp); 
-write_INT16 (m_info.nBackWall[1], fp); 
-write_INT32 (m_info.time, fp);		  
+WriteInt32 (m_info.n_parts, fp);
+WriteInt16 (m_info.nFrontWall[0], fp);
+WriteInt16 (m_info.nFrontWall[1], fp);
+WriteInt16 (m_info.nBackWall[0], fp); 
+WriteInt16 (m_info.nBackWall[1], fp); 
+WriteInt32 (m_info.time, fp);		  
 }
 
 // ------------------------------------------------------------------------

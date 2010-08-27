@@ -16,14 +16,14 @@
 #include <math.h>
 
 typedef struct tBugPos {
-	INT32	nSegment;
-	INT32	nSide;
-	INT32	nLine;
-	INT32	nPoint;
-	INT32	nChild;
-	INT32	nWall;
-	INT32	nTrigger;
-	INT32	nObject;
+	int	nSegment;
+	int	nSide;
+	int	nLine;
+	int	nPoint;
+	int	nChild;
+	int	nWall;
+	int	nTrigger;
+	int	nObject;
 } tBugPos;
 
                         /*--------------------------*/
@@ -34,11 +34,11 @@ if (!(m_bInited && theMine))
 	return;
 
 	CListBox	*plb = LBBugs ();
-	INT32 h = plb->GetCount ();
+	int h = plb->GetCount ();
 	char szText [256];
 
 tBugPos *pbp;
-INT32 i;
+int i;
 for (i = 0; i < h; i++) {
 	plb->GetText (i, szText);
 	if (!strchr (szText, '['))
@@ -55,7 +55,7 @@ m_statsWidth = 0;
 
                         /*--------------------------*/
 
-bool CDiagTool::MarkSegment (INT16 nSegment) 
+bool CDiagTool::MarkSegment (short nSegment) 
 {
 if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
 	return false;
@@ -72,9 +72,9 @@ if (!theMine) return;
 
 	bool bCurSeg;
 	CWall *wallP;
-	INT32 nWall;
+	int nWall;
 
-INT32 i = LBBugs ()->GetCurSel ();
+int i = LBBugs ()->GetCurSel ();
 if ((i < 0) || (i >= LBBugs ()->GetCount ()))
 	return;
 tBugPos *pbp = (tBugPos *) LBBugs ()->GetItemDataPtr (i);
@@ -121,9 +121,9 @@ theApp.MineView ()->Refresh ();
 // 6) returns the minimum of the two ratios 
 //------------------------------------------------------------------------
 
-double CDiagTool::CalcFlatnessRatio (INT16 nSegment, INT16 nSide) 
+double CDiagTool::CalcFlatnessRatio (short nSegment, short nSide) 
 {
-  INT16		i;
+  short		i;
   CVertex	midpoint1, midpoint2;
   double		length1, length2, ave_length, mid_length;
   double		ratio;
@@ -179,7 +179,7 @@ return C.Mag ();
 // CalcAngle ()
 //--------------------------------------------------------------------------
 
-double CDiagTool::CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3) 
+double CDiagTool::CalcAngle (short vert0,short vert1,short vert2,short vert3) 
 {
   CDoubleVector line1,line2,line3,orthog;
   double ratio;
@@ -203,7 +203,7 @@ if (dot_product == 0 || magnitude1 == 0 || magnitude2 == 0)
 	angle = (200.0 * M_PI)/180.0; 
 else {
 	ratio = dot_product/ (magnitude1*magnitude2);
-	ratio = ( (double) ( (INT32) (ratio*1000.0))) / 1000.0; // bug fix 9/21/96
+	ratio = ( (double) ( (int) (ratio*1000.0))) / 1000.0; // bug fix 9/21/96
 	if (ratio < -1.0 || ratio > (double)1.0) 
 		angle = (199.0 * M_PI)/180.0;
 	else
@@ -221,10 +221,10 @@ return fabs (angle);  // angle should be positive since acos returns 0 to PI but
 //  RETURN - Returns TRUE if ID is out of range.  Otherwise, FALSE.
 //--------------------------------------------------------------------------
 
-INT32 CDiagTool::CheckId (CGameObject *objP) 
+int CDiagTool::CheckId (CGameObject *objP) 
 {
-	INT32 type = objP->m_info.type;
-	INT32 id = objP->m_info.id;
+	int type = objP->m_info.type;
+	int id = objP->m_info.id;
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
@@ -356,15 +356,15 @@ if (sz.cx > m_statsWidth)
 
 //--------------------------------------------------------------------------
 
-bool CDiagTool::UpdateStats (char *szError, INT32 nErrorLevel, 
-									  INT32 nSegment, INT32 nSide, INT32 linenum, INT32 pointnum, 
-									  INT32 childnum, INT32 nWall, INT32 nTrigger, INT32 objnum)
+bool CDiagTool::UpdateStats (char *szError, int nErrorLevel, 
+									  int nSegment, int nSide, int linenum, int pointnum, 
+									  int childnum, int nWall, int nTrigger, int objnum)
 {
 if (!(szError && *szError))
 	return false;
 if (!(m_bShowWarnings || !strstr (szError, "WARNING:")))
 	return true;
-INT32 h = AddMessage (szError, -1, true);
+int h = AddMessage (szError, -1, true);
 UpdateStatsWidth (szError);
 if (h >= 0) {
 	tBugPos *pbp = new tBugPos;
@@ -396,7 +396,7 @@ bool CDiagTool::CheckSegTypes (void)
 if (!theMine) 
 	return false;
 
-	INT16	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
+	short	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
 	CSegment	*segP = theMine->Segments (0);
 
 for (i = theMine->SegCount (); i; i--, segP++)
@@ -439,17 +439,17 @@ bool CDiagTool::CheckSegments (void)
 if (!theMine) 
 	return false;
 
-  INT16 nSegment, nSide, nChild, nSide2, pointnum;
-  INT16 vert0, vert1, vert2, vert3;
-  INT16 i, j;
+  short nSegment, nSide, nChild, nSide2, pointnum;
+  short vert0, vert1, vert2, vert3;
+  short i, j;
   double angle,flatness;
-  INT16 match[4];
+  short match[4];
   CSegment *segP = theMine->Segments (0);
 
   // check Segments ()
   //--------------------------------------------------------------
-INT16 sub_errors = m_nErrors [0];
-INT16 sub_warnings = m_nErrors [1];
+short sub_errors = m_nErrors [0];
+short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Cubes]");
 
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
@@ -484,7 +484,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
 		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));
 		if (angle > M_PI_2) {
-			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",nSegment,pointnum, (INT32) ( (angle*180.0)/M_PI));
+			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",nSegment,pointnum, (int) ( (angle*180.0)/M_PI));
 			if (UpdateStats (message, 0, nSegment, -1, -1, pointnum))
 				return true;
 			break; // from for loop
@@ -495,7 +495,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		for (nSide = 0; nSide < 6; nSide++) {
 			flatness = CalcFlatnessRatio (nSegment,nSide);
 			if (flatness < 0.80) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",nSegment,nSide, (INT32) (flatness*100));
+				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",nSegment,nSide, (int) (flatness*100));
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				break; // from for loop
@@ -509,7 +509,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		length = theMine->CalcLength (theMine->Vertices (segP->m_info.verts[lineVertTable[linenum][0]]),
 											  theMine->Vertices (segP->m_info.verts[lineVertTable[linenum][1]]));
 		if (length < (double)F1_0) {
-			sprintf_s (message, sizeof (message),"WARNING: Line length too INT16 (cube=%d,line=%d)",nSegment,linenum);
+			sprintf_s (message, sizeof (message),"WARNING: Line length too short (cube=%d,line=%d)",nSegment,linenum);
 			if (UpdateStats (message, 0, nSegment, -1, linenum))
 				return true;
 			}
@@ -567,12 +567,12 @@ return false;
 
 //--------------------------------------------------------------------------
 
-bool CDiagTool::CheckAndFixPlayer (INT32 nMin, INT32 nMax, INT32 nObject, INT32* players)
+bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
 {
 if (!theMine) 
 	return false;
 
-INT32 id = theMine->Objects (nObject)->m_info.id;
+int id = theMine->Objects (nObject)->m_info.id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
 else if (players [id])
@@ -604,16 +604,16 @@ bool CDiagTool::CheckObjects ()
 if (!theMine) 
 	return false;
 
-	INT32				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
+	int				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
 	CVertex			center;
 	double			radius, max_radius, object_radius;
 	CGameObject*	objP = theMine->Objects (0);
 	CGameObject*	pPlayer = NULL;
-	INT32				objCount = theMine->GameInfo ().objects.count;
+	int				objCount = theMine->GameInfo ().objects.count;
 	CSegment*		segP;
 
-INT16 sub_errors = m_nErrors [0];
-INT16 sub_warnings = m_nErrors [1];
+short sub_errors = m_nErrors [0];
+short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Objects]");
 for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
@@ -825,7 +825,7 @@ if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->m_i
 		}
 // resequence player and coop ids
 if (m_bAutoFixBugs) {
-	INT32 i;
+	int i;
 	if (bFix & 1) {
 		for (i = id = 0; id < MAX_PLAYERS; id++)
 			if (players [id] != 0) 
@@ -925,17 +925,17 @@ bool CDiagTool::CheckTriggers ()
 if (!theMine) 
 	return false;
 
-	INT32 count, nTrigger, deltrignum, nWall, i;
-	INT32 nSegment, nSide, linknum;
-	INT16 nOppSeg, nOppSide;
+	int count, nTrigger, deltrignum, nWall, i;
+	int nSegment, nSide, linknum;
+	short nOppSeg, nOppSide;
 
-	INT16 sub_errors = m_nErrors [0];
-	INT16 sub_warnings = m_nErrors [1];
+	short sub_errors = m_nErrors [0];
+	short sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Triggers]");
-	INT32 segCount = theMine->SegCount ();
-	INT32 trigCount = theMine->GameInfo ().triggers.count;
+	int segCount = theMine->SegCount ();
+	int trigCount = theMine->GameInfo ().triggers.count;
 	CTrigger *trigP = theMine->Triggers (0);
-	INT32 wallCount = theMine->GameInfo ().walls.count;
+	int wallCount = theMine->GameInfo ().walls.count;
 	CWall *wallP;
 	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers (0);
 
@@ -962,8 +962,8 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		if (wallP->m_info.nTrigger == nTrigger) {
 			// if exit, make sure it is linked to CReactorTrigger
-			INT32 tt = trigP->m_info.type;
-			INT32 tf = trigP->m_info.flags;
+			int tt = trigP->m_info.type;
+			int tf = trigP->m_info.flags;
 			if (theApp.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->m_count; i++)
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
@@ -1002,7 +1002,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	}
 
-INT16 trigSeg, trigSide;
+short trigSeg, trigSide;
 trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	theApp.MainFrame ()->Progress ().StepIt ();
@@ -1015,8 +1015,8 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	else
 		trigSeg = trigSide = -1;
 	// check number of links of trigP (only for
-	INT32 tt = trigP->m_info.type;
-	INT32 tf = trigP->m_info.flags;
+	int tt = trigP->m_info.type;
+	int tf = trigP->m_info.flags;
 	if (trigP->m_count == 0) {
 		if (theApp.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
@@ -1157,8 +1157,8 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	else
 		trigSeg = trigSide = -1;
-	INT32 tt = trigP->m_info.type;
-	INT32 tf = trigP->m_info.flags;
+	int tt = trigP->m_info.type;
+	int tf = trigP->m_info.flags;
 	if (theApp.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
@@ -1191,9 +1191,9 @@ return false;
 
 //------------------------------------------------------------------------
 
-INT8 CDiagTool::FindMatCen (CRobotMaker* matCenP, INT16 nSegment, INT16* refList)
+char CDiagTool::FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList)
 {
-	INT8	h = -1, i, j = INT8 (theMine->GameInfo ().botgen.count);
+	char	h = -1, i, j = char (theMine->GameInfo ().botgen.count);
 
 if (refList) {
 	for (i = 0; i < j; i++) {
@@ -1215,14 +1215,14 @@ return h;
 
 //------------------------------------------------------------------------
 
-void CDiagTool::CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
+void CDiagTool::CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* matCenP, short nMatCens)
 {
 	CSegment*		segP = theMine->Segments (0);
-	INT16				n, h, i, j = theMine->SegCount ();
+	short				n, h, i, j = theMine->SegCount ();
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->m_info.function == UINT8 (nSpecialType)) {
+	if (segP->m_info.function == byte (nSpecialType)) {
 		n = segP->m_info.nMatCen;
 		if ((n >= 0) && (n < nMatCens) && (refList [n] >= 0)) {
 			if (matCenP [n].m_info.nSegment == i)
@@ -1236,25 +1236,25 @@ for (h = i = 0; i < j; i++, segP++) {
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType)
+short CDiagTool::FixMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens, char* pszType)
 {
 	CSegment*	segP = theMine->Segments (0);
-	INT16			h, i, j = theMine->SegCount ();
-	INT8			n;
+	short			h, i, j = theMine->SegCount ();
+	char			n;
 
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->m_info.function != UINT8 (nSpecialType))
+	if (segP->m_info.function != byte (nSpecialType))
 		continue;
 	n = segP->m_info.nMatCen;
 	if ((n < 0) || (n >= nMatCens)) {
 		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (m_bAutoFixBugs)
-			n = segP->m_info.nMatCen = INT8 (FindMatCen (matCenP, i));
+			n = segP->m_info.nMatCen = char (FindMatCen (matCenP, i));
 		}
 	else if (matCenP [n].m_info.nSegment != i) {
 		sprintf_s (message, sizeof (message), "%s: %s maker list corrupted (segment=%d)", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (m_bAutoFixBugs) {
-			n = INT8 (FindMatCen (matCenP, i));
+			n = char (FindMatCen (matCenP, i));
 			if (n >= 0) {
 				segP->m_info.nMatCen = n;
 				refList [n] = -1;
@@ -1283,17 +1283,17 @@ return h;
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
+short CDiagTool::AssignMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
 	CSegment*	segP = theMine->Segments (0);
-	INT16			h, i, j = theMine->SegCount ();
-	INT8			n;
+	short			h, i, j = theMine->SegCount ();
+	char			n;
 
 for (h = i = 0; i < j; i++, segP++) {
-	if (segP->m_info.function != UINT8 (nSpecialType))
+	if (segP->m_info.function != byte (nSpecialType))
 		continue;
 	n = segP->m_info.nMatCen;
 	if (n >= 0)
@@ -1312,14 +1312,14 @@ return h;
 
 //------------------------------------------------------------------------
 
-INT16 CDiagTool::CleanupMatCens (INT16* refList, CRobotMaker* matCenP, INT16 nMatCens)
+short CDiagTool::CleanupMatCens (short* refList, CRobotMaker* matCenP, short nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
 	CSegment*	segP = theMine->Segments (0);
 	
-for (INT32 i = 0; i < nMatCens; i) {
+for (int i = 0; i < nMatCens; i) {
 	if (refList [i] < 0) 
 		i++;
 	else {
@@ -1341,13 +1341,13 @@ bool CDiagTool::CheckBotGens (void)
 if (!theMine) 
 	return false;
 
-	INT16					h = theMine->SegCount (), i, nSegment = 0;
+	short					h = theMine->SegCount (), i, nSegment = 0;
 	bool					bOk = true;
-	INT16					nMatCenSegs, nMatCens = INT16 (theMine->GameInfo ().botgen.count);
+	short					nMatCenSegs, nMatCens = short (theMine->GameInfo ().botgen.count);
 	CSegment*			segP = theMine->Segments (0);
 	CRobotMaker*		matCenP = theMine->BotGens (0);
-	INT16					segList [MAX_NUM_MATCENS2];
-	INT16					refList [MAX_NUM_MATCENS2];
+	short					segList [MAX_NUM_MATCENS2];
+	short					refList [MAX_NUM_MATCENS2];
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].m_info.nFuelCen = i;
@@ -1366,12 +1366,12 @@ return false;
 
 bool CDiagTool::CheckEquipGens (void)
 {
-	INT16					i, nSegment = 0;
+	short					i, nSegment = 0;
 	bool					bOk = true;
-	INT32					nMatCenSegs, nMatCens = INT32 (theMine->GameInfo ().equipgen.count);
+	int					nMatCenSegs, nMatCens = int (theMine->GameInfo ().equipgen.count);
 	CRobotMaker*		matCenP = theMine->EquipGens (0);
-	INT16					segList [MAX_NUM_MATCENS2];
-	INT16					refList [MAX_NUM_MATCENS2];
+	short					segList [MAX_NUM_MATCENS2];
+	short					refList [MAX_NUM_MATCENS2];
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].m_info.nFuelCen = i;
@@ -1389,9 +1389,9 @@ return false;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-CWall *CDiagTool::OppWall (UINT16 nSegment, UINT16 nSide)
+CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 {
-	INT16	oppSegnum, oppSidenum, nWall;
+	short	oppSegnum, oppSidenum, nWall;
 
 if (!theMine->GetOppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
 	return NULL;
@@ -1409,17 +1409,17 @@ bool CDiagTool::CheckWalls (void)
 if (!theMine) 
 	return false;
 
-	INT16 nSegment,nSide;
-	UINT16 nWall, wallCount = theMine->GameInfo ().walls.count, 
+	short nSegment,nSide;
+	ushort nWall, wallCount = theMine->GameInfo ().walls.count, 
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
 	CSide *sideP;
 	CWall *wallP = theMine->Walls (0), *w, *ow;
-	INT32 segCount = theMine->SegCount ();
-	UINT8 wallFixed [MAX_WALLS2];
+	int segCount = theMine->SegCount ();
+	byte wallFixed [MAX_WALLS2];
 
-	INT16 sub_errors = m_nErrors [0];
-	INT16 sub_warnings = m_nErrors [1];
+	short sub_errors = m_nErrors [0];
+	short sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Walls]");
 
 memset (wallFixed, 0, sizeof (wallFixed));
@@ -1557,7 +1557,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			}
 #if 1 // linked walls not supported in DLE-XP and D2X-XL
 		if (wallP->m_info.linkedWall != -1) {
-			INT16 invLinkedWall = wallP->m_info.linkedWall;
+			short invLinkedWall = wallP->m_info.linkedWall;
 			if (m_bAutoFixBugs) {
 				wallP->m_info.linkedWall = -1;
 				sprintf_s (message, sizeof (message),
@@ -1572,7 +1572,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 #else
 		if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount)) {
 			if (m_bAutoFixBugs) {
-				INT16	oppSeg, oppSide, invLinkedWall = wallP->m_info.linkedWall;
+				short	oppSeg, oppSide, invLinkedWall = wallP->m_info.linkedWall;
 				if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 					wallP->m_info.linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
 					if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount))
@@ -1588,9 +1588,9 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					nWall,wallP->m_info.linkedWall);
 			}
 		else if (wallP->m_info.linkedWall >= 0) {
-			INT16	oppSeg, oppSide;
+			short	oppSeg, oppSide;
 			if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-				INT16 oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
+				short oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
@@ -1665,7 +1665,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 							if (UpdateStats (message,0,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 							} 
 						else {
-							UINT16 wallnum2 = segP->m_sides[nSide].m_info.nWall;
+							ushort wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
 								 ((wallP->m_info.nClip != theMine->Walls (wallnum2)->m_info.nClip ||
 									wallP->m_info.type != theMine->Walls (wallnum2)->m_info.type))) {
@@ -1731,11 +1731,11 @@ if (!theMine)
 	return false;
 
 //  bool found;
-  INT32 nSegment,nVertex,point;
-  INT32 nUnused = 0;
+  int nSegment,nVertex,point;
+  int nUnused = 0;
 
-  INT16 sub_errors = m_nErrors [0];
-  INT16 sub_warnings = m_nErrors [1];
+  short sub_errors = m_nErrors [0];
+  short sub_warnings = m_nErrors [1];
   LBBugs ()->AddString ("[Misc]");
 
 for (nVertex = theMine->VertCount (); nVertex; nVertex--)

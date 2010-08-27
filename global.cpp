@@ -30,51 +30,51 @@ char SubFile[20]="";
 bool bExpertMode = true;
 bool bExtBlkFmt = false;
 
-INT32 preferences = 0;
+int preferences = 0;
 
 //CFlickeringLight *flickeringLights=0;
 LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
-UINT32       N_robot_types=0;
+uint       N_robot_types=0;
 //CRobotInfo   *robotInfo;     // MAX_ROBOT_TYPES
 
 #if ALLOCATE_POLYOBJECT
-UINT32       N_robot_joints=0;
-UINT32       N_polygon_models=0;
-UINT32       N_object_bitmaps=0;
+uint       N_robot_joints=0;
+uint       N_polygon_models=0;
+uint       N_object_bitmaps=0;
 JOINTPOS     *Robot_joints;   // MAX_ROBOT_JOINTS
 tPolyModel    *Polygon_models[MAX_POLYGON_MODELS];
-UINT32       *Dying_modelnums;// N_D2_POLYGON_MODELS
-UINT32       *Dead_modelnums; // N_D2_POLYGON_MODELS
-UINT16 *ObjBitmaps;     // MAX_OBJ_BITMAPS
-UINT16 *ObjBitmapPtrs;  // MAX_OBJ_BITMAPS
+uint       *Dying_modelnums;// N_D2_POLYGON_MODELS
+uint       *Dead_modelnums; // N_D2_POLYGON_MODELS
+ushort *ObjBitmaps;     // MAX_OBJ_BITMAPS
+ushort *ObjBitmapPtrs;  // MAX_OBJ_BITMAPS
 #endif
 
 char skip[16] = "tomÅ";
-INT32 left;
-INT32 top;
-INT32 right;
-INT32 bottom;
-INT32 x_center;
-INT32 y_center;
-INT32 x_max;
-INT32 y_max;
+int left;
+int top;
+int right;
+int bottom;
+int x_center;
+int y_center;
+int x_max;
+int y_max;
 double aspect_ratio;
-INT32 refresh_needed = 0;
-INT32 splash = 0;
+int refresh_needed = 0;
+int splash = 0;
 
 
-INT32 level_modified = 0;
-//UINT8 texture_modified[1+MAX_D2_TEXTURES/8];
-INT32 disable_saves = 1;
+int level_modified = 0;
+//byte texture_modified[1+MAX_D2_TEXTURES/8];
+int disable_saves = 1;
 
-UINT8 clipList [D2_NUM_OF_CLIPS] = {
+byte clipList [D2_NUM_OF_CLIPS] = {
 	0,1,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,    // added 0 & 7 1/28/97
 	22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
 	40,41,42,43,44,45,46,47,48,49,50
 };
 
-UINT16 wall_flags [MAX_WALL_FLAGS] = {
+ushort wall_flags [MAX_WALL_FLAGS] = {
 	WALL_BLASTED,
 	WALL_DOOR_OPENED,
 	WALL_DOOR_LOCKED,
@@ -86,26 +86,26 @@ UINT16 wall_flags [MAX_WALL_FLAGS] = {
 	WALL_IGNORE_MARKER
 };
 
-INT32 texture_resource = D2_TEXTURE_STRING_TABLE;
+int texture_resource = D2_TEXTURE_STRING_TABLE;
 
 long ScrnMemMax = 0L;
-INT32 ScrnWidth = 0;
-INT32 ScrnHeight = 0;
+int ScrnWidth = 0;
+int ScrnHeight = 0;
 
 // new data for Descent 2
-INT32 file_type = RL2_FILE;
-INT16	     num_static_lights=0;
+int file_type = RL2_FILE;
+short	     num_static_lights=0;
 
 char		string [256];
-INT16		nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
+short		nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
 char		spline_error_message []  =  "You must exit spline creation before preforming this function";
 CVertex	splinePoints [MAX_SPLINES];
 CVertex	points [4];
-INT16		n_splines = 0;
-INT16		spline_length1 = 20, spline_length2 = 20;
-INT16		spline_active = 0;
+short		n_splines = 0;
+short		spline_length1 = 20, spline_length2 = 20;
+short		spline_active = 0;
 
-UINT8 object_list[MAX_OBJECT_NUMBER] = {
+byte object_list[MAX_OBJECT_NUMBER] = {
 	OBJ_ROBOT,
 	OBJ_HOSTAGE,
 	OBJ_PLAYER,
@@ -120,20 +120,20 @@ UINT8 object_list[MAX_OBJECT_NUMBER] = {
 	OBJ_EFFECT
 };
 
-UINT8 contentsList[MAX_CONTAINS_NUMBER] = {
+byte contentsList[MAX_CONTAINS_NUMBER] = {
 	OBJ_ROBOT,
 	OBJ_POWERUP
 };
 
 // the following array is used to select a list item by objP->m_info.type
-INT8 objectSelection[MAX_OBJECT_TYPES] = {
+char objectSelection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,1,2,3,-1,4,-1,5,-1,-1,-1,-1,6,-1,7,8,9,10,11
 };
-INT8 contentsSelection[MAX_OBJECT_TYPES] = {
+char contentsSelection[MAX_OBJECT_TYPES] = {
 	-1,-1,0,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 };
 
-UINT8 robotClip[MAX_ROBOT_IDS_TOTAL] = {
+byte robotClip[MAX_ROBOT_IDS_TOTAL] = {
 	0x00,0x02,0x03,0x05,0x07,0x09,0x0b,0x0d,
 	0x0e,0x10,0x12,0x13,0x14,0x15,0x16,0x18,
 	0x19,0x1b,0x1c,0x1e,0x20,0x22,0x24,0x26,
@@ -149,7 +149,7 @@ UINT8 robotClip[MAX_ROBOT_IDS_TOTAL] = {
 // note1: 0 == not used,
 // note2: 100 and 101 are flags but will appear as shields
 //        in non multiplayer level
-UINT8 powerupClip[MAX_POWERUP_IDS2] = {
+byte powerupClip[MAX_POWERUP_IDS2] = {
 	36, 18, 19, 20, 24, 26, 25,  0,
 		0,  0, 34, 35, 51, 37, 38, 39,
 		40, 41, 42, 43, 44, 45, 46, 47,
@@ -162,7 +162,7 @@ char *ai_options[MAX_D2_AI_OPTIONS] = {
 	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
 };
 
-FIX powerupSize[MAX_POWERUP_IDS2] = {
+fix powerupSize[MAX_POWERUP_IDS2] = {
 		0x28000L,0x30000L,0x28000L,0x40000L,0x30000L,0x30000L,0x30000L,0x30000L,
 		0x30000L,0x30000L,0x28000L,0x30000L,0x30000L,0x40000L,0x40000L,0x40000L,
 		0x40000L,0x30000L,0x28000L,0x30000L,0x28000L,0x30000L,0x1ccccL,0x20000L,
@@ -172,7 +172,7 @@ FIX powerupSize[MAX_POWERUP_IDS2] = {
 };
 
 
-FIX robotSize [MAX_ROBOT_IDS_TOTAL] = {
+fix robotSize [MAX_ROBOT_IDS_TOTAL] = {
 		399147L,368925L,454202L,316909L,328097L,345407L,399147L,293412L,
 		300998L,308541L,246493L,283415L,283415L,227232L,200000L,598958L,
 		399147L,1597221L,290318L,345407L,323879L,339488L,294037L,1443273L,
@@ -186,7 +186,7 @@ FIX robotSize [MAX_ROBOT_IDS_TOTAL] = {
 		342424L,322628L,332831L,1217722L,907806L,378960L    // vertigo robots
 };
 
-FIX robot_shield [MAX_ROBOT_IDS_TOTAL] = {
+fix robot_shield [MAX_ROBOT_IDS_TOTAL] = {
 	6553600L,6553600L,6553600L,1638400L,2293760L,6553600L,9830400L,16384000L,
 		2293760L,16384000L,2293760L,2293760L,2000000L,9830400L,1310720L,26214400L,
 		21299200L,131072000L,6553600L,3276800L,3276800L,4587520L,4587520L,327680000L,
@@ -240,43 +240,43 @@ TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2] = {
 	{434, 0x020000L}
 };
 
-INT16 d2_blastable_lights [] = {
+short d2_blastable_lights [] = {
 	276, 278, 360, 361, 364, 366, 368,
 	370, 372, 374, 375, 377, 380, 382, 
 	420, 432,
 	431,  -1
 	};
 
-INT16 d2_switches [] = {414, 416, 418, -1};
+short d2_switches [] = {414, 416, 418, -1};
 
-INT16 add_segment_mode = ORTHOGONAL;
+short add_segment_mode = ORTHOGONAL;
 char dlc_version[10] = "2.7a";
 //char testers_name[20] = "TESTERS_NAME_HERE";
-INT16 serial_number   = 27;
+short serial_number   = 27;
 char message[256];
-//UINT8 test4 = 0xBA;
+//byte test4 = 0xBA;
 char m_startFolder [256];
-//UINT8 test5 = 0xBA;
-FIX grid = 0x2000L;   // 0.125
+//byte test5 = 0xBA;
+fix grid = 0x2000L;   // 0.125
 char descent_path[256]="\\programs\\d2\\data";
-//UINT8 test6 = 0xBA;
+//byte test6 = 0xBA;
 char descent2_path[256]="\\programs\\d2\\data";
-//UINT8 test7 = 0xBA;
+//byte test7 = 0xBA;
 char levels_path[256]="\\programs\\d2\\data";
-//UINT8 test8 = 0xBA;
+//byte test8 = 0xBA;
 char player_profile [20] = "";
 
-INT16 nTrigger = 0;
-//INT16 number_of_textures=0;
-//INT16  show_lines      = SHOW_LINES_PARTIAL;
+short nTrigger = 0;
+//short number_of_textures=0;
+//short  show_lines      = SHOW_LINES_PARTIAL;
 #if 0
-INT16  show_lines      = SHOW_FILLED_POLYGONS;
-INT16  show_walls      = 1;
-INT16  show_special    = 1;
-INT16  show_lights     = 1;
-INT16  show_objects    = (1<<OBJ_ROBOT)  + (1<<OBJ_HOSTAGE) + (1<<OBJ_POWERUP)
+short  show_lines      = SHOW_FILLED_POLYGONS;
+short  show_walls      = 1;
+short  show_special    = 1;
+short  show_lights     = 1;
+short  show_objects    = (1<<OBJ_ROBOT)  + (1<<OBJ_HOSTAGE) + (1<<OBJ_POWERUP)
 + (1<<OBJ_PLAYER) + (1<<OBJ_COOP) +(1<<OBJ_CNTRLCEN);
-INT16  show_powerups   =  POWERUP_POWERUP_MASK + POWERUP_WEAPON_MASK + POWERUP_KEY_MASK;
+short  show_powerups   =  POWERUP_POWERUP_MASK + POWERUP_WEAPON_MASK + POWERUP_KEY_MASK;
 #endif
 //CUBE  current1 = {DEFAULT_SEGMENT,
 //DEFAULT_SIDE,
@@ -290,14 +290,14 @@ INT16  show_powerups   =  POWERUP_POWERUP_MASK + POWERUP_WEAPON_MASK + POWERUP_K
 //DEFAULT_OBJECT};
 //CUBE  *current = &current1;
 #if 0
-INT16 select_mode     = CUBE_MODE;
-INT16 edit_mode       = EDIT_OFF;
+short select_mode     = CUBE_MODE;
+short edit_mode       = EDIT_OFF;
 #endif
 tUVL default_uvls[4] = {
-	{(UINT16) 0x0000, (UINT16)0x0000, (UINT16)DEFAULT_LIGHTING},
-	{(UINT16) 0x0000, (UINT16)0x0800, (UINT16)DEFAULT_LIGHTING},
-	{(UINT16)-0x0800, (UINT16)0x0800, (UINT16)DEFAULT_LIGHTING},
-	{(UINT16)-0x0800, (UINT16)0x0000, (UINT16)DEFAULT_LIGHTING}
+	{(ushort) 0x0000, (ushort)0x0000, (ushort)DEFAULT_LIGHTING},
+	{(ushort) 0x0000, (ushort)0x0800, (ushort)DEFAULT_LIGHTING},
+	{(ushort)-0x0800, (ushort)0x0800, (ushort)DEFAULT_LIGHTING},
+	{(ushort)-0x0800, (ushort)0x0000, (ushort)DEFAULT_LIGHTING}
 };
 
 char *object_names[MAX_OBJECT_TYPES] = {
@@ -324,7 +324,7 @@ char *object_names[MAX_OBJECT_TYPES] = {
 	"Effect"
 };
 
-UINT8 powerup_types[MAX_POWERUP_IDS2] = {
+byte powerup_types[MAX_POWERUP_IDS2] = {
 		POWERUP_POWERUP_MASK,
 		POWERUP_POWERUP_MASK,
 		POWERUP_POWERUP_MASK,
@@ -406,17 +406,17 @@ char wall_state_names[4][8] = {
 
 
 APOINT *scrn;
-INT16 gx0,gy0,gz0;
+short gx0,gy0,gz0;
 double spinx,spiny,spinz;
 double movex, movey, movez;
-INT16 max_x, min_x, max_y, min_y, max_z, min_z;
+short max_x, min_x, max_y, min_y, max_z, min_z;
 double sizex,sizey,sizez;
 double angleRate = (double)PI / 16.f;
 double moveRate = 1.0;
 double depthPerception = 1000.0;
 
 /* define points for a given side */
-UINT8 sideVertTable[6][4] = {
+byte sideVertTable[6][4] = {
 	{7,6,2,3},
 	{0,4,7,3},
 	{0,1,5,4},
@@ -426,10 +426,10 @@ UINT8 sideVertTable[6][4] = {
 };
 
 /* define oppisite side of a given side */
-UINT8 oppSideTable[6] = {2,3,0,1,5,4};
+byte oppSideTable[6] = {2,3,0,1,5,4};
 
 /* define points for the oppisite side of a given side */
-UINT8 oppSideVertTable[6][4] = {
+byte oppSideVertTable[6][4] = {
 	{4,5,1,0},
 	{1,5,6,2},
 	{3,2,6,7},
@@ -439,7 +439,7 @@ UINT8 oppSideVertTable[6][4] = {
 };
 
 /* define 2 points for a given line */
-UINT8 lineVertTable[12][2] = {
+byte lineVertTable[12][2] = {
 	{0,1},
 	{1,2},
 	{2,3},
@@ -455,7 +455,7 @@ UINT8 lineVertTable[12][2] = {
 };
 
 /* define lines for a given side */
-UINT8 sideLineTable[6][4] = {
+byte sideLineTable[6][4] = {
 	{7,10,2,11},//{2,11,7,10},
 	{4,8,11,3},//{3,11,8,4},
 	{0,9,5,4},//{0,9,5,4},
@@ -465,7 +465,7 @@ UINT8 sideLineTable[6][4] = {
 };
 
 /* define 3 points which connect to a certain point */
-UINT8 connectPointTable[8][3] = {
+byte connectPointTable[8][3] = {
 	{1,3,4},
 	{2,0,5},
 	{3,1,6},
@@ -477,7 +477,7 @@ UINT8 connectPointTable[8][3] = {
 };
 
 // side numbers for each point (3 sides touch each point)
-INT8 pointSideTable[8][3] = {
+char pointSideTable[8][3] = {
     {1,2,5},
     {2,3,5},
     {0,3,5},
@@ -489,7 +489,7 @@ INT8 pointSideTable[8][3] = {
 };
 
 // CUVL corner for pointSideTable above
-INT8 pointCornerTable[8][3] = {
+char pointCornerTable[8][3] = {
     {0,0,3},
     {1,3,2},
     {2,0,1},
@@ -502,7 +502,7 @@ INT8 pointCornerTable[8][3] = {
 
                         /*--------------------------*/
 
-UINT8 doorClipTable [D2_NUM_OF_CLIPS] = {
+byte doorClipTable [D2_NUM_OF_CLIPS] = {
 	1, 1, 4, 5, 10,24, 8,11,13,12,14,17,     // 1/28/97
 	18,19,20,21,22,23,25,26,28,29,
 	30,31,32,33,34,35,36,37,38,39,
@@ -510,8 +510,8 @@ UINT8 doorClipTable [D2_NUM_OF_CLIPS] = {
 	51,52,53,54,55,56,57
 	};
 
-INT32 renderXOffs = 0;
-INT32 renderYOffs = 0;
+int renderXOffs = 0;
+int renderYOffs = 0;
 
 tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE] = {
 	{{0, 5}, TXT_GRAY_ROCK, 0},

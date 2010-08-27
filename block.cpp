@@ -34,23 +34,23 @@ char *BLOCKOP_HINT =
 // Change - Now reads verts relative to current side
 //---------------------------------------------------------------------------
 
-INT16 CMine::ReadSegmentInfo (FILE *fBlk) 
+short CMine::ReadSegmentInfo (FILE *fBlk) 
 {
 	CSegment		*segP;
 	CSide			*sideP;
 #if 0
 	CGameObject			*objP;
-	INT16				objnum, segObjCount;
+	short				objnum, segObjCount;
 #endif
-	INT16				nSegment, nSide, nVertex;
-	INT16				i, j, test;
-	INT16				origVertCount, k;
+	short				nSegment, nSide, nVertex;
+	short				i, j, test;
+	short				origVertCount, k;
 	CVertex			origin, vVertex;
 	CDoubleVector	xPrime, yPrime, zPrime, v;
 	CDoubleVector	xAxis, yAxis, zAxis;
-	INT16				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
-	INT16				xlatSegNum [MAX_SEGMENTS3];
-	INT32				byteBuf;
+	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
+	short				xlatSegNum [MAX_SEGMENTS3];
+	int				byteBuf;
 
 // remember number of vertices for later
 origVertCount = VertCount ();
@@ -120,7 +120,7 @@ while(!feof(fBlk)) {
 
 	// read in side information 
 	sideP = segP->m_sides;
-	for (INT32 nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+	for (int nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 		fscanf_s (fBlk, "  side %hd\n", &test);
 		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
@@ -136,7 +136,7 @@ while(!feof(fBlk)) {
 						&sideP->m_info.uvls [j].l);
 		if (bExtBlkFmt) {
 			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
-			sideP->m_info.nWall = (UINT16) byteBuf;
+			sideP->m_info.nWall = (ushort) byteBuf;
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
@@ -166,7 +166,7 @@ while(!feof(fBlk)) {
 					fscanf_s (fBlk, "			    value %ld\n", &t.m_info.value);
 					fscanf_s (fBlk, "			    timer %d\n", &t.m_info.time);
 					fscanf_s (fBlk, "			    count %hd\n", &t.m_count);
-					INT32 iTarget;
+					int iTarget;
 					for (iTarget = 0; iTarget < t.m_count; iTarget++) {
 						fscanf_s (fBlk, "			        segP %hd\n", &t [iTarget].m_nSegment);
 						fscanf_s (fBlk, "			        side %hd\n", &t [iTarget].m_nSide);
@@ -195,17 +195,17 @@ while(!feof(fBlk)) {
 				memset (&o, 0, sizeof (o));
 				fscanf_s (fBlk, "            signature %hd\n", &o.signature);
 				fscanf_s (fBlk, "            type %d\n", &byteBuf);
-				o.type = (INT8) byteBuf;
+				o.type = (char) byteBuf;
 				fscanf_s (fBlk, "            id %d\n", &byteBuf);
-				o.id = (INT8) byteBuf;
+				o.id = (char) byteBuf;
 				fscanf_s (fBlk, "            controlType %d\n", &byteBuf);
-				o.controlType = (UINT8) byteBuf;
+				o.controlType = (byte) byteBuf;
 				fscanf_s (fBlk, "            movementType %d\n", &byteBuf);
-				o.movementType = (UINT8) byteBuf;
+				o.movementType = (byte) byteBuf;
 				fscanf_s (fBlk, "            renderType %d\n", &byteBuf);
-				o.renderType = (UINT8) byteBuf;
+				o.renderType = (byte) byteBuf;
 				fscanf_s (fBlk, "            flags %d\n", &byteBuf);
-				o.flags = (UINT8) byteBuf;
+				o.flags = (byte) byteBuf;
 				o.nSegment = nSegment;
 				fscanf_s (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
 				memcpy (&o.lastPos, &o.pos, sizeof (o.pos));
@@ -217,11 +217,11 @@ while(!feof(fBlk)) {
 				fscanf_s (fBlk, "            size %ld\n", &o.size);
 				fscanf_s (fBlk, "            shields %ld\n", &o.shields);
 				fscanf_s (fBlk, "            contents.type %d\n", &byteBuf);
-				o.contents.type = (INT8) byteBuf;
+				o.contents.type = (char) byteBuf;
 				fscanf_s (fBlk, "            contents.id %d\n", &byteBuf);
-				o.contents.id = (INT8) byteBuf;
+				o.contents.id = (char) byteBuf;
 				fscanf_s (fBlk, "            contents.count %d\n", &byteBuf);
-				o.contents.count = (INT8) byteBuf;
+				o.contents.count = (char) byteBuf;
 				switch (o.type) {
 					case OBJ_POWERUP:
 					case OBJ_HOSTAGE:
@@ -267,14 +267,14 @@ while(!feof(fBlk)) {
 #endif
 			}
 		}
-	INT16 children [6];
+	short children [6];
 	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n", 
 				 children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
 	for (i = 0; i < 6; i++)
 		segP->SetChild (i, children [i]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
-		FIX x, y, z;
+		fix x, y, z;
 		fscanf_s (fBlk, "  vms_vector %hd %ld %ld %ld\n", &test, &x, &y, &z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
@@ -368,7 +368,7 @@ for (i = nNewTriggers; i; i--) {
 		if (trigger->Segment (j) >= 0)
 			trigger->Segment (j) = xlatSegNum [trigger->Segment (j)];
 		else if (trigger->m_count == 1) {
-			DeleteTrigger (INT16 (trigger - Triggers (0)));
+			DeleteTrigger (short (trigger - Triggers (0)));
 			i--;
 			}
 		else {
@@ -399,16 +399,16 @@ return (nNewSegs);
 //
 //---------------------------------------------------------------------------
 
-void CMine::WriteSegmentInfo (FILE *fBlk, INT16 /*nSegment*/) 
+void CMine::WriteSegmentInfo (FILE *fBlk, short /*nSegment*/) 
 {
-	INT16				nSegment;
+	short				nSegment;
 	CSegment			*segP;
 	CSide				*sideP;
 	CWall				*wallP;
-	INT16				i,j;
+	short				i,j;
 	CVertex			origin;
 	CDoubleVector	xPrime, yPrime, zPrime, vVertex;
-	INT16				nVertex;
+	short				nVertex;
 
 #if DEMO
 ErrorMsg ("You cannot save a mine in the demo.");
@@ -470,8 +470,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
 					else {
 						CTrigger *trigger = Triggers (wallP->m_info.nTrigger);
-						INT32 iTarget;
-						INT32 count = 0;
+						int iTarget;
+						int count = 0;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
@@ -531,8 +531,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 void CMine::CutBlock()
 {
   FILE *fBlk;
-  INT16 nSegment;
-  INT16 count;
+  short nSegment;
+  short count;
   char szFile [256] = "\0";
 
 if (m_bSplineActive) {
@@ -626,7 +626,7 @@ void CMine::CopyBlock(char *pszBlockFile)
 {
   FILE *fBlk;
   char szFile [256] = "\0";
-  INT16 count;
+  short count;
 
   // make sure some cubes are marked
 count = MarkedSegmentCount ();
@@ -745,12 +745,12 @@ if (!ReadBlock (szFile, 0))
 // if option == 1, then "x blocks pasted" message is suppressed
 //==========================================================================
 
-INT32 CMine::ReadBlock (char *pszBlockFile,INT32 option) 
+int CMine::ReadBlock (char *pszBlockFile,int option) 
 {
 	CSegment *segP,*seg2;
-	INT16 nSegment,seg_offset;
-	INT16 count,child;
-	INT16 nVertex;
+	short nSegment,seg_offset;
+	short count,child;
+	short nVertex;
 	FILE *fBlk;
 
 _strlwr_s (pszBlockFile, 256);
@@ -810,7 +810,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					ResetSide (nSegment,child);
 					// auto link the new segment with any touching Segments ()
 					seg2 = Segments (0);
-					INT32 segnum2, sidenum2;
+					int segnum2, sidenum2;
 					for (segnum2 = 0; segnum2 < SegCount (); segnum2++, seg2++) {
 						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
@@ -886,7 +886,7 @@ if (!ReadBlock (m_szBlockFile, 1))
 void CMine::DeleteBlock()
 {
 
-INT16 nSegment,count;
+short nSegment,count;
 
 if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);

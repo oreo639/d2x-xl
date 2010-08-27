@@ -67,7 +67,7 @@ UpdateColorCtrl (
 
                         /*--------------------------*/
 
-void CTextureTool::ToggleLight (INT32 i)
+void CTextureTool::ToggleLight (int i)
 {
 CButton *pb = LightButton (i - 1);
 pb->SetCheck (!pb->GetCheck ());
@@ -85,8 +85,8 @@ if (m_iLight < 0)
 if (m_iLight >= MAX_FLICKERING_LIGHTS)
 	return;
 
-UINT32 nLightMask = 0;
-for (INT32 i = 0; i < 32; i++)
+uint nLightMask = 0;
+for (int i = 0; i < 32; i++)
 	if (m_szLight [i] == '1')
 		nLightMask |= (1 << i);
 long nDelay = I2X (m_nLightDelay) / 1000;
@@ -104,7 +104,7 @@ if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
 
                         /*--------------------------*/
 
-bool CTextureTool::SetLightDelay (INT32 nSpeed)
+bool CTextureTool::SetLightDelay (int nSpeed)
 {
 if (nSpeed < 0)
 	return false;
@@ -132,7 +132,7 @@ void CTextureTool::SetLightString (void)
 	static char cLight [2] = {'0', '1'};
 	char szLight [33];
 
-INT32 i;
+int i;
 for (i = 0; i < 32; i++)
 	szLight [i] = cLight [LightButton (i)->GetCheck ()];
 szLight [32] = '\0';
@@ -145,7 +145,7 @@ if (strcmp (szLight, m_szLight)) {
 		
                         /*--------------------------*/
 
-void CTextureTool::SetLightButtons (LPSTR szLight, INT32 nSpeed)
+void CTextureTool::SetLightButtons (LPSTR szLight, int nSpeed)
 {
 	bool	bDefault = false;
 
@@ -155,7 +155,7 @@ if (szLight) {
 	}
 else
 	UpdateData (TRUE);
-INT32 i;
+int i;
 for (i = 0; i < 32; i++) {
 	if (!bDefault && (m_szLight [i] == '\0'))
 		bDefault = true;
@@ -174,7 +174,7 @@ if (!SetLightDelay (nSpeed)) {
 
 void CTextureTool::EnableLightControls (BOOL bEnable)
 {
-INT32 i;
+int i;
 for (i = IDC_TEXLIGHT_OFF; i <= IDC_TEXLIGHT_TIMER; i++)
 	GetDlgItem (i)->EnableWindow (bEnable);
 }
@@ -212,11 +212,11 @@ if (m_iLight < 0) {
 	}
 
 long nLightMask = theMine->FlickeringLights (m_iLight)->m_info.mask;
-INT32 i;
+int i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
 m_szLight [32] = '\0';
-SetLightButtons (m_szLight, (INT32) (((1000 * theMine->FlickeringLights (m_iLight)->m_info.delay + F0_5) / F1_0)));
+SetLightButtons (m_szLight, (int) (((1000 * theMine->FlickeringLights (m_iLight)->m_info.delay + F0_5) / F1_0)));
 }
 
                         /*--------------------------*/
@@ -239,7 +239,7 @@ if (m_iLight < 0)
 	UpdateData (FALSE);
 else {
 	UpdateData (TRUE);
-	SetLightDelay ((INT32) (1000 * m_nLightTime));
+	SetLightDelay ((int) (1000 * m_nLightTime));
 	}
 }
 
@@ -317,8 +317,8 @@ void CTextureTool::OnLight32 () { ToggleLight (32); }
 void CTextureTool::SetWallColor (void)
 {
 if (theMine->UseTexColors ()) {
-	INT16			nSegment, nSide;
-	INT16			nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
+	short			nSegment, nSide;
+	short			nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
 	CSegment*	segP = theMine->Segments (0);
 	CSide*		sideP;
 	CWall			*wallP;
@@ -396,9 +396,9 @@ cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;
 if (ChooseColor (&cc)) {
 	CColor *psc = theMine->CurrLightColor ();
 	psc->m_info.index = m_nColorIndex = 255;
-	m_rgbColor.peBlue = ((BYTE) (cc.rgbResult >> 16)) & 0xFF;
-	m_rgbColor.peGreen = ((BYTE) (cc.rgbResult >> 8)) & 0xFF;
-	m_rgbColor.peRed = ((BYTE) cc.rgbResult) & 0xFF;
+	m_rgbColor.peBlue = ((byte) (cc.rgbResult >> 16)) & 0xFF;
+	m_rgbColor.peGreen = ((byte) (cc.rgbResult >> 8)) & 0xFF;
+	m_rgbColor.peRed = ((byte) cc.rgbResult) & 0xFF;
 	psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
 	psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->m_info.color.b = (double) m_rgbColor.peBlue / 255.0;

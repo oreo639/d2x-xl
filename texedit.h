@@ -7,27 +7,27 @@
 class CPaletteWnd : public CWnd
 {
 	public:
-		INT32				m_nWidth;
-		INT32				m_nHeight;
+		int				m_nWidth;
+		int				m_nHeight;
 		CWnd				*m_pParentWnd;
 		CDC				*m_pDC;
 		CPalette			*m_pOldPal;
-		UINT16			m_nColor;
-		UINT8				m_nSortedPalIdx [256];
+		ushort			m_nColor;
+		byte				m_nSortedPalIdx [256];
 		PALETTEENTRY	m_palColors [256];
 
 		CPaletteWnd ();
 		~CPaletteWnd ();
-		INT32 Create (CWnd *pParentWnd = NULL, INT32 nWidth = 32, INT32 nHeight = 8);
-		bool SelectColor (CPoint& point, INT32& color, PALETTEENTRY *pRGB = NULL);
+		int Create (CWnd *pParentWnd = NULL, int nWidth = 32, int nHeight = 8);
+		bool SelectColor (CPoint& point, int& color, PALETTEENTRY *pRGB = NULL);
 		void DrawPalette (void);
-		void CPaletteWnd::SetPalettePixel (INT32 x, INT32 y);
+		void CPaletteWnd::SetPalettePixel (int x, int y);
 		bool BeginPaint ();
 		void EndPaint ();
 		void Update ();
 		void CreatePalette ();
-		void SortPalette (INT32 l, INT32 r);
-		INT32 CmpColors (PALETTEENTRY *c, PALETTEENTRY *m);
+		void SortPalette (int l, int r);
+		int CmpColors (PALETTEENTRY *c, PALETTEENTRY *m);
 #if 0		
 		afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
 		afx_msg void OnRButtonUp (UINT nFlags, CPoint point);
@@ -46,22 +46,22 @@ class CTextureEdit : public CDialog
 		CPaletteWnd	m_paletteWnd;
 		CWnd			m_layerWnd;
 		CTexture	m_texture;
-		UINT8			*m_bitmap,
+		byte			*m_bitmap,
 						*m_backupBM;
 		tRGBA			*m_tga,
 						*m_backupTGA;
-		INT32			m_fgColor,
+		int			m_fgColor,
 						m_bgColor;
 		bool			m_lBtnDown,
 						m_rBtnDown;
 		bool			m_bModified;
-		INT32			m_iTexture;
+		int			m_iTexture;
 		char			m_szColors [80];
 		CDC			*m_pDC;
 		CWnd			*m_pPaintWnd;
 		CPalette		*m_pOldPal;
 		CTexture	*m_pTx;
-		UINT32		m_nWidth,
+		uint		m_nWidth,
 						m_nHeight,
 						m_nSize,
 						m_nFormat,
@@ -77,16 +77,16 @@ class CTextureEdit : public CDialog
       virtual void DoDataExchange (CDataExchange *pDX);
 		void OnOK (void);
 		void Backup (void);
-		void ColorPoint (UINT nFlags, CPoint &point, INT32& color);
-		void OnButtonDown (UINT nFlags, CPoint point, INT32& color);
+		void ColorPoint (UINT nFlags, CPoint &point, int& color);
+		void OnButtonDown (UINT nFlags, CPoint point, int& color);
 		void Refresh ();
 		bool BeginPaint (CWnd *pWnd);
 		void EndPaint ();
 		void DrawTexture (void);
 		void DrawPalette (void);
 		void DrawLayers (void);
-		void SetTexturePixel (INT32 x, INT32 y);
-		void SetPalettePixel (INT32 x, INT32 y);
+		void SetTexturePixel (int x, int y);
+		void SetPalettePixel (int x, int y);
 		void Update (CWnd *pWnd);
 		void GetClientRect (CWnd *pWnd, CRect& rc);
 		bool PtInRect (CRect& rc, CPoint& pt);

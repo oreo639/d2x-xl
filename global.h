@@ -7,7 +7,7 @@
 #include "segment.h"
 #include "object.h"
 
-extern INT32 m_changesMade;
+extern int m_changesMade;
 extern bool bExpertMode;
 extern bool bExtBlkFmt;
 
@@ -15,123 +15,123 @@ extern MISSION_DATA	missionData;
 //extern HGLOBAL texture_handle[MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
 ; // MAX_D2_TEXTURES
 extern HINSTANCE hInst;
-extern INT32 left,right,top,bottom;
+extern int left,right,top,bottom;
 extern LPLOGPALETTE MyLogPalette;
-extern INT16 d2_blastable_lights [];
-extern INT16 d2_switches [];
+extern short d2_blastable_lights [];
+extern short d2_switches [];
 
-extern INT32 bEnableDeltaShading;
+extern int bEnableDeltaShading;
 
 extern char FileName[256];
 extern char FilePath[256];
 extern char SubFile[20];
 
 // robot related globals
-extern INT32 preferences;
+extern int preferences;
 //extern CFlickeringLight *flickeringLights;
 extern LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
 extern LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
-extern UINT32        N_robot_types;
+extern uint        N_robot_types;
 //extern CRobotInfo   *robotInfo;
 #if ALLOCATE_POLYOBJECT
-extern UINT32        N_robot_joints;
-extern UINT32        N_polygon_models;
-extern UINT32        N_object_bitmaps;
+extern uint        N_robot_joints;
+extern uint        N_polygon_models;
+extern uint        N_object_bitmaps;
 extern JOINTPOS     *Robot_joints;
 extern tPolyModel    *Polygon_models[MAX_POLYGON_MODELS];
-extern UINT32       *Dying_modelnums;
-extern UINT32       *Dead_modelnums;
-extern UINT16 *ObjBitmaps;
-extern UINT16 *ObjBitmapPtrs;
+extern uint       *Dying_modelnums;
+extern uint       *Dead_modelnums;
+extern ushort *ObjBitmaps;
+extern ushort *ObjBitmapPtrs;
 #endif
 
 extern char skip[16];
-extern INT32 left;
-extern INT32 top;
-extern INT32 right;
-extern INT32 bottom;
-extern INT32 x_center;
-extern INT32 y_center;
-extern INT32 x_max;
-extern INT32 y_max;
+extern int left;
+extern int top;
+extern int right;
+extern int bottom;
+extern int x_center;
+extern int y_center;
+extern int x_max;
+extern int y_max;
 extern double aspect_ratio;
-extern INT32 refresh_needed;
-extern INT32 splash;
+extern int refresh_needed;
+extern int splash;
 
 
 
-extern INT32 level_modified;
-//extern UINT8 texture_modified[1+MAX_D2_TEXTURES/8];
-extern INT32 disable_saves;
-extern UINT8 clipList [D2_NUM_OF_CLIPS];
-extern UINT16 wall_flags[9];
-extern INT32 texture_resource;
+extern int level_modified;
+//extern byte texture_modified[1+MAX_D2_TEXTURES/8];
+extern int disable_saves;
+extern byte clipList [D2_NUM_OF_CLIPS];
+extern ushort wall_flags[9];
+extern int texture_resource;
 extern long ScrnMemMax;
-extern INT32 ScrnWidth;
-extern INT32 ScrnHeight;
-extern INT32 m_fileType;
+extern int ScrnWidth;
+extern int ScrnHeight;
+extern int m_fileType;
 extern CLightDeltaIndex *lightDeltaIndices;
 extern CLightDeltaValue *lightDeltaValues;
-extern INT16 num_static_lights;
+extern short num_static_lights;
 extern char string [256];
-extern INT16 nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
+extern short nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
 extern char spline_error_message [];
 extern CVertex splinePoints [MAX_SPLINES];
 extern CVertex points [4];
-extern INT16 n_splines;
-//extern INT16 spline_active;
-extern UINT8 object_list [MAX_OBJECT_NUMBER];
-extern UINT8 contentsList [MAX_CONTAINS_NUMBER];
-extern INT8 objectSelection [MAX_OBJECT_TYPES];
-extern INT8 contentsSelection [MAX_OBJECT_TYPES];
-extern UINT8 robotClip [MAX_ROBOT_IDS_TOTAL];
-extern UINT8 powerupClip [MAX_POWERUP_IDS2];
+extern short n_splines;
+//extern short spline_active;
+extern byte object_list [MAX_OBJECT_NUMBER];
+extern byte contentsList [MAX_CONTAINS_NUMBER];
+extern char objectSelection [MAX_OBJECT_TYPES];
+extern char contentsSelection [MAX_OBJECT_TYPES];
+extern byte robotClip [MAX_ROBOT_IDS_TOTAL];
+extern byte powerupClip [MAX_POWERUP_IDS2];
 extern char *ai_options [MAX_D2_AI_OPTIONS];
-extern FIX powerupSize [MAX_POWERUP_IDS2];
-extern FIX robotSize [MAX_ROBOT_IDS_TOTAL];
-extern FIX robot_shield [MAX_ROBOT_IDS_TOTAL];
+extern fix powerupSize [MAX_POWERUP_IDS2];
+extern fix robotSize [MAX_ROBOT_IDS_TOTAL];
+extern fix robot_shield [MAX_ROBOT_IDS_TOTAL];
 extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
 extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 extern long lightMap [MAX_D2_TEXTURES];
-extern INT16 add_segment_mode;
+extern short add_segment_mode;
 extern char dlc_version[10];
 extern char testers_name[20];
-extern INT16 serial_number;
+extern short serial_number;
 extern char message[256];
 extern char m_startFolder [256];
-extern FIX grid;
+extern fix grid;
 extern char descent_path[256];
 extern char descent2_path[256];
 extern char levels_path[256];
 extern char player_profile [20];
-extern INT16 nTrigger;
-//extern INT16 number_of_textures;
+extern short nTrigger;
+//extern short number_of_textures;
 #if 0
-extern INT16  show_lines;
-extern INT16  show_lights;
-extern INT16  show_walls;
-extern INT16  show_special;
-extern INT16  show_objects;
-extern INT16  show_powerups;
+extern short  show_lines;
+extern short  show_lights;
+extern short  show_walls;
+extern short  show_special;
+extern short  show_objects;
+extern short  show_powerups;
 #endif
 //extern CUBE  current1;
 //extern CUBE  current2;
 //extern CUBE  *current;
 #if 0
-extern INT16 select_mode;
+extern short select_mode;
 #endif
-extern INT16 edit_mode;
+extern short edit_mode;
 extern tUVL   default_uvls[4];
 extern char  *object_names[MAX_OBJECT_TYPES];
-extern UINT8 powerup_types[MAX_POWERUP_IDS2];
+extern byte powerup_types[MAX_POWERUP_IDS2];
 extern char  wall_type_names[6][10];
 extern char  wall_flag_names[8][14];
 extern char  wall_state_names[4][8];
 extern APOINT *scrn; //MAX_VERTICES
-extern INT16 gx0, gy0, gz0;
+extern short gx0, gy0, gz0;
 extern double spinx,spiny,spinz;
 extern double movex, movey, movez;
-extern INT16 max_x, min_x, max_y, min_y, max_z, min_z;
+extern short max_x, min_x, max_y, min_y, max_z, min_z;
 extern double sizex,sizey,sizez;
 extern double angleRate;
 extern double moveRate;
@@ -139,29 +139,29 @@ extern double moveRate;
 //extern double IM[4][4]; /* inverse matrix of M[4][4] */
 extern double depthPerception;
 
-extern UINT8 sideVertTable[6][4];
-extern UINT8 oppSideTable[6];
-extern UINT8 oppSideVertTable[6][4];
-extern UINT8 lineVertTable[12][2];
-extern UINT8 sideLineTable[6][4];
-extern UINT8 connectPointTable[8][3];
-extern INT8 pointSideTable[8][3];
-extern INT8 pointCornerTable[8][3];
+extern byte sideVertTable[6][4];
+extern byte oppSideTable[6];
+extern byte oppSideVertTable[6][4];
+extern byte lineVertTable[12][2];
+extern byte sideLineTable[6][4];
+extern byte connectPointTable[8][3];
+extern char pointSideTable[8][3];
+extern char pointCornerTable[8][3];
 
-extern UINT8 doorClipTable [D2_NUM_OF_CLIPS];
+extern byte doorClipTable [D2_NUM_OF_CLIPS];
 
 /* debug data */
-extern UINT32 debug_offset2;
-extern UINT32 debug_offset1;
+extern uint debug_offset2;
+extern uint debug_offset1;
 /* External Prototypes */
-extern void cleanup(INT16 error);
+extern void cleanup(short error);
 
-extern INT16 map_mask[4];
+extern short map_mask[4];
 
-extern INT32 renderXOffs;
-extern INT32 renderYOffs;
+extern int renderXOffs;
+extern int renderYOffs;
 
-extern UINT8 *pCustomPalette;
+extern byte *pCustomPalette;
 
 #define	TXT_GRAY_ROCK			1
 #define	TXT_BROWN_ROCK			(1L << 1)
@@ -204,13 +204,13 @@ extern UINT8 *pCustomPalette;
 #define	TXT_SIGNS		(TXT_SIGN | TXT_LABEL | TXT_MONITOR | TXT_STRIPES)
 
 typedef struct tTxtRange {
-	INT16	nMin, nMax;
+	short	nMin, nMax;
 } tTxtRange;
 
 typedef struct tTxtFilter {
 	tTxtRange	iTexture;
-	UINT32		nFilter;
-	UINT32		n2ndFilter;
+	uint		nFilter;
+	uint		n2ndFilter;
 } tTxtFilter;
 
 #define D1_TXT_FILTER_SIZE	154

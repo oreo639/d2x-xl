@@ -21,22 +21,22 @@
 
 static double zoomScales [2] = {1.2, 1.033};
 
-INT32 CMineView::ZoomFactor (INT32 nSteps, double min, double max)
+int CMineView::ZoomFactor (int nSteps, double min, double max)
 {
 double zoom;
-INT32 i;
+int i;
 
 for (zoom = log(10*m_size.v.x), i = 0; i < nSteps; i++) {
 	zoom /= log (1.2);
 	if ((zoom < min) || (zoom > max))
 		return i;
 	}
-return nSteps; //(INT32) ((zoom > 0) ? zoom + 0.5: zoom - 0.5);
+return nSteps; //(int) ((zoom > 0) ? zoom + 0.5: zoom - 0.5);
 }
 
                         /*--------------------------*/
 
-void CMineView::Zoom (INT32 nSteps, double zoom)
+void CMineView::Zoom (int nSteps, double zoom)
 {
 for (; nSteps; nSteps--) {
 //	m_size.v.x *= zoom;
@@ -49,7 +49,7 @@ Refresh (false);
 
                         /*--------------------------*/
 
-INT32 CMineView::ZoomIn (INT32 nSteps, bool bSlow)
+int CMineView::ZoomIn (int nSteps, bool bSlow)
 {
 if (nSteps = ZoomFactor (nSteps, -100, 25))
 	Zoom (nSteps, zoomScales [bSlow]);
@@ -65,7 +65,7 @@ return nSteps;
 
                         /*--------------------------*/
 
-INT32 CMineView::ZoomOut(INT32 nSteps, bool bSlow)
+int CMineView::ZoomOut(int nSteps, bool bSlow)
 {
 if (nSteps = ZoomFactor (nSteps, -5, 100))
 	Zoom (nSteps, 1.0 / zoomScales [bSlow]);
@@ -83,7 +83,7 @@ if (!(m_xRenderOffs && m_yRenderOffs))
 
 	APOINT *a = m_viewPoints;
 
-INT32 i;
+int i;
 for (i = theMine->VertCount (); i; i--, a++) {
 	a->x += m_xRenderOffs;
 	a->y += m_yRenderOffs;
@@ -92,13 +92,13 @@ for (i = theMine->VertCount (); i; i--, a++) {
 
                         /*--------------------------*/
 
-INT32 CMineView::FitToView (void)
+int CMineView::FitToView (void)
 {
 if (!theMine) return 1;
 
 	CRect			rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
 	double		zoomX, zoomY, zoom;
-	INT32			dx, dy;
+	int			dx, dy;
 
 DelayRefresh (true);
 //CenterMine ();
@@ -157,7 +157,7 @@ return 1;
 void CMineView::Rotate (char direction, double angle)
 {
 	static double a = 0;
-INT32 i = direction - 'X';
+int i = direction - 'X';
 if ((i < 0) || (i > 2))
 	return;
 #if 0 //OGL_RENDERING
@@ -185,11 +185,11 @@ Refresh (false);
 
                         /*--------------------------*/
 
-void CMineView::Pan (char direction, INT32 value)
+void CMineView::Pan (char direction, int value)
 {
 if (!value)
 	return;
-INT32 i = direction - 'X';
+int i = direction - 'X';
 if ((i < 0) || (i > 2))
 	i = 1;
 #if 0 //OGL_RENDERING
@@ -226,7 +226,7 @@ if (!theMine) return;
 
 	CVertex *verts;
 	CVertex	vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
-	INT32 i;
+	int i;
 
 verts = theMine->Vertices (0);
 for (i = 0; i < theMine->VertCount ();i++, verts++) {
@@ -236,7 +236,7 @@ for (i = 0; i < theMine->VertCount ();i++, verts++) {
 m_spin.Set (M_PI / 4.0, M_PI / 4.0, 0.0);
 m_move = CDoubleVector (Average (vMin, vMax));
 CDoubleVector v = vMax - vMin;
-INT32 maxVal = INT32 (max (max (v.v.x, v.v.y), v.v.z) / 20);
+int maxVal = int (max (max (v.v.x, v.v.y), v.v.z) / 20);
 double factor;
 if (maxVal < 2)      
 	factor = 14;
@@ -266,7 +266,7 @@ if (!theMine) return;
 
 	CSegment& seg = theMine->Segments (0) [m_Current->nSegment];
 	CVertex *vMine = theMine->Vertices (0);
-	INT16 *vSeg = seg.m_info.verts;
+	short *vSeg = seg.m_info.verts;
 
 m_move = (vMine [vSeg [0]] +
 			 vMine [vSeg [1]] +

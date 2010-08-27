@@ -22,58 +22,58 @@ void tRobotGunInfo::Read (FILE* fp, int nField) {
 	if (nField == 0)
 		points.Read (fp);
 	else
-		subModels = UINT8 (read_INT8 (fp));
+		subModels = byte (ReadInt8 (fp));
 	}
 
 void tRobotGunInfo::Write (FILE* fp, int nField) {
 	if (nField == 0)
 		points.Write (fp);
 	else
-		write_INT8 ((INT8) subModels, fp);
+		WriteInt8 ((char) subModels, fp);
 	}
 
 //------------------------------------------------------------------------
 
 void tRobotExplInfo::Read (FILE* fp) {
-	nClip = read_INT16 (fp);
-	nSound = read_INT16 (fp);
+	nClip = ReadInt16 (fp);
+	nSound = ReadInt16 (fp);
 	}
 
 void tRobotExplInfo::Write (FILE* fp) {
-	write_INT16 (nClip , fp);
-	write_INT16 (nSound, fp);
+	WriteInt16 (nClip , fp);
+	WriteInt16 (nSound, fp);
 	}
 
 //------------------------------------------------------------------------
 
 void tRobotContentsInfo::Read (FILE* fp) {
-	id = read_INT8 (fp);
-	count = read_INT8 (fp);
-	prob = read_INT8 (fp);
-	type = read_INT8 (fp);
+	id = ReadInt8 (fp);
+	count = ReadInt8 (fp);
+	prob = ReadInt8 (fp);
+	type = ReadInt8 (fp);
 	}
 
 void tRobotContentsInfo::Write (FILE* fp) {
-	write_INT8 (id, fp);
-	write_INT8 (count, fp);
-	write_INT8 (prob, fp);
-	write_INT8 (type, fp);
+	WriteInt8 (id, fp);
+	WriteInt8 (count, fp);
+	WriteInt8 (prob, fp);
+	WriteInt8 (type, fp);
 	}
 
 //------------------------------------------------------------------------
 
 void tRobotSoundInfo::Read (FILE* fp) {
-	see = (UINT8) read_INT8 (fp);
-	attack = (UINT8) read_INT8 (fp);
-	claw = (UINT8) read_INT8 (fp);
-	taunt = (UINT8) read_INT8 (fp);
+	see = (byte) ReadInt8 (fp);
+	attack = (byte) ReadInt8 (fp);
+	claw = (byte) ReadInt8 (fp);
+	taunt = (byte) ReadInt8 (fp);
 	}
 
 void tRobotSoundInfo::Write (FILE* fp) {
-	write_INT8 ((INT8) see, fp);
-	write_INT8 ((INT8) attack, fp);
-	write_INT8 ((INT8) claw, fp);
-	write_INT8 ((INT8) taunt, fp);
+	WriteInt8 ((char) see, fp);
+	WriteInt8 ((char) attack, fp);
+	WriteInt8 ((char) claw, fp);
+	WriteInt8 ((char) taunt, fp);
 	}
 
 //------------------------------------------------------------------------
@@ -81,28 +81,28 @@ void tRobotSoundInfo::Write (FILE* fp) {
 void tRobotCombatInfo::Read (FILE* fp, int nField) {
 	switch (nField) {
 		case 0:
-			fieldOfView = read_FIX (fp);
+			fieldOfView = ReadFix (fp);
 			break;
 		case 1:
-			firingWait [0] = read_FIX (fp);
+			firingWait [0] = ReadFix (fp);
 			break;
 		case 2:
-			firingWait [1] = read_FIX (fp);
+			firingWait [1] = ReadFix (fp);
 			break;
 		case 3:
-			turnTime = read_FIX (fp);
+			turnTime = ReadFix (fp);
 			break;
 		case 4:
-			maxSpeed = read_FIX (fp);
+			maxSpeed = ReadFix (fp);
 			break;
 		case 5:
-			circleDistance = read_FIX (fp);
+			circleDistance = ReadFix (fp);
 			break;
 		case 6:
-			rapidFire = read_INT8 (fp);
+			rapidFire = ReadInt8 (fp);
 			break;
 		case 7:
-			evadeSpeed = read_INT8 (fp);
+			evadeSpeed = ReadInt8 (fp);
 			break;
 		}
 	}
@@ -110,135 +110,135 @@ void tRobotCombatInfo::Read (FILE* fp, int nField) {
 void tRobotCombatInfo::Write (FILE* fp, int nField) {
 	switch (nField) {
 		case 0:
-			write_FIX (fieldOfView, fp);
+			WriteFix (fieldOfView, fp);
 			break;
 		case 1:
-			write_FIX (firingWait [0], fp);
+			WriteFix (firingWait [0], fp);
 			break;
 		case 2:
-			write_FIX (firingWait [1], fp);
+			WriteFix (firingWait [1], fp);
 			break;
 		case 3:
-			write_FIX (turnTime, fp);
+			WriteFix (turnTime, fp);
 			break;
 		case 4:
-			write_FIX (maxSpeed, fp);
+			WriteFix (maxSpeed, fp);
 			break;
 		case 5:
-			write_FIX (circleDistance, fp);
+			WriteFix (circleDistance, fp);
 			break;
 		case 6:
-			write_INT8 (rapidFire, fp);
+			WriteInt8 (rapidFire, fp);
 			break;
 		case 7:
-			write_INT8 (evadeSpeed, fp);
+			WriteInt8 (evadeSpeed, fp);
 			break;
 		}
 	}
 
 //------------------------------------------------------------------------
 
-INT32 CRobotInfo::Read (FILE* fp, INT32 version, bool bFlag) 
+int CRobotInfo::Read (FILE* fp, int version, bool bFlag) 
 { 
 	int i, j;
 
-m_info.nModel = read_INT32 (fp);
+m_info.nModel = ReadInt32 (fp);
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_GUNS; i++)
 		m_info.guns [i].Read (fp, j);
 for (i = 0; i < 2; i++)
 	m_info.expl [i].Read (fp);
 for (i = 0; i < 2; i++)
-	m_info.weaponType [i] = read_INT8 (fp);
-m_info.n_guns = read_INT8 (fp);
+	m_info.weaponType [i] = ReadInt8 (fp);
+m_info.n_guns = ReadInt8 (fp);
 m_info.contents.Read (fp);
-m_info.kamikaze = read_INT8 (fp);
-m_info.scoreValue = read_INT16 (fp);
-m_info.badass = read_INT8 (fp);
-m_info.drainEnergy = read_INT8 (fp);
-m_info.lighting = read_FIX (fp);
-m_info.strength = read_FIX (fp);
-m_info.mass = read_FIX (fp);
-m_info.drag = read_FIX (fp);
+m_info.kamikaze = ReadInt8 (fp);
+m_info.scoreValue = ReadInt16 (fp);
+m_info.badass = ReadInt8 (fp);
+m_info.drainEnergy = ReadInt8 (fp);
+m_info.lighting = ReadFix (fp);
+m_info.strength = ReadFix (fp);
+m_info.mass = ReadFix (fp);
+m_info.drag = ReadFix (fp);
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Read (fp, j);
-m_info.cloakType = read_INT8 (fp);
-m_info.attackType = read_INT8 (fp);
+m_info.cloakType = ReadInt8 (fp);
+m_info.attackType = ReadInt8 (fp);
 m_info.sounds.Read (fp);
-m_info.bossFlag = read_INT8 (fp);
-m_info.companion = read_INT8 (fp);
-m_info.smartBlobs = read_INT8 (fp);
-m_info.energyBlobs = read_INT8 (fp);
-m_info.thief = read_INT8 (fp);
-m_info.pursuit = read_INT8 (fp);
-m_info.lightCast = read_INT8 (fp);
-m_info.deathRoll = read_INT8 (fp);
-m_info.flags = (UINT8) read_INT8 (fp);
-m_info.bCustom = read_INT8 (fp); 
-m_info.pad [0] = read_INT8 (fp); 
-m_info.pad [1] = read_INT8 (fp); 
-m_info.deathRollSound = (UINT8) read_INT8 (fp);
-m_info.glow = (UINT8) read_INT8 (fp);
-m_info.behavior = (UINT8) read_INT8 (fp);
-m_info.aim = (UINT8) read_INT8 (fp);
+m_info.bossFlag = ReadInt8 (fp);
+m_info.companion = ReadInt8 (fp);
+m_info.smartBlobs = ReadInt8 (fp);
+m_info.energyBlobs = ReadInt8 (fp);
+m_info.thief = ReadInt8 (fp);
+m_info.pursuit = ReadInt8 (fp);
+m_info.lightCast = ReadInt8 (fp);
+m_info.deathRoll = ReadInt8 (fp);
+m_info.flags = (byte) ReadInt8 (fp);
+m_info.bCustom = ReadInt8 (fp); 
+m_info.pad [0] = ReadInt8 (fp); 
+m_info.pad [1] = ReadInt8 (fp); 
+m_info.deathRollSound = (byte) ReadInt8 (fp);
+m_info.glow = (byte) ReadInt8 (fp);
+m_info.behavior = (byte) ReadInt8 (fp);
+m_info.aim = (byte) ReadInt8 (fp);
 for (i = 0; i <= MAX_GUNS; i++)
 	for (j = 0; j < N_ANIM_STATES; j++)
 		m_info.animStates [i][j].Read (fp);
-m_info.always_0xabcd = read_INT32 (fp);
+m_info.always_0xabcd = ReadInt32 (fp);
 return 1; 
 }
 
 //------------------------------------------------------------------------
 
-void CRobotInfo::Write (FILE* fp, INT32 version, bool bFlag) 
+void CRobotInfo::Write (FILE* fp, int version, bool bFlag) 
 {
 	int i, j;
 
-write_INT32 (m_info.nModel, fp);
+WriteInt32 (m_info.nModel, fp);
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_GUNS; i++)
 		m_info.guns [i].Write (fp, j);
 for (i = 0; i < 2; i++)
 	m_info.expl [i].Write (fp);
 for (i = 0; i < 2; i++)
-	write_INT8 (m_info.weaponType [i], fp);
-write_INT8 (m_info.n_guns, fp);
+	WriteInt8 (m_info.weaponType [i], fp);
+WriteInt8 (m_info.n_guns, fp);
 m_info.contents.Write (fp);
-write_INT8 (m_info.kamikaze, fp);
-write_INT16 (m_info.scoreValue, fp);
-write_INT8 (m_info.badass, fp);
-write_INT8 (m_info.drainEnergy, fp);
-write_FIX (m_info.lighting, fp);
-write_FIX (m_info.strength, fp);
-write_FIX (m_info.mass, fp);
-write_FIX (m_info.drag, fp);
+WriteInt8 (m_info.kamikaze, fp);
+WriteInt16 (m_info.scoreValue, fp);
+WriteInt8 (m_info.badass, fp);
+WriteInt8 (m_info.drainEnergy, fp);
+WriteFix (m_info.lighting, fp);
+WriteFix (m_info.strength, fp);
+WriteFix (m_info.mass, fp);
+WriteFix (m_info.drag, fp);
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Write (fp, j);
-write_INT8 (m_info.cloakType, fp);
-write_INT8 (m_info.attackType, fp);
+WriteInt8 (m_info.cloakType, fp);
+WriteInt8 (m_info.attackType, fp);
 m_info.sounds.Write (fp);
-write_INT8 (m_info.bossFlag, fp);
-write_INT8 (m_info.companion, fp);
-write_INT8 (m_info.smartBlobs, fp);
-write_INT8 (m_info.energyBlobs, fp);
-write_INT8 (m_info.thief, fp);
-write_INT8 (m_info.pursuit, fp);
-write_INT8 (m_info.lightCast, fp);
-write_INT8 (m_info.deathRoll, fp);
-write_INT8 (m_info.flags, fp);
-write_INT8 (m_info.bCustom, fp); // skip
-write_INT8 (m_info.pad [1], fp); // skip
-write_INT8 (m_info.pad [2], fp); // skip
-(UINT8) write_INT8 (m_info.deathRollSound, fp);
-(UINT8) write_INT8 (m_info.glow, fp);
-(UINT8) write_INT8 (m_info.behavior, fp);
-(UINT8) write_INT8 (m_info.aim, fp);
+WriteInt8 (m_info.bossFlag, fp);
+WriteInt8 (m_info.companion, fp);
+WriteInt8 (m_info.smartBlobs, fp);
+WriteInt8 (m_info.energyBlobs, fp);
+WriteInt8 (m_info.thief, fp);
+WriteInt8 (m_info.pursuit, fp);
+WriteInt8 (m_info.lightCast, fp);
+WriteInt8 (m_info.deathRoll, fp);
+WriteInt8 (m_info.flags, fp);
+WriteInt8 (m_info.bCustom, fp); // skip
+WriteInt8 (m_info.pad [1], fp); // skip
+WriteInt8 (m_info.pad [2], fp); // skip
+(byte) WriteInt8 (m_info.deathRollSound, fp);
+(byte) WriteInt8 (m_info.glow, fp);
+(byte) WriteInt8 (m_info.behavior, fp);
+(byte) WriteInt8 (m_info.aim, fp);
 for (i = 0; i <= MAX_GUNS; i++)
 	for (j = 0; j < N_ANIM_STATES; j++)
 		m_info.animStates [i][j].Write (fp);
-write_INT32 (m_info.always_0xabcd, fp);
+WriteInt32 (m_info.always_0xabcd, fp);
 }
 
 //------------------------------------------------------------------------
@@ -280,13 +280,13 @@ write_INT32 (m_info.always_0xabcd, fp);
 //   1) Memory was allocated for globals (except polymodel data)
 //------------------------------------------------------------------------
 
-#define MAKESIG(_sig)	(UINT32) *((INT32 *) &(_sig))
+#define MAKESIG(_sig)	(uint) *((int *) &(_sig))
 
-INT32 CMine::ReadHamFile(char *pszFile, INT32 type) 
+int CMine::ReadHamFile(char *pszFile, int type) 
 {
   FILE*			fp;
-  INT16			t, t0;
-  UINT32			id;
+  short			t, t0;
+  uint			id;
   CPolyModel	pm;
   char			szFile [256];
 
@@ -319,41 +319,41 @@ if (!pszFile) {
 // the information which is found in the extended ham
 // (the robot information)
 if (type == NORMAL_HAM)  {
-	id = read_INT32(fp); // "HAM!"
+	id = ReadInt32(fp); // "HAM!"
 	if (id != MAKESIG (d2HamSig)) {//0x214d4148L) {
 		sprintf_s (message, sizeof (message), "Not a D2 HAM file (%s)", pszFile);
 		ErrorMsg (message);
 		goto abort;
 		}
-	read_INT32(fp); // version (0x00000007)
-	t = (INT16) read_INT32(fp);
-	fseek (fp, sizeof (UINT16) * t, SEEK_CUR);
+	ReadInt32(fp); // version (0x00000007)
+	t = (short) ReadInt32(fp);
+	fseek (fp, sizeof (ushort) * t, SEEK_CUR);
 	fseek (fp, sizeof (TMAP_INFO) * t, SEEK_CUR);
-	t = (INT16) read_INT32(fp);
-	fseek (fp, sizeof (UINT8) * t, SEEK_CUR);
-	fseek (fp, sizeof (UINT8) * t, SEEK_CUR);
-	t = (INT16) read_INT32(fp);
+	t = (short) ReadInt32(fp);
+	fseek (fp, sizeof (byte) * t, SEEK_CUR);
+	fseek (fp, sizeof (byte) * t, SEEK_CUR);
+	t = (short) ReadInt32(fp);
 	fseek (fp, sizeof (VCLIP) * t, SEEK_CUR);
-	t = (INT16) read_INT32(fp);
+	t = (short) ReadInt32(fp);
 	fseek (fp, sizeof (ECLIP) * t, SEEK_CUR);
-	t = (INT16) read_INT32(fp);
+	t = (short) ReadInt32(fp);
 	fseek (fp, sizeof (WCLIP) * t, SEEK_CUR);
 	}
 else if (type == EXTENDED_HAM)  {
-	id = read_INT32(fp); // "HAM!"
+	id = ReadInt32(fp); // "HAM!"
 	if (id != MAKESIG (d2xHamSig)) {//0x214d4148L) {
 		sprintf_s (message, sizeof (message), "Not a D2X HAM file (%s)", pszFile);
 		ErrorMsg (message);
 		goto abort;
 		}
-	read_INT32(fp); //skip version
-	t = read_INT32(fp); //skip weapon count
+	ReadInt32(fp); //skip version
+	t = ReadInt32(fp); //skip weapon count
 	fseek (fp, t * sizeof (WEAPON_INFO), SEEK_CUR); //skip weapon info
 	}
 
 	// read robot information
 	//------------------------
-	t = (INT16) read_INT32(fp);
+	t = (short) ReadInt32(fp);
 	t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_TYPES;
 	N_robot_types = t0 + t;
 	if (N_robot_types > MAX_ROBOT_TYPES) {
@@ -371,18 +371,18 @@ else if (type == EXTENDED_HAM)  {
 
   // skip joints weapons, and powerups
   //----------------------------------
-  t = (INT16) read_INT32(fp);
+  t = (short) ReadInt32(fp);
   fseek(fp,sizeof (JOINTPOS)*t,SEEK_CUR);
   if (type == NORMAL_HAM) {
-    t = (INT16) read_INT32(fp);
+    t = (short) ReadInt32(fp);
     fseek(fp,sizeof (WEAPON_INFO)*t,SEEK_CUR);
-    t = (INT16) read_INT32(fp);
+    t = (short) ReadInt32(fp);
     fseek(fp,sizeof (POWERUP_TYPE_INFO)*t,SEEK_CUR);
   }
 
   // read poly model data and write it to a file
   //---------------------------------------------
-  t = (INT16) read_INT32(fp);
+  t = (short) ReadInt32(fp);
   if (t > MAX_POLYGON_MODELS) {
     sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_D2_POLYGON_MODELS);
     ErrorMsg (message);
@@ -391,7 +391,7 @@ else if (type == EXTENDED_HAM)  {
 #if ALLOCATE_tPolyModelS
   // read joint information
   //-----------------------
-  t = (INT16) read_INT32(fp);
+  t = (short) ReadInt32(fp);
   t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_JOINTS;
   N_robot_joints = t0 + t;
   if (N_robot_joints > MAX_ROBOT_JOINTS) {
@@ -404,15 +404,15 @@ else if (type == EXTENDED_HAM)  {
   // skip weapon and powerup data
   //-----------------------------
   if (type == NORMAL_HAM) {
-    t = (INT16) read_INT32(fp);
+    t = (short) ReadInt32(fp);
     fseek(fp,sizeof (WEAPON_INFO)*t,SEEK_CUR);
-    t = (INT16) read_INT32(fp);
+    t = (short) ReadInt32(fp);
     fseek(fp,sizeof (POWERUP_TYPE_INFO)*t,SEEK_CUR);
   }
 
   // read poly model data
   //---------------------
-  t = (INT16) read_INT32(fp);
+  t = (short) ReadInt32(fp);
   t0 = (type == NORMAL_HAM) ? 0: N_D2_POLYGON_MODELS;
   N_polygon_models = t0 + t;
   if (N_polygon_models > MAX_POLYGON_MODELS) {
@@ -421,7 +421,7 @@ else if (type == EXTENDED_HAM)  {
     goto abort;
   }
 
-  INT16 i;
+  short i;
 
   for (i=t0; i<t0+t; i++ ) {
     // free poly data memory if already allocated
@@ -432,26 +432,26 @@ else if (type == EXTENDED_HAM)  {
     fread(&Polygon_model, sizeof (tPolyModel), 1, fp );
   }
   for (i=t0; i<t0+t; i++ ) {
-    Polygon_models[i]->model_data = (UINT8 *) malloc((INT32)Polygon_models[i]->model_dataSize);
+    Polygon_models[i]->model_data = (byte *) malloc((int)Polygon_models[i]->model_dataSize);
 
     if (Polygon_models[i]->model_data == NULL ) {
       ErrorMsg ("Could not allocate memory for polymodel data");
       goto abort;
     }
-    fread( Polygon_models[i]->model_data, sizeof (UINT8), (INT16)Polygon_models[i]->model_dataSize, fp );
+    fread( Polygon_models[i]->model_data, sizeof (byte), (short)Polygon_models[i]->model_dataSize, fp );
 //    g3_init_polygon_model(Polygon_models[i].model_data);
   }
 
   // extended hog writes over normal hogs dying models instead of adding new ones
-  fread( &Dying_modelnums[t0], sizeof (INT32), t, fp );
-  fread( &Dead_modelnums[t0], sizeof (INT32), t, fp );
+  fread( &Dying_modelnums[t0], sizeof (int), t, fp );
+  fread( &Dead_modelnums[t0], sizeof (int), t, fp );
 
   // skip gague data
   //----------------
   if (type == NORMAL_HAM) {
-    t = (INT16) read_INT32(fp);
-    fseek(fp,sizeof (UINT16)*t,SEEK_CUR); // lores gague
-    fseek(fp,sizeof (UINT16)*t,SEEK_CUR); // hires gague
+    t = (short) ReadInt32(fp);
+    fseek(fp,sizeof (ushort)*t,SEEK_CUR); // lores gague
+    fseek(fp,sizeof (ushort)*t,SEEK_CUR); // hires gague
   }
 
   // read object bitmap data
@@ -461,7 +461,7 @@ else if (type == EXTENDED_HAM)  {
   // writes all 600 indicies even though it doesn't use all
   // of them.
   //----------------------------------------------------------
-  t = (INT16) read_INT32(fp);
+  t = (short) ReadInt32(fp);
   t0 = (type == NORMAL_HAM) ? 0: N_D2_OBJBITMAPS;
   if (type == NORMAL_HAM) {
     N_object_bitmaps  = t0 + t;  // only update this if we are reading Descent2.ham file
@@ -471,10 +471,10 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-  fread( &ObjBitmaps[t0], sizeof (UINT16), t, fp );
+  fread( &ObjBitmaps[t0], sizeof (ushort), t, fp );
 
   if (type == EXTENDED_HAM) {
-    t = (INT16) read_INT32(fp);
+    t = (short) ReadInt32(fp);
     t0 = (type == NORMAL_HAM) ? 0: N_D2_OBJBITMAPPTRS;
     if (t+t0 > MAX_OBJ_BITMAPS) {
       sprintf_s (message, sizeof (message), "Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_D2_OBJBITMAPPTRS);
@@ -482,7 +482,7 @@ else if (type == EXTENDED_HAM)  {
       goto abort;
     }
   }
-  fread(&ObjBitmapPtrs[t0], sizeof (UINT16), t, fp );
+  fread(&ObjBitmapPtrs[t0], sizeof (ushort), t, fp );
 #endif
 
   fclose(fp);
@@ -529,9 +529,9 @@ abort:
 //   1) Memory was allocated for globals (except polymodel data)
 //------------------------------------------------------------------------
 
-INT32 CMine::ReadHxmFile(FILE *fp, long fSize) 
+int CMine::ReadHxmFile(FILE *fp, long fSize) 
 {
-	UINT16 t,i,j;
+	ushort t,i,j;
 	CRobotInfo rInfo;
 	long p;
 
@@ -543,8 +543,8 @@ if (!fp) {
 p = ftell (fp);
 if (fSize < 0)
 	fSize = _filelength (_fileno (fp));
-UINT32 id;
-id = read_INT32(fp); // "HXM!"
+uint id;
+id = ReadInt32(fp); // "HXM!"
 if (id != 0x21584d48L) {
 	ErrorMsg ("Not a HXM file");
 	goto abort;
@@ -554,13 +554,13 @@ if (m_pHxmExtraData) {
 	m_pHxmExtraData = NULL;
 	m_nHxmExtraDataSize = 0;
 	}
-read_INT32(fp); // version (0x00000001)
+ReadInt32(fp); // version (0x00000001)
 
 // read robot information
 //------------------------
-t = (UINT16) read_INT32(fp);
+t = (ushort) ReadInt32(fp);
 for (j = 0; j < t; j++) {
-	i = (UINT16) read_INT32(fp);
+	i = (ushort) ReadInt32(fp);
 	if (i >= N_robot_types) {
 		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, N_robot_types - 1);
 		ErrorMsg (message);
@@ -606,9 +606,9 @@ return 1;
 //  robotInfo[MAX_ROBOT_TYPES]
 //------------------------------------------------------------------------
 
-INT32 CMine::WriteHxmFile(FILE *fp) 
+int CMine::WriteHxmFile(FILE *fp) 
 {
-UINT16 t,i;
+ushort t,i;
 
 for (i = 0,t = 0; i < N_robot_types; i++)
 	if (IsCustomRobot (i))
@@ -621,18 +621,18 @@ if (!fp) {
 	}
 
 #if 1
-UINT32 id;
+uint id;
 id = 0x21584d48L;    // "HXM!"
-write_INT32 (id,fp);
-write_INT32 (1,fp);   // version 1
+WriteInt32 (id,fp);
+WriteInt32 (1,fp);   // version 1
 #endif
 
 // write robot information
 //------------------------
-write_INT32 (t,fp); // number of robot info structs stored
+WriteInt32 (t,fp); // number of robot info structs stored
 for (i = 0; i < N_robot_types; i++) {
 	if (RobotInfo (i)->m_info.bCustom) {
-		write_INT32 ((UINT32) i, fp);
+		WriteInt32 ((uint) i, fp);
 		RobotInfo (i)->Write (fp);
 		}
 	}
@@ -645,11 +645,11 @@ else
 // write zeros for the rest of the data
 //-------------------------------------
 {
-write_INT32 (0,fp);  //number of joints
-write_INT32 (0,fp);  //number of polygon models
-write_INT32 (0,fp);  //number of objbitmaps
-write_INT32 (0,fp);  //number of objbitmaps
-write_INT32 (0,fp);  //number of objbitmapptrs
+WriteInt32 (0,fp);  //number of joints
+WriteInt32 (0,fp);  //number of polygon models
+WriteInt32 (0,fp);  //number of objbitmaps
+WriteInt32 (0,fp);  //number of objbitmaps
+WriteInt32 (0,fp);  //number of objbitmapptrs
 }
 
 if (t) {
@@ -681,10 +681,10 @@ void CMine::InitRobotData()
 //
 // if robot_number == -1, then it reads all robots
 //------------------------------------------------------------------------
-void CMine::ReadRobotResource(INT32 robot_number) 
+void CMine::ReadRobotResource(int robot_number) 
 {
-  UINT16 i,j,t;
-  UINT8 *ptr;
+  ushort i,j,t;
+  byte *ptr;
   HRSRC hFind = FindResource( hInst,"ROBOT_HXM", "RC_DATA");
   HINSTANCE hInst = AfxGetApp ()->m_hInstance;
   HGLOBAL hResource = LoadResource( hInst, hFind);
@@ -692,18 +692,18 @@ void CMine::ReadRobotResource(INT32 robot_number)
     ErrorMsg ("Could not find robot resource data");
     return;
   }
-  ptr = (UINT8 *)LockResource(hResource);
+  ptr = (byte *)LockResource(hResource);
   if (!ptr) {
     ErrorMsg ("Could not lock robot resource data");
     return;
   }
-  t = (UINT16)(*((UINT32 *)ptr));
+  t = (ushort)(*((uint *)ptr));
   N_robot_types = min(t,MAX_ROBOT_TYPES);
-  ptr += sizeof (UINT32);
+  ptr += sizeof (uint);
   for (j=0;j<t;j++) {
-    i = (UINT16)(*((UINT32 *)ptr));
+    i = (ushort)(*((uint *)ptr));
     if (i>MAX_ROBOT_TYPES) break;
-    ptr += sizeof (UINT32);
+    ptr += sizeof (uint);
     // copy the robot info for one robot, or all robots
     if (j==robot_number || robot_number == -1) {
       memcpy(RobotInfo (i), ptr, sizeof (tRobotInfo));
@@ -717,17 +717,17 @@ void CMine::ReadRobotResource(INT32 robot_number)
 // has_custom_robots()
 //--------------------------------------------------------------------------
 
-bool CMine::IsCustomRobot (INT32 i)
+bool CMine::IsCustomRobot (int i)
 {
 	bool				bFound = false;
 	CSegment*		segP;
 	CGameObject*	objP;
-	INT32				j;
+	int				j;
 
 if (!RobotInfo (i)->m_info.bCustom) //changed?
 	return false;
 	// check if actually different from defaults
-UINT8 bCustom = DefRobotInfo (i)->m_info.bCustom;
+byte bCustom = DefRobotInfo (i)->m_info.bCustom;
 DefRobotInfo (i)->m_info.bCustom = RobotInfo (i)->m_info.bCustom; //make sure it's equal for the comparison
 if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (tRobotInfo))) { //they're different
 	// find a robot of that type
@@ -740,7 +740,7 @@ if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (tRobotInfo))) { //they're d
 		// find a matcen producing a robot of that type
 		for (j = SegCount (), segP = Segments (0); j; j--, segP++)
 			if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-				INT32 matcen = segP->m_info.nMatCen;
+				int matcen = segP->m_info.nMatCen;
 				if ((i < 32) 
 					 ? BotGens (matcen)->m_info.objFlags [0] & (1L << i) 
 					 : BotGens (matcen)->m_info.objFlags [1] & (1L << (i-32)))
@@ -764,8 +764,8 @@ return bFound;
 
 BOOL CMine::HasCustomRobots() 
 {
-INT32 i;
-for (i = 0; i < (INT32) N_robot_types; i++)
+int i;
+for (i = 0; i < (int) N_robot_types; i++)
 	if (IsCustomRobot (i))
 		return TRUE;
 return (m_nHxmExtraDataSize > 0);

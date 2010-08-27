@@ -27,8 +27,8 @@
 void CMineView::SelectCurrentObject (long xMouse, long yMouse) 
 {
 CGameObject *objP;
-INT16 closest_object;
-INT16 i;
+short closest_object;
+short i;
 double radius,closest_radius;
 APOINT pt;
 CGameObject temp_obj;
@@ -38,9 +38,9 @@ closest_object = 0;
 closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
-INT32 enable_secret = FALSE;
+int enable_secret = FALSE;
 if (theApp.IsD2File ())
-	for(i=0;i<(INT16)theMine->GameInfo ().triggers.count;i++)
+	for(i=0;i<(short)theMine->GameInfo ().triggers.count;i++)
 		if (theMine->Triggers (i)->m_info.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
 			break;
@@ -53,7 +53,7 @@ for (i = 0; i <= theMine->GameInfo ().objects.count; i++) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter (objP->m_location.pos, (UINT16)theMine->SecretCubeNum ());
+		CalcSegmentCenter (objP->m_location.pos, (ushort)theMine->SecretCubeNum ());
 		}
 	else
 		objP = theMine->Objects (i);
@@ -108,10 +108,10 @@ RefreshObject(i, closest_object);
 
 //--------------------------------------------------------------------------
 
-INT32 Side (APOINT &p0, APOINT &p1, APOINT &p2)
+int Side (APOINT &p0, APOINT &p1, APOINT &p2)
 {
-return ((INT32) p0.y - (INT32) p1.y) * ((INT32) p2.x - (INT32) p1.x)  - 
-		 ((INT32) p0.x - (INT32) p1.x) * ((INT32) p2.y - (INT32) p1.y);
+return ((int) p0.y - (int) p1.y) * ((int) p2.x - (int) p1.x)  - 
+		 ((int) p0.x - (int) p1.x) * ((int) p2.y - (int) p1.y);
 }
 
 //--------------------------------------------------------------------------
@@ -126,22 +126,22 @@ return (fab * fbc > 0) && (fca * fbc > 0);
 
 //--------------------------------------------------------------------------
 
-bool CMineView::SelectCurrentSegment (INT16 direction, long xMouse, long yMouse) 
+bool CMineView::SelectCurrentSegment (short direction, long xMouse, long yMouse) 
 {
   CSegment		*segP;
   CRect			rc;
-//  extern INT16 xMouse,yMouse;
-  INT16			cur_segment, next_segment;
-  INT16			i, j;
-  INT32			x, y;
+//  extern short xMouse,yMouse;
+  short			cur_segment, next_segment;
+  short			i, j;
+  int			x, y;
   APOINT			sideVerts [4], mousePos;
   bool			bFound = false;
 
 /* find next segment which is within the cursor position */
 GetClientRect (rc);
 next_segment = cur_segment = theMine->Current ()->nSegment;
-mousePos.x = (INT16) xMouse;
-mousePos.y = (INT16) yMouse;
+mousePos.x = (short) xMouse;
+mousePos.y = (short) yMouse;
 mousePos.z = 0;
 do {
 	wrap (&next_segment, direction, 0, theMine->SegCount () - 1); /* point to next segment */
@@ -213,7 +213,7 @@ return true;
 //==========================================================================
 // MENU - NextPoint
 //==========================================================================
-void CMineView::NextPoint(INT32 dir) 
+void CMineView::NextPoint(int dir) 
 {
 //if (!theMine->SplineActive ())
 //	DrawHighlight (1);
@@ -236,7 +236,7 @@ NextPoint (-1);
 //==========================================================================
 // MENU - NextSide
 //==========================================================================
-void CMineView::NextSide (INT32 dir) 
+void CMineView::NextSide (int dir) 
 {
 wrap(&theMine->Current ()->nSide,dir,0,6-1);
 Refresh (true);
@@ -254,7 +254,7 @@ NextSide (-1);
 //==========================================================================
 // MENU - NextSide2 (same except doesn't change mode)
 //==========================================================================
-void CMineView::NextSide2 (INT32 dir)
+void CMineView::NextSide2 (int dir)
 {
 wrap(&theMine->Current ()->nSide,dir,0,6-1);
 Refresh ();
@@ -269,7 +269,7 @@ NextSide2 (-1);
 // MENU - NextLine
 //==========================================================================
 
-void CMineView::NextLine (INT32 dir) 
+void CMineView::NextLine (int dir) 
 {
 wrap (&theMine->Current ()->nLine, dir, 0, 4-1);
 theMine->Current ()->nPoint = theMine->Current ()->nLine;
@@ -290,7 +290,7 @@ NextLine (-1);
 // MENU - NextCube
 //==========================================================================
 
-void CMineView::NextCube (INT32 dir) 
+void CMineView::NextCube (int dir) 
 {
 if (theMine->SegCount () <= 0)
 	return;
@@ -329,10 +329,10 @@ NextCube (-1);
 //         Smart side selection done before moving (instead of after) (v0.9)
 //==========================================================================
 
-void CMineView::ForwardCube (INT32 dir) 
+void CMineView::ForwardCube (int dir) 
 {
 	CSegment *segP,*childseg;
-	INT16 child,nSide;
+	short child,nSide;
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
@@ -405,7 +405,7 @@ Refresh (true);
 
 bool CMineView::SelectOtherSide () 
 {
-INT16 nOppSeg, nOppSide;
+short nOppSeg, nOppSide;
 
 if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
 	return false;
@@ -421,15 +421,15 @@ return true;
 // MENU - NextObject
 //==========================================================================
 
-void CMineView::NextObject (INT32 dir) 
+void CMineView::NextObject (int dir) 
 {
-  INT16 old_object = theMine->Current ()->nObject;
-  INT16 new_object = theMine->Current ()->nObject;
+  short old_object = theMine->Current ()->nObject;
+  short new_object = theMine->Current ()->nObject;
 
 //  DrawHighlight (1);
 if (theMine->GameInfo ().objects.count > 1) {
 //	if (m_selectMode == OBJECT_MODE)
-		wrap(&new_object,dir,0, (INT16)theMine->GameInfo ().objects.count - 1) ;
+		wrap(&new_object,dir,0, (short)theMine->GameInfo ().objects.count - 1) ;
 	Refresh (true);
 	}
 //SetSelectMode (OBJECT_MODE);
@@ -449,7 +449,7 @@ NextObject (-1);
 // NextElement
 //==========================================================================
 
-void CMineView::NextCubeElement (INT32 dir)
+void CMineView::NextCubeElement (int dir)
 {
 switch (m_selectMode) {
 	case eSelectPoint:

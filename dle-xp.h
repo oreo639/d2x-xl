@@ -17,7 +17,7 @@
 #include "mainfrm.h"
 #include "mine.h"
 
-extern INT32 nLayout;
+extern int nLayout;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDlcApp:
@@ -40,12 +40,12 @@ class CUndoList
 		tUndoBuffer	*m_head;
 		tUndoBuffer	*m_tail;
 		tUndoBuffer	*m_current;
-		INT32			m_maxSize;
-		INT32			m_size;
-		INT32			m_delay;
-		INT32			m_enabled;
+		int			m_maxSize;
+		int			m_size;
+		int			m_delay;
+		int			m_enabled;
 
-	CUndoList (INT32 maxSize = 100);
+	CUndoList (int maxSize = 100);
 	~CUndoList ();
 	bool Update (bool bForce = false);
 	bool Undo ();
@@ -54,10 +54,10 @@ class CUndoList
 	void Reset ();
 	bool Revert ();
 	void Delay (bool bDelay);
-	INT32 UndoCount ();
-	INT32 Enable (INT32 bEnable);
-	INT32 SetMaxSize (INT32 maxSize);
-	inline INT32 GetMaxSize (void)
+	int UndoCount ();
+	int Enable (int bEnable);
+	int SetMaxSize (int maxSize);
+	inline int GetMaxSize (void)
 		{ return m_maxSize; }
 };
 
@@ -69,8 +69,8 @@ public:
 	char					m_szCaption [256];
 	char					m_szExtCaption [256];
 	CUndoList			m_undoList;
-	INT32					m_delayUndo;
-	INT32					m_nModified;
+	int					m_delayUndo;
+	int					m_nModified;
 	BOOL					m_bSplashScreen;
 	bool					m_bMaximized;
 
@@ -81,8 +81,8 @@ public:
 	void ResetUndoBuffer ();
 	bool Undo ();
 	bool Redo ();
-	INT32 UndoCount ();
-	INT32 EnableUndo (INT32 bEnable);
+	int UndoCount ();
+	int EnableUndo (int bEnable);
 	inline void LockUndo ()
 		{ DelayUndo (true); }
 	inline void UnlockUndo ()
@@ -114,7 +114,7 @@ public:
 	bool SetModified (BOOL bModified);
 	void ResetModified (bool bRevertUndo);
 	CDocument* CDlcApp::OpenDocumentFile(LPCTSTR lpszFileName);
-	void WritePrivateProfileInt (LPSTR szKey, INT32 nValue);
+	void WritePrivateProfileInt (LPSTR szKey, int nValue);
 	void SaveLayout ();
 	void LoadLayout ();
 
@@ -123,7 +123,7 @@ public:
 	//{{AFX_VIRTUAL(CDlcApp)
 	public:
 	virtual BOOL InitInstance();
-		virtual INT32 ExitInstance();
+		virtual int ExitInstance();
 	//}}AFX_VIRTUAL
 
 // Implementation

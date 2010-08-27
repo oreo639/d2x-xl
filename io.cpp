@@ -5,157 +5,196 @@
 #include "io.h"
 
 //------------------------------------------------------------------------
-// read_INT32 ()
+// ReadInt32 ()
 //
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
 
-DOUBLE read_DOUBLE (FILE *fp) 
+double ReadDouble (FILE *fp) 
 {
-DOUBLE return_value=0;
-fread (&return_value, sizeof (DOUBLE), 1, fp);
-return (return_value);
+double value = 0;
+fread (&value, sizeof (double), 1, fp);
+return value;
 }
 
 //------------------------------------------------------------------------
-// read_INT32 ()
+// ReadInt32 ()
 //
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
 
-INT32 read_INT32 (FILE *fp) 
+int ReadInt32 (FILE *fp) 
 {
-INT32 return_value=0;
-fread (&return_value, sizeof (INT32), 1, fp);
-return (return_value);
+int value = 0;
+fread (&value, sizeof (int), 1, fp);
+return value;
 }
 
 //------------------------------------------------------------------------
-// read_INT16 ()
+// ReadUInt32 ()
+//
+// ACTION - Reads a 32 bit word from a file.
+//------------------------------------------------------------------------
+
+uint ReadUInt32 (FILE *fp) 
+{
+uint value = 0;
+fread (&value, sizeof (uint), 1, fp);
+return value;
+}
+
+//------------------------------------------------------------------------
+// ReadInt16 ()
 //
 // ACTION - Reads a 16 bit word from a file.
 //------------------------------------------------------------------------
 
-INT16 read_INT16 (FILE *fp) 
+short ReadInt16 (FILE *fp) 
 {
-INT16 return_value=0;
-fread (&return_value, sizeof (INT16), 1, fp);
-return (return_value);
+short value = 0;
+fread (&value, sizeof (short), 1, fp);
+return value;
 }
 
 //------------------------------------------------------------------------
-// read_INT8 ()
+// ReadUInt16 ()
+//
+// ACTION - Reads a 16 bit word from a file.
+//------------------------------------------------------------------------
+
+ushort ReadUInt16 (FILE *fp) 
+{
+ushort value = 0;
+fread (&value, sizeof (ushort), 1, fp);
+return value;
+}
+
+//------------------------------------------------------------------------
+// ReadInt8 ()
 //
 // ACTION - Reads a 8 bit word from a file.
 //------------------------------------------------------------------------
 
-INT8 read_INT8 (FILE *fp) 
+char ReadInt8 (FILE *fp) 
 {
-INT8 return_value=0;
-fread (&return_value, sizeof (INT8), 1, fp);
-return (return_value);
+char value = 0;
+fread (&value, sizeof (char), 1, fp);
+return value;
 }
 
 //------------------------------------------------------------------------
-// read_FIX ()
+// ReadInt8 ()
 //
-//  ACTION - Reads a FIX word from a file.
+// ACTION - Reads a 8 bit word from a file.
 //------------------------------------------------------------------------
 
-FIX read_FIX (FILE *fp) 
+char ReadUInt8 (FILE *fp) 
 {
-FIX return_value=0;
-fread (&return_value, sizeof (FIX), 1, fp);
-return (return_value);
+byte value = 0;
+fread (&value, sizeof (byte), 1, fp);
+return value;
 }
 
 //------------------------------------------------------------------------
-// read_FIXANG ()
+// ReadFix ()
 //
-// ACTION - Reads a FIXANG word from a file.
+//  ACTION - Reads a fix word from a file.
 //------------------------------------------------------------------------
 
-FIXANG read_FIXANG (FILE *fp) 
+fix ReadFix (FILE *fp) 
 {
-FIXANG return_value=0;
-fread (&return_value, sizeof (FIXANG), 1, fp);
-return (return_value);
+fix value = 0;
+fread (&value, sizeof (fix), 1, fp);
+return value;
 }
 
 //------------------------------------------------------------------------
-// write_INT32 ()
+// ReadFixAng ()
+//
+// ACTION - Reads a fixang word from a file.
+//------------------------------------------------------------------------
+
+fixang ReadFixAng (FILE *fp) 
+{
+fixang value = 0;
+fread (&value, sizeof (fixang), 1, fp);
+return value;
+}
+
+//------------------------------------------------------------------------
+// WriteInt32 ()
 //
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
 
-INT32 write_INT32 (INT32 value,FILE *fp) 
+int WriteInt32 (int value,FILE *fp) 
 {
-fwrite (&value, sizeof (INT32), 1, fp);
+fwrite (&value, sizeof (int), 1, fp);
 return (value);
 }
 
 //------------------------------------------------------------------------
-// write_INT16 ()
+// WriteInt16 ()
 //
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
 
-INT16 write_INT16 (INT16 value,FILE *fp) 
+short WriteInt16 (short value,FILE *fp) 
 {
-fwrite (&value, sizeof (INT16), 1, fp);
+fwrite (&value, sizeof (short), 1, fp);
 return (value);
 }
 
 //------------------------------------------------------------------------
-// write_INT8 ()
+// WriteInt8 ()
 //
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
 
-INT8 write_INT8 (INT8 value,FILE *fp) 
+char WriteInt8 (char value,FILE *fp) 
 {
-fwrite (&value, sizeof (INT8), 1, fp);
+fwrite (&value, sizeof (char), 1, fp);
 return (value);
 }
 
 //------------------------------------------------------------------------
-// write_FIX ()
+// WriteFix ()
 //
-// ACTION - Writes a FIX word to a file.
+// ACTION - Writes a fix word to a file.
 //------------------------------------------------------------------------
-FIX write_FIX (FIX value,FILE *fp) 
+fix WriteFix (fix value,FILE *fp) 
 {
-fwrite (&value, sizeof (FIX), 1, fp);
+fwrite (&value, sizeof (fix), 1, fp);
 return (value);
 }
 
 //------------------------------------------------------------------------
-// write_FIXANG ()
+// WriteFixAng ()
 //
-// ACTION - Writes a FIXANG word to a file.
+// ACTION - Writes a fixang word to a file.
 //------------------------------------------------------------------------
 
-FIXANG write_FIXANG (FIXANG value,FILE *fp) 
+fixang WriteFixAng (fixang value,FILE *fp) 
 {
-fwrite (&value, sizeof (FIXANG), 1, fp);
+fwrite (&value, sizeof (fixang), 1, fp);
 return (value);
 }
 
 //------------------------------------------------------------------------
-// write_DOUBLE ()
+// WriteDouble ()
 //
 // ACTION - Writes a double to a file.
 //------------------------------------------------------------------------
 
-DOUBLE write_DOUBLE (DOUBLE value,FILE *fp) 
+double WriteDouble (double value,FILE *fp) 
 {
-fwrite (&value, sizeof (DOUBLE), 1, fp);
+fwrite (&value, sizeof (double), 1, fp);
 return (value);
 }
 
                         /*---------------------------*/
 
-static char *CopyIoName (char *dest, char *src, UINT16 srcLen, UINT16 destSize)
+static char *CopyIoName (char *dest, char *src, ushort srcLen, ushort destSize)
 {
 if (dest) {
    if (srcLen > --destSize)
@@ -172,15 +211,15 @@ char *FSplit (char *fullName, char *pathName, char *fileName, char *extName)
 {
    char *s;
    char	fn [256];
-	INT32	l;
+	int	l;
 
-l = INT32 (strlen (fullName));
+l = int (strlen (fullName));
 memcpy (fn, fullName, l + 1);
 if (pathName)
    *pathName = 0;
 for (s = fn + l; (s != fn); --s) {
    if ( (*s == ':') || (*s == '\\')) {
-      CopyIoName (pathName, fn, (UINT16) (s - fn) + 1, 256);
+      CopyIoName (pathName, fn, (ushort) (s - fn) + 1, 256);
       memmove (fn, s + 1, strlen (s));
       break;
       }
@@ -190,14 +229,14 @@ for (s = fn + strlen (fn); (s != fn); --s)
    if ( (*s == '.') || (*s == ':') || (*s == '\\'))
       break;
 if (*s == '.') {
-   CopyIoName (extName, s, (UINT16) strlen (s), 256);
+   CopyIoName (extName, s, (ushort) strlen (s), 256);
    if (fileName) {
       *s = 0;
-      CopyIoName (fileName, fn, (UINT16) strlen (fn), 256);
+      CopyIoName (fileName, fn, (ushort) strlen (fn), 256);
       }
    }
 else {
-   CopyIoName (fileName, fn, (UINT16) strlen (fn), 256);
+   CopyIoName (fileName, fn, (ushort) strlen (fn), 256);
    if (extName)
       *extName = 0;
    }
@@ -228,7 +267,7 @@ return td;
 }
 
 
-char *TimeStr (char *pszTime, INT32 nDestSize)
+char *TimeStr (char *pszTime, int nDestSize)
 {
 	struct tm td;
 
@@ -238,7 +277,7 @@ return pszTime;
 } 
 
 
-char *DateStr (char *pszTime, INT32 nDestSize, bool bMonthNames)
+char *DateStr (char *pszTime, int nDestSize, bool bMonthNames)
 {
 	struct tm td;
 
@@ -251,7 +290,7 @@ return pszTime;
 } 
 
 
-char *TimeDateStr (char *pszTime, INT32 nDestSize, bool bMonthNames)
+char *TimeDateStr (char *pszTime, int nDestSize, bool bMonthNames)
 {
 	struct tm td;
 

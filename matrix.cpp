@@ -110,14 +110,14 @@ fVec.Set (0, 0, F1_0);
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix::CFixMatrix (FIX x1, FIX y1, FIX z1, FIX x2, FIX y2, FIX z2, FIX x3, FIX y3, FIX z3)
+CFixMatrix::CFixMatrix (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3)
 {
 Set (x1, y1, z1, x2, y2, z2, x3, y3, z3);
 }
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix& CFixMatrix::Set (FIX x1, FIX y1, FIX z1, FIX x2, FIX y2, FIX z2, FIX x3, FIX y3, FIX z3)
+CFixMatrix& CFixMatrix::Set (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3)
 {
 rVec.Set (x1, y1, z1);
 uVec.Set (x2, y2, z2);
@@ -127,28 +127,28 @@ return *this;
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix::CFixMatrix (FIX sinp, FIX cosp, FIX sinb, FIX cosb, FIX sinh, FIX cosh)
+CFixMatrix::CFixMatrix (fix sinp, fix cosp, fix sinb, fix cosb, fix sinh, fix cosh)
 {
 Set (sinp, cosp, sinb, cosb, sinh, cosh);
 }
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix& CFixMatrix::Set (FIX sinp, FIX cosp, FIX sinb, FIX cosb, FIX sinh, FIX cosh)
+CFixMatrix& CFixMatrix::Set (fix sinp, fix cosp, fix sinb, fix cosb, fix sinh, fix cosh)
 {
 double sbsh = sinb * sinh;
 double cbch = cosb * cosh;
 double cbsh = cosb * sinh;
 double sbch = sinb * cosh;
-rVec.v.x = (FIX) (cbch + sinp * sbsh);
-uVec.v.z = (FIX) (sbsh + sinp * cbch);
-uVec.v.x = (FIX) (sinp * cbsh - sbch);
-rVec.v.z = (FIX) (sinp * sbch - cbsh);
-fVec.v.x = (FIX) (sinh * cosp);		
-rVec.v.y = (FIX) (sinb * cosp);		
-uVec.v.y = (FIX) (cosb * cosp);		
-fVec.v.z = (FIX) (cosh * cosp);		
-fVec.v.y = (FIX) -sinp;				
+rVec.v.x = (fix) (cbch + sinp * sbsh);
+uVec.v.z = (fix) (sbsh + sinp * cbch);
+uVec.v.x = (fix) (sinp * cbsh - sbch);
+rVec.v.z = (fix) (sinp * sbch - cbsh);
+fVec.v.x = (fix) (sinh * cosp);		
+rVec.v.y = (fix) (sinb * cosp);		
+uVec.v.y = (fix) (cosb * cosp);		
+fVec.v.z = (fix) (cosh * cosp);		
+fVec.v.y = (fix) -sinp;				
 return *this;
 }
 
@@ -176,9 +176,9 @@ return m;
 
 // -----------------------------------------------------------------------------
 
-const FIX CFixMatrix::Det (void) 
+const fix CFixMatrix::Det (void) 
 {
-FIX det = FixMul (rVec.v.x, FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y));
+fix det = FixMul (rVec.v.x, FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y));
 det += FixMul (rVec.v.y, FixMul (uVec.v.z, fVec.v.x) - FixMul (uVec.v.x, fVec.v.z));
 det += FixMul (rVec.v.z, FixMul (uVec.v.x, fVec.v.y) - FixMul (uVec.v.y, fVec.v.x));
 return det;
@@ -190,7 +190,7 @@ const CFixMatrix CFixMatrix::Inverse (void)
 {
 	CFixMatrix m;
 
-FIX det = Det ();
+fix det = Det ();
 if (det != 0) {
 	m.rVec.v.x = FixDiv (FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y), det);
 	m.rVec.v.y = FixDiv (FixMul (rVec.v.z, fVec.v.y) - FixMul (rVec.v.y, fVec.v.z), det);
@@ -237,12 +237,12 @@ switch (axis) {
 		//	0	cos	sin
 		//	0	-sin	cos
 		//
-		mRot.uVec.Set ((FIX) (uVec.v.x * cosX + fVec.v.x * sinX), 
-					      (FIX) (uVec.v.y * cosX + fVec.v.y * sinX),
-						   (FIX) (uVec.v.z * cosX + fVec.v.z * sinX));
-		mRot.fVec.Set ((FIX) (-uVec.v.x * sinX + fVec.v.x * cosX),
-							(FIX) (-uVec.v.y * sinX + fVec.v.y * cosX),
-							(FIX) (-uVec.v.z * sinX + fVec.v.z * cosX));
+		mRot.uVec.Set ((fix) (uVec.v.x * cosX + fVec.v.x * sinX), 
+					      (fix) (uVec.v.y * cosX + fVec.v.y * sinX),
+						   (fix) (uVec.v.z * cosX + fVec.v.z * sinX));
+		mRot.fVec.Set ((fix) (-uVec.v.x * sinX + fVec.v.x * cosX),
+							(fix) (-uVec.v.y * sinX + fVec.v.y * cosX),
+							(fix) (-uVec.v.z * sinX + fVec.v.z * cosX));
 		uVec = mRot.uVec;
 		fVec = mRot.fVec;
 		break;
@@ -252,12 +252,12 @@ switch (axis) {
 		//	0	1	0
 		//	sin	0	cos
 		//
-		mRot.rVec.Set ((FIX) (rVec.v.x * cosX - fVec.v.x * sinX), 
-							(FIX) (rVec.v.y * cosX - fVec.v.y * sinX), 
-							(FIX) (rVec.v.z * cosX - fVec.v.z * sinX));
-		mRot.fVec.Set ((FIX) (rVec.v.x * sinX + fVec.v.x * cosX), 
-							(FIX) (rVec.v.y * sinX + fVec.v.y * cosX),
-							(FIX) (rVec.v.z * sinX + fVec.v.z * cosX));
+		mRot.rVec.Set ((fix) (rVec.v.x * cosX - fVec.v.x * sinX), 
+							(fix) (rVec.v.y * cosX - fVec.v.y * sinX), 
+							(fix) (rVec.v.z * cosX - fVec.v.z * sinX));
+		mRot.fVec.Set ((fix) (rVec.v.x * sinX + fVec.v.x * cosX), 
+							(fix) (rVec.v.y * sinX + fVec.v.y * cosX),
+							(fix) (rVec.v.z * sinX + fVec.v.z * cosX));
 		rVec = mRot.rVec;
 		fVec = mRot.fVec;
 		break;
@@ -266,12 +266,12 @@ switch (axis) {
 		//	cos	sin	0
 		//	-sin	cos	0
 		//	0	0	1
-		mRot.rVec.Set ((FIX) (rVec.v.x * cosX + uVec.v.x * sinX),
-							(FIX) (rVec.v.y * cosX + uVec.v.y * sinX),
-							(FIX) (rVec.v.z * cosX + uVec.v.z * sinX));
-		mRot.uVec.Set ((FIX) (-rVec.v.x * sinX + uVec.v.x * cosX),
-							(FIX) (-rVec.v.y * sinX + uVec.v.y * cosX),
-							(FIX) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		mRot.rVec.Set ((fix) (rVec.v.x * cosX + uVec.v.x * sinX),
+							(fix) (rVec.v.y * cosX + uVec.v.y * sinX),
+							(fix) (rVec.v.z * cosX + uVec.v.z * sinX));
+		mRot.uVec.Set ((fix) (-rVec.v.x * sinX + uVec.v.x * cosX),
+							(fix) (-rVec.v.y * sinX + uVec.v.y * cosX),
+							(fix) (-rVec.v.z * sinX + uVec.v.z * cosX));
 		rVec = mRot.rVec;
 		uVec = mRot.uVec;
 		break;
@@ -293,14 +293,14 @@ fVec.Set (0.0, 0.0, 1.0);
 
 // -----------------------------------------------------------------------------
 
-CDoubleMatrix::CDoubleMatrix (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3)
+CDoubleMatrix::CDoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
 {
 Set (x1, y1, z1, x2, y2, z2, x3, y3, z3);
 }
 
 // -----------------------------------------------------------------------------
 
-CDoubleMatrix& CDoubleMatrix::Set (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3)
+CDoubleMatrix& CDoubleMatrix::Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3)
 {
 rVec.Set (x1, y1, z1);
 uVec.Set (x2, y2, z2);
@@ -310,14 +310,14 @@ return *this;
 
 // -----------------------------------------------------------------------------
 
-CDoubleMatrix::CDoubleMatrix (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh)
+CDoubleMatrix::CDoubleMatrix (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
 {
 Set (sinp, cosp, sinb, cosb, sinh, cosh);
 }
 
 // -----------------------------------------------------------------------------
 
-CDoubleMatrix& CDoubleMatrix::Set (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh)
+CDoubleMatrix& CDoubleMatrix::Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh)
 {
 double sbsh = sinb * sinh;
 double cbch = cosb * cosh;
@@ -445,12 +445,12 @@ switch (axis) {
 		//	cos	sin	0
 		//	-sin	cos	0
 		//	0	0	1
-		mRot.rVec.Set ((FIX) (rVec.v.x * cosX + uVec.v.x * sinX),
-							(FIX) (rVec.v.y * cosX + uVec.v.y * sinX),
-							(FIX) (rVec.v.z * cosX + uVec.v.z * sinX));
-		mRot.uVec.Set ((FIX) (-rVec.v.x * sinX + uVec.v.x * cosX),
-							(FIX) (-rVec.v.y * sinX + uVec.v.y * cosX),
-							(FIX) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		mRot.rVec.Set ((fix) (rVec.v.x * cosX + uVec.v.x * sinX),
+							(fix) (rVec.v.y * cosX + uVec.v.y * sinX),
+							(fix) (rVec.v.z * cosX + uVec.v.z * sinX));
+		mRot.uVec.Set ((fix) (-rVec.v.x * sinX + uVec.v.x * cosX),
+							(fix) (-rVec.v.y * sinX + uVec.v.y * cosX),
+							(fix) (-rVec.v.z * sinX + uVec.v.z * cosX));
 		rVec = mRot.rVec;
 		uVec = mRot.uVec;
 		break;
@@ -510,7 +510,7 @@ m_angles [1][2] = 0;
 // SetViewInfo
 // -----------------------------------------------------------------------------
 
-void CViewMatrix::SetViewInfo (double depthPerception, INT16 viewWidth, INT16 viewHeight)
+void CViewMatrix::SetViewInfo (double depthPerception, short viewWidth, short viewHeight)
 {
 m_depthPerception = depthPerception;
 m_viewWidth = viewWidth / 2;
@@ -545,17 +545,17 @@ m_invMove [0] = m_invMat [0] * m_move [0];
 // Rotate()
 //--------------------------------------------------------------------------
 
-void CViewMatrix::ClampAngle (INT32 i)
+void CViewMatrix::ClampAngle (int i)
 {
 if (m_angles [0][i] < 0)
-	m_angles [0][i] += (INT32) (-m_angles [0][i] / 360) * 360;
+	m_angles [0][i] += (int) (-m_angles [0][i] / 360) * 360;
 else
-	m_angles [0][i] -= (INT32) (m_angles [0][i] / 360) * 360;
+	m_angles [0][i] -= (int) (m_angles [0][i] / 360) * 360;
 }
 
 //--------------------------------------------------------------------------
 
-void CViewMatrix::RotateAngle (INT32 i, double a)
+void CViewMatrix::RotateAngle (int i, double a)
 {
 m_angles [0][i] += a;
 //ClampAngle (i);
@@ -705,9 +705,9 @@ double scale = 5.0;
 if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
 	scale *= m_depthPerception / (r.v.z + m_depthPerception);
 r *= CDoubleVector (scale, scale, 1.0);
-apoint.x = (INT16) ((FIX) (r.v.x + m_viewWidth) % 32767);
-apoint.y = (INT16) ((FIX) (m_viewHeight - r.v.y) % 32767);
-apoint.z = (INT16) r.v.z;
+apoint.x = (short) ((fix) (r.v.x + m_viewWidth) % 32767);
+apoint.y = (short) ((fix) (m_viewHeight - r.v.y) % 32767);
+apoint.z = (short) r.v.z;
 }
 
 //--------------------------------------------------------------------------
@@ -727,7 +727,7 @@ vertex = r;
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 
-INT32 CViewMatrix::CheckNormal (CGameObject *objP, CVertex& a, CVertex& b) 
+int CViewMatrix::CheckNormal (CGameObject *objP, CVertex& a, CVertex& b) 
 {
 CVertex _a = objP->m_location.orient * a;
 CVertex _b = objP->m_location.orient * b;
@@ -739,7 +739,7 @@ return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
 
 // -----------------------------------------------------------------------------
 
-INT32 CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
+int CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
 {
 CVertex _a = objP->m_location.orient * CDoubleVector (a);
 CVertex _b = objP->m_location.orient * CDoubleVector (b);

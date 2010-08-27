@@ -12,47 +12,47 @@
 
 typedef struct tModelRenderPoly {
 public:
-	UINT16		n_verts;
+	ushort		n_verts;
 	CVertex		offset;
 	CVertex		normal;
-	UINT16		nBaseTex;
-	UINT16		color;
-	UINT16		glow_num;
-	UINT16		verts [MAX_POLYMODEL_POLY_POINTS];
+	ushort		nBaseTex;
+	ushort		color;
+	ushort		glow_num;
+	ushort		verts [MAX_POLYMODEL_POLY_POINTS];
 	tUVL			uvls [MAX_POLYMODEL_POLY_POINTS];
 
 	void Draw (CViewMatrix* view, CDC* pDC);
 } tModelRenderPoly;
 
 typedef struct tModelRenderData {
-	UINT16				n_points;
+	ushort				n_points;
 	CVertex				points [MAX_POLYMODEL_POINTS];
-	UINT16				n_polys;
+	ushort				n_polys;
 	tModelRenderPoly	polys [MAX_POLYMODEL_POLYS];
 } tModelRenderData;
 
 typedef struct tSubModel {
-  INT32 			ptr;
+  int 			ptr;
   CFixVector 	offset;
   CFixVector 	norm;		// norm for sep plane
   CFixVector 	pnt;		// point on sep plane
-  FIX 			rad;		// radius for each submodel
-  UINT8 			parent;  // what is parent for each submodel
+  fix 			rad;		// radius for each submodel
+  byte 			parent;  // what is parent for each submodel
   CFixVector 	vMin;
   CFixVector   vMax;
 } tSubModel;
 
 //used to describe a polygon model
 typedef struct tPolyModel {
-  INT32			nModels;
-  INT32 			dataSize;
-  UINT8*			renderData;
+  int			nModels;
+  int 			dataSize;
+  byte*			renderData;
   tSubModel		subModels [MAX_SUBMODELS];
   CFixVector 	vMin, vMax;			  // min, max for whole model
-  FIX				rad;
-  UINT8			textureCount;
-  UINT16			firstTexture;
-  UINT8			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
+  fix				rad;
+  byte			textureCount;
+  ushort			firstTexture;
+  byte			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
 } tPolyModel;
 
 class CPolyModel {
@@ -72,7 +72,7 @@ public:
 			m_info.renderData = NULL;
 			}
 		}
-	INT32 Read (FILE* fp, bool bRenderData = false);
+	int Read (FILE* fp, bool bRenderData = false);
 	void Write (FILE* fp, bool bRenderData = false);
 	inline void CPolyModel::Draw (CViewMatrix* view, CDC* pDC) {
 		if (m_info.renderData) {
@@ -83,8 +83,8 @@ public:
 		}
 
 	private:
-		void SetModelPoints (INT32 start, INT32 end);
-		void Render (UINT8* p);
+		void SetModelPoints (int start, int end);
+		void Render (byte* p);
 };
 
 extern CPolyModel* renderModel;

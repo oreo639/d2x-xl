@@ -15,14 +15,14 @@ class CFixMatrix;
 
 // --------------------------------------------------------------------------
 
-inline FIX FixMul (FIX n, FIX m)
+inline fix FixMul (fix n, fix m)
 {
-return (FIX) ((double) n * (double) m / 65536.0);
+return (fix) ((double) n * (double) m / 65536.0);
 }
 
-inline FIX FixDiv (FIX n, FIX m)
+inline fix FixDiv (fix n, fix m)
 {
-return (FIX) ((double) n / (double) m * 65536.0);
+return (fix) ((double) n / (double) m * 65536.0);
 }
 
 // --------------------------------------------------------------------------
@@ -31,19 +31,19 @@ return (FIX) ((double) n / (double) m * 65536.0);
 
 typedef struct tAngleVector {
 public:
-	FIXANG p, b, h;
+	fixang p, b, h;
 
-inline INT32 Read (FILE* fp) { 
-	p = read_FIXANG (fp);
-	b = read_FIXANG (fp);
-	h = read_FIXANG (fp);
+inline int Read (FILE* fp) { 
+	p = ReadFixAng (fp);
+	b = ReadFixAng (fp);
+	h = ReadFixAng (fp);
 	return 1;
 	}
 
 inline void Write (FILE* fp) { 
-	write_FIXANG (p, fp);
-	write_FIXANG (b, fp);
-	write_FIXANG (h, fp);
+	WriteFixAng (p, fp);
+	WriteFixAng (b, fp);
+	WriteFixAng (h, fp);
 	}
 
 } tAngleVector;
@@ -53,13 +53,13 @@ public:
 	tAngleVector	v;
 
 	CAngleVector () { v.p = 0, v.b = 0, v.h = 0; }
-	CAngleVector (FIXANG p, FIXANG b, FIXANG h) { v.p = p, v.b = b, v.h = h; }
+	CAngleVector (fixang p, fixang b, fixang h) { v.p = p, v.b = b, v.h = h; }
 	CAngleVector (tAngleVector& _v) { v.p = _v.p, v.b = _v.b, v.h = _v.h; }
 	CAngleVector (CAngleVector& _v) { v.p = _v.v.p, v.b = _v.v.b, v.h = _v.v.h; }
-	void Set (FIXANG p, FIXANG b, FIXANG h) { v.p = p, v.b = b, v.h = h; }
+	void Set (fixang p, fixang b, fixang h) { v.p = p, v.b = b, v.h = h; }
 	void Clear (void) { Set (0,0,0); }
 
-	inline INT32 Read (FILE* fp) { return v.Read (fp); }
+	inline int Read (FILE* fp) { return v.Read (fp); }
 	inline void Write (FILE* fp) { v.Write (fp); }
 
 	inline const CAngleVector& operator= (CAngleVector& other) { 
@@ -85,63 +85,63 @@ public:
 
 struct tFixVector {
 public:
-	FIX x, y, z;
+	fix x, y, z;
 
-inline INT32 Read (FILE* fp) { 
-	x = read_FIX (fp);
-	y = read_FIX (fp);
-	z = read_FIX (fp);
+inline int Read (FILE* fp) { 
+	x = ReadFix (fp);
+	y = ReadFix (fp);
+	z = ReadFix (fp);
 	return 1;
 	}
 
 inline void Write (FILE* fp) { 
-	write_FIX (x, fp);
-	write_FIX (y, fp);
-	write_FIX (z, fp);
+	WriteFix (x, fp);
+	WriteFix (y, fp);
+	WriteFix (z, fp);
 	}
 };
 
 class CFixVector {
 public:
 	tFixVector	v;
-	//DOUBLE x, y, z;
+	//double x, y, z;
 	CFixVector ()  { v.x = 0, v.y = 0, v.z = 0; }
-	CFixVector (FIX x, FIX y, FIX z) { v.x = x, v.y = y, v.z = z; }
+	CFixVector (fix x, fix y, fix z) { v.x = x, v.y = y, v.z = z; }
 	CFixVector (tFixVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
 	CFixVector (CDoubleVector& _v); 
-	void Set (FIX x, FIX y, FIX z) { v.x = x, v.y = y, v.z = z; }
+	void Set (fix x, fix y, fix z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
 
 
-inline INT32 Read (FILE* fp) { return v.Read (fp); }
+inline int Read (FILE* fp) { return v.Read (fp); }
 inline void Write (FILE* fp) { v.Write (fp); }
 
 inline const bool operator== (const CFixVector other);
-inline FIX& CFixVector::operator[] (const size_t i);
+inline fix& CFixVector::operator[] (const size_t i);
 inline const CFixVector& operator= (const tFixVector& other);
 inline const CFixVector& operator= (const CFixVector& other);
 inline const CFixVector& operator= (const tDoubleVector& other);
 inline const CFixVector& operator= (const CDoubleVector& other);
 inline const CFixVector& operator+= (const CFixVector other);
 inline const CFixVector& operator-= (const CFixVector other);
-inline const CFixVector& operator*= (const FIX n);
-inline const CFixVector& operator/= (const FIX n);
-inline const CFixVector& operator*= (const DOUBLE n);
-inline const CFixVector& operator/= (const DOUBLE n);
+inline const CFixVector& operator*= (const fix n);
+inline const CFixVector& operator/= (const fix n);
+inline const CFixVector& operator*= (const double n);
+inline const CFixVector& operator/= (const double n);
 inline const CFixVector operator+ (const CFixVector& other) const;
 inline const CFixVector operator- (const CFixVector& other) const;
 inline const CFixVector operator- (void) const;
-inline const CFixVector operator>> (const FIX n);
-inline const CFixVector operator<< (const FIX n);
-inline const CFixVector& operator>>= (const FIX n);
-inline const CFixVector& operator<<= (const FIX n);
+inline const CFixVector operator>> (const fix n);
+inline const CFixVector operator<< (const fix n);
+inline const CFixVector& operator>>= (const fix n);
+inline const CFixVector& operator<<= (const fix n);
 inline const CFixVector operator* (CFixVector other) const;
 inline const CFixVector operator/ (CFixVector other) const;
-inline const CFixVector operator* (FIX n) const;
-inline const CFixVector operator/ (FIX n) const;
-inline const FIX operator^ (const CFixVector& other) const;
+inline const CFixVector operator* (fix n) const;
+inline const CFixVector operator/ (fix n) const;
+inline const fix operator^ (const CFixVector& other) const;
 
-inline const FIX Mag (void);
+inline const fix Mag (void);
 inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
 void Rotate (CFixVector& origin, CFixVector& normal, double angle);
 };
@@ -154,41 +154,41 @@ void Rotate (CFixVector& origin, CFixVector& normal, double angle);
 
 struct tDoubleVector {
 public:
-	DOUBLE x, y, z;
+	double x, y, z;
 
-inline INT32 Read (FILE* fp) { 
-	x = X2D (read_FIX (fp));
-	y = X2D (read_FIX (fp));
-	z = X2D (read_FIX (fp));
+inline int Read (FILE* fp) { 
+	x = X2D (ReadFix (fp));
+	y = X2D (ReadFix (fp));
+	z = X2D (ReadFix (fp));
 	return 1;
 	}
 
 inline void Write (FILE* fp) { 
-	write_FIX (D2X (x), fp);
-	write_FIX (D2X (y), fp);
-	write_FIX (D2X (z), fp);
+	WriteFix (D2X (x), fp);
+	WriteFix (D2X (y), fp);
+	WriteFix (D2X (z), fp);
 	}
 };
 
 class CDoubleVector {
 public:
 	tDoubleVector	v;
-	//DOUBLE x, y, z;
+	//double x, y, z;
 	CDoubleVector ()  { v.x = 0, v.y = 0, v.z = 0; }
-	CDoubleVector (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
+	CDoubleVector (double x, double y, double z) { v.x = x, v.y = y, v.z = z; }
 	CDoubleVector (tDoubleVector& _v) { v.x = _v.x, v.y = _v.y, v.z = _v.z; }
 #if !FIX_IS_DOUBLE
 	CDoubleVector (CFixVector _v);
 #endif
 	//CDoubleVector (CDoubleVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
-	void Set (DOUBLE x, DOUBLE y, DOUBLE z) { v.x = x, v.y = y, v.z = z; }
+	void Set (double x, double y, double z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
 
-inline INT32 Read (FILE* fp) { return v.Read (fp); }
+inline int Read (FILE* fp) { return v.Read (fp); }
 inline void Write (FILE* fp) { v.Write (fp); }
 
 inline const bool operator== (const CDoubleVector other);
-inline DOUBLE& CDoubleVector::operator[] (const size_t i);
+inline double& CDoubleVector::operator[] (const size_t i);
 inline const CDoubleVector& operator= (const tDoubleVector& other);
 inline const CDoubleVector& operator= (const CDoubleVector& other);
 #if !FIX_IS_DOUBLE
@@ -197,8 +197,8 @@ inline const CDoubleVector& operator= (const CFixVector& other);
 #endif
 inline const CDoubleVector& operator+= (const CDoubleVector other);
 inline const CDoubleVector& operator-= (const CDoubleVector other);
-inline const CDoubleVector& operator*= (const DOUBLE n);
-inline const CDoubleVector& operator/= (const DOUBLE n);
+inline const CDoubleVector& operator*= (const double n);
+inline const CDoubleVector& operator/= (const double n);
 inline const CDoubleVector& operator*= (const CDoubleVector other);
 inline const CDoubleVector& operator/= (const CDoubleVector other);
 inline const CDoubleVector operator+ (const CDoubleVector& other) const;
@@ -206,11 +206,11 @@ inline const CDoubleVector operator- (const CDoubleVector& other) const;
 inline const CDoubleVector operator- (void) const;
 inline const CDoubleVector operator* (CDoubleVector other) const;
 inline const CDoubleVector operator/ (CDoubleVector other) const;
-inline const CDoubleVector operator* (DOUBLE n);
-inline const CDoubleVector operator/ (DOUBLE n);
-inline const DOUBLE operator^ (const CDoubleVector& other) const;
+inline const CDoubleVector operator* (double n);
+inline const CDoubleVector operator/ (double n);
+inline const double operator^ (const CDoubleVector& other) const;
 
-inline const DOUBLE Mag (void) { return sqrt (v.x * v.x + v.y * v.y + v.z * v.z); }
+inline const double Mag (void) { return sqrt (v.x * v.x + v.y * v.y + v.z * v.z); }
 inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
 void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
 };
@@ -230,7 +230,7 @@ inline const bool CFixVector::operator== (const CFixVector other) {
 	return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
 }
 
-inline FIX& CFixVector::operator[] (const size_t i) { return ((FIX*) &v) [i]; }
+inline fix& CFixVector::operator[] (const size_t i) { return ((fix*) &v) [i]; }
 
 inline const CFixVector& CFixVector::operator= (const CFixVector& other) { 
 	v.x = other.v.x, v.y = other.v.y, v.z = other.v.z; 
@@ -269,52 +269,52 @@ inline const CFixVector CFixVector::operator- (void) const {
 	return CFixVector (-v.x, -v.y, -v.z);
 	}
 
-inline const CFixVector& CFixVector::operator*= (const FIX n) {
+inline const CFixVector& CFixVector::operator*= (const fix n) {
 	v.x = FixMul (v.x, n), v.y = FixMul (v.y, n), v.z = FixMul (v.z, n);
 	return *this;
 	}
 
-inline const CFixVector& CFixVector::operator/= (const FIX n) {
+inline const CFixVector& CFixVector::operator/= (const fix n) {
 	v.x = FixDiv (v.x, n), v.y = FixDiv (v.y, n), v.z = FixDiv (v.z, n);
 	return *this;
 	}
 
-inline const CFixVector& CFixVector::operator*= (const DOUBLE n) {
-	v.x = (FIX) Round ((double) v.x * n),
-	v.y = (FIX) Round ((double) v.y * n),
-	v.z = (FIX) Round ((double) v.z * n);
+inline const CFixVector& CFixVector::operator*= (const double n) {
+	v.x = (fix) Round ((double) v.x * n),
+	v.y = (fix) Round ((double) v.y * n),
+	v.z = (fix) Round ((double) v.z * n);
 	return *this;
 	}
 
-inline const CFixVector& CFixVector::operator/= (const DOUBLE n) {
-	v.x = (FIX) Round ((double) v.x / n),
-	v.y = (FIX) Round ((double) v.y / n),
-	v.z = (FIX) Round ((double) v.z / n);
+inline const CFixVector& CFixVector::operator/= (const double n) {
+	v.x = (fix) Round ((double) v.x / n),
+	v.y = (fix) Round ((double) v.y / n),
+	v.z = (fix) Round ((double) v.z / n);
 	return *this;
 	}
 
-inline const CFixVector CFixVector::operator* (const FIX n) const {
+inline const CFixVector CFixVector::operator* (const fix n) const {
 	return CFixVector (FixMul (v.x, n), FixMul (v.y, n), FixMul (v.z, n));
 	}
 
-inline const CFixVector CFixVector::operator/ (const FIX n) const {
+inline const CFixVector CFixVector::operator/ (const fix n) const {
 	return CFixVector (FixDiv (v.x , n), FixDiv (v.y , n), FixDiv (v.z , n));
 	}
 
-inline const CFixVector CFixVector::operator>> (const FIX n) {
+inline const CFixVector CFixVector::operator>> (const fix n) {
 	return CFixVector (v.x >> n, v.y >> n, v.z >> n);
 	}
 
-inline const CFixVector CFixVector::operator<< (const FIX n) {
+inline const CFixVector CFixVector::operator<< (const fix n) {
 	return CFixVector (v.x << n, v.y << n, v.z << n);
 	}
 
-inline const CFixVector& CFixVector::operator>>= (const FIX n) {
+inline const CFixVector& CFixVector::operator>>= (const fix n) {
 	v.x >>= n, v.y >>= n, v.z >>= n;
 	return *this;
 	}
 
-inline const CFixVector& CFixVector::operator<<= (const FIX n) {
+inline const CFixVector& CFixVector::operator<<= (const fix n) {
 	v.x <<= n, v.y <<= n, v.z <<= n;
 	return *this;
 	}
@@ -327,11 +327,11 @@ inline const CFixVector CFixVector::operator/ (CFixVector other) const {
 	return CFixVector (FixDiv (v.x, other.v.x), FixDiv (v.y, other.v.y), FixDiv (v.z, other.v.z));
 	}
 
-inline const FIX CFixVector::operator^ (const CFixVector& other) const {
-	return FIX ((double (v.x) * double (other.v.x) + double (v.y) * double (other.v.y) + double (v.z) * double (other.v.z)) / 65536.0);
+inline const fix CFixVector::operator^ (const CFixVector& other) const {
+	return fix ((double (v.x) * double (other.v.x) + double (v.y) * double (other.v.y) + double (v.z) * double (other.v.z)) / 65536.0);
 	}
 
-inline const FIX CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag ()); }
+inline const fix CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag ()); }
 
 #endif
 
@@ -341,7 +341,7 @@ inline const bool CDoubleVector::operator== (const CDoubleVector other) {
 	return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
 }
 
-inline DOUBLE& CDoubleVector::operator[] (const size_t i) { return ((DOUBLE*) &v) [i]; }
+inline double& CDoubleVector::operator[] (const size_t i) { return ((double*) &v) [i]; }
 
 inline const CDoubleVector& CDoubleVector::operator= (const tDoubleVector& other) { 
 	v.x = other.x, v.y = other.y, v.z = other.z; 
@@ -387,12 +387,12 @@ inline const CDoubleVector CDoubleVector::operator- (void) const {
 	return CDoubleVector (-v.x, -v.y, -v.z);
 	}
 
-inline const CDoubleVector& CDoubleVector::operator*= (const DOUBLE n) {
+inline const CDoubleVector& CDoubleVector::operator*= (const double n) {
 	v.x *= n, v.y *= n, v.z *= n;
 	return *this;
 	}
 
-inline const CDoubleVector& CDoubleVector::operator/= (const DOUBLE n) {
+inline const CDoubleVector& CDoubleVector::operator/= (const double n) {
 	v.x /= n, v.y /= n, v.z /= n;
 	return *this;
 	}
@@ -407,11 +407,11 @@ inline const CDoubleVector& CDoubleVector::operator/= (const CDoubleVector other
 	return *this;
 	}
 
-inline const CDoubleVector CDoubleVector::operator/ (const DOUBLE n) {
+inline const CDoubleVector CDoubleVector::operator/ (const double n) {
 	return CDoubleVector (v.x / n, v.y / n, v.z / n);
 	}
 
-inline const CDoubleVector CDoubleVector::operator* (const DOUBLE n) {
+inline const CDoubleVector CDoubleVector::operator* (const double n) {
 	return CDoubleVector (v.x * n, v.y * n, v.z * n);
 	}
 
@@ -423,7 +423,7 @@ inline const CDoubleVector CDoubleVector::operator/ (CDoubleVector other) const 
 	return CDoubleVector (v.x / other.v.x, v.y / other.v.y, v.z / other.v.z);
 	}
 
-inline const DOUBLE CDoubleVector::operator^ (const CDoubleVector& other) const {
+inline const double CDoubleVector::operator^ (const CDoubleVector& other) const {
 	return double (v.x) * double (other.v.x) + double (v.y) * double (other.v.y) + double (v.z) * double (other.v.z);
 	}
 
@@ -440,7 +440,7 @@ static inline CDoubleVector Perpendicular (const CDoubleVector& p0, const CDoubl
 	}
 
 static inline const CDoubleVector Normalize (CDoubleVector v) { 
-	DOUBLE m = v.Mag ();
+	double m = v.Mag ();
 	return (m != 0.0) ? v / m : CDoubleVector (0.0, 0.0, 0.0); 
 	}
 
@@ -448,17 +448,17 @@ static inline const CDoubleVector Normal (const CDoubleVector& p0, const CDouble
 	return Normalize (CrossProduct (p1 - p0, p2 - p0));
 	}
 
-static inline const DOUBLE Normal (CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
+static inline const double Normal (CDoubleVector& normal, const CDoubleVector& p0, const CDoubleVector& p1, const CDoubleVector& p2) {
 	normal = CrossProduct (p1 - p0, p2 - p0);
-	DOUBLE m = normal.Mag ();
+	double m = normal.Mag ();
 	if (m > 0.0)
 		normal *= m;
 	return m;
 	}
 
 #if !FIX_IS_DOUBLE
-static inline FIX Dot (const CFixVector& v0, const CFixVector& v1) {
-	return FIX ((double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z)) / 65536.0);
+static inline fix Dot (const CFixVector& v0, const CFixVector& v1) {
+	return fix ((double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z)) / 65536.0);
 	}
 
 static inline CFixVector Min (const CFixVector& v0, const CFixVector& v1) {
@@ -469,7 +469,7 @@ static inline CFixVector Max (const CFixVector& v0, const CFixVector& v1) {
 	return CFixVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
 	}
 
-static inline DOUBLE Distance (const CFixVector& p0, const CFixVector& p1) {
+static inline double Distance (const CFixVector& p0, const CFixVector& p1) {
 	CFixVector v = p0 - p1;
 	return D2X (CDoubleVector (v).Mag ());
 	}
@@ -481,7 +481,7 @@ static inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
 	}
 #endif
 
-static inline DOUBLE Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
+static inline double Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
 	return double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z);
 	}
 
@@ -493,14 +493,14 @@ static inline CDoubleVector Max (const CDoubleVector& v0, const CDoubleVector& v
 	return CDoubleVector(max (v0.v.x, v1.v.x), max (v0.v.y, v1.v.y), max (v0.v.z, v1.v.z));
 	}
 
-static inline DOUBLE Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
+static inline double Distance (const CDoubleVector& p0, const CDoubleVector& p1) {
 	CDoubleVector v = p0 - p1;
 	return v.Mag ();
 	}
 
 static inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVector& p1) {
 	CDoubleVector v = p0 + p1;
-	v /= DOUBLE (2);
+	v /= double (2);
 	return v;
 	}
 
@@ -518,7 +518,7 @@ class CFixMatrix {
 public:
 	CFixVector rVec, uVec, fVec;
 
-	inline INT32 Read (FILE* fp) { 
+	inline int Read (FILE* fp) { 
 		rVec.Read (fp);
 		uVec.Read (fp);
 		fVec.Read (fp);
@@ -532,17 +532,17 @@ public:
 	}
 
 	CFixMatrix ();
-	CFixMatrix (FIX x1, FIX y1, FIX z1, FIX x2, FIX y2, FIX z2, FIX x3, FIX y3, FIX z3);
+	CFixMatrix (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3);
 	CFixMatrix (CFixMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
 	CFixMatrix (CFixVector& r, CFixVector& u, CFixVector& f) : rVec (r), uVec (u), fVec (f) {}
-	CFixMatrix (FIX sinp, FIX cosp, FIX sinb, FIX cosb, FIX sinh, FIX cosh);
+	CFixMatrix (fix sinp, fix cosp, fix sinb, fix cosb, fix sinh, fix cosh);
 	//computes a matrix from a Set of three angles.  returns ptr to matrix
 	CFixMatrix (CAngleVector& a);
 	//computes a matrix from a forward vector and an angle
-	CFixMatrix (CFixVector *v, FIXANG a);
+	CFixMatrix (CFixVector *v, fixang a);
 
-	CFixMatrix& CFixMatrix::Set (FIX x1, FIX y1, FIX z1, FIX x2, FIX y2, FIX z2, FIX x3, FIX y3, FIX z3);
-	CFixMatrix& Set (FIX sinp, FIX cosp, FIX sinb, FIX cosb, FIX sinh, FIX cosh);
+	CFixMatrix& CFixMatrix::Set (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3);
+	CFixMatrix& Set (fix sinp, fix cosp, fix sinb, fix cosb, fix sinh, fix cosh);
 
 	CFixMatrix& Invert (CFixMatrix& m);
 	CFixMatrix Mul (const CFixMatrix& m);
@@ -555,7 +555,7 @@ public:
 		return *this;
 		}
 
-	const FIX Det (void);
+	const fix Det (void);
 	const CFixMatrix Inverse (void);
 	void CFixMatrix::Rotate (double angle, char axis);
 	inline const CFixMatrix Transpose (void);
@@ -601,7 +601,7 @@ class CDoubleMatrix {
 public:
 	CDoubleVector rVec, uVec, fVec;
 
-	inline INT32 Read (FILE* fp) { 
+	inline int Read (FILE* fp) { 
 		rVec.Read (fp);
 		uVec.Read (fp);
 		fVec.Read (fp);
@@ -615,18 +615,18 @@ public:
 	}
 
 	CDoubleMatrix::CDoubleMatrix () { Clear (); }
-	CDoubleMatrix::CDoubleMatrix (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3);
+	CDoubleMatrix::CDoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
 	CDoubleMatrix (CDoubleMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
 	CDoubleMatrix (CDoubleVector r, CDoubleVector u, CDoubleVector f) : rVec (r), uVec (u), fVec (f) {}
-	CDoubleMatrix (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh);
+	CDoubleMatrix (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
 	//computes a matrix from a Set of three angles.  returns ptr to matrix
 	CDoubleMatrix (CAngleVector& a);
 	//computes a matrix from a forward vector and an angle
-	CDoubleMatrix (CDoubleVector *v, FIXANG a);
+	CDoubleMatrix (CDoubleVector *v, fixang a);
 
 	void Clear (void);
-	CDoubleMatrix& Set (DOUBLE x1, DOUBLE y1, DOUBLE z1, DOUBLE x2, DOUBLE y2, DOUBLE z2, DOUBLE x3, DOUBLE y3, DOUBLE z3);
-	CDoubleMatrix& Set (DOUBLE sinp, DOUBLE cosp, DOUBLE sinb, DOUBLE cosb, DOUBLE sinh, DOUBLE cosh);
+	CDoubleMatrix& Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
+	CDoubleMatrix& Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
 
 	CDoubleMatrix& Invert (CDoubleMatrix& m);
 	CDoubleMatrix Mul (const CDoubleMatrix& m);
@@ -639,7 +639,7 @@ public:
 		return *this;
 		}
 
-	const DOUBLE Det (void);
+	const double Det (void);
 	const CDoubleMatrix Inverse (void);
 	inline const CDoubleMatrix Transpose (void);
 	void Rotate (double angle, char axis);

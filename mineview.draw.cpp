@@ -48,27 +48,27 @@ for (; i--; ) {
 	z = a->z;
 	if (rc.left > x) {
 		rc.left = x;
-		m_minVPIdx.x = (INT16) i;
+		m_minVPIdx.x = (short) i;
 		}
 	if (rc.right < x) {
 		rc.right = x;
-		m_maxVPIdx.x = (INT16) i;
+		m_maxVPIdx.x = (short) i;
 		}
 	if (rc.top > y) {
 		rc.top = y;
-		m_minVPIdx.y = (INT16) i;
+		m_minVPIdx.y = (short) i;
 		}
 	if (rc.bottom < y) {
 		rc.bottom = y;
-		m_maxVPIdx.y = (INT16) i;
+		m_maxVPIdx.y = (short) i;
 		}
 	if (minZ > z) {
 		minZ = z;
-		m_minVPIdx.z = (INT16) i;
+		m_minVPIdx.z = (short) i;
 		}
 	if (maxZ < z) {
 		maxZ = z;
-		m_maxVPIdx.z = (INT16) i;
+		m_maxVPIdx.z = (short) i;
 		}
 	}
 #if OGL_RENDERING 
@@ -83,12 +83,12 @@ x = rc.Width ();
 y = rc.Height ();
 if (pRC)
 	*pRC = rc;
-m_minViewPoint.x = (INT16) rc.left;
-m_minViewPoint.y = (INT16) rc.bottom;
-m_minViewPoint.z = (INT16) minZ;
-m_maxViewPoint.x = (INT16) rc.right;
-m_maxViewPoint.y = (INT16) rc.top;
-m_maxViewPoint.z = (INT16) maxZ;
+m_minViewPoint.x = (short) rc.left;
+m_minViewPoint.y = (short) rc.bottom;
+m_minViewPoint.z = (short) minZ;
+m_maxViewPoint.x = (short) rc.right;
+m_maxViewPoint.y = (short) rc.top;
+m_maxViewPoint.z = (short) maxZ;
 }
 
 //----------------------------------------------------------------------------
@@ -99,10 +99,10 @@ void CMineView::CalcSegDist (void)
 {
 CHECKMINE;
 
-	INT32			h, i, j, c, nDist, segNum = theMine->SegCount (), sideNum;
+	int			h, i, j, c, nDist, segNum = theMine->SegCount (), sideNum;
 	CSegment	*segI, *segJ;
 
-	static INT16 segRef [MAX_SEGMENTS3];
+	static short segRef [MAX_SEGMENTS3];
 
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->m_info.nIndex = -1;
@@ -133,10 +133,10 @@ void CMineView::DrawMineCenter (CDC *pViewDC)
 {
 if (m_nMineCenter == 1) {
 	m_pDC->SelectObject(GetStockObject (WHITE_PEN));
-	m_pDC->MoveTo (x_center, y_center - (INT32) (10.0 * m_size.v.y) + 1);
-	m_pDC->LineTo (x_center, y_center + (INT32) (10.0 * m_size.v.y) + 1);
-	m_pDC->MoveTo (x_center - (INT32) (10.0 * m_size.v.x) + 1, y_center);
-	m_pDC->LineTo (x_center + (INT32) (10.0 * m_size.v.x) + 1, y_center);
+	m_pDC->MoveTo (x_center, y_center - (int) (10.0 * m_size.v.y) + 1);
+	m_pDC->LineTo (x_center, y_center + (int) (10.0 * m_size.v.y) + 1);
+	m_pDC->MoveTo (x_center - (int) (10.0 * m_size.v.x) + 1, y_center);
+	m_pDC->LineTo (x_center + (int) (10.0 * m_size.v.x) + 1, y_center);
 	}
 else if (m_nMineCenter == 2) {
 	// draw a globe
@@ -146,7 +146,7 @@ else if (m_nMineCenter == 2) {
 	APOINT pt;
 
 	m_pDC->SelectObject (m_penCyan);
-	INT32 i, j;
+	int i, j;
 	for (i = -60; i <= 60; i += 30) {
 		for (j = 0; j <= 360; j += 15) {
 			double scale = (5 * cos (Radians (i)));
@@ -201,7 +201,7 @@ void CMineView::DrawWireFrame (bool bPartial)
 {
 CHECKMINE;
 
-	INT32			nSegment;
+	int			nSegment;
 	CSegment	*segP;
 
 CalcSegDist ();
@@ -222,19 +222,19 @@ for (nSegment=0, segP = theMine->Segments (0);nSegment<theMine->SegCount ();nSeg
 //----------------------------------------------------------------------------
 
 typedef struct tSegZOrder {
-	INT32		zMax;
-	INT16		iSeg;
+	int		zMax;
+	short		iSeg;
 } tSegZOrder;
 
 typedef tSegZOrder *pSegZOrder;
 
 static tSegZOrder szo [MAX_SEGMENTS3];
 
-void QSortCubes (INT16 left, INT16 right)
+void QSortCubes (short left, short right)
 {
-	INT32		m = szo [(left + right) / 2].zMax;
+	int		m = szo [(left + right) / 2].zMax;
 	tSegZOrder	h;
-	INT16	l = left, r = right;
+	short	l = left, r = right;
 
 do {
 	while (szo [l].zMax > m)
@@ -264,13 +264,13 @@ void CMineView::DrawTextureMappedCubes (void)
 {
 CHECKMINE;
 
-	UINT32 nSegment;
-	INT16	 iVertex;
-	INT32	 z, zMax;
+	uint nSegment;
+	short	 iVertex;
+	int	 z, zMax;
 	CSegment *segP;
 
 	// Get shading table data
-UINT8* light_index = 0;
+byte* light_index = 0;
 if (m_viewMineFlags & eViewMineShading && (light_index = PalettePtr ()))
 	light_index += 256*5; // skip 3-byte palette + 1st 2 light tables
 
@@ -296,9 +296,9 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++) {
 //--------------------------------------------------------------------------
 #define IN_RANGE(value,absolute_range) ((-absolute_range <= value) && (value <= absolute_range))
 
-bool CMineView::InRange (INT16 *pv, INT16 i)
+bool CMineView::InRange (short *pv, short i)
 {
-	INT32	v;
+	int	v;
 
 for (; i; i--, pv++) {
 	v = *pv;
@@ -316,13 +316,13 @@ void CMineView::DrawCube (CSegment *segP, bool bPartial)
 DrawCubeQuick (segP, bPartial);
 }
 
-void CMineView::DrawCube (INT16 nSegment,INT16 nSide, INT16 linenum, INT16 pointnum, INT16 clear_it) 
+void CMineView::DrawCube (short nSegment,short nSide, short linenum, short pointnum, short clear_it) 
 {
 CHECKMINE;
 
 	CSegment *segP = theMine->Segments (nSegment);
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
 
 	if (!Visible (segP))
 		return;
@@ -331,7 +331,7 @@ CHECKMINE;
 	if (clear_it) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 		m_pDC->SelectObject (GetStockObject(BLACK_PEN)); // BLACK
-		INT32 nVert = segP->m_info.verts [sideVertTable [nSide] [pointnum]];
+		int nVert = segP->m_info.verts [sideVertTable [nSide] [pointnum]];
 		if (IN_RANGE (m_viewPoints [nVert].x,x_max) &&
 			 IN_RANGE (m_viewPoints [nVert].y,y_max)) {
 			m_pDC->Ellipse(m_viewPoints [nVert].x - 4,
@@ -452,8 +452,8 @@ void CMineView::DrawCubePartial (CSegment *segP)
 {
 CHECKMINE;
 
-  INT16 line;
-  INT16 vert0,vert1;
+  short line;
+  short vert0,vert1;
 
 if (!Visible (segP))
 	return;
@@ -482,10 +482,10 @@ for (line=0;line<12;line++) {
 // DrawCube()
 //--------------------------------------------------------------------------
 
-void QSortLineRef (POINT *lineRef, INT16 left, INT16 right)
+void QSortLineRef (POINT *lineRef, short left, short right)
 {
-	INT32		m = lineRef [(left + right) / 2].y;
-	INT16	l = left, r = right;
+	int		m = lineRef [(left + right) / 2].y;
+	short	l = left, r = right;
 do {
 	while (lineRef [l].y < m)
 		l++;
@@ -517,20 +517,20 @@ CHECKMINE;
 if (!Visible (segP))
 	return;
 
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
-	INT32	chSegI, chSideI, chVertI, i, j, commonVerts;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
+	int	chSegI, chSideI, chVertI, i, j, commonVerts;
 	CSegment	*childP;
-	INT16 *pv = segP->m_info.verts;
+	short *pv = segP->m_info.verts;
 
 for (i = 0; i < 8; i++, pv++) {
-	INT32	v = *pv;
+	int	v = *pv;
 	if (!(IN_RANGE (m_viewPoints [v].x, x_max) &&
 			IN_RANGE (m_viewPoints [v].y, y_max)))
 		return;
 	}
 if (bPartial) {
-	UINT32 nSide;
+	uint nSide;
 	for (nSide=0; nSide<6; nSide++) {
 		if (segP->Child (nSide) >= 0)
 			continue;
@@ -569,7 +569,7 @@ if (bPartial) {
 					for (commonVerts = 0, chVertI = 0; (chVertI < 4) && (commonVerts < 2); chVertI++) {
 						vert.x = m_viewPoints [childP->m_info.verts [sideVertTable [chSideI] [chVertI]]].x;
 						vert.y = m_viewPoints [childP->m_info.verts [sideVertTable [chSideI] [chVertI]]].y;
-						INT32 h;
+						int h;
 						for (h = 0; h < 2; h++) {
 							if ((line [h].x == vert.x) && (line [h].y == vert.y)) {
 								++commonVerts;
@@ -588,16 +588,16 @@ else {	//!bPartial
 	POINT	lines [12][2];
 	POINT lineRef [12];
 /*
-	static	INT32 poly1 [] = {4,0,1,2,3};
-	static	INT32 poly2 [] = {3,0,3,7};
-	static	INT32 poly3 [] = {5,0,4,5,6,7};
-	static	INT32 poly4 [] = {2,4,7};
-	static	INT32 poly5 [] = {2,2,6};
-	static	INT32 poly6 [] = {2,1,5};
-	static	INT32* polys [] = {poly1, poly2, poly3, poly4, poly5, poly6};
+	static	int poly1 [] = {4,0,1,2,3};
+	static	int poly2 [] = {3,0,3,7};
+	static	int poly3 [] = {5,0,4,5,6,7};
+	static	int poly4 [] = {2,4,7};
+	static	int poly5 [] = {2,2,6};
+	static	int poly6 [] = {2,1,5};
+	static	int* polys [] = {poly1, poly2, poly3, poly4, poly5, poly6};
 */
-	static	INT32 points [] = {0,1,1,2,2,3,3,0,0,4,4,5,5,6,6,7,7,4,3,7,2,6,1,5,-1};
-	INT32		i, j, k, v, l;
+	static	int points [] = {0,1,1,2,2,3,3,0,0,4,4,5,5,6,6,7,7,4,3,7,2,6,1,5,-1};
+	int		i, j, k, v, l;
 
 	for (i = 0;; i++) {
 		k = points [i];
@@ -626,18 +626,18 @@ else {	//!bPartial
 // works for all glAngle
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine (CTexture *pTx, POINT pt0, POINT pt1, UINT8 color) 
+void CMineView::DrawLine (CTexture *pTx, POINT pt0, POINT pt1, byte color) 
 {
 CHECKMINE;
 
-	INT32 i,x,y;
-	INT32 dx = pt1.x - pt0.x;
-	INT32 dy = pt1.y - pt0.y;
+	int i,x,y;
+	int dx = pt1.x - pt0.x;
+	int dy = pt1.y - pt0.y;
 
 #if 1
-	INT32 xInc, yInc;
+	int xInc, yInc;
 	double scale;
-	INT32 nStep = 0;
+	int nStep = 0;
 
 if (dx > 0)
 	xInc = 1;
@@ -652,15 +652,15 @@ else {
 	dy = -dy;
 	}
 scale = pTx->Scale ();
-xInc = (INT32) ((double) xInc * scale);
-yInc = (INT32) ((double) yInc * scale);
+xInc = (int) ((double) xInc * scale);
+yInc = (int) ((double) yInc * scale);
 
 x = pt0.x;
 y = pt0.y;
 
 #if 0	//most universal
-INT32 xStep = 0, yStep = 0;
-INT32 dd = (dx >= dy) ? dx: dy;
+int xStep = 0, yStep = 0;
+int dd = (dx >= dy) ? dx: dy;
 for (i = dd + 1; i; i--) {
 	pTx->m_info.bmDataP [y*pTx->m_info.width+x] = color;
 	yStep += dy;
@@ -740,10 +740,10 @@ else
 // DrawAnimDirArrows()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawAnimDirArrows (INT16 texture1, CTexture *pTx)
+void CMineView::DrawAnimDirArrows (short texture1, CTexture *pTx)
 {
-	INT32 sx,sy;
-	INT32 bScroll = theMine->ScrollSpeed (texture1, &sx, &sy);
+	int sx,sy;
+	int bScroll = theMine->ScrollSpeed (texture1, &sx, &sy);
 
 if (!bScroll)
 	return;
@@ -776,12 +776,12 @@ DrawLine (pTx, pt [0], pt [3], 1);
 // DrawCubeTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubeTextured(CSegment *segP, UINT8* light_index) 
+void CMineView::DrawCubeTextured(CSegment *segP, byte* light_index) 
 {
 CHECKMINE;
 
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
 
 	if (IN_RANGE(m_viewPoints [segP->m_info.verts [0]].x,x_max) &&
 		IN_RANGE(m_viewPoints [segP->m_info.verts [0]].y,y_max) &&
@@ -802,13 +802,13 @@ CHECKMINE;
 	{
 
 		CTexture tex (bmBuf);
-		UINT8 *pm_viewPointsMem = (UINT8 *)m_pvBits;
-		UINT16 width = m_viewWidth;
-		UINT16 height = m_viewHeight;
-		UINT16 rowOffset = (m_viewWidth + 3) & ~3;
-		UINT16 nSide = 5;
+		byte *pm_viewPointsMem = (byte *)m_pvBits;
+		ushort width = m_viewWidth;
+		ushort height = m_viewHeight;
+		ushort rowOffset = (m_viewWidth + 3) & ~3;
+		ushort nSide = 5;
 		CWall *wallP;
-		UINT16 nWall = NO_WALL;
+		ushort nWall = NO_WALL;
 
 		for (nSide = 0; nSide < 6; nSide++) {
 			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
@@ -826,8 +826,8 @@ CHECKMINE;
 				b.v.x = (double) (p3.x - p0.x);
 				b.v.y = (double) (p3.y - p0.y);
 				if (a.v.x * b.v.y > a.v.y * b.v.x) {
-					INT16 texture1 = segP->m_sides [nSide].m_info.nBaseTex;
-					INT16 texture2 = segP->m_sides [nSide].m_info.nOvlTex;
+					short texture1 = segP->m_sides [nSide].m_info.nBaseTex;
+					short texture2 = segP->m_sides [nSide].m_info.nOvlTex;
 					if (!DefineTexture (texture1, texture2, &tex, 0, 0)) {
 						DrawAnimDirArrows (texture1, &tex);
 						TextureMap (segP, nSide, tex.m_info.bmDataP, tex.m_info.width, tex.m_info.height, 
@@ -847,9 +847,9 @@ void CMineView::DrawCubePoints (CSegment *segP)
 {
 CHECKMINE;
 
-	INT16		*pv = segP->m_info.verts;
+	short		*pv = segP->m_info.verts;
 	COLORREF	color = RGB (128,128,128);
-	INT32		h, i;
+	int		h, i;
 
 for (i = 0; i < 8; i++, pv++) {
 	h = *pv;
@@ -871,14 +871,14 @@ pDC->SetPixel (m_viewPoints [segP.verts [7]].x, m_viewPoints [segP.verts [7]].y,
 //			draw_marked_segments()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawMarkedCubes (INT16 clear_it) 
+void CMineView::DrawMarkedCubes (short clear_it) 
 {
 CHECKMINE;
 
 	CSegment	*segP;
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
-	INT16 i;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
+	short i;
 
 	// draw marked/special Segments () and Walls ()
 if (!clear_it) {
@@ -957,9 +957,9 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 {
 CHECKMINE;
 
-	INT16 nSide = m_Current->nSide;
-	INT16 linenum = m_Current->nPoint;
-	INT16 pointnum = m_Current->nPoint;
+	short nSide = m_Current->nSide;
+	short linenum = m_Current->nPoint;
+	short pointnum = m_Current->nPoint;
 
 	if (segP->m_info.wallFlags & MARKED_MASK) {
 		m_pDC->SelectObject(m_penCyan);
@@ -984,8 +984,8 @@ CHECKMINE;
 // Select this pen if this is the "other current" cube
 //	m_pDC->SelectObject(m_penDkGreen);
 
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
 
 	if (IN_RANGE(m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [0]]].x,x_max) &&
 		 IN_RANGE(m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [0]]].y,y_max) &&
@@ -1043,7 +1043,7 @@ CHECKMINE;
 // Action - draws a line starting with lowest vert
 //--------------------------------------------------------------------------
 
-void CMineView::DrawLine(CSegment *segP,INT16 vert1,INT16 vert2) 
+void CMineView::DrawLine(CSegment *segP,short vert1,short vert2) 
 {
 CHECKMINE;
 if (vert2 > vert1) {
@@ -1067,14 +1067,14 @@ CHECKMINE;
 	CSegment	*segments = theMine->Segments (0);
 	CVertex	*vertices = theMine->Vertices (0);
 	CSegment	*segP;
-	INT16 i,j;
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
+	short i,j;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
 
 for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 	if (walls [i].m_nSegment > theMine->SegCount ())
 		continue;
-	segP = segments + (INT32)walls [i].m_nSegment;
+	segP = segments + (int)walls [i].m_nSegment;
 	if (!Visible (segP))
 		continue;
 	switch (walls [i].m_info.type) {
@@ -1147,7 +1147,7 @@ for (i=0;i<theMine->GameInfo ().walls.count;i++) {
 			m_view.Project (vector, arrowEndPoint);
 
 			// direction toward center of line 0 from center
-			UINT8 *svp = &sideVertTable [walls [i].m_nSide][0];
+			byte *svp = &sideVertTable [walls [i].m_nSide][0];
 			vector = Average (vertices [segP->m_info.verts [svp [0]]], vertices [segP->m_info.verts [svp [1]]]);
 			vector -= center;
 			vector.Normalize ();
@@ -1195,14 +1195,14 @@ for (INT i = 0; i < theMine->FlickerLightCount (); i++, flP++)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-void CMineView::DrawOctagon(INT16 nSide, INT16 nSegment) 
+void CMineView::DrawOctagon(short nSide, short nSegment) 
 {
 CHECKMINE;
 
 	CSegment *segP;
-	INT16 j;
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
+	short j;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
 
 if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
 	POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
@@ -1218,7 +1218,7 @@ if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
 		center.x = (corners [0].x + corners [1].x + corners [2].x + corners [3].x)>>2;
 		center.y = (corners [0].y + corners [1].y + corners [2].y + corners [3].y)>>2;
 		for (j = 0; j < 4; j++) {
-			INT32 k = (j+1) & 0x03;
+			int k = (j+1) & 0x03;
 			line_centers [j].x = (corners [j].x + corners [k].x) >> 1;
 			line_centers [j].y = (corners [j].y + corners [k].y) >> 1;
 			diamond [j].x = (line_centers [j].x + center.x) >> 1;
@@ -1242,7 +1242,7 @@ if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
 
 void CMineView::DrawSpline (void) 
 {
-	INT32 h, i, j;
+	int h, i, j;
 
 //  SelectObject(hdc, hrgnAll);
 m_pDC->SelectObject (m_penRed);
@@ -1294,11 +1294,11 @@ dest += offs;
 }
 
 
-void CMineView::DrawObject(INT16 objnum,INT16 clear_it) 
+void CMineView::DrawObject(short objnum,short clear_it) 
 {
 CHECKMINE;
 
-	INT16				poly;
+	short				poly;
 	CGameObject*	objP;
 	CVertex			pt [MAX_POLY];
 	APOINT			poly_draw [MAX_POLY];
@@ -1311,8 +1311,8 @@ CHECKMINE;
 		{ 0,  0,  4}
 		};
 	CGameObject temp_obj;
-	INT16 x_max = m_viewWidth * 2;
-	INT16 y_max = m_viewHeight * 2;
+	short x_max = m_viewWidth * 2;
+	short y_max = m_viewHeight * 2;
 
 //  m_pDC->SelectObject(hrgnBackground);
 if (objnum >=0 && objnum < theMine->GameInfo ().objects.count) {
@@ -1329,7 +1329,7 @@ else {
 	objP->m_location.orient.uVec =  theMine->SecretOrient ().fVec;
 	objP->m_location.orient.fVec =  theMine->SecretOrient ().uVec;
 	// objP->m_location.orient =  theMine->secret_orient;
-	UINT16 nSegment = (UINT16)theMine->SecretCubeNum ();
+	ushort nSegment = (ushort)theMine->SecretCubeNum ();
 	if (nSegment >= theMine->SegCount ())
 		nSegment = 0;
 	if (!Visible (theMine->Segments (nSegment)))
@@ -1392,7 +1392,7 @@ for (poly = 0; poly < MAX_POLY; poly++) {
 
 // figure out world coordinates
 
-INT32 i;
+int i;
 for (i = 0; i < 6; i++)
 	if (!(IN_RANGE (poly_draw [i].x, x_max) &&
 			IN_RANGE (poly_draw [i].y, y_max)))
@@ -1414,7 +1414,7 @@ else {
 	for (poly = 0; poly < 6; poly++)
 		m_pDC->LineTo (poly_draw [poly].x, poly_draw [poly].y);
 	if (objnum == theMine->Current ()->nObject) {
-		INT32 dx,dy;
+		int dx,dy;
 		for (dx = -1; dx < 2; dx++) {
 			for (dy = -1; dy < 2; dy++) {
 				m_pDC->MoveTo (poly_draw [0].x+dx,poly_draw [0].y+dy);
@@ -1426,7 +1426,7 @@ else {
 	}
 if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nObject)) {
 	CPen     pen, *pOldPen;
-	INT32		d;
+	int		d;
 
 	pt [0] =
 	pt [1] =
@@ -1454,19 +1454,19 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 //			  DrawObjects()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawObjects (INT16 clear_it) 
+void CMineView::DrawObjects (short clear_it) 
 {
 CHECKMINE;
 
 if (!ViewObject ())
 	return;
 
-INT32 i, j;
+int i, j;
 if (theApp.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < theMine->GameInfo ().triggers.count; i++)
 	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
-		DrawObject ((INT16)theMine->GameInfo ().objects.count, 0);
+		DrawObject ((short)theMine->GameInfo ().objects.count, 0);
 		break; // only draw one secret exit
 		}
 	}
@@ -1481,12 +1481,12 @@ for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
 //			  draw_highlight()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawHighlight(INT16 clear_it) 
+void CMineView::DrawHighlight(short clear_it) 
 {
 CHECKMINE;
 
-	INT16	currSide, currPoint;
-//	INT16 i;
+	short	currSide, currPoint;
+//	short i;
 //	RECT rect;
 
 if (theMine->SegCount ()==0) 
@@ -1526,7 +1526,7 @@ if (theMine->m_bSplineActive)
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   INT16 vertex = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [sideVertTable [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+   short vertex = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [sideVertTable [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);

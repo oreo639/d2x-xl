@@ -25,18 +25,18 @@ bool CMine::EditGeoFwd (void)
   double				radius;
   CVertex			center, oppCenter;
   CDoubleVector	v;
-  INT32				i;
+  int				i;
 /* calculate center of current side */
 
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
    center += *Vertices (nVertex);
 	 }
 center /= 4.0;
 
 // calculate center of opposite of current side
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
    oppCenter += *Vertices (nVertex);
 	}
 oppCenter /= 4.0;
@@ -68,18 +68,18 @@ else
 bool CMine::EditGeoBack (void) 
 {
   CVertex	center, oppCenter;
-  INT32		i;
+  int		i;
 
 /* calculate center of current side */
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
 	center += *Vertices (nVertex);
 	}
 center /= 4.0;
 
 // calculate center of oppisite current side
 for (i = 0; i < 4; i++) {
-	INT32 nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
 	oppCenter += *Vertices (nVertex);
 	}
 oppCenter /= 4.0;
@@ -90,7 +90,7 @@ CDoubleVector v (center - oppCenter);
 // make sure distance is positive to prevent
 // cube from turning inside out
 // defines line orthogonal to a side at a point
-	UINT8 sideNormalTable [6][4] = {
+	byte sideNormalTable [6][4] = {
 		{8,6,1,3},
 		{0,5,7,2},
 		{3,1,6,8},
@@ -102,7 +102,7 @@ CDoubleVector v (center - oppCenter);
 	bool		okToMove = true;
 
 segP = Segments (0) + Current ()->nSegment;
-UINT8* sideNormalP = sideNormalTable [Current ()->nSide];
+byte* sideNormalP = sideNormalTable [Current ()->nSide];
 switch (m_selectMode) {
 	case POINT_MODE:
 		if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][0]]), 
@@ -231,11 +231,11 @@ return ResizeItem (-moveRate);
 
 bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
-	INT32			nSegment = Current ()->nSegment;
-	INT32			nSide = Current ()->nSide;
+	int			nSegment = Current ()->nSegment;
+	int			nSide = Current ()->nSide;
 	CSegment*	segP = Segments (nSegment);
 	CVertex		center, oppCenter;
-	INT32			i, pts [4];
+	int			i, pts [4];
 
 switch (m_selectMode){
 	case POINT_MODE:
@@ -299,10 +299,10 @@ return true;
 
 bool CMine::ResizeItem (double delta) 
 {
-	INT32 nSegment = Current ()->nSegment;
-	INT32 nSide = Current ()->nSide;
+	int nSegment = Current ()->nSegment;
+	int nSide = Current ()->nSide;
 	CSegment *segP = Segments (nSegment);
-	INT32 i, j, point [4];
+	int i, j, point [4];
 	bool result = false;
 
 switch (m_selectMode) {
@@ -320,8 +320,8 @@ switch (m_selectMode) {
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [Current ()->nSide][i];
 		// enlarge the diagonals
-		result = ResizeLine (segP, point [0], point [2], (INT32) (delta*sqrt(2.0))) &&
-				   ResizeLine (segP, point [1], point [3], (INT32) (delta*sqrt(2.0)));
+		result = ResizeLine (segP, point [0], point [2], (int) (delta*sqrt(2.0))) &&
+				   ResizeLine (segP, point [1], point [3], (int) (delta*sqrt(2.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -329,10 +329,10 @@ switch (m_selectMode) {
 		// enlarge the diagonals
 		theApp.SetModified (TRUE);
 		theApp.LockUndo ();
-		result = ResizeLine (segP, 0, 6, (INT32) (delta*sqrt(3.0))) &&
-				   ResizeLine (segP, 1, 7, (INT32) (delta*sqrt(3.0))) &&
-					ResizeLine (segP, 2, 4, (INT32) (delta*sqrt(3.0))) &&
-					ResizeLine (segP, 3, 5, (INT32) (delta*sqrt(3.0)));
+		result = ResizeLine (segP, 0, 6, (int) (delta*sqrt(3.0))) &&
+				   ResizeLine (segP, 1, 7, (int) (delta*sqrt(3.0))) &&
+					ResizeLine (segP, 2, 4, (int) (delta*sqrt(3.0))) &&
+					ResizeLine (segP, 3, 5, (int) (delta*sqrt(3.0)));
 		theApp.UnlockUndo ();
 		return result;
 
@@ -371,15 +371,15 @@ return false;
 // of the current line.
 //--------------------------------------------------------------------------
 
-bool CMine::MovePoints (INT32 pt0, INT32 pt1) 
+bool CMine::MovePoints (int pt0, int pt1) 
 {
 	CDoubleVector	delta;
 	double			length;
-	INT32				i;
+	int				i;
 	CSegment*		segP = Segments (Current ()->nSegment);
-	UINT8*			sideVertP = sideVertTable [Current ()->nSide];
-	INT16				p0 = sideVertP [CURRENT_POINT(pt0)];
-	INT16				p1 = sideVertP [CURRENT_POINT(pt1)];
+	byte*			sideVertP = sideVertTable [Current ()->nSide];
+	short				p0 = sideVertP [CURRENT_POINT(pt0)];
+	short				p1 = sideVertP [CURRENT_POINT(pt1)];
 
 delta = *Vertices (segP->m_info.verts [p1]) - *Vertices (segP->m_info.verts [p0]);
 length = delta.Mag ();
@@ -437,7 +437,7 @@ return true;
 // prevent lines from being bigger than 8*20 and less than 3
 //--------------------------------------------------------------------------
 
-bool CMine::ResizeLine (CSegment *segP, INT32 point0, INT32 point1, double delta) 
+bool CMine::ResizeLine (CSegment *segP, int point0, int point1, double delta) 
 {
 #if 0
 // round a bit
@@ -478,12 +478,12 @@ return true;
 
 bool CMine::MoveOn (CDoubleVector delta) 
 {
-INT32 nSegment = Current ()->nSegment;
-INT32 nSide = Current ()->nSide;
-INT32 nPoint = Current ()->nPoint;
-INT32 nLine = Current ()->nLine;
+int nSegment = Current ()->nSegment;
+int nSide = Current ()->nSide;
+int nPoint = Current ()->nPoint;
+int nLine = Current ()->nLine;
 CSegment *segP = Segments (nSegment);
-INT16 i;
+short i;
 
 theApp.SetModified (TRUE);
 switch (m_selectMode) {
@@ -538,13 +538,13 @@ return true;
 
 bool CMine::SpinSelection (double angle) 
 {
-	INT32				nSegment = Current ()->nSegment;
-	INT32				nSide = Current ()->nSide;
+	int				nSegment = Current ()->nSegment;
+	int				nSide = Current ()->nSide;
 	CSegment*		segP = Segments (nSegment);
 	CGameObject*	objP;
 	CDoubleMatrix* orient;
 	CVertex			center, oppCenter, normal;
-	INT16				i;
+	short				i;
 
 /* calculate segment pointer */
 switch (m_selectMode) {

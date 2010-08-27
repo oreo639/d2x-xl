@@ -28,11 +28,11 @@ class CExtBitmapButton : public CBitmapButton
 	public:
 		DECLARE_DYNCREATE(CExtBitmapButton)
 	public:
-		INT32	m_nId;
+		int	m_nId;
 		CWnd	*m_pParent;
 		UINT	m_nState;
-		INT32	m_nPos;
-		//virtual INT32 OnToolHitTest (CPoint point, TOOLINFO* pTI);
+		int	m_nPos;
+		//virtual int OnToolHitTest (CPoint point, TOOLINFO* pTI);
 		BOOL AutoLoad (UINT nId, CWnd* pParent) {
 			m_nId = nId;
 			m_pParent = pParent;
@@ -60,13 +60,13 @@ class CConvertDlg : public CDialog
 		CWnd			m_showD2;
 		HINSTANCE	m_hInst;
 		HGLOBAL		m_hTextures;
-		INT16			*m_pTextures;
+		short			*m_pTextures;
 
 		CConvertDlg (CWnd *pParent = NULL);
       virtual BOOL OnInitDialog ();
-		void EndDialog (INT32 nResult);
+		void EndDialog (int nResult);
       virtual void DoDataExchange (CDataExchange *pDX);
-		void CreateImgWnd (CWnd *pImgWnd, INT32 nIdC);
+		void CreateImgWnd (CWnd *pImgWnd, int nIdC);
 		void Reset ();
 		void Refresh ();
 		afx_msg void OnPaint ();
@@ -114,34 +114,34 @@ class CToolDlg : public CPropertyPage
 			}
 		void Refresh (void)
 			{ UpdateData (FALSE); }
-		void DDX_Double (CDataExchange * pDX, INT32 nIDC, double& fVal, double min = 1, double max = 0, LPSTR pszFmt = "%1.2f", LPSTR pszErrMsg = NULL);
-		void DDX_Slider (CDataExchange * pDX, INT32 nIdC, INT32& nTic);
-		INT32 DDX_Int (CDataExchange * pDX, INT32 nIdC, INT32 i);
-		INT32 DDX_Flag (CDataExchange * pDX, INT32 nIdC, INT32 i);
-		void InitSlider (INT32 nIdC, INT32 nMin, INT32 nMax);
-		INT32 GetCheck (INT32 nIdC);
-		INT32 CBAddString (CComboBox *pcb, char *str);
-		void SelectItemData (CComboBox *pcb, INT32 nItemData);
-		void EnableControls (INT32 nIdFirst, INT32 nIdLast, BOOL bEnable);
+		void DDX_Double (CDataExchange * pDX, int nIDC, double& fVal, double min = 1, double max = 0, LPSTR pszFmt = "%1.2f", LPSTR pszErrMsg = NULL);
+		void DDX_Slider (CDataExchange * pDX, int nIdC, int& nTic);
+		int DDX_Int (CDataExchange * pDX, int nIdC, int i);
+		int DDX_Flag (CDataExchange * pDX, int nIdC, int i);
+		void InitSlider (int nIdC, int nMin, int nMax);
+		int GetCheck (int nIdC);
+		int CBAddString (CComboBox *pcb, char *str);
+		void SelectItemData (CComboBox *pcb, int nItemData);
+		void EnableControls (int nIdFirst, int nIdLast, BOOL bEnable);
 #if 0
-		INT32 OnToolHitTest (CPoint point, TOOLINFO* pTI);
+		int OnToolHitTest (CPoint point, TOOLINFO* pTI);
 #endif
 		BOOL OnToolTipNotify (UINT id, NMHDR *pNMHDR, LRESULT *pResult);
-		void CreateImgWnd (CWnd * pImgWnd, INT32 nIdC);
+		void CreateImgWnd (CWnd * pImgWnd, int nIdC);
 		afx_msg void OnSelectPrevTab ();
 		afx_msg void OnSelectNextTab ();
 		void GetCtrlClientRect (CWnd *pWnd, CRect& rc);
 		inline bool Inited ()
 			{ return m_bInited; }
-		inline CComboBox *CBCtrl (INT32 nId)
+		inline CComboBox *CBCtrl (int nId)
 			{ return (CComboBox *) GetDlgItem (nId); }
-		inline CListBox *LBCtrl (INT32 nId)
+		inline CListBox *LBCtrl (int nId)
 			{ return (CListBox *) GetDlgItem (nId); }
-		inline CButton *BtnCtrl (INT32 nId)
+		inline CButton *BtnCtrl (int nId)
 			{ return (CButton *) GetDlgItem (nId); }
-		inline CSliderCtrl *SlCtrl (INT32 nId)
+		inline CSliderCtrl *SlCtrl (int nId)
 			{ return (CSliderCtrl *) GetDlgItem (nId); }
-		inline CScrollBar *SBCtrl (INT32 nId)
+		inline CScrollBar *SBCtrl (int nId)
 			{ return (CScrollBar *) GetDlgItem (nId); }
 
 		DECLARE_MESSAGE_MAP()
@@ -156,17 +156,17 @@ class CTexToolDlg : public CToolDlg
 
 	CWnd		m_textureWnd;
 	UINT_PTR	m_nTimer;
-	INT32		m_nTexWndId;
-	INT32		m_nTimerId;
+	int		m_nTexWndId;
+	int		m_nTimerId;
 	COLORREF	m_bkColor;
-	INT32		m_frame [2];
+	int		m_frame [2];
 	bool		m_bOtherSeg;
 
 	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = NULL, 
-					 INT32 nTexWndId = 0, INT32 nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
+					 int nTexWndId = 0, int nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
 					 bool bOtherSeg = false);
 	~CTexToolDlg ();
-	bool Refresh (INT16 nBaseTex = -1, INT16 nOvlTex = -1, INT16 nVisible = -1);
+	bool Refresh (short nBaseTex = -1, short nOvlTex = -1, short nVisible = -1);
 	void AnimateTexture (void);
 
    virtual BOOL OnInitDialog ();
@@ -184,28 +184,28 @@ class CTexToolDlg : public CToolDlg
 class CAdvObjTool : public CToolDlg
 {
 	public:
-		INT32		m_mass;
-		INT32		m_drag;
-		INT32		m_brakes;
-		INT32		m_turnRoll;
-		INT32		m_size;
-		INT32		m_flags;
-		INT32		m_shields;
-		INT32		m_vx;
-		INT32		m_vy;
-		INT32		m_vz;
-		INT32		m_tx;
-		INT32		m_ty;
-		INT32		m_tz;
-		INT32		m_rvx;
-		INT32		m_rvy;
-		INT32		m_rvz;
-		INT32		m_rtx;
-		INT32		m_rty;
-		INT32		m_rtz;
-		INT32		m_model;
-		INT32		m_frame;
-		INT32		m_frameNo;
+		int		m_mass;
+		int		m_drag;
+		int		m_brakes;
+		int		m_turnRoll;
+		int		m_size;
+		int		m_flags;
+		int		m_shields;
+		int		m_vx;
+		int		m_vy;
+		int		m_vz;
+		int		m_tx;
+		int		m_ty;
+		int		m_tz;
+		int		m_rvx;
+		int		m_rvy;
+		int		m_rvz;
+		int		m_rtx;
+		int		m_rty;
+		int		m_rtz;
+		int		m_model;
+		int		m_frame;
+		int		m_frameNo;
 		CAdvObjTool (CPropertySheet *pParent = NULL);
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -223,17 +223,17 @@ class CAdvObjTool : public CToolDlg
 class CDiagTool : public CToolDlg
 {
 	public:
-		INT32			m_nTrigger;
-		INT32			m_targets;
-		INT32			m_iTarget;
-		INT32			m_nCountDown;
-		INT32			m_nSecretReturn;
+		int			m_nTrigger;
+		int			m_targets;
+		int			m_iTarget;
+		int			m_nCountDown;
+		int			m_nSecretReturn;
 		char			m_szTarget [40];
-		INT32			m_nObjects [16];
-		INT32			m_nContained [2];
-		INT32			m_nErrors [2];
-		INT32			m_bAutoFixBugs;
-		INT32			m_bShowWarnings;
+		int			m_nObjects [16];
+		int			m_nContained [2];
+		int			m_nErrors [2];
+		int			m_bAutoFixBugs;
+		int			m_bShowWarnings;
 		CReactorTrigger	*m_pTrigger;
 		bool			m_bCheckMsgs;
 		int			m_statsWidth;
@@ -245,39 +245,39 @@ class CDiagTool : public CToolDlg
 		virtual BOOL OnSetActive ();
 		void Reset ();
 		void Refresh ();
-		LPSTR ItemText (INT32 nValue, LPSTR pszPrefix = NULL);
+		LPSTR ItemText (int nValue, LPSTR pszPrefix = NULL);
 		void CountObjects (void);
-		INT32 CountTextures (void);
+		int CountTextures (void);
 		afx_msg void OnCheckMine ();
 		afx_msg void OnShowBug ();
 		afx_msg void OnClearList ();
 		afx_msg void OnFixBugs ();
 		afx_msg void OnShowWarnings ();
-		INT32 AddMessage (const char *pszMsg, INT32 nMaxMsgs = 100, bool bCheckMsg = false);
+		int AddMessage (const char *pszMsg, int nMaxMsgs = 100, bool bCheckMsg = false);
 		void UpdateStatsWidth (char* s);
-		bool UpdateStats (char *szError, INT32 nErrorLevel, 
-							   INT32 nSegment = -1, INT32 nSide = -1, INT32 linenum = -1, INT32 pointnum = -1, 
-							   INT32 childnum = -1, INT32 nWall = -1, INT32 nTrigger = -1, INT32 objnum = -1);
-		double CalcFlatnessRatio (INT16 nSegment, INT16 nSide);
+		bool UpdateStats (char *szError, int nErrorLevel, 
+							   int nSegment = -1, int nSide = -1, int linenum = -1, int pointnum = -1, 
+							   int childnum = -1, int nWall = -1, int nTrigger = -1, int objnum = -1);
+		double CalcFlatnessRatio (short nSegment, short nSide);
 		double CalcDistance (CVertex* v1, CVertex* v2, CVertex* v3);
-		double CalcAngle (INT16 vert0,INT16 vert1,INT16 vert2,INT16 vert3);
+		double CalcAngle (short vert0,short vert1,short vert2,short vert3);
 		void ClearBugList ();
-		INT32 CheckId (CGameObject *objP);
+		int CheckId (CGameObject *objP);
 		bool CheckSegments ();
 		bool CheckSegTypes ();
 		bool CheckWalls ();
 		bool CheckTriggers ();
 		bool CheckObjects ();
-		bool CheckAndFixPlayer (INT32 nMin, INT32 nMax, INT32 nObject, INT32* players);
+		bool CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players);
 		bool CheckVertices ();
 		bool CheckBotGens ();
 		bool CheckEquipGens ();
-		bool MarkSegment (INT16 nSegment);
-		INT8 FindMatCen (CRobotMaker* matCenP, INT16 nSegment, INT16* refList = NULL);
-		void CountMatCenRefs (INT32 nSpecialType, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
-		INT16 FixMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens, char* pszType);
-		INT16 AssignMatCens (INT32 nSpecialType, INT16* segList, INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
-		INT16 CleanupMatCens (INT16* refList, CRobotMaker* matCenP, INT16 nMatCens);
+		bool MarkSegment (short nSegment);
+		char FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList = NULL);
+		void CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* matCenP, short nMatCens);
+		short FixMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens, char* pszType);
+		short AssignMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens);
+		short CleanupMatCens (short* refList, CRobotMaker* matCenP, short nMatCens);
 
 		inline CListView *LVStats ()
 			{ return (CListView *) GetDlgItem (IDC_DIAG_STATS); }
@@ -285,7 +285,7 @@ class CDiagTool : public CToolDlg
 			{ return LBCtrl (IDC_DIAG_BUGLIST); }
 		inline CWnd *TargetEdit ()
 			{ return GetDlgItem (IDC_REACTOR_TARGET); }
-		CWall *OppWall (UINT16 nSegment, UINT16 nSide);
+		CWall *OppWall (ushort nSegment, ushort nSide);
 
 		DECLARE_MESSAGE_MAP ()
 };
@@ -295,11 +295,11 @@ class CDiagTool : public CToolDlg
 class CReactorTool : public CToolDlg
 {
 	public:
-		INT32			m_nTrigger;
-		INT32			m_targets;
-		INT32			m_iTarget;
-		INT32			m_nCountDown;
-		INT32			m_nSecretReturn;
+		int			m_nTrigger;
+		int			m_targets;
+		int			m_iTarget;
+		int			m_nCountDown;
+		int			m_nSecretReturn;
 		char			m_szTarget [40];
 		CReactorTrigger	*m_pTrigger;
 
@@ -311,8 +311,8 @@ class CReactorTool : public CToolDlg
 		void InitLBTargets ();
 		void Reset ();
 		void Refresh ();
-		void AddTarget (INT16 nSegment, INT16 nSide);
-		INT32 FindTarget (INT16 nSegment, INT16 nSide);
+		void AddTarget (short nSegment, short nSide);
+		int FindTarget (short nSegment, short nSide);
 		afx_msg void OnAddTarget ();
 		afx_msg void OnDeleteTarget ();
 		afx_msg void OnAddWallTarget ();
@@ -367,8 +367,8 @@ class CObjectTool : public CToolDlg
 		CWnd		m_showObjWnd;
 		CWnd		m_showSpawnWnd;
 		CWnd		m_showTextureWnd;
-		INT32		m_nSpawnQty;
-		INT32		m_bEndsLevel;
+		int		m_nSpawnQty;
+		int		m_bEndsLevel;
 		char		m_szInfo [200];
 
 		CObjectTool (CPropertySheet *pParent = NULL);
@@ -381,20 +381,20 @@ class CObjectTool : public CToolDlg
 		void Refresh ();
 		void RefreshRobot ();
 		void DrawObjectImages ();
-		void DrawObject (CWnd *pWnd, INT32 type, INT32 id);
+		void DrawObject (CWnd *pWnd, int type, int id);
 		void SetTextureOverride ();
-		bool SetPlayerId (CGameObject *objP, INT32 objType, INT32 *ids, INT32 maxIds, char *pszError);
-		void SetObjectId (CComboBox *pcb, INT16 type, INT16 id, INT16 flag = 0);
+		bool SetPlayerId (CGameObject *objP, int objType, int *ids, int maxIds, char *pszError);
+		void SetObjectId (CComboBox *pcb, short type, short id, short flag = 0);
 
-		void CBInit (CComboBox *pcb, char* pszNames [], UINT8 *pIndex, UINT8 *pItemData, INT32 nMax, INT32 nType = 0, bool bAddNone = false);
+		void CBInit (CComboBox *pcb, char* pszNames [], byte *pIndex, byte *pItemData, int nMax, int nType = 0, bool bAddNone = false);
 		void InitSliders ();
-		void UpdateSliders (INT32 i = -1);
-		INT32 GetSliderData (CScrollBar *pScrollBar);
-		double SliderFactor (INT32 nId);
+		void UpdateSliders (int i = -1);
+		int GetSliderData (CScrollBar *pScrollBar);
+		double SliderFactor (int nId);
 		void UpdateRobot ();
-		INT32 ObjOfAKindCount (INT32 nType = -1, INT32 nId = -1);
-		INT32 GetObjectsOfAKind (INT32 nType, CGameObject *objList []);
-		void SetNewObjId (CGameObject *objP, INT32 nType, INT32 nId, INT32 nMaxId);
+		int ObjOfAKindCount (int nType = -1, int nId = -1);
+		int GetObjectsOfAKind (int nType, CGameObject *objList []);
+		void SetNewObjId (CGameObject *objP, int nType, int nId, int nMaxId);
 
 		afx_msg void OnPaint ();
 		afx_msg void OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
@@ -489,7 +489,7 @@ class CEffectTool : public CToolDlg
 		CSmokeInfo			m_smoke;
 		CLightningInfo		m_lightning;
 		CSoundInfo			m_sound;
-		INT32					m_nBufferId;
+		int					m_nBufferId;
 
 		CEffectTool (CPropertySheet *pParent = NULL);
 		~CEffectTool ();
@@ -545,21 +545,21 @@ class CEffectTool : public CToolDlg
 class CSegmentTool : public CToolDlg
 {
 	public:
-		INT32		m_nSegment;
-		INT32		m_nSide;
-		INT32		m_nPoint;
-		INT32		m_nVertex;
-		INT32		m_nType;
-		INT32		m_nProps;
-		INT32		m_nOwner;
-		INT32		m_nGroup;
-		INT32		m_bEndOfExit;
-		INT16		m_nDamage [2];
+		int		m_nSegment;
+		int		m_nSide;
+		int		m_nPoint;
+		int		m_nVertex;
+		int		m_nType;
+		int		m_nProps;
+		int		m_nOwner;
+		int		m_nGroup;
+		int		m_bEndOfExit;
+		short		m_nDamage [2];
 		double	m_nLight;
 		double	m_nCoord [3];
-		INT32		m_nLastCube;
-		INT32		m_nLastSide;
-		INT32		m_bSetDefTexture;
+		int		m_nLastCube;
+		int		m_nLastSide;
+		int		m_bSetDefTexture;
 
 		CSegmentTool (CPropertySheet *pParent = NULL);
 		virtual BOOL OnInitDialog ();
@@ -569,13 +569,13 @@ class CSegmentTool : public CToolDlg
 		void Reset ();
 		void EnableControls (BOOL bEnable);
 		void Refresh ();
-		void OnSide (INT32 nSide);
-		void OnPoint (INT32 nPoint);
-		INT32 FindBot (CListBox *plb, LPSTR pszBot = NULL);
-		INT32 FindEquip (CListBox *plb, LPSTR pszBot = NULL);
+		void OnSide (int nSide);
+		void OnPoint (int nPoint);
+		int FindBot (CListBox *plb, LPSTR pszBot = NULL);
+		int FindEquip (CListBox *plb, LPSTR pszBot = NULL);
 		bool IsBotMaker (CSegment *segP);
 		bool IsEquipMaker (CSegment *segP);
-		void SetDefTexture (INT16 nTexture);
+		void SetDefTexture (short nTexture);
 	
 		afx_msg void OnSetCube ();
 		afx_msg void OnSetType ();
@@ -584,16 +584,16 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnSetCoord ();
 		afx_msg void OnResetCoord ();
 		afx_msg void OnLight ();
-		void OnDamage (INT32 i);
+		void OnDamage (int i);
 		afx_msg void OnDamage0 ();
 		afx_msg void OnDamage1 ();
-		void OnProp (INT32 nProp);
+		void OnProp (int nProp);
 		afx_msg void OnProp1 ();
 		afx_msg void OnProp2 ();
 		afx_msg void OnProp3 ();
 		afx_msg void OnProp4 ();
 		afx_msg void OnProp5 ();
-		void OnFlag (INT32 nID, INT32& nFlag);
+		void OnFlag (int nID, int& nFlag);
 		afx_msg void OnSetDefTexture ();
 		afx_msg void OnSide1 ();
 		afx_msg void OnSide2 ();
@@ -639,7 +639,7 @@ class CSegmentTool : public CToolDlg
 			{ return BtnCtrl (IDC_CUBE_ENDOFEXIT); }
 		inline CButton *SetDefTexture ()
 			{ return BtnCtrl (IDC_CUBE_SETDEFTEXTURE); }
-		inline CButton *Prop (INT32 nProp)
+		inline CButton *Prop (int nProp)
 			{ return BtnCtrl (IDC_CUBE_WATER + nProp); }
 		inline CComboBox *CBOwner ()
 			{ return CBCtrl(IDC_CUBE_OWNER); }
@@ -653,24 +653,24 @@ class CWallTool : public CTexToolDlg
 {
 	public:
 		CWnd		m_textureWnd;
-		INT32		m_nSegment;
-		INT32		m_nSide;
-		INT32		m_nTrigger;
-		INT32		m_nWall [2];
-		INT32		m_nType;
-		INT32		m_nClip;
+		int		m_nSegment;
+		int		m_nSide;
+		int		m_nTrigger;
+		int		m_nWall [2];
+		int		m_nType;
+		int		m_nClip;
 		double	m_nStrength;
 		double	m_nCloak;
-		INT32		m_bFlyThrough;
-		INT32		m_bKeys [4];
-		INT32		m_bFlags [MAX_WALL_FLAGS];
+		int		m_bFlyThrough;
+		int		m_bKeys [4];
+		int		m_bFlags [MAX_WALL_FLAGS];
 		char		m_szMsg [256];
 		CWall	*m_pWall [2];
 		CWall	m_defWall;
 		CWall	m_defDoor;
-		INT16		m_defTexture;
-		INT16		m_defDoorTexture;
-		INT16		m_defOvlTexture;
+		short		m_defTexture;
+		short		m_defDoorTexture;
+		short		m_defOvlTexture;
 		BOOL		m_bBothSides;
 		bool		m_bLock;
 		bool		m_bDelayRefresh;
@@ -725,8 +725,8 @@ class CWallTool : public CTexToolDlg
 		afx_msg void OnAddWallWaterfall ();
 		afx_msg void OnAddWallLavafall ();
 
-		void OnKey (INT32 i);
-		void OnFlag (INT32 i); 
+		void OnKey (int i);
+		void OnFlag (int i); 
 		void OnStrength ();
 		void OnCloak ();
 
@@ -736,9 +736,9 @@ class CWallTool : public CTexToolDlg
 			{ return CBCtrl(IDC_WALL_TYPE); }
 		inline CComboBox *CBClipNo ()
 			{ return CBCtrl(IDC_WALL_CLIPNO); }
-		inline CButton *KeyBtn (INT32 i)
+		inline CButton *KeyBtn (int i)
 			{ return BtnCtrl (IDC_WALL_NOKEY + i); }
-		inline CButton *FlagBtn (INT32 i)
+		inline CButton *FlagBtn (int i)
 			{ return BtnCtrl (IDC_WALL_BLASTED + i); }
 		inline CScrollBar *TransparencySlider ()
 			{ return (CScrollBar *) GetDlgItem (IDC_WALL_TRANSPARENCY); }
@@ -751,24 +751,24 @@ class CWallTool : public CTexToolDlg
 class CTriggerTool : public CTexToolDlg
 {
 	public:
-		INT32					m_nClass;
-		INT32					m_nType;
-		INT32					m_nTime;
-		INT32					m_targets;
-		INT32					m_iTarget;
-		INT32					m_bD1Flags [MAX_TRIGGER_FLAGS];
-		INT32					m_bD2Flags [16];
-		INT32					m_nSliderValue;
+		int					m_nClass;
+		int					m_nType;
+		int					m_nTime;
+		int					m_targets;
+		int					m_iTarget;
+		int					m_bD1Flags [MAX_TRIGGER_FLAGS];
+		int					m_bD2Flags [16];
+		int					m_nSliderValue;
 		double				m_nStrength;
 		CTrigger			m_defTrigger;
 		CTrigger			*m_pTrigger;
-		INT32					m_nTrigger;
+		int					m_nTrigger;
 		CTrigger			*m_pStdTrigger;
-		INT32					m_nStdTrigger;
+		int					m_nStdTrigger;
 		CTrigger			*m_pObjTrigger;
-		INT32					m_nObjTrigger;
+		int					m_nObjTrigger;
 		char					m_szTarget [40];
-		INT32					m_bAutoAddWall;
+		int					m_bAutoAddWall;
 		CWnd					m_showObjWnd;
 		CWnd					m_showTexWnd;
 		bool					m_bFindTrigger;
@@ -785,20 +785,20 @@ class CTriggerTool : public CTexToolDlg
 		void Reset ();
 		void EnableControls (BOOL bEnable);
 		void Refresh ();
-		void AddTarget (INT16 nSegment, INT16 nSide);
-		INT32 FindTarget (INT16 nSegment, INT16 nSide);
-		bool OnD1Flag (INT32 i, INT32 j = -1);
-		void OnD2Flag (INT32 i, INT32 j = 0);
+		void AddTarget (short nSegment, short nSide);
+		int FindTarget (short nSegment, short nSide);
+		bool OnD1Flag (int i, int j = -1);
+		void OnD2Flag (int i, int j = 0);
 		void SetTriggerPtr (void);
 		void ClearObjWindow (void);
 		void DrawObjectImage ();
 		virtual BOOL TextureIsVisible ();
-		bool FindTrigger (INT16 &nTrigger);
+		bool FindTrigger (short &nTrigger);
 		bool TriggerHasSlider (void);
-		INT32 NumTriggers ();
+		int NumTriggers ();
 		void OnSelect1st ();
 		void OnSelect2nd ();
-		void SelectTexture (INT32 nIdC, bool bFirst);
+		void SelectTexture (int nIdC, bool bFirst);
 		afx_msg void OnPaint ();
 		afx_msg void OnAddTrigger ();
 		afx_msg void OnDeleteTrigger ();
@@ -855,17 +855,17 @@ class CTriggerTool : public CTexToolDlg
 			{ return CBCtrl(IDC_TRIGGER_TEXTURE1); }
 		inline CComboBox *CBTexture2 ()
 			{ return CBCtrl(IDC_TRIGGER_TEXTURE2); }
-		inline INT16 Texture1 (void)
-			{ return (INT16) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->m_info.value & 0xffff : 0); }
-		inline INT16 Texture2 (void)
-			{ return (INT16) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->m_info.value >> 16 : 0); }
-		inline void SetTexture (INT16 texture1, INT16 texture2) {
+		inline short Texture1 (void)
+			{ return (short) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->m_info.value & 0xffff : 0); }
+		inline short Texture2 (void)
+			{ return (short) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->m_info.value >> 16 : 0); }
+		inline void SetTexture (short texture1, short texture2) {
 			if ((m_nTrigger >= 0) && m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) {
 				if (texture1 < 0)
 					texture1 = Texture1 ();
 				if (texture2 < 0)
 					texture2 = Texture2 ();
-				m_pTrigger->m_info.value = (FIX) (texture2 << 16) + (FIX) texture1; 
+				m_pTrigger->m_info.value = (fix) (texture2 << 16) + (fix) texture1; 
 				}
 			}
 
@@ -884,8 +884,8 @@ class CTxtFilterTool : public CToolDlg
 		//virtual BOOL OnSetActive ();
 		virtual BOOL OnKillActive ();
 		
-		void SetFilter (INT32 i);
-		void SetFilterRange (UINT32 nFlags, INT32 nValue);
+		void SetFilter (int i);
+		void SetFilterRange (uint nFlags, int nValue);
 
 		afx_msg void OnGrayRock ();
 		afx_msg void OnBrownRock ();
@@ -966,28 +966,28 @@ class CTextureTool : public CTexToolDlg
 		bool					m_bInitTextureListBoxes;
 
 		char					m_szTextureBuf [100];
-		INT32					last_texture1,
+		int					last_texture1,
 								last_texture2,
 								last_mode;
-		INT32					save_texture1,
+		int					save_texture1,
 								save_texture2;
 		CUVL					save_uvls[4];
-//		INT32					frame [2];
+//		int					frame [2];
 		double				m_lights [4];
 //		CWnd					m_textureWnd;
 		CWnd					m_alignWnd;
 		CWnd					m_lightWnd;
 		CWnd					m_colorWnd;
-		INT32					m_bUse1st;
-		INT32					m_bUse2nd;
-		INT32					m_bShowTexture;
-		INT32					m_bShowChildren;
+		int					m_bUse1st;
+		int					m_bUse2nd;
+		int					m_bShowTexture;
+		int					m_bShowChildren;
 		double				m_alignX;
 		double				m_alignY;
 		double				m_alignAngle;
 		double				m_alignUvPoint [4];
 		double				m_zoom;
-		INT32					m_alignRot2nd;
+		int					m_alignRot2nd;
 		POINT					m_apts [4];
 		POINT					m_minPt,
 								m_maxPt,
@@ -996,18 +996,18 @@ class CTextureTool : public CTexToolDlg
 		UINT_PTR				m_nTimer;
 		UINT_PTR				m_nEditTimer;
 		UINT_PTR				m_nLightTimer;
-		INT32					m_nLightDelay;
+		int					m_nLightDelay;
 		double				m_nLightTime;
-		INT32					m_nHighlight;
+		int					m_nHighlight;
 		char					m_szLight [33];
-		INT32					m_iLight;
+		int					m_iLight;
 		BOOL					m_bLightEnabled;
 		BOOL					m_bIgnorePlane;
-		INT32					m_nBrightness;
-		INT32					m_nColorIndex;
+		int					m_nBrightness;
+		int					m_nColorIndex;
 		PALETTEENTRY		m_rgbColor;
 		COLORREF				m_custColors [16];
-		INT32					m_nEditFunc;
+		int					m_nEditFunc;
 
 		CTextureTool (CPropertySheet *pParent = NULL);
 		~CTextureTool ();
@@ -1103,31 +1103,31 @@ class CTextureTool : public CTexToolDlg
 		void OnEditTimer (void);
 
 		void SetLightString ();
-		void SetLightButtons (LPSTR szLight = NULL, INT32 nSpeed = -1);
-		bool SetLightDelay (INT32 nSpeed = -1);
-		void GetBrightness (INT32 nTexture);
-		void SetBrightness (INT32 nBrightness = 0);
+		void SetLightButtons (LPSTR szLight = NULL, int nSpeed = -1);
+		bool SetLightDelay (int nSpeed = -1);
+		void GetBrightness (int nTexture);
+		void SetBrightness (int nBrightness = 0);
 		void UpdateLightWnd (void);
 		void UpdateLight (void);
 		void EnableLightControls (BOOL bEnable);
 
-		void ToggleLight (INT32 i);
+		void ToggleLight (int i);
 		void AnimateTexture (void);
 		void AnimateLight (void);
 		void OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
 		void OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar);
-		void Rot2nd (INT32 iAngle);
-		void HAlign (INT32 dir);
-		void VAlign (INT32 dir);
-		void RAlign (INT32 dir);
+		void Rot2nd (int iAngle);
+		void HAlign (int dir);
+		void VAlign (int dir);
+		void RAlign (int dir);
 		void HFlip (void);
 		void VFlip (void);
-		void SelectTexture (INT32 nIdC, bool bFirst);
-		void PasteTexture (INT16 nSegment, INT16 nSide, INT16 nDepth);
-		bool GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16 linenum,
-									 INT16 *neighbor_segnum, INT16 *neighbor_sidenum);
+		void SelectTexture (int nIdC, bool bFirst);
+		void PasteTexture (short nSegment, short nSide, short nDepth);
+		bool GetAdjacentSide (short start_segment, short start_side, short linenum,
+									 short *neighbor_segnum, short *neighbor_sidenum);
 		bool SideHasLight (void);
-		void CreateColorCtrl (CWnd *pWnd, INT32 nIdC);
+		void CreateColorCtrl (CWnd *pWnd, int nIdC);
 		void UpdateColorCtrl (CWnd *pWnd, COLORREF color);
 		void RotateUV (double angle, bool bUpdate = true);
 		void Refresh ();
@@ -1137,12 +1137,12 @@ class CTextureTool : public CTexToolDlg
 		void RefreshAlignment ();
 		void UpdateAlignWnd (void);
 		void UpdatePaletteWnd (void);
-		void DrawTexture (INT16 texture1, INT16 texture2, INT32 x0, INT32 y0);
+		void DrawTexture (short texture1, short texture2, int x0, int y0);
 		void DrawAlignment (CDC *pDC);
-		INT32 ScrollSpeed (UINT16 texture,INT32 *x,INT32 *y);
-		INT32 AlignTextures (INT16 start_segment, INT16 start_side, INT16 only_child);
-		void AlignChildTextures (INT32 nSegment, INT32 nSide, INT32 nDepth);
-		void AlignChildren (INT16 nSegment, INT16 nSide, bool bStart);
+		int ScrollSpeed (ushort texture,int *x,int *y);
+		int AlignTextures (short start_segment, short start_side, short only_child);
+		void AlignChildTextures (int nSegment, int nSide, int nDepth);
+		void AlignChildren (short nSegment, short nSide, bool bStart);
 		void SetWallColor (void);
 
 		inline CScrollBar *HScrollAlign ()
@@ -1153,7 +1153,7 @@ class CTextureTool : public CTexToolDlg
 			{ return CBCtrl(IDC_TEXTURE_1ST); }
 		inline CComboBox *CBTexture2 ()
 			{ return CBCtrl(IDC_TEXTURE_2ND); }
-		inline CButton *LightButton (INT32 i)
+		inline CButton *LightButton (int i)
 			{ return BtnCtrl (IDC_TEXLIGHT_1 + i); }
 		inline CScrollBar *TimerSlider ()
 			{ return (CScrollBar *) GetDlgItem (IDC_TEXLIGHT_TIMERSLIDER); }
@@ -1168,23 +1168,23 @@ class CTextureTool : public CTexToolDlg
 class CLightTool : public CToolDlg
 {
 	public:
-		INT32		m_bIlluminate;
-		INT32		m_bAvgCornerLight;
-		INT32		m_bScaleLight;
-		INT32		m_bCubeLight;
-		INT32		m_bDynCubeLights;
-		INT32		m_bDeltaLight;
+		int		m_bIlluminate;
+		int		m_bAvgCornerLight;
+		int		m_bScaleLight;
+		int		m_bCubeLight;
+		int		m_bDynCubeLights;
+		int		m_bDeltaLight;
 		double	m_fBrightness;
 		double	m_fLightScale;
 		double	m_fCubeLight;
 		double	m_fDeltaLight;
 		double	m_fVertexLight;
-		INT32		m_nNoLightDeltas;
-		INT32		m_lightRenderDepth;
-		INT32		m_deltaLightRenderDepth;
-		INT32		m_deltaLightFrameRate;
-		INT32		m_bShowLightSource;
-		INT32		m_bCopyTexLights;
+		int		m_nNoLightDeltas;
+		int		m_lightRenderDepth;
+		int		m_deltaLightRenderDepth;
+		int		m_deltaLightFrameRate;
+		int		m_bShowLightSource;
+		int		m_bCopyTexLights;
 
 		CLightTool (CPropertySheet *pParent = NULL);
       virtual BOOL OnInitDialog ();
@@ -1212,19 +1212,19 @@ class CPrefsDlg : public CToolDlg
 		char				m_d1Path [256];
 		char				m_d2Path [256];
 		char				m_missionsPath [256];
-		UINT32			m_mineViewFlags;
-		UINT32			m_objViewFlags;
-		UINT32			m_texViewFlags;
-		INT32				m_iDepthPerception;
+		uint			m_mineViewFlags;
+		uint			m_objViewFlags;
+		uint			m_texViewFlags;
+		int				m_iDepthPerception;
 		double			m_depthPerceptions [4];
-		INT32				m_iRotateRate;
+		int				m_iRotateRate;
 		double			m_rotateRates [5];
 		double			m_moveRate;
-		INT32				m_bExpertMode;
-		INT32				m_bUseTexColors;
-		INT32				m_nViewDist;
-		INT32				m_nMineCenter;
-		INT32				m_nMaxUndo;
+		int				m_bExpertMode;
+		int				m_bUseTexColors;
+		int				m_nViewDist;
+		int				m_nMineCenter;
+		int				m_nMaxUndo;
 		BOOL				m_bSplashScreen;
 		bool				m_bNoRefresh;
 		bool				m_bInvalid;
@@ -1248,10 +1248,10 @@ class CPrefsDlg : public CToolDlg
 		afx_msg void OnLayout0 (void);
 		afx_msg void OnLayout1 (void);
 		afx_msg void OnSetMineCenter (void);
-		void SetLayout (INT32 nLayout);
+		void SetLayout (int nLayout);
 		void FreeTextureHandles (bool bDeleteModified = true);
 		void Refresh (void);
-		void WritePrivateProfileInt (LPSTR szKey, INT32 nValue);
+		void WritePrivateProfileInt (LPSTR szKey, int nValue);
 		void WritePrivateProfileDouble (LPSTR szKey, double nValue);
 		void GetAppSettings ();
 		void SetAppSettings (bool bInitApp = false);
@@ -1269,9 +1269,9 @@ class CPrefsDlg : public CToolDlg
 
 class CToolView : public CWnd {
 	private:
-		INT32				m_scrollRange [2];
-		INT32				m_scrollPage [2];
-		INT32				m_scrollOffs [2];
+		int				m_scrollRange [2];
+		int				m_scrollPage [2];
+		int				m_scrollOffs [2];
 		CSize				m_toolSize;
 		BOOL				m_bHScroll;
 		BOOL				m_bVScroll;
@@ -1299,7 +1299,7 @@ class CToolView : public CWnd {
 		~CToolView ();
 		int Setup ();
 		void Reset () {};
-		afx_msg INT32 OnCreate (LPCREATESTRUCT lpCreateStruct);
+		afx_msg int OnCreate (LPCREATESTRUCT lpCreateStruct);
 		afx_msg void OnDestroy (void);
 		afx_msg void OnPaint ();
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);
@@ -1308,12 +1308,12 @@ class CToolView : public CWnd {
 		afx_msg void OnSelectPrevTab ();
 		afx_msg void OnSelectNextTab ();
 		void CalcToolSize (void);
-		void RecalcLayout (INT32 nToolMode = 0, INT32 nTextureMode = 0);
-		void MoveWindow (INT32 x, INT32 y, INT32 nWidth, INT32 nHeight, BOOL bRepaint = TRUE);
+		void RecalcLayout (int nToolMode = 0, int nTextureMode = 0);
+		void MoveWindow (int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE);
 		void MoveWindow (LPCRECT lpRect, BOOL bRepaint = TRUE);
 		inline CSize& ToolSize ()
 			{ return m_toolSize; }
-		void SetActive (INT32 nPage);
+		void SetActive (int nPage);
 		inline void EditTexture ()
 			{ SetActive (0); }
 		inline void EditCube ()
@@ -1361,7 +1361,7 @@ class CToolView : public CWnd {
 		inline CPrefsDlg *PrefsDlg ()
 			{ return m_prefsDlg; }
 		void Refresh ();
-		void CycleTab (INT32 nDir);
+		void CycleTab (int nDir);
 		void NextTab ();
 		void PrevTab ();
 	DECLARE_MESSAGE_MAP()

@@ -74,7 +74,7 @@ if (!CToolDlg::OnInitDialog ())
 InitSlider (IDC_LIGHT_RENDER_DEPTH, 1, 10);
 InitSlider (IDC_LIGHT_DELTA_RENDER_DEPTH, 1, 10);
 InitSlider (IDC_LIGHT_DELTA_FRAMERATE, 10, 100);
-INT32 i;
+int i;
 for (i = 20; i < 100; i += 10)
 	SlCtrl (IDC_LIGHT_DELTA_FRAMERATE)->SetTic (i);
 m_bInited = true;
@@ -134,9 +134,9 @@ if (m_bAvgCornerLight)
 if (m_bScaleLight)
 	theMine->ScaleCornerLight (m_fLightScale, bAll);
 if (m_bCubeLight)
-	theMine->SetCubeLight (m_fCubeLight, (INT32) bAll, m_bDynCubeLights != 0);
+	theMine->SetCubeLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
-	theMine->CalcDeltaLightData (m_fDeltaLight, (INT32) bAll);
+	theMine->CalcDeltaLightData (m_fDeltaLight, (int) bAll);
 theApp.UnlockUndo ();
 theApp.MineView ()->Refresh ();
 }
@@ -183,14 +183,14 @@ void CLightTool::OnSetVertexLight ()
 {
 CHECKMINE;
 
-	INT32	nVertexLight;
+	int	nVertexLight;
 
 if (!::IsWindow(m_hWnd))
 	return;
 UpdateData (TRUE);
-nVertexLight = (INT32) (m_fVertexLight * f1_0 / 100.0);
+nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 
-	INT16			nSegment, nSide, nVertex, i;
+	short			nSegment, nSide, nVertex, i;
 	CSegment*	segP = theMine->Segments (0);
 	CSide*		sideP;
 	bool			bChange = false;
@@ -226,7 +226,7 @@ theMine->LoadDefaultLightAndColor ();
 
 void CLightTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	INT32	nPos = pScrollBar->GetScrollPos ();
+	int	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (pScrollBar == (CScrollBar *) GetDlgItem (IDC_LIGHT_DELTA_FRAMERATE)) {

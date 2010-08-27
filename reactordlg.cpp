@@ -87,7 +87,7 @@ return CToolDlg::OnSetActive ();
 void CReactorTool::EnableControls (BOOL bEnable)
 {
 CToolDlg::EnableControls (IDC_REACTOR_COUNTDOWN, IDC_REACTOR_SECRETRETURN, bEnable);
-//INT32 i;
+//int i;
 //for (i = IDC_TRIGGER_TRIGGER_NO; i <= IDC_TRIGGER_PASTE; i++)
 //	GetDlgItem (i)->EnableWindow (bEnable);
 }
@@ -101,7 +101,7 @@ m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
 if (m_pTrigger) {
 	m_targets = m_pTrigger->m_count;
-	INT32 i;
+	int i;
 	for (i = 0; i < m_targets ; i++) {
 		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
 		plb->AddString (m_szTarget);
@@ -167,7 +167,7 @@ theMine->SecretCubeNum () = m_nSecretReturn;
 // CReactorTool - Add cube/side to trigger list
 //------------------------------------------------------------------------
 
-void CReactorTool::AddTarget (INT16 nSegment, INT16 nSide) 
+void CReactorTool::AddTarget (short nSegment, short nSide) 
 {
 m_targets = m_pTrigger->m_count;
 if (m_targets >= MAX_TRIGGER_TARGETS) {
@@ -192,7 +192,7 @@ Refresh ();
 
 void CReactorTool::OnAddTarget () 
 {
-INT32 nSegment, nSide;
+int nSegment, nSide;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d,%d", &nSegment, &nSide);
 if ((nSegment < 0) || (nSegment >= theMine->SegCount ()) || (nSide < 1) || (nSide > 6))
@@ -205,7 +205,7 @@ AddTarget (nSegment, nSide);
 void CReactorTool::OnAddWallTarget ()
 {
 CSelection *other = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 () : &theMine->Current1 ();
-INT32 i = FindTarget (other->nSegment, other->nSide);
+int i = FindTarget (other->nSegment, other->nSide);
 if (i >= 0)
 	return;
 LBTargets ()->SetCurSel (i);
@@ -232,7 +232,7 @@ Refresh ();
 
                         /*--------------------------*/
 
-INT32 CReactorTool::FindTarget (INT16 nSegment, INT16 nSide)
+int CReactorTool::FindTarget (short nSegment, short nSide)
 {
 return m_pTrigger->Find (nSegment, nSide);
 }
@@ -242,7 +242,7 @@ return m_pTrigger->Find (nSegment, nSide);
 void CReactorTool::OnDeleteWallTarget ()
 {
 CSelection *other = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 () : &theMine->Current1 ();
-INT32 i = FindTarget (other->nSegment, other->nSide);
+int i = FindTarget (other->nSegment, other->nSide);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
 	return;
@@ -265,10 +265,10 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->m_count))
 	return;
 
-INT16 nSegment = m_pTrigger->Segment (m_iTarget);
+short nSegment = m_pTrigger->Segment (m_iTarget);
 if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
 	 return;
-INT16 nSide = m_pTrigger->Side (m_iTarget);
+short nSide = m_pTrigger->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 

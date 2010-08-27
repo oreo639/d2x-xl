@@ -98,7 +98,7 @@ CHECKMINE;
 CComboBox *pcb = CBCubeNo ();
 if (theMine->SegCount () != pcb->GetCount ()) {
 	pcb->ResetContent ();
-	for (INT32 i = 0; i < theMine->SegCount (); i++) {
+	for (int i = 0; i < theMine->SegCount (); i++) {
 		_itoa_s (i, message, sizeof (message), 10);
 		pcb->AddString (message);
 		}
@@ -131,7 +131,7 @@ if (!CToolDlg::OnInitDialog ())
 CComboBox *pcb = CBType ();
 pcb->ResetContent ();
 
-INT32 h, i, j;
+int h, i, j;
 for (j = sizeof (pszCubeFuncs) / sizeof (*pszCubeFuncs), i = 0; i < j; i++) {
 	h = pcb->AddString (pszCubeFuncs [i]);
 	pcb->SetItemData (h, i);
@@ -160,19 +160,19 @@ SelectItemData (CBType (), m_nType);
 DDX_Double (pDX, IDC_CUBE_LIGHT, m_nLight);
 DDX_Radio (pDX, IDC_CUBE_SIDE1, m_nSide);
 DDX_Radio (pDX, IDC_CUBE_POINT1, m_nPoint);
-for (INT32	i = 0; i < 3; i++) {
+for (int	i = 0; i < 3; i++) {
 	DDX_Double (pDX, IDC_CUBE_POINTX + i, m_nCoord [i]);
 	if (m_nCoord [i] < -0x7fff)
 		m_nCoord [i] = -0x7fff;
 	else if (m_nCoord [i] > 0x7fff)
 		m_nCoord [i] = 0x7fff;
-//	DDV_MinMaxInt (pDX, (FIX) m_nCoord [i], -0x7fff, 0x7fff);
+//	DDV_MinMaxInt (pDX, (fix) m_nCoord [i], -0x7fff, 0x7fff);
 	}
 
-INT32 i;
+int i;
 
 for (i = 0; i < 5; i++) {
-	INT32 h = (m_nProps & (1 << i)) != 0;
+	int h = (m_nProps & (1 << i)) != 0;
 	DDX_Check (pDX, IDC_CUBE_WATER + i, h);
 	if (h)
 		m_nProps |= (1 << i);
@@ -256,7 +256,7 @@ CHECKMINE;
 UpdateData (TRUE);
 theApp.SetModified (TRUE);
 m_nVertex = theMine->CurrSeg ()->m_info.verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
-theMine->Vertices (m_nVertex)->Set ((FIX) (m_nCoord [0] * 0x10000L), (FIX) (m_nCoord [1] * 0x10000L), (FIX) (m_nCoord [2] * 0x10000L));
+theMine->Vertices (m_nVertex)->Set ((fix) (m_nCoord [0] * 0x10000L), (fix) (m_nCoord [1] * 0x10000L), (fix) (m_nCoord [2] * 0x10000L));
 theApp.MineView ()->Refresh (false);
 }
 
@@ -275,7 +275,7 @@ theApp.MineView ()->Refresh (false);
 
                         /*--------------------------*/
 
-void CSegmentTool::OnProp (INT32 nProp)
+void CSegmentTool::OnProp (int nProp)
 {
 CHECKMINE;
 theApp.SetModified (TRUE);
@@ -294,7 +294,7 @@ void CSegmentTool::OnProp5 () { OnProp (4); }
 
                         /*--------------------------*/
 
-void CSegmentTool::OnSide (INT32 nSide)
+void CSegmentTool::OnSide (int nSide)
 {
 CHECKMINE;
 theMine->Current ()->nSide = m_nSide = nSide;
@@ -310,7 +310,7 @@ void CSegmentTool::OnSide6 () { OnSide (5); }
 
                         /*--------------------------*/
 
-void CSegmentTool::OnPoint (INT32 nPoint)
+void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
 theMine->Current ()->nPoint = m_nPoint = nPoint;
@@ -324,11 +324,11 @@ void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
                         /*--------------------------*/
 
-void CSegmentTool::SetDefTexture (INT16 nTexture)
+void CSegmentTool::SetDefTexture (short nTexture)
 {
 CSegment *segP = theMine->Segments (0) + m_nSegment;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
-	INT32 i;
+	int i;
 	for (i = 0; i < 6; i++)
 		if (segP->Child (i) == -1)
 			theMine->SetTexture (m_nSegment, i, nTexture, 0);
@@ -346,7 +346,7 @@ if (!(m_bInited && theMine))
 InitCBCubeNo ();
 OnResetCoord ();
 
-INT32 h, i, j;
+int h, i, j;
 
 // update automatic data
 theMine->RenumberBotGens ();
@@ -369,28 +369,28 @@ OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
 CTrigger *trigP = theMine->Triggers (0);
-INT32 nTrigger;
+int nTrigger;
 for (nTrigger = 0; nTrigger < theMine->GameInfo ().triggers.count; nTrigger++, trigP++) {
 	for (i = 0; i < trigP->m_count; i++) {
 		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
 			CWall *wallP = theMine->Walls (0);
-			INT32 nWall;
+			int nWall;
 			for (nWall = 0; nWall < theMine->GameInfo ().walls.count ;nWall++, wallP++) {
 				if (wallP->m_info.nTrigger == nTrigger) 
 					break;
 				}
 			if (nWall < theMine->GameInfo ().walls.count) {
-				sprintf_s (message, sizeof (message),  "%d,%d", (INT32) wallP->m_nSegment, (INT32) wallP->m_nSide + 1);
-				INT32 h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (FIX) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
+				sprintf_s (message, sizeof (message),  "%d,%d", (int) wallP->m_nSegment, (int) wallP->m_nSide + 1);
+				int h = LBTriggers ()->AddString (message);
+				LBTriggers ()->SetItemData (h, (fix) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
 				}
 			}
 		}
 	}
 // show if this is cube/side is trigPed by the control_center
 CReactorTrigger* reactorTrigger = theMine->ReactorTriggers (0);
-INT32 control;
+int control;
 for (control = 0; control < MAX_REACTOR_TRIGGERS; control++, reactorTrigger++) {
 	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide))) {
 		LBTriggers ()->AddString ("Reactor");
@@ -407,12 +407,12 @@ m_nLight = ((double) segP->m_info.staticLight) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
 if (IsBotMaker (segP)) {
-	INT32 nMatCen = segP->m_info.nMatCen;
+	int nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
 	char		szObj [80];
-	INT32		objFlags [2];
+	int		objFlags [2];
 	for (i = 0; i < 2; i++)
 		objFlags [i] = theMine->BotGens (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
@@ -433,12 +433,12 @@ if (IsBotMaker (segP)) {
 		}
 	}
 else if (IsEquipMaker (segP)) {
-	INT32 nMatCen = segP->m_info.nMatCen;
+	int nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
 	HINSTANCE hInst = AfxGetInstanceHandle ();
 	char		szObj [80];
-	INT32		objFlags [2];
+	int		objFlags [2];
 	for (i = 0; i < 2; i++)
 		objFlags [i] = theMine->EquipGens (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
@@ -529,7 +529,7 @@ theApp.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
-	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
+	for (short nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
 		if (segP->m_info.wallFlags & MARKED_MASK)
 			segP->m_info.owner = m_nOwner;
 	}
@@ -554,7 +554,7 @@ theApp.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
-	for (INT16 nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
+	for (short nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
 		if (segP->m_info.wallFlags & MARKED_MASK)
 			segP->m_info.group = m_nGroup;
 	}
@@ -574,19 +574,19 @@ CHECKMINE;
 
 	BOOL		bChangeOk = TRUE;
 	BOOL		bMarked = theMine->GotMarkedSegments ();
-	INT32		nSegNum, nMinSeg, nMaxSeg;
+	int		nSegNum, nMinSeg, nMaxSeg;
 
 bool bUndo = theApp.SetModified (TRUE);
 theApp.LockUndo ();
 theApp.MineView ()->DelayRefresh (true);
 m_nLastCube = -1; //force Refresh() to rebuild all dialog data
-UINT8 nType = UINT8 (CBType ()->GetItemData (CBType ()->GetCurSel ()));
+byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if (bMarked) {
 	nMinSeg = 0;
 	nMaxSeg = theMine->SegCount ();
 	}
 else {
-	nMinSeg = INT32 (theMine->CurrSeg () - theMine->Segments (0));
+	nMinSeg = int (theMine->CurrSeg () - theMine->Segments (0));
 	nMaxSeg = nMinSeg + 1;
 	}
 CSegment* segP = theMine->Segments (nMinSeg);
@@ -699,24 +699,24 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 #else
 	if (m_nType == SEGMENT_FUNC_ROBOTMAKER) {
 		// remove matcen
-		INT32 nMatCens = (INT32) theMine->GameInfo ().matcen.count;
+		int nMatCens = (int) theMine->GameInfo ().matcen.count;
 		if (nMatCens > 0) {
 			// fill in deleted matcen
-			INT32 nDelMatCen = theMine->CurrSeg ()->value;
+			int nDelMatCen = theMine->CurrSeg ()->value;
 			memcpy (theMine->BotGens (nDelMatCen), theMine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
 			theMine->GameInfo ().matcen.count--;
-			INT32 i;
+			int i;
 			for (i = 0; i < 6; i++)
 				theMine->DeleteTriggerTargets (m_nSegment, i);
 			}
 		}
 	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
-		INT16 nSegNum = theMine->Current ()->nSegment;
+		short nSegNum = theMine->Current ()->nSegment;
 		CSegment *childseg, *segP = theMine->CurrSeg ();
 		CSide *oppside, *sideP = theMine->CurrSide ();
 		CWall *wallP;
-		INT16 nOppSeg, nOppSide;
-		for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
+		short nOppSeg, nOppSide;
+		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 			if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 				continue;
 			childseg = theMine->Segments (0) + segP->Child (nSide);
@@ -778,13 +778,13 @@ void CSegmentTool::OnLight ()
 {
 CHECKMINE;
 UpdateData (TRUE);
-theMine->CurrSeg ()->m_info.staticLight = (FIX) (m_nLight * 24 * 327.68);
+theMine->CurrSeg ()->m_info.staticLight = (fix) (m_nLight * 24 * 327.68);
 theApp.SetModified (TRUE);
 }
 
                         /*--------------------------*/
 
-void CSegmentTool::OnDamage (INT32 i) 
+void CSegmentTool::OnDamage (int i) 
 {
 CHECKMINE;
 UpdateData (TRUE);
@@ -797,14 +797,14 @@ void CSegmentTool::OnDamage1 () { OnDamage (1); }
 
                         /*--------------------------*/
 
-INT32 CSegmentTool::FindBot (CListBox *plb, LPSTR pszObj)
+int CSegmentTool::FindBot (CListBox *plb, LPSTR pszObj)
 {
-	INT32 i, j;
+	int i, j;
 
 i = plb->GetCurSel ();
 if (i < 0)
 	return -1;
-j = INT32 (plb->GetItemData (i));
+j = int (plb->GetItemData (i));
 if (pszObj)
 	LoadString (AfxGetInstanceHandle(), ROBOT_STRING_TABLE + j, pszObj, 80);
 return j;
@@ -812,14 +812,14 @@ return j;
 
                         /*--------------------------*/
 
-INT32 CSegmentTool::FindEquip (CListBox *plb, LPSTR pszObj)
+int CSegmentTool::FindEquip (CListBox *plb, LPSTR pszObj)
 {
-	INT32 i, j;
+	int i, j;
 
 i = plb->GetCurSel ();
 if (i < 0)
 	return -1;
-j = INT32 (plb->GetItemData (i));
+j = int (plb->GetItemData (i));
 if (pszObj)
 	LoadString (AfxGetInstanceHandle(), POWERUP_STRING_TABLE + j, pszObj, 80);
 return j;
@@ -833,13 +833,13 @@ void CSegmentTool::AddBot ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->m_info.nMatCen;
+int matcen = segP->m_info.nMatCen;
 char szObj [80];
-INT32 i = FindBot (LBAvailBots (), szObj);
+int i = FindBot (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 theMine->BotGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
-INT32 h = LBAvailBots ()->GetCurSel ();
+int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
@@ -856,13 +856,13 @@ void CSegmentTool::AddEquip ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->m_info.nMatCen;
+int matcen = segP->m_info.nMatCen;
 char szObj [80];
-INT32 i = FindEquip (LBAvailBots (), szObj);
+int i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS2))
 	return;
 theMine->EquipGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
-INT32 h = LBAvailBots ()->GetCurSel ();
+int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
@@ -893,13 +893,13 @@ void CSegmentTool::DeleteBot ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->m_info.nMatCen;
+int matcen = segP->m_info.nMatCen;
 char szObj [80];
-INT32 i = FindBot (LBUsedBots (), szObj);
+int i = FindBot (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 theMine->BotGens (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
-INT32 h = LBUsedBots ()->GetCurSel ();
+int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
@@ -916,13 +916,13 @@ void CSegmentTool::DeleteEquip ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-INT32 matcen = segP->m_info.nMatCen;
+int matcen = segP->m_info.nMatCen;
 char szObj [80];
-INT32 i = FindEquip (LBUsedBots (), szObj);
+int i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 theMine->EquipGens (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
-INT32 h = LBUsedBots ()->GetCurSel ();
+int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
@@ -963,12 +963,12 @@ void CSegmentTool::OnWallDetails ()
 CHECKMINE;
 if (!LBTriggers ()->GetCount ())
 	return;
-INT32 i = LBTriggers ()->GetCurSel ();
+int i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-theMine->Current ()->nSegment = (INT16) (h / 0x10000L);
-theMine->Current ()->nSide = (INT16) (h % 0x10000L);
+theMine->Current ()->nSegment = (short) (h / 0x10000L);
+theMine->Current ()->nSide = (short) (h % 0x10000L);
 theApp.ToolView ()->EditWall ();
 theApp.MineView ()->Refresh ();
 }
@@ -982,14 +982,14 @@ void CSegmentTool::OnTriggerDetails ()
 CHECKMINE;
 if (!LBTriggers ()->GetCount ())
 	return;
-INT32 i = LBTriggers ()->GetCurSel ();
+int i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
 theMine->Other ()->nSegment = theMine->Current ()->nSegment;
 theMine->Other ()->nSide = theMine->Current ()->nSide;
-theMine->Current ()->nSegment = (INT16) (h / 0x10000L);
-theMine->Current ()->nSide = (INT16) (h % 0x10000L);
+theMine->Current ()->nSegment = (short) (h / 0x10000L);
+theMine->Current ()->nSide = (short) (h % 0x10000L);
 theApp.ToolView ()->EditTrigger ();
 theApp.MineView ()->Refresh ();
 }

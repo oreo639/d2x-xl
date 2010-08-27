@@ -106,7 +106,7 @@ return TRUE;
                         /*--------------------------*/
 
 typedef struct tCtrlMap {
-	INT32	nFlag, nIdC;
+	int	nFlag, nIdC;
 } tCtrlMap;
 
 tCtrlMap ctrlMap [] = {
@@ -147,7 +147,7 @@ void CTxtFilterTool::DoDataExchange (CDataExchange *pDX)
 if (!HaveData (pDX)) 
 	return;
 
-	INT32		h, i;
+	int		h, i;
 
 for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
 	h = (theApp.TextureView ()->TextureFilter () & ctrlMap [i].nFlag) != 0;
@@ -161,7 +161,7 @@ for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
 
                         /*--------------------------*/
 
-void CTxtFilterTool::SetFilter (INT32 i)
+void CTxtFilterTool::SetFilter (int i)
 {
 if (theApp.TextureView ()->TextureFilter () & ctrlMap [i].nFlag)
 	theApp.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
@@ -173,7 +173,7 @@ theApp.TextureView ()->Refresh ();
 
                         /*--------------------------*/
 
-void CTxtFilterTool::SetFilterRange (UINT32 nFlags, INT32 nValue)
+void CTxtFilterTool::SetFilterRange (uint nFlags, int nValue)
 {
 if (nValue == 1)
 	theApp.TextureView ()->TextureFilter () |= nFlags;

@@ -179,7 +179,7 @@ return 0;
 
                         /*--------------------------*/
 
-INT32 CToolView::OnCreate (LPCREATESTRUCT lpCreateStruct) 
+int CToolView::OnCreate (LPCREATESTRUCT lpCreateStruct) 
 {
 if (CWnd::OnCreate (lpCreateStruct) == -1)
 	return -1;
@@ -249,7 +249,7 @@ return 1;
 */
 }
 
-void CToolView::MoveWindow (INT32 x, INT32 y, INT32 nWidth, INT32 nHeight, BOOL bRepaint)
+void CToolView::MoveWindow (int x, int y, int nWidth, int nHeight, BOOL bRepaint)
 {
 /*
 if (nHeight > 100) {
@@ -351,7 +351,7 @@ RecalcLayout ();
 
                         /*--------------------------*/
 
-void CToolView::RecalcLayout (INT32 nToolMode, INT32 nTextureMode)
+void CToolView::RecalcLayout (int nToolMode, int nTextureMode)
 {
 	CRect	rc;
 	CSize	paneSize;
@@ -411,7 +411,7 @@ m_bRecalcLayout = FALSE;
 
                         /*--------------------------*/
 
-void CToolView::SetActive (INT32 nPage)
+void CToolView::SetActive (int nPage)
 {
 if (m_pTools) {
 	m_pTools->SetActivePage (nPage);
@@ -421,10 +421,10 @@ if (m_pTools) {
 
                         /*--------------------------*/
 
-void CToolView::CycleTab (INT32 nDir)
+void CToolView::CycleTab (int nDir)
 {
-INT32 i = m_pTools->GetPageIndex (m_pTools->GetActivePage ()) + nDir;
-INT32 h = m_pTools->GetPageCount ();
+int i = m_pTools->GetPageIndex (m_pTools->GetActivePage ()) + nDir;
+int h = m_pTools->GetPageCount ();
 if (i < 0)
 	i = h - 1;
 else if (i >= h)
@@ -465,7 +465,7 @@ NextTab ();
                         /*--------------------------*/
 
 #if 0
-INT32 CDlcBitmapButton::OnToolHitTest (CPoint point, TOOLINFO* pTI)
+int CDlcBitmapButton::OnToolHitTest (CPoint point, TOOLINFO* pTI)
 {
 	CRect	rc;
 

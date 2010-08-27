@@ -135,7 +135,7 @@ last_texture1 = -1;
 last_texture2 = 0;
 save_texture1 = -1;
 save_texture2 = 0;
-INT32 i;
+int i;
 for (i = 0; i < 4; i++)
 	save_uvls [i].l = default_uvls [i].l;
 #if TEXTOODLG == 0
@@ -187,7 +187,7 @@ if (m_bInited) {
 
                         /*--------------------------*/
 
-void CTextureTool::CreateColorCtrl (CWnd *pWnd, INT32 nIdC)
+void CTextureTool::CreateColorCtrl (CWnd *pWnd, int nIdC)
 {
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
@@ -298,7 +298,7 @@ void CTextureTool::DoDataExchange (CDataExchange *pDX)
 if (!HaveData (pDX)) 
 	return;
 
-	INT32		i, nBrightness;
+	int		i, nBrightness;
 	char		szBrightness [20];
 
 for (i = 0; i < 4; i++)
@@ -337,15 +337,15 @@ CHECKMINE;
 
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	char			name [80];
-	INT32			bShowFrames;
-	INT32			nTextures, iTexture, index;
+	int			bShowFrames;
+	int			nTextures, iTexture, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 
 bShowFrames = GetCheck (IDC_TEXTURE_SHOWFRAMES);
 
-INT16 texture1 = theMine->CurrSide ()->m_info.nBaseTex;
-INT16 texture2 = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff;
+short texture1 = theMine->CurrSide ()->m_info.nBaseTex;
+short texture2 = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff;
 
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
@@ -440,7 +440,7 @@ m_textureWnd.UpdateWindow ();
 
                         /*--------------------------*/
 
-INT32 lightIdxFromMode [4] = {0, 3, 2, 1};
+int lightIdxFromMode [4] = {0, 3, 2, 1};
 
 void CTextureTool::Refresh (void)
 {
@@ -456,9 +456,9 @@ if (m_bInitTextureListBoxes) {
 	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
-	INT16			texture1, texture2, mode;
+	short			texture1, texture2, mode;
 	bool			bShowTexture;
-	INT32			i, j;
+	int			i, j;
 	CSegment*	segP;
 	CSide*		sideP;
 	CWall*		pWall;
@@ -478,7 +478,7 @@ m_frame [1] = 0;
 segP = theMine->CurrSeg ();
 sideP = theMine->CurrSide ();
 colorP = theMine->CurrLightColor ();
-INT32 nSide = theMine->Current ()->nSide;
+int nSide = theMine->Current ()->nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 pWall = theMine->CurrWall ();
@@ -496,16 +496,16 @@ mode = sideP->m_info.nOvlTex & 0xc000;
 for (i = 0; i < 4; i++) {
 /*
 	switch(mode) {
-		case (INT16) 0x0000: 
+		case (short) 0x0000: 
 			j = i;       
 			break;
-		case (INT16) 0x4000: 
+		case (short) 0x4000: 
 			j = (i + 3) % 4; 
 			break;
-		case (INT16) 0x8000: 
+		case (short) 0x8000: 
 			j = (i + 2) % 4;
 			break;
-		case (INT16) 0xC000: 
+		case (short) 0xC000: 
 			j = (i + 1) % 4;
 			break;
 		default: 
@@ -513,13 +513,13 @@ for (i = 0; i < 4; i++) {
 		}
 */
 	j = (i + lightIdxFromMode [mode / 0x4000]) % 4;
-	m_lights [j] = (double) ((UINT16) sideP->m_info.uvls [i].l) / 327.68;
+	m_lights [j] = (double) ((ushort) sideP->m_info.uvls [i].l) / 327.68;
 	}
 
 if (segP->Child (nSide)==-1)
 	bShowTexture = TRUE;
 else {
-	UINT16 nWall = sideP->m_info.nWall;
+	ushort nWall = sideP->m_info.nWall;
 	bShowTexture = (nWall < theMine->GameInfo ().walls.count);
 	}
 if (bShowTexture) {
@@ -572,11 +572,11 @@ if (!PaintTexture (&m_textureWnd))
 
                         /*--------------------------*/
 #if TEXTOOLDLG == 0
-void CTextureTool::DrawTexture (INT16 texture1, INT16 texture2, INT32 x0, INT32 y0) 
+void CTextureTool::DrawTexture (short texture1, short texture2, int x0, int y0) 
 {
-	UINT8 bitmap_array [64*64];
-	INT32 x_offset;
-	INT32 y_offset;
+	byte bitmap_array [64*64];
+	int x_offset;
+	int y_offset;
 	x_offset = 0;
 	y_offset = 0;
 	CDC	*pDC = m_textureWnd.GetDC ();
@@ -644,12 +644,12 @@ void CTextureTool::AnimateTexture (void)
 {
 	CSegment *segP = theMine->CurrSeg ();
 
-	UINT16 texture [2];
-	static INT32 scroll_offset_x = 0;
-	static INT32 scroll_offset_y = 0;
-	INT32 bScroll;
-	INT32 x,y;
-	static INT32 old_x,old_y;
+	ushort texture [2];
+	static int scroll_offset_x = 0;
+	static int scroll_offset_y = 0;
+	int bScroll;
+	int x,y;
+	static int old_x,old_y;
 
 	CSide	*sideP = theMine->CurrSide ();
 
@@ -679,7 +679,7 @@ scroll_offset_y = 0;
 
 // abort if this is not a wall
 #ifndef _DEBUG
-UINT16 nWall = sideP->m_info.nWall;
+ushort nWall = sideP->m_info.nWall;
 if (nWall >= theMine->GameInfo ().walls.count)
 	return;
 
@@ -687,11 +687,11 @@ if (nWall >= theMine->GameInfo ().walls.count)
 if (theMine->Walls () [nWall].type != WALL_DOOR)
 	return;
 #endif
-	INT32 i;
-	static INT32 hold_time [2] = {0,0};
-	static INT32 inc [2]= {1,1}; // 1=forward or -1=backwards
-	INT32 index [2];
-	static UINT16 d1_anims [] = {
+	int i;
+	static int hold_time [2] = {0,0};
+	static int inc [2]= {1,1}; // 1=forward or -1=backwards
+	int index [2];
+	static ushort d1_anims [] = {
 		371, 376, 387, 399, 413, 419, 424, 436, 444, 459,
 		472, 486, 492, 500, 508, 515, 521, 529, 536, 543,
 		550, 563, 570, 577, 584, 0
@@ -700,7 +700,7 @@ if (theMine->Walls () [nWall].type != WALL_DOOR)
 //       the number of frames in 577
 // The 0 is used to end the search
 
-	static UINT16 d2_anims [] = {
+	static ushort d2_anims [] = {
 		435, 440, 451, 463, 477, 483, 488, 500, 508, 523,
 		536, 550, 556, 564, 572, 579, 585, 593, 600, 608,
 		615, 628, 635, 642, 649, 664, 672, 687, 702, 717,
@@ -711,7 +711,7 @@ if (theMine->Walls () [nWall].type != WALL_DOOR)
 // note: 910 is not an anim texture, but it is used to calculate
 //       the number of frames in 901
 // The 0 is used to end the search
-	UINT16 *anim; // points to d1_anim or d2_anim depending on m_fileType
+	ushort *anim; // points to d1_anim or d2_anim depending on m_fileType
 
 // first find out if one of the textures is animated
 anim = (IsD1File ()) ? d1_anims : d2_anims;
@@ -772,18 +772,18 @@ else
 
                         /*--------------------------*/
 
-void CTextureTool::SelectTexture (INT32 nIdC, bool bFirst)
+void CTextureTool::SelectTexture (int nIdC, bool bFirst)
 {
 if (!theMine) return;
 
 	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
-	INT32			index = pcb->GetCurSel ();
+	int			index = pcb->GetCurSel ();
 	
 if (index <= 0)
 	sideP->m_info.nOvlTex = 0;
 else {
-	INT16 texture = (INT16) pcb->GetItemData (index);
+	short texture = (short) pcb->GetItemData (index);
 	if (bFirst)
 		theMine->SetTexture (-1, -1, texture, -1);
 	else
@@ -801,11 +801,11 @@ if (!theMine) return;
 
 UpdateData (TRUE);
 CSide *sideP = theMine->CurrSide ();
-INT16 mode = sideP->m_info.nOvlTex & 0xc000;
-INT32 i, j;
+short mode = sideP->m_info.nOvlTex & 0xc000;
+int i, j;
 for (i = 0; i < 4; i++) {
 	j = (i + lightIdxFromMode [mode / 0x4000]) % 4;
-	sideP->m_info.uvls [i].l = (UINT16) (m_lights [j] * 327.68);
+	sideP->m_info.uvls [i].l = (ushort) (m_lights [j] * 327.68);
 	}
 theApp.MineView ()->Refresh ();
 }
@@ -830,7 +830,7 @@ void CTextureTool::OnEditTexture ()
 {
 	CTextureEdit	e (NULL);
 
-INT32 i = INT32 (e.DoModal ());
+int i = int (e.DoModal ());
 theApp.MineView ()->Refresh (false);
 Refresh ();
 }
@@ -849,16 +849,16 @@ if (!theMine) return;
 
 save_texture1 = sideP->m_info.nBaseTex & 0x3fff;
 save_texture2 = sideP->m_info.nOvlTex & 0x3fff;
-INT32 i;
+int i;
 for (i = 0; i < 4; i++)
 	save_uvls [i].l = sideP->m_info.uvls [i].l;
 
 //CBTexture1 ()->SelectString (-1, texture_name1);
 //CBTexture2 ()->SelectString (-1, texture_name2);
 pcb = CBTexture1 ();
-LoadString (hInst, texture_resource + INT32 (pcb->GetItemData (pcb->GetCurSel ())), t1Name, sizeof (t1Name));
+LoadString (hInst, texture_resource + int (pcb->GetItemData (pcb->GetCurSel ())), t1Name, sizeof (t1Name));
 pcb = CBTexture2 ();
-if (i = INT32 (pcb->GetItemData (pcb->GetCurSel ())))
+if (i = int (pcb->GetItemData (pcb->GetCurSel ())))
 	LoadString (hInst, texture_resource + i, t2Name, sizeof (t2Name));
 else
 	strcpy_s (t2Name, sizeof (t2Name), "(none)");
@@ -899,7 +899,7 @@ if (!(m_bUse1st || m_bUse2nd))
 theApp.SetModified (TRUE);
 theMine->SetTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
-INT32 i;
+int i;
 for (i = 0; i < 4; i++)
 	sideP->m_info.uvls [i].l = save_uvls [i].l;
 Refresh ();
@@ -921,7 +921,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
 	CSegment *segP = theMine->Segments (0);
-INT32 nSegment;
+int nSegment;
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
     segP->m_info.nIndex = 0;
 theApp.SetModified (TRUE);
@@ -942,7 +942,7 @@ UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
 
-	INT16			nSegment,
+	short			nSegment,
 					nSide;
 	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
@@ -961,7 +961,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 			if (segP->Child (nSide) == -1) {
 				bChange = true;
 				theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
-				INT32 i;
+				int i;
 				for (i = 0; i < 4; i++)
 					sideP->m_info.uvls [i].l = save_uvls [i].l;
 				}
@@ -986,7 +986,7 @@ UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
 
-	INT16			nSegment,
+	short			nSegment,
 					nSide;
 	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
@@ -1010,7 +1010,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
 				 continue;
 			if (theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
-//			INT32 i;
+//			int i;
 //			for (i = 0; i < 4; i++)
 //				sideP->m_info.uvls [i].l = save_uvls [i].l;
 			}
@@ -1024,7 +1024,7 @@ theApp.MineView ()->Refresh ();
 
                         /*--------------------------*/
 
-void CTextureTool::PasteTexture (INT16 nSegment, INT16 nSide, INT16 nDepth) 
+void CTextureTool::PasteTexture (short nSegment, short nSide, short nDepth) 
 {
 if (!theMine) return;
 
@@ -1033,9 +1033,9 @@ if (nDepth <= 0)
 
 	CSegment	*segP = theMine->Segments (nSegment);
 	CSide		*sideP = segP->m_sides + nSide;
-	INT16			old_texture1, 
+	short			old_texture1, 
 					old_texture2;
-	INT32			i;
+	int			i;
 
 // remember these texture for a comparison below
 old_texture1 = sideP->m_info.nBaseTex;
@@ -1053,7 +1053,7 @@ for (i = 0; i < 4; i++)
 
 // now check each adjing side to see it has the same texture
 for (i = 0; i < 4; i++) {
-	INT16 adj_segnum, adj_sidenum;
+	short adj_segnum, adj_sidenum;
 	if (GetAdjacentSide (nSegment, nSide, i, &adj_segnum, &adj_sidenum)) {
 		// if adj matches and its not "pasted" yet
 		segP = theMine->Segments (adj_segnum);
@@ -1079,15 +1079,15 @@ for (i = 0; i < 4; i++) {
 
                         /*--------------------------*/
 
-bool CTextureTool::GetAdjacentSide (INT16 nStartSeg, INT16 nStartSide, INT16 nLine,
-												INT16 *nAdjSeg, INT16 *nAdjSide) 
+bool CTextureTool::GetAdjacentSide (short nStartSeg, short nStartSide, short nLine,
+												short *nAdjSeg, short *nAdjSide) 
 {
 	CSegment *segP;
-	INT16 nSide, nChild;
-	INT16 point0, point1, vert0, vert1;
-	INT16 nChildSide, nChildLine;
-	INT16 nChildPoint0, nChildPoint1, nChildVert0, nChildVert1;
-	INT32 sideChildTable[6][4] = {
+	short nSide, nChild;
+	short point0, point1, vert0, vert1;
+	short nChildSide, nChildLine;
+	short nChildPoint0, nChildPoint1, nChildVert0, nChildVert1;
+	int sideChildTable[6][4] = {
 		{4,3,5,1},
 		{2,4,0,5},
 		{5,3,4,1},
@@ -1134,9 +1134,9 @@ return false;
 }
                         /*--------------------------*/
 
-void CTextureTool::GetBrightness (INT32 nTexture)
+void CTextureTool::GetBrightness (int nTexture)
 {
-	INT32 nBrightness;
+	int nBrightness;
 
 if (nTexture < 0)
 	nBrightness = 0;
@@ -1153,7 +1153,7 @@ m_nBrightness = nBrightness;
 
                         /*--------------------------*/
 
-void CTextureTool::SetBrightness (INT32 nBrightness)
+void CTextureTool::SetBrightness (int nBrightness)
 {
 	static	BOOL	bSemaphore = FALSE;
 
@@ -1161,8 +1161,8 @@ if (!bSemaphore) {
 	bSemaphore = TRUE;
 
 	CComboBox	*pcb = (m_bUse2nd && !m_bUse1st) ? CBTexture2 () : CBTexture1 ();
-	INT32			index = pcb->GetCurSel ();
-	INT16			texture = (INT16) pcb->GetItemData (index);
+	int			index = pcb->GetCurSel ();
+	short			texture = (short) pcb->GetItemData (index);
 
 	if (texture >= 0) {
 		m_nBrightness = nBrightness;
@@ -1183,7 +1183,7 @@ UpdateData (TRUE);
 
 void CTextureTool::OnHScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	INT32	nPos = pScrollBar->GetScrollPos ();
+	int	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (pScrollBar == BrightnessSlider ()) {
@@ -1247,7 +1247,7 @@ UpdateAlignWnd ();
 
 void CTextureTool::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
-	INT32	nPos = pScrollBar->GetScrollPos ();
+	int	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
 if (pScrollBar == TimerSlider ()) {
@@ -1341,7 +1341,7 @@ else {
 BOOL CTextureTool::OnNotify (WPARAM wParam, LPARAM lParam, LRESULT *pResult)
 {
 	LPNMHDR	nmHdr = (LPNMHDR) lParam;
-	INT32		nMsg = nmHdr->code;
+	int		nMsg = nmHdr->code;
 
 switch (wParam) {
 	case IDC_TEXALIGN_HALIGN:
@@ -1358,7 +1358,7 @@ switch (wParam) {
 	case IDC_TEXALIGN_HSHRINK:
 	case IDC_TEXALIGN_VSHRINK:
 		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
-			m_nEditFunc = INT32 (wParam);
+			m_nEditFunc = int (wParam);
 			m_nEditTimer = SetTimer (3, m_nTimerDelay = 250U, NULL);
 			}
 		else {

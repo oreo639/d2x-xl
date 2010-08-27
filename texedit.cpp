@@ -63,12 +63,12 @@ CPaletteWnd::~CPaletteWnd ()
 #define	MINRGB(rgb)	(((rgb)->peRed < (rgb)->peGreen) ? ((rgb)->peRed < (rgb)->peBlue) ? (rgb)->peRed : (rgb)->peBlue : ((rgb)->peGreen < (rgb)->peBlue) ? (rgb)->peGreen : (rgb)->peBlue)
 #define	MAXRGB(rgb)	(((rgb)->peRed > (rgb)->peGreen) ? ((rgb)->peRed > (rgb)->peBlue) ? (rgb)->peRed : (rgb)->peBlue : ((rgb)->peGreen > (rgb)->peBlue) ? (rgb)->peGreen : (rgb)->peBlue)
 
-#define sqr(v)	(((INT32)(v))*((INT32)(v)))
+#define sqr(v)	(((int)(v))*((int)(v)))
 
-INT32 CPaletteWnd::CmpColors (PALETTEENTRY *c, PALETTEENTRY *m)
+int CPaletteWnd::CmpColors (PALETTEENTRY *c, PALETTEENTRY *m)
 {
-INT32 i = c->peRed + c->peGreen + c->peBlue; //Luminance (c->peRed, c->peGreen, c->peBlue);
-INT32 j = m->peRed + m->peGreen + m->peBlue; //Luminance (m->peRed, m->peGreen, m->peBlue);
+int i = c->peRed + c->peGreen + c->peBlue; //Luminance (c->peRed, c->peGreen, c->peBlue);
+int j = m->peRed + m->peGreen + m->peBlue; //Luminance (m->peRed, m->peGreen, m->peBlue);
 if (i < j)
 	return -1;
 if (i > j)
@@ -90,9 +90,9 @@ return 0;
 
                         /*--------------------------*/
 
-void CPaletteWnd::SortPalette (INT32 left, INT32 right)
+void CPaletteWnd::SortPalette (int left, int right)
 {
-	INT32				l = left,
+	int				l = left,
 						r = right;
 	PALETTEENTRY	m = m_palColors [(l + r) / 2];
 
@@ -106,7 +106,7 @@ do {
 			PALETTEENTRY h = m_palColors [l];
 			m_palColors [l] = h = m_palColors [r];
 			m_palColors [r] = h;
-			UINT8 i = m_nSortedPalIdx [l];
+			byte i = m_nSortedPalIdx [l];
 			m_nSortedPalIdx [l] = m_nSortedPalIdx [r];
 			m_nSortedPalIdx [r] = i;
 			}
@@ -125,7 +125,7 @@ if (l < right)
 
 void CPaletteWnd::CreatePalette ()
 {
-INT32 i;
+int i;
 for (i = 0; i < 256; i++) {
 	m_nSortedPalIdx [i] = i;
 	RgbFromIndex (i, m_palColors + i);
@@ -141,7 +141,7 @@ UpdateWindow ();
 
                         /*--------------------------*/
 
-INT32 CPaletteWnd::Create (CWnd *pParentWnd, INT32 nWidth, INT32 nHeight)
+int CPaletteWnd::Create (CWnd *pParentWnd, int nWidth, int nHeight)
 {
 	CRect	rc;
 
@@ -161,7 +161,7 @@ return CWnd::Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 
                         /*--------------------------*/
 
-bool CPaletteWnd::SelectColor (CPoint& point, INT32& color, PALETTEENTRY *pRGB)
+bool CPaletteWnd::SelectColor (CPoint& point, int& color, PALETTEENTRY *pRGB)
 {
 	CRect	rcPal;
 
@@ -169,12 +169,12 @@ GetClientRect (rcPal);
 //ClientToScreen (rcPal);
 // if over palette, redefine foreground color
 if (PtInRect (rcPal, point)) {
-	INT32 x,y;
+	int x,y;
 //	x = ((point.x - rcPal.left) >> 3)&127;
 //	y = ((point.y - rcPal.top) >> 3)&31;
-	x = (INT32) ((double) (point.x - rcPal.left) * ((double) m_nWidth / rcPal.Width ()));
-	y = (INT32) ((double) (point.y - rcPal.top) * ((double) m_nHeight / rcPal.Height ()));
-	INT32 c = m_nWidth * y + x;
+	x = (int) ((double) (point.x - rcPal.left) * ((double) m_nWidth / rcPal.Width ()));
+	y = (int) ((double) (point.y - rcPal.top) * ((double) m_nHeight / rcPal.Height ()));
+	int c = m_nWidth * y + x;
 	if (c > 255)
 		return false;
 	color = m_nSortedPalIdx [c];
@@ -188,12 +188,12 @@ return false;
 
                         /*--------------------------*/
 
-void CPaletteWnd::SetPalettePixel (INT32 x, INT32 y) 
+void CPaletteWnd::SetPalettePixel (int x, int y) 
 {
 	CRect	rc;
 
 GetClientRect (&rc);
-INT32 dx, dy;
+int dx, dy;
 for (dy = 0; dy < 8; dy++)
 	for (dx = 0; dx < 8; dx++)
 		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top,
@@ -210,8 +210,8 @@ CreatePalette ();
 //SortPalette (0, 255);
 CRect rc;
 GetClientRect (&rc);
-UINT8 *pal_bitmap  = (UINT8 *) malloc (m_nWidth * m_nHeight);
-INT32 h, i, c, w, x, y;
+byte *pal_bitmap  = (byte *) malloc (m_nWidth * m_nHeight);
+int h, i, c, w, x, y;
 for (c = 0, y = m_nHeight - 1; (y >= 0); y--) {
 	for (x = 0, h = y * m_nWidth; x < m_nWidth; x++, h++) {
 		if (!y)
@@ -375,7 +375,7 @@ if (!(m_pTx->m_info.bmDataP && m_pTx->m_info.bValid)) {
 m_nWidth = m_pTx->m_info.width;
 m_nHeight = m_pTx->m_info.height;
 m_nSize = m_pTx->m_info.size;
-m_bitmap = new UINT8 [2048 * 2048];
+m_bitmap = new byte [2048 * 2048];
 if (!m_bitmap) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
@@ -387,7 +387,7 @@ if (!m_tga) {
 	}
 else if (m_nFormat = m_pTx->m_info.nFormat)
 	memcpy (m_tga, m_pTx->m_info.tgaDataP, m_nSize * sizeof (tRGBA));
-m_backupBM = new UINT8 [2048 * 2048];
+m_backupBM = new byte [2048 * 2048];
 m_backupTGA = new tRGBA [2048 * 2048];
 if (!(m_backupBM && m_backupTGA))
 	DEBUGMSG (" Texture tool: Not enough memory for undo function");
@@ -428,7 +428,7 @@ return (pt.x >= rc.left) && (pt.x < rc.right) &&
 
                         /*--------------------------*/
 
-void CTextureEdit::OnButtonDown (UINT nFlags, CPoint point, INT32& color)
+void CTextureEdit::OnButtonDown (UINT nFlags, CPoint point, int& color)
 {
 	CRect	rcEdit, rcPal;
 
@@ -451,7 +451,7 @@ else if (PtInRect (rcPal, point)) {
 void CTextureEdit::OnOK ()
 {
 if ((m_pTx->m_info.width != m_nWidth) || (m_pTx->m_info.height != m_nHeight) || (m_pTx->m_info.nFormat != m_nFormat)) {
-	UINT8 *pDataBM = new UINT8 [m_nWidth * m_nHeight];
+	byte *pDataBM = new byte [m_nWidth * m_nHeight];
 	tRGBA  *pDataTGA = m_nFormat ? new tRGBA [m_nWidth * m_nHeight] : NULL;
 
 	if (!pDataBM) {
@@ -553,7 +553,7 @@ if (m_pPaintWnd) {
 void CTextureEdit::GetClientRect (CWnd *pWnd, CRect& rc)
 {
 	CRect	rcc;
-	INT32	dx, dy;
+	int	dx, dy;
 
 pWnd->GetClientRect (&rcc);
 pWnd->GetWindowRect (rc);
@@ -573,7 +573,7 @@ rc.DeflateRect (dx / 2, dy / 2);
 // If control key is held down, color is defined by bitmap instead.
 //************************************************************************
 
-void CTextureEdit::ColorPoint (UINT nFlags, CPoint& point, INT32& color) 
+void CTextureEdit::ColorPoint (UINT nFlags, CPoint& point, int& color) 
 {
 	CRect		rcEdit;
 
@@ -584,18 +584,18 @@ if (m_nFormat) {
 	ErrorMsg ("Cannot edit TGA images.");
 	}
 else if (PtInRect (rcEdit, point)) {
-	INT32 x,y;
+	int x,y;
 	m_bModified = TRUE;  // mark this as m_bModified
 //	x = ((point.x - rcEdit.left) >> 2) & 63;
 //	y = ((point.y - rcEdit.top) >> 2) & 63;
-	x = (INT32) ((double) (point.x - rcEdit.left) * (64.0 / rcEdit.Width ()));
-	y = (INT32) ((double) (point.y - rcEdit.top) * (64.0 / rcEdit.Height ()));
+	x = (int) ((double) (point.x - rcEdit.left) * (64.0 / rcEdit.Width ()));
+	y = (int) ((double) (point.y - rcEdit.top) * (64.0 / rcEdit.Height ()));
 	if (nFlags & MK_CONTROL) {
 		color = m_bitmap [m_nWidth * (m_nHeight - 1 - y) + x];
 		DrawLayers ();
 		}
 	else if (BeginPaint (&m_textureWnd)) {
-		m_bitmap [m_nWidth * (m_nHeight - 1 - y) + x] = (UINT8) color;
+		m_bitmap [m_nWidth * (m_nHeight - 1 - y) + x] = (byte) color;
 		SetTexturePixel (x, y);
 		EndPaint ();
 		}
@@ -616,7 +616,7 @@ Refresh ();
 // TTextureDialog - Open Message
 //************************************************************************
 
-inline INT32 Sqr (INT32 i)
+inline int Sqr (int i)
 {
 return i * i;
 }
@@ -625,7 +625,7 @@ return i * i;
 // 
 //************************************************************************
 
-inline INT32 ColorDelta (RGBQUAD *bmPal, PALETTEENTRY *sysPal, INT32 j)
+inline int ColorDelta (RGBQUAD *bmPal, PALETTEENTRY *sysPal, int j)
 {
 sysPal += j;
 return 
@@ -642,7 +642,7 @@ bool CTextureEdit::LoadTGA (FILE *file)
 {
 	tTgaHeader	tgaHeader;
 	char			imgIdent [255];
-	INT32			h, i, j, s;
+	int			h, i, j, s;
 	tBGRA			bgra;
 
 if (!m_tga) {
@@ -678,7 +678,7 @@ for (i = m_nHeight; i; i--) {
 fread (m_tga, m_nSize * sizeof (tRGBA), 1, file);
 #endif
 m_bModified = TRUE;
-if (TGA2Bitmap (m_tga, m_bitmap, (INT32) tgaHeader.width, (INT32) tgaHeader.height)) {
+if (TGA2Bitmap (m_tga, m_bitmap, (int) tgaHeader.width, (int) tgaHeader.height)) {
 	m_nFormat = 1;
 	return true;
 	}
@@ -695,9 +695,9 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	PALETTEENTRY *sysPal=NULL;
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmih;
-	UINT8 color_map[256];
+	byte color_map[256];
 	bool bFuncRes = false;
-	UINT32 x, y, width, paletteSize;
+	uint x, y, width, paletteSize;
 
    palette = (RGBQUAD *) malloc(256*sizeof (RGBQUAD));
 	if (!palette) {
@@ -722,7 +722,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 		bmih.biHeight *= -1;
 
 	// make sure it is a bitmap file
-	if (bmfh.bfType != 'B' + (((UINT16)'M')<<8) ) {
+	if (bmfh.bfType != 'B' + (((ushort)'M')<<8) ) {
 	  ErrorMsg ("This is not a bitmap file.");
 	  goto errorExit;
 	}
@@ -745,7 +745,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	}
 
 	// read palette
-	paletteSize = min((INT32)bmih.biClrUsed,256);
+	paletteSize = min((int)bmih.biClrUsed,256);
 	if (paletteSize == 0) {
 	  paletteSize = 1 << bmih.biBitCount;
 	}
@@ -755,8 +755,8 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 	theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 
 	// check color palette
-	INT32 i;
-	for (i = 0; i < INT32 (paletteSize); i++) {
+	int i;
+	for (i = 0; i < int (paletteSize); i++) {
 	  color_map [i] = i;
 	  if (palette [i].rgbRed != sysPal [i].peRed ||
 			palette [i].rgbGreen != sysPal [i].peGreen ||
@@ -764,7 +764,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 			break;
 	  }
 	}
-	if (i != INT32 (paletteSize)) {
+	if (i != int (paletteSize)) {
 		if (!bExpertMode)
 			ErrorMsg ("The palette of this bitmap file is not exactly the\n"
 					  "the same as the Descent palette. Therefore, some color\n"
@@ -773,15 +773,15 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 					  "the Descent textures to a file an use it as a starting point.\n"
 					  "If you plan to use transparencies, then you may want to start\n"
 					  "with the texture called 'empty'.");
-		for (i = 0; i < INT32 (paletteSize); i++) {
-			UINT32 closest_index = i;
+		for (i = 0; i < int (paletteSize); i++) {
+			uint closest_index = i;
 			if ((palette [i].rgbRed != sysPal [i].peRed) ||
 				 (palette [i].rgbGreen != sysPal [i].peGreen) ||
 				 (palette [i].rgbBlue != sysPal [i].peBlue)) {
-				UINT32 closest_delta = 0x7fffffff;
-				INT32 j;
+				uint closest_delta = 0x7fffffff;
+				int j;
 				for (j = 0; (j < 255) && closest_delta; j++) {
-					UINT32 delta = ColorDelta (palette + i, sysPal, j);
+					uint delta = ColorDelta (palette + i, sysPal, j);
 					if (delta < closest_delta) {
 						closest_index = j;
 						closest_delta = delta;
@@ -792,29 +792,29 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 			}
 		}
 
-	INT32 x0,x1,y0,y1;
+	int x0,x1,y0,y1;
 	// if size is not 64 x 64, ask if they want to "size to fit"
 	if ((bmih.biWidth != m_nWidth) || (bmih.biHeight != m_nHeight)) {
 		sprintf_s (message, sizeof (message), "The bitmap being loaded is a %d x %d image.\n"
 				  "Do you want the image to be sized to fit the\n"
 				  "the current %d x %d texture size?\n\n"
 			     "(press no to see another option)",
-			     (INT32) bmih.biWidth, (INT32) bmih.biHeight,
-				  (INT32) m_nWidth, (INT32) m_nHeight);
+			     (int) bmih.biWidth, (int) bmih.biHeight,
+				  (int) m_nWidth, (int) m_nHeight);
 		switch (Query2Msg (message, MB_YESNOCANCEL)) {
 			case IDYES:
 				Backup();
 				x0 = 0;
 				y0 = 0;
-				x1 = (INT32)bmih.biWidth+1;
-				y1 = (INT32)bmih.biHeight+1;
+				x1 = (int)bmih.biWidth+1;
+				y1 = (int)bmih.biHeight+1;
 				break;
 
 			case IDNO:
 				Backup();
 				if (Query2Msg("Would you like to center/tile the image?", MB_YESNO) == IDYES) {
-					x0 = (INT32)(bmih.biWidth - m_nWidth)/2;
-					y0 = (INT32)(bmih.biHeight - m_nHeight)/2;
+					x0 = (int)(bmih.biWidth - m_nWidth)/2;
+					y0 = (int)(bmih.biHeight - m_nHeight)/2;
 					x1 = x0+m_nWidth;
 					y1 = y0+m_nHeight;
 					}
@@ -823,8 +823,8 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 				else {
 					x0 = 0;
 					y0 = 0;
-					x1 = m_nWidth = (UINT16) bmih.biWidth;
-					y1 = m_nHeight = (UINT16) bmih.biHeight;
+					x1 = m_nWidth = (ushort) bmih.biWidth;
+					y1 = m_nHeight = (ushort) bmih.biHeight;
 					}
 				break;
 
@@ -844,26 +844,26 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 
 	// read data into bitmap
 	m_bModified = TRUE;  // mark this as m_bModified
-	width = (((INT32)(bmih.biWidth*bmih.biBitCount + 31)>>3)) & ~3;
+	width = (((int)(bmih.biWidth*bmih.biBitCount + 31)>>3)) & ~3;
 	double mx, my;
 	mx = (x1 - x0) / (double) m_nWidth;
 	my = (y1 - y0) / (double) m_nHeight;
 	for (y = 0; y < m_nHeight; y++) {
 		for (x = 0; x < m_nWidth; x++) {
-			INT32 u = (INT32) (mx * x + x0);
-			INT32 v = (INT32) (my * y + y0);
-			u %= (INT32)bmih.biWidth;          //  -width to width
+			int u = (int) (mx * x + x0);
+			int v = (int) (my * y + y0);
+			u %= (int)bmih.biWidth;          //  -width to width
 			if (u<0) 
-				u+= (INT32)bmih.biWidth;  //       0 to width
-			v %= (INT32)bmih.biHeight;         // -height to height
+				u+= (int)bmih.biWidth;  //       0 to width
+			v %= (int)bmih.biHeight;         // -height to height
 			if (v<0) 
-			v+= (INT32)bmih.biHeight; //       0 to height
+			v+= (int)bmih.biHeight; //       0 to height
 			
-			UINT8 byte;
+			byte byte;
 
 			if (bmih.biBitCount == 4) {
-				long offset = (FIX)v*(FIX)width + (FIX)u / 2;
-				fseek(file,(FIX)bmfh.bfOffBits + offset,SEEK_SET);
+				long offset = (fix)v*(fix)width + (fix)u / 2;
+				fseek(file,(fix)bmfh.bfOffBits + offset,SEEK_SET);
 				fread(&byte,1,1,file);
 				if (!(u&1))
 					byte >>=4;
@@ -871,7 +871,7 @@ bool CTextureEdit::LoadBitmap (FILE *file)
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
 			else {
-				fseek(file,(FIX)bmfh.bfOffBits + (FIX)v*(FIX)width + (FIX)u,SEEK_SET);
+				fseek(file,(fix)bmfh.bfOffBits + (fix)v*(fix)width + (fix)u,SEEK_SET);
 				fread(&byte,1,1,file);
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
@@ -975,7 +975,7 @@ fwrite(m_bitmap, m_nSize,1,file);
 void CTextureEdit::SaveTGA (FILE *file)
 {
 	tTgaHeader	h;
-	INT32			i, j;
+	int			i, j;
 	tBGRA			c;
 	tRGBA			*pc;
 
@@ -1167,27 +1167,27 @@ DrawLayers ();
 //************************************************************************
 //************************************************************************
 
-void CTextureEdit::SetTexturePixel (INT32 x, INT32 y) 
+void CTextureEdit::SetTexturePixel (int x, int y) 
 {
 	CRect		rc;
-	INT32		cx, cy;
+	int		cx, cy;
 	double	xs, ys;
-	INT32		color = PALETTEINDEX (m_bitmap [(63 - y) * 64 + x]);
+	int		color = PALETTEINDEX (m_bitmap [(63 - y) * 64 + x]);
 
 m_textureWnd.GetClientRect (&rc);
 cx = rc.Width ();
 cy = rc.Height ();
 xs = (double) cx / 64.0;
 ys = (double) cy / 64.0;
-x = rc.left + (INT32) ((double) x * xs);
-y = rc.top + (INT32) ((double) y * ys);
-INT32 dx, dy;
+x = rc.left + (int) ((double) x * xs);
+y = rc.top + (int) ((double) y * ys);
+int dx, dy;
 xs /= 4.0;
 ys /= 4.0;
 for (dy = 0; dy < 4; dy++)
 	for (dx = 0; dx < 4; dx++)
-		m_pDC->SetPixel (x + (INT32) ((double) dx * xs),
-							  y + (INT32) ((double) dy * ys),
+		m_pDC->SetPixel (x + (int) ((double) dx * xs),
+							  y + (int) ((double) dy * ys),
 							  color);
 //		m_pDC->SetPixel((x<<2)+dx+rc.left,(y<<2)+dy+rc.top,
 //							 PALETTEINDEX(m_bitmap [(63-y)*64+x]));
@@ -1196,12 +1196,12 @@ for (dy = 0; dy < 4; dy++)
 //************************************************************************
 //************************************************************************
 
-void CTextureEdit::SetPalettePixel (INT32 x, INT32 y) 
+void CTextureEdit::SetPalettePixel (int x, int y) 
 {
 	CRect	rc;
 
 m_paletteWnd.GetClientRect (&rc);
-INT32 dx,dy;
+int dx,dy;
 for (dy=0;dy<8;dy++)
 	for (dx=0;dx<8;dx++)
 		m_pDC->SetPixel((x<<3)+dx+rc.left,(y<<3)+dy+rc.top,

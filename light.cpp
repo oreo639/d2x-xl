@@ -13,7 +13,7 @@
 #include "global.h"
 
 // external globals
-extern INT32 bEnableDeltaShading; // uvls.cpp
+extern int bEnableDeltaShading; // uvls.cpp
 
 long lightMap [MAX_D2_TEXTURES];
 long defLightMap [MAX_D2_TEXTURES];
@@ -22,11 +22,11 @@ long defLightMap [MAX_D2_TEXTURES];
 // light_weight()
 //--------------------------------------------------------------------------
 
-INT32 FindLight (INT32 nTexture, TEXTURE_LIGHT *pTexLights, INT32 nLights)
+int FindLight (int nTexture, TEXTURE_LIGHT *pTexLights, int nLights)
 {
-	INT32	l = 0;
-	INT32	r = nLights - 1;
-	INT32	m, t;
+	int	l = 0;
+	int	r = nLights - 1;
+	int	m, t;
 
 while (l <= r) {
 	m = (l + r) / 2;
@@ -49,7 +49,7 @@ void CreateLightMap (void)
 theMine->LoadDefaultLightAndColor ();
 #else
 	TEXTURE_LIGHT	*pTexLights = (theApp.IsD1File ()) ? d1_texture_light : d2_texture_light;
-	INT32				i = ((theApp.IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
+	int				i = ((theApp.IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
 
 memset (lightMap, 0, sizeof (lightMap));
 while (i) {
@@ -68,7 +68,7 @@ memcpy (defLightMap, lightMap, sizeof (defLightMap));
 BOOL HasCustomLightMap (void)
 {
 #ifdef _DEBUG
-	INT32	i;
+	int	i;
 
 i = memcmp (lightMap, defLightMap, sizeof (lightMap));
 if (i != 0) {
@@ -86,14 +86,14 @@ return memcmp (lightMap, defLightMap, sizeof (lightMap)) != 0;
 
 //--------------------------------------------------------------------------
 
-INT32 ReadLightMap (FILE *fLightMap, UINT32 nSize)
+int ReadLightMap (FILE *fLightMap, uint nSize)
 {
 return fread (lightMap, nSize, 1, fLightMap) != 1;
 }
 
 //--------------------------------------------------------------------------
 
-INT32 WriteLightMap (FILE *fLightMap)
+int WriteLightMap (FILE *fLightMap)
 {
 return fwrite (lightMap, sizeof (lightMap), 1, fLightMap) != 1;
 }
@@ -102,27 +102,27 @@ return fwrite (lightMap, sizeof (lightMap), 1, fLightMap) != 1;
 // light_weight()
 //--------------------------------------------------------------------------
 
-UINT8 CMine::LightWeight(INT16 nBaseTex) 
+byte CMine::LightWeight(short nBaseTex) 
 {
 #if 1
-return (UINT8) ((lightMap [nBaseTex] - 1) / 0x0200L);
+return (byte) ((lightMap [nBaseTex] - 1) / 0x0200L);
 #else
-  INT32 i;
+  int i;
 
 #	if 1
 if (theApp.IsD1File ()) {
 	i = FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1);
 	if (i >= 0)
-		return (UINT8) ((d1_texture_light [i].light - 1) / 0x0200L);
+		return (byte) ((d1_texture_light [i].light - 1) / 0x0200L);
 	}
 else {
 	i = FindLight (nBaseTex, d2_texture_light, NUM_LIGHTS_D2);
 	if (i >= 0)
-		return (UINT8) ((d2_texture_light [i].light - 1) / 0x0200L);
+		return (byte) ((d2_texture_light [i].light - 1) / 0x0200L);
 	}
 return 0;
 #	else
-	UINT8 result;
+	byte result;
 
 if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
 	if (theApp.IsD1File ()) {
@@ -130,14 +130,14 @@ if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
 			if (nBaseTex <= d1_texture_light[i].m_info.nBaseTex) 
 				break;
 		if (nBaseTex == d1_texture_light[i].m_info.nBaseTex)
-			result = (UINT8)((d1_texture_light[i].light - 1) / 0x0200L);
+			result = (byte)((d1_texture_light[i].light - 1) / 0x0200L);
 		}
 	else {
 		for (i=0;i<NUM_LIGHTS_D2;i++)
 			if (nBaseTex <= d2_texture_light[i].m_info.nBaseTex) 
 				break;
 		if (nBaseTex == d2_texture_light[i].m_info.nBaseTex)
-			result = (UINT8)((d2_texture_light[i].light - 1) / 0x0200L);
+			result = (byte)((d2_texture_light[i].light - 1) / 0x0200L);
 		}
 	}
 return (result);
@@ -151,11 +151,11 @@ return (result);
 // returns -1 if not exists
 //------------------------------------------------------------------------
 
-INT16 CMine::GetFlickeringLight (INT16 nSegment, INT16 nSide) 
+short CMine::GetFlickeringLight (short nSegment, short nSide) 
 {
 GetCurrent (nSegment, nSide);
 CFlickeringLight *flP = FlickeringLights (0);
-INT32 i;
+int i;
 for (i = FlickerLightCount (); i; i--, flP++)
 	if ((flP->m_nSegment == nSegment) && (flP->m_nSide == nSide))
 		break;
@@ -166,7 +166,7 @@ return -1;
 
 
 
-bool CMine::IsFlickeringLight (INT16 nSegment, INT16 nSide)
+bool CMine::IsFlickeringLight (short nSegment, short nSide)
 {
 return GetFlickeringLight (nSegment, nSide) >= 0;
 }
@@ -177,7 +177,7 @@ return GetFlickeringLight (nSegment, nSide) >= 0;
 // returns index to newly created flickering light
 //------------------------------------------------------------------------
 
-INT16 CMine::AddFlickeringLight (INT16 nSegment, INT16 nSide, UINT32 mask,FIX time) 
+short CMine::AddFlickeringLight (short nSegment, short nSide, uint mask,fix time) 
 {
 GetCurrent (nSegment, nSide);
 if (GetFlickeringLight (nSegment,nSide) != -1) {
@@ -195,8 +195,8 @@ if (FlickerLightCount () >= MAX_FLICKERING_LIGHTS) {
 		}
 	return -1;
 	}
-INT16 nBaseTex = CurrSide ()->m_info.nBaseTex & 0x1fff;
-INT16 nOvlTex = CurrSide ()->m_info.nOvlTex & 0x1fff;
+short nBaseTex = CurrSide ()->m_info.nBaseTex & 0x1fff;
+short nOvlTex = CurrSide ()->m_info.nOvlTex & 0x1fff;
 if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 	if (!bExpertMode)
 		ErrorMsg ("Blinking lights can only be added to a side\n"
@@ -220,13 +220,13 @@ return ++FlickerLightCount ();
 // removes a flickering light if it exists
 //------------------------------------------------------------------------
 
-bool CMine::DeleteFlickeringLight (INT16 nSegment, INT16 nSide) 
+bool CMine::DeleteFlickeringLight (short nSegment, short nSide) 
 {
 if (nSegment < 0)
 	nSegment = Current ()->nSegment;
 if (nSide < 0)
 	nSide = Current ()->nSide;
-INT16 index = GetFlickeringLight (nSegment, nSide);
+short index = GetFlickeringLight (nSegment, nSide);
 if (index == -1) {
 //ErrorMsg ("There is no flickering light on this side.");
 	return false;
@@ -245,7 +245,7 @@ return true;
 // returns index if found, -1 if not in the list
 //------------------------------------------------------------------------
 
-INT32 CMine::IsLight (INT32 nBaseTex) 
+int CMine::IsLight (int nBaseTex) 
 {
 #if 1
 return (lightMap [nBaseTex & 0x3fff] > 0) ? 0 : -1;
@@ -255,8 +255,8 @@ return (IsD1File ()) ?
 	FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1) : 
 	FindLight (nBaseTex, d2_texture_light, NUM_LIGHTS_D2);
 #	else
-	INT32 retval = -1;
-	INT32 i;
+	int retval = -1;
+	int i;
 	TEXTURE_LIGHT *t;
 	if (IsD1File ()) {
 		i = NUM_LIGHTS_D1;
@@ -307,7 +307,7 @@ return (IsD1File ()) ?
 //298 ceil029-l   299 ceil029b-f
 //------------------------------------------------------------------------
 
-INT32 CMine::IsExplodingLight(INT32 nBaseTex) 
+int CMine::IsExplodingLight(int nBaseTex) 
 {
 	switch (nBaseTex) {
 	case 291:
@@ -326,14 +326,14 @@ INT32 CMine::IsExplodingLight(INT32 nBaseTex)
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-bool CMine::IsBlastableLight (INT32 nBaseTex) 
+bool CMine::IsBlastableLight (int nBaseTex) 
 {
 nBaseTex &= 0x3fff;
 if (IsExplodingLight (nBaseTex))
 	return true;
 if (IsD1File ())
 	return false;
-for (INT16 *p = d2_blastable_lights; *p >= 0; p++)
+for (short *p = d2_blastable_lights; *p >= 0; p++)
 	if (*p == nBaseTex)
 		return true;
 #if 0
@@ -348,7 +348,7 @@ return false;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-bool CMine::VisibleWall (UINT16 nWall)
+bool CMine::VisibleWall (ushort nWall)
 {
 if (nWall == NO_WALL)
 	return false;
@@ -361,9 +361,9 @@ return (wallP->m_info.type != WALL_OPEN);
 
 void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
 {
-	long nLight = (FIX) (fLight * 65536); //24.0 * 327.68);
+	long nLight = (fix) (fLight * 65536); //24.0 * 327.68);
 	CSegment *segP;
-	INT32	h, i, j, l, c, nSegment;
+	int	h, i, j, l, c, nSegment;
 
 theApp.SetModified (TRUE);
 fLight /= 100.0;
@@ -376,14 +376,14 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 			c = 0;
 			for (j = 0; j < 6; j++) {
 				for (i = 0; i < 4; i++) {
-					h = (UINT16) segP->m_sides [j].m_info.uvls [i].l;
+					h = (ushort) segP->m_sides [j].m_info.uvls [i].l;
 					if (h || ((segP->Child (j) == -1) && !VisibleWall (segP->m_sides [j].m_info.nWall))) {
 						l += h;
 						c++;
 						}
 					}
 				}
-			segP->m_info.staticLight = (FIX) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
+			segP->m_info.staticLight = (fix) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
 			}
 		}
 	}
@@ -394,7 +394,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 
 void CMine::ScaleCornerLight (double fLight, bool bAll) 
 {
-	INT32 segNum, segCount = SegCount ();
+	int segNum, segCount = SegCount ();
 	double scale;
 
 theApp.SetModified (TRUE);
@@ -405,12 +405,12 @@ scale = fLight / 100.0; // 100.0% = normal
 	for (segNum = 0; segNum < segCount; segNum++) {
 		CSegment* segP = Segments (segNum);
 		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
-			for (INT32 j = 0; j < 6; j++) {
-				for (INT32 i = 0; i < 4; i++) {
-					double l = ((double) ((UINT16) segP->m_sides [j].m_info.uvls [i].l)) * scale;
+			for (int j = 0; j < 6; j++) {
+				for (int i = 0; i < 4; i++) {
+					double l = ((double) ((ushort) segP->m_sides [j].m_info.uvls [i].l)) * scale;
 					l = min (l, 0x8000);
 					l = max (l, 0);
-					segP->m_sides [j].m_info.uvls [i].l = (UINT16) l;
+					segP->m_sides [j].m_info.uvls [i].l = (ushort) l;
 					}
 				}
 			}
@@ -422,13 +422,13 @@ scale = fLight / 100.0; // 100.0% = normal
 //--------------------------------------------------------------------------
 
 typedef struct tAvgCornerLight {
-	UINT16	light;
-	UINT8		count;
+	ushort	light;
+	byte		count;
 } tAvgCornerLight;
 
 void CMine::CalcAverageCornerLight (bool bAll)
 {
-  INT32 nSegment, segCount = SegCount (), wallCount = GameInfo ().walls.count;
+  int nSegment, segCount = SegCount (), wallCount = GameInfo ().walls.count;
   tAvgCornerLight* max_brightness = new tAvgCornerLight [VertCount ()];
 
 memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
@@ -440,15 +440,15 @@ theApp.SetModified (TRUE);
 #pragma omp for
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = Segments (nSegment);
-		for (INT32 pt = 0; pt < 8; pt++) {
-			INT32 nVertex = segP->m_info.verts [pt];
+		for (int pt = 0; pt < 8; pt++) {
+			int nVertex = segP->m_info.verts [pt];
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
-				for (INT32 i = 0; i < 3; i++) {
-					INT32 nSide = pointSideTable [pt][i];
+				for (int i = 0; i < 3; i++) {
+					int nSide = pointSideTable [pt][i];
 					if ((segP->Child (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
-						INT32 uvnum = pointCornerTable [pt][i];
-						if (max_brightness [nVertex].light < UINT16 (segP->m_sides [nSide].m_info.uvls [uvnum].l))
-							max_brightness [nVertex].light = UINT16 (segP->m_sides [nSide].m_info.uvls [uvnum].l);
+						int uvnum = pointCornerTable [pt][i];
+						if (max_brightness [nVertex].light < ushort (segP->m_sides [nSide].m_info.uvls [uvnum].l))
+							max_brightness [nVertex].light = ushort (segP->m_sides [nSide].m_info.uvls [uvnum].l);
 						max_brightness [nVertex].count++;
 						}
 					}
@@ -459,13 +459,13 @@ theApp.SetModified (TRUE);
 #pragma omp for
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = Segments (nSegment);
-		for (INT32 pt = 0; pt < 8; pt++) {
-			INT32 nVertex = segP->m_info.verts [pt];
+		for (int pt = 0; pt < 8; pt++) {
+			int nVertex = segP->m_info.verts [pt];
 			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
-				for (INT32 i = 0; i < 3; i++) {
-					INT32 nSide = pointSideTable [pt][i];
+				for (int i = 0; i < 3; i++) {
+					int nSide = pointSideTable [pt][i];
 					if ((segP->Child (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
-						INT32 uvnum = pointCornerTable [pt][i];
+						int uvnum = pointCornerTable [pt][i];
 						segP->m_sides [nSide].m_info.uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
 						}
 					}
@@ -481,10 +481,10 @@ delete[] max_brightness;
 
 void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
-	INT32			nSegment;
-	INT32			nTexture;
-	INT32			nSide;
-	UINT32		brightness;
+	int			nSegment;
+	int			nTexture;
+	int			nSide;
+	uint		brightness;
 	CSegment*	segP;
 	CSide*		sideP;
 
@@ -496,7 +496,7 @@ if (bAll)
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK))
 		for (nSide=0, sideP = segP->m_sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-			INT32 i;
+			int i;
 			for (i = 0; i < 4; i++) {
 				sideP->m_info.uvls [i].l = 0;
 				if (!bAll)
@@ -523,7 +523,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 		if ((nTexture > 0) && (nTexture < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (nTexture));
 		if (brightness > 0)
-			Illuminate (nSegment, nSide, (UINT32) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
+			Illuminate (nSegment, nSide, (uint) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
 		}
 	}
 theApp.UnlockUndo ();
@@ -583,31 +583,31 @@ else
 
 //--------------------------------------------------------------------------
 
-void CMine::IlluminateSide (CSegment* segP, INT16 nSide, UINT32 brightness, CColor* lightColorP, double* effect, double fLightScale)
+void CMine::IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale)
 {
 CUVL*		uvlP = segP->m_sides [nSide].m_info.uvls;
-UINT32	vertBrightness, lightBrightness;
-UINT8*	sideVerts = sideVertTable [nSide];
+uint	vertBrightness, lightBrightness;
+byte*	sideVerts = sideVertTable [nSide];
 
 theApp.SetModified (TRUE);
-for (INT32 i = 0; i < 4; i++, uvlP++) {
+for (int i = 0; i < 4; i++, uvlP++) {
 	CColor* vertColorP = VertexColors (segP->m_info.verts [sideVerts [i]]);
-	vertBrightness = (UINT16) uvlP->l;
-	lightBrightness = (UINT32) (brightness * (effect ? effect [i] : fLightScale));
+	vertBrightness = (ushort) uvlP->l;
+	lightBrightness = (uint) (brightness * (effect ? effect [i] : fLightScale));
 	BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
 	vertBrightness += lightBrightness;
 	vertBrightness = min (0x8000, vertBrightness);
-	uvlP->l = (UINT16) vertBrightness;
+	uvlP->l = (ushort) vertBrightness;
 	}
 }
 
 //--------------------------------------------------------------------------
 
 #ifdef _DEBUG
-static INT32 qqq1 = -1, qqq2 = 0;
+static int qqq1 = -1, qqq2 = 0;
 #endif
 
-void CMine::Illuminate (INT16 nSourceSeg, INT16 nSourceSide, UINT32 brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
+void CMine::Illuminate (short nSourceSeg, short nSourceSide, uint brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
 {
 	CSegment*	segP = Segments (0);
 	double		effect [4];
@@ -623,12 +623,12 @@ void CMine::Illuminate (INT16 nSourceSeg, INT16 nSourceSide, UINT32 brightness, 
 
 segP = Segments (nSourceSeg);
 #if 1//def _OPENMP
-INT16* visited = new INT16 [SegCount ()];
+short* visited = new short [SegCount ()];
 memset (visited, 0xff, SegCount () * sizeof (*visited));
 SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
 visited [nSourceSeg] = m_lightRenderDepth;
 #else
-INT32 i;
+int i;
 for (i = SegCount (); i; )
 	Segments (--i)->m_info.nIndex = -1;
 SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth);
@@ -648,8 +648,8 @@ if (UseTexColors () && bCopyTexLights) {
 	}
 bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != NULL;
 // loop on child Segments ()
-INT32 nChildSeg;
-INT32 nSegCount = SegCount ();
+int nChildSeg;
+int nSegCount = SegCount ();
 #pragma omp parallel 
 	{
 #pragma omp for private (effect)
@@ -665,16 +665,16 @@ INT32 nSegCount = SegCount ();
 #endif
 		// setup source corner vertex for length calculation later
 		CVertex sourceCorners [4];
-		UINT8* sideVerts = sideVertTable [nSourceSide];
-		for (INT32 j = 0; j < 4; j++)
+		byte* sideVerts = sideVertTable [nSourceSide];
+		for (int j = 0; j < 4; j++)
 			sourceCorners [j] = *Vertices (segP->m_info.verts [sideVerts [j]]);
 		// loop on child sides
-		for (INT32 nChildSide = 0; nChildSide < 6; nChildSide++) {
+		for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 			// if side has a child..
 			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
 				continue;
 			if (childSegP->Child (nChildSide) >= 0) {
-				UINT16 nWall = childSegP->m_sides [nChildSide].m_info.nWall;
+				ushort nWall = childSegP->m_sides [nChildSide].m_info.nWall;
 				// .. but there is no wall ..
 				if (nWall >= GameInfo ().walls.count)
 					continue;
@@ -690,17 +690,17 @@ INT32 nSegCount = SegCount ();
 				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, NULL, fLightScale);
 #else
 				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
-				UINT32	vertBrightness, lightBrightness;
+				uint	vertBrightness, lightBrightness;
 
 				theApp.SetModified (TRUE);
-				for (INT32 j = 0; j < 4; j++, uvlP++) {
+				for (int j = 0; j < 4; j++, uvlP++) {
 					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
-					vertBrightness = (UINT16) uvlP->l;
-					lightBrightness = (UINT32) (brightness * fLightScale);
+					vertBrightness = (ushort) uvlP->l;
+					lightBrightness = (uint) (brightness * fLightScale);
 					BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
 					vertBrightness += lightBrightness;
 					vertBrightness = min (0x8000, vertBrightness);
-					uvlP->l = (UINT16) vertBrightness;
+					uvlP->l = (ushort) vertBrightness;
 					}
 #endif
 				continue;
@@ -712,18 +712,18 @@ INT32 nSegCount = SegCount ();
 #if 1
 				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, effect, fLightScale);
 #else
-					UINT32	vertBrightness, lightBrightness;	//vertex brightness, light brightness
+					uint	vertBrightness, lightBrightness;	//vertex brightness, light brightness
 					CUVL		*uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 
 				theApp.SetModified (TRUE);
-				for (INT32 j = 0; j < 4; j++, uvlP++) {
+				for (int j = 0; j < 4; j++, uvlP++) {
 					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
-					vertBrightness = (UINT16) uvlP->l;
-					lightBrightness = (UINT16) (brightness * effect [j] / 32);
+					vertBrightness = (ushort) uvlP->l;
+					lightBrightness = (ushort) (brightness * effect [j] / 32);
 					BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
 					vertBrightness += lightBrightness;
 					vertBrightness = min (0x8000, vertBrightness);
-					uvlP->l = (UINT16) vertBrightness;
+					uvlP->l = (ushort) vertBrightness;
 					}
 #endif
 				}
@@ -773,10 +773,10 @@ delete[] visited;
 // Segments () close to flickering lights will be computed properly.
 //------------------------------------------------------------------------
 
-void CMine::CalcDeltaLightData(double fLightScale, INT32 force) 
+void CMine::CalcDeltaLightData(double fLightScale, int force) 
 {
 theApp.SetModified (TRUE);
-INT32 recursion_depth;
+int recursion_depth;
 for (recursion_depth = m_deltaLightRenderDepth; recursion_depth; recursion_depth--)
 	if (CalcDeltaLights (fLightScale, force, recursion_depth))
 		break;
@@ -784,7 +784,7 @@ for (recursion_depth = m_deltaLightRenderDepth; recursion_depth; recursion_depth
 
 
 
-bool CMine::IsLava (INT32 nBaseTex)
+bool CMine::IsLava (int nBaseTex)
 {
   HINSTANCE hInst = AfxGetApp()->m_hInstance;
   char		name [20];
@@ -796,20 +796,20 @@ return (strstr((char*)name,"lava") != NULL);
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-INT32 CMine::FindDeltaLight (INT16 nSegment, INT16 nSide, INT16 *pi)
+int CMine::FindDeltaLight (short nSegment, short nSide, short *pi)
 {
-	INT32	i = pi ? *pi : 0;
-	INT32	j	= (INT32)GameInfo ().lightDeltaIndices.count++;
+	int	i = pi ? *pi : 0;
+	int	j	= (int)GameInfo ().lightDeltaIndices.count++;
 	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
 if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34)) {
 	for (; i < j; i++, dliP++)
-		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (UINT8) nSide))
+		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
 	}
 else {
 	for (; i < j; i++, dliP++)
-		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (UINT8) nSide))
+		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
 	}
 return -1;
@@ -818,12 +818,12 @@ return -1;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-bool CMine::CalcDeltaLights (double fLightScale, INT32 force, INT32 recursion_depth) 
+bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth) 
 {
 	// initialize totals
-	INT32		nSegCount = SegCount ();
-	INT32		nSourceSeg;
-	INT32		nErrors = 0;
+	int		nSegCount = SegCount ();
+	int		nSourceSeg;
+	int		nErrors = 0;
 	double	effect[4];
 
 GameInfo ().lightDeltaValues.count = 0;
@@ -842,10 +842,10 @@ fLightScale = 1.0; ///= 100.0;
 		if  (!(srcSegP->m_info.wallFlags & MARKED_MASK) && !force) 
 			continue;
 		// loop on all sides
-		for (INT32 nSourceSide = 0; nSourceSide < 6; nSourceSide++) {
-			INT16 nTexture = srcSegP->m_sides [nSourceSide].m_info.nBaseTex & 0x3fff;
-			INT16 tmapnum2 = srcSegP->m_sides [nSourceSide].m_info.nOvlTex & 0x3fff;
-			INT16 nTrigger;
+		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++) {
+			short nTexture = srcSegP->m_sides [nSourceSide].m_info.nBaseTex & 0x3fff;
+			short tmapnum2 = srcSegP->m_sides [nSourceSide].m_info.nOvlTex & 0x3fff;
+			short nTrigger;
 			bool bl1 = (bool) (IsLight (nTexture) != -1);
 			bool bl2 = (bool) (IsLight (tmapnum2) != -1);
 			if (!(bl1 || bl2))
@@ -855,7 +855,7 @@ fLightScale = 1.0; ///= 100.0;
 			// than can make the wall appear/disappear, calculate delta lights for it
 			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != NULL)) &&
 				 ((nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
-				INT8 trigtype = Triggers (nTrigger)->m_info.type;
+				char trigtype = Triggers (nTrigger)->m_info.type;
 				bCalcDeltas =
 					(trigtype == TT_ILLUSION_OFF) ||
 					(trigtype == TT_ILLUSION_ON) ||
@@ -876,14 +876,14 @@ fLightScale = 1.0; ///= 100.0;
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-				INT32 nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide);
+				int nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide);
 				if ((nTrigger >= 0) && (Triggers (nTrigger)->m_info.type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas)
 				continue;
 
-			INT16 srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
+			short srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
 			if ((srcSegP->Child (nSourceSide) != -1) &&
 				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->m_info.type == WALL_OPEN)))
 				continue;
@@ -901,12 +901,12 @@ fLightScale = 1.0; ///= 100.0;
 				}
 
 			CVertex	A, sourceCenter;
-			INT32		lightDeltaIndexCount;
+			int		lightDeltaIndexCount;
 
 			// get index number and increment total number of lightDeltaIndices
 	//#pragma omp critical
 			{
-			lightDeltaIndexCount = INT32 (GameInfo ().lightDeltaIndices.count++);
+			lightDeltaIndexCount = int (GameInfo ().lightDeltaIndices.count++);
 			}
 			CLightDeltaIndex *dliP = LightDeltaIndex (lightDeltaIndexCount);
 			if (bD2XLights) {
@@ -919,7 +919,7 @@ fLightScale = 1.0; ///= 100.0;
 				dliP->m_nSide = nSourceSide;
 				dliP->m_info.count = 0; // will be incremented below
 				}
-			dliP->m_info.index = (INT16)GameInfo ().lightDeltaValues.count;
+			dliP->m_info.index = (short)GameInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
 			A = -CalcSideNormal (nSourceSeg,nSourceSide);
@@ -933,12 +933,12 @@ fLightScale = 1.0; ///= 100.0;
 			//       This actually reduces the number of calls since most
 			//       Segments () do not have lights)
 	#if 1
-			INT16* visited = new INT16 [nSegCount];
+			short* visited = new short [nSegCount];
 			memset (visited, 0xff, nSegCount * sizeof (*visited));
 			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth, visited);
 			visited [nSourceSeg] = recursion_depth;
 	#else
-			INT32 h;
+			int h;
 			for (h = 0; h < SegCount (); h++)
 				Segments (h)->m_info.nIndex = -1;
 			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth);
@@ -947,14 +947,14 @@ fLightScale = 1.0; ///= 100.0;
 
 			// setup source corner vertex for length calculation later
 			CVertex sourceCorners [4];
-			for (INT32 j = 0; j < 4; j++) {
-				UINT8 nVertex = sideVertTable [nSourceSide][j];
-				INT32 h = srcSegP->m_info.verts [nVertex];
+			for (int j = 0; j < 4; j++) {
+				byte nVertex = sideVertTable [nSourceSide][j];
+				int h = srcSegP->m_info.verts [nVertex];
 				sourceCorners [j] = *Vertices (h);
 				}
 
 			// loop on child Segments ()
-			INT32 nChildSeg;
+			int nChildSeg;
 			for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
 				if (nErrors)
 					continue;
@@ -968,10 +968,10 @@ fLightScale = 1.0; ///= 100.0;
 					continue;
 	#endif
 				// loop on child sides
-				for (INT32 nChildSide = 0; nChildSide < 6; nChildSide++) {
+				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
 					if (childSegP->Child (nChildSide) >= 0) {
-						UINT16 nWall = childSegP->m_sides[nChildSide].m_info.nWall;
+						ushort nWall = childSegP->m_sides[nChildSide].m_info.nWall;
 						// .. if there is no wall ..
 						if (nWall >= GameInfo ().walls.count)
 							continue;
@@ -1012,7 +1012,7 @@ fLightScale = 1.0; ///= 100.0;
 						dl->m_info.vertLight [0] =
 						dl->m_info.vertLight [1] =
 						dl->m_info.vertLight [2] =
-						dl->m_info.vertLight [3] = (UINT8) min (32, 32 * fLightScale);
+						dl->m_info.vertLight [3] = (byte) min (32, 32 * fLightScale);
 						dliP->m_info.count++;
 						continue;
 						}
@@ -1038,9 +1038,9 @@ fLightScale = 1.0; ///= 100.0;
 							}
 							dl->m_nSegment = nChildSeg;
 							dl->m_nSide = nChildSide;
-							INT32 iCorner;
+							int iCorner;
 							for (iCorner = 0; iCorner < 4; iCorner++)
-								dl->m_info.vertLight [iCorner] = (UINT8) min(32, effect [iCorner]);
+								dl->m_info.vertLight [iCorner] = (byte) min(32, effect [iCorner]);
 							if (bD2XLights)
 								dliP->m_info.count++;
 							else
@@ -1067,9 +1067,9 @@ return (nErrors == 0);
 void CMine::UnlinkSeg (CSegment *pSegment, CSegment *pRoot)
 {
 #if 0
-	INT16	prevSeg = pSegment->prevSeg;
-	INT16	nextSeg = pSegment->nextSeg;
-	INT16	thisSeg = pSegment - Segments ();
+	short	prevSeg = pSegment->prevSeg;
+	short	nextSeg = pSegment->nextSeg;
+	short	thisSeg = pSegment - Segments ();
 
 CBRK ((prevSeg >= 0) && (Segments (prevSeg)->nextSeg < 0));
 if (prevSeg >= 0) {
@@ -1089,10 +1089,10 @@ if (nextSeg >= 0) {
 void CMine::LinkSeg (CSegment *pSegment, CSegment *pRoot)
 {
 #if 0
-	INT16	prevSeg = pRoot->prevSeg;
-	INT16	nextSeg = pRoot->nextSeg;
-	INT16 thisSeg = pSegment - Segments ();
-	INT16 rootSeg = pRoot - Segments ();
+	short	prevSeg = pRoot->prevSeg;
+	short	nextSeg = pRoot->nextSeg;
+	short thisSeg = pSegment - Segments ();
+	short rootSeg = pRoot - Segments ();
 
 if (prevSeg < 0) {
 	pRoot->nextSeg = thisSeg;
@@ -1110,10 +1110,10 @@ pSegment->rootSeg = rootSeg;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-void CMine::SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion_level) 
+void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion_level) 
 {
-	INT16			nSide, child, nImprove = 0;
-	UINT16		nWall;
+	short			nSide, child, nImprove = 0;
+	ushort		nWall;
 	CSegment	*segP = Segments (0) + nSegment;
 	CSegment	*prevSeg = NULL;
 	bool			bMarkChildren = false;
@@ -1161,10 +1161,10 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-void CMine::SetSegmentChildNum (CSegment *pRoot, INT16 nSegment, INT16 recursion_level, INT16* visited) 
+void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion_level, short* visited) 
 {
-	INT16			nSide, child, nImprove = 0;
-	UINT16		nWall;
+	short			nSide, child, nImprove = 0;
+	ushort		nWall;
 	CSegment	*segP = Segments (0) + nSegment;
 	CSegment	*prevSeg = NULL;
 	bool			bMarkChildren = false;
@@ -1211,7 +1211,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 
 //--------------------------------------------------------------------------
 
-bool CMine::CalcSideLights (INT32 nSegment, INT32 nSide, 
+bool CMine::CalcSideLights (int nSegment, int nSide, 
 									 CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
 									 double* effect, double fLightScale, bool bIgnoreAngle)
 {
@@ -1230,7 +1230,7 @@ if (!bIgnoreAngle) {
 	if (mag_A == 0.0 || mag_B == 0.0)
 		return false;
 	ratio = A_dot_B / (mag_A * mag_B);
-	ratio = ((double) ((INT32) (ratio * 1000.0))) / 1000.0;
+	ratio = ((double) ((int) (ratio * 1000.0))) / 1000.0;
 	if (ratio < -1.0 || ratio > 1.0) 
 		return false;
 	angle = acos (ratio);  // force a failure
@@ -1239,10 +1239,10 @@ if (!bIgnoreAngle) {
 	if (angle >= Radians (180.0))
 		return false;
 	}
-for (INT32 j = 0; j < 4; j++) {
+for (int j = 0; j < 4; j++) {
 	CVertex* corner = Vertices (segP->m_info.verts [sideVertTable [nSide][j]]);
 	double length = 20.0 * m_lightRenderDepth;
-	for (INT32 i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	// light is recuded by 1/4
@@ -1259,14 +1259,14 @@ return (effect [0] != 0 || effect [1] != 0 || effect [2] != 0 || effect [3] != 0
 
 //--------------------------------------------------------------------------
 
-CColor *CMine::LightColor (INT32 i, INT32 j, bool bUseTexColors) 
+CColor *CMine::LightColor (int i, int j, bool bUseTexColors) 
 { 
 if (bUseTexColors && UseTexColors ()) {
 	CWall *wallP = SideWall (i, j);
 	//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
 		{	//always use a side color for transp. walls
 		CColor *pc;
-		INT16 t = Segments (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
+		short t = Segments (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
 		if ((t > 0) && (pc = GetTexColor (t)))
 			return pc;
 		if (pc = GetTexColor (Segments (i)->m_sides [j].m_info.nBaseTex, wallP && (wallP->m_info.type == WALL_TRANSPARENT)))

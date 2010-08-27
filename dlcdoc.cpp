@@ -27,8 +27,8 @@ class CSaveFileDlg : public CDialog {
 	public:
 		char	m_name [256];
 		LPSTR	m_lpszName;
-		INT32	m_type;
-		INT32	*m_pType;
+		int	m_type;
+		int	*m_pType;
 
 		CSaveFileDlg (CWnd *pParentWnd)
 			: CDialog (IDD_SAVELEVEL, pParentWnd) {};
@@ -126,10 +126,10 @@ class CNewFileDlg : public CDialog {
 	public:
 		char	m_name [256];
 		LPSTR	m_lpszName;
-		INT32	m_type;
-		INT32	*m_pType;
+		int	m_type;
+		int	*m_pType;
 
-		CNewFileDlg (CWnd *pParentWnd, LPSTR lpszName, INT32 *pType)
+		CNewFileDlg (CWnd *pParentWnd, LPSTR lpszName, int *pType)
 			: CDialog (IDD_NEWLEVEL, pParentWnd) {
 			strcpy_s (m_name, sizeof (m_name), m_lpszName = lpszName);
 			m_type = *(m_pType = pType);
@@ -228,7 +228,7 @@ return TRUE;
 void CDlcDoc::CreateNewLevel ()
 {
 char	new_level_name [256];
-INT32	newFileType = 1;
+int	newFileType = 1;
 strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
 
 CNewFileDlg	d (theApp.MainFrame (), new_level_name, &newFileType);
@@ -324,7 +324,7 @@ return true;
 
 BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile) 
 {
-	INT32 err = 0;
+	int err = 0;
 	char szFile [256], szSubFile [256];
 
 if (bEnableDeltaShading)
@@ -398,7 +398,7 @@ bool CDlcDoc::SaveFile (bool bSaveAs)
 ErrorMsg ("You cannot save a mine in the demo.");
 return false;
 #else
-	INT32 err = 0;
+	int err = 0;
 
 theApp.ToolView ()->Refresh ();
 CountCustomTextures ();
@@ -475,8 +475,8 @@ if (p) {
 	strcpy_s (szProg, sizeof (szProg), descent2_path);
 	if (h = strstr (szProg, "data"))
 		*h = '\0';
-	INT32 i;
-	for (i = INT32 (strlen (szProg)); i && szProg [i - 1] != '\\'; i--)
+	int i;
+	for (i = int (strlen (szProg)); i && szProg [i - 1] != '\\'; i--)
 		;
 	szProg [i] = '\0';
 	_chdir (szProg);

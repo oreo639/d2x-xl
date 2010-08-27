@@ -15,7 +15,7 @@
 #include "global.h"
 #include "io.h"
 
-INT32 nLayout = 1;
+int nLayout = 1;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,9 +30,9 @@ class CAboutDlg : public CDialog
 {
 public:
 	UINT_PTR m_nTimer;
-	INT32		m_nTimeout;
+	int		m_nTimeout;
 
-	CAboutDlg(INT32 m_nTimeout = 0);
+	CAboutDlg(int m_nTimeout = 0);
 
 // Dialog Data
 	//{{AFX_DATA(CAboutDlg)
@@ -57,7 +57,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg(INT32 nTimeout) : CDialog(CAboutDlg::IDD)
+CAboutDlg::CAboutDlg(int nTimeout) : CDialog(CAboutDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CAboutDlg)
 	m_nTimer = -1;
@@ -108,7 +108,7 @@ EndDialog (1);
 
 void CAboutDlg::OnTimer (UINT_PTR nIdEvent)
 {
-if (m_nTimer == (INT32) nIdEvent) {
+if (m_nTimer == (int) nIdEvent) {
 	m_nTimeout--;
 	if (m_nTimeout <= 0) {
 		KillTimer (m_nTimer);
@@ -168,7 +168,7 @@ void DLE_XP_invalid_parameter(
    const wchar_t * expression,
    const wchar_t * function, 
    const wchar_t * file, 
-   UINT32 line,
+   uint line,
    uintptr_t pReserved)
 {
 errno = EINVAL;
@@ -315,7 +315,7 @@ LONG CDLCModule::Lock()
 
                         /*--------------------------*/
 
-INT32 CDlcApp::ExitInstance()
+int CDlcApp::ExitInstance()
 {
 if (m_bATLInited) {
 	_Module.RevokeClassObjects();
@@ -328,7 +328,7 @@ return CWinApp::ExitInstance();
 
 CDocument* CDlcApp::OpenDocumentFile (LPCTSTR lpszFileName)
 {
-	INT32			nAction = IDOK;
+	int			nAction = IDOK;
 
 	ASSERT(m_pDocManager != NULL);
 //	GetDocument ()->SetPathName ("(new document)");
@@ -391,7 +391,7 @@ m_undoList.Delay (bDelay);
 
                         /*--------------------------*/
 
-INT32 CDlcApp::UndoCount ()
+int CDlcApp::UndoCount ()
 {
 return m_undoList.UndoCount ();
 }
@@ -412,7 +412,7 @@ return m_undoList.Revert ();
 
                         /*--------------------------*/
 
-INT32 CDlcApp::EnableUndo (INT32 bEnable)
+int CDlcApp::EnableUndo (int bEnable)
 {
 return m_undoList.Enable (bEnable);
 }
@@ -439,7 +439,7 @@ return bRedo;
 
                         /*--------------------------*/
 
-void CDlcApp::WritePrivateProfileInt (LPSTR szKey, INT32 nValue)
+void CDlcApp::WritePrivateProfileInt (LPSTR szKey, int nValue)
 {
 	char	szValue [20];
 
@@ -565,7 +565,7 @@ m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, INIFILE);
 
                         /*--------------------------*/
 
-CUndoList::CUndoList (INT32 maxSize)
+CUndoList::CUndoList (int maxSize)
 {
 m_head = m_tail = m_current = NULL;
 m_size = 0;
@@ -590,9 +590,9 @@ Truncate ();
 
                         /*--------------------------*/
 
-INT32 CUndoList::Enable (INT32 bEnable)
+int CUndoList::Enable (int bEnable)
 {
-	INT32 b = m_enabled;
+	int b = m_enabled;
 
 m_enabled = bEnable;
 return b;
@@ -664,7 +664,7 @@ return true;
 
                         /*--------------------------*/
 
-INT32 CUndoList::SetMaxSize (INT32 maxSize)
+int CUndoList::SetMaxSize (int maxSize)
 {
 if (maxSize < 1)
 	maxSize = 0;
@@ -733,10 +733,10 @@ else if (m_delay)
 
                         /*--------------------------*/
 
-INT32 CUndoList::UndoCount ()
+int CUndoList::UndoCount ()
 {
 	tUndoBuffer	*p;
-	INT32			i;
+	int			i;
 
 if (!m_enabled)
 	return 0;

@@ -3,21 +3,21 @@
 
 #include "Types.h"
 
-extern UINT8 bmBuf [512 * 512 * 32 * 4];
+extern byte bmBuf [512 * 512 * 32 * 4];
 
 typedef struct {
     byte  identSize;          // size of ID field that follows 18 byte header (0 usually)
     byte  colorMapType;      // type of colour map 0=none, 1=has palette
     byte  imageType;          // type of image 0=none,1=indexed,2=rgb,3=grey,+8=rle packed
 
-    INT16 colorMapStart;     // first colour map entry in palette
-    INT16 colorMapLength;    // number of colours in palette
+    short colorMapStart;     // first colour map entry in palette
+    short colorMapLength;    // number of colours in palette
     byte  colorMapBits;      // number of bits per palette entry 15,16,24,32
 
-    INT16 xStart;             // image x origin
-    INT16 yStart;             // image y origin
-    INT16 width;              // image width in pixels
-    INT16 height;             // image height in pixels
+    short xStart;             // image x origin
+    short yStart;             // image y origin
+    short width;              // image width in pixels
+    short height;             // image height in pixels
     byte  bits;               // image bits per pixel 8,16,24,32
     byte  descriptor;         // image descriptor bits (vh flip bits)
 } tTgaHeader;
@@ -41,18 +41,18 @@ typedef struct tBGR {
 } tBGR;
 
 typedef struct tTexture {
-	UINT8*	bmDataP;
+	byte*	bmDataP;
 	tRGBA*	tgaDataP;
-	UINT32	width, height, size;
+	uint	width, height, size;
 	bool		bModified, bExtData, bValid;
-	UINT8		nFormat;	// 0: Bitmap, 1: TGA (RGB)
+	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
 
 class CTexture : public CGameItem {
 public:
 	tTexture	m_info;
 
-	CTexture (UINT8 *dataP = NULL) {
+	CTexture (byte *dataP = NULL) {
 		Clear ();
 		m_info.bmDataP = dataP;
 		m_info.bExtData = dataP != NULL;
@@ -72,27 +72,27 @@ public:
 
 	~CTexture() { Release (); }
 
-	INT32 Read (INT16 index);
-	double Scale (INT16 index = -1);
+	int Read (short index);
+	double Scale (short index = -1);
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
-	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
+	virtual int Read (FILE* fp, int version = 0, bool bFlag = false) { return 1; };
+	virtual void Write (FILE* fp, int version = 0, bool bFlag = false) {};
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
 
-INT32 DefineTexture(INT16 nBaseTex,INT16 nOvlTex, CTexture *pDestTx, INT32 x0, INT32 y0);
-void RgbFromIndex (INT32 nIndex, PALETTEENTRY *pRGB);
+int DefineTexture(short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
+void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB);
 BITMAPINFO *MakeBitmap(void);
 BOOL HasCustomTextures ();
-INT32 CountCustomTextures ();
+int CountCustomTextures ();
 void FreeTextureHandles(bool bDeleteModified = true);
-INT32 ReadPog(FILE *file, UINT32 nFileSize = 0xFFFFFFFF);
-INT32 CreatePog (FILE *file);
-bool PaintTexture (CWnd *pWnd, INT32 bkColor = -1, 
-						 INT32 nSegment = -1, INT32 nSide = -1, INT32 texture1 = -1, INT32 texture2 = 0,
-						 INT32 xOffset = 0, INT32 yOffset = 0);
-bool TGA2Bitmap (tRGBA *pTGA, UINT8 *pBM, INT32 nWidth, INT32 nHeight);
+int ReadPog(FILE *file, uint nFileSize = 0xFFFFFFFF);
+int CreatePog (FILE *file);
+bool PaintTexture (CWnd *pWnd, int bkColor = -1, 
+						 int nSegment = -1, int nSide = -1, int texture1 = -1, int texture2 = 0,
+						 int xOffset = 0, int yOffset = 0);
+bool TGA2Bitmap (tRGBA *pTGA, byte *pBM, int nWidth, int nHeight);
 
 #endif //__textures_h
