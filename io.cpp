@@ -96,32 +96,6 @@ return value;
 }
 
 //------------------------------------------------------------------------
-// ReadFix ()
-//
-//  ACTION - Reads a fix word from a file.
-//------------------------------------------------------------------------
-
-fix ReadFix (FILE *fp) 
-{
-fix value = 0;
-fread (&value, sizeof (fix), 1, fp);
-return value;
-}
-
-//------------------------------------------------------------------------
-// ReadFixAng ()
-//
-// ACTION - Reads a fixang word from a file.
-//------------------------------------------------------------------------
-
-fixang ReadFixAng (FILE *fp) 
-{
-fixang value = 0;
-fread (&value, sizeof (fixang), 1, fp);
-return value;
-}
-
-//------------------------------------------------------------------------
 // WriteInt32 ()
 //
 // ACTION - Writes a 32 bit word to a file.
@@ -154,29 +128,6 @@ return (value);
 char WriteInt8 (char value,FILE *fp) 
 {
 fwrite (&value, sizeof (char), 1, fp);
-return (value);
-}
-
-//------------------------------------------------------------------------
-// WriteFix ()
-//
-// ACTION - Writes a fix word to a file.
-//------------------------------------------------------------------------
-fix WriteFix (fix value,FILE *fp) 
-{
-fwrite (&value, sizeof (fix), 1, fp);
-return (value);
-}
-
-//------------------------------------------------------------------------
-// WriteFixAng ()
-//
-// ACTION - Writes a fixang word to a file.
-//------------------------------------------------------------------------
-
-fixang WriteFixAng (fixang value,FILE *fp) 
-{
-fwrite (&value, sizeof (fixang), 1, fp);
 return (value);
 }
 

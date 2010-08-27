@@ -557,13 +557,13 @@ pWnd->UpdateWindow ();
 
 int CObjPhysicsInfo::Read (FILE *fp, int version)
 {
-read_vector (&velocity, fp);
-read_vector (&thrust, fp);
+velocity.Read (fp);
+thrust.Read (fp);
 mass = ReadFix (fp);
 drag = ReadFix (fp);
 brakes = ReadFix (fp);
-read_vector (&rotvel, fp);
-read_vector (&rotthrust, fp);
+rotvel.Read (fp);
+rotthrust.Read (fp);
 turnroll = ReadFixAng (fp);
 flags = ReadInt16 (fp);
 return 1;
@@ -869,7 +869,7 @@ switch (m_info.movementType) {
 		mType.physInfo.Read (fp, version);
 		break;
 	case MT_SPINNING:
-		read_vector (&mType.spinRate, fp);
+		mType.spinRate.Read (fp);
 		break;
 	case MT_NONE:
 		break;
