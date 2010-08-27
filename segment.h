@@ -108,9 +108,9 @@ public:
 	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
-	inline INT16 Child (INT16 nSide) { return m_sides [nSide].nChild; }
+	inline INT16 Child (INT16 nSide) { return m_sides [nSide].m_info.nChild; }
 	inline INT16 SetChild (INT16 nSide, INT16 nSegment) {
-		if ((m_sides [nSide].nChild = nSegment) < 0)
+		if ((m_sides [nSide].m_info.nChild = nSegment) < 0)
 			m_info.childFlags &= ~(1 << nSide);
 		else
 			m_info.childFlags |= (1 << nSide);
