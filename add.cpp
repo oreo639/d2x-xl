@@ -23,7 +23,7 @@ double scale = theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (segP->m_info.children [nSide] == -1) {
+	if (segP->Child (nSide) == -1) {
 		SetTexture (nSegment, nSide, nTexture, 0);
 	/*
 		sideP->m_info.uvls [0].l = 0x8000;
@@ -122,9 +122,9 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 	CWall *wallP;
 	INT16 nOppSeg, nOppSide;
 	for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (segP->m_info.children [nSide] < 0)	// assume no wall if no child segment at the current side
+		if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childSegP = Segments (segP->m_info.children [nSide]);
+		childSegP = Segments (segP->Child (nSide));
 		if (childSegP->m_info.function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it

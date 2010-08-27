@@ -114,7 +114,7 @@ for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 	for (h = i; j < h; j++) {
 		segI = theMine->Segments (segRef [j]);
 		for (sideNum = 0; sideNum < 6; sideNum++) {
-			c = segI->m_info.children [sideNum];
+			c = segI->Child (sideNum);
 			if (c < 0) 
 				continue;
 			segJ = theMine->Segments (c);
@@ -458,7 +458,7 @@ CHECKMINE;
 if (!Visible (segP))
 	return;
 for (line=0;line<12;line++) {
-	if (segP->m_info.map_bitmask & (1<<line)) {
+	if (segP->m_info.mapBitmask & (1<<line)) {
       if (IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [0]]].x,x_max) &&
 			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [0]]].y,y_max) &&
 			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [1]]].x,x_max) &&
@@ -532,7 +532,7 @@ for (i = 0; i < 8; i++, pv++) {
 if (bPartial) {
 	UINT32 nSide;
 	for (nSide=0; nSide<6; nSide++) {
-		if (segP->m_info.children [nSide] >= 0)
+		if (segP->Child (nSide) >= 0)
 			continue;
 		
 		POINT	side [4], line [2], vert;
@@ -558,9 +558,9 @@ if (bPartial) {
 			// check childP cubes
 			commonVerts = 0;
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
-				if (segP->m_info.children [chSegI] < 0)
+				if (segP->child (chSegI) < 0)
 					continue;
-				childP = theMine->Segments (segP->m_info.children [chSegI]);
+				childP = theMine->Segments (segP->Child (chSegI));
 				// walk through childP cube's sides
 				commonVerts = 0;
 				for (chSideI = 0; (chSideI < 6) && (commonVerts < 2); chSideI++) {
@@ -812,7 +812,7 @@ CHECKMINE;
 
 		for (nSide = 0; nSide < 6; nSide++) {
 			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
-			if ((segP->m_info.children [nSide] == -1) ||
+			if ((segP->Child (nSide) == -1) ||
 				(wallP && (wallP->m_info.type != WALL_OPEN) && ((wallP->m_info.type != WALL_CLOAKED) || wallP->m_info.cloakValue))
 				)
 			{

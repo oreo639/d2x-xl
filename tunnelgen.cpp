@@ -292,8 +292,8 @@ if (!m_bSplineActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((Segments (Current1 ().nSegment)->m_info.children [Current1 ().nSide] != -1) ||
-		 (Segments (Current2 ().nSegment)->m_info.children [Current2 ().nSide] != -1)) {
+	if ((Segments (Current1 ().nSegment)->Child ([Current1 ().nSide) != -1) ||
+		 (Segments (Current2 ().nSegment)->Child ([Current2 ().nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of spline\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
@@ -383,7 +383,7 @@ else {
 		UntwistSegment (SegCount (), nSplineSide1);
 		// define children and sides (textures and nWall)
 		for (j = 0; j < 6; j++) {
-			segP->m_info.children [j] = -1;
+			segP->Child (j) = -1;
 			segP->m_sides [j].m_info.nBaseTex = 0;
 			segP->m_sides [j].m_info.nOvlTex = 0;
 			segP->m_sides [j].m_info.nWall = NO_WALL;
@@ -394,24 +394,21 @@ else {
 				}
 			segP->SetUV (j,0,0);
 			}
-		if (spline==0) {
-			segP->m_info.children [oppSideTable [nSplineSide1]] = nSplineSeg1;
-			segP->m_info.children [nSplineSide1] = SegCount ()+1;
-			Segments (nSplineSeg1)->m_info.children [nSplineSide1] = SegCount ();
-			Segments (nSplineSeg1)->m_info.childFlags |= (1<<nSplineSide1);
+		if (spline == 0) {
+			segP->SetChild (oppSideTable [nSplineSide1], nSplineSeg1);
+			segP->SetChild (nSplineSide1, SegCount () + 1);
+			Segments (nSplineSeg1)->SetChild (nSplineSide1, SegCount ());
 			} 
 		else if (spline < n_splines-1) {
-			segP->m_info.children [oppSideTable [nSplineSide1]] = SegCount ()-1;
-			segP->m_info.children [nSplineSide1] = SegCount ()+1;
+			segP->SetChild (oppSideTable [nSplineSide1], SegCount () - 1);
+			segP->SetChild (nSplineSide1, SegCount () + 1);
 			}
 		else {
-			segP->m_info.children [oppSideTable [nSplineSide1]] = SegCount ()-1;
-			segP->m_info.children [nSplineSide1] = nSplineSeg2;
-			Segments (nSplineSeg2)->m_info.children [nSplineSide2] = SegCount ();
-			Segments (nSplineSeg2)->m_info.childFlags |= (1<<nSplineSide2);
+			segP->SetChild (oppSideTable [nSplineSide1], SegCount () - 1);
+			segP->SetChild (nSplineSide1, nSplineSeg2);
+			Segments (nSplineSeg2)->SetChild (nSplineSide2, SegCount ());
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
-		segP->m_info.childFlags = (1 << nSplineSide1) | (1 << oppSideTable [nSplineSide1]);
 		segP->m_info.owner = -1;
 		segP->m_info.group = -1;
 		segP->m_info.function = 0;

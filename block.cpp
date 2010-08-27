@@ -267,9 +267,11 @@ while(!feof(fBlk)) {
 #endif
 			}
 		}
-	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n",
-				&segP->m_info.children [0],&segP->m_info.children [1],&segP->m_info.children [2],
-				&segP->m_info.children [3],&segP->m_info.children [4],&segP->m_info.children [5]);
+	INT16 children [6];
+	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n", 
+				 child [0], child [1], child [2], child [3], child [4], child [5], child [6]);
+	for (i = 0; i < 6; i++)
+		segP->SetChild (i, children [i]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
 		FIX x, y, z;
@@ -353,7 +355,7 @@ while(!feof(fBlk)) {
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-		if (segP->m_info.children [i] >= 0)
+		if (segP->Child (i) >= 0)
 		segP->m_info.childFlags |= (1 << i);
 	SegCount ()++;
 	nNewSegs++;
@@ -498,7 +500,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			}
 		fprintf (fBlk, "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fBlk, " %d", segP->m_info.children [i]);
+			fprintf (fBlk, " %d", segP->Child (i));
 		fprintf (fBlk, "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
@@ -799,8 +801,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			if (segP->m_info.childFlags & (1 << child)) {
 				seg2 = Segments (0);
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
-					if (segP->m_info.children [child] == ~seg2->m_info.nIndex) {
-						segP->m_info.children [child] = seg_offset;
+					if (segP->Child (child) == ~seg2->m_info.nIndex) {
+						segP->Child (child) = seg_offset;
 						break;
 						}
 					}
@@ -827,7 +829,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					}
 				} 
 			else {
-				segP->m_info.children [child] = -1; // force child to agree with bitmask
+				segP->Child (child) = -1; // force child to agree with bitmask
 				}
 			}
 		}

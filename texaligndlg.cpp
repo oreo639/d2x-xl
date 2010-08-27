@@ -74,7 +74,7 @@ CHECKMINE;
 	CPoint		offset;
 	CRgn			hRgn;
 // each side has 4 children (ordered by side's line number)
-	static INT32 side_child[6][4] = {
+	static INT32 sideChildTable[6][4] = {
 		{4,3,5,1},//{5,1,4,3},
 		{2,4,0,5},//{5,0,4,2},
 		{5,3,4,1},//{5,3,4,1},
@@ -188,8 +188,8 @@ if (theMine->IsWall ()) {
 			vert1  = segP->m_info.verts [point1];
 
 			// check child for this line 
-			nChildSide = side_child[nSide][nChildLine];
-			nChild = segP->m_info.children[nChildSide];
+			nChildSide = sideChildTable[nSide][nChildLine];
+			nChild = segP->Child (nChildSide);
 			childSeg = theMine->Segments (0) + nChild;
 			if (nChild > -1) {
 
@@ -681,7 +681,7 @@ theApp.LockUndo ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (theMine->SideIsMarked (nSegment, nSide)) {
-			if ((segP->m_info.children [nSide] == -1) || 
+			if ((segP->Child (nSide) == -1) || 
 				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
 				theMine->Segments (nSegment)->SetUV (nSide,0,0);
@@ -828,7 +828,7 @@ UpdateAlignWnd ();
 
                         /*--------------------------*/
 
-static const INT32 side_child[6][4] = {
+static const INT32 sideChildTable[6][4] = {
   {4,3,5,1},
   {2,4,0,5},
   {5,3,4,1},
@@ -870,7 +870,7 @@ if (m_bIgnorePlane) {
 	bAlignedSides = 1 << nSide;
 	h = theMine->AlignTextures (nSegment, nSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 	for (nLine = 0; nLine < 4; nLine++) {
-		child_sidenum = side_child[nSide][nLine];
+		child_sidenum = sideChildTable[nSide][nLine];
 		if (!(bAlignedSides & (1 << child_sidenum))) {
 			bAlignedSides |= (1 << child_sidenum);
 			childSideP = segP->m_sides + child_sidenum;
@@ -882,7 +882,7 @@ if (m_bIgnorePlane) {
 		for (child_sidenum = 0, childSideP = segP->m_sides; child_sidenum < 6; child_sidenum++, childSideP++) {
 			if (childSideP->m_info.nBaseTex == nBaseTex) {
 				for (nLine = 0; nLine < 4; nLine++) {
-					child_segnum = segP->m_info.children [side_child[child_sidenum][nLine]];
+					child_segnum = segP->Child (sideChildTable[child_sidenum][nLine]);
 					if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 						continue;
 					childSeg = theMine->Segments (child_segnum);
@@ -900,7 +900,7 @@ if (m_bIgnorePlane) {
 //			if (childSideP->m_info.nBaseTex != sideP->m_info.nBaseTex)
 //				continue;
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
+			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
 			if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
@@ -920,7 +920,7 @@ else {
 		for (nLine = 0; nLine < 4; nLine++) {
 			if (nSide < 0)
 				continue;
-			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
+			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
 			if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
@@ -932,7 +932,7 @@ else {
 			}
 /*
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->m_info.children [side_child[nSide][nLine]];
+			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
 			if ((child_segnum < 0) || (child_segnum >= theMine->SegCount ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);

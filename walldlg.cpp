@@ -257,7 +257,7 @@ InitCBWallNo ();
 if (!(m_pWall [0] = theMine->FindWall ())) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (theMine->CurrSeg ()->m_info.children [theMine->Current ()->nSide] >= 0)
+	if (theMine->CurrSeg ()->Child (theMine->Current ()->nSide) >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);
@@ -369,7 +369,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	else if (theMine->GameInfo ().walls.count >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((theApp.IsD2File ()) && (segP [bSide]->m_info.children [nSide [bSide]] == -1))
+		if ((theApp.IsD2File ()) && (segP [bSide]->Child (nSide [bSide]) == -1))
 			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.m_info.type, m_defWall.m_info.flags, 
 													m_defWall.m_info.keys, m_defWall.m_info.nClip, m_defTexture)) {

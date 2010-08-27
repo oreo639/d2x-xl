@@ -462,8 +462,8 @@ INT16 CMine::FixIndexValues(void)
 				checkErr |= (1 << 0);
 			}
 			// check children
-			if (segP->m_info.children [nSide] < - 2 || segP->m_info.children [nSide] >(INT16)SegCount ()) {
-				segP->m_info.children [nSide] =-1;
+			if (segP->Child (nSide) < - 2 || segP->Child (nSide) >(INT16)SegCount ()) {
+				segP->Child (nSide) =-1;
 				checkErr |= (1 << 1);
 			}
 		}

@@ -337,12 +337,12 @@ void CMineView::ForwardCube (INT32 dir)
 
 DrawHighlight (1);
 segP = theMine->Segments (0) + theMine->Current ()->nSegment;
-child = segP->m_info.children [bFwd ? theMine->Current ()->nSide: oppSideTable [theMine->Current ()->nSide]];
+child = segP->Child (bFwd ? theMine->Current ()->nSide: oppSideTable [theMine->Current ()->nSide]);
 if (child <= -1) {
 	// first try to find a non backwards route
 	for (nSide = 0; nSide < 6; nSide++) {
-		if (segP->m_info.children [nSide] != m_lastSegment && segP->m_info.children [nSide] > -1) {
-			child = segP->m_info.children [nSide];
+		if (segP->Child (nSide) != m_lastSegment && segP->Child (nSide) > -1) {
+			child = segP->Child (nSide);
 			theMine->Current ()->nSide =  bFwd ? nSide: oppSideTable [nSide];
 			break;
 			}
@@ -350,8 +350,8 @@ if (child <= -1) {
 	// then settle for any way out
 	if (nSide == 6) {
 		for (nSide = 0; nSide < 6; nSide++) {
-			if (segP->m_info.children [nSide] > -1) {
-				child = segP->m_info.children [nSide];
+			if (segP->Child (nSide) > -1) {
+				child = segP->Child (nSide);
 				theMine->Current ()->nSide = bFwd ? nSide: oppSideTable [nSide];
 				break;
 				}
@@ -362,7 +362,7 @@ if (child > -1) {
 	childseg = theMine->Segments (0) + child;
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
-		if (childseg->m_info.children [nSide] == theMine->Current ()->nSegment) {
+		if (childseg->Child (nSide) == theMine->Current ()->nSegment) {
 			theMine->Current ()->nSide =  bFwd ? oppSideTable [nSide]: nSide;
 			break;
 			}

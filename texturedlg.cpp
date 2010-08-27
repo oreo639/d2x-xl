@@ -516,7 +516,7 @@ for (i = 0; i < 4; i++) {
 	m_lights [j] = (double) ((UINT16) sideP->m_info.uvls [i].l) / 327.68;
 	}
 
-if (segP->m_info.children [nSide]==-1)
+if (segP->Child (nSide)==-1)
 	bShowTexture = TRUE;
 else {
 	UINT16 nWall = sideP->m_info.nWall;
@@ -958,7 +958,7 @@ if (bAll)
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
-			if (segP->m_info.children [nSide] == -1) {
+			if (segP->Child (nSide) == -1) {
 				bChange = true;
 				theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 				INT32 i;
@@ -1006,7 +1006,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
 				continue;
 			if (m_bUse2nd && ((sideP->m_info.nOvlTex & 0x3FFF) != last_texture2))
 				continue;
-			if ((segP->m_info.children [nSide] >= 0) && (sideP->m_info.nWall == NO_WALL))
+			if ((segP->Child (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
 				 continue;
 			if (theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
@@ -1079,15 +1079,15 @@ for (i = 0; i < 4; i++) {
 
                         /*--------------------------*/
 
-bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16 linenum,
-												INT16 *adj_segnum, INT16 *adj_sidenum) 
+bool CTextureTool::GetAdjacentSide (INT16 nStartSeg, INT16 nStartSide, INT16 nLine,
+												INT16 *nAdjSeg, INT16 *nAdjSide) 
 {
 	CSegment *segP;
-	INT16 nSide,childnum;
-	INT16 point0,point1,vert0,vert1;
-	INT16 childs_side,childs_line;
-	INT16 childs_point0,childs_point1,childs_vert0,childs_vert1;
-	INT32 side_child[6][4] = {
+	INT16 nSide, childnum;
+	INT16 point0, point1, vert0, vert1;
+	INT16 childs_side, childs_line;
+	INT16 childs_point0, childs_point1, childs_vert0, childs_vert1;
+	INT32 sideChildTable[6][4] = {
 		{4,3,5,1},
 		{2,4,0,5},
 		{5,3,4,1},
@@ -1096,36 +1096,35 @@ bool CTextureTool::GetAdjacentSide (INT16 start_segment, INT16 start_side, INT16
 		{0,3,2,1}
 		};
 
-  // figure out which side of child shares two points w/ start_side
+  // figure out which side of child shares two points w/ nStartSide
   // find vert numbers for the line's two end points
-point0 = lineVertTable[sideLineTable[start_side][linenum]][0];
-point1 = lineVertTable[sideLineTable[start_side][linenum]][1];
-segP = theMine->Segments (0) + start_segment;
-vert0  = segP->m_info.verts[point0];
-vert1  = segP->m_info.verts[point1];
+point0 = lineVertTable [sideLineTable[nStartSide][nLine]][0];
+point1 = lineVertTable [sideLineTable[nStartSide][nLine]][1];
+segP = theMine->Segments (nStartSeg);
+vert0 = segP->m_info.verts [point0];
+vert1 = segP->m_info.verts [point1];
 
-nSide = side_child[start_side][linenum];
-childnum = segP->m_info.children[nSide];
-if (childnum < 0 || childnum >= theMine->SegCount ())
+nSide = sideChildTable[nStartSide][nLine];
+nChild = segP->Child (nSide);
+if (nChild < 0 || nChild >= theMine->SegCount ())
 	return false;
-for (childs_side=0;childs_side<6;childs_side++) {
-	segP = theMine->Segments (0) + childnum;
-	if ((segP->m_info.children[childs_side] == -1) ||
-	    (segP->m_sides[childs_side].m_info.nWall < theMine->GameInfo ().walls.count)) {
-		for (childs_line=0;childs_line<4;childs_line++) {
+for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+	segP = theMine->Segments (0) + nChild;
+	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < theMine->GameInfo ().walls.count)) {
+		for (nChildLine = 0; nChildLine < 4;nChildLine++) {
 			// find vert numbers for the line's two end points
-			childs_point0 = lineVertTable[sideLineTable[childs_side][childs_line]][0];
-			childs_point1 = lineVertTable[sideLineTable[childs_side][childs_line]][1];
-			childs_vert0  = segP->m_info.verts[childs_point0];
-			childs_vert1  = segP->m_info.verts[childs_point1];
+			nChildPoint0 = lineVertTable [sideLineTable [nChildSide][nChildLine]][0];
+			nChildPoint1 = lineVertTable [sideLineTable [nChildSide][nChildLine]][1];
+			nChildVert0  = segP->m_info.verts [nChildPoint0];
+			nChildVert1  = segP->m_info.verts [nChildPoint1];
 			// if points of child's line == corresponding points of parent
-			if (childs_vert0 == vert1 && childs_vert1 == vert0 ||
-				childs_vert0 == vert0 && childs_vert1 == vert1) {
+			if (((nChildVert0 == vert1) && (nChildVert1 == vert0)) ||
+				 ((nChildVert0 == vert0) && (nChildVert1 == vert1))) {
 				// now we know the child's side & line which touches the parent
-				// child:  childnum, childs_side, childs_line, childs_point0, childs_point1
-				// parent: start_segment, start_side, linenum, point0, point1
-				*adj_segnum = childnum;
-				*adj_sidenum = childs_side;
+				// child:  nChild, nChildSide, nChildLine, nChildPoint0, nChildPoint1
+				// parent: nStartSeg, nStartSide, nLine, point0, point1
+				*nAdjSeg = nChild;
+				*nAdjSide = nChildSide;
 				return true;
 				}
 			}

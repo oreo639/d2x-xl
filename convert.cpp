@@ -230,7 +230,7 @@ theMine->LoadPalette ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
 	segP->m_info.s2_flags = 0;
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
-		if ((segP->m_info.children [nSide] == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
+		if ((segP->Child (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 			d1Texture = segP->m_sides [nSide].m_info.nBaseTex;
 			if ((d1Texture >= 0) && (d1Texture < MAX_D1_TEXTURES))
 				segP->m_sides[nSide].m_info.nBaseTex = m_pTextures [d1Texture];

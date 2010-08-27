@@ -439,7 +439,7 @@ bool CDiagTool::CheckSegments (void)
 if (!theMine) 
 	return false;
 
-  INT16 nSegment, nSide, child, sidenum2, pointnum;
+  INT16 nSegment, nSide, nChild, nSide2, pointnum;
   INT16 vert0, vert1, vert2, vert3;
   INT16 i, j;
   double angle,flatness;
@@ -516,42 +516,42 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 #endif
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		child = theMine->Segments (nSegment)->m_info.children[nSide];
-// check child range 
-		if (child != -1 && child != -2) {
-			if (child < -2) {
-				sprintf_s (message, sizeof (message),"ERROR: Illegal child number %d (cube=%d,side=%d)",child,nSegment,nSide);
+		nChild = theMine->Segments (nSegment)->Child (nSide);
+// check nChild range 
+		if (nChild != -1 && nChild != -2) {
+			if (nChild < -2) {
+				sprintf_s (message, sizeof (message),"ERROR: Illegal nChild number %d (cube=%d,side=%d)",nChild,nSegment,nSide);
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				}
-			else if (child >= theMine->SegCount ()) {
-				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (cube=%d,side=%d)",child,nSegment,nSide);
+			else if (nChild >= theMine->SegCount ()) {
+				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (cube=%d,side=%d)",nChild,nSegment,nSide);
 				if (UpdateStats (message, 1, nSegment, nSide)) 
 					return true;
 				}
 			else {
-			// make sure child segment has a child from this segment
+			// make sure nChild segment has a nChild from this segment
 			// and that it shares the same vertices as this segment
-				for (sidenum2 = 0; sidenum2 < MAX_SIDES_PER_SEGMENT; sidenum2++) {
-					if (theMine->Segments (child)->m_info.children[sidenum2] == nSegment) 
+				for (nSide2 = 0; nSide2 < MAX_SIDES_PER_SEGMENT; nSide2++) {
+					if (theMine->Segments (nChild)->Child (nSide2) == nSegment) 
 						break;
 					}					
-				if (sidenum2 < MAX_SIDES_PER_SEGMENT) {
+				if (nSide2 < MAX_SIDES_PER_SEGMENT) {
 					memset (match, 0, sizeof (match));
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
-							if (theMine->Segments (nSegment)->m_info.verts[sideVertTable[nSide][i]] ==
-								 theMine->Segments (child)->m_info.verts[sideVertTable[sidenum2][j]])
+							if (theMine->Segments (nSegment)->m_info.verts [sideVertTable [nSide][i]] ==
+								 theMine->Segments (nChild)->m_info.verts [sideVertTable [nSide2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
-						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,child=%d)",nSegment,nSide,child);
-						if (UpdateStats (message, 0, nSegment, -1, -1, -1, child))
+						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,nChild=%d)",nSegment,nSide,nChild);
+						if (UpdateStats (message, 0, nSegment, -1, -1, -1, nChild))
 							return true;
 						}
 					}
 				else {
-					sprintf_s (message, sizeof (message), "WARNING:Child cube does not connect to this cube (cube=%d,side=%d,child=%d)",nSegment,nSide,child);
-					if (UpdateStats (message, 1, nSegment, -1, -1, -1, child))
+					sprintf_s (message, sizeof (message), "WARNING:Child cube does not connect to this cube (cube=%d,side=%d,nChild=%d)",nSegment,nSide,nChild);
+					if (UpdateStats (message, 1, nSegment, -1, -1, -1, nChild))
 						return false;
 					}
 				}
@@ -1649,13 +1649,13 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
-				nSegment = theMine->Segments (wallP->m_nSegment)->m_info.children[wallP->m_nSide];
+				nSegment = theMine->Segments (wallP->m_nSegment)->Child (wallP->m_nSide);
 				CSegment *segP = theMine->Segments (nSegment);
 				if ((nSegment >= 0 && nSegment < theMine->SegCount ()) &&
 					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
-						if (segP->m_info.children[nSide] == wallP->m_nSegment)
+						if (segP->Child (nSide) == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
 						if (segP->m_sides[nSide].m_info.nWall >= theMine->GameInfo ().walls.count) {

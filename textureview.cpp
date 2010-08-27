@@ -406,7 +406,7 @@ else {
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
 			UINT16 nWall = segP->m_sides[nSide].m_info.nWall;
-			if ((segP->m_info.children [nSide] == -1) ||
+			if ((segP->Child (nSide) == -1) ||
 				 (nWall < theMine->GameInfo ().walls.count && 
 				  theMine->Walls (nWall)->m_info.type != WALL_OPEN)) {
 				INT32 t = segP->m_sides [nSide].m_info.nBaseTex;

@@ -1149,7 +1149,7 @@ if (nBaseTex < 0) {
 	INT32 nSide = theMine->Current ()->nSide;
 	nBaseTex = sideP->m_info.nBaseTex;
 	nOvlTex = sideP->m_info.nOvlTex & 0x1fff;
-	if (segP->m_info.children [nSide] == -1)
+	if (segP->Child (nSide) == -1)
 		bShowTexture = TRUE;
 	else {
 		nWall = sideP->m_info.nWall;

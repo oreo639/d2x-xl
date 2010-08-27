@@ -232,11 +232,11 @@ void CSegmentTool::EnableControls (BOOL bEnable)
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
 // enable/disable "end of exit tunnel" button
-EndOfExit ()->EnableWindow (segP->m_info.children [m_nSide] < 0);
+EndOfExit ()->EnableWindow (segP->Child (m_nSide) < 0);
 // enable/disable add cube button
 GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((theMine->SegCount () < MAX_SEGMENTS) &&
 													  (theMine->VertCount () < MAX_VERTICES - 4) &&
-													  (segP->m_info.children [m_nSide] < 0));
+													  (segP->Child (m_nSide) < 0));
 GetDlgItem (IDC_CUBE_DEL)->EnableWindow (theMine->SegCount () > 1);
 // enable/disable add robot button
 GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBAvailBots ()->GetCount () > 0));
@@ -330,7 +330,7 @@ CSegment *segP = theMine->Segments (0) + m_nSegment;
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	INT32 i;
 	for (i = 0; i < 6; i++)
-		if (segP->m_info.children [i] == -1)
+		if (segP->Child (i) == -1)
 			theMine->SetTexture (m_nSegment, i, nTexture, 0);
 	}
 }
@@ -353,7 +353,7 @@ theMine->RenumberBotGens ();
 theMine->RenumberEquipGens ();
 // update cube number combo box if number of cubes has changed
 CSegment *segP = theMine->CurrSeg ();
-m_bEndOfExit = (segP->m_info.children [theMine->Current ()->nSide] == -2);
+m_bEndOfExit = (segP->Child (theMine->Current ()->nSide) == -2);
 m_nSegment = theMine->Current ()->nSegment;
 m_nSide = theMine->Current ()->nSide;
 m_nPoint = theMine->Current ()->nPoint;
@@ -484,11 +484,11 @@ CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
 theApp.SetModified (TRUE);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
-	segP->m_info.children [m_nSide] = -2;
+	segP->Child (m_nSide) = -2;
 	segP->m_info.childFlags |= (1 << m_nSide);
 	}
 else {
-	segP->m_info.children[m_nSide] = -1;
+	segP->Child (m_nSide) = -1;
 	segP->m_info.childFlags &= ~(1 << m_nSide);
 	}
 }
@@ -719,9 +719,9 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		CWall *wallP;
 		INT16 nOppSeg, nOppSide;
 		for (INT16 nSide = 0; nSide < 6; nSide++, sideP++) {
-			if (segP->m_info.children [nSide] < 0)	// assume no wall if no child segment at the current side
+			if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 				continue;
-			childseg = theMine->Segments (0) + segP->m_info.children [nSide];
+			childseg = theMine->Segments (0) + segP->Child (nSide);
 			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it

@@ -139,7 +139,7 @@ if (CurrSide ()->m_info.nWall >= GameInfo ().walls.count) {
 			}
 		nSegment = nSide = -1;
 		GetCurrent (nSegment, nSide);
-		if (!AddWall (-1, -1, (Segments (nSegment)->m_info.children [nSide] < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
+		if (!AddWall (-1, -1, (Segments (nSegment)->Child (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			theApp.ResetModified (bUndo);
 			return NULL;

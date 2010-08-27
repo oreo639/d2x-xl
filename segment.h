@@ -25,6 +25,7 @@ public:
 		}
 
 	inline void Clear (void) { u = v = l = 0; }
+	inline void Set (INT16 _u, INT16 _v, INT16 _l) { u = _u, v = _v, l = _l; }
 };
 
 typedef struct rgbColor {
@@ -48,6 +49,7 @@ public:
 };
 
 typedef struct tSide {
+	INT16		nChild;
 	UINT16	nWall;		// (was INT16) Index into Walls array, which wall (probably door) is on this side 
 	INT16		nBaseTex;	// Index into array of textures specified in bitmaps.bin 
 	INT16		nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
@@ -68,7 +70,6 @@ public:
 };
 
 typedef struct tSegment {
-	INT16		children [MAX_SIDES_PER_SEGMENT];	// indices of 6 children segments, front, left, top, right, bottom, back 
 	INT16		verts [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
 	UINT8		function;			// special property of a segment (such as damaging, trigger, etc.) 
 	UINT8		props;
@@ -80,7 +81,7 @@ typedef struct tSegment {
 	UINT8		childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
 	UINT8		wallFlags;			// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
 	INT16		nIndex;				// used for cut & paste to help link children 
-	INT16		map_bitmask;		// which lines are drawn when displaying wireframe 
+	INT16		mapBitmask;		// which lines are drawn when displaying wireframe 
 	INT8		owner;
 	INT8		group;
 } tSegment;
@@ -107,6 +108,14 @@ public:
 	virtual CGameItem* Next (void) { return this + 1; }
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
+	inline INT16 Child (INT16 nSide) { return m_sides [nSide].nChild; }
+	inline INT16 SetChild (INT16 nSide, INT16 nSegment) {
+		if ((m_sides [nSide].nChild = nSegment) < 0)
+			m_info.childFlags &= ~(1 << nSide);
+		else
+			m_info.childFlags |= (1 << nSide);
+		}
+
 private:
 	UINT8 ReadWalls (FILE* fp, int nLevelVersion);
 	UINT8 WriteWalls (FILE* fp, int nLevelVersion);

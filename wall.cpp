@@ -33,16 +33,16 @@ CSegment *segP = Segments (nSegment);
 
 // if wall is an overlay, make sure there is no child
 if (type < 0)
-	type = (segP->m_info.children [nSide] == -1) ? WALL_OVERLAY : WALL_OPEN;
+	type = (segP->Child (nSide) == -1) ? WALL_OVERLAY : WALL_OPEN;
 if (type == WALL_OVERLAY) {
-	if (segP->m_info.children [nSide] != -1) {
+	if (segP->Child (nSide) != -1) {
 		ErrorMsg ("Switches can only be put on solid sides.");
 		return NULL;
 		}
 	}
 else {
 	// otherwise make sure there is a child
-	if (segP->m_info.children [nSide] < 0) {
+	if (segP->Child (nSide) < 0) {
 		ErrorMsg ("This side must be attached to an other cube before a wall can be added.");
 		return NULL;
 		}
