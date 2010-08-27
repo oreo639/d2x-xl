@@ -92,9 +92,6 @@
 
         public const int MAX_MACROS = 100;
 
-        public const int MAX_D1_TEXTURES = 584;
-        public const int MAX_D2_TEXTURES = 910;
-
         public const int MAX_D1_WALL_FLAGS = 5;
         public const int MAX_D2_WALL_FLAGS = 9;
         public const int MAX_WALL_FLAGS = 9;

@@ -161,12 +161,14 @@
     <Compile Include="Segment.cs" />
     <Compile Include="Segment.Enums.cs" />
     <Compile Include="Side.cs" />
+    <Compile Include="Texture.cs" />
     <Compile Include="TextureFilters.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TextureFilters.Designer.cs">
       <DependentUpon>TextureFilters.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextureManager.cs" />
     <Compile Include="TextureTool.cs">
       <SubType>Form</SubType>
     </Compile>

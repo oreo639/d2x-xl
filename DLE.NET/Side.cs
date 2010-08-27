@@ -8,40 +8,68 @@ namespace DLE.NET
 {
     public class Side : GameItem
     {
-	    ushort	nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
-	    short	nBaseTex;	    // Index into array of textures specified in bitmaps.bin 
-	    short	nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
-	    UVL[]	uvls = new UVL[4];     // CUVL coordinates at each point 
+            public short nChild;
+            public ushort nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
+            public ushort nBaseTex;	    // Index into array of textures specified in bitmaps.bin 
+            public ushort nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
+            public UVL[] uvls = new UVL [4];  // CUVL coordinates at each point 
 
-    	void Setup ()
+        public void Setup ()
         {
         }
 
-	    void LoadTextures ()
+        public void LoadTextures ()
         {
         }
 
-	    bool SetTexture (short nBaseTex, short nOvlTex)
+        public bool SetTexture (short nBaseTex, short nOvlTex)
         {
             return false;
         }
-	
-        Wall Wall ()
+
+        public Wall Wall ()
         {
             return null;
         }
 
-        public override int Read (Stream fp, int version = 0, bool bFlag = false)
+        public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
-            return 1;
+            nWall = fp.ReadUInt16 ();
+            nBaseTex = fp.ReadUInt16 ();
+            if ((nBaseTex & 0x8000) == 0)
+                nOvlTex = 0;
+            else
+            {
+                nOvlTex = fp.ReadUInt16 ();
+                if ((nOvlTex & 0x1FFF) == 0)
+                    nOvlTex = 0;
+            }
+            nBaseTex &= 0x1FFF;
+            for (int i = 0; i < uvls.Length; i++)
+                uvls [i].Read (fp);
         }
 
-        public override void Write (Stream fp, int version = 0, bool bFlag = false)
+        public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
+            if (nOvlTex == 0)
+                fp.Write (nBaseTex);
+            else
+            {
+                fp.Write (nBaseTex | (ushort) 0x8000);
+                fp.Write (nOvlTex);
+            }
+            for (int i = 0; i < uvls.Length; i++)
+                uvls [i].Write (fp);
         }
 
         public override void Clear ()
         {
+            nChild = 0;
+            nWall = 0;
+            nBaseTex = 0;
+            nOvlTex = 0;
+            for (int i = 0; i < uvls.Length; i++)
+                uvls [i].Clear ();
         }
     }
 }

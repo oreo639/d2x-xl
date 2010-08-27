@@ -10,23 +10,23 @@ namespace DLE.NET
     {
         short u, v, l;
 
-	int Read (Stream fp) {
-		u = read_INT16 (fp);
-		v = read_INT16 (fp);
-		l = read_INT16 (fp);
-		return 1;
-		}
+        public void Read (BinaryReader fp)
+        {
+            u = fp.ReadInt16 ();
+            v = fp.ReadInt16 ();
+            l = fp.ReadInt16 ();
+        }
 
-	void Write (Stream fp) {
-		write_INT16 (u, fp);
-		write_INT16 (v, fp);
-		write_INT16 (l, fp);
-		}
+        public void Write (BinaryWriter fp)
+        {
+            fp.Write (u);
+            fp.Write (v);
+            fp.Write (l);
+        }
 
-	public override void Clear () 
-    { 
-        u = v = l = 0; 
-    }
-};
+        public override void Clear ()
+        {
+            u = v = l = 0;
+        }
     }
 }
