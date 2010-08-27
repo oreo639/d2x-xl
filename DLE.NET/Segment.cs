@@ -30,14 +30,22 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public override void Read (Stream fp, int version = 0, bool bFlag = false)
+        public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
+            function = fp.ReadByte ();
+            props = fp.ReadByte ();
+            nMatCen = fp.ReadSByte ();
+            value = fp.ReadSByte ();
         }
 
         //------------------------------------------------------------------------------
 
-        public override void Write (Stream fp, int version = 0, bool bFlag = false)
+        public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
+            fp.Write (function);
+            fp.Write (props);
+            fp.Write (nMatCen);
+            fp.Write (value);
         }
 
         //------------------------------------------------------------------------------
@@ -63,7 +71,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public short Child (short nSide)
+        public short GetChild (short nSide)
         {
             return sides [nSide].nChild;
         }
@@ -79,5 +87,8 @@ namespace DLE.NET
                 childFlags |= (byte) (1 << nSide);
             return nSegment;
         }
+
+        //------------------------------------------------------------------------------
+
     }
 }

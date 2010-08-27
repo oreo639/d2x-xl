@@ -30,7 +30,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public override void Clear ()
+        public void Clear ()
         {
             u = v = l = 0;
         }

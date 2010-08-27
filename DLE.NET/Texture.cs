@@ -71,7 +71,7 @@ namespace DLE.NET
             m_info.name = new byte [8];
         }
 
-        public void Read (BinaryReader fp)
+        public virtual void Read (BinaryReader fp)
         {
             m_info.name = fp.ReadBytes (m_info.name.Length);
             m_info.dflags = fp.ReadByte ();
@@ -103,10 +103,10 @@ namespace DLE.NET
 
     public class PigTextureD2 : PigTextureD1
     {
-        public PigTexture m_info;
+        public new PigTexture m_info;
         public ushort whExtra;     // bits 0-3 width, bits 4-7 height
 
-        public const uint Size = 15;
+        public new const uint Size = 15;
 
         public override void Read (BinaryReader fp)
         {
