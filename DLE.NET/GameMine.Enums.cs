@@ -2,14 +2,14 @@
 {
     public partial class GameMine
     {
-        enum MacroModes : uint
+        public enum MacroModes : uint
         {
             MACRO_OFF = 0,
             MACRO_RECORD = 1,
             MACRO_PLAY = 2
         }
 
-        enum SelectModes : uint
+        public enum SelectModes : uint
         {
             POINT_MODE = 0,
             LINE_MODE = 1,
@@ -20,21 +20,21 @@
             N_SELEMODES = 6
         }
 
-        enum EditModes : uint
+        public enum EditModes : uint
         {
             EDIT_OFF = 0,
             EDIT_MOVE = 1,
             N_EDIT_MODES = 2
         }
 
-        enum MarkModes : byte
+        public enum MarkModes : byte
         {
             NEW_MASK = 0x20, // used on vert_status                
             DELETED_MASK = 0x40, // used on wall_bitmask & vert_status 
             MARKED_MASK = 0x80 // used on wall_bitmask & vert_status 
         }
 
-        enum ShowMode : uint
+        public enum ShowMode : uint
         {
             SHOW_LINES_POINTS = 1,
             SHOW_LINES_PARTIAL = 2,
@@ -43,13 +43,13 @@
             SHOW_FILLED_POLYGONS = 16
         }
 
-        enum GameFileType : uint
+        public enum GameFileType : uint
         {
             RDL = 0,
             RL2 = 1
         }
 
-        enum WallSide : byte
+        public enum WallSide : byte
         {
             LEFT = 0,
             TOP = 1,
@@ -60,7 +60,7 @@
 
         }
 
-        enum PowerupMask : byte
+        public enum PowerupMask : byte
         {
             POWERUP_WEAPON_MASK = 1,
             POWERUP_KEY_MASK = 2,
@@ -68,7 +68,7 @@
             POWERUP_UNKNOWN_MASK = 255 // show the type if any other mask is on
         }
 
-        enum AIBehavior : byte
+        public enum AIBehavior : byte
         {
             AIB_STILL = 0x80,
             MIN_BEHAVIOR = AIB_STILL,
@@ -81,7 +81,7 @@
             MAX_BEHAVIOR = AIB_FOLLOW_PATH
         }
 
-        enum SegInsMode : uint
+        public enum SegInsMode : uint
         {
             ORTHOGONAL = 0,
             EXTEND = 1,
@@ -90,7 +90,7 @@
         }
 
 
-        enum TextureFlag : int
+        public enum TextureFlag : int
         {
             TRANSPARENT = 1,
             SUPER_TRANSPARENT = 2,

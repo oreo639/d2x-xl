@@ -165,43 +165,46 @@ namespace DLE.NET
 
         int Read (short index) 
         {
-	        byte				xsize[200];
-	        byte				line[320],*line_ptr;
-	        byte				j;
-	        PigTexture		ptexture;
-	        PigTextureD2 d2_ptexture;
-	        PigHeaderD1		file_header;
-	        PigHeaderD2	d2FileHeader;
+	        byte[]			xsize = new byte [200];
+	        byte[]			line = new byte [320];
+	        byte			j;
+	        PigTextureD1	pigTexD1;
+	        PigTextureD2    pigTexD2;
+	        PigHeaderD1		fileHeaderD1;
+	        PigHeaderD2	    fileHeaderD2;
 	        int				offset,dataOffset;
-	        short				x,y,w,h,s;
-	        byte				byteVal, runcount, runvalue;
+	        short			x,y,w,h,s;
+	        byte			byteVal, runcount, runvalue;
 	        int				nSize;
-	        short				linenum;
-	        HRSRC				hFind = 0;
-	        HGLOBAL			hGlobal = 0;
-	        short				*textureTable;
+	        short			nLine;
+            //HRSRC			hFind = 0;
+            //HGLOBAL			hGlobal = 0;
+            //short			*textureTable;
 	        int				rc;
-	        short				*texture_ptr;
-	        FILE				*fTextures = NULL;
-	        char				path [256];
+	        short			linePtr, texPtr;
+            Stream          fTextures;
+            String          folder;
 	
-        if (m_info.bModified)
+        if ((index > ((DLE.IsD1File ()) ? TextureManager.MAX_D1_TEXTURES : TextureManager.MAX_D2_TEXTURES)) || (index < 0))
+            throw (new ArgumentException ("Reading texture: Texture #" + i + " out of range.");
+        if (bModified)
 	        return 0;
-        strcpy_s (path, sizeof (path), (theApp.IsD1File ()) ? descent_path : descent2_path);
-        if (!strstr (path, ".pig"))
-	        strcat_s (path, sizeof (path), "groupa.pig");
+        folder = DLE.settings.gameFolders [DLE.IsD1File () ? 0 : 1];
+        if (!folder.Contains (".pig"))
+            folder += "groupa.pig";
+
+            = DLE.Properties.Resources.Data.
 
         HINSTANCE hInst = AfxGetInstanceHandle ();
 
         // do a range check on the texture number
-        if ((index > ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
-        DEBUGMSG (" Reading texture: Texture # out of range.");
+        DEBUGMSG ();
         rc = 1;
         goto abort;
         }
 
         // get pointer to texture table from resource fTextures
-        hFind = (theApp.IsD1File ()) ?
+        hFind = (DLE.IsD1File ()) ?
 	        FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
 	        FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
         if (!hFind) {
@@ -233,19 +236,19 @@ namespace DLE.NET
         else if (dataOffset < 0x10000L)
 	        dataOffset = 0;
         fseek (fTextures, dataOffset, SEEK_SET);
-        if (theApp.IsD2File ())
-	        fread (&d2FileHeader, sizeof (d2FileHeader), 1, fTextures);
+        if (DLE.IsD2File ())
+	        fread (&fileHeaderD2, sizeof (fileHeaderD2), 1, fTextures);
         else
-	        fread (&file_header, sizeof (file_header), 1, fTextures);
+	        fread (&fileHeaderD1, sizeof (fileHeaderD1), 1, fTextures);
 
         // read texture header
-        if (theApp.IsD2File ()) {
+        if (DLE.IsD2File ()) {
 	        offset = sizeof (PigHeaderD2) + dataOffset +
 				        (fix) (textureTable[index]-1) * sizeof (PigTextureD2);
 	        fseek (fTextures, offset, SEEK_SET);
-	        fread (&d2_ptexture, sizeof (PigTextureD2), 1, fTextures);
-	        w = d2_ptexture.xsize + ((d2_ptexture.wh_extra & 0xF) << 8);
-	        h = d2_ptexture.ysize + ((d2_ptexture.wh_extra & 0xF0) << 4);
+	        fread (&pigTexD2, sizeof (PigTextureD2), 1, fTextures);
+	        w = pigTexD2.xsize + ((pigTexD2.wh_extra & 0xF) << 8);
+	        h = pigTexD2.ysize + ((pigTexD2.wh_extra & 0xF0) << 4);
 	        }
         else {
 	        offset = sizeof (PigHeaderD1) + dataOffset + (fix) (textureTable [index] - 1) * sizeof (ptexture);
@@ -253,49 +256,49 @@ namespace DLE.NET
 	        fread (&ptexture, sizeof (PigTexture), 1, fTextures);
 	        ptexture.name [sizeof (ptexture.name) - 1] = '\0';
 	        // copy d1 texture into d2 texture struct
-	        strncpy_s (d2_ptexture.name, sizeof (d2_ptexture.name), ptexture.name, sizeof (ptexture.name));
-	        d2_ptexture.dflags = ptexture.dflags;
-	        d2_ptexture.xsize = ptexture.xsize;
-	        d2_ptexture.ysize = ptexture.ysize;
-	        d2_ptexture.flags = ptexture.flags;
-	        d2_ptexture.avg_color = ptexture.avg_color;
-	        d2_ptexture.offset = ptexture.offset;
-	        d2_ptexture.wh_extra = (ptexture.dflags == 128) ? 1 : 0;
+	        strncpy_s (pigTexD2.name, sizeof (pigTexD2.name), ptexture.name, sizeof (ptexture.name));
+	        pigTexD2.dflags = ptexture.dflags;
+	        pigTexD2.xsize = ptexture.xsize;
+	        pigTexD2.ysize = ptexture.ysize;
+	        pigTexD2.flags = ptexture.flags;
+	        pigTexD2.avg_color = ptexture.avg_color;
+	        pigTexD2.offset = ptexture.offset;
+	        pigTexD2.wh_extra = (ptexture.dflags == 128) ? 1 : 0;
 	        w = h = 64;
 	        }
         s = w * h;
 
         // seek to data
-        if (theApp.IsD2File ()) {
+        if (DLE.IsD2File ()) {
 	        offset = sizeof (PigHeaderD2) 
 				        + dataOffset
-				        + d2FileHeader.nTextures * sizeof (PigTextureD2)
-				        + d2_ptexture.offset;
+				        + fileHeaderD2.nTextures * sizeof (PigTextureD2)
+				        + pigTexD2.offset;
 	        }
         else {
 	        offset = sizeof (PigHeaderD1) + dataOffset
-				        + file_header.nTextures * sizeof (PigTexture)
-				        + file_header.nSounds   * sizeof (PIG_SOUND)
-				        + d2_ptexture.offset;
+				        + fileHeaderD1.nTextures * sizeof (PigTexture)
+				        + fileHeaderD1.nSounds   * sizeof (PIG_SOUND)
+				        + pigTexD2.offset;
 	        }
 
         // allocate data if necessary
-        if (m_info.bmDataP && ((m_info.width != w) || (m_info.height != h)))
+        if (bmDataP && ((width != w) || (height != h)))
 	        Release ();
-        if (m_info.bmDataP == NULL)
-	        m_info.bmDataP = new byte [s];
-        if (m_info.bmDataP == NULL) {
+        if (bmDataP == NULL)
+	        bmDataP = new byte [s];
+        if (bmDataP == NULL) {
 	        rc = 1;
 	        goto abort;
 	        }
-        m_info.nFormat = 0;
+        nFormat = 0;
         fseek (fTextures, offset, SEEK_SET);
-        if (d2_ptexture.flags & 0x08) {
+        if (pigTexD2.flags & 0x08) {
 	        fread (&nSize, 1, sizeof (int), fTextures);
-	        fread (xsize, d2_ptexture.ysize, 1, fTextures);
-	        linenum = 0;
+	        fread (xsize, pigTexD2.ysize, 1, fTextures);
+	        nLine = 0;
 	        for (y = h - 1; y >= 0; y--) {
-		        fread (line, xsize[linenum++], 1, fTextures);
+		        fread (line, xsize[nLine++], 1, fTextures);
 		        line_ptr = line;
 			        for (x = 0; x < w;) {
 			        byteVal = *line_ptr++;
@@ -304,13 +307,13 @@ namespace DLE.NET
 				        runvalue = *line_ptr++;
 				        for (j = 0; j < runcount; j++) {
 					        if (x < w) {
-						        m_info.bmDataP [y * w + x] = runvalue;
+						        bmDataP [y * w + x] = runvalue;
 						        x++;
 						        }
 					        }
 				        }
 			        else {
-				        m_info.bmDataP [y * w + x] = byteVal;
+				        bmDataP [y * w + x] = byteVal;
 				        x++;
 				        }
 			        }
@@ -319,22 +322,22 @@ namespace DLE.NET
         else {
 	        for (y=h-1;y>=0;y--) {
         #if 1
-		        fread (m_info.bmDataP + y * w, w, 1, fTextures);
+		        fread (bmDataP + y * w, w, 1, fTextures);
         #else
 		        fread (line,w,1,fTextures);
 		        line_ptr = line;
 		        for (x=0;x<w;x++) {
 			        byteVal = *line_ptr++;
-			        m_info.bmDataP[y*w+x] = byteVal;
+			        bmDataP[y*w+x] = byteVal;
 			        }
         #endif
 		        }
 	        }
         fclose (fTextures);
-        m_info.width = w;
-        m_info.height = h;
-        m_info.size = s;
-        m_info.bValid = 1;
+        width = w;
+        height = h;
+        size = s;
+        bValid = 1;
         return (0);
 
         abort:

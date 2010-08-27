@@ -160,6 +160,7 @@
     </Compile>
     <Compile Include="Segment.cs" />
     <Compile Include="Segment.Enums.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Side.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TextureFilters.cs">
@@ -309,174 +310,174 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\alien1.256" />
-    <None Include="Resources\alien1.pal" />
-    <None Include="Resources\alien2.256" />
-    <None Include="Resources\alien2.pal" />
-    <None Include="Resources\credits.256" />
-    <None Include="Resources\credits.pal" />
-    <None Include="Resources\d12d2.dat" />
-    <None Include="Resources\default.256" />
-    <None Include="Resources\default.pal" />
-    <None Include="Resources\descent.clr" />
-    <None Include="Resources\descent.lgt" />
-    <None Include="Resources\descent2.clr" />
-    <None Include="Resources\descent2.lgt" />
-    <None Include="Resources\fire.256" />
-    <None Include="Resources\fire.pal" />
-    <None Include="Resources\groupa.256" />
-    <None Include="Resources\groupa.pal" />
-    <None Include="Resources\ice.256" />
-    <None Include="Resources\ice.pal" />
-    <None Include="Resources\level1.rl2" />
-    <None Include="Resources\level1b.rl2" />
-    <None Include="Resources\level1c.rl2" />
-    <None Include="Resources\level1d.rl2" />
-    <None Include="Resources\level1e.rl2" />
-    <None Include="Resources\level1f.rl2" />
-    <None Include="Resources\light.dat" />
-    <None Include="Resources\light2.dat" />
-    <None Include="Resources\new1.rl2" />
-    <None Include="Resources\new2.rl2" />
-    <None Include="Resources\new3.rl2" />
-    <None Include="Resources\new_save.mn2" />
-    <None Include="Resources\new_save.msn" />
-    <None Include="Resources\new_save.rdl" />
-    <None Include="Resources\new_save.rl2" />
-    <None Include="Resources\palette.256" />
-    <None Include="Resources\palette.pal" />
-    <None Include="Resources\pofs1.dat" />
-    <None Include="Resources\pofs2.dat" />
-    <None Include="Resources\rc_data1.bin" />
-    <None Include="Resources\robot.hxm" />
-    <None Include="Resources\ship.dat" />
-    <None Include="Resources\temp.dat" />
-    <None Include="Resources\temp2.dat" />
-    <None Include="Resources\temp2.ham" />
-    <None Include="Resources\texture.dat" />
-    <None Include="Resources\texture2.dat" />
-    <None Include="Resources\texturetool.png" />
+    <None Include="Resources\Palettes\alien1.256" />
+    <None Include="Resources\Palettes\alien1.pal" />
+    <None Include="Resources\Palettes\alien2.256" />
+    <None Include="Resources\Palettes\alien2.pal" />
+    <None Include="Resources\Palettes\credits.256" />
+    <None Include="Resources\Palettes\credits.pal" />
+    <None Include="Resources\Data\d12d2.dat" />
+    <None Include="Resources\Palettes\default.256" />
+    <None Include="Resources\Palettes\default.pal" />
+    <None Include="Resources\Data\descent.clr" />
+    <None Include="Resources\Data\descent.lgt" />
+    <None Include="Resources\Data\descent2.clr" />
+    <None Include="Resources\Data\descent2.lgt" />
+    <None Include="Resources\Palettes\fire.256" />
+    <None Include="Resources\Palettes\fire.pal" />
+    <None Include="Resources\Palettes\groupa.256" />
+    <None Include="Resources\Palettes\groupa.pal" />
+    <None Include="Resources\Palettes\ice.256" />
+    <None Include="Resources\Palettes\ice.pal" />
+    <None Include="Resources\Data\level1.rl2" />
+    <None Include="Resources\Data\level1b.rl2" />
+    <None Include="Resources\Data\level1c.rl2" />
+    <None Include="Resources\Data\level1d.rl2" />
+    <None Include="Resources\Data\level1e.rl2" />
+    <None Include="Resources\Data\level1f.rl2" />
+    <None Include="Resources\Data\light.dat" />
+    <None Include="Resources\Data\light2.dat" />
+    <None Include="Resources\Data\new1.rl2" />
+    <None Include="Resources\Data\new2.rl2" />
+    <None Include="Resources\Data\new3.rl2" />
+    <None Include="Resources\Data\new_save.mn2" />
+    <None Include="Resources\Data\new_save.msn" />
+    <None Include="Resources\Data\new_save.rdl" />
+    <None Include="Resources\Data\new_save.rl2" />
+    <None Include="Resources\Palettes\palette.256" />
+    <None Include="Resources\Palettes\palette.pal" />
+    <None Include="Resources\Data\pofs1.dat" />
+    <None Include="Resources\Data\pofs2.dat" />
+    <None Include="Resources\Bitmaps\rc_data1.bin" />
+    <None Include="Resources\Data\robot.hxm" />
+    <None Include="Resources\Data\ship.dat" />
+    <None Include="Resources\Data\temp.dat" />
+    <None Include="Resources\Data\temp2.dat" />
+    <None Include="Resources\Data\temp2.ham" />
+    <None Include="Resources\Data\texture.dat" />
+    <None Include="Resources\Data\texture2.dat" />
+    <None Include="Resources\Bitmaps\texturetool.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\addcube.png" />
+    <None Include="Resources\Bitmaps\addcube.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\blockmode.png" />
+    <None Include="Resources\Bitmaps\blockmode.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\checkmine.png" />
+    <None Include="Resources\Bitmaps\checkmine.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\cubemode.png" />
+    <None Include="Resources\Bitmaps\cubemode.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\cubetool.png" />
+    <None Include="Resources\Bitmaps\cubetool.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\extendcube.png" />
+    <None Include="Resources\Bitmaps\extendcube.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\fitview.png" />
+    <None Include="Resources\Bitmaps\fitview.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\fullscreen.png" />
+    <None Include="Resources\Bitmaps\fullscreen.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\joinlines.png" />
+    <None Include="Resources\Bitmaps\joinlines.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\joinpoints.png" />
+    <None Include="Resources\Bitmaps\joinpoints.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\joinsides.png" />
+    <None Include="Resources\Bitmaps\joinsides.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\lighttool.png" />
+    <None Include="Resources\Bitmaps\lighttool.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\linemode.png" />
+    <None Include="Resources\Bitmaps\linemode.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\mirrorcubes.png" />
+    <None Include="Resources\Bitmaps\mirrorcubes.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\movedown.png" />
+    <None Include="Resources\Bitmaps\movedown.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\moveright.png" />
+    <None Include="Resources\Bitmaps\moveright.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\moveup.png" />
+    <None Include="Resources\Bitmaps\moveup.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\objectmode.png" />
+    <None Include="Resources\Bitmaps\objectmode.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\objecttool.png" />
+    <None Include="Resources\Bitmaps\objecttool.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\openfile.png" />
+    <None Include="Resources\Bitmaps\openfile.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\pointmode.png" />
+    <None Include="Resources\Bitmaps\pointmode.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\preferences.png" />
+    <None Include="Resources\Bitmaps\preferences.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\redraw.png" />
+    <None Include="Resources\Bitmaps\redraw.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\savefile.png" />
+    <None Include="Resources\Bitmaps\savefile.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\sidemode.png" />
+    <None Include="Resources\Bitmaps\sidemode.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\splitlines.png" />
+    <None Include="Resources\Bitmaps\splitlines.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\splitpoints.png" />
+    <None Include="Resources\Bitmaps\splitpoints.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\splitscreen.png" />
+    <None Include="Resources\Bitmaps\splitscreen.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\splitsides.png" />
+    <None Include="Resources\Bitmaps\splitsides.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tnames.dat" />
-    <None Include="Resources\tnames2.dat" />
-    <None Include="Resources\walltool.png" />
+    <None Include="Resources\Data\tnames.dat" />
+    <None Include="Resources\Data\tnames2.dat" />
+    <None Include="Resources\Bitmaps\walltool.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\water.256" />
-    <None Include="Resources\water.pal" />
-    <None Include="Resources\xrotright.png" />
+    <None Include="Resources\Palettes\water.256" />
+    <None Include="Resources\Palettes\water.pal" />
+    <None Include="Resources\Bitmaps\xrotright.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\yrotleft.png" />
+    <None Include="Resources\Bitmaps\yrotleft.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\yrotright.png" />
+    <None Include="Resources\Bitmaps\yrotright.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\zoomin.png" />
+    <None Include="Resources\Bitmaps\zoomin.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\zoomout.png" />
+    <None Include="Resources\Bitmaps\zoomout.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\zrotleft.png" />
+    <None Include="Resources\Bitmaps\zrotleft.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\zrotright.png" />
+    <None Include="Resources\Bitmaps\zrotright.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\moveleft.png" />
+    <None Include="Resources\Bitmaps\moveleft.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\xrotleft.png" />
+    <None Include="Resources\Bitmaps\xrotleft.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\DockPanel\DockPanel\DockPanel.csproj">
@@ -485,383 +486,374 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\vertflip.png" />
+    <None Include="Resources\Bitmaps\vertflip.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shrinkhorz.png" />
+    <None Include="Resources\Bitmaps\shrinkhorz.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\stretchtofit.png" />
+    <None Include="Resources\Bitmaps\stretchtofit.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\alignchildren.png" />
+    <None Include="Resources\Bitmaps\alignchildren.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\alignchildren1.png" />
+    <None Include="Resources\Bitmaps\aligndown.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\aligndown.png" />
+    <None Include="Resources\Bitmaps\shrinkvert.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shrinkvert.png" />
+    <None Include="Resources\Bitmaps\resetmarked.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\resetmarked.png" />
+    <None Include="Resources\Bitmaps\horzflip.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\horzflip.png" />
+    <None Include="Resources\Bitmaps\alignup.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\alignall1.png" />
+    <None Include="Resources\Bitmaps\resetaligment.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\alignup.png" />
+    <None Include="Resources\Bitmaps\addyndlight.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\resetaligment.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\addyndlight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\deldynlight.png" />
+    <None Include="Resources\Bitmaps\deldynlight.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dle-icon.ico" />
-    <None Include="Resources\texturefilter-16x16.png" />
-    <None Include="Resources\reactor-16x16.png" />
-    <None Include="Resources\effecttool-16x161.png" />
-    <None Include="Resources\effecttool-16x16.png" />
-    <None Include="Resources\copy-16x16.png" />
-    <None Include="Resources\missiontool-16x16.png" />
-    <None Include="Resources\truecolor-32x32.png" />
-    <None Include="Resources\truecolor-16x16.png" />
-    <None Include="Resources\alignall-16x16.png" />
-    <None Include="Resources\align-16x16.png" />
-    <None Include="Resources\resetblue-16x16.png" />
-    <None Include="Resources\resetred-16x16.png" />
-    <None Include="Resources\subtract-16x16.png" />
-    <None Include="Resources\joinsides-16x16.png" />
-    <None Include="Resources\splitsides-16x16.png" />
-    <None Include="Resources\splitpoints-16x16.png" />
-    <None Include="Resources\joinpoints-16x16.png" />
-    <None Include="Resources\joinlines-16x16.png" />
-    <None Include="Resources\splitlines-16x16.png" />
-    <None Include="Resources\line-16x16.png" />
-    <None Include="Resources\point-16x16.png" />
-    <None Include="Resources\lightbulb-16x16.png" />
-    <None Include="Resources\sides-16x16.png" />
-    <None Include="Resources\segment-16x16.png" />
-    <None Include="Resources\refresh-16x16.png" />
-    <None Include="Resources\nozoom-16x16.png" />
-    <None Include="Resources\flipvert-16x16.png" />
-    <None Include="Resources\fliphorz-16x16.png" />
-    <None Include="Resources\zrotright-16x16.png" />
-    <None Include="Resources\zrotleft-16x16.png" />
-    <None Include="Resources\segmenttool-16x16.png" />
-    <None Include="Resources\zoomout-16x16.png" />
-    <None Include="Resources\zoomin-16x16.png" />
-    <None Include="Resources\yrotright-16x16.png" />
-    <None Include="Resources\yrotleft-16x16.png" />
-    <None Include="Resources\xrotright-16x16.png" />
-    <None Include="Resources\xrotleft-16x16.png" />
-    <None Include="Resources\wall-16x16.png" />
-    <None Include="Resources\undo-16x16.png" />
-    <None Include="Resources\texturetool-16x16.png" />
-    <None Include="Resources\settings-16x16.png" />
-    <None Include="Resources\segments-16x16.png" />
-    <None Include="Resources\savefile-16x16.png" />
-    <None Include="Resources\redo-16x16.png" />
-    <None Include="Resources\paste-16x16.png" />
-    <None Include="Resources\openfile-16x16.png" />
-    <None Include="Resources\objects-16x16.png" />
-    <None Include="Resources\moveup-16x16.png" />
-    <None Include="Resources\moveright-16x16.png" />
-    <None Include="Resources\moveleft-16x16.png" />
-    <None Include="Resources\movedown-16x16.png" />
-    <None Include="Resources\lighttool-16x16.png" />
-    <None Include="Resources\expandvert-16x16.png" />
-    <None Include="Resources\expandhorz-16x16.png" />
-    <None Include="Resources\expand-16x16.png" />
-    <None Include="Resources\diagnosis-16x16.png" />
-    <None Include="Resources\cut-16x16.png" />
-    <None Include="Resources\chainwheel-16x16.png" />
-    <None Include="Resources\brokenwall-16x16.png" />
-    <None Include="Resources\blockmode-16x16.png" />
-    <None Include="Resources\add-16x16.png" />
-    <None Include="Resources\segmenttool-16x16.ico" />
-    <None Include="Resources\zrotleft-16x16.ico" />
-    <None Include="Resources\zrotright-16x16.ico" />
-    <None Include="Resources\xrotleft-16x16.ico" />
-    <None Include="Resources\xrotright-16x161.ico" />
-    <None Include="Resources\yrotleft-16x161.ico" />
-    <None Include="Resources\xrotright-16x16.ico" />
-    <None Include="Resources\yrotleft-16x16.ico" />
-    <None Include="Resources\yrotright-16x16.ico" />
-    <None Include="Resources\movedown-16x16.ico" />
-    <None Include="Resources\moveup-16x16.ico" />
-    <None Include="Resources\moveright-16x16.ico" />
-    <None Include="Resources\openfile-16x16.ico" />
-    <None Include="Resources\Zoom.png" />
-    <None Include="Resources\Zoom out.png" />
-    <None Include="Resources\Zoom in.png" />
-    <None Include="Resources\Zoom auto.png" />
-    <None Include="Resources\YUV color space.png" />
-    <None Include="Resources\Yes.png" />
-    <None Include="Resources\Wrong.png" />
-    <None Include="Resources\Writing pencil.png" />
-    <None Include="Resources\Work area.png" />
-    <None Include="Resources\Wizard.png" />
-    <None Include="Resources\Wide brush.png" />
-    <None Include="Resources\Webcam.png" />
-    <None Include="Resources\Web designer.png" />
-    <None Include="Resources\Warning.png" />
-    <None Include="Resources\Wait.png" />
-    <None Include="Resources\Upload image.png" />
-    <None Include="Resources\Up-down.png" />
-    <None Include="Resources\Up.png" />
-    <None Include="Resources\Unlock.png" />
-    <None Include="Resources\Units.png" />
-    <None Include="Resources\Undo.png" />
-    <None Include="Resources\True color.png" />
-    <None Include="Resources\Triangle.png" />
-    <None Include="Resources\Transparent color.png" />
-    <None Include="Resources\Transparent background.png" />
-    <None Include="Resources\Transparency.png" />
-    <None Include="Resources\Touch.png" />
-    <None Include="Resources\Tools.png" />
-    <None Include="Resources\To do list.png" />
-    <None Include="Resources\Tip of the day.png" />
-    <None Include="Resources\Time.png" />
-    <None Include="Resources\Text tool.png" />
-    <None Include="Resources\Text replace.png" />
-    <None Include="Resources\Text color.png" />
-    <None Include="Resources\Test line.png" />
-    <None Include="Resources\Target1.png" />
-    <None Include="Resources\Target.png" />
-    <None Include="Resources\Tag.png" />
-    <None Include="Resources\Synchronize.png" />
-    <None Include="Resources\Stop.png" />
-    <None Include="Resources\Stop playing.png" />
-    <None Include="Resources\Square.png" />
-    <None Include="Resources\Spray.png" />
-    <None Include="Resources\Spiral.png" />
-    <None Include="Resources\Spell checking.png" />
-    <None Include="Resources\Smooth.png" />
-    <None Include="Resources\Smooth line.png" />
-    <None Include="Resources\Sizes.png" />
-    <None Include="Resources\Show.png" />
-    <None Include="Resources\Sharpness.png" />
-    <None Include="Resources\Settings.png" />
-    <None Include="Resources\Selection.png" />
-    <None Include="Resources\Select gpadient.png" />
-    <None Include="Resources\Search.png" />
-    <None Include="Resources\Search text.png" />
-    <None Include="Resources\Search online.png" />
-    <None Include="Resources\Search folder.png" />
-    <None Include="Resources\Search computer.png" />
-    <None Include="Resources\Script.png" />
-    <None Include="Resources\Scenario.png" />
-    <None Include="Resources\Scanner.png" />
-    <None Include="Resources\Scan image.png" />
-    <None Include="Resources\Scan film.png" />
-    <None Include="Resources\Save.png" />
-    <None Include="Resources\Save picture.png" />
-    <None Include="Resources\Save image.png" />
-    <None Include="Resources\Save data.png" />
-    <None Include="Resources\Save color.png" />
-    <None Include="Resources\Save as.png" />
-    <None Include="Resources\Rounded rectangle.png" />
-    <None Include="Resources\Rotation.png" />
-    <None Include="Resources\Rotate right.png" />
-    <None Include="Resources\Rotate left.png" />
-    <None Include="Resources\Rotate CW.png" />
-    <None Include="Resources\Rotate CCW.png" />
-    <None Include="Resources\Right.png" />
-    <None Include="Resources\RGB.png" />
-    <None Include="Resources\Revert.png" />
-    <None Include="Resources\Restangle.png" />
-    <None Include="Resources\Resize image.png" />
-    <None Include="Resources\Replace pixels.png" />
-    <None Include="Resources\Rename.png" />
-    <None Include="Resources\Registry.png" />
-    <None Include="Resources\Registration.png" />
-    <None Include="Resources\Refresh.png" />
-    <None Include="Resources\Redo.png" />
-    <None Include="Resources\Red eye removing.png" />
-    <None Include="Resources\Red book.png" />
-    <None Include="Resources\Properties.png" />
-    <None Include="Resources\Problem.png" />
-    <None Include="Resources\Print.png" />
-    <None Include="Resources\Preview.png" />
-    <None Include="Resources\Play.png" />
-    <None Include="Resources\Pixels.png" />
-    <None Include="Resources\Pixel editor.png" />
-    <None Include="Resources\Pinion.png" />
-    <None Include="Resources\Pin.png" />
-    <None Include="Resources\Pie chart.png" />
-    <None Include="Resources\Picture.png" />
-    <None Include="Resources\Pick color.png" />
-    <None Include="Resources\Pencil.png" />
-    <None Include="Resources\Pen.png" />
-    <None Include="Resources\Paste.png" />
-    <None Include="Resources\Pantone.png" />
-    <None Include="Resources\Painter.png" />
-    <None Include="Resources\Paint over pixels.png" />
-    <None Include="Resources\Open.png" />
-    <None Include="Resources\Open v2.png" />
-    <None Include="Resources\Open file.png" />
-    <None Include="Resources\Open colors.png" />
-    <None Include="Resources\Ok.png" />
-    <None Include="Resources\Objects.png" />
-    <None Include="Resources\No.png" />
-    <None Include="Resources\New video.png" />
-    <None Include="Resources\New imagelist.png" />
-    <None Include="Resources\New image.png" />
-    <None Include="Resources\New frame1.png" />
-    <None Include="Resources\New frame.png" />
-    <None Include="Resources\New file.png" />
-    <None Include="Resources\New clip art.png" />
-    <None Include="Resources\Movie.png" />
-    <None Include="Resources\Move.png" />
-    <None Include="Resources\Mouse.png" />
-    <None Include="Resources\Mouse pointer.png" />
-    <None Include="Resources\Monitors.png" />
-    <None Include="Resources\Monitor.png" />
-    <None Include="Resources\Microsoft flag.png" />
-    <None Include="Resources\Measure.png" />
-    <None Include="Resources\Magic hat.png" />
-    <None Include="Resources\Lock.png" />
-    <None Include="Resources\Lock transparency.png" />
-    <None Include="Resources\Lock color.png" />
-    <None Include="Resources\List.png" />
-    <None Include="Resources\Line.png" />
-    <None Include="Resources\Left-right.png" />
-    <None Include="Resources\Left.png" />
-    <None Include="Resources\Layers.png" />
-    <None Include="Resources\LAB color model.png" />
-    <None Include="Resources\Knife.png" />
-    <None Include="Resources\Key.png" />
-    <None Include="Resources\Info.png" />
-    <None Include="Resources\Index.png" />
-    <None Include="Resources\Increase time.png" />
-    <None Include="Resources\Import.png" />
-    <None Include="Resources\Icon wizard.png" />
-    <None Include="Resources\Ico.png" />
-    <None Include="Resources\HSV.png" />
-    <None Include="Resources\HSL.png" />
-    <None Include="Resources\Homepage.png" />
-    <None Include="Resources\Home.png" />
-    <None Include="Resources\Hints.png" />
-    <None Include="Resources\Hint.png" />
-    <None Include="Resources\Hide.png" />
-    <None Include="Resources\Hexagon.png" />
-    <None Include="Resources\Help.png" />
-    <None Include="Resources\Help book.png" />
-    <None Include="Resources\Grid.png" />
-    <None Include="Resources\Graphic tools.png" />
-    <None Include="Resources\Graphic file.png" />
-    <None Include="Resources\Graphic designer.png" />
-    <None Include="Resources\Gpadient.png" />
-    <None Include="Resources\Go up.png" />
-    <None Include="Resources\Go down.png" />
-    <None Include="Resources\Funnel.png" />
-    <None Include="Resources\Frames.png" />
-    <None Include="Resources\Forward.png" />
-    <None Include="Resources\Form.png" />
-    <None Include="Resources\Folder.png" />
-    <None Include="Resources\Flower.png" />
-    <None Include="Resources\Flow block.png" />
-    <None Include="Resources\Flip.png" />
-    <None Include="Resources\Flip vertically.png" />
-    <None Include="Resources\Flip horizontally.png" />
-    <None Include="Resources\Fine brush.png" />
-    <None Include="Resources\Find.png" />
-    <None Include="Resources\Fill.png" />
-    <None Include="Resources\File exetension.png" />
-    <None Include="Resources\Feather.png" />
-    <None Include="Resources\Favourites.png" />
-    <None Include="Resources\Export.png" />
-    <None Include="Resources\Exit.png" />
-    <None Include="Resources\Error.png" />
-    <None Include="Resources\Eraser.png" />
-    <None Include="Resources\Erase.png" />
-    <None Include="Resources\Equipment.png" />
-    <None Include="Resources\E-mail.png" />
-    <None Include="Resources\Ellipse.png" />
-    <None Include="Resources\Edit.png" />
-    <None Include="Resources\Edit text.png" />
-    <None Include="Resources\Edit page.png" />
-    <None Include="Resources\Dropper.png" />
-    <None Include="Resources\Download.png" />
-    <None Include="Resources\Download image.png" />
-    <None Include="Resources\Down.png" />
-    <None Include="Resources\Diagram.png" />
-    <None Include="Resources\Designer.png" />
-    <None Include="Resources\Delete.png" />
-    <None Include="Resources\Delete frames.png" />
-    <None Include="Resources\Delete frame.png" />
-    <None Include="Resources\Decrease time.png" />
-    <None Include="Resources\Danger.png" />
-    <None Include="Resources\Cut.png" />
-    <None Include="Resources\Curve.png" />
-    <None Include="Resources\Curve points.png" />
-    <None Include="Resources\Critical details.png" />
-    <None Include="Resources\Create.png" />
-    <None Include="Resources\Copy.png" />
-    <None Include="Resources\Contrast.png" />
-    <None Include="Resources\Comment.png" />
-    <None Include="Resources\Color.png" />
-    <None Include="Resources\Color test.png" />
-    <None Include="Resources\Color profile.png" />
-    <None Include="Resources\Color palette.png" />
-    <None Include="Resources\Color layers.png" />
-    <None Include="Resources\Color filter.png" />
-    <None Include="Resources\Color balance.png" />
-    <None Include="Resources\Coffee.png" />
-    <None Include="Resources\Coffe.png" />
-    <None Include="Resources\CMYK.png" />
-    <None Include="Resources\Close.png" />
-    <None Include="Resources\Close folder.png" />
-    <None Include="Resources\Close file.png" />
-    <None Include="Resources\Clipboard.png" />
-    <None Include="Resources\Clear.png" />
-    <None Include="Resources\Circle.png" />
-    <None Include="Resources\Check boxes.png" />
-    <None Include="Resources\Chart xy.png" />
-    <None Include="Resources\Cancel.png" />
-    <None Include="Resources\Camera.png" />
-    <None Include="Resources\Brush.png" />
-    <None Include="Resources\Brightness.png" />
-    <None Include="Resources\Blue cube.png" />
-    <None Include="Resources\Bitmap editor.png" />
-    <None Include="Resources\Back.png" />
-    <None Include="Resources\Attach.png" />
-    <None Include="Resources\Arrow.png" />
-    <None Include="Resources\Arc.png" />
-    <None Include="Resources\Apply.png" />
-    <None Include="Resources\Angle.png" />
-    <None Include="Resources\Add.png" />
-    <None Include="Resources\Add folder.png" />
-    <None Include="Resources\About.png" />
-    <None Include="Resources\256 colors.png" />
-    <None Include="Resources\16 colors.png" />
-    <None Include="Resources\3d graph.png" />
-    <None Include="Resources\3d chart.png" />
-    <None Include="Resources\3d bar chart.png" />
-    <None Include="Resources\walltool.ico" />
-    <None Include="Resources\texturetool.ico" />
-    <None Include="Resources\objecttool.ico" />
-    <None Include="Resources\lighttool.ico" />
-    <None Include="Resources\zoomout.cur" />
-    <None Include="Resources\zoomin.cur" />
-    <None Include="Resources\zoom.cur" />
-    <None Include="Resources\xhairs.cur" />
-    <None Include="Resources\rotate.cur" />
-    <None Include="Resources\pencil.cur" />
-    <None Include="Resources\pan.cur" />
-    <None Include="Resources\drag.cur" />
-    <None Include="Resources\arrow.cur" />
+    <None Include="Resources\Bitmaps\texturefilter-16x16.png" />
+    <None Include="Resources\Bitmaps\reactor-16x16.png" />
+    <None Include="Resources\Bitmaps\effecttool-16x16.png" />
+    <None Include="Resources\Bitmaps\copy-16x16.png" />
+    <None Include="Resources\Bitmaps\missiontool-16x16.png" />
+    <None Include="Resources\Bitmaps\truecolor-32x32.png" />
+    <None Include="Resources\Bitmaps\truecolor-16x16.png" />
+    <None Include="Resources\Bitmaps\alignall-16x16.png" />
+    <None Include="Resources\Bitmaps\align-16x16.png" />
+    <None Include="Resources\Bitmaps\resetblue-16x16.png" />
+    <None Include="Resources\Bitmaps\resetred-16x16.png" />
+    <None Include="Resources\Bitmaps\subtract-16x16.png" />
+    <None Include="Resources\Bitmaps\joinsides-16x16.png" />
+    <None Include="Resources\Bitmaps\splitsides-16x16.png" />
+    <None Include="Resources\Bitmaps\splitpoints-16x16.png" />
+    <None Include="Resources\Bitmaps\joinpoints-16x16.png" />
+    <None Include="Resources\Bitmaps\joinlines-16x16.png" />
+    <None Include="Resources\Bitmaps\splitlines-16x16.png" />
+    <None Include="Resources\Bitmaps\line-16x16.png" />
+    <None Include="Resources\Bitmaps\point-16x16.png" />
+    <None Include="Resources\Bitmaps\lightbulb-16x16.png" />
+    <None Include="Resources\Bitmaps\sides-16x16.png" />
+    <None Include="Resources\Bitmaps\segment-16x16.png" />
+    <None Include="Resources\Bitmaps\refresh-16x16.png" />
+    <None Include="Resources\Bitmaps\nozoom-16x16.png" />
+    <None Include="Resources\Bitmaps\flipvert-16x16.png" />
+    <None Include="Resources\Bitmaps\fliphorz-16x16.png" />
+    <None Include="Resources\Bitmaps\zrotright-16x16.png" />
+    <None Include="Resources\Bitmaps\zrotleft-16x16.png" />
+    <None Include="Resources\Bitmaps\segmenttool-16x16.png" />
+    <None Include="Resources\Bitmaps\zoomout-16x16.png" />
+    <None Include="Resources\Bitmaps\zoomin-16x16.png" />
+    <None Include="Resources\Bitmaps\yrotright-16x16.png" />
+    <None Include="Resources\Bitmaps\yrotleft-16x16.png" />
+    <None Include="Resources\Bitmaps\xrotright-16x16.png" />
+    <None Include="Resources\Bitmaps\xrotleft-16x16.png" />
+    <None Include="Resources\Bitmaps\wall-16x16.png" />
+    <None Include="Resources\Bitmaps\undo-16x16.png" />
+    <None Include="Resources\Bitmaps\texturetool-16x16.png" />
+    <None Include="Resources\Bitmaps\settings-16x16.png" />
+    <None Include="Resources\Bitmaps\segments-16x16.png" />
+    <None Include="Resources\Bitmaps\savefile-16x16.png" />
+    <None Include="Resources\Bitmaps\redo-16x16.png" />
+    <None Include="Resources\Bitmaps\paste-16x16.png" />
+    <None Include="Resources\Bitmaps\openfile-16x16.png" />
+    <None Include="Resources\Bitmaps\objects-16x16.png" />
+    <None Include="Resources\Bitmaps\moveup-16x16.png" />
+    <None Include="Resources\Bitmaps\moveright-16x16.png" />
+    <None Include="Resources\Bitmaps\moveleft-16x16.png" />
+    <None Include="Resources\Bitmaps\movedown-16x16.png" />
+    <None Include="Resources\Bitmaps\lighttool-16x16.png" />
+    <None Include="Resources\Bitmaps\expandvert-16x16.png" />
+    <None Include="Resources\Bitmaps\expandhorz-16x16.png" />
+    <None Include="Resources\Bitmaps\expand-16x16.png" />
+    <None Include="Resources\Bitmaps\diagnosis-16x16.png" />
+    <None Include="Resources\Bitmaps\cut-16x16.png" />
+    <None Include="Resources\Bitmaps\chainwheel-16x16.png" />
+    <None Include="Resources\Bitmaps\brokenwall-16x16.png" />
+    <None Include="Resources\Bitmaps\blockmode-16x16.png" />
+    <None Include="Resources\Bitmaps\add-16x16.png" />
+    <None Include="Resources\Bitmaps\segmenttool-16x16.ico" />
+    <None Include="Resources\Icons\zrotleft-16x16.ico" />
+    <None Include="Resources\Icons\zrotright-16x16.ico" />
+    <None Include="Resources\Icons\xrotleft-16x16.ico" />
+    <None Include="Resources\Icons\xrotright-16x16.ico" />
+    <None Include="Resources\Icons\yrotleft-16x16.ico" />
+    <None Include="Resources\Icons\yrotright-16x16.ico" />
+    <None Include="Resources\Icons\movedown-16x16.ico" />
+    <None Include="Resources\Icons\moveup-16x16.ico" />
+    <None Include="Resources\Bitmaps\moveright-16x16.ico" />
+    <None Include="Resources\Icons\openfile-16x16.ico" />
+    <None Include="Resources\Bitmaps\Zoom.png" />
+    <None Include="Resources\Bitmaps\Zoom out.png" />
+    <None Include="Resources\Bitmaps\Zoom in.png" />
+    <None Include="Resources\Bitmaps\Zoom auto.png" />
+    <None Include="Resources\Bitmaps\YUV color space.png" />
+    <None Include="Resources\Bitmaps\Yes.png" />
+    <None Include="Resources\Bitmaps\Wrong.png" />
+    <None Include="Resources\Bitmaps\Writing pencil.png" />
+    <None Include="Resources\Bitmaps\Work area.png" />
+    <None Include="Resources\Bitmaps\Wizard.png" />
+    <None Include="Resources\Bitmaps\Wide brush.png" />
+    <None Include="Resources\Bitmaps\Webcam.png" />
+    <None Include="Resources\Bitmaps\Web designer.png" />
+    <None Include="Resources\Bitmaps\Warning.png" />
+    <None Include="Resources\Bitmaps\Wait.png" />
+    <None Include="Resources\Bitmaps\Upload image.png" />
+    <None Include="Resources\Bitmaps\Up-down.png" />
+    <None Include="Resources\Bitmaps\Up.png" />
+    <None Include="Resources\Bitmaps\Unlock.png" />
+    <None Include="Resources\Bitmaps\Units.png" />
+    <None Include="Resources\Bitmaps\Undo.png" />
+    <None Include="Resources\Bitmaps\True color.png" />
+    <None Include="Resources\Bitmaps\Triangle.png" />
+    <None Include="Resources\Bitmaps\Transparent color.png" />
+    <None Include="Resources\Bitmaps\Transparent background.png" />
+    <None Include="Resources\Bitmaps\Transparency.png" />
+    <None Include="Resources\Bitmaps\Touch.png" />
+    <None Include="Resources\Bitmaps\Tools.png" />
+    <None Include="Resources\Bitmaps\To do list.png" />
+    <None Include="Resources\Bitmaps\Tip of the day.png" />
+    <None Include="Resources\Bitmaps\Time.png" />
+    <None Include="Resources\Bitmaps\Text tool.png" />
+    <None Include="Resources\Bitmaps\Text replace.png" />
+    <None Include="Resources\Bitmaps\Text color.png" />
+    <None Include="Resources\Bitmaps\Test line.png" />
+    <None Include="Resources\Bitmaps\Target1.png" />
+    <None Include="Resources\Bitmaps\Target.png" />
+    <None Include="Resources\Bitmaps\Tag.png" />
+    <None Include="Resources\Bitmaps\Synchronize.png" />
+    <None Include="Resources\Bitmaps\Stop.png" />
+    <None Include="Resources\Bitmaps\Stop playing.png" />
+    <None Include="Resources\Bitmaps\Square.png" />
+    <None Include="Resources\Bitmaps\Spray.png" />
+    <None Include="Resources\Bitmaps\Spiral.png" />
+    <None Include="Resources\Bitmaps\Spell checking.png" />
+    <None Include="Resources\Bitmaps\Smooth.png" />
+    <None Include="Resources\Bitmaps\Smooth line.png" />
+    <None Include="Resources\Bitmaps\Sizes.png" />
+    <None Include="Resources\Bitmaps\Show.png" />
+    <None Include="Resources\Bitmaps\Sharpness.png" />
+    <None Include="Resources\Bitmaps\Settings.png" />
+    <None Include="Resources\Bitmaps\Selection.png" />
+    <None Include="Resources\Bitmaps\Select gpadient.png" />
+    <None Include="Resources\Bitmaps\Search.png" />
+    <None Include="Resources\Bitmaps\Search text.png" />
+    <None Include="Resources\Bitmaps\Search online.png" />
+    <None Include="Resources\Bitmaps\Search folder.png" />
+    <None Include="Resources\Bitmaps\Search computer.png" />
+    <None Include="Resources\Bitmaps\Script.png" />
+    <None Include="Resources\Bitmaps\Scenario.png" />
+    <None Include="Resources\Bitmaps\Scanner.png" />
+    <None Include="Resources\Bitmaps\Scan image.png" />
+    <None Include="Resources\Bitmaps\Scan film.png" />
+    <None Include="Resources\Bitmaps\Save.png" />
+    <None Include="Resources\Bitmaps\Save picture.png" />
+    <None Include="Resources\Bitmaps\Save image.png" />
+    <None Include="Resources\Bitmaps\Save data.png" />
+    <None Include="Resources\Bitmaps\Save color.png" />
+    <None Include="Resources\Bitmaps\Save as.png" />
+    <None Include="Resources\Bitmaps\Rounded rectangle.png" />
+    <None Include="Resources\Bitmaps\Rotation.png" />
+    <None Include="Resources\Bitmaps\Rotate right.png" />
+    <None Include="Resources\Bitmaps\Rotate left.png" />
+    <None Include="Resources\Bitmaps\Rotate CW.png" />
+    <None Include="Resources\Bitmaps\Rotate CCW.png" />
+    <None Include="Resources\Bitmaps\Right.png" />
+    <None Include="Resources\Bitmaps\RGB.png" />
+    <None Include="Resources\Bitmaps\Revert.png" />
+    <None Include="Resources\Bitmaps\Restangle.png" />
+    <None Include="Resources\Bitmaps\Resize image.png" />
+    <None Include="Resources\Bitmaps\Replace pixels.png" />
+    <None Include="Resources\Bitmaps\Rename.png" />
+    <None Include="Resources\Bitmaps\Registry.png" />
+    <None Include="Resources\Bitmaps\Registration.png" />
+    <None Include="Resources\Bitmaps\Refresh.png" />
+    <None Include="Resources\Bitmaps\Redo.png" />
+    <None Include="Resources\Bitmaps\Red eye removing.png" />
+    <None Include="Resources\Bitmaps\Red book.png" />
+    <None Include="Resources\Bitmaps\Properties.png" />
+    <None Include="Resources\Bitmaps\Problem.png" />
+    <None Include="Resources\Bitmaps\Print.png" />
+    <None Include="Resources\Bitmaps\Preview.png" />
+    <None Include="Resources\Bitmaps\Play.png" />
+    <None Include="Resources\Bitmaps\Pixels.png" />
+    <None Include="Resources\Bitmaps\Pixel editor.png" />
+    <None Include="Resources\Bitmaps\Pinion.png" />
+    <None Include="Resources\Bitmaps\Pin.png" />
+    <None Include="Resources\Bitmaps\Pie chart.png" />
+    <None Include="Resources\Bitmaps\Picture.png" />
+    <None Include="Resources\Bitmaps\Pick color.png" />
+    <None Include="Resources\Bitmaps\Pencil.png" />
+    <None Include="Resources\Bitmaps\Pen.png" />
+    <None Include="Resources\Bitmaps\Paste.png" />
+    <None Include="Resources\Bitmaps\Pantone.png" />
+    <None Include="Resources\Bitmaps\Painter.png" />
+    <None Include="Resources\Bitmaps\Paint over pixels.png" />
+    <None Include="Resources\Bitmaps\Open.png" />
+    <None Include="Resources\Bitmaps\Open v2.png" />
+    <None Include="Resources\Bitmaps\Open file.png" />
+    <None Include="Resources\Bitmaps\Open colors.png" />
+    <None Include="Resources\Bitmaps\Ok.png" />
+    <None Include="Resources\Bitmaps\Objects.png" />
+    <None Include="Resources\Bitmaps\No.png" />
+    <None Include="Resources\Bitmaps\New video.png" />
+    <None Include="Resources\Bitmaps\New imagelist.png" />
+    <None Include="Resources\Bitmaps\New image.png" />
+    <None Include="Resources\Bitmaps\New frame1.png" />
+    <None Include="Resources\Bitmaps\New frame.png" />
+    <None Include="Resources\Bitmaps\New file.png" />
+    <None Include="Resources\Bitmaps\New clip art.png" />
+    <None Include="Resources\Bitmaps\Movie.png" />
+    <None Include="Resources\Bitmaps\Move.png" />
+    <None Include="Resources\Bitmaps\Mouse.png" />
+    <None Include="Resources\Bitmaps\Mouse pointer.png" />
+    <None Include="Resources\Bitmaps\Monitors.png" />
+    <None Include="Resources\Bitmaps\Monitor.png" />
+    <None Include="Resources\Bitmaps\Microsoft flag.png" />
+    <None Include="Resources\Bitmaps\Measure.png" />
+    <None Include="Resources\Bitmaps\Magic hat.png" />
+    <None Include="Resources\Bitmaps\Lock.png" />
+    <None Include="Resources\Bitmaps\Lock transparency.png" />
+    <None Include="Resources\Bitmaps\Lock color.png" />
+    <None Include="Resources\Bitmaps\List.png" />
+    <None Include="Resources\Bitmaps\Line.png" />
+    <None Include="Resources\Bitmaps\Left-right.png" />
+    <None Include="Resources\Bitmaps\Left.png" />
+    <None Include="Resources\Bitmaps\Layers.png" />
+    <None Include="Resources\Bitmaps\LAB color model.png" />
+    <None Include="Resources\Bitmaps\Knife.png" />
+    <None Include="Resources\Bitmaps\Key.png" />
+    <None Include="Resources\Bitmaps\Info.png" />
+    <None Include="Resources\Bitmaps\Index.png" />
+    <None Include="Resources\Bitmaps\Increase time.png" />
+    <None Include="Resources\Bitmaps\Import.png" />
+    <None Include="Resources\Bitmaps\Icon wizard.png" />
+    <None Include="Resources\Bitmaps\Ico.png" />
+    <None Include="Resources\Bitmaps\HSV.png" />
+    <None Include="Resources\Bitmaps\HSL.png" />
+    <None Include="Resources\Bitmaps\Homepage.png" />
+    <None Include="Resources\Bitmaps\Home.png" />
+    <None Include="Resources\Bitmaps\Hints.png" />
+    <None Include="Resources\Bitmaps\Hint.png" />
+    <None Include="Resources\Bitmaps\Hide.png" />
+    <None Include="Resources\Bitmaps\Hexagon.png" />
+    <None Include="Resources\Bitmaps\Help.png" />
+    <None Include="Resources\Bitmaps\Help book.png" />
+    <None Include="Resources\Bitmaps\Grid.png" />
+    <None Include="Resources\Bitmaps\Graphic tools.png" />
+    <None Include="Resources\Bitmaps\Graphic file.png" />
+    <None Include="Resources\Bitmaps\Graphic designer.png" />
+    <None Include="Resources\Bitmaps\Gpadient.png" />
+    <None Include="Resources\Bitmaps\Go up.png" />
+    <None Include="Resources\Bitmaps\Go down.png" />
+    <None Include="Resources\Bitmaps\Funnel.png" />
+    <None Include="Resources\Bitmaps\Frames.png" />
+    <None Include="Resources\Bitmaps\Forward.png" />
+    <None Include="Resources\Bitmaps\Form.png" />
+    <None Include="Resources\Bitmaps\Folder.png" />
+    <None Include="Resources\Bitmaps\Flower.png" />
+    <None Include="Resources\Bitmaps\Flow block.png" />
+    <None Include="Resources\Bitmaps\Flip.png" />
+    <None Include="Resources\Bitmaps\Flip vertically.png" />
+    <None Include="Resources\Bitmaps\Flip horizontally.png" />
+    <None Include="Resources\Bitmaps\Fine brush.png" />
+    <None Include="Resources\Bitmaps\Find.png" />
+    <None Include="Resources\Bitmaps\Fill.png" />
+    <None Include="Resources\Bitmaps\File exetension.png" />
+    <None Include="Resources\Bitmaps\Feather.png" />
+    <None Include="Resources\Bitmaps\Favourites.png" />
+    <None Include="Resources\Bitmaps\Export.png" />
+    <None Include="Resources\Bitmaps\Exit.png" />
+    <None Include="Resources\Bitmaps\Error.png" />
+    <None Include="Resources\Bitmaps\Eraser.png" />
+    <None Include="Resources\Bitmaps\Erase.png" />
+    <None Include="Resources\Bitmaps\Equipment.png" />
+    <None Include="Resources\Bitmaps\E-mail.png" />
+    <None Include="Resources\Bitmaps\Ellipse.png" />
+    <None Include="Resources\Bitmaps\Edit.png" />
+    <None Include="Resources\Bitmaps\Edit text.png" />
+    <None Include="Resources\Bitmaps\Edit page.png" />
+    <None Include="Resources\Bitmaps\Dropper.png" />
+    <None Include="Resources\Bitmaps\Download.png" />
+    <None Include="Resources\Bitmaps\Download image.png" />
+    <None Include="Resources\Bitmaps\Down.png" />
+    <None Include="Resources\Bitmaps\Diagram.png" />
+    <None Include="Resources\Bitmaps\Designer.png" />
+    <None Include="Resources\Bitmaps\Delete.png" />
+    <None Include="Resources\Bitmaps\Delete frames.png" />
+    <None Include="Resources\Bitmaps\Delete frame.png" />
+    <None Include="Resources\Bitmaps\Decrease time.png" />
+    <None Include="Resources\Bitmaps\Danger.png" />
+    <None Include="Resources\Bitmaps\Cut.png" />
+    <None Include="Resources\Bitmaps\Curve.png" />
+    <None Include="Resources\Bitmaps\Curve points.png" />
+    <None Include="Resources\Bitmaps\Critical details.png" />
+    <None Include="Resources\Bitmaps\Create.png" />
+    <None Include="Resources\Bitmaps\Copy.png" />
+    <None Include="Resources\Bitmaps\Contrast.png" />
+    <None Include="Resources\Bitmaps\Comment.png" />
+    <None Include="Resources\Bitmaps\Color.png" />
+    <None Include="Resources\Bitmaps\Color test.png" />
+    <None Include="Resources\Bitmaps\Color profile.png" />
+    <None Include="Resources\Bitmaps\Color palette.png" />
+    <None Include="Resources\Bitmaps\Color layers.png" />
+    <None Include="Resources\Bitmaps\Color filter.png" />
+    <None Include="Resources\Bitmaps\Color balance.png" />
+    <None Include="Resources\Bitmaps\Coffee.png" />
+    <None Include="Resources\Bitmaps\Coffe.png" />
+    <None Include="Resources\Bitmaps\CMYK.png" />
+    <None Include="Resources\Bitmaps\Close.png" />
+    <None Include="Resources\Bitmaps\Close folder.png" />
+    <None Include="Resources\Bitmaps\Close file.png" />
+    <None Include="Resources\Bitmaps\Clipboard.png" />
+    <None Include="Resources\Bitmaps\Clear.png" />
+    <None Include="Resources\Bitmaps\Circle.png" />
+    <None Include="Resources\Bitmaps\Check boxes.png" />
+    <None Include="Resources\Bitmaps\Chart xy.png" />
+    <None Include="Resources\Bitmaps\Cancel.png" />
+    <None Include="Resources\Bitmaps\Camera.png" />
+    <None Include="Resources\Bitmaps\Brush.png" />
+    <None Include="Resources\Bitmaps\Brightness.png" />
+    <None Include="Resources\Bitmaps\Blue cube.png" />
+    <None Include="Resources\Bitmaps\Bitmap editor.png" />
+    <None Include="Resources\Bitmaps\Back.png" />
+    <None Include="Resources\Bitmaps\Attach.png" />
+    <None Include="Resources\Bitmaps\Arrow.png" />
+    <None Include="Resources\Bitmaps\Arc.png" />
+    <None Include="Resources\Bitmaps\Apply.png" />
+    <None Include="Resources\Bitmaps\Angle.png" />
+    <None Include="Resources\Bitmaps\Add.png" />
+    <None Include="Resources\Bitmaps\Add folder.png" />
+    <None Include="Resources\Bitmaps\About.png" />
+    <None Include="Resources\Bitmaps\256 colors.png" />
+    <None Include="Resources\Bitmaps\16 colors.png" />
+    <None Include="Resources\Bitmaps\3d graph.png" />
+    <None Include="Resources\Bitmaps\3d chart.png" />
+    <None Include="Resources\Bitmaps\3d bar chart.png" />
+    <None Include="Resources\Icons\walltool.ico" />
+    <None Include="Resources\Bitmaps\texturetool.ico" />
+    <None Include="Resources\Icons\objecttool.ico" />
+    <None Include="Resources\Icons\lighttool.ico" />
+    <None Include="Resources\Cursors\zoomout.cur" />
+    <None Include="Resources\Cursors\zoomin.cur" />
+    <None Include="Resources\Cursors\zoom.cur" />
+    <None Include="Resources\Cursors\xhairs.cur" />
+    <None Include="Resources\Bitmaps\rotate.cur" />
+    <None Include="Resources\Cursors\pencil.cur" />
+    <None Include="Resources\Cursors\pan.cur" />
+    <None Include="Resources\Cursors\drag.cur" />
+    <None Include="Resources\Bitmaps\arrow.cur" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
