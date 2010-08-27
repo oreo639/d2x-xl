@@ -109,12 +109,13 @@ public:
 	virtual INT32 Read (FILE* fp, INT32 version = 0, bool bFlag = false) { return 1; };
 	virtual void Write (FILE* fp, INT32 version = 0, bool bFlag = false) {};
 	inline INT16 Child (INT16 nSide) { return m_sides [nSide].m_info.nChild; }
-	inline void SetChild (INT16 nSide, INT16 nSegment) {
+	inline INT16 SetChild (INT16 nSide, INT16 nSegment) {
 		m_sides [nSide].m_info.nChild = nSegment;
 		if (nSegment == -1)
 			m_info.childFlags &= ~(1 << nSide);
 		else
 			m_info.childFlags |= (1 << nSide);
+		return nSegment;
 		}
 
 private:

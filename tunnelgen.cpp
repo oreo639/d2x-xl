@@ -383,7 +383,7 @@ else {
 		UntwistSegment (SegCount (), nSplineSide1);
 		// define children and sides (textures and nWall)
 		for (j = 0; j < 6; j++) {
-			segP->Child (j) = -1;
+			segP->SetChild (j, -1);
 			segP->m_sides [j].m_info.nBaseTex = 0;
 			segP->m_sides [j].m_info.nOvlTex = 0;
 			segP->m_sides [j].m_info.nWall = NO_WALL;

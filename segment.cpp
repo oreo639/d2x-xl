@@ -666,7 +666,7 @@ bool CMine::LinkSegments (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 
 	seg2 = Segments (nSegment2); 
 
 // don't link to a segment which already has a child
-if (seg1->Child (nSide1) !=-1 || seg2->m_info.Child (nSide2) != -1)
+if (seg1->Child (nSide1) !=-1 || seg2->Child (nSide2) != -1)
 	return FALSE; 
 
 // copy vertices for comparison later (makes code more readable)
@@ -976,7 +976,7 @@ if (nSegment < 0 || nSegment >= SegCount ())
 theApp.SetModified (TRUE); 
 theApp.LockUndo ();
 CSegment *segP = Segments (0) + nSegment; 
-segP->Child (nSide) =-1; 
+segP->SetChild (nSide, -1); 
 segP->m_info.childFlags &= ~(1 << nSide); 
 CSide *sideP = segP->m_sides + nSide;
 sideP->m_info.nBaseTex = 0; 
@@ -2399,8 +2399,7 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 #endif
 		}
 	InitSegment (nSegment);
-	if ((segP->Child (nSide) = centerSegP->Child (nSide)) > -1) {
-		segP->m_info.childFlags |= (1 << nSide);
+	if ((segP->SetChild (nSide, centerSegP->Child (nSide))) > -1) {
 		for (childSegP = Segments (segP->Child (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
 			if (childSegP->Child (nChildSide) == nCenterSeg) {
 				childSegP->SetChild (nChildSide, nSegment);
@@ -2450,10 +2449,8 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 						}
 					}
 				if (h == 4) {
-					segP->Child (nSide) = SegCount () + nChildSeg;
-					segP->m_info.childFlags |= (1 << nSide);
-					childSegP->Child (nChildSide)  = SegCount () + nSegment;
-					childSegP->m_info.childFlags |= (1 << nChildSide);
+					segP->SetChild (nSide, SegCount () + nChildSeg);
+					childSegP->SetChild (nChildSide, SegCount () + nSegment);
 					break;
 					}
 				}
@@ -2580,7 +2577,7 @@ m_info.childFlags = UINT8 (read_INT8 (fp));
 
 // read 0 to 6 children (0 to 12 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-	Child (i) = (m_info.childFlags & (1 << i)) ? read_INT16 (fp) : -1;
+	m_sides [i].m_info.nChild = (m_info.childFlags & (1 << i)) ? read_INT16 (fp) : -1;
 
 // read vertex numbers (16 bytes)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)

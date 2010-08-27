@@ -1085,8 +1085,8 @@ bool CTextureTool::GetAdjacentSide (INT16 nStartSeg, INT16 nStartSide, INT16 nLi
 	CSegment *segP;
 	INT16 nSide, nChild;
 	INT16 point0, point1, vert0, vert1;
-	INT16 childSide, childLine;
-	INT16 childPoint0, childPoint1, childsVert0, childsVert1;
+	INT16 nChildSide, nChildLine;
+	INT16 nChildPoint0, nChildPoint1, nChildVert0, nChildVert1;
 	INT32 sideChildTable[6][4] = {
 		{4,3,5,1},
 		{2,4,0,5},

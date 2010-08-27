@@ -802,7 +802,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				seg2 = Segments (0);
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
 					if (segP->Child (child) == ~seg2->m_info.nIndex) {
-						segP->Child (child) = seg_offset;
+						segP->SetChild (child, seg_offset);
 						break;
 						}
 					}
