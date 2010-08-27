@@ -17,11 +17,11 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void LoadTextures (short nBaseTex, short nOvlTex)
+        public void LoadTextures (ushort nBaseTex, ushort nOvlTex)
         {
-            textures [(int) DLE.theMine.FileType][nBaseTex].Read (nBaseTex);
+            textures [(int) DLE.theMine.FileType][nBaseTex].Load (nBaseTex);
             if ((nOvlTex & 0x1FFF) != 0)
-                textures [(int)DLE.theMine.FileType] [nOvlTex].Read (nBaseTex);
+                textures [(int)DLE.theMine.FileType] [nOvlTex].Load (nBaseTex);
         }
     }
 }

@@ -1019,10 +1019,10 @@ namespace DLE.NET.Properties {
             }
         }
         
-        internal static byte[] texture2 {
+        internal static ushort[] texture2 {
             get {
                 object obj = ResourceManager.GetObject("texture2", resourceCulture);
-                return ((byte[])(obj));
+                return ((ushort[])(obj));
             }
         }
         

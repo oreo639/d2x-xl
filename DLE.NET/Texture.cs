@@ -148,7 +148,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Release ()
+        public void Release ()
         {
             bmData = null;
             tgaData = null;
@@ -156,12 +156,12 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        virtual override void Read (BinaryReader fp, int version = 0, bool bFlag = false) { }
-        virtual override void Write (BinaryWriter fp, int version = 0, bool bFlag = false) { }
+        public virtual override void Read (BinaryReader fp, int version = 0, bool bFlag = false) { }
+        public virtual override void Write (BinaryWriter fp, int version = 0, bool bFlag = false) { }
 
         //------------------------------------------------------------------------------
 
-        virtual override void Clear ()
+        public virtual override void Clear ()
         {
             Release ();
             width = height = size = 0;
@@ -178,7 +178,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        new int Read (short index) 
+        public new int Load (ushort index) 
         {
 	        byte[]			rowSize = new byte [4096];
 	        byte[]			rowData = new byte [4096];
@@ -190,7 +190,6 @@ namespace DLE.NET
 	        byte			byteVal, runLength, runValue;
 	        uint			nSize;
 	        short			nLine;
-	        int				rc;
             String          folder;
 	
         if ((index > ((DLE.IsD1File ()) ? TextureManager.MAX_D1_TEXTURES : TextureManager.MAX_D2_TEXTURES)) || (index < 0))
@@ -201,7 +200,11 @@ namespace DLE.NET
         if (!folder.Contains (".pig"))
             folder += "groupa.pig";
 
-        byte[] textureTable = (DLE.IsD1File() ? Properties.Resources.texture : Properties.Resources.texture2);
+        ushort[] textureTable;
+        if (DLE.IsD1File())
+            textureTable = Properties.Resources.texture;
+        else
+            textureTable = Properties.Resources.texture2;
 
         using (FileStream fs = File.OpenRead (folder))
             using (BinaryReader fp = new BinaryReader (fs))
@@ -215,14 +218,14 @@ namespace DLE.NET
                 if (DLE.IsD2File ())
                 {
                     fileHeaderD2.Read (fp);
-    	            offset = PigHeaderD2.Size + dataOffset + (uint) (TextureIndex (textureTable, index) - 1) * PigTextureD2.Size;
+    	            offset = PigHeaderD2.Size + dataOffset + (uint) (textureTable [index + 1] - 1) * PigTextureD2.Size;
                     fs.Seek (offset, SeekOrigin.Begin);
                     pigTexD2.Read (fp);
                 }
                 else
                 {
                     fileHeaderD1.Read (fp);
-    	            offset = PigHeaderD1.Size + dataOffset + (uint) (TextureIndex (textureTable, index) - 1) * PigTextureD1.Size;
+    	            offset = PigHeaderD1.Size + dataOffset + (uint) (textureTable [index - 1] - 1) * PigTextureD1.Size;
                     fs.Seek (offset, SeekOrigin.Begin);
                     pigTexD1.Read (fp);
                     pigTexD1.m_info.name [7] = 0;
