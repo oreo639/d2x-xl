@@ -231,12 +231,12 @@ char	new_level_name [256];
 int	newFileType = 1;
 strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
 
-CNewFileDlg	d (theApp.MainFrame (), new_level_name, &newFileType);
+CNewFileDlg	d (DLE.MainFrame (), new_level_name, &newFileType);
 if (d.DoModal () == IDOK) {
 	theMine->Default ();
-	theApp.MineView ()->Reset ();
-	theApp.TextureView ()->Reset ();
-	theApp.ToolView ()->Reset ();
+	DLE.MineView ()->Reset ();
+	DLE.TextureView ()->Reset ();
+	DLE.ToolView ()->Reset ();
 //		InitRobotData();
 
 	*m_szFile = '\0';
@@ -271,12 +271,12 @@ if (d.DoModal () == IDOK) {
 	strcpy_s (theMine->LevelName (), theMine->LevelNameSize (), new_level_name);
 	theMine->Reset ();
 	theMine->SetLinesToDraw ();
-	theApp.MineView ()->ResetView (true);
+	DLE.MineView ()->ResetView (true);
 	memset (&missionData, 0, sizeof (missionData));
 	CreateLightMap ();
-	theApp.TextureView ()->Setup ();
-	theApp.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
-	theApp.ToolView ()->MissionTool ()->Refresh ();
+	DLE.TextureView ()->Setup ();
+	DLE.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
+	DLE.ToolView ()->MissionTool ()->Refresh ();
 	}
 }
 
@@ -289,7 +289,7 @@ return ::BrowseForFile (bOpen, "hog;rl2;rdl", pszFile,
 								"|mission files (*.hog)|*.hog|"
 								"|Descent 2 level (*.rl2)|*.rl2|"
 								"Descent 1 level (*.rdl)|*.rdl||", 
-								0, theApp.MainFrame ());
+								0, DLE.MainFrame ());
 }
 
                         /*--------------------------*/
@@ -308,12 +308,12 @@ bool CDlcDoc::SaveIfModified (void)
 if (!IsModified ())
 	return true;
 
-CSaveFileDlg d (theApp.MainFrame ());
+CSaveFileDlg d (DLE.MainFrame ());
 
 nAction = d.DoModal (); //AfxMessageBox ("\nThe mine has been modified.\n\nClick 'Yes' to load another mine and loose all changes,\n'No' to save changes before loading another mine,\nor 'Cancel' to keep this mine and return without saving.", MB_YESNOCANCEL | MB_ICONEXCLAMATION);
 if (nAction == IDCANCEL)
 	return false;
-theApp.SetModified (FALSE);
+DLE.SetModified (FALSE);
 // buggy for new mine; fix required
 if (nAction == IDNO) 
 	SaveFile (*GetPathName () == '\0');
@@ -328,13 +328,13 @@ BOOL CDlcDoc::OpenFile (bool bBrowseForFile, LPSTR pszFile, LPSTR pszSubFile)
 	char szFile [256], szSubFile [256];
 
 if (bEnableDeltaShading)
-	theApp.ToolView ()->LightTool ()->OnShowDelta ();
+	DLE.ToolView ()->LightTool ()->OnShowDelta ();
 if (!SaveIfModified ())
 	return FALSE;
 if (bBrowseForFile && !BrowseForFile (m_szFile, TRUE))
 	return FALSE;
-if (theApp.ToolView () && theApp.ToolView ()->DiagTool ())
-	theApp.ToolView ()->DiagTool ()->Reset ();
+if (DLE.ToolView () && DLE.ToolView ()->DiagTool ())
+	DLE.ToolView ()->DiagTool ()->Reset ();
 if (!pszFile)
 	pszFile = m_szFile;
 if (!pszSubFile)
@@ -344,7 +344,7 @@ strcpy_s (szFile, sizeof (szFile), pszFile);
 strcpy_s (szSubFile, sizeof (szSubFile), pszSubFile);
 CreateLightMap ();
 if (strstr (pszFile, ".hog")) {
-	CHogManager	hm (theApp.MainFrame (), szFile, szSubFile);
+	CHogManager	hm (DLE.MainFrame (), szFile, szSubFile);
 	if (pszSubFile != m_szSubFile) {
 		if (!hm.LoadLevel (szFile, szSubFile))
 			return FALSE;
@@ -370,22 +370,22 @@ else {
 	strcat_s (pszSubFile, 256, szExt);
 	}
 theMine->Reset ();
-theApp.TextureView ()->Setup ();
-theApp.MineView ()->DelayRefresh (true);
-theApp.MineView ()->Reset ();
-theApp.MineView ()->FitToView ();
-//theApp.TextureView ()->Refresh ();
-//theApp.ToolView ()->MissionTool ()->Refresh ();
-theApp.MineView ()->DelayRefresh (false);
-theApp.MineView ()->ResetView (true);
-theApp.MainFrame ()->UpdateSelectButtons ((enum eSelectModes) theApp.MineView ()->GetSelectMode ());
+DLE.TextureView ()->Setup ();
+DLE.MineView ()->DelayRefresh (true);
+DLE.MineView ()->Reset ();
+DLE.MineView ()->FitToView ();
+//DLE.TextureView ()->Refresh ();
+//DLE.ToolView ()->MissionTool ()->Refresh ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->ResetView (true);
+DLE.MainFrame ()->UpdateSelectButtons ((enum eSelectModes) DLE.MineView ()->GetSelectMode ());
 //UpdateAllViews (NULL);
 if (!err) {
 	UpdateCaption ();
 	AfxGetApp ()->AddToRecentFileList (m_szFile);
 	}
 CountCustomTextures ();
-theApp.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
+DLE.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
 return (err == 0);
 }
 
@@ -400,14 +400,14 @@ return false;
 #else
 	int err = 0;
 
-theApp.ToolView ()->Refresh ();
+DLE.ToolView ()->Refresh ();
 CountCustomTextures ();
 if (bEnableDeltaShading)
-	theApp.ToolView ()->LightTool ()->OnShowDelta ();
+	DLE.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
-	FSplit ((theApp.IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
-//	strcpy_s (m_szFile, sizeof (m_szFile), (theApp.IsD1File ()) ? "new.rdl" : "new.rl2");
+	FSplit ((DLE.IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
+//	strcpy_s (m_szFile, sizeof (m_szFile), (DLE.IsD1File ()) ? "new.rdl" : "new.rl2");
 	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
 if (bSaveAs && !BrowseForFile (m_szFile, FALSE))

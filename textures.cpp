@@ -169,7 +169,7 @@ int DefineTexture (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, in
 	CTexture*	texP [2];
 	byte			*bmBuf = destTexP->m_info.bmDataP;
 	byte			c;
-	int			fileType = theApp.FileType ();
+	int			fileType = DLE.FileType ();
 
 	
 	textures [0] = nBaseTex;
@@ -335,7 +335,7 @@ return 0;
 
 int CTexture::Read (short index) 
 {
-	byte				xsize[200];
+	byte				rowSize [200];
 	byte				line[320],*line_ptr;
 	byte				j;
 	PIG_TEXTURE		ptexture;
@@ -357,21 +357,21 @@ int CTexture::Read (short index)
 	
 if (m_info.bModified)
 	return 0;
-strcpy_s (path, sizeof (path), (theApp.IsD1File ()) ? descent_path : descent2_path);
+strcpy_s (path, sizeof (path), (DLE.IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
 	strcat_s (path, sizeof (path), "groupa.pig");
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
 
 // do a range check on the texture number
-if ((index > ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
+if ((index > ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
 DEBUGMSG (" Reading texture: Texture # out of range.");
 rc = 1;
 goto abort;
 }
 
 // get pointer to texture table from resource fTextures
-hFind = (theApp.IsD1File ()) ?
+hFind = (DLE.IsD1File ()) ?
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
 if (!hFind) {
@@ -403,13 +403,13 @@ if (dataOffset == 0x47495050L) /* 'PPIG' Descent 2 type */
 else if (dataOffset < 0x10000L)
 	dataOffset = 0;
 fseek (fTextures, dataOffset, SEEK_SET);
-if (theApp.IsD2File ())
+if (DLE.IsD2File ())
 	fread (&d2FileHeader, sizeof (d2FileHeader), 1, fTextures);
 else
 	fread (&file_header, sizeof (file_header), 1, fTextures);
 
 // read texture header
-if (theApp.IsD2File ()) {
+if (DLE.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) + dataOffset +
 				(fix) (textureTable[index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures, offset, SEEK_SET);
@@ -436,7 +436,7 @@ else {
 s = w * h;
 
 // seek to data
-if (theApp.IsD2File ()) {
+if (DLE.IsD2File ()) {
 	offset = sizeof (D2_PIG_HEADER) 
 				+ dataOffset
 				+ d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE)
@@ -462,10 +462,10 @@ m_info.nFormat = 0;
 fseek (fTextures, offset, SEEK_SET);
 if (d2_ptexture.flags & 0x08) {
 	fread (&nSize, 1, sizeof (int), fTextures);
-	fread (xsize, d2_ptexture.ysize, 1, fTextures);
+	fread (rowSize, d2_ptexture.ysize, 1, fTextures);
 	linenum = 0;
 	for (y = h - 1; y >= 0; y--) {
-		fread (line, xsize[linenum++], 1, fTextures);
+		fread (line, rowSize [linenum++], 1, fTextures);
 		line_ptr = line;
 			for (x = 0; x < w;) {
 			byteVal = *line_ptr++;
@@ -608,10 +608,10 @@ int ReadPog (FILE *fTextures, uint nFileSize)
 	ushort			nUnknownTextures, nMissingTextures;
 	bool				bExtraTexture;
 	CTexture*		texP;
-	int				fileType = theApp.FileType ();
+	int				fileType = DLE.FileType ();
 
 // make sure this is descent 2 fTextures
-if (theApp.IsD1File ()) {
+if (DLE.IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
 	return 1;
 	}
@@ -898,9 +898,9 @@ int CreatePog (FILE *outPigFile)
 	int num;
 	pExtraTexture	extraTexP;
 	CTexture* texP;
-	int	fileType = theApp.FileType ();
+	int	fileType = DLE.FileType ();
 
-if (theApp.IsD1File ()) {
+if (DLE.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
 	rc = 4;
 	goto abort;
@@ -1007,7 +1007,7 @@ while (extraTextures) {
 
 BOOL HasCustomTextures () 
 {
-CTexture* texP = theMine->Textures (theApp.FileType ());
+CTexture* texP = theMine->Textures (DLE.FileType ());
 
 for (int i = MAX_D2_TEXTURES; i; i--, texP++)
 	if (texP->m_info.bModified)
@@ -1020,7 +1020,7 @@ return FALSE;
 int CountCustomTextures () 
 {
 	int			count = 0;
-	CTexture*	texP = theMine->Textures (theApp.FileType ());
+	CTexture*	texP = theMine->Textures (DLE.FileType ());
 
 for (int i = MAX_D2_TEXTURES; i; i--, texP++)
 	if (texP->m_info.bModified)
@@ -1137,7 +1137,7 @@ if (!pDC)
 	CSegment*	segP;
 	CSide*		sideP;
 	short			nWall;
-	bool			bShowTexture = true, bDescent1 = theApp.IsD1File ();
+	bool			bShowTexture = true, bDescent1 = DLE.IsD1File ();
 	char			*path = bDescent1 ? descent_path : descent2_path;
 
 CRect	rc;

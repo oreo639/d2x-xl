@@ -39,7 +39,7 @@ closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
 int enable_secret = FALSE;
-if (theApp.IsD2File ())
+if (DLE.IsD2File ())
 	for(i=0;i<(short)theMine->GameInfo ().triggers.count;i++)
 		if (theMine->Triggers (i)->m_info.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
@@ -49,7 +49,7 @@ if (theApp.IsD2File ())
 for (i = 0; i <= theMine->GameInfo ().objects.count; i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == theMine->GameInfo ().objects.count && theApp.IsD2File () && enable_secret) {
+	if (i == theMine->GameInfo ().objects.count && DLE.IsD2File () && enable_secret) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
@@ -205,7 +205,7 @@ foundSeg:
 if (!bFound)
 	return false;
 theMine->Current ()->nSegment = next_segment;
-theApp.ToolView ()->Refresh ();
+DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;
 }
@@ -398,7 +398,7 @@ void CMineView::SelectOtherCube ()
 {
 theMine->Current () = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 (): &theMine->Current1 ();
 Refresh (true);
-//theApp.ToolView ()->CubeTool ()->Refresh ();
+//DLE.ToolView ()->CubeTool ()->Refresh ();
 }
 
 
@@ -413,7 +413,7 @@ if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
 theMine->Current ()->nSegment = nOppSeg;
 theMine->Current ()->nSide = nOppSide;
 Refresh (true);
-//theApp.ToolView ()->CubeTool ()->Refresh ();
+//DLE.ToolView ()->CubeTool ()->Refresh ();
 return true;
 }
 

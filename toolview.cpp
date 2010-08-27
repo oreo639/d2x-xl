@@ -359,8 +359,8 @@ void CToolView::RecalcLayout (int nToolMode, int nTextureMode)
 if (m_bRecalcLayout)
 	return;
 m_bRecalcLayout = TRUE;
-if (theApp.MainFrame ())
-	theApp.MainFrame ()->RecalcLayout (nToolMode, nTextureMode);
+if (DLE.MainFrame ())
+	DLE.MainFrame ()->RecalcLayout (nToolMode, nTextureMode);
 GetWindowRect (rc);
 paneSize.cx = rc.Width ();
 paneSize.cy = rc.Height ();
@@ -415,7 +415,7 @@ void CToolView::SetActive (int nPage)
 {
 if (m_pTools) {
 	m_pTools->SetActivePage (nPage);
-	theApp.MainFrame ()->RecalcLayout (FALSE, 1);
+	DLE.MainFrame ()->RecalcLayout (FALSE, 1);
 	}
 }	
 
@@ -450,7 +450,7 @@ CycleTab (-1);
 
 void CToolView::OnSelectPrevTab ()
 {
-theApp.MainFrame ()->ShowTools ();
+DLE.MainFrame ()->ShowTools ();
 PrevTab ();
 }
 
@@ -458,7 +458,7 @@ PrevTab ();
 
 void CToolView::OnSelectNextTab ()
 {
-theApp.MainFrame ()->ShowTools ();
+DLE.MainFrame ()->ShowTools ();
 NextTab ();
 }
 

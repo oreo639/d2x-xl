@@ -54,11 +54,11 @@ else
 	v = CalcSideNormal (Current ()->nSegment, Current ()->nSide);
 
 // move on x, y, and z
- theApp.SetModified (TRUE);
- theApp.LockUndo ();
+ DLE.SetModified (TRUE);
+ DLE.LockUndo ();
  v *= moveRate;
  MoveOn (v);
- theApp.UnlockUndo ();
+ DLE.UnlockUndo ();
  return true;
 }
 
@@ -149,13 +149,13 @@ else {
 	else 
 		v = CalcSideNormal (Current ()->nSegment,Current ()->nSide);
 	// move on x, y, and z
-	theApp.SetModified (TRUE);
-	theApp.LockUndo ();
+	DLE.SetModified (TRUE);
+	DLE.LockUndo ();
 	v *= -moveRate;
 	MoveOn (v);
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 	}
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 return true;
 }
 
@@ -247,8 +247,8 @@ switch (m_selectMode){
 		return false;
 
 	case SIDE_MODE:	// spin side around the opposite side
-		theApp.SetModified (TRUE);
-		theApp.LockUndo ();
+		DLE.SetModified (TRUE);
+		DLE.LockUndo ();
 		if (perpendicular) { // use lines 0 and 2
 			pts [0] = 1;
 			pts [1] = 2;
@@ -270,7 +270,7 @@ switch (m_selectMode){
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
 			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
-		theApp.UnlockUndo ();	
+		DLE.UnlockUndo ();	
 		break;
 	
 	case CUBE_MODE:
@@ -315,32 +315,32 @@ switch (m_selectMode) {
 		return ResizeLine (segP, point [0], point [1], delta);
 
 	case SIDE_MODE:
-		theApp.SetModified (TRUE);
-		theApp.LockUndo ();
+		DLE.SetModified (TRUE);
+		DLE.LockUndo ();
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [Current ()->nSide][i];
 		// enlarge the diagonals
 		result = ResizeLine (segP, point [0], point [2], (int) (delta*sqrt(2.0))) &&
 				   ResizeLine (segP, point [1], point [3], (int) (delta*sqrt(2.0)));
-		theApp.UnlockUndo ();
+		DLE.UnlockUndo ();
 		return result;
 
 	case CUBE_MODE:
 		// enlarge the diagonals
-		theApp.SetModified (TRUE);
-		theApp.LockUndo ();
+		DLE.SetModified (TRUE);
+		DLE.LockUndo ();
 		result = ResizeLine (segP, 0, 6, (int) (delta*sqrt(3.0))) &&
 				   ResizeLine (segP, 1, 7, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 2, 4, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 3, 5, (int) (delta*sqrt(3.0)));
-		theApp.UnlockUndo ();
+		DLE.UnlockUndo ();
 		return result;
 
 	case OBJECT_MODE:
 		return false;
 
 	case BLOCK_MODE:
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		CVertex	max_pt (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL), 
 					min_pt (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
 					center;
@@ -391,30 +391,30 @@ else
 switch (m_selectMode){
 	case POINT_MODE:
 		*Vertices (segP->m_info.verts [p0]) += delta;
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		break;
 
 	case LINE_MODE:
 		*Vertices (segP->m_info.verts [p0]) += delta;
 		*Vertices (segP->m_info.verts [p1]) += delta;
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		break;
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++)
 			*Vertices (segP->m_info.verts [sideVertP [i]]) += delta;
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		break;
 
 	case CUBE_MODE:
 		for (i = 0; i < 8; i++) 
 			*Vertices (segP->m_info.verts [i]) += delta;
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		break;
 
 	case OBJECT_MODE:
 		CurrObj ()->m_location.pos += delta;
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		break;
 
 	case BLOCK_MODE:
@@ -425,7 +425,7 @@ switch (m_selectMode){
 				bMoved = true;
 				}
 			}
-		theApp.SetModified (bMoved);
+		DLE.SetModified (bMoved);
 		break;
 	}
 return true;
@@ -485,7 +485,7 @@ int nLine = Current ()->nLine;
 CSegment *segP = Segments (nSegment);
 short i;
 
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 switch (m_selectMode) {
 	case POINT_MODE:
 		*Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += delta;
@@ -558,7 +558,7 @@ switch (m_selectMode) {
 	
 	case SIDE_MODE: // spin side around its center in the plane of the side
 		// calculate center of current side
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		center.Clear ();
 		for (i = 0; i < 4; i++) {
 			center += *Vertices (segP->m_info.verts [sideVertTable [nSide][i]]);
@@ -582,7 +582,7 @@ switch (m_selectMode) {
 
 	case CUBE_MODE:	// spin cube around the center of the cube using screen's perspective
 		// calculate center of current cube
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		center.Clear ();
 		for (i = 0; i < 8; i++) 
 			center += *Vertices (segP->m_info.verts [i]);
@@ -598,7 +598,7 @@ switch (m_selectMode) {
 		break;
 
 	case OBJECT_MODE:	// spin object vector
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
 		switch (nSide) {
 			case 0:
@@ -623,7 +623,7 @@ switch (m_selectMode) {
 		break;
 
 	case BLOCK_MODE:
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		// calculate center of current cube
 		center.Clear ();
 		for (i = 0; i < 8; i++) {

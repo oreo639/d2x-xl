@@ -9,11 +9,11 @@
 #define ErrorMsg(a) AfxMessageBox(a)
 #define QueryMsg(a) (bExpertMode ? IDYES : AfxMessageBox (a, MB_YESNO))
 #define Query2Msg(a,i) AfxMessageBox(a,i)
-//#define STATUSMSG(a) theApp.MainFrame () ? theApp.MainFrame ()->StatusMsg(a) : AfxMessageBox(a)
-//#define DEBUGMSG(a) theApp.MainFrame () ? theApp.MainFrame ()->DebugMsg(a) : AfxMessageBox(a)
-#define STATUSMSG(a) {if (theApp.MainFrame ()) theApp.MainFrame ()->StatusMsg(a);}
-#define INFOMSG(a) {if (theApp.MainFrame ()) theApp.MainFrame ()->InfoMsg(a);}
-#define DEBUGMSG(a) {if (theApp.MainFrame ()) theApp.MainFrame ()->DebugMsg(a);}
+//#define STATUSMSG(a) DLE.MainFrame () ? DLE.MainFrame ()->StatusMsg(a) : AfxMessageBox(a)
+//#define DEBUGMSG(a) DLE.MainFrame () ? DLE.MainFrame ()->DebugMsg(a) : AfxMessageBox(a)
+#define STATUSMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->StatusMsg(a);}
+#define INFOMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->InfoMsg(a);}
+#define DEBUGMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
 
 #define M_PI	3.141592653589793240
 #define M_PI_2	(M_PI / 2.0)
@@ -158,15 +158,15 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 
 #define D1_PLAYER_CLIP_NUMBER		43
 #define D2_PLAYER_CLIP_NUMBER		108
-#define PLAYER_CLIP_NUMBER			(theApp.IsD1File () ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER)
+#define PLAYER_CLIP_NUMBER			(DLE.IsD1File () ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER)
 
 #define D1_COOP_CLIP_NUMBER		44
 #define D2_COOP_CLIP_NUMBER		108
-#define COOP_CLIP_NUMBER			(theApp.IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER)
+#define COOP_CLIP_NUMBER			(DLE.IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER)
 
 #define D1_REACTOR_CLIP_NUMBER	39
 #define D2_REACTOR_CLIP_NUMBER	97
-#define REACTOR_CLIP_NUMBER		(theApp.IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER)
+#define REACTOR_CLIP_NUMBER		(DLE.IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER)
 
 
 #define HOSTAGE_SIZE   0x50000L
@@ -281,7 +281,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define MAX_POWERUP_IDS1            26
 #define MAX_POWERUP_IDS2            50
 #define MAX_POWERUP_IDS_D2          48
-#define MAX_POWERUP_IDS					(theApp.IsD1File () ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2)
+#define MAX_POWERUP_IDS					(DLE.IsD1File () ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2)
 #define MAX_TRIGGER_TARGETS         10
 
 #define POW_AMMORACK						35

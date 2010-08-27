@@ -648,7 +648,7 @@ if (!BrowseForFile (TRUE, (IsD1File ()) ? "rdl" : "rl2", szFile,
 						  "Palette file|*.pal|"
 						  "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST,
-						  theApp.MainFrame ())
+						  DLE.MainFrame ())
 	return;
 #else
 	OPENFILENAME ofn;
@@ -663,7 +663,7 @@ ofn.lpstrFilter = "Descent Level\0*.rdl\0"
 						"Color file\0*.clr\0"
 						"Palette file\0*.pal\0"
 						"All Files\0*.*\0";
-if (theApp.IsD1File ()) {
+if (DLE.IsD1File ()) {
 	ofn.nFilterIndex = 1;
 	ofn.lpstrDefExt = "rdl";
 	}
@@ -746,7 +746,7 @@ strcpy_s (szFile, sizeof (szFile), lh.name);
 #if 1
 if (!BrowseForFile (FALSE, "", szFile, "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-						  theApp.MainFrame ()))
+						  DLE.MainFrame ()))
 	return;
 ExportSubFile (m_pszFile, szFile, offset, lh.size);
 #else //0
@@ -1186,7 +1186,7 @@ if (*szSubFile) {
 	strncpy_s (szBaseName, sizeof (szBaseName), szSubFile, pszExtStart - szSubFile);
 	szBaseName [pszExtStart - szSubFile] = '\0';
 	}
-if (theApp.IsD1File ())
+if (DLE.IsD1File ())
 	sprintf_s (szTmp, sizeof (szTmp), "%s.RDL", szBaseName);
 else
 	sprintf_s (szTmp, sizeof (szTmp), "%s.RL2", szBaseName);
@@ -1327,7 +1327,7 @@ int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs)
 _strlwr_s (szHogFile, 256);
 psz = strstr (szHogFile, "new.");
 if (!*szSubFile || psz) { 
-	CInputDialog dlg (theApp.MainFrame (), "Name mine", "Enter file name:", szSubFile, 9);
+	CInputDialog dlg (DLE.MainFrame (), "Name mine", "Enter file name:", szSubFile, 9);
 	if (dlg.DoModal () != IDOK)
 		return 1;
 	LPSTR ext = strrchr (szSubFile, '.');
@@ -1341,7 +1341,7 @@ if (!*szSubFile || psz) {
 		strcpy_s (psz, 256 - (psz - szHogFile), szSubFile);
 		strcat_s (szHogFile, sizeof (szHogFile), ".hog");
 		}
-	strcat_s (szSubFile, 256, (theApp.IsD1File ()) ? ".rdl" : ".rl2");
+	strcat_s (szSubFile, 256, (DLE.IsD1File ()) ? ".rdl" : ".rl2");
 	}
 // if this HOG file only contains one rdl/rl2 file total and
 // it has the same name as the current level, and it has
@@ -1549,7 +1549,7 @@ strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat_s (szMsn, sizeof (szMsn), (theApp.IsD1File ()) ? ".msn" : ".mn2");
+strcat_s (szMsn, sizeof (szMsn), (DLE.IsD1File ()) ? ".msn" : ".mn2");
 fopen_s (&fMsn, szMsn, "rt");
 if (!fMsn) {
 	DEBUGMSG (" Hog manager: Mission file not found.");
@@ -1656,7 +1656,7 @@ strcpy_s (szMsn, sizeof (szMsn), pszFile);
 char *pExt = strrchr (szMsn, '.');
 if (pExt)
 	*pExt = '\0';
-strcat_s (szMsn, sizeof (szMsn), (theApp.IsD1File ()) ? ".msn" : ".mn2");
+strcat_s (szMsn, sizeof (szMsn), (DLE.IsD1File ()) ? ".msn" : ".mn2");
 if (bSaveAs) {
 	fopen_s (&fMsn, szMsn, "rt");
 	if (fMsn) {
@@ -1726,7 +1726,7 @@ if (!*missionData.missionName)
 	strcpy_s (missionData.missionName, sizeof (missionData.missionName), szBaseName);
 if (bSaveAs || !*missionData.missionName)
 	do {
-		CInputDialog dlg (theApp.MainFrame (), "Mission title", "Enter mission title:", missionData.missionName, sizeof (missionData.missionName));
+		CInputDialog dlg (DLE.MainFrame (), "Mission title", "Enter mission title:", missionData.missionName, sizeof (missionData.missionName));
 		if (dlg.DoModal () != IDOK)
 			return -1;
 	} while (!*missionData.missionName);
@@ -1734,7 +1734,7 @@ missionData.missionType = 1;
 missionData.numLevels = 1;
 strcpy_s (missionData.levelList [0], sizeof (missionData.levelList [0]), pszSubFile);
 if (!strchr (pszSubFile, '.'))
-	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), theApp.IsD2File () ? ".rl2" : ".rdl");
+	strcat_s (missionData.levelList [0], sizeof (missionData.levelList [0]), DLE.IsD2File () ? ".rl2" : ".rdl");
 missionData.numSecrets = 0;
 strcpy_s (missionData.missionInfo [0], sizeof (missionData.levelList [0]), "DLE-XP");
 strcpy_s (missionData.missionInfo [2], sizeof (missionData.levelList [2]), DateStr (szTime, sizeof (szTime), true));
@@ -1742,7 +1742,7 @@ if (bSaveAs)
 	strcpy_s (missionData.missionInfo [3], sizeof (missionData.missionInfo [3]), "1.0");
 missionData.customFlags [0] = bCustomTextures;
 missionData.customFlags [1] = bCustomRobots;
-return WriteMissionFile (pszFile, theApp.LevelVersion (), bSaveAs);
+return WriteMissionFile (pszFile, DLE.LevelVersion (), bSaveAs);
 }
 
 // eof file.cpp

@@ -223,7 +223,7 @@ m_nTimer = -1;
 
 void CExtToolBar::Notify (UINT nMsg)
 {
-theApp.MainFrame ()->SendMessage (WM_COMMAND, nMsg, NULL);
+DLE.MainFrame ()->SendMessage (WM_COMMAND, nMsg, NULL);
 }
 
 								/*---------------------------*/
@@ -395,7 +395,7 @@ void CMainFrame::OnClose ()
 if (m_bEditorTB)
 	OnEditorToolbar ();
 #endif
-theApp.SaveLayout ();
+DLE.SaveLayout ();
 if (ToolView ()->PrefsDlg ())
 	ToolView ()->PrefsDlg ()->SaveAppSettings ();
 CFrameWnd::OnClose ();
@@ -506,7 +506,7 @@ if (m_bShowCtrlBar) {
 else {
 	CRect rc;
 	m_splitter2.GetPane (1,0)->GetWindowRect (rc);
-	m_bRecalcBarLayout = (theApp.ToolSize ().cy == rc.Height () + 10);
+	m_bRecalcBarLayout = (DLE.ToolSize ().cy == rc.Height () + 10);
 	}
 return bCheck;
 }
@@ -986,8 +986,8 @@ if (m_bEditorTB) {
 else {
 	CRect rc;
 	m_pEditTool->GetWindowRect (rc);
-	theApp.WritePrivateProfileInt ("xEditTB", rc.left);
-	theApp.WritePrivateProfileInt ("yEditTB", rc.top);
+	DLE.WritePrivateProfileInt ("xEditTB", rc.left);
+	DLE.WritePrivateProfileInt ("yEditTB", rc.top);
 	m_pEditTool->DestroyWindow ();
 	delete m_pEditTool;
 	m_pEditTool = NULL;
@@ -1567,13 +1567,13 @@ MineView ()->SelectOtherSide ();
 
 void CMainFrame::OnUndo () 
 {
-if (theApp.Undo ())
+if (DLE.Undo ())
 	MineView ()->Refresh ();
 }
 
 void CMainFrame::OnRedo () 
 {
-if (theApp.Redo ())
+if (DLE.Redo ())
 	MineView ()->Refresh ();
 }
 
@@ -1646,9 +1646,9 @@ if (nLayout) {
 		ToolPane ()->GetWindowRect (rc1);
 		if (rc.Width () - rc1.Width () < rc0.Width ())
 			m_splitter1.SetColumnInfo (0, rc.Width () - rc1.Width () - 9 - 2 * GetSystemMetrics (SM_CYBORDER), 0);
-		else if ((nToolMode == 1) || (rc1.Width () > theApp.ToolSize ().cx)) {
-			m_splitter1.SetColumnInfo (1, rc.Width () - theApp.ToolSize ().cx, 0);
-			m_splitter1.SetColumnInfo (0, theApp.ToolSize ().cx, 0);
+		else if ((nToolMode == 1) || (rc1.Width () > DLE.ToolSize ().cx)) {
+			m_splitter1.SetColumnInfo (1, rc.Width () - DLE.ToolSize ().cx, 0);
+			m_splitter1.SetColumnInfo (0, DLE.ToolSize ().cx, 0);
 			}
 		else if (nToolMode == 2) {
 			m_splitter1.SetColumnInfo (0, 0, 0);
@@ -1682,7 +1682,7 @@ CFrameWnd::RecalcLayout ();
 
 void CDlcSplitterWnd::RecalcLayout (int nToolMode, int nTextureMode)
 {
-if (theApp.MainFrame () && theApp.ToolView ()) {
+if (DLE.MainFrame () && DLE.ToolView ()) {
 	CRect	rc, rc0, rc1;
 	GetClientRect (rc);
 	GetPane (0,0)->GetWindowRect (rc0);
@@ -1700,9 +1700,9 @@ if (theApp.MainFrame () && theApp.ToolView ()) {
 	else {
 		if (rc.Height () - rc1.Height () < rc0.Height ())
 			SetRowInfo (0, rc.Height () - rc1.Height () - m_cySplitter - 2 * GetSystemMetrics (SM_CYBORDER), 0);
-		else if ((nToolMode == 1) || (rc1.Height () > theApp.ToolSize ().cy)) {
-			SetRowInfo (0, rc.Height () - theApp.ToolSize ().cy, 0);
-			SetRowInfo (1, theApp.ToolSize ().cy, 0);
+		else if ((nToolMode == 1) || (rc1.Height () > DLE.ToolSize ().cy)) {
+			SetRowInfo (0, rc.Height () - DLE.ToolSize ().cy, 0);
+			SetRowInfo (1, DLE.ToolSize ().cy, 0);
 			}
 		else if (nToolMode == 2) {
 			SetRowInfo (0, rc.Height (), 0);
@@ -1718,16 +1718,16 @@ CSplitterWnd::RecalcLayout ();
 void CMainFrame::DebugMsg (const char *pszMsg)
 {
 m_statusBar.SetPaneText (2, pszMsg); 
-if (!(theApp.ToolView () && theApp.ToolView ()->DiagTool ()))
+if (!(DLE.ToolView () && DLE.ToolView ()->DiagTool ()))
 	return;
-if (!theApp.ToolView ()->DiagTool ()->Inited ()) {
-	int i = theApp.ToolView ()->m_pTools->GetActiveIndex ();
-	theApp.ToolView ()->EditDiag ();
-	theApp.ToolView ()->SetActive (i);
+if (!DLE.ToolView ()->DiagTool ()->Inited ()) {
+	int i = DLE.ToolView ()->m_pTools->GetActiveIndex ();
+	DLE.ToolView ()->EditDiag ();
+	DLE.ToolView ()->SetActive (i);
 	}
-if (!theApp.ToolView ()->DiagTool ()->Inited ())
+if (!DLE.ToolView ()->DiagTool ()->Inited ())
 	return;
-theApp.ToolView ()->DiagTool ()->AddMessage (pszMsg, 100);
+DLE.ToolView ()->DiagTool ()->AddMessage (pszMsg, 100);
 }
 
                         /*--------------------------*/
@@ -1787,16 +1787,16 @@ return TRUE;
 
                         /*--------------------------*/
 
-bool CEditTool::EditGeo0 (void) { return theApp.MainFrame ()->EditGeoShrink (); }
-bool CEditTool::EditGeo1 (void) { return theApp.MainFrame ()->EditGeoRotLeft (); }
-bool CEditTool::EditGeo2 (void) { return theApp.MainFrame ()->EditGeoDown (); }
-bool CEditTool::EditGeo3 (void) { return theApp.MainFrame ()->EditGeoRotRight (); }
-bool CEditTool::EditGeo4 (void) { return theApp.MainFrame ()->EditGeoLeft (); }
-bool CEditTool::EditGeo5 (void) { return theApp.MainFrame ()->EditGeoGrow (); }
-bool CEditTool::EditGeo6 (void) { return theApp.MainFrame ()->EditGeoRight (); }
-bool CEditTool::EditGeo7 (void) { return theApp.MainFrame ()->EditGeoBack (); }
-bool CEditTool::EditGeo8 (void) { return theApp.MainFrame ()->EditGeoUp (); }
-bool CEditTool::EditGeo9 (void) { return theApp.MainFrame ()->EditGeoFwd (); }
+bool CEditTool::EditGeo0 (void) { return DLE.MainFrame ()->EditGeoShrink (); }
+bool CEditTool::EditGeo1 (void) { return DLE.MainFrame ()->EditGeoRotLeft (); }
+bool CEditTool::EditGeo2 (void) { return DLE.MainFrame ()->EditGeoDown (); }
+bool CEditTool::EditGeo3 (void) { return DLE.MainFrame ()->EditGeoRotRight (); }
+bool CEditTool::EditGeo4 (void) { return DLE.MainFrame ()->EditGeoLeft (); }
+bool CEditTool::EditGeo5 (void) { return DLE.MainFrame ()->EditGeoGrow (); }
+bool CEditTool::EditGeo6 (void) { return DLE.MainFrame ()->EditGeoRight (); }
+bool CEditTool::EditGeo7 (void) { return DLE.MainFrame ()->EditGeoBack (); }
+bool CEditTool::EditGeo8 (void) { return DLE.MainFrame ()->EditGeoUp (); }
+bool CEditTool::EditGeo9 (void) { return DLE.MainFrame ()->EditGeoFwd (); }
 
 void CEditTool::OnEditGeo0 () { EditGeo0 (); }
 void CEditTool::OnEditGeo1 () { EditGeo1 (); }

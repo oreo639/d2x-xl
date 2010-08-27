@@ -93,11 +93,11 @@ long nDelay = I2X (m_nLightDelay) / 1000;
 
 CFlickeringLight* flP = theMine->FlickeringLights (m_iLight);
 if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
-	bUndo = theApp.SetModified (TRUE);
-	theApp.LockUndo ();
+	bUndo = DLE.SetModified (TRUE);
+	DLE.LockUndo ();
 	flP->m_info.mask = nLightMask;
 	flP->m_info.delay = nDelay;
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 	}
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }
@@ -251,7 +251,7 @@ if (m_iLight >= 0)
 	INFOMSG (" There is already a flickering light.")
 else if (0 <= (m_iLight = theMine->AddFlickeringLight (-1, -1, 0xAAAAAAAAL, F1_0 / 4))) {
 	UpdateLightWnd ();
-	theApp.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	}
 }
 
@@ -264,7 +264,7 @@ if (m_iLight < 0)
 else if (theMine->DeleteFlickeringLight ()) {
 	m_iLight = -1;
 	UpdateLightWnd ();
-	theApp.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	}
 }
 
@@ -389,7 +389,7 @@ void CTextureTool::ChooseRGBColor (void)
 
 memset (&cc, 0, sizeof (cc));
 cc.lStructSize = sizeof (cc);
-cc.hwndOwner = theApp.MainFrame ()->m_hWnd;
+cc.hwndOwner = DLE.MainFrame ()->m_hWnd;
 cc.rgbResult = RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue);
 cc.lpCustColors = m_custColors;
 cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;

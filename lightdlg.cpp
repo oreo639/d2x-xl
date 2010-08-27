@@ -125,8 +125,8 @@ theMine->m_lightRenderDepth = m_lightRenderDepth;
 theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
 if (bAll = !theMine->GotMarkedSides ())
 	INFOMSG (" light processing entire mine");
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (m_bIlluminate)
 	theMine->AutoAdjustLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
 if (m_bAvgCornerLight)
@@ -137,8 +137,8 @@ if (m_bCubeLight)
 	theMine->SetCubeLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
 	theMine->CalcDeltaLightData (m_fDeltaLight, (int) bAll);
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -154,7 +154,7 @@ UpdateData (FALSE);
 void CLightTool::OnShowLightSource ()
 {
 m_bShowLightSource = BtnCtrl (IDC_LIGHT_DELTA_SHOWSOURCE)->GetCheck ();
-theApp.MineView ()->EnableDeltaShading (bEnableDeltaShading, m_deltaLightFrameRate, m_bShowLightSource);
+DLE.MineView ()->EnableDeltaShading (bEnableDeltaShading, m_deltaLightFrameRate, m_bShowLightSource);
 }
 
                         /*--------------------------*/
@@ -168,13 +168,13 @@ if (!::IsWindow(m_hWnd))
 UpdateData (TRUE);
 if (bEnableDeltaShading) {
 	((CWnd *) GetDlgItem (IDC_LIGHT_SHOWDELTA))->SetWindowText ("animate");
-	theApp.MineView ()->EnableDeltaShading (0, m_deltaLightFrameRate, m_bShowLightSource);
+	DLE.MineView ()->EnableDeltaShading (0, m_deltaLightFrameRate, m_bShowLightSource);
 	}
 else {
 	((CWnd *) GetDlgItem (IDC_LIGHT_SHOWDELTA))->SetWindowText ("stop");
-	theApp.MineView ()->EnableDeltaShading (1, m_deltaLightFrameRate, m_bShowLightSource);
+	DLE.MineView ()->EnableDeltaShading (1, m_deltaLightFrameRate, m_bShowLightSource);
 	}
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -195,8 +195,8 @@ nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 	CSide*		sideP;
 	bool			bChange = false;
 
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
@@ -209,10 +209,10 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 	}
 if (bChange)
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 else
-	theApp.ResetModified (bUndo);
-theApp.MineView ()->Refresh ();
+	DLE.ResetModified (bUndo);
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/

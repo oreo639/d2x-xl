@@ -101,7 +101,7 @@ for (nSeg = segCount; nSeg; nSeg--, segP++) {
 pcb->SetCurSel (0);
 
   // add complete set for Texture 2 combo box
-nTextures = theApp.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = DLE.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 pcb = CBD2 ();
 int i;
 for (i = 0; i < nTextures; i++) {
@@ -148,7 +148,7 @@ if (LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + texture2, message, sizeof (me
 else
 	nError = GetLastError ();
 #endif
-fileTypeBackup = theApp.FileType ();
+fileTypeBackup = DLE.FileType ();
 theMine->SetFileType (RL2_FILE);
 theMine->LoadPalette ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
@@ -220,7 +220,7 @@ if (!theMine) return;
 				wallCount = theMine->GameInfo ().walls.count;
 
 FreeTextureHandles ();
-theApp.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
+DLE.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RL2_FILE);
 texture_resource = D2_TEXTURE_STRING_TABLE;
@@ -349,7 +349,7 @@ theMine->ReactorStrength () = 0xffffffffL;
 theMine->SecretCubeNum () = 0L;
 
 theMine->SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
-theApp.MineView ()->ResetView (true);
+DLE.MineView ()->ResetView (true);
 CDialog::OnOK ();
 }
 

@@ -169,7 +169,7 @@ void CMissionTool::OnOK (void)
 {
 UpdateData (TRUE);
 memcpy (&missionData, &m_missionData, sizeof (missionData));
-WriteMissionFile (theApp.GetDocument ()->File (), theApp.LevelVersion ());
+WriteMissionFile (DLE.GetDocument ()->File (), DLE.LevelVersion ());
 }
 
                         /*--------------------------*/
@@ -201,7 +201,7 @@ if (psz = strchr (pszName, '.'))
 int l = int (strlen (pszName));
 if (l > 8)
 	pszName [8] = '\0';
-strcat_s (pszName, 256, theApp.IsD1File () ? ".rdl" : ".rl2");
+strcat_s (pszName, 256, DLE.IsD1File () ? ".rdl" : ".rl2");
 return pszName;
 }
 
@@ -308,7 +308,7 @@ if ((i >= 0) && (i < h - 1)) {
 
 void CMissionTool::OnFromHog ()
 {
-if (!ReadHogData (theApp.GetDocument ()->File (), LBLevels (), false, true, false))
+if (!ReadHogData (DLE.GetDocument ()->File (), LBLevels (), false, true, false))
 	UpdateData (TRUE);
 }
 
@@ -325,7 +325,7 @@ LBLevels ()->GetText (i, szNewFile);
 char *psz = strchr (szNewFile, ',');
 if (psz)
 	*psz = '\0';
-theApp.GetDocument ()->OpenFile (false, NULL, szNewFile);
+DLE.GetDocument ()->OpenFile (false, NULL, szNewFile);
 }
 
                         /*--------------------------*/

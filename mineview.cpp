@@ -126,7 +126,7 @@ m_penHiOrange  = new CPen(PS_SOLID, 2, RGB(255,128,  0));
 m_penHiMagenta = new CPen(PS_SOLID, 2, RGB(255,  0,255));
 int i;
 for (i = eMouseStateIdle; i < eMouseStateCount; i++)
-	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? NULL: theApp.m_hInstance, nIdCursors [i]);
+	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? NULL: DLE.m_hInstance, nIdCursors [i]);
 m_viewObjectFlags = eViewObjectsAll;
 m_viewMineFlags = eViewMineLights | eViewMineWalls | eViewMineSpecial;
 m_viewOption = eViewTextureMapped;
@@ -539,7 +539,7 @@ BOOL CMineView::SetWindowPos(const CWnd *pWndInsertAfter, int x, int y, int cx, 
 	GetClientRect (rc);
 
 if ((rc.Width () != cx) || (rc.Height () != cy))
-	theApp.MainFrame ()->ResetPaneMode ();
+	DLE.MainFrame ()->ResetPaneMode ();
 return CView::SetWindowPos (pWndInsertAfter, x, y, cx, cy, nFlags);
 }
 
@@ -814,8 +814,8 @@ y_center = (bottom-top)/2;
 aspect_ratio = (double) rc.Height () / (double) rc.Width ();
 x_max = 8*right;
 y_max = 8*bottom;
-//if (theApp.MainFrame () && ((m_viewWidth != cx) || (m_viewHeight != cy)))
-//	theApp.MainFrame ()->ResetPaneMode ();
+//if (DLE.MainFrame () && ((m_viewWidth != cx) || (m_viewHeight != cy)))
+//	DLE.MainFrame ()->ResetPaneMode ();
 CView::OnSize (nType, cx, cy);
 m_bUpdate = true;
 }
@@ -866,7 +866,7 @@ void CMineView::SetViewObjectFlags(uint mask)
 void CMineView::SetSelectMode (uint mode)
 {
 theMine->SetSelectMode ((short) mode);
-theApp.MainFrame ()->UpdateSelectButtons ((eSelectModes) mode);
+DLE.MainFrame ()->UpdateSelectButtons ((eSelectModes) mode);
 m_selectMode = mode; 
 Refresh (false);
 }
@@ -1089,8 +1089,8 @@ if (!(bRefreshing || m_nDelayRefresh)) {
 	InvalidateRect (NULL, TRUE);
 //	SetFocus ();
 	if (bAll && (m_mouseState == eMouseStateIdle)) {
-		theApp.ToolView ()->Refresh ();
-		theApp.TextureView ()->Refresh ();
+		DLE.ToolView ()->Refresh ();
+		DLE.TextureView ()->Refresh ();
 //		UpdateWindow ();
 		}
 	m_bUpdate = true;
@@ -1158,7 +1158,7 @@ if (m_bUpdate) {
 void CMineView::RefreshObject(short old_object, short new_object) 
 {
 theMine->Current ()->nObject = new_object;
-theApp.ToolView ()->Refresh ();
+DLE.ToolView ()->Refresh ();
 Refresh (false);
 }
 
@@ -1280,7 +1280,7 @@ BOOL CMineView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 
 GetWindowRect (rc);
 if ((pt.x < rc.left) || (pt.x >= rc.right) || (pt.y < rc.top) || (pt.y >= rc.bottom))
-	return theApp.TextureView ()->OnMouseWheel (nFlags, zDelta, pt);
+	return DLE.TextureView ()->OnMouseWheel (nFlags, zDelta, pt);
 if (zDelta > 0)
 	ZoomIn (zDelta / WHEEL_DELTA);
 else
@@ -1292,16 +1292,16 @@ return 0;
 
 void CMineView::OnSelectPrevTab ()
 {
-theApp.MainFrame ()->ShowTools ();
-theApp.ToolView ()->PrevTab ();
+DLE.MainFrame ()->ShowTools ();
+DLE.ToolView ()->PrevTab ();
 }
 
                         /*--------------------------*/
 
 void CMineView::OnSelectNextTab ()
 {
-theApp.MainFrame ()->ShowTools ();
-theApp.ToolView ()->NextTab ();
+DLE.MainFrame ()->ShowTools ();
+DLE.ToolView ()->NextTab ();
 }
 
                         /*--------------------------*/

@@ -341,11 +341,11 @@ else {
 	m_bSplineActive = false;
 	// ask if user wants to keep the new spline
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) {
-		theApp.MineView ()->Refresh (false);
+		DLE.MineView ()->Refresh (false);
 		return;
 		}
-	theApp.SetModified (TRUE);
-	theApp.LockUndo ();
+	DLE.SetModified (TRUE);
+	DLE.LockUndo ();
 	for (spline = 0; spline < n_splines; spline++) {
 		segP = Segments (SegCount ());
 		// copy current segment
@@ -417,10 +417,10 @@ else {
 		segP->m_info.wallFlags = 0; // make sure segment is not marked
 		SegCount ()++;
 		}
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 	}
 SetLinesToDraw ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //==========================================================================
@@ -438,7 +438,7 @@ if (Current ()->nSegment == nSplineSeg1)
 if (Current ()->nSegment == nSplineSeg2)
 	if (m_splineLength2 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength2 += SPLINE_INTERVAL;
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //==========================================================================
@@ -456,7 +456,7 @@ if (Current ()->nSegment == nSplineSeg1)
 if (Current ()->nSegment == nSplineSeg2)
 	if (m_splineLength2 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength2 -= SPLINE_INTERVAL;
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //-------------------------------------------------------------------------

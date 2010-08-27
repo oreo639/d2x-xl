@@ -283,7 +283,7 @@ objP->m_info.id = SMOKE_ID;
 objP->m_info.renderType = RT_SMOKE;
 memset (&objP->rType.smokeInfo, 0, sizeof (objP->rType.smokeInfo));
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -298,7 +298,7 @@ objP->m_info.id = LIGHTNING_ID;
 objP->m_info.renderType = RT_LIGHTNING;
 memset (&objP->rType.lightningInfo, 0, sizeof (objP->rType.lightningInfo));
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -314,7 +314,7 @@ objP->m_info.renderType = RT_SOUND;
 *objP->rType.soundInfo.szFilename = '\0';
 objP->rType.soundInfo.nVolume = 10;
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -336,7 +336,7 @@ if (theMine->CurrObj ()->m_info.type != OBJ_EFFECT) {
 if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 	theMine->DeleteObject ();
 	Refresh ();
-	theApp.MineView ()->Refresh (false);
+	DLE.MineView ()->Refresh (false);
 	}
 }
 
@@ -411,7 +411,7 @@ short nOld = theMine->Current ()->nObject;
 short nNew = short (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
-	theApp.MineView ()->RefreshObject (nOld, nNew);
+	DLE.MineView ()->RefreshObject (nOld, nNew);
 	HiliteTarget ();
 	}
 //Refresh ();
@@ -444,7 +444,7 @@ if (nTarget = objP->rType.lightningInfo.nTarget)
 			break;
 			return;
 			}
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 #endif
 }
  

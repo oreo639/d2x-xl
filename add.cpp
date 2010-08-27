@@ -150,15 +150,15 @@ segP->m_info.function = SEGMENT_FUNC_NONE;
 
 bool CMine::DefineSegment (short nSegment, byte type, short nTexture, short walltype)
 {
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 UndefineSegment (nSegment);
 CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
 segP->m_info.function = type;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -176,26 +176,26 @@ for (segP = Segments (0), i = SegCount (); i; i--, segP++)
 		return false;
 		}
 #endif
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}
 if (!DefineSegment (nSegment, SEGMENT_FUNC_CONTROLCEN, bSetDefTextures ? (IsD1File ()) ? 10 : 357 : -1)) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
 if (bCreate) {
 	if (!CopyObject (OBJ_CNTRLCEN, nSegment)) {
-		theApp.ResetModified (bUndo);
+		DLE.ResetModified (bUndo);
 		return false; 
 		}	
 	CurrObj ()->m_info.id = (IsD1File ()) ? 0 : 2;
 	AutoLinkExitToReactor ();
 	}
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -210,16 +210,16 @@ if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.MineView ()->DelayRefresh (true);
+DLE.MineView ()->DelayRefresh (true);
 if (!DefineSegment (nSegment, SEGMENT_FUNC_EQUIPMAKER, -1)) {
-	theApp.ResetModified (bUndo);
-	theApp.MineView ()->DelayRefresh (false);
+	DLE.ResetModified (bUndo);
+	DLE.MineView ()->DelayRefresh (false);
 	return false; 
 	}	
 EquipGens (n_matcen)->m_info.objFlags [0] = 0;
@@ -231,9 +231,9 @@ EquipGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
 GameInfo ().equipgen.count++;
-theApp.UnlockUndo ();
-theApp.MineView ()->DelayRefresh (false);
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -248,16 +248,16 @@ if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.MineView ()->DelayRefresh (true);
+DLE.MineView ()->DelayRefresh (true);
 if (!DefineSegment (nSegment, SEGMENT_FUNC_ROBOTMAKER,  bSetDefTextures ? (IsD1File ()) ? 339 : 361 : -1)) {
-	theApp.ResetModified (bUndo);
-	theApp.MineView ()->DelayRefresh (false);
+	DLE.ResetModified (bUndo);
+	DLE.MineView ()->DelayRefresh (false);
 	return false; 
 	}	
 BotGens (n_matcen)->m_info.objFlags [0] = 8;
@@ -269,9 +269,9 @@ BotGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
 GameInfo ().botgen.count++;
-theApp.UnlockUndo ();
-theApp.MineView ()->DelayRefresh (false);
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -284,18 +284,18 @@ if (IsD1File ()) {
 		ErrorMsg ("Flag goals are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}
 if (!DefineSegment (nSegment, nType, bSetDefTextures ? nTexture : -1)) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -308,18 +308,18 @@ if (IsD1File ()) {
 		ErrorMsg ("Team start positions are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}
 if (!DefineSegment (nSegment, nType, bSetDefTextures ? nTexture : -1)) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -332,18 +332,18 @@ if (IsD1File ()) {
 		ErrorMsg ("Blocked cubes are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}
 if (!DefineSegment (nSegment, SEGMENT_FUNC_SKYBOX, -1)) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -356,18 +356,18 @@ if (IsD1File ()) {
 		ErrorMsg ("Speed boost cubes are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}
 if (!DefineSegment (nSegment, SEGMENT_FUNC_SPEEDBOOST, -1)) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -403,9 +403,9 @@ if ((IsD1File ()) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
 	return false;
 	}
 int last_segment = Current ()->nSegment;
-bool bUndo = theApp.SetModified (TRUE);
+bool bUndo = DLE.SetModified (TRUE);
 if (bCreate && !AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
 int new_segment = Current ()->nSegment;
@@ -417,11 +417,11 @@ if (!((nType == SEGMENT_FUNC_FUELCEN) ?
 	   DefineSegment (nSegment, nType,  bSetDefTextures ? ((IsD1File ()) ? 322 : 333) : -1, WALL_ILLUSION) :
 	   DefineSegment (nSegment, nType,  bSetDefTextures ? 433 : -1, -1)) //use the blue goal texture for repair centers
 	) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -445,19 +445,19 @@ if (GameInfo ().walls.count + 1 >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls reached");
 	return false;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 // add a door to the current segment/side
 if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
 		 AddWall (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
-		theApp.UnlockUndo ();
-		theApp.MineView ()->Refresh ();
+		DLE.UnlockUndo ();
+		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
-theApp.ResetModified (bUndo);
+DLE.ResetModified (bUndo);
 return false;
 }
 
@@ -604,8 +604,8 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	return false;
 	}
 // make a new wall and a new trigger
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Walls () [GameInfo ().walls.count-1].m_info.nClip = 10;
@@ -619,12 +619,12 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKE
 		Walls () [GameInfo ().walls.count - 1].m_info.nClip = 10;
 		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
-		theApp.UnlockUndo ();
-		theApp.MineView ()->Refresh ();
+		DLE.UnlockUndo ();
+		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
-theApp.ResetModified (bUndo);
+DLE.ResetModified (bUndo);
 return false;
 }
 
@@ -647,10 +647,10 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	return false;
 	}
 int last_segment = Current ()->nSegment;
-bool bUndo = theApp.SetModified (true);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (true);
+DLE.LockUndo ();
 if (!AddSegment ()) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false;
 	}
 int new_segment = Current ()->nSegment;
@@ -661,11 +661,11 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE
 	SetDefaultTexture (426, -1);
 	Current ()->nSegment = new_segment;
 	SetDefaultTexture (426, -1);
-	theApp.MineView ()->Refresh ();
-	theApp.UnlockUndo ();
+	DLE.MineView ()->Refresh ();
+	DLE.UnlockUndo ();
 	return true;
 	}
-theApp.ResetModified (bUndo);
+DLE.ResetModified (bUndo);
 return false;
 }
 
@@ -702,8 +702,8 @@ ushort nWall;
 if (!GetTriggerResources (nWall))
 	return false;
 // make a new wall and a new trigger
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, (byte) wall_type, wall_flags, KEY_NONE, -1, -1) &&
 	 AddTrigger (GameInfo ().walls.count - 1, trigger_type)) {
 	short nTrigger = GameInfo ().triggers.count - 1;
@@ -711,11 +711,11 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, (byte) wall_type, wall_fla
 	Triggers (nTrigger)->m_count = 1;
 	Triggers (nTrigger)->m_targets [0].m_nSegment = Other ()->nSegment;
 	Triggers (nTrigger)->m_targets [0].m_nSide = Other ()->nSide;
-	theApp.UnlockUndo ();
-	theApp.MineView ()->Refresh ();
+	DLE.UnlockUndo ();
+	DLE.MineView ()->Refresh ();
 	return true;
 	}
-theApp.ResetModified (bUndo);
+DLE.ResetModified (bUndo);
 return false;
 }
 

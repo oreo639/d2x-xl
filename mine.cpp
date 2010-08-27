@@ -112,7 +112,7 @@ Current2 ().nPoint = DEFAULT_POINT;
 Current2 ().nLine = DEFAULT_LINE;
 Current2 ().nSide = DEFAULT_SIDE;
 Current2 ().nObject = DEFAULT_OBJECT;
-theApp.ResetUndoBuffer ();
+DLE.ResetUndoBuffer ();
 }
 
 void CMine::ConvertWallNum (ushort wNumOld, ushort wNumNew)

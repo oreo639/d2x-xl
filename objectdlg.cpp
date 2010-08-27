@@ -290,10 +290,10 @@ InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) object_names, contentsList, NULL, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
-CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (theApp.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
-short nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
+short nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 short i, j;
 char sz [100], **psz;
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
@@ -573,7 +573,7 @@ if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->EnableWindow (FALSE);
 
 // gray edit if this is an RDL file
-if (theApp.IsD1File ())
+if (DLE.IsD1File ())
 	CToolDlg::EnableControls (IDC_OBJ_BRIGHT, IDT_OBJ_CONT_PROB, FALSE);
 
 // set contains data
@@ -603,7 +603,7 @@ DrawObjectImages ();
 SetTextureOverride ();
 CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->GameInfo ().objects.count > 0);
 UpdateData (FALSE);
-theApp.MineView ()->Refresh (FALSE);
+DLE.MineView ()->Refresh (FALSE);
 }
 
                         /*--------------------------*/
@@ -736,7 +736,7 @@ if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *theMine->RobotInfo (i);
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 rInfo.m_info.bCustom |= 1;
 rInfo.m_info.scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
 rInfo.m_info.strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
@@ -825,7 +825,7 @@ if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (short) theMine->CurrObj ()->rType.polyModelInfo.tmap_override;
-	if ((tnum < 0) || (tnum >= ((theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
+	if ((tnum < 0) || (tnum >= ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
 		}
@@ -887,10 +887,10 @@ void CObjectTool::SetObjectId (CComboBox *pcb, short type, short id, short flag)
 	char str [40];
 	int h, i, j;
 	short max_robot_ids = flag 
-								 ? theApp.IsD1File () 
+								 ? DLE.IsD1File () 
 									? ROBOT_IDS1 
 									: 64 
-								 : theApp.IsD1File () 
+								 : DLE.IsD1File () 
 									? ROBOT_IDS1 
 									: ROBOT_IDS2;
 
@@ -998,7 +998,7 @@ switch(type) {
 		break;
 
 	case OBJ_CNTRLCEN: // a control center */
-		if (theApp.IsD1File ()) {
+		if (DLE.IsD1File ()) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
 				sprintf_s (str, sizeof (str), "%d", i);
 				h = pcb->AddString (str);
@@ -1079,7 +1079,7 @@ if (theMine->GameInfo ().objects.count == 1) {
 if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 	theMine->DeleteObject ();
 	Refresh ();
-	theApp.MineView ()->Refresh (false);
+	DLE.MineView ()->Refresh (false);
 	}
 }
 
@@ -1089,9 +1089,9 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CObjectTool::OnDeleteAll () 
 {
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = theMine->CurrObj ();
 int nType = objP->m_info.type;
 int nId = objP->m_info.id;
@@ -1107,14 +1107,14 @@ for (int h = theMine->GameInfo ().objects.count, i = 0; i < h; ) {
 	else
 		i++, objP++;
 	}
-theApp.MineView ()->DelayRefresh (false);
+DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	theApp.UnlockUndo ();
-	theApp.MineView ()->Refresh ();
+	DLE.UnlockUndo ();
+	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 }
 
 //------------------------------------------------------------------------
@@ -1125,8 +1125,8 @@ void CObjectTool::OnReset ()
 {
 CDoubleMatrix* orient;
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
@@ -1134,9 +1134,9 @@ if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
 	orient = &theMine->CurrObj ()->m_location.orient;
 	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 Refresh ();
-theApp.MineView ()->Refresh (false);
+DLE.MineView ()->Refresh (false);
 }
 
 //------------------------------------------------------------------------
@@ -1159,7 +1159,7 @@ if (QueryMsg ("Are you sure you want to move the\n"
 				 "current object to the current cube?\n") != IDYES)
 	return;
 #endif
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count)
 	theMine->SecretCubeNum () = theMine->Current ()->nSegment;
 else {
@@ -1174,7 +1174,7 @@ else {
 	objP->m_location.lastPos.v.y += count * 2 * F1_0;
 	objP->m_info.nSegment = theMine->Current ()->nSegment;
 	Refresh ();
-	theApp.MineView ()->Refresh (false);
+	DLE.MineView ()->Refresh (false);
 	}
 }
 
@@ -1186,7 +1186,7 @@ void CObjectTool::OnSetObject ()
 {
 short old_object = theMine->Current ()->nObject;
 short new_object = CBObjNo ()->GetCurSel ();
-theApp.MineView ()->RefreshObject (old_object, new_object);
+DLE.MineView ()->RefreshObject (old_object, new_object);
 //Refresh ();
 }
 
@@ -1222,7 +1222,7 @@ void CObjectTool::OnSetObjType ()
 {
 CGameObject *objP = theMine->CurrObj ();
 int selection = object_list [CBObjType ()->GetCurSel ()];
-if (theApp.IsD1File () && (selection == OBJ_WEAPON)) {
+if (DLE.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
 	}
@@ -1252,7 +1252,7 @@ switch (selection) {
 		break;
 
 	case OBJ_CNTRLCEN:
-		objP->m_info.id = theApp.IsD1File () ? 0: 2;
+		objP->m_info.id = DLE.IsD1File () ? 0: 2;
 		break;
 
 	case OBJ_EXPLOSION:
@@ -1266,7 +1266,7 @@ objP->m_info.type = selection;
 SetObjectId (CBObjId (), selection, 0);
 theMine->SetObjectData (objP->m_info.type);
 Refresh ();
-theApp.MineView ()->Refresh (false);
+DLE.MineView ()->Refresh (false);
 }
 
 //------------------------------------------------------------------------
@@ -1323,8 +1323,8 @@ CGameObject *objP = theMine->CurrObj ();
 CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
 		SetNewObjId (objP, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
@@ -1364,7 +1364,7 @@ switch (objP->m_info.type) {
 	case OBJ_CNTRLCEN:
 		objP->m_info.size = REACTOR_SIZE;
 		objP->m_info.shields = REACTOR_SHIELD;
-		if (theApp.IsD1File ())
+		if (DLE.IsD1File ())
 			objP->rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
 		else {
 			int model;
@@ -1407,7 +1407,7 @@ switch (objP->m_info.type) {
 	}
 theMine->SortObjects ();
 SelectItemData (pcb, objP->m_info.id);
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 Refresh ();
 }
 
@@ -1418,7 +1418,7 @@ Refresh ();
 void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 theMine->CurrObj ()->m_info.contents.count = m_nSpawnQty;
 Refresh ();
 }
@@ -1431,8 +1431,8 @@ void CObjectTool::OnSetSpawnType ()
 {
 CGameObject *objP = theMine->CurrObj ();
 int selection;
-theApp.SetModified (TRUE);
-theApp.UnlockUndo ();
+DLE.SetModified (TRUE);
+DLE.UnlockUndo ();
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
@@ -1451,7 +1451,7 @@ else {
 	OnSetSpawnQty ();
 	OnSetSpawnId ();
 	}
-theApp.LockUndo ();
+DLE.LockUndo ();
 }
 
 //------------------------------------------------------------------------
@@ -1462,7 +1462,7 @@ void CObjectTool::OnSetSpawnId ()
 {
 CGameObject *objP = theMine->CurrObj ();
 
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 if (objP->m_info.contents.count < -1)
 	objP->m_info.contents.count = -1;
 int i = CBSpawnType ()->GetCurSel () - 1;
@@ -1475,7 +1475,7 @@ else {
 	objP->m_info.contents.id = -1;
 	}
 Refresh ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 }
 
 //------------------------------------------------------------------------
@@ -1484,7 +1484,7 @@ theApp.SetModified (TRUE);
 
 void CObjectTool::OnSetObjAI ()
 {
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
  	int index = CBObjAI ()->GetCurSel ();
@@ -1501,7 +1501,7 @@ if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 else
 	CBObjAI ()->SetCurSel (1); // Normal
 Refresh ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 }
 
 //------------------------------------------------------------------------
@@ -1513,7 +1513,7 @@ void CObjectTool::OnSetTexture ()
 CGameObject *objP = theMine->CurrObj ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
-	theApp.SetModified (TRUE);
+	DLE.SetModified (TRUE);
 	int index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.tmap_override = 
 		(index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;

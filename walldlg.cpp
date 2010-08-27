@@ -152,7 +152,7 @@ for (i = 0; i < j; i++) {
 
 pcb = CBClipNo ();
 pcb->ResetContent ();
-j = (theApp.IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
+j = (DLE.IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
 for (i = 0; i < j; i++) {
 	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", doorClipTable [i]);
 	pcb->AddString (m_szMsg);
@@ -270,16 +270,16 @@ else {
     // enable all
 	EnableControls (TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (FALSE);
-   if ((theApp.IsD2File ()) && (m_pWall [0]->m_info.type == WALL_TRANSPARENT))
+   if ((DLE.IsD2File ()) && (m_pWall [0]->m_info.type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_STRENGTH)->EnableWindow (FALSE);
 	else {
 		GetDlgItem (IDC_WALL_FLYTHROUGH)->EnableWindow (FALSE);
 		}
-   if ((theApp.IsD1File ()) || (m_pWall [0]->m_info.type == WALL_TRANSPARENT))
+   if ((DLE.IsD1File ()) || (m_pWall [0]->m_info.type == WALL_TRANSPARENT))
 		GetDlgItem (IDC_WALL_CLOAK)->EnableWindow (FALSE);
 
     // enable buddy proof and switch checkboxes only if d2 level
-	if (theApp.IsD1File ()) {
+	if (DLE.IsD1File ()) {
 		int i;
 		for (i = 0; i < 2; i++)
 			GetDlgItem (IDC_WALL_SWITCH + i)->EnableWindow (FALSE);
@@ -369,7 +369,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	else if (theMine->GameInfo ().walls.count >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
-		if ((theApp.IsD2File ()) && (segP [bSide]->Child (nSide [bSide]) == -1))
+		if ((DLE.IsD2File ()) && (segP [bSide]->Child (nSide [bSide]) == -1))
 			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.m_info.type, m_defWall.m_info.flags, 
 													m_defWall.m_info.keys, m_defWall.m_info.nClip, m_defTexture)) {
@@ -391,7 +391,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		}
 m_bDelayRefresh = false;
 if (bRefresh) {
-	theApp.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 }
@@ -423,7 +423,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
 			ErrorMsg ("There is no wall at this side of the current cube.");
 	}
 if (bRefresh) {
-	theApp.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 }
@@ -434,9 +434,9 @@ if (bRefresh) {
 
 void CWallTool::OnDeleteWallAll () 
 {
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
@@ -452,14 +452,14 @@ for (i = theMine->SegCount (); i; i--, segP++) {
 			}
 		}
 	}
-theApp.MineView ()->DelayRefresh (false);
+DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	theApp.UnlockUndo ();
-	theApp.MineView ()->Refresh ();
+	DLE.UnlockUndo ();
+	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 }
 
 //------------------------------------------------------------------------
@@ -468,7 +468,7 @@ else
 
 void CWallTool::OnOtherSide () 
 {
-theApp.MineView ()->SelectOtherSide ();
+DLE.MineView ()->SelectOtherSide ();
 }
 
                         /*--------------------------*/
@@ -506,7 +506,7 @@ return true;
 void CWallTool::OnSetWall ()
 {
 if (GetWalls ())
-	theApp.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 Refresh ();
 }
 
@@ -522,7 +522,7 @@ void CWallTool::OnSetType ()
 
 GetWalls ();
 nType = int (CBType ()->GetItemData (CBType ()->GetCurSel ()));
-if ((nType > WALL_CLOSED) && theApp.IsD1File ()) 
+if ((nType > WALL_CLOSED) && DLE.IsD1File ()) 
 	return;
 if ((nType > WALL_CLOAKED) && (theMine->IsStdLevel ())) 
 	return;
@@ -550,7 +550,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 //		else if ((wallP->m_info.type == WALL_CLOAKED) || (wallP->m_info.type == WALL_TRANSPARENT))
 //			wallP->m_info.cloakValue = m_defWall.cloakValue;
 		}
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 Refresh ();
 }
 
@@ -570,15 +570,15 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_pWall [bSide])
 		if ((wallP->m_info.type == WALL_BLASTABLE) || (wallP->m_info.type == WALL_DOOR)) {
 			if (m_nWall [bSide] < theMine->GameInfo ().walls.count) {
-				theApp.SetModified (TRUE);
-				theApp.LockUndo ();
+				DLE.SetModified (TRUE);
+				DLE.LockUndo ();
 				nClip = clipList [m_nClip];
 				wallP->m_info.nClip = nClip;
 				// define door textures based on clip number
 				if (wallP->m_info.nClip >= 0)
 					theMine->SetWallTextures (m_nWall [bSide], m_defTexture);
-				theApp.UnlockUndo ();
-				theApp.MineView ()->Refresh ();
+				DLE.UnlockUndo ();
+				DLE.MineView ()->Refresh ();
 				Refresh ();
 				}
 			}
@@ -595,7 +595,7 @@ memset (m_bKeys, 0, sizeof (m_bKeys));
 m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		m_pWall [bSide]->m_info.keys = (1 << i);
 		Refresh ();
 		}
@@ -607,7 +607,7 @@ GetWalls ();
 m_bFlags [i] = BtnCtrl (IDC_WALL_BLASTED + i)->GetCheck ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		if (m_bFlags [i])
 			m_pWall [bSide]->m_info.flags |= wall_flags [i];
 		else
@@ -638,7 +638,7 @@ void CWallTool::OnStrength ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		m_pWall [bSide]->m_info.hps = (fix) m_nStrength * F1_0;
 		if ((m_pWall [bSide]->m_info.type == WALL_TRANSPARENT) && m_bFlyThrough)
 			m_pWall [bSide]->m_info.hps = -m_pWall [bSide]->m_info.hps;
@@ -652,7 +652,7 @@ void CWallTool::OnCloak ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
-		theApp.SetModified (TRUE);
+		DLE.SetModified (TRUE);
 		m_defWall.m_info.cloakValue =
 		m_pWall [bSide]->m_info.cloakValue = (char) (m_nCloak * 31.0 / 100.0) % 32;
 		}

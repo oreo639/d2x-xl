@@ -48,8 +48,8 @@ if (nDelSeg < 0)
 if (nDelSeg < 0 || nDelSeg >= SegCount ()) 
 	return; 
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 delSegP = Segments (nDelSeg); 
 UndefineSegment (nDelSeg);
 
@@ -289,9 +289,9 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
   if (Current2 ().nSegment >= SegCount ()) Current2 ().nSegment--; 
   if (Current1 ().nSegment < 0) Current1 ().nSegment = 0; 
   if (Current2 ().nSegment < 0) Current2 ().nSegment = 0; 
-theApp.MineView ()->Refresh (false); 
-theApp.ToolView ()->Refresh (); 
-theApp.UnlockUndo ();
+DLE.MineView ()->Refresh (false); 
+DLE.ToolView ()->Refresh (); 
+DLE.UnlockUndo ();
 }
 
 
@@ -307,7 +307,7 @@ void CMine::DeleteVertex (short nDeletedVert)
 {
 	short nVertex, nSegment; 
 
-theApp.SetModified (TRUE); 
+DLE.SetModified (TRUE); 
 // fill in gap in vertex array and status
 memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices (0)));
 // update anyone pointing to this vertex
@@ -394,8 +394,8 @@ if (curSegP->Child (nCurrSide) >= 0) {
 	return FALSE;
 	}
 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 // get new verts
 newVerts [0] = VertCount (); 
 newVerts [1] = newVerts [0] + 1; 
@@ -487,9 +487,9 @@ for (nNewSide = 0; nNewSide < 6; nNewSide++)
 // set current segment to new segment
 Current ()->nSegment = nNewSeg; 
 //		SetLinesToDraw(); 
-theApp.MineView ()->Refresh (false); 
-theApp.ToolView ()->Refresh (); 
-theApp.UnlockUndo ();
+DLE.MineView ()->Refresh (false); 
+DLE.ToolView ()->Refresh (); 
+DLE.UnlockUndo ();
 return TRUE; 
 }
 
@@ -849,7 +849,7 @@ void CMine::Mark()
 	CSegment *segP = CurrSeg (); 
 	int i, p [8], n_points; 
 
-switch (theApp.MineView ()->GetSelectMode ()) {
+switch (DLE.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
 		n_points = 1; 
 		p [0] = segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; 
@@ -885,7 +885,7 @@ else {
 			VertStatus (p [i]) |= MARKED_MASK; 
 		UpdateMarkedCubes(); 
 	}
-theApp.MineView ()->Refresh (); 
+DLE.MineView ()->Refresh (); 
 }
 
 // -------------------------------------------------------------------------- 
@@ -946,7 +946,7 @@ for (i = 0; i < SegCount (); i++)
 	Segments (i)->m_info.wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
 	VertStatus (i) |= MARKED_MASK; 
-theApp.MineView ()->Refresh (); 
+DLE.MineView ()->Refresh (); 
 }
 
 //========================================================================== 
@@ -960,7 +960,7 @@ void CMine::UnmarkAll() {
 	byte& stat = VertStatus ();
 	for (i = 0; i < MAX_VERTICES; i++, stat++)
 		stat &= ~MARKED_MASK; 
-	theApp.MineView ()->Refresh (); 
+	DLE.MineView ()->Refresh (); 
 }
 
 // -------------------------------------------------------------------------- 
@@ -973,8 +973,8 @@ void CMine::ResetSide (short nSegment, short nSide)
 {
 if (nSegment < 0 || nSegment >= SegCount ()) 
 	return; 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 CSegment *segP = Segments (0) + nSegment; 
 segP->SetChild (nSide, -1); 
 segP->m_info.childFlags &= ~(1 << nSide); 
@@ -989,7 +989,7 @@ for (i = 0; i < 4; i++, uvls++) {
 	uvls->v = (short) (default_uvls [i].v / scale); 
 	uvls->l = (ushort) DEFAULT_LIGHTING; 
 	}
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 }
 
 // -------------------------------------------------------------------------- 
@@ -1036,11 +1036,11 @@ if (nChildSide < 6) {
 		// otherwise, they don't share all four points correctly
 		// so unlink the child from the parent
 		// and unlink the parent from the child
-		theApp.SetModified (TRUE); 
-		theApp.LockUndo ();
+		DLE.SetModified (TRUE); 
+		DLE.LockUndo ();
 		ResetSide (nChildSeg, nChildSide); 
 		ResetSide (nParentSeg, nSide); 
-		theApp.UnlockUndo ();
+		DLE.UnlockUndo ();
 		}
 	}
 else {
@@ -1119,8 +1119,8 @@ if (!found) {
 if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES) 
 	return; 
 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 // create a new point (copy of other vertex)
 memcpy (Vertices (VertCount ()), Vertices (vert), sizeof (*Vertices (0)));
 /*
@@ -1147,8 +1147,8 @@ for (nSide = 0; nSide < 6; nSide++)
 	UnlinkChild(Current ()->nSegment, nSide); 
 
 SetLinesToDraw(); 
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 
 }
 
@@ -1201,8 +1201,8 @@ if (!(found [0] && found [1])) {
 
 if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 segP = Segments (Current ()->nSegment); 
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
@@ -1229,8 +1229,8 @@ for (nSide = 0; nSide < 6; nSide++) {
 		}
 	}
 SetLinesToDraw(); 
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
 
@@ -1296,8 +1296,8 @@ if (!solidify && (VertCount () > (MAX_VERTICES - nFound))) {
 if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 	return; 
 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 segP = Segments (Current ()->nSegment); 
 if (nFound < 4)
 	solidify = 0;
@@ -1340,8 +1340,8 @@ else {
 	ResetSide (Current ()->nSegment, Current ()->nSide); 
 	SetLinesToDraw(); 
 	}
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 }
 
 // -------------------------------------------------------------------------- 
@@ -1395,16 +1395,16 @@ if (distance > JOIN_DISTANCE) {
 if (QueryMsg("Are you sure you want to join the current point\n"
 				 "with the 'other' cube's current point?") != IDYES)
 	return; 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 // define vert numbers
 seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]] = vert2; 
 // delete any unused vertices
 //  delete_unused_vertices(); 
 FixChildren(); 
 SetLinesToDraw(); 
-theApp.MineView ()->Refresh ();
-theApp.UnlockUndo ();
+DLE.MineView ()->Refresh ();
+DLE.UnlockUndo ();
 }
 
 // -------------------------------------------------------------------------- 
@@ -1499,8 +1499,8 @@ if (fail) {
 	match [0] = 1; 
 	match [1] = 0; 
 	}
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
 	nLine = sideLineTable [cur1->nSide][cur1->nLine]; 
@@ -1508,8 +1508,8 @@ for (i = 0; i < 2; i++) {
 	}
 FixChildren(); 
 SetLinesToDraw(); 
-theApp.MineView ()->Refresh ();
-theApp.UnlockUndo ();
+DLE.MineView ()->Refresh ();
+DLE.UnlockUndo ();
 }
 
 
@@ -1820,12 +1820,12 @@ if (max_radius >= JOIN_DISTANCE) {
 // if Segments () are too close to put a new segment between them, 
 // then solidifyally link them together without asking
 if (min_radius <= 5) {
-	theApp.SetModified (TRUE); 
-	theApp.LockUndo ();
+	DLE.SetModified (TRUE); 
+	DLE.LockUndo ();
 	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 
 	SetLinesToDraw(); 
-	theApp.UnlockUndo ();
-	theApp.MineView ()->Refresh ();
+	DLE.UnlockUndo ();
+	DLE.MineView ()->Refresh ();
 	return; 
 	}
 
@@ -1847,8 +1847,8 @@ if (!(SegCount () < MAX_SEGMENTS)) {
 	}
 segP = Segments (nNewSeg); 
 
-theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 // define children and special child
 // first clear all sides
 segP->m_info.childFlags = 0; 
@@ -1919,9 +1919,9 @@ for (i = 0; i < 4; i++) {
 
 // update number of Segments () and vertices
 SegCount ()++; 
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 SetLinesToDraw(); 
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 // ------------------------------------------------------------------------ 
@@ -2029,8 +2029,8 @@ int CMine::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg
 		{0, 3, 2, 1} //{2, 3, 0, 1}
 		}; 
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 for (nLine = 0; nLine < 4; nLine++) {
 	// find vert numbers for the line's two end points
 	point0 = lineVertTable [sideLineTable [nStartSide][nLine]][0]; 
@@ -2152,7 +2152,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 			}
 		}
 	}
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 return return_code; 
 }
 
@@ -2203,20 +2203,20 @@ bool CMine::SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlT
 {
 	bool bUndo, bChange = false;
 
-bUndo = theApp.SetModified (TRUE); 
-theApp.LockUndo (); 
+bUndo = DLE.SetModified (TRUE); 
+DLE.LockUndo (); 
 GetCurrent (nSegment, nSide); 
 CSide *sideP = Segments (nSegment)->m_sides + nSide; 
 bChange = sideP->SetTexture (nBaseTex, nOvlTex);
 if (!bChange) {
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 	return false;
 	}
 if ((IsLight (sideP->m_info.nBaseTex) == -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
 	DeleteFlickeringLight (nSegment, nSide); 
 if (!WallClipFromTexture (nSegment, nSide))
 	CheckForDoor (nSegment, nSide); 
-theApp.UnlockUndo (); 
+DLE.UnlockUndo (); 
 sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x3fff, sideP->m_info.nOvlTex & 0x3fff); 
 INFOMSG (message); 
 return true;
@@ -2288,8 +2288,8 @@ if (Current1 ().nSegment == Current2 ().nSegment)
 	return; 
 short nSegment = Current ()->nSegment; 
 CSegment *otherSeg = OtherSeg (); 
-bUndo = theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+bUndo = DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 int nSide;
 for (nSide = 0; nSide < 6; nSide++)
 	if (SetTexture (nSegment, nSide, 
@@ -2297,10 +2297,10 @@ for (nSide = 0; nSide < 6; nSide++)
 						 otherSeg->m_sides [nSide].m_info.nOvlTex))
 		bChange = true;
 if (!bChange)
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 else {
-	theApp.UnlockUndo ();
-	theApp.MineView ()->Refresh (); 
+	DLE.UnlockUndo ();
+	DLE.MineView ()->Refresh (); 
 	}
 }
 
@@ -2322,8 +2322,8 @@ if (SegCount () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
-bUndo = theApp.SetModified (TRUE); 
-theApp.LockUndo ();
+bUndo = DLE.SetModified (TRUE); 
+DLE.LockUndo ();
 h = VertCount ();
 #if 0
 // isolate segment
@@ -2460,8 +2460,8 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 #endif
 SegCount () += 6;
 #endif
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -2807,7 +2807,7 @@ switch (x) {
 	break; 
 	}
 #else
-theApp.SetModified (TRUE); 
+DLE.SetModified (TRUE); 
 m_sides [nSide].LoadTextures ();
 double scale = 1.0; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
@@ -2896,8 +2896,8 @@ if ((nBaseTex >= 0) && (nBaseTex != m_info.nBaseTex)) {
 	}
 if (nOvlTex >= 0) {
 	if (nOvlTex == m_info.nBaseTex)
-		nOvlTex = 0; 
-	if (nOvlTex) {
+		m_info.nOvlTex = 0; 
+	else if (nOvlTex) {
 		m_info.nOvlTex &= ~(0x3fff);	//preserve light settings
 		m_info.nOvlTex |= nOvlTex; 
 		}
@@ -2981,7 +2981,7 @@ WriteInt16 (m_info.index, fp);
 int CRobotMaker::Read (FILE *fp, int version, bool bFlag)
 {
 m_info.objFlags [0] = ReadInt32 (fp);
-if (theApp.IsD2File ())
+if (DLE.IsD2File ())
 	m_info.objFlags [1] = ReadInt32 (fp);
 m_info.hitPoints = ReadFix (fp);
 m_info.interval = ReadFix (fp);
@@ -2995,7 +2995,7 @@ return 1;
 void CRobotMaker::Write (FILE *fp, int version, bool bFlag)
 {
 WriteInt32 (m_info.objFlags [0], fp);
-if (theApp.IsD2File ())
+if (DLE.IsD2File ())
 	WriteInt32 (m_info.objFlags [1], fp);
 WriteFix (m_info.hitPoints, fp);
 WriteFix (m_info.interval, fp);

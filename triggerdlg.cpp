@@ -126,8 +126,8 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (theApp.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (DLE.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -215,7 +215,7 @@ CreateImgWnd (&m_showObjWnd, IDC_TRIGGER_SHOW_OBJ);
 CreateImgWnd (&m_showTexWnd, IDC_TRIGGER_SHOW_TEXTURE);
 CComboBox *pcb = CBType ();
 pcb->ResetContent();
-if (theApp.IsD2File ()) {
+if (DLE.IsD2File ()) {
 	int h, i, j = sizeof (triggerData) / sizeof (tTriggerData);
 	for (i = 0; i < j; i++) {
 		h = pcb->AddString (triggerData [i].pszName);
@@ -271,7 +271,7 @@ if (TriggerHasSlider () || (m_nType == TT_SHIELD_DAMAGE_D2) || (m_nType == TT_EN
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -1000, 1000, "%3.1f");
 else if ((m_nType == TT_MESSAGE) || (m_nType == TT_SOUND))
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 1000, "%1.0f");
-else if ((theApp.IsD1File ()) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
+else if ((DLE.IsD1File ()) && (m_bD1Flags [1] || m_bD1Flags [2]))	// D1 shield/energy drain
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, -10000, 10000, "%1.0f");
 else
 	DDX_Double (pDX, IDC_TRIGGER_STRENGTH, m_nStrength, 0, 64, "%1.0f");
@@ -498,7 +498,7 @@ if (m_nClass || (m_nTrigger == -1)) {
 	EnableControls (FALSE);
 	CToolDlg::EnableControls (IDC_TRIGGER_STANDARD, IDC_TRIGGER_OBJECT, TRUE);
 	CToolDlg::EnableControls (IDC_TRIGGER_ADD_OPENDOOR, IDC_TRIGGER_ADD_CONTROLPANEL, TRUE);
-	if (theApp.IsD2File ())
+	if (DLE.IsD2File ())
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
 	GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_TRIGGER_D2TYPE)->EnableWindow (TRUE);
@@ -531,7 +531,7 @@ if (m_nTrigger != -1) {
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
-	if (theApp.IsD2File ()) {
+	if (DLE.IsD2File ()) {
 		SelectItemData (CBType (), m_nType);
 		CToolDlg::EnableControls (IDC_TRIGGER_CONTROLDOORS, IDC_TRIGGER_CLOSEWALL, FALSE);
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
@@ -615,7 +615,7 @@ else {
 	}
 // Redraw trigger window
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -632,7 +632,7 @@ else
 	theMine->DeleteTrigger (m_nTrigger);
 // Redraw trigger window
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -641,9 +641,9 @@ theApp.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTriggerAll () 
 {
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
@@ -662,14 +662,14 @@ for (i = theMine->SegCount (); i; i--, segP++) {
 			}
 		}
 	}
-theApp.MineView ()->DelayRefresh (false);
+DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	theApp.UnlockUndo ();
-	theApp.MineView ()->Refresh ();
+	DLE.UnlockUndo ();
+	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 }
 
 //------------------------------------------------------------------------
@@ -712,7 +712,7 @@ SetTriggerPtr ();
 m_bFindTrigger = false;
 Refresh ();
 m_bFindTrigger = true;
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -735,7 +735,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 m_pTrigger->m_info.type = m_nType;
 Refresh ();
 }
@@ -750,7 +750,7 @@ UpdateData (TRUE);
 if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TEXTURE))
 	return;
 SetTriggerPtr ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 UpdateData (FALSE);
 m_pTrigger->m_info.value = (int) (m_nStrength * F1_0);
 }
@@ -765,7 +765,7 @@ UpdateData (TRUE);
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 m_pTrigger->m_info.time = m_nTime;
 }
 
@@ -779,7 +779,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return false;
 SetTriggerPtr ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 if ((m_bD1Flags [i] = !m_bD1Flags [i]))
 //if ((m_bD1Flags [i] = ((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->GetCheck ()))
 	m_pTrigger->m_info.flags |= triggerFlagsD1 [i];
@@ -803,7 +803,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 j = d2FlagXlat [i];
 int h = 1 << j;
 m_pTrigger->m_info.flags ^= h;
@@ -857,7 +857,7 @@ if (FindTarget (nSegment, nSide) > -1) {
 	DEBUGMSG (" Trigger tool: Trigger already has this target.");
 	return;
 	}
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 m_pTrigger->Add (nSegment, nSide + 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
@@ -894,7 +894,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-if ((theApp.IsD1File ()) 
+if ((DLE.IsD1File ()) 
 	 ? (m_pTrigger->m_info.flags & TRIGGER_MATCEN) != 0 
 	 : (m_pTrigger->m_info.type == TT_MATCEN) && (theMine->Segments (other->nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
 	) {
@@ -930,7 +930,7 @@ if (m_nTrigger == -1)
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 SetTriggerPtr ();
 m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
@@ -976,7 +976,7 @@ if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide =
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -996,10 +996,10 @@ void CTriggerTool::OnPasteTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 theMine->Triggers () [m_nTrigger] = m_defTrigger;
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/

@@ -355,8 +355,8 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (theApp.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (theApp.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+texture_resource = (DLE.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
+nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
 #if 0
 	if (iTexture >= 910)
@@ -790,7 +790,7 @@ else {
 		theMine->SetTexture (-1, -1, -1, texture);
 	}
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -807,7 +807,7 @@ for (i = 0; i < 4; i++) {
 	j = (i + lightIdxFromMode [mode / 0x4000]) % 4;
 	sideP->m_info.uvls [i].l = (ushort) (m_lights [j] * 327.68);
 	}
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -831,7 +831,7 @@ void CTextureTool::OnEditTexture ()
 	CTextureEdit	e (NULL);
 
 int i = int (e.DoModal ());
-theApp.MineView ()->Refresh (false);
+DLE.MineView ()->Refresh (false);
 Refresh ();
 }
 
@@ -896,14 +896,14 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSide *sideP = theMine->CurrSide ();
 
 //CheckForDoor ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 theMine->SetTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 int i;
 for (i = 0; i < 4; i++)
 	sideP->m_info.uvls [i].l = save_uvls [i].l;
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 
@@ -924,12 +924,12 @@ if (save_texture1 == -1 || save_texture2 == -1)
 int nSegment;
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
     segP->m_info.nIndex = 0;
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 PasteTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 100);
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -951,8 +951,8 @@ if (!(m_bUse1st || m_bUse2nd))
 
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
@@ -969,11 +969,11 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 	}
 if (bChange)
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 else
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -995,8 +995,8 @@ if (!(m_bUse1st || m_bUse2nd))
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
@@ -1015,11 +1015,11 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
 //				sideP->m_info.uvls [i].l = save_uvls [i].l;
 			}
 if (bChange)
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 else
-	theApp.ResetModified (bUndo);
+	DLE.ResetModified (bUndo);
 Refresh ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/

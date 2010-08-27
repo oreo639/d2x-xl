@@ -563,7 +563,7 @@ if (!BrowseForFile (FALSE,
 						  "Extended block file|*.blx|"
 						  "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-						  theApp.MainFrame ()))
+						  DLE.MainFrame ()))
 	return;
 #else
   // Initialize data for fBlk open dialog
@@ -596,8 +596,8 @@ WriteSegmentInfo (fBlk, 0);
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
 // the SegCount () will be decremented for each nSegment in loop.
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 CSegment *segP = Segments (0) + SegCount ();
 for (nSegment = SegCount () - 1; nSegment; nSegment--)
     if ((--segP)->m_info.wallFlags & MARKED_MASK) {
@@ -605,7 +605,7 @@ for (nSegment = SegCount () - 1; nSegment; nSegment--)
 			break;
 		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 fclose(fBlk);
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
@@ -615,7 +615,7 @@ wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,-1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
 SetLinesToDraw ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //==========================================================================
@@ -655,7 +655,7 @@ else {
 						  "Extended block file|*.blx|"
 						  "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-						  theApp.MainFrame ()))
+						  DLE.MainFrame ()))
 		return;
 	}
 #else
@@ -692,7 +692,7 @@ fclose (fBlk);
 sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
 SetLinesToDraw ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //==========================================================================
@@ -715,7 +715,7 @@ if (!BrowseForFile (TRUE,
 						  "Extended block file|*.blx|"
 						  "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST,
-						  theApp.MainFrame ()))
+						  DLE.MainFrame ()))
 	return;
 #else
   OPENFILENAME ofn;
@@ -735,7 +735,7 @@ if (!BrowseForFile (TRUE,
 //  UpdateUndoBuffer(0);
 
 if (!ReadBlock (szFile, 0))
-	theApp.MineView ()->SetSelectMode (BLOCK_MODE);
+	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 }
 
 //==========================================================================
@@ -775,9 +775,9 @@ strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file
 
 // unmark all Segments ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 segP = Segments (0);
 for (nSegment = 0;nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->m_info.nIndex = nSegment;
@@ -848,10 +848,10 @@ if (option != 1) {
 	}
 */
 fclose(fBlk);
-//theApp.MineView ()->Refresh ();
-theApp.UnlockUndo ();
-theApp.MineView ()->DelayRefresh (false);
-theApp.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->Refresh ();
 return 0;
 }
 
@@ -876,7 +876,7 @@ if (m_bSplineActive) {
 //UpdateUndoBuffer(0);
 
 if (!ReadBlock (m_szBlockFile, 1))
-	theApp.MineView ()->SetSelectMode (BLOCK_MODE);
+	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 }
 
 //==========================================================================
@@ -901,9 +901,9 @@ if (!count) {
 	return;
 	}
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
@@ -923,9 +923,9 @@ wrap(&Current1 ().nSegment,-1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,-1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
-theApp.UnlockUndo ();
-theApp.MineView ()->DelayRefresh (false);
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->Refresh ();
 }
 
 //eof block.cpp

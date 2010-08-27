@@ -148,6 +148,6 @@ private:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
-extern CDlcApp	theApp;
+extern CDlcApp	DLE;
 
 #endif //__dlc_h

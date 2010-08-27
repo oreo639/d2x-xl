@@ -150,7 +150,7 @@ ResetUndoBuffer ();
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CDlcApp object
 
-CDlcApp theApp;
+CDlcApp DLE;
 
 
 // {3F315842-67AC-11d2-AE2A-00C0F03014A5}

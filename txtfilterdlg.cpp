@@ -150,12 +150,12 @@ if (!HaveData (pDX))
 	int		h, i;
 
 for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
-	h = (theApp.TextureView ()->TextureFilter () & ctrlMap [i].nFlag) != 0;
+	h = (DLE.TextureView ()->TextureFilter () & ctrlMap [i].nFlag) != 0;
 	DDX_Check (pDX, ctrlMap [i].nIdC, h);
 	if (h)
-		theApp.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
+		DLE.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
 	else
-		theApp.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
+		DLE.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
 	}
 }
 
@@ -163,12 +163,12 @@ for (i = 0; i < sizeof (ctrlMap) / sizeof (tCtrlMap); i++) {
 
 void CTxtFilterTool::SetFilter (int i)
 {
-if (theApp.TextureView ()->TextureFilter () & ctrlMap [i].nFlag)
-	theApp.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
+if (DLE.TextureView ()->TextureFilter () & ctrlMap [i].nFlag)
+	DLE.TextureView ()->TextureFilter () &= ~ctrlMap [i].nFlag;
 else
-	theApp.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
+	DLE.TextureView ()->TextureFilter () |= ctrlMap [i].nFlag;
 UpdateData (FALSE);
-theApp.TextureView ()->Refresh ();
+DLE.TextureView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -176,13 +176,13 @@ theApp.TextureView ()->Refresh ();
 void CTxtFilterTool::SetFilterRange (uint nFlags, int nValue)
 {
 if (nValue == 1)
-	theApp.TextureView ()->TextureFilter () |= nFlags;
+	DLE.TextureView ()->TextureFilter () |= nFlags;
 else if (nValue == 0)
-	theApp.TextureView ()->TextureFilter () &= ~nFlags;
+	DLE.TextureView ()->TextureFilter () &= ~nFlags;
 else if (nValue == -1)
-	theApp.TextureView ()->TextureFilter ()	^= nFlags;
+	DLE.TextureView ()->TextureFilter ()	^= nFlags;
 UpdateData (FALSE);
-theApp.TextureView ()->Refresh ();
+DLE.TextureView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -239,7 +239,7 @@ void CTxtFilterTool::OnTxtInvert () { SetFilterRange (0xFFFFFFFF, -1); }
 BOOL CTxtFilterTool::OnKillActive ()
 {
 UpdateData (TRUE);
-theApp.TextureView ()->Refresh ();
+DLE.TextureView ()->Refresh ();
 return CToolDlg::OnKillActive ();
 }
 

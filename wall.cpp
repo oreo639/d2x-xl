@@ -59,16 +59,16 @@ if ((nWall = GameInfo ().walls.count) >= MAX_WALLS) {
 	}
 
 // link wall to segment/side
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 segP->m_sides [nSide].m_info.nWall = nWall;
 DefineWall (nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
 Walls (nWall)->m_info.flags = flags;
 Walls (nWall)->m_info.keys = keys;
 // update number of Walls () in mine
 GameInfo ().walls.count++;
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return Walls (nWall);
 }
 
@@ -103,8 +103,8 @@ GetCurrent (nSegment, nSide);
 	CSide *sideP = segP->m_sides + nSide;
 	CWall *wallP = Walls (nWall);
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 // define new wallP
 wallP->m_nSegment = nSegment;
 wallP->m_nSide = nSide;
@@ -176,7 +176,7 @@ for (i = 0;i<4;i++) {
 	sideP->m_info.uvls [i].l = default_uvls [i].l;
 	}
 Segments (nSegment)->SetUV (nSide, 0, 0);
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 }
 
 //--------------------------------------------------------------------------
@@ -205,8 +205,8 @@ CWall *wallP = Walls (nWall);
 CSide *sideP = Segments (wallP->m_nSegment)->m_sides + (short) wallP->m_nSide;
 char nClip = wallP->m_info.nClip;
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if ((wallP->m_info.type == WALL_DOOR) || (wallP->m_info.type == WALL_BLASTABLE))
 	if (IsD1File ()) {
 		sideP->m_info.nBaseTex = wall_texture [nClip][0];
@@ -222,8 +222,8 @@ else if (nTexture >= 0) {
 	}
 else
 	return;
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 }
 
 //--------------------------------------------------------------------------
@@ -243,8 +243,8 @@ if (nWall >= GameInfo ().walls.count)
 	return;
 // if trigger exists, remove it as well
 nTrigger = Walls (nWall)->m_info.nTrigger;
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if ((nTrigger > -1) && (nTrigger < GameInfo ().triggers.count))
 	DeleteTrigger (nTrigger); 
 // remove references to the deleted wall
@@ -270,8 +270,8 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 if (nWall < --GameInfo ().walls.count)
 	memcpy (Walls (nWall), Walls (nWall + 1), (GameInfo ().walls.count - nWall) * sizeof (CWall));
 // update number of Walls () in mine
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 AutoLinkExitToReactor();
 }
 
@@ -304,8 +304,8 @@ if (ps = strstr (szName, "door")) {
 	for (i = 1; i < D2_NUM_OF_CLIPS; i++)
 		if (nDoor == doorClipTable [i]) {
 			wallP->m_info.nClip = clipList [i];
-			theApp.SetModified (TRUE);
-			theApp.MineView ()->Refresh ();
+			DLE.SetModified (TRUE);
+			DLE.MineView ()->Refresh ();
 			return i;
 			}
 	}

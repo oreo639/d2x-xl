@@ -129,8 +129,8 @@ if (GameInfo ().triggers.count >= MAX_TRIGGERS) {
 	return NULL;
 	}
 // if no wall at current side, try to add a wall of proper type
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (CurrSide ()->m_info.nWall >= GameInfo ().walls.count) {
 	if (bAutoAddWall) {
 		if (GameInfo ().walls.count >= MAX_WALLS) {
@@ -141,7 +141,7 @@ if (CurrSide ()->m_info.nWall >= GameInfo ().walls.count) {
 		GetCurrent (nSegment, nSide);
 		if (!AddWall (-1, -1, (Segments (nSegment)->Child (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
-			theApp.ResetModified (bUndo);
+			DLE.ResetModified (bUndo);
 			return NULL;
 			}
 		}
@@ -193,8 +193,8 @@ Walls (nWall)->m_info.nTrigger = (byte) nTrigger;
 // update number of Triggers ()
 GameInfo ().triggers.count++;
 AutoLinkExitToReactor();
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 return Triggers (nTrigger);
 }
 
@@ -216,8 +216,8 @@ if (nTrigger >= GameInfo ().triggers.count)
 	return;
 // update all Walls () who point to Triggers () higher than this one
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 CWall *wallP = Walls (0);
 for (i = GameInfo ().walls.count; i; i--, wallP++)
 	if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger > nTrigger))
@@ -236,8 +236,8 @@ for (i = NumTriggers (); i; i--, trigP++)
 		DeleteTriggerTarget (trigP, nSegment, nSide, false);
 if (nTrigger < --GameInfo ().triggers.count)
 	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof (CTrigger));
-theApp.UnlockUndo ();
-theApp.MineView ()->Refresh ();
+DLE.UnlockUndo ();
+DLE.MineView ()->Refresh ();
 AutoLinkExitToReactor();
 }
 
@@ -367,8 +367,8 @@ void CMine::AutoLinkExitToReactor ()
   control = 0; // only 0 used by the game Descent
   CReactorTrigger *reactorTrigger = ReactorTriggers (control);
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 // remove items from list that do not point to a wall
 for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
 	count = reactorTrigger->m_count;
@@ -411,7 +411,7 @@ for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
 			}
 		}
 	}
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 }
 
 //------------------------------------------------------------------------
@@ -432,13 +432,13 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return NULL;
 	}
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
 short nTrigger = NumObjTriggers ();
 ObjTriggers (nTrigger)->Setup (type, 0);
 ObjTriggers (nTrigger)->m_info.nObject = objnum;
 NumObjTriggers ()++;
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
 	if (ObjTriggers (--i)->m_info.nIndex == nTrigger)
@@ -493,13 +493,13 @@ return -1;
 
 int CTrigger::Read (FILE *fp, int version, bool bObjTrigger)
 {
-if (theApp.IsD2File ()) {
+if (DLE.IsD2File ()) {
 	m_info.type = ReadInt8(fp);
 	m_info.flags = bObjTrigger ? ReadInt16(fp) : (ushort) ReadInt8(fp);
 	m_count = ReadInt8(fp);
 	ReadInt8(fp);
 	m_info.value = ReadFix(fp);
-	if ((theApp.LevelVersion () < 21) && (m_info.type == TT_EXIT))
+	if ((DLE.LevelVersion () < 21) && (m_info.type == TT_EXIT))
 		m_info.value = 0;
 	if ((version < 39) && (m_info.type == TT_MASTER))
 		m_info.value = 0;
@@ -530,7 +530,7 @@ return 1;
 
 void CTrigger::Write (FILE *fp, int version, bool bObjTrigger)
 {
-if (theApp.IsD2File ()) {
+if (DLE.IsD2File ()) {
 	WriteInt8 (m_info.type, fp);
 	if (bObjTrigger)
 		WriteInt16 (m_info.flags, fp);

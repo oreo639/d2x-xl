@@ -219,7 +219,7 @@ typedef struct tTxtFilter {
 extern tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE];
 extern tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE];
 
-#define TEX_FILTER_SIZE	(theApp.IsD1File () ? D1_TXT_FILTER_SIZE : D2_TXT_FILTER_SIZE)
-#define TEXTURE_FILTERS (theApp.IsD1File () ? txtFiltersD1 : txtFiltersD2)
+#define TEX_FILTER_SIZE	(DLE.IsD1File () ? D1_TXT_FILTER_SIZE : D2_TXT_FILTER_SIZE)
+#define TEXTURE_FILTERS (DLE.IsD1File () ? txtFiltersD1 : txtFiltersD2)
 
 #endif //__global_h4

@@ -1398,7 +1398,7 @@ for (i = 0; i < 6; i++)
 			IN_RANGE (poly_draw [i].y, y_max)))
 		return;
 
-if ((theApp.IsD2File ()) &&
+if ((DLE.IsD2File ()) &&
 	 (objnum == theMine->Current ()->nObject) &&
 	 (objP->m_info.type != OBJ_CAMBOT) && (objP->m_info.type != OBJ_MONSTERBALL) && 
 	 (objP->m_info.type != OBJ_EXPLOSION) && (objP->m_info.type != OBJ_SMOKE) && (objP->m_info.type != OBJ_EFFECT) &&
@@ -1462,7 +1462,7 @@ if (!ViewObject ())
 	return;
 
 int i, j;
-if (theApp.IsD2File ()) {
+if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < theMine->GameInfo ().triggers.count; i++)
 	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {

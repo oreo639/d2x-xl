@@ -156,16 +156,16 @@ pImgWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 
 void CToolDlg::OnSelectPrevTab ()
 {
-theApp.MainFrame ()->ShowTools ();
-theApp.ToolView ()->PrevTab ();
+DLE.MainFrame ()->ShowTools ();
+DLE.ToolView ()->PrevTab ();
 }
 
                         /*--------------------------*/
 
 void CToolDlg::OnSelectNextTab ()
 {
-theApp.MainFrame ()->ShowTools ();
-theApp.ToolView ()->NextTab ();
+DLE.MainFrame ()->ShowTools ();
+DLE.ToolView ()->NextTab ();
 }
 
                         /*--------------------------*/
@@ -443,7 +443,7 @@ if (nWall >= theMine->GameInfo ().walls.count)
 	ushort *anim; // points to d1_anim or d2_anim depending on m_fileType
 
 // first find out if one of the textures is animated
-anim = (theApp.IsD1File ()) ? d1_anims : d2_anims;
+anim = (DLE.IsD1File ()) ? d1_anims : d2_anims;
 
 for (i=0; i<2;i++)
 	for (index [i] = 0; anim [index [i]]; index [i]++)

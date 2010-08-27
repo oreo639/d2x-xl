@@ -149,9 +149,9 @@ m_btnBrowseD1PIG.AutoLoad (IDC_PREFS_BROWSE_D1PIG, this);
 m_btnBrowseD2PIG.AutoLoad (IDC_PREFS_BROWSE_D2PIG, this);
 m_btnBrowseMissions.AutoLoad (IDC_PREFS_BROWSE_MISSIONS, this);
 #if 1
-m_mineViewFlags = theApp.MineView ()->GetMineViewFlags ();
-m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
-m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
+m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
+m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
+m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
 m_mineViewFlags = GetPrivateProfileInt ("DLE-XP", "MineViewFlags", m_mineViewFlags, INIFILE);
 m_objViewFlags = GetPrivateProfileInt ("DLE-XP", "ObjViewFlags", m_objViewFlags, INIFILE);
 m_texViewFlags = GetPrivateProfileInt ("DLE-XP", "TexViewFlags", m_texViewFlags, INIFILE);
@@ -181,9 +181,9 @@ void CPrefsDlg::Refresh (void)
 if (::IsWindow (m_hWnd) && !m_bNoRefresh) {
 	OnCancel ();
 /*
-	m_mineViewFlags = theApp.MineView ()->GetMineViewFlags ();
-	m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
-	m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
+	m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
+	m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
+	m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
 	UpdateData (FALSE);
 */
 	}
@@ -219,9 +219,9 @@ for (i = 0; i <= IDC_PREFS_VIEW_SKYBOX - IDC_PREFS_VIEW_WALLS; i++) {
 		m_mineViewFlags &= ~(1 << i);
 	}
 if (!pDX->m_bSaveAndValidate) {
-	m_mineViewFlags = theApp.MineView ()->GetMineViewFlags ();
-	m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
-	m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
+	m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
+	m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
+	m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
 	}
 h = ((m_texViewFlags & eViewMineUsedTextures) != 0);
 DDX_Check (pDX, IDC_PREFS_VIEW_ALLTEXTURES, h);
@@ -244,7 +244,7 @@ if (pDX->m_bSaveAndValidate)
 else {
 	char	szViewDist [10];
 	if (m_nViewDist)
-		sprintf_s (szViewDist, sizeof (szViewDist), "%d", theApp.MineView ()->ViewDist ());
+		sprintf_s (szViewDist, sizeof (szViewDist), "%d", DLE.MineView ()->ViewDist ());
 	else
 		strcpy_s (szViewDist, sizeof (szViewDist), "all");
 	((CWnd *) GetDlgItem (IDC_PREFS_VIEWDIST_TEXT))->SetWindowText (szViewDist);
@@ -319,10 +319,10 @@ void CPrefsDlg::GetAppSettings ()
 strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
 strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
 strcpy_s (m_missionsPath, sizeof (m_missionsPath), levels_path);
-m_mineViewFlags = theApp.MineView ()->GetMineViewFlags ();
-m_objViewFlags = theApp.MineView ()->GetObjectViewFlags ();
-m_texViewFlags = theApp.TextureView ()->GetViewFlags ();
-m_nMaxUndo = theApp.m_undoList.GetMaxSize ();
+m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
+m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
+m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
+m_nMaxUndo = DLE.m_undoList.GetMaxSize ();
 for (i = 0; i < 4; i++)
 	if (depthPerception == m_depthPerceptions [i]) {
 		m_iDepthPerception = i;
@@ -335,7 +335,7 @@ for (i = 0; i < 5; i++)
 		}
 m_moveRate = moveRate;
 m_bUseTexColors = theMine->UseTexColors ();
-m_bSplashScreen = theApp.m_bSplashScreen;
+m_bSplashScreen = DLE.m_bSplashScreen;
 }
 
                         /*--------------------------*/
@@ -361,9 +361,9 @@ WritePrivateProfileInt ("ObjViewFlags", m_objViewFlags);
 WritePrivateProfileInt ("TexViewFlags", m_texViewFlags);
 WritePrivateProfileInt ("UseTexColors", m_bUseTexColors);
 WritePrivateProfileInt ("ViewDistance", m_nViewDist);
-WritePrivateProfileInt ("MineCenter", *theApp.MineView ()->MineCenter ());
+WritePrivateProfileInt ("MineCenter", *DLE.MineView ()->MineCenter ());
 WritePrivateProfileInt ("MaxUndo", m_nMaxUndo);
-WritePrivateProfileInt ("TextureFilter", theApp.TextureView ()->TextureFilter ());
+WritePrivateProfileInt ("TextureFilter", DLE.TextureView ()->TextureFilter ());
 }
                         /*--------------------------*/
 
@@ -376,7 +376,7 @@ _strlwr_s (m_d1Path, sizeof (m_d1Path));
 if (strcmp (descent_path, m_d1Path)) {
 	strcpy_s (descent_path, sizeof (descent_path), m_d1Path);
 	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, INIFILE);
-	if (theApp.IsD1File ())
+	if (DLE.IsD1File ())
 		FreeTextureHandles();
 	}
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
@@ -391,10 +391,10 @@ if (strcmp (descent2_path, m_d2Path)) {
 	if (bChangePig) {
 		strcpy_s (descent2_path, sizeof (descent2_path), m_d2Path);
 		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
-		if (theApp.IsD2File ())
+		if (DLE.IsD2File ())
 			FreeTextureHandles (false);
 		theMine->LoadPalette ();
-		theApp.MineView ()->ResetView (true);
+		DLE.MineView ()->ResetView (true);
 		}
 	}
 _strlwr_s (m_missionsPath, sizeof (m_missionsPath));
@@ -403,17 +403,17 @@ if (strcmp (levels_path, m_missionsPath)) {
 	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, INIFILE);
 	}
 if (!bInitApp)
-	theApp.MineView ()->DelayRefresh (true);
-theApp.MineView ()->m_nViewDist = m_nViewDist;
-theApp.MineView ()->SetViewMineFlags (m_mineViewFlags);
-theApp.MineView ()->SetViewObjectFlags (m_objViewFlags);
-theApp.TextureView ()->SetViewFlags (m_texViewFlags);
+	DLE.MineView ()->DelayRefresh (true);
+DLE.MineView ()->m_nViewDist = m_nViewDist;
+DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
+DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
+DLE.TextureView ()->SetViewFlags (m_texViewFlags);
 depthPerception = m_depthPerceptions [m_iDepthPerception];
-theApp.MineView ()->DepthPerception () = depthPerception;
-*(theApp.MineView ()->MineCenter ()) = m_nMineCenter;
+DLE.MineView ()->DepthPerception () = depthPerception;
+*(DLE.MineView ()->MineCenter ()) = m_nMineCenter;
 if (!bInitApp) {
-	theApp.MineView ()->DelayRefresh (false);
-	theApp.MineView ()->Refresh (false);
+	DLE.MineView ()->DelayRefresh (false);
+	DLE.MineView ()->Refresh (false);
 	}
 angleRate = m_rotateRates [m_iRotateRate];
 moveRate = m_moveRate;
@@ -421,8 +421,8 @@ bExpertMode = (m_bExpertMode != 0);
 theMine->UseTexColors () = m_bUseTexColors != 0;
 if (!bInitApp)
 	SaveAppSettings (false);
-theApp.m_bSplashScreen = m_bSplashScreen;
-theApp.m_undoList.SetMaxSize (m_nMaxUndo);
+DLE.m_bSplashScreen = m_bSplashScreen;
+DLE.m_undoList.SetMaxSize (m_nMaxUndo);
 }
 
                         /*--------------------------*/
@@ -441,7 +441,7 @@ Refresh ();
 void CPrefsDlg::FreeTextureHandles (bool bDeleteModified)
 {
 ::FreeTextureHandles (bDeleteModified);
-theApp.TextureView ()->Refresh ();
+DLE.TextureView ()->Refresh ();
 }
 
                         /*--------------------------*/
@@ -487,7 +487,7 @@ if (BrowseFile ("Descent mission file", m_missionsPath, "*.hog", TRUE)) {
 void CPrefsDlg::OnViewObjectsNone (void)
 {
 m_objViewFlags = eViewObjectsNone;
-theApp.MineView ()->SetViewObjectFlags (m_objViewFlags);
+DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
 UpdateData (FALSE);
 OnOK ();
 }
@@ -497,7 +497,7 @@ OnOK ();
 void CPrefsDlg::OnViewObjectsAll (void)
 {
 m_objViewFlags = eViewObjectsAll;
-theApp.MineView ()->SetViewObjectFlags (m_objViewFlags);
+DLE.MineView ()->SetViewObjectFlags (m_objViewFlags);
 UpdateData (FALSE);
 OnOK ();
 }
@@ -507,7 +507,7 @@ OnOK ();
 void CPrefsDlg::OnViewMineNone (void)
 {
 m_mineViewFlags &= ~(eViewMineLights | eViewMineSpecial | eViewMineWalls | eViewMineDeltaLights);
-theApp.MineView ()->SetViewMineFlags (m_mineViewFlags);
+DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
 UpdateData (FALSE);
 OnOK ();
 }
@@ -517,7 +517,7 @@ OnOK ();
 void CPrefsDlg::OnViewMineAll (void)
 {
 m_mineViewFlags |= (eViewMineLights | eViewMineSpecial | eViewMineWalls | eViewMineDeltaLights);
-theApp.MineView ()->SetViewMineFlags (m_mineViewFlags);
+DLE.MineView ()->SetViewMineFlags (m_mineViewFlags);
 UpdateData (FALSE);
 OnOK ();
 }
@@ -575,7 +575,7 @@ if (pScrollBar == ViewDistSlider ()) {
 		nPos = 0;
 	else if (nPos > MAX_VIEWDIST)
 		nPos = MAX_VIEWDIST;
-	theApp.MineView ()->SetViewDist (m_nViewDist = nPos);
+	DLE.MineView ()->SetViewDist (m_nViewDist = nPos);
 	UpdateData (FALSE);
 //	pScrollBar->SetScrollPos (nPos, TRUE);
 	}

@@ -107,7 +107,7 @@ if ((nWall >= 0) && MarkSegment ((wallP = theMine->Walls (nWall))->m_nSegment))
 		}
 if ((pbp->nObject >= 0) && (pbp->nObject < theMine->GameInfo ().objects.count))
 	theMine->Current ()->nObject = pbp->nObject;
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -228,7 +228,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		if (id < 0 || id >= (theApp.IsD1File () ? ROBOT_IDS1 : ROBOT_IDS2)) {
+		if (id < 0 || id >= (DLE.IsD1File () ? ROBOT_IDS1 : ROBOT_IDS2)) {
 			return 1;
 		}
 		break;
@@ -254,7 +254,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 		break;
 
 	case OBJ_CNTRLCEN: /* the control center */
-		if (theApp.IsD1File ()) {
+		if (DLE.IsD1File ()) {
 			if (id >= 0 || id <= 25) {
 				return 0;
 			}
@@ -265,7 +265,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		objP->m_info.id = theApp.IsD1File () ? 1 : 2;
+		objP->m_info.id = DLE.IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -302,14 +302,14 @@ UpdateData (TRUE);
 ClearBugList ();
 m_bCheckMsgs = true;
 if (m_bAutoFixBugs) {
-	theApp.SetModified (TRUE);
-	theApp.LockUndo ();
+	DLE.SetModified (TRUE);
+	DLE.LockUndo ();
 	}
   // set mode to BLOCK mode to make errors appear in red
-theApp.MineView ()->SetSelectMode (BLOCK_MODE);
+DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
 // now do actual checking
-theApp.MainFrame ()->InitProgress (theMine->SegCount () * 3 + 
+DLE.MainFrame ()->InitProgress (theMine->SegCount () * 3 + 
 											  theMine->VertCount () +
 											  theMine->GameInfo ().walls.count * 2 +
 											  theMine->GameInfo ().triggers.count * 3 +
@@ -323,10 +323,10 @@ if (!CheckBotGens ())
 					if (!CheckTriggers ())
 						if (!CheckObjects ())
 							CheckVertices ();
-theApp.MainFrame ()->Progress ().DestroyWindow ();
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 LBBugs ()->SetCurSel (0);
 if (m_bAutoFixBugs)
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 }
 
 //--------------------------------------------------------------------------
@@ -453,7 +453,7 @@ short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Cubes]");
 
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 // check geometry of segment
 // 	Given that each point has 3 lines (called L1, L2, and L3),
 //	and an orthogonal vector of L1 and L2 (called V1), the angle
@@ -616,7 +616,7 @@ short sub_errors = m_nErrors [0];
 short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Objects]");
 for (nObject = 0;nObject < objCount ; nObject++, objP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	// check segment range
 	nSegment = objP->m_info.nSegment;
 	if (nSegment < 0 || nSegment >= theMine->SegCount ()) {
@@ -728,7 +728,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	  case OBJ_SMOKE:
 	  case OBJ_MONSTERBALL:
 	  case OBJ_EXPLOSION:
-			if (theApp.IsD2File ()) 
+			if (DLE.IsD2File ()) 
 				break;
 	  default:
 		 if (m_bAutoFixBugs) {
@@ -876,7 +876,7 @@ else if (nPlayers [1] > 3) {
 count = 0;
 objP = theMine->Objects (0);
 for (nObject=0;nObject<objCount;nObject++, objP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	type = objP->m_info.type;
 	if (type == OBJ_CNTRLCEN) {
 		if (theMine->Segments (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_CONTROLCEN) {
@@ -956,7 +956,7 @@ for (i = 0; i < reactorTrigger->m_count; i++)
 			}
 		}
 for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
 	wallP = theMine->Walls (0);
 	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
@@ -964,7 +964,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			// if exit, make sure it is linked to CReactorTrigger
 			int tt = trigP->m_info.type;
 			int tf = trigP->m_info.flags;
-			if (theApp.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
+			if (DLE.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->m_count; i++)
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
 						break; // found it
@@ -1005,7 +1005,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 short trigSeg, trigSide;
 trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	nWall = theMine->FindTriggerWall (nTrigger);
 	if (nWall < wallCount) {
 		wallP = theMine->Walls (nWall);
@@ -1018,7 +1018,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	int tt = trigP->m_info.type;
 	int tf = trigP->m_info.flags;
 	if (trigP->m_count == 0) {
-		if (theApp.IsD1File ()
+		if (DLE.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 			 : (tt != TT_EXIT) && (tt != TT_SECRET_EXIT) && (tt != TT_MESSAGE) && (tt != TT_SOUND) && 
 			   (tt != TT_SPEEDBOOST) && (tt != TT_SHIELD_DAMAGE_D2) && (tt != TT_ENERGY_DRAIN_D2)
@@ -1080,7 +1080,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 					CSegment *segP = theMine->Segments (nSegment);
 					// check door opening trigP
 //						if (trigP->m_info.flags == TRIGGER_CONTROL_DOORS) {
-					if (theApp.IsD1File ()
+					if (DLE.IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigP points to a wallP if it controls doors
@@ -1111,7 +1111,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 								}
 							}
 						}
-					else if (theApp.IsD1File () 
+					else if (DLE.IsD1File () 
 								? tf & (TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
 								: tt == TT_ILLUSION_OFF || tt == TT_ILLUSION_ON || tt == TT_OPEN_WALL || tt == TT_CLOSE_WALL || tt == TT_ILLUSORY_WALL
 							  ) {
@@ -1132,7 +1132,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							}
 						}
 //						if (trigP->m_info.flags == TRIGGER_MATCEN) {
-					else if (theApp.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
+					else if (DLE.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((segP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
@@ -1148,7 +1148,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 count = 0;
 trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	nWall = theMine->FindTriggerWall (nTrigger);
 	if (nWall < wallCount) {
 		wallP = theMine->Walls (nWall);
@@ -1159,7 +1159,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		trigSeg = trigSide = -1;
 	int tt = trigP->m_info.type;
 	int tf = trigP->m_info.flags;
-	if (theApp.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
+	if (DLE.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
 			sprintf_s (message, sizeof (message),"WARNING: More than one exit found (trig=%d)",nTrigger);
@@ -1170,7 +1170,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 
 trigCount = theMine->NumObjTriggers ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	trigP = theMine->ObjTriggers (nTrigger);
 	if ((trigP->m_info.type != TT_MESSAGE) && (trigP->m_info.type != TT_SOUND) && (trigP->m_info.type != TT_COUNTDOWN) && !trigP->m_count) {
 		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->m_info.nObject);
@@ -1485,9 +1485,9 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 		} 
 	}
 for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wallP->m_info.type > (theApp.IsD1File () ? WALL_CLOSED : theMine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wallP->m_info.type > (DLE.IsD1File () ? WALL_CLOSED : theMine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
 					nWall,wallP->m_info.type);
@@ -1633,8 +1633,8 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			  || wallP->m_info.nClip == 2
 //			     || wallP->m_info.nClip == 7
 			  || wallP->m_info.nClip == 8
-			  || (theApp.IsD1File () && wallP->m_info.nClip > 25)
-			  || (theApp.IsD2File () && wallP->m_info.nClip > 50))) {
+			  || (DLE.IsD1File () && wallP->m_info.nClip > 25)
+			  || (DLE.IsD2File () && wallP->m_info.nClip > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
 						nWall,wallP->m_info.nClip);
@@ -1685,7 +1685,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	// make sure segP's wall points back to the segment
 segP = theMine->Segments (0);
 for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	sideP = segP->m_sides;
 	for (nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (sideP->m_info.nWall <	wallCount) {
@@ -1748,7 +1748,7 @@ for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
 		theMine->VertStatus (segP->m_info.verts [point]) |= NEW_MASK;
 
 for (nVertex = theMine->VertCount (); nVertex > 0; ) {
-	theApp.MainFrame ()->Progress ().StepIt ();
+	DLE.MainFrame ()->Progress ().StepIt ();
 	if (!(theMine->VertStatus (--nVertex) & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {

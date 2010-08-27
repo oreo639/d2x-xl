@@ -124,7 +124,7 @@ void CReactorTool::Refresh ()
 {
 if (!(m_bInited && theMine))
 	return;
-EnableControls (theApp.IsD2File ());
+EnableControls (DLE.IsD2File ());
 m_pTrigger = theMine->ReactorTriggers (m_nTrigger);
 m_nCountDown = theMine->ReactorTime ();
 m_nSecretReturn = theMine->SecretCubeNum ();
@@ -144,7 +144,7 @@ char szVal [5];
 if (!*szVal)
 	return;
 UpdateData (TRUE);
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 theMine->ReactorTime () = m_nCountDown;
 }
 
@@ -159,7 +159,7 @@ char szVal [5];
 if (!*szVal)
 	return;
 UpdateData (TRUE);
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 theMine->SecretCubeNum () = m_nSecretReturn;
 }
 
@@ -178,7 +178,7 @@ if (FindTarget (nSegment, nSide) >= 0) {
 	DEBUGMSG (" Reactor tool: Trigger already has this target.");
 	return;
 	}
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 m_pTrigger->Add (nSegment, nSide - 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
@@ -221,7 +221,7 @@ void CReactorTool::OnDeleteTarget ()
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
@@ -277,7 +277,7 @@ if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide =
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/

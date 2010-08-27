@@ -136,8 +136,8 @@ void CMine::MakeObject (CGameObject *objP, char type, short nSegment)
 {
   CVertex	location;
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 CalcSegCenter (location,nSegment);
 objP->Clear ();
 objP->m_info.signature = 0;
@@ -159,7 +159,7 @@ objP->rType.polyModelInfo.tmap_override = -1;
 objP->m_info.contents.type = 0;
 objP->m_info.contents.id = 0;
 objP->m_info.contents.count = 0;
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 return;
 }
 
@@ -175,8 +175,8 @@ void CMine::SetObjectData (char type)
   CGameObject *objP;
   int  id;
 
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 objP = Objects (0) + Current ()->nObject;
 id = objP->m_info.id;
 memset (&objP->mType, 0, sizeof (objP->mType));
@@ -311,7 +311,7 @@ switch (type) {
 	  objP->m_info.shields       = DEFAULT_SHIELD;
 
   }
-	theApp.UnlockUndo ();
+	DLE.UnlockUndo ();
 }
 
 //------------------------------------------------------------------------
@@ -381,8 +381,8 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 
 // Now we can add the object
 // Make a new object
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 if (GameInfo ().objects.count == 0) {
 	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
 	GameInfo ().objects.count = 1;
@@ -421,9 +421,9 @@ objP->m_info.contents.type = 0;
 objP->m_info.contents.id = 0;
 objP->m_info.contents.count = 0;
 SortObjects ();
-theApp.MineView ()->Refresh (false);
-theApp.ToolView ()->ObjectTool ()->Refresh ();
-theApp.UnlockUndo ();
+DLE.MineView ()->Refresh (false);
+DLE.ToolView ()->ObjectTool ()->Refresh ();
+DLE.UnlockUndo ();
 return TRUE;
 }
 
@@ -450,8 +450,8 @@ if (nDelObj == GameInfo ().objects.count) {
 		ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-theApp.SetModified (TRUE);
-theApp.LockUndo ();
+DLE.SetModified (TRUE);
+DLE.LockUndo ();
 DeleteObjTriggers (nDelObj);
 int i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
@@ -465,7 +465,7 @@ if (Current1 ().nObject >= j)
 	Current1 ().nObject = j - 1;
 if (Current2 ().nObject >= j)
 	Current2 ().nObject = j - 1;
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 }
 
 //------------------------------------------------------------------------
@@ -595,7 +595,7 @@ hide_segment = ReadInt16 (fp);
 hide_index = ReadInt16 (fp);
 path_length = ReadInt16 (fp);
 cur_path_index = ReadInt16 (fp);
-if (theApp.IsD1File ()) {
+if (DLE.IsD1File ()) {
 	follow_path_start_seg = ReadInt16 (fp);
 	follow_path_end_seg = ReadInt16 (fp);
 	}
@@ -613,7 +613,7 @@ WriteInt16 (hide_segment, fp);
 WriteInt16 (hide_index, fp);
 WriteInt16 (path_length, fp);
 WriteInt16 (cur_path_index, fp);
-if (theApp.IsD1File ()) {
+if (DLE.IsD1File ()) {
 	WriteInt16 (follow_path_start_seg, fp);
 	WriteInt16 (follow_path_end_seg, fp);
 	}
@@ -919,18 +919,18 @@ switch (m_info.renderType) {
 	case RT_HOSTAGE:
 	case RT_POWERUP:
 	case RT_FIREBALL:
-		rType.vClipInfo.Read (fp, theApp.LevelVersion ());
+		rType.vClipInfo.Read (fp, DLE.LevelVersion ());
 		break;
 	case RT_LASER:
 		break;
 	case RT_SMOKE:
-		rType.smokeInfo.Read (fp, theApp.LevelVersion ());
+		rType.smokeInfo.Read (fp, DLE.LevelVersion ());
 		break;
 	case RT_LIGHTNING:
-		rType.lightningInfo.Read (fp, theApp.LevelVersion ());
+		rType.lightningInfo.Read (fp, DLE.LevelVersion ());
 		break;
 	case RT_SOUND:
-		rType.soundInfo.Read (fp, theApp.LevelVersion ());
+		rType.soundInfo.Read (fp, DLE.LevelVersion ());
 		break;
 	default:
 	break;

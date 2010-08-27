@@ -82,8 +82,8 @@ if (bRepaint) {
 	UpdateWindow ();
 	}
 if (!m_bDelayRefresh) {
-	theApp.MineView ()->Refresh (false);
-	theApp.ToolView ()->Refresh ();
+	DLE.MineView ()->Refresh (false);
+	DLE.ToolView ()->Refresh ();
 	}
 }
 
@@ -252,14 +252,14 @@ if (nFlags & MK_SHIFT) {
 	objP->rType.polyModelInfo.tmap_override = nBaseTex;
   } 
 else if (nFlags & MK_CONTROL) {
-	theApp.ToolView ()->TriggerTool ()->SetTexture (nBaseTex, -1);
-	theApp.ToolView ()->TriggerTool ()->Refresh ();
+	DLE.ToolView ()->TriggerTool ()->SetTexture (nBaseTex, -1);
+	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
 	theMine->SetTexture (-1, -1, nBaseTex, -1);
 	Refresh ();
 	}
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 }
 
 //------------------------------------------------------------------------
@@ -274,14 +274,14 @@ if (!theMine) return;
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_CONTROL) {
-	theApp.ToolView ()->TriggerTool ()->SetTexture (-1, nBaseTex);
-	theApp.ToolView ()->TriggerTool ()->Refresh ();
+	DLE.ToolView ()->TriggerTool ()->SetTexture (-1, nBaseTex);
+	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
 	theMine->SetTexture (-1, -1, -1, nBaseTex);
 	Refresh ();
 	}
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 }
 
 //------------------------------------------------------------------------
@@ -551,7 +551,7 @@ void CTextureView::Setup (void)
   int nTextures, nFrames = 0;
   HINSTANCE hInst = AfxGetApp()->m_hInstance;
 
-  nTextures = theApp.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+  nTextures = DLE.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
 
   // calculate total number of textures
 m_nTextures [1] = 0;

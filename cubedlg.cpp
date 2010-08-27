@@ -243,7 +243,7 @@ GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (
 GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBUsedBots ()->GetCount () > 0));
 GetDlgItem (IDC_CUBE_WALLDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_TRIGGERDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
-GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (theApp.IsD2File ());
+GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (DLE.IsD2File ());
 GetDlgItem (IDC_CUBE_OWNER)->EnableWindow (theMine->IsD2XLevel ());
 GetDlgItem (IDC_CUBE_GROUP)->EnableWindow (theMine->IsD2XLevel ());
 }
@@ -254,10 +254,10 @@ void CSegmentTool::OnSetCoord (void)
 {
 CHECKMINE;
 UpdateData (TRUE);
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 m_nVertex = theMine->CurrSeg ()->m_info.verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
 theMine->Vertices (m_nVertex)->Set ((fix) (m_nCoord [0] * 0x10000L), (fix) (m_nCoord [1] * 0x10000L), (fix) (m_nCoord [2] * 0x10000L));
-theApp.MineView ()->Refresh (false);
+DLE.MineView ()->Refresh (false);
 }
 
                         /*--------------------------*/
@@ -270,7 +270,7 @@ m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
 m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
 m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
 UpdateData (FALSE);
-theApp.MineView ()->Refresh (false);
+DLE.MineView ()->Refresh (false);
 }
 
                         /*--------------------------*/
@@ -278,7 +278,7 @@ theApp.MineView ()->Refresh (false);
 void CSegmentTool::OnProp (int nProp)
 {
 CHECKMINE;
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 if (Prop (nProp)->GetCheck ())
 	m_nProps |= 1 << nProp;
 else
@@ -298,7 +298,7 @@ void CSegmentTool::OnSide (int nSide)
 {
 CHECKMINE;
 theMine->Current ()->nSide = m_nSide = nSide;
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 void CSegmentTool::OnSide1 () { OnSide (0); }
@@ -314,7 +314,7 @@ void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
 theMine->Current ()->nPoint = m_nPoint = nPoint;
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 void CSegmentTool::OnPoint1 () { OnPoint (0); }
@@ -482,7 +482,7 @@ void CSegmentTool::OnEndOfExit ()
 {
 CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
 	segP->SetChild (m_nSide, -2);
 	}
@@ -499,7 +499,7 @@ void CSegmentTool::OnAddCube ()
 {
 CHECKMINE;
 theMine->AddSegment ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -510,7 +510,7 @@ void CSegmentTool::OnDeleteCube ()
 {
 CHECKMINE;
 theMine->DeleteSegment (theMine->Current ()->nSegment);
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -523,9 +523,9 @@ CHECKMINE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
 
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
@@ -535,8 +535,8 @@ if (bMarked) {
 	}
 else 					
 	theMine->CurrSeg ()->m_info.owner = m_nOwner;
-theApp.UnlockUndo ();
-theApp.MineView ()->DelayRefresh (false);
+DLE.UnlockUndo ();
+DLE.MineView ()->DelayRefresh (false);
 }
 
 //------------------------------------------------------------------------
@@ -548,9 +548,9 @@ CHECKMINE;
 	BOOL	bChangeOk = TRUE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
@@ -560,8 +560,8 @@ if (bMarked) {
 	}
 else 					
 	theMine->CurrSeg ()->m_info.group = m_nGroup;
-theApp.UnlockUndo ();
-theApp.MineView ()->DelayRefresh (false);
+DLE.UnlockUndo ();
+DLE.MineView ()->DelayRefresh (false);
 }
 
 //------------------------------------------------------------------------
@@ -576,9 +576,9 @@ CHECKMINE;
 	BOOL		bMarked = theMine->GotMarkedSegments ();
 	int		nSegNum, nMinSeg, nMaxSeg;
 
-bool bUndo = theApp.SetModified (TRUE);
-theApp.LockUndo ();
-theApp.MineView ()->DelayRefresh (true);
+bool bUndo = DLE.SetModified (TRUE);
+DLE.LockUndo ();
+DLE.MineView ()->DelayRefresh (true);
 m_nLastCube = -1; //force Refresh() to rebuild all dialog data
 byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if (bMarked) {
@@ -600,7 +600,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				goto errorExit;
 			if (!theMine->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
-				theApp.ResetModified (bUndo);
+				DLE.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -618,7 +618,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if (!theMine->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
-				theApp.ResetModified (bUndo);
+				DLE.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -627,7 +627,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if (!theMine->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
-				theApp.ResetModified (bUndo);
+				DLE.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -749,13 +749,13 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 errorExit:
 
-theApp.UnlockUndo ();
+DLE.UnlockUndo ();
 theMine->AutoLinkExitToReactor ();
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 
 funcExit:
 
-theApp.MineView ()->DelayRefresh (false);
+DLE.MineView ()->DelayRefresh (false);
 UpdateData (TRUE);
 }
 
@@ -767,7 +767,7 @@ void CSegmentTool::OnSetCube ()
 {
 CHECKMINE;
 theMine->Current ()->nSegment = CBCubeNo ()->GetCurSel ();
-theApp.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -779,7 +779,7 @@ void CSegmentTool::OnLight ()
 CHECKMINE;
 UpdateData (TRUE);
 theMine->CurrSeg ()->m_info.staticLight = (fix) (m_nLight * 24 * 327.68);
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 }
 
                         /*--------------------------*/
@@ -789,7 +789,7 @@ void CSegmentTool::OnDamage (int i)
 CHECKMINE;
 UpdateData (TRUE);
 theMine->CurrSeg ()->m_info.damage [i] = m_nDamage [i];
-theApp.SetModified (TRUE);
+DLE.SetModified (TRUE);
 }
 
 void CSegmentTool::OnDamage0 () { OnDamage (0); }
@@ -844,8 +844,8 @@ LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
 LBUsedBots ()->SetItemData (h, i);
-theApp.SetModified (TRUE);
-theApp.MineView ()->Refresh ();
+DLE.SetModified (TRUE);
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -867,8 +867,8 @@ LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
 LBUsedBots ()->SetItemData (h, i);
-theApp.SetModified (TRUE);
-theApp.MineView ()->Refresh ();
+DLE.SetModified (TRUE);
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -904,8 +904,8 @@ LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-theApp.SetModified (TRUE);
-theApp.MineView ()->Refresh ();
+DLE.SetModified (TRUE);
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -927,8 +927,8 @@ LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-theApp.SetModified (TRUE);
-theApp.MineView ()->Refresh ();
+DLE.SetModified (TRUE);
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -951,7 +951,7 @@ else if (IsEquipMaker (segP))
 
 void CSegmentTool::OnOtherCube () 
 {
-theApp.MineView ()->SelectOtherCube ();
+DLE.MineView ()->SelectOtherCube ();
 }
 
 //------------------------------------------------------------------------
@@ -969,8 +969,8 @@ if (i < 0)
 long h = long (LBTriggers ()->GetItemData (i));
 theMine->Current ()->nSegment = (short) (h / 0x10000L);
 theMine->Current ()->nSide = (short) (h % 0x10000L);
-theApp.ToolView ()->EditWall ();
-theApp.MineView ()->Refresh ();
+DLE.ToolView ()->EditWall ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
@@ -990,8 +990,8 @@ theMine->Other ()->nSegment = theMine->Current ()->nSegment;
 theMine->Other ()->nSide = theMine->Current ()->nSide;
 theMine->Current ()->nSegment = (short) (h / 0x10000L);
 theMine->Current ()->nSide = (short) (h % 0x10000L);
-theApp.ToolView ()->EditTrigger ();
-theApp.MineView ()->Refresh ();
+DLE.ToolView ()->EditTrigger ();
+DLE.MineView ()->Refresh ();
 }
 
                         /*--------------------------*/
