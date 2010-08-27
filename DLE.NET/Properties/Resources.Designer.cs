@@ -1012,17 +1012,17 @@ namespace DLE.NET.Properties {
             }
         }
         
-        internal static ushort[] texture {
+        internal static byte[] texture {
             get {
                 object obj = ResourceManager.GetObject("texture", resourceCulture);
-                return ((ushort[])(obj));
+                return ((byte[])(obj));
             }
         }
         
-        internal static ushort[] texture2 {
+        internal static byte[] texture2 {
             get {
                 object obj = ResourceManager.GetObject("texture2", resourceCulture);
-                return ((ushort[])(obj));
+                return ((byte[])(obj));
             }
         }
         
@@ -1047,10 +1047,10 @@ namespace DLE.NET.Properties {
             }
         }
         
-        internal static ushort[] tnames {
+        internal static byte[] tnames {
             get {
                 object obj = ResourceManager.GetObject("tnames", resourceCulture);
-                return ((ushort[])(obj));
+                return ((byte[])(obj));
             }
         }
         

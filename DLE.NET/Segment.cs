@@ -6,7 +6,7 @@ using System.IO;
 
 namespace DLE.NET
 {
-    partial class Segment : GameItem
+    public partial class Segment : GameItem
     {
 
         public const int MAX_SIDES_PER_SEGMENT = 6;

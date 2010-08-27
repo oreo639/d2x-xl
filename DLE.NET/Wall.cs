@@ -5,9 +5,9 @@ using System.Text;
 
 namespace DLE.NET
 {
-    class Wall
+    public class Wall
     {
-        enum Type : byte
+        public enum Type : byte
         {
             NORMAL = 0, // Normal wall 
             BLASTABLE = 1, // Removable (by shooting) wall 
@@ -20,7 +20,7 @@ namespace DLE.NET
             TRANSPARENT = 8
         }
 
-        enum Flag : ushort
+        public enum Flag : ushort
         {
             BLASTED = 1, // Blasted out wall. 
             DOOR_OPENED = 2, // Open door.  
@@ -33,7 +33,7 @@ namespace DLE.NET
             IGNORE_MARKER = 256
         }
 
-        enum ClipFlag : byte
+        public enum ClipFlag : byte
         {
             EXPLODES = 1, //door explodes when opening
             BLASTABLE = 2, //this is a blastable wall
@@ -41,7 +41,7 @@ namespace DLE.NET
             HIDDEN = 8 //this uses primary tmap, not tmap2
         }
 
-        enum DoorState : byte
+        public enum DoorState : byte
         {
             CLOSED = 0, // Door is closed 
             OPENING = 1, // Door is opening. 
@@ -51,7 +51,7 @@ namespace DLE.NET
             DECLOAKING = 6	// Wall is going from open -> closed (Descent 2)
         }
 
-        enum KeyType : byte
+        public enum KeyType : byte
         {
             NONE = 1,
             BLUE = 2,
@@ -59,7 +59,7 @@ namespace DLE.NET
             GOLD = 8
         }
 
-        enum VisType : byte
+        public enum VisType : byte
         {
             FLY = 1,
             RENDER = 2,
@@ -68,7 +68,7 @@ namespace DLE.NET
             CLOAKED = 16 // Descent 2
         }
 
-        enum RenderType : byte  // WALL_IS_DOORWAY return values F/R/RP 
+        public enum RenderType : byte  // WALL_IS_DOORWAY return values F/R/RP 
         {
             SOLID = 2,	// 0/1/0 wall	 
             ILLUSORY = 3,	// 1/1/0 illusory wall 
@@ -78,22 +78,22 @@ namespace DLE.NET
             EXTERNAL = 8	// 0/0/0/1 don't see it, dont fly through it 
         }
 
-        int     segnum, sidenum; // Seg & side for this wall 
-        int     hps;            // "Hit points" of the wall.  
-        int     linked_wall;    // number of linked wall 
-        byte    type;           // What kind of special wall. 
-        ushort  flags;          // Flags for the wall.     
-        byte    state;          // Opening, closing, etc. 
-        byte    trigger;        // Which trigger is associated with the wall. 
-        char    clip_num;       // Which  animation associated with the wall.  
-        byte    keys;           // which keys are required 
+        public int segnum, sidenum; // Seg & side for this wall 
+        public int hps;            // "Hit points" of the wall.  
+        public int linked_wall;    // number of linked wall 
+        public byte type;           // What kind of special wall. 
+        public ushort flags;          // Flags for the wall.     
+        public byte state;          // Opening, closing, etc. 
+        public byte trigger;        // Which trigger is associated with the wall. 
+        public char clip_num;       // Which  animation associated with the wall.  
+        public byte keys;           // which keys are required 
 
         // the following two Descent2 bytes replace the "short pad" of Descent1
-        char    controlling_trigger;    // which trigger causes something to happen here.
+        public char controlling_trigger;    // which trigger causes something to happen here.
                                         // Not like "trigger" above, which is the trigger on this wall.
                                         //	Note: This gets stuffed at load time in gamemine.c.  
                                         // Don't try to use it in the editor.  You will be sorry!
-        char    cloak_value;	        // if this wall is cloaked, the fade value
+        public char cloak_value;	        // if this wall is cloaked, the fade value
 
     }
 }

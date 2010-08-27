@@ -8,15 +8,24 @@ namespace DLE.NET
 {
     public class Side : GameItem
     {
-            public short nChild;
-            public ushort nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
-            public ushort nBaseTex;	    // Index into array of textures specified in bitmaps.bin 
-            public ushort nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
-            public UVL[] uvls = new UVL [4];  // CUVL coordinates at each point 
+        public short nChild;
+        public ushort nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 
+        public ushort nBaseTex;	    // Index into array of textures specified in bitmaps.bin 
+        public ushort nOvlTex;		// Index, as above, texture which gets overlaid on nBaseTex 
+        public UVL[] uvls = new UVL [4];  // CUVL coordinates at each point 
 
-        public void Setup ()
+        // ------------------------------------------------------------------------
+
+        void Setup ()
         {
+            nWall = DLE.theMine.NO_WALL ();
+            nBaseTex =
+            nOvlTex = 0;
+            for (int i = 0; i < 4; i++)
+                uvls [i].l = (ushort)GameMine.DEFAULT_LIGHTING;
         }
+
+        // ------------------------------------------------------------------------
 
         public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
@@ -35,6 +44,8 @@ namespace DLE.NET
                 uvls [i].Read (fp);
         }
 
+        // ------------------------------------------------------------------------
+
         public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
             if (nOvlTex == 0)
@@ -47,6 +58,8 @@ namespace DLE.NET
             for (int i = 0; i < uvls.Length; i++)
                 uvls [i].Write (fp);
         }
+
+        // ------------------------------------------------------------------------
 
         public override void Clear ()
         {
@@ -100,17 +113,6 @@ namespace DLE.NET
 	        }
             for (int i = 0; i < 4; i++)
 	            uvls [i].Write (fp);
-        }
-
-        // ------------------------------------------------------------------------
-
-        void Setup ()
-        {
-        nWall = DLE.theMine.NO_WALL (); 
-        nBaseTex =
-        nOvlTex = 0; 
-        for (int i = 0; i < 4; i++)
-	        uvls [i].l = (ushort) GameMine.DEFAULT_LIGHTING; 
         }
 
         // ------------------------------------------------------------------------ 

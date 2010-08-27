@@ -10,23 +10,23 @@ namespace DLE.NET
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    struct tRGBA
+    public struct tRGBA
     {
         byte r, g, b, a;
     }
 
 
-    struct tBGRA
+    public struct tBGRA
     {
         byte b, g, r, a;
     }
 
-    struct tABGR
+    public struct tABGR
     {
         byte a, b, g, r;
     }
 
-    struct tBGR
+    public struct tBGR
     {
         byte r, g, b;
     }
@@ -51,7 +51,7 @@ namespace DLE.NET
 
     public struct PigTexture
     {
-        public byte [] name = new byte [8];
+        public byte [] name;
         public byte dflags;      // this is only important for large bitmaps like the cockpit
         public ushort width;
         public ushort height;
@@ -65,6 +65,11 @@ namespace DLE.NET
         public PigTexture m_info;
 
         public const uint Size = 14;
+
+        public PigTextureD1()
+        {
+            m_info.name = new byte [8];
+        }
 
         public void Read (BinaryReader fp)
         {
@@ -118,7 +123,7 @@ namespace DLE.NET
         }
     }
 
-    class PigSoundD1
+    unsafe struct PigSoundD1
     {
         fixed byte unknown [20];
 
@@ -156,12 +161,12 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public virtual override void Read (BinaryReader fp, int version = 0, bool bFlag = false) { }
-        public virtual override void Write (BinaryWriter fp, int version = 0, bool bFlag = false) { }
+        public override void Read (BinaryReader fp, int version = 0, bool bFlag = false) { }
+        public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false) { }
 
         //------------------------------------------------------------------------------
 
-        public virtual override void Clear ()
+        public override void Clear ()
         {
             Release ();
             width = height = size = 0;
@@ -171,15 +176,16 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        ushort TextureIndex (byte [] textureTable, short index)
+        ushort TextureIndex (byte [] textureIndex, short index)
         {
-            return (ushort)(textureTable [index + 2] + (int)textureTable [index + 3] * 256);
+            return (ushort)(textureIndex [index + 2] + (int)textureIndex [index + 3] * 256);
         }
 
         //------------------------------------------------------------------------------
 
         public new int Load (ushort index) 
         {
+            ushort[]        textureIndex;
 	        byte[]			rowSize = new byte [4096];
 	        byte[]			rowData = new byte [4096];
 	        PigTextureD1	pigTexD1 = new PigTextureD1();
@@ -200,11 +206,17 @@ namespace DLE.NET
         if (!folder.Contains (".pig"))
             folder += "groupa.pig";
 
-        ushort[] textureTable;
-        if (DLE.IsD1File())
-            textureTable = Properties.Resources.texture;
-        else
-            textureTable = Properties.Resources.texture2;
+        using (MemoryStream resource = new MemoryStream (DLE.IsD1File() ? Properties.Resources.texture : Properties.Resources.texture2))
+        {
+            using (BinaryReader reader = new BinaryReader (resource))
+            {
+                textureIndex = new ushort [resource.Length / 2];
+                for (int i = 0; i < resource.Length / 2; i++)
+                {
+                    textureIndex [i] = reader.ReadUInt16 ();
+                }
+            }
+        }
 
         using (FileStream fs = File.OpenRead (folder))
             using (BinaryReader fp = new BinaryReader (fs))
@@ -218,14 +230,14 @@ namespace DLE.NET
                 if (DLE.IsD2File ())
                 {
                     fileHeaderD2.Read (fp);
-    	            offset = PigHeaderD2.Size + dataOffset + (uint) (textureTable [index + 1] - 1) * PigTextureD2.Size;
+    	            offset = PigHeaderD2.Size + dataOffset + (uint) (textureIndex [index + 1] - 1) * PigTextureD2.Size;
                     fs.Seek (offset, SeekOrigin.Begin);
                     pigTexD2.Read (fp);
                 }
                 else
                 {
                     fileHeaderD1.Read (fp);
-    	            offset = PigHeaderD1.Size + dataOffset + (uint) (textureTable [index - 1] - 1) * PigTextureD1.Size;
+    	            offset = PigHeaderD1.Size + dataOffset + (uint) (textureIndex [index - 1] - 1) * PigTextureD1.Size;
                     fs.Seek (offset, SeekOrigin.Begin);
                     pigTexD1.Read (fp);
                     pigTexD1.m_info.name [7] = 0;
