@@ -357,18 +357,18 @@ int CTexture::Read (short index)
 	
 if (m_info.bModified)
 	return 0;
+// do a range check on the texture number
+if ((index > ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
+	DEBUGMSG (" Reading texture: Texture # out of range.");
+	rc = 1;
+	goto abort;
+	}
+
 strcpy_s (path, sizeof (path), (DLE.IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (path, ".pig"))
 	strcat_s (path, sizeof (path), "groupa.pig");
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
-
-// do a range check on the texture number
-if ((index > ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
-DEBUGMSG (" Reading texture: Texture # out of range.");
-rc = 1;
-goto abort;
-}
 
 // get pointer to texture table from resource fTextures
 hFind = (DLE.IsD1File ()) ?
@@ -410,8 +410,7 @@ else
 
 // read texture header
 if (DLE.IsD2File ()) {
-	offset = sizeof (D2_PIG_HEADER) + dataOffset +
-				(fix) (textureTable[index]-1) * sizeof (D2_PIG_TEXTURE);
+	offset = sizeof (D2_PIG_HEADER) + dataOffset + (fix) (textureTable [index]-1) * sizeof (D2_PIG_TEXTURE);
 	fseek (fTextures, offset, SEEK_SET);
 	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
 	w = d2_ptexture.xsize + ((d2_ptexture.whExtra & 0xF) << 8);
