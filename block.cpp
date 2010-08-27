@@ -829,7 +829,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					}
 				} 
 			else {
-				segP->Child (child) = -1; // force child to agree with bitmask
+				segP->SetChild (child, -1); // force child to agree with bitmask
 				}
 			}
 		}
