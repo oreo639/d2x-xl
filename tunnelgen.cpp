@@ -292,8 +292,8 @@ if (!m_bSplineActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((Segments (Current1 ().nSegment)->Child ([Current1 ().nSide) != -1) ||
-		 (Segments (Current2 ().nSegment)->Child ([Current2 ().nSide) != -1)) {
+	if ((Segments (Current1 ().nSegment)->Child (Current1 ().nSide) != -1) ||
+		 (Segments (Current2 ().nSegment)->Child (Current2 ().nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of spline\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"

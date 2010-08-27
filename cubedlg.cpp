@@ -484,12 +484,10 @@ CHECKMINE;
 CSegment *segP = theMine->CurrSeg ();
 theApp.SetModified (TRUE);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
-	segP->Child (m_nSide) = -2;
-	segP->m_info.childFlags |= (1 << m_nSide);
+	segP->SetChild (m_nSide, -2);
 	}
 else {
-	segP->Child (m_nSide) = -1;
-	segP->m_info.childFlags &= ~(1 << m_nSide);
+	segP->SetChild (m_nSide, -1);
 	}
 }
 

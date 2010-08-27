@@ -462,14 +462,14 @@ INT16 CMine::FixIndexValues(void)
 				checkErr |= (1 << 0);
 			}
 			// check children
-			if (segP->Child (nSide) < - 2 || segP->Child (nSide) >(INT16)SegCount ()) {
-				segP->Child (nSide) =-1;
+			if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (INT16)SegCount ())) {
+				segP->SetChild (nSide, -1);
 				checkErr |= (1 << 1);
 			}
 		}
 		// check verts
 		for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-			if (segP->m_info.verts [nVertex] < 0 || segP->m_info.verts [nVertex] >= VertCount ()) {
+			if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= VertCount ())) {
 				segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture [0]
 				checkErr |= (1 << 2);      // but it will prevent a crash
 			}

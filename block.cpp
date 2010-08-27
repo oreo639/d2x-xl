@@ -269,7 +269,7 @@ while(!feof(fBlk)) {
 		}
 	INT16 children [6];
 	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n", 
-				 child [0], child [1], child [2], child [3], child [4], child [5], child [6]);
+				 children [0], children [1], children [2], children [3], children [4], children [5], children [6]);
 	for (i = 0; i < 6; i++)
 		segP->SetChild (i, children [i]);
 	// read in vertices

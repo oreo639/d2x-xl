@@ -558,7 +558,7 @@ if (bPartial) {
 			// check childP cubes
 			commonVerts = 0;
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
-				if (segP->child (chSegI) < 0)
+				if (segP->Child (chSegI) < 0)
 					continue;
 				childP = theMine->Segments (segP->Child (chSegI));
 				// walk through childP cube's sides

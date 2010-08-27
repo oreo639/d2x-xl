@@ -143,8 +143,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 					Current ()->nSegment--; 
 
 				// remove child number and update child bitmask
-				segP->Child (child) = -1; 
-				segP->m_info.childFlags &= ~(1 << child); 
+				segP->SetChild (child, -1); 
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + child;
@@ -175,7 +174,7 @@ for (i = (UINT16)GameInfo ().objects.count - 1; i >= 0; i--) {
 				if (segP->m_info.childFlags & (1 << child)
 					&& segP->Child (child) >= 0 && segP->Child (child) < SegCount ()) { // debug fix
 					childSegP = Segments (segP->Child (child)); 
-					segP->Child (child) = childSegP->m_info.nIndex; 
+					segP->SetChild (child, childSegP->m_info.nIndex); 
 				}
 			}
 		}
@@ -426,7 +425,7 @@ InitSegment (nNewSeg);
 // define children and special child
 newSegP->m_info.childFlags = 1 << oppSideTable [nCurrSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	newSegP->Child (i) = (newSegP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1;
+	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1);
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -456,8 +455,7 @@ if (index != -1) {
 	}
 
 // update current segment
-curSegP->Child (nCurrSide) = nNewSeg; 
-curSegP->m_info.childFlags |= (1 << nCurrSide); 
+curSegP->SetChild (nCurrSide, nNewSeg); 
 curSegP->m_sides [nCurrSide].m_info.nBaseTex = 0; 
 curSegP->m_sides [nCurrSide].m_info.nOvlTex = 0; 
 memset (curSegP->m_sides [nCurrSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nCurrSide].m_info.uvls));
@@ -668,7 +666,7 @@ bool CMine::LinkSegments (INT16 nSegment1, INT16 nSide1, INT16 nSegment2, INT16 
 	seg2 = Segments (nSegment2); 
 
 // don't link to a segment which already has a child
-if (seg1->m_info.Child (nSide1) !=-1 || seg2->m_info.Child (nSide2) != -1)
+if (seg1->Child (nSide1) !=-1 || seg2->m_info.Child (nSide2) != -1)
 	return FALSE; 
 
 // copy vertices for comparison later (makes code more readable)
@@ -745,12 +743,12 @@ seg1->SetChild (nSide1, nSegment2);
 seg1->m_sides [nSide1].m_info.nBaseTex = 0; 
 seg1->m_sides [nSide1].m_info.nOvlTex = 0; 
 for (i = 0; i < 4; i++) 
-	seg1->m_sides [nSide1].m_info.uvls.Clear (); 
+	seg1->m_sides [nSide1].m_info.uvls [i].Clear (); 
 seg2->SetChild (nSide2, nSegment1); 
 seg2->m_sides [nSide2].m_info.nBaseTex = 0; 
 seg2->m_sides [nSide2].m_info.nOvlTex = 0; 
 for (i = 0; i < 4; i++) 
-	seg2->m_sides [nSide2].m_info.uvls.Clear (); 
+	seg2->m_sides [nSide2].m_info.uvls [i].Clear (); 
 
 // merge vertices
 for (i = 0; i < 4; i++) {
@@ -1002,14 +1000,14 @@ theApp.UnlockUndo ();
 // Note: 2nd parameter "nSide" is ignored
 // -------------------------------------------------------------------------- 
 
-void CMine::UnlinkChild (INT16 parent_segnum, INT16 nSide) 
+void CMine::UnlinkChild (INT16 nParentSeg, INT16 nSide) 
 {
-  CSegment *parent_seg = Segments (parent_segnum); 
+  CSegment *parentSegP = Segments (nParentSeg); 
 
 // loop on each side of the parent
 //	INT32 nSide;
 //  for (nSide = 0; nSide < 6; nSide++) {
-INT32 nChildSeg = parent_seg->Child (nSide); 
+INT32 nChildSeg = parentSegP->Child (nSide); 
 // does this side have a child?
 if (nChildSeg < 0 || nChildSeg >= SegCount ())
 	return;
@@ -1024,7 +1022,7 @@ if (nChildSide < 6) {
 	INT16 pv [4], cv [4]; // (INT16 names given for clarity)
 	INT32 i;
 	for (i = 0; i < 4; i++) {
-		pv [i] = parent_seg->m_info.verts [sideVertTable [nSide][i]]; // parent vert
+		pv [i] = parentSegP->m_info.verts [sideVertTable [nSide][i]]; // parent vert
 		cv [i] = child_seg->m_info.verts [sideVertTable [nChildSide][i]]; // child vert
 		}
 	// if they share all four vertices..
@@ -1855,7 +1853,7 @@ theApp.LockUndo ();
 // first clear all sides
 segP->m_info.childFlags = 0; 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
-	segP->Child (i) =-1; 
+	segP->SetChild (i, -1); 
 
 // now define two sides:
 // near side has opposite side number cube 1
@@ -2404,7 +2402,7 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 	if ((segP->Child (nSide) = centerSegP->Child (nSide)) > -1) {
 		segP->m_info.childFlags |= (1 << nSide);
 		for (childSegP = Segments (segP->Child (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
-			if (childSegP->Child (nChildSide == nCenterSeg) {
+			if (childSegP->Child (nChildSide) == nCenterSeg) {
 				childSegP->SetChild (nChildSide, nSegment);
 				break;
 				}
