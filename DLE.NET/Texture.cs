@@ -44,8 +44,8 @@ namespace DLE.NET
 
         public void Read (BinaryReader fp)
         {
-            nTextures = fp.ReadInt32 ();
-            nSounds = fp.ReadInt32 ();
+            nTextures = fp.ReadUInt32 ();
+            nSounds = fp.ReadUInt32 ();
         }
     }
 
@@ -90,9 +90,9 @@ namespace DLE.NET
 
         public void Read (BinaryReader fp)
         {
-            signature = fp.ReadInt32 ();
-            version = fp.ReadInt32 ();
-            nTextures = fp.ReadInt32 ();
+            signature = fp.ReadUInt32 ();
+            version = fp.ReadUInt32 ();
+            nTextures = fp.ReadUInt32 ();
         }
     }
 
@@ -178,14 +178,14 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        int Read (short index) 
+        new int Read (short index) 
         {
 	        byte[]			rowSize = new byte [4096];
 	        byte[]			rowData = new byte [4096];
-	        PigTextureD1	pigTexD1 = new PigTextureD1;
-	        PigTextureD2    pigTexD2 = new PigTextureD2;
-	        PigHeaderD1		fileHeaderD1 = new PigHeaderD1;
-	        PigHeaderD2	    fileHeaderD2 = new PigHeaderD2;
+	        PigTextureD1	pigTexD1 = new PigTextureD1();
+	        PigTextureD2    pigTexD2 = new PigTextureD2();
+	        PigHeaderD1		fileHeaderD1 = new PigHeaderD1();
+	        PigHeaderD2	    fileHeaderD2 = new PigHeaderD2();
 	        uint			offset,dataOffset;
 	        byte			byteVal, runLength, runValue;
 	        uint			nSize;
@@ -201,7 +201,7 @@ namespace DLE.NET
         if (!folder.Contains (".pig"))
             folder += "groupa.pig";
 
-        byte[] textureTable = (DLE.IsD1File() ? Properties.Resources.tnames : Properties.Resources.tnames2);
+        byte[] textureTable = (DLE.IsD1File() ? Properties.Resources.texture : Properties.Resources.texture2);
 
         using (FileStream fs = File.OpenRead (folder))
             using (BinaryReader fp = new BinaryReader (fs))
@@ -228,7 +228,7 @@ namespace DLE.NET
                     pigTexD1.m_info.name [7] = 0;
 	                // copy d1 texture into d2 texture struct
 	                pigTexD2.m_info = pigTexD1.m_info;
-	                pigTexD2.whExtra = (ushort ((pigTexD1.m_info.dflags == 128) ? 1 : 0);
+	                pigTexD2.whExtra = (ushort) ((pigTexD1.m_info.dflags == 128) ? 1 : 0);
                 }
 
                 nSize = (uint) (pigTexD2.m_info.width * pigTexD2.m_info.height);
