@@ -135,43 +135,53 @@ namespace DLE.NET
             short offset;
         }
 
+        public class ROBOT_GUN_INFO
+        {
+            FixVector points; // where each gun model is
+            byte subModels; // which submodel is each gun in?
+        }
+
+        public class ROBOT_COMBAT_INFO
+        {
+            int field_of_view;      // compare this value with forward_vector.dot.vector_to_player,
+            int firing_wait;	    // time in seconds between shots
+            int firing_wait2;	    // time in seconds between shots
+            int turn_time;	        // time in seconds to rotate 360 degrees in a dimension
+            int max_speed;	        // maximum speed attainable by this robot
+            int circle_distance;    // distance at which robot circles player
+            char rapidfire_count;   // number of shots fired rapidly
+            char evade_speed;	    // rate at which robot can evade shots, 0=none, 4=very fast
+        }
+
         public class ROBOT_INFO
         {
             int model_num;		  // which polygon model?
-            FixVector [] gun_points = new FixVector [MAX_GUNS];	  // where each gun model is
-            byte [] gun_submodels = new byte [MAX_GUNS];  // which submodel is each gun in?
+            ROBOT_GUN_INFO [] gunInfo = new ROBOT_GUN_INFO [MAX_GUNS];
             short exp1_vclip_num;
             short exp1_sound_num;
             short exp2_vclip_num;
             short exp2_sound_num;
             char weapon_type;
             char weapon_type2;		// Secondary weapon number, -1 means none, otherwise gun #0 fires this weapon.
-            char n_guns;			    // how many different gun positions
+            char n_guns;			// how many different gun positions
             char contains_id;		// ID of powerup this robot can contain.
-            char contains_count;		// Max number of things this instance can contain.
+            char contains_count;	// Max number of things this instance can contain.
             char contains_prob;		// Probability that this instance will contain something in N/16
             char contains_type;		// Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
             char kamikaze;		    // !0 means commits suicide when hits you, strength thereof. 0 means no.
             short score_value;		// Score from this robot.
-            char badass;			    // Dies with badass explosion, and strength thereof, 0 means NO.
+            char badass;			// Dies with badass explosion, and strength thereof, 0 means NO.
             char energy_drain;		// Points of energy drained at each collision.
             int lighting;		    // should this be here or with polygon model?
             int strength;		    // Initial shields of robot
             int mass;			    // how heavy is this thing?
             int drag;			    // how much drag does it have?
-            int [] field_of_view = new int [NDL];   // compare this value with forward_vector.dot.vector_to_player,
-            int [] firing_wait = new int [NDL];	    // time in seconds between shots
-            int [] firing_wait2 = new int [NDL];	// time in seconds between shots
-            int [] turn_time = new int [NDL];	    // time in seconds to rotate 360 degrees in a dimension
-            int [] max_speed = new int [NDL];	    // maximum speed attainable by this robot
-            int [] circle_distance = new int [NDL]; // distance at which robot circles player
-            char [] rapidfire_count = new char [NDL];// number of shots fired rapidly
-            char [] evade_speed = new char [NDL];	// rate at which robot can evade shots, 0=none, 4=very fast
-            char cloak_type;		    // 0=never, 1=always, 2=except-when-firing
+            ROBOT_COMBAT_INFO[] combatInfo = new ROBOT_COMBAT_INFO [NDL];
+            char cloak_type;		// 0=never, 1=always, 2=except-when-firing
             char attack_type;		// 0=firing, 1=charge (like green guy)
             byte see_sound;		    // sound robot makes when it first sees the player
             byte attack_sound;		// sound robot makes when it attacks the player
-            byte claw_sound;		    // sound robot makes as it claws you (attack_type should be 1)
+            byte claw_sound;		// sound robot makes as it claws you (attack_type should be 1)
             byte taunt_sound;		// sound robot makes after you die
             char boss_flag;		    // 0 = not boss, 1 = boss.  Is that surprising?
             char companion;		    // Companion robot, leads you to things.
@@ -182,26 +192,16 @@ namespace DLE.NET
             // ..4 = 4/2 pursue up to 4/2 seconds after becoming invisible if up to 4
             // ..segments away
             char lightcast;		    // Amount of light cast. 1 is default.  10 is very large.
-            char death_roll;		    // 0 = dies without death roll. !0 means does death roll, larger = faster and louder
+            char death_roll;		// 0 = dies without death roll. !0 means does death roll, larger = faster and louder
             byte flags;			    // misc properties
-            byte pad1, pad2, pad3;   // alignment
+            byte pad1, pad2, pad3;  // alignment
             byte deathroll_sound;	// if has deathroll, what sound?
             byte glow;			    // apply this light to robot itself. stored as 4:4 FIXed-point
             byte behavior;		    // Default behavior.
             byte aim;			    // 255 = perfect, less = more likely to miss.  0 != random, would look stupid.
-            // ..0=45 degree spread.  Specify in bitmaps.tbl in range 0.0..1.0
-            //animation info
-            JOINTLIST [] [] anim_states = new JOINTLIST [MAX_GUNS + 1] [];
+                                    // 0=45 degree spread.  Specify in bitmaps.tbl in range 0.0..1.0
+            JOINTLIST [,] anim_states = new JOINTLIST [MAX_GUNS + 1, N_ANIM_STATES]; //animation info
             int always_0xabcd;		// debugging
-
-            public ROBOT_INFO ()
-            {
-                for (int i = 0; i < anim_states.Length; i++)
-                {
-                    anim_states [i] = new JOINTLIST [N_ANIM_STATES];
-                }
-            }
-
         }
 
         class JOINTPOS

@@ -9,6 +9,7 @@ namespace DLE.NET
         public short m_count { get; private set; }
         public SideKey [] m_targets = new SideKey [MAX_TARGETS];
 
+        // add a new trigger target
         public short Add (SideKey key)
         {
             if (m_count < m_targets.Length)
@@ -16,11 +17,13 @@ namespace DLE.NET
             return m_count++;
         }
 
+        // add a new trigger target
         public short Add (short nSegment, short nSide)
         {
             return Add (new SideKey (nSegment, nSide));
         }
 
+        // delete trigger target no. i
         short Delete (int i = -1)
         {
             if (i < 0)
@@ -40,13 +43,12 @@ namespace DLE.NET
     #region Trigger
     public partial class Trigger : TargetList
     {
-        byte type;
-        ushort flags;
-        short nObject;
-        char num_links;
-        int value;
-        int time;
-        ushort nIndex;
+        byte m_ntype;
+        ushort m_flags;
+        short m_nObject;
+        int m_value;
+        int m_time;
+        ushort m_nIndex;
     }
     #endregion
 }

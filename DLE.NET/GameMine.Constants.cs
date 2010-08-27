@@ -79,8 +79,6 @@
         public const int MAX_CLIP_FRAMES1 = 20; // Descent 1
         public const int MAX_CLIP_FRAMES2 = 50; // Descent 2
         public const int MAX_STUCK_OBJECTS = 32;
-        public const int MAX_SIDES_PER_SEGMENT = 6;
-        public const int MAX_VERTICES_PER_SEGMENT = 8;
         public const int MAX_AI_FLAGS = 11; // This MUST cause word (4 bytes) alignment in ai_static, allowing for one byte mode 
         public const int MAX_SUBMODELS = 10; // I guessed at this value (BAA) 
 

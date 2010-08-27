@@ -41,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>dle-icon.ico</ApplicationIcon>
@@ -108,6 +110,7 @@
     <Compile Include="EffectTool.Designer.cs">
       <DependentUpon>EffectTool.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameItem.cs" />
     <Compile Include="GameMine.Constants.cs" />
     <Compile Include="GameMine.Convert.cs" />
     <Compile Include="GameMine.cs" />
@@ -157,6 +160,7 @@
     </Compile>
     <Compile Include="Segment.cs" />
     <Compile Include="Segment.Enums.cs" />
+    <Compile Include="Side.cs" />
     <Compile Include="TextureFilters.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -209,6 +213,7 @@
     <Compile Include="TriggerTool.Designer.cs">
       <DependentUpon>TriggerTool.cs</DependentUpon>
     </Compile>
+    <Compile Include="UVL.cs" />
     <Compile Include="Wall.cs" />
     <Compile Include="WallTool.cs">
       <SubType>Form</SubType>
