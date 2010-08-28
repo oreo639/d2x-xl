@@ -150,7 +150,6 @@ public:
 	HPALETTE			m_paletteHandle;
 	CPalette*		m_currentPalette;
 	LPLOGPALETTE	m_dlcLogPalette;
-	textureList		textures;
 	
 	// strings
 	char				message[256];

@@ -85,301 +85,6 @@ free (sysPal);
 return true;
 }
 
-//------------------------------------------------------------------------
-// textureManager.Define ()
-//
-// ACTION - Defines data with texture.  If bitmap_handle != 0,
-//          then data is copied from the global data.  Otherwise,
-//          the pig file defines bmBuf and then global memory
-//          is allocated and the data is copied to the global memory.
-//          The next time that texture is used, the handle will be defined.
-//------------------------------------------------------------------------
-
-int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, int y0) 
-{
-	typedef struct tFrac {
-		int	c, d;
-	} tFrac;
-
-	byte			*ptr;
-	short			nTextures [2], mode, w, h;
-	int			i, x, y, y1, offs, s;
-	tFrac			scale, scale2;
-	int			rc; // return code
-	CTexture*	texP [2];
-	byte			*bmBufP = destTexP->m_info.bmDataP;
-	byte			c;
-	int			fileType = DLE.FileType ();
-
-	
-nTextures [0] = nBaseTex;
-nTextures [1] = nOvlTex & 0x3fff;
-mode = nOvlTex & 0xC000;
-for (i = 0; i < 2; i++) {
-#if 0	
-	ASSERT (textures [i] < MAX_TEXTURES);
-#endif
-if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
-	nTextures [i] = 0;
-	// buffer textures if not already buffered
-	texP [i] = textures [i];
-	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
-		if (rc = texP [i]->Load (nTextures [i]))
-			return rc;
-	}
-	
-	// Define bmBufP based on texture numbers and rotation
-destTexP->m_info.width = texP [0]->m_info.width;
-destTexP->m_info.height = texP [0]->m_info.height;
-destTexP->m_info.size = texP [0]->m_info.size;
-destTexP->m_info.bValid = 1;
-ptr = texP [0]->m_info.bmDataP;
-if (ptr) {
-	// if not rotated, then copy directly
-	if (x0 == 0 && y0 == 0) 
-		memcpy (bmBufP, ptr, texP [0]->m_info.size);
-	else {
-		// otherwise, copy bit by bit
-		w = texP [0]->m_info.width;
-#if 1
-		int	l1 = y0 * w + x0;
-		int	l2 = texP [0]->m_info.size - l1;
-		memcpy (bmBufP, ptr + l1, l2);
-		memcpy (bmBufP + l2, ptr, l1);
-#else
-		byte		*dest = bmBufP;
-		h = w;//texP [0]->m_info.height;
-		for (y = 0; y < h; y++)
-			for (x = 0; x < w; x++)
-				*dest++ = ptr [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
-#endif
-		}
-	}
-
-// Overlay texture 2 if present
-
-if (nTextures [1] == 0)
-	return 0;
-if (!(ptr = texP [1]->m_info.bmDataP))
-	return 0;
-if (texP [0]->m_info.width == texP [1]->m_info.width)
-	scale.c = scale.d = 1;
-else if (texP [0]->m_info.width < texP [1]->m_info.width) {
-	scale.c = texP [1]->m_info.width / texP [0]->m_info.width;
-	scale.d = 1;
-	}
-else if (texP [0]->m_info.width > texP [1]->m_info.width) {
-	scale.d = texP [0]->m_info.width / texP [1]->m_info.width;
-	scale.c = 1;
-	}
-scale2.c = scale.c * scale.c;
-scale2.d = scale.d * scale.d;
-offs = 0;
-w = texP [1]->m_info.width / scale.c * scale.d;
-h = w;//texP [1]->m_info.height / scale.c * scale.d;
-s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
-if (!(x0 || y0)) {
-	byte *dest, *dest2;
-	if (mode == 0x0000) {
-		dest = bmBufP;
-		for (y = 0; y < h; y++)
-			for (x = 0; x < w; x++, dest++) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					*dest = c;
-				}
-		}
-	else if (mode == (short) 0x4000) {
-		dest = bmBufP + h - 1;
-		for (y = 0; y < h; y++, dest--)
-			for (x = 0, dest2 = dest; x < w; x++, dest2 += w) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					*dest2 = c;
-				}
-		}
-	else if (mode == (short) 0x8000) {
-		dest = bmBufP + s - 1;
-		for (y = 0; y < h; y++)
-			for (x = 0; x < w; x++, dest--) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					*dest = c;
-				}
-		}
-	else if (mode == (short) 0xC000) {
-		dest = bmBufP + (h - 1) * w;
-		for (y = 0; y < h; y++, dest++)
-			for (x = 0, dest2 = dest; x < w; x++, dest2 -= w) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					*dest2 = c;
-				}
-		}
-	} 
-else {
-	if (mode == 0x0000) {
-		for (y = 0; y < h; y++) {
-			y1 = ((y + y0) % h) * w;
-			for (x = 0; x < w; x++) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					bmBufP [y1 + (x + x0) % w] = c;
-				}
-			}
-		}
-	else if (mode == (short) 0x4000) {
-		for (y = h - 1; y >= 0; y--)
-			for (x = 0; x < w; x++) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
-				}
-		}
-	else if (mode == (short) 0x8000) {
-		for (y = h - 1; y >= 0; y--) {
-			y1 = ((y + y0) % h) * w;
-			for (x = w - 1; x >= 0; x--) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					bmBufP [y1 + (x + x0) % w] = c;
-				}
-			}
-		}
-	else if (mode == (short) 0xC000) {
-		for (y = 0; y < h; y++)
-			for (x = w - 1; x >= 0; x--) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
-				if (c != 255)
-					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
-				}
-			}
-	}
-return 0;
-}
-
-//------------------------------------------------------------------------------
-// ReadTextureFromFile ()
-//
-// ACTION - defines a bitmap from a descent PIG fp.
-//
-// INPUTS - index:	no. of texture within pig file
-//          fp:	pointer to pig file stream
-//			mode:	bit16/15=position of orgin
-//                  00=upper left   01=upper right
-//                  10=lower right  11=lower left
-//
-// Changes - Y axis flipped to since DIBs have zero in lower left corner
-//------------------------------------------------------------------------
-
-bool CTexture::Allocate (int nSize, int nTexture)
-{
-if (m_info.bmDataP && ((m_info.width * m_info.height != nSize)))
-	Release ();
-if (m_info.bmDataP == NULL)
-	m_info.bmDataP = new byte [nSize];
-return (m_info.bmDataP != NULL);
-}
-
-//------------------------------------------------------------------------
-
-void CTexture::Load (FILE* fp, CPigTexture& info) 
-{
-	byte	rowSize [4096];
-	byte	rowBuf [4096], *rowPtr;
-	byte	byteVal, runLength, runValue;
-
-m_info.nFormat = 0;
-if (info.flags & 0x08) {
-	int nSize = ReadInt32 (fp);
-	ReadBytes (rowSize, info.height, fp);
-	int nRow = 0;
-	for (int y = info.height - 1; y >= 0; y--) {
-		fread (rowBuf, rowSize [nRow++], 1, fp);
-		rowPtr = rowBuf;
-			for (int x = 0; x < info.width; ) {
-			byteVal = *rowPtr++;
-			if ((byteVal & 0xe0) == 0xe0) {
-				runLength = byteVal & 0x1f;
-				runValue = *rowPtr++;
-				for (int j = 0; j < runLength; j++) {
-					if (x < info.width) {
-						m_info.bmDataP [y * info.width + x] = runValue;
-						x++;
-						}
-					}
-				}
-			else {
-				m_info.bmDataP [y * info.width + x] = byteVal;
-				x++;
-				}
-			}
-		}
-	}
-else {
-	for (int y = info.height - 1; y >= 0; y--) {
-		fread (m_info.bmDataP + y * info.width, info.width, 1, fp);
-		}
-	}
-m_info.width = info.width;
-m_info.height = info.height;
-m_info.size = info.BufSize ();
-m_info.bValid = 1;
-}
-
-//------------------------------------------------------------------------
-
-int CTexture::Load (short nTexture) 
-{
-	FILE*		fp = NULL;
-	char		filename [256];
-	int		nVersion = DLE.IsD1File () ? 0 : 1;
-	
-if (m_info.bModified)
-	return 0;
-// do a range check on the texture number
-strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
-if (!strstr (filename, ".pig"))
-	strcat_s (filename, sizeof (filename), "groupa.pig");
-if (fopen_s (&fp, filename, "rb")) {
-	DEBUGMSG (" Reading texture: Texture file not found.");
-	return 1;
-	}
-// read fp header
-fseek (fp, 0, SEEK_SET);
-uint nOffset = ReadUInt32 (fp);
-if (nOffset == 0x47495050) /* 'PPIG' Descent 2 type */
-	nOffset = 0;
-else if (nOffset < 0x10000)
-	nOffset = 0;
-fseek (fp, nOffset, SEEK_SET);
-
-CPigHeader header = textureManager.LoadInfo (fp, nVersion, nOffset);
-CPigTexture& info = textureManager.info [nVersion][nTexture];
-int nSize = info.BufSize ();
-
-if (!Allocate (nSize, nTexture)) {
-	fclose (fp);
-	return 1;
-	}
-fseek (fp, nOffset, SEEK_SET);
-Load (fp, info);
-fclose (fp);
-return 0;
-}
-
-//------------------------------------------------------------------------
-
-double CTexture::Scale (short nTexture)
-{
-if (!m_info.width)
-	if (nTexture < 0)
-		return 1.0;
-	else
-		Load (nTexture);
-return m_info.width ? (double) m_info.width / 64.0 : 1.0;
-}
-
 //------------------------------------------------------------------------------
 
 int RLEExpand (CPigTexture& pigTexInfo, byte *texBuf)
@@ -720,6 +425,7 @@ return true;
 //   omitted since the xsize array defines the length of each line???
 //
 //-----------------------------------------------------------------------------
+
 int CreatePog (FILE *outPigFile) 
 {
 	int rc; // return code;
@@ -790,85 +496,6 @@ return rc;
 }
 
 //------------------------------------------------------------------------
-// Free Texture Handles
-//------------------------------------------------------------------------
-
-void CTextureManager::Release (bool bDeleteModified) 
-{
-  // free any textures that have been buffered
-	int i, j;
-
-for (i = 0; i < 2; i++) {
-	CTexture* texP = textures [i];
-	for (j = MaxTextures (i); j; j--, texP++)
-		if (bDeleteModified || !texP->m_info.bModified)
-			texP->Release ();
-	}
-pExtraTexture p;
-while (extraTextures) {
-	p = extraTextures;
-	extraTextures = p->pNext;
-	delete p;
-	}
-}
-
-//------------------------------------------------------------------------
-
-int CTextureManager::MaxTextures (int nVersion)
-{
-return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_D2_TEXTURES : MAX_D1_TEXTURES;
-}
-
-//------------------------------------------------------------------------
-
-bool CTextureManager::HasCustomTextures (void) 
-{
-CTexture* texP = textures [DLE.FileType ()];
-
-for (int i = MaxTextures (DLE.FileType ()); i; i--, texP++)
-	if (texP->m_info.bModified)
-		return true;
-return false;
-}
-
-//------------------------------------------------------------------------
-
-int CTextureManager::CountCustomTextures (void) 
-{
-	int			count = 0;
-	CTexture*	texP = textures [DLE.FileType ()];
-
-for (int i = MaxTextures (); i; i--, texP++)
-	if (texP->m_info.bModified)
-		count++;
-return count;
-}
-
-//------------------------------------------------------------------------------
-
-bool CTextureManager::Check (int nTexture)
-{
-if ((nTexture >= 0) && (nTexture < MaxTextures ()))
-	return true;
-//sprintf (message, "Reading texture: Texture #" + nTexture + " out of range.");
-//DebugMsg (message);
-return false;
-}
-
-//------------------------------------------------------------------------------
-
-void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
-{
-if (Check (nBaseTex)) {
-   textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
-   if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
-       Check ((ushort)(nOvlTex & 0x1FFF));
-       textures [(int)DLE.FileType ()] [nOvlTex].Load (nBaseTex);
-		}
-   }
-}
-
-//------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
@@ -888,9 +515,6 @@ if (pRGB) {
 }
 
 //------------------------------------------------------------------------
-//
-//------------------------------------------------------------------------
-
 
 BITMAPINFO *MakeBitmap (void) 
 {
@@ -953,7 +577,7 @@ static MyBMI my_bmi;
 	FreeResource (hPalette);
   return bmi;
 }
-// -------------------------------------------------------------------------- 
+
 // -------------------------------------------------------------------------- 
 
 bool PaintTexture (CWnd *pWnd, int bkColor, int nSegment, int nSide, int nBaseTex, int nOvlTex, int xOffset, int yOffset)
@@ -1069,9 +693,201 @@ pWnd->InvalidateRect (NULL, TRUE);
 pWnd->UpdateWindow ();
 return bShowTexture;
 }
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+bool CTexture::Allocate (int nSize, int nTexture)
+{
+if (m_info.bmDataP && ((m_info.width * m_info.height != nSize)))
+	Release ();
+if (m_info.bmDataP == NULL)
+	m_info.bmDataP = new byte [nSize];
+return (m_info.bmDataP != NULL);
+}
+
+//------------------------------------------------------------------------
+
+void CTexture::Load (FILE* fp, CPigTexture& info) 
+{
+	byte	rowSize [4096];
+	byte	rowBuf [4096], *rowPtr;
+	byte	byteVal, runLength, runValue;
+
+m_info.nFormat = 0;
+if (info.flags & 0x08) {
+	int nSize = ReadInt32 (fp);
+	ReadBytes (rowSize, info.height, fp);
+	int nRow = 0;
+	for (int y = info.height - 1; y >= 0; y--) {
+		fread (rowBuf, rowSize [nRow++], 1, fp);
+		rowPtr = rowBuf;
+			for (int x = 0; x < info.width; ) {
+			byteVal = *rowPtr++;
+			if ((byteVal & 0xe0) == 0xe0) {
+				runLength = byteVal & 0x1f;
+				runValue = *rowPtr++;
+				for (int j = 0; j < runLength; j++) {
+					if (x < info.width) {
+						m_info.bmDataP [y * info.width + x] = runValue;
+						x++;
+						}
+					}
+				}
+			else {
+				m_info.bmDataP [y * info.width + x] = byteVal;
+				x++;
+				}
+			}
+		}
+	}
+else {
+	for (int y = info.height - 1; y >= 0; y--) {
+		fread (m_info.bmDataP + y * info.width, info.width, 1, fp);
+		}
+	}
+m_info.width = info.width;
+m_info.height = info.height;
+m_info.size = info.BufSize ();
+m_info.bValid = 1;
+}
+
+//------------------------------------------------------------------------
+
+int CTexture::Load (short nTexture) 
+{
+	FILE*		fp = NULL;
+	char		filename [256];
+	int		nVersion = DLE.IsD1File () ? 0 : 1;
+	
+if (m_info.bModified)
+	return 0;
+// do a range check on the texture number
+strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
+if (!strstr (filename, ".pig"))
+	strcat_s (filename, sizeof (filename), "groupa.pig");
+if (fopen_s (&fp, filename, "rb")) {
+	DEBUGMSG (" Reading texture: Texture file not found.");
+	return 1;
+	}
+// read fp header
+fseek (fp, 0, SEEK_SET);
+uint nOffset = ReadUInt32 (fp);
+if (nOffset == 0x47495050) /* 'PPIG' Descent 2 type */
+	nOffset = 0;
+else if (nOffset < 0x10000)
+	nOffset = 0;
+fseek (fp, nOffset, SEEK_SET);
+
+CPigHeader header = textureManager.LoadInfo (fp, nVersion, nOffset);
+CPigTexture& info = textureManager.info [nVersion][nTexture];
+int nSize = info.BufSize ();
+
+if (!Allocate (nSize, nTexture)) {
+	fclose (fp);
+	return 1;
+	}
+fseek (fp, nOffset, SEEK_SET);
+Load (fp, info);
+fclose (fp);
+return 0;
+}
+
+//------------------------------------------------------------------------
+
+double CTexture::Scale (short nTexture)
+{
+if (!m_info.width)
+	if (nTexture < 0)
+		return 1.0;
+	else
+		Load (nTexture);
+return m_info.width ? (double) m_info.width / 64.0 : 1.0;
+}
+
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
+
+// Free Texture Handles
+
+void CTextureManager::Release (bool bDeleteModified) 
+{
+  // free any textures that have been buffered
+	int i, j;
+
+for (i = 0; i < 2; i++) {
+	CTexture* texP = textures [i];
+	for (j = MaxTextures (i); j; j--, texP++)
+		if (bDeleteModified || !texP->m_info.bModified)
+			texP->Release ();
+	}
+pExtraTexture p;
+while (extraTextures) {
+	p = extraTextures;
+	extraTextures = p->pNext;
+	delete p;
+	}
+}
+
+//------------------------------------------------------------------------
+
+int CTextureManager::MaxTextures (int nVersion)
+{
+return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_D2_TEXTURES : MAX_D1_TEXTURES;
+}
+
+//------------------------------------------------------------------------
+
+bool CTextureManager::HasCustomTextures (void) 
+{
+CTexture* texP = textures [DLE.FileType ()];
+
+for (int i = MaxTextures (DLE.FileType ()); i; i--, texP++)
+	if (texP->m_info.bModified)
+		return true;
+return false;
+}
+
+//------------------------------------------------------------------------
+
+int CTextureManager::CountCustomTextures (void) 
+{
+	int			count = 0;
+	CTexture*	texP = textures [DLE.FileType ()];
+
+for (int i = MaxTextures (); i; i--, texP++)
+	if (texP->m_info.bModified)
+		count++;
+return count;
+}
+
+//------------------------------------------------------------------------------
+
+bool CTextureManager::Check (int nTexture)
+{
+if ((nTexture >= 0) && (nTexture < MaxTextures ()))
+	return true;
+//sprintf (message, "Reading texture: Texture #" + nTexture + " out of range.");
+//DebugMsg (message);
+return false;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
+{
+if (Check (nBaseTex)) {
+   textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
+   if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
+       Check ((ushort)(nOvlTex & 0x1FFF));
+       textures [(int)DLE.FileType ()] [nOvlTex].Load (nBaseTex);
+		}
+   }
+}
+
+//------------------------------------------------------------------------------
 
 int CTextureManager::LoadIndex (int nVersion)
 {
@@ -1116,6 +932,177 @@ return header [nVersion];
 }
 
 //------------------------------------------------------------------------
+// textureManager.Define ()
+//
+// ACTION - Defines data with texture.  If bitmap_handle != 0,
+//          then data is copied from the global data.  Otherwise,
+//          the pig file defines bmBuf and then global memory
+//          is allocated and the data is copied to the global memory.
+//          The next time that texture is used, the handle will be defined.
+//------------------------------------------------------------------------
+
+int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, int y0) 
+{
+	typedef struct tFrac {
+		int	c, d;
+	} tFrac;
+
+	byte			*ptr;
+	short			nTextures [2], mode, w, h;
+	int			i, x, y, y1, offs, s;
+	tFrac			scale, scale2;
+	int			rc; // return code
+	CTexture*	texP [2];
+	byte			*bmBufP = destTexP->m_info.bmDataP;
+	byte			c;
+	int			fileType = DLE.FileType ();
+
+	
+nTextures [0] = nBaseTex;
+nTextures [1] = nOvlTex & 0x3fff;
+mode = nOvlTex & 0xC000;
+for (i = 0; i < 2; i++) {
+#if 0	
+	ASSERT (textures [i] < MAX_TEXTURES);
+#endif
+if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
+	nTextures [i] = 0;
+	// buffer textures if not already buffered
+	texP [i] = textures [i];
+	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
+		if (rc = texP [i]->Load (nTextures [i]))
+			return rc;
+	}
+	
+	// Define bmBufP based on texture numbers and rotation
+destTexP->m_info.width = texP [0]->m_info.width;
+destTexP->m_info.height = texP [0]->m_info.height;
+destTexP->m_info.size = texP [0]->m_info.size;
+destTexP->m_info.bValid = 1;
+ptr = texP [0]->m_info.bmDataP;
+if (ptr) {
+	// if not rotated, then copy directly
+	if (x0 == 0 && y0 == 0) 
+		memcpy (bmBufP, ptr, texP [0]->m_info.size);
+	else {
+		// otherwise, copy bit by bit
+		w = texP [0]->m_info.width;
+#if 1
+		int	l1 = y0 * w + x0;
+		int	l2 = texP [0]->m_info.size - l1;
+		memcpy (bmBufP, ptr + l1, l2);
+		memcpy (bmBufP + l2, ptr, l1);
+#else
+		byte		*dest = bmBufP;
+		h = w;//texP [0]->m_info.height;
+		for (y = 0; y < h; y++)
+			for (x = 0; x < w; x++)
+				*dest++ = ptr [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
+#endif
+		}
+	}
+
+// Overlay texture 2 if present
+
+if (nTextures [1] == 0)
+	return 0;
+if (!(ptr = texP [1]->m_info.bmDataP))
+	return 0;
+if (texP [0]->m_info.width == texP [1]->m_info.width)
+	scale.c = scale.d = 1;
+else if (texP [0]->m_info.width < texP [1]->m_info.width) {
+	scale.c = texP [1]->m_info.width / texP [0]->m_info.width;
+	scale.d = 1;
+	}
+else if (texP [0]->m_info.width > texP [1]->m_info.width) {
+	scale.d = texP [0]->m_info.width / texP [1]->m_info.width;
+	scale.c = 1;
+	}
+scale2.c = scale.c * scale.c;
+scale2.d = scale.d * scale.d;
+offs = 0;
+w = texP [1]->m_info.width / scale.c * scale.d;
+h = w;//texP [1]->m_info.height / scale.c * scale.d;
+s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ / scale2.c * scale2.d;
+if (!(x0 || y0)) {
+	byte *dest, *dest2;
+	if (mode == 0x0000) {
+		dest = bmBufP;
+		for (y = 0; y < h; y++)
+			for (x = 0; x < w; x++, dest++) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					*dest = c;
+				}
+		}
+	else if (mode == (short) 0x4000) {
+		dest = bmBufP + h - 1;
+		for (y = 0; y < h; y++, dest--)
+			for (x = 0, dest2 = dest; x < w; x++, dest2 += w) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					*dest2 = c;
+				}
+		}
+	else if (mode == (short) 0x8000) {
+		dest = bmBufP + s - 1;
+		for (y = 0; y < h; y++)
+			for (x = 0; x < w; x++, dest--) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					*dest = c;
+				}
+		}
+	else if (mode == (short) 0xC000) {
+		dest = bmBufP + (h - 1) * w;
+		for (y = 0; y < h; y++, dest++)
+			for (x = 0, dest2 = dest; x < w; x++, dest2 -= w) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					*dest2 = c;
+				}
+		}
+	} 
+else {
+	if (mode == 0x0000) {
+		for (y = 0; y < h; y++) {
+			y1 = ((y + y0) % h) * w;
+			for (x = 0; x < w; x++) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					bmBufP [y1 + (x + x0) % w] = c;
+				}
+			}
+		}
+	else if (mode == (short) 0x4000) {
+		for (y = h - 1; y >= 0; y--)
+			for (x = 0; x < w; x++) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
+				}
+		}
+	else if (mode == (short) 0x8000) {
+		for (y = h - 1; y >= 0; y--) {
+			y1 = ((y + y0) % h) * w;
+			for (x = w - 1; x >= 0; x--) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					bmBufP [y1 + (x + x0) % w] = c;
+				}
+			}
+		}
+	else if (mode == (short) 0xC000) {
+		for (y = 0; y < h; y++)
+			for (x = w - 1; x >= 0; x--) {
+				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				if (c != 255)
+					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
+				}
+			}
+	}
+return 0;
+}
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
