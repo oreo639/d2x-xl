@@ -255,7 +255,7 @@ BOOL CDlcApp::InitInstance()
 	if (!theMine)
 		theMine = new CMine;
 	theMine->Load ();
-	//memset (theMine->Textures (), 0, sizeof (theMine->Textures ()));
+	//memset (textureManager.Textures (), 0, sizeof (textureManager.Textures ()));
 	TextureView ()->Setup ();
 //	ToolView ()->Setup ();
 	// The one and only window has been initialized, so show and update it.

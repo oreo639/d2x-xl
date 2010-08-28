@@ -169,7 +169,7 @@ wallP->m_info.keys = 0;
 wallP->m_info.controllingTrigger = 0;
 
 // set uvls of new texture
-uint	scale = (uint) theMine->Textures (m_fileType, nTexture)->Scale (nTexture);
+uint	scale = (uint) textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 for (i = 0;i<4;i++) {
 	sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
 	sideP->m_info.uvls [i].v = default_uvls [i].v / scale;

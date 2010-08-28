@@ -703,7 +703,7 @@ UpdateAlignWnd ();
 void CTextureTool::OnAlignStretch2Fit ()
 {
 	CSide*		sideP = theMine->CurrSide ();
-	uint		scale = 1; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
+	uint		scale = 1; //textureManager.Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 	CSegment*	segP;
 	short			nSegment, nSide;
 	int			i;

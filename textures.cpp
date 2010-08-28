@@ -102,7 +102,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	} tFrac;
 
 	byte			*ptr;
-	short			textures [2], mode, w, h;
+	short			nTextures [2], mode, w, h;
 	int			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
 	int			rc; // return code
@@ -112,19 +112,19 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	int			fileType = DLE.FileType ();
 
 	
-	textures [0] = nBaseTex;
-	textures [1] = nOvlTex & 0x3fff;
-	mode     = nOvlTex & 0xC000;
-	for (i = 0; i < 2; i++) {
+nTextures [0] = nBaseTex;
+nTextures [1] = nOvlTex & 0x3fff;
+mode = nOvlTex & 0xC000;
+for (i = 0; i < 2; i++) {
 #if 0	
 	ASSERT (textures [i] < MAX_TEXTURES);
 #endif
-if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
-	textures [i] = 0;
+if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
+	nTextures [i] = 0;
 	// buffer textures if not already buffered
-	texP [i] = theMine->Textures (fileType, textures [i]);
+	texP [i] = textures [i];
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
-		if (rc = texP [i]->Load (textures [i]))
+		if (rc = texP [i]->Load (nTextures [i]))
 			return rc;
 	}
 	
@@ -134,7 +134,6 @@ destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
 ptr = texP [0]->m_info.bmDataP;
-//CBRK (textures [0] == 220);
 if (ptr) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
@@ -159,7 +158,7 @@ if (ptr) {
 
 // Overlay texture 2 if present
 
-if (textures [1] == 0)
+if (nTextures [1] == 0)
 	return 0;
 if (!(ptr = texP [1]->m_info.bmDataP))
 	return 0;
@@ -529,7 +528,7 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 		nBaseTex = 0;
 		}
 	else
-		texP = theMine->Textures (fileType, nBaseTex);
+		texP = textureManager.Textures (1, nBaseTex);
 // allocate memory for texture if not already
 	if (!(ptr = new byte [nSize]))
 		continue;
@@ -727,11 +726,11 @@ int CreatePog (FILE *outPigFile)
 	CPigHeader		pigFileInfo;
 	uint				textureCount = 0, nOffset = 0;
 	ushort*			textureTable;
-	int				i;
+	int				nVersion = DLE.FileType ();
+	int				i, h = textureManager.MaxTextures (nVersion);
 	int				num;
 	pExtraTexture	extraTexP;
 	CTexture*		texP;
-	int				fileType = DLE.FileType ();
 
 if (DLE.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
@@ -748,7 +747,7 @@ sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 pigFileInfo.nId = 0x474f5044L; /* 'DPOG' */
 pigFileInfo.nVersion = 1;
 pigFileInfo.nTextures = 0;
-for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified)
 		pigFileInfo.nTextures++;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
@@ -756,7 +755,7 @@ for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
 fwrite (&pigFileInfo, sizeof (PIG_HEADER_D2), 1, outPigFile);
 
 // write list of textures
-for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified)
 		fwrite (textureTable + i, sizeof (ushort), 1, outPigFile);
 
@@ -765,7 +764,7 @@ for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
 
 // write texture headers
 num = 0;
-for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified)
 		nOffset = WritePogTextureHeader (outPigFile, texP, num++, nOffset);
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext, num++)
@@ -774,11 +773,8 @@ for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext, num++)
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",pigFileInfo.nTextures);
 DEBUGMSG (message);
 
-//-----------------------------------------
-// write textures (non-compressed)
-//-----------------------------------------
 rc = 8;
-for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
+for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified && !WritePogTexture (outPigFile, texP))
 		goto abort;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
@@ -797,14 +793,14 @@ return rc;
 // Free Texture Handles
 //------------------------------------------------------------------------
 
-void FreeTextureHandles (bool bDeleteModified) 
+void CTextureManager::Release (bool bDeleteModified) 
 {
   // free any textures that have been buffered
 	int i, j;
 
 for (i = 0; i < 2; i++) {
-	CTexture* texP = theMine->Textures (i);
-	for (j = MAX_D2_TEXTURES; j; j--, texP++)
+	CTexture* texP = textures [i];
+	for (j = MaxTextures (i); j; j--, texP++)
 		if (bDeleteModified || !texP->m_info.bModified)
 			texP->Release ();
 	}
@@ -816,33 +812,64 @@ while (extraTextures) {
 	}
 }
 
+//------------------------------------------------------------------------
 
-
-BOOL HasCustomTextures () 
+int CTextureManager::MaxTextures (int nVersion)
 {
-CTexture* texP = theMine->Textures (DLE.FileType ());
-
-for (int i = MAX_D2_TEXTURES; i; i--, texP++)
-	if (texP->m_info.bModified)
-		return TRUE;
-return FALSE;
+return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_D2_TEXTURES : MAX_D1_TEXTURES;
 }
 
+//------------------------------------------------------------------------
 
+bool CTextureManager::HasCustomTextures (void) 
+{
+CTexture* texP = textures [DLE.FileType ()];
 
-int CountCustomTextures () 
+for (int i = MaxTextures (DLE.FileType ()); i; i--, texP++)
+	if (texP->m_info.bModified)
+		return true;
+return false;
+}
+
+//------------------------------------------------------------------------
+
+int CTextureManager::CountCustomTextures (void) 
 {
 	int			count = 0;
-	CTexture*	texP = theMine->Textures (DLE.FileType ());
+	CTexture*	texP = textures [DLE.FileType ()];
 
-for (int i = MAX_D2_TEXTURES; i; i--, texP++)
+for (int i = MaxTextures (); i; i--, texP++)
 	if (texP->m_info.bModified)
 		count++;
 return count;
 }
 
+//------------------------------------------------------------------------------
+
+bool CTextureManager::Check (int nTexture)
+{
+if ((nTexture >= 0) && (nTexture < MaxTextures ()))
+	return true;
+//sprintf (message, "Reading texture: Texture #" + nTexture + " out of range.");
+//DebugMsg (message);
+return false;
+}
+
+//------------------------------------------------------------------------------
+
+void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
+{
+if (Check (nBaseTex)) {
+   textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
+   if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
+       Check ((ushort)(nOvlTex & 0x1FFF));
+       textures [(int)DLE.FileType ()] [nOvlTex].Load (nBaseTex);
+		}
+   }
+}
+
 //------------------------------------------------------------------------
-//
+//------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
 void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB)

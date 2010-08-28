@@ -264,13 +264,17 @@ public:
 	CPigHeader header [2];
 	byte bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
 
+	inline CTexture* Textures (int nVersion, int nTexture = 0) { return textures [nVersion] + nTexture; }
+
+	int MaxTextures (int nVersion = -1);
 	int LoadIndex (int nVersion);
 	CPigHeader LoadInfo (FILE* fp, int nVersion, uint nOffset);
-	int MaxTextures (int nVersion);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
-	void Release ();
+	void Release (bool bDeleteModified);
+	bool HasCustomTextures (void);
+	int CountCustomTextures (void);
 
 	CTextureManager() {
 		header [0] = CPigHeader (0);

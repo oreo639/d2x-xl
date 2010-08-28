@@ -132,7 +132,7 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 	delSegP->m_info.wallFlags &= ~MARKED_MASK; 
 
 	// unlink any children with this segment number
-	CTexture* texP = theMine->Textures (m_fileType);
+	CTexture* texP = textureManager.Textures (m_fileType);
 	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (segP->Child (child) == nDelSeg) {
@@ -982,7 +982,7 @@ CSide *sideP = segP->m_sides + nSide;
 sideP->m_info.nBaseTex = 0; 
 sideP->m_info.nOvlTex = 0; 
 CUVL *uvls = sideP->m_info.uvls;
-double scale = theMine->Textures (m_fileType, sideP->m_info.nBaseTex)->Scale (sideP->m_info.nBaseTex);
+double scale = textureManager.Textures (m_fileType, sideP->m_info.nBaseTex)->Scale (sideP->m_info.nBaseTex);
 int i;
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->u = (short) (default_uvls [i].u / scale); 
@@ -2807,7 +2807,7 @@ switch (x) {
 #else
 DLE.SetModified (TRUE); 
 m_sides [nSide].LoadTextures ();
-double scale = 1.0; //theMine->Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
+double scale = 1.0; //textureManager.Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->v = (short) ((y + D2X (E [i].v.x / 640)) / scale); 
 	uvls->u = (short) ((x - D2X (E [i].v.y / 640)) / scale); 
