@@ -281,6 +281,8 @@ public:
 		header [1] = CPigHeader (1);
 		LoadIndex (0);
 		LoadIndex (1);
+		textures [0] = new CTexture [MaxTextures (0)];
+		textures [1] = new CTexture [MaxTextures (0)];
 		}
 
 	~CTextureManager() {
