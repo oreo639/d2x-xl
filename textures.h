@@ -69,7 +69,7 @@ public:
 		}
 
 	void Read (FILE* fp) {
-		if (nVersion == 1) {
+		if (m_nVersion == 1) {
 			nId = ReadInt32 (fp);
 			nVersion = ReadInt32 (fp);
 			nTextures = ReadInt32 (fp);
