@@ -88,11 +88,23 @@ return value;
 // ACTION - Reads a 8 bit word from a file.
 //------------------------------------------------------------------------
 
-char ReadUInt8 (FILE *fp) 
+byte ReadUInt8 (FILE *fp) 
 {
 byte value = 0;
 fread (&value, sizeof (byte), 1, fp);
 return value;
+}
+
+//------------------------------------------------------------------------
+// ReadBytes ()
+//
+// ACTION - Reads a number of 8 bit bytes from a file.
+//------------------------------------------------------------------------
+
+byte* ReadBytes (char* buffer, uint length, FILE *fp) 
+{
+fread (buffer, sizeof (byte), length, fp);
+return buffer;
 }
 
 //------------------------------------------------------------------------
@@ -101,7 +113,7 @@ return value;
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
 
-int WriteInt32 (int value,FILE *fp) 
+int WriteInt32 (int value, FILE *fp) 
 {
 fwrite (&value, sizeof (int), 1, fp);
 return (value);
@@ -113,7 +125,7 @@ return (value);
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
 
-short WriteInt16 (short value,FILE *fp) 
+short WriteInt16 (short value, FILE *fp) 
 {
 fwrite (&value, sizeof (short), 1, fp);
 return (value);
@@ -125,9 +137,45 @@ return (value);
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
 
-char WriteInt8 (char value,FILE *fp) 
+char WriteInt8 (char value, FILE *fp) 
 {
 fwrite (&value, sizeof (char), 1, fp);
+return (value);
+}
+
+//------------------------------------------------------------------------
+// WriteInt32 ()
+//
+// ACTION - Writes a 32 bit word to a file.
+//------------------------------------------------------------------------
+
+int WriteUInt32 (uint value, FILE *fp) 
+{
+fwrite (&value, sizeof (uint), 1, fp);
+return (value);
+}
+
+//------------------------------------------------------------------------
+// WriteInt16 ()
+//
+// ACTION - Writes a 16 bit word to a file.
+//------------------------------------------------------------------------
+
+short WriteuInt16 (ushort value, FILE *fp) 
+{
+fwrite (&value, sizeof (ushort), 1, fp);
+return (value);
+}
+
+//------------------------------------------------------------------------
+// WriteInt8 ()
+//
+// ACTION - Writes a 8 bit word to a file.
+//------------------------------------------------------------------------
+
+char WriteuInt8 (byte value, FILE *fp) 
+{
+fwrite (&value, sizeof (byte), 1, fp);
 return (value);
 }
 
@@ -137,10 +185,22 @@ return (value);
 // ACTION - Writes a double to a file.
 //------------------------------------------------------------------------
 
-double WriteDouble (double value,FILE *fp) 
+double WriteDouble (double value, FILE *fp) 
 {
 fwrite (&value, sizeof (double), 1, fp);
 return (value);
+}
+
+//------------------------------------------------------------------------
+// ReadBytes ()
+//
+// ACTION - Reads a number of 8 bit bytes from a file.
+//------------------------------------------------------------------------
+
+byte* WriteBytes (char* buffer, uint length, FILE *fp) 
+{
+fwrite (buffer, sizeof (byte), length, fp);
+return buffer;
 }
 
                         /*---------------------------*/

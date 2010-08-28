@@ -20,6 +20,8 @@ pExtraTexture	extraTextures = NULL;
 
 byte bmBuf [512 * 512 * 32 * 4];
 
+CTextureManager textureManager;
+
 //------------------------------------------------------------------------
 
 inline int Sqr (int i)
@@ -185,7 +187,7 @@ if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	texP [i] = theMine->Textures (fileType, textures [i]);
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
 		if (rc = texP [i]->Read (textures [i]))
-			return (rc);
+			return rc;
 	}
 	
 	// Define bmBuf based on texture numbers and rotation
@@ -322,10 +324,10 @@ return 0;
 //------------------------------------------------------------------------------
 // ReadTextureFromFile ()
 //
-// ACTION - defines a bitmap from a descent PIG fTextures.
+// ACTION - defines a bitmap from a descent PIG fp.
 //
 // INPUTS - index:	no. of texture within pig file
-//          fTextures:	pointer to pig file stream
+//          fp:	pointer to pig file stream
 //			mode:	bit16/15=position of orgin
 //                  00=upper left   01=upper right
 //                  10=lower right  11=lower left
@@ -335,24 +337,23 @@ return 0;
 
 int CTexture::Read (short index) 
 {
+#if 0
 	byte				rowSize [200];
 	byte				line[320],*line_ptr;
 	byte				j;
-	PIG_TEXTURE		ptexture;
-	D2_PIG_TEXTURE d2_ptexture;
-	PIG_HEADER		file_header;
-	D2_PIG_HEADER	d2FileHeader;
+	PIG_TEXTURE_D1	ptexture;
+	PIG_TEXTURE_D2 d2_ptexture;
+	PIG_HEADER_D1	file_header;
+	PIG_HEADER_D2	pigFileInfo;
 	int				offset,dataOffset;
 	short				x,y,w,h,s;
 	byte				byteVal, runcount, runvalue;
 	int				nSize;
 	short				linenum;
-	HRSRC				hFind = 0;
-	HGLOBAL			hGlobal = 0;
 	short				*textureTable;
 	int				rc;
 	short				*texture_ptr;
-	FILE				*fTextures = NULL;
+	FILE				*fp = NULL;
 	char				path [256];
 	
 if (m_info.bModified)
@@ -370,7 +371,7 @@ if (!strstr (path, ".pig"))
 
 HINSTANCE hInst = AfxGetInstanceHandle ();
 
-// get pointer to texture table from resource fTextures
+// get pointer to texture table from resource fp
 hFind = (DLE.IsD1File ()) ?
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
 	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
@@ -389,45 +390,45 @@ if (!hGlobal) {
 texture_ptr = (short *)LockResource (hGlobal);
 textureTable = texture_ptr + 2;
 
-if (fopen_s (&fTextures, path, "rb")) {
+if (fopen_s (&fp, path, "rb")) {
 	DEBUGMSG (" Reading texture: Texture file not found.");
 	rc = 1;
 	goto abort;
 	}
 
-// read fTextures header
-fseek (fTextures, 0, SEEK_SET);
-dataOffset = ReadInt32 (fTextures);
+// read fp header
+fseek (fp, 0, SEEK_SET);
+dataOffset = ReadInt32 (fp);
 if (dataOffset == 0x47495050L) /* 'PPIG' Descent 2 type */
 	dataOffset = 0;
 else if (dataOffset < 0x10000L)
 	dataOffset = 0;
-fseek (fTextures, dataOffset, SEEK_SET);
+fseek (fp, dataOffset, SEEK_SET);
 if (DLE.IsD2File ())
-	fread (&d2FileHeader, sizeof (d2FileHeader), 1, fTextures);
+	fread (&pigFileInfo, sizeof (pigFileInfo), 1, fp);
 else
-	fread (&file_header, sizeof (file_header), 1, fTextures);
+	fread (&file_header, sizeof (file_header), 1, fp);
 
 // read texture header
 if (DLE.IsD2File ()) {
-	offset = sizeof (D2_PIG_HEADER) + dataOffset + (fix) (textureTable [index]-1) * sizeof (D2_PIG_TEXTURE);
-	fseek (fTextures, offset, SEEK_SET);
-	fread (&d2_ptexture, sizeof (D2_PIG_TEXTURE), 1, fTextures);
-	w = d2_ptexture.xsize + ((d2_ptexture.whExtra & 0xF) << 8);
-	h = d2_ptexture.ysize + ((d2_ptexture.whExtra & 0xF0) << 4);
+	offset = sizeof (PIG_HEADER_D2) + dataOffset + (fix) (textureTable [index]-1) * sizeof (PIG_TEXTURE_D2);
+	fseek (fp, offset, SEEK_SET);
+	fread (&d2_ptexture, sizeof (PIG_TEXTURE_D2), 1, fp);
+	w = d2_ptexture.width + ((d2_ptexture.whExtra & 0xF) << 8);
+	h = d2_ptexture.height + ((d2_ptexture.whExtra & 0xF0) << 4);
 	}
 else {
 	offset = sizeof (PIG_HEADER) + dataOffset + (fix) (textureTable [index] - 1) * sizeof (ptexture);
-	fseek (fTextures, offset, SEEK_SET);
-	fread (&ptexture, sizeof (PIG_TEXTURE), 1, fTextures);
+	fseek (fp, offset, SEEK_SET);
+	fread (&ptexture, sizeof (PIG_TEXTURE_D1), 1, fp);
 	ptexture.name [sizeof (ptexture.name) - 1] = '\0';
 	// copy d1 texture into d2 texture struct
 	strncpy_s (d2_ptexture.name, sizeof (d2_ptexture.name), ptexture.name, sizeof (ptexture.name));
 	d2_ptexture.dflags = ptexture.dflags;
-	d2_ptexture.xsize = ptexture.xsize;
-	d2_ptexture.ysize = ptexture.ysize;
+	d2_ptexture.width = ptexture.width;
+	d2_ptexture.height = ptexture.height;
 	d2_ptexture.flags = ptexture.flags;
-	d2_ptexture.avg_color = ptexture.avg_color;
+	d2_ptexture.avgColor = ptexture.avgColor;
 	d2_ptexture.offset = ptexture.offset;
 	d2_ptexture.whExtra = (ptexture.dflags == 128) ? 1 : 0;
 	w = h = 64;
@@ -436,14 +437,14 @@ s = w * h;
 
 // seek to data
 if (DLE.IsD2File ()) {
-	offset = sizeof (D2_PIG_HEADER) 
+	offset = sizeof (PIG_HEADER_D2) 
 				+ dataOffset
-				+ d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE)
+				+ pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2)
 				+ d2_ptexture.offset;
 	}
 else {
 	offset = sizeof (PIG_HEADER) + dataOffset
-				+ file_header.number_of_textures * sizeof (PIG_TEXTURE)
+				+ file_header.number_of_textures * sizeof (PIG_TEXTURE_D1)
 				+ file_header.number_of_sounds   * sizeof (PIG_SOUND)
 				+ d2_ptexture.offset;
 	}
@@ -458,13 +459,13 @@ if (m_info.bmDataP == NULL) {
 	goto abort;
 	}
 m_info.nFormat = 0;
-fseek (fTextures, offset, SEEK_SET);
+fseek (fp, offset, SEEK_SET);
 if (d2_ptexture.flags & 0x08) {
-	fread (&nSize, 1, sizeof (int), fTextures);
-	fread (rowSize, d2_ptexture.ysize, 1, fTextures);
+	fread (&nSize, 1, sizeof (int), fp);
+	fread (rowSize, d2_ptexture.height, 1, fp);
 	linenum = 0;
 	for (y = h - 1; y >= 0; y--) {
-		fread (line, rowSize [linenum++], 1, fTextures);
+		fread (line, rowSize [linenum++], 1, fp);
 		line_ptr = line;
 			for (x = 0; x < w;) {
 			byteVal = *line_ptr++;
@@ -488,9 +489,9 @@ if (d2_ptexture.flags & 0x08) {
 else {
 	for (y=h-1;y>=0;y--) {
 #if 1
-		fread (m_info.bmDataP + y * w, w, 1, fTextures);
+		fread (m_info.bmDataP + y * w, w, 1, fp);
 #else
-		fread (line,w,1,fTextures);
+		fread (line,w,1,fp);
 		line_ptr = line;
 		for (x=0;x<w;x++) {
 			byteVal = *line_ptr++;
@@ -499,7 +500,7 @@ else {
 #endif
 		}
 	}
-fclose (fTextures);
+fclose (fp);
 m_info.width = w;
 m_info.height = h;
 m_info.size = s;
@@ -510,6 +511,7 @@ abort:
 // free handle
 if (hGlobal) FreeResource (hGlobal);
 return (rc);
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -526,7 +528,7 @@ return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 
 //------------------------------------------------------------------------------
 
-int RLEExpand (D2_PIG_TEXTURE *bmP, byte *texBuf)
+int RLEExpand (CPigTexture& pigTexInfo, byte *texBuf)
 {
 #	define RLE_CODE			0xE0
 #	define NOT_RLE_CODE		31
@@ -535,22 +537,22 @@ int RLEExpand (D2_PIG_TEXTURE *bmP, byte *texBuf)
 
 	byte	*expandBuf, *pSrc, *pDest;
 	byte	c, h;
-	int	i, j, l, bufSize, bBigRLE;
+	int	i, j, l, bBigRLE;
 	ushort nLineSize;
 
-bufSize = bmP->xsize * bmP->ysize;
-if (!(bmP->flags & BM_FLAG_RLE))
-	return bufSize;
+int bufSize = pigTexInfo.BufSize ();
+if (!(pigTexInfo.flags & BM_FLAG_RLE))
+	return (int) bufSize;
 if (!(expandBuf = (byte *) malloc (bufSize)))
 	return -1;
 
-bBigRLE = (bmP->flags & BM_FLAG_RLE_BIG) != 0;
+bBigRLE = (pigTexInfo.flags & BM_FLAG_RLE_BIG) != 0;
 if (bBigRLE)
-	pSrc = texBuf + 4 + 2 * bmP->ysize;
+	pSrc = texBuf + 4 + 2 * pigTexInfo.height;
 else
-	pSrc = texBuf + 4 + bmP->ysize;
+	pSrc = texBuf + 4 + pigTexInfo.height;
 pDest = expandBuf;
-for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
+for (i = 0; i < pigTexInfo.height; i++, pSrc += nLineSize) {
 	if (bBigRLE)
 		nLineSize = *((ushort *) (texBuf + 4 + 2 * i));
 	else
@@ -578,7 +580,7 @@ for (i = 0; i < bmP->ysize; i++, pSrc += nLineSize) {
 	}
 l = (int) (pDest - expandBuf);
 memcpy (texBuf, expandBuf, l);
-bmP->flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
+pigTexInfo.flags &= ~(BM_FLAG_RLE | BM_FLAG_RLE_BIG);
 free (expandBuf);
 return l;
 }
@@ -587,79 +589,60 @@ return l;
 // ReadPog ()
 //-----------------------------------------------------------------------------
 
-int ReadPog (FILE *fTextures, uint nFileSize) 
+int ReadPog (FILE *fp, uint nFileSize) 
 {
-	D2_PIG_HEADER	d2FileHeader;
-	D2_PIG_TEXTURE d2texture;
+	CPigHeader		pigFileInfo (2);
+	CPigTexture		pigTexInfo (2);
 
 	HRSRC				hFind = 0;
 	HGLOBAL			hGlobal = 0;
-	uint*			textureCount = 0;
+	uint*				textureCount = 0;
 	ushort*			textureTable;
 	ushort			nBaseTex;
 	ushort*			xlatTbl = NULL;
-	int				tWidth, tHeight, tSize;
-	uint			offset, hdrOffset, bmpOffset, hdrSize, xlatTblSize;
+	uint				nSize;
+	uint				offset, hdrOffset, bmpOffset, hdrSize, pigTexIndex;
 	int				rc; // return code;
 	int				nTexture;
-	byte*			ptr;
+	byte*				ptr;
 	int				row;
 	ushort			nUnknownTextures, nMissingTextures;
 	bool				bExtraTexture;
 	CTexture*		texP;
 	int				fileType = DLE.FileType ();
 
-// make sure this is descent 2 fTextures
+// make sure this is descent 2 fp
 if (DLE.IsD1File ()) {
 	INFOMSG (" Descent 1 does not support custom textures.");
 	return 1;
 	}
 
-//--------------------------------------------------------------------
-// first open the texture table
-//--------------------------------------------------------------------
-// get pointer to texture table from resource fTextures
-//	hFind	 = FindResource (hInst,"TEXTURE_DATA2", "RC_DATA");
-hFind = FindResource (hInst, MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
-if (!hFind) {
-	DEBUGMSG (" POG manager: Texture resource not found.");
-	return 2;
-	goto abort;
-	}
-hGlobal = LoadResource (hInst, hFind);
-if (!hGlobal) {
-	DEBUGMSG (" POG manager: Could not load texture resource from pog file.");
-	rc = 3;
-	goto abort;
-	}
-textureCount = (uint *)LockResource (hGlobal);
-textureTable = (ushort *) (textureCount + 1);     // first long is number of textures
+textureTable = textureManager.index [1];     // first long is number of textures
 
 // read file header
-fread (&d2FileHeader, sizeof (D2_PIG_HEADER), 1, fTextures);
-if (d2FileHeader.signature != 0x474f5044L) {  // 'DPOG'
+pigFileInfo.Read (fp);
+if (pigFileInfo.nId != 0x474f5044L) {  // 'DPOG'
 	ErrorMsg ("Invalid pog file - reading from hog file");
 	rc = 4;
 	goto abort;
 	}
 FreeTextureHandles ();
-sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures",d2FileHeader.textureCount);
+sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures",pigFileInfo.nTextures);
 DEBUGMSG (message);
-xlatTbl = new ushort [d2FileHeader.textureCount];
-if (!xlatTbl) {
+if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {
 	rc = 5;
 	goto abort;
 	}
-xlatTblSize = d2FileHeader.textureCount * sizeof (ushort);
-offset = ftell (fTextures);
-fread (xlatTbl, xlatTblSize, 1, fTextures);
+pigTexIndex = pigFileInfo.nTextures * sizeof (ushort);
+offset = ftell (fp);
+fread (xlatTbl, pigTexIndex, 1, fp);
 // loop for each custom texture
 nUnknownTextures = 0;
 nMissingTextures = 0;
-hdrOffset = offset + xlatTblSize;
-hdrSize = xlatTblSize + d2FileHeader.textureCount * sizeof (D2_PIG_TEXTURE);
+hdrOffset = offset + pigTexIndex;
+hdrSize = pigTexIndex + pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2);
 bmpOffset = offset + hdrSize;
-for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
+for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	// read texture index
 	ushort textureIndex = xlatTbl [nTexture];
 	// look it up in the list of textures
@@ -669,19 +652,11 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 	bExtraTexture = (nBaseTex >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
 #if 1
-	fseek (fTextures, hdrOffset + nTexture * sizeof (D2_PIG_TEXTURE), SEEK_SET);
+	fseek (fp, hdrOffset + nTexture * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 #endif
-	if (fread (&d2texture, sizeof (D2_PIG_TEXTURE), 1, fTextures) != 1)
-		break;
-	tWidth = d2texture.xsize + ((d2texture.whExtra & 0xF) << 8);
-	if ((d2texture.flags & 0x80) && (tWidth > 256))
-		tHeight = (int) d2texture.ysize * tWidth;
-	else
-		tHeight = d2texture.ysize + ((d2texture.whExtra & 0xF0) << 4);
-//	if (tWidth != 512 || tHeight != 512)
-//		continue;
-	tSize = tWidth * tHeight;
-	if (hdrSize + d2texture.offset + tSize >= nFileSize) {
+	pigTexInfo.Read (fp);
+	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
+	if (hdrSize + pigTexInfo.offset + nSize >= nFileSize) {
 		nMissingTextures++;
 		continue;
 		}
@@ -701,13 +676,13 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 	else
 		texP = theMine->Textures (fileType, nBaseTex);
 // allocate memory for texture if not already
-	if (!(ptr = new byte [tSize]))
+	if (!(ptr = new byte [nSize]))
 		continue;
 	if (!bExtraTexture)
 		texP->Release ();
 	texP->m_info.bmDataP = ptr;
-	if (d2texture.flags & 0x80) {
-		ptr = new byte [tSize * sizeof (tRGBA)];
+	if (pigTexInfo.flags & 0x80) {
+		ptr = new byte [nSize * sizeof (tRGBA)];
 		if (ptr) {
 			texP->m_info.tgaDataP = (tRGBA *) ptr;
 			texP->m_info.nFormat = 1;
@@ -719,29 +694,29 @@ for (nTexture = 0; nTexture < d2FileHeader.textureCount; nTexture++) {
 		}
 	else
 		texP->m_info.nFormat = 0;
-	texP->m_info.width = tWidth;
-	texP->m_info.height = tHeight;
-	texP->m_info.size = tSize;
+	texP->m_info.width = pigTexInfo.width;
+	texP->m_info.height = pigTexInfo.height;
+	texP->m_info.size = nSize;
 	texP->m_info.bValid = 1;
 	// read texture into memory (assume non-compressed)
 #if 1
-	fseek (fTextures, bmpOffset + d2texture.offset, SEEK_SET);
+	fseek (fp, bmpOffset + pigTexInfo.offset, SEEK_SET);
 #endif
 	if (texP->m_info.nFormat) {
-		fread (ptr, texP->m_info.size * sizeof (tRGBA), 1, fTextures);
+		fread (ptr, texP->m_info.size * sizeof (tRGBA), 1, fp);
 		texP->m_info.bValid = 
-			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) tWidth, (int) tHeight);
+			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
 		}
 	else {
-		if (d2texture.flags & BM_FLAG_RLE) {
-			fread (ptr, tSize, 1, fTextures);
-			RLEExpand (&d2texture, ptr);
+		if (pigTexInfo.flags & BM_FLAG_RLE) {
+			fread (ptr, nSize, 1, fp);
+			RLEExpand (pigTexInfo, ptr);
 			}
 		else {
-			byte *p = ptr + tWidth * (tHeight - 1); // point to last row of bitmap
-			for (row = 0; row < tHeight; row++) {
-				fread (p, tWidth, 1, fTextures);
-				p -= tWidth;
+			byte *p = ptr + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
+			for (row = 0; row < pigTexInfo.height; row++) {
+				fread (p, pigTexInfo.width, 1, fp);
+				p -= pigTexInfo.width;
 				}
 			}
 		}
@@ -772,55 +747,61 @@ return rc;
 
 //-----------------------------------------------------------------------------
 
-void WritePogTextureHeader (FILE *pDestPigFile, CTexture *pTexture, int nTexture, uint& nOffset)
+uint WritePogTextureHeader (FILE* fp, CTexture *texP, int nTexture, uint nOffset)
 {
-	D2_PIG_TEXTURE d2texture;
+	CPigTexture pigTexInfo (1);
 	byte *pSrc;
 
-sprintf_s (d2texture.name, sizeof (d2texture.name), "new%04d", nTexture);
-d2texture.dflags = 0;
-d2texture.flags = pTexture->m_info.nFormat ? 0x80 : 0;
-d2texture.xsize = pTexture->m_info.width % 256;
-if ((d2texture.flags & 0x80) && (pTexture->m_info.width > 256)) {
-	d2texture.whExtra = (pTexture->m_info.width >> 8);
-	d2texture.ysize = pTexture->m_info.height / pTexture->m_info.width;
+sprintf_s (pigTexInfo.name, sizeof (pigTexInfo.name), "new%04d", nTexture);
+#if 1
+pigTexInfo.Setup (1, texP->m_info.nFormat ? 0x80 : 0, texP->m_info.width, texP->m_info.height, nOffset);
+#else
+pigTexInfo.dflags = 0;
+pigTexInfo.flags = texP->m_info.nFormat ? 0x80 : 0;
+pigTexInfo.width =  % 256;
+if ((pigTexInfo.flags & 0x80) && (texP->m_info.width > 256)) {
+	pigTexInfo.whExtra = (texP->m_info.width >> 8);
+	pigTexInfo.height = texP->m_info.height / texP->m_info.width;
 	}
 else {
-	d2texture.ysize = pTexture->m_info.height % 256;
-	d2texture.whExtra = (pTexture->m_info.width >> 8) | ((pTexture->m_info.height >> 4) & 0xF0);
+	pigTexInfo.height = texP->m_info.height % 256;
+	pigTexInfo.whExtra = (texP->m_info.width >> 8) | ((texP->m_info.height >> 4) & 0xF0);
 	}
-d2texture.avg_color = 0;
-d2texture.offset = nOffset;
-nOffset += (d2texture.flags & 0x80) ? pTexture->m_info.size * 4: pTexture->m_info.size;
+pigTexInfo.avgColor = 0;
+pigTexInfo.offset = nOffset;
+#endif
+
+nOffset += texP->m_info.nFormat ? texP->m_info.size * 4 : texP->m_info.size;
 
 // check for transparency and super transparency
-if (!pTexture->m_info.nFormat)
-	if (pSrc = (byte *) pTexture->m_info.bmDataP) {
+if (!texP->m_info.nFormat)
+	if (pSrc = (byte *) texP->m_info.bmDataP) {
 		uint j;
-		for (j = 0; j < pTexture->m_info.size; j++, pSrc++) {
+		for (j = 0; j < texP->m_info.size; j++, pSrc++) {
 			if (*pSrc == 255) 
-				d2texture.flags |= BM_FLAG_TRANSPARENT;
+				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
 			if (*pSrc == 254) 
-				d2texture.flags |= BM_FLAG_SUPER_TRANSPARENT;
+				pigTexInfo.flags |= BM_FLAG_SUPER_TRANSPARENT;
 			}
 	}
-fwrite (&d2texture, sizeof (D2_PIG_TEXTURE), 1, pDestPigFile);
+pigTexInfo.Write (fp);
+return nOffset;
 }
 
 //-----------------------------------------------------------------------------
 
-bool WritePogTexture (FILE *pDestPigFile, CTexture *pTexture)
+bool WritePogTexture (FILE *pDestPigFile, CTexture *texP)
 {
-	byte		*pSrc = pTexture->m_info.nFormat ? (byte*) pTexture->m_info.tgaDataP : pTexture->m_info.bmDataP;
+	byte		*pSrc = texP->m_info.nFormat ? (byte*) texP->m_info.tgaDataP : texP->m_info.bmDataP;
 
 if (!pSrc) {
 	DEBUGMSG (" POG manager: Couldn't lock texture data.");
 	return false;
 	}
-if (pTexture->m_info.nFormat) {
+if (texP->m_info.nFormat) {
 #if 0
-	int w = pTexture->m_info.width;
-	int h = pTexture->m_info.height;
+	int w = texP->m_info.width;
+	int h = texP->m_info.height;
 	tBGRA	bgra;
 
 	pSrc += w * (h - 1) * 4;
@@ -836,12 +817,12 @@ if (pTexture->m_info.nFormat) {
 		pSrc -= 2 * w * 4;
 		}
 #else
-	fwrite (pSrc, pTexture->m_info.width * pTexture->m_info.height * sizeof (tRGBA), 1, pDestPigFile);
+	fwrite (pSrc, texP->m_info.width * texP->m_info.height * sizeof (tRGBA), 1, pDestPigFile);
 #endif
 	}
 else {
-	ushort w = pTexture->m_info.width;
-	ushort h = pTexture->m_info.height;
+	ushort w = texP->m_info.width;
+	ushort h = texP->m_info.height;
 	pSrc += w * (h - 1); // point to last row of bitmap
 	int row;
 	for (row = 0; row < h; row++) {
@@ -855,7 +836,7 @@ return true;
 //-----------------------------------------------------------------------------
 // CreatePog ()
 //
-// Action - Creates a POG fTextures from all the changed textures
+// Action - Creates a POG fp from all the changed textures
 //
 // Format:
 //   Pig Header
@@ -888,16 +869,14 @@ return true;
 int CreatePog (FILE *outPigFile) 
 {
 	int rc; // return code;
-	D2_PIG_HEADER d2FileHeader;
-	HRSRC hFind = 0;
-	HGLOBAL hGlobal = 0;
-	uint *textureCount = 0, nOffset = 0;
-	ushort *textureTable;
-	int i;
-	int num;
+	CPigHeader		pigFileInfo;
+	uint				textureCount = 0, nOffset = 0;
+	ushort*			textureTable;
+	int				i;
+	int				num;
 	pExtraTexture	extraTexP;
-	CTexture* texP;
-	int	fileType = DLE.FileType ();
+	CTexture*		texP;
+	int				fileType = DLE.FileType ();
 
 if (DLE.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
@@ -905,37 +884,21 @@ if (DLE.IsD1File ()) {
 	goto abort;
 	}
 
-//--------------------------------------------------------------------
-// first open the texture table
-//--------------------------------------------------------------------
-// get pointer to texture table from resource fTextures
-hFind   = FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
-if (!hFind) {
-	DEBUGMSG (" Reading texture: Texture resource not found.");
-	rc = 5;
-	goto abort;
-	}
-hGlobal = LoadResource (hInst, hFind);
-if (!hGlobal) {
-	DEBUGMSG (" Pog manager: Could not load texture resource.");
-	rc = 6;
-	goto abort;
-	}
-textureCount = (uint *)LockResource (hGlobal);
-textureTable = (ushort *) (textureCount + 1);     // first long is number of textures
+textureCount = textureManager.nTextures [1];
+textureTable = textureManager.index [1];
 
 sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 
 // write file  header
-d2FileHeader.signature    = 0x474f5044L; /* 'DPOG' */
-d2FileHeader.version      = 0x00000001L;
-d2FileHeader.textureCount = 0;
+pigFileInfo.nId = 0x474f5044L; /* 'DPOG' */
+pigFileInfo.nVersion = 1;
+pigFileInfo.nTextures = 0;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_info.bModified)
-		d2FileHeader.textureCount++;
+		pigFileInfo.nTextures++;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
-	d2FileHeader.textureCount++;
-fwrite (&d2FileHeader, sizeof (D2_PIG_HEADER), 1, outPigFile);
+	pigFileInfo.nTextures++;
+fwrite (&pigFileInfo, sizeof (PIG_HEADER_D2), 1, outPigFile);
 
 // write list of textures
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
@@ -949,11 +912,11 @@ for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext)
 num = 0;
 for (i = 0, texP = theMine->Textures (fileType); i < MAX_D2_TEXTURES; i++, texP++)
 	if (texP->m_info.bModified)
-		WritePogTextureHeader (outPigFile, texP, num++, nOffset);
+		nOffset = WritePogTextureHeader (outPigFile, texP, num++, nOffset);
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->pNext, num++)
-	WritePogTextureHeader (outPigFile, &extraTexP->texture, num, nOffset);
+	nOffset = WritePogTextureHeader (outPigFile, &extraTexP->texture, num, nOffset);
 
-sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",d2FileHeader.textureCount);
+sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",pigFileInfo.nTextures);
 DEBUGMSG (message);
 
 //-----------------------------------------
@@ -972,10 +935,6 @@ rc = 0; // return success
 abort:
 if (outPigFile) 
 	fclose (outPigFile);
-if (textureCount) 
-	GlobalUnlock (hGlobal);  // no need to unlock it but what the heck
-if (hGlobal) 
-	FreeResource (hGlobal);
 return rc;
 }
 
@@ -1129,7 +1088,7 @@ if (!pDC)
 
 	HINSTANCE	hInst = AfxGetApp ()->m_hInstance;
 	CBitmap		bmTexture;
-	FILE			*fTextures = NULL;
+	FILE			*fp = NULL;
 	char			szFile [256];
 	BITMAP		bm;
 	CDC			memDC;
@@ -1164,12 +1123,12 @@ if (bShowTexture) {
 	// check pig file
 	if (dataOffset [bDescent1] == 0) {
 		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descent_path : descent2_path);
-		if (fopen_s (&fTextures, szFile, "rb"))
+		if (fopen_s (&fp, szFile, "rb"))
 			dataOffset [bDescent1] = -1;  // pig file not found
 		else {
-			fseek (fTextures, 0, SEEK_SET);
-			dataOffset [bDescent1] = ReadInt32 (fTextures);  // determine type of pig file
-			fclose (fTextures);
+			fseek (fp, 0, SEEK_SET);
+			dataOffset [bDescent1] = ReadInt32 (fp);  // determine type of pig file
+			fclose (fp);
 			}
 		}
 	if (dataOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
@@ -1228,4 +1187,56 @@ pWnd->InvalidateRect (NULL, TRUE);
 pWnd->UpdateWindow ();
 return bShowTexture;
 }
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+int CTextureManager::LoadIndex (int nVersion)
+{
+HINSTANCE hInst = AfxGetInstanceHandle ();
+HRSRC hRes = FindResource (hInst, MAKEINTRESOURCE (DLE.IsD1File () ? IDR_TEXTURE_DAT : IDR_TEXTURE2_DAT), "RC_DATA");
+if (!hRes) {
+	DEBUGMSG (" Reading texture: Texture index not found.");
+	return 1;
+	}
+HGLOBAL hGlobal = LoadResource (hInst, hRes);
+if (!hGlobal) {
+	DEBUGMSG (" Reading texture: Could not load texture index.");
+	return 2;
+	}
+// first long is number of textures
+ushort* indexP = (ushort *) LockResource (hGlobal);
+nTextures [nVersion] = *((uint*) indexP);
+indexP += 2;
+if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
+	FreeResource (hGlobal);
+	DEBUGMSG (" Reading texture: Could not allocate texture index.");
+	return 3;
+	}
+for (uint i = 0; i < nTextures [nVersion]; i++)
+	index [nVersion][i] = *indexP++;
+FreeResource (hGlobal);
+return 0;
+}
+
+//------------------------------------------------------------------------------
+
+CPigHeader CTextureManager::LoadInfo (FILE* fp, int nVersion, uint dataOffset)
+{
+if (info [nVersion] == NULL) {
+    fseek (fp, dataOffset, SEEK_SET);
+    header [nVersion].Read (fp);
+    info [nVersion] = new CPigTexture [header [nVersion].nTextures];
+    for (int i = 0; i < header [nVersion].nTextures; i++)
+        info [nVersion][i].Read (fp);
+   }
+return header [nVersion];
+}
+
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
 //eof textures.cpp

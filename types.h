@@ -577,48 +577,6 @@ public:
 };
 
 
-/* pig file types */
-typedef struct {
-  int number_of_textures;
-  int number_of_sounds;
-} PIG_HEADER;
-
-typedef struct {
-  char name[8];
-  byte dflags; /* this is only important for large bitmaps like the cockpit */
-  byte xsize;
-  byte ysize;
-  byte flags;
-  byte avg_color;
-  uint offset;
-} PIG_TEXTURE;
-
-typedef struct {
-  int signature;
-  int version;
-  int textureCount;
-} D2_PIG_HEADER;
-
-typedef struct {
-  char name[8];
-  byte dflags;  // bits 0-5 anim frame num, bit 6 abm flag
-  byte xsize;   // low 8 bits here, 4 more bits in pad
-  byte ysize;   // low 8 bits here, 4 more bits in pad
-  byte whExtra;     // bits 0-3 xsize, bits 4-7 ysize
-  byte flags;   // see BM_FLAG_XXX in define.h
-  byte avg_color;   // average color
-  uint offset;
-} D2_PIG_TEXTURE;
-
-typedef struct {
-  byte unknown[20];
-} PIG_SOUND;
-
-typedef struct {
-  char name[8];
-  short number;
-} TEXTURE;
-
 typedef struct tFlickeringLight {
 	uint mask;    // bits with 1 = on, 0 = off
 	fix timer;		 // always set to 0
