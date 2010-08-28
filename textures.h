@@ -260,6 +260,7 @@ public:
 	uint nTextures [2];
 	CTexture* textures [2];
 	ushort* index [2];
+	uint nOffsets [2];
 	CPigTexture* info [2];
 	CPigHeader header [2];
 	byte bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
