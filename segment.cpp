@@ -1930,9 +1930,7 @@ void CMine::LoadSideTextures (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 CSide	*sideP = Segments (nSegment)->m_sides + nSide;
-theMine->Textures (m_fileType, sideP->m_info.nBaseTex)->Read (sideP->m_info.nBaseTex);
-if ((sideP->m_info.nOvlTex & 0x3fff) > 0)
-	theMine->Textures (m_fileType, sideP->m_info.nOvlTex & 0x3fff)->Read (sideP->m_info.nOvlTex & 0x3fff);
+textureManager.Load (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex);
 }
 
 // ------------------------------------------------------------------------ 
@@ -2874,9 +2872,7 @@ for (int i = 0; i < 4; i++)
 
 void CSide::LoadTextures (void)
 {
-theMine->Textures (theMine->m_fileType, m_info.nBaseTex)->Read (m_info.nBaseTex);
-if ((m_info.nOvlTex & 0x3fff) > 0)
-	theMine->Textures (theMine->m_fileType, m_info.nOvlTex & 0x3fff)->Read (m_info.nOvlTex & 0x3fff);
+textureManager.Load (m_info.nBaseTex, m_info.nOvlTex);
 }
 
 // ------------------------------------------------------------------------

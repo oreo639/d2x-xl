@@ -60,7 +60,7 @@ class CTextureEdit : public CDialog
 		CDC			*m_pDC;
 		CWnd			*m_pPaintWnd;
 		CPalette		*m_pOldPal;
-		CTexture	*m_pTx;
+		CTexture	*m_texP;
 		uint		m_nWidth,
 						m_nHeight,
 						m_nSize,

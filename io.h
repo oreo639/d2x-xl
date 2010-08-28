@@ -5,9 +5,9 @@ double ReadDouble (FILE *fp);
 int ReadInt32 (FILE *fp);
 short ReadInt16 (FILE *fp);
 char ReadInt8 (FILE *fp);
-int ReadUInt32 (FILE *fp);
-short ReadUInt16 (FILE *fp);
-char ReadUInt8 (FILE *fp);
+uint ReadUInt32 (FILE *fp);
+ushort ReadUInt16 (FILE *fp);
+byte ReadUInt8 (FILE *fp);
 
 byte* ReadBytes (void* buffer, uint length, FILE *fp);
 
@@ -17,9 +17,9 @@ byte* ReadBytes (void* buffer, uint length, FILE *fp);
 int WriteInt32 (uint value, FILE *fp);
 short WriteInt16 (short value, FILE *fp);
 char WriteInt8 (char value, FILE *fp);
-int WriteUInt32 (uint value, FILE *fp);
-short WriteUInt16 (ushort value, FILE *fp);
-char WriteUInt8 (byte value, FILE *fp);
+uint WriteUInt32 (uint value, FILE *fp);
+ushort WriteUInt16 (ushort value, FILE *fp);
+byte WriteUInt8 (byte value, FILE *fp);
 byte* WriteBytes (void* buffer, uint length, FILE *fp);
 
 #define WriteFix(_value, _fp)		WriteInt32 ((int) (_value), _fp)

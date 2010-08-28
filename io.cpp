@@ -116,7 +116,7 @@ return buffer;
 int WriteInt32 (int value, FILE *fp) 
 {
 fwrite (&value, sizeof (int), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
@@ -128,7 +128,7 @@ return (value);
 short WriteInt16 (short value, FILE *fp) 
 {
 fwrite (&value, sizeof (short), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
@@ -140,7 +140,7 @@ return (value);
 char WriteInt8 (char value, FILE *fp) 
 {
 fwrite (&value, sizeof (char), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
@@ -152,7 +152,7 @@ return (value);
 int WriteUInt32 (uint value, FILE *fp) 
 {
 fwrite (&value, sizeof (uint), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
@@ -164,7 +164,7 @@ return (value);
 short WriteuInt16 (ushort value, FILE *fp) 
 {
 fwrite (&value, sizeof (ushort), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
@@ -176,7 +176,7 @@ return (value);
 char WriteuInt8 (byte value, FILE *fp) 
 {
 fwrite (&value, sizeof (byte), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
@@ -188,7 +188,7 @@ return (value);
 double WriteDouble (double value, FILE *fp) 
 {
 fwrite (&value, sizeof (double), 1, fp);
-return (value);
+return value;
 }
 
 //------------------------------------------------------------------------
