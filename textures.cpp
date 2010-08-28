@@ -810,16 +810,24 @@ return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// Free Texture Handles
+CTextureManager::Setup (void)
+{
+header [0] = CPigHeader (0);
+header [1] = CPigHeader (1);
+LoadIndex (0);
+LoadIndex (1);
+textures [0] = new CTexture [MaxTextures (0)];
+textures [1] = new CTexture [MaxTextures (1)];
+}
+
+//------------------------------------------------------------------------
 
 void CTextureManager::Release (bool bDeleteModified) 
 {
-  // free any textures that have been buffered
-	int i, j;
-
-for (i = 0; i < 2; i++) {
+// free any textures that have been buffered
+for (int i = 0; i < 2; i++) {
 	CTexture* texP = textures [i];
-	for (j = MaxTextures (i); j; j--, texP++)
+	for (int j = MaxTextures (i); j; j--, texP++)
 		if (bDeleteModified || !texP->m_info.bModified)
 			texP->Release ();
 	}

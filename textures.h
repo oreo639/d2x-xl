@@ -278,14 +278,7 @@ public:
 
 	CTextureManager() {}
 	
-	void Setup (void) {
-		header [0] = CPigHeader (0);
-		header [1] = CPigHeader (1);
-		LoadIndex (0);
-		LoadIndex (1);
-		textures [0] = new CTexture [MaxTextures (0)];
-		textures [1] = new CTexture [MaxTextures (0)];
-		}
+	void Setup (void);
 
 	~CTextureManager() {
 		for (int i = 0; i < 2; i++) {
