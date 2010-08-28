@@ -758,7 +758,6 @@ m_info.bValid = 1;
 int CTexture::Load (short nTexture) 
 {
 	FILE*		fp = NULL;
-	char		filename [256];
 	int		nVersion = DLE.IsD1File () ? 0 : 1;
 	uint		nOffset;
 	
@@ -783,7 +782,7 @@ if (!Allocate (nSize, nTexture)) {
 	fclose (fp);
 	return 1;
 	}
-fseek (fp, nOffsets [nVersion] + info.offset, SEEK_SET);
+fseek (fp, textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (fp, info);
 fclose (fp);
 return 0;
@@ -839,13 +838,14 @@ while (extraTextures) {
 FILE* CTextureManager::OpenFile (uint& nOffset)
 {
 	FILE* fp = NULL;
+	char	filename [256];
 
 strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fopen_s (&fp, filename, "rb")) {
 	DEBUGMSG (" Reading texture: Texture file not found.");
-	return null;
+	return NULL;
 	}
 fseek (fp, 0, SEEK_SET);
 nOffset = ReadUInt32 (fp);
@@ -895,7 +895,7 @@ bool CTextureManager::Check (int nTexture)
 {
 if ((nTexture >= 0) && (nTexture < MaxTextures ()))
 	return true;
-sprintf (message, "Reading texture: Texture #" + nTexture + " out of range.");
+sprintf_s (message, sizeof (message), "Reading texture: Texture #%d out of range.", nTexture);
 DEBUGMSG (message);
 return false;
 }
