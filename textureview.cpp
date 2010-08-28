@@ -476,7 +476,7 @@ if (!theMine) return;
   // figure out position of current texture
   int nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
   int nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
-  CTexture tx (bmBuf);
+  CTexture tex (textureManager.bmBuf);
 
 	CDC *pDC = GetDC();
 	if (!pDC) {
@@ -500,12 +500,12 @@ if (!theMine) return;
 			}
 		if (nOffset &&	--nOffset)
 			continue;
-		if (!DefineTexture (m_mapViewToTxt [i], 0, &tx, 0, 0)) {
-			bmi->bmiHeader.biWidth = tx.m_info.width;
-			bmi->bmiHeader.biHeight = tx.m_info.width;
+		if (!textureManager.Define (m_mapViewToTxt [i], 0, &tex, 0, 0)) {
+			bmi->bmiHeader.biWidth = tex.m_info.width;
+			bmi->bmiHeader.biHeight = tex.m_info.width;
 			StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
-								m_iconSize.cx, m_iconSize.cy, 0, 0, tx.m_info.width, tx.m_info.width, 
-								(void *)tx.m_info.bmDataP, bmi, DIB_RGB_COLORS, SRCCOPY);
+								m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
+								(void *)tex.m_info.bmDataP, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 	// pick color for box drawn around texture
 		if (m_mapViewToTxt [i] == nBaseTex)

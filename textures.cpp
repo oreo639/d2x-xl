@@ -18,8 +18,6 @@ struct tExtraTexture {
 
 pExtraTexture	extraTextures = NULL;
 
-byte bmBuf [512 * 512 * 32 * 4];
-
 CTextureManager textureManager;
 
 //------------------------------------------------------------------------
@@ -72,7 +70,6 @@ theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
 int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
 int h = nSize, i = 0, k, x, y;
 
-#if 1
 for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 	k -= nWidth;
 #pragma omp parallel 
@@ -84,71 +81,12 @@ for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 		}
 	}
 }
-#else
-if (bConverted = (byte *) malloc ((nSize + 7) / 8))
-	memset (bConverted, 0, (nSize + 7) / 8);
-
-nextPixel:
-
-if (bConverted) {
-	for (k = nSize; (i < h) && nSize; i++) {
-		rgba = pTGA [i];
-#	if 0
-		if (bConverted [i >> 3] & (1 << (i & 7)))
-			continue;
-		closestIndex = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
-#	else
-//		CBRK ((rgba.r == 252) && (rgba.b == 252) && (rgba.b == 252));
-#		if 0
-		pBM [--k] = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
-#		else
-		k = (nHeight - (i / nHeight) - 1);
-		k *= nWidth;
-		k += i % nWidth;
-		pBM [k] = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
-//		pBM [(nHeight - (i / nHeight) - 1) * nWidth + i % nWidth] = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
-#		endif
-		continue;
-#	endif
-		for (j = i, pRGBA = pTGA + j; (j < h) && nSize; j++, pRGBA++) {
-			if (bConverted [j >> 3] & (1 << (j & 7)))
-				continue;
-			if ((j == i) || ((pRGBA->r == rgba.r) && (pRGBA->g == rgba.g) && (pRGBA->b == rgba.b))) {
-				pBM [j] = closestIndex;
-				bConverted [j >> 3] |= (1 << (j & 7));
-				nSize--;
-				}
-			}
-		}
-	}
-else {
-	for (; (i < h) && nSize; i++) {
-		hRgba = rgba;
-		rgba = pTGA [i];
-		// look if this color already converted
-		for (j = i - 1, pRGBA = pTGA + j; j >= 0; j--, pRGBA--)
-			if ((pRGBA->r == rgba.r) && (pRGBA->g == rgba.g) && (pRGBA->b == rgba.b)) {
-				i++;
-				goto nextPixel;
-				}
-		closestIndex = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
-		for (j = i, pRGBA = pTGA + j; (j < h) && nSize; j++, pRGBA++) {
-			if ((pRGBA->r == rgba.r) && (pRGBA->g == rgba.g) && (pRGBA->b == rgba.b)) {
-				pBM [j] = closestIndex;
-				nSize--;
-				}
-			}
-		}
-	}
-if (bConverted)
-	free (bConverted);
-#endif
 free (sysPal);
 return true;
 }
 
 //------------------------------------------------------------------------
-// DefineTexture ()
+// textureManager.Define ()
 //
 // ACTION - Defines data with texture.  If bitmap_handle != 0,
 //          then data is copied from the global data.  Otherwise,
@@ -157,7 +95,7 @@ return true;
 //          The next time that texture is used, the handle will be defined.
 //------------------------------------------------------------------------
 
-int DefineTexture (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, int y0) 
+int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, int y0) 
 {
 	typedef struct tFrac {
 		int	c, d;
@@ -169,7 +107,7 @@ int DefineTexture (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, in
 	tFrac			scale, scale2;
 	int			rc; // return code
 	CTexture*	texP [2];
-	byte			*bmBuf = destTexP->m_info.bmDataP;
+	byte			*bmBufP = destTexP->m_info.bmDataP;
 	byte			c;
 	int			fileType = DLE.FileType ();
 
@@ -190,7 +128,7 @@ if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 			return rc;
 	}
 	
-	// Define bmBuf based on texture numbers and rotation
+	// Define bmBufP based on texture numbers and rotation
 destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
@@ -200,17 +138,17 @@ ptr = texP [0]->m_info.bmDataP;
 if (ptr) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
-		memcpy (bmBuf, ptr, texP [0]->m_info.size);
+		memcpy (bmBufP, ptr, texP [0]->m_info.size);
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
 #if 1
 		int	l1 = y0 * w + x0;
 		int	l2 = texP [0]->m_info.size - l1;
-		memcpy (bmBuf, ptr + l1, l2);
-		memcpy (bmBuf + l2, ptr, l1);
+		memcpy (bmBufP, ptr + l1, l2);
+		memcpy (bmBufP + l2, ptr, l1);
 #else
-		byte		*dest = bmBuf;
+		byte		*dest = bmBufP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++)
@@ -244,7 +182,7 @@ s = (texP [1]->m_info.width * texP [1]->m_info.width)/*texP [1]->m_info.size*/ /
 if (!(x0 || y0)) {
 	byte *dest, *dest2;
 	if (mode == 0x0000) {
-		dest = bmBuf;
+		dest = bmBufP;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++, dest++) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
@@ -253,7 +191,7 @@ if (!(x0 || y0)) {
 				}
 		}
 	else if (mode == (short) 0x4000) {
-		dest = bmBuf + h - 1;
+		dest = bmBufP + h - 1;
 		for (y = 0; y < h; y++, dest--)
 			for (x = 0, dest2 = dest; x < w; x++, dest2 += w) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
@@ -262,7 +200,7 @@ if (!(x0 || y0)) {
 				}
 		}
 	else if (mode == (short) 0x8000) {
-		dest = bmBuf + s - 1;
+		dest = bmBufP + s - 1;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++, dest--) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
@@ -271,7 +209,7 @@ if (!(x0 || y0)) {
 				}
 		}
 	else if (mode == (short) 0xC000) {
-		dest = bmBuf + (h - 1) * w;
+		dest = bmBufP + (h - 1) * w;
 		for (y = 0; y < h; y++, dest++)
 			for (x = 0, dest2 = dest; x < w; x++, dest2 -= w) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
@@ -287,7 +225,7 @@ else {
 			for (x = 0; x < w; x++) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
-					bmBuf [y1 + (x + x0) % w] = c;
+					bmBufP [y1 + (x + x0) % w] = c;
 				}
 			}
 		}
@@ -296,7 +234,7 @@ else {
 			for (x = 0; x < w; x++) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
-					bmBuf [((x + y0) % h) * w + (y + x0) % w] = c;
+					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
 				}
 		}
 	else if (mode == (short) 0x8000) {
@@ -305,7 +243,7 @@ else {
 			for (x = w - 1; x >= 0; x--) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
-					bmBuf [y1 + (x + x0) % w] = c;
+					bmBufP [y1 + (x + x0) % w] = c;
 				}
 			}
 		}
@@ -314,7 +252,7 @@ else {
 			for (x = w - 1; x >= 0; x--) {
 				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
-					bmBuf [((x + y0) % h) * w + (y + x0) % w] = c;
+					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
 				}
 			}
 	}
@@ -335,19 +273,19 @@ return 0;
 // Changes - Y axis flipped to since DIBs have zero in lower left corner
 //------------------------------------------------------------------------
 
-int CTexture::Read (short index) 
+int CTexture::Load (short nTexture) 
 {
-#if 0
-	byte				rowSize [200];
-	byte				line[320],*line_ptr;
+#if 1
+	byte				rowSize [4096];
+	byte				rowBuf [4096], *rowPtr;
 	byte				j;
-	PIG_TEXTURE_D1	ptexture;
-	PIG_TEXTURE_D2 d2_ptexture;
-	PIG_HEADER_D1	file_header;
-	PIG_HEADER_D2	pigFileInfo;
+	//PIG_TEXTURE_D1	ptexture;
+	//PIG_TEXTURE_D2 d2_ptexture;
+	//PIG_HEADER_D1	file_header;
+	//PIG_HEADER_D2	pigFileInfo;
 	int				offset,dataOffset;
 	short				x,y,w,h,s;
-	byte				byteVal, runcount, runvalue;
+	byte				byteVal, runLength, runValue;
 	int				nSize;
 	short				linenum;
 	short				*textureTable;
@@ -359,7 +297,7 @@ int CTexture::Read (short index)
 if (m_info.bModified)
 	return 0;
 // do a range check on the texture number
-if ((index > ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (index < 0)) {
+if ((nTexture > ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (nTexture < 0)) {
 	DEBUGMSG (" Reading texture: Texture # out of range.");
 	rc = 1;
 	goto abort;
@@ -411,14 +349,14 @@ else
 
 // read texture header
 if (DLE.IsD2File ()) {
-	offset = sizeof (PIG_HEADER_D2) + dataOffset + (fix) (textureTable [index]-1) * sizeof (PIG_TEXTURE_D2);
+	offset = sizeof (PIG_HEADER_D2) + dataOffset + (fix) (textureTable [nTexture]-1) * sizeof (PIG_TEXTURE_D2);
 	fseek (fp, offset, SEEK_SET);
 	fread (&d2_ptexture, sizeof (PIG_TEXTURE_D2), 1, fp);
 	w = d2_ptexture.width + ((d2_ptexture.whExtra & 0xF) << 8);
 	h = d2_ptexture.height + ((d2_ptexture.whExtra & 0xF0) << 4);
 	}
 else {
-	offset = sizeof (PIG_HEADER) + dataOffset + (fix) (textureTable [index] - 1) * sizeof (ptexture);
+	offset = sizeof (PIG_HEADER) + dataOffset + (fix) (textureTable [nTexture] - 1) * sizeof (ptexture);
 	fseek (fp, offset, SEEK_SET);
 	fread (&ptexture, sizeof (PIG_TEXTURE_D1), 1, fp);
 	ptexture.name [sizeof (ptexture.name) - 1] = '\0';
@@ -1132,9 +1070,9 @@ if (bShowTexture) {
 			}
 		}
 	if (dataOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CTexture	tex (bmBuf);
-		if (DefineTexture (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
-			DEBUGMSG (" Texture renderer: Texture not found (DefineTexture failed)");
+		CTexture	tex (textureManager.bmBuf);
+		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
+			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
 		pDC->RealizePalette ();
 		int caps = pDC->GetDeviceCaps (RASTERCAPS);
@@ -1145,14 +1083,14 @@ if (bShowTexture) {
 			bmi->bmiHeader.biWidth = 
 			bmi->bmiHeader.biHeight = tex.m_info.width;
 			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
-					        	 (void *) bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
+					        	 (void *) textureManager.bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 		else {
 			double scale = tex.Scale ();
 			uint x, y;
 			for (x = 0; x < tex.m_info.width; x = (int) (x + scale))
 				for (y = 0; y < tex.m_info.width; y = (int) (y + scale))
-					pDC->SetPixel ((short) (x / scale), (short) (y / scale), PALETTEINDEX (bmBuf [y*tex.m_info.width+x]));
+					pDC->SetPixel ((short) (x / scale), (short) (y / scale), PALETTEINDEX (textureManager.bmBuf [y * tex.m_info.width + x]));
 			}
 		pDC->SelectPalette (pOldPalette, FALSE);
 		}

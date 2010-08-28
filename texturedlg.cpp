@@ -583,7 +583,7 @@ void CTextureTool::DrawTexture (short texture1, short texture2, int x0, int y0)
 	CTexture tx (bmBuf);
 
 memset (bitmap_array,0,sizeof (bitmap_array));
-if (DefineTexture(texture1,texture2,&tx,x0,y0))
+if (textureManager.Define(texture1,texture2,&tx,x0,y0))
 	return;
 BITMAPINFO *bmi;
 bmi = MakeBitmap ();

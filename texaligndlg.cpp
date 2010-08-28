@@ -289,7 +289,7 @@ if (!m_bShowTexture)
 	int			h, i, j, x, y;
 	POINT			offset;
 	CSide*		sideP = theMine->CurrSide ();
-	CTexture		tex (bmBuf);
+	CTexture		tex (textureManager.bmBuf);
 	ushort		scale;
 
 // read scroll bar
@@ -299,9 +299,9 @@ offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 // set up logical palette
 oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
 pDC->RealizePalette();
-memset (tex.m_info.bmDataP, 0, sizeof (bmBuf));
-if (DefineTexture (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
-	DEBUGMSG (" Texture tool: Texture not found (DefineTexture failed)");
+memset (tex.m_info.bmDataP, 0, sizeof (textureManager.bmBuf));
+if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
+	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
 	return;
 	}
 hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);

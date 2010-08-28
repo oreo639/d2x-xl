@@ -256,11 +256,11 @@ public:
 class CTextureManager {
 public:
 	uint nTextures [2];
-	CTexture	textures [2];
+	CTexture* textures [2];
 	ushort* index [2];
 	CPigTexture* info [2];
 	CPigHeader header [2];
-	byte* bmBuf;
+	byte bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
 
 	int LoadIndex (int nVersion);
 	CPigHeader LoadInfo (FILE* fp, int nVersion, uint nOffset);
@@ -277,6 +277,17 @@ public:
 		LoadIndex (0);
 		LoadIndex (1);
 		}
+
+	~CTextureManager() {
+		for (int i = 0; i < 2; i++) {
+			if (textures [i])
+				delete textures [i];
+			if (index [i])
+				delete index [i];
+			if (info [i])
+				delete info [i];
+			}
+		}
 };
 
 extern CTextureManager textureManager;
@@ -285,7 +296,7 @@ extern CTextureManager textureManager;
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-int DefineTexture (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
+//int textureManager.Define (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
 void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB);
 BITMAPINFO *MakeBitmap(void);
 BOOL HasCustomTextures ();
@@ -297,8 +308,6 @@ bool PaintTexture (CWnd *pWnd, int bkColor = -1,
 						 int nSegment = -1, int nSide = -1, int texture1 = -1, int texture2 = 0,
 						 int xOffset = 0, int yOffset = 0);
 bool TGA2Bitmap (tRGBA *pTGA, byte *pBM, int nWidth, int nHeight);
-
-extern byte bmBuf [512 * 512 * 32 * 4];
 
 //------------------------------------------------------------------------
 

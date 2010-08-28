@@ -801,7 +801,7 @@ CHECKMINE;
 		IN_RANGE(m_viewPoints [segP->m_info.verts [7]].y,y_max)   )
 	{
 
-		CTexture tex (bmBuf);
+		CTexture tex (textureManager.bmBuf);
 		byte *pm_viewPointsMem = (byte *)m_pvBits;
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
@@ -828,7 +828,7 @@ CHECKMINE;
 				if (a.v.x * b.v.y > a.v.y * b.v.x) {
 					short texture1 = segP->m_sides [nSide].m_info.nBaseTex;
 					short texture2 = segP->m_sides [nSide].m_info.nOvlTex;
-					if (!DefineTexture (texture1, texture2, &tex, 0, 0)) {
+					if (!textureManager.Define (texture1, texture2, &tex, 0, 0)) {
 						DrawAnimDirArrows (texture1, &tex);
 						TextureMap (segP, nSide, tex.m_info.bmDataP, tex.m_info.width, tex.m_info.height, 
 									   light_index, pm_viewPointsMem, m_viewPoints, width, height, rowOffset);

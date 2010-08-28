@@ -814,11 +814,6 @@ if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
 void CObjectTool::SetTextureOverride ()
 {
 CGameObject *objP = theMine->CurrObj ();
-#if 0
-CRect rc;
-m_showTextureWnd.GetClientRect (&rc);
-pDC->FillSolidRect (&rc, IMG_BKCOLOR);
-#endif
 short tnum = 0, tnum2 = -1;
 
 if (objP->m_info.renderType != RT_POLYOBJ)
@@ -831,37 +826,9 @@ else {
 		}
 	else {
 		tnum2 = 0;
-#if 0
-		// texture is overrides, select index in list box
-		CDC *pDC = m_showTextureWnd.GetDC ();
-		if (!pDC)
-			return;
-		HINSTANCE hInst = AfxGetApp()->m_hInstance;
-		LoadString (hInst,texture_resource + tnum, message, sizeof (message));
-		CBObjTexture ()->SelectString (-1, message);
-		// and show bitmap
-		CTexture tx (bmBuf);
-		if (!DefineTexture(tnum,0,&tx,0,0)) {
-			CPalette * pOldPalette = pDC->SelectPalette(m_currentPalette, FALSE);
-			pDC->RealizePalette ();
-			BITMAPINFO *bmi;
-			bmi = MakeBitmap ();
-			CRect rc;
-			m_showTextureWnd.GetClientRect (rc);
-			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tx.width, tx.height,
-								(void *) bmBuf, bmi, DIB_RGB_COLORS,SRCCOPY);
-			pDC->SelectPalette(pOldPalette, FALSE);
-			}
-#endif
 		}
 	}
-#if 0
-m_showTextureWnd.ReleaseDC (pDC);
-m_showTextureWnd.InvalidateRect (NULL, TRUE);
-m_showTextureWnd.UpdateWindow ();
-#else
 PaintTexture (&m_showTextureWnd, IMG_BKCOLOR, -1, -1, tnum, tnum2);
-#endif
 }
 
 //------------------------------------------------------------------------
