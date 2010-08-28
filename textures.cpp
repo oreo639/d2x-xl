@@ -124,7 +124,7 @@ if ((textures [i] < 0) || (textures [i] >= MAX_TEXTURES))
 	// buffer textures if not already buffered
 	texP [i] = theMine->Textures (fileType, textures [i]);
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
-		if (rc = texP [i]->Read (textures [i]))
+		if (rc = texP [i]->Load (textures [i]))
 			return rc;
 	}
 	
@@ -273,194 +273,111 @@ return 0;
 // Changes - Y axis flipped to since DIBs have zero in lower left corner
 //------------------------------------------------------------------------
 
-int CTexture::Load (short nTexture) 
+bool CTexture::Allocate (int nSize, int nTexture)
 {
-#if 1
-	byte				rowSize [4096];
-	byte				rowBuf [4096], *rowPtr;
-	byte				j;
-	//PIG_TEXTURE_D1	ptexture;
-	//PIG_TEXTURE_D2 d2_ptexture;
-	//PIG_HEADER_D1	file_header;
-	//PIG_HEADER_D2	pigFileInfo;
-	int				offset,dataOffset;
-	short				x,y,w,h,s;
-	byte				byteVal, runLength, runValue;
-	int				nSize;
-	short				linenum;
-	short				*textureTable;
-	int				rc;
-	short				*texture_ptr;
-	FILE				*fp = NULL;
-	char				path [256];
-	
-if (m_info.bModified)
-	return 0;
-// do a range check on the texture number
-if ((nTexture > ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)) || (nTexture < 0)) {
-	DEBUGMSG (" Reading texture: Texture # out of range.");
-	rc = 1;
-	goto abort;
-	}
-
-strcpy_s (path, sizeof (path), (DLE.IsD1File ()) ? descent_path : descent2_path);
-if (!strstr (path, ".pig"))
-	strcat_s (path, sizeof (path), "groupa.pig");
-
-HINSTANCE hInst = AfxGetInstanceHandle ();
-
-// get pointer to texture table from resource fp
-hFind = (DLE.IsD1File ()) ?
-	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE_DAT), "RC_DATA") : 
-	FindResource (hInst,MAKEINTRESOURCE (IDR_TEXTURE2_DAT), "RC_DATA");
-if (!hFind) {
-	DEBUGMSG (" Reading texture: Texture resource not found.");
-	rc = 1;
-	goto abort;
-	}
-hGlobal = LoadResource (hInst, hFind);
-if (!hGlobal) {
-	DEBUGMSG (" Reading texture: Could not load texture resource.");
-	rc = 2;
-	goto abort;
-	}
-// first long is number of textures
-texture_ptr = (short *)LockResource (hGlobal);
-textureTable = texture_ptr + 2;
-
-if (fopen_s (&fp, path, "rb")) {
-	DEBUGMSG (" Reading texture: Texture file not found.");
-	rc = 1;
-	goto abort;
-	}
-
-// read fp header
-fseek (fp, 0, SEEK_SET);
-dataOffset = ReadInt32 (fp);
-if (dataOffset == 0x47495050L) /* 'PPIG' Descent 2 type */
-	dataOffset = 0;
-else if (dataOffset < 0x10000L)
-	dataOffset = 0;
-fseek (fp, dataOffset, SEEK_SET);
-if (DLE.IsD2File ())
-	fread (&pigFileInfo, sizeof (pigFileInfo), 1, fp);
-else
-	fread (&file_header, sizeof (file_header), 1, fp);
-
-// read texture header
-if (DLE.IsD2File ()) {
-	offset = sizeof (PIG_HEADER_D2) + dataOffset + (fix) (textureTable [nTexture]-1) * sizeof (PIG_TEXTURE_D2);
-	fseek (fp, offset, SEEK_SET);
-	fread (&d2_ptexture, sizeof (PIG_TEXTURE_D2), 1, fp);
-	w = d2_ptexture.width + ((d2_ptexture.whExtra & 0xF) << 8);
-	h = d2_ptexture.height + ((d2_ptexture.whExtra & 0xF0) << 4);
-	}
-else {
-	offset = sizeof (PIG_HEADER) + dataOffset + (fix) (textureTable [nTexture] - 1) * sizeof (ptexture);
-	fseek (fp, offset, SEEK_SET);
-	fread (&ptexture, sizeof (PIG_TEXTURE_D1), 1, fp);
-	ptexture.name [sizeof (ptexture.name) - 1] = '\0';
-	// copy d1 texture into d2 texture struct
-	strncpy_s (d2_ptexture.name, sizeof (d2_ptexture.name), ptexture.name, sizeof (ptexture.name));
-	d2_ptexture.dflags = ptexture.dflags;
-	d2_ptexture.width = ptexture.width;
-	d2_ptexture.height = ptexture.height;
-	d2_ptexture.flags = ptexture.flags;
-	d2_ptexture.avgColor = ptexture.avgColor;
-	d2_ptexture.offset = ptexture.offset;
-	d2_ptexture.whExtra = (ptexture.dflags == 128) ? 1 : 0;
-	w = h = 64;
-	}
-s = w * h;
-
-// seek to data
-if (DLE.IsD2File ()) {
-	offset = sizeof (PIG_HEADER_D2) 
-				+ dataOffset
-				+ pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2)
-				+ d2_ptexture.offset;
-	}
-else {
-	offset = sizeof (PIG_HEADER) + dataOffset
-				+ file_header.number_of_textures * sizeof (PIG_TEXTURE_D1)
-				+ file_header.number_of_sounds   * sizeof (PIG_SOUND)
-				+ d2_ptexture.offset;
-	}
-
-// allocate data if necessary
-if (m_info.bmDataP && ((m_info.width != w) || (m_info.height != h)))
+if (m_info.bmDataP && ((m_info.width * m_info.height != nSize)))
 	Release ();
 if (m_info.bmDataP == NULL)
-	m_info.bmDataP = new byte [s];
-if (m_info.bmDataP == NULL) {
-	rc = 1;
-	goto abort;
-	}
+	m_info.bmDataP = new byte [nSize];
+return (m_info.bmDataP != NULL);
+}
+
+//------------------------------------------------------------------------
+
+void CTexture::Load (FILE* fp, CPigTexture& info) 
+{
+	byte	rowSize [4096];
+	byte	rowBuf [4096], *rowPtr;
+	byte	byteVal, runLength, runValue;
+
 m_info.nFormat = 0;
-fseek (fp, offset, SEEK_SET);
-if (d2_ptexture.flags & 0x08) {
-	fread (&nSize, 1, sizeof (int), fp);
-	fread (rowSize, d2_ptexture.height, 1, fp);
-	linenum = 0;
-	for (y = h - 1; y >= 0; y--) {
-		fread (line, rowSize [linenum++], 1, fp);
-		line_ptr = line;
-			for (x = 0; x < w;) {
-			byteVal = *line_ptr++;
+if (info.flags & 0x08) {
+	int nSize = ReadInt32 (fp);
+	ReadBytes (rowSize, info.height, fp);
+	int nRow = 0;
+	for (int y = info.height - 1; y >= 0; y--) {
+		fread (rowBuf, rowSize [nRow++], 1, fp);
+		rowPtr = rowBuf;
+			for (int x = 0; x < info.width; ) {
+			byteVal = *rowPtr++;
 			if ((byteVal & 0xe0) == 0xe0) {
-				runcount = byteVal & 0x1f;
-				runvalue = *line_ptr++;
-				for (j = 0; j < runcount; j++) {
-					if (x < w) {
-						m_info.bmDataP [y * w + x] = runvalue;
+				runLength = byteVal & 0x1f;
+				runValue = *rowPtr++;
+				for (int j = 0; j < runLength; j++) {
+					if (x < info.width) {
+						m_info.bmDataP [y * info.width + x] = runValue;
 						x++;
 						}
 					}
 				}
 			else {
-				m_info.bmDataP [y * w + x] = byteVal;
+				m_info.bmDataP [y * info.width + x] = byteVal;
 				x++;
 				}
 			}
 		}
 	}
 else {
-	for (y=h-1;y>=0;y--) {
-#if 1
-		fread (m_info.bmDataP + y * w, w, 1, fp);
-#else
-		fread (line,w,1,fp);
-		line_ptr = line;
-		for (x=0;x<w;x++) {
-			byteVal = *line_ptr++;
-			m_info.bmDataP[y*w+x] = byteVal;
-			}
-#endif
+	for (int y = info.height - 1; y >= 0; y--) {
+		fread (m_info.bmDataP + y * info.width, info.width, 1, fp);
 		}
 	}
-fclose (fp);
-m_info.width = w;
-m_info.height = h;
-m_info.size = s;
+m_info.width = info.width;
+m_info.height = info.height;
+m_info.size = info.BufSize ();
 m_info.bValid = 1;
-return (0);
-
-abort:
-// free handle
-if (hGlobal) FreeResource (hGlobal);
-return (rc);
-#endif
 }
 
 //------------------------------------------------------------------------
 
-double CTexture::Scale (short index)
+int CTexture::Load (short nTexture) 
+{
+	FILE*		fp = NULL;
+	char		filename [256];
+	int		nVersion = DLE.IsD1File () ? 0 : 1;
+	
+if (m_info.bModified)
+	return 0;
+// do a range check on the texture number
+strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
+if (!strstr (filename, ".pig"))
+	strcat_s (filename, sizeof (filename), "groupa.pig");
+if (fopen_s (&fp, filename, "rb")) {
+	DEBUGMSG (" Reading texture: Texture file not found.");
+	return 1;
+	}
+// read fp header
+fseek (fp, 0, SEEK_SET);
+uint nOffset = ReadUInt32 (fp);
+if (nOffset == 0x47495050) /* 'PPIG' Descent 2 type */
+	nOffset = 0;
+else if (nOffset < 0x10000)
+	nOffset = 0;
+fseek (fp, nOffset, SEEK_SET);
+
+CPigHeader header = textureManager.LoadInfo (fp, nVersion, nOffset);
+CPigTexture& info = textureManager.info [nVersion][nTexture];
+int nSize = info.BufSize ();
+
+if (!Allocate (nSize, nTexture)) {
+	fclose (fp);
+	return 1;
+	}
+fseek (fp, nOffset, SEEK_SET);
+Load (fp, info);
+fclose (fp);
+return 0;
+}
+
+//------------------------------------------------------------------------
+
+double CTexture::Scale (short nTexture)
 {
 if (!m_info.width)
-	if (index < 0)
+	if (nTexture < 0)
 		return 1.0;
 	else
-		Read (index);
+		Load (nTexture);
 return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 }
 
@@ -1017,7 +934,7 @@ bool PaintTexture (CWnd *pWnd, int bkColor, int nSegment, int nSide, int nBaseTe
 if (!theMine) 
 	return false;
 
-	static int dataOffset [2] = {0, 0};
+	static int nOffset [2] = {0, 0};
 
 	CDC			*pDC = pWnd->GetDC ();
 
@@ -1059,17 +976,17 @@ if ((nOvlTex < 0) || (nOvlTex >= MAX_TEXTURES))	// this allows to suppress bitma
 
 if (bShowTexture) {
 	// check pig file
-	if (dataOffset [bDescent1] == 0) {
+	if (nOffset [bDescent1] == 0) {
 		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descent_path : descent2_path);
 		if (fopen_s (&fp, szFile, "rb"))
-			dataOffset [bDescent1] = -1;  // pig file not found
+			nOffset [bDescent1] = -1;  // pig file not found
 		else {
 			fseek (fp, 0, SEEK_SET);
-			dataOffset [bDescent1] = ReadInt32 (fp);  // determine type of pig file
+			nOffset [bDescent1] = ReadInt32 (fp);  // determine type of pig file
 			fclose (fp);
 			}
 		}
-	if (dataOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
+	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
 		CTexture	tex (textureManager.bmBuf);
 		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
@@ -1096,7 +1013,7 @@ if (bShowTexture) {
 		}
 	else {
 		HGDIOBJ hgdiobj1;
-		bmTexture.LoadBitmap ((dataOffset [bDescent1] < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
+		bmTexture.LoadBitmap ((nOffset [bDescent1] < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
 		bmTexture.GetObject (sizeof (BITMAP), &bm);
 		memDC.CreateCompatibleDC (pDC);
 		hgdiobj1 = memDC.SelectObject (bmTexture);
@@ -1159,10 +1076,10 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-CPigHeader CTextureManager::LoadInfo (FILE* fp, int nVersion, uint dataOffset)
+CPigHeader CTextureManager::LoadInfo (FILE* fp, int nVersion, uint nOffset)
 {
 if (info [nVersion] == NULL) {
-    fseek (fp, dataOffset, SEEK_SET);
+    fseek (fp, nOffset, SEEK_SET);
     header [nVersion].Read (fp);
     info [nVersion] = new CPigTexture [header [nVersion].nTextures];
     for (int i = 0; i < header [nVersion].nTextures; i++)

@@ -101,7 +101,7 @@ return value;
 // ACTION - Reads a number of 8 bit bytes from a file.
 //------------------------------------------------------------------------
 
-byte* ReadBytes (char* buffer, uint length, FILE *fp) 
+void* ReadBytes (void* buffer, uint length, FILE *fp) 
 {
 fread (buffer, sizeof (byte), length, fp);
 return buffer;
@@ -197,7 +197,7 @@ return (value);
 // ACTION - Reads a number of 8 bit bytes from a file.
 //------------------------------------------------------------------------
 
-byte* WriteBytes (char* buffer, uint length, FILE *fp) 
+void* WriteBytes (void* buffer, uint length, FILE *fp) 
 {
 fwrite (buffer, sizeof (byte), length, fp);
 return buffer;

@@ -9,7 +9,7 @@ int ReadUInt32 (FILE *fp);
 short ReadUInt16 (FILE *fp);
 char ReadUInt8 (FILE *fp);
 
-byte* ReadBytes (char* buffer, uint length, FILE *fp);
+byte* ReadBytes (void* buffer, uint length, FILE *fp);
 
 #define ReadFix(_fp)		(fix) ReadInt32 (_fp)
 #define ReadFixAng(_fp)	(fixang) ReadInt16 (_fp)
@@ -20,7 +20,7 @@ char WriteInt8 (char value, FILE *fp);
 int WriteUInt32 (uint value, FILE *fp);
 short WriteUInt16 (ushort value, FILE *fp);
 char WriteUInt8 (byte value, FILE *fp);
-byte* WriteBytes (char* buffer, uint length, FILE *fp);
+byte* WriteBytes (void* buffer, uint length, FILE *fp);
 
 #define WriteFix(_value, _fp)		WriteInt32 ((int) (_value), _fp)
 #define WriteFixAng(_value, _fp)	WriteInt32 ((short) (_value), _fp)

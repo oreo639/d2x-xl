@@ -240,7 +240,9 @@ public:
 
 	~CTexture() { Release (); }
 
-	int Read (short index);
+	bool Allocate (int nSize, int nTexture);
+	int Load (short nTexture);
+	void Load (FILE* fp, CPigTexture& info);
 	double Scale (short index = -1);
 
 	virtual CGameItem* Next (void) { return this + 1; }
@@ -271,7 +273,6 @@ public:
 	void Release ();
 
 	CTextureManager() {
-		bmBuf = new byte [512 * 512 * 32 * 4];
 		header [0] = CPigHeader (0);
 		header [1] = CPigHeader (1);
 		LoadIndex (0);
