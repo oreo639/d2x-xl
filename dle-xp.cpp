@@ -254,6 +254,7 @@ BOOL CDlcApp::InitInstance()
 		return FALSE;
 	if (!theMine)
 		theMine = new CMine;
+	textureManager.Setup ();
 	theMine->Load ();
 	//memset (textureManager.Textures (), 0, sizeof (textureManager.Textures ()));
 	TextureView ()->Setup ();

@@ -276,7 +276,9 @@ public:
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
 
-	CTextureManager() {
+	CTextureManager();
+	
+	void Setup (void) {
 		header [0] = CPigHeader (0);
 		header [1] = CPigHeader (1);
 		LoadIndex (0);
