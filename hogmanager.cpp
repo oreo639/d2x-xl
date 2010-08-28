@@ -1267,7 +1267,7 @@ if (HasCustomPalette ()) {
 	}
 
 // if textures have changed, ask if user wants to create a pog file
-if (HasCustomTextures ()) {
+if (textureManager.HasCustomTextures ()) {
 	if (bExpertMode ||
 		 QueryMsg("This level contains custom textures.\n"
 					 "Would you like save these textures into the HOG file?\n\n"
@@ -1468,7 +1468,7 @@ if (theMine->HasCustomLightColors ()) {
 		}
 	}
 
-if (HasCustomTextures ()) {
+if (textureManager.HasCustomTextures ()) {
 	FSplit (szHogFile, szTmp, NULL, NULL);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 	fopen_s (&fTmp, szTmp, "wb");

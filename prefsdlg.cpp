@@ -382,7 +382,7 @@ if (strcmp (descent_path, m_d1Path)) {
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
 if (strcmp (descent2_path, m_d2Path)) {
 	bool	bChangePig = true;
-	if (HasCustomTextures() &&
+	if (textureManager.HasCustomTextures() &&
 		 (QueryMsg ("Changing the pig file will affect the custom textures\n"
 						"in this level because of the change in palette.\n"
 						"(Reload the level to fix custom texture appeareance.)\n\n"

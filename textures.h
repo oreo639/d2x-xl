@@ -306,8 +306,8 @@ extern CTextureManager textureManager;
 //int textureManager.Define (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
 void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB);
 BITMAPINFO *MakeBitmap(void);
-BOOL HasCustomTextures ();
-int CountCustomTextures ();
+//BOOL HasCustomTextures ();
+//int CountCustomTextures ();
 int ReadPog(FILE *file, uint nFileSize = 0xFFFFFFFF);
 int CreatePog (FILE *file);
 bool PaintTexture (CWnd *pWnd, int bkColor = -1, 

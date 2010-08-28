@@ -139,7 +139,7 @@ if (m_fileType== RDL_FILE)
 	WriteInt32 (hostagetextOffset, fp); // hostagetextOffset
 fclose(fp);
 
-if (HasCustomTextures () && !bSaveToHog) {
+if (textureManager.HasCustomTextures () && !bSaveToHog) {
 	char* ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");

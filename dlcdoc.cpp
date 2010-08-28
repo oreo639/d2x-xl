@@ -384,7 +384,7 @@ if (!err) {
 	UpdateCaption ();
 	AfxGetApp ()->AddToRecentFileList (m_szFile);
 	}
-CountCustomTextures ();
+//textureManager.CountCustomTextures ();
 DLE.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
 return (err == 0);
 }
@@ -401,7 +401,7 @@ return false;
 	int err = 0;
 
 DLE.ToolView ()->Refresh ();
-CountCustomTextures ();
+//textureManager.CountCustomTextures ();
 if (bEnableDeltaShading)
 	DLE.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
