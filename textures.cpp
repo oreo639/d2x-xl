@@ -760,29 +760,22 @@ int CTexture::Load (short nTexture)
 	FILE*		fp = NULL;
 	char		filename [256];
 	int		nVersion = DLE.IsD1File () ? 0 : 1;
+	uint		nOffset;
 	
 if (m_info.bModified)
 	return 0;
-// do a range check on the texture number
-strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
-if (!strstr (filename, ".pig"))
-	strcat_s (filename, sizeof (filename), "groupa.pig");
-if (fopen_s (&fp, filename, "rb")) {
-	DEBUGMSG (" Reading texture: Texture file not found.");
-	return 1;
+if (!textureManager.HaveInfo (nVersion)) {
+	fp = textureManager.OpenFile (nOffset);
+	CPigHeader header = textureManager.LoadInfo (fp, nVersion, nOffset);
+	CPigTexture& info = textureManager.info [nVersion][nTexture];
 	}
-// read fp header
-fseek (fp, 0, SEEK_SET);
-uint nOffset = ReadUInt32 (fp);
-if (nOffset == 0x47495050) /* 'PPIG' Descent 2 type */
-	nOffset = 0;
-else if (nOffset < 0x10000)
-	nOffset = 0;
-fseek (fp, nOffset, SEEK_SET);
-
-CPigHeader header = textureManager.LoadInfo (fp, nVersion, nOffset);
-CPigTexture& info = textureManager.info [nVersion][nTexture];
 int nSize = info.BufSize ();
+
+if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
+	return 0; // already loaded
+
+if (!fp)
+	fp = textureManager.OpenFile ();
 
 if (!Allocate (nSize, nTexture)) {
 	fclose (fp);
@@ -810,7 +803,7 @@ return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-CTextureManager::Setup (void)
+void CTextureManager::Setup (void)
 {
 header [0] = CPigHeader (0);
 header [1] = CPigHeader (1);
@@ -837,6 +830,29 @@ while (extraTextures) {
 	extraTextures = p->pNext;
 	delete p;
 	}
+}
+
+//------------------------------------------------------------------------
+
+FILE* CTextureManager::OpenFile (uint& nOffset)
+{
+	FILE* fp = NULL;
+
+strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
+if (!strstr (filename, ".pig"))
+	strcat_s (filename, sizeof (filename), "groupa.pig");
+if (fopen_s (&fp, filename, "rb")) {
+	DEBUGMSG (" Reading texture: Texture file not found.");
+	return null;
+	}
+fseek (fp, 0, SEEK_SET);
+nOffset = ReadUInt32 (fp);
+if (nOffset == 0x47495050) /* 'PPIG' Descent 2 type */
+	nOffset = 0;
+else if (nOffset < 0x10000)
+	nOffset = 0;
+fseek (fp, nOffset, SEEK_SET);
+return fp;
 }
 
 //------------------------------------------------------------------------
@@ -877,8 +893,8 @@ bool CTextureManager::Check (int nTexture)
 {
 if ((nTexture >= 0) && (nTexture < MaxTextures ()))
 	return true;
-//sprintf (message, "Reading texture: Texture #" + nTexture + " out of range.");
-//DebugMsg (message);
+sprintf (message, "Reading texture: Texture #" + nTexture + " out of range.");
+DEBUGMSG (message);
 return false;
 }
 

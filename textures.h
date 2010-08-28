@@ -275,6 +275,9 @@ public:
 	void Release (bool bDeleteModified = true);
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
+	FILE* OpenFile (uint& nOffset);
+
+	inline bool HaveInfo (int nVersion) { return info [nVersion] != NULL; }
 
 	CTextureManager() {}
 	
