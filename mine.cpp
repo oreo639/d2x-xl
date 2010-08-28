@@ -50,8 +50,8 @@ CLEAR (ObjTriggers ());
 CLEAR (ReactorTriggers ());
 CLEAR (BotGens ());
 CLEAR (EquipGens ());
-CLEAR (Textures () [0]);
-CLEAR (Textures () [1]);
+//CLEAR (Textures () [0]);
+//CLEAR (Textures () [1]);
 CLEAR (RobotInfo ());
 #endif
 m_levelVersion = 7;

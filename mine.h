@@ -213,8 +213,8 @@ public:
 		{ return MineData ().lightDeltaValues; }
 	inline flickeringLightList& FlickeringLights ()
 		{ return MineData ().flickeringLights; }
-	inline textureList& Textures ()
-		{ return textures; }
+	//inline textureList& Textures ()
+	//	{ return textures; }
 
 	inline CVertex *Vertices (int i)
 		{ return MineData ().vertices + i; }
@@ -254,8 +254,8 @@ public:
 		{ return MineData ().lightDeltaValues + i; }
 	inline CFlickeringLight *FlickeringLights (int i)
 		{ return MineData ().flickeringLights + i; }
-	inline CTexture* Textures (int i, int j = 0)
-		{ return &textures [i][j]; }
+	//inline CTexture* Textures (int i, int j = 0)
+	//	{ return &textureManager.textures [i][j]; }
 
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
