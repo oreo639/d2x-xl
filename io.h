@@ -13,7 +13,7 @@ void* ReadBytes (void* buffer, uint length, FILE *fp);
 #define ReadFix(_fp)		(fix) ReadInt32 (_fp)
 #define ReadFixAng(_fp)	(fixang) ReadInt16 (_fp)
 
-int WriteInt32 (uint value, FILE *fp);
+int WriteInt32 (int value, FILE *fp);
 short WriteInt16 (short value, FILE *fp);
 char WriteInt8 (char value, FILE *fp);
 uint WriteUInt32 (uint value, FILE *fp);

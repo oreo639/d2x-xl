@@ -149,7 +149,7 @@ return value;
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
 
-int WriteUInt32 (uint value, FILE *fp) 
+uint WriteUInt32 (uint value, FILE *fp) 
 {
 fwrite (&value, sizeof (uint), 1, fp);
 return value;
@@ -161,7 +161,7 @@ return value;
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
 
-short WriteuInt16 (ushort value, FILE *fp) 
+ushort WriteUInt16 (ushort value, FILE *fp) 
 {
 fwrite (&value, sizeof (ushort), 1, fp);
 return value;
@@ -173,7 +173,7 @@ return value;
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
 
-char WriteuInt8 (byte value, FILE *fp) 
+byte WriteUInt8 (byte value, FILE *fp) 
 {
 fwrite (&value, sizeof (byte), 1, fp);
 return value;
