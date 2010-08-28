@@ -92,7 +92,7 @@ if (!m_bDelayRefresh) {
 void CTextureView::Reset () 
 {
 if (!theMine) return;
-FreeTextureHandles ();
+textureManager.Release ();
 Refresh ();
 }
 

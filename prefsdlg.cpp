@@ -440,7 +440,7 @@ Refresh ();
 
 void CPrefsDlg::FreeTextureHandles (bool bDeleteModified)
 {
-::FreeTextureHandles (bDeleteModified);
+textureManager.Release (bDeleteModified);
 DLE.TextureView ()->Refresh ();
 }
 

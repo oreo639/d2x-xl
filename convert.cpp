@@ -219,7 +219,7 @@ if (!theMine) return;
 				segCount = theMine->SegCount (),
 				wallCount = theMine->GameInfo ().walls.count;
 
-FreeTextureHandles ();
+textureManager.Release ();
 DLE.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RL2_FILE);

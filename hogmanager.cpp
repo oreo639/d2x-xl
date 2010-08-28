@@ -355,7 +355,7 @@ if (pszSubFile) {
 	}
 else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
-FreeTextureHandles ();
+textureManager.Release ();
 
 FSplit (pszFile, szTmp, NULL, NULL);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");

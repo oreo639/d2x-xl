@@ -185,7 +185,7 @@ if (pigFileInfo.nId != 0x474f5044L) {  // 'DPOG'
 	rc = 4;
 	goto abort;
 	}
-FreeTextureHandles ();
+textureManager.Release ();
 sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures",pigFileInfo.nTextures);
 DEBUGMSG (message);
 if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {

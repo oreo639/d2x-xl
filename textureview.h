@@ -29,12 +29,12 @@ class CTextureView : public CWnd {
 		CSize			m_iconSpace;
 		CSize			m_viewSpace;
 		int			m_nRows [2];
-		uint		m_viewFlags;
+		uint			m_viewFlags;
 		BOOL			m_bShowAll;
 		bool			m_bDelayRefresh;
 		short			m_mapTxtToView [MAX_D2_TEXTURES];
 		short			m_mapViewToTxt [MAX_D2_TEXTURES];
-		uint		m_nTxtFilter;
+		uint			m_nTxtFilter;
 
 		CTextureView ();
 		~CTextureView ();

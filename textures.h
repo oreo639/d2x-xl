@@ -308,7 +308,6 @@ void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB);
 BITMAPINFO *MakeBitmap(void);
 BOOL HasCustomTextures ();
 int CountCustomTextures ();
-void FreeTextureHandles(bool bDeleteModified = true);
 int ReadPog(FILE *file, uint nFileSize = 0xFFFFFFFF);
 int CreatePog (FILE *file);
 bool PaintTexture (CWnd *pWnd, int bkColor = -1, 

@@ -1212,9 +1212,9 @@ class CPrefsDlg : public CToolDlg
 		char				m_d1Path [256];
 		char				m_d2Path [256];
 		char				m_missionsPath [256];
-		uint			m_mineViewFlags;
-		uint			m_objViewFlags;
-		uint			m_texViewFlags;
+		uint				m_mineViewFlags;
+		uint				m_objViewFlags;
+		uint				m_texViewFlags;
 		int				m_iDepthPerception;
 		double			m_depthPerceptions [4];
 		int				m_iRotateRate;
