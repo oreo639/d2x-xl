@@ -64,16 +64,15 @@ fp.WriteInt32 (LevelVersion ());
 fp.WriteInt32 (0); // minedataOffset (temporary)
 fp.WriteInt32 (0); // gamedataOffset (temporary)
 
-if (IsD2File ()&& (LevelVersion () >= 8)) {
-	fp.WriteInt16 (rand ());
-	fp.WriteInt16 (rand ());
-	fp.WriteInt16 (rand ());
-	fp.WriteSByte ((sbyte) rand ());
-	}
-
-if (m_fileType== RDL_FILE)
+if (IsD1File ())
 	fp.WriteInt32 (0); // hostageTextOffset (temporary)
-else {
+else if (IsD2File ()) {
+	if (LevelVersion () >= 8) {
+		fp.WriteInt16 (rand ());
+		fp.WriteInt16 (rand ());
+		fp.WriteInt16 (rand ());
+		fp.WriteSByte ((sbyte) rand ());
+		}
 	// save palette name
 	char *name = strrchr (descent2_path, '\\');
 	if (!name) 
@@ -87,10 +86,10 @@ else {
 	if (strlen ((char *)paletteName) > 4)
 		strcpy_s (&paletteName [strlen ((char *) paletteName) - 4], 5, ".256");
 	else
-		strcpy_s (paletteName, sizeof (paletteName), "GROUPA.256");
-	_strupr_s (paletteName, sizeof (paletteName));
+		strcpy_s (paletteName, sizeof (paletteName), "groupa.256");
+	//_strupr_s (paletteName, sizeof (paletteName));
 	strcat_s (paletteName, sizeof (paletteName), "\n"); // add a return to the end
-	fp.Write (paletteName, strlen ((char *) paletteName), 1);
+	fp.Write (paletteName, strlen (paletteName), 1);
 	}
 
 // write reactor info

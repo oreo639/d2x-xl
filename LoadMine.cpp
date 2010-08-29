@@ -278,7 +278,7 @@ if (mineErr != 0) {
 }
 
 fp.Seek (gamedataOffset, SEEK_SET);
-gameErr = LoadGameData(fp, bNewMine);
+gameErr = LoadGameData (fp, bNewMine);
 
 if (gameErr != 0) {
 	ErrorMsg ("Error loading game data");
@@ -619,70 +619,71 @@ if (GameFileInfo ().signature != 0x6705) {
 if (GameInfo ().fileInfo.version < 14) 
 	m_currentLevelName [0] = 0;
 else {  /*load mine filename */
-	char *p;
-	for (p = m_currentLevelName; ; p++) {
+	for (char *p = m_currentLevelName; *p; p++) {
 		*p = fp.ReadChar ();
-		if (*p== '\n') *p = 0;
-		if (*p== 0) break;
+		if (*p== '\n') {
+			*p = 0;
+			break;
+			}
 		}
 	}
 
-	if (0 > LoadGameItem (fp, GameInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
-		return -1;
-	if (0 > LoadGameItem (fp, GameInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
-		return -1;
-	if (0 > LoadGameItem (fp, GameInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
-		return -1;
-	if (0 > LoadGameItem (fp, GameInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
-		return -1;
-	if (GameInfo ().triggers.offset > -1) {
-		int bObjTriggersOk = 1;
-		if (GameInfo ().fileInfo.version >= 33) {
-			int i = fp.Tell ();
-			if (fp.Read (&NumObjTriggers (), sizeof (int), 1) != 1) {
-				ErrorMsg ("Error reading object triggers from mine.");
-				bObjTriggersOk = 0;
+if (0 > LoadGameItem (fp, GameInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
+	return -1;
+if (0 > LoadGameItem (fp, GameInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
+	return -1;
+if (0 > LoadGameItem (fp, GameInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
+	return -1;
+if (0 > LoadGameItem (fp, GameInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
+	return -1;
+if (GameInfo ().triggers.offset > -1) {
+	int bObjTriggersOk = 1;
+	if (GameInfo ().fileInfo.version >= 33) {
+		int i = fp.Tell ();
+		if (fp.Read (&NumObjTriggers (), sizeof (int), 1) != 1) {
+			ErrorMsg ("Error reading object triggers from mine.");
+			bObjTriggersOk = 0;
+			}
+		else {
+			for (i = 0; i < NumObjTriggers (); i++)
+				ObjTriggers (i)->Read (fp, GameInfo ().fileInfo.version, true);
+			if (GameInfo ().fileInfo.version >= 40) {
+				for (i = 0; i < NumObjTriggers (); i++)
+					ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 				}
 			else {
-				for (i = 0; i < NumObjTriggers (); i++)
-					ObjTriggers (i)->Read (fp, GameInfo ().fileInfo.version, true);
-				if (GameInfo ().fileInfo.version >= 40) {
-					for (i = 0; i < NumObjTriggers (); i++)
-						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
+				for (i = 0; i < NumObjTriggers (); i++) {
+					fp.ReadInt16 ();
+					fp.ReadInt16 ();
+					ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 					}
-				else {
-					for (i = 0; i < NumObjTriggers (); i++) {
-						fp.ReadInt16 ();
-						fp.ReadInt16 ();
-						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
-						}
-					if (GameInfo ().fileInfo.version < 36)
-						fp.Seek (700 * sizeof (short), SEEK_CUR);
-					else
-						fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
-					}
+				if (GameInfo ().fileInfo.version < 36)
+					fp.Seek (700 * sizeof (short), SEEK_CUR);
+				else
+					fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
 				}
 			}
-		if (bObjTriggersOk && NumObjTriggers ())
-			SortObjTriggers ();
-		else {
-			NumObjTriggers () = 0;
-			CLEAR (ObjTriggers ());
-			}
 		}
+	if (bObjTriggersOk && NumObjTriggers ())
+		SortObjTriggers ();
+	else {
+		NumObjTriggers () = 0;
+		CLEAR (ObjTriggers ());
+		}
+	}
 
-	if (0 > LoadGameItem (fp, GameInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
+if (0 > LoadGameItem (fp, GameInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
+	return -1;
+if (0 > LoadGameItem (fp, GameInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
+	return -1;
+if (0 > LoadGameItem (fp, GameInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
+	return -1;
+if (IsD2File ()) {
+	if (0 > LoadGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34)))
 		return -1;
-	if (0 > LoadGameItem (fp, GameInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
+	if (0 > LoadGameItem (fp, GameInfo ().lightDeltaValues, LightDeltaValues (0), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
 		return -1;
-	if (0 > LoadGameItem (fp, GameInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
-		return -1;
-	if (IsD2File ()) {
-		if (0 > LoadGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34)))
-			return -1;
-		if (0 > LoadGameItem (fp, GameInfo ().lightDeltaValues, LightDeltaValues (0), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
-			return -1;
-		}
+	}
 
 return 0;
 }

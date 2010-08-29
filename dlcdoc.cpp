@@ -357,8 +357,9 @@ if (strstr (pszFile, ".hog")) {
 		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
 	CFileManager::SplitPath (pszFile, m_startFolder , null, null);
-	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder );
+	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder);
 	err = theMine->Load (m_szTmpFile, true);
+	CFileManager::Delete (m_szTmpFile);
 	memset (&missionData, 0, sizeof (missionData));
 	ReadMissionFile (m_szFile);
 	}
