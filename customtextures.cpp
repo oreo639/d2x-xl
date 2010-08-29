@@ -141,8 +141,8 @@ return l;
 
 int ReadPog (FILE *fp, uint nFileSize) 
 {
-	CPigHeader		pigFileInfo (2);
-	CPigTexture		pigTexInfo (2);
+	CPigHeader		pigFileInfo (1);
+	CPigTexture		pigTexInfo (1);
 
 	HRSRC				hFind = 0;
 	HGLOBAL			hGlobal = 0;
