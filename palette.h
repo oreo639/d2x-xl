@@ -8,4 +8,4 @@ void FreeCustomPalette (void);
 int ReadCustomPalette (CFileManager& fp, long fSize);
 int WriteCustomPalette (CFileManager& fp);
 byte* PalettePtr (CResource& res);
-LPCTSTR PaletteResource (void);
+const char* PaletteResource (void);

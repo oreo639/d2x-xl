@@ -266,7 +266,7 @@ if (bRenderData) {
 	Release ();
 	if (!(m_info.renderData = new byte [m_info.dataSize]))
 		return 0;
-	return fread (m_info.renderData, m_info.dataSize, 1, fp) == 1;
+	return fp.Read (m_info.renderData, m_info.dataSize, 1) == 1;
 	}
 else {
 	m_info.nModels = fp.ReadInt32 ();
@@ -276,19 +276,19 @@ else {
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].ptr = fp.ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].offset.Read (fp);
+		fp.Read (m_info.subModels [i].offset);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].norm.Read (fp);
+		fp.Read (m_info.subModels [i].norm);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].pnt.Read (fp);
+		fp.Read (m_info.subModels [i].pnt);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].rad = fp.ReadFix ();
+		fp.Read (m_info.subModels [i].rad = fp.ReadFix ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].parent = (byte) fp.ReadSByte ();
+		fp.Read (m_info.subModels [i].parent = (byte) fp.ReadSByte ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].vMin.Read (fp);
+		fp.Read (m_info.subModels [i].vMin);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].vMax.Read (fp);
+		fp.Read (m_info.subModels [i].vMax);
 	fp.Read (m_info.vMin);
 	fp.Read (m_info.vMax);
 	m_info.rad = fp.ReadFix ();
@@ -305,7 +305,7 @@ int CMineView::ReadModelData (char* filename, char *szSubFile, bool bCustom)
 {
 	CFileManager fp;
 
-if (fopen_s (&fp, filename, "rb"))
+if (fp.Open (filename, "rb"))
 	return 1;
 
 	uint	id;
@@ -316,13 +316,13 @@ if (bCustom) {
 	char data[3];
 	long position;
 
-	fread (data, 3, 1, fp); // verify signature "DHF"
+	fp.Read (data, 3, 1); // verify signature "DHF"
 	if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
 		fp.Close ();
 		return 1;
 		}
 	position = 3;
-	while (!feof (fp)) {
+	while (!fp.EoF ()) {
 		fp.Seek (position, SEEK_SET);
 		if ((fread (&level, sizeof (struct level_header), 1, fp) != 1) ||
 			 (level.size > 10000000L || level.size < 0)) {

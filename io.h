@@ -1,6 +1,8 @@
 #ifndef __io_h
 #define __io_h
 
+#if 0
+
 double ReadDouble (CFileManager& fp);
 int ReadInt32 (CFileManager& fp);
 short ReadInt16 (CFileManager& fp);
@@ -27,6 +29,9 @@ void* WriteBytes (void* buffer, uint length, CFileManager& fp);
 double WriteDouble (double value, CFileManager& fp);
 
 LPSTR FSplit (LPSTR fullName, LPSTR pathName, LPSTR fileName, LPSTR extName);
+
+#endif
+
 char *TimeStr (char *pszTime, int nDestSize);
 char *DateStr (char *pszTime, int nDestSize, bool bMonthNames = false);
 char *DateTimeStr (char *pszTime, int nDestSize, bool bMonthNames = false);

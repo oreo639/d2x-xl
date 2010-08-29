@@ -303,13 +303,12 @@ if (!pszFile) {
 	pszFile = szFile;
 	}
 
-  pm.m_info.nModels = 0;
-  fopen_s (&fp, pszFile, "rb");
-  if (!fp) {
-    sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", pszFile);
-    DEBUGMSG (message);
-    return 1;
-  }
+pm.m_info.nModels = 0;
+if (fp.Open (pszFile, "rb")) {
+	sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", pszFile);
+	DEBUGMSG (message);
+	return 1;
+	}
 
 // The extended HAM only contains part of the normal HAM file.
 // Therefore, we have to skip some items if we are reading
@@ -528,7 +527,7 @@ int CMine::ReadHxmFile(CFileManager& fp, long fSize)
 	int			t, i, j;
 	long			p;
 
-if (!fp) {
+if (!fp.File ()) {
 	ErrorMsg ("Invalid file handle for reading HXM data.");
 	goto abort;
 	}
@@ -554,7 +553,7 @@ fp.ReadInt32 (); // version (0x00000001)
 t = fp.ReadInt32 ();
 for (j = 0; j < t; j++) {
 	i = fp.ReadInt32 ();
-	if (i >= N_robot_types) {
+	if (i >= (int) N_robot_types) {
 		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, N_robot_types - 1);
 		ErrorMsg (message);
 		goto abort;
@@ -613,11 +612,11 @@ if (!fp.File ()) {
 	return 1;
 	}
 
-fp.WriteInt32 (0x21584d48L,);	// "HXM!"
-fp. WriteInt32 (1);   // version 1
+fp.WriteInt32 (0x21584d48);	// "HXM!"
+fp.WriteInt32 (1);   // version 1
 
 // write robot information
-WriteInt32 (t,fp); // number of robot info structs stored
+fp.Write (t); // number of robot info structs stored
 for (i = 0; i < N_robot_types; i++) {
 	if (RobotInfo (i)->m_info.bCustom) {
 		fp.Write (i);

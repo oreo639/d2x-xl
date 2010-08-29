@@ -90,7 +90,7 @@ else {
 		strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
 	_strupr_s (palette_name, sizeof (palette_name));
 	strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
-	fwrite (palette_name, strlen ((char *)palette_name), 1);
+	fp.Write (palette_name, strlen ((char *) palette_name), 1);
 	}
 
 // write reactor info
@@ -221,11 +221,11 @@ return info.count;
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::SaveMineDataCompiled(CFileManager& fp)
+short CMine::SaveMineDataCompiled (CFileManager& fp)
 {
 	int	i;
 // write version (1 byte)
-WriteInt8 (COMPILED_MINE_VERSION);
+fp.WriteSByte (COMPILED_MINE_VERSION);
 
 // write no. of vertices (2 bytes)
 fp.WriteInt16 (VertCount ());
@@ -248,9 +248,9 @@ if (IsD2File ()) {
   }
 
 if (IsD2XLevel ()) {
-	SaveColors (VertexColors (0), VertCount ());
-	SaveColors (LightColors (0), SegCount () * 6);
-	SaveColors (TexColors (0), MAX_D2_TEXTURES);
+	SaveColors (VertexColors (0), VertCount (), fp);
+	SaveColors (LightColors (0), SegCount () * 6, fp);
+	SaveColors (TexColors (0), MAX_D2_TEXTURES, fp);
 	}
 return 0;
 }
@@ -298,14 +298,14 @@ else {
 	GameInfo ().level = 0;
 }
 
-fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
+fp.Write (&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
 if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
-	fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
+	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 }
 if (IsD2File ()) {
-	fwrite("\n", 1, 1); // write an end - of - line
+	fp.Write ("\n", 1, 1); // write an end - of - line
 } else {
-	fwrite("", 1, 1);   // write a null
+	fp.Write ("", 1, 1);   // write a null
 }
 
 // write pof names from resource file
@@ -320,10 +320,10 @@ if (IsD2File ()) {
 else {
 	nSavePofNames = 78;
 	nPofs = 25;   // Don't know exactly what this value is for or why it is 25?
-	fwrite(&nPofs, 2, 1);
+	fp.Write (&nPofs, 2, 1);
 	}
 
-if (!(savePofNamesP = res.Load (IsD1File () ? IRD_POF_NAMES1 : IDR_POF_NAMES2)))
+if (!(savePofNamesP = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2)))
 	return 1;
 
 fp.Write (savePofNamesP, nSavePofNames, 13); // 13 characters each

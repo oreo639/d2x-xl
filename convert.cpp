@@ -61,6 +61,8 @@ CDialog::OnInitDialog ();
 CreateImgWnd (&m_showD1, IDC_CONVERT_SHOWD1);
 CreateImgWnd (&m_showD2, IDC_CONVERT_SHOWD2);
 
+m_hInst = AfxGetApp()->m_hInstance;
+
 if (!(m_pTextures = (short *) m_res.Load (IDR_TEXTURE_D1D2)))
 	return FALSE;
 

@@ -35,9 +35,9 @@ if (bNewFormat) {
 	m_info.color.b = double (fp.ReadInt32 ()) / double (0x7fffffff);
 	}
 else {
-	m_info.color.r = ReadDouble (fp);
-	m_info.color.g = ReadDouble (fp);
-	m_info.color.b = ReadDouble (fp);
+	m_info.color.r = fp.ReadDouble ();
+	m_info.color.g = fp.ReadDouble ();
+	m_info.color.b = fp.ReadDouble ();
 	}
 return 1;
 }
@@ -74,17 +74,17 @@ for (; nColors; nColors--, pc++)
 
 //--------------------------------------------------------------------------
 
-int CMine::ReadColorMap (FILE *fColorMap)
+int CMine::ReadColorMap (CFileManager& fp)
 {
-LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fColorMap);
+LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fp);
 return 0;
 }
 
 //--------------------------------------------------------------------------
 
-int CMine::WriteColorMap (FILE *fColorMap)
+int CMine::WriteColorMap (CFileManager& fp)
 {
-SaveColors (TexColors (), MAX_D2_TEXTURES, fColorMap);
+SaveColors (TexColors (), MAX_D2_TEXTURES, fp);
 return 0;
 }
 

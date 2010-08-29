@@ -34,7 +34,7 @@ char *BLOCKOP_HINT =
 // Change - Now reads verts relative to current side
 //---------------------------------------------------------------------------
 
-short CMine::ReadSegmentInfo (FILE *fBlk) 
+short CMine::ReadSegmentInfo (CFileManager& fp) 
 {
 	CSegment		*segP;
 	CSide			*sideP;
@@ -99,7 +99,7 @@ zAxis.Set (yPrime.v.x * zPrime.v.y - zPrime.v.x * yPrime.v.y,
 
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
-while(!feof(fBlk)) {
+while(!fp.EoF ()) {
 	if (SegCount () >= MAX_SEGMENTS) {
 		ErrorMsg ("No more free segments");
 		return (nNewSegs);
@@ -113,7 +113,7 @@ while(!feof(fBlk)) {
 	segP = Segments (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
-	fscanf_s (fBlk, "segment %hd\n", &segP->m_info.nIndex);
+	fscanf_s (fp.File (), "segment %hd\n", &segP->m_info.nIndex);
 	xlatSegNum [segP->m_info.nIndex] = nSegment;
 	// invert segment number so its children can be children can be fixed later
 	segP->m_info.nIndex = ~segP->m_info.nIndex;
@@ -121,55 +121,55 @@ while(!feof(fBlk)) {
 	// read in side information 
 	sideP = segP->m_sides;
 	for (int nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-		fscanf_s (fBlk, "  side %hd\n", &test);
+		fscanf_s (fp.File (), "  side %hd\n", &test);
 		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
 		sideP->m_info.nWall = NO_WALL;
-		fscanf_s (fBlk, "    tmap_num %hd\n",&sideP->m_info.nBaseTex);
-		fscanf_s (fBlk, "    tmap_num2 %hd\n",&sideP->m_info.nOvlTex);
+		fscanf_s (fp.File (), "    tmap_num %hd\n",&sideP->m_info.nBaseTex);
+		fscanf_s (fp.File (), "    tmap_num2 %hd\n",&sideP->m_info.nOvlTex);
 		for (j = 0; j < 4; j++)
-			fscanf_s (fBlk, "    uvls %hd %hd %hd\n",
+			fscanf_s (fp.File (), "    uvls %hd %hd %hd\n",
 						&sideP->m_info.uvls [j].u,
 						&sideP->m_info.uvls [j].v,
 						&sideP->m_info.uvls [j].l);
 		if (bExtBlkFmt) {
-			fscanf_s (fBlk, "    nWall %d\n",&byteBuf);
+			fscanf_s (fp.File (), "    nWall %d\n",&byteBuf);
 			sideP->m_info.nWall = (ushort) byteBuf;
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
 				w.Clear ();
 				t.Clear ();
-				fscanf_s (fBlk, "        segment %ld\n", &w.m_nSegment);
-				fscanf_s (fBlk, "        side %ld\n", &w.m_nSide);
-				fscanf_s (fBlk, "        hps %ld\n", &w.m_info.hps);
-				fscanf_s (fBlk, "        type %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        segment %ld\n", &w.m_nSegment);
+				fscanf_s (fp.File (), "        side %ld\n", &w.m_nSide);
+				fscanf_s (fp.File (), "        hps %ld\n", &w.m_info.hps);
+				fscanf_s (fp.File (), "        type %d\n", &byteBuf);
 				w.m_info.type = byteBuf;
-				fscanf_s (fBlk, "        flags %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        flags %d\n", &byteBuf);
 				w.m_info.flags = byteBuf;
-				fscanf_s (fBlk, "        state %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        state %d\n", &byteBuf);
 				w.m_info.state = byteBuf;
-				fscanf_s (fBlk, "        nClip %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        nClip %d\n", &byteBuf);
 				w.m_info.nClip = byteBuf;
-				fscanf_s (fBlk, "        keys %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        keys %d\n", &byteBuf);
 				w.m_info.keys = byteBuf;
-				fscanf_s (fBlk, "        cloak %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        cloak %d\n", &byteBuf);
 				w.m_info.cloakValue = byteBuf;
-				fscanf_s (fBlk, "        trigger %d\n", &byteBuf);
+				fscanf_s (fp.File (), "        trigger %d\n", &byteBuf);
 				w.m_info.nTrigger = byteBuf;
 				if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
-					fscanf_s (fBlk, "			    type %d\n", &byteBuf);
+					fscanf_s (fp.File (), "			    type %d\n", &byteBuf);
 					t.m_info.type = byteBuf;
-					fscanf_s (fBlk, "			    flags %hd\n", &t.m_info.flags);
-					fscanf_s (fBlk, "			    value %ld\n", &t.m_info.value);
-					fscanf_s (fBlk, "			    timer %d\n", &t.m_info.time);
-					fscanf_s (fBlk, "			    count %hd\n", &t.m_count);
+					fscanf_s (fp.File (), "			    flags %hd\n", &t.m_info.flags);
+					fscanf_s (fp.File (), "			    value %ld\n", &t.m_info.value);
+					fscanf_s (fp.File (), "			    timer %d\n", &t.m_info.time);
+					fscanf_s (fp.File (), "			    count %hd\n", &t.m_count);
 					int iTarget;
 					for (iTarget = 0; iTarget < t.m_count; iTarget++) {
-						fscanf_s (fBlk, "			        segP %hd\n", &t [iTarget].m_nSegment);
-						fscanf_s (fBlk, "			        side %hd\n", &t [iTarget].m_nSide);
+						fscanf_s (fp.File (), "			        segP %hd\n", &t [iTarget].m_nSegment);
+						fscanf_s (fp.File (), "			        side %hd\n", &t [iTarget].m_nSide);
 						}
 					}
 				if (GameInfo ().walls.count < MAX_WALLS) {
@@ -189,38 +189,38 @@ while(!feof(fBlk)) {
 					}
 				}
 #if 0
-			fscanf_s (fBlk, "    object_num %hd\n",&segObjCount);
+			fscanf_s (fp.File (), "    object_num %hd\n",&segObjCount);
 			while (segObjCount) {
 				CGameObject o;
 				memset (&o, 0, sizeof (o));
-				fscanf_s (fBlk, "            signature %hd\n", &o.signature);
-				fscanf_s (fBlk, "            type %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            signature %hd\n", &o.signature);
+				fscanf_s (fp.File (), "            type %d\n", &byteBuf);
 				o.type = (char) byteBuf;
-				fscanf_s (fBlk, "            id %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            id %d\n", &byteBuf);
 				o.id = (char) byteBuf;
-				fscanf_s (fBlk, "            controlType %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            controlType %d\n", &byteBuf);
 				o.controlType = (byte) byteBuf;
-				fscanf_s (fBlk, "            movementType %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            movementType %d\n", &byteBuf);
 				o.movementType = (byte) byteBuf;
-				fscanf_s (fBlk, "            renderType %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            renderType %d\n", &byteBuf);
 				o.renderType = (byte) byteBuf;
-				fscanf_s (fBlk, "            flags %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            flags %d\n", &byteBuf);
 				o.flags = (byte) byteBuf;
 				o.nSegment = nSegment;
-				fscanf_s (fBlk, "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
+				fscanf_s (fp.File (), "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
 				memcpy (&o.lastPos, &o.pos, sizeof (o.pos));
-				fscanf_s (fBlk, "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
+				fscanf_s (fp.File (), "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
 													&o.orient.rVec.x, &o.orient.rVec.y, &o.orient.rVec.z,
 													&o.orient.uVec.x, &o.orient.uVec.y, &o.orient.uVec.z,
 													&o.orient.fVec.x, &o.orient.fVec.y, &o.orient.fVec.z);
-				fscanf_s (fBlk, "            nSegment %hd\n", &o.nSegment);
-				fscanf_s (fBlk, "            size %ld\n", &o.size);
-				fscanf_s (fBlk, "            shields %ld\n", &o.shields);
-				fscanf_s (fBlk, "            contents.type %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            nSegment %hd\n", &o.nSegment);
+				fscanf_s (fp.File (), "            size %ld\n", &o.size);
+				fscanf_s (fp.File (), "            shields %ld\n", &o.shields);
+				fscanf_s (fp.File (), "            contents.type %d\n", &byteBuf);
 				o.contents.type = (char) byteBuf;
-				fscanf_s (fBlk, "            contents.id %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            contents.id %d\n", &byteBuf);
 				o.contents.id = (char) byteBuf;
-				fscanf_s (fBlk, "            contents.count %d\n", &byteBuf);
+				fscanf_s (fp.File (), "            contents.count %d\n", &byteBuf);
 				o.contents.count = (char) byteBuf;
 				switch (o.type) {
 					case OBJ_POWERUP:
@@ -240,22 +240,22 @@ while(!feof(fBlk)) {
 					}
 				switch (o.movementType) {
 					case MT_PHYSICS:
-						fscanf_s (fBlk, "            velocity %ld %ld %ld\n", 
+						fscanf_s (fp.File (), "            velocity %ld %ld %ld\n", 
 								  &o.physInfo.velocity.x, &o.physInfo.velocity.y, &o.physInfo.velocity.z);
-						fscanf_s (fBlk, "            thrust %ld %ld %ld\n", 
+						fscanf_s (fp.File (), "            thrust %ld %ld %ld\n", 
 								  &o.physInfo.thrust.x, &o.physInfo.thrust.y, &o.physInfo.thrust.z);
-						fscanf_s (fBlk, "            mass %ld\n", &o.physInfo.mass);
-						fscanf_s (fBlk, "            drag %ld\n", &o.physInfo.drag);
-						fscanf_s (fBlk, "            brakes %ld\n", &o.physInfo.brakes);
-						fscanf_s (fBlk, "            rotvel %ld %ld %ld\n", 
+						fscanf_s (fp.File (), "            mass %ld\n", &o.physInfo.mass);
+						fscanf_s (fp.File (), "            drag %ld\n", &o.physInfo.drag);
+						fscanf_s (fp.File (), "            brakes %ld\n", &o.physInfo.brakes);
+						fscanf_s (fp.File (), "            rotvel %ld %ld %ld\n", 
 								  &o.physInfo.rotvel.x, &o.physInfo.rotvel.y, &o.physInfo.rotvel.z);
-						fscanf_s (fBlk, "            rotthrust %ld %ld %ld\n", 
+						fscanf_s (fp.File (), "            rotthrust %ld %ld %ld\n", 
 								  &o.physInfo.rotthrust.x, &o.physInfo.rotthrust.y, &o.physInfo.rotthrust.z);
-						fscanf_s (fBlk, "            turnroll %hd\n", &o.physInfo.turnroll);
-						fscanf_s (fBlk, "            flags %hd\n", &o.physInfo.flags);
+						fscanf_s (fp.File (), "            turnroll %hd\n", &o.physInfo.turnroll);
+						fscanf_s (fp.File (), "            flags %hd\n", &o.physInfo.flags);
 						break;
 					case MT_SPIN:
-						fscanf_s (fBlk, "            spinrate %ld %ld %ld\n", 
+						fscanf_s (fp.File (), "            spinrate %ld %ld %ld\n", 
 								  &o.spin_rate.x, &o.spin_rate.y, &o.spin_rate.z);
 						break;
 					}
@@ -268,14 +268,14 @@ while(!feof(fBlk)) {
 			}
 		}
 	short children [6];
-	fscanf_s (fBlk, "  children %hd %hd %hd %hd %hd %hd\n", 
+	fscanf_s (fp.File (), "  children %hd %hd %hd %hd %hd %hd\n", 
 				 children + 0, children + 1, children + 2, children + 3, children + 4, children + 5, children + 6);
 	for (i = 0; i < 6; i++)
 		segP->SetChild (i, children [i]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
 		fix x, y, z;
-		fscanf_s (fBlk, "  vms_vector %hd %ld %ld %ld\n", &test, &x, &y, &z);
+		fscanf_s (fp.File (), "  vms_vector %hd %ld %ld %ld\n", &test, &x, &y, &z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
 			return (0);
@@ -305,17 +305,17 @@ while(!feof(fBlk)) {
 	// mark vertices
 	for (i = 0; i < 8; i++)
 		VertStatus (segP->m_info.verts [i]) |= MARKED_MASK;
-	fscanf_s (fBlk, "  staticLight %ld\n", &segP->m_info.staticLight);
+	fscanf_s (fp.File (), "  staticLight %ld\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
-		fscanf_s (fBlk, "  special %d\n", &byteBuf);
+		fscanf_s (fp.File (), "  special %d\n", &byteBuf);
 		segP->m_info.function = byteBuf;
-		fscanf_s (fBlk, "  nMatCen %d\n", &byteBuf);
+		fscanf_s (fp.File (), "  nMatCen %d\n", &byteBuf);
 		segP->m_info.nMatCen = byteBuf;
-		fscanf_s (fBlk, "  value %d\n", &byteBuf);
+		fscanf_s (fp.File (), "  value %d\n", &byteBuf);
 		segP->m_info.value = byteBuf;
-		fscanf_s (fBlk, "  childFlags %d\n", &byteBuf);
+		fscanf_s (fp.File (), "  childFlags %d\n", &byteBuf);
 		segP->m_info.childFlags = byteBuf;
-		fscanf_s (fBlk, "  wallFlags %d\n", &byteBuf);
+		fscanf_s (fp.File (), "  wallFlags %d\n", &byteBuf);
 		segP->m_info.wallFlags = byteBuf;
 		switch (segP->m_info.function) {
 			case SEGMENT_FUNC_FUELCEN:
@@ -347,9 +347,9 @@ while(!feof(fBlk)) {
 		segP->m_info.nMatCen = -1;
 		segP->m_info.value = -1;
 		}
-	//        fscanf_s (fBlk, "  childFlags %d\n",&test);
+	//        fscanf_s (fp.File (), "  childFlags %d\n",&test);
 	//        segP->m_info.childFlags = test & 0x3f;
-	//        fscanf_s (fBlk, "  wallFlags %d\n",&test);
+	//        fscanf_s (fp.File (), "  wallFlags %d\n",&test);
 	//        segP->m_info.wallFlags  = (test & 0x3f) | MARKED_MASK;
 	segP->m_info.wallFlags = MARKED_MASK; // no other bits
 	// calculate childFlags
@@ -387,7 +387,7 @@ return (nNewSegs);
 //---------------------------------------------------------------------------
 // dump_seg_info()
 //
-// ACTION - Writes a segment's information in text form to a fBlk.  Uses
+// ACTION - Writes a segment's information in text form to a fp.  Uses
 //          actual coordinate information instead of vertex number.  Only
 //          saves segment information (no Walls (), Objects (), or Triggers ()).
 //
@@ -399,7 +399,7 @@ return (nNewSegs);
 //
 //---------------------------------------------------------------------------
 
-void CMine::WriteSegmentInfo (FILE *fBlk, short /*nSegment*/) 
+void CMine::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/) 
 {
 	short				nSegment;
 	CSegment			*segP;
@@ -440,34 +440,34 @@ zPrime.Normalize ();
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->m_info.wallFlags & MARKED_MASK) {
-		fprintf (fBlk, "segment %d\n",nSegment);
+		fprintf (fp, "segment %d\n",nSegment);
 		sideP = segP->m_sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
-			fprintf (fBlk, "  side %d\n",i);
-			fprintf (fBlk, "    tmap_num %d\n",sideP->m_info.nBaseTex);
-			fprintf (fBlk, "    tmap_num2 %d\n",sideP->m_info.nOvlTex);
+			fprintf (fp, "  side %d\n",i);
+			fprintf (fp, "    tmap_num %d\n",sideP->m_info.nBaseTex);
+			fprintf (fp, "    tmap_num2 %d\n",sideP->m_info.nOvlTex);
 			for (j = 0; j < 4; j++) {
-				fprintf (fBlk, "    uvls %d %d %d\n",
+				fprintf (fp, "    uvls %d %d %d\n",
 				sideP->m_info.uvls [j].u,
 				sideP->m_info.uvls [j].v,
 				sideP->m_info.uvls [j].l);
 				}
 			if (bExtBlkFmt) {
-				fprintf (fBlk, "    nWall %d\n", 
+				fprintf (fp, "    nWall %d\n", 
 							(sideP->m_info.nWall < GameInfo ().walls.count) ? sideP->m_info.nWall : NO_WALL);
 				if (sideP->m_info.nWall < GameInfo ().walls.count) {
 					wallP = Walls (sideP->m_info.nWall);
-					fprintf (fBlk, "        segment %d\n", wallP->m_nSegment);
-					fprintf (fBlk, "        side %d\n", wallP->m_nSide);
-					fprintf (fBlk, "        hps %d\n", wallP->m_info.hps);
-					fprintf (fBlk, "        type %d\n", wallP->m_info.type);
-					fprintf (fBlk, "        flags %d\n", wallP->m_info.flags);
-					fprintf (fBlk, "        state %d\n", wallP->m_info.state);
-					fprintf (fBlk, "        nClip %d\n", wallP->m_info.nClip);
-					fprintf (fBlk, "        keys %d\n", wallP->m_info.keys);
-					fprintf (fBlk, "        cloak %d\n", wallP->m_info.cloakValue);
+					fprintf (fp, "        segment %d\n", wallP->m_nSegment);
+					fprintf (fp, "        side %d\n", wallP->m_nSide);
+					fprintf (fp, "        hps %d\n", wallP->m_info.hps);
+					fprintf (fp, "        type %d\n", wallP->m_info.type);
+					fprintf (fp, "        flags %d\n", wallP->m_info.flags);
+					fprintf (fp, "        state %d\n", wallP->m_info.state);
+					fprintf (fp, "        nClip %d\n", wallP->m_info.nClip);
+					fprintf (fp, "        keys %d\n", wallP->m_info.keys);
+					fprintf (fp, "        cloak %d\n", wallP->m_info.cloakValue);
 					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= GameInfo ().triggers.count))
-						fprintf (fBlk, "        trigger %u\n", NO_TRIGGER);
+						fprintf (fp, "        trigger %u\n", NO_TRIGGER);
 					else {
 						CTrigger *trigger = Triggers (wallP->m_info.nTrigger);
 						int iTarget;
@@ -478,30 +478,30 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 								count++;
 #if 0
 						if (trigger->m_count && !count)	// no targets in marked area
-							fprintf (fBlk, "        trigger %d\n", MAX_TRIGGERS);
+							fprintf (fp, "        trigger %d\n", MAX_TRIGGERS);
 						else 
 #endif
 							{
-							fprintf (fBlk, "        trigger %d\n", wallP->m_info.nTrigger);
-							fprintf (fBlk, "			    type %d\n", trigger->m_info.type);
-							fprintf (fBlk, "			    flags %ld\n", trigger->m_info.flags);
-							fprintf (fBlk, "			    value %ld\n", trigger->m_info.value);
-							fprintf (fBlk, "			    timer %d\n", trigger->m_info.time);
-							fprintf (fBlk, "			    count %d\n", count);
+							fprintf (fp, "        trigger %d\n", wallP->m_info.nTrigger);
+							fprintf (fp, "			    type %d\n", trigger->m_info.type);
+							fprintf (fp, "			    flags %ld\n", trigger->m_info.flags);
+							fprintf (fp, "			    value %ld\n", trigger->m_info.value);
+							fprintf (fp, "			    timer %d\n", trigger->m_info.time);
+							fprintf (fp, "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 								if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
-									fprintf (fBlk, "			        segP %d\n", trigger->Segment (iTarget));
-									fprintf (fBlk, "			        side %d\n", trigger->Side (iTarget));
+									fprintf (fp, "			        segP %d\n", trigger->Segment (iTarget));
+									fprintf (fp, "			        side %d\n", trigger->Side (iTarget));
 									}
 							}
 						}
 					}
 				}
 			}
-		fprintf (fBlk, "  children");
+		fprintf (fp, "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fBlk, " %d", segP->Child (i));
-		fprintf (fBlk, "\n");
+			fprintf (fp, " %d", segP->Child (i));
+		fprintf (fp, "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
 			// each vertex relative to the origin has a x', y', and z' component
@@ -510,15 +510,15 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
 			vVertex = *Vertices (nVertex) - origin;
-			fprintf (fBlk, "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ xPrime), D2X (vVertex ^ yPrime), D2X (vVertex ^ zPrime));
+			fprintf (fp, "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ xPrime), D2X (vVertex ^ yPrime), D2X (vVertex ^ zPrime));
 			}
-		fprintf (fBlk, "  staticLight %ld\n",segP->m_info.staticLight);
+		fprintf (fp, "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
-			fprintf (fBlk, "  special %d\n",segP->m_info.function);
-			fprintf (fBlk, "  nMatCen %d\n",segP->m_info.nMatCen);
-			fprintf (fBlk, "  value %d\n",segP->m_info.value);
-			fprintf (fBlk, "  childFlags %d\n",segP->m_info.childFlags);
-			fprintf (fBlk, "  wallFlags %d\n",segP->m_info.wallFlags);
+			fprintf (fp, "  special %d\n",segP->m_info.function);
+			fprintf (fp, "  nMatCen %d\n",segP->m_info.nMatCen);
+			fprintf (fp, "  value %d\n",segP->m_info.value);
+			fprintf (fp, "  childFlags %d\n",segP->m_info.childFlags);
+			fprintf (fp, "  wallFlags %d\n",segP->m_info.wallFlags);
 			}
 		}
 	}
@@ -530,7 +530,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 
 void CMine::CutBlock()
 {
-  FILE *fBlk;
+  CFileManager& fp;
   short nSegment;
   short count;
   char szFile [256] = "\0";
@@ -566,7 +566,7 @@ if (!BrowseForFile (FALSE,
 						  DLE.MainFrame ()))
 	return;
 #else
-  // Initialize data for fBlk open dialog
+  // Initialize data for fp open dialog
   OPENFILENAME ofn;
   memset(&ofn, 0, sizeof (OPENFILENAME));
   ofn.lStructSize = sizeof (OPENFILENAME);
@@ -584,15 +584,15 @@ if (!BrowseForFile (FALSE,
 #endif
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
-fopen_s (&fBlk, szFile, "w");
-if (!fBlk) {
+fopen_s (&fp, szFile, "w");
+if (!fp) {
 	ErrorMsg ("Unable to open block file");
 	return;
 	}
 //UpdateUndoBuffer(0);
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember file for quick paste
-fprintf (fBlk, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
-WriteSegmentInfo (fBlk, 0);
+fprintf (fp, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+WriteSegmentInfo (fp, 0);
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
 // the SegCount () will be decremented for each nSegment in loop.
@@ -606,7 +606,7 @@ for (nSegment = SegCount () - 1; nSegment; nSegment--)
 		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
 DLE.UnlockUndo ();
-fclose(fBlk);
+fclose(fp);
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
@@ -624,7 +624,7 @@ DLE.MineView ()->Refresh ();
 
 void CMine::CopyBlock(char *pszBlockFile)
 {
-  FILE *fBlk;
+  CFileManager& fp;
   char szFile [256] = "\0";
   short count;
 
@@ -659,7 +659,7 @@ else {
 		return;
 	}
 #else
-  // Initialize data for fBlk open dialog
+  // Initialize data for fp open dialog
   OPENFILENAME ofn;
   memset(&ofn, 0, sizeof (OPENFILENAME));
   ofn.lStructSize = sizeof (OPENFILENAME);
@@ -678,17 +678,17 @@ else {
 #endif
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
-fopen_s (&fBlk, szFile, "w");
-if (!fBlk) {
+fopen_s (&fp, szFile, "w");
+if (!fp) {
 	sprintf_s (message, sizeof (message), "Unable to open block file '%s'", szFile);
 	ErrorMsg (message);
 	return;
 	}
 //  UpdateUndoBuffer(0);
-strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fBlk for quick paste
-fprintf (fBlk, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
-WriteSegmentInfo (fBlk, 0);
-fclose (fBlk);
+strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fp for quick paste
+fprintf (fp, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+WriteSegmentInfo (fp, 0);
+fclose (fp);
 sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
 SetLinesToDraw ();
@@ -705,7 +705,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
-// Initialize data for fBlk open dialog
+// Initialize data for fp open dialog
   char szFile [256] = "\0";
 
 #if 1
@@ -751,23 +751,23 @@ int CMine::ReadBlock (char *pszBlockFile,int option)
 	short nSegment,seg_offset;
 	short count,child;
 	short nVertex;
-	FILE *fBlk;
+	CFileManager& fp;
 
 _strlwr_s (pszBlockFile, 256);
-fopen_s (&fBlk, pszBlockFile, "r");
-if (!fBlk) {
+fopen_s (&fp, pszBlockFile, "r");
+if (!fp) {
 	ErrorMsg ("Unable to open block file");
 	return 1;
 	}	
 
-fscanf_s (fBlk, "%s\n", &message, sizeof (message));
+fscanf_s (fp.File (), "%s\n", &message, sizeof (message));
 if (!strncmp (message, "DMB_BLOCK_FILE", 14))
 	bExtBlkFmt = false;
 else if (!strncmp (message, "DMB_EXT_BLOCK_FILE", 18))
 	bExtBlkFmt = true;
 else {
 	ErrorMsg ("This is not a block file.");
-	fclose (fBlk);
+	fclose (fp);
 	return 2;
 	}
 
@@ -789,7 +789,7 @@ for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
 	VertStatus (nVertex) &= ~MARKED_MASK;
 	VertStatus (nVertex) &= ~NEW_MASK;
 	}
-count = ReadSegmentInfo (fBlk);
+count = ReadSegmentInfo (fp);
 
 // fix up the new Segments () children
 segP = Segments (0);
@@ -847,7 +847,7 @@ if (option != 1) {
 	DEBUGMSG (message);
 	}
 */
-fclose(fBlk);
+fclose(fp);
 //DLE.MineView ()->Refresh ();
 DLE.UnlockUndo ();
 DLE.MineView ()->DelayRefresh (false);

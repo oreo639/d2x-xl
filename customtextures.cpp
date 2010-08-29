@@ -182,7 +182,7 @@ if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {
 	}
 pigTexIndex = pigFileInfo.nTextures * sizeof (ushort);
 offset = fp.Tell ();
-fread (xlatTbl, pigTexIndex, 1, fp);
+fp.Read (xlatTbl, pigTexIndex, 1);
 // loop for each custom texture
 nUnknownTextures = 0;
 nMissingTextures = 0;
@@ -247,19 +247,19 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
 #endif
 	if (texP->m_info.nFormat) {
-		fread (texP->m_info.tgaDataP, texP->m_info.size * sizeof (tRGBA), 1, fp);
+		fp.Read (texP->m_info.tgaDataP, texP->m_info.size * sizeof (tRGBA), 1);
 		texP->m_info.bValid = 
 			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
 		}
 	else {
 		if (pigTexInfo.flags & BM_FLAG_RLE) {
-			fread (texP->m_info.bmDataP, nSize, 1, fp);
+			fp.Read (texP->m_info.bmDataP, nSize, 1);
 			RLEExpand (pigTexInfo, texP->m_info.bmDataP);
 			}
 		else {
 			byte *bufP = texP->m_info.bmDataP + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
 			for (row = 0; row < pigTexInfo.height; row++) {
-				fread (bufP, pigTexInfo.width, 1, fp);
+				fp.Read (bufP, pigTexInfo.width, 1);
 				bufP -= pigTexInfo.width;
 				}
 			}
@@ -282,10 +282,6 @@ abort:
 
 if (xlatTbl)
 	delete xlatTbl;
-if (textureCount) 
-	GlobalUnlock (hGlobal);  // no need to unlock it but what the heck
-if (hGlobal) 
-	FreeResource (hGlobal);
 return rc;
 }
 
@@ -334,7 +330,7 @@ return nOffset;
 
 //-----------------------------------------------------------------------------
 
-bool WritePogTexture (FILE *pDestPigFile, CTexture *texP)
+bool WritePogTexture (CFileManager& pDestPigFile, CTexture *texP)
 {
 	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.tgaDataP : texP->m_info.bmDataP;
 
@@ -356,12 +352,12 @@ if (texP->m_info.nFormat) {
 			bgra.g = *bufP++;
 			bgra.r = *bufP++;
 			bgra.a = *bufP++;
-			fwrite (&bgra, sizeof (bgra), 1, pDestPigFile);
+			fp.Write (&bgra, sizeof (bgra), 1, pDestPigFile);
 			}
 		bufP -= 2 * w * 4;
 		}
 #else
-	fwrite (bufP, texP->m_info.width * texP->m_info.height * sizeof (tRGBA), 1, pDestPigFile);
+	fp.Write (bufP, texP->m_info.width * texP->m_info.height * sizeof (tRGBA), 1, pDestPigFile);
 #endif
 	}
 else {
@@ -370,7 +366,7 @@ else {
 	bufP += w * (h - 1); // point to last row of bitmap
 	int row;
 	for (row = 0; row < h; row++) {
-		fwrite (bufP, w, 1, pDestPigFile);
+		fp.Write (bufP, w, 1, pDestPigFile);
 		bufP -= w;
 		}
 	}
@@ -413,7 +409,6 @@ return true;
 
 int CreatePog (CFileManager& fp) 
 {
-	int rc; // return code;
 	CPigHeader		pigFileInfo (1);
 	uint				textureCount = 0, nOffset = 0;
 	ushort*			textureTable;
@@ -442,15 +437,15 @@ for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 		pigFileInfo.nTextures++;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	pigFileInfo.nTextures++;
-fwrite (&pigFileInfo, sizeof (PIG_HEADER_D2), 1, fp);
+fp.Write (&pigFileInfo, sizeof (PIG_HEADER_D2), 1, fp);
 
 // write list of textures
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified)
-		fwrite (textureTable + i, sizeof (ushort), 1, fp);
+		fp.Write (textureTable + i, sizeof (ushort), 1);
 
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
-	fwrite (&extraTexP->m_index, sizeof (ushort), 1, fp);
+	fp.Write (&extraTexP->m_index, sizeof (ushort), 1);
 
 // write texture headers
 nExtra = 0;
@@ -466,17 +461,12 @@ DEBUGMSG (message);
 rc = 8;
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified && !WritePogTexture (fp, texP))
-		goto abort;
+		return 1;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	if (!WritePogTexture (fp, extraTexP))
-		goto abort;
+		return 1;
 
-rc = 0; // return success
-
-abort:
-if (fp) 
-	fp.Close ();
-return rc;
+return 0;
 }
 
 //------------------------------------------------------------------------

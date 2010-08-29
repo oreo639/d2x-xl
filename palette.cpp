@@ -68,7 +68,7 @@ byte *pCustomPalette = (byte *) malloc (37 * 256);
 if (!pCustomPalette)
 	return 0;
 
-int h = int (fread (pCustomPalette, 37 * 256, 1, fp));
+int h = (int) fp.Read (pCustomPalette, 37 * 256, 1);
 if (h == 37 * 256)
 	return 1;
 
@@ -92,7 +92,7 @@ return 1;
 
 int WriteCustomPalette (CFileManager& fp)
 {
-return fwrite (pCustomPalette, 37 * 256, 1, fp) == 37 * 256;
+return fp.Write (pCustomPalette, 37 * 256, 1) == 37 * 256;
 }
 
 //------------------------------------------------------------------------
@@ -111,7 +111,7 @@ return pCustomPalette ? pCustomPalette : res.Load (PaletteResource);
 //
 //------------------------------------------------------------------------
 
-LPCTSTR PaletteResource (void) 
+const char* PaletteResource (void) 
 {
 	typedef struct tPalExt {
 		char	szFile [256];
@@ -133,7 +133,8 @@ LPCTSTR PaletteResource (void)
 int id = IDR_GROUPA_256;
 if (theMine && theMine->IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
-FSplit (descent2_path, null, szFile, null);
+CFileManager fp;
+fp.SplitPath (descent2_path, null, szFile, null);
 for (ppe = palExt; *(ppe->szFile); ppe++)
 	if (!_stricmp (ppe->szFile, szFile))
 		return MAKEINTRESOURCE (ppe->nIdPal);

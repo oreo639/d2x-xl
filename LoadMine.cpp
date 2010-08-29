@@ -31,14 +31,15 @@
 //
 //==========================================================================
 
-short CMine::Load (const char *filename_passed, bool bLoadFromHog)
+short CMine::Load (const char *szFile, bool bLoadFromHog)
 {
 if (!theMine)
 	return 0;
 
-char filename [256];
-short checkErr;
-bool bNewMine = false;
+	char filename [256];
+	short checkErr;
+	bool bNewMine = false;
+	CFileManager fp;
 
 // first disable curve generator
 m_bSplineActive = FALSE;
@@ -48,11 +49,11 @@ m_bSplineActive = FALSE;
 
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
-if (filename_passed && *filename_passed)
-	strcpy_s (filename, sizeof (filename), filename_passed);
+if (szFile && *szFile)
+	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
-	FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+	fp.SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 	bLoadFromHog = false;
 	bNewMine = true;
@@ -174,9 +175,8 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	char*	ps;
 
 m_changesMade = 0;
-fopen_s (&fp, filename, "rb");
 
-if (!fp) {
+if (fp.Open (filename, "rb")) {
 	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
 	ErrorMsg (message);
 	return -1;
@@ -205,9 +205,9 @@ if (IsD2File ()) {
 	// read palette file name
 	int i;
 	for (i = 0; i < 15; i++) {
-		palette_name [i] = fgetc(fp);
+		palette_name [i] = fp.ReadChar ();
 		if (palette_name [i]== 0x0a) {
-			palette_name [i] = null;
+			palette_name [i] = 0;
 			break;
 			}
 		}
@@ -263,7 +263,7 @@ if (IsD2File ()) {
 	// read secret cube number
 	SecretCubeNum () = fp.ReadInt32 ();
 	// read secret cube orientation?
-	SecretOrient ().Read (fp);
+	fp.Read (SecretOrient ());
 	}
 
 m_disableDrawing = TRUE;
@@ -300,18 +300,19 @@ if (gameErr != 0) {
 goto load_pog;
 
 load_end:
-	return_code = 0;
+
+return_code = 0;
+
 load_pog:
 
-	fp.Close ();
+fp.Close ();
 if (!bLoadFromHog && (IsD2File ())) {
 	ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, 256 - (ps - filename), ".pog");
 	else
 		strcat_s (filename, 256, ".pog");
-	fopen_s (&fp, filename, "rb");
-	if (fp) {
+	if (fp.Open (filename, "rb")) {
 		ReadPog (fp);
 		fp.Close ();
 		}
@@ -327,12 +328,12 @@ if (!bLoadFromHog && (IsD2File ())) {
 		char szHogFile [256], szHamFile [256], *p;
 		long nSize, nPos;
 
-		FSplit (descent2_path, szHogFile, null, null);
+		fp.SplitPath (descent2_path, szHogFile, null, null);
 		if (p = strstr (szHogFile, "data"))
 			*p = '\0';
 		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
 		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
-			FSplit (descent2_path, szHamFile, null, null);
+			fp.SplitPath (descent2_path, szHamFile, null, null);
 			if (p = strstr (szHamFile, "data"))
 				*p = '\0';
 			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
@@ -348,8 +349,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 		strcpy_s (filename, 256 - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, 256, ".hxm");
-	fopen_s (&fp, filename, "rb");
-	if (fp) {
+	if (fp.Open (filename, "rb")) {
 		ReadHxmFile (fp, -1);
 		fp.Close ();
 		}
@@ -410,7 +410,7 @@ for (CColor *colorP = DATA (MineData ().texColors); i; i--, colorP++) {
 
 if (!(dataP = res.Load (IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;
-memcpy (lightMap, dataP, min (nSize, sizeof (lightMap)));
+memcpy (lightMap, dataP, min (res.Size (), sizeof (lightMap)));
 return 1;
 }
 
@@ -533,9 +533,9 @@ if (LevelVersion () == 9) {
 	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
 	LoadColors (VertexColors (0), VertCount (), 9, 15, fp);
 #else
-	fread (LightColors (), sizeof (CColor), SegCount () * 6, fp); //skip obsolete side colors 
-	fread (LightColors (), sizeof (CColor), SegCount () * 6, fp);
-	fread (VertexColors (), sizeof (CColor), VertCount (), fp);
+	fp.Read (LightColors (), sizeof (CColor), SegCount () * 6); //skip obsolete side colors 
+	fp.Read (LightColors (), sizeof (CColor), SegCount () * 6);
+	fp.Read (VertexColors (), sizeof (CColor), VertCount ());
 #endif
 	}
 else if (LevelVersion () > 9) {
@@ -613,7 +613,7 @@ if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
-if (fread(&gameFileInfo, sizeof (gameFileInfo), 1, fp) != 1) {
+if (fp.Read (&gameFileInfo, sizeof (gameFileInfo), 1) != 1) {
 	ErrorMsg ("Error reading game info in mine.cpp");
 	return -1;
 	}
@@ -631,7 +631,7 @@ if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking to game info in mine.cpp");
 	return -1;
 	}
-if (fread(&GameInfo (), (short)gameFileInfo.size, 1, fp)!= 1) {
+if (fp.Read (&GameInfo (), (short)gameFileInfo.size, 1) !=  1) {
 	ErrorMsg ("Error reading game info from mine.cpp");
 	return -1;
 	}
@@ -640,7 +640,7 @@ if (GameInfo ().fileinfo.version < 14)
 else {  /*load mine filename */
 	char *p;
 	for (p = m_currentLevelName; ; p++) {
-		*p = fgetc(fp);
+		*p = fp.ReadChar ();
 		if (*p== '\n') *p = 0;
 		if (*p== 0) break;
 		}
@@ -658,7 +658,7 @@ else {  /*load mine filename */
 		int bObjTriggersOk = 1;
 		if (GameInfo ().fileinfo.version >= 33) {
 			int i = fp.Tell ();
-			if (fread (&NumObjTriggers (), sizeof (int), 1, fp) != 1) {
+			if (fp.Read (&NumObjTriggers (), sizeof (int), 1) != 1) {
 				ErrorMsg ("Error reading object triggers from mine.");
 				bObjTriggersOk = 0;
 				}

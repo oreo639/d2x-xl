@@ -90,11 +90,15 @@ class CFileManager {
 		int ReadVector (tFixVector& v);
 		int ReadVector (tDoubleVector& v);
 		int ReadVector (tAngleVector& v);
-		inline int ReadVector (CFixVector& v) { return ReadVector (v.v); }
-		inline int ReadVector (CDoubleVector& v) { return ReadVector (v.v); }
-		inline int ReadVector (CAngleVector& v) { return ReadVector (v.v); }
 		int ReadMatrix (CFixMatrix& v);
 		int ReadMatrix (CDoubleMatrix& m);
+
+		inline int Read (CFixVector& v) { return ReadVector (v.v); }
+		inline int Read (CDoubleVector& v) { return ReadVector (v.v); }
+		inline int Read (CAngleVector& v) { return ReadVector (v.v); }
+		inline int Read (CFixMatrix& m) { return ReadMatrix (m); }
+		inline int Read (CDoubleMatrix& m) { return ReadMatrix (m); }
+
 
 		int WriteInt32 (int v);
 		int WriteUInt32 (uint v);

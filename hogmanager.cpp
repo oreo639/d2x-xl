@@ -17,6 +17,7 @@
 #include "hogmanager.h"
 #include "light.h"
 #include "palette.h"
+#include "io.h"
 
 // local globals
 char *VERTIGO_HINT =
@@ -338,13 +339,13 @@ return true;
 
 bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile) 
 {
-	FILE*		fTmp = null, *fSrc = null;
-	long		size,offset;
-	char		szTmp[256];
-	int		chunk;
-	char*		pszExt;
-	int		index = -1;
-	bool		funcRes = false;
+	CFileManager	fTmp, fSrc;
+	long				size,offset;
+	char				szTmp[256];
+	int				chunk;
+	char*				pszExt;
+	int				index = -1;
+	bool				funcRes = false;
 
 if (!pszFile)
 	pszFile = m_pszFile;
@@ -357,27 +358,25 @@ else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
 textureManager.Release ();
 
-FSplit (pszFile, szTmp, null, null);
+CFileManager::SplitPath (pszFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
-fopen_s (&fTmp, szTmp, "wb");
-fopen_s (&fSrc, pszFile, "rb");
-// copy level to a temporary fTmp
-if (!(fTmp && fSrc)) {
+
+if (fTmp.Open (szTmp, "wb") || fSrc.Open (pszFile, "rb")) {
 	ErrorMsg ("Unable to create temporary DLE-XP work file.");
 	goto errorExit;
 	}
 // set subfile name
-fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-size_t fPos = ftell (fSrc);
+fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+size_t fPos = fSrc.Tell ();
 if (theMine->LoadMineSigAndType (fSrc))
 	goto errorExit;
-fseek (fSrc, long (fPos), SEEK_SET);
+fSrc.Seek (long (fPos), SEEK_SET);
 while (size > 0) {
 	chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;
-	fread (dataBuf, 1, chunk, fSrc);
+	fSrc.Read (dataBuf, 1, chunk);
 	if (!chunk)
 		break;
-	fwrite(dataBuf, 1, chunk, fTmp);
+	fTmp.Write (dataBuf, 1, chunk);
 	size -= chunk;
 	}
 
@@ -396,10 +395,10 @@ if (pszExt) {
 			GetFileData (index, &size, &offset);
 		}
 	if ((size > 0) || (offset >= 0)) {
-		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		int h = ftell (fSrc);
+		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+		int h = fSrc.Tell ();
 		ReadCustomPalette (fSrc, size);
-		h = ftell (fSrc) - h;
+		h = fSrc.Tell () - h;
 		}
 	}
 // read custom light values if a lightmap file exists
@@ -419,10 +418,10 @@ if (pszExt) {
 	if ((size < 0) || (offset < 0))
 		CreateLightMap ();
 	else {
-		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		int h = ftell (fSrc);
+		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+		int h = fSrc.Tell ();
 		ReadLightMap (fSrc, size);
-		h = ftell (fSrc) - h;
+		h = fSrc.Tell () - h;
 		}
 	}
 
@@ -438,10 +437,10 @@ else {
 		GetFileData (index, &size, &offset);
 	}
 if ((size >= 0) && (offset >= 0)) {
-	fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-	int h = ftell (fSrc);
+	fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+	int h = fSrc.Tell ();
 	theMine->ReadColorMap (fSrc);
-	h = ftell (fSrc) - h;
+	h = fSrc.Tell () - h;
 	}
 // read custom textures if a pog file exists
 strcpy_s (message, sizeof (message), m_pszSubFile);
@@ -458,10 +457,10 @@ if (pszExt) {
 			GetFileData (index, &size, &offset);
 		}
 	if ((size > 0) && (offset >= 0)) {
-		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
-		int h = ftell (fSrc);
+		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
+		int h = fSrc.Tell ();
 		ReadPog (fSrc, size);
-		h = ftell (fSrc) - h;
+		h = fSrc.Tell () - h;
 		}
 	}
 // read custom robot info if hxm fTmp exists
@@ -479,7 +478,7 @@ if (pszExt) {
 			GetFileData (index, &size, &offset);
 		}
 	if ((size >= 0) && (offset >= 0)) {
-		fseek (fSrc, sizeof (struct level_header) + offset, SEEK_SET);
+		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 		theMine->ReadHxmFile (fSrc, size);
 		int i, count;
 		for (i = 0, count = 0; i < (int) N_robot_types;i++)
@@ -1119,8 +1118,8 @@ memset (&lh, 0, sizeof (lh));
 strncpy_s (lh.name, sizeof (lh.name), szLevel, 12);
 _strlwr_s (lh.name, sizeof (lh.name));
 // calculate then write size
-fseek (fSrc, 0, SEEK_END);
-lh.size = ftell (fSrc);
+fSrc.Seek (0, SEEK_END);
+lh.size = fSrc.Tell ();
 //fclose (fSrc);
 //fSrc = fopen (szSrc,"rb");
 fseek (fSrc,0,SEEK_SET);
@@ -1222,7 +1221,7 @@ if (IsD2File ()) {
 if (theMine->HasCustomLightMap ()) {
 	FSplit (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
-	fopen_s (&fTmp, szTmp, "wb");
+	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
 		if (!WriteLightMap (fTmp)) {
 			fclose (fTmp);
@@ -1237,7 +1236,7 @@ if (theMine->HasCustomLightMap ()) {
 if (theMine->HasCustomLightColors ()) {
 	FSplit (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
-	fopen_s (&fTmp, szTmp, "wb");
+	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
 		if (!theMine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
@@ -1253,7 +1252,7 @@ if (theMine->HasCustomLightColors ()) {
 if (HasCustomPalette ()) {
 	FSplit (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pal");
-	fopen_s (&fTmp, szTmp,"wb");
+	fTmp.Open (szTmp,"wb");
 	if (fTmp) {
 		if (!WriteCustomPalette (fTmp)) {
 			fclose (fTmp);
@@ -1275,7 +1274,7 @@ if (textureManager.HasCustomTextures ()) {
 					 "the textures when you play the game.") == IDYES) {
 		FSplit (hogFilename, szTmp, null, null);
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.pog");
-		fopen_s (&fTmp, szTmp,"wb");
+		fTmp.Open (szTmp,"wb");
 		if (fTmp) {
 			if (!CreatePog (fTmp)) {
 				fclose (fTmp);
@@ -1298,7 +1297,7 @@ if (theMine->HasCustomRobots ()) {
 					  "the changes to take effect.") == IDYES) {
 		FSplit (hogFilename, szTmp, null, null);
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
-		fopen_s (&fTmp, szTmp, "wb");
+		fTmp.Open (szTmp, "wb");
 		if (fTmp) {
 			if (!theMine->WriteHxmFile (fTmp)) {
 				sprintf_s (szBase, sizeof (szBase), "%s.hxm", szBaseName);
@@ -1434,9 +1433,9 @@ theMine->Save (szTmp, true);
 WriteSubFile (file, szTmp, szSubFile);
 
 if (theMine->HasCustomLightMap ()) {
-	FSplit (szHogFile, szTmp, null, null);
+	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
-	fopen_s (&fTmp, szTmp, "wb");
+	fTmp.Open (szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
 		if (!WriteLightMap (fTmp)) {
@@ -1453,9 +1452,9 @@ if (theMine->HasCustomLightMap ()) {
 		ErrorMsg ("Error writing custom light map.");
 	}
 if (theMine->HasCustomLightColors ()) {
-	FSplit (szHogFile, szTmp, null, null);
+	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
-	fopen_s (&fTmp, szTmp, "wb");
+	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
 		if (!theMine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
@@ -1469,9 +1468,9 @@ if (theMine->HasCustomLightColors ()) {
 	}
 
 if (textureManager.HasCustomTextures ()) {
-	FSplit (szHogFile, szTmp, null, null);
+	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
-	fopen_s (&fTmp, szTmp, "wb");
+	fTmp.Open (szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
 		if (!CreatePog (fTmp)) {
@@ -1487,9 +1486,9 @@ if (textureManager.HasCustomTextures ()) {
 	}
 
 if (theMine->HasCustomRobots ()) {
-	FSplit (szHogFile, szTmp, null, null);
+	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
-	fopen_s (&fTmp, szTmp, "wb");
+	fTmp.Open (szTmp, "wb");
 	bool bOk = false;
 	if (fTmp) {
 		if (!theMine->WriteHxmFile (fTmp)) {

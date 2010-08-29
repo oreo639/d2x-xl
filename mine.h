@@ -313,8 +313,8 @@ public:
 
 	byte *LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize);
 	short LoadDefaultLightAndColor (void);
-	BOOL HasCustomLightMap (void);
-	BOOL HasCustomLightColors (void);
+	bool HasCustomLightMap (void);
+	bool HasCustomLightColors (void);
 
 	short Load(const char *filename = null, bool bLoadFromHog = false);
 	short Save(const char *filename, bool bSaveToHog = false);

@@ -472,7 +472,7 @@ DLE.UnlockUndo ();
 /// CObjectTool - DrawObject
 //------------------------------------------------------------------------
 
-void CMine::DrawObject (CWnd *pWnd, int type, int id)
+void CMine::DrawObject (CWnd *wndP, int type, int id)
 {
 	int powerup_lookup[48] = {
 		 0, 1, 2, 3, 4, 5, 6,-1,-1,-1,
@@ -523,14 +523,14 @@ switch (type) {
 		object_number = -1; // undefined
 }
 
-CDC *pDC = pWnd->GetDC ();
+CDC *pDC = wndP->GetDC ();
 CRect rc;
-pWnd->GetClientRect (rc);
+wndP->GetClientRect (rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 if ( (object_number >= 0) && (object_number <= 129)) {
 	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", object_number);
 	CResource res;
-	char *resP = res.Load (message, RT_BITMAP);
+	char *resP = (char*) res.Load (message, RT_BITMAP);
 	BITMAPINFO *bmi = (BITMAPINFO *) resP;
 	if (bmi) {	//if not, there is a problem in the resource file
 		int ncolors = (int) bmi->bmiHeader.biClrUsed;
@@ -544,22 +544,22 @@ if ( (object_number >= 0) && (object_number <= 129)) {
 		SetDIBitsToDevice (pDC->m_hDC,  xoffset, yoffset, width, height, 0, 0, 0, height,pImage, bmi, DIB_RGB_COLORS);
 		}
 	}
-pWnd->ReleaseDC (pDC);
-pWnd->InvalidateRect (null				 TRUE);
-pWnd->UpdateWindow ();
+wndP->ReleaseDC (pDC);
+wndP->InvalidateRect (NULL, TRUE);
+wndP->UpdateWindow ();
 }
 
 // ------------------------------------------------------------------------
 
 int CObjPhysicsInfo::Read (CFileManager& fp, int version)
 {
-velocity.Read (fp);
-thrust.Read (fp);
+fp.Read (velocity);
+fp.Read (thrust.Read);
 mass = fp.ReadFix ();
 drag = fp.ReadFix ();
 brakes = fp.ReadFix ();
-rotvel.Read (fp);
-rotthrust.Read (fp);
+fp.Read (rotvel);
+fp.Read (rotthrust);
 turnroll = fp.ReadFixAng ();
 flags = fp.ReadInt16 ();
 return 1;
@@ -569,15 +569,15 @@ return 1;
 
 void CObjPhysicsInfo::Write (CFileManager& fp, int version)
 {
-velocity.Write (fp);
-thrust.Write (fp);
-WriteFix (mass, fp);
-WriteFix (drag, fp);
-WriteFix (brakes, fp);
-rotvel.Write (fp);
-rotthrust.Write (fp);
-WriteFixAng (turnroll, fp);
-WriteInt16 (flags, fp);
+fp.Write (velocity);
+fp.Write (thrust);
+fp.WriteFix (mass);
+fp.WriteFix (drag);
+fp.WriteFix (brakes);
+fp.Write (rotvel);
+fp.Write (rotthrust);
+fp.WriteFixAng (turnroll);
+fp.WriteInt16 (flags);
 }
 
 // ------------------------------------------------------------------------
@@ -602,16 +602,16 @@ return 1;
 
 void CObjAIInfo::Write (CFileManager& fp, int version)
 {
-WriteInt8 (behavior, fp);
+fp.Write (behavior);
 for (int i = 0; i < MAX_AI_FLAGS; i++)
-	WriteInt8 (flags [i], fp);
-WriteInt16 (hide_segment, fp);
-WriteInt16 (hide_index, fp);
-WriteInt16 (path_length, fp);
-WriteInt16 (cur_path_index, fp);
+	fp.Write (flags [i]);
+fp.Write (hide_segment);
+fp.Write (hide_index);
+fp.Write (path_length);
+fp.Write (cur_path_index);
 if (DLE.IsD1File ()) {
-	WriteInt16 (follow_path_start_seg, fp);
-	WriteInt16 (follow_path_end_seg, fp);
+	fp.Write (follow_path_start_seg);
+	fp.Write (follow_path_end_seg);
 	}
 }
 
@@ -632,9 +632,9 @@ return 1;
 
 void CObjExplosionInfo::Write (CFileManager& fp, int version)
 {
-WriteFix (spawn_time, fp);
-WriteFix (delete_time, fp);
-WriteInt16 (delete_objnum, fp);
+fp.Write (spawn_time);
+fp.Write (delete_time);
+fp.Write (delete_objnum);
 }
 
 // ------------------------------------------------------------------------
@@ -651,9 +651,9 @@ return 1;
 
 void CObjLaserInfo::Write (CFileManager& fp, int version)
 {
-WriteInt16 (parent_type, fp);
-WriteInt16 (parent_num, fp);
-WriteInt32 (parent_signature, fp);
+fp.Write (parent_type);
+fp.Write (parent_num);
+fp.Write (parent_signature);
 }
 
 // ------------------------------------------------------------------------
@@ -669,7 +669,7 @@ return 1;
 void CObjPowerupInfo::Write (CFileManager& fp, int version)
 {
 if (version >= 25) 
-	WriteInt32 (count, fp);
+	fp.Write (count);
 }
 
 // ------------------------------------------------------------------------
@@ -684,7 +684,7 @@ return 1;
 
 void CObjLightInfo::Write (CFileManager& fp, int version)
 {
-WriteFix (intensity, fp);
+fp.Write (intensity);
 }
 
 // ------------------------------------------------------------------------
@@ -704,11 +704,11 @@ return 1;
 
 void CObjPolyModelInfo::Write (CFileManager& fp, int version)
 {
-WriteInt32 (nModel, fp);
+fp.Write (nModel);
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	anim_angles [i].Write (fp);
-WriteInt32 (subobj_flags, fp);
-WriteInt32 (tmap_override, fp);
+	fp.Write (anim_angles [i]);
+fp.Write (subobj_flags);
+fp.Write (tmap_override);
 }
 
 // ------------------------------------------------------------------------
@@ -725,9 +725,9 @@ return 1;
 
 void CObjVClipInfo::Write (CFileManager& fp, int version)
 {
-WriteInt32 (vclip_num, fp);
-WriteFix (frametime, fp);
-WriteInt8 (framenum, fp);
+fp.Write (vclip_num);
+fp.Write (frametime);
+fp.Write (framenum);
 }
 
 // ------------------------------------------------------------------------
@@ -752,17 +752,17 @@ return 1;
 
 void CSmokeInfo::Write (CFileManager& fp, int version)
 {
-WriteInt32 (nLife, fp);
-WriteInt32 (nSize [0], fp);
-WriteInt32 (nParts, fp);
-WriteInt32 (nSpeed, fp);
-WriteInt32 (nDrift, fp);
-WriteInt32 (nBrightness, fp);
+fp.Write (nLife);
+fp.Write (nSize [0]);
+fp.Write (nParts);
+fp.Write (nSpeed);
+fp.Write (nDrift);
+fp.Write (nBrightness);
 for (int i = 0; i < 4; i++)
-	WriteInt8 (color [i], fp);
-WriteInt8 (nSide, fp);
-WriteInt8 (nSide, fp);
-WriteInt8 (bEnabled, fp);
+	fp.Write (color [i]);
+fp.Write (nSide);
+fp.Write (nSide);
+fp.Write (bEnabled);
 }
 
 // ------------------------------------------------------------------------
@@ -798,35 +798,35 @@ return 1;
 
 void CLightningInfo::Write (CFileManager& fp, int version)
 {
-WriteInt32 (nLife, fp);
-WriteInt32 (nDelay, fp);
-WriteInt32 (nLength, fp);
-WriteInt32 (nAmplitude, fp);
-WriteInt32 (nOffset, fp);
-WriteInt16 (nLightnings, fp);
-WriteInt16 (nId, fp);
-WriteInt16 (nTarget, fp);
-WriteInt16 (nNodes, fp);
-WriteInt16 (nChildren, fp);
-WriteInt16 (nSteps, fp);
-WriteInt8 (nAngle, fp);
-WriteInt8 (nStyle, fp);
-WriteInt8 (nSmoothe, fp);
-WriteInt8 (bClamp, fp);
-WriteInt8 (bPlasma, fp);
-WriteInt8 (bSound, fp);
-WriteInt8 (bRandom, fp);
-WriteInt8 (bInPlane, fp);
+fp.Write (nLife);
+fp.Write (nDelay);
+fp.Write (nLength);
+fp.Write (nAmplitude);
+fp.Write (nOffset);
+fp.Write (nLightnings);
+fp.Write (nId);
+fp.Write (nTarget);
+fp.Write (nNodes);
+fp.Write (nChildren);
+fp.Write (nSteps);
+fp.Write (nAngle);
+fp.Write (nStyle);
+fp.Write (nSmoothe);
+fp.Write (bClamp);
+fp.Write (bPlasma);
+fp.Write (bSound);
+fp.Write (bRandom);
+fp.Write (bInPlane);
 for (int i = 0; i < 4; i++)
-	WriteInt8 (color [i], fp);
-WriteInt8 (bEnabled, fp);
+	fp.Write (color [i]);
+fp.Write (bEnabled);
 }
 
 // ------------------------------------------------------------------------
 
 int CSoundInfo::Read (CFileManager& fp, int version)
 {
-fread (szFilename, 1, sizeof (szFilename), fp);
+fp.Read (szFilename, 1, sizeof (szFilename));
 nVolume = fp.ReadInt32 ();
 bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
 return 1;
@@ -835,10 +835,11 @@ return 1;
 
 void CSoundInfo::Write (CFileManager& fp, int version)
 {
-fwrite (szFilename, 1, sizeof (szFilename), fp);
-WriteInt32 (nVolume, fp);
-WriteInt8 (bEnabled, fp);
+fp.Write (szFilename, 1, sizeof (szFilename));
+fp.Write (nVolume);
+fp.Write (bEnabled);
 }
+
 // ------------------------------------------------------------------------
 
 int CGameObject::Read (CFileManager& fp, int version, bool bFlag) 
@@ -944,22 +945,22 @@ void CGameObject::Write (CFileManager& fp, int version, bool bFlag)
 if (theMine->IsStdLevel () && (m_info.type >= OBJ_CAMBOT))
 	return;	// not a d2x-xl level, but a d2x-xl object
 
-WriteInt8 (m_info.type, fp);
-WriteInt8 (m_info.id, fp);
-WriteInt8 (m_info.controlType, fp);
-WriteInt8 (m_info.movementType, fp);
-WriteInt8 (m_info.renderType, fp);
-WriteInt8 (m_info.flags, fp);
-WriteInt8 (m_info.multiplayer, fp);
-WriteInt16 (m_info.nSegment, fp);
-m_location.pos.Write (fp);
-m_location.orient.Write (fp);
-WriteFix (m_info.size, fp);
-WriteFix (m_info.shields, fp);
-m_location.lastPos. Write (fp);
-WriteInt8 (m_info.contents.type, fp);
-WriteInt8 (m_info.contents.id, fp);
-WriteInt8 (m_info.contents.count, fp);
+fp.Write (m_info.type);
+fp.Write (m_info.id);
+fp.Write (m_info.controlType);
+fp.Write (m_info.movementType);
+fp.Write (m_info.renderType);
+fp.Write (m_info.flags);
+fp.Write (m_info.multiplayer);
+fp.Write (m_info.nSegment);
+fp.Write (m_location.pos);
+fp.Write (m_location.orient);
+fp.Write (m_info.size);
+fp.Write (m_info.shields);
+fp.Write (m_location.lastPos);
+fp.Write (m_info.contents.type);
+fp.Write (m_info.contents.id);
+fp.Write (m_info.contents.count);
 
 switch (m_info.movementType) {
 	case MT_PHYSICS:

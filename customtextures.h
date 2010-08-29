@@ -15,8 +15,8 @@ extern CExtraTexture* extraTextures;
 
 //------------------------------------------------------------------------
 
-int ReadPog (FILE *file, uint nFileSize = 0xFFFFFFFF);
-int CreatePog (FILE *file);
+int ReadPog (CFileManager& fp, uint nFileSize = 0xFFFFFFFF);
+int CreatePog (CFileManager& fp);
 
 //------------------------------------------------------------------------
 
