@@ -154,7 +154,6 @@ int ReadPog (FILE *fp, uint nFileSize)
 	uint				offset, hdrOffset, bmpOffset, hdrSize, pigTexIndex;
 	int				rc; // return code;
 	int				nTexture;
-	byte*				bufP;
 	int				row;
 	ushort			nUnknownTextures, nMissingTextures;
 	bool				bExtraTexture;
@@ -231,15 +230,11 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	if (!(texP->m_info.bmDataP = new byte [nSize]))
 		continue;
 	if (pigTexInfo.flags & 0x80) {
-		texP->m_info.tgaDataP = new tRGBA [nSize];
-		if (bufP) {
-			(tRGBA *) bufP;
-			texP->m_info.nFormat = 1;
-			}
-		else {
+		if (!(texP->m_info.tgaDataP = new tRGBA [nSize])) {
 			texP->Release ();
 			continue;
 			}
+		texP->m_info.nFormat = 1;
 		}
 	else
 		texP->m_info.nFormat = 0;
@@ -252,20 +247,20 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	fseek (fp, bmpOffset + pigTexInfo.offset, SEEK_SET);
 #endif
 	if (texP->m_info.nFormat) {
-		fread (bufP, texP->m_info.size * sizeof (tRGBA), 1, fp);
+		fread (texP->m_info.tgaDataP, texP->m_info.size * sizeof (tRGBA), 1, fp);
 		texP->m_info.bValid = 
 			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
 		}
 	else {
 		if (pigTexInfo.flags & BM_FLAG_RLE) {
-			fread (bufP, nSize, 1, fp);
-			RLEExpand (pigTexInfo, bufP);
+			fread (texP->m_info.bmDataP, nSize, 1, fp);
+			RLEExpand (pigTexInfo, texP->m_info.bmDataP);
 			}
 		else {
-			byte *p = bufP + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
+			byte *bufP = texP->m_info.bmDataP + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
 			for (row = 0; row < pigTexInfo.height; row++) {
-				fread (p, pigTexInfo.width, 1, fp);
-				p -= pigTexInfo.width;
+				fread (bufP, pigTexInfo.width, 1, fp);
+				bufP -= pigTexInfo.width;
 				}
 			}
 		}
