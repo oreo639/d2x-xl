@@ -178,6 +178,7 @@ if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {
 	goto abort;
 	}
 xlatSize = pigFileInfo.nTextures * sizeof (ushort);
+offset = fp.Tell ();
 fp.Read (xlatTbl, xlatSize, 1);
 // loop for each custom texture
 nUnknownTextures = 0;
