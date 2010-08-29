@@ -104,7 +104,7 @@ class CFileManager {
 		int WriteFixAng (fixang v);
 		int WriteFloat (float v);
 		int WriteDouble (double v);
-		byte* WriteBytes (char *buffer, int length);
+		byte* WriteBytes (byte* buffer, int length);
 		int WriteString (const char *buf);
 
 		void WriteVector (const CAngleVector& v);
@@ -114,8 +114,8 @@ class CFileManager {
 		void WriteMatrix (const CDoubleMatrix& m);
 
 		int Copy (const char *pszSrc, const char *pszDest);
-		int Extract (const char *filename, const char *folder, const char *szDest);
-		time_t Date (const char *filename, const char *folder);
+		byte* ReadData (const char *filename);
+		time_t Date (const char *filename);
 
 		static int Exist (const char *filename, const char *folder);	// Returns true if file exists on disk (1) or in hog (2).
 		static int Delete (const char *filename, const char* folder);

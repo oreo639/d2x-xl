@@ -580,17 +580,17 @@ int CFileManager::Copy (const char *pszSrc, const char *pszDest)
 	INT8	buffer [COPY_BUF_SIZE];
 	CFileManager	cf;
 
-if (!cf.Open (pszDest, gameFolders.szSaveDir, "wb"))
+if (!cf.Open (pszDest, "wb"))
 	return -1;
-if (!Open (pszSrc, gameFolders.szSaveDir, "rb"))
+if (!Open (pszSrc, "rb"))
 	return -2;
 while (!EoF ()) {
-	int bytes_read = (int) Read (buffer, 1, COPY_BUF_SIZE);
+	int nRead = (int) Read (buffer, 1, COPY_BUF_SIZE);
 	if (Error ()) {
 		cf.Close ();
 		return -2;
 	}
-	cf.Write (buffer, 1, bytes_read);
+	cf.Write (buffer, 1, nRead);
 	if (cf.Error ()) {
 		cf.Close ();
 		return -2;
@@ -607,22 +607,22 @@ return 0;
 
 // ----------------------------------------------------------------------------
 
-char *CFileManager::ReadData (const char *filename, const char *folder)
+byte *CFileManager::ReadData (const char *filename)
 {
-	char		*pData = NULL;
+	byte*		buffer = NULL;
 	size_t	nSize;
 
-if (!Open (filename, folder, "rb"))
+if (!Open (filename, "rb"))
 	return NULL;
 nSize = Length ();
-if (!(pData = new char [nSize]))
+if (!(buffer = new byte [nSize]))
 	return NULL;
-if (!Read (pData, nSize, 1)) {
-	delete[] pData;
-	pData = NULL;
+if (!Read (buffer, nSize, 1)) {
+	delete[] buffer;
+	buffer = NULL;
 	}
 Close ();
-return pData;
+return buffer;
 }
 
 // ----------------------------------------------------------------------------
@@ -664,12 +664,12 @@ if (szFile) {
 
 // ----------------------------------------------------------------------------
 
-time_t CFileManager::Date (const char *filename, const char *folder)
+time_t CFileManager::Date (const char* filename)
 {
 	struct stat statbuf;
 
 //	sprintf (fn, "%s/%s", folder, hogname);
-if (!Open (filename, folder, "rb"))
+if (!Open (filename, "rb"))
 	return -1;
 #ifdef _WIN32
 fstat (_fileno (m_cf.file), &statbuf);
