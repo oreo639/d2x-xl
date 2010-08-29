@@ -267,7 +267,7 @@ typedef CDynamicArray< CTexture > textureList;
 
 #else
 
-typedef CTexture* textureList [2];
+typedef CTexture* textureList;
 
 #endif
 
