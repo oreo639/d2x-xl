@@ -9,12 +9,12 @@
 #include "global.h"
 #include "mine.h"
 #include "matrix.h"
-#include "io.h"
+#include "cfile.h"
 #include "textures.h"
 #include "palette.h"
 #include "dle-xp.h"
 #include "robot.h"
-#include "io.h"
+#include "cfile.h"
 
 // -------------------------------------------------------------------------- 
 // -------------------------------------------------------------------------- 
@@ -2582,7 +2582,7 @@ for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	m_info.verts [i] = fp.ReadInt16 ();
 
 if (nLevelVersion == 0)
-	ReadExtras (0, nLevelType, nLevelVersion, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
+	ReadExtras (fp, nLevelType, nLevelVersion, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // read the wall bit mask
 m_info.wallFlags = byte (fp.ReadSByte ());
@@ -2611,15 +2611,15 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_sides [i].m_info.nWall < theMine->GameInfo ().walls.count) 
 		m_info.wallFlags |= (1 << i);
 	}
-WriteInt8 (m_info.wallFlags, fp);
+fp.Write (m_info.wallFlags);
 
 // write wall numbers
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_info.wallFlags & (1 << i)) {
 		if (nLevelVersion >= 13)
-			WriteInt16 (m_sides [i].m_info.nWall, fp);
+			fp.Write (m_sides [i].m_info.nWall);
 		else
-			WriteInt8 (char (m_sides [i].m_info.nWall), fp);
+			fp.Write (char (m_sides [i].m_info.nWall));
 		}
 	}
 return m_info.wallFlags;
@@ -2630,17 +2630,17 @@ return m_info.wallFlags;
 void CSegment::WriteExtras (CFileManager& fp, int nLevelType, bool bExtras)
 {
 if (bExtras) {
-	WriteInt8 (m_info.function, fp);
-	WriteInt8 (m_info.nMatCen, fp);
-	WriteInt8 (m_info.value, fp);
-	WriteInt8 (m_info.s2Flags, fp);
+	fp.Write (m_info.function);
+	fp.Write (m_info.nMatCen);
+	fp.Write (m_info.value);
+	fp.Write (m_info.s2Flags);
 	}
 if (nLevelType == 2) {
-	WriteInt8 (m_info.props, fp);
-	WriteInt16 (m_info.damage [0], fp);
-	WriteInt16 (m_info.damage [1], fp);
+	fp.Write (m_info.props);
+	fp.Write (m_info.damage [0]);
+	fp.Write (m_info.damage [1]);
 	}
-WriteFix (m_info.staticLight, fp);
+WriteFix (m_info.staticLight);
 }
 
 // ------------------------------------------------------------------------
@@ -2650,8 +2650,8 @@ void CSegment::Write (CFileManager& fp, int nLevelType, int nLevelVersion)
 	int	i;
 
 if (nLevelType == 2) {
-	WriteInt8 (m_info.owner, fp);
-	WriteInt8 (m_info.group, fp);
+	fp.Write (m_info.owner);
+	fp.Write (m_info.group);
 	}
 
 #if 1
@@ -2667,16 +2667,16 @@ if (nLevelType == 0) {
 		}
 	}
 #endif
-WriteInt8 (m_info.childFlags, fp);
+fp.Write (m_info.childFlags);
 
 // write children numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (m_info.childFlags & (1 << i)) 
-		WriteInt16 (Child (i), fp);
+		fp.Write (Child (i));
 
 // write vertex numbers (16 bytes)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	WriteInt16 (m_info.verts [i], fp);
+	fp.Write (m_info.verts [i]);
 
 // write special info (0 to 4 bytes)
 if ((m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (m_info.nMatCen == -1)) {
@@ -2848,10 +2848,10 @@ return 1;
 void CSide::Write (CFileManager& fp)
 {
 if (m_info.nOvlTex == 0)
-	WriteInt16 (m_info.nBaseTex, fp);
+	fp.Write (m_info.nBaseTex);
 else {
-	WriteInt16 (m_info.nBaseTex | 0x8000, fp);
-	WriteInt16 (m_info.nOvlTex, fp);
+	fp.Write (m_info.nBaseTex | 0x8000);
+	fp.Write (m_info.nOvlTex);
 	}
 for (int i = 0; i < 4; i++)
 	m_info.uvls [i].Write (fp);
@@ -2931,11 +2931,11 @@ return 1;
 
 void CLightDeltaValue::Write (CFileManager& fp, int version, bool bFlag)
 {
-WriteInt16 (m_nSegment, fp);
-WriteInt8 (char (m_nSide), fp);
-WriteInt8 (0, fp);
+fp.Write (m_nSegment);
+fp.Write (char (m_nSide));
+fp.Write (0);
 for (int i = 0; i < 4; i++)
-	WriteInt8 (m_info.vertLight [i], fp);
+	fp.Write (m_info.vertLight [i]);
 }
 
 // ------------------------------------------------------------------------
@@ -2960,14 +2960,14 @@ return 1;
 
 void CLightDeltaIndex::Write (CFileManager& fp, int version, bool bD2X)
 {
-WriteInt16 (m_nSegment, fp);
+fp.Write (m_nSegment);
 if (bD2X)
-	WriteInt16 ((m_nSide & 7) | (m_info.count << 3), fp);
+	fp.Write ((m_nSide & 7) | (m_info.count << 3));
 else {
-	WriteInt8 (char (m_nSide), fp);
-	WriteInt8 (char (m_info.count), fp);
+	fp.Write (char (m_nSide));
+	fp.Write (char (m_info.count));
 	}
-WriteInt16 (m_info.index, fp);
+fp.Write (m_info.index);
 }
 
 // ------------------------------------------------------------------------
@@ -2990,13 +2990,13 @@ return 1;
 
 void CRobotMaker::Write (CFileManager& fp, int version, bool bFlag)
 {
-WriteInt32 (m_info.objFlags [0], fp);
+fp.Write (m_info.objFlags [0]);
 if (DLE.IsD2File ())
-	WriteInt32 (m_info.objFlags [1], fp);
-WriteFix (m_info.hitPoints, fp);
-WriteFix (m_info.interval, fp);
-WriteInt16 (m_info.nSegment, fp);
-WriteInt16 (m_info.nFuelCen, fp);
+	fp.Write (m_info.objFlags [1]);
+fp.Write (m_info.hitPoints);
+fp.Write (m_info.interval);
+fp.Write (m_info.nSegment);
+fp.Write (m_info.nFuelCen);
 }
 
 // ------------------------------------------------------------------------

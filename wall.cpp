@@ -12,7 +12,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "global.h"
-#include "io.h"
+#include "cfile.h"
 
 //--------------------------------------------------------------------------
 // Mine - add wall
@@ -384,21 +384,21 @@ return 1;
 
 void CWall::Write (CFileManager& fp, int version, bool bFlag)
 {
-WriteInt32 (m_nSegment, fp);
-WriteInt32 (m_nSide, fp); 
-WriteFix (m_info.hps, fp);
-WriteInt32 (m_info.linkedWall, fp);
-WriteInt8 (m_info.type, fp);
+fp.Write (m_nSegment);
+fp.Write (m_nSide); 
+fp.Write (m_info.hps);
+fp.Write (m_info.linkedWall);
+fp.Write (m_info.type);
 if (version < 37) 
-	WriteInt8 (char (m_info.flags), fp);
+	fp.Write (char (m_info.flags));
 else
-	WriteInt16 (m_info.flags, fp);         
-WriteInt8 (m_info.state, fp);         
-WriteInt8 (m_info.nTrigger, fp);       
-WriteInt8 (m_info.nClip, fp);      
-WriteInt8 (m_info.keys, fp);          
-WriteInt8 (m_info.controllingTrigger, fp);
-WriteInt8 (m_info.cloakValue, fp);
+	fp.Write (m_info.flags);         
+fp.Write (m_info.state);         
+fp.Write (m_info.nTrigger);       
+fp.Write (m_info.nClip);      
+fp.Write (m_info.keys);          
+fp.Write (m_info.controllingTrigger);
+fp.Write (m_info.cloakValue);
 }
 
 
@@ -419,12 +419,12 @@ return 1;
 
 void CActiveDoor::Write (CFileManager& fp, int version, bool bFlag)
 {
-WriteInt32 (m_info.n_parts, fp);
-WriteInt16 (m_info.nFrontWall[0], fp);
-WriteInt16 (m_info.nFrontWall[1], fp);
-WriteInt16 (m_info.nBackWall[0], fp); 
-WriteInt16 (m_info.nBackWall[1], fp); 
-WriteInt32 (m_info.time, fp);		  
+fp.Write (m_info.n_parts);
+fp.Write (m_info.nFrontWall[0]);
+fp.Write (m_info.nFrontWall[1]);
+fp.Write (m_info.nBackWall[0]); 
+fp.Write (m_info.nBackWall[1]); 
+fp.Write (m_info.time);		  
 }
 
 // ------------------------------------------------------------------------

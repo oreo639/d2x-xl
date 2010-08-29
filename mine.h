@@ -318,8 +318,8 @@ public:
 
 	short Load(const char *filename = null, bool bLoadFromHog = false);
 	short Save(const char *filename, bool bSaveToHog = false);
-	int WriteColorMap (FILE *fColorMap);
-	int ReadColorMap (FILE *fColorMap);
+	int WriteColorMap (CFileManager& fColorMap);
+	int ReadColorMap (CFileManager& fColorMap);
 	void  Default();
 	inline LPSTR LevelName (void)
 		{ return m_currentLevelName; }
@@ -541,8 +541,8 @@ public:
 	int WriteHxmFile (CFileManager& fp);
 	int ReadHxmFile (CFileManager& fp, long fSize);
 
-	short ReadSegmentInfo (FILE *file);
-	void WriteSegmentInfo (FILE *file, short /*nSegment*/);
+	short ReadSegmentInfo (CFileManager& file);
+	void WriteSegmentInfo (CFileManager& file, short /*nSegment*/);
 	void CutBlock ();
 	void CopyBlock (char *pszBlkFile = null);
 	void PasteBlock (); 
@@ -589,18 +589,18 @@ private:
 	int ReadHamFile(char *fname = null, int type = NORMAL_HAM);
 	void ReadPigTextureTable();
 	void ReadRobotResource(int robot_number);
-	void ReadColor (CColor *pc, FILE *load_file);
-	void SaveColor (CColor *pc, FILE *save_file);
+	void ReadColor (CColor *pc, CFileManager& fp);
+	void SaveColor (CColor *pc, CFileManager& fp);
 	void LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
 	void SaveColors (CColor *pc, int nColors, CFileManager& fp);
 	void ClearGameItem (CGameItem* items, int nCount);
 	int LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
 	int SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items, bool bFlag = false);
-	short LoadMineDataCompiled (FILE *load_file, bool bNewMine);
+	short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
 	short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
-	short LoadGameData(FILE *loadfile, bool bNewMine);
-	short SaveMineDataCompiled(FILE *save_file);
-	short SaveGameData(FILE *savefile);
+	short LoadGameData(CFileManager& loadfile, bool bNewMine);
+	short SaveMineDataCompiled(CFileManager& fp);
+	short SaveGameData(CFileManager& savefile);
 	void ClearMineData();
 	void UpdateDeltaLights ();
 	void SetSegmentChildNum(CSegment *pRoot, short nSegment,short recursion_level);

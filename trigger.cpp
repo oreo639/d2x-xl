@@ -12,7 +12,7 @@
 #include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
-#include "io.h"
+#include "cfile.h"
 
 //------------------------------------------------------------------------
 // Mine - add_trigger()
@@ -531,23 +531,23 @@ return 1;
 void CTrigger::Write (CFileManager& fp, int version, bool bObjTrigger)
 {
 if (DLE.IsD2File ()) {
-	WriteInt8 (m_info.type, fp);
+	fp.Write (m_info.type);
 	if (bObjTrigger)
-		WriteInt16 (m_info.flags, fp);
+		fp.Write (m_info.flags);
 	else
-		WriteInt8 (char (m_info.flags), fp);
-	WriteInt8 (char (m_count), fp);
-	WriteInt8 (0, fp);
-	WriteInt32 (m_info.value, fp);
-	WriteInt32 (m_info.time, fp);
+		fp.Write (char (m_info.flags));
+	fp.WriteSByte ((sbyte) m_count);
+	fp.WriteInt8 (0);
+	fp.Write (m_info.value);
+	fp.Write (m_info.time);
 	}
 else {
-	WriteInt8 (m_info.type, fp);
-	WriteInt16 (m_info.flags, fp);
-	WriteInt32 (m_info.value, fp);
-	WriteInt32 (m_info.time, fp);
-	WriteInt8 (char (m_count), fp);
-	WriteInt16 (m_count, fp);
+	fp.Write (m_info.type);
+	fp.Write (m_info.flags);
+	fp.Write (m_info.value);
+	fp.Write (m_info.time);
+	fp.WriteSByte ((sbyte) m_count);
+	fp.Write (m_count);
 	}
 WriteTargets (fp);
 //int	i;
@@ -577,11 +577,11 @@ void CReactorTrigger::Write (CFileManager& fp, int version, bool bFlag)
 {
 	int	i;
 
-WriteInt16 (m_count, fp);
+fp.Write (m_count);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	WriteInt16 (m_targets [i].m_nSegment, fp);
+	fp.Write (m_targets [i].m_nSegment);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	WriteInt16 (m_targets [i].m_nSide, fp);
+	fp.Write (m_targets [i].m_nSide);
 }
 
 //------------------------------------------------------------------------

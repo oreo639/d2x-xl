@@ -13,7 +13,7 @@
 #include "types.h"
 #include "global.h"
 #include "poly.h"
-#include "io.h"
+#include "cfile.h"
 /*
 extern HPEN hPenRed, hPenDkRed, hPenGreen, hPenDkGreen, hPenBlue, hPenCyan, hPenDkCyan, 
 	 hPenMagenta, hPenYellow, hPenDkYellow, hPenOrange, hPenGold, hPenGray, 

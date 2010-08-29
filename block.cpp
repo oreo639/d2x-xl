@@ -10,7 +10,7 @@
 #include "mine.h"
 #include "global.h"
 #include "toolview.h"
-#include "io.h"
+#include "cfile.h"
 #include "hogmanager.h"
 
 #define CURRENT_POINT(a) ((theMine->Current ()->nPoint + (a))&0x03)

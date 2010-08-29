@@ -2,7 +2,7 @@
 
 #include "define.h"
 #include "types.h"
-#include "io.h"
+#include "cfile.h"
 
 //------------------------------------------------------------------------
 // ReadInt32 ()

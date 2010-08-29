@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "textures.h"
-#include "io.h"
+#include "cfile.h"
 #include "dle-xp-res.h"
 #include "global.h"
 #include "palette.h"

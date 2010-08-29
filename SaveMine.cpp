@@ -9,7 +9,7 @@
 #include "global.h"
 #include "mine.h"
 #include "matrix.h"
-#include "io.h"
+#include "cfile.h"
 #include "customtextures.h"
 #include "palette.h"
 #include "dle-xp.h"
@@ -32,10 +32,10 @@
 // ACTION -  saves a level (.RDL) file to disk
 // ------------------------------------------------------------------------
 
-short CMine::Save (const char * filename, bool bSaveToHog)
+short CMine::Save (const char * szFile, bool bSaveToHog)
 {
 	CFileManager	fp;
-	char				filename [256];
+	/char				filename [256];
 	int				minedataOffset, gamedataOffset, hostageTextOffset;
 	int				mineErr, gameErr;
 	int				i;
@@ -44,9 +44,9 @@ if (fp.Open (filename, "wb"))
 	return 1;
 
 m_changesMade = 0;
-
+strcpy_s (filename, sizeof (filename), szFile);
 // write file signature
-fp.fp.WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L'); // signature
+fp.WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L'); // signature
 
 // always save as version 7 or greater if its a D2 level
 // otherwise, blinking lights will not work.
@@ -68,7 +68,7 @@ if (IsD2File ()&& (LevelVersion () >= 8)) {
 	fp.WriteInt16 (rand ());
 	fp.WriteInt16 (rand ());
 	fp.WriteInt16 (rand ());
-	WriteInt8 ((sbyte) rand ());
+	fp.WriteInt8 ((sbyte) rand ());
 	}
 
 if (m_fileType== RDL_FILE)
@@ -108,7 +108,7 @@ if (IsD2File ()) {
 	// write secret cube number
 	fp.Write (SecretCubeNum ());
 	// write secret cube orientation?
-	SecretOrient ().Write (fp);
+	fp.Write (SecretOrient ());
 	}
 // save mine data
 minedataOffset = fp.Tell ();

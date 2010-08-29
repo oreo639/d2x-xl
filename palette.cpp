@@ -10,7 +10,7 @@
 #include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
-#include "io.h"
+#include "cfile.h"
 #include "palette.h"
 
 byte *pCustomPalette = null;

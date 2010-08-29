@@ -12,7 +12,7 @@
 #include "textures.h"
 #include "global.h"
 #include "render.h"
-#include "io.h"
+#include "cfile.h"
 
 #include <math.h>
 

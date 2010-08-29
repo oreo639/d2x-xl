@@ -12,7 +12,7 @@
 #include "dlcDoc.h"
 #include "global.h"
 #include "parser.h"
-#include "io.h"
+#include "cfile.h"
 #include "hogmanager.h"
 #include "light.h"
 #include "textures.h"

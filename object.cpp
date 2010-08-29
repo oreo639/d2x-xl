@@ -12,7 +12,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 #include "global.h"
-#include "io.h"
+#include "cfile.h"
 
 //------------------------------------------------------------------------
 // SortObjects ()
@@ -529,9 +529,6 @@ pWnd->GetClientRect (rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 if ( (object_number >= 0) && (object_number <= 129)) {
 	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", object_number);
-	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
-	HRSRC hFind = FindResource (hInst, message, RT_BITMAP);
-	HGLOBAL hGlobal = LoadResource (hInst, hFind);
 	CResource res;
 	char *resP = res.Load (message, RT_BITMAP);
 	BITMAPINFO *bmi = (BITMAPINFO *) resP;

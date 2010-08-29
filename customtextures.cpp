@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "textures.h"
-#include "io.h"
+#include "cfile.h"
 #include "dle-xp-res.h"
 #include "global.h"
 #include "palette.h"
@@ -144,8 +144,6 @@ int ReadPog (CFileManager& fp, uint nFileSize)
 	CPigHeader		pigFileInfo (1);
 	CPigTexture		pigTexInfo (1);
 
-	HRSRC				hFind = 0;
-	HGLOBAL			hGlobal = 0;
 	uint*				textureCount = 0;
 	ushort*			textureTable;
 	ushort			nBaseTex;

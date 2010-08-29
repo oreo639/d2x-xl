@@ -13,7 +13,7 @@
 #include "customtextures.h"
 #include "robot.h"
 #include "dle-xp-res.h"
-#include "io.h"
+#include "cfile.h"
 #include "hogmanager.h"
 #include "light.h"
 #include "palette.h"

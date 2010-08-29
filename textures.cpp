@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "textures.h"
-#include "io.h"
+#include "cfile.h"
 #include "dle-xp-res.h"
 #include "global.h"
 #include "palette.h"
@@ -17,7 +17,7 @@ void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
 CResource res;
 byte* palette;
-if (palette = res.Load (PaletteResource ()) {
+if (palette = res.Load (PaletteResource ())) {
 	palette += 3 * nIndex;
 	rgb.peRed = palette [0] << 2;
 	rgb.peGreen = palette [1] << 2;
@@ -82,17 +82,17 @@ if (!theMine)
 if (!pDC)
 	return false;
 
-	HINSTANCE	hInst = AfxGetApp ()->m_hInstance;
-	CBitmap		bmTexture;
-	FILE			*fp = null;
-	char			szFile [256];
-	BITMAP		bm;
-	CDC			memDC;
-	CSegment*	segP;
-	CSide*		sideP;
-	short			nWall;
-	bool			bShowTexture = true, bDescent1 = DLE.IsD1File ();
-	char			*path = bDescent1 ? descent_path : descent2_path;
+	HINSTANCE		hInst = AfxGetApp ()->m_hInstance;
+	CBitmap			bmTexture;
+	CFileManager	fp;
+	char				szFile [256];
+	BITMAP			bm;
+	CDC				memDC;
+	CSegment*		segP;
+	CSide*			sideP;
+	short				nWall;
+	bool				bShowTexture = true, bDescent1 = DLE.IsD1File ();
+	char*				path = bDescent1 ? descent_path : descent2_path;
 
 CRect	rc;
 wndP->GetClientRect (rc);
@@ -119,7 +119,7 @@ if (bShowTexture) {
 	// check pig file
 	if (nOffset [bDescent1] == 0) {
 		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descent_path : descent2_path);
-		if (fopen_s (&fp, szFile, "rb"))
+		if (fp.Open (szFile, "rb"))
 			nOffset [bDescent1] = -1;  // pig file not found
 		else {
 			fp.Seek (0, SEEK_SET);
@@ -208,10 +208,10 @@ void CTexture::Load (CFileManager& fp, CPigTexture& info)
 m_info.nFormat = 0;
 if (info.flags & 0x08) {
 	int nSize = fp.ReadInt32 ();
-	ReadBytes (rowSize, info.height, fp);
+	fp.ReadBytes (rowSize, info.height);
 	int nRow = 0;
 	for (int y = info.height - 1; y >= 0; y--) {
-		fread (rowBuf, rowSize [nRow++], 1, fp);
+		fp.ReadBytes (rowBuf, rowSize [nRow++]);
 		rowPtr = rowBuf;
 			for (int x = 0; x < info.width; ) {
 			byteVal = *rowPtr++;
@@ -258,7 +258,7 @@ bool	bLocalFile = (fp == null);
 if (!(fp || textureManager.HaveInfo (nVersion)))
 	fp = textureManager.OpenPigFile (nVersion);
 
-CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
+CPigTexture& info = textureManager.LoadInfo (*fp, nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
@@ -269,10 +269,10 @@ if (!Allocate (nSize, nTexture)) {
 		fp.Close ();	
 	return 1;
 	}
-fp.Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
-Load (fp, info);
+fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
+Load (*fp, info);
 if (bLocalFile)
-	fp.Close ();
+	fp->Close ();
 return 0;
 }
 
