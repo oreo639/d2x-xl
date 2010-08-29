@@ -331,18 +331,18 @@ NextCube (-1);
 
 void CMineView::ForwardCube (int dir) 
 {
-	CSegment *segP,*childseg;
-	short child,nSide;
+	CSegment *segP,*childSegP;
+	short nChild, nSide;
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
-segP = theMine->Segments (0) + theMine->Current ()->nSegment;
-child = segP->Child (bFwd ? theMine->Current ()->nSide: oppSideTable [theMine->Current ()->nSide]);
-if (child <= -1) {
+segP = theMine->Segments (theMine->Current ()->nSegment);
+nChild = segP->Child (bFwd ? theMine->Current ()->nSide: oppSideTable [theMine->Current ()->nSide]);
+if (nChild <= -1) {
 	// first try to find a non backwards route
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->Child (nSide) != m_lastSegment && segP->Child (nSide) > -1) {
-			child = segP->Child (nSide);
+			nChild = segP->Child (nSide);
 			theMine->Current ()->nSide =  bFwd ? nSide: oppSideTable [nSide];
 			break;
 			}
@@ -351,18 +351,18 @@ if (child <= -1) {
 	if (nSide == 6) {
 		for (nSide = 0; nSide < 6; nSide++) {
 			if (segP->Child (nSide) > -1) {
-				child = segP->Child (nSide);
+				nChild = segP->Child (nSide);
 				theMine->Current ()->nSide = bFwd ? nSide: oppSideTable [nSide];
 				break;
 				}
 			}			
 		}
 	}
-if (child > -1) {
-	childseg = theMine->Segments (0) + child;
+if (nChild > -1) {
+	childSegP = theMine->Segments (nChild);
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
-		if (childseg->Child (nSide) == theMine->Current ()->nSegment) {
+		if (childSegP->Child (nSide) == theMine->Current ()->nSegment) {
 			theMine->Current ()->nSide =  bFwd ? oppSideTable [nSide]: nSide;
 			break;
 			}
@@ -370,11 +370,11 @@ if (child > -1) {
 	m_lastSegment = theMine->Current ()->nSegment;
 	if (0) {//!ViewOption (eViewPartialLines)) {
 		// DrawHighlight (1);
-		theMine->Current ()->nSegment = child;
+		theMine->Current ()->nSegment = nChild;
 		// DrawHighlight (0);
 		} 
 	else {
-		theMine->Current ()->nSegment = child;
+		theMine->Current ()->nSegment = nChild;
 		Refresh (true);
 		}
 	}

@@ -597,7 +597,7 @@ WriteSegmentInfo (fp, 0);
 // the SegCount () will be decremented for each nSegment in loop.
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-CSegment *segP = Segments (0) + SegCount ();
+CSegment *segP = Segments (SegCount ());
 for (nSegment = SegCount () - 1; nSegment; nSegment--)
     if ((--segP)->m_info.wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
@@ -844,7 +844,7 @@ if (option != 1) {
 	DEBUGMSG (message);
 	}
 */
-fclose(fp);
+fp.Close ();
 //DLE.MineView ()->Refresh ();
 DLE.UnlockUndo ();
 DLE.MineView ()->DelayRefresh (false);

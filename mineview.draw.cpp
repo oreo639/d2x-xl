@@ -812,7 +812,7 @@ CHECKMINE;
 		ushort nWall = NO_WALL;
 
 		for (nSide = 0; nSide < 6; nSide++) {
-			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? null : theMine->Walls () + nWall;
+			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? null : theMine->Walls (nWall);
 			if ((segP->Child (nSide) == -1) ||
 				(wallP && (wallP->m_info.type != WALL_OPEN) && ((wallP->m_info.type != WALL_CLOAKED) || wallP->m_info.cloakValue))
 				)
@@ -1207,7 +1207,7 @@ CHECKMINE;
 
 if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
 	POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
-	segP = theMine->Segments (0) + nSegment;
+	segP = theMine->Segments (nSegment);
 	for (j=0;j<4;j++) {
 		corners [j].x = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].x;
 		corners [j].y = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].y;

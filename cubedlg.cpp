@@ -326,7 +326,7 @@ void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
 void CSegmentTool::SetDefTexture (short nTexture)
 {
-CSegment *segP = theMine->Segments (0) + m_nSegment;
+CSegment *segP = theMine->Segments (m_nSegment);
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	int i;
 	for (i = 0; i < 6; i++)
@@ -719,7 +719,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 			if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 				continue;
-			childseg = theMine->Segments (0) + segP->Child (nSide);
+			childseg = theMine->Segments (segP->Child (nSide));
 			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it

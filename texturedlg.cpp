@@ -1109,7 +1109,7 @@ nChild = segP->Child (nSide);
 if (nChild < 0 || nChild >= theMine->SegCount ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-	segP = theMine->Segments (0) + nChild;
+	segP = theMine->Segments (nChild);
 	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < theMine->GameInfo ().walls.count)) {
 		for (nChildLine = 0; nChildLine < 4;nChildLine++) {
 			// find vert numbers for the line's two end points

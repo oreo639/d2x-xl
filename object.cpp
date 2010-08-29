@@ -177,7 +177,7 @@ void CMine::SetObjectData (char type)
 
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-objP = Objects (0) + Current ()->nObject;
+objP = Objects (Current ()->nObject);
 id = objP->m_info.id;
 memset (&objP->mType, 0, sizeof (objP->mType));
 memset (&objP->cType, 0, sizeof (objP->cType));
@@ -457,7 +457,7 @@ int i, j = GameInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->m_info.signature = i;
 if (nDelObj < --j)
-	memcpy (Objects () + nDelObj, Objects () + nDelObj + 1, (GameInfo ().objects.count - nDelObj) * sizeof (CGameObject));
+	memcpy (Objects (nDelObj), Objects (nDelObj + 1), (GameInfo ().objects.count - nDelObj) * sizeof (CGameObject));
 GameInfo ().objects.count = j;
 RenumberObjTriggers ();
 RenumberTriggerTargetObjs ();
@@ -866,7 +866,7 @@ switch (m_info.movementType) {
 		mType.physInfo.Read (fp, version);
 		break;
 	case MT_SPINNING:
-		fp.Read (mType.spinRate.Read);
+		fp.Read (mType.spinRate);
 		break;
 	case MT_NONE:
 		break;

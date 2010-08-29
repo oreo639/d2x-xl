@@ -101,7 +101,7 @@ CDoubleVector v (center - oppCenter);
 	CSegment *segP;
 	bool		okToMove = true;
 
-segP = Segments (0) + Current ()->nSegment;
+segP = Segments (Current ()->nSegment);
 byte* sideNormalP = sideNormalTable [Current ()->nSide];
 switch (m_selectMode) {
 	case POINT_MODE:

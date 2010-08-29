@@ -190,7 +190,7 @@ if (theMine->IsWall ()) {
 			// check child for this line 
 			nChildSide = sideChildTable[nSide][nChildLine];
 			nChild = segP->Child (nChildSide);
-			childSeg = theMine->Segments (0) + nChild;
+			childSeg = theMine->Segments (nChild);
 			if (nChild > -1) {
 
 				// figure out which side of child shares two points w/ current->side

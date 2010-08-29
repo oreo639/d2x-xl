@@ -896,7 +896,7 @@ DLE.MineView ()->Refresh ();
 // -------------------------------------------------------------------------- 
 void CMine::MarkSegment(short nSegment)
 {
-  CSegment *segP = Segments (0) + nSegment; 
+  CSegment *segP = Segments (nSegment); 
 
 	segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 
@@ -975,7 +975,7 @@ if (nSegment < 0 || nSegment >= SegCount ())
 	return; 
 DLE.SetModified (TRUE); 
 DLE.LockUndo ();
-CSegment *segP = Segments (0) + nSegment; 
+CSegment *segP = Segments (nSegment); 
 segP->SetChild (nSide, -1); 
 segP->m_info.childFlags &= ~(1 << nSide); 
 CSide *sideP = segP->m_sides + nSide;
@@ -1011,7 +1011,7 @@ int nChildSeg = parentSegP->Child (nSide);
 // does this side have a child?
 if (nChildSeg < 0 || nChildSeg >= SegCount ())
 	return;
-CSegment *child_seg = Segments (0) + nChildSeg; 
+CSegment *child_seg = Segments (nChildSeg); 
 // yes, see if child has a side which points to the parent
 int nChildSide;
 for (nChildSide = 0; nChildSide < 6; nChildSide++)
@@ -1368,14 +1368,14 @@ if (Current1 ().nSegment== Current2 ().nSegment) {
 	}
 
 if (Current () == &Current1 ()) {
-	seg1 = Segments (0) + Current1 ().nSegment; 
-	seg2 = Segments (0) + Current2 ().nSegment; 
+	seg1 = Segments (Current1 ().nSegment); 
+	seg2 = Segments (Current2 ().nSegment); 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	}
 else {
-	seg1 = Segments (0) + Current2 ().nSegment; 
-	seg2 = Segments (0) + Current1 ().nSegment; 
+	seg1 = Segments (Current2 ().nSegment); 
+	seg2 = Segments (Current1 ().nSegment); 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1436,14 +1436,14 @@ if (Current1 ().nSegment == Current2 ().nSegment) {
 	}
 
 if (Current ()== &Current1 ()) {
-	seg1 = Segments (0) + Current1 ().nSegment; 
-	seg2 = Segments (0) + Current2 ().nSegment; 
+	seg1 = Segments (Current1 ().nSegment); 
+	seg2 = Segments (Current2 ().nSegment); 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	} 
 else {
-	seg1 = Segments (0) + Current2 ().nSegment; 
-	seg2 = Segments (0) + Current1 ().nSegment; 
+	seg1 = Segments (Current2 ().nSegment); 
+	seg2 = Segments (Current1 ().nSegment); 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -2232,7 +2232,7 @@ nMatCens = 0;
 for (i = 0; i < GameInfo ().botgen.count; i++) {
 	nSegment = BotGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
-		segP = Segments (0) + nSegment; 
+		segP = Segments (nSegment); 
 		segP->m_info.value = i; 
 		if (segP->m_info.function== SEGMENT_FUNC_ROBOTMAKER)
 			segP->m_info.nMatCen = nMatCens++; 
@@ -2260,7 +2260,7 @@ nMatCens = 0;
 for (i = 0; i < GameInfo ().equipgen.count; i++) {
 	nSegment = EquipGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
-		segP = Segments (0) + nSegment; 
+		segP = Segments (nSegment); 
 		segP->m_info.value = i; 
 		if (segP->m_info.function== SEGMENT_FUNC_EQUIPMAKER)
 			segP->m_info.nMatCen = nMatCens++; 

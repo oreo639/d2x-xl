@@ -136,10 +136,8 @@ for (i = SegCount (); i; i--, segP++)
 
 short CMine::CreateNewLevel (void)
 {
-HGLOBAL hGlobal;
-uint nResSize;
 CResource res;
-byte *dataP = res.Load ((IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2));
+byte *dataP = res.Load (IsD1File () ? IDR_NEW_RDL : IDR_NEW_RL2);
 if (!dataP)
 	return 0;
 // copy dataP to a file
@@ -152,7 +150,7 @@ if (fp.Open (message, "wb"))
 	return 2;
 size_t nBytes = fp.Write (dataP, sizeof (byte), (ushort) res.Size ());
 fp.Close ();
-if (nBytes != nResSize)
+if (nBytes != res.Size ())
 	return 1;
 NumObjTriggers () = 0;
 return 0;

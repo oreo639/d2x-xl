@@ -1114,7 +1114,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion
 {
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
-	CSegment	*segP = Segments (0) + nSegment;
+	CSegment	*segP = Segments (nSegment);
 	CSegment	*prevSeg = null;
 	bool			bMarkChildren = false;
 
@@ -1165,8 +1165,8 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion
 {
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
-	CSegment	*segP = Segments (0) + nSegment;
-	CSegment	*prevSeg = null;
+	CSegment		*segP = Segments (nSegment);
+	CSegment		*prevSeg = null;
 	bool			bMarkChildren = false;
 
 // mark each child if child number is lower

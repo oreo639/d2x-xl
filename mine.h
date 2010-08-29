@@ -345,7 +345,7 @@ public:
 	void  LinkSides(short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match[4]);
 	void	CalcSegCenter (CVertex& pos, short nSegment);
 	inline CSegment *CurrSeg ()
-		{ return Segments () + Current ()->nSegment; }
+		{ return Segments (Current ()->nSegment); }
 	inline CWall *SideWall (int i = 0, int j = 0)
 		{ int w = Segments (i)->m_sides [j].m_info.nWall; return (w < 0) ? null : Walls (w); }
 	inline CWall *CurrWall ()
@@ -355,7 +355,7 @@ public:
 	inline short CurrVert ()
 		{ return CurrSeg ()->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; }
 	inline CGameObject *CurrObj ()
-		{ return Objects () + Current ()->nObject; }
+		{ return Objects (Current ()->nObject); }
 	void Mark ();
 	void MarkAll ();
 	void UnmarkAll ();
@@ -523,7 +523,7 @@ public:
 		{ return GameInfo ().objects.count; }
 
 	inline CSegment *OtherSeg (void)
-		{ return Segments () + Other ()->nSegment; }
+		{ return Segments (Other ()->nSegment); }
 	inline CSide *OtherSide (void)
 		{ return OtherSeg ()->m_sides + Other ()->nSide; }
 	inline void SetCurrent (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1) {
