@@ -358,8 +358,7 @@ else {
 	ushort w = texP->m_info.width;
 	ushort h = texP->m_info.height;
 	bufP += w * (h - 1); // point to last row of bitmap
-	int row;
-	for (row = 0; row < h; row++) {
+	for (int row = 0; row < h; row++) {
 		fp.Write (bufP, 1, w);
 		bufP -= w;
 		}
