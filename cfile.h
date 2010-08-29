@@ -13,7 +13,7 @@
 #include "VectorTypes.h"
 
 // the maximum length of a filename
-#define FILENAME_LEN			1024
+#define FILENAME_LEN			256
 
 class CFilename {
 	public:
