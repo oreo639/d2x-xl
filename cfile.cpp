@@ -354,7 +354,7 @@ return m_cf.rawPosition;
 
 int CFileManager::Seek (size_t offset, int whence) 
 {
-if (!m_cf.size)
+if (!m_cf.file)
 	return -1;
 
 	int destPos;
