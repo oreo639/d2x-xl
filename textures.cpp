@@ -771,6 +771,8 @@ bool	bLocalFile = (fp == NULL);
 if (!(fp || textureManager.HaveInfo (nVersion)))
 	fp = textureManager.OpenPigFile (nVersion);
 
+if (nTexture == 326)
+	nTexture = nTexture;
 CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
@@ -813,13 +815,6 @@ LoadIndex (0);
 LoadIndex (1);
 LoadTextures (0);
 LoadTextures (1);
-#ifdef USE_DYN_ARRAYS
-textures [0].Create (MaxTextures (0));
-textures [1].Create (MaxTextures (1));
-#else
-textures [0] = new CTexture [MaxTextures (0)];
-textures [1] = new CTexture [MaxTextures (1)];
-#endif
 }
 
 //------------------------------------------------------------------------
@@ -925,7 +920,7 @@ if (Check (nBaseTex)) {
 int CTextureManager::LoadIndex (int nVersion)
 {
 HINSTANCE hInst = AfxGetInstanceHandle ();
-HRSRC hRes = FindResource (hInst, MAKEINTRESOURCE (DLE.IsD1File () ? IDR_TEXTURE_DAT : IDR_TEXTURE2_DAT), "RC_DATA");
+HRSRC hRes = FindResource (hInst, MAKEINTRESOURCE (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT), "RC_DATA");
 if (!hRes) {
 	DEBUGMSG (" Reading texture: Texture index not found.");
 	return 1;
@@ -937,7 +932,7 @@ if (!hGlobal) {
 	}
 // first long is number of textures
 ushort* indexP = (ushort *) LockResource (hGlobal);
-nTextures [nVersion] = *((uint*) indexP) - 1;
+nTextures [nVersion] = *((uint*) indexP);
 indexP += 2;
 if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
 	FreeResource (hGlobal);
@@ -945,7 +940,7 @@ if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
 	return 3;
 	}
 for (uint i = 0; i < nTextures [nVersion]; i++)
-	index [nVersion][i] = *indexP++;
+	index [nVersion][i] = (*indexP++) - 1;
 FreeResource (hGlobal);
 return 0;
 }
@@ -955,12 +950,16 @@ return 0;
 CPigTexture& CTextureManager::LoadInfo (FILE* fp, int nVersion, short nTexture)
 {
 if (info [nVersion] == NULL) {
-    header [nVersion].Read (fp);
-    info [nVersion] = new CPigTexture [header [nVersion].nTextures];
-	 for (int i = 0; i < header [nVersion].nTextures; i++)
+	header [nVersion].Read (fp);
+	info [nVersion] = new CPigTexture [header [nVersion].nTextures];
+	for (int i = 0; i < header [nVersion].nTextures; i++)
+		{
+		if (i == 1554)
+			i = i;
 		info [nVersion][i].Read (fp, nVersion);
-	nOffsets [nVersion] = ftell (fp);
-   }
+		nOffsets [nVersion] = ftell (fp);
+		}
+	}
 return info [nVersion][index [nVersion][nTexture]];
 }
 
@@ -968,6 +967,12 @@ return info [nVersion][index [nVersion][nTexture]];
 
 void CTextureManager::LoadTextures (int nVersion)
 {
+#ifdef USE_DYN_ARRAYS
+textures [nVersion].Create (MaxTextures (nVersion));
+#else
+textures [nVersion] = new CTexture [MaxTextures (nVersion)];
+#endif
+
 	FILE* fp = OpenPigFile (nVersion);
 
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
@@ -1012,7 +1017,7 @@ for (i = 0; i < 2; i++) {
 	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
 		nTextures [i] = 0;
 	// buffer textures if not already buffered
-	texP [i] = &textures [nTextures [i]][0];
+	texP [i] = &textures [fileType][nTextures [i]];
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
 		if (rc = texP [i]->Load (nTextures [i]))
 			return rc;
