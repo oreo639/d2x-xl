@@ -156,8 +156,6 @@ if (info [nVersion] == NULL) {
 	info [nVersion] = new CPigTexture [header [nVersion].nTextures];
 	for (int i = 0; i < header [nVersion].nTextures; i++)
 		{
-		if (i == 1554)
-			i = i;
 		info [nVersion][i].Read (fp, nVersion);
 		nOffsets [nVersion] = ftell (fp);
 		}
@@ -169,6 +167,8 @@ return info [nVersion][index [nVersion][nTexture]];
 
 void CTextureManager::LoadTextures (int nVersion)
 {
+header [nVersion] = CPigHeader (nVersion);
+LoadIndex (nVersion);
 #if USE_DYN_ARRAYS
 textures [nVersion].Create (MaxTextures (nVersion));
 #else
