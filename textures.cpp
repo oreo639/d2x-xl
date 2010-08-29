@@ -776,7 +776,7 @@ int nSize = info.BufSize ();
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
 if (!fp)
-	fp = textureManager.OpenFile ();
+	fp = textureManager.OpenPigFile (nVersion);
 if (!Allocate (nSize, nTexture)) {
 	if (bLocalFile)
 		fclose (fp);	
@@ -848,7 +848,7 @@ FILE* CTextureManager::OpenPigFile (int nVersion)
 	FILE* fp = NULL;
 	char	filename [256];
 
-strcpy_s (filename, sizeof (filename), (nVersion ? descent_path : descent2_path);
+strcpy_s (filename, sizeof (filename), nVersion ? descent_path : descent2_path);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fopen_s (&fp, filename, "rb")) {
@@ -966,7 +966,7 @@ return info [nVersion][index [nVersion][nTexture]];
 
 //------------------------------------------------------------------------------
 
-void LoadTextures (int nVersion)
+void CTextureManager::LoadTextures (int nVersion)
 {
 	FILE* fp = OpenPigFile (nVersion);
 
