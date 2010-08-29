@@ -1148,11 +1148,11 @@ switch (nType) {
 		i = 1;
 		break;
 	}
+fTmp.Close ();
 if (!i) {
 	sprintf_s (szDest, sizeof (szDest), "%s%s", szFile, extensions [nType]);
 	i = WriteSubFile (fp, szTmp, szDest);
 	}
-fTmp.Close ();
 CFileManager::Delete (szTmp);
 return i;
 }
@@ -1431,7 +1431,7 @@ if (fp.Open (szHogFile, "ab")) {
 fp.Seek (0, SEEK_END);
 sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp.rdl", szFolder);
 theMine->Save (szTmp, true);
-WriteSubFile (fp, szFolder, szSubFile);
+WriteSubFile (fp, szTmp, szSubFile);
 CFileManager::Delete (szTmp);
 
 #if 1
