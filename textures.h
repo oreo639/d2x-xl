@@ -118,16 +118,6 @@ public:
 
 	inline int Size (void) { return m_nVersion ? sizeof (PIG_TEXTURE_D2) : sizeof (PIG_TEXTURE_D1); }
 
-	void Setup (int nVersion, ushort w = 0, ushort h = 0, byte f = 0, uint o = 0) {
-		m_nVersion = nVersion;
-		width = w;
-		height = h;
-		flags = f;
-		offset = o;
-		dflags = 0;
-		avgColor = 0;
-		}
-
 	void Decode (void) {
 		width += (ushort) (whExtra % 16) * 256;
 		if ((flags & 0x80) && (width > 256))
@@ -143,9 +133,20 @@ public:
 			}
 		else {
 			whExtra = (width / 256) + ((height / 256) * 16);
-			width &= 256;
+			width %= 256;
 			height %= 256;
 			}
+		}
+
+	void Setup (int nVersion, ushort w = 0, ushort h = 0, byte f = 0, uint o = 0) {
+		m_nVersion = nVersion;
+		width = w;
+		height = h;
+		flags = f;
+		offset = o;
+		dflags = 0;
+		avgColor = 0;
+		Encode ();
 		}
 
 	void Read (CFileManager& fp, int nVersion = -1) {
