@@ -170,7 +170,7 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	int gamedataOffset = 0;
 	int mineErr, gameErr = 0;
 	int	return_code = 0;
-	char	palette_name [256];
+	char	paletteName [256];
 	char*	ps;
 
 m_changesMade = 0;
@@ -204,16 +204,16 @@ if (IsD2File ()) {
 	// read palette file name
 	int i;
 	for (i = 0; i < 15; i++) {
-		palette_name [i] = fp.ReadChar ();
-		if (palette_name [i]== 0x0a) {
-			palette_name [i] = 0;
+		paletteName [i] = fp.ReadChar ();
+		if (paletteName [i]== 0x0a) {
+			paletteName [i] = 0;
 			break;
 			}
 		}
 	// replace extension with .pig
 	if (i >= 4) {
-		palette_name [strlen ((char *)palette_name) - 4] = null;
-		strcat_s (palette_name, sizeof (palette_name), ".PIG");
+		paletteName [strlen ((char *)paletteName) - 4] = 0;
+		strcat_s (paletteName, sizeof (paletteName), ".PIG");
 		}
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
@@ -228,7 +228,7 @@ if (IsD2File ()) {
 				*path = null;
 				}
 			// paste on new *.pig name
-			strcat_s (descent2_path, sizeof (descent2_path), palette_name);
+			strcat_s (descent2_path, sizeof (descent2_path), paletteName);
 			_strlwr_s (descent2_path, sizeof (descent2_path));
 			}
 		}
@@ -293,7 +293,7 @@ if (gameErr != 0) {
 	GameInfo ().lightDeltaIndices.Reset ();
 	GameInfo ().lightDeltaValues.Reset ();
 	fp.Close ();
-	return(3);
+	return 3;
 	}
 
 goto load_pog;
@@ -311,7 +311,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 		strcpy_s (ps, 256 - (ps - filename), ".pog");
 	else
 		strcat_s (filename, 256, ".pog");
-	if (fp.Open (filename, "rb")) {
+	if (!fp.Open (filename, "rb")) {
 		ReadPog (fp);
 		fp.Close ();
 		}

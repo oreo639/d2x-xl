@@ -80,17 +80,17 @@ else {
 		name = descent2_path; // point to 1st char if no slash found
 	else
 		name++;               // point to character after slash
-	char palette_name [15];
-	strncpy_s (palette_name, sizeof (palette_name), name, 12);
-	palette_name [13] = null;  // null terminate just in case
+	char paletteName [15];
+	strncpy_s (paletteName, sizeof (paletteName), name, 12);
+	paletteName [13] = null;  // null terminate just in case
 	// replace extension with *.256
-	if (strlen ((char *)palette_name) > 4)
-		strcpy_s (&palette_name [strlen ((char *) palette_name) - 4], 5, ".256");
+	if (strlen ((char *)paletteName) > 4)
+		strcpy_s (&paletteName [strlen ((char *) paletteName) - 4], 5, ".256");
 	else
-		strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
-	_strupr_s (palette_name, sizeof (palette_name));
-	strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
-	fp.Write (palette_name, strlen ((char *) palette_name), 1);
+		strcpy_s (paletteName, sizeof (paletteName), "GROUPA.256");
+	_strupr_s (paletteName, sizeof (paletteName));
+	strcat_s (paletteName, sizeof (paletteName), "\n"); // add a return to the end
+	fp.Write (paletteName, strlen ((char *) paletteName), 1);
 	}
 
 // write reactor info
