@@ -256,6 +256,7 @@ return 0;
 //  ACTION - Saves the player, object, wall, door, trigger, and
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
+
 short CMine::SaveGameData(CFileManager& fp)
 {
 HINSTANCE hInst = AfxGetInstanceHandle();

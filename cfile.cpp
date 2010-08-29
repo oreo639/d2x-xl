@@ -275,7 +275,7 @@ if (m_cf.rawPosition >= m_cf.size)
 	return EOF;
 c = getc (m_cf.file);
 if (c != EOF)
-	m_cf.rawPosition = ftell (m_cf.file) - m_cf.libOffset;
+	m_cf.rawPosition = ftell (m_cf.file);
 return c;
 }
 
@@ -372,8 +372,8 @@ switch (whence) {
 	default:
 		return 1;
 	}
-int c = fseek (m_cf.file, m_cf.libOffset + destPos, SEEK_SET);
-m_cf.rawPosition = ftell (m_cf.file) - m_cf.libOffset;
+int c = fseek (m_cf.file, destPos, SEEK_SET);
+m_cf.rawPosition = ftell (m_cf.file);
 return c;
 }
 

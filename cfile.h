@@ -43,7 +43,6 @@ typedef struct tFileInfo {
 	FILE		*file;
 	char		*filename;
 	int		size;
-	int		libOffset;
 	int		rawPosition;
 } tFileInfo;
 
