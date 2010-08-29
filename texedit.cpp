@@ -862,7 +862,7 @@ bool CTextureEdit::LoadBitmap (CFileManager& fp)
 
 			if (bmih.biBitCount == 4) {
 				long offset = (fix)v*(fix)width + (fix)u / 2;
-				fseek(fp, (fix)bmfh.bfOffBits + offset, SEEK_SET);
+				fp.Seek ((fix)bmfh.bfOffBits + offset, SEEK_SET);
 				fp.Read(&byte, 1, 1);
 				if (!(u&1))
 					byte >>=4;
@@ -870,7 +870,7 @@ bool CTextureEdit::LoadBitmap (CFileManager& fp)
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
 			else {
-				fseek(fp, (fix)bmfh.bfOffBits + (fix)v*(fix)width + (fix)u, SEEK_SET);
+				fp.Seek ((fix)bmfh.bfOffBits + (fix)v*(fix)width + (fix)u, SEEK_SET);
 				fp.Read(&byte, 1, 1);
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
@@ -898,7 +898,7 @@ void CTextureEdit::OnLoad ()
 {
   OPENFILENAME ofn;
   char szFile[80] = "\0";
-  CFileManager& fp;
+  CFileManager fp;
   bool bFuncRes;
 
   sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
@@ -915,8 +915,7 @@ void CTextureEdit::OnLoad ()
 if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
 		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.') + 1, 3);
-	fp.Open (ofn.lpstrFile, "rb");
-	if (!fp) {
+	if (fp.Open (ofn.lpstrFile, "rb")) {
 		ErrorMsg ("Could not open texture fp.");
 		goto errorExit;
 		}
@@ -1001,7 +1000,7 @@ void CTextureEdit::OnSave ()
 {
 OPENFILENAME ofn;
 char szFile[256] = "\0";
-CFileManager& fp;
+CFileManager fp;
 
 memset(&ofn, 0, sizeof (OPENFILENAME));
 
@@ -1015,8 +1014,7 @@ ofn.nMaxFile = sizeof (szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName (&ofn)) {
 	_strlwr_s (ofn.lpstrFile, sizeof (szFile));
-	fp.Open (ofn.lpstrFile, "wb");
-	if (!fp) {
+	if (fp.Open (ofn.lpstrFile, "wb")) {
 		ErrorMsg ("Could not create bitmap fp.");
 		return;
 		}
@@ -1026,7 +1024,7 @@ if (GetSaveFileName (&ofn)) {
 		SaveBitmap (fp);
 	// define the fp header
 	// close fp
-	fclose(fp);
+	fp.Close ();
 	}
 }
 
