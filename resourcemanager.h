@@ -21,6 +21,7 @@ public:
 		}
 
 	byte* Load (const char* szName, const char* szCategory);
+	inline byte* Load (const int nId, const char* szCategory) { return Load (MAKEINTRESOURCE (nId), szCategory); }
 
 	inline size_t Size (void) { return m_size; }
 };
@@ -30,6 +31,7 @@ public:
 class CDataResource : public CResource {
 public:
 	inline byte* Load (const char* szName) { return this->CResource::Load (szName, "RC_DATA"); }
+	inline byte* Load (int nId) { return this->CResource::Load (nId, "RC_DATA"); }
 };
 
 //------------------------------------------------------------------------

@@ -123,7 +123,7 @@ int CTextureManager::LoadIndex (int nVersion)
 {
 	CResource res;	
 
-ushort* indexP = (ushort *) res.Load (MAKEINTRESOURCE (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT));
+ushort* indexP = (ushort *) res.Load (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT);
 if (!indexP) {
 	DEBUGMSG (" Reading texture: Could not load texture index.");
 	return 1;
