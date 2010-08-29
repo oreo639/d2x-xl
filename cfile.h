@@ -130,11 +130,14 @@ class CFileManager {
 		void WriteVector (const tAngleVector& v);
 		void WriteVector (const tFixVector& v);
 		void WriteVector (const tDoubleVector& v);
-		inline void WriteVector (const CAngleVector& v) { WriteVector (v.v); }
-		inline void WriteVector (const CFixVector& v) { WriteVector (v.v); }
-		inline void WriteVector (const CDoubleVector& v) { WriteVector (v.v); }
+		inline void Write (const CAngleVector& v) { WriteVector (v.v); }
+		inline void Write (const CFixVector& v) { WriteVector (v.v); }
+		inline void Write (const CDoubleVector& v) { WriteVector (v.v); }
+
 		void WriteMatrix (const CFixMatrix& m);
 		void WriteMatrix (const CDoubleMatrix& m);
+		inline void Write (const CFixMatrix& m) { WriteMatrix (m); }
+		inline void Write (const CDoubleMatrix& m) { WriteMatrix (m); }
 
 		int Copy (const char *pszSrc, const char *pszDest);
 		byte* ReadData (const char *filename);

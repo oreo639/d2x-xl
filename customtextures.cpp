@@ -330,7 +330,7 @@ return nOffset;
 
 //-----------------------------------------------------------------------------
 
-bool WritePogTexture (CFileManager& pDestPigFile, CTexture *texP)
+bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
 	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.tgaDataP : texP->m_info.bmDataP;
 
@@ -419,8 +419,7 @@ int CreatePog (CFileManager& fp)
 
 if (DLE.IsD1File ()) {
 	ErrorMsg ("Descent 1 does not support custom textures.");
-	rc = 4;
-	goto abort;
+	return 4;
 	}
 
 textureCount = textureManager.nTextures [1];
@@ -437,7 +436,7 @@ for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 		pigFileInfo.nTextures++;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	pigFileInfo.nTextures++;
-fp.Write (&pigFileInfo, sizeof (PIG_HEADER_D2), 1, fp);
+fp.Write (&pigFileInfo, sizeof (PIG_HEADER_D2), 1);
 
 // write list of textures
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)

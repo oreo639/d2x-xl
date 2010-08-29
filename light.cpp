@@ -86,16 +86,16 @@ return memcmp (lightMap, defLightMap, sizeof (lightMap)) != 0;
 
 //--------------------------------------------------------------------------
 
-int ReadLightMap (FILE *fLightMap, uint nSize)
+int ReadLightMap (CFileManager& fp, uint nSize)
 {
-return fread (lightMap, nSize, 1, fLightMap) != 1;
+return fp.Read (lightMap, nSize, 1) != 1;
 }
 
 //--------------------------------------------------------------------------
 
-int WriteLightMap (FILE *fLightMap)
+int WriteLightMap (CFileManager& fp)
 {
-return fwrite (lightMap, sizeof (lightMap), 1, fLightMap) != 1;
+return fp.Write (lightMap, sizeof (lightMap), 1) != 1;
 }
 
 //--------------------------------------------------------------------------

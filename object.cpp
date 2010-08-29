@@ -553,13 +553,13 @@ wndP->UpdateWindow ();
 
 int CObjPhysicsInfo::Read (CFileManager& fp, int version)
 {
-fp.Read (velocity);
-fp.Read (thrust.Read);
+fp.ReadVector (velocity);
+fp.ReadVector (thrust);
 mass = fp.ReadFix ();
 drag = fp.ReadFix ();
 brakes = fp.ReadFix ();
-fp.Read (rotvel);
-fp.Read (rotthrust);
+fp.ReadVector (rotvel);
+fp.ReadVector (rotthrust);
 turnroll = fp.ReadFixAng ();
 flags = fp.ReadInt16 ();
 return 1;
@@ -569,13 +569,13 @@ return 1;
 
 void CObjPhysicsInfo::Write (CFileManager& fp, int version)
 {
-fp.Write (velocity);
-fp.Write (thrust);
+fp.WriteVector (velocity);
+fp.WriteVector (thrust);
 fp.WriteFix (mass);
 fp.WriteFix (drag);
 fp.WriteFix (brakes);
-fp.Write (rotvel);
-fp.Write (rotthrust);
+fp.WriteVector (rotvel);
+fp.WriteVector (rotthrust);
 fp.WriteFixAng (turnroll);
 fp.WriteInt16 (flags);
 }
@@ -706,7 +706,7 @@ void CObjPolyModelInfo::Write (CFileManager& fp, int version)
 {
 fp.Write (nModel);
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	fp.Write (anim_angles [i]);
+	fp.WriteVector (anim_angles [i]);
 fp.Write (subobj_flags);
 fp.Write (tmap_override);
 }

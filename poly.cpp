@@ -282,9 +282,9 @@ else {
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		fp.Read (m_info.subModels [i].pnt);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].rad = fp.ReadFix ();
+		m_info.subModels [i].rad = fp.ReadFix ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		fp.Read (m_info.subModels [i].parent = (byte) fp.ReadSByte ();
+		m_info.subModels [i].parent = (byte) fp.ReadSByte ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		fp.Read (m_info.subModels [i].vMin);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -324,7 +324,7 @@ if (bCustom) {
 	position = 3;
 	while (!fp.EoF ()) {
 		fp.Seek (position, SEEK_SET);
-		if ((fread (&level, sizeof (struct level_header), 1, fp) != 1) ||
+		if ((fp.Read (&level, sizeof (struct level_header), 1) != 1) ||
 			 (level.size > 10000000L || level.size < 0)) {
 				fp.Close ();
 				return 1;

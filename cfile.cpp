@@ -207,7 +207,7 @@ static long ffilelength (FILE* fp)
 
 if (((oldPos = ftell (fp)) == -1) ||
 	 (fseek (fp, 0, SEEK_END) == -1) ||
-	 ((size = fp.Tell ()) == -1) ||
+	 ((size = ftell (fp)) == -1) ||
 	 (fseek (fp, oldPos, SEEK_SET) == -1))
 	return -1;
 return size;
@@ -469,9 +469,9 @@ return 1;
 
 int CFileManager::ReadMatrix (CFixMatrix& m)
 {
-ReadVector (m.rVec);
-ReadVector (m.uVec);
-ReadVector (m.fVec);
+ReadVector (m.rVec.v);
+ReadVector (m.uVec.v);
+ReadVector (m.fVec.v);
 return 1;
 }
 
@@ -479,9 +479,9 @@ return 1;
 
 int CFileManager::ReadMatrix (CDoubleMatrix& m)
 {
-ReadVector (m.rVec);
-ReadVector (m.uVec);
-ReadVector (m.fVec);
+ReadVector (m.rVec.v);
+ReadVector (m.uVec.v);
+ReadVector (m.fVec.v);
 return 1;
 }
 

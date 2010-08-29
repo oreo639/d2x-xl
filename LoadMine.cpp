@@ -77,7 +77,7 @@ if (checkErr != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", checkErr);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
-			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+			CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 			bLoadFromHog = false;
 			bNewMine = true;
@@ -165,7 +165,7 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	HINSTANCE hInst = AfxGetInstanceHandle();
 	byte* palette = 0;
 
-	CFileManager& fp = 0;
+	CFileManager& fp;
 	int sig = 0;
 	int minedataOffset = 0;
 	int gamedataOffset = 0;
@@ -319,7 +319,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 	ReadHamFile ();
 #if 0
 	char szHamFile [256];
-	FSplit (descent2_path, szHamFile, null, null);
+	CFileManager::SplitPath (descent2_path, szHamFile, null, null);
 	strcat (szHamFile, "hoard.ham");
 	ReadHamFile (szHamFile, EXTENDED_HAM);
 #endif
@@ -362,13 +362,11 @@ return return_code;
 
 bool CMine::HasCustomLightMap (void)
 {
-	CResource res;
-
+CResource res;
 byte *dataP;
 if (!(dataP = res.Load (IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
 	return false;
 return memcmp (lightMap, dataP, sizeof (lightMap)) != 0;
-return bCustom;
 }
 
 // ------------------------------------------------------------------------

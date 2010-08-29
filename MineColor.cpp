@@ -46,10 +46,10 @@ return 1;
 
 void CColor::Write (CFileManager& fp, int version, bool bFlag) 
 {
-WriteInt8 (m_info.index, fp);
-WriteInt32 (int (m_info.color.r * 0x7fffffff + 0.5), fp);
-WriteInt32 (int (m_info.color.g * 0x7fffffff + 0.5), fp);
-WriteInt32 (int (m_info.color.b * 0x7fffffff + 0.5), fp);
+fp.Write (m_info.index);
+fp.WriteInt32 ((int) (m_info.color.r * 0x7fffffff + 0.5));
+fp.WriteInt32 ((int) (m_info.color.g * 0x7fffffff + 0.5));
+fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 }
 
 // ------------------------------------------------------------------------

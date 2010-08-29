@@ -28,7 +28,7 @@ void* WriteBytes (void* buffer, uint length, CFileManager& fp);
 
 double WriteDouble (double value, CFileManager& fp);
 
-LPSTR FSplit (LPSTR fullName, LPSTR pathName, LPSTR fileName, LPSTR extName);
+LPSTR CFileManager::SplitPath (LPSTR fullName, LPSTR pathName, LPSTR fileName, LPSTR extName);
 
 #endif
 

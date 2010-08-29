@@ -92,14 +92,14 @@ return 1;
 
 int WriteCustomPalette (CFileManager& fp)
 {
-return fp.Write (pCustomPalette, 37 * 256, 1) == 37 * 256;
+return fp.Write (pCustomPalette, 37 * 256, 1) == 1;
 }
 
 //------------------------------------------------------------------------
 
 byte* PalettePtr (CResource& res)
 {
-return pCustomPalette ? pCustomPalette : res.Load (PaletteResource);
+return pCustomPalette ? pCustomPalette : res.Load (PaletteResource ());
 }
 
 //------------------------------------------------------------------------

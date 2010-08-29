@@ -440,34 +440,34 @@ zPrime.Normalize ();
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->m_info.wallFlags & MARKED_MASK) {
-		fprintf (fp, "segment %d\n",nSegment);
+		fprintf (fp.File (), "segment %d\n",nSegment);
 		sideP = segP->m_sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
-			fprintf (fp, "  side %d\n",i);
-			fprintf (fp, "    tmap_num %d\n",sideP->m_info.nBaseTex);
-			fprintf (fp, "    tmap_num2 %d\n",sideP->m_info.nOvlTex);
+			fprintf (fp.File (), "  side %d\n",i);
+			fprintf (fp.File (), "    tmap_num %d\n",sideP->m_info.nBaseTex);
+			fprintf (fp.File (), "    tmap_num2 %d\n",sideP->m_info.nOvlTex);
 			for (j = 0; j < 4; j++) {
-				fprintf (fp, "    uvls %d %d %d\n",
+				fprintf (fp.File (), "    uvls %d %d %d\n",
 				sideP->m_info.uvls [j].u,
 				sideP->m_info.uvls [j].v,
 				sideP->m_info.uvls [j].l);
 				}
 			if (bExtBlkFmt) {
-				fprintf (fp, "    nWall %d\n", 
+				fprintf (fp.File (), "    nWall %d\n", 
 							(sideP->m_info.nWall < GameInfo ().walls.count) ? sideP->m_info.nWall : NO_WALL);
 				if (sideP->m_info.nWall < GameInfo ().walls.count) {
 					wallP = Walls (sideP->m_info.nWall);
-					fprintf (fp, "        segment %d\n", wallP->m_nSegment);
-					fprintf (fp, "        side %d\n", wallP->m_nSide);
-					fprintf (fp, "        hps %d\n", wallP->m_info.hps);
-					fprintf (fp, "        type %d\n", wallP->m_info.type);
-					fprintf (fp, "        flags %d\n", wallP->m_info.flags);
-					fprintf (fp, "        state %d\n", wallP->m_info.state);
-					fprintf (fp, "        nClip %d\n", wallP->m_info.nClip);
-					fprintf (fp, "        keys %d\n", wallP->m_info.keys);
-					fprintf (fp, "        cloak %d\n", wallP->m_info.cloakValue);
+					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
+					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
+					fprintf (fp.File (), "        hps %d\n", wallP->m_info.hps);
+					fprintf (fp.File (), "        type %d\n", wallP->m_info.type);
+					fprintf (fp.File (), "        flags %d\n", wallP->m_info.flags);
+					fprintf (fp.File (), "        state %d\n", wallP->m_info.state);
+					fprintf (fp.File (), "        nClip %d\n", wallP->m_info.nClip);
+					fprintf (fp.File (), "        keys %d\n", wallP->m_info.keys);
+					fprintf (fp.File (), "        cloak %d\n", wallP->m_info.cloakValue);
 					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= GameInfo ().triggers.count))
-						fprintf (fp, "        trigger %u\n", NO_TRIGGER);
+						fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
 					else {
 						CTrigger *trigger = Triggers (wallP->m_info.nTrigger);
 						int iTarget;
@@ -478,30 +478,30 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 								count++;
 #if 0
 						if (trigger->m_count && !count)	// no targets in marked area
-							fprintf (fp, "        trigger %d\n", MAX_TRIGGERS);
+							fprintf (fp.File (), "        trigger %d\n", MAX_TRIGGERS);
 						else 
 #endif
 							{
-							fprintf (fp, "        trigger %d\n", wallP->m_info.nTrigger);
-							fprintf (fp, "			    type %d\n", trigger->m_info.type);
-							fprintf (fp, "			    flags %ld\n", trigger->m_info.flags);
-							fprintf (fp, "			    value %ld\n", trigger->m_info.value);
-							fprintf (fp, "			    timer %d\n", trigger->m_info.time);
-							fprintf (fp, "			    count %d\n", count);
+							fprintf (fp.File (), "        trigger %d\n", wallP->m_info.nTrigger);
+							fprintf (fp.File (), "			    type %d\n", trigger->m_info.type);
+							fprintf (fp.File (), "			    flags %ld\n", trigger->m_info.flags);
+							fprintf (fp.File (), "			    value %ld\n", trigger->m_info.value);
+							fprintf (fp.File (), "			    timer %d\n", trigger->m_info.time);
+							fprintf (fp.File (), "			    count %d\n", count);
 							for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 								if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
-									fprintf (fp, "			        segP %d\n", trigger->Segment (iTarget));
-									fprintf (fp, "			        side %d\n", trigger->Side (iTarget));
+									fprintf (fp.File (), "			        segP %d\n", trigger->Segment (iTarget));
+									fprintf (fp.File (), "			        side %d\n", trigger->Side (iTarget));
 									}
 							}
 						}
 					}
 				}
 			}
-		fprintf (fp, "  children");
+		fprintf (fp.File (), "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fp, " %d", segP->Child (i));
-		fprintf (fp, "\n");
+			fprintf (fp.File (), " %d", segP->Child (i));
+		fprintf (fp.File (), "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
 			// each vertex relative to the origin has a x', y', and z' component
@@ -510,15 +510,15 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
 			vVertex = *Vertices (nVertex) - origin;
-			fprintf (fp, "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ xPrime), D2X (vVertex ^ yPrime), D2X (vVertex ^ zPrime));
+			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ xPrime), D2X (vVertex ^ yPrime), D2X (vVertex ^ zPrime));
 			}
-		fprintf (fp, "  staticLight %ld\n",segP->m_info.staticLight);
+		fprintf (fp.File (), "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
-			fprintf (fp, "  special %d\n",segP->m_info.function);
-			fprintf (fp, "  nMatCen %d\n",segP->m_info.nMatCen);
-			fprintf (fp, "  value %d\n",segP->m_info.value);
-			fprintf (fp, "  childFlags %d\n",segP->m_info.childFlags);
-			fprintf (fp, "  wallFlags %d\n",segP->m_info.wallFlags);
+			fprintf (fp.File (), "  special %d\n",segP->m_info.function);
+			fprintf (fp.File (), "  nMatCen %d\n",segP->m_info.nMatCen);
+			fprintf (fp.File (), "  value %d\n",segP->m_info.value);
+			fprintf (fp.File (), "  childFlags %d\n",segP->m_info.childFlags);
+			fprintf (fp.File (), "  wallFlags %d\n",segP->m_info.wallFlags);
 			}
 		}
 	}
@@ -591,7 +591,7 @@ if (!fp) {
 	}
 //UpdateUndoBuffer(0);
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember file for quick paste
-fprintf (fp, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fp, 0);
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
@@ -686,7 +686,7 @@ if (!fp) {
 	}
 //  UpdateUndoBuffer(0);
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fp for quick paste
-fprintf (fp, bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fp, 0);
 fclose (fp);
 sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);

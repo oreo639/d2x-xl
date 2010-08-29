@@ -143,7 +143,7 @@ if (!data)
 	return 0;
 // copy data to a file
 
-FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 ASSIGN (RobotInfo (), DefRobotInfo ());
 texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;

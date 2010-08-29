@@ -220,7 +220,7 @@ return dest;
 
                         /*---------------------------*/
 
-char *FSplit (char *fullName, char *pathName, char *fileName, char *extName)
+char *CFileManager::SplitPath (char *fullName, char *pathName, char *fileName, char *extName)
 {
    char *s;
    char	fn [256];

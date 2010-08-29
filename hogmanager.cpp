@@ -33,11 +33,11 @@ char cut_paste_filename [256] = "";
 int read_block_file(char *name,int option);
 void strip_extension(char *str);
 
-void DeleteSubFile (FILE *file, long size, long offset, int num_entries, int delete_index);
+void DeleteSubFile (FILE *fp, long size, long offset, int num_entries, int delete_index);
 void ImportSubFile ();
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size);
 void RenameSubFile ();
-void DeleteLevelSubFiles(FILE *file,char *name);
+void DeleteLevelSubFiles(FILE *fp,char *name);
 
                          /*--------------------------*/
 
@@ -362,7 +362,7 @@ CFileManager::SplitPath (pszFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 
 if (fTmp.Open (szTmp, "wb") || fSrc.Open (pszFile, "rb")) {
-	ErrorMsg ("Unable to create temporary DLE-XP work file.");
+	ErrorMsg ("Unable to create temporary DLE-XP work fp.");
 	goto errorExit;
 	}
 // set subfile name
@@ -401,7 +401,7 @@ if (pszExt) {
 		h = fSrc.Tell () - h;
 		}
 	}
-// read custom light values if a lightmap file exists
+// read custom light values if a lightmap fp exists
 strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');
 if (pszExt) {
@@ -442,7 +442,7 @@ if ((size >= 0) && (offset >= 0)) {
 	theMine->ReadColorMap (fSrc);
 	h = fSrc.Tell () - h;
 	}
-// read custom textures if a pog file exists
+// read custom textures if a pog fp exists
 strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');
 if (pszExt) {
@@ -492,17 +492,13 @@ funcRes = true;
 
 errorExit:
 
-if (fTmp) 
-	fclose (fTmp);
-if (fSrc) 
-	fclose (fSrc);
 return funcRes;
 }
 
 //------------------------------------------------------------------------
 // CHogManager::Ok()
 //
-// Saves file to a temporary file called dle_temp.rdl so editor can load it
+// Saves fp to a temporary fp called dle_temp.rdl so editor can load it
 //------------------------------------------------------------------------
 
 void CHogManager::OnOK () 
@@ -511,18 +507,18 @@ LBFiles ()->GetText (LBFiles ()->GetCurSel (), m_pszSubFile);
 char *pszExt = strrchr ((char *) m_pszSubFile, '.');
 if (pszExt && _strcmpi (pszExt,".rdl") && _strcmpi (pszExt,".rl2")) {
 #if 1
-	ErrorMsg ("DLE-XP cannot process this file. To change the file,\n\n"
+	ErrorMsg ("DLE-XP cannot process this fp. To change the fp,\n\n"
 				 "export it and process it with the appropriate application.\n"
-				 "To incorporate the changes in the HOG file,\n"
-				 "import the modified file back into the HOG file.");
+				 "To incorporate the changes in the HOG fp,\n"
+				 "import the modified fp back into the HOG fp.");
 	return;
 	}
 #else //0
-	if (QueryMsg ("Would you like to view this file\n"
+	if (QueryMsg ("Would you like to view this fp\n"
 					  "from an associated windows program?\n\n"
-					  "Note: Any changes to this file will affect\n"
-					  "the exported file and will have to be imported\n"
-					  "back into the HOG file when finished.") == IDOK) {
+					  "Note: Any changes to this fp will affect\n"
+					  "the exported fp and will have to be imported\n"
+					  "back into the HOG fp when finished.") == IDOK) {
 		SizeListBox->GetString (message, index);
 		long size = atol(message);
 		OffsetListBox->GetString(message,index);
@@ -573,17 +569,17 @@ void CHogManager::OnRename ()
 if (index < 0)
 	return;
 LBFiles ()->GetText (index, buf);
-CInputDialog dlg (this, "Rename file", "Enter new name:",(char *) buf, sizeof (buf));
+CInputDialog dlg (this, "Rename fp", "Enter new name:",(char *) buf, sizeof (buf));
 if (dlg.DoModal () != IDOK)
 	return;
 if (FindFilename (buf) >= 0) {
-	ErrorMsg ("A file with that name already exists\nin the HOG file.");
+	ErrorMsg ("A fp with that name already exists\nin the HOG fp.");
 	return;
 	}
 FILE *hogfile;
 fopen_s (&hogfile, m_pszFile, "r+b"); // add it to the end
 if (!hogfile) {
-	ErrorMsg ("Could not open HOG file.");
+	ErrorMsg ("Could not open HOG fp.");
 	return;
 	}
 long size, offset;
@@ -591,7 +587,7 @@ level_header lh;
 int fileno = GetFileData (index, &size, &offset);
 fseek (hogfile, offset, SEEK_SET);
 if (!fread (&lh, sizeof (lh), 1, hogfile))
-	ErrorMsg ("Cannot read from HOG file");
+	ErrorMsg ("Cannot read from HOG fp");
 else {
 	memset(lh.name, 0, sizeof (lh.name));
 	buf[12] = null;
@@ -599,7 +595,7 @@ else {
 	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
 	fseek (hogfile,offset,SEEK_SET);
 	if (!fwrite (&lh, sizeof (lh), 1, hogfile))
-		ErrorMsg ("Cannot write to HOG file");
+		ErrorMsg ("Cannot write to HOG fp");
 	else {
 		// update list box
 		DeleteFile ();
@@ -619,14 +615,14 @@ fclose(hogfile);
 //------------------------------------------------------------------------
 // CHogManager - ImportMsg
 //
-// Adds file to the end of the list
+// Adds fp to the end of the list
 //------------------------------------------------------------------------
 
 void CHogManager::OnImport () 
 {
 	long offset;
 
-	char szFile[256] = "\0"; // buffer for file name
+	char szFile[256] = "\0"; // buffer for fp name
 	level_header lh;
 //  DWORD index;
 
@@ -640,11 +636,11 @@ void CHogManager::OnImport ()
 if (!BrowseForFile (TRUE, (IsD1File ()) ? "rdl" : "rl2", szFile, 
 						  "Descent Level|*.rdl|"
 						  "Descent 2 Level|*.rl2|"
-						  "Texture file|*.pog|"
-						  "Robot file|*.hxm|"
-						  "Lightmap file|*.lgt|"
-						  "Color file|*.clr|"
-						  "Palette file|*.pal|"
+						  "Texture fp|*.pog|"
+						  "Robot fp|*.hxm|"
+						  "Lightmap fp|*.lgt|"
+						  "Color fp|*.clr|"
+						  "Palette fp|*.pal|"
 						  "All Files|*.*||",
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST,
 						  DLE.MainFrame ())
@@ -656,11 +652,11 @@ ofn.lStructSize = sizeof (OPENFILENAME);
 ofn.hwndOwner = GetSafeHwnd ();
 ofn.lpstrFilter = "Descent Level\0*.rdl\0"
 						"Descent 2 Level\0*.rl2\0"
-						"Texture file\0*.pog\0"
-						"Robot file\0*.hxm\0"
-						"Lightmap file\0*.lgt\0"
-						"Color file\0*.clr\0"
-						"Palette file\0*.pal\0"
+						"Texture fp\0*.pog\0"
+						"Robot fp\0*.hxm\0"
+						"Lightmap fp\0*.lgt\0"
+						"Color fp\0*.clr\0"
+						"Palette fp\0*.pal\0"
 						"All Files\0*.*\0";
 if (DLE.IsD1File ()) {
 	ofn.nFilterIndex = 1;
@@ -682,13 +678,13 @@ if (!GetOpenFileName (&ofn))
 FILE *fDest;
 fopen_s (&fDest, m_pszFile, "ab"); // add it to the end
 if (!fDest) {
-	ErrorMsg ("Could not open destination HOG file for import.");
+	ErrorMsg ("Could not open destination HOG fp for import.");
 	return;
 	}
 FILE *fSrc;
 fopen_s (&fSrc, szFile, "rb");
 if (!fSrc) {
-	ErrorMsg ("Could not open source file for import.");
+	ErrorMsg ("Could not open source fp for import.");
 	fclose (fDest);
 	return;
 	}
@@ -720,12 +716,12 @@ LBFiles ()->SetCurSel (index);
 //------------------------------------------------------------------------
 // CHogManager - ExportMsg
 //
-// Exports selected item to a file
+// Exports selected item to a fp
 //------------------------------------------------------------------------
 
 void CHogManager::OnExport () 
 {
-	char szFile[256] = "\0"; // buffer for file name
+	char szFile[256] = "\0"; // buffer for fp name
 	DWORD index;
 	level_header lh;
 	long size, offset;
@@ -733,7 +729,7 @@ void CHogManager::OnExport ()
 // make sure there is an item selected
 index = LBFiles ()->GetCurSel ();
 if (index < 0) {
-	ErrorMsg ("Please select a file to export.");
+	ErrorMsg ("Please select a fp to export.");
 	return;
 	}
 // get item name, size, and offset
@@ -769,11 +765,11 @@ if (GetSaveFileName (&ofn))
 //------------------------------------------------------------------------
 // CHogManager - DeleteMsg
 //
-// Deletes an item from a HOG file using the following steps:
+// Deletes an item from a HOG fp using the following steps:
 //
-// 1) Creates a new HOG file which does not contain the file selected
-// 2) Deletes original HOG file
-// 3) Renames new file to original file's name
+// 1) Creates a new HOG fp which does not contain the fp selected
+// 2) Deletes original HOG fp
+// 3) Renames new fp to original fp's name
 //
 //------------------------------------------------------------------------
 
@@ -789,7 +785,7 @@ void CHogManager::OnDelete ()
 // make sure there is an item selected
 delete_index = plb->GetCurSel ();
 if (delete_index < 0) {
-	ErrorMsg ("Please choose a file to delete.");
+	ErrorMsg ("Please choose a fp to delete.");
 	return;
 	}
 #if 1//ndef _DEBUG
@@ -831,13 +827,13 @@ bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels
 ClearFileList (plb);
 fopen_s (&hog_file, pszFile, "rb");
 if (!hog_file) {
-	sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
+	sprintf_s (message, sizeof (message), "Unable to open HOG fp (%s)",pszFile);
 	ErrorMsg (message);
 	return false;
 	}
 fread (data,3,1,hog_file); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
-	ErrorMsg ("This is not a Descent HOG file");
+	ErrorMsg ("This is not a Descent HOG fp");
 	return false;
 	}
 position = 3;
@@ -848,7 +844,7 @@ while (!feof (hog_file)) {
 		break;
 	level = (struct level_header *) data;
 	if (level->size < 0) {
-		ErrorMsg ("Error reading HOG file");
+		ErrorMsg ("Error reading HOG fp");
 		fclose (hog_file);
 		return false;
 		}
@@ -863,7 +859,7 @@ while (!feof (hog_file)) {
 									 strstr (level->name, ".pal")))) {
 		int i = plb->AddString (level->name);
 		if (bGetFileData && (0 > AddFileData (plb, i, level->size, position, nFiles))) {
-			ErrorMsg ("Too many files in HOG file.");
+			ErrorMsg ("Too many files in HOG fp.");
 			fclose (hog_file);
 			return false;
 			}
@@ -873,7 +869,7 @@ while (!feof (hog_file)) {
 	position += sizeof (struct level_header) + level->size;
 	}
 fclose (hog_file);
-// select first level file
+// select first level fp
 for (index = 0; index < nFiles; index++) {
 	message [0] = null;
 	plb->GetText (index, message);
@@ -906,7 +902,7 @@ bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOO
 fopen_s (&hog_file, pszFile, "rb");
 if (!hog_file) {
 	if (bVerbose) {
-		sprintf_s (message, sizeof (message), "Unable to open HOG file (%s)",pszFile);
+		sprintf_s (message, sizeof (message), "Unable to open HOG fp (%s)",pszFile);
 		ErrorMsg (message);
 		}
 	return false;
@@ -914,7 +910,7 @@ if (!hog_file) {
 fread(data,3,1,hog_file); // verify signature "DHF"
 if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
 	if (bVerbose)
-		ErrorMsg ("This is not a Descent HOG file");
+		ErrorMsg ("This is not a Descent HOG fp");
 	return false;
 	}
 position = 3;
@@ -926,7 +922,7 @@ while (!feof (hog_file)) {
 	level = (struct level_header *) data;
 	if (level->size > 100000000L || level->size < 0) {
 		if (bVerbose)
-			ErrorMsg ("Error reading HOG file");
+			ErrorMsg ("Error reading HOG fp");
 		fclose (hog_file);
 		return false;
 		}
@@ -955,19 +951,19 @@ bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long s
 FILE *fSrc;
 fopen_s (&fSrc, pszSrc, "rb");
 if (!fSrc) {
-	ErrorMsg ("Could not open HOG file.");
+	ErrorMsg ("Could not open HOG fp.");
 	return false;
 	}
 FILE *fDest;
 fopen_s (&fDest, pszDest,"wb");
 if (!fDest) {
-	ErrorMsg ("Could not create export file.");
+	ErrorMsg ("Could not create export fp.");
 	fclose (fSrc);
 	return false;
 	}
-// seek to item's offset in HOG file
+// seek to item's offset in HOG fp
 fseek(fSrc,offset,SEEK_SET);
-// create file (from HOG to file)
+// create fp (from HOG to fp)
 while (size > 0) {
 	size_t n_bytes, n;
 	n = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size_t (size);
@@ -987,25 +983,25 @@ return (size == 0);
 // delete_sub_file()
 //----------------------------------------------------------------------------
 
-void DeleteSubFile (FILE *file, long size, long offset, int num_entries, int delete_index) 
+void DeleteSubFile (FILE *fp, long size, long offset, int num_entries, int delete_index) 
 {
 int n_bytes;
 // as long as we are not deleting the last item
 if (delete_index < num_entries - 1) {
-	// get size of chunk to remove from the file, then move everything
+	// get size of chunk to remove from the fp, then move everything
 	// down by that amount.
 	do {
-		fseek (file, offset + size, SEEK_SET);
-		n_bytes = int (fread (dataBuf, 1, sizeof (dataBuf), file));
+		fseek (fp, offset + size, SEEK_SET);
+		n_bytes = int (fread (dataBuf, 1, sizeof (dataBuf), fp));
 		if (n_bytes <= 0)
 			break;
-		fseek (file, offset, SEEK_SET);
-		fwrite (dataBuf, 1, n_bytes, file);
+		fseek (fp, offset, SEEK_SET);
+		fwrite (dataBuf, 1, n_bytes, fp);
 		offset += n_bytes;
 		} while (n_bytes > 0);
 	}
-// set the new size of the file
-_chsize (_fileno (file), offset);
+// set the new size of the fp
+_chsize (_fileno (fp), offset);
 }
 
 //--------------------------------------------------------------------------
@@ -1027,7 +1023,7 @@ if (ext)
 
 #define MAX_REGNUM 6
 
-void DeleteLevelSubFiles (FILE *file, char *base) 
+void DeleteLevelSubFiles (FILE *fp, char *base) 
 {
 struct region {
 	int index;
@@ -1040,14 +1036,14 @@ struct region {
 	int num_entries = 0;
 	region reg [MAX_REGNUM] = {{-1,0,0,0},{-1,0,0,0},{-1,0,0,0},{-1,0,0,0},{-1,0,0,0},{-1,0,0,0}};
 
-// figure out regions of the file to delete (3 regions max)
+// figure out regions of the fp to delete (3 regions max)
 long offset = 3;
 long size;
 delete_index = -1;
-while(!feof (file)) {
+while(!feof (fp)) {
 	level_header lh = {"",0};
-	fseek (file, offset, SEEK_SET); // skip "HOG"
-	if (!fread (&lh, sizeof (lh), 1, file)) 
+	fseek (fp, offset, SEEK_SET); // skip "HOG"
+	if (!fread (&lh, sizeof (lh), 1, fp)) 
 		break;
 	size = lh.size + sizeof (lh);
 	if (regnum < MAX_REGNUM) {
@@ -1089,10 +1085,10 @@ nextSubFile:
 // now delete matching regions
 while (regnum > 0) {
 	regnum--;
-	DeleteSubFile (file, reg [regnum].size, reg [regnum].offset, num_entries, reg [regnum].index);
+	DeleteSubFile (fp, reg [regnum].size, reg [regnum].offset, num_entries, reg [regnum].index);
 	num_entries -= reg [regnum].files;
 	}
-fclose (file);
+fclose (fp);
 }
 
 #undef MAX_REGNUM
@@ -1101,15 +1097,14 @@ fclose (file);
 // write_sub_file()
 //==========================================================================
 
-int WriteSubFile (FILE *fDest, char *szSrc, char *szLevel) 
+int WriteSubFile (CFileManager& fDest, char *szSrc, char *szLevel) 
 {
-	FILE *fSrc;
-	size_t n_bytes;
-	level_header lh;
+	CFileManager	fSrc;
+	size_t			n_bytes;
+	level_header	lh;
 
-fopen_s (&fSrc, szSrc, "rb");
-if (!fSrc) {
-	sprintf_s (message, sizeof (message), "Unable to open temporary file:\n%s",szSrc);
+if (fSrc.Open (szSrc, "rb")) {
+	sprintf_s (message, sizeof (message), "Unable to open temporary fp:\n%s",szSrc);
 	ErrorMsg (message);
 	return -1;
 	}
@@ -1122,50 +1117,49 @@ fSrc.Seek (0, SEEK_END);
 lh.size = fSrc.Tell ();
 //fclose (fSrc);
 //fSrc = fopen (szSrc,"rb");
-fseek (fSrc,0,SEEK_SET);
-fwrite (&lh, sizeof (lh), 1, fDest);
+fseek (fSrc, 0, SEEK_SET);
+fDest.Write (&lh, sizeof (lh), 1);
 // write data
 while(!feof (fSrc)) {
 	n_bytes = fread (dataBuf,1,sizeof (dataBuf),fSrc);
 	if (n_bytes > 0)
 		fwrite(dataBuf,1,n_bytes,fDest);
 	}
-fclose(fSrc);
+fSrc.Close ()
 return lh.size + sizeof (lh);
 }
 
 //==========================================================================
 // make_hog()
 //
-// Action - makes a HOG file which includes three files
-//             1. the rdl file to include (only one)
-//             2. a briefing file (called brief.txb)
+// Action - makes a HOG fp which includes three files
+//             1. the rdl fp to include (only one)
+//             2. a briefing fp (called brief.txb)
 //             3. an ending sequence (same name as hog w/ .txb extension)
-//          also makes a mission file for this HOG file
+//          also makes a mission fp for this HOG fp
 //
 // Changes - now saves rl2 files
 //==========================================================================
 
 int MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs) 
 {
-	FILE *hogfile, *fTmp;
-	char *name_start,*pszNameEnd, *pszExtStart;
-	char szBaseName[13];
-	char filename[256];
-	char szTmp[256], szBase [13];
-	int custom_robots = 0;
-	int custom_textures = 0;
+	CFileManager	hogfile, fTmp;
+	char				*name_start, *pszNameEnd, *pszExtStart;
+	char				szBaseName[13];
+	char				filename[256];
+	char				szTmp[256], szBase [13];
+	int				custom_robots = 0;
+	int				custom_textures = 0;
 
-// create HOG file which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
+// create HOG fp which contains szTmp.rdl, szTmp.txb, and dlebrief.txb");
 strcpy_s (filename, sizeof (filename), hogFilename);
-fopen_s (&hogfile, filename, "wb");
-if (!hogfile) {
-	sprintf_s (message, sizeof (message), "Unable to create HOG file:\n%s",filename);
+if (hogfile.Open (filename, "wb")) {
+	sprintf_s (message, sizeof (message), "Unable to create HOG fp:\n%s",filename);
 	ErrorMsg (message);
 	return 1;
 	}
-// write file type
-fwrite("DHF",1,3,hogfile); // starts with Descent Hog File
+// write fp type
+hogfile.Write ("DHF", 1, 3); // starts with Descent Hog File
 // get base szTmp w/o extension and w/o path
 name_start = strrchr(hogFilename,'\\');
 if (name_start==null)
@@ -1178,7 +1172,7 @@ pszNameEnd = strrchr((char *)szBaseName,'.');
 if (!pszNameEnd)
 	pszNameEnd = szBaseName + strlen ((char *)szBaseName);
 memset (pszNameEnd, 0, 12 - int (pszNameEnd - szBaseName));
-// write rdl file
+// write rdl fp
 if (*szSubFile) {
 	for (pszExtStart = szSubFile; *pszExtStart && (*pszExtStart != '.'); pszExtStart++)
 		;
@@ -1192,7 +1186,7 @@ else
 WriteSubFile (hogfile, rdlFilename, szTmp);
 _unlink (szTmp);
 #if 0
-// write palette file into hog (if D2)
+// write palette fp into hog (if D2)
 if (IsD2File ()) {
 	if (strcmp(palette_resource(),"GROUPA_256") == 0) {
 		char *start_name = strrchr(descent2_path,'\\');
@@ -1219,7 +1213,7 @@ if (IsD2File ()) {
 #endif
 
 if (theMine->HasCustomLightMap ()) {
-	FSplit (hogFilename, szTmp, null, null);
+	CFileManager::SplitPath (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
 	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
@@ -1234,7 +1228,7 @@ if (theMine->HasCustomLightMap ()) {
 		}
 	}
 if (theMine->HasCustomLightColors ()) {
-	FSplit (hogFilename, szTmp, null, null);
+	CFileManager::SplitPath (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
 	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
@@ -1250,7 +1244,7 @@ if (theMine->HasCustomLightColors ()) {
 	}
 	
 if (HasCustomPalette ()) {
-	FSplit (hogFilename, szTmp, null, null);
+	CFileManager::SplitPath (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pal");
 	fTmp.Open (szTmp,"wb");
 	if (fTmp) {
@@ -1265,14 +1259,14 @@ if (HasCustomPalette ()) {
 		}
 	}
 
-// if textures have changed, ask if user wants to create a pog file
+// if textures have changed, ask if user wants to create a pog fp
 if (textureManager.HasCustomTextures ()) {
 	if (bExpertMode ||
 		 QueryMsg("This level contains custom textures.\n"
-					 "Would you like save these textures into the HOG file?\n\n"
+					 "Would you like save these textures into the HOG fp?\n\n"
 					 "Note: You must use version 1.2 or higher of Descent2 to see\n"
 					 "the textures when you play the game.") == IDYES) {
-		FSplit (hogFilename, szTmp, null, null);
+		CFileManager::SplitPath (hogFilename, szTmp, null, null);
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.pog");
 		fTmp.Open (szTmp,"wb");
 		if (fTmp) {
@@ -1288,14 +1282,14 @@ if (textureManager.HasCustomTextures ()) {
 			}
 		}
 	}
-// if robot info has changed, ask if user wants to create a hxm file
+// if robot info has changed, ask if user wants to create a hxm fp
 if (theMine->HasCustomRobots ()) {
 	if (bExpertMode ||
 		 QueryMsg ("This level contains custom robot settings.\n"
-					  "Would you like save these changes into the HOG file?\n\n"
+					  "Would you like save these changes into the HOG fp?\n\n"
 					  "Note: You must use version 1.2 or higher of Descent2 for\n"
 					  "the changes to take effect.") == IDYES) {
-		FSplit (hogFilename, szTmp, null, null);
+		CFileManager::SplitPath (hogFilename, szTmp, null, null);
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 		fTmp.Open (szTmp, "wb");
 		if (fTmp) {
@@ -1319,14 +1313,14 @@ return 0;
 
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs) 
 {
-	FILE	*fTmp;
-	char szTmp [256], subName [256];
-	char *psz;
+	CFileManager	fTmp;
+	char				szTmp [256], subName [256];
+	char*				psz;
 
 _strlwr_s (szHogFile, 256);
 psz = strstr (szHogFile, "new.");
 if (!*szSubFile || psz) { 
-	CInputDialog dlg (DLE.MainFrame (), "Name mine", "Enter file name:", szSubFile, 9);
+	CInputDialog dlg (DLE.MainFrame (), "Name mine", "Enter fp name:", szSubFile, 9);
 	if (dlg.DoModal () != IDOK)
 		return 1;
 	LPSTR ext = strrchr (szSubFile, '.');
@@ -1342,41 +1336,40 @@ if (!*szSubFile || psz) {
 		}
 	strcat_s (szSubFile, 256, (DLE.IsD1File ()) ? ".rdl" : ".rl2");
 	}
-// if this HOG file only contains one rdl/rl2 file total and
+// if this HOG fp only contains one rdl/rl2 fp total and
 // it has the same name as the current level, and it has
 // no other files (besides hxm or pog files), then
 // allow quick save
-FILE *file;
+CFileManager fp;
 // See if another level with the same name exists
 // and see if there are any other files here (ignore hxm and pog files)
 int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
-fopen_s (&file, szHogFile, "rb");
-if (!file) {
-	FSplit (szHogFile, szTmp, null, null);
+if (!fp.Open (szHogFile, "rb")) {
+	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 	theMine->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, true);
 	}
-fseek (file,3,SEEK_SET); // skip "HOG"
-while (!feof (file)) {
+fseek (fp,3,SEEK_SET); // skip "HOG"
+while (!fp.EoF ()) {
 	level_header lh = {"",0};
-	if (!fread (&lh, sizeof (lh), 1, file)) 
+	if (!fp.Read (&lh, sizeof (lh), 1)) 
 		break;
 	_strlwr_s (lh.name, sizeof (lh.name));
 	lh.name [sizeof (lh.name) - 1] = null; // null terminate
-	if (!strstr ((char *) lh.name, ".hxm") &&     // not a custom robot file
-		 !strstr ((char *) lh.name, ".pog") &&     // not a custom texture file
-		 !strstr ((char *) lh.name, ".lgt") &&     // not an texture brightness table file
-		 !strstr ((char *) lh.name, ".clr") &&     // not an texture color table file
-		 !strstr ((char *) lh.name, ".pal") &&     // not a palette file
+	if (!strstr ((char *) lh.name, ".hxm") &&     // not a custom robot fp
+		 !strstr ((char *) lh.name, ".pog") &&     // not a custom texture fp
+		 !strstr ((char *) lh.name, ".lgt") &&     // not an texture brightness table fp
+		 !strstr ((char *) lh.name, ".clr") &&     // not an texture color table fp
+		 !strstr ((char *) lh.name, ".pal") &&     // not a palette fp
 		 _strcmpi((char *) lh.name, szSubFile)) // not the same level
 		bOtherFilesFound = 1;
 	if (!_strcmpi ((char *) lh.name, szSubFile)) // same level
 		bIdenticalLevelFound = 1;
-	fseek(file, lh.size, SEEK_CUR);
+	fp.Seek (lh.size, SEEK_CUR);
 	}
-fclose(file);
+fp.Close ();
 
 // if no other files found
 // then simply do a quick save
@@ -1388,20 +1381,20 @@ else if (bIdenticalLevelFound) {
 		return 1;
 	}
 else {
-	// otherwise, if save file was not found,
-	// then ask user if they want to append to the HOG file
+	// otherwise, if save fp was not found,
+	// then ask user if they want to append to the HOG fp
 	if (QueryMsg ("Would you like to add the level to the end\n"
-					  "of this HOG file?\n\n"
-					  "(Press OK to append this level to the HOG file\n"
-					  "or Cancel to overwrite the entire HOG file") == IDYES) {
+					  "of this HOG fp?\n\n"
+					  "(Press OK to append this level to the HOG fp\n"
+					  "or Cancel to overwrite the entire HOG fp") == IDYES) {
 		if (!bExpertMode)
-			ErrorMsg ("Don't forget to add this level's name to the mission file.\n");
+			ErrorMsg ("Don't forget to add this level's name to the mission fp.\n");
 		}
 	else
 		bQuickSave = 1;
 	}
 if (bQuickSave) {
-	FSplit (szHogFile, szTmp, null, null);
+	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 	theMine->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, bSaveAs);
@@ -1409,28 +1402,28 @@ if (bQuickSave) {
 	}
 char base [256];
 // determine base name
-FSplit (szSubFile, null, base, null);
+CFileManager::SplitPath (szSubFile, null, base, null);
 base[8] = null;
 _strlwr_s (base, sizeof (base));
 strip_extension (base);
-fopen_s (&file, szHogFile, "r+b"); // reopen file
-if (!file) {
-	ErrorMsg ("Destination HOG file not found/accessible.");
+
+if (fp.Open (szHogFile, "r+b")) {
+	ErrorMsg ("Destination HOG fp not found/accessible.");
 	return 1;
 	}
-DeleteLevelSubFiles (file, base);
-fclose (file);
-// now append sub-files to the end of the HOG file
-fopen_s (&file, szHogFile, "ab");
-if (!file) {
-	ErrorMsg ("Could not open destination HOG file for save.");
+DeleteLevelSubFiles (fp, base);
+fp.Close ();
+// now append sub-files to the end of the HOG fp
+
+if (fp.Open (szHogFile, "ab")) {
+	ErrorMsg ("Could not open destination HOG fp for save.");
 	return 1;
 	}
-fseek (file, 0, SEEK_END);
-FSplit (szHogFile, szTmp, null, null);
+fp.Seek (0, SEEK_END);
+CFileManager::SplitPath (szHogFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 theMine->Save (szTmp, true);
-WriteSubFile (file, szTmp, szSubFile);
+WriteSubFile (fp, szTmp, szSubFile);
 
 if (theMine->HasCustomLightMap ()) {
 	CFileManager::SplitPath (szHogFile, szTmp, null, null);
@@ -1441,7 +1434,7 @@ if (theMine->HasCustomLightMap ()) {
 		if (!WriteLightMap (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (subName, sizeof (subName), "%s.lgt", base);
-			WriteSubFile (file, szTmp, subName);
+			WriteSubFile (fp, szTmp, subName);
 			bOk = true;
 			}
 		else
@@ -1451,6 +1444,7 @@ if (theMine->HasCustomLightMap ()) {
 	if (!bOk)
 		ErrorMsg ("Error writing custom light map.");
 	}
+
 if (theMine->HasCustomLightColors ()) {
 	CFileManager::SplitPath (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
@@ -1459,7 +1453,7 @@ if (theMine->HasCustomLightColors ()) {
 		if (!theMine->WriteColorMap (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (subName, sizeof (subName), "%s.clr", base);
-			WriteSubFile (file, szTmp, subName);
+			WriteSubFile (fp, szTmp, subName);
 			}
 		else
 			fclose (fTmp);
@@ -1475,7 +1469,7 @@ if (textureManager.HasCustomTextures ()) {
 	if (fTmp) {
 		if (!CreatePog (fTmp)) {
 			sprintf_s (subName, sizeof (subName), "%s.pog", base);
-			WriteSubFile (file, szTmp, subName);
+			WriteSubFile (fp, szTmp, subName);
 			bOk = true;
 			}
 		fclose (fTmp);
@@ -1493,7 +1487,7 @@ if (theMine->HasCustomRobots ()) {
 	if (fTmp) {
 		if (!theMine->WriteHxmFile (fTmp)) {
 			sprintf_s (subName, sizeof (subName), "%s.hxm", base);
-			WriteSubFile (file, szTmp, subName);
+			WriteSubFile (fp, szTmp, subName);
 			bOk = true;
 			}
 		_unlink (szTmp);
@@ -1501,7 +1495,7 @@ if (theMine->HasCustomRobots ()) {
 	if (!bOk)
 		ErrorMsg ("Error writing custom robots.");
 	}
-fclose(file);
+fclose(fp);
 return 0;
 }
 
@@ -1551,7 +1545,7 @@ if (pExt)
 strcat_s (szMsn, sizeof (szMsn), (DLE.IsD1File ()) ? ".msn" : ".mn2");
 fopen_s (&fMsn, szMsn, "rt");
 if (!fMsn) {
-	DEBUGMSG (" Hog manager: Mission file not found.");
+	DEBUGMSG (" Hog manager: Mission fp not found.");
 	return -1;
 	}
 memset (missionData.comment, 0, sizeof (missionData.comment));
@@ -1660,11 +1654,11 @@ if (bSaveAs) {
 	fopen_s (&fMsn, szMsn, "rt");
 	if (fMsn) {
 		fclose (fMsn);
-		if (AfxMessageBox ("A mission file with that name already exists.\nOverwrite mission file?", MB_YESNO) != IDYES)
+		if (AfxMessageBox ("A mission fp with that name already exists.\nOverwrite mission fp?", MB_YESNO) != IDYES)
 			return -1;
 		}
 	}
-// create mission file
+// create mission fp
 fopen_s (&fMsn, szMsn, "wt");
 if (!fMsn)
 	return -1;
@@ -1720,7 +1714,7 @@ int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int b
 	char	szTime [20];
 
 //memset (&missionData, 0, sizeof (missionData));
-FSplit (pszSubFile, null, szBaseName, null);
+CFileManager::SplitPath (pszSubFile, null, szBaseName, null);
 if (!*missionData.missionName)
 	strcpy_s (missionData.missionName, sizeof (missionData.missionName), szBaseName);
 if (bSaveAs || !*missionData.missionName)
@@ -1744,4 +1738,4 @@ missionData.customFlags [1] = bCustomRobots;
 return WriteMissionFile (pszFile, DLE.LevelVersion (), bSaveAs);
 }
 
-// eof file.cpp
+// eof fp.cpp
