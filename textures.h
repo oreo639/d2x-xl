@@ -146,7 +146,6 @@ public:
 		offset = o;
 		dflags = 0;
 		avgColor = 0;
-		Encode ();
 		}
 
 	void Read (CFileManager& fp, int nVersion = -1) {

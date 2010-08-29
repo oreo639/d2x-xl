@@ -148,7 +148,7 @@ int ReadPog (CFileManager& fp, uint nFileSize)
 	ushort			nBaseTex;
 	ushort*			xlatTbl = null;
 	uint				nSize;
-	uint				offset, hdrOffset, bmpOffset, hdrSize, pigTexIndex;
+	uint				offset, hdrOffset, bmpOffset, hdrSize, xlatSize;
 	int				rc; // return code;
 	int				nTexture;
 	int				row;
@@ -177,14 +177,13 @@ if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {
 	rc = 5;
 	goto abort;
 	}
-pigTexIndex = pigFileInfo.nTextures * sizeof (ushort);
-offset = fp.Tell ();
-fp.Read (xlatTbl, pigTexIndex, 1);
+xlatSize = pigFileInfo.nTextures * sizeof (ushort);
+fp.Read (xlatTbl, xlatSize, 1);
 // loop for each custom texture
 nUnknownTextures = 0;
 nMissingTextures = 0;
-hdrOffset = offset + pigTexIndex;
-hdrSize = pigTexIndex + pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2);
+hdrOffset = offset + xlatSize;
+hdrSize = xlatSize + pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2);
 bmpOffset = offset + hdrSize;
 for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	// read texture index
@@ -200,6 +199,7 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 #endif
 	pigTexInfo.Read (fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
+	assert (nSize <= 512 * 512);
 	if (hdrSize + pigTexInfo.offset + nSize >= nFileSize) {
 		nMissingTextures++;
 		continue;
@@ -443,7 +443,7 @@ for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified)
 		nOffset = WritePogTextureHeader (fp, texP, nExtra++, nOffset);
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
-	nOffset = WritePogTextureHeader (fp, extraTexP, nExtra, nOffset);
+	nOffset = WritePogTextureHeader (fp, extraTexP, nExtra++, nOffset);
 
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", pigFileInfo.nTextures);
 DEBUGMSG (message);
