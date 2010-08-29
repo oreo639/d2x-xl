@@ -200,6 +200,8 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 			break;
 	bExtraTexture = (nBaseTex >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
+	if (nBaseTex == 86)
+		nBaseTex = nBaseTex;
 #if 1
 	fseek (fp, hdrOffset + nTexture * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 #endif
