@@ -967,7 +967,7 @@ return info [nVersion][index [nVersion][nTexture]];
 
 void CTextureManager::LoadTextures (int nVersion)
 {
-#ifdef USE_DYN_ARRAYS
+#if USE_DYN_ARRAYS
 textures [nVersion].Create (MaxTextures (nVersion));
 #else
 textures [nVersion] = new CTexture [MaxTextures (nVersion)];
