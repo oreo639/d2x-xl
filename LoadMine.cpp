@@ -348,7 +348,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 		strcpy_s (filename, 256 - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, 256, ".hxm");
-	if (fp.Open (filename, "rb")) {
+	if (!fp.Open (filename, "rb")) {
 		ReadHxmFile (fp, -1);
 		fp.Close ();
 		}
