@@ -70,15 +70,27 @@ public:
 		m_nVersion = nVersion;
 		}
 
-	void Read (FILE* fp) {
+	void Read (CFileManager& fp) {
 		if (m_nVersion == 1) {
-			nId = ReadInt32 (fp);
-			nVersion = ReadInt32 (fp);
-			nTextures = ReadInt32 (fp);
+			nId = fp.ReadInt32 ();
+			nVersion = fp.ReadInt32 ();
+			nTextures = fp.ReadInt32 ();
 			}
 		else {
-			nTextures = ReadInt32 (fp);
-			nSounds = ReadInt32 (fp);
+			nTextures = fp.ReadInt32 ();
+			nSounds = fp.ReadInt32 ();
+			}
+		}
+
+	void Write (CFileManager& fp) {
+		if (m_nVersion == 1) {
+			 WriteInt32 (nId, fp);
+			 WriteInt32 (nVersion, fp);
+			 WriteInt32 (nTextures, fp);
+			}
+		else {
+			WriteInt32 (nTextures, fp);
+			WriteInt32 (nSounds, fp);
 			}
 		}
 };
@@ -136,26 +148,26 @@ public:
 			}
 		}
 
-	void Read (FILE* fp, int nVersion = -1) {
+	void Read (CFileManager& fp, int nVersion = -1) {
 		if (nVersion >= 0)
 			m_nVersion = nVersion;
 		ReadBytes (name, sizeof (name), fp);
-		dflags = ReadUInt8 (fp);
-		width = (ushort) ReadUInt8 (fp);
-		height = (ushort) ReadUInt8 (fp);
+		dflags = fp.ReadByte ();
+		width = (ushort) fp.ReadByte ();
+		height = (ushort) fp.ReadByte ();
 		if (m_nVersion == 1)
-			whExtra = ReadUInt8 (fp);
+			whExtra = fp.ReadByte ();
 		else {
 			name [7] = 0;
 			whExtra = 0;
 			}
-		flags = ReadUInt8 (fp);
-		avgColor = ReadUInt8 (fp);
-		offset = ReadUInt32 (fp);
+		flags = fp.ReadByte ();
+		avgColor = fp.ReadByte ();
+		offset = fp.ReadUInt32 ();
 		Decode ();
 		}
 
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		Encode ();
 		WriteBytes (name, sizeof (name), fp);
 		WriteUInt8 (dflags, fp);
@@ -247,13 +259,13 @@ public:
 	~CTexture() { Release (); }
 
 	bool Allocate (int nSize, int nTexture);
-	int Load (short nTexture, int nVersion = -1, FILE* fp = NULL);
-	void Load (FILE* fp, CPigTexture& info);
+	int Load (short nTexture, int nVersion = -1, CFileManager& fp = NULL);
+	void Load (CFileManager& fp, CPigTexture& info);
 	double Scale (short index = -1);
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE* fp, int version = 0, bool bFlag = false) { return 1; };
-	virtual void Write (FILE* fp, int version = 0, bool bFlag = false) {};
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return 1; };
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
@@ -286,7 +298,7 @@ public:
 	int MaxTextures (int nVersion = -1);
 	int LoadIndex (int nVersion);
 	void LoadTextures (int nVersion);
-	CPigTexture& LoadInfo (FILE* fp, int nVersion, short nTexture);
+	CPigTexture& LoadInfo (CFileManager& fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);

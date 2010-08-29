@@ -130,9 +130,9 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-short CMine::LoadMineSigAndType (FILE* fp)
+short CMine::LoadMineSigAndType (CFileManager& fp)
 {
-int sig = ReadInt32 (fp);
+int sig = fp.ReadInt32 ();
 if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	ErrorMsg ("Signature value incorrect.");
 	fclose (fp);
@@ -140,7 +140,7 @@ if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	}
 
 // read version
-SetLevelVersion (ReadInt32 (fp));
+SetLevelVersion (fp.ReadInt32 ());
 if (LevelVersion () == 1) {
 	SetFileType (RDL_FILE);
 	texture_resource = D1_TEXTURE_STRING_TABLE;
@@ -166,7 +166,7 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	HINSTANCE hInst = AfxGetInstanceHandle();
 	byte* palette = 0;
 
-	FILE* fp = 0;
+	CFileManager& fp = 0;
 	int sig = 0;
 	int minedataOffset = 0;
 	int gamedataOffset = 0;
@@ -188,9 +188,9 @@ if (LoadMineSigAndType (fp))
 	return -1;
 ClearMineData ();
 // read mine data offset
-minedataOffset = ReadInt32 (fp);
+minedataOffset = fp.ReadInt32 ();
 // read game data offset
-gamedataOffset = ReadInt32 (fp);
+gamedataOffset = fp.ReadInt32 ();
 
 // don't bother reading  hostagetextOffset since
 // for Descent 1 files since we dont use it anyway
@@ -199,10 +199,10 @@ gamedataOffset = ReadInt32 (fp);
 // read palette name *.256
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
-		ReadInt16 (fp);
-		ReadInt16 (fp);
-		ReadInt16 (fp);
-		ReadInt8 (fp);
+		fp.ReadInt16 ();
+		fp.ReadInt16 ();
+		fp.ReadInt16 ();
+		fp.ReadSByte ();
 		}
 	// read palette file name
 	int i;
@@ -242,10 +242,10 @@ if (return_code = LoadPalette ())
 
 // read descent 2 reactor information
 if (IsD2File ()) {
-	ReactorTime () = ReadInt32 (fp); // base control center explosion time
-	ReactorStrength () = ReadInt32 (fp); // reactor strength
+	ReactorTime () = fp.ReadInt32 (); // base control center explosion time
+	ReactorStrength () = fp.ReadInt32 (); // reactor strength
 	if (LevelVersion () > 6) {
-		FlickerLightCount () = short (ReadInt32 (fp));
+		FlickerLightCount () = short (fp.ReadInt32 ());
 		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_FLICKERING_LIGHTS)) {
 			for (int i = 0; i < FlickerLightCount (); i++)
 				FlickeringLights (i)->Read (fp);
@@ -497,7 +497,7 @@ short CMine::FixIndexValues(void)
 // ACTION - Reads a mine data portion of RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
+short CMine::LoadMineDataCompiled (CFileManager& fp, bool bNewMine)
 {
 	int    i; 
 	byte    version;
@@ -505,9 +505,9 @@ short CMine::LoadMineDataCompiled (FILE *fp, bool bNewMine)
 	ushort   n_segments;
 
 // read version (1 byte)
-version = byte (ReadInt8 (fp));
+version = byte (fp.ReadSByte ());
 // read number of vertices (2 bytes)
-n_vertices = ushort (ReadInt16 (fp));
+n_vertices = ushort (fp.ReadInt16 ());
 if (n_vertices > MAX_VERTICES3) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
 	ErrorMsg (message);
@@ -518,7 +518,7 @@ if (((IsD1File ()) && (n_vertices > MAX_VERTICES1)) ||
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
-n_segments = ushort (ReadInt16 (fp));
+n_segments = ushort (fp.ReadInt16 ());
 if (n_segments > MAX_SEGMENTS3) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 	ErrorMsg (message);
@@ -575,7 +575,7 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-int CMine::LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
+int CMine::LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
 {
 if ((info.offset < 0) || (info.count < 1))
 	return 0;
@@ -611,7 +611,7 @@ return info.count;
 //          materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
 
-short CMine::LoadGameData (FILE *fp, bool bNewMine) 
+short CMine::LoadGameData (CFileManager& fp, bool bNewMine) 
 {
 	int startOffset;
 
@@ -689,18 +689,18 @@ else {  /*load mine filename */
 					ObjTriggers (i)->Read (fp, GameInfo ().fileinfo.version, true);
 				if (GameInfo ().fileinfo.version >= 40) {
 					for (i = 0; i < NumObjTriggers (); i++)
-						ObjTriggers (i)->m_info.nObject = ReadInt16 (fp);
+						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 					}
 				else {
 					for (i = 0; i < NumObjTriggers (); i++) {
-						ReadInt16 (fp);
-						ReadInt16 (fp);
-						ObjTriggers (i)->m_info.nObject = ReadInt16 (fp);
+						fp.ReadInt16 ();
+						fp.ReadInt16 ();
+						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 						}
 					if (GameInfo ().fileinfo.version < 36)
 						fseek (fp, 700 * sizeof (short), SEEK_CUR);
 					else
-						fseek (fp, 2 * sizeof (short) * ReadInt16 (fp), SEEK_CUR);
+						fseek (fp, 2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
 					}
 				}
 			}

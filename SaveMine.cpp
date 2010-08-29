@@ -209,7 +209,7 @@ if (r > left)
 
 // ------------------------------------------------------------------------
 
-int CMine::SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
+int CMine::SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
 {
 info.offset = ftell (fp);
 for (int i = 0; i < info.count; i++) {
@@ -224,7 +224,7 @@ return info.count;
 //
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
-short CMine::SaveMineDataCompiled(FILE *fp)
+short CMine::SaveMineDataCompiled(CFileManager& fp)
 {
 	int	i;
 // write version (1 byte)
@@ -264,7 +264,7 @@ return 0;
 //  ACTION - Saves the player, object, wall, door, trigger, and
 //           materialogrifizationator data from an RDL file.
 // ------------------------------------------------------------------------
-short CMine::SaveGameData(FILE *fp)
+short CMine::SaveGameData(CFileManager& fp)
 {
 #if 1 //!DEMO
 	HINSTANCE hInst = AfxGetInstanceHandle();

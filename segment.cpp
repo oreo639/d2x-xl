@@ -2517,26 +2517,26 @@ m_info.damage [1] = 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-byte CSegment::ReadWalls (FILE* fp, int nLevelVersion)
+byte CSegment::ReadWalls (CFileManager& fp, int nLevelVersion)
 {
-	byte wallFlags = byte (ReadInt8 (fp));
+	byte wallFlags = byte (fp.ReadSByte ());
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (m_info.wallFlags &= (1 << i)) 
-		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? ReadInt16 (fp) : short (ReadInt8 (fp));
+		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? fp.ReadInt16 () : short (fp.ReadSByte ());
 return wallFlags;
 }
 
 // ------------------------------------------------------------------------
 
-void CSegment::ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras)
+void CSegment::ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras)
 {
 if (bExtras) {
-	m_info.function = ReadInt8 (fp);
-	m_info.nMatCen = ReadInt8 (fp);
-	m_info.value = ReadInt8 (fp);
-	ReadInt8 (fp);
+	m_info.function = fp.ReadSByte ();
+	m_info.nMatCen = fp.ReadSByte ();
+	m_info.value = fp.ReadSByte ();
+	fp.ReadSByte ();
 	}
 else {
 	m_info.function = 0;
@@ -2548,49 +2548,49 @@ if (nLevelType) {
 	if (nLevelVersion < 20)
 		Upgrade ();
 	else {
-		m_info.props = ReadInt8 (fp);
-		m_info.damage [0] = ReadInt16 (fp);
-		m_info.damage [1] = ReadInt16 (fp);
+		m_info.props = fp.ReadSByte ();
+		m_info.damage [0] = fp.ReadInt16 ();
+		m_info.damage [1] = fp.ReadInt16 ();
 		}
 	}
-m_info.staticLight = ReadFix (fp);
+m_info.staticLight = fp.ReadFix ();
 }
 
 // ------------------------------------------------------------------------
 
-int CSegment::Read (FILE* fp, int nLevelType, int nLevelVersion)
+int CSegment::Read (CFileManager& fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
 
 if (nLevelVersion >= 9) {
-	m_info.owner = ReadInt8 (fp);
-	m_info.group = ReadInt8 (fp);
+	m_info.owner = fp.ReadSByte ();
+	m_info.group = fp.ReadSByte ();
 	}
 else {
 	m_info.owner = -1;
 	m_info.group = -1;
 	}
 // read in child mask (1 byte)
-m_info.childFlags = byte (ReadInt8 (fp));
+m_info.childFlags = byte (fp.ReadSByte ());
 
 // read 0 to 6 children (0 to 12 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-	m_sides [i].m_info.nChild = (m_info.childFlags & (1 << i)) ? ReadInt16 (fp) : -1;
+	m_sides [i].m_info.nChild = (m_info.childFlags & (1 << i)) ? fp.ReadInt16 () : -1;
 
 // read vertex numbers (16 bytes)
 for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	m_info.verts [i] = ReadInt16 (fp);
+	m_info.verts [i] = fp.ReadInt16 ();
 
 if (nLevelVersion == 0)
 	ReadExtras (0, nLevelType, nLevelVersion, (m_info.childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
 // read the wall bit mask
-m_info.wallFlags = byte (ReadInt8 (fp));
+m_info.wallFlags = byte (fp.ReadSByte ());
 
 // read in wall numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	m_sides [i].m_info.nWall = (m_info.wallFlags & (1 << i)) 
-										? ushort ((nLevelVersion < 13) ? ReadInt8 (fp) : ReadInt16 (fp))
+										? ushort ((nLevelVersion < 13) ? fp.ReadSByte () : fp.ReadInt16 ())
 										: NO_WALL;
 
 // read in textures and uvls (0 to 60 bytes)
@@ -2602,7 +2602,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-byte CSegment::WriteWalls (FILE* fp, int nLevelVersion)
+byte CSegment::WriteWalls (CFileManager& fp, int nLevelVersion)
 {
 	int	i;
 
@@ -2627,7 +2627,7 @@ return m_info.wallFlags;
 
 // ------------------------------------------------------------------------
 
-void CSegment::WriteExtras (FILE* fp, int nLevelType, bool bExtras)
+void CSegment::WriteExtras (CFileManager& fp, int nLevelType, bool bExtras)
 {
 if (bExtras) {
 	WriteInt8 (m_info.function, fp);
@@ -2645,7 +2645,7 @@ WriteFix (m_info.staticLight, fp);
 
 // ------------------------------------------------------------------------
 
-void CSegment::Write (FILE* fp, int nLevelType, int nLevelVersion)
+void CSegment::Write (CFileManager& fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
 
@@ -2819,12 +2819,12 @@ for (i = 0; i < 4; i++, uvls++) {
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-int CSide::Read (FILE* fp, bool bTextured)
+int CSide::Read (CFileManager& fp, bool bTextured)
 {
 if (bTextured) {
-	m_info.nBaseTex = ReadInt16 (fp);
+	m_info.nBaseTex = fp.ReadInt16 ();
 	if (m_info.nBaseTex & 0x8000) {
-		m_info.nOvlTex = ReadInt16 (fp);
+		m_info.nOvlTex = fp.ReadInt16 ();
 		if ((m_info.nOvlTex & 0x1FFF) == 0)
 			m_info.nOvlTex = 0;
 		}
@@ -2845,7 +2845,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CSide::Write (FILE* fp)
+void CSide::Write (CFileManager& fp)
 {
 if (m_info.nOvlTex == 0)
 	WriteInt16 (m_info.nBaseTex, fp);
@@ -2917,19 +2917,19 @@ return (m_info.nWall == NO_WALL) ? NULL : theMine->Walls (m_info.nWall);
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-int CLightDeltaValue::Read (FILE *fp, int version, bool bFlag)
+int CLightDeltaValue::Read (CFileManager& fp, int version, bool bFlag)
 {
-m_nSegment = ReadInt16 (fp);
-m_nSide = ReadInt8 (fp);
-ReadInt8 (fp);
+m_nSegment = fp.ReadInt16 ();
+m_nSide = fp.ReadSByte ();
+fp.ReadSByte ();
 for (int i = 0; i < 4; i++)
-	m_info.vertLight [i] = ReadInt8 (fp);
+	m_info.vertLight [i] = fp.ReadSByte ();
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CLightDeltaValue::Write (FILE *fp, int version, bool bFlag)
+void CLightDeltaValue::Write (CFileManager& fp, int version, bool bFlag)
 {
 WriteInt16 (m_nSegment, fp);
 WriteInt8 (char (m_nSide), fp);
@@ -2940,25 +2940,25 @@ for (int i = 0; i < 4; i++)
 
 // ------------------------------------------------------------------------
 
-int CLightDeltaIndex::Read (FILE *fp, int version, bool bD2X)
+int CLightDeltaIndex::Read (CFileManager& fp, int version, bool bD2X)
 {
-m_nSegment = ReadInt16 (fp);
+m_nSegment = fp.ReadInt16 ();
 if (bD2X) {
-	ushort h = ReadInt16 (fp);
+	ushort h = fp.ReadInt16 ();
 	m_nSide = h & 7;
 	m_info.count = h >> 3;
 	}
 else {
-	m_nSide = ReadInt8 (fp);
-	m_info.count = ReadInt8 (fp);
+	m_nSide = fp.ReadSByte ();
+	m_info.count = fp.ReadSByte ();
 	}
-m_info.index = ReadInt16 (fp);
+m_info.index = fp.ReadInt16 ();
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CLightDeltaIndex::Write (FILE *fp, int version, bool bD2X)
+void CLightDeltaIndex::Write (CFileManager& fp, int version, bool bD2X)
 {
 WriteInt16 (m_nSegment, fp);
 if (bD2X)
@@ -2974,21 +2974,21 @@ WriteInt16 (m_info.index, fp);
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-int CRobotMaker::Read (FILE *fp, int version, bool bFlag)
+int CRobotMaker::Read (CFileManager& fp, int version, bool bFlag)
 {
-m_info.objFlags [0] = ReadInt32 (fp);
+m_info.objFlags [0] = fp.ReadInt32 ();
 if (DLE.IsD2File ())
-	m_info.objFlags [1] = ReadInt32 (fp);
-m_info.hitPoints = ReadFix (fp);
-m_info.interval = ReadFix (fp);
-m_info.nSegment = ReadInt16 (fp);
-m_info.nFuelCen = ReadInt16 (fp);
+	m_info.objFlags [1] = fp.ReadInt32 ();
+m_info.hitPoints = fp.ReadFix ();
+m_info.interval = fp.ReadFix ();
+m_info.nSegment = fp.ReadInt16 ();
+m_info.nFuelCen = fp.ReadInt16 ();
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CRobotMaker::Write (FILE *fp, int version, bool bFlag)
+void CRobotMaker::Write (CFileManager& fp, int version, bool bFlag)
 {
 WriteInt32 (m_info.objFlags [0], fp);
 if (DLE.IsD2File ())

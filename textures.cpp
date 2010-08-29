@@ -147,7 +147,7 @@ if (bShowTexture) {
 			nOffset [bDescent1] = -1;  // pig file not found
 		else {
 			fseek (fp, 0, SEEK_SET);
-			nOffset [bDescent1] = ReadInt32 (fp);  // determine type of pig file
+			nOffset [bDescent1] = fp.ReadInt32 ();  // determine type of pig file
 			fclose (fp);
 			}
 		}
@@ -223,7 +223,7 @@ return (m_info.bmDataP != NULL);
 
 //------------------------------------------------------------------------
 
-void CTexture::Load (FILE* fp, CPigTexture& info) 
+void CTexture::Load (CFileManager& fp, CPigTexture& info) 
 {
 	byte	rowSize [4096];
 	byte	rowBuf [4096], *rowPtr;
@@ -231,7 +231,7 @@ void CTexture::Load (FILE* fp, CPigTexture& info)
 
 m_info.nFormat = 0;
 if (info.flags & 0x08) {
-	int nSize = ReadInt32 (fp);
+	int nSize = fp.ReadInt32 ();
 	ReadBytes (rowSize, info.height, fp);
 	int nRow = 0;
 	for (int y = info.height - 1; y >= 0; y--) {
@@ -269,7 +269,7 @@ m_info.bValid = 1;
 
 //------------------------------------------------------------------------
 
-int CTexture::Load (short nTexture, int nVersion, FILE* fp) 
+int CTexture::Load (short nTexture, int nVersion, CFileManager& fp) 
 {
 if (m_info.bModified)
 	return 0;

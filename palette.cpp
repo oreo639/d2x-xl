@@ -59,7 +59,7 @@ if (pCustomPalette) {
 
 //------------------------------------------------------------------------
 
-int ReadCustomPalette (FILE *fp, long fSize)
+int ReadCustomPalette (CFileManager& fp, long fSize)
 {
 FreeCustomPalette ();
 
@@ -90,7 +90,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-int WriteCustomPalette (FILE *fp)
+int WriteCustomPalette (CFileManager& fp)
 {
 return fwrite (pCustomPalette, 37 * 256, 1, fp) == 37 * 256;
 }

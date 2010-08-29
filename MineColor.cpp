@@ -26,13 +26,13 @@
 
 // ------------------------------------------------------------------------
 
-int CColor::Read (FILE* fp, int version, bool bNewFormat)
+int CColor::Read (CFileManager& fp, int version, bool bNewFormat)
 {
-m_info.index = ReadInt8 (fp);
+m_info.index = fp.ReadSByte ();
 if (bNewFormat) {
-	m_info.color.r = double (ReadInt32 (fp)) / double (0x7fffffff);
-	m_info.color.g = double (ReadInt32 (fp)) / double (0x7fffffff);
-	m_info.color.b = double (ReadInt32 (fp)) / double (0x7fffffff);
+	m_info.color.r = double (fp.ReadInt32 ()) / double (0x7fffffff);
+	m_info.color.g = double (fp.ReadInt32 ()) / double (0x7fffffff);
+	m_info.color.b = double (fp.ReadInt32 ()) / double (0x7fffffff);
 	}
 else {
 	m_info.color.r = ReadDouble (fp);
@@ -44,7 +44,7 @@ return 1;
 
 // ------------------------------------------------------------------------
 
-void CColor::Write (FILE* fp, int version, bool bFlag) 
+void CColor::Write (CFileManager& fp, int version, bool bFlag) 
 {
 WriteInt8 (m_info.index, fp);
 WriteInt32 (int (m_info.color.r * 0x7fffffff + 0.5), fp);
@@ -54,7 +54,7 @@ WriteInt32 (int (m_info.color.b * 0x7fffffff + 0.5), fp);
 
 // ------------------------------------------------------------------------
 
-void CMine::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, FILE *fp)
+void CMine::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp)
 {
 	bool bNewFormat = LevelVersion () >= nNewVersion;
 
@@ -66,7 +66,7 @@ if (LevelVersion () > nFirstVersion) {
 
 // ------------------------------------------------------------------------
 
-void CMine::SaveColors (CColor *pc, int nColors, FILE *fp)
+void CMine::SaveColors (CColor *pc, int nColors, CFileManager& fp)
 {
 for (; nColors; nColors--, pc++)
 	pc->Write (fp);

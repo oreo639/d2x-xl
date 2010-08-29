@@ -6,15 +6,8 @@
 # pragma pack(push, packing)
 # pragma pack(1)
 
-/* define unsigned types */
-typedef unsigned char byte;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef int fix;			// 16 bits int, 16 bits frac 
-typedef short fixang;	// angles 
-
-#include "io.h"
 #include "VectorTypes.h"
+#include "cfile.h"
 
 #if 0
 class CStatusMask {
@@ -75,12 +68,12 @@ public:
 	inline const byte operator| (CStatusMask& other) const { return m_status | other.m_status; }
 	inline const byte operator^ (CStatusMask& other) const { return m_status ^ other.m_status; }
 
-	inline int Read (FILE* fp) { 
-		m_status = byte (ReadInt8 (fp));
+	inline int Read (CFileManager& fp) { 
+		m_status = byte (fp.ReadSByte ());
 		return 1;
 		}
 
-	inline void Write (FILE* fp) {
+	inline void Write (CFileManager& fp) {
 		WriteInt8 (char (m_status), fp);
 	}
 };
@@ -89,8 +82,8 @@ public:
 class CGameItem {
 public:
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE* fp, int version = 0, bool bFlag = false) = 0;
-	virtual void Write (FILE* fp, int version = 0, bool bFlag = false) = 0;
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
 	void Reset (int count) { 
 		CGameItem* i = this;
@@ -110,8 +103,8 @@ public:
 	CVertex (CDoubleVector _v) : CDoubleVector (_v) { m_status = 0; }
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE* fp, int version = 0, bool bFlag = false) { return v.Read (fp); }
-	virtual void Write (FILE* fp, int version = 0, bool bFlag = false) { v.Write (fp); }
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return fp.Read (v); }
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.Write (v); }
 	virtual void Clear (void) { 
 		m_status = 0;
 		this->CDoubleVector::Clear ();
@@ -229,14 +222,14 @@ public:
 	ushort  version;
 	int   size;
 
-	int Read (FILE* fp) {
-		signature = ReadInt16 (fp);
-		version = ReadInt16 (fp);
-		size = ReadInt32 (fp);
+	int Read (CFileManager& fp) {
+		signature = fp.ReadInt16 ();
+		version = fp.ReadInt16 ();
+		size = fp.ReadInt32 ();
 		return 1;
 		}
 
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		WriteInt16 (signature, fp);
 		WriteInt16 (version, fp);
 		WriteInt32 (size, fp);
@@ -249,13 +242,13 @@ public:
 	int  size;
 
 	CPlayerItemInfo () { offset = -1, size = 0; }
-	int Read (FILE* fp) {
-		offset = ReadInt32 (fp);
-		size  = ReadInt32 (fp);
+	int Read (CFileManager& fp) {
+		offset = fp.ReadInt32 ();
+		size  = fp.ReadInt32 ();
 		return 1;
 		}
 
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		WriteInt32 (offset, fp);
 		WriteInt32 (size, fp);
 		}
@@ -271,14 +264,14 @@ public:
 
 	void Reset (void) { offset = -1, count = size = 0; } 
 
-	int Read (FILE* fp) {
-		offset = ReadInt32 (fp);
-		count = ReadInt32 (fp);
-		size  = ReadInt32 (fp);
+	int Read (CFileManager& fp) {
+		offset = fp.ReadInt32 ();
+		count = fp.ReadInt32 ();
+		size  = fp.ReadInt32 ();
 		return 1;
 		}
 
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		WriteInt32 (offset, fp);
 		WriteInt32 (count, fp);
 		WriteInt32 (size, fp);
@@ -317,12 +310,12 @@ public:
 	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
 	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
 
-	int Read (FILE* fp) {
-		m_nSegment = ReadInt16 (fp);
-		m_nSide = ReadInt16 (fp);
+	int Read (CFileManager& fp) {
+		m_nSegment = fp.ReadInt16 ();
+		m_nSide = fp.ReadInt16 ();
 		return 1;
 		}
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		WriteInt16 (m_nSegment, fp);
 		WriteInt16 (m_nSide, fp);
 		}
@@ -354,8 +347,8 @@ public:
 	tWall		m_info;
  
 
-	int Read (FILE* fp, int version = 0, bool bFlag = false);
-	void Write (FILE* fp, int version = 0, bool bFlag = false);
+	int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
@@ -371,8 +364,8 @@ class CActiveDoor : public CGameItem {
 public:
 	tActiveDoor	m_info;
 
-	virtual int Read (FILE *fp, int version = 0, bool bFlag = false);
-	virtual void Write (FILE *fp, int version = 0, bool bFlag = false);
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
@@ -389,8 +382,8 @@ class CCloakingWall : public CGameItem {    // NEW for Descent 2
 public:
 	tCloakingWall m_info;
 
-	virtual int Read (FILE *fp, int version = 0, bool bFlag = false);
-	virtual void Write (FILE *fp, int version = 0, bool bFlag = false);
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
@@ -457,15 +450,15 @@ public:
 		for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			m_targets [i].Clear ();
 		}
-	inline int ReadTargets (FILE* fp) {
+	inline int ReadTargets (CFileManager& fp) {
 		int i;
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			m_targets [i].m_nSegment = ReadInt16(fp);
+			m_targets [i].m_nSegment = fp.ReadInt16 ();
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			m_targets [i].m_nSide = ReadInt16(fp);
+			m_targets [i].m_nSide = fp.ReadInt16 ();
 		return 1;
 		}
-	inline void WriteTargets (FILE* fp) {
+	inline void WriteTargets (CFileManager& fp) {
 		int i;
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			WriteInt16 (m_targets [i].m_nSegment, fp);
@@ -490,8 +483,8 @@ public:
 	//inline CSideKey& operator[](uint i) { return targets [i]; }
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE *fp, int version, bool bObjTrigger);
-	virtual void Write (FILE *fp, int version, bool bObjTrigger);
+	virtual int Read (CFileManager& fp, int version, bool bObjTrigger);
+	virtual void Write (CFileManager& fp, int version, bool bObjTrigger);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		CTriggerTargets::Clear ();
@@ -516,8 +509,8 @@ class CLightDeltaValue : public CSideKey, public CGameItem {
 public:
 	tLightDeltaValue m_info;
 
-	virtual int Read (FILE *fp, int version = 0, bool bFlag = false);
-	virtual void Write (FILE *fp, int version = 0, bool bFlag = false);
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
@@ -535,8 +528,8 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 public:
 	tLightDeltaIndex m_info;
 
-	virtual int Read (FILE *fp, int version, bool bD2X);
-	virtual void Write (FILE *fp, int version, bool bD2X);
+	virtual int Read (CFileManager& fp, int version, bool bD2X);
+	virtual void Write (CFileManager& fp, int version, bool bD2X);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
@@ -551,8 +544,8 @@ public:
 
 class CReactorTrigger : public CTriggerTargets, public CGameItem {
 public:
-	int Read (FILE *fp, int version = 0, bool bFlag = false);
-	void Write (FILE *fp, int version = 0, bool bFlag = false);
+	int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { CTriggerTargets::Clear (); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
@@ -570,8 +563,8 @@ class CRobotMaker : public CGameItem {
 public:
 	tRobotMaker	m_info;
 
-	int Read (FILE *fp, int version = 0, bool bFlag = false);
-	void Write (FILE *fp, int version = 0, bool bFlag = false);
+	int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 };
@@ -587,14 +580,14 @@ class CFlickeringLight : public CSideKey {
 public:
 	tFlickeringLight m_info;
 
-	int Read (FILE* fp) {
+	int Read (CFileManager& fp) {
 		CSideKey::Read (fp);
-		m_info.mask = ReadInt32 (fp);
-		m_info.timer = ReadFix (fp);
-		m_info.delay = ReadFix (fp);
+		m_info.mask = fp.ReadInt32 ();
+		m_info.timer = fp.ReadFix ();
+		m_info.delay = fp.ReadFix ();
 		return 1;
 		}
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		CSideKey::Write (fp);
 		WriteInt32 (m_info.mask, fp);
 		WriteFix (m_info.timer, fp);

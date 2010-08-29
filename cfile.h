@@ -10,7 +10,7 @@
 #include <errno.h>
 #endif
 
-#include "types.h"
+#include "VectorTypes.h"
 
 // the maximum length of a filename
 #define FILENAME_LEN			1024
@@ -39,23 +39,23 @@ class CFilename {
 	};
 
 
-typedef struct CFILE_INFO {
+typedef struct tFileInfo {
 	FILE		*file;
 	char		*filename;
 	int		size;
 	int		libOffset;
 	int		rawPosition;
-} CFILE;
+} tFileInfo;
 
 class CFileManager {
 	private:
-		CFILE_INFO	m_cf;
+		tFileInfo	m_cf;
 
 	public:
 		CFileManager () { Init (); }
 		~CFileManager () { Close (); };
 		void Init (void);
-		int Open (const char *filename, const char *folder, const char *mode);
+		int Open (const char *filename, const char *mode);
 		int Length (void);							// Returns actual size of file...
 		size_t Read (void *buf, size_t elsize, size_t nelem);
 		int Close (void);
@@ -73,33 +73,45 @@ class CFileManager {
 		inline int Size (void) { return m_cf.size; }
 
 		// prototypes for reading basic types from fp
-		int ReadInt (void);
-		uint ReadUInt (void);
-		short ReadShort (void);
-		ushort ReadUShort (void);
-		char ReadByte (void);
-		byte ReadUByte (void);
+		int ReadInt32 (void);
+		uint ReadUInt32 (void);
+		short ReadInt16 (void);
+		ushort ReadUInt16 (void);
+		byte ReadByte (void);
+		sbyte ReadSByte (void);
+		char ReadChar (void);
 		fix ReadFix (void);
 		fixang ReadFixAng (void);
-		void ReadVector (CFixVector& v);
-		void ReadAngVec (CAngleVector& v);
-		void ReadMatrix (CFixMatrix& v);
 		float ReadFloat (void);
 		double ReadDouble (void);
-		void ReadString (char *buf, int n);
-		char *ReadData (const char *filename, const char *folder);
+		byte* ReadBytes (byte* buffer, int bufLen);
+		void ReadString (char* buffer, int bufLen);
 
-		int WriteInt (int i);
-		int WriteFix (fix x);
-		int WriteShort (short s);
-		int WriteByte (char u);
-		int WriteFixAng (fixang a);
-		int WriteFloat (float f);
-		int WriteDouble (double d);
-		void WriteAngVec (const CAngleVector& v);
-		void WriteVector (const CFixVector& v);
-		void WriteMatrix (const CFixMatrix& m);
+		int ReadVector (CFixVector& v);
+		int ReadVector (CDoubleVector& v);
+		int ReadVector (CAngleVector& v);
+		int ReadMatrix (CFixMatrix& v);
+		int ReadMatrix (CDoubleMatrix& m);
+
+		int WriteInt32 (int v);
+		int WriteUInt32 (uint v);
+		int WriteFix (fix v);
+		int WriteInt16 (short v);
+		int WriteUInt16 (ushort v);
+		int WriteByte (byte v);
+		int WriteSByte (sbyte v);
+		int WriteChar (char v);
+		int WriteFixAng (fixang v);
+		int WriteFloat (float v);
+		int WriteDouble (double v);
+		byte* WriteBytes (char *buffer, int length);
 		int WriteString (const char *buf);
+
+		void WriteVector (const CAngleVector& v);
+		void WriteVector (const CFixVector& v);
+		void WriteVector (const CDoubleVector& v);
+		void WriteMatrix (const CFixMatrix& m);
+		void WriteMatrix (const CDoubleMatrix& m);
 
 		int Copy (const char *pszSrc, const char *pszDest);
 		int Extract (const char *filename, const char *folder, const char *szDest);
@@ -118,52 +130,10 @@ class CFileManager {
 	};
 
 
-typedef struct tGameFolders {
-	char szHomeDir [FILENAME_LEN];
-#if defined (__unix__) || defined (__macosx__)
-	char szSharePath [FILENAME_LEN];
-#endif
-	char szAltHogDir [FILENAME_LEN];
-	char szCacheDir [FILENAME_LEN];
-	char szConfigDir [FILENAME_LEN];
-	char szDataDir [FILENAME_LEN];
-	char szDemoDir [FILENAME_LEN];
-	char szDownloadDir [FILENAME_LEN];
-	char szGameDir [FILENAME_LEN];
-	char szMissionDir [FILENAME_LEN];
-	char szMissionDirs [2][FILENAME_LEN];
-	char szMissionDownloadDir [FILENAME_LEN];
-	char szModDir [2][FILENAME_LEN];
-	char szModelDir [3][FILENAME_LEN];
-	char szModelCacheDir [3][FILENAME_LEN];
-	char szModName [FILENAME_LEN];
-	char szMovieDir [FILENAME_LEN];
-	char szMsnSubDir [FILENAME_LEN];
-	char szMusicDir [FILENAME_LEN];
-	char szProfDir [FILENAME_LEN];
-	char szSaveDir [FILENAME_LEN];
-	char szScrShotDir [FILENAME_LEN];
-	char szShaderDir [FILENAME_LEN];
-	char szSoundDir [7][FILENAME_LEN];
-	char szTextureCacheDir [4][FILENAME_LEN];
-	char szTextureDir [4][FILENAME_LEN];
-	char szWallpaperDir [FILENAME_LEN];
-	int bAltHogDirInited;
-} tGameFolders;
-
-int GetAppFolder (const char *szRootDir, char *szFolder, const char *szName, const char *szFilter);
-char *GameDataFilename (char *pszFilename, const char *pszExt, int nLevel, int nType);
-void MakeTexSubFolders (char* pszParentFolder);
-void MakeModFolders (const char* pszMission);
-void ResetModFolders (void);
-
 #ifdef _WIN32
 char *UnicodeToAsc (char *str, const wchar_t *w_str);
 wchar_t *AscToUnicode (wchar_t *w_str, const char *str);
 #endif
-
-extern int nCFileError;
-extern tGameFolders	gameFolders;
 
 #ifdef _WIN32_WCE
 # define errno -1

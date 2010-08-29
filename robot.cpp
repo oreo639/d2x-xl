@@ -18,14 +18,14 @@
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-void tRobotGunInfo::Read (FILE* fp, int nField) {
+void tRobotGunInfo::Read (CFileManager& fp, int nField) {
 	if (nField == 0)
 		points.Read (fp);
 	else
-		subModels = byte (ReadInt8 (fp));
+		subModels = byte (fp.ReadSByte ());
 	}
 
-void tRobotGunInfo::Write (FILE* fp, int nField) {
+void tRobotGunInfo::Write (CFileManager& fp, int nField) {
 	if (nField == 0)
 		points.Write (fp);
 	else
@@ -34,26 +34,26 @@ void tRobotGunInfo::Write (FILE* fp, int nField) {
 
 //------------------------------------------------------------------------
 
-void tRobotExplInfo::Read (FILE* fp) {
-	nClip = ReadInt16 (fp);
-	nSound = ReadInt16 (fp);
+void tRobotExplInfo::Read (CFileManager& fp) {
+	nClip = fp.ReadInt16 ();
+	nSound = fp.ReadInt16 ();
 	}
 
-void tRobotExplInfo::Write (FILE* fp) {
+void tRobotExplInfo::Write (CFileManager& fp) {
 	WriteInt16 (nClip , fp);
 	WriteInt16 (nSound, fp);
 	}
 
 //------------------------------------------------------------------------
 
-void tRobotContentsInfo::Read (FILE* fp) {
-	id = ReadInt8 (fp);
-	count = ReadInt8 (fp);
-	prob = ReadInt8 (fp);
-	type = ReadInt8 (fp);
+void tRobotContentsInfo::Read (CFileManager& fp) {
+	id = fp.ReadSByte ();
+	count = fp.ReadSByte ();
+	prob = fp.ReadSByte ();
+	type = fp.ReadSByte ();
 	}
 
-void tRobotContentsInfo::Write (FILE* fp) {
+void tRobotContentsInfo::Write (CFileManager& fp) {
 	WriteInt8 (id, fp);
 	WriteInt8 (count, fp);
 	WriteInt8 (prob, fp);
@@ -62,14 +62,14 @@ void tRobotContentsInfo::Write (FILE* fp) {
 
 //------------------------------------------------------------------------
 
-void tRobotSoundInfo::Read (FILE* fp) {
-	see = (byte) ReadInt8 (fp);
-	attack = (byte) ReadInt8 (fp);
-	claw = (byte) ReadInt8 (fp);
-	taunt = (byte) ReadInt8 (fp);
+void tRobotSoundInfo::Read (CFileManager& fp) {
+	see = (byte) fp.ReadSByte ();
+	attack = (byte) fp.ReadSByte ();
+	claw = (byte) fp.ReadSByte ();
+	taunt = (byte) fp.ReadSByte ();
 	}
 
-void tRobotSoundInfo::Write (FILE* fp) {
+void tRobotSoundInfo::Write (CFileManager& fp) {
 	WriteInt8 ((char) see, fp);
 	WriteInt8 ((char) attack, fp);
 	WriteInt8 ((char) claw, fp);
@@ -78,36 +78,36 @@ void tRobotSoundInfo::Write (FILE* fp) {
 
 //------------------------------------------------------------------------
 
-void tRobotCombatInfo::Read (FILE* fp, int nField) {
+void tRobotCombatInfo::Read (CFileManager& fp, int nField) {
 	switch (nField) {
 		case 0:
-			fieldOfView = ReadFix (fp);
+			fieldOfView = fp.ReadFix ();
 			break;
 		case 1:
-			firingWait [0] = ReadFix (fp);
+			firingWait [0] = fp.ReadFix ();
 			break;
 		case 2:
-			firingWait [1] = ReadFix (fp);
+			firingWait [1] = fp.ReadFix ();
 			break;
 		case 3:
-			turnTime = ReadFix (fp);
+			turnTime = fp.ReadFix ();
 			break;
 		case 4:
-			maxSpeed = ReadFix (fp);
+			maxSpeed = fp.ReadFix ();
 			break;
 		case 5:
-			circleDistance = ReadFix (fp);
+			circleDistance = fp.ReadFix ();
 			break;
 		case 6:
-			rapidFire = ReadInt8 (fp);
+			rapidFire = fp.ReadSByte ();
 			break;
 		case 7:
-			evadeSpeed = ReadInt8 (fp);
+			evadeSpeed = fp.ReadSByte ();
 			break;
 		}
 	}
 
-void tRobotCombatInfo::Write (FILE* fp, int nField) {
+void tRobotCombatInfo::Write (CFileManager& fp, int nField) {
 	switch (nField) {
 		case 0:
 			WriteFix (fieldOfView, fp);
@@ -138,60 +138,60 @@ void tRobotCombatInfo::Write (FILE* fp, int nField) {
 
 //------------------------------------------------------------------------
 
-int CRobotInfo::Read (FILE* fp, int version, bool bFlag) 
+int CRobotInfo::Read (CFileManager& fp, int version, bool bFlag) 
 { 
 	int i, j;
 
-m_info.nModel = ReadInt32 (fp);
+m_info.nModel = fp.ReadInt32 ();
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_GUNS; i++)
 		m_info.guns [i].Read (fp, j);
 for (i = 0; i < 2; i++)
 	m_info.expl [i].Read (fp);
 for (i = 0; i < 2; i++)
-	m_info.weaponType [i] = ReadInt8 (fp);
-m_info.n_guns = ReadInt8 (fp);
+	m_info.weaponType [i] = fp.ReadSByte ();
+m_info.n_guns = fp.ReadSByte ();
 m_info.contents.Read (fp);
-m_info.kamikaze = ReadInt8 (fp);
-m_info.scoreValue = ReadInt16 (fp);
-m_info.badass = ReadInt8 (fp);
-m_info.drainEnergy = ReadInt8 (fp);
-m_info.lighting = ReadFix (fp);
-m_info.strength = ReadFix (fp);
-m_info.mass = ReadFix (fp);
-m_info.drag = ReadFix (fp);
+m_info.kamikaze = fp.ReadSByte ();
+m_info.scoreValue = fp.ReadInt16 ();
+m_info.badass = fp.ReadSByte ();
+m_info.drainEnergy = fp.ReadSByte ();
+m_info.lighting = fp.ReadFix ();
+m_info.strength = fp.ReadFix ();
+m_info.mass = fp.ReadFix ();
+m_info.drag = fp.ReadFix ();
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Read (fp, j);
-m_info.cloakType = ReadInt8 (fp);
-m_info.attackType = ReadInt8 (fp);
+m_info.cloakType = fp.ReadSByte ();
+m_info.attackType = fp.ReadSByte ();
 m_info.sounds.Read (fp);
-m_info.bossFlag = ReadInt8 (fp);
-m_info.companion = ReadInt8 (fp);
-m_info.smartBlobs = ReadInt8 (fp);
-m_info.energyBlobs = ReadInt8 (fp);
-m_info.thief = ReadInt8 (fp);
-m_info.pursuit = ReadInt8 (fp);
-m_info.lightCast = ReadInt8 (fp);
-m_info.deathRoll = ReadInt8 (fp);
-m_info.flags = (byte) ReadInt8 (fp);
-m_info.bCustom = ReadInt8 (fp); 
-m_info.pad [0] = ReadInt8 (fp); 
-m_info.pad [1] = ReadInt8 (fp); 
-m_info.deathRollSound = (byte) ReadInt8 (fp);
-m_info.glow = (byte) ReadInt8 (fp);
-m_info.behavior = (byte) ReadInt8 (fp);
-m_info.aim = (byte) ReadInt8 (fp);
+m_info.bossFlag = fp.ReadSByte ();
+m_info.companion = fp.ReadSByte ();
+m_info.smartBlobs = fp.ReadSByte ();
+m_info.energyBlobs = fp.ReadSByte ();
+m_info.thief = fp.ReadSByte ();
+m_info.pursuit = fp.ReadSByte ();
+m_info.lightCast = fp.ReadSByte ();
+m_info.deathRoll = fp.ReadSByte ();
+m_info.flags = (byte) fp.ReadSByte ();
+m_info.bCustom = fp.ReadSByte (); 
+m_info.pad [0] = fp.ReadSByte (); 
+m_info.pad [1] = fp.ReadSByte (); 
+m_info.deathRollSound = (byte) fp.ReadSByte ();
+m_info.glow = (byte) fp.ReadSByte ();
+m_info.behavior = (byte) fp.ReadSByte ();
+m_info.aim = (byte) fp.ReadSByte ();
 for (i = 0; i <= MAX_GUNS; i++)
 	for (j = 0; j < N_ANIM_STATES; j++)
 		m_info.animStates [i][j].Read (fp);
-m_info.always_0xabcd = ReadInt32 (fp);
+m_info.always_0xabcd = fp.ReadInt32 ();
 return 1; 
 }
 
 //------------------------------------------------------------------------
 
-void CRobotInfo::Write (FILE* fp, int version, bool bFlag) 
+void CRobotInfo::Write (CFileManager& fp, int version, bool bFlag) 
 {
 	int i, j;
 
@@ -529,7 +529,7 @@ abort:
 //   1) Memory was allocated for globals (except polymodel data)
 //------------------------------------------------------------------------
 
-int CMine::ReadHxmFile(FILE *fp, long fSize) 
+int CMine::ReadHxmFile(CFileManager& fp, long fSize) 
 {
 	ushort t,i,j;
 	CRobotInfo rInfo;
@@ -606,7 +606,7 @@ return 1;
 //  robotInfo[MAX_ROBOT_TYPES]
 //------------------------------------------------------------------------
 
-int CMine::WriteHxmFile(FILE *fp) 
+int CMine::WriteHxmFile(CFileManager& fp) 
 {
 ushort t,i;
 

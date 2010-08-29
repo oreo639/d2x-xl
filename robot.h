@@ -11,11 +11,11 @@ public:
 	short  n_joints;
 	short  offset;
 
-	void Read (FILE* fp) {
-		n_joints = ReadInt16 (fp);
-		offset = ReadInt16 (fp);
+	void Read (CFileManager& fp) {
+		n_joints = fp.ReadInt16 ();
+		offset = fp.ReadInt16 ();
 		}
-	void Write (FILE* fp) {
+	void Write (CFileManager& fp) {
 		 WriteInt16 (n_joints, fp);
 		 WriteInt16 (offset, fp);
 		}
@@ -25,16 +25,16 @@ typedef struct tRobotGunInfo {
 	CFixVector	points;
 	byte			subModels;
 
-	void Read (FILE* fp, int nField);
-	void Write (FILE* fp, int nField);
+	void Read (CFileManager& fp, int nField);
+	void Write (CFileManager& fp, int nField);
 } tRobotGunInfo;
 
 typedef struct tRobotExplInfo {
 	short			nClip;
 	short			nSound;
 
-	void Read (FILE* fp);
-	void Write (FILE* fp);
+	void Read (CFileManager& fp);
+	void Write (CFileManager& fp);
 } tRobotExplInfo;
 
 typedef struct tRobotContentsInfo {
@@ -43,8 +43,8 @@ typedef struct tRobotContentsInfo {
 	char			prob;			// Probability that this instance will contain something in N/16
 	char			type;			// Type of thing contained, robot or powerup, in bitmaps.tbl, !0=robot, 0=powerup
 
-	void Read (FILE* fp);
-	void Write (FILE* fp);
+	void Read (CFileManager& fp);
+	void Write (CFileManager& fp);
 } tRobotContentsInfo;
 
 typedef struct tRobotSoundInfo {
@@ -53,8 +53,8 @@ typedef struct tRobotSoundInfo {
 	byte			claw;			// sound robot makes as it claws you (m_info.attackType should be 1)
 	byte			taunt;		// sound robot makes after you die
 
-	void Read (FILE* fp);
-	void Write (FILE* fp);
+	void Read (CFileManager& fp);
+	void Write (CFileManager& fp);
 } tRobotSoundInfo;
 
 typedef struct tRobotCombatInfo {
@@ -67,8 +67,8 @@ public:
 	char			rapidFire;			// number of shots fired rapidly
 	char			evadeSpeed;			// rate at which robot can evade shots, 0=none, 4=very fast
 
-	void Read (FILE* fp, int nField);
-	void Write (FILE* fp, int nField);
+	void Read (CFileManager& fp, int nField);
+	void Write (CFileManager& fp, int nField);
 } tRobotCombatInfo;
 
 typedef struct tRobotInfo {
@@ -119,8 +119,8 @@ class CRobotInfo : public CGameItem {
 		tRobotInfo	m_info;
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE* fp, int version = 0, bool bFlag = false);
-	virtual void Write (FILE* fp, int version = 0, bool bFlag = false);
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 

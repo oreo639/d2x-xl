@@ -33,13 +33,19 @@ COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 #define INTEL_FLOAT
 #define INTEL_DOUBLE
 
-INT32 nFileError = 0;
+int nFileError = 0;
+
+// ----------------------------------------------------------------------------
+
+#define ReadScalar(_T) { _T i; Read (&i, sizeof (i), 1); return i; }
+
+#define WriteScalar(i) { return Write (&i, sizeof (i), 1); }
 
 // ----------------------------------------------------------------------------
 
 void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt)
 {
-	INT32	h = 0, i, j, l = (INT32) strlen (szFullPath) - 1;
+	int	h = 0, i, j, l = (int) strlen (szFullPath) - 1;
 
 i = l;
 #ifdef _WIN32
@@ -73,12 +79,12 @@ if (szExt) {
 
 void CFileManager::ChangeFilenameExtension (char *dest, const char *src, const char *newExt)
 {
-	INT32 i;
+	int i;
 
 strcpy_s (dest, FILENAME_LEN, src);
 if (newExt [0] == '.')
 	newExt++;
-for (i = 1; i < (INT32) strlen (dest); i++)
+for (i = 1; i < (int) strlen (dest); i++)
 	if ((dest [i] == '.') || (dest [i] == ' ') || (dest [i] == 0))
 		break;
 if (i < FILENAME_LEN - 5) {
@@ -123,7 +129,7 @@ return fp;
 // past the end of the file. It returns 0 if the current position is not end of file.
 // There is no error return.
 
-INT32 CFileManager::EoF (void)
+int CFileManager::EoF (void)
 {
 #if DBG
 if (!m_cf.file)
@@ -134,14 +140,14 @@ return (m_cf.rawPosition >= m_cf.size);
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Error (void)
+int CFileManager::Error (void)
 {
 return nFileError;
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Exist (const char *filename, const char *folder) 
+int CFileManager::Exist (const char *filename, const char *folder) 
 {
 	FILE	*fp;
 	char	*pfn = const_cast<char*> (filename);
@@ -155,7 +161,7 @@ return 0;
 
 // ----------------------------------------------------------------------------
 // Deletes a file.
-INT32 CFileManager::Delete (const char *filename, const char* folder)
+int CFileManager::Delete (const char *filename, const char* folder)
 {
 	char	fn [FILENAME_LEN];
 
@@ -169,7 +175,7 @@ sprintf_s (fn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", filename);
 
 // ----------------------------------------------------------------------------
 // Rename a file.
-INT32 CFileManager::Rename (const char *oldname, const char *newname, const char *folder)
+int CFileManager::Rename (const char *oldname, const char *newname, const char *folder)
 {
 	char	fno [FILENAME_LEN], fnn [FILENAME_LEN];
 
@@ -184,7 +190,7 @@ sprintf_s (fnn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", newname);
 
 // ----------------------------------------------------------------------------
 // Make a directory.
-INT32 CFileManager::MkDir (const char *pathname)
+int CFileManager::MkDir (const char *pathname)
 {
 #if defined (_WIN32_WCE) || defined (_WIN32)
 return !CreateDirectory (pathname, NULL);
@@ -195,35 +201,32 @@ return mkdir (pathname, 0755);
 
 // ----------------------------------------------------------------------------
 
-static long ffilelength(FILE *file)
+static long ffilelength (FILE* fp)
 {
-	long old_pos, size;
+	long oldPos, size;
 
-if ((old_pos = ftell(file)) == -1 ||
-	 fseek(file, 0, SEEK_END) == -1 ||
-	 (size = ftell(file)) == -1 ||
-	 fseek(file, old_pos, SEEK_SET) == -1)
-	return -1L;
+if (((oldPos = ftell (fp)) == -1) ||
+	 (fseek (fp, 0, SEEK_END) == -1) ||
+	 ((size = ftell (fp)) == -1) ||
+	 (fseek (fp, oldPos, SEEK_SET) == -1))
+	return -1;
 return size;
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Open (const char *filename, const char *folder, const char *mode) 
+int CFileManager::Open (const char *filename, const char *mode) 
 {
-	INT32	length = -1;
+	int	length = -1;
 	FILE	*fp = NULL;
 
 m_cf.file = NULL;
 if (!(filename && *filename))
 	return 0;
-fp = GetFileHandle (filename, folder, mode);		// Check for non-hogP file first...
-if (!fp) 
+if (fopen_s (&m_cf.file, filename, mode))
 	return 0;
-m_cf.file = fp;
 m_cf.rawPosition = 0;
-m_cf.size = (length < 0) ? ffilelength (fp) : length;
-m_cf.libOffset = (length < 0) ? 0 : ftell (fp);
+m_cf.size = (length < 0) ? ffilelength (m_cf.file) : length;
 m_cf.filename = const_cast<char*> (filename);
 return 1;
 }
@@ -238,7 +241,7 @@ m_cf.rawPosition = -1;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Length (void) 
+int CFileManager::Length (void) 
 {
 return m_cf.size;
 }
@@ -249,15 +252,15 @@ return m_cf.size;
 // returns:   number of full elements actually written
 //
 //
-INT32 CFileManager::Write (const void *buf, INT32 nElemSize, INT32 nElemCount)
+int CFileManager::Write (const void *buffer, int nElemSize, int nElemCount)
 {
-	INT32 nWritten;
+	int nWritten;
 
 if (!m_cf.file)
 	return 0;
 if (!(nElemSize * nElemCount))
 	return 0;
-nWritten = (INT32) fwrite (buf, nElemSize, nElemCount, m_cf.file);
+nWritten = (int) fwrite (buffer, nElemSize, nElemCount, m_cf.file);
 m_cf.rawPosition = ftell (m_cf.file);
 if (Error ())
 	return 0;
@@ -270,9 +273,9 @@ return nWritten;
 // returns:   success ==> returns character written
 //            error   ==> EOF
 //
-INT32 CFileManager::PutC (INT32 c)
+int CFileManager::PutC (int c)
 {
-	INT32 char_written;
+	int char_written;
 
 char_written = fputc (c, m_cf.file);
 m_cf.rawPosition = ftell (m_cf.file);
@@ -281,9 +284,9 @@ return char_written;
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::GetC (void) 
+int CFileManager::GetC (void) 
 {
-	INT32 c;
+	int c;
 
 if (m_cf.rawPosition >= m_cf.size) 
 	return EOF;
@@ -299,9 +302,9 @@ return c;
 // returns:   success ==> non-negative value
 //            error   ==> EOF
 //
-INT32 CFileManager::PutS (const char *str)
+int CFileManager::PutS (const char *str)
 {
-	INT32 ret;
+	int ret;
 
 ret = fputs (str, m_cf.file);
 m_cf.rawPosition = ftell (m_cf.file);
@@ -310,23 +313,23 @@ return ret;
 
 // ----------------------------------------------------------------------------
 
-char * CFileManager::GetS (char * buf, size_t n) 
+char * CFileManager::GetS (char * buffer, size_t n) 
 {
-	char * t = buf;
+	char * t = buffer;
 	size_t i;
-	INT32 c;
+	int c;
 
 for (i = 0; i < n - 1; i++) {
 	do {
 		if (m_cf.rawPosition >= m_cf.size) {
-			*buf = 0;
-			return (buf == t) ? NULL : t;
+			*buffer = 0;
+			return (buffer == t) ? NULL : t;
 			}
 		c = GetC ();
 		if (c == 0 || c == 10)       // Unix line ending
 			break;
 		if (c == 13) {      // Mac or DOS line ending
-			INT32 c1 = GetC ();
+			int c1 = GetC ();
 			Seek ( -1, SEEK_CUR);
 			if (c1 == 10) // DOS line ending
 				continue;
@@ -336,43 +339,42 @@ for (i = 0; i < n - 1; i++) {
 		} while (c == 13);
  	if (c == 0 || c == 10 || c == 13)  // because cr-lf is a bad thing on the mac
  		break;   // and anyway -- 0xod is CR on mac, not 0x0a
-	*buf++ = c;
+	*buffer++ = c;
 	if (c == '\n')
 		break;
 	}
-*buf++ = 0;
+*buffer++ = 0;
 return  t;
 }
 
 // ----------------------------------------------------------------------------
 
-size_t CFileManager::Read (void *buf, size_t elSize, size_t nElems) 
+size_t CFileManager::Read (void *buffer, size_t elSize, size_t nElems) 
 {
-UINT32 i, size = (INT32) (elSize * nElems);
+uint i, size = (int) (elSize * nElems);
 
 if (!m_cf.file || (m_cf.size < 1) || !size) 
 	return 0;
-i = (INT32) fread (buf, 1, size, m_cf.file);
+i = (int) fread (buffer, 1, size, m_cf.file);
 m_cf.rawPosition += i;
 return i / elSize;
 }
 
-
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Tell (void) 
+int CFileManager::Tell (void) 
 {
 return m_cf.rawPosition;
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Seek (size_t offset, INT32 whence) 
+int CFileManager::Seek (size_t offset, int whence) 
 {
 if (!m_cf.size)
 	return -1;
 
-	INT32 destPos;
+	int destPos;
 
 switch (whence) {
 	case SEEK_SET:
@@ -387,16 +389,16 @@ switch (whence) {
 	default:
 		return 1;
 	}
-INT32 c = fseek (m_cf.file, m_cf.libOffset + destPos, SEEK_SET);
+int c = fseek (m_cf.file, m_cf.libOffset + destPos, SEEK_SET);
 m_cf.rawPosition = ftell (m_cf.file) - m_cf.libOffset;
 return c;
 }
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::Close (void)
+int CFileManager::Close (void)
 {
-	INT32 result;
+	int result;
 
 if (!m_cf.file)
 	return 0;
@@ -408,294 +410,164 @@ return result;
 }
 
 // ----------------------------------------------------------------------------
-// routines to read basic data types from CFileManager::ILE's.  Put here to
-// simplify mac/pc reading from cfiles.
 
-INT32 CFileManager::ReadInt (void)
+int CFileManager::ReadInt32 (void) { ReadScalar (int) }
+uint CFileManager::ReadUInt32 (void) { ReadScalar (uint) }
+short CFileManager::ReadInt16 (void) { ReadScalar (short) }
+ushort CFileManager::ReadUInt16 (void) { ReadScalar (ushort) }
+sbyte CFileManager::ReadSByte (void) { ReadScalar (sbyte) }
+byte CFileManager::ReadByte (void) { ReadScalar (byte) }
+char CFileManager::ReadChar (void) { ReadScalar (char) }
+float CFileManager::ReadFloat (void) { ReadScalar (float) }
+double CFileManager::ReadDouble (void) { ReadScalar (double) }
+fix CFileManager::ReadFix (void) { ReadScalar (fix) }
+fixang CFileManager::ReadFixAng (void) { ReadScalar (fixang) }
+
+int CFileManager::WriteInt32 (int v) { WriteScalar (v) }
+int CFileManager::WriteUInt32 (uint v) { WriteScalar (v) }
+int CFileManager::WriteInt16 (short v) { WriteScalar (v) }
+int CFileManager::WriteUInt16 (ushort v) { WriteScalar (v) }
+int CFileManager::WriteSByte (sbyte v) { WriteScalar (v) }
+int CFileManager::WriteByte (byte v) { WriteScalar (v) }
+int CFileManager::WriteChar (char v) { WriteScalar (v) }
+int CFileManager::WriteFloat (float v) { WriteScalar (v) }
+int CFileManager::WriteDouble (double v) { WriteScalar (v) }
+int CFileManager::WriteFix (fix v) { WriteScalar (v) }
+int CFileManager::WriteFixAng (fixang v) { WriteScalar (v) }
+
+// ----------------------------------------------------------------------------
+
+int CFileManager::ReadVector (CFixVector& v) 
 {
-	INT32 i;
-
-Read (&i, sizeof (i), 1);
-//Error ("Error reading INT32 in CFileManager::ReadInt ()");
-return INTEL_INT (i);
+v.v.x = ReadFix ();
+v.v.y = ReadFix ();
+v.v.z = ReadFix ();
+return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-UINT32 CFileManager::ReadUInt (void)
+int CFileManager::ReadVector (CDoubleVector& v) 
 {
-	UINT32 i;
-
-Read (&i, sizeof (i), 1);
-//Error ("Error reading INT32 in CFileManager::ReadInt ()");
-return INTEL_INT (i);
+v.v.x = X2D (ReadFix ());
+v.v.y = X2D (ReadFix ());
+v.v.z = X2D (ReadFix ());
+return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-INT16 CFileManager::ReadShort (void)
+int CFileManager::ReadVector (CAngleVector& v)
 {
-	INT16 s;
-
-Read (&s, sizeof (s), 1);
-//Error ("Error reading INT16 in CFileManager::ReadShort ()");
-return INTEL_SHORT (s);
+v.v.p = ReadFixAng ();
+v.v.b = ReadFixAng ();
+v.v.h = ReadFixAng ();
+return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-UINT16 CFileManager::ReadUShort (void)
+int CFileManager::ReadMatrix (CFixMatrix& m)
 {
-	UINT16 s;
-
-Read (&s, sizeof (s), 1);
-//Error ("Error reading INT16 in CFileManager::ReadShort ()");
-return INTEL_SHORT (s);
+ReadVector (m.rVec);
+ReadVector (m.uVec);
+ReadVector (m.fVec);
+return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-INT8 CFileManager::ReadByte (void)
+int CFileManager::ReadMatrix (CDoubleMatrix& m)
 {
-	INT8 b;
-
-if (Read (&b, sizeof (b), 1) != 1)
-	return nFileError;
-//Error ("Error reading byte in CFileManager::ReadByte ()");
-return b;
+ReadVector (m.rVec);
+ReadVector (m.uVec);
+ReadVector (m.fVec);
+return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-UINT8 CFileManager::ReadUByte (void)
+byte* CFileManager::ReadBytes (byte* buffer, int length)
 {
-	UINT8 b;
-
-if (Read (&b, sizeof (b), 1) != 1)
-	return nFileError;
-//Error ("Error reading byte in CFileManager::ReadByte ()");
-return b;
+Read (buffer, 1, length);
+return buffer;
 }
 
 // ----------------------------------------------------------------------------
 
-float CFileManager::ReadFloat (void)
-{
-	float f;
-
-Read (&f, sizeof (f), 1) ;
-//Error ("Error reading float in CFileManager::ReadFloat ()");
-return INTEL_FLOAT (f);
-}
-
-// ----------------------------------------------------------------------------
-//Read and return a double (64 bits)
-//Throws an exception of nType (nFileError *) if the OS returns an error on read
-double CFileManager::ReadDouble (void)
-{
-	double d;
-
-Read (&d, sizeof (d), 1);
-return INTEL_DOUBLE (d);
-}
-
-// ----------------------------------------------------------------------------
-
-FIX CFileManager::ReadFix (void)
-{
-	FIX f;
-
-Read (&f, sizeof (f), 1) ;
-//Error ("Error reading FIX in CFileManager::ReadFix ()");
-return (FIX) INTEL_INT ((INT32) f);
-return f;
-}
-
-// ----------------------------------------------------------------------------
-
-FIXANG CFileManager::ReadFixAng (void)
-{
-	FIXANG f;
-
-Read (&f, 2, 1);
-//Error ("Error reading FIXANG in CFileManager::ReadFixAng ()");
-return (FIXANG) INTEL_SHORT ((INT32) f);
-}
-
-// ----------------------------------------------------------------------------
-
-void CFileManager::ReadVector (CFixVector& v) 
-{
-v.x = ReadFix ();
-v.y = ReadFix ();
-v.z = ReadFix ();
-}
-
-// ----------------------------------------------------------------------------
-
-void CFileManager::ReadAngVec (CAngleVector& v)
-{
-v.p = ReadFixAng ();
-v.b = ReadFixAng ();
-v.h = ReadFixAng ();
-}
-
-// ----------------------------------------------------------------------------
-
-void CFileManager::ReadMatrix (CFixMatrix& m)
-{
-ReadVector (m.rvec);
-ReadVector (m.uvec);
-ReadVector (m.fvec);
-}
-
-
-// ----------------------------------------------------------------------------
-
-void CFileManager::ReadString (char *buf, INT32 n)
+void CFileManager::ReadString (char *buffer, int length)
 {
 	char c;
 
 do {
 	c = (char) ReadByte ();
-	if (n > 0) {
-		*buf++ = c;
-		n--;
+	if (length > 0) {
+		*buffer++ = c;
+		length--;
 		}
 	} while (c != 0);
-}
-
-// ----------------------------------------------------------------------------
-// equivalent write functions of above read functions follow
-
-INT32 CFileManager::WriteInt (INT32 i)
-{
-i = INTEL_INT (i);
-return Write (&i, sizeof (i), 1);
-}
-
-// ----------------------------------------------------------------------------
-
-INT32 CFileManager::WriteShort (INT16 s)
-{
-s = INTEL_SHORT (s);
-return Write(&s, sizeof (s), 1);
-}
-
-// ----------------------------------------------------------------------------
-
-INT32 CFileManager::WriteByte (INT8 b)
-{
-return Write (&b, sizeof (b), 1);
-}
-
-// ----------------------------------------------------------------------------
-
-INT32 CFileManager::WriteFloat (float f)
-{
-f = INTEL_FLOAT (f);
-return Write (&f, sizeof (f), 1);
-}
-
-// ----------------------------------------------------------------------------
-//Read and return a double (64 bits)
-//Throws an exception of nType (nFileError *) if the OS returns an error on read
-INT32 CFileManager::WriteDouble (double d)
-{
-d = INTEL_DOUBLE (d);
-return Write (&d, sizeof (d), 1);
-}
-
-// ----------------------------------------------------------------------------
-
-INT32 CFileManager::WriteFix (FIX x)
-{
-x = INTEL_INT (x);
-return Write (&x, sizeof (x), 1);
-}
-
-// ----------------------------------------------------------------------------
-
-INT32 CFileManager::WriteFixAng (FIXANG a)
-{
-a = INTEL_SHORT (a);
-return Write (&a, sizeof (a), 1);
 }
 
 // ----------------------------------------------------------------------------
 
 void CFileManager::WriteVector (const CFixVector& v)
 {
-WriteFix (v.x);
-WriteFix (v.y);
-WriteFix (v.z);
+WriteFix (v.v.x);
+WriteFix (v.v.y);
+WriteFix (v.v.z);
 }
 
 // ----------------------------------------------------------------------------
 
-void CFileManager::WriteAngVec (const CAngleVector& v)
+void CFileManager::WriteVector (const CDoubleVector& v)
 {
-WriteFixAng (v.p);
-WriteFixAng (v.b);
-WriteFixAng (v.h);
+WriteDouble (D2X (v.v.x));
+WriteDouble (D2X (v.v.y));
+WriteDouble (D2X (v.v.z));
+}
+
+// ----------------------------------------------------------------------------
+
+void CFileManager::WriteVector (const CAngleVector& v)
+{
+WriteFixAng (v.v.p);
+WriteFixAng (v.v.b);
+WriteFixAng (v.v.h);
 }
 
 // ----------------------------------------------------------------------------
 
 void CFileManager::WriteMatrix (const CFixMatrix& m)
 {
-WriteVector (m.rvec);
-WriteVector (m.uvec);
-WriteVector (m.fvec);
+WriteVector (m.rVec);
+WriteVector (m.uVec);
+WriteVector (m.fVec);
 }
-
 
 // ----------------------------------------------------------------------------
 
-INT32 CFileManager::WriteString (const char *buf)
+void CFileManager::WriteMatrix (const CDoubleMatrix& m)
 {
-if (buf && *buf && Write (buf, (INT32) strlen (buf), 1))
-	return (INT32) WriteByte (0);   // write out NULL termination
+WriteVector (m.rVec);
+WriteVector (m.uVec);
+WriteVector (m.fVec);
+}
+
+// ----------------------------------------------------------------------------
+
+byte* CFileManager::WriteBytes (byte* buffer, int length)
+{
+Write (buffer, 1, length);
+return buffer;
+}
+
+// ----------------------------------------------------------------------------
+
+int CFileManager::WriteString (const char *buffer)
+{
+if (buffer && *buffer && Write (buffer, (int) strlen (buffer), 1))
+	return (int) WriteByte (0);   // write out NULL termination
 return 0;
-}
-
-// ----------------------------------------------------------------------------
-
-INT32 CFileManager::Extract (const char *filename, const char *folder, const char *szDestName)
-{
-	FILE		*fp;
-	char		szDest [FILENAME_LEN], fn [FILENAME_LEN];
-	static	char buf [4096];
-	INT32		h, l;
-
-if (!Open (filename, folder, "rb"))
-	return 0;
-strcpy_s (fn, FILENAME_LEN, filename);
-if (*szDestName) {
-	if (*szDestName == '.') {
-		char *psz = strchr (fn, '.');
-		if (psz)
-			strcpy_s (psz, FILENAME_LEN, szDestName);
-		else
-			strcat_s (fn, FILENAME_LEN, szDestName);
-		}
-	else
-		strcpy_s (fn, FILENAME_LEN, szDestName);
-	}
-sprintf_s (szDest, FILENAME_LEN, "%s%s%s", gameFolders.szCacheDir, *gameFolders.szCacheDir ? "/" : "", fn);
-if (fopen_s (&fp, szDest, "wb")) {
-	Close ();
-	return 0;
-	}
-for (h = sizeof (buf), l = m_cf.size; l; l -= h) {
-	if (h > l)
-		h = l;
-	Read (buf, h, 1);
-	fwrite (buf, h, 1, fp);
-	}
-Close ();
-fclose (fp);
-return 1;
 }
 
 //	-----------------------------------------------------------------------------------
@@ -703,9 +575,9 @@ return 1;
 
 #define COPY_BUF_SIZE 65536
 
-INT32 CFileManager::Copy (const char *pszSrc, const char *pszDest)
+int CFileManager::Copy (const char *pszSrc, const char *pszDest)
 {
-	INT8	buf [COPY_BUF_SIZE];
+	INT8	buffer [COPY_BUF_SIZE];
 	CFileManager	cf;
 
 if (!cf.Open (pszDest, gameFolders.szSaveDir, "wb"))
@@ -713,12 +585,12 @@ if (!cf.Open (pszDest, gameFolders.szSaveDir, "wb"))
 if (!Open (pszSrc, gameFolders.szSaveDir, "rb"))
 	return -2;
 while (!EoF ()) {
-	INT32 bytes_read = (INT32) Read (buf, 1, COPY_BUF_SIZE);
+	int bytes_read = (int) Read (buffer, 1, COPY_BUF_SIZE);
 	if (Error ()) {
 		cf.Close ();
 		return -2;
 	}
-	cf.Write (buf, 1, bytes_read);
+	cf.Write (buffer, 1, bytes_read);
 	if (cf.Error ()) {
 		cf.Close ();
 		return -2;
@@ -757,7 +629,7 @@ return pData;
 
 void CFileManager::SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt)
 {
-	INT32	h = 0, i, j, l = (INT32) strlen (szFullPath) - 1;
+	int	h = 0, i, j, l = (int) strlen (szFullPath) - 1;
 
 i = l;
 #ifdef _WIN32

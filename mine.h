@@ -538,8 +538,8 @@ public:
 		}
 
 	void InitRobotData();
-	int WriteHxmFile (FILE *fp);
-	int ReadHxmFile (FILE *fp, long fSize);
+	int WriteHxmFile (CFileManager& fp);
+	int ReadHxmFile (CFileManager& fp, long fSize);
 
 	short ReadSegmentInfo (FILE *file);
 	void WriteSegmentInfo (FILE *file, short /*nSegment*/);
@@ -576,7 +576,7 @@ public:
 	void SortObjTriggers (void);
 	bool IsCustomRobot (int i);
 	BOOL HasCustomRobots();
-	short LoadMineSigAndType (FILE* fp);
+	short LoadMineSigAndType (CFileManager& fp);
 
 private:
 	int FindClip (CWall *wallP, short nTexture);
@@ -591,11 +591,11 @@ private:
 	void ReadRobotResource(int robot_number);
 	void ReadColor (CColor *pc, FILE *load_file);
 	void SaveColor (CColor *pc, FILE *save_file);
-	void LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, FILE *fp);
-	void SaveColors (CColor *pc, int nColors, FILE *fp);
+	void LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
+	void SaveColors (CColor *pc, int nColors, CFileManager& fp);
 	void ClearGameItem (CGameItem* items, int nCount);
-	int LoadGameItem (FILE* fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
-	int SaveGameItem (FILE* fp, CGameItemInfo& info, CGameItem* items, bool bFlag = false);
+	int LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
+	int SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items, bool bFlag = false);
 	short LoadMineDataCompiled (FILE *load_file, bool bNewMine);
 	short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 	short LoadGameData(FILE *loadfile, bool bNewMine);

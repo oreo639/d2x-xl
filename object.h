@@ -84,8 +84,8 @@ public:
 	fixang     turnroll;   /*rotation caused by turn banking */
 	ushort     flags;      /*misc physics flags */
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 /*stuctures for different kinds of simulation */
@@ -100,8 +100,8 @@ public:
 	char  track_goal;      /*  Object this object is tracking. */
 	fix   multiplier;      /*  Power if this is a fusion bolt (or other super weapon to be added). */
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CObjExplosionInfo {
@@ -113,24 +113,24 @@ public:
 	char  prev_attach;    /* previous explosion in attach list */
 	char  next_attach;    /* next explosion in attach list */
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CObjLightInfo {
 public:
   fix  intensity;    /*how bright the light is */
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CObjPowerupInfo {
 public:
 	int  count;      /*how many/much we pick up (vulcan cannon only?) */
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CObjVClipInfo {
@@ -139,8 +139,8 @@ public:
 	fix	frametime;
 	char	framenum;
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 /*structures for different kinds of rendering */
@@ -153,8 +153,8 @@ public:
 	int      tmap_override;    /*if this is not -1, map all face to this */
 	char       alt_textures;     /*if not -1, use these textures instead */
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CObjAIInfo {
@@ -172,8 +172,8 @@ public:
 	int  danger_laser_signature;
 	short  danger_laser_num;
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CSmokeInfo {
@@ -189,8 +189,8 @@ public:
 	char			nType;
 	char			bEnabled;
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CLightningInfo {
@@ -217,8 +217,8 @@ public:
 	char			bEnabled;
 	byte			color [4];
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 class CSoundInfo {
@@ -227,8 +227,8 @@ public:
 	char			szFilename [40];
 	char			bEnabled;
 
-	int Read (FILE* fp, int version);
-	void Write (FILE* fp, int version);
+	int Read (CFileManager& fp, int version);
+	void Write (CFileManager& fp, int version);
 };
 
 typedef struct tObjContentsInfo {
@@ -296,8 +296,8 @@ public:
 
 	//CGameObject () { memset (this, 0, sizeof (*this)); }
 
-	virtual int Read (FILE *fp, int version = 0, bool bFlag = false);
-	virtual void Write (FILE *fp, int version = 0, bool bFlag = false);
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) {
 		memset (&m_info, 0, sizeof (m_info)); 
 		m_location.Clear ();

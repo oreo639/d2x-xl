@@ -10,7 +10,7 @@
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
 
-double ReadDouble (FILE *fp) 
+double ReadDouble (CFileManager& fp) 
 {
 double value = 0;
 fread (&value, sizeof (double), 1, fp);
@@ -23,7 +23,7 @@ return value;
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
 
-int ReadInt32 (FILE *fp) 
+int ReadInt32 (CFileManager& fp) 
 {
 int value = 0;
 fread (&value, sizeof (int), 1, fp);
@@ -36,7 +36,7 @@ return value;
 // ACTION - Reads a 32 bit word from a file.
 //------------------------------------------------------------------------
 
-uint ReadUInt32 (FILE *fp) 
+uint ReadUInt32 (CFileManager& fp) 
 {
 uint value = 0;
 fread (&value, sizeof (uint), 1, fp);
@@ -49,7 +49,7 @@ return value;
 // ACTION - Reads a 16 bit word from a file.
 //------------------------------------------------------------------------
 
-short ReadInt16 (FILE *fp) 
+short ReadInt16 (CFileManager& fp) 
 {
 short value = 0;
 fread (&value, sizeof (short), 1, fp);
@@ -62,7 +62,7 @@ return value;
 // ACTION - Reads a 16 bit word from a file.
 //------------------------------------------------------------------------
 
-ushort ReadUInt16 (FILE *fp) 
+ushort ReadUInt16 (CFileManager& fp) 
 {
 ushort value = 0;
 fread (&value, sizeof (ushort), 1, fp);
@@ -75,7 +75,7 @@ return value;
 // ACTION - Reads a 8 bit word from a file.
 //------------------------------------------------------------------------
 
-char ReadInt8 (FILE *fp) 
+char ReadInt8 (CFileManager& fp) 
 {
 char value = 0;
 fread (&value, sizeof (char), 1, fp);
@@ -88,7 +88,7 @@ return value;
 // ACTION - Reads a 8 bit word from a file.
 //------------------------------------------------------------------------
 
-byte ReadUInt8 (FILE *fp) 
+byte ReadUInt8 (CFileManager& fp) 
 {
 byte value = 0;
 fread (&value, sizeof (byte), 1, fp);
@@ -101,7 +101,7 @@ return value;
 // ACTION - Reads a number of 8 bit bytes from a file.
 //------------------------------------------------------------------------
 
-void* ReadBytes (void* buffer, uint length, FILE *fp) 
+void* ReadBytes (void* buffer, uint length, CFileManager& fp) 
 {
 fread (buffer, sizeof (byte), length, fp);
 return buffer;
@@ -113,7 +113,7 @@ return buffer;
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
 
-int WriteInt32 (int value, FILE *fp) 
+int WriteInt32 (int value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (int), 1, fp);
 return value;
@@ -125,7 +125,7 @@ return value;
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
 
-short WriteInt16 (short value, FILE *fp) 
+short WriteInt16 (short value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (short), 1, fp);
 return value;
@@ -137,7 +137,7 @@ return value;
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
 
-char WriteInt8 (char value, FILE *fp) 
+char WriteInt8 (char value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (char), 1, fp);
 return value;
@@ -149,7 +149,7 @@ return value;
 // ACTION - Writes a 32 bit word to a file.
 //------------------------------------------------------------------------
 
-uint WriteUInt32 (uint value, FILE *fp) 
+uint WriteUInt32 (uint value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (uint), 1, fp);
 return value;
@@ -161,7 +161,7 @@ return value;
 // ACTION - Writes a 16 bit word to a file.
 //------------------------------------------------------------------------
 
-ushort WriteUInt16 (ushort value, FILE *fp) 
+ushort WriteUInt16 (ushort value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (ushort), 1, fp);
 return value;
@@ -173,7 +173,7 @@ return value;
 // ACTION - Writes a 8 bit word to a file.
 //------------------------------------------------------------------------
 
-byte WriteUInt8 (byte value, FILE *fp) 
+byte WriteUInt8 (byte value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (byte), 1, fp);
 return value;
@@ -185,7 +185,7 @@ return value;
 // ACTION - Writes a double to a file.
 //------------------------------------------------------------------------
 
-double WriteDouble (double value, FILE *fp) 
+double WriteDouble (double value, CFileManager& fp) 
 {
 fwrite (&value, sizeof (double), 1, fp);
 return value;
@@ -197,7 +197,7 @@ return value;
 // ACTION - Reads a number of 8 bit bytes from a file.
 //------------------------------------------------------------------------
 
-void* WriteBytes (void* buffer, uint length, FILE *fp) 
+void* WriteBytes (void* buffer, uint length, CFileManager& fp) 
 {
 fwrite (buffer, sizeof (byte), length, fp);
 return buffer;

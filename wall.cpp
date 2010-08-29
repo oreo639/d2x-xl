@@ -363,26 +363,26 @@ if (!bExpertMode &&
 
 // ------------------------------------------------------------------------
 
-int CWall::Read (FILE* fp, int version, bool bFlag)
+int CWall::Read (CFileManager& fp, int version, bool bFlag)
 {
-m_nSegment = ReadInt32 (fp);
-m_nSide = ReadInt32 (fp); 
-m_info.hps = ReadFix (fp);
-m_info.linkedWall = ReadInt32 (fp);
-m_info.type = byte (ReadInt8 (fp));
-m_info.flags = ushort ((version < 37) ? ReadInt8 (fp) : ReadInt16 (fp));         
-m_info.state = byte (ReadInt8 (fp));         
-m_info.nTrigger = byte (ReadInt8 (fp));       
-m_info.nClip = byte (ReadInt8 (fp));      
-m_info.keys = byte (ReadInt8 (fp));          
-m_info.controllingTrigger = ReadInt8 (fp);
-m_info.cloakValue = ReadInt8 (fp);
+m_nSegment = fp.ReadInt32 ();
+m_nSide = fp.ReadInt32 (); 
+m_info.hps = fp.ReadFix ();
+m_info.linkedWall = fp.ReadInt32 ();
+m_info.type = byte (fp.ReadSByte ());
+m_info.flags = ushort ((version < 37) ? fp.ReadSByte () : fp.ReadInt16 ());         
+m_info.state = byte (fp.ReadSByte ());         
+m_info.nTrigger = byte (fp.ReadSByte ());       
+m_info.nClip = byte (fp.ReadSByte ());      
+m_info.keys = byte (fp.ReadSByte ());          
+m_info.controllingTrigger = fp.ReadSByte ();
+m_info.cloakValue = fp.ReadSByte ();
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CWall::Write (FILE* fp, int version, bool bFlag)
+void CWall::Write (CFileManager& fp, int version, bool bFlag)
 {
 WriteInt32 (m_nSegment, fp);
 WriteInt32 (m_nSide, fp); 
@@ -404,20 +404,20 @@ WriteInt8 (m_info.cloakValue, fp);
 
 // ------------------------------------------------------------------------
 
-int CActiveDoor::Read (FILE *fp, int version, bool bFlag)
+int CActiveDoor::Read (CFileManager& fp, int version, bool bFlag)
 {
-m_info.n_parts = ReadInt32 (fp);
-m_info.nFrontWall [0] = ReadInt16 (fp);
-m_info.nFrontWall [1] = ReadInt16 (fp);
-m_info.nBackWall [0] = ReadInt16 (fp); 
-m_info.nBackWall [1] = ReadInt16 (fp); 
-m_info.time = ReadInt32 (fp);		  
+m_info.n_parts = fp.ReadInt32 ();
+m_info.nFrontWall [0] = fp.ReadInt16 ();
+m_info.nFrontWall [1] = fp.ReadInt16 ();
+m_info.nBackWall [0] = fp.ReadInt16 (); 
+m_info.nBackWall [1] = fp.ReadInt16 (); 
+m_info.time = fp.ReadInt32 ();		  
 return 1;
 }
 
 // ------------------------------------------------------------------------
 
-void CActiveDoor::Write (FILE *fp, int version, bool bFlag)
+void CActiveDoor::Write (CFileManager& fp, int version, bool bFlag)
 {
 WriteInt32 (m_info.n_parts, fp);
 WriteInt16 (m_info.nFrontWall[0], fp);

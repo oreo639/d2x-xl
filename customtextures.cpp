@@ -139,7 +139,7 @@ return l;
 // ReadPog ()
 //-----------------------------------------------------------------------------
 
-int ReadPog (FILE *fp, uint nFileSize) 
+int ReadPog (CFileManager& fp, uint nFileSize) 
 {
 	CPigHeader		pigFileInfo (1);
 	CPigTexture		pigTexInfo (1);
@@ -293,7 +293,7 @@ return rc;
 
 //-----------------------------------------------------------------------------
 
-uint WritePogTextureHeader (FILE* fp, CTexture *texP, int nTexture, uint nOffset)
+uint WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint nOffset)
 {
 	CPigTexture pigTexInfo (1);
 	byte *pSrc;
@@ -413,10 +413,10 @@ return true;
 //
 //-----------------------------------------------------------------------------
 
-int CreatePog (FILE *fp) 
+int CreatePog (CFileManager& fp) 
 {
 	int rc; // return code;
-	CPigHeader		pigFileInfo;
+	CPigHeader		pigFileInfo (1);
 	uint				textureCount = 0, nOffset = 0;
 	ushort*			textureTable;
 	int				nVersion = DLE.FileType ();

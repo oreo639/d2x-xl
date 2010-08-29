@@ -260,7 +260,7 @@ return;
 // Reads a uint number and converts it UINTW (16 or 32 bit)
 //--------------------------------------------------------------------------
 
-UINTW read_UINTW (FILE *fp) 
+UINTW read_UINTW (CFileManager& fp) 
 {
 uint value;
 fread (&value, sizeof (uint), 1, fp);
@@ -274,7 +274,7 @@ return (UINTW)value;
 
 #define FREAD(b)	fread (&b, sizeof (b), 1, file)
 
-int CPolyModel::Read (FILE* fp, bool bRenderData) 
+int CPolyModel::Read (CFileManager& fp, bool bRenderData) 
 {
 if (bRenderData) {
 	Release ();
@@ -283,12 +283,12 @@ if (bRenderData) {
 	return fread (m_info.renderData, m_info.dataSize, 1, fp) == 1;
 	}
 else {
-	m_info.nModels = ReadInt32 (fp);
-	m_info.dataSize = ReadInt32 (fp);
-	ReadInt32 (fp);
+	m_info.nModels = fp.ReadInt32 ();
+	m_info.dataSize = fp.ReadInt32 ();
+	fp.ReadInt32 ();
 	m_info.renderData = NULL;
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].ptr = ReadInt32 (fp);
+		m_info.subModels [i].ptr = fp.ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].offset.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -296,19 +296,19 @@ else {
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].pnt.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].rad = ReadFix (fp);
+		m_info.subModels [i].rad = fp.ReadFix ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].parent = (byte) ReadInt8 (fp);
+		m_info.subModels [i].parent = (byte) fp.ReadSByte ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].vMin.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].vMax.Read (fp);
 	m_info.vMin.Read (fp);
 	m_info.vMax.Read (fp);
-	m_info.rad = ReadFix (fp);
-	m_info.textureCount = (byte) ReadInt8 (fp);
-	m_info.firstTexture = (ushort) ReadInt16 (fp);
-	m_info.simplerModel = (byte) ReadInt8 (fp);
+	m_info.rad = fp.ReadFix ();
+	m_info.textureCount = (byte) fp.ReadSByte ();
+	m_info.firstTexture = (ushort) fp.ReadInt16 ();
+	m_info.simplerModel = (byte) fp.ReadSByte ();
 	}
 return 1;
 }
@@ -344,7 +344,7 @@ if (bCustom) {
 				return 1;
 				}
 		if (!strcmp (level.name, szSubFile)) {
-			id = ReadInt32 (fp);	  					   // read id
+			id = fp.ReadInt32 ();	  					   // read id
 			if (id != 0x5848414DL) {
 				fclose (fp);
 				return 1;
@@ -369,7 +369,7 @@ if (bCustom) {
 		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp, true);
 	}
 else {
-	id = ReadInt32 (fp);	  					   // read id
+	id = fp.ReadInt32 ();	  					   // read id
 	if (id != 0x214d4148L) {
 		fclose (fp);
 		return 1;

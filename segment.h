@@ -12,13 +12,13 @@ public:
 
 class CUVL : public tUVL {
 public:
-	inline int Read (FILE* fp) {
-		u = ReadInt16 (fp);
-		v = ReadInt16 (fp);
-		l = ReadInt16 (fp);
+	inline int Read (CFileManager& fp) {
+		u = fp.ReadInt16 ();
+		v = fp.ReadInt16 ();
+		l = fp.ReadInt16 ();
 		return 1;
 		}
-	inline void Write (FILE* fp) {
+	inline void Write (CFileManager& fp) {
 		WriteInt16 (u, fp);
 		WriteInt16 (v, fp);
 		WriteInt16 (l, fp);
@@ -42,8 +42,8 @@ public:
 	tColor	m_info;
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE* fp, int version = 0, bool bFlag = false);
-	virtual void Write (FILE* fp, int version = 0, bool bFlag = false);
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
@@ -60,8 +60,8 @@ class CSide {
 public:
 	tSide m_info;
 
-	int Read (FILE* fp, bool bTextured);
-	void Write (FILE* fp);
+	int Read (CFileManager& fp, bool bTextured);
+	void Write (CFileManager& fp);
 	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	void Setup (void);
 	void LoadTextures (void);
@@ -93,10 +93,10 @@ public:
 
 public:
 	void Upgrade (void);
-	int Read (FILE* fp, int nLevelType, int nLevelVersion);
-	void ReadExtras (FILE* fp, int nLevelType, int nLevelVersion, bool bExtras);
-	void Write (FILE* fp, int nLevelType, int nLevelVersion);
-	void WriteExtras (FILE* fp, int nLevelType, bool bExtras);
+	int Read (CFileManager& fp, int nLevelType, int nLevelVersion);
+	void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras);
+	void Write (CFileManager& fp, int nLevelType, int nLevelVersion);
+	void WriteExtras (CFileManager& fp, int nLevelType, bool bExtras);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		for (int i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
@@ -106,8 +106,8 @@ public:
 	void SetUV (short nSide, short x, short y);
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (FILE* fp, int version = 0, bool bFlag = false) { return 1; };
-	virtual void Write (FILE* fp, int version = 0, bool bFlag = false) {};
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return 1; };
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	inline short Child (short nSide) { return m_sides [nSide].m_info.nChild; }
 	inline short SetChild (short nSide, short nSegment) {
 		m_sides [nSide].m_info.nChild = nSegment;
@@ -119,8 +119,8 @@ public:
 		}
 
 private:
-	byte ReadWalls (FILE* fp, int nLevelVersion);
-	byte WriteWalls (FILE* fp, int nLevelVersion);
+	byte ReadWalls (CFileManager& fp, int nLevelVersion);
+	byte WriteWalls (CFileManager& fp, int nLevelVersion);
 
 };
 

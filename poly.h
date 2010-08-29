@@ -72,8 +72,8 @@ public:
 			m_info.renderData = NULL;
 			}
 		}
-	int Read (FILE* fp, bool bRenderData = false);
-	void Write (FILE* fp, bool bRenderData = false);
+	int Read (CFileManager& fp, bool bRenderData = false);
+	void Write (CFileManager& fp, bool bRenderData = false);
 	inline void CPolyModel::Draw (CViewMatrix* view, CDC* pDC) {
 		if (m_info.renderData) {
 			m_view = view;

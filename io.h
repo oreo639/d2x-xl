@@ -1,37 +1,30 @@
 #ifndef __io_h
 #define __io_h
 
-double ReadDouble (FILE *fp);
-int ReadInt32 (FILE *fp);
-short ReadInt16 (FILE *fp);
-char ReadInt8 (FILE *fp);
-uint ReadUInt32 (FILE *fp);
-ushort ReadUInt16 (FILE *fp);
-byte ReadUInt8 (FILE *fp);
-void* ReadBytes (void* buffer, uint length, FILE *fp);
+double ReadDouble (CFileManager& fp);
+int ReadInt32 (CFileManager& fp);
+short ReadInt16 (CFileManager& fp);
+char ReadInt8 (CFileManager& fp);
+uint ReadUInt32 (CFileManager& fp);
+ushort ReadUInt16 (CFileManager& fp);
+byte ReadUInt8 (CFileManager& fp);
+void* ReadBytes (void* buffer, uint length, CFileManager& fp);
 
 #define ReadFix(_fp)		(fix) ReadInt32 (_fp)
 #define ReadFixAng(_fp)	(fixang) ReadInt16 (_fp)
 
-int WriteInt32 (int value, FILE *fp);
-short WriteInt16 (short value, FILE *fp);
-char WriteInt8 (char value, FILE *fp);
-uint WriteUInt32 (uint value, FILE *fp);
-ushort WriteUInt16 (ushort value, FILE *fp);
-byte WriteUInt8 (byte value, FILE *fp);
-void* WriteBytes (void* buffer, uint length, FILE *fp);
+int WriteInt32 (int value, CFileManager& fp);
+short WriteInt16 (short value, CFileManager& fp);
+char WriteInt8 (char value, CFileManager& fp);
+uint WriteUInt32 (uint value, CFileManager& fp);
+ushort WriteUInt16 (ushort value, CFileManager& fp);
+byte WriteUInt8 (byte value, CFileManager& fp);
+void* WriteBytes (void* buffer, uint length, CFileManager& fp);
 
 #define WriteFix(_value, _fp)		WriteInt32 ((int) (_value), _fp)
 #define WriteFixAng(_value, _fp)	WriteInt32 ((short) (_value), _fp)
 
-double WriteDouble (double value, FILE *fp);
-
-//#define read_matrix(_m, fp) (_m)->Read (fp)
-//#define read_vector(_v, fp) (_v)->Read (fp)
-//#define read_angvec(_a, fp) (_a)->Read (fp)
-//#define write_matrix(_m, fp) (_m)->Write (fp)
-//#define write_vector(_v, fp) (_v)->Write (fp)
-//#define write_angvec(_a, fp) (_a)->Write (fp)
+double WriteDouble (double value, CFileManager& fp);
 
 LPSTR FSplit (LPSTR fullName, LPSTR pathName, LPSTR fileName, LPSTR extName);
 char *TimeStr (char *pszTime, int nDestSize);

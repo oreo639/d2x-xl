@@ -4,6 +4,7 @@
 #include <math.h>
 #include "define.h"
 #include "VectorTypes.h"
+#include "cfile.h"
 
 struct tAngleVector;
 class CAngleVector;
@@ -12,6 +13,15 @@ class CFixVector;
 struct tDoubleVector;
 class CDoubleVector;
 class CFixMatrix;
+
+// --------------------------------------------------------------------------
+
+typedef signed char sbyte;
+typedef unsigned char byte;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef int fix;			// 16 bits int, 16 bits frac 
+typedef short fixang;	// angles 
 
 // --------------------------------------------------------------------------
 
@@ -32,20 +42,20 @@ return (fix) ((double) n / (double) m * 65536.0);
 typedef struct tAngleVector {
 public:
 	fixang p, b, h;
-
-inline int Read (FILE* fp) { 
-	p = ReadFixAng (fp);
-	b = ReadFixAng (fp);
-	h = ReadFixAng (fp);
+#if 0
+inline int Read (CFileManager& fp) { 
+	p = fp.ReadFixAng ();
+	b = fp.ReadFixAng ();
+	h = fp.ReadFixAng ();
 	return 1;
 	}
 
-inline void Write (FILE* fp) { 
+inline void Write (CFileManager& fp) { 
 	WriteFixAng (p, fp);
 	WriteFixAng (b, fp);
 	WriteFixAng (h, fp);
 	}
-
+#endif
 } tAngleVector;
 
 class CAngleVector {
@@ -58,10 +68,10 @@ public:
 	CAngleVector (CAngleVector& _v) { v.p = _v.v.p, v.b = _v.v.b, v.h = _v.v.h; }
 	void Set (fixang p, fixang b, fixang h) { v.p = p, v.b = b, v.h = h; }
 	void Clear (void) { Set (0,0,0); }
-
-	inline int Read (FILE* fp) { return v.Read (fp); }
-	inline void Write (FILE* fp) { v.Write (fp); }
-
+#if 0
+	inline int Read (CFileManager& fp) { return v.Read (fp); }
+	inline void Write (CFileManager& fp) { v.Write (fp); }
+#endif
 	inline const CAngleVector& operator= (CAngleVector& other) { 
 		v.p = other.v.p, v.b = other.v.b, other.v.h = other.v.h; 
 		return *this;
@@ -86,19 +96,20 @@ public:
 struct tFixVector {
 public:
 	fix x, y, z;
-
-inline int Read (FILE* fp) { 
-	x = ReadFix (fp);
-	y = ReadFix (fp);
-	z = ReadFix (fp);
+#if 0
+inline int Read (CFileManager& fp) { 
+	x = fp.ReadFix ();
+	y = fp.ReadFix ();
+	z = fp.ReadFix ();
 	return 1;
 	}
 
-inline void Write (FILE* fp) { 
+inline void Write (CFileManager& fp) { 
 	WriteFix (x, fp);
 	WriteFix (y, fp);
 	WriteFix (z, fp);
 	}
+#endif
 };
 
 class CFixVector {
@@ -112,9 +123,10 @@ public:
 	void Set (fix x, fix y, fix z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
 
-
-inline int Read (FILE* fp) { return v.Read (fp); }
-inline void Write (FILE* fp) { v.Write (fp); }
+#if 0
+inline int Read (CFileManager& fp) { return v.Read (fp); }
+inline void Write (CFileManager& fp) { v.Write (fp); }
+#endif
 
 inline const bool operator== (const CFixVector other);
 inline fix& CFixVector::operator[] (const size_t i);
@@ -155,19 +167,20 @@ void Rotate (CFixVector& origin, CFixVector& normal, double angle);
 struct tDoubleVector {
 public:
 	double x, y, z;
-
-inline int Read (FILE* fp) { 
-	x = X2D (ReadFix (fp));
-	y = X2D (ReadFix (fp));
-	z = X2D (ReadFix (fp));
+#if 0
+inline int Read (CFileManager& fp) { 
+	x = X2D (fp.ReadFix ());
+	y = X2D (fp.ReadFix ());
+	z = X2D (fp.ReadFix ());
 	return 1;
 	}
 
-inline void Write (FILE* fp) { 
+inline void Write (CFileManager& fp) { 
 	WriteFix (D2X (x), fp);
 	WriteFix (D2X (y), fp);
 	WriteFix (D2X (z), fp);
 	}
+#endif
 };
 
 class CDoubleVector {
@@ -183,10 +196,10 @@ public:
 	//CDoubleVector (CDoubleVector& _v) { v.x = _v.v.x, v.y = _v.v.y, v.z = _v.v.z; }
 	void Set (double x, double y, double z) { v.x = x, v.y = y, v.z = z; }
 	void Clear (void) { Set (0,0,0); }
-
-inline int Read (FILE* fp) { return v.Read (fp); }
-inline void Write (FILE* fp) { v.Write (fp); }
-
+#if 0
+inline int Read (CFileManager& fp) { return v.Read (fp); }
+inline void Write (CFileManager& fp) { v.Write (fp); }
+#endif
 inline const bool operator== (const CDoubleVector other);
 inline double& CDoubleVector::operator[] (const size_t i);
 inline const CDoubleVector& operator= (const tDoubleVector& other);
@@ -517,20 +530,20 @@ static inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVecto
 class CFixMatrix {
 public:
 	CFixVector rVec, uVec, fVec;
-
-	inline int Read (FILE* fp) { 
+#if 0
+	inline int Read (CFileManager& fp) { 
 		rVec.Read (fp);
 		uVec.Read (fp);
 		fVec.Read (fp);
 		return 1;
 	}
 
-	inline void Write (FILE* fp) { 
+	inline void Write (CFileManager& fp) { 
 		rVec.Write (fp);
 		uVec.Write (fp);
 		fVec.Write (fp);
 	}
-
+#endif
 	CFixMatrix ();
 	CFixMatrix (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3);
 	CFixMatrix (CFixMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
@@ -600,20 +613,20 @@ return CFixVector (v ^ rVec, v ^ uVec, v ^ fVec);
 class CDoubleMatrix {
 public:
 	CDoubleVector rVec, uVec, fVec;
-
-	inline int Read (FILE* fp) { 
+#if 0
+	inline int Read (CFileManager& fp) { 
 		rVec.Read (fp);
 		uVec.Read (fp);
 		fVec.Read (fp);
 		return 1;
-	}
+		}
 
-	inline void Write (FILE* fp) { 
+	inline void Write (CFileManager& fp) { 
 		rVec.Write (fp);
 		uVec.Write (fp);
 		fVec.Write (fp);
-	}
-
+		}
+#endif
 	CDoubleMatrix::CDoubleMatrix () { Clear (); }
 	CDoubleMatrix::CDoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
 	CDoubleMatrix (CDoubleMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
