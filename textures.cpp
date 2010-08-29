@@ -848,7 +848,7 @@ FILE* CTextureManager::OpenPigFile (int nVersion)
 	FILE* fp = NULL;
 	char	filename [256];
 
-strcpy_s (filename, sizeof (filename), nVersion ? descent_path : descent2_path);
+strcpy_s (filename, sizeof (filename), nVersion ? descent2_path : descent_path);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fopen_s (&fp, filename, "rb")) {
@@ -957,8 +957,8 @@ CPigTexture& CTextureManager::LoadInfo (FILE* fp, int nVersion, short nTexture)
 if (info [nVersion] == NULL) {
     header [nVersion].Read (fp);
     info [nVersion] = new CPigTexture [header [nVersion].nTextures];
-    for (int i = 0; i < header [nVersion].nTextures; i++)
-		info [nVersion][i].Read (fp);
+	 for (int i = 0; i < header [nVersion].nTextures; i++)
+		info [nVersion][i].Read (fp, nVersion);
 	nOffsets [nVersion] = ftell (fp);
    }
 return info [nVersion][index [nVersion][nTexture]];

@@ -136,7 +136,9 @@ public:
 			}
 		}
 
-	void Read (FILE* fp) {
+	void Read (FILE* fp, int nVersion = -1) {
+		if (nVersion >= 0)
+			m_nVersion = nVersion;
 		ReadBytes (name, sizeof (name), fp);
 		dflags = ReadUInt8 (fp);
 		width = (ushort) ReadUInt8 (fp);
