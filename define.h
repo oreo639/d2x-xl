@@ -620,4 +620,10 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 
 #define IMG_BKCOLOR	RGB (196,196,196)
 
+#ifdef _DEBUG
+#	define USE_DYN_ARRAYS 1
+#else
+#	define USE_DYN_ARRAYS 0
+#endif
+
 #endif // _DEFINE_H

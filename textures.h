@@ -1,7 +1,9 @@
 #ifndef __textures_h
 #define __textures_h
 
+#include "Define.h"
 #include "Types.h"
+#include "carray.h"
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -255,28 +257,38 @@ public:
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+#if USE_DYN_ARRAYS
+
+typedef CArray< CTexture > textureList;
+
+#else
+
+typedef CTexture* textureList [2];
+
+#endif
+
 class CTextureManager {
 public:
 	uint nTextures [2];
-	CTexture* textures [2];
+	textureList textures [2];
 	ushort* index [2];
 	uint nOffsets [2];
 	CPigTexture* info [2];
 	CPigHeader header [2];
 	byte bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
 
-	inline CTexture* Textures (int nVersion, int nTexture = 0) { return textures [nVersion] + nTexture; }
+	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &textures [nVersion][nTexture]; }
 
 	int MaxTextures (int nVersion = -1);
 	int LoadIndex (int nVersion);
-	CPigHeader LoadInfo (FILE* fp, int nVersion, uint nOffset);
+	CPigTexture& LoadInfo (FILE* fp, int nVersion, uint nOffset, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
 	void Release (bool bDeleteModified = true);
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
-	FILE* OpenFile (uint& nOffset);
+	FILE* OpenFile (void);
 
 	inline bool HaveInfo (int nVersion) { return info [nVersion] != NULL; }
 
@@ -286,8 +298,12 @@ public:
 
 	~CTextureManager() {
 		for (int i = 0; i < 2; i++) {
+#if USE_DYN_ARRAYS
+			//textures [i].Destroy ();
+#else
 			if (textures [i])
 				delete textures [i];
+#endif
 			if (index [i])
 				delete index [i];
 			if (info [i])

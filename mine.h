@@ -28,9 +28,7 @@ extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 // CLASS - Level
 //**************************************************************************
 
-#define USE_DYN_ARRAYS _DEBUG
-
-#if USE_DYN_ARRAYS
+#ifdef USE_DYN_ARRAYS
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
@@ -48,7 +46,6 @@ typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
-typedef CStaticArray< CStaticArray< CTexture, MAX_D2_TEXTURES>, 2> textureList;
 
 #define CLEAR(_b) (_b) [0].Reset((_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
@@ -72,7 +69,6 @@ typedef CGameObject objectList [MAX_OBJECTS2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
-typedef CTexture textureList [2][MAX_D2_TEXTURES];
 
 #define CLEAR(_b)	(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))

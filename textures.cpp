@@ -759,25 +759,18 @@ int CTexture::Load (short nTexture)
 {
 	FILE*		fp = NULL;
 	int		nVersion = DLE.IsD1File () ? 0 : 1;
-	uint		nOffset;
 	
 if (m_info.bModified)
 	return 0;
 
-if (!textureManager.HaveInfo (nVersion)) {
-	fp = textureManager.OpenFile (nOffset);
-	CPigHeader header = textureManager.LoadInfo (fp, nVersion, nOffset);
-	}
-CPigTexture& info = textureManager.info [nVersion][nTexture];
-
+if (!textureManager.HaveInfo (nVersion))
+	fp = textureManager.OpenFile ();
+CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nOffset, nTexture);
 int nSize = info.BufSize ();
-
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
-
 if (!fp)
-	fp = textureManager.OpenFile (nOffset);
-
+	fp = textureManager.OpenFile ();
 if (!Allocate (nSize, nTexture)) {
 	fclose (fp);
 	return 1;
@@ -810,8 +803,13 @@ header [0] = CPigHeader (0);
 header [1] = CPigHeader (1);
 LoadIndex (0);
 LoadIndex (1);
+#ifdef USE_DYN_ARRAYS
+textures [0].Create (MaxTextures (0));
+textures [1].Create (MaxTextures (1));
+#else
 textures [0] = new CTexture [MaxTextures (0)];
 textures [1] = new CTexture [MaxTextures (1)];
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -835,7 +833,7 @@ while (extraTextures) {
 
 //------------------------------------------------------------------------
 
-FILE* CTextureManager::OpenFile (uint& nOffset)
+FILE* CTextureManager::OpenFile (void)
 {
 	FILE* fp = NULL;
 	char	filename [256];
@@ -847,9 +845,8 @@ if (fopen_s (&fp, filename, "rb")) {
 	DEBUGMSG (" Reading texture: Texture file not found.");
 	return NULL;
 	}
-fseek (fp, 0, SEEK_SET);
-nOffset = ReadUInt32 (fp);
-if (nOffset == 0x47495050) /* 'PPIG' Descent 2 type */
+uint nOffset = ReadUInt32 (fp);
+if (nOffset == 0x47495050) // 'PPIG' Descent 2 type
 	nOffset = 0;
 else if (nOffset < 0x10000)
 	nOffset = 0;
@@ -930,7 +927,7 @@ if (!hGlobal) {
 	}
 // first long is number of textures
 ushort* indexP = (ushort *) LockResource (hGlobal);
-nTextures [nVersion] = *((uint*) indexP);
+nTextures [nVersion] = *((uint*) indexP) - 1;
 indexP += 2;
 if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
 	FreeResource (hGlobal);
@@ -945,17 +942,16 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-CPigHeader CTextureManager::LoadInfo (FILE* fp, int nVersion, uint nOffset)
+CPigTexture& CTextureManager::LoadInfo (FILE* fp, int nVersion, uint nOffset, short nTexture)
 {
 if (info [nVersion] == NULL) {
-    fseek (fp, nOffset, SEEK_SET);
     header [nVersion].Read (fp);
     info [nVersion] = new CPigTexture [header [nVersion].nTextures];
     for (int i = 0; i < header [nVersion].nTextures; i++)
 		info [nVersion][i].Read (fp);
 	nOffsets [nVersion] = ftell (fp);
    }
-return header [nVersion];
+return info [nVersion][index [nVersion][nTexture]];
 }
 
 //------------------------------------------------------------------------
@@ -992,10 +988,10 @@ for (i = 0; i < 2; i++) {
 #if 0	
 	ASSERT (textures [i] < MAX_TEXTURES);
 #endif
-if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
-	nTextures [i] = 0;
+	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
+		nTextures [i] = 0;
 	// buffer textures if not already buffered
-	texP [i] = textures [i];
+	texP [i] = textures [nTextures [i]];
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
 		if (rc = texP [i]->Load (nTextures [i]))
 			return rc;
