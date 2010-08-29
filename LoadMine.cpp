@@ -135,7 +135,7 @@ short CMine::LoadMineSigAndType (CFileManager& fp)
 int sig = fp.ReadInt32 ();
 if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 	ErrorMsg ("Signature value incorrect.");
-	fclose (fp);
+	fp.Close ();
 	return 1;
 	}
 
@@ -152,7 +152,7 @@ else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
 else {
 	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
 	ErrorMsg (message);
-	fclose (fp);
+	fp.Close ();
 	return 1;
 	}
 return 0;
@@ -194,7 +194,7 @@ gamedataOffset = fp.ReadInt32 ();
 
 // don't bother reading  hostagetextOffset since
 // for Descent 1 files since we dont use it anyway
-// hostagetextOffset = ReadInt32(fp);
+// hostagetextOffset = fp.ReadInt32 ();
 
 // read palette name *.256
 if (IsD2File ()) {
@@ -263,24 +263,24 @@ if (IsD2File ()) {
 	//    DEBUGMSG(message);
 
 	// read secret cube number
-	SecretCubeNum () = ReadInt32(fp);
+	SecretCubeNum () = fp.ReadInt32 ();
 	// read secret cube orientation?
 	SecretOrient ().Read (fp);
 	}
 
 m_disableDrawing = TRUE;
 
-fseek (fp, minedataOffset, SEEK_SET);
+fp.Seek (minedataOffset, SEEK_SET);
 mineErr = LoadMineDataCompiled (fp, bNewMine);
-int fPos = ftell (fp);
+int fPos = fp.Tell ();
 
 if (mineErr != 0) {
 	ErrorMsg ("Error loading mine data");
-	fclose(fp);
+	fp.Close ();
 	return(2);
 }
 
-fseek(fp, gamedataOffset, SEEK_SET);
+fp.Seek ( gamedataOffset, SEEK_SET);
 gameErr = LoadGameData(fp, bNewMine);
 
 if (gameErr != 0) {
@@ -295,7 +295,7 @@ if (gameErr != 0) {
 	GameInfo ().equipgen.Reset ();
 	GameInfo ().lightDeltaIndices.Reset ();
 	GameInfo ().lightDeltaValues.Reset ();
-	fclose(fp);
+	fp.Close ();
 	return(3);
 	}
 
@@ -305,7 +305,7 @@ load_end:
 	return_code = 0;
 load_pog:
 
-	fclose(fp);
+	fp.Close ();
 if (!bLoadFromHog && (IsD2File ())) {
 	ps = strstr (filename, ".");
 	if (ps)
@@ -315,7 +315,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 	fopen_s (&fp, filename, "rb");
 	if (fp) {
 		ReadPog (fp);
-		fclose (fp);
+		fp.Close ();
 		}
 	ReadHamFile ();
 #if 0
@@ -353,7 +353,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 	fopen_s (&fp, filename, "rb");
 	if (fp) {
 		ReadHxmFile (fp, -1);
-		fclose (fp);
+		fp.Close ();
 		}
 	}
 SortObjects ();
@@ -535,7 +535,7 @@ SegCount () = n_segments;
 
 // read all vertices
 CVertex* vertP = Vertices (0);
-size_t fPos = ftell (fp);
+size_t fPos = fp.Tell ();
 for (i = 0; i < VertCount (); i++, vertP++) {
 	vertP->Read (fp);
 	vertP->m_status = 0;
@@ -579,7 +579,7 @@ int CMine::LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items,
 {
 if ((info.offset < 0) || (info.count < 1))
 	return 0;
-if (fseek (fp, info.offset, SEEK_SET))
+if (fp.Seek (info.offset, SEEK_SET))
 	return -1;
 if (info.count > nMaxCount) {
 	sprintf_s (message, sizeof (message),  "Error: Too many %s (%d/%d)", pszItem, info.count, nMaxCount);
@@ -615,7 +615,7 @@ short CMine::LoadGameData (CFileManager& fp, bool bNewMine)
 {
 	int startOffset;
 
-startOffset = ftell(fp);
+startOffset = fp.Tell ();
 
 // Set default values
 GameInfo ().objects.Reset ();
@@ -631,7 +631,7 @@ GameInfo ().lightDeltaValues.Reset ();
 //==================== = READ FILE INFO========================
 
 // Read in gameFileInfo to get size of saved fileinfo.
-if (fseek(fp, startOffset, SEEK_SET)) {
+if (fp.Seek ( startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
@@ -649,7 +649,7 @@ if (gameFileInfo.signature != 0x6705) {
 //    return -1;
 
 // Now, Read in the fileinfo
-if (fseek(fp, startOffset, SEEK_SET)) {
+if (fp.Seek ( startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking to game info in mine.cpp");
 	return -1;
 	}
@@ -679,7 +679,7 @@ else {  /*load mine filename */
 	if (GameInfo ().triggers.offset > -1) {
 		int bObjTriggersOk = 1;
 		if (GameInfo ().fileinfo.version >= 33) {
-			int i = ftell (fp);
+			int i = fp.Tell ();
 			if (fread (&NumObjTriggers (), sizeof (int), 1, fp) != 1) {
 				ErrorMsg ("Error reading object triggers from mine.");
 				bObjTriggersOk = 0;
@@ -698,9 +698,9 @@ else {  /*load mine filename */
 						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 						}
 					if (GameInfo ().fileinfo.version < 36)
-						fseek (fp, 700 * sizeof (short), SEEK_CUR);
+						fp.Seek (700 * sizeof (short), SEEK_CUR);
 					else
-						fseek (fp, 2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
+						fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
 					}
 				}
 			}

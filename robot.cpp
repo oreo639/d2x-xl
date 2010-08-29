@@ -11,7 +11,7 @@
 #include "mine.h"
 #include "global.h"
 #include "toolview.h"
-#include "io.h"
+#include "cfile.h"
 #include "hogmanager.h"
 
 //------------------------------------------------------------------------
@@ -29,7 +29,7 @@ void tRobotGunInfo::Write (CFileManager& fp, int nField) {
 	if (nField == 0)
 		points.Write (fp);
 	else
-		WriteInt8 ((char) subModels, fp);
+		fp.Write ((char) subModels);
 	}
 
 //------------------------------------------------------------------------
@@ -40,8 +40,8 @@ void tRobotExplInfo::Read (CFileManager& fp) {
 	}
 
 void tRobotExplInfo::Write (CFileManager& fp) {
-	WriteInt16 (nClip , fp);
-	WriteInt16 (nSound, fp);
+	fp.Write (nClip);
+	fp.Write (nSound);
 	}
 
 //------------------------------------------------------------------------
@@ -54,26 +54,26 @@ void tRobotContentsInfo::Read (CFileManager& fp) {
 	}
 
 void tRobotContentsInfo::Write (CFileManager& fp) {
-	WriteInt8 (id, fp);
-	WriteInt8 (count, fp);
-	WriteInt8 (prob, fp);
-	WriteInt8 (type, fp);
+	fp.Write (id);
+	fp.Write (count);
+	fp.Write (prob);
+	fp.Write (type);
 	}
 
 //------------------------------------------------------------------------
 
 void tRobotSoundInfo::Read (CFileManager& fp) {
-	see = (byte) fp.ReadSByte ();
-	attack = (byte) fp.ReadSByte ();
-	claw = (byte) fp.ReadSByte ();
-	taunt = (byte) fp.ReadSByte ();
+	see = fp.ReadByte ();
+	attack = fp.ReadByte ();
+	claw = fp.ReadByte ();
+	taunt = fp.ReadByte ();
 	}
 
 void tRobotSoundInfo::Write (CFileManager& fp) {
-	WriteInt8 ((char) see, fp);
-	WriteInt8 ((char) attack, fp);
-	WriteInt8 ((char) claw, fp);
-	WriteInt8 ((char) taunt, fp);
+	fp.Write (see);
+	fp.Write (attack);
+	fp.Write (claw);
+	fp.Write (taunt);
 	}
 
 //------------------------------------------------------------------------
@@ -110,28 +110,28 @@ void tRobotCombatInfo::Read (CFileManager& fp, int nField) {
 void tRobotCombatInfo::Write (CFileManager& fp, int nField) {
 	switch (nField) {
 		case 0:
-			WriteFix (fieldOfView, fp);
+			fp.Write (fieldOfView);
 			break;
 		case 1:
-			WriteFix (firingWait [0], fp);
+			fp.Write (firingWait [0]);
 			break;
 		case 2:
-			WriteFix (firingWait [1], fp);
+			fp.Write (firingWait [1]);
 			break;
 		case 3:
-			WriteFix (turnTime, fp);
+			fp.Write (turnTime);
 			break;
 		case 4:
-			WriteFix (maxSpeed, fp);
+			fp.Write (maxSpeed);
 			break;
 		case 5:
-			WriteFix (circleDistance, fp);
+			fp.Write (circleDistance);
 			break;
 		case 6:
-			WriteInt8 (rapidFire, fp);
+			fp.Write (rapidFire);
 			break;
 		case 7:
-			WriteInt8 (evadeSpeed, fp);
+			fp.Write (evadeSpeed);
 			break;
 		}
 	}
@@ -195,53 +195,51 @@ void CRobotInfo::Write (CFileManager& fp, int version, bool bFlag)
 {
 	int i, j;
 
-WriteInt32 (m_info.nModel, fp);
+WriteInt32 (m_info.nModel);
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_GUNS; i++)
 		m_info.guns [i].Write (fp, j);
 for (i = 0; i < 2; i++)
 	m_info.expl [i].Write (fp);
 for (i = 0; i < 2; i++)
-	WriteInt8 (m_info.weaponType [i], fp);
-WriteInt8 (m_info.n_guns, fp);
+	fp.Write (m_info.weaponType [i]);
+fp.Write (m_info.n_guns);
 m_info.contents.Write (fp);
-WriteInt8 (m_info.kamikaze, fp);
-WriteInt16 (m_info.scoreValue, fp);
-WriteInt8 (m_info.badass, fp);
-WriteInt8 (m_info.drainEnergy, fp);
-WriteFix (m_info.lighting, fp);
-WriteFix (m_info.strength, fp);
-WriteFix (m_info.mass, fp);
-WriteFix (m_info.drag, fp);
+fp.Write (m_info.kamikaze);
+fp.Write (m_info.scoreValue);
+fp.Write (m_info.badass);
+fp.Write (m_info.drainEnergy);
+WriteFix (m_info.lighting);
+WriteFix (m_info.strength);
+WriteFix (m_info.mass);
+WriteFix (m_info.drag);
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Write (fp, j);
-WriteInt8 (m_info.cloakType, fp);
-WriteInt8 (m_info.attackType, fp);
+fp.Write (m_info.cloakType);
+fp.Write (m_info.attackType);
 m_info.sounds.Write (fp);
-WriteInt8 (m_info.bossFlag, fp);
-WriteInt8 (m_info.companion, fp);
-WriteInt8 (m_info.smartBlobs, fp);
-WriteInt8 (m_info.energyBlobs, fp);
-WriteInt8 (m_info.thief, fp);
-WriteInt8 (m_info.pursuit, fp);
-WriteInt8 (m_info.lightCast, fp);
-WriteInt8 (m_info.deathRoll, fp);
-WriteInt8 (m_info.flags, fp);
-WriteInt8 (m_info.bCustom, fp); // skip
-WriteInt8 (m_info.pad [1], fp); // skip
-WriteInt8 (m_info.pad [2], fp); // skip
-(byte) WriteInt8 (m_info.deathRollSound, fp);
-(byte) WriteInt8 (m_info.glow, fp);
-(byte) WriteInt8 (m_info.behavior, fp);
-(byte) WriteInt8 (m_info.aim, fp);
+fp.Write (m_info.bossFlag);
+fp.Write (m_info.companion);
+fp.Write (m_info.smartBlobs);
+fp.Write (m_info.energyBlobs);
+fp.Write (m_info.thief);
+fp.Write (m_info.pursuit);
+fp.Write (m_info.lightCast);
+fp.Write (m_info.deathRoll);
+fp.Write (m_info.flags);
+fp.Write (m_info.bCustom); // skip
+fp.Write (m_info.pad [1]); // skip
+fp.Write (m_info.pad [2]); // skip
+(byte) fp.Write (m_info.deathRollSound);
+(byte) fp.Write (m_info.glow);
+(byte) fp.Write (m_info.behavior);
+(byte) fp.Write (m_info.aim);
 for (i = 0; i <= MAX_GUNS; i++)
 	for (j = 0; j < N_ANIM_STATES; j++)
 		m_info.animStates [i][j].Write (fp);
-WriteInt32 (m_info.always_0xabcd, fp);
+fp.Write (m_info.always_0xabcd);
 }
-
-//------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
 // ReadHamFile()
@@ -285,7 +283,7 @@ WriteInt32 (m_info.always_0xabcd, fp);
 int CMine::ReadHamFile(char *pszFile, int type) 
 {
   FILE*			fp;
-  short			t, t0;
+  int				t, t0;
   uint			id;
   CPolyModel	pm;
   char			szFile [256];
@@ -310,7 +308,7 @@ if (!pszFile) {
   if (!fp) {
     sprintf_s (message, sizeof (message), " Ham manager: Cannot open robot file <%s>.", pszFile);
     DEBUGMSG (message);
-    goto abort;
+    return 1;
   }
 
 // The extended HAM only contains part of the normal HAM file.
@@ -319,41 +317,41 @@ if (!pszFile) {
 // the information which is found in the extended ham
 // (the robot information)
 if (type == NORMAL_HAM)  {
-	id = ReadInt32(fp); // "HAM!"
+	id = fp.ReadInt32 (); // "HAM!"
 	if (id != MAKESIG (d2HamSig)) {//0x214d4148L) {
 		sprintf_s (message, sizeof (message), "Not a D2 HAM file (%s)", pszFile);
 		ErrorMsg (message);
-		goto abort;
+	    return 1;
 		}
-	ReadInt32(fp); // version (0x00000007)
-	t = (short) ReadInt32(fp);
-	fseek (fp, sizeof (ushort) * t, SEEK_CUR);
-	fseek (fp, sizeof (TMAP_INFO) * t, SEEK_CUR);
-	t = (short) ReadInt32(fp);
-	fseek (fp, sizeof (byte) * t, SEEK_CUR);
-	fseek (fp, sizeof (byte) * t, SEEK_CUR);
-	t = (short) ReadInt32(fp);
-	fseek (fp, sizeof (VCLIP) * t, SEEK_CUR);
-	t = (short) ReadInt32(fp);
-	fseek (fp, sizeof (ECLIP) * t, SEEK_CUR);
-	t = (short) ReadInt32(fp);
-	fseek (fp, sizeof (WCLIP) * t, SEEK_CUR);
+	fp.ReadInt32 (); // version (0x00000007)
+	t = fp.ReadInt32 ();
+	fp.Seek (sizeof (ushort) * t, SEEK_CUR);
+	fp.Seek (sizeof (TMAP_INFO) * t, SEEK_CUR);
+	t = fp.ReadInt32 ();
+	fp.Seek (sizeof (byte) * t, SEEK_CUR);
+	fp.Seek (sizeof (byte) * t, SEEK_CUR);
+	t = fp.ReadInt32 ();
+	fp.Seek (sizeof (VCLIP) * t, SEEK_CUR);
+	t = fp.ReadInt32 ();
+	fp.Seek (sizeof (ECLIP) * t, SEEK_CUR);
+	t = fp.ReadInt32 ();
+	fp.Seek (sizeof (WCLIP) * t, SEEK_CUR);
 	}
 else if (type == EXTENDED_HAM)  {
-	id = ReadInt32(fp); // "HAM!"
+	id = fp.ReadInt32 (); // "HAM!"
 	if (id != MAKESIG (d2xHamSig)) {//0x214d4148L) {
 		sprintf_s (message, sizeof (message), "Not a D2X HAM file (%s)", pszFile);
 		ErrorMsg (message);
-		goto abort;
+	    return 1;
 		}
-	ReadInt32(fp); //skip version
-	t = ReadInt32(fp); //skip weapon count
-	fseek (fp, t * sizeof (WEAPON_INFO), SEEK_CUR); //skip weapon info
+	fp.ReadInt32 (); //skip version
+	t = fp.ReadInt32 (); //skip weapon count
+	fp.Seek (t * sizeof (WEAPON_INFO), SEEK_CUR); //skip weapon info
 	}
 
 	// read robot information
 	//------------------------
-	t = (short) ReadInt32(fp);
+	t = fp.ReadInt32 ();
 	t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_TYPES;
 	N_robot_types = t0 + t;
 	if (N_robot_types > MAX_ROBOT_TYPES) {
@@ -361,7 +359,6 @@ else if (type == EXTENDED_HAM)  {
 		ErrorMsg (message);
 		N_robot_types = MAX_ROBOT_TYPES;
 		t = N_robot_types - t0;
-		//    goto abort;
 		}
 	for (; t; t--, t0++) {
 		RobotInfo (t0)->Read (fp);
@@ -371,27 +368,27 @@ else if (type == EXTENDED_HAM)  {
 
   // skip joints weapons, and powerups
   //----------------------------------
-  t = (short) ReadInt32(fp);
-  fseek(fp,sizeof (JOINTPOS)*t,SEEK_CUR);
+  t = fp.ReadInt32 ();
+  fp.Seek (sizeof (JOINTPOS) * t, SEEK_CUR);
   if (type == NORMAL_HAM) {
-    t = (short) ReadInt32(fp);
-    fseek(fp,sizeof (WEAPON_INFO)*t,SEEK_CUR);
-    t = (short) ReadInt32(fp);
-    fseek(fp,sizeof (POWERUP_TYPE_INFO)*t,SEEK_CUR);
+    t = fp.ReadInt32 ();
+    fp.Seek (sizeof (WEAPON_INFO) * t, SEEK_CUR);
+    t = fp.ReadInt32 ();
+    fp.Seek (sizeof (POWERUP_TYPE_INFO) * t, SEEK_CUR);
   }
 
   // read poly model data and write it to a file
   //---------------------------------------------
-  t = (short) ReadInt32(fp);
+  t = fp.ReadInt32 ();
   if (t > MAX_POLYGON_MODELS) {
     sprintf_s (message, sizeof (message), "Too many polygon models (%d) in <%s>.  Max is %d.",t,pszFile,MAX_POLYGON_MODELS-N_D2_POLYGON_MODELS);
     ErrorMsg (message);
-    goto abort;
+    return 1;
   }
 #if ALLOCATE_tPolyModelS
   // read joint information
   //-----------------------
-  t = (short) ReadInt32(fp);
+  t = fp.ReadInt32 ();
   t0 = (type == NORMAL_HAM) ? 0: N_D2_ROBOT_JOINTS;
   N_robot_joints = t0 + t;
   if (N_robot_joints > MAX_ROBOT_JOINTS) {
@@ -399,20 +396,20 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-  fread( &Robot_joints[t0], sizeof (JOINTPOS), t, fp );
+  fread( &Robot_joints[t0], sizeof (JOINTPOS), t );
 
   // skip weapon and powerup data
   //-----------------------------
   if (type == NORMAL_HAM) {
-    t = (short) ReadInt32(fp);
-    fseek(fp,sizeof (WEAPON_INFO)*t,SEEK_CUR);
-    t = (short) ReadInt32(fp);
-    fseek(fp,sizeof (POWERUP_TYPE_INFO)*t,SEEK_CUR);
+    t = fp.ReadInt32 ();
+    fp.Seek (sizeof (WEAPON_INFO) * t, SEEK_CUR);
+    t = fp.ReadInt32 ();
+    fp.Seek (sizeof (POWERUP_TYPE_INFO) * t, SEEK_CUR);
   }
 
   // read poly model data
   //---------------------
-  t = (short) ReadInt32(fp);
+  t = fp.ReadInt32 ();
   t0 = (type == NORMAL_HAM) ? 0: N_D2_POLYGON_MODELS;
   N_polygon_models = t0 + t;
   if (N_polygon_models > MAX_POLYGON_MODELS) {
@@ -428,8 +425,8 @@ else if (type == EXTENDED_HAM)  {
     if (Polygon_models[i]->model_data != null ) {
       free((void *)Polygon_models[i]->model_data);
     }
-    fread(Polygon_models[i], sizeof (tPolyModel), 1, fp );
-    fread(&Polygon_model, sizeof (tPolyModel), 1, fp );
+    fread(Polygon_models[i], sizeof (tPolyModel), 1 );
+    fread(&Polygon_model, sizeof (tPolyModel), 1 );
   }
   for (i=t0; i<t0+t; i++ ) {
     Polygon_models[i]->model_data = (byte *) malloc((int)Polygon_models[i]->model_dataSize);
@@ -438,20 +435,20 @@ else if (type == EXTENDED_HAM)  {
       ErrorMsg ("Could not allocate memory for polymodel data");
       goto abort;
     }
-    fread( Polygon_models[i]->model_data, sizeof (byte), (short)Polygon_models[i]->model_dataSize, fp );
+    fread( Polygon_models[i]->model_data, sizeof (byte), (short)Polygon_models[i]->model_dataSize );
 //    g3_init_polygon_model(Polygon_models[i].model_data);
   }
 
   // extended hog writes over normal hogs dying models instead of adding new ones
-  fread( &Dying_modelnums[t0], sizeof (int), t, fp );
-  fread( &Dead_modelnums[t0], sizeof (int), t, fp );
+  fread( &Dying_modelnums[t0], sizeof (int), t );
+  fread( &Dead_modelnums[t0], sizeof (int), t );
 
   // skip gague data
   //----------------
   if (type == NORMAL_HAM) {
-    t = (short) ReadInt32(fp);
-    fseek(fp,sizeof (ushort)*t,SEEK_CUR); // lores gague
-    fseek(fp,sizeof (ushort)*t,SEEK_CUR); // hires gague
+    t = fp.ReadInt32 ();
+    fp.Seek (sizeof (ushort) * t, SEEK_CUR); // lores gague
+    fp.Seek (sizeof (ushort) * t, SEEK_CUR); // hires gague
   }
 
   // read object bitmap data
@@ -461,7 +458,7 @@ else if (type == EXTENDED_HAM)  {
   // writes all 600 indicies even though it doesn't use all
   // of them.
   //----------------------------------------------------------
-  t = (short) ReadInt32(fp);
+  t = fp.ReadInt32 ();
   t0 = (type == NORMAL_HAM) ? 0: N_D2_OBJBITMAPS;
   if (type == NORMAL_HAM) {
     N_object_bitmaps  = t0 + t;  // only update this if we are reading Descent2.ham file
@@ -471,10 +468,10 @@ else if (type == EXTENDED_HAM)  {
     ErrorMsg (message);
     goto abort;
   }
-  fread( &ObjBitmaps[t0], sizeof (ushort), t, fp );
+  fread( &ObjBitmaps[t0], sizeof (ushort), t );
 
   if (type == EXTENDED_HAM) {
-    t = (short) ReadInt32(fp);
+    t = fp.ReadInt32 ();
     t0 = (type == NORMAL_HAM) ? 0: N_D2_OBJBITMAPPTRS;
     if (t+t0 > MAX_OBJ_BITMAPS) {
       sprintf_s (message, sizeof (message), "Too many object bitmaps pointer (%d) in <%s>.  Max is %d.",t,pszFile,MAX_OBJ_BITMAPS-N_D2_OBJBITMAPPTRS);
@@ -482,16 +479,12 @@ else if (type == EXTENDED_HAM)  {
       goto abort;
     }
   }
-  fread(&ObjBitmapPtrs[t0], sizeof (ushort), t, fp );
+  fread(&ObjBitmapPtrs[t0], sizeof (ushort), t );
 #endif
 
-  fclose(fp);
-  return 0;
-abort:
-  if (fp) fclose(fp);
-  return 1;
+fp.Close ();
+return 0;
 }
-
 
 //------------------------------------------------------------------------
 // ReadHxmFile()
@@ -531,20 +524,20 @@ abort:
 
 int CMine::ReadHxmFile(CFileManager& fp, long fSize) 
 {
-	ushort t,i,j;
-	CRobotInfo rInfo;
-	long p;
+	CRobotInfo	rInfo;
+	int			t, i, j;
+	long			p;
 
 if (!fp) {
 	ErrorMsg ("Invalid file handle for reading HXM data.");
 	goto abort;
 	}
 
-p = ftell (fp);
+p = fp.Tell ();
 if (fSize < 0)
-	fSize = _filelength (_fileno (fp));
+	fSize = fp.Length ();
 uint id;
-id = ReadInt32(fp); // "HXM!"
+id = fp.ReadInt32 (); // "HXM!"
 if (id != 0x21584d48L) {
 	ErrorMsg ("Not a HXM file");
 	goto abort;
@@ -554,13 +547,13 @@ if (m_pHxmExtraData) {
 	m_pHxmExtraData = null;
 	m_nHxmExtraDataSize = 0;
 	}
-ReadInt32(fp); // version (0x00000001)
+fp.ReadInt32 (); // version (0x00000001)
 
 // read robot information
 //------------------------
-t = (ushort) ReadInt32(fp);
+t = fp.ReadInt32 ();
 for (j = 0; j < t; j++) {
-	i = (ushort) ReadInt32(fp);
+	i = fp.ReadInt32 ();
 	if (i >= N_robot_types) {
 		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, N_robot_types - 1);
 		ErrorMsg (message);
@@ -574,20 +567,20 @@ for (j = 0; j < t; j++) {
 		}
 	}
 
-m_nHxmExtraDataSize = fSize - ftell (fp) + p;
+m_nHxmExtraDataSize = fSize - fp.Tell () + p;
 if (m_nHxmExtraDataSize > 0) {
 	if (!(m_pHxmExtraData = (char*) malloc (m_nHxmExtraDataSize))) {
 		ErrorMsg ("Couldn't allocate extra data from hxm file.\nThis data will be lost when saving the level!");
 		goto abort;
 		}
-	if (fread (m_pHxmExtraData, m_nHxmExtraDataSize, 1, fp) != 1) {
+	if (fp.Read (m_pHxmExtraData, m_nHxmExtraDataSize, 1) != 1) {
 		ErrorMsg ("Couldn't read extra data from hxm file.\nThis data will be lost when saving the level!");
 		goto abort;
 		}
 	}
 return 0;
 abort:
-//  if (fp) fclose(fp);
+//  if (fp) fp.Close ();
 return 1;
 }
 
@@ -608,109 +601,96 @@ return 1;
 
 int CMine::WriteHxmFile(CFileManager& fp) 
 {
-ushort t,i;
+	uint	i, t;
 
-for (i = 0,t = 0; i < N_robot_types; i++)
+	for (i = 0, t = 0; i < N_robot_types; i++)
 	if (IsCustomRobot (i))
 		t++;
 if (!(t || m_nHxmExtraDataSize))
 	return 0;
-if (!fp) {
+if (!fp.File ()) {
 	ErrorMsg ("Invalid file handle for writing HXM data.");
-	goto abort;
+	return 1;
 	}
 
-#if 1
-uint id;
-id = 0x21584d48L;    // "HXM!"
-WriteInt32 (id,fp);
-WriteInt32 (1,fp);   // version 1
-#endif
+fp.WriteInt32 (0x21584d48L,);	// "HXM!"
+fp. WriteInt32 (1);   // version 1
 
 // write robot information
-//------------------------
 WriteInt32 (t,fp); // number of robot info structs stored
 for (i = 0; i < N_robot_types; i++) {
 	if (RobotInfo (i)->m_info.bCustom) {
-		WriteInt32 ((uint) i, fp);
+		fp.Write (i);
 		RobotInfo (i)->Write (fp);
 		}
 	}
 
-#if 1
 if (m_nHxmExtraDataSize)
-	fwrite (m_pHxmExtraData, m_nHxmExtraDataSize, 1, fp);
-else
-#endif
-// write zeros for the rest of the data
-//-------------------------------------
-{
-WriteInt32 (0,fp);  //number of joints
-WriteInt32 (0,fp);  //number of polygon models
-WriteInt32 (0,fp);  //number of objbitmaps
-WriteInt32 (0,fp);  //number of objbitmaps
-WriteInt32 (0,fp);  //number of objbitmapptrs
-}
+	fp.Write (m_pHxmExtraData, m_nHxmExtraDataSize, 1);
+else {
+	// write zeros for the rest of the data
+	fp.WriteInt32 (0);  //number of joints
+	fp.WriteInt32 (0);  //number of polygon models
+	fp.WriteInt32 (0);  //number of objbitmaps
+	fp.WriteInt32 (0);  //number of objbitmaps
+	fp.WriteInt32 (0);  //number of objbitmapptrs
+	}
 
 if (t) {
 	sprintf_s (message, sizeof (message)," Hxm manager: Saving %d custom robots",t);
 	DEBUGMSG (message);
 	}
-fclose(fp);
+fp.Close ();
 return 0;
-
-abort:
-
-if (fp) 
-	fclose(fp);
-return 1;
 }
 
 //------------------------------------------------------------------------
 // InitRobotData()
 //------------------------------------------------------------------------
 
-void CMine::InitRobotData() 
+void CMine::InitRobotData (void) 
 {
-  ReadRobotResource(-1);
+ReadRobotResource (-1);
 }
-
 
 //------------------------------------------------------------------------
 // ReadRobotResource() - reads robot.hxm from resource data into robotInfo[]
 //
 // if robot_number == -1, then it reads all robots
 //------------------------------------------------------------------------
-void CMine::ReadRobotResource(int robot_number) 
+
+void CMine::ReadRobotResource (int robot_number) 
 {
-  ushort i,j,t;
-  byte *ptr;
-  HRSRC hFind = FindResource( hInst,"ROBOT_HXM", "RC_DATA");
-  HINSTANCE hInst = AfxGetApp ()->m_hInstance;
-  HGLOBAL hResource = LoadResource( hInst, hFind);
-  if (!hResource) {
-    ErrorMsg ("Could not find robot resource data");
-    return;
-  }
-  ptr = (byte *)LockResource(hResource);
-  if (!ptr) {
-    ErrorMsg ("Could not lock robot resource data");
-    return;
-  }
-  t = (ushort)(*((uint *)ptr));
-  N_robot_types = min(t,MAX_ROBOT_TYPES);
-  ptr += sizeof (uint);
-  for (j=0;j<t;j++) {
-    i = (ushort)(*((uint *)ptr));
-    if (i>MAX_ROBOT_TYPES) break;
-    ptr += sizeof (uint);
-    // copy the robot info for one robot, or all robots
-    if (j==robot_number || robot_number == -1) {
-      memcpy(RobotInfo (i), ptr, sizeof (tRobotInfo));
-    }
-    ptr += sizeof (tRobotInfo);
-  }
-  FreeResource(hResource);
+  int		i,	j,	t;
+  byte*	bufPtr;
+
+HINSTANCE hInst = AfxGetApp ()->m_hInstance;
+HRSRC hFind = FindResource (hInst, "ROBOT_HXM", "RC_DATA");
+HGLOBAL hResource = LoadResource (hInst, hFind);
+if (!hResource) {
+	ErrorMsg ("Could not find robot resource data");
+	return;
+	}
+bufP = (byte *)LockResource(hResource);
+if (!bufP) {
+	ErrorMsg ("Could not lock robot resource data");
+	return;
+	}
+t = (ushort)(*((uint *)bufP));
+N_robot_types = min(t,MAX_ROBOT_TYPES);
+bufP += sizeof (uint);
+for (j = 0; j < t; j++) {
+	i = (ushort)(*((uint *)bufP));
+	if (i > MAX_ROBOT_TYPES) 
+		break;
+bufP += sizeof (uint);
+// copy the robot info for one robot, or all robots
+if (j==robot_number || robot_number == -1) {
+memcpy(RobotInfo (i), bufP, sizeof (tRobotInfo));
+}
+bufP += sizeof (tRobotInfo);
+}
+FreeResource (hResource);
 }
 
 //--------------------------------------------------------------------------

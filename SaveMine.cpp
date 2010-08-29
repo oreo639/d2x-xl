@@ -32,22 +32,21 @@
 // ACTION -  saves a level (.RDL) file to disk
 // ------------------------------------------------------------------------
 
-short CMine::Save (const char * filename_passed, bool bSaveToHog)
+short CMine::Save (const char * filename, bool bSaveToHog)
 {
-	FILE*	fp;
-	char	filename [256];
-	int minedataOffset, gamedataOffset, hostagetextOffset;
-	int mineErr, gameErr;
-	int	i;
+	CFileManager	fp;
+	char				filename [256];
+	int				minedataOffset, gamedataOffset, hostageTextOffset;
+	int				mineErr, gameErr;
+	int				i;
 
-strcpy_s (filename, sizeof (filename), filename_passed);
-if (fopen_s (&fp, filename, "wb")) 
-	return(1);
+if (fp.Open (filename, "wb"))
+	return 1;
 
 m_changesMade = 0;
 
 // write file signature
-WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L', fp); // signature
+fp.fp.WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L'); // signature
 
 // always save as version 7 or greater if its a D2 level
 // otherwise, blinking lights will not work.
@@ -61,22 +60,22 @@ if ((IsD2XLevel ()) && (LevelOutdated ())) {
 	}
 
 // write version
-WriteInt32 (LevelVersion (), fp);
-WriteInt32 (0, fp); // minedataOffset (temporary)
-WriteInt32 (0, fp); // gamedataOffset (temporary)
+fp.WriteInt32 (LevelVersion ());
+fp.WriteInt32 (0); // minedataOffset (temporary)
+fp.WriteInt32 (0); // gamedataOffset (temporary)
 
 if (IsD2File ()&& (LevelVersion () >= 8)) {
-	WriteInt16(rand(), fp);
-	WriteInt16(rand(), fp);
-	WriteInt16(rand(), fp);
-	WriteInt8((char)rand(), fp);
+	fp.WriteInt16 (rand ());
+	fp.WriteInt16 (rand ());
+	fp.WriteInt16 (rand ());
+	WriteInt8 ((sbyte) rand ());
 	}
 
 if (m_fileType== RDL_FILE)
-	WriteInt32 (0, fp); // hostagetextOffset (temporary)
+	fp.WriteInt32 (0); // hostageTextOffset (temporary)
 else {
 	// save palette name
-	char *name = strrchr(descent2_path, '\\');
+	char *name = strrchr (descent2_path, '\\');
 	if (!name) 
 		name = descent2_path; // point to 1st char if no slash found
 	else
@@ -91,53 +90,53 @@ else {
 		strcpy_s (palette_name, sizeof (palette_name), "GROUPA.256");
 	_strupr_s (palette_name, sizeof (palette_name));
 	strcat_s (palette_name, sizeof (palette_name), "\n"); // add a return to the end
-	fwrite (palette_name, strlen ((char *)palette_name), 1, fp);
+	fwrite (palette_name, strlen ((char *)palette_name), 1);
 	}
 
 // write reactor info
 if (IsD2File ()) {
 	// read descent 2 reactor information
-	WriteInt32 (ReactorTime (), fp);
-	WriteInt32 (ReactorStrength (), fp);
+	fp.Write (ReactorTime ());
+	fp.Write (ReactorStrength ());
 	// flickering light new for version 7
 	if (FlickerLightCount () > MAX_FLICKERING_LIGHTS) 
 		FlickerLightCount () = MAX_FLICKERING_LIGHTS;
-	WriteInt32 (FlickerLightCount (), fp);
+	fp.WriteInt32 ((int) FlickerLightCount ());
 	for (i = 0; i < FlickerLightCount (); i++)
 		FlickeringLights (i)->Write (fp);
 
 	// write secret cube number
-	WriteInt32 (SecretCubeNum (), fp);
+	fp.Write (SecretCubeNum ());
 	// write secret cube orientation?
 	SecretOrient ().Write (fp);
 	}
 // save mine data
-minedataOffset = ftell(fp);
+minedataOffset = fp.Tell ();
 if (0 > (mineErr = SaveMineDataCompiled (fp))) {
-	fclose(fp);
+	fp.Close ();
 	ErrorMsg ("Error saving mine data");
 	return(2);
 	}
 
 // save game data
-gamedataOffset = ftell(fp);
-if (0 > (gameErr = SaveGameData(fp))) {
-	fclose(fp);
+gamedataOffset = fp.Tell ();
+if (0 > (gameErr = SaveGameData (fp))) {
+	fp.Close ();
 	ErrorMsg ("Error saving game data");
 	return(3);
 	}
 
 // save hostage data
-hostagetextOffset = ftell(fp);
+hostageTextOffset = fp.Tell ();
 // leave hostage text empty
 
 // now and go back to beginning of file and save offsets
-fseek(fp, 2*sizeof (int), SEEK_SET);
-WriteInt32 (minedataOffset, fp);    // gamedataOffset
-WriteInt32 (gamedataOffset, fp);    // gamedataOffset
-if (m_fileType== RDL_FILE) 
-	WriteInt32 (hostagetextOffset, fp); // hostagetextOffset
-fclose(fp);
+fp.Seek (2 * sizeof (int), SEEK_SET);
+fp.Write (minedataOffset);    // gamedataOffset
+fp.Write (gamedataOffset);    // gamedataOffset
+if (m_fileType == RDL_FILE) 
+	fp.Write (hostageTextOffset); // hostageTextOffset
+fp.Close ();
 
 if (textureManager.HasCustomTextures () && !bSaveToHog) {
 	char* ps = strstr (filename, ".");
@@ -148,7 +147,7 @@ if (textureManager.HasCustomTextures () && !bSaveToHog) {
 	fopen_s (&fp, filename, "wb");
 	if (fp) {
 		CreatePog (fp);
-		fclose (fp);
+		fp.Close ();
 		}
 	}
 
@@ -158,11 +157,9 @@ if (HasCustomRobots () && !bSaveToHog) {
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, sizeof (filename), ".hxm");
-	fopen_s (&fp, filename, "wb");
-	if (fp)
+	if (!fp.Open (filename, "wb"))
 		WriteHxmFile (fp);
 	}
-
 return 0;
 }
 
@@ -211,7 +208,7 @@ if (r > left)
 
 int CMine::SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
 {
-info.offset = ftell (fp);
+info.offset = fp.Tell ();
 for (int i = 0; i < info.count; i++) {
 	items->Write (fp, GameInfo ().fileinfo.version, bFlag);
 	items = items->Next ();
@@ -228,13 +225,13 @@ short CMine::SaveMineDataCompiled(CFileManager& fp)
 {
 	int	i;
 // write version (1 byte)
-WriteInt8 (COMPILED_MINE_VERSION, fp);
+WriteInt8 (COMPILED_MINE_VERSION);
 
 // write no. of vertices (2 bytes)
-WriteInt16 (VertCount (), fp);
+fp.WriteInt16 (VertCount ());
 
 // write number of Segments () (2 bytes)
-WriteInt16 (SegCount (), fp);
+fp.WriteInt16 (SegCount ());
 
 // write all vertices
 for (int i = 0; i < VertCount (); i++)
@@ -251,9 +248,9 @@ if (IsD2File ()) {
   }
 
 if (IsD2XLevel ()) {
-	SaveColors (VertexColors (0), VertCount (), fp);
-	SaveColors (LightColors (0), SegCount () * 6, fp);
-	SaveColors (TexColors (0), MAX_D2_TEXTURES, fp);
+	SaveColors (VertexColors (0), VertCount ());
+	SaveColors (LightColors (0), SegCount () * 6);
+	SaveColors (TexColors (0), MAX_D2_TEXTURES);
 	}
 return 0;
 }
@@ -272,7 +269,7 @@ short CMine::SaveGameData(CFileManager& fp)
 	int i;
 	int startOffset, endOffset;
 
-	startOffset = ftell(fp);
+	startOffset = fp.Tell ();
 
 	//==================== = WRITE FILE INFO========================
 
@@ -302,14 +299,14 @@ short CMine::SaveGameData(CFileManager& fp)
 		GameInfo ().level = 0;
 	}
 
-	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1, fp);
+	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
 	if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
-		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName), fp);
+		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 	}
 	if (IsD2File ()) {
-		fwrite("\n", 1, 1, fp); // write an end - of - line
+		fwrite("\n", 1, 1); // write an end - of - line
 	} else {
-		fwrite("", 1, 1, fp);   // write a null
+		fwrite("", 1, 1);   // write a null
 	}
 
 	// write pof names from resource file
@@ -322,14 +319,14 @@ short CMine::SaveGameData(CFileManager& fp)
 		n_save_pof_names = 166;
 		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES2), "RC_DATA")))
 			return 1;
-		fwrite(&n_save_pof_names, 2, 1, fp);   // write # of POF names
+		fwrite(&n_save_pof_names, 2, 1);   // write # of POF names
 		}
 	else {
 		n_save_pof_names = 78;
 		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES1), "RC_DATA")))
 			return 1;
 		n_pofs = 25;   // Don't know exactly what this value is for or why it is 25?
-		fwrite(&n_pofs, 2, 1, fp);
+		fwrite(&n_pofs, 2, 1);
 		}
 	hGlobal = LoadResource(hInst, hRes);
 	ASSERT(hGlobal);
@@ -337,13 +334,13 @@ short CMine::SaveGameData(CFileManager& fp)
 	save_pof_names = (byte *) LockResource(hGlobal);
 	ASSERT(save_pof_names);
 
-	fwrite(save_pof_names, n_save_pof_names, 13, fp); // 13 characters each
+	fwrite(save_pof_names, n_save_pof_names, 13); // 13 characters each
 	FreeResource(hGlobal);
 
 	//==================== = WRITE PLAYER INFO==========================
-	GameInfo ().player.offset = ftell(fp);
+	GameInfo ().player.offset = fp.Tell ();
 	char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
-	fwrite(str, strlen (str) + 1, 1, fp);
+	fwrite(str, strlen (str) + 1, 1);
 
 	//==================== = WRITE OBJECT INFO==========================
 	// note: same for D1 and D2
@@ -352,13 +349,13 @@ short CMine::SaveGameData(CFileManager& fp)
 	SaveGameItem (fp, GameInfo ().doors, DATA (ActiveDoors ()));
 	SaveGameItem (fp, GameInfo ().triggers, DATA (Triggers ()));
 	if (LevelVersion () >= 12) {
-		WriteInt32 (NumObjTriggers (), fp);
+		fp.WriteInt32 (NumObjTriggers ());
 		if (NumObjTriggers ()) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
 				ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				WriteInt16 (ObjTriggers (i)->m_info.nObject, fp);
+				fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
 			}
 		}
 	SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
@@ -371,14 +368,14 @@ short CMine::SaveGameData(CFileManager& fp)
 		SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
 		}
 
-	endOffset = ftell(fp);
+	endOffset = fp.Tell ();
 
 	//==================== = UPDATE FILE INFO OFFSETS====================== =
-	fseek(fp, startOffset, SEEK_SET);
-	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1, fp);
+	fp.Seek ( startOffset, SEEK_SET);
+	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
 
 	//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
-	fseek(fp, endOffset, SEEK_SET);
+	fp.Seek ( endOffset, SEEK_SET);
 #endif //DEMO
 	return(0);
 }

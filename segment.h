@@ -4,6 +4,7 @@
 #define __segment_h
 
 #include "define.h"
+#include "cfile.h"
 
 typedef struct tUVL {
 public:
@@ -19,9 +20,9 @@ public:
 		return 1;
 		}
 	inline void Write (CFileManager& fp) {
-		WriteInt16 (u, fp);
-		WriteInt16 (v, fp);
-		WriteInt16 (l, fp);
+		fp.Write (u);
+		fp.Write (v);
+		fp.Write (l);
 		}
 
 	inline void Clear (void) { u = v = l = 0; }

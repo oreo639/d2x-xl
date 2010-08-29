@@ -445,7 +445,7 @@ public:
 						  bool bRedefine);
 	void SetWallTextures (ushort nWall, short nTexture = 0);
 	// trigger stuff
-	void InitTrigger (CTrigger *t, short type, short flags);
+	void InitTrigger (CTrigger  * t,  short type, short flags);
 	CTrigger *AddTrigger (ushort nWall, short type, BOOL bAutoAddWall = FALSE);
 	void DeleteTrigger (short nTrigger = -1);
 	bool DeleteTriggerTarget (CTrigger *trigger, short nSegment, short nSide, bool bAutoDeleteTrigger = true);

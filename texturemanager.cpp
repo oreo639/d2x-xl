@@ -121,29 +121,22 @@ if (Check (nBaseTex)) {
 
 int CTextureManager::LoadIndex (int nVersion)
 {
-HINSTANCE hInst = AfxGetInstanceHandle ();
-HRSRC hRes = FindResource (hInst, MAKEINTRESOURCE (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT), "RC_DATA");
-if (!hRes) {
-	DEBUGMSG (" Reading texture: Texture index not found.");
+	CResource res;	
+
+ushort* indexP = (ushort *) res.Load (MAKEINTRESOURCE (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT));
+if (!indexP) {
+	DEBUGMSG (" Reading texture: Could not load texture index.");
 	return 1;
 	}
-HGLOBAL hGlobal = LoadResource (hInst, hRes);
-if (!hGlobal) {
-	DEBUGMSG (" Reading texture: Could not load texture index.");
-	return 2;
-	}
 // first long is number of textures
-ushort* indexP = (ushort *) LockResource (hGlobal);
 nTextures [nVersion] = *((uint*) indexP);
 indexP += 2;
 if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
-	FreeResource (hGlobal);
 	DEBUGMSG (" Reading texture: Could not allocate texture index.");
 	return 3;
 	}
 for (uint i = 0; i < nTextures [nVersion]; i++)
 	index [nVersion][i] = (*indexP++);
-FreeResource (hGlobal);
 return 0;
 }
 

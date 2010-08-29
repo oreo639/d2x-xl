@@ -332,31 +332,31 @@ if (bCustom) {
 
 	fread (data, 3, 1, fp); // verify signature "DHF"
 	if (data[0] != 'D' || data[1] != 'H' || data[2] != 'F') {
-		fclose (fp);
+		fp.Close ();
 		return 1;
 		}
 	position = 3;
 	while (!feof (fp)) {
-		fseek (fp, position, SEEK_SET);
+		fp.Seek (position, SEEK_SET);
 		if ((fread (&level, sizeof (struct level_header), 1, fp) != 1) ||
 			 (level.size > 10000000L || level.size < 0)) {
-				fclose (fp);
+				fp.Close ();
 				return 1;
 				}
 		if (!strcmp (level.name, szSubFile)) {
 			id = fp.ReadInt32 ();	  					   // read id
 			if (id != 0x5848414DL) {
-				fclose (fp);
+				fp.Close ();
 				return 1;
 				}
 			read_UINTW (fp);                              // read version
 			n = read_UINTW (fp);                         // n_weapon_types
-			fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
+			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
 			n = read_UINTW (fp);                         // n_robot_types
 			for (i = 0; i < n; i++)
 				theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
 			n  = read_UINTW (fp);                         // n_robot_joints
-			fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
+			fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
 			break;
 			}
 		position += sizeof (struct level_header) + level.size;
@@ -371,32 +371,32 @@ if (bCustom) {
 else {
 	id = fp.ReadInt32 ();	  					   // read id
 	if (id != 0x214d4148L) {
-		fclose (fp);
+		fp.Close ();
 		return 1;
 		}
 	read_UINTW (fp);                              // read version
 	n  = read_UINTW (fp);                         // n_tmap_info
-	fseek (fp, n * sizeof (ushort), SEEK_CUR);	 // bitmap_indicies
-	fseek (fp, n * sizeof (TMAP_INFO), SEEK_CUR); // tmap_info
+	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 // bitmap_indicies
+	fp.Seek (n * sizeof (TMAP_INFO), SEEK_CUR); // tmap_info
 	n = read_UINTW (fp);                          // n_sounds
-	fseek (fp, n * sizeof (byte), SEEK_CUR);     // sounds
-	fseek (fp, n * sizeof (byte), SEEK_CUR);     // alt_sounds
+	fp.Seek (n * sizeof (byte), SEEK_CUR);     // sounds
+	fp.Seek (n * sizeof (byte), SEEK_CUR);     // alt_sounds
 	n = read_UINTW (fp);                          // n_vclips
-	fseek (fp, n * sizeof (VCLIP), SEEK_CUR);     // video clips
+	fp.Seek (n * sizeof (VCLIP), SEEK_CUR);     // video clips
 	n = read_UINTW (fp);                          // n_eclips
-	fseek (fp, n * sizeof (ECLIP), SEEK_CUR);     // effect clips
+	fp.Seek (n * sizeof (ECLIP), SEEK_CUR);     // effect clips
 	n = read_UINTW (fp);                          // n_wclips
-	fseek (fp, n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
-	n = ftell (fp);
+	fp.Seek (n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
+	n = fp.Tell ();
 	n = read_UINTW (fp);                          // n_robots
 	for (i = 0; i < n; i++) 
 		theMine->RobotInfo (i)->Read (fp);
 	n = read_UINTW (fp);                          // n_robot_joints
-	fseek (fp, n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
+	fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
 	n = read_UINTW (fp);                          // n_weapon
-	fseek (fp, n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon info
+	fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon info
 	n = read_UINTW (fp);                          // n_powerups
-	fseek (fp, n * sizeof (POWERUP_TYPE_INFO), SEEK_CUR); // powerup info
+	fp.Seek (n * sizeof (POWERUP_TYPE_INFO), SEEK_CUR); // powerup info
 	n = read_UINTW (fp);                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
@@ -404,7 +404,7 @@ else {
 	for (i = 0; i < n; i++) 
 		m_polyModels [i].Read (fp, true);
 	}
-fclose (fp);
+fp.Close ();
 return 0;
 }
 

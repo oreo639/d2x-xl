@@ -146,9 +146,9 @@ if (bShowTexture) {
 		if (fopen_s (&fp, szFile, "rb"))
 			nOffset [bDescent1] = -1;  // pig file not found
 		else {
-			fseek (fp, 0, SEEK_SET);
+			fp.Seek (0, SEEK_SET);
 			nOffset [bDescent1] = fp.ReadInt32 ();  // determine type of pig file
-			fclose (fp);
+			fp.Close ();
 			}
 		}
 	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
@@ -290,13 +290,13 @@ if (!fp)
 	fp = textureManager.OpenPigFile (nVersion);
 if (!Allocate (nSize, nTexture)) {
 	if (bLocalFile)
-		fclose (fp);	
+		fp.Close ();	
 	return 1;
 	}
-fseek (fp, textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
+fp.Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (fp, info);
 if (bLocalFile)
-	fclose (fp);
+	fp.Close ();
 return 0;
 }
 

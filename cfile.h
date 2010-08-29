@@ -60,7 +60,7 @@ class CFileManager {
 		size_t Read (void *buf, size_t elsize, size_t nelem);
 		int Close (void);
 		int Size (const char *hogname, const char *folder);
-		int Seek (size_t offset, int where);
+		int Seek (size_t offset, int where == SEEK_SET);
 		int Tell (void);
 		char *GetS (char *buf, size_t n);
 		int EoF (void);

@@ -115,7 +115,7 @@ sprintf_s (fn, FILENAME_LEN, "%s/%s", folder, filename);
  	pfn = filename;
  
 if (fopen_s (&fp, pfn, mode)) {
-	fclose (fp);
+	fp.Close ();
 	fp = null;
 	}
 //if (!fp) PrintLog ("CFGetFileHandle (): error opening %s\n", pfn);
@@ -153,7 +153,7 @@ int CFileManager::Exist (const char *filename, const char *folder)
 	char	*pfn = const_cast<char*> (filename);
 
 if ((fp = GetFileHandle (pfn, folder, "rb"))) { // Check for non-hogP file first...
-	fclose (fp);
+	fp.Close ();
 	return 1;
 	}
 return 0;
@@ -205,10 +205,10 @@ static long ffilelength (FILE* fp)
 {
 	long oldPos, size;
 
-if (((oldPos = ftell (fp)) == -1) ||
-	 (fseek (fp, 0, SEEK_END) == -1) ||
-	 ((size = ftell (fp)) == -1) ||
-	 (fseek (fp, oldPos, SEEK_SET) == -1))
+if (((oldPos = fp.Tell ()) == -1) ||
+	 (fp.Seek (0, SEEK_END) == -1) ||
+	 ((size = fp.Tell ()) == -1) ||
+	 (fp.Seek (oldPos, SEEK_SET) == -1))
 	return -1;
 return size;
 }
@@ -369,14 +369,14 @@ return m_cf.rawPosition;
 
 // ----------------------------------------------------------------------------
 
-int CFileManager::Seek (size_t offset, int whence) 
+int CFileManager::Seek (size_t offset, int where) 
 {
 if (!m_cf.size)
 	return -1;
 
 	int destPos;
 
-switch (whence) {
+switch (where) {
 	case SEEK_SET:
 		destPos = offset;
 		break;

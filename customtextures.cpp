@@ -183,7 +183,7 @@ if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {
 	goto abort;
 	}
 pigTexIndex = pigFileInfo.nTextures * sizeof (ushort);
-offset = ftell (fp);
+offset = fp.Tell ();
 fread (xlatTbl, pigTexIndex, 1, fp);
 // loop for each custom texture
 nUnknownTextures = 0;
@@ -203,7 +203,7 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	if (nBaseTex == 86)
 		nBaseTex = nBaseTex;
 #if 1
-	fseek (fp, hdrOffset + nTexture * sizeof (PIG_TEXTURE_D2), SEEK_SET);
+	fp.Seek (hdrOffset + nTexture * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 #endif
 	pigTexInfo.Read (fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
@@ -246,7 +246,7 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 	texP->m_info.bValid = 1;
 	// read texture into memory (assume non-compressed)
 #if 1
-	fseek (fp, bmpOffset + pigTexInfo.offset, SEEK_SET);
+	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
 #endif
 	if (texP->m_info.nFormat) {
 		fread (texP->m_info.tgaDataP, texP->m_info.size * sizeof (tRGBA), 1, fp);
@@ -477,7 +477,7 @@ rc = 0; // return success
 
 abort:
 if (fp) 
-	fclose (fp);
+	fp.Close ();
 return rc;
 }
 
