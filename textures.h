@@ -259,7 +259,7 @@ public:
 
 #if USE_DYN_ARRAYS
 
-typedef CArray< CTexture > textureList;
+typedef CDynamicArray< CTexture > textureList;
 
 #else
 

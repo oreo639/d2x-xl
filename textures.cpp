@@ -4,6 +4,7 @@
 #include "dle-xp-res.h"
 #include "global.h"
 #include "palette.h"
+#include "textures.h"
 #include "dle-xp.h"
 
 struct tExtraTexture;
