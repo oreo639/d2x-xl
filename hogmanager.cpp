@@ -1324,7 +1324,7 @@ return 0;
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs) 
 {
 	CFileManager	fTmp;
-	char				szFolder [256], szFile [256];
+	char				szFolder [256], szFile [256], szTmp [256];
 	char*				psz;
 
 _strlwr_s (szHogFile, 256);
@@ -1353,10 +1353,10 @@ if (!*szSubFile || psz) {
 CFileManager fp;
 // See if another level with the same name exists
 // and see if there are any other files here (ignore hxm and pog files)
+CFileManager::SplitPath (szHogFile, szFolder, null, null);
 int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
 if (fp.Open (szHogFile, "rb")) {
-	CFileManager::SplitPath (szHogFile, szFolder, null, null);
 	strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
 	theMine->Save (szFolder);
 	return MakeHog (szFolder, szHogFile, szSubFile, true);
@@ -1405,7 +1405,6 @@ else {
 		bQuickSave = 1;
 	}
 if (bQuickSave) {
-	CFileManager::SplitPath (szHogFile, szFolder, null, null);
 	strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
 	theMine->Save (szFolder);
 	return MakeHog (szFolder, szHogFile, szSubFile, bSaveAs);
@@ -1430,11 +1429,10 @@ if (fp.Open (szHogFile, "ab")) {
 	return 1;
 	}
 fp.Seek (0, SEEK_END);
-CFileManager::SplitPath (szHogFile, szFolder, null, null);
-strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
-theMine->Save (szFolder, true);
+sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp.rdl", szFolder);
+theMine->Save (szTmp, true);
 WriteSubFile (fp, szFolder, szSubFile);
-CFileManager::Delete (szFolder);
+CFileManager::Delete (szTmp);
 
 #if 1
 
