@@ -10,7 +10,7 @@
 #include "mine.h"
 #include "global.h"
 #include "robot.h"
-#include "textures.h"
+#include "customtextures.h"
 #include "robot.h"
 #include "dle-xp-res.h"
 #include "io.h"

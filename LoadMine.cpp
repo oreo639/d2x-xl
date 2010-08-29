@@ -10,7 +10,7 @@
 #include "mine.h"
 #include "matrix.h"
 #include "io.h"
-#include "textures.h"
+#include "customtextures.h"
 #include "palette.h"
 #include "dle-xp.h"
 #include "robot.h"
