@@ -954,8 +954,7 @@ bmfh.bfReserved2 = 0;
 bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER)+sizeof (BITMAPINFOHEADER)+256*4;
 
 // define the bitmap header
-BITMAPINFO *bmi;
-bmi = MakeBitmap();
+BITMAPINFO *bmi = MakeBitmap();
 bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
 
