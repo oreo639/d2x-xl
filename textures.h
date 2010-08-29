@@ -143,10 +143,12 @@ public:
 		dflags = ReadUInt8 (fp);
 		width = (ushort) ReadUInt8 (fp);
 		height = (ushort) ReadUInt8 (fp);
-		if (m_nVersion == 0)
-			name [7] = 0;
-		else 
+		if (m_nVersion == 1)
 			whExtra = ReadUInt8 (fp);
+		else {
+			name [7] = 0;
+			whExtra = 0;
+			}
 		flags = ReadUInt8 (fp);
 		avgColor = ReadUInt8 (fp);
 		offset = ReadUInt32 (fp);
