@@ -92,7 +92,7 @@ return 0;
 
 void CPaletteWnd::SortPalette (int left, int right)
 {
-	int				l = left,
+	int				l = left, 
 						r = right;
 	PALETTEENTRY	m = m_palColors [(l + r) / 2];
 
@@ -168,7 +168,7 @@ GetClientRect (rcPal);
 //ClientToScreen (rcPal);
 // if over palette, redefine foreground color
 if (PtInRect (rcPal, point)) {
-	int x,y;
+	int x, y;
 //	x = ((point.x - rcPal.left) >> 3)&127;
 //	y = ((point.y - rcPal.top) >> 3)&31;
 	x = (int) ((double) (point.x - rcPal.left) * ((double) m_nWidth / rcPal.Width ()));
@@ -195,7 +195,7 @@ GetClientRect (&rc);
 int dx, dy;
 for (dy = 0; dy < 8; dy++)
 	for (dx = 0; dx < 8; dx++)
-		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top,
+		m_pDC->SetPixel ((x << 3) + dx + rc.left, (y << 3) + dy + rc.top, 
 							  PALETTEINDEX (y * m_nWidth + x));
 }
 
@@ -224,12 +224,12 @@ bmi->bmiHeader.biHeight = m_nHeight;
 if (m_nWidth & 1)
 	for (i = 0; i < m_nHeight; i++) {
 		w = (i == m_nHeight - 1) ? 256 % m_nWidth : m_nWidth;
-		StretchDIBits (m_pDC->m_hDC, 0, i * 8, w * 8, 8, 0, 0, w, 1,
+		StretchDIBits (m_pDC->m_hDC, 0, i * 8, w * 8, 8, 0, 0, w, 1, 
 						   (void *) (pal_bitmap + (m_nHeight - i - 1) * m_nWidth), bmi, 
 							DIB_RGB_COLORS, SRCCOPY);
 		}
 else
-	StretchDIBits (m_pDC->m_hDC, 0, 0, m_nWidth * 8, m_nHeight * 8, 0, 0, m_nWidth, m_nHeight,
+	StretchDIBits (m_pDC->m_hDC, 0, 0, m_nWidth * 8, m_nHeight * 8, 0, 0, m_nWidth, m_nHeight, 
 					   (void *) pal_bitmap, bmi, DIB_RGB_COLORS, SRCCOPY);
 free (pal_bitmap);
 EndPaint ();
@@ -357,7 +357,7 @@ m_layerWnd.Create (null, null, WS_CHILD | WS_VISIBLE, rc, pWnd, 0);
 // set cursor styles for bitmap windows
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
 SetCursor (LoadCursor (hInst, "PENCIL_CURSOR"));
-//  PaletteButton->SetCursor(null,IDC_CROSS);
+//  PaletteButton->SetCursor(null, IDC_CROSS);
 m_fgColor = 0; // black
 m_bgColor = 1; // white
 m_lBtnDown  = FALSE;
@@ -583,7 +583,7 @@ if (m_nFormat) {
 	ErrorMsg ("Cannot edit TGA images.");
 	}
 else if (PtInRect (rcEdit, point)) {
-	int x,y;
+	int x, y;
 	m_bModified = TRUE;  // mark this as m_bModified
 //	x = ((point.x - rcEdit.left) >> 2) & 63;
 //	y = ((point.y - rcEdit.top) >> 2) & 63;
@@ -637,7 +637,7 @@ return
 // 
 //************************************************************************
 
-bool CTextureEdit::LoadTGA (CFileManager& file)
+bool CTextureEdit::LoadTGA (CFileManager& fp)
 {
 	tTgaHeader	tgaHeader;
 	char			imgIdent [255];
@@ -648,7 +648,7 @@ if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
 	return false;
 	}
-fread (&tgaHeader, sizeof (tgaHeader), 1, file);
+fp.Read (&tgaHeader, sizeof (tgaHeader), 1);
 if ((tgaHeader.width * tgaHeader.height > 2048 * 2048)) {
 	ErrorMsg ("Image too large.");
 	return false;
@@ -657,7 +657,7 @@ m_nWidth = tgaHeader.width;
 m_nHeight = tgaHeader.height;
 m_nSize = tgaHeader.width * tgaHeader.height;
 if (tgaHeader.identSize)
-	fread (imgIdent, tgaHeader.identSize, 1, file);
+	fp.Read (imgIdent, tgaHeader.identSize, 1);
 #if 1
 h = 0; //m_nWidth * (m_nHeight - 1);
 s = (tgaHeader.bits == 32) ? 4 : 3;
@@ -665,7 +665,7 @@ bgra.a = 255;
 h = m_nWidth * (m_nHeight - 1);
 for (i = m_nHeight; i; i--) {
 	for (j = m_nWidth; j; j--, h++) {
-		fread (&bgra, s, 1, file);
+		fp.Read (&bgra, s, 1);
 		m_tga [h].a = bgra.a;
 		m_tga [h].r = bgra.r;
 		m_tga [h].g = bgra.g;
@@ -674,7 +674,7 @@ for (i = m_nHeight; i; i--) {
 	h -= 2 * m_nWidth;
 	}
 #else
-fread (m_tga, m_nSize * sizeof (tRGBA), 1, file);
+fp.Read (m_tga, m_nSize * sizeof (tRGBA), 1);
 #endif
 m_bModified = TRUE;
 if (TGA2Bitmap (m_tga, m_bitmap, (int) tgaHeader.width, (int) tgaHeader.height)) {
@@ -688,7 +688,7 @@ return false;
 // 
 //************************************************************************
 
-bool CTextureEdit::LoadBitmap (CFileManager& file)
+bool CTextureEdit::LoadBitmap (CFileManager& fp)
 {
 	RGBQUAD *palette=null;
 	PALETTEENTRY *sysPal=null;
@@ -711,8 +711,8 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 	}
 
 	// read the header information
-	fread(&bmfh,sizeof (bmfh),1,file);
-	fread(&bmih,sizeof (bmih),1,file);
+	fp.Read(&bmfh, sizeof (bmfh), 1);
+	fp.Read(&bmih, sizeof (bmih), 1);
 
 	// handle exceptions
 	if (bmih.biClrUsed==0)  
@@ -720,9 +720,9 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 	if (bmih.biHeight < 0) 
 		bmih.biHeight *= -1;
 
-	// make sure it is a bitmap file
+	// make sure it is a bitmap fp
 	if (bmfh.bfType != 'B' + (((ushort)'M')<<8) ) {
-	  ErrorMsg ("This is not a bitmap file.");
+	  ErrorMsg ("This is not a bitmap fp.");
 	  goto errorExit;
 	}
 
@@ -730,7 +730,7 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 	if (bmih.biBitCount != 8 && bmih.biBitCount != 4) {
 	  ErrorMsg ("DLE-XP only reads 16 or 256 color bitmap files.\n\n"
 		   "Hint: Load this image into a paint program\n"
-		   "then save it as a 16 or 256 color *.bmp file.");
+		   "then save it as a 16 or 256 color *.bmp fp.");
 	  goto errorExit;
 	}
 
@@ -738,17 +738,17 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 	if (bmih.biCompression != BI_RGB) {
 	  ErrorMsg ("Cannot read compressed bitmap files.\n\n"
 		   "Hint: Try loading this image into a paint program\n"
-		   "then save it as a 256 color *.bmp file with the\n"
+		   "then save it as a 256 color *.bmp fp with the\n"
 		   "compression option off.");
 	  goto errorExit;
 	}
 
 	// read palette
-	paletteSize = min((int)bmih.biClrUsed,256);
+	paletteSize = min((int)bmih.biClrUsed, 256);
 	if (paletteSize == 0) {
 	  paletteSize = 1 << bmih.biBitCount;
 	}
-	fread(palette,sizeof (RGBQUAD),paletteSize,file);
+	fp.Read(palette, sizeof (RGBQUAD), paletteSize);
 
 	// read the logical palette entries
 	theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
@@ -765,11 +765,11 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 	}
 	if (i != int (paletteSize)) {
 		if (!bExpertMode)
-			ErrorMsg ("The palette of this bitmap file is not exactly the\n"
+			ErrorMsg ("The palette of this bitmap fp is not exactly the\n"
 					  "the same as the Descent palette. Therefore, some color\n"
 					  "changes may occur.\n\n"
 					  "Hint: If you want the palettes to match, then save one of\n"
-					  "the Descent textures to a file an use it as a starting point.\n"
+					  "the Descent textures to a fp an use it as a starting point.\n"
 					  "If you plan to use transparencies, then you may want to start\n"
 					  "with the texture called 'empty'.");
 		for (i = 0; i < int (paletteSize); i++) {
@@ -791,14 +791,14 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 			}
 		}
 
-	int x0,x1,y0,y1;
+	int x0, x1, y0, y1;
 	// if size is not 64 x 64, ask if they want to "size to fit"
 	if ((bmih.biWidth != m_nWidth) || (bmih.biHeight != m_nHeight)) {
 		sprintf_s (message, sizeof (message), "The bitmap being loaded is a %d x %d image.\n"
 				  "Do you want the image to be sized to fit the\n"
 				  "the current %d x %d texture size?\n\n"
-			     "(press no to see another option)",
-			     (int) bmih.biWidth, (int) bmih.biHeight,
+			     "(press no to see another option)", 
+			     (int) bmih.biWidth, (int) bmih.biHeight, 
 				  (int) m_nWidth, (int) m_nHeight);
 		switch (Query2Msg (message, MB_YESNOCANCEL)) {
 			case IDYES:
@@ -862,16 +862,16 @@ bool CTextureEdit::LoadBitmap (CFileManager& file)
 
 			if (bmih.biBitCount == 4) {
 				long offset = (fix)v*(fix)width + (fix)u / 2;
-				fseek(file,(fix)bmfh.bfOffBits + offset,SEEK_SET);
-				fread(&byte,1,1,file);
+				fseek(fp, (fix)bmfh.bfOffBits + offset, SEEK_SET);
+				fp.Read(&byte, 1, 1);
 				if (!(u&1))
 					byte >>=4;
 				byte &= 0x0f;
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
 			else {
-				fseek(file,(fix)bmfh.bfOffBits + (fix)v*(fix)width + (fix)u,SEEK_SET);
-				fread(&byte,1,1,file);
+				fseek(fp, (fix)bmfh.bfOffBits + (fix)v*(fix)width + (fix)u, SEEK_SET);
+				fp.Read(&byte, 1, 1);
 				m_bitmap [y*m_nWidth+x] = color_map[byte];
 				}
 			}
@@ -898,7 +898,7 @@ void CTextureEdit::OnLoad ()
 {
   OPENFILENAME ofn;
   char szFile[80] = "\0";
-  CFileManager& file=null;
+  CFileManager& fp;
   bool bFuncRes;
 
   sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
@@ -915,17 +915,17 @@ void CTextureEdit::OnLoad ()
 if (GetOpenFileName (&ofn)) {
 	if (strchr (ofn.lpstrFile, '.'))
 		strncpy_s (m_szDefExt, sizeof (m_szDefExt), strchr (ofn.lpstrFile, '.') + 1, 3);
-	fopen_s (&file, ofn.lpstrFile,"rb");
-	if (!file) {
-		ErrorMsg ("Could not open texture file.");
+	fp.Open (ofn.lpstrFile, "rb");
+	if (!fp) {
+		ErrorMsg ("Could not open texture fp.");
 		goto errorExit;
 		}
 	Backup ();
 	_strlwr_s (m_szDefExt, sizeof (m_szDefExt));
 	if (!strcmp (m_szDefExt, "bmp"))
-		bFuncRes = LoadBitmap (file);
+		bFuncRes = LoadBitmap (fp);
 	else
-		bFuncRes = LoadTGA (file);
+		bFuncRes = LoadTGA (fp);
 	if (bFuncRes)
 		Refresh ();
 	else
@@ -934,15 +934,14 @@ if (GetOpenFileName (&ofn)) {
 
 errorExit:
 
-if (file) 
-	fclose (file);
+fp.Close ();
 }
 
 //************************************************************************
 // TTextureDialog - Save Message
 //************************************************************************
 
-void CTextureEdit::SaveBitmap (CFileManager& file)
+void CTextureEdit::SaveBitmap (CFileManager& fp)
 {
 BITMAPFILEHEADER bmfh;
 
@@ -958,19 +957,19 @@ bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
 
 // write the headers
-fwrite(&bmfh,sizeof (BITMAPFILEHEADER),1,file);
-fwrite(&bmi->bmiHeader,sizeof (BITMAPINFOHEADER),1,file);
+fp.Write(&bmfh, sizeof (BITMAPFILEHEADER), 1);
+fp.Write(&bmi->bmiHeader, sizeof (BITMAPINFOHEADER), 1);
 
 // write palette
-fwrite(bmi->bmiColors,sizeof (RGBQUAD),256,file);
+fp.Write(bmi->bmiColors, sizeof (RGBQUAD), 256);
 
 // save bitmap data
-fwrite(m_bitmap, m_nSize,1,file);
+fp.Write(m_bitmap, m_nSize, 1);
 }
 
 //************************************************************************
 
-void CTextureEdit::SaveTGA (CFileManager& file)
+void CTextureEdit::SaveTGA (CFileManager& fp)
 {
 	tTgaHeader	h;
 	int			i, j;
@@ -982,7 +981,7 @@ h.imageType = 2;
 h.width = m_nWidth;
 h.height = m_nHeight;
 h.bits = 32;
-fwrite (&h, sizeof (h), 1, file);
+fp.Write (&h, sizeof (h), 1);
 pc = m_tga + m_nWidth * (m_nHeight - 1);
 for (i = m_nHeight; i; i--) {
 	for (j = m_nWidth; j; j--, pc++) {
@@ -990,7 +989,7 @@ for (i = m_nHeight; i; i--) {
 		c.g = pc->g;
 		c.b = pc->b;
 		c.a = pc->a;
-		fwrite (&c, sizeof (c), 1, file);
+		fp.Write (&c, sizeof (c), 1);
 		}
 	pc -= 2 * m_nWidth;
 	}
@@ -1002,7 +1001,7 @@ void CTextureEdit::OnSave ()
 {
 OPENFILENAME ofn;
 char szFile[256] = "\0";
-CFileManager& file;
+CFileManager& fp;
 
 memset(&ofn, 0, sizeof (OPENFILENAME));
 
@@ -1016,18 +1015,18 @@ ofn.nMaxFile = sizeof (szFile);
 ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
 if (GetSaveFileName (&ofn)) {
 	_strlwr_s (ofn.lpstrFile, sizeof (szFile));
-	fopen_s (&file, ofn.lpstrFile, "wb");
-	if (!file) {
-		ErrorMsg ("Could not create bitmap file.");
+	fp.Open (ofn.lpstrFile, "wb");
+	if (!fp) {
+		ErrorMsg ("Could not create bitmap fp.");
 		return;
 		}
 	if (m_nFormat)
-		SaveTGA (file);
+		SaveTGA (fp);
 	else
-		SaveBitmap (file);
-	// define the file header
-	// close file
-	fclose(file);
+		SaveBitmap (fp);
+	// define the fp header
+	// close fp
+	fclose(fp);
 	}
 }
 
@@ -1088,8 +1087,8 @@ bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nWidth;
 CRect	rc;
 m_textureWnd.GetClientRect (&rc);
-StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_nWidth, m_nWidth,
-					(void *)m_bitmap, bmi, DIB_RGB_COLORS,SRCCOPY);
+StretchDIBits (m_pDC->m_hDC, 0, 0, rc.right, rc.bottom, 0, 0, m_nWidth, m_nWidth, 
+					(void *)m_bitmap, bmi, DIB_RGB_COLORS, SRCCOPY);
 EndPaint ();
 }
 
@@ -1184,10 +1183,10 @@ xs /= 4.0;
 ys /= 4.0;
 for (dy = 0; dy < 4; dy++)
 	for (dx = 0; dx < 4; dx++)
-		m_pDC->SetPixel (x + (int) ((double) dx * xs),
-							  y + (int) ((double) dy * ys),
+		m_pDC->SetPixel (x + (int) ((double) dx * xs), 
+							  y + (int) ((double) dy * ys), 
 							  color);
-//		m_pDC->SetPixel((x<<2)+dx+rc.left,(y<<2)+dy+rc.top,
+//		m_pDC->SetPixel((x<<2)+dx+rc.left, (y<<2)+dy+rc.top, 
 //							 PALETTEINDEX(m_bitmap [(63-y)*64+x]));
 }
 
@@ -1199,10 +1198,10 @@ void CTextureEdit::SetPalettePixel (int x, int y)
 	CRect	rc;
 
 m_paletteWnd.GetClientRect (&rc);
-int dx,dy;
+int dx, dy;
 for (dy=0;dy<8;dy++)
 	for (dx=0;dx<8;dx++)
-		m_pDC->SetPixel((x<<3)+dx+rc.left,(y<<3)+dy+rc.top,
+		m_pDC->SetPixel((x<<3)+dx+rc.left, (y<<3)+dy+rc.top, 
 							 PALETTEINDEX(y*32+x));
 }
 
