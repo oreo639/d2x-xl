@@ -177,6 +177,7 @@ public:
 			fp.Write (whExtra);
 		fp.Write (flags);
 		fp.Write (avgColor);
+		fp.Write (offset);
 		}
 
 	inline int BufSize (void) { return (int) width * (int) height; }

@@ -163,6 +163,7 @@ if (DLE.IsD1File ()) {
 	return 1;
 	}
 
+uint startOffset = fp.Tell ();
 // read file header
 pigFileInfo.Read (fp);
 if (pigFileInfo.nId != 0x474f5044L) {  // 'DPOG'
