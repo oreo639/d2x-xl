@@ -766,18 +766,22 @@ if (m_info.bModified)
 
 if (!textureManager.HaveInfo (nVersion))
 	fp = textureManager.OpenFile ();
-CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
-int nSize = info.BufSize ();
-if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
-	return 0; // already loaded
-if (!fp)
-	fp = textureManager.OpenFile ();
-if (!Allocate (nSize, nTexture)) {
-	fclose (fp);
-	return 1;
+
+for (int i = 0, j = textureManager.MaxTextures (nVersion); i < j; i++) {
+	nTexture = i;
+	CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
+	int nSize = info.BufSize ();
+	if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
+		return 0; // already loaded
+	if (!fp)
+		fp = textureManager.OpenFile ();
+	if (!Allocate (nSize, nTexture)) {
+		fclose (fp);
+		return 1;
+		}
+	fseek (fp, textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
+	Load (fp, info);
 	}
-fseek (fp, textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
-Load (fp, info);
 fclose (fp);
 return 0;
 }
