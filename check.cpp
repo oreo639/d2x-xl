@@ -1738,7 +1738,7 @@ if (!theMine)
   short sub_warnings = m_nErrors [1];
   LBBugs ()->AddString ("[Misc]");
 
-for (nVertex = theMine->VertCount (); nVertex; nVertex--)
+for (nVertex = theMine->VertCount (); nVertex > 0; )
 	theMine->VertStatus (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
@@ -1762,7 +1762,7 @@ for (nVertex = theMine->VertCount (); nVertex > 0; ) {
 			}
 		}
 	}
-for (nVertex = theMine->VertCount (); nVertex; )
+for (nVertex = theMine->VertCount (); nVertex > 0; )
 	theMine->VertStatus (--nVertex) &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)

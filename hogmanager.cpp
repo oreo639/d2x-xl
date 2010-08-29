@@ -1124,7 +1124,7 @@ int WriteCustomFile (CFileManager&fp, const int nType, const char* szFolder, con
 	char szTmp [256], szDest [256];
 
 CFileManager::SplitPath (szFolder, szTmp, null, null);
-sprintf_s (szTmp, sizeof (szTmp), "%s//dle.temp", szFolder);
+sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp%s", szFolder, extensions [nType]);
 if (fTmp.Open (szTmp, "wb"))
 	return 1;
 int i;
@@ -1134,10 +1134,13 @@ switch (nType) {
 		break;
 	case 1:
 		i = theMine->WriteColorMap (fTmp);
+		break;
 	case 2:
 		i = WriteCustomPalette (fTmp);
+		break;
 	case 3:
 		i = CreatePog (fTmp);
+		break;
 	case 4:
 		i = theMine->WriteHxmFile (fTmp);
 		break;
@@ -1147,7 +1150,7 @@ switch (nType) {
 	}
 if (!i) {
 	sprintf_s (szDest, sizeof (szDest), "%s%s", szFile, extensions [nType]);
-	i = WriteSubFile (fTmp, szTmp, szDest);
+	i = WriteSubFile (fp, szTmp, szDest);
 	}
 fTmp.Close ();
 CFileManager::Delete (szTmp);
@@ -1352,7 +1355,7 @@ CFileManager fp;
 // and see if there are any other files here (ignore hxm and pog files)
 int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
-if (!fp.Open (szHogFile, "rb")) {
+if (fp.Open (szHogFile, "rb")) {
 	CFileManager::SplitPath (szHogFile, szFolder, null, null);
 	strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
 	theMine->Save (szFolder);
@@ -1413,7 +1416,6 @@ if (bQuickSave) {
 CFileManager::SplitPath (szSubFile, null, szFile, null);
 szFile [8] = null;
 _strlwr_s (szFile, sizeof (szFile));
-strip_extension (szFile);
 
 if (fp.Open (szHogFile, "r+b")) {
 	ErrorMsg ("Destination HOG file not found or inaccessible.");
@@ -1432,6 +1434,7 @@ CFileManager::SplitPath (szHogFile, szFolder, null, null);
 strcat_s (szFolder, sizeof (szFolder), "dle_temp.rdl");
 theMine->Save (szFolder, true);
 WriteSubFile (fp, szFolder, szSubFile);
+CFileManager::Delete (szFolder);
 
 #if 1
 
