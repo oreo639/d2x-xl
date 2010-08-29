@@ -125,10 +125,9 @@ if (l < right)
 
 void CPaletteWnd::CreatePalette ()
 {
-int i;
-for (i = 0; i < 256; i++) {
+for (int i = 0; i < 256; i++) {
 	m_nSortedPalIdx [i] = i;
-	RgbFromIndex (i, m_palColors + i);
+	RgbFromIndex (i, m_palColors [i]);
 	}
 }
                         /*--------------------------*/

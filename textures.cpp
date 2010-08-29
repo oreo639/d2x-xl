@@ -13,18 +13,16 @@
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB)
+void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
-if (pRGB) {
-	HRSRC hFind = FindResource (hInst, PaletteResource (), "RC_DATA");
-	if (hFind) {
-		HGLOBAL hPalette = LoadResource (hInst, hFind);
-		byte *palette = ((byte *) LockResource (hPalette)) + 3 * nIndex;
-		pRGB->peRed = (*palette++)<<2;
-		pRGB->peGreen = (*palette++)<<2;
-		pRGB->peBlue = (*palette)<<2;
-		pRGB->peFlags = 0;
-		}
+CResource res;
+byte* palette;
+if (palette = res.Load (PaletteResource ()) {
+	palette += 3 * nIndex;
+	rgb.peRed = palette [0] << 2;
+	rgb.peGreen = palette [1] << 2;
+	rgb.peBlue = palette [2] << 2;
+	rgb.peFlags = 0;
 	}
 }
 
@@ -32,64 +30,42 @@ if (pRGB) {
 
 BITMAPINFO *MakeBitmap (void) 
 {
-	BITMAPINFO *bmi;
-	BITMAPINFOHEADER *bi;
-	short i;
-	HRSRC hFind;
-	HGLOBAL hPalette;
-	byte *palette;
-
 	typedef struct tagMyBMI {
 		BITMAPINFOHEADER bmiHeader;
 		RGBQUAD bmiColors[256];
 		} MyBMI;
 
-static MyBMI my_bmi;
+	static MyBMI my_bmi;
 
 	// point bitmap info to structure
-	bmi = (BITMAPINFO *)&my_bmi;
+BITMAPINFO* bmi = (BITMAPINFO *)&my_bmi;
+// point the info to the bitmap header structure
+BITMAPINFOHEADER& bi = bmi->bmiHeader;
+// define bit map info header elements
+bi.biSize          = sizeof (BITMAPINFOHEADER);
+bi.biWidth         = 64;
+bi.biHeight        = 64;
+bi.biPlanes        = 1;
+bi.biBitCount      = 8;
+bi.biCompression   = BI_RGB;
+bi.biSizeImage     = 0;
+bi.biXPelsPerMeter = 0;
+bi.biYPelsPerMeter = 0;
+bi.biClrUsed       = 0;
+bi.biClrImportant  = 0;
 
-	// point the info to the bitmap header structure
-	bi = &bmi->bmiHeader;
-
-	// define bit map info header elements
-	bi->biSize          = sizeof (BITMAPINFOHEADER);
-	bi->biWidth         = 64;
-	bi->biHeight        = 64;
-	bi->biPlanes        = 1;
-	bi->biBitCount      = 8;
-	bi->biCompression   = BI_RGB;
-	bi->biSizeImage     = 0;
-	bi->biXPelsPerMeter = 0;
-	bi->biYPelsPerMeter = 0;
-	bi->biClrUsed       = 0;
-	bi->biClrImportant  = 0;
-
-	// define d1 palette from resource
-	hFind = FindResource (hInst, PaletteResource (), "RC_DATA");
-	if (!hFind) {
-		DEBUGMSG (" Bitmap creation: Palette resource not found.");
-		return null;
-		}
-	hPalette = LoadResource (hInst, hFind);
-	palette = (byte *) LockResource (hPalette);
-#if 0
-	for (i=0;i<256;i++) {
-	  bmi->bmiColors[i].rgbRed      = *palette++;
-	  bmi->bmiColors[i].rgbGreen    = *palette++;
-	  bmi->bmiColors[i].rgbBlue     = *palette++;
-	  bmi->bmiColors[i].rgbReserved = 0;palette++;
+// define d1 palette from resource
+CResource res;
+byte* palette;
+if (!(palette = res.Load (PaletteResource ()))
+	return null;
+for (int i = 0; i < 256; i++) {
+	bmi->bmiColors [i].rgbRed = (*palette++) << 2;
+	bmi->bmiColors [i].rgbGreen = (*palette++) << 2;
+	bmi->bmiColors [i].rgbBlue = (*palette++) << 2;
+	bmi->bmiColors [i].rgbReserved = 0;
 	}
-#else
-	for (i=0;i<256;i++) {
-	  bmi->bmiColors[i].rgbRed    = (*palette++)<<2;
-	  bmi->bmiColors[i].rgbGreen  = (*palette++)<<2;
-	  bmi->bmiColors[i].rgbBlue   = (*palette++)<<2;
-	  bmi->bmiColors[i].rgbReserved = 0;
-	}
-#endif
-	FreeResource (hPalette);
-  return bmi;
+return bmi;
 }
 
 // -------------------------------------------------------------------------- 

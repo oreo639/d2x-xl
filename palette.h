@@ -5,6 +5,5 @@ int HasCustomPalette (void);
 void FreeCustomPalette (void);
 int ReadCustomPalette (CFileManager& fp, long fSize);
 int WriteCustomPalette (CFileManager& fp);
-byte * PalettePtr (void);
-LPCTSTR PaletteResource ();
-void FreePaletteResource ();
+byte * PalettePtr (CResource& res);
+LPCTSTR PaletteResource (void);

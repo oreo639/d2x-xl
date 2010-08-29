@@ -659,38 +659,29 @@ ReadRobotResource (-1);
 // if robot_number == -1, then it reads all robots
 //------------------------------------------------------------------------
 
-void CMine::ReadRobotResource (int robot_number) 
+void CMine::ReadRobotResource (int nRobot) 
 {
-  int		i,	j,	t;
-  byte*	bufPtr;
+  int			i,	j,	t;
+  byte*		bufPtr;
+  CResource	res;
 
-HINSTANCE hInst = AfxGetApp ()->m_hInstance;
-HRSRC hFind = FindResource (hInst, "ROBOT_HXM", "RC_DATA");
-HGLOBAL hResource = LoadResource (hInst, hFind);
-if (!hResource) {
-	ErrorMsg ("Could not find robot resource data");
-	return;
-	}
-bufP = (byte *)LockResource(hResource);
-if (!bufP) {
+if (!(bufP = res.Load ("ROBOT.HXM"))) {
 	ErrorMsg ("Could not lock robot resource data");
 	return;
 	}
-t = (ushort)(*((uint *)bufP));
-N_robot_types = min(t,MAX_ROBOT_TYPES);
+t = (ushort) (*((uint *) bufP));
+N_robot_types = min (t, MAX_ROBOT_TYPES);
 bufP += sizeof (uint);
 for (j = 0; j < t; j++) {
-	i = (ushort)(*((uint *)bufP));
+	i = (ushort) (*((uint *) bufP));
 	if (i > MAX_ROBOT_TYPES) 
 		break;
-bufP += sizeof (uint);
-// copy the robot info for one robot, or all robots
-if (j==robot_number || robot_number == -1) {
-memcpy(RobotInfo (i), bufP, sizeof (tRobotInfo));
-}
-bufP += sizeof (tRobotInfo);
-}
-FreeResource (hResource);
+	bufP += sizeof (uint);
+	// copy the robot info for one robot, or all robots
+	if ((j == nRobot) || (nRobot == -1)) 
+		memcpy(RobotInfo (i), bufP, sizeof (tRobotInfo));
+	bufP += sizeof (tRobotInfo);
+	}
 }
 
 //--------------------------------------------------------------------------

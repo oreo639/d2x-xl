@@ -97,28 +97,9 @@ return fwrite (pCustomPalette, 37 * 256, 1, fp) == 37 * 256;
 
 //------------------------------------------------------------------------
 
-byte * PalettePtr (void)
+byte* PalettePtr (CResource& res)
 {
-if (pCustomPalette)
-	return pCustomPalette;
-HINSTANCE hInst = AfxGetInstanceHandle();
-HRSRC hResource = FindResource (hInst, PaletteResource (), "RC_DATA");
-if (!hResource)
-	return null;
-hPalette = LoadResource (hInst, hResource);
-if (!hPalette)
-	return null;
-return (byte *) LockResource (hPalette);
-}
-
-//------------------------------------------------------------------------
-
-void FreePaletteResource ()
-{
-if (!pCustomPalette && hPalette) {
-	FreeResource (hPalette);
-	hPalette = 0;
-	}
+return pCustomPalette ? pCustomPalette : res.Load (PaletteResource);
 }
 
 //------------------------------------------------------------------------

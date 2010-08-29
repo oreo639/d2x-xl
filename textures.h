@@ -336,7 +336,7 @@ extern CTextureManager textureManager;
 //------------------------------------------------------------------------
 
 //int textureManager.Define (short nBaseTex,short nOvlTex, CTexture *pDestTx, int x0, int y0);
-void RgbFromIndex (int nIndex, PALETTEENTRY *pRGB);
+void RgbFromIndex (int nIndex, PALETTEENTRY& rgb);
 
 BITMAPINFO *MakeBitmap(void);
 

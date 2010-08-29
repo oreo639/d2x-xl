@@ -17,6 +17,7 @@ CResourceManager resourceManager;
 
 byte* CResource::Load (const char* szName, const char* szCategory) 
 {
+Unload ();
 HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 HRSRC hFind = FindResource (hInst, "ROBOT_HXM", "RC_DATA");
 if (!hFind)

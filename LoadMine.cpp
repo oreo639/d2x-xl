@@ -100,16 +100,15 @@ short CMine::LoadPalette (void)
 HINSTANCE hInst = AfxGetInstanceHandle();
 // set palette
 // make global palette
-byte *palette = PalettePtr ();
+CResource res;
+byte *palette = PalettePtr (res);
 ASSERT(palette);
 if (!palette)
 	return 1;
 // redefine logical palette entries if memory for it is allocated
 m_dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
-if (!m_dlcLogPalette) {
-	FreePaletteResource ();
+if (!m_dlcLogPalette)
 	return 1;
-	}
 m_dlcLogPalette->palVersion = 0x300;
 m_dlcLogPalette->palNumEntries = 256;
 int i;
@@ -124,7 +123,6 @@ if (m_currentPalette)
 	delete m_currentPalette;
 m_currentPalette = new CPalette ();
 m_currentPalette->CreatePalette (m_dlcLogPalette);
-FreePaletteResource ();
 return 0;
 }
 
@@ -280,7 +278,7 @@ if (mineErr != 0) {
 	return(2);
 }
 
-fp.Seek ( gamedataOffset, SEEK_SET);
+fp.Seek (gamedataOffset, SEEK_SET);
 gameErr = LoadGameData(fp, bNewMine);
 
 if (gameErr != 0) {
@@ -362,56 +360,37 @@ return return_code;
 
 // ------------------------------------------------------------------------
 
-byte *CMine::LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize)
+bool CMine::HasCustomLightMap (void)
 {
-HINSTANCE hInst = AfxGetInstanceHandle ();
-HRSRC hRes = FindResource (hInst, pszRes, "RC_DATA");
-if (!hRes)
-	return null;
-if (!(hGlobal = LoadResource (hInst, hRes)))
-	return null;
-nResSize = SizeofResource (hInst, hRes);
-return (byte *) LockResource (hGlobal);
-}
+	CResource res;
 
-// ------------------------------------------------------------------------
-
-BOOL CMine::HasCustomLightMap (void)
-{
-HGLOBAL hGlobal = 0;
-uint nSize = 0;
-byte *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
-if (!dataP)
-	return 0;
-BOOL bCustom = memcmp (lightMap, dataP, sizeof (lightMap)) != 0;
-FreeResource (hGlobal);
+byte *dataP;
+if (!(dataP = res.Load (IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
+	return false;
+return memcmp (lightMap, dataP, sizeof (lightMap)) != 0;
 return bCustom;
 }
 
 // ------------------------------------------------------------------------
 
-BOOL CMine::HasCustomLightColors (void)
+bool CMine::HasCustomLightColors (void)
 {
-HGLOBAL hGlobal = 0;
-uint nSize = 0;
-byte *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
-if (!dataP)
-	return 0;
-BOOL bCustom = memcmp (DATA (MineData ().texColors), dataP, sizeof (MineData ().texColors)) != 0;
-FreeResource (hGlobal);
-return bCustom;
+CResource res;
+byte *dataP;
+if (!(dataP = res.Load (IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
+	return false;
+return memcmp (DATA (MineData ().texColors), dataP, sizeof (MineData ().texColors)) != 0;
 }
 
 // ------------------------------------------------------------------------
 
 short CMine::LoadDefaultLightAndColor (void)
 {
-HGLOBAL hGlobal = 0;
-uint nSize = 0;
-byte *dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_COLOR_D1 : IDR_COLOR_D2), hGlobal, nSize);
-if (!dataP)
-	return 0;
-int i = nSize / (3 * sizeof (int) + sizeof (byte));
+CResource res;
+byte *dataP;;
+if (!(dataP = res.Load (IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
+	return false;
+int i = res.Size () / (3 * sizeof (int) + sizeof (byte));
 #if USE_DYN_ARRAYS
 if (i > (int) MineData ().texColors.Length ())
 	i = (int) MineData ().texColors.Length ();
@@ -428,12 +407,10 @@ for (CColor *colorP = DATA (MineData ().texColors); i; i--, colorP++) {
 	colorP->m_info.color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
 	dataP += sizeof (int);
 	}
-FreeResource (hGlobal);
-dataP = LoadDataResource (MAKEINTRESOURCE ((IsD1File ()) ? IDR_LIGHT_D1 : IDR_LIGHT_D2), hGlobal, nSize);
-if (!dataP)
-	return 0;
+
+if (!(dataP = res.Load (IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
+	return false;
 memcpy (lightMap, dataP, min (nSize, sizeof (lightMap)));
-FreeResource (hGlobal);
 return 1;
 }
 
@@ -445,50 +422,51 @@ return 1;
 //
 // Returns - 0 if no error is detected
 // ------------------------------------------------------------------------
+
 short CMine::FixIndexValues(void)
 {
 	short 	nSegment, nSide, nVertex;
 	ushort	nWall;
 	short 	checkErr;
 
-	checkErr = 0;
-	CSegment *segP = Segments (0);
-	for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
-		for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-			// check wall numbers
-			CSide& side = segP->m_sides [nSide];
-			if (side.m_info.nWall >= GameInfo ().walls.count && side.m_info.nWall != NO_WALL) {
-				side.m_info.nWall = NO_WALL;
-				checkErr |= (1 << 0);
+checkErr = 0;
+CSegment *segP = Segments (0);
+for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+	for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+		// check wall numbers
+		CSide& side = segP->m_sides [nSide];
+		if (side.m_info.nWall >= GameInfo ().walls.count && side.m_info.nWall != NO_WALL) {
+			side.m_info.nWall = NO_WALL;
+			checkErr |= (1 << 0);
 			}
-			// check children
-			if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (short)SegCount ())) {
-				segP->SetChild (nSide, -1);
-				checkErr |= (1 << 1);
+		// check children
+		if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (short)SegCount ())) {
+			segP->SetChild (nSide, -1);
+			checkErr |= (1 << 1);
 			}
 		}
-		// check verts
-		for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-			if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= VertCount ())) {
-				segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture [0]
-				checkErr |= (1 << 2);      // but it will prevent a crash
+	// check verts
+	for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
+		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= VertCount ())) {
+			segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture [0]
+			checkErr |= (1 << 2);      // but it will prevent a crash
 			}
 		}
 	}
-	CWall *wallP = Walls (0);
-	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++) {
-		// check nSegment
-		if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
-			wallP->m_nSegment = 0;
-			checkErr |= (1 << 3);
+CWall *wallP = Walls (0);
+for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++) {
+	// check nSegment
+	if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
+		wallP->m_nSegment = 0;
+		checkErr |= (1 << 3);
 		}
-		// check nSide
-		if (wallP->m_nSide < 0 || wallP->m_nSide > 5) {
-			wallP->m_nSide = 0;
-			checkErr |= (1 << 4);
+	// check nSide
+	if (wallP->m_nSide < 0 || wallP->m_nSide > 5) {
+		wallP->m_nSide = 0;
+		checkErr |= (1 << 4);
 		}
 	}
-	return checkErr;
+return checkErr;
 }
 
 // ------------------------------------------------------------------------
@@ -631,7 +609,7 @@ GameInfo ().lightDeltaValues.Reset ();
 //==================== = READ FILE INFO========================
 
 // Read in gameFileInfo to get size of saved fileinfo.
-if (fp.Seek ( startOffset, SEEK_SET)) {
+if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
@@ -649,7 +627,7 @@ if (gameFileInfo.signature != 0x6705) {
 //    return -1;
 
 // Now, Read in the fileinfo
-if (fp.Seek ( startOffset, SEEK_SET)) {
+if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking to game info in mine.cpp");
 	return -1;
 	}

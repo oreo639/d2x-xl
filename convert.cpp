@@ -61,15 +61,7 @@ CDialog::OnInitDialog ();
 CreateImgWnd (&m_showD1, IDC_CONVERT_SHOWD1);
 CreateImgWnd (&m_showD2, IDC_CONVERT_SHOWD2);
 
-m_hInst = AfxGetApp()->m_hInstance;
-HRSRC hFind = FindResource (m_hInst, MAKEINTRESOURCE (IDR_TEXTURE_D1D2), "RC_DATA");
-if (!hFind)
-	return FALSE;
-m_hTextures = LoadResource (m_hInst, hFind);
-if (!m_hTextures)
-	return FALSE;
-m_pTextures = (short *) LockResource (m_hTextures);
-if (!m_pTextures)
+if (!(m_pTextures = (short *) m_res.Load (IDR_TEXTURE_D1D2)))
 	return FALSE;
 
 CComboBox *pcb = CBD1 ();

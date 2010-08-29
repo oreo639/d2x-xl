@@ -532,24 +532,23 @@ if ( (object_number >= 0) && (object_number <= 129)) {
 	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
 	HRSRC hFind = FindResource (hInst, message, RT_BITMAP);
 	HGLOBAL hGlobal = LoadResource (hInst, hFind);
-	char *pRes = (char *)LockResource (hGlobal);
-	BITMAPINFO *bmi = (BITMAPINFO *)pRes;
+	CResource res;
+	char *resP = res.Load (message, RT_BITMAP);
+	BITMAPINFO *bmi = (BITMAPINFO *) resP;
 	if (bmi) {	//if not, there is a problem in the resource file
-		int ncolors = (int)bmi->bmiHeader.biClrUsed;
+		int ncolors = (int) bmi->bmiHeader.biClrUsed;
 		if (ncolors == 0)
 			ncolors = 1 << (bmi->bmiHeader.biBitCount); // 256 colors for 8-bit data
-		char *pImage = pRes + sizeof (BITMAPINFOHEADER) + ncolors * 4;
-		int width = (int)bmi->bmiHeader.biWidth;
-		int height = (int)bmi->bmiHeader.biHeight;
+		char *pImage = resP + sizeof (BITMAPINFOHEADER) + ncolors * 4;
+		int width = (int) bmi->bmiHeader.biWidth;
+		int height = (int) bmi->bmiHeader.biHeight;
 		int xoffset = (64 - width) / 2;
 		int yoffset = (64 - height) / 2;
-		SetDIBitsToDevice (pDC->m_hDC, xoffset,yoffset,width,height,0,0,
-								0, height,pImage, bmi, DIB_RGB_COLORS);
+		SetDIBitsToDevice (pDC->m_hDC,  xoffset, yoffset, width, height, 0, 0, 0, height,pImage, bmi, DIB_RGB_COLORS);
 		}
-	FreeResource (hGlobal);
 	}
 pWnd->ReleaseDC (pDC);
-pWnd->InvalidateRect (null, TRUE);
+pWnd->InvalidateRect (null				 TRUE);
 pWnd->UpdateWindow ();
 }
 

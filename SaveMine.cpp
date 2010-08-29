@@ -263,121 +263,110 @@ return 0;
 // ------------------------------------------------------------------------
 short CMine::SaveGameData(CFileManager& fp)
 {
-#if 1 //!DEMO
-	HINSTANCE hInst = AfxGetInstanceHandle();
+HINSTANCE hInst = AfxGetInstanceHandle();
 
-	int i;
-	int startOffset, endOffset;
+int i;
+int startOffset, endOffset;
 
-	startOffset = fp.Tell ();
+startOffset = fp.Tell ();
 
-	//==================== = WRITE FILE INFO========================
+//==================== = WRITE FILE INFO========================
 
-	// Do not assume the "sizeof" values are the same as what was read when level was loaded.
-	// Also be careful no to use sizeof () because the editor's internal size may not match
-	// the size which is used by the game engine.
-	GameInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
-	GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
-	GameInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
-	GameInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
-	GameInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
-	GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
-	GameInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
-	GameInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
-	GameInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
+// Do not assume the "sizeof" values are the same as what was read when level was loaded.
+// Also be careful no to use sizeof () because the editor's internal size may not match
+// the size which is used by the game engine.
+GameInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
+GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
+GameInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
+GameInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
+GameInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
+GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
+GameInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
+GameInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
+GameInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
 
-	if (m_fileType== RDL_FILE) {
-		GameInfo ().fileinfo.signature = 0x6705;
-		GameInfo ().fileinfo.version = 25;
-		GameInfo ().fileinfo.size = 119;
-		GameInfo ().level = 0;
+if (m_fileType== RDL_FILE) {
+	GameInfo ().fileinfo.signature = 0x6705;
+	GameInfo ().fileinfo.version = 25;
+	GameInfo ().fileinfo.size = 119;
+	GameInfo ().level = 0;
+	}
+else {
+	GameInfo ().fileinfo.signature = 0x6705;
+	GameInfo ().fileinfo.version = (LevelVersion () < 13) ? 31 : 40;
+	GameInfo ().fileinfo.size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
+	GameInfo ().level = 0;
+}
+
+fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
+if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
+	fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
+}
+if (IsD2File ()) {
+	fwrite("\n", 1, 1); // write an end - of - line
+} else {
+	fwrite("", 1, 1);   // write a null
+}
+
+// write pof names from resource file
+byte*				savePofNamesP;
+short				nSavePofNames, nPofs;
+CResource	res;
+
+if (IsD2File ()) {
+	nSavePofNames = 166;
+	fwrite (&nSavePofNames, 2, 1);   // write # of POF names
+	}
+else {
+	nSavePofNames = 78;
+	nPofs = 25;   // Don't know exactly what this value is for or why it is 25?
+	fwrite(&nPofs, 2, 1);
+	}
+hGlobal = LoadResource(hInst, hRes);
+ASSERT(hGlobal);
+
+if (!(savePofNamesP = res.Load (IsD1File () ? IRD_POF_NAMES1 : IDR_POF_NAMES2)))
+	return 1;
+
+fwrite(savePofNamesP, nSavePofNames, 13); // 13 characters each
+
+GameInfo ().player.offset = fp.Tell ();
+char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
+fwrite(str, strlen (str) + 1, 1);
+
+SaveGameItem (fp, GameInfo ().objects, DATA (Objects ()));
+SaveGameItem (fp, GameInfo ().walls, DATA (Walls ()));
+SaveGameItem (fp, GameInfo ().doors, DATA (ActiveDoors ()));
+SaveGameItem (fp, GameInfo ().triggers, DATA (Triggers ()));
+if (LevelVersion () >= 12) {
+	fp.Write (NumObjTriggers ());
+	if (NumObjTriggers ()) {
+		SortObjTriggers ();
+		for (i = 0; i < NumObjTriggers (); i++)
+			ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
+		for (i = 0; i < NumObjTriggers (); i++)
+			fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
 		}
-	else {
-		GameInfo ().fileinfo.signature = 0x6705;
-		GameInfo ().fileinfo.version = (LevelVersion () < 13) ? 31 : 40;
-		GameInfo ().fileinfo.size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
-		GameInfo ().level = 0;
+	}
+SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
+SaveGameItem (fp, GameInfo ().botgen, DATA (BotGens ()));
+if (IsD2File ()) {
+SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
+	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
+		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
+	SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
+	SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
 	}
 
-	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
-	if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
-		fwrite(m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
-	}
-	if (IsD2File ()) {
-		fwrite("\n", 1, 1); // write an end - of - line
-	} else {
-		fwrite("", 1, 1);   // write a null
-	}
+endOffset = fp.Tell ();
 
-	// write pof names from resource file
-	HRSRC     hRes;
-	HGLOBAL   hGlobal;
-	byte *save_pof_names;
-	short n_save_pof_names, n_pofs;
+//==================== = UPDATE FILE INFO OFFSETS====================== =
+fp.Seek (startOffset, SEEK_SET);
+fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
 
-	if (IsD2File ()) {
-		n_save_pof_names = 166;
-		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES2), "RC_DATA")))
-			return 1;
-		fwrite(&n_save_pof_names, 2, 1);   // write # of POF names
-		}
-	else {
-		n_save_pof_names = 78;
-		if (!(hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_POF_NAMES1), "RC_DATA")))
-			return 1;
-		n_pofs = 25;   // Don't know exactly what this value is for or why it is 25?
-		fwrite(&n_pofs, 2, 1);
-		}
-	hGlobal = LoadResource(hInst, hRes);
-	ASSERT(hGlobal);
-
-	save_pof_names = (byte *) LockResource(hGlobal);
-	ASSERT(save_pof_names);
-
-	fwrite(save_pof_names, n_save_pof_names, 13); // 13 characters each
-	FreeResource(hGlobal);
-
-	//==================== = WRITE PLAYER INFO==========================
-	GameInfo ().player.offset = fp.Tell ();
-	char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
-	fwrite(str, strlen (str) + 1, 1);
-
-	//==================== = WRITE OBJECT INFO==========================
-	// note: same for D1 and D2
-	SaveGameItem (fp, GameInfo ().objects, DATA (Objects ()));
-	SaveGameItem (fp, GameInfo ().walls, DATA (Walls ()));
-	SaveGameItem (fp, GameInfo ().doors, DATA (ActiveDoors ()));
-	SaveGameItem (fp, GameInfo ().triggers, DATA (Triggers ()));
-	if (LevelVersion () >= 12) {
-		fp.WriteInt32 (NumObjTriggers ());
-		if (NumObjTriggers ()) {
-			SortObjTriggers ();
-			for (i = 0; i < NumObjTriggers (); i++)
-				ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
-			for (i = 0; i < NumObjTriggers (); i++)
-				fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
-			}
-		}
-	SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
-	SaveGameItem (fp, GameInfo ().botgen, DATA (BotGens ()));
-	if (IsD2File ()) {
-	SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
-		if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
-			SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
-		SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
-		SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
-		}
-
-	endOffset = fp.Tell ();
-
-	//==================== = UPDATE FILE INFO OFFSETS====================== =
-	fp.Seek ( startOffset, SEEK_SET);
-	fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
-
-	//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
-	fp.Seek ( endOffset, SEEK_SET);
-#endif //DEMO
-	return(0);
+//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
+fp.Seek (endOffset, SEEK_SET);
+return 0;
 }
 
 // --------------------------------------------------------------------------

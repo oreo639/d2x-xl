@@ -11,27 +11,23 @@ private:
 	size_t		m_size;
 
 public:
-	CResource () : m_handle (0), m_size(0) {}
+	byte* Load (const char* szName, const char* szCategory = "RC_DATA");
 
-	~CResource () {
+	inline byte* Load (const int nId, const char* szCategory = "RC_DATA") { return Load (MAKEINTRESOURCE (nId), szCategory); }
+
+	inline void Unload (void) {
 		if (m_hResource) {
 			FreeResource (m_hResource);
 			m_hResource = 0;
 			}
 		}
 
-	byte* Load (const char* szName, const char* szCategory);
-	inline byte* Load (const int nId, const char* szCategory) { return Load (MAKEINTRESOURCE (nId), szCategory); }
-
 	inline size_t Size (void) { return m_size; }
-};
 
-//------------------------------------------------------------------------
+	CResource () : m_handle (0), m_size(0) {}
 
-class CDataResource : public CResource {
-public:
-	inline byte* Load (const char* szName) { return this->CResource::Load (szName, "RC_DATA"); }
-	inline byte* Load (int nId) { return this->CResource::Load (nId, "RC_DATA"); }
+	~CResource () { Unload (); }
+
 };
 
 //------------------------------------------------------------------------

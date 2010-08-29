@@ -58,9 +58,8 @@ class CConvertDlg : public CDialog
 		bool			m_bInited;
 		CWnd			m_showD1;
 		CWnd			m_showD2;
-		HINSTANCE	m_hInst;
-		HGLOBAL		m_hTextures;
-		short			*m_pTextures;
+		CResource	m_res;
+		short*		m_pTextures;
 
 		CConvertDlg (CWnd *pParent = null);
       virtual BOOL OnInitDialog ();
