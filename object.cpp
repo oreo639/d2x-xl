@@ -866,7 +866,7 @@ switch (m_info.movementType) {
 		mType.physInfo.Read (fp, version);
 		break;
 	case MT_SPINNING:
-		fp.Read (mType.spinRate);
+		fp.ReadVector (mType.spinRate);
 		break;
 	case MT_NONE:
 		break;

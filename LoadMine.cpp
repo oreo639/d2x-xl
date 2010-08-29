@@ -53,7 +53,7 @@ if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
-	fp.SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+	CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 	bLoadFromHog = false;
 	bNewMine = true;
@@ -328,12 +328,12 @@ if (!bLoadFromHog && (IsD2File ())) {
 		char szHogFile [256], szHamFile [256], *p;
 		long nSize, nPos;
 
-		fp.SplitPath (descent2_path, szHogFile, null, null);
+		CFileManager::SplitPath (descent2_path, szHogFile, null, null);
 		if (p = strstr (szHogFile, "data"))
 			*p = '\0';
 		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
 		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
-			fp.SplitPath (descent2_path, szHamFile, null, null);
+			CFileManager::SplitPath (descent2_path, szHamFile, null, null);
 			if (p = strstr (szHamFile, "data"))
 				*p = '\0';
 			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");

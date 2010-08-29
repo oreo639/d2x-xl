@@ -133,8 +133,7 @@ const char* PaletteResource (void)
 int id = IDR_GROUPA_256;
 if (theMine && theMine->IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
-CFileManager fp;
-fp.SplitPath (descent2_path, null, szFile, null);
+CFileManager::SplitPath (descent2_path, null, szFile, null);
 for (ppe = palExt; *(ppe->szFile); ppe++)
 	if (!_stricmp (ppe->szFile, szFile))
 		return MAKEINTRESOURCE (ppe->nIdPal);

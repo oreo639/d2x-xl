@@ -136,6 +136,8 @@ return nFileError;
 
 int CFileManager::Exist (const char *filename) 
 {
+	FILE *fp;
+
 if ((fp = GetFileHandle (filename, "rb"))) { // Check for non-hogP file first...
 	fclose (fp);
 	return 1;
