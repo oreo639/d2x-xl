@@ -98,7 +98,7 @@ if (i < FILENAME_LEN - 5) {
 
 // ----------------------------------------------------------------------------
 
-FILE *CFileManager::GetFileHandle (const char *filename, const char *folder, const char *mode) 
+CFileManager& CFileManager::GetFileHandle (const char *filename, const char *folder, const char *mode) 
 {
 	FILE	*fp;
 	char	fn [FILENAME_LEN];
@@ -539,18 +539,18 @@ WriteFixAng (v.h);
 
 void CFileManager::WriteMatrix (const CFixMatrix& m)
 {
-WriteVector (m.rVec);
-WriteVector (m.uVec);
-WriteVector (m.fVec);
+WriteVector (m.rVec.v);
+WriteVector (m.uVec.v);
+WriteVector (m.fVec.v);
 }
 
 // ----------------------------------------------------------------------------
 
 void CFileManager::WriteMatrix (const CDoubleMatrix& m)
 {
-WriteVector (m.rVec);
-WriteVector (m.uVec);
-WriteVector (m.fVec);
+WriteVector (m.rVec.v);
+WriteVector (m.uVec.v);
+WriteVector (m.fVec.v);
 }
 
 // ----------------------------------------------------------------------------

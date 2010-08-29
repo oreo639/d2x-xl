@@ -33,11 +33,11 @@ char cut_paste_filename [256] = "";
 int read_block_file(char *name,int option);
 void strip_extension(char *str);
 
-void DeleteSubFile (FILE *fp, long size, long offset, int num_entries, int delete_index);
+void DeleteSubFile (CFileManager& fp, long size, long offset, int num_entries, int delete_index);
 void ImportSubFile ();
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size);
 void RenameSubFile ();
-void DeleteLevelSubFiles(FILE *fp,char *name);
+void DeleteLevelSubFiles(CFileManager& fp,char *name);
 
                          /*--------------------------*/
 
@@ -576,7 +576,7 @@ if (FindFilename (buf) >= 0) {
 	ErrorMsg ("A fp with that name already exists\nin the HOG fp.");
 	return;
 	}
-FILE *hogfile;
+CFileManager& hogfile;
 fopen_s (&hogfile, m_pszFile, "r+b"); // add it to the end
 if (!hogfile) {
 	ErrorMsg ("Could not open HOG fp.");
@@ -675,13 +675,13 @@ if (!GetOpenFileName (&ofn))
 	return;
 #endif
 
-FILE *fDest;
+CFileManager& fDest;
 fopen_s (&fDest, m_pszFile, "ab"); // add it to the end
 if (!fDest) {
 	ErrorMsg ("Could not open destination HOG fp for import.");
 	return;
 	}
-FILE *fSrc;
+CFileManager& fSrc;
 fopen_s (&fSrc, szFile, "rb");
 if (!fSrc) {
 	ErrorMsg ("Could not open source fp for import.");
@@ -779,7 +779,7 @@ void CHogManager::OnDelete ()
 	long size;
 	long offset;
 	int fileno;
-	FILE *hogFile = 0;
+	CFileManager& hogFile = 0;
 	CListBox * plb = LBFiles ();
 
 // make sure there is an item selected
@@ -821,7 +821,7 @@ bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels
 	char data [256];
 	long position;
 	byte index;
-	FILE *hog_file;
+	CFileManager& hog_file;
 	int nFiles;
 
 ClearFileList (plb);
@@ -894,7 +894,7 @@ bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOO
 	struct level_header *level;
 	char data [256];
 	long position;
-	FILE *hog_file;
+	CFileManager& hog_file;
 	int nFiles;
 
 *nSize = -1;
@@ -948,13 +948,13 @@ return false;
 
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size) 
 {
-FILE *fSrc;
+CFileManager& fSrc;
 fopen_s (&fSrc, pszSrc, "rb");
 if (!fSrc) {
 	ErrorMsg ("Could not open HOG fp.");
 	return false;
 	}
-FILE *fDest;
+CFileManager& fDest;
 fopen_s (&fDest, pszDest,"wb");
 if (!fDest) {
 	ErrorMsg ("Could not create export fp.");
@@ -983,7 +983,7 @@ return (size == 0);
 // delete_sub_file()
 //----------------------------------------------------------------------------
 
-void DeleteSubFile (FILE *fp, long size, long offset, int num_entries, int delete_index) 
+void DeleteSubFile (CFileManager& fp, long size, long offset, int num_entries, int delete_index) 
 {
 int n_bytes;
 // as long as we are not deleting the last item
@@ -1023,7 +1023,7 @@ if (ext)
 
 #define MAX_REGNUM 6
 
-void DeleteLevelSubFiles (FILE *fp, char *base) 
+void DeleteLevelSubFiles (CFileManager& fp, char *base) 
 {
 struct region {
 	int index;

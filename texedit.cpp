@@ -637,7 +637,7 @@ return
 // 
 //************************************************************************
 
-bool CTextureEdit::LoadTGA (FILE *file)
+bool CTextureEdit::LoadTGA (CFileManager& file)
 {
 	tTgaHeader	tgaHeader;
 	char			imgIdent [255];
@@ -688,7 +688,7 @@ return false;
 // 
 //************************************************************************
 
-bool CTextureEdit::LoadBitmap (FILE *file)
+bool CTextureEdit::LoadBitmap (CFileManager& file)
 {
 	RGBQUAD *palette=null;
 	PALETTEENTRY *sysPal=null;
@@ -898,7 +898,7 @@ void CTextureEdit::OnLoad ()
 {
   OPENFILENAME ofn;
   char szFile[80] = "\0";
-  FILE *file=null;
+  CFileManager& file=null;
   bool bFuncRes;
 
   sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
@@ -942,7 +942,7 @@ if (file)
 // TTextureDialog - Save Message
 //************************************************************************
 
-void CTextureEdit::SaveBitmap (FILE *file)
+void CTextureEdit::SaveBitmap (CFileManager& file)
 {
 BITMAPFILEHEADER bmfh;
 
@@ -970,7 +970,7 @@ fwrite(m_bitmap, m_nSize,1,file);
 
 //************************************************************************
 
-void CTextureEdit::SaveTGA (FILE *file)
+void CTextureEdit::SaveTGA (CFileManager& file)
 {
 	tTgaHeader	h;
 	int			i, j;
@@ -1002,7 +1002,7 @@ void CTextureEdit::OnSave ()
 {
 OPENFILENAME ofn;
 char szFile[256] = "\0";
-FILE *file;
+CFileManager& file;
 
 memset(&ofn, 0, sizeof (OPENFILENAME));
 

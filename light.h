@@ -100,9 +100,9 @@ void update_CLightDeltaValues(); // light.cpp
 int is_light(int value);
 int is_exploding_light(int value);
 void CreateLightMap (void);
-int ReadLightMap (FILE *fLightMap, uint nSize);
-int WriteLightMap (FILE *fLightMap);
-int WriteColorMap (FILE *fColorMap);
+int ReadLightMap (CFileManager& fLightMap, uint nSize);
+int WriteLightMap (CFileManager& fLightMap);
+int WriteColorMap (CFileManager& fColorMap);
 BOOL HasCustomLightMap (void);
 
 #endif

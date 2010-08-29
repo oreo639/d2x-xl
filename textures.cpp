@@ -234,7 +234,7 @@ if (info.flags & 0x08) {
 	}
 else {
 	for (int y = info.height - 1; y >= 0; y--) {
-		fread (m_info.bmDataP + y * info.width, info.width, 1, fp);
+		fp.Read (m_info.bmDataP + y * info.width, info.width, 1);
 		}
 	}
 m_info.width = info.width;
@@ -266,7 +266,7 @@ if (!fp)
 	fp = textureManager.OpenPigFile (nVersion);
 if (!Allocate (nSize, nTexture)) {
 	if (bLocalFile)
-		fp.Close ();	
+		fp->Close ();	
 	return 1;
 	}
 fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);

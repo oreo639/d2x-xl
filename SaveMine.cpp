@@ -315,7 +315,7 @@ CResource	res;
 
 if (IsD2File ()) {
 	nSavePofNames = 166;
-	fwrite (&nSavePofNames, 2, 1);   // write # of POF names
+	fp.Write (&nSavePofNames, 2, 1);   // write # of POF names
 	}
 else {
 	nSavePofNames = 78;

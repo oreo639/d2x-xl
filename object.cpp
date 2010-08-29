@@ -693,7 +693,7 @@ int CObjPolyModelInfo::Read (CFileManager& fp, int version)
 {
 nModel = fp.ReadInt32 ();
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	anim_angles [i].Read (fp);
+	fp.Read (anim_angles [i]);
 subobj_flags = fp.ReadInt32 ();
 tmap_override = fp.ReadInt32 ();
 alt_textures = 0;
@@ -853,7 +853,7 @@ m_info.flags = fp.ReadSByte ();
 m_info.multiplayer = (version > 37) ? fp.ReadSByte () : 0;
 m_info.nSegment = fp.ReadInt16 ();
 m_location.pos.Read (fp);
-m_location.orient.Read (fp);
+fp.Read (m_location.orient);
 m_info.size = fp.ReadFix ();
 m_info.shields = fp.ReadFix ();
 m_location.lastPos.Read (fp);
@@ -866,7 +866,7 @@ switch (m_info.movementType) {
 		mType.physInfo.Read (fp, version);
 		break;
 	case MT_SPINNING:
-		mType.spinRate.Read (fp);
+		fp.Read (mType.spinRate.Read);
 		break;
 	case MT_NONE:
 		break;
@@ -967,7 +967,7 @@ switch (m_info.movementType) {
 		mType.physInfo.Write (fp, version);
 		break;
 	case MT_SPINNING:
-		mType.spinRate.Write (fp);
+		fp.Write (mType.spinRate);
 		break;
 	case MT_NONE:
 		break;

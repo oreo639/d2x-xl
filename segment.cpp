@@ -2640,7 +2640,7 @@ if (nLevelType == 2) {
 	fp.Write (m_info.damage [0]);
 	fp.Write (m_info.damage [1]);
 	}
-WriteFix (m_info.staticLight);
+fp.Write (m_info.staticLight);
 }
 
 // ------------------------------------------------------------------------

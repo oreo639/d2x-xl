@@ -280,7 +280,7 @@ public:
 	void	InterpModelData(byte *model_data); // poly.c
 	void	DrawPoly (tModelRenderData *p);
 	int ReadModelData (char* filename, char* szSubFile, bool bCustom = false);
-	//void	ReadPolyModel (tPolyModel& polyModel, FILE *file);
+	//void	ReadPolyModel (tPolyModel& polyModel, CFileManager& file);
 
 	// view control functions
 	void	Zoom(int nSteps, double zoom);

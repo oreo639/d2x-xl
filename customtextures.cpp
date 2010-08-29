@@ -357,7 +357,7 @@ if (texP->m_info.nFormat) {
 		bufP -= 2 * w * 4;
 		}
 #else
-	fp.Write (bufP, texP->m_info.width * texP->m_info.height * sizeof (tRGBA), 1, pDestPigFile);
+	fp.Write (bufP, texP->m_info.width * texP->m_info.height * sizeof (tRGBA), 1);
 #endif
 	}
 else {
@@ -366,7 +366,7 @@ else {
 	bufP += w * (h - 1); // point to last row of bitmap
 	int row;
 	for (row = 0; row < h; row++) {
-		fp.Write (bufP, w, 1, pDestPigFile);
+		fp.Write (bufP, w, 1);
 		bufP -= w;
 		}
 	}
@@ -457,13 +457,12 @@ for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures",pigFileInfo.nTextures);
 DEBUGMSG (message);
 
-rc = 8;
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bModified && !WritePogTexture (fp, texP))
-		return 1;
+		return 8;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	if (!WritePogTexture (fp, extraTexP))
-		return 1;
+		return 8;
 
 return 0;
 }

@@ -147,7 +147,7 @@ class CFileManager {
 		static int Delete (const char *filename, const char* folder);
 		static int Rename (const char *oldname, const char *newname, const char *folder);
 		static int MkDir (const char *pathname);
-		static FILE *GetFileHandle (const char *filename, const char *folder, const char *mode);
+		static CFileManager& GetFileHandle (const char *filename, const char *folder, const char *mode);
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
 

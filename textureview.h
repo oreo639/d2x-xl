@@ -58,7 +58,7 @@ class CTextureView : public CWnd {
 		int TextureIndex(short nBaseTex);
 		int PickTexture(CPoint &point,short &nBaseTex);
 //		int ReadTextureFromFile(short texture_number,byte *bitmap_array);
-//		int ReadPog(FILE *file);
+//		int ReadPog(CFileManager& file);
 		void Refresh (bool bRepaint = true);
 		void ToggleViewFlag(eMineViewFlags flag) {
 			m_viewFlags ^= flag;

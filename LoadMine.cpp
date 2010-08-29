@@ -165,7 +165,7 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	HINSTANCE hInst = AfxGetInstanceHandle();
 	byte* palette = 0;
 
-	CFileManager& fp;
+	CFileManager fp;
 	int sig = 0;
 	int minedataOffset = 0;
 	int gamedataOffset = 0;

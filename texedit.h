@@ -90,10 +90,10 @@ class CTextureEdit : public CDialog
 		void Update (CWnd *pWnd);
 		void GetClientRect (CWnd *pWnd, CRect& rc);
 		bool PtInRect (CRect& rc, CPoint& pt);
-		bool LoadBitmap (FILE *file);
-		bool LoadTGA (FILE *file);
-		void SaveBitmap (FILE *file);
-		void SaveTGA (FILE *file);
+		bool LoadBitmap (CFileManager& file);
+		bool LoadTGA (CFileManager& file);
+		void SaveBitmap (CFileManager& file);
+		void SaveTGA (CFileManager& file);
 
 		afx_msg void OnMouseMove (UINT nFlags, CPoint point);
 		afx_msg void OnLButtonDown (UINT nFlags, CPoint point);

@@ -535,7 +535,7 @@ if (DLE.IsD2File ()) {
 	if (bObjTrigger)
 		fp.Write (m_info.flags);
 	else
-		fp.Write (char (m_info.flags));
+		fp.WriteSByte ((sbyte) m_info.flags);
 	fp.WriteSByte ((sbyte) m_count);
 	fp.WriteByte (0);
 	fp.Write (m_info.value);
