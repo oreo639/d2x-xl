@@ -282,8 +282,6 @@ bool	bLocalFile = (fp == NULL);
 if (!(fp || textureManager.HaveInfo (nVersion)))
 	fp = textureManager.OpenPigFile (nVersion);
 
-if (nTexture == 326)
-	nTexture = nTexture;
 CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))

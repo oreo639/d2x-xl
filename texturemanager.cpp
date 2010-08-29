@@ -142,7 +142,7 @@ if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
 	return 3;
 	}
 for (uint i = 0; i < nTextures [nVersion]; i++)
-	index [nVersion][i] = (*indexP++) - 1;
+	index [nVersion][i] = (*indexP++);
 FreeResource (hGlobal);
 return 0;
 }
@@ -160,7 +160,7 @@ if (info [nVersion] == NULL) {
 		nOffsets [nVersion] = ftell (fp);
 		}
 	}
-return info [nVersion][index [nVersion][nTexture]];
+return info [nVersion][index [nVersion][nTexture] - 1];
 }
 
 //------------------------------------------------------------------------------
