@@ -40,11 +40,11 @@ short CMine::Save (const char * szFile, bool bSaveToHog)
 	int				mineErr, gameErr;
 	int				i;
 
+strcpy_s (filename, sizeof (filename), szFile);
 if (fp.Open (filename, "wb"))
 	return 1;
 
 m_changesMade = 0;
-strcpy_s (filename, sizeof (filename), szFile);
 // write file signature
 fp.WriteInt32 ('P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L'); // signature
 
@@ -209,7 +209,7 @@ int CMine::SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items
 {
 info.offset = fp.Tell ();
 for (int i = 0; i < info.count; i++) {
-	items->Write (fp, GameInfo ().fileinfo.version, bFlag);
+	items->Write (fp, GameInfo ().fileInfo.version, bFlag);
 	items = items->Next ();
 	}
 return info.count;
@@ -286,20 +286,20 @@ GameInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeo
 GameInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
 
 if (m_fileType== RDL_FILE) {
-	GameInfo ().fileinfo.signature = 0x6705;
-	GameInfo ().fileinfo.version = 25;
-	GameInfo ().fileinfo.size = 119;
+	GameInfo ().fileInfo.signature = 0x6705;
+	GameInfo ().fileInfo.version = 25;
+	GameInfo ().fileInfo.size = 119;
 	GameInfo ().level = 0;
 	}
 else {
-	GameInfo ().fileinfo.signature = 0x6705;
-	GameInfo ().fileinfo.version = (LevelVersion () < 13) ? 31 : 40;
-	GameInfo ().fileinfo.size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
+	GameInfo ().fileInfo.signature = 0x6705;
+	GameInfo ().fileInfo.version = (LevelVersion () < 13) ? 31 : 40;
+	GameInfo ().fileInfo.size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
 	GameInfo ().level = 0;
 }
 
-fp.Write (&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
-if (GameInfo ().fileinfo.version >= 14) {  /*save mine filename */
+GameInfo ().Write (fp);
+if (GameInfo ().fileInfo.version >= 14) {  /*save mine filename */
 	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 }
 if (IsD2File ()) {
@@ -341,7 +341,7 @@ if (LevelVersion () >= 12) {
 	if (NumObjTriggers ()) {
 		SortObjTriggers ();
 		for (i = 0; i < NumObjTriggers (); i++)
-			ObjTriggers (i)->Write (fp, GameInfo ().fileinfo.version, true);
+			ObjTriggers (i)->Write (fp, GameInfo ().fileInfo.version, true);
 		for (i = 0; i < NumObjTriggers (); i++)
 			fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
 		}
@@ -350,7 +350,7 @@ SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
 SaveGameItem (fp, GameInfo ().botgen, DATA (BotGens ()));
 if (IsD2File ()) {
 SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
-	if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34))
+	if ((LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34))
 		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
 	SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
 	SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
@@ -360,7 +360,7 @@ endOffset = fp.Tell ();
 
 //==================== = UPDATE FILE INFO OFFSETS====================== =
 fp.Seek (startOffset, SEEK_SET);
-fp.Write (&GameInfo (), GameInfo ().fileinfo.size, 1);
+fp.Write (&GameInfo (), GameInfo ().fileInfo.size, 1);
 
 //============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
 fp.Seek (endOffset, SEEK_SET);

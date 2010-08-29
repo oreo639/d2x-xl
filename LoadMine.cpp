@@ -561,13 +561,13 @@ if (info.count > nMaxCount) {
 	ErrorMsg (message);
 	return -1;
 	}
-if (GameInfo ().fileinfo.version < nMinVersion) {
+if (GameInfo ().fileInfo.version < nMinVersion) {
 	sprintf_s (message, sizeof (message), "%s version < %d, walls not loaded", pszItem, nMinVersion);
 	ErrorMsg (message);
 	return 0;
 	}
 
-int nVersion =  GameInfo ().fileinfo.version;
+int nVersion =  GameInfo ().fileInfo.version;
 for (int i = 0; i < info.count; i++) {
 	if (!items->Read (fp, nVersion, bFlag)) {
 		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
@@ -605,34 +605,18 @@ GameInfo ().lightDeltaValues.Reset ();
 
 //==================== = READ FILE INFO========================
 
-// Read in gameFileInfo to get size of saved fileinfo.
+// Read in GameFileInfo () to get size of saved fileinfo.
 if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
-if (fp.Read (&gameFileInfo, sizeof (gameFileInfo), 1) != 1) {
-	ErrorMsg ("Error reading game info in mine.cpp");
-	return -1;
-	}
 // Check signature
-if (gameFileInfo.signature != 0x6705) {
+GameInfo ().Read (fp);
+if (GameFileInfo ().signature != 0x6705) {
 	ErrorMsg ("Game data signature incorrect");
 	return -1;
 	}
-// Check version number
-//  if (gameFileInfo.version < GAME_COMPATIBLE_VERSION)
-//    return -1;
-
-// Now, Read in the fileinfo
-if (fp.Seek (startOffset, SEEK_SET)) {
-	ErrorMsg ("Error seeking to game info in mine.cpp");
-	return -1;
-	}
-if (fp.Read (&GameInfo (), (short)gameFileInfo.size, 1) !=  1) {
-	ErrorMsg ("Error reading game info from mine.cpp");
-	return -1;
-	}
-if (GameInfo ().fileinfo.version < 14) 
+if (GameInfo ().fileInfo.version < 14) 
 	m_currentLevelName [0] = 0;
 else {  /*load mine filename */
 	char *p;
@@ -653,7 +637,7 @@ else {  /*load mine filename */
 		return -1;
 	if (GameInfo ().triggers.offset > -1) {
 		int bObjTriggersOk = 1;
-		if (GameInfo ().fileinfo.version >= 33) {
+		if (GameInfo ().fileInfo.version >= 33) {
 			int i = fp.Tell ();
 			if (fp.Read (&NumObjTriggers (), sizeof (int), 1) != 1) {
 				ErrorMsg ("Error reading object triggers from mine.");
@@ -661,8 +645,8 @@ else {  /*load mine filename */
 				}
 			else {
 				for (i = 0; i < NumObjTriggers (); i++)
-					ObjTriggers (i)->Read (fp, GameInfo ().fileinfo.version, true);
-				if (GameInfo ().fileinfo.version >= 40) {
+					ObjTriggers (i)->Read (fp, GameInfo ().fileInfo.version, true);
+				if (GameInfo ().fileInfo.version >= 40) {
 					for (i = 0; i < NumObjTriggers (); i++)
 						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 					}
@@ -672,7 +656,7 @@ else {  /*load mine filename */
 						fp.ReadInt16 ();
 						ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 						}
-					if (GameInfo ().fileinfo.version < 36)
+					if (GameInfo ().fileInfo.version < 36)
 						fp.Seek (700 * sizeof (short), SEEK_CUR);
 					else
 						fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
@@ -694,7 +678,7 @@ else {  /*load mine filename */
 	if (0 > LoadGameItem (fp, GameInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 		return -1;
 	if (IsD2File ()) {
-		if (0 > LoadGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34)))
+		if (0 > LoadGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34)))
 			return -1;
 		if (0 > LoadGameItem (fp, GameInfo ().lightDeltaValues, LightDeltaValues (0), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
 			return -1;

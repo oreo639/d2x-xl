@@ -280,8 +280,8 @@ public:
 
 class CGameInfo {
 public:
-	CGameFileInfo		fileinfo;
-	char					mine_filename[15];
+	CGameFileInfo		fileInfo;
+	char					mineFilename[15];
 	int					level;
 	CPlayerItemInfo	player;
 	CGameItemInfo		objects;
@@ -294,6 +294,43 @@ public:
 	CGameItemInfo		lightDeltaIndices;
 	CGameItemInfo		lightDeltaValues;
 	CGameItemInfo		equipgen;
+
+	int Read (CFileManager& fp) {
+		fileInfo.Read (fp);
+		fp.Read (mineFilename, 1, sizeof (mineFilename));
+		level = fp.ReadInt32 ();
+		player.Read (fp);
+		objects.Read (fp);
+		walls.Read (fp);
+		doors.Read (fp);
+		triggers.Read (fp);
+		links.Read (fp);
+		control.Read (fp);
+		botgen.Read (fp);
+		lightDeltaIndices.Read (fp);
+		lightDeltaValues.Read (fp);
+		if (fileInfo.size > 143)
+			equipgen.Read (fp);
+		return !fp.EoF ();
+		}
+
+	void Write (CFileManager& fp) {
+		fileInfo.Write (fp);
+		fp.Write (mineFilename, 1, sizeof (mineFilename));
+		fp.Write (level);
+		player.Write (fp);
+		objects.Write (fp);
+		walls.Write (fp);
+		doors.Write (fp);
+		triggers.Write (fp);
+		links.Write (fp);
+		control.Write (fp);
+		botgen.Write (fp);
+		lightDeltaIndices.Write (fp);
+		lightDeltaValues.Write (fp);
+		if (fileInfo.size > 143)
+			equipgen.Write (fp);
+		}
 };
 
 

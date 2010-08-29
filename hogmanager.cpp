@@ -1082,15 +1082,13 @@ memset (&lh, 0, sizeof (lh));
 strncpy_s (lh.name, sizeof (lh.name), szLevel, 12);
 _strlwr_s (lh.name, sizeof (lh.name));
 // calculate then write size
-fSrc.Seek (0, SEEK_END);
-lh.size = fSrc.Tell ();
+lh.size = fSrc.Size ();
 //fclose (fSrc);
 //fSrc = fopen (szSrc,"rb");
-fSrc.Seek (0, SEEK_SET);
 fDest.Write (&lh, sizeof (lh), 1);
 // write data
-while(!fSrc.EoF ()) {
-	nBytes = fSrc.Read (dataBuf, 1, sizeof (dataBuf));
+for (int l = fSrc.Size (); l > 0; l -= sizeof (dataBuf)) {
+	nBytes = fSrc.Read (dataBuf, 1, min (l, sizeof (dataBuf)));
 	if (nBytes > 0)
 		fDest.Write (dataBuf, 1, nBytes);
 	}

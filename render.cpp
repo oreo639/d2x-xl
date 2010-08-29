@@ -38,7 +38,7 @@ void TextureMap (CSegment *segP, short nSide,
 	double w;
 	byte *ptr;
 	CUVL *uvls;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
+	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileInfo.version >= 34);
 	
 	// TEMPORARY
 	CSideKey face (short (segP - theMine->Segments (0)), nSide);

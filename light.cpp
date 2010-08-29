@@ -802,7 +802,7 @@ int CMine::FindDeltaLight (short nSegment, short nSide, short *pi)
 	int	j	= (int)GameInfo ().lightDeltaIndices.count++;
 	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
-if ((LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34)) {
+if ((LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34)) {
 	for (; i < j; i++, dliP++)
 		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
@@ -828,7 +828,7 @@ bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth)
 
 GameInfo ().lightDeltaValues.count = 0;
 GameInfo ().lightDeltaIndices.count = 0;
-bool bWall, bD2XLights = (LevelVersion () >= 15) && (GameInfo ().fileinfo.version >= 34);
+bool bWall, bD2XLights = (LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel

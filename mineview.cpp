@@ -437,7 +437,7 @@ bool CMineView::SetLightStatus (void)
 	CFlickeringLight *flP = theMine->FlickeringLights (0);
 	LIGHT_STATUS *pls;
 	bool bChange = false;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileinfo.version >= 34);
+	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileInfo.version >= 34);
 	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light

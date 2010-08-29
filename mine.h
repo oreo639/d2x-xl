@@ -140,7 +140,6 @@ public:
 	int				m_fileType;
 	int				m_levelVersion;
 	char				m_currentLevelName [256];	
-	CGameFileInfo	gameFileInfo;
 	MINE_DATA		m_mineData;
 	robotInfoList	m_defaultRobotInfo;
 	HPALETTE			m_paletteHandle;
@@ -255,6 +254,8 @@ public:
 
 	inline CGameInfo& GameInfo ()
 		{ return MineData ().gameInfo; }
+	inline CGameFileInfo& GameFileInfo ()
+		{ return MineData ().gameInfo.fileInfo; }
 	inline ushort& SegCount ()
 		{ return MineData ().numSegments; }
 	inline int& ObjCount ()
