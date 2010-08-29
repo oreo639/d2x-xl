@@ -530,7 +530,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 
 void CMine::CutBlock()
 {
-  CFileManager& fp;
+  CFileManager fp;
   short nSegment;
   short count;
   char szFile [256] = "\0";
@@ -584,8 +584,7 @@ if (!BrowseForFile (FALSE,
 #endif
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
-fopen_s (&fp, szFile, "w");
-if (!fp) {
+if (fp.Open (szFile, "w")) {
 	ErrorMsg ("Unable to open block file");
 	return;
 	}
@@ -606,7 +605,7 @@ for (nSegment = SegCount () - 1; nSegment; nSegment--)
 		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
 DLE.UnlockUndo ();
-fclose(fp);
+fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
@@ -624,7 +623,7 @@ DLE.MineView ()->Refresh ();
 
 void CMine::CopyBlock(char *pszBlockFile)
 {
-  CFileManager& fp;
+  CFileManager fp;
   char szFile [256] = "\0";
   short count;
 
@@ -678,8 +677,7 @@ else {
 #endif
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
-fopen_s (&fp, szFile, "w");
-if (!fp) {
+if (fp.Open (szFile, "w")) {
 	sprintf_s (message, sizeof (message), "Unable to open block file '%s'", szFile);
 	ErrorMsg (message);
 	return;
@@ -688,7 +686,7 @@ if (!fp) {
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fp for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fp, 0);
-fclose (fp);
+fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks copied to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
 SetLinesToDraw ();
@@ -751,11 +749,10 @@ int CMine::ReadBlock (char *pszBlockFile,int option)
 	short nSegment,seg_offset;
 	short count,child;
 	short nVertex;
-	CFileManager& fp;
+	CFileManager fp;
 
 _strlwr_s (pszBlockFile, 256);
-fopen_s (&fp, pszBlockFile, "r");
-if (!fp) {
+if (fp.Open (pszBlockFile, "r")) {
 	ErrorMsg ("Unable to open block file");
 	return 1;
 	}	
@@ -767,7 +764,7 @@ else if (!strncmp (message, "DMB_EXT_BLOCK_FILE", 18))
 	bExtBlkFmt = true;
 else {
 	ErrorMsg ("This is not a block file.");
-	fclose (fp);
+	fp.Close ();
 	return 2;
 	}
 

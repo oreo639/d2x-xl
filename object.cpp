@@ -693,7 +693,7 @@ int CObjPolyModelInfo::Read (CFileManager& fp, int version)
 {
 nModel = fp.ReadInt32 ();
 for (int i = 0; i < MAX_SUBMODELS; i++)
-	fp.Read (anim_angles [i]);
+	fp.ReadVector (anim_angles [i]);
 subobj_flags = fp.ReadInt32 ();
 tmap_override = fp.ReadInt32 ();
 alt_textures = 0;

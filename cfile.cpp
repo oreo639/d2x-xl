@@ -98,7 +98,7 @@ if (i < FILENAME_LEN - 5) {
 
 // ----------------------------------------------------------------------------
 
-CFileManager& CFileManager::GetFileHandle (const char *filename, const char *mode) 
+FILE* CFileManager::GetFileHandle (const char *filename, const char *mode) 
 {
 	FILE	*fp;
 
