@@ -84,7 +84,7 @@ class CFileManager {
 		fixang ReadFixAng (void);
 		float ReadFloat (void);
 		double ReadDouble (void);
-		byte* ReadBytes (byte* buffer, int bufLen);
+		void* ReadBytes (void* buffer, int bufLen);
 		void ReadString (char* buffer, int bufLen);
 
 		int ReadVector (tFixVector& v);
@@ -120,7 +120,7 @@ class CFileManager {
 		inline int Write (float& v) { return WriteFloat (v); }
 		inline int Write (double& v) { return WriteDouble (v); }
 
-		byte* WriteBytes (byte* buffer, int length);
+		void* WriteBytes (void* buffer, int length);
 		int WriteString (const char *buf);
 
 		void WriteVector (const tAngleVector& v);

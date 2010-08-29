@@ -269,7 +269,7 @@ m_info.bValid = 1;
 
 //------------------------------------------------------------------------
 
-int CTexture::Load (short nTexture, int nVersion, CFileManager& fp) 
+int CTexture::Load (short nTexture, int nVersion, CFileManager* fp) 
 {
 if (m_info.bModified)
 	return 0;

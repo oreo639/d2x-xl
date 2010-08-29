@@ -31,9 +31,9 @@ class CDynamicArray : public CQuickSort < _T > {
 	class CArrayData {
 		public:
 			_U*		buffer;
-			_U			null;
-			uint	length;
-			uint	pos;
+			_U			nil;
+			uint		length;
+			uint		pos;
 			int		nMode;
 			bool		bWrap;
 			};
@@ -93,7 +93,7 @@ class CDynamicArray : public CQuickSort < _T > {
 			m_data.pos = 0;
 			m_data.nMode = 0;
 			m_data.bWrap = false;
-			memset (&m_data.null, 0, sizeof (m_data.null));
+			memset (&m_data.nil, 0, sizeof (m_data.nil));
 			}
 
 		void Clear (byte filler = 0, uint count = 0xffffffff) { 
@@ -224,10 +224,10 @@ class CDynamicArray : public CQuickSort < _T > {
 			if (m_data.buffer && (i < m_data.length))
 				return m_data.buffer [i];
 			if (i == m_data.length)
-				return m_data.null; 
+				return m_data.nil; 
 			else {
 				ArrayError ("invalid array handle or index\n");
-				return m_data.null; 
+				return m_data.nil; 
 				}
 			}
 #else

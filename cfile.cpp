@@ -222,13 +222,13 @@ int CFileManager::Open (const char *filename, const char *mode)
 
 m_cf.file = null;
 if (!(filename && *filename))
-	return 0;
+	return 1;
 if (fopen_s (&m_cf.file, filename, mode))
-	return 0;
+	return 1;
 m_cf.rawPosition = 0;
 m_cf.size = (length < 0) ? ffilelength (m_cf.file) : length;
 m_cf.filename = const_cast<char*> (filename);
-return 1;
+return 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -487,7 +487,7 @@ return 1;
 
 // ----------------------------------------------------------------------------
 
-byte* CFileManager::ReadBytes (byte* buffer, int length)
+void* CFileManager::ReadBytes (void* buffer, int length)
 {
 Read (buffer, 1, length);
 return buffer;
@@ -555,7 +555,7 @@ WriteVector (m.fVec);
 
 // ----------------------------------------------------------------------------
 
-byte* CFileManager::WriteBytes (byte* buffer, int length)
+void* CFileManager::WriteBytes (void* buffer, int length)
 {
 Write (buffer, 1, length);
 return buffer;

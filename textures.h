@@ -84,13 +84,13 @@ public:
 
 	void Write (CFileManager& fp) {
 		if (m_nVersion == 1) {
-			 WriteInt32 (nId, fp);
-			 WriteInt32 (nVersion, fp);
-			 WriteInt32 (nTextures, fp);
+			 fp.Write (nId);
+			 fp.Write (nVersion);
+			 fp.Write (nTextures);
 			}
 		else {
-			WriteInt32 (nTextures, fp);
-			WriteInt32 (nSounds, fp);
+			fp.Write (nTextures);
+			fp.Write (nSounds);
 			}
 		}
 };
@@ -151,7 +151,7 @@ public:
 	void Read (CFileManager& fp, int nVersion = -1) {
 		if (nVersion >= 0)
 			m_nVersion = nVersion;
-		ReadBytes (name, sizeof (name), fp);
+		fp.ReadBytes (name, sizeof (name));
 		dflags = fp.ReadByte ();
 		width = (ushort) fp.ReadByte ();
 		height = (ushort) fp.ReadByte ();
@@ -169,14 +169,14 @@ public:
 
 	void Write (CFileManager& fp) {
 		Encode ();
-		WriteBytes (name, sizeof (name), fp);
-		WriteUInt8 (dflags, fp);
-		WriteUInt8 ((byte) width, fp);
-		WriteUInt8 ((byte) height, fp);
+		fp.WriteBytes (name, sizeof (name));
+		fp.Write (dflags);
+		fp.WriteByte ((byte) width);
+		fp.WriteByte ((byte) height);
 		if (m_nVersion == 1)
-			WriteUInt8 (whExtra, fp);
-		WriteUInt8 (flags, fp);
-		WriteUInt8 (avgColor, fp);
+			fp.Write (whExtra);
+		fp.Write (flags);
+		fp.Write (avgColor);
 		}
 
 	inline int BufSize (void) { return (int) width * (int) height; }
@@ -259,7 +259,7 @@ public:
 	~CTexture() { Release (); }
 
 	bool Allocate (int nSize, int nTexture);
-	int Load (short nTexture, int nVersion = -1, CFileManager& fp = null);
+	int Load (short nTexture, int nVersion = -1, CFileManager* fp = null);
 	void Load (CFileManager& fp, CPigTexture& info);
 	double Scale (short index = -1);
 
@@ -305,7 +305,7 @@ public:
 	void Release (bool bDeleteModified = true);
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
-	FILE* OpenPigFile (int nVersion);
+	CFileManager* OpenPigFile (int nVersion);
 
 	inline bool HaveInfo (int nVersion) { return info [nVersion] != null; }
 

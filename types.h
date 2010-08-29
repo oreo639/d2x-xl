@@ -461,7 +461,7 @@ public:
 	inline void WriteTargets (CFileManager& fp) {
 		int i;
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			Write (m_targets [i].m_nSegment);
+			fp.Write (m_targets [i].m_nSegment);
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 			fp.Write (m_targets [i].m_nSide);
 		}
@@ -589,9 +589,9 @@ public:
 		}
 	void Write (CFileManager& fp) {
 		CSideKey::Write (fp);
-		WriteInt32 (m_info.mask, fp);
-		WriteFix (m_info.timer, fp);
-		WriteFix (m_info.delay, fp);
+		fp.Write (m_info.mask);
+		fp.Write (m_info.timer);
+		fp.Write (m_info.delay);
 		}
 	void Clear (void) {
 		memset (&m_info, 0, sizeof (m_info));
