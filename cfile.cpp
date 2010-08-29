@@ -504,9 +504,9 @@ WriteFix (v.z);
 
 void CFileManager::WriteVector (const tDoubleVector& v)
 {
-WriteDouble (D2X (v.x));
-WriteDouble (D2X (v.y));
-WriteDouble (D2X (v.z));
+WriteFix (D2X (v.x));
+WriteFix (D2X (v.y));
+WriteFix (D2X (v.z));
 }
 
 // ----------------------------------------------------------------------------

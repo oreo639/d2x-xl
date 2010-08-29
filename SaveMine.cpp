@@ -83,18 +83,14 @@ else if (IsD2File ()) {
 	strncpy_s (paletteName, sizeof (paletteName), name, 12);
 	paletteName [13] = null;  // null terminate just in case
 	// replace extension with *.256
-	if (strlen ((char *)paletteName) > 4)
-		strcpy_s (&paletteName [strlen ((char *) paletteName) - 4], 5, ".256");
+	if (strlen (paletteName) > 4)
+		strcpy_s (&paletteName [strlen (paletteName) - 4], 5, ".256");
 	else
 		strcpy_s (paletteName, sizeof (paletteName), "groupa.256");
 	//_strupr_s (paletteName, sizeof (paletteName));
 	strcat_s (paletteName, sizeof (paletteName), "\n"); // add a return to the end
 	fp.Write (paletteName, strlen (paletteName), 1);
-	}
-
-// write reactor info
-if (IsD2File ()) {
-	// read descent 2 reactor information
+	// write reactor info
 	fp.Write (ReactorTime ());
 	fp.Write (ReactorStrength ());
 	// flickering light new for version 7
