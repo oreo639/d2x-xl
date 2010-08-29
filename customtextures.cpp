@@ -9,6 +9,8 @@
 #include "customtextures.h"
 #include "dle-xp.h"
 
+CExtraTexture*	extraTextures = NULL;
+
 //------------------------------------------------------------------------
 
 inline int Sqr (int i)

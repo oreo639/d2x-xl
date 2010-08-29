@@ -11,7 +11,7 @@ public:
 	ushort			m_index;
 };
 
-CExtraTexture*	extraTextures = NULL;
+extern CExtraTexture* extraTextures;
 
 //------------------------------------------------------------------------
 
