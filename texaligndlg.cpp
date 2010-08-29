@@ -61,7 +61,7 @@ void CTextureTool::RefreshAlignWnd (void)
 CHECKMINE;
 
 	int			x, y, i, uv;
-	CSegment*	segP, * childSeg;
+	CSegment*	segP, * childSegP;
 	CSide*		sideP;
 	int			nSide,
 					nLine;
@@ -190,21 +190,20 @@ if (theMine->IsWall ()) {
 			// check child for this line 
 			nChildSide = sideChildTable[nSide][nChildLine];
 			nChild = segP->Child (nChildSide);
-			childSeg = theMine->Segments (nChild);
 			if (nChild > -1) {
-
+				childSegP = theMine->Segments (nChild);
 				// figure out which side of child shares two points w/ current->side
 				for (childs_side = 0; childs_side < 6; childs_side++) {
 					// ignore children of different textures (or no texture)
-					CSide *childSideP = childSeg->m_sides + childs_side;
+					CSide *childSideP = childSegP->m_sides + childs_side;
 					if (theMine->IsWall (nChild, childs_side) &&
 						 (childSideP->m_info.nBaseTex == sideP->m_info.nBaseTex)) {
 						for (childs_line=0;childs_line<4;childs_line++) {
 							// find vert numbers for the line's two end points
 							childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0];
 							childs_point1 = lineVertTable [sideLineTable [childs_side][childs_line]][1];
-							childs_vert0  = childSeg->m_info.verts [childs_point0];
-							childs_vert1  = childSeg->m_info.verts [childs_point1];
+							childs_vert0  = childSegP->m_info.verts [childs_point0];
+							childs_vert1  = childSegP->m_info.verts [childs_point1];
 							// if both points of line == either point of parent
 							if ((childs_vert0 == vert0 && childs_vert1 == vert1) ||
 								 (childs_vert0 == vert1 && childs_vert1 == vert0)) {

@@ -16,8 +16,8 @@
 byte* CResource::Load (const char* szName, const char* szCategory) 
 {
 Unload ();
-HINSTANCE hInst = AfxGetApp ()->m_hInstance;
-HRSRC hRes = FindResource (hInst, "ROBOT_HXM", "RC_DATA");
+HINSTANCE hInst = AfxGetInstanceHandle (); //AfxGetApp ()->m_hInstance;
+HRSRC hRes = FindResource (hInst, szName, "RC_DATA");
 if (!hRes)
 	return null;
 m_handle = LoadResource (hInst, hRes);

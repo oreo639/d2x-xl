@@ -98,7 +98,6 @@ return 0;
 
 short CMine::LoadPalette (void)
 {
-HINSTANCE hInst = AfxGetInstanceHandle();
 // set palette
 // make global palette
 CResource res;
