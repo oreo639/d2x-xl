@@ -281,7 +281,7 @@ public:
 
 	int MaxTextures (int nVersion = -1);
 	int LoadIndex (int nVersion);
-	CPigTexture& LoadInfo (FILE* fp, int nVersion, uint nOffset, short nTexture);
+	CPigTexture& LoadInfo (FILE* fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);

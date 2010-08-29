@@ -765,7 +765,7 @@ if (m_info.bModified)
 
 if (!textureManager.HaveInfo (nVersion))
 	fp = textureManager.OpenFile ();
-CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nOffset, nTexture);
+CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
@@ -818,7 +818,7 @@ void CTextureManager::Release (bool bDeleteModified)
 {
 // free any textures that have been buffered
 for (int i = 0; i < 2; i++) {
-	CTexture* texP = textures [i];
+	CTexture* texP = &textures [i][0];
 	for (int j = MaxTextures (i); j; j--, texP++)
 		if (bDeleteModified || !texP->m_info.bModified)
 			texP->Release ();
@@ -865,7 +865,7 @@ return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_D2_TEXTURES : MAX_D1_
 
 bool CTextureManager::HasCustomTextures (void) 
 {
-CTexture* texP = textures [DLE.FileType ()];
+CTexture* texP = &textures [DLE.FileType ()][0];
 
 for (int i = MaxTextures (DLE.FileType ()); i; i--, texP++)
 	if (texP->m_info.bModified)
@@ -878,7 +878,7 @@ return false;
 int CTextureManager::CountCustomTextures (void) 
 {
 	int			count = 0;
-	CTexture*	texP = textures [DLE.FileType ()];
+	CTexture*	texP = &textures [DLE.FileType ()][0];
 
 for (int i = MaxTextures (); i; i--, texP++)
 	if (texP->m_info.bModified)
@@ -942,7 +942,7 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-CPigTexture& CTextureManager::LoadInfo (FILE* fp, int nVersion, uint nOffset, short nTexture)
+CPigTexture& CTextureManager::LoadInfo (FILE* fp, int nVersion, short nTexture)
 {
 if (info [nVersion] == NULL) {
     header [nVersion].Read (fp);
@@ -991,7 +991,7 @@ for (i = 0; i < 2; i++) {
 	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
 		nTextures [i] = 0;
 	// buffer textures if not already buffered
-	texP [i] = textures [nTextures [i]];
+	texP [i] = &textures [nTextures [i]][0];
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
 		if (rc = texP [i]->Load (nTextures [i]))
 			return rc;
