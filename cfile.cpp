@@ -369,14 +369,14 @@ return m_cf.rawPosition;
 
 // ----------------------------------------------------------------------------
 
-int CFileManager::Seek (size_t offset, int where) 
+int CFileManager::Seek (size_t offset, int whence) 
 {
 if (!m_cf.size)
 	return -1;
 
 	int destPos;
 
-switch (where) {
+switch (whence) {
 	case SEEK_SET:
 		destPos = offset;
 		break;

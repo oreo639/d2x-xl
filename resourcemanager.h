@@ -16,9 +16,9 @@ public:
 	inline byte* Load (const int nId, const char* szCategory = "RC_DATA") { return Load (MAKEINTRESOURCE (nId), szCategory); }
 
 	inline void Unload (void) {
-		if (m_hResource) {
-			FreeResource (m_hResource);
-			m_hResource = 0;
+		if (m_handle) {
+			FreeResource (m_handle);
+			m_handle = 0;
 			}
 		}
 

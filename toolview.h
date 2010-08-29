@@ -20,6 +20,7 @@
 #include "dle-xp-res.h"
 #include "textures.h"
 #include "texedit.h"
+#include "resourcemanager.h"
 
                         /*--------------------------*/
 #if 1

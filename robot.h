@@ -16,8 +16,8 @@ public:
 		offset = fp.ReadInt16 ();
 		}
 	void Write (CFileManager& fp) {
-		 WriteInt16 (n_joints, fp);
-		 WriteInt16 (offset, fp);
+		 fp.Write (n_joints);
+		 fp.Write (offset);
 		}
 } tJointList;
 
