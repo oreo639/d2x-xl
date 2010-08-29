@@ -98,27 +98,14 @@ if (i < FILENAME_LEN - 5) {
 
 // ----------------------------------------------------------------------------
 
-CFileManager& CFileManager::GetFileHandle (const char *filename, const char *folder, const char *mode) 
+CFileManager& CFileManager::GetFileHandle (const char *filename, const char *mode) 
 {
 	FILE	*fp;
-	char	fn [FILENAME_LEN];
-	const char *pfn;
 
-if (!*filename || (strlen (filename) + (folder ? strlen (folder) : 0) >= FILENAME_LEN)) {
-	return null;
-	}
-if ((*filename != '/') && (strstr (filename, "./") != filename) && folder && *folder) {
-sprintf_s (fn, FILENAME_LEN, "%s/%s", folder, filename);
-   pfn = fn;
-	}
- else
- 	pfn = filename;
- 
-if (fopen_s (&fp, pfn, mode)) {
+if (!fopen_s (&fp, filename, mode)) {
 	fclose (fp);
 	fp = null;
 	}
-//if (!fp) PrintLog ("CFGetFileHandle (): error opening %s\n", pfn);
 return fp;
 }
 
@@ -149,10 +136,7 @@ return nFileError;
 
 int CFileManager::Exist (const char *filename, const char *folder) 
 {
-	FILE	*fp;
-	char	*pfn = const_cast<char*> (filename);
-
-if ((fp = GetFileHandle (pfn, folder, "rb"))) { // Check for non-hogP file first...
+if ((fp = GetFileHandle (filename, "rb"))) { // Check for non-hogP file first...
 	fclose (fp);
 	return 1;
 	}
@@ -161,13 +145,10 @@ return 0;
 
 // ----------------------------------------------------------------------------
 // Deletes a file.
-int CFileManager::Delete (const char *filename, const char* folder)
+int CFileManager::Delete (const char *filename)
 {
-	char	fn [FILENAME_LEN];
-
-sprintf_s (fn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", filename);
 #ifndef _WIN32_WCE
-	return remove (fn);
+	return remove (filename);
 #else
 	return !DeleteFile (fn);
 #endif

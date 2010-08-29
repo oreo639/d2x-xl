@@ -143,11 +143,11 @@ class CFileManager {
 		byte* ReadData (const char *filename);
 		time_t Date (const char *filename);
 
-		static int Exist (const char *filename, const char *folder);	// Returns true if file exists on disk (1) or in hog (2).
-		static int Delete (const char *filename, const char* folder);
+		static int Exist (const char *filename);	// Returns true if file exists on disk (1) or in hog (2).
+		static int Delete (const char *filename);
 		static int Rename (const char *oldname, const char *newname, const char *folder);
 		static int MkDir (const char *pathname);
-		static CFileManager& GetFileHandle (const char *filename, const char *folder, const char *mode);
+		static CFileManager& GetFileHandle (const char *filename, const char *mode);
 		static void SplitPath (const char *szFullPath, char *szFolder, char *szFile, char *szExt);
 		static void ChangeFilenameExtension (char *dest, const char *src, const char *new_ext);
 
