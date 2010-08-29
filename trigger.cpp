@@ -537,7 +537,7 @@ if (DLE.IsD2File ()) {
 	else
 		fp.Write (char (m_info.flags));
 	fp.WriteSByte ((sbyte) m_count);
-	fp.WriteInt8 (0);
+	fp.WriteByte (0);
 	fp.Write (m_info.value);
 	fp.Write (m_info.time);
 	}

@@ -57,7 +57,7 @@ bi.biClrImportant  = 0;
 // define d1 palette from resource
 CResource res;
 byte* palette;
-if (!(palette = res.Load (PaletteResource ()))
+if (!(palette = res.Load (PaletteResource ())))
 	return null;
 for (int i = 0; i < 256; i++) {
 	bmi->bmiColors [i].rgbRed = (*palette++) << 2;

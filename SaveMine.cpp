@@ -35,7 +35,7 @@
 short CMine::Save (const char * szFile, bool bSaveToHog)
 {
 	CFileManager	fp;
-	/char				filename [256];
+	char				filename [256];
 	int				minedataOffset, gamedataOffset, hostageTextOffset;
 	int				mineErr, gameErr;
 	int				i;
@@ -68,7 +68,7 @@ if (IsD2File ()&& (LevelVersion () >= 8)) {
 	fp.WriteInt16 (rand ());
 	fp.WriteInt16 (rand ());
 	fp.WriteInt16 (rand ());
-	fp.WriteInt8 ((sbyte) rand ());
+	fp.WriteSByte ((sbyte) rand ());
 	}
 
 if (m_fileType== RDL_FILE)
@@ -144,8 +144,7 @@ if (textureManager.HasCustomTextures () && !bSaveToHog) {
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".pog");
 	else
 		strcat_s (filename, sizeof (filename), ".pog");
-	fopen_s (&fp, filename, "wb");
-	if (fp) {
+	if (!fp.Open (filename, "wb")) {
 		CreatePog (fp);
 		fp.Close ();
 		}
@@ -221,6 +220,7 @@ return info.count;
 //
 // ACTION - Writes a mine data portion of RDL file.
 // ------------------------------------------------------------------------
+
 short CMine::SaveMineDataCompiled(CFileManager& fp)
 {
 	int	i;
@@ -322,17 +322,15 @@ else {
 	nPofs = 25;   // Don't know exactly what this value is for or why it is 25?
 	fwrite(&nPofs, 2, 1);
 	}
-hGlobal = LoadResource(hInst, hRes);
-ASSERT(hGlobal);
 
 if (!(savePofNamesP = res.Load (IsD1File () ? IRD_POF_NAMES1 : IDR_POF_NAMES2)))
 	return 1;
 
-fwrite(savePofNamesP, nSavePofNames, 13); // 13 characters each
+fp.Write (savePofNamesP, nSavePofNames, 13); // 13 characters each
 
 GameInfo ().player.offset = fp.Tell ();
 char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
-fwrite(str, strlen (str) + 1, 1);
+fp.Write (str, strlen (str) + 1, 1);
 
 SaveGameItem (fp, GameInfo ().objects, DATA (Objects ()));
 SaveGameItem (fp, GameInfo ().walls, DATA (Walls ()));
@@ -362,7 +360,7 @@ endOffset = fp.Tell ();
 
 //==================== = UPDATE FILE INFO OFFSETS====================== =
 fp.Seek (startOffset, SEEK_SET);
-fwrite(&GameInfo (), (short)GameInfo ().fileinfo.size, 1);
+fp.Write (&GameInfo (), GameInfo ().fileinfo.size, 1);
 
 //============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
 fp.Seek (endOffset, SEEK_SET);

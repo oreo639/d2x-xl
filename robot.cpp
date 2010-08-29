@@ -20,16 +20,16 @@
 
 void tRobotGunInfo::Read (CFileManager& fp, int nField) {
 	if (nField == 0)
-		points.Read (fp);
+		fp.Read (points);
 	else
 		subModels = byte (fp.ReadSByte ());
 	}
 
 void tRobotGunInfo::Write (CFileManager& fp, int nField) {
 	if (nField == 0)
-		points.Write (fp);
+		fp.Write (points);
 	else
-		fp.Write ((char) subModels);
+		fp.WriteSByte ((sbyte) subModels);
 	}
 
 //------------------------------------------------------------------------
@@ -195,7 +195,7 @@ void CRobotInfo::Write (CFileManager& fp, int version, bool bFlag)
 {
 	int i, j;
 
-WriteInt32 (m_info.nModel);
+fp.Write (m_info.nModel);
 for (j = 0; j < 2; j++)
 	for (i = 0; i < MAX_GUNS; i++)
 		m_info.guns [i].Write (fp, j);
@@ -209,10 +209,10 @@ fp.Write (m_info.kamikaze);
 fp.Write (m_info.scoreValue);
 fp.Write (m_info.badass);
 fp.Write (m_info.drainEnergy);
-WriteFix (m_info.lighting);
-WriteFix (m_info.strength);
-WriteFix (m_info.mass);
-WriteFix (m_info.drag);
+fp.Write (m_info.lighting);
+fp.Write (m_info.strength);
+fp.Write (m_info.mass);
+fp.Write (m_info.drag);
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Write (fp, j);
@@ -282,7 +282,7 @@ fp.Write (m_info.always_0xabcd);
 
 int CMine::ReadHamFile(char *pszFile, int type) 
 {
-  FILE*			fp;
+  CFileManager	fp;
   int				t, t0;
   uint			id;
   CPolyModel	pm;
@@ -293,11 +293,11 @@ int CMine::ReadHamFile(char *pszFile, int type)
 
 if (!pszFile) {
 	if (IsD2File ()) {
-		FSplit (descent2_path, szFile, null, null);
+		fp.SplitPath (descent2_path, szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}
 	else {
-		FSplit (descent_path, szFile, null, null);
+		fp.SplitPath (descent_path, szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent.ham");
 		}
 	pszFile = szFile;
@@ -662,7 +662,7 @@ ReadRobotResource (-1);
 void CMine::ReadRobotResource (int nRobot) 
 {
   int			i,	j,	t;
-  byte*		bufPtr;
+  byte*		bufP;
   CResource	res;
 
 if (!(bufP = res.Load ("ROBOT.HXM"))) {

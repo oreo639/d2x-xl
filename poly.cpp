@@ -254,20 +254,6 @@ while (W (p) != OP_EOF) {
 return;
 }
 
-//--------------------------------------------------------------------------
-// read_UINTW ()
-//
-// Reads a uint number and converts it UINTW (16 or 32 bit)
-//--------------------------------------------------------------------------
-
-UINTW read_UINTW (CFileManager& fp) 
-{
-uint value;
-fread (&value, sizeof (uint), 1, fp);
-assert (value <= 0xffff);
-return (UINTW)value;
-}
-
 //-----------------------------------------------------------------------
 // ReadModelData ();
 //-----------------------------------------------------------------------
@@ -303,12 +289,12 @@ else {
 		m_info.subModels [i].vMin.Read (fp);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].vMax.Read (fp);
-	m_info.vMin.Read (fp);
-	m_info.vMax.Read (fp);
+	fp.Read (m_info.vMin);
+	fp.Read (m_info.vMax);
 	m_info.rad = fp.ReadFix ();
-	m_info.textureCount = (byte) fp.ReadSByte ();
-	m_info.firstTexture = (ushort) fp.ReadInt16 ();
-	m_info.simplerModel = (byte) fp.ReadSByte ();
+	m_info.textureCount = fp.ReadByte ();
+	m_info.firstTexture = fp.ReadUInt16 ();
+	m_info.simplerModel = fp.ReadByte ();
 	}
 return 1;
 }
@@ -317,7 +303,7 @@ return 1;
 
 int CMineView::ReadModelData (char* filename, char *szSubFile, bool bCustom) 
 {
-	FILE*		fp;
+	CFileManager fp;
 
 if (fopen_s (&fp, filename, "rb"))
 	return 1;
@@ -349,19 +335,19 @@ if (bCustom) {
 				fp.Close ();
 				return 1;
 				}
-			read_UINTW (fp);                              // read version
-			n = read_UINTW (fp);                         // n_weapon_types
+			fp.ReadUInt16 ();                              // read version
+			n = fp.ReadInt16 ();                         // n_weapon_types
 			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
-			n = read_UINTW (fp);                         // n_robot_types
+			n = fp.ReadInt16 ();                         // n_robot_types
 			for (i = 0; i < n; i++)
 				theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
-			n  = read_UINTW (fp);                         // n_robot_joints
+			n  = fp.ReadInt16 ();                         // n_robot_joints
 			fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
 			break;
 			}
 		position += sizeof (struct level_header) + level.size;
 		}
-	n = read_UINTW (fp);                          // n_curModels
+	n = fp.ReadInt16 ();                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
 		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp);
@@ -374,30 +360,30 @@ else {
 		fp.Close ();
 		return 1;
 		}
-	read_UINTW (fp);                              // read version
-	n  = read_UINTW (fp);                         // n_tmap_info
+	fp.ReadInt16 ();                              // read version
+	n  = fp.ReadInt16 ();                         // n_tmap_info
 	fp.Seek (n * sizeof (ushort), SEEK_CUR);	 // bitmap_indicies
 	fp.Seek (n * sizeof (TMAP_INFO), SEEK_CUR); // tmap_info
-	n = read_UINTW (fp);                          // n_sounds
+	n = fp.ReadInt16 ();                          // n_sounds
 	fp.Seek (n * sizeof (byte), SEEK_CUR);     // sounds
 	fp.Seek (n * sizeof (byte), SEEK_CUR);     // alt_sounds
-	n = read_UINTW (fp);                          // n_vclips
+	n = fp.ReadInt16 ();                          // n_vclips
 	fp.Seek (n * sizeof (VCLIP), SEEK_CUR);     // video clips
-	n = read_UINTW (fp);                          // n_eclips
+	n = fp.ReadInt16 ();                          // n_eclips
 	fp.Seek (n * sizeof (ECLIP), SEEK_CUR);     // effect clips
-	n = read_UINTW (fp);                          // n_wclips
+	n = fp.ReadInt16 ();                          // n_wclips
 	fp.Seek (n * sizeof (WCLIP), SEEK_CUR);     // weapon clips
 	n = fp.Tell ();
-	n = read_UINTW (fp);                          // n_robots
+	n = fp.ReadInt16 ();                          // n_robots
 	for (i = 0; i < n; i++) 
 		theMine->RobotInfo (i)->Read (fp);
-	n = read_UINTW (fp);                          // n_robot_joints
+	n = fp.ReadInt16 ();                          // n_robot_joints
 	fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot joints
-	n = read_UINTW (fp);                          // n_weapon
+	n = fp.ReadInt16 ();                          // n_weapon
 	fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon info
-	n = read_UINTW (fp);                          // n_powerups
+	n = fp.ReadInt16 ();                          // n_powerups
 	fp.Seek (n * sizeof (POWERUP_TYPE_INFO), SEEK_CUR); // powerup info
-	n = read_UINTW (fp);                          // n_curModels
+	n = fp.ReadInt16 ();                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
 		m_polyModels [i].Read (fp);

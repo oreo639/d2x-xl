@@ -390,7 +390,7 @@ fp.Write (m_info.hps);
 fp.Write (m_info.linkedWall);
 fp.Write (m_info.type);
 if (version < 37) 
-	fp.Write (char (m_info.flags));
+	fp.WriteSByte ((sbyte) m_info.flags);
 else
 	fp.Write (m_info.flags);         
 fp.Write (m_info.state);         

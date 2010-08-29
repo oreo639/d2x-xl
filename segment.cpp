@@ -2619,7 +2619,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		if (nLevelVersion >= 13)
 			fp.Write (m_sides [i].m_info.nWall);
 		else
-			fp.Write (char (m_sides [i].m_info.nWall));
+			fp.WriteSByte ((sbyte) m_sides [i].m_info.nWall);
 		}
 	}
 return m_info.wallFlags;
@@ -2672,7 +2672,7 @@ fp.Write (m_info.childFlags);
 // write children numbers (0 to 6 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	if (m_info.childFlags & (1 << i)) 
-		fp.Write (Child (i));
+		fp.WriteInt16 (Child (i));
 
 // write vertex numbers (16 bytes)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
@@ -2850,7 +2850,7 @@ void CSide::Write (CFileManager& fp)
 if (m_info.nOvlTex == 0)
 	fp.Write (m_info.nBaseTex);
 else {
-	fp.Write (m_info.nBaseTex | 0x8000);
+	fp.WriteInt16 (m_info.nBaseTex | 0x8000);
 	fp.Write (m_info.nOvlTex);
 	}
 for (int i = 0; i < 4; i++)
@@ -2932,8 +2932,8 @@ return 1;
 void CLightDeltaValue::Write (CFileManager& fp, int version, bool bFlag)
 {
 fp.Write (m_nSegment);
-fp.Write (char (m_nSide));
-fp.Write (0);
+fp.WriteSByte ((sbyte) m_nSide);
+fp.WriteByte (0);
 for (int i = 0; i < 4; i++)
 	fp.Write (m_info.vertLight [i]);
 }
@@ -2962,10 +2962,10 @@ void CLightDeltaIndex::Write (CFileManager& fp, int version, bool bD2X)
 {
 fp.Write (m_nSegment);
 if (bD2X)
-	fp.Write ((m_nSide & 7) | (m_info.count << 3));
+	fp.WriteInt16 ((m_nSide & 7) | (m_info.count << 3));
 else {
-	fp.Write (char (m_nSide));
-	fp.Write (char (m_info.count));
+	fp.WriteSByte ((sbyte) m_nSide);
+	fp.WriteSByte ((sbyte) m_info.count);
 	}
 fp.Write (m_info.index);
 }
