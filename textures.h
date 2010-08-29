@@ -243,7 +243,7 @@ public:
 	~CTexture() { Release (); }
 
 	bool Allocate (int nSize, int nTexture);
-	int Load (short nTexture);
+	int Load (short nTexture, int nVersion = -1, FILE* fp = NULL);
 	void Load (FILE* fp, CPigTexture& info);
 	double Scale (short index = -1);
 
@@ -281,6 +281,7 @@ public:
 
 	int MaxTextures (int nVersion = -1);
 	int LoadIndex (int nVersion);
+	void LoadTextures (int nVersion);
 	CPigTexture& LoadInfo (FILE* fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
@@ -288,7 +289,7 @@ public:
 	void Release (bool bDeleteModified = true);
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
-	FILE* OpenFile (void);
+	FILE* OpenPigFile (int nVersion);
 
 	inline bool HaveInfo (int nVersion) { return info [nVersion] != NULL; }
 

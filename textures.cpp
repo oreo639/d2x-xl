@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "stdafx.h"
 #include "textures.h"
 #include "io.h"
@@ -756,33 +758,34 @@ m_info.bValid = 1;
 
 //------------------------------------------------------------------------
 
-int CTexture::Load (short nTexture) 
+int CTexture::Load (short nTexture, int nVersion, FILE* fp) 
 {
-	FILE*		fp = NULL;
-	int		nVersion = DLE.IsD1File () ? 0 : 1;
-	
 if (m_info.bModified)
 	return 0;
 
-if (!textureManager.HaveInfo (nVersion))
-	fp = textureManager.OpenFile ();
+if (nVersion < 0)
+	nVersion = DLE.IsD1File () ? 0 : 1;
 
-for (int i = 0, j = textureManager.MaxTextures (nVersion); i < j; i++) {
-	nTexture = i;
-	CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
-	int nSize = info.BufSize ();
-	if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
-		return 0; // already loaded
-	if (!fp)
-		fp = textureManager.OpenFile ();
-	if (!Allocate (nSize, nTexture)) {
-		fclose (fp);
-		return 1;
-		}
-	fseek (fp, textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
-	Load (fp, info);
+bool	bLocalFile = (fp == NULL);
+	
+if (!(fp || textureManager.HaveInfo (nVersion)))
+	fp = textureManager.OpenPigFile (nVersion);
+
+CPigTexture& info = textureManager.LoadInfo (fp, nVersion, nTexture);
+int nSize = info.BufSize ();
+if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
+	return 0; // already loaded
+if (!fp)
+	fp = textureManager.OpenFile ();
+if (!Allocate (nSize, nTexture)) {
+	if (bLocalFile)
+		fclose (fp);	
+	return 1;
 	}
-fclose (fp);
+fseek (fp, textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
+Load (fp, info);
+if (bLocalFile)
+	fclose (fp);
 return 0;
 }
 
@@ -808,6 +811,8 @@ header [0] = CPigHeader (0);
 header [1] = CPigHeader (1);
 LoadIndex (0);
 LoadIndex (1);
+LoadTextures (0);
+LoadTextures (1);
 #ifdef USE_DYN_ARRAYS
 textures [0].Create (MaxTextures (0));
 textures [1].Create (MaxTextures (1));
@@ -838,12 +843,12 @@ while (extraTextures) {
 
 //------------------------------------------------------------------------
 
-FILE* CTextureManager::OpenFile (void)
+FILE* CTextureManager::OpenPigFile (int nVersion)
 {
 	FILE* fp = NULL;
 	char	filename [256];
 
-strcpy_s (filename, sizeof (filename), (DLE.IsD1File ()) ? descent_path : descent2_path);
+strcpy_s (filename, sizeof (filename), (nVersion ? descent_path : descent2_path);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fopen_s (&fp, filename, "rb")) {
@@ -959,7 +964,18 @@ if (info [nVersion] == NULL) {
 return info [nVersion][index [nVersion][nTexture]];
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void LoadTextures (int nVersion)
+{
+	FILE* fp = OpenPigFile (nVersion);
+
+for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
+	textures [nVersion][i].Load (i, nVersion, fp);
+fclose (fp);
+}
+
+//------------------------------------------------------------------------------
 // textureManager.Define ()
 //
 // ACTION - Defines data with texture.  If bitmap_handle != 0,
@@ -967,7 +983,7 @@ return info [nVersion][index [nVersion][nTexture]];
 //          the pig file defines bmBuf and then global memory
 //          is allocated and the data is copied to the global memory.
 //          The next time that texture is used, the handle will be defined.
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, int x0, int y0) 
 {
