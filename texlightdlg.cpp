@@ -112,7 +112,7 @@ if (m_nLightTimer)
 	KillTimer (m_nLightTimer);
 if ((m_iLight >= 0) && nSpeed) {
 	m_nLightDelay = nSpeed;
-	m_nLightTimer = SetTimer (2, m_nLightDelay, NULL);
+	m_nLightTimer = SetTimer (2, m_nLightDelay, null);
 	((CSliderCtrl *) TimerSlider ())->SetPos (20 - (m_nLightDelay + 25) / 50);
 	}
 else {

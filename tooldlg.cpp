@@ -149,7 +149,7 @@ void CToolDlg::CreateImgWnd (CWnd * pImgWnd, int nIdC)
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
 pParentWnd->GetClientRect (rc);
-pImgWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
+pImgWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
                         /*--------------------------*/
@@ -338,7 +338,7 @@ if (TextureIsVisible ()) {
 	}
 else
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, MAX_TEXTURES);
-m_textureWnd.InvalidateRect (NULL);
+m_textureWnd.InvalidateRect (null);
 m_textureWnd.UpdateWindow ();
 }
 
@@ -347,7 +347,7 @@ m_textureWnd.UpdateWindow ();
 BOOL CTexToolDlg::OnSetActive ()
 {
 if (m_nTimerId >= 0)
-	m_nTimer = SetTimer ((UINT) m_nTimerId, 100U, NULL);
+	m_nTimer = SetTimer ((UINT) m_nTimerId, 100U, null);
 return CToolDlg::OnSetActive ();
 }
 

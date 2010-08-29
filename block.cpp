@@ -583,7 +583,7 @@ if (!BrowseForFile (FALSE,
   strcpy (szFile, ofn.lpstrFile);
 #endif
 _strlwr_s (szFile, sizeof (szFile));
-bExtBlkFmt = strstr (szFile, ".blx") != NULL;
+bExtBlkFmt = strstr (szFile, ".blx") != null;
 fopen_s (&fBlk, szFile, "w");
 if (!fBlk) {
 	ErrorMsg ("Unable to open block file");
@@ -677,7 +677,7 @@ else {
   }
 #endif
 _strlwr_s (szFile, sizeof (szFile));
-bExtBlkFmt = strstr (szFile, ".blx") != NULL;
+bExtBlkFmt = strstr (szFile, ".blx") != null;
 fopen_s (&fBlk, szFile, "w");
 if (!fBlk) {
 	sprintf_s (message, sizeof (message), "Unable to open block file '%s'", szFile);

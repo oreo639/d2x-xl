@@ -103,8 +103,8 @@ public:
 	CVertex (CDoubleVector _v) : CDoubleVector (_v) { m_status = 0; }
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return fp.Read (v); }
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.Write (v); }
+	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return fp.ReadVector (v); }
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.WriteVector (v); }
 	virtual void Clear (void) { 
 		m_status = 0;
 		this->CDoubleVector::Clear ();
@@ -230,9 +230,9 @@ public:
 		}
 
 	void Write (CFileManager& fp) {
-		WriteInt16 (signature, fp);
-		WriteInt16 (version, fp);
-		WriteInt32 (size, fp);
+		fp.Write (signature);
+		fp.Write (version);
+		fp.Write (size);
 		}
 };
 
@@ -249,8 +249,8 @@ public:
 		}
 
 	void Write (CFileManager& fp) {
-		WriteInt32 (offset, fp);
-		WriteInt32 (size, fp);
+		fp.Write (offset);
+		fp.Write (size);
 		}
 };
 
@@ -272,9 +272,9 @@ public:
 		}
 
 	void Write (CFileManager& fp) {
-		WriteInt32 (offset, fp);
-		WriteInt32 (count, fp);
-		WriteInt32 (size, fp);
+		fp.Write (offset);
+		fp.Write (count);
+		fp.Write (size);
 		}
 };
 
@@ -316,8 +316,8 @@ public:
 		return 1;
 		}
 	void Write (CFileManager& fp) {
-		WriteInt16 (m_nSegment, fp);
-		WriteInt16 (m_nSide, fp);
+		fp.Write (m_nSegment);
+		fp.Write (m_nSide);
 		}
 
 	void Clear (void) {
@@ -461,9 +461,9 @@ public:
 	inline void WriteTargets (CFileManager& fp) {
 		int i;
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			WriteInt16 (m_targets [i].m_nSegment, fp);
+			Write (m_targets [i].m_nSegment);
 		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			WriteInt16 (m_targets [i].m_nSide, fp);
+			fp.Write (m_targets [i].m_nSide);
 		}
 
 };

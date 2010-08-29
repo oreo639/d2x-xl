@@ -72,27 +72,27 @@ int powerupIdStrXlat [MAX_POWERUP_IDS2];
                         /*--------------------------*/
 
 static tSliderData sliderData [] = {
-	{IDC_OBJ_SCORE, 0, 600, 50, NULL},
-	{IDC_OBJ_STRENGTH, 13, 20, 1, NULL},
-	{IDC_OBJ_MASS, 10, 20, 1, NULL},
-	{IDC_OBJ_DRAG, 1, 13, -F1_0 / 100, NULL},
-	{IDC_OBJ_EBLOBS, 0, 100, 1, NULL},
-	{IDC_OBJ_LIGHT, 0, 10, 1, NULL},
-	{IDC_OBJ_GLOW, 0, 12, 1, NULL},
-	{IDC_OBJ_AIM, 2, 4, -0x40, NULL},
+	{IDC_OBJ_SCORE, 0, 600, 50, null},
+	{IDC_OBJ_STRENGTH, 13, 20, 1, null},
+	{IDC_OBJ_MASS, 10, 20, 1, null},
+	{IDC_OBJ_DRAG, 1, 13, -F1_0 / 100, null},
+	{IDC_OBJ_EBLOBS, 0, 100, 1, null},
+	{IDC_OBJ_LIGHT, 0, 10, 1, null},
+	{IDC_OBJ_GLOW, 0, 12, 1, null},
+	{IDC_OBJ_AIM, 2, 4, -0x40, null},
 	{IDC_OBJ_SKILL, 0, 4, 1, szSkills},
-	{IDC_OBJ_FOV, -10, 10, -F1_0 / 10, NULL},
-	{IDC_OBJ_FIREWAIT1, 1, 35, -F1_0 / 5, NULL},
-	{IDC_OBJ_FIREWAIT2, 1, 35, -F1_0 / 5, NULL},
-	{IDC_OBJ_TURNTIME, 0, 10, -F1_0 / 10, NULL},
-	{IDC_OBJ_MAXSPEED, 0, 140, -F1_0, NULL},
-	{IDC_OBJ_FIRESPEED, 1, 18, 1, NULL},
-	{IDC_OBJ_EVADESPEED, 0, 6, 1, NULL},
-	{IDC_OBJ_CIRCLEDIST, 0, 0, -F1_0, NULL},
-	{IDC_OBJ_DEATHROLL, 0, 10, 1, NULL},
-	{IDC_OBJ_EXPLSIZE, 0, 100, 1, NULL},
-	{IDC_OBJ_CONT_COUNT, 0, 100, 1, NULL},
-	{IDC_OBJ_CONT_PROB, 0, 16, 1, NULL}
+	{IDC_OBJ_FOV, -10, 10, -F1_0 / 10, null},
+	{IDC_OBJ_FIREWAIT1, 1, 35, -F1_0 / 5, null},
+	{IDC_OBJ_FIREWAIT2, 1, 35, -F1_0 / 5, null},
+	{IDC_OBJ_TURNTIME, 0, 10, -F1_0 / 10, null},
+	{IDC_OBJ_MAXSPEED, 0, 140, -F1_0, null},
+	{IDC_OBJ_FIRESPEED, 1, 18, 1, null},
+	{IDC_OBJ_EVADESPEED, 0, 6, 1, null},
+	{IDC_OBJ_CIRCLEDIST, 0, 0, -F1_0, null},
+	{IDC_OBJ_DEATHROLL, 0, 10, 1, null},
+	{IDC_OBJ_EXPLSIZE, 0, 100, 1, null},
+	{IDC_OBJ_CONT_COUNT, 0, 100, 1, null},
+	{IDC_OBJ_CONT_PROB, 0, 16, 1, null}
 	};
 
                         /*--------------------------*/
@@ -277,7 +277,7 @@ return 1.0;
 
                         /*--------------------------*/
 
-char *pszBossTypes [] = {"none", "Boss 1", "Boss 2", "Red Fatty", "Water Boss", "Fire Boss", "Ice Boss", "Alien 1", "Alien 2", "Vertigo", "Red Guard", NULL};
+char *pszBossTypes [] = {"none", "Boss 1", "Boss 2", "Red Fatty", "Water Boss", "Fire Boss", "Ice Boss", "Alien 1", "Alien 2", "Vertigo", "Red Guard", null};
 
 BOOL CObjectTool::OnInitDialog ()
 {
@@ -288,10 +288,10 @@ CreateImgWnd (&m_showSpawnWnd, IDC_OBJ_SHOW_SPAWN);
 CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);
 InitSliders ();
 UpdateSliders ();
-CBInit (CBObjType (), (char**) object_names, object_list, NULL, MAX_OBJECT_NUMBER);
-CBInit (CBSpawnType (), (char**) object_names, contentsList, NULL, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, NULL, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
-CBInit (CBObjClassAI (), (char**) ai_options, NULL, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjType (), (char**) object_names, object_list, null, MAX_OBJECT_NUMBER);
+CBInit (CBSpawnType (), (char**) object_names, contentsList, null, MAX_CONTAINS_NUMBER, 0, true);
+CBInit (CBObjAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
 short nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 short i, j;
@@ -318,11 +318,11 @@ for (psz = pszBossTypes; *psz; psz++) {
 	pcb->SetItemData(index++, (int) (psz - pszBossTypes));
 	}
 CGameObject *objP = theMine->CurrObj ();
-//CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1);
+//CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, null, null, ROBOT_IDS2, 1);
 //SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
-CBInit (CBExplType (), (char **) "explosion", NULL, exp2_vclip_num_table, MAX_EXP2_VCLIP_NUM_TABLE, 2);
-CBInit (CBWeapon1 (), (char **) 7000, NULL, NULL, MAX_WEAPON_TYPES, 3, true);
-CBInit (CBWeapon2 (), (char **) 7000, NULL, NULL, MAX_WEAPON_TYPES, 3, true);
+CBInit (CBExplType (), (char **) "explosion", null, exp2_vclip_num_table, MAX_EXP2_VCLIP_NUM_TABLE, 2);
+CBInit (CBWeapon1 (), (char **) 7000, null, null, MAX_WEAPON_TYPES, 3, true);
+CBInit (CBWeapon2 (), (char **) 7000, null, null, MAX_WEAPON_TYPES, 3, true);
 i = CBContType ()->AddString ("Robot");
 CBContType ()->SetItemData (i, OBJ_ROBOT);
 i = CBContType ()->AddString ("Powerup");
@@ -668,10 +668,10 @@ j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
 switch (rInfo.m_info.contents.type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		CBInit (CBContId (), (char **) ROBOT_STRING_TABLE, NULL, NULL, ROBOT_IDS2, 1, true);
+		CBInit (CBContId (), (char **) ROBOT_STRING_TABLE, null, null, ROBOT_IDS2, 1, true);
 		break;
 	case OBJ_POWERUP: // a powerup you can pick up
-		CBInit (CBContId (), (char **) POWERUP_STRING_TABLE, NULL, NULL, MAX_POWERUP_IDS, 1, true);
+		CBInit (CBContId (), (char **) POWERUP_STRING_TABLE, null, null, MAX_POWERUP_IDS, 1, true);
 		break;
 	}
 // update list boxes

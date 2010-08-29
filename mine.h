@@ -290,7 +290,7 @@ public:
 			*TexColors (nBaseTex) = *pc;
 		}
 	inline CColor *GetTexColor (short nBaseTex, bool bIsTranspWall = false)	
-		{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : NULL; }
+		{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : null; }
 	CColor *LightColor (int i = 0, int j = 0, bool bUseTexColors = true);
 	inline lightColorList& LightColors ()
 		{ return MineData ().lightColors; }
@@ -316,7 +316,7 @@ public:
 	BOOL HasCustomLightMap (void);
 	BOOL HasCustomLightColors (void);
 
-	short Load(const char *filename = NULL, bool bLoadFromHog = false);
+	short Load(const char *filename = null, bool bLoadFromHog = false);
 	short Save(const char *filename, bool bSaveToHog = false);
 	int WriteColorMap (FILE *fColorMap);
 	int ReadColorMap (FILE *fColorMap);
@@ -347,9 +347,9 @@ public:
 	inline CSegment *CurrSeg ()
 		{ return Segments () + Current ()->nSegment; }
 	inline CWall *SideWall (int i = 0, int j = 0)
-		{ int w = Segments (i)->m_sides [j].m_info.nWall; return (w < 0) ? NULL : Walls (w); }
+		{ int w = Segments (i)->m_sides [j].m_info.nWall; return (w < 0) ? null : Walls (w); }
 	inline CWall *CurrWall ()
-		{ int w = CurrSide ()->m_info.nWall; return (w < 0) ? NULL : Walls (w); }
+		{ int w = CurrSide ()->m_info.nWall; return (w < 0) ? null : Walls (w); }
 	inline CSide *CurrSide ()
 		{ return CurrSeg ()->m_sides + Current ()->nSide; }
 	inline short CurrVert ()
@@ -385,7 +385,7 @@ public:
 	bool IsFlickeringLight (short nSegment, short nSide);
 	bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
 	void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
-	int FindDeltaLight (short nSegment, short nSide, short *pi = NULL);
+	int FindDeltaLight (short nSegment, short nSide, short *pi = null);
 	byte LightWeight(short nBaseTex);
 	short GetFlickeringLight (short nSegment = -1, short nSide = -1);
 	short AddFlickeringLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, fix time = 0x10000 / 4);
@@ -544,7 +544,7 @@ public:
 	short ReadSegmentInfo (FILE *file);
 	void WriteSegmentInfo (FILE *file, short /*nSegment*/);
 	void CutBlock ();
-	void CopyBlock (char *pszBlkFile = NULL);
+	void CopyBlock (char *pszBlkFile = null);
 	void PasteBlock (); 
 	int ReadBlock (char *name,int option); 
 	void QuickPasteBlock  ();
@@ -586,7 +586,7 @@ private:
 	short FixIndexValues();
 	void ResetSide (short nSegment,short nSide);
 
-	int ReadHamFile(char *fname = NULL, int type = NORMAL_HAM);
+	int ReadHamFile(char *fname = null, int type = NORMAL_HAM);
 	void ReadPigTextureTable();
 	void ReadRobotResource(int robot_number);
 	void ReadColor (CColor *pc, FILE *load_file);

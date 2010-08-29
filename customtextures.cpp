@@ -9,7 +9,7 @@
 #include "customtextures.h"
 #include "dle-xp.h"
 
-CExtraTexture*	extraTextures = NULL;
+CExtraTexture*	extraTextures = null;
 
 //------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ return closestIndex;
 bool TGA2Bitmap (tRGBA *pTGA, byte *pBM, int nWidth, int nHeight)
 {
 	tRGBA			rgba = {0,0,0,0};
-	byte			*bConverted = NULL;
+	byte			*bConverted = null;
 
 PALETTEENTRY *sysPal = (PALETTEENTRY *) malloc (256 * sizeof (PALETTEENTRY));
 if (!sysPal) {
@@ -149,7 +149,7 @@ int ReadPog (CFileManager& fp, uint nFileSize)
 	uint*				textureCount = 0;
 	ushort*			textureTable;
 	ushort			nBaseTex;
-	ushort*			xlatTbl = NULL;
+	ushort*			xlatTbl = null;
 	uint				nSize;
 	uint				offset, hdrOffset, bmpOffset, hdrSize, pigTexIndex;
 	int				rc; // return code;
@@ -220,7 +220,7 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 		extraTexP->m_next = extraTextures;
 		extraTextures = extraTexP;
 		extraTexP->m_index = textureIndex;
-		extraTexP->m_info.bmDataP = NULL;
+		extraTexP->m_info.bmDataP = null;
 		texP = extraTexP;
 		nBaseTex = 0;
 		}

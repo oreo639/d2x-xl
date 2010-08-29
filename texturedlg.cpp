@@ -192,7 +192,7 @@ void CTextureTool::CreateColorCtrl (CWnd *pWnd, int nIdC)
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
 pParentWnd->GetClientRect (rc);
-pWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
+pWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
                         /*--------------------------*/
@@ -433,7 +433,7 @@ void CTextureTool::UpdateTextureWnd (void)
 {
 #if TEXTOOLDLG == 0
 RefreshTextureWnd ();
-m_textureWnd.InvalidateRect (NULL);
+m_textureWnd.InvalidateRect (null);
 m_textureWnd.UpdateWindow ();
 #endif
 }
@@ -465,7 +465,7 @@ if (m_bInitTextureListBoxes) {
 	CColor*		colorP;
 // enable buttons as required
 /*
-EditButton->EnableWindow((IsD1File () || path [0] == NULL) ? FALSE: TRUE);
+EditButton->EnableWindow((IsD1File () || path [0] == null) ? FALSE: TRUE);
 LightButton->EnableWindow((m_fileType==RDL_FILE) ? FALSE:TRUE);
 PickButton->EnableWindow(path [0] ? TRUE:FALSE);
 */
@@ -605,10 +605,10 @@ BOOL CTextureTool::OnSetActive ()
 #if TEXTOOLDLG
 CTexToolDlg::OnSetActive ();
 #else
-m_nTimer = SetTimer (1, 100U, NULL);
+m_nTimer = SetTimer (1, 100U, null);
 #endif
 if (m_iLight >= 0)
-	m_nLightTimer = SetTimer (2, m_nLightDelay, NULL);
+	m_nLightTimer = SetTimer (2, m_nLightDelay, null);
 Refresh ();
 return TRUE; //CTexToolDlg::OnSetActive ();
 }
@@ -828,7 +828,7 @@ SelectTexture (IDC_TEXTURE_2ND, false);
 
 void CTextureTool::OnEditTexture () 
 {
-	CTextureEdit	e (NULL);
+	CTextureEdit	e (null);
 
 int i = int (e.DoModal ());
 DLE.MineView ()->Refresh (false);
@@ -1359,7 +1359,7 @@ switch (wParam) {
 	case IDC_TEXALIGN_VSHRINK:
 		if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
 			m_nEditFunc = int (wParam);
-			m_nEditTimer = SetTimer (3, m_nTimerDelay = 250U, NULL);
+			m_nEditTimer = SetTimer (3, m_nTimerDelay = 250U, null);
 			}
 		else {
 			m_nEditFunc = -1;
@@ -1428,7 +1428,7 @@ switch (m_nEditFunc) {
 UINT i = (m_nTimerDelay * 9) / 10;
 if (i >= 25) {
 	KillTimer (m_nTimer);
-	m_nTimer = SetTimer (3, m_nTimerDelay = i, NULL);
+	m_nTimer = SetTimer (3, m_nTimerDelay = i, null);
 	}
 }
 

@@ -52,7 +52,7 @@ if (filename_passed && *filename_passed)
 	strcpy_s (filename, sizeof (filename), filename_passed);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
-	FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
+	FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 	bLoadFromHog = false;
 	bNewMine = true;
@@ -76,7 +76,7 @@ if (checkErr != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", checkErr);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
-			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
+			FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 			bLoadFromHog = false;
 			bNewMine = true;
@@ -209,26 +209,26 @@ if (IsD2File ()) {
 	for (i = 0; i < 15; i++) {
 		palette_name [i] = fgetc(fp);
 		if (palette_name [i]== 0x0a) {
-			palette_name [i] = NULL;
+			palette_name [i] = null;
 			break;
 			}
 		}
 	// replace extension with .pig
 	if (i >= 4) {
-		palette_name [strlen ((char *)palette_name) - 4] = NULL;
+		palette_name [strlen ((char *)palette_name) - 4] = null;
 		strcat_s (palette_name, sizeof (palette_name), ".PIG");
 		}
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
 	if (!bNewMine) {
-		if (descent2_path [0] != NULL) {
+		if (descent2_path [0] != null) {
 			char *path = strrchr (descent2_path, '\\');
 			if (!path) {
-				descent2_path [0] = NULL;
+				descent2_path [0] = null;
 				} 
 			else {
 				path++;  // leave slash
-				*path = NULL;
+				*path = null;
 				}
 			// paste on new *.pig name
 			strcat_s (descent2_path, sizeof (descent2_path), palette_name);
@@ -320,7 +320,7 @@ if (!bLoadFromHog && (IsD2File ())) {
 	ReadHamFile ();
 #if 0
 	char szHamFile [256];
-	FSplit (descent2_path, szHamFile, NULL, NULL);
+	FSplit (descent2_path, szHamFile, null, null);
 	strcat (szHamFile, "hoard.ham");
 	ReadHamFile (szHamFile, EXTENDED_HAM);
 #endif
@@ -329,12 +329,12 @@ if (!bLoadFromHog && (IsD2File ())) {
 		char szHogFile [256], szHamFile [256], *p;
 		long nSize, nPos;
 
-		FSplit (descent2_path, szHogFile, NULL, NULL);
+		FSplit (descent2_path, szHogFile, null, null);
 		if (p = strstr (szHogFile, "data"))
 			*p = '\0';
 		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
 		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
-			FSplit (descent2_path, szHamFile, NULL, NULL);
+			FSplit (descent2_path, szHamFile, null, null);
 			if (p = strstr (szHamFile, "data"))
 				*p = '\0';
 			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
@@ -367,9 +367,9 @@ byte *CMine::LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize)
 HINSTANCE hInst = AfxGetInstanceHandle ();
 HRSRC hRes = FindResource (hInst, pszRes, "RC_DATA");
 if (!hRes)
-	return NULL;
+	return null;
 if (!(hGlobal = LoadResource (hInst, hRes)))
-	return NULL;
+	return null;
 nResSize = SizeofResource (hInst, hRes);
 return (byte *) LockResource (hGlobal);
 }

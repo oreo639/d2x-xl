@@ -83,7 +83,7 @@ else {
 		name++;               // point to character after slash
 	char palette_name [15];
 	strncpy_s (palette_name, sizeof (palette_name), name, 12);
-	palette_name [13] = NULL;  // null terminate just in case
+	palette_name [13] = null;  // null terminate just in case
 	// replace extension with *.256
 	if (strlen ((char *)palette_name) > 4)
 		strcpy_s (&palette_name [strlen ((char *) palette_name) - 4], 5, ".256");

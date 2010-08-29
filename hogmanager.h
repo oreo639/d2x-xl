@@ -12,7 +12,7 @@ class CInputDialog : public CDialog {
 		LPSTR		m_pszBuf;
 		size_t	m_nBufSize;
 
-		CInputDialog (CWnd *pParentWnd = NULL, LPSTR pszTitle = NULL, LPSTR pszPrompt = NULL, LPSTR pszBuf = NULL, size_t nBufSize = 0);
+		CInputDialog (CWnd *pParentWnd = null, LPSTR pszTitle = null, LPSTR pszPrompt = null, LPSTR pszBuf = null, size_t nBufSize = 0);
 		virtual BOOL OnInitDialog (void);
 		virtual void DoDataExchange (CDataExchange * pDX);
 		void OnOK (void);
@@ -37,7 +37,7 @@ class CHogManager : public CDialog {
 		int				m_bShowAll;
 //		tHogFileData	m_fileData;
 
-		CHogManager (CWnd *pParentWnd = NULL, LPSTR pszFile = NULL, LPSTR pszSubFile = NULL);
+		CHogManager (CWnd *pParentWnd = null, LPSTR pszFile = null, LPSTR pszSubFile = null);
 		virtual BOOL OnInitDialog (void);
 		virtual void DoDataExchange (CDataExchange * pDX);
 		void EndDialog (int nResult);
@@ -45,9 +45,9 @@ class CHogManager : public CDialog {
 		void ClearFileList (void);
 		int AddFile (LPSTR pszName, long size, long offset, int fileno);
 		int DeleteFile (int index = -1);
-		int GetFileData (int index = -1, long *size = NULL, long *offset = NULL);
+		int GetFileData (int index = -1, long *size = null, long *offset = null);
 		int AddFileData (int index, long size, long offset, int fileno);
-		bool LoadLevel (LPSTR pszFile = NULL, LPSTR pszSubFile = NULL);
+		bool LoadLevel (LPSTR pszFile = null, LPSTR pszSubFile = null);
 		void OnOK (void);
 		void OnCancel (void);
 		bool ReadHogData ();
@@ -66,7 +66,7 @@ class CHogManager : public CDialog {
 
                          /*--------------------------*/
 
-bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags = 0, CWnd *pParentWnd = NULL);
+bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags = 0, CWnd *pParentWnd = null);
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs);
 bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels, bool bGetFileData = true);
 bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose = TRUE);

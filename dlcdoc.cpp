@@ -356,7 +356,7 @@ if (strstr (pszFile, ".hog")) {
 	if (pszFile != m_szFile)
 		strcpy_s (m_szFile, sizeof (m_szFile), szFile);
 	strcpy_s (m_szSubFile, sizeof (m_szSubFile), szSubFile);
-	FSplit (pszFile, m_startFolder , NULL, NULL);
+	FSplit (pszFile, m_startFolder , null, null);
 	sprintf_s (m_szTmpFile, sizeof (m_szTmpFile), "%sdle_temp.rdl", m_startFolder );
 	err = theMine->Load (m_szTmpFile, true);
 	memset (&missionData, 0, sizeof (missionData));
@@ -366,7 +366,7 @@ else {
 		char szExt [256];
 
 	err = theMine->Load (pszFile);
-	FSplit (pszFile, NULL, pszSubFile, szExt);
+	FSplit (pszFile, null, pszSubFile, szExt);
 	strcat_s (pszSubFile, 256, szExt);
 	}
 theMine->Reset ();
@@ -379,7 +379,7 @@ DLE.MineView ()->FitToView ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->ResetView (true);
 DLE.MainFrame ()->UpdateSelectButtons ((enum eSelectModes) DLE.MineView ()->GetSelectMode ());
-//UpdateAllViews (NULL);
+//UpdateAllViews (null);
 if (!err) {
 	UpdateCaption ();
 	AfxGetApp ()->AddToRecentFileList (m_szFile);
@@ -406,7 +406,7 @@ if (bEnableDeltaShading)
 	DLE.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
-	FSplit ((DLE.IsD1File ()) ? descent_path : levels_path, szMissions, NULL, NULL);
+	FSplit ((DLE.IsD1File ()) ? descent_path : levels_path, szMissions, null, null);
 //	strcpy_s (m_szFile, sizeof (m_szFile), (DLE.IsD1File ()) ? "new.rdl" : "new.rl2");
 	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
@@ -491,7 +491,7 @@ if (p) {
 								 *player_profile ? "-player" : "", player_profile, 
 								 "-auto_hogfile", szHogFile, 
 								 "-auto_mission", szMission, 
-								 NULL);
+								 null);
 	if (j < 0)
 		j = errno;
 	}

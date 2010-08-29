@@ -626,4 +626,6 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #	define USE_DYN_ARRAYS 0
 #endif
 
+#define null NULL
+
 #endif // _DEFINE_H

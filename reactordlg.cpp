@@ -36,7 +36,7 @@ END_MESSAGE_MAP ()
 CReactorTool::CReactorTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_REACTORDATA2 : IDD_REACTORDATA, pParent)
 {
-m_pTrigger = NULL;
+m_pTrigger = null;
 Reset ();
 }
 

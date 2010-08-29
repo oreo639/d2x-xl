@@ -115,7 +115,7 @@ memset (m_bFlags, 0, sizeof (m_bFlags));
 
 BOOL CWallTool::TextureIsVisible ()
 {
-return m_pWall [0] != NULL;
+return m_pWall [0] != null;
 }
 
 //------------------------------------------------------------------------
@@ -478,9 +478,9 @@ CWall *CWallTool::GetOtherWall (void)
 short nOppSeg, nOppSide;
 
 if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
-	return m_pWall [1] = NULL;
+	return m_pWall [1] = null;
 m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
-return m_pWall [1] = (m_nWall [1] < theMine->GameInfo ().walls.count ? theMine->Walls (m_nWall [1]) : NULL);
+return m_pWall [1] = (m_nWall [1] < theMine->GameInfo ().walls.count ? theMine->Walls (m_nWall [1]) : null);
 }
 
                         /*--------------------------*/
@@ -491,7 +491,7 @@ m_nWall [0] = CBWallNo ()->GetCurSel ();
 if (m_nWall [0] < 0) {
 	m_nWall [1] = -1;
 	m_pWall [0] =
-	m_pWall [1] = NULL;
+	m_pWall [1] = null;
 	return false;
 	}
 m_pWall [0] = theMine->Walls (m_nWall [0]);

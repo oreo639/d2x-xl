@@ -47,7 +47,7 @@ void CConvertDlg::CreateImgWnd (CWnd *pImgWnd, int nIdC)
 CWnd *pParentWnd = GetDlgItem (nIdC);
 CRect rc;
 pParentWnd->GetClientRect (rc);
-pImgWnd->Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
+pImgWnd->Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
 //------------------------------------------------------------------------

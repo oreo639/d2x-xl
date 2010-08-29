@@ -67,7 +67,7 @@ void CParser::RunScript()
 		CComPtr<IScriptControl> scriptControl;
 		CComPtr<IScriptError> error;
 
-		if (dispIntfc && SUCCEEDED(::CoCreateInstance(CLSID_ScriptControl,NULL,CLSCTX_INPROC_SERVER,IID_IScriptControl,(void**)&scriptControl)) )
+		if (dispIntfc && SUCCEEDED(::CoCreateInstance(CLSID_ScriptControl,null,CLSCTX_INPROC_SERVER,IID_IScriptControl,(void**)&scriptControl)) )
 		{
 			HRESULT hr;
 			
@@ -112,7 +112,7 @@ void CParser::RunScript()
 					{
 						if (bstr.Length())
 						{
-							::MessageBox(NULL,OLE2T(bstr),"Error",MB_OK);
+							::MessageBox(null,OLE2T(bstr),"Error",MB_OK);
 						}
 					}
 				}

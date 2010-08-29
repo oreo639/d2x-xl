@@ -15,7 +15,7 @@ STDMETHODIMP CComMine::InfoMessage(BSTR strValue)
 	AFX_MANAGE_STATE(AfxGetStaticModuleState())
 
 	CString str(strValue);
-	::MessageBox(NULL, str,"Information Message",  MB_OK);
+	::MessageBox(null, str,"Information Message",  MB_OK);
 
 	return S_OK;
 }

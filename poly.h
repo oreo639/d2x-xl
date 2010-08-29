@@ -69,7 +69,7 @@ public:
 	inline void Release (void) {
 		if (m_info.renderData) {
 			delete m_info.renderData;
-			m_info.renderData = NULL;
+			m_info.renderData = null;
 			}
 		}
 	int Read (CFileManager& fp, bool bRenderData = false);

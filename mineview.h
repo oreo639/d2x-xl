@@ -242,7 +242,7 @@ public:
 		}
 	void DrawMineCenter (CDC *pViewDC);
 	bool VertexVisible (int v);
-	void SetViewPoints (CRect *pRC = NULL, bool bSetViewInfo = true);
+	void SetViewPoints (CRect *pRC = null, bool bSetViewInfo = true);
 	void ShiftViewPoints ();
 	// drawing functions
 	void	InitView(CDC* pViewDC);
@@ -396,7 +396,7 @@ public:
 	void GLRenderTexture (short nSegment, short nSide, short nTexture);
 	void GLCreateTexture (short nTexture);
 	GLvoid GLKillWindow (GLvoid);
-	BOOL GLCreateWindow (CDC *pDC = NULL);
+	BOOL GLCreateWindow (CDC *pDC = null);
 #endif
 
 protected:

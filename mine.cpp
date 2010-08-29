@@ -24,7 +24,7 @@
 
 #define ENABLE_TEXT_DUMP 0
 
-CMine* theMine = NULL;
+CMine* theMine = null;
 
 //==========================================================================
 // CMine - CMine
@@ -57,7 +57,7 @@ CLEAR (RobotInfo ());
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
 m_dlcLogPalette = 0;
-m_currentPalette = NULL;
+m_currentPalette = null;
 FlickerLightCount () = 0;
 Current () = &Current1 ();
 *m_szBlockFile = '\0';
@@ -73,11 +73,11 @@ GameInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-m_currentPalette = NULL;
+m_currentPalette = null;
 LoadPalette ();
 m_bSortObjects = TRUE;
 m_bVertigo = false;
-m_pHxmExtraData = NULL;
+m_pHxmExtraData = null;
 m_nHxmExtraDataSize = 0;
 m_bUseTexColors = false;
 LoadDefaultLightAndColor ();
@@ -143,7 +143,7 @@ if (!data)
 	return 0;
 // copy data to a file
 
-FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , NULL, NULL);
+FSplit ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 ASSIGN (RobotInfo (), DefRobotInfo ());
 texture_resource = (IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
@@ -174,7 +174,7 @@ ClearMineData();
 
 if (m_pHxmExtraData) {
 	free (m_pHxmExtraData);
-	m_pHxmExtraData = NULL;
+	m_pHxmExtraData = null;
 	m_nHxmExtraDataSize = 0;
 	}
 

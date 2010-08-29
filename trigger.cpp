@@ -122,11 +122,11 @@ CTrigger *CMine::AddTrigger (ushort nWall, short type, BOOL bAutoAddWall)
 nWall = FindTriggerWall (&nTrigger);
 if (nTrigger != NO_TRIGGER) {
 	ErrorMsg ("There is already a trigger on this side");
-	return NULL;
+	return null;
 	}
 if (GameInfo ().triggers.count >= MAX_TRIGGERS) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
-	return NULL;
+	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = DLE.SetModified (TRUE);
@@ -135,19 +135,19 @@ if (CurrSide ()->m_info.nWall >= GameInfo ().walls.count) {
 	if (bAutoAddWall) {
 		if (GameInfo ().walls.count >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
-			return NULL;
+			return null;
 			}
 		nSegment = nSide = -1;
 		GetCurrent (nSegment, nSide);
 		if (!AddWall (-1, -1, (Segments (nSegment)->Child (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			DLE.ResetModified (bUndo);
-			return NULL;
+			return null;
 			}
 		}
 	else {
 		ErrorMsg ("You must add a wall to this side before you can add a trigger.");
-		return NULL;
+		return null;
 		}
 	}
 // if D1, then convert type to flag value
@@ -426,11 +426,11 @@ if ((Objects (objnum)->m_info.type != OBJ_ROBOT) &&
 	 (Objects (objnum)->m_info.type != OBJ_HOSTAGE) &&
 	 (Objects (objnum)->m_info.type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
-	return NULL;
+	return null;
 	}
 if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
-	return NULL;
+	return null;
 	}
 bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();

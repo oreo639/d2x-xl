@@ -40,7 +40,7 @@ if (m_mouseState == eMouseStateInitDrag) {
 	}
 HighlightDrag (nVert, x, y);
 	
-//InvalidateRect (NULL, TRUE);
+//InvalidateRect (null, TRUE);
 return TRUE;
 }
 

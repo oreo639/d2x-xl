@@ -62,7 +62,7 @@ class CConvertDlg : public CDialog
 		HGLOBAL		m_hTextures;
 		short			*m_pTextures;
 
-		CConvertDlg (CWnd *pParent = NULL);
+		CConvertDlg (CWnd *pParent = null);
       virtual BOOL OnInitDialog ();
 		void EndDialog (int nResult);
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -93,13 +93,13 @@ class CToolDlg : public CPropertyPage
 		bool	m_bInited;
 		bool	m_bHaveData;
 
-		CToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = NULL);
+		CToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = null);
 		~CToolDlg ()
-			{ m_pParent = NULL; m_bInited = m_bHaveData = false; }
+			{ m_pParent = null; m_bInited = m_bHaveData = false; }
       virtual BOOL OnInitDialog () 
 			{ return CPropertyPage::OnInitDialog (); }
       virtual BOOL OnSetActive () {
-			if ((theMine == NULL) || !CPropertyPage::OnSetActive ())
+			if ((theMine == null) || !CPropertyPage::OnSetActive ())
 				return FALSE;
          UpdateData (FALSE);
          return TRUE;
@@ -114,7 +114,7 @@ class CToolDlg : public CPropertyPage
 			}
 		void Refresh (void)
 			{ UpdateData (FALSE); }
-		void DDX_Double (CDataExchange * pDX, int nIDC, double& fVal, double min = 1, double max = 0, LPSTR pszFmt = "%1.2f", LPSTR pszErrMsg = NULL);
+		void DDX_Double (CDataExchange * pDX, int nIDC, double& fVal, double min = 1, double max = 0, LPSTR pszFmt = "%1.2f", LPSTR pszErrMsg = null);
 		void DDX_Slider (CDataExchange * pDX, int nIdC, int& nTic);
 		int DDX_Int (CDataExchange * pDX, int nIdC, int i);
 		int DDX_Flag (CDataExchange * pDX, int nIdC, int i);
@@ -162,7 +162,7 @@ class CTexToolDlg : public CToolDlg
 	int		m_frame [2];
 	bool		m_bOtherSeg;
 
-	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = NULL, 
+	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = null, 
 					 int nTexWndId = 0, int nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
 					 bool bOtherSeg = false);
 	~CTexToolDlg ();
@@ -206,7 +206,7 @@ class CAdvObjTool : public CToolDlg
 		int		m_model;
 		int		m_frame;
 		int		m_frameNo;
-		CAdvObjTool (CPropertySheet *pParent = NULL);
+		CAdvObjTool (CPropertySheet *pParent = null);
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
@@ -238,14 +238,14 @@ class CDiagTool : public CToolDlg
 		bool			m_bCheckMsgs;
 		int			m_statsWidth;
 
-		CDiagTool (CPropertySheet *pParent = NULL);
+		CDiagTool (CPropertySheet *pParent = null);
 		~CDiagTool ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
 		void Reset ();
 		void Refresh ();
-		LPSTR ItemText (int nValue, LPSTR pszPrefix = NULL);
+		LPSTR ItemText (int nValue, LPSTR pszPrefix = null);
 		void CountObjects (void);
 		int CountTextures (void);
 		afx_msg void OnCheckMine ();
@@ -273,7 +273,7 @@ class CDiagTool : public CToolDlg
 		bool CheckBotGens ();
 		bool CheckEquipGens ();
 		bool MarkSegment (short nSegment);
-		char FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList = NULL);
+		char FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList = null);
 		void CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* matCenP, short nMatCens);
 		short FixMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens, char* pszType);
 		short AssignMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens);
@@ -303,7 +303,7 @@ class CReactorTool : public CToolDlg
 		char			m_szTarget [40];
 		CReactorTrigger	*m_pTrigger;
 
-		CReactorTool (CPropertySheet *pParent = NULL);
+		CReactorTool (CPropertySheet *pParent = null);
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
@@ -336,7 +336,7 @@ class CMissionTool : public CToolDlg
 		MISSION_DATA	m_missionData;
 		char				m_szLevel [26];
 
-		CMissionTool (CPropertySheet *pParent = NULL);
+		CMissionTool (CPropertySheet *pParent = null);
 	   virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
 		virtual void OnOK (void);
@@ -371,7 +371,7 @@ class CObjectTool : public CToolDlg
 		int		m_bEndsLevel;
 		char		m_szInfo [200];
 
-		CObjectTool (CPropertySheet *pParent = NULL);
+		CObjectTool (CPropertySheet *pParent = null);
 		~CObjectTool ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -491,7 +491,7 @@ class CEffectTool : public CToolDlg
 		CSoundInfo			m_sound;
 		int					m_nBufferId;
 
-		CEffectTool (CPropertySheet *pParent = NULL);
+		CEffectTool (CPropertySheet *pParent = null);
 		~CEffectTool ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -561,7 +561,7 @@ class CSegmentTool : public CToolDlg
 		int		m_nLastSide;
 		int		m_bSetDefTexture;
 
-		CSegmentTool (CPropertySheet *pParent = NULL);
+		CSegmentTool (CPropertySheet *pParent = null);
 		virtual BOOL OnInitDialog ();
 		virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
@@ -571,8 +571,8 @@ class CSegmentTool : public CToolDlg
 		void Refresh ();
 		void OnSide (int nSide);
 		void OnPoint (int nPoint);
-		int FindBot (CListBox *plb, LPSTR pszBot = NULL);
-		int FindEquip (CListBox *plb, LPSTR pszBot = NULL);
+		int FindBot (CListBox *plb, LPSTR pszBot = null);
+		int FindEquip (CListBox *plb, LPSTR pszBot = null);
 		bool IsBotMaker (CSegment *segP);
 		bool IsEquipMaker (CSegment *segP);
 		void SetDefTexture (short nTexture);
@@ -675,7 +675,7 @@ class CWallTool : public CTexToolDlg
 		bool		m_bLock;
 		bool		m_bDelayRefresh;
 
-		CWallTool (CPropertySheet *pParent = NULL);
+		CWallTool (CPropertySheet *pParent = null);
 		~CWallTool ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -773,7 +773,7 @@ class CTriggerTool : public CTexToolDlg
 		CWnd					m_showTexWnd;
 		bool					m_bFindTrigger;
 
-		CTriggerTool (CPropertySheet *pParent = NULL);
+		CTriggerTool (CPropertySheet *pParent = null);
 		~CTriggerTool ();
 		virtual BOOL OnInitDialog ();
 		virtual void DoDataExchange (CDataExchange *pDX);
@@ -877,7 +877,7 @@ class CTriggerTool : public CTexToolDlg
 class CTxtFilterTool : public CToolDlg
 {
 	public:
-		CTxtFilterTool (CPropertySheet *pParent = NULL);
+		CTxtFilterTool (CPropertySheet *pParent = null);
 		~CTxtFilterTool ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -1009,7 +1009,7 @@ class CTextureTool : public CTexToolDlg
 		COLORREF				m_custColors [16];
 		int					m_nEditFunc;
 
-		CTextureTool (CPropertySheet *pParent = NULL);
+		CTextureTool (CPropertySheet *pParent = null);
 		~CTextureTool ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
@@ -1103,7 +1103,7 @@ class CTextureTool : public CTexToolDlg
 		void OnEditTimer (void);
 
 		void SetLightString ();
-		void SetLightButtons (LPSTR szLight = NULL, int nSpeed = -1);
+		void SetLightButtons (LPSTR szLight = null, int nSpeed = -1);
 		bool SetLightDelay (int nSpeed = -1);
 		void GetBrightness (int nTexture);
 		void SetBrightness (int nBrightness = 0);
@@ -1186,7 +1186,7 @@ class CLightTool : public CToolDlg
 		int		m_bShowLightSource;
 		int		m_bCopyTexLights;
 
-		CLightTool (CPropertySheet *pParent = NULL);
+		CLightTool (CPropertySheet *pParent = null);
       virtual BOOL OnInitDialog ();
 		void SetDefaults (void);
 		void OnOK (void);
@@ -1229,7 +1229,7 @@ class CPrefsDlg : public CToolDlg
 		bool				m_bNoRefresh;
 		bool				m_bInvalid;
 
-		CPrefsDlg (CPropertySheet *pParent = NULL);
+		CPrefsDlg (CPropertySheet *pParent = null);
 		~CPrefsDlg ();
 		bool BrowseFile (LPSTR fileType, LPSTR fileName, LPSTR fileExt, BOOL bOpen);
 	   virtual BOOL OnInitDialog ();

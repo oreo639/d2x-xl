@@ -625,13 +625,13 @@ segP = Segments (nSourceSeg);
 #if 1//def _OPENMP
 short* visited = new short [SegCount ()];
 memset (visited, 0xff, SegCount () * sizeof (*visited));
-SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
+SetSegmentChildNum (null, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
 visited [nSourceSeg] = m_lightRenderDepth;
 #else
 int i;
 for (i = SegCount (); i; )
 	Segments (--i)->m_info.nIndex = -1;
-SetSegmentChildNum (NULL, nSourceSeg, m_lightRenderDepth);
+SetSegmentChildNum (null, nSourceSeg, m_lightRenderDepth);
 segP->m_info.nIndex = m_lightRenderDepth;
 #endif
 
@@ -646,7 +646,7 @@ if (UseTexColors () && bCopyTexLights) {
 	CColor* segColorP = LightColor (nSourceSeg, nSourceSide, false);
 	*segColorP = *lightColorP;
 	}
-bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != NULL;
+bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != null;
 // loop on child Segments ()
 int nChildSeg;
 int nSegCount = SegCount ();
@@ -687,7 +687,7 @@ int nSegCount = SegCount ();
 			// if the child side is the same as the source side, then set light and continue
 			if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg)) {
 #if 1
-				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, NULL, fLightScale);
+				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, null, fLightScale);
 #else
 				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 				uint	vertBrightness, lightBrightness;
@@ -790,7 +790,7 @@ bool CMine::IsLava (int nBaseTex)
   char		name [20];
 
 LoadString(hInst,texture_resource + nBaseTex, name, sizeof (name));
-return (strstr((char*)name,"lava") != NULL);
+return (strstr((char*)name,"lava") != null);
 }
 
 //--------------------------------------------------------------------------
@@ -853,7 +853,7 @@ fLightScale = 1.0; ///= 100.0;
 			bool bCalcDeltas = false;
 			// if the current side is a wall and has a light and is the target of a trigger
 			// than can make the wall appear/disappear, calculate delta lights for it
-			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != NULL)) &&
+			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != null)) &&
 				 ((nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
 				char trigtype = Triggers (nTrigger)->m_info.type;
 				bCalcDeltas =
@@ -1115,7 +1115,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
 	CSegment	*segP = Segments (0) + nSegment;
-	CSegment	*prevSeg = NULL;
+	CSegment	*prevSeg = null;
 	bool			bMarkChildren = false;
 
 // mark each child if child number is lower
@@ -1166,7 +1166,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
 	CSegment	*segP = Segments (0) + nSegment;
-	CSegment	*prevSeg = NULL;
+	CSegment	*prevSeg = null;
 	bool			bMarkChildren = false;
 
 // mark each child if child number is lower

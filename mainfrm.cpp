@@ -223,7 +223,7 @@ m_nTimer = -1;
 
 void CExtToolBar::Notify (UINT nMsg)
 {
-DLE.MainFrame ()->SendMessage (WM_COMMAND, nMsg, NULL);
+DLE.MainFrame ()->SendMessage (WM_COMMAND, nMsg, null);
 }
 
 								/*---------------------------*/
@@ -239,7 +239,7 @@ for (i = 0, h = GetToolBarCtrl ().GetButtonCount (); i < h; i++) {
 	if ((pos.x >= rc.left) && (pos.x < rc.right) && (pos.y >= rc.top) && (pos.y < rc.bottom)) {
 		if ((i >= 11) && (i <= 23) && (i != 13)) {
 			m_nId = i;
-			m_nTimer = SetTimer (1, m_nTimerDelay = 250U, NULL);
+			m_nTimer = SetTimer (1, m_nTimerDelay = 250U, null);
 			}
 		break;
 		}
@@ -281,7 +281,7 @@ if (nFlags & MK_LBUTTON) {
 	else {
 		if (m_nPos != 1) {
 			m_nPos = 1;
-			m_nTimer = SetTimer (1, m_nTimerDelay = 250U, NULL);
+			m_nTimer = SetTimer (1, m_nTimerDelay = 250U, null);
 			}
 		}
 	}
@@ -355,7 +355,7 @@ if (nIdEvent == 1) {
 UINT i = (m_nTimerDelay * 9) / 10;
 if (i >= 25) {
 	KillTimer (m_nTimer);
-	m_nTimer = SetTimer (1, m_nTimerDelay = i, NULL);
+	m_nTimer = SetTimer (1, m_nTimerDelay = i, null);
 	}
 }
 
@@ -365,9 +365,9 @@ if (i >= 25) {
 CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
-m_mineView = NULL;
-m_textureView = NULL;
-m_toolView = NULL;
+m_mineView = null;
+m_textureView = null;
+m_toolView = null;
 m_paneMode = 0;
 m_bShowCtrlBar = 1;
 m_bRecalcBarLayout = 0;
@@ -380,7 +380,7 @@ nLayout = GetPrivateProfileInt ("DLE-XP", "Layout", 0, INIFILE);
 m_bEditorTB = 1;
 #else
 m_bEditorTB = 0;
-m_pEditTool = NULL;
+m_pEditTool = null;
 #endif
 
 }
@@ -531,12 +531,12 @@ FloatControlBar (&m_editBar, p, (UINT) AFX_IDW_DOCKBAR_RIGHT);
 
 
 CMineView* CMainFrame::GetMineView() {
-	CView* view = NULL;
+	CView* view = null;
 	CDocument* doc = GetActiveDocument();
 	if (doc)
 	{
 		POSITION pos = doc->GetFirstViewPosition();
-		while (pos != NULL)
+		while (pos != null)
 		{
 			view = (CMineView *)doc->GetNextView(pos);
 			if (view->IsKindOf(RUNTIME_CLASS(CMineView))) break;
@@ -981,7 +981,7 @@ if (m_bEditorTB) {
 		m_pEditTool->ShowWindow (SW_SHOW);
 		}
 	else
-		m_bEditorTB = NULL;
+		m_bEditorTB = null;
 	}
 else {
 	CRect rc;
@@ -990,7 +990,7 @@ else {
 	DLE.WritePrivateProfileInt ("yEditTB", rc.top);
 	m_pEditTool->DestroyWindow ();
 	delete m_pEditTool;
-	m_pEditTool = NULL;
+	m_pEditTool = null;
 	}
 #if EDITBAR
 if (m_bShowCtrlBar && m_bEditorTB)
@@ -1922,7 +1922,7 @@ if ((m_nEditFunc == UINT (-1)) || (i >= 25)) {
 	if (m_nEditFunc == UINT (-1))
 		m_nTimer = -1;
 	else
-		m_nTimer = SetTimer (1, m_nTimerDelay = i, NULL);
+		m_nTimer = SetTimer (1, m_nTimerDelay = i, null);
 	}
 }
 
@@ -1943,7 +1943,7 @@ if (((LPNMHDR) lParam)->code == WM_LBUTTONDOWN) {
 	if ((pos.x < 0) || (pos.y < 0) || (pos.x >= rc.right) || (pos.y >= rc.bottom))
 		QuitEditFunc ();
 	m_nEditFunc = wParam;
-	m_nTimer = SetTimer (1, 250U, NULL);
+	m_nTimer = SetTimer (1, 250U, null);
 	m_nTimerDelay = 250;
 	}
 else {

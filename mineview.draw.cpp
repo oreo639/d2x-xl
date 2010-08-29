@@ -811,7 +811,7 @@ CHECKMINE;
 		ushort nWall = NO_WALL;
 
 		for (nSide = 0; nSide < 6; nSide++) {
-			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? NULL : theMine->Walls () + nWall;
+			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? null : theMine->Walls () + nWall;
 			if ((segP->Child (nSide) == -1) ||
 				(wallP && (wallP->m_info.type != WALL_OPEN) && ((wallP->m_info.type != WALL_CLOAKED) || wallP->m_info.cloakValue))
 				)

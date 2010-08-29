@@ -69,7 +69,7 @@ static MyBMI my_bmi;
 	hFind = FindResource (hInst, PaletteResource (), "RC_DATA");
 	if (!hFind) {
 		DEBUGMSG (" Bitmap creation: Palette resource not found.");
-		return NULL;
+		return null;
 		}
 	hPalette = LoadResource (hInst, hFind);
 	palette = (byte *) LockResource (hPalette);
@@ -108,7 +108,7 @@ if (!pDC)
 
 	HINSTANCE	hInst = AfxGetApp ()->m_hInstance;
 	CBitmap		bmTexture;
-	FILE			*fp = NULL;
+	FILE			*fp = null;
 	char			szFile [256];
 	BITMAP		bm;
 	CDC			memDC;
@@ -203,7 +203,7 @@ else if (bkColor < 0) {
 else if (bkColor >= 0)
 	pDC->FillSolidRect (&rc, (COLORREF) bkColor);
 wndP->ReleaseDC (pDC);
-wndP->InvalidateRect (NULL, TRUE);
+wndP->InvalidateRect (null, TRUE);
 wndP->UpdateWindow ();
 return bShowTexture;
 }
@@ -216,9 +216,9 @@ bool CTexture::Allocate (int nSize, int nTexture)
 {
 if (m_info.bmDataP && ((m_info.width * m_info.height != nSize)))
 	Release ();
-if (m_info.bmDataP == NULL)
+if (m_info.bmDataP == null)
 	m_info.bmDataP = new byte [nSize];
-return (m_info.bmDataP != NULL);
+return (m_info.bmDataP != null);
 }
 
 //------------------------------------------------------------------------
@@ -277,7 +277,7 @@ if (m_info.bModified)
 if (nVersion < 0)
 	nVersion = DLE.IsD1File () ? 0 : 1;
 
-bool	bLocalFile = (fp == NULL);
+bool	bLocalFile = (fp == null);
 	
 if (!(fp || textureManager.HaveInfo (nVersion)))
 	fp = textureManager.OpenPigFile (nVersion);

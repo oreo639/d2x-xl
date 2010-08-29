@@ -286,7 +286,7 @@ else {
 	m_info.nModels = fp.ReadInt32 ();
 	m_info.dataSize = fp.ReadInt32 ();
 	fp.ReadInt32 ();
-	m_info.renderData = NULL;
+	m_info.renderData = null;
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].ptr = fp.ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -413,7 +413,7 @@ return 0;
 CPolyModel* CMineView::RenderModel (CGameObject* objP)
 {
 if (!theMine)
-	return NULL;
+	return null;
 
 	uint nModel;
 
@@ -440,7 +440,7 @@ switch (objP->m_info.type) {
 		nModel = theMine->RobotInfo ((objP->m_info.id >= N_D2_ROBOT_TYPES) ? objP->m_info.id /*- N_D2_ROBOT_TYPES*/ : objP->m_info.id)->m_info.nModel;
 		break;
 	default:
-		return NULL;
+		return null;
 	}
 return m_polyModels + nModel;
 }
@@ -457,7 +457,7 @@ renderOffset.Clear ();
 modelRenderData.n_points = 0;
 glow_num = -1;
 
-if (NULL == (renderModel = RenderModel (renderObject = objP)))
+if (null == (renderModel = RenderModel (renderObject = objP)))
 	return 1;
 if (renderModel->m_info.renderData)
 	return 0;
@@ -480,8 +480,8 @@ if (bCustom) {
 	}
 strcat_s (filename, sizeof (filename), bCustom ? "missions\\d2x.hog" : "descent2.ham");
 if (ReadModelData (filename, bCustom ? "d2x.ham" : "", bCustom))
-	renderModel = NULL;
-return renderModel == NULL;
+	renderModel = null;
+return renderModel == null;
 }
 
 //-----------------------------------------------------------------------

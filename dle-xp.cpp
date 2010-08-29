@@ -92,7 +92,7 @@ BOOL CAboutDlg::OnInitDialog ()
 {
 CDialog::OnInitDialog ();
 if (m_nTimeout)
-	m_nTimer = SetTimer (4, (UINT) 100, NULL);
+	m_nTimer = SetTimer (4, (UINT) 100, null);
 return TRUE;
 }
 
@@ -139,7 +139,7 @@ END_MESSAGE_MAP()
 
 CDlcApp::CDlcApp()
 {
-m_pDlcDoc = NULL;
+m_pDlcDoc = null;
 m_bSplashScreen = 1;
 m_bMaximized = false;
 ResetUndoBuffer ();
@@ -274,7 +274,7 @@ BOOL CDlcApp::InitInstance()
 		aboutDlg.DoModal ();
 		}
 	if (*cmdInfo.m_strFileName)
-		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), NULL /*"*"*/);
+		GetDocument ()->OpenFile (false, cmdInfo.m_strFileName.GetBuffer (256), null /*"*"*/);
 	if (ToolView ()->PrefsDlg ())
 		ToolView ()->PrefsDlg ()->SetAppSettings (true);
 	return TRUE;
@@ -331,7 +331,7 @@ CDocument* CDlcApp::OpenDocumentFile (LPCTSTR lpszFileName)
 {
 	int			nAction = IDOK;
 
-	ASSERT(m_pDocManager != NULL);
+	ASSERT(m_pDocManager != null);
 //	GetDocument ()->SetPathName ("(new document)");
 	return CWinApp::OpenDocumentFile (lpszFileName);
 }
@@ -568,7 +568,7 @@ m_bSplashScreen = GetPrivateProfileInt ("DLE-XP", "SplashScreen", 1, INIFILE);
 
 CUndoList::CUndoList (int maxSize)
 {
-m_head = m_tail = m_current = NULL;
+m_head = m_tail = m_current = null;
 m_size = 0;
 m_enabled = 1;
 m_maxSize = maxSize;
@@ -614,9 +614,9 @@ while (p = m_current) {
 	m_size--;
 	}
 if (m_current = m_tail)
-	m_tail->nextBuf = NULL;
+	m_tail->nextBuf = null;
 else
-	m_head = NULL;
+	m_head = null;
 }
 
                         /*--------------------------*/
@@ -652,12 +652,12 @@ else if (m_head) {
 		m_tail->nextBuf = m_head;
 		m_tail = m_head;
 		m_head = m_head->nextBuf;
-		m_head->prevBuf = NULL;
+		m_head->prevBuf = null;
 		}
 	}
 else
 	return false;
-m_tail->nextBuf = NULL;
+m_tail->nextBuf = null;
 memcpy (&m_tail->undoBuffer, &theMine->MineData (), sizeof (struct tMineData));
 m_current = m_tail;
 return true;

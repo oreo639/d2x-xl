@@ -126,7 +126,7 @@ m_penHiOrange  = new CPen(PS_SOLID, 2, RGB(255,128,  0));
 m_penHiMagenta = new CPen(PS_SOLID, 2, RGB(255,  0,255));
 int i;
 for (i = eMouseStateIdle; i < eMouseStateCount; i++)
-	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? NULL: DLE.m_hInstance, nIdCursors [i]);
+	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? null: DLE.m_hInstance, nIdCursors [i]);
 m_viewObjectFlags = eViewObjectsAll;
 m_viewMineFlags = eViewMineLights | eViewMineWalls | eViewMineSpecial;
 m_viewOption = eViewTextureMapped;
@@ -139,12 +139,12 @@ m_xScrollCenter =
 m_yScrollCenter = 0;
 m_nMineCenter = 2;
 #if OGL_RENDERING
-m_glRC = NULL;
-m_glDC = NULL;
+m_glRC = null;
+m_glDC = null;
 #endif
 m_nViewDist = 0;
 m_depthPerception = 10000.0f;
-renderModel = NULL;
+renderModel = null;
 Reset ();
 }
 
@@ -502,7 +502,7 @@ else if (nIdEvent == 3) {
 		AdvanceLightTick ();
 		if (SetLightStatus ()) {
 			m_bUpdate = TRUE;
-			InvalidateRect (NULL, TRUE);
+			InvalidateRect (null, TRUE);
 			UpdateWindow ();
 			}
 		}
@@ -516,7 +516,7 @@ else
 void CMineView::EnableDeltaShading (int bEnable, int nFrameRate, int bShowLightSource)
 {
 if (bEnableDeltaShading = bEnable) {
-	m_lightTimer = SetTimer (3, (UINT) (m_nFrameRate + 5) / 10, NULL);
+	m_lightTimer = SetTimer (3, (UINT) (m_nFrameRate + 5) / 10, null);
 	if ((nFrameRate >= 10) && (nFrameRate <= 100))
 		m_nFrameRate = nFrameRate;
 	if (bShowLightSource != -1)
@@ -652,7 +652,7 @@ void CMineView::InitView (CDC *pViewDC)
 					mybmi.bmiColors [i].rgbReserved = 0;
 					}
 				}
-			m_DIB =::CreateDIBSection(m_DC.m_hDC, (BITMAPINFO *) &mybmi, DIB_RGB_COLORS, &m_pvBits, NULL, 0);
+			m_DIB =::CreateDIBSection(m_DC.m_hDC, (BITMAPINFO *) &mybmi, DIB_RGB_COLORS, &m_pvBits, null, 0);
 			if (m_DIB) {
 				m_DC.SelectObject(m_DIB);
 			}
@@ -1002,7 +1002,7 @@ void CMineView::OnLButtonDown (UINT nFlags, CPoint point)
 SetMouseState (eMouseStateButtonDown);
 m_clickPos = point;
 m_clickState = nFlags;
-m_selectTimer = SetTimer (4, 500U, NULL);
+m_selectTimer = SetTimer (4, 500U, null);
 CView::OnLButtonDown (nFlags, point);
 }
 
@@ -1086,7 +1086,7 @@ if (!theMine) return;
 
 if (!(bRefreshing || m_nDelayRefresh)) {
 	bRefreshing = true;
-	InvalidateRect (NULL, TRUE);
+	InvalidateRect (null, TRUE);
 //	SetFocus ();
 	if (bAll && (m_mouseState == eMouseStateIdle)) {
 		DLE.ToolView ()->Refresh ();
@@ -1103,7 +1103,7 @@ if (!(bRefreshing || m_nDelayRefresh)) {
 void CMineView::OnUpdate (CView* pSender, LPARAM lHint, CGameObject* pHint)
 {
 //m_bUpdate = true;
-//InvalidateRect(NULL);
+//InvalidateRect(null);
 Refresh ();
 }
 

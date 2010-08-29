@@ -549,7 +549,7 @@ if ( (object_number >= 0) && (object_number <= 129)) {
 	FreeResource (hGlobal);
 	}
 pWnd->ReleaseDC (pDC);
-pWnd->InvalidateRect (NULL, TRUE);
+pWnd->InvalidateRect (null, TRUE);
 pWnd->UpdateWindow ();
 }
 

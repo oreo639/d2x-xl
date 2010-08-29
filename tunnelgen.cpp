@@ -33,7 +33,7 @@ int _matherr (struct exception *e) {
 		   "%s (%8g,%8g): %s\n\n"
 		   "Press OK to continue, or Cancel to close DMB",
 		    e->name, e->arg1, e->arg2, whyS [e->m_info.type - 1]);
-  if (MessageBox(NULL, message,"Descent Level Editor XP - Error",
+  if (MessageBox(null, message,"Descent Level Editor XP - Error",
 	    MB_ICONEXCLAMATION|MB_OKCANCEL+MB_TASKMODAL) == IDCANCEL) {
     if (QueryMsg("Are you sure you want to abort DLE-XP?") == IDYES) {
       return 0;

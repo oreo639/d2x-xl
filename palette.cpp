@@ -13,7 +13,7 @@
 #include "io.h"
 #include "palette.h"
 
-byte *pCustomPalette = NULL;
+byte *pCustomPalette = null;
 HGLOBAL hPalette;
 
 //------------------------------------------------------------------------
@@ -44,7 +44,7 @@ return (byte) (((int) c * f) / 34);
 
 int HasCustomPalette (void)
 {
-return pCustomPalette != NULL;
+return pCustomPalette != null;
 }
 
 //------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void FreeCustomPalette (void)
 {
 if (pCustomPalette) {
 	free (pCustomPalette);
-	pCustomPalette = NULL;
+	pCustomPalette = null;
 	}
 }
 
@@ -104,10 +104,10 @@ if (pCustomPalette)
 HINSTANCE hInst = AfxGetInstanceHandle();
 HRSRC hResource = FindResource (hInst, PaletteResource (), "RC_DATA");
 if (!hResource)
-	return NULL;
+	return null;
 hPalette = LoadResource (hInst, hResource);
 if (!hPalette)
-	return NULL;
+	return null;
 return (byte *) LockResource (hPalette);
 }
 
@@ -152,7 +152,7 @@ LPCTSTR PaletteResource (void)
 int id = IDR_GROUPA_256;
 if (theMine && theMine->IsD1File ())
 	return MAKEINTRESOURCE (IDR_PALETTE_256);
-FSplit (descent2_path, NULL, szFile, NULL);
+FSplit (descent2_path, null, szFile, null);
 for (ppe = palExt; *(ppe->szFile); ppe++)
 	if (!_stricmp (ppe->szFile, szFile))
 		return MAKEINTRESOURCE (ppe->nIdPal);

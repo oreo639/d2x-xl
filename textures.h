@@ -240,10 +240,10 @@ class CTexture : public CGameItem {
 public:
 	tTexture	m_info;
 
-	CTexture (byte *dataP = NULL) {
+	CTexture (byte *dataP = null) {
 		Clear ();
 		m_info.bmDataP = dataP;
-		m_info.bExtData = (dataP != NULL);
+		m_info.bExtData = (dataP != null);
 		}
 
 	inline void Release (void) {
@@ -259,7 +259,7 @@ public:
 	~CTexture() { Release (); }
 
 	bool Allocate (int nSize, int nTexture);
-	int Load (short nTexture, int nVersion = -1, CFileManager& fp = NULL);
+	int Load (short nTexture, int nVersion = -1, CFileManager& fp = null);
 	void Load (CFileManager& fp, CPigTexture& info);
 	double Scale (short index = -1);
 
@@ -307,7 +307,7 @@ public:
 	int CountCustomTextures (void);
 	FILE* OpenPigFile (int nVersion);
 
-	inline bool HaveInfo (int nVersion) { return info [nVersion] != NULL; }
+	inline bool HaveInfo (int nVersion) { return info [nVersion] != null; }
 
 	CTextureManager() {}
 	

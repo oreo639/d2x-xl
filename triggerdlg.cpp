@@ -398,7 +398,7 @@ plb->SetCurSel (m_iTarget);
 void CTriggerTool::SetTriggerPtr (void)
 {
 if (m_nTrigger == -1) {
-	m_pTrigger = NULL;
+	m_pTrigger = null;
 	m_nStdTrigger = 
 	m_nObjTrigger = -1;
 	ClearObjWindow ();
@@ -1041,7 +1041,7 @@ theMine->AddUnlockTrigger ();
 
 BOOL CTriggerTool::TextureIsVisible ()
 {
-return !m_nClass && (m_pTrigger != NULL) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->m_count);
+return !m_nClass && (m_pTrigger != null) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->m_count);
 }
 
                         /*--------------------------*/

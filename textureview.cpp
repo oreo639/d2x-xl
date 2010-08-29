@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 CTextureView::CTextureView () 
 	: CWnd ()
 {
-m_pTextures = NULL;
+m_pTextures = null;
 m_nTextures [0] = 0;
 m_nTextures [1] = 0;
 m_penCyan = new CPen (PS_SOLID, 1, RGB (0,255,255));
@@ -78,7 +78,7 @@ void CTextureView::Refresh (bool bRepaint)
 {
 if (!theMine) return;
 if (bRepaint) {
-	InvalidateRect (NULL, TRUE);
+	InvalidateRect (null, TRUE);
 	UpdateWindow ();
 	}
 if (!m_bDelayRefresh) {
@@ -576,7 +576,7 @@ if (m_pTextures) {
    m_nTextures [1] = 0;
    for (i = 0; i < nTextures; i++) {
 		LoadString(hInst,texture_resource + i,name,sizeof (name));
-		if (strstr((char*)name,"frame") == NULL)
+		if (strstr((char*)name,"frame") == null)
 			m_pTextures[m_nTextures [1]++] = i;
 		else
 			++nFrames;

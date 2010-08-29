@@ -4,7 +4,7 @@
 #include <math.h>
 #include "define.h"
 #include "VectorTypes.h"
-#include "cfile.h"
+//#include "cfile.h"
 
 struct tAngleVector;
 class CAngleVector;

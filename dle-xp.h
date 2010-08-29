@@ -90,13 +90,13 @@ public:
 	inline CMainFrame *MainFrame ()
 		{ return (CMainFrame *) m_pMainWnd; }
 	inline CMineView *MineView ()
-		{ CMainFrame *h; return (h = MainFrame ()) ? h->MineView () : NULL; }
+		{ CMainFrame *h; return (h = MainFrame ()) ? h->MineView () : null; }
 	inline CTextureView *TextureView ()
-		{ CMainFrame* h; return (h = MainFrame ()) ? h->TextureView () : NULL; }
+		{ CMainFrame* h; return (h = MainFrame ()) ? h->TextureView () : null; }
 	inline CToolView *ToolView ()
-		{ CMainFrame* h; return (h = MainFrame ()) ? MainFrame ()->ToolView () : NULL; }
+		{ CMainFrame* h; return (h = MainFrame ()) ? MainFrame ()->ToolView () : null; }
 	inline CDlcDoc *GetDocument ()
-		{ CMineView *h; return (h = MineView ()) ? h->GetDocument () : NULL; }
+		{ CMineView *h; return (h = MineView ()) ? h->GetDocument () : null; }
 	inline int FileType (void) 
 		{ return theMine ? theMine->FileType (): RL2_FILE; }
 	inline int LevelVersion (void) 

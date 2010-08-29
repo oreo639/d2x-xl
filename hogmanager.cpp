@@ -338,7 +338,7 @@ return true;
 
 bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile) 
 {
-	FILE*		fTmp = NULL, *fSrc = NULL;
+	FILE*		fTmp = null, *fSrc = null;
 	long		size,offset;
 	char		szTmp[256];
 	int		chunk;
@@ -357,7 +357,7 @@ else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
 textureManager.Release ();
 
-FSplit (pszFile, szTmp, NULL, NULL);
+FSplit (pszFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 fopen_s (&fTmp, szTmp, "wb");
 fopen_s (&fSrc, pszFile, "rb");
@@ -595,7 +595,7 @@ if (!fread (&lh, sizeof (lh), 1, hogfile))
 	ErrorMsg ("Cannot read from HOG file");
 else {
 	memset(lh.name, 0, sizeof (lh.name));
-	buf[12] = NULL;
+	buf[12] = null;
 	_strlwr_s (buf, sizeof (buf));
 	strncpy_s (lh.name, sizeof (lh.name), buf, 12);
 	fseek (hogfile,offset,SEEK_SET);
@@ -876,7 +876,7 @@ while (!feof (hog_file)) {
 fclose (hog_file);
 // select first level file
 for (index = 0; index < nFiles; index++) {
-	message [0] = NULL;
+	message [0] = null;
 	plb->GetText (index, message);
 	_strlwr_s (message, sizeof (message));
 	if (strstr (message, ".rdl")) 
@@ -1169,12 +1169,12 @@ if (!hogfile) {
 fwrite("DHF",1,3,hogfile); // starts with Descent Hog File
 // get base szTmp w/o extension and w/o path
 name_start = strrchr(hogFilename,'\\');
-if (name_start==NULL)
+if (name_start==null)
 	name_start = hogFilename;
 else
 	name_start++; // move to just pass the backslash
 strncpy_s (szBaseName, sizeof (szBaseName), name_start,12);
-szBaseName[12] = NULL; // make sure it is null terminated
+szBaseName[12] = null; // make sure it is null terminated
 pszNameEnd = strrchr((char *)szBaseName,'.');
 if (!pszNameEnd)
 	pszNameEnd = szBaseName + strlen ((char *)szBaseName);
@@ -1204,7 +1204,7 @@ if (IsD2File ()) {
 			start_name++;               // point to character after slash
 			}
 		strncpy(szTmp,start_name,12);
-		szTmp[13] = NULL;  // null terminate just in case
+		szTmp[13] = null;  // null terminate just in case
 		// replace extension with *.256
 		if (strlen (szTmp) > 4) {
 			strcpy(szTmp + strlen (szTmp) - 4,".256");
@@ -1220,7 +1220,7 @@ if (IsD2File ()) {
 #endif
 
 if (theMine->HasCustomLightMap ()) {
-	FSplit (hogFilename, szTmp, NULL, NULL);
+	FSplit (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
 	fopen_s (&fTmp, szTmp, "wb");
 	if (fTmp) {
@@ -1235,7 +1235,7 @@ if (theMine->HasCustomLightMap ()) {
 		}
 	}
 if (theMine->HasCustomLightColors ()) {
-	FSplit (hogFilename, szTmp, NULL, NULL);
+	FSplit (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
 	fopen_s (&fTmp, szTmp, "wb");
 	if (fTmp) {
@@ -1251,7 +1251,7 @@ if (theMine->HasCustomLightColors ()) {
 	}
 	
 if (HasCustomPalette ()) {
-	FSplit (hogFilename, szTmp, NULL, NULL);
+	FSplit (hogFilename, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pal");
 	fopen_s (&fTmp, szTmp,"wb");
 	if (fTmp) {
@@ -1273,7 +1273,7 @@ if (textureManager.HasCustomTextures ()) {
 					 "Would you like save these textures into the HOG file?\n\n"
 					 "Note: You must use version 1.2 or higher of Descent2 to see\n"
 					 "the textures when you play the game.") == IDYES) {
-		FSplit (hogFilename, szTmp, NULL, NULL);
+		FSplit (hogFilename, szTmp, null, null);
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.pog");
 		fopen_s (&fTmp, szTmp,"wb");
 		if (fTmp) {
@@ -1296,7 +1296,7 @@ if (theMine->HasCustomRobots ()) {
 					  "Would you like save these changes into the HOG file?\n\n"
 					  "Note: You must use version 1.2 or higher of Descent2 for\n"
 					  "the changes to take effect.") == IDYES) {
-		FSplit (hogFilename, szTmp, NULL, NULL);
+		FSplit (hogFilename, szTmp, null, null);
 		strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 		fopen_s (&fTmp, szTmp, "wb");
 		if (fTmp) {
@@ -1354,7 +1354,7 @@ int bOtherFilesFound = 0;
 int bIdenticalLevelFound = 0;
 fopen_s (&file, szHogFile, "rb");
 if (!file) {
-	FSplit (szHogFile, szTmp, NULL, NULL);
+	FSplit (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 	theMine->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, true);
@@ -1365,7 +1365,7 @@ while (!feof (file)) {
 	if (!fread (&lh, sizeof (lh), 1, file)) 
 		break;
 	_strlwr_s (lh.name, sizeof (lh.name));
-	lh.name [sizeof (lh.name) - 1] = NULL; // null terminate
+	lh.name [sizeof (lh.name) - 1] = null; // null terminate
 	if (!strstr ((char *) lh.name, ".hxm") &&     // not a custom robot file
 		 !strstr ((char *) lh.name, ".pog") &&     // not a custom texture file
 		 !strstr ((char *) lh.name, ".lgt") &&     // not an texture brightness table file
@@ -1402,7 +1402,7 @@ else {
 		bQuickSave = 1;
 	}
 if (bQuickSave) {
-	FSplit (szHogFile, szTmp, NULL, NULL);
+	FSplit (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 	theMine->Save (szTmp);
 	return MakeHog (szTmp, szHogFile, szSubFile, bSaveAs);
@@ -1410,8 +1410,8 @@ if (bQuickSave) {
 	}
 char base [256];
 // determine base name
-FSplit (szSubFile, NULL, base, NULL);
-base[8] = NULL;
+FSplit (szSubFile, null, base, null);
+base[8] = null;
 _strlwr_s (base, sizeof (base));
 strip_extension (base);
 fopen_s (&file, szHogFile, "r+b"); // reopen file
@@ -1428,13 +1428,13 @@ if (!file) {
 	return 1;
 	}
 fseek (file, 0, SEEK_END);
-FSplit (szHogFile, szTmp, NULL, NULL);
+FSplit (szHogFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 theMine->Save (szTmp, true);
 WriteSubFile (file, szTmp, szSubFile);
 
 if (theMine->HasCustomLightMap ()) {
-	FSplit (szHogFile, szTmp, NULL, NULL);
+	FSplit (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
 	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
@@ -1453,7 +1453,7 @@ if (theMine->HasCustomLightMap ()) {
 		ErrorMsg ("Error writing custom light map.");
 	}
 if (theMine->HasCustomLightColors ()) {
-	FSplit (szHogFile, szTmp, NULL, NULL);
+	FSplit (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
 	fopen_s (&fTmp, szTmp, "wb");
 	if (fTmp) {
@@ -1469,7 +1469,7 @@ if (theMine->HasCustomLightColors ()) {
 	}
 
 if (textureManager.HasCustomTextures ()) {
-	FSplit (szHogFile, szTmp, NULL, NULL);
+	FSplit (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
@@ -1487,7 +1487,7 @@ if (textureManager.HasCustomTextures ()) {
 	}
 
 if (theMine->HasCustomRobots ()) {
-	FSplit (szHogFile, szTmp, NULL, NULL);
+	FSplit (szHogFile, szTmp, null, null);
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 	fopen_s (&fTmp, szTmp, "wb");
 	bool bOk = false;
@@ -1510,16 +1510,16 @@ return 0;
 // write_mission_file()
 //==========================================================================
 
-static LPSTR szMissionName [] = {"name", "zname", "d2x-name", NULL};
-static LPSTR szMissionInfo [] = {"editor", "build_time", "date", "revision", "author", "email", "web_site", "briefing", NULL};
-static LPSTR szMissionType [] = {"type", NULL};
-static LPSTR szMissionTypes [] = {"anarchy", "normal", NULL};
-static LPSTR szMissionFlags [] = {"normal", "anarchy", "robo_anarchy", "coop", "capture_flag", "hoard", NULL};
-static LPSTR szCustomFlags [] = {"custom_textures", "custom_robots", "custom_music", NULL};
-static LPSTR szAuthorFlags [] = {"multi_author", "want_feedback", NULL};
-static LPSTR szNumLevels [] = {"num_levels", NULL};
-static LPSTR szNumSecrets [] = {"num_secrets", NULL};
-static LPSTR szBool [] = {"no", "yes", NULL};
+static LPSTR szMissionName [] = {"name", "zname", "d2x-name", null};
+static LPSTR szMissionInfo [] = {"editor", "build_time", "date", "revision", "author", "email", "web_site", "briefing", null};
+static LPSTR szMissionType [] = {"type", null};
+static LPSTR szMissionTypes [] = {"anarchy", "normal", null};
+static LPSTR szMissionFlags [] = {"normal", "anarchy", "robo_anarchy", "coop", "capture_flag", "hoard", null};
+static LPSTR szCustomFlags [] = {"custom_textures", "custom_robots", "custom_music", null};
+static LPSTR szAuthorFlags [] = {"multi_author", "want_feedback", null};
+static LPSTR szNumLevels [] = {"num_levels", null};
+static LPSTR szNumSecrets [] = {"num_secrets", null};
+static LPSTR szBool [] = {"no", "yes", null};
 
 static LPSTR *szTags [] = {szMissionName, szMissionInfo, szMissionType, szMissionFlags, szCustomFlags, szAuthorFlags, szNumLevels, szNumSecrets};
 
@@ -1721,7 +1721,7 @@ int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int b
 	char	szTime [20];
 
 //memset (&missionData, 0, sizeof (missionData));
-FSplit (pszSubFile, NULL, szBaseName, NULL);
+FSplit (pszSubFile, null, szBaseName, null);
 if (!*missionData.missionName)
 	strcpy_s (missionData.missionName, sizeof (missionData.missionName), szBaseName);
 if (bSaveAs || !*missionData.missionName)

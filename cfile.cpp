@@ -105,7 +105,7 @@ FILE *CFileManager::GetFileHandle (const char *filename, const char *folder, con
 	const char *pfn;
 
 if (!*filename || (strlen (filename) + (folder ? strlen (folder) : 0) >= FILENAME_LEN)) {
-	return NULL;
+	return null;
 	}
 if ((*filename != '/') && (strstr (filename, "./") != filename) && folder && *folder) {
 sprintf_s (fn, FILENAME_LEN, "%s/%s", folder, filename);
@@ -116,7 +116,7 @@ sprintf_s (fn, FILENAME_LEN, "%s/%s", folder, filename);
  
 if (fopen_s (&fp, pfn, mode)) {
 	fclose (fp);
-	fp = NULL;
+	fp = null;
 	}
 //if (!fp) PrintLog ("CFGetFileHandle (): error opening %s\n", pfn);
 return fp;
@@ -193,7 +193,7 @@ sprintf_s (fnn, FILENAME_LEN, "%s%s%s", folder, *folder ? "/" : "", newname);
 int CFileManager::MkDir (const char *pathname)
 {
 #if defined (_WIN32_WCE) || defined (_WIN32)
-return !CreateDirectory (pathname, NULL);
+return !CreateDirectory (pathname, null);
 #else
 return mkdir (pathname, 0755);
 #endif
@@ -218,9 +218,9 @@ return size;
 int CFileManager::Open (const char *filename, const char *mode) 
 {
 	int	length = -1;
-	FILE	*fp = NULL;
+	FILE	*fp = null;
 
-m_cf.file = NULL;
+m_cf.file = null;
 if (!(filename && *filename))
 	return 0;
 if (fopen_s (&m_cf.file, filename, mode))
@@ -323,7 +323,7 @@ for (i = 0; i < n - 1; i++) {
 	do {
 		if (m_cf.rawPosition >= m_cf.size) {
 			*buffer = 0;
-			return (buffer == t) ? NULL : t;
+			return (buffer == t) ? null : t;
 			}
 		c = GetC ();
 		if (c == 0 || c == 10)       // Unix line ending
@@ -403,7 +403,7 @@ int CFileManager::Close (void)
 if (!m_cf.file)
 	return 0;
 result = fclose (m_cf.file);
-m_cf.file = NULL;
+m_cf.file = null;
 m_cf.size = 0;
 m_cf.rawPosition = -1;
 return result;
@@ -437,31 +437,31 @@ int CFileManager::WriteFixAng (fixang v) { WriteScalar (v) }
 
 // ----------------------------------------------------------------------------
 
-int CFileManager::ReadVector (CFixVector& v) 
+int CFileManager::ReadVector (tFixVector& v) 
 {
-v.v.x = ReadFix ();
-v.v.y = ReadFix ();
-v.v.z = ReadFix ();
+v.x = ReadFix ();
+v.y = ReadFix ();
+v.z = ReadFix ();
 return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-int CFileManager::ReadVector (CDoubleVector& v) 
+int CFileManager::ReadVector (tDoubleVector& v) 
 {
-v.v.x = X2D (ReadFix ());
-v.v.y = X2D (ReadFix ());
-v.v.z = X2D (ReadFix ());
+v.x = X2D (ReadFix ());
+v.y = X2D (ReadFix ());
+v.z = X2D (ReadFix ());
 return 1;
 }
 
 // ----------------------------------------------------------------------------
 
-int CFileManager::ReadVector (CAngleVector& v)
+int CFileManager::ReadVector (tAngleVector& v)
 {
-v.v.p = ReadFixAng ();
-v.v.b = ReadFixAng ();
-v.v.h = ReadFixAng ();
+v.p = ReadFixAng ();
+v.b = ReadFixAng ();
+v.h = ReadFixAng ();
 return 1;
 }
 
@@ -510,29 +510,29 @@ do {
 
 // ----------------------------------------------------------------------------
 
-void CFileManager::WriteVector (const CFixVector& v)
+void CFileManager::WriteVector (const tFixVector& v)
 {
-WriteFix (v.v.x);
-WriteFix (v.v.y);
-WriteFix (v.v.z);
+WriteFix (v.x);
+WriteFix (v.y);
+WriteFix (v.z);
 }
 
 // ----------------------------------------------------------------------------
 
-void CFileManager::WriteVector (const CDoubleVector& v)
+void CFileManager::WriteVector (const tDoubleVector& v)
 {
-WriteDouble (D2X (v.v.x));
-WriteDouble (D2X (v.v.y));
-WriteDouble (D2X (v.v.z));
+WriteDouble (D2X (v.x));
+WriteDouble (D2X (v.y));
+WriteDouble (D2X (v.z));
 }
 
 // ----------------------------------------------------------------------------
 
-void CFileManager::WriteVector (const CAngleVector& v)
+void CFileManager::WriteVector (const tAngleVector& v)
 {
-WriteFixAng (v.v.p);
-WriteFixAng (v.v.b);
-WriteFixAng (v.v.h);
+WriteFixAng (v.p);
+WriteFixAng (v.b);
+WriteFixAng (v.h);
 }
 
 // ----------------------------------------------------------------------------
@@ -566,7 +566,7 @@ return buffer;
 int CFileManager::WriteString (const char *buffer)
 {
 if (buffer && *buffer && Write (buffer, (int) strlen (buffer), 1))
-	return (int) WriteByte (0);   // write out NULL termination
+	return (int) WriteByte (0);   // write out null termination
 return 0;
 }
 
@@ -609,17 +609,17 @@ return 0;
 
 byte *CFileManager::ReadData (const char *filename)
 {
-	byte*		buffer = NULL;
+	byte*		buffer = null;
 	size_t	nSize;
 
 if (!Open (filename, "rb"))
-	return NULL;
+	return null;
 nSize = Length ();
 if (!(buffer = new byte [nSize]))
-	return NULL;
+	return null;
 if (!Read (buffer, nSize, 1)) {
 	delete[] buffer;
-	buffer = NULL;
+	buffer = null;
 	}
 Close ();
 return buffer;

@@ -32,7 +32,7 @@ for (int i = 0; i < 2; i++) {
 		if (bDeleteModified || !texP->m_info.bModified)
 			texP->Release ();
 	}
-for (CExtraTexture* p = extraTextures; p != NULL; ) {
+for (CExtraTexture* p = extraTextures; p != null; ) {
 	extraTextures = p->m_next;
 	delete p;
 	}
@@ -42,7 +42,7 @@ for (CExtraTexture* p = extraTextures; p != NULL; ) {
 
 FILE* CTextureManager::OpenPigFile (int nVersion)
 {
-	CFileManager& fp = NULL;
+	CFileManager& fp = null;
 	char	filename [256];
 
 strcpy_s (filename, sizeof (filename), nVersion ? descent2_path : descent_path);
@@ -50,7 +50,7 @@ if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fopen_s (&fp, filename, "rb")) {
 	DEBUGMSG (" Reading texture: Texture file not found.");
-	return NULL;
+	return null;
 	}
 uint nOffset = fp.ReadUInt32 ();
 if (nOffset == 0x47495050) // 'PPIG' Descent 2 type
@@ -151,7 +151,7 @@ return 0;
 
 CPigTexture& CTextureManager::LoadInfo (CFileManager& fp, int nVersion, short nTexture)
 {
-if (info [nVersion] == NULL) {
+if (info [nVersion] == null) {
 	header [nVersion].Read (fp);
 	info [nVersion] = new CPigTexture [header [nVersion].nTextures];
 	for (int i = 0; i < header [nVersion].nTextures; i++)

@@ -48,8 +48,8 @@ CPaletteWnd::CPaletteWnd ()
 {
 m_nWidth =
 m_nHeight = 0;
-m_pDC = NULL;
-m_pOldPal = NULL;
+m_pDC = null;
+m_pOldPal = null;
 }
 
                         /*--------------------------*/
@@ -135,7 +135,7 @@ for (i = 0; i < 256; i++) {
 
 void CPaletteWnd::Update ()
 {
-InvalidateRect (NULL);
+InvalidateRect (null);
 UpdateWindow ();
 }
 
@@ -156,7 +156,7 @@ if (m_nHeight < 0) {
 	if (m_nWidth * m_nHeight > 256)
 		m_nHeight = (256 + m_nWidth - 1) / m_nWidth;
 	}
-return CWnd::Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
+return CWnd::Create (null, null, WS_CHILD | WS_VISIBLE, rc, pParentWnd, 0);
 }
 
                         /*--------------------------*/
@@ -258,10 +258,10 @@ void CPaletteWnd::EndPaint ()
 if (m_pDC) {
 	if (m_pOldPal) {
 		m_pDC->SelectPalette (m_pOldPal, FALSE);
-		m_pOldPal = NULL;
+		m_pOldPal = null;
 		}
 	ReleaseDC (m_pDC);
-	m_pDC = NULL;
+	m_pDC = null;
 	}
 Update ();
 }
@@ -302,15 +302,15 @@ CTextureEdit::CTextureEdit (CWnd *pParent)
 	: CDialog (IDD_EDITTEXTURE, pParent) 
 {
 *m_szColors = '\0';
-m_pDC = NULL;
-m_pPaintWnd = NULL;
-m_pOldPal = NULL;
+m_pDC = null;
+m_pPaintWnd = null;
+m_pOldPal = null;
 m_lBtnDown =
 m_rBtnDown = false;
 m_bitmap = 
-m_backupBM = NULL;
+m_backupBM = null;
 m_tga =
-m_backupTGA = NULL;
+m_backupTGA = null;
 if (!*m_szDefExt)
 	strcpy_s (m_szDefExt, sizeof (m_szDefExt), "bmp");
 }
@@ -321,19 +321,19 @@ CTextureEdit::~CTextureEdit ()
 {
 if (m_bitmap) {
 	delete m_bitmap;
-	m_bitmap = NULL;
+	m_bitmap = null;
 	}
 if (m_backupBM) {
 	delete m_backupBM;
-	m_backupBM = NULL;
+	m_backupBM = null;
 	}
 if (m_tga) {
 	delete m_tga;
-	m_tga = NULL;
+	m_tga = null;
 	}
 if (m_backupTGA) {
 	delete m_backupTGA;
-	m_backupTGA = NULL;
+	m_backupTGA = null;
 	}
 }
 
@@ -348,17 +348,17 @@ CDialog::OnInitDialog ();
 
 pWnd = GetDlgItem (IDC_TEXEDIT_TEXTURE);
 pWnd->GetClientRect (rc);
-m_textureWnd.Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pWnd, 0);
+m_textureWnd.Create (null, null, WS_CHILD | WS_VISIBLE, rc, pWnd, 0);
 pWnd = GetDlgItem (IDC_TEXEDIT_PALETTE);
 pWnd->GetClientRect (rc);
 m_paletteWnd.Create (pWnd, 32, 8);
 pWnd = GetDlgItem (IDC_TEXEDIT_LAYERS);
 pWnd->GetClientRect (rc);
-m_layerWnd.Create (NULL, NULL, WS_CHILD | WS_VISIBLE, rc, pWnd, 0);
+m_layerWnd.Create (null, null, WS_CHILD | WS_VISIBLE, rc, pWnd, 0);
 // set cursor styles for bitmap windows
 HINSTANCE hInst = AfxGetApp()->m_hInstance;
 SetCursor (LoadCursor (hInst, "PENCIL_CURSOR"));
-//  PaletteButton->SetCursor(NULL,IDC_CROSS);
+//  PaletteButton->SetCursor(null,IDC_CROSS);
 m_fgColor = 0; // black
 m_bgColor = 1; // white
 m_lBtnDown  = FALSE;
@@ -452,7 +452,7 @@ void CTextureEdit::OnOK ()
 {
 if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) || (m_texP->m_info.nFormat != m_nFormat)) {
 	byte *pDataBM = new byte [m_nWidth * m_nHeight];
-	tRGBA  *pDataTGA = m_nFormat ? new tRGBA [m_nWidth * m_nHeight] : NULL;
+	tRGBA  *pDataTGA = m_nFormat ? new tRGBA [m_nWidth * m_nHeight] : null;
 
 	if (!pDataBM) {
 		DEBUGMSG (" Texture tool: Not enough memory for the new texture");
@@ -538,13 +538,13 @@ if (m_pPaintWnd) {
 	if (m_pDC) {
 		if (m_pOldPal) {
 			m_pDC->SelectPalette (m_pOldPal, FALSE);
-			m_pOldPal = NULL;
+			m_pOldPal = null;
 			}
 		m_pPaintWnd->ReleaseDC (m_pDC);
-		m_pDC = NULL;
+		m_pDC = null;
 		}
 	Update (m_pPaintWnd);
-	m_pPaintWnd = NULL;
+	m_pPaintWnd = null;
 	}
 }
 
@@ -691,8 +691,8 @@ return false;
 
 bool CTextureEdit::LoadBitmap (FILE *file)
 {
-	RGBQUAD *palette=NULL;
-	PALETTEENTRY *sysPal=NULL;
+	RGBQUAD *palette=null;
+	PALETTEENTRY *sysPal=null;
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmih;
 	byte color_map[256];
@@ -899,7 +899,7 @@ void CTextureEdit::OnLoad ()
 {
   OPENFILENAME ofn;
   char szFile[80] = "\0";
-  FILE *file=NULL;
+  FILE *file=null;
   bool bFuncRes;
 
   sprintf_s (szFile, sizeof (szFile), "*.%s", m_szDefExt);
@@ -1052,7 +1052,7 @@ if (m_backupBM) {
 
 void CTextureEdit::Update (CWnd *pWnd) 
 {
-pWnd->InvalidateRect (NULL);
+pWnd->InvalidateRect (null);
 pWnd->UpdateWindow ();
 }
 

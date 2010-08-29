@@ -87,9 +87,12 @@ class CFileManager {
 		byte* ReadBytes (byte* buffer, int bufLen);
 		void ReadString (char* buffer, int bufLen);
 
-		int ReadVector (CFixVector& v);
-		int ReadVector (CDoubleVector& v);
-		int ReadVector (CAngleVector& v);
+		int ReadVector (tFixVector& v);
+		int ReadVector (tDoubleVector& v);
+		int ReadVector (tAngleVector& v);
+		inline int ReadVector (CFixVector& v) { return ReadVector (v.v); }
+		inline int ReadVector (CDoubleVector& v) { return ReadVector (v.v); }
+		inline int ReadVector (CAngleVector& v) { return ReadVector (v.v); }
 		int ReadMatrix (CFixMatrix& v);
 		int ReadMatrix (CDoubleMatrix& m);
 
@@ -104,12 +107,28 @@ class CFileManager {
 		int WriteFixAng (fixang v);
 		int WriteFloat (float v);
 		int WriteDouble (double v);
+
+		inline int Write (int& v) { return WriteInt32 (v); }
+		inline int Write (uint& v) { return WriteUInt32 (v); }
+//		inline int Write (fix& v) { return WriteFix (v); }
+		inline int Write (short& v) { return WriteInt16 (v); }
+		inline int Write (ushort& v) { return WriteUInt16 (v); }
+		inline int Write (byte& v) { return WriteByte (v); }
+		inline int Write (sbyte& v) { return WriteSByte (v); }
+		inline int Write (char& v) { return WriteChar (v); }
+//		inline int Write (fixang& v) { return WriteFixAng (v); }
+		inline int Write (float& v) { return WriteFloat (v); }
+		inline int Write (double& v) { return WriteDouble (v); }
+
 		byte* WriteBytes (byte* buffer, int length);
 		int WriteString (const char *buf);
 
-		void WriteVector (const CAngleVector& v);
-		void WriteVector (const CFixVector& v);
-		void WriteVector (const CDoubleVector& v);
+		void WriteVector (const tAngleVector& v);
+		void WriteVector (const tFixVector& v);
+		void WriteVector (const tDoubleVector& v);
+		inline void WriteVector (const CAngleVector& v) { WriteVector (v.v); }
+		inline void WriteVector (const CFixVector& v) { WriteVector (v.v); }
+		inline void WriteVector (const CDoubleVector& v) { WriteVector (v.v); }
 		void WriteMatrix (const CFixMatrix& m);
 		void WriteMatrix (const CDoubleMatrix& m);
 

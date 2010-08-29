@@ -46,7 +46,7 @@ void TextureMap (CSegment *segP, short nSide,
 	short dscan_light,scan_light;
 	short light [4];
 	ushort bmWidth2;
-	bool bEnableShading = (light_index != NULL);
+	bool bEnableShading = (light_index != null);
 
 bmHeight = bmWidth;
 bmWidth2 = bmWidth / 2;

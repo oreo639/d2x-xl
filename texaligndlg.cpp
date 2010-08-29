@@ -49,7 +49,7 @@ void CTextureTool::UpdateAlignWnd (void)
 {
 CHECKMINE;
 RefreshAlignWnd ();
-m_alignWnd.InvalidateRect (NULL);
+m_alignWnd.InvalidateRect (null);
 m_alignWnd.UpdateWindow ();
 DLE.MineView ()->Refresh (false);
 }

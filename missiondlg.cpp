@@ -325,7 +325,7 @@ LBLevels ()->GetText (i, szNewFile);
 char *psz = strchr (szNewFile, ',');
 if (psz)
 	*psz = '\0';
-DLE.GetDocument ()->OpenFile (false, NULL, szNewFile);
+DLE.GetDocument ()->OpenFile (false, null, szNewFile);
 }
 
                         /*--------------------------*/

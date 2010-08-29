@@ -188,7 +188,7 @@ if (!(m_bInited && theMine))
 	static LPSTR szItems [] = {
 		"cubes", "vertices", "mat cens", "fuel centers", "walls", "triggers", "objects:", 
 		"robots", "hostages", "players", "coop players", "powerups", "weapons", "keys", "reactors", "textures",
-		NULL};
+		null};
 
 plc.DeleteAllItems ();
 for (psz = szItems, i = 0; *psz; psz++, i++)

@@ -29,7 +29,7 @@ public:
 // Operations
 	void CreateNewLevel ();
 	bool BrowseForFile (LPSTR pszFile, BOOL bOpen);
-	BOOL OpenFile (bool bBrowseForFile = true, LPSTR pszFile = NULL, LPSTR pszSubFile = NULL);
+	BOOL OpenFile (bool bBrowseForFile = true, LPSTR pszFile = null, LPSTR pszSubFile = null);
 	bool SaveFile (bool bSaveAs);
 	bool SaveIfModified (void);
 	void UpdateCaption ();
@@ -133,7 +133,7 @@ class CDlcDocTemplate : public CSingleDocTemplate {
 			{ m_pFrameClass = pFrameClass; }
 
 		CFrameWnd* CreateNewFrame(CDocument* pDoc, CFrameWnd* pOther) {
-			return m_pFrameClass ? CDocTemplate::CreateNewFrame(pDoc, pOther) : NULL;
+			return m_pFrameClass ? CDocTemplate::CreateNewFrame(pDoc, pOther) : null;
 		}
 };
 

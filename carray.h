@@ -50,16 +50,16 @@ class CDynamicArray : public CQuickSort < _T > {
 				_V*			m_p;
 				CDynamicArray<_V>&	m_a;
 			public:
-				Iterator () : m_p (NULL) {}
-				Iterator (CDynamicArray<_V>& a) : m_a (a), m_p (NULL) {}
-				operator bool() const { return m_p != NULL; }
+				Iterator () : m_p (null) {}
+				Iterator (CDynamicArray<_V>& a) : m_a (a), m_p (null) {}
+				operator bool() const { return m_p != null; }
 				_V* operator*() const { return m_p; }
 				Iterator& operator++() { 
 					if (m_p) {
 						if (m_p < m_end)
 							m_p++;
 						else
-							m_p = NULL;
+							m_p = null;
 						}
 					return *this;
 					}
@@ -68,7 +68,7 @@ class CDynamicArray : public CQuickSort < _T > {
 						if (m_p > m_end)
 							m_p--;
 						else
-							m_p = NULL;
+							m_p = null;
 						}
 					return *this;
 					}
@@ -88,7 +88,7 @@ class CDynamicArray : public CQuickSort < _T > {
 		~CDynamicArray() { Destroy (); }
 		
 		void Init (void) { 
-			m_data.buffer = reinterpret_cast<_T *> (NULL); 
+			m_data.buffer = reinterpret_cast<_T *> (null); 
 			m_data.length = 0;
 			m_data.pos = 0;
 			m_data.nMode = 0;
@@ -137,7 +137,7 @@ class CDynamicArray : public CQuickSort < _T > {
 		inline _T* Pointer (uint i) { 
 			if (!m_data.buffer || (i >= m_data.length)) {
 				ArrayError ("invalid array handle or index\n");
-				return NULL;
+				return null;
 				}
 			return m_data.buffer + i; 
 			}
@@ -150,7 +150,7 @@ class CDynamicArray : public CQuickSort < _T > {
 				if (!m_data.nMode) {
 					delete[] m_data.buffer;
 #if DBG_ARRAYS
-					m_data.buffer = reinterpret_cast<_T *> (NULL); 
+					m_data.buffer = reinterpret_cast<_T *> (null); 
 #endif
 					}
 				Init ();
@@ -168,7 +168,7 @@ class CDynamicArray : public CQuickSort < _T > {
 #if DBG_ARRAYS
 					ArrayError ("invalid buffer size\n");
 #endif
-					m_data.buffer = NULL;
+					m_data.buffer = null;
 					}
 				}
 			return m_data.buffer;
@@ -200,7 +200,7 @@ class CDynamicArray : public CQuickSort < _T > {
 #if DBG_ARRAYS
 				ArrayError ("invalid buffer size\n");
 #endif
-				p = NULL;
+				p = null;
 				}
 			if (!p)
 				return m_data.buffer;
@@ -216,7 +216,7 @@ class CDynamicArray : public CQuickSort < _T > {
 
 		inline uint Length (void) { return m_data.length; }
 
-		inline _T* Current (void) { return m_data.buffer ? m_data.buffer + m_data.pos : NULL; }
+		inline _T* Current (void) { return m_data.buffer ? m_data.buffer + m_data.pos : null; }
 
 		inline size_t Size (void) { return m_data.length * sizeof (_T); }
 #if DBG_ARRAYS
@@ -268,29 +268,29 @@ class CDynamicArray : public CQuickSort < _T > {
 
 		inline _T* Start (void) { return m_data.buffer; }
 
-		inline _T* End (void) { return (m_data.buffer && m_data.length) ? m_data.buffer + m_data.length - 1 : NULL; }
+		inline _T* End (void) { return (m_data.buffer && m_data.length) ? m_data.buffer + m_data.length - 1 : null; }
 
 		inline _T* operator++ (void) { 
 			if (!m_data.buffer)
-				return NULL;
+				return null;
 			if (m_data.pos < m_data.length - 1)
 				m_data.pos++;
 			else if (m_data.bWrap) 
 				m_data.pos = 0;
 			else
-				return NULL;
+				return null;
 			return m_data.buffer + m_data.pos;
 			}
 
 		inline _T* operator-- (void) { 
 			if (!m_data.buffer)
-				return NULL;
+				return null;
 			if (m_data.pos > 0)
 				m_data.pos--;
 			else if (m_data.bWrap)
 				m_data.pos = m_data.length - 1;
 			else
-				return NULL;
+				return null;
 			return m_data.buffer + m_data.pos;
 			}
 
@@ -300,20 +300,20 @@ class CDynamicArray : public CQuickSort < _T > {
 			if (m_data.buffer && (i < m_data.length))
 				return m_data.buffer + i;
 			if (i == m_data.length)
-				return NULL;
+				return null;
 			else {
 				ArrayError ("invalid array handle or index\n");
-				return  NULL; 
+				return  null; 
 				}
 			}
 
 #else
 
-		inline _T* operator+ (uint i) { return m_data.buffer ? m_data.buffer + i : NULL; }
+		inline _T* operator+ (uint i) { return m_data.buffer ? m_data.buffer + i : null; }
 
 #endif
 
-		inline _T* operator- (uint i) { return m_data.buffer ? m_data.buffer - i : NULL; }
+		inline _T* operator- (uint i) { return m_data.buffer ? m_data.buffer - i : null; }
 
 		CDynamicArray<_T>& ShareBuffer (CDynamicArray<_T>& child) {
 			memcpy (&child.m_data, &m_data, sizeof (m_data));
@@ -322,7 +322,7 @@ class CDynamicArray : public CQuickSort < _T > {
 			return child;
 			}
 
-		inline bool operator! () { return m_data.buffer == NULL; }
+		inline bool operator! () { return m_data.buffer == null; }
 
 		inline uint Pos (void) { return m_data.pos; }
 
@@ -414,7 +414,7 @@ class CCharArray : public CDynamicArray<char> {
 		inline char* operator= (const char* source) { 
 			uint l = uint (strlen (source) + 1);
 			if ((l > this->m_data.length) && !this->Resize (this->m_data.length + l))
-				return NULL;
+				return null;
 			memcpy (this->m_data.buffer, source, l);
 			return this->m_data.buffer;
 		}

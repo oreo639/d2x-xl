@@ -37,25 +37,25 @@ if (type < 0)
 if (type == WALL_OVERLAY) {
 	if (segP->Child (nSide) != -1) {
 		ErrorMsg ("Switches can only be put on solid sides.");
-		return NULL;
+		return null;
 		}
 	}
 else {
 	// otherwise make sure there is a child
 	if (segP->Child (nSide) < 0) {
 		ErrorMsg ("This side must be attached to an other cube before a wall can be added.");
-		return NULL;
+		return null;
 		}
 	}
 
 if (segP->m_sides [nSide].m_info.nWall < GameInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side.");
-	return NULL;
+	return null;
 	}
 
 if ((nWall = GameInfo ().walls.count) >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls () reached");
-	return NULL;
+	return null;
 	}
 
 // link wall to segment/side
@@ -286,7 +286,7 @@ int nWall;
 for (wallP = Walls (0), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++)
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide))
 		return wallP;
-return NULL;
+return null;
 }
 
                         /*--------------------------*/
@@ -318,7 +318,7 @@ CWall *CMine::GetWall (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 ushort nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
-return (nWall < GameInfo ().walls.count) ? Walls (nWall) : NULL;
+return (nWall < GameInfo ().walls.count) ? Walls (nWall) : null;
 }
 
                         /*--------------------------*/

@@ -295,11 +295,11 @@ int CMine::ReadHamFile(char *pszFile, int type)
 
 if (!pszFile) {
 	if (IsD2File ()) {
-		FSplit (descent2_path, szFile, NULL, NULL);
+		FSplit (descent2_path, szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}
 	else {
-		FSplit (descent_path, szFile, NULL, NULL);
+		FSplit (descent_path, szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent.ham");
 		}
 	pszFile = szFile;
@@ -425,7 +425,7 @@ else if (type == EXTENDED_HAM)  {
 
   for (i=t0; i<t0+t; i++ ) {
     // free poly data memory if already allocated
-    if (Polygon_models[i]->model_data != NULL ) {
+    if (Polygon_models[i]->model_data != null ) {
       free((void *)Polygon_models[i]->model_data);
     }
     fread(Polygon_models[i], sizeof (tPolyModel), 1, fp );
@@ -434,7 +434,7 @@ else if (type == EXTENDED_HAM)  {
   for (i=t0; i<t0+t; i++ ) {
     Polygon_models[i]->model_data = (byte *) malloc((int)Polygon_models[i]->model_dataSize);
 
-    if (Polygon_models[i]->model_data == NULL ) {
+    if (Polygon_models[i]->model_data == null ) {
       ErrorMsg ("Could not allocate memory for polymodel data");
       goto abort;
     }
@@ -551,7 +551,7 @@ if (id != 0x21584d48L) {
 	}
 if (m_pHxmExtraData) {
 	free (m_pHxmExtraData);
-	m_pHxmExtraData = NULL;
+	m_pHxmExtraData = null;
 	m_nHxmExtraDataSize = 0;
 	}
 ReadInt32(fp); // version (0x00000001)

@@ -2191,7 +2191,7 @@ CSide *CMine::OppSide ()
 {
 short nOppSeg, nOppSide;
 if (!GetOppositeSide (nOppSeg, nOppSide))
-	return NULL;
+	return null;
 return Segments (nOppSeg)->m_sides + nOppSide;
 }
 
@@ -2910,7 +2910,7 @@ return bChange;
 
 CWall* CSide::Wall (void)
 { 
-return (m_info.nWall == NO_WALL) ? NULL : theMine->Walls (m_info.nWall); 
+return (m_info.nWall == NO_WALL) ? null : theMine->Walls (m_info.nWall); 
 }
 
 // ------------------------------------------------------------------------

@@ -40,7 +40,7 @@ public:
 	int CountCustomTextures (void);
 	FILE* OpenPigFile (int nVersion);
 
-	inline bool HaveInfo (int nVersion) { return info [nVersion] != NULL; }
+	inline bool HaveInfo (int nVersion) { return info [nVersion] != null; }
 
 	CTextureManager() {}
 	

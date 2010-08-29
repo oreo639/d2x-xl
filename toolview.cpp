@@ -45,20 +45,20 @@ CToolView::CToolView ()
 	: CWnd ()
 {
 m_bRecalcLayout = FALSE;
-m_segmentTool = NULL;
-m_wallTool = NULL;
-m_triggerTool = NULL;
-m_textureTool = NULL;
-m_objectTool = NULL;
-m_effectTool = NULL;
-m_advObjTool = NULL;
-m_lightTool = NULL;
-m_missionTool = NULL;
-m_reactorTool = NULL;
-m_diagTool = NULL;
-m_prefsDlg = NULL;
-m_txtFilterTool = NULL;
-m_pTools = NULL;
+m_segmentTool = null;
+m_wallTool = null;
+m_triggerTool = null;
+m_textureTool = null;
+m_objectTool = null;
+m_effectTool = null;
+m_advObjTool = null;
+m_lightTool = null;
+m_missionTool = null;
+m_reactorTool = null;
+m_diagTool = null;
+m_prefsDlg = null;
+m_txtFilterTool = null;
+m_pTools = null;
 m_scrollOffs [0] = 0;
 m_scrollPage [0] = 0;
 m_scrollRange [0] = 0;
@@ -73,7 +73,7 @@ CToolView::~CToolView ()
 {
 if (m_pTools) {
 	delete m_pTools;
-	m_pTools = NULL;
+	m_pTools = null;
 	}
 if (m_segmentTool)
 	delete m_segmentTool;

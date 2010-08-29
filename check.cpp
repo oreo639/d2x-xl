@@ -44,7 +44,7 @@ for (i = 0; i < h; i++) {
 	if (!strchr (szText, '['))
 		if (pbp = (tBugPos *) plb->GetItemDataPtr (i)) {
 			delete pbp;
-			plb->SetItemDataPtr (i, NULL);
+			plb->SetItemDataPtr (i, null);
 			}
 	}
 plb->ResetContent ();
@@ -608,7 +608,7 @@ if (!theMine)
 	CVertex			center;
 	double			radius, max_radius, object_radius;
 	CGameObject*	objP = theMine->Objects (0);
-	CGameObject*	pPlayer = NULL;
+	CGameObject*	pPlayer = null;
 	int				objCount = theMine->GameInfo ().objects.count;
 	CSegment*		segP;
 
@@ -1394,10 +1394,10 @@ CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 	short	oppSegnum, oppSidenum, nWall;
 
 if (!theMine->GetOppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
-	return NULL;
+	return null;
 nWall = theMine->Segments (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
 if ((nWall < 0) || (nWall > MAX_WALLS))
-	return NULL;
+	return null;
 return theMine->Walls (nWall);
 }
 

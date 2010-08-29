@@ -18,8 +18,8 @@ class CPaletteWnd : public CWnd
 
 		CPaletteWnd ();
 		~CPaletteWnd ();
-		int Create (CWnd *pParentWnd = NULL, int nWidth = 32, int nHeight = 8);
-		bool SelectColor (CPoint& point, int& color, PALETTEENTRY *pRGB = NULL);
+		int Create (CWnd *pParentWnd = null, int nWidth = 32, int nHeight = 8);
+		bool SelectColor (CPoint& point, int& color, PALETTEENTRY *pRGB = null);
 		void DrawPalette (void);
 		void CPaletteWnd::SetPalettePixel (int x, int y);
 		bool BeginPaint ();
@@ -71,7 +71,7 @@ class CTextureEdit : public CDialog
 						m_nOldFormat;
 		static char	m_szDefExt [4];
 
-		CTextureEdit (CWnd * pParent = NULL);
+		CTextureEdit (CWnd * pParent = null);
 		~CTextureEdit ();
       virtual BOOL OnInitDialog ();
       virtual void DoDataExchange (CDataExchange *pDX);
