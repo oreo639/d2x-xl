@@ -89,16 +89,16 @@ if (m_current) {
 
 void CPaletteManager::Decode (byte* palette)
 {
-for (int i = 0; i < 256; i++)
-	*palette++ <<= 2;
+for (int i = 0; i < 3 * 256; i++)
+	palette [i] <<= 2;
 }
 
 //------------------------------------------------------------------------
 
 void CPaletteManager::Encode (byte* palette)
 {
-for (int i = 0; i < 256; i++)
-	*palette++ >>= 2;
+for (int i = 0; i < 3 * 256; i++)
+	palette [i] >>= 2;
 }
 
 //------------------------------------------------------------------------
@@ -123,7 +123,7 @@ for (int i = 0; i < 256; i++) {
 	for (int j = 0; j < 34; j++)
 		fadeP [j * 256 + i] = FadeValue (c, j + 1);
 	}
-Encode (m_custom);
+Decode (m_custom);
 SetupBMI (m_custom);
 return 1;
 }
@@ -132,9 +132,9 @@ return 1;
 
 int CPaletteManager::SaveCustom (CFileManager& fp)
 {
-Decode (m_custom);
-return fp.Write (m_custom, 37 * 256, 1) == 1;
 Encode (m_custom);
+return fp.Write (m_custom, 37 * 256, 1) == 1;
+Decode (m_custom);
 }
 
 //------------------------------------------------------------------------
@@ -146,7 +146,7 @@ if (!res.Load (Resource ()))
 	return null;
 m_default = new byte [res.Size()];
 memcpy (m_default, res.Data (), res.Size ());
-Encode (m_default);
+Decode (m_default);
 SetupBMI (m_default);
 return m_default;
 }
