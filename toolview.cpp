@@ -109,6 +109,9 @@ void CToolView::Refresh (void)
 {
 CHECKMINE;
 
+if (DLE.MineView ()->DelayRefresh ())
+	return;
+
 if (!m_pTools)
 	return;
 

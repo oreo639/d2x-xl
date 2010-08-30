@@ -104,10 +104,10 @@ protected: // create from serialization only
 	bool			m_bUpdateCursor;
 	bool			m_bDelayRefresh;
 	int			m_nDelayRefresh;
-	uint		m_viewObjectFlags;
-	uint		m_viewMineFlags;
-	uint		m_viewOption;
-	uint		m_selectMode;
+	uint			m_viewObjectFlags;
+	uint			m_viewMineFlags;
+	uint			m_viewOption;
+	uint			m_selectMode;
 	HCURSOR		m_hCursors [eMouseStateCount];
 
 	CSelection	*m_Current;
@@ -358,6 +358,7 @@ public:
 		else if (m_nDelayRefresh)
 			m_nDelayRefresh--;
 		}
+	inline bool DelayRefresh (void) { return m_nDelayRefresh > 0; }
 
 	void SetMouseState (int newMouseState);
 	BOOL SetCursor (HCURSOR hCursor);

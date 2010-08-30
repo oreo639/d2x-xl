@@ -683,56 +683,32 @@ theMine->DeleteTrigger ();
 
 void CDlcDoc::OnCutBlock ()
 {
-DLE.MineView ()->DelayRefresh (true);
 theMine->CutBlock ();
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
 }
 
 void CDlcDoc::OnCopyBlock ()
 {
-DLE.MineView ()->DelayRefresh (true);
 theMine->CopyBlock ();
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
 }
 
 void CDlcDoc::OnQuickCopyBlock ()
 {
-DLE.MineView ()->DelayRefresh (true);
 theMine->CopyBlock ("dle_temp.blx");
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
 }
 
 void CDlcDoc::OnPasteBlock ()
 {
-DLE.MineView ()->DelayRefresh (true);
 theMine->PasteBlock ();
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
 }
 
 void CDlcDoc::OnQuickPasteBlock ()
 {
-DLE.MineView ()->DelayRefresh (true);
 theMine->QuickPasteBlock ();
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
 }
 
 void CDlcDoc::OnDeleteBlock ()
 {
-DLE.MineView ()->DelayRefresh (true);
 theMine->DeleteBlock ();
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
 }
 
 void CDlcDoc::OnCopyOtherCube ()
