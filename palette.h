@@ -28,7 +28,6 @@ class CPaletteManager {
 		LPLOGPALETTE	m_dlcLog;
 
 	public:
-		CPaletteManager () : m_custom(null), m_default(null) {}
 		void Load (void);
 		int LoadCustom (CFileManager& fp, long size);
 		int SaveCustom (CFileManager& fp);
@@ -47,7 +46,11 @@ class CPaletteManager {
 
 		inline byte* Custom () { return m_custom; }
 		inline byte* Default () { return m_default; }
-		inline CPalette* Render () { return m_render; }
+		inline CPalette* Render () { 
+			if (!m_render)
+				SetupRender (Current ());
+			return m_render; 
+			}
 		byte* Current (void);
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
@@ -59,6 +62,9 @@ class CPaletteManager {
 		byte* LoadDefault (void);
 		void Encode (byte* palette);
 		void Decode (byte* palette);
+
+		CPaletteManager () : m_custom(null), m_default(null) {}
+		~CPaletteManager () { Release (); }
 };
 
 extern CPaletteManager paletteManager;
