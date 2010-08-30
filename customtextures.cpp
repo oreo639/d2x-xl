@@ -195,7 +195,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 			break;
 	bExtraTexture = (nTexture >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
-	if (nTexture == 302)
+	if (nTexture == 184)
 		nTexture = nTexture;
 	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 	pigTexInfo.Read (fp);
@@ -242,7 +242,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
 #endif
 	if (texP->m_info.nFormat) {
-		fp.Read (texP->m_info.tgaDataP, texP->m_info.size * sizeof (tRGBA), 1);
+		fp.Read (texP->m_info.tgaDataP, sizeof (tRGBA), texP->m_info.size);
 		texP->m_info.bValid = 
 			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
 		}
@@ -328,31 +328,8 @@ bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
 	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.tgaDataP : texP->m_info.bmDataP;
 
-if (!bufP) {
-	DEBUGMSG (" POG manager: Couldn't lock texture data.");
-	return false;
-	}
 if (texP->m_info.nFormat) {
-#if 0
-	int w = texP->m_info.width;
-	int h = texP->m_info.height;
-	tBGRA	bgra;
-
-	bufP += w * (h - 1) * 4;
-	int i, j;
-	for (i = h; i; i--) {
-		for (j = w; j; j--) {
-			bgra.b = *bufP++;
-			bgra.g = *bufP++;
-			bgra.r = *bufP++;
-			bgra.a = *bufP++;
-			fp.Write (&bgra, sizeof (bgra), 1, pDestPigFile);
-			}
-		bufP -= 2 * w * 4;
-		}
-#else
 	fp.Write (bufP, sizeof (tRGBA), texP->m_info.size);
-#endif
 	}
 else {
 	ushort w = texP->m_info.width;
@@ -449,11 +426,10 @@ sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", 
 DEBUGMSG (message);
 
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
-	if (texP->m_info.bModified && !WritePogTexture (fp, texP))
-		return 1;
+	if (texP->m_info.bModified)
+		WritePogTexture (fp, texP);
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
-	if (!WritePogTexture (fp, extraTexP))
-		return 1;
+	WritePogTexture (fp, extraTexP);
 
 return 0;
 }

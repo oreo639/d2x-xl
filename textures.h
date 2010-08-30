@@ -133,9 +133,9 @@ public:
 			}
 		else {
 			whExtra = (width / 256) + ((height / 256) * 16);
-			width %= 256;
 			height %= 256;
 			}
+		width %= 256;
 		}
 
 	void Setup (int nVersion, ushort w = 0, ushort h = 0, byte f = 0, uint o = 0) {
