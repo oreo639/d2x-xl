@@ -8,7 +8,7 @@
 #include "mineview.h"
 
 #include "palette.h"
-#include "textures.h"
+#include "texturemanager.h"
 #include "global.h"
 #include "render.h"
 #include "cfile.h"

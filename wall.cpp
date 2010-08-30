@@ -13,6 +13,7 @@
 #include "dle-xp.h"
 #include "global.h"
 #include "cfile.h"
+#include "texturemanager.h"
 
 //--------------------------------------------------------------------------
 // Mine - add wall
