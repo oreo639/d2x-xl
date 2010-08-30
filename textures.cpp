@@ -92,7 +92,7 @@ if (bShowTexture) {
 		pDC->RealizePalette ();
 		int caps = pDC->GetDeviceCaps (RASTERCAPS);
 		if (caps & RC_DIBTODEV) {
-			BITMAPINFO *bmi = MakeBitmap ();
+			BITMAPINFO* bmi = paletteManager.BMI ();
 			if (!bmi)
 				return false;
 			bmi->bmiHeader.biWidth = 

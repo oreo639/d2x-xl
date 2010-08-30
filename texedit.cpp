@@ -219,7 +219,7 @@ for (c = 0, y = m_nHeight - 1; (y >= 0); y--) {
 		pal_bitmap [h] = (c < 256) ? m_nSortedPalIdx [c++] : 0;
 		}
 	}
-BITMAPINFO *bmi = MakeBitmap ();
+BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
 if (m_nWidth & 1)
@@ -951,7 +951,7 @@ bmfh.bfReserved2 = 0;
 bmfh.bfOffBits   = sizeof (BITMAPFILEHEADER)+sizeof (BITMAPINFOHEADER)+256*4;
 
 // define the bitmap header
-BITMAPINFO *bmi = MakeBitmap();
+BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nHeight;
 
@@ -1080,7 +1080,7 @@ void CTextureEdit::DrawTexture (void)
 {
 if (!BeginPaint (&m_textureWnd))
 	return;
-BITMAPINFO *bmi = MakeBitmap ();
+BITMAPINFO* bmi = paletteManager.BMI ();
 bmi->bmiHeader.biWidth = m_nWidth;
 bmi->bmiHeader.biHeight = m_nWidth;
 CRect	rc;

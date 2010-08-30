@@ -50,7 +50,7 @@ class CPaletteManager {
 		inline byte* Custom () { return m_custom; }
 		inline byte* Default () { return m_default; }
 		byte* Current (void);
-		tBMIInfo& BMI (void) { return m_bmi; }
+		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
 	private:
 		const char* Resource (void);

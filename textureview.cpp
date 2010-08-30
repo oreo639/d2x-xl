@@ -452,7 +452,7 @@ if (!pDC) {
 	ErrorMsg ("No device context for texture picker available");
 	return;
 	}
-BITMAPINFO* bmi = MakeBitmap();
+BITMAPINFO* bmi = paletteManager.BMI ();
 
    // realize pallette for 256 color displays
 CPalette *oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
