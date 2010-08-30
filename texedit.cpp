@@ -247,7 +247,7 @@ if (m_pDC)
 	return false;
 if (!(m_pDC = GetDC ()))
 	 return false;
-m_pOldPal = m_pDC->SelectPalette (theMine->m_currentPalette, FALSE);
+m_pOldPal = m_pDC->SelectPalette (paletteManager.Render (), FALSE);
 m_pDC->RealizePalette ();
 return true;
 }
@@ -525,7 +525,7 @@ if (m_pDC)
 if (!(m_pDC = pWnd->GetDC ()))
 	 return false;
 m_pPaintWnd = pWnd;
-m_pOldPal = m_pDC->SelectPalette (theMine->m_currentPalette, FALSE);
+m_pOldPal = m_pDC->SelectPalette (paletteManager.Render (), FALSE);
 m_pDC->RealizePalette ();
 return true;
 }
@@ -752,7 +752,7 @@ bool CTextureEdit::LoadBitmap (CFileManager& fp)
 	fp.Read(palette, sizeof (RGBQUAD), paletteSize);
 
 	// read the logical palette entries
-	theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
+	paletteManager.Render ()->GetPaletteEntries (0, 256, sysPal);
 
 	// check color palette
 	int i;

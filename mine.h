@@ -143,9 +143,6 @@ public:
 	MINE_DATA		m_mineData;
 	robotInfoList	m_defaultRobotInfo;
 	HPALETTE			m_paletteHandle;
-	CPalette*		m_currentPalette;
-	byte*				m_lastPalette;
-	LPLOGPALETTE	m_dlcLogPalette;
 	
 	// strings
 	char				message[256];
@@ -566,7 +563,6 @@ public:
 	void CalcSpline ();
 	void UntwistSegment (short nSegment,short nSide);
 	int MatchingSide (int j);
-	short LoadPalette (void);
 
 	void SortObjects ();
 	void RenumberTriggerTargetObjs (void);

@@ -88,7 +88,7 @@ if (bShowTexture) {
 		CTexture	tex (textureManager.bmBuf);
 		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
-		CPalette *pOldPalette = pDC->SelectPalette (theMine->m_currentPalette, FALSE);
+		CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		pDC->RealizePalette ();
 		int caps = pDC->GetDeviceCaps (RASTERCAPS);
 		if (caps & RC_DIBTODEV) {

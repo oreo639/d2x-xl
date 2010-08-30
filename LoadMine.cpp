@@ -94,68 +94,6 @@ return 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-short CMine::LoadPalette (void)
-{
-// set palette
-// make global palette
-byte *palette = paletteManager.Current ();
-if (!palette)
-	return 1;
-// redefine logical palette entries if memory for it is allocated
-m_dlcLogPalette = (LPLOGPALETTE) malloc (sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256);
-if (!m_dlcLogPalette)
-	return 1;
-m_dlcLogPalette->palVersion = 0x300;
-m_dlcLogPalette->palNumEntries = 256;
-uint* rgb = (uint*) m_dlcLogPalette->palPalEntry;
-for (int i = 0; i < 256; i++, palette += 3) {
-	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
-#if 0
-	m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
-	m_dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
-	m_dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
-	m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
-#endif
-	}
-// now recreate the global Palette
-if (m_currentPalette)
-	delete m_currentPalette;
-m_currentPalette = new CPalette ();
-m_currentPalette->CreatePalette (m_dlcLogPalette);
-return 0;
-}
-
-// ------------------------------------------------------------------------
-
-short CMine::LoadMineSigAndType (CFileManager& fp)
-{
-int sig = fp.ReadInt32 ();
-if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
-	ErrorMsg ("Signature value incorrect.");
-	fp.Close ();
-	return 1;
-	}
-
-// read version
-SetLevelVersion (fp.ReadInt32 ());
-if (LevelVersion () == 1) {
-	SetFileType (RDL_FILE);
-	}
-else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
-	SetFileType (RL2_FILE);
-	}
-else {
-	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
-	ErrorMsg (message);
-	fp.Close ();
-	return 1;
-	}
-return 0;
-}
-
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-
 short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 {
 	byte* palette = 0;
@@ -230,9 +168,6 @@ if (IsD2File ()) {
 		}
 	}
 
-if (return_code = LoadPalette ())
-	goto load_end;
-
 // read descent 2 reactor information
 if (IsD2File ()) {
 	ReactorTime () = fp.ReadInt32 (); // base control center explosion time
@@ -293,8 +228,6 @@ if (gameErr != 0) {
 	}
 
 goto load_pog;
-
-load_end:
 
 return_code = 0;
 

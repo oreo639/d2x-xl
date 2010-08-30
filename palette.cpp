@@ -87,6 +87,16 @@ if (m_current) {
 
 //------------------------------------------------------------------------
 
+void CPaletteManager::FreeRender (void)
+{
+if (m_render) {
+	delete m_render;
+	m_render = null;
+	}
+}
+
+//------------------------------------------------------------------------
+
 void CPaletteManager::Decode (byte* palette)
 {
 //for (int i = 0; i < 3 * 256; i++)
@@ -124,6 +134,7 @@ for (int i = 0; i < 256; i++) {
 		fadeP [j * 256 + i] = FadeValue (c, j + 1);
 	}
 Decode (m_custom);
+SetupRender (m_custom);
 SetupBMI (m_custom);
 return 1;
 }
@@ -139,6 +150,25 @@ Decode (m_custom);
 
 //------------------------------------------------------------------------
 
+short CPaletteManager::SetupRender (byte* palette)
+{
+LPLOGPALETTE logPal = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256];
+if (!logPal)
+	return 1;
+logPal->palVersion = 0x300;
+logPal->palNumEntries = 256;
+uint* rgb = (uint*) logPal->palPalEntry;
+for (int i = 0; i < 256; i++, palette += 3)
+	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+FreeRender ();
+m_render = new CPalette ();
+m_render->CreatePalette (logPal);
+delete logPal;
+return 0;
+}
+
+//------------------------------------------------------------------------
+
 byte* CPaletteManager::LoadDefault (void)
 {
 CResource res;
@@ -147,6 +177,7 @@ if (!res.Load (Resource ()))
 m_default = new byte [res.Size()];
 memcpy (m_default, res.Data (), res.Size ());
 Decode (m_default);
+SetupRender (m_default);
 SetupBMI (m_default);
 return m_default;
 }

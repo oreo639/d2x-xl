@@ -56,8 +56,6 @@ CLEAR (RobotInfo ());
 #endif
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
-m_dlcLogPalette = 0;
-m_currentPalette = null;
 FlickerLightCount () = 0;
 Current () = &Current1 ();
 *m_szBlockFile = '\0';
@@ -73,8 +71,6 @@ GameInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-m_currentPalette = null;
-LoadPalette ();
 m_bSortObjects = TRUE;
 m_bVertigo = false;
 m_pHxmExtraData = null;

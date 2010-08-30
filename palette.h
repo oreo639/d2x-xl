@@ -20,9 +20,11 @@ typedef struct tBMIInfo {
 
 class CPaletteManager {
 	private:
-		byte*		m_custom;
-		byte*		m_default;	
-		tBMIInfo	m_bmi;
+		byte*				m_custom;
+		byte*				m_default;	
+		tBMIInfo			m_bmi;
+		CPalette*		m_render;
+		LPLOGPALETTE	m_dlcLog;
 
 	public:
 		CPaletteManager () : m_custom(null), m_default(null) {}
@@ -31,9 +33,11 @@ class CPaletteManager {
 		int SaveCustom (CFileManager& fp);
 		void FreeCustom (void);
 		void FreeCurrent (void);
+		void FreeRender (void);
 		inline void Release (void) {
 			FreeCustom ();
 			FreeCurrent ();
+			FreeRender ();
 			}
 		inline void Reload (void) {
 			Release ();
@@ -42,6 +46,7 @@ class CPaletteManager {
 
 		inline byte* Custom () { return m_custom; }
 		inline byte* Default () { return m_default; }
+		inline CPalette* Render () { return m_render; }
 		byte* Current (void);
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
@@ -49,6 +54,7 @@ class CPaletteManager {
 		const char* Resource (void);
 		byte FadeValue (byte c, int f);
 		void SetupBMI (byte* palette);
+		short SetupRender (byte* palette);
 		byte* LoadDefault (void);
 		void Encode (byte* palette);
 		void Decode (byte* palette);

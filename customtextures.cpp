@@ -20,22 +20,23 @@ return i * i;
 }
 
 
-inline int ColorDelta (unsigned char r, unsigned char g, unsigned char b, byte* palette, int j)
+inline int ColorDelta (int r, int g, int b, byte* palette, int j)
 {
-palette += 3 * j;
-return Sqr (r - (palette [0] << 2)) + Sqr (g - (palette [1] << 2)) + Sqr (b - (palette [2] << 2));
+return Sqr (r - ((int) palette [0] << 2)) + Sqr (g - ((int) palette [1] << 2)) + Sqr (b - ((int) palette [1] << 2));
 }
 
 //------------------------------------------------------------------------
 
-inline uint ClosestColor (unsigned char r, unsigned char g, unsigned char b, byte* palette)
+inline uint ClosestColor (int r, int g, int b, byte* palette)
 {
-	uint	k, delta, closestDelta = 0x7fffffff, closestIndex = 0;
+	uint	i, delta, closestDelta = 0x7fffffff, closestIndex = 0;
 
-for (k = 0; (k < 256) && closestDelta; k++) {
-	delta = ColorDelta (r, g, b, palette, k);
+for (i = 0; (i < 256) && closestDelta; i++) {
+	delta = ColorDelta (r, g, b, palette + 3 * i, i);
 	if (delta < closestDelta) {
-		closestIndex = k;
+		if (delta == 0)
+			return i;
+		closestIndex = i;
 		closestDelta = delta;
 		}
 	}
@@ -54,7 +55,7 @@ if (!sysPal) {
 	ErrorMsg ("Not enough memory for palette.");
 	return false;
 	}
-theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
+paletteManager.Render ()->GetPaletteEntries (0, 256, sysPal);
 #endif
 int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
 int h = nSize, i = 0, k, x, y;
@@ -66,7 +67,7 @@ for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 #	pragma omp for private (x)
 	for (x = 0; x < nWidth; x++) {
 		rgba = pTGA [i + x];
-		pBM [k + x] = ClosestColor (rgba.r, rgba.g, rgba.b, paletteManager.Current ());
+		pBM [k + x] = ClosestColor ((int) rgba.r, (int) rgba.g, (int) rgba.b, paletteManager.Current ());
 		}
 	}
 }

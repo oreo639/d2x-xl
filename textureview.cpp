@@ -455,7 +455,7 @@ if (!pDC) {
 BITMAPINFO* bmi = paletteManager.BMI ();
 
    // realize pallette for 256 color displays
-CPalette *oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
+CPalette *oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 pDC->RealizePalette();
 pDC->SetStretchBltMode(STRETCH_DELETESCANS);
 int x = 0;

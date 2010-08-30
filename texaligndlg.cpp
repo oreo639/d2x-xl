@@ -60,7 +60,7 @@ void CTextureTool::RefreshAlignWnd (void)
 {
 CHECKMINE;
 
-	int			x, y, i, uv;
+	int			x, y, i, uv, dx, dy;
 	CSegment*	segP, * childSegP;
 	CSide*		sideP;
 	int			nSide,
@@ -85,8 +85,8 @@ CHECKMINE;
 
 
 // read scroll bar
-offset.x = (int)(m_zoom * (double) HScrollAlign ()->GetScrollPos ());
-offset.y = (int)(m_zoom * (double) VScrollAlign ()->GetScrollPos ());
+offset.x = (int)(m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x;
+offset.y = (int)(m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y;
 UpdateData (TRUE);
 /*
 RefreshX();
@@ -138,23 +138,25 @@ pDC->FillRgn (&hRgn, &brBlack);
 
 // draw grid
 pDC->SetBkMode (TRANSPARENT);
-y=16;
-for (x= -32 * y; x < 32 * y; x += 32) {
+y = 16;
+for (x = -32 * y; x < 32 * y; x += 32) {
+	dx = (int) (m_zoom * x);
+	dy = (int) (m_zoom * y * 32);
 	pDC->SelectObject((x==0) ? hPenAxis : hPenGrid);
-	pDC->MoveTo ((int) (offset.x+m_centerPt.x+m_zoom*x   ), (int) (offset.y+m_centerPt.y-m_zoom*32*y));
-	pDC->LineTo ((int) (offset.x+m_centerPt.x+m_zoom*x   ), (int) (offset.y+m_centerPt.y+m_zoom*32*y));
-	pDC->MoveTo ((int) (offset.x+m_centerPt.x-m_zoom*32*y), (int) (offset.y+m_centerPt.y+m_zoom*x   ));
-	pDC->LineTo ((int) (offset.x+m_centerPt.x+m_zoom*32*y), (int) (offset.y+m_centerPt.y+m_zoom*x   ));
+	pDC->MoveTo ((int) (offset.x + dx), (int) (offset.y - dy));
+	pDC->LineTo ((int) (offset.x + dx), (int) (offset.y + dy));
+	pDC->MoveTo ((int) (offset.x - dy), (int) (offset.y + dx));
+	pDC->LineTo ((int) (offset.x + dy), (int) (offset.y + dx));
 	}	
 
 if (theMine->IsWall ()) {
 	// define array of screen points for (u,v) coordinates
 	for (i = 0; i < 4; i++) {
-		x = offset.x + m_centerPt.x + (int)(m_zoom*(double)sideP->m_info.uvls[i].u/64.0);
-		y = offset.y + m_centerPt.y + (int)(m_zoom*(double)sideP->m_info.uvls[i].v/64.0);
+		x = offset.x + (int)(m_zoom * (double)sideP->m_info.uvls[i].u / 64.0);
+		y = offset.y + (int)(m_zoom * (double)sideP->m_info.uvls[i].v / 64.0);
 		m_apts [i].x = x;
 		m_apts [i].y = y;
-		if (i==0) {
+		if (i == 0) {
 			m_minPt.x = m_maxPt.x = x;
 			m_minPt.y = m_maxPt.y = y;
 			}
@@ -170,7 +172,7 @@ if (theMine->IsWall ()) {
 	m_minPt.y = max(m_minPt.y, minRect.y);
 	m_maxPt.y = min(m_maxPt.y, maxRect.y);
 
-	if (m_bShowChildren) {
+	if (false && m_bShowChildren) {
 		int nChildSide, nChild, nChildLine;
 		int point0, point1, vert0, vert1;
 		int childs_side, childs_line;
@@ -180,7 +182,7 @@ if (theMine->IsWall ()) {
 
 		// draw all sides (u,v)
 		pDC->SelectObject (hPenGrid);
-		for (nChildLine=0;nChildLine<4;nChildLine++) {
+		for (nChildLine = 0; nChildLine < 4; nChildLine++) {
 			// find vert numbers for the line's two end points
 			point0 = lineVertTable [sideLineTable [nSide][nChildLine]][0];
 			point1 = lineVertTable [sideLineTable [nSide][nChildLine]][1];
@@ -213,8 +215,8 @@ if (theMine->IsWall ()) {
 								// ..of the texture size in order to make it line up on the screen
 								// start by copying points into an array
 								for (i = 0; i < 4; i++) {
-									x = offset.x + m_centerPt.x + (int)(m_zoom*(double)childSideP->m_info.uvls[i].u/64.0);
-									y = offset.y + m_centerPt.y + (int)(m_zoom*(double)childSideP->m_info.uvls[i].v/64.0);
+									x = offset.x + (int)(m_zoom*(double)childSideP->m_info.uvls[i].u/64.0);
+									y = offset.y + (int)(m_zoom*(double)childSideP->m_info.uvls[i].v/64.0);
 									child_pts[i].x = x;
 									child_pts[i].y = y;
 									}
@@ -248,15 +250,14 @@ if (theMine->IsWall ()) {
 	pDC->SelectObject (hPenCurrentPoint);
 	x = m_apts [theMine->Current ()->nPoint].x;
 	y = m_apts [theMine->Current ()->nPoint].y;
-	pDC->Ellipse((int) (x-4*m_zoom), (int) (y-4*m_zoom), 
-					 (int) (x+4*m_zoom), (int) (y+4*m_zoom));
+	pDC->Ellipse((int) (x-4*m_zoom), (int) (y-4*m_zoom), (int) (x+4*m_zoom), (int) (y+4*m_zoom));
 	// fill in texture
 	DrawAlignment (pDC);
 	pDC->SelectObject (hRgn);
 	// draw CUVL
 	pDC->SelectObject (hPenCurrentSide);
 	pDC->MoveTo (m_apts [3].x, m_apts [3].y);
-	for (i=0;i<4;i++)
+	for (i = 0; i < 4; i++)
 		pDC->LineTo (m_apts [i].x, m_apts [i].y);
 	// highlight current line
 	pDC->SelectObject(hPenCurrentLine);
@@ -296,7 +297,7 @@ offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ());
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 
 // set up logical palette
-oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
+oldPalette = pDC->SelectPalette(paletteManager.Render (), FALSE);
 pDC->RealizePalette();
 memset (tex.m_info.bmDataP, 0, sizeof (textureManager.bmBuf));
 if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {

@@ -9,6 +9,7 @@
 #include "mine.h"
 #include "global.h"
 #include "dlcdoc.h"
+#include "palette.h"
 #include "texturemanager.h"
 
 BEGIN_MESSAGE_MAP (CConvertDlg, CDialog)
@@ -142,10 +143,10 @@ else
 #endif
 fileTypeBackup = DLE.FileType ();
 theMine->SetFileType (RL2_FILE);
-theMine->LoadPalette ();
+paletteManager.Reload ();
 PaintTexture (&m_showD2, 0, -1, -1, texture2, 0);
 theMine->SetFileType (RDL_FILE);
-theMine->LoadPalette ();
+paletteManager.Reload ();
 PaintTexture (&m_showD1, 0, -1, -1, texture1, 0);
 
   // restore file type (should always be RDL_TYPE)
@@ -215,7 +216,7 @@ textureManager.Release ();
 DLE.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RL2_FILE);
-theMine->LoadPalette ();
+paletteManager.Reload ();
 
   // convert textures
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {

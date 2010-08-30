@@ -393,7 +393,7 @@ if (strcmp (descent2_path, m_d2Path)) {
 		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
 		if (DLE.IsD2File ())
 			FreeTextureHandles (false);
-		theMine->LoadPalette ();
+		paletteManager.Reload ();
 		DLE.MineView ()->ResetView (true);
 		}
 	}
