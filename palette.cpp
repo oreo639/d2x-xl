@@ -50,9 +50,9 @@ m_bmi.header.biYPelsPerMeter = 0;
 m_bmi.header.biClrUsed       = 0;
 m_bmi.header.biClrImportant  = 0;
 
-uint* rgb = (uint*) m_bmi.colors;
-for (int i = 256; i; i--, palette += 3, rgb++)
-	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+uint* rgb = (uint*) &m_bmi.colors [0];
+for (int i = 0; i < 256; i++, palette += 3)
+	rgb [i] = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
 }
 
 //------------------------------------------------------------------------
@@ -153,15 +153,14 @@ Decode (m_custom);
 
 short CPaletteManager::SetupRender (byte* palette)
 {
-;
+FreeRender ();
 if (!(m_dlcLog = (LPLOGPALETTE) new byte [sizeof (LOGPALETTE) + sizeof (PALETTEENTRY) * 256]))
 	return 1;
 m_dlcLog->palVersion = 0x300;
 m_dlcLog->palNumEntries = 256;
-uint* rgb = (uint*) m_dlcLog->palPalEntry;
+uint* rgb = (uint*) &m_dlcLog->palPalEntry [0];
 for (int i = 0; i < 256; i++, palette += 3)
-	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
-FreeRender ();
+	rgb [i] = ((uint) (palette [0]) << 2) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 18);
 m_render = new CPalette ();
 m_render->CreatePalette (m_dlcLog);
 return 0;
