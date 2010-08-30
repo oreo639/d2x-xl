@@ -452,7 +452,7 @@ else if (IsEquipMaker (segP)) {
 						continue;
 					}
 				res.Load (POWERUP_STRING_TABLE + j);
-				if (!strcmp (szObj, "(not used)"))
+				if (!strcmp (res.Value (), "(not used)"))
 					continue;
 				h = plb [i]->AddString (res.Value ());
 				plb [i]->SetItemData (h, j);

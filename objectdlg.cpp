@@ -14,7 +14,7 @@
 #include "dle-xp.h"
 #include "global.h"
 #include "toolview.h"
-#include "textures.h"
+#include "texturemanager.h"
 
 typedef struct tSliderData {
 	int	nId;
@@ -210,7 +210,7 @@ for (i = 0; i < h; i++, psd++) {
 
 void CObjectTool::CBInit (CComboBox *pcb, char** pszNames, byte *pIndex, byte *pItemData, int nMax, int nType, bool bAddNone)
 {
-	int h, j, l;
+	int h, j;
 	DWORD nErr;
 	
 pcb->ResetContent ();

@@ -513,15 +513,13 @@ ReleaseDC(pDC);
 
 void CTextureView::Setup (void) 
 {
-  char name[20];
-  int i;
   int nTextures, nFrames = 0;
 
   nTextures = textureManager.MaxTextures ();
 
   // calculate total number of textures
 m_nTextures [1] = 0;
-for (i = 0; i < nTextures; i++) {
+for (int i = 0; i < nTextures; i++) {
 	if (textureManager.Texture (i)->m_info.bFrame)
 		++nFrames;
 	else

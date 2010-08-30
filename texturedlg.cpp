@@ -363,7 +363,7 @@ for (iTexture = 0; iTexture < nTextures; iTexture++) {
 		cbTexture1->SetItemData (index, iTexture);
 		if (texture1 == iTexture)
 			cbTexture1->SetCurSel (index);
-		index = cbTexture2->AddString (iTexture ? *p : "(none)");
+		index = cbTexture2->AddString (iTexture ? p : "(none)");
 		if (texture2 == iTexture)
 			cbTexture2->SetCurSel (index);
 		cbTexture2->SetItemData (index, iTexture);

@@ -13,6 +13,7 @@
 #include "mine.h"
 #include "global.h"
 #include "toolview.h"
+#include "texturemanager.h"
 
                         /*--------------------------*/
 
