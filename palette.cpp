@@ -55,7 +55,7 @@ m_bmi.header.biClrImportant  = 0;
 
 uint* rgb = (uint*) m_bmi.colors;
 for (int i = 256; i; i--, palette += 3, rgb++)
-	*rgb = ((uint) (palette [0]) << 16) + ((uint) (palette [1]) << 8) + ((uint) (palette [2]));
+	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
 }
 
 //------------------------------------------------------------------------
@@ -89,16 +89,16 @@ if (m_current) {
 
 void CPaletteManager::Decode (byte* palette)
 {
-for (int i = 0; i < 3 * 256; i++)
-	palette [i] <<= 2;
+//for (int i = 0; i < 3 * 256; i++)
+//	palette [i] <<= 2;
 }
 
 //------------------------------------------------------------------------
 
 void CPaletteManager::Encode (byte* palette)
 {
-for (int i = 0; i < 3 * 256; i++)
-	palette [i] >>= 2;
+//for (int i = 0; i < 3 * 256; i++)
+//	palette [i] >>= 2;
 }
 
 //------------------------------------------------------------------------

@@ -23,7 +23,7 @@ return i * i;
 inline int ColorDelta (unsigned char r, unsigned char g, unsigned char b, byte* palette, int j)
 {
 palette += 3 * j;
-return Sqr (r - palette [0]) + Sqr (g - palette [1]) + Sqr (b - palette [2]);
+return Sqr (r - (palette [0] << 2)) + Sqr (g - (palette [1] << 2)) + Sqr (b - (palette [2] << 2));
 }
 
 //------------------------------------------------------------------------
