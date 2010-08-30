@@ -344,11 +344,13 @@ if (LevelVersion () >= 12) {
 SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
 SaveGameItem (fp, GameInfo ().botgen, DATA (BotGens ()));
 if (IsD2File ()) {
-SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
-	if ((LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34))
-		SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
-	SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
-	SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
+	SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
+	if (GameInfo ().lightDeltaIndices.count > 0) {
+		if ((LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34))
+			SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
+		SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
+		SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
+		}
 	}
 
 endOffset = fp.Tell ();
