@@ -30,9 +30,7 @@ public:
 	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &textures [nVersion][nTexture]; }
 
 	int MaxTextures (int nVersion = -1);
-	int LoadIndex (int nVersion);
-	void LoadNames (int nVersion);
-	void LoadTextures (int nVersion);
+	void ReloadTextures (int nVersion = -1);
 	CPigTexture& LoadInfo (CFileManager& fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
@@ -75,6 +73,13 @@ public:
 				delete info [i];
 			}
 		}
+
+private:
+	int LoadIndex (int nVersion);
+	void LoadNames (int nVersion);
+	void LoadTextures (int nVersion);
+	void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
+
 };
 
 extern CTextureManager textureManager;

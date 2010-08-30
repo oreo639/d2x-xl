@@ -357,7 +357,6 @@ if (pszSubFile) {
 	}
 else if (0 > (index = GetFileData (-1, &size, &offset)))
 	goto errorExit;
-textureManager.Release ();
 
 CFileManager::SplitPath (pszFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");

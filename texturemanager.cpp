@@ -32,22 +32,29 @@ return DLE.IsD1File () ? 0 : 1;
 
 //------------------------------------------------------------------------
 
+void CTextureManager::Release (int nVersion, bool bDeleteAll, bool bDeleteUnused) 
+{
+// free any textures that have been buffered
+CTexture* texP = &textures [nVersion][0];
+for (int i = 0, h = MaxTextures (nVersion); i < h; i++, texP++) {
+	if (bDeleteUnused) {
+		if (texP->m_info.bCustom && !texP->m_info.bUsed)
+			texP->Release ();
+		}
+	else {
+		if (bDeleteAll || texP->m_info.bCustom)
+			texP->Release ();
+		}
+	}		
+}
+
+//------------------------------------------------------------------------
+
 void CTextureManager::Release (bool bDeleteAll, bool bDeleteUnused) 
 {
 // free any textures that have been buffered
-for (int i = 0; i < 2; i++) {
-	CTexture* texP = &textures [i][0];
-	for (int j = 0, h = MaxTextures (i); j < h; j++, texP++) {
-		if (bDeleteUnused) {
-			if (texP->m_info.bCustom && !texP->m_info.bUsed)
-				texP->Release ();
-			}
-		else {
-			if (bDeleteAll || texP->m_info.bCustom)
-				texP->Release ();
-			}
-		}		
-	}
+for (int i = 0; i < 2; i++) 
+	Release (i, bDeleteAll, bDeleteUnused);
 for (CExtraTexture* p = extraTextures; p != null; ) {
 	extraTextures = p->m_next;
 	delete p;
@@ -192,6 +199,19 @@ return info [nVersion][index [nVersion][nTexture] - 1];
 
 //------------------------------------------------------------------------------
 
+void CTextureManager::ReloadTextures (int nVersion)
+{
+if (nVersion < 0)
+	nVersion = Version ();
+
+CFileManager* fp = OpenPigFile (nVersion);
+for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
+	textures [nVersion][i].Load (i, nVersion, fp);
+fp->Close ();
+}
+
+//------------------------------------------------------------------------------
+
 void CTextureManager::LoadTextures (int nVersion)
 {
 header [nVersion] = CPigHeader (nVersion);
@@ -202,12 +222,7 @@ textures [nVersion].Create (MaxTextures (nVersion));
 #else
 textures [nVersion] = new CTexture [MaxTextures (nVersion)];
 #endif
-
-	CFileManager* fp = OpenPigFile (nVersion);
-
-for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
-	textures [nVersion][i].Load (i, nVersion, fp);
-fp->Close ();
+ReloadTextures (nVersion);
 }
 
 //------------------------------------------------------------------------------

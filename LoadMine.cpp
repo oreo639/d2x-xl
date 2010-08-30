@@ -61,8 +61,6 @@ else if (!CreateNewLevel ()) {
 	}
 
 m_disableDrawing = TRUE;
-if (!bLoadFromHog)
-	textureManager.Release ();
 
 LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && (IsD2XLevel ()) && (LevelOutdated ())) {
@@ -84,12 +82,12 @@ if (checkErr != 0) {
 			bNewMine = true;
 			}
 		m_disableDrawing = TRUE;
-		textureManager.Release ();
 		LoadMine (filename, bLoadFromHog, bNewMine);
 		m_disableDrawing = FALSE;
 		return 1;
 		}
 	}
+textureManager.ReloadTextures ();
 m_disableDrawing = FALSE;
 return 0;
 }
