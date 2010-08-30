@@ -15,6 +15,7 @@
 #include "dle-xp.h"
 #include "robot.h"
 #include "hogmanager.h"
+#include "palette.h"
 #include "light.h"
 
 #ifdef ALLOCATE_tPolyModelS
