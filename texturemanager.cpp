@@ -393,7 +393,7 @@ void CTextureManager::MarkUsedTextures (void)
 	int i, j, h = MaxTextures (nVersion);
 
 for (i = 0; i < h; i++)
-	textures [nVersion][i].m_info.bUsed = false;
+	textures [nVersion][i].m_info.bUsed = !textures [nVersion][i].m_info.bCustom;
 
 for (i = theMine->SegCount (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
@@ -411,7 +411,7 @@ CTexture* texP = null;
 for (i = 0; i < h; i++) {
 	if (!textures [nVersion][i].m_info.bFrame)
 		texP = &textures [nVersion][i];
-	else 
+	else if (!textures [nVersion][i].m_info.bUsed)
 		textures [nVersion][i].m_info.bUsed = (texP != null) && texP->m_info.bUsed;
 	}
 }
