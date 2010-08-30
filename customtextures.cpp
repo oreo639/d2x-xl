@@ -195,8 +195,6 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 			break;
 	bExtraTexture = (nTexture >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
-	if (nTexture == 184)
-		nTexture = nTexture;
 	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 	pigTexInfo.Read (fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
