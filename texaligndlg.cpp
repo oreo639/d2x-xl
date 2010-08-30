@@ -292,30 +292,27 @@ if (!m_bShowTexture)
 	CTexture		tex (textureManager.bmBuf);
 	ushort		scale;
 
-// read scroll bar
-offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ());
-offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
+offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x - 128;
+offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
-// set up logical palette
 memset (tex.m_info.bmDataP, 0, sizeof (textureManager.bmBuf));
 if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
 	return;
 	}
-oldPalette = pDC->SelectPalette(paletteManager.Render (), FALSE);
+oldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 pDC->RealizePalette();
 hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);
 pDC->SelectObject (&hRgn);
 scale = min (tex.m_info.width, tex.m_info.height) / 64;
 for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
-		i=((int)(((((x-(m_centerPt.x+offset.x))+128)*2)/m_zoom))&63)*scale;
-		j=((int)(((((y-(m_centerPt.y+offset.y))+128)*2)/m_zoom))&63)*scale;
-		pDC->SetPixel(x, y, h=PALETTEINDEX(tex.m_info.bmDataP[(tex.m_info.width-j)*tex.m_info.width+i]));
+		i = ((int) ((((x - offset.x) * 2) / m_zoom)) & 63) * scale;
+		j = ((int) ((((y - offset.y) * 2) / m_zoom)) & 63) * scale;
+		pDC->SetPixel (x, y, h = PALETTEINDEX (tex.m_info.bmDataP [(tex.m_info.width - j) * tex.m_info.width + i]));
 		}
 	}
 DeleteObject(hRgn);
-// restort to origional palette
 pDC->SelectPalette (oldPalette, FALSE);
 }
 

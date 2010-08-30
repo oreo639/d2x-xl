@@ -26,6 +26,7 @@ class CPaletteManager {
 		tBMIInfo			m_bmi;
 		CPalette*		m_render;
 		LPLOGPALETTE	m_dlcLog;
+		PALETTEENTRY*	m_colorMap;
 
 	public:
 		void Load (void);
@@ -46,11 +47,8 @@ class CPaletteManager {
 
 		inline byte* Custom () { return m_custom; }
 		inline byte* Default () { return m_default; }
-		inline CPalette* Render () { 
-			if (!m_render)
-				SetupRender (Current ());
-			return m_render; 
-			}
+		inline CPalette* Render () { return m_render; }
+		inline PALETTEENTRY* ColorMap () { return m_colorMap; }
 		byte* Current (void);
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 

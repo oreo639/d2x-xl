@@ -49,10 +49,18 @@ m_bmi.header.biXPelsPerMeter = 0;
 m_bmi.header.biYPelsPerMeter = 0;
 m_bmi.header.biClrUsed       = 0;
 m_bmi.header.biClrImportant  = 0;
-
+#if 0
+for (int i = 0; i < 256; i++) {
+	m_bmi.colors [i].rgbRed = m_colorMap [i].peRed; 
+	m_bmi.colors [i].rgbGreen = m_colorMap [i].peGreen; 
+	m_bmi.colors [i].rgbBlue = m_colorMap [i].peBlue; 
+	m_bmi.colors [i].rgbReserved = 0;
+	}
+#else
 uint* rgb = (uint*) &m_bmi.colors [0];
 for (int i = 0; i < 256; i++, palette += 3)
 	rgb [i] = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -93,6 +101,10 @@ if (m_render) {
 if (m_dlcLog) {
 	delete m_dlcLog;
 	m_dlcLog = null;
+	}
+if (m_colorMap) {
+	delete m_colorMap;
+	m_colorMap = null;
 	}
 }
 
@@ -135,7 +147,7 @@ for (int i = 0; i < 256; i++) {
 		fadeP [j * 256 + i] = FadeValue (c, j + 1);
 	}
 Decode (m_custom);
-//SetupRender (m_custom);
+SetupRender (m_custom);
 SetupBMI (m_custom);
 return 1;
 }
@@ -161,8 +173,11 @@ m_dlcLog->palNumEntries = 256;
 uint* rgb = (uint*) &m_dlcLog->palPalEntry [0];
 for (int i = 0; i < 256; i++, palette += 3)
 	rgb [i] = ((uint) (palette [0]) << 2) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 18);
-if (m_render = new CPalette ())
-	m_render->CreatePalette (m_dlcLog);
+if (!(m_render = new CPalette ()))
+	return 1;
+m_render->CreatePalette (m_dlcLog);
+m_colorMap = new PALETTEENTRY [256];
+m_render->GetPaletteEntries (0, 256, m_colorMap);
 return m_render == null;
 }
 
@@ -176,7 +191,7 @@ if (!res.Load (Resource ()))
 m_default = new byte [res.Size()];
 memcpy (m_default, res.Data (), res.Size ());
 Decode (m_default);
-//SetupRender (m_default);
+SetupRender (m_default);
 SetupBMI (m_default);
 return m_default;
 }

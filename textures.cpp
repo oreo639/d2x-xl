@@ -98,7 +98,7 @@ if (bShowTexture) {
 			bmi->bmiHeader.biWidth = 
 			bmi->bmiHeader.biHeight = tex.m_info.width;
 			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
-					        	 (void *) textureManager.bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
+					        	(void *) textureManager.bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 		else {
 			double scale = tex.Scale ();
