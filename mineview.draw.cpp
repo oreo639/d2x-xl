@@ -38,14 +38,13 @@ m_view.Calculate (m_move.v.x, m_move.v.y, m_move.v.z);
 InitViewDimensions ();
 if (bSetViewInfo)
 	m_view.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
-MarkVisibleVerts ();
 i = theMine->VertCount ();
 APOINT *a = m_viewPoints + i;
 CVertex* vertP = theMine->Vertices (i);
 for (; i--; ) {
-	if (!vertP->m_status)
+	if (!(--vertP)->m_status)
 		continue;
-	m_view.Project (*(--vertP), *(--a));
+	m_view.Project (*(vertP), *(--a));
 	x = a->x;
 	y = a->y;
 	z = a->z;

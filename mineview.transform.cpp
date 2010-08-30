@@ -105,6 +105,7 @@ DelayRefresh (true);
 //SetViewPoints (&rc);
 m_move.Clear ();
 m_view.SetViewInfo (10000, m_viewWidth, m_viewHeight);
+MarkVisibleVerts ();
 SetViewPoints (&rc, false);
 CRect	crc;
 GetClientRect (crc);
@@ -147,6 +148,7 @@ else
 		Pan ('X', +1);
 		SetViewPoints (&rc);
 		}
+MarkVisibleVerts (true);
 DelayRefresh (false);
 Refresh ();
 return 1;
@@ -217,14 +219,14 @@ void CMineView::AlignSide()
 }
                         /*--------------------------*/
 
-void CMineView::MarkVisibleVerts (void)
+void CMineView::MarkVisibleVerts (bool bReset)
 {
-	int			h, i, bSkyBox = (m_viewMineFlags & eViewMineSkyBox) != 0;
+	int			h, i;
 	CSegment*	segP;
 
 segP = theMine->Segments (0);
 for (i = 0, h = theMine->SegCount (); i < h; i++, segP++) {
-	byte status = bSkyBox || (segP->m_info.function != SEGMENT_TYPE_SKYBOX);
+	status = bReset ? 0 : Visible (segP) ? 1 : 0;
 	for (int j = 0; j < 8; j++)
 		theMine->VertStatus (segP->m_info.verts [j]) = status;
 	}
@@ -272,6 +274,7 @@ else
 factor = 0.1 * pow (1.2, (double) factor);
 m_size.Set (factor, factor, factor);
 m_view.Set (m_move, m_size, m_spin);
+MarkVisibleVerts (true);
 Refresh (false);
 }
 
