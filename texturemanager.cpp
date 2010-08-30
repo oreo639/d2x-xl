@@ -390,10 +390,11 @@ void CTextureManager::MarkUsedTextures (void)
 {
 	CSegment* segP = theMine->Segments (0);
 	int nVersion = DLE.IsD1File () ? 0 : 1;
-	int i, j = MaxTextures (nVersion);
+	int i, j, h = MaxTextures (nVersion);
 
-for (i = 0; i < j; i++)
+for (i = 0; i < h; i++)
 	textures [nVersion][i].m_info.bUsed = false;
+
 for (i = theMine->SegCount (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
@@ -407,7 +408,7 @@ for (i = theMine->SegCount (); i; i--, segP++) {
 
 CTexture* texP = null;
 
-for (i = 0; i < j; i++) {
+for (i = 0; i < h; i++) {
 	if (!textures [nVersion][i].m_info.bFrame)
 		texP = &textures [nVersion][i];
 	else 
