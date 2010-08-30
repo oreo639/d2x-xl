@@ -36,12 +36,8 @@ char *BLOCKOP_HINT =
 
 short CMine::ReadSegmentInfo (CFileManager& fp) 
 {
-	CSegment		*segP;
-	CSide			*sideP;
-#if 0
-	CGameObject			*objP;
-	short				objnum, segObjCount;
-#endif
+	CSegment			*segP;
+	CSide				*sideP;
 	short				nSegment, nSide, nVertex;
 	short				i, j, test;
 	short				origVertCount, k;
@@ -79,23 +75,6 @@ yAxis.Set (zPrime.v.x * yPrime.v.z - yPrime.v.x * zPrime.v.z,
 zAxis.Set (yPrime.v.x * zPrime.v.y - zPrime.v.x * yPrime.v.y,
 			  zPrime.v.x * xPrime.v.y - xPrime.v.x * zPrime.v.y,
 			  xPrime.v.x * yPrime.v.y - yPrime.v.x * xPrime.v.y);
-
-#if 0
-  sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
-		  "y'=(%0.3f,%0.3f,%0.3f)\n"
-		  "z'=(%0.3f,%0.3f,%0.3f)\n",
-		  (float)xPrime.x,(float)xPrime.y,(float)xPrime.z,
-		  (float)yPrime.x,(float)yPrime.y,(float)yPrime.z,
-		  (float)zPrime.x,(float)zPrime.y,(float)zPrime.z);
-  DebugMsg(message);
-  sprintf_s (message, sizeof (message), "x''=(%0.3f,%0.3f,%0.3f)\n"
-		  "y''=(%0.3f,%0.3f,%0.3f)\n"
-		  "z''=(%0.3f,%0.3f,%0.3f)\n",
-		  (float)xAxis.x,(float)xAxis.y,(float)xAxis.z,
-		  (float)yAxis.x,(float)yAxis.y,(float)yAxis.z,
-		  (float)zAxis.x,(float)zAxis.y,(float)zAxis.z);
-  DebugMsg(message);
-#endif
 
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
@@ -348,10 +327,6 @@ while (!fp.EoF ()) {
 		segP->m_info.nMatCen = -1;
 		segP->m_info.value = -1;
 		}
-	//        fscanf_s (fp.File (), "  childFlags %d\n",&test);
-	//        segP->m_info.childFlags = test & 0x3f;
-	//        fscanf_s (fp.File (), "  wallFlags %d\n",&test);
-	//        segP->m_info.wallFlags  = (test & 0x3f) | MARKED_MASK;
 	segP->m_info.wallFlags = MARKED_MASK; // no other bits
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
@@ -411,10 +386,6 @@ void CMine::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/)
 	CDoubleVector	xPrime, yPrime, zPrime, vVertex;
 	short				nVertex;
 
-#if DEMO
-ErrorMsg ("You cannot save a mine in the demo.");
-return;
-#endif
 // set origin
 segP = CurrSeg ();
 origin = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]]);
@@ -428,18 +399,9 @@ xPrime.Normalize ();
 yPrime.Normalize ();
 zPrime.Normalize ();
 
-#if 0
-  sprintf_s (message, sizeof (message), "x'=(%0.3f,%0.3f,%0.3f)\n"
-		  "y'=(%0.3f,%0.3f,%0.3f)\n"
-		  "z'=(%0.3f,%0.3f,%0.3f)\n",
-		  (float)xPrime.x,(float)xPrime.y,(float)xPrime.z,
-		  (float)yPrime.x,(float)yPrime.y,(float)yPrime.z,
-		  (float)zPrime.x,(float)zPrime.y,(float)zPrime.z);
-  DebugMsg(message);
-#endif
-
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+	DLE.MainFrame ()->Progress ().StepIt ();
 	if (segP->m_info.wallFlags & MARKED_MASK) {
 		fprintf (fp.File (), "segment %d\n",nSegment);
 		sideP = segP->m_sides;
@@ -477,24 +439,17 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
-#if 0
-						if (trigger->m_count && !count)	// no targets in marked area
-							fprintf (fp.File (), "        trigger %d\n", MAX_TRIGGERS);
-						else 
-#endif
-							{
-							fprintf (fp.File (), "        trigger %d\n", wallP->m_info.nTrigger);
-							fprintf (fp.File (), "			    type %d\n", trigger->m_info.type);
-							fprintf (fp.File (), "			    flags %ld\n", trigger->m_info.flags);
-							fprintf (fp.File (), "			    value %ld\n", trigger->m_info.value);
-							fprintf (fp.File (), "			    timer %d\n", trigger->m_info.time);
-							fprintf (fp.File (), "			    count %d\n", count);
-							for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
-								if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
-									fprintf (fp.File (), "			        segP %d\n", trigger->Segment (iTarget));
-									fprintf (fp.File (), "			        side %d\n", trigger->Side (iTarget));
-									}
-							}
+						fprintf (fp.File (), "        trigger %d\n", wallP->m_info.nTrigger);
+						fprintf (fp.File (), "			    type %d\n", trigger->m_info.type);
+						fprintf (fp.File (), "			    flags %ld\n", trigger->m_info.flags);
+						fprintf (fp.File (), "			    value %ld\n", trigger->m_info.value);
+						fprintf (fp.File (), "			    timer %d\n", trigger->m_info.time);
+						fprintf (fp.File (), "			    count %d\n", count);
+						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
+							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
+								fprintf (fp.File (), "			        segP %d\n", trigger->Segment (iTarget));
+								fprintf (fp.File (), "			        side %d\n", trigger->Side (iTarget));
+								}
 						}
 					}
 				}
@@ -544,9 +499,7 @@ if (m_bSplineActive) {
   // make sure some cubes are marked
 count = MarkedSegmentCount ();
 if (count==0) {
-	ErrorMsg ("No block marked.\n\n"
-				"Use 'M' or shift left mouse button\n"
-				"to mark one or more cubes.");
+	ErrorMsg ("No block marked.\n\n""Use 'M' or shift left mouse button\n""to mark one or more cubes.");
 	return;
 	}
 
@@ -557,7 +510,6 @@ if (count==0) {
 
 if (!bExpertMode && Query2Msg(BLOCKOP_HINT,MB_YESNO) != IDYES)
 	return;
-#if 1
 if (!BrowseForFile (FALSE, 
 	                 bExtBlkFmt ? "blx" : "blk", szFile, 
 						  "Block file|*.blk|"
@@ -566,23 +518,6 @@ if (!BrowseForFile (FALSE,
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
 						  DLE.MainFrame ()))
 	return;
-#else
-  // Initialize data for fp open dialog
-  OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof (OPENFILENAME));
-  ofn.lStructSize = sizeof (OPENFILENAME);
-  ofn.hwndOwner = HWindow;
-  ofn.lpstrFilter = "DMB Block File\0*.blk\0";
-  ofn.nFilterIndex = 1;
-  ofn.lpstrFile= szFile;
-  ofn.lpstrDefExt = "blk";
-  ofn.nMaxFile = sizeof (szFile);
-  ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-  if (!GetSaveFileName(&ofn)) {
-	return;
-  }
-  strcpy (szFile, ofn.lpstrFile);
-#endif
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
 if (fp.Open (szFile, "w")) {
@@ -592,7 +527,9 @@ if (fp.Open (szFile, "w")) {
 //UpdateUndoBuffer(0);
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember file for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
+DLE.MainFrame ()->InitProgress (SegCount ());
 WriteSegmentInfo (fp, 0);
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
 // the SegCount () will be decremented for each nSegment in loop.
@@ -626,18 +563,15 @@ DLE.MineView ()->Refresh ();
 // MENU - Copy
 //==========================================================================
 
-void CMine::CopyBlock(char *pszBlockFile)
+void CMine::CopyBlock (char *pszBlockFile)
 {
   CFileManager fp;
   char szFile [256] = "\0";
-  short count;
+  short count = MarkedSegmentCount ();
 
-  // make sure some cubes are marked
-count = MarkedSegmentCount ();
-if (count==0) {
-	ErrorMsg ("No block marked.\n\n"
-				"Use 'M' or shift left mouse button\n"
-				"to mark one or more cubes.");
+// make sure some cubes are marked
+if (count == 0) {
+	ErrorMsg ("No block marked.\n\n""Use 'M' or shift left mouse button\n""to mark one or more cubes.");
 	return;
 	}
 
@@ -648,7 +582,6 @@ if (count==0) {
 
 if (!bExpertMode && Query2Msg(BLOCKOP_HINT,MB_YESNO) != IDYES)
 	return;
-#if 1
 if (pszBlockFile && *pszBlockFile)
 	strcpy_s (szFile, sizeof (szFile), pszBlockFile);
 else {
@@ -662,24 +595,6 @@ else {
 						  DLE.MainFrame ()))
 		return;
 	}
-#else
-  // Initialize data for fp open dialog
-  OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof (OPENFILENAME));
-  ofn.lStructSize = sizeof (OPENFILENAME);
-  ofn.hwndOwner = HWindow;
-  ofn.lpstrFilter = "DLE-XP Block File\0*.blk\0";
-  ofn.nFilterIndex = 1;
-  ofn.lpstrFile= szFile;
-  ofn.lpstrDefExt = "blk";
-  ofn.nMaxFile = sizeof (szFile);
-  ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT;
-
-  if (!GetSaveFileName(&ofn)) {
-    return;
-  strcpy (szFile, ofn.lpstrFile);
-  }
-#endif
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
 if (fp.Open (szFile, "w")) {
@@ -711,7 +626,6 @@ if (m_bSplineActive) {
 // Initialize data for fp open dialog
   char szFile [256] = "\0";
 
-#if 1
 if (!BrowseForFile (TRUE, 
 	                 bExtBlkFmt ? "blx" : "blk", szFile, 
 						  "Block file|*.blk|"
@@ -720,23 +634,6 @@ if (!BrowseForFile (TRUE,
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST,
 						  DLE.MainFrame ()))
 	return;
-#else
-  OPENFILENAME ofn;
-  memset(&ofn, 0, sizeof (OPENFILENAME));
-  ofn.lStructSize = sizeof (OPENFILENAME);
-  ofn.hwndOwner = HWindow;
-  ofn.lpstrFilter = "DLE-XP Block File\0*.blk\0";
-  ofn.nFilterIndex = 1;
-  ofn.lpstrFile= szFile;
-  ofn.nMaxFile = sizeof (szFile);
-  ofn.Flags = OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-  if (!GetOpenFileName(&ofn)) {
-    return;
-  }
-#endif
-//  UpdateUndoBuffer(0);
-
 if (!ReadBlock (szFile, 0))
 	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 }
