@@ -161,9 +161,9 @@ m_dlcLog->palNumEntries = 256;
 uint* rgb = (uint*) &m_dlcLog->palPalEntry [0];
 for (int i = 0; i < 256; i++, palette += 3)
 	rgb [i] = ((uint) (palette [0]) << 2) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 18);
-m_render = new CPalette ();
-m_render->CreatePalette (m_dlcLog);
-return 0;
+if (m_render = new CPalette ())
+	m_render->CreatePalette (m_dlcLog);
+return m_render == null;
 }
 
 //------------------------------------------------------------------------

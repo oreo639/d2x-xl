@@ -237,13 +237,10 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	texP->m_info.size = nSize;
 	texP->m_info.bValid = 1;
 	// read texture into memory (assume non-compressed)
-#if 1
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
-#endif
 	if (texP->m_info.nFormat) {
 		fp.Read (texP->m_info.tgaDataP, sizeof (tRGBA), texP->m_info.size);
-		texP->m_info.bValid = 
-			TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
+		texP->m_info.bValid = TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
 		}
 	else {
 		if (pigTexInfo.flags & BM_FLAG_RLE) {
