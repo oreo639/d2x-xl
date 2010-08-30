@@ -24,19 +24,16 @@ int bEnableDeltaShading = 0;
 void TextureMap (CSegment *segP, short nSide,
 					  byte *bmData, ushort bmWidth, ushort bmHeight,
 					  byte *lightIndex,
-					  byte *pScrnMem, APOINT* scrn,
+					  byte *screenBuffer, APOINT* scrn,
 					  ushort width, ushort height, ushort rowOffset)
 {
 	
 	int h, i, j, k;
-	int x, y;
-	LONG yi,  yj;
+	long yi, yj;
 	POINT a [4];
 	POINT minpt, maxpt;
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
-	double w;
-	byte *ptr;
 	CUVL *uvls;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileInfo.version >= 34);
 	
@@ -111,7 +108,7 @@ if (bEnableDeltaShading) {
 		 (lightDeltaValues = theMine->LightDeltaValues (0))) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
-		for (i = 0; i <dlIdxCount; i++, dli++) {
+		for (i = 0; i < dlIdxCount; i++, dli++) {
 //				if (dli->m_info.nSegment == theMine->current->segP) {
 			// loop on each delta light till the segP/side is found
 				CLightDeltaValue *dlP = theMine->LightDeltaValues (dli->m_info.index);
@@ -144,16 +141,21 @@ UV.Square2Quad (b);
 UV.Scale (1.0 / 2048.0);
 //multiply_matrix (B, IA, UV);
 B = IA * UV;
-for (y = minpt.y; y < maxpt.y; y ++) {
-	int x0, x1;
+
+//#pragma omp parallel
+{
+//#	pragma omp for private (scanLight, deltaLight)
+for (int y = minpt.y; y < maxpt.y; y++) {
+	int x, x0, x1;
+	double w;
 	// Determine min and max x for this y.
 	// Check each of the four lines of the quadrilaterial
 	// to figure out the min and max x
 	x0 = maxpt.x; // start out w/ min point all the way to the right
 	x1 = minpt.x; // and max point to the left
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		// if line intersects this y then update x0 & x1
-		j = (i + 1) % 4; // j = other point of line
+		int j = (i + 1) % 4; // j = other point of line
 		yi = a [i].y;
 		yj = a [j].y;
 		if ((y >= yi && y <= yj) || (y >= yj && y <= yi)) {
@@ -163,14 +165,14 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 				if (x < x0) {
 					scanLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x0 = x;
-				}
+					}
 				if (x>x1) {
 					deltaLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x1 = x;
+					}
 				}
 			}
-		}
-	} // end for
+		} // end for
 	
 	// clip
 	x0 = max (x0, minpt.x);
@@ -182,7 +184,7 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 	if (fabs ((double) (x0 - x1)) >= 1.0) {
 		double u0, u1, v0, v1, w0, w1, h, scale, x0d, x1d;
 		uint u, v, du, dv, m, vd, vm, dx;
-		deltaLight = (deltaLight - scanLight)/(x1-x0);
+		deltaLight = (deltaLight - scanLight) / (x1-x0);
 		
 		// loop for every 32 bytes
 		int end_x = x1;
@@ -215,7 +217,7 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 				if (!m)
 					m = 64;
 				m *= 1024;
-				dx = x1-x0;
+				dx = x1 - x0;
 				if (!dx)
 					dx = 1;
 				du = ((uint) (((u1 - u0) * 1024.0) / dx) % m);
@@ -226,12 +228,11 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 				vd = 1024 / bmHeight;
 				vm = bmWidth * (bmHeight - 1);
 				
-				ptr = pScrnMem + (uint)(height - y - 1) * (uint) rowOffset + x0;
+				byte* screenBufP = screenBuffer + (uint)(height - y - 1) * (uint) rowOffset + x0;
 				
 				int k = (x1 - x0);
 				if (y < (height-1) && k > 0)  {
-					byte *pixelP;
-					pixelP = ptr;
+					byte* pixelP = screenBufP;
 					if (bEnableShading) {
 						do {
 							u += du;
@@ -264,4 +265,5 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 			} // end of 32 byte loop
 		}
 	}
+} // omp parallel
 }
