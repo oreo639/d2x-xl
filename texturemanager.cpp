@@ -202,7 +202,7 @@ return info [nVersion][index [nVersion][nTexture] - 1];
 void CTextureManager::ReloadTextures (int nVersion)
 {
 if (nVersion < 0)
-	nVersion = Version ();
+	Release (nVersion = Version (), false, false);
 
 CFileManager* fp = OpenPigFile (nVersion);
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)

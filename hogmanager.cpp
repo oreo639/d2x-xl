@@ -370,6 +370,7 @@ fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 size_t fPos = fSrc.Tell ();
 if (theMine->LoadMineSigAndType (fSrc))
 	goto errorExit;
+theMine->LoadPaletteName (fSrc);
 fSrc.Seek (long (fPos), SEEK_SET);
 while (size > 0) {
 	chunk = (size > sizeof (dataBuf)) ? sizeof (dataBuf) : size;

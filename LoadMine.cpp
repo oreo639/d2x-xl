@@ -49,7 +49,6 @@ m_bSplineActive = FALSE;
 //CLEAR (VertexColors ());
 
 // if no file passed, define a new level w/ 1 object
-paletteManager.Release ();
 if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
@@ -123,40 +122,8 @@ return 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
+void CMine::LoadPaletteName (CFileManager& fp)
 {
-	byte* palette = 0;
-
-	CFileManager fp;
-	int sig = 0;
-	int minedataOffset = 0;
-	int gamedataOffset = 0;
-	int mineErr, gameErr = 0;
-	int	return_code = 0;
-	char	paletteName [256];
-	char*	ps;
-
-m_changesMade = 0;
-
-if (fp.Open (filename, "rb")) {
-	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
-	ErrorMsg (message);
-	return -1;
-	}
-	//  strcpy(gamesave_current_filename, filename);
-if (LoadMineSigAndType (fp))
-	return -1;
-ClearMineData ();
-// read mine data offset
-minedataOffset = fp.ReadInt32 ();
-// read game data offset
-gamedataOffset = fp.ReadInt32 ();
-
-// don't bother reading  hostagetextOffset since
-// for Descent 1 files since we dont use it anyway
-// hostagetextOffset = fp.ReadInt32 ();
-
-// read palette name *.256
 if (IsD2File ()) {
 	if (LevelVersion () >= 8) {
 		fp.ReadInt16 ();
@@ -196,6 +163,38 @@ if (IsD2File ()) {
 			}
 		}
 	}
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
+{
+	byte* palette = 0;
+
+	CFileManager fp;
+	int sig = 0;
+	int mineErr, gameErr = 0;
+	int	return_code = 0;
+	char	paletteName [256];
+	char*	ps;
+
+m_changesMade = 0;
+
+if (fp.Open (filename, "rb")) {
+	sprintf_s (message, sizeof (message),  "Error %d: Can't open file \"%s\".", GetLastError (), filename);
+	ErrorMsg (message);
+	return -1;
+	}
+	//  strcpy(gamesave_current_filename, filename);
+if (LoadMineSigAndType (fp))
+	return -1;
+ClearMineData ();
+// read mine data offset
+minedataOffset = fp.ReadInt32 ();
+// read game data offset
+gamedataOffset = fp.ReadInt32 ();
+LoadPaletteName ();
 
 // read descent 2 reactor information
 if (IsD2File ()) {
