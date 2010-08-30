@@ -110,7 +110,6 @@ if (m_bInited) {
 
 void CTriggerTool::LoadTextureListBoxes () 
 {
-	char			*name;
 	int			nTextures, iTexture, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
@@ -128,13 +127,13 @@ cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
 nTextures = textureManager.MaxTextures ();
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
-	name = textureManager.Name (iTexture);
-	if (!strstr (name, "frame")) {
-		index = cbTexture1->AddString (name);
+	char* p = textureManager.Name (iTexture);
+	if (!strstr (p, "frame")) {
+		index = cbTexture1->AddString (p);
 		cbTexture1->SetItemData (index, iTexture);
 		if (texture1 == iTexture)
 			cbTexture1->SetCurSel (index);
-		index = cbTexture2->AddString (iTexture ? *name : "(none)");
+		index = cbTexture2->AddString (iTexture ? p : "(none)");
 		if (texture2 == iTexture)
 			cbTexture2->SetCurSel (index);
 		cbTexture2->SetItemData (index, iTexture);
@@ -507,10 +506,10 @@ if (m_nTrigger != -1) {
 		cbTexture2->SetCurSel (cbTexture2->SelectString (-1, "(none)"));  // unselect if string not found
 		}
 	else {
-		strcpy_s (message, sizeof (message), textureManager.Name (Texture1 ());
+		strcpy_s (message, sizeof (message), textureManager.Name (Texture1 ()));
 		cbTexture1->SetCurSel (cbTexture1->SelectString (-1, message));  // unselect if string not found
 		if (Texture2 ()) {
-			strcpy_s (message, sizeof (message), textureManager.Name (Texture2 ());
+			strcpy_s (message, sizeof (message), textureManager.Name (Texture2 ()));
 			cbTexture2->SetCurSel (cbTexture2->SelectString (-1, message));  // unselect if string not found
 			}
 		else

@@ -285,7 +285,7 @@ CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1Fil
 
 short nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 short i, j;
-char sz [100], **psz;
+char **psz;
 
 CComboBox *pcb = CBObjTexture ();
 pcb->AddString ("(none)");
@@ -323,7 +323,7 @@ CBContType ()->SetItemData (i, OBJ_POWERUP);
 i = CBContType ()->AddString ("(none)");
 CBContType ()->SetItemData (i, -1);
 // setup sound list boxes
-char szSound [100];
+//char szSound [100];
 for (i = 0; i < 196; i++) {
 	res.Load (6000 + i);
 	//LoadString (hInst, 6000 + i, szSound,sizeof (szSound));
