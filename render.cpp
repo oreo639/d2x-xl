@@ -23,7 +23,7 @@ int bEnableDeltaShading = 0;
 
 void TextureMap (CSegment *segP, short nSide,
 					  byte *bmData, ushort bmWidth, ushort bmHeight,
-					  byte *light_index,
+					  byte *lightIndex,
 					  byte *pScrnMem, APOINT* scrn,
 					  ushort width, ushort height, ushort rowOffset)
 {
@@ -42,11 +42,11 @@ void TextureMap (CSegment *segP, short nSide,
 	
 	// TEMPORARY
 	CSideKey face (short (segP - theMine->Segments (0)), nSide);
-	short flick_light = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
-	short dscan_light,scan_light;
+	short flickLight = theMine->GetFlickeringLight (face.m_nSegment, face.m_nSide);
+	short deltaLight, scanLight;
 	short light [4];
 	ushort bmWidth2;
-	bool bEnableShading = (light_index != null);
+	bool bEnableShading = (lightIndex != null);
 
 bmHeight = bmWidth;
 bmWidth2 = bmWidth / 2;
@@ -161,11 +161,11 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 			if (w != 0.0) { // avoid divide by zero
 				x = (int)(((double) a [i].x * ((double) y - (double) yj) - (double) a [j].x * ((double)  y - (double)  yi)) / w);
 				if (x < x0) {
-					scan_light = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
+					scanLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x0 = x;
 				}
 				if (x>x1) {
-					dscan_light = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
+					deltaLight = (int)(((double) light [i] * ((double) y - (double) yj) - (double) light [j] * ((double) y - (double) yi)) / w);
 					x1 = x;
 				}
 			}
@@ -182,7 +182,7 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 	if (fabs ((double) (x0 - x1)) >= 1.0) {
 		double u0, u1, v0, v1, w0, w1, h, scale, x0d, x1d;
 		uint u, v, du, dv, m, vd, vm, dx;
-		dscan_light = (dscan_light - scan_light)/(x1-x0);
+		deltaLight = (deltaLight - scanLight)/(x1-x0);
 		
 		// loop for every 32 bytes
 		int end_x = x1;
@@ -197,8 +197,8 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 			h = B.uVec.v.z * (double) y + B.fVec.v.z;
 			x0d = (double) x0;
 			x1d = (double) x1;
-			w0 = (B.rVec[2] * x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
-			w1 = (B.rVec[2] * x1d + h) / scale;
+			w0 = (B.rVec.v.z * x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
+			w1 = (B.rVec.v.z * x1d + h) / scale;
 			if (fabs(w0)>0.0001 && fabs(w1)>0.0001) {
 				h = B.uVec.v.x * (double) y + B.fVec.v.x;
 				u0 = (B.rVec.v.x * x0d + h) / w0;
@@ -233,7 +233,6 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 					byte *pixelP;
 					pixelP = ptr;
 					if (bEnableShading) {
-						int scanLightOffset = ((scan_light / 4) & 0x1f00);
 						do {
 							u += du;
 							u %= m;
@@ -241,11 +240,11 @@ for (y = minpt.y; y < maxpt.y; y ++) {
 							v %= m;
 							byte temp = bmData [(u / 1024) + ((v / vd) & vm)];
 							if (temp < 254) {
-								temp = light_index [temp + scanLightOffset];
+								temp = lightIndex [temp + ((scanLight / 4) & 0x1f00)];
 								*pixelP = temp;
 								}
 							pixelP++;
-							scan_light += dscan_light;
+							scanLight += deltaLight;
 							} while (--k);
 						} 
 					else {
