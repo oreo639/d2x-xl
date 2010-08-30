@@ -109,8 +109,8 @@ if (!m_dlcLogPalette)
 m_dlcLogPalette->palVersion = 0x300;
 m_dlcLogPalette->palNumEntries = 256;
 int i;
-uint* rgb = m_dlcLogPalette->palPalEntry;
-for (int i = 0; i < 256; i++, palette += 3)
+uint* rgb = (uint*) m_dlcLogPalette->palPalEntry;
+for (int i = 0; i < 256; i++, palette += 3) {
 	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
 #if 0
 	m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
@@ -118,7 +118,7 @@ for (int i = 0; i < 256; i++, palette += 3)
 	m_dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
 	m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
 #endif
-}
+	}
 // now recreate the global Palette
 if (m_currentPalette)
 	delete m_currentPalette;
