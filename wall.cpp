@@ -294,7 +294,7 @@ return null;
 
 int CMine::FindClip (CWall *wallP, short nTexture)
 {
-	char *pszName = textureManager.Name (nTexture);
+	char *ps, *pszName = textureManager.Name (nTexture);
 
 if (!strcmp (pszName, "wall01 - anim"))
 	return wallP->m_info.nClip = 0;

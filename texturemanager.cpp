@@ -24,7 +24,7 @@ LoadTextures (1);
 
 //------------------------------------------------------------------------
 
-int Version (void) 
+int CTextureManager::Version (void) 
 { 
 return DLE.IsD1File () ? 0 : 1; 
 }
