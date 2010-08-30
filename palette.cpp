@@ -126,7 +126,7 @@ return fp.Write (m_custom, 37 * 256, 1) == 1;
 byte* CPaletteManager::LoadDefault (void)
 {
 CResource res;
-if (!res.Load (PaletteResource ()))
+if (!res.Load (Resource ()))
 	return null;
 m_default = new byte [res.Size()];
 memcpy (m_default, res.Data (), res.Size ());

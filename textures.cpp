@@ -16,8 +16,8 @@
 void RgbFromIndex (int nIndex, PALETTEENTRY& rgb)
 {
 CResource res;
-byte* palette;
-if (palette = res.Load (PaletteResource ())) {
+byte* palette = paletteManager.Current ();
+if (palette) {
 	palette += 3 * nIndex;
 	rgb.peRed = palette [0] << 2;
 	rgb.peGreen = palette [1] << 2;
