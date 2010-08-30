@@ -143,6 +143,7 @@ void CTextureManager::LoadNames (int nVersion)
 
 names [nVersion] = new char* [j];
 for (int i = 0; i < j; i++) {
+	res.Clear ();
 	res.Load (nResource + i);
 	int l = res.Length () + 1;
 	names [nVersion][i] = new char [l];
