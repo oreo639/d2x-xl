@@ -36,34 +36,35 @@ BITMAPINFO *MakeBitmap (void)
 		} MyBMI;
 
 	static MyBMI my_bmi;
+	static byte* lastPalette = null;
 
-	// point bitmap info to structure
-BITMAPINFO* bmi = (BITMAPINFO *)&my_bmi;
-// point the info to the bitmap header structure
-BITMAPINFOHEADER& bi = bmi->bmiHeader;
-// define bit map info header elements
-bi.biSize          = sizeof (BITMAPINFOHEADER);
-bi.biWidth         = 64;
-bi.biHeight        = 64;
-bi.biPlanes        = 1;
-bi.biBitCount      = 8;
-bi.biCompression   = BI_RGB;
-bi.biSizeImage     = 0;
-bi.biXPelsPerMeter = 0;
-bi.biYPelsPerMeter = 0;
-bi.biClrUsed       = 0;
-bi.biClrImportant  = 0;
-
-// define d1 palette from resource
 CResource res;
-byte* palette;
-if (!(palette = res.Load (PaletteResource ())))
+byte* palette = PalettePtr (res);
+if (!palette)
 	return null;
-for (int i = 0; i < 256; i++) {
-	bmi->bmiColors [i].rgbRed = (*palette++) << 2;
-	bmi->bmiColors [i].rgbGreen = (*palette++) << 2;
-	bmi->bmiColors [i].rgbBlue = (*palette++) << 2;
-	bmi->bmiColors [i].rgbReserved = 0;
+
+BITMAPINFO* bmi = (BITMAPINFO *)&my_bmi;
+
+if (lastPalette != palette) {
+	lastPalette = palette;
+
+	BITMAPINFOHEADER& bi = bmi->bmiHeader;
+
+	bi.biSize          = sizeof (BITMAPINFOHEADER);
+	bi.biWidth         = 64;
+	bi.biHeight        = 64;
+	bi.biPlanes        = 1;
+	bi.biBitCount      = 8;
+	bi.biCompression   = BI_RGB;
+	bi.biSizeImage     = 0;
+	bi.biXPelsPerMeter = 0;
+	bi.biYPelsPerMeter = 0;
+	bi.biClrUsed       = 0;
+	bi.biClrImportant  = 0;
+
+	uint* rgb = (uint*) bmi->bmiColors;
+	for (int i = 256; i; i--, palette += 3, rgb++)
+		*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
 	}
 return bmi;
 }

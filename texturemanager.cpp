@@ -251,8 +251,6 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	byte			c;
 	int			fileType = DLE.FileType ();
 
-if (nBaseTex == 86)
-	nBaseTex = nBaseTex;
 nTextures [0] = nBaseTex;
 nTextures [1] = nOvlTex & 0x3fff;
 mode = nOvlTex & 0xC000;

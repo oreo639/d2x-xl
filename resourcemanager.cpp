@@ -23,11 +23,11 @@ if (!hRes)
 m_handle = LoadResource (hInst, hRes);
 if (!m_handle)
 	return null;
-byte* bufP = (byte *) LockResource (m_handle);
-if (!bufP)
+m_data = (byte *) LockResource (m_handle);
+if (!m_data)
 	return null;
 m_size = SizeofResource (hInst, hRes);
-return bufP;
+return m_data;
 }
 
 //------------------------------------------------------------------------

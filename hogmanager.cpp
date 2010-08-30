@@ -362,7 +362,7 @@ CFileManager::SplitPath (pszFile, szTmp, null, null);
 strcat_s (szTmp, sizeof (szTmp), "dle_temp.rdl");
 
 if (fTmp.Open (szTmp, "wb") || fSrc.Open (pszFile, "rb")) {
-	ErrorMsg ("Unable to create temporary DLE-XP work fp.");
+	ErrorMsg ("Unable to create temporary DLE work file.");
 	goto errorExit;
 	}
 // set subfile name
@@ -442,6 +442,7 @@ if ((size >= 0) && (offset >= 0)) {
 	theMine->ReadColorMap (fSrc);
 	h = fSrc.Tell () - h;
 	}
+textureManager.ReloadTextures ();
 // read custom textures if a pog fp exists
 strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');

@@ -8,6 +8,7 @@
 class CResource {
 private:
 	HGLOBAL		m_handle;
+	byte*			m_data;
 	size_t		m_size;
 
 public:
@@ -23,8 +24,9 @@ public:
 		}
 
 	inline size_t Size (void) { return m_size; }
+	inline byte* Data (void) { return m_data; }
 
-	CResource () : m_handle (0), m_size(0) {}
+	CResource () : m_handle (0), m_data(null), m_size(0) {}
 
 	~CResource () { Unload (); }
 

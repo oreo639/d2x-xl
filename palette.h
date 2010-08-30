@@ -5,6 +5,7 @@
 int Luminance (int r, int g, int b);
 int HasCustomPalette (void);
 void FreeCustomPalette (void);
+void FreeCurrentPalette (void);
 int ReadCustomPalette (CFileManager& fp, long fSize);
 int WriteCustomPalette (CFileManager& fp);
 byte* PalettePtr (CResource& res);

@@ -13,7 +13,9 @@
 #include "cfile.h"
 #include "palette.h"
 
-byte *pCustomPalette = null;
+byte* customPalette = null;
+byte* currentPalette = null;
+
 HGLOBAL hPalette;
 
 //------------------------------------------------------------------------
@@ -44,16 +46,26 @@ return (byte) (((int) c * f) / 34);
 
 int HasCustomPalette (void)
 {
-return pCustomPalette != null;
+return customPalette != null;
 }
 
 //------------------------------------------------------------------------
 
 void FreeCustomPalette (void)
 {
-if (pCustomPalette) {
-	free (pCustomPalette);
-	pCustomPalette = null;
+if (customPalette) {
+	delete customPalette;
+	customPalette = null;
+	}
+}
+
+//------------------------------------------------------------------------
+
+void FreeCurrentPalette (void)
+{
+if (currentPalette) {
+	delete currentPalette;
+	currentPalette = null;
 	}
 }
 
@@ -62,28 +74,22 @@ if (pCustomPalette) {
 int ReadCustomPalette (CFileManager& fp, long fSize)
 {
 FreeCustomPalette ();
+if (!(customPalette = new byte [37 * 256]))
+	return null;
 
-byte *pCustomPalette = (byte *) malloc (37 * 256);
-
-if (!pCustomPalette)
-	return 0;
-
-int h = (int) fp.Read (pCustomPalette, 37 * 256, 1);
+int h = (int) fp.Read (customPalette, 37 * 256, 1);
 if (h == 37 * 256)
 	return 1;
 
 if (h != 3 * 256) {
-	free (pCustomPalette);
+	FreeCustomPalette ();
 	return 0;
 	}
-
-byte *pFade = pCustomPalette + 3 * 256;
-
-int i, j;
-for (i = 0; i < 256; i++) {
-	byte	c = pCustomPalette [i];
-	for (j = 0; j < 34; j++)
-		pFade [j * 256 + i] = FadeValue (c, j + 1);
+byte *fadeP = customPalette + 3 * 256;
+for (int i = 0; i < 256; i++) {
+	byte c = customPalette [i];
+	for (int j = 0; j < 34; j++)
+		fadeP [j * 256 + i] = FadeValue (c, j + 1);
 	}
 return 1;
 }
@@ -92,14 +98,22 @@ return 1;
 
 int WriteCustomPalette (CFileManager& fp)
 {
-return fp.Write (pCustomPalette, 37 * 256, 1) == 1;
+return fp.Write (customPalette, 37 * 256, 1) == 1;
 }
 
 //------------------------------------------------------------------------
 
 byte* PalettePtr (CResource& res)
 {
-return pCustomPalette ? pCustomPalette : res.Load (PaletteResource ());
+if (customPalette)
+	return customPalette;
+if (currentPalette)
+	return currentPalette;
+if (!res.Load (PaletteResource ()))
+	return null;
+currentPalette = new byte [res.Size()];
+memcpy (currentPalette, res.Data (), res.Size ());
+return currentPalette;
 }
 
 //------------------------------------------------------------------------
@@ -139,3 +153,5 @@ for (ppe = palExt; *(ppe->szFile); ppe++)
 		return MAKEINTRESOURCE (ppe->nIdPal);
 return MAKEINTRESOURCE (IDR_GROUPA_256);
 }
+
+//------------------------------------------------------------------------

@@ -50,6 +50,7 @@ m_bSplineActive = FALSE;
 
 // if no file passed, define a new level w/ 1 object
 FreeCustomPalette ();
+FreeCurrentPalette ();
 if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
@@ -87,7 +88,6 @@ if (checkErr != 0) {
 		return 1;
 		}
 	}
-textureManager.ReloadTextures ();
 m_disableDrawing = FALSE;
 return 0;
 }
@@ -301,52 +301,47 @@ return_code = 0;
 load_pog:
 
 fp.Close ();
-if (!bLoadFromHog && (IsD2File ())) {
-	ps = strstr (filename, ".");
-	if (ps)
-		strcpy_s (ps, 256 - (ps - filename), ".pog");
-	else
-		strcat_s (filename, 256, ".pog");
-	if (!fp.Open (filename, "rb")) {
-		ReadPog (fp);
-		fp.Close ();
-		}
-	ReadHamFile ();
-#if 0
-	char szHamFile [256];
-	CFileManager::SplitPath (descent2_path, szHamFile, null, null);
-	strcat (szHamFile, "hoard.ham");
-	ReadHamFile (szHamFile, EXTENDED_HAM);
-#endif
-#if 1
+if (!bLoadFromHog) {
+	textureManager.ReloadTextures ();
 	if (IsD2File ()) {
-		char szHogFile [256], szHamFile [256], *p;
-		long nSize, nPos;
+		ps = strstr (filename, ".");
+		if (ps)
+			strcpy_s (ps, 256 - (ps - filename), ".pog");
+		else
+			strcat_s (filename, 256, ".pog");
+		if (!fp.Open (filename, "rb")) {
+			ReadPog (fp);
+			fp.Close ();
+			}
+		ReadHamFile ();
+		if (IsD2File ()) {
+			char szHogFile [256], szHamFile [256], *p;
+			long nSize, nPos;
 
-		CFileManager::SplitPath (descent2_path, szHogFile, null, null);
-		if (p = strstr (szHogFile, "data"))
-			*p = '\0';
-		strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
-		if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
-			CFileManager::SplitPath (descent2_path, szHamFile, null, null);
-			if (p = strstr (szHamFile, "data"))
+			CFileManager::SplitPath (descent2_path, szHogFile, null, null);
+			if (p = strstr (szHogFile, "data"))
 				*p = '\0';
-			strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
-			if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
-				m_bVertigo = ReadHamFile (szHamFile, EXTENDED_HAM) == 0;
-				_unlink (szHamFile);
+			strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
+			if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
+				CFileManager::SplitPath (descent2_path, szHamFile, null, null);
+				if (p = strstr (szHamFile, "data"))
+					*p = '\0';
+				strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
+				if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
+					m_bVertigo = ReadHamFile (szHamFile, EXTENDED_HAM) == 0;
+					_unlink (szHamFile);
+					}
 				}
 			}
-		}
-#endif
-	ps = strstr (filename, ".");
-	if (ps)
-		strcpy_s (filename, 256 - (ps - filename), ".hxm");
-	else
-		strcat_s (filename, 256, ".hxm");
-	if (!fp.Open (filename, "rb")) {
-		ReadHxmFile (fp, -1);
-		fp.Close ();
+		ps = strstr (filename, ".");
+		if (ps)
+			strcpy_s (filename, 256 - (ps - filename), ".hxm");
+		else
+			strcat_s (filename, 256, ".hxm");
+		if (!fp.Open (filename, "rb")) {
+			ReadHxmFile (fp, -1);
+			fp.Close ();
+			}
 		}
 	}
 SortObjects ();
