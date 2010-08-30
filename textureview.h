@@ -32,18 +32,18 @@ class CTextureView : public CWnd {
 		uint			m_viewFlags;
 		BOOL			m_bShowAll;
 		bool			m_bDelayRefresh;
-		short			m_mapTxtToView [MAX_D2_TEXTURES];
-		short			m_mapViewToTxt [MAX_D2_TEXTURES];
+		short			m_mapTexToView [MAX_D2_TEXTURES];
+		short			m_mapViewToTex [MAX_D2_TEXTURES];
 		uint			m_nTxtFilter;
 
 		CTextureView ();
 		~CTextureView ();
 		void Reset ();
-		void QSortTxtMap (short left, short right);
-		void CrtTxtMap (void);
+		void QSortTexMap (short left, short right);
+		void CreateTexMap (void);
 		uint TextureFilter (short nTxt);
 		short TexFilterIndex (short nTxt);
-		int QCmpTxtFilters (int nTxt, int mTxt, uint mf, uint mf2);
+		int QCmpTexFilters (int nTxt, int mTxt, uint mf, uint mf2);
 //		CTreeView	m_treeView;
 //		afx_msg int CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
 		afx_msg BOOL OnEraseBkgnd (CDC* pDC);

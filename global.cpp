@@ -513,7 +513,7 @@ byte doorClipTable [D2_NUM_OF_CLIPS] = {
 int renderXOffs = 0;
 int renderYOffs = 0;
 
-tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE] = {
+tTexFilter texFiltersD1 [D1_TXT_FILTER_SIZE] = {
 	{{0, 5}, TXT_GRAY_ROCK, 0},
 	{{6, 6}, TXT_BLUE_ROCK, 0},
 	{{7, 7}, TXT_YELLOW_ROCK, 0},
@@ -670,7 +670,7 @@ tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE] = {
 	{{371, 577}, TXT_DOOR, 0}
 };
 
-tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE] = {
+tTexFilter texFiltersD2 [D2_TXT_FILTER_SIZE] = {
 	{{0, 0}, TXT_GRAY_ROCK, TXT_CONCRETE},
 	{{1, 5}, TXT_GRAY_ROCK, 0},
 	{{6, 6}, TXT_BLUE_ROCK, 0},

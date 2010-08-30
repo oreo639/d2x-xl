@@ -369,7 +369,7 @@ for (i = 0, j = MaxTextures (nVersion); i < j; i++)
 for (i = theMine->SegCount (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
-		if ((sideP->m_info.nChild >= 0) || (sideP->m_info.nWall != NO_WALL)) {
+		if ((sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
 			textures [nVersion][sideP->m_info.nBaseTex & 0x1FFF].m_info.bUsed = true;
 			if ((sideP->m_info.nOvlTex & 0x1FFF) != 0)
 				textures [nVersion][sideP->m_info.nOvlTex & 0x1FFF].m_info.bUsed = true;
@@ -383,9 +383,14 @@ for (i = theMine->SegCount (); i; i--, segP++) {
 
 void CTextureManager::RemoveUnusedTextures (void)
 {
-if (HasCustomTextures ()) {
+	int nCustom = CountCustomTextures ();
+
+if (nCustom) {
 	MarkUsedTextures ();
 	Release (false, true);
+	int nRemoved = nCustom - CountCustomTextures ();
+	sprintf_s (message, sizeof (message), "%d custom textures %s removed", nRemoved, (nRemoved == 1) ? "was" : "were");
+	INFOMSG (message);
 	}
 }
 

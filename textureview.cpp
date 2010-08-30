@@ -126,7 +126,7 @@ return (m < 0) ? 0 : TEXTURE_FILTERS [m].nFilter;
 
 //------------------------------------------------------------------------
 
-int CTextureView::QCmpTxtFilters (int nTxt, int mTxt, uint mf, uint mf2)
+int CTextureView::QCmpTexFilters (int nTxt, int mTxt, uint mf, uint mf2)
 {
 	short	n = TexFilterIndex (nTxt);
 	uint	nf = TEXTURE_FILTERS [n].nFilter,
@@ -147,25 +147,25 @@ else
 
 //------------------------------------------------------------------------
 
-void CTextureView::QSortTxtMap (short left, short right)
+void CTextureView::QSortTexMap (short left, short right)
 {
-	short		mTxt = m_mapViewToTxt [(left + right) / 2];
+	short		mTxt = m_mapViewToTex [(left + right) / 2];
 	short		m = TexFilterIndex (mTxt);
-	uint	mf, mf2;
+	uint		mf, mf2;
 	short		h, l = left, r = right;
 
 mf = TEXTURE_FILTERS [m].nFilter;
 mf2 = TEXTURE_FILTERS [m].n2ndFilter;
 do {
-	while (QCmpTxtFilters (m_mapViewToTxt [l], mTxt, mf, mf2) < 0)
+	while (QCmpTexFilters (m_mapViewToTex [l], mTxt, mf, mf2) < 0)
 		l++;
-	while (QCmpTxtFilters (m_mapViewToTxt [r], mTxt, mf, mf2) > 0)
+	while (QCmpTexFilters (m_mapViewToTex [r], mTxt, mf, mf2) > 0)
 		r--;
 	if (l <= r) {
 		if (l < r) {
-			h = m_mapViewToTxt [l];
-			m_mapViewToTxt [l] = m_mapViewToTxt [r];
-			m_mapViewToTxt [r] = h;
+			h = m_mapViewToTex [l];
+			m_mapViewToTex [l] = m_mapViewToTex [r];
+			m_mapViewToTex [r] = h;
 			}
 		l++;
 		r--;
@@ -173,19 +173,19 @@ do {
 	}
 while (l < r);
 if (l < right)
-	QSortTxtMap (l, right);
+	QSortTexMap (l, right);
 if (left < r)
-	QSortTxtMap (left, r);
+	QSortTexMap (left, r);
 }
 
 //------------------------------------------------------------------------
 
-void CTextureView::CrtTxtMap (void)
+void CTextureView::CreateTexMap (void)
 {
-QSortTxtMap (0, m_nTextures [1] - 1);
+QSortTexMap (0, m_nTextures [1] - 1);
 int i;
 for (i = 0; i < m_nTextures [1]; i++)
-	m_mapTxtToView [m_mapViewToTxt [i]] = i;
+	m_mapTexToView [m_mapViewToTex [i]] = i;
 }
 
 //------------------------------------------------------------------------
@@ -195,7 +195,7 @@ for (i = 0; i < m_nTextures [1]; i++)
 //          Also calls refreshdata() to update the bitmap.
 //------------------------------------------------------------------------
 
-void CTextureView::OnVScroll(UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
+void CTextureView::OnVScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
 UINT nPos = GetScrollPos (SB_VERT);
 CRect rect;
@@ -314,7 +314,7 @@ byte pFilter [1 + MAX_D2_TEXTURES / 8];
 FilterTextures (pFilter, m_bShowAll);
 int x = 0;
 int y = 0;
-#if 1
+
 x = point.x / m_iconSpace.cx;
 y = point.y / m_iconSpace.cy;
 int h = nOffset + y * m_viewSpace.cx + x + 1;
@@ -322,29 +322,10 @@ int i;
 for (i = 0; i < m_nTextures [1]; i++) {
 	if (BITSET (pFilter, i)) //pFilter [i / 8] & (1 << (i & 7)))
 		if (!--h) {
-			nBaseTex = m_mapViewToTxt [i]; //m_pTextures [i];
+			nBaseTex = m_mapViewToTex [i]; //m_pTextures [i];
 			return 0; // return success
 			}
 	}
-#else
-int i;
-for (i = nOffset; i < m_nTextures [1]; i++) {
-	if (BITSET (pFilter, i)) {
-		if ((point.x >= x * m_iconSpace.cx) && 
-			 (point.x <= (x + 1) * m_iconSpace.cx) &&
-			 (point.y >=  y * m_iconSpace.cy) &&
-			 (point.y <= (y + 1) * m_iconSpace.cy)) {
-			nBaseTex = m_pTextures[i];
-			return 0; // return success
-			}
-		if (++x >= m_viewSpace.cx) {
-			x = 0;
-			if (++y >= m_viewSpace.cy)
-				break;
-			}
-		}
-	}
-#endif
 return 1; // return failure
 }
 
@@ -358,18 +339,7 @@ return 1; // return failure
 
 int CTextureView::TextureIndex(short nBaseTex) 
 {
-#if 1
-return ((nBaseTex < 0) || (nBaseTex >= sizeof (m_mapTxtToView) / sizeof (m_mapTxtToView [0]))) ? 0 : m_mapTxtToView [nBaseTex];
-#else
-	int i;
-
-nBaseTex &= 0x1fff;
-if (nBaseTex >= 0)
-	for (i = 0; i <m_nTextures [1]; i++)
-		if (nBaseTex == m_pTextures [i]) 
-			break;
-return (i == m_nTextures [1]) ? -1 : i;
-#endif
+return ((nBaseTex < 0) || (nBaseTex >= sizeof (m_mapTexToView) / sizeof (m_mapTexToView [0]))) ? 0 : m_mapTexToView [nBaseTex];
 }
 
 //------------------------------------------------------------------------
@@ -388,7 +358,7 @@ if (bShowAll) {
 		m_nTextures [0] = 0;
 		int i, f = m_nTxtFilter & ~TXT_MOVE;
 		for (i = 0; i < m_nTextures [1]; i++) {
-			int t = m_mapViewToTxt [i];
+			int t = m_mapViewToTex [i];
 			int j = TexFilterIndex (t);
 			if ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & f) {
 				SETBIT (pFilter, i);
@@ -435,110 +405,109 @@ else {
 
 void CTextureView::RecalcLayout () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CRect rect;
 	GetClientRect(rect);
 
-	m_viewSpace.cx = rect.Width () / m_iconSpace.cx;
-	m_viewSpace.cy = rect.Height () / m_iconSpace.cy;
+m_viewSpace.cx = rect.Width () / m_iconSpace.cx;
+m_viewSpace.cy = rect.Height () / m_iconSpace.cy;
 
-  int nOffset = 0;
-  m_bShowAll = ((m_viewFlags & eViewMineUsedTextures) == 0);
+int nOffset = 0;
+m_bShowAll = ((m_viewFlags & eViewMineUsedTextures) == 0);
 
-  if (!(m_viewSpace.cx && m_viewSpace.cy))
-		return;
+if (!(m_viewSpace.cx && m_viewSpace.cy))
+	return;
 
-	byte pFilter [(MAX_D2_TEXTURES + 7) / 8];
-	FilterTextures (pFilter, m_bShowAll);
-	m_nRows [ShowAll ()] = (m_nTextures [ShowAll ()] + m_viewSpace.cx - 1) / m_viewSpace.cx;
+byte pFilter [(MAX_D2_TEXTURES + 7) / 8];
+FilterTextures (pFilter, m_bShowAll);
+m_nRows [ShowAll ()] = (m_nTextures [ShowAll ()] + m_viewSpace.cx - 1) / m_viewSpace.cx;
 
-	// read scroll position to get offset for bitmap tiles
-	SetScrollRange (SB_VERT, 0, m_nRows [m_bShowAll] - m_viewSpace.cy, TRUE);
-	// if there is enough lines to show all textures, then hide the scroll bar
-	if (m_nRows [ShowAll ()] <= m_viewSpace.cy) {
-		ShowScrollBar (SB_VERT,FALSE);
-		nOffset = 0;
-		}
-	else {
-	// otherwise, calculate the number of rows to skip
-		ShowScrollBar (SB_VERT,TRUE);
-		UINT nPos = GetScrollPos (SB_VERT);
-		int i, j = nPos * m_viewSpace.cx; 
-		for (i = 0, nOffset = 0; (i < m_nTextures [1]); i++)
-			if (ShowAll () || BITSET (pFilter, i)) {
-				nOffset++;
-				if (--j < 0)
-					break;
-				}
-		}
-	SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
-  // figure out position of current texture
-  int nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
-  int nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
-  CTexture tex (textureManager.bmBuf);
-
-	CDC *pDC = GetDC();
-	if (!pDC) {
-		ErrorMsg ("No device context for texture picker available");
-		return;
-		}
-	BITMAPINFO* bmi = MakeBitmap();
-
-      // realize pallette for 256 color displays
-	CPalette *oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
-	pDC->RealizePalette();
-	pDC->SetStretchBltMode(STRETCH_DELETESCANS);
-	int x=0;
-	int y=0;
-	int i;
-	for (i = 0; i < m_nTextures [1]; i++) {
-		if (!ShowAll ()) {
-			if (!BITSET (pFilter, i))
-				continue;
-			}
-		if (nOffset &&	--nOffset)
-			continue;
-		if (!textureManager.Define (m_mapViewToTxt [i], 0, &tex, 0, 0)) {
-			bmi->bmiHeader.biWidth = tex.m_info.width;
-			bmi->bmiHeader.biHeight = tex.m_info.width;
-			StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
-								m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
-								(void *)tex.m_info.bmDataP, bmi, DIB_RGB_COLORS, SRCCOPY);
-			}
-	// pick color for box drawn around texture
-		if (m_mapViewToTxt [i] == nBaseTex)
-			pDC->SelectObject (GetStockObject (WHITE_PEN));
-		else if (i && (m_mapViewToTxt [i] == nOvlTex)) // note: 0 means no texture
-			pDC->SelectObject (m_penCyan);
-		else
-			pDC->SelectObject (GetStockObject (BLACK_PEN));
-		pDC->MoveTo (1 + x * m_iconSpace.cx, 1 + y * m_iconSpace.cy);
-		pDC->LineTo (4 + x * m_iconSpace.cx+m_iconSize.cx,1 + y * m_iconSpace.cy);
-		pDC->LineTo (4 + x * m_iconSpace.cx+m_iconSize.cx,4 + y * m_iconSpace.cy+m_iconSize.cy);
-		pDC->LineTo (1 + x * m_iconSpace.cx, 4 + y * m_iconSpace.cy+m_iconSize.cy);
-		pDC->LineTo (1 + x * m_iconSpace.cx, 1 + y * m_iconSpace.cy);
-
-  // draw black boxes around and inside this box
-//	  SelectObject(hdc, GetStockObject(BLACK_PEN));
-		pDC->MoveTo (0 + x * m_iconSpace.cx, 0 + y * m_iconSpace.cy);
-		pDC->LineTo (5 + x * m_iconSpace.cx+m_iconSize.cx,0 + y * m_iconSpace.cy);
-		pDC->LineTo (5 + x * m_iconSpace.cx+m_iconSize.cx,5 + y * m_iconSpace.cy+m_iconSize.cy);
-		pDC->LineTo (0 + x * m_iconSpace.cx, 5 + y * m_iconSpace.cy+m_iconSize.cy);
-		pDC->LineTo (0 + x * m_iconSpace.cx, 0 + y * m_iconSpace.cy);
-		pDC->MoveTo (2 + x * m_iconSpace.cx, 2 + y * m_iconSpace.cy);
-		pDC->LineTo (3 + x * m_iconSpace.cx+m_iconSize.cx,2 + y * m_iconSpace.cy);
-		pDC->LineTo (3 + x * m_iconSpace.cx+m_iconSize.cx,3 + y * m_iconSpace.cy+m_iconSize.cy);
-		pDC->LineTo (2 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy+m_iconSize.cy);
-		pDC->LineTo (2 + x * m_iconSpace.cx, 2 + y * m_iconSpace.cy);
-		if (++x >= m_viewSpace.cx) {
-			x = 0;
-			if (++y >= m_viewSpace.cy)
+// read scroll position to get offset for bitmap tiles
+SetScrollRange (SB_VERT, 0, m_nRows [m_bShowAll] - m_viewSpace.cy, TRUE);
+// if there is enough lines to show all textures, then hide the scroll bar
+if (m_nRows [ShowAll ()] <= m_viewSpace.cy) {
+	ShowScrollBar (SB_VERT,FALSE);
+	nOffset = 0;
+	}
+else {
+// otherwise, calculate the number of rows to skip
+	ShowScrollBar (SB_VERT,TRUE);
+	UINT nPos = GetScrollPos (SB_VERT);
+	int i, j = nPos * m_viewSpace.cx; 
+	for (i = 0, nOffset = 0; (i < m_nTextures [1]); i++)
+		if (ShowAll () || BITSET (pFilter, i)) {
+			nOffset++;
+			if (--j < 0)
 				break;
 			}
+	}
+SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
+// figure out position of current texture
+int nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
+int nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
+CTexture tex (textureManager.bmBuf);
+
+CDC *pDC = GetDC();
+if (!pDC) {
+	ErrorMsg ("No device context for texture picker available");
+	return;
+	}
+BITMAPINFO* bmi = MakeBitmap();
+
+   // realize pallette for 256 color displays
+CPalette *oldPalette = pDC->SelectPalette(theMine->m_currentPalette, FALSE);
+pDC->RealizePalette();
+pDC->SetStretchBltMode(STRETCH_DELETESCANS);
+int x = 0;
+int y = 0;
+for (int i = 0; i < m_nTextures [1]; i++) {
+	if (!ShowAll ()) {
+		if (!BITSET (pFilter, i))
+			continue;
+			}
+	if (nOffset &&	--nOffset)
+		continue;
+	if (!textureManager.Define (m_mapViewToTex [i], 0, &tex, 0, 0)) {
+		bmi->bmiHeader.biWidth = tex.m_info.width;
+		bmi->bmiHeader.biHeight = tex.m_info.width;
+		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
+							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
+							(void *)tex.m_info.bmDataP, bmi, DIB_RGB_COLORS, SRCCOPY);
+		}
+// pick color for box drawn around texture
+	if (m_mapViewToTex [i] == nBaseTex)
+		pDC->SelectObject (GetStockObject (WHITE_PEN));
+	else if (i && (m_mapViewToTex [i] == nOvlTex)) // note: 0 means no texture
+		pDC->SelectObject (m_penCyan);
+	else
+		pDC->SelectObject (GetStockObject (BLACK_PEN));
+	pDC->MoveTo (1 + x * m_iconSpace.cx, 1 + y * m_iconSpace.cy);
+	pDC->LineTo (4 + x * m_iconSpace.cx+m_iconSize.cx,1 + y * m_iconSpace.cy);
+	pDC->LineTo (4 + x * m_iconSpace.cx+m_iconSize.cx,4 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (1 + x * m_iconSpace.cx, 4 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (1 + x * m_iconSpace.cx, 1 + y * m_iconSpace.cy);
+
+// draw black boxes around and inside this box
+//	  SelectObject(hdc, GetStockObject(BLACK_PEN));
+	pDC->MoveTo (0 + x * m_iconSpace.cx, 0 + y * m_iconSpace.cy);
+	pDC->LineTo (5 + x * m_iconSpace.cx+m_iconSize.cx,0 + y * m_iconSpace.cy);
+	pDC->LineTo (5 + x * m_iconSpace.cx+m_iconSize.cx,5 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (0 + x * m_iconSpace.cx, 5 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (0 + x * m_iconSpace.cx, 0 + y * m_iconSpace.cy);
+	pDC->MoveTo (2 + x * m_iconSpace.cx, 2 + y * m_iconSpace.cy);
+	pDC->LineTo (3 + x * m_iconSpace.cx+m_iconSize.cx,2 + y * m_iconSpace.cy);
+	pDC->LineTo (3 + x * m_iconSpace.cx+m_iconSize.cx,3 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (2 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy+m_iconSize.cy);
+	pDC->LineTo (2 + x * m_iconSpace.cx, 2 + y * m_iconSpace.cy);
+	if (++x >= m_viewSpace.cx) {
+		x = 0;
+		if (++y >= m_viewSpace.cy)
+			break;
+			}
 		} 
-	pDC->SelectPalette(oldPalette, FALSE);
-   ReleaseDC(pDC);
+pDC->SelectPalette(oldPalette, FALSE);
+ReleaseDC(pDC);
 }
 
 								/*---------------------------*/
@@ -559,7 +528,7 @@ for (i = 0; i < nTextures; i++) {
 	if (strstr ((char*) name, "frame"))
 		++nFrames;
 	else
-		m_mapViewToTxt [m_nTextures [1]++] = i;
+		m_mapViewToTex [m_nTextures [1]++] = i;
 	}
 
   // allocate memory for texture list
@@ -571,7 +540,7 @@ if (m_pTextures) {
 	// fill in texture list
 #if 1
    for (i = 0; i < m_nTextures [1]; i++) 
-		m_pTextures [i] = m_mapViewToTxt [i];
+		m_pTextures [i] = m_mapViewToTex [i];
 #else
    m_nTextures [1] = 0;
    for (i = 0; i < nTextures; i++) {
@@ -584,7 +553,7 @@ if (m_pTextures) {
 #endif
 	}
 #endif
-CrtTxtMap ();
+CreateTexMap ();
 //m_nTxtFilter = 0xFFFFFFFF;
 //RefreshData ();
 }

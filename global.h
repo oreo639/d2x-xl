@@ -207,19 +207,19 @@ typedef struct tTxtRange {
 	short	nMin, nMax;
 } tTxtRange;
 
-typedef struct tTxtFilter {
+typedef struct tTexFilter {
 	tTxtRange	iTexture;
 	uint		nFilter;
 	uint		n2ndFilter;
-} tTxtFilter;
+} tTexFilter;
 
 #define D1_TXT_FILTER_SIZE	154
 #define D2_TXT_FILTER_SIZE	174
 
-extern tTxtFilter txtFiltersD2 [D2_TXT_FILTER_SIZE];
-extern tTxtFilter txtFiltersD1 [D1_TXT_FILTER_SIZE];
+extern tTexFilter texFiltersD2 [D2_TXT_FILTER_SIZE];
+extern tTexFilter texFiltersD1 [D1_TXT_FILTER_SIZE];
 
 #define TEX_FILTER_SIZE	(DLE.IsD1File () ? D1_TXT_FILTER_SIZE : D2_TXT_FILTER_SIZE)
-#define TEXTURE_FILTERS (DLE.IsD1File () ? txtFiltersD1 : txtFiltersD2)
+#define TEXTURE_FILTERS (DLE.IsD1File () ? texFiltersD1 : texFiltersD2)
 
 #endif //__global_h4
