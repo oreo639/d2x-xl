@@ -27,7 +27,7 @@ return (uint) (Sqr (r - (int) palette->peRed) + Sqr (g - (int) palette->peGreen)
 
 //------------------------------------------------------------------------
 
-inline uint ClosestColor (int r, int g, int b, PALETTEENTRY* palette)
+inline byte ClosestColor (int r, int g, int b, PALETTEENTRY* palette)
 {
 	uint	i, delta, closestDelta = 0x7fffffff, closestIndex = 0;
 
@@ -40,12 +40,12 @@ for (i = 0; (i < 256) && closestDelta; i++) {
 		closestDelta = delta;
 		}
 	}
-return closestIndex;
+return (byte) closestIndex;
 }
 
 //------------------------------------------------------------------------
 
-bool TGA2Bitmap (tRGBA *pTGA, byte *pBM, int nWidth, int nHeight)
+bool TGA2Bitmap (tRGBA *pTGA, byte *bmP, int nWidth, int nHeight)
 {
 	tRGBA			rgba = {0,0,0,0};
 	byte			*bConverted = null;
@@ -60,7 +60,7 @@ for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 #	pragma omp for private (x)
 	for (x = 0; x < nWidth; x++) {
 		rgba = pTGA [i + x];
-		pBM [k + x] = ClosestColor ((int) rgba.r, (int) rgba.g, (int) rgba.b, paletteManager.ColorMap ()); //paletteManager.Current ());
+		bmP [k + x] = ClosestColor ((int) rgba.r, (int) rgba.g, (int) rgba.b, paletteManager.ColorMap ()); //paletteManager.Current ());
 		}
 	}
 }
