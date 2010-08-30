@@ -642,8 +642,7 @@ void CMineView::InitView (CDC *pViewDC)
 			mybmi.bmiHeader.biClrImportant      = 256;
 
 			// copy the bitmap palette
-			CResource res;
-			byte *palette = PalettePtr (res);
+			byte *palette = PalettePtr ();
 			if (palette) {
 				int i, j;
 				for (i = j = 0; i < 256; i++) {

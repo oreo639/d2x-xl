@@ -273,8 +273,7 @@ CHECKMINE;
 
 	// Get shading table data
 byte* light_index = 0;
-CResource res;
-if (m_viewMineFlags & eViewMineShading && (light_index = PalettePtr (res)))
+if (m_viewMineFlags & eViewMineShading && (light_index = PalettePtr ()))
 	light_index += 256*5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()

@@ -144,6 +144,7 @@ public:
 	robotInfoList	m_defaultRobotInfo;
 	HPALETTE			m_paletteHandle;
 	CPalette*		m_currentPalette;
+	byte*				m_lastPalette;
 	LPLOGPALETTE	m_dlcLogPalette;
 	
 	// strings

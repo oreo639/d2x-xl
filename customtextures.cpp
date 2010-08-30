@@ -20,18 +20,15 @@ return i * i;
 }
 
 
-inline int ColorDelta (unsigned char r, unsigned char g, unsigned char b, PALETTEENTRY *sysPal, int j)
+inline int ColorDelta (unsigned char r, unsigned char g, unsigned char b, byte* palette, int j)
 {
-sysPal += j;
-return 
-	Sqr (r - sysPal->peRed) + 
-	Sqr (g - sysPal->peGreen) + 
-	Sqr (b - sysPal->peBlue);
+palette += 3 * j;
+return Sqr (r - palette [0]) + Sqr (g - palette [1]) + Sqr (b - palette [2]);
 }
 
 //------------------------------------------------------------------------
 
-inline uint ClosestColor (unsigned char r, unsigned char g, unsigned char b, PALETTEENTRY *sysPal)
+inline uint ClosestColor (unsigned char r, unsigned char g, unsigned char b, byte* palette)
 {
 	uint	k, delta, closestDelta = 0x7fffffff, closestIndex = 0;
 
@@ -51,14 +48,14 @@ bool TGA2Bitmap (tRGBA *pTGA, byte *pBM, int nWidth, int nHeight)
 {
 	tRGBA			rgba = {0,0,0,0};
 	byte			*bConverted = null;
-
+#if 0
 PALETTEENTRY *sysPal = (PALETTEENTRY *) malloc (256 * sizeof (PALETTEENTRY));
 if (!sysPal) {
 	ErrorMsg ("Not enough memory for palette.");
 	return false;
 	}
 theMine->m_currentPalette->GetPaletteEntries (0, 256, sysPal);
-
+#endif
 int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
 int h = nSize, i = 0, k, x, y;
 
@@ -69,11 +66,13 @@ for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 #	pragma omp for private (x)
 	for (x = 0; x < nWidth; x++) {
 		rgba = pTGA [i + x];
-		pBM [k + x] = ClosestColor (rgba.r, rgba.g, rgba.b, sysPal);
+		pBM [k + x] = ClosestColor (rgba.r, rgba.g, rgba.b, currentPalette);
 		}
 	}
 }
+#if 0
 free (sysPal);
+#endif
 return true;
 }
 

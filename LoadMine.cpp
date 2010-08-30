@@ -99,9 +99,7 @@ short CMine::LoadPalette (void)
 {
 // set palette
 // make global palette
-CResource res;
-byte *palette = PalettePtr (res);
-ASSERT(palette);
+byte *palette = PalettePtr ();
 if (!palette)
 	return 1;
 // redefine logical palette entries if memory for it is allocated
@@ -111,11 +109,15 @@ if (!m_dlcLogPalette)
 m_dlcLogPalette->palVersion = 0x300;
 m_dlcLogPalette->palNumEntries = 256;
 int i;
-for (i = 0; i < 256; ++i) {
+uint* rgb = m_dlcLogPalette->palPalEntry;
+for (int i = 0; i < 256; i++, palette += 3)
+	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+#if 0
 	m_dlcLogPalette->palPalEntry [i].peRed = palette [i*3 + 0] << 2;
 	m_dlcLogPalette->palPalEntry [i].peGreen = palette [i*3 + 1] << 2;
 	m_dlcLogPalette->palPalEntry [i].peBlue = palette [i*3 + 2] << 2;
 	m_dlcLogPalette->palPalEntry [i].peFlags = PC_RESERVED;
+#endif
 }
 // now recreate the global Palette
 if (m_currentPalette)

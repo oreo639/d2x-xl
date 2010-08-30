@@ -397,7 +397,7 @@ if (pszExt) {
 	if ((size > 0) || (offset >= 0)) {
 		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 		int h = fSrc.Tell ();
-		ReadCustomPalette (fSrc, size);
+		LoadCustomPalette (fSrc, size);
 		h = fSrc.Tell () - h;
 		}
 	}

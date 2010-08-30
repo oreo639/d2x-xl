@@ -39,7 +39,7 @@ BITMAPINFO *MakeBitmap (void)
 	static byte* lastPalette = null;
 
 CResource res;
-byte* palette = PalettePtr (res);
+byte* palette = PalettePtr ();
 if (!palette)
 	return null;
 

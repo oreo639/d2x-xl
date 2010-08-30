@@ -71,7 +71,7 @@ if (currentPalette) {
 
 //------------------------------------------------------------------------
 
-int ReadCustomPalette (CFileManager& fp, long fSize)
+int LoadCustomPalette (CFileManager& fp, long fSize)
 {
 FreeCustomPalette ();
 if (!(customPalette = new byte [37 * 256]))
@@ -103,12 +103,13 @@ return fp.Write (customPalette, 37 * 256, 1) == 1;
 
 //------------------------------------------------------------------------
 
-byte* PalettePtr (CResource& res)
+byte* PalettePtr (void)
 {
 if (customPalette)
 	return customPalette;
 if (currentPalette)
 	return currentPalette;
+CResource res;
 if (!res.Load (PaletteResource ()))
 	return null;
 currentPalette = new byte [res.Size()];
