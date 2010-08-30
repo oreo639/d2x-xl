@@ -159,9 +159,6 @@ extern short map_mask[4];
 extern int renderXOffs;
 extern int renderYOffs;
 
-extern byte *customPalette;
-extern byte *currentPalette;
-
 #define	TXT_GRAY_ROCK			1
 #define	TXT_BROWN_ROCK			(1L << 1)
 #define	TXT_RED_ROCK			(1L << 2)

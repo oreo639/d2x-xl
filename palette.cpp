@@ -13,8 +13,8 @@
 #include "cfile.h"
 #include "palette.h"
 
-byte* customPalette = null;
-byte* currentPalette = null;
+byte* m_custom = null;
+byte* m_current = null;
 
 HGLOBAL hPalette;
 
@@ -37,47 +37,64 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-byte FadeValue (byte c, int f)
+void CPaletteManager::SetupBMI (void) 
+{
+byte* palette = Current ();
+if (!palette)
+	return;
+m_bmi.header.biSize          = sizeof (BITMAPINFOHEADER);
+m_bmi.header.biWidth         = 64;
+m_bmi.header.biHeight        = 64;
+m_bmi.header.biPlanes        = 1;
+m_bmi.header.biBitCount      = 8;
+m_bmi.header.biCompression   = BI_RGB;
+m_bmi.header.biSizeImage     = 0;
+m_bmi.header.biXPelsPerMeter = 0;
+m_bmi.header.biYPelsPerMeter = 0;
+m_bmi.header.biClrUsed       = 0;
+m_bmi.header.biClrImportant  = 0;
+
+uint* rgb = (uint*) m_bmi.colors;
+for (int i = 256; i; i--, palette += 3, rgb++)
+	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+}
+
+//------------------------------------------------------------------------
+
+byte CPaletteManager::FadeValue (byte c, int f)
 {
 return (byte) (((int) c * f) / 34);
 }
 
 //------------------------------------------------------------------------
 
-int HasCustomPalette (void)
+void CPaletteManager::FreeCustom (void)
 {
-return customPalette != null;
-}
-
-//------------------------------------------------------------------------
-
-void FreeCustomPalette (void)
-{
-if (customPalette) {
-	delete customPalette;
-	customPalette = null;
+if (m_custom) {
+	delete m_custom;
+	m_custom = null;
 	}
 }
 
 //------------------------------------------------------------------------
 
-void FreeCurrentPalette (void)
+void CPaletteManager::FreeCurrent (void)
 {
-if (currentPalette) {
-	delete currentPalette;
-	currentPalette = null;
+if (m_current) {
+	delete m_current;
+	m_current = null;
 	}
 }
 
 //------------------------------------------------------------------------
 
-int LoadCustomPalette (CFileManager& fp, long fSize)
+int CPaletteManager::LoadCustom (CFileManager& fp, long size)
 {
-FreeCustomPalette ();
-if (!(customPalette = new byte [37 * 256]))
+FreeCustom ();
+if (!(m_custom = new byte [37 * 256]))
 	return null;
 
-int h = (int) fp.Read (customPalette, 37 * 256, 1);
+int h = (int) fp.Read (m_custom, 37 * 256, 1);
 if (h == 37 * 256)
 	return 1;
 
@@ -85,12 +102,13 @@ if (h != 3 * 256) {
 	FreeCustomPalette ();
 	return 0;
 	}
-byte *fadeP = customPalette + 3 * 256;
+byte *fadeP = m_custom + 3 * 256;
 for (int i = 0; i < 256; i++) {
-	byte c = customPalette [i];
+	byte c = m_custom [i];
 	for (int j = 0; j < 34; j++)
 		fadeP [j * 256 + i] = FadeValue (c, j + 1);
 	}
+SetupBMI ();
 return 1;
 }
 
@@ -98,23 +116,31 @@ return 1;
 
 int WriteCustomPalette (CFileManager& fp)
 {
-return fp.Write (customPalette, 37 * 256, 1) == 1;
+return fp.Write (m_custom, 37 * 256, 1) == 1;
 }
 
 //------------------------------------------------------------------------
 
-byte* PalettePtr (void)
+byte* CPaletteManager::LoadDefault (void)
 {
-if (customPalette)
-	return customPalette;
-if (currentPalette)
-	return currentPalette;
 CResource res;
 if (!res.Load (PaletteResource ()))
 	return null;
-currentPalette = new byte [res.Size()];
-memcpy (currentPalette, res.Data (), res.Size ());
-return currentPalette;
+m_default = new byte [res.Size()];
+memcpy (m_default, res.Data (), res.Size ());
+SetupBMI ();
+return m_default;
+}
+
+//------------------------------------------------------------------------
+
+byte* CPaletteManager::Current (void)
+{
+if (m_custom)
+	return m_custom;
+if (m_default)
+	return m_default;
+return LoadDefault ();
 }
 
 //------------------------------------------------------------------------
@@ -126,7 +152,7 @@ return currentPalette;
 //
 //------------------------------------------------------------------------
 
-const char* PaletteResource (void) 
+const char* CPaletteManager::Resource (void) 
 {
 	typedef struct tPalExt {
 		char	szFile [256];
@@ -142,6 +168,7 @@ const char* PaletteResource (void)
 		{"ice", IDR_ICE_256},
 		{"", 0}
 	};
+
 	tPalExt	*ppe;
 	char		szFile [256];
 

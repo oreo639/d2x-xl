@@ -26,49 +26,6 @@ if (palette = res.Load (PaletteResource ())) {
 	}
 }
 
-//------------------------------------------------------------------------
-
-BITMAPINFO *MakeBitmap (void) 
-{
-	typedef struct tagMyBMI {
-		BITMAPINFOHEADER bmiHeader;
-		RGBQUAD bmiColors[256];
-		} MyBMI;
-
-	static MyBMI my_bmi;
-	static byte* lastPalette = null;
-
-CResource res;
-byte* palette = PalettePtr ();
-if (!palette)
-	return null;
-
-BITMAPINFO* bmi = (BITMAPINFO *)&my_bmi;
-
-if (lastPalette != palette) {
-	lastPalette = palette;
-
-	BITMAPINFOHEADER& bi = bmi->bmiHeader;
-
-	bi.biSize          = sizeof (BITMAPINFOHEADER);
-	bi.biWidth         = 64;
-	bi.biHeight        = 64;
-	bi.biPlanes        = 1;
-	bi.biBitCount      = 8;
-	bi.biCompression   = BI_RGB;
-	bi.biSizeImage     = 0;
-	bi.biXPelsPerMeter = 0;
-	bi.biYPelsPerMeter = 0;
-	bi.biClrUsed       = 0;
-	bi.biClrImportant  = 0;
-
-	uint* rgb = (uint*) bmi->bmiColors;
-	for (int i = 256; i; i--, palette += 3, rgb++)
-		*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
-	}
-return bmi;
-}
-
 // -------------------------------------------------------------------------- 
 
 bool PaintTexture (CWnd *wndP, int bkColor, int nSegment, int nSide, int nBaseTex, int nOvlTex, int xOffset, int yOffset)

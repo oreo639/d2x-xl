@@ -304,6 +304,7 @@ load_pog:
 
 fp.Close ();
 if (!bLoadFromHog) {
+	paletteManager.Reload ();
 	textureManager.ReloadTextures ();
 	if (IsD2File ()) {
 		ps = strstr (filename, ".");

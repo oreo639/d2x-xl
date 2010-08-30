@@ -66,7 +66,7 @@ for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
 #	pragma omp for private (x)
 	for (x = 0; x < nWidth; x++) {
 		rgba = pTGA [i + x];
-		pBM [k + x] = ClosestColor (rgba.r, rgba.g, rgba.b, currentPalette);
+		pBM [k + x] = ClosestColor (rgba.r, rgba.g, rgba.b, paletteManager.Current ());
 		}
 	}
 }

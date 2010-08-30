@@ -442,6 +442,7 @@ if ((size >= 0) && (offset >= 0)) {
 	theMine->ReadColorMap (fSrc);
 	h = fSrc.Tell () - h;
 	}
+paletteManager.Reload ();
 textureManager.ReloadTextures ();
 // read custom textures if a pog fp exists
 strcpy_s (message, sizeof (message), m_pszSubFile);
