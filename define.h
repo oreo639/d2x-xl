@@ -12,7 +12,7 @@
 //#define STATUSMSG(a) DLE.MainFrame () ? DLE.MainFrame ()->StatusMsg(a) : AfxMessageBox(a)
 //#define DEBUGMSG(a) DLE.MainFrame () ? DLE.MainFrame ()->DebugMsg(a) : AfxMessageBox(a)
 #define STATUSMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->StatusMsg(a);}
-#define INFOMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->InfoMsg(a);}
+#define INFOMSG(a) {if (DLE.MainFrame () && !DLE.MineView ()->DelayRefresh ()) DLE.MainFrame ()->InfoMsg(a);}
 #define DEBUGMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
 
 #define M_PI	3.141592653589793240

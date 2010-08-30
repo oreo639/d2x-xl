@@ -99,7 +99,8 @@ zAxis.Set (yPrime.v.x * zPrime.v.y - zPrime.v.x * yPrime.v.y,
 
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
-while(!fp.EoF ()) {
+while (!fp.EoF ()) {
+	DLE.MainFrame ()->Progress ().SetPos (fp.Tell ());
 	if (SegCount () >= MAX_SEGMENTS) {
 		ErrorMsg ("No more free segments");
 		return (nNewSegs);
@@ -528,7 +529,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 // MENU - Cut
 //==========================================================================
 
-void CMine::CutBlock()
+void CMine::CutBlock (void)
 {
   CFileManager fp;
   short nSegment;
@@ -597,13 +598,17 @@ WriteSegmentInfo (fp, 0);
 // the SegCount () will be decremented for each nSegment in loop.
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
+DLE.MainFrame ()->InitProgress (SegCount ());
 CSegment *segP = Segments (SegCount ());
-for (nSegment = SegCount () - 1; nSegment; nSegment--)
+for (nSegment = SegCount () - 1; nSegment; nSegment--) {
+	DLE.MainFrame ()->Progress ().StepIt ();
     if ((--segP)->m_info.wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
 		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
+	}
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 DLE.UnlockUndo ();
 fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
@@ -776,7 +781,7 @@ DLE.SetModified (TRUE);
 DLE.LockUndo ();
 DLE.MineView ()->DelayRefresh (true);
 segP = Segments (0);
-for (nSegment = 0;nSegment < MAX_SEGMENTS; nSegment++, segP++) {
+for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->m_info.nIndex = nSegment;
 	segP->m_info.wallFlags &= ~MARKED_MASK;
 	}
@@ -786,7 +791,10 @@ for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
 	VertStatus (nVertex) &= ~MARKED_MASK;
 	VertStatus (nVertex) &= ~NEW_MASK;
 	}
+
+DLE.MainFrame ()->InitProgress (fp.Length ());
 count = ReadSegmentInfo (fp);
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 
 // fix up the new Segments () children
 segP = Segments (0);
@@ -880,10 +888,10 @@ if (!ReadBlock (m_szBlockFile, 1))
 // MENU - Delete Block
 //==========================================================================
 
-void CMine::DeleteBlock()
+void CMine::DeleteBlock (void)
 {
 
-short nSegment,count;
+short nSegment, count;
 
 if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
@@ -905,16 +913,20 @@ DLE.MineView ()->DelayRefresh (true);
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
 // the SegCount () will be decremented for each nSegment in loop.
-if (QueryMsg("Are you sure you want to delete the marked cubes?")!=IDYES)
+if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 	return;
 
-for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--)
-	if (Segments (nSegment)->m_info.wallFlags & MARKED_MASK) {
+DLE.MainFrame ()->InitProgress (SegCount ());
+for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--) {
+		DLE.MainFrame ()->Progress ().StepIt ();
+		if (Segments (nSegment)->m_info.wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
 		if (Objects (0)->m_info.nSegment != nSegment)
 			DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
+	}
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 // wrap back then forward to make sure segment is valid
 wrap(&Current1 ().nSegment,-1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,1,0,SegCount () - 1);

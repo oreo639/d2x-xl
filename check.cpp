@@ -310,11 +310,11 @@ DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
 // now do actual checking
 DLE.MainFrame ()->InitProgress (theMine->SegCount () * 3 + 
-											  theMine->VertCount () +
-											  theMine->GameInfo ().walls.count * 2 +
-											  theMine->GameInfo ().triggers.count * 3 +
-											  theMine->GameInfo ().objects.count * 2 +
-											  theMine->NumObjTriggers ());
+										  theMine->VertCount () +
+										  theMine->GameInfo ().walls.count * 2 +
+										  theMine->GameInfo ().triggers.count * 3 +
+										  theMine->GameInfo ().objects.count * 2 +
+										  theMine->NumObjTriggers ());
 if (!CheckBotGens ())
 	if (!CheckEquipGens ())
 		if (!CheckSegments ())

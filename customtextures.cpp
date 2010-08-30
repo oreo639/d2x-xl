@@ -148,7 +148,6 @@ int ReadPog (CFileManager& fp, uint nFileSize)
 	ushort*			xlatTbl = null;
 	uint				nSize;
 	uint				offset, hdrOffset, bmpOffset, hdrSize, xlatSize;
-	int				rc; // return code;
 	short				nTexture;
 	int				row;
 	ushort			nUnknownTextures, nMissingTextures;
@@ -167,16 +166,13 @@ uint startOffset = fp.Tell ();
 pigFileInfo.Read (fp);
 if (pigFileInfo.nId != 0x474f5044L) {  // 'DPOG'
 	ErrorMsg ("Invalid pog file - reading from hog file");
-	rc = 4;
-	goto abort;
+	return 1;
 	}
 //textureManager.Release ();
 sprintf_s (message, sizeof (message), " Pog manager: Reading %d custom textures", pigFileInfo.nTextures);
 DEBUGMSG (message);
-if (!(xlatTbl = new ushort [pigFileInfo.nTextures])) {
-	rc = 5;
-	goto abort;
-	}
+if (!(xlatTbl = new ushort [pigFileInfo.nTextures]))
+	return 5;
 xlatSize = pigFileInfo.nTextures * sizeof (ushort);
 offset = fp.Tell ();
 fp.Read (xlatTbl, xlatSize, 1);
@@ -186,7 +182,11 @@ nMissingTextures = 0;
 hdrOffset = offset + xlatSize;
 hdrSize = xlatSize + pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2);
 bmpOffset = offset + hdrSize;
+
+DLE.MainFrame ()->InitProgress (pigFileInfo.nTextures);
+
 for (int i = 0; i < pigFileInfo.nTextures; i++) {
+	DLE.MainFrame ()->Progress ().StepIt ();
 	// read texture index
 	ushort nIndex = xlatTbl [i];
 	// look it up in the list of textures
@@ -269,13 +269,11 @@ if (nMissingTextures) {
 	DEBUGMSG (message);
 	}
 
-rc = 0;
-
-abort:
+DLE.MainFrame ()->Progress ().DestroyWindow ();
 
 if (xlatTbl)
 	delete xlatTbl;
-return rc;
+return 0;
 }
 
 //-----------------------------------------------------------------------------
