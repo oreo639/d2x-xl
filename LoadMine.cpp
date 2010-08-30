@@ -474,8 +474,8 @@ return checkErr;
 
 short CMine::LoadMineDataCompiled (CFileManager& fp, bool bNewMine)
 {
-	int    i; 
-	byte    version;
+	int		i; 
+	byte		version;
 	ushort   n_vertices;
 	ushort   n_segments;
 
@@ -497,7 +497,7 @@ n_segments = ushort (fp.ReadInt16 ());
 if (n_segments > MAX_SEGMENTS3) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 	ErrorMsg (message);
-	return(2);
+	return 2;
 	}
 if (((IsD1File ()) && (n_segments > MAX_SEGMENTS1)) ||
 	 ((IsD2File ()) && (IsStdLevel ()) && (n_segments > MAX_SEGMENTS2)))
