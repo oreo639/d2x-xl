@@ -18,6 +18,7 @@ CTextureManager textureManager;
 
 void CTextureManager::Setup (void)
 {
+names [0] = names [1] = null;
 LoadTextures (0);
 LoadTextures (1);
 }
@@ -145,7 +146,7 @@ for (int i = 0; i < j; i++) {
 	res.Load (nResource + i);
 	int l = res.Length () + 1;
 	names [nVersion][i] = new char [l];
-	memcpy_s (names [nVersion] + i, l, res.Value (), l);
+	memcpy_s (names [nVersion][i], l, res.Value (), l);
 	}
 }
 
