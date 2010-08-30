@@ -368,6 +368,9 @@ if (fTmp.Open (szTmp, "wb") || fSrc.Open (pszFile, "rb")) {
 // set subfile name
 fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 size_t fPos = fSrc.Tell ();
+// skip mineDataOffset and gameDataOffset
+fSrc.ReadInt32 ();
+fSrc.ReadInt32 ();
 if (theMine->LoadMineSigAndType (fSrc))
 	goto errorExit;
 theMine->LoadPaletteName (fSrc);

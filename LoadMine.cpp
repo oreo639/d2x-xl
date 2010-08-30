@@ -122,9 +122,11 @@ return 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-void CMine::LoadPaletteName (CFileManager& fp)
+void CMine::LoadPaletteName (CFileManager& fp, bool bNewMine)
 {
 if (IsD2File ()) {
+	char	paletteName [256];
+
 	if (LevelVersion () >= 8) {
 		fp.ReadInt16 ();
 		fp.ReadInt16 ();
@@ -148,7 +150,7 @@ if (IsD2File ()) {
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
 	if (!bNewMine) {
-		if (descent2_path [0] != null) {
+		if (descent2_path [0] != 0) {
 			char *path = strrchr (descent2_path, '\\');
 			if (!path) {
 				descent2_path [0] = null;
@@ -173,10 +175,10 @@ short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 	byte* palette = 0;
 
 	CFileManager fp;
-	int sig = 0;
-	int mineErr, gameErr = 0;
+	int	sig = 0;
+	int	minedataOffset = 0, gamedataOffset = 0;
+	int	mineErr, gameErr = 0;
 	int	return_code = 0;
-	char	paletteName [256];
 	char*	ps;
 
 m_changesMade = 0;
@@ -194,7 +196,7 @@ ClearMineData ();
 minedataOffset = fp.ReadInt32 ();
 // read game data offset
 gamedataOffset = fp.ReadInt32 ();
-LoadPaletteName ();
+LoadPaletteName (fp, bNewMine);
 
 // read descent 2 reactor information
 if (IsD2File ()) {

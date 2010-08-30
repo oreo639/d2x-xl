@@ -575,7 +575,7 @@ public:
 	bool IsCustomRobot (int i);
 	BOOL HasCustomRobots();
 	short LoadMineSigAndType (CFileManager& fp);
-	void LoadPaletteName (CFileManager& fp);
+	void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
 
 private:
 	int FindClip (CWall *wallP, short nTexture);
