@@ -61,6 +61,7 @@ private:
 	int LoadIndex (int nVersion);
 	void LoadNames (int nVersion);
 	void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
+	void Create (int nVersion);
 	void Destroy (int nVersion);
 
 };

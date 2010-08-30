@@ -159,10 +159,14 @@ return (m_info.bmDataP != null);
 void CTexture::Release (void) 
 {
 if (!m_info.bExtData) {
-	if (m_info.bmDataP)
+	if (m_info.bmDataP) {
 		delete m_info.bmDataP;
-	if (m_info.tgaDataP)
+		m_info.bmDataP = null;
+		}
+	if (m_info.tgaDataP) {
 		delete m_info.tgaDataP;
+		m_info.tgaDataP = null;
+		}
 	}
 bool bFrame = m_info.bFrame;
 Clear ();

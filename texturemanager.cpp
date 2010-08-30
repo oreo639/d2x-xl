@@ -18,9 +18,23 @@ CTextureManager textureManager;
 
 void CTextureManager::Setup (void)
 {
-names [0] = names [1] = null;
-LoadTextures (0);
-LoadTextures (1);
+Create (0);
+Create (1);
+}
+
+//------------------------------------------------------------------------
+
+void CTextureManager::Create (int nVersion)
+{
+names [nVersion] = null;
+LoadNames (nVersion);
+header [nVersion] = CPigHeader (nVersion);
+LoadIndex (nVersion);
+#if USE_DYN_ARRAYS
+textures [nVersion].Create (MaxTextures (nVersion));
+#else
+textures [nVersion] = new CTexture [MaxTextures (nVersion)];
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -73,17 +87,23 @@ return DLE.IsD1File () ? 0 : 1;
 void CTextureManager::Release (int nVersion, bool bDeleteAll, bool bDeleteUnused) 
 {
 // free any textures that have been buffered
-CTexture* texP = &textures [nVersion][0];
-for (int i = 0, h = MaxTextures (nVersion); i < h; i++, texP++) {
-	if (bDeleteUnused) {
-		if (texP->m_info.bCustom && !texP->m_info.bUsed)
-			texP->Release ();
-		}
-	else {
-		if (bDeleteAll || texP->m_info.bCustom)
-			texP->Release ();
-		}
-	}		
+#if USE_DYN_ARRAYS
+CTexture* texP = textures [nVersion].Buffer ();
+#else
+CTexture* texP = textures [nVersion];
+#endif
+if (texP != null) {
+	for (int i = 0, h = MaxTextures (nVersion); i < h; i++, texP++) {
+		if (bDeleteUnused) {
+			if (texP->m_info.bCustom && !texP->m_info.bUsed)
+				texP->Release ();
+			}
+		else {
+			if (bDeleteAll || texP->m_info.bCustom)
+				texP->Release ();
+			}
+		}		
+	}
 }
 
 //------------------------------------------------------------------------
@@ -241,15 +261,7 @@ void CTextureManager::LoadTextures (int nVersion)
 {
 if (nVersion < 0)
 	nVersion = Version ();
-Destroy (nVersion);
-header [nVersion] = CPigHeader (nVersion);
-LoadNames (nVersion);
-LoadIndex (nVersion);
-#if USE_DYN_ARRAYS
-textures [nVersion].Create (MaxTextures (nVersion));
-#else
-textures [nVersion] = new CTexture [MaxTextures (nVersion)];
-#endif
+Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
 	textures [nVersion][i].Load (i, nVersion, fp);
