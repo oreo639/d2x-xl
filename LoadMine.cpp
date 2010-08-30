@@ -94,6 +94,35 @@ return 0;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
+short CMine::LoadMineSigAndType (CFileManager& fp)
+{
+int sig = fp.ReadInt32 ();
+if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
+	ErrorMsg ("Signature value incorrect.");
+	fp.Close ();
+	return 1;
+	}
+
+// read version
+SetLevelVersion (fp.ReadInt32 ());
+if (LevelVersion () == 1) {
+	SetFileType (RDL_FILE);
+	}
+else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
+	SetFileType (RL2_FILE);
+	}
+else {
+	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
+	ErrorMsg (message);
+	fp.Close ();
+	return 1;
+	}
+return 0;
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
 short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 {
 	byte* palette = 0;
