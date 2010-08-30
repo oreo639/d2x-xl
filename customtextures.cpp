@@ -289,7 +289,7 @@ uint WritePogTextureHeader (CFileManager& fp, CTexture *texP, int nTexture, uint
 
 sprintf_s (pigTexInfo.name, sizeof (pigTexInfo.name), "POG%04d", nTexture);
 #if 1
-pigTexInfo.Setup (1, texP->m_info.nFormat ? 0x80 : 0, texP->m_info.width, texP->m_info.height, nOffset);
+pigTexInfo.Setup (1, texP->m_info.width, texP->m_info.height, texP->m_info.nFormat ? 0x80 : 0, nOffset);
 #else
 pigTexInfo.dflags = 0;
 pigTexInfo.flags = texP->m_info.nFormat ? 0x80 : 0;
