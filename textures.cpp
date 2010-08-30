@@ -206,7 +206,9 @@ if (!m_info.bExtData) {
 	if (m_info.tgaDataP)
 		delete m_info.tgaDataP;
 	}
+bool bFrame = m_info.bFrame;
 Clear ();
+m_info.bFrame = bFrame;
 }
 
 //------------------------------------------------------------------------
@@ -283,8 +285,6 @@ if (!Allocate (nSize, nTexture)) {
 	}
 fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (*fp, info);
-if (nTexture == 739)
-	nTexture = nTexture;
 m_info.bFrame = (strstr (textureManager.names [nVersion][nTexture], "frame") != null);
 if (bLocalFile)
 	fp->Close ();

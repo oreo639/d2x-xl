@@ -39,15 +39,13 @@ for (int i = 0; i < 2; i++) {
 	CTexture* texP = &textures [i][0];
 	for (int j = 0, h = MaxTextures (i); j < h; j++, texP++) {
 		if (bDeleteUnused) {
-			if (!texP->m_info.bCustom || texP->m_info.bUsed)
-				continue;
+			if (texP->m_info.bCustom || !texP->m_info.bUsed)
+				texP->Release ();
 			}
 		else {
 			if (bDeleteAll || texP->m_info.bCustom)
-				continue;
+				texP->Release ();
 			}
-		texP->Release ();
-		texP->m_info.bFrame = (strstr (textureManager.names [i][j], "frame") != null);
 		}		
 	}
 for (CExtraTexture* p = extraTextures; p != null; ) {
