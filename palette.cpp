@@ -39,11 +39,8 @@ return (minColor + maxColor) / 2;
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::SetupBMI (void) 
+void CPaletteManager::SetupBMI (byte* palette) 
 {
-byte* palette = Current ();
-if (!palette)
-	return;
 m_bmi.header.biSize          = sizeof (BITMAPINFOHEADER);
 m_bmi.header.biWidth         = 64;
 m_bmi.header.biHeight        = 64;
@@ -58,7 +55,7 @@ m_bmi.header.biClrImportant  = 0;
 
 uint* rgb = (uint*) m_bmi.colors;
 for (int i = 256; i; i--, palette += 3, rgb++)
-	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
+	*rgb = ((uint) (palette [0]) << 16) + ((uint) (palette [1]) << 8) + ((uint) (palette [2]));
 }
 
 //------------------------------------------------------------------------
@@ -90,6 +87,22 @@ if (m_current) {
 
 //------------------------------------------------------------------------
 
+void CPaletteManager::Decode (byte* palette)
+{
+for (int i = 0; i < 256; i++)
+	*palette++ <<= 2;
+}
+
+//------------------------------------------------------------------------
+
+void CPaletteManager::Encode (byte* palette)
+{
+for (int i = 0; i < 256; i++)
+	*palette++ >>= 2;
+}
+
+//------------------------------------------------------------------------
+
 int CPaletteManager::LoadCustom (CFileManager& fp, long size)
 {
 FreeCustom ();
@@ -110,7 +123,8 @@ for (int i = 0; i < 256; i++) {
 	for (int j = 0; j < 34; j++)
 		fadeP [j * 256 + i] = FadeValue (c, j + 1);
 	}
-SetupBMI ();
+Encode (m_custom);
+SetupBMI (m_custom);
 return 1;
 }
 
@@ -118,7 +132,9 @@ return 1;
 
 int CPaletteManager::SaveCustom (CFileManager& fp)
 {
+Decode (m_custom);
 return fp.Write (m_custom, 37 * 256, 1) == 1;
+Encode (m_custom);
 }
 
 //------------------------------------------------------------------------
@@ -130,7 +146,8 @@ if (!res.Load (Resource ()))
 	return null;
 m_default = new byte [res.Size()];
 memcpy (m_default, res.Data (), res.Size ());
-SetupBMI ();
+Encode (m_default);
+SetupBMI (m_default);
 return m_default;
 }
 

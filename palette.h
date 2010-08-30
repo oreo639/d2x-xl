@@ -48,8 +48,10 @@ class CPaletteManager {
 	private:
 		const char* Resource (void);
 		byte FadeValue (byte c, int f);
-		void SetupBMI (void);
+		void SetupBMI (byte* palette);
 		byte* LoadDefault (void);
+		void Encode (byte* palette);
+		void Decode (byte* palette);
 };
 
 extern CPaletteManager paletteManager;
