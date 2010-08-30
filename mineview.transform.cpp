@@ -224,14 +224,24 @@ if (!theMine) return;
 //	CDlcDoc* pDoc = GetDocument();
 //	ASSERT_VALID(pDoc);
 
-	CVertex *verts;
-	CVertex	vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
-	int i;
+	CSegment*	segP;
+	CVertex*		vertP;
+	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
+	int			h, i, bSkyBox = (m_viewMineFlags & eViewMineSkyBox) != 0;
 
-verts = theMine->Vertices (0);
-for (i = 0; i < theMine->VertCount ();i++, verts++) {
-	vMin = Min (vMin, *verts);
-	vMax = Max (vMax, *verts);
+segP = theMine->Segments (0);
+for (i = 0, h = theMine->SegCount (); i < h; i++, segP++) {
+	byte status = bSkyBox || (segP->m_info.function != SEGMENT_TYPE_SKYBOX);
+	for (int j = 0; j < 8; j++)
+		theMine->VertStatus (segP->m_info.verts [j]) = status;
+	}
+
+vertP = theMine->Vertices (0);
+for (i = 0, h = theMine->VertCount (); i < h; i++, vertP++) {
+	if (theMine->VertStatus (i)) {
+		vMin = Min (vMin, *vertP);
+		vMax = Max (vMax, *vertP);
+		}
 	}
 m_spin.Set (M_PI / 4.0, M_PI / 4.0, 0.0);
 m_move = CDoubleVector (Average (vMin, vMax));
