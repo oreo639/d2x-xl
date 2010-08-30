@@ -217,17 +217,10 @@ void CMineView::AlignSide()
 }
                         /*--------------------------*/
 
-void CMineView::CenterMine()
+void CMineView::MarkVisibleVerts (void)
 {
-if (!theMine) return;
-
-//	CDlcDoc* pDoc = GetDocument();
-//	ASSERT_VALID(pDoc);
-
-	CSegment*	segP;
-	CVertex*		vertP;
-	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 	int			h, i, bSkyBox = (m_viewMineFlags & eViewMineSkyBox) != 0;
+	CSegment*	segP;
 
 segP = theMine->Segments (0);
 for (i = 0, h = theMine->SegCount (); i < h; i++, segP++) {
@@ -235,9 +228,23 @@ for (i = 0, h = theMine->SegCount (); i < h; i++, segP++) {
 	for (int j = 0; j < 8; j++)
 		theMine->VertStatus (segP->m_info.verts [j]) = status;
 	}
+}
 
+                        /*--------------------------*/
+
+void CMineView::CenterMine()
+{
+if (!theMine) return;
+
+//	CDlcDoc* pDoc = GetDocument();
+//	ASSERT_VALID(pDoc);
+
+	CVertex*		vertP;
+	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
+
+MarkVisibleVerts ();
 vertP = theMine->Vertices (0);
-for (i = 0, h = theMine->VertCount (); i < h; i++, vertP++) {
+for (int i = 0, h = theMine->VertCount (); i < h; i++, vertP++) {
 	if (theMine->VertStatus (i)) {
 		vMin = Min (vMin, *vertP);
 		vMax = Max (vMax, *vertP);

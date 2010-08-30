@@ -291,6 +291,7 @@ public:
 	void	Rotate(char direction, double angle);
 	void	Pan(char direction, int amount);
 	void	AlignSide();
+	void MarkVisibleVerts (void);
 	void	CenterMine();
 	void	CenterCube();
 	void	CenterObject();
