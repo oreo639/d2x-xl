@@ -42,7 +42,7 @@ i = theMine->VertCount ();
 APOINT *a = m_viewPoints + i;
 CVertex* vertP = theMine->Vertices (i);
 for (; i--; ) {
-	if (!(--vertP)->m_status)
+	if ((--vertP)->m_status == 255)
 		continue;
 	m_view.Project (*(vertP), *(--a));
 	x = a->x;

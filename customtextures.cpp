@@ -145,12 +145,11 @@ int ReadPog (CFileManager& fp, uint nFileSize)
 	CPigTexture		pigTexInfo (1);
 
 	uint*				textureCount = 0;
-	ushort			nBaseTex;
 	ushort*			xlatTbl = null;
 	uint				nSize;
 	uint				offset, hdrOffset, bmpOffset, hdrSize, xlatSize;
 	int				rc; // return code;
-	int				nTexture;
+	short				nTexture;
 	int				row;
 	ushort			nUnknownTextures, nMissingTextures;
 	bool				bExtraTexture;
@@ -187,21 +186,20 @@ nMissingTextures = 0;
 hdrOffset = offset + xlatSize;
 hdrSize = xlatSize + pigFileInfo.nTextures * sizeof (PIG_TEXTURE_D2);
 bmpOffset = offset + hdrSize;
-for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
+for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	// read texture index
-	ushort textureIndex = xlatTbl [nTexture];
+	ushort nIndex = xlatTbl [i];
 	// look it up in the list of textures
-	for (nBaseTex = 0; nBaseTex < MAX_D2_TEXTURES; nBaseTex++)
-		if (textureManager.index [1][nBaseTex] == textureIndex)
+	for (nTexture = 0; nTexture < MAX_D2_TEXTURES; nTexture++)
+		if (textureManager.index [1][nTexture] == nIndex)
 			break;
-	bExtraTexture = (nBaseTex >= MAX_D2_TEXTURES);
+	bExtraTexture = (nTexture >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
-#if 1
-	fp.Seek (hdrOffset + nTexture * sizeof (PIG_TEXTURE_D2), SEEK_SET);
-#endif
+	if (nTexture == 302)
+		nTexture = nTexture;
+	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 	pigTexInfo.Read (fp);
 	nSize = (uint) pigTexInfo.width * (uint) pigTexInfo.height;
-	assert (nSize <= 512 * 512);
 	if (hdrSize + pigTexInfo.offset + nSize >= nFileSize) {
 		nMissingTextures++;
 		continue;
@@ -214,13 +212,13 @@ for (nTexture = 0; nTexture < pigFileInfo.nTextures; nTexture++) {
 			}
 		extraTexP->m_next = extraTextures;
 		extraTextures = extraTexP;
-		extraTexP->m_index = textureIndex;
+		extraTexP->m_index = nIndex;
 		extraTexP->m_info.bmDataP = null;
 		texP = extraTexP;
-		nBaseTex = 0;
+		nTexture = 0;
 		}
 	else {
-		texP = textureManager.Textures (1, nBaseTex);
+		texP = textureManager.Textures (1, nTexture);
 		texP->Release ();
 		}
 // allocate memory for texture if not already
