@@ -46,7 +46,7 @@ public:
 	inline char* Value (void) { return m_value; }
 	inline size_t Size (void) { return sizeof (m_value); }
 	inline size_t Length (void) { return strlen (m_value); }
-	inline char* Clear (void) { m_value [0] = 0; }
+	inline void Clear (void) { m_value [0] = 0; }
 };
 
 //------------------------------------------------------------------------
