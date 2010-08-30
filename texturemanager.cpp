@@ -39,7 +39,7 @@ for (int i = 0; i < 2; i++) {
 	CTexture* texP = &textures [i][0];
 	for (int j = 0, h = MaxTextures (i); j < h; j++, texP++) {
 		if (bDeleteUnused) {
-			if (texP->m_info.bCustom || !texP->m_info.bUsed)
+			if (texP->m_info.bCustom && !texP->m_info.bUsed)
 				texP->Release ();
 			}
 		else {
@@ -393,7 +393,7 @@ void CTextureManager::MarkUsedTextures (void)
 	int i, j, h = MaxTextures (nVersion);
 
 for (i = 0; i < h; i++)
-	textures [nVersion][i].m_info.bUsed = !textures [nVersion][i].m_info.bCustom;
+	textures [nVersion][i].m_info.bUsed = false;
 
 for (i = theMine->SegCount (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
@@ -406,13 +406,14 @@ for (i = theMine->SegCount (); i; i--, segP++) {
 		}
 	}
 
-CTexture* texP = null;
+CTexture * texP, * parentTexP = null;
 
 for (i = 0; i < h; i++) {
-	if (!textures [nVersion][i].m_info.bFrame)
-		texP = &textures [nVersion][i];
-	else if (!textures [nVersion][i].m_info.bUsed)
-		textures [nVersion][i].m_info.bUsed = (texP != null) && texP->m_info.bUsed;
+	texP = &textures [nVersion][i];
+	if (!texP->m_info.bFrame)
+		parentTexP = texP;
+	else if (texP->m_info.bCustom && !texP->m_info.bUsed)
+		texP->m_info.bUsed = (parentTexP != null) && parentTexP->m_info.bUsed;
 	}
 }
 
