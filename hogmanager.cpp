@@ -369,10 +369,10 @@ if (fTmp.Open (szTmp, "wb") || fSrc.Open (pszFile, "rb")) {
 fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 size_t fPos = fSrc.Tell ();
 // skip mineDataOffset and gameDataOffset
-fSrc.ReadInt32 ();
-fSrc.ReadInt32 ();
 if (theMine->LoadMineSigAndType (fSrc))
 	goto errorExit;
+fSrc.ReadInt32 ();
+fSrc.ReadInt32 ();
 theMine->LoadPaletteName (fSrc);
 fSrc.Seek (long (fPos), SEEK_SET);
 while (size > 0) {
@@ -447,7 +447,7 @@ if ((size >= 0) && (offset >= 0)) {
 	h = fSrc.Tell () - h;
 	}
 paletteManager.Reload ();
-textureManager.ReloadTextures ();
+textureManager.LoadTextures ();
 // read custom textures if a pog fp exists
 strcpy_s (message, sizeof (message), m_pszSubFile);
 pszExt = strrchr (message, '.');

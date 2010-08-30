@@ -30,7 +30,7 @@ public:
 	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &textures [nVersion][nTexture]; }
 
 	int MaxTextures (int nVersion = -1);
-	void ReloadTextures (int nVersion = -1);
+	void LoadTextures (int nVersion);
 	CPigTexture& LoadInfo (CFileManager& fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
@@ -53,32 +53,15 @@ public:
 	CTextureManager() {}
 	
 	void Setup (void);
+	void Destroy (void);
 
-	~CTextureManager() {
-		for (int i = 0; i < 2; i++) {
-#if USE_DYN_ARRAYS
-			//textures [i].Destroy ();
-#else
-			if (textures [i])
-				delete textures [i];
-#endif
-			if (names [i]) {
-				for (int j = 0, h = MaxTextures (i); j < h; j++)
-					if (names [i][j])
-						delete names [i][j];
-				}
-			if (index [i])
-				delete index [i];
-			if (info [i])
-				delete info [i];
-			}
-		}
+	~CTextureManager() { Destroy (); }
 
 private:
 	int LoadIndex (int nVersion);
 	void LoadNames (int nVersion);
-	void LoadTextures (int nVersion);
 	void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
+	void Destroy (int nVersion);
 
 };
 

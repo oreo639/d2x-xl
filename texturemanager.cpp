@@ -25,6 +25,44 @@ LoadTextures (1);
 
 //------------------------------------------------------------------------
 
+void CTextureManager::Destroy (int nVersion)
+{
+Release (nVersion, true, false);
+#if USE_DYN_ARRAYS
+textures [nVersion].Destroy ();
+#else
+if (textures [nVersion]) {
+	delete textures [nVersion];
+	textures [nVersion] = null;
+	}
+#endif
+if (names [nVersion]) {
+	for (int j = 0, h = MaxTextures (i); j < h; j++)
+		if (names [nVersion][j])
+			delete names [nVersion][j];
+	delete names [nVersion];
+	names [nVersion] = null;
+	}
+if (index [nVersion]) {
+	delete index [nVersion];
+	index [nVersion] = null;
+	}
+if (info [nVersion]) {
+	delete info [nVersion];
+	info [nVersion] = null;
+	}
+}
+
+//------------------------------------------------------------------------
+
+void CTextureManager::Destroy (void)
+{
+for (int i = 0; i < 2; i++)
+	Destroy (i);
+}
+
+//------------------------------------------------------------------------
+
 int CTextureManager::Version (void) 
 { 
 return DLE.IsD1File () ? 0 : 1; 
@@ -199,21 +237,11 @@ return info [nVersion][index [nVersion][nTexture] - 1];
 
 //------------------------------------------------------------------------------
 
-void CTextureManager::ReloadTextures (int nVersion)
-{
-if (nVersion < 0)
-	Release (nVersion = Version (), false, false);
-
-CFileManager* fp = OpenPigFile (nVersion);
-for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
-	textures [nVersion][i].Load (i, nVersion, fp);
-fp->Close ();
-}
-
-//------------------------------------------------------------------------------
-
 void CTextureManager::LoadTextures (int nVersion)
 {
+if (nVersion < 0)
+	nVersion = Version ();
+Destroy (nVersion);
 header [nVersion] = CPigHeader (nVersion);
 LoadNames (nVersion);
 LoadIndex (nVersion);
@@ -222,7 +250,10 @@ textures [nVersion].Create (MaxTextures (nVersion));
 #else
 textures [nVersion] = new CTexture [MaxTextures (nVersion)];
 #endif
-ReloadTextures (nVersion);
+CFileManager* fp = OpenPigFile (nVersion);
+for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
+	textures [nVersion][i].Load (i, nVersion, fp);
+fp->Close ();
 }
 
 //------------------------------------------------------------------------------
