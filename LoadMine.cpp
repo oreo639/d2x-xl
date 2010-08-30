@@ -108,7 +108,6 @@ if (!m_dlcLogPalette)
 	return 1;
 m_dlcLogPalette->palVersion = 0x300;
 m_dlcLogPalette->palNumEntries = 256;
-int i;
 uint* rgb = (uint*) m_dlcLogPalette->palPalEntry;
 for (int i = 0; i < 256; i++, palette += 3) {
 	*rgb = ((uint) (palette [0]) << 18) + ((uint) (palette [1]) << 10) + ((uint) (palette [2]) << 2);
