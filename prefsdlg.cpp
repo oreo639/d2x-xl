@@ -95,14 +95,14 @@ CPrefsDlg::CPrefsDlg (CPropertySheet *pParent)
 {
 	char	szMoveRate [20];
 
-GetPrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, descent_path, sizeof (descent_path), INIFILE);
-strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
+GetPrivateProfileString ("DLE-XP", "DescentDirectory", descentPath [0], descentPath [0], sizeof (descentPath [0]), INIFILE);
+strcpy_s (m_d1Path, sizeof (m_d1Path), descentPath [0]);
 CompletePath (m_d1Path, "descent.pig", ".pig");
-GetPrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, descent2_path, sizeof (descent2_path), INIFILE);
-strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
+GetPrivateProfileString ("DLE-XP", "Descent2Directory", descentPath [1], descentPath [1], sizeof (descentPath [1]), INIFILE);
+strcpy_s (m_d2Path, sizeof (m_d2Path), descentPath [1]);
 CompletePath (m_d2Path, "groupa.pig", ".pig");
-GetPrivateProfileString ("DLE-XP", "LevelsDirectory", levels_path, levels_path, sizeof (levels_path), INIFILE);
-strcpy_s (m_missionsPath, sizeof (m_missionsPath), levels_path);
+GetPrivateProfileString ("DLE-XP", "LevelsDirectory", missionPath, missionPath, sizeof (missionPath), INIFILE);
+strcpy_s (m_missionsPath, sizeof (m_missionsPath), missionPath);
 CompletePath (m_missionsPath, "descent2.hog", ".hog");
 GetPrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, player_profile, sizeof (player_profile), INIFILE);
 m_depthPerceptions [0] = 10000;
@@ -316,9 +316,9 @@ void CPrefsDlg::GetAppSettings ()
 {
 	int	i;
 
-strcpy_s (m_d1Path, sizeof (m_d1Path), descent_path);
-strcpy_s (m_d2Path, sizeof (m_d2Path), descent2_path);
-strcpy_s (m_missionsPath, sizeof (m_missionsPath), levels_path);
+strcpy_s (m_d1Path, sizeof (m_d1Path), descentPath [0]);
+strcpy_s (m_d2Path, sizeof (m_d2Path), descentPath [1]);
+strcpy_s (m_missionsPath, sizeof (m_missionsPath), missionPath);
 m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
 m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
@@ -345,9 +345,9 @@ void CPrefsDlg::SaveAppSettings (bool bSaveFolders)
 	char	szMoveRate [20];
 
 if (bSaveFolders) {
-	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, INIFILE);
-	WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
-	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, INIFILE);
+	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentPath [0], INIFILE);
+	WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentPath [1], INIFILE);
+	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionPath, INIFILE);
 	}
 WritePrivateProfileString ("DLE-XP", "PlayerProfile", player_profile, INIFILE);
 WritePrivateProfileInt ("DepthPerception", m_iDepthPerception);
@@ -373,14 +373,14 @@ CHECKMINE;
 if (m_bInvalid)
 	return;
 _strlwr_s (m_d1Path, sizeof (m_d1Path));
-if (strcmp (descent_path, m_d1Path)) {
-	strcpy_s (descent_path, sizeof (descent_path), m_d1Path);
-	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descent_path, INIFILE);
+if (strcmp (descentPath [0], m_d1Path)) {
+	strcpy_s (descentPath [0], sizeof (descentPath [0]), m_d1Path);
+	WritePrivateProfileString ("DLE-XP", "DescentDirectory", descentPath [0], INIFILE);
 	if (DLE.IsD1File ())
 		FreeTextureHandles();
 	}
 _strlwr_s (m_d2Path, sizeof (m_d2Path));
-if (strcmp (descent2_path, m_d2Path)) {
+if (strcmp (descentPath [1], m_d2Path)) {
 	bool	bChangePig = true;
 	if (textureManager.HasCustomTextures() &&
 		 (QueryMsg ("Changing the pig file will affect the custom textures\n"
@@ -389,8 +389,8 @@ if (strcmp (descent2_path, m_d2Path)) {
 						"Are you sure you want to do this?") != IDOK))
 		bChangePig = false;
 	if (bChangePig) {
-		strcpy_s (descent2_path, sizeof (descent2_path), m_d2Path);
-		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descent2_path, INIFILE);
+		strcpy_s (descentPath [1], sizeof (descentPath [1]), m_d2Path);
+		WritePrivateProfileString ("DLE-XP", "Descent2Directory", descentPath [1], INIFILE);
 		if (DLE.IsD2File ())
 			FreeTextureHandles (false);
 		paletteManager.Reload ();
@@ -398,9 +398,9 @@ if (strcmp (descent2_path, m_d2Path)) {
 		}
 	}
 _strlwr_s (m_missionsPath, sizeof (m_missionsPath));
-if (strcmp (levels_path, m_missionsPath)) {
-	strcpy_s (levels_path, sizeof (levels_path), m_missionsPath);
-	WritePrivateProfileString ("DLE-XP", "levelsDirectory", levels_path, INIFILE);
+if (strcmp (missionPath, m_missionsPath)) {
+	strcpy_s (missionPath, sizeof (missionPath), m_missionsPath);
+	WritePrivateProfileString ("DLE-XP", "levelsDirectory", missionPath, INIFILE);
 	}
 if (!bInitApp)
 	DLE.MineView ()->DelayRefresh (true);

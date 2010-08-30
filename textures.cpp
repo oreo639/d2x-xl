@@ -49,7 +49,7 @@ if (!pDC)
 	CSide*			sideP;
 	short				nWall;
 	bool				bShowTexture = true, bDescent1 = DLE.IsD1File ();
-	char*				path = bDescent1 ? descent_path : descent2_path;
+	char*				path = bDescent1 ? descentPath [0] : descentPath [1];
 
 CRect	rc;
 wndP->GetClientRect (rc);
@@ -75,7 +75,7 @@ if ((nOvlTex < 0) || (nOvlTex >= textureManager.MaxTextures ()))	// this allows 
 if (bShowTexture) {
 	// check pig file
 	if (nOffset [bDescent1] == 0) {
-		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descent_path : descent2_path);
+		strcpy_s (szFile, sizeof (szFile), (bDescent1) ? descentPath [0] : descentPath [1]);
 		if (fp.Open (szFile, "rb"))
 			nOffset [bDescent1] = -1;  // pig file not found
 		else {

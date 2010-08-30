@@ -403,7 +403,7 @@ if (bEnableDeltaShading)
 	DLE.ToolView ()->LightTool ()->OnShowDelta ();
 if (!*m_szFile) {
 	char	szMissions [256];
-	CFileManager::SplitPath ((DLE.IsD1File ()) ? descent_path : levels_path, szMissions, null, null);
+	CFileManager::SplitPath ((DLE.IsD1File ()) ? descentPath [0] : missionPath, szMissions, null, null);
 //	strcpy_s (m_szFile, sizeof (m_szFile), (DLE.IsD1File ()) ? "new.rdl" : "new.rl2");
 	sprintf_s (m_szFile, sizeof (m_szFile), "%s%s.hog", szMissions, *m_szSubFile ? m_szSubFile : "new");
 	}
@@ -467,7 +467,7 @@ char *h, *p = strstr (m_szFile, "missions\\");
 if (p) {
 	char	szProg [255], szHogFile [255], szMission [255];
 
-	strcpy_s (szProg, sizeof (szProg), descent2_path);
+	strcpy_s (szProg, sizeof (szProg), descentPath [1]);
 	if (h = strstr (szProg, "data"))
 		*h = '\0';
 	int i;

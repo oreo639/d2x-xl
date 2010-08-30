@@ -26,6 +26,7 @@ public:
 	CPigTexture* info [2];
 	CPigHeader header [2];
 	byte bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
+	char pigFiles [2][256];
 
 	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &textures [nVersion][nTexture]; }
 

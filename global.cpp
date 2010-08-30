@@ -248,48 +248,16 @@ short d2_switches [] = {414, 416, 418, -1};
 
 short add_segment_mode = ORTHOGONAL;
 char dlc_version[10] = "2.7a";
-//char testers_name[20] = "TESTERS_NAME_HERE";
 short serial_number   = 27;
 char message[256];
-//byte test4 = 0xBA;
 char m_startFolder [256];
-//byte test5 = 0xBA;
 fix grid = 0x2000L;   // 0.125
-char descent_path[256]="\\programs\\d2\\data";
-//byte test6 = 0xBA;
-char descent2_path[256]="\\programs\\d2\\data";
-//byte test7 = 0xBA;
-char levels_path[256]="\\programs\\d2\\data";
-//byte test8 = 0xBA;
+char descentPath [2][256] = {"\\programs\\d2\\data", "\\programs\\d2\\data"};
+char missionPath [256]= "\\programs\\d2\\missions";
 char player_profile [20] = "";
 
 short nTrigger = 0;
-//short number_of_textures=0;
-//short  show_lines      = SHOW_LINES_PARTIAL;
-#if 0
-short  show_lines      = SHOW_FILLED_POLYGONS;
-short  show_walls      = 1;
-short  show_special    = 1;
-short  show_lights     = 1;
-short  show_objects    = (1<<OBJ_ROBOT)  + (1<<OBJ_HOSTAGE) + (1<<OBJ_POWERUP)
-+ (1<<OBJ_PLAYER) + (1<<OBJ_COOP) +(1<<OBJ_CNTRLCEN);
-short  show_powerups   =  POWERUP_POWERUP_MASK + POWERUP_WEAPON_MASK + POWERUP_KEY_MASK;
-#endif
-//CUBE  current1 = {DEFAULT_SEGMENT,
-//DEFAULT_SIDE,
-//DEFAULT_LINE,
-//DEFAULT_POINT,
-//DEFAULT_OBJECT};
-//CUBE  current2 = {DEFAULT_SEGMENT,
-//DEFAULT_SIDE,
-//DEFAULT_LINE,
-//DEFAULT_POINT,
-//DEFAULT_OBJECT};
-//CUBE  *current = &current1;
-#if 0
-short select_mode     = CUBE_MODE;
-short edit_mode       = EDIT_OFF;
-#endif
+
 tUVL default_uvls[4] = {
 	{(ushort) 0x0000, (ushort)0x0000, (ushort)DEFAULT_LIGHTING},
 	{(ushort) 0x0000, (ushort)0x0800, (ushort)DEFAULT_LIGHTING},

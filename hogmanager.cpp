@@ -133,7 +133,7 @@ bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter,
 if (*pszFile)
 	strcpy_s (szFolder, sizeof (szFolder), pszFile);
 else {
-	strcpy_s (szFolder, sizeof (szFolder), levels_path);
+	strcpy_s (szFolder, sizeof (szFolder), missionPath);
 	if ((ps = strstr (szFolder, "\\data")))
 		ps [1] = '\0';
 	if (!*pszDefExt) 

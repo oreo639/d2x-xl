@@ -75,9 +75,9 @@ else if (IsD2File ()) {
 		fp.WriteSByte ((sbyte) rand ());
 		}
 	// save palette name
-	char *name = strrchr (descent2_path, '\\');
+	char *name = strrchr (descentPath [1], '\\');
 	if (!name) 
-		name = descent2_path; // point to 1st char if no slash found
+		name = descentPath [1]; // point to 1st char if no slash found
 	else
 		name++;               // point to character after slash
 	char paletteName [15];

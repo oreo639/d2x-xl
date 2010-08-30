@@ -293,11 +293,11 @@ int CMine::ReadHamFile(char *pszFile, int type)
 
 if (!pszFile) {
 	if (IsD2File ()) {
-		CFileManager::SplitPath (descent2_path, szFile, null, null);
+		CFileManager::SplitPath (descentPath [1], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}
 	else {
-		CFileManager::SplitPath (descent_path, szFile, null, null);
+		CFileManager::SplitPath (descentPath [0], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent.ham");
 		}
 	pszFile = szFile;

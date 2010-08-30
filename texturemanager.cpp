@@ -26,6 +26,7 @@ Create (1);
 
 void CTextureManager::Create (int nVersion)
 {
+pigFiles [nVersion][0] = 0;
 names [nVersion] = null;
 LoadNames (nVersion);
 header [nVersion] = CPigHeader (nVersion);
@@ -126,7 +127,7 @@ CFileManager* CTextureManager::OpenPigFile (int nVersion)
 	CFileManager* fp = new CFileManager;
 	char	filename [256];
 
-strcpy_s (filename, sizeof (filename), nVersion ? descent2_path : descent_path);
+strcpy_s (filename, sizeof (filename), nVersion ? descentPath [1] : descentPath [0]);
 if (!strstr (filename, ".pig"))
 	strcat_s (filename, sizeof (filename), "groupa.pig");
 if (fp->Open (filename, "rb")) {
@@ -259,8 +260,14 @@ return info [nVersion][index [nVersion][nTexture] - 1];
 
 void CTextureManager::LoadTextures (int nVersion)
 {
-if (nVersion < 0)
+if (nVersion < 0) {
 	nVersion = Version ();
+	if (strcmp (pigFiles [nVersion], descentPath [nVersion]) == 0)
+		return;
+	strcpy_s (pigFiles [nVersion], sizeof (pigFiles [nVersion]), descentPath [nVersion]);
+	delete info [nVersion];
+	info [nVersion] = null;
+	}
 Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)

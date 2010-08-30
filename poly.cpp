@@ -450,7 +450,7 @@ if (renderModel->m_info.renderData)
 
   char filename[256];
 
-strcpy_s (filename, sizeof (filename), descent2_path);
+strcpy_s (filename, sizeof (filename), descentPath [1]);
 char *slash = strrchr (filename, '\\');
 if (slash)
 	*(slash+1) = '\0';

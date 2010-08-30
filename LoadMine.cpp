@@ -53,7 +53,7 @@ if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
 	CreateLightMap ();
-	CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+	CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
 	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 	bLoadFromHog = false;
 	bNewMine = true;
@@ -75,7 +75,7 @@ if (checkErr != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", checkErr);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
-			CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+			CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
 			sprintf_s (filename, sizeof (filename), (IsD1File ()) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 			bLoadFromHog = false;
 			bNewMine = true;
@@ -150,18 +150,18 @@ if (IsD2File ()) {
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
 	if (!bNewMine) {
-		if (descent2_path [0] != 0) {
-			char *path = strrchr (descent2_path, '\\');
+		if (descentPath [1] [0] != 0) {
+			char *path = strrchr (descentPath [1], '\\');
 			if (!path) {
-				descent2_path [0] = null;
+				descentPath [1] [0] = null;
 				} 
 			else {
 				path++;  // leave slash
 				*path = null;
 				}
 			// paste on new *.pig name
-			strcat_s (descent2_path, sizeof (descent2_path), paletteName);
-			_strlwr_s (descent2_path, sizeof (descent2_path));
+			strcat_s (descentPath [1], sizeof (descentPath [1]), paletteName);
+			_strlwr_s (descentPath [1], sizeof (descentPath [1]));
 			}
 		}
 	}
@@ -282,12 +282,12 @@ if (!bLoadFromHog) {
 			char szHogFile [256], szHamFile [256], *p;
 			long nSize, nPos;
 
-			CFileManager::SplitPath (descent2_path, szHogFile, null, null);
+			CFileManager::SplitPath (descentPath [1], szHogFile, null, null);
 			if (p = strstr (szHogFile, "data"))
 				*p = '\0';
 			strcat_s (szHogFile, sizeof (szHogFile), "missions\\d2x.hog");
 			if (FindFileData (szHogFile, "d2x.ham", &nSize, &nPos, FALSE)) {
-				CFileManager::SplitPath (descent2_path, szHamFile, null, null);
+				CFileManager::SplitPath (descentPath [1], szHamFile, null, null);
 				if (p = strstr (szHamFile, "data"))
 					*p = '\0';
 				strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");

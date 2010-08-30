@@ -80,7 +80,7 @@ m_bUseTexColors = false;
 LoadDefaultLightAndColor ();
 Reset ();
 Default ();
-//	strcpy (descent2_path, "d:\\games\\descent\\d2\\");
+//	strcpy (descentPath [1], "d:\\games\\descent\\d2\\");
 }
 
 //==========================================================================
@@ -139,7 +139,7 @@ if (!dataP)
 	return 0;
 // copy dataP to a file
 
-CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descent_path : levels_path, m_startFolder , null, null);
+CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 ASSIGN (RobotInfo (), DefRobotInfo ());
 CFileManager fp;
