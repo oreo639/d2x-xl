@@ -111,8 +111,8 @@ void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
 if (Check (nBaseTex)) {
    textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
    if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
-       Check ((ushort)(nOvlTex & 0x1FFF));
-       textures [(int)DLE.FileType ()] [nOvlTex].Load (nBaseTex);
+       Check ((ushort) (nOvlTex & 0x1FFF));
+       textures [(int)DLE.FileType ()] [(ushort) (nOvlTex & 0x1FFF)].Load ((ushort) (nOvlTex & 0x1FFF));
 		}
    }
 }

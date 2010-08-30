@@ -106,14 +106,14 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 			}
 		}
 #endif
-	for (j = 0; j < GameInfo ().botgen.count; j++)
+	for (i = 0; i < GameInfo ().botgen.count; i++)
 		if (BotGens (i)->m_info.nSegment > nDelSeg)
 			BotGens (i)->m_info.nSegment--;
-	for (j = 0; j < GameInfo ().equipgen.count; j++)
+	for (i = 0; i < GameInfo ().equipgen.count; i++)
 		if (EquipGens (i)->m_info.nSegment > nDelSeg)
 			EquipGens (i)->m_info.nSegment--;
 	// delete any control segP with this segment
-	for (i = (ushort)GameInfo ().control.count - 1; i >= 0; i--) {
+	for (j = (ushort)GameInfo ().control.count - 1; j >= 0; j--) {
 		int count = ReactorTriggers (i)->m_count;
 		for (j = count - 1; j > 0; j--) {
 			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
