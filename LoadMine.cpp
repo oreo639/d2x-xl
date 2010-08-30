@@ -507,10 +507,12 @@ return 0;
 
 int CMine::LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
 {
-if ((info.offset < 0) || (info.count < 1))
+if (info.offset < 0)
 	return 0;
 if (fp.Seek (info.offset, SEEK_SET))
 	return -1;
+if (info.count < 1)
+	return 0;
 if (info.count > nMaxCount) {
 	sprintf_s (message, sizeof (message),  "Error: Too many %s (%d/%d)", pszItem, info.count, nMaxCount);
 	ErrorMsg (message);
@@ -574,12 +576,12 @@ if (GameFileInfo ().signature != 0x6705) {
 if (GameInfo ().fileInfo.version < 14) 
 	m_currentLevelName [0] = 0;
 else {  /*load mine filename */
-	for (char *p = m_currentLevelName; *p; p++) {
+	for (char *p = m_currentLevelName; ; p++) {
 		*p = fp.ReadChar ();
-		if (*p== '\n') {
+		if (*p== '\n')
 			*p = 0;
+		if (*p == 0)
 			break;
-			}
 		}
 	}
 
@@ -594,29 +596,23 @@ if (0 > LoadGameItem (fp, GameInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, 
 if (GameInfo ().triggers.offset > -1) {
 	int bObjTriggersOk = 1;
 	if (GameInfo ().fileInfo.version >= 33) {
-		int i = fp.Tell ();
-		if (fp.Read (&NumObjTriggers (), sizeof (int), 1) != 1) {
-			ErrorMsg ("Error reading object triggers from mine.");
-			bObjTriggersOk = 0;
+		NumObjTriggers () = fp.ReadInt32 ();
+		for (int i = 0; i < NumObjTriggers (); i++)
+			ObjTriggers (i)->Read (fp, GameInfo ().fileInfo.version, true);
+		if (GameInfo ().fileInfo.version >= 40) {
+			for (int i = 0; i < NumObjTriggers (); i++)
+				ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 			}
 		else {
-			for (i = 0; i < NumObjTriggers (); i++)
-				ObjTriggers (i)->Read (fp, GameInfo ().fileInfo.version, true);
-			if (GameInfo ().fileInfo.version >= 40) {
-				for (i = 0; i < NumObjTriggers (); i++)
-					ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
+			for (int i = 0; i < NumObjTriggers (); i++) {
+				fp.ReadInt16 ();
+				fp.ReadInt16 ();
+				ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 				}
-			else {
-				for (i = 0; i < NumObjTriggers (); i++) {
-					fp.ReadInt16 ();
-					fp.ReadInt16 ();
-					ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
-					}
-				if (GameInfo ().fileInfo.version < 36)
-					fp.Seek (700 * sizeof (short), SEEK_CUR);
-				else
-					fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
-				}
+			if (GameInfo ().fileInfo.version < 36)
+				fp.Seek (700 * sizeof (short), SEEK_CUR);
+			else
+				fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
 			}
 		}
 	if (bObjTriggersOk && NumObjTriggers ())

@@ -654,6 +654,7 @@ public:
 
 	const double Det (void);
 	const CDoubleMatrix Inverse (void);
+	const CDoubleMatrix Adjoint (void);
 	inline const CDoubleMatrix Transpose (void);
 	void Rotate (double angle, char axis);
 	void Scale (double scale);

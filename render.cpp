@@ -83,7 +83,7 @@ A.Square2Quad (a);
 
 // calculate adjoint matrix (same as inverse)
 //adjoint_matrix(A,IA);
-IA = A.Inverse ();
+IA = A.Adjoint ();
 
 // store uv coordinates into b []
 uvls = segP->m_sides [nSide].m_info.uvls;

@@ -368,12 +368,12 @@ m_nSegment = fp.ReadInt32 ();
 m_nSide = fp.ReadInt32 (); 
 m_info.hps = fp.ReadFix ();
 m_info.linkedWall = fp.ReadInt32 ();
-m_info.type = byte (fp.ReadSByte ());
+m_info.type = fp.ReadByte ();
 m_info.flags = ushort ((version < 37) ? fp.ReadSByte () : fp.ReadInt16 ());         
-m_info.state = byte (fp.ReadSByte ());         
-m_info.nTrigger = byte (fp.ReadSByte ());       
-m_info.nClip = byte (fp.ReadSByte ());      
-m_info.keys = byte (fp.ReadSByte ());          
+m_info.state = fp.ReadByte ();         
+m_info.nTrigger = fp.ReadByte ();       
+m_info.nClip = fp.ReadByte ();      
+m_info.keys = fp.ReadByte ();          
 m_info.controllingTrigger = fp.ReadSByte ();
 m_info.cloakValue = fp.ReadSByte ();
 return 1;
@@ -383,8 +383,8 @@ return 1;
 
 void CWall::Write (CFileManager& fp, int version, bool bFlag)
 {
-fp.Write (m_nSegment);
-fp.Write (m_nSide); 
+fp.WriteInt32 ((int) m_nSegment);
+fp.WriteInt32 ((int) m_nSide); 
 fp.Write (m_info.hps);
 fp.Write (m_info.linkedWall);
 fp.Write (m_info.type);

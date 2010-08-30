@@ -405,6 +405,24 @@ return m;
 
 // -----------------------------------------------------------------------------
 
+const CDoubleMatrix CDoubleMatrix::Adjoint (void) 
+{
+	CDoubleMatrix m;
+
+m.rVec.v.x = uVec.v.y * fVec.v.z - uVec.v.z * fVec.v.y;
+m.rVec.v.y = rVec.v.z * fVec.v.y - rVec.v.y * fVec.v.z;
+m.rVec.v.z = rVec.v.y * uVec.v.z - rVec.v.z * uVec.v.y;
+m.uVec.v.x = uVec.v.z * fVec.v.x - uVec.v.x * fVec.v.z;
+m.uVec.v.y = rVec.v.x * fVec.v.z - rVec.v.z * fVec.v.x;
+m.uVec.v.z = rVec.v.z * uVec.v.x - rVec.v.x * uVec.v.z;
+m.fVec.v.x = uVec.v.x * fVec.v.y - uVec.v.y * fVec.v.x;
+m.fVec.v.y = rVec.v.y * fVec.v.x - rVec.v.x * fVec.v.y;
+m.fVec.v.z = rVec.v.x * uVec.v.y - rVec.v.y * uVec.v.x;
+return m;
+}
+
+// -----------------------------------------------------------------------------
+
 CDoubleMatrix& Transpose (CDoubleMatrix& dest, CDoubleMatrix& src)
 {
 dest.rVec.v.x = src.rVec.v.x;
