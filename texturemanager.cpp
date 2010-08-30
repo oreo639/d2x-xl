@@ -37,7 +37,7 @@ if (textures [nVersion]) {
 	}
 #endif
 if (names [nVersion]) {
-	for (int j = 0, h = MaxTextures (i); j < h; j++)
+	for (int j = 0, h = MaxTextures (nVersion); j < h; j++)
 		if (names [nVersion][j])
 			delete names [nVersion][j];
 	delete names [nVersion];
