@@ -91,7 +91,6 @@ void CEffectTool::LoadEffectList ()
 {
 if (!theMine) return;
 
-	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	CComboBox	*cbEffects = CBEffects ();
 	char			szEffect [100];
 	int			index, curSel = 0;

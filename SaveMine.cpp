@@ -260,8 +260,6 @@ return 0;
 
 short CMine::SaveGameData(CFileManager& fp)
 {
-HINSTANCE hInst = AfxGetInstanceHandle();
-
 int i;
 int startOffset, endOffset;
 

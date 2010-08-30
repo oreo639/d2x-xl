@@ -121,8 +121,8 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define MAX_WALL_TYPES    6
 #define D2_MAX_WALL_TYPES 8
 
-#define D1_TEXTURE_STRING_TABLE 1000
-#define D2_TEXTURE_STRING_TABLE 2000
+#define TEXTURE_STRING_TABLE_D1 1000
+#define TEXTURE_STRING_TABLE_D2 2000
 #define ROBOT_STRING_TABLE      3000
 #define POWERUP_STRING_TABLE    4000
 #define HOT_BUTTON_STRING_TABLE 5000

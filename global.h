@@ -14,7 +14,6 @@ extern bool bExtBlkFmt;
 extern MISSION_DATA	missionData;
 //extern HGLOBAL texture_handle[MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
 ; // MAX_D2_TEXTURES
-extern HINSTANCE hInst;
 extern int left,right,top,bottom;
 extern LPLOGPALETTE MyLogPalette;
 extern short d2_blastable_lights [];
@@ -65,7 +64,6 @@ extern int level_modified;
 extern int disable_saves;
 extern byte clipList [D2_NUM_OF_CLIPS];
 extern ushort wall_flags[9];
-extern int texture_resource;
 extern long ScrnMemMax;
 extern int ScrnWidth;
 extern int ScrnHeight;

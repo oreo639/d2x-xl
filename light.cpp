@@ -786,11 +786,7 @@ for (recursion_depth = m_deltaLightRenderDepth; recursion_depth; recursion_depth
 
 bool CMine::IsLava (int nBaseTex)
 {
-  HINSTANCE hInst = AfxGetApp()->m_hInstance;
-  char		name [20];
-
-LoadString(hInst,texture_resource + nBaseTex, name, sizeof (name));
-return (strstr((char*)name,"lava") != null);
+return (strstr (textureManager.Name ((short) nBaseTex), "lava") != null);
 }
 
 //--------------------------------------------------------------------------

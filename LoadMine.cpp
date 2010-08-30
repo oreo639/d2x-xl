@@ -142,11 +142,9 @@ if (sig != 'P'*0x1000000L + 'L'*0x10000L + 'V'*0x100 + 'L') {
 SetLevelVersion (fp.ReadInt32 ());
 if (LevelVersion () == 1) {
 	SetFileType (RDL_FILE);
-	texture_resource = D1_TEXTURE_STRING_TABLE;
 	}
 else if ((LevelVersion () >= 6L) && (LevelVersion () <= 21L)) {
 	SetFileType (RL2_FILE);
-	texture_resource = D2_TEXTURE_STRING_TABLE;
 	}
 else {
 	sprintf_s (message, sizeof (message),  "Version %d unknown. Cannot load this level.", LevelVersion ());
@@ -162,7 +160,6 @@ return 0;
 
 short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 {
-	HINSTANCE hInst = AfxGetInstanceHandle();
 	byte* palette = 0;
 
 	CFileManager fp;

@@ -211,51 +211,41 @@ for (i = 0; i < h; i++, psd++) {
 void CObjectTool::CBInit (CComboBox *pcb, char** pszNames, byte *pIndex, byte *pItemData, int nMax, int nType, bool bAddNone)
 {
 	int h, j, l;
-	HINSTANCE hInst;
-	char szLabel [100];
-	char *pszLabel;
 	DWORD nErr;
 	
-if (nType & 1) {
-	hInst = AfxGetApp()->m_hInstance;
-	pszLabel = szLabel;
-	}
-else if (nType == 2)
-	pszLabel = szLabel;
 pcb->ResetContent ();
 if (bAddNone) {
 	j = pcb->AddString ("(none)");
 	pcb->SetItemData (j, -1);
 	}
-int i;
-for (i = 0; i < nMax; i++) {
+
+CStringResource res;
+
+for (int i = 0; i < nMax; i++) {
 	switch (nType) {
 		case 0:
 			h = pIndex ? pIndex [i]: i;
-			sprintf_s (szLabel, sizeof (szLabel), "%s", pszNames [h]);
-			pszLabel = szLabel;
-//			pszLabel = pszNames [h];
+			sprintf_s (res.Value (), res.Size (), "%s", pszNames [h]);
 			break;
 		case 1:
-			sprintf_s (szLabel, sizeof (szLabel), "%d: ", i);
-			l = int (strlen (szLabel));
-			LoadString (hInst, int (pszNames) + i, szLabel + l, sizeof (szLabel) - l);
+			sprintf_s (res.Value (), res.Size (), "%d: ", i);
+			res.Load (int (pszNames) + i);
 			h = i;
 			break;
 		case 2:
-			sprintf_s (szLabel, sizeof (szLabel), "%s %d", (char *) pszNames, i);
+			sprintf_s (res.Value (), res.Size (), "%s %d", (char *) pszNames, i);
 			h = pIndex ? pIndex [i]: i;
 			break;
 		case 3:
-			LoadString (hInst, int (pszNames) + i, szLabel, sizeof (szLabel));
+			res.Load (int (pszNames) + i);
 			nErr = GetLastError ();
 			h = i;
 			break;
 		default:
 			return;
 		}
-	if (!strstr (pszLabel, "(not used)")) {
-		j = pcb->AddString (pszLabel);
+	if (!strstr (res.Value (), "(not used)")) {
+		j = pcb->AddString (res.Value ());
 		pcb->SetItemData (j, pItemData ? pItemData [h]: h);
 		}
 	}
@@ -296,18 +286,21 @@ CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1Fil
 short nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
 short i, j;
 char sz [100], **psz;
-HINSTANCE hInst = AfxGetApp()->m_hInstance;
+
 CComboBox *pcb = CBObjTexture ();
 pcb->AddString ("(none)");
 for (i = 0; i < nTextures; i++) {
-	LoadString (hInst, texture_resource + i, sz, sizeof (sz));
-	if (!strstr((char *) sz, "frame")) {
-		int index = pcb->AddString (sz);
+	char* p = textureManager.Name (i);
+	if (!strstr (p, "frame")) {
+		int index = pcb->AddString (p);
 		pcb->SetItemData(index++, i);
 		}
 	}
+
+CStringResource res;
+
 for (i = j = 0; i < MAX_POWERUP_IDS; i++) {
-	LoadString (hInst, POWERUP_STRING_TABLE + i, sz, sizeof (sz));
+	//res.Load (POWERUP_STRING_TABLE + i);
 	//if (strcmp (sz, "(not used)"))
 		powerupIdStrXlat [j++] = i;
 	}
@@ -332,18 +325,19 @@ CBContType ()->SetItemData (i, -1);
 // setup sound list boxes
 char szSound [100];
 for (i = 0; i < 196; i++) {
-	LoadString (hInst, 6000 + i, szSound,sizeof (szSound));
+	res.Load (6000 + i);
+	//LoadString (hInst, 6000 + i, szSound,sizeof (szSound));
 	// int nSound = (szSound [0] - '0') * 100 + (szSound [1] - '0') * 10 + (szSound [2] - '0');
-	int nSound = atoi (szSound);
-	int index = CBSoundExpl ()->AddString (szSound + 3);
+	int nSound = atoi (res.Value ());
+	int index = CBSoundExpl ()->AddString (res.Value () + 3);
 	CBSoundExpl ()->SetItemData (index, nSound);
-	index = CBSoundSee ()->AddString (szSound + 3);
+	index = CBSoundSee ()->AddString (res.Value () + 3);
 	CBSoundSee ()->SetItemData (index, nSound);
-	index = CBSoundAttack ()->AddString (szSound + 3);
+	index = CBSoundAttack ()->AddString (res.Value () + 3);
 	CBSoundAttack ()->SetItemData (index, nSound);
-	index = CBSoundClaw ()->AddString (szSound + 3);
+	index = CBSoundClaw ()->AddString (res.Value () + 3);
 	CBSoundClaw ()->SetItemData (index, nSound);
-	index = CBSoundDeath ()->AddString (szSound + 3);
+	index = CBSoundDeath ()->AddString (res.Value () + 3);
 	CBSoundDeath ()->SetItemData (index, nSound);
 	}
 Refresh ();
@@ -449,9 +443,9 @@ void CObjectTool::Refresh ()
 {
 if (!(m_bInited && theMine))
 	return;
-HINSTANCE hInst = AfxGetApp()->m_hInstance;
 
 short type;
+CStringResource res;
 
 // update object list box
 CBObjNo ()->ResetContent ();
@@ -460,45 +454,45 @@ int i;
 for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT: /* an evil enemy */
-			LoadString (hInst, ROBOT_STRING_TABLE + objP->m_info.id, string, sizeof (string));
+			res.Load (ROBOT_STRING_TABLE + objP->m_info.id);
 			break;
 		case OBJ_HOSTAGE: // a hostage you need to rescue
-			sprintf_s (string, sizeof (string), "Hostage");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Hostage");
 			break;
 		case OBJ_PLAYER: // the player on the console
-			sprintf_s (string, sizeof (string), "Player #%d", objP->m_info.id + 1);
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Player #%d", objP->m_info.id + 1);
 			break;
 		case OBJ_WEAPON: //
-			strcpy_s (string, sizeof (string), "Red Mine");
+			strcpy_s (res.Value (), sizeof (res.Value ()), "Red Mine");
 			break;
 		case OBJ_POWERUP: // a powerup you can pick up
-			LoadString (hInst, POWERUP_STRING_TABLE + powerupIdStrXlat [objP->m_info.id], string, sizeof (string));
+			res.Load (POWERUP_STRING_TABLE + powerupIdStrXlat [objP->m_info.id]);
 			break;
 		case OBJ_CNTRLCEN: // a control center */
-			sprintf_s (string, sizeof (string), "Reactor");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Reactor");
 			break;
 		case OBJ_COOP: // a cooperative player object
-			sprintf_s (string, sizeof (string), "Coop Player #%d", objP->m_info.id + 1);
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Coop Player #%d", objP->m_info.id + 1);
 			break;
 		case OBJ_CAMBOT: // a camera */
-			sprintf_s (string, sizeof (string), "Camera");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Camera");
 			break;
 		case OBJ_MONSTERBALL: // a camera */
-			sprintf_s (string, sizeof (string), "Monsterball");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Monsterball");
 			break;
 		case OBJ_EXPLOSION:
-			sprintf_s (string, sizeof (string), "Explosion");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Explosion");
 			break;
 		case OBJ_SMOKE: 
-			sprintf_s (string, sizeof (string), "Smoke");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Smoke");
 			break;
 		case OBJ_EFFECT:
-			sprintf_s (string, sizeof (string), "Effect");
+			sprintf_s (res.Value (), sizeof (res.Value ()), "Effect");
 			break;
 		default:
-			*string = '\0';
+			*res.Value () = '\0';
 	}
-	sprintf_s (message, sizeof (message), (i < 10) ? "%3d: %s": "%d: %s", i, string);
+	sprintf_s (message, sizeof (message), (i < 10) ? "%3d: %s": "%d: %s", i, res.Value ());
 	CBObjNo ()->AddString (message);
 	}
 // add secret object to list
@@ -851,30 +845,30 @@ int bbb = 1;
 
 void CObjectTool::SetObjectId (CComboBox *pcb, short type, short id, short flag) 
 {
-	char str [40];
 	int h, i, j;
-	short max_robot_ids = flag 
-								 ? DLE.IsD1File () 
-									? ROBOT_IDS1 
-									: 64 
-								 : DLE.IsD1File () 
-									? ROBOT_IDS1 
-									: ROBOT_IDS2;
+	short maxRobotIds = flag 
+							  ? DLE.IsD1File () 
+								  ? ROBOT_IDS1 
+								  : 64 
+							  : DLE.IsD1File () 
+								  ? ROBOT_IDS1 
+								  : ROBOT_IDS2;
 
 pcb->ResetContent ();
-HINSTANCE hInst = AfxGetApp ()->m_hInstance;
+
+CStringResource res;
+
 switch(type) {
 	case OBJ_ROBOT: /* an evil enemy */
-		for (i = 0; i < max_robot_ids; i++) {
-			sprintf_s (string, sizeof (string), (i < 10) ? "%3d: ": "%d: ", i);
-			h = int (strlen (string));
-			LoadString (hInst, ROBOT_STRING_TABLE + i, string + h, sizeof (string) - h);
-			if (!strcmp (string, "(not used)"))
+		for (i = 0; i < maxRobotIds; i++) {
+			sprintf_s (res.Value (), sizeof (res.Value ()), (i < 10) ? "%3d: ": "%d: ", i);
+			res.Load (ROBOT_STRING_TABLE + i);
+			if (!strcmp (res.Value (), "(not used)"))
 				continue;
-			h = CBAddString (pcb, string);
+			h = CBAddString (pcb, res.Value ());
 			pcb->SetItemData (h, i);
 			}
-		if (id < 0 || id >= max_robot_ids) {
+		if (id < 0 || id >= maxRobotIds) {
 			sprintf_s (message, sizeof (message), " ObjectTool: Unknown robot id (%d)", id);
 			DEBUGMSG (message);
 			}
@@ -883,8 +877,8 @@ switch(type) {
 
 	case OBJ_HOSTAGE: // a hostage you need to rescue
 		for (i = 0; i <= 1; i++) {
-			sprintf_s (str, sizeof (str), "%d", i);
-			h = pcb->AddString (str);
+			sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+			h = pcb->AddString (res.Value ());
 			pcb->SetItemData (h, i);
 			}
 		SelectItemData (pcb, id);
@@ -892,8 +886,8 @@ switch(type) {
 
 	case OBJ_PLAYER: // the player on the console
 		for (i = 0; i < MAX_PLAYERS; i++) {
-			sprintf_s (str, sizeof (str), (i < 9) ? "%3d" : "%d", i + 1);
-			h = pcb->AddString (str);
+			sprintf_s (res.Value (), sizeof (res.Value ()), (i < 9) ? "%3d" : "%d", i + 1);
+			h = pcb->AddString (res.Value ());
 			pcb->SetItemData (h, i);
 			}
 		SelectItemData (pcb, id);
@@ -944,10 +938,10 @@ switch(type) {
 		pcb->SetItemData (h, -1);
 		for (i = 0; i < MAX_POWERUP_IDS; i++) {
 			j = powerupIdStrXlat [i];
-			LoadString (hInst, POWERUP_STRING_TABLE + j, string, sizeof (string));
-			if (!strcmp (string, "(not used)"))
+			res.Load (POWERUP_STRING_TABLE + j);
+			if (!strcmp (res.Value (), "(not used)"))
 				continue;
-			h = pcb->AddString (string);
+			h = pcb->AddString (res.Value ());
 			xlat [i] = j;
 			pcb->SetItemData (h, j);
 			}
@@ -967,15 +961,15 @@ switch(type) {
 	case OBJ_CNTRLCEN: // a control center */
 		if (DLE.IsD1File ()) {
 			for ( i = 0; i <= 25; i++) { //??? not sure of max
-				sprintf_s (str, sizeof (str), "%d", i);
-				h = pcb->AddString (str);
+				sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+				h = pcb->AddString (res.Value ());
 				pcb->SetItemData (h, i);
 				}
 			}
 		else {
 			for (i = 1; i <= 6; i++) {
-				sprintf_s (str, sizeof (str), "%d", i);
-				h = pcb->AddString (str);
+				sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+				h = pcb->AddString (res.Value ());
 				pcb->SetItemData (h, i);
 				}
 			}
@@ -984,8 +978,8 @@ switch(type) {
 
 	case OBJ_COOP: // a cooperative player object
 		for (i = MAX_PLAYERS; i < MAX_PLAYERS + MAX_COOP_PLAYERS; i++) {
-			sprintf_s (str, sizeof (str), "%d", i);
-			h = pcb->AddString (str);
+			sprintf_s (res.Value (), sizeof (res.Value ()), "%d", i);
+			h = pcb->AddString (res.Value ());
 			pcb->SetItemData (h, i - MAX_PLAYERS);
 			}
 		SelectItemData (pcb, id - MAX_PLAYERS);

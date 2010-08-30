@@ -410,9 +410,10 @@ if (IsBotMaker (segP)) {
 	int nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
-	HINSTANCE hInst = AfxGetInstanceHandle ();
-	char		szObj [80];
-	int		objFlags [2];
+	
+	int objFlags [2];
+	CStringResource res;
+
 	for (i = 0; i < 2; i++)
 		objFlags [i] = theMine->BotGens (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
@@ -424,8 +425,8 @@ if (IsBotMaker (segP)) {
 					if (!h)	//only add flagged objects to 2nd list box
 						continue;
 					}
-				LoadString (hInst, ROBOT_STRING_TABLE + j, szObj, sizeof (szObj));
-				h = plb [i]->AddString (szObj);
+				res.Load (ROBOT_STRING_TABLE + j);
+				h = plb [i]->AddString (res.Value ());
 				plb [i]->SetItemData (h, j);
 				}
 			plb [i]->SetCurSel (0);
@@ -436,9 +437,9 @@ else if (IsEquipMaker (segP)) {
 	int nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
-	HINSTANCE hInst = AfxGetInstanceHandle ();
-	char		szObj [80];
-	int		objFlags [2];
+	int objFlags [2];
+	CStringResource res;
+
 	for (i = 0; i < 2; i++)
 		objFlags [i] = theMine->EquipGens (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
@@ -450,10 +451,10 @@ else if (IsEquipMaker (segP)) {
 					if (!h)	//only add flagged objects to 2nd list box
 						continue;
 					}
-				LoadString (hInst, POWERUP_STRING_TABLE + j, szObj, sizeof (szObj));
+				res.Load (POWERUP_STRING_TABLE + j);
 				if (!strcmp (szObj, "(not used)"))
 					continue;
-				h = plb [i]->AddString (szObj);
+				h = plb [i]->AddString (res.Value ());
 				plb [i]->SetItemData (h, j);
 				}
 			plb [i]->SetCurSel (0);

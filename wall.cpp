@@ -294,13 +294,11 @@ return null;
 
 int CMine::FindClip (CWall *wallP, short nTexture)
 {
-	HINSTANCE hInst = AfxGetApp ()->m_hInstance;
-	char szName [80], *ps;
+	char *pszName = textureManager.Name (nTexture);
 
-LoadString (hInst, texture_resource + nTexture, szName, sizeof (szName));
-if (!strcmp (szName, "wall01 - anim"))
+if (!strcmp (pszName, "wall01 - anim"))
 	return wallP->m_info.nClip = 0;
-if (ps = strstr (szName, "door")) {
+if (ps = strstr (pszName, "door")) {
 	int i, nDoor = atol (ps + 4);
 	for (i = 1; i < D2_NUM_OF_CLIPS; i++)
 		if (nDoor == doorClipTable [i]) {

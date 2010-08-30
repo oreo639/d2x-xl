@@ -337,8 +337,6 @@ void CTextureTool::LoadTextureListBoxes (void)
 {
 CHECKMINE;
 
-	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
-	char			name [80];
 	int			bShowFrames;
 	int			nTextures, iTexture, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
@@ -357,21 +355,15 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (DLE.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = textureManager.MaxTextures ();
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
-#if 0
-	if (iTexture >= 910)
-		sprintf (name, "xtra #%d", iTexture);
-	else
-#endif
-		LoadString (hInst, texture_resource + iTexture, name, sizeof (name));
-	if (bShowFrames || !strstr ((char *) name, "frame")) {
-		index = cbTexture1->AddString (name);
+	char* p = textureManager.Name (iTexture);
+	if (bShowFrames || !strstr (p, "frame")) {
+		index = cbTexture1->AddString (p);
 		cbTexture1->SetItemData (index, iTexture);
 		if (texture1 == iTexture)
 			cbTexture1->SetCurSel (index);
-		index = cbTexture2->AddString (iTexture ? name : "(none)");
+		index = cbTexture2->AddString (iTexture ? *p : "(none)");
 		if (texture2 == iTexture)
 			cbTexture2->SetCurSel (index);
 		cbTexture2->SetItemData (index, iTexture);
@@ -455,7 +447,6 @@ if (m_bInitTextureListBoxes) {
 
 
 //Beep (1000,100);
-	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 	short			texture1, texture2, mode;
@@ -529,10 +520,10 @@ if (bShowTexture) {
 		last_texture1 = texture1;
 		last_texture2 = texture2;
 		last_mode = mode;
-		LoadString (hInst, texture_resource + texture1, message, sizeof (message));
+		strcpy_s (message, sizeof (message), textureManager.Name (texture1));
 		cbTexture1->SetCurSel (i = cbTexture1->SelectString (-1, message));  // unselect if string not found
 		if (sideP->m_info.nOvlTex) {
-			LoadString (hInst, texture_resource + texture2, message, sizeof (message));
+			strcpy_s (message, sizeof (message), textureManager.Name (texture2));
 			cbTexture2->SetCurSel (cbTexture2->SelectString (-1, message));  // unselect if string not found
 			}
 		else
@@ -843,9 +834,7 @@ void CTextureTool::OnSaveTexture ()
 {
 if (!theMine) return;
 
-	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
-	char			t1Name [20],
-					t2Name [20];
+	char			*t1Name, *t2Name;
 	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb;
 
@@ -858,12 +847,12 @@ for (i = 0; i < 4; i++)
 //CBTexture1 ()->SelectString (-1, texture_name1);
 //CBTexture2 ()->SelectString (-1, texture_name2);
 pcb = CBTexture1 ();
-LoadString (hInst, texture_resource + int (pcb->GetItemData (pcb->GetCurSel ())), t1Name, sizeof (t1Name));
+t1Name = textureManager.Name ((short) pcb->GetItemData (pcb->GetCurSel ()));
 pcb = CBTexture2 ();
 if (i = int (pcb->GetItemData (pcb->GetCurSel ())))
-	LoadString (hInst, texture_resource + i, t2Name, sizeof (t2Name));
+	t2Name = textureManager.Name ((short) i);
 else
-	strcpy_s (t2Name, sizeof (t2Name), "(none)");
+	t2Name = "(none)";
 sprintf_s (m_szTextureBuf, sizeof (m_szTextureBuf ), "%s,%s", t1Name, t2Name);
 UpdateData (FALSE);
 //SaveTextureStatic->SetText(message);

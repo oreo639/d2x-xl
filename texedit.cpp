@@ -356,8 +356,7 @@ pWnd = GetDlgItem (IDC_TEXEDIT_LAYERS);
 pWnd->GetClientRect (rc);
 m_layerWnd.Create (null, null, WS_CHILD | WS_VISIBLE, rc, pWnd, 0);
 // set cursor styles for bitmap windows
-HINSTANCE hInst = AfxGetApp()->m_hInstance;
-SetCursor (LoadCursor (hInst, "PENCIL_CURSOR"));
+SetCursor (LoadCursor (AfxGetInstanceHandle (), "PENCIL_CURSOR"));
 //  PaletteButton->SetCursor(null, IDC_CROSS);
 m_fgColor = 0; // black
 m_bgColor = 1; // white

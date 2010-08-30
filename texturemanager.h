@@ -19,6 +19,7 @@ typedef CTexture* textureList;
 class CTextureManager {
 public:
 	uint nTextures [2];
+	char** names [2];
 	textureList textures [2];
 	ushort* index [2];
 	uint nOffsets [2];
@@ -30,6 +31,7 @@ public:
 
 	int MaxTextures (int nVersion = -1);
 	int LoadIndex (int nVersion);
+	void LoadNames (int nVersion);
 	void LoadTextures (int nVersion);
 	CPigTexture& LoadInfo (CFileManager& fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
@@ -43,6 +45,12 @@ public:
 	CFileManager* OpenPigFile (int nVersion);
 
 	inline bool HaveInfo (int nVersion) { return info [nVersion] != null; }
+	int Version (void);
+	inline char* Name (short nTexture) { 
+		char* p = names [Version ()][nTexture]; 
+		return p ? p : "";
+		}
+	CTexture* Texture (short nTexture) { return &textures [Version ()][nTexture]; }
 
 	CTextureManager() {}
 	
@@ -56,6 +64,11 @@ public:
 			if (textures [i])
 				delete textures [i];
 #endif
+			if (names [i]) {
+				for (int j = 0, h = MaxTextures (i); j < h; j++)
+					if (names [i][j])
+						delete names [i][j];
+				}
 			if (index [i])
 				delete index [i];
 			if (info [i])

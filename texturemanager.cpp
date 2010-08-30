@@ -24,6 +24,13 @@ LoadTextures (1);
 
 //------------------------------------------------------------------------
 
+int Version (void) 
+{ 
+return DLE.IsD1File () ? 0 : 1; 
+}
+
+//------------------------------------------------------------------------
+
 void CTextureManager::Release (bool bDeleteAll, bool bDeleteUnused) 
 {
 // free any textures that have been buffered
@@ -127,6 +134,23 @@ if (Check (nBaseTex)) {
 
 //------------------------------------------------------------------------------
 
+void CTextureManager::LoadNames (int nVersion)
+{
+	int nResource = (DLE.IsD1File ()) ? TEXTURE_STRING_TABLE_D1 : TEXTURE_STRING_TABLE_D2;
+	CStringResource res;
+	int j = MaxTextures (nVersion);
+
+names [nVersion] = new char* [j];
+for (int i = 0; i < j; i++) {
+	res.Load (nResource + i);
+	int l = res.Length () + 1;
+	names [nVersion][i] = new char [l];
+	memcpy_s (names [nVersion] + i, l, res.Value (), l);
+	}
+}
+
+//------------------------------------------------------------------------------
+
 int CTextureManager::LoadIndex (int nVersion)
 {
 	CResource res;	
@@ -169,6 +193,7 @@ return info [nVersion][index [nVersion][nTexture] - 1];
 void CTextureManager::LoadTextures (int nVersion)
 {
 header [nVersion] = CPigHeader (nVersion);
+LoadNames (nVersion);
 LoadIndex (nVersion);
 #if USE_DYN_ARRAYS
 textures [nVersion].Create (MaxTextures (nVersion));

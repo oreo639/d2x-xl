@@ -109,8 +109,7 @@ if (m_bInited) {
 
 void CTriggerTool::LoadTextureListBoxes () 
 {
-	HINSTANCE	hInst = AfxGetApp()->m_hInstance;
-	char			name [80];
+	char			*name;
 	int			nTextures, iTexture, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
@@ -126,21 +125,15 @@ if ((texture2 < 0) || (texture2 >= MAX_TEXTURES))
 cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
-texture_resource = (DLE.IsD1File ()) ? D1_TEXTURE_STRING_TABLE : D2_TEXTURE_STRING_TABLE;
-nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = textureManager.MaxTextures ();
 for (iTexture = 0; iTexture < nTextures; iTexture++) {
-#if 0
-	if (iTexture >= 910)
-		sprintf (name, "xtra #%d", iTexture);
-	else
-#endif
-		LoadString (hInst, texture_resource + iTexture, name, sizeof (name));
-	if (!strstr ((char *) name, "frame")) {
+	name = textureManager.Name (iTexture);
+	if (!strstr (name, "frame")) {
 		index = cbTexture1->AddString (name);
 		cbTexture1->SetItemData (index, iTexture);
 		if (texture1 == iTexture)
 			cbTexture1->SetCurSel (index);
-		index = cbTexture2->AddString (iTexture ? name : "(none)");
+		index = cbTexture2->AddString (iTexture ? *name : "(none)");
 		if (texture2 == iTexture)
 			cbTexture2->SetCurSel (index);
 		cbTexture2->SetItemData (index, iTexture);
@@ -513,10 +506,10 @@ if (m_nTrigger != -1) {
 		cbTexture2->SetCurSel (cbTexture2->SelectString (-1, "(none)"));  // unselect if string not found
 		}
 	else {
-		LoadString (hInst, texture_resource + Texture1 (), message, sizeof (message));
+		strcpy_s (message, sizeof (message), textureManager.Name (Texture1 ());
 		cbTexture1->SetCurSel (cbTexture1->SelectString (-1, message));  // unselect if string not found
 		if (Texture2 ()) {
-			LoadString (hInst, texture_resource + Texture2 (), message, sizeof (message));
+			strcpy_s (message, sizeof (message), textureManager.Name (Texture2 ());
 			cbTexture2->SetCurSel (cbTexture2->SelectString (-1, message));  // unselect if string not found
 			}
 		else

@@ -183,8 +183,7 @@ if (left < r)
 void CTextureView::CreateTexMap (void)
 {
 QSortTexMap (0, m_nTextures [1] - 1);
-int i;
-for (i = 0; i < m_nTextures [1]; i++)
+for (int i = 0; i < m_nTextures [1]; i++)
 	m_mapTexToView [m_mapViewToTex [i]] = i;
 }
 
@@ -517,45 +516,20 @@ void CTextureView::Setup (void)
   char name[20];
   int i;
   int nTextures, nFrames = 0;
-  HINSTANCE hInst = AfxGetApp()->m_hInstance;
 
-  nTextures = DLE.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+  nTextures = textureManager.MaxTextures ();
 
   // calculate total number of textures
 m_nTextures [1] = 0;
 for (i = 0; i < nTextures; i++) {
-	LoadString (hInst, texture_resource + i, name, sizeof (name));
-	if (strstr ((char*) name, "frame"))
+	if (textureManager.Texture (i)->m_info.bFrame)
 		++nFrames;
 	else
 		m_mapViewToTex [m_nTextures [1]++] = i;
 	}
 
-  // allocate memory for texture list
-#if 0
-if (m_pTextures)
-	free (m_pTextures);
-m_pTextures = (int *) malloc (m_nTextures [1] * sizeof (int));
-if (m_pTextures) {
-	// fill in texture list
-#if 1
-   for (i = 0; i < m_nTextures [1]; i++) 
-		m_pTextures [i] = m_mapViewToTex [i];
-#else
-   m_nTextures [1] = 0;
-   for (i = 0; i < nTextures; i++) {
-		LoadString(hInst,texture_resource + i,name,sizeof (name));
-		if (strstr((char*)name,"frame") == null)
-			m_pTextures[m_nTextures [1]++] = i;
-		else
-			++nFrames;
-		}
-#endif
-	}
-#endif
+// allocate memory for texture list
 CreateTexMap ();
-//m_nTxtFilter = 0xFFFFFFFF;
-//RefreshData ();
 }
 
 								/*---------------------------*/

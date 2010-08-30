@@ -82,7 +82,6 @@ if (!theMine)
 if (!pDC)
 	return false;
 
-	HINSTANCE		hInst = AfxGetApp ()->m_hInstance;
 	CBitmap			bmTexture;
 	CFileManager	fp;
 	char				szFile [256];
@@ -271,6 +270,7 @@ if (!Allocate (nSize, nTexture)) {
 	}
 fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (*fp, info);
+m_info.bFrame = (strstr (textureManager.names [nVersion][nTexture], "frame") != null);
 if (bLocalFile)
 	fp->Close ();
 return 0;

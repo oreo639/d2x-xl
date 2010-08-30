@@ -20,7 +20,6 @@
 MISSION_DATA missionData;
 //HGLOBAL texture_handle [MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
 CPalette *m_currentPalette;
-HINSTANCE hInst;
 LPLOGPALETTE MyLogPalette;
 
 char FileName[256]="";
@@ -85,8 +84,6 @@ ushort wall_flags [MAX_WALL_FLAGS] = {
 	WALL_RENDER_ADDITIVE,
 	WALL_IGNORE_MARKER
 };
-
-int texture_resource = D2_TEXTURE_STRING_TABLE;
 
 long ScrnMemMax = 0L;
 int ScrnWidth = 0;

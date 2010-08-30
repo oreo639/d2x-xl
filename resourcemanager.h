@@ -31,6 +31,25 @@ public:
 };
 
 //------------------------------------------------------------------------
+
+class CStringResource {
+private:
+	char			m_value [1024];
+	HINSTANCE	m_hInst;
+
+public:
+	CStringResource () { 
+		m_value [0] = 0; 
+		m_hInst = AfxGetInstanceHandle ();
+		}
+	char* Load (int nResource);
+	inline char* Value (void) { return m_value; }
+	inline size_t Size (void) { return sizeof (m_value); }
+	inline size_t Length (void) { return strlen (m_value); }
+	inline char* Clear (void) { m_value [0] = 0; }
+};
+
+//------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 

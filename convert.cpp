@@ -61,8 +61,6 @@ CDialog::OnInitDialog ();
 CreateImgWnd (&m_showD1, IDC_CONVERT_SHOWD1);
 CreateImgWnd (&m_showD2, IDC_CONVERT_SHOWD2);
 
-m_hInst = AfxGetApp()->m_hInstance;
-
 if (!(m_pTextures = (short *) m_res.Load (IDR_TEXTURE_D1D2)))
 	return FALSE;
 
@@ -82,7 +80,7 @@ for (nSeg = segCount; nSeg; nSeg--, segP++) {
 		for (i = 0; i < 2; i++) {
 			if (tnum [i] != -1) {
 				// read name of texture from Descent 1 texture resource
-				LoadString (m_hInst, D1_TEXTURE_STRING_TABLE + tnum [i], szName, sizeof (szName));
+				LoadString (m_hInst, TEXTURE_STRING_TABLE_D1 + tnum [i], szName, sizeof (szName));
 				// if not already in list box, add it
 				if (pcb->FindStringExact (-1, szName) < 0) {
 					h = pcb->AddString (szName);
@@ -100,7 +98,7 @@ pcb = CBD2 ();
 int i;
 for (i = 0; i < nTextures; i++) {
 // read szName of texture from Descent 2 texture resource
-	LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + i, szName, sizeof (szName));
+	LoadString (m_hInst, TEXTURE_STRING_TABLE_D2 + i, szName, sizeof (szName));
 	if (*szName != '*') {
 		h = pcb->AddString (szName);
 		pcb->SetItemData (h, i);
@@ -136,7 +134,7 @@ if (!(m_bInited && theMine))
 //  texture1 = GetTextureID (message);
 texture1 = (short) (CBD1 ()->GetItemData (CBD1 ()->GetCurSel ()));
 texture2 = m_pTextures [texture1];
-if (LoadString (m_hInst, D2_TEXTURE_STRING_TABLE + texture2, message, sizeof (message)))
+if (LoadString (m_hInst, TEXTURE_STRING_TABLE_D2 + texture2, message, sizeof (message)))
 	CBD2 ()->SelectString (-1, message);
 #ifdef _DEBUG
 else
@@ -203,21 +201,20 @@ void CConvertDlg::OnOK ()
 {
 if (!theMine) return;
 
-  short		i,j;
-  CSegment *segP;
-  CSide		*sideP;
-  CWall		*wallP;
-  CTrigger	*trigP;
+  short			i,j;
+  CSegment		*segP;
+  CSide			*sideP;
+  CWall			*wallP;
+  CTrigger		*trigP;
   CGameObject	*objP;
-  short		nSegment, nSide, d1Texture, mode,
-				segCount = theMine->SegCount (),
-				wallCount = theMine->GameInfo ().walls.count;
+  short			nSegment, nSide, d1Texture, mode,
+					segCount = theMine->SegCount (),
+					wallCount = theMine->GameInfo ().walls.count;
 
 textureManager.Release ();
 DLE.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RL2_FILE);
-texture_resource = D2_TEXTURE_STRING_TABLE;
 theMine->LoadPalette ();
 
   // convert textures
