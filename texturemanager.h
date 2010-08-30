@@ -37,7 +37,7 @@ public:
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
-	void Release (bool bDeleteAll = true, bool bDeleteUnused = false);
+	void Release (bool bDeleteAll = false, bool bDeleteUnused = false);
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
 	void MarkUsedTextures (void);

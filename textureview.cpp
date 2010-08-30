@@ -91,8 +91,8 @@ if (!m_bDelayRefresh) {
 
 void CTextureView::Reset () 
 {
-if (!theMine) return;
-textureManager.Release ();
+CHECKMINE;
+//textureManager.Release ();
 Refresh ();
 }
 

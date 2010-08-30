@@ -198,6 +198,19 @@ return (m_info.bmDataP != null);
 
 //------------------------------------------------------------------------
 
+void CTexture::Release (void) 
+{
+if (!m_info.bExtData) {
+	if (m_info.bmDataP)
+		delete m_info.bmDataP;
+	if (m_info.tgaDataP)
+		delete m_info.tgaDataP;
+	}
+Clear ();
+}
+
+//------------------------------------------------------------------------
+
 void CTexture::Load (CFileManager& fp, CPigTexture& info) 
 {
 	byte	rowSize [4096];
@@ -270,6 +283,8 @@ if (!Allocate (nSize, nTexture)) {
 	}
 fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (*fp, info);
+if (nTexture == 739)
+	nTexture = nTexture;
 m_info.bFrame = (strstr (textureManager.names [nVersion][nTexture], "frame") != null);
 if (bLocalFile)
 	fp->Close ();

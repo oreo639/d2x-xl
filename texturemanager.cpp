@@ -37,15 +37,17 @@ void CTextureManager::Release (bool bDeleteAll, bool bDeleteUnused)
 // free any textures that have been buffered
 for (int i = 0; i < 2; i++) {
 	CTexture* texP = &textures [i][0];
-	for (int j = MaxTextures (i); j; j--, texP++) {
+	for (int j = 0, h = MaxTextures (i); j < h; j++, texP++) {
 		if (bDeleteUnused) {
-			if (texP->m_info.bCustom && !texP->m_info.bUsed)
-				texP->Release ();
+			if (!texP->m_info.bCustom || texP->m_info.bUsed)
+				continue;
 			}
 		else {
-			if (bDeleteAll || !texP->m_info.bCustom)
-				texP->Release ();
+			if (bDeleteAll || texP->m_info.bCustom)
+				continue;
 			}
+		texP->Release ();
+		texP->m_info.bFrame = (strstr (textureManager.names [i][j], "frame") != null);
 		}		
 	}
 for (CExtraTexture* p = extraTextures; p != null; ) {

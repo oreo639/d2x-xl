@@ -247,15 +247,7 @@ public:
 		m_info.bExtData = (dataP != null);
 		}
 
-	inline void Release (void) {
-		if (!m_info.bExtData) {
-			if (m_info.bmDataP)
-				delete m_info.bmDataP;
-			if (m_info.tgaDataP)
-				delete m_info.tgaDataP;
-			}
-		Clear ();
-		}
+	void Release (void);
 
 	~CTexture() { Release (); }
 
