@@ -266,10 +266,9 @@ void CMineView::DrawTextureMappedCubes (void)
 {
 CHECKMINE;
 
-	uint nSegment;
-	short	 iVertex;
-	int	 z, zMax;
-	CSegment *segP;
+	short		nSegment;
+	short		iVertex;
+	int		h, z, zMax;
 
 	// Get shading table data
 byte* light_index = 0;
@@ -277,17 +276,23 @@ if (m_viewMineFlags & eViewMineShading && (light_index = paletteManager.Current 
 	light_index += 256*5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()
-for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
+h = theMine->SegCount ();
+#pragma omp parallel
+{
+#	pragma omp for
+for (nSegment = 0; nSegment < h; nSegment++) {
+	CSegment* segP = theMine->Segments (nSegment);
 	for (iVertex = 0, zMax = LONG_MIN; iVertex < MAX_VERTICES_PER_SEGMENT; iVertex++)
 		if (zMax < (z = m_viewPoints [segP->m_info.verts [iVertex]].z))
 			zMax = z;
 	szo [nSegment].iSeg = nSegment;
 	szo [nSegment].zMax = zMax;
 	}
+} // omp parallel
 QSortCubes (0, theMine->SegCount () - 1);
 CalcSegDist ();
-for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++) {
-	segP = theMine->Segments (szo [nSegment].iSeg);
+for (nSegment = 0; nSegment < h; nSegment++) {
+	CSegment* segP = theMine->Segments (szo [nSegment].iSeg);
 	if (Visible (segP))
 	 	DrawCubeTextured (segP, light_index);
 	}
