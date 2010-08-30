@@ -11,6 +11,7 @@
 #include "matrix.h"
 #include "cfile.h"
 #include "customtextures.h"
+#include "texturemanager.h"
 #include "palette.h"
 #include "dle-xp.h"
 #include "robot.h"

@@ -35,10 +35,12 @@ public:
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
-	void Release (bool bDeleteModified = true);
+	void Release (bool bDeleteAll = true, bool bDeleteUnused = false);
 	bool HasCustomTextures (void);
 	int CountCustomTextures (void);
-	FILE* OpenPigFile (int nVersion);
+	void MarkUsedTextures (void);
+	void RemoveUnusedTextures (void);
+	CFileManager* OpenPigFile (int nVersion);
 
 	inline bool HaveInfo (int nVersion) { return info [nVersion] != null; }
 

@@ -470,7 +470,7 @@ if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) |
 memcpy (m_texP->m_info.bmDataP, m_bitmap, m_texP->m_info.size);
 if (m_texP->m_info.nFormat)
 	memcpy (m_texP->m_info.tgaDataP, m_tga, m_texP->m_info.size * sizeof (tRGBA));
-m_texP->m_info.bModified = m_bModified;
+m_texP->m_info.bCustom = m_bModified;
 CDialog::OnOK ();
 }
 
@@ -1061,7 +1061,7 @@ void CTextureEdit::OnDefault (void)
 if (QueryMsg("Are you sure you want to restore this texture\n"
 				 "back to its original texture\n") == IDYES) {
 	Backup ();
-	m_texP->m_info.bModified = m_bModified = FALSE;
+	m_texP->m_info.bCustom = m_bModified = FALSE;
 	m_texP->Load (m_iTexture);
 	memcpy (m_bitmap, m_texP->m_info.bmDataP, m_texP->m_info.size);
 	m_nWidth = m_texP->m_info.width;

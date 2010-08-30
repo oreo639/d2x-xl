@@ -7,6 +7,7 @@
 #include "global.h"
 #include "palette.h"
 #include "customtextures.h"
+#include "texturemanager.h"
 #include "dle-xp.h"
 
 CTextureManager textureManager;
@@ -23,14 +24,21 @@ LoadTextures (1);
 
 //------------------------------------------------------------------------
 
-void CTextureManager::Release (bool bDeleteModified) 
+void CTextureManager::Release (bool bDeleteAll, bool bDeleteUnused) 
 {
 // free any textures that have been buffered
 for (int i = 0; i < 2; i++) {
 	CTexture* texP = &textures [i][0];
-	for (int j = MaxTextures (i); j; j--, texP++)
-		if (bDeleteModified || !texP->m_info.bModified)
-			texP->Release ();
+	for (int j = MaxTextures (i); j; j--, texP++) {
+		if (bDeleteUnused) {
+			if (texP->m_info.bCustom && !texP->m_info.bUsed)
+				texP->Release ();
+			}
+		else {
+			if (bDeleteAll || !texP->m_info.bCustom)
+				texP->Release ();
+			}
+		}		
 	}
 for (CExtraTexture* p = extraTextures; p != null; ) {
 	extraTextures = p->m_next;
@@ -75,7 +83,7 @@ bool CTextureManager::HasCustomTextures (void)
 CTexture* texP = &textures [DLE.FileType ()][0];
 
 for (int i = MaxTextures (DLE.FileType ()); i; i--, texP++)
-	if (texP->m_info.bModified)
+	if (texP->m_info.bCustom)
 		return true;
 return false;
 }
@@ -88,7 +96,7 @@ int CTextureManager::CountCustomTextures (void)
 	CTexture*	texP = &textures [DLE.FileType ()][0];
 
 for (int i = MaxTextures (); i; i--, texP++)
-	if (texP->m_info.bModified)
+	if (texP->m_info.bCustom)
 		count++;
 return count;
 }
@@ -347,6 +355,38 @@ else {
 			}
 	}
 return 0;
+}
+
+//------------------------------------------------------------------------
+
+void CTextureManager::MarkUsedTextures (void)
+{
+	CSegment* segP = theMine->Segments (0);
+	int i, j, nVersion = DLE.IsD1File () ? 0 : 1;
+
+for (i = 0, j = MaxTextures (nVersion); i < j; i++)
+	textures [nVersion][i].m_info.bUsed = false;
+for (i = theMine->SegCount (); i; i--, segP++) {
+	CSide* sideP = segP->m_sides;
+	for (j = 6; j; j--, sideP++) {
+		if ((sideP->m_info.nChild >= 0) || (sideP->m_info.nWall != NO_WALL)) {
+			textures [nVersion][sideP->m_info.nBaseTex & 0x1FFF].m_info.bUsed = true;
+			if ((sideP->m_info.nOvlTex & 0x1FFF) != 0)
+				textures [nVersion][sideP->m_info.nOvlTex & 0x1FFF].m_info.bUsed = true;
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------
+// remove unused custom textures
+
+void CTextureManager::RemoveUnusedTextures (void)
+{
+if (HasCustomTextures ()) {
+	MarkUsedTextures ();
+	Release (false, true);
+	}
 }
 
 //------------------------------------------------------------------------

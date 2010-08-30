@@ -1030,6 +1030,7 @@ class CTextureTool : public CTexToolDlg
 		afx_msg void OnSelect2nd ();
 		afx_msg void OnPaste1st ();
 		afx_msg void OnPaste2nd ();
+		afx_msg void OnCleanup ();
 		afx_msg void OnAlignX ();
 		afx_msg void OnAlignY ();
 		afx_msg void OnAlignRot ();
@@ -1250,7 +1251,7 @@ class CPrefsDlg : public CToolDlg
 		afx_msg void OnLayout1 (void);
 		afx_msg void OnSetMineCenter (void);
 		void SetLayout (int nLayout);
-		void FreeTextureHandles (bool bDeleteModified = true);
+		void FreeTextureHandles (bool bDeleteAll = true);
 		void Refresh (void);
 		void WritePrivateProfileInt (LPSTR szKey, int nValue);
 		void WritePrivateProfileDouble (LPSTR szKey, double nValue);

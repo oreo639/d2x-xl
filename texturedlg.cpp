@@ -16,6 +16,7 @@
 #include "render.h"
 #include "texedit.h"
 #include "cfile.h"
+#include "texturemanager.h"
 
 #include <math.h>
 
@@ -45,6 +46,7 @@ BEGIN_MESSAGE_MAP(CTextureTool, CTexToolDlg)
 	ON_BN_CLICKED (IDC_TEXTURE_REPLACE, OnReplace)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE1ST, OnPaste1st)
 	ON_BN_CLICKED (IDC_TEXTURE_PASTE2ND, OnPaste2nd)
+	ON_BN_CLICKED (IDC_TEXTURE_CLEANUP, OnCleanup)
 	ON_BN_CLICKED (IDC_TEXALIGN_HALEFT, OnAlignLeft)
 	ON_BN_CLICKED (IDC_TEXALIGN_HARIGHT, OnAlignRight)
 	ON_BN_CLICKED (IDC_TEXALIGN_VAUP, OnAlignUp)
@@ -880,6 +882,14 @@ Refresh ();
 void CTextureTool::OnPaste2nd () 
 {
 m_bUse2nd = !m_bUse2nd;
+Refresh ();
+}
+
+                        /*--------------------------*/
+
+void CTextureTool::OnCleanup () 
+{
+textureManager.RemoveUnusedTextures ();
 Refresh ();
 }
 

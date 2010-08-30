@@ -11,6 +11,7 @@
 #include "global.h"
 #include "robot.h"
 #include "customtextures.h"
+#include "texturemanager.h"
 #include "robot.h"
 #include "dle-xp-res.h"
 #include "cfile.h"

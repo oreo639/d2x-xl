@@ -6,7 +6,7 @@
 #include "dle-xp-res.h"
 #include "global.h"
 #include "palette.h"
-#include "textures.h"
+#include "texturemanager.h"
 #include "dle-xp.h"
 
 //------------------------------------------------------------------------
@@ -247,7 +247,7 @@ m_info.bValid = 1;
 
 int CTexture::Load (short nTexture, int nVersion, CFileManager* fp) 
 {
-if (m_info.bModified)
+if (m_info.bCustom)
 	return 0;
 
 if (nVersion < 0)

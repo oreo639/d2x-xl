@@ -7,6 +7,7 @@
 #include "global.h"
 #include "palette.h"
 #include "customtextures.h"
+#include "texturemanager.h"
 #include "dle-xp.h"
 
 CExtraTexture*	extraTextures = null;
@@ -258,7 +259,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 			}
 		}
 	if (!bExtraTexture)
-		texP->m_info.bModified = TRUE;
+		texP->m_info.bCustom = TRUE;
 	}
 if (nUnknownTextures) {
 	sprintf_s (message, sizeof (message), " Pog manager: %d unknown textures found.", nUnknownTextures);
@@ -396,7 +397,7 @@ pigFileInfo.nId = 0x474f5044L; /* 'DPOG' */
 pigFileInfo.nVersion = 1;
 pigFileInfo.nTextures = 0;
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
-	if (texP->m_info.bModified)
+	if (texP->m_info.bCustom)
 		pigFileInfo.nTextures++;
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	pigFileInfo.nTextures++;
@@ -404,7 +405,7 @@ pigFileInfo.Write (fp);
 
 // write list of textures
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
-	if (texP->m_info.bModified)
+	if (texP->m_info.bCustom)
 		fp.Write (textureManager.index [1][i]);
 
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
@@ -413,7 +414,7 @@ for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 // write texture headers
 nExtra = 0;
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
-	if (texP->m_info.bModified)
+	if (texP->m_info.bCustom)
 		nOffset = WritePogTextureHeader (fp, texP, nExtra++, nOffset);
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	nOffset = WritePogTextureHeader (fp, extraTexP, nExtra++, nOffset);
@@ -422,7 +423,7 @@ sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", 
 DEBUGMSG (message);
 
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
-	if (texP->m_info.bModified)
+	if (texP->m_info.bCustom)
 		WritePogTexture (fp, texP);
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	WritePogTexture (fp, extraTexP);
