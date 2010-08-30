@@ -297,13 +297,13 @@ offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ());
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ());
 
 // set up logical palette
-oldPalette = pDC->SelectPalette(paletteManager.Render (), FALSE);
-pDC->RealizePalette();
 memset (tex.m_info.bmDataP, 0, sizeof (textureManager.bmBuf));
 if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
 	return;
 	}
+oldPalette = pDC->SelectPalette(paletteManager.Render (), FALSE);
+pDC->RealizePalette();
 hRgn.CreatePolygonRgn (m_apts, sizeof (m_apts) / sizeof (POINT), ALTERNATE);
 pDC->SelectObject (&hRgn);
 scale = min (tex.m_info.width, tex.m_info.height) / 64;

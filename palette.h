@@ -32,11 +32,11 @@ class CPaletteManager {
 		int LoadCustom (CFileManager& fp, long size);
 		int SaveCustom (CFileManager& fp);
 		void FreeCustom (void);
-		void FreeCurrent (void);
+		void FreeDefault (void);
 		void FreeRender (void);
 		inline void Release (void) {
 			FreeCustom ();
-			FreeCurrent ();
+			FreeDefault ();
 			FreeRender ();
 			}
 		inline void Reload (void) {
@@ -54,6 +54,9 @@ class CPaletteManager {
 		byte* Current (void);
 		BITMAPINFO* BMI (void) { return Current () ? (BITMAPINFO*) &m_bmi : null; }
 
+		CPaletteManager () : m_custom(null), m_default(null) {}
+		~CPaletteManager () { Release (); }
+
 	private:
 		const char* Resource (void);
 		byte FadeValue (byte c, int f);
@@ -63,8 +66,6 @@ class CPaletteManager {
 		void Encode (byte* palette);
 		void Decode (byte* palette);
 
-		CPaletteManager () : m_custom(null), m_default(null) {}
-		~CPaletteManager () { Release (); }
 };
 
 extern CPaletteManager paletteManager;

@@ -13,9 +13,6 @@
 #include "cfile.h"
 #include "palette.h"
 
-byte* m_custom = null;
-byte* m_current = null;
-
 HGLOBAL hPalette;
 
 CPaletteManager paletteManager;
@@ -77,11 +74,11 @@ if (m_custom) {
 
 //------------------------------------------------------------------------
 
-void CPaletteManager::FreeCurrent (void)
+void CPaletteManager::FreeDefault (void)
 {
-if (m_current) {
-	delete m_current;
-	m_current = null;
+if (m_default) {
+	delete m_default;
+	m_default = null;
 	}
 }
 
