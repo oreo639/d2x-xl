@@ -18,6 +18,8 @@ byte* m_current = null;
 
 HGLOBAL hPalette;
 
+CPaletteManager paletteManager;
+
 //------------------------------------------------------------------------
 
 int Luminance (int r, int g, int b)
@@ -99,7 +101,7 @@ if (h == 37 * 256)
 	return 1;
 
 if (h != 3 * 256) {
-	FreeCustomPalette ();
+	paletteManager.FreeCustom ();
 	return 0;
 	}
 byte *fadeP = m_custom + 3 * 256;
@@ -114,7 +116,7 @@ return 1;
 
 //------------------------------------------------------------------------
 
-int WriteCustomPalette (CFileManager& fp)
+int CPaletteManager::SaveCustom (CFileManager& fp)
 {
 return fp.Write (m_custom, 37 * 256, 1) == 1;
 }

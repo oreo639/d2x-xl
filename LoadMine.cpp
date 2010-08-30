@@ -49,8 +49,7 @@ m_bSplineActive = FALSE;
 //CLEAR (VertexColors ());
 
 // if no file passed, define a new level w/ 1 object
-FreeCustomPalette ();
-FreeCurrentPalette ();
+paletteManager.Release ();
 if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
@@ -99,7 +98,7 @@ short CMine::LoadPalette (void)
 {
 // set palette
 // make global palette
-byte *palette = PalettePtr ();
+byte *palette = paletteManager.Current ();
 if (!palette)
 	return 1;
 // redefine logical palette entries if memory for it is allocated

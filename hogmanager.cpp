@@ -397,7 +397,7 @@ if (pszExt) {
 	if ((size > 0) || (offset >= 0)) {
 		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 		int h = fSrc.Tell ();
-		LoadCustomPalette (fSrc, size);
+		paletteManager.LoadCustom (fSrc, size);
 		h = fSrc.Tell () - h;
 		}
 	}
@@ -1136,7 +1136,7 @@ switch (nType) {
 		i = theMine->WriteColorMap (fTmp);
 		break;
 	case 2:
-		i = WriteCustomPalette (fTmp);
+		i = paletteManager.SaveCustom (fTmp);
 		break;
 	case 3:
 		i = CreatePog (fTmp);
@@ -1168,7 +1168,7 @@ if (theMine->HasCustomLightMap ())
 	WriteCustomFile (fp, 0, szFolder, szFile);
 if (theMine->HasCustomLightColors ())
 	WriteCustomFile (fp, 1, szFolder, szFile);
-if (HasCustomPalette ())
+if (paletteManager.Custom () != null)
 	WriteCustomFile (fp, 2, szFolder, szFile);
 if (textureManager.HasCustomTextures () && (!bCreate || bExpertMode || QueryMsg (szPogQuery) == IDYES)) 
 	WriteCustomFile (fp, 3, szFolder, szFile);
@@ -1267,7 +1267,7 @@ if (HasCustomPalette ()) {
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pal");
 	fTmp.Open (szTmp,"wb");
 	if (fTmp) {
-		if (!WriteCustomPalette (fTmp)) {
+		if (!paletteManager.SaveCustom (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (szBase, sizeof (szBase), "%s.pal", szBaseName);
 			WriteSubFile (fp, szTmp, szBase);
