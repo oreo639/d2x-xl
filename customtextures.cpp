@@ -33,7 +33,7 @@ inline uint ClosestColor (unsigned char r, unsigned char g, unsigned char b, byt
 	uint	k, delta, closestDelta = 0x7fffffff, closestIndex = 0;
 
 for (k = 0; (k < 256) && closestDelta; k++) {
-	delta = ColorDelta (r, g, b, sysPal, k);
+	delta = ColorDelta (r, g, b, palette, k);
 	if (delta < closestDelta) {
 		closestIndex = k;
 		closestDelta = delta;
