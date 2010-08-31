@@ -30,10 +30,10 @@ public:
 	CExtraTexture*	m_extra;
 
 	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &m_textures [nVersion][nTexture]; }
+	inline CPigTexture& Info (int nVersion, int nTexture = 0) { return m_info [nVersion][m_index [nVersion][nTexture] - 1]; }
 
 	int MaxTextures (int nVersion = -1);
 	void LoadTextures (int nVersion = -1);
-	CPigTexture& LoadInfo (CFileManager& fp, int nVersion, short nTexture);
 	bool Check (int nTexture);
 	void Load (ushort nBaseTex, ushort nOvlTex);
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
@@ -63,6 +63,7 @@ public:
 private:
 	int LoadIndex (int nVersion);
 	void LoadNames (int nVersion);
+	void LoadInfo (int nVersion);
 	void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
 	void Create (int nVersion);
 	void Destroy (int nVersion);

@@ -191,13 +191,13 @@ return false;
 
 void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
 {
-if (Check (nBaseTex)) {
-   m_textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
-   if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
-       Check ((ushort) (nOvlTex & 0x1FFF));
-       m_textures [(int)DLE.FileType ()] [(ushort) (nOvlTex & 0x1FFF)].Load ((ushort) (nOvlTex & 0x1FFF));
-		}
-   }
+//if (Check (nBaseTex)) {
+//   m_textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
+//   if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
+//       Check ((ushort) (nOvlTex & 0x1FFF));
+//       m_textures [(int)DLE.FileType ()] [(ushort) (nOvlTex & 0x1FFF)].Load ((ushort) (nOvlTex & 0x1FFF));
+//		}
+//   }
 }
 
 //------------------------------------------------------------------------------
@@ -243,18 +243,18 @@ return 0;
 
 //------------------------------------------------------------------------------
 
-CPigTexture& CTextureManager::LoadInfo (CFileManager& fp, int nVersion, short nTexture)
+void CTextureManager::LoadInfo (int nVersion)
 {
-if (m_info [nVersion] == null) {
-	m_header [nVersion].Read (fp);
-	m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
-	for (int i = 0; i < m_header [nVersion].nTextures; i++)
-		{
-		m_info [nVersion][i].Read (fp, nVersion);
-		m_nOffsets [nVersion] = fp.Tell ();
-		}
-	}
-return m_info [nVersion][m_index [nVersion][nTexture] - 1];
+if (m_info [nVersion] != null)
+	delete m_info [nVersion];
+CFileManager* fp = OpenPigFile (nVersion);
+m_header [nVersion].Read (*fp);
+m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
+for (int i = 0; i < m_header [nVersion].nTextures; i++)
+	m_info [nVersion][i].Read (*fp, nVersion);
+m_nOffsets [nVersion] = fp->Tell ();
+fp->Close ();
+delete fp;
 }
 
 //------------------------------------------------------------------------------
@@ -266,14 +266,14 @@ if (nVersion < 0) {
 	if (strcmp (m_pigFiles [nVersion], descentPath [nVersion]) == 0)
 		return;
 	strcpy_s (m_pigFiles [nVersion], sizeof (m_pigFiles [nVersion]), descentPath [nVersion]);
-	delete m_info [nVersion];
-	m_info [nVersion] = null;
+	LoadInfo (nVersion);
 	}
 Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
-	m_textures [nVersion][i].Load (i, nVersion, fp);
+	m_textures [nVersion][i].Load (*fp, i, nVersion);
 fp->Close ();
+delete fp;
 }
 
 //------------------------------------------------------------------------------
@@ -309,7 +309,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	short			m_nTextures [2], mode, w, h;
 	int			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
-	int			rc; // return code
+	//int			rc; // return code
 	CTexture*	texP [2];
 	byte			*bmBufP = destTexP->m_info.bmDataP;
 	byte			c;
@@ -326,9 +326,9 @@ for (i = 0; i < 2; i++) {
 		m_nTextures [i] = 0;
 	// buffer m_textures if not already buffered
 	texP [i] = &m_textures [fileType][m_nTextures [i]];
-	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
-		if (rc = texP [i]->Load (m_nTextures [i]))
-			return rc;
+	//if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
+	//	if (rc = texP [i]->Load (m_nTextures [i]))
+	//		return rc;
 	}
 	
 	// Define bmBufP based on texture numbers and rotation

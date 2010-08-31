@@ -221,7 +221,7 @@ m_info.bValid = 1;
 
 //------------------------------------------------------------------------
 
-int CTexture::Load (short nTexture, int nVersion, CFileManager* fp) 
+int CTexture::Load (CFileManager& fp, short nTexture, int nVersion) 
 {
 if (m_info.bCustom)
 	return 0;
@@ -229,27 +229,16 @@ if (m_info.bCustom)
 if (nVersion < 0)
 	nVersion = DLE.IsD1File () ? 0 : 1;
 
-bool	bLocalFile = (fp == null);
-	
-if (!(fp || textureManager.HaveInfo (nVersion)))
-	fp = textureManager.OpenPigFile (nVersion);
-
-CPigTexture& info = textureManager.LoadInfo (*fp, nVersion, nTexture);
+CPigTexture& info = textureManager.Info (nVersion, nTexture);
 int nSize = info.BufSize ();
 if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
-if (!fp)
-	fp = textureManager.OpenPigFile (nVersion);
 if (!Allocate (nSize, nTexture)) {
-	if (bLocalFile)
-		fp->Close ();	
 	return 1;
 	}
-fp->Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
-Load (*fp, info);
+fp.Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
+Load (fp, info);
 m_info.bFrame = (strstr (textureManager.m_names [nVersion][nTexture], "frame") != null);
-if (bLocalFile)
-	fp->Close ();
 return 0;
 }
 
@@ -257,11 +246,11 @@ return 0;
 
 double CTexture::Scale (short nTexture)
 {
-if (!m_info.width)
-	if (nTexture < 0)
-		return 1.0;
-	else
-		Load (nTexture);
+//if (!m_info.width)
+//	if (nTexture < 0)
+//		return 1.0;
+//	else
+//		Load (nTexture);
 return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 }
 

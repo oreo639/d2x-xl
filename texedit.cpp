@@ -1063,7 +1063,7 @@ if (QueryMsg("Are you sure you want to restore this texture\n"
 				 "back to its original texture\n") == IDYES) {
 	Backup ();
 	m_texP->m_info.bCustom = m_bModified = FALSE;
-	m_texP->Load (m_iTexture);
+	//m_texP->Load (m_iTexture);
 	memcpy (m_bitmap, m_texP->m_info.bmDataP, m_texP->m_info.size);
 	m_nWidth = m_texP->m_info.width;
 	m_nHeight = m_texP->m_info.height;

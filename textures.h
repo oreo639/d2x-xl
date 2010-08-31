@@ -252,7 +252,7 @@ public:
 	~CTexture() { Release (); }
 
 	bool Allocate (int nSize, int nTexture);
-	int Load (short nTexture, int nVersion = -1, CFileManager* fp = null);
+	int Load (CFileManager& fp, short nTexture, int nVersion = -1);
 	void Load (CFileManager& fp, CPigTexture& info);
 	double Scale (short index = -1);
 

@@ -184,7 +184,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 	if (fabs ((double) (x0 - x1)) >= 1.0) {
 		double u0, u1, v0, v1, w0, w1, h, scale, x0d, x1d;
 		uint u, v, du, dv, m, vd, vm, dx;
-		deltaLight = (deltaLight - scanLight) / (x1-x0);
+		deltaLight = (deltaLight - scanLight) / (x1 - x0);
 		
 		// loop for every 32 bytes
 		int end_x = x1;
@@ -201,7 +201,7 @@ for (int y = minpt.y; y < maxpt.y; y++) {
 			x1d = (double) x1;
 			w0 = (B.rVec.v.z * x0d + h) / scale; // scale factor (64 pixels = 1.0 unit)
 			w1 = (B.rVec.v.z * x1d + h) / scale;
-			if (fabs(w0)>0.0001 && fabs(w1)>0.0001) {
+			if ((fabs (w0) > 0.0001) && (fabs (w1) > 0.0001)) {
 				h = B.uVec.v.x * (double) y + B.fVec.v.x;
 				u0 = (B.rVec.v.x * x0d + h) / w0;
 				u1 = (B.rVec.v.x * x1d + h) / w1;
