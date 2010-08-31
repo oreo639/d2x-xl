@@ -311,7 +311,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	tFrac			scale, scale2;
 	//int			rc; // return code
 	CTexture*	texP [2];
-	byte			*bmBufP = destTexP->m_info.bmDataP;
+	byte			*bmBufP = destTexP->m_info.bmData;
 	byte			c;
 	int			fileType = DLE.FileType ();
 
@@ -326,7 +326,7 @@ for (i = 0; i < 2; i++) {
 		m_nTextures [i] = 0;
 	// buffer m_textures if not already buffered
 	texP [i] = &m_textures [fileType][m_nTextures [i]];
-	//if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
+	//if (!(texP [i]->m_info.bmData && texP [i]->m_info.bValid))
 	//	if (rc = texP [i]->Load (m_nTextures [i]))
 	//		return rc;
 	}
@@ -336,7 +336,7 @@ destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
-ptr = texP [0]->m_info.bmDataP;
+ptr = texP [0]->m_info.bmData;
 if (ptr) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
@@ -363,7 +363,7 @@ if (ptr) {
 
 if (m_nTextures [1] == 0)
 	return 0;
-if (!(ptr = texP [1]->m_info.bmDataP))
+if (!(ptr = texP [1]->m_info.bmData))
 	return 0;
 if (texP [0]->m_info.width == texP [1]->m_info.width)
 	scale.c = scale.d = 1;

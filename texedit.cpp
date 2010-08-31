@@ -368,7 +368,7 @@ m_iTexture = theMine->CurrSide ()->m_info.nBaseTex;
 if (m_iTexture >= MAX_D2_TEXTURES)
 	m_iTexture = 0;
 m_texP = textureManager.Textures (DLE.FileType (), m_iTexture);
-if (!(m_texP->m_info.bmDataP && m_texP->m_info.bValid)) {
+if (!(m_texP->m_info.bmData && m_texP->m_info.bValid)) {
 	DEBUGMSG (" Texture tool: Invalid texture");
 	EndDialog (IDCANCEL);
 	}
@@ -380,13 +380,13 @@ if (!m_bitmap) {
 	DEBUGMSG (" Texture tool: Not enough memory for texture editing");
 	EndDialog (IDCANCEL);
 	}
-memcpy (m_bitmap, m_texP->m_info.bmDataP, m_nSize);
+memcpy (m_bitmap, m_texP->m_info.bmData, m_nSize);
 m_tga = new tRGBA [2048 * 2048];
 if (!m_tga) {
 	DEBUGMSG (" Texture tool: Not enough memory for TGA texture editing");
 	}
 else if (m_nFormat = m_texP->m_info.nFormat)
-	memcpy (m_tga, m_texP->m_info.tgaDataP, m_nSize * sizeof (tRGBA));
+	memcpy (m_tga, m_texP->m_info.tgaData, m_nSize * sizeof (tRGBA));
 m_backupBM = new byte [2048 * 2048];
 m_backupTGA = new tRGBA [2048 * 2048];
 if (!(m_backupBM && m_backupTGA))
@@ -458,19 +458,19 @@ if ((m_texP->m_info.width != m_nWidth) || (m_texP->m_info.height != m_nHeight) |
 		DEBUGMSG (" Texture tool: Not enough memory for the new texture");
 		EndDialog (IDCANCEL);
 		}
-	delete m_texP->m_info.bmDataP;
-	if (m_texP->m_info.tgaDataP)
-		delete m_texP->m_info.tgaDataP;
-	m_texP->m_info.tgaDataP = pDataTGA;
-	m_texP->m_info.bmDataP = pDataBM;
+	delete m_texP->m_info.bmData;
+	if (m_texP->m_info.tgaData)
+		delete m_texP->m_info.tgaData;
+	m_texP->m_info.tgaData = pDataTGA;
+	m_texP->m_info.bmData = pDataBM;
 	m_texP->m_info.width = m_nWidth;
 	m_texP->m_info.height = m_nHeight;
 	m_texP->m_info.size = m_nSize;
 	m_texP->m_info.nFormat = (unsigned char) m_nFormat;
 	}
-memcpy (m_texP->m_info.bmDataP, m_bitmap, m_texP->m_info.size);
+memcpy (m_texP->m_info.bmData, m_bitmap, m_texP->m_info.size);
 if (m_texP->m_info.nFormat)
-	memcpy (m_texP->m_info.tgaDataP, m_tga, m_texP->m_info.size * sizeof (tRGBA));
+	memcpy (m_texP->m_info.tgaData, m_tga, m_texP->m_info.size * sizeof (tRGBA));
 m_texP->m_info.bCustom = m_bModified;
 CDialog::OnOK ();
 }
@@ -1064,7 +1064,7 @@ if (QueryMsg("Are you sure you want to restore this texture\n"
 	Backup ();
 	m_texP->m_info.bCustom = m_bModified = FALSE;
 	//m_texP->Load (m_iTexture);
-	memcpy (m_bitmap, m_texP->m_info.bmDataP, m_texP->m_info.size);
+	memcpy (m_bitmap, m_texP->m_info.bmData, m_texP->m_info.size);
 	m_nWidth = m_texP->m_info.width;
 	m_nHeight = m_texP->m_info.height;
 	m_nSize = m_texP->m_info.size;

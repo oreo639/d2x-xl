@@ -230,8 +230,8 @@ typedef struct tBGR {
 //------------------------------------------------------------------------
 
 typedef struct tTexture {
-	byte*		bmDataP;
-	tRGBA*	tgaDataP;
+	byte*		bmData;
+	tRGBA*	tgaData;
 	uint		width, height, size;
 	bool		bCustom, bExtData, bFrame, bUsed, bValid;
 	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)
@@ -243,7 +243,7 @@ public:
 
 	CTexture (byte *dataP = null) {
 		Clear ();
-		m_info.bmDataP = dataP;
+		m_info.bmData = dataP;
 		m_info.bExtData = (dataP != null);
 		}
 

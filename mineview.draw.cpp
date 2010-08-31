@@ -669,7 +669,7 @@ y = pt0.y;
 int xStep = 0, yStep = 0;
 int dd = (dx >= dy) ? dx: dy;
 for (i = dd + 1; i; i--) {
-	pTx->m_info.bmDataP [y*pTx->m_info.width+x] = color;
+	pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
 	yStep += dy;
 	if (yStep >= dx) {
 		y += yInc;
@@ -684,7 +684,7 @@ for (i = dd + 1; i; i--) {
 #else //0; faster
 if (dx >= dy) {
 	for (i = dx + 1; i; i--, x += xInc) {
-		pTx->m_info.bmDataP [y*pTx->m_info.width+x] = color;
+		pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
 		nStep += dy;
 		if (nStep >= dx) {
 			y += yInc;
@@ -694,7 +694,7 @@ if (dx >= dy) {
 	}
 else {
 	for (i = dy + 1; i; i--, y += yInc) {
-		pTx->m_info.bmDataP [y*pTx->m_info.width+x] = color;
+		pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
 		nStep += dx;
 		if (nStep >= dy) {
 			x += xInc;
@@ -708,10 +708,10 @@ if (dx == 0) {
 	x = pt0.x;
 	if (dy>0)
 		for (y=pt0.y;y<=pt1.y;y++)
-			pTx->m_info.bmDataP [y*pTx->m_info.width+x] = color;
+			pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
 	else
 		for (y=pt0.y;y>=pt1.y;y--)
-			pTx->m_info.bmDataP [y*pTx->m_info.width+x] = color;
+			pTx->m_info.bmData [y*pTx->m_info.width+x] = color;
 	return;
 	}
 
@@ -837,7 +837,7 @@ CHECKMINE;
 					short texture2 = segP->m_sides [nSide].m_info.nOvlTex;
 					if (!textureManager.Define (texture1, texture2, &tex, 0, 0)) {
 						DrawAnimDirArrows (texture1, &tex);
-						TextureMap (segP, nSide, tex.m_info.bmDataP, tex.m_info.width, tex.m_info.height, 
+						TextureMap (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
 									   light_index, pm_viewPointsMem, m_viewPoints, width, height, rowOffset);
 					}
 				}

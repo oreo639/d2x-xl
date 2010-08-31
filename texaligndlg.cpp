@@ -295,7 +295,7 @@ if (!m_bShowTexture)
 offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x - 128;
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
-memset (tex.m_info.bmDataP, 0, sizeof (textureManager.m_bmBuf));
+memset (tex.m_info.bmData, 0, sizeof (textureManager.m_bmBuf));
 if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
 	return;
@@ -309,7 +309,7 @@ for (x = m_minPt.x; x < m_maxPt.x; x++) {
 	for (y = m_minPt.y; y < m_maxPt.y; y++) {
 		i = ((int) ((((x - offset.x) * 2) / m_zoom)) & 63) * scale;
 		j = ((int) ((((y - offset.y) * 2) / m_zoom)) & 63) * scale;
-		pDC->SetPixel (x, y, h = PALETTEINDEX (tex.m_info.bmDataP [(tex.m_info.width - j) * tex.m_info.width + i]));
+		pDC->SetPixel (x, y, h = PALETTEINDEX (tex.m_info.bmData [(tex.m_info.width - j) * tex.m_info.width + i]));
 		}
 	}
 DeleteObject(hRgn);

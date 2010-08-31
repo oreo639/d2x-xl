@@ -147,11 +147,11 @@ return bShowTexture;
 
 bool CTexture::Allocate (int nSize, int nTexture)
 {
-if (m_info.bmDataP && ((m_info.width * m_info.height != nSize)))
+if (m_info.bmData && ((m_info.width * m_info.height != nSize)))
 	Release ();
-if (m_info.bmDataP == null)
-	m_info.bmDataP = new byte [nSize];
-return (m_info.bmDataP != null);
+if (m_info.bmData == null)
+	m_info.bmData = new byte [nSize];
+return (m_info.bmData != null);
 }
 
 //------------------------------------------------------------------------
@@ -159,13 +159,13 @@ return (m_info.bmDataP != null);
 void CTexture::Release (void) 
 {
 if (!m_info.bExtData) {
-	if (m_info.bmDataP) {
-		delete m_info.bmDataP;
-		m_info.bmDataP = null;
+	if (m_info.bmData) {
+		delete m_info.bmData;
+		m_info.bmData = null;
 		}
-	if (m_info.tgaDataP) {
-		delete m_info.tgaDataP;
-		m_info.tgaDataP = null;
+	if (m_info.tgaData) {
+		delete m_info.tgaData;
+		m_info.tgaData = null;
 		}
 	}
 bool bFrame = m_info.bFrame;
@@ -196,13 +196,13 @@ if (info.flags & 0x08) {
 				runValue = *rowPtr++;
 				for (int j = 0; j < runLength; j++) {
 					if (x < info.width) {
-						m_info.bmDataP [y * info.width + x] = runValue;
+						m_info.bmData [y * info.width + x] = runValue;
 						x++;
 						}
 					}
 				}
 			else {
-				m_info.bmDataP [y * info.width + x] = byteVal;
+				m_info.bmData [y * info.width + x] = byteVal;
 				x++;
 				}
 			}
@@ -210,7 +210,7 @@ if (info.flags & 0x08) {
 	}
 else {
 	for (int y = info.height - 1; y >= 0; y--) {
-		fp.Read (m_info.bmDataP + y * info.width, info.width, 1);
+		fp.Read (m_info.bmData + y * info.width, info.width, 1);
 		}
 	}
 m_info.width = info.width;
@@ -231,7 +231,7 @@ if (nVersion < 0)
 
 CPigTexture& info = textureManager.Info (nVersion, nTexture);
 int nSize = info.BufSize ();
-if (m_info.bmDataP && ((m_info.width * m_info.height == nSize)))
+if (m_info.bmData && ((m_info.width * m_info.height == nSize)))
 	return 0; // already loaded
 if (!Allocate (nSize, nTexture)) {
 	return 1;

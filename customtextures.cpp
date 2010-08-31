@@ -204,10 +204,10 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		texP->Release ();
 		}
 // allocate memory for texture if not already
-	if (!(texP->m_info.bmDataP = new byte [nSize]))
+	if (!(texP->m_info.bmData = new byte [nSize]))
 		continue;
 	if (pigTexInfo.flags & 0x80) {
-		if (!(texP->m_info.tgaDataP = new tRGBA [nSize])) {
+		if (!(texP->m_info.tgaData = new tRGBA [nSize])) {
 			texP->Release ();
 			continue;
 			}
@@ -222,16 +222,16 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	// read texture into memory (assume non-compressed)
 	fp.Seek (bmpOffset + pigTexInfo.offset, SEEK_SET);
 	if (texP->m_info.nFormat) {
-		fp.Read (texP->m_info.tgaDataP, sizeof (tRGBA), texP->m_info.size);
-		texP->m_info.bValid = TGA2Bitmap (texP->m_info.tgaDataP, texP->m_info.bmDataP, (int) pigTexInfo.width, (int) pigTexInfo.height);
+		fp.Read (texP->m_info.tgaData, sizeof (tRGBA), texP->m_info.size);
+		texP->m_info.bValid = TGA2Bitmap (texP->m_info.tgaData, texP->m_info.bmData, (int) pigTexInfo.width, (int) pigTexInfo.height);
 		}
 	else {
 		if (pigTexInfo.flags & BM_FLAG_RLE) {
-			fp.Read (texP->m_info.bmDataP, nSize, 1);
-			RLEExpand (pigTexInfo, texP->m_info.bmDataP);
+			fp.Read (texP->m_info.bmData, nSize, 1);
+			RLEExpand (pigTexInfo, texP->m_info.bmData);
 			}
 		else {
-			byte *bufP = texP->m_info.bmDataP + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
+			byte *bufP = texP->m_info.bmData + pigTexInfo.width * (pigTexInfo.height - 1); // point to last row of bitmap
 			for (row = 0; row < pigTexInfo.height; row++) {
 				fp.Read (bufP, pigTexInfo.width, 1);
 				bufP -= pigTexInfo.width;
@@ -287,7 +287,7 @@ nOffset += texP->m_info.nFormat ? texP->m_info.size * 4 : texP->m_info.size;
 
 // check for transparency and super transparency
 if (!texP->m_info.nFormat)
-	if (pSrc = (byte *) texP->m_info.bmDataP) {
+	if (pSrc = (byte *) texP->m_info.bmData) {
 		for (uint j = 0; j < texP->m_info.size; j++, pSrc++) {
 			if (*pSrc == 255) 
 				pigTexInfo.flags |= BM_FLAG_TRANSPARENT;
@@ -303,7 +303,7 @@ return nOffset;
 
 bool WritePogTexture (CFileManager& fp, CTexture *texP)
 {
-	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.tgaDataP : texP->m_info.bmDataP;
+	byte	*bufP = texP->m_info.nFormat ? (byte*) texP->m_info.tgaData : texP->m_info.bmData;
 
 if (texP->m_info.nFormat) {
 	fp.Write (bufP, sizeof (tRGBA), texP->m_info.size);

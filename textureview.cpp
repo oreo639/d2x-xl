@@ -472,7 +472,7 @@ for (int i = 0; i < m_nTextures [1]; i++) {
 		bmi->bmiHeader.biHeight = tex.m_info.width;
 		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
 							m_iconSize.cx, m_iconSize.cy, 0, 0, tex.m_info.width, tex.m_info.width, 
-							(void *)tex.m_info.bmDataP, bmi, DIB_RGB_COLORS, SRCCOPY);
+							(void *)tex.m_info.bmData, bmi, DIB_RGB_COLORS, SRCCOPY);
 		}
 // pick color for box drawn around texture
 	if (m_mapViewToTex [i] == nBaseTex)
