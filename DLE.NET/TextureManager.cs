@@ -304,24 +304,25 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------
 
-        void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused) 
+        void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused)
         {
-        // free any m_textures that have been buffered
-        if (m_textures [nVersion] != null) 
-        {
-            foreach (Texture tex in m_textures [nVersion])
+            // free any m_textures that have been buffered
+            if (m_textures [nVersion] != null)
             {
-		        if (bDeleteUnused) 
+                foreach (Texture tex in m_textures [nVersion])
                 {
-			        if (tex.bCustom && !tex.bUsed)
-				        tex.Release ();
-		        }
-		        else 
-                {
-			        if (bDeleteAll || tex.bCustom)
-				        tex.Release ();
-		        }		
-	        }
+                    if (bDeleteUnused)
+                    {
+                        if (tex.bCustom && !tex.bUsed)
+                            tex.Release ();
+                    }
+                    else
+                    {
+                        if (bDeleteAll || tex.bCustom)
+                            tex.Release ();
+                    }
+                }
+            }
         }
 
         //------------------------------------------------------------------------
