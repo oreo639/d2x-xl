@@ -289,13 +289,13 @@ if (!m_bShowTexture)
 	int			h, i, j, x, y;
 	POINT			offset;
 	CSide*		sideP = theMine->CurrSide ();
-	CTexture		tex (textureManager.bmBuf);
+	CTexture		tex (textureManager.m_bmBuf);
 	ushort		scale;
 
 offset.x = (int) (m_zoom * (double) HScrollAlign ()->GetScrollPos ()) + m_centerPt.x - 128;
 offset.y = (int) (m_zoom * (double) VScrollAlign ()->GetScrollPos ()) + m_centerPt.y - 128;
 
-memset (tex.m_info.bmDataP, 0, sizeof (textureManager.bmBuf));
+memset (tex.m_info.bmDataP, 0, sizeof (textureManager.m_bmBuf));
 if (textureManager.Define (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, &tex, 0, 0)) {
 	DEBUGMSG (" Texture tool: Texture not found (textureManager.Define failed)");
 	return;

@@ -85,7 +85,7 @@ if (bShowTexture) {
 			}
 		}
 	if (nOffset [bDescent1] > 0x10000L) {  // pig file type is v1.4a or descent 2 type
-		CTexture	tex (textureManager.bmBuf);
+		CTexture	tex (textureManager.m_bmBuf);
 		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
 		CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
@@ -98,14 +98,14 @@ if (bShowTexture) {
 			bmi->bmiHeader.biWidth = 
 			bmi->bmiHeader.biHeight = tex.m_info.width;
 			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
-					        	(void *) textureManager.bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
+					        	(void *) textureManager.m_bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
 			}
 		else {
 			double scale = tex.Scale ();
 			uint x, y;
 			for (x = 0; x < tex.m_info.width; x = (int) (x + scale))
 				for (y = 0; y < tex.m_info.width; y = (int) (y + scale))
-					pDC->SetPixel ((short) (x / scale), (short) (y / scale), PALETTEINDEX (textureManager.bmBuf [y * tex.m_info.width + x]));
+					pDC->SetPixel ((short) (x / scale), (short) (y / scale), PALETTEINDEX (textureManager.m_bmBuf [y * tex.m_info.width + x]));
 			}
 		pDC->SelectPalette (pOldPalette, FALSE);
 		}
@@ -245,7 +245,7 @@ if (!Allocate (nSize, nTexture)) {
 		fp->Close ();	
 	return 1;
 	}
-fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
+fp->Seek (textureManager.m_nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (*fp, info);
 m_info.bFrame = (strstr (textureManager.m_names [nVersion][nTexture], "frame") != null);
 if (bLocalFile)

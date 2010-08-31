@@ -808,7 +808,7 @@ CHECKMINE;
 		IN_RANGE(m_viewPoints [segP->m_info.verts [7]].y,y_max)   )
 	{
 
-		CTexture tex (textureManager.bmBuf);
+		CTexture tex (textureManager.m_bmBuf);
 		byte *pm_viewPointsMem = (byte *)m_pvBits;
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
