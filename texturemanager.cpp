@@ -305,8 +305,8 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 		int	c, d;
 	} tFrac;
 
-	byte			*ptr;
-	short			m_nTextures [2], mode, w, h;
+	byte			*src;
+	short			nTextures [2], mode, w, h;
 	int			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
 	//int			rc; // return code
@@ -315,19 +315,19 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	byte			c;
 	int			fileType = DLE.FileType ();
 
-m_nTextures [0] = nBaseTex;
-m_nTextures [1] = nOvlTex & 0x3fff;
+nTextures [0] = nBaseTex;
+nTextures [1] = nOvlTex & 0x3fff;
 mode = nOvlTex & 0xC000;
 for (i = 0; i < 2; i++) {
 #if 0	
 	ASSERT (m_textures [i] < MAX_TEXTURES);
 #endif
-	if ((m_nTextures [i] < 0) || (m_nTextures [i] >= MAX_TEXTURES))
-		m_nTextures [i] = 0;
+	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
+		nTextures [i] = 0;
 	// buffer m_textures if not already buffered
-	texP [i] = &m_textures [fileType][m_nTextures [i]];
+	texP [i] = &m_textures [fileType][nTextures [i]];
 	//if (!(texP [i]->m_info.bmData && texP [i]->m_info.bValid))
-	//	if (rc = texP [i]->Load (m_nTextures [i]))
+	//	if (rc = texP [i]->Load (nTextures [i]))
 	//		return rc;
 	}
 	
@@ -336,34 +336,32 @@ destTexP->m_info.width = texP [0]->m_info.width;
 destTexP->m_info.height = texP [0]->m_info.height;
 destTexP->m_info.size = texP [0]->m_info.size;
 destTexP->m_info.bValid = 1;
-ptr = texP [0]->m_info.bmData;
-if (ptr) {
+src = texP [0]->m_info.bmData;
+if (src) {
 	// if not rotated, then copy directly
 	if (x0 == 0 && y0 == 0) 
-		memcpy (bmBufP, ptr, texP [0]->m_info.size);
+		memcpy (bmBufP, src, texP [0]->m_info.size);
 	else {
 		// otherwise, copy bit by bit
 		w = texP [0]->m_info.width;
-#if 1
 		int	l1 = y0 * w + x0;
 		int	l2 = texP [0]->m_info.size - l1;
-		memcpy (bmBufP, ptr + l1, l2);
-		memcpy (bmBufP + l2, ptr, l1);
-#else
+		memcpy (bmBufP, src + l1, l2);
+		memcpy (bmBufP + l2, src, l1);
 		byte		*dest = bmBufP;
 		h = w;//texP [0]->m_info.height;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++)
-				*dest++ = ptr [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
-#endif
+				*dest++ = src [(((y - y0 + h) % h) * w) + ((x - x0 + w) % w)];
 		}
 	}
 
 // Overlay texture 2 if present
 
-if (m_nTextures [1] == 0)
+if (nTextures [1] == 0)
 	return 0;
-if (!(ptr = texP [1]->m_info.bmData))
+src = texP [1]->m_info.bmData;
+if (src == null)
 	return 0;
 if (texP [0]->m_info.width == texP [1]->m_info.width)
 	scale.c = scale.d = 1;
@@ -371,7 +369,7 @@ else if (texP [0]->m_info.width < texP [1]->m_info.width) {
 	scale.c = texP [1]->m_info.width / texP [0]->m_info.width;
 	scale.d = 1;
 	}
-else if (texP [0]->m_info.width > texP [1]->m_info.width) {
+else {
 	scale.d = texP [0]->m_info.width / texP [1]->m_info.width;
 	scale.c = 1;
 	}
@@ -387,7 +385,7 @@ if (!(x0 || y0)) {
 		dest = bmBufP;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++, dest++) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					*dest = c;
 				}
@@ -396,7 +394,7 @@ if (!(x0 || y0)) {
 		dest = bmBufP + h - 1;
 		for (y = 0; y < h; y++, dest--)
 			for (x = 0, dest2 = dest; x < w; x++, dest2 += w) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					*dest2 = c;
 				}
@@ -405,7 +403,7 @@ if (!(x0 || y0)) {
 		dest = bmBufP + s - 1;
 		for (y = 0; y < h; y++)
 			for (x = 0; x < w; x++, dest--) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					*dest = c;
 				}
@@ -414,7 +412,7 @@ if (!(x0 || y0)) {
 		dest = bmBufP + (h - 1) * w;
 		for (y = 0; y < h; y++, dest++)
 			for (x = 0, dest2 = dest; x < w; x++, dest2 -= w) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					*dest2 = c;
 				}
@@ -425,7 +423,7 @@ else {
 		for (y = 0; y < h; y++) {
 			y1 = ((y + y0) % h) * w;
 			for (x = 0; x < w; x++) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					bmBufP [y1 + (x + x0) % w] = c;
 				}
@@ -434,7 +432,7 @@ else {
 	else if (mode == (short) 0x4000) {
 		for (y = h - 1; y >= 0; y--)
 			for (x = 0; x < w; x++) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
 				}
@@ -443,7 +441,7 @@ else {
 		for (y = h - 1; y >= 0; y--) {
 			y1 = ((y + y0) % h) * w;
 			for (x = w - 1; x >= 0; x--) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					bmBufP [y1 + (x + x0) % w] = c;
 				}
@@ -452,7 +450,7 @@ else {
 	else if (mode == (short) 0xC000) {
 		for (y = 0; y < h; y++)
 			for (x = w - 1; x >= 0; x--) {
-				c = ptr [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
+				c = src [(y * scale.c / scale.d) * (w * scale.c / scale.d) + x * scale.c / scale.d];
 				if (c != 255)
 					bmBufP [((x + y0) % h) * w + (y + x0) % w] = c;
 				}
