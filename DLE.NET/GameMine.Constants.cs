@@ -143,22 +143,22 @@
         public const int MAX_BRIGHTNESS = 0x20000;
 
         // pseudo constants
-        public ushort MAX_SEGMENTS () { return (ushort) (DLE.IsD1File () ? MAX_SEGMENTS1 : DLE.IsStdLevel () ? MAX_SEGMENTS2 : SEGMENT_LIMIT); }
-        public ushort MAX_VERTICES () { return (ushort) (DLE.IsD1File () ? MAX_VERTICES1 : DLE.IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3); }
-        public ushort MAX_OBJECTS () { return (ushort) (DLE.IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2); }
-        public ushort MAX_WALLS () { return (ushort) (DLE.IsD1File () ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : WALL_LIMIT); }
+        public ushort MAX_SEGMENTS () { return (ushort) (DLE.IsD1File ? MAX_SEGMENTS1 : DLE.IsStdLevel ? MAX_SEGMENTS2 : SEGMENT_LIMIT); }
+        public ushort MAX_VERTICES () { return (ushort) (DLE.IsD1File ? MAX_VERTICES1 : DLE.IsStdLevel ? MAX_VERTICES2 : MAX_VERTICES3); }
+        public ushort MAX_OBJECTS () { return (ushort) (DLE.IsStdLevel ? MAX_OBJECTS1 : MAX_OBJECTS2); }
+        public ushort MAX_WALLS () { return (ushort) (DLE.IsD1File ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : WALL_LIMIT); }
         public ushort NO_WALL () { return (ushort) (MAX_WALLS ()); }
-        public ushort MAX_TRIGGERS () { return (ushort) ((DLE.IsD1File () || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2); }
-        public ushort MAX_PLAYERS () { return (ushort) (DLE.IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X); }
-        public ushort MAX_NUM_MATCENS () { return (ushort) ((DLE.IsD1File () || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2); }
-        public ushort MAX_NUM_FUELCENS () { return (ushort) ((DLE.IsD1File () || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2); }
-        public ushort MAX_NUM_REPAIRCENS () { return (ushort) ((DLE.IsD1File () || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2); }
-        public ushort PLAYER_CLIP_NUMBER () { return (ushort) (DLE.IsD1File () ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER); }
-        public ushort COOP_CLIP_NUMBER () { return (ushort) (DLE.IsD1File () ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER); }
-        public ushort REACTOR_CLIP_NUMBER () { return (ushort) (DLE.IsD1File () ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER); }
+        public ushort MAX_TRIGGERS () { return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2); }
+        public ushort MAX_PLAYERS () { return (ushort) (DLE.IsStdLevel ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X); }
+        public ushort MAX_NUM_MATCENS () { return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2); }
+        public ushort MAX_NUM_FUELCENS () { return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2); }
+        public ushort MAX_NUM_REPAIRCENS () { return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2); }
+        public ushort PLAYER_CLIP_NUMBER () { return (ushort) (DLE.IsD1File ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER); }
+        public ushort COOP_CLIP_NUMBER () { return (ushort) (DLE.IsD1File ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER); }
+        public ushort REACTOR_CLIP_NUMBER () { return (ushort) (DLE.IsD1File ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER); }
         public ushort ROBOT_IDS2 () { return (ushort) ((LevelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL); }
-        public ushort MAX_POWERUP_IDS () { return (ushort) (DLE.IsD1File () ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2); }
-        public ushort MAX_DL_INDICES () { return (ushort) ((DLE.IsD1File () || DLE.IsStdLevel ()) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X); }
-        public ushort MAX_DELTA_LIGHTS () { return (ushort) ((DLE.IsD1File () || DLE.IsStdLevel ()) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X); }
+        public ushort MAX_POWERUP_IDS () { return (ushort) (DLE.IsD1File ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2); }
+        public ushort MAX_DL_INDICES () { return (ushort) ((DLE.IsD1File || DLE.IsStdLevel) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X); }
+        public ushort MAX_DELTA_LIGHTS () { return (ushort) ((DLE.IsD1File || DLE.IsStdLevel) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X); }
     }
 }

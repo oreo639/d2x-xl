@@ -11,10 +11,11 @@ namespace DLE.NET
         public static Settings settings = new Settings ();
         public static TextureManager textureManager = new TextureManager ();
 
-        public static bool IsD1File () { return theMine.FileType == GameMine.GameFileType.RDL; }
-        public static bool IsD2File () { return theMine.FileType != GameMine.GameFileType.RDL; }
-        public static bool IsStdLevel () { return theMine.LevelVersion < 9; }
-        public static bool IsD2XLevel () { return theMine.LevelVersion >= 9; }
+        public static bool IsD1File { get { return theMine.FileType == GameMine.GameFileType.RDL; } }
+        public static bool IsD2File { get { return theMine.FileType != GameMine.GameFileType.RDL; } }
+        public static bool IsStdLevel { get { return theMine.LevelVersion < 9; } }
+        public static bool IsD2XLevel { get { return theMine.LevelVersion >= 9; } }
+        public static int FileType { get { return (int) theMine.FileType; } }
 
         public static String[] descentPath = new String [2] { "", "" };
 

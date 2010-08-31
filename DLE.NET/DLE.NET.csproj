@@ -226,24 +226,31 @@
     </Compile>
     <EmbeddedResource Include="DiagnosisTool.resx">
       <DependentUpon>DiagnosisTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EffectTool.resx">
       <DependentUpon>EffectTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LightTool.resx">
       <DependentUpon>LightTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MissionTool.resx">
       <DependentUpon>MissionTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectTool.resx">
       <DependentUpon>ObjectTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PreferencesForm.resx">
       <DependentUpon>PreferencesForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -252,30 +259,39 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReactorTool.resx">
       <DependentUpon>ReactorTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RenderWindow.resx">
       <DependentUpon>RenderWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SegmentTool.resx">
       <DependentUpon>SegmentTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TextureFilters.resx">
       <DependentUpon>TextureFilters.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TextureTool.resx">
       <DependentUpon>TextureTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TextureWindow.resx">
       <DependentUpon>TextureWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ToolWindow.resx">
       <DependentUpon>ToolWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TriggerTool.resx">
       <DependentUpon>TriggerTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WallTool.resx">
       <DependentUpon>WallTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
