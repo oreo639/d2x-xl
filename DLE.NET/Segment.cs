@@ -32,10 +32,20 @@ namespace DLE.NET
 
         public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
+            for (int i = 0; i < verts.Length; i++)
+                verts [i] = fp.ReadInt16 ();
             function = fp.ReadByte ();
             props = fp.ReadByte ();
             nMatCen = fp.ReadSByte ();
             value = fp.ReadSByte ();
+            damage [0] = fp.ReadInt16 ();
+            damage [1] = fp.ReadInt16 ();
+            staticLight = fp.ReadInt32 ();
+            childFlags = fp.ReadByte ();
+            wallFlags = fp.ReadByte ();
+            mapBitmask = fp.ReadByte ();
+            owner = fp.ReadSByte ();
+            group = fp.ReadSByte ();
         }
 
         //------------------------------------------------------------------------------

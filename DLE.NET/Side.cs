@@ -115,13 +115,6 @@ namespace DLE.NET
 	            uvls [i].Write (fp);
         }
 
-        // ------------------------------------------------------------------------ 
-
-        void LoadTextures ()
-        {
-        DLE.textureManager.LoadTextures (nBaseTex, nOvlTex);
-        }
-
         // ------------------------------------------------------------------------
 
         bool SetTexture (ushort nNewBaseTex, ushort nNewOvlTex)
@@ -148,8 +141,8 @@ namespace DLE.NET
 		        nOvlTex = 0; 
 	        bChange = true; 
 	        }
-        if (bChange)
-	        LoadTextures ();
+        //if (bChange)
+        //    LoadTextures ();
         return bChange;
         }
 

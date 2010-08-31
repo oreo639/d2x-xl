@@ -31,105 +31,7 @@ namespace DLE.NET
         byte r, g, b;
     }
 
-    //------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------
-
-    public class PigHeaderD1
-    {
-        public uint nTextures;
-        public uint nSounds;
-
-        public const uint Size = 2 * sizeof (int);
-
-        public void Read (BinaryReader fp)
-        {
-            nTextures = fp.ReadUInt32 ();
-            nSounds = fp.ReadUInt32 ();
-        }
-    }
-
-    public struct PigTexture
-    {
-        public byte [] name;
-        public byte dflags;      // this is only important for large bitmaps like the cockpit
-        public ushort width;
-        public ushort height;
-        public byte flags;
-        public byte avgColor;
-        public uint offset;
-    }
-
-    public class PigTextureD1
-    {
-        public PigTexture m_info;
-
-        public const uint Size = 14;
-
-        public PigTextureD1()
-        {
-            m_info.name = new byte [8];
-        }
-
-        public virtual void Read (BinaryReader fp)
-        {
-            m_info.name = fp.ReadBytes (m_info.name.Length);
-            m_info.dflags = fp.ReadByte ();
-            m_info.width = (ushort)fp.ReadByte ();
-            m_info.height = (ushort)fp.ReadByte ();
-            m_info.flags = fp.ReadByte ();
-            m_info.avgColor = fp.ReadByte ();
-            m_info.offset = fp.ReadUInt32 ();
-        }
-    }
-
-    //------------------------------------------------------------------------------
-
-    public class PigHeaderD2
-    {
-        public uint signature;
-        public uint version;
-        public uint nTextures;
-
-        public const uint Size = 3 * sizeof (int);
-
-        public void Read (BinaryReader fp)
-        {
-            signature = fp.ReadUInt32 ();
-            version = fp.ReadUInt32 ();
-            nTextures = fp.ReadUInt32 ();
-        }
-    }
-
-    public class PigTextureD2 : PigTextureD1
-    {
-        public new PigTexture m_info;
-        public ushort whExtra;     // bits 0-3 width, bits 4-7 height
-
-        public new const uint Size = 15;
-
-        public override void Read (BinaryReader fp)
-        {
-            m_info.name = fp.ReadBytes (m_info.name.Length);
-            m_info.dflags = fp.ReadByte ();
-            m_info.width = (ushort)fp.ReadByte ();
-            m_info.height = (ushort)fp.ReadByte ();
-            whExtra = (ushort)fp.ReadByte ();     // bits 0-3 width, bits 4-7 height
-            m_info.width += (ushort)((whExtra % 16) * 256);
-            m_info.height += (ushort)((whExtra / 16) * 256);
-            m_info.flags = fp.ReadByte ();
-            m_info.avgColor = fp.ReadByte ();
-            m_info.offset = fp.ReadUInt32 ();
-        }
-    }
-
-    unsafe struct PigSoundD1
-    {
-        fixed byte unknown [20];
-
-        public const uint Size = 20;
-    }
-
+    
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
@@ -139,7 +41,7 @@ namespace DLE.NET
         public byte [] bmData;
         public tRGBA [] tgaData;
         public uint width = 0, height = 0, size = 0;
-        public bool bModified = false, bExtData = false, bValid = false;
+        public bool bCustom = false, bExtData = false, bFrame = false, bUsed = false, bValid = false;
         public byte nFormat = 0;	// 0: Bitmap, 1: TGA (RGB)
 
         //------------------------------------------------------------------------------
@@ -170,7 +72,7 @@ namespace DLE.NET
         {
             Release ();
             width = height = size = 0;
-            bModified = bExtData = bValid = false;
+            bCustom = bExtData = bValid = false;
             nFormat = 0;
         }
 
@@ -183,122 +85,108 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public new int Load (ushort index) 
+        void Allocate(uint nSize, ushort nTexture)
         {
-            ushort[]        textureIndex;
-	        byte[]			rowSize = new byte [4096];
-	        byte[]			rowData = new byte [4096];
-	        PigTextureD1	pigTexD1 = new PigTextureD1();
-	        PigTextureD2    pigTexD2 = new PigTextureD2();
-	        PigHeaderD1		fileHeaderD1 = new PigHeaderD1();
-	        PigHeaderD2	    fileHeaderD2 = new PigHeaderD2();
-	        uint			offset,dataOffset;
-	        byte			byteVal, runLength, runValue;
-	        uint			nSize;
-	        short			nLine;
-            String          folder;
-	
-        if ((index > ((DLE.IsD1File ()) ? TextureManager.MAX_D1_TEXTURES : TextureManager.MAX_D2_TEXTURES)) || (index < 0))
-            throw (new ArgumentException ("Reading texture: Texture #" + index + " out of range."));
-        if (bModified)
-	        return 0;
-        folder = DLE.settings.gameFolders [DLE.IsD1File () ? 0 : 1];
-        if (!folder.Contains (".pig"))
-            folder += "groupa.pig";
-
-        using (MemoryStream resource = new MemoryStream (DLE.IsD1File() ? Properties.Resources.texture : Properties.Resources.texture2))
-        {
-            using (BinaryReader reader = new BinaryReader (resource))
+            if ((bmData != null) && (width * height != nSize))
+	            Release ();
+            if (bmData == null)
             {
-                textureIndex = new ushort [resource.Length / 2];
-                for (int i = 0; i < resource.Length / 2; i++)
+                try
                 {
-                    textureIndex [i] = reader.ReadUInt16 ();
+                    bmData = new byte [size];
+                }
+                catch (InsufficientMemoryException)
+                {
+                    throw (new InsufficientMemoryException ("Reading texture: Not enough memory for texture #" + nTexture + "."));
+                }
+            }
+            nFormat = 0;
+        }
+
+        //------------------------------------------------------------------------------
+
+        void Load (BinaryReader fp, PigTexture info)
+        {
+            byte [] rowSize = new byte [4096];
+            byte [] rowData = new byte [4096];
+
+            if (((int)info.flags & 0x08) == 0)
+            {
+                for (int y = info.height - 1; y >= 0; y--)
+                    Array.Copy (fp.ReadBytes (info.width), 0, bmData, (long)(y * info.width), info.width);
+            }
+            else
+            {
+                uint nSize = fp.ReadUInt32 ();
+                rowSize = fp.ReadBytes (info.height);
+                byte byteVal, runLength, runValue;
+                ushort nLine = 0;
+                for (int y = info.height - 1; y >= 0; y--)
+                {
+                    rowData = fp.ReadBytes (rowSize [nLine++]);
+                    for (int x = 0, i = 0; x < info.width; )
+                    {
+                        byteVal = rowData [i];
+                        if ((byteVal & 0xe0) == 0xe0)
+                        {
+                            runLength = (byte)(byteVal & 0x1f);
+                            runValue = rowData [i++];
+                            for (int j = 0; j < runLength; j++)
+                            {
+                                if (x < info.width)
+                                {
+                                    bmData [y * info.width + x] = runValue;
+                                    x++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            bmData [y * info.width + x] = byteVal;
+                            x++;
+                        }
+                    }
                 }
             }
         }
 
-        using (FileStream fs = File.OpenRead (folder))
+        //------------------------------------------------------------------------
+
+        bool Allocate (int nSize, int nTexture)
+        {
+            if ((bmData != null) && ((width * height != nSize)))
+	            Release ();
+            if (bmData == null)
+	            bmData = new byte [nSize];
+            return (bmData != null);
+        }
+
+        //------------------------------------------------------------------------
+
+        public int Load (FileStream fs, short nTexture, int nVersion) 
+        {
+            if (bCustom)
+	            return 0;
+
+            if (nVersion < 0)
+	            nVersion = DLE.IsD1File () ? 0 : 1;
+
+            PigTexture info = DLE.textureManager.Info (nTexture);
+            int nSize = info.BufSize ();
+            if ((bmData != null) && ((width * height == nSize)))
+	            return 0; // already loaded
+            if (!Allocate (nSize, nTexture))
+	            return 1;
             using (BinaryReader fp = new BinaryReader (fs))
             {
-                dataOffset = fp.ReadUInt32 ();
-                if (dataOffset == 0x47495050L) /* 'PPIG' Descent 2 type */
-	                dataOffset = 0;
-                else if (dataOffset < 0x10000L)
-    	            dataOffset = 0;
-                fs.Seek (dataOffset, SeekOrigin.Begin);
-                if (DLE.IsD2File ())
-                {
-                    fileHeaderD2.Read (fp);
-    	            offset = PigHeaderD2.Size + dataOffset + (uint) (textureIndex [index + 1] - 1) * PigTextureD2.Size;
-                    fs.Seek (offset, SeekOrigin.Begin);
-                    pigTexD2.Read (fp);
-                }
-                else
-                {
-                    fileHeaderD1.Read (fp);
-    	            offset = PigHeaderD1.Size + dataOffset + (uint) (textureIndex [index - 1] - 1) * PigTextureD1.Size;
-                    fs.Seek (offset, SeekOrigin.Begin);
-                    pigTexD1.Read (fp);
-                    pigTexD1.m_info.name [7] = 0;
-	                // copy d1 texture into d2 texture struct
-	                pigTexD2.m_info = pigTexD1.m_info;
-	                pigTexD2.whExtra = (ushort) ((pigTexD1.m_info.dflags == 128) ? 1 : 0);
-                }
-
-                nSize = (uint) (pigTexD2.m_info.width * pigTexD2.m_info.height);
-                if ((bmData != null) && ((width != pigTexD2.m_info.width) || (height != pigTexD2.m_info.height)))
-	                Release ();
-                if (bmData == null)
-	                bmData = new byte [size];
-                if (bmData == null)
-                    throw (new InsufficientMemoryException ("Reading texture: Not enough memory for texture #" + index + "."));
-                nFormat = 0;
-
-	            offset = dataOffset + pigTexD2.m_info.offset +
-                            (DLE.IsD2File () 
-                            ? PigHeaderD2.Size + fileHeaderD2.nTextures * PigTextureD2.Size 
-                            : PigHeaderD1.Size + fileHeaderD1.nTextures * PigTextureD1.Size + fileHeaderD1.nSounds * PigSoundD1.Size);
-                fs.Seek (offset, SeekOrigin.Begin);
-                if (((int) pigTexD2.m_info.flags & 0x08) == 0) 
-                {
-	                for (int y = pigTexD2.m_info.height - 1; y >= 0; y--) 
-                        Array.Copy (fp.ReadBytes (pigTexD2.m_info.width), 0, bmData, (long) (y * pigTexD2.m_info.width), pigTexD2.m_info.width);
-	            }
-                else 
-                {
-                    nSize = fp.ReadUInt32 ();
-                    rowSize = fp.ReadBytes (pigTexD2.m_info.height);
-	                nLine = 0;
-	                for (int y = pigTexD2.m_info.height - 1; y >= 0; y--)
-                    {
-                        rowData = fp.ReadBytes (rowSize [nLine++]);
-		                for (int x = 0, i = 0; x < pigTexD2.m_info.width; ) 
-                        {
-			                byteVal = rowData [i];
-			                if ((byteVal & 0xe0) == 0xe0) 
-                            {
-				                runLength = (byte) (byteVal & 0x1f);
-				                runValue = rowData [i++];
-				                for (int j = 0; j < runLength; j++) 
-                                {
-					                if (x < pigTexD2.m_info.width) 
-                                    {
-						                bmData [y * pigTexD2.m_info.width + x] = runValue;
-						                x++;
-						            }
-					            }
-				            }
-			                else 
-                            {
-				                bmData [y * pigTexD2.m_info.width + x] = byteVal;
-				                x++;
-				            }
-			            }
-		            }
-	            }
+                fs.Seek (DLE.textureManager.Offset + info.offset, SeekOrigin.Begin);
+                Load (fp, info);
+                bFrame = DLE.textureManager.Name (nTexture).Contains ("frame");
+                return 0;
             }
-            return 1;
         }
+
+        //------------------------------------------------------------------------------
+
     }
 }
