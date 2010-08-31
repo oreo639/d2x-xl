@@ -368,7 +368,7 @@ if (DLE.IsD1File ()) {
 	return 1;
 	}
 
-textureCount = textureManager.nTextures [1];
+textureCount = textureManager.m_nTextures [1];
 
 sprintf_s (message, sizeof (message),"%s\\dle_temp.pog",m_startFolder );
 
@@ -379,7 +379,7 @@ pigFileInfo.nTextures = 0;
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		pigFileInfo.nTextures++;
-for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	pigFileInfo.nTextures++;
 pigFileInfo.Write (fp);
 
@@ -388,7 +388,7 @@ for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		fp.Write (textureManager.m_index [1][i]);
 
-for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	fp.Write (extraTexP->m_index);
 
 // write texture headers
@@ -396,7 +396,7 @@ nExtra = 0;
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		nOffset = WritePogTextureHeader (fp, texP, nExtra++, nOffset);
-for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	nOffset = WritePogTextureHeader (fp, extraTexP, nExtra++, nOffset);
 
 sprintf_s (message, sizeof (message)," Pog manager: Saving %d custom textures", pigFileInfo.nTextures);
@@ -405,7 +405,7 @@ DEBUGMSG (message);
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
 		WritePogTexture (fp, texP);
-for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
+for (extraTexP = textureManager.m_extra; extraTexP; extraTexP = extraTexP->m_next)
 	WritePogTexture (fp, extraTexP);
 
 return 0;

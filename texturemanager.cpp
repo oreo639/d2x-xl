@@ -18,9 +18,9 @@ CTextureManager textureManager;
 
 void CTextureManager::Setup (void)
 {
+m_extra = null;
 Create (0);
 Create (1);
-m_extra = null;
 }
 
 //------------------------------------------------------------------------
