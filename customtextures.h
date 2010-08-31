@@ -5,16 +5,6 @@
 
 //------------------------------------------------------------------------
 
-class CExtraTexture : public CTexture {
-public:
-	CExtraTexture*	m_next;
-	ushort			m_index;
-};
-
-extern CExtraTexture* extraTextures;
-
-//------------------------------------------------------------------------
-
 int ReadPog (CFileManager& fp, uint nFileSize = 0xFFFFFFFF);
 int CreatePog (CFileManager& fp);
 

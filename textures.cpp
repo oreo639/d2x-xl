@@ -247,7 +247,7 @@ if (!Allocate (nSize, nTexture)) {
 	}
 fp->Seek (textureManager.nOffsets [nVersion] + info.offset, SEEK_SET);
 Load (*fp, info);
-m_info.bFrame = (strstr (textureManager.names [nVersion][nTexture], "frame") != null);
+m_info.bFrame = (strstr (textureManager.m_names [nVersion][nTexture], "frame") != null);
 if (bLocalFile)
 	fp->Close ();
 return 0;

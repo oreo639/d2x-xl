@@ -18,17 +18,18 @@ typedef CTexture* textureList;
 
 class CTextureManager {
 public:
-	uint nTextures [2];
-	char** names [2];
-	textureList textures [2];
-	ushort* index [2];
-	uint nOffsets [2];
-	CPigTexture* info [2];
-	CPigHeader header [2];
-	byte bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
-	char pigFiles [2][256];
+	uint m_nTextures [2];
+	char** m_names [2];
+	textureList m_textures [2];
+	ushort* m_index [2];
+	uint m_nOffsets [2];
+	CPigTexture* m_info [2];
+	CPigHeader m_header [2];
+	byte m_bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
+	char m_pigFiles [2][256];
+	CExtraTexture*	m_extra;
 
-	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &textures [nVersion][nTexture]; }
+	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &m_textures [nVersion][nTexture]; }
 
 	int MaxTextures (int nVersion = -1);
 	void LoadTextures (int nVersion = -1);
@@ -42,14 +43,15 @@ public:
 	void MarkUsedTextures (void);
 	void RemoveUnusedTextures (void);
 	CFileManager* OpenPigFile (int nVersion);
+	CTexture* AddExtra (ushort nIndex);
 
-	inline bool HaveInfo (int nVersion) { return info [nVersion] != null; }
+	inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
 	int Version (void);
 	inline char* Name (short nTexture) { 
-		char* p = names [Version ()][nTexture]; 
+		char* p = m_names [Version ()][nTexture]; 
 		return p ? p : "";
 		}
-	CTexture* Texture (short nTexture) { return &textures [Version ()][nTexture]; }
+	CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
 
 	CTextureManager() {}
 	

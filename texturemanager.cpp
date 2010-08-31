@@ -20,21 +20,22 @@ void CTextureManager::Setup (void)
 {
 Create (0);
 Create (1);
+m_extra = null;
 }
 
 //------------------------------------------------------------------------
 
 void CTextureManager::Create (int nVersion)
 {
-pigFiles [nVersion][0] = 0;
-names [nVersion] = null;
+m_pigFiles [nVersion][0] = 0;
+m_names [nVersion] = null;
 LoadNames (nVersion);
-header [nVersion] = CPigHeader (nVersion);
+m_header [nVersion] = CPigHeader (nVersion);
 LoadIndex (nVersion);
 #if USE_DYN_ARRAYS
-textures [nVersion].Create (MaxTextures (nVersion));
+m_textures [nVersion].Create (MaxTextures (nVersion));
 #else
-textures [nVersion] = new CTexture [MaxTextures (nVersion)];
+m_textures [nVersion] = new CTexture [MaxTextures (nVersion)];
 #endif
 }
 
@@ -44,27 +45,27 @@ void CTextureManager::Destroy (int nVersion)
 {
 Release (nVersion, true, false);
 #if USE_DYN_ARRAYS
-textures [nVersion].Destroy ();
+m_textures [nVersion].Destroy ();
 #else
-if (textures [nVersion]) {
-	delete textures [nVersion];
-	textures [nVersion] = null;
+if (m_textures [nVersion]) {
+	delete m_textures [nVersion];
+	m_textures [nVersion] = null;
 	}
 #endif
-if (names [nVersion]) {
+if (m_names [nVersion]) {
 	for (int j = 0, h = MaxTextures (nVersion); j < h; j++)
-		if (names [nVersion][j])
-			delete names [nVersion][j];
-	delete names [nVersion];
-	names [nVersion] = null;
+		if (m_names [nVersion][j])
+			delete m_names [nVersion][j];
+	delete m_names [nVersion];
+	m_names [nVersion] = null;
 	}
-if (index [nVersion]) {
-	delete index [nVersion];
-	index [nVersion] = null;
+if (m_index [nVersion]) {
+	delete m_index [nVersion];
+	m_index [nVersion] = null;
 	}
-if (info [nVersion]) {
-	delete info [nVersion];
-	info [nVersion] = null;
+if (m_info [nVersion]) {
+	delete m_info [nVersion];
+	m_info [nVersion] = null;
 	}
 }
 
@@ -87,11 +88,11 @@ return DLE.IsD1File () ? 0 : 1;
 
 void CTextureManager::Release (int nVersion, bool bDeleteAll, bool bDeleteUnused) 
 {
-// free any textures that have been buffered
+// free any m_textures that have been buffered
 #if USE_DYN_ARRAYS
-CTexture* texP = textures [nVersion].Buffer ();
+CTexture* texP = m_textures [nVersion].Buffer ();
 #else
-CTexture* texP = textures [nVersion];
+CTexture* texP = m_textures [nVersion];
 #endif
 if (texP != null) {
 	for (int i = 0, h = MaxTextures (nVersion); i < h; i++, texP++) {
@@ -111,11 +112,11 @@ if (texP != null) {
 
 void CTextureManager::Release (bool bDeleteAll, bool bDeleteUnused) 
 {
-// free any textures that have been buffered
+// free any m_textures that have been buffered
 for (int i = 0; i < 2; i++) 
 	Release (i, bDeleteAll, bDeleteUnused);
-for (CExtraTexture* p = extraTextures; p != null; ) {
-	extraTextures = p->m_next;
+for (CExtraTexture* p = m_extra; p != null; ) {
+	m_extra = p->m_next;
 	delete p;
 	}
 }
@@ -154,7 +155,7 @@ return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_D2_TEXTURES : MAX_D1_
 
 bool CTextureManager::HasCustomTextures (void) 
 {
-CTexture* texP = &textures [DLE.FileType ()][0];
+CTexture* texP = &m_textures [DLE.FileType ()][0];
 
 for (int i = MaxTextures (DLE.FileType ()); i; i--, texP++)
 	if (texP->m_info.bCustom)
@@ -167,7 +168,7 @@ return false;
 int CTextureManager::CountCustomTextures (void) 
 {
 	int			count = 0;
-	CTexture*	texP = &textures [DLE.FileType ()][0];
+	CTexture*	texP = &m_textures [DLE.FileType ()][0];
 
 for (int i = MaxTextures (); i; i--, texP++)
 	if (texP->m_info.bCustom)
@@ -191,10 +192,10 @@ return false;
 void CTextureManager::Load (ushort nBaseTex, ushort nOvlTex)
 {
 if (Check (nBaseTex)) {
-   textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
+   m_textures [(int)DLE.FileType ()] [nBaseTex].Load (nBaseTex);
    if (Check (nOvlTex & 0x1FFF) && ((nOvlTex & 0x1FFF) != 0)) {
        Check ((ushort) (nOvlTex & 0x1FFF));
-       textures [(int)DLE.FileType ()] [(ushort) (nOvlTex & 0x1FFF)].Load ((ushort) (nOvlTex & 0x1FFF));
+       m_textures [(int)DLE.FileType ()] [(ushort) (nOvlTex & 0x1FFF)].Load ((ushort) (nOvlTex & 0x1FFF));
 		}
    }
 }
@@ -207,13 +208,13 @@ void CTextureManager::LoadNames (int nVersion)
 	CStringResource res;
 	int j = MaxTextures (nVersion);
 
-names [nVersion] = new char* [j];
+m_names [nVersion] = new char* [j];
 for (int i = 0; i < j; i++) {
 	res.Clear ();
 	res.Load (nResource + i);
 	int l = res.Length () + 1;
-	names [nVersion][i] = new char [l];
-	memcpy_s (names [nVersion][i], l, res.Value (), l);
+	m_names [nVersion][i] = new char [l];
+	memcpy_s (m_names [nVersion][i], l, res.Value (), l);
 	}
 }
 
@@ -225,18 +226,18 @@ int CTextureManager::LoadIndex (int nVersion)
 
 ushort* indexP = (ushort *) res.Load (nVersion ? IDR_TEXTURE2_DAT : IDR_TEXTURE_DAT);
 if (!indexP) {
-	DEBUGMSG (" Reading texture: Could not load texture index.");
+	DEBUGMSG (" Reading texture: Could not load texture m_index.");
 	return 1;
 	}
-// first long is number of textures
-nTextures [nVersion] = *((uint*) indexP);
+// first long is number of m_textures
+m_nTextures [nVersion] = *((uint*) indexP);
 indexP += 2;
-if (!(index [nVersion] = new ushort [nTextures [nVersion]])) {
-	DEBUGMSG (" Reading texture: Could not allocate texture index.");
+if (!(m_index [nVersion] = new ushort [m_nTextures [nVersion]])) {
+	DEBUGMSG (" Reading texture: Could not allocate texture m_index.");
 	return 3;
 	}
-for (uint i = 0; i < nTextures [nVersion]; i++)
-	index [nVersion][i] = (*indexP++);
+for (uint i = 0; i < m_nTextures [nVersion]; i++)
+	m_index [nVersion][i] = (*indexP++);
 return 0;
 }
 
@@ -244,16 +245,16 @@ return 0;
 
 CPigTexture& CTextureManager::LoadInfo (CFileManager& fp, int nVersion, short nTexture)
 {
-if (info [nVersion] == null) {
-	header [nVersion].Read (fp);
-	info [nVersion] = new CPigTexture [header [nVersion].nTextures];
-	for (int i = 0; i < header [nVersion].nTextures; i++)
+if (m_info [nVersion] == null) {
+	m_header [nVersion].Read (fp);
+	m_info [nVersion] = new CPigTexture [m_header [nVersion].nTextures];
+	for (int i = 0; i < m_header [nVersion].nTextures; i++)
 		{
-		info [nVersion][i].Read (fp, nVersion);
-		nOffsets [nVersion] = fp.Tell ();
+		m_info [nVersion][i].Read (fp, nVersion);
+		m_nOffsets [nVersion] = fp.Tell ();
 		}
 	}
-return info [nVersion][index [nVersion][nTexture] - 1];
+return m_info [nVersion][m_index [nVersion][nTexture] - 1];
 }
 
 //------------------------------------------------------------------------------
@@ -262,17 +263,30 @@ void CTextureManager::LoadTextures (int nVersion)
 {
 if (nVersion < 0) {
 	nVersion = Version ();
-	if (strcmp (pigFiles [nVersion], descentPath [nVersion]) == 0)
+	if (strcmp (m_pigFiles [nVersion], descentPath [nVersion]) == 0)
 		return;
-	strcpy_s (pigFiles [nVersion], sizeof (pigFiles [nVersion]), descentPath [nVersion]);
-	delete info [nVersion];
-	info [nVersion] = null;
+	strcpy_s (m_pigFiles [nVersion], sizeof (m_pigFiles [nVersion]), descentPath [nVersion]);
+	delete m_info [nVersion];
+	m_info [nVersion] = null;
 	}
 Release (nVersion, true, false);
 CFileManager* fp = OpenPigFile (nVersion);
 for (int i = 0, j = MaxTextures (nVersion); i < j; i++)
-	textures [nVersion][i].Load (i, nVersion, fp);
+	m_textures [nVersion][i].Load (i, nVersion, fp);
 fp->Close ();
+}
+
+//------------------------------------------------------------------------------
+
+CTexture* CTextureManager::AddExtra (ushort nIndex)
+{
+	CExtraTexture* extraTexP = new CExtraTexture;
+if (!extraTexP)
+	return null;
+extraTexP->m_next = m_extra;
+m_extra = extraTexP;
+extraTexP->m_index = nIndex;
+return extraTexP;
 }
 
 //------------------------------------------------------------------------------
@@ -292,7 +306,7 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	} tFrac;
 
 	byte			*ptr;
-	short			nTextures [2], mode, w, h;
+	short			m_nTextures [2], mode, w, h;
 	int			i, x, y, y1, offs, s;
 	tFrac			scale, scale2;
 	int			rc; // return code
@@ -301,19 +315,19 @@ int CTextureManager::Define (short nBaseTex, short nOvlTex, CTexture *destTexP, 
 	byte			c;
 	int			fileType = DLE.FileType ();
 
-nTextures [0] = nBaseTex;
-nTextures [1] = nOvlTex & 0x3fff;
+m_nTextures [0] = nBaseTex;
+m_nTextures [1] = nOvlTex & 0x3fff;
 mode = nOvlTex & 0xC000;
 for (i = 0; i < 2; i++) {
 #if 0	
-	ASSERT (textures [i] < MAX_TEXTURES);
+	ASSERT (m_textures [i] < MAX_TEXTURES);
 #endif
-	if ((nTextures [i] < 0) || (nTextures [i] >= MAX_TEXTURES))
-		nTextures [i] = 0;
-	// buffer textures if not already buffered
-	texP [i] = &textures [fileType][nTextures [i]];
+	if ((m_nTextures [i] < 0) || (m_nTextures [i] >= MAX_TEXTURES))
+		m_nTextures [i] = 0;
+	// buffer m_textures if not already buffered
+	texP [i] = &m_textures [fileType][m_nTextures [i]];
 	if (!(texP [i]->m_info.bmDataP && texP [i]->m_info.bValid))
-		if (rc = texP [i]->Load (nTextures [i]))
+		if (rc = texP [i]->Load (m_nTextures [i]))
 			return rc;
 	}
 	
@@ -347,7 +361,7 @@ if (ptr) {
 
 // Overlay texture 2 if present
 
-if (nTextures [1] == 0)
+if (m_nTextures [1] == 0)
 	return 0;
 if (!(ptr = texP [1]->m_info.bmDataP))
 	return 0;
@@ -456,15 +470,15 @@ void CTextureManager::MarkUsedTextures (void)
 	int i, j, h = MaxTextures (nVersion);
 
 for (i = 0; i < h; i++)
-	textures [nVersion][i].m_info.bUsed = false;
+	m_textures [nVersion][i].m_info.bUsed = false;
 
 for (i = theMine->SegCount (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
 		if ((sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {
-			textures [nVersion][sideP->m_info.nBaseTex & 0x1FFF].m_info.bUsed = true;
+			m_textures [nVersion][sideP->m_info.nBaseTex & 0x1FFF].m_info.bUsed = true;
 			if ((sideP->m_info.nOvlTex & 0x1FFF) != 0)
-				textures [nVersion][sideP->m_info.nOvlTex & 0x1FFF].m_info.bUsed = true;
+				m_textures [nVersion][sideP->m_info.nOvlTex & 0x1FFF].m_info.bUsed = true;
 			}
 		}
 	}
@@ -472,7 +486,7 @@ for (i = theMine->SegCount (); i; i--, segP++) {
 CTexture * texP, * parentTexP = null;
 
 for (i = 0; i < h; i++) {
-	texP = &textures [nVersion][i];
+	texP = &m_textures [nVersion][i];
 	if (!texP->m_info.bFrame)
 		parentTexP = texP;
 	else if (texP->m_info.bCustom && !texP->m_info.bUsed)
@@ -481,7 +495,7 @@ for (i = 0; i < h; i++) {
 }
 
 //------------------------------------------------------------------------
-// remove unused custom textures
+// remove unused custom m_textures
 
 void CTextureManager::RemoveUnusedTextures (void)
 {
@@ -491,7 +505,7 @@ if (nCustom) {
 	MarkUsedTextures ();
 	Release (false, true);
 	int nRemoved = nCustom - CountCustomTextures ();
-	sprintf_s (message, sizeof (message), "%d custom textures %s removed", nRemoved, (nRemoved == 1) ? "was" : "were");
+	sprintf_s (message, sizeof (message), "%d custom m_textures %s removed", nRemoved, (nRemoved == 1) ? "was" : "were");
 	if (nRemoved)
 		DLE.SetModified (TRUE);
 	INFOMSG (message);
@@ -502,4 +516,4 @@ if (nCustom) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-//eof textures.cpp
+//eof m_textures.cpp

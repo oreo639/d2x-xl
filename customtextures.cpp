@@ -10,8 +10,6 @@
 #include "texturemanager.h"
 #include "dle-xp.h"
 
-CExtraTexture*	extraTextures = null;
-
 //------------------------------------------------------------------------
 
 inline int Sqr (int i)
@@ -182,7 +180,7 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	ushort nIndex = xlatTbl [i];
 	// look it up in the list of textures
 	for (nTexture = 0; nTexture < MAX_D2_TEXTURES; nTexture++)
-		if (textureManager.index [1][nTexture] == nIndex)
+		if (textureManager.m_index [1][nTexture] == nIndex)
 			break;
 	bExtraTexture = (nTexture >= MAX_D2_TEXTURES);
 	// get texture data offset from texture header
@@ -194,16 +192,11 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 		continue;
 		}
 	if (bExtraTexture) {
-			CExtraTexture* extraTexP = new CExtraTexture;
-		if (!extraTexP) {
+			texP = textureManager.AddExtra (nIndex);
+		if (!texP) {
 			nUnknownTextures++;
 			continue;
 			}
-		extraTexP->m_next = extraTextures;
-		extraTextures = extraTexP;
-		extraTexP->m_index = nIndex;
-		extraTexP->m_info.bmDataP = null;
-		texP = extraTexP;
 		nTexture = 0;
 		}
 	else {
@@ -393,7 +386,7 @@ pigFileInfo.Write (fp);
 // write list of textures
 for (i = 0, texP = textureManager.Textures (nVersion); i < h; i++, texP++)
 	if (texP->m_info.bCustom)
-		fp.Write (textureManager.index [1][i]);
+		fp.Write (textureManager.m_index [1][i]);
 
 for (extraTexP = extraTextures; extraTexP; extraTexP = extraTexP->m_next)
 	fp.Write (extraTexP->m_index);
