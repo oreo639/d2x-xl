@@ -24,10 +24,6 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public int Key { get; set; }
-
-        // ------------------------------------------------------------------------
-
         public void Setup ()
         {
             m_nWall = DLE.Mine.NO_WALL;
@@ -39,7 +35,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
+        public void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
             m_nWall = fp.ReadUInt16 ();
             m_nBaseTex = fp.ReadUInt16 ();
@@ -58,7 +54,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
+        public void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
             if (m_nOvlTex == 0)
                 fp.Write (m_nBaseTex);
@@ -73,7 +69,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public override void Clear ()
+        public void Clear ()
         {
             m_nChild = 0;
             m_nWall = 0;

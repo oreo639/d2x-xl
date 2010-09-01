@@ -96,7 +96,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public override void Read (BinaryReader fp, int version, bool bFlag)
+        public void Read (BinaryReader fp, int version, bool bFlag)
         {
             m_nSegment = (short) fp.ReadInt32 ();
             m_nSide = (short) fp.ReadInt32 (); 
@@ -114,7 +114,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public override void Write (BinaryWriter fp, int version, bool bFlag)
+        public void Write (BinaryWriter fp, int version, bool bFlag)
         {
             fp.Write ((int) m_nSegment);
             fp.Write ((int) m_nSide); 
@@ -135,7 +135,7 @@ namespace DLE.NET
         
         // ------------------------------------------------------------------------
 
-        public override void Clear ()
+        public new void Clear ()
         {
             m_nSegment = 0;
             m_nSide = 0;
@@ -149,6 +149,7 @@ namespace DLE.NET
             m_keys = 0;
             m_controllingTrigger = 0;
             m_cloakValue = 0;
+            base.Clear ();
         }
 
         // ------------------------------------------------------------------------

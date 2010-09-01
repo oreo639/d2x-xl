@@ -78,7 +78,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
+        public void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
             for (int i = 0; i < m_verts.Length; i++)
                 m_verts [i] = fp.ReadInt16 ();
@@ -98,7 +98,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
+        public void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
             fp.Write ((byte) m_function);
             fp.Write ((byte) m_props);
@@ -108,7 +108,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public override void Clear ()
+        public void Clear ()
         {
             m_function = 0;
             m_props = 0;

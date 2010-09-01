@@ -63,7 +63,7 @@ namespace DLE.NET
 
             // Descent 2
             NO_MESSAGE = 1, // Don't show a message when triggered
-            ONE_SHOT = 2, // Only trigger once
+            SINGLE_USE = 2, // Only trigger once
             DISABLED = 4, // Set after one-shot fires
             PERMANENT = 8, // indestructable switch for repeated operation
             ALTERNATE = 16, // switch will assume the opposite function after operation

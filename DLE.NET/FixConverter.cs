@@ -32,11 +32,6 @@ namespace DLE.NET
             return ((double)n / 65536.0);
         }
 
-        public static int D2X (double n)
-        {
-            return ((int)Round (n * 65536.0));
-        }
-
         public static int Mul (int n, int m)
         {
             return (int) ((double) n * (double) m / 65536.0);

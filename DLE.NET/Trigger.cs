@@ -5,16 +5,21 @@ namespace DLE.NET
     // ------------------------------------------------------------------------
 
     #region TargetList
-    public class TargetList
+    public class TargetList : SideKey
     {
         public const short MAX_TARGETS = 10;
 
+        short m_count;
+
         public short Count 
-        { 
-            get; 
+        {
+            get
+            {
+                return m_count;
+            }
             protected set
             {
-               Count = (value < 0) ? (short) 0 : (value > Trigger.MAX_TARGETS) ? Trigger.MAX_TARGETS : value;
+               m_count = (value < 0) ? (short) 0 : (value > Trigger.MAX_TARGETS) ? Trigger.MAX_TARGETS : value;
             }
         }
         public SideKey [] m_targets = new SideKey [MAX_TARGETS];
@@ -28,11 +33,12 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public void Clear () 
+        public new void Clear () 
         { 
 		    Count = 0;
 		    for (int i = 0; i < MAX_TARGETS; i++)
 			    m_targets [i].Clear ();
+            base.Clear ();
 		}
 
         // ------------------------------------------------------------------------
@@ -89,20 +95,6 @@ namespace DLE.NET
         public int Find (short nSegment, short nSide) 
         { 
             return Find (new SideKey (nSegment, nSide)); 
-        }
-
-        // ------------------------------------------------------------------------
-
-        public short Segment (uint i) 
-        { 
-            return m_targets [i].m_nSegment; 
-        }
-
-        // ------------------------------------------------------------------------
-
-        public short Side (uint i) 
-        { 
-            return m_targets [i].m_nSide; 
         }
 
         // ------------------------------------------------------------------------
@@ -189,7 +181,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        public override void Read (BinaryReader fp, int version, bool bObjTrigger)
+        public void Read (BinaryReader fp, int version, bool bObjTrigger)
         {
         if (DLE.IsD2File) {
 	       m_type = (Type) fp.ReadByte ();
@@ -209,7 +201,7 @@ namespace DLE.NET
 	       m_value = fp.ReadInt32 ();
 	       m_time = fp.ReadInt32 ();
 	       fp.ReadByte (); //skip 8 bit value "link_num"
-	       Count = char (fp.ReadInt16 ());
+	       Count = fp.ReadInt16 ();
 	        if (Count < 0)
 		        Count = 0;
 	        else if (Count > MAX_TARGETS)
@@ -220,7 +212,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Write (BinaryWriter fp, int version, bool bObjTrigger)
+        public void Write (BinaryWriter fp, int version, bool bObjTrigger)
         {
         if (DLE.IsD2File) {
 	        fp.Write ((byte) m_type);
