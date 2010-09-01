@@ -13,8 +13,8 @@ namespace DLE.NET
         public const int MAX_VERTICES_PER_SEGMENT = 8;
 
         public short [] m_verts = new short [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
-        public byte m_function;			// special property of a segment (such as damaging, trigger, etc.) 
-        public byte m_props;
+        public Function m_function;			// special property of a segment (such as damaging, trigger, etc.) 
+        public Property m_props;
         public sbyte m_nMatCen;			// which center segment is associated with, high bit set 
         public sbyte m_value;				// matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 
         public byte m_s2Flags;			// New for Descent 2
@@ -78,8 +78,8 @@ namespace DLE.NET
         {
             for (int i = 0; i < m_verts.Length; i++)
                 m_verts [i] = fp.ReadInt16 ();
-            m_function = fp.ReadByte ();
-            m_props = fp.ReadByte ();
+            m_function = (Function) fp.ReadByte ();
+            m_props = (Property) fp.ReadByte ();
             m_nMatCen = fp.ReadSByte ();
             m_value = fp.ReadSByte ();
             m_damage [0] = fp.ReadInt16 ();
@@ -96,8 +96,8 @@ namespace DLE.NET
 
         public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false)
         {
-            fp.Write (m_function);
-            fp.Write (m_props);
+            fp.Write ((byte) m_function);
+            fp.Write ((byte) m_props);
             fp.Write (m_nMatCen);
             fp.Write (m_value);
         }
@@ -144,23 +144,33 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        byte ReadWalls (CFileManager& fp, int nLevelVersion)
+        void Upgrade ()
+        {
+        m_props = segPropsFromType [(int) m_function];
+        m_function = segFuncFromType [(int) m_function];
+        m_damage [0] =
+        m_damage [1] = 0;
+        }
+
+        // ------------------------------------------------------------------------
+
+        byte ReadWalls (BinaryReader fp, int nLevelVersion)
         {
 	        byte wallFlags = byte (fp.ReadSByte ());
 	        int	i;
 
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	        if (m_wallFlags &= (1 << i)) 
-		        m_sides [i].m_nWall = (nLevelVersion >= 13) ? fp.ReadInt16 () : short (fp.ReadSByte ());
+	        if ((m_wallFlags & (1 << i)) != 0)
+		        m_sides [i].m_nWall = (nLevelVersion >= 13) ? fp.ReadUInt16 () : (ushort) fp.ReadByte ();
         return wallFlags;
         }
 
         //------------------------------------------------------------------------------
 
-        void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras)
+        void ReadExtras (BinaryReader fp, int nLevelType, int nLevelVersion, bool bExtras)
         {
         if (bExtras) {
-	        m_function = fp.ReadSByte ();
+	        m_function = (Function) fp.ReadByte ();
 	        m_nMatCen = fp.ReadSByte ();
 	        m_value = fp.ReadSByte ();
 	        fp.ReadSByte ();
@@ -171,23 +181,23 @@ namespace DLE.NET
 	        m_value = 0;
 	        }
         m_s2Flags = 0;  
-        if (nLevelType) {
+        if (nLevelType != 0) {
 	        if (nLevelVersion < 20)
 		        Upgrade ();
 	        else {
-		        m_props = fp.ReadSByte ();
+		        m_props = (Property) fp.ReadByte ();
 		        m_damage [0] = fp.ReadInt16 ();
 		        m_damage [1] = fp.ReadInt16 ();
 		        }
 	        }
-        m_staticLight = fp.ReadFix ();
+        m_staticLight = fp.ReadInt ();
         }
 
         //------------------------------------------------------------------------------
 
-        int Read (CFileManager& fp, int nLevelType, int nLevelVersion)
+        int Read (BinaryReader fp, int nLevelType, int nLevelVersion)
         {
-	        int	i;
+	        short	i;
 
         if (nLevelVersion >= 9) {
 	        m_owner = fp.ReadSByte ();
@@ -202,10 +212,10 @@ namespace DLE.NET
 
         // read 0 to 6 children (0 to 12 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-	        m_sides [i].m_nChild = (m_childFlags & (1 << i)) ? fp.ReadInt16 () : -1;
+	        m_sides [i].m_nChild = ((m_childFlags & (1 << i)) != 0) ? fp.ReadInt16 () : (short) -1;
 
         // read vertex numbers (16 bytes)
-        for (int i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
+        for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	        m_verts [i] = fp.ReadInt16 ();
 
         if (nLevelVersion == 0)
@@ -218,10 +228,9 @@ namespace DLE.NET
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	        m_sides [i].m_nWall = (m_wallFlags & (1 << i)) 
 										        ? ushort ((nLevelVersion < 13) ? fp.ReadSByte () : fp.ReadInt16 ())
-										        : NO_WALL;
+										        : DLE.Mine.NO_WALL;
 
         // read in textures and uvls (0 to 60 bytes)
-        size_t fPos = fp.Tell ();
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	        m_sides [i].Read (fp, (GetChild (i) == -1) || ((m_wallFlags & (1 << i)) != 0));
         return 1;
@@ -229,24 +238,24 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        byte WriteWalls (CFileManager& fp, int nLevelVersion)
+        byte WriteWalls (BinaryWriter fp, int nLevelVersion)
         {
 	        int	i;
 
         m_wallFlags = 0;
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	        if (m_sides [i].m_nWall < theMine->GameInfo ().walls.count) 
-		        m_wallFlags |= (1 << i);
+	        if (m_sides [i].m_nWall < DLE.Mine.Info.walls.count) 
+		        m_wallFlags |= (byte) (1 << i);
 	        }
         fp.Write (m_wallFlags);
 
         // write wall numbers
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	        if (m_wallFlags & (1 << i)) {
+	        if ((m_wallFlags & (1 << i)) != 0) {
 		        if (nLevelVersion >= 13)
 			        fp.Write (m_sides [i].m_nWall);
 		        else
-			        fp.WriteSByte ((sbyte) m_sides [i].m_nWall);
+			        fp.Write ((sbyte) m_sides [i].m_nWall);
 		        }
 	        }
         return m_wallFlags;
@@ -254,16 +263,16 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void WriteExtras (CFileManager& fp, int nLevelType, bool bExtras)
+        void WriteExtras (BinaryWriter fp, int nLevelType, bool bExtras)
         {
         if (bExtras) {
-	        fp.Write (m_function);
+	        fp.Write ((byte) m_function);
 	        fp.Write (m_nMatCen);
 	        fp.Write (m_value);
 	        fp.Write (m_s2Flags);
 	        }
         if (nLevelType == 2) {
-	        fp.Write (m_props);
+	        fp.Write ((byte) m_props);
 	        fp.Write (m_damage [0]);
 	        fp.Write (m_damage [1]);
 	        }
@@ -272,9 +281,9 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        void Write (CFileManager& fp, int nLevelType, int nLevelVersion)
+        void Write (BinaryWriter fp, int nLevelType, int nLevelVersion)
         {
-	        int	i;
+	        short i;
 
         if (nLevelType == 2) {
 	        fp.Write (m_owner);
@@ -285,7 +294,7 @@ namespace DLE.NET
         m_childFlags = 0;
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	        if (GetChild (i) != -1) {
-		        m_childFlags |= (1 << i);
+		        m_childFlags |= (byte) (1 << i);
 		        }
 	        }
         if (nLevelType == 0) {
@@ -298,18 +307,18 @@ namespace DLE.NET
 
         // write children numbers (0 to 6 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	        if (m_childFlags & (1 << i)) 
-		        fp.WriteInt16 (GetChild (i));
+	        if ((m_childFlags & (1 << i)) != 0)
+		        fp.Write (GetChild (i));
 
         // write vertex numbers (16 bytes)
         for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
 	        fp.Write (m_verts [i]);
 
         // write special info (0 to 4 bytes)
-        if ((m_function == SEGMENT_FUNC_ROBOTMAKER) && (m_nMatCen == -1)) {
-	        m_function = SEGMENT_FUNC_NONE;
+        if ((m_function == Function.ROBOTMAKER) && (m_nMatCen == -1)) {
+	        m_function = Function.NONE;
 	        m_value = 0;
-	        m_childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
+	        m_childFlags = (byte) ((int) m_childFlags & ~(1 << MAX_SIDES_PER_SEGMENT));
 	        }
         if (nLevelType == 0)
 	        WriteExtras (fp, nLevelType, (m_childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
@@ -317,15 +326,15 @@ namespace DLE.NET
         // calculate wall bit mask
         WriteWalls (fp, nLevelVersion);
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
-	        if ((GetChild (i) == -1) || (m_wallFlags & (1 << i))) 
+	        if ((GetChild (i) == -1) || ((m_wallFlags & (1 << i)) != 0))
 		        m_sides [i].Write (fp);
         }
 
         //------------------------------------------------------------------------------
 
-        void Setup (void)
+        void Setup ()
         {
-	        int i;
+	        short i;
 
         m_owner = -1;
         m_group = -1;
@@ -344,9 +353,13 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void SetUV (short nSide short x, short y)
+        void SetUV (short nSide, short x, short y)
         {
-	        CDoubleVector	A [4], B [4], C [4], D [4], E [4]; 
+	        DoubleVector[]	A = new DoubleVector [4], 
+                            B = new DoubleVector  [4], 
+                            C = new DoubleVector  [4], 
+                            D = new DoubleVector  [4], 
+                            E = new DoubleVector  [4]; 
 	        int				i; 
 	        double			angle, sinAngle, cosAngle; 
 

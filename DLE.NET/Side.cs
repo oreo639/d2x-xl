@@ -20,7 +20,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Setup ()
+        public void Setup ()
         {
             m_nWall = DLE.Mine.NO_WALL;
             m_nBaseTex =
@@ -77,7 +77,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        int Read (BinaryReader fp, bool bTextured)
+        public int Read (BinaryReader fp, bool bTextured)
         {
             if (bTextured) 
             {
@@ -106,7 +106,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        void Write (BinaryWriter fp)
+        public void Write (BinaryWriter fp)
         {
             if (m_nOvlTex == 0)
 	            fp.Write (m_nBaseTex);
@@ -121,7 +121,7 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        bool SetTexture (ushort nNewBaseTex, ushort nNewOvlTex)
+        public bool SetTexture (ushort nNewBaseTex, ushort nNewOvlTex)
         {
 	        bool bChange = false;
 
@@ -152,14 +152,14 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        Wall Wall
+        public Wall Wall
         {
             get { return (m_nWall == DLE.Mine.NO_WALL) ? null : DLE.Mine.Walls [m_nWall]; }
         }
 
         // ------------------------------------------------------------------------
 
-        bool IsTextured
+        public bool IsTextured
         {
             get { return (m_nChild == -1) || (m_nWall < DLE.Mine.Info.walls.count && DLE.Mine.Walls [m_nWall].m_type != Wall.Type.OPEN); }
         }

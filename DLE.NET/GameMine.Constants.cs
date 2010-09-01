@@ -26,11 +26,11 @@
         public const int WALL_DOOR_INTERVAL = 5 * F1_0;	 // How many seconds a door is open 
 
         // level database constants
-        public const int N_D2_ROBOT_TYPES = 66;
-        public const int N_D2_ROBOT_JOINTS = 1145;
-        public const int N_D2_POLYGON_MODELS = 166;
-        public const int N_D2_OBJBITMAPS = 422;
-        public const int N_D2_OBJBITMAPPTRS = 502;
+        public const int N_ROBOT_TYPES_D2 = 66;
+        public const int N_ROBOT_JOINTS_D2 = 1145;
+        public const int N_POLYGON_MODELS_D2 = 166;
+        public const int N_OBJBITMAPS_D2 = 422;
+        public const int N_OBJBITMAPPTRS_D2 = 502;
 
         public const int MAX_ROBOT_TYPES = 85;
         public const int MAX_ROBOT_JOINTS = 1250;
@@ -42,20 +42,20 @@
         public const int MAX_SEGMENTS2 = 900;  // descent 2 max # of cubes
         public const int SEGMENT_LIMIT = 8000; // D2X-XL max # of cubes
 
-        public const int MAX_VERTICES1 = 2808; // descent 1 max # of vertices
-        public const int MAX_VERTICES2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
-        public const int MAX_VERTICES3 = (SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
+        public const int MAX_VERTICES_D1 = 2808; // descent 1 max # of vertices
+        public const int MAX_VERTICES_D2 = (MAX_SEGMENTS2 * 4 + 8); // descent 2 max # of vertices
+        public const int VERTEX_LIMIT = (SEGMENT_LIMIT * 4 + 8); // descent 2 max # of vertices
 
         public const int MAX_OBJECTS1 = 350;
         public const int MAX_OBJECTS2 = 2000;
 
-        public const int MAX_WALLS1 = 175; // Maximum number of walls for Descent 1
-        public const int MAX_WALLS2 = 255; // Maximum number of walls for Descent 2
+        public const int MAX_WALLS_D1 = 175; // Maximum number of walls for Descent 1
+        public const int MAX_WALLS_D2 = 255; // Maximum number of walls for Descent 2
         public const int WALL_LIMIT = 2047; // Maximum number of walls for Descent 2
 
-        public const int MAX_TRIGGERS1 = 100;
-        public const int MAX_TRIGGERS2 = 254;
-        public const int TRIGGER_LIMIT = MAX_TRIGGERS2;
+        public const int MAX_TRIGGERS_D1 = 100;
+        public const int MAX_TRIGGERS_D2 = 254;
+        public const int TRIGGER_LIMIT = MAX_TRIGGERS_D2;
 
         public const int MAX_OBJ_TRIGGERS = 254;
         public const int MAX_TRIGGER_FLAGS = 12;
@@ -71,38 +71,43 @@
         public const int MAX_NUM_MATCENS2 = 100;
         public const int MAX_WALL_SWITCHES = 50;
         public const int MAX_WALL_LINKS = 100;
-        public const int MAX_NUM_FUELCENS1 = 70;
-        public const int MAX_NUM_REPAIRCENS1 = 70;
-        public const int MAX_NUM_FUELCENS2 = 500;
-        public const int MAX_NUM_REPAIRCENS2 = 500;
-        public const int MAX_WALL_ANIMS1 = 30;  // Maximum different types of doors Descent 1
-        public const int MAX_WALL_ANIMS2 = 60;  // Maximum different types of doors Descent 2
-        public const int MAX_CLIP_FRAMES1 = 20; // Descent 1
-        public const int MAX_CLIP_FRAMES2 = 50; // Descent 2
+        public const int MAX_NUM_FUELCENS_D2 = 70;
+        public const int MAX_NUM_REPAIRCENS_D2 = 70;
+        public const int MAX_NUM_FUELCENS_D2X = 500;
+        public const int MAX_NUM_REPAIRCENS_D2X = 500;
+        public const int MAX_WALL_ANIMS_D1 = 30;  // Maximum different types of doors Descent 1
+        public const int MAX_WALL_ANIMS_D2 = 60;  // Maximum different types of doors Descent 2
+        public const int MAX_CLIP_FRAMES_D1 = 20; // Descent 1
+        public const int MAX_CLIP_FRAMES_D2 = 50; // Descent 2
         public const int MAX_STUCK_OBJECTS = 32;
         public const int MAX_AI_FLAGS = 11; // This MUST cause word (4 bytes) alignment in ai_static, allowing for one byte mode 
         public const int MAX_SUBMODELS = 10; // I guessed at this value (BAA) 
+
+        public const int N_WALL_TEXTURES_D1 = 26;
+        public const int N_WALL_TEXTURES_D2 = 51;
+        public const int NUM_OF_CLIPS_D1 = 24;
+        public const int NUM_OF_CLIPS_D2 = 49;
 
         public const int VCLIP_MAX_FRAMES = 30;
         public const int MAX_GUNS = 8;  //should be multiple of 4 for ubyte array
         public const int NDL = 5;  // Guessed at this value (B. Aamot 9/14/96)
         public const int N_ANIM_STATES = 5;
 
-        public const int MAX_D1_AI_OPTIONS = 6;
-        public const int MAX_D2_AI_OPTIONS = 9;
+        public const int MAX_AI_OPTIONS_D1 = 6;
+        public const int MAX_AI_OPTIONS_D2 = 9;
 
         public const int MAX_MACROS = 100;
 
-        public const int MAX_D1_WALL_FLAGS = 5;
-        public const int MAX_D2_WALL_FLAGS = 9;
-        public const int MAX_WALL_FLAGS = 9;
+        public const int MAX_WALL_FLAGS_D1 = 5;
+        public const int MAX_WALL_FLAGS_D2 = 9;
+        public const int WALL_FLAG_LIMIT = 9;
         public const int NUM_LIGHTS_D1 = 48;
         public const int NUM_LIGHTS_D2 = 85;
 
         public const int ASPECT_TOP = 3;
         public const int ASPECT_BOT = 5;
-        const float ANGLE_RATE = 0.01f;
-        public const int MOVE_RATE = 5;
+        public const double ANGLE_RATE = 0.01f;
+        public const double MOVE_RATE = 5;
 
         public const int DEFAULT_SEGMENT = 0;
         public const int DEFAULT_SIDE = 4;
@@ -118,14 +123,14 @@
         public const int VCLIP_BIG_EXPLOSION = 0;
         public const int VCLIP_SMALL_EXPLOSION = 2;
 
-        public const int D1_PLAYER_CLIP_NUMBER = 43;
-        public const int D2_PLAYER_CLIP_NUMBER = 108;
+        public const int PLAYER_CLIP_NUMBER_D1 = 43;
+        public const int PLAYER_CLIP_NUMBER_D2 = 108;
 
-        public const int D1_COOP_CLIP_NUMBER = 44;
-        public const int D2_COOP_CLIP_NUMBER = 108;
+        public const int COOP_CLIP_NUMBER_D1 = 44;
+        public const int COOP_CLIP_NUMBER_D2 = 108;
 
-        public const int D1_REACTOR_CLIP_NUMBER = 39;
-        public const int D2_REACTOR_CLIP_NUMBER = 97;
+        public const int REACTOR_CLIP_NUMBER_D1 = 39;
+        public const int REACTOR_CLIP_NUMBER_D2 = 97;
 
         public const int COMPILED_MINE_VERSION = 0;
 
@@ -145,19 +150,19 @@
 
         // pseudo constants
         public ushort MAX_SEGMENTS { get {return (ushort) (DLE.IsD1File ? MAX_SEGMENTS1 : DLE.IsStdLevel ? MAX_SEGMENTS2 : SEGMENT_LIMIT); } }
-        public ushort MAX_VERTICES { get {return (ushort) (DLE.IsD1File ? MAX_VERTICES1 : DLE.IsStdLevel ? MAX_VERTICES2 : MAX_VERTICES3); } }
+        public ushort MAX_VERTICES { get {return (ushort) (DLE.IsD1File ? MAX_VERTICES_D1 : DLE.IsStdLevel ? MAX_VERTICES_D2 : VERTEX_LIMIT); } }
         public ushort MAX_OBJECTS { get {return (ushort) (DLE.IsStdLevel ? MAX_OBJECTS1 : MAX_OBJECTS2); } }
-        public ushort MAX_WALLS { get {return (ushort) (DLE.IsD1File ? MAX_WALLS1 : (LevelVersion < 12) ? MAX_WALLS2 : WALL_LIMIT); } }
+        public ushort MAX_WALLS { get {return (ushort) (DLE.IsD1File ? MAX_WALLS_D1 : (LevelVersion < 12) ? MAX_WALLS_D2 : WALL_LIMIT); } }
         public ushort NO_WALL { get {return MAX_WALLS; } }
-        public ushort MAX_TRIGGERS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2); } }
+        public ushort MAX_TRIGGERS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2); } }
         public ushort MAX_PLAYERS { get {return (ushort) (DLE.IsStdLevel ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X); } }
         public ushort MAX_NUM_MATCENS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2); } }
-        public ushort MAX_NUM_FUELCENS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2); } }
-        public ushort MAX_NUM_REPAIRCENS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2); } }
-        public ushort PLAYER_CLIP_NUMBER { get {return (ushort) (DLE.IsD1File ? D1_PLAYER_CLIP_NUMBER : D2_PLAYER_CLIP_NUMBER); } }
-        public ushort COOP_CLIP_NUMBER { get {return (ushort) (DLE.IsD1File ? D1_COOP_CLIP_NUMBER : D2_COOP_CLIP_NUMBER); } }
-        public ushort REACTOR_CLIP_NUMBER { get {return (ushort) (DLE.IsD1File ? D1_REACTOR_CLIP_NUMBER : D2_REACTOR_CLIP_NUMBER); } }
-        public ushort ROBOT_IDS2 { get {return (ushort) ((LevelVersion == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL); } }
+        public ushort MAX_NUM_FUELCENS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X); } }
+        public ushort MAX_NUM_REPAIRCENS { get {return (ushort) ((DLE.IsD1File || (LevelVersion < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X); } }
+        public ushort PLAYER_CLIP_NUMBER { get {return (ushort) (DLE.IsD1File ? PLAYER_CLIP_NUMBER_D1 : PLAYER_CLIP_NUMBER_D2); } }
+        public ushort COOP_CLIP_NUMBER { get {return (ushort) (DLE.IsD1File ? COOP_CLIP_NUMBER_D1 : COOP_CLIP_NUMBER_D2); } }
+        public ushort REACTOR_CLIP_NUMBER { get {return (ushort) (DLE.IsD1File ? REACTOR_CLIP_NUMBER_D1 : REACTOR_CLIP_NUMBER_D2); } }
+        public ushort ROBOT_IDS2 { get {return (ushort) ((LevelVersion == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL); } }
         public ushort MAX_POWERUP_IDS { get {return (ushort) (DLE.IsD1File ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2); } }
         public ushort MAX_DL_INDICES { get {return (ushort) ((DLE.IsD1File || DLE.IsStdLevel) ? MAX_DL_INDICES_D2 : MAX_DL_INDICES_D2X); } }
         public ushort MAX_DELTA_LIGHTS { get {return (ushort) ((DLE.IsD1File || DLE.IsStdLevel) ? MAX_DELTA_LIGHTS_D2 : MAX_DELTA_LIGHTS_D2X); } }

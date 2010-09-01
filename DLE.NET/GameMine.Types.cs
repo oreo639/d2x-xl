@@ -73,7 +73,7 @@ namespace DLE.NET
         {
             int play_time;
             short num_frames;
-            short [] frames = new short [MAX_CLIP_FRAMES2];
+            short [] frames = new short [MAX_CLIP_FRAMES_D2];
             short open_sound;
             short close_sound;
             short flags;
