@@ -6,6 +6,10 @@ using System.IO;
 
 namespace DLE.NET
 {
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
     public class Side : GameItem
     {
         public short m_nChild;
@@ -18,7 +22,7 @@ namespace DLE.NET
 
         void Setup ()
         {
-            m_nWall = DLE.Mine.NO_WALL ();
+            m_nWall = DLE.Mine.NO_WALL;
             m_nBaseTex =
             m_nOvlTex = 0;
             for (int i = 0; i < 4; i++)

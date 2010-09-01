@@ -13,7 +13,7 @@ namespace DLE.NET
 
         static GameMine theMine = new GameMine ();
         static Settings settings = new Settings ();
-        static TextureManager textureManager = new TextureManager ();
+        public static TextureManager textureManager = new TextureManager ();
 
         static public bool Modified { get; set; }
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DLE.NET
 {
-    public class Wall
+    public class Wall : SideKey
     {
         public enum Type : byte
         {
@@ -78,15 +78,15 @@ namespace DLE.NET
             EXTERNAL = 8	// 0/0/0/1 don't see it, dont fly through it 
         }
 
-        public int segnum, sidenum; // Seg & side for this wall 
-        public int hps;            // "Hit points" of the wall.  
-        public int linked_wall;    // number of linked wall 
-        public byte type;           // What kind of special wall. 
-        public ushort flags;          // Flags for the wall.     
-        public byte state;          // Opening, closing, etc. 
-        public byte trigger;        // Which trigger is associated with the wall. 
-        public char clip_num;       // Which  animation associated with the wall.  
-        public byte keys;           // which keys are required 
+        public int m_nSegment, m_nSide; // Seg & side for this wall 
+        public int m_hps;            // "Hit points" of the wall.  
+        public int m_linkedWall;    // number of linked wall 
+        public byte m_type;           // What kind of special wall. 
+        public ushort m_flags;          // Flags for the wall.     
+        public byte m_state;          // Opening, closing, etc. 
+        public byte m_trigger;        // Which trigger is associated with the wall. 
+        public char m_nClip;       // Which  animation associated with the wall.  
+        public byte m_keys;           // which keys are required 
 
         // the following two Descent2 bytes replace the "short pad" of Descent1
         public char controlling_trigger;    // which trigger causes something to happen here.
