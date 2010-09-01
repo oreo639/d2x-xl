@@ -3,7 +3,7 @@ using System;
 
 namespace DLE.NET
 {
-    struct tFixVector
+    public struct tFixVector
     {
         public int x, y, z;
 
@@ -86,7 +86,12 @@ namespace DLE.NET
 	        return (v1.v.x == v2.v.x) && (v1.v.y == v2.v.y) && (v1.v.z == v2.v.z);
         }
 
-        public static FixVector operator+ (FixVector v1, FixVector v2) 
+        public static bool operator != (FixVector v1, FixVector v2)
+        {
+            return (v1.v.x != v2.v.x) || (v1.v.y != v2.v.y) || (v1.v.z != v2.v.z);
+        }
+
+        public static FixVector operator + (FixVector v1, FixVector v2) 
         {
 	        return new FixVector (v1.v.x + v2.v.x, v1.v.y + v2.v.y, v1.v.z + v2.v.z);
 	    }

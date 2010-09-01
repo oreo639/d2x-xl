@@ -13,7 +13,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        enum Type : uint
+        public enum Type : int
         {
 		    GRAY_ROCK = 1,
 		    BROWN_ROCK = (1 << 1),
@@ -51,7 +51,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        class FilterInfo
+        public class FilterInfo
         {
             public short m_nMin, m_nMax;
             public Type m_nFilter1, m_nFilter2;
@@ -63,20 +63,18 @@ namespace DLE.NET
                 m_nFilter1 = nFilter1;
                 m_nFilter2 = nFilter2;
             }
+
+            public uint TEX_ROCK { get { return (uint) TextureFilter.Type.GRAY_ROCK | (uint) TextureFilter.Type.BROWN_ROCK | (uint) TextureFilter.Type.RED_ROCK | (uint) TextureFilter.Type.YELLOW_ROCK | (uint) TextureFilter.Type.GREEN_ROCK | (uint) TextureFilter.Type.BLUE_ROCK; } }
+            public uint TEX_NATURE { get { return (uint) TextureFilter.Type.ICE | (uint) TextureFilter.Type.STONES | (uint) TextureFilter.Type.GRASS | (uint) TextureFilter.Type.SAND | (uint) TextureFilter.Type.LAVA | (uint) TextureFilter.Type.WATER; } }
+            public uint TEX_BUILDING { get { return (uint) TextureFilter.Type.STEEL | (uint) TextureFilter.Type.CONCRETE | (uint) TextureFilter.Type.BRICK | (uint) TextureFilter.Type.TARMAC | (uint) TextureFilter.Type.WALL | (uint) TextureFilter.Type.FLOOR | (uint) TextureFilter.Type.CEILING; } }
+            public uint TEX_OTHER { get { return (uint) TextureFilter.Type.FAN | (uint) TextureFilter.Type.GRATE | (uint) TextureFilter.Type.DOOR; } }
+            public uint TEX_TECHMAT { get { return (uint) TextureFilter.Type.SWITCH | (uint) TextureFilter.Type.TECH | (uint) TextureFilter.Type.ENERGY | (uint) TextureFilter.Type.FORCEFIELD | (uint) TextureFilter.Type.LIGHT; } }
+            public uint TEX_SIGNS { get { return (uint) TextureFilter.Type.SIGN | (uint) TextureFilter.Type.LABEL | (uint) TextureFilter.Type.MONITOR | (uint) TextureFilter.Type.STRIPES; } }
         }
 
         //------------------------------------------------------------------------------
 
-        uint Type.ROCK { get { return (uint) Type.GRAY_ROCK | (uint) Type.BROWN_ROCK | (uint) Type.RED_ROCK | (uint) Type.YELLOW_ROCK | (uint) Type.GREEN_ROCK | (uint) Type.BLUE_ROCK; } }
-        uint Type.NATURE { get { return (uint) Type.ICE | (uint) Type.STONES | (uint) Type.GRASS | (uint) Type.SAND | (uint) Type.LAVA | (uint) Type.WATER; } }
-        uint Type.BUILDING { get { return (uint) Type.STEEL | (uint) Type.CONCRETE | (uint) Type.BRICK | (uint) Type.TARMAC | (uint) Type.WALL | (uint) Type.FLOOR | (uint) Type.CEILING; } }
-        uint Type.OTHER{ get { return (uint) Type.FAN | (uint) Type.GRATE | (uint) Type.DOOR; } }
-        uint Type.TECHMAT{ get { return (uint) Type.SWITCH | (uint) Type.TECH | (uint) Type.ENERGY | (uint) Type.FORCEFIELD | (uint) Type.LIGHT; } }
-        uint Type.SIGNS{ get { return (uint) Type.SIGN | (uint) Type.LABEL | (uint) Type.MONITOR | (uint) Type.STRIPES; } }
-
-        //------------------------------------------------------------------------------
-
-        const int TEXFILTER_SIZE_D1= 154;
+        const int TEXFILTER_SIZE_D1 = 154;
         const int TEXFILTER_SIZE_D2 = 174;
 
         int TEXFILTER_SIZE { get { return DLE.IsD1File ? TEXFILTER_SIZE_D1 : TEXFILTER_SIZE_D2; } }
@@ -466,7 +464,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------
 
-        uint Filter (short nTexture)
+        uint GetFilter (short nTexture)
         {
 	        short	m = FilterIndex (nTexture);
 
@@ -582,7 +580,7 @@ namespace DLE.NET
         {
         SetFilter ();
         if (bShowAll) {
-	        if (m_nFilter == (Type) 0xFFFFFFFF)
+	        if (m_nFilter == (Type) (-1))
                 Buffer.SetByte (filter, 0, 255);
 	        else {
                 Buffer.SetByte (filter, 0, 0);

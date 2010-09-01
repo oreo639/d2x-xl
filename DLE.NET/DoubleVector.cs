@@ -6,7 +6,7 @@ using System.IO;
 
 namespace DLE.NET
 {
-    struct tDoubleVector 
+    public struct tDoubleVector 
     {
         public double x, y, z;
 
@@ -93,7 +93,12 @@ namespace DLE.NET
 	        return (v1.v.x == v2.v.x) && (v1.v.y == v2.v.y) && (v1.v.z == v2.v.z);
         }
 
-        public static DoubleVector operator+ (DoubleVector v1, DoubleVector v2) 
+        public static bool operator != (DoubleVector v1, DoubleVector v2)
+        {
+            return (v1.v.x != v2.v.x) || (v1.v.y != v2.v.y) || (v1.v.z != v2.v.z);
+        }
+
+        public static DoubleVector operator + (DoubleVector v1, DoubleVector v2) 
         {
 	        return new DoubleVector (v1.v.x + v2.v.x, v1.v.y + v2.v.y, v1.v.z + v2.v.z);
 	    }

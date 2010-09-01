@@ -3,7 +3,7 @@ namespace DLE.NET
 {
     partial class Segment
     {
-        enum Type : byte
+        public enum Type : byte
         {
             NONE = 0,
             FUELCEN = 1,
@@ -27,7 +27,7 @@ namespace DLE.NET
             COUNT_D2 = 17 // Descent 2 only
         }
 
-        enum Function : byte
+        public enum Function : byte
         {
             NONE = 0,
             FUELCEN = 1,
@@ -44,7 +44,7 @@ namespace DLE.NET
             COUNT = 12
         }
 
-        enum Property : byte
+        public enum Property : byte
         {
             NONE = 0,
             WATER = 1,
