@@ -234,7 +234,7 @@ namespace DLE.NET
 
         public DoubleVector Normalize (DoubleVector v) 
         { 
-            return v / v.Mag ();
+            return Div (Mag ());
         }
 
         // ------------------------------------------------------------------------

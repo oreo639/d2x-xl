@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System;
 
 namespace DLE.NET
 {
@@ -218,15 +219,15 @@ namespace DLE.NET
         // ------------------------------------------------------------------------
         #region Math
         public int Mag () 
-        { 
-            return Math.Sqrt (v.x * v.x + v.y * v.y + v.z * v.z); 
+        {
+            return FixConverter.Sqrt (FixConverter.Sqr (v.x) + FixConverter.Sqr (v.y) + FixConverter.Sqr (v.z));
         }
 
         // ------------------------------------------------------------------------
 
-        public FixVector Normalize (FixVector v) 
+        public FixVector Normalize () 
         { 
-            return v / v.Mag ();
+            return Div (Mag ());
         }
 
         // ------------------------------------------------------------------------

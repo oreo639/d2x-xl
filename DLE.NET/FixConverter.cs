@@ -12,14 +12,14 @@ namespace DLE.NET
             return (value >= 0) ? value + round / 2.0 : value - round / 2.0;
         }
 
-        public static double X2D (int f)
+        public static double X2D (int n)
         {
-            return ((double)f / 65536.0);
+            return ((double)n / 65536.0);
         }
 
-        public static int D2X (double f)
+        public static int D2X (double n)
         {
-            return ((int)Round (f * 65536.0));
+            return ((int)Round (n * 65536.0));
         }
 
         public static int Mul (int n, int m)
@@ -30,6 +30,16 @@ namespace DLE.NET
         public static int Div (int n, int m)
         {
             return (int) ((double) n / (double) m * 65536.0);
+        }
+
+        public static int Sqr (int n)
+        {
+            return Mul (n, n);
+        }
+
+        public static int Sqrt (int n)
+        {
+            return D2X (Math.Sqrt (X2D (n)));
         }
     }
 }
