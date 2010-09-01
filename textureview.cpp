@@ -14,6 +14,7 @@
 #include "cfile.h"
 #include "light.h"
 #include "toolview.h"
+#include "texturefilter.h"
 
 #include <math.h>
 
@@ -54,7 +55,7 @@ m_iconSize.cy = 64 / scale;
 m_iconSpace.cx = m_iconSize.cx + 6;
 m_iconSpace.cy = m_iconSize.cy + 6;
 m_viewFlags = 0;
-TextureFilter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, INIFILE);
+m_filter.Filter () = GetPrivateProfileInt ("DLE-XP", "TextureFilter", 0xFFFFFFFF, INIFILE);
 m_bShowAll = TRUE;
 m_bDelayRefresh = false;
 };
@@ -91,97 +92,6 @@ void CTextureView::Reset ()
 CHECKMINE;
 //textureManager.Release ();
 Refresh ();
-}
-
-//------------------------------------------------------------------------
-
-short CTextureView::TexFilterIndex (short nTexture)
-{
-	short	m, l = 0, r = TEX_FILTER_SIZE - 1;
-
-do {
-	m = (l + r) / 2;
-	if (nTexture < TEXTURE_FILTERS [m].m_range.nMin)
-		r = m - 1;
-	else if (nTexture > TEXTURE_FILTERS [m].m_range.nMax)
-		l = m + 1;
-	else
-		return m;
-	}
-while (l <= r);
-return -1;
-}
-
-//------------------------------------------------------------------------
-
-uint CTextureView::TextureFilter (short nTexture)
-{
-	short	m = TexFilterIndex (nTexture);
-
-return (m < 0) ? 0 : TEXTURE_FILTERS [m].nFilter1;
-}
-
-//------------------------------------------------------------------------
-
-int CTextureView::QCmpTexFilters (int nTexture, int mTexture, uint mf, uint mf2)
-{
-	short	n = TexFilterIndex (nTexture);
-	uint	nf = TEXTURE_FILTERS [n].nFilter1,
-			nf2 = TEXTURE_FILTERS [n].nFilter2;
-
-//CBRK (((nf == TXT_DOOR) && (mf == TXT_SAND)) || ((mf == TXT_DOOR) && (nf == TXT_SAND)));
-if (nf < mf)
-	return -1;
-else if (nf > mf)
-	return 1;
-else if (nf2 < mf2)
-	return -1;
-else if (nf2 > mf2)
-	return 1;
-else
-	return (nTexture < mTexture) ? -1 : (nTexture > mTexture) ? 1 : 0;
-}
-
-//------------------------------------------------------------------------
-
-void CTextureView::QSortTexMap (short left, short right)
-{
-	short		mTexture = m_mapViewToTex [(left + right) / 2];
-	short		m = TexFilterIndex (mTexture);
-	uint		mf, mf2;
-	short		h, l = left, r = right;
-
-mf = TEXTURE_FILTERS [m].nFilter;
-mf2 = TEXTURE_FILTERS [m].n2ndFilter;
-do {
-	while (QCmpTexFilters (m_mapViewToTex [l], mTexture, mf, mf2) < 0)
-		l++;
-	while (QCmpTexFilters (m_mapViewToTex [r], mTexture, mf, mf2) > 0)
-		r--;
-	if (l <= r) {
-		if (l < r) {
-			h = m_mapViewToTex [l];
-			m_mapViewToTex [l] = m_mapViewToTex [r];
-			m_mapViewToTex [r] = h;
-			}
-		l++;
-		r--;
-		}
-	}
-while (l < r);
-if (l < right)
-	QSortTexMap (l, right);
-if (left < r)
-	QSortTexMap (left, r);
-}
-
-//------------------------------------------------------------------------
-
-void CTextureView::CreateTexMap (void)
-{
-QSortTexMap (0, m_nTextures [1] - 1);
-for (int i = 0; i < m_nTextures [1]; i++)
-	m_mapTexToView [m_mapViewToTex [i]] = i;
 }
 
 //------------------------------------------------------------------------
@@ -305,9 +215,9 @@ if (!theMine)
 
 UINT nPos = GetScrollPos (SB_VERT);
 int nOffset = nPos * m_viewSpace.cx;
-byte pFilter [1 + MAX_TEXTURES_D2 / 8];
+byte filterP [1 + MAX_TEXTURES_D2 / 8];
 
-FilterTextures (pFilter, m_bShowAll);
+m_filter.Process (filterP, m_bShowAll);
 int x = 0;
 int y = 0;
 
@@ -316,85 +226,13 @@ y = point.y / m_iconSpace.cy;
 int h = nOffset + y * m_viewSpace.cx + x + 1;
 int i;
 for (i = 0; i < m_nTextures [1]; i++) {
-	if (BITSET (pFilter, i)) //pFilter [i / 8] & (1 << (i & 7)))
+	if (GETBIT (filterP, i)) //filterP [i / 8] & (1 << (i & 7)))
 		if (!--h) {
-			nBaseTex = m_mapViewToTex [i]; //m_pTextures [i];
+			nBaseTex = m_filter.MapViewToTex (i); //m_pTextures [i];
 			return 0; // return success
 			}
 	}
 return 1; // return failure
-}
-
-//------------------------------------------------------------------------
-// TextureIndex()
-//
-// looks up texture index number for nBaseTex
-// returns 0 to m_nTextures-1 on success
-// returns -1 on failure
-//------------------------------------------------------------------------
-
-int CTextureView::TextureIndex(short nBaseTex) 
-{
-return ((nBaseTex < 0) || (nBaseTex >= sizeof (m_mapTexToView) / sizeof (m_mapTexToView [0]))) ? 0 : m_mapTexToView [nBaseTex];
-}
-
-//------------------------------------------------------------------------
-// FilterTexture()
-//
-// Determines which textures to display based on which have been used
-//------------------------------------------------------------------------
-
-void CTextureView::FilterTextures (byte *pFilter, BOOL bShowAll) 
-{
-if (bShowAll) {
-	if (m_nTxtFilter == 0xFFFFFFFF)
-		memset (pFilter, 0xFF, (MAX_TEXTURES_D2 + 7) / 8);
-	else {
-		memset (pFilter, 0, (MAX_TEXTURES_D2 + 7) / 8);
-		m_nTextures [0] = 0;
-		int i, f = m_nTxtFilter & ~TXT_MOVE;
-		for (i = 0; i < m_nTextures [1]; i++) {
-			int t = m_mapViewToTex [i];
-			int j = TexFilterIndex (t);
-			if ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & f) {
-				SETBIT (pFilter, i);
-				m_nTextures [0]++;
-				}
-			}
-		}
-	}
-else {
-	ushort nSegment,nSide;
-	CSegment *segP;
-
-	memset (pFilter, 0, (MAX_TEXTURES_D2 + 7) / 8);
-	m_nTextures [0] = 0;
-	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
-      for (nSide = 0;nSide < 6; nSide++) {
-			ushort nWall = segP->m_sides[nSide].m_info.nWall;
-			if ((segP->Child (nSide) == -1) ||
-				 (nWall < theMine->GameInfo ().walls.count && 
-				  theMine->Walls (nWall)->m_info.type != WALL_OPEN)) {
-				int t = segP->m_sides [nSide].m_info.nBaseTex;
-				int i = TextureIndex (t);
-				int j = TexFilterIndex (t);
-				if ((i >= 0) && !BITSET (pFilter, i) && 
-					 ((TEXTURE_FILTERS [j].nFilter | TEXTURE_FILTERS [j].n2ndFilter) & m_nTxtFilter)) {
-					SETBIT (pFilter, i);
-					m_nTextures [0]++;
-					}
-//					pFilter[t/8] |= (1<<(t&7));
-				t = segP->m_sides [nSide].m_info.nOvlTex & 0x3fff;
-				i = TextureIndex (t);
-				j = TexFilterIndex (t);
-				if ((t > 0) && !BITSET (pFilter, i)) {
-					SETBIT (pFilter, i);
-//					pFilter[t/8] |= (1<<(t&7));
-					m_nTextures [0]++;
-					}
-				}
-			}
-	}
 }
 
 								/*---------------------------*/
@@ -415,8 +253,8 @@ m_bShowAll = ((m_viewFlags & eViewMineUsedTextures) == 0);
 if (!(m_viewSpace.cx && m_viewSpace.cy))
 	return;
 
-byte pFilter [(MAX_TEXTURES_D2 + 7) / 8];
-FilterTextures (pFilter, m_bShowAll);
+byte filterP [(MAX_TEXTURES_D2 + 7) / 8];
+m_filter.Process (filterP, m_bShowAll);
 m_nRows [ShowAll ()] = (m_nTextures [ShowAll ()] + m_viewSpace.cx - 1) / m_viewSpace.cx;
 
 // read scroll position to get offset for bitmap tiles
@@ -432,7 +270,7 @@ else {
 	UINT nPos = GetScrollPos (SB_VERT);
 	int i, j = nPos * m_viewSpace.cx; 
 	for (i = 0, nOffset = 0; (i < m_nTextures [1]); i++)
-		if (ShowAll () || BITSET (pFilter, i)) {
+		if (ShowAll () || GETBIT (filterP, i)) {
 			nOffset++;
 			if (--j < 0)
 				break;
@@ -459,12 +297,12 @@ int x = 0;
 int y = 0;
 for (int i = 0; i < m_nTextures [1]; i++) {
 	if (!ShowAll ()) {
-		if (!BITSET (pFilter, i))
+		if (!GETBIT (filterP, i))
 			continue;
 			}
 	if (nOffset &&	--nOffset)
 		continue;
-	if (!textureManager.Define (m_mapViewToTex [i], 0, &tex, 0, 0)) {
+	if (!textureManager.Define (m_filter.MapViewToTex (i), 0, &tex, 0, 0)) {
 		bmi->bmiHeader.biWidth = tex.m_info.width;
 		bmi->bmiHeader.biHeight = tex.m_info.width;
 		StretchDIBits (*pDC, 3 + x * m_iconSpace.cx, 3 + y * m_iconSpace.cy, 
@@ -472,9 +310,9 @@ for (int i = 0; i < m_nTextures [1]; i++) {
 							(void *)tex.m_info.bmData, bmi, DIB_RGB_COLORS, SRCCOPY);
 		}
 // pick color for box drawn around texture
-	if (m_mapViewToTex [i] == nBaseTex)
+	if (m_filter.MapViewToTex (i) == nBaseTex)
 		pDC->SelectObject (GetStockObject (WHITE_PEN));
-	else if (i && (m_mapViewToTex [i] == nOvlTex)) // note: 0 means no texture
+	else if (i && (m_filter.MapViewToTex (i) == nOvlTex)) // note: 0 means no texture
 		pDC->SelectObject (m_penCyan);
 	else
 		pDC->SelectObject (GetStockObject (BLACK_PEN));
@@ -510,21 +348,7 @@ ReleaseDC(pDC);
 
 void CTextureView::Setup (void) 
 {
-  int nTextures, nFrames = 0;
-
-  nTextures = textureManager.MaxTextures ();
-
-  // calculate total number of textures
-m_nTextures [1] = 0;
-for (int i = 0; i < nTextures; i++) {
-	if (textureManager.Texture (i)->m_info.bFrame)
-		++nFrames;
-	else
-		m_mapViewToTex [m_nTextures [1]++] = i;
-	}
-
-// allocate memory for texture list
-CreateTexMap ();
+m_filter.Setup ();
 }
 
 								/*---------------------------*/

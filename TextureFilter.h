@@ -49,6 +49,9 @@
 #define	TEX_TECHMAT				(TEX_SWITCH | TEX_TECH | TEX_ENERGY | TEX_FORCEFIELD | TEX_LIGHT)
 #define	TEX_SIGNS				(TEX_SIGN | TEX_LABEL | TEX_MONITOR | TEX_STRIPES)
 
+#define	SETBIT(_b,_i)	((_b) [(_i) >> 3] |= (1 << ((_i) & 7)))
+#define	GETBIT(_b,_i)	((_b) [(_i) >> 3] & (1 << ((_i) & 7)))
+
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -75,9 +78,11 @@ private:
 		uint				m_nSize;
 
 public:
-	void FilterTextures (byte* filterP, BOOL bShowAll); 
+	void Process (byte* filterP, BOOL bShowAll); 
 	void Setup (void); 
 	inline uint& Filter (void) { return m_nFilter; }
+	inline short MapViewToTex (short i) { return m_mapViewToTex [i]; }
+	inline short MapTexToView (short i) { return m_mapTexToView [i]; }
 
 private:
 	short FilterIndex (short nTexture);

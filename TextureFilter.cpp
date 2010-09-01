@@ -16,9 +16,6 @@
 #define TEXFILTER_SIZE	(DLE.IsD1File () ? TEXFILTER_SIZE_D1 : TEXFILTER_SIZE_D2)
 #define TEXTURE_FILTERS (DLE.IsD1File () ? texFiltersD1 : texFiltersD2)
 
-#define	SETBIT(_b,_i)	((_b) [(_i) >> 3] |= (1 << ((_i) & 7)))
-#define	GETBIT(_b,_i)	((_b) [(_i) >> 3] & (1 << ((_i) & 7)))
-
 //------------------------------------------------------------------------
 
 static tTexFilterInfo texFiltersD1 [TEXFILTER_SIZE_D1] = {
@@ -497,7 +494,7 @@ return ((nTexture < 0) || (nTexture >= sizeof (m_mapTexToView) / sizeof (m_mapTe
 // Determines which textures to display based on which have been used
 //------------------------------------------------------------------------
 
-void CTextureFilter::FilterTextures (byte* filterP, BOOL bShowAll) 
+void CTextureFilter::Process (byte* filterP, BOOL bShowAll) 
 {
 SetFilter ();
 if (bShowAll) {
