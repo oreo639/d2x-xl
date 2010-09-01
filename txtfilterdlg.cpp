@@ -110,36 +110,36 @@ typedef struct tCtrlMap {
 } tCtrlMap;
 
 tCtrlMap ctrlMap [] = {
-	{TXT_GRAY_ROCK, IDC_TXT_GRAY_ROCK},
-	{TXT_BROWN_ROCK, IDC_TXT_BROWN_ROCK},
-	{TXT_RED_ROCK, IDC_TXT_RED_ROCK},
-	{TXT_GREEN_ROCK, IDC_TXT_GREEN_ROCK},
-	{TXT_YELLOW_ROCK, IDC_TXT_YELLOW_ROCK},
-	{TXT_BLUE_ROCK, IDC_TXT_BLUE_ROCK},
-	{TXT_ICE, IDC_TXT_ICE},
-	{TXT_STONES, IDC_TXT_STONES},
-	{TXT_GRASS, IDC_TXT_GRASS},
-	{TXT_SAND, IDC_TXT_SAND},
-	{TXT_LAVA, IDC_TXT_LAVA},
-	{TXT_WATER, IDC_TXT_WATER},
-	{TXT_STEEL, IDC_TXT_STEEL},
-	{TXT_CONCRETE, IDC_TXT_CONCRETE},
-	{TXT_BRICK, IDC_TXT_BRICK},
-	{TXT_TARMAC, IDC_TXT_TARMAC},
-	{TXT_WALL, IDC_TXT_WALL},
-	{TXT_FLOOR, IDC_TXT_FLOOR},
-	{TXT_CEILING, IDC_TXT_CEILING},
-	{TXT_GRATE, IDC_TXT_GRATE},
-	{TXT_FAN, IDC_TXT_FAN},
-	{TXT_LIGHT, IDC_TXT_LIGHT},
-	{TXT_ENERGY, IDC_TXT_ENERGY},
-	{TXT_FORCEFIELD, IDC_TXT_FORCEFIELD},
-	{TXT_SWITCH, IDC_TXT_SWITCH},
-	{TXT_TECH, IDC_TXT_TECH},
-	{TXT_DOOR, IDC_TXT_DOOR},
-	{TXT_LABEL, IDC_TXT_LABEL},
-	{TXT_MONITOR, IDC_TXT_MONITOR},
-	{TXT_STRIPES, IDC_TXT_STRIPES}
+	{TEX_GRAY_ROCK, IDC_TXT_GRAY_ROCK},
+	{TEX_BROWN_ROCK, IDC_TXT_BROWN_ROCK},
+	{TEX_RED_ROCK, IDC_TXT_RED_ROCK},
+	{TEX_GREEN_ROCK, IDC_TXT_GREEN_ROCK},
+	{TEX_YELLOW_ROCK, IDC_TXT_YELLOW_ROCK},
+	{TEX_BLUE_ROCK, IDC_TXT_BLUE_ROCK},
+	{TEX_ICE, IDC_TXT_ICE},
+	{TEX_STONES, IDC_TXT_STONES},
+	{TEX_GRASS, IDC_TXT_GRASS},
+	{TEX_SAND, IDC_TXT_SAND},
+	{TEX_LAVA, IDC_TXT_LAVA},
+	{TEX_WATER, IDC_TXT_WATER},
+	{TEX_STEEL, IDC_TXT_STEEL},
+	{TEX_CONCRETE, IDC_TXT_CONCRETE},
+	{TEX_BRICK, IDC_TXT_BRICK},
+	{TEX_TARMAC, IDC_TXT_TARMAC},
+	{TEX_WALL, IDC_TXT_WALL},
+	{TEX_FLOOR, IDC_TXT_FLOOR},
+	{TEX_CEILING, IDC_TXT_CEILING},
+	{TEX_GRATE, IDC_TXT_GRATE},
+	{TEX_FAN, IDC_TXT_FAN},
+	{TEX_LIGHT, IDC_TXT_LIGHT},
+	{TEX_ENERGY, IDC_TXT_ENERGY},
+	{TEX_FORCEFIELD, IDC_TXT_FORCEFIELD},
+	{TEX_SWITCH, IDC_TXT_SWITCH},
+	{TEX_TECH, IDC_TXT_TECH},
+	{TEX_DOOR, IDC_TXT_DOOR},
+	{TEX_LABEL, IDC_TXT_LABEL},
+	{TEX_MONITOR, IDC_TXT_MONITOR},
+	{TEX_STRIPES, IDC_TXT_STRIPES}
 };
 
 void CTxtFilterTool::DoDataExchange (CDataExchange *pDX)
@@ -217,19 +217,19 @@ void CTxtFilterTool::OnDoors () { SetFilter (26); }
 void CTxtFilterTool::OnLabels () { SetFilter (27); }
 void CTxtFilterTool::OnMonitors () { SetFilter (28); }
 void CTxtFilterTool::OnStripes () { SetFilter (29); }
-void CTxtFilterTool::OnMovers () { SetFilterRange (TXT_LIGHT | TXT_STRIPES, -1); }
-void CTxtFilterTool::OnRockAll () { SetFilterRange (TXT_ROCK, 1); }
-void CTxtFilterTool::OnRockNone () { SetFilterRange (TXT_ROCK, 0); }
-void CTxtFilterTool::OnNatureAll () { SetFilterRange (TXT_NATURE, 1); }
-void CTxtFilterTool::OnNatureNone () { SetFilterRange (TXT_NATURE, 0); }
-void CTxtFilterTool::OnBuildingAll () { SetFilterRange (TXT_BUILDING, 1); }
-void CTxtFilterTool::OnBuildingNone () { SetFilterRange (TXT_BUILDING, 0); }
-void CTxtFilterTool::OnTechAll () { SetFilterRange (TXT_TECHMAT, 1); }
-void CTxtFilterTool::OnTechNone () { SetFilterRange (TXT_TECHMAT, 0); }
-void CTxtFilterTool::OnOtherAll () { SetFilterRange (TXT_OTHER, 1); }
-void CTxtFilterTool::OnOtherNone () { SetFilterRange (TXT_OTHER, 0); }
-void CTxtFilterTool::OnSignAll () { SetFilterRange (TXT_SIGNS, 1); }
-void CTxtFilterTool::OnSignNone () { SetFilterRange (TXT_SIGNS, 0); }
+void CTxtFilterTool::OnMovers () { SetFilterRange (TEX_LIGHT | TEX_STRIPES, -1); }
+void CTxtFilterTool::OnRockAll () { SetFilterRange (TEX_ROCK, 1); }
+void CTxtFilterTool::OnRockNone () { SetFilterRange (TEX_ROCK, 0); }
+void CTxtFilterTool::OnNatureAll () { SetFilterRange (TEX_NATURE, 1); }
+void CTxtFilterTool::OnNatureNone () { SetFilterRange (TEX_NATURE, 0); }
+void CTxtFilterTool::OnBuildingAll () { SetFilterRange (TEX_BUILDING, 1); }
+void CTxtFilterTool::OnBuildingNone () { SetFilterRange (TEX_BUILDING, 0); }
+void CTxtFilterTool::OnTechAll () { SetFilterRange (TEX_TECHMAT, 1); }
+void CTxtFilterTool::OnTechNone () { SetFilterRange (TEX_TECHMAT, 0); }
+void CTxtFilterTool::OnOtherAll () { SetFilterRange (TEX_OTHER, 1); }
+void CTxtFilterTool::OnOtherNone () { SetFilterRange (TEX_OTHER, 0); }
+void CTxtFilterTool::OnSignAll () { SetFilterRange (TEX_SIGNS, 1); }
+void CTxtFilterTool::OnSignNone () { SetFilterRange (TEX_SIGNS, 0); }
 void CTxtFilterTool::OnTxtAll () { SetFilterRange (0xFFFFFFFF, 1); }
 void CTxtFilterTool::OnTxtNone () { SetFilterRange (0xFFFFFFFF, 0); }
 void CTxtFilterTool::OnTxtInvert () { SetFilterRange (0xFFFFFFFF, -1); }

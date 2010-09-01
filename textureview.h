@@ -69,6 +69,7 @@ class CTextureView : public CWnd {
 			{ return m_viewFlags; }
 		inline bool ShowAll ()
 			{ return m_bShowAll && (m_filter.Filter () == 0xFFFFFFFF); }
+		inline uint& TextureFilter (void) { return m_filter.Filter (); }
 	DECLARE_MESSAGE_MAP()
 };
                         
