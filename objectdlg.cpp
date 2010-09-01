@@ -25,7 +25,7 @@ typedef struct tSliderData {
 } tSliderData;
 
 // list box tables
-int model_num_list [N_D2_ROBOT_TYPES] = {
+int model_num_list [N_ROBOT_TYPES_D2] = {
   0x00, 0x02, 0x04, 0x06, 0x08, 0x0a, 0x0c, 0x0e, 0x0f, 0x11,
   0x13, 0x14, 0x15, 0x16, 0x17, 0x19, 0x1a, 0x1c, 0x1d, 0x1f,
   0x21, 0x23, 0x25, 0x27, 0x28, 0x29, 0x2b, 0x2c, 0x2d, 0x2e,
@@ -280,8 +280,8 @@ InitSliders ();
 UpdateSliders ();
 CBInit (CBObjType (), (char**) object_names, object_list, null, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) object_names, contentsList, null, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
-CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
+CBInit (CBObjAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
+CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
 
 short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1: MAX_TEXTURES_D2;
 short i, j;
@@ -312,7 +312,7 @@ for (psz = pszBossTypes; *psz; psz++) {
 	}
 CGameObject *objP = theMine->CurrObj ();
 //CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, null, null, ROBOT_IDS2, 1);
-//SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
+//SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_ROBOT_TYPES_D2) ? objP->m_info.id: -1);
 CBInit (CBExplType (), (char **) "explosion", null, exp2_vclip_num_table, MAX_EXP2_VCLIP_NUM_TABLE, 2);
 CBInit (CBWeapon1 (), (char **) 7000, null, null, MAX_WEAPON_TYPES, 3, true);
 CBInit (CBWeapon2 (), (char **) 7000, null, null, MAX_WEAPON_TYPES, 3, true);
@@ -581,7 +581,7 @@ theMine->CurrObj ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetChec
 //SelectItemData (CBSpawnType (), type);
 SetObjectId (CBSpawnId (), objP->m_info.contents.type, objP->m_info.contents.id, 1);
 m_nSpawnQty = objP->m_info.contents.count;
-//SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_D2_ROBOT_TYPES) ? objP->m_info.id: -1);
+//SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_ROBOT_TYPES_D2) ? objP->m_info.id: -1);
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 	int index =
 		((objP->cType.aiInfo.behavior == AIB_RUN_FROM) && (objP->cType.aiInfo.flags [4] & 0x02)) ? // smart bomb flag

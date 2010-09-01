@@ -31,17 +31,17 @@ extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 #ifdef USE_DYN_ARRAYS
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
-typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
-typedef CStaticArray< CSegment, MAX_SEGMENTS3 > segmentList;
-typedef CStaticArray< CColor, MAX_SEGMENTS3 * 6 > lightColorList;
+typedef CStaticArray< CVertex, VERTEX_LIMIT > vertexList;
+typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
+typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
-typedef CStaticArray< CColor, MAX_VERTICES3 > vertexColorList;
-typedef CStaticArray< CWall, MAX_WALLS3 > wallList;
-typedef CStaticArray< CActiveDoor, MAX_DOORS > activeDoorList;
-typedef CStaticArray< CTrigger, MAX_TRIGGERS2 > triggerList;
+typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
+typedef CStaticArray< CWall, WALL_LIMIT > wallList;
+typedef CStaticArray< CActiveDoor, DOOR_LIMIT > activeDoorList;
+typedef CStaticArray< CTrigger, MAX_TRIGGERS_D2 > triggerList;
 typedef CStaticArray< CTrigger, MAX_OBJ_TRIGGERS > objTriggerList;
 typedef CStaticArray< CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggerList;
-typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS2 > robotMakerList;
+typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
@@ -54,17 +54,17 @@ typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightL
 #else
 
 typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
-typedef CVertex vertexList [MAX_VERTICES3];
-typedef CSegment segmentList [MAX_SEGMENTS3];
-typedef CColor lightColorList [MAX_SEGMENTS3 * 6];
+typedef CVertex vertexList [VERTEX_LIMIT];
+typedef CSegment segmentList [SEGMENT_LIMIT];
+typedef CColor lightColorList [SEGMENT_LIMIT * 6];
 typedef CColor texColorList [MAX_TEXTURES_D2];
-typedef CColor vertexColorList [MAX_VERTICES3];
-typedef CWall wallList [MAX_WALLS3];
-typedef CActiveDoor activeDoorList [MAX_DOORS];
-typedef CTrigger triggerList [MAX_TRIGGERS2];
+typedef CColor vertexColorList [VERTEX_LIMIT];
+typedef CWall wallList [WALL_LIMIT];
+typedef CActiveDoor activeDoorList [DOOR_LIMIT];
+typedef CTrigger triggerList [MAX_TRIGGERS_D2];
 typedef CTrigger objTriggerList [MAX_OBJ_TRIGGERS];
 typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
-typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS2];
+typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 typedef CGameObject objectList [MAX_OBJECTS2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
@@ -110,18 +110,18 @@ typedef struct tMineData {
 	flickeringLightList		flickeringLights;
 
 	//CRobotInfo				robotInfo [MAX_ROBOT_TYPES];
-	//CVertex					vertices [MAX_VERTICES3];
-	//CSegment					segments [MAX_SEGMENTS3];
-	//CColor 					lightColors [MAX_SEGMENTS3][6];
+	//CVertex					vertices [VERTEX_LIMIT];
+	//CSegment					segments [SEGMENT_LIMIT];
+	//CColor 					lightColors [SEGMENT_LIMIT][6];
 	//CColor						texColors [MAX_TEXTURES_D2];
-	//CColor						vertexColors [MAX_VERTICES3];
-	//CWall						walls[MAX_WALLS3];
-	//CActiveDoor				activeDoors[MAX_DOORS];
-	//CTrigger					triggers[MAX_TRIGGERS2];
+	//CColor						vertexColors [VERTEX_LIMIT];
+	//CWall						walls[WALL_LIMIT];
+	//CActiveDoor				activeDoors[DOOR_LIMIT];
+	//CTrigger					triggers[MAX_TRIGGERS_D2];
 	//CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
 	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
-	//CRobotMaker				robotMakers[MAX_NUM_MATCENS2];
-	//CRobotMaker				equipMakers[MAX_NUM_MATCENS2];
+	//CRobotMaker				robotMakers[MAX_NUM_MATCENS_D2];
+	//CRobotMaker				equipMakers[MAX_NUM_MATCENS_D2];
 	//CGameObject				objects[MAX_OBJECTS2];
 	//CLightDeltaIndex		lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
 	//CLightDeltaValue		lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
@@ -609,17 +609,17 @@ private:
 	void SortDLIndex (int left, int right);
 	};
 
-#define MAX_SEGMENTS (!theMine ? MAX_SEGMENTS2 : theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3)
-#define MAX_VERTICES (!theMine ? MAX_VERTICES2 : theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3)
-#define MAX_WALLS (!theMine ? MAX_WALLS2 : theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3)
+#define MAX_SEGMENTS (!theMine ? MAX_SEGMENTS2 : theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : SEGMENT_LIMIT)
+#define MAX_VERTICES (!theMine ? MAX_VERTICES2 : theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : VERTEX_LIMIT)
+#define MAX_WALLS (!theMine ? MAX_WALLS2 : theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : WALL_LIMIT)
 #define MAX_TEXTURES (!theMine ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
-#define MAX_TRIGGERS (!theMine ? MAX_TRIGGERS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2)
+#define MAX_TRIGGERS (!theMine ? MAX_TRIGGERS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2)
 #define MAX_OBJECTS (!theMine ? MAX_OBJECTS2 : theMine->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2)
-#define MAX_NUM_FUELCENS (!theMine ? MAX_NUM_FUELCENS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2)
-#define MAX_NUM_REPAIRCENS (!theMine ? MAX_NUM_REPAIRCENS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS1 : MAX_NUM_REPAIRCENS2)
+#define MAX_NUM_FUELCENS (!theMine ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
+#define MAX_NUM_REPAIRCENS (!theMine ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
 #define MAX_PLAYERS (!theMine ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
-#define ROBOT_IDS2 (!theMine ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_D2_ROBOT_TYPES : MAX_ROBOT_IDS_TOTAL)
-#define MAX_ROBOT_MAKERS (!theMine ? MAX_NUM_MATCENS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS1 : MAX_NUM_MATCENS2)
+#define ROBOT_IDS2 (!theMine ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
+#define MAX_ROBOT_MAKERS (!theMine ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
 #define MAX_LIGHT_DELTA_INDICES (!theMine ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
 #define MAX_LIGHT_DELTA_VALUES (!theMine ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
 

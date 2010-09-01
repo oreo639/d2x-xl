@@ -1613,7 +1613,7 @@ else {
 			INFOMSG (" Mine converted to a D2X-XL level")
 		else
 			ErrorMsg ("Mine converted to a D2X-XL level.");
-		theMine->ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
+		theMine->ConvertWallNum (MAX_WALLS2 + 1, WALL_LIMIT + 1);
 		theMine->NumObjTriggers () = 0;
 		}
 	else {
@@ -1622,7 +1622,7 @@ else {
 			INFOMSG (" Mine converted to a non-Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a non-Vertigo level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
-		theMine->ConvertWallNum (MAX_WALLS3 + 1, MAX_WALLS2 + 1);
+		theMine->ConvertWallNum (WALL_LIMIT + 1, MAX_WALLS2 + 1);
 		}
 	}
 }

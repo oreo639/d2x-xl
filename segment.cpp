@@ -2523,7 +2523,7 @@ byte CSegment::ReadWalls (CFileManager& fp, int nLevelVersion)
 	int	i;
 
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	if (m_info.wallFlags &= (1 << i)) 
+	if (m_info.wallFlags & (1 << i)) 
 		m_sides [i].m_info.nWall = (nLevelVersion >= 13) ? fp.ReadInt16 () : short (fp.ReadSByte ());
 return wallFlags;
 }
@@ -2594,7 +2594,6 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 										: NO_WALL;
 
 // read in textures and uvls (0 to 60 bytes)
-size_t fPos = fp.Tell ();
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	m_sides [i].Read (fp, (Child (i) == -1) || ((m_info.wallFlags & (1 << i)) != 0));
 return 1;

@@ -340,7 +340,7 @@ if (bCustom) {
 			fp.Seek (n * sizeof (WEAPON_INFO), SEEK_CUR);  // weapon_info
 			n = fp.ReadInt16 ();                         // n_robot_types
 			for (i = 0; i < n; i++)
-				theMine->RobotInfo (N_D2_ROBOT_TYPES + i)->Read (fp);
+				theMine->RobotInfo (N_ROBOT_TYPES_D2 + i)->Read (fp);
 			n  = fp.ReadInt16 ();                         // n_robot_joints
 			fp.Seek (n * sizeof (JOINTPOS), SEEK_CUR);     // robot_joints
 			break;
@@ -350,9 +350,9 @@ if (bCustom) {
 	n = fp.ReadInt16 ();                          // n_curModels
 	assert (n <= MAX_POLYGON_MODELS);
 	for (i = 0; i < n; i++) 
-		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp);
+		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (fp);
 	for (i = 0; i < n; i++) 
-		m_polyModels [N_D2_POLYGON_MODELS + i].Read (fp, true);
+		m_polyModels [N_POLYGON_MODELS_D2 + i].Read (fp, true);
 	}
 else {
 	id = fp.ReadInt32 ();	  					   // read id
@@ -423,7 +423,7 @@ switch (objP->m_info.type) {
 		}
 		break;
 	case OBJ_ROBOT:
-		nModel = theMine->RobotInfo ((objP->m_info.id >= N_D2_ROBOT_TYPES) ? objP->m_info.id /*- N_D2_ROBOT_TYPES*/ : objP->m_info.id)->m_info.nModel;
+		nModel = theMine->RobotInfo ((objP->m_info.id >= N_ROBOT_TYPES_D2) ? objP->m_info.id /*- N_ROBOT_TYPES_D2*/ : objP->m_info.id)->m_info.nModel;
 		break;
 	default:
 		return null;
@@ -457,7 +457,7 @@ if (slash)
 else
 	filename[0] = '\0';
 
-bool bCustom = (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_D2_ROBOT_TYPES);
+bool bCustom = (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_ROBOT_TYPES_D2);
 
 if (bCustom) {
 	char *psz = strstr (filename, "data");

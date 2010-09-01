@@ -104,7 +104,7 @@ CHECKMINE;
 	int			h, i, j, c, nDist, segNum = theMine->SegCount (), sideNum;
 	CSegment	*segI, *segJ;
 
-	static short segRef [MAX_SEGMENTS3];
+	static short segRef [SEGMENT_LIMIT];
 
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->m_info.nIndex = -1;
@@ -230,7 +230,7 @@ typedef struct tSegZOrder {
 
 typedef tSegZOrder *pSegZOrder;
 
-static tSegZOrder szo [MAX_SEGMENTS3];
+static tSegZOrder szo [SEGMENT_LIMIT];
 
 void QSortCubes (short left, short right)
 {

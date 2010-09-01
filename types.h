@@ -163,7 +163,7 @@ typedef struct ECLIP {
 typedef struct WCLIP {
   fix		 play_time;
   short	 num_frames;
-  short	 frames[MAX_CLIP_FRAMES2];
+  short	 frames[MAX_CLIP_FRAMES_D2];
   short	 open_sound;
   short	 close_sound;
   short	 flags;

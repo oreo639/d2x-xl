@@ -264,7 +264,7 @@ if (d.DoModal () == IDOK) {
 			break;
 		case 3:
 			theMine->UpdateLevelVersion ();
-			theMine->ConvertWallNum (MAX_WALLS2, MAX_WALLS3
+			theMine->ConvertWallNum (MAX_WALLS2, WALL_LIMIT
 				);
 		}
 	*m_szSubFile = '\0';

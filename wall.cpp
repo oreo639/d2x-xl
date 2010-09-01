@@ -188,12 +188,12 @@ DLE.UnlockUndo ();
 
 void CMine::SetWallTextures (ushort nWall, short nTexture) 
 {
-static short wall_texture [N_WALL_TEXTURES][2] = {
+static short wall_texture [N_WALL_TEXTURES_D1][2] = {
 	{371,0},{0,376},{0,0},  {0,387},{0,399},{413,0},{419,0},{0,424},  {0,0},{436,0},
 	{0,444},{0,459},{0,472},{486,0},{492,0},{500,0},{508,0},{515,0},{521,0},{529,0},
 	{536,0},{543,0},{0,550},{563,0},{570,0},{577,0}
 	};
-static short d2_wall_texture [D2_N_WALL_TEXTURES][2] = {
+static short d2_wall_texture [N_WALL_TEXTURES_D2][2] = {
 	{435,0},{0,440},{0,0},{0,451},{0,463},{477,0},{483,0},{0,488},{0,0},  {500,0},
 	{0,508},{0,523},{0,536},{550,0},{556,0},{564,0},{572,0},{579,0},{585,0},{593,0},
 	{600,0},{608,0},{0,615},{628,0},{635,0},{642,0},{0,649},{664,0},{0,672},{0,687},
@@ -300,7 +300,7 @@ if (!strcmp (pszName, "wall01 - anim"))
 	return wallP->m_info.nClip = 0;
 if (ps = strstr (pszName, "door")) {
 	int i, nDoor = atol (ps + 4);
-	for (i = 1; i < D2_NUM_OF_CLIPS; i++)
+	for (i = 1; i < NUM_OF_CLIPS_D2; i++)
 		if (nDoor == doorClipTable [i]) {
 			wallP->m_info.nClip = clipList [i];
 			DLE.SetModified (TRUE);

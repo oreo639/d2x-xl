@@ -152,7 +152,7 @@ protected: // create from serialization only
 	//double		M[4][4];  /* 4x4 matrix used in coordinate transformation */
 	//double		IM[4][4]; /* inverse matrix of M[4][4] */
 //	double		depthPerception;
-	APOINT		m_viewPoints [MAX_VERTICES3];
+	APOINT		m_viewPoints [VERTEX_LIMIT];
 	APOINT		m_minViewPoint;
 	APOINT		m_maxViewPoint;
 	APOINT		m_minVPIdx;

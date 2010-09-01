@@ -29,7 +29,7 @@ extern char SubFile[20];
 extern int preferences;
 //extern CFlickeringLight *flickeringLights;
 extern LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
-extern LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
+extern LIGHT_STATUS lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 extern uint        N_robot_types;
 //extern CRobotInfo   *robotInfo;
 #if ALLOCATE_POLYOBJECT
@@ -62,7 +62,7 @@ extern int splash;
 extern int level_modified;
 //extern byte texture_modified[1+MAX_TEXTURES_D2/8];
 extern int disable_saves;
-extern byte clipList [D2_NUM_OF_CLIPS];
+extern byte clipList [NUM_OF_CLIPS_D2];
 extern ushort wall_flags[9];
 extern long ScrnMemMax;
 extern int ScrnWidth;
@@ -84,7 +84,7 @@ extern char objectSelection [MAX_OBJECT_TYPES];
 extern char contentsSelection [MAX_OBJECT_TYPES];
 extern byte robotClip [MAX_ROBOT_IDS_TOTAL];
 extern byte powerupClip [MAX_POWERUP_IDS2];
-extern char *ai_options [MAX_D2_AI_OPTIONS];
+extern char *ai_options [MAX_AI_OPTIONS_D2];
 extern fix powerupSize [MAX_POWERUP_IDS2];
 extern fix robotSize [MAX_ROBOT_IDS_TOTAL];
 extern fix robot_shield [MAX_ROBOT_IDS_TOTAL];
@@ -145,7 +145,7 @@ extern byte connectPointTable[8][3];
 extern char pointSideTable[8][3];
 extern char pointCornerTable[8][3];
 
-extern byte doorClipTable [D2_NUM_OF_CLIPS];
+extern byte doorClipTable [NUM_OF_CLIPS_D2];
 
 /* debug data */
 extern uint debug_offset2;

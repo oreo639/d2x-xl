@@ -33,7 +33,7 @@ int preferences = 0;
 
 //CFlickeringLight *flickeringLights=0;
 LIGHT_TIMER lightTimers [MAX_FLICKERING_LIGHTS];
-LIGHT_STATUS lightStatus [MAX_SEGMENTS3][MAX_SIDES_PER_SEGMENT];
+LIGHT_STATUS lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 uint       N_robot_types=0;
 //CRobotInfo   *robotInfo;     // MAX_ROBOT_TYPES
 
@@ -43,8 +43,8 @@ uint       N_polygon_models=0;
 uint       N_object_bitmaps=0;
 JOINTPOS     *Robot_joints;   // MAX_ROBOT_JOINTS
 tPolyModel    *Polygon_models[MAX_POLYGON_MODELS];
-uint       *Dying_modelnums;// N_D2_POLYGON_MODELS
-uint       *Dead_modelnums; // N_D2_POLYGON_MODELS
+uint       *Dying_modelnums;// N_POLYGON_MODELS_D2
+uint       *Dead_modelnums; // N_POLYGON_MODELS_D2
 ushort *ObjBitmaps;     // MAX_OBJ_BITMAPS
 ushort *ObjBitmapPtrs;  // MAX_OBJ_BITMAPS
 #endif
@@ -67,7 +67,7 @@ int level_modified = 0;
 //byte texture_modified[1+MAX_TEXTURES_D2/8];
 int disable_saves = 1;
 
-byte clipList [D2_NUM_OF_CLIPS] = {
+byte clipList [NUM_OF_CLIPS_D2] = {
 	0,1,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,    // added 0 & 7 1/28/97
 	22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
 	40,41,42,43,44,45,46,47,48,49,50
@@ -155,7 +155,7 @@ byte powerupClip[MAX_POWERUP_IDS2] = {
 		79, 90, 91, 81,102, 82,100,101
 };
 
-char *ai_options[MAX_D2_AI_OPTIONS] = {
+char *ai_options[MAX_AI_OPTIONS_D2] = {
 	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
 };
 
@@ -467,7 +467,7 @@ char pointCornerTable[8][3] = {
 
                         /*--------------------------*/
 
-byte doorClipTable [D2_NUM_OF_CLIPS] = {
+byte doorClipTable [NUM_OF_CLIPS_D2] = {
 	1, 1, 4, 5, 10,24, 8,11,13,12,14,17,     // 1/28/97
 	18,19,20,21,22,23,25,26,28,29,
 	30,31,32,33,34,35,36,37,38,39,

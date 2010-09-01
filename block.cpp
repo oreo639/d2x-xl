@@ -45,7 +45,7 @@ short CMine::ReadSegmentInfo (CFileManager& fp)
 	CDoubleVector	xPrime, yPrime, zPrime, v;
 	CDoubleVector	xAxis, yAxis, zAxis;
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
-	short				xlatSegNum [MAX_SEGMENTS3];
+	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf;
 
 // remember number of vertices for later

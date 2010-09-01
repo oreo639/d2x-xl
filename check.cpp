@@ -1220,7 +1220,7 @@ void CDiagTool::CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* 
 	CSegment*		segP = theMine->Segments (0);
 	short				n, h, i, j = theMine->SegCount ();
 
-memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS2);
+memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS_D2);
 for (h = i = 0; i < j; i++, segP++) {
 	if (segP->m_info.function == byte (nSpecialType)) {
 		n = segP->m_info.nMatCen;
@@ -1270,7 +1270,7 @@ for (h = i = 0; i < j; i++, segP++) {
 				}
 			}
 		}
-	if (h < MAX_NUM_MATCENS2)
+	if (h < MAX_NUM_MATCENS_D2)
 		segList [h++] = i;
 	else {
 		sprintf_s (message, sizeof (message), "%s: Too many %s makers", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
@@ -1346,8 +1346,8 @@ if (!theMine)
 	short					nMatCenSegs, nMatCens = short (theMine->MineInfo ().botgen.count);
 	CSegment*			segP = theMine->Segments (0);
 	CRobotMaker*		matCenP = theMine->BotGens (0);
-	short					segList [MAX_NUM_MATCENS2];
-	short					refList [MAX_NUM_MATCENS2];
+	short					segList [MAX_NUM_MATCENS_D2];
+	short					refList [MAX_NUM_MATCENS_D2];
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].m_info.nFuelCen = i;
@@ -1370,8 +1370,8 @@ bool CDiagTool::CheckEquipGens (void)
 	bool					bOk = true;
 	int					nMatCenSegs, nMatCens = int (theMine->MineInfo ().equipgen.count);
 	CRobotMaker*		matCenP = theMine->EquipGens (0);
-	short					segList [MAX_NUM_MATCENS2];
-	short					refList [MAX_NUM_MATCENS2];
+	short					segList [MAX_NUM_MATCENS_D2];
+	short					refList [MAX_NUM_MATCENS_D2];
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].m_info.nFuelCen = i;

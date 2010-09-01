@@ -64,7 +64,7 @@ m_disableDrawing = TRUE;
 LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && (IsD2XLevel ()) && (LevelOutdated ())) {
 	if (LevelVersion () < 15) {
-		ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
+		ConvertWallNum (MAX_WALLS2 + 1, WALL_LIMIT + 1);
 		NumObjTriggers () = 0;
 		}
 	UpdateLevelVersion ();
@@ -438,7 +438,7 @@ short CMine::LoadMineDataCompiled (CFileManager& fp, bool bNewMine)
 version = byte (fp.ReadSByte ());
 // read number of vertices (2 bytes)
 n_vertices = ushort (fp.ReadInt16 ());
-if (n_vertices > MAX_VERTICES3) {
+if (n_vertices > VERTEX_LIMIT) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
 	ErrorMsg (message);
 	return(1);
@@ -449,7 +449,7 @@ if (((IsD1File ()) && (n_vertices > MAX_VERTICES1)) ||
 
 // read number of Segments () (2 bytes)
 n_segments = ushort (fp.ReadInt16 ());
-if (n_segments > MAX_SEGMENTS3) {
+if (n_segments > SEGMENT_LIMIT) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 	ErrorMsg (message);
 	return 2;
@@ -589,7 +589,7 @@ if (0 > LoadGameItem (fp, MineInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Ob
 	return -1;
 if (0 > LoadGameItem (fp, MineInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
 	return -1;
-if (0 > LoadGameItem (fp, MineInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
+if (0 > LoadGameItem (fp, MineInfo ().doors, ActiveDoors (0), 20, DOOR_LIMIT, "Doors"))
 	return -1;
 if (0 > LoadGameItem (fp, MineInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
 	return -1;

@@ -152,7 +152,7 @@ for (i = 0; i < j; i++) {
 
 pcb = CBClipNo ();
 pcb->ResetContent ();
-j = (DLE.IsD2File ()) ? D2_NUM_OF_CLIPS : NUM_OF_CLIPS;
+j = (DLE.IsD2File ()) ? NUM_OF_CLIPS_D2 : NUM_OF_CLIPS_D1;
 for (i = 0; i < j; i++) {
 	sprintf_s (m_szMsg, sizeof (m_szMsg), i ? "door%02d" : "wall%02d", doorClipTable [i]);
 	pcb->AddString (m_szMsg);
@@ -307,11 +307,11 @@ else {
 	CBClipNo ()->EnableWindow ((m_nType == WALL_BLASTABLE) || (m_nType == WALL_DOOR));
 	// select list box index for clip
 	int i;
-	for (i = 0; i < D2_NUM_OF_CLIPS; i++)
+	for (i = 0; i < NUM_OF_CLIPS_D2; i++)
 		if (clipList [i] == m_nClip)
 			break;
 	m_nClip = i;
-	CBClipNo ()->SetCurSel ((i < D2_NUM_OF_CLIPS) ? i : 0);
+	CBClipNo ()->SetCurSel ((i < NUM_OF_CLIPS_D2) ? i : 0);
 	for (i = 0; i < MAX_WALL_FLAGS; i++)
 		m_bFlags [i] = ((m_pWall [0]->m_info.flags & wall_flags [i]) != 0);
 	for (i = 0; i < 4; i++)

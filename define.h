@@ -83,11 +83,11 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define NUM_HOT_BUTTONS 21
 
 // defines for reading ham files
-#define N_D2_ROBOT_TYPES      66
-#define N_D2_ROBOT_JOINTS     1145
-#define N_D2_POLYGON_MODELS   166
-#define N_D2_OBJBITMAPS       422
-#define N_D2_OBJBITMAPPTRS    502 // why is this not the same as N_D2_OBJBITMAPS???
+#define N_ROBOT_TYPES_D2      66
+#define N_ROBOT_JOINTS_D2     1145
+#define N_POLYGON_MODELS_D2   166
+#define N_OBJBITMAPS_D2       422
+#define N_OBJBITMAPPTRS_D2    502 // why is this not the same as N_OBJBITMAPS_D2???
 
 #define MAX_ROBOT_TYPES       85
 #define MAX_ROBOT_JOINTS      1250
@@ -102,7 +102,7 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define N_ANIM_STATES	 5
 
 // the following are already defined below
-// #define MAX_CLIP_FRAMES 50  // (called MAX_CLIP_FRAMES2)
+// #define MAX_CLIP_FRAMES 50  // (called MAX_CLIP_FRAMES_D2)
 // #define MAX_SUBMODELS   10  // I guessed at this value (BAA)
 
 // allow all caps types for vectors
@@ -113,10 +113,10 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 
 #define MINE_CLIP_NUMBER  159
 
-#define N_WALL_TEXTURES 26
-#define NUM_OF_CLIPS 24
-#define D2_N_WALL_TEXTURES 51
-#define D2_NUM_OF_CLIPS 49
+#define N_WALL_TEXTURES_D1 26
+#define N_WALL_TEXTURES_D2 51
+#define NUM_OF_CLIPS_D1 24
+#define NUM_OF_CLIPS_D2 49
 
 #define MAX_WALL_TYPES    6
 #define D2_MAX_WALL_TYPES 8
@@ -178,8 +178,8 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define DEFAULT_SHIELD 0x640000L
 #define REACTOR_SHIELD 0xC82000L
 
-#define MAX_D1_AI_OPTIONS 6
-#define MAX_D2_AI_OPTIONS 9
+#define MAX_AI_OPTIONS_D1 6
+#define MAX_AI_OPTIONS_D2 9
 
 // cube insertion modes
 #define ORTHOGONAL 0
@@ -193,8 +193,8 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define MAX_MACROS        100
 #define MAX_TEXTURES_D1   584
 #define MAX_TEXTURES_D2   910
-#define MAX_D1_WALL_FLAGS 5
-#define MAX_D2_WALL_FLAGS 9
+#define MAX_WALL_FLAGS_D1 5
+#define MAX_WALL_FLAGS_D2 9
 #define MAX_WALL_FLAGS    9
 #define NUM_LIGHTS_D1     48
 #define NUM_LIGHTS_D2     85
@@ -250,17 +250,17 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 
 #define MAX_SEGMENTS1 800  // descent 1 max # of cubes
 #define MAX_SEGMENTS2 900  // descent 2 max # of cubes
-#define MAX_SEGMENTS3 8000 // D2X-XL max # of cubes
+#define SEGMENT_LIMIT 8000 // D2X-XL max # of cubes
 #define MAX_VERTICES1 2808 // descent 1 max # of vertices
 #define MAX_VERTICES2 (MAX_SEGMENTS2 * 4 + 8) // descent 2 max # of vertices
-#define MAX_VERTICES3 (MAX_SEGMENTS3 * 4 + 8) // descent 2 max # of vertices
+#define VERTEX_LIMIT (SEGMENT_LIMIT * 4 + 8) // descent 2 max # of vertices
 #define MAX_OBJECTS1  350
 #define MAX_OBJECTS2  2000
 #define MAX_WALLS1    175 // Maximum number of walls for Descent 1
 #define MAX_WALLS2    255 // Maximum number of walls for Descent 2
-#define MAX_WALLS3    2047 // Maximum number of walls for Descent 2
-#define MAX_TRIGGERS1 100
-#define MAX_TRIGGERS2 254
+#define WALL_LIMIT    2047 // Maximum number of walls for Descent 2
+#define MAX_TRIGGERS_D1 100
+#define MAX_TRIGGERS_D2 254
 #define MAX_OBJ_TRIGGERS	254
 #define MAX_TRIGGER_FLAGS 12
 #define NO_TRIGGER	255
@@ -286,23 +286,23 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 
 #define POW_AMMORACK						35
 
-#define MAX_DOORS1                50 // Maximum number of open doors Descent 1
-#define MAX_DOORS2                90 // Maximum number of open doors Descent 2
+#define MAX_DOORS_D1                50 // Maximum number of open doors Descent 1
+#define MAX_DOORS_D2                90 // Maximum number of open doors Descent 2
+#define DOOR_LIMIT                   MAX_DOORS_D2
 
-#define MAX_DOORS                    1
-#define MAX_REACTOR_TRIGGERS 10
-#define MAX_NUM_MATCENS1				20
-#define MAX_NUM_MATCENS2				100
+#define MAX_REACTOR_TRIGGERS			10
+#define MAX_NUM_MATCENS_D1				20
+#define MAX_NUM_MATCENS_D2				100
 #define MAX_WALL_SWITCHES           50
 #define MAX_WALL_LINKS              100
-#define MAX_NUM_FUELCENS1				70
-#define MAX_NUM_REPAIRCENS1			70
-#define MAX_NUM_FUELCENS2				500
-#define MAX_NUM_REPAIRCENS2			500
-#define MAX_WALL_ANIMS1					30  // Maximum different types of doors Descent 1
-#define MAX_WALL_ANIMS2					60  // Maximum different types of doors Descent 2
-#define MAX_CLIP_FRAMES1	         20 // Descent 1
-#define MAX_CLIP_FRAMES2	         50 // Descent 2
+#define MAX_NUM_FUELCENS_D2			70
+#define MAX_NUM_REPAIRCENS_D2			70
+#define MAX_NUM_FUELCENS_D2X			500
+#define MAX_NUM_REPAIRCENS_D2X		500
+#define MAX_WALL_ANIMS_D1				30  // Maximum different types of doors Descent 1
+#define MAX_WALL_ANIMS_D2				60  // Maximum different types of doors Descent 2
+#define MAX_CLIP_FRAMES_D1	         20 // Descent 1
+#define MAX_CLIP_FRAMES_D2	         50 // Descent 2
 #define MAX_STUCK_OBJECTS	         32
 #define MAX_SIDES_PER_SEGMENT			6
 #define MAX_VERTICES_PER_SEGMENT		8

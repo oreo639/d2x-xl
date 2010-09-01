@@ -57,7 +57,7 @@ if (LevelVersion () < 7 && IsD2File ()) {
 if ((IsD2XLevel ()) && (LevelOutdated ())) {
 	UpdateLevelVersion ();
 	//if (LevelVersion () < 15)
-		ConvertWallNum (MAX_WALLS2 + 1, MAX_WALLS3 + 1);
+		ConvertWallNum (MAX_WALLS2 + 1, WALL_LIMIT + 1);
 	}
 
 // write version
