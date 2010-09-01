@@ -10,13 +10,21 @@ namespace DLE.NET
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    public class Side : GameItem
+    public class Side : IGameItem
     {
+        public int Key { get; set; }
+
+        //------------------------------------------------------------------------------
+
         public short m_nChild;
         public ushort m_nWall;		        // (was short) Index into Walls array, which wall (probably door) is on this side 
         public ushort m_nBaseTex;	        // Index into array of textures specified in bitmaps.bin 
         public ushort m_nOvlTex;		    // Index, as above, texture which gets overlaid on nBaseTex 
         public UVL[] m_uvls = new UVL [4];    // CUVL coordinates at each point 
+
+        // ------------------------------------------------------------------------
+
+        public int Key { get; set; }
 
         // ------------------------------------------------------------------------
 

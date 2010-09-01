@@ -3,24 +3,7 @@ namespace DLE.NET
 {
     partial class Trigger
     {
-        enum D1Type : ushort
-        {
-            CONTROL_DOORS = 1,	// Control Trigger 
-            SHIELD_DAMAGE = 2,	// Shield Damage Trigger 
-            ENERGY_DRAIN = 4,	// Energy Drain Trigger 
-            EXIT = 8,	// End of level Trigger 
-            ON = 16,	// Whether Trigger is active 
-            ONE_SHOT = 32,	// If Trigger can only be triggered once 
-            MATCEN = 64,	// Trigger for materialization centers 
-            ILLUSION_OFF = 128,	// Switch Illusion OFF trigger 
-            SECRET_EXIT = 256,	// Exit to secret level 
-            ILLUSION_ON = 512,	// Switch Illusion ON trigger 
-            OPEN_WALL = 1024,
-            CLOSE_WALL = 2048,
-            MAKE_ILLUSIONARY = 4096
-        }
-
-        enum D2Type : byte
+         enum Type : byte
         {
             OPEN_DOOR = 0,  // Open a door
             CLOSE_DOOR = 1,  // Close a door
@@ -61,8 +44,9 @@ namespace DLE.NET
             ENERGY_DRAIN = 101    // added to support d1 energy drain
         }
 
-        enum D1Flag : uint
+        enum Properties : ushort
         {
+            // Descent 1
             CONTROL_DOORS = 1, // Control Trigger 
             SHIELD_DAMAGE = 2, // Shield Damage Trigger 
             ENERGY_DRAIN = 4, // Energy Drain Trigger 
@@ -75,11 +59,9 @@ namespace DLE.NET
             ILLUSION_ON = 512, // Switch Illusion ON trigger 
             OPEN_WALL = 1024,
             CLOSE_WALL = 2048,
-            MAKE_ILLUSIONARY = 4096
-        }
+            MAKE_ILLUSIONARY = 4096,
 
-        enum D2Flag : byte
-        {
+            // Descent 2
             NO_MESSAGE = 1, // Don't show a message when triggered
             ONE_SHOT = 2, // Only trigger once
             DISABLED = 4, // Set after one-shot fires

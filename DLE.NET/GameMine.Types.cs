@@ -287,47 +287,6 @@ namespace DLE.NET
             int size;
         }
 
-        public class GAME_TOP_INFO
-        {
-            ushort fileinfo_signature;
-            ushort fileinfo_version;
-            int fileinfo_size;
-        }
-
-        public class PLAYER_ITEM_INFO
-        {
-            int offset;
-            int size;
-        }
-
-        public class GAME_ITEM_INFO
-        {
-            int offset;
-            int count;
-            int size;
-        }
-
-        public class game_info
-        {
-            ushort fileinfo_signature;
-            ushort fileinfo_version;
-            int fileinfo_size;
-            string mine_filename;
-            int level;
-            PLAYER_ITEM_INFO player;
-            GAME_ITEM_INFO objects;
-            GAME_ITEM_INFO walls;
-            GAME_ITEM_INFO doors;
-            GAME_ITEM_INFO triggers;
-            GAME_ITEM_INFO links;
-            GAME_ITEM_INFO control;
-            GAME_ITEM_INFO botgen;
-            GAME_ITEM_INFO dl_indices;
-            GAME_ITEM_INFO delta_lights;
-            GAME_ITEM_INFO equipgen;
-        }
-
-
         public class ACTIVE_DOOR
         {
             int n_parts;	   // for linked walls

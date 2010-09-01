@@ -113,7 +113,7 @@
     </Compile>
     <Compile Include="FixConverter.cs" />
     <Compile Include="FixVector.cs" />
-    <Compile Include="GameItem.cs" />
+    <Compile Include="IGameItem.cs" />
     <Compile Include="GameMine.Constants.cs" />
     <Compile Include="GameMine.Convert.cs" />
     <Compile Include="GameMine.cs" />

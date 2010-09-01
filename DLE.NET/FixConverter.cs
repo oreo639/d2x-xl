@@ -12,6 +12,21 @@ namespace DLE.NET
             return (value >= 0) ? value + round / 2.0 : value - round / 2.0;
         }
 
+        public static int I2X (int n)
+        {
+            return (n * 65536);
+        }
+
+        public static int X2I (int n)
+        {
+            return (n / 65536);
+        }
+
+        public static int D2X (double n)
+        {
+            return ((int)Round (n * 65536.0));
+        }
+
         public static double X2D (int n)
         {
             return ((double)n / 65536.0);

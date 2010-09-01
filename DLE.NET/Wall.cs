@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace DLE.NET
 {
-    public class Wall : SideKey
+    public class Wall : SideKey, IGameItem
     {
+        public int Key { get; set; }
+
+        //------------------------------------------------------------------------------
+
         public enum Type : byte
         {
             NORMAL = 0, // Normal wall 
@@ -83,10 +88,70 @@ namespace DLE.NET
         public Type m_type;             // What kind of special wall. 
         public ushort m_flags;          // Flags for the wall.     
         public byte m_state;            // Opening, closing, etc. 
-        public byte m_trigger;          // Which trigger is associated with the wall. 
-        public char m_nClip;            // Which  animation associated with the wall.  
+        public byte m_nTrigger;         // Which trigger is associated with the wall. 
+        public sbyte m_nClip;            // Which  animation associated with the wall.  
         public byte m_keys;             // which keys are required 
-        public char m_controllingTrigger; // trigger targetting this wall. A bit pointless since a wall can be targetted by several triggers
-        public char m_cloakValue;	    // if this wall is cloaked, the fade value
+        public sbyte m_controllingTrigger; // trigger targetting this wall. A bit pointless since a wall can be targetted by several triggers
+        public sbyte m_cloakValue;	    // if this wall is cloaked, the fade value
+
+        // ------------------------------------------------------------------------
+
+        public override void Read (BinaryReader fp, int version, bool bFlag)
+        {
+            m_nSegment = (short) fp.ReadInt32 ();
+            m_nSide = (short) fp.ReadInt32 (); 
+            m_hps = fp.ReadInt32 ();
+            m_linkedWall = fp.ReadInt32 ();
+            m_type = (Type) fp.ReadByte ();
+            m_flags = (version < 37) ?  (ushort) fp.ReadByte () : fp.ReadUInt16 ();         
+            m_state = fp.ReadByte ();         
+            m_nTrigger = fp.ReadByte ();       
+            m_nClip = fp.ReadSByte ();      
+            m_keys = fp.ReadByte ();          
+            m_controllingTrigger = fp.ReadSByte ();
+            m_cloakValue = fp.ReadSByte ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        public override void Write (BinaryWriter fp, int version, bool bFlag)
+        {
+            fp.Write ((int) m_nSegment);
+            fp.Write ((int) m_nSide); 
+            fp.Write (m_hps);
+            fp.Write (m_linkedWall);
+            fp.Write ((byte) m_type);
+            if (version < 37) 
+	            fp.Write ((sbyte) m_flags);
+            else
+	            fp.Write (m_flags);         
+            fp.Write (m_state);         
+            fp.Write (m_nTrigger);       
+            fp.Write (m_nClip);      
+            fp.Write (m_keys);          
+            fp.Write (m_controllingTrigger);
+            fp.Write (m_cloakValue);
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public override void Clear ()
+        {
+            m_nSegment = 0;
+            m_nSide = 0;
+            m_hps = 0;
+            m_linkedWall = 0;
+            m_type = 0;
+            m_flags = 0;
+            m_state = 0;
+            m_nTrigger = 0;
+            m_nClip = 0;
+            m_keys = 0;
+            m_controllingTrigger = 0;
+            m_cloakValue = 0;
+        }
+
+        // ------------------------------------------------------------------------
+
     }
 }

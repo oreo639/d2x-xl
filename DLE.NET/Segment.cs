@@ -6,8 +6,12 @@ using System.IO;
 
 namespace DLE.NET
 {
-    public partial class Segment : GameItem
+    public partial class Segment : IGameItem
     {
+
+        public int Key { get; set; }
+
+        // ------------------------------------------------------------------------
 
         public const int MAX_SIDES_PER_SEGMENT = 6;
         public const int MAX_VERTICES_PER_SEGMENT = 8;

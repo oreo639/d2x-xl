@@ -36,7 +36,7 @@ namespace DLE.NET
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    public class Texture : GameItem
+    public class Texture
     {
         public byte [] m_bmData;
         public tRGBA [] m_tgaData;
@@ -64,12 +64,7 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
-        public override void Read (BinaryReader fp, int version = 0, bool bFlag = false) { }
-        public override void Write (BinaryWriter fp, int version = 0, bool bFlag = false) { }
-
-        //------------------------------------------------------------------------------
-
-        public override void Clear ()
+        public void Clear ()
         {
             Release ();
             m_width = m_height = m_size = 0;

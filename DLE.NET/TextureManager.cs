@@ -175,7 +175,7 @@ namespace DLE.NET
 
         long [] m_nOffsets = new long [2] { 0, 0 };
         byte [] m_bmBuffer = new byte [512 * 512 * 4 * 32];
-        Texture m_extra = null;
+        List<Texture> m_extra = new List<Texture> ();
 
         //------------------------------------------------------------------------------
 
@@ -310,8 +310,7 @@ namespace DLE.NET
 	        Texture tex = new Texture();
             if (tex != null)
             {
-                tex.Append (m_extra);
-                m_extra = tex;
+                m_extra.Add (tex);
                 tex.m_nIndex = nIndex;
             }
         return tex;
@@ -347,7 +346,7 @@ namespace DLE.NET
         // free any m_textures that have been buffered
         for (int i = 0; i < 2; i++) 
 	        Release (i, bDeleteAll, bDeleteUnused);
-        m_extra.Destroy ();
+        m_extra = new List<Texture> ();
         }
 
 
