@@ -1078,7 +1078,7 @@ CHECKMINE;
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
-for (i=0;i<theMine->GameInfo ().walls.count;i++) {
+for (i=0;i<theMine->MineInfo ().walls.count;i++) {
 	if (walls [i].m_nSegment > theMine->SegCount ())
 		continue;
 	segP = segments + (int)walls [i].m_nSegment;
@@ -1289,7 +1289,7 @@ for (i = 0; i < n_splines; i++, segP--)
 //			  DrawObject()
 //
 // Changed: 0=normal,1=gray,2=black
-//        if (objnum == (GameInfo ().objects.count
+//        if (objnum == (MineInfo ().objects.count
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
@@ -1322,7 +1322,7 @@ CHECKMINE;
 	short y_max = m_viewHeight * 2;
 
 //  m_pDC->SelectObject(hrgnBackground);
-if (objnum >=0 && objnum < theMine->GameInfo ().objects.count) {
+if (objnum >=0 && objnum < theMine->MineInfo ().objects.count) {
 	objP = theMine->Objects (objnum);
 	if (!Visible (theMine->Segments (objP->m_info.nSegment)))
 		return;
@@ -1471,15 +1471,15 @@ if (!ViewObject ())
 int i, j;
 if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
-	for(i = 0; i < theMine->GameInfo ().triggers.count; i++)
+	for(i = 0; i < theMine->MineInfo ().triggers.count; i++)
 	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
-		DrawObject ((short)theMine->GameInfo ().objects.count, 0);
+		DrawObject ((short)theMine->MineInfo ().objects.count, 0);
 		break; // only draw one secret exit
 		}
 	}
 HiliteTarget ();
 CGameObject *objP = theMine->Objects (0);
-for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
+for (i = theMine->MineInfo ().objects.count, j = 0; i; i--, j++, objP++)
 	if (ViewObject (objP))
 		DrawObject (j, 0);
 }

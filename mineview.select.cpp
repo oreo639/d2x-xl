@@ -40,16 +40,16 @@ closest_radius = 1.0E30;
 // if there is a secret exit, then enable it in search
 int enable_secret = FALSE;
 if (DLE.IsD2File ())
-	for(i=0;i<(short)theMine->GameInfo ().triggers.count;i++)
+	for(i=0;i<(short)theMine->MineInfo ().triggers.count;i++)
 		if (theMine->Triggers (i)->m_info.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
 			break;
 			}
 
-for (i = 0; i <= theMine->GameInfo ().objects.count; i++) {
+for (i = 0; i <= theMine->MineInfo ().objects.count; i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == theMine->GameInfo ().objects.count && DLE.IsD2File () && enable_secret) {
+	if (i == theMine->MineInfo ().objects.count && DLE.IsD2File () && enable_secret) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
@@ -427,9 +427,9 @@ void CMineView::NextObject (int dir)
   short new_object = theMine->Current ()->nObject;
 
 //  DrawHighlight (1);
-if (theMine->GameInfo ().objects.count > 1) {
+if (theMine->MineInfo ().objects.count > 1) {
 //	if (m_selectMode == OBJECT_MODE)
-		wrap(&new_object,dir,0, (short)theMine->GameInfo ().objects.count - 1) ;
+		wrap(&new_object,dir,0, (short)theMine->MineInfo ().objects.count - 1) ;
 	Refresh (true);
 	}
 //SetSelectMode (OBJECT_MODE);

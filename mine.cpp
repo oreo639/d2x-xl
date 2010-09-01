@@ -60,15 +60,15 @@ m_fileType = RL2_FILE;
 FlickerLightCount () = 0;
 Current () = &Current1 ();
 *m_szBlockFile = '\0';
-GameInfo ().objects.Reset ();
-GameInfo ().walls.Reset ();
-GameInfo ().doors.Reset ();
-GameInfo ().triggers.Reset ();
-GameInfo ().control.Reset ();
-GameInfo ().botgen.Reset ();
-GameInfo ().equipgen.Reset ();
-GameInfo ().lightDeltaIndices.Reset ();
-GameInfo ().lightDeltaValues.Reset ();
+MineInfo ().objects.Reset ();
+MineInfo ().walls.Reset ();
+MineInfo ().doors.Reset ();
+MineInfo ().triggers.Reset ();
+MineInfo ().control.Reset ();
+MineInfo ().botgen.Reset ();
+MineInfo ().equipgen.Reset ();
+MineInfo ().lightDeltaIndices.Reset ();
+MineInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
@@ -324,15 +324,15 @@ for (i = 0; i < MAX_VERTICES; i++)
 VertCount () = 0;
 FlickerLightCount () = 0;
 // reset "howmany"
-GameInfo ().objects.Reset ();
-GameInfo ().walls.Reset ();
-GameInfo ().doors.Reset ();
-GameInfo ().triggers.Reset ();
-GameInfo ().control.Reset ();
-GameInfo ().botgen.Reset ();
-GameInfo ().equipgen.Reset ();
-GameInfo ().lightDeltaIndices.Reset ();
-GameInfo ().lightDeltaValues.Reset ();
+MineInfo ().objects.Reset ();
+MineInfo ().walls.Reset ();
+MineInfo ().doors.Reset ();
+MineInfo ().triggers.Reset ();
+MineInfo ().control.Reset ();
+MineInfo ().botgen.Reset ();
+MineInfo ().equipgen.Reset ();
+MineInfo ().lightDeltaIndices.Reset ();
+MineInfo ().lightDeltaValues.Reset ();
 }
 
 // --------------------------------------------------------------------------

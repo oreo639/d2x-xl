@@ -345,7 +345,7 @@ CToolDlg::EnableControls (IDC_TRIGGER_SHOW_TEXTURE, IDC_TRIGGER_TEXTURE2, bEnabl
 
 int CTriggerTool::NumTriggers ()
 {
-return m_nClass ? theMine->NumObjTriggers () : theMine->GameInfo ().triggers.count;
+return m_nClass ? theMine->NumObjTriggers () : theMine->MineInfo ().triggers.count;
 }
 
 								/*--------------------------*/
@@ -462,7 +462,7 @@ else {
 		ushort nWall = theMine->FindTriggerWall (&nTrigger);
 		m_nTrigger = (nTrigger == NO_TRIGGER) ? -1 : nTrigger;
 		// if found, proceed
-		if ((m_nTrigger == -1) || (nWall >= theMine->GameInfo ().walls.count))
+		if ((m_nTrigger == -1) || (nWall >= theMine->MineInfo ().walls.count))
 			return false;
 		}
 	}
@@ -682,10 +682,10 @@ if (m_nClass) {
 	theMine->Current ()->nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
 	}
 else {
-	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->GameInfo ().walls.count; nWall++, wallP++)
+	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->MineInfo ().walls.count; nWall++, wallP++)
 		if (wallP->m_info.nTrigger == m_nTrigger)
 			break;
-	if (nWall >= theMine->GameInfo ().walls.count) {
+	if (nWall >= theMine->MineInfo ().walls.count) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;

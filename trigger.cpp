@@ -124,16 +124,16 @@ if (nTrigger != NO_TRIGGER) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS) {
+if (MineInfo ().triggers.count >= MAX_TRIGGERS) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if (CurrSide ()->m_info.nWall >= GameInfo ().walls.count) {
+if (CurrSide ()->m_info.nWall >= MineInfo ().walls.count) {
 	if (bAutoAddWall) {
-		if (GameInfo ().walls.count >= MAX_WALLS) {
+		if (MineInfo ().walls.count >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
 			return null;
 			}
@@ -185,13 +185,13 @@ if (IsD1File ()) {
 else
 	flags = 0;
 
-nTrigger = (ushort) GameInfo ().triggers.count;
+nTrigger = (ushort) MineInfo ().triggers.count;
 // set new trigger data
 Triggers (nTrigger)->Setup (type, flags);
 // link trigger to the wall
 Walls (nWall)->m_info.nTrigger = (byte) nTrigger;
 // update number of Triggers ()
-GameInfo ().triggers.count++;
+MineInfo ().triggers.count++;
 AutoLinkExitToReactor();
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
@@ -208,18 +208,18 @@ void CMine::DeleteTrigger (short nTrigger)
 
 if (nTrigger < 0) {
 	nWall = CurrSeg ()->m_sides [Current ()->nSide].m_info.nWall;
-	if (nWall >= GameInfo ().walls.count)
+	if (nWall >= MineInfo ().walls.count)
 		return;
 	nTrigger = Walls (nWall)->m_info.nTrigger;
 	}
-if (nTrigger >= GameInfo ().triggers.count)
+if (nTrigger >= MineInfo ().triggers.count)
 	return;
 // update all Walls () who point to Triggers () higher than this one
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
 CWall *wallP = Walls (0);
-for (i = GameInfo ().walls.count; i; i--, wallP++)
+for (i = MineInfo ().walls.count; i; i--, wallP++)
 	if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger > nTrigger))
 		wallP->m_info.nTrigger--;
 	else if (wallP->m_info.nTrigger == nTrigger) {
@@ -228,14 +228,14 @@ for (i = GameInfo ().walls.count; i; i--, wallP++)
 		nSide = wallP->m_nSide;
 		}
 // remove trigger from array
-//for (i=nTrigger;i<GameInfo ().triggers.count-1;i++)
+//for (i=nTrigger;i<MineInfo ().triggers.count-1;i++)
 // update number of Triggers ()
 CTrigger *trigP = Triggers (0);
 for (i = NumTriggers (); i; i--, trigP++)
 	if (trigP->m_info.type >= TT_MASTER)
 		DeleteTriggerTarget (trigP, nSegment, nSide, false);
-if (nTrigger < --GameInfo ().triggers.count)
-	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (GameInfo ().triggers.count - nTrigger) * sizeof (CTrigger));
+if (nTrigger < --MineInfo ().triggers.count)
+	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (MineInfo ().triggers.count - nTrigger) * sizeof (CTrigger));
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
 AutoLinkExitToReactor();
@@ -279,7 +279,7 @@ void CMine::DeleteTriggerTargets (short nSegment, short nSide)
 {
 int i;
 
-for (i = 0; i < GameInfo ().triggers.count; i++)
+for (i = 0; i < MineInfo ().triggers.count; i++)
 	if (DeleteTriggerTarget (Triggers (i), nSegment, nSide))
 		i--;
 
@@ -299,24 +299,24 @@ short CMine::FindTriggerWall (short *nTrigger, short nSegment, short nSide)
 GetCurrent (nSegment, nSide);
 CWall *wallP = Walls (0);
 int nWall;
-for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++) {
+for (nWall = MineInfo ().walls.count; nWall; nWall--, wallP++) {
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide)) {
 		*nTrigger = wallP->m_info.nTrigger;
 		return short (wallP - Walls (0));
 		}
 	}
 *nTrigger = NO_TRIGGER;
-return GameInfo ().walls.count;
+return MineInfo ().walls.count;
 }
 
 short CMine::FindTriggerWall (short nTrigger)
 {
 CWall *wallP = Walls (0);
 int nWall;
-for (nWall = GameInfo ().walls.count; nWall; nWall--, wallP++)
+for (nWall = MineInfo ().walls.count; nWall; nWall--, wallP++)
 	if (wallP->m_info.nTrigger == nTrigger)
 		return short (wallP - Walls (0));
-return GameInfo ().walls.count;
+return MineInfo ().walls.count;
 }
 
 short CMine::FindTriggerObject (short *nTrigger)
@@ -342,7 +342,7 @@ short CMine::FindTriggerTarget (short nTrigger, short nSegment, short nSide)
 	CSideKey key = CSideKey (nSegment, nSide);
 	int i, j;
 
-for (i = nTrigger; i < GameInfo ().triggers.count; i++, trigP++)
+for (i = nTrigger; i < MineInfo ().triggers.count; i++, trigP++)
 	if (-1 < (j = trigP->Find (key)))
 		return i;
 return -1;
@@ -375,7 +375,7 @@ for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
 	face = reactorTrigger->m_targets [linknum];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
-	for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
+	for (nWall = 0; nWall < MineInfo ().walls.count; nWall++) {
 		if (*Walls (nWall) == face) {
 		found = TRUE;
 		break;
@@ -389,9 +389,9 @@ for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
 // add exit to list if not already in list
 // search for Walls () that have a exit of type trigger
 count =  reactorTrigger->m_count;
-for (nWall = 0; nWall < GameInfo ().walls.count; nWall++) {
+for (nWall = 0; nWall < MineInfo ().walls.count; nWall++) {
 	nTrigger = Walls (nWall)->m_info.nTrigger;
-	if (nTrigger >= 0 && nTrigger <GameInfo ().triggers.count) {
+	if (nTrigger >= 0 && nTrigger <MineInfo ().triggers.count) {
 		if (IsD1File () 
 			 ? Triggers (nTrigger)->m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
 			 : Triggers (nTrigger)->m_info.type == TT_EXIT || Triggers (nTrigger)->m_info.type == TT_SECRET_EXIT) {

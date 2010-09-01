@@ -35,20 +35,20 @@ STDMETHODIMP CComMine::get_NumberOfPoints(long* pRetVal)
 
 STDMETHODIMP CComMine::get_NumberOfWalls(long* pRetVal)
 {
-	*pRetVal = _pMine->GameInfo ().walls.count;
+	*pRetVal = _pMine->MineInfo ().walls.count;
 	return S_OK;
 }
 
 STDMETHODIMP CComMine::get_NumberOfTriggers(long* pRetVal)
 {
-	*pRetVal = _pMine->GameInfo ().triggers.count;
+	*pRetVal = _pMine->MineInfo ().triggers.count;
 	return S_OK;
 }
 
 
 STDMETHODIMP CComMine::get_NumberOfObjects(long* pRetVal)
 {
-	*pRetVal = _pMine->GameInfo ().objects.count;
+	*pRetVal = _pMine->MineInfo ().objects.count;
 	return S_OK;
 }
 
@@ -82,7 +82,7 @@ STDMETHODIMP CComMine::get_Object(VARIANT index, LPDISPATCH* pVal)
 		CComVariant var(index);
 		if (SUCCEEDED(var.ChangeType(VT_I4)))
 		{
-			if (var.lVal < _pMine->GameInfo ().objects.count)
+			if (var.lVal < _pMine->MineInfo ().objects.count)
 			{
 				CComObject<CComObj>* pObject = new CComObject<CComObj>();
 				pObject->_pObject = &_pMine->Objects ()[var.lVal];

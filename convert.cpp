@@ -210,7 +210,7 @@ if (!theMine) return;
   CGameObject	*objP;
   short			nSegment, nSide, d1Texture, mode,
 					segCount = theMine->SegCount (),
-					wallCount = theMine->GameInfo ().walls.count;
+					wallCount = theMine->MineInfo ().walls.count;
 
 textureManager.Release ();
 DLE.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
@@ -251,7 +251,7 @@ for (i = 0, wallP = theMine->Walls (0); i < wallCount; i++, wallP++) {
 
 // change trigP type and flags
 //-------------------------------------------
-for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.count; i++, trigP++) {
+for (i = 0, trigP = theMine->Triggers (0); i < theMine->MineInfo ().triggers.count; i++, trigP++) {
 	switch (trigP->m_info.flags) {
 		case TRIGGER_CONTROL_DOORS:
 			trigP->m_info.type = TT_OPEN_DOOR;
@@ -289,7 +289,7 @@ for (i = 0, trigP = theMine->Triggers (0); i < theMine->GameInfo ().triggers.cou
 
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
+for (i = 0; i < theMine->MineInfo ().botgen.count; i++) {
 	theMine->BotGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == i))
@@ -298,7 +298,7 @@ for (i = 0; i < theMine->GameInfo ().botgen.count; i++) {
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
+for (i = 0; i < theMine->MineInfo ().equipgen.count; i++) {
 	theMine->EquipGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nMatCen == i))
@@ -308,7 +308,7 @@ for (i = 0; i < theMine->GameInfo ().equipgen.count; i++) {
 // Objects ()
 //-----------------------------------------------
 
-for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++) {
+for (i = 0, objP = theMine->Objects (0); i < theMine->MineInfo ().objects.count; i++, objP++) {
 // fix clip numbers for poly Objects () (except robots)
 	switch (objP->m_info.type) {
 		case OBJ_PLAYER   : // the player on the console
@@ -325,8 +325,8 @@ for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count;
 
 // d2 light data and indicies
 //--------------------------------------------
-theMine->GameInfo ().lightDeltaIndices.count = 0;
-theMine->GameInfo ().lightDeltaValues.count = 0;
+theMine->MineInfo ().lightDeltaIndices.count = 0;
+theMine->MineInfo ().lightDeltaValues.count = 0;
 theMine->FlickerLightCount () = 0;
 theMine->AutoAdjustLight (50.0, true);
 theMine->CalcAverageCornerLight (true);

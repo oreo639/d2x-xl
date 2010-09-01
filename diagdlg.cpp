@@ -95,7 +95,7 @@ CGameObject *objP = theMine->Objects (0);
 memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 int i, j;
-for (i = theMine->GameInfo ().objects.count, j = 0; i; i--, j++, objP++)
+for (i = theMine->MineInfo ().objects.count, j = 0; i; i--, j++, objP++)
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
@@ -142,7 +142,7 @@ int CDiagTool::CountTextures (void)
 	CSegment *segP = theMine->Segments (0);
 	CSide *sideP;
 	char bUsed [(MAX_TEXTURES_D2 + 7) / 8];
-	int t, i, j, h = theMine->GameInfo ().walls.count;
+	int t, i, j, h = theMine->MineInfo ().walls.count;
 	int nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));

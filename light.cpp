@@ -429,7 +429,7 @@ typedef struct tAvgCornerLight {
 
 void CMine::CalcAverageCornerLight (bool bAll)
 {
-  int nSegment, segCount = SegCount (), wallCount = GameInfo ().walls.count;
+  int nSegment, segCount = SegCount (), wallCount = MineInfo ().walls.count;
   tAvgCornerLight* max_brightness = new tAvgCornerLight [VertCount ()];
 
 memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
@@ -677,7 +677,7 @@ int nSegCount = SegCount ();
 			if (childSegP->Child (nChildSide) >= 0) {
 				ushort nWall = childSegP->m_sides [nChildSide].m_info.nWall;
 				// .. but there is no wall ..
-				if (nWall >= GameInfo ().walls.count)
+				if (nWall >= MineInfo ().walls.count)
 					continue;
 					// .. or its not a door ..
 				if (Walls (nWall)->m_info.type == WALL_OPEN)
@@ -796,10 +796,10 @@ return (strstr (textureManager.Name ((short) nBaseTex), "lava") != null);
 int CMine::FindDeltaLight (short nSegment, short nSide, short *pi)
 {
 	int	i = pi ? *pi : 0;
-	int	j	= (int)GameInfo ().lightDeltaIndices.count++;
+	int	j	= (int)MineInfo ().lightDeltaIndices.count++;
 	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
-if ((LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34)) {
+if ((LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34)) {
 	for (; i < j; i++, dliP++)
 		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
@@ -823,9 +823,9 @@ bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth)
 	int		nErrors = 0;
 	double	effect[4];
 
-GameInfo ().lightDeltaValues.count = 0;
-GameInfo ().lightDeltaIndices.count = 0;
-bool bWall, bD2XLights = (LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34);
+MineInfo ().lightDeltaValues.count = 0;
+MineInfo ().lightDeltaIndices.count = 0;
+bool bWall, bD2XLights = (LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel
@@ -882,10 +882,10 @@ fLightScale = 1.0; ///= 100.0;
 
 			short srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
 			if ((srcSegP->Child (nSourceSide) != -1) &&
-				 ((srcwall >= GameInfo ().walls.count) || (Walls (srcwall)->m_info.type == WALL_OPEN)))
+				 ((srcwall >= MineInfo ().walls.count) || (Walls (srcwall)->m_info.type == WALL_OPEN)))
 				continue;
 
-			if (GameInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES) {
+			if (MineInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES) {
 //#pragma omp critical
 				{
 				if (++nErrors == 1) {
@@ -903,7 +903,7 @@ fLightScale = 1.0; ///= 100.0;
 			// get index number and increment total number of lightDeltaIndices
 	//#pragma omp critical
 			{
-			lightDeltaIndexCount = int (GameInfo ().lightDeltaIndices.count++);
+			lightDeltaIndexCount = int (MineInfo ().lightDeltaIndices.count++);
 			}
 			CLightDeltaIndex *dliP = LightDeltaIndex (lightDeltaIndexCount);
 			if (bD2XLights) {
@@ -916,7 +916,7 @@ fLightScale = 1.0; ///= 100.0;
 				dliP->m_nSide = nSourceSide;
 				dliP->m_info.count = 0; // will be incremented below
 				}
-			dliP->m_info.index = (short)GameInfo ().lightDeltaValues.count;
+			dliP->m_info.index = (short)MineInfo ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
 			A = -CalcSideNormal (nSourceSeg,nSourceSide);
@@ -970,7 +970,7 @@ fLightScale = 1.0; ///= 100.0;
 					if (childSegP->Child (nChildSide) >= 0) {
 						ushort nWall = childSegP->m_sides[nChildSide].m_info.nWall;
 						// .. if there is no wall ..
-						if (nWall >= GameInfo ().walls.count)
+						if (nWall >= MineInfo ().walls.count)
 							continue;
 						// .. or its not a door ..
 						if (Walls (nWall)->m_info.type == WALL_OPEN) 
@@ -988,7 +988,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (dliP->m_info.count == (bD2XLights ? 8191 : 255))) {
+						if ((MineInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (dliP->m_info.count == (bD2XLights ? 8191 : 255))) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -1002,7 +1002,7 @@ fLightScale = 1.0; ///= 100.0;
 						CLightDeltaValue* dl;
 	//#pragma omp critical
 						{
-						dl = LightDeltaValues (GameInfo ().lightDeltaValues.count++);
+						dl = LightDeltaValues (MineInfo ().lightDeltaValues.count++);
 						}
 						dl->m_nSegment = nChildSeg;
 						dl->m_nSide = nChildSide;
@@ -1017,7 +1017,7 @@ fLightScale = 1.0; ///= 100.0;
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
 							DLE.SetModified (TRUE);
-							if ((GameInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
+							if ((MineInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {
@@ -1031,7 +1031,7 @@ fLightScale = 1.0; ///= 100.0;
 							CLightDeltaValue *dl;
 //#pragma omp critical
 							{
-							dl = LightDeltaValues (GameInfo ().lightDeltaValues.count++);
+							dl = LightDeltaValues (MineInfo ().lightDeltaValues.count++);
 							}
 							dl->m_nSegment = nChildSeg;
 							dl->m_nSide = nChildSide;
@@ -1120,7 +1120,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
+	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
 	child = segP->Child (nSide);
@@ -1146,7 +1146,7 @@ if (!bMarkChildren || (recursion_level == 1))
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
+	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
 	child = segP->Child (nSide);
@@ -1171,7 +1171,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
+	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
 	child = segP->Child (nSide);
@@ -1197,7 +1197,7 @@ if (!bMarkChildren || (recursion_level == 1))
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
-	if ((nWall < GameInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
+	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
 	child = segP->Child (nSide);

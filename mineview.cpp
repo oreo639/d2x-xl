@@ -437,7 +437,7 @@ bool CMineView::SetLightStatus (void)
 	CFlickeringLight *flP = theMine->FlickeringLights (0);
 	LIGHT_STATUS *pls;
 	bool bChange = false;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->GameInfo ().fileInfo.version >= 34);
+	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->MineInfo ().fileInfo.version >= 34);
 	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light
@@ -445,7 +445,7 @@ pls = lightStatus [0];
 for (i = theMine->SegCount (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
-for (h = 0; h < theMine->GameInfo ().lightDeltaIndices.count; h++, ldiP++) {
+for (h = 0; h < theMine->MineInfo ().lightDeltaIndices.count; h++, ldiP++) {
 	nSrcSide = ldiP->m_nSegment;
 	nSrcSeg = ldiP->m_nSide;
 	j = theMine->GetFlickeringLight (nSrcSide, nSrcSeg);
@@ -738,7 +738,7 @@ if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 theMine->Other ()->nObject = theMine->Current ()->nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++)
+	for (i = 0, objP = theMine->Objects (0); i < theMine->MineInfo ().objects.count; i++, objP++)
 		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			theMine->Other ()->nObject = i;
 			break;

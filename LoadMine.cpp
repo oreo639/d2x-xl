@@ -244,15 +244,15 @@ gameErr = LoadGameData (fp, bNewMine);
 if (gameErr != 0) {
 	ErrorMsg ("Error loading game data");
 	// reset "howmany"
-	GameInfo ().objects.Reset ();
-	GameInfo ().walls.Reset ();
-	GameInfo ().doors.Reset ();
-	GameInfo ().triggers.Reset ();
-	GameInfo ().control.Reset ();
-	GameInfo ().botgen.Reset ();
-	GameInfo ().equipgen.Reset ();
-	GameInfo ().lightDeltaIndices.Reset ();
-	GameInfo ().lightDeltaValues.Reset ();
+	MineInfo ().objects.Reset ();
+	MineInfo ().walls.Reset ();
+	MineInfo ().doors.Reset ();
+	MineInfo ().triggers.Reset ();
+	MineInfo ().control.Reset ();
+	MineInfo ().botgen.Reset ();
+	MineInfo ().equipgen.Reset ();
+	MineInfo ().lightDeltaIndices.Reset ();
+	MineInfo ().lightDeltaValues.Reset ();
 	fp.Close ();
 	return 3;
 	}
@@ -387,7 +387,7 @@ for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		// check wall numbers
 		CSide& side = segP->m_sides [nSide];
-		if (side.m_info.nWall >= GameInfo ().walls.count && side.m_info.nWall != NO_WALL) {
+		if (side.m_info.nWall >= MineInfo ().walls.count && side.m_info.nWall != NO_WALL) {
 			side.m_info.nWall = NO_WALL;
 			checkErr |= (1 << 0);
 			}
@@ -406,7 +406,7 @@ for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		}
 	}
 CWall *wallP = Walls (0);
-for (nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++) {
+for (nWall = 0; nWall < MineInfo ().walls.count; nWall++, wallP++) {
 	// check nSegment
 	if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
 		wallP->m_nSegment = 0;
@@ -495,9 +495,9 @@ else if (LevelVersion () > 9) {
 	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
 	LoadColors (TexColors (0), MAX_TEXTURES_D2, 10, 16, fp);
 	}
-if (GameInfo ().objects.count > MAX_OBJECTS) {
+if (MineInfo ().objects.count > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-			  GameInfo ().objects.count, MAX_OBJECTS2);
+			  MineInfo ().objects.count, MAX_OBJECTS2);
 	ErrorMsg (message);
 	}
 return 0;
@@ -518,13 +518,13 @@ if (info.count > nMaxCount) {
 	ErrorMsg (message);
 	return -1;
 	}
-if (GameInfo ().fileInfo.version < nMinVersion) {
+if (MineInfo ().fileInfo.version < nMinVersion) {
 	sprintf_s (message, sizeof (message), "%s version < %d, walls not loaded", pszItem, nMinVersion);
 	ErrorMsg (message);
 	return 0;
 	}
 
-int nVersion =  GameInfo ().fileInfo.version;
+int nVersion =  MineInfo ().fileInfo.version;
 for (int i = 0; i < info.count; i++) {
 	if (!items->Read (fp, nVersion, bFlag)) {
 		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
@@ -550,30 +550,30 @@ short CMine::LoadGameData (CFileManager& fp, bool bNewMine)
 startOffset = fp.Tell ();
 
 // Set default values
-GameInfo ().objects.Reset ();
-GameInfo ().walls.Reset ();
-GameInfo ().doors.Reset ();
-GameInfo ().triggers.Reset ();
-GameInfo ().control.Reset ();
-GameInfo ().botgen.Reset ();
-GameInfo ().equipgen.Reset ();
-GameInfo ().lightDeltaIndices.Reset ();
-GameInfo ().lightDeltaValues.Reset ();
+MineInfo ().objects.Reset ();
+MineInfo ().walls.Reset ();
+MineInfo ().doors.Reset ();
+MineInfo ().triggers.Reset ();
+MineInfo ().control.Reset ();
+MineInfo ().botgen.Reset ();
+MineInfo ().equipgen.Reset ();
+MineInfo ().lightDeltaIndices.Reset ();
+MineInfo ().lightDeltaValues.Reset ();
 
 //==================== = READ FILE INFO========================
 
-// Read in GameFileInfo () to get size of saved fileinfo.
+// Read in MineFileInfo () to get size of saved fileinfo.
 if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
 // Check signature
-GameInfo ().Read (fp);
-if (GameFileInfo ().signature != 0x6705) {
+MineInfo ().Read (fp);
+if (MineFileInfo ().signature != 0x6705) {
 	ErrorMsg ("Game data signature incorrect");
 	return -1;
 	}
-if (GameInfo ().fileInfo.version < 14) 
+if (MineInfo ().fileInfo.version < 14) 
 	m_currentLevelName [0] = 0;
 else {  /*load mine filename */
 	for (char *p = m_currentLevelName; ; p++) {
@@ -585,21 +585,21 @@ else {  /*load mine filename */
 		}
 	}
 
-if (0 > LoadGameItem (fp, GameInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
+if (0 > LoadGameItem (fp, MineInfo ().objects, Objects (0), -1, MAX_OBJECTS, "Objects"))
 	return -1;
-if (0 > LoadGameItem (fp, GameInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
+if (0 > LoadGameItem (fp, MineInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
 	return -1;
-if (0 > LoadGameItem (fp, GameInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
+if (0 > LoadGameItem (fp, MineInfo ().doors, ActiveDoors (0), 20, MAX_DOORS, "Doors"))
 	return -1;
-if (0 > LoadGameItem (fp, GameInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
+if (0 > LoadGameItem (fp, MineInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
 	return -1;
-if (GameInfo ().triggers.offset > -1) {
+if (MineInfo ().triggers.offset > -1) {
 	int bObjTriggersOk = 1;
-	if (GameInfo ().fileInfo.version >= 33) {
+	if (MineInfo ().fileInfo.version >= 33) {
 		NumObjTriggers () = fp.ReadInt32 ();
 		for (int i = 0; i < NumObjTriggers (); i++)
-			ObjTriggers (i)->Read (fp, GameInfo ().fileInfo.version, true);
-		if (GameInfo ().fileInfo.version >= 40) {
+			ObjTriggers (i)->Read (fp, MineInfo ().fileInfo.version, true);
+		if (MineInfo ().fileInfo.version >= 40) {
 			for (int i = 0; i < NumObjTriggers (); i++)
 				ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 			}
@@ -609,7 +609,7 @@ if (GameInfo ().triggers.offset > -1) {
 				fp.ReadInt16 ();
 				ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 				}
-			if (GameInfo ().fileInfo.version < 36)
+			if (MineInfo ().fileInfo.version < 36)
 				fp.Seek (700 * sizeof (short), SEEK_CUR);
 			else
 				fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
@@ -623,16 +623,16 @@ if (GameInfo ().triggers.offset > -1) {
 		}
 	}
 
-if (0 > LoadGameItem (fp, GameInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
+if (0 > LoadGameItem (fp, MineInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
 	return -1;
-if (0 > LoadGameItem (fp, GameInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
+if (0 > LoadGameItem (fp, MineInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
 	return -1;
-if (0 > LoadGameItem (fp, GameInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
+if (0 > LoadGameItem (fp, MineInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 	return -1;
 if (IsD2File ()) {
-	if (0 > LoadGameItem (fp, GameInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34)))
+	if (0 > LoadGameItem (fp, MineInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34)))
 		return -1;
-	if (0 > LoadGameItem (fp, GameInfo ().lightDeltaValues, LightDeltaValues (0), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
+	if (0 > LoadGameItem (fp, MineInfo ().lightDeltaValues, LightDeltaValues (0), -1, MAX_LIGHT_DELTA_VALUES, "Light delta values"))
 		return -1;
 	}
 

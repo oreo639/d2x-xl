@@ -504,7 +504,7 @@ switch (m_selectMode) {
 	case CUBE_MODE:
 		for (i = 0; i < 8; i++)
 			*Vertices (segP->m_info.verts [i]) += delta;
-		for (i = 0; i < GameInfo ().objects.count; i++)
+		for (i = 0; i < MineInfo ().objects.count; i++)
 			if (Objects (i)->m_info.nSegment == nSegment)
 				Objects (i)->m_location.pos += delta;
 		break;
@@ -519,7 +519,7 @@ switch (m_selectMode) {
 		for (i = 0; i < MAX_VERTICES; i++)
 			if (VertStatus (i) & MARKED_MASK)
 				*Vertices (i) += delta;
-		for (i = GameInfo ().objects.count; i; i--, objP++)
+		for (i = MineInfo ().objects.count; i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
 				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
 					objP->m_location.pos += delta;
@@ -599,7 +599,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		DLE.SetModified (TRUE);
-		orient = (Current ()->nObject == GameInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
+		orient = (Current ()->nObject == MineInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');
@@ -642,7 +642,7 @@ switch (m_selectMode) {
 				Vertices (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
-		for (i = GameInfo ().objects.count; i; i--, objP++)
+		for (i = MineInfo ().objects.count; i; i--, objP++)
 			if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
 				objP->m_location.pos.Rotate (center, oppCenter, angle);
 		break;

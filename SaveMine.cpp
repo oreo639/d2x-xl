@@ -205,7 +205,7 @@ int CMine::SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items
 {
 info.offset = fp.Tell ();
 for (int i = 0; i < info.count; i++) {
-	items->Write (fp, GameInfo ().fileInfo.version, bFlag);
+	items->Write (fp, MineInfo ().fileInfo.version, bFlag);
 	items = items->Next ();
 	}
 return info.count;
@@ -270,31 +270,31 @@ startOffset = fp.Tell ();
 // Do not assume the "sizeof" values are the same as what was read when level was loaded.
 // Also be careful no to use sizeof () because the editor's internal size may not match
 // the size which is used by the game engine.
-GameInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
-GameInfo ().walls.size = 24;                            // 24 = sizeof (wall)
-GameInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
-GameInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
-GameInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
-GameInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
-GameInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
-GameInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
-GameInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
+MineInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
+MineInfo ().walls.size = 24;                            // 24 = sizeof (wall)
+MineInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
+MineInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
+MineInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
+MineInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
+MineInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
+MineInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
+MineInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
 
 if (m_fileType== RDL_FILE) {
-	GameInfo ().fileInfo.signature = 0x6705;
-	GameInfo ().fileInfo.version = 25;
-	GameInfo ().fileInfo.size = 119;
-	GameInfo ().level = 0;
+	MineInfo ().fileInfo.signature = 0x6705;
+	MineInfo ().fileInfo.version = 25;
+	MineInfo ().fileInfo.size = 119;
+	MineInfo ().level = 0;
 	}
 else {
-	GameInfo ().fileInfo.signature = 0x6705;
-	GameInfo ().fileInfo.version = (LevelVersion () < 13) ? 31 : 40;
-	GameInfo ().fileInfo.size = (LevelVersion () < 13) ? 143 : sizeof (GameInfo ()); // same as sizeof (GameInfo ())
-	GameInfo ().level = 0;
+	MineInfo ().fileInfo.signature = 0x6705;
+	MineInfo ().fileInfo.version = (LevelVersion () < 13) ? 31 : 40;
+	MineInfo ().fileInfo.size = (LevelVersion () < 13) ? 143 : sizeof (MineInfo ()); // same as sizeof (MineInfo ())
+	MineInfo ().level = 0;
 }
 
-GameInfo ().Write (fp);
-if (GameInfo ().fileInfo.version >= 14) {  /*save mine filename */
+MineInfo ().Write (fp);
+if (MineInfo ().fileInfo.version >= 14) {  /*save mine filename */
 	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 }
 if (IsD2File ()) {
@@ -323,33 +323,33 @@ if (!(savePofNamesP = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2)))
 
 fp.Write (savePofNamesP, nSavePofNames, 13); // 13 characters each
 
-GameInfo ().player.offset = fp.Tell ();
+MineInfo ().player.offset = fp.Tell ();
 char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
 fp.Write (str, strlen (str) + 1, 1);
 
-SaveGameItem (fp, GameInfo ().objects, DATA (Objects ()));
-SaveGameItem (fp, GameInfo ().walls, DATA (Walls ()));
-SaveGameItem (fp, GameInfo ().doors, DATA (ActiveDoors ()));
-SaveGameItem (fp, GameInfo ().triggers, DATA (Triggers ()));
+SaveGameItem (fp, MineInfo ().objects, DATA (Objects ()));
+SaveGameItem (fp, MineInfo ().walls, DATA (Walls ()));
+SaveGameItem (fp, MineInfo ().doors, DATA (ActiveDoors ()));
+SaveGameItem (fp, MineInfo ().triggers, DATA (Triggers ()));
 if (LevelVersion () >= 12) {
 	fp.Write (NumObjTriggers ());
 	if (NumObjTriggers ()) {
 		SortObjTriggers ();
 		for (i = 0; i < NumObjTriggers (); i++)
-			ObjTriggers (i)->Write (fp, GameInfo ().fileInfo.version, true);
+			ObjTriggers (i)->Write (fp, MineInfo ().fileInfo.version, true);
 		for (i = 0; i < NumObjTriggers (); i++)
 			fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
 		}
 	}
-SaveGameItem (fp, GameInfo ().control, DATA (ReactorTriggers ()));
-SaveGameItem (fp, GameInfo ().botgen, DATA (BotGens ()));
+SaveGameItem (fp, MineInfo ().control, DATA (ReactorTriggers ()));
+SaveGameItem (fp, MineInfo ().botgen, DATA (BotGens ()));
 if (IsD2File ()) {
-	SaveGameItem (fp, GameInfo ().equipgen, DATA (EquipGens ()));
-	if (GameInfo ().lightDeltaIndices.count > 0) {
-		if ((LevelVersion () >= 15) && (GameInfo ().fileInfo.version >= 34))
-			SortDLIndex (0, GameInfo ().lightDeltaIndices.count - 1);
-		SaveGameItem (fp, GameInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
-		SaveGameItem (fp, GameInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
+	SaveGameItem (fp, MineInfo ().equipgen, DATA (EquipGens ()));
+	if (MineInfo ().lightDeltaIndices.count > 0) {
+		if ((LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34))
+			SortDLIndex (0, MineInfo ().lightDeltaIndices.count - 1);
+		SaveGameItem (fp, MineInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
+		SaveGameItem (fp, MineInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
 		}
 	}
 
@@ -357,7 +357,7 @@ endOffset = fp.Tell ();
 
 //==================== = UPDATE FILE INFO OFFSETS====================== =
 fp.Seek (startOffset, SEEK_SET);
-fp.Write (&GameInfo (), GameInfo ().fileInfo.size, 1);
+fp.Write (&MineInfo (), MineInfo ().fileInfo.size, 1);
 
 //============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
 fp.Seek (endOffset, SEEK_SET);

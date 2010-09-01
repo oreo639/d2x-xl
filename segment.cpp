@@ -80,40 +80,40 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 		}
 
 	// delete any Objects () within segment
-for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
+for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 	if (Objects (i)->m_info.nSegment == nDelSeg) {
 		DeleteObject(i); 
 		}
 	}
 #if 0 // done by UndefineSegment ()
 	// delete any robot centers with this
-	for (i = (ushort)GameInfo ().botgen.count - 1; i >= 0; i--) {
+	for (i = (ushort)MineInfo ().botgen.count - 1; i >= 0; i--) {
 		nSegment = BotGens (i)->m_info.nSegment; 
 		if (nSegment == nDelSeg) {
-			int nMatCens = --GameInfo ().botgen.count; 
+			int nMatCens = --MineInfo ().botgen.count; 
 			if (i < nMatCens)
 			memcpy ((void *) BotGens (i), (void *) BotGens (nMatCens), sizeof (CRobotMaker)); 
 			}
 		}
 
 	// delete any equipment centers with this
-	for (i = (ushort) GameInfo ().equipgen.count - 1; i >= 0; i--) {
+	for (i = (ushort) MineInfo ().equipgen.count - 1; i >= 0; i--) {
 		nSegment = EquipGens (i)->m_info.nSegment; 
 		if (nSegment == nDelSeg) {
-			GameInfo ().equipgen.count--; 
+			MineInfo ().equipgen.count--; 
 			memcpy ((void *) EquipGens (i), (void *) EquipGens (i + 1), 
-					  (GameInfo ().equipgen.count - i) * sizeof (CRobotMaker)); 
+					  (MineInfo ().equipgen.count - i) * sizeof (CRobotMaker)); 
 			}
 		}
 #endif
-	for (i = 0; i < GameInfo ().botgen.count; i++)
+	for (i = 0; i < MineInfo ().botgen.count; i++)
 		if (BotGens (i)->m_info.nSegment > nDelSeg)
 			BotGens (i)->m_info.nSegment--;
-	for (i = 0; i < GameInfo ().equipgen.count; i++)
+	for (i = 0; i < MineInfo ().equipgen.count; i++)
 		if (EquipGens (i)->m_info.nSegment > nDelSeg)
 			EquipGens (i)->m_info.nSegment--;
 	// delete any control segP with this segment
-	for (j = (ushort)GameInfo ().control.count - 1; j >= 0; j--) {
+	for (j = (ushort)MineInfo ().control.count - 1; j >= 0; j--) {
 		int count = ReactorTriggers (i)->m_count;
 		for (j = count - 1; j > 0; j--) {
 			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
@@ -180,7 +180,7 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 		}
 
 		// replace all wall segP numbers with real numbers
-		for (i = 0; i < GameInfo ().walls.count; i++) {
+		for (i = 0; i < MineInfo ().walls.count; i++) {
 			nSegment = (short) Walls (i)->m_nSegment; 
 			if (nSegment < SegCount ()) {
 				segP = Segments (nSegment); 
@@ -216,7 +216,7 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 			}
 
 		// replace all object segP numbers with real numbers
-		for (i = 0; i < GameInfo ().objects.count; i++) {
+		for (i = 0; i < MineInfo ().objects.count; i++) {
 			objP = Objects (i); 
 			if (SegCount () > (nSegment = objP->m_info.nSegment))
 				objP->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
@@ -225,7 +225,7 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 			}
 
 		// replace robot centers segP numbers with real numbers
-		for (i = 0; i < GameInfo ().botgen.count; i++) {
+		for (i = 0; i < MineInfo ().botgen.count; i++) {
 			if (SegCount () > (nSegment = BotGens (i)->m_info.nSegment))
 				BotGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
@@ -233,7 +233,7 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 			}
 
 		// replace equipment centers segP numbers with real numbers
-		for (i = 0; i < GameInfo ().equipgen.count; i++) {
+		for (i = 0; i < MineInfo ().equipgen.count; i++) {
 			if (SegCount () > (nSegment = EquipGens (i)->m_info.nSegment))
 				EquipGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
@@ -241,7 +241,7 @@ for (i = (ushort)GameInfo ().objects.count - 1; i >= 0; i--) {
 			}
 
 		// replace control segP numbers with real numbers
-		for (i = 0; i < GameInfo ().control.count; i++) {
+		for (i = 0; i < MineInfo ().control.count; i++) {
 			for (j = 0; j < ReactorTriggers (i)->m_count; j++) {
 				if (SegCount () > (nSegment = ReactorTriggers (i)->Segment (j)))
 					ReactorTriggers (i)->Segment (j) = Segments (nSegment)->m_info.nIndex; 
@@ -1971,7 +1971,7 @@ int CMine::IsWall (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide); 
 return (Segments (nSegment)->Child (nSide)== -1) ||
-		 (Segments (nSegment)->m_sides [nSide].m_info.nWall < GameInfo ().walls.count); 
+		 (Segments (nSegment)->m_sides [nSide].m_info.nWall < MineInfo ().walls.count); 
 }
 
                         /* -------------------------- */
@@ -2229,7 +2229,7 @@ void CMine::RenumberBotGens ()
 
 // number "matcen"
 nMatCens = 0; 
-for (i = 0; i < GameInfo ().botgen.count; i++) {
+for (i = 0; i < MineInfo ().botgen.count; i++) {
 	nSegment = BotGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = Segments (nSegment); 
@@ -2257,7 +2257,7 @@ void CMine::RenumberEquipGens ()
 
 // number "matcen"
 nMatCens = 0; 
-for (i = 0; i < GameInfo ().equipgen.count; i++) {
+for (i = 0; i < MineInfo ().equipgen.count; i++) {
 	nSegment = EquipGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = Segments (nSegment); 
@@ -2608,7 +2608,7 @@ byte CSegment::WriteWalls (CFileManager& fp, int nLevelVersion)
 
 m_info.wallFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if (m_sides [i].m_info.nWall < theMine->GameInfo ().walls.count) 
+	if (m_sides [i].m_info.nWall < theMine->MineInfo ().walls.count) 
 		m_info.wallFlags |= (1 << i);
 	}
 fp.Write (m_info.wallFlags);

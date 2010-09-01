@@ -99,7 +99,7 @@ cbEffects->ResetContent ();
 CGameObject *curObj = theMine->CurrObj (),
 			*objP = theMine->Objects (0);
 int i;
-for (i = 0; i < theMine->GameInfo ().objects.count; i++, objP++) {
+for (i = 0; i < theMine->MineInfo ().objects.count; i++, objP++) {
 	if (objP->m_info.type != OBJ_EFFECT)
 		continue;
 	if (objP == curObj)
@@ -261,7 +261,7 @@ UpdateData (FALSE);
 
 bool CEffectTool::AddEffect ()
 {
-if (theMine->GameInfo ().objects.count >= MAX_OBJECTS) {
+if (theMine->MineInfo ().objects.count >= MAX_OBJECTS) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return false;
 	}
@@ -320,11 +320,11 @@ DLE.MineView ()->Refresh ();
 
 void CEffectTool::OnDelete ()
 {
-if (theMine->Current ()->nObject == theMine->GameInfo ().objects.count) {
+if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-if (theMine->GameInfo ().objects.count == 1) {
+if (theMine->MineInfo ().objects.count == 1) {
 	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
@@ -437,7 +437,7 @@ if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 theMine->Other ()->nObject = theMine->Current ()->nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = theMine->Objects (0); i < theMine->GameInfo ().objects.count; i++, objP++)
+	for (i = 0, objP = theMine->Objects (0); i < theMine->MineInfo ().objects.count; i++, objP++)
 		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			theMine->Other ()->nObject = i;
 			break;

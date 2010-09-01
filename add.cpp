@@ -42,14 +42,14 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		}
 	else if (nTexture >= 0) {
 		if (walltype >= 0) {
-			if ((GameInfo ().walls.count < MAX_WALLS) &&
-				 (Segments (nSegment)->m_sides [nSide].m_info.nWall >= GameInfo ().walls.count))
+			if ((MineInfo ().walls.count < MAX_WALLS) &&
+				 (Segments (nSegment)->m_sides [nSide].m_info.nWall >= MineInfo ().walls.count))
 				AddWall (nSegment, nSide, (byte) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
-			if ((GameInfo ().walls.count < MAX_WALLS) &&
+			if ((MineInfo ().walls.count < MAX_WALLS) &&
 				 GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) &&
-				 (Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall >= GameInfo ().walls.count))
+				 (Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall >= MineInfo ().walls.count))
 				AddWall (nOppSeg, nOppSide, (byte) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
@@ -70,7 +70,7 @@ void CMine::UndefineSegment (short nSegment)
 nSegment = short (segP - Segments (0));
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 	// remove matcen
-	int nMatCens = (int) GameInfo ().botgen.count;
+	int nMatCens = (int) MineInfo ().botgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
 		int nDelMatCen = segP->m_info.nMatCen;
@@ -79,7 +79,7 @@ if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 			BotGens (nDelMatCen)->m_info.nFuelCen = nDelMatCen;
 			segP->m_info.nMatCen = -1;
 			}
-		GameInfo ().botgen.count--;
+		MineInfo ().botgen.count--;
 		int i;
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (nSegment, i);
@@ -94,7 +94,7 @@ if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
 	}
 if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
 	// remove matcen
-	int nMatCens = (int) GameInfo ().equipgen.count;
+	int nMatCens = (int) MineInfo ().equipgen.count;
 	if (nMatCens > 0) {
 		// fill in deleted matcen
 		int nDelMatCen = segP->m_info.nMatCen;
@@ -103,12 +103,12 @@ if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
 			EquipGens (nDelMatCen)->m_info.nFuelCen = nDelMatCen;
 			segP->m_info.nMatCen = -1;
 			}
-		GameInfo ().equipgen.count--;
+		MineInfo ().equipgen.count--;
 		int i;
 		for (i = 0; i < 6; i++)
 			DeleteTriggerTargets (nSegment, i);
 		CSegment *s;
-		nDelMatCen += (int) GameInfo ().botgen.count;
+		nDelMatCen += (int) MineInfo ().botgen.count;
 		for (i = SegCount (), s = Segments (0); i; i--, s++)
 			if ((s->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (s->m_info.nMatCen == nMatCens)) {
 				s->m_info.nMatCen = nDelMatCen;
@@ -206,7 +206,7 @@ return true;
 
 bool CMine::AddEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-int n_matcen = (int) GameInfo ().equipgen.count;
+int n_matcen = (int) MineInfo ().equipgen.count;
 if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
@@ -231,7 +231,7 @@ EquipGens (n_matcen)->m_info.nSegment = nSegment;
 EquipGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
-GameInfo ().equipgen.count++;
+MineInfo ().equipgen.count++;
 DLE.UnlockUndo ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
@@ -244,7 +244,7 @@ return true;
 
 bool CMine::AddRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-int n_matcen = (int) GameInfo ().botgen.count;
+int n_matcen = (int) MineInfo ().botgen.count;
 if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
@@ -269,7 +269,7 @@ BotGens (n_matcen)->m_info.nSegment = nSegment;
 BotGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
-GameInfo ().botgen.count++;
+MineInfo ().botgen.count++;
 DLE.UnlockUndo ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
@@ -411,7 +411,7 @@ if (bCreate && !AddSegment ()) {
 	}	
 int new_segment = Current ()->nSegment;
 Current ()->nSegment = last_segment;
-if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (GameInfo ().walls.count < MAX_WALLS))
+if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (MineInfo ().walls.count < MAX_WALLS))
 	AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
 Current ()->nSegment = new_segment;
 if (!((nType == SEGMENT_FUNC_FUELCEN) ?
@@ -438,11 +438,11 @@ bool CMine::AddDoor (byte type, byte flags, byte keys, char nClip, short nTextur
   ushort nWall;
 
 nWall = CurrSide ()->m_info.nWall;
-if (nWall < GameInfo ().walls.count) {
+if (nWall < MineInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count + 1 >= MAX_WALLS) {
+if (MineInfo ().walls.count + 1 >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls reached");
 	return false;
 	}
@@ -592,15 +592,15 @@ bool CMine::AddExit (short type)
 {
 
 ushort nWall = Segments (Current ()->nSegment)->m_sides [Current ()->nSide].m_info.nWall;
-if (nWall < GameInfo ().walls.count) {
+if (nWall < MineInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS - 1) {
+if (MineInfo ().walls.count >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -609,15 +609,15 @@ bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	Walls () [GameInfo ().walls.count-1].m_info.nClip = 10;
+	Walls () [MineInfo ().walls.count-1].m_info.nClip = 10;
 	SetTexture (Current ()->nSegment, Current ()->nSide, 0, (IsD1File ()) ? 444 : 508);
-	AddTrigger (GameInfo ().walls.count - 1, type);
+	AddTrigger (MineInfo ().walls.count - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	short nOppSeg, nOppSide;
 	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
 		AddWall (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		Walls () [GameInfo ().walls.count - 1].m_info.nClip = 10;
+		Walls () [MineInfo ().walls.count - 1].m_info.nClip = 10;
 		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
 		DLE.UnlockUndo ();
@@ -639,11 +639,11 @@ if (IsD1File ()) {
     AddExit (TT_SECRET_EXIT);
 	 return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS) {
+if (MineInfo ().walls.count >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -657,7 +657,7 @@ if (!AddSegment ()) {
 int new_segment = Current ()->nSegment;
 Current ()->nSegment = last_segment;
 if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
-	AddTrigger (GameInfo ().walls.count - 1, TT_SECRET_EXIT);
+	AddTrigger (MineInfo ().walls.count - 1, TT_SECRET_EXIT);
 	SecretCubeNum () = Current ()->nSegment;
 	SetDefaultTexture (426, -1);
 	Current ()->nSegment = new_segment;
@@ -675,15 +675,15 @@ return false;
 bool CMine::GetTriggerResources (ushort& nWall)
 {
 nWall = CurrSide ()->m_info.nWall;
-if (nWall < GameInfo ().walls.count) {
+if (nWall < MineInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (GameInfo ().walls.count >= MAX_WALLS - 1) {
+if (MineInfo ().walls.count >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (GameInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -706,8 +706,8 @@ if (!GetTriggerResources (nWall))
 bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, (byte) wall_type, wall_flags, KEY_NONE, -1, -1) &&
-	 AddTrigger (GameInfo ().walls.count - 1, trigger_type)) {
-	short nTrigger = GameInfo ().triggers.count - 1;
+	 AddTrigger (MineInfo ().walls.count - 1, trigger_type)) {
+	short nTrigger = MineInfo ().triggers.count - 1;
 	// set link to trigger target
 	Triggers (nTrigger)->m_count = 1;
 	Triggers (nTrigger)->m_targets [0].m_nSegment = Other ()->nSegment;
@@ -726,7 +726,7 @@ bool CMine::AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_t
 {
 CSegment* otherSegP = OtherSeg ();
 ushort nWall = otherSegP->m_sides [Other ()->nSide].m_info.nWall;
-if (nWall >= GameInfo ().walls.count) {
+if (nWall >= MineInfo ().walls.count) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
 				"Hint: Select a wall using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

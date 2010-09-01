@@ -117,7 +117,7 @@ void CMine::SortObjects ()
 {
 	int	i, j;
 
-if (m_bSortObjects && ( (i = GameInfo ().objects.count) > 1)) {
+if (m_bSortObjects && ( (i = MineInfo ().objects.count) > 1)) {
 	for (j = 0; j < i; j++)
 		Objects (j)->m_info.signature = j;
 	QSortObjects (0, i - 1);
@@ -334,7 +334,7 @@ bool CMine::CopyObject (byte new_type, short nSegment)
 	byte type;
 	short i,count;
 
-if (GameInfo ().objects.count >= MAX_OBJECTS) {
+if (MineInfo ().objects.count >= MAX_OBJECTS) {
 	ErrorMsg ("The maximum number of objects has already been reached.");
 	return false;
 	}
@@ -349,7 +349,7 @@ type = (new_type == OBJ_NONE) ? CurrObj ()->m_info.type : new_type;
 //------------------------------------------------------
 if (type == OBJ_PLAYER || type == OBJ_COOP) {
 	objP = Objects (0);
-	for (objnum = GameInfo ().objects.count; objnum; objnum--, objP++)
+	for (objnum = MineInfo ().objects.count; objnum; objnum--, objP++)
 		if (objP->m_info.type == type) {
 			id = objP->m_info.id;
 			if (id >= 0 && id < (MAX_PLAYERS + MAX_COOP_PLAYERS))
@@ -383,14 +383,14 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 // Make a new object
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if (GameInfo ().objects.count == 0) {
+if (MineInfo ().objects.count == 0) {
 	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
-	GameInfo ().objects.count = 1;
+	MineInfo ().objects.count = 1;
 	objnum = 0;
 	}
 else {
 	// Make a copy of the current object
-	objnum = GameInfo ().objects.count++;
+	objnum = MineInfo ().objects.count++;
 	objP = Objects (objnum);
 	current_obj = CurrObj ();
 	memcpy (objP, current_obj, sizeof (CGameObject));
@@ -403,7 +403,7 @@ objP->m_location.lastPos = objP->m_location.pos;
 Current ()->nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
-for (i = 0; i < GameInfo ().objects.count - 1; i++)
+for (i = 0; i < MineInfo ().objects.count - 1; i++)
 	if (Objects (i)->m_info.nSegment == Current ()->nSegment)
 		count++;
 objP->m_location.pos.v.y += count * 2 * F1_0;
@@ -433,19 +433,19 @@ return TRUE;
 
 void CMine::DeleteObject (short nDelObj)
 {
-if (GameInfo ().objects.count == 0) {
+if (MineInfo ().objects.count == 0) {
 	if (!bExpertMode)
 		ErrorMsg ("There are no Objects () in the mine.");
 	return;
 	}
-if (GameInfo ().objects.count == 1) {
+if (MineInfo ().objects.count == 1) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot delete the last object.");
 	return;
 	}
 if (nDelObj < 0)
 	nDelObj = Current ()->nObject;
-if (nDelObj == GameInfo ().objects.count) {
+if (nDelObj == MineInfo ().objects.count) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot delete the secret return.");
 	return;
@@ -453,12 +453,12 @@ if (nDelObj == GameInfo ().objects.count) {
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
 DeleteObjTriggers (nDelObj);
-int i, j = GameInfo ().objects.count;
+int i, j = MineInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
 	Objects (i)->m_info.signature = i;
 if (nDelObj < --j)
-	memcpy (Objects (nDelObj), Objects (nDelObj + 1), (GameInfo ().objects.count - nDelObj) * sizeof (CGameObject));
-GameInfo ().objects.count = j;
+	memcpy (Objects (nDelObj), Objects (nDelObj + 1), (MineInfo ().objects.count - nDelObj) * sizeof (CGameObject));
+MineInfo ().objects.count = j;
 RenumberObjTriggers ();
 RenumberTriggerTargetObjs ();
 if (Current1 ().nObject >= j)

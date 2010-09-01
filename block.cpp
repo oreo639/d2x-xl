@@ -152,18 +152,18 @@ while (!fp.EoF ()) {
 						fscanf_s (fp.File (), "			        side %hd\n", &t [iTarget].m_nSide);
 						}
 					}
-				if (GameInfo ().walls.count < MAX_WALLS) {
+				if (MineInfo ().walls.count < MAX_WALLS) {
 					if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
-						if (GameInfo ().triggers.count >= MAX_TRIGGERS)
+						if (MineInfo ().triggers.count >= MAX_TRIGGERS)
 							w.m_info.nTrigger = NO_TRIGGER;
 						else {
-							w.m_info.nTrigger = GameInfo ().triggers.count++;
+							w.m_info.nTrigger = MineInfo ().triggers.count++;
 							++nNewTriggers;
 							*Triggers (w.m_info.nTrigger) = t;
 							}
 						}
 					nNewWalls++;
-					sideP->m_info.nWall = GameInfo ().walls.count++;
+					sideP->m_info.nWall = MineInfo ().walls.count++;
 					w.m_nSegment = nSegment;
 					*Walls (sideP->m_info.nWall) = w;
 					}
@@ -337,7 +337,7 @@ while (!fp.EoF ()) {
 	nNewSegs++;
 	}
 
-CTrigger *trigger = Triggers (GameInfo ().triggers.count);
+CTrigger *trigger = Triggers (MineInfo ().triggers.count);
 for (i = nNewTriggers; i; i--) {
 	trigger--;
 	for (j = 0; j < trigger->m_count; j++) {
@@ -417,8 +417,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				}
 			if (bExtBlkFmt) {
 				fprintf (fp.File (), "    nWall %d\n", 
-							(sideP->m_info.nWall < GameInfo ().walls.count) ? sideP->m_info.nWall : NO_WALL);
-				if (sideP->m_info.nWall < GameInfo ().walls.count) {
+							(sideP->m_info.nWall < MineInfo ().walls.count) ? sideP->m_info.nWall : NO_WALL);
+				if (sideP->m_info.nWall < MineInfo ().walls.count) {
 					wallP = Walls (sideP->m_info.nWall);
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
 					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
@@ -429,7 +429,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 					fprintf (fp.File (), "        nClip %d\n", wallP->m_info.nClip);
 					fprintf (fp.File (), "        keys %d\n", wallP->m_info.keys);
 					fprintf (fp.File (), "        cloak %d\n", wallP->m_info.cloakValue);
-					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= GameInfo ().triggers.count))
+					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= MineInfo ().triggers.count))
 						fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
 					else {
 						CTrigger *trigger = Triggers (wallP->m_info.nTrigger);

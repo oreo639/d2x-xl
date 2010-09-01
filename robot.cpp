@@ -701,7 +701,7 @@ byte bCustom = DefRobotInfo (i)->m_info.bCustom;
 DefRobotInfo (i)->m_info.bCustom = RobotInfo (i)->m_info.bCustom; //make sure it's equal for the comparison
 if (memcmp (RobotInfo (i), DefRobotInfo (i), sizeof (tRobotInfo))) { //they're different
 	// find a robot of that type
-	for (j = GameInfo ().objects.count, objP = Objects (0); j; j--, objP++)
+	for (j = MineInfo ().objects.count, objP = Objects (0); j; j--, objP++)
 		if ((objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id == i))
 			break;
 	if (j) // found one

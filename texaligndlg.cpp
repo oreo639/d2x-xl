@@ -669,7 +669,7 @@ UpdateAlignWnd ();
 void CTextureTool::OnAlignResetMarked ()
 {	
 	CSegment *segP;
-	short nSegment, nSide, nWalls = theMine->GameInfo ().walls.count;
+	short nSegment, nSide, nWalls = theMine->MineInfo ().walls.count;
 	BOOL bModified = FALSE;
 
 UpdateData (TRUE);

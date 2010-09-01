@@ -222,7 +222,7 @@ public:
 	inline CTrigger *Triggers (int i)
 		{ return MineData ().triggers + i; }
 	inline int &NumTriggers ()
-		{ return GameInfo ().triggers.count; }
+		{ return MineInfo ().triggers.count; }
 	inline CTrigger *ObjTriggers (int i)
 		{ return MineData ().objTriggers + i; }
 	inline int& NumObjTriggers ()
@@ -250,14 +250,14 @@ public:
 	//inline CTexture* Textures (int i, int j = 0)
 	//	{ return &textureManager.textures [i][j]; }
 
-	inline CGameInfo& GameInfo ()
+	inline CGameInfo& MineInfo ()
 		{ return MineData ().gameInfo; }
-	inline CGameFileInfo& GameFileInfo ()
+	inline CGameFileInfo& MineFileInfo ()
 		{ return MineData ().gameInfo.fileInfo; }
 	inline ushort& SegCount ()
 		{ return MineData ().numSegments; }
 	inline int& ObjCount ()
-		{ return GameInfo ().objects.count; }
+		{ return MineInfo ().objects.count; }
 	inline ushort& VertCount ()
 		{ return MineData ().numVertices; }
 	inline short& FlickerLightCount ()
@@ -511,15 +511,15 @@ public:
 	void AutoLinkExitToReactor ();
 	int FuelCenterCount (void);
 	inline int& RobotMakerCount (void) 
-		{ return GameInfo ().botgen.count; }
+		{ return MineInfo ().botgen.count; }
 	inline int& EquipMakerCount (void) 
-		{ return GameInfo ().equipgen.count; }
+		{ return MineInfo ().equipgen.count; }
 	inline int& WallCount (void) 
-		{ return GameInfo ().walls.count; }
+		{ return MineInfo ().walls.count; }
 	inline int& TriggerCount (void) 
-		{ return GameInfo ().triggers.count; }
+		{ return MineInfo ().triggers.count; }
 	inline int& ObjectCount (void) 
-		{ return GameInfo ().objects.count; }
+		{ return MineInfo ().objects.count; }
 
 	inline CSegment *OtherSeg (void)
 		{ return Segments (Other ()->nSegment); }

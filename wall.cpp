@@ -49,12 +49,12 @@ else {
 		}
 	}
 
-if (segP->m_sides [nSide].m_info.nWall < GameInfo ().walls.count) {
+if (segP->m_sides [nSide].m_info.nWall < MineInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side.");
 	return null;
 	}
 
-if ((nWall = GameInfo ().walls.count) >= MAX_WALLS) {
+if ((nWall = MineInfo ().walls.count) >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls () reached");
 	return null;
 	}
@@ -67,7 +67,7 @@ DefineWall (nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
 Walls (nWall)->m_info.flags = flags;
 Walls (nWall)->m_info.keys = keys;
 // update number of Walls () in mine
-GameInfo ().walls.count++;
+MineInfo ().walls.count++;
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
 return Walls (nWall);
@@ -240,25 +240,25 @@ void CMine::DeleteWall (ushort nWall)
 
 if (nWall < 0)
 	nWall = CurrSide ()->m_info.nWall;
-if (nWall >= GameInfo ().walls.count)
+if (nWall >= MineInfo ().walls.count)
 	return;
 // if trigger exists, remove it as well
 nTrigger = Walls (nWall)->m_info.nTrigger;
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if ((nTrigger > -1) && (nTrigger < GameInfo ().triggers.count))
+if ((nTrigger > -1) && (nTrigger < MineInfo ().triggers.count))
 	DeleteTrigger (nTrigger); 
 // remove references to the deleted wall
 if (GetOppositeSide (nOppSeg, nOppSide, Walls (nWall)->m_nSegment, Walls (nWall)->m_nSide)) {
 	short nOppWall = Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
-	if ((nOppWall >= 0) && (nOppWall < GameInfo ().walls.count))
+	if ((nOppWall >= 0) && (nOppWall < MineInfo ().walls.count))
 		Walls (nOppWall)->m_info.linkedWall = -1;
 	}
 // update all Segments () that point to Walls () higher than deleted one
 // and unlink all Segments () that point to deleted wall
 for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
-		if (sideP->m_info.nWall >= GameInfo ().walls.count)
+		if (sideP->m_info.nWall >= MineInfo ().walls.count)
 			sideP->m_info.nWall = NO_WALL;
 		else if (sideP->m_info.nWall > nWall)
 			sideP->m_info.nWall--;
@@ -267,9 +267,9 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 			DeleteTriggerTargets (nSegment, nSide); //delete this wall from all Triggers () that target it
 			}
 // move remaining Walls () in place of deleted wall
-// for (i = nWall; i < GameInfo ().walls.count - 1; i++)
-if (nWall < --GameInfo ().walls.count)
-	memcpy (Walls (nWall), Walls (nWall + 1), (GameInfo ().walls.count - nWall) * sizeof (CWall));
+// for (i = nWall; i < MineInfo ().walls.count - 1; i++)
+if (nWall < --MineInfo ().walls.count)
+	memcpy (Walls (nWall), Walls (nWall + 1), (MineInfo ().walls.count - nWall) * sizeof (CWall));
 // update number of Walls () in mine
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
@@ -284,7 +284,7 @@ GetCurrent (nSegment, nSide);
 CWall *wallP;
 int nWall;
 
-for (wallP = Walls (0), nWall = 0; nWall < GameInfo ().walls.count; nWall++, wallP++)
+for (wallP = Walls (0), nWall = 0; nWall < MineInfo ().walls.count; nWall++, wallP++)
 	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide))
 		return wallP;
 return null;
@@ -317,7 +317,7 @@ CWall *CMine::GetWall (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 ushort nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
-return (nWall < GameInfo ().walls.count) ? Walls (nWall) : null;
+return (nWall < MineInfo ().walls.count) ? Walls (nWall) : null;
 }
 
                         /*--------------------------*/
@@ -349,7 +349,7 @@ GetCurrent (nSegment, nSide);
 ushort nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
 
 if (!bExpertMode &&
-    (nWall < GameInfo ().walls.count) &&
+    (nWall < MineInfo ().walls.count) &&
 	 ((Walls (nWall)->m_info.type == WALL_BLASTABLE) || (Walls (nWall)->m_info.type == WALL_DOOR)))
 		ErrorMsg ("Changing the texture of a door only affects\n"
 					"how the door will look before it is opened.\n"
