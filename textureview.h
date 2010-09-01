@@ -14,6 +14,7 @@
 #include "Matrix.h"
 #include "mineview.h"
 #include "poly.h"
+#include "texturefilter.h"
 
                         /*--------------------------*/
 
@@ -22,27 +23,23 @@ class CTextureView : public CWnd {
 // structs
 		DECLARE_DYNCREATE(CTextureView)
 
-		int			*m_pTextures;
-		int			m_nTextures [2];
-		CPen			*m_penCyan;
-		CSize			m_iconSize;
-		CSize			m_iconSpace;
-		CSize			m_viewSpace;
-		int			m_nRows [2];
-		uint			m_viewFlags;
-		BOOL			m_bShowAll;
-		bool			m_bDelayRefresh;
-		short			m_mapTexToView [MAX_D2_TEXTURES];
-		short			m_mapViewToTex [MAX_D2_TEXTURES];
-		uint			m_nTxtFilter;
+		int				*m_pTextures;
+		int				m_nTextures [2];
+		CPen				*m_penCyan;
+		CSize				m_iconSize;
+		CSize				m_iconSpace;
+		CSize				m_viewSpace;
+		int				m_nRows [2];
+		uint				m_viewFlags;
+		BOOL				m_bShowAll;
+		bool				m_bDelayRefresh;
+		CTextureFilter	m_filter;
 
 		CTextureView ();
 		~CTextureView ();
 		void Reset ();
 		void QSortTexMap (short left, short right);
 		void CreateTexMap (void);
-		uint TextureFilter (short nTxt);
-		short TexFilterIndex (short nTxt);
 		int QCmpTexFilters (int nTxt, int mTxt, uint mf, uint mf2);
 //		CTreeView	m_treeView;
 //		afx_msg int CTextureView::OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -54,8 +51,6 @@ class CTextureView : public CWnd {
 		afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
 		void Setup ();
 		void RecalcLayout ();
-		void FilterTextures(byte *show_texture,BOOL show_all_textures);
-		int TextureIndex(short nBaseTex);
 		int PickTexture(CPoint &point,short &nBaseTex);
 //		int ReadTextureFromFile(short texture_number,byte *bitmap_array);
 //		int ReadPog(CFileManager& file);
@@ -72,10 +67,8 @@ class CTextureView : public CWnd {
 			}
 		inline uint GetViewFlags ()
 			{ return m_viewFlags; }
-		inline uint& TextureFilter (void)
-			{ return m_nTxtFilter; }
 		inline bool ShowAll ()
-			{ return m_bShowAll && (m_nTxtFilter == 0xFFFFFFFF); }
+			{ return m_bShowAll && (m_filter.Filter () == 0xFFFFFFFF); }
 	DECLARE_MESSAGE_MAP()
 };
                         

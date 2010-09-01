@@ -94,7 +94,7 @@ for (nSeg = segCount; nSeg; nSeg--, segP++) {
 pcb->SetCurSel (0);
 
   // add complete set for Texture 2 combo box
-nTextures = DLE.IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES;
+nTextures = DLE.IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2;
 pcb = CBD2 ();
 int i;
 for (i = 0; i < nTextures; i++) {
@@ -224,7 +224,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
 		if ((segP->Child (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 			d1Texture = segP->m_sides [nSide].m_info.nBaseTex;
-			if ((d1Texture >= 0) && (d1Texture < MAX_D1_TEXTURES))
+			if ((d1Texture >= 0) && (d1Texture < MAX_TEXTURES_D1))
 				segP->m_sides[nSide].m_info.nBaseTex = m_pTextures [d1Texture];
 			else { 
 				DEBUGMSG (" Level converter: Invalid texture 1 found")
@@ -232,7 +232,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				}
 			d1Texture = segP->m_sides [nSide].m_info.nOvlTex & 0x1fff;
 			mode = segP->m_sides[nSide].m_info.nOvlTex & 0xc000;
-			if (d1Texture > 0 && d1Texture < MAX_D1_TEXTURES)
+			if (d1Texture > 0 && d1Texture < MAX_TEXTURES_D1)
 				segP->m_sides [nSide].m_info.nOvlTex = m_pTextures [d1Texture] | mode;
 			else if (d1Texture < 0) {
 				DEBUGMSG (" Level converter: Invalid texture 2 found")

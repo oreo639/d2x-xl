@@ -191,8 +191,8 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 #define min(a,b)        (((a) < (b)) ? (a) : (b))
 
 #define MAX_MACROS        100
-#define MAX_D1_TEXTURES   584
-#define MAX_D2_TEXTURES   910
+#define MAX_TEXTURES_D1   584
+#define MAX_TEXTURES_D2   910
 #define MAX_D1_WALL_FLAGS 5
 #define MAX_D2_WALL_FLAGS 9
 #define MAX_WALL_FLAGS    9

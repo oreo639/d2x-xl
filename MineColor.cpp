@@ -76,7 +76,7 @@ for (; nColors; nColors--, pc++)
 
 int CMine::ReadColorMap (CFileManager& fp)
 {
-LoadColors (TexColors (), MAX_D2_TEXTURES, 0, 0, fp);
+LoadColors (TexColors (), MAX_TEXTURES_D2, 0, 0, fp);
 return 0;
 }
 
@@ -84,7 +84,7 @@ return 0;
 
 int CMine::WriteColorMap (CFileManager& fp)
 {
-SaveColors (TexColors (), MAX_D2_TEXTURES, fp);
+SaveColors (TexColors (), MAX_TEXTURES_D2, fp);
 return 0;
 }
 

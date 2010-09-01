@@ -34,7 +34,7 @@ typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CVertex, MAX_VERTICES3 > vertexList;
 typedef CStaticArray< CSegment, MAX_SEGMENTS3 > segmentList;
 typedef CStaticArray< CColor, MAX_SEGMENTS3 * 6 > lightColorList;
-typedef CStaticArray< CColor, MAX_D2_TEXTURES > texColorList;
+typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
 typedef CStaticArray< CColor, MAX_VERTICES3 > vertexColorList;
 typedef CStaticArray< CWall, MAX_WALLS3 > wallList;
 typedef CStaticArray< CActiveDoor, MAX_DOORS > activeDoorList;
@@ -57,7 +57,7 @@ typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
 typedef CVertex vertexList [MAX_VERTICES3];
 typedef CSegment segmentList [MAX_SEGMENTS3];
 typedef CColor lightColorList [MAX_SEGMENTS3 * 6];
-typedef CColor texColorList [MAX_D2_TEXTURES];
+typedef CColor texColorList [MAX_TEXTURES_D2];
 typedef CColor vertexColorList [MAX_VERTICES3];
 typedef CWall wallList [MAX_WALLS3];
 typedef CActiveDoor activeDoorList [MAX_DOORS];
@@ -113,7 +113,7 @@ typedef struct tMineData {
 	//CVertex					vertices [MAX_VERTICES3];
 	//CSegment					segments [MAX_SEGMENTS3];
 	//CColor 					lightColors [MAX_SEGMENTS3][6];
-	//CColor						texColors [MAX_D2_TEXTURES];
+	//CColor						texColors [MAX_TEXTURES_D2];
 	//CColor						vertexColors [MAX_VERTICES3];
 	//CWall						walls[MAX_WALLS3];
 	//CActiveDoor				activeDoors[MAX_DOORS];
@@ -612,7 +612,7 @@ private:
 #define MAX_SEGMENTS (!theMine ? MAX_SEGMENTS2 : theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : MAX_SEGMENTS3)
 #define MAX_VERTICES (!theMine ? MAX_VERTICES2 : theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : MAX_VERTICES3)
 #define MAX_WALLS (!theMine ? MAX_WALLS2 : theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : MAX_WALLS3)
-#define MAX_TEXTURES (!theMine ? MAX_D2_TEXTURES : theMine->IsD1File () ? MAX_D1_TEXTURES : MAX_D2_TEXTURES)
+#define MAX_TEXTURES (!theMine ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
 #define MAX_TRIGGERS (!theMine ? MAX_TRIGGERS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS1 : MAX_TRIGGERS2)
 #define MAX_OBJECTS (!theMine ? MAX_OBJECTS2 : theMine->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2)
 #define MAX_NUM_FUELCENS (!theMine ? MAX_NUM_FUELCENS2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS1 : MAX_NUM_FUELCENS2)

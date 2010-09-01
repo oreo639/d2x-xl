@@ -25,9 +25,6 @@ static char THIS_FILE[] = __FILE__;
 
 #define TEXTURE_SCALE	2
 
-#define	SETBIT(_b,_i)	((_b) [(_i) >> 3] |= (1 << ((_i) & 7)))
-#define	BITSET(_b,_i)	((_b) [(_i) >> 3] & (1 << ((_i) & 7)))
-
 /////////////////////////////////////////////////////////////////////////////
 // CMineView
 
@@ -308,7 +305,7 @@ if (!theMine)
 
 UINT nPos = GetScrollPos (SB_VERT);
 int nOffset = nPos * m_viewSpace.cx;
-byte pFilter [1 + MAX_D2_TEXTURES / 8];
+byte pFilter [1 + MAX_TEXTURES_D2 / 8];
 
 FilterTextures (pFilter, m_bShowAll);
 int x = 0;
@@ -351,9 +348,9 @@ void CTextureView::FilterTextures (byte *pFilter, BOOL bShowAll)
 {
 if (bShowAll) {
 	if (m_nTxtFilter == 0xFFFFFFFF)
-		memset (pFilter, 0xFF, (MAX_D2_TEXTURES + 7) / 8);
+		memset (pFilter, 0xFF, (MAX_TEXTURES_D2 + 7) / 8);
 	else {
-		memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
+		memset (pFilter, 0, (MAX_TEXTURES_D2 + 7) / 8);
 		m_nTextures [0] = 0;
 		int i, f = m_nTxtFilter & ~TXT_MOVE;
 		for (i = 0; i < m_nTextures [1]; i++) {
@@ -370,7 +367,7 @@ else {
 	ushort nSegment,nSide;
 	CSegment *segP;
 
-	memset (pFilter, 0, (MAX_D2_TEXTURES + 7) / 8);
+	memset (pFilter, 0, (MAX_TEXTURES_D2 + 7) / 8);
 	m_nTextures [0] = 0;
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
       for (nSide = 0;nSide < 6; nSide++) {
@@ -418,7 +415,7 @@ m_bShowAll = ((m_viewFlags & eViewMineUsedTextures) == 0);
 if (!(m_viewSpace.cx && m_viewSpace.cy))
 	return;
 
-byte pFilter [(MAX_D2_TEXTURES + 7) / 8];
+byte pFilter [(MAX_TEXTURES_D2 + 7) / 8];
 FilterTextures (pFilter, m_bShowAll);
 m_nRows [ShowAll ()] = (m_nTextures [ShowAll ()] + m_viewSpace.cx - 1) / m_viewSpace.cx;
 

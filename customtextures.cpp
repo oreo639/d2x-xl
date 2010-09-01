@@ -176,10 +176,10 @@ for (int i = 0; i < pigFileInfo.nTextures; i++) {
 	// read texture index
 	ushort nIndex = xlatTbl [i];
 	// look it up in the list of textures
-	for (nTexture = 0; nTexture < MAX_D2_TEXTURES; nTexture++)
+	for (nTexture = 0; nTexture < MAX_TEXTURES_D2; nTexture++)
 		if (textureManager.m_index [1][nTexture] == nIndex)
 			break;
-	bExtraTexture = (nTexture >= MAX_D2_TEXTURES);
+	bExtraTexture = (nTexture >= MAX_TEXTURES_D2);
 	// get texture data offset from texture header
 	fp.Seek (hdrOffset + i * sizeof (PIG_TEXTURE_D2), SEEK_SET);
 	pigTexInfo.Read (fp);

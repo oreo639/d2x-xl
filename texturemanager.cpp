@@ -148,7 +148,7 @@ return fp;
 
 int CTextureManager::MaxTextures (int nVersion)
 {
-return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_D2_TEXTURES : MAX_D1_TEXTURES;
+return ((nVersion < 0) ? DLE.IsD2File () : nVersion) ? MAX_TEXTURES_D2 : MAX_TEXTURES_D1;
 }
 
 //------------------------------------------------------------------------

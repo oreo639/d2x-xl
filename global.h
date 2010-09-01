@@ -12,8 +12,8 @@ extern bool bExpertMode;
 extern bool bExtBlkFmt;
 
 extern MISSION_DATA	missionData;
-//extern HGLOBAL texture_handle[MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
-; // MAX_D2_TEXTURES
+//extern HGLOBAL texture_handle[MAX_TEXTURES_D2]; // MAX_TEXTURES_D2
+; // MAX_TEXTURES_D2
 extern int left,right,top,bottom;
 extern LPLOGPALETTE MyLogPalette;
 extern short d2_blastable_lights [];
@@ -60,7 +60,7 @@ extern int splash;
 
 
 extern int level_modified;
-//extern byte texture_modified[1+MAX_D2_TEXTURES/8];
+//extern byte texture_modified[1+MAX_TEXTURES_D2/8];
 extern int disable_saves;
 extern byte clipList [D2_NUM_OF_CLIPS];
 extern ushort wall_flags[9];
@@ -90,7 +90,7 @@ extern fix robotSize [MAX_ROBOT_IDS_TOTAL];
 extern fix robot_shield [MAX_ROBOT_IDS_TOTAL];
 extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
 extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
-extern long lightMap [MAX_D2_TEXTURES];
+extern long lightMap [MAX_TEXTURES_D2];
 extern short add_segment_mode;
 extern char dlc_version[10];
 extern char testers_name[20];

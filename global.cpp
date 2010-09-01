@@ -18,7 +18,7 @@
 #include "mine.h"
 
 MISSION_DATA missionData;
-//HGLOBAL texture_handle [MAX_D2_TEXTURES]; // MAX_D2_TEXTURES
+//HGLOBAL texture_handle [MAX_TEXTURES_D2]; // MAX_TEXTURES_D2
 CPalette *m_currentPalette;
 LPLOGPALETTE MyLogPalette;
 
@@ -64,7 +64,7 @@ int splash = 0;
 
 
 int level_modified = 0;
-//byte texture_modified[1+MAX_D2_TEXTURES/8];
+//byte texture_modified[1+MAX_TEXTURES_D2/8];
 int disable_saves = 1;
 
 byte clipList [D2_NUM_OF_CLIPS] = {

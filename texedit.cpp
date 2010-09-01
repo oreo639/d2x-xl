@@ -365,7 +365,7 @@ m_lBtnDown  = FALSE;
 m_rBtnDown = FALSE;
 m_bModified = FALSE;
 m_iTexture = theMine->CurrSide ()->m_info.nBaseTex;
-if (m_iTexture >= MAX_D2_TEXTURES)
+if (m_iTexture >= MAX_TEXTURES_D2)
 	m_iTexture = 0;
 m_texP = textureManager.Textures (DLE.FileType (), m_iTexture);
 if (!(m_texP->m_info.bmData && m_texP->m_info.bValid)) {

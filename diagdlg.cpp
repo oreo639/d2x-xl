@@ -141,7 +141,7 @@ int CDiagTool::CountTextures (void)
 {
 	CSegment *segP = theMine->Segments (0);
 	CSide *sideP;
-	char bUsed [(MAX_D2_TEXTURES + 7) / 8];
+	char bUsed [(MAX_TEXTURES_D2 + 7) / 8];
 	int t, i, j, h = theMine->GameInfo ().walls.count;
 	int nUsed = 0;
 
@@ -150,14 +150,14 @@ for (i = theMine->SegCount (); i; i--, segP++)
 	for (j = 0, sideP = segP->m_sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
 		if ((segP->Child (j) == -1) || (sideP->m_info.nWall < h)) {
 			t = sideP->m_info.nBaseTex;
-//			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
-			if ((t >= 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
+//			CBRK ((t >> 3) >= (MAX_TEXTURES_D2 + 7) / 8);
+			if ((t >= 0) && (t < MAX_TEXTURES_D2) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;
 				bUsed [t >> 3] |= (1 << (t & 7));
 				}
 			t = sideP->m_info.nOvlTex;
-//			CBRK ((t >> 3) >= (MAX_D2_TEXTURES + 7) / 8);
-			if ((t > 0) && (t < MAX_D2_TEXTURES) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
+//			CBRK ((t >> 3) >= (MAX_TEXTURES_D2 + 7) / 8);
+			if ((t > 0) && (t < MAX_TEXTURES_D2) && (!(bUsed [t >> 3] & (1 << (t & 7))))) {
 				nUsed++;
 				bUsed [t >> 3] |= (1 << (t & 7));
 				}

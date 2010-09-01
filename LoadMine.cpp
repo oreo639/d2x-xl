@@ -493,7 +493,7 @@ if (LevelVersion () == 9) {
 else if (LevelVersion () > 9) {
 	LoadColors (VertexColors (0), VertCount (), 9, 15, fp);
 	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
-	LoadColors (TexColors (0), MAX_D2_TEXTURES, 10, 16, fp);
+	LoadColors (TexColors (0), MAX_TEXTURES_D2, 10, 16, fp);
 	}
 if (GameInfo ().objects.count > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 

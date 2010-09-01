@@ -246,7 +246,7 @@ if (IsD2File ()) {
 if (IsD2XLevel ()) {
 	SaveColors (VertexColors (0), VertCount (), fp);
 	SaveColors (LightColors (0), SegCount () * 6, fp);
-	SaveColors (TexColors (0), MAX_D2_TEXTURES, fp);
+	SaveColors (TexColors (0), MAX_TEXTURES_D2, fp);
 	}
 return 0;
 }

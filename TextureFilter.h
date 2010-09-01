@@ -49,15 +49,6 @@
 #define	TEX_TECHMAT				(TEX_SWITCH | TEX_TECH | TEX_ENERGY | TEX_FORCEFIELD | TEX_LIGHT)
 #define	TEX_SIGNS				(TEX_SIGN | TEX_LABEL | TEX_MONITOR | TEX_STRIPES)
 
-#define TEXFILTER_SIZE_D1	154
-#define TEXFILTER_SIZE_D2	174
-
-extern tTexFilter texFiltersD2 [TEXFILTER_SIZE_D2];
-extern tTexFilter texFiltersD1 [TEXFILTER_SIZE_D1];
-
-#define TEX_FILTER_SIZE	(DLE.IsD1File () ? TEXFILTER_SIZE_D1 : TEXFILTER_SIZE_D2)
-#define TEXTURE_FILTERS (DLE.IsD1File () ? texFiltersD1 : texFiltersD2)
-
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -73,11 +64,29 @@ typedef struct tTexFilterInfo {
 } tTexFilterInfo;
 
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 
 class CTextureFilter {
+private:
+		short				m_mapTexToView [MAX_TEXTURES_D2];
+		short				m_mapViewToTex [MAX_TEXTURES_D2];
+		ushort			m_nTextures [2];
+		uint				m_nFilter;
+		tTexFilterInfo	*m_filter;
+		uint				m_nSize;
+
 public:
+	void FilterTextures (byte* filterP, BOOL bShowAll); 
+	void Setup (void); 
+	inline uint& Filter (void) { return m_nFilter; }
+
+private:
+	short FilterIndex (short nTexture);
+	short TextureIndex (short nTexture);
+	uint Filter (short nTexture);
+	int CompareFilters (int nTexture, int mTexture, uint mf, uint mf2);
+	void SortMap (short left, short right);
+	void CreateMap (void);
+	inline void SetFilter (void);
 };
 
 //------------------------------------------------------------------------

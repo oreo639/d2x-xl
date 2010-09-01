@@ -16,8 +16,8 @@
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp
 
-long lightMap [MAX_D2_TEXTURES];
-long defLightMap [MAX_D2_TEXTURES];
+long lightMap [MAX_TEXTURES_D2];
+long defLightMap [MAX_TEXTURES_D2];
 
 //--------------------------------------------------------------------------
 // light_weight()
@@ -73,7 +73,7 @@ BOOL HasCustomLightMap (void)
 
 i = memcmp (lightMap, defLightMap, sizeof (lightMap));
 if (i != 0) {
-	for (i = 0; i < MAX_D2_TEXTURES; i++)
+	for (i = 0; i < MAX_TEXTURES_D2; i++)
 		if (lightMap [i] != defLightMap [i])
 			return TRUE;
 	}

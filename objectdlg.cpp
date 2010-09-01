@@ -283,7 +283,7 @@ CBInit (CBSpawnType (), (char**) object_names, contentsList, null, MAX_CONTAINS_
 CBInit (CBObjAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_D1_AI_OPTIONS: MAX_D2_AI_OPTIONS);
 
-short nTextures = (DLE.IsD1File ()) ? MAX_D1_TEXTURES: MAX_D2_TEXTURES;
+short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1: MAX_TEXTURES_D2;
 short i, j;
 char **psz;
 
@@ -814,7 +814,7 @@ if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
 	tnum = (short) theMine->CurrObj ()->rType.polyModelInfo.tmap_override;
-	if ((tnum < 0) || (tnum >= ((DLE.IsD1File ()) ? MAX_D1_TEXTURES : MAX_D2_TEXTURES))) {
+	if ((tnum < 0) || (tnum >= ((DLE.IsD1File ()) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
 		}
