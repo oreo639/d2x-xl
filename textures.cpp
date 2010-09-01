@@ -88,24 +88,27 @@ if (bShowTexture) {
 		CTexture	tex (textureManager.m_bmBuf);
 		if (textureManager.Define (nBaseTex, nOvlTex, &tex, xOffset, yOffset))
 			DEBUGMSG (" Texture renderer: Texture not found (textureManager.Define failed)");
-		CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
-		pDC->RealizePalette ();
-		int caps = pDC->GetDeviceCaps (RASTERCAPS);
-		if (0 && (caps & RC_DIBTODEV)) {
+#if 0
+		if (pDC->GetDeviceCaps (RASTERCAPS) & (RC_PALETTE | RC_STRETCHDIB)/*RC_DIBTODEV*/) {
+			CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
+			pDC->RealizePalette ();
 			BITMAPINFO* bmi = paletteManager.BMI ();
 			bmi->bmiHeader.biWidth = 
 			bmi->bmiHeader.biHeight = tex.m_info.width;
+			bmi->bmiHeader.biSizeImage = ((((bmi->bmiHeader.biWidth * bmi->bmiHeader.biBitCount) + 31) & ~31) >> 3) * bmi->bmiHeader.biHeight;
 			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,
 					        	(void *) textureManager.m_bmBuf, bmi, DIB_RGB_COLORS, SRCCOPY);
+			pDC->SelectPalette (pOldPalette, FALSE);
 			}
-		else {
+		else 
+#endif
+			{
 			double scale = tex.Scale ();
 			uint x, y;
 			for (x = 0; x < tex.m_info.width; x = (int) (x + scale))
 				for (y = 0; y < tex.m_info.width; y = (int) (y + scale))
 					pDC->SetPixel ((short) (x / scale), (short) (y / scale), PALETTEINDEX (textureManager.m_bmBuf [y * tex.m_info.width + x]));
 			}
-		pDC->SelectPalette (pOldPalette, FALSE);
 		}
 	else {
 		HGDIOBJ hgdiobj1;
