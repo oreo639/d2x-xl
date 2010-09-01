@@ -152,9 +152,16 @@ namespace DLE.NET
 
         // ------------------------------------------------------------------------
 
-        Wall Wall (ushort nWall)
-        { 
-        return (nWall == DLE.Mine.NO_WALL) ? null : DLE.Mine.Walls [nWall]; 
+        Wall Wall
+        {
+            get { return (m_nWall == DLE.Mine.NO_WALL) ? null : DLE.Mine.Walls [m_nWall]; }
+        }
+
+        // ------------------------------------------------------------------------
+
+        bool IsTextured
+        {
+            get { return (m_nChild == -1) || (m_nWall < DLE.Mine.Info.walls.count && DLE.Mine.Walls [m_nWall].m_type != Wall.Type.OPEN); }
         }
 
         // ------------------------------------------------------------------------

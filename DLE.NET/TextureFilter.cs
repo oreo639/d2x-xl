@@ -1245,10 +1245,8 @@ namespace DLE.NET
             {
                 Side[] sides = segs [nSegment].m_sides;
                 for (nSide = 0; nSide < 6; nSide++) {
-			        ushort nWall = segs [nSide].m_sides [nSide].m_nWall;
-			        if ((segs [nSegment].GetChild (nSide) == -1) ||
-			            (nWall < DLE.Mine.Info.walls.count && 
-			            DLE.Mine.Walls [nWall].m_type != Wall.Type.OPEN)) {
+			        if (sides [nSide].IsTextured)
+                    {
 				        short t = (short) sides [nSide].m_nBaseTex;
 				        short i = TextureIndex (t);
 				        short j = FilterIndex (t);

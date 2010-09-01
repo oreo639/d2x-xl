@@ -96,20 +96,20 @@ namespace DLE.NET
     {
         public byte[] mineFilename = new byte [15];
         public int level;
-        MineFileInfo fileInfo = new MineFileInfo ();
-        PlayerItemInfo player = new PlayerItemInfo ();
-        MineItemInfo[] items = new MineItemInfo [10];
+        public MineFileInfo fileInfo = new MineFileInfo ();
+        public PlayerItemInfo player = new PlayerItemInfo ();
+        public MineItemInfo [] items = new MineItemInfo [10];
 
-        MineItemInfo objects { get { return items [0]; } }
-        MineItemInfo walls  { get { return items [1]; } }
-        MineItemInfo doors { get { return items [2]; } }
-        MineItemInfo triggers { get { return items [3]; } }
-        MineItemInfo links { get { return items [4]; } }
-        MineItemInfo reactor { get { return items [5]; } }
-        MineItemInfo botgen { get { return items [6]; } }
-        MineItemInfo lightDeltaIndices { get { return items [7]; } }
-        MineItemInfo lightDeltaValues { get { return items [8]; } }
-        MineItemInfo equipgen { get { return items [9]; } }
+        public MineItemInfo objects { get { return items [0]; } }
+        public MineItemInfo walls { get { return items [1]; } }
+        public MineItemInfo doors { get { return items [2]; } }
+        public MineItemInfo triggers { get { return items [3]; } }
+        public MineItemInfo links { get { return items [4]; } }
+        public MineItemInfo reactor { get { return items [5]; } }
+        public MineItemInfo botgen { get { return items [6]; } }
+        public MineItemInfo lightDeltaIndices { get { return items [7]; } }
+        public MineItemInfo lightDeltaValues { get { return items [8]; } }
+        public MineItemInfo equipgen { get { return items [9]; } }
 
 	    void Read (BinaryReader fp) 
         {
