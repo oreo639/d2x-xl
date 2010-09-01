@@ -223,7 +223,7 @@ namespace DLE.NET
         // read in textures and uvls (0 to 60 bytes)
         size_t fPos = fp.Tell ();
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
-	        m_sides [i].Read (fp, (Child (i) == -1) || ((m_wallFlags & (1 << i)) != 0));
+	        m_sides [i].Read (fp, (GetChild (i) == -1) || ((m_wallFlags & (1 << i)) != 0));
         return 1;
         }
 
@@ -284,7 +284,7 @@ namespace DLE.NET
         #if 1
         m_childFlags = 0;
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	        if (Child (i) != -1) {
+	        if (GetChild (i) != -1) {
 		        m_childFlags |= (1 << i);
 		        }
 	        }
@@ -299,7 +299,7 @@ namespace DLE.NET
         // write children numbers (0 to 6 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
 	        if (m_childFlags & (1 << i)) 
-		        fp.WriteInt16 (Child (i));
+		        fp.WriteInt16 (GetChild (i));
 
         // write vertex numbers (16 bytes)
         for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
@@ -317,7 +317,7 @@ namespace DLE.NET
         // calculate wall bit mask
         WriteWalls (fp, nLevelVersion);
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
-	        if ((Child (i) == -1) || (m_wallFlags & (1 << i))) 
+	        if ((GetChild (i) == -1) || (m_wallFlags & (1 << i))) 
 		        m_sides [i].Write (fp);
         }
 

@@ -104,12 +104,15 @@
     <Compile Include="DiagnosisTool.Designer.cs">
       <DependentUpon>DiagnosisTool.cs</DependentUpon>
     </Compile>
+    <Compile Include="DoubleVector.cs" />
     <Compile Include="EffectTool.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="EffectTool.Designer.cs">
       <DependentUpon>EffectTool.cs</DependentUpon>
     </Compile>
+    <Compile Include="FixConverter.cs" />
+    <Compile Include="FixVector.cs" />
     <Compile Include="GameItem.cs" />
     <Compile Include="GameMine.Constants.cs" />
     <Compile Include="GameMine.Convert.cs" />
@@ -124,6 +127,8 @@
     <Compile Include="GraphicsPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MineInfo.cs" />
+    <Compile Include="Vertex.cs" />
     <Compile Include="MissionTool.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -78,22 +78,15 @@ namespace DLE.NET
             EXTERNAL = 8	// 0/0/0/1 don't see it, dont fly through it 
         }
 
-        public int m_nSegment, m_nSide; // Seg & side for this wall 
-        public int m_hps;            // "Hit points" of the wall.  
-        public int m_linkedWall;    // number of linked wall 
-        public byte m_type;           // What kind of special wall. 
+        public int m_hps;               // "Hit points" of the wall.  
+        public int m_linkedWall;        // number of linked wall 
+        public Type m_type;             // What kind of special wall. 
         public ushort m_flags;          // Flags for the wall.     
-        public byte m_state;          // Opening, closing, etc. 
-        public byte m_trigger;        // Which trigger is associated with the wall. 
-        public char m_nClip;       // Which  animation associated with the wall.  
-        public byte m_keys;           // which keys are required 
-
-        // the following two Descent2 bytes replace the "short pad" of Descent1
-        public char controlling_trigger;    // which trigger causes something to happen here.
-                                        // Not like "trigger" above, which is the trigger on this wall.
-                                        //	Note: This gets stuffed at load time in gamemine.c.  
-                                        // Don't try to use it in the editor.  You will be sorry!
-        public char cloak_value;	        // if this wall is cloaked, the fade value
-
+        public byte m_state;            // Opening, closing, etc. 
+        public byte m_trigger;          // Which trigger is associated with the wall. 
+        public char m_nClip;            // Which  animation associated with the wall.  
+        public byte m_keys;             // which keys are required 
+        public char m_controllingTrigger; // trigger targetting this wall. A bit pointless since a wall can be targetted by several triggers
+        public char m_cloakValue;	    // if this wall is cloaked, the fade value
     }
 }
