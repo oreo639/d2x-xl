@@ -208,17 +208,17 @@ inline const CDoubleVector& operator= (const CDoubleVector& other);
 inline const CDoubleVector& operator= (const tFixVector& other);
 inline const CDoubleVector& operator= (const CFixVector& other);
 #endif
-inline const CDoubleVector& operator+= (const CDoubleVector other);
-inline const CDoubleVector& operator-= (const CDoubleVector other);
+inline const CDoubleVector& operator+= (const CDoubleVector& other);
+inline const CDoubleVector& operator-= (const CDoubleVector& other);
 inline const CDoubleVector& operator*= (const double n);
 inline const CDoubleVector& operator/= (const double n);
-inline const CDoubleVector& operator*= (const CDoubleVector other);
-inline const CDoubleVector& operator/= (const CDoubleVector other);
+inline const CDoubleVector& operator*= (const CDoubleVector& other);
+inline const CDoubleVector& operator/= (const CDoubleVector& other);
 inline const CDoubleVector operator+ (const CDoubleVector& other) const;
 inline const CDoubleVector operator- (const CDoubleVector& other) const;
 inline const CDoubleVector operator- (void) const;
-inline const CDoubleVector operator* (CDoubleVector other) const;
-inline const CDoubleVector operator/ (CDoubleVector other) const;
+inline const CDoubleVector operator* (const CDoubleVector& other) const;
+inline const CDoubleVector operator/ (const CDoubleVector& other) const;
 inline const CDoubleVector operator* (double n);
 inline const CDoubleVector operator/ (double n);
 inline const double operator^ (const CDoubleVector& other) const;
@@ -378,12 +378,12 @@ inline const CDoubleVector& CDoubleVector::operator= (const CFixVector& other) {
 	}
 #endif
 
-inline const CDoubleVector& CDoubleVector::operator+= (const CDoubleVector other) {
+inline const CDoubleVector& CDoubleVector::operator+= (const CDoubleVector& other) {
 	v.x += other.v.x, v.y += other.v.y, v.z += other.v.z; 
 	return *this;
 	}
 
-inline const CDoubleVector& CDoubleVector::operator-= (const CDoubleVector other) {
+inline const CDoubleVector& CDoubleVector::operator-= (const CDoubleVector& other) {
 	v.x -= other.v.x, v.y -= other.v.y, v.z -= other.v.z; 
 	return *this;
 	}
@@ -410,12 +410,12 @@ inline const CDoubleVector& CDoubleVector::operator/= (const double n) {
 	return *this;
 	}
 
-inline const CDoubleVector& CDoubleVector::operator*= (const CDoubleVector other) {
+inline const CDoubleVector& CDoubleVector::operator*= (const CDoubleVector& other) {
 	v.x *= other.v.x, v.y *= other.v.y, v.z *= other.v.z;
 	return *this;
 	}
 
-inline const CDoubleVector& CDoubleVector::operator/= (const CDoubleVector other) {
+inline const CDoubleVector& CDoubleVector::operator/= (const CDoubleVector& other) {
 	v.x /= other.v.x, v.y /= other.v.y, v.z /= other.v.z;
 	return *this;
 	}
@@ -428,11 +428,11 @@ inline const CDoubleVector CDoubleVector::operator* (const double n) {
 	return CDoubleVector (v.x * n, v.y * n, v.z * n);
 	}
 
-inline const CDoubleVector CDoubleVector::operator* (CDoubleVector other) const {
+inline const CDoubleVector CDoubleVector::operator* (const CDoubleVector& other) const {
 	return CDoubleVector (v.x * other.v.x, v.y * other.v.y, v.z * other.v.z);
 	}
 
-inline const CDoubleVector CDoubleVector::operator/ (CDoubleVector other) const {
+inline const CDoubleVector CDoubleVector::operator/ (const CDoubleVector& other) const {
 	return CDoubleVector (v.x / other.v.x, v.y / other.v.y, v.z / other.v.z);
 	}
 

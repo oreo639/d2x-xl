@@ -91,10 +91,8 @@ if (bShowTexture) {
 		CPalette *pOldPalette = pDC->SelectPalette (paletteManager.Render (), FALSE);
 		pDC->RealizePalette ();
 		int caps = pDC->GetDeviceCaps (RASTERCAPS);
-		if (caps & RC_DIBTODEV) {
+		if (0 && (caps & RC_DIBTODEV)) {
 			BITMAPINFO* bmi = paletteManager.BMI ();
-			if (!bmi)
-				return false;
 			bmi->bmiHeader.biWidth = 
 			bmi->bmiHeader.biHeight = tex.m_info.width;
 			StretchDIBits (pDC->m_hDC, 0, 0, rc.Width (), rc.Height (), 0, 0, tex.m_info.width, tex.m_info.width,

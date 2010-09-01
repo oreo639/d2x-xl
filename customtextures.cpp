@@ -32,8 +32,6 @@ inline byte ClosestColor (int r, int g, int b, PALETTEENTRY* palette)
 for (i = 0; (i < 256) && closestDelta; i++) {
 	delta = ColorDelta (r, g, b, palette++);
 	if (delta < closestDelta) {
-		if (delta == 0)
-			return i;
 		closestIndex = i;
 		closestDelta = delta;
 		}
@@ -45,19 +43,18 @@ return (byte) closestIndex;
 
 bool TGA2Bitmap (tRGBA *pTGA, byte *bmP, int nWidth, int nHeight)
 {
-	tRGBA			rgba = {0,0,0,0};
 	byte			*bConverted = null;
 
 int nSize = nWidth * nHeight;	//only convert the 1st frame of animated TGAs
-int h = nSize, i = 0, k, x, y;
 
-for (i = y = 0, k = nSize; y < nHeight; y++, i += nWidth) {
-	k -= nWidth;
 #pragma omp parallel 
 {
-#	pragma omp for private (x)
-	for (x = 0; x < nWidth; x++) {
-		rgba = pTGA [i + x];
+#	pragma omp for
+for (int y = 0; y < nHeight; y++) {
+	int i = y * nWidth;
+	int k = nSize - nWidth - i;
+	for (int x = 0; x < nWidth; x++) {
+		tRGBA& rgba = pTGA [i + x];
 		bmP [k + x] = ClosestColor ((int) rgba.r, (int) rgba.g, (int) rgba.b, paletteManager.ColorMap ()); //paletteManager.Current ());
 		}
 	}

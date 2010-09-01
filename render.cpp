@@ -142,9 +142,9 @@ UV.Scale (1.0 / 2048.0);
 //multiply_matrix (B, IA, UV);
 B = IA * UV;
 
-#pragma omp parallel
+//#pragma omp parallel
 {
-#	pragma omp for private (scanLight, deltaLight)
+//#	pragma omp for private (scanLight, deltaLight)
 for (int y = minpt.y; y < maxpt.y; y++) {
 	int x, x0, x1;
 	double w;
