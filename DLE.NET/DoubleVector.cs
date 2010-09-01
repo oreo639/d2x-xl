@@ -34,27 +34,28 @@ namespace DLE.NET
         public tDoubleVector v;
 
         #region Initializers
-        DoubleVector ()
+        public DoubleVector ()
         {
             v.x = 0;
             v.y = 0;
             v.z = 0;
         }
-        DoubleVector (double x, double y, double z)
+
+        public DoubleVector (double x, double y, double z)
         {
             v.x = x;
             v.y = y;
             v.z = z;
         }
 
-        DoubleVector (tDoubleVector other)
+        public DoubleVector (tDoubleVector other)
         {
             v.x = other.x;
             v.y = other.y;
             v.z = other.z;
         }
 
-        DoubleVector (FixVector other)
+        public DoubleVector (FixVector other)
         {
             v.x = FixConverter.X2D (other.v.x);
             v.y = FixConverter.X2D (other.v.y);

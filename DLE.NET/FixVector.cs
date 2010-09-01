@@ -27,27 +27,28 @@ namespace DLE.NET
         public tFixVector v;
 
         #region Initializers
-        FixVector ()
+        public FixVector ()
         {
             v.x = 0;
             v.y = 0;
             v.z = 0;
         }
-        FixVector (int x, int y, int z)
+
+        public FixVector (int x, int y, int z)
         {
             v.x = x;
             v.y = y;
             v.z = z;
         }
 
-        FixVector (tFixVector other)
+        public FixVector (tFixVector other)
         {
             v.x = other.x;
             v.y = other.y;
             v.z = other.z;
         }
 
-        FixVector (DoubleVector other)
+        public FixVector (DoubleVector other)
         {
             v.x = FixConverter.D2X (other.v.x);
             v.y = FixConverter.D2X (other.v.y);
