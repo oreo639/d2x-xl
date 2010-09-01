@@ -22,7 +22,7 @@ namespace DLE.NET
         private EffectTool m_effectTool;
         private DiagnosisTool m_diagnosisTool;
         private PreferencesForm m_prefsForm;
-        private TextureFilters m_textureFilter;
+        private TextureFilterTool m_textureFilter;
 
         private RenderWindow m_renderWindow;
         private TextureWindow m_textureList;
@@ -64,7 +64,7 @@ namespace DLE.NET
             m_missionTool.RightToLeftLayout = false;
             m_missionTool = new MissionTool();
             m_missionTool.RightToLeftLayout = false;
-            m_textureFilter = new TextureFilters();
+            m_textureFilter = new TextureFilterTool();
             m_textureFilter.RightToLeftLayout = false;
             if (!m_bSaveLayout)
                 Setup();

@@ -7,11 +7,13 @@ namespace DLE.NET
 {
     public static class DLE
     {
-        static GameMine theMine = new GameMine();
+        public static GameMine Mine { get { return theMine; } }
+        public static Settings Settings { get { return settings; } }
+        public static TextureManager TextureManager { get { return textureManager; } }
 
-        public static GameMine Mine { get; }
-        public static Settings settings = new Settings ();
-        public static TextureManager textureManager = new TextureManager ();
+        static GameMine theMine = new GameMine ();
+        static Settings settings = new Settings ();
+        static TextureManager textureManager = new TextureManager ();
 
         static public bool Modified { get; set; }
 

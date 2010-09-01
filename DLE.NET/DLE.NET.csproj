@@ -116,6 +116,7 @@
     <Compile Include="GameMine.cs" />
     <Compile Include="GameMine.Enums.cs" />
     <Compile Include="GameMine.GlobalData.cs" />
+    <Compile Include="GameMine.Tables.cs" />
     <Compile Include="GameMine.Types.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameObject.Enums.cs" />
@@ -163,11 +164,12 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Side.cs" />
     <Compile Include="Texture.cs" />
-    <Compile Include="TextureFilters.cs">
+    <Compile Include="TextureFilter.cs" />
+    <Compile Include="TextureFilterTool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TextureFilters.Designer.cs">
-      <DependentUpon>TextureFilters.cs</DependentUpon>
+    <Compile Include="TextureFilterTool.Designer.cs">
+      <DependentUpon>TextureFilterTool.cs</DependentUpon>
     </Compile>
     <Compile Include="TextureManager.cs" />
     <Compile Include="TextureTool.cs">
@@ -269,8 +271,8 @@
       <DependentUpon>SegmentTool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TextureFilters.resx">
-      <DependentUpon>TextureFilters.cs</DependentUpon>
+    <EmbeddedResource Include="TextureFilterTool.resx">
+      <DependentUpon>TextureFilterTool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TextureTool.resx">
