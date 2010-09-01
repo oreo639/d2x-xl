@@ -3,8 +3,15 @@ namespace DLE.NET
 {
     public partial class GameMine
     {
-        public Segment [] segments = new Segment [SEGMENT_LIMIT];
-        public Wall [] walls = new Wall [WALL_LIMIT];
+        ushort m_nSegments;
+        ushort m_nWalls;
+        ushort m_nTriggers;
+
+        public ushort SegCount { get { return m_nSegments; } set { m_nSegments = value; }  }
+
+        public Segment [] Segments = new Segment [SEGMENT_LIMIT];
+        public Wall [] Walls = new Wall [WALL_LIMIT];
+        public Trigger [] Triggers = new Trigger [TRIGGER_LIMIT];
 
         //------------------------------------------------------------------------------
 

@@ -161,6 +161,10 @@ namespace DLE.NET
         public int Version { get { return DLE.IsD1File ? 0 : 1; } }
         public long Offset { get { return m_nOffsets [Version]; } }
 
+        public Texture [] Textures { get { return m_textures [Version]; } }
+        public PigTexture [] Infos { get { return m_info [Version]; } }
+        public String [] Names { get { return m_names [Version]; } }
+
         public Texture [][] m_textures = new Texture [2][] { new Texture [MAX_TEXTURES_D1], new Texture [MAX_TEXTURES_D2] };
         public ushort [][] m_index = new ushort [2][];
         public String [][] m_names = new String [2][];
@@ -185,21 +189,21 @@ namespace DLE.NET
 
         public Texture Texture (int nTexture)
         {
-            return m_textures [Version] [nTexture];
+            return Textures [nTexture];
         }
 
         //------------------------------------------------------------------------------
 
         public String Name (int nTexture)
         {
-            return m_names [Version] [nTexture];
+            return Names [nTexture];
         }
 
         //------------------------------------------------------------------------------
 
         public PigTexture Info (int nTexture)
         {
-            return m_info [Version] [nTexture];
+            return Infos [nTexture];
         }
 
         //------------------------------------------------------------------------
@@ -354,17 +358,17 @@ namespace DLE.NET
             public int c, d;
         }
 
-        int DefineTex (short nBaseTex, short nOvlTex, Texture destTexP, int x0, int y0) 
+        int Define (short nBaseTex, short nOvlTex, Texture destTexP, int x0, int y0) 
         {
 
-	        byte[]      src;
-	        short[]     nTextures = new short [2];
-            int         mode;
-	        int		    w, h, i, j, x, y, y1, s;
-	        tFrac		scale, scale2;
-	        Texture[]   texP = new Texture [2];
-	        byte[]      bmBufP = destTexP.m_bmData;
-	        byte		c;
+            byte [] src;
+            short [] nTextures = new short [2];
+            int mode;
+            int w, h, i, j, x, y, y1, s;
+            tFrac scale, scale2;
+            Texture [] texP = new Texture [2];
+            byte [] bmBufP = destTexP.m_bmData;
+            byte c;
 
             nTextures [0] = nBaseTex;
             nTextures [1] = (short) (nOvlTex & 0x3fff);
@@ -535,6 +539,90 @@ namespace DLE.NET
                 }
             }
         return 0;
+        }
+
+        //------------------------------------------------------------------------
+
+        bool HasCustom
+        {
+            get
+            {
+                Texture[] texs = Textures;
+                for (int i = 0; i < MaxTextures; i++)
+                    if (texs [i].m_bCustom)
+                        return true;
+                return false;
+            }
+        }
+
+        //------------------------------------------------------------------------
+
+        ushort CustomCount
+        {
+            get
+            {
+                Texture [] texs = Textures;
+                ushort count = 0;
+                for (int i = 0; i < MaxTextures; i++)
+                    if (texs [i].m_bCustom)
+                        count++;
+                return count;
+            }
+        }
+
+        //------------------------------------------------------------------------
+
+        void MarkUsed ()
+        {
+	        int nVersion = DLE.IsD1File ? 0 : 1;
+	        int i, j, h = MaxTextures;
+            Segment[] segs = DLE.theMine.Segments;
+            Texture [] texs = m_textures [Version];
+
+            for (i = 0; i < h; i++)
+	            texs [i].m_bUsed = false;
+
+            for (i = 0; i < h; i++)
+            {
+                Side[] sides = segs [i].m_sides;
+	            for (j = 0; j < 6; j++) 
+                {
+		            if ((sides [i].m_nChild < 0) || (sides [i].m_nWall != DLE.theMine.NO_WALL)) 
+                    {
+			            m_textures [nVersion][sides [i].m_nBaseTex & 0x1FFF].m_bUsed = true;
+			            if ((sides [i].m_nOvlTex & 0x1FFF) != 0)
+				            m_textures [nVersion][sides [i].m_nOvlTex & 0x1FFF].m_bUsed = true;
+			        }
+		        }
+	        }
+
+            Texture parentTex = null;
+
+            for (i = 0; i < h; i++) 
+            {
+	            if (!texs [i].m_bFrame)
+                    parentTex = texs [i];
+                else if (texs [i].m_bCustom && !texs [i].m_bUsed)
+                    texs [i].m_bUsed = (parentTex != null) && parentTex.m_bUsed;
+	        }
+        }
+
+        //------------------------------------------------------------------------
+        // remove unused custom m_textures
+
+        void RemoveUnused ()
+        {
+	        int nCustom = CustomCount;
+
+        if (nCustom > 0) {
+	        MarkUsed ();
+	        Release (Version, false, true);
+	        int nRemoved = nCustom - CustomCount;
+            String message = nRemoved + " custom textures " + ((nRemoved == 1) ? "was" : "were") + " removed";
+            //INFOMSG (message);
+            if (nRemoved > 0)
+		        DLE.Modified = true;
+	        }
         }
 
         //------------------------------------------------------------------------------
