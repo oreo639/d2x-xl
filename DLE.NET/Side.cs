@@ -18,7 +18,7 @@ namespace DLE.NET
 
         void Setup ()
         {
-            m_nWall = DLE.theMine.NO_WALL ();
+            m_nWall = DLE.Mine.NO_WALL ();
             m_nBaseTex =
             m_nOvlTex = 0;
             for (int i = 0; i < 4; i++)
@@ -134,7 +134,7 @@ namespace DLE.NET
 	        if (nNewOvlTex == m_nBaseTex)
 		        m_nOvlTex = 0; 
 	        else if (nNewOvlTex != 0) {
-		        m_nOvlTex &= (ushort) 0xD000;	//preserve light settings
+		        m_nOvlTex &= (ushort) 0xE000;	//preserve light settings
 		        m_nOvlTex |= nNewOvlTex; 
 		        }
 	        else
@@ -150,7 +150,7 @@ namespace DLE.NET
 
         Wall Wall (ushort nWall)
         { 
-        return (nWall == DLE.theMine.NO_WALL ()) ? null : DLE.theMine.walls [nWall]; 
+        return (nWall == DLE.Mine.NO_WALL) ? null : DLE.Mine.Walls [nWall]; 
         }
 
         // ------------------------------------------------------------------------

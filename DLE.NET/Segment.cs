@@ -30,6 +30,50 @@ namespace DLE.NET
 
         //------------------------------------------------------------------------------
 
+        Function[] segFuncFromType = new Function[(int) Type.COUNT_D2]
+        {
+	        Function.NONE,
+	        Function.FUELCEN,
+	        Function.REPAIRCEN,
+	        Function.CONTROLCEN,
+	        Function.ROBOTMAKER,
+	        Function.GOAL_BLUE,
+	        Function.GOAL_RED,
+	        Function.NONE,
+	        Function.NONE,
+	        Function.TEAM_BLUE,
+	        Function.TEAM_RED,
+	        Function.SPEEDBOOST,
+	        Function.NONE,
+	        Function.NONE,
+	        Function.SKYBOX,
+	        Function.EQUIPMAKER,
+	        Function.NONE
+	    };
+
+        Property [] segPropsFromType = new Property [(int)Type.COUNT_D2] 
+        {
+	        Property.NONE,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.WATER,
+	        Property.LAVA,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.NONE,
+	        Property.BLOCKED,
+	        Property.NODAMAGE,
+	        Property.BLOCKED,
+	        Property.NONE,
+	        Property.OUTDOORS
+        };
+
+        //------------------------------------------------------------------------------
+
         public override void Read (BinaryReader fp, int version = 0, bool bFlag = false)
         {
             for (int i = 0; i < m_verts.Length; i++)

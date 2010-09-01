@@ -576,7 +576,7 @@ namespace DLE.NET
         {
 	        int nVersion = DLE.IsD1File ? 0 : 1;
 	        int i, j, h = MaxTextures;
-            Segment[] segs = DLE.theMine.Segments;
+            Segment [] segs = DLE.Mine.Segments;
             Texture [] texs = m_textures [Version];
 
             for (i = 0; i < h; i++)
@@ -587,7 +587,7 @@ namespace DLE.NET
                 Side[] sides = segs [i].m_sides;
 	            for (j = 0; j < 6; j++) 
                 {
-		            if ((sides [i].m_nChild < 0) || (sides [i].m_nWall != DLE.theMine.NO_WALL)) 
+		            if ((sides [i].m_nChild < 0) || (sides [i].m_nWall != DLE.Mine.NO_WALL)) 
                     {
 			            m_textures [nVersion][sides [i].m_nBaseTex & 0x1FFF].m_bUsed = true;
 			            if ((sides [i].m_nOvlTex & 0x1FFF) != 0)

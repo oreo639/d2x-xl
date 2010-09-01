@@ -7,7 +7,9 @@ namespace DLE.NET
 {
     public static class DLE
     {
-        public static GameMine theMine = new GameMine();
+        static GameMine theMine = new GameMine();
+
+        public static GameMine Mine { get; }
         public static Settings settings = new Settings ();
         public static TextureManager textureManager = new TextureManager ();
 
