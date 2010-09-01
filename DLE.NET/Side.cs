@@ -16,7 +16,7 @@ namespace DLE.NET
         public ushort m_nWall;		        // (was short) Index into Walls array, which wall (probably door) is on this side 
         public ushort m_nBaseTex;	        // Index into array of textures specified in bitmaps.bin 
         public ushort m_nOvlTex;		    // Index, as above, texture which gets overlaid on nBaseTex 
-        public UVL[] uvls = new UVL [4];    // CUVL coordinates at each point 
+        public UVL[] m_uvls = new UVL [4];    // CUVL coordinates at each point 
 
         // ------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ namespace DLE.NET
             m_nBaseTex =
             m_nOvlTex = 0;
             for (int i = 0; i < 4; i++)
-                uvls [i].l = (ushort)GameMine.DEFAULT_LIGHTING;
+                m_uvls [i].l = (ushort)GameMine.DEFAULT_LIGHTING;
         }
 
         // ------------------------------------------------------------------------
@@ -44,8 +44,8 @@ namespace DLE.NET
                     m_nOvlTex = 0;
             }
             m_nBaseTex &= 0x1FFF;
-            for (int i = 0; i < uvls.Length; i++)
-                uvls [i].Read (fp);
+            for (int i = 0; i < m_uvls.Length; i++)
+                m_uvls [i].Read (fp);
         }
 
         // ------------------------------------------------------------------------
@@ -59,8 +59,8 @@ namespace DLE.NET
                 fp.Write (m_nBaseTex | (ushort) 0x8000);
                 fp.Write (m_nOvlTex);
             }
-            for (int i = 0; i < uvls.Length; i++)
-                uvls [i].Write (fp);
+            for (int i = 0; i < m_uvls.Length; i++)
+                m_uvls [i].Write (fp);
         }
 
         // ------------------------------------------------------------------------
@@ -71,8 +71,8 @@ namespace DLE.NET
             m_nWall = 0;
             m_nBaseTex = 0;
             m_nOvlTex = 0;
-            for (int i = 0; i < uvls.Length; i++)
-                uvls [i].Clear ();
+            for (int i = 0; i < m_uvls.Length; i++)
+                m_uvls [i].Clear ();
         }
 
         // ------------------------------------------------------------------------
@@ -92,14 +92,14 @@ namespace DLE.NET
 		            m_nOvlTex = 0;
 	            m_nBaseTex &= 0x1FFF;
 	            for (int i = 0; i < 4; i++)
-		            uvls [i].Read (fp);
+		            m_uvls [i].Read (fp);
 	        }
             else 
             {
 	            m_nBaseTex = 0;
 	            m_nOvlTex = 0;
 	            for (int i = 0; i < 4; i++)
-		            uvls [i].Clear ();
+		            m_uvls [i].Clear ();
 	        }
             return 1;
         }
@@ -116,7 +116,7 @@ namespace DLE.NET
 	            fp.Write (m_nOvlTex);
 	        }
             for (int i = 0; i < 4; i++)
-	            uvls [i].Write (fp);
+	            m_uvls [i].Write (fp);
         }
 
         // ------------------------------------------------------------------------

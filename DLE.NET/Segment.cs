@@ -156,7 +156,7 @@ namespace DLE.NET
 
         byte ReadWalls (BinaryReader fp, int nLevelVersion)
         {
-	        byte wallFlags = byte (fp.ReadSByte ());
+	        byte wallFlags = fp.ReadByte ();
 	        int	i;
 
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
@@ -190,7 +190,7 @@ namespace DLE.NET
 		        m_damage [1] = fp.ReadInt16 ();
 		        }
 	        }
-        m_staticLight = fp.ReadInt ();
+        m_staticLight = fp.ReadInt32 ();
         }
 
         //------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ namespace DLE.NET
 	        m_group = -1;
 	        }
         // read in child mask (1 byte)
-        m_childFlags = byte (fp.ReadSByte ());
+        m_childFlags = fp.ReadByte ();
 
         // read 0 to 6 children (0 to 12 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
@@ -222,13 +222,13 @@ namespace DLE.NET
 	        ReadExtras (fp, nLevelType, nLevelVersion, (m_childFlags & (1 << MAX_SIDES_PER_SEGMENT)) != 0);
 
         // read the wall bit mask
-        m_wallFlags = byte (fp.ReadSByte ());
+        m_wallFlags = fp.ReadByte ();
 
         // read in wall numbers (0 to 6 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
-	        m_sides [i].m_nWall = (m_wallFlags & (1 << i)) 
-										        ? ushort ((nLevelVersion < 13) ? fp.ReadSByte () : fp.ReadInt16 ())
-										        : DLE.Mine.NO_WALL;
+	        m_sides [i].m_nWall = ((m_wallFlags & (1 << i)) != 0)
+						          ? (ushort) ((nLevelVersion < 13) ? fp.ReadSByte () : fp.ReadInt16 ())
+								  : DLE.Mine.NO_WALL;
 
         // read in textures and uvls (0 to 60 bytes)
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
@@ -290,7 +290,6 @@ namespace DLE.NET
 	        fp.Write (m_group);
 	        }
 
-        #if 1
         m_childFlags = 0;
         for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	        if (GetChild (i) != -1) {
@@ -302,7 +301,6 @@ namespace DLE.NET
 		        m_childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		        }
 	        }
-        #endif
         fp.Write (m_childFlags);
 
         // write children numbers (0 to 6 bytes)
@@ -365,7 +363,7 @@ namespace DLE.NET
 
             // copy side's four points into A
             for (i = 0; i < 4; i++)
-	            A [i] = DLE.Mine.Vertices [m_verts [sideVertTable [nSide][i]]] as DoubleVector;
+	            A [i] = DLE.Mine.Vertices [m_verts [GameTables.sideVertTable [nSide,i]]] as DoubleVector;
 
             // subtract point 0 from all points in A to form B points
             for (i = 0; i < 4; i++) 
@@ -374,39 +372,38 @@ namespace DLE.NET
             // calculate angle to put point 1 in x - y plane by spinning on x - axis
             // then rotate B points on x - axis to form C points.
             // check to see if on x - axis already
-            angle = atan3 (B [1].v.z, B [1].v.y); 
-            sinAngle = sin (angle);
-            cosAngle = cos (angle);
+            angle = Math.Atan2 (B [1].v.z, B [1].v.y); 
+            sinAngle = Math.Sin (angle);
+            cosAngle = Math.Cos (angle);
             for (i = 0; i < 4; i++) 
 	            C [i].Set (B [i].v.x, B [i].v.y * cosAngle + B [i].v.z * sinAngle, -B [i].v.y * sinAngle + B [i].v.z * cosAngle); 
 
             // calculate angle to put point 1 on x axis by spinning on z - axis
             // then rotate C points on z - axis to form D points
             // check to see if on z - axis already
-            angle = atan3 (C [1].v.y, C [1].v.x); 
-            sinAngle = sin (angle);
-            cosAngle = cos (angle);
+            angle = Math.Atan2 (C [1].v.y, C [1].v.x); 
+            sinAngle = Math.Sin (angle);
+            cosAngle = Math.Cos (angle);
             for (i = 0; i < 4; i++)
 	            D [i].Set (C [i].v.x * cosAngle + C [i].v.y * sinAngle, -C [i].v.x * sinAngle + C [i].v.y * cosAngle, C [i].v.z); 
 
             // calculate angle to put point 2 in x - y plane by spinning on x - axis
             // the rotate D points on x - axis to form E points
             // check to see if on x - axis already
-            angle = atan3 (D [2].v.z, D [2].v.y); 
+            angle = Math.Atan2 (D [2].v.z, D [2].v.y); 
             for (i = 0; i < 4; i++) 
-	            E [i].Set (D [i].v.x, D [i].v.y * cos (angle) + D [i].v.z * sin (angle), -D [i].v.y * sin (angle) + D [i].v.z * cos (angle)); 
+	            E [i].Set (D [i].v.x, D [i].v.y * Math.Cos (angle) + D [i].v.z * Math.Sin (angle), -D [i].v.y * Math.Sin (angle) + D [i].v.z * Math.Cos (angle)); 
 
             // now points 0, 1, and 2 are in x - y plane and point 3 is close enough.
             // set v to x axis and u to negative u axis to match default (u, v)
             // (remember to scale by dividing by 640)
             UVL[] uvls = m_sides [nSide].m_uvls;
-            DLE.SetModified = true; 
-            m_sides [nSide].LoadTextures ();
+            DLE.Modified = true; 
             double scale = 1.0; //textureManager.Textures () [m_fileType][sideP->m_nBaseTex].Scale (sideP->m_nBaseTex);
-            for (i = 0; i < 4; i++, uvls++) 
+            for (i = 0; i < 4; i++) 
             {
-	            uvls->v = (short) ((y + D2X (E [i].v.x / 640)) / scale); 
-	            uvls->u = (short) ((x - D2X (E [i].v.y / 640)) / scale); 
+	            uvls [i].v = (ushort) ((y + FixConverter.D2X (E [i].v.x / 640)) / scale); 
+	            uvls [i].u = (ushort) ((x - FixConverter.D2X (E [i].v.y / 640)) / scale); 
 	        }
         }
 
