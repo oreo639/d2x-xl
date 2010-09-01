@@ -13,6 +13,8 @@ namespace DLE.NET
         public Wall [] Walls = new Wall [WALL_LIMIT];
         public Trigger [] Triggers = new Trigger [TRIGGER_LIMIT];
 
+        public MineInfo Info = new MineInfo ();
+
         //------------------------------------------------------------------------------
 
         public int LevelVersion { get; set; }
