@@ -6,149 +6,286 @@ using System.IO;
 
 namespace DLE.NET
 {
-    public class DoubleVector
+    struct tDoubleVector 
     {
-        struct tDoubleVector 
-        {
-            public double x, y, z;
+        public double x, y, z;
 
-            public void Read (BinaryReader fp) 
-            { 
-	            x = FixConverter.X2D (fp.ReadInt32 ());
-	            y = FixConverter.X2D (fp.ReadInt32 ());
-	            z = FixConverter.X2D (fp.ReadInt32 ());
-	        }
-
-            public void Write (BinaryWriter fp) 
-            { 
-	            fp.Write (FixConverter.D2X (x));
-	            fp.Write (FixConverter.D2X (y));
-	            fp.Write (FixConverter.D2X (z));
-	        }
-        }
-
-        public tDoubleVector v;
-	    //double x; y; z;
-	    DoubleVector ()  { v.x = 0; v.y = 0; v.z = 0; }
-	    DoubleVector (double x, double y, double z) { v.x = x; v.y = y; v.z = z; }
-	    DoubleVector (tDoubleVector _v) { v.x = _v.x; v.y = _v.y; v.z = _v.z; }
-	    DoubleVector (FixVector _v);
-	    //DoubleVector (DoubleVector _v) { v.x = _v.v.x; v.y = _v.v.y; v.z = _v.v.z; }
-
-	    void Set (double x, double y, double z) 
+        public void Read (BinaryReader fp) 
         { 
-            v.x = x; 
-            v.y = y; 
-            v.z = z; 
-        }
-
-	    void Clear () 
-        { 
-            Set (0, 0, 0); 
-        }
-
-        void Read (BinaryReader fp) 
-        { 
-            v.Read (fp); 
-        }
-
-        void Write (BinaryWrite fp) { v.Write (fp); }
-        bool operator== (DoubleVector other) {
-	        return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
-}
-
-        double operator[] (size_t i) { return ((double*) &v) [i]; }
-
-        DoubleVector operator= (tDoubleVector& other) 
-        { 
-	        v.x = other.x; v.y = other.y; v.z = other.z; 
-	        return *this;
+	        x = FixConverter.X2D (fp.ReadInt32 ());
+	        y = FixConverter.X2D (fp.ReadInt32 ());
+	        z = FixConverter.X2D (fp.ReadInt32 ());
 	    }
 
-        DoubleVector operator= (DoubleVector other) { 
-	        v.x = other.v.x; v.y = other.v.y; v.z = other.v.z; 
-	        return *this;
-	        }
+        public void Write (BinaryWriter fp) 
+        { 
+	        fp.Write (FixConverter.D2X (x));
+	        fp.Write (FixConverter.D2X (y));
+	        fp.Write (FixConverter.D2X (z));
+	    }
+    }
 
-        #if !FIX_IS_DOUBLE
-        DoubleVector operator= (tFixVector& other) { 
-	        v.x = X2D (other.x); v.y = X2D (other.y); v.z = X2D (other.z); 
-	        return *this;
-	        }
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-        DoubleVector operator= (CFixVector& other) { 
-	        v.x = X2D (other.v.x); v.y = X2D (other.v.y); v.z = X2D (other.v.z); 
-	        return *this;
-	        }
-        #endif
+    public class DoubleVector
+    {
+        public tDoubleVector v;
 
-        DoubleVector operator+= (DoubleVector other) {
-	        v.x += other.v.x; v.y += other.v.y; v.z += other.v.z; 
-	        return *this;
-	        }
+        #region Initializers
+        DoubleVector ()
+        {
+            v.x = 0;
+            v.y = 0;
+            v.z = 0;
+        }
+        DoubleVector (double x, double y, double z)
+        {
+            v.x = x;
+            v.y = y;
+            v.z = z;
+        }
 
-        DoubleVector operator-= (DoubleVector other) {
-	        v.x -= other.v.x; v.y -= other.v.y; v.z -= other.v.z; 
-	        return *this;
-	        }
+        DoubleVector (tDoubleVector other)
+        {
+            v.x = other.x;
+            v.y = other.y;
+            v.z = other.z;
+        }
 
-        DoubleVector operator+ (DoubleVector other) {
-	        return DoubleVector (v.x + other.v.x; v.y + other.v.y; v.z + other.v.z);
-	        }
+        DoubleVector (FixVector other)
+        {
+            v.x = FixConverter.X2D (other.v.x);
+            v.y = FixConverter.X2D (other.v.y);
+            v.z = FixConverter.X2D (other.v.z);
+        }
 
-        DoubleVector operator- (DoubleVector other) {
-	        return DoubleVector (v.x - other.v.x; v.y - other.v.y; v.z - other.v.z);
-	        }
+        public void Set (double x, double y, double z)
+        {
+            v.x = x;
+            v.y = y;
+            v.z = z;
+        }
 
-        DoubleVector operator- () {
-	        return DoubleVector (-v.x; -v.y; -v.z);
-	        }
+        public void Clear ()
+        {
+            Set (0, 0, 0);
+        }
+        #endregion
 
-        DoubleVector operator*= (double n) {
-	        v.x *= n; v.y *= n; v.z *= n;
-	        return *this;
-	        }
+        #region File i/o
+        public void Read (BinaryReader fp)
+        {
+            v.Read (fp);
+        }
 
-        DoubleVector operator/= (double n) {
-	        v.x /= n; v.y /= n; v.z /= n;
-	        return *this;
-	        }
+        public void Write (BinaryWriter fp)
+        {
+            v.Write (fp);
+        }
+        #endregion
 
-        DoubleVector operator*= (DoubleVector other) {
-	        v.x *= other.v.x; v.y *= other.v.y; v.z *= other.v.z;
-	        return *this;
-	        }
+        #region Operators
+        public static bool operator == (DoubleVector v1, DoubleVector v2) 
+        {
+	        return (v1.v.x == v2.v.x) && (v1.v.y == v2.v.y) && (v1.v.z == v2.v.z);
+        }
 
-        DoubleVector operator/= (DoubleVector other) {
-	        v.x /= other.v.x; v.y /= other.v.y; v.z /= other.v.z;
-	        return *this;
-	        }
+        public static DoubleVector operator+ (DoubleVector v1, DoubleVector v2) 
+        {
+	        return new DoubleVector (v1.v.x + v2.v.x, v1.v.y + v2.v.y, v1.v.z + v2.v.z);
+	    }
 
-        DoubleVector operator/ (double n) {
-	        return DoubleVector (v.x / n; v.y / n; v.z / n);
-	        }
+        public static DoubleVector operator- (DoubleVector v1, DoubleVector v2) 
+        {
+	        return new DoubleVector (v1.v.x - v2.v.x, v1.v.y - v2.v.y, v1.v.z - v2.v.z);
+	    }
 
-        DoubleVector operator* (double n) {
-	        return DoubleVector (v.x * n; v.y * n; v.z * n);
-	        }
+        public static DoubleVector operator- (DoubleVector v) 
+        {
+	        return new DoubleVector (-v.v.x, -v.v.y, -v.v.z);
+	    }
 
-        DoubleVector operator* (DoubleVector other) {
-	        return DoubleVector (v.x * other.v.x; v.y * other.v.y; v.z * other.v.z);
-	        }
+        public static DoubleVector operator* (DoubleVector v, double n) 
+        {
+            return new DoubleVector (v.v.x * n, v.v.y * n, v.v.z * n);
+        }
 
-        DoubleVector operator/ (DoubleVector other) {
-	        return DoubleVector (v.x / other.v.x; v.y / other.v.y; v.z / other.v.z);
-	        }
+        public static DoubleVector operator/ (DoubleVector v, double n) 
+        {
+            return new DoubleVector (v.v.x / n, v.v.y / n, v.v.z / n);
+        }
 
-        double operator^ (DoubleVector other) {
-	        return double (v.x) * double (other.v.x) + double (v.y) * double (other.v.y) + double (v.z) * double (other.v.z);
-	        }
+        public static DoubleVector operator* (DoubleVector v1, DoubleVector v2) 
+        {
+	        return new DoubleVector (v1.v.x * v2.v.x, v1.v.y * v2.v.y, v1.v.z * v2.v.z);
+	    }
 
+        public static DoubleVector operator/ (DoubleVector v1, DoubleVector v2) 
+        {
+	        return new DoubleVector (v1.v.x / v2.v.x, v1.v.y / v2.v.y, v1.v.z / v2.v.z);
+	    }
 
-    double Mag () { return sqrt (v.x * v.x + v.y * v.y + v.z * v.z); }
-    DoubleVector Normalize () { *this /= Mag (); return *this; }
-    void Rotate (DoubleVector origin; DoubleVector normal; double angle);
-    };
+        // dot product
+        public static double operator^ (DoubleVector v1, DoubleVector v2) 
+        {
+	        return v1.v.x * v2.v.x + v1.v.y * v2.v.y + v1.v.z * v2.v.z;
+	    }
+        #endregion
+        // ------------------------------------------------------------------------
+        #region Unary operations
+        public DoubleVector Neg (DoubleVector other)
+        {
+            v.x = -v.x;
+            v.y = -v.z;
+            v.z = -v.z;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Add (DoubleVector other)
+        {
+            v.x += other.v.x;
+            v.y += other.v.z;
+            v.z += other.v.z;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Sub (DoubleVector other)
+        {
+            v.x -= other.v.x;
+            v.y -= other.v.z;
+            v.z -= other.v.z;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Mul (DoubleVector other)
+        {
+            v.x *= other.v.x;
+            v.y *= other.v.y;
+            v.z *= other.v.z;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Div (DoubleVector other)
+        {
+            v.x /= other.v.x;
+            v.y /= other.v.y;
+            v.z /= other.v.z;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Add (double value)
+        {
+            v.x += value;
+            v.y += value;
+            v.z += value;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Sub (double value)
+        {
+            v.x -= value;
+            v.y -= value;
+            v.z -= value;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Mul (double value)
+        {
+            v.x *= value;
+            v.y *= value;
+            v.z *= value;
+            return this;
+        }
+        
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Div (double value)
+        {
+            v.x /= value;
+            v.y /= value;
+            v.z /= value;
+            return this;
+        }
+        #endregion
+        // ------------------------------------------------------------------------
+        #region Math
+        public double Mag () 
+        { 
+            return Math.Sqrt (v.x * v.x + v.y * v.y + v.z * v.z); 
+        }
+
+        // ------------------------------------------------------------------------
+
+        public DoubleVector Normalize (DoubleVector v) 
+        { 
+            return v / v.Mag ();
+        }
+
+        // ------------------------------------------------------------------------
+
+        void Rotate (DoubleVector origin, DoubleVector normal, double angle) 
+        {
+        }
+        #endregion
+        // ------------------------------------------------------------------------
+        #region Equality functions
+        public override bool Equals (System.Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Point return false.
+            DoubleVector p = obj as DoubleVector;
+            if ((System.Object) p == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (v.x == p.v.x) && (v.y == p.v.y) && (v.z == p.v.z);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public bool Equals (DoubleVector p)
+        {
+            // If parameter is null return false:
+            if ((object)p == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (v.x == p.v.x) && (v.y == p.v.y) && (v.z == p.v.z);
+        }
+
+        // ------------------------------------------------------------------------
+
+        public override int GetHashCode ()
+        {
+            return FixConverter.D2X (v.x) ^ FixConverter.D2X (v.y) ^ FixConverter.D2X (v.z);
+        }
+        #endregion
+        // ------------------------------------------------------------------------
 
     }
 }

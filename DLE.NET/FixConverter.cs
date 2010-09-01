@@ -22,5 +22,14 @@ namespace DLE.NET
             return ((int)Round (f * 65536.0));
         }
 
+        public static int Mul (int n, int m)
+        {
+            return (int) ((double) n * (double) m / 65536.0);
+        }
+
+        public static int Div (int n, int m)
+        {
+            return (int) ((double) n / (double) m * 65536.0);
+        }
     }
 }

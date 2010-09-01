@@ -128,6 +128,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MineInfo.cs" />
+    <Compile Include="SideKey.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="MissionTool.cs">
       <SubType>Form</SubType>
