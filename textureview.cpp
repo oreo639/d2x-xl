@@ -98,15 +98,15 @@ Refresh ();
 
 //------------------------------------------------------------------------
 
-short CTextureView::TexFilterIndex (short nTxt)
+short CTextureView::TexFilterIndex (short nTexture)
 {
 	short	m, l = 0, r = TEX_FILTER_SIZE - 1;
 
 do {
 	m = (l + r) / 2;
-	if (nTxt < TEXTURE_FILTERS [m].iTexture.nMin)
+	if (nTexture < TEXTURE_FILTERS [m].m_range.nMin)
 		r = m - 1;
-	else if (nTxt > TEXTURE_FILTERS [m].iTexture.nMax)
+	else if (nTexture > TEXTURE_FILTERS [m].m_range.nMax)
 		l = m + 1;
 	else
 		return m;
@@ -117,20 +117,20 @@ return -1;
 
 //------------------------------------------------------------------------
 
-uint CTextureView::TextureFilter (short nTxt)
+uint CTextureView::TextureFilter (short nTexture)
 {
-	short	m = TexFilterIndex (nTxt);
+	short	m = TexFilterIndex (nTexture);
 
-return (m < 0) ? 0 : TEXTURE_FILTERS [m].nFilter;
+return (m < 0) ? 0 : TEXTURE_FILTERS [m].nFilter1;
 }
 
 //------------------------------------------------------------------------
 
-int CTextureView::QCmpTexFilters (int nTxt, int mTxt, uint mf, uint mf2)
+int CTextureView::QCmpTexFilters (int nTexture, int mTexture, uint mf, uint mf2)
 {
-	short	n = TexFilterIndex (nTxt);
-	uint	nf = TEXTURE_FILTERS [n].nFilter,
-			nf2 = TEXTURE_FILTERS [n].n2ndFilter;
+	short	n = TexFilterIndex (nTexture);
+	uint	nf = TEXTURE_FILTERS [n].nFilter1,
+			nf2 = TEXTURE_FILTERS [n].nFilter2;
 
 //CBRK (((nf == TXT_DOOR) && (mf == TXT_SAND)) || ((mf == TXT_DOOR) && (nf == TXT_SAND)));
 if (nf < mf)
@@ -142,24 +142,24 @@ else if (nf2 < mf2)
 else if (nf2 > mf2)
 	return 1;
 else
-	return (nTxt < mTxt) ? -1 : (nTxt > mTxt) ? 1 : 0;
+	return (nTexture < mTexture) ? -1 : (nTexture > mTexture) ? 1 : 0;
 }
 
 //------------------------------------------------------------------------
 
 void CTextureView::QSortTexMap (short left, short right)
 {
-	short		mTxt = m_mapViewToTex [(left + right) / 2];
-	short		m = TexFilterIndex (mTxt);
+	short		mTexture = m_mapViewToTex [(left + right) / 2];
+	short		m = TexFilterIndex (mTexture);
 	uint		mf, mf2;
 	short		h, l = left, r = right;
 
 mf = TEXTURE_FILTERS [m].nFilter;
 mf2 = TEXTURE_FILTERS [m].n2ndFilter;
 do {
-	while (QCmpTexFilters (m_mapViewToTex [l], mTxt, mf, mf2) < 0)
+	while (QCmpTexFilters (m_mapViewToTex [l], mTexture, mf, mf2) < 0)
 		l++;
-	while (QCmpTexFilters (m_mapViewToTex [r], mTxt, mf, mf2) > 0)
+	while (QCmpTexFilters (m_mapViewToTex [r], mTexture, mf, mf2) > 0)
 		r--;
 	if (l <= r) {
 		if (l < r) {

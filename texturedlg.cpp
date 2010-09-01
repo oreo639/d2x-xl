@@ -338,7 +338,7 @@ void CTextureTool::LoadTextureListBoxes (void)
 CHECKMINE;
 
 	int			bShowFrames;
-	int			nTextures, iTexture, index;
+	int			nTextures, i, index;
 	CComboBox	*cbTexture1 = CBTexture1 ();
 	CComboBox	*cbTexture2 = CBTexture2 ();
 
@@ -356,17 +356,17 @@ cbTexture1->ResetContent ();
 cbTexture2->ResetContent ();
 index = cbTexture1->AddString ("(none)");
 nTextures = textureManager.MaxTextures ();
-for (iTexture = 0; iTexture < nTextures; iTexture++) {
-	char* p = textureManager.Name (iTexture);
+for (i = 0; i < nTextures; i++) {
+	char* p = textureManager.Name (i);
 	if (bShowFrames || !strstr (p, "frame")) {
 		index = cbTexture1->AddString (p);
-		cbTexture1->SetItemData (index, iTexture);
-		if (texture1 == iTexture)
+		cbTexture1->SetItemData (index, i);
+		if (texture1 == i)
 			cbTexture1->SetCurSel (index);
-		index = cbTexture2->AddString (iTexture ? p : "(none)");
-		if (texture2 == iTexture)
+		index = cbTexture2->AddString (i ? p : "(none)");
+		if (texture2 == i)
 			cbTexture2->SetCurSel (index);
-		cbTexture2->SetItemData (index, iTexture);
+		cbTexture2->SetItemData (index, i);
 		}
 	}
 }
