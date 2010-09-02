@@ -79,6 +79,7 @@ CTrigger *CTriggerManager::Add (ushort nWall, short type, bool bAddWall)
 		};
 
 // check if there's already a trigger on the current side
+CSegment* segP = segmentManager.GetSegment ();
 CSide* sideP = segmentManager.GetSide ();
 CWall* wallP = sideP->GetWall ();
 if (sideP->GetWall ()) {
@@ -92,15 +93,15 @@ if (Count () >= MAX_TRIGGERS) {
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if (CurrSide ()->m_info.nWall >= MineInfo ().walls.count) {
-	if (bAutoAddWall) {
+if (current.Side ()->m_info.nWall >= MineInfo ().walls.count) {
+	if (bAddWall) {
 		if (MineInfo ().walls.count >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
 			return null;
 			}
 		nSegment = nSide = -1;
-		GetCurrent (nSegment, nSide);
-		if (!AddWall (-1, -1, (Segments (nSegment)->Child (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
+		current.Get (nSegment, nSide);
+		if (!wallManager.Add (-1, -1, (Segments (nSegment)->GetChild (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			DLE.ResetModified (bUndo);
 			return null;
@@ -168,7 +169,7 @@ void CTriggerManager::DeleteTrigger (short nTrigger)
 	short	i, nSegment, nSide, nWall;
 
 if (nTrigger < 0) {
-	nWall = CurrSeg ()->m_sides [Current ()->nSide].m_info.nWall;
+	nWall = current.Segment ()->m_sides [Current ()->nSide].m_info.nWall;
 	if (nWall >= MineInfo ().walls.count)
 		return;
 	nTrigger = Walls (nWall)->m_info.nTrigger;
@@ -257,7 +258,7 @@ for (i = 0; i < NumObjTriggers (); i++)
 
 short CTriggerManager::FindWall (short& nTrigger, short nSegment, short nSide)
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 CWall *wallP = Walls (0);
 int nWall;
 for (nWall = MineInfo ().walls.count; nWall; nWall--, wallP++) {

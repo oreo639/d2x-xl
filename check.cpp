@@ -516,7 +516,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 #endif
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		nChild = theMine->Segments (nSegment)->Child (nSide);
+		nChild = theMine->Segments (nSegment)->GetChild (nSide);
 // check nChild range 
 		if (nChild != -1 && nChild != -2) {
 			if (nChild < -2) {
@@ -533,7 +533,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 			// make sure nChild segment has a nChild from this segment
 			// and that it shares the same vertices as this segment
 				for (nSide2 = 0; nSide2 < MAX_SIDES_PER_SEGMENT; nSide2++) {
-					if (theMine->Segments (nChild)->Child (nSide2) == nSegment) 
+					if (theMine->Segments (nChild)->GetChild (nSide2) == nSegment) 
 						break;
 					}					
 				if (nSide2 < MAX_SIDES_PER_SEGMENT) {
@@ -1649,13 +1649,13 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
-				nSegment = theMine->Segments (wallP->m_nSegment)->Child (wallP->m_nSide);
+				nSegment = theMine->Segments (wallP->m_nSegment)->GetChild (wallP->m_nSide);
 				CSegment *segP = theMine->Segments (nSegment);
 				if ((nSegment >= 0 && nSegment < theMine->SegCount ()) &&
 					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
-						if (segP->Child (nSide) == wallP->m_nSegment)
+						if (segP->GetChild (nSide) == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
 						if (segP->m_sides[nSide].m_info.nWall >= theMine->MineInfo ().walls.count) {

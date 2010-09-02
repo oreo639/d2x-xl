@@ -132,7 +132,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_SEL_FWDCUBE, OnSelFwdCube)
 	ON_COMMAND(ID_SEL_BACKCUBE, OnSelBackCube)
 	ON_COMMAND(ID_SEL_OTHERCUBE, OnSelOtherCube)
-	ON_COMMAND(ID_SEL_OTHERSIDE, OnSelOtherSide)
+	ON_COMMAND(ID_SEL_OTHERSIDE, OnSelother.Side)
 	ON_COMMAND(ID_SEL_NEXTCUBEELEM, OnSelNextCubeElem)
 	ON_COMMAND(ID_SEL_PREVCUBEELEM, OnSelPrevCubeElem)
 	ON_COMMAND(ID_TOOLS_TEXTUREEDIT, OnEditTexture)
@@ -1558,9 +1558,9 @@ void CMainFrame::OnSelOtherCube ()
 MineView ()->SelectOtherCube ();
 }
 
-void CMainFrame::OnSelOtherSide () 
+void CMainFrame::OnSelother.Side () 
 {
-MineView ()->SelectOtherSide ();
+MineView ()->Selectother.Side ();
 }
 
 void CMainFrame::OnUndo () 

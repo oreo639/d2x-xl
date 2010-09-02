@@ -62,8 +62,10 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		CTriggerTargets::Clear ();
 		}
+
 	void CTrigger::Setup (short type, short flags);
 	bool IsExit (void);
+
 	inline const bool operator< (const CTrigger& other) {
 		return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 
 		}

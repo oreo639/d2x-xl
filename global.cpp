@@ -258,7 +258,7 @@ char player_profile [20] = "";
 
 short nTrigger = 0;
 
-tUVL default_uvls[4] = {
+tUVL defaultUVLs [4] = {
 	{(ushort) 0x0000, (ushort)0x0000, (ushort)DEFAULT_LIGHTING},
 	{(ushort) 0x0000, (ushort)0x0800, (ushort)DEFAULT_LIGHTING},
 	{(ushort)-0x0800, (ushort)0x0800, (ushort)DEFAULT_LIGHTING},

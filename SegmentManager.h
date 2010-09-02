@@ -42,7 +42,7 @@ public:
 	int			m_nAddMode;
 
 public:
-	inline bool IsValid (short i, short j) { return (i > 0) && (i < j); }
+	inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
 
 	// Segment and side getters
 	inline segmentList& Segments (void)
@@ -55,13 +55,17 @@ public:
 		{ return IsValid (i, m_nSegments) ? &m_segments [i] : null; }
 
 	inline CSide* GetSide (short nSegment = -1, short nSide = -1) {
-		GetCurrent (nSegment, nSide);
+		current.Get (nSegment, nSide);
 		return &Segments (nSegment)->m_sides [nSide];
 		}
 
 	inline CSide* GetOppositeSide (short nSegment = -1, short nSide = -1) {
-		GetCurrent (nSegment, nSide);
+		current.Get (nSegment, nSide);
 		return &Segments (nSegment)->m_sides [nSide];
+		}
+
+	inline CWall* GetWall (short nSegment = -1, short nSide = -1) {
+		return GetSide (nSegment, nSide)->GetWall ();
 		}
 
 	void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
@@ -125,7 +129,7 @@ public:
 	bool GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment = -1, short nSide = -1);
 	CSide *OppSide (void);
 	bool SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlTex);
-	void CopyOtherSegment (void);
+	void Copyother.Segmentment (void);
 	bool WallClipFromTexture (short nSegment, short nSide);
 	void CheckForDoor (short nSegment, short nSide);
 	void RenumberBotGens (void);
@@ -136,10 +140,10 @@ public:
 	void UndefineSegment (short nSegment);
 	void AutoLinkExitToReactor ();
 
-	inline CSegment *OtherSeg (void)
+	inline CSegment *other.Segment (void)
 		{ return Segments (Other ()->nSegment); }
-	inline CSide *OtherSide (void)
-		{ return OtherSeg ()->m_sides + Other ()->nSide; }
+	inline CSide *other.Side (void)
+		{ return other.Segment ()->m_sides + Other ()->nSide; }
 
 	short ReadSegmentInfo (CFileManager& file);
 	void WriteSegmentInfo (CFileManager& file, short);

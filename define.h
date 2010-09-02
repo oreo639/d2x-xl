@@ -486,9 +486,9 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define WID_TRANSILLUSORY_WALL	7	// 1/1/1 transparent illusory wall 
 #define WID_EXTERNAL					8	// 0/0/0/1 don't see it, dont fly through it 
 
-#define WALL_IS_DOORWAY(_segP,_side)	(((_segP)->Child (_side) == -1) \
+#define WALL_IS_DOORWAY(_segP,_side)	(((_segP)->GetChild (_side) == -1) \
 													? WID_RENDER_FLAG \
-													: ((_segP)->Child (_side) == -2) \
+													: ((_segP)->GetChild (_side) == -2) \
 														? WID_EXTERNAL_FLAG \
 														: ((_segP)->m_sides [(_side)].m_info.nWall == -1) \
 															? (WID_FLY_FLAG | WID_RENDPAST_FLAG) \

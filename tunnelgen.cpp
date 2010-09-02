@@ -292,8 +292,8 @@ if (!m_bSplineActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((Segments (Current1 ().nSegment)->Child (Current1 ().nSide) != -1) ||
-		 (Segments (Current2 ().nSegment)->Child (Current2 ().nSide) != -1)) {
+	if ((Segments (Current1 ().nSegment)->GetChild (Current1 ().nSide) != -1) ||
+		 (Segments (Current2 ().nSegment)->GetChild (Current2 ().nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of spline\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
@@ -388,8 +388,8 @@ else {
 			segP->m_sides [j].m_info.nOvlTex = 0;
 			segP->m_sides [j].m_info.nWall = NO_WALL;
 			for (i = 0; i < 4; i++) {
-//	    segP->m_sides [j].uvls [i].u = default_uvls [i].u;
-//	    segP->m_sides [j].uvls [i].v = default_uvls [i].v;
+//	    segP->m_sides [j].uvls [i].u = defaultUVLs [i].u;
+//	    segP->m_sides [j].uvls [i].v = defaultUVLs [i].v;
 				segP->m_sides [j].m_info.uvls [i].l = (ushort) DEFAULT_LIGHTING;
 				}
 			segP->SetUV (j,0,0);

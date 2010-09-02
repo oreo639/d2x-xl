@@ -265,14 +265,14 @@ END_MESSAGE_MAP()
 
 CTexToolDlg::CTexToolDlg (UINT nIdTemplate, CPropertySheet *pParent, 
 								  int nTexWndId, int nTimerId, COLORREF bkColor,
-								  bool bOtherSeg)
+								  bool bother.Segment)
 	: CToolDlg (nIdTemplate, pParent)
 {
 m_nTexWndId = nTexWndId;
 m_nTimerId = nTimerId;
 m_bkColor = bkColor;
 m_nTimer = -1;
-m_bOtherSeg = bOtherSeg;
+m_bother.Segment = bother.Segment;
 }
 
                         /*--------------------------*/
@@ -313,10 +313,10 @@ if (nVisible < 0)
 	nVisible = (short) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		short nSegment = m_bOtherSeg ? theMine->Other ()->nSegment : theMine->Current ()->nSegment;
-		short nSide = m_bOtherSeg ? theMine->Other ()->nSide : theMine->Current ()->nSide;
+		short nSegment = m_bother.Segment ? theMine->Other ()->nSegment : theMine->Current ()->nSegment;
+		short nSide = m_bother.Segment ? theMine->Other ()->nSide : theMine->Current ()->nSide;
 		if (nVisible = theMine->IsWall (nSegment, nSide)) {
-			CSide *sideP = m_bOtherSeg ? theMine->OtherSide () : theMine->CurrSide ();
+			CSide *sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
 			nBaseTex = sideP->m_info.nBaseTex;
 			nOvlTex = sideP->m_info.nOvlTex & 0x3fff;
 			}
@@ -333,7 +333,7 @@ void CTexToolDlg::OnPaint ()
 {
 CToolDlg::OnPaint ();
 if (TextureIsVisible ()) {
-	CSide *sideP = m_bOtherSeg ? theMine->OtherSide () : theMine->CurrSide ();
+	CSide *sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex & 0x1fff);
 	}
 else
@@ -373,13 +373,13 @@ void CTexToolDlg::AnimateTexture (void)
 if (!TextureIsVisible ())
 	return;
 
-	CSegment *segP = m_bOtherSeg ? theMine->OtherSeg () : theMine->CurrSeg ();
+	CSegment *segP = m_bother.Segment ? theMine->other.Segment () : theMine->current.Segment ();
 
 	ushort texture [2];
 	int bScroll;
 	int x,y;
 
-	CSide	*sideP = m_bOtherSeg ? theMine->OtherSide () : theMine->CurrSide ();
+	CSide	*sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
 
 texture [0] = sideP->m_info.nBaseTex & 0x3fff;
 texture [1] = sideP->m_info.nOvlTex;

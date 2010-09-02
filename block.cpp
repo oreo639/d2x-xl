@@ -52,7 +52,7 @@ short CMine::ReadSegmentInfo (CFileManager& fp)
 origVertCount = VertCount ();
 
 // set origin
-segP = CurrSeg ();
+segP = current.Segment ();
 nSide = Current ()->nSide;
 origin = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
 // set x'
@@ -331,7 +331,7 @@ while (!fp.EoF ()) {
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-		if (segP->Child (i) >= 0)
+		if (segP->GetChild (i) >= 0)
 		segP->m_info.childFlags |= (1 << i);
 	SegCount ()++;
 	nNewSegs++;
@@ -387,7 +387,7 @@ void CMine::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/)
 	short				nVertex;
 
 // set origin
-segP = CurrSeg ();
+segP = current.Segment ();
 origin = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]]);
 // set x'
 xPrime = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]]) - origin;
@@ -456,7 +456,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			}
 		fprintf (fp.File (), "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fp.File (), " %d", segP->Child (i));
+			fprintf (fp.File (), " %d", segP->GetChild (i));
 		fprintf (fp.File (), "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
@@ -703,7 +703,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			if (segP->m_info.childFlags & (1 << child)) {
 				seg2 = Segments (0);
 				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
-					if (segP->Child (child) == ~seg2->m_info.nIndex) {
+					if (segP->GetChild (child) == ~seg2->m_info.nIndex) {
 						segP->SetChild (child, seg_offset);
 						break;
 						}

@@ -6493,6 +6493,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Selection.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TextureFilter.cpp"
 					>
 				</File>
@@ -6906,6 +6910,10 @@
 				</File>
 				<File
 					RelativePath=".\SegmentManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Selection.h"
 					>
 				</File>
 				<File

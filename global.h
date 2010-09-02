@@ -118,7 +118,7 @@ extern short  show_powerups;
 extern short select_mode;
 #endif
 extern short edit_mode;
-extern tUVL   default_uvls[4];
+extern tUVL   defaultUVLs[4];
 extern char  *object_names[MAX_OBJECT_TYPES];
 extern byte powerup_types[MAX_POWERUP_IDS_D2];
 extern char  wall_type_names[6][10];

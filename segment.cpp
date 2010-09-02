@@ -20,6 +20,123 @@
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
+int CSide::Read (CFileManager& fp, bool bTextured)
+{
+if (bTextured) {
+	m_info.nBaseTex = fp.ReadInt16 ();
+	if (m_info.nBaseTex & 0x8000) {
+		m_info.nOvlTex = fp.ReadInt16 ();
+		if ((m_info.nOvlTex & 0x1FFF) == 0)
+			m_info.nOvlTex = 0;
+		}
+	else
+		m_info.nOvlTex = 0;
+	m_info.nBaseTex &= 0x1FFF;
+	for (int i = 0; i < 4; i++)
+		m_info.uvls [i].Read (fp);
+	}
+else {
+	m_info.nBaseTex = 0;
+	m_info.nOvlTex = 0;
+	for (int i = 0; i < 4; i++)
+		m_info.uvls [i].Clear ();
+	}
+return 1;
+}
+
+// ------------------------------------------------------------------------
+
+void CSide::Write (CFileManager& fp)
+{
+if (m_info.nOvlTex == 0)
+	fp.Write (m_info.nBaseTex);
+else {
+	fp.WriteInt16 (m_info.nBaseTex | 0x8000);
+	fp.Write (m_info.nOvlTex);
+	}
+for (int i = 0; i < 4; i++)
+	m_info.uvls [i].Write (fp);
+}
+
+// ------------------------------------------------------------------------
+
+void CSide::Setup (void)
+{
+m_info.nWall = NO_WALL; 
+m_info.nBaseTex =
+m_info.nOvlTex = 0; 
+for (int i = 0; i < 4; i++)
+	m_info.uvls [i].l = (ushort) DEFAULT_LIGHTING; 
+}
+
+// ------------------------------------------------------------------------ 
+
+void CSide::LoadTextures (void)
+{
+textureManager.Load (m_info.nBaseTex, m_info.nOvlTex);
+}
+
+// ------------------------------------------------------------------------
+
+bool CSide::SetTextures (short nBaseTex, short nOvlTex)
+{
+	bool bChange = false;
+
+if (nOvlTex == nBaseTex)
+   nOvlTex = 0; 
+if ((nBaseTex >= 0) && (nBaseTex != m_info.nBaseTex)) {
+	m_info.nBaseTex = nBaseTex; 
+	if (nBaseTex == (m_info.nOvlTex & 0x3fff)) {
+		m_info.nOvlTex = 0; 
+		}
+	bChange = true; 
+	}
+if (nOvlTex >= 0) {
+	if (nOvlTex == m_info.nBaseTex)
+		m_info.nOvlTex = 0; 
+	else if (nOvlTex) {
+		m_info.nOvlTex &= ~(0x3fff);	//preserve light settings
+		m_info.nOvlTex |= nOvlTex; 
+		}
+	else
+		m_info.nOvlTex = 0; 
+	bChange = true; 
+	}
+if (bChange)
+	LoadTextures ();
+return bChange;
+}
+
+// ------------------------------------------------------------------------
+
+void CSide::GetTextures (short &nBaseTex, short &nOvlTex)
+{
+nBaseTex = m_info.BaseTex;
+nOvlTex = m_info.nOvlTex & 0x1FFF;
+}
+
+// ------------------------------------------------------------------------
+
+void CSide::InitUVL (void)
+{
+uint scale = (uint) textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
+for (int i = 0; i < 4; i++) {
+	m_info.uvls [i].u = defaultUVLs [i].u / scale;
+	m_info.uvls [i].v = defaultUVLs [i].v / scale;
+	m_info.uvls [i].l = defaultUVLs [i].l;
+	}
+
+// ------------------------------------------------------------------------
+
+CWall* CSide::GetWall (void)
+{ 
+return wallManager.GetWall (m_info.nWall); 
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
 static byte segFuncFromType [] = {
 	SEGMENT_FUNC_NONE,
 	SEGMENT_FUNC_FUELCEN,
@@ -365,104 +482,6 @@ for (i = 0; i < 4; i++, uvls++) {
 	uvls->u = (short) ((x - D2X (E [i].v.y / 640)) / scale); 
 	}
 #endif
-}
-
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-
-int CSide::Read (CFileManager& fp, bool bTextured)
-{
-if (bTextured) {
-	m_info.nBaseTex = fp.ReadInt16 ();
-	if (m_info.nBaseTex & 0x8000) {
-		m_info.nOvlTex = fp.ReadInt16 ();
-		if ((m_info.nOvlTex & 0x1FFF) == 0)
-			m_info.nOvlTex = 0;
-		}
-	else
-		m_info.nOvlTex = 0;
-	m_info.nBaseTex &= 0x1FFF;
-	for (int i = 0; i < 4; i++)
-		m_info.uvls [i].Read (fp);
-	}
-else {
-	m_info.nBaseTex = 0;
-	m_info.nOvlTex = 0;
-	for (int i = 0; i < 4; i++)
-		m_info.uvls [i].Clear ();
-	}
-return 1;
-}
-
-// ------------------------------------------------------------------------
-
-void CSide::Write (CFileManager& fp)
-{
-if (m_info.nOvlTex == 0)
-	fp.Write (m_info.nBaseTex);
-else {
-	fp.WriteInt16 (m_info.nBaseTex | 0x8000);
-	fp.Write (m_info.nOvlTex);
-	}
-for (int i = 0; i < 4; i++)
-	m_info.uvls [i].Write (fp);
-}
-
-// ------------------------------------------------------------------------
-
-void CSide::Setup (void)
-{
-m_info.nWall = NO_WALL; 
-m_info.nBaseTex =
-m_info.nOvlTex = 0; 
-for (int i = 0; i < 4; i++)
-	m_info.uvls [i].l = (ushort) DEFAULT_LIGHTING; 
-}
-
-// ------------------------------------------------------------------------ 
-
-void CSide::LoadTextures (void)
-{
-textureManager.Load (m_info.nBaseTex, m_info.nOvlTex);
-}
-
-// ------------------------------------------------------------------------
-
-bool CSide::SetTexture (short nBaseTex, short nOvlTex)
-{
-	bool bChange = false;
-
-if (nOvlTex == nBaseTex)
-   nOvlTex = 0; 
-if ((nBaseTex >= 0) && (nBaseTex != m_info.nBaseTex)) {
-	m_info.nBaseTex = nBaseTex; 
-	if (nBaseTex == (m_info.nOvlTex & 0x3fff)) {
-		m_info.nOvlTex = 0; 
-		}
-	bChange = true; 
-	}
-if (nOvlTex >= 0) {
-	if (nOvlTex == m_info.nBaseTex)
-		m_info.nOvlTex = 0; 
-	else if (nOvlTex) {
-		m_info.nOvlTex &= ~(0x3fff);	//preserve light settings
-		m_info.nOvlTex |= nOvlTex; 
-		}
-	else
-		m_info.nOvlTex = 0; 
-	bChange = true; 
-	}
-if (bChange)
-	LoadTextures ();
-return bChange;
-}
-
-// ------------------------------------------------------------------------
-
-CWall* CSide::GetWall (void)
-{ 
-return wallManager.GetWall (m_info.nWall); 
 }
 
 // ------------------------------------------------------------------------

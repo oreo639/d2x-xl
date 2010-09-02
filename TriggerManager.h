@@ -35,7 +35,7 @@ class CTriggerManager {
 		short						m_nReactorTriggers;
 
 	public:
-		inline bool IsValid (short i, j) { return (i > 0) && (i < j); }
+		inline bool IsValid (short i, j) { return (i >= 0) && (i < j); }
 
 		inline triggerList& Triggers (void) { return m_triggers [0]; }
 

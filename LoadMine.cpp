@@ -392,7 +392,7 @@ for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			checkErr |= (1 << 0);
 			}
 		// check children
-		if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (short)SegCount ())) {
+		if ((segP->GetChild (nSide) < -2) || (segP->GetChild (nSide) > (short)SegCount ())) {
 			segP->SetChild (nSide, -1);
 			checkErr |= (1 << 1);
 			}

@@ -40,6 +40,9 @@ public:
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 
+	bool CWall::IsDoor (void);
+	inline void SetTrigger (short nTrigger) { m_info.nTrigger = nTrigger; }
+	CSide* GetSide (void);
 	CTrigger* GetTrigger (void);
 };
 

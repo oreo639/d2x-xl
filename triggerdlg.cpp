@@ -556,7 +556,7 @@ if (m_nTrigger != -1) {
 	}
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumTriggers () > 0);
 CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumTriggers () > 0);
-sideP = theMine->OtherSide ();
+sideP = theMine->other.Side ();
 CTexToolDlg::Refresh (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
 	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
@@ -1041,7 +1041,7 @@ return !m_nClass && (m_pTrigger != null) && (m_iTarget >= 0) && (m_iTarget < m_p
 
 void CTriggerTool::SelectTexture (int nIdC, bool bFirst)
 {
-	CSide		*sideP = theMine->CurrSide ();
+	CSide		*sideP = theMine->current.Side ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	int			index = pcb->GetCurSel ();
 	

@@ -154,7 +154,7 @@ return (result);
 
 short CMine::GetFlickeringLight (short nSegment, short nSide) 
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 CFlickeringLight *flP = FlickeringLights (0);
 int i;
 for (i = FlickerLightCount (); i; i--, flP++)
@@ -180,7 +180,7 @@ return GetFlickeringLight (nSegment, nSide) >= 0;
 
 short CMine::AddFlickeringLight (short nSegment, short nSide, uint mask,int time) 
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 if (GetFlickeringLight (nSegment,nSide) != -1) {
 	if (!bExpertMode)
 		ErrorMsg ("There is already a flickering light on this side");
@@ -196,8 +196,8 @@ if (FlickerLightCount () >= MAX_FLICKERING_LIGHTS) {
 		}
 	return -1;
 	}
-short nBaseTex = CurrSide ()->m_info.nBaseTex & 0x1fff;
-short nOvlTex = CurrSide ()->m_info.nOvlTex & 0x1fff;
+short nBaseTex = current.Side ()->m_info.nBaseTex & 0x1fff;
+short nOvlTex = current.Side ()->m_info.nOvlTex & 0x1fff;
 if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 	if (!bExpertMode)
 		ErrorMsg ("Blinking lights can only be added to a side\n"
@@ -378,7 +378,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 			for (j = 0; j < 6; j++) {
 				for (i = 0; i < 4; i++) {
 					h = (ushort) segP->m_sides [j].m_info.uvls [i].l;
-					if (h || ((segP->Child (j) == -1) && !VisibleWall (segP->m_sides [j].m_info.nWall))) {
+					if (h || ((segP->GetChild (j) == -1) && !VisibleWall (segP->m_sides [j].m_info.nWall))) {
 						l += h;
 						c++;
 						}
@@ -446,7 +446,7 @@ DLE.SetModified (TRUE);
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
 				for (int i = 0; i < 3; i++) {
 					int nSide = pointSideTable [pt][i];
-					if ((segP->Child (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
+					if ((segP->GetChild (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 						int uvnum = pointCornerTable [pt][i];
 						if (max_brightness [nVertex].light < ushort (segP->m_sides [nSide].m_info.uvls [uvnum].l))
 							max_brightness [nVertex].light = ushort (segP->m_sides [nSide].m_info.uvls [uvnum].l);
@@ -465,7 +465,7 @@ DLE.SetModified (TRUE);
 			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
 				for (int i = 0; i < 3; i++) {
 					int nSide = pointSideTable [pt][i];
-					if ((segP->Child (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
+					if ((segP->GetChild (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
 						int uvnum = pointCornerTable [pt][i];
 						segP->m_sides [nSide].m_info.uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
 						}
@@ -512,7 +512,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || SideIsMarked (nSegment, nSide)))
 			continue;
-		if ((segP->Child (nSide) >= 0) && !VisibleWall (sideP->m_info.nWall))
+		if ((segP->GetChild (nSide) >= 0) && !VisibleWall (sideP->m_info.nWall))
 			continue;
 		if (bCopyTexLights)
 			LightColors (nSegment, nSide)->Clear ();
@@ -674,7 +674,7 @@ int nSegCount = SegCount ();
 			// if side has a child..
 			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
 				continue;
-			if (childSegP->Child (nChildSide) >= 0) {
+			if (childSegP->GetChild (nChildSide) >= 0) {
 				ushort nWall = childSegP->m_sides [nChildSide].m_info.nWall;
 				// .. but there is no wall ..
 				if (nWall >= MineInfo ().walls.count)
@@ -881,7 +881,7 @@ fLightScale = 1.0; ///= 100.0;
 				continue;
 
 			short srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
-			if ((srcSegP->Child (nSourceSide) != -1) &&
+			if ((srcSegP->GetChild (nSourceSide) != -1) &&
 				 ((srcwall >= MineInfo ().walls.count) || (Walls (srcwall)->m_info.type == WALL_OPEN)))
 				continue;
 
@@ -967,7 +967,7 @@ fLightScale = 1.0; ///= 100.0;
 				// loop on child sides
 				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
-					if (childSegP->Child (nChildSide) >= 0) {
+					if (childSegP->GetChild (nChildSide) >= 0) {
 						ushort nWall = childSegP->m_sides[nChildSide].m_info.nWall;
 						// .. if there is no wall ..
 						if (nWall >= MineInfo ().walls.count)
@@ -1123,7 +1123,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
-	child = segP->Child (nSide);
+	child = segP->GetChild (nSide);
 	if ((child > -1) && (child < SegCount ()) && (recursion_level > segP->m_info.nIndex)) {
 		if (segP->m_info.nIndex >= 0)
 			++nImprove;
@@ -1149,7 +1149,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
-	child = segP->Child (nSide);
+	child = segP->GetChild (nSide);
 	if ((child > -1) && (child < SegCount ()))
 		SetSegmentChildNum (pRoot, child, recursion_level - 1);
 	}
@@ -1174,7 +1174,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
-	child = segP->Child (nSide);
+	child = segP->GetChild (nSide);
 	if ((child > -1) && (child < SegCount ()) && (recursion_level > visited [nSegment])) {
 		if (visited [nSegment] >= 0)
 			++nImprove;
@@ -1200,7 +1200,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
-	child = segP->Child (nSide);
+	child = segP->GetChild (nSide);
 	if ((child > -1) && (child < SegCount ()))
 		SetSegmentChildNum (pRoot, child, recursion_level - 1, visited);
 	}

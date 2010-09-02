@@ -86,7 +86,9 @@ public:
 	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	void Setup (void);
 	void LoadTextures (void);
-	bool SetTexture (short nBaseTex, short nOvlTex);
+	void GetTextures (short &nBaseTex, short &nOvlTex);
+	bool SetTextures (short nBaseTex, short nOvlTex);
+	void CSide::InitUVL (void);
 	CWall* GetWall (void);
 };
 
@@ -135,7 +137,8 @@ public:
 	virtual CGameItem* Next (void) { return this + 1; }
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
-	inline short Child (short nSide) { return m_sides [nSide].m_info.nChild; }
+	inline CSide* GetSide (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
+	inline short GetChild (short nSide) { return m_sides [nSide].m_info.nChild; }
 	inline short SetChild (short nSide, short nSegment) {
 		m_sides [nSide].m_info.nChild = nSegment;
 		if (nSegment == -1)

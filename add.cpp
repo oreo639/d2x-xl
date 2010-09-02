@@ -24,7 +24,7 @@ double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (segP->Child (nSide) == -1) {
+	if (segP->GetChild (nSide) == -1) {
 		SetTexture (nSegment, nSide, nTexture, 0);
 	/*
 		sideP->m_info.uvls [0].l = 0x8000;
@@ -34,9 +34,9 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 	*/
 		int i;
 		for (i = 0; i < 4; i++) {
-			sideP->m_info.uvls [i].u = (short) ((double) default_uvls [i].u / scale);
-			sideP->m_info.uvls [i].v = (short) ((double) default_uvls [i].v / scale);
-			sideP->m_info.uvls [i].l = default_uvls [i].l;
+			sideP->m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale);
+			sideP->m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale);
+			sideP->m_info.uvls [i].l = defaultUVLs [i].l;
 			}
 		Segments (nSegment)->SetUV (nSide, 0, 0);
 		}
@@ -65,7 +65,7 @@ return true;
 
 void CMine::UndefineSegment (short nSegment)
 {
-	CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
+	CSegment *segP = (nSegment < 0) ? current.Segment () : Segments (nSegment);
 
 nSegment = short (segP - Segments (0));
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
@@ -123,9 +123,9 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 	CWall *wallP;
 	short nOppSeg, nOppSide;
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
+		if (segP->GetChild (nSide) < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childSegP = Segments (segP->Child (nSide));
+		childSegP = Segments (segP->GetChild (nSide));
 		if (childSegP->m_info.function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
@@ -154,7 +154,7 @@ bool CMine::DefineSegment (short nSegment, byte type, short nTexture, short wall
 bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
 UndefineSegment (nSegment);
-CSegment *segP = (nSegment < 0) ? CurrSeg () : Segments (nSegment);
+CSegment *segP = (nSegment < 0) ? current.Segment () : Segments (nSegment);
 segP->m_info.function = type;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
@@ -437,7 +437,7 @@ bool CMine::AddDoor (byte type, byte flags, byte keys, char nClip, short nTextur
   short 	nOppSeg, nOppSide;
   ushort nWall;
 
-nWall = CurrSide ()->m_info.nWall;
+nWall = current.Side ()->m_info.nWall;
 if (nWall < MineInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -674,7 +674,7 @@ return false;
 
 bool CMine::GetTriggerResources (ushort& nWall)
 {
-nWall = CurrSide ()->m_info.nWall;
+nWall = current.Side ()->m_info.nWall;
 if (nWall < MineInfo ().walls.count) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -724,7 +724,7 @@ return false;
 
 bool CMine::AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type) 
 {
-CSegment* otherSegP = OtherSeg ();
+CSegment* otherSegP = other.Segment ();
 ushort nWall = otherSegP->m_sides [Other ()->nSide].m_info.nWall;
 if (nWall >= MineInfo ().walls.count) {
 	ErrorMsg ("Other cube's side is not on a wall.\n\n"
@@ -753,7 +753,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 
 bool CMine::AddRobotMakerTrigger () 
 {
-CSegment *otherSegP = OtherSeg ();
+CSegment *otherSegP = other.Segment ();
 if (otherSegP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"

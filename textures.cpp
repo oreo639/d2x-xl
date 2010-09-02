@@ -55,12 +55,12 @@ CRect	rc;
 wndP->GetClientRect (rc);
 
 if (nBaseTex < 0) {
-	segP = (nSegment < 0) ? theMine->CurrSeg () : theMine->Segments (nSegment);
-	sideP = (nSide < 0) ? theMine->CurrSide () : segP->m_sides + nSide;
+	segP = (nSegment < 0) ? theMine->current.Segment () : theMine->Segments (nSegment);
+	sideP = (nSide < 0) ? theMine->current.Side () : segP->m_sides + nSide;
 	int nSide = theMine->Current ()->nSide;
 	nBaseTex = sideP->m_info.nBaseTex;
 	nOvlTex = sideP->m_info.nOvlTex & 0x1fff;
-	if (segP->Child (nSide) == -1)
+	if (segP->GetChild (nSide) == -1)
 		bShowTexture = TRUE;
 	else {
 		nWall = sideP->m_info.nWall;

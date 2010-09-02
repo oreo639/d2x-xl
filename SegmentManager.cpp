@@ -20,17 +20,25 @@ CSegmentManager segmentManager;
 
 // -----------------------------------------------------------------------------
 
-CWall *CSegmentManager::Wall (short nSegment, short nSide)
+CWall* CSegmentManager::Wall (short nSegment, short nSide)
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 return wallManager.Walls (Segments (nSegment)->m_sides [nSide].m_info.nWall);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegmentManager::GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex)
+{
+current.Get (nSegment, nSide);
+GetSide (nSegment, nSide)->GetTextures (nBaseTex, nOvlTex);
 }
 
 // -----------------------------------------------------------------------------
 
 CDoubleVector CSegmentManager::CalcSideNormal (short nSegment, short nSide)
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 
 	short* segVertP = Segments (nSegment)->m_info.verts;
 	byte*	sideVertP = &sideVertTable [nSide][0];
@@ -43,7 +51,7 @@ return -Normal (*Vertices (segVertP [sideVertP [0]]), *Vertices (segVertP [sideV
 
 CDoubleVector CSegmentManager::CalcSideCenter (short nSegment, short nSide)
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 
 	short*	segVertP = Segments (nSegment)->m_info.verts;
 	byte*		sideVertP = &sideVertTable [nSide][0];
@@ -104,7 +112,7 @@ DeleteWalls (nDelSeg);
 
 // delete any Walls () on child Segments () that connect to this segment
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	child = delSegP->Child (i); 
+	child = delSegP->GetChild (i); 
 	if (child >= 0 && child < SegCount ()) {
 		short	oppSegNum, oppSideNum;
 		GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
@@ -169,7 +177,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 	CTexture* texP = textureManager.Textures (m_fileType);
 	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (segP->Child (child) == nDelSeg) {
+			if (segP->GetChild (child) == nDelSeg) {
 
 				// subtract by 1 if segment is above deleted segment
 				Current ()->nSegment = nSegment; 
@@ -185,8 +193,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 				Segments (nSegment)->SetUV (child, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
-					//segP->m_sides [child].m_info.uvls [i].u = (short) ((double) default_uvls [i].u / scale); 
-					//segP->m_sides [child].m_info.uvls [i].v = (short) ((double) default_uvls [i].v / scale); 
+					//segP->m_sides [child].m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale); 
+					//segP->m_sides [child].m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale); 
 					segP->m_sides [child].m_info.uvls [i].l = delSegP->m_sides [child].m_info.uvls [i].l; 
 				}
 			}
@@ -206,8 +214,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 				if (segP->m_info.childFlags & (1 << child)
-					&& segP->Child (child) >= 0 && segP->Child (child) < SegCount ()) { // debug int
-					childSegP = Segments (segP->Child (child)); 
+					&& segP->GetChild (child) >= 0 && segP->GetChild (child) < SegCount ()) { // debug int
+					childSegP = Segments (segP->GetChild (child)); 
 					segP->SetChild (child, childSegP->m_info.nIndex); 
 				}
 			}
@@ -404,7 +412,7 @@ Segments (nSegment)->Setup ();
 bool CSegmentManager::Add (void)
 {
 	CSegment *newSegP, *curSegP; 
-	short i, nNewSeg, nNewSide, nCurrSide = Current ()->nSide; 
+	short i, nNewSeg, nNewSide, ncurrent.Side = Current ()->nSide; 
 	short newVerts [4]; 
 	short nSegment, nSide; 
 
@@ -423,7 +431,7 @@ if (SegCount () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
-if (curSegP->Child (nCurrSide) >= 0) {
+if (curSegP->GetChild (ncurrent.Side) >= 0) {
 	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
 	return FALSE;
 	}
@@ -444,28 +452,28 @@ newSegP = Segments (nNewSeg);
 DefineVertices (newVerts); 
 
 // define vert numbers for common side
-newSegP->m_info.verts [oppSideVertTable [nCurrSide][0]] = curSegP->m_info.verts [sideVertTable [nCurrSide][0]]; 
-newSegP->m_info.verts [oppSideVertTable [nCurrSide][1]] = curSegP->m_info.verts [sideVertTable [nCurrSide][1]]; 
-newSegP->m_info.verts [oppSideVertTable [nCurrSide][2]] = curSegP->m_info.verts [sideVertTable [nCurrSide][2]]; 
-newSegP->m_info.verts [oppSideVertTable [nCurrSide][3]] = curSegP->m_info.verts [sideVertTable [nCurrSide][3]]; 
+newSegP->m_info.verts [oppSideVertTable [ncurrent.Side][0]] = curSegP->m_info.verts [sideVertTable [ncurrent.Side][0]]; 
+newSegP->m_info.verts [oppSideVertTable [ncurrent.Side][1]] = curSegP->m_info.verts [sideVertTable [ncurrent.Side][1]]; 
+newSegP->m_info.verts [oppSideVertTable [ncurrent.Side][2]] = curSegP->m_info.verts [sideVertTable [ncurrent.Side][2]]; 
+newSegP->m_info.verts [oppSideVertTable [ncurrent.Side][3]] = curSegP->m_info.verts [sideVertTable [ncurrent.Side][3]]; 
 
 // define vert numbers for new side
-newSegP->m_info.verts [sideVertTable [nCurrSide][0]] = newVerts [0]; 
-newSegP->m_info.verts [sideVertTable [nCurrSide][1]] = newVerts [1]; 
-newSegP->m_info.verts [sideVertTable [nCurrSide][2]] = newVerts [2]; 
-newSegP->m_info.verts [sideVertTable [nCurrSide][3]] = newVerts [3]; 
+newSegP->m_info.verts [sideVertTable [ncurrent.Side][0]] = newVerts [0]; 
+newSegP->m_info.verts [sideVertTable [ncurrent.Side][1]] = newVerts [1]; 
+newSegP->m_info.verts [sideVertTable [ncurrent.Side][2]] = newVerts [2]; 
+newSegP->m_info.verts [sideVertTable [ncurrent.Side][3]] = newVerts [3]; 
 
 InitSegment (nNewSeg);
 // define children and special child
-newSegP->m_info.childFlags = 1 << oppSideTable [nCurrSide]; /* only opposite side connects to current_segment */
+newSegP->m_info.childFlags = 1 << oppSideTable [ncurrent.Side]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1);
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (newSegP->Child (nSide) < 0) {
+	if (newSegP->GetChild (nSide) < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if ((curSegP->Child (nSide) < 0) && (curSegP->m_info.function == SEGMENT_FUNC_NONE)) {
+		if ((curSegP->GetChild (nSide) < 0) && (curSegP->m_info.function == SEGMENT_FUNC_NONE)) {
 			newSegP->m_sides [nSide].m_info.nBaseTex = curSegP->m_sides [nSide].m_info.nBaseTex; 
 			newSegP->m_sides [nSide].m_info.nOvlTex = curSegP->m_sides [nSide].m_info.nOvlTex; 
 			for (i = 0; i < 4; i++) 
@@ -481,7 +489,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete flickering light if it exists
-short index = GetFlickeringLight (Current ()->nSegment, nCurrSide); 
+short index = GetFlickeringLight (Current ()->nSegment, ncurrent.Side); 
 if (index != -1) {
 	FlickerLightCount ()--; 
 	// put last light in place of deleted light
@@ -489,10 +497,10 @@ if (index != -1) {
 	}
 
 // update current segment
-curSegP->SetChild (nCurrSide, nNewSeg); 
-curSegP->m_sides [nCurrSide].m_info.nBaseTex = 0; 
-curSegP->m_sides [nCurrSide].m_info.nOvlTex = 0; 
-memset (curSegP->m_sides [nCurrSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nCurrSide].m_info.uvls));
+curSegP->SetChild (ncurrent.Side, nNewSeg); 
+curSegP->m_sides [ncurrent.Side].m_info.nBaseTex = 0; 
+curSegP->m_sides [ncurrent.Side].m_info.nOvlTex = 0; 
+memset (curSegP->m_sides [ncurrent.Side].m_info.uvls, 0, sizeof (curSegP->m_sides [ncurrent.Side].m_info.uvls));
  
 // update number of Segments () and vertices and clear vertexStatus
 SegCount ()++;
@@ -700,7 +708,7 @@ bool CSegmentManager::Link (short nSegment1, short nSide1, short nSegment2, shor
 	seg2 = Segments (nSegment2); 
 
 // don't link to a segment which already has a child
-if (seg1->Child (nSide1) !=-1 || seg2->Child (nSide2) != -1)
+if (seg1->GetChild (nSide1) !=-1 || seg2->GetChild (nSide2) != -1)
 	return FALSE; 
 
 // copy vertices for comparison later (makes code more readable)
@@ -797,7 +805,7 @@ pos /= 8.0;
 
 bool CSegmentManager::SideIsMarked (short nSegment, short nSide)
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 CSegment *segP = Segments (nSegment);
 for (int i = 0; i < 4; i++) {
 	if (!(VertStatus (segP->m_info.verts [sideVertTable [nSide][i]]) & MARKED_MASK))
@@ -916,8 +924,8 @@ CUVL *uvls = sideP->m_info.uvls;
 double scale = textureManager.Textures (m_fileType, sideP->m_info.nBaseTex)->Scale (sideP->m_info.nBaseTex);
 int i;
 for (i = 0; i < 4; i++, uvls++) {
-	uvls->u = (short) (default_uvls [i].u / scale); 
-	uvls->v = (short) (default_uvls [i].v / scale); 
+	uvls->u = (short) (defaultUVLs [i].u / scale); 
+	uvls->v = (short) (defaultUVLs [i].v / scale); 
 	uvls->l = (ushort) DEFAULT_LIGHTING; 
 	}
 DLE.UnlockUndo ();
@@ -938,7 +946,7 @@ void CSegmentManager::UnlinkChild (short nParentSeg, short nSide)
 // loop on each side of the parent
 //	int nSide;
 //  for (nSide = 0; nSide < 6; nSide++) {
-int nChildSeg = parentSegP->Child (nSide); 
+int nChildSeg = parentSegP->GetChild (nSide); 
 // does this side have a child?
 if (nChildSeg < 0 || nChildSeg >= SegCount ())
 	return;
@@ -946,7 +954,7 @@ CSegment *child_seg = Segments (nChildSeg);
 // yes, see if child has a side which points to the parent
 int nChildSide;
 for (nChildSide = 0; nChildSide < 6; nChildSide++)
-	if (child_seg->Child (nChildSide) == nParentSeg) break; 
+	if (child_seg->GetChild (nChildSide) == nParentSeg) break; 
 // if we found the matching side
 if (nChildSide < 6) {
 // define vert numbers for comparison
@@ -1071,7 +1079,7 @@ int nSide;
 for (nSide = 0; nSide < 6; nSide++)
 	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]) &&
 		 GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, nSide)) {
-		UnlinkChild (segP->Child (nSide), oppSideTable [nSide]);
+		UnlinkChild (segP->GetChild (nSide), oppSideTable [nSide]);
 		UnlinkChild (Current ()->nSegment, nSide); 
 		}
 
@@ -1188,10 +1196,10 @@ if (m_bSplineActive) {
 	return; 
 	}
 
-segP = CurrSeg (); 
+segP = current.Segment (); 
 if (nSide < 0)
 	nSide = Current ()->nSide;
-int nChildSeg = segP->Child (nSide); 
+int nChildSeg = segP->GetChild (nSide); 
 if (nChildSeg == -1) {
 	ErrorMsg ("The current side is not connected to another cube"); 
 	return; 
@@ -1263,7 +1271,7 @@ else {
 	// yes, see if child has a side which points to the parent
 	int nChildSide;
 	for (nChildSide = 0; nChildSide < 6; nChildSide++)
-		if (childSegP->Child (nChildSide) == Current ()->nSegment) 
+		if (childSegP->GetChild (nChildSide) == Current ()->nSegment) 
 			break; 
 	// if we found the matching side
 	if (nChildSide < 6)
@@ -1462,7 +1470,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 	segP->m_info.mapBitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		if (segP->Child (nSide) > -1) { // -1 = no child,  - 2 = outside of world
+		if (segP->GetChild (nSide) > -1) { // -1 = no child,  - 2 = outside of world
 			segP->m_info.mapBitmask &= ~(1 << (sideLineTable [nSide][0])); 
 			segP->m_info.mapBitmask &= ~(1 << (sideLineTable [nSide][1])); 
 			segP->m_info.mapBitmask &= ~(1 << (sideLineTable [nSide][2])); 
@@ -1499,7 +1507,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 			for (nSide = 0; nSide < 6; nSide++) {
 				if (!Link (nNewSeg, nNewSide, nSegment, nSide, 3)) {
 					// if these Segments () were linked, then unlink them
-					if ((newSegP->Child (nNewSide) == nSegment) && (segP->Child (nSide) == nNewSeg)) {
+					if ((newSegP->GetChild (nNewSide) == nSegment) && (segP->GetChild (nSide) == nNewSeg)) {
 						newSegP->SetChild (nNewSide, -1); 
 						segP->SetChild (nSide, -1); 
 						}
@@ -1539,7 +1547,7 @@ if (m_bSplineActive) {
 
 // figure out "other' cube
 if (solidify) {
-	if (Segments (Current ()->nSegment)->Child (Current ()->nSide) != -1) {
+	if (Segments (Current ()->nSegment)->GetChild (Current ()->nSide) != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
@@ -1752,7 +1760,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (segP->Child (nSide) == -1) {
+	if (segP->GetChild (nSide) == -1) {
 		SetTexture (nNewSeg, nSide, seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
 		Segments (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
@@ -1825,8 +1833,8 @@ return nCount;
 
 int CSegmentManager::IsWall (short nSegment, short nSide)
 {
-GetCurrent (nSegment, nSide); 
-return (Segments (nSegment)->Child (nSide)== -1) ||
+current.Get (nSegment, nSide); 
+return (Segments (nSegment)->GetChild (nSide)== -1) ||
 		 (Segments (nSegment)->m_sides [nSide].m_info.nWall < MineInfo ().walls.count); 
 }
 
@@ -1873,7 +1881,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 		}
 	else {
 		nSide = sideChildTable [nStartSide][nLine]; 
-		nChildSeg = segP->Child (nSide); 
+		nChildSeg = segP->GetChild (nSide); 
 		}
 	if ((nChildSeg < 0) || ((nOnlyChildSeg != -1) && (nChildSeg != nOnlyChildSeg)))
 		continue;
@@ -1998,16 +2006,16 @@ bool CSegmentManager::GetOppositeSide (short& nOppSeg, short& nOppSide, short nS
 
 nOppSeg = 0; 
 nOppSide = 0; 
-GetCurrent (nSegment, nSide); 
+current.Get (nSegment, nSide); 
 if (nSegment < 0 || nSegment >= SegCount ())
 	return false; 
 if (nSide < 0 || nSide >= 6)
 	return false; 
-nChildSeg = Segments (nSegment)->Child (nSide); 
+nChildSeg = Segments (nSegment)->GetChild (nSide); 
 if (nChildSeg < 0 || nChildSeg >= SegCount ())
 	return false; 
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-	if (Segments (nChildSeg)->Child (nChildSide) == nSegment) {
+	if (Segments (nChildSeg)->GetChild (nChildSide) == nSegment) {
 		nOppSeg = nChildSeg; 
 		nOppSide = nChildSide; 
 		return true; 
@@ -2045,7 +2053,7 @@ bool CSegmentManager::SetTexture (short nSegment, short nSide, short nBaseTex, s
 
 bUndo = DLE.SetModified (TRUE); 
 DLE.LockUndo (); 
-GetCurrent (nSegment, nSide); 
+current.Get (nSegment, nSide); 
 CSide *sideP = Segments (nSegment)->m_sides + nSide; 
 bChange = sideP->SetTexture (nBaseTex, nOvlTex);
 if (!bChange) {
@@ -2120,14 +2128,14 @@ for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
 
                         /* -------------------------- */
 
-void CSegmentManager::CopyOtherSegment ()
+void CSegmentManager::Copyother.Segmentment ()
 {
 	bool bUndo, bChange = false;
 
 if (Current1 ().nSegment == Current2 ().nSegment)
 	return; 
 short nSegment = Current ()->nSegment; 
-CSegment *otherSeg = OtherSeg (); 
+CSegment *otherSeg = other.Segment (); 
 bUndo = DLE.SetModified (TRUE); 
 DLE.LockUndo ();
 int nSide;
@@ -2148,7 +2156,7 @@ else {
 
 bool CSegmentManager::SplitSegment (void)
 {
-	CSegment*	centerSegP = CurrSeg (), *segP, *childSegP;
+	CSegment*	centerSegP = current.Segment (), *segP, *childSegP;
 	short			nCenterSeg = short (centerSegP - Segments (0));
 	short			nSegment, nChildSeg;
 	short			nSide, nOppSide, nChildSide;
@@ -2168,7 +2176,7 @@ h = VertCount ();
 #if 0
 // isolate segment
 for (nSide = 0; nSide < 6; nSide++) {
-	if (segP->Child (nSide) < 0)
+	if (segP->GetChild (nSide) < 0)
 		continue;
 	for (vertNum = 0; vertNum < 4; vertNum++, h++)
 		*Vertices (h) = *Vertices (segP->m_info.verts [sideVertTable [nSide][vertNum]]);
@@ -2239,9 +2247,9 @@ for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 #endif
 		}
 	InitSegment (nSegment);
-	if ((segP->SetChild (nSide, centerSegP->Child (nSide))) > -1) {
-		for (childSegP = Segments (segP->Child (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
-			if (childSegP->Child (nChildSide) == nCenterSeg) {
+	if ((segP->SetChild (nSide, centerSegP->GetChild (nSide))) > -1) {
+		for (childSegP = Segments (segP->GetChild (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
+			if (childSegP->GetChild (nChildSide) == nCenterSeg) {
 				childSegP->SetChild (nChildSide, nSegment);
 				break;
 				}
@@ -2270,13 +2278,13 @@ for (nSide = 0; nSide < 6; nSide++) {
 #if 1
 for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
-		if (segP->Child (nSide) >= 0)
+		if (segP->GetChild (nSide) >= 0)
 			continue;
 		for (nChildSeg = nSegment + 1, childSegP = Segments (SegCount () + nChildSeg); 
 			  nChildSeg < 6; 
 			  nChildSeg++, childSegP++) {
 			for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-				if (childSegP->Child (nChildSide)  >= 0)
+				if (childSegP->GetChild (nChildSide)  >= 0)
 					continue;
 				h = 0;
 				for (i = 0; i < 4; i++) {

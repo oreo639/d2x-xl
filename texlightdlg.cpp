@@ -318,7 +318,7 @@ void CTextureTool::SetWallColor (void)
 {
 if (theMine->UseTexColors ()) {
 	short			nSegment, nSide;
-	short			nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
+	short			nBaseTex = theMine->current.Side ()->m_info.nBaseTex;
 	CSegment*	segP = theMine->Segments (0);
 	CSide*		sideP;
 	CWall			*wallP;
@@ -371,8 +371,8 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				}
 			//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
 				{
-				theMine->SetTexColor (theMine->CurrSide ()->m_info.nBaseTex, psc);
-				theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
+				theMine->SetTexColor (theMine->current.Side ()->m_info.nBaseTex, psc);
+				theMine->SetTexColor (theMine->current.Side ()->m_info.nOvlTex, psc);
 				}
 			UpdateData (FALSE);
 			UpdatePaletteWnd ();
@@ -402,8 +402,8 @@ if (ChooseColor (&cc)) {
 	psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
 	psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->m_info.color.b = (double) m_rgbColor.peBlue / 255.0;
-	theMine->SetTexColor (theMine->CurrSide ()->m_info.nBaseTex, psc);
-	theMine->SetTexColor (theMine->CurrSide ()->m_info.nOvlTex, psc);
+	theMine->SetTexColor (theMine->current.Side ()->m_info.nBaseTex, psc);
+	theMine->SetTexColor (theMine->current.Side ()->m_info.nOvlTex, psc);
 	UpdatePaletteWnd ();
 	}
 }

@@ -27,7 +27,7 @@ CWallManager wallManager;
 
 CWall *CWallManager::Add (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture) 
 {
-GetCurrent (nSegment, nSide);
+current.Get (nSegment, nSide);
 
 ushort nWall;
 CSegment *segP = segmentManager.GetSegment (nSegment);
@@ -35,27 +35,26 @@ CSide* sideP = segmentManager.GetSide (nSegment, nSide);
 
 // if wall is an overlay, make sure there is no child
 if (type < 0)
-	type = (segP->Child (nSide) == -1) ? WALL_OVERLAY : WALL_OPEN;
-if (type == WALL_OVERLAY) {
-	if (segP->Child (nSide) != -1) {
+	type = (segP->GetChild (nSide) == -1) ? WALL_OVERLAY : WALL_OPEN;
+	if ((type == WALL_OVERLAY) && (segP->GetChild (nSide) != -1)) {
 		ErrorMsg ("Switches can only be put on solid sides.");
 		return null;
 		}
 	}
 else {
 	// otherwise make sure there is a child
-	if (segP->Child (nSide) < 0) {
+	if (segP->GetChild (nSide) < 0) {
 		ErrorMsg ("This side must be attached to an other cube before a wall can be added.");
 		return null;
 		}
 	}
 
-if (segP->m_sides [nSide].m_info.nWall < MineInfo ().walls.count) {
+if (sideP->GetWall () != null) {
 	ErrorMsg ("There is already a wall on this side.");
 	return null;
 	}
 
-if ((nWall = MineInfo ().walls.count) >= MAX_WALLS) {
+if ((nWall = Count ()) >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls () reached");
 	return null;
 	}
@@ -63,15 +62,16 @@ if ((nWall = MineInfo ().walls.count) >= MAX_WALLS) {
 // link wall to segment/side
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-segP->m_sides [nSide].m_info.nWall = nWall;
-DefineWall (nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
-Walls (nWall)->m_info.flags = flags;
-Walls (nWall)->m_info.keys = keys;
+sideP->m_info.nWall = nWall;
+CWall* wallP = Walls (nWall);
+wallP->(nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
+wallP->m_info.flags = flags;
+wallP->m_info.keys = keys;
 // update number of Walls () in mine
 MineInfo ().walls.count++;
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
-return Walls (nWall);
+return wallP;
 }
 
 //--------------------------------------------------------------------------
@@ -86,148 +86,6 @@ nOppWall = Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 return true;
 }
 
-//--------------------------------------------------------------------------
-// DefineWall()
-//
-// Note: if nClip == -1, then it is overriden for blastable and auto door
-//       if nTexture == -1, then it is overriden for illusion Walls ()
-//       if nClip == -2, then texture is applied to nOvlTex instead
-//--------------------------------------------------------------------------
-
-void CWallManager::DefineWall (short nSegment, short nSide, ushort nWall,
-								byte type, char nClip, short nTexture,
-								bool bRedefine) 
-{
-GetCurrent (nSegment, nSide);
-
-	int i;
-	CSegment *segP = Segments (nSegment);
-	CSide *sideP = segP->m_sides + nSide;
-	CWall *wallP = Walls (nWall);
-
-DLE.SetModified (TRUE);
-DLE.LockUndo ();
-// define new wallP
-wallP->m_nSegment = nSegment;
-wallP->m_nSide = nSide;
-wallP->m_info.type = type;
-if (!bRedefine) {
-	wallP->m_info.nTrigger = NO_TRIGGER;
-	wallP->m_info.linkedWall = -1; //GetOppositeWall (nOppWall, nSegment, nSide) ? nOppWall : -1;
-	}
-switch (type) {
-	case WALL_BLASTABLE:
-		wallP->m_info.nClip = (nClip == -1) ?  6 : nClip;
-		wallP->m_info.hps = WALL_HPS;
-		// define door textures based on clip number
-		SetWallTextures (nWall, nTexture);
-		break;
-
-	case WALL_DOOR:
-		wallP->m_info.nClip = (nClip == -1) ? 1 : nClip;
-		wallP->m_info.hps = 0;
-		// define door textures based on clip number
-		SetWallTextures (nWall, nTexture);
-		break;
-
-	case WALL_CLOSED:
-	case WALL_ILLUSION:
-		wallP->m_info.nClip = -1;
-		wallP->m_info.hps = 0;
-		// define texture to be energy
-		if (nTexture == -1)
-			SetTexture (nSegment, nSide, (IsD1File ()) ? 328 : 353, 0); // energy
-		else if (nClip == -2)
-			SetTexture (nSegment, nSide, 0, nTexture);
-		else
-			SetTexture (nSegment, nSide, nTexture, 0);
-		break;
-
-	case WALL_OVERLAY: // d2 only
-		wallP->m_info.nClip = -1;
-		wallP->m_info.hps = 0;
-		// define box01a
-		SetTexture (nSegment, nSide, -1, 414);
-		break;
-
-	case WALL_CLOAKED:
-		wallP->m_info.cloakValue = 17;
-		break;
-
-	case WALL_TRANSPARENT:
-		wallP->m_info.cloakValue = 0;
-		break;
-
-	default:
-		wallP->m_info.nClip = -1;
-		wallP->m_info.hps = 0;
-		SetTexture (nSegment, nSide, nTexture, 0);
-		break;
-	}
-wallP->m_info.flags = 0;
-wallP->m_info.state = 0;
-wallP->m_info.keys = 0;
-//  wallP->pad = 0;
-wallP->m_info.controllingTrigger = 0;
-
-// set uvls of new texture
-uint	scale = (uint) textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
-for (i = 0;i<4;i++) {
-	sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
-	sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
-	sideP->m_info.uvls [i].l = default_uvls [i].l;
-	}
-Segments (nSegment)->SetUV (nSide, 0, 0);
-DLE.UnlockUndo ();
-}
-
-//------------------------------------------------------------------------------
-// SetWallTextures()
-//
-// 1/27/97 - added wall01 and door08
-//------------------------------------------------------------------------------
-
-void CWallManager::SetWallTextures (ushort nWall, short nTexture) 
-{
-static short wall_texture [N_WALL_TEXTURES_D1][2] = {
-	{371,0},{0,376},{0,0},  {0,387},{0,399},{413,0},{419,0},{0,424},  {0,0},{436,0},
-	{0,444},{0,459},{0,472},{486,0},{492,0},{500,0},{508,0},{515,0},{521,0},{529,0},
-	{536,0},{543,0},{0,550},{563,0},{570,0},{577,0}
-	};
-static short d2_wall_texture [N_WALL_TEXTURES_D2][2] = {
-	{435,0},{0,440},{0,0},{0,451},{0,463},{477,0},{483,0},{0,488},{0,0},  {500,0},
-	{0,508},{0,523},{0,536},{550,0},{556,0},{564,0},{572,0},{579,0},{585,0},{593,0},
-	{600,0},{608,0},{0,615},{628,0},{635,0},{642,0},{0,649},{664,0},{0,672},{0,687},
-	{0,702},{717,0},{725,0},{731,0},{738,0},{745,0},{754,0},{763,0},{772,0},{780,0},
-	{0,790},{806,0},{817,0},{827,0},{838,0},{849,0},{858,0},{863,0},{0,871},{0,886},
-	{901,0}
-	};
-
-CWall *wallP = Walls (nWall);
-CSide *sideP = Segments (wallP->m_nSegment)->m_sides + (short) wallP->m_nSide;
-char nClip = wallP->m_info.nClip;
-
-DLE.SetModified (TRUE);
-DLE.LockUndo ();
-if ((wallP->m_info.type == WALL_DOOR) || (wallP->m_info.type == WALL_BLASTABLE))
-	if (IsD1File ()) {
-		sideP->m_info.nBaseTex = wall_texture [nClip][0];
-		sideP->m_info.nOvlTex = wall_texture [nClip][1];
-		} 
-	else {
-		sideP->m_info.nBaseTex = d2_wall_texture [nClip][0];
-		sideP->m_info.nOvlTex = d2_wall_texture [nClip][1];
-		}
-else if (nTexture >= 0) {
-	sideP->m_info.nBaseTex = nTexture;
-	sideP->m_info.nOvlTex = 0;
-	}
-else
-	return;
-DLE.UnlockUndo ();
-DLE.MineView ()->Refresh ();
-}
-
 //------------------------------------------------------------------------------
 // Mine - delete wall
 //------------------------------------------------------------------------------
@@ -240,7 +98,7 @@ void CWallManager::Delete (ushort nWall)
 	CSide *sideP;
 
 if (nWall < 0)
-	nWall = CurrSide ()->m_info.nWall;
+	nWall = current.Side ()->m_info.nWall;
 
 CWall* delWallP = Walls (nWall);
 
@@ -342,13 +200,9 @@ return (FindClip (wallP, nOvlTex) >= 0) || (FindClip (wallP, nBaseTex) >= 0);
 
 void CWallManager::CheckForDoor (short nSegment, short nSide) 
 {
-GetCurrent (nSegment, nSide);
-// put up a warning if changing a door's texture
-ushort nWall = Segments (nSegment)->m_sides [nSide].m_info.nWall;
-
-if (!bExpertMode &&
-    (nWall < MineInfo ().walls.count) &&
-	 ((Walls (nWall)->m_info.type == WALL_BLASTABLE) || (Walls (nWall)->m_info.type == WALL_DOOR)))
+if (!bExpertMode) {
+	CWall* wallP = segmentManager.GetWall (nSegment, nSide);
+	if ((wallP != null) && wallP->IsDoor ())
 		ErrorMsg ("Changing the texture of a door only affects\n"
 					"how the door will look before it is opened.\n"
 					"You can use this trick to hide a door\n"
@@ -356,6 +210,7 @@ if (!bExpertMode &&
 					"Hint: To change the door animation,\n"
 					"select \"Wall edit...\" from the Tools\n"
 					"menu and change the clip number.");
+	}
 }
 
 // ------------------------------------------------------------------------

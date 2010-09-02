@@ -172,7 +172,7 @@ void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 CHECKMINE;
 
-	CSide *sideP = theMine->CurrSide ();
+	CSide *sideP = theMine->current.Side ();
 	short	nBaseTex;
 
 if (PickTexture (point, nBaseTex))
@@ -273,8 +273,8 @@ else {
 	}
 SetScrollPos (SB_VERT, nOffset / m_viewSpace.cx, TRUE);
 // figure out position of current texture
-int nBaseTex = theMine->CurrSide ()->m_info.nBaseTex;
-int nOvlTex = theMine->CurrSide ()->m_info.nOvlTex & 0x3fff; // strip rotation info
+int nBaseTex = theMine->current.Side ()->m_info.nBaseTex;
+int nOvlTex = theMine->current.Side ()->m_info.nOvlTex & 0x3fff; // strip rotation info
 CTexture tex (textureManager.m_bmBuf);
 
 CDC *pDC = GetDC();

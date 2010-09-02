@@ -713,7 +713,7 @@ theMine->DeleteBlock ();
 
 void CDlcDoc::OnCopyOtherCube ()
 {
-theMine->CopyOtherSegment ();
+theMine->Copyother.Segmentment ();
 }
 
 

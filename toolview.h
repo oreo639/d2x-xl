@@ -161,11 +161,11 @@ class CTexToolDlg : public CToolDlg
 	int		m_nTimerId;
 	COLORREF	m_bkColor;
 	int		m_frame [2];
-	bool		m_bOtherSeg;
+	bool		m_bother.Segment;
 
 	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = null, 
 					 int nTexWndId = 0, int nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
-					 bool bOtherSeg = false);
+					 bool bother.Segment = false);
 	~CTexToolDlg ();
 	bool Refresh (short nBaseTex = -1, short nOvlTex = -1, short nVisible = -1);
 	void AnimateTexture (void);
@@ -696,7 +696,7 @@ class CWallTool : public CTexToolDlg
 		afx_msg void OnDeleteWall ();
 		afx_msg void OnDeleteWallAll ();
 		afx_msg void OnLock ();
-		afx_msg void OnOtherSide ();
+		afx_msg void Onother.Side ();
 		afx_msg void OnSetWall ();
 		afx_msg void OnSetType ();
 		afx_msg void OnSetClip ();

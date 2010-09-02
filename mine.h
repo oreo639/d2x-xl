@@ -360,16 +360,16 @@ public:
 	bool  LinkSegments(short nSegment1, short nSide1, short nSegment2,short nSide2, double margin);
 	void  LinkSides(short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match[4]);
 	void	CalcSegCenter (CVertex& pos, short nSegment);
-	inline CSegment *CurrSeg ()
+	inline CSegment *current.Segment ()
 		{ return Segments (Current ()->nSegment); }
 	inline CWall *SideWall (int i = 0, int j = 0)
 		{ int w = Segments (i)->m_sides [j].m_info.nWall; return (w < 0) ? null : Walls (w); }
 	inline CWall *CurrWall ()
-		{ int w = CurrSide ()->m_info.nWall; return (w < 0) ? null : Walls (w); }
-	inline CSide *CurrSide ()
-		{ return CurrSeg ()->m_sides + Current ()->nSide; }
+		{ int w = current.Side ()->m_info.nWall; return (w < 0) ? null : Walls (w); }
+	inline CSide *current.Side ()
+		{ return current.Segment ()->m_sides + Current ()->nSide; }
 	inline short CurrVert ()
-		{ return CurrSeg ()->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; }
+		{ return current.Segment ()->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; }
 	inline CGameObject *CurrObj ()
 		{ return Objects (Current ()->nObject); }
 	void Mark ();
@@ -538,17 +538,24 @@ public:
 	inline int& ObjectCount (void) 
 		{ return MineInfo ().objects.count; }
 
-	inline CSegment *OtherSeg (void)
+	inline CSegment *other.Segment (void)
 		{ return Segments (Other ()->nSegment); }
-	inline CSide *OtherSide (void)
-		{ return OtherSeg ()->m_sides + Other ()->nSide; }
+
+	inline CSide *other.Side (void)
+		{ return other.Segment ()->m_sides + Other ()->nSide; }
+
 	inline void SetCurrent (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1) {
-		if (nSegment >= 0) Current ()->nSegment = nSegment;
-		if (nSide >= 0) Current ()->nSide = nSide;
-		if (nLine >= 0) Current ()->nLine = nLine;
-		if (nPoint >= 0) Current ()->nPoint = nPoint;
+		if (nSegment >= 0) 
+			Current ()->nSegment = nSegment;
+		if (nSide >= 0) 
+			Current ()->nSide = nSide;
+		if (nLine >= 0) 
+			Current ()->nLine = nLine;
+		if (nPoint >= 0) 
+			Current ()->nPoint = nPoint;
 		}
-	inline void GetCurrent (short &nSegment, short& nSide) {
+
+	inline void current.Get (short &nSegment, short& nSide) {
 		if (nSegment < 0) nSegment = Current ()->nSegment;
 		if (nSide < 0) nSide = Current ()->nSide;
 		}
