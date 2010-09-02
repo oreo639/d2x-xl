@@ -1,4 +1,5 @@
 #include "SegmentManager.h"
+#include "ObjectManager.h"
 #include "TriggerManager.h"
 #include "UndoManager.h"
 
@@ -90,18 +91,18 @@ if (Count (0) >= MAX_TRIGGERS) {
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 
 CWall* wallP = current.Wall ();
 
 if (wallP == null) {
 	if (bAddWall) {
-		if (MineInfo ().walls.count >= MAX_WALLS) {
-			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
+		if (wallManager.Count () >= MAX_WALLS) {
+			ErrorMsg ("Cannot add a wall for this trigger\nsince the maximum number of walls is already reached.");
 			return null;
 			}
-		wallP = wallManager.Add (-1, -1, (current.Segment ()->GetChild (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
+		wallP = wallManager.Add (-1, -1, (current.Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			undoManager.ResetModified (bUndo);
@@ -115,7 +116,7 @@ if (wallP == null) {
 	}
 // if D1, then convert type to flag value
 ushort flags;
-if (IsD1File ()) {
+if (theMine->IsD1File ()) {
 	switch(type) {
 		case TT_OPEN_DOOR:
 			flags = TRIGGER_CONTROL_DOORS;
@@ -184,10 +185,10 @@ undoManager.SetModified (TRUE);
 undoManager.Lock ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
-if (nDelTrigger < --Count ()) {	
+if (nDelTrigger < --m_nCount [0]) {	
 	// move the last trigger in the list to the deleted trigger's position
 	wallManager.UpdateTrigger (m_nCount [0], nDelTrigger);
-	*delTrigP = Trigger (m_nCount [0], 0);
+	*delTrigP = m_triggers [0][m_nCount [0]];
 	}
 
 undoManager.Unlock ();
@@ -201,7 +202,7 @@ LinkExitToReactor ();
 
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
-CTrigger* trigP = m_triggers [nClass];
+CTrigger* trigP = &m_triggers [nClass][0];
 for (int i = 0; i < m_nCount [nClass]; i++, trigP++)
 	trigP->Delete (key);
 }
@@ -210,32 +211,28 @@ for (int i = 0; i < m_nCount [nClass]; i++, trigP++)
 // Mine - FindTrigger
 //------------------------------------------------------------------------------
 
-short CTriggerManager::FindWall (short& nTrigger, short nSegment, short nSide)
+short CTriggerManager::FindBySide (short& nTrigger, short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
-CWall *wallP = Walls (0);
-int nWall;
-for (nWall = MineInfo ().walls.count; nWall; nWall--, wallP++) {
-	if ((wallP->m_nSegment == nSegment) && (wallP->m_nSide == nSide)) {
-		nTrigger = wallP->m_info.nTrigger;
-		return short (wallP - Walls (0));
-		}
+CWall *wallP = wallManager.FindBySide (nSegment, nSide);
+if (wallP != null) {
+	nTrigger = wallP->m_info.nTrigger;
+	return wallManager.Index (wallP);
 	}
-nTrigger = NO_TRIGGER;
-return MineInfo ().walls.count;
+return wallManager.Count ();
 }
 
 //------------------------------------------------------------------------------------
 // Mine - FindTrigger
 //------------------------------------------------------------------------------------
 
-short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide, short nClass = 0)
+short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide, short nClass)
 {
 	CTrigger *trigP = Triggers (0);
 	CSideKey key = CSideKey (nSegment, nSide);
 	int i, j;
 
-for (i = nTrigger; i < MineInfo ().triggers.count; i++, trigP++)
+for (i = nTrigger; i < m_nCount [0]; i++, trigP++)
 	if (-1 < (j = trigP->Find (key)))
 		return i;
 return -1;
@@ -251,31 +248,26 @@ return -1;
 
 void CTriggerManager::LinkExitToReactor (void) 
 {
-  short 		nTarget;
-  CSideKey	key;
-  ushort		nWall;
-  char 		nTrigger;
-  bool 		found;
-
   CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
 // remove items from list that do not point to a wall
-for (nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
-	if (!wallManager.Find (reactorTrigger->m_targets [nTarget]))
+for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
+	if (!wallManager.FindBySide (reactorTrigger->m_targets [nTarget]))
 		reactorTrigger->Delete (nTarget);
 	}
 // add any exits to target list that are not already in it
-for (nWall = 0; nWall < wallManager.Count (); nWall++) {
-	CTrigger* trigP = wallManager.GetWall (nWall)->GetTrigger ();
+for (short nWall = 0; nWall < wallManager.Count (); nWall++) {
+	CWall* wallP = wallManager.GetWall (nWall);
+	CTrigger* trigP = wallP->GetTrigger ();
 	if (trigP == null)
 		continue;
 	if (!trigP->IsExit ())
 		continue;
-	if (reactorTrigger->Find (*Walls (nWall)))
+	if (reactorTrigger->Find (*wallP))
 		continue;
-	nTarget = reactorTrigger->Add (face);
+	reactorTrigger->Add (*wallP);
 	}
 undoManager.Unlock ();
 }
@@ -284,7 +276,7 @@ undoManager.Unlock ();
 
 CTrigger* CTriggerManager::AddToObject (short nObject, short type) 
 {
-	CObject* objP = (nObject < 0) ? current.Object () : objectManager.GetObject (nObject);
+	CGameObject* objP = (nObject < 0) ? current.Object () : objectManager.GetObject (nObject);
 
 if (objP == null) {
 	ErrorMsg ("Couldn't find object to attach triggers to.");
@@ -324,8 +316,8 @@ void CTriggerManager::DeleteFromObject (short nDelTrigger)
 {
 if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
-if (nDelTrigger < NumObjTriggers () - 1)
-	*ObjTriggers (nDelTrigger) = *ObjTriggers (NumObjTriggers () - 1);
+if (nDelTrigger < --m_nCount [1])
+	m_triggers [1][nDelTrigger] = m_triggers [1][m_nCount [1]];
 }
 
 //------------------------------------------------------------------------------
@@ -336,7 +328,7 @@ void CTriggerManager::DeleteObjTriggers (short nObject)
 	
 while (i)
 	if (ObjTriggers (--i)->m_info.nObject == nObject)
-		DeleteObjTrigger (i);
+		DeleteFromObject (i);
 }
 
 //------------------------------------------------------------------------------
@@ -357,37 +349,38 @@ for (i = 0; nTriggers; i++)
 	if (Triggers (i)->Delete (key))
 		i--;
 
-for (i = NumObjTriggers (); i > 0)
+for (i = NumObjTriggers (); i > 0; )
 	if (ObjTriggers (--i)->Delete (key) == 0) // no targets left
-		DeleteObjTrigger (i);
+		DeleteFromObject (i);
 }
 
 // -----------------------------------------------------------------------------
 
-void Read (CFileManager& fp, CMineItemInfo& info)
+void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
-if (info.nOffset < 0)
+if (info.offset < 0)
 	return;
-Count () = info.count;
+Count (0) = info.count;
 for (short i = 0; i < info.count; i++)
 	m_triggers [0][i].Read (fp);
 
 int bObjTriggersOk = 1;
-if (MineInfo ().fileInfo.version >= 33) {
+
+if (nFileVersion >= 33) {
 	NumObjTriggers () = fp.ReadInt32 ();
-	for (int i = 0; i < NumObjTriggers (); i++)
-		ObjTriggers (i)->Read (fp, MineInfo ().fileInfo.version, true);
-	if (MineInfo ().fileInfo.version >= 40) {
-		for (int i = 0; i < NumObjTriggers (); i++)
+	for (short i = 0; i < NumObjTriggers (); i++)
+		ObjTriggers (i)->Read (fp, nFileVersion, true);
+	if (nFileVersion >= 40) {
+		for (short i = 0; i < NumObjTriggers (); i++)
 			ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 		}
 	else {
-		for (int i = 0; i < NumObjTriggers (); i++) {
+		for (short i = 0; i < NumObjTriggers (); i++) {
 			fp.ReadInt16 ();
 			fp.ReadInt16 ();
 			ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
 			}
-		if (MineInfo ().fileInfo.version < 36)
+		if (nFileVersion < 36)
 			fp.Seek (700 * sizeof (short), SEEK_CUR);
 		else
 			fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
@@ -403,23 +396,28 @@ else {
 
 // -----------------------------------------------------------------------------
 
-void Write (CFileManager& fp, CMineItemInfo& info)
+void CTriggerManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
 info.count = Count (0);
 if (Count (0) + Count (1) == 0)
 	info.offset = -1;
 else {
+	short i;
+
 	info.offset = fp.Tell ();
-	for (short i = 0; i < Count (); i++)
-		m_triggers [0][i].Write (fp);
-if (DLE.LevelVersion () >= 12) {
-	fp.Write (NumObjTriggers ());
-	if (NumObjTriggers () > 0) {
-		SortObjTriggers ();
-		for (i = 0; i < NumObjTriggers (); i++)
-			ObjTriggers (i)->Write (fp, MineInfo ().fileInfo.version, true);
-		for (i = 0; i < NumObjTriggers (); i++)
-			fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
+
+	for (i = 0; i < Count (0); i++)
+		m_triggers [0][i].Write (fp, nFileVersion);
+
+	if (theMine->LevelVersion () >= 12) {
+		fp.Write (NumObjTriggers ());
+		if (NumObjTriggers () > 0) {
+			SortObjTriggers ();
+			for (i = 0; i < NumObjTriggers (); i++)
+				ObjTriggers (i)->Write (fp, nFileVersion, true);
+			for (i = 0; i < NumObjTriggers (); i++)
+				fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
+			}
 		}
 	}
 }

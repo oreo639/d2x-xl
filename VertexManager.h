@@ -50,8 +50,8 @@ class CVertexManager {
 		void DeleteUnused (void);
 		void Delete (short nDelVert);
 
-		void Read (short nCount);
-		void Write (void);
+		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 	};
 
 extern CVertexManager vertexManager;

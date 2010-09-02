@@ -6905,6 +6905,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ObjectManager.h"
+					>
+				</File>
+				<File
 					RelativePath="palette.h"
 					>
 				</File>

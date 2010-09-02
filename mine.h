@@ -108,7 +108,8 @@ public:
 	int				m_fileType;
 	int				m_levelVersion;
 	char				m_currentLevelName [256];	
-	MINE_DATA		m_mineData;
+	CMineData		m_mineData;
+
 	robotInfoList	m_defaultRobotInfo;
 	HPALETTE			m_paletteHandle;
 	
@@ -232,7 +233,7 @@ public:
 	inline CColor *LightColors (int i, int j = 0)
 		{ return &MineData ().lightColors [i * 6 + j]; }
 	inline CColor *CurrLightColor ()
-		{ return LightColor (Current ()->nSegment, Current ()->nSide); }
+		{ return LightColor (current.m_nSegment, current.m_nSide); }
 
 
 	byte *LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize);
@@ -258,16 +259,6 @@ public:
 	bool	CopyObject (byte new_type, short nSegment = -1);
 	void  DeleteObject(short objectNumber = -1);
 
-	void InitSegment (short segNum);
-	bool SplitSegment ();
-	bool  AddSegment();
-	bool  LinkSegments(short nSegment1, short nSide1, short nSegment2,short nSide2, double margin);
-	void  LinkSides(short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match[4]);
-	void	CalcSegCenter (CVertex& pos, short nSegment);
-	inline short CurrVert ()
-		{ return current.Segment ()->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; }
-	inline CGameObject *CurrObj ()
-		{ return Objects (Current ()->nObject); }
 	void Mark ();
 	void MarkAll ();
 	void UnmarkAll ();
@@ -275,16 +266,6 @@ public:
 	void UpdateMarkedCubes ();
 	bool SideIsMarked (short nSegment, short nSide);
 	bool SegmentIsMarked (short nSegment);
-
-	bool IsPointOfSide (CSegment *segP, int nSide, int pointnum);
-	bool IsLineOfSide (CSegment *segP, int nSide, int linenum);
-
-	void JoinSegments(int automatic = 0);
-	void JoinLines();
-	void JoinPoints();
-	void SplitSegments(int solidify = 0, int nSide = -1);
-	void SplitLines();
-	void SplitPoints();
 
 	CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
 	CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);

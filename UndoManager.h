@@ -40,6 +40,8 @@ class CUndoManager
 		inline int GetMaxSize (void) { return m_maxSize; }
 		inline void Lock () { Delay (true); }
 		inline void Unlock () { Delay (false); }
+		bool SetModified (bool bModified);
+		void ResetModified (bool bRevert);
 };
 
 extern CUndoManager undoManager;

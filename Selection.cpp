@@ -45,6 +45,21 @@ return segmentManager.GetSegment (m_nSegment);
 
 // -----------------------------------------------------------------------------
 
+short CSelection::Child (void)
+{
+return Segment ()->Child (m_nSide);
+}
+
+// -----------------------------------------------------------------------------
+
+CSegment* CSelection::ChildSeg (void)
+{
+short nChild = Child ();
+return (nChild < 0) ? null : segmentManager.GetSegment (nChild);
+}
+
+// -----------------------------------------------------------------------------
+
 CSide* CSelection::Side (void)
 {
 return segmentManager.GetSide (m_nSegment, m_nSide);
@@ -59,7 +74,7 @@ return segmentManager.GetWall (m_nSegment, m_nSide);
 
 // -----------------------------------------------------------------------------
 
-CObject* CSelection::Object (void)
+CGameObject* CSelection::Object (void)
 {
 return objectManager.GetObject (m_nObject);
 }

@@ -5,6 +5,7 @@
 #include "cfile.h"
 #include "carray.h"
 #include "trigger.h"
+#include "MineInfo.h"
 
 #define MAX_TRIGGERS_D1			100
 #define MAX_TRIGGERS_D2			254
@@ -33,8 +34,8 @@ typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 class CTriggerManager {
 	public:
 		triggerList				m_triggers [2];
-		short						m_nCount [2];
 		reactorTriggerList	m_reactorTriggers;
+		short						m_nCount [2];
 		short						m_nReactorTriggers;
 
 	public:
@@ -62,6 +63,8 @@ class CTriggerManager {
 
 		void DeleteTarget (CSideKey key);
 
+		void DeleteTarget (CSideKey key, short nClass);
+
 		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey (nSegment, nSide)); }
 
 		inline CTrigger* Add (short nItem, short type, bool bAddWall = false) {
@@ -75,6 +78,10 @@ class CTriggerManager {
 				DeleteFromWall (nDelTrigger);
 			}
 
+		void DeleteObjTriggers (short nObject);
+
+		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
+
 		bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
 		bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
 		bool AddOpenDoor (void); 
@@ -86,6 +93,13 @@ class CTriggerManager {
 		bool AddNormalExit (void); 
 		bool AddSecretExit (void); 
 
+		short FindBySide (short& nTrigger, short nSegment, short nSide);
+		short FindTarget (short nTrigger, short nSegment, short nSide, short nClass = 0);
+		short FindObjTarget (short nTrigger, short nSegment, short nSide);
+
+		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+
 	private:
 		int CmpObjTriggers (CTrigger *pi, CTrigger *pm);
 		void SortObjTriggers (short left, short right);
@@ -93,7 +107,7 @@ class CTriggerManager {
 		CTrigger* AddToObject (short nObject, short type);
 		void DeleteFromWall (short nDelTrigger);
 		void DeleteFromObject (short nDelTrigger);
-
+		void LinkExitToReactor (void);
 };
 
 extern CTriggerManager triggerManager;

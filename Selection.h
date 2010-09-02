@@ -28,9 +28,11 @@ public:
 
 	void Get (short& nSegment, short& nSide);
 	CSegment* Segment (void);
+	short Child (void);
+	CSegment* ChildSeg (void);
 	CSide* Side (void);
 	CWall* Wall (void);
-	CObject* Object (void);
+	CGameObject* Object (void);
 };
 
 extern CSelection selections [2];

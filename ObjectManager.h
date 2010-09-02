@@ -33,4 +33,6 @@ class CObjectManager {
 	void Write (void);
 };
 
+extern CObjectManager objectManager;
+
 #endif //__objman_h
