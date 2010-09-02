@@ -3,7 +3,6 @@
 
 #include <math.h>
 #include "define.h"
-#include "Vector.h"
 //#include "cfile.h"
 
 struct tAngleVector;
@@ -12,31 +11,6 @@ struct tFixVector;
 class CFixVector;
 struct tDoubleVector;
 class CDoubleVector;
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-inline double Round (double value, double round = 1.0) { return (value >= 0) ? value + round / 2.0 : value - round / 2.0; }
-
-// -----------------------------------------------------------------------------
-
-#define X2D(_v)	((double) _v / 65536.0)
-#define D2X(_v)	((int) Round (_v * 65536.0))
-#define X2I(_v)	(_v / 65536)
-#define I2X(_v)	((int) _v * 65536.0)
-
-// -----------------------------------------------------------------------------
-
-inline int FixMul (int n, int m)
-{
-return (int) ((double) n * (double) m / 65536.0);
-}
-
-inline int FixDiv (int n, int m)
-{
-return (int) ((double) n / (double) m * 65536.0);
-}
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -53,9 +27,9 @@ inline void Read (CFileManager& fp) {
 	}
 
 inline void Write (CFileManager& fp) { 
-	WriteFixAng (p, fp);
-	WriteFixAng (b, fp);
-	WriteFixAng (h, fp);
+	WriteInt16 (p, fp);
+	WriteInt16 (b, fp);
+	WriteInt16 (h, fp);
 	}
 #endif
 } tAngleVector;
@@ -88,13 +62,6 @@ public:
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-#if FIX_IS_DOUBLE
-
-#define tFixVector	tDoubleVector	
-#define CFixVector	CDoubleVector	
-
-#else
-
 struct tFixVector {
 public:
 	int x, y, z;
@@ -106,9 +73,9 @@ inline void Read (CFileManager& fp) {
 	}
 
 inline void Write (CFileManager& fp) { 
-	WriteFix (x, fp);
-	WriteFix (y, fp);
-	WriteFix (z, fp);
+	WriteInt32 (x, fp);
+	WriteInt32 (y, fp);
+	WriteInt32 (z, fp);
 	}
 #endif
 };
@@ -159,8 +126,6 @@ inline const CFixVector& Normalize (void) { *this /= Mag (); return *this; }
 void Rotate (CFixVector& origin, CFixVector& normal, double angle);
 };
 
-#endif
-
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -176,9 +141,9 @@ inline void Read (CFileManager& fp) {
 	}
 
 inline void Write (CFileManager& fp) { 
-	WriteFix (D2X (x), fp);
-	WriteFix (D2X (y), fp);
-	WriteFix (D2X (z), fp);
+	WriteInt32 (D2X (x), fp);
+	WriteInt32 (D2X (y), fp);
+	WriteInt32 (D2X (z), fp);
 	}
 #endif
 };
@@ -316,7 +281,7 @@ inline const CFixVector CFixVector::operator/ (CFixVector other) const {
 	}
 
 inline const int CFixVector::operator^ (const CFixVector& other) const {
-	return X2D (FixMul (v.x, other.v.x) + FixMul (v.y, other.v.y) + FixMul (v.z, other.v.z));
+	return FixMul (v.x, other.v.x) + FixMul (v.y, other.v.y) + FixMul (v.z, other.v.z);
 	}
 
 inline const int CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag ()); }
@@ -339,7 +304,6 @@ inline const CDoubleVector& CDoubleVector::operator= (const CDoubleVector& other
 	return *this;
 	}
 
-#if !FIX_IS_DOUBLE
 inline const CDoubleVector& CDoubleVector::operator= (const tFixVector& other) { 
 	v.x = X2D (other.x), v.y = X2D (other.y), v.z = X2D (other.z); 
 	return *this;
@@ -349,7 +313,6 @@ inline const CDoubleVector& CDoubleVector::operator= (const CFixVector& other) {
 	v.x = X2D (other.v.x), v.y = X2D (other.v.y), v.z = X2D (other.v.z); 
 	return *this;
 	}
-#endif
 
 inline const CDoubleVector& CDoubleVector::operator+= (const CDoubleVector& other) {
 	v.x += other.v.x, v.y += other.v.y, v.z += other.v.z; 
@@ -442,7 +405,6 @@ static inline const double Normal (CDoubleVector& normal, const CDoubleVector& p
 	return m;
 	}
 
-#if !FIX_IS_DOUBLE
 static inline int Dot (const CFixVector& v0, const CFixVector& v1) {
 	return int ((double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z)) / 65536.0);
 	}
@@ -465,7 +427,6 @@ static inline CFixVector Average (const CFixVector& p0, const CFixVector& p1) {
 	v /= 2.0;
 	return v;
 	}
-#endif
 
 static inline double Dot (const CDoubleVector& v0, const CDoubleVector& v1) {
 	return double (v0.v.x) * double (v1.v.x) + double (v0.v.y) * double (v1.v.y) + double (v0.v.z) * double (v1.v.z);
@@ -489,178 +450,6 @@ static inline CDoubleVector Average (const CDoubleVector& p0, const CDoubleVecto
 	v /= double (2);
 	return v;
 	}
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-#if FIX_IS_DOUBLE
-
-#define CFixMatrix	CDoubleMatrix
-
-#else
-
-class CFixMatrix {
-public:
-	CFixVector rVec, uVec, fVec;
-#if 0
-	inline void Read (CFileManager& fp) { 
-		rVec.Read (fp);
-		uVec.Read (fp);
-		fVec.Read (fp);
-	}
-
-	inline void Write (CFileManager& fp) { 
-		rVec.Write (fp);
-		uVec.Write (fp);
-		fVec.Write (fp);
-	}
-#endif
-	CFixMatrix ();
-	CFixMatrix (int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3);
-	CFixMatrix (CFixMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
-	CFixMatrix (CFixVector& r, CFixVector& u, CFixVector& f) : rVec (r), uVec (u), fVec (f) {}
-	CFixMatrix (int sinp, int cosp, int sinb, int cosb, int sinh, int cosh);
-	//computes a matrix from a Set of three angles.  returns ptr to matrix
-	CFixMatrix (CAngleVector& a);
-	//computes a matrix from a forward vector and an angle
-	CFixMatrix (CFixVector *v, short a);
-
-	CFixMatrix& CFixMatrix::Set (int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3);
-	CFixMatrix& Set (int sinp, int cosp, int sinb, int cosb, int sinh, int cosh);
-
-	CFixMatrix& Invert (CFixMatrix& m);
-	CFixMatrix Mul (const CFixMatrix& m);
-	CFixMatrix& Scale (CFixVector& scale);
-
-	const CFixVector operator* (const CFixVector& v);
-	inline const CFixMatrix operator* (const CFixMatrix& other) { return Mul (other); }
-	inline const CFixMatrix& operator= (const CFixMatrix& other) { 
-		rVec = other.rVec, uVec = other.uVec, fVec = other.fVec;
-		return *this;
-		}
-
-	const int Det (void);
-	const CFixMatrix Inverse (void);
-	void CFixMatrix::Rotate (double angle, char axis);
-	inline const CFixMatrix Transpose (void);
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-CFixMatrix& Transpose (CFixMatrix& dest, CFixMatrix& src);
-
-inline CFixMatrix& Transpose (CFixMatrix& m)
-{
-Swap (m.rVec.v.y, m.uVec.v.x);
-Swap (m.rVec.v.z, m.fVec.v.x);
-Swap (m.uVec.v.z, m.fVec.v.y);
-return m;
-}
-
-// -----------------------------------------------------------------------------
-
-inline const CFixMatrix CFixMatrix::Transpose (void)
-{
-CFixMatrix m;
-::Transpose (m, *this);
-return m;
-}
-
-// -----------------------------------------------------------------------------
-
-inline const CFixVector CFixMatrix::operator* (const CFixVector& v)
-{
-return CFixVector (v ^ rVec, v ^ uVec, v ^ fVec);
-}
-
-#endif
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-class CDoubleMatrix {
-public:
-	CDoubleVector rVec, uVec, fVec;
-#if 0
-	inline void Read (CFileManager& fp) { 
-		rVec.Read (fp);
-		uVec.Read (fp);
-		fVec.Read (fp);
-		}
-
-	inline void Write (CFileManager& fp) { 
-		rVec.Write (fp);
-		uVec.Write (fp);
-		fVec.Write (fp);
-		}
-#endif
-	CDoubleMatrix::CDoubleMatrix () { Clear (); }
-	CDoubleMatrix::CDoubleMatrix (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
-	CDoubleMatrix (CDoubleMatrix& m) : rVec(m.rVec), uVec(m.uVec), fVec(m.fVec) {}
-	CDoubleMatrix (CDoubleVector r, CDoubleVector u, CDoubleVector f) : rVec (r), uVec (u), fVec (f) {}
-	CDoubleMatrix (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
-	//computes a matrix from a Set of three angles.  returns ptr to matrix
-	CDoubleMatrix (CAngleVector& a);
-	//computes a matrix from a forward vector and an angle
-	CDoubleMatrix (CDoubleVector *v, short a);
-
-	void Clear (void);
-	CDoubleMatrix& Set (double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
-	CDoubleMatrix& Set (double sinp, double cosp, double sinb, double cosb, double sinh, double cosh);
-
-	CDoubleMatrix& Invert (CDoubleMatrix& m);
-	CDoubleMatrix Mul (const CDoubleMatrix& m);
-	CDoubleMatrix& Scale (CDoubleVector& scale);
-
-	const CDoubleVector operator* (const CDoubleVector& v);
-	inline const CDoubleMatrix operator* (const CDoubleMatrix& other) { return Mul (other); }
-	inline const CDoubleMatrix& operator= (const CDoubleMatrix& other) { 
-		rVec = other.rVec, uVec = other.uVec, fVec = other.fVec;
-		return *this;
-		}
-
-	const double Det (void);
-	const CDoubleMatrix Inverse (void);
-	const CDoubleMatrix Adjoint (void);
-	inline const CDoubleMatrix Transpose (void);
-	void Rotate (double angle, char axis);
-	void Scale (double scale);
-	void Square2Quad (POINT a [4]);
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-CDoubleMatrix& Transpose (CDoubleMatrix& dest, CDoubleMatrix& src);
-
-inline CDoubleMatrix& Transpose (CDoubleMatrix& m)
-{
-Swap (m.rVec.v.y, m.uVec.v.x);
-Swap (m.rVec.v.z, m.fVec.v.x);
-Swap (m.uVec.v.z, m.fVec.v.y);
-return m;
-}
-
-// -----------------------------------------------------------------------------
-
-inline const CDoubleMatrix CDoubleMatrix::Transpose (void)
-{
-CDoubleMatrix m;
-::Transpose (m, *this);
-return m;
-}
-
-// -----------------------------------------------------------------------------
-
-inline const CDoubleVector CDoubleMatrix::operator* (const CDoubleVector& v)
-{
-return CDoubleVector (v ^ rVec, v ^ uVec, v ^ fVec);
-}
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

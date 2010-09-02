@@ -7,6 +7,7 @@
 # pragma pack(1)
 
 #include "cfile.h"
+#include "Types.h"
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -45,6 +46,7 @@ typedef struct tTrigger {
 	ushort	flags;
 	int		value;
 	int		time;
+	short		nObject;
 	ushort	nIndex;
 } tTrigger;
 

@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------
 
-#if USE_DYN_ARRAYS
+#if _DEBUG
 
 typedef CDynamicArray< CTexture > textureList;
 

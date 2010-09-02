@@ -1,33 +1,25 @@
 #ifndef __segman_h
 #define __segman_h
 
+#include "define.h"
+#include "cfile.h"
 #include "carray.h"
-#include "types.h"
-#include "segment.h"
-#include "robot.h"
-#include "object.h"
-#include "textures.h"
-#include "poly.h"
+#include "Types.h"
+#include "Selection.h"
 
 #define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
 #define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
 #define SEGMENT_LIMIT		8000 // D2X-XL max # of cubes
-#define MAX_VERTICES_D1		2808 // descent 1 max # of vertices
-#define MAX_VERTICES_D2		(MAX_SEGMENTS_D2 * 4 + 8) // descent 2 max # of vertices
-#define VERTEX_LIMIT			(SEGMENT_LIMIT * 4 + 8) // descent 2 max # of vertices
 
 #define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : theMine->IsD1File () ? MAX_SEGMENTS_D1  : theMine->IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
-#define MAX_VERTICES ((theMine == null) ? MAX_VERTICES_D2 : theMine->IsD1File () ? MAX_VERTICES_D1 : theMine->IsStdLevel () ? MAX_VERTICES_D2 : VERTEX_LIMIT)
 
-#ifdef USE_DYN_ARRAYS
+#ifdef _DEBUG
 
 typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
-typedef CStaticArray< CVertex, VERTEX_LIMIT > vertexList;
 
 #else
 
 typedef CSegment segmentList [SEGMENT_LIMIT];
-typedef CVertex vertexList [VERTEX_LIMIT];
 
 #endif
 
@@ -36,9 +28,7 @@ typedef CVertex vertexList [VERTEX_LIMIT];
 class CSegmentManager {
 public:
 	segmentList	m_segments;
-	ushort		m_nSegments;
-	vertexList	vertices;
-	ushort		m_nVertices;
+	ushort		m_nCount;
 	int			m_nAddMode;
 
 public:
@@ -49,19 +39,18 @@ public:
 		{ return m_segments; }
 
 	inline ushort& SegCount ()
-		{ return m_nSegments; }
+		{ return m_nCount; }
 
-	inline CSegment *GetSegment (int i)
-		{ return IsValid (i, m_nSegments) ? &m_segments [i] : null; }
+	inline CSegment *GetSegment (int i) { return &m_segments [i]; }
 
 	inline CSide* GetSide (short nSegment = -1, short nSide = -1) {
 		current.Get (nSegment, nSide);
-		return &Segments (nSegment)->m_sides [nSide];
+		return &GetSegment (nSegment)->m_sides [nSide];
 		}
 
 	inline CSide* GetOppositeSide (short nSegment = -1, short nSide = -1) {
 		current.Get (nSegment, nSide);
-		return &Segments (nSegment)->m_sides [nSide];
+		return &GetSegment (nSegment)->m_sides [nSide];
 		}
 
 	inline CWall* GetWall (short nSegment = -1, short nSide = -1) {
@@ -78,19 +67,6 @@ public:
 		}
 
 	void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
-
-	// Vertex getters
-	inline vertexList& Vertices (void)
-		{ return m_vertices; }
-
-	inline CVertex *GetVertex (int i)
-		{ return IsValid (i, m_nVertices) ? &m_vertices [i] : null; }
-
-	inline byte& VertStatus (int i = 0)
-		{ return Vertices (i)->m_status; }
-
-	inline ushort& VertCount ()
-		{ return m_nVertices; }
 
 	inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 	inline int GetAddMode (void) { return m_nAddMode; }
@@ -138,7 +114,7 @@ public:
 	bool GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment = -1, short nSide = -1);
 	CSide *OppSide (void);
 	bool SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlTex);
-	void Copyother.Segmentment (void);
+	void CopyOtherSegment (void);
 	bool WallClipFromTexture (short nSegment, short nSide);
 	void CheckForDoor (short nSegment, short nSide);
 	void RenumberBotGens (void);
@@ -149,15 +125,10 @@ public:
 	void UndefineSegment (short nSegment);
 	void AutoLinkExitToReactor ();
 
-	inline CSegment *other.Segment (void)
-		{ return Segments (Other ()->nSegment); }
-	inline CSide *other.Side (void)
-		{ return other.Segment ()->m_sides + Other ()->nSide; }
-
-	short ReadSegmentInfo (CFileManager& file);
-	void WriteSegmentInfo (CFileManager& file, short);
+	short ReadSegmentInfo (CFileManager& fp);
+	void WriteSegmentInfo (CFileManager& fp, short);
 	void CutBlock ();
-	void CopyBlock (char *pszBlkFile = null);
+	void CopyBlock (char *filename = null);
 	void PasteBlock (); 
 	int ReadBlock (char *name,int option); 
 	void QuickPasteBlock ();
@@ -171,6 +142,8 @@ public:
 			*x = max;
 		}
 
+	void Read (short nCount);
+	void Write (void);
 
 private:
 	void UnlinkChild (short nParentSeg, short nSide);

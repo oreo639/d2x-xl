@@ -32,7 +32,7 @@ m_names [nVersion] = null;
 LoadNames (nVersion);
 m_header [nVersion] = CPigHeader (nVersion);
 LoadIndex (nVersion);
-#if USE_DYN_ARRAYS
+#if _DEBUG
 m_textures [nVersion].Create (MaxTextures (nVersion));
 #else
 m_textures [nVersion] = new CTexture [MaxTextures (nVersion)];
@@ -44,7 +44,7 @@ m_textures [nVersion] = new CTexture [MaxTextures (nVersion)];
 void CTextureManager::Destroy (int nVersion)
 {
 Release (nVersion, true, false);
-#if USE_DYN_ARRAYS
+#if _DEBUG
 m_textures [nVersion].Destroy ();
 #else
 if (m_textures [nVersion]) {
@@ -89,7 +89,7 @@ return DLE.IsD1File () ? 0 : 1;
 void CTextureManager::Release (int nVersion, bool bDeleteAll, bool bDeleteUnused) 
 {
 // free any m_textures that have been buffered
-#if USE_DYN_ARRAYS
+#if _DEBUG
 CTexture* texP = m_textures [nVersion].Buffer ();
 #else
 CTexture* texP = m_textures [nVersion];

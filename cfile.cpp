@@ -415,8 +415,8 @@ int CFileManager::WriteByte (byte v) { WriteScalar (v) }
 int CFileManager::WriteChar (char v) { WriteScalar (v) }
 int CFileManager::WriteFloat (float v) { WriteScalar (v) }
 int CFileManager::WriteDouble (double v) { WriteScalar (v) }
-int CFileManager::WriteFix (int v) { WriteScalar (v) }
-int CFileManager::WriteFixAng (short v) { WriteScalar (v) }
+int CFileManager::WriteInt32 (int v) { WriteScalar (v) }
+int CFileManager::WriteInt16 (short v) { WriteScalar (v) }
 
 // ----------------------------------------------------------------------------
 
@@ -495,27 +495,27 @@ do {
 
 void CFileManager::WriteVector (const tFixVector& v)
 {
-WriteFix (v.x);
-WriteFix (v.y);
-WriteFix (v.z);
+WriteInt32 (v.x);
+WriteInt32 (v.y);
+WriteInt32 (v.z);
 }
 
 // ----------------------------------------------------------------------------
 
 void CFileManager::WriteVector (const tDoubleVector& v)
 {
-WriteFix (D2X (v.x));
-WriteFix (D2X (v.y));
-WriteFix (D2X (v.z));
+WriteInt32 (D2X (v.x));
+WriteInt32 (D2X (v.y));
+WriteInt32 (D2X (v.z));
 }
 
 // ----------------------------------------------------------------------------
 
 void CFileManager::WriteVector (const tAngleVector& v)
 {
-WriteFixAng (v.p);
-WriteFixAng (v.b);
-WriteFixAng (v.h);
+WriteInt16 (v.p);
+WriteInt16 (v.b);
+WriteInt16 (v.h);
 }
 
 // ----------------------------------------------------------------------------

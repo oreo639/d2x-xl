@@ -1,9 +1,10 @@
 #ifndef __selection_h
 #define __selection_h
 
-#include "TriggerManager.h"
-#include "WallManager.h"
-#include "SegmentManager.h"
+#include "Trigger.h"
+#include "Wall.h"
+#include "Segment.h"
+#include "Object.h"
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -25,11 +26,11 @@ public:
 	short m_nPoint;
 	short m_nObject;
 
-	Get (short& nSegment, short& nSide);
-	Segment (void);
-	Side (void);
-	Wall (void);
-	Object (void);
+	void Get (short& nSegment, short& nSide);
+	CSegment* Segment (void);
+	CSide* Side (void);
+	CWall* Wall (void);
+	CObject* Object (void);
 };
 
 extern CSelection current, other;

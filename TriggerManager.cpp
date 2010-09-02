@@ -1,4 +1,5 @@
-#include "triggermanager.h"
+#include "SegmentManager.h"
+#include "TriggerManager.h"
 
 CTriggerManager triggerManager;
 
@@ -26,9 +27,9 @@ void CTriggerManager::SortObjTriggers (short left, short right)
 	short	l = left, r = right;
 
 do {
-	while (QCmpObjTriggers (ObjTriggers (l), &median) < 0)
+	while (CmpObjTriggers (ObjTriggers (l), &median) < 0)
 		l++;
-	while (QCmpObjTriggers (ObjTriggers (r), &median) > 0)
+	while (CmpObjTriggers (ObjTriggers (r), &median) > 0)
 		r--;
 	if (l <= r) {
 		if (l < r)
@@ -39,9 +40,9 @@ do {
 	}
 while (l < r);
 if (l < right)
-	QSortObjTriggers (l, right);
+	SortObjTriggers (l, right);
 if (left < r)
-	QSortObjTriggers (left, r);
+	SortObjTriggers (left, r);
 }
 
 //------------------------------------------------------------------------
@@ -347,8 +348,6 @@ return FindTarget (nTrigger, nSegment, nSide, 1);
 
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-
 void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide) 
 {
 CSideKey key (nSegment, nSide);
@@ -358,11 +357,9 @@ for (i = 0; nTriggers; i++)
 	if (Triggers (i)->Delete (key))
 		i--;
 
-for (i = 0; i < NumObjTriggers (); i++)
-	if (ObjTriggers (i)->Delete (key) == 0) { // no targets left
+for (i = NumObjTriggers (); i > 0)
+	if (ObjTriggers (--i)->Delete (key) == 0) // no targets left
 		DeleteObjTrigger (i);
-		i--;
-		}
 }
 
 // -----------------------------------------------------------------------------

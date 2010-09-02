@@ -1,20 +1,11 @@
-#ifndef DMB_TYPES_H
-#define DMB_TYPES_H
+#ifndef __types_h
+#define __types_h
 
 #include "define.h"
+#include "cfile.h"
 
 # pragma pack(push, packing)
 # pragma pack(1)
-
-#include "Vector.h"
-#include "cfile.h"
-
-// -----------------------------------------------------------------------------
-
-typedef signed char sbyte;
-typedef unsigned char byte;
-typedef unsigned short ushort;
-typedef unsigned int uint;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -65,6 +56,34 @@ public:
 	void Clear (void) {
 		m_nSegment = m_nSide = -1;
 		}
+};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+typedef struct rgbColor {
+	double	r, g, b;
+} rgbColor;
+
+// -----------------------------------------------------------------------------
+
+typedef struct tColor {
+	byte		index;
+	rgbColor	color;
+} tColor;
+
+// -----------------------------------------------------------------------------
+
+class CColor : public CGameItem {
+public:
+	tColor	m_info;
+
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
 // -----------------------------------------------------------------------------
@@ -261,5 +280,26 @@ typedef struct tVertMatch {
 		double	d;
 	} tVertMatch; 
 
-#endif // DMB_TYPES_H
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CVertex;
+class CSegment;
+class CSide;
+class CWall;
+class CTrigger;
+class CObject;
+class CSegmentManager;
+class CWallManager;
+class CTriggerManager;
+class CMine;
+
+extern CMine* theMine;
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+#endif // __types_h
 

@@ -23,8 +23,8 @@ ushort WriteUInt16 (ushort value, CFileManager& fp);
 byte WriteUInt8 (byte value, CFileManager& fp);
 void* WriteBytes (void* buffer, uint length, CFileManager& fp);
 
-#define WriteFix(_value, _fp)		WriteInt32 ((int) (_value), _fp)
-#define WriteFixAng(_value, _fp)	WriteInt32 ((short) (_value), _fp)
+#define WriteInt32(_value, _fp)		WriteInt32 ((int) (_value), _fp)
+#define WriteInt16(_value, _fp)	WriteInt32 ((short) (_value), _fp)
 
 double WriteDouble (double value, CFileManager& fp);
 

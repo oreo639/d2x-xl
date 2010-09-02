@@ -6,19 +6,18 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
+
 #include "define.h"
 #include "types.h"
-#include "dle-xp.h"
-#include "mine.h"
-#include "global.h"
 #include "cfile.h"
+#include "trigger.h"
+#include "dle-xp.h"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-short CTriggerTarget::Add (CSideKey key) 
+short CTriggerTargets::Add (CSideKey key) 
 {
 if (m_count < MAX_TRIGGER_TARGETS)
 	m_targets [m_count] = key;
@@ -27,7 +26,7 @@ return m_count++;
 
 //------------------------------------------------------------------------------
 
-short CTriggerTarget::Delete (short i = -1) 
+short CTriggerTargets::Delete (short i) 
 {
 if (i < 0)
 	i = m_count - 1;
@@ -42,7 +41,7 @@ return m_count;
 
 //------------------------------------------------------------------------------
 
-int CTriggerTarget::Delete (CSideKey key) 
+int CTriggerTargets::Delete (CSideKey key) 
 { 
 short i = Find (key);
 if (i >= 0)
@@ -51,7 +50,7 @@ if (i >= 0)
 
 //------------------------------------------------------------------------------
 
-int CTriggerTarget::Find (CSideKey key) 
+int CTriggerTargets::Find (CSideKey key) 
 { 
 for (int i = 0; i < m_count; i++)
 	if (m_targets [i] == key)
@@ -61,7 +60,7 @@ return -1;
 
 //------------------------------------------------------------------------------
 
-void Clear (void) 
+void CTriggerTargets::Clear (void) 
 { 
 m_count = 0;
 for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
@@ -70,7 +69,7 @@ for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 //------------------------------------------------------------------------------
 
-void Read (CFileManager& fp) 
+void CTriggerTargets::Read (CFileManager& fp) 
 {
 	int i;
 
@@ -78,12 +77,11 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSegment = fp.ReadInt16 ();
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSide = fp.ReadInt16 ();
-return 1;
 }
 
 //------------------------------------------------------------------------------
 
-void Write (CFileManager& fp) 
+void CTriggerTargets::Write (CFileManager& fp) 
 {
 	int i;
 
@@ -108,7 +106,7 @@ else if ((type == TT_CHANGE_TEXTURE) || (type == TT_MASTER))
 else if ((type == TT_MESSAGE) || (type == TT_SOUND))
 	m_info.value = 1;
 else 	
-	m_info.value = 5 * F1_0; // 5% shield or energy damage
+	m_info.value = I2X (5); // 5% shield or energy damage
 m_info.time = -1;
 m_count = 0;
 for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
@@ -117,7 +115,7 @@ for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 //------------------------------------------------------------------------------
 
-int CTrigger::Read (CFileManager& fp, int version, bool bObjTrigger)
+void CTrigger::Read (CFileManager& fp, int version, bool bObjTrigger)
 {
 if (DLE.IsD2File ()) {
 	m_info.type = fp.ReadByte ();
@@ -144,7 +142,6 @@ else {
 		m_count = MAX_TRIGGER_TARGETS;
 	}
 this->CTriggerTargets::Read (fp);
-return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -178,15 +175,15 @@ this->CTriggerTargets::Write (fp);
 bool CTrigger::IsExit (void)
 {
 return DLE.IsD1File () 
-		 ? m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
-		 : m_info.type == TT_EXIT || trigP->m_info.type == TT_SECRET_EXIT);
+		 ? (m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT)) != 0
+		 : (m_info.type == TT_EXIT) || (m_info.type == TT_SECRET_EXIT);
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-int CReactorTrigger::Read (CFileManager& fp, int version, bool bFlag)
+void CReactorTrigger::Read (CFileManager& fp, int version, bool bFlag)
 {
 	int	i;
 
@@ -195,7 +192,6 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSegment = fp.ReadInt16 ();
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	m_targets [i].m_nSide = fp.ReadInt16 ();
-return 1;
 }
 
 //------------------------------------------------------------------------------

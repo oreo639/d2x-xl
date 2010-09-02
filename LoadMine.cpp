@@ -343,7 +343,7 @@ byte *dataP;;
 if (!(dataP = res.Load (IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
 	return false;
 int i = res.Size () / (3 * sizeof (int) + sizeof (byte));
-#if USE_DYN_ARRAYS
+#if _DEBUG
 if (i > (int) MineData ().texColors.Length ())
 	i = (int) MineData ().texColors.Length ();
 #else

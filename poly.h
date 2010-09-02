@@ -1,7 +1,7 @@
 #ifndef __poly_h
 #define __poly_h
 
-#include "matrix.h"
+#include "ViewMatrix.h"
 
 /* the followin numbers are set using the original D2 robots */
 #define MAX_POLYMODEL_POINTS			416

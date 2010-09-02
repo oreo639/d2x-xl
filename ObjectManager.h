@@ -1,0 +1,36 @@
+#ifndef __objman_h
+#define __objman_h
+
+#include "define.h"
+#include "cfile.h"
+#include "carray.h"
+#include "object.h"
+
+#ifdef _DEBUG
+
+typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
+
+#else
+
+typedef CGameObject objectList [MAX_OBJECTS_D2];
+
+#endif
+
+class CObjectManager {
+	public:
+		objectList	m_objects;
+		short			m_nCount;
+
+	inline bool IsValid (short i) { return (i >= 0) && (i < m_nCount); }
+
+	inline objectList& Objects (void) { return m_objects; }
+	inline CGameObject *GetObject (int i) 
+		{ return &m_objects [i]; }
+
+	inline short& ObjCount () { return m_nCount; }
+
+	void Read (short nCount);
+	void Write (void);
+};
+
+#endif //__objman_h

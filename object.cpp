@@ -571,12 +571,12 @@ void CObjPhysicsInfo::Write (CFileManager& fp, int version)
 {
 fp.WriteVector (velocity);
 fp.WriteVector (thrust);
-fp.WriteFix (mass);
-fp.WriteFix (drag);
-fp.WriteFix (brakes);
+fp.WriteInt32 (mass);
+fp.WriteInt32 (drag);
+fp.WriteInt32 (brakes);
 fp.WriteVector (rotvel);
 fp.WriteVector (rotthrust);
-fp.WriteFixAng (turnroll);
+fp.WriteInt16 (turnroll);
 fp.WriteInt16 (flags);
 }
 

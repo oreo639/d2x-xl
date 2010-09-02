@@ -2,6 +2,9 @@
 #define __trigman_h
 
 #include "define.h"
+#include "cfile.h"
+#include "carray.h"
+#include "trigger.h"
 
 #define MAX_TRIGGERS_D1			100
 #define MAX_TRIGGERS_D2			254
@@ -13,7 +16,7 @@
 
 #define MAX_TRIGGERS	((theMine == null) ? MAX_TRIGGERS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2)
 
-#ifdef USE_DYN_ARRAYS
+#ifdef _DEBUG
 
 typedef CStaticArray< CTrigger, TRIGGER_LIMIT > triggerList;
 typedef CStaticArray< CTrigger, TRIGGER_LIMIT > objTriggerList;
@@ -30,24 +33,24 @@ typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 class CTriggerManager {
 	public:
 		triggerList				m_triggers [2];
-		short						m_nTriggers [2];
+		short						m_nCount [2];
 		reactorTriggerList	m_reactorTriggers;
 		short						m_nReactorTriggers;
 
 	public:
-		inline bool IsValid (short i, j) { return (i >= 0) && (i < j); }
+		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
 
 		inline triggerList& Triggers (void) { return m_triggers [0]; }
 
 		inline objTriggerList& ObjTriggers (void) { return m_triggers [1]; }
 
-		inline CTrigger *Triggers (int i, int nClass = 0) { return IsValid (i, m_nTriggers [nClass]) ? &m_triggers [nClass][i] : null; }
+		inline CTrigger* Triggers (int i, int nClass = 0) { return IsValid (i, m_nCount [nClass]) ? &m_triggers [nClass][i] : null; }
 
-		inline short& Count (int nClass) { return m_nTriggers [nClass]; }
+		inline short& Count (int nClass) { return m_nCount [nClass]; }
 
-		inline short& NumTriggers (void) { return Count 0); }
+		inline short& NumTriggers (void) { return Count (0); }
 
-		inline CTrigger *ObjTriggers (int i) { return Triggers (i, 1); }
+		inline CTrigger* ObjTriggers (int i) { return Triggers (i, 1); }
 
 		inline short& NumObjTriggers (void) { return Count (1); }
 
@@ -59,7 +62,9 @@ class CTriggerManager {
 
 		void DeleteTarget (CSideKey key);
 
-		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey key (nSegment, nSide)); }
+		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey (nSegment, nSide)); }
+
+		CTrigger* Add (short nWall, short type, bool bAddWall);
 
 		void Delete (short nDelTrigger, int nClass = 0);
 

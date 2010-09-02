@@ -2,7 +2,6 @@
 #ifndef __viewmatrix_h
 #define __viewmatrix_h
 
-#include "global.h"
 #include "matrix.h"
 
 class CViewMatrix

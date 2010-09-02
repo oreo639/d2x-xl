@@ -1,12 +1,16 @@
 #ifndef __mine_h
 #define __mine_h
 
+#include "define.h"
+#include "cfile.h"
 #include "carray.h"
-#include "types.h"
-#include "segment.h"
+#include "Types.h"
+#include "Selection.h"
 #include "robot.h"
-#include "object.h"
 #include "textures.h"
+#include "TriggerManager.h"
+#include "WallManager.h"
+#include "SegmentManager.h"
 #include "poly.h"
 
 #define MAX_LIGHT_DEPTH 6
@@ -28,15 +32,13 @@ extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 // CLASS - Level
 //**************************************************************************
 
-#ifdef USE_DYN_ARRAYS
+#ifdef _DEBUG
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
 typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
 typedef CStaticArray< CActiveDoor, DOOR_LIMIT > activeDoorList;
-typedef CStaticArray< CTrigger, MAX_TRIGGERS_D2 > triggerList;
-typedef CStaticArray< CTrigger, MAX_OBJ_TRIGGERS > objTriggerList;
 typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
@@ -183,35 +185,9 @@ public:
 	inline MINE_DATA& MineData ()
 		{ return m_mineData; }
 
-	inline vertexList& Vertices (void)
-		{ return segmentManager.Vertices (); }
-	inline CVertex *Vertices (int i)
-		{ return Vertices () + i; }
-	inline byte& VertStatus (int i = 0)
-		{ return Vertices (i)->m_status; }
-
-	inline segmentList& Segments (void)
-		{ return segmentManager.Segments (); }
-	inline ushort& SegCount ()
-		{ return segmentManager.SegCount (); }
-	inline CSegment *Segments (int i)
-		{ return Segments () + i; }
-
 	inline vertexColorList& VertexColors (void)
 		{ return MineData ().vertexColors; }
 
-	inline wallList& Walls (void)
-		{ return MineData ().walls; }
-
-	inline triggerList& Triggers (void)
-		{ return MineData ().triggers; }
-	inline objTriggerList& ObjTriggers (void)
-		{ return MineData ().objTriggers; }
-	inline reactorTriggerList& ReactorTriggers (void)
-		{ return MineData ().reactorTriggers; }
-
-	inline objectList& Objects (void)
-		{ return MineData ().objects; }
 	inline robotMakerList& BotGens (void)
 		{ return MineData ().robotMakers; }
 	inline robotMakerList& EquipGens (void)
@@ -234,22 +210,6 @@ public:
 	inline CColor *VertexColors (int i)
 		{ return &(MineData ().vertexColors [i]); }
 
-	inline CWall *Walls (int i)
-		{ return MineData ().walls + i; }
-
-	inline CTrigger *Triggers (int i)
-		{ return MineData ().triggers + i; }
-	inline int &NumTriggers ()
-		{ return MineInfo ().triggers.count; }
-	inline CTrigger *ObjTriggers (int i)
-		{ return MineData ().objTriggers + i; }
-	inline int& NumObjTriggers ()
-		{ return MineData ().numObjTriggers; }
-	inline CReactorTrigger *ReactorTriggers (int i)
-		{ return MineData ().reactorTriggers + i; }
-
-	inline CGameObject *Objects (int i)
-		{ return MineData ().objects + i; }
 	inline CRobotMaker *BotGens (int i)
 		{ return MineData ().robotMakers + i; }
 	inline CRobotMaker *EquipGens (int i)
@@ -273,10 +233,6 @@ public:
 		{ return MineData ().gameInfo; }
 	inline CMineFileInfo& MineFileInfo ()
 		{ return MineData ().gameInfo.fileInfo; }
-	inline int& ObjCount ()
-		{ return MineInfo ().objects.count; }
-	inline ushort& VertCount ()
-		{ return segmentManager.VertCount (); }
 	inline short& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (CMineItemInfo& gii)

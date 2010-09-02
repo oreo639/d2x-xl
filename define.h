@@ -1,16 +1,20 @@
 #ifndef _DEFINE_H
 #define _DEFINE_H
 
-#define MEMSET(a,b,c)
-
 // Copyright (C) 1997 Bryan Aamot
 
-//#define HUGE
+// -----------------------------------------------------------------------------
+
+typedef signed char sbyte;
+typedef unsigned char byte;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+
+// -----------------------------------------------------------------------------
+
 #define ErrorMsg(a) AfxMessageBox(a)
 #define QueryMsg(a) (bExpertMode ? IDYES : AfxMessageBox (a, MB_YESNO))
 #define Query2Msg(a,i) AfxMessageBox(a,i)
-//#define STATUSMSG(a) DLE.MainFrame () ? DLE.MainFrame ()->StatusMsg(a) : AfxMessageBox(a)
-//#define DEBUGMSG(a) DLE.MainFrame () ? DLE.MainFrame ()->DebugMsg(a) : AfxMessageBox(a)
 #define STATUSMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->StatusMsg(a);}
 #define INFOMSG(a) {if (DLE.MainFrame () && !DLE.MineView ()->DelayRefresh ()) DLE.MainFrame ()->InfoMsg(a);}
 #define DEBUGMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
@@ -18,11 +22,30 @@
 #define M_PI	3.141592653589793240
 #define M_PI_2	(M_PI / 2.0)
 
-#define FIX_IS_DOUBLE 0
+// -----------------------------------------------------------------------------
 
-#define I2X(_i)	((int) ((_i) * 65536))
-#define X2I(_i)	((int) (((_i) + I2X (1) / 2) / I2X (1)))
+inline double Round (double value, double round = 1.0) { return (value >= 0) ? value + round / 2.0 : value - round / 2.0; }
 
+// -----------------------------------------------------------------------------
+
+#define X2D(_v)	((double) _v / 65536.0)
+#define D2X(_v)	((int) Round (_v * 65536.0))
+#define X2I(_v)	(_v / 65536)
+#define I2X(_v)	((int) _v * 65536.0)
+
+// -----------------------------------------------------------------------------
+
+inline int FixMul (int n, int m)
+{
+return (int) ((double) n * (double) m / 65536.0);
+}
+
+inline int FixDiv (int n, int m)
+{
+return (int) ((double) n / (double) m * 65536.0);
+}
+
+// -----------------------------------------------------------------------------
 //Some handy constants 
 #define f0_5   (I2X(1) / 2)
 #define f1_0   I2X(1)
@@ -381,52 +404,6 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define	CONTROL_LIGHTS_OFF		32	// If Trigger turns off lights in a certain area 
 #define	TRIGGER_CONTROL_ROBOTS	64	// If Trigger is a Door control trigger (Linked) 
 
-//  Returns true if nSegment references a child, else returns false. 
-//  Note that -1 means no connection, -2 means a connection to the outside world. 
-#define  IS_CHILD(nSegment) (nSegment > -1)
-
-#define SEGMENT_TYPE_NONE				0
-#define SEGMENT_TYPE_FUELCEN			1
-#define SEGMENT_TYPE_REPAIRCEN		2
-#define SEGMENT_TYPE_CONTROLCEN		3
-#define SEGMENT_TYPE_ROBOTMAKER		4
-#define MAX_SEGMENT_TYPES1				5
-
-#define SEGMENT_TYPE_GOAL_BLUE		5 // Descent 2 only
-#define SEGMENT_TYPE_GOAL_RED			6 // Descent 2 only
-#define SEGMENT_TYPE_WATER				7
-#define SEGMENT_TYPE_LAVA				8
-#define SEGMENT_TYPE_TEAM_BLUE		9
-#define SEGMENT_TYPE_TEAM_RED			10
-#define SEGMENT_TYPE_SPEEDBOOST		11
-#define SEGMENT_TYPE_BLOCKED			12
-#define SEGMENT_TYPE_NODAMAGE			13
-#define SEGMENT_TYPE_SKYBOX			14
-#define SEGMENT_TYPE_EQUIPMAKER		15	// matcen for powerups
-#define SEGMENT_TYPE_OUTDOORS			16
-#define MAX_SEGMENT_TYPES2				17 // Descent 2 only
-
-#define SEGMENT_FUNC_NONE				0
-#define SEGMENT_FUNC_FUELCEN			1
-#define SEGMENT_FUNC_REPAIRCEN		2
-#define SEGMENT_FUNC_CONTROLCEN		3
-#define SEGMENT_FUNC_ROBOTMAKER		4
-#define SEGMENT_FUNC_GOAL_BLUE		5
-#define SEGMENT_FUNC_GOAL_RED			6
-#define SEGMENT_FUNC_TEAM_BLUE		7
-#define SEGMENT_FUNC_TEAM_RED			8
-#define SEGMENT_FUNC_SPEEDBOOST		9
-#define SEGMENT_FUNC_SKYBOX			10
-#define SEGMENT_FUNC_EQUIPMAKER		11
-#define MAX_SEGMENT_FUNCTIONS			12
-
-#define SEGMENT_PROP_NONE				0
-#define SEGMENT_PROP_WATER				1
-#define SEGMENT_PROP_LAVA				2
-#define SEGMENT_PROP_BLOCKED			4
-#define SEGMENT_PROP_NODAMAGE			8
-#define SEGMENT_PROP_OUTDOORS			16
-
 // Various wall types. 
 #define WALL_NORMAL			0  	// Normal wall 
 #define WALL_BLASTABLE		1  	// Removable (by shooting) wall 
@@ -597,9 +574,9 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define IMG_BKCOLOR	RGB (196,196,196)
 
 #ifdef _DEBUG
-#	define USE_DYN_ARRAYS 1
+#	define _DEBUG 1
 #else
-#	define USE_DYN_ARRAYS 0
+#	define _DEBUG 0
 #endif
 
 #define null NULL

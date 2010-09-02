@@ -183,7 +183,7 @@ protected: // create from serialization only
 					m_yRenderOffs;
 	int			m_nViewDist;
 	int			m_nMineCenter;
-#if USE_DYN_ARRAYS
+#if _DEBUG
 	CStaticArray< CPolyModel, MAX_POLYGON_MODELS > m_polyModels;
 #else
 	CPolyModel	m_polyModels [MAX_POLYGON_MODELS];
