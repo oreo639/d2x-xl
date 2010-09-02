@@ -1,3 +1,5 @@
+#include <afxwin.h>
+
 #include "SegmentManager.h"
 #include "ObjectManager.h"
 #include "TriggerManager.h"
@@ -156,7 +158,7 @@ trigP->Setup (type, flags);
 wallP->SetTrigger (nTrigger);
 LinkExitToReactor ();
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 return Triggers (nTrigger);
 }
 
@@ -192,7 +194,7 @@ if (nDelTrigger < --m_nCount [0]) {
 	}
 
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 LinkExitToReactor ();
 }
 
@@ -362,7 +364,7 @@ if (info.offset < 0)
 	return;
 Count (0) = info.count;
 for (short i = 0; i < info.count; i++)
-	m_triggers [0][i].Read (fp);
+	m_triggers [0][i].Read (fp, nFileVersion, false);
 
 int bObjTriggersOk = 1;
 
@@ -407,7 +409,7 @@ else {
 	info.offset = fp.Tell ();
 
 	for (i = 0; i < Count (0); i++)
-		m_triggers [0][i].Write (fp, nFileVersion);
+		m_triggers [0][i].Write (fp, nFileVersion, false);
 
 	if (theMine->LevelVersion () >= 12) {
 		fp.Write (NumObjTriggers ());

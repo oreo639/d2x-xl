@@ -32,7 +32,6 @@ public:
 	CDlcDocTemplate	*m_pDlcDoc;
 	char					m_szCaption [256];
 	char					m_szExtCaption [256];
-	CUndoList			m_undoList;
 	int					m_delayUndo;
 	int					m_nModified;
 	BOOL					m_bSplashScreen;

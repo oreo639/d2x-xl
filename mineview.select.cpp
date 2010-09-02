@@ -394,7 +394,7 @@ ForwardCube (-1);
 // MENU - Other_Cube
 //==========================================================================
 
-void CMineView::SelectOtherCube () 
+void CMineView::SelectOtherSegment () 
 {
 theMine->Current () = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 (): &theMine->Current1 ();
 Refresh (true);

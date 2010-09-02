@@ -6,6 +6,7 @@
 #include "carray.h"
 #include "Types.h"
 #include "Selection.h"
+#include "MineInfo.h"
 
 #define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
 #define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes

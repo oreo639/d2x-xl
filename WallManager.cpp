@@ -71,7 +71,7 @@ wallP->m_info.keys = keys;
 // update number of Walls () in mine
 MineInfo ().walls.count++;
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 return wallP;
 }
 
@@ -138,7 +138,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 	memcpy (delWallP, Walls (nDelWall + 1), (MineInfo ().walls.count - nDelWall) * sizeof (CWall));
 // update number of Walls () in mine
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 LinkExitToReactor();
 }
 

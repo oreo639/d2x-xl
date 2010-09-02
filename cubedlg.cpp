@@ -952,7 +952,7 @@ else if (IsEquipMaker (segP))
 
 void CSegmentTool::OnOtherCube () 
 {
-DLE.MineView ()->SelectOtherCube ();
+DLE.MineView ()->SelectOtherSegment ();
 }
 
 //------------------------------------------------------------------------

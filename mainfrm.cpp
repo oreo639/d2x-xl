@@ -1555,7 +1555,7 @@ MineView ()->BackwardsCube ();
 
 void CMainFrame::OnSelOtherCube ()
 {
-MineView ()->SelectOtherCube ();
+MineView ()->SelectOtherSegment ();
 }
 
 void CMainFrame::OnSelother.Side () 

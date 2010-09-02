@@ -356,8 +356,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
   if (Current2 ().nSegment >= SegCount ()) Current2 ().nSegment--; 
   if (Current1 ().nSegment < 0) Current1 ().nSegment = 0; 
   if (Current2 ().nSegment < 0) Current2 ().nSegment = 0; 
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
+//DLE.MineView ()->Refresh (false); 
+//DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
 }
 
@@ -508,8 +508,8 @@ for (nNewSide = 0; nNewSide < 6; nNewSide++)
 // set current segment to new segment
 Current ()->nSegment = nNewSeg; 
 //		SetLinesToDraw(); 
-DLE.MineView ()->Refresh (false); 
-DLE.ToolView ()->Refresh (); 
+//DLE.MineView ()->Refresh (false); 
+//DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
 return TRUE; 
 }
@@ -862,7 +862,7 @@ for (i = 0; i < SegCount (); i++)
 	Segments (i)->m_info.wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
 	VertStatus (i) |= MARKED_MASK; 
-DLE.MineView ()->Refresh (); 
+//DLE.MineView ()->Refresh (); 
 }
 
 //========================================================================== 
@@ -871,14 +871,15 @@ DLE.MineView ()->Refresh ();
 
 void CSegmentManager::UnmarkAll (void) 
 {
-	int i; 
-	CSegment *segP = Segments (0);
-	for (i = 0; i < MAX_SEGMENTS; i++, segP++)
-		segP->m_info.wallFlags &= ~MARKED_MASK; 
-	byte& stat = VertStatus ();
-	for (i = 0; i < MAX_VERTICES; i++, stat++)
-		stat &= ~MARKED_MASK; 
-	DLE.MineView ()->Refresh (); 
+	short i; 
+
+CSegment *segP = Segments (0);
+for (i = 0; i < MAX_SEGMENTS; i++, segP++)
+	segP->m_info.wallFlags &= ~MARKED_MASK; 
+byte& stat = VertStatus ();
+for (i = 0; i < MAX_VERTICES; i++, stat++)
+	stat &= ~MARKED_MASK; 
+//	DLE.MineView ()->Refresh (); 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -1066,7 +1067,7 @@ for (nSide = 0; nSide < 6; nSide++)
 
 SetLinesToDraw(); 
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 
 }
 
@@ -1148,7 +1149,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 	}
 SetLinesToDraw(); 
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
 
@@ -1259,7 +1260,7 @@ else {
 	SetLinesToDraw(); 
 	}
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -1321,7 +1322,7 @@ seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]] = vert2;
 //  delete_unused_vertices(); 
 FixChildren(); 
 SetLinesToDraw(); 
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 undoManager.Unlock ();
 }
 
@@ -1426,7 +1427,7 @@ for (i = 0; i < 2; i++) {
 	}
 FixChildren(); 
 SetLinesToDraw(); 
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 undoManager.Unlock ();
 }
 
@@ -1687,7 +1688,7 @@ if (min_radius <= 5) {
 	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 
 	SetLinesToDraw(); 
 	undoManager.Unlock ();
-	DLE.MineView ()->Refresh ();
+	//DLE.MineView ()->Refresh ();
 	return; 
 	}
 
@@ -1776,7 +1777,7 @@ for (i = 0; i < 4; i++) {
 SegCount ()++; 
 undoManager.Unlock ();
 SetLinesToDraw(); 
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 }
 
 // ------------------------------------------------------------------------ 
@@ -2127,7 +2128,7 @@ if (!bChange)
 	undoManager.ResetModified (bUndo);
 else {
 	undoManager.Unlock ();
-	DLE.MineView ()->Refresh (); 
+	//DLE.MineView ()->Refresh (); 
 	}
 }
 
@@ -2288,7 +2289,7 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 SegCount () += 6;
 #endif
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 return true;
 }
 

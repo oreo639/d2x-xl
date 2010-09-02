@@ -9,8 +9,9 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
+#include <afxwin.h>
+
 #include "afxcview.h"
-#include "dle-xp.h"
 #include "DlcDoc.h"
 #include "Matrix.h"
 #include "poly.h"

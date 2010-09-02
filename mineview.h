@@ -316,8 +316,8 @@ public:
 	void PrevCube ();
 	void ForwardCube (int dir = 1);
 	void BackwardsCube ();
-	void SelectOtherCube ();
-	bool Selectother.Side ();
+	void SelectOtherSegment ();
+	bool SelectOtherSide ();
 	void NextObject (int dir = 1);
 	void PrevObject ();
 	void NextCubeElement (int dir = 1);
