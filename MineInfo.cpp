@@ -1,3 +1,4 @@
+#include "cfile.h"
 #include "MineInfo.h"
 
 // -----------------------------------------------------------------------------
@@ -62,7 +63,7 @@ fp.Write (size);
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CGameInfo::Read (CFileManager& fp) 
+void CMineInfo::Read (CFileManager& fp) 
 {
 fileInfo.Read (fp);
 fp.Read (mineFilename, 1, sizeof (mineFilename));
@@ -83,7 +84,7 @@ if (fileInfo.size > 143)
 
 // -----------------------------------------------------------------------------
 
-void CGameInfo::Write (CFileManager& fp) 
+void CMineInfo::Write (CFileManager& fp) 
 {
 fileInfo.Write (fp);
 fp.Write (mineFilename, 1, sizeof (mineFilename));

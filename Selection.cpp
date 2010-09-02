@@ -1,13 +1,16 @@
 #include "TriggerManager.h"
 #include "WallManager.h"
 #include "SegmentManager.h"
+#include "VertexManager.h"
 #include "selection.h"
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-CSelection current, other;
+CSelection selections [2];
+CSelection& current = selection [0];
+CSelection& other = selection [1];
 
 // -----------------------------------------------------------------------------
 
@@ -35,30 +38,37 @@ if (nSide < 0)
 
 // -----------------------------------------------------------------------------
 
-CSelection::Segment (void)
+CSegment* CSelection::Segment (void)
 {
 return segmentManager.GetSegment (m_nSegment);
 }
 
 // -----------------------------------------------------------------------------
 
-CSelection::Side (void)
+CSide* CSelection::Side (void)
 {
 return segmentManager.GetSide (m_nSegment, m_nSide);
 }
 
 // -----------------------------------------------------------------------------
 
-CSelection::Wall (void)
+CWall* CSelection::Wall (void)
 {
 return segmentManager.GetWall (m_nSegment, m_nSide);
 }
 
 // -----------------------------------------------------------------------------
 
-CSelection::Object (void)
+CObject* CSelection::Object (void)
 {
 return objectManager.GetObject (m_nObject);
+}
+
+// -----------------------------------------------------------------------------
+
+CSelection::Vertex (void)
+{
+return vertexManager.GetVertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m_nPoint]]); 
 }
 
 // -----------------------------------------------------------------------------

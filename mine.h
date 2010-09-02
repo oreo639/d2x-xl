@@ -11,6 +11,8 @@
 #include "TriggerManager.h"
 #include "WallManager.h"
 #include "SegmentManager.h"
+#include "VertexManager.h"
+#include "MineInfo.h"
 #include "poly.h"
 
 #define MAX_LIGHT_DEPTH 6
@@ -72,55 +74,31 @@ typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-typedef struct tMineData {
-	CGameInfo					gameInfo;
-	
-	int							m_reactorTime;
-	int							m_reactorStrength;
-	int							m_secretSegNum;
-	CDoubleMatrix				m_secretOrient;
-	
-	// robot data
-	robotInfoList				robotInfo;
-	
-	// structure data
-	lightColorList				lightColors;
-	texColorList				texColors;
-	vertexColorList			vertexColors;
-	wallList						walls;
-	activeDoorList				activeDoors;
-	reactorTriggerList		reactorTriggers;
-	robotMakerList				robotMakers;
-	robotMakerList				equipMakers;
-	objectList					objects;
-	lightDeltaIndexList		lightDeltaIndices;
-	lightDeltaValueList		lightDeltaValues;
-	short							m_nFlickeringLights;
-	flickeringLightList		flickeringLights;
-
-	//CRobotInfo				robotInfo [MAX_ROBOT_TYPES];
-	//CVertex					vertices [VERTEX_LIMIT];
-	//CSegment					segments [SEGMENT_LIMIT];
-	//CColor 					lightColors [SEGMENT_LIMIT][6];
-	//CColor						texColors [MAX_TEXTURES_D2];
-	//CColor						vertexColors [VERTEX_LIMIT];
-	//CWall						walls[WALL_LIMIT];
-	//CActiveDoor				activeDoors[DOOR_LIMIT];
-	//CTrigger					triggers[MAX_TRIGGERS_D2];
-	//CTrigger					objTriggers[MAX_OBJ_TRIGGERS];
-	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
-	//CRobotMaker				robotMakers[MAX_NUM_MATCENS_D2];
-	//CRobotMaker				equipMakers[MAX_NUM_MATCENS_D2];
-	//CGameObject				objects[MAX_OBJECTS_D2];
-	//CLightDeltaIndex		lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
-	//CLightDeltaValue		lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
-	//CFlickeringLight		flickeringLights[MAX_FLICKERING_LIGHTS];
-
-	CSelection					current1;
-	CSelection					current2;
-	CSelection					*current;
-
-} MINE_DATA;
+class CMineData {
+	public:
+		CMineInfo					mineInfo;
+		
+		int							m_reactorTime;
+		int							m_reactorStrength;
+		int							m_secretSegNum;
+		CDoubleMatrix				m_secretOrient;
+		
+		// robot data
+		robotInfoList				robotInfo;
+		
+		// structure data
+		lightColorList				lightColors;
+		texColorList				texColors;
+		vertexColorList			vertexColors;
+		activeDoorList				activeDoors;
+		robotMakerList				robotMakers;
+		robotMakerList				equipMakers;
+		objectList					objects;
+		lightDeltaIndexList		lightDeltaIndices;
+		lightDeltaValueList		lightDeltaValues;
+		short							m_nFlickeringLights;
+		flickeringLightList		flickeringLights;
+};
 
 // -----------------------------------------------------------------------------
 
@@ -159,10 +137,23 @@ public:
 	~CMine();
 	void Initialize (void);
 	void Reset (void);
+	void Default (void);
 	
 public:
-	inline MINE_DATA& MineData ()
+	inline CMineData& MineData ()
 		{ return m_mineData; }
+
+	inline int LevelVersion (void) { return m_levelVersion; }
+	inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
+	inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
+	inline bool IsStdLevel (void) { return LevelVersion () < 9; }
+	inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
+	inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
+		
+	inline int FileType (void) { return m_fileType; }
+	inline void SetFileType (int fileType) { m_fileType = fileType; }
+	inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
+	inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
 	inline vertexColorList& VertexColors (void)
 		{ return MineData ().vertexColors; }
@@ -208,10 +199,10 @@ public:
 	//inline CTexture* Textures (int i, int j = 0)
 	//	{ return &textureManager.textures [i][j]; }
 
-	inline CGameInfo& MineInfo ()
-		{ return MineData ().gameInfo; }
+	inline CMineInfo& MineInfo ()
+		{ return MineData ().mineInfo; }
 	inline CMineFileInfo& MineFileInfo ()
-		{ return MineData ().gameInfo.fileInfo; }
+		{ return MineData ().mineInfo.fileInfo; }
 	inline short& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (CMineItemInfo& gii)
@@ -224,14 +215,7 @@ public:
 		{ return MineData ().m_secretSegNum; }
 	inline CDoubleMatrix& SecretOrient ()
 		{ return MineData ().m_secretOrient; }
-	inline CSelection* &Current ()
-		{ return MineData ().current; }
-	inline CSelection& Current1 ()
-		{ return MineData ().current1; }
-	inline CSelection& Current2 ()
-		{ return MineData ().current2; }
-	inline CSelection *Other (void)
-		{ return (Current () == &Current2 ()) ? &Current1 () : &Current2 (); }
+
 	inline CColor *TexColors (int i = 0)
 		{ return MineData ().texColors + (i & 0x3fff); }
 	inline bool& UseTexColors (void)
@@ -250,17 +234,6 @@ public:
 	inline CColor *CurrLightColor ()
 		{ return LightColor (Current ()->nSegment, Current ()->nSide); }
 
-	inline int LevelVersion (void) { return m_levelVersion; }
-	inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
-	inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
-	inline bool IsStdLevel (void) { return LevelVersion () < 9; }
-	inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
-	inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
-		
-	inline int FileType (void) { return m_fileType; }
-	inline void SetFileType (int fileType) { m_fileType = fileType; }
-	inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
-	inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
 	byte *LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize);
 	short LoadDefaultLightAndColor (void);
@@ -271,7 +244,6 @@ public:
 	short Save(const char *filename, bool bSaveToHog = false);
 	int WriteColorMap (CFileManager& fColorMap);
 	int ReadColorMap (CFileManager& fColorMap);
-	void  Default();
 	inline LPSTR LevelName (void)
 		{ return m_currentLevelName; }
 	inline int LevelNameSize (void)
@@ -280,14 +252,11 @@ public:
 		{ return m_bSplineActive; }
 	inline void SetSplineActive (bool bSplineActive)
 		{ m_bSplineActive = bSplineActive; }
-	void  DeleteSegment(short delete_segnum = -1);
-	void  DeleteSegmentWalls (short nSegment);
+
 	void	MakeObject (CGameObject *objP, char type, short nSegment);
 	void	SetObjectData (char type);
 	bool	CopyObject (byte new_type, short nSegment = -1);
 	void  DeleteObject(short objectNumber = -1);
-	void  DeleteUnusedVertices();
-	void  DeleteVertex(short nDeletedVert);
 
 	void InitSegment (short segNum);
 	bool SplitSegment ();
@@ -295,14 +264,6 @@ public:
 	bool  LinkSegments(short nSegment1, short nSide1, short nSegment2,short nSide2, double margin);
 	void  LinkSides(short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match[4]);
 	void	CalcSegCenter (CVertex& pos, short nSegment);
-	inline CSegment *current.Segment ()
-		{ return Segments (Current ()->nSegment); }
-	inline CWall *SideWall (int i = 0, int j = 0)
-		{ int w = Segments (i)->m_sides [j].m_info.nWall; return (w < 0) ? null : Walls (w); }
-	inline CWall *CurrWall ()
-		{ int w = current.Side ()->m_info.nWall; return (w < 0) ? null : Walls (w); }
-	inline CSide *current.Side ()
-		{ return current.Segment ()->m_sides + Current ()->nSide; }
 	inline short CurrVert ()
 		{ return current.Segment ()->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; }
 	inline CGameObject *CurrObj ()

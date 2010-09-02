@@ -33,7 +33,9 @@ public:
 	CObject* Object (void);
 };
 
-extern CSelection current, other;
+extern CSelection selections [2];
+extern CSelection& current;
+extern CSelection& other;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

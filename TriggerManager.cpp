@@ -151,12 +151,9 @@ else
 
 short nTrigger = Count (0)++;
 CTrigger* trigP = Triggers (nTrigger);
-// set new trigger data
 trigP->Setup (type, flags);
-// link trigger to the wall
 wallP->SetTrigger (nTrigger);
-// update number of Triggers ()
-LinkExitToReactor();
+LinkExitToReactor ();
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return Triggers (nTrigger);
@@ -182,20 +179,20 @@ CTrigger* delTrigP = Triggers (nDelTrigger, 0);
 
 if (delTrigP == null)
 	return;
-// update all Walls () who point to Triggers () higher than this one
-// and unlink all Walls () who point to deleted trigger (should be only one wall)
+
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
+
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
-if (nTrigger < --Count ()) {	
+if (nDelTrigger < --Count ()) {	
 	// move the last trigger in the list to the deleted trigger's position
-	wallManager.UpdateTrigger (m_nTriggers [0], nDelTrigger);
-	*delTrigP = Trigger (m_nTriggers [0], 0);
+	wallManager.UpdateTrigger (m_nCount [0], nDelTrigger);
+	*delTrigP = Trigger (m_nCount [0], 0);
 	}
 
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
-AutoLinkExitToReactor();
+LinkExitToReactor ();
 }
 
 //------------------------------------------------------------------------------
@@ -205,7 +202,7 @@ AutoLinkExitToReactor();
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
 CTrigger* trigP = m_triggers [nClass];
-for (int i = 0; i < m_nTriggers [nClass]; i++, trigP++)
+for (int i = 0; i < m_nCount [nClass]; i++, trigP++)
 	trigP->Delete (key);
 }
 
@@ -271,7 +268,7 @@ for (nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 	}
 // add any exits to target list that are not already in it
 for (nWall = 0; nWall < wallManager.Count (); nWall++) {
-	CTrigger* trigP = Triggers (Walls (nWall)->m_info.nTrigger);
+	CTrigger* trigP = wallManager.GetWall (nWall)->GetTrigger ();
 	if (trigP == null)
 		continue;
 	if (!trigP->IsExit ())
@@ -295,10 +292,10 @@ if (objP == null) {
 	}
 
 if ((objP->m_info.type != OBJ_ROBOT) && 
-	  objP->m_info.type != OBJ_CAMBOT) &&
-	  objP->m_info.type != OBJ_POWERUP) &&
-	  objP->m_info.type != OBJ_HOSTAGE) &&
-	  objP->m_info.type != OBJ_CNTRLCEN)) {
+	 (objP->m_info.type != OBJ_CAMBOT) &&
+	 (objP->m_info.type != OBJ_POWERUP) &&
+	 (objP->m_info.type != OBJ_HOSTAGE) &&
+	 (objP->m_info.type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return null;
 	}

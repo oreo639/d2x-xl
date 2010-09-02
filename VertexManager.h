@@ -27,28 +27,31 @@ typedef CVertex vertexList [VERTEX_LIMIT];
 
 
 class CVertexManager {
-public:
-	vertexList	vertices;
-	ushort		m_nCount;
+	public:
+		vertexList	m_vertices;
+		ushort		m_nCount;
 
-public:
-	inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
+	public:
+		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
 
-	// Segment and side getters
-	// Vertex getters
-	inline vertexList& Vertices (void)
-		{ return m_vertices; }
+		// Segment and side getters
+		// Vertex getters
+		inline vertexList& Vertices (void)
+			{ return m_vertices; }
 
-	inline CVertex *GetVertex (int i) { &m_vertices [i]; }
+		inline CVertex *GetVertex (int i) { &m_vertices [i]; }
 
-	inline byte& VertStatus (int i = 0)
-		{ return GetVertex (i)->m_status; }
+		inline byte& VertStatus (int i = 0)
+			{ return GetVertex (i)->m_status; }
 
-	inline ushort& Count ()
-		{ return m_nCount; }
+		inline ushort& Count (void)
+			{ return m_nCount; }
 
-	void Read (short nCount);
-	void Write (void);
+		void DeleteUnused (void);
+		void Delete (short nDelVert);
+
+		void Read (short nCount);
+		void Write (void);
 	};
 
 extern CVertexManager vertexManager;

@@ -6755,6 +6755,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\VertexManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ViewMatrix.cpp"
 					>
 				</File>
@@ -6962,6 +6966,10 @@
 				</File>
 				<File
 					RelativePath=".\Vector.h"
+					>
+				</File>
+				<File
+					RelativePath=".\VertexManager.h"
 					>
 				</File>
 				<File

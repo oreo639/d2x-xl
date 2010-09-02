@@ -185,7 +185,7 @@ void CTextureTool::UpdateLightWnd (void)
 {
 CHECKMINE;
 
-CWall *wallP = theMine->CurrWall ();
+CWall *wallP = theMine->current.Wall ();
 if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
@@ -353,7 +353,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.x -= rcPal.left;
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
-			CWall *wallP = theMine->CurrWall ();
+			CWall *wallP = theMine->current.Wall ();
 			if (wallP && (wallP->m_info.type == WALL_TRANSPARENT)) {
 				wallP->m_info.cloakValue = m_nColorIndex;
 				SetWallColor ();

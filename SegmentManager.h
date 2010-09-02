@@ -104,12 +104,14 @@ public:
 	//double CalcLength (CFixVector* center1, CFixVector* center2);
 
 	void FixChildren (void);
+	void UpdateWall (short nOldWall, short nNewWall);
+	void UpdateVertex (short nOldVert, short nNewVert);
 
 	short	MarkedSegmentCount (bool bCheck = false);
-	bool	GotMarkedSegments (void) { return MarkedSegmentCount (true) > 0; }
+	bool GotMarkedSegments (void) { return MarkedSegmentCount (true) > 0; }
 	bool GotMarkedSides (void);
 
-	int AlignTextures (short start_segment, short start_side, short only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
+	int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
 
 	bool GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment = -1, short nSide = -1);
 	CSide *OppSide (void);

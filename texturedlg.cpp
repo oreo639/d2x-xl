@@ -381,7 +381,7 @@ if	((theMine->IsLight (theMine->current.Side ()->m_info.nBaseTex) != -1) ||
 	 (((theMine->current.Side ()->m_info.nOvlTex & 0x3fff) != 0) &&
 	  (theMine->IsLight (theMine->current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
-CWall *pWall = theMine->CurrWall ();
+CWall *pWall = theMine->current.Wall ();
 return pWall && (pWall->m_info.type == WALL_TRANSPARENT);
 
 }
@@ -474,7 +474,7 @@ colorP = theMine->CurrLightColor ();
 int nSide = current.m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
-pWall = theMine->CurrWall ();
+pWall = theMine->current.Wall ();
 m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->m_info.cloakValue : colorP->m_info.index;
 m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
 m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);

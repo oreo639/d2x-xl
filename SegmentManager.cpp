@@ -86,6 +86,20 @@ for (int i = 0; i < m_nSegments; i++, segP++) {
 
 // ----------------------------------------------------------------------------- 
 
+void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
+{
+CSegment *segP = Segments (0);
+for (nSegment = SegCount (); nSegment; nSegment--, segP++) {
+	for (nVertex = 0; nVertex < 8; nVertex++) {
+		short* vertP = segP->m_info.verts;
+		if (vertP [nVertex] == nOldVert)
+			vertP [nVertex] == nNewVert;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CSegmentManager::Delete (short nDelSeg)
 {
 	CSegment			*segP, *delSegP, *childSegP; 
@@ -348,52 +362,6 @@ undoManager.Unlock ();
 }
 
 
-
-// ----------------------------------------------------------------------------- 
-// DeleteVertex()
-//
-// ACTION - Removes a vertex from the vertices array and updates all the
-//	    Segments () vertices who's vertex is greater than the deleted vertex
-// ----------------------------------------------------------------------------- 
-
-void CSegmentManager::DeleteVertex (short nDeletedVert)
-{
-	short nVertex, nSegment; 
-
-undoManager.SetModified (TRUE); 
-// fill in gap in vertex array and status
-memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices (0)));
-// update anyone pointing to this vertex
-CSegment *segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-	for (nVertex = 0; nVertex < 8; nVertex++)
-		if (segP->m_info.verts [nVertex] > nDeletedVert)
-			segP->m_info.verts [nVertex]--; 
-// update number of vertices
-VertCount ()--; 
-}
-
-// ----------------------------------------------------------------------------- 
-// DeleteUnusedVertices()
-//
-// ACTION - Deletes unused vertices
-// ----------------------------------------------------------------------------- 
-
-void CSegmentManager::DeleteUnusedVertices (void)
-{
-	short nVertex, nSegment, point; 
-
-for (nVertex = 0; nVertex < VertCount (); nVertex++)
-	VertStatus (nVertex) &= ~NEW_MASK; 
-// mark all used verts
-CSegment *segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
-	for (point = 0; point < 8; point++)
-		VertStatus (segP->m_info.verts [point]) |= NEW_MASK; 
-for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
-	if (!(VertStatus (nVertex) & NEW_MASK))
-		DeleteVertex(nVertex); 
-}
 
 // ----------------------------------------------------------------------------- 
 //	AddSegment()

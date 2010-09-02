@@ -6,9 +6,6 @@
 # pragma pack(push, packing)
 # pragma pack(1)
 
-#include "VectorTypes.h"
-#include "cfile.h"
-
 class CMineFileInfo {
 public:
 	ushort  signature;
@@ -42,7 +39,7 @@ public:
 	void Write (CFileManager& fp);
 };
 
-class CGameInfo {
+class CMineInfo {
 public:
 	CMineFileInfo		fileInfo;
 	char					mineFilename[15];
