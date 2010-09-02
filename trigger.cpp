@@ -27,7 +27,7 @@ return m_count++;
 
 //------------------------------------------------------------------------------
 
-short CTriggerTarget::Delete (int i = -1) 
+short CTriggerTarget::Delete (short i = -1) 
 {
 if (i < 0)
 	i = m_count - 1;
@@ -39,6 +39,15 @@ if ((m_count > 0) && (i < --m_count)) {
 	}
 return m_count;
 }	
+
+//------------------------------------------------------------------------------
+
+int CTriggerTarget::Delete (CSideKey key) 
+{ 
+short i = Find (key);
+if (i >= 0)
+	Delete (i);
+}
 
 //------------------------------------------------------------------------------
 

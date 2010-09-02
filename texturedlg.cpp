@@ -471,7 +471,7 @@ m_frame [1] = 0;
 segP = theMine->current.Segment ();
 sideP = theMine->current.Side ();
 colorP = theMine->CurrLightColor ();
-int nSide = theMine->Current ()->nSide;
+int nSide = current.m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
 pWall = theMine->CurrWall ();
@@ -896,7 +896,7 @@ if (!(m_bUse1st || m_bUse2nd))
 
 //CheckForDoor ();
 DLE.SetModified (TRUE);
-theMine->SetTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 
+theMine->SetTexture (current.m_nSegment, current.m_nSide, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 int i;
 for (i = 0; i < 4; i++)
@@ -925,7 +925,7 @@ for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
     segP->m_info.nIndex = 0;
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-PasteTexture (theMine->Current ()->nSegment, theMine->Current ()->nSide, 100);
+PasteTexture (current.m_nSegment, current.m_nSide, 100);
 DLE.UnlockUndo ();
 Refresh ();
 DLE.MineView ()->Refresh ();

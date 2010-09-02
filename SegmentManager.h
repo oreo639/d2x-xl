@@ -68,6 +68,11 @@ public:
 		return GetSide (nSegment, nSide)->GetWall ();
 		}
 
+	inline CWall* GetOppositeWall (short nSegment = -1, short nSide = -1) {
+		CSide* sideP = GetSide (nSegment, nSide);
+		return (sideP == null) ? null : GetSide (nSegment, nSide)->GetWall ();
+		}
+
 	void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
 
 	// Vertex getters

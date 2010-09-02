@@ -82,31 +82,31 @@ if (!pbp)
 	return;
 theMine->UnmarkAll ();
 if (bCurSeg = MarkSegment (pbp->nSegment))
-	theMine->Current ()->nSegment = pbp->nSegment;
+	current.m_nSegment = pbp->nSegment;
 MarkSegment (pbp->nChild);
 if ((pbp->nSide >= 0) && (pbp->nSide < MAX_SIDES_PER_SEGMENT))
-	theMine->Current ()->nSide = pbp->nSide;
+	current.m_nSide = pbp->nSide;
 if ((pbp->nLine >= 0) && (pbp->nLine < 4))
-	theMine->Current ()->nLine = pbp->nLine;
+	current.m_nLine = pbp->nLine;
 if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
-	theMine->Current ()->nPoint = pbp->nPoint;
+	current.m_nPoint = pbp->nPoint;
 if ((pbp->nWall >= 0) && (pbp->nWall < theMine->MineInfo ().walls.count))
 	nWall = pbp->nWall;
 else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < theMine->MineInfo ().triggers.count))
-	nWall = theMine->FindTriggerWall (pbp->nTrigger);
+	wallP = wallManager.FindByTrigger (pbp->nTrigger);
 else
-	nWall = -1;
-if ((nWall >= 0) && MarkSegment ((wallP = theMine->Walls (nWall))->m_nSegment))
+	wallP = null;
+if ((wallP != null) && MarkSegment ((wallP->m_nSegment))
 	if (bCurSeg) {
-		theMine->Other ()->nSegment = wallP->m_nSegment;
-		theMine->Other ()->nSide = wallP->m_nSide;
+		other.m_nSegment = wallP->m_nSegment;
+		other.m_nSide = wallP->m_nSide;
 		}
 	else {
-		theMine->Current ()->nSegment = wallP->m_nSegment;
-		theMine->Current ()->nSide = wallP->m_nSide;
+		current.m_nSegment = wallP->m_nSegment;
+		current.m_nSide = wallP->m_nSide;
 		}
 if ((pbp->nObject >= 0) && (pbp->nObject < theMine->MineInfo ().objects.count))
-	theMine->Current ()->nObject = pbp->nObject;
+	current.m_nObject = pbp->nObject;
 DLE.MineView ()->Refresh ();
 }
 

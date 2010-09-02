@@ -446,10 +446,10 @@ if (!m_bFindTrigger)
 	nTrigger = m_nTrigger;
 else {
 	if (m_nClass) {
-		if (theMine->Current ()->nObject == theMine->ObjTriggers (m_nTrigger)->m_info.nObject)
+		if (current.m_nObject == theMine->ObjTriggers (m_nTrigger)->m_info.nObject)
 			return false;
 		for (int i = 0, j = theMine->NumObjTriggers (); j; j--, i++) {
-			if (theMine->Current ()->nObject == theMine->ObjTriggers (i)->m_info.nObject) {
+			if (current.m_nObject == theMine->ObjTriggers (i)->m_info.nObject) {
 				m_nTrigger = i;
 				return false;
 				}
@@ -679,7 +679,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if ((m_nTrigger == -1) || (m_nTrigger >= NumTriggers ()))
 	return;
 if (m_nClass) {
-	theMine->Current ()->nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
+	current.m_nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
 	}
 else {
 	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->MineInfo ().walls.count; nWall++, wallP++)
@@ -696,8 +696,8 @@ else {
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((theMine->Current ()->nSegment != wallP->m_nSegment) ||
-		 (theMine->Current ()->nSide != wallP->m_nSide)) {
+	if ((current.m_nSegment != wallP->m_nSegment) ||
+		 (current.m_nSide != wallP->m_nSide)) {
 		theMine->SetCurrent (wallP->m_nSegment, wallP->m_nSide);
 		}
 	}
@@ -908,7 +908,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-AddTarget (theMine->Current ()->nObject, 0);
+AddTarget (current.m_nObject, 0);
 }
 
 //------------------------------------------------------------------------
@@ -965,7 +965,7 @@ if ((nSide < 0) || (nSide > 5))
 	return;
 
 CSelection *other = theMine->Other ();
-if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide == nSide))
+if ((current.m_nSegment == nSegment) && (current.m_nSide == nSide))
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);

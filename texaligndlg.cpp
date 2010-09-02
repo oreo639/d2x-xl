@@ -106,8 +106,8 @@ m_centerPt.y = minRect.y + 166 / 2;
 
 segP = theMine->current.Segment ();
 sideP = theMine->current.Side ();
-nSide = theMine->Current ()->nSide;
-nLine = theMine->Current ()->nLine;
+nSide = current.m_nSide;
+nLine = current.m_nLine;
 
 // get device context handle
 pDC = m_alignWnd.GetDC ();
@@ -248,8 +248,8 @@ if (theMine->IsWall ()) {
 	// highlight current point
 	pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
 	pDC->SelectObject (hPenCurrentPoint);
-	x = m_apts [theMine->Current ()->nPoint].x;
-	y = m_apts [theMine->Current ()->nPoint].y;
+	x = m_apts [current.m_nPoint].x;
+	y = m_apts [current.m_nPoint].y;
 	pDC->Ellipse((int) (x-4*m_zoom), (int) (y-4*m_zoom), (int) (x+4*m_zoom), (int) (y+4*m_zoom));
 	// fill in texture
 	DrawAlignment (pDC);
@@ -326,16 +326,16 @@ UpdateData (TRUE);
 	int i,	delta;
 	CSide	*sideP = theMine->current.Side ();
 
-if (delta = (int) (sideP->m_info.uvls [theMine->Current ()->nPoint].u - m_alignX / UV_FACTOR)) {
+if (delta = (int) (sideP->m_info.uvls [current.m_nPoint].u - m_alignX / UV_FACTOR)) {
 	UpdateData (TRUE);
 	DLE.SetModified (TRUE);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->m_info.uvls[theMine->Current ()->nPoint].u -= delta;
+			sideP->m_info.uvls[current.m_nPoint].u -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls[theMine->Current ()->nLine].u -= delta;
-			sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].u -= delta;
+			sideP->m_info.uvls[current.m_nLine].u -= delta;
+			sideP->m_info.uvls[(current.m_nLine+1)&3].u -= delta;
 			break;
 		default:
 			for (i = 0; i < 4; i++)
@@ -354,16 +354,16 @@ UpdateData (TRUE);
 	int i, delta;
 	CSide	*sideP = theMine->current.Side ();
 
-if (delta = (int) (sideP->m_info.uvls [theMine->Current ()->nPoint].v - m_alignY / UV_FACTOR)) {
+if (delta = (int) (sideP->m_info.uvls [current.m_nPoint].v - m_alignY / UV_FACTOR)) {
 	UpdateData (TRUE);
 	DLE.SetModified (TRUE);
 	switch (DLE.MineView ()->GetSelectMode ()) {
 		case POINT_MODE:
-			sideP->m_info.uvls[theMine->Current ()->nPoint].v -= delta;
+			sideP->m_info.uvls[current.m_nPoint].v -= delta;
 			break;
 		case LINE_MODE:
-			sideP->m_info.uvls[theMine->Current ()->nLine].v -= delta;
-			sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].v -= delta;
+			sideP->m_info.uvls[current.m_nLine].v -= delta;
+			sideP->m_info.uvls[(current.m_nLine+1)&3].v -= delta;
 			break;
 		default:
 			for (i = 0; i < 4; i++)
@@ -395,8 +395,8 @@ void CTextureTool::RefreshAlignment ()
 {
 CSide * sideP = theMine->current.Side ();
 
-m_alignX = (double) sideP->m_info.uvls [theMine->Current ()->nPoint].u * UV_FACTOR;
-m_alignY = (double) sideP->m_info.uvls [theMine->Current ()->nPoint].v * UV_FACTOR;
+m_alignX = (double) sideP->m_info.uvls [current.m_nPoint].u * UV_FACTOR;
+m_alignY = (double) sideP->m_info.uvls [current.m_nPoint].v * UV_FACTOR;
 
 double dx = sideP->m_info.uvls [1].u - sideP->m_info.uvls [0].u;
 double dy = sideP->m_info.uvls [1].v - sideP->m_info.uvls [0].v;
@@ -454,7 +454,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		l = theMine->Current ()->nLine;
+		l = current.m_nLine;
 		h = sideP->m_info.uvls [l].u;
 		sideP->m_info.uvls [l].u = sideP->m_info.uvls [(l + 1) & 3].u;
 		sideP->m_info.uvls [(l + 1) & 3].u = h;
@@ -484,7 +484,7 @@ switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
 		break;
 	case LINE_MODE:
-		l = theMine->Current ()->nLine;
+		l = current.m_nLine;
 		h = sideP->m_info.uvls [l].v;
 		sideP->m_info.uvls [l].v = sideP->m_info.uvls [(l + 1) & 3].v;
 		sideP->m_info.uvls [(l + 1) & 3].v = h;
@@ -513,17 +513,17 @@ UpdateData (TRUE);
 DLE.SetModified (TRUE);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->m_info.uvls[theMine->Current ()->nPoint].u += (short) delta;
+		sideP->m_info.uvls[current.m_nPoint].u += (short) delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls[theMine->Current ()->nLine].u += (short) delta;
-		sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].u += (short) delta;
+		sideP->m_info.uvls[current.m_nLine].u += (short) delta;
+		sideP->m_info.uvls[(current.m_nLine+1)&3].u += (short) delta;
 		break;
 	default:
 		for (i=0;i<4;i++)
 			sideP->m_info.uvls[i].u += (short) delta;
 	}
-m_alignX = (double) sideP->m_info.uvls [theMine->Current ()->nPoint].u * UV_FACTOR;
+m_alignX = (double) sideP->m_info.uvls [current.m_nPoint].u * UV_FACTOR;
 UpdateData (FALSE);
 DLE.SetModified (TRUE);
 UpdateAlignWnd ();
@@ -541,17 +541,17 @@ UpdateData (TRUE);
 DLE.SetModified (TRUE);
 switch (DLE.MineView ()->GetSelectMode ()) {
 	case POINT_MODE:
-		sideP->m_info.uvls[theMine->Current ()->nPoint].v += (short) delta;
+		sideP->m_info.uvls[current.m_nPoint].v += (short) delta;
 		break;
 	case LINE_MODE:
-		sideP->m_info.uvls[theMine->Current ()->nLine].v += (short) delta;
-		sideP->m_info.uvls[(theMine->Current ()->nLine+1)&3].v += (short) delta;
+		sideP->m_info.uvls[current.m_nLine].v += (short) delta;
+		sideP->m_info.uvls[(current.m_nLine+1)&3].v += (short) delta;
 		break;
 	default:
 		for (i=0;i<4;i++)
 			sideP->m_info.uvls[i].v += (short) delta;
 	}
-m_alignY = (double)sideP->m_info.uvls[theMine->Current ()->nPoint].v * UV_FACTOR;
+m_alignY = (double)sideP->m_info.uvls[current.m_nPoint].v * UV_FACTOR;
 UpdateData (FALSE);
 DLE.SetModified (TRUE);
 UpdateAlignWnd ();
@@ -617,7 +617,7 @@ RotateUV (-angleRate);
 
 void CTextureTool::OnHShrink ()
 {
-	int		i = theMine->Current ()->nPoint;
+	int		i = current.m_nPoint;
 	CSide	*sideP = theMine->current.Side ();
 	double	delta = moveRate * 256 / m_zoom ;
 
@@ -634,7 +634,7 @@ UpdateAlignWnd ();
 
 void CTextureTool::OnVShrink ()
 {
-	int		i = theMine->Current ()->nPoint;
+	int		i = current.m_nPoint;
 	CSide	*sideP = theMine->current.Side ();
 	double	delta = moveRate * 256 / m_zoom;
 
@@ -654,7 +654,7 @@ void CTextureTool::OnAlignReset ()
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-theMine->current.Segment ()->SetUV (theMine->Current ()->nSide, 0, 0);
+theMine->current.Segment ()->SetUV (current.m_nSide, 0, 0);
 m_alignX = 0;
 m_alignY = 0;
 m_alignAngle = 0;
@@ -758,7 +758,7 @@ void CTextureTool::OnAlignAll (void)
 	CSide		*sideP = theMine->current.Side (),
 					*childSideP;
 	short			nSegment, 
-					nSide = theMine->Current ()->nSide,
+					nSide = current.m_nSide,
 					nChildLine = 3;
 	double		sangle, cangle, angle, length; 
 
@@ -778,7 +778,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 		continue;
 	if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 		continue;
-	if (nSegment != theMine->Current ()->nSegment) {
+	if (nSegment != current.m_nSegment) {
 		theMine->Segments (nSegment)->SetUV (nSide, 0, 0);
 		sangle = atan3 (sideP->m_info.uvls [(nChildLine + 1) & 3].v - sideP->m_info.uvls [nChildLine].v, 
 							 sideP->m_info.uvls [(nChildLine + 1) & 3].u - sideP->m_info.uvls [nChildLine].u); 
@@ -811,7 +811,7 @@ DLE.SetModified (TRUE);
 DLE.LockUndo ();
 if ((theMine == null)->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
-	AlignChildren (theMine->Current ()->nSegment, theMine->Current ()->nSide, true);
+	AlignChildren (current.m_nSegment, current.m_nSide, true);
 else {	// use all marked sides as alignment source
 	int nSegment, nSide;
 	for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++)

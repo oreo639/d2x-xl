@@ -23,7 +23,8 @@ public:
 	void Write (CFileManager& fp);
 
 	short Add (CSideKey key);
-	short Delete (int i = -1);
+	short Delete (short i = -1);
+	int Delete (CSideKey key);
 	int Find (CSideKey key);
 
 	inline short Add (short nSegment, short nSide) { return Add (CSideKey (nSegment, nSide)); }

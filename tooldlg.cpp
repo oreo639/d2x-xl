@@ -313,8 +313,8 @@ if (nVisible < 0)
 	nVisible = (short) TextureIsVisible ();
 if (nVisible > 0) {
 	if (nBaseTex < 0) {
-		short nSegment = m_bother.Segment ? theMine->Other ()->nSegment : theMine->Current ()->nSegment;
-		short nSide = m_bother.Segment ? theMine->Other ()->nSide : theMine->Current ()->nSide;
+		short nSegment = m_bother.Segment ? other.m_nSegment : current.m_nSegment;
+		short nSide = m_bother.Segment ? other.m_nSide : current.m_nSide;
 		if (nVisible = theMine->IsWall (nSegment, nSide)) {
 			CSide *sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
 			nBaseTex = sideP->m_info.nBaseTex;

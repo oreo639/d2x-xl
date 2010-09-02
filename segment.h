@@ -89,7 +89,9 @@ public:
 	void GetTextures (short &nBaseTex, short &nOvlTex);
 	bool SetTextures (short nBaseTex, short nOvlTex);
 	void CSide::InitUVL (void);
+	inline void SetWall (short nWall) { m_info.nWall = nWall; }
 	CWall* GetWall (void);
+	CTrigger* GetTrigger (void);
 };
 
 // -----------------------------------------------------------------------------

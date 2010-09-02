@@ -502,11 +502,11 @@ for (i = 0; i < theMine->MineInfo ().triggers.count; i++)
 		break;
 		}
 // select current object
-CBObjNo ()->SetCurSel (theMine->Current ()->nObject);
+CBObjNo ()->SetCurSel (current.m_nObject);
 
 // if secret object, disable everything but the "move" button
 // and the object list, then return
-if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
@@ -1010,7 +1010,7 @@ SetTextureOverride ();
 
 void CObjectTool::OnAdd () 
 {
-if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	ErrorMsg ("Cannot add another secret return.");
 	return;
  }
@@ -1029,7 +1029,7 @@ Refresh ();
 
 void CObjectTool::OnDelete ()
 {
-if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
@@ -1088,7 +1088,7 @@ CDoubleMatrix* orient;
 
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
@@ -1121,19 +1121,19 @@ if (QueryMsg ("Are you sure you want to move the\n"
 	return;
 #endif
 DLE.SetModified (TRUE);
-if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count)
-	theMine->SecretCubeNum () = theMine->Current ()->nSegment;
+if (current.m_nObject == theMine->MineInfo ().objects.count)
+	theMine->SecretCubeNum () = current.m_nSegment;
 else {
 	CGameObject *objP = theMine->CurrObj ();
-	theMine->CalcSegCenter (objP->m_location.pos, theMine->Current ()->nSegment);
+	theMine->CalcSegCenter (objP->m_location.pos, current.m_nSegment);
 	// bump position over if this is not the first object in the cube
 	int i, count = 0;
 	for (i = 0; i < theMine->MineInfo ().objects.count;i++)
-		if (theMine->Objects (i)->m_info.nSegment == theMine->Current ()->nSegment)
+		if (theMine->Objects (i)->m_info.nSegment == current.m_nSegment)
 			count++;
 	objP->m_location.pos.v.y += count * 2 * F1_0;
 	objP->m_location.lastPos.v.y += count * 2 * F1_0;
-	objP->m_info.nSegment = theMine->Current ()->nSegment;
+	objP->m_info.nSegment = current.m_nSegment;
 	Refresh ();
 	DLE.MineView ()->Refresh (false);
 	}
@@ -1145,7 +1145,7 @@ else {
 
 void CObjectTool::OnSetObject ()
 {
-short old_object = theMine->Current ()->nObject;
+short old_object = current.m_nObject;
 short new_object = CBObjNo ()->GetCurSel ();
 DLE.MineView ()->RefreshObject (old_object, new_object);
 //Refresh ();

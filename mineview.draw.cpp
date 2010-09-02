@@ -108,7 +108,7 @@ CHECKMINE;
 
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->m_info.nIndex = -1;
-segRef [0] = theMine->Current ()->nSegment;	
+segRef [0] = current.m_nSegment;	
 theMine->current.Segment ()->m_info.nIndex = 0;
 i = 1;
 h = j = 0;
@@ -378,7 +378,7 @@ CHECKMINE;
 	else {
 		if (segP->m_info.wallFlags & MARKED_MASK)
 			m_pDC->SelectObject (m_penHiCyan);
-		else if (nSegment == theMine->Current ()->nSegment)
+		else if (nSegment == current.m_nSegment)
 			if (SelectMode (eSelectCube)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);         // RED
 			else
@@ -394,7 +394,7 @@ CHECKMINE;
 	// draw current side
 	// must draw in same order as segment to avoid leftover pixels on screen
 	if (!clear_it) {
-		if (nSegment == theMine->Current ()->nSegment)
+		if (nSegment == current.m_nSegment)
 			if (SelectMode (eSelectSide)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);        // RED
 			else
@@ -416,7 +416,7 @@ CHECKMINE;
 
 		// draw current line
 		// must draw in same order as segment to avoid leftover pixels on screen
-		if (nSegment == theMine->Current ()->nSegment)
+		if (nSegment == current.m_nSegment)
 			if (SelectMode (eSelectLine)) // && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed);  // RED
 			else 
@@ -435,7 +435,7 @@ CHECKMINE;
 	// draw a circle around the current point
 	if (!clear_it) {
 		m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
-		if (nSegment == theMine->Current ()->nSegment)
+		if (nSegment == current.m_nSegment)
 			if (SelectMode (eSelectPoint)) //  && edit_mode != EDIT_OFF) {
 				m_pDC->SelectObject (m_penHiRed); // RED
 			else
@@ -1347,7 +1347,7 @@ else {
 switch (clear_it) {
 	case 0: // normal
 	case 1: // gray
-		if (m_selectMode == OBJECT_MODE && objnum == theMine->Current ()->nObject) 
+		if (m_selectMode == OBJECT_MODE && objnum == current.m_nObject) 
 			m_pDC->SelectObject(m_penRed); // RED
 		else {
 			switch(objP->m_info.type) {
@@ -1406,7 +1406,7 @@ for (i = 0; i < 6; i++)
 		return;
 
 if ((DLE.IsD2File ()) &&
-	 (objnum == theMine->Current ()->nObject) &&
+	 (objnum == current.m_nObject) &&
 	 (objP->m_info.type != OBJ_CAMBOT) && (objP->m_info.type != OBJ_MONSTERBALL) && 
 	 (objP->m_info.type != OBJ_EXPLOSION) && (objP->m_info.type != OBJ_SMOKE) && (objP->m_info.type != OBJ_EFFECT) &&
 	 (objP->m_info.renderType == RT_POLYOBJ) &&
@@ -1420,7 +1420,7 @@ else {
 	m_pDC->MoveTo (poly_draw [0].x,poly_draw [0].y);
 	for (poly = 0; poly < 6; poly++)
 		m_pDC->LineTo (poly_draw [poly].x, poly_draw [poly].y);
-	if (objnum == theMine->Current ()->nObject) {
+	if (objnum == current.m_nObject) {
 		int dx,dy;
 		for (dx = -1; dx < 2; dx++) {
 			for (dy = -1; dy < 2; dy++) {
@@ -1431,7 +1431,7 @@ else {
 			}
 		}
 	}
-if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nObject)) {
+if ((objnum == current.m_nObject) || (objnum == other.m_nObject)) {
 	CPen     pen, *pOldPen;
 	int		d;
 
@@ -1449,7 +1449,7 @@ if ((objnum == theMine->Current ()->nObject) || (objnum == theMine->Other ()->nO
 	d = (poly_draw [2].x - poly_draw [1].x);
 	if (d < 24)
 		d = 24;
-	pen.CreatePen (PS_SOLID, 2, (objnum == theMine->Current ()->nObject) ? RGB (255,0,0) : RGB (255,208,0));
+	pen.CreatePen (PS_SOLID, 2, (objnum == current.m_nObject) ? RGB (255,0,0) : RGB (255,208,0));
 	pOldPen = m_pDC->SelectObject (&pen);
 	m_pDC->SelectObject ((HBRUSH)GetStockObject(HOLLOW_BRUSH));
 	m_pDC->Ellipse (poly_draw [0].x - d, poly_draw [0].y - d, poly_draw [0].x + d, poly_draw [0].y + d);
@@ -1533,7 +1533,7 @@ if (theMine->m_bSplineActive)
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   short vertex = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [sideVertTable [theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+   short vertex = theMine->Segments (0) [current.m_nSegment].m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);
@@ -1544,27 +1544,27 @@ else {
 	strcat_s (message, sizeof (message), "  cube size: ");
 	CDoubleVector center1,center2;
    double length;
-   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 0);
-	center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 2);
+   center1 = theMine->CalcSideCenter (current.m_nSegment, 0);
+	center2 = theMine->CalcSideCenter (current.m_nSegment, 2);
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 1);
-   center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 3);
+   center1 = theMine->CalcSideCenter (current.m_nSegment, 1);
+   center2 = theMine->CalcSideCenter (current.m_nSegment, 3);
    length = Distance (center1, center2);
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 4);
-   center2 = theMine->CalcSideCenter (theMine->Current ()->nSegment, 5);
+   center1 = theMine->CalcSideCenter (current.m_nSegment, 4);
+   center2 = theMine->CalcSideCenter (current.m_nSegment, 5);
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}
 strcat_s (message, sizeof (message), ",  cube:");
-_itoa_s (theMine->Current ()->nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current.m_nSegment, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " side:");
-_itoa_s ((currSide = theMine->Current ()->nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s ((currSide = current.m_nSide) + 1, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " point:");
-_itoa_s (currPoint = theMine->Current ()->nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (currPoint = current.m_nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
 _itoa_s (theMine->current.Segment ()->m_info.verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 

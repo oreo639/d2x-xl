@@ -257,7 +257,7 @@ InitCBWallNo ();
 if (!(m_pWall [0] = theMine->FindWall ())) {
 	strcpy_s (m_szMsg, sizeof (m_szMsg), "No wall for current side");
 	EnableControls (FALSE);
-	if (theMine->current.Segment ()->GetChild (theMine->Current ()->nSide) >= 0)
+	if (theMine->current.Segment ()->GetChild (current.m_nSide) >= 0)
 		CToolDlg::EnableControls (IDC_WALL_ADD_DOOR_NORMAL, IDC_WALL_ADD_WALL_LAVAFALL, TRUE);
 	GetDlgItem (IDC_WALL_ADD)->EnableWindow (TRUE);
 	GetDlgItem (IDC_WALL_TYPE)->EnableWindow (TRUE);
@@ -356,8 +356,8 @@ bool bRefresh = false;
 m_bDelayRefresh = true;
 segP [0] = theMine->current.Segment ();
 sideP [0] = theMine->current.Side ();
-nSegment [0] = theMine->Current ()->nSegment;
-nSide [0] = theMine->Current ()->nSide;
+nSegment [0] = current.m_nSegment;
+nSide [0] = current.m_nSide;
 if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = theMine->Segments (nSegment [1]);
 	sideP [1] = segP [1]->m_sides + nSide [1];
@@ -534,8 +534,8 @@ m_pWall [0] = theMine->Walls (m_nWall [0]);
 */
 segP [0] = theMine->current.Segment ();
 sideP [0] = theMine->current.Side ();
-nSegment [0] = theMine->Current ()->nSegment;
-nSide [0] = theMine->Current ()->nSide;
+nSegment [0] = current.m_nSegment;
+nSide [0] = current.m_nSide;
 if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = theMine->Segments (nSegment [1]);
 	sideP [1] = segP [1]->m_sides + nSide [1];

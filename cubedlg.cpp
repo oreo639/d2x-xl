@@ -255,7 +255,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
-m_nVertex = theMine->current.Segment ()->m_info.verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+m_nVertex = theMine->current.Segment ()->m_info.verts[sideVertTable[current.m_nSide][current.m_nPoint]];
 theMine->Vertices (m_nVertex)->Set ((int) (m_nCoord [0] * 0x10000L), (int) (m_nCoord [1] * 0x10000L), (int) (m_nCoord [2] * 0x10000L));
 DLE.MineView ()->Refresh (false);
 }
@@ -265,7 +265,7 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-m_nVertex = theMine->current.Segment ()->m_info.verts [sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
+m_nVertex = theMine->current.Segment ()->m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]];
 m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
 m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
 m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
@@ -297,7 +297,7 @@ void CSegmentTool::OnProp5 () { OnProp (4); }
 void CSegmentTool::OnSide (int nSide)
 {
 CHECKMINE;
-theMine->Current ()->nSide = m_nSide = nSide;
+current.m_nSide = m_nSide = nSide;
 DLE.MineView ()->Refresh ();
 }
 
@@ -313,7 +313,7 @@ void CSegmentTool::OnSide6 () { OnSide (5); }
 void CSegmentTool::OnPoint (int nPoint)
 {
 CHECKMINE;
-theMine->Current ()->nPoint = m_nPoint = nPoint;
+current.m_nPoint = m_nPoint = nPoint;
 DLE.MineView ()->Refresh ();
 }
 
@@ -353,10 +353,10 @@ theMine->RenumberBotGens ();
 theMine->RenumberEquipGens ();
 // update cube number combo box if number of cubes has changed
 CSegment *segP = theMine->current.Segment ();
-m_bEndOfExit = (segP->GetChild (theMine->Current ()->nSide) == -2);
-m_nSegment = theMine->Current ()->nSegment;
-m_nSide = theMine->Current ()->nSide;
-m_nPoint = theMine->Current ()->nPoint;
+m_bEndOfExit = (segP->GetChild (current.m_nSide) == -2);
+m_nSegment = current.m_nSegment;
+m_nSide = current.m_nSide;
+m_nPoint = current.m_nPoint;
 m_nType = segP->m_info.function;
 m_nDamage [0] = segP->m_info.damage [0];
 m_nDamage [1] = segP->m_info.damage [1];
@@ -510,7 +510,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnDeleteCube () 
 {
 CHECKMINE;
-theMine->DeleteSegment (theMine->Current ()->nSegment);
+theMine->DeleteSegment (current.m_nSegment);
 DLE.MineView ()->Refresh ();
 }
 
@@ -712,7 +712,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			}
 		}
 	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
-		short nSegNum = theMine->Current ()->nSegment;
+		short nSegNum = current.m_nSegment;
 		CSegment *childseg, *segP = theMine->current.Segment ();
 		CSide *oppside, *sideP = theMine->current.Side ();
 		CWall *wallP;
@@ -767,7 +767,7 @@ UpdateData (TRUE);
 void CSegmentTool::OnSetCube () 
 {
 CHECKMINE;
-theMine->Current ()->nSegment = CBCubeNo ()->GetCurSel ();
+current.m_nSegment = CBCubeNo ()->GetCurSel ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -968,8 +968,8 @@ int i = LBTriggers ()->GetCurSel ();
 if (i < 0)
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-theMine->Current ()->nSegment = (short) (h / 0x10000L);
-theMine->Current ()->nSide = (short) (h % 0x10000L);
+current.m_nSegment = (short) (h / 0x10000L);
+current.m_nSide = (short) (h % 0x10000L);
 DLE.ToolView ()->EditWall ();
 DLE.MineView ()->Refresh ();
 }
@@ -987,10 +987,10 @@ int i = LBTriggers ()->GetCurSel ();
 if ((i < 0) || (i >= LBTriggers ()->GetCount ()))
 	return;
 long h = long (LBTriggers ()->GetItemData (i));
-theMine->Other ()->nSegment = theMine->Current ()->nSegment;
-theMine->Other ()->nSide = theMine->Current ()->nSide;
-theMine->Current ()->nSegment = (short) (h / 0x10000L);
-theMine->Current ()->nSide = (short) (h % 0x10000L);
+other.m_nSegment = current.m_nSegment;
+other.m_nSide = current.m_nSide;
+current.m_nSegment = (short) (h / 0x10000L);
+current.m_nSide = (short) (h % 0x10000L);
 DLE.ToolView ()->EditTrigger ();
 DLE.MineView ()->Refresh ();
 }

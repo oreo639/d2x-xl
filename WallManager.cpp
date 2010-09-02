@@ -29,7 +29,6 @@ CWall *CWallManager::Add (short nSegment, short nSide, short type, ushort flags,
 {
 current.Get (nSegment, nSide);
 
-ushort nWall;
 CSegment *segP = segmentManager.GetSegment (nSegment);
 CSide* sideP = segmentManager.GetSide (nSegment, nSide);
 
@@ -54,7 +53,9 @@ if (sideP->GetWall () != null) {
 	return null;
 	}
 
-if ((nWall = Count ()) >= MAX_WALLS) {
+ushort nWall = Count ();
+
+if (nWall >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls () reached");
 	return null;
 	}
@@ -62,7 +63,7 @@ if ((nWall = Count ()) >= MAX_WALLS) {
 // link wall to segment/side
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-sideP->m_info.nWall = nWall;
+sideP->SetWall (nWall);
 CWall* wallP = Walls (nWall);
 wallP->(nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
 wallP->m_info.flags = flags;
@@ -97,10 +98,7 @@ void CWallManager::Delete (ushort nWall)
 	CSegment *segP;
 	CSide *sideP;
 
-if (nWall < 0)
-	nWall = current.Side ()->m_info.nWall;
-
-CWall* delWallP = Walls (nWall);
+CWall* delWallP = (nWall < 0) ? current.Wall () : Walls (nWall);
 
 if (delWallP == null)
 	return;
@@ -109,14 +107,18 @@ triggerManager.Delete (delWallP->m_info.nTrigger);
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
 // remove references to the deleted wall
-CSide* sideP = segmentManager.OppositeSide (delWallP->m_nSegment, delWallP->m_nSide);
-if (sideP != null) {
-	short nOppWall = Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
-	if ((nOppWall >= 0) && (nOppWall < MineInfo ().walls.count))
-		Walls (nOppWall)->m_info.linkedWall = -1;
+CWall* oppWallP = segmentManager.OppositeWall (delWallP->m_nSegment, delWallP->m_nSide);
+if (oppWallP != null) 
+	oppWallP->m_info.linkedWall = -1;
+
+triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
+segmentManager.GetSide (delWallP->m_nSegment, delWallP->m_nSide)->SetWall (NO_WALL);
+if (nWall < --Count ()) {
+	CWall* moveWallP = m_walls + Count ();
+	segmentManager.GetSide (moveWallP->m_nSegment, moveWallP->m_nSide)->SetWall (nWall);
+	*delWallP = *moveWallP;
 	}
-// update all Segments () that point to Walls () higher than deleted one
-// and unlink all Segments () that point to deleted wall
+
 for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
 		if (sideP->m_info.nWall >= MineInfo ().walls.count)
@@ -129,7 +131,6 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 			}
 // move remaining Walls () in place of deleted wall
 // for (i = nWall; i < MineInfo ().walls.count - 1; i++)
-if (nWall < --MineInfo ().walls.count)
 	memcpy (delWallP, Walls (nWall + 1), (MineInfo ().walls.count - nWall) * sizeof (CWall));
 // update number of Walls () in mine
 DLE.UnlockUndo ();
@@ -160,7 +161,7 @@ return -1;
 
 //------------------------------------------------------------------------------
 
-CWall *CWallManager::FindSide (CSideKey key, int i = 0)
+CWall *CWallManager::FindBySide (CSideKey key, int i = 0)
 {
 for (; i < m_nWalls; i++)
 	if (m_walls [i] == key)
@@ -170,7 +171,7 @@ return null;
 
 //------------------------------------------------------------------------------
 
-CWall *CWallManager::FindTrigger (short nTrigger, int i = 0)
+CWall *CWallManager::FindByTrigger (short nTrigger, int i = 0)
 {
 for (; i < m_nWalls; i++)
 	if (m_walls [i].m_nTrigger == nTrigger)

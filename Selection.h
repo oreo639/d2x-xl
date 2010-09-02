@@ -28,6 +28,7 @@ public:
 	Get (short& nSegment, short& nSide);
 	Segment (void);
 	Side (void);
+	Wall (void);
 };
 
 extern CSelection current, other;

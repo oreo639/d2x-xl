@@ -13,7 +13,7 @@
 #include "cfile.h"
 #include "hogmanager.h"
 
-#define CURRENT_POINT(a) ((theMine->Current ()->nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
 char *BLOCKOP_HINT =
 	"The block of cubes will be saved relative to the current cube.\n"

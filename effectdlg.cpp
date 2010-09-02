@@ -320,7 +320,7 @@ DLE.MineView ()->Refresh ();
 
 void CEffectTool::OnDelete ()
 {
-if (theMine->Current ()->nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
@@ -406,7 +406,7 @@ Refresh ();
 
 void CEffectTool::OnSetObject ()
 {
-short nOld = theMine->Current ()->nObject;
+short nOld = current.m_nObject;
 short nNew = short (CBEffects ()->GetItemData (CBEffects ()->GetCurSel ()));
 if (nOld != nNew) {
 	UpdateData (TRUE);
@@ -435,11 +435,11 @@ void CEffectTool::HiliteTarget (void)
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
-theMine->Other ()->nObject = theMine->Current ()->nObject;
+other.m_nObject = current.m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
 	for (i = 0, objP = theMine->Objects (0); i < theMine->MineInfo ().objects.count; i++, objP++)
 		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
-			theMine->Other ()->nObject = i;
+			other.m_nObject = i;
 			break;
 			return;
 			}

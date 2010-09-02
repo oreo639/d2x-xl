@@ -92,7 +92,7 @@ for (i = 0; i <= theMine->MineInfo ().objects.count; i++) {
 	}
 
 // unhighlight current object and select next object
-i = theMine->Current ()->nObject;
+i = current.m_nObject;
 RefreshObject(i, closest_object);
 }
 
@@ -139,7 +139,7 @@ bool CMineView::SelectCurrentSegment (short direction, long xMouse, long yMouse)
 
 /* find next segment which is within the cursor position */
 GetClientRect (rc);
-next_segment = cur_segment = theMine->Current ()->nSegment;
+next_segment = cur_segment = current.m_nSegment;
 mousePos.x = (short) xMouse;
 mousePos.y = (short) yMouse;
 mousePos.z = 0;
@@ -204,7 +204,7 @@ foundSeg:
 
 if (!bFound)
 	return false;
-theMine->Current ()->nSegment = next_segment;
+current.m_nSegment = next_segment;
 DLE.ToolView ()->Refresh ();
 Refresh ();
 return true;
@@ -218,8 +218,8 @@ void CMineView::NextPoint(int dir)
 //if ((theMine == null)->SplineActive ())
 //	DrawHighlight (1);
 //if (m_selectMode==POINT_MODE)
-wrap(&theMine->Current ()->nPoint,dir,0,4-1);
-theMine->Current ()->nLine = theMine->Current ()->nPoint;
+wrap(&current.m_nPoint,dir,0,4-1);
+current.m_nLine = current.m_nPoint;
 Refresh ();
 //SetSelectMode (POINT_MODE);
 }
@@ -238,7 +238,7 @@ NextPoint (-1);
 //==========================================================================
 void CMineView::NextSide (int dir) 
 {
-wrap(&theMine->Current ()->nSide,dir,0,6-1);
+wrap(&current.m_nSide,dir,0,6-1);
 Refresh (true);
 //SetSelectMode (SIDE_MODE);
 }
@@ -256,7 +256,7 @@ NextSide (-1);
 //==========================================================================
 void CMineView::NextSide2 (int dir)
 {
-wrap(&theMine->Current ()->nSide,dir,0,6-1);
+wrap(&current.m_nSide,dir,0,6-1);
 Refresh ();
 }
 
@@ -271,8 +271,8 @@ NextSide2 (-1);
 
 void CMineView::NextLine (int dir) 
 {
-wrap (&theMine->Current ()->nLine, dir, 0, 4-1);
-theMine->Current ()->nPoint = theMine->Current ()->nLine;
+wrap (&current.m_nLine, dir, 0, 4-1);
+current.m_nPoint = current.m_nLine;
 Refresh ();
 //SetSelectMode (LINE_MODE);
 }
@@ -298,14 +298,14 @@ if (theMine->SegCount () <= 0)
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
 	//if (m_selectMode == CUBE_MODE)
-		wrap (&theMine->Current ()->nSegment,dir,0, theMine->SegCount () - 1);
+		wrap (&current.m_nSegment,dir,0, theMine->SegCount () - 1);
 	Refresh (true);
 	//SetSelectMode (CUBE_MODE);
 	DrawHighlight (0);
 	}
 else {
 	//if (m_selectMode == CUBE_MODE)
-		wrap (&theMine->Current ()->nSegment, dir, 0, theMine->SegCount () - 1);
+		wrap (&current.m_nSegment, dir, 0, theMine->SegCount () - 1);
 	Refresh (true);
 	//SetSelectMode (CUBE_MODE);
 	}
@@ -336,14 +336,14 @@ void CMineView::ForwardCube (int dir)
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
-segP = theMine->Segments (theMine->Current ()->nSegment);
-nChild = segP->GetChild (bFwd ? theMine->Current ()->nSide: oppSideTable [theMine->Current ()->nSide]);
+segP = theMine->Segments (current.m_nSegment);
+nChild = segP->GetChild (bFwd ? current.m_nSide: oppSideTable [current.m_nSide]);
 if (nChild <= -1) {
 	// first try to find a non backwards route
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->GetChild (nSide) != m_lastSegment && segP->GetChild (nSide) > -1) {
 			nChild = segP->GetChild (nSide);
-			theMine->Current ()->nSide =  bFwd ? nSide: oppSideTable [nSide];
+			current.m_nSide =  bFwd ? nSide: oppSideTable [nSide];
 			break;
 			}
 		}
@@ -352,7 +352,7 @@ if (nChild <= -1) {
 		for (nSide = 0; nSide < 6; nSide++) {
 			if (segP->GetChild (nSide) > -1) {
 				nChild = segP->GetChild (nSide);
-				theMine->Current ()->nSide = bFwd ? nSide: oppSideTable [nSide];
+				current.m_nSide = bFwd ? nSide: oppSideTable [nSide];
 				break;
 				}
 			}			
@@ -362,19 +362,19 @@ if (nChild > -1) {
 	childSegP = theMine->Segments (nChild);
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
-		if (childSegP->GetChild (nSide) == theMine->Current ()->nSegment) {
-			theMine->Current ()->nSide =  bFwd ? oppSideTable [nSide]: nSide;
+		if (childSegP->GetChild (nSide) == current.m_nSegment) {
+			current.m_nSide =  bFwd ? oppSideTable [nSide]: nSide;
 			break;
 			}
 		}
-	m_lastSegment = theMine->Current ()->nSegment;
+	m_lastSegment = current.m_nSegment;
 	if (0) {//!ViewOption (eViewPartialLines)) {
 		// DrawHighlight (1);
-		theMine->Current ()->nSegment = nChild;
+		current.m_nSegment = nChild;
 		// DrawHighlight (0);
 		} 
 	else {
-		theMine->Current ()->nSegment = nChild;
+		current.m_nSegment = nChild;
 		Refresh (true);
 		}
 	}
@@ -410,8 +410,8 @@ short nOppSeg, nOppSide;
 if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide))
 	return false;
 
-theMine->Current ()->nSegment = nOppSeg;
-theMine->Current ()->nSide = nOppSide;
+current.m_nSegment = nOppSeg;
+current.m_nSide = nOppSide;
 Refresh (true);
 //DLE.ToolView ()->CubeTool ()->Refresh ();
 return true;
@@ -423,8 +423,8 @@ return true;
 
 void CMineView::NextObject (int dir) 
 {
-  short old_object = theMine->Current ()->nObject;
-  short new_object = theMine->Current ()->nObject;
+  short old_object = current.m_nObject;
+  short new_object = current.m_nObject;
 
 //  DrawHighlight (1);
 if (theMine->MineInfo ().objects.count > 1) {

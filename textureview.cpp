@@ -150,7 +150,7 @@ CHECKMINE;
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = theMine->Objects (theMine->Current ()->nObject);
+	CGameObject *objP = theMine->Objects (current.m_nObject);
    if (objP->m_info.renderType != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.tmap_override = nBaseTex;

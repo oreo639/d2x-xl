@@ -273,7 +273,7 @@ if ((nSide < 0) || (nSide > 5))
 	return;
 
 CSelection *other = theMine->Other ();
-if ((theMine->Current ()->nSegment == nSegment) && (theMine->Current ()->nSide == nSide))
+if ((current.m_nSegment == nSegment) && (current.m_nSide == nSide))
 	return;
 other->nSegment = m_pTrigger->Segment (m_iTarget);
 other->nSide = m_pTrigger->Side (m_iTarget);

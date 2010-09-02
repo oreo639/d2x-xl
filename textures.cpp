@@ -57,7 +57,7 @@ wndP->GetClientRect (rc);
 if (nBaseTex < 0) {
 	segP = (nSegment < 0) ? theMine->current.Segment () : theMine->Segments (nSegment);
 	sideP = (nSide < 0) ? theMine->current.Side () : segP->m_sides + nSide;
-	int nSide = theMine->Current ()->nSide;
+	int nSide = current.m_nSide;
 	nBaseTex = sideP->m_info.nBaseTex;
 	nOvlTex = sideP->m_info.nOvlTex & 0x1fff;
 	if (segP->GetChild (nSide) == -1)

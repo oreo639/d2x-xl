@@ -59,7 +59,7 @@ if (h > 1) {
 
 //------------------------------------------------------------------------
 
-CTrigger *CTriggerManager::Add (ushort nWall, short type, bool bAddWall) 
+CTrigger *CTriggerManager::Add (short nWall, short type, bool bAddWall) 
 {
 	static short defWallTypes [NUM_TRIGGER_TYPES] = {
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_ILLUSION, 
@@ -164,7 +164,7 @@ return Triggers (nTrigger);
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------
 
-void CTriggerManager::DeleteTrigger (short nTrigger) 
+void CTriggerManager::Delete (short nTrigger) 
 {
 	short	i, nSegment, nSide, nWall;
 
@@ -239,17 +239,13 @@ return false;
 
 void CTriggerManager::DeleteTriggerTargets (short nSegment, short nSide) 
 {
-int i;
+CSideKey key (nSegment, nSide);
 
-for (i = 0; i < MineInfo ().triggers.count; i++)
-	if (DeleteTriggerTarget (Triggers (i), nSegment, nSide))
-		i--;
-
-for (i = 0; i < NumObjTriggers (); i++)
-	if (DeleteTriggerTarget (ObjTriggers (i), nSegment, nSide, false)) {
-		DeleteObjTrigger (i);
-		i--;
-		}
+for (int h = 0; h < 2; h++) {
+	CTrigger* trigP = m_triggers [h];
+	for (int i = 0; i < m_nTriggers [h]; i++, trigP++)
+		trigP->Delete (key);
+	}
 }
 
 //------------------------------------------------------------------------

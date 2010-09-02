@@ -26,7 +26,7 @@ if ((theMine == null)) return FALSE;
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
-	short nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+	short nVert = sideVertTable [current.m_nSide] [current.m_nPoint];
 	short v = theMine->current.Segment ()->m_info.verts [nVert];
 	short x = m_viewPoints [v].x;
 	short y = m_viewPoints [v].y;
@@ -93,7 +93,7 @@ if (m_lastMousePos == m_lastDragPos)
 	short x, y;
 	int i;
 
-nVert = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
+nVert = sideVertTable [current.m_nSide] [current.m_nPoint];
 
 // unhighlight last point and lines drawing
 HighlightDrag (nVert, m_lastDragPos.x, m_lastDragPos.y);
@@ -146,8 +146,8 @@ CHECKMINE;
 
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
-point1 = sideVertTable [theMine->Current ()->nSide] [theMine->Current ()->nPoint];
-vert1 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [point1];
+point1 = sideVertTable [current.m_nSide] [current.m_nPoint];
+vert1 = theMine->Segments (0) [current.m_nSegment].m_info.verts [point1];
 // find point to merge with
 for (i = 0; i < theMine->VertCount (); i++) {
 	xPoint = m_viewPoints [i].x;
@@ -166,7 +166,7 @@ if (count == 1) {
 // make sure new vert is not one of the current cube's verts
 	for (i=0;i<8;i++) {
 		if (i!=point1) {
-			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [i];
+			vert2 = theMine->Segments (0) [current.m_nSegment].m_info.verts [i];
 			if (new_vert == vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
@@ -177,7 +177,7 @@ if (count == 1) {
 	// make sure the new line lengths are close enough
 		for (i=0;i<3;i++) {
 			point2 = connectPointTable [point1] [i];
-			vert2 = theMine->Segments (0) [theMine->Current ()->nSegment].m_info.verts [point2];
+			vert2 = theMine->Segments (0) [current.m_nSegment].m_info.verts [point2];
 			if (Distance (*theMine->Vertices (new_vert), *theMine->Vertices (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
@@ -185,7 +185,7 @@ if (count == 1) {
 			}
 		if (i==3) { //
 			// replace origional vertex with new vertex
-			theMine->Segments () [theMine->Current ()->nSegment].m_info.verts [point1] = new_vert;
+			theMine->Segments () [current.m_nSegment].m_info.verts [point1] = new_vert;
 			// all unused vertices
 			theMine->DeleteUnusedVertices ();
 			theMine->FixChildren ();
