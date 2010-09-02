@@ -10,7 +10,7 @@
 #include <errno.h>
 #endif
 
-#include "VectorTypes.h"
+#include "Vector.h"
 
 // the maximum length of a filename
 #define FILENAME_LEN			256

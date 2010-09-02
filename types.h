@@ -6,7 +6,7 @@
 # pragma pack(push, packing)
 # pragma pack(1)
 
-#include "VectorTypes.h"
+#include "Vector.h"
 #include "cfile.h"
 
 // -----------------------------------------------------------------------------

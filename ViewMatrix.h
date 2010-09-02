@@ -1,8 +1,9 @@
 // matrix.h
-#ifndef __matrix_h
-#define __matrix_h
+#ifndef __viewmatrix_h
+#define __viewmatrix_h
 
 #include "global.h"
+#include "matrix.h"
 
 class CViewMatrix
 {
@@ -49,4 +50,4 @@ public:
 	void Unrotate (void);
 };
 
-#endif //__matrix_h
+#endif //__viewmatrix_h

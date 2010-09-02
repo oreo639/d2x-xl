@@ -1,9 +1,9 @@
-#ifndef __vectortypes_h
-#define __vectortypes_h
+#ifndef __vector_h
+#define __vector_h
 
 #include <math.h>
 #include "define.h"
-#include "VectorTypes.h"
+#include "Vector.h"
 //#include "cfile.h"
 
 struct tAngleVector;
@@ -12,7 +12,6 @@ struct tFixVector;
 class CFixVector;
 struct tDoubleVector;
 class CDoubleVector;
-class CFixMatrix;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -667,5 +666,5 @@ return CDoubleVector (v ^ rVec, v ^ uVec, v ^ fVec);
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-#endif // __vectortypes_h
+#endif // __vector_h
 

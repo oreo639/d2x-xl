@@ -8,7 +8,7 @@
 
 #include "cfile.h"
 #include "Types.h"
-#include "VectorTypes.h"
+#include "Vector.h"
 
 typedef struct {
   short jointnum;
