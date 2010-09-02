@@ -576,14 +576,6 @@ public:
 //extern int	     Num_static_lights;
 
 
-class CReactorTrigger : public CTriggerTargets, public CGameItem {
-public:
-	int Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Clear (void) { CTriggerTargets::Clear (); }
-	virtual CGameItem* Next (void) { return this + 1; }
-};
-
 typedef struct tRobotMaker {
 	int  objFlags [2]; /* Up to 32 different Descent 1 robots */
 	//  int  robot_flags2;// Additional 32 robots for Descent 2

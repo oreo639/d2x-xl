@@ -31,7 +31,6 @@ extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 #ifdef USE_DYN_ARRAYS
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
-typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
 typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
 typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
@@ -39,7 +38,6 @@ typedef CStaticArray< CWall, WALL_LIMIT > wallList;
 typedef CStaticArray< CActiveDoor, DOOR_LIMIT > activeDoorList;
 typedef CStaticArray< CTrigger, MAX_TRIGGERS_D2 > triggerList;
 typedef CStaticArray< CTrigger, MAX_OBJ_TRIGGERS > objTriggerList;
-typedef CStaticArray< CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggerList;
 typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
@@ -53,15 +51,11 @@ typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightL
 #else
 
 typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
-typedef CSegment segmentList [SEGMENT_LIMIT];
 typedef CColor lightColorList [SEGMENT_LIMIT * 6];
 typedef CColor texColorList [MAX_TEXTURES_D2];
 typedef CColor vertexColorList [VERTEX_LIMIT];
 typedef CWall wallList [WALL_LIMIT];
 typedef CActiveDoor activeDoorList [DOOR_LIMIT];
-typedef CTrigger triggerList [MAX_TRIGGERS_D2];
-typedef CTrigger objTriggerList [MAX_OBJ_TRIGGERS];
-typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 typedef CGameObject objectList [MAX_OBJECTS_D2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
@@ -86,18 +80,11 @@ typedef struct tMineData {
 	robotInfoList				robotInfo;
 	
 	// structure data
-	ushort						numVertices;
-	vertexList					vertices;
-	ushort						numSegments;
-	segmentList					segments;
 	lightColorList				lightColors;
 	texColorList				texColors;
 	vertexColorList			vertexColors;
 	wallList						walls;
 	activeDoorList				activeDoors;
-	triggerList					triggers;
-	objTriggerList				objTriggers;
-	int							numObjTriggers;
 	reactorTriggerList		reactorTriggers;
 	robotMakerList				robotMakers;
 	robotMakerList				equipMakers;
@@ -189,18 +176,20 @@ public:
 		{ return MineData ().vertexColors; }
 	inline wallList& Walls (void)
 		{ return MineData ().walls; }
+
 	inline triggerList& Triggers (void)
 		{ return MineData ().triggers; }
 	inline objTriggerList& ObjTriggers (void)
 		{ return MineData ().objTriggers; }
+	inline reactorTriggerList& ReactorTriggers (void)
+		{ return MineData ().reactorTriggers; }
+
 	inline objectList& Objects (void)
 		{ return MineData ().objects; }
 	inline robotMakerList& BotGens (void)
 		{ return MineData ().robotMakers; }
 	inline robotMakerList& EquipGens (void)
 		{ return MineData ().equipMakers; }
-	inline reactorTriggerList& ReactorTriggers (void)
-		{ return MineData ().reactorTriggers; }
 	inline activeDoorList& ActiveDoors (void)
 		{ return MineData ().activeDoors; }
 	inline robotInfoList& RobotInfo (void)
@@ -220,6 +209,7 @@ public:
 		{ return &(MineData ().vertexColors [i]); }
 	inline CWall *Walls (int i)
 		{ return MineData ().walls + i; }
+
 	inline CTrigger *Triggers (int i)
 		{ return MineData ().triggers + i; }
 	inline int &NumTriggers ()
@@ -228,14 +218,15 @@ public:
 		{ return MineData ().objTriggers + i; }
 	inline int& NumObjTriggers ()
 		{ return MineData ().numObjTriggers; }
+	inline CReactorTrigger *ReactorTriggers (int i)
+		{ return MineData ().reactorTriggers + i; }
+
 	inline CGameObject *Objects (int i)
 		{ return MineData ().objects + i; }
 	inline CRobotMaker *BotGens (int i)
 		{ return MineData ().robotMakers + i; }
 	inline CRobotMaker *EquipGens (int i)
 		{ return MineData ().equipMakers + i; }
-	inline CReactorTrigger *ReactorTriggers (int i)
-		{ return MineData ().reactorTriggers + i; }
 	inline CActiveDoor *ActiveDoors (int i)
 		{ return MineData ().activeDoors + i; }
 	inline CRobotInfo *RobotInfo (int i)
