@@ -67,7 +67,7 @@ public:
 	void Setup (void);
 	void LoadTextures (void);
 	bool SetTexture (short nBaseTex, short nOvlTex);
-	CWall* Wall (void);
+	CWall* GetWall (void);
 };
 
 typedef struct tSegment {

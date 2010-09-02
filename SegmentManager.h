@@ -161,4 +161,6 @@ private:
 
 	};
 
+extern CSegmentManager segmentManager;
+
 #endif //__segman_h

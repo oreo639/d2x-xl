@@ -26,23 +26,31 @@ class CTriggerManager {
 
 	public:
 		inline bool IsValid (short i, j) { return (i > 0) && (i < j); }
-		inline triggerList& Triggers (void)
-			{ return m_triggers [0]; }
-		inline objTriggerList& ObjTriggers (void)
-			{ return m_triggers [1]; }
-		inline CTrigger *Triggers (int i)
-			{ return IsValid (i, m_nTriggers [0]) ? &m_triggers [0][i] : null; }
-			{ return &m_triggers [0][i]; }
-		inline int &NumTriggers (void)
-			{ return m_nTriggers [0]; }
-		inline CTrigger *ObjTriggers (int i)
-			{ return IsValid (i, m_nTriggers [1]) ? &m_triggers [1][i] : null; }
-		inline int& NumObjTriggers (void)
-			{ return m_nTriggers [1]; }
-		inline reactorTriggerList& ReactorTriggers (void)
-			{ return m_reactorTriggers; }
-		inline CReactorTrigger* ReactorTriggers (int i)
-			{ return &m_reactorTriggers [i]; }
+
+		inline triggerList& Triggers (void) { return m_triggers [0]; }
+
+		inline objTriggerList& ObjTriggers (void) { return m_triggers [1]; }
+
+		inline CTrigger *Triggers (int i, int j = 0) { return IsValid (i, m_nTriggers [j]) ? &m_triggers [j][i] : null; }
+
+		inline int &NumTriggers (int i = 0) { return m_nTriggers [i]; }
+
+		inline CTrigger *ObjTriggers (int i) { return Triggers (i, 1); }
+
+		inline int& NumObjTriggers (void) { return NumTriggers (1); }
+
+		inline reactorTriggerList& ReactorTriggers (void) { return m_reactorTriggers; }
+
+		inline CReactorTrigger* ReactorTriggers (int i) { return &m_reactorTriggers [i]; }
+
+		void CTriggerManager::SortObjTriggers (void);
+
+	private:
+		int CTriggerManager::CmpObjTriggers (CTrigger *pi, CTrigger *pm);
+		void CTriggerManager::SortObjTriggers (short left, short right);
+
 };
+
+extern CTriggerManager triggerManager;
 
 #endif //__trigman_h

@@ -1,5 +1,6 @@
 #include "triggermanager.h"
 
+CTriggerManager triggerManager;
 
 //------------------------------------------------------------------------
 
@@ -30,11 +31,8 @@ do {
 	while (QCmpObjTriggers (ObjTriggers (r), &median) > 0)
 		r--;
 	if (l <= r) {
-		if (l < r) {
-			CTrigger o = *ObjTriggers (l);
-			*ObjTriggers (l) = *ObjTriggers (r);
-			*ObjTriggers (r) = o;
-			}
+		if (l < r)
+			Swap (*ObjTriggers (l), *ObjTriggers (r));
 		l++;
 		r--;
 		}
@@ -61,10 +59,8 @@ if (h > 1) {
 
 //------------------------------------------------------------------------
 
-CTrigger *CTriggerManager::AddTrigger (ushort nWall, short type, BOOL bAutoAddWall) 
+CTrigger *CTriggerManager::Add (ushort nWall, short type, bool bAddWall) 
 {
-	short flags;
-	short nSegment, nSide, nTrigger;
 	static short defWallTypes [NUM_TRIGGER_TYPES] = {
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_ILLUSION, 
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, 
@@ -83,12 +79,13 @@ CTrigger *CTriggerManager::AddTrigger (ushort nWall, short type, BOOL bAutoAddWa
 		};
 
 // check if there's already a trigger on the current side
-nWall = FindTriggerWall (&nTrigger);
-if (nTrigger != NO_TRIGGER) {
+CSide* sideP = segmentManager.GetSide ();
+CWall* wallP = sideP->GetWall ();
+if (sideP->GetWall ()) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
-if (MineInfo ().triggers.count >= MAX_TRIGGERS) {
+if (Count () >= MAX_TRIGGERS) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return null;
 	}

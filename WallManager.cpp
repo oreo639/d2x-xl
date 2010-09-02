@@ -15,6 +15,8 @@
 #include "cfile.h"
 #include "texturemanager.h"
 
+CWallManager wallManager;
+
 //------------------------------------------------------------------------------
 // Mine - add wall
 //

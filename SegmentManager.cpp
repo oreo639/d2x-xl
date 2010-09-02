@@ -16,6 +16,8 @@
 #include "robot.h"
 #include "cfile.h"
 
+CSegmentManager segmentManager;
+
 // -----------------------------------------------------------------------------
 
 CWall *CSegmentManager::Wall (short nSegment, short nSide)
