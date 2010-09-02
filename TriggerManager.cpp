@@ -79,10 +79,7 @@ CTrigger *CTriggerManager::Add (short nWall, short type, bool bAddWall)
 		};
 
 // check if there's already a trigger on the current side
-CSegment* segP = segmentManager.GetSegment ();
-CSide* sideP = segmentManager.GetSide ();
-CWall* wallP = sideP->GetWall ();
-if (sideP->GetWall ()) {
+if (segmentManager.GetTrigger () != null) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
@@ -93,22 +90,24 @@ if (Count () >= MAX_TRIGGERS) {
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if (current.Side ()->m_info.nWall >= MineInfo ().walls.count) {
+
+CWall* wallP = current.Wall ();
+
+if (wallP == null) {
 	if (bAddWall) {
 		if (MineInfo ().walls.count >= MAX_WALLS) {
 			ErrorMsg ("Cannot add a wall to this side,\nsince the maximum number of walls is already reached.");
 			return null;
 			}
-		nSegment = nSide = -1;
-		current.Get (nSegment, nSide);
-		if (!wallManager.Add (-1, -1, (Segments (nSegment)->GetChild (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type])) {
+		wallP = wallManager.Add (-1, -1, (current.Segment ()->GetChild (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
+		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			DLE.ResetModified (bUndo);
 			return null;
 			}
 		}
 	else {
-		ErrorMsg ("You must add a wall to this side before you can add a trigger.");
+		ErrorMsg ("You need to add a wall to this side before you can add a trigger.");
 		return null;
 		}
 	}
@@ -147,14 +146,13 @@ if (IsD1File ()) {
 else
 	flags = 0;
 
-nTrigger = (ushort) MineInfo ().triggers.count;
+CTrigger* trigP = Triggers (++Count (0));
 // set new trigger data
-Triggers (nTrigger)->Setup (type, flags);
+trigP->Setup (type, flags);
 // link trigger to the wall
-Walls (nWall)->m_info.nTrigger = (byte) nTrigger;
+wallP->SetTrigger (nTrigger);
 // update number of Triggers ()
-MineInfo ().triggers.count++;
-AutoLinkExitToReactor();
+LinkExitToReactor();
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
 return Triggers (nTrigger);
@@ -164,40 +162,30 @@ return Triggers (nTrigger);
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------
 
-void CTriggerManager::Delete (short nTrigger) 
+void CTriggerManager::Delete (short nDelTrigger, int nClass) 
 {
-	short	i, nSegment, nSide, nWall;
-
-if (nTrigger < 0) {
-	nWall = current.Segment ()->m_sides [Current ()->nSide].m_info.nWall;
-	if (nWall >= MineInfo ().walls.count)
+if (nDelTrigger < 0) {
+	CWall* wallP = current.Wall ();
+	if (wallP == null)
 		return;
-	nTrigger = Walls (nWall)->m_info.nTrigger;
+	nDelTrigger = Walls (nWall)->m_info.nDelTrigger;
 	}
-if (nTrigger >= MineInfo ().triggers.count)
+
+CTrigger* delTrigP = Triggers (nDelTrigger, nClass);
+
+if (delTrigP == null)
 	return;
 // update all Walls () who point to Triggers () higher than this one
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-CWall *wallP = Walls (0);
-for (i = MineInfo ().walls.count; i; i--, wallP++)
-	if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger > nTrigger))
-		wallP->m_info.nTrigger--;
-	else if (wallP->m_info.nTrigger == nTrigger) {
-		wallP->m_info.nTrigger = NO_TRIGGER;
-		nSegment = wallP->m_nSegment;
-		nSide = wallP->m_nSide;
-		}
-// remove trigger from array
-//for (i=nTrigger;i<MineInfo ().triggers.count-1;i++)
-// update number of Triggers ()
-CTrigger *trigP = Triggers (0);
-for (i = NumTriggers (); i; i--, trigP++)
-	if (trigP->m_info.type >= TT_MASTER)
-		DeleteTriggerTarget (trigP, nSegment, nSide, false);
-if (nTrigger < --MineInfo ().triggers.count)
-	memcpy(Triggers (nTrigger), Triggers (nTrigger + 1), (MineInfo ().triggers.count - nTrigger) * sizeof (CTrigger));
+wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
+if (nTrigger < --Count ()) {	
+	// move the last trigger in the list to the deleted trigger's position
+	wallManager.UpdateTrigger (m_nTriggers [nClass], nDelTrigger);
+	*delTrigP = Trigger (m_nTriggers [nClass], nClass);
+	}
+
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
 AutoLinkExitToReactor();
@@ -207,40 +195,8 @@ AutoLinkExitToReactor();
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------
 
-int CTriggerManager::DeleteTargetFromTrigger (CTrigger *trigger, short linknum, bool bAutoDeleteTrigger)
+void CTriggerManager::DeleteTarget (CSideKey key) 
 {
-if (!--trigger->m_count) {
-	if (bAutoDeleteTrigger)
-		DeleteTrigger ();
-	return 0;
-	}
-if (linknum < trigger->m_count) {
-	memcpy (trigger->m_targets + linknum, trigger->m_targets + linknum + 1, (trigger->m_count - linknum) * sizeof (trigger [0]));
-	}
-return trigger->m_count;
-}
-
-
-int CTriggerManager::DeleteTargetFromTrigger (short nTrigger, short linknum, bool bAutoDeleteTrigger)
-{
-return DeleteTargetFromTrigger (Triggers (nTrigger), linknum, bAutoDeleteTrigger);
-}
-
-
-bool CTriggerManager::DeleteTriggerTarget (CTrigger* trigP, short nSegment, short nSide, bool bAutoDeleteTrigger) 
-{
-int j;
-for (j = 0; j < trigP->m_count; j++)
-	if ((trigP->m_targets [j] == CSideKey (nSegment, nSide)))
-		return DeleteTargetFromTrigger (trigP, j, bAutoDeleteTrigger) == 0;
-return false;
-}
-
-
-void CTriggerManager::DeleteTriggerTargets (short nSegment, short nSide) 
-{
-CSideKey key (nSegment, nSide);
-
 for (int h = 0; h < 2; h++) {
 	CTrigger* trigP = m_triggers [h];
 	for (int i = 0; i < m_nTriggers [h]; i++, trigP++)

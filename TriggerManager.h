@@ -41,13 +41,15 @@ class CTriggerManager {
 
 		inline objTriggerList& ObjTriggers (void) { return m_triggers [1]; }
 
-		inline CTrigger *Triggers (int i, int j = 0) { return IsValid (i, m_nTriggers [j]) ? &m_triggers [j][i] : null; }
+		inline CTrigger *Triggers (int i, int nClass = 0) { return IsValid (i, m_nTriggers [nClass]) ? &m_triggers [nClass][i] : null; }
 
-		inline int &NumTriggers (int i = 0) { return m_nTriggers [i]; }
+		inline short& Count (int nClass) { return m_nTriggers [nClass]; }
+
+		inline short& NumTriggers (void) { return Count 0); }
 
 		inline CTrigger *ObjTriggers (int i) { return Triggers (i, 1); }
 
-		inline int& NumObjTriggers (void) { return NumTriggers (1); }
+		inline short& NumObjTriggers (void) { return Count (1); }
 
 		inline reactorTriggerList& ReactorTriggers (void) { return m_reactorTriggers; }
 
@@ -55,9 +57,13 @@ class CTriggerManager {
 
 		void CTriggerManager::SortObjTriggers (void);
 
+		void DeleteTarget (CSideKey key);
+
+		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey key (nSegment, nSide)); }
+
 	private:
-		int CTriggerManager::CmpObjTriggers (CTrigger *pi, CTrigger *pm);
-		void CTriggerManager::SortObjTriggers (short left, short right);
+		int CmpObjTriggers (CTrigger *pi, CTrigger *pm);
+		void SortObjTriggers (short left, short right);
 
 };
 

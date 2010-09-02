@@ -25,7 +25,7 @@ CWallManager wallManager;
 // Note: nClip & nTexture are used for call to DefineWall only.
 //------------------------------------------------------------------------------
 
-CWall *CWallManager::Add (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture) 
+CWall* CWallManager::Add (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture) 
 {
 current.Get (nSegment, nSide);
 
@@ -177,6 +177,16 @@ for (; i < m_nWalls; i++)
 	if (m_walls [i].m_nTrigger == nTrigger)
 		return &m_walls [i];
 return null;
+}
+
+//------------------------------------------------------------------------------
+
+void UpdateTrigger (short nOldTrigger, short nNewTrigger)
+{
+	CWall* wallP = FindByTrigger (nOldTrigger);
+
+if (wallP != null)
+	wallP->SetTrigger (nNewTrigger);
 }
 
 //------------------------------------------------------------------------------

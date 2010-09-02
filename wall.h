@@ -41,8 +41,8 @@ public:
 	virtual CGameItem* Next (void) { return this + 1; }
 
 	bool CWall::IsDoor (void);
-	inline void SetTrigger (short nTrigger) { m_info.nTrigger = nTrigger; }
 	CSide* GetSide (void);
+	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
 	CTrigger* GetTrigger (void);
 };
 

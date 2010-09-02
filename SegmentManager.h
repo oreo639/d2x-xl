@@ -68,6 +68,10 @@ public:
 		return GetSide (nSegment, nSide)->GetWall ();
 		}
 
+	inline CTrigger* GetTrigger (short nSegment = -1, short nSide = -1) {
+		return GetSide (nSegment, nSide)->GetTrigger ();
+		}
+
 	inline CWall* GetOppositeWall (short nSegment = -1, short nSide = -1) {
 		CSide* sideP = GetSide (nSegment, nSide);
 		return (sideP == null) ? null : GetSide (nSegment, nSide)->GetWall ();
