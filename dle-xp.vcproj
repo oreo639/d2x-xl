@@ -6924,6 +6924,10 @@
 					RelativePath=".\VectorTypes.h"
 					>
 				</File>
+				<File
+					RelativePath=".\WallManager.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

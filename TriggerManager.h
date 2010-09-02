@@ -25,17 +25,19 @@ class CTriggerManager {
 		short						m_nReactorTriggers;
 
 	public:
+		inline bool IsValid (short i, j) { return (i > 0) && (i < j); }
 		inline triggerList& Triggers (void)
 			{ return m_triggers [0]; }
 		inline objTriggerList& ObjTriggers (void)
 			{ return m_triggers [1]; }
 		inline CTrigger *Triggers (int i)
+			{ return IsValid (i, m_nTriggers [0]) ? &m_triggers [0][i] : null; }
 			{ return &m_triggers [0][i]; }
-		inline int &NumTriggers ()
+		inline int &NumTriggers (void)
 			{ return m_nTriggers [0]; }
 		inline CTrigger *ObjTriggers (int i)
-			{ return &m_triggers [1][i]; }
-		inline int& NumObjTriggers ()
+			{ return IsValid (i, m_nTriggers [1]) ? &m_triggers [1][i] : null; }
+		inline int& NumObjTriggers (void)
 			{ return m_nTriggers [1]; }
 		inline reactorTriggerList& ReactorTriggers (void)
 			{ return m_reactorTriggers; }

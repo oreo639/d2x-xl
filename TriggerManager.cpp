@@ -326,7 +326,7 @@ return -1;
 
 void CTriggerManager::LinkExitToReactor (void) 
 {
-  short 		linknum,control,count;
+  short 		nTarget, control, count;
   CSideKey	face;
   ushort		nWall;
   char 		nTrigger;
@@ -338,9 +338,9 @@ void CTriggerManager::LinkExitToReactor (void)
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
 // remove items from list that do not point to a wall
-for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
+for (nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 	count = reactorTrigger->m_count;
-	face = reactorTrigger->m_targets [linknum];
+	face = reactorTrigger->m_targets [nTarget];
 	// search for Walls () that have a exit of type trigger
 	found = FALSE;
 	for (nWall = 0; nWall < MineInfo ().walls.count; nWall++) {
@@ -350,7 +350,7 @@ for (linknum = 0; linknum < reactorTrigger->m_count; linknum++) {
 		}
 	}
 	if (!found) {
-		reactorTrigger->Delete (linknum);
+		reactorTrigger->Delete (nTarget);
 		}
 	}
 
@@ -366,15 +366,15 @@ for (nWall = 0; nWall < MineInfo ().walls.count; nWall++) {
 			// see if cube,side is already on the list
 			face = *Walls (nWall);
 			found = FALSE;
-			for (linknum = 0; linknum < count; linknum++) {
-				if (face == reactorTrigger->m_targets [linknum]) {
+			for (nTarget = 0; nTarget < count; nTarget++) {
+				if (face == reactorTrigger->m_targets [nTarget]) {
 					found = TRUE;
 					break;
 					}
 				}
 			// if not already on the list, add it
 			if (!found) {
-				linknum = reactorTrigger->Add (face);
+				nTarget = reactorTrigger->Add (face);
 				}
 			}
 		}

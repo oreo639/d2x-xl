@@ -16,10 +16,17 @@
 #include "robot.h"
 #include "cfile.h"
 
-// --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-CDoubleVector CMine::CalcSideNormal (short nSegment, short nSide)
+CWall *CSegmentManager::Wall (short nSegment, short nSide)
+{
+GetCurrent (nSegment, nSide);
+return wallManager.Walls (Segments (nSegment)->m_sides [nSide].m_info.nWall);
+}
+
+// -----------------------------------------------------------------------------
+
+CDoubleVector CSegmentManager::CalcSideNormal (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 
@@ -30,10 +37,9 @@ GetCurrent (nSegment, nSide);
 return -Normal (*Vertices (segVertP [sideVertP [0]]), *Vertices (segVertP [sideVertP [1]]), *Vertices (segVertP [sideVertP [3]]));
 }
 
-// --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-CDoubleVector CMine::CalcSideCenter (short nSegment, short nSide)
+CDoubleVector CSegmentManager::CalcSideCenter (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 
@@ -47,23 +53,19 @@ v /= 4.0;
 return v;
 }
 
-// -------------------------------------------------------------------------- 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::DeleteWalls (short nSegment)
+void CSegmentManager::DeleteWalls (short nSegment)
 {
 	CSide *sideP = Segments (nSegment)->m_sides; 
 
-int i;
-for (i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
-	if (sideP->m_info.nWall != NO_WALL)
-		DeleteWall (sideP->m_info.nWall); 
+for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
+	wallManager.Delete (sideP [i].m_info.nWall);
 }
 
-// -------------------------------------------------------------------------- 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::Delete (short nDelSeg)
+void CSegmentManager::Delete (short nDelSeg)
 {
 	CSegment			*segP, *delSegP, *childSegP; 
 	CGameObject		*objP; 
@@ -326,14 +328,14 @@ DLE.UnlockUndo ();
 
 
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // DeleteVertex()
 //
 // ACTION - Removes a vertex from the vertices array and updates all the
 //	    Segments () vertices who's vertex is greater than the deleted vertex
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::DeleteVertex (short nDeletedVert)
+void CSegmentManager::DeleteVertex (short nDeletedVert)
 {
 	short nVertex, nSegment; 
 
@@ -350,13 +352,13 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 VertCount ()--; 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // DeleteUnusedVertices()
 //
 // ACTION - Deletes unused vertices
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::DeleteUnusedVertices (void)
+void CSegmentManager::DeleteUnusedVertices (void)
 {
 	short nVertex, nSegment, point; 
 
@@ -372,7 +374,7 @@ for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
 		DeleteVertex(nVertex); 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //	AddSegment()
 //
 //  ACTION - Add new segment at the end. solidifyally joins to adjacent
@@ -388,16 +390,16 @@ for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
 //
 //        If cube is special (fuel center, robot maker, etc..) then textures
 //        are set to default texture.
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::InitSegment (short nSegment)
+void CSegmentManager::InitSegment (short nSegment)
 {
 Segments (nSegment)->Setup ();
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-bool CMine::AddSegment (void)
+bool CSegmentManager::Add (void)
 {
 	CSegment *newSegP, *curSegP; 
 	short i, nNewSeg, nNewSide, nCurrSide = Current ()->nSide; 
@@ -523,16 +525,16 @@ DLE.UnlockUndo ();
 return TRUE; 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // DefineVertices()
 //
 //  ACTION - Calculates vertices when adding a new segment.
 //
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
 #define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
 
-void CMine::DefineVertices (short newVerts [4])
+void CSegmentManager::DefineVertices (short newVerts [4])
 {
 	CSegment*		curSegP; 
 	CDoubleVector	A [8], B [8], C [8], D [8], E [8], a, b, c, d, v; 
@@ -672,7 +674,7 @@ switch (m_nAddMode) {
 	}
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // LinkSegments()
 //
 //  Action - checks 2 Segments () and 2 sides to see if the vertices are identical
@@ -682,9 +684,9 @@ switch (m_nAddMode) {
 //  Change - no longer links if segment already has a child
 //           no longer links Segments () if vert numbers are not in the right order
 //
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-bool CMine::Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin)
+bool CSegmentManager::Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin)
 {
 	CSegment		* seg1, * seg2; 
 	short			i, j; 
@@ -732,11 +734,11 @@ return TRUE;
 }
 
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // LinkSides()
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::LinkSides (short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match [4]) 
+void CSegmentManager::LinkSides (short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match [4]) 
 {
 	CSegment*	seg1 = Segments (nSegment1); 
 	CSegment*	seg2 = Segments (nSegment2); 
@@ -779,7 +781,7 @@ for (i = 0; i < 4; i++) {
 // calculate_segment_center()
 // ------------------------------------------------------------------------- 
 
-void CMine::CalcSegCenter (CVertex& pos, short nSegment) 
+void CSegmentManager::CalcSegCenter (CVertex& pos, short nSegment) 
 {
   short	*nVerts = Segments (nSegment)->m_info.verts; 
   
@@ -789,9 +791,9 @@ for (int i = 0; i < 8; i++)
 pos /= 8.0;
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-bool CMine::SideIsMarked (short nSegment, short nSide)
+bool CSegmentManager::SideIsMarked (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide);
 CSegment *segP = Segments (nSegment);
@@ -802,7 +804,7 @@ for (int i = 0; i < 4; i++) {
 return true;
 }
 
-bool CMine::SegmentIsMarked (short nSegment)
+bool CSegmentManager::SegmentIsMarked (short nSegment)
 {
 CSegment *segP = Segments (nSegment);
 for (int i = 0;  i < 8; i++)
@@ -811,14 +813,14 @@ for (int i = 0;  i < 8; i++)
 return true;
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //			 mark_segment()
 //
 //  ACTION - Toggle marked bit of segment and mark/unmark vertices.
 //
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::Mark (short nSegment)
+void CSegmentManager::Mark (short nSegment)
 {
   CSegment *segP = Segments (nSegment); 
 
@@ -836,11 +838,11 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 			VertStatus (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // update_marked_cubes()
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::UpdateMarked (void)
+void CSegmentManager::UpdateMarked (void)
 {
 	CSegment *segP = Segments (0); 
 	int i; 
@@ -863,7 +865,7 @@ for (int i = 0; i < SegCount (); i++, segP++)
 // MENU - Mark all cubes
 //========================================================================== 
 
-void CMine::MarkAll (void) 
+void CSegmentManager::MarkAll (void) 
 {
 	int i; 
 
@@ -878,7 +880,7 @@ DLE.MineView ()->Refresh ();
 // MENU - Unmark all cubes
 //========================================================================== 
 
-void CMine::UnmarkAll (void) 
+void CSegmentManager::UnmarkAll (void) 
 {
 	int i; 
 	CSegment *segP = Segments (0);
@@ -890,13 +892,13 @@ void CMine::UnmarkAll (void)
 	DLE.MineView ()->Refresh (); 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // ResetSide()
 //
 // Action - sets side to have no child and a default texture
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::ResetSide (short nSegment, short nSide)
+void CSegmentManager::ResetSide (short nSegment, short nSide)
 {
 if (nSegment < 0 || nSegment >= SegCount ()) 
 	return; 
@@ -919,15 +921,15 @@ for (i = 0; i < 4; i++, uvls++) {
 DLE.UnlockUndo ();
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // unlink_child()
 //
 // Action - unlinks current cube's children which don't share all four points
 //
 // Note: 2nd parameter "nSide" is ignored
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::UnlinkChild (short nParentSeg, short nSide) 
+void CSegmentManager::UnlinkChild (short nParentSeg, short nSide) 
 {
   CSegment *parentSegP = Segments (nParentSeg); 
 
@@ -977,9 +979,9 @@ else {
 	}
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-bool CMine::IsPointOfSide (CSegment *segP, int nSide, int nPoint)
+bool CSegmentManager::IsPointOfSide (CSegment *segP, int nSide, int nPoint)
 {
 	int	i;
 
@@ -989,9 +991,9 @@ for (i = 0; i < 4; i++)
 return false;
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-bool CMine::IsLineOfSide (CSegment *segP, int nSide, int nLine)
+bool CSegmentManager::IsLineOfSide (CSegment *segP, int nSide, int nLine)
 {
 	int	i;
 
@@ -1001,15 +1003,15 @@ for (i = 0; i < 2; i++)
 return true;
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //                          Splitpoints()
 //
 // Action - Splits one point shared between two cubes into two points.
 //          New point is added to current cube, other cube is left alone.
 //
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::SplitPoints (void) 
+void CSegmentManager::SplitPoints (void) 
 {
 CSegment *segP; 
 short vert, nSegment, nVertex, nOppSeg, nOppSide; 
@@ -1079,14 +1081,14 @@ DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //                         Splitlines()
 //
 // Action - Splits common lines of two cubes into two lines.
 //
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::SplitLines (void) 
+void CSegmentManager::SplitLines (void) 
 {
   CSegment *segP; 
   short vert [2], nSegment, nVertex, nLine, nOppSeg, nOppSide, i; 
@@ -1161,7 +1163,7 @@ DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //                       Splitsegments()
 //
 // ACTION - Splits a cube from all other points which share its coordinates
@@ -1171,9 +1173,9 @@ INFOMSG ("Two new points were made for the current line.");
 // sides, unless one or more of its vertices are already solitaire, in which
 // case the side needs to get disconnected from its child anyway because that 
 // constitutes an error in the level structure.
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::SplitSegments (int solidify, int nSide) 
+void CSegmentManager::SplitSegments (int solidify, int nSide) 
 {
   CSegment *segP; 
   int vert [4], nSegment, nVertex, i, nFound = 0; 
@@ -1271,11 +1273,11 @@ DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // Mine - Joinpoints
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::JoinPoints (void) 
+void CSegmentManager::JoinPoints (void) 
 {
   CSegment *seg1, *seg2; 
  double distance; //v1x, v1y, v1z, v2x, v2y, v2z; 
@@ -1334,11 +1336,11 @@ DLE.MineView ()->Refresh ();
 DLE.UnlockUndo ();
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // Mine - Joinlines
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::JoinLines (void) 
+void CSegmentManager::JoinLines (void) 
 {
   CSegment *seg1, *seg2; 
   double v1x [2], v1y [2], v1z [2], v2x [2], v2y [2], v2z [2]; 
@@ -1440,16 +1442,16 @@ DLE.UnlockUndo ();
 }
 
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //			  set_lines_to_draw()
 //
 //  ACTION - Determines which lines will be shown when drawing 3d image of
 //           the theMine->  This helps speed up drawing by avoiding drawing lines
 //           multiple times.
 //
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::SetLinesToDraw (void)
+void CSegmentManager::SetLinesToDraw (void)
 {
   CSegment *segP; 
   short nSegment, nSide; 
@@ -1468,13 +1470,13 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 	}
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // FixChildren()
 //
 // Action - Updates linkage between current segment and all other Segments ()
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::FixChildren (void)
+void CSegmentManager::FixChildren (void)
 {
 short nNewSide, nSide, nSegment, nNewSeg; 
 
@@ -1506,7 +1508,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 	}
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 //		       Joinsegments()
 //
 //  ACTION - Joins sides of current Segments ().  Finds closest corners.
@@ -1515,9 +1517,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
 //           new cube is added added.
 //
 //  Changes - Added option to solidifyally figure out "other cube"
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::Join (int solidify)
+void CSegmentManager::Join (int solidify)
 {
 	CSegment *segP; 
 	CSegment *seg1, *seg2; 
@@ -1790,7 +1792,7 @@ DLE.MineView ()->Refresh ();
 
 // ------------------------------------------------------------------------ 
 
-bool CMine::HaveMarkedSides ()
+bool CSegmentManager::HaveMarkedSides ()
 {
 int	nSegment, nSide; 
 
@@ -1803,7 +1805,7 @@ return false;
 
 // ------------------------------------------------------------------------ 
 
-short CMine::MarkedCount (bool bCheck)
+short CSegmentManager::MarkedCount (bool bCheck)
 {
 	int	nSegment, nCount; 
 	CSegment *segP = Segments (0);
@@ -1819,7 +1821,7 @@ return nCount;
 // ------------------------------------------------------------------------ 
 
 
-int CMine::IsWall (short nSegment, short nSide)
+int CSegmentManager::IsWall (short nSegment, short nSide)
 {
 GetCurrent (nSegment, nSide); 
 return (Segments (nSegment)->Child (nSide)== -1) ||
@@ -1829,7 +1831,7 @@ return (Segments (nSegment)->Child (nSide)== -1) ||
 
                         /* -------------------------- */
 
-int CMine::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
+int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
 {
 	CSegment*	segP = Segments (nStartSeg); 
 	CSegment*	childSegP; 
@@ -1981,14 +1983,14 @@ DLE.UnlockUndo ();
 return return_code; 
 }
 
-// --------------------------------------------------------------------------- 
+// ------------------------------------------------------------------------------ 
 // get_opposing_side()
 //
 // Action - figures out childs nSegment and side for a given side
 // Returns - TRUE on success
-// --------------------------------------------------------------------------- 
+// ------------------------------------------------------------------------------ 
 
-bool CMine::GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment, short nSide)
+bool CSegmentManager::GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment, short nSide)
 {
   short nChildSeg, nChildSide; 
 
@@ -2012,9 +2014,20 @@ for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 return false; 
 }
 
+// ------------------------------------------------------------------------------ 
+
+CSide* CSegmentManager::GetOppositeSide (short nSegment, short nSide)
+{
+	short nOppSeg, nOppSide;
+
+return GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) ? GetSide (nOppSeg, nOppSide) : null;
+}
+
+// ------------------------------------------------------------------------------ 
+
                         /* -------------------------- */
 
-CSide* CMine::OppSide (void) 
+CSide* CSegmentManager::OppSide (void) 
 {
 short nOppSeg, nOppSide;
 if (!GetOppositeSide (nOppSeg, nOppSide))
@@ -2024,7 +2037,7 @@ return Segments (nOppSeg)->m_sides + nOppSide;
 
                         /* -------------------------- */
 
-bool CMine::SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlTex)
+bool CSegmentManager::SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlTex)
 {
 	bool bUndo, bChange = false;
 
@@ -2049,7 +2062,7 @@ return true;
 
                         /* -------------------------- */
 
-void CMine::RenumberBotGens (void) 
+void CSegmentManager::RenumberBotGens (void) 
 {
 	int			i, nMatCens, value, nSegment; 
 	CSegment	*segP; 
@@ -2077,7 +2090,7 @@ for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
 
                         /* -------------------------- */
 
-void CMine::RenumberEquipGens (void) 
+void CSegmentManager::RenumberEquipGens (void) 
 {
 	int		i, nMatCens, value, nSegment; 
 	CSegment	*segP; 
@@ -2105,7 +2118,7 @@ for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
 
                         /* -------------------------- */
 
-void CMine::CopyOtherSegment ()
+void CSegmentManager::CopyOtherSegment ()
 {
 	bool bUndo, bChange = false;
 
@@ -2131,7 +2144,7 @@ else {
 
                         /* -------------------------- */
 
-bool CMine::SplitSegment (void)
+bool CSegmentManager::SplitSegment (void)
 {
 	CSegment*	centerSegP = CurrSeg (), *segP, *childSegP;
 	short			nCenterSeg = short (centerSegP - Segments (0));
@@ -2290,14 +2303,14 @@ DLE.MineView ()->Refresh ();
 return true;
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // DeleteVertex()
 //
 // ACTION - Removes a vertex from the vertices array and updates all the
 //	    Segments () vertices who's vertex is greater than the deleted vertex
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::DeleteVertex (short nDeletedVert)
+void CSegmentManager::DeleteVertex (short nDeletedVert)
 {
 	short nVertex, nSegment; 
 
@@ -2314,13 +2327,13 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 VertCount ()--; 
 }
 
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 // DeleteUnusedVertices()
 //
 // ACTION - Deletes unused vertices
-// -------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
 
-void CMine::DeleteUnusedVertices (void)
+void CSegmentManager::DeleteUnusedVertices (void)
 {
 	short nVertex, nSegment, point; 
 

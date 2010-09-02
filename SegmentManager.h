@@ -32,21 +32,31 @@ public:
 	int			m_nAddMode;
 
 public:
+	inline bool IsValid (short i, short j) { return (i > 0) && (i < j); }
 	inline segmentList& Segments (void)
 		{ return m_segments; }
 	inline CSegment *Segments (int i)
-		{ return m_segments + i; }
+		{ return IsValid (i, m_nSegments) ? &m_segments [i] : null; }
 	inline ushort& SegCount ()
 		{ return m_nSegments; }
 
 	inline vertexList& Vertices (void)
 		{ return m_vertices; }
 	inline CVertex *Vertices (int i)
-		{ return m_vertices + i; }
+		{ return IsValid (i, m_nVertices) ? &m_vertices [i] : null; }
 	inline byte& VertStatus (int i = 0)
 		{ return Vertices (i)->m_status; }
 	inline ushort& VertCount ()
-		{ return MineData ().numVertices; }
+		{ return m_nVertices; }
+
+	inline CSide* GetSide (short nSegment = -1, short nSide = -1) {
+		GetCurrent (nSegment, nSide);
+		return &Segments (nSegment)->m_sides [nSide];
+		}
+	inline CSide* GetOppositeSide (short nSegment = -1, short nSide = -1) {
+		GetCurrent (nSegment, nSide);
+		return &Segments (nSegment)->m_sides [nSide];
+		}
 
 	inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 	inline int GetAddMode (void) { return m_nAddMode; }
@@ -63,7 +73,7 @@ public:
 	bool AddSpeedBoost (short nSegment, bool bCreate);
 	bool AddSkybox (short nSegment, bool bCreate);
 
-	void DeleteSideWalls (short nSegment);
+	void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
 
 	void Init (short segNum);
 	bool Split (void);
@@ -133,10 +143,12 @@ private:
 	void UnlinkChild (short nParentSeg, short nSide);
 	void ResetSide  (short nSegment, short nSide);
 
-	void SetSegmentChildNum(CSegment *rootSegP, short nSegment,short recursionLevel);
+	void SetSegmentChildNum (CSegment *rootSegP, short nSegment, short recursionLevel);
 	void SetSegmentChildNum (CSegment *rootSegP, short nSegment, short recursionLevel, short* visited);
 	void UnlinkSeg (CSegment *segP, CSegment *rootSegP);
 	void LinkSeg (CSegment *segP, CSegment *rootSegP);
+	void DeleteWalls (short nSegment);
+
 	};
 
 #endif //__segman_h

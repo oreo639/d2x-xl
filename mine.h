@@ -34,7 +34,6 @@ typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
 typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
-typedef CStaticArray< CWall, WALL_LIMIT > wallList;
 typedef CStaticArray< CActiveDoor, DOOR_LIMIT > activeDoorList;
 typedef CStaticArray< CTrigger, MAX_TRIGGERS_D2 > triggerList;
 typedef CStaticArray< CTrigger, MAX_OBJ_TRIGGERS > objTriggerList;
@@ -54,7 +53,6 @@ typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
 typedef CColor lightColorList [SEGMENT_LIMIT * 6];
 typedef CColor texColorList [MAX_TEXTURES_D2];
 typedef CColor vertexColorList [VERTEX_LIMIT];
-typedef CWall wallList [WALL_LIMIT];
 typedef CActiveDoor activeDoorList [DOOR_LIMIT];
 typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 typedef CGameObject objectList [MAX_OBJECTS_D2];
@@ -174,6 +172,7 @@ public:
 
 	inline vertexColorList& VertexColors (void)
 		{ return MineData ().vertexColors; }
+
 	inline wallList& Walls (void)
 		{ return MineData ().walls; }
 
@@ -207,6 +206,7 @@ public:
 
 	inline CColor *VertexColors (int i)
 		{ return &(MineData ().vertexColors [i]); }
+
 	inline CWall *Walls (int i)
 		{ return MineData ().walls + i; }
 
