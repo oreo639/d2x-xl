@@ -313,7 +313,7 @@ CSaveFileDlg d (DLE.MainFrame ());
 nAction = d.DoModal (); //AfxMessageBox ("\nThe mine has been modified.\n\nClick 'Yes' to load another mine and loose all changes,\n'No' to save changes before loading another mine,\nor 'Cancel' to keep this mine and return without saving.", MB_YESNOCANCEL | MB_ICONEXCLAMATION);
 if (nAction == IDCANCEL)
 	return false;
-DLE.SetModified (FALSE);
+undoManager.SetModified (FALSE);
 // buggy for new mine; int required
 if (nAction == IDNO) 
 	SaveFile (*GetPathName () == '\0');

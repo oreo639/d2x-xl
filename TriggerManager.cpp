@@ -1,5 +1,6 @@
 #include "SegmentManager.h"
 #include "TriggerManager.h"
+#include "UndoManager.h"
 
 CTriggerManager triggerManager;
 
@@ -60,7 +61,7 @@ if (h > 1) {
 
 //------------------------------------------------------------------------------
 
-CTrigger *CTriggerManager::Add (short nWall, short type, bool bAddWall) 
+CTrigger* CTriggerManager::AddToWall (short nWall, short type, bool bAddWall) 
 {
 	static short defWallTypes [NUM_TRIGGER_TYPES] = {
 		WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_OPEN, WALL_ILLUSION, 
@@ -89,7 +90,7 @@ if (Count (0) >= MAX_TRIGGERS) {
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 
 CWall* wallP = current.Wall ();
@@ -103,7 +104,7 @@ if (wallP == null) {
 		wallP = wallManager.Add (-1, -1, (current.Segment ()->GetChild (nSide) < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
-			DLE.ResetModified (bUndo);
+			undoManager.ResetModified (bUndo);
 			return null;
 			}
 		}
@@ -113,6 +114,7 @@ if (wallP == null) {
 		}
 	}
 // if D1, then convert type to flag value
+ushort flags;
 if (IsD1File ()) {
 	switch(type) {
 		case TT_OPEN_DOOR:
@@ -147,7 +149,8 @@ if (IsD1File ()) {
 else
 	flags = 0;
 
-CTrigger* trigP = Triggers (++Count (0));
+short nTrigger = Count ()++;
+CTrigger* trigP = Triggers (nTrigger);
 // set new trigger data
 trigP->Setup (type, flags);
 // link trigger to the wall
@@ -163,7 +166,7 @@ return Triggers (nTrigger);
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------------
 
-void CTriggerManager::Delete (short nDelTrigger) 
+void CTriggerManager::DeleteFromWall (short nDelTrigger) 
 {
 if (nDelTrigger == NO_TRIGGER)
 	return;
@@ -181,7 +184,7 @@ if (delTrigP == null)
 	return;
 // update all Walls () who point to Triggers () higher than this one
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
 if (nTrigger < --Count ()) {	
@@ -259,7 +262,7 @@ void CTriggerManager::LinkExitToReactor (void)
 
   CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 // remove items from list that do not point to a wall
 for (nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
@@ -282,7 +285,7 @@ undoManager.Unlock ();
 
 //------------------------------------------------------------------------------------
 
-CTrigger *CTriggerManager::AddObjTrigger (short nObject, short type) 
+CTrigger* CTriggerManager::AddToObject (short nObject, short type) 
 {
 	CObject* objP = (nObject < 0) ? current.Object () : objectManager.GetObject (nObject);
 
@@ -291,11 +294,11 @@ if (objP == null) {
 	return null;
 	}
 
-if (objP->m_info.type != OBJ_ROBOT) && 
-	 objP->m_info.type != OBJ_CAMBOT) &&
-	 objP->m_info.type != OBJ_POWERUP) &&
-	 objP->m_info.type != OBJ_HOSTAGE) &&
-	 objP->m_info.type != OBJ_CNTRLCEN)) {
+if ((objP->m_info.type != OBJ_ROBOT) && 
+	  objP->m_info.type != OBJ_CAMBOT) &&
+	  objP->m_info.type != OBJ_POWERUP) &&
+	  objP->m_info.type != OBJ_HOSTAGE) &&
+	  objP->m_info.type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return null;
 	}
@@ -304,7 +307,7 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return null;
 	}
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 short nTrigger = NumObjTriggers ();
 ObjTriggers (nTrigger)->Setup (type, 0);
@@ -320,12 +323,12 @@ return ObjTriggers (nTrigger);
 
 //------------------------------------------------------------------------------
 
-void CTriggerManager::DeleteObjTrigger (short nTrigger) 
+void CTriggerManager::DeleteFromObject (short nDelTrigger) 
 {
-if ((nTrigger < 0) || (nTrigger >= NumObjTriggers ()))
+if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
-if (nTrigger < NumObjTriggers () - 1)
-	*ObjTriggers (nTrigger) = *ObjTriggers (NumObjTriggers () - 1);
+if (nDelTrigger < NumObjTriggers () - 1)
+	*ObjTriggers (nDelTrigger) = *ObjTriggers (NumObjTriggers () - 1);
 }
 
 //------------------------------------------------------------------------------
@@ -360,6 +363,68 @@ for (i = 0; nTriggers; i++)
 for (i = NumObjTriggers (); i > 0)
 	if (ObjTriggers (--i)->Delete (key) == 0) // no targets left
 		DeleteObjTrigger (i);
+}
+
+// -----------------------------------------------------------------------------
+
+void Read (CFileManager& fp, CMineItemInfo& info)
+{
+if (info.nOffset < 0)
+	return;
+Count () = info.count;
+for (short i = 0; i < info.count; i++)
+	m_triggers [0][i].Read (fp);
+
+int bObjTriggersOk = 1;
+if (MineInfo ().fileInfo.version >= 33) {
+	NumObjTriggers () = fp.ReadInt32 ();
+	for (int i = 0; i < NumObjTriggers (); i++)
+		ObjTriggers (i)->Read (fp, MineInfo ().fileInfo.version, true);
+	if (MineInfo ().fileInfo.version >= 40) {
+		for (int i = 0; i < NumObjTriggers (); i++)
+			ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
+		}
+	else {
+		for (int i = 0; i < NumObjTriggers (); i++) {
+			fp.ReadInt16 ();
+			fp.ReadInt16 ();
+			ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
+			}
+		if (MineInfo ().fileInfo.version < 36)
+			fp.Seek (700 * sizeof (short), SEEK_CUR);
+		else
+			fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
+		}
+	}
+if (bObjTriggersOk && NumObjTriggers ())
+	SortObjTriggers ();
+else {
+	NumObjTriggers () = 0;
+	CLEAR (ObjTriggers ());
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void Write (CFileManager& fp, CMineItemInfo& info)
+{
+info.count = Count (0);
+if (Count (0) + Count (1) == 0)
+	info.offset = -1;
+else {
+	info.offset = fp.Tell ();
+	for (short i = 0; i < Count (); i++)
+		m_triggers [0][i].Write (fp);
+if (DLE.LevelVersion () >= 12) {
+	fp.Write (NumObjTriggers ());
+	if (NumObjTriggers () > 0) {
+		SortObjTriggers ();
+		for (i = 0; i < NumObjTriggers (); i++)
+			ObjTriggers (i)->Write (fp, MineInfo ().fileInfo.version, true);
+		for (i = 0; i < NumObjTriggers (); i++)
+			fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
+		}
+	}
 }
 
 // -----------------------------------------------------------------------------

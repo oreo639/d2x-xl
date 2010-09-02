@@ -79,7 +79,6 @@ lightDeltaIndices.Read (fp);
 lightDeltaValues.Read (fp);
 if (fileInfo.size > 143)
 	equipgen.Read (fp);
-return !fp.EoF ();
 }
 
 // -----------------------------------------------------------------------------

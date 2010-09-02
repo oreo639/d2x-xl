@@ -72,34 +72,13 @@ typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-class CSelection {
-public:
-	CSelection() :
-		nSegment(0),
-		nSide(DEFAULT_SIDE),
-		nLine(DEFAULT_LINE),
-		nPoint(DEFAULT_POINT),
-		nObject(DEFAULT_OBJECT)
-	{}
-
-	short nSegment;
-	short nSide;
-	short nLine;
-	short nPoint;
-	short nObject;
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
 typedef struct tMineData {
 	CGameInfo					gameInfo;
 	
-	int							m_reactor_time;
-	int							m_reactor_strength;
-	int							m_secret_cubenum;
-	CDoubleMatrix				m_secret_orient;
+	int							m_reactorTime;
+	int							m_reactorStrength;
+	int							m_secretSegNum;
+	CDoubleMatrix				m_secretOrient;
 	
 	// robot data
 	robotInfoList				robotInfo;
@@ -238,13 +217,13 @@ public:
 	long TotalSize (CMineItemInfo& gii)
 		{ return (int) gii.size * (int) gii.count; }
 	inline int& ReactorTime ()
-		{ return MineData ().m_reactor_time; }
+		{ return MineData ().m_reactorTime; }
 	inline int& ReactorStrength ()
-		{ return MineData ().m_reactor_strength; }
+		{ return MineData ().m_reactorStrength; }
 	inline int& SecretCubeNum ()
-		{ return MineData ().m_secret_cubenum; }
+		{ return MineData ().m_secretSegNum; }
 	inline CDoubleMatrix& SecretOrient ()
-		{ return MineData ().m_secret_orient; }
+		{ return MineData ().m_secretOrient; }
 	inline CSelection* &Current ()
 		{ return MineData ().current; }
 	inline CSelection& Current1 ()

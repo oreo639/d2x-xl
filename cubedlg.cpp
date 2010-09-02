@@ -254,7 +254,7 @@ void CSegmentTool::OnSetCoord (void)
 {
 CHECKMINE;
 UpdateData (TRUE);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 m_nVertex = theMine->current.Segment ()->m_info.verts[sideVertTable[current.m_nSide][current.m_nPoint]];
 theMine->Vertices (m_nVertex)->Set ((int) (m_nCoord [0] * 0x10000L), (int) (m_nCoord [1] * 0x10000L), (int) (m_nCoord [2] * 0x10000L));
 DLE.MineView ()->Refresh (false);
@@ -278,7 +278,7 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnProp (int nProp)
 {
 CHECKMINE;
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 if (Prop (nProp)->GetCheck ())
 	m_nProps |= 1 << nProp;
 else
@@ -483,7 +483,7 @@ void CSegmentTool::OnEndOfExit ()
 {
 CHECKMINE;
 CSegment *segP = theMine->current.Segment ();
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
 	segP->SetChild (m_nSide, -2);
 	}
@@ -524,7 +524,7 @@ CHECKMINE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
 
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
@@ -549,7 +549,7 @@ CHECKMINE;
 	BOOL	bChangeOk = TRUE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
@@ -577,7 +577,7 @@ CHECKMINE;
 	BOOL		bMarked = theMine->GotMarkedSegments ();
 	int		nSegNum, nMinSeg, nMaxSeg;
 
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 m_nLastCube = -1; //force Refresh() to rebuild all dialog data
@@ -601,7 +601,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				goto errorExit;
 			if ((theMine == null)->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
-				DLE.ResetModified (bUndo);
+				undoManager.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -619,7 +619,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
-				DLE.ResetModified (bUndo);
+				undoManager.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -628,7 +628,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
-				DLE.ResetModified (bUndo);
+				undoManager.ResetModified (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -752,7 +752,7 @@ errorExit:
 
 undoManager.Unlock ();
 theMine->AutoLinkExitToReactor ();
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 
 funcExit:
 
@@ -780,7 +780,7 @@ void CSegmentTool::OnLight ()
 CHECKMINE;
 UpdateData (TRUE);
 theMine->current.Segment ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 }
 
                         /*--------------------------*/
@@ -790,7 +790,7 @@ void CSegmentTool::OnDamage (int i)
 CHECKMINE;
 UpdateData (TRUE);
 theMine->current.Segment ()->m_info.damage [i] = m_nDamage [i];
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 }
 
 void CSegmentTool::OnDamage0 () { OnDamage (0); }
@@ -845,7 +845,7 @@ LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
 LBUsedBots ()->SetItemData (h, i);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 DLE.MineView ()->Refresh ();
 }
 
@@ -868,7 +868,7 @@ LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
 LBUsedBots ()->SetItemData (h, i);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 DLE.MineView ()->Refresh ();
 }
 
@@ -905,7 +905,7 @@ LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 DLE.MineView ()->Refresh ();
 }
 
@@ -928,7 +928,7 @@ LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 DLE.MineView ()->Refresh ();
 }
 

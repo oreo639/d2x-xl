@@ -125,7 +125,7 @@ theMine->m_lightRenderDepth = m_lightRenderDepth;
 theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
 if (bAll = (theMine == null)->GotMarkedSides ())
 	INFOMSG (" light processing entire mine");
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (m_bIlluminate)
 	theMine->AutoAdjustLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
@@ -195,7 +195,7 @@ nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 	CSide*		sideP;
 	bool			bChange = false;
 
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
@@ -211,7 +211,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 if (bChange)
 	undoManager.Unlock ();
 else
-	DLE.ResetModified (bUndo);
+	undoManager.ResetModified (bUndo);
 DLE.MineView ()->Refresh ();
 }
 

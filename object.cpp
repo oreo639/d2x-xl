@@ -136,7 +136,7 @@ void CMine::MakeObject (CGameObject *objP, char type, short nSegment)
 {
   CVertex	location;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 CalcSegCenter (location,nSegment);
 objP->Clear ();
@@ -175,7 +175,7 @@ void CMine::SetObjectData (char type)
   CGameObject *objP;
   int  id;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 objP = Objects (Current ()->nObject);
 id = objP->m_info.id;
@@ -381,7 +381,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 
 // Now we can add the object
 // Make a new object
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (MineInfo ().objects.count == 0) {
 	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
@@ -450,7 +450,7 @@ if (nDelObj == MineInfo ().objects.count) {
 		ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 DeleteObjTriggers (nDelObj);
 int i, j = MineInfo ().objects.count;

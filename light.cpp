@@ -205,7 +205,7 @@ if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 					"end of its name.");
 	return -1;
 	}
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 CFlickeringLight *flP = FlickeringLights (FlickerLightCount ());
 flP->m_nSegment = nSegment;
 flP->m_nSide = nSide;
@@ -232,7 +232,7 @@ if (index == -1) {
 //ErrorMsg ("There is no flickering light on this side.");
 	return false;
 	}
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 if (index < --FlickerLightCount ())
 // put last light in place of deleted light
 	memcpy (FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (CFlickeringLight));
@@ -366,7 +366,7 @@ void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
 	CSegment *segP;
 	int	h, i, j, l, c, nSegment;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 fLight /= 100.0;
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
@@ -398,7 +398,7 @@ void CMine::ScaleCornerLight (double fLight, bool bAll)
 	int segNum, segCount = SegCount ();
 	double scale;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 scale = fLight / 100.0; // 100.0% = normal
 //#pragma omp parallel 
 	{
@@ -435,7 +435,7 @@ void CMine::CalcAverageCornerLight (bool bAll)
 memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
 
 // smooth corner light by averaging all corners which share a vertex
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 #pragma omp parallel 
 	{
 #pragma omp for
@@ -490,7 +490,7 @@ void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights)
 	CSide*		sideP;
 
 // clear all lighting on marked cubes
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (bAll)
 	CLEAR (VertexColors ());
@@ -590,7 +590,7 @@ CUVL*		uvlP = segP->m_sides [nSide].m_info.uvls;
 uint	vertBrightness, lightBrightness;
 byte*	sideVerts = sideVertTable [nSide];
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 for (int i = 0; i < 4; i++, uvlP++) {
 	CColor* vertColorP = VertexColors (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;
@@ -693,7 +693,7 @@ int nSegCount = SegCount ();
 				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 				uint	vertBrightness, lightBrightness;
 
-				DLE.SetModified (TRUE);
+				undoManager.SetModified (TRUE);
 				for (int j = 0; j < 4; j++, uvlP++) {
 					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
 					vertBrightness = (ushort) uvlP->l;
@@ -716,7 +716,7 @@ int nSegCount = SegCount ();
 					uint	vertBrightness, lightBrightness;	//vertex brightness, light brightness
 					CUVL		*uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
 
-				DLE.SetModified (TRUE);
+				undoManager.SetModified (TRUE);
 				for (int j = 0; j < 4; j++, uvlP++) {
 					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
 					vertBrightness = (ushort) uvlP->l;
@@ -776,7 +776,7 @@ delete[] visited;
 
 void CMine::CalcDeltaLightData(double fLightScale, int force) 
 {
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 int recursion_depth;
 for (recursion_depth = m_deltaLightRenderDepth; recursion_depth; recursion_depth--)
 	if (CalcDeltaLights (fLightScale, force, recursion_depth))
@@ -1016,7 +1016,7 @@ fLightScale = 1.0; ///= 100.0;
 
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
-							DLE.SetModified (TRUE);
+							undoManager.SetModified (TRUE);
 							if ((MineInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{

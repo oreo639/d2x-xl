@@ -61,7 +61,7 @@ if (nWall >= MAX_WALLS) {
 	}
 
 // link wall to segment/side
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 sideP->SetWall (nWall);
 CWall* wallP = Walls (nWall);
@@ -108,7 +108,7 @@ if (delWallP == null)
 	return;
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.OppositeWall (delWallP->m_nSegment, delWallP->m_nSide);

@@ -1,12 +1,14 @@
 #ifndef __undoman_h
 #define __undoman_h
 
+#include "mine.h"
+
 //------------------------------------------------------------------------------
 
 typedef struct tUndoBuffer {
 	tUndoBuffer	*prevBuf;
 	tUndoBuffer	*nextBuf;
-	MINE_DATA	undoBuffer;
+	CMineData	undoBuffer;
 } tUndoBuffer;
 
 //------------------------------------------------------------------------------

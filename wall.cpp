@@ -27,7 +27,7 @@ void CWall::Setup (short nSegment, short nSide, ushort nWall, byte type, char nC
 {
 	int i;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 // define new wallP
 m_nSegment = nSegment;
@@ -120,7 +120,7 @@ void CWall::SetTextures (short nTexture)
 CSide *sideP = GetSide ();
 char nClip = wallP->m_info.nClip;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (IsDoor ()) {
 	if (IsD1File ())
@@ -210,7 +210,7 @@ if (ps = strstr (pszName, "door")) {
 	for (int i = 1; i < NUM_OF_CLIPS_D2; i++)
 		if (nDoor == doorClipTable [i]) {
 			m_info.nClip = clipList [i];
-			DLE.SetModified (TRUE);
+			undoManager.SetModified (TRUE);
 			DLE.MineView ()->Refresh ();
 			return i;
 			}

@@ -5935,6 +5935,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MineInfo.cpp"
+					>
+				</File>
+				<File
 					RelativePath="MODIFY.CPP"
 					>
 					<FileConfiguration
@@ -6882,6 +6886,10 @@
 				</File>
 				<File
 					RelativePath="Mine.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MineInfo.h"
 					>
 				</File>
 				<File

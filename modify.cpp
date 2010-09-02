@@ -54,7 +54,7 @@ else
 	v = CalcSideNormal (Current ()->nSegment, Current ()->nSide);
 
 // move on x, y, and z
- DLE.SetModified (TRUE);
+ undoManager.SetModified (TRUE);
  undoManager.Lock ();
  v *= moveRate;
  MoveOn (v);
@@ -149,13 +149,13 @@ else {
 	else 
 		v = CalcSideNormal (Current ()->nSegment,Current ()->nSide);
 	// move on x, y, and z
-	DLE.SetModified (TRUE);
+	undoManager.SetModified (TRUE);
 	undoManager.Lock ();
 	v *= -moveRate;
 	MoveOn (v);
 	undoManager.Unlock ();
 	}
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 return true;
 }
 
@@ -247,7 +247,7 @@ switch (m_selectMode){
 		return false;
 
 	case SIDE_MODE:	// spin side around the opposite side
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		undoManager.Lock ();
 		if (perpendicular) { // use lines 0 and 2
 			pts [0] = 1;
@@ -315,7 +315,7 @@ switch (m_selectMode) {
 		return ResizeLine (segP, point [0], point [1], delta);
 
 	case SIDE_MODE:
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		undoManager.Lock ();
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [Current ()->nSide][i];
@@ -327,7 +327,7 @@ switch (m_selectMode) {
 
 	case CUBE_MODE:
 		// enlarge the diagonals
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		undoManager.Lock ();
 		result = ResizeLine (segP, 0, 6, (int) (delta*sqrt(3.0))) &&
 				   ResizeLine (segP, 1, 7, (int) (delta*sqrt(3.0))) &&
@@ -340,7 +340,7 @@ switch (m_selectMode) {
 		return false;
 
 	case BLOCK_MODE:
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		CVertex	max_pt (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL), 
 					min_pt (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
 					center;
@@ -391,30 +391,30 @@ else
 switch (m_selectMode){
 	case POINT_MODE:
 		*Vertices (segP->m_info.verts [p0]) += delta;
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		break;
 
 	case LINE_MODE:
 		*Vertices (segP->m_info.verts [p0]) += delta;
 		*Vertices (segP->m_info.verts [p1]) += delta;
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		break;
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++)
 			*Vertices (segP->m_info.verts [sideVertP [i]]) += delta;
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		break;
 
 	case CUBE_MODE:
 		for (i = 0; i < 8; i++) 
 			*Vertices (segP->m_info.verts [i]) += delta;
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		break;
 
 	case OBJECT_MODE:
 		CurrObj ()->m_location.pos += delta;
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		break;
 
 	case BLOCK_MODE:
@@ -425,7 +425,7 @@ switch (m_selectMode){
 				bMoved = true;
 				}
 			}
-		DLE.SetModified (bMoved);
+		undoManager.SetModified (bMoved);
 		break;
 	}
 return true;
@@ -485,7 +485,7 @@ int nLine = Current ()->nLine;
 CSegment *segP = Segments (nSegment);
 short i;
 
-DLE.SetModified (TRUE);
+undoManager.SetModified (TRUE);
 switch (m_selectMode) {
 	case POINT_MODE:
 		*Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += delta;
@@ -558,7 +558,7 @@ switch (m_selectMode) {
 	
 	case SIDE_MODE: // spin side around its center in the plane of the side
 		// calculate center of current side
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		center.Clear ();
 		for (i = 0; i < 4; i++) {
 			center += *Vertices (segP->m_info.verts [sideVertTable [nSide][i]]);
@@ -582,7 +582,7 @@ switch (m_selectMode) {
 
 	case CUBE_MODE:	// spin cube around the center of the cube using screen's perspective
 		// calculate center of current cube
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		center.Clear ();
 		for (i = 0; i < 8; i++) 
 			center += *Vertices (segP->m_info.verts [i]);
@@ -598,7 +598,7 @@ switch (m_selectMode) {
 		break;
 
 	case OBJECT_MODE:	// spin object vector
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		orient = (Current ()->nObject == MineInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
 		switch (nSide) {
 			case 0:
@@ -623,7 +623,7 @@ switch (m_selectMode) {
 		break;
 
 	case BLOCK_MODE:
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		// calculate center of current cube
 		center.Clear ();
 		for (i = 0; i < 8; i++) {

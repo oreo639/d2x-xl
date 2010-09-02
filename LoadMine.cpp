@@ -591,9 +591,9 @@ if (0 > LoadGameItem (fp, MineInfo ().walls, Walls (0), 20, MAX_WALLS, "Walls"))
 	return -1;
 if (0 > LoadGameItem (fp, MineInfo ().doors, ActiveDoors (0), 20, DOOR_LIMIT, "Doors"))
 	return -1;
-if (0 > LoadGameItem (fp, MineInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
-	return -1;
 if (MineInfo ().triggers.offset > -1) {
+	if (0 > LoadGameItem (fp, MineInfo ().triggers, Triggers (0), -1, MAX_TRIGGERS, "Triggers"))
+		return -1;
 	int bObjTriggersOk = 1;
 	if (MineInfo ().fileInfo.version >= 33) {
 		NumObjTriggers () = fp.ReadInt32 ();

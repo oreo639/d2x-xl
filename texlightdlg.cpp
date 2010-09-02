@@ -93,7 +93,7 @@ long nDelay = I2X (m_nLightDelay) / 1000;
 
 CFlickeringLight* flP = theMine->FlickeringLights (m_iLight);
 if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
-	bUndo = DLE.SetModified (TRUE);
+	bUndo = undoManager.SetModified (TRUE);
 	undoManager.Lock ();
 	flP->m_info.mask = nLightMask;
 	flP->m_info.delay = nDelay;

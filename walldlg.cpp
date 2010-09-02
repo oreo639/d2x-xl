@@ -434,7 +434,7 @@ if (bRefresh) {
 
 void CWallTool::OnDeleteWallAll () 
 {
-bool bUndo = DLE.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = theMine->Segments (0);
@@ -459,7 +459,7 @@ if (nDeleted) {
 	Refresh ();
 	}
 else
-	DLE.ResetModified (bUndo);
+	undoManager.ResetModified (bUndo);
 }
 
 //------------------------------------------------------------------------
@@ -570,7 +570,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_pWall [bSide])
 		if ((wallP->m_info.type == WALL_BLASTABLE) || (wallP->m_info.type == WALL_DOOR)) {
 			if (m_nWall [bSide] < theMine->MineInfo ().walls.count) {
-				DLE.SetModified (TRUE);
+				undoManager.SetModified (TRUE);
 				undoManager.Lock ();
 				nClip = clipList [m_nClip];
 				wallP->m_info.nClip = nClip;
@@ -595,7 +595,7 @@ memset (m_bKeys, 0, sizeof (m_bKeys));
 m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		m_pWall [bSide]->m_info.keys = (1 << i);
 		Refresh ();
 		}
@@ -607,7 +607,7 @@ GetWalls ();
 m_bFlags [i] = BtnCtrl (IDC_WALL_BLASTED + i)->GetCheck ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		if (m_bFlags [i])
 			m_pWall [bSide]->m_info.flags |= wall_flags [i];
 		else
@@ -638,7 +638,7 @@ void CWallTool::OnStrength ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		m_pWall [bSide]->m_info.hps = (int) m_nStrength * F1_0;
 		if ((m_pWall [bSide]->m_info.type == WALL_TRANSPARENT) && m_bFlyThrough)
 			m_pWall [bSide]->m_info.hps = -m_pWall [bSide]->m_info.hps;
@@ -652,7 +652,7 @@ void CWallTool::OnCloak ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
-		DLE.SetModified (TRUE);
+		undoManager.SetModified (TRUE);
 		m_defWall.m_info.cloakValue =
 		m_pWall [bSide]->m_info.cloakValue = (char) (m_nCloak * 31.0 / 100.0) % 32;
 		}

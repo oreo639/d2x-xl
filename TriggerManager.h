@@ -64,9 +64,16 @@ class CTriggerManager {
 
 		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey (nSegment, nSide)); }
 
-		CTrigger* Add (short nWall, short type, bool bAddWall);
+		inline CTrigger* Add (short nItem, short type, bool bAddWall = false) {
+			return (nItem < 0) ? AddToObject (-nItem - 1, type) : AddToWall (nItem, type, bAddWall);
+			}
 
-		void Delete (short nDelTrigger);
+		inline void Delete (short nDelTrigger) {
+			if (nDelTrigger < 0)
+				DeleteFromObject (-nDelTrigger - 1);
+			else
+				DeleteFromWall (nDelTrigger);
+			}
 
 		bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
 		bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
@@ -82,6 +89,10 @@ class CTriggerManager {
 	private:
 		int CmpObjTriggers (CTrigger *pi, CTrigger *pm);
 		void SortObjTriggers (short left, short right);
+		CTrigger* AddToWall (short nWall, short type, bool bAddWall);
+		CTrigger* AddToObject (short nObject, short type);
+		void DeleteFromWall (short nDelTrigger);
+		void DeleteFromObject (short nDelTrigger);
 
 };
 
