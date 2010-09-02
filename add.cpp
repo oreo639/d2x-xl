@@ -193,7 +193,7 @@ if (bCreate) {
 		return false; 
 		}	
 	CurrObj ()->m_info.id = (IsD1File ()) ? 0 : 2;
-	AutoLinkExitToReactor ();
+	AutoUpdateReactor ();
 	}
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
@@ -619,7 +619,7 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKE
 		// set clip number and texture
 		Walls () [MineInfo ().walls.count - 1].m_info.nClip = 10;
 		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
-		AutoLinkExitToReactor();
+		AutoUpdateReactor();
 		undoManager.Unlock ();
 		DLE.MineView ()->Refresh ();
 		return true;

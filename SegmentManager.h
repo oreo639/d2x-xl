@@ -49,10 +49,7 @@ class CSegmentManager {
 			return &GetSegment (nSegment)->m_sides [nSide];
 			}
 
-		inline CSide* GetOppositeSide (short nSegment = -1, short nSide = -1) {
-			current.Get (nSegment, nSide);
-			return &GetSegment (nSegment)->m_sides [nSide];
-			}
+		CSide* GetOppositeSide (short nSegment = -1, short nSide = -1);
 
 		inline CWall* GetWall (short nSegment = -1, short nSide = -1) {
 			return GetSide (nSegment, nSide)->GetWall ();
@@ -118,8 +115,7 @@ class CSegmentManager {
 
 		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
 
-		bool GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment = -1, short nSide = -1);
-		CSide *OppSide (void);
+		CSide* OppSide (void);
 		bool SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex);
 		void CopyOtherSegment (void);
 		void RenumberBotGens (void);

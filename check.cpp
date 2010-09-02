@@ -971,7 +971,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				// if did not find it
 				if (i>=theMine->ReactorTriggers (0)->m_count) {
 					if (m_bAutoFixBugs) {
-						theMine->AutoLinkExitToReactor ();
+						theMine->AutoUpdateReactor ();
 						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 						}
 					else

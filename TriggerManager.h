@@ -80,7 +80,7 @@ class CTriggerManager {
 
 		void DeleteObjTriggers (short nObject);
 
-		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
+		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (Triggers (), Count (0), nSegment, nSide); }
 
 		bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
 		bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
@@ -97,17 +97,20 @@ class CTriggerManager {
 		short FindTarget (short nTrigger, short nSegment, short nSide, short nClass = 0);
 		short FindObjTarget (short nTrigger, short nSegment, short nSide);
 
+		void UpdateReactor (void);
+
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 
 	private:
-		int CmpObjTriggers (CTrigger *pi, CTrigger *pm);
+		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);
 		void SortObjTriggers (short left, short right);
 		CTrigger* AddToWall (short nWall, short type, bool bAddWall);
 		CTrigger* AddToObject (short nObject, short type);
 		void DeleteFromWall (short nDelTrigger);
 		void DeleteFromObject (short nDelTrigger);
-		void LinkExitToReactor (void);
+		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
+
 };
 
 extern CTriggerManager triggerManager;

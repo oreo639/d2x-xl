@@ -751,7 +751,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 errorExit:
 
 undoManager.Unlock ();
-theMine->AutoLinkExitToReactor ();
+theMine->AutoUpdateReactor ();
 undoManager.SetModified (TRUE);
 
 funcExit:

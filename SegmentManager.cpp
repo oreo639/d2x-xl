@@ -2008,8 +2008,8 @@ return false;
 
 CSide* CSegmentManager::GetOppositeSide (short nSegment, short nSide)
 {
-	short nOppSeg, nOppSide;
-
+current.Get (nSegment, nSide);
+short nOppSeg, nOppSide;
 return GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) ? GetSide (nOppSeg, nOppSide) : null;
 }
 

@@ -9,17 +9,17 @@ CTriggerManager triggerManager;
 
 //------------------------------------------------------------------------------
 
-int CTriggerManager::CmpObjTriggers (CTrigger *pi, CTrigger *pm)
+int CTriggerManager::CmpObjTriggers (CTrigger& pi, CTrigger& pm)
 {
-	short i = pi->m_info.nObject;
-	short m = pm->m_info.nObject;
+	short i = pi.m_info.nObject;
+	short m = pm.m_info.nObject;
 
 if (i < m)
 	return -1;
 if (i > m)
 	return 1;
-i = pi->m_info.type;
-m = pm->m_info.type;
+i = pi.m_info.type;
+m = pm.m_info.type;
 return (i < m) ? -1 : (i > m) ? 1 : 0;
 }
 
@@ -27,17 +27,17 @@ return (i < m) ? -1 : (i > m) ? 1 : 0;
 
 void CTriggerManager::SortObjTriggers (short left, short right)
 {
-	CTrigger median = *ObjTriggers ((left + right) / 2);
+	CTrigger median = m_triggers [1][(left + right) / 2];
 	short	l = left, r = right;
 
 do {
-	while (CmpObjTriggers (ObjTriggers (l), &median) < 0)
+	while (CmpObjTriggers (m_triggers [1][l], median) < 0)
 		l++;
-	while (CmpObjTriggers (ObjTriggers (r), &median) > 0)
+	while (CmpObjTriggers (m_triggers [1][r], median) > 0)
 		r--;
 	if (l <= r) {
 		if (l < r)
-			Swap (*ObjTriggers (l), *ObjTriggers (r));
+			Swap (m_triggers [1][l], m_triggers [1][r]);
 		l++;
 		r--;
 		}
@@ -57,7 +57,7 @@ void CTriggerManager::SortObjTriggers (void)
 
 if (h > 1) {
 	for (ushort i = 0; i < h; i++)
-		ObjTriggers (i)->m_info.nIndex = i;
+		GetObjTrigger (i)->m_info.nIndex = i;
 	SortObjTriggers (0, h - 1);
 	}
 }
@@ -153,13 +153,13 @@ else
 	flags = 0;
 
 short nTrigger = Count (0)++;
-CTrigger* trigP = Triggers (nTrigger);
+CTrigger* trigP = GetTrigger (nTrigger);
 trigP->Setup (type, flags);
 wallP->SetTrigger (nTrigger);
-LinkExitToReactor ();
+UpdateReactor ();
 undoManager.Unlock ();
 //DLE.MineView ()->Refresh ();
-return Triggers (nTrigger);
+return GetTrigger (nTrigger);
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ if (nDelTrigger < 0) {
 	nDelTrigger = wallP->m_info.nTrigger;
 	}
 
-CTrigger* delTrigP = Triggers (nDelTrigger, 0);
+CTrigger* delTrigP = GetTrigger (nDelTrigger, 0);
 
 if (delTrigP == null)
 	return;
@@ -195,7 +195,7 @@ if (nDelTrigger < --m_nCount [0]) {
 
 undoManager.Unlock ();
 //DLE.MineView ()->Refresh ();
-LinkExitToReactor ();
+UpdateReactor ();
 }
 
 //------------------------------------------------------------------------------
@@ -230,7 +230,7 @@ return wallManager.Count ();
 
 short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide, short nClass)
 {
-	CTrigger *trigP = Triggers (0);
+	CTrigger *trigP = GetTrigger (0);
 	CSideKey key = CSideKey (nSegment, nSide);
 	int i, j;
 
@@ -241,14 +241,14 @@ return -1;
 }
 
 //------------------------------------------------------------------------------------
-// LinkExitToReactor()
+// UpdateReactor()
 //
 // Action - Updates control center Triggers () so that exit door opens
 //          when the reactor blows up.  Removes any invalid cube/sides
 //          from reactorTriggers if they exist.
 //------------------------------------------------------------------------------------
 
-void CTriggerManager::LinkExitToReactor (void) 
+void CTriggerManager::UpdateReactor (void) 
 {
   CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
@@ -301,15 +301,15 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 short nTrigger = NumObjTriggers ();
-ObjTriggers (nTrigger)->Setup (type, 0);
-ObjTriggers (nTrigger)->m_info.nObject = nObject;
+GetObjTrigger (nTrigger)->Setup (type, 0);
+GetObjTrigger (nTrigger)->m_info.nObject = nObject;
 NumObjTriggers ()++;
 undoManager.Unlock ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
-	if (ObjTriggers (--i)->m_info.nIndex == nTrigger)
-		return ObjTriggers (i);
-return ObjTriggers (nTrigger);
+	if (GetObjTrigger (--i)->m_info.nIndex == nTrigger)
+		return GetObjTrigger (i);
+return GetObjTrigger (nTrigger);
 }
 
 //------------------------------------------------------------------------------
@@ -329,7 +329,7 @@ void CTriggerManager::DeleteObjTriggers (short nObject)
 	short i = NumObjTriggers ();
 	
 while (i)
-	if (ObjTriggers (--i)->m_info.nObject == nObject)
+	if (GetObjTrigger (--i)->m_info.nObject == nObject)
 		DeleteFromObject (i);
 }
 
@@ -348,11 +348,11 @@ CSideKey key (nSegment, nSide);
 int i;
 
 for (i = 0; nTriggers; i++)
-	if (Triggers (i)->Delete (key))
+	if (GetTrigger (i)->Delete (key))
 		i--;
 
 for (i = NumObjTriggers (); i > 0; )
-	if (ObjTriggers (--i)->Delete (key) == 0) // no targets left
+	if (GetObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
 }
 
@@ -371,16 +371,16 @@ int bObjTriggersOk = 1;
 if (nFileVersion >= 33) {
 	NumObjTriggers () = fp.ReadInt32 ();
 	for (short i = 0; i < NumObjTriggers (); i++)
-		ObjTriggers (i)->Read (fp, nFileVersion, true);
+		GetObjTrigger (i)->Read (fp, nFileVersion, true);
 	if (nFileVersion >= 40) {
 		for (short i = 0; i < NumObjTriggers (); i++)
-			ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
+			GetObjTrigger (i)->m_info.nObject = fp.ReadInt16 ();
 		}
 	else {
 		for (short i = 0; i < NumObjTriggers (); i++) {
 			fp.ReadInt16 ();
 			fp.ReadInt16 ();
-			ObjTriggers (i)->m_info.nObject = fp.ReadInt16 ();
+			GetObjTrigger (i)->m_info.nObject = fp.ReadInt16 ();
 			}
 		if (nFileVersion < 36)
 			fp.Seek (700 * sizeof (short), SEEK_CUR);
@@ -416,9 +416,9 @@ else {
 		if (NumObjTriggers () > 0) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
-				ObjTriggers (i)->Write (fp, nFileVersion, true);
+				GetObjTrigger (i)->Write (fp, nFileVersion, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
+				fp.WriteInt16 (GetObjTrigger (i)->m_info.nObject);
 			}
 		}
 	}
