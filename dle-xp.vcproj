@@ -6739,6 +6739,14 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\Vector.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ViewMatrix.cpp"
+					>
+				</File>
+				<File
 					RelativePath="WALL.CPP"
 					>
 					<FileConfiguration

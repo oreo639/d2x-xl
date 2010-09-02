@@ -308,24 +308,6 @@ inline const CFixVector CFixVector::operator/ (const int n) const {
 	return CFixVector (FixDiv (v.x , n), FixDiv (v.y , n), FixDiv (v.z , n));
 	}
 
-inline const CFixVector CFixVector::operator>> (const int n) {
-	return CFixVector (v.x >> n, v.y >> n, v.z >> n);
-	}
-
-inline const CFixVector CFixVector::operator<< (const int n) {
-	return CFixVector (v.x << n, v.y << n, v.z << n);
-	}
-
-inline const CFixVector& CFixVector::operator>>= (const int n) {
-	v.x >>= n, v.y >>= n, v.z >>= n;
-	return *this;
-	}
-
-inline const CFixVector& CFixVector::operator<<= (const int n) {
-	v.x <<= n, v.y <<= n, v.z <<= n;
-	return *this;
-	}
-
 inline const CFixVector CFixVector::operator* (CFixVector other) const {
 	return CFixVector (FixMul (v.x, other.v.x), FixMul (v.y, other.v.y), FixMul (v.z, other.v.z));
 	}
@@ -335,7 +317,7 @@ inline const CFixVector CFixVector::operator/ (CFixVector other) const {
 	}
 
 inline const int CFixVector::operator^ (const CFixVector& other) const {
-	return int ((double (v.x) * double (other.v.x) + double (v.y) * double (other.v.y) + double (v.z) * double (other.v.z)) / 65536.0);
+	return X2D (FixMul (v.x, other.v.x) + FixMul (v.y, other.v.y) + FixMul (v.z, other.v.z));
 	}
 
 inline const int CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag ()); }
