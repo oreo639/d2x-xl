@@ -1147,7 +1147,7 @@ for (i = 0; i < theMine->VertCount (); i++, pa++) {
 		}
 	}
 if (m_bUpdate) {
-	theMine->UpdateMarkedCubes ();
+	theMine->UpdateMarkedSegments ();
 	Refresh ();
 	}
 }

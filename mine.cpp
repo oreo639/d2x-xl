@@ -335,37 +335,6 @@ MineInfo ().lightDeltaIndices.Reset ();
 MineInfo ().lightDeltaValues.Reset ();
 }
 
-// --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
-
-CDoubleVector CMine::CalcSideNormal (short nSegment, short nSide)
-{
-GetCurrent (nSegment, nSide);
-
-	short*			sideIndexP = Segments (nSegment)->m_info.verts;
-	byte*			sideVertP = &sideVertTable [nSide][0];
-	CDoubleVector	v;
-
-return -Normal (*Vertices (sideIndexP [sideVertP [0]]), *Vertices (sideIndexP [sideVertP [1]]), *Vertices (sideIndexP [sideVertP [3]]));
-}
-
-// --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
-
-CDoubleVector CMine::CalcSideCenter (short nSegment, short nSide)
-{
-GetCurrent (nSegment, nSide);
-
-	short*			sideIndexP = Segments (nSegment)->m_info.verts;
-	byte*			sideVertP = &sideVertTable [nSide][0];
-	CDoubleVector	v;
-
-for (int i = 0; i < 4; i++)
-	v += *Vertices (sideIndexP [sideVertP [i]]);
-v /= 4.0;
-return v;
-}
-
 // ------------------------------------------------------------------------
 
 void CMine::ClearGameItem (CGameItem* items, int nCount)

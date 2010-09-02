@@ -484,7 +484,7 @@ if (CreateToolBars ())
 	return -1;
 if (CreateStatusBar ())
 	return -1;
-UpdateInsModeButtons (add_segment_mode);
+UpdateInsModeButtons (segmentManager.GetAddMode ());
 return 0;
 }
 
@@ -929,8 +929,7 @@ InsModeMsg (szInsMode [mode]);
 
 void CMainFrame::SetInsertMode (short mode)
 {
-add_segment_mode = mode;
-UpdateInsModeButtons (mode);
+UpdateInsModeButtons (segmentManager.SetAddMode (mode));
 }
 
 void CMainFrame::OnInsModeNormal ()
@@ -950,8 +949,7 @@ SetInsertMode (MIRROR);
 
 void CMainFrame::OnToggleInsMode ()
 {
-add_segment_mode = (add_segment_mode + 1) % 3;
-UpdateInsModeButtons (add_segment_mode);
+UpdateInsModeButtons (segmentManager.SetAddMode (segmentManager.GetAddMode () + 1) % 3);
 }
 
 void CMainFrame::OnEditorToolbar ()
@@ -1029,17 +1027,17 @@ pCmdUI->SetCheck(m_bEditorTB);
 
 void CMainFrame::OnUpdateInsModeNormal (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck(add_segment_mode == ORTHOGONAL);
+pCmdUI->SetCheck (segmentManager.GetAddMode () == ORTHOGONAL);
 }
 
 void CMainFrame::OnUpdateInsModeExtend (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck(add_segment_mode == EXTEND);
+pCmdUI->SetCheck(segmentManager.GetAddMode () == EXTEND);
 }
 
 void CMainFrame::OnUpdateInsModeMirror (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck(add_segment_mode == MIRROR);
+pCmdUI->SetCheck(segmentManager.GetAddMode () == MIRROR);
 }
 
 void CMainFrame::UpdateSelectButtons (eSelectModes mode)
@@ -1596,7 +1594,7 @@ if (theMine->IsD1File ()) {
 			INFOMSG (" Mine converted to a Descent 2 level")
 		else
 			ErrorMsg ("Mine converted to a Descent 2 level.");
-		theMine->ConvertWallNum (MAX_WALLS1 + 1, MAX_WALLS2 + 1);
+		theMine->ConvertWallNum (MAX_WALLS_D1 + 1, MAX_WALLS_D2 + 1);
 		}
 	}
 else {
@@ -1613,7 +1611,7 @@ else {
 			INFOMSG (" Mine converted to a D2X-XL level")
 		else
 			ErrorMsg ("Mine converted to a D2X-XL level.");
-		theMine->ConvertWallNum (MAX_WALLS2 + 1, WALL_LIMIT + 1);
+		theMine->ConvertWallNum (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
 		theMine->NumObjTriggers () = 0;
 		}
 	else {
@@ -1622,7 +1620,7 @@ else {
 			INFOMSG (" Mine converted to a non-Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a non-Vertigo level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
-		theMine->ConvertWallNum (WALL_LIMIT + 1, MAX_WALLS2 + 1);
+		theMine->ConvertWallNum (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
 		}
 	}
 }

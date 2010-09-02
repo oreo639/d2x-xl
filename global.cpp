@@ -146,7 +146,7 @@ byte robotClip[MAX_ROBOT_IDS_TOTAL] = {
 // note1: 0 == not used,
 // note2: 100 and 101 are flags but will appear as shields
 //        in non multiplayer level
-byte powerupClip[MAX_POWERUP_IDS2] = {
+byte powerupClip[MAX_POWERUP_IDS_D2] = {
 	36, 18, 19, 20, 24, 26, 25,  0,
 		0,  0, 34, 35, 51, 37, 38, 39,
 		40, 41, 42, 43, 44, 45, 46, 47,
@@ -159,7 +159,7 @@ char *ai_options[MAX_AI_OPTIONS_D2] = {
 	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
 };
 
-fix powerupSize[MAX_POWERUP_IDS2] = {
+fix powerupSize[MAX_POWERUP_IDS_D2] = {
 		0x28000L,0x30000L,0x28000L,0x40000L,0x30000L,0x30000L,0x30000L,0x30000L,
 		0x30000L,0x30000L,0x28000L,0x30000L,0x30000L,0x40000L,0x40000L,0x40000L,
 		0x40000L,0x30000L,0x28000L,0x30000L,0x28000L,0x30000L,0x1ccccL,0x20000L,
@@ -289,7 +289,7 @@ char *object_names[MAX_OBJECT_TYPES] = {
 	"Effect"
 };
 
-byte powerup_types[MAX_POWERUP_IDS2] = {
+byte powerup_types[MAX_POWERUP_IDS_D2] = {
 		POWERUP_POWERUP_MASK,
 		POWERUP_POWERUP_MASK,
 		POWERUP_POWERUP_MASK,

@@ -445,7 +445,7 @@ else if (IsEquipMaker (segP)) {
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
-			for (j = 0; j < MAX_POWERUP_IDS2; j++) {
+			for (j = 0; j < MAX_POWERUP_IDS_D2; j++) {
 				if (i) {
 					h = ((objFlags [j / 32] & (1L << (j % 32))) != 0);
 					if (!h)	//only add flagged objects to 2nd list box
@@ -860,7 +860,7 @@ CSegment *segP = theMine->CurrSeg ();
 int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindEquip (LBAvailBots (), szObj);
-if ((i < 0) || (i >= MAX_POWERUP_IDS2))
+if ((i < 0) || (i >= MAX_POWERUP_IDS_D2))
 	return;
 theMine->EquipGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 int h = LBAvailBots ()->GetCurSel ();

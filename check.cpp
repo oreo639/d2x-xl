@@ -1416,7 +1416,7 @@ if (!theMine)
 	CSide *sideP;
 	CWall *wallP = theMine->Walls (0), *w, *ow;
 	int segCount = theMine->SegCount ();
-	byte wallFixed [MAX_WALLS2];
+	byte wallFixed [MAX_WALLS_D2];
 
 	short sub_errors = m_nErrors [0];
 	short sub_warnings = m_nErrors [1];

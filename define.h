@@ -248,23 +248,6 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define DELETED_MASK 0x40 // used on wallFlags & vertexStatus 
 #define NEW_MASK     0x20 // used on vertexStatus                
 
-#define MAX_SEGMENTS1 800  // descent 1 max # of cubes
-#define MAX_SEGMENTS2 900  // descent 2 max # of cubes
-#define SEGMENT_LIMIT 8000 // D2X-XL max # of cubes
-#define MAX_VERTICES1 2808 // descent 1 max # of vertices
-#define MAX_VERTICES2 (MAX_SEGMENTS2 * 4 + 8) // descent 2 max # of vertices
-#define VERTEX_LIMIT (SEGMENT_LIMIT * 4 + 8) // descent 2 max # of vertices
-#define MAX_OBJECTS1  350
-#define MAX_OBJECTS2  2000
-#define MAX_WALLS1    175 // Maximum number of walls for Descent 1
-#define MAX_WALLS2    255 // Maximum number of walls for Descent 2
-#define WALL_LIMIT    2047 // Maximum number of walls for Descent 2
-#define MAX_TRIGGERS_D1 100
-#define MAX_TRIGGERS_D2 254
-#define MAX_OBJ_TRIGGERS	254
-#define MAX_TRIGGER_FLAGS 12
-#define NO_TRIGGER	255
-
 #define SHOW_LINES_POINTS    0x01
 #define SHOW_LINES_PARTIAL   0x02
 #define SHOW_LINES_ALL       0x04
@@ -276,19 +259,37 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define POWERUP_POWERUP_MASK 0x04
 #define POWERUP_UNKNOWN_MASK 0xff // show the type if any other mask is on
 
-#define ROBOT_IDS1						24
-#define MAX_ROBOT_IDS_TOTAL         78
-#define MAX_POWERUP_IDS1            26
-#define MAX_POWERUP_IDS2            50
-#define MAX_POWERUP_IDS_D2          48
-#define MAX_POWERUP_IDS					(DLE.IsD1File () ? MAX_POWERUP_IDS1 : MAX_POWERUP_IDS2)
-#define MAX_TRIGGER_TARGETS         10
-
 #define POW_AMMORACK						35
 
-#define MAX_DOORS_D1                50 // Maximum number of open doors Descent 1
-#define MAX_DOORS_D2                90 // Maximum number of open doors Descent 2
-#define DOOR_LIMIT                   MAX_DOORS_D2
+#define ROBOT_IDS1						24
+#define MAX_ROBOT_IDS_TOTAL			78
+#define MAX_POWERUP_IDS_D1				26
+#define MAX_POWERUP_IDS_D2				50
+#define MAX_POWERUP_IDS_USED			48
+#define MAX_POWERUP_IDS					(DLE.IsD1File () ? MAX_POWERUP_IDS_D1 : MAX_POWERUP_IDS_D2)
+#define MAX_TRIGGER_TARGETS			10
+
+#define MAX_DOORS_D1						50 // Maximum number of open doors Descent 1
+#define MAX_DOORS_D2						90 // Maximum number of open doors Descent 2
+#define DOOR_LIMIT						MAX_DOORS_D2
+
+#define MAX_SEGMENTS1					800  // descent 1 max # of cubes
+#define MAX_SEGMENTS2					900  // descent 2 max # of cubes
+#define SEGMENT_LIMIT					8000 // D2X-XL max # of cubes
+#define MAX_VERTICES_D1					2808 // descent 1 max # of vertices
+#define MAX_VERTICES_D2					(MAX_SEGMENTS2 * 4 + 8) // descent 2 max # of vertices
+#define VERTEX_LIMIT						(SEGMENT_LIMIT * 4 + 8) // descent 2 max # of vertices
+#define MAX_OBJECTS_D1					350
+#define MAX_OBJECTS_D2					2000
+#define MAX_WALLS_D1						175 // Maximum number of walls for Descent 1
+#define MAX_WALLS_D2						255 // Maximum number of walls for Descent 2
+#define WALL_LIMIT						2047 // Maximum number of walls for Descent 2
+#define MAX_TRIGGERS_D1					100
+#define MAX_TRIGGERS_D2					254
+#define MAX_OBJ_TRIGGERS				254
+#define TRIGGER_LIMIT					MAX_TRIGGERS_D2
+#define MAX_TRIGGER_FLAGS				12
+#define NO_TRIGGER						(TRIGGER_LIMIT + 1)
 
 #define MAX_REACTOR_TRIGGERS			10
 #define MAX_NUM_MATCENS_D1				20
@@ -372,18 +373,18 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define TT_DISABLE_TRIGGER		33
 #define NUM_TRIGGER_TYPES		34
 
-#define TT_SHIELD_DAMAGE         100    // added to support d1 shield damage
-#define TT_ENERGY_DRAIN          101    // added to support d1 energy drain
+#define TT_SHIELD_DAMAGE      100    // added to support d1 shield damage
+#define TT_ENERGY_DRAIN       101    // added to support d1 energy drain
 
 // Trigger flags for Descent 2
-#define TF_NO_MESSAGE		   1	// Don't show a message when triggered
-#define TF_ONE_SHOT		   2	// Only trigger once
-#define TF_DISABLED		   4	// Set after one-shot fires
-#define TF_PERMANENT		   8	// indestructable switch for repeated operation
-#define TF_ALTERNATE			16 // switch will assume the opposite function after operation
-#define TF_SET_ORIENT		32 // switch will assume the opposite function after operation
-#define TF_SILENT          64
-#define TF_AUTOPLAY			128
+#define TF_NO_MESSAGE			1	// Don't show a message when triggered
+#define TF_ONE_SHOT				2	// Only trigger once
+#define TF_DISABLED				4	// Set after one-shot fires
+#define TF_PERMANENT				8	// indestructable switch for repeated operation
+#define TF_ALTERNATE				16 // switch will assume the opposite function after operation
+#define TF_SET_ORIENT			32 // switch will assume the opposite function after operation
+#define TF_SILENT					64
+#define TF_AUTOPLAY				128
 
 #define	MAX_LIGHT_DELTA_INDICES_STD	500
 #define	MAX_LIGHT_DELTA_VALUES_STD		10000

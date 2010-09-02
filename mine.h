@@ -31,7 +31,6 @@ extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 #ifdef USE_DYN_ARRAYS
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
-typedef CStaticArray< CVertex, VERTEX_LIMIT > vertexList;
 typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
 typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
@@ -42,7 +41,7 @@ typedef CStaticArray< CTrigger, MAX_TRIGGERS_D2 > triggerList;
 typedef CStaticArray< CTrigger, MAX_OBJ_TRIGGERS > objTriggerList;
 typedef CStaticArray< CReactorTrigger, MAX_REACTOR_TRIGGERS > reactorTriggerList;
 typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
-typedef CStaticArray< CGameObject, MAX_OBJECTS2 > objectList;
+typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
@@ -54,7 +53,6 @@ typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightL
 #else
 
 typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
-typedef CVertex vertexList [VERTEX_LIMIT];
 typedef CSegment segmentList [SEGMENT_LIMIT];
 typedef CColor lightColorList [SEGMENT_LIMIT * 6];
 typedef CColor texColorList [MAX_TEXTURES_D2];
@@ -65,7 +63,7 @@ typedef CTrigger triggerList [MAX_TRIGGERS_D2];
 typedef CTrigger objTriggerList [MAX_OBJ_TRIGGERS];
 typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
-typedef CGameObject objectList [MAX_OBJECTS2];
+typedef CGameObject objectList [MAX_OBJECTS_D2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
@@ -122,7 +120,7 @@ typedef struct tMineData {
 	//CReactorTrigger			reactorTriggers[MAX_REACTOR_TRIGGERS];
 	//CRobotMaker				robotMakers[MAX_NUM_MATCENS_D2];
 	//CRobotMaker				equipMakers[MAX_NUM_MATCENS_D2];
-	//CGameObject				objects[MAX_OBJECTS2];
+	//CGameObject				objects[MAX_OBJECTS_D2];
 	//CLightDeltaIndex		lightDeltaIndices [MAX_LIGHT_DELTA_INDICES_D2X];
 	//CLightDeltaValue		lightDeltaValues [MAX_LIGHT_DELTA_VALUES_D2X];
 	//CFlickeringLight		flickeringLights[MAX_FLICKERING_LIGHTS];
@@ -135,7 +133,6 @@ typedef struct tMineData {
 
 class CMine {
 public:
-	
 	// level info
 	int				m_fileType;
 	int				m_levelVersion;
@@ -175,9 +172,19 @@ public:
 		{ return m_mineData; }
 
 	inline vertexList& Vertices (void)
-		{ return MineData ().vertices; }
+		{ return segmentManager.Vertices (); }
+	inline CVertex *Vertices (int i)
+		{ return Vertices () + i; }
+	inline byte& VertStatus (int i = 0)
+		{ return Vertices (i)->m_status; }
+
 	inline segmentList& Segments (void)
-		{ return MineData ().segments; }
+		{ return segmentManager.Segments (); }
+	inline ushort& SegCount ()
+		{ return segmentManager.SegCount (); }
+	inline CSegment *Segments (int i)
+		{ return Segments () + i; }
+
 	inline vertexColorList& VertexColors (void)
 		{ return MineData ().vertexColors; }
 	inline wallList& Walls (void)
@@ -209,12 +216,6 @@ public:
 	//inline textureList& Textures ()
 	//	{ return textures; }
 
-	inline CVertex *Vertices (int i)
-		{ return MineData ().vertices + i; }
-	inline byte& VertStatus (int i = 0)
-		{ return Vertices (i)->m_status; }
-	inline CSegment *Segments (int i)
-		{ return MineData ().segments + i; }
 	inline CColor *VertexColors (int i)
 		{ return &(MineData ().vertexColors [i]); }
 	inline CWall *Walls (int i)
@@ -254,12 +255,10 @@ public:
 		{ return MineData ().gameInfo; }
 	inline CGameFileInfo& MineFileInfo ()
 		{ return MineData ().gameInfo.fileInfo; }
-	inline ushort& SegCount ()
-		{ return MineData ().numSegments; }
 	inline int& ObjCount ()
 		{ return MineInfo ().objects.count; }
 	inline ushort& VertCount ()
-		{ return MineData ().numVertices; }
+		{ return segmentManager.VertCount (); }
 	inline short& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (CGameItemInfo& gii)
@@ -409,7 +408,7 @@ public:
 	short	MarkedSegmentCount (bool bCheck = false);
 	bool	GotMarkedSegments (void)
 		{ return MarkedSegmentCount (true) > 0; }
-	bool CMine::GotMarkedSides ();
+	bool GotMarkedSides ();
 
 	inline void SetSelectMode (short mode)
 		{ m_selectMode = mode; }
@@ -582,7 +581,7 @@ private:
 	short CreateNewLevel ();
 	void DefineVertices(short new_verts[4]);
 	void UnlinkChild(short parent_segnum,short nSide);
-	short FixIndexValues();
+	short FixIndexValues ();
 	void ResetSide (short nSegment,short nSide);
 
 	int ReadHamFile(char *fname = null, int type = NORMAL_HAM);
@@ -610,11 +609,11 @@ private:
 	};
 
 #define MAX_SEGMENTS (!theMine ? MAX_SEGMENTS2 : theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : SEGMENT_LIMIT)
-#define MAX_VERTICES (!theMine ? MAX_VERTICES2 : theMine->IsD1File () ? MAX_VERTICES1 : theMine->IsStdLevel () ? MAX_VERTICES2 : VERTEX_LIMIT)
-#define MAX_WALLS (!theMine ? MAX_WALLS2 : theMine->IsD1File () ? MAX_WALLS1 : (theMine->LevelVersion () < 12) ? MAX_WALLS2 : WALL_LIMIT)
+#define MAX_VERTICES (!theMine ? MAX_VERTICES_D2 : theMine->IsD1File () ? MAX_VERTICES_D1 : theMine->IsStdLevel () ? MAX_VERTICES_D2 : VERTEX_LIMIT)
+#define MAX_WALLS (!theMine ? MAX_WALLS_D2 : theMine->IsD1File () ? MAX_WALLS_D1 : (theMine->LevelVersion () < 12) ? MAX_WALLS_D2 : WALL_LIMIT)
 #define MAX_TEXTURES (!theMine ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
 #define MAX_TRIGGERS (!theMine ? MAX_TRIGGERS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2)
-#define MAX_OBJECTS (!theMine ? MAX_OBJECTS2 : theMine->IsStdLevel () ? MAX_OBJECTS1 : MAX_OBJECTS2)
+#define MAX_OBJECTS (!theMine ? MAX_OBJECTS_D2 : theMine->IsStdLevel () ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
 #define MAX_NUM_FUELCENS (!theMine ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
 #define MAX_NUM_REPAIRCENS (!theMine ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
 #define MAX_PLAYERS (!theMine ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)

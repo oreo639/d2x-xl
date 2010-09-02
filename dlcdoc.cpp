@@ -264,7 +264,7 @@ if (d.DoModal () == IDOK) {
 			break;
 		case 3:
 			theMine->UpdateLevelVersion ();
-			theMine->ConvertWallNum (MAX_WALLS2, WALL_LIMIT
+			theMine->ConvertWallNum (MAX_WALLS_D2, WALL_LIMIT
 				);
 		}
 	*m_szSubFile = '\0';
@@ -713,7 +713,7 @@ theMine->DeleteBlock ();
 
 void CDlcDoc::OnCopyOtherCube ()
 {
-theMine->CopyOtherCube ();
+theMine->CopyOtherSegment ();
 }
 
 

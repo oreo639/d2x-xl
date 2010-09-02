@@ -67,7 +67,7 @@ char *szSkills [5] = {
 char *pszExplosionIds [] = {"small explosion", "medium explosion", "big explosion", "huge explosion", "red blast"};
 int nExplosionIds [] = {7, 58, 0, 60, 106};
 
-int powerupIdStrXlat [MAX_POWERUP_IDS2];
+int powerupIdStrXlat [MAX_POWERUP_IDS_D2];
 
                         /*--------------------------*/
 
@@ -1310,7 +1310,7 @@ switch (objP->m_info.type) {
 
 switch (objP->m_info.type) {
 	case OBJ_POWERUP:
-		id = (objP->m_info.id < MAX_POWERUP_IDS_D2) ? objP->m_info.id : POW_AMMORACK;
+		id = (objP->m_info.id < MAX_POWERUP_IDS_USED) ? objP->m_info.id : POW_AMMORACK;
 		objP->m_info.size = powerupSize [id];
 		objP->m_info.shields = DEFAULT_SHIELD;
 		objP->rType.vClipInfo.vclip_num = powerupClip [id];

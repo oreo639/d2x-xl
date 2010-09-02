@@ -64,7 +64,7 @@ m_disableDrawing = TRUE;
 LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && (IsD2XLevel ()) && (LevelOutdated ())) {
 	if (LevelVersion () < 15) {
-		ConvertWallNum (MAX_WALLS2 + 1, WALL_LIMIT + 1);
+		ConvertWallNum (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
 		NumObjTriggers () = 0;
 		}
 	UpdateLevelVersion ();
@@ -443,8 +443,8 @@ if (n_vertices > VERTEX_LIMIT) {
 	ErrorMsg (message);
 	return(1);
 	}
-if (((IsD1File ()) && (n_vertices > MAX_VERTICES1)) ||
-	 ((IsD2File ()) && (IsStdLevel ()) && (n_vertices > MAX_VERTICES2)))
+if (((IsD1File ()) && (n_vertices > MAX_VERTICES_D1)) ||
+	 ((IsD2File ()) && (IsStdLevel ()) && (n_vertices > MAX_VERTICES_D2)))
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
@@ -497,7 +497,7 @@ else if (LevelVersion () > 9) {
 	}
 if (MineInfo ().objects.count > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-			  MineInfo ().objects.count, MAX_OBJECTS2);
+			  MineInfo ().objects.count, MAX_OBJECTS_D2);
 	ErrorMsg (message);
 	}
 return 0;
