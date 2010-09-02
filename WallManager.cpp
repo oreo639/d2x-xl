@@ -91,14 +91,18 @@ return true;
 // Mine - delete wall
 //------------------------------------------------------------------------------
 
-void CWallManager::Delete (ushort nWall) 
+void CWallManager::Delete (short nDelWall) 
 {
 	short nTrigger;
 	short nSegment, nSide, nOppSeg, nOppSide;
 	CSegment *segP;
 	CSide *sideP;
 
-CWall* delWallP = (nWall < 0) ? current.Wall () : Walls (nWall);
+CWall* delWallP = Walls (nDelWall);
+if (delWallP == null) {
+	delWallP = current.Wall ();
+	nDelWall = Index (delWallP);
+	}
 
 if (delWallP == null)
 	return;
@@ -113,25 +117,25 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
 segmentManager.GetSide (delWallP->m_nSegment, delWallP->m_nSide)->SetWall (NO_WALL);
-if (nWall < --Count ()) {
-	CWall* moveWallP = m_walls + Count ();
-	segmentManager.GetSide (moveWallP->m_nSegment, moveWallP->m_nSide)->SetWall (nWall);
+if (nDelWall < --Count ()) {
+	CWall* moveWallP = m_walls + m_nCount;
+	segmentManager.GetSide (moveWallP->m_nSegment, moveWallP->m_nSide)->SetWall (nDelWall);
 	*delWallP = *moveWallP;
 	}
 
 for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
-		if (sideP->m_info.nWall >= MineInfo ().walls.count)
-			sideP->m_info.nWall = NO_WALL;
-		else if (sideP->m_info.nWall > nWall)
-			sideP->m_info.nWall--;
-		else if (sideP->m_info.nWall == nWall) {
-			sideP->m_info.nWall = NO_WALL;
+		if (sideP->m_info.nDelWall >= MineInfo ().walls.count)
+			sideP->m_info.nDelWall = NO_WALL;
+		else if (sideP->m_info.nDelWall > nDelWall)
+			sideP->m_info.nDelWall--;
+		else if (sideP->m_info.nDelWall == nDelWall) {
+			sideP->m_info.nDelWall = NO_WALL;
 			DeleteTriggerTargets (nSegment, nSide); //delete this wall from all Triggers () that target it
 			}
 // move remaining Walls () in place of deleted wall
-// for (i = nWall; i < MineInfo ().walls.count - 1; i++)
-	memcpy (delWallP, Walls (nWall + 1), (MineInfo ().walls.count - nWall) * sizeof (CWall));
+// for (i = nDelWall; i < MineInfo ().walls.count - 1; i++)
+	memcpy (delWallP, Walls (nDelWall + 1), (MineInfo ().walls.count - nDelWall) * sizeof (CWall));
 // update number of Walls () in mine
 DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
@@ -140,30 +144,9 @@ LinkExitToReactor();
 
 //------------------------------------------------------------------------------
 
-int CWallManager::FindClip (CWall *wallP, short nTexture)
-{
-	char *ps, *pszName = textureManager.Name (nTexture);
-
-if (!strcmp (pszName, "wall01 - anim"))
-	return wallP->m_info.nClip = 0;
-if (ps = strstr (pszName, "door")) {
-	int i, nDoor = atol (ps + 4);
-	for (i = 1; i < NUM_OF_CLIPS_D2; i++)
-		if (nDoor == doorClipTable [i]) {
-			wallP->m_info.nClip = clipList [i];
-			DLE.SetModified (TRUE);
-			DLE.MineView ()->Refresh ();
-			return i;
-			}
-	}
-return -1;
-}
-
-//------------------------------------------------------------------------------
-
 CWall *CWallManager::FindBySide (CSideKey key, int i = 0)
 {
-for (; i < m_nWalls; i++)
+for (; i < m_nCount; i++)
 	if (m_walls [i] == key)
 		return &m_walls [i];
 return null;
@@ -171,9 +154,9 @@ return null;
 
 //------------------------------------------------------------------------------
 
-CWall *CWallManager::FindByTrigger (short nTrigger, int i = 0)
+CWall* CWallManager::FindByTrigger (short nTrigger, int i = 0)
 {
-for (; i < m_nWalls; i++)
+for (; i < m_nCount; i++)
 	if (m_walls [i].m_nTrigger == nTrigger)
 		return &m_walls [i];
 return null;
@@ -181,7 +164,7 @@ return null;
 
 //------------------------------------------------------------------------------
 
-void UpdateTrigger (short nOldTrigger, short nNewTrigger)
+void CWallManager::UpdateTrigger (short nOldTrigger, short nNewTrigger)
 {
 	CWall* wallP = FindByTrigger (nOldTrigger);
 
@@ -195,14 +178,14 @@ bool CWallManager::ClipFromTexture (short nSegment, short nSide)
 {
 CWall *wallP = segmentManager.Wall (nSegment, nSide);
 
-if (!wallP || ((wallP->m_info.type != WALL_DOOR) && (wallP->m_info.type != WALL_BLASTABLE)))
+if (!(wallP && wallP->IsDoor ()))
 	return true;
 
 short nBaseTex, nOvlTex;
 
 segmentManager.GetTextures (nSegment, nSide, nBaseTex, nOvlTex);
 
-return (FindClip (wallP, nOvlTex) >= 0) || (FindClip (wallP, nBaseTex) >= 0);
+return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 }
 
 //------------------------------------------------------------------------

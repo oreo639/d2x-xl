@@ -197,6 +197,27 @@ bool CWall::IsDoor (void)
 return (m_info.type == WALL_BLASTABLE) || (m_info.type == WALL_DOOR);
 }
 
+//------------------------------------------------------------------------------
+
+int CWall::SetClip (short nTexture)
+{
+	char *ps, *pszName = textureManager.Name (nTexture);
+
+if (!strcmp (pszName, "wall01 - anim"))
+	return m_info.nClip = 0;
+if (ps = strstr (pszName, "door")) {
+	int nDoor = atol (ps + 4);
+	for (int i = 1; i < NUM_OF_CLIPS_D2; i++)
+		if (nDoor == doorClipTable [i]) {
+			m_info.nClip = clipList [i];
+			DLE.SetModified (TRUE);
+			DLE.MineView ()->Refresh ();
+			return i;
+			}
+	}
+return -1;
+}
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------

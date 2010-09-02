@@ -44,6 +44,7 @@ public:
 	CSide* GetSide (void);
 	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
 	CTrigger* GetTrigger (void);
+	int SetClip (short nTexture);
 };
 
 //------------------------------------------------------------------------

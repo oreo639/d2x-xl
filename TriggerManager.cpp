@@ -164,6 +164,9 @@ return Triggers (nTrigger);
 
 void CTriggerManager::Delete (short nDelTrigger, int nClass) 
 {
+if (nDelTrigger == NO_TRIGGER)
+	return;
+
 if (nDelTrigger < 0) {
 	CWall* wallP = current.Wall ();
 	if (wallP == null)
