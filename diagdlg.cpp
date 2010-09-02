@@ -169,7 +169,7 @@ return nUsed;
 
 void CDiagTool::Reset (void)
 {
-if (!theMine) return;
+CHECKMINE;
 if (!Inited ())
 	return;
 ClearBugList ();

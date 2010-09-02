@@ -453,7 +453,7 @@ WritePrivateProfileString ("DLE-XP", szKey, szValue, INIFILE);
 
 void CDlcApp::SaveLayout ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CRect	rc;
 
@@ -489,7 +489,7 @@ WritePrivateProfileInt ("SplashScreen", m_bSplashScreen);
 
 void CDlcApp::LoadLayout ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CRect	rc, tbrc;
 	UINT h = AFX_IDW_DOCKBAR_TOP;

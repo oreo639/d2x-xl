@@ -40,14 +40,12 @@ BEGIN_MESSAGE_MAP(CTextureView, CWnd)
 	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
-
+//------------------------------------------------------------------------
 
 CTextureView::CTextureView () 
 	: CWnd ()
 {
 m_pTextures = null;
-m_nTextures [0] = 0;
-m_nTextures [1] = 0;
 m_penCyan = new CPen (PS_SOLID, 1, RGB (0,255,255));
 int scale = TEXTURE_SCALE;
 m_iconSize.cx = 64 / scale;
@@ -74,7 +72,7 @@ if (m_penCyan)
 
 void CTextureView::Refresh (bool bRepaint) 
 {
-if (!theMine) return;
+CHECKMINE;
 if (bRepaint) {
 	InvalidateRect (null, TRUE);
 	UpdateWindow ();
@@ -145,7 +143,7 @@ Refresh ();
 
 void CTextureView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	short nBaseTex;
 
@@ -172,7 +170,7 @@ DLE.SetModified (TRUE);
 
 void CTextureView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CSide *sideP = theMine->CurrSide ();
 	short	nBaseTex;
@@ -225,7 +223,7 @@ x = point.x / m_iconSpace.cx;
 y = point.y / m_iconSpace.cy;
 int h = nOffset + y * m_viewSpace.cx + x + 1;
 int i;
-for (i = 0; i < m_nTextures [1]; i++) {
+for (i = 0; i < m_filter.Count (1); i++) {
 	if (GETBIT (filterP, i)) //filterP [i / 8] & (1 << (i & 7)))
 		if (!--h) {
 			nBaseTex = m_filter.MapViewToTex (i); //m_pTextures [i];
@@ -237,7 +235,7 @@ return 1; // return failure
 
 								/*---------------------------*/
 
-void CTextureView::RecalcLayout () 
+void CTextureView::RecalcLayout (void) 
 {
 CHECKMINE;
 
@@ -255,7 +253,7 @@ if (!(m_viewSpace.cx && m_viewSpace.cy))
 
 byte filterP [(MAX_TEXTURES_D2 + 7) / 8];
 m_filter.Process (filterP, m_bShowAll);
-m_nRows [ShowAll ()] = (m_nTextures [ShowAll ()] + m_viewSpace.cx - 1) / m_viewSpace.cx;
+m_nRows [ShowAll ()] = (m_filter.Count (ShowAll ()) + m_viewSpace.cx - 1) / m_viewSpace.cx;
 
 // read scroll position to get offset for bitmap tiles
 SetScrollRange (SB_VERT, 0, m_nRows [m_bShowAll] - m_viewSpace.cy, TRUE);
@@ -269,7 +267,7 @@ else {
 	ShowScrollBar (SB_VERT,TRUE);
 	UINT nPos = GetScrollPos (SB_VERT);
 	int i, j = nPos * m_viewSpace.cx; 
-	for (i = 0, nOffset = 0; (i < m_nTextures [1]); i++)
+	for (i = 0, nOffset = 0; (i < m_filter.Count (1)); i++)
 		if (ShowAll () || GETBIT (filterP, i)) {
 			nOffset++;
 			if (--j < 0)
@@ -295,7 +293,7 @@ pDC->RealizePalette();
 pDC->SetStretchBltMode(STRETCH_DELETESCANS);
 int x = 0;
 int y = 0;
-for (int i = 0; i < m_nTextures [1]; i++) {
+for (int i = 0; i < m_filter.Count (1); i++) {
 	if (!ShowAll ()) {
 		if (!GETBIT (filterP, i))
 			continue;

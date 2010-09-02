@@ -20,7 +20,7 @@
 // Returns - TRUE on success
 //
 // Changes - now takes type instead of flag.
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTrigger::Setup (short type, short flags)
 {

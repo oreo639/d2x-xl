@@ -440,9 +440,6 @@ typedef struct {
 
 //extern char	Wall_names[7][10]; // New for Descent 2
 
-typedef struct tTriggerTargets {
-} tTriggerTargets;
-
 class CTriggerTargets {
 public:
 	short		m_count;
@@ -466,7 +463,7 @@ public:
 			int l = m_count - i;
 			if (l)
 				memcpy (m_targets + i, m_targets + i + 1, l * sizeof (m_targets [0]));
-			m_targets [m_count] = CSideKey (0,0);
+			m_targets [m_count] = CSideKey (-1,-1);
 			}
 		return m_count;
 		}	

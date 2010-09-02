@@ -114,7 +114,7 @@ DDX_Check (pDX, IDC_LIGHT_COPYTEXLIGHTS, m_bCopyTexLights);
 
 void CLightTool::OnOK ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 	bool		bAll;
 
@@ -161,7 +161,7 @@ DLE.MineView ()->EnableDeltaShading (bEnableDeltaShading, m_deltaLightFrameRate,
 
 void CLightTool::OnShowDelta ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 if (!::IsWindow(m_hWnd))
 	return;

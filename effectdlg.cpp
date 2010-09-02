@@ -89,7 +89,7 @@ m_nBufferId = -1;
 
 void CEffectTool::LoadEffectList () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CComboBox	*cbEffects = CBEffects ();
 	char			szEffect [100];

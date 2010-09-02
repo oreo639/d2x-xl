@@ -200,7 +200,7 @@ Refresh ();
 
 void CConvertDlg::OnOK () 
 {
-if (!theMine) return;
+CHECKMINE;
 
   short			i,j;
   CSegment		*segP;

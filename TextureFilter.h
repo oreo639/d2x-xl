@@ -40,7 +40,7 @@
 #define	TEX_LABEL				(1L << 28)
 #define	TEX_MONITOR				(1L << 29)
 #define	TEX_STRIPES				(1L << 30)
-#define	TEX_MOVE					(1L << 31)
+#define	TEX_MOVING					(1L << 31)
 
 #define  TEX_ROCK					(TEX_GRAY_ROCK | TEX_BROWN_ROCK | TEX_RED_ROCK | TEX_YELLOW_ROCK | TEX_GREEN_ROCK | TEX_BLUE_ROCK)
 #define  TEX_NATURE				(TEX_ICE | TEX_STONES | TEX_GRASS | TEX_SAND | TEX_LAVA | TEX_WATER)
@@ -56,14 +56,11 @@
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-typedef struct tTexRange {
-	short	nMin, nMax;
-} tTexRange;
-
 typedef struct tTexFilterInfo {
-	tTexRange	m_range;
-	uint			m_nFilter1;
-	uint			m_nFilter2;
+	short	m_nMin;
+	short	m_nMax;
+	uint	m_nFilter1;
+	uint	m_nFilter2;
 } tTexFilterInfo;
 
 //------------------------------------------------------------------------
@@ -78,11 +75,17 @@ private:
 		uint				m_nSize;
 
 public:
+	CTextureFilter () { 
+		m_nFilter = 0xFFFFFFFF; 
+		m_nTextures [0] = 0;
+		m_nTextures [1] = 0;
+		}
 	void Process (byte* filterP, BOOL bShowAll); 
 	void Setup (void); 
 	inline uint& Filter (void) { return m_nFilter; }
 	inline short MapViewToTex (short i) { return m_mapViewToTex [i]; }
 	inline short MapTexToView (short i) { return m_mapTexToView [i]; }
+	inline ushort Count (short i) { return m_nTextures [i]; }
 
 private:
 	short FilterIndex (short nTexture);

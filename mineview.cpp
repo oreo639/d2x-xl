@@ -1080,7 +1080,7 @@ CWnd::InvalidateRect (lpRect, bErase);
 
 void CMineView::Refresh (bool bAll)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	static bool bRefreshing = false;
 
@@ -1127,7 +1127,7 @@ return false;
 
 void CMineView::MarkRubberBandedVertices (void)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	APOINT	*pa = m_viewPoints;
 	int		x, y;
@@ -1220,7 +1220,7 @@ return TRUE;
                         
 void CMineView::UpdateRubberRect (CPoint pt)
 {
-if (!theMine) return;
+CHECKMINE;
 
 if (m_mouseState == eMouseStateZoom)
 	return;
@@ -1263,7 +1263,7 @@ if (rc != m_rubberRect) {
                         
 void CMineView::ResetRubberRect ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 ReleaseCapture ();
 InvalidateRect (&m_rubberRect, FALSE);

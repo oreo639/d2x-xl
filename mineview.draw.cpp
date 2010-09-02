@@ -22,7 +22,7 @@
 
 void CMineView::SetViewPoints (CRect *pRC, bool bSetViewInfo)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CRect		rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
 	long		i, 

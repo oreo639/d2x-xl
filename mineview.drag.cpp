@@ -48,7 +48,7 @@ return TRUE;
                         
 void CMineView::HighlightDrag (short nVert, long x, long y) 
 {
-if (!theMine) return;
+CHECKMINE;
 
 m_pDC->SelectObject((HBRUSH) GetStockObject (NULL_BRUSH));
 //m_pDC->SetROP2 (R2_NOT);
@@ -134,7 +134,7 @@ return TRUE;
                         
 void CMineView::FinishDrag (void)
 {
-if (!theMine) return;
+CHECKMINE;
 
 //ReleaseCapture ();
 	int		m_changesMade = 1;

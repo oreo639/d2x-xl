@@ -552,7 +552,7 @@ UpdatePaletteWnd ();
 
 void CTextureTool::RefreshTextureWnd ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 #if TEXTOOLDLG
 if (!CTexToolDlg::Refresh ())
@@ -767,7 +767,7 @@ else
 
 void CTextureTool::SelectTexture (int nIdC, bool bFirst)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CSide		*sideP = theMine->CurrSide ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
@@ -790,7 +790,7 @@ DLE.MineView ()->Refresh ();
 
 void CTextureTool::OnSetLight () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 UpdateData (TRUE);
 CSide *sideP = theMine->CurrSide ();
@@ -832,7 +832,7 @@ Refresh ();
 
 void CTextureTool::OnSaveTexture () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 	char			*t1Name, *t2Name;
 	CSide		*sideP = theMine->CurrSide ();
@@ -886,7 +886,7 @@ Refresh ();
 
 void CTextureTool::OnPasteSide () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
@@ -910,7 +910,7 @@ DLE.MineView ()->Refresh ();
 
 void CTextureTool::OnPasteTouching ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
@@ -935,7 +935,7 @@ DLE.MineView ()->Refresh ();
 
 void CTextureTool::OnPasteMarked () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
@@ -979,7 +979,7 @@ DLE.MineView ()->Refresh ();
 
 void CTextureTool::OnReplace () 
 {
-if (!theMine) return;
+CHECKMINE;
 
 UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
@@ -1025,7 +1025,7 @@ DLE.MineView ()->Refresh ();
 
 void CTextureTool::PasteTexture (short nSegment, short nSide, short nDepth) 
 {
-if (!theMine) return;
+CHECKMINE;
 
 if (nDepth <= 0) 
 	return;

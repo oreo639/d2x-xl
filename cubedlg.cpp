@@ -70,7 +70,7 @@ Reset ();
 
 void CSegmentTool::Reset ()
 {
-if (!theMine) return;
+CHECKMINE;
 
 m_nSegment =
 m_nSide =

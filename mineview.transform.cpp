@@ -236,7 +236,7 @@ for (i = 0, h = theMine->SegCount (); i < h; i++, segP++) {
 
 void CMineView::CenterMine()
 {
-if (!theMine) return;
+CHECKMINE;
 
 //	CDlcDoc* pDoc = GetDocument();
 //	ASSERT_VALID(pDoc);
@@ -282,7 +282,7 @@ Refresh (false);
 
 void CMineView::CenterCube (void)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	CSegment& seg = theMine->Segments (0) [m_Current->nSegment];
 	CVertex *vMine = theMine->Vertices (0);
@@ -304,7 +304,7 @@ Refresh (false);
 
 void CMineView::CenterObject()
 {
-if (!theMine) return;
+CHECKMINE;
 
 CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);

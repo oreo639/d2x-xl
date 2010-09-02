@@ -24,7 +24,6 @@ class CTextureView : public CWnd {
 		DECLARE_DYNCREATE(CTextureView)
 
 		int				*m_pTextures;
-		int				m_nTextures [2];
 		CPen				*m_penCyan;
 		CSize				m_iconSize;
 		CSize				m_iconSpace;

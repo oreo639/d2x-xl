@@ -68,7 +68,7 @@ return true;
 
 void CDiagTool::OnShowBug (void)
 {
-if (!theMine) return;
+CHECKMINE;
 
 	bool bCurSeg;
 	CWall *wallP;
