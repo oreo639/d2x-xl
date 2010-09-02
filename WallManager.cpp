@@ -15,20 +15,21 @@
 #include "cfile.h"
 #include "texturemanager.h"
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Mine - add wall
 //
 // Returns - TRUE on success
 //
 // Note: nClip & nTexture are used for call to DefineWall only.
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-CWall *CWallManager::AddWall (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture) 
+CWall *CWallManager::Add (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture) 
 {
 GetCurrent (nSegment, nSide);
 
 ushort nWall;
-CSegment *segP = Segments (nSegment);
+CSegment *segP = segmentManager.GetSegment (nSegment);
+CSide* sideP = segmentManager.GetSide (nSegment, nSide);
 
 // if wall is an overlay, make sure there is no child
 if (type < 0)
@@ -178,11 +179,11 @@ Segments (nSegment)->SetUV (nSide, 0, 0);
 DLE.UnlockUndo ();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // SetWallTextures()
 //
 // 1/27/97 - added wall01 and door08
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CWallManager::SetWallTextures (ushort nWall, short nTexture) 
 {
@@ -225,9 +226,9 @@ DLE.UnlockUndo ();
 DLE.MineView ()->Refresh ();
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Mine - delete wall
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CWallManager::Delete (ushort nWall) 
 {
@@ -238,16 +239,18 @@ void CWallManager::Delete (ushort nWall)
 
 if (nWall < 0)
 	nWall = CurrSide ()->m_info.nWall;
-if (nWall >= MineInfo ().walls.count)
-	return;
 
 CWall* delWallP = Walls (nWall);
+
+if (delWallP == null)
+	return;
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
 // remove references to the deleted wall
-if (GetOppositeSide (nOppSeg, nOppSide, delWallP->m_nSegment, delWallP->m_nSide)) {
+CSide* sideP = segmentManager.OppositeSide (delWallP->m_nSegment, delWallP->m_nSide);
+if (sideP != null) {
 	short nOppWall = Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 	if ((nOppWall >= 0) && (nOppWall < MineInfo ().walls.count))
 		Walls (nOppWall)->m_info.linkedWall = -1;
@@ -274,7 +277,7 @@ DLE.MineView ()->Refresh ();
 LinkExitToReactor();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CWallManager::FindClip (CWall *wallP, short nTexture)
 {
@@ -295,17 +298,27 @@ if (ps = strstr (pszName, "door")) {
 return -1;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
-CWall *CWallManager::Find (CSideKey key)
+CWall *CWallManager::FindSide (CSideKey key, int i = 0)
 {
-for (int i = 0; i < m_nWalls; i++)
+for (; i < m_nWalls; i++)
 	if (m_walls [i] == key)
 		return &m_walls [i];
 return null;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
+
+CWall *CWallManager::FindTrigger (short nTrigger, int i = 0)
+{
+for (; i < m_nWalls; i++)
+	if (m_walls [i].m_nTrigger == nTrigger)
+		return &m_walls [i];
+return null;
+}
+
+//------------------------------------------------------------------------------
 
 bool CWallManager::ClipFromTexture (short nSegment, short nSide)
 {

@@ -326,73 +326,46 @@ return -1;
 
 void CTriggerManager::LinkExitToReactor (void) 
 {
-  short 		nTarget, control, count;
-  CSideKey	face;
+  short 		nTarget;
+  CSideKey	key;
   ushort		nWall;
   char 		nTrigger;
   bool 		found;
 
-  control = 0; // only 0 used by the game Descent
-  CReactorTrigger *reactorTrigger = ReactorTriggers (control);
+  CReacto1rTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
 // remove items from list that do not point to a wall
 for (nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
-	count = reactorTrigger->m_count;
-	face = reactorTrigger->m_targets [nTarget];
-	// search for Walls () that have a exit of type trigger
-	found = FALSE;
-	for (nWall = 0; nWall < MineInfo ().walls.count; nWall++) {
-		if (*Walls (nWall) == face) {
-		found = TRUE;
-		break;
-		}
-	}
-	if (!found) {
+	if (!wallManager.Find (reactorTrigger->m_targets [nTarget]))
 		reactorTrigger->Delete (nTarget);
-		}
 	}
-
-// add exit to list if not already in list
-// search for Walls () that have a exit of type trigger
-count =  reactorTrigger->m_count;
-for (nWall = 0; nWall < MineInfo ().walls.count; nWall++) {
-	nTrigger = Walls (nWall)->m_info.nTrigger;
-	if (nTrigger >= 0 && nTrigger <MineInfo ().triggers.count) {
-		if (IsD1File () 
-			 ? Triggers (nTrigger)->m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) 
-			 : Triggers (nTrigger)->m_info.type == TT_EXIT || Triggers (nTrigger)->m_info.type == TT_SECRET_EXIT) {
-			// see if cube,side is already on the list
-			face = *Walls (nWall);
-			found = FALSE;
-			for (nTarget = 0; nTarget < count; nTarget++) {
-				if (face == reactorTrigger->m_targets [nTarget]) {
-					found = TRUE;
-					break;
-					}
-				}
-			// if not already on the list, add it
-			if (!found) {
-				nTarget = reactorTrigger->Add (face);
-				}
-			}
-		}
+// add any exits to target list that are not already in it
+for (nWall = 0; nWall < wallManager.Count (); nWall++) {
+	CTrigger* trigP = Triggers (Walls (nWall)->m_info.nTrigger);
+	if (trigP == null)
+		continue;
+	if (!trigP->IsExit ())
+		continue;
+	if (reactorTrigger->Find (*Walls (nWall)))
+		continue;
+	nTarget = reactorTrigger->Add (face);
 	}
 DLE.UnlockUndo ();
 }
 
 //------------------------------------------------------------------------
 
-CTrigger *CTriggerManager::AddObjTrigger (short objnum, short type) 
+CTrigger *CTriggerManager::AddObjTrigger (short nObject, short type) 
 {
-if (objnum < 0)
-	objnum = Current ()->nObject;
-if ((Objects (objnum)->m_info.type != OBJ_ROBOT) && 
-	 (Objects (objnum)->m_info.type != OBJ_CAMBOT) &&
-	 (Objects (objnum)->m_info.type != OBJ_POWERUP) &&
-	 (Objects (objnum)->m_info.type != OBJ_HOSTAGE) &&
-	 (Objects (objnum)->m_info.type != OBJ_CNTRLCEN)) {
+if (nObject < 0)
+	nObject = Current ()->nObject;
+if ((Objects (nObject)->m_info.type != OBJ_ROBOT) && 
+	 (Objects (nObject)->m_info.type != OBJ_CAMBOT) &&
+	 (Objects (nObject)->m_info.type != OBJ_POWERUP) &&
+	 (Objects (nObject)->m_info.type != OBJ_HOSTAGE) &&
+	 (Objects (nObject)->m_info.type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return null;
 	}
@@ -404,7 +377,7 @@ bool bUndo = DLE.SetModified (TRUE);
 DLE.LockUndo ();
 short nTrigger = NumObjTriggers ();
 ObjTriggers (nTrigger)->Setup (type, 0);
-ObjTriggers (nTrigger)->m_info.nObject = objnum;
+ObjTriggers (nTrigger)->m_info.nObject = nObject;
 NumObjTriggers ()++;
 DLE.UnlockUndo ();
 SortObjTriggers ();

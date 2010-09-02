@@ -33,34 +33,46 @@ public:
 
 public:
 	inline bool IsValid (short i, short j) { return (i > 0) && (i < j); }
+
+	// Segment and side getters
 	inline segmentList& Segments (void)
 		{ return m_segments; }
-	inline CSegment *Segments (int i)
-		{ return IsValid (i, m_nSegments) ? &m_segments [i] : null; }
+
 	inline ushort& SegCount ()
 		{ return m_nSegments; }
 
-	inline vertexList& Vertices (void)
-		{ return m_vertices; }
-	inline CVertex *Vertices (int i)
-		{ return IsValid (i, m_nVertices) ? &m_vertices [i] : null; }
-	inline byte& VertStatus (int i = 0)
-		{ return Vertices (i)->m_status; }
-	inline ushort& VertCount ()
-		{ return m_nVertices; }
+	inline CSegment *GetSegment (int i)
+		{ return IsValid (i, m_nSegments) ? &m_segments [i] : null; }
 
 	inline CSide* GetSide (short nSegment = -1, short nSide = -1) {
 		GetCurrent (nSegment, nSide);
 		return &Segments (nSegment)->m_sides [nSide];
 		}
+
 	inline CSide* GetOppositeSide (short nSegment = -1, short nSide = -1) {
 		GetCurrent (nSegment, nSide);
 		return &Segments (nSegment)->m_sides [nSide];
 		}
 
+	void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
+
+	// Vertex getters
+	inline vertexList& Vertices (void)
+		{ return m_vertices; }
+
+	inline CVertex *GetVertex (int i)
+		{ return IsValid (i, m_nVertices) ? &m_vertices [i] : null; }
+
+	inline byte& VertStatus (int i = 0)
+		{ return Vertices (i)->m_status; }
+
+	inline ushort& VertCount ()
+		{ return m_nVertices; }
+
 	inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 	inline int GetAddMode (void) { return m_nAddMode; }
 
+	// Operations
 	bool Add (void);
 	void Delete (short nDelSeg = -1);
 
@@ -73,9 +85,7 @@ public:
 	bool AddSpeedBoost (short nSegment, bool bCreate);
 	bool AddSkybox (short nSegment, bool bCreate);
 
-	void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
-
-	void Init (short segNum);
+	void Init (short nSegment);
 	bool Split (void);
 	bool Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin);
 	void CalcCenter (CVertex& pos, short nSegment);
