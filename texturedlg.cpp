@@ -924,9 +924,9 @@ int nSegment;
 for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
     segP->m_info.nIndex = 0;
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 PasteTexture (current.m_nSegment, current.m_nSide, 100);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -951,7 +951,7 @@ if (!(m_bUse1st || m_bUse2nd))
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
@@ -968,7 +968,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 	}
 if (bChange)
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 else
 	DLE.ResetModified (bUndo);
 Refresh ();
@@ -995,7 +995,7 @@ if (!(m_bUse1st || m_bUse2nd))
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
@@ -1014,7 +1014,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
 //				sideP->m_info.uvls [i].l = save_uvls [i].l;
 			}
 if (bChange)
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 else
 	DLE.ResetModified (bUndo);
 Refresh ();

@@ -1051,7 +1051,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 void CObjectTool::OnDeleteAll () 
 {
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = theMine->CurrObj ();
 int nType = objP->m_info.type;
@@ -1070,7 +1070,7 @@ for (int h = theMine->MineInfo ().objects.count, i = 0; i < h; ) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
@@ -1087,7 +1087,7 @@ void CObjectTool::OnReset ()
 CDoubleMatrix* orient;
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
@@ -1095,7 +1095,7 @@ if (current.m_nObject == theMine->MineInfo ().objects.count) {
 	orient = &theMine->CurrObj ()->m_location.orient;
 	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 Refresh ();
 DLE.MineView ()->Refresh (false);
 }
@@ -1285,7 +1285,7 @@ CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
 		SetNewObjId (objP, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
@@ -1368,7 +1368,7 @@ switch (objP->m_info.type) {
 	}
 theMine->SortObjects ();
 SelectItemData (pcb, objP->m_info.id);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 Refresh ();
 }
 
@@ -1393,7 +1393,7 @@ void CObjectTool::OnSetSpawnType ()
 CGameObject *objP = theMine->CurrObj ();
 int selection;
 DLE.SetModified (TRUE);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
@@ -1412,7 +1412,7 @@ else {
 	OnSetSpawnQty ();
 	OnSetSpawnId ();
 	}
-DLE.LockUndo ();
+undoManager.Lock ();
 }
 
 //------------------------------------------------------------------------

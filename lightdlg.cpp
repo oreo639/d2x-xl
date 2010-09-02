@@ -126,7 +126,7 @@ theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
 if (bAll = (theMine == null)->GotMarkedSides ())
 	INFOMSG (" light processing entire mine");
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (m_bIlluminate)
 	theMine->AutoAdjustLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
 if (m_bAvgCornerLight)
@@ -137,7 +137,7 @@ if (m_bCubeLight)
 	theMine->SetCubeLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
 	theMine->CalcDeltaLightData (m_fDeltaLight, (int) bAll);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -196,7 +196,7 @@ nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 	bool			bChange = false;
 
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
@@ -209,7 +209,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 	}
 if (bChange)
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 else
 	DLE.ResetModified (bUndo);
 DLE.MineView ()->Refresh ();

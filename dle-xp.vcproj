@@ -6743,6 +6743,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\UndoManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Vector.cpp"
 					>
 				</File>
@@ -6942,6 +6946,10 @@
 				</File>
 				<File
 					RelativePath="Types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\UndoManager.h"
 					>
 				</File>
 				<File

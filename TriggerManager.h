@@ -58,7 +58,7 @@ class CTriggerManager {
 
 		inline CReactorTrigger* ReactorTriggers (int i) { return &m_reactorTriggers [i]; }
 
-		void CTriggerManager::SortObjTriggers (void);
+		void SortObjTriggers (void);
 
 		void DeleteTarget (CSideKey key);
 
@@ -66,7 +66,7 @@ class CTriggerManager {
 
 		CTrigger* Add (short nWall, short type, bool bAddWall);
 
-		void Delete (short nDelTrigger, int nClass = 0);
+		void Delete (short nDelTrigger);
 
 		bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
 		bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);

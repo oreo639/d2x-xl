@@ -26,42 +26,6 @@ extern int nLayout;
 
 #define MAX_UNDOS		100
 
-struct tUndoBuffer;
-
-typedef struct tUndoBuffer {
-	tUndoBuffer	*prevBuf;
-	tUndoBuffer	*nextBuf;
-	MINE_DATA	undoBuffer;
-} tUndoBuffer;
-
-class CUndoList 
-{
-	public:
-		tUndoBuffer	*m_head;
-		tUndoBuffer	*m_tail;
-		tUndoBuffer	*m_current;
-		int			m_maxSize;
-		int			m_size;
-		int			m_delay;
-		int			m_enabled;
-
-	CUndoList (int maxSize = 100);
-	~CUndoList ();
-	bool Update (bool bForce = false);
-	bool Undo ();
-	bool Redo ();
-	void Truncate ();
-	void Reset ();
-	bool Revert ();
-	void Delay (bool bDelay);
-	int UndoCount ();
-	int Enable (int bEnable);
-	int SetMaxSize (int maxSize);
-	inline int GetMaxSize (void)
-		{ return m_maxSize; }
-};
-
-
 class CDlcApp : public CWinApp
 {
 public:
@@ -75,18 +39,6 @@ public:
 	bool					m_bMaximized;
 
 	CDlcApp();
-	void DelayUndo (bool bDelay);
-	bool UpdateUndoBuffer (bool bForce = false);
-	bool RevertUndoBuffer ();
-	void ResetUndoBuffer ();
-	bool Undo ();
-	bool Redo ();
-	int UndoCount ();
-	int EnableUndo (int bEnable);
-	inline void LockUndo ()
-		{ DelayUndo (true); }
-	inline void UnlockUndo ()
-		{ DelayUndo (false); }
 	inline CMainFrame *MainFrame ()
 		{ return (CMainFrame *) m_pMainWnd; }
 	inline CMineView *MineView ()

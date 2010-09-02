@@ -491,7 +491,7 @@ void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights)
 
 // clear all lighting on marked cubes
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bAll)
 	CLEAR (VertexColors ());
 for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
@@ -527,7 +527,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 			Illuminate (nSegment, nSide, (uint) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
 		}
 	}
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 }
 
 //--------------------------------------------------------------------------

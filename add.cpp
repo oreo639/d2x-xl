@@ -152,13 +152,13 @@ segP->m_info.function = SEGMENT_FUNC_NONE;
 bool CMine::DefineSegment (short nSegment, byte type, short nTexture, short walltype)
 {
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 UndefineSegment (nSegment);
 CSegment *segP = (nSegment < 0) ? current.Segment () : Segments (nSegment);
 segP->m_info.function = type;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -178,7 +178,7 @@ for (segP = Segments (0), i = SegCount (); i; i--, segP++)
 		}
 #endif
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -195,7 +195,7 @@ if (bCreate) {
 	CurrObj ()->m_info.id = (IsD1File ()) ? 0 : 2;
 	AutoLinkExitToReactor ();
 	}
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -212,7 +212,7 @@ if (n_matcen >= MAX_ROBOT_MAKERS) {
 	 return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -232,7 +232,7 @@ EquipGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
 MineInfo ().equipgen.count++;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return true;
@@ -250,7 +250,7 @@ if (n_matcen >= MAX_ROBOT_MAKERS) {
 	 return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -270,7 +270,7 @@ BotGens (n_matcen)->m_info.nFuelCen = n_matcen;
 Segments (Current ()->nSegment)->m_info.value = 
 Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
 MineInfo ().botgen.count++;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return true;
@@ -286,7 +286,7 @@ if (IsD1File ()) {
 	return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -295,7 +295,7 @@ if (!DefineSegment (nSegment, nType, bSetDefTextures ? nTexture : -1)) {
 	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -310,7 +310,7 @@ if (IsD1File ()) {
 	return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -319,7 +319,7 @@ if (!DefineSegment (nSegment, nType, bSetDefTextures ? nTexture : -1)) {
 	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -334,7 +334,7 @@ if (IsD1File ()) {
 	return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -343,7 +343,7 @@ if (!DefineSegment (nSegment, SEGMENT_FUNC_SKYBOX, -1)) {
 	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -358,7 +358,7 @@ if (IsD1File ()) {
 	return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false; 
@@ -367,7 +367,7 @@ if (!DefineSegment (nSegment, SEGMENT_FUNC_SPEEDBOOST, -1)) {
 	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -421,7 +421,7 @@ if (!((nType == SEGMENT_FUNC_FUELCEN) ?
 	DLE.ResetModified (bUndo);
 	return false; 
 	}	
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -447,13 +447,13 @@ if (MineInfo ().walls.count + 1 >= MAX_WALLS) {
 	return false;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 // add a door to the current segment/side
 if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
 		 AddWall (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
-		DLE.UnlockUndo ();
+		undoManager.Unlock ();
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
@@ -606,7 +606,7 @@ if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	}
 // make a new wall and a new trigger
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Walls () [MineInfo ().walls.count-1].m_info.nClip = 10;
@@ -620,7 +620,7 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKE
 		Walls () [MineInfo ().walls.count - 1].m_info.nClip = 10;
 		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
 		AutoLinkExitToReactor();
-		DLE.UnlockUndo ();
+		undoManager.Unlock ();
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
@@ -649,7 +649,7 @@ if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	}
 int last_segment = Current ()->nSegment;
 bool bUndo = DLE.SetModified (true);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (!AddSegment ()) {
 	DLE.ResetModified (bUndo);
 	return false;
@@ -663,7 +663,7 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE
 	Current ()->nSegment = new_segment;
 	SetDefaultTexture (426, -1);
 	DLE.MineView ()->Refresh ();
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 	return true;
 	}
 DLE.ResetModified (bUndo);
@@ -704,7 +704,7 @@ if (!GetTriggerResources (nWall))
 	return false;
 // make a new wall and a new trigger
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (AddWall (Current ()->nSegment, Current ()->nSide, (byte) wall_type, wall_flags, KEY_NONE, -1, -1) &&
 	 AddTrigger (MineInfo ().walls.count - 1, trigger_type)) {
 	short nTrigger = MineInfo ().triggers.count - 1;
@@ -712,7 +712,7 @@ if (AddWall (Current ()->nSegment, Current ()->nSide, (byte) wall_type, wall_fla
 	Triggers (nTrigger)->m_count = 1;
 	Triggers (nTrigger)->m_targets [0].m_nSegment = Other ()->nSegment;
 	Triggers (nTrigger)->m_targets [0].m_nSide = Other ()->nSide;
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 	DLE.MineView ()->Refresh ();
 	return true;
 	}

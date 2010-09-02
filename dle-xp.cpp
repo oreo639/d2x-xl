@@ -330,113 +330,21 @@ return CWinApp::ExitInstance();
 
 CDocument* CDlcApp::OpenDocumentFile (LPCTSTR lpszFileName)
 {
-	int			nAction = IDOK;
+	int	nAction = IDOK;
 
-	ASSERT(m_pDocManager != null);
+ASSERT(m_pDocManager != null);
 //	GetDocument ()->SetPathName ("(new document)");
-	return CWinApp::OpenDocumentFile (lpszFileName);
+return CWinApp::OpenDocumentFile (lpszFileName);
 }
 
                         /*--------------------------*/
 
 BOOL CDlcApp::InitATL()
 {
-	m_bATLInited = TRUE;
-
-	_Module.Init(ObjectMap, AfxGetInstanceHandle());
-	_Module.dwThreadID = GetCurrentThreadId();
-
-	return TRUE;
-
-}
-
-                        /*--------------------------*/
-
-bool CDlcApp::SetModified (BOOL bModified) 
-{
-GetDocument ()->SetModifiedFlag (bModified);
-if (bModified) {
-	m_nModified++;
-	return UpdateUndoBuffer ();
-	}
-else
-	m_nModified = 0;
-return false;
-}  
-
-                        /*--------------------------*/
-
-void CDlcApp::ResetModified (bool bRevertUndo) 
-{
-if (m_nModified) {
-	if (!--m_nModified)
-		SetModified (FALSE);
-	UnlockUndo ();
-	if (bRevertUndo)
-		RevertUndoBuffer ();
-	}
-}
-
-                        /*--------------------------*/
-
-void CDlcApp::ResetUndoBuffer ()
-{
-m_undoList.Reset ();
-}
-
-                        /*--------------------------*/
-
-void CDlcApp::DelayUndo (bool bDelay)
-{
-m_undoList.Delay (bDelay);
-}
-
-                        /*--------------------------*/
-
-int CDlcApp::UndoCount ()
-{
-return m_undoList.UndoCount ();
-}
-
-                        /*--------------------------*/
-
-bool CDlcApp::UpdateUndoBuffer (bool bForce)
-{
-return m_undoList.Update (bForce);
-}
-
-                        /*--------------------------*/
-
-bool CDlcApp::RevertUndoBuffer ()
-{
-return m_undoList.Revert ();
-}
-
-                        /*--------------------------*/
-
-int CDlcApp::EnableUndo (int bEnable)
-{
-return m_undoList.Enable (bEnable);
-}
-
-                        /*--------------------------*/
-
-bool CDlcApp::Undo ()
-{
-bool bUndo = m_undoList.Undo ();
-if (bUndo)
-	MineView ()->Refresh ();
-return bUndo;
-}
-
-                        /*--------------------------*/
-
-bool CDlcApp::Redo ()
-{
-bool bRedo = m_undoList.Redo ();
-if (bRedo)
-	MineView ()->Refresh ();
-return bRedo;
+m_bATLInited = TRUE;
+_Module.Init(ObjectMap, AfxGetInstanceHandle());
+_Module.dwThreadID = GetCurrentThreadId();
+return TRUE;
 }
 
                         /*--------------------------*/

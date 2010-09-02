@@ -525,7 +525,7 @@ CHECKMINE;
 
 
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
@@ -536,7 +536,7 @@ if (bMarked) {
 	}
 else 					
 	theMine->current.Segment ()->m_info.owner = m_nOwner;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -550,7 +550,7 @@ CHECKMINE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
@@ -561,7 +561,7 @@ if (bMarked) {
 	}
 else 					
 	theMine->current.Segment ()->m_info.group = m_nGroup;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -578,7 +578,7 @@ CHECKMINE;
 	int		nSegNum, nMinSeg, nMaxSeg;
 
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 m_nLastCube = -1; //force Refresh() to rebuild all dialog data
 byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
@@ -750,7 +750,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 errorExit:
 
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 theMine->AutoLinkExitToReactor ();
 DLE.SetModified (TRUE);
 

@@ -62,7 +62,7 @@ if (nWall >= MAX_WALLS) {
 
 // link wall to segment/side
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 sideP->SetWall (nWall);
 CWall* wallP = Walls (nWall);
 wallP->(nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
@@ -70,7 +70,7 @@ wallP->m_info.flags = flags;
 wallP->m_info.keys = keys;
 // update number of Walls () in mine
 MineInfo ().walls.count++;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return wallP;
 }
@@ -109,7 +109,7 @@ if (delWallP == null)
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.OppositeWall (delWallP->m_nSegment, delWallP->m_nSide);
 if (oppWallP != null) 
@@ -137,7 +137,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 // for (i = nDelWall; i < MineInfo ().walls.count - 1; i++)
 	memcpy (delWallP, Walls (nDelWall + 1), (MineInfo ().walls.count - nDelWall) * sizeof (CWall));
 // update number of Walls () in mine
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 LinkExitToReactor();
 }

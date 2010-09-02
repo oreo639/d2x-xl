@@ -28,7 +28,7 @@ void CWall::Setup (short nSegment, short nSide, ushort nWall, byte type, char nC
 	int i;
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 // define new wallP
 m_nSegment = nSegment;
 m_nSide = nSide;
@@ -93,7 +93,7 @@ m_info.controllingTrigger = 0;
 
 // set uvls of new texture
 Segments (nSegment)->SetUV (nSide, 0, 0);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 }
 
 //--------------------------------------------------------------------------
@@ -121,7 +121,7 @@ CSide *sideP = GetSide ();
 char nClip = wallP->m_info.nClip;
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (IsDoor ()) {
 	if (IsD1File ())
 		sideP->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);
@@ -133,7 +133,7 @@ else if (nTexture >= 0) {
 	}
 else
 	return;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 }
 

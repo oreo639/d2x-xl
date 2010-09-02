@@ -274,7 +274,7 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 void CMine::TunnelGenerator (void) 
 {
 
-//  UpdateUndoBuffer(0);
+//  undoManager.UpdateBuffer(0);
 
 double		length;
 int			i, j, nVertex, spline;
@@ -345,7 +345,7 @@ else {
 		return;
 		}
 	DLE.SetModified (TRUE);
-	DLE.LockUndo ();
+	undoManager.Lock ();
 	for (spline = 0; spline < n_splines; spline++) {
 		segP = Segments (SegCount ());
 		// copy current segment
@@ -417,7 +417,7 @@ else {
 		segP->m_info.wallFlags = 0; // make sure segment is not marked
 		SegCount ()++;
 		}
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 	}
 SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
@@ -430,7 +430,7 @@ DLE.MineView ()->Refresh ();
 void CMine::IncreaseSpline() 
 {
 
-//UpdateUndoBuffer(0);
+//undoManager.UpdateBuffer(0);
 
 if (Current ()->nSegment == nSplineSeg1)
 	if (m_splineLength1 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
@@ -448,7 +448,7 @@ DLE.MineView ()->Refresh ();
 void CMine::DecreaseSpline() 
 {
 
-//  UpdateUndoBuffer(0);
+//  undoManager.UpdateBuffer(0);
 
 if (Current ()->nSegment == nSplineSeg1)
 	if (m_splineLength1 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))

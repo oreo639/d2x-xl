@@ -524,7 +524,7 @@ if (fp.Open (szFile, "w")) {
 	ErrorMsg ("Unable to open block file");
 	return;
 	}
-//UpdateUndoBuffer(0);
+//undoManager.UpdateBuffer(0);
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember file for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 DLE.MainFrame ()->InitProgress (SegCount ());
@@ -534,7 +534,7 @@ DLE.MainFrame ()->Progress ().DestroyWindow ();
 // is effected for each deletion.  When all Segments () are marked
 // the SegCount () will be decremented for each nSegment in loop.
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MainFrame ()->InitProgress (SegCount ());
 CSegment *segP = Segments (SegCount ());
 for (nSegment = SegCount () - 1; nSegment; nSegment--) {
@@ -546,7 +546,7 @@ for (nSegment = SegCount () - 1; nSegment; nSegment--) {
 		}
 	}
 DLE.MainFrame ()->Progress ().DestroyWindow ();
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
@@ -602,7 +602,7 @@ if (fp.Open (szFile, "w")) {
 	ErrorMsg (message);
 	return;
 	}
-//  UpdateUndoBuffer(0);
+//  undoManager.UpdateBuffer(0);
 strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fp for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fp, 0);
@@ -675,7 +675,7 @@ strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file
 // unmark all Segments ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 segP = Segments (0);
 for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
@@ -751,7 +751,7 @@ if (option != 1) {
 */
 fp.Close ();
 //DLE.MineView ()->Refresh ();
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return 0;
@@ -775,7 +775,7 @@ if (m_bSplineActive) {
 	return;
 	}
 
-//UpdateUndoBuffer(0);
+//undoManager.UpdateBuffer(0);
 
 if (!ReadBlock (m_szBlockFile, 1))
 	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
@@ -804,7 +804,7 @@ if (!count) {
 	}
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 
 // delete Segments () from last to first because SegCount ()
@@ -829,7 +829,7 @@ wrap(&Current1 ().nSegment,-1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,-1,0,SegCount () - 1);
 wrap(&Current2 ().nSegment,1,0,SegCount () - 1);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 }

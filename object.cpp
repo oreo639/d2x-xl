@@ -137,7 +137,7 @@ void CMine::MakeObject (CGameObject *objP, char type, short nSegment)
   CVertex	location;
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 CalcSegCenter (location,nSegment);
 objP->Clear ();
 objP->m_info.signature = 0;
@@ -159,7 +159,7 @@ objP->rType.polyModelInfo.tmap_override = -1;
 objP->m_info.contents.type = 0;
 objP->m_info.contents.id = 0;
 objP->m_info.contents.count = 0;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 return;
 }
 
@@ -176,7 +176,7 @@ void CMine::SetObjectData (char type)
   int  id;
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 objP = Objects (Current ()->nObject);
 id = objP->m_info.id;
 memset (&objP->mType, 0, sizeof (objP->mType));
@@ -311,7 +311,7 @@ switch (type) {
 	  objP->m_info.shields       = DEFAULT_SHIELD;
 
   }
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 }
 
 //------------------------------------------------------------------------
@@ -382,7 +382,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 // Now we can add the object
 // Make a new object
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if (MineInfo ().objects.count == 0) {
 	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
 	MineInfo ().objects.count = 1;
@@ -423,7 +423,7 @@ objP->m_info.contents.count = 0;
 SortObjects ();
 DLE.MineView ()->Refresh (false);
 DLE.ToolView ()->ObjectTool ()->Refresh ();
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 return TRUE;
 }
 
@@ -451,7 +451,7 @@ if (nDelObj == MineInfo ().objects.count) {
 	return;
 	}
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 DeleteObjTriggers (nDelObj);
 int i, j = MineInfo ().objects.count;
 for (i = nDelObj; i < j; i++)
@@ -465,7 +465,7 @@ if (Current1 ().nObject >= j)
 	Current1 ().nObject = j - 1;
 if (Current2 ().nObject >= j)
 	Current2 ().nObject = j - 1;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 }
 
 //------------------------------------------------------------------------

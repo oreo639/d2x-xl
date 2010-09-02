@@ -55,10 +55,10 @@ else
 
 // move on x, y, and z
  DLE.SetModified (TRUE);
- DLE.LockUndo ();
+ undoManager.Lock ();
  v *= moveRate;
  MoveOn (v);
- DLE.UnlockUndo ();
+ undoManager.Unlock ();
  return true;
 }
 
@@ -150,10 +150,10 @@ else {
 		v = CalcSideNormal (Current ()->nSegment,Current ()->nSide);
 	// move on x, y, and z
 	DLE.SetModified (TRUE);
-	DLE.LockUndo ();
+	undoManager.Lock ();
 	v *= -moveRate;
 	MoveOn (v);
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 	}
 DLE.SetModified (TRUE);
 return true;
@@ -248,7 +248,7 @@ switch (m_selectMode){
 
 	case SIDE_MODE:	// spin side around the opposite side
 		DLE.SetModified (TRUE);
-		DLE.LockUndo ();
+		undoManager.Lock ();
 		if (perpendicular) { // use lines 0 and 2
 			pts [0] = 1;
 			pts [1] = 2;
@@ -270,7 +270,7 @@ switch (m_selectMode){
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
 			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
-		DLE.UnlockUndo ();	
+		undoManager.Unlock ();	
 		break;
 	
 	case CUBE_MODE:
@@ -316,24 +316,24 @@ switch (m_selectMode) {
 
 	case SIDE_MODE:
 		DLE.SetModified (TRUE);
-		DLE.LockUndo ();
+		undoManager.Lock ();
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [Current ()->nSide][i];
 		// enlarge the diagonals
 		result = ResizeLine (segP, point [0], point [2], (int) (delta*sqrt(2.0))) &&
 				   ResizeLine (segP, point [1], point [3], (int) (delta*sqrt(2.0)));
-		DLE.UnlockUndo ();
+		undoManager.Unlock ();
 		return result;
 
 	case CUBE_MODE:
 		// enlarge the diagonals
 		DLE.SetModified (TRUE);
-		DLE.LockUndo ();
+		undoManager.Lock ();
 		result = ResizeLine (segP, 0, 6, (int) (delta*sqrt(3.0))) &&
 				   ResizeLine (segP, 1, 7, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 2, 4, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 3, 5, (int) (delta*sqrt(3.0)));
-		DLE.UnlockUndo ();
+		undoManager.Unlock ();
 		return result;
 
 	case OBJECT_MODE:

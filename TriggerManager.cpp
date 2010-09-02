@@ -3,7 +3,7 @@
 
 CTriggerManager triggerManager;
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int CTriggerManager::CmpObjTriggers (CTrigger *pi, CTrigger *pm)
 {
@@ -19,7 +19,7 @@ m = pm->m_info.type;
 return (i < m) ? -1 : (i > m) ? 1 : 0;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTriggerManager::SortObjTriggers (short left, short right)
 {
@@ -45,7 +45,7 @@ if (left < r)
 	SortObjTriggers (left, r);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTriggerManager::SortObjTriggers (void)
 {
@@ -58,7 +58,7 @@ if (h > 1) {
 	}
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 CTrigger *CTriggerManager::Add (short nWall, short type, bool bAddWall) 
 {
@@ -84,13 +84,13 @@ if (segmentManager.GetTrigger () != null) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
-if (Count () >= MAX_TRIGGERS) {
+if (Count (0) >= MAX_TRIGGERS) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 
 CWall* wallP = current.Wall ();
 
@@ -154,16 +154,16 @@ trigP->Setup (type, flags);
 wallP->SetTrigger (nTrigger);
 // update number of Triggers ()
 LinkExitToReactor();
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return Triggers (nTrigger);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Mine - DeleteTrigger
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void CTriggerManager::Delete (short nDelTrigger, int nClass) 
+void CTriggerManager::Delete (short nDelTrigger) 
 {
 if (nDelTrigger == NO_TRIGGER)
 	return;
@@ -175,29 +175,29 @@ if (nDelTrigger < 0) {
 	nDelTrigger = Walls (nWall)->m_info.nDelTrigger;
 	}
 
-CTrigger* delTrigP = Triggers (nDelTrigger, nClass);
+CTrigger* delTrigP = Triggers (nDelTrigger, 0);
 
 if (delTrigP == null)
 	return;
 // update all Walls () who point to Triggers () higher than this one
 // and unlink all Walls () who point to deleted trigger (should be only one wall)
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
 if (nTrigger < --Count ()) {	
 	// move the last trigger in the list to the deleted trigger's position
-	wallManager.UpdateTrigger (m_nTriggers [nClass], nDelTrigger);
-	*delTrigP = Trigger (m_nTriggers [nClass], nClass);
+	wallManager.UpdateTrigger (m_nTriggers [0], nDelTrigger);
+	*delTrigP = Trigger (m_nTriggers [0], 0);
 	}
 
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 AutoLinkExitToReactor();
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Mine - DeleteTrigger
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
@@ -206,9 +206,9 @@ for (int i = 0; i < m_nTriggers [nClass]; i++, trigP++)
 	trigP->Delete (key);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Mine - FindTrigger
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 short CTriggerManager::FindWall (short& nTrigger, short nSegment, short nSide)
 {
@@ -225,9 +225,9 @@ nTrigger = NO_TRIGGER;
 return MineInfo ().walls.count;
 }
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------
 // Mine - FindTrigger
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------
 
 short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide, short nClass = 0)
 {
@@ -241,13 +241,13 @@ for (i = nTrigger; i < MineInfo ().triggers.count; i++, trigP++)
 return -1;
 }
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------
 // LinkExitToReactor()
 //
 // Action - Updates control center Triggers () so that exit door opens
 //          when the reactor blows up.  Removes any invalid cube/sides
 //          from reactorTriggers if they exist.
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------
 
 void CTriggerManager::LinkExitToReactor (void) 
 {
@@ -260,7 +260,7 @@ void CTriggerManager::LinkExitToReactor (void)
   CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 // remove items from list that do not point to a wall
 for (nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 	if (!wallManager.Find (reactorTrigger->m_targets [nTarget]))
@@ -277,10 +277,10 @@ for (nWall = 0; nWall < wallManager.Count (); nWall++) {
 		continue;
 	nTarget = reactorTrigger->Add (face);
 	}
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 }
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------
 
 CTrigger *CTriggerManager::AddObjTrigger (short nObject, short type) 
 {
@@ -305,12 +305,12 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	return null;
 	}
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 short nTrigger = NumObjTriggers ();
 ObjTriggers (nTrigger)->Setup (type, 0);
 ObjTriggers (nTrigger)->m_info.nObject = nObject;
 NumObjTriggers ()++;
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
 	if (ObjTriggers (--i)->m_info.nIndex == nTrigger)
@@ -318,7 +318,7 @@ for (ushort i = NumObjTriggers (); i; )
 return ObjTriggers (nTrigger);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteObjTrigger (short nTrigger) 
 {
@@ -328,7 +328,7 @@ if (nTrigger < NumObjTriggers () - 1)
 	*ObjTriggers (nTrigger) = *ObjTriggers (NumObjTriggers () - 1);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteObjTriggers (short nObject) 
 {
@@ -339,7 +339,7 @@ while (i)
 		DeleteObjTrigger (i);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 short CTriggerManager::FindObjTarget (short nTrigger, short nSegment, short nSide)
 {

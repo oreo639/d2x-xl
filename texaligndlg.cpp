@@ -653,14 +653,14 @@ void CTextureTool::OnAlignReset ()
 {
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 theMine->current.Segment ()->SetUV (current.m_nSide, 0, 0);
 m_alignX = 0;
 m_alignY = 0;
 m_alignAngle = 0;
 Rot2nd (0);
 UpdateData (FALSE);
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 UpdateAlignWnd ();
 }
 
@@ -674,7 +674,7 @@ void CTextureTool::OnAlignResetMarked ()
 
 UpdateData (TRUE);
 bool bUndo = DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (theMine->SideIsMarked (nSegment, nSide)) {
@@ -688,7 +688,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 		}
 	}
 if (bModified)
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 else
 	DLE.ResetModified (bUndo);
 DLE.MineView ()->Refresh (false);
@@ -714,7 +714,7 @@ if ((theMine == null)->GotMarkedSides ()) {
 		}
 	}
 else {
-	DLE.LockUndo ();
+	undoManager.Lock ();
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 			if (theMine->SideIsMarked (nSegment, nSide)) {
@@ -725,7 +725,7 @@ else {
 				}
 			}
 		}
-	DLE.UnlockUndo ();
+	undoManager.Unlock ();
 	}
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
@@ -764,7 +764,7 @@ void CTextureTool::OnAlignAll (void)
 
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 bool bAll = (theMine == null)->GotMarkedSegments ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
 	 segP->m_info.nIndex = 0;
@@ -797,7 +797,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount ()
 		}
 	AlignChildren (nSegment, nSide, false);
 	}
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 UpdateAlignWnd ();
 }
 
@@ -808,7 +808,7 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
-DLE.LockUndo ();
+undoManager.Lock ();
 if ((theMine == null)->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (current.m_nSegment, current.m_nSide, true);
@@ -819,7 +819,7 @@ else {	// use all marked sides as alignment source
 			if (theMine->SideIsMarked (nSegment, nSide)) 
 				AlignChildren (nSegment, nSide, true);
 	}
-DLE.UnlockUndo ();
+undoManager.Unlock ();
 UpdateAlignWnd ();
 }
 
