@@ -308,7 +308,7 @@ else {
 	// select list box index for clip
 	int i;
 	for (i = 0; i < NUM_OF_CLIPS_D2; i++)
-		if (clipList [i] == m_nClip)
+		if (animClipTable [i] == m_nClip)
 			break;
 	m_nClip = i;
 	CBClipNo ()->SetCurSel ((i < NUM_OF_CLIPS_D2) ? i : 0);
@@ -572,7 +572,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 			if (m_nWall [bSide] < theMine->MineInfo ().walls.count) {
 				undoManager.SetModified (TRUE);
 				undoManager.Lock ();
-				nClip = clipList [m_nClip];
+				nClip = animClipTable [m_nClip];
 				wallP->m_info.nClip = nClip;
 				// define door textures based on clip number
 				if (wallP->m_info.nClip >= 0)

@@ -214,7 +214,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + child;
-				SetTexture (nSegment, child, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
+				SetTextures (nSegment, child, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
 				Segments (nSegment)->SetUV (child, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
@@ -1741,11 +1741,11 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if (segP->GetChild (nSide) == -1) {
-		SetTexture (nNewSeg, nSide, seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
+		SetTextures (nNewSeg, nSide, seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
 		Segments (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
 	else {
-		SetTexture (nNewSeg, nSide, 0, 0); 
+		SetTextures (nNewSeg, nSide, 0, 0); 
 		for (i = 0; i < 4; i++) {
 			segP->m_sides [nSide].m_info.uvls [i].u = 0; 
 			segP->m_sides [nSide].m_info.uvls [i].v = 0; 
@@ -1759,14 +1759,14 @@ segP->m_info.staticLight = seg1->m_info.staticLight;
 
 // update cur segment
 seg1->SetChild (cur1->nSide, nNewSeg); 
-SetTexture (cur1->nSegment, cur1->nSide, 0, 0); 
+SetTextures (cur1->nSegment, cur1->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
 	seg1->m_sides [cur1->nSide].m_info.uvls [i].u = 0; 
 	seg1->m_sides [cur1->nSide].m_info.uvls [i].v = 0; 
 	seg1->m_sides [cur1->nSide].m_info.uvls [i].l = 0; 
 	}
 seg2->SetChild (cur2->nSide, nNewSeg); 
-SetTexture (cur2->nSegment, cur2->nSide, 0, 0); 
+SetTextures (cur2->nSegment, cur2->nSide, 0, 0); 
 for (i = 0; i < 4; i++) {
 	seg2->m_sides [cur2->nSide].m_info.uvls [i].u = 0; 
 	seg2->m_sides [cur2->nSide].m_info.uvls [i].v = 0; 
@@ -2027,7 +2027,7 @@ return Segments (nOppSeg)->m_sides + nOppSide;
 
                         /* -------------------------- */
 
-bool CSegmentManager::SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlTex)
+bool CSegmentManager::SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex)
 {
 	bool bUndo, bChange = false;
 
@@ -2035,7 +2035,7 @@ bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock (); 
 current.Get (nSegment, nSide); 
 CSide *sideP = Segments (nSegment)->m_sides + nSide; 
-bChange = sideP->SetTexture (nBaseTex, nOvlTex);
+bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
 	undoManager.ResetModified (bUndo);
 	return false;
@@ -2120,9 +2120,7 @@ bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 int nSide;
 for (nSide = 0; nSide < 6; nSide++)
-	if (SetTexture (nSegment, nSide, 
-						 otherSeg->m_sides [nSide].m_info.nBaseTex, 
-						 otherSeg->m_sides [nSide].m_info.nOvlTex))
+	if (SetTextures (nSegment, nSide, otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))
 		bChange = true;
 if (!bChange)
 	undoManager.ResetModified (bUndo);

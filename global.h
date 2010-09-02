@@ -62,7 +62,7 @@ extern int splash;
 extern int level_modified;
 //extern byte texture_modified[1+MAX_TEXTURES_D2/8];
 extern int disable_saves;
-extern byte clipList [NUM_OF_CLIPS_D2];
+extern byte animClipTable [NUM_OF_CLIPS_D2];
 extern ushort wall_flags[9];
 extern long ScrnMemMax;
 extern int ScrnWidth;

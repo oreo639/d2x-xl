@@ -28,10 +28,10 @@ inline double Round (double value, double round = 1.0) { return (value >= 0) ? v
 
 // -----------------------------------------------------------------------------
 
-#define X2D(_v)	((double) _v / 65536.0)
-#define D2X(_v)	((int) Round (_v * 65536.0))
-#define X2I(_v)	(_v / 65536)
-#define I2X(_v)	((int) _v * 65536.0)
+#define X2D(_v)	((double) (_v) / 65536.0)
+#define D2X(_v)	((int) Round ((_v) * 65536.0))
+#define X2I(_v)	((_v) / 65536)
+#define I2X(_v)	((int) (_v) * 65536)
 
 // -----------------------------------------------------------------------------
 

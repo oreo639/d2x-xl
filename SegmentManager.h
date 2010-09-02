@@ -120,7 +120,7 @@ class CSegmentManager {
 
 		bool GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment = -1, short nSide = -1);
 		CSide *OppSide (void);
-		bool SetTexture (short nSegment, short nSide, short nBaseTex, short nOvlTex);
+		bool SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex);
 		void CopyOtherSegment (void);
 		void RenumberBotGens (void);
 		void RenumberEquipGens (void);

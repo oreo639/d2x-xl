@@ -24,8 +24,6 @@
 
 void CWall::Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine) 
 {
-	int i;
-
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
 // define new wallP
@@ -41,7 +39,7 @@ switch (type) {
 		m_info.nClip = (nClip == -1) ?  6 : nClip;
 		m_info.hps = WALL_HPS;
 		// define door textures based on clip number
-		SetWallTextures (nWall, nTexture);
+		SetTextures (nTexture);
 		break;
 
 	case WALL_DOOR:
@@ -57,7 +55,7 @@ switch (type) {
 		m_info.hps = 0;
 		// define texture to be energy
 		if (nTexture == -1)
-			segmentManager.SetTextures (nSegment, nSide, DLE.IsD1File () ? 328 : 353, 0); // energy
+			segmentManager.SetTextures (nSegment, nSide, theMine->IsD1File () ? 328 : 353, 0); // energy
 		else if (nClip == -2)
 			segmentManager.SetTextures (nSegment, nSide, 0, nTexture);
 		else
@@ -68,7 +66,7 @@ switch (type) {
 		m_info.nClip = -1;
 		m_info.hps = 0;
 		// define box01a
-		segmentManager.SetTexture (nSegment, nSide, -1, 414);
+		segmentManager.SetTextures (nSegment, nSide, -1, 414);
 		break;
 
 	case WALL_CLOAKED:
@@ -91,7 +89,7 @@ m_info.keys = 0;
 m_info.controllingTrigger = 0;
 
 // set uvls of new texture
-Segments (nSegment)->SetUV (nSide, 0, 0);
+segmentManager.GetSegment (nSegment)->SetUV (nSide, 0, 0);
 undoManager.Unlock ();
 }
 
@@ -117,12 +115,12 @@ void CWall::SetTextures (short nTexture)
 		};
 
 CSide *sideP = GetSide ();
-char nClip = wallP->m_info.nClip;
+char nClip = m_info.nClip;
 
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (IsDoor ()) {
-	if (IsD1File ())
+	if (theMine->IsD1File ())
 		sideP->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);
 	else
 		sideP->SetTextures (wallTexturesD2 [nClip][0], wallTexturesD2 [nClip][1]);
@@ -133,12 +131,12 @@ else if (nTexture >= 0) {
 else
 	return;
 undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 }
 
 // ------------------------------------------------------------------------
 
-int CWall::Read (CFileManager& fp, int version, bool bFlag)
+void CWall::Read (CFileManager& fp, int version, bool bFlag)
 {
 m_nSegment = fp.ReadInt32 ();
 m_nSide = fp.ReadInt32 (); 
@@ -152,7 +150,6 @@ m_info.nClip = fp.ReadByte ();
 m_info.keys = fp.ReadByte ();          
 m_info.controllingTrigger = fp.ReadSByte ();
 m_info.cloakValue = fp.ReadSByte ();
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -188,6 +185,7 @@ return segmentManager.GetSide (m_nSegment, m_nSide);
 CTrigger* CWall::GetTrigger (void)
 {
 return triggerManager.GetTrigger (m_info.nTrigger);
+}
 
 // ------------------------------------------------------------------------
 
@@ -208,9 +206,9 @@ if (ps = strstr (pszName, "door")) {
 	int nDoor = atol (ps + 4);
 	for (int i = 1; i < NUM_OF_CLIPS_D2; i++)
 		if (nDoor == doorClipTable [i]) {
-			m_info.nClip = clipList [i];
-			undoManager.SetModified (TRUE);
-			DLE.MineView ()->Refresh ();
+			m_info.nClip = animClipTable [i];
+			undoManager.SetModified (true);
+			//DLE.MineView ()->Refresh ();
 			return i;
 			}
 	}
@@ -221,26 +219,25 @@ return -1;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-int CActiveDoor::Read (CFileManager& fp, int version, bool bFlag)
+void CActiveDoor::Read (CFileManager& fp, int version, bool bFlag)
 {
-m_info.n_parts = fp.ReadInt32 ();
+m_info.nParts = fp.ReadInt32 ();
 m_info.nFrontWall [0] = fp.ReadInt16 ();
 m_info.nFrontWall [1] = fp.ReadInt16 ();
 m_info.nBackWall [0] = fp.ReadInt16 (); 
 m_info.nBackWall [1] = fp.ReadInt16 (); 
 m_info.time = fp.ReadInt32 ();		  
-return 1;
 }
 
 // ------------------------------------------------------------------------
 
 void CActiveDoor::Write (CFileManager& fp, int version, bool bFlag)
 {
-fp.Write (m_info.n_parts);
-fp.Write (m_info.nFrontWall[0]);
-fp.Write (m_info.nFrontWall[1]);
-fp.Write (m_info.nBackWall[0]); 
-fp.Write (m_info.nBackWall[1]); 
+fp.Write (m_info.nParts);
+fp.Write (m_info.nFrontWall [0]);
+fp.Write (m_info.nFrontWall [1]);
+fp.Write (m_info.nBackWall [0]); 
+fp.Write (m_info.nBackWall [1]); 
 fp.Write (m_info.time);		  
 }
 

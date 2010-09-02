@@ -13,6 +13,34 @@
 #define WALL_HPS				I2X (100) // Normal wall's hp 
 #define WALL_DOOR_INTERVAL	I2X (5)	 // How many seconds a door is open 
 
+ushort wallFlags [MAX_WALL_FLAGS] = {
+	WALL_BLASTED,
+	WALL_DOOR_OPENED,
+	WALL_DOOR_LOCKED,
+	WALL_DOOR_AUTO,
+	WALL_ILLUSION_OFF,
+	WALL_WALL_SWITCH,
+	WALL_BUDDY_PROOF,
+	WALL_RENDER_ADDITIVE,
+	WALL_IGNORE_MARKER
+	};
+
+byte animClipTable [NUM_OF_CLIPS_D2] = {
+	 0,  1,  3,  4,  5,  6,  7,  9, 10, 11, 
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 
+	22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 
+	32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 
+	42, 43, 44, 45, 46, 47, 48, 49, 50
+	};
+
+byte doorClipTable [NUM_OF_CLIPS_D2] = {
+	 1,  1,  4,  5, 10, 24,  8, 11, 13, 12, 
+	14, 17, 18, 19, 20, 21, 22, 23, 25, 26, 
+	28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 
+	38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 
+	49, 50, 51, 52, 53, 54, 55, 56, 57
+	};
+
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -46,6 +74,7 @@ public:
 	virtual CGameItem* Next (void) { return this + 1; }
 
 	void Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
+	void SetTextures (short nTexture);
 
 	bool IsDoor (void);
 	CSide* GetSide (void);

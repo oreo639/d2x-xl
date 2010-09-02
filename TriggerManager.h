@@ -45,13 +45,13 @@ class CTriggerManager {
 
 		inline objTriggerList& ObjTriggers (void) { return m_triggers [1]; }
 
-		inline CTrigger* Triggers (int i, int nClass = 0) { return IsValid (i, m_nCount [nClass]) ? &m_triggers [nClass][i] : null; }
+		inline CTrigger* GetTrigger (int i, int nClass = 0) { return IsValid (i, m_nCount [nClass]) ? &m_triggers [nClass][i] : null; }
 
 		inline short& Count (int nClass) { return m_nCount [nClass]; }
 
 		inline short& NumTriggers (void) { return Count (0); }
 
-		inline CTrigger* ObjTriggers (int i) { return Triggers (i, 1); }
+		inline CTrigger* GetObjTrigger (int i) { return GetTrigger (i, 1); }
 
 		inline short& NumObjTriggers (void) { return Count (1); }
 
