@@ -244,7 +244,7 @@ public:
 
 	inline CGameInfo& MineInfo ()
 		{ return MineData ().gameInfo; }
-	inline CGameFileInfo& MineFileInfo ()
+	inline CMineFileInfo& MineFileInfo ()
 		{ return MineData ().gameInfo.fileInfo; }
 	inline int& ObjCount ()
 		{ return MineInfo ().objects.count; }
@@ -252,7 +252,7 @@ public:
 		{ return segmentManager.VertCount (); }
 	inline short& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
-	long TotalSize (CGameItemInfo& gii)
+	long TotalSize (CMineItemInfo& gii)
 		{ return (fix) gii.size * (fix) gii.count; }
 	inline int& ReactorTime ()
 		{ return MineData ().m_reactor_time; }
@@ -583,8 +583,8 @@ private:
 	void LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
 	void SaveColors (CColor *pc, int nColors, CFileManager& fp);
 	void ClearGameItem (CGameItem* items, int nCount);
-	int LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
-	int SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items, bool bFlag = false);
+	int LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
+	int SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag = false);
 	short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
 	short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 	short LoadGameData(CFileManager& loadfile, bool bNewMine);

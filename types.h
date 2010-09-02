@@ -216,7 +216,7 @@ struct sub {
   int size;
 };
 
-class CGameFileInfo {
+class CMineFileInfo {
 public:
 	ushort  signature;
 	ushort  version;
@@ -254,13 +254,13 @@ public:
 		}
 };
 
-class CGameItemInfo {
+class CMineItemInfo {
 public:
-	int	 offset;
-	int	 count;
-	int  size;
+	int	offset;
+	int	count;
+	int	size;
 
-	CGameItemInfo () { Reset (); }
+	CMineItemInfo () { Reset (); }
 
 	void Reset (void) { offset = -1, count = size = 0; } 
 
@@ -280,20 +280,20 @@ public:
 
 class CGameInfo {
 public:
-	CGameFileInfo		fileInfo;
+	CMineFileInfo		fileInfo;
 	char					mineFilename[15];
 	int					level;
 	CPlayerItemInfo	player;
-	CGameItemInfo		objects;
-	CGameItemInfo		walls;
-	CGameItemInfo		doors;
-	CGameItemInfo		triggers;
-	CGameItemInfo		links;
-	CGameItemInfo		control;
-	CGameItemInfo		botgen;
-	CGameItemInfo		lightDeltaIndices;
-	CGameItemInfo		lightDeltaValues;
-	CGameItemInfo		equipgen;
+	CMineItemInfo		objects;
+	CMineItemInfo		walls;
+	CMineItemInfo		doors;
+	CMineItemInfo		triggers;
+	CMineItemInfo		links;
+	CMineItemInfo		control;
+	CMineItemInfo		botgen;
+	CMineItemInfo		lightDeltaIndices;
+	CMineItemInfo		lightDeltaValues;
+	CMineItemInfo		equipgen;
 
 	int Read (CFileManager& fp) {
 		fileInfo.Read (fp);
@@ -359,130 +359,6 @@ public:
 
 	void Clear (void) {
 		m_nSegment = m_nSide = -1;
-		}
-};
-
-typedef struct tWall {
-	fix		hps;            // "Hit points" of the wall. 
-	int		linkedWall;		 // number of linked wall
-	byte		type;           // What kind of special wall.
-	ushort	flags;          // Flags for the wall.    
-	byte		state;          // Opening, closing, etc.
-	byte		nTrigger;       // Which trigger is associated with the wall.
-	char		nClip;          // Which  animation associated with the wall. 
-	byte		keys;           // which keys are required
-	// the following two Descent2 bytes replace the "short pad" of Descent1
-	char		controllingTrigger; // which trigger causes something to happen here.
-	// Not like "trigger" above, which is the trigger on this wall.
-	//	Note: This gets stuffed at load time in gamemine.c.  
-	// Don't try to use it in the editor.  You will be sorry!
-	char		cloakValue;	// if this wall is cloaked, the fade value
-} tWall;
-
-/*
-typedef struct {
-  fix	play_time;
-  short	num_frames;
-  short	frames[MAX_CLIP_FRAMES];
-  short	open_sound;
-  short	close_sound;
-  short	flags;
-  char	filename[13];
-  char	pad;
-} wclip;
-*/
-
-//extern char	Wall_names[7][10]; // New for Descent 2
-
-class CTriggerTargets {
-public:
-	short		m_count;
-	CSideKey	m_targets [MAX_TRIGGER_TARGETS];
-
-	CTriggerTargets () { m_count = 0; }
-
-	inline CSideKey& operator[](uint i) { return m_targets [i]; }
-
-	inline short Add (CSideKey key) {
-		if (m_count < sizeof (m_targets) / sizeof (m_targets [0]))
-			m_targets [m_count] = key;
-		return m_count++;
-		}
-	inline short Add (short nSegment, short nSide) { return Add (CSideKey (nSegment, nSide)); }
-
-	inline short Delete (int i = -1) {
-		if (i < 0)
-			i = m_count - 1;
-		if ((m_count > 0) && (i < --m_count)) {
-			int l = m_count - i;
-			if (l)
-				memcpy (m_targets + i, m_targets + i + 1, l * sizeof (m_targets [0]));
-			m_targets [m_count] = CSideKey (-1,-1);
-			}
-		return m_count;
-		}	
-
-	inline short Pop (void) { return Delete (m_count - 1); }
-
-	inline int Find (CSideKey key) { 
-		for (int i = 0; i < m_count; i++)
-			if (m_targets [i] == key)
-				return i;
-		return -1;
-		}
-	inline int Find (short nSegment, short nSide) { return Find (CSideKey (nSegment, nSide)); }
-	inline short& Segment (uint i) { return m_targets [i].m_nSegment; }
-	inline short& Side (uint i) { return m_targets [i].m_nSide; }
-	void Clear (void) { 
-		m_count = 0;
-		for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			m_targets [i].Clear ();
-		}
-	inline int ReadTargets (CFileManager& fp) {
-		int i;
-		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			m_targets [i].m_nSegment = fp.ReadInt16 ();
-		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			m_targets [i].m_nSide = fp.ReadInt16 ();
-		return 1;
-		}
-	inline void WriteTargets (CFileManager& fp) {
-		int i;
-		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			fp.Write (m_targets [i].m_nSegment);
-		for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-			fp.Write (m_targets [i].m_nSide);
-		}
-
-};
-
-typedef struct tTrigger {
-	byte		type;
-	ushort	flags;
-	short		nObject;
-	fix		value;
-	fix		time;
-	ushort	nIndex;
-} tTrigger;
-
-class CTrigger : public CTriggerTargets, public CGameItem {
-public:
-	struct tTrigger m_info;
-	//inline CSideKey& operator[](uint i) { return targets [i]; }
-
-	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version, bool bObjTrigger);
-	virtual void Write (CFileManager& fp, int version, bool bObjTrigger);
-	virtual void Clear (void) { 
-		memset (&m_info, 0, sizeof (m_info)); 
-		CTriggerTargets::Clear ();
-		}
-	void CTrigger::Setup (short type, short flags);
-	inline const bool operator< (const CTrigger& other) {
-		return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 
-		}
-	inline const bool operator> (const CTrigger& other) {
-		return (m_info.nObject > other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type > other.m_info.type)); 
 		}
 };
 

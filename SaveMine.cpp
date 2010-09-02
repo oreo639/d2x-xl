@@ -25,7 +25,7 @@
 
 #define ENABLE_TEXT_DUMP 0
 
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // ReadObject()
 // ------------------------------------------------------------------------
 // CMine - save()
@@ -201,7 +201,7 @@ if (r > left)
 
 // ------------------------------------------------------------------------
 
-int CMine::SaveGameItem (CFileManager& fp, CGameItemInfo& info, CGameItem* items, bool bFlag)
+int CMine::SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag)
 {
 info.offset = fp.Tell ();
 for (int i = 0; i < info.count; i++) {

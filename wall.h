@@ -12,6 +12,25 @@
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+typedef struct tWall {
+	fix		hps;            // "Hit points" of the wall. 
+	int		linkedWall;		 // number of linked wall
+	byte		type;           // What kind of special wall.
+	ushort	flags;          // Flags for the wall.    
+	byte		state;          // Opening, closing, etc.
+	byte		nTrigger;       // Which trigger is associated with the wall.
+	char		nClip;          // Which  animation associated with the wall. 
+	byte		keys;           // which keys are required
+	// the following two Descent2 bytes replace the "short pad" of Descent1
+	char		controllingTrigger; // which trigger causes something to happen here.
+	// Not like "trigger" above, which is the trigger on this wall.
+	//	Note: This gets stuffed at load time in gamemine.c.  
+	// Don't try to use it in the editor.  You will be sorry!
+	char		cloakValue;	// if this wall is cloaked, the fade value
+} tWall;
+
+//------------------------------------------------------------------------
+
 class CWall : public CSideKey, public CGameItem {
 public:
 	tWall		m_info;

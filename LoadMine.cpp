@@ -505,7 +505,7 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-int CMine::LoadGameItem (CFileManager& fp, CGameItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
+int CMine::LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
 {
 if (info.offset < 0)
 	return 0;
