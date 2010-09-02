@@ -445,32 +445,6 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define KEY_RED			4
 #define KEY_GOLD		8
 
-#define WALL_HPS		100*F1_0 // Normal wall's hp 
-#define WALL_DOOR_INTERVAL	5*F1_0	 // How many seconds a door is open 
-
-// WALL_IS_DOORWAY flags. 
-#define WID_FLY_FLAG			1
-#define WID_RENDER_FLAG		2
-#define WID_RENDPAST_FLAG	4
-#define WID_EXTERNAL_FLAG	8
-#define WID_CLOAKED_FLAG	16 // Descent 2
-
-// WALL_IS_DOORWAY return values F/R/RP 
-#define WID_WALL						2	// 0/1/0 wall	 
-#define WID_ILLUSORY_WALL			3	// 1/1/0 illusory wall 
-#define WID_NO_WALL					5	// 1/0/1 no wall, can fly through 
-#define WID_TRANSPARENT_WALL		6	// 0/1/1 transparent wall 
-#define WID_TRANSILLUSORY_WALL	7	// 1/1/1 transparent illusory wall 
-#define WID_EXTERNAL					8	// 0/0/0/1 don't see it, dont fly through it 
-
-#define WALL_IS_DOORWAY(_segP,_side)	(((_segP)->GetChild (_side) == -1) \
-													? WID_RENDER_FLAG \
-													: ((_segP)->GetChild (_side) == -2) \
-														? WID_EXTERNAL_FLAG \
-														: ((_segP)->m_sides [(_side)].m_info.nWall == -1) \
-															? (WID_FLY_FLAG | WID_RENDPAST_FLAG) \
-															: wall_is_doorway ((_segP), (_side)))
-
 //Object types 
 #define OBJ_NONE         255  // unused object 
 #define OBJ_WALL           0  // A wall... not really an object, but used for collisions 

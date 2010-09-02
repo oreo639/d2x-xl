@@ -188,14 +188,7 @@ public:
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	inline CSide* GetSide (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 	inline short GetChild (short nSide) { return m_sides [nSide].m_info.nChild; }
-	inline short SetChild (short nSide, short nSegment) {
-		m_sides [nSide].m_info.nChild = nSegment;
-		if (nSegment == -1)
-			m_info.childFlags &= ~(1 << nSide);
-		else
-			m_info.childFlags |= (1 << nSide);
-		return nSegment;
-		}
+	short SetChild (short nSide, short nSegment);
 
 private:
 	byte ReadWalls (CFileManager& fp, int nLevelVersion);

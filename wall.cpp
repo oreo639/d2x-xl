@@ -6,14 +6,13 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
+
 #include "define.h"
 #include "types.h"
-#include "mine.h"
-#include "dle-xp.h"
-#include "global.h"
 #include "cfile.h"
-#include "texturemanager.h"
+#include "wall.h"
+#include "TextureManager.h"
+#include "UndoManager.h"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

@@ -9,6 +9,11 @@
 #include "cfile.h"
 
 //------------------------------------------------------------------------
+
+#define WALL_HPS				I2X (100) // Normal wall's hp 
+#define WALL_DOOR_INTERVAL	I2X (5)	 // How many seconds a door is open 
+
+//------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
@@ -40,7 +45,9 @@ public:
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	virtual CGameItem* Next (void) { return this + 1; }
 
-	bool CWall::IsDoor (void);
+	void Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
+
+	bool IsDoor (void);
 	CSide* GetSide (void);
 	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
 	CTrigger* GetTrigger (void);

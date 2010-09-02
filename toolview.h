@@ -162,7 +162,7 @@ class CTexToolDlg : public CToolDlg
 	int		m_nTimerId;
 	COLORREF	m_bkColor;
 	int		m_frame [2];
-	bool		m_bother.Segment;
+	bool		m_bOtherSegment;
 
 	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = null, 
 					 int nTexWndId = 0, int nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
