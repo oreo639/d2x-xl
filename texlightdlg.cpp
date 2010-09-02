@@ -322,7 +322,7 @@ if (theMine->UseTexColors ()) {
 	CSegment*	segP = theMine->Segments (0);
 	CSide*		sideP;
 	CWall			*wallP;
-	bool			bAll = !theMine->GotMarkedSides ();
+	bool			bAll = (theMine == null)->GotMarkedSides ();
 
 	for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {

@@ -166,7 +166,7 @@ for (int	i = 0; i < 3; i++) {
 		m_nCoord [i] = -0x7fff;
 	else if (m_nCoord [i] > 0x7fff)
 		m_nCoord [i] = 0x7fff;
-//	DDV_MinMaxInt (pDX, (fix) m_nCoord [i], -0x7fff, 0x7fff);
+//	DDV_MinMaxInt (pDX, (int) m_nCoord [i], -0x7fff, 0x7fff);
 	}
 
 int i;
@@ -256,7 +256,7 @@ CHECKMINE;
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
 m_nVertex = theMine->CurrSeg ()->m_info.verts[sideVertTable[theMine->Current ()->nSide][theMine->Current ()->nPoint]];
-theMine->Vertices (m_nVertex)->Set ((fix) (m_nCoord [0] * 0x10000L), (fix) (m_nCoord [1] * 0x10000L), (fix) (m_nCoord [2] * 0x10000L));
+theMine->Vertices (m_nVertex)->Set ((int) (m_nCoord [0] * 0x10000L), (int) (m_nCoord [1] * 0x10000L), (int) (m_nCoord [2] * 0x10000L));
 DLE.MineView ()->Refresh (false);
 }
 
@@ -383,7 +383,7 @@ for (nTrigger = 0; nTrigger < theMine->MineInfo ().triggers.count; nTrigger++, t
 			if (nWall < theMine->MineInfo ().walls.count) {
 				sprintf_s (message, sizeof (message),  "%d,%d", (int) wallP->m_nSegment, (int) wallP->m_nSide + 1);
 				int h = LBTriggers ()->AddString (message);
-				LBTriggers ()->SetItemData (h, (fix) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
+				LBTriggers ()->SetItemData (h, (int) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
 				}
 			}
 		}
@@ -600,7 +600,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_ROBOTMAKER:
 			if (nType == m_nType)
 				goto errorExit;
-			if (!theMine->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
+			if ((theMine == null)->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
 				DLE.ResetModified (bUndo);
 				goto funcExit;
 				}
@@ -618,7 +618,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_FUELCEN:
 			if (nType == m_nType)
 				continue;
-			if (!theMine->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
+			if ((theMine == null)->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
 				DLE.ResetModified (bUndo);
 				goto funcExit;
 				}
@@ -627,7 +627,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_CONTROLCEN:
 			if (nType == m_nType)
 				continue;
-			if (!theMine->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
+			if ((theMine == null)->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
 				DLE.ResetModified (bUndo);
 				goto funcExit;
 				}
@@ -637,7 +637,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_GOAL_RED:
 			if (nType == m_nType)
 				continue;
-			if (!theMine->AddGoalCube (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
+			if ((theMine == null)->AddGoalCube (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
 				goto errorExit;		
 			break;
 
@@ -651,7 +651,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				}
 			if (nType == m_nType)
 				continue;
-			if (!theMine->AddTeamCube (nSegNum, false, false, nType, -1))
+			if ((theMine == null)->AddTeamCube (nSegNum, false, false, nType, -1))
 				goto errorExit;		
 			break;
 
@@ -662,7 +662,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (!theMine->AddSpeedBoostCube (nSegNum, false))
+			if ((theMine == null)->AddSpeedBoostCube (nSegNum, false))
 				goto errorExit;
 			break;
 
@@ -673,7 +673,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (!theMine->AddSkyboxCube (nSegNum, false))
+			if ((theMine == null)->AddSkyboxCube (nSegNum, false))
 				goto errorExit;
 			break;
 
@@ -684,7 +684,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (!theMine->AddEquipMaker (nSegNum, false))
+			if ((theMine == null)->AddEquipMaker (nSegNum, false))
 				goto errorExit;
 			break;
 
@@ -779,7 +779,7 @@ void CSegmentTool::OnLight ()
 {
 CHECKMINE;
 UpdateData (TRUE);
-theMine->CurrSeg ()->m_info.staticLight = (fix) (m_nLight * 24 * 327.68);
+theMine->CurrSeg ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
 DLE.SetModified (TRUE);
 }
 

@@ -73,11 +73,11 @@ static APOINT poly_xy [MAX_POLYMODEL_POINTS];
 CPolyModel* renderModel;
 
 //-----------------------------------------------------------------------
-// fix MultiplyFix ()
+// int MultiplyFix ()
 //-----------------------------------------------------------------------
 
-fix MultiplyFix (fix a, fix b) {
-  return (fix) ((double (a) * double (b))/F1_0);
+int MultiplyFix (int a, int b) {
+  return (int) ((double (a) * double (b))/F1_0);
 }
 
 //-----------------------------------------------------------------------
@@ -101,9 +101,9 @@ void CPolyModel::SetModelPoints (int start, int end)
 	CVertex	pt;
 
 for (int i = start; i < end; i++) {
-	//fix x0 = modelRenderData.points[i].v.x;
-	//fix y0 = modelRenderData.points[i].v.y;
-	//fix z0 = modelRenderData.points[i].v.z;
+	//int x0 = modelRenderData.points[i].v.x;
+	//int y0 = modelRenderData.points[i].v.y;
+	//int z0 = modelRenderData.points[i].v.z;
 
 	// rotate point using Objects () rotation matrix
 	pt = renderObject->m_location.orient * modelRenderData.points [i];
@@ -282,7 +282,7 @@ else {
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		fp.Read (m_info.subModels [i].pnt);
 	for (int i = 0; i < MAX_SUBMODELS; i++)
-		m_info.subModels [i].rad = fp.ReadFix ();
+		m_info.subModels [i].rad = fp.ReadInt32 ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
 		m_info.subModels [i].parent = (byte) fp.ReadSByte ();
 	for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -291,7 +291,7 @@ else {
 		fp.Read (m_info.subModels [i].vMax);
 	fp.Read (m_info.vMin);
 	fp.Read (m_info.vMax);
-	m_info.rad = fp.ReadFix ();
+	m_info.rad = fp.ReadInt32 ();
 	m_info.textureCount = fp.ReadByte ();
 	m_info.firstTexture = fp.ReadUInt16 ();
 	m_info.simplerModel = fp.ReadByte ();
@@ -398,7 +398,7 @@ return 0;
 
 CPolyModel* CMineView::RenderModel (CGameObject* objP)
 {
-if (!theMine)
+if ((theMine == null))
 	return null;
 
 	uint nModel;

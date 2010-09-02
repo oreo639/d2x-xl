@@ -203,7 +203,7 @@ if (dot_product == 0 || magnitude1 == 0 || magnitude2 == 0)
 	angle = (200.0 * M_PI)/180.0; 
 else {
 	ratio = dot_product/ (magnitude1*magnitude2);
-	ratio = ( (double) ( (int) (ratio*1000.0))) / 1000.0; // bug fix 9/21/96
+	ratio = ( (double) ( (int) (ratio*1000.0))) / 1000.0; // bug int 9/21/96
 	if (ratio < -1.0 || ratio > (double)1.0) 
 		angle = (199.0 * M_PI)/180.0;
 	else
@@ -393,7 +393,7 @@ return true;
 
 bool CDiagTool::CheckSegTypes (void) 
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 	short	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
@@ -436,7 +436,7 @@ return false;
 
 bool CDiagTool::CheckSegments (void) 
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
   short nSegment, nSide, nChild, nSide2, pointnum;
@@ -569,7 +569,7 @@ return false;
 
 bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 int id = theMine->Objects (nObject)->m_info.id;
@@ -601,7 +601,7 @@ return true;
 
 bool CDiagTool::CheckObjects () 
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 	int				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
@@ -786,7 +786,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	}
   }
 
-  // make sure object 0 is player 0; if not fix it
+  // make sure object 0 is player 0; if not int it
 if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->m_info.id != 0) {
 	if (m_bAutoFixBugs) {
 		CGameObject h;
@@ -922,7 +922,7 @@ return false;
 
 bool CDiagTool::CheckTriggers ()
  {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 	int count, nTrigger, deltrignum, nWall, i;
@@ -1100,7 +1100,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						}
 
 						// make sure oposite segment/side has a wallP too
-						if (!theMine->GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide)) {
+						if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
@@ -1338,7 +1338,7 @@ return nMatCens;
 
 bool CDiagTool::CheckBotGens (void)
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 	short					h = theMine->SegCount (), i, nSegment = 0;
@@ -1393,7 +1393,7 @@ CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 {
 	short	oppSegnum, oppSidenum, nWall;
 
-if (!theMine->GetOppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
+if ((theMine == null)->GetOppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
 	return null;
 nWall = theMine->Segments (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
 if ((nWall < 0) || (nWall > MAX_WALLS))
@@ -1406,7 +1406,7 @@ return theMine->Walls (nWall);
 
 bool CDiagTool::CheckWalls (void) 
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 	short nSegment,nSide;
@@ -1727,7 +1727,7 @@ return false;
 
 bool CDiagTool::CheckVertices (void) 
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 //  bool found;

@@ -36,7 +36,7 @@ typedef struct tSubModel {
   CFixVector 	offset;
   CFixVector 	norm;		// norm for sep plane
   CFixVector 	pnt;		// point on sep plane
-  fix 			rad;		// radius for each submodel
+  int 			rad;		// radius for each submodel
   byte 			parent;  // what is parent for each submodel
   CFixVector 	vMin;
   CFixVector   vMax;
@@ -49,7 +49,7 @@ typedef struct tPolyModel {
   byte*			renderData;
   tSubModel		subModels [MAX_SUBMODELS];
   CFixVector 	vMin, vMax;			  // min, max for whole model
-  fix				rad;
+  int				rad;
   byte			textureCount;
   ushort			firstTexture;
   byte			simplerModel;			  // alternate model with less detail (0 if none, nModel+1 else)
@@ -72,7 +72,7 @@ public:
 			m_info.renderData = null;
 			}
 		}
-	int Read (CFileManager& fp, bool bRenderData = false);
+	void Read (CFileManager& fp, bool bRenderData = false);
 	void Write (CFileManager& fp, bool bRenderData = false);
 	inline void CPolyModel::Draw (CViewMatrix* view, CDC* pDC) {
 		if (m_info.renderData) {

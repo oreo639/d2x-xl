@@ -197,7 +197,7 @@ DLE.SetModified (TRUE);
 
 int CTextureView::PickTexture(CPoint &point,short &nBaseTex) 
 {
-if (!theMine) 
+if (theMine == null)
 	return 1;
 
 //if (!m_pTextures)
@@ -207,9 +207,6 @@ if (!theMine)
 
   CRect rect;
   GetClientRect(rect);
-
-//if (m_nRows [m_bShowAll] <= m_viewSpace.cy)
-//	return 1;
 
 UINT nPos = GetScrollPos (SB_VERT);
 int nOffset = nPos * m_viewSpace.cx;
@@ -353,7 +350,7 @@ m_filter.Setup ();
 
 afx_msg BOOL CTextureView::OnEraseBkgnd (CDC* pDC)
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return FALSE;
 
    CRect    rc;

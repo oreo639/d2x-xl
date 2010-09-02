@@ -46,45 +46,45 @@ typedef struct {
   char	flash;				// Flash effect
   char	afterburnerSize;	// Size of blobs in F1_0/16 units, specify in bitmaps.tbl as floating point. Player afterburner size = 2.5.
   char	children;				// ID of weapon to drop if this contains children.  -1 means no children.
-  fix		energy_usage;			// How much fuel is consumed to fire this weapon.
-  fix		fire_wait;				// Time until this weapon can be fired again.
-  fix		multi_damage_scale;	// Scale damage by this amount when applying to player in multiplayer. F1_0 means no change.
+  int		energy_usage;			// How much fuel is consumed to fire this weapon.
+  int		fire_wait;				// Time until this weapon can be fired again.
+  int		multi_damage_scale;	// Scale damage by this amount when applying to player in multiplayer. F1_0 means no change.
   ushort bitmap;					// Pointer to bitmap if rendertype==0 or 1.
-  fix		blobSize;				// Size of blob if blob type
-  fix		flashSize;				// How big to draw the flash
-  fix		impactSize;				// How big of an impact
-  fix		strength[NDL];			// How much damage it can inflict
-  fix		speed[NDL];				// How fast it can move, difficulty level based.
-  fix		mass;						// How much mass it has
-  fix		drag;						// How much drag it has
-  fix		thrust;					// How much thrust it has
-  fix		poLenToWidthRatio;	// For polyobjects, the ratio of len/width. (10 maybe?)
-  fix		light;					// Amount of light this weapon casts.
-  fix		lifetime;				// Lifetime in seconds of this weapon.
-  fix		damageRadius;			// Radius of damage caused by weapon, used for missiles (not lasers) to apply to damage to things it did not hit
+  int		blobSize;				// Size of blob if blob type
+  int		flashSize;				// How big to draw the flash
+  int		impactSize;				// How big of an impact
+  int		strength[NDL];			// How much damage it can inflict
+  int		speed[NDL];				// How fast it can move, difficulty level based.
+  int		mass;						// How much mass it has
+  int		drag;						// How much drag it has
+  int		thrust;					// How much thrust it has
+  int		poLenToWidthRatio;	// For polyobjects, the ratio of len/width. (10 maybe?)
+  int		light;					// Amount of light this weapon casts.
+  int		lifetime;				// Lifetime in seconds of this weapon.
+  int		damageRadius;			// Radius of damage caused by weapon, used for missiles (not lasers) to apply to damage to things it did not hit
   ushort	picture [2];			// a picture and a hires picture of the weapon for the cockpit 
 } WEAPON_INFO;
 
 typedef struct {
   int	vclip_num;
   int	hit_sound;
-  fix		size;				// 3d size of longest dimension
-  fix		light;			// amount of light cast by this powerup, set in bitmaps.tbl
+  int		size;				// 3d size of longest dimension
+  int		light;			// amount of light cast by this powerup, set in bitmaps.tbl
 } POWERUP_TYPE_INFO;
 
 class CObjPhysicsInfo {
 public:
 	tFixVector velocity;   /*velocity vector of this object */
 	tFixVector thrust;     /*constant force applied to this object */
-	fix        mass;       /*the mass of this object */
-	fix        drag;       /*how fast this slows down */
-	fix        brakes;     /*how much brakes applied */
+	int        mass;       /*the mass of this object */
+	int        drag;       /*how fast this slows down */
+	int        brakes;     /*how much brakes applied */
 	tFixVector rotvel;     /*rotational velecity (angles) */
 	tFixVector rotthrust;  /*rotational acceleration */
-	fixang     turnroll;   /*rotation caused by turn banking */
+	short     turnroll;   /*rotation caused by turn banking */
 	ushort     flags;      /*misc physics flags */
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -95,33 +95,33 @@ public:
 	short parent_type;     /* The type of the parent of this object */
 	short parent_num;      /* The object's parent's number */
 	int parent_signature;/* The object's parent's signature... */
-	fix   creation_time;   /*  Absolute time of creation. */
+	int   creation_time;   /*  Absolute time of creation. */
 	char  last_hitobj;     /*  For persistent weapons (survive object collision), object it most recently hit. */
 	char  track_goal;      /*  Object this object is tracking. */
-	fix   multiplier;      /*  Power if this is a fusion bolt (or other super weapon to be added). */
+	int   multiplier;      /*  Power if this is a fusion bolt (or other super weapon to be added). */
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
 class CObjExplosionInfo {
 public:
-	fix   spawn_time;     /* when lifeleft is < this, spawn another */
-	fix   delete_time;    /* when to delete object */
+	int   spawn_time;     /* when lifeleft is < this, spawn another */
+	int   delete_time;    /* when to delete object */
 	char  delete_objnum;  /* and what object to delete */
 	char  attach_parent;  /* explosion is attached to this object */
 	char  prev_attach;    /* previous explosion in attach list */
 	char  next_attach;    /* next explosion in attach list */
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
 class CObjLightInfo {
 public:
-  fix  intensity;    /*how bright the light is */
+  int  intensity;    /*how bright the light is */
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -129,17 +129,17 @@ class CObjPowerupInfo {
 public:
 	int  count;      /*how many/much we pick up (vulcan cannon only?) */
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
 class CObjVClipInfo {
 public:
 	int vclip_num;
-	fix	frametime;
+	int	frametime;
 	char	framenum;
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -153,7 +153,7 @@ public:
 	int      tmap_override;    /*if this is not -1, map all face to this */
 	char       alt_textures;     /*if not -1, use these textures instead */
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -172,7 +172,7 @@ public:
 	int  danger_laser_signature;
 	short  danger_laser_num;
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -189,7 +189,7 @@ public:
 	char			nType;
 	char			bEnabled;
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -217,7 +217,7 @@ public:
 	char			bEnabled;
 	byte			color [4];
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -227,7 +227,7 @@ public:
 	char			szFilename [40];
 	char			bEnabled;
 
-	int Read (CFileManager& fp, int version);
+	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
 
@@ -262,8 +262,8 @@ typedef struct tGameObject {
 	byte				multiplayer;   // object only available in multiplayer games 
 	short				nSegment;      // segment number containing object 
 	tObjContentsInfo contents;
-	fix				size;          // 3d size of object - for collision detection 
-	fix				shields;       // Starts at maximum, when <0, object dies.. 
+	int				size;          // 3d size of object - for collision detection 
+	int				shields;       // Starts at maximum, when <0, object dies.. 
 } tGameObject;
 
 class CGameObject : public CGameItem {
@@ -296,7 +296,7 @@ public:
 
 	//CGameObject () { memset (this, 0, sizeof (*this)); }
 
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) {
 		memset (&m_info, 0, sizeof (m_info)); 

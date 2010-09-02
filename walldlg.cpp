@@ -477,7 +477,7 @@ CWall *CWallTool::GetOtherWall (void)
 {
 short nOppSeg, nOppSide;
 
-if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
+if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = null;
 m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 return m_pWall [1] = (m_nWall [1] < theMine->MineInfo ().walls.count ? theMine->Walls (m_nWall [1]) : null);
@@ -639,7 +639,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
 		DLE.SetModified (TRUE);
-		m_pWall [bSide]->m_info.hps = (fix) m_nStrength * F1_0;
+		m_pWall [bSide]->m_info.hps = (int) m_nStrength * F1_0;
 		if ((m_pWall [bSide]->m_info.type == WALL_TRANSPARENT) && m_bFlyThrough)
 			m_pWall [bSide]->m_info.hps = -m_pWall [bSide]->m_info.hps;
 		}

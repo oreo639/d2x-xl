@@ -555,9 +555,9 @@ int CObjPhysicsInfo::Read (CFileManager& fp, int version)
 {
 fp.ReadVector (velocity);
 fp.ReadVector (thrust);
-mass = fp.ReadFix ();
-drag = fp.ReadFix ();
-brakes = fp.ReadFix ();
+mass = fp.ReadInt32 ();
+drag = fp.ReadInt32 ();
+brakes = fp.ReadInt32 ();
 fp.ReadVector (rotvel);
 fp.ReadVector (rotthrust);
 turnroll = fp.ReadFixAng ();
@@ -619,8 +619,8 @@ if (DLE.IsD1File ()) {
 
 int CObjExplosionInfo::Read (CFileManager& fp, int version)
 {
-spawn_time = fp.ReadFix ();
-delete_time = fp.ReadFix ();
+spawn_time = fp.ReadInt32 ();
+delete_time = fp.ReadInt32 ();
 delete_objnum = (byte)fp.ReadInt16 ();
 next_attach = 
 prev_attach = 
@@ -676,7 +676,7 @@ if (version >= 25)
 
 int CObjLightInfo::Read (CFileManager& fp, int version)
 {
-intensity = fp.ReadFix ();
+intensity = fp.ReadInt32 ();
 return 1;
 }
 
@@ -716,7 +716,7 @@ fp.Write (tmap_override);
 int CObjVClipInfo::Read (CFileManager& fp, int version)
 {
 vclip_num = fp.ReadInt32 ();
-frametime = fp.ReadFix ();
+frametime = fp.ReadInt32 ();
 framenum = fp.ReadSByte ();
 return 1;
 }
@@ -854,8 +854,8 @@ m_info.multiplayer = (version > 37) ? fp.ReadSByte () : 0;
 m_info.nSegment = fp.ReadInt16 ();
 m_location.pos.Read (fp);
 fp.Read (m_location.orient);
-m_info.size = fp.ReadFix ();
-m_info.shields = fp.ReadFix ();
+m_info.size = fp.ReadInt32 ();
+m_info.shields = fp.ReadInt32 ();
 m_location.lastPos.Read (fp);
 m_info.contents.type = fp.ReadSByte ();
 m_info.contents.id = fp.ReadSByte ();

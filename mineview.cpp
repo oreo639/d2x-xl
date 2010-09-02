@@ -1187,7 +1187,7 @@ pos /= 8.0;
                         
 BOOL CMineView::DrawRubberBox ()
 {
-if (!theMine) return FALSE;
+if ((theMine == null)) return FALSE;
 
 	static CRect	prevRect (0, 0, 0, 0);
       

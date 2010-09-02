@@ -159,7 +159,7 @@ char *ai_options[MAX_AI_OPTIONS_D2] = {
 	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
 };
 
-fix powerupSize[MAX_POWERUP_IDS_D2] = {
+int powerupSize[MAX_POWERUP_IDS_D2] = {
 		0x28000L,0x30000L,0x28000L,0x40000L,0x30000L,0x30000L,0x30000L,0x30000L,
 		0x30000L,0x30000L,0x28000L,0x30000L,0x30000L,0x40000L,0x40000L,0x40000L,
 		0x40000L,0x30000L,0x28000L,0x30000L,0x28000L,0x30000L,0x1ccccL,0x20000L,
@@ -169,7 +169,7 @@ fix powerupSize[MAX_POWERUP_IDS_D2] = {
 };
 
 
-fix robotSize [MAX_ROBOT_IDS_TOTAL] = {
+int robotSize [MAX_ROBOT_IDS_TOTAL] = {
 		399147L,368925L,454202L,316909L,328097L,345407L,399147L,293412L,
 		300998L,308541L,246493L,283415L,283415L,227232L,200000L,598958L,
 		399147L,1597221L,290318L,345407L,323879L,339488L,294037L,1443273L,
@@ -183,7 +183,7 @@ fix robotSize [MAX_ROBOT_IDS_TOTAL] = {
 		342424L,322628L,332831L,1217722L,907806L,378960L    // vertigo robots
 };
 
-fix robot_shield [MAX_ROBOT_IDS_TOTAL] = {
+int robot_shield [MAX_ROBOT_IDS_TOTAL] = {
 	6553600L,6553600L,6553600L,1638400L,2293760L,6553600L,9830400L,16384000L,
 		2293760L,16384000L,2293760L,2293760L,2000000L,9830400L,1310720L,26214400L,
 		21299200L,131072000L,6553600L,3276800L,3276800L,4587520L,4587520L,327680000L,
@@ -251,7 +251,7 @@ char dlc_version[10] = "2.7a";
 short serial_number   = 27;
 char message[256];
 char m_startFolder [256];
-fix grid = 0x2000L;   // 0.125
+int grid = 0x2000L;   // 0.125
 char descentPath [2][256] = {"\\programs\\d2\\data", "\\programs\\d2\\data"};
 char missionPath [256]= "\\programs\\d2\\missions";
 char player_profile [20] = "";

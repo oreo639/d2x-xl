@@ -15,9 +15,9 @@
 #if 0
 int CFixVector::Read (CFileManager& fp) 
 { 
-x = fp.ReadFix ();
-y = fp.ReadFix ();
-z = fp.ReadFix ();
+x = fp.ReadInt32 ();
+y = fp.ReadInt32 ();
+z = fp.ReadInt32 ();
 return 1;
 }
 
@@ -129,14 +129,14 @@ fVec.Set (0, 0, F1_0);
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix::CFixMatrix (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3)
+CFixMatrix::CFixMatrix (int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3)
 {
 Set (x1, y1, z1, x2, y2, z2, x3, y3, z3);
 }
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix& CFixMatrix::Set (fix x1, fix y1, fix z1, fix x2, fix y2, fix z2, fix x3, fix y3, fix z3)
+CFixMatrix& CFixMatrix::Set (int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3)
 {
 rVec.Set (x1, y1, z1);
 uVec.Set (x2, y2, z2);
@@ -146,28 +146,28 @@ return *this;
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix::CFixMatrix (fix sinp, fix cosp, fix sinb, fix cosb, fix sinh, fix cosh)
+CFixMatrix::CFixMatrix (int sinp, int cosp, int sinb, int cosb, int sinh, int cosh)
 {
 Set (sinp, cosp, sinb, cosb, sinh, cosh);
 }
 
 // -----------------------------------------------------------------------------
 
-CFixMatrix& CFixMatrix::Set (fix sinp, fix cosp, fix sinb, fix cosb, fix sinh, fix cosh)
+CFixMatrix& CFixMatrix::Set (int sinp, int cosp, int sinb, int cosb, int sinh, int cosh)
 {
 double sbsh = sinb * sinh;
 double cbch = cosb * cosh;
 double cbsh = cosb * sinh;
 double sbch = sinb * cosh;
-rVec.v.x = (fix) (cbch + sinp * sbsh);
-uVec.v.z = (fix) (sbsh + sinp * cbch);
-uVec.v.x = (fix) (sinp * cbsh - sbch);
-rVec.v.z = (fix) (sinp * sbch - cbsh);
-fVec.v.x = (fix) (sinh * cosp);		
-rVec.v.y = (fix) (sinb * cosp);		
-uVec.v.y = (fix) (cosb * cosp);		
-fVec.v.z = (fix) (cosh * cosp);		
-fVec.v.y = (fix) -sinp;				
+rVec.v.x = (int) (cbch + sinp * sbsh);
+uVec.v.z = (int) (sbsh + sinp * cbch);
+uVec.v.x = (int) (sinp * cbsh - sbch);
+rVec.v.z = (int) (sinp * sbch - cbsh);
+fVec.v.x = (int) (sinh * cosp);		
+rVec.v.y = (int) (sinb * cosp);		
+uVec.v.y = (int) (cosb * cosp);		
+fVec.v.z = (int) (cosh * cosp);		
+fVec.v.y = (int) -sinp;				
 return *this;
 }
 
@@ -195,9 +195,9 @@ return m;
 
 // -----------------------------------------------------------------------------
 
-const fix CFixMatrix::Det (void) 
+const int CFixMatrix::Det (void) 
 {
-fix det = FixMul (rVec.v.x, FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y));
+int det = FixMul (rVec.v.x, FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y));
 det += FixMul (rVec.v.y, FixMul (uVec.v.z, fVec.v.x) - FixMul (uVec.v.x, fVec.v.z));
 det += FixMul (rVec.v.z, FixMul (uVec.v.x, fVec.v.y) - FixMul (uVec.v.y, fVec.v.x));
 return det;
@@ -209,7 +209,7 @@ const CFixMatrix CFixMatrix::Inverse (void)
 {
 	CFixMatrix m;
 
-fix det = Det ();
+int det = Det ();
 if (det != 0) {
 	m.rVec.v.x = FixDiv (FixMul (uVec.v.y, fVec.v.z) - FixMul (uVec.v.z, fVec.v.y), det);
 	m.rVec.v.y = FixDiv (FixMul (rVec.v.z, fVec.v.y) - FixMul (rVec.v.y, fVec.v.z), det);
@@ -256,12 +256,12 @@ switch (axis) {
 		//	0	cos	sin
 		//	0	-sin	cos
 		//
-		mRot.uVec.Set ((fix) (uVec.v.x * cosX + fVec.v.x * sinX), 
-					      (fix) (uVec.v.y * cosX + fVec.v.y * sinX),
-						   (fix) (uVec.v.z * cosX + fVec.v.z * sinX));
-		mRot.fVec.Set ((fix) (-uVec.v.x * sinX + fVec.v.x * cosX),
-							(fix) (-uVec.v.y * sinX + fVec.v.y * cosX),
-							(fix) (-uVec.v.z * sinX + fVec.v.z * cosX));
+		mRot.uVec.Set ((int) (uVec.v.x * cosX + fVec.v.x * sinX), 
+					      (int) (uVec.v.y * cosX + fVec.v.y * sinX),
+						   (int) (uVec.v.z * cosX + fVec.v.z * sinX));
+		mRot.fVec.Set ((int) (-uVec.v.x * sinX + fVec.v.x * cosX),
+							(int) (-uVec.v.y * sinX + fVec.v.y * cosX),
+							(int) (-uVec.v.z * sinX + fVec.v.z * cosX));
 		uVec = mRot.uVec;
 		fVec = mRot.fVec;
 		break;
@@ -271,12 +271,12 @@ switch (axis) {
 		//	0	1	0
 		//	sin	0	cos
 		//
-		mRot.rVec.Set ((fix) (rVec.v.x * cosX - fVec.v.x * sinX), 
-							(fix) (rVec.v.y * cosX - fVec.v.y * sinX), 
-							(fix) (rVec.v.z * cosX - fVec.v.z * sinX));
-		mRot.fVec.Set ((fix) (rVec.v.x * sinX + fVec.v.x * cosX), 
-							(fix) (rVec.v.y * sinX + fVec.v.y * cosX),
-							(fix) (rVec.v.z * sinX + fVec.v.z * cosX));
+		mRot.rVec.Set ((int) (rVec.v.x * cosX - fVec.v.x * sinX), 
+							(int) (rVec.v.y * cosX - fVec.v.y * sinX), 
+							(int) (rVec.v.z * cosX - fVec.v.z * sinX));
+		mRot.fVec.Set ((int) (rVec.v.x * sinX + fVec.v.x * cosX), 
+							(int) (rVec.v.y * sinX + fVec.v.y * cosX),
+							(int) (rVec.v.z * sinX + fVec.v.z * cosX));
 		rVec = mRot.rVec;
 		fVec = mRot.fVec;
 		break;
@@ -285,12 +285,12 @@ switch (axis) {
 		//	cos	sin	0
 		//	-sin	cos	0
 		//	0	0	1
-		mRot.rVec.Set ((fix) (rVec.v.x * cosX + uVec.v.x * sinX),
-							(fix) (rVec.v.y * cosX + uVec.v.y * sinX),
-							(fix) (rVec.v.z * cosX + uVec.v.z * sinX));
-		mRot.uVec.Set ((fix) (-rVec.v.x * sinX + uVec.v.x * cosX),
-							(fix) (-rVec.v.y * sinX + uVec.v.y * cosX),
-							(fix) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		mRot.rVec.Set ((int) (rVec.v.x * cosX + uVec.v.x * sinX),
+							(int) (rVec.v.y * cosX + uVec.v.y * sinX),
+							(int) (rVec.v.z * cosX + uVec.v.z * sinX));
+		mRot.uVec.Set ((int) (-rVec.v.x * sinX + uVec.v.x * cosX),
+							(int) (-rVec.v.y * sinX + uVec.v.y * cosX),
+							(int) (-rVec.v.z * sinX + uVec.v.z * cosX));
 		rVec = mRot.rVec;
 		uVec = mRot.uVec;
 		break;
@@ -482,12 +482,12 @@ switch (axis) {
 		//	cos	sin	0
 		//	-sin	cos	0
 		//	0	0	1
-		mRot.rVec.Set ((fix) (rVec.v.x * cosX + uVec.v.x * sinX),
-							(fix) (rVec.v.y * cosX + uVec.v.y * sinX),
-							(fix) (rVec.v.z * cosX + uVec.v.z * sinX));
-		mRot.uVec.Set ((fix) (-rVec.v.x * sinX + uVec.v.x * cosX),
-							(fix) (-rVec.v.y * sinX + uVec.v.y * cosX),
-							(fix) (-rVec.v.z * sinX + uVec.v.z * cosX));
+		mRot.rVec.Set ((int) (rVec.v.x * cosX + uVec.v.x * sinX),
+							(int) (rVec.v.y * cosX + uVec.v.y * sinX),
+							(int) (rVec.v.z * cosX + uVec.v.z * sinX));
+		mRot.uVec.Set ((int) (-rVec.v.x * sinX + uVec.v.x * cosX),
+							(int) (-rVec.v.y * sinX + uVec.v.y * cosX),
+							(int) (-rVec.v.z * sinX + uVec.v.z * cosX));
 		rVec = mRot.rVec;
 		uVec = mRot.uVec;
 		break;
@@ -742,8 +742,8 @@ double scale = 5.0;
 if ((m_depthPerception < 10000) && (r.v.z > - m_depthPerception)) 
 	scale *= m_depthPerception / (r.v.z + m_depthPerception);
 r *= CDoubleVector (scale, scale, 1.0);
-apoint.x = (short) ((fix) (r.v.x + m_viewWidth) % 32767);
-apoint.y = (short) ((fix) (m_viewHeight - r.v.y) % 32767);
+apoint.x = (short) ((int) (r.v.x + m_viewWidth) % 32767);
+apoint.y = (short) ((int) (m_viewHeight - r.v.y) % 32767);
 apoint.z = (short) r.v.z;
 }
 

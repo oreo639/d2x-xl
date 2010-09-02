@@ -66,6 +66,31 @@ typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
 
 #endif
 
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CSelection {
+public:
+	CSelection() :
+		nSegment(0),
+		nSide(DEFAULT_SIDE),
+		nLine(DEFAULT_LINE),
+		nPoint(DEFAULT_POINT),
+		nObject(DEFAULT_OBJECT)
+	{}
+
+	short nSegment;
+	short nSide;
+	short nLine;
+	short nPoint;
+	short nObject;
+};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 typedef struct tMineData {
 	CGameInfo					gameInfo;
 	
@@ -115,6 +140,8 @@ typedef struct tMineData {
 	CSelection					*current;
 
 } MINE_DATA;
+
+// -----------------------------------------------------------------------------
 
 class CMine {
 public:
@@ -253,7 +280,7 @@ public:
 	inline short& FlickerLightCount ()
 		{ return MineData ().m_nFlickeringLights; }
 	long TotalSize (CMineItemInfo& gii)
-		{ return (fix) gii.size * (fix) gii.count; }
+		{ return (int) gii.size * (int) gii.count; }
 	inline int& ReactorTime ()
 		{ return MineData ().m_reactor_time; }
 	inline int& ReactorStrength ()
@@ -377,7 +404,7 @@ public:
 	int FindDeltaLight (short nSegment, short nSide, short *pi = null);
 	byte LightWeight(short nBaseTex);
 	short GetFlickeringLight (short nSegment = -1, short nSide = -1);
-	short AddFlickeringLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, fix time = 0x10000 / 4);
+	short AddFlickeringLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
 	bool DeleteFlickeringLight (short nSegment = -1, short nSide = -1);
 	int IsExplodingLight(int nBaseTex);
 	bool VisibleWall (ushort nWall);
@@ -599,26 +626,26 @@ private:
 	void SortDLIndex (int left, int right);
 	};
 
-#define MAX_SEGMENTS (!theMine ? MAX_SEGMENTS2 : theMine->IsD1File () ? MAX_SEGMENTS1  : theMine->IsStdLevel () ? MAX_SEGMENTS2 : SEGMENT_LIMIT)
-#define MAX_VERTICES (!theMine ? MAX_VERTICES_D2 : theMine->IsD1File () ? MAX_VERTICES_D1 : theMine->IsStdLevel () ? MAX_VERTICES_D2 : VERTEX_LIMIT)
-#define MAX_WALLS (!theMine ? MAX_WALLS_D2 : theMine->IsD1File () ? MAX_WALLS_D1 : (theMine->LevelVersion () < 12) ? MAX_WALLS_D2 : WALL_LIMIT)
-#define MAX_TEXTURES (!theMine ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
-#define MAX_TRIGGERS (!theMine ? MAX_TRIGGERS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2)
-#define MAX_OBJECTS (!theMine ? MAX_OBJECTS_D2 : theMine->IsStdLevel () ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
-#define MAX_NUM_FUELCENS (!theMine ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
-#define MAX_NUM_REPAIRCENS (!theMine ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
-#define MAX_PLAYERS (!theMine ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
-#define ROBOT_IDS2 (!theMine ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
-#define MAX_ROBOT_MAKERS (!theMine ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
-#define MAX_LIGHT_DELTA_INDICES (!theMine ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
-#define MAX_LIGHT_DELTA_VALUES (!theMine ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+#define MAX_TEXTURES ((theMine == null) ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
+#define MAX_OBJECTS ((theMine == null) ? MAX_OBJECTS_D2 : theMine->IsStdLevel () ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
+#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
+#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
+#define MAX_PLAYERS ((theMine == null) ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+#define ROBOT_IDS2 ((theMine == null) ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
+#define MAX_ROBOT_MAKERS ((theMine == null) ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
+#define MAX_LIGHT_DELTA_INDICES ((theMine == null) ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
+#define MAX_LIGHT_DELTA_VALUES ((theMine == null) ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
 
 #define NO_WALL MAX_WALLS
 
 extern CMine* theMine;
 
-#define CHECKMINE			if (!theMine) return;
-#define CHECKMINEV(_v)	if (!theMine) return (_v);
+#define CHECKMINE			if ((theMine == null)) return;
+#define CHECKMINEV(_v)	if ((theMine == null)) return (_v);
 #define CHECKMINEF		CHECKMINE(FALSE);
 
 #endif //__mine_h

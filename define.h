@@ -20,7 +20,7 @@
 
 #define FIX_IS_DOUBLE 0
 
-#define I2X(_i)	((fix) ((_i) * 65536))
+#define I2X(_i)	((int) ((_i) * 65536))
 #define X2I(_i)	((int) (((_i) + I2X (1) / 2) / I2X (1)))
 
 //Some handy constants 
@@ -51,15 +51,6 @@
 
 template<typename _T> 
 inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
-
-//	-----------------------------------------------------------------------------------------------------------
-
-inline double Round (double value, double round = 1.0) { return (value >= 0) ? value + round / 2.0 : value - round / 2.0; }
-
-//	-----------------------------------------------------------------------------------------------------------
-
-#define X2D(_f)	((double) _f / 65536.0)
-#define D2X(_f)	((fix) Round (_f * 65536.0))
 
 #define JOIN_DISTANCE (20*20)
 
@@ -273,25 +264,9 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define MAX_DOORS_D2						90 // Maximum number of open doors Descent 2
 #define DOOR_LIMIT						MAX_DOORS_D2
 
-#define MAX_SEGMENTS1					800  // descent 1 max # of cubes
-#define MAX_SEGMENTS2					900  // descent 2 max # of cubes
-#define SEGMENT_LIMIT					8000 // D2X-XL max # of cubes
-#define MAX_VERTICES_D1					2808 // descent 1 max # of vertices
-#define MAX_VERTICES_D2					(MAX_SEGMENTS2 * 4 + 8) // descent 2 max # of vertices
-#define VERTEX_LIMIT						(SEGMENT_LIMIT * 4 + 8) // descent 2 max # of vertices
 #define MAX_OBJECTS_D1					350
 #define MAX_OBJECTS_D2					2000
-#define MAX_WALLS_D1						175 // Maximum number of walls for Descent 1
-#define MAX_WALLS_D2						255 // Maximum number of walls for Descent 2
-#define WALL_LIMIT						2047 // Maximum number of walls for Descent 2
-#define MAX_TRIGGERS_D1					100
-#define MAX_TRIGGERS_D2					254
-#define MAX_OBJ_TRIGGERS				254
-#define TRIGGER_LIMIT					MAX_TRIGGERS_D2
-#define MAX_TRIGGER_FLAGS				12
-#define NO_TRIGGER						(TRIGGER_LIMIT + 1)
 
-#define MAX_REACTOR_TRIGGERS			10
 #define MAX_NUM_MATCENS_D1				20
 #define MAX_NUM_MATCENS_D2				100
 #define MAX_WALL_SWITCHES           50

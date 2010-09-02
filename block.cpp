@@ -254,7 +254,7 @@ while (!fp.EoF ()) {
 		segP->SetChild (i, children [i]);
 	// read in vertices
 	for (i = 0; i < 8; i++) {
-		fix x, y, z;
+		int x, y, z;
 		fscanf_s (fp.File (), "  vms_vector %hd %ld %ld %ld\n", &test, &x, &y, &z);
 		if (test != i) {
 			ErrorMsg ("Invalid vertex number read");
@@ -693,7 +693,7 @@ DLE.MainFrame ()->InitProgress (fp.Length ());
 count = ReadSegmentInfo (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
-// fix up the new Segments () children
+// int up the new Segments () children
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	if (segP->m_info.nIndex < 0) {  // if segment was just inserted

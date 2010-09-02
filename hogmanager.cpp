@@ -1255,7 +1255,7 @@ if (theMine->HasCustomLightColors ())
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
 	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
-		if (!theMine->WriteColorMap (fTmp)) {
+		if ((theMine == null)->WriteColorMap (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (szBase, sizeof (szBase), "%s.clr", szBaseName);
 			WriteSubFile (fp, szTmp, szBase);
@@ -1305,7 +1305,7 @@ if (theMine->HasCustomRobots () && (bExpertMode || QueryMsg (szHxmQuery) == IDYE
 	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
 	fTmp.Open (szTmp, "wb");
 	if (fTmp) {
-		if (!theMine->WriteHxmFile (fTmp)) {
+		if ((theMine == null)->WriteHxmFile (fTmp)) {
 			sprintf_s (szBase, sizeof (szBase), "%s.hxm", szBaseName);
 			WriteSubFile (fp, szTmp, szBase);
 			custom_robots = 1;
@@ -1471,7 +1471,7 @@ if (theMine->HasCustomLightColors ()) {
 	strcat_s (szFolder, sizeof (szFolder), "dle_temp.clr");
 	fTmp.Open (szFolder, "wb");
 	if (fTmp) {
-		if (!theMine->WriteColorMap (fTmp)) {
+		if ((theMine == null)->WriteColorMap (fTmp)) {
 			fclose (fTmp);
 			sprintf_s (subName, sizeof (subName), "%s.clr", szFile);
 			WriteSubFile (fp, szFolder, subName);
@@ -1506,7 +1506,7 @@ if (theMine->HasCustomRobots ()) {
 	fTmp.Open (szFolder, "wb");
 	bool bOk = false;
 	if (fTmp) {
-		if (!theMine->WriteHxmFile (fTmp)) {
+		if ((theMine == null)->WriteHxmFile (fTmp)) {
 			sprintf_s (subName, sizeof (subName), "%s.hxm", szFile);
 			WriteSubFile (fp, szFolder, subName);
 			bOk = true;

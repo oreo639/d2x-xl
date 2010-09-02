@@ -97,8 +97,8 @@ static tSliderData sliderData [] = {
 
                         /*--------------------------*/
 
-fix fix_exp(int x);
-int fix_log(fix x);
+int fix_exp(int x);
+int fix_log(int x);
 
                         /*--------------------------*/
 
@@ -945,7 +945,7 @@ switch(type) {
 			xlat [i] = j;
 			pcb->SetItemData (h, j);
 			}
-#if 0//def _DEBUG // hack to fix bogus powerup ids
+#if 0//def _DEBUG // hack to int bogus powerup ids
 		CGameObject *objP;
 		for (i = 0, objP = theMine->Objects (0); i < theMine->ObjCount (); i++, objP++)
 			if ((objP->m_info.type == OBJ_POWERUP) && (xlat [objP->m_info.id] == -1)) {
@@ -1685,16 +1685,16 @@ return nCount;
 
                         /*--------------------------*/
 
-int fix_log(fix x) 
+int fix_log(int x) 
 {
 return (x >= 1) ? (int) (log ((double) x) + 0.5): 0; // round (assume value is positive)
 }
 
                         /*--------------------------*/
 
-fix fix_exp(int x) 
+int fix_exp(int x) 
 {
-return (x >= 0 && x <= 21) ? (fix) (exp ((double) x) + 0.5): 1; // round (assume value is positive)
+return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5): 1; // round (assume value is positive)
 }
 
                         /*--------------------------*/

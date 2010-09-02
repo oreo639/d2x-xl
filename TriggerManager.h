@@ -3,6 +3,16 @@
 
 #include "define.h"
 
+#define MAX_TRIGGERS_D1			100
+#define MAX_TRIGGERS_D2			254
+#define MAX_OBJ_TRIGGERS		254
+#define MAX_REACTOR_TRIGGERS	10
+#define TRIGGER_LIMIT			MAX_TRIGGERS_D2
+#define MAX_TRIGGER_FLAGS		12
+#define NO_TRIGGER				(TRIGGER_LIMIT + 1)
+
+#define MAX_TRIGGERS	((theMine == null) ? MAX_TRIGGERS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2)
+
 #ifdef USE_DYN_ARRAYS
 
 typedef CStaticArray< CTrigger, TRIGGER_LIMIT > triggerList;

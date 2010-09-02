@@ -309,7 +309,7 @@ for (i = 0; i < theMine->MineInfo ().equipgen.count; i++) {
 //-----------------------------------------------
 
 for (i = 0, objP = theMine->Objects (0); i < theMine->MineInfo ().objects.count; i++, objP++) {
-// fix clip numbers for poly Objects () (except robots)
+// int clip numbers for poly Objects () (except robots)
 	switch (objP->m_info.type) {
 		case OBJ_PLAYER   : // the player on the console
 			objP->rType.polyModelInfo.nModel = D2_PLAYER_CLIP_NUMBER;

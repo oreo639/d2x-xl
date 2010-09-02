@@ -18,85 +18,93 @@
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-void tRobotGunInfo::Read (CFileManager& fp, int nField) {
-	if (nField == 0)
-		fp.Read (points);
-	else
-		subModels = byte (fp.ReadSByte ());
-	}
+void tRobotGunInfo::Read (CFileManager& fp, int nField) 
+{
+if (nField == 0)
+	fp.Read (points);
+else
+	subModels = byte (fp.ReadSByte ());
+}
 
-void tRobotGunInfo::Write (CFileManager& fp, int nField) {
-	if (nField == 0)
-		fp.Write (points);
-	else
-		fp.WriteSByte ((sbyte) subModels);
-	}
-
-//------------------------------------------------------------------------
-
-void tRobotExplInfo::Read (CFileManager& fp) {
-	nClip = fp.ReadInt16 ();
-	nSound = fp.ReadInt16 ();
-	}
-
-void tRobotExplInfo::Write (CFileManager& fp) {
-	fp.Write (nClip);
-	fp.Write (nSound);
-	}
+void tRobotGunInfo::Write (CFileManager& fp, int nField) 
+{
+if (nField == 0)
+	fp.Write (points);
+else
+	fp.WriteSByte ((sbyte) subModels);
+}
 
 //------------------------------------------------------------------------
 
-void tRobotContentsInfo::Read (CFileManager& fp) {
-	id = fp.ReadSByte ();
-	count = fp.ReadSByte ();
-	prob = fp.ReadSByte ();
-	type = fp.ReadSByte ();
-	}
+void tRobotExplInfo::Read (CFileManager& fp) 
+{
+nClip = fp.ReadInt16 ();
+nSound = fp.ReadInt16 ();
+}
 
-void tRobotContentsInfo::Write (CFileManager& fp) {
-	fp.Write (id);
-	fp.Write (count);
-	fp.Write (prob);
-	fp.Write (type);
-	}
+void tRobotExplInfo::Write (CFileManager& fp) 
+{
+fp.Write (nClip);
+fp.Write (nSound);
+}
 
 //------------------------------------------------------------------------
 
-void tRobotSoundInfo::Read (CFileManager& fp) {
-	see = fp.ReadByte ();
-	attack = fp.ReadByte ();
-	claw = fp.ReadByte ();
-	taunt = fp.ReadByte ();
-	}
+void tRobotContentsInfo::Read (CFileManager& fp) 
+{
+id = fp.ReadSByte ();
+count = fp.ReadSByte ();
+prob = fp.ReadSByte ();
+type = fp.ReadSByte ();
+}
 
-void tRobotSoundInfo::Write (CFileManager& fp) {
-	fp.Write (see);
-	fp.Write (attack);
-	fp.Write (claw);
-	fp.Write (taunt);
-	}
+void tRobotContentsInfo::Write (CFileManager& fp) 
+{
+fp.Write (id);
+fp.Write (count);
+fp.Write (prob);
+fp.Write (type);
+}
+
+//------------------------------------------------------------------------
+
+void tRobotSoundInfo::Read (CFileManager& fp) 
+{
+see = fp.ReadByte ();
+attack = fp.ReadByte ();
+claw = fp.ReadByte ();
+taunt = fp.ReadByte ();
+}
+
+void tRobotSoundInfo::Write (CFileManager& fp) 
+{
+fp.Write (see);
+fp.Write (attack);
+fp.Write (claw);
+fp.Write (taunt);
+}
 
 //------------------------------------------------------------------------
 
 void tRobotCombatInfo::Read (CFileManager& fp, int nField) {
 	switch (nField) {
 		case 0:
-			fieldOfView = fp.ReadFix ();
+			fieldOfView = fp.ReadInt32 ();
 			break;
 		case 1:
-			firingWait [0] = fp.ReadFix ();
+			firingWait [0] = fp.ReadInt32 ();
 			break;
 		case 2:
-			firingWait [1] = fp.ReadFix ();
+			firingWait [1] = fp.ReadInt32 ();
 			break;
 		case 3:
-			turnTime = fp.ReadFix ();
+			turnTime = fp.ReadInt32 ();
 			break;
 		case 4:
-			maxSpeed = fp.ReadFix ();
+			maxSpeed = fp.ReadInt32 ();
 			break;
 		case 5:
-			circleDistance = fp.ReadFix ();
+			circleDistance = fp.ReadInt32 ();
 			break;
 		case 6:
 			rapidFire = fp.ReadSByte ();
@@ -156,10 +164,10 @@ m_info.kamikaze = fp.ReadSByte ();
 m_info.scoreValue = fp.ReadInt16 ();
 m_info.badass = fp.ReadSByte ();
 m_info.drainEnergy = fp.ReadSByte ();
-m_info.lighting = fp.ReadFix ();
-m_info.strength = fp.ReadFix ();
-m_info.mass = fp.ReadFix ();
-m_info.drag = fp.ReadFix ();
+m_info.lighting = fp.ReadInt32 ();
+m_info.strength = fp.ReadInt32 ();
+m_info.mass = fp.ReadInt32 ();
+m_info.drag = fp.ReadInt32 ();
 for (j = 0; j < 8; j++)
 	for (i = 0; i < NDL; i++)
 		m_info.combat [i].Read (fp, j);

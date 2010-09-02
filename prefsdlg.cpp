@@ -385,7 +385,7 @@ if (strcmp (descentPath [1], m_d2Path)) {
 	if (textureManager.HasCustomTextures() &&
 		 (QueryMsg ("Changing the pig file will affect the custom textures\n"
 						"in this level because of the change in palette.\n"
-						"(Reload the level to fix custom texture appeareance.)\n\n"
+						"(Reload the level to int custom texture appeareance.)\n\n"
 						"Are you sure you want to do this?") != IDOK))
 		bChangePig = false;
 	if (bChangePig) {

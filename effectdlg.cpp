@@ -388,7 +388,7 @@ if (m_nBufferId < 0) {
 	return;
 	}
 CGameObject *objP = theMine->Objects (0);
-boolean bAll = !theMine->GotMarkedSegments ();
+boolean bAll = (theMine == null)->GotMarkedSegments ();
 
 int i;
 for (i = theMine->ObjCount (); i; i--, objP++)

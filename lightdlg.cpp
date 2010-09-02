@@ -123,7 +123,7 @@ UpdateData (TRUE);
 theMine->m_nNoLightDeltas = m_nNoLightDeltas;
 theMine->m_lightRenderDepth = m_lightRenderDepth;
 theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
-if (bAll = !theMine->GotMarkedSides ())
+if (bAll = (theMine == null)->GotMarkedSides ())
 	INFOMSG (" light processing entire mine");
 DLE.SetModified (TRUE);
 DLE.LockUndo ();

@@ -379,7 +379,7 @@ else {
 				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = VertCount () - 4 + j;
 				}
 			}
-		// fix twisted segments
+		// int twisted segments
 		UntwistSegment (SegCount (), nSplineSide1);
 		// define children and sides (textures and nWall)
 		for (j = 0; j < 6; j++) {
@@ -621,7 +621,7 @@ for (i = 0; i < n_splines; i++) {
 		}
 	}
 
-  // fix twisted segments
+  // int twisted segments
 for (i = 0; i < n_splines; i++)
 	UntwistSegment ((MAX_SEGMENTS - 1) - i, nSplineSide1);
 }

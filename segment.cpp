@@ -106,7 +106,7 @@ if (nLevelType) {
 		m_info.damage [1] = fp.ReadInt16 ();
 		}
 	}
-m_info.staticLight = fp.ReadFix ();
+m_info.staticLight = fp.ReadInt32 ();
 }
 
 // ------------------------------------------------------------------------
@@ -531,8 +531,8 @@ int CRobotMaker::Read (CFileManager& fp, int version, bool bFlag)
 m_info.objFlags [0] = fp.ReadInt32 ();
 if (DLE.IsD2File ())
 	m_info.objFlags [1] = fp.ReadInt32 ();
-m_info.hitPoints = fp.ReadFix ();
-m_info.interval = fp.ReadFix ();
+m_info.hitPoints = fp.ReadInt32 ();
+m_info.interval = fp.ReadInt32 ();
 m_info.nSegment = fp.ReadInt16 ();
 m_info.nFuelCen = fp.ReadInt16 ();
 return 1;

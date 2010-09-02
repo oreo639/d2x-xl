@@ -19,7 +19,7 @@ public:
 
 	CTriggerTargets () { m_count = 0; }
 	void Clear (void);
-	int Read (CFileManager& fp);
+	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 
 	short Add (CSideKey key);
@@ -43,8 +43,8 @@ typedef struct tTrigger {
 	byte		type;
 	ushort	flags;
 	short		nObject;
-	fix		value;
-	fix		time;
+	int		value;
+	int		time;
 	ushort	nIndex;
 } tTrigger;
 
@@ -56,7 +56,7 @@ public:
 	//inline CSideKey& operator[](uint i) { return targets [i]; }
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version, bool bObjTrigger);
+	virtual void Read (CFileManager& fp, int version, bool bObjTrigger);
 	virtual void Write (CFileManager& fp, int version, bool bObjTrigger);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
@@ -78,7 +78,7 @@ public:
 
 class CReactorTrigger : public CTriggerTargets, public CGameItem {
 public:
-	int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { CTriggerTargets::Clear (); }
 	virtual CGameItem* Next (void) { return this + 1; }

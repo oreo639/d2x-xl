@@ -34,7 +34,7 @@
 
 short CMine::Load (const char *szFile, bool bLoadFromHog)
 {
-if (!theMine)
+if ((theMine == null))
 	return 0;
 
 	char filename [256];
@@ -369,7 +369,7 @@ return 1;
 // ------------------------------------------------------------------------
 // FixIndexValues()
 //
-// Action - This routine attempts to fix array index values to prevent
+// Action - This routine attempts to int array index values to prevent
 //          the editor from crashing when the level is drawn.
 //
 // Returns - 0 if no error is detected
@@ -454,8 +454,8 @@ if (n_segments > SEGMENT_LIMIT) {
 	ErrorMsg (message);
 	return 2;
 	}
-if (((IsD1File ()) && (n_segments > MAX_SEGMENTS1)) ||
-	 ((IsD2File ()) && (IsStdLevel ()) && (n_segments > MAX_SEGMENTS2)))
+if (((IsD1File ()) && (n_segments > MAX_SEGMENTS_D1)) ||
+	 ((IsD2File ()) && (IsStdLevel ()) && (n_segments > MAX_SEGMENTS_D2)))
 	ErrorMsg ("Warning: Too many Segments for this level version");
 
 // if we are happy with the number of verts and Segments (), then proceed...

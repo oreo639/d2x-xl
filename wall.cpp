@@ -368,7 +368,7 @@ int CWall::Read (CFileManager& fp, int version, bool bFlag)
 {
 m_nSegment = fp.ReadInt32 ();
 m_nSide = fp.ReadInt32 (); 
-m_info.hps = fp.ReadFix ();
+m_info.hps = fp.ReadInt32 ();
 m_info.linkedWall = fp.ReadInt32 ();
 m_info.type = fp.ReadByte ();
 m_info.flags = ushort ((version < 37) ? fp.ReadSByte () : fp.ReadInt16 ());         

@@ -21,7 +21,7 @@
                         
 BOOL CMineView::UpdateDragPos (void)
 {
-if (!theMine) return FALSE;
+if ((theMine == null)) return FALSE;
 
 if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
@@ -82,7 +82,7 @@ UpdateWindow ();
                         
 BOOL CMineView::DrawDragPos (void)
 {
-if (!theMine) return FALSE;
+if ((theMine == null)) return FALSE;
 
 if (m_mouseState != eMouseStateDrag)
 	return FALSE;

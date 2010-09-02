@@ -707,7 +707,7 @@ void CTextureTool::OnAlignStretch2Fit ()
 
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
-if (!theMine->GotMarkedSides ()) {
+if ((theMine == null)->GotMarkedSides ()) {
 	for (i = 0; i < 4; i++) {
 		sideP->m_info.uvls [i].u = default_uvls [i].u / scale;
 		sideP->m_info.uvls [i].v = default_uvls [i].v / scale;
@@ -765,7 +765,7 @@ void CTextureTool::OnAlignAll (void)
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-bool bAll = !theMine->GotMarkedSegments ();
+bool bAll = (theMine == null)->GotMarkedSegments ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
 	 segP->m_info.nIndex = 0;
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++) {
@@ -809,7 +809,7 @@ void CTextureTool::OnAlignChildren ()
 UpdateData (TRUE);
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
-if (!theMine->GotMarkedSegments ())
+if ((theMine == null)->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (theMine->Current ()->nSegment, theMine->Current ()->nSide, true);
 else {	// use all marked sides as alignment source

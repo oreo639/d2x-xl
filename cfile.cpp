@@ -403,8 +403,8 @@ byte CFileManager::ReadByte (void) { ReadScalar (byte) }
 char CFileManager::ReadChar (void) { ReadScalar (char) }
 float CFileManager::ReadFloat (void) { ReadScalar (float) }
 double CFileManager::ReadDouble (void) { ReadScalar (double) }
-fix CFileManager::ReadFix (void) { ReadScalar (fix) }
-fixang CFileManager::ReadFixAng (void) { ReadScalar (fixang) }
+int CFileManager::ReadInt32 (void) { ReadScalar (int) }
+short CFileManager::ReadFixAng (void) { ReadScalar (short) }
 
 int CFileManager::WriteInt32 (int v) { WriteScalar (v) }
 int CFileManager::WriteUInt32 (uint v) { WriteScalar (v) }
@@ -415,16 +415,16 @@ int CFileManager::WriteByte (byte v) { WriteScalar (v) }
 int CFileManager::WriteChar (char v) { WriteScalar (v) }
 int CFileManager::WriteFloat (float v) { WriteScalar (v) }
 int CFileManager::WriteDouble (double v) { WriteScalar (v) }
-int CFileManager::WriteFix (fix v) { WriteScalar (v) }
-int CFileManager::WriteFixAng (fixang v) { WriteScalar (v) }
+int CFileManager::WriteFix (int v) { WriteScalar (v) }
+int CFileManager::WriteFixAng (short v) { WriteScalar (v) }
 
 // ----------------------------------------------------------------------------
 
 int CFileManager::ReadVector (tFixVector& v) 
 {
-v.x = ReadFix ();
-v.y = ReadFix ();
-v.z = ReadFix ();
+v.x = ReadInt32 ();
+v.y = ReadInt32 ();
+v.z = ReadInt32 ();
 return 1;
 }
 
@@ -432,9 +432,9 @@ return 1;
 
 int CFileManager::ReadVector (tDoubleVector& v) 
 {
-v.x = X2D (ReadFix ());
-v.y = X2D (ReadFix ());
-v.z = X2D (ReadFix ());
+v.x = X2D (ReadInt32 ());
+v.y = X2D (ReadInt32 ());
+v.z = X2D (ReadInt32 ());
 return 1;
 }
 

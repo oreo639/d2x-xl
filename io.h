@@ -12,8 +12,8 @@ ushort ReadUInt16 (CFileManager& fp);
 byte ReadUInt8 (CFileManager& fp);
 void* ReadBytes (void* buffer, uint length, CFileManager& fp);
 
-#define ReadFix(_fp)		(fix) ReadInt32 (_fp)
-#define ReadFixAng(_fp)	(fixang) ReadInt16 (_fp)
+#define ReadInt32(_fp)		(int) ReadInt32 (_fp)
+#define ReadFixAng(_fp)	(short) ReadInt16 (_fp)
 
 int WriteInt32 (int value, CFileManager& fp);
 short WriteInt16 (short value, CFileManager& fp);

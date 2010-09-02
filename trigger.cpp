@@ -61,7 +61,7 @@ for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 //------------------------------------------------------------------------------
 
-int Read (CFileManager& fp) 
+void Read (CFileManager& fp) 
 {
 	int i;
 
@@ -115,18 +115,18 @@ if (DLE.IsD2File ()) {
 	m_info.flags = bObjTrigger ? fp.ReadInt16 () : (ushort) fp.ReadByte ();
 	m_count = fp.ReadByte ();
 	fp.ReadByte ();
-	m_info.value = fp.ReadFix ();
+	m_info.value = fp.ReadInt32 ();
 	if ((DLE.LevelVersion () < 21) && (m_info.type == TT_EXIT))
 		m_info.value = 0;
 	if ((version < 39) && (m_info.type == TT_MASTER))
 		m_info.value = 0;
-	m_info.time = fp.ReadFix ();
+	m_info.time = fp.ReadInt32 ();
 	}
 else {
 	m_info.type = fp.ReadByte ();
 	m_info.flags = fp.ReadInt16 ();
-	m_info.value = fp.ReadFix ();
-	m_info.time = fp.ReadFix ();
+	m_info.value = fp.ReadInt32 ();
+	m_info.time = fp.ReadInt32 ();
 	fp.ReadByte (); //skip 8 bit value "link_num"
 	m_count = char (fp.ReadInt16 ());
 	if (m_count < 0)

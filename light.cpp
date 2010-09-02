@@ -178,7 +178,7 @@ return GetFlickeringLight (nSegment, nSide) >= 0;
 // returns index to newly created flickering light
 //------------------------------------------------------------------------
 
-short CMine::AddFlickeringLight (short nSegment, short nSide, uint mask,fix time) 
+short CMine::AddFlickeringLight (short nSegment, short nSide, uint mask,int time) 
 {
 GetCurrent (nSegment, nSide);
 if (GetFlickeringLight (nSegment,nSide) != -1) {
@@ -362,7 +362,7 @@ return (wallP->m_info.type != WALL_OPEN);
 
 void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
 {
-	long nLight = (fix) (fLight * 65536); //24.0 * 327.68);
+	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
 	CSegment *segP;
 	int	h, i, j, l, c, nSegment;
 
@@ -384,7 +384,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) 
 						}
 					}
 				}
-			segP->m_info.staticLight = (fix) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
+			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
 			}
 		}
 	}
@@ -765,7 +765,7 @@ delete[] visited;
 //	Delta light values are stored for each corner of the effected side.
 //	(0x00 = no effect, 0x20 is maximum effect)
 //
-// A little fix to take care of too many delta light values leading
+// A little int to take care of too many delta light values leading
 // to some flickering lights not being visible in Descent:
 // For each recursion step, the delta light calculation will be executed
 // for all children of sides with flickering lights with exactly that

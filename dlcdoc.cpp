@@ -136,7 +136,7 @@ class CNewFileDlg : public CDialog {
 			}
       virtual BOOL OnInitDialog () {
 			CDialog::OnInitDialog ();
-			if (!theMine->m_bVertigo)
+			if ((theMine == null)->m_bVertigo)
 				GetDlgItem (IDC_D2VLEVEL)->EnableWindow (FALSE);
 			return TRUE;
 			}
@@ -314,7 +314,7 @@ nAction = d.DoModal (); //AfxMessageBox ("\nThe mine has been modified.\n\nClick
 if (nAction == IDCANCEL)
 	return false;
 DLE.SetModified (FALSE);
-// buggy for new mine; fix required
+// buggy for new mine; int required
 if (nAction == IDNO) 
 	SaveFile (*GetPathName () == '\0');
 return true;

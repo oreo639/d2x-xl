@@ -90,7 +90,7 @@ public:
 };
 
 void delete_flickering_light(ushort nSegment, ushort nSide);
-void add_flickering_light(ushort nSegment, ushort nSide, uint mask,fix time);
+void add_flickering_light(ushort nSegment, ushort nSide, uint mask,int time);
 short get_flickering_light(ushort nSegment, ushort nSide);
 
 void set_segment_child_num(short nSegment,short recursion_level);

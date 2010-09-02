@@ -4,7 +4,42 @@
 #define __segment_h
 
 #include "define.h"
+#include "Types.h"
 #include "cfile.h"
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CVertex : public CDoubleVector, public CGameItem {
+public:
+	byte m_status;
+	CVertex () : m_status(0) {}
+	CVertex (double x, double y, double z) : CDoubleVector (x, y, z) { m_status = 0; }
+	CVertex (tDoubleVector& _v) : CDoubleVector (_v) { m_status = 0; }
+	CVertex (CDoubleVector _v) : CDoubleVector (_v) { m_status = 0; }
+
+	virtual CGameItem* Next (void) { return this + 1; }
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) { return fp.ReadVector (v); }
+	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.WriteVector (v); }
+	virtual void Clear (void) { 
+		m_status = 0;
+		this->CDoubleVector::Clear ();
+		}
+
+	inline const CVertex& operator= (const CVertex& other) { 
+		v = other.v, m_status = other.m_status; 
+		return *this;
+		}
+	inline const CVertex& operator= (const CDoubleVector& other) { 
+		v = other.v; 
+		return *this;
+		}
+};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 typedef struct tUVL {
 public:
@@ -13,11 +48,10 @@ public:
 
 class CUVL : public tUVL {
 public:
-	inline int Read (CFileManager& fp) {
+	inline void Read (CFileManager& fp) {
 		u = fp.ReadInt16 ();
 		v = fp.ReadInt16 ();
 		l = fp.ReadInt16 ();
-		return 1;
 		}
 	inline void Write (CFileManager& fp) {
 		fp.Write (u);
@@ -29,25 +63,9 @@ public:
 	inline void Set (short _u, short _v, short _l) { u = _u, v = _v, l = _l; }
 };
 
-typedef struct rgbColor {
-	double	r, g, b;
-} rgbColor;
-
-typedef struct tColor {
-	byte		index;
-	rgbColor	color;
-} tColor;
-
-class CColor : public CGameItem {
-public:
-	tColor	m_info;
-
-	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
-
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-};
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 typedef struct tSide {
 	short		nChild;
@@ -57,11 +75,13 @@ typedef struct tSide {
 	CUVL		uvls [4];   // CUVL coordinates at each point 
 } tSide;
 
+// -----------------------------------------------------------------------------
+
 class CSide {
 public:
 	tSide m_info;
 
-	int Read (CFileManager& fp, bool bTextured);
+	void Read (CFileManager& fp, bool bTextured);
 	void Write (CFileManager& fp);
 	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 	void Setup (void);
@@ -69,6 +89,10 @@ public:
 	bool SetTexture (short nBaseTex, short nOvlTex);
 	CWall* GetWall (void);
 };
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 typedef struct tSegment {
 	short		verts [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
@@ -78,7 +102,7 @@ typedef struct tSegment {
 	char		value;				// matcens: bitmask of producable robots, fuelcenters: energy given? --MK, 3/15/95 
 	byte		s2Flags;			// New for Descent 2
 	short		damage [2];
-	fix		staticLight;		// average static light in segment 
+	int		staticLight;		// average static light in segment 
 	byte		childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
 	byte		wallFlags;			// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
 	short		nIndex;				// used for cut & paste to help link children 
@@ -87,6 +111,8 @@ typedef struct tSegment {
 	char		group;
 } tSegment;
 
+// -----------------------------------------------------------------------------
+
 class CSegment : public CGameItem {
 public:
 	tSegment	m_info;
@@ -94,7 +120,7 @@ public:
 
 public:
 	void Upgrade (void);
-	int Read (CFileManager& fp, int nLevelType, int nLevelVersion);
+	void Read (CFileManager& fp, int nLevelType, int nLevelVersion);
 	void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras);
 	void Write (CFileManager& fp, int nLevelType, int nLevelVersion);
 	void WriteExtras (CFileManager& fp, int nLevelType, bool bExtras);
@@ -107,7 +133,7 @@ public:
 	void SetUV (short nSide, short x, short y);
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return 1; };
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	inline short Child (short nSide) { return m_sides [nSide].m_info.nChild; }
 	inline short SetChild (short nSide, short nSegment) {
@@ -124,5 +150,34 @@ private:
 	byte WriteWalls (CFileManager& fp, int nLevelVersion);
 
 };
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+typedef struct tRobotMaker {
+	int  objFlags [2]; /* Up to 32 different Descent 1 robots */
+	//  int  robot_flags2;// Additional 32 robots for Descent 2
+	int    hitPoints;  /* How hard it is to destroy this particular matcen */
+	int    interval;    /* Interval between materializations */
+	short  nSegment;      /* Segment this is attached to. */
+	short  nFuelCen; /* Index in fuelcen array. */
+} tRobotMaker;
+
+// -----------------------------------------------------------------------------
+
+class CRobotMaker : public CGameItem {
+public:
+	tRobotMaker	m_info;
+
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+	virtual CGameItem* Next (void) { return this + 1; }
+};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #endif //__segment_h

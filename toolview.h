@@ -866,7 +866,7 @@ class CTriggerTool : public CTexToolDlg
 					texture1 = Texture1 ();
 				if (texture2 < 0)
 					texture2 = Texture2 ();
-				m_pTrigger->m_info.value = (fix) (texture2 << 16) + (fix) texture1; 
+				m_pTrigger->m_info.value = (int) (texture2 << 16) + (int) texture1; 
 				}
 			}
 

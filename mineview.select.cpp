@@ -215,7 +215,7 @@ return true;
 //==========================================================================
 void CMineView::NextPoint(int dir) 
 {
-//if (!theMine->SplineActive ())
+//if ((theMine == null)->SplineActive ())
 //	DrawHighlight (1);
 //if (m_selectMode==POINT_MODE)
 wrap(&theMine->Current ()->nPoint,dir,0,4-1);
@@ -407,7 +407,7 @@ bool CMineView::SelectOtherSide ()
 {
 short nOppSeg, nOppSide;
 
-if (!theMine->GetOppositeSide (nOppSeg, nOppSide))
+if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide))
 	return false;
 
 theMine->Current ()->nSegment = nOppSeg;

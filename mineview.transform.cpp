@@ -94,7 +94,7 @@ for (i = theMine->VertCount (); i; i--, a++) {
 
 int CMineView::FitToView (void)
 {
-if (!theMine) return 1;
+if ((theMine == null)) return 1;
 
 	CRect			rc (LONG_MAX, LONG_MAX, -LONG_MAX, -LONG_MAX);
 	double		zoomX, zoomY, zoom;

@@ -9,6 +9,16 @@
 #include "textures.h"
 #include "poly.h"
 
+#define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
+#define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
+#define SEGMENT_LIMIT		8000 // D2X-XL max # of cubes
+#define MAX_VERTICES_D1		2808 // descent 1 max # of vertices
+#define MAX_VERTICES_D2		(MAX_SEGMENTS_D2 * 4 + 8) // descent 2 max # of vertices
+#define VERTEX_LIMIT			(SEGMENT_LIMIT * 4 + 8) // descent 2 max # of vertices
+
+#define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : theMine->IsD1File () ? MAX_SEGMENTS_D1  : theMine->IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
+#define MAX_VERTICES ((theMine == null) ? MAX_VERTICES_D2 : theMine->IsD1File () ? MAX_VERTICES_D1 : theMine->IsStdLevel () ? MAX_VERTICES_D2 : VERTEX_LIMIT)
+
 #ifdef USE_DYN_ARRAYS
 
 typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;

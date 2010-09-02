@@ -30,7 +30,7 @@ if (palette) {
 
 bool PaintTexture (CWnd *wndP, int bkColor, int nSegment, int nSide, int nBaseTex, int nOvlTex, int xOffset, int yOffset)
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return false;
 
 	static int nOffset [2] = {0, 0};

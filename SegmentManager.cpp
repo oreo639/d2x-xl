@@ -206,7 +206,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 				if (segP->m_info.childFlags & (1 << child)
-					&& segP->Child (child) >= 0 && segP->Child (child) < SegCount ()) { // debug fix
+					&& segP->Child (child) >= 0 && segP->Child (child) < SegCount ()) { // debug int
 					childSegP = Segments (segP->Child (child)); 
 					segP->SetChild (child, childSegP->m_info.nIndex); 
 				}
@@ -221,7 +221,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 				Walls (i)->m_nSegment = segP->m_info.nIndex; 
 				} 
 			else {
-				Walls (i)->m_nSegment = 0; // fix wall segment number
+				Walls (i)->m_nSegment = 0; // int wall segment number
 			}
 		}
 
@@ -255,7 +255,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 			if (SegCount () > (nSegment = objP->m_info.nSegment))
 				objP->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
-				objP->m_info.nSegment = 0; // fix object segment number
+				objP->m_info.nSegment = 0; // int object segment number
 			}
 
 		// replace robot centers segP numbers with real numbers
@@ -263,7 +263,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 			if (SegCount () > (nSegment = BotGens (i)->m_info.nSegment))
 				BotGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
-				BotGens (i)->m_info.nSegment = 0; // fix robot center nSegment
+				BotGens (i)->m_info.nSegment = 0; // int robot center nSegment
 			}
 
 		// replace equipment centers segP numbers with real numbers
@@ -271,7 +271,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 			if (SegCount () > (nSegment = EquipGens (i)->m_info.nSegment))
 				EquipGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
 			else
-				EquipGens (i)->m_info.nSegment = 0; // fix robot center nSegment
+				EquipGens (i)->m_info.nSegment = 0; // int robot center nSegment
 			}
 
 		// replace control segP numbers with real numbers
@@ -280,7 +280,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 				if (SegCount () > (nSegment = ReactorTriggers (i)->Segment (j)))
 					ReactorTriggers (i)->Segment (j) = Segments (nSegment)->m_info.nIndex; 
 				else 
-					ReactorTriggers (i)->Segment (j) = 0; // fix control center segment number
+					ReactorTriggers (i)->Segment (j) = 0; // int control center segment number
 			}
 		}
 
@@ -289,14 +289,14 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 			if (SegCount () > (nSegment = FlickeringLights (i)->m_nSegment))
 				FlickeringLights (i)->m_nSegment = Segments (nSegment)->m_info.nIndex; 
 			else 
-				FlickeringLights (i)->m_nSegment = 0; // fix object segment number
+				FlickeringLights (i)->m_nSegment = 0; // int object segment number
 			}
 
 		// replace secret cubenum with real number
 		if (SegCount () > (nSegment = (ushort) SecretCubeNum ()))
 			SecretCubeNum () = Segments (nSegment)->m_info.nIndex; 
 		else
-			SecretCubeNum () = 0; // fix secret cube number
+			SecretCubeNum () = 0; // int secret cube number
 
 		// move remaining Segments () down by 1
   }

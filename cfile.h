@@ -79,8 +79,8 @@ class CFileManager {
 		byte ReadByte (void);
 		sbyte ReadSByte (void);
 		char ReadChar (void);
-		fix ReadFix (void);
-		fixang ReadFixAng (void);
+		int ReadInt32 (void);
+		short ReadFixAng (void);
 		float ReadFloat (void);
 		double ReadDouble (void);
 		void* ReadBytes (void* buffer, int bufLen);
@@ -92,34 +92,34 @@ class CFileManager {
 		int ReadMatrix (CFixMatrix& v);
 		int ReadMatrix (CDoubleMatrix& m);
 
-		inline int Read (CFixVector& v) { return ReadVector (v.v); }
-		inline int Read (CDoubleVector& v) { return ReadVector (v.v); }
-		inline int Read (CAngleVector& v) { return ReadVector (v.v); }
-		inline int Read (CFixMatrix& m) { return ReadMatrix (m); }
-		inline int Read (CDoubleMatrix& m) { return ReadMatrix (m); }
+		inline void Read (CFixVector& v) { return ReadVector (v.v); }
+		inline void Read (CDoubleVector& v) { return ReadVector (v.v); }
+		inline void Read (CAngleVector& v) { return ReadVector (v.v); }
+		inline void Read (CFixMatrix& m) { return ReadMatrix (m); }
+		inline void Read (CDoubleMatrix& m) { return ReadMatrix (m); }
 
 
 		int WriteInt32 (int v);
 		int WriteUInt32 (uint v);
-		int WriteFix (fix v);
+		int WriteFix (int v);
 		int WriteInt16 (short v);
 		int WriteUInt16 (ushort v);
 		int WriteByte (byte v);
 		int WriteSByte (sbyte v);
 		int WriteChar (char v);
-		int WriteFixAng (fixang v);
+		int WriteFixAng (short v);
 		int WriteFloat (float v);
 		int WriteDouble (double v);
 
 		inline int Write (int& v) { return WriteInt32 (v); }
 		inline int Write (uint& v) { return WriteUInt32 (v); }
-//		inline int Write (fix& v) { return WriteFix (v); }
+//		inline int Write (int& v) { return WriteFix (v); }
 		inline int Write (short& v) { return WriteInt16 (v); }
 		inline int Write (ushort& v) { return WriteUInt16 (v); }
 		inline int Write (byte& v) { return WriteByte (v); }
 		inline int Write (sbyte& v) { return WriteSByte (v); }
 		inline int Write (char& v) { return WriteChar (v); }
-//		inline int Write (fixang& v) { return WriteFixAng (v); }
+//		inline int Write (short& v) { return WriteFixAng (v); }
 		inline int Write (float& v) { return WriteFloat (v); }
 		inline int Write (double& v) { return WriteDouble (v); }
 

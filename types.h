@@ -9,80 +9,21 @@
 #include "VectorTypes.h"
 #include "cfile.h"
 
-#if 0
-class CStatusMask {
-public:
-	byte	m_status;
+// -----------------------------------------------------------------------------
 
-	inline byte Status () { return m_status; }
-	inline void Set (byte mask = 0) { m_status = mask; }
-	inline void Mark (byte flags = MARKED_MASK) { m_status |= flags; }
-	inline void Unmark (byte flags = MARKED_MASK) { m_status &= ~flags; }
-	inline bool Marked (byte flags = MARKED_MASK) { return (m_status & flags) != 0; }
+typedef signed char sbyte;
+typedef unsigned char byte;
+typedef unsigned short ushort;
+typedef unsigned int uint;
 
-	inline byte& operator&= (byte mask) { 
-		m_status &= mask;
-		return m_status;
-		}
-
-	inline byte& operator|= (byte mask) { 
-		m_status |= mask;
-		return m_status;
-		}
-
-	inline byte& operator^= (byte mask) { 
-		m_status ^= mask;
-		return m_status;
-		}
-
-	inline byte& operator= (byte mask) { 
-		m_status = mask;
-		return m_status;
-		}
-
-	inline const byte operator& (byte other) const { return m_status & other; }
-	inline const byte operator| (byte other) const { return m_status | other; }
-	inline const byte operator^ (byte other) const { return m_status ^ other; }
-
-	inline CStatusMask& operator&= (CStatusMask& other) { 
-		m_status &= other.m_status;
-		return *this;
-		}
-
-	inline CStatusMask& operator|= (CStatusMask& other) { 
-		m_status |= other.m_status;
-		return *this;
-		}
-
-	inline CStatusMask& operator^= (CStatusMask& other) { 
-		m_status ^= other.m_status;
-		return *this;
-		}
-
-	inline CStatusMask& operator= (CStatusMask& other) { 
-		m_status = other.m_status;
-		return *this;
-		}
-
-	inline const byte operator& (CStatusMask& other) const { return m_status & other.m_status; }
-	inline const byte operator| (CStatusMask& other) const { return m_status | other.m_status; }
-	inline const byte operator^ (CStatusMask& other) const { return m_status ^ other.m_status; }
-
-	inline int Read (CFileManager& fp) { 
-		m_status = byte (fp.ReadSByte ());
-		return 1;
-		}
-
-	inline void Write (CFileManager& fp) {
-		WriteInt8 (char (m_status), fp);
-	}
-};
-#endif
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 class CGameItem {
 public:
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
 	void Reset (int count) { 
@@ -94,31 +35,41 @@ public:
 		}
 };
 
-class CVertex : public CDoubleVector, public CGameItem {
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+class CSideKey {
 public:
-	byte m_status;
-	CVertex () : m_status(0) {}
-	CVertex (double x, double y, double z) : CDoubleVector (x, y, z) { m_status = 0; }
-	CVertex (tDoubleVector& _v) : CDoubleVector (_v) { m_status = 0; }
-	CVertex (CDoubleVector _v) : CDoubleVector (_v) { m_status = 0; }
+	short	m_nSegment;
+	short	m_nSide;
 
-	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false) { return fp.ReadVector (v); }
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.WriteVector (v); }
-	virtual void Clear (void) { 
-		m_status = 0;
-		this->CDoubleVector::Clear ();
+	CSideKey(short nSegment = 0, short nSide = 0) : m_nSegment(nSegment), m_nSide(nSide) {}
+	inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
+	inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }
+	inline bool operator < (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide < other.m_nSide)); }
+	inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
+	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
+	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
+
+	void Read (CFileManager& fp) {
+		m_nSegment = fp.ReadInt16 ();
+		m_nSide = fp.ReadInt16 ();
 		}
 
-	inline const CVertex& operator= (const CVertex& other) { 
-		v = other.v, m_status = other.m_status; 
-		return *this;
+	void Write (CFileManager& fp) {
+		fp.Write (m_nSegment);
+		fp.Write (m_nSide);
 		}
-	inline const CVertex& operator= (const CDoubleVector& other) { 
-		v = other.v; 
-		return *this;
+
+	void Clear (void) {
+		m_nSegment = m_nSide = -1;
 		}
 };
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 typedef struct {
   ushort index;
@@ -127,26 +78,26 @@ typedef struct {
 typedef struct {
   byte	flags;		    //values defined above
   byte	pad[3];	    //keep alignment
-  fix		lighting;	    //how much light this casts
-  fix		damage;	    //how much damage being against this does (for lava)
+  int		lighting;	    //how much light this casts
+  int		damage;	    //how much damage being against this does (for lava)
   short	eclip_num;	    //the eclip that changes this, or -1
   short	destroyed;	    //bitmap to show when destroyed, or -1
-  short	slide_u, slide_v;   //slide rates of texture, stored in 8:8 fix
+  short	slide_u, slide_v;   //slide rates of texture, stored in 8:8 int
 } TMAP_INFO;
 
 typedef struct VCLIP {
-  fix		play_time;  //total time (in seconds) of clip
+  int		play_time;  //total time (in seconds) of clip
   int	num_frames;
-  fix		frame_time; //time (in seconds) of each frame
+  int		frame_time; //time (in seconds) of each frame
   int	flags;
   short	sound_num;
   ushort	frames[VCLIP_MAX_FRAMES];
-  fix		light_value;
+  int		light_value;
 } VCLIP;
 
 typedef struct ECLIP {
   VCLIP   vc;			   //imbedded vclip
-  fix		 time_left;		   //for sequencing
+  int		 time_left;		   //for sequencing
   int	 frame_count;		   //for sequencing
   short	 changing_wall_texture;	   //Which element of Textures array to replace.
   short	 changing_object_texture;  //Which element of ObjBitmapPtrs array to replace.
@@ -155,13 +106,13 @@ typedef struct ECLIP {
   int	 dest_bm_num;		//use this bitmap when monitor destroyed
   int	 dest_vclip;		//what vclip to play when exploding
   int	 dest_eclip;		//what eclip to play when exploding
-  fix	 destSize;		//3d size of explosion
+  int	 destSize;		//3d size of explosion
   int	 sound_num;		//what sound this makes
   int	 nSegment,nSide;	//what segP & side, for one-shot clips
 } ECLIP;
 
 typedef struct WCLIP {
-  fix		 play_time;
+  int		 play_time;
   short	 num_frames;
   short	 frames[MAX_CLIP_FRAMES_D2];
   short	 open_sound;
@@ -188,22 +139,9 @@ typedef struct {
   short nObject;
 } SEGMENT;
 
-class CSelection {
-public:
-	CSelection() :
-		nSegment(0),
-		nSide(DEFAULT_SIDE),
-		nLine(DEFAULT_LINE),
-		nPoint(DEFAULT_POINT),
-		nObject(DEFAULT_OBJECT)
-	{}
-
-	short nSegment;
-	short nSide;
-	short nLine;
-	short nPoint;
-	short nObject;
-};
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 struct level_header {
   char name[13];
@@ -216,151 +154,9 @@ struct sub {
   int size;
 };
 
-class CMineFileInfo {
-public:
-	ushort  signature;
-	ushort  version;
-	int   size;
-
-	int Read (CFileManager& fp) {
-		signature = fp.ReadInt16 ();
-		version = fp.ReadInt16 ();
-		size = fp.ReadInt32 ();
-		return 1;
-		}
-
-	void Write (CFileManager& fp) {
-		fp.Write (signature);
-		fp.Write (version);
-		fp.Write (size);
-		}
-};
-
-class CPlayerItemInfo {
-public:
-	int	 offset;
-	int  size;
-
-	CPlayerItemInfo () { offset = -1, size = 0; }
-	int Read (CFileManager& fp) {
-		offset = fp.ReadInt32 ();
-		size  = fp.ReadInt32 ();
-		return 1;
-		}
-
-	void Write (CFileManager& fp) {
-		fp.Write (offset);
-		fp.Write (size);
-		}
-};
-
-class CMineItemInfo {
-public:
-	int	offset;
-	int	count;
-	int	size;
-
-	CMineItemInfo () { Reset (); }
-
-	void Reset (void) { offset = -1, count = size = 0; } 
-
-	int Read (CFileManager& fp) {
-		offset = fp.ReadInt32 ();
-		count = fp.ReadInt32 ();
-		size  = fp.ReadInt32 ();
-		return 1;
-		}
-
-	void Write (CFileManager& fp) {
-		fp.Write (offset);
-		fp.Write (count);
-		fp.Write (size);
-		}
-};
-
-class CGameInfo {
-public:
-	CMineFileInfo		fileInfo;
-	char					mineFilename[15];
-	int					level;
-	CPlayerItemInfo	player;
-	CMineItemInfo		objects;
-	CMineItemInfo		walls;
-	CMineItemInfo		doors;
-	CMineItemInfo		triggers;
-	CMineItemInfo		links;
-	CMineItemInfo		control;
-	CMineItemInfo		botgen;
-	CMineItemInfo		lightDeltaIndices;
-	CMineItemInfo		lightDeltaValues;
-	CMineItemInfo		equipgen;
-
-	int Read (CFileManager& fp) {
-		fileInfo.Read (fp);
-		fp.Read (mineFilename, 1, sizeof (mineFilename));
-		level = fp.ReadInt32 ();
-		player.Read (fp);
-		objects.Read (fp);
-		walls.Read (fp);
-		doors.Read (fp);
-		triggers.Read (fp);
-		links.Read (fp);
-		control.Read (fp);
-		botgen.Read (fp);
-		lightDeltaIndices.Read (fp);
-		lightDeltaValues.Read (fp);
-		if (fileInfo.size > 143)
-			equipgen.Read (fp);
-		return !fp.EoF ();
-		}
-
-	void Write (CFileManager& fp) {
-		fileInfo.Write (fp);
-		fp.Write (mineFilename, 1, sizeof (mineFilename));
-		fp.Write (level);
-		player.Write (fp);
-		objects.Write (fp);
-		walls.Write (fp);
-		doors.Write (fp);
-		triggers.Write (fp);
-		links.Write (fp);
-		control.Write (fp);
-		botgen.Write (fp);
-		lightDeltaIndices.Write (fp);
-		lightDeltaValues.Write (fp);
-		if (fileInfo.size > 143)
-			equipgen.Write (fp);
-		}
-};
-
-
-class CSideKey {
-public:
-	short	m_nSegment;
-	short	m_nSide;
-
-	CSideKey(short nSegment = 0, short nSide = 0) : m_nSegment(nSegment), m_nSide(nSide) {}
-	inline bool operator == (CSideKey& other) { return (m_nSegment == other.m_nSegment) && (m_nSide == other.m_nSide); }
-	inline bool operator != (CSideKey& other) { return (m_nSegment != other.m_nSegment) || (m_nSide != other.m_nSide); }
-	inline bool operator < (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide < other.m_nSide)); }
-	inline bool operator <= (CSideKey& other) { return (m_nSegment < other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide <= other.m_nSide)); }
-	inline bool operator > (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide > other.m_nSide)); }
-	inline bool operator >= (CSideKey& other) { return (m_nSegment > other.m_nSegment) || ((m_nSegment == other.m_nSegment) && (m_nSide >= other.m_nSide)); }
-
-	int Read (CFileManager& fp) {
-		m_nSegment = fp.ReadInt16 ();
-		m_nSide = fp.ReadInt16 ();
-		return 1;
-		}
-	void Write (CFileManager& fp) {
-		fp.Write (m_nSegment);
-		fp.Write (m_nSide);
-		}
-
-	void Clear (void) {
-		m_nSegment = m_nSide = -1;
-		}
-};
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // New stuff, 10/14/95: For shooting out lights and monitors.
 // Light cast upon vert_light vertices in nSegment:nSide by some light
@@ -373,7 +169,7 @@ class CLightDeltaValue : public CSideKey, public CGameItem {
 public:
 	tLightDeltaValue m_info;
 
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
@@ -392,7 +188,7 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 public:
 	tLightDeltaIndex m_info;
 
-	virtual int Read (CFileManager& fp, int version, bool bD2X);
+	virtual void Read (CFileManager& fp, int version, bool bD2X);
 	virtual void Write (CFileManager& fp, int version, bool bD2X);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
@@ -405,44 +201,23 @@ public:
 //extern CLightDeltaValue CLightDeltaValues[MAX_LIGHT_DELTA_VALUES];
 //extern int	     Num_static_lights;
 
-
-typedef struct tRobotMaker {
-	int  objFlags [2]; /* Up to 32 different Descent 1 robots */
-	//  int  robot_flags2;// Additional 32 robots for Descent 2
-	fix    hitPoints;  /* How hard it is to destroy this particular matcen */
-	fix    interval;    /* Interval between materializations */
-	short  nSegment;      /* Segment this is attached to. */
-	short  nFuelCen; /* Index in fuelcen array. */
-} tRobotMaker;
-
-class CRobotMaker : public CGameItem {
-public:
-	tRobotMaker	m_info;
-
-	int Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-	virtual CGameItem* Next (void) { return this + 1; }
-};
-
-
 typedef struct tFlickeringLight {
 	uint mask;    // bits with 1 = on, 0 = off
-	fix timer;		 // always set to 0
-	fix delay;      // time for each bit in mask (int seconds)
+	int timer;		 // always set to 0
+	int delay;      // time for each bit in mask (int seconds)
 } tFlickeringLight;
 
 class CFlickeringLight : public CSideKey {
 public:
 	tFlickeringLight m_info;
 
-	int Read (CFileManager& fp) {
+	void Read (CFileManager& fp) {
 		CSideKey::Read (fp);
 		m_info.mask = fp.ReadInt32 ();
-		m_info.timer = fp.ReadFix ();
-		m_info.delay = fp.ReadFix ();
-		return 1;
+		m_info.timer = fp.ReadInt32 ();
+		m_info.delay = fp.ReadInt32 ();
 		}
+
 	void Write (CFileManager& fp) {
 		CSideKey::Write (fp);
 		fp.Write (m_info.mask);

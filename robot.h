@@ -59,11 +59,11 @@ typedef struct tRobotSoundInfo {
 
 typedef struct tRobotCombatInfo {
 public:
-	fix			fieldOfView;		// compare this value with forward_vector.dot.vector_to_player, if fieldOfView <, then robot can see player
-	fix			firingWait [2];	// time in seconds between shots
-	fix			turnTime;			// time in seconds to rotate 360 degrees in a dimension
-	fix			maxSpeed;			// maximum speed attainable by this robot
-	fix			circleDistance;	// distance at which robot circles player
+	int			fieldOfView;		// compare this value with forward_vector.dot.vector_to_player, if fieldOfView <, then robot can see player
+	int			firingWait [2];	// time in seconds between shots
+	int			turnTime;			// time in seconds to rotate 360 degrees in a dimension
+	int			maxSpeed;			// maximum speed attainable by this robot
+	int			circleDistance;	// distance at which robot circles player
 	char			rapidFire;			// number of shots fired rapidly
 	char			evadeSpeed;			// rate at which robot can evade shots, 0=none, 4=very fast
 
@@ -82,10 +82,10 @@ typedef struct tRobotInfo {
 	short						scoreValue;			// Score from this robot.
 	char						badass;				// Dies with badass explosion, and strength thereof, 0 means NO.
 	char						drainEnergy;		// Points of energy drained at each collision.
-	fix						lighting;			// should this be here or with polygon model?
-	fix						strength;			// Initial shields of robot
-	fix						mass;					// how heavy is this thing?
-	fix						drag;					// how much drag does it have?
+	int						lighting;			// should this be here or with polygon model?
+	int						strength;			// Initial shields of robot
+	int						mass;					// how heavy is this thing?
+	int						drag;					// how much drag does it have?
 	tRobotCombatInfo		combat [NDL];
 	char						cloakType;			// 0=never, 1=always, 2=except-when-firing
 	char						attackType;			// 0=firing, 1=charge (like green guy)
@@ -119,7 +119,7 @@ class CRobotInfo : public CGameItem {
 		tRobotInfo	m_info;
 
 	virtual CGameItem* Next (void) { return this + 1; }
-	virtual int Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };

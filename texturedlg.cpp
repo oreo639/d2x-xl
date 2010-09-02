@@ -375,7 +375,7 @@ for (i = 0; i < nTextures; i++) {
 
 bool CTextureTool::SideHasLight (void)
 {
-if (!theMine) return false;
+if ((theMine == null)) return false;
 
 if	((theMine->IsLight (theMine->CurrSide ()->m_info.nBaseTex) != -1) ||
 	 (((theMine->CurrSide ()->m_info.nOvlTex & 0x3fff) != 0) &&
@@ -411,7 +411,7 @@ else {
 
 void CTextureTool::OnPaint ()
 {
-if (!theMine) 
+if ((theMine == null)) 
 	return;
 CTexToolDlg::OnPaint ();
 #if TEXTOOLDLG == 0
@@ -946,7 +946,7 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false,
-					bAll = !theMine->GotMarkedSides ();
+					bAll = (theMine == null)->GotMarkedSides ();
 
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
@@ -990,7 +990,7 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false,
-					bAll = !theMine->GotMarkedSides ();
+					bAll = (theMine == null)->GotMarkedSides ();
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
