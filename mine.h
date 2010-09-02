@@ -402,7 +402,7 @@ public:
 	bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
 	void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
 	int FindDeltaLight (short nSegment, short nSide, short *pi = null);
-	byte LightWeight(short nBaseTex);
+	byte LightWeight (short nBaseTex);
 	short GetFlickeringLight (short nSegment = -1, short nSide = -1);
 	short AddFlickeringLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
 	bool DeleteFlickeringLight (short nSegment = -1, short nSide = -1);

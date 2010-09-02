@@ -459,10 +459,9 @@ else {
 		}
 	else {
 		// use current side's trigger
-		ushort nWall = theMine->FindTriggerWall (&nTrigger);
 		m_nTrigger = (nTrigger == NO_TRIGGER) ? -1 : nTrigger;
 		// if found, proceed
-		if ((m_nTrigger == -1) || (nWall >= theMine->MineInfo ().walls.count))
+		if ((m_nTrigger == -1) || (wallManager.FindByTrigger (m_nTrigger) == null))
 			return false;
 		}
 	}

@@ -43,7 +43,6 @@ public:
 typedef struct tTrigger {
 	byte		type;
 	ushort	flags;
-	short		nObject;
 	int		value;
 	int		time;
 	ushort	nIndex;

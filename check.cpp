@@ -1006,9 +1006,8 @@ short trigSeg, trigSide;
 trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	nWall = theMine->FindTriggerWall (nTrigger);
-	if (nWall < wallCount) {
-		wallP = theMine->Walls (nWall);
+	wallP = wallManager.FindByTrigger (nTrigger);
+	if (wallP != null) {
 		trigSeg = wallP->m_nSegment;
 		trigSide = wallP->m_nSide;
 		}
@@ -1149,9 +1148,8 @@ count = 0;
 trigP = theMine->Triggers (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	nWall = theMine->FindTriggerWall (nTrigger);
-	if (nWall < wallCount) {
-		wallP = theMine->Walls (nWall);
+	wallP = wallManager.FindByTrigger (nTrigger);
+	if (nWall != null) {
 		trigSeg = wallP->m_nSegment;
 		trigSide = wallP->m_nSide;
 		}

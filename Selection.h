@@ -29,6 +29,7 @@ public:
 	Segment (void);
 	Side (void);
 	Wall (void);
+	Object (void);
 };
 
 extern CSelection current, other;

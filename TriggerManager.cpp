@@ -198,13 +198,11 @@ AutoLinkExitToReactor();
 // Mine - DeleteTrigger
 //------------------------------------------------------------------------
 
-void CTriggerManager::DeleteTarget (CSideKey key) 
+void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
-for (int h = 0; h < 2; h++) {
-	CTrigger* trigP = m_triggers [h];
-	for (int i = 0; i < m_nTriggers [h]; i++, trigP++)
-		trigP->Delete (key);
-	}
+CTrigger* trigP = m_triggers [nClass];
+for (int i = 0; i < m_nTriggers [nClass]; i++, trigP++)
+	trigP->Delete (key);
 }
 
 //------------------------------------------------------------------------
@@ -226,38 +224,11 @@ nTrigger = NO_TRIGGER;
 return MineInfo ().walls.count;
 }
 
-//------------------------------------------------------------------------
-
-short CTriggerManager::FindTriggerWall (short nTrigger)
-{
-CWall *wallP = Walls (0);
-int nWall;
-for (nWall = MineInfo ().walls.count; nWall; nWall--, wallP++)
-	if (wallP->m_info.nTrigger == nTrigger)
-		return short (wallP - Walls (0));
-return MineInfo ().walls.count;
-}
-
-//------------------------------------------------------------------------
-
-short CTriggerManager::FindTriggerObject (short& nTrigger)
-{
-	short nObject = Current ()->nObject;
-
-for (int i = 0; i < NumObjTriggers (); i++)
-	if (ObjTriggers (i)->m_info.nObject == nObject) {
-		nTrigger = i;
-		return nObject;
-		}
-nTrigger = NO_TRIGGER;
-return -1;
-}
-
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Mine - FindTrigger
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide)
+short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide, short nClass = 0)
 {
 	CTrigger *trigP = Triggers (0);
 	CSideKey key = CSideKey (nSegment, nSide);
@@ -269,13 +240,13 @@ for (i = nTrigger; i < MineInfo ().triggers.count; i++, trigP++)
 return -1;
 }
 
-//------------------------------------------------------------------------
-// AutoLinkExitToReactor()
+//------------------------------------------------------------------------------
+// LinkExitToReactor()
 //
 // Action - Updates control center Triggers () so that exit door opens
 //          when the reactor blows up.  Removes any invalid cube/sides
 //          from reactorTriggers if they exist.
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CTriggerManager::LinkExitToReactor (void) 
 {
@@ -285,7 +256,7 @@ void CTriggerManager::LinkExitToReactor (void)
   char 		nTrigger;
   bool 		found;
 
-  CReacto1rTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
+  CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
 DLE.SetModified (TRUE);
 DLE.LockUndo ();
@@ -308,20 +279,26 @@ for (nWall = 0; nWall < wallManager.Count (); nWall++) {
 DLE.UnlockUndo ();
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 CTrigger *CTriggerManager::AddObjTrigger (short nObject, short type) 
 {
-if (nObject < 0)
-	nObject = Current ()->nObject;
-if ((Objects (nObject)->m_info.type != OBJ_ROBOT) && 
-	 (Objects (nObject)->m_info.type != OBJ_CAMBOT) &&
-	 (Objects (nObject)->m_info.type != OBJ_POWERUP) &&
-	 (Objects (nObject)->m_info.type != OBJ_HOSTAGE) &&
-	 (Objects (nObject)->m_info.type != OBJ_CNTRLCEN)) {
+	CObject* objP = (nObject < 0) ? current.Object () : objectManager.GetObject (nObject);
+
+if (objP == null) {
+	ErrorMsg ("Couldn't find object to attach triggers to.");
+	return null;
+	}
+
+if (objP->m_info.type != OBJ_ROBOT) && 
+	 objP->m_info.type != OBJ_CAMBOT) &&
+	 objP->m_info.type != OBJ_POWERUP) &&
+	 objP->m_info.type != OBJ_HOSTAGE) &&
+	 objP->m_info.type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return null;
 	}
+
 if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return null;
@@ -342,62 +319,50 @@ return ObjTriggers (nTrigger);
 
 //------------------------------------------------------------------------
 
-bool CTriggerManager::ObjTriggerIsInList (short nTrigger)
-{
-return true;
-}
-
-//------------------------------------------------------------------------
-
 void CTriggerManager::DeleteObjTrigger (short nTrigger) 
 {
 if ((nTrigger < 0) || (nTrigger >= NumObjTriggers ()))
 	return;
-if (nTrigger < --NumObjTriggers ())
-	*ObjTriggers (nTrigger) = *ObjTriggers (NumObjTriggers ());
+if (nTrigger < NumObjTriggers () - 1)
+	*ObjTriggers (nTrigger) = *ObjTriggers (NumObjTriggers () - 1);
 }
 
 //------------------------------------------------------------------------
 
-void CTriggerManager::DeleteObjTriggers (short objnum) 
+void CTriggerManager::DeleteObjTriggers (short nObject) 
 {
 	short i = NumObjTriggers ();
 	
 while (i)
-	if (ObjTriggers (--i)->m_info.nObject == objnum)
+	if (ObjTriggers (--i)->m_info.nObject == nObject)
 		DeleteObjTrigger (i);
 }
 
 //------------------------------------------------------------------------
 
-short CTriggerManager::FindObjTriggerTarget (short nTrigger, short nSegment, short nSide)
+short CTriggerManager::FindObjTarget (short nTrigger, short nSegment, short nSide)
 {
-CTrigger *trigP = ObjTriggers (0);
-CSideKey key = CSideKey (nSegment, nSide);
-int i, j;
-
-for (i = nTrigger; i < NumObjTriggers (); i++, trigP++)
-	for (j = 0; j < trigP->m_count; j++)
-		if (-1 < (i = trigP->Find (key)))
-			return i;
-return -1;
+return FindTarget (nTrigger, nSegment, nSide, 1);
 }
+
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 
 void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide) 
 {
+CSideKey key (nSegment, nSide);
 int i;
 
 for (i = 0; nTriggers; i++)
-	if (DeleteTriggerTarget (Triggers (i), nSegment, nSide))
+	if (Triggers (i)->Delete (key))
 		i--;
 
 for (i = 0; i < NumObjTriggers (); i++)
-	if (DeleteTriggerTarget (ObjTriggers (i), nSegment, nSide, false)) {
+	if (ObjTriggers (i)->Delete (key) == 0) { // no targets left
 		DeleteObjTrigger (i);
 		i--;
 		}
 }
 
+// -----------------------------------------------------------------------------
