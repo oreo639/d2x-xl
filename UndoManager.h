@@ -25,8 +25,8 @@ class CUndoManager
 		int			m_enabled;
 		int			m_nModified;
 
-		CUndoList (int maxSize = 100);
-		~CUndoList ();
+		CUndoManager (int maxSize = 100);
+		~CUndoManager ();
 		bool Update (bool bForce = false);
 		bool Undo ();
 		bool Redo ();

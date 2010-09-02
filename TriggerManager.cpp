@@ -149,7 +149,7 @@ if (IsD1File ()) {
 else
 	flags = 0;
 
-short nTrigger = Count ()++;
+short nTrigger = Count (0)++;
 CTrigger* trigP = Triggers (nTrigger);
 // set new trigger data
 trigP->Setup (type, flags);
@@ -175,7 +175,7 @@ if (nDelTrigger < 0) {
 	CWall* wallP = current.Wall ();
 	if (wallP == null)
 		return;
-	nDelTrigger = Walls (nWall)->m_info.nDelTrigger;
+	nDelTrigger = wallP->m_info.nTrigger;
 	}
 
 CTrigger* delTrigP = Triggers (nDelTrigger, 0);
