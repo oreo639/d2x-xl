@@ -61,6 +61,19 @@ class CTriggerManager {
 
 		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey key (nSegment, nSide)); }
 
+		void Delete (short nDelTrigger, int nClass = 0);
+
+		bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
+		bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
+		bool AddOpenDoor (void); 
+		bool AddRobotMaker (void); 
+		bool AddShield (void); 
+		bool AddEnergy (void); 
+		bool AddUnlock (void); 
+		bool AddExit (short type); 
+		bool AddNormalExit (void); 
+		bool AddSecretExit (void); 
+
 	private:
 		int CmpObjTriggers (CTrigger *pi, CTrigger *pm);
 		void SortObjTriggers (short left, short right);

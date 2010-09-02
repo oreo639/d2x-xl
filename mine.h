@@ -394,7 +394,7 @@ public:
 	CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
 	//double CalcLength (CFixVector* center1, CFixVector* center2);
 
-	int IsLight(int nBaseTex);
+	int IsLight (int nBaseTex);
 	int IsWall (short nSegment = -1, short nSide = -1);
 	bool IsLava (int nBaseTex);
 	bool IsBlastableLight (int nBaseTex);
@@ -452,31 +452,7 @@ public:
 	//void SetUV (short segment, short side, short x, short y, double angle);
 	void LoadSideTextures (short segNum, short sideNum);
 
-	CWall *AddWall (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture);
-	CWall *GetWall (short nSegment = -1, short nSide = -1);
-	void DeleteWall (ushort nWall = -1);
-	CWall *FindWall (short nSegment = -1, short nSide = -1);
-	void DefineWall (short nSegment, short nSide, ushort nWall,
-						  byte type, char nClip, short nTexture,
-						  bool bRedefine);
-	void SetWallTextures (ushort nWall, short nTexture = 0);
 	// trigger stuff
-	void InitTrigger (CTrigger  * t,  short type, short flags);
-	CTrigger *AddTrigger (ushort nWall, short type, BOOL bAutoAddWall = FALSE);
-	void DeleteTrigger (short nTrigger = -1);
-	bool DeleteTriggerTarget (CTrigger *trigger, short nSegment, short nSide, bool bAutoDeleteTrigger = true);
-	void DeleteTriggerTargets (short nSegment, short nSide);
-	int DeleteTargetFromTrigger (CTrigger *trigger, short linknum, bool bAutoDeleteTrigger = true);
-	int DeleteTargetFromTrigger (short nTrigger, short linknum, bool bAutoDeleteTrigger = true);
-	short FindTriggerWall (short *nTrigger, short nSegment = -1, short nSide = -1);
-	short FindTriggerWall (short nTrigger);
-	short FindTriggerObject (short *nTrigger);
-	short FindTriggerTarget (short nTrigger, short nSegment, short nSide);
-	CTrigger *AddObjTrigger (short objnum, short type);
-	bool ObjTriggerIsInList (short nTrigger);
-	void DeleteObjTrigger (short objnum);
-	void DeleteObjTriggers (short objnum);
-	short FindObjTriggerTarget (short nTrigger, short nSegment, short nSide);
 	short FindObjBySig (short nSignature);
 
 	void DrawObject (CWnd *pWnd, int type, int id);
@@ -496,36 +472,6 @@ public:
 	bool DefineSegment (short nSegment, byte type, short nTexture, short walltype = -1);
 	void UndefineSegment (short nSegment);
 	bool GetTriggerResources (ushort& nWall);
-	bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
-	bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
-	bool AddOpenDoorTrigger(); 
-	bool AddRobotMakerTrigger (); 
-	bool AddShieldTrigger(); 
-	bool AddEnergyTrigger(); 
-	bool AddUnlockTrigger(); 
-	bool AddExit (short type); 
-	bool AddNormalExit(); 
-	bool AddSecretExit(); 
-	bool AddDoor (byte type, byte flags, byte keys, char nClip, short nTexture); 
-	bool AddAutoDoor (char nClip = -1, short nTexture = -1); 
-	bool AddPrisonDoor (); 
-	bool AddGuideBotDoor(); 
-	bool AddFuelCell (); 
-	bool AddIllusionaryWall (); 
-	bool AddForceField (); 
-	bool AddFan ();
-	bool AddWaterFall ();
-	bool AddLavaFall(); 
-	bool AddGrate(); 
-	bool AddReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
-	bool AddGoalCube (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
-	bool AddTeamCube (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
-	bool AddSpeedBoostCube (short nSegment, bool bCreate);
-	bool AddSkyboxCube (short nSegment, bool bCreate);
-	void AutoLinkExitToReactor ();
 	int FuelCenterCount (void);
 	inline int& RobotMakerCount (void) 
 		{ return MineInfo ().botgen.count; }
@@ -537,28 +483,6 @@ public:
 		{ return MineInfo ().triggers.count; }
 	inline int& ObjectCount (void) 
 		{ return MineInfo ().objects.count; }
-
-	inline CSegment *other.Segment (void)
-		{ return Segments (Other ()->nSegment); }
-
-	inline CSide *other.Side (void)
-		{ return other.Segment ()->m_sides + Other ()->nSide; }
-
-	inline void SetCurrent (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1) {
-		if (nSegment >= 0) 
-			Current ()->nSegment = nSegment;
-		if (nSide >= 0) 
-			Current ()->nSide = nSide;
-		if (nLine >= 0) 
-			Current ()->nLine = nLine;
-		if (nPoint >= 0) 
-			Current ()->nPoint = nPoint;
-		}
-
-	inline void current.Get (short &nSegment, short& nSide) {
-		if (nSegment < 0) nSegment = Current ()->nSegment;
-		if (nSide < 0) nSide = Current ()->nSide;
-		}
 
 	void InitRobotData();
 	int WriteHxmFile (CFileManager& fp);
@@ -602,7 +526,6 @@ public:
 	void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
 
 private:
-	int FindClip (CWall *wallP, short nTexture);
 	short CreateNewLevel ();
 	void DefineVertices(short new_verts[4]);
 	void UnlinkChild(short parent_segnum,short nSide);
@@ -626,10 +549,6 @@ private:
 	short SaveGameData(CFileManager& savefile);
 	void ClearMineData();
 	void UpdateDeltaLights ();
-	void SetSegmentChildNum(CSegment *pRoot, short nSegment,short recursion_level);
-	void SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion_level, short* visited);
-	void UnlinkSeg (CSegment *pSegment, CSegment *pRoot);
-	void LinkSeg (CSegment *pSegment, CSegment *pRoot);
 	void SortDLIndex (int left, int right);
 	};
 
