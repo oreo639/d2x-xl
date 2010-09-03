@@ -66,15 +66,15 @@ if (h > 1) {
 
 void CTriggerManager::RenumberObjTriggers (void)
 {
-	CTrigger*	trigP = ObjTriggers (0);
+	CTrigger*	trigP = GetObjTrigger (0);
 	int			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
 	trigP->m_info.nObject = objectManager.Index (objectManager.FindBySig (trigP->m_info.nObject));
 i = NumObjTriggers ();
 while (i) {
-	if (ObjTriggers (--i)->m_info.nObject < 0)
-		DeleteObjTrigger (i);
+	if (GetObjTrigger (--i)->m_info.nObject < 0)
+		DeleteFromObject (i);
 	}
 SortObjTriggers ();
 }
@@ -85,7 +85,7 @@ void CTriggerManager::RenumberTargetObjs (void)
 {
 	CTrigger* trigP = GetTrigger (0);
 
-for (int i = Count (); i; i--, trigP++) {
+for (int i = NumObjTriggers (); i; i--, trigP++) {
 	CSideKey* targetP = trigP->m_targets;
 	for (int j = 0; j < trigP->m_count; ) {
 		if (targetP->m_nSide >= 0) 
@@ -267,15 +267,16 @@ return wallManager.Count ();
 // Mine - FindTrigger
 //------------------------------------------------------------------------------------
 
-CTrigger* CTriggerManager::FindByTarget (short nSegment, short nSide, short nTrigger)
+CTrigger* CTriggerManager::FindByTarget (short nSegment, short nSide, short i)
 {
-	CTrigger *trigP = GetTrigger (nTrigger);
+	CTrigger *trigP = GetTrigger (i);
 	CSideKey key = CSideKey (nSegment, nSide);
-	int i, j;
 
-for (i = nTrigger; i < m_nCount [0]; i++, trigP++)
-	if (-1 < (j = trigP->Find (key)))
+for (; i < m_nCount [0]; i++, trigP++) {
+	int j = trigP->Find (key);
+	if (j >= 0)
 		return trigP;
+	}
 return null;
 }
 
@@ -357,8 +358,8 @@ void CTriggerManager::DeleteFromObject (short nDelTrigger)
 {
 if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
-if (nDelTrigger < --m_nCount [1])
-	m_triggers [1][nDelTrigger] = m_triggers [1][m_nCount [1]];
+if (nDelTrigger < --NumObjTriggers ())
+	*GetObjTrigger (nDelTrigger) = *GetObjTrigger (NumObjTriggers ());
 }
 
 //------------------------------------------------------------------------------
@@ -370,13 +371,6 @@ void CTriggerManager::DeleteObjTriggers (short nObject)
 while (i)
 	if (GetObjTrigger (--i)->m_info.nObject == nObject)
 		DeleteFromObject (i);
-}
-
-//------------------------------------------------------------------------------
-
-short CTriggerManager::FindObjTarget (short nTrigger, short nSegment, short nSide)
-{
-return FindTarget (nTrigger, nSegment, nSide, 1);
 }
 
 // -----------------------------------------------------------------------------
@@ -397,7 +391,7 @@ for (i = NumObjTriggers (); i > 0; )
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Read (CFileManager& fp, CTriggerManagerItemInfo& info, int nFileVersion)
+void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
 if (info.offset < 0)
 	return;
@@ -431,13 +425,13 @@ if (bObjTriggersOk && NumObjTriggers ())
 	SortObjTriggers ();
 else {
 	NumObjTriggers () = 0;
-	CLEAR (ObjTriggers ());
+	Clear (1);
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Write (CFileManager& fp, CTriggerManagerItemInfo& info, int nFileVersion)
+void CTriggerManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
 info.count = Count (0);
 if (Count (0) + Count (1) == 0)
@@ -465,18 +459,25 @@ else {
 
 // ----------------------------------------------------------------------------- 
 
-void Clear (void)
+void CTriggerManager::Clear (int nType)
 {
-for (int = 0; i < Count (); i++)
-	m_triggers [i].Clear ();
+for (int i = 0; i < Count (nType); i++)
+	m_triggers [nType][i].Clear ();
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CTriggerManager::HaveResources (ushort& nWall)
+void CTriggerManager::Clear (void)
 {
-nWall = current.Side ()->m_info.nWall;
-if (nWall < MineInfo ().walls.count) {
+Clear (0);
+Clear (1);
+}
+
+// ----------------------------------------------------------------------------- 
+
+bool CTriggerManager::HaveResources (void)
+{
+if (current.Wall () != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
@@ -484,7 +485,7 @@ if (wallManager.Count () >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
-if (Count () >= MAX_TRIGGERS - 1) {
+if (Count (0) >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}
@@ -500,17 +501,16 @@ return true;
 
 bool CTriggerManager::AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType) 
 {
-ushort nWall;
-if (!GetTriggerResources (nWall))
+if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (wallManager.Add (current.m_nSegment, current.m_nSide, (byte) wallType, wallFlags, KEY_NONE, -1, -1) &&
-	 triggerManager.AddToWall (wallManager.Count () - 1, triggerType)) {
-	Triggers (Count () - 1)->Add (other.m_nSegment, other.m_nSide);
+	 AddToWall (wallManager.Count (0) - 1, triggerType, false)) {
+	GetTrigger (Count (0) - 1)->Add (other.m_nSegment, other.m_nSide);
 	undoManager.Unlock ();
-	DLE.MineView ()->Refresh ();
+	//DLE.MineView ()->Refresh ();
 	return true;
 	}
 undoManager.ResetModified (bUndo);

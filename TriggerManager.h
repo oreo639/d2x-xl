@@ -32,7 +32,7 @@ typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 #endif
 
 class CTriggerManager {
-	public:
+	private:
 		triggerList				m_triggers [2];
 		reactorTriggerList	m_reactorTriggers;
 		short						m_nCount [2];
@@ -62,6 +62,7 @@ class CTriggerManager {
 		void SortObjTriggers (void);
 
 		void RenumberObjTriggers (void);
+
 		void RenumberTargetObjs (void);
 
 		void DeleteTarget (CSideKey key);
@@ -97,8 +98,8 @@ class CTriggerManager {
 		bool AddSecretExit (void); 
 
 		short FindBySide (short& nTrigger, short nSegment, short nSide);
-		CTrigger* FindByTarget (short nSegment, short nSide, short nTrigger = 0);
-		short FindObjTarget (short nTrigger, short nSegment, short nSide);
+
+		CTrigger* FindByTarget (short nSegment, short nSide, short i = 0);
 
 		void UpdateReactor (void);
 
@@ -114,7 +115,8 @@ class CTriggerManager {
 		void DeleteFromWall (short nDelTrigger);
 		void DeleteFromObject (short nDelTrigger);
 		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
-
+		bool HaveResources (void);
+		void Clear (int nType);
 };
 
 extern CTriggerManager triggerManager;

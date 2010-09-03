@@ -482,7 +482,7 @@ fLightScale = 1.0; ///= 100.0;
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-				CTrigger* trigP = triggerManager.FindTarget (nSourceSeg, nSourceSide);
+				CTrigger* trigP = triggerManager.FindByTarget (nSourceSeg, nSourceSide);
 				if ((trigP != null) && (trigP->m_info.type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}

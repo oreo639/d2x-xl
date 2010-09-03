@@ -30,21 +30,25 @@ class CObjectManager {
 
 		inline short& Count () { return m_nCount; }
 
-		short FindBySeg (short nSegment, short i = 0);
-		short FindBySig (short nSignature);
+		CGameObject* FindBySeg (short nSegment, short i = 0);
+
+		CGameObject* FindBySig (short nSignature);
+
 		CGameObject* FindRobot (short nId, short i = 0);
-		void InitRobotData (void);
-		int ReadHxmFile (CFileManager& fp, long fSize);
-		int WriteHxmFile (CFileManager& fp);
+
 		void Sort (short left, short right);
+
 		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - &m_objects [0]; }
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+
 		void Clear (void);
 
 	private:
 		int Compare (CGameObject& pi, CGameObject& pm);
+
 		void Sort (void);
 };
 
