@@ -5,7 +5,7 @@
 
 #include "types.h"
 #include "segment.h"
-#include "object.h"
+#include "GameObject.h"
 
 extern int m_changesMade;
 extern bool bExpertMode;

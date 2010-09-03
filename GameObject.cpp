@@ -58,300 +58,140 @@ return;
 // 	    size, and shields (also nModel & texture if robot)
 //------------------------------------------------------------------------
 
-void CGameObject::SetupData (char type) 
+void CGameObject::Setup (char type) 
 {
   int  id;
 
 undoManager.SetModified (true);
 undoManager.Lock ();
-objP = Objects (current.m_nObject);
-id = objP->m_info.id;
-memset (&objP->mType, 0, sizeof (objP->mType));
-memset (&objP->cType, 0, sizeof (objP->cType));
-memset (&objP->rType, 0, sizeof (objP->rType));
+id = m_info.id;
+memset (&mType, 0, sizeof (mType));
+memset (&cType, 0, sizeof (cType));
+memset (&rType, 0, sizeof (rType));
 switch (type) {
 	case OBJ_ROBOT: // an evil enemy
-	  objP->m_info.controlType  = CT_AI;
-	  objP->m_info.movementType = MT_PHYSICS;
-	  objP->m_info.renderType   = RT_POLYOBJ;
-	  objP->m_info.size          = robotSize[id];
-	  objP->m_info.shields       = robot_shield[id];
-	  objP->rType.polyModelInfo.nModel = robotClip[id];
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
-	  objP->cType.aiInfo.behavior = AIB_NORMAL;
-	  break;
+		m_info.controlType = CT_AI;
+		m_info.movementType = MT_PHYSICS;
+		m_info.renderType = RT_POLYOBJ;
+		m_info.size = robotSize[id];
+		m_info.shields = robot_shield[id];
+		rType.polyModelInfo.nModel = robotClip[id];
+		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		cType.aiInfo.behavior = AIB_NORMAL;
+		break;
 
-	case OBJ_HOSTAGE  : // a hostage you need to rescue
-	  objP->m_info.controlType = CT_POWERUP;
-	  objP->m_info.movementType = MT_NONE;
-	  objP->m_info.renderType   = RT_HOSTAGE;
-	  objP->rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
-	  objP->m_info.size          = PLAYER_SIZE;
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  break;
+	case OBJ_HOSTAGE: // a hostage you need to rescue
+		m_info.controlType = CT_POWERUP;
+		m_info.movementType = MT_NONE;
+		m_info.renderType = RT_HOSTAGE;
+		rType.vClipInfo.vclip_num = HOSTAGE_CLIP_NUMBER;
+		m_info.size = PLAYER_SIZE;
+		m_info.shields = DEFAULT_SHIELD;
+		break;
 
-	case OBJ_PLAYER   : // the player on the console
-	  if (objP->m_info.id == 0) {
-		objP->m_info.controlType = CT_NONE; /* player 0 only */
-	  } else {
-		objP->m_info.controlType = CT_SLEW; /* all other players */
-	  }
-	  objP->m_info.movementType = MT_PHYSICS;
-	  objP->m_info.renderType   = RT_POLYOBJ;
-	  objP->m_info.size          = PLAYER_SIZE;
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
-	  break;
+	case OBJ_PLAYER: // the player on the console
+		m_info.controlType = (m_info.id == 0) ? CT_NONE : CT_SLEW; /* player 0 only */
+		m_info.movementType = MT_PHYSICS;
+		m_info.renderType = RT_POLYOBJ;
+		m_info.size = PLAYER_SIZE;
+		m_info.shields = DEFAULT_SHIELD;
+		rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
+		rType.polyModelInfo.tmap_override = -1; // set texture to normal
+		break;
 
-	case OBJ_WEAPON   : // a poly-type weapon
-	  objP->m_info.controlType  = CT_WEAPON;
-	  objP->m_info.movementType = MT_PHYSICS;
-	  objP->m_info.renderType   = RT_POLYOBJ;
-	  objP->m_info.size          = WEAPON_SIZE;
-	  objP->m_info.shields       = WEAPON_SHIELD;
-	  objP->rType.polyModelInfo.nModel = MINE_CLIP_NUMBER;
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to normal
-	  objP->mType.physInfo.mass      = 65536L;
-	  objP->mType.physInfo.drag      = 2162;
-	  objP->mType.physInfo.rotvel.x  = 0;
-	  objP->mType.physInfo.rotvel.y  = 46482L;  // don't know exactly what to put here
-	  objP->mType.physInfo.rotvel.z  = 0;
-	  objP->mType.physInfo.flags     = 260;
-	  objP->cType.laserInfo.parent_type      = 5;
-	  objP->cType.laserInfo.parent_num       = 146; // don't know exactly what to put here
-	  objP->cType.laserInfo.parent_signature = 146; // don't know exactly what to put here
-	  break;
+	case OBJ_WEAPON: // a poly-type weapon
+		m_info.controlType = CT_WEAPON;
+		m_info.movementType = MT_PHYSICS;
+		m_info.renderType = RT_POLYOBJ;
+		m_info.size = WEAPON_SIZE;
+		m_info.shields = WEAPON_SHIELD;
+		rType.polyModelInfo.nModel = MINE_CLIP_NUMBER;
+		rType.polyModelInfo.tmap_override = -1; // set texture to normal
+		mType.physInfo.mass = 65536L;
+		mType.physInfo.drag = 2162;
+		mType.physInfo.rotvel.x = 0;
+		mType.physInfo.rotvel.y = 46482L;  // don't know exactly what to put here
+		mType.physInfo.rotvel.z = 0;
+		mType.physInfo.flags = 260;
+		cType.laserInfo.parent_type = 5;
+		cType.laserInfo.parent_num = 146; // don't know exactly what to put here
+		cType.laserInfo.parent_signature = 146; // don't know exactly what to put here
+		break;
 
-	case OBJ_POWERUP  : // a powerup you can pick up
-	  objP->m_info.controlType  = CT_POWERUP;
-	  objP->m_info.movementType = MT_NONE;
-	  objP->m_info.renderType   = RT_POWERUP;
-	  objP->rType.vClipInfo.vclip_num = powerupClip[id];
-	  objP->m_info.size          = powerupSize[id];
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  break;
+	case OBJ_POWERUP: // a powerup you can pick up
+		m_info.controlType = CT_POWERUP;
+		m_info.movementType = MT_NONE;
+		m_info.renderType = RT_POWERUP;
+		rType.vClipInfo.vclip_num = powerupClip[id];
+		m_info.size = powerupSize[id];
+		m_info.shields = DEFAULT_SHIELD;
+		break;
 
-	case OBJ_CNTRLCEN : // the reactor
-	  objP->m_info.controlType = CT_CNTRLCEN;
-	  objP->m_info.movementType = MT_NONE;
-	  objP->m_info.renderType   = RT_POLYOBJ;
-	  objP->m_info.size          = REACTOR_SIZE;
-	  objP->m_info.shields       = REACTOR_SHIELD;
-	  if (IsD1File ())
-			objP->rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
-	  else {
-		int model;
-		switch (id) {
-		  case 1:  model = 95;  break;
-		  case 2:  model = 97;  break;
-		  case 3:  model = 99;  break;
-		  case 4:  model = 101; break;
-		  case 5:  model = 103; break;
-		  case 6:  model = 105; break;
-		  default: model = 97;  break; // level 1's reactor
-		}
-		objP->rType.polyModelInfo.nModel = model;
-	  }
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
-	  break;
+	case OBJ_CNTRLCEN: // the reactor
+		m_info.controlType = CT_CNTRLCEN;
+		m_info.movementType = MT_NONE;
+		m_info.renderType = RT_POLYOBJ;
+		m_info.size = REACTOR_SIZE;
+		m_info.shields = REACTOR_SHIELD;
+		if (theMine->IsD1File ())
+			rType.polyModelInfo.nModel = REACTOR_CLIP_NUMBER;
+		else {
+			int model;
+			switch (id) {
+				case 1:  model = 95;  break;
+				case 2:  model = 97;  break;
+				case 3:  model = 99;  break;
+				case 4:  model = 101; break;
+				case 5:  model = 103; break;
+				case 6:  model = 105; break;
+				default: model = 97;  break; // level 1's reactor
+				}
+			rType.polyModelInfo.nModel = model;
+			}
+		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		break;
 
-	case OBJ_COOP     : // a cooperative player object
-	  objP->m_info.controlType = CT_NONE;
-	  objP->m_info.movementType = MT_PHYSICS;
-	  objP->m_info.renderType   = RT_POLYOBJ;
-	  objP->m_info.size          = PLAYER_SIZE;
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.nModel = COOP_CLIP_NUMBER;
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
-	  break;
+	case OBJ_COOP: // a cooperative player object
+		m_info.controlType = CT_NONE;
+		m_info.movementType = MT_PHYSICS;
+		m_info.renderType = RT_POLYOBJ;
+		m_info.size = PLAYER_SIZE;
+		m_info.shields = DEFAULT_SHIELD;
+		rType.polyModelInfo.nModel = COOP_CLIP_NUMBER;
+		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		break;
 
 	case OBJ_CAMBOT:
 	case OBJ_SMOKE:
 	case OBJ_MONSTERBALL:
-	  objP->m_info.controlType  = CT_AI;
-	  objP->m_info.movementType = MT_NONE;
-	  objP->m_info.renderType   = RT_POLYOBJ;
-	  objP->m_info.size          = robotSize[0];
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.polyModelInfo.nModel = robotClip [0];
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
-	  objP->cType.aiInfo.behavior = AIB_STILL;
-	  break;
+		m_info.controlType = CT_AI;
+		m_info.movementType = MT_NONE;
+		m_info.renderType = RT_POLYOBJ;
+		m_info.size = robotSize[0];
+		m_info.shields = DEFAULT_SHIELD;
+		rType.polyModelInfo.nModel = robotClip [0];
+		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		cType.aiInfo.behavior = AIB_STILL;
+		break;
 
 	case OBJ_EXPLOSION:
-	  objP->m_info.controlType  = CT_POWERUP;
-	  objP->m_info.movementType = MT_NONE;
-	  objP->m_info.renderType   = RT_POWERUP;
-	  objP->m_info.size          = robotSize[0];
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-	  objP->rType.vClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
-	  objP->rType.polyModelInfo.tmap_override = -1; // set texture to none
-	  objP->cType.aiInfo.behavior = AIB_STILL;
-	  break;
+		m_info.controlType = CT_POWERUP;
+		m_info.movementType = MT_NONE;
+		m_info.renderType = RT_POWERUP;
+		m_info.size = robotSize[0];
+		m_info.shields = DEFAULT_SHIELD;
+		rType.vClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
+		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		cType.aiInfo.behavior = AIB_STILL;
+		break;
 
 	case OBJ_EFFECT:
-	  objP->m_info.controlType  = CT_NONE;
-	  objP->m_info.movementType = MT_NONE;
-	  objP->m_info.renderType   = RT_NONE;
-	  objP->m_info.size          = f1_0;
-	  objP->m_info.shields       = DEFAULT_SHIELD;
-
-  }
-	undoManager.Unlock ();
-}
-
-//------------------------------------------------------------------------
-// copy_object ()
-//
-// Action - Copies the current object to a new object
-//          If object is a player or coop, it chooses the next available id
-//
-// Parameters - char new_type = new type of object
-//
-// Returns - TRUE upon success
-//
-//------------------------------------------------------------------------
-
-bool CMine::CopyObject (byte new_type, short nSegment) 
-{
-	short objnum,id;
-	short ids [MAX_PLAYERS_D2X + MAX_COOP_PLAYERS] = {0,0,0,0,0,0,0,0,0,0,0};
-	CGameObject *objP,*current_obj;
-	byte type;
-	short i,count;
-
-if (MineInfo ().objects.count >= MAX_OBJECTS) {
-	ErrorMsg ("The maximum number of objects has already been reached.");
-	return false;
+		m_info.controlType = CT_NONE;
+		m_info.movementType = MT_NONE;
+		m_info.renderType = RT_NONE;
+		m_info.size = f1_0;
+		m_info.shields = DEFAULT_SHIELD;
 	}
-// If OBJ_NONE used, then make a copy of the current object type
-// otherwise use the type passed as the parameter "new_type"
-//--------------------------------------------------------------
-
-type = (new_type == OBJ_NONE) ? CurrObj ()->m_info.type : new_type;
-
-// Make sure it is ok to add another object of this type
-// Set the id if it's a player or coop
-//------------------------------------------------------
-if (type == OBJ_PLAYER || type == OBJ_COOP) {
-	objP = Objects (0);
-	for (objnum = MineInfo ().objects.count; objnum; objnum--, objP++)
-		if (objP->m_info.type == type) {
-			id = objP->m_info.id;
-			if (id >= 0 && id < (MAX_PLAYERS + MAX_COOP_PLAYERS))
-				ids[id]++;
-			}
-	if (type == OBJ_PLAYER) {
-		for (id = 0; (id <= MAX_PLAYERS) && ids[id]; id++)
-				;// loop until 1st id with 0
-		if (id > MAX_PLAYERS) {
-				char szMsg [80];
-
-			sprintf_s (szMsg, sizeof (szMsg), "There are already %d players in the mine", MAX_PLAYERS);
-			ErrorMsg (szMsg);
-			return FALSE;
-			}
-		}
-	else {
-		for (id = MAX_PLAYERS; (id < MAX_PLAYERS + MAX_COOP_PLAYERS) && ids[id]; id++)
-			;// loop until 1st id with 0
-		if (id > MAX_PLAYERS + MAX_COOP_PLAYERS) {
-				char szMsg [80];
-
-			sprintf_s (szMsg, sizeof (szMsg), "There are already %d cooperative players in the mine", MAX_COOP_PLAYERS);
-			ErrorMsg (szMsg);
-			return FALSE;
-			}
-		}
-	}
-
-// Now we can add the object
-// Make a new object
-undoManager.SetModified (true);
-undoManager.Lock ();
-if (MineInfo ().objects.count == 0) {
-	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? current.m_nSegment : nSegment);
-	MineInfo ().objects.count = 1;
-	objnum = 0;
-	}
-else {
-	// Make a copy of the current object
-	objnum = MineInfo ().objects.count++;
-	objP = Objects (objnum);
-	current_obj = CurrObj ();
-	memcpy (objP, current_obj, sizeof (CGameObject));
-	}
-objP->m_info.flags = 0;                                      // new: 1/27/97
-objP->m_info.nSegment = current.m_nSegment;
-// set object position in the center of the cube for now
-CalcSegCenter (objP->m_location.pos, current.m_nSegment);
-objP->m_location.lastPos = objP->m_location.pos;
-current.m_nObject = objnum;
-// bump position over if this is not the first object in the cube
-count = 0;
-for (i = 0; i < MineInfo ().objects.count - 1; i++)
-	if (Objects (i)->m_info.nSegment == current.m_nSegment)
-		count++;
-objP->m_location.pos.v.y += count * 2 * F1_0;
-objP->m_location.lastPos.v.y += count * 2 * F1_0;
-// set the id if new object is a player or a coop
-if (type == OBJ_PLAYER || type == OBJ_COOP)
-	objP->m_info.id = (char) id;
-// set object data if new object being added
-if (new_type != OBJ_NONE) {
-	objP->m_info.type = new_type;
-	SetObjectData (objP->m_info.type);
-	}
-// set the contents to zero
-objP->m_info.contents.type = 0;
-objP->m_info.contents.id = 0;
-objP->m_info.contents.count = 0;
-SortObjects ();
-DLE.MineView ()->Refresh (false);
-DLE.ToolView ()->ObjectTool ()->Refresh ();
-undoManager.Unlock ();
-return TRUE;
-}
-
-//------------------------------------------------------------------------
-// DeleteObject ()
-//------------------------------------------------------------------------
-
-void CMine::DeleteObject (short nDelObj)
-{
-if (MineInfo ().objects.count == 0) {
-	if (!bExpertMode)
-		ErrorMsg ("There are no Objects () in the mine.");
-	return;
-	}
-if (MineInfo ().objects.count == 1) {
-	if (!bExpertMode)
-		ErrorMsg ("Cannot delete the last object.");
-	return;
-	}
-if (nDelObj < 0)
-	nDelObj = current.m_nObject;
-if (nDelObj == MineInfo ().objects.count) {
-	if (!bExpertMode)
-		ErrorMsg ("Cannot delete the secret return.");
-	return;
-	}
-undoManager.SetModified (true);
-undoManager.Lock ();
-DeleteObjTriggers (nDelObj);
-int i, j = MineInfo ().objects.count;
-for (i = nDelObj; i < j; i++)
-	Objects (i)->m_info.signature = i;
-if (nDelObj < --j)
-	memcpy (Objects (nDelObj), Objects (nDelObj + 1), (MineInfo ().objects.count - nDelObj) * sizeof (CGameObject));
-MineInfo ().objects.count = j;
-triggerManager.RenumberObjTriggers ();
-triggerManager.RenumberTargetObjs ();
-if (Current1 ().nObject >= j)
-	Current1 ().nObject = j - 1;
-if (Current2 ().nObject >= j)
-	Current2 ().nObject = j - 1;
 undoManager.Unlock ();
 }
 
@@ -359,63 +199,64 @@ undoManager.Unlock ();
 /// CObjectTool - DrawObject
 //------------------------------------------------------------------------
 
-void CMine::DrawObject (CWnd *wndP, int type, int id)
+void CObject::Draw (CWnd* wndP)
 {
-	int powerup_lookup[48] = {
-		 0, 1, 2, 3, 4, 5, 6,-1,-1,-1,
-		 7, 8, 9,10,11,12,13,14,15,16,
-		17,18,19,20,-1,21,-1,-1,22,23,
-		24,25,26,27,28,29,30,31,32,33,
-		34,35,36,37,38,39,40,41
+	static int powerupTable [48] = {
+		 0,  1,  2,  3,  4,  5,  6, -1, -1, -1, 
+		 7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 
+		17, 18, 19, 20, -1, 21, -1, -1, 22, 23, 
+		24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 
+		34, 35, 36, 37, 38, 39, 40, 41
 		};
-	int object_number;
+
+	int nBitmap = -1;
 
 // figure out object number based on object type and id
-object_number = -1; // assume that we can't find the object
-switch (type) {
+
+switch (m_info.type) {
 	case OBJ_PLAYER:
-		object_number = 0;
+		nBitmap = 0;
 		break;
 	case OBJ_COOP:
-		object_number = 0;
+		nBitmap = 0;
 		break;
 	case OBJ_ROBOT:
-		object_number = (id < 66) ? 1 + id : 118 + (id - 66);
+		nBitmap = (id < 66) ? 1 + id : 118 + (id - 66);
 		break;
 	case OBJ_CNTRLCEN:
-	if (IsD1File ())
-		object_number = 67;
+	if (theMine->IsD1File ())
+		nBitmap = 67;
 	else
 		switch (id) {
-			case 1: object_number = 68; break;
-			case 2: object_number = 69; break;
-			case 3: object_number = 70; break;
-			case 4: object_number = 71; break;
-			case 5: object_number = 72; break;
-			case 6: object_number = 73; break;
-			default: object_number = 69; break; // level 1's reactor
+			case 1: nBitmap = 68; break;
+			case 2: nBitmap = 69; break;
+			case 3: nBitmap = 70; break;
+			case 4: nBitmap = 71; break;
+			case 5: nBitmap = 72; break;
+			case 6: nBitmap = 73; break;
+			default: nBitmap = 69; break; // level 1's reactor
 			}
 		break;
 	case OBJ_WEAPON:
-		object_number = 74;
+		nBitmap = 74;
 		break;
 	case OBJ_HOSTAGE:
-		object_number = 75;
+		nBitmap = 75;
 		break;
 	case OBJ_POWERUP:
-		if ( (id >= 0) && (id < MAX_POWERUP_IDS) && (powerup_lookup[id] >= 0))
-			object_number = 76 + powerup_lookup[id];
+		if ((m_info.id >= 0) && (m_info.id < MAX_POWERUP_IDS) && (powerupTable [m_info.id] >= 0))
+			nBitmap = 76 + powerupTable [m_info.id];
 		break;
 	default:
-		object_number = -1; // undefined
+		nBitmap = -1; // undefined
 }
 
 CDC *pDC = wndP->GetDC ();
 CRect rc;
 wndP->GetClientRect (rc);
 pDC->FillSolidRect (&rc, IMG_BKCOLOR);
-if ( (object_number >= 0) && (object_number <= 129)) {
-	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", object_number);
+if ((nBitmap >= 0) && (nBitmap <= 129)) {
+	sprintf_s (message, sizeof (message),"OBJ_%03d_BMP", nBitmap);
 	CResource res;
 	char *resP = (char*) res.Load (message, RT_BITMAP);
 	BITMAPINFO *bmi = (BITMAPINFO *) resP;
@@ -428,7 +269,7 @@ if ( (object_number >= 0) && (object_number <= 129)) {
 		int height = (int) bmi->bmiHeader.biHeight;
 		int xoffset = (64 - width) / 2;
 		int yoffset = (64 - height) / 2;
-		SetDIBitsToDevice (pDC->m_hDC,  xoffset, yoffset, width, height, 0, 0, 0, height,pImage, bmi, DIB_RGB_COLORS);
+		SetDIBitsToDevice (pDC->m_hDC, xoffset, yoffset, width, height, 0, 0, 0, height,pImage, bmi, DIB_RGB_COLORS);
 		}
 	}
 wndP->ReleaseDC (pDC);

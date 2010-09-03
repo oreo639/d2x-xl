@@ -10,10 +10,14 @@
 #include "Types.h"
 #include "Vector.h"
 
+//------------------------------------------------------------------------
+
 typedef struct {
   short jointnum;
   CAngleVector angles;
 } JOINTPOS;
+
+//------------------------------------------------------------------------
 
 typedef struct {
   char	renderType;		// How to draw 0=laser, 1=blob, 2=object
@@ -65,12 +69,18 @@ typedef struct {
   ushort	picture [2];			// a picture and a hires picture of the weapon for the cockpit 
 } WEAPON_INFO;
 
+//------------------------------------------------------------------------
+
 typedef struct {
   int	vclip_num;
   int	hit_sound;
   int		size;				// 3d size of longest dimension
   int		light;			// amount of light cast by this powerup, set in bitmaps.tbl
 } POWERUP_TYPE_INFO;
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 class CObjPhysicsInfo {
 public:
@@ -88,7 +98,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
-/*stuctures for different kinds of simulation */
+//------------------------------------------------------------------------
+// stuctures for different kinds of simulation
 
 class CObjLaserInfo {
 public:
@@ -104,6 +115,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
+//------------------------------------------------------------------------
+
 class CObjExplosionInfo {
 public:
 	int   spawn_time;     /* when lifeleft is < this, spawn another */
@@ -117,6 +130,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
+//------------------------------------------------------------------------
+
 class CObjLightInfo {
 public:
   int  intensity;    /*how bright the light is */
@@ -125,6 +140,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
+//------------------------------------------------------------------------
+
 class CObjPowerupInfo {
 public:
 	int  count;      /*how many/much we pick up (vulcan cannon only?) */
@@ -132,6 +149,8 @@ public:
 	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
+
+//------------------------------------------------------------------------
 
 class CObjVClipInfo {
 public:
@@ -143,7 +162,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
-/*structures for different kinds of rendering */
+//------------------------------------------------------------------------
+// structures for different kinds of rendering 
 
 class CObjPolyModelInfo {
 public:
@@ -156,6 +176,8 @@ public:
 	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
+
+//------------------------------------------------------------------------
 
 class CObjAIInfo {
 public:
@@ -176,6 +198,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
+//------------------------------------------------------------------------
+
 class CSmokeInfo {
 public:
 	int			nLife;
@@ -192,6 +216,8 @@ public:
 	void Read (CFileManager& fp, int version);
 	void Write (CFileManager& fp, int version);
 };
+
+//------------------------------------------------------------------------
 
 class CLightningInfo {
 public:
@@ -221,6 +247,8 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
+//------------------------------------------------------------------------
+
 class CSoundInfo {
 public:
 	int			nVolume;
@@ -231,12 +259,16 @@ public:
 	void Write (CFileManager& fp, int version);
 };
 
+//------------------------------------------------------------------------
+
 typedef struct tObjContentsInfo {
 public:
 	char			type; //  Type of object this object contains (eg, spider contains powerup) 
 	char			id;   //  ID of object this object contains (eg, id = blue type = key) 
 	char			count;// number of objects of type:id this object contains 
 } tObjContentsInfo;
+
+//------------------------------------------------------------------------
 
 typedef struct CObjLocationInfo {
 public:
@@ -250,6 +282,10 @@ public:
 		orient.Clear ();
 		}
 } tObjLocationInfo;
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 typedef struct tGameObject {
 	short				signature;     // reduced size to save memory 
@@ -304,7 +340,12 @@ public:
 		}
 	void Create (byte type);
 	void Setup (byte type, short nSegment);
+	void Draw (CWnd* wndP);
 };
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 #endif // __gameobject_h
 
