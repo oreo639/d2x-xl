@@ -16,6 +16,21 @@
 CWallManager wallManager;
 
 //------------------------------------------------------------------------------
+
+bool CWallManager::HaveResources (void)
+{
+CWall* wallP = segmentManager.GetWall ();
+if (wallP != null) {
+	ErrorMsg ("There is already a wall on this side");
+	return false;
+	}
+if (Count () >= MAX_WALLS - 1) {
+	ErrorMsg ("Maximum number of walls reached");
+	return false;
+	}
+}
+
+//------------------------------------------------------------------------------
 // Mine - add wall
 //
 // Returns - TRUE on success
@@ -25,6 +40,9 @@ CWallManager wallManager;
 
 CWall* CWallManager::Add (short nSegment, short nSide, short type, ushort flags, byte keys, char nClip, short nTexture) 
 {
+if (!HaveResources ())
+	return null;
+
 current.Get (nSegment, nSide);
 
 CSegment *segP = segmentManager.GetSegment (nSegment);
@@ -49,17 +67,7 @@ else {
 		}
 	}
 
-if (sideP->GetWall () != null) {
-	ErrorMsg ("There is already a wall on this side.");
-	return null;
-	}
-
 ushort nWall = Count ();
-
-if (nWall >= MAX_WALLS) {
-	ErrorMsg ("Maximum number of walls reached");
-	return null;
-	}
 
 // link wall to segment/side
 undoManager.SetModified (true);
@@ -72,7 +80,7 @@ wallP->m_info.keys = keys;
 // update number of Walls () in mine
 Count ()++;
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+////DLE.MineView ()->Refresh ();
 return wallP;
 }
 
@@ -84,8 +92,6 @@ CSide* sideP = segmentManager.GetOppositeSide (nSegment, nSide);
 return (sideP == null) ? null : sideP->GetWall ();
 }
 
-//------------------------------------------------------------------------------
-// Mine - delete wall
 //------------------------------------------------------------------------------
 
 void CWallManager::Delete (short nDelWall) 
@@ -112,13 +118,13 @@ if (oppWallP != null)
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
 segmentManager.GetSide (delWallP->m_nSegment, delWallP->m_nSide)->SetWall (NO_WALL);
 if (nDelWall < --Count ()) { // move last wall in list to position of deleted wall
-	CWall* lastWallP = m_walls + m_nCount;
+	CWall* lastWallP = GetWall (Count ());
 	segmentManager.GetSide (lastWallP->m_nSegment, lastWallP->m_nSide)->SetWall (nDelWall); // make last wall's side point to new wall position
 	*delWallP = *lastWallP;
 	}
 
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+////DLE.MineView ()->Refresh ();
 triggerManager.UpdateReactor ();
 }
 
@@ -126,7 +132,7 @@ triggerManager.UpdateReactor ();
 
 CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
-for (; i < m_nCount; i++)
+for (; i < Count (); i++)
 	if (m_walls [i] == key)
 		return &m_walls [i];
 return null;
@@ -136,7 +142,7 @@ return null;
 
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
-for (; i < m_nCount; i++)
+for (; i < Count (); i++)
 	if (m_walls [i].m_info.nTrigger == nTrigger)
 		return &m_walls [i];
 return null;
@@ -172,10 +178,7 @@ return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 
 bool CWallManager::AddDoor (byte type, byte flags, byte keys, char nClip, short nTexture) 
 {
-  short 	nOppSeg, nOppSide;
-  ushort nWall;
-
-nWall = current.Side ()->m_info.nWall;
+short nWall = current.Side ()->m_info.nWall;
 if (nWall < Count ()) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -189,10 +192,11 @@ undoManager.Lock ();
 // add a door to the current segment/side
 if (Add (current.m_nSegment, current.m_nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
-	if (GetOppositeSide (nOppSeg, nOppSide, current.m_nSegment, current.m_nSide) &&
-		 AddWall (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
+	short nOppSeg, nOppSide;
+	if (segmentManager.GetOppositeSide (current, nOppSeg, nOppSide) &&
+		 Add (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
 		undoManager.Unlock ();
-		DLE.MineView ()->Refresh ();
+		//DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
@@ -229,12 +233,12 @@ return AddDoor (WALL_BLASTABLE, 0, 0, 46, -1);
 
 bool CWallManager::AddFuelCell (void) 
 {
-return AddDoor (WALL_ILLUSION, 0, 0, -1, (IsD1File ()) ? 328 : 353);
+return AddDoor (WALL_ILLUSION, 0, 0, -1, theMine->IsD1File () ? 328 : 353);
 }
 
 //------------------------------------------------------------------------------
 
-bool CWallManager::AddIllusionaryWall (void) 
+bool CWallManager::AddIllusion (void) 
 {
 return AddDoor (WALL_ILLUSION, 0, 0, -1, 0);
 }
@@ -243,7 +247,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 0);
 
 bool CWallManager::AddForceField (void) 
 {
-if (IsD1File ()) {
+if (theMine->IsD1File ()) {
 	ErrorMsg ("Force fields are not supported in Descent 1");
    return false;
 	}
@@ -254,7 +258,7 @@ return AddDoor (WALL_CLOSED, 0, 0, -1, 420);
 
 bool CWallManager::AddFan (void)
 {
-return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 325 : 354);
+return AddDoor (WALL_CLOSED, 0, 0, -2, theMine->IsD1File () ? 325 : 354);
 }
 
 //------------------------------------------------------------------------------
@@ -283,7 +287,7 @@ return AddDoor (WALL_ILLUSION, 0, 0, -1, 408);
 
 bool CWallManager::AddGrate (void) 
 {
-return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 246 : 321);
+return AddDoor (WALL_CLOSED, 0, 0, -2, theMine->IsD1File () ? 246 : 321);
 }
 
 //------------------------------------------------------------------------------
@@ -298,15 +302,6 @@ return AddExit (TT_EXIT);
 bool CWallManager::AddExit (short type) 
 {
 
-ushort nWall = Segments (current.m_nSegment)->m_sides [current.m_nSide].m_info.nWall;
-if (nWall < Count ()) {
-	ErrorMsg ("There is already a wall on this side");
-	return false;
-	}
-if (Count () >= MAX_WALLS - 1) {
-	ErrorMsg ("Maximum number of walls reached");
-	return false;
-	}
 if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
@@ -328,7 +323,7 @@ if (AddWall (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, K
 		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
 		AutoUpdateReactor();
 		undoManager.Unlock ();
-		DLE.MineView ()->Refresh ();
+		//DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
@@ -367,7 +362,7 @@ if (AddWall (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1
 	SetDefaultTexture (426, -1);
 	current.m_nSegment = new_segment;
 	SetDefaultTexture (426, -1);
-	DLE.MineView ()->Refresh ();
+	//DLE.MineView ()->Refresh ();
 	undoManager.Unlock ();
 	return true;
 	}

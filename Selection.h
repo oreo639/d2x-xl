@@ -1,6 +1,7 @@
 #ifndef __selection_h
 #define __selection_h
 
+#include "Types.h"
 #include "Vertex.h"
 #include "Trigger.h"
 #include "Wall.h"
@@ -11,18 +12,15 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-class CSelection {
+class CSelection : public CSideKey {
 public:
 	CSelection() :
-		m_nSegment(0),
-		m_nSide(DEFAULT_SIDE),
+		CSideKey (0, DEFAULT_SIDE),
 		m_nLine(DEFAULT_LINE),
 		m_nPoint(DEFAULT_POINT),
 		m_nObject(DEFAULT_OBJECT)
 	{}
 
-	short m_nSegment;
-	short m_nSide;
 	short m_nLine;
 	short m_nPoint;
 	short m_nObject;

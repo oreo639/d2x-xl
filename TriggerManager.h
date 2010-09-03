@@ -103,6 +103,8 @@ class CTriggerManager {
 
 		void UpdateReactor (void);
 
+		bool HaveResources (void);
+
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Clear (void);
@@ -115,7 +117,6 @@ class CTriggerManager {
 		void DeleteFromWall (short nDelTrigger);
 		void DeleteFromObject (short nDelTrigger);
 		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
-		bool HaveResources (void);
 		void Clear (int nType);
 };
 

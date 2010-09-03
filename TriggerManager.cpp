@@ -477,14 +477,8 @@ Clear (1);
 
 bool CTriggerManager::HaveResources (void)
 {
-if (current.Wall () != null) {
-	ErrorMsg ("There is already a wall on this side");
+if (!wallManager.HaveResources ())
 	return false;
-	}
-if (wallManager.Count () >= MAX_WALLS - 1) {
-	ErrorMsg ("Maximum number of walls reached");
-	return false;
-	}
 if (Count (0) >= MAX_TRIGGERS - 1) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
