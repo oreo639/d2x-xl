@@ -1,9 +1,11 @@
+#include "mine.h"
+
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::Add (void)
 {
 	CSegment *newSegP, *curSegP; 
-	short i, nNewSeg, nNewSide, current.m_nSide = current.m_nSide; 
+	short i, nNewSeg, nNewSide, nCurSide = current.m_nSide; 
 	short newVerts [4]; 
 	short nSegment, nSide; 
 
@@ -22,7 +24,7 @@ if (vertexManager.Count () >= MAX_VERTICES) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
-if (curSegP->GetChild (current.m_nSide) >= 0) {
+if (curSegP->GetChild (nCurSide) >= 0) {
 	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
 	return FALSE;
 	}
@@ -43,20 +45,20 @@ newSegP = GetSegment (nNewSeg);
 DefineVertices (newVerts); 
 
 // define vert numbers for common side
-newSegP->m_info.verts [oppSideVertTable [current.m_nSide][0]] = curSegP->m_info.verts [sideVertTable [current.m_nSide][0]]; 
-newSegP->m_info.verts [oppSideVertTable [current.m_nSide][1]] = curSegP->m_info.verts [sideVertTable [current.m_nSide][1]]; 
-newSegP->m_info.verts [oppSideVertTable [current.m_nSide][2]] = curSegP->m_info.verts [sideVertTable [current.m_nSide][2]]; 
-newSegP->m_info.verts [oppSideVertTable [current.m_nSide][3]] = curSegP->m_info.verts [sideVertTable [current.m_nSide][3]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurSide][0]] = curSegP->m_info.verts [sideVertTable [nCurSide][0]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurSide][1]] = curSegP->m_info.verts [sideVertTable [nCurSide][1]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurSide][2]] = curSegP->m_info.verts [sideVertTable [nCurSide][2]]; 
+newSegP->m_info.verts [oppSideVertTable [nCurSide][3]] = curSegP->m_info.verts [sideVertTable [nCurSide][3]]; 
 
 // define vert numbers for new side
-newSegP->m_info.verts [sideVertTable [current.m_nSide][0]] = newVerts [0]; 
-newSegP->m_info.verts [sideVertTable [current.m_nSide][1]] = newVerts [1]; 
-newSegP->m_info.verts [sideVertTable [current.m_nSide][2]] = newVerts [2]; 
-newSegP->m_info.verts [sideVertTable [current.m_nSide][3]] = newVerts [3]; 
+newSegP->m_info.verts [sideVertTable [nCurSide][0]] = newVerts [0]; 
+newSegP->m_info.verts [sideVertTable [nCurSide][1]] = newVerts [1]; 
+newSegP->m_info.verts [sideVertTable [nCurSide][2]] = newVerts [2]; 
+newSegP->m_info.verts [sideVertTable [nCurSide][3]] = newVerts [3]; 
 
 newSegP->Setup ();
 // define children and special child
-newSegP->m_info.childFlags = 1 << oppSideTable [current.m_nSide]; /* only opposite side connects to current_segment */
+newSegP->m_info.childFlags = 1 << oppSideTable [nCurSide]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? current.m_nSegment : -1);
 
@@ -80,7 +82,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete variable light if it exists
-short index = GetVariableLight (current.m_nSegment, current.m_nSide); 
+short index = GetVariableLight (current.m_nSegment, nCurSide); 
 if (index != -1) {
 	lightManager.Count ()--; 
 	// put last light in place of deleted light
@@ -88,10 +90,10 @@ if (index != -1) {
 	}
 
 // update current segment
-curSegP->SetChild (current.m_nSide, nNewSeg); 
-curSegP->m_sides [current.m_nSide].m_info.nBaseTex = 0; 
-curSegP->m_sides [current.m_nSide].m_info.nOvlTex = 0; 
-memset (curSegP->m_sides [current.m_nSide].m_info.uvls, 0, sizeof (curSegP->m_sides [current.m_nSide].m_info.uvls));
+curSegP->SetChild (nCurSide, nNewSeg); 
+curSegP->m_sides [nCurSide].m_info.nBaseTex = 0; 
+curSegP->m_sides [nCurSide].m_info.nOvlTex = 0; 
+memset (curSegP->m_sides [nCurSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nCurSide].m_info.uvls));
  
 // update number of GetSegment () and vertices and clear vertexStatus
 Count ()++;
@@ -320,7 +322,7 @@ for (i = 0; i < 4; i++)
 switch (m_nAddMode) {
 	case (ORTHOGONAL):
 		{
-		center = CalcSideCenter (current.m_nSegment, current.m_nSide); 
+		center = CalcCenter (current.m_nSegment, current.m_nSide); 
 		oppCenter = CalcSideCenter (current.m_nSegment, oppSideTable [current.m_nSide]); 
 		orthog = CalcSideNormal (current.m_nSegment, current.m_nSide); 
 		// set the length of the new cube to be one standard cube length

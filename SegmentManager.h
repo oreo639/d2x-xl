@@ -182,6 +182,7 @@ class CSegmentManager {
 		bool SetDefaultTexture (short nTexture);
 		bool Define (short nSegment, byte type, short nTexture);
 		void Undefine (short nSegment);
+		void ComputeVertices (short newVerts [4]);
 	};
 
 extern CSegmentManager segmentManager;

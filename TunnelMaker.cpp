@@ -13,40 +13,9 @@
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
-//-------------------------------------------------------------------------
-// _matherr()
-//
-// defined to prevent crashes
-//-------------------------------------------------------------------------
-#if 0
-char *whyS [] = {
-    "argument domain error",
-    "argument singularity ",
-    "overflow range error ",
-    "underflow range error",
-    "total loss of significance",
-    "partial loss of significance"
-};
+//------------------------------------------------------------------------------
 
-int _matherr (struct exception *e) {
-  sprintf_s (message, sizeof (message),"DMB has detected a math error\n"
-		   "%s (%8g,%8g): %s\n\n"
-		   "Press OK to continue, or Cancel to close DMB",
-		    e->name, e->arg1, e->arg2, whyS [e->m_info.type - 1]);
-  if (MessageBox(null, message,"Descent Level Editor XP - Error",
-	    MB_ICONEXCLAMATION|MB_OKCANCEL+MB_TASKMODAL) == IDCANCEL) {
-    if (QueryMsg("Are you sure you want to abort DLE-XP?") == IDYES) {
-      return 0;
-    }
-  }
-  return 1; // let program continue
-}
-#endif
-//-------------------------------------------------------------------------
-//   Faculty (q) - returns n! (n factorial)
-//-------------------------------------------------------------------------
-
-long Faculty (int n) 
+long CTunnelMaker::Faculty (int n) 
 {
 long i = 1;
 
@@ -55,44 +24,32 @@ for (int j = n; j >= 2; j--)
 return i;
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //   Coeff(n,i) - returns n!/(i!*(n-i)!)
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-double Coeff(int n, int i) 
+double CTunnelMaker::Coeff (int n, int i) 
 {
 return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //   Blend(i,n,u) - returns a weighted coefficient for each point in a spline
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-double Blend (int i, int n, double u) 
+double CTunnelMaker::Blend (int i, int n, double u) 
 {
-#if 1
 double partial = Coeff (n, i) * pow (u, i) * pow (1 - u, n - i);
-#else
-	double partial;
-	int j;
-
- partial = Coeff(n,i);
- for (j = 1; j <= i; j++) 
-    partial *= u;
-  
-for (j = 1; j <= (n - i); j++) 
-	partial *= (1-u);
-#endif
 return partial;
 }
 
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //   BezierFcn(pt,u,n,p [][]) - sets (x,y,z) for u=#/segs based on points p
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-CVertex BezierFcn (double u, int npts, CVertex* p) 
+CVertex CTunnelMaker::BezierFcn (double u, int npts, CVertex* p) 
 {
-CVertex v;
+	CVertex v;
 
 for (int i = 0; i < npts; i++) {
 	double b = Blend (i, npts - 1, u);
@@ -101,13 +58,13 @@ for (int i = 0; i < npts; i++) {
 return v;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // UntwistSegment ()
 //
 // Action - swaps vertices of opposing side if cube is twisted
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void CMine::UntwistSegment (short nSegment,short nSide) 
+void CTunnelMaker::UntwistSegment (short nSegment,short nSide) 
 {
   double		len, minLen = 1e10;
   short		index,j;
@@ -133,11 +90,11 @@ if (index != 0) {
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // SpinPoint () - spin on y-axis then z-axis
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void SpinPoint (CVertex* point, double ySpin, double zSpin) 
+void CTunnelMaker::SpinPoint (CVertex* point, double ySpin, double zSpin) 
 {
 double tx = point->v.x * cos (ySpin) - point->v.z * sin (ySpin);
 double ty = point->v.y;
@@ -145,11 +102,11 @@ double tz = point->v.x * sin (ySpin) + point->v.z * cos (ySpin);
 point->Set (tx * cos (zSpin) + ty * sin (zSpin), ty * cos (zSpin) - tx * sin (zSpin), tz);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // SpinBackPoint () - spin on z-axis then y-axis
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
+void CTunnelMaker::SpinBackPoint (CVertex* point, double ySpin, double zSpin) 
 {
 double tx = point->v.x * cos (-zSpin) + point->v.y * sin (-zSpin);
 double ty = -point->v.x * sin (-zSpin) + point->v.y * cos (-zSpin);
@@ -157,13 +114,13 @@ double tz = point->v.z;
 point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * cos (-ySpin));
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // MatchingSide ()
 //
 // Action - Returns matching side depending on the current points
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-int CMine::MatchingSide (int j) 
+int CTunnelMaker::MatchingSide (int j) 
 {
   static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
   int offset;
@@ -172,15 +129,15 @@ offset = (4 + selections [0].m_nPoint - selections [1].m_nPoint) % 4;
 return ret [offset][j];
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // Action - Spins points which lie in the y-z plane orthagonal to a normal
 //          Uses normal as center for translating points.
 //
 // Changes - Chooses axis to normalizes on based on "normal" direction
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
+CDoubleVector CTunnelMaker::RectPoints (double angle, double radius, CVertex* origin, CVertex* normal) 
 {
   double			ySpin,zSpin;
   char			spinAxis;
@@ -230,10 +187,9 @@ v = *normal + v1;
 return v;
 }
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* orgin, CVertex* normal) 
+void CTunnelMaker::PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* orgin, CVertex* normal) 
 {
 double x1,y1,z1,y2,z2;
 // translate coordanites to orgin
@@ -263,15 +219,15 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 *angle = atan3 (z2,y2);
 }
 
-//==========================================================================
+//------------------------------------------------------------------------------
 // MENU - Tunnel Generator
 //
 // Action - This is like a super "join" feature which uses splines to
 //          connect the cubes.  The number of cubes is determined
 //          automatically.
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CMine::TunnelGenerator (void) 
+void CTunnelMaker::Create (void) 
 {
 
 //  undoManager.UpdateBuffer(0);
@@ -423,11 +379,9 @@ SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
 }
 
-//==========================================================================
-// TMainWindow - CM_IncreaseSpline
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CMine::IncreaseSpline() 
+void CTunnelMaker::IncreaseSpline (void) 
 {
 
 //undoManager.UpdateBuffer(0);
@@ -441,11 +395,9 @@ if (current.m_nSegment == nSplineSeg2)
 DLE.MineView ()->Refresh ();
 }
 
-//==========================================================================
-// TMainWindow - CM_DecreaseSpline
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CMine::DecreaseSpline() 
+void CTunnelMaker::DecreaseSpline (void) 
 {
 
 //  undoManager.UpdateBuffer(0);
@@ -459,14 +411,14 @@ if (current.m_nSegment == nSplineSeg2)
 DLE.MineView ()->Refresh ();
 }
 
-//-------------------------------------------------------------------------
-// CalcSpline ()
+//------------------------------------------------------------------------------
+// ComputeSpline ()
 //
 // Note: this routine is called by dmb.cpp - update_display() everytime
 //       the display is redrawn.
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void CMine::CalcSpline (void) 
+void CTunnelMaker::ComputeSpline (void) 
 {
   double length;
   double angle;
@@ -626,4 +578,5 @@ for (i = 0; i < n_splines; i++)
 	UntwistSegment ((MAX_SEGMENTS - 1) - i, nSplineSide1);
 }
 
+//------------------------------------------------------------------------------
 //eof tunnelgen.cpp
