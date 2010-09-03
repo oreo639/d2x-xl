@@ -8,11 +8,18 @@
 #include "Selection.h"
 #include "MineInfo.h"
 
+//------------------------------------------------------------------------
+
 #define MAX_SEGMENTS_D1		800  // descent 1 max # of cubes
 #define MAX_SEGMENTS_D2		900  // descent 2 max # of cubes
 #define SEGMENT_LIMIT		8000 // D2X-XL max # of cubes
 
 #define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : theMine->IsD1File () ? MAX_SEGMENTS_D1  : theMine->IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
+
+#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
+#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
+
+//------------------------------------------------------------------------
 
 #ifdef _DEBUG
 
@@ -26,7 +33,7 @@ typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 
 #endif
 
-
+//------------------------------------------------------------------------
 
 class CSegmentManager {
 	public:
@@ -93,17 +100,18 @@ class CSegmentManager {
 		CSegment* FindRobotMaker (short i = 0);
 
 		// Operations
-		bool Add (void);
+		short Add (void) { return (Count () < MAX_SEGMENTS) ? Count ()++ : -1; }
+		bool Create (void);
 		void Delete (short nDelSeg = -1);
 
-		bool AddReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
-		bool AddRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
-		bool AddEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
-		bool AddFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
-		bool AddGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
-		bool AddTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
-		bool AddSpeedBoost (short nSegment, bool bCreate);
-		bool AddSkybox (short nSegment, bool bCreate);
+		bool CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+		bool CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+		bool CreateSpeedBoost (short nSegment, bool bCreate);
+		bool CreateSkybox (short nSegment, bool bCreate);
 
 		void Init (short nSegment);
 		bool Split (void);
@@ -161,14 +169,6 @@ class CSegmentManager {
 		void QuickPasteBlock ();
 		void DeleteBlock ();
 
-		inline void Wrap (short *x, short delta,short min,short max) {
-			*x += delta;
-			if (*x > max)
-				*x = min;
-			else if (*x < min)
-				*x = max;
-			}
-
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 
@@ -180,7 +180,7 @@ class CSegmentManager {
 		void LinkSeg (CSegment *segP, CSegment *rootSegP);
 		void DeleteWalls (short nSegment);
 
-		bool Add (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null);
+		bool Create (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null);
 		bool SetDefaultTexture (short nTexture);
 		bool Define (short nSegment, byte type, short nTexture);
 		void Undefine (short nSegment);
@@ -188,5 +188,7 @@ class CSegmentManager {
 	};
 
 extern CSegmentManager segmentManager;
+
+//------------------------------------------------------------------------
 
 #endif //__segman_h

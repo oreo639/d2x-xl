@@ -15,18 +15,6 @@ public:
 
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.WriteVector (v); }
 
-	void WriteText (CFileManager& fp) {
-		}
-	
-for (i = 0; i < 8; i++) {
-	// each vertex relative to the origin has a x', y', and z' component
-	// which is a constant (k) times the axis
-	// k = (B*A)/(A*A) where B is the vertex relative to the origin
-	//                       A is the axis unit vector (always 1)
-	CVertex& v = *GetVertex (m_info.verts [i]) - origin;
-	fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
-	}
-
 	virtual void Clear (void) { 
 		m_status = 0;
 		this->CDoubleVector::Clear ();

@@ -1,6 +1,8 @@
 #ifndef __tunnelmaker_h
 #define __tunnelmaker_h
 
+//------------------------------------------------------------------------
+
 class CTunnelMaker {
 	private:
 		bool		m_bActive;

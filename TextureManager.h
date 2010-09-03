@@ -6,6 +6,10 @@
 
 //------------------------------------------------------------------------
 
+#define MAX_TEXTURES ((theMine == null) ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
+
+//------------------------------------------------------------------------
+
 #if _DEBUG
 
 typedef CDynamicArray< CTexture > textureList;

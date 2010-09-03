@@ -1527,7 +1527,7 @@ if (ViewFlag (eViewMineLights))
 	  DrawLights ();
 
 // draw spline
-if (theMine->m_bSplineActive)
+if (theMine->TunnelMaker.Active ())
 	DrawSpline ();
 
 *message = '\0';

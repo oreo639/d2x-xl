@@ -4,6 +4,14 @@
 #include "Robot.h"
 #include "PolyModel.h"
 
+//------------------------------------------------------------------------
+
+#define MAX_ROBOT_MAKERS ((theMine == null) ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
+
+#define ROBOT_IDS2 ((theMine == null) ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
+
+//------------------------------------------------------------------------
+
 #ifdef _DEBUG
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
@@ -45,5 +53,7 @@ class CRobotManager {
 
 		int ReadHXM (CFileManager& fp, long size); 
 	};
+
+//------------------------------------------------------------------------
 
 #endif //__botman_h

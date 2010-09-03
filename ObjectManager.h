@@ -7,6 +7,14 @@
 #include "Selection.h"
 #include "MineInfo.h"
 
+//------------------------------------------------------------------------
+
+#define MAX_OBJECTS ((theMine == null) ? MAX_OBJECTS_D2 : theMine->IsStdLevel () ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
+
+#define MAX_PLAYERS ((theMine == null) ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+
+//------------------------------------------------------------------------
+
 #ifdef _DEBUG
 
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
@@ -45,8 +53,10 @@ class CObjectManager {
 		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - &m_objects [0]; }
 
 		void SetIndex (void);
+	
+		inline short Add (void);
 
-		bool Copy (byte newType, short nSegment);
+		bool Create (byte newType, short nSegment);
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 
@@ -63,5 +73,7 @@ class CObjectManager {
 };
 
 extern CObjectManager objectManager;
+
+//------------------------------------------------------------------------
 
 #endif //__objman_h

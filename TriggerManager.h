@@ -7,6 +7,8 @@
 #include "trigger.h"
 #include "MineInfo.h"
 
+//------------------------------------------------------------------------
+
 #define MAX_TRIGGERS_D1			100
 #define MAX_TRIGGERS_D2			254
 #define MAX_OBJ_TRIGGERS		254
@@ -16,6 +18,8 @@
 #define NO_TRIGGER				(TRIGGER_LIMIT + 1)
 
 #define MAX_TRIGGERS	((theMine == null) ? MAX_TRIGGERS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_TRIGGERS_D1 : MAX_TRIGGERS_D2)
+
+//------------------------------------------------------------------------
 
 #ifdef _DEBUG
 
@@ -30,6 +34,8 @@ typedef CTrigger objTriggerList [MAX_OBJ_TRIGGERS];
 typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 
 #endif
+
+//------------------------------------------------------------------------
 
 class CTriggerManager {
 	private:
@@ -55,7 +61,7 @@ class CTriggerManager {
 
 		inline short& NumObjTriggers (void) { return Count (1); }
 
-		short Index (CTrigger* trigP) { return (short) (trigP - &m_triggers [0][0]; }
+		short Index (CTrigger* trigP) { return (short) (trigP - &m_triggers [0][0]); }
 
 		void SetIndex (void);
 
@@ -75,9 +81,9 @@ class CTriggerManager {
 
 		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey (nSegment, nSide)); }
 
-		inline CTrigger* Add (void) { return HaveResources () ? GetTrigger (Count (0)++) : null; }
+		inline short Add (void) { return HaveResources () ? Count (0)++ : NO_TRIGGER; }
 
-		inline CTrigger* Add (short nItem, short type, bool bAddWall = false) {
+		inline CTrigger* Create (short nItem, short type, bool bAddWall = false) {
 			return (nItem < 0) ? AddToObject (-nItem - 1, type) : AddToWall (nItem, type, bAddWall);
 			}
 
@@ -127,5 +133,7 @@ class CTriggerManager {
 };
 
 extern CTriggerManager triggerManager;
+
+//------------------------------------------------------------------------
 
 #endif //__trigman_h

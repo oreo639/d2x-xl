@@ -127,26 +127,40 @@ public:
 
 public:
 	void Upgrade (void);
+
 	void Read (CFileManager& fp, int nLevelType, int nLevelVersion);
+	
 	void Write (CFileManager& fp, int nLevelType, int nLevelVersion);
+	
 	void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras);
+	
 	void WriteExtras (CFileManager& fp, int nLevelType, bool bExtras);
+	
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		for (int i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 			m_sides [i].Clear ();
 		}
+
 	void Setup (void);
+
 	void SetUV (short nSide, short x, short y);
 
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
+
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+
 	inline CSide* GetSide (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
+
 	inline short GetChild (short nSide) { return m_sides [nSide].m_info.nChild; }
+
 	short SetChild (short nSide, short nSegment);
+
+	bool HasChild (short nChild) { return (m_info.childFlags & (1 << nChild)) != 0; }
 
 private:
 	byte ReadWalls (CFileManager& fp, int nLevelVersion);
+
 	byte WriteWalls (CFileManager& fp, int nLevelVersion);
 
 };

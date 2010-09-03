@@ -2,7 +2,7 @@
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::Add (void)
+bool CSegmentManager::Create (void)
 {
 	CSegment *newSegP, *curSegP; 
 	short i, nNewSeg, nNewSide, nCurSide = current.m_nSide; 
@@ -130,11 +130,11 @@ return TRUE;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (bCreate && !Add ()) {
+if (bCreate && !Create ()) {
 	undoManager.ResetModified (bUndo);
 	return false; 
 	}
@@ -157,7 +157,7 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::Add (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null)
+bool CSegmentManager::Create (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null)
 {
 if ((szError != null) && theMine->IsD1File ()) {
 	if (!bExpertMode)
@@ -167,7 +167,7 @@ if ((szError != null) && theMine->IsD1File ()) {
 
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (bCreate && !Add ()) {
+if (bCreate && !Create ()) {
 	undoManager.ResetModified (bUndo);
 	return false; 
 	}	
@@ -185,14 +185,14 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
 int nMatCen = (int) theMine->Info ().equipGen.count;
 if (nMatCen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
-if (!Add (nSegment, SEGMENT_FUNC_EQUIPMAKER, bCreate))
+if (!Create (nSegment, SEGMENT_FUNC_EQUIPMAKER, bCreate))
 	return false;
 GetEquipGen (nMatCen)->Setup (nSegment, nMatCen, 0);
 GetSegment (current.m_nSegment)->m_info.value = 
@@ -203,14 +203,14 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
 int nMatCen = (int) theMine->Info ().botGen.count;
 if (nMatCen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}
-if (!Add (nSegment, SEGMENT_FUNC_ROBOTMAKER, bCreate))
+if (!Create (nSegment, SEGMENT_FUNC_ROBOTMAKER, bCreate))
 	return false;
 GetBotGen (nMatCen)->Setup (nSegment, nMatCen, 8);
 GetSegment (current.m_nSegment)->m_info.value = 
@@ -224,30 +224,30 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
+bool CSegmentManager::CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
 {
-return Add (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Flag goals are not available in Descent 1.");
+return Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
+bool CSegmentManager::CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
 {
-return Add (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Team start positions are not available in Descent 1.");
+return Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Team start positions are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddSkybox (short nSegment, bool bCreate) 
+bool CSegmentManager::CreateSkybox (short nSegment, bool bCreate) 
 {
-return Add (nSegment, bCreate, SEGMENT_FUNC_SKYBOX, -1, "Skyboxes are not available in Descent 1.");
+return Create (nSegment, bCreate, SEGMENT_FUNC_SKYBOX, -1, "Skyboxes are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddSpeedBoost (short nSegment, bool bCreate) 
+bool CSegmentManager::CreateSpeedBoost (short nSegment, bool bCreate) 
 {
-return Add (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cubes are not available in Descent 1.");
+return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cubes are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
@@ -264,7 +264,7 @@ return nFuelCens;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::AddFuelCenter (short nSegment, byte nType, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateFuelCenter (short nSegment, byte nType, bool bCreate, bool bSetDefTextures) 
 {
 // count number of fuel centers
 int nFuelCen = FuelCenterCount ();
@@ -277,21 +277,21 @@ if (nFuelCen >= MAX_NUM_FUELCENS) {
 
 if (nType == SEGMENT_FUNC_FUELCEN) {
 	short nLastSeg = current.m_nSegment;
-	if (!Add (nSegment, bCreate, nType, bSetDefTextures ? theMine->IsD1File () ? 322 : 333 : -1))
+	if (!Create (nSegment, bCreate, nType, bSetDefTextures ? theMine->IsD1File () ? 322 : 333 : -1))
 		return false;
 	if (bSetDefTextures) {
 		short nNewSeg = current.m_nSegment;
 		current.m_nSegment = nLastSeg;
-		if (wallManager.Add (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+		if (wallManager.Create (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 			short nOppSeg, nOppSide;
 			if (GetOppositeSide (current, nOppSeg, nOppSide)
-				wallManager.Add (nOppSeg, nOppSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
+				wallManager.Create (nOppSeg, nOppSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
 		current.m_nSegment = nNewSeg;
 		}
 	}
 else if (nType == SEGMENT_FUNC_REPAIRCEN) {
-	if (!Add (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1."))
+	if (!Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1."))
 		return false;
 	}
 else

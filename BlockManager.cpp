@@ -1,17 +1,6 @@
 // Copyright (C) 1997 Bryan Aamot
-#include "stdafx.h"
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
-#include "mine.h"
-#include "global.h"
-#include "toolview.h"
-#include "cfile.h"
-#include "HogManager.h"
+
+#include "Mine.h"
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
@@ -24,15 +13,15 @@ char *BLOCKOP_HINT =
 	"\n"
 	"Would you like to proceed?";
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
 {
-o = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
+o = *vertexManager.GetVertex (current.Segment ()->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
 // set x'
-m.rVec = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]]) - origin;
+m.rVec = *vertexManager.GetVertex (current.Segment ()->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]]) - origin;
 // calculate y'
-CVertex v = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]]) - origin;
+CVertex v = *vertexManager.GetVertex (current.Segment ()->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]]) - origin;
 m.uVec = CrossProduct (m.rVec, v);
 m.fVec = CrossProduct (m.rVec, m.uVec);
 m.rVec.Normalize ();
@@ -40,32 +29,28 @@ m.uVec.Normalize ();
 m.fVec.Normalize ();
 }
 
-//---------------------------------------------------------------------------
-// ReadSegmentInfo()
+//------------------------------------------------------------------------------
+// Read ()
 //
 // ACTION - Reads a segment's information in text form from a file.  Adds
 //          new vertices if non-identical one does not exist.  Aborts if
 //	    MAX_VERTICES is hit.
 //
 // Change - Now reads verts relative to current side
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 short CBlockManager::Read (CFileManager& fp) 
 {
-	CSegment			*segP;
-	CSide				*sideP;
-	short				nSegment, nSide, nVertex;
-	short				i, j, test;
-	short				origVertCount, k;
-	CVertex			origin, vVertex;
+	short				i, j, k;
+	short				origVertCount;
 	CDoubleMatrix	m;
-	CDoubleVector	xAxis, yAxis, zAxis, v;
+	CDoubleVector	xAxis, yAxis, zAxis, origin;
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf;
 
 // remember number of vertices for later
-origVertCount = VertCount ();
+origVertCount = vertexManager.Count ();
 
 // set origin
 segP = current.Segment ();
@@ -86,17 +71,17 @@ nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
 while (!fp.EoF ()) {
 	DLE.MainFrame ()->Progress ().SetPos (fp.Tell ());
-	if (SegCount () >= MAX_SEGMENTS) {
-		ErrorMsg ("No more free segments");
-		return (nNewSegs);
-		}
 // abort if there are not at least 8 vertices free
-	if (MAX_VERTICES - VertCount () < 8) {
+	if (MAX_VERTICES - vertexManager.Count () < 8) {
 		ErrorMsg ("No more free vertices");
 		return nNewSegs;
 		}
-	nSegment = segmentManager.SegCount ();
-	segP = segmentManager.GetSegment (nSegment);
+	short nSegment = segmentManager.Add ();
+	if (nSegment < 0) {
+		ErrorMsg ("No more free segments");
+		return nNewSegs;
+		}
+	CSegment* segP = segmentManager.GetSegment (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	fscanf_s (fp.File (), "segment %hd\n", &segP->m_info.nIndex);
@@ -105,24 +90,24 @@ while (!fp.EoF ()) {
 	segP->m_info.nIndex = ~segP->m_info.nIndex;
 
 	// read in side information 
-	sideP = segP->m_sides;
-	for (int nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+	CSide* sideP = segP->m_sides;
+	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+		short test;
 		fscanf_s (fp.File (), "  side %hd\n", &test);
 		if (test != nSide) {
 			ErrorMsg ("Invalid side number read");
 			return (0);
 			}
 		sideP->m_info.nWall = NO_WALL;
-		fscanf_s (fp.File (), "    tmap_num %hd\n",&sideP->m_info.nBaseTex);
-		fscanf_s (fp.File (), "    tmap_num2 %hd\n",&sideP->m_info.nOvlTex);
-		for (j = 0; j < 4; j++)
+		fscanf_s (fp.File (), "    tmap_num %hd\n", &sideP->m_info.nBaseTex);
+		fscanf_s (fp.File (), "    tmap_num2 %hd\n", &sideP->m_info.nOvlTex);
+		for (i = 0; i < 4; i++)
 			fscanf_s (fp.File (), "    uvls %hd %hd %hd\n",
-						&sideP->m_info.uvls [j].u,
-						&sideP->m_info.uvls [j].v,
-						&sideP->m_info.uvls [j].l);
+						&sideP->m_info.uvls [i].u,
+						&sideP->m_info.uvls [i].v,
+						&sideP->m_info.uvls [i].l);
 		if (bExtBlkFmt) {
-			fscanf_s (fp.File (), "    nWall %d\n",&byteBuf);
-			sideP->m_info.nWall = (ushort) byteBuf;
+			fscanf_s (fp.File (), "    nWall %d\n", &sideP->m_info.nWall);
 			if (sideP->m_info.nWall != NO_WALL) {
 				CWall w;
 				CTrigger t;
@@ -131,126 +116,43 @@ while (!fp.EoF ()) {
 				fscanf_s (fp.File (), "        segment %ld\n", &w.m_nSegment);
 				fscanf_s (fp.File (), "        side %ld\n", &w.m_nSide);
 				fscanf_s (fp.File (), "        hps %ld\n", &w.m_info.hps);
-				fscanf_s (fp.File (), "        type %d\n", &byteBuf);
-				w.m_info.type = byteBuf;
-				fscanf_s (fp.File (), "        flags %d\n", &byteBuf);
-				w.m_info.flags = byteBuf;
-				fscanf_s (fp.File (), "        state %d\n", &byteBuf);
-				w.m_info.state = byteBuf;
-				fscanf_s (fp.File (), "        nClip %d\n", &byteBuf);
-				w.m_info.nClip = byteBuf;
-				fscanf_s (fp.File (), "        keys %d\n", &byteBuf);
-				w.m_info.keys = byteBuf;
-				fscanf_s (fp.File (), "        cloak %d\n", &byteBuf);
-				w.m_info.cloakValue = byteBuf;
+				fscanf_s (fp.File (), "        type %d\n", &w.m_info.type);
+				fscanf_s (fp.File (), "        flags %d\n", &w.m_info.flags);
+				fscanf_s (fp.File (), "        state %d\n", &w.m_info.state);
+				fscanf_s (fp.File (), "        nClip %d\n", &w.m_info.nClip);
+				fscanf_s (fp.File (), "        keys %d\n", &w.m_info.keys);
+				fscanf_s (fp.File (), "        cloak %d\n", &w.m_info.cloakValue);
 				fscanf_s (fp.File (), "        trigger %d\n", &byteBuf);
 				w.m_info.nTrigger = byteBuf;
 				if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
-					fscanf_s (fp.File (), "			    type %d\n", &byteBuf);
-					t.m_info.type = byteBuf;
+					fscanf_s (fp.File (), "			    type %d\n", &t.m_info.type);
 					fscanf_s (fp.File (), "			    flags %hd\n", &t.m_info.flags);
 					fscanf_s (fp.File (), "			    value %ld\n", &t.m_info.value);
 					fscanf_s (fp.File (), "			    timer %d\n", &t.m_info.time);
 					fscanf_s (fp.File (), "			    count %hd\n", &t.m_count);
-					int iTarget;
-					for (iTarget = 0; iTarget < t.m_count; iTarget++) {
-						fscanf_s (fp.File (), "			        segP %hd\n", &t [iTarget].m_nSegment);
-						fscanf_s (fp.File (), "			        side %hd\n", &t [iTarget].m_nSide);
+					for (i = 0; i < t.m_count; i++) {
+						fscanf_s (fp.File (), "			        segP %hd\n", &t.m_targets [i].m_nSegment);
+						fscanf_s (fp.File (), "			        side %hd\n", &t.m_targets [i].m_nSide);
 						}
 					}
-				if (MineInfo ().walls.count < MAX_WALLS) {
+				if (wallManager.HaveResources ()) {
 					if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
-						if (MineInfo ().triggers.count >= MAX_TRIGGERS)
+						if (!triggerManager.HaveResources ())
 							w.m_info.nTrigger = NO_TRIGGER;
 						else {
-							w.m_info.nTrigger = MineInfo ().triggers.count++;
+							CTrigger* trigP = triggerManager.Add ();
+							w.m_info.nTrigger = triggerManager.Index (trigP);
+							*trigP = t;
 							++nNewTriggers;
-							*Triggers (w.m_info.nTrigger) = t;
 							}
 						}
-					nNewWalls++;
-					sideP->m_info.nWall = MineInfo ().walls.count++;
+					CWall* wallP = wallManager.Add ();
+					sideP->m_info.nWall = wallManager.Index (wallP);
 					w.m_nSegment = nSegment;
-					*Walls (sideP->m_info.nWall) = w;
+					*wallP = w;
+					nNewWalls++;
 					}
 				}
-#if 0
-			fscanf_s (fp.File (), "    object_num %hd\n",&segObjCount);
-			while (segObjCount) {
-				CGameObject o;
-				memset (&o, 0, sizeof (o));
-				fscanf_s (fp.File (), "            signature %hd\n", &o.signature);
-				fscanf_s (fp.File (), "            type %d\n", &byteBuf);
-				o.type = (char) byteBuf;
-				fscanf_s (fp.File (), "            id %d\n", &byteBuf);
-				o.id = (char) byteBuf;
-				fscanf_s (fp.File (), "            controlType %d\n", &byteBuf);
-				o.controlType = (byte) byteBuf;
-				fscanf_s (fp.File (), "            movementType %d\n", &byteBuf);
-				o.movementType = (byte) byteBuf;
-				fscanf_s (fp.File (), "            renderType %d\n", &byteBuf);
-				o.renderType = (byte) byteBuf;
-				fscanf_s (fp.File (), "            flags %d\n", &byteBuf);
-				o.flags = (byte) byteBuf;
-				o.nSegment = nSegment;
-				fscanf_s (fp.File (), "            pos %ld %ld %ld\n", &o.pos.x, &o.pos.y, &o.pos.z);
-				memcpy (&o.lastPos, &o.pos, sizeof (o.pos));
-				fscanf_s (fp.File (), "            orient %ld %ld %ld %ld %ld %ld %ld %ld %ld\n", 
-													&o.orient.rVec.x, &o.orient.rVec.y, &o.orient.rVec.z,
-													&o.orient.uVec.x, &o.orient.uVec.y, &o.orient.uVec.z,
-													&o.orient.fVec.x, &o.orient.fVec.y, &o.orient.fVec.z);
-				fscanf_s (fp.File (), "            nSegment %hd\n", &o.nSegment);
-				fscanf_s (fp.File (), "            size %ld\n", &o.size);
-				fscanf_s (fp.File (), "            shields %ld\n", &o.shields);
-				fscanf_s (fp.File (), "            contents.type %d\n", &byteBuf);
-				o.contents.type = (char) byteBuf;
-				fscanf_s (fp.File (), "            contents.id %d\n", &byteBuf);
-				o.contents.id = (char) byteBuf;
-				fscanf_s (fp.File (), "            contents.count %d\n", &byteBuf);
-				o.contents.count = (char) byteBuf;
-				switch (o.type) {
-					case OBJ_POWERUP:
-					case OBJ_HOSTAGE:
-						// has vclip
-						break;
-					case OBJ_PLAYER:
-					case OBJ_COOP:
-					case OBJ_ROBOT:
-					case OBJ_WEAPON:
-					case OBJ_CNTRLCEN:
-						// has poly model;
-						break;
-					}
-				switch (o.controlType) {
-					case :
-					}
-				switch (o.movementType) {
-					case MT_PHYSICS:
-						fscanf_s (fp.File (), "            velocity %ld %ld %ld\n", 
-								  &o.physInfo.velocity.x, &o.physInfo.velocity.y, &o.physInfo.velocity.z);
-						fscanf_s (fp.File (), "            thrust %ld %ld %ld\n", 
-								  &o.physInfo.thrust.x, &o.physInfo.thrust.y, &o.physInfo.thrust.z);
-						fscanf_s (fp.File (), "            mass %ld\n", &o.physInfo.mass);
-						fscanf_s (fp.File (), "            drag %ld\n", &o.physInfo.drag);
-						fscanf_s (fp.File (), "            brakes %ld\n", &o.physInfo.brakes);
-						fscanf_s (fp.File (), "            rotvel %ld %ld %ld\n", 
-								  &o.physInfo.rotvel.x, &o.physInfo.rotvel.y, &o.physInfo.rotvel.z);
-						fscanf_s (fp.File (), "            rotthrust %ld %ld %ld\n", 
-								  &o.physInfo.rotthrust.x, &o.physInfo.rotthrust.y, &o.physInfo.rotthrust.z);
-						fscanf_s (fp.File (), "            turnroll %hd\n", &o.physInfo.turnroll);
-						fscanf_s (fp.File (), "            flags %hd\n", &o.physInfo.flags);
-						break;
-					case MT_SPIN:
-						fscanf_s (fp.File (), "            spinrate %ld %ld %ld\n", 
-								  &o.spin_rate.x, &o.spin_rate.y, &o.spin_rate.z);
-						break;
-					}
-				switch (o.renderType) {
-					case :
-						break;
-					}
-				}
-#endif
 			}
 		}
 	short children [6];
@@ -268,24 +170,25 @@ while (!fp.EoF ()) {
 			}
 		// each vertex relative to the origin has a x', y', and z' component
 		// adjust vertices relative to origin
-		vVertex.Set (x, y, z);
-		v.Set (vVertex ^ xAxis, vVertex ^ xAxis, vVertex ^ xAxis);
+		CDoubleVector v;
+		v.Set (x, y, z);
+		v.Set (v ^ xAxis, v ^ xAxis, v ^ xAxis);
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
 		CVertex* vertP = vertexManager.GetVertex (origVertCount);
-		for (k = origVertCount; k < VertCount (); k++, vertP++)
+		for (k = vertexManager.Count () - origVertCount; k > 0; k--, vertP++)
 			if (*vertP == v) {
 				segP->m_info.verts [i] = k;
 				break;
 				}
 		// else make a new vertex
-		if (k == VertCount ()) {
-			nVertex = VertCount ();
+		if (k == 0) {
+			vertexManager.Add ();
+			int nVertex = vertexManager.Count () - 1;
 			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
 			*vertexManager.GetVertex (nVertex) = v;
-			VertCount ()++;
 			}
 		}
 	// mark vertices
@@ -293,16 +196,11 @@ while (!fp.EoF ()) {
 		vertexManager.Status (segP->m_info.verts [i]) |= MARKED_MASK;
 	fscanf_s (fp.File (), "  staticLight %ld\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
-		fscanf_s (fp.File (), "  special %d\n", &byteBuf);
-		segP->m_info.function = byteBuf;
-		fscanf_s (fp.File (), "  nMatCen %d\n", &byteBuf);
-		segP->m_info.nMatCen = byteBuf;
-		fscanf_s (fp.File (), "  value %d\n", &byteBuf);
-		segP->m_info.value = byteBuf;
-		fscanf_s (fp.File (), "  childFlags %d\n", &byteBuf);
-		segP->m_info.childFlags = byteBuf;
-		fscanf_s (fp.File (), "  wallFlags %d\n", &byteBuf);
-		segP->m_info.wallFlags = byteBuf;
+		fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
+		fscanf_s (fp.File (), "  nMatCen %d\n", &segP->m_info.nMatCen);
+		fscanf_s (fp.File (), "  value %d\n", &segP->m_info.value);
+		fscanf_s (fp.File (), "  childFlags %d\n", &segP->m_info.childFlags);
+		fscanf_s (fp.File (), "  wallFlags %d\n", &segP->m_info.wallFlags);
 		switch (segP->m_info.function) {
 			case SEGMENT_FUNC_FUELCEN:
 				if (!AddFuelCenter (nSegment, SEGMENT_FUNC_FUELCEN, false, false))
@@ -339,7 +237,6 @@ while (!fp.EoF ()) {
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 		if (segP->GetChild (i) >= 0)
 		segP->m_info.childFlags |= (1 << i);
-	SegCount ()++;
 	nNewSegs++;
 	}
 
@@ -366,7 +263,7 @@ DEBUGMSG (message);
 return (nNewSegs);
 }
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // dump_seg_info()
 //
 // ACTION - Writes a segment's information in text form to a fp.  Uses
@@ -379,38 +276,26 @@ return (nNewSegs);
 //          z' is in the neg direction orthogonal to line0 & line3
 //          x' is in the direction orghogonal to x' and y'
 //
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void CBlockManager::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/) 
+void CBlockManager::Write (CFileManager& fp, short /*nSegment*/) 
 {
 	short				nSegment;
-	CSegment			*segP;
-	CSide				*sideP;
-	CWall				*wallP;
 	short				i,j;
 	CVertex			origin;
-	CDoubleVector	m.rVec, m.uVec, m.fVec, vVertex;
+	CDoubleMatrix	m;
+	CDoubleVector	v;
 	short				nVertex;
 
 // set origin
-segP = current.Segment ();
-origin = *vertexManager.GetVertex (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(0)]]);
-// set x'
-m.rVec = *vertexManager.GetVertex (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(1)]]) - origin;
-// calculate y'
-vVertex = *vertexManager.GetVertex (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(3)]]) - origin;
-m.uVec = CrossProduct (m.rVec, vVertex);
-m.fVec = CrossProduct (m.rVec, m.uVec);
-m.rVec.Normalize ();
-m.uVec.Normalize ();
-m.fVec.Normalize ();
+MakeTransformation (m, origin);
 
-segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+CSegment* segP = segmentManager.GetSegment (0);
+for (nSegment = 0; nSegment < segmentManager.Count () (); nSegment++, segP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	if (segP->m_info.wallFlags & MARKED_MASK) {
 		fprintf (fp.File (), "segment %d\n",nSegment);
-		sideP = segP->m_sides;
+		CSide* sideP = segP->m_sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
 			fprintf (fp.File (), "  side %d\n",i);
 			fprintf (fp.File (), "    tmap_num %d\n",sideP->m_info.nBaseTex);
@@ -425,7 +310,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 				fprintf (fp.File (), "    nWall %d\n", 
 							(sideP->m_info.nWall < MineInfo ().walls.count) ? sideP->m_info.nWall : NO_WALL);
 				if (sideP->m_info.nWall < MineInfo ().walls.count) {
-					wallP = Walls (sideP->m_info.nWall);
+					CWall* wallP = Walls (sideP->m_info.nWall);
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
 					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
 					fprintf (fp.File (), "        hps %d\n", wallP->m_info.hps);
@@ -443,7 +328,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						int count = 0;
 						// count trigger targets in marked area
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
-							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
+							if (segmentManager.GetSegment (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
 						fprintf (fp.File (), "        trigger %d\n", wallP->m_info.nTrigger);
 						fprintf (fp.File (), "			    type %d\n", trigger->m_info.type);
@@ -452,7 +337,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						fprintf (fp.File (), "			    timer %d\n", trigger->m_info.time);
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
-							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
+							if (segmentManager.GetSegment (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
 								fprintf (fp.File (), "			        segP %d\n", trigger->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigger->Side (iTarget));
 								}
@@ -471,8 +356,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
-			vVertex = *vertexManager.GetVertex (nVertex) - origin;
-			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ m.rVec), D2X (vVertex ^ m.uVec), D2X (vVertex ^ m.fVec));
+			CVertex v = *vertexManager.GetVertex (nVertex) - origin;
+			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
 			}
 		fprintf (fp.File (), "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
@@ -486,36 +371,26 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	}
 }
 
-//==========================================================================
-// MENU - Cut
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CBlockManager::CutBlock (void)
+void CBlockManager::Cut (void)
 {
-  CFileManager fp;
-  short nSegment;
-  short count;
-  char szFile [256] = "\0";
-
-if (m_bSplineActive) {
+if (TunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
 
   // make sure some cubes are marked
-count = MarkedSegmentCount ();
-if (count==0) {
+short count = MarkedSegmentCount ();
+if (count == 0) {
 	ErrorMsg ("No block marked.\n\n""Use 'M' or shift left mouse button\n""to mark one or more cubes.");
 	return;
 	}
 
-//  if (disable_saves) {
-//    ErrorMsg ("Saves disabled, contact Interplay for your security number.");
-//    return;
-//  }
-
 if (!bExpertMode && Query2Msg(BLOCKOP_HINT,MB_YESNO) != IDYES)
 	return;
+
+ char szFile [256] = "\0";
 if (!BrowseForFile (FALSE, 
 	                 bExtBlkFmt ? "blx" : "blk", szFile, 
 						  "Block file|*.blk|"
@@ -526,27 +401,27 @@ if (!BrowseForFile (FALSE,
 	return;
 _strlwr_s (szFile, sizeof (szFile));
 bExtBlkFmt = strstr (szFile, ".blx") != null;
+
+CFileManager fp;
 if (fp.Open (szFile, "w")) {
 	ErrorMsg ("Unable to open block file");
 	return;
 	}
 //undoManager.UpdateBuffer(0);
-strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember file for quick paste
+strcpy_s (m_filename, sizeof (m_filename), szFile); // remember file for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
-DLE.MainFrame ()->InitProgress (SegCount ());
-WriteSegmentInfo (fp, 0);
+DLE.MainFrame ()->InitProgress (segmentManager.Count () ());
+Write (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
-// delete Segments () from last to first because SegCount ()
-// is effected for each deletion.  When all Segments () are marked
-// the SegCount () will be decremented for each nSegment in loop.
+
 undoManager.SetModified (true);
 undoManager.Lock ();
-DLE.MainFrame ()->InitProgress (SegCount ());
-CSegment *segP = Segments (SegCount ());
-for (nSegment = SegCount () - 1; nSegment; nSegment--) {
+DLE.MainFrame ()->InitProgress (segmentManager.Count () ());
+CSegment *segP = segmentManager.GetSegment (segmentManager.Count () ());
+for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
 	DLE.MainFrame ()->Progress ().StepIt ();
     if ((--segP)->m_info.wallFlags & MARKED_MASK) {
-		if (SegCount () <= 1)
+		if (segmentManager.Count () <= 1)
 			break;
 		DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
 		}
@@ -557,19 +432,17 @@ fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
-wrap (&selections [0].m_nSegment, -1, 0, SegCount () - 1);
-wrap (&selections [1].m_nSegment, 1, 0, SegCount () - 1);
-wrap (&selections [1].m_nSegment, -1, 0, SegCount () - 1);
-wrap (&selections [1].m_nSegment, 1, 0, SegCount () - 1);
+wrap (&selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
+wrap (&selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
+wrap (&selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
+wrap (&selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
 SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
 }
 
-//==========================================================================
-// MENU - Copy
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CBlockManager::CopyBlock (char *pszBlockFile)
+void CBlockManager::Copy (char *filename)
 {
   CFileManager fp;
   char szFile [256] = "\0";
@@ -581,17 +454,12 @@ if (count == 0) {
 	return;
 	}
 
-//  if (disable_saves) {
-//    ErrorMsg ("Saves disabled, contact Interplay for your security number.");
-//    return;
-//  }
-
 if (!bExpertMode && Query2Msg(BLOCKOP_HINT,MB_YESNO) != IDYES)
 	return;
-if (pszBlockFile && *pszBlockFile)
-	strcpy_s (szFile, sizeof (szFile), pszBlockFile);
+if (filename && *filename)
+	strcpy_s (szFile, sizeof (szFile), filename);
 else {
-	strcpy_s (szFile, sizeof (szFile), m_szBlockFile);
+	strcpy_s (szFile, sizeof (szFile), m_filename);
 	if (!BrowseForFile (FALSE, 
 	                 bExtBlkFmt ? "blx" : "blk", szFile, 
 						  "Block file|*.blk|"
@@ -609,7 +477,7 @@ if (fp.Open (szFile, "w")) {
 	return;
 	}
 //  undoManager.UpdateBuffer(0);
-strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), szFile); // remember fp for quick paste
+strcpy_s (m_filename, sizeof (m_filename), szFile); // remember fp for quick paste
 fprintf (fp.File (), bExtBlkFmt ? "DMB_EXT_BLOCK_FILE\n" : "DMB_BLOCK_FILE\n");
 WriteSegmentInfo (fp, 0);
 fp.Close ();
@@ -619,13 +487,11 @@ SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
 }
 
-//==========================================================================
-// MENU - Paste
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CBlockManager::PasteBlock() 
+void CBlockManager::Paste (void) 
 {
-if (m_bSplineActive) {
+if (TunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -640,27 +506,22 @@ if (!BrowseForFile (TRUE,
 						  OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST,
 						  DLE.MainFrame ()))
 	return;
-if (!ReadBlock (szFile, 0))
+if (!Read (szFile, 0))
 	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 }
 
-//==========================================================================
-// read_block_file()
-//
-// returns 0 on success
-// if option == 1, then "x blocks pasted" message is suppressed
-//==========================================================================
+//------------------------------------------------------------------------------
 
-int CBlockManager::ReadBlock (char *pszBlockFile,int option) 
+int CBlockManager::Read (char *filename, int option) 
 {
-	CSegment *segP,*seg2;
+	CSegment *segP, *seg2P;
 	short nSegment,seg_offset;
 	short count,child;
 	short nVertex;
 	CFileManager fp;
 
-_strlwr_s (pszBlockFile, 256);
-if (fp.Open (pszBlockFile, "r")) {
+_strlwr_s (filename, 256);
+if (fp.Open (filename, "r")) {
 	ErrorMsg ("Unable to open block file");
 	return 1;
 	}	
@@ -676,14 +537,14 @@ else {
 	return 2;
 	}
 
-strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file for quick paste
+strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick paste
 
-// unmark all Segments ()
+// unmark all segmentManager.GetSegment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
-segP = Segments (0);
+segP = segmentManager.GetSegment (0);
 for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->m_info.nIndex = nSegment;
 	segP->m_info.wallFlags &= ~MARKED_MASK;
@@ -696,40 +557,39 @@ for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
 	}
 
 DLE.MainFrame ()->InitProgress (fp.Length ());
-count = ReadSegmentInfo (fp);
+count = Read (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
-// int up the new Segments () children
-segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
+// int up the new segmentManager.GetSegment () children
+segP = segmentManager.GetSegment (0);
+for (nSegment = 0; nSegment < segmentManager.Count () (); nSegment++, segP++) {
 	if (segP->m_info.nIndex < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
 		//  segment's offset number, otherwise set it to -1
-		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (segP->m_info.childFlags & (1 << child)) {
-				seg2 = Segments (0);
-				for (seg_offset = 0; seg_offset < SegCount (); seg_offset++, seg2++) {
-					if (segP->GetChild (child) == ~seg2->m_info.nIndex) {
-						segP->SetChild (child, seg_offset);
+		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
+			if (segP->HasChild (nChild)) {
+				seg2P = segmentManager.GetSegment (0);
+				for (short nSegOffset = 0; nSegOffset < segmentManager.Count () (); nSegOffset++, seg2P++) {
+					if (segP->GetChild (child) == ~seg2P->m_info.nIndex) {
+						segP->SetChild (child, nSegOffset);
 						break;
 						}
 					}
-				if (seg_offset == SegCount ()) { // no child found
+				if (nSegOffset == segmentManager.Count () ()) { // no child found
 					ResetSide (nSegment,child);
-					// auto link the new segment with any touching Segments ()
-					seg2 = Segments (0);
-					int segnum2, sidenum2;
-					for (segnum2 = 0; segnum2 < SegCount (); segnum2++, seg2++) {
-						if (nSegment != segnum2) {
-							// first check to see if Segments () are any where near each other
+					// auto link the new segment with any touching segmentManager.GetSegment ()
+					seg2P = segmentManager.GetSegment (0);
+					for (short nSegment2 = 0; nSegment2 < segmentManager.Count () (); nSegment2++, seg2P++) {
+						if (nSegment != nSegment2) {
+							// first check to see if segmentManager.GetSegment () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
 							CVertex* v1 = vertexManager.GetVertex (segP ->m_info.verts [0]);
-							CVertex* v2 = vertexManager.GetVertex (seg2->m_info.verts [0]);
+							CVertex* v2 = vertexManager.GetVertex (seg2P->m_info.verts [0]);
 							if (fabs (v1->v.x - v2->v.x) < 10.0 &&
 								 fabs (v1->v.y - v2->v.y) < 10.0 &&
 								 fabs (v1->v.z - v2->v.z) < 10.0) {
-								for (sidenum2 = 0; sidenum2 < 6; sidenum2++) {
-									LinkSegments (nSegment, child, segnum2, sidenum2, 3 * F1_0);
+								for (short nSide2 = 0; nSide2 < 6; nSide2++) {
+									LinkSegments (nSegment, nChild, nSegment2, nSide2, 3 * F1_0);
 									}
 								}
 							}
@@ -746,8 +606,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	vertexManager.Status (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
-segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+segP = segmentManager.GetSegment (0);
+for (nSegment = 0; nSegment < segmentManager.Count () (); nSegment++, segP++)
 	segP->m_info.nIndex = nSegment;
 /*
 if (option != 1) {
@@ -763,45 +623,40 @@ DLE.MineView ()->Refresh ();
 return 0;
 }
 
-//==========================================================================
-// MENU - Quick Paste
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CBlockManager::QuickPasteBlock ()
+void CBlockManager::QuickPaste (void)
 {
-if (!*m_szBlockFile) {
-	PasteBlock ();
+if (!*m_filename) {
+	Paste ();
 //	ErrorMsg ("You must first use one of the cut or paste commands\n"
 //				"before you use the Quick Paste command");
 	return;
 	}
 
-if (m_bSplineActive) {
+if (TunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
 
 //undoManager.UpdateBuffer(0);
 
-if (!ReadBlock (m_szBlockFile, 1))
+if (!Read (m_filename, 1))
 	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 }
 
-//==========================================================================
-// MENU - Delete Block
-//==========================================================================
+//------------------------------------------------------------------------------
 
-void CBlockManager::DeleteBlock (void)
+void CBlockManager::Delete (void)
 {
-
 short nSegment, count;
 
-if (m_bSplineActive) {
+if (TunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
 // make sure some cubes are marked
-count = MarkedSegmentCount ();
+count = segmentManager.MarkedCount ();
 if (!count) {
 	ErrorMsg ("No block marked.\n\n"
 				"Use 'M' or shift left mouse button\n"
@@ -813,17 +668,17 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 
-// delete Segments () from last to first because SegCount ()
-// is effected for each deletion.  When all Segments () are marked
-// the SegCount () will be decremented for each nSegment in loop.
+// delete segmentManager.GetSegment () from last to first because segmentManager.Count () ()
+// is effected for each deletion.  When all segmentManager.GetSegment () are marked
+// the segmentManager.Count () will be decremented for each nSegment in loop.
 if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 	return;
 
-DLE.MainFrame ()->InitProgress (SegCount ());
-for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--) {
+DLE.MainFrame ()->InitProgress (segmentManager.Count () ());
+for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 		DLE.MainFrame ()->Progress ().StepIt ();
 		if (GetSegment (nSegment)->m_info.wallFlags & MARKED_MASK) {
-		if (SegCount () <= 1)
+		if (segmentManager.Count () <= 1)
 			break;
 		if (Objects (0)->m_info.nSegment != nSegment)
 			DeleteSegment (nSegment); // delete segP w/o asking "are you sure"
@@ -831,10 +686,10 @@ for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--) {
 	}
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 // wrap back then forward to make sure segment is valid
-wrap(&selections [0].m_nSegment,-1,0,SegCount () - 1);
-wrap(&selections [1].m_nSegment,1,0,SegCount () - 1);
-wrap(&selections [1].m_nSegment,-1,0,SegCount () - 1);
-wrap(&selections [1].m_nSegment,1,0,SegCount () - 1);
+Wrap (selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
+Wrap (selections [0].m_nSegment, 1, 0, segmentManager.Count () - 1);
+Wrap (selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
+Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
