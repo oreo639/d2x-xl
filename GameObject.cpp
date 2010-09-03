@@ -20,7 +20,7 @@
 // Action - Defines a standard object (currently assumed to be a player)
 //------------------------------------------------------------------------
 
-void CGameObject::Setup (byte type, short nSegment) 
+void CGameObject::Create (byte type, short nSegment) 
 {
   CVertex	location;
 
@@ -58,9 +58,8 @@ return;
 // 	    size, and shields (also nModel & texture if robot)
 //------------------------------------------------------------------------
 
-void CMine::SetObjectData (char type) 
+void CGameObject::SetupData (char type) 
 {
-  CGameObject *objP;
   int  id;
 
 undoManager.SetModified (true);

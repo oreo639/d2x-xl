@@ -1,5 +1,5 @@
-#ifndef OBJECT_TYPES_H
-#define OBJECT_TYPES_H
+#ifndef __gameobject_h
+#define __gameobject_h
 
 #include "define.h"
 
@@ -302,8 +302,9 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		m_location.Clear ();
 		}
+	void Create (byte type);
 	void Setup (byte type, short nSegment);
 };
 
-#endif // OBJECT_TYPES_H
+#endif // __gameobject_h
 
