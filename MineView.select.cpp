@@ -53,7 +53,7 @@ for (i = 0; i <= theMine->Info ().objects.count; i++) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter (objP->m_location.pos, (ushort)theMine->SecretCubeNum ());
+		CalcSegmentCenter (objP->m_location.pos, (ushort)theMine->SecretSegment ());
 		}
 	else
 		objP = theMine->Objects (i);

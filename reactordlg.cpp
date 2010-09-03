@@ -127,7 +127,7 @@ if (!(m_bInited && theMine))
 EnableControls (DLE.IsD2File ());
 m_pTrigger = theMine->ReactorTriggers (m_nTrigger);
 m_nCountDown = theMine->ReactorTime ();
-m_nSecretReturn = theMine->SecretCubeNum ();
+m_nSecretReturn = theMine->SecretSegment ();
 InitLBTargets ();
 OnSetTarget ();
 UpdateData (FALSE);
@@ -160,7 +160,7 @@ if (!*szVal)
 	return;
 UpdateData (TRUE);
 undoManager.SetModified (true);
-theMine->SecretCubeNum () = m_nSecretReturn;
+theMine->SecretSegment () = m_nSecretReturn;
 }
 
 //------------------------------------------------------------------------

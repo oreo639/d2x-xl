@@ -467,7 +467,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 			}
 		}
 	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().equipgen.count) || (theMine->EquipGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().equipGen.count) || (theMine->EquipGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
@@ -1366,7 +1366,7 @@ bool CDiagTool::CheckEquipGens (void)
 {
 	short					i, nSegment = 0;
 	bool					bOk = true;
-	int					nMatCenSegs, nMatCens = int (theMine->Info ().equipgen.count);
+	int					nMatCenSegs, nMatCens = int (theMine->Info ().equipGen.count);
 	CRobotMaker*		matCenP = theMine->EquipGens (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
@@ -1376,7 +1376,7 @@ for (i = 0; i < nMatCens; i++)
 CountMatCenRefs (SEGMENT_FUNC_EQUIPMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
 AssignMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens);
-theMine->Info ().equipgen.count = CleanupMatCens (refList, matCenP, nMatCens);
+theMine->Info ().equipGen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;

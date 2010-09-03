@@ -1336,7 +1336,7 @@ else {
 	objP->m_location.orient.uVec =  theMine->SecretOrient ().fVec;
 	objP->m_location.orient.fVec =  theMine->SecretOrient ().uVec;
 	// objP->m_location.orient =  theMine->secret_orient;
-	ushort nSegment = (ushort)theMine->SecretCubeNum ();
+	ushort nSegment = (ushort)theMine->SecretSegment ();
 	if (nSegment >= segmentManager.Count ())
 		nSegment = 0;
 	if (!Visible (segmentManager.GetSegment (nSegment)))

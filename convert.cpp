@@ -298,7 +298,7 @@ for (i = 0; i < theMine->Info ().botgen.count; i++) {
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < theMine->Info ().equipgen.count; i++) {
+for (i = 0; i < theMine->Info ().equipGen.count; i++) {
 	theMine->EquipGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nMatCen == i))
@@ -338,7 +338,7 @@ lightManager.CalcDeltaLightData (50.0, 1);
 //----------------------------------------------
 theMine->ReactorTime () = 0x1e;
 theMine->ReactorStrength () = 0xffffffffL;
-theMine->SecretCubeNum () = 0L;
+theMine->SecretSegment () = 0L;
 
 theMine->SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 DLE.MineView ()->ResetView (true);

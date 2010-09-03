@@ -54,7 +54,7 @@ class CMine {
 		int				m_fileType;
 		int				m_levelVersion;
 		char				m_currentLevelName [256];	
-		CMineData		m_mineData;
+		CMineData		m_data;
 
 		HPALETTE			m_paletteHandle;
 		
@@ -85,8 +85,8 @@ class CMine {
 		void Default (void);
 		
 	public:
-		inline CMineData& MineData (void)
-			{ return m_mineData; }
+		inline CMineData& Data (void)
+			{ return m_data; }
 
 		inline int LevelVersion (void) { return m_levelVersion; }
 		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
@@ -109,19 +109,19 @@ class CMine {
 		//	{ return &textureManager.textures [i][j]; }
 
 		inline CMineInfo& Info (void)
-			{ return MineData ().mineInfo; }
+			{ return Data ().mineInfo; }
 		inline CMineFileInfo& FileInfo (void)
-			{ return MineData ().mineInfo.fileInfo; }
+			{ return Data ().mineInfo.fileInfo; }
 
 		long TotalSize (CMineItemInfo& gii) { return (int) gii.size * (int) gii.count; }
 
-		inline int& ReactorTime (void) { return MineData ().m_reactorTime; }
+		inline int& ReactorTime (void) { return Data ().m_reactorTime; }
 
-		inline int& ReactorStrength (void) { return MineData ().m_reactorStrength; }
+		inline int& ReactorStrength (void) { return Data ().m_reactorStrength; }
 
-		inline int& SecretCubeNum (void) { return MineData ().m_secretSegNum; }
+		inline int& SecretSegment (void) { return Data ().m_secretSegNum; }
 
-		inline CDoubleMatrix& SecretOrient (void) { return MineData ().m_secretOrient; }
+		inline CDoubleMatrix& SecretOrient (void) { return Data ().m_secretOrient; }
 
 		short Load(const char *filename = null, bool bLoadFromHog = false);
 
@@ -174,7 +174,7 @@ class CMine {
 		inline int& RobotMakerCount (void) 
 			{ return Info ().botgen.count; }
 		inline int& EquipMakerCount (void) 
-			{ return Info ().equipgen.count; }
+			{ return Info ().equipGen.count; }
 		inline int& WallCount (void) 
 			{ return Info ().walls.count; }
 		inline int& TriggerCount (void) 

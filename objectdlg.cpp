@@ -1122,7 +1122,7 @@ if (QueryMsg ("Are you sure you want to move the\n"
 #endif
 undoManager.SetModified (true);
 if (current.m_nObject == theMine->Info ().objects.count)
-	theMine->SecretCubeNum () = current.m_nSegment;
+	theMine->SecretSegment () = current.m_nSegment;
 else {
 	CGameObject *objP = theMine->current.Object ();
 	theMine->CalcSegCenter (objP->m_location.pos, current.m_nSegment);

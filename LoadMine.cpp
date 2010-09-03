@@ -221,7 +221,7 @@ if (IsD2File ()) {
 	//    DEBUGMSG(message);
 
 	// read secret cube number
-	SecretCubeNum () = fp.ReadInt32 ();
+	SecretSegment () = fp.ReadInt32 ();
 	// read secret cube orientation?
 	fp.Read (SecretOrient ());
 	}
@@ -250,7 +250,7 @@ if (gameErr != 0) {
 	MineInfo ().triggers.Reset ();
 	MineInfo ().control.Reset ();
 	MineInfo ().botgen.Reset ();
-	MineInfo ().equipgen.Reset ();
+	MineInfo ().equipGen.Reset ();
 	MineInfo ().lightDeltaIndices.Reset ();
 	MineInfo ().lightDeltaValues.Reset ();
 	fp.Close ();
@@ -503,7 +503,7 @@ MineInfo ().doors.Reset ();
 MineInfo ().triggers.Reset ();
 MineInfo ().control.Reset ();
 MineInfo ().botgen.Reset ();
-MineInfo ().equipgen.Reset ();
+MineInfo ().equipGen.Reset ();
 MineInfo ().lightDeltaIndices.Reset ();
 MineInfo ().lightDeltaValues.Reset ();
 
@@ -574,7 +574,7 @@ if (0 > LoadGameItem (fp, MineInfo ().control, ReactorTriggers (0), -1, MAX_REAC
 	return -1;
 if (0 > LoadGameItem (fp, MineInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
 	return -1;
-if (0 > LoadGameItem (fp, MineInfo ().equipgen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
+if (0 > LoadGameItem (fp, MineInfo ().equipGen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 	return -1;
 if (IsD2File ()) {
 	if (0 > LoadGameItem (fp, MineInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34)))

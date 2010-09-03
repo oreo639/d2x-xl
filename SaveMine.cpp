@@ -102,7 +102,7 @@ else if (IsD2File ()) {
 		VariableLights (i)->Write (fp);
 
 	// write secret cube number
-	fp.Write (SecretCubeNum ());
+	fp.Write (SecretSegment ());
 	// write secret cube orientation?
 	fp.Write (SecretOrient ());
 	}
@@ -276,7 +276,7 @@ MineInfo ().doors.size = 16;                            // 16 = sizeof (CDoor)
 MineInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
 MineInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
 MineInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
-MineInfo ().equipgen.size = 20; // 20 = sizeof (CRobotMaker)
+MineInfo ().equipGen.size = 20; // 20 = sizeof (CRobotMaker)
 MineInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
 MineInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
 
@@ -344,7 +344,7 @@ if (LevelVersion () >= 12) {
 SaveGameItem (fp, MineInfo ().control, DATA (ReactorTriggers ()));
 SaveGameItem (fp, MineInfo ().botgen, DATA (BotGens ()));
 if (IsD2File ()) {
-	SaveGameItem (fp, MineInfo ().equipgen, DATA (EquipGens ()));
+	SaveGameItem (fp, MineInfo ().equipGen, DATA (EquipGens ()));
 	if (MineInfo ().lightDeltaIndices.count > 0) {
 		if ((LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34))
 			SortDLIndex (0, MineInfo ().lightDeltaIndices.count - 1);

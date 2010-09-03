@@ -222,7 +222,7 @@ bool CSegmentTool::IsEquipMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < theMine->Info ().equipgen.count);
+	(segP->m_info.nMatCen < theMine->Info ().equipGen.count);
 }
 
                         /*--------------------------*/

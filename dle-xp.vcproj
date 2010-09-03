@@ -6061,6 +6061,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\SegmentManager.Add.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\SegmentManager.cpp"
 					>
 				</File>

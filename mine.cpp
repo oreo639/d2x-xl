@@ -66,7 +66,7 @@ MineInfo ().doors.Reset ();
 MineInfo ().triggers.Reset ();
 MineInfo ().control.Reset ();
 MineInfo ().botgen.Reset ();
-MineInfo ().equipgen.Reset ();
+MineInfo ().equipGen.Reset ();
 MineInfo ().lightDeltaIndices.Reset ();
 MineInfo ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
@@ -318,7 +318,7 @@ MineInfo ().doors.Reset ();
 MineInfo ().triggers.Reset ();
 MineInfo ().control.Reset ();
 MineInfo ().botgen.Reset ();
-MineInfo ().equipgen.Reset ();
+MineInfo ().equipGen.Reset ();
 MineInfo ().lightDeltaIndices.Reset ();
 MineInfo ().lightDeltaValues.Reset ();
 }

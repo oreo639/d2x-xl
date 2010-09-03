@@ -79,7 +79,7 @@ botgen.Read (fp);
 lightDeltaIndices.Read (fp);
 lightDeltaValues.Read (fp);
 if (fileInfo.size > 143)
-	equipgen.Read (fp);
+	equipGen.Read (fp);
 }
 
 // -----------------------------------------------------------------------------
@@ -100,7 +100,7 @@ botgen.Write (fp);
 lightDeltaIndices.Write (fp);
 lightDeltaValues.Write (fp);
 if (fileInfo.size > 143)
-	equipgen.Write (fp);
+	equipGen.Write (fp);
 }
 
 // -----------------------------------------------------------------------------

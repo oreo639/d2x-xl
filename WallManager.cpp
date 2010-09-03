@@ -178,15 +178,6 @@ return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 
 bool CWallManager::AddDoor (byte type, byte flags, byte keys, char nClip, short nTexture) 
 {
-short nWall = current.Side ()->m_info.nWall;
-if (nWall < Count ()) {
-	ErrorMsg ("There is already a wall on this side");
-	return false;
-	}
-if (Count () + 1 >= MAX_WALLS) {
-	ErrorMsg ("Maximum number of Walls reached");
-	return false;
-	}
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 // add a door to the current segment/side
@@ -302,26 +293,24 @@ return AddExit (TT_EXIT);
 bool CWallManager::AddExit (short type) 
 {
 
-if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
-	ErrorMsg ("Maximum number of triggers reached");
+if (!triggerManager.HaveResources ())
 	return false;
-	}
 // make a new wall and a new trigger
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (AddWall (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+if (Add (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	Walls () [Count ()-1].m_info.nClip = 10;
-	SetTexture (current.m_nSegment, current.m_nSide, 0, (IsD1File ()) ? 444 : 508);
+	GetWall (Count ()- 1)->m_info.nClip = 10;
+	segmentManager.SetTextures (current.m_nSegment, current.m_nSide, 0, theMine->IsD1File () ? 444 : 508);
 	AddTrigger (Count () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	short nOppSeg, nOppSide;
-	if (GetOppositeSide (nOppSeg, nOppSide, current.m_nSegment, current.m_nSide) &&
-		AddWall (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+	if (segmentManager.GetOppositeSide (current, nOppSeg, nOppSide) &&
+		Add (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		Walls () [Count () - 1].m_info.nClip = 10;
-		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
-		AutoUpdateReactor();
+		GetWall (Count () - 1)->m_info.nClip = 10;
+		segmentManager.SetTextures (nOppSeg, nOppSide, 0, theMine->IsD1File () ? 444 : 508);
+		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();
 		//DLE.MineView ()->Refresh ();
 		return true;
@@ -339,28 +328,23 @@ if (theMine->IsD1File ()) {
     AddExit (TT_SECRET_EXIT);
 	 return false;
 	}
-if (Count () >= MAX_WALLS) {
-	ErrorMsg ("Maximum number of walls reached");
+if (!triggerManager.HaveResources ())
 	return false;
-	}
-if (triggerManager.Count () >= MAX_TRIGGERS - 1) {
-	ErrorMsg ("Maximum number of triggers reached");
-	return false;
-	}
-int last_segment = current.m_nSegment;
+
+int lastSegment = current.m_nSegment;
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (!AddSegment ()) {
+if (!segmentManager.Add ()) {
 	undoManager.ResetModified (bUndo);
 	return false;
 	}
-int new_segment = current.m_nSegment;
-current.m_nSegment = last_segment;
-if (AddWall (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
-	AddTrigger (Count () - 1, TT_SECRET_EXIT);
-	SecretCubeNum () = current.m_nSegment;
+int newSegment = current.m_nSegment;
+current.m_nSegment = lastSegment;
+if (Add (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+	triggerManager.Add (Count () - 1, TT_SECRET_EXIT);
+	theMine->SecretSegment () = current.m_nSegment;
 	SetDefaultTexture (426, -1);
-	current.m_nSegment = new_segment;
+	current.m_nSegment = newSegment;
 	SetDefaultTexture (426, -1);
 	//DLE.MineView ()->Refresh ();
 	undoManager.Unlock ();

@@ -54,7 +54,7 @@ public:
 	CMineItemInfo		botgen;
 	CMineItemInfo		lightDeltaIndices;
 	CMineItemInfo		lightDeltaValues;
-	CMineItemInfo		equipgen;
+	CMineItemInfo		equipGen;
 
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
