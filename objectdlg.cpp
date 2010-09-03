@@ -14,7 +14,7 @@
 #include "dle-xp.h"
 #include "global.h"
 #include "toolview.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 
 typedef struct tSliderData {
 	int	nId;

@@ -11,7 +11,7 @@
 #include "mine.h"
 #include "light.h"
 #include "global.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp

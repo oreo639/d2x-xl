@@ -5,7 +5,7 @@
 #include "types.h"
 #include "mine.h"
 #include "dle-xp.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 #include "texturefilter.h"
 
 //------------------------------------------------------------------------

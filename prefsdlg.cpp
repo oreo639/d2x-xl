@@ -10,7 +10,7 @@
 #include "toolview.h"
 
 #include "palette.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 #include "global.h"
 #include "render.h"
 #include "cfile.h"

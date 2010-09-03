@@ -6,7 +6,7 @@
 #include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 
 //==========================================================================
 // SetDefaultTexture

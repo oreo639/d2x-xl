@@ -16,7 +16,7 @@
 #include "render.h"
 #include "texedit.h"
 #include "cfile.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 
 #include <math.h>
 

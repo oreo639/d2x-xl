@@ -13,7 +13,7 @@
 #include "ComCube.h"
 #include "ComObj.h"
 #include "global.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 #include "cfile.h"
 
 int nLayout = 1;

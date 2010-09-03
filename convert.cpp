@@ -10,7 +10,7 @@
 #include "global.h"
 #include "dlcdoc.h"
 #include "palette.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 
 BEGIN_MESSAGE_MAP (CConvertDlg, CDialog)
 	ON_WM_PAINT ()

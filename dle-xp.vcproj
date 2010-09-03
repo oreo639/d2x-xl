@@ -6509,7 +6509,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\texturemanager.cpp"
+					RelativePath=".\TextureManager.cpp"
 					>
 				</File>
 				<File
@@ -6949,7 +6949,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\texturemanager.h"
+					RelativePath=".\TextureManager.h"
 					>
 				</File>
 				<File

@@ -16,7 +16,7 @@
 #include "dle-xp.h"
 #include "texedit.h"
 #include "palette.h"
-#include "texturemanager.h"
+#include "TextureManager.h"
 
                         /*--------------------------*/
 
