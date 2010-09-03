@@ -192,7 +192,7 @@ if (bCreate) {
 		undoManager.ResetModified (bUndo);
 		return false; 
 		}	
-	CurrObj ()->m_info.id = (IsD1File ()) ? 0 : 2;
+	current.Object ()->m_info.id = (IsD1File ()) ? 0 : 2;
 	AutoUpdateReactor ();
 	}
 undoManager.Unlock ();

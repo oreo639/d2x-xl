@@ -413,7 +413,7 @@ switch (m_selectMode){
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->m_location.pos += delta;
+		current.Object ()->m_location.pos += delta;
 		undoManager.SetModified (true);
 		break;
 
@@ -510,7 +510,7 @@ switch (m_selectMode) {
 		break;
 
 	case OBJECT_MODE:
-		CurrObj ()->m_location.pos += delta;
+		current.Object ()->m_location.pos += delta;
 		break;
 	break;
 
@@ -599,7 +599,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		undoManager.SetModified (true);
-		orient = (current.m_nObject == MineInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
+		orient = (current.m_nObject == MineInfo ().objects.count) ? &SecretOrient () : &current.Object ()->m_location.orient;
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');

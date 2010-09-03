@@ -2253,49 +2253,15 @@ return true;
 }
 
 // ----------------------------------------------------------------------------- 
-// DeleteVertex()
-//
-// ACTION - Removes a vertex from the vertices array and updates all the
-//	    GetSegment () vertices who's vertex is greater than the deleted vertex
-// ----------------------------------------------------------------------------- 
 
-void CSegmentManager::DeleteVertex (short nDeletedVert)
+CSegment* CSegmentManager::FindRobotMaker (short i = 0)
 {
-	short nVertex, nSegment; 
+	CSegment* segP = GetSegment (i);
 
-undoManager.SetModified (true); 
-// fill in gap in vertex array and status
-memcpy (vertexManager.GetVertex (nDeletedVert), vertexManager.GetVertex (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*vertexManager.GetVertex (0)));
-// update anyone pointing to this vertex
-CSegment *segP = GetSegment (0);
-for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
-	for (nVertex = 0; nVertex < 8; nVertex++)
-		if (segP->m_info.verts [nVertex] > nDeletedVert)
-			segP->m_info.verts [nVertex]--; 
-// update number of vertices
-VertCount ()--; 
-}
-
-// ----------------------------------------------------------------------------- 
-// DeleteUnusedVertices()
-//
-// ACTION - Deletes unused vertices
-// ----------------------------------------------------------------------------- 
-
-void CSegmentManager::DeleteUnusedVertices (void)
-{
-	short nVertex, nSegment, point; 
-
-for (nVertex = 0; nVertex < VertCount (); nVertex++)
-	vertexManager.Status (nVertex) &= ~NEW_MASK; 
-// mark all used verts
-CSegment *segP = GetSegment (0);
-for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
-	for (point = 0; point < 8; point++)
-		vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK; 
-for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
-	if (!(vertexManager.Status (nVertex) & NEW_MASK))
-		DeleteVertex(nVertex); 
+for (; i < Count (); i++, segP++)
+	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
+		return segP;
+return null;
 }
 
 //------------------------------------------------------------------------

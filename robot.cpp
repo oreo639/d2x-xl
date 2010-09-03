@@ -86,7 +86,8 @@ fp.Write (taunt);
 
 //------------------------------------------------------------------------
 
-void tRobotCombatInfo::Read (CFileManager& fp, int nField) {
+void tRobotCombatInfo::Read (CFileManager& fp, int nField) 
+{
 	switch (nField) {
 		case 0:
 			fieldOfView = fp.ReadInt32 ();
@@ -249,6 +250,8 @@ for (i = 0; i <= MAX_GUNS; i++)
 fp.Write (m_info.always_0xabcd);
 }
 
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //------------------------------------------------------------------------
 // ReadHamFile()
 //
@@ -288,7 +291,7 @@ fp.Write (m_info.always_0xabcd);
 
 #define MAKESIG(_sig)	(uint) *((int *) &(_sig))
 
-int CMine::ReadHamFile(char *pszFile, int type) 
+int CMine::ReadHamFile (char *pszFile, int type) 
 {
   CFileManager	fp;
   int				t, t0;
@@ -495,41 +498,8 @@ return 0;
 
 //------------------------------------------------------------------------
 // ReadHxmFile()
-//
-// Actions
-//   1)	Reads all robot data from a HXM file
-//   2) Memory will be allocated for polymodel data.  It is the
-//	responsibility of the caller to free all non-null polymodel
-//	data pointer.
-//   3) If polymodel data is allocated aready, it will be freed and
-//	reallocated.
-//
-// Parameters
-//	fp - pointer to file (already offset to the correct position)
-//
-// Globals used
-//
-//  N_robot_types
-//  robotInfo[MAX_ROBOT_TYPES]
-//
-//  N_robot_joints
-//  Robot_joints[MAX_ROBOT_JOINTS]
-//
-//  N_polygon_models
-//  Polygon_models[MAX_POLYGON_MODELS]
-//  Dying_modelnums[N_POLYGON_MODELS_D2]
-//  Dead_modelnums[N_POLYGON_MODELS_D2]
-//
-//  N_object_bitmaps
-//  ObjBitmaps[MAX_OBJ_BITMAPS]
-//  ObjBitmapPtrs[MAX_OBJ_BITMAPS]
-//
-//
-// Assumptions
-//   1) Memory was allocated for globals (except polymodel data)
-//------------------------------------------------------------------------
 
-int CMine::ReadHxmFile(CFileManager& fp, long fSize) 
+int CMine::ReadHxmFile (CFileManager& fp, long fSize) 
 {
 	CRobotInfo	rInfo;
 	int			t, i, j;
@@ -606,7 +576,7 @@ return 1;
 //  robotInfo[MAX_ROBOT_TYPES]
 //------------------------------------------------------------------------
 
-int CMine::WriteHxmFile(CFileManager& fp) 
+int CMine::WriteHxmFile (CFileManager& fp) 
 {
 	uint	i, t;
 
@@ -737,18 +707,16 @@ return bFound;
 }
 
 //--------------------------------------------------------------------------
-// has_custom_robots()
-//--------------------------------------------------------------------------
 
-BOOL CMine::HasCustomRobots() 
+BOOL CMine::HasCustomRobots (void) 
 {
-int i;
-for (i = 0; i < (int) N_robot_types; i++)
+for (int i = 0; i < (int) N_robot_types; i++)
 	if (IsCustomRobot (i))
 		return TRUE;
 return (m_nHxmExtraDataSize > 0);
 }
 
+//--------------------------------------------------------------------------
 //eof robot.cpp
 
 

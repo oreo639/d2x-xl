@@ -42,6 +42,8 @@ class CSegmentManager {
 		inline ushort& Count ()
 			{ return m_nCount; }
 
+		inline short Index (CSegment* segP) { return (short) (segP - m_segments); }
+
 		inline CSegment *GetSegment (int i) { return &m_segments [i]; }
 
 		inline CSide* GetSide (CSideKey key) {
@@ -75,6 +77,8 @@ class CSegmentManager {
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 		inline int GetAddMode (void) { return m_nAddMode; }
+
+		CSegment* FindRobotMaker (short i = 0);
 
 		// Operations
 		bool Add (void);
