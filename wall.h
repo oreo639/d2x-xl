@@ -71,7 +71,6 @@ public:
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-	virtual CGameItem* Next (void) { return this + 1; }
 
 	void Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
 	void SetTextures (short nTexture);
@@ -105,7 +104,6 @@ public:
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 //------------------------------------------------------------------------
@@ -129,7 +127,6 @@ public:
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 //------------------------------------------------------------------------

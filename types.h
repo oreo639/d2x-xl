@@ -13,7 +13,6 @@
 
 class CGameItem {
 public:
-	virtual CGameItem* Next (void) { return this + 1; }
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
@@ -72,7 +71,7 @@ class CColor : public CGameItem {
 public:
 	tColor	m_info;
 
-	virtual CGameItem* Next (void) { return this + 1; }
+
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
@@ -182,7 +181,6 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
 		}
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
@@ -201,7 +199,6 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
 		}
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 //extern CLightDeltaIndex    Dl_indices[MAX_LIGHT_DELTA_INDICES];

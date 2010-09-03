@@ -302,7 +302,7 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		m_location.Clear ();
 		}
-	virtual CGameItem* Next (void) { return this + 1; }
+	void Setup (byte type, short nSegment);
 };
 
 #endif // OBJECT_TYPES_H

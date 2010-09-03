@@ -38,7 +38,6 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
 		}
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // -----------------------------------------------------------------------------
@@ -63,7 +62,6 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
 		}
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // -----------------------------------------------------------------------------

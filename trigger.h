@@ -57,7 +57,6 @@ public:
 	struct tTrigger m_info;
 	//inline CSideKey& operator[](uint i) { return targets [i]; }
 
-	virtual CGameItem* Next (void) { return this + 1; }
 	virtual void Read (CFileManager& fp, int version, bool bObjTrigger);
 	virtual void Write (CFileManager& fp, int version, bool bObjTrigger);
 	virtual void Clear (void) { 
@@ -85,7 +84,7 @@ public:
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { CTriggerTargets::Clear (); }
-	virtual CGameItem* Next (void) { return this + 1; }
+
 };
 
 //------------------------------------------------------------------------

@@ -20,33 +20,33 @@
 // Action - Defines a standard object (currently assumed to be a player)
 //------------------------------------------------------------------------
 
-void CMine::MakeObject (CGameObject *objP, char type, short nSegment) 
+void CGameObject::Setup (byte type, short nSegment) 
 {
   CVertex	location;
 
 undoManager.SetModified (true);
 undoManager.Lock ();
-CalcSegCenter (location,nSegment);
-objP->Clear ();
-objP->m_info.signature = 0;
-objP->m_info.type = type;
-objP->m_info.id = (type == OBJ_WEAPON) ? SMALLMINE_ID : 0;
-objP->m_info.controlType = CT_NONE; /* player 0 only */
-objP->m_info.movementType = MT_PHYSICS;
-objP->m_info.renderType = RT_POLYOBJ;
-objP->m_info.flags	= 0;
-objP->m_info.nSegment = current.m_nSegment;
-objP->m_location.pos = location;
-objP->m_location.orient.rVec.Set (F1_0, 0, 0);
-objP->m_location.orient.uVec.Set (0, F1_0, 0);
-objP->m_location.orient.fVec.Set (0, 0, F1_0);
-objP->m_info.size = PLAYER_SIZE;
-objP->m_info.shields = DEFAULT_SHIELD;
-objP->rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
-objP->rType.polyModelInfo.tmap_override = -1;
-objP->m_info.contents.type = 0;
-objP->m_info.contents.id = 0;
-objP->m_info.contents.count = 0;
+segmentManager.CalcSegCenter (location, nSegment);
+Clear ();
+m_info.signature = 0;
+m_info.type = type;
+m_info.id = (type == OBJ_WEAPON) ? SMALLMINE_ID : 0;
+m_info.controlType = CT_NONE; /* player 0 only */
+m_info.movementType = MT_PHYSICS;
+m_info.renderType = RT_POLYOBJ;
+m_info.flags	= 0;
+m_info.nSegment = current.m_nSegment;
+m_location.pos = location;
+m_location.orient.rVec.Set (F1_0, 0, 0);
+m_location.orient.uVec.Set (0, F1_0, 0);
+m_location.orient.fVec.Set (0, 0, F1_0);
+m_info.size = PLAYER_SIZE;
+m_info.shields = DEFAULT_SHIELD;
+rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
+rType.polyModelInfo.tmap_override = -1;
+m_info.contents.type = 0;
+m_info.contents.id = 0;
+m_info.contents.count = 0;
 undoManager.Unlock ();
 return;
 }

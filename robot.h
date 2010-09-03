@@ -118,7 +118,6 @@ class CRobotInfo : public CGameItem {
 	public:
 		tRobotInfo	m_info;
 
-	virtual CGameItem* Next (void) { return this + 1; }
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }

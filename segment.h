@@ -166,7 +166,6 @@ public:
 	void Setup (void);
 	void SetUV (short nSide, short x, short y);
 
-	virtual CGameItem* Next (void) { return this + 1; }
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	inline CSide* GetSide (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
@@ -201,7 +200,6 @@ public:
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-	virtual CGameItem* Next (void) { return this + 1; }
 };
 
 // -----------------------------------------------------------------------------
