@@ -5877,6 +5877,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\ObjectManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath="palette.cpp"
 					>
 					<FileConfiguration

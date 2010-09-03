@@ -4,7 +4,7 @@
 #include "define.h"
 #include "cfile.h"
 #include "carray.h"
-#include "object.h"
+#include "Selection.h"
 
 #ifdef _DEBUG
 
@@ -21,16 +21,17 @@ class CObjectManager {
 		objectList	m_objects;
 		short			m_nCount;
 
-	inline bool IsValid (short i) { return (i >= 0) && (i < m_nCount); }
+		inline bool IsValid (short i) { return (i >= 0) && (i < m_nCount); }
 
-	inline objectList& Objects (void) { return m_objects; }
-	inline CGameObject *GetObject (int i) 
-		{ return &m_objects [i]; }
+		inline objectList& Objects (void) { return m_objects; }
+		inline CGameObject *GetObject (int i) 
+			{ return &m_objects [i]; }
 
-	inline short& ObjCount () { return m_nCount; }
+		inline short& ObjCount () { return m_nCount; }
 
-	void Read (short nCount);
-	void Write (void);
+		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Clear (void);
 };
 
 extern CObjectManager objectManager;
