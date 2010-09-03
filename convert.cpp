@@ -289,7 +289,7 @@ for (i = 0, trigP = theMine->Triggers (0); i < theMine->Info ().triggers.count; 
 
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < theMine->Info ().botgen.count; i++) {
+for (i = 0; i < theMine->Info ().botGen.count; i++) {
 	theMine->BotGens (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == i))

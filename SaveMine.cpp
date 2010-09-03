@@ -275,7 +275,7 @@ MineInfo ().walls.size = 24;                            // 24 = sizeof (wall)
 MineInfo ().doors.size = 16;                            // 16 = sizeof (CDoor)
 MineInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
 MineInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
-MineInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
+MineInfo ().botGen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
 MineInfo ().equipGen.size = 20; // 20 = sizeof (CRobotMaker)
 MineInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
 MineInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
@@ -342,7 +342,7 @@ if (LevelVersion () >= 12) {
 		}
 	}
 SaveGameItem (fp, MineInfo ().control, DATA (ReactorTriggers ()));
-SaveGameItem (fp, MineInfo ().botgen, DATA (BotGens ()));
+SaveGameItem (fp, MineInfo ().botGen, DATA (BotGens ()));
 if (IsD2File ()) {
 	SaveGameItem (fp, MineInfo ().equipGen, DATA (EquipGens ()));
 	if (MineInfo ().lightDeltaIndices.count > 0) {

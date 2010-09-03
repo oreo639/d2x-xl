@@ -157,7 +157,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		DeleteObject(i); 
 		}
 	}
-	for (i = 0; i < MineInfo ().botgen.count; i++)
+	for (i = 0; i < MineInfo ().botGen.count; i++)
 		if (BotGens (i)->m_info.nSegment > nDelSeg)
 			BotGens (i)->m_info.nSegment--;
 	for (i = 0; i < MineInfo ().equipGen.count; i++)
@@ -276,7 +276,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 			}
 
 		// replace robot centers segP numbers with real numbers
-		for (i = 0; i < MineInfo ().botgen.count; i++) {
+		for (i = 0; i < MineInfo ().botGen.count; i++) {
 			if (Count () > (nSegment = BotGens (i)->m_info.nSegment))
 				BotGens (i)->m_info.nSegment = GetSegment (nSegment)->m_info.nIndex; 
 			else
@@ -1760,7 +1760,7 @@ void CSegmentManager::RenumberBotGens (void)
 
 // number "matcen"
 nMatCens = 0; 
-for (i = 0; i < MineInfo ().botgen.count; i++) {
+for (i = 0; i < MineInfo ().botGen.count; i++) {
 	nSegment = BotGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = GetSegment (nSegment); 

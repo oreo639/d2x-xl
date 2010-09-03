@@ -460,7 +460,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().botgen.count) || (theMine->BotGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().botGen.count) || (theMine->BotGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
@@ -1191,7 +1191,7 @@ return false;
 
 char CDiagTool::FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList)
 {
-	char	h = -1, i, j = char (theMine->Info ().botgen.count);
+	char	h = -1, i, j = char (theMine->Info ().botGen.count);
 
 if (refList) {
 	for (i = 0; i < j; i++) {
@@ -1341,7 +1341,7 @@ if ((theMine == null))
 
 	short					h = segmentManager.Count (), i, nSegment = 0;
 	bool					bOk = true;
-	short					nMatCenSegs, nMatCens = short (theMine->Info ().botgen.count);
+	short					nMatCenSegs, nMatCens = short (theMine->Info ().botGen.count);
 	CSegment*			segP = theMine->Segments (0);
 	CRobotMaker*		matCenP = theMine->BotGens (0);
 	short					segList [MAX_NUM_MATCENS_D2];
@@ -1352,7 +1352,7 @@ for (i = 0; i < nMatCens; i++)
 CountMatCenRefs (SEGMENT_FUNC_ROBOTMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
 AssignMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens);
-theMine->Info ().botgen.count = CleanupMatCens (refList, matCenP, nMatCens);
+theMine->Info ().botGen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;

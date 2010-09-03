@@ -212,7 +212,7 @@ bool CSegmentTool::IsBotMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < theMine->Info ().botgen.count);
+	(segP->m_info.nMatCen < theMine->Info ().botGen.count);
 }
 
                         /*--------------------------*/

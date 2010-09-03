@@ -51,7 +51,7 @@ public:
 	CMineItemInfo		triggers;
 	CMineItemInfo		links;
 	CMineItemInfo		control;
-	CMineItemInfo		botgen;
+	CMineItemInfo		botGen;
 	CMineItemInfo		lightDeltaIndices;
 	CMineItemInfo		lightDeltaValues;
 	CMineItemInfo		equipGen;

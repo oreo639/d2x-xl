@@ -172,7 +172,7 @@ class CMine {
 
 		int FuelCenterCount (void);
 		inline int& RobotMakerCount (void) 
-			{ return Info ().botgen.count; }
+			{ return Info ().botGen.count; }
 		inline int& EquipMakerCount (void) 
 			{ return Info ().equipGen.count; }
 		inline int& WallCount (void) 

@@ -174,6 +174,12 @@ public:
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+	void Setup (short nSegment, short nIndex, int nFlags) {
+		Clear ();
+		m_info.nSegment = nSegment;
+		m_info.objFlags [0] = nFlags;
+		nFuelCen = nIndex;
+		};
 };
 
 // -----------------------------------------------------------------------------

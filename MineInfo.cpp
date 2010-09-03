@@ -75,7 +75,7 @@ doors.Read (fp);
 triggers.Read (fp);
 links.Read (fp);
 control.Read (fp);
-botgen.Read (fp);
+botGen.Read (fp);
 lightDeltaIndices.Read (fp);
 lightDeltaValues.Read (fp);
 if (fileInfo.size > 143)
@@ -96,7 +96,7 @@ doors.Write (fp);
 triggers.Write (fp);
 links.Write (fp);
 control.Write (fp);
-botgen.Write (fp);
+botGen.Write (fp);
 lightDeltaIndices.Write (fp);
 lightDeltaValues.Write (fp);
 if (fileInfo.size > 143)

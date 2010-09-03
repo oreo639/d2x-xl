@@ -249,7 +249,7 @@ if (gameErr != 0) {
 	MineInfo ().doors.Reset ();
 	MineInfo ().triggers.Reset ();
 	MineInfo ().control.Reset ();
-	MineInfo ().botgen.Reset ();
+	MineInfo ().botGen.Reset ();
 	MineInfo ().equipGen.Reset ();
 	MineInfo ().lightDeltaIndices.Reset ();
 	MineInfo ().lightDeltaValues.Reset ();
@@ -502,7 +502,7 @@ MineInfo ().walls.Reset ();
 MineInfo ().doors.Reset ();
 MineInfo ().triggers.Reset ();
 MineInfo ().control.Reset ();
-MineInfo ().botgen.Reset ();
+MineInfo ().botGen.Reset ();
 MineInfo ().equipGen.Reset ();
 MineInfo ().lightDeltaIndices.Reset ();
 MineInfo ().lightDeltaValues.Reset ();
@@ -572,7 +572,7 @@ if (MineInfo ().triggers.offset > -1) {
 
 if (0 > LoadGameItem (fp, MineInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
 	return -1;
-if (0 > LoadGameItem (fp, MineInfo ().botgen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
+if (0 > LoadGameItem (fp, MineInfo ().botGen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
 	return -1;
 if (0 > LoadGameItem (fp, MineInfo ().equipGen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 	return -1;

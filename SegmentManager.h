@@ -174,11 +174,12 @@ class CSegmentManager {
 		void UnlinkChild (short nParentSeg, short nSide);
 		void ResetSide (short nSegment, short nSide);
 
-		void SetSegmentChildNum (CSegment *rootSegP, short nSegment, short recursionLevel);
-		void SetSegmentChildNum (CSegment *rootSegP, short nSegment, short recursionLevel, short* visited);
 		void UnlinkSeg (CSegment *segP, CSegment *rootSegP);
 		void LinkSeg (CSegment *segP, CSegment *rootSegP);
 		void DeleteWalls (short nSegment);
+
+		bool CSegmentManager::Add (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null);
+
 
 		};
 
