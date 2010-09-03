@@ -30,28 +30,48 @@ public:
 	CExtraTexture*	m_extra;
 
 	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &m_textures [nVersion][nTexture]; }
+
 	inline CPigTexture& Info (int nVersion, int nTexture = 0) { return m_info [nVersion][m_index [nVersion][nTexture] - 1]; }
 
 	int MaxTextures (int nVersion = -1);
+	
 	void LoadTextures (int nVersion = -1);
+	
 	bool Check (int nTexture);
+	
 	void Load (ushort nBaseTex, ushort nOvlTex);
+	
 	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
+	
 	void Release (bool bDeleteAll = false, bool bDeleteUnused = false);
+	
 	bool HasCustomTextures (void);
+	
 	int CountCustomTextures (void);
+	
 	void MarkUsedTextures (void);
+	
 	void RemoveUnusedTextures (void);
+	
 	CFileManager* OpenPigFile (int nVersion);
+	
 	CTexture* AddExtra (ushort nIndex);
 
 	inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
+	
 	int Version (void);
+	
 	inline char* Name (short nTexture) { 
 		char* p = m_names [Version ()][nTexture]; 
 		return p ? p : "";
 		}
+	
 	CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
+
+	inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null);
+}
+
+
 
 	CTextureManager() {}
 	

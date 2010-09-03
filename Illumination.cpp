@@ -16,16 +16,61 @@
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+// Mark each segment that is within a given range (in segments to traverse) to a root segment
+
+class CVicinity {
+public:
+	CVicinity () {
+		m_depth = new short* [Count ()];
+		if (m_depth != null)
+			memset (m_depth, 0, Count () * sizeof (m_depth [0]));
+		}
+
+	~CVicinity () {
+		if (m_depth != null) {
+			delete[] m_depth;
+			m_depth = null;
+			}
+		}
+
+	void Compute (short nSegment, short nDepth) {
+		if (nSegment < 0)
+			return;
+
+		if (m_depth == null)
+			return;
+
+		if (nDepth <= m_depth [nSegment])
+			return;
+		m_depth [nSegment] = nDepth;
+
+		if (nDepth > 0) {
+			// check each side of this segment for more children
+			for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+				// skip if there is a wall and its a door
+				CWall* wallP = segP->m_sides [nSide].GetWall ();
+				if ((wallP == null) && (wallP->m_info.type != WALL_DOOR))
+					SetSegmentDepth (segP->GetChild (nSide), nDepth - 1, m_depth);
+				}
+			}
+		}
+};
+
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 // light_weight()
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 byte CLightManager::LightWeight (short nBaseTex) 
 {
 return (byte) ((m_lightMap [nBaseTex] - 1) / 0x0200L);
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 void CLightManager::ScaleCornerLight (double fLight, bool bAll) 
 {
@@ -55,7 +100,7 @@ scale = fLight / 100.0; // 100.0% = normal
 	}
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 typedef struct tAvgCornerLight {
 	ushort	light;
@@ -111,7 +156,7 @@ undoManager.SetModified (TRUE);
 delete[] maxBrightness;
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 void CLightManager::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
@@ -127,11 +172,10 @@ undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (bAll)
 	CLEAR (VertexColors ());
-for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
+for (nSegment = SegCount (), segP = segmentManager.GetSegment (0); nSegment; nSegment--, segP++)
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK))
-		for (nSide=0, sideP = segP->m_sides;nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-			int i;
-			for (i = 0; i < 4; i++) {
+		for (nSide = 0, sideP = segP->m_sides; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+			for (int i = 0; i < 4; i++) {
 				sideP->m_info.uvls [i].l = 0;
 				if (!bAll)
 					VertexColors (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
@@ -141,7 +185,7 @@ for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++)
 // Calculate cube side corner light values
 // for each marked side in the level
 // (range: 0 = min, 0x8000 = max)
-for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
+for (nSegment = 0, segP = segmentManager.GetSegment (0); nSegment < SegCount (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || SideIsMarked (nSegment, nSide)))
 			continue;
@@ -163,16 +207,16 @@ for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP
 undoManager.Unlock ();
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 // set_illumination()
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 // blend two colors depending on each colors brightness
 // psc: source color (light source)
 // pdc: destination color (vertex/side color)
 // srcBr: source brightness (remaining brightness at current vertex/side)
 // destBr: vertex/side brightness
 
-void CMine::BlendColors (CColor *srcColorP, CColor *destColorP, double srcBrightness, double destBrightness)
+void CLightManager::BlendColors (CColor* srcColorP, CColor* destColorP, double srcBrightness, double destBrightness)
 {
 if (destBrightness)
 	destBrightness /= 65536.0;
@@ -215,9 +259,9 @@ else
 	}
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-void CMine::IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale)
+void CLightManager::IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale)
 {
 CUVL*		uvlP = segP->m_sides [nSide].m_info.uvls;
 uint	vertBrightness, lightBrightness;
@@ -235,15 +279,11 @@ for (int i = 0; i < 4; i++, uvlP++) {
 	}
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-#ifdef _DEBUG
-static int qqq1 = -1, qqq2 = 0;
-#endif
-
-void CMine::Illuminate (short nSourceSeg, short nSourceSide, uint brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
+void CLightManager::Illuminate (short nSourceSeg, short nSourceSide, uint brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
 {
-	CSegment*	segP = Segments (0);
+	CSegment*	segP = segmentManager.GetSegment (0);
 	double		effect [4];
 	// find orthogonal angle of source segment
 	CVertex A = -CalcSideNormal (nSourceSeg, nSourceSide);
@@ -256,18 +296,8 @@ void CMine::Illuminate (short nSourceSeg, short nSourceSide, uint brightness, do
 //Segments ()[nSourceSeg].nIndex = m_lightRenderDepth;
 
 segP = Segments (nSourceSeg);
-#if 1//def _OPENMP
-short* visited = new short [SegCount ()];
-memset (visited, 0xff, SegCount () * sizeof (*visited));
-SetSegmentChildNum (null, nSourceSeg, m_lightRenderDepth, visited);	//mark all children that are at most lightRenderDepth segments away
-visited [nSourceSeg] = m_lightRenderDepth;
-#else
-int i;
-for (i = SegCount (); i; )
-	Segments (--i)->m_info.nIndex = -1;
-SetSegmentChildNum (null, nSourceSeg, m_lightRenderDepth);
-segP->m_info.nIndex = m_lightRenderDepth;
-#endif
+CVicinity vicinity;
+vicinity.Compute (nSourceSeg, m_lightRenderDepth);	//mark all children that are at most lightRenderDepth segments away
 
 CColor *lightColorP = LightColor (nSourceSeg, nSourceSide);
 if (!lightColorP->m_info.index) {
@@ -280,10 +310,11 @@ if (UseTexColors () && bCopyTexLights) {
 	CColor* segColorP = LightColor (nSourceSeg, nSourceSide, false);
 	*segColorP = *lightColorP;
 	}
-bool bWall = false; //FindWall (nSourceSeg, nSourceSide) != null;
-// loop on child Segments ()
+bool bWall = false; 
+
 int nChildSeg;
 int nSegCount = SegCount ();
+
 #pragma omp parallel 
 	{
 #pragma omp for private (effect)
@@ -291,7 +322,7 @@ int nSegCount = SegCount ();
 		CSegment* childSegP = Segments (nChildSeg);
 		// skip if this is too far away
 #if 1//def _OPENMP
-		if (visited [nChildSeg] < 0)
+		if (vicinity.m_depth [nChildSeg] == 0)
 			continue;
 #else
 		if (childSegP->m_info.nIndex < 0) 
@@ -320,53 +351,18 @@ int nSegCount = SegCount ();
 	//		CBRK (segColorP->m_info.index > 0);
 			// if the child side is the same as the source side, then set light and continue
 			if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg)) {
-#if 1
 				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, null, fLightScale);
-#else
-				CUVL*		uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
-				uint	vertBrightness, lightBrightness;
-
-				undoManager.SetModified (TRUE);
-				for (int j = 0; j < 4; j++, uvlP++) {
-					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
-					vertBrightness = (ushort) uvlP->l;
-					lightBrightness = (uint) (brightness * fLightScale);
-					BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
-					vertBrightness += lightBrightness;
-					vertBrightness = min (0x8000, vertBrightness);
-					uvlP->l = (ushort) vertBrightness;
-					}
-#endif
 				continue;
 				}
 
 			// calculate vector between center of source segment and center of child
 	//		CBRK (nChildSeg == 1 && nChildSide == 2);
 			if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, effect, fLightScale, bWall)) {
-#if 1
 				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, effect, fLightScale);
-#else
-					uint	vertBrightness, lightBrightness;	//vertex brightness, light brightness
-					CUVL		*uvlP = childSegP->m_sides [nChildSide].m_info.uvls;
-
-				undoManager.SetModified (TRUE);
-				for (int j = 0; j < 4; j++, uvlP++) {
-					CColor* vertColorP = VertexColors (childSegP->m_info.verts [sideVertTable [nChildSide][j]]);
-					vertBrightness = (ushort) uvlP->l;
-					lightBrightness = (ushort) (brightness * effect [j] / 32);
-					BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
-					vertBrightness += lightBrightness;
-					vertBrightness = min (0x8000, vertBrightness);
-					uvlP->l = (ushort) vertBrightness;
-					}
-#endif
 				}
 			}
 		}
 	}
-#if 1//def _OPENMP
-delete[] visited;
-#endif
 }
 
 //------------------------------------------------------------------------
@@ -407,26 +403,18 @@ delete[] visited;
 // Segments () close to variable lights will be computed properly.
 //------------------------------------------------------------------------
 
-void CMine::CalcDeltaLightData(double fLightScale, int force) 
+void CLightManager::CalcDeltaLightData (double fLightScale, int force) 
 {
 undoManager.SetModified (TRUE);
-int recursion_depth;
-for (recursion_depth = m_deltaLightRenderDepth; recursion_depth; recursion_depth--)
-	if (CalcDeltaLights (fLightScale, force, recursion_depth))
+int nDepth;
+for (nDepth = m_deltaLightRenderDepth; nDepth; nDepth--)
+	if (CalcLightDeltas (fLightScale, force, nDepth))
 		break;
 }
 
+//---------------------------------------------------------------------------------
 
-
-bool CMine::IsLava (int nBaseTex)
-{
-return (strstr (textureManager.Name ((short) nBaseTex), "lava") != null);
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-
-int CMine::FindDeltaLight (short nSegment, short nSide, short *pi)
+int CLightManager::FindLightDelta (short nSegment, short nSide, short *pi)
 {
 	int	i = pi ? *pi : 0;
 	int	j	= (int)MineInfo ().lightDeltaIndices.count++;
@@ -445,10 +433,9 @@ else {
 return -1;
 }
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-bool CMine::CalcDeltaLights (double fLightScale, int force, int recursion_depth) 
+bool CLightManager::CalcLightDeltas (double fLightScale, int force, int nDepth) 
 {
 	// initialize totals
 	int		nSegCount = SegCount ();
@@ -523,7 +510,7 @@ fLightScale = 1.0; ///= 100.0;
 				{
 				if (++nErrors == 1) {
 					char szMsg [256];
-					sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+					sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", nDepth);
 					DEBUGMSG (szMsg);
 					}
 				}
@@ -562,18 +549,8 @@ fLightScale = 1.0; ///= 100.0;
 			//       even though some Segments () have multiple lights.
 			//       This actually reduces the number of calls since most
 			//       Segments () do not have lights)
-	#if 1
-			short* visited = new short [nSegCount];
-			memset (visited, 0xff, nSegCount * sizeof (*visited));
-			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth, visited);
-			visited [nSourceSeg] = recursion_depth;
-	#else
-			int h;
-			for (h = 0; h < SegCount (); h++)
-				Segments (h)->m_info.nIndex = -1;
-			SetSegmentChildNum (srcSegP, nSourceSeg, recursion_depth);
-			srcSegP->m_info.nIndex = recursion_depth;
-	#endif
+			CVicinity vicinity;
+			vicinity.Compute (nSourceSeg, nDepth);
 
 			// setup source corner vertex for length calculation later
 			CVertex sourceCorners [4];
@@ -588,15 +565,9 @@ fLightScale = 1.0; ///= 100.0;
 			for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
 				if (nErrors)
 					continue;
-	#if 1
-				if (visited [nChildSeg] < 0)
+				if (vicinity.m_depth [nChildSeg] == 0)
 					continue;
 				CSegment* childSegP = Segments (nChildSeg);
-	#else
-				CSegment* childSegP = Segments (nChildSeg);
-				if (childSegP->m_info.nIndex < 0)
-					continue;
-	#endif
 				// loop on child sides
 				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
@@ -626,7 +597,7 @@ fLightScale = 1.0; ///= 100.0;
 							{
 							if (++nErrors == 1) {
 								char szMsg [256];
-								sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+								sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", nDepth);
 								DEBUGMSG (szMsg);
 								}
 							}
@@ -655,7 +626,7 @@ fLightScale = 1.0; ///= 100.0;
 								{
 								if (++nErrors == 1) {
 									char szMsg [256];
-									sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", recursion_depth);
+									sprintf_s (szMsg, sizeof (szMsg), " Light tool: Too many dynamic lights at render depth %d", nDepth);
 									DEBUGMSG (szMsg);
 									}
 								}
@@ -679,22 +650,19 @@ fLightScale = 1.0; ///= 100.0;
 						}
 					}
 	//			}
-#if 1
-			delete[] visited;
-#endif
 			}
 		}
 	}
 return (nErrors == 0);
 }
 
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 // SetSegmentChildNum()
 //
 // Action - Sets nIndex to child number from parent
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-void CMine::UnlinkSeg (CSegment *pSegment, CSegment *pRoot)
+void CLightManager::UnlinkSeg (CSegment *pSegment, CSegment *pRoot)
 {
 #if 0
 	short	prevSeg = pSegment->prevSeg;
@@ -713,10 +681,10 @@ if (nextSeg >= 0) {
 #endif
 }
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-void CMine::LinkSeg (CSegment *pSegment, CSegment *pRoot)
+void CLightManager::LinkSeg (CSegment *pSegment, CSegment *pRoot)
 {
 #if 0
 	short	prevSeg = pRoot->prevSeg;
@@ -737,10 +705,10 @@ pSegment->rootSeg = rootSeg;
 #endif
 }
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion_level) 
+void CLightManager::SetSegmentChildNum (CSegment *pRoot, short nSegment, short nDepth) 
 {
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
@@ -757,7 +725,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		continue;
 	// mark segment if it has a child
 	child = segP->GetChild (nSide);
-	if ((child > -1) && (child < SegCount ()) && (recursion_level > segP->m_info.nIndex)) {
+	if ((child > -1) && (child < SegCount ()) && (nDepth > segP->m_info.nIndex)) {
 		if (segP->m_info.nIndex >= 0)
 			++nImprove;
 /*
@@ -766,13 +734,13 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 			LinkSeg (segP, pRoot);
 			}
 */
-		segP->m_info.nIndex = recursion_level;
+		segP->m_info.nIndex = nDepth;
 		bMarkChildren = true;
 		break;
 		}
 	}
 //return if segment has no children or max recursion depth is reached
-if (!bMarkChildren || (recursion_level == 1))
+if (!bMarkChildren || (nDepth == 1))
 	return;
 
 // check each side of this segment for more children
@@ -784,66 +752,15 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// check child
 	child = segP->GetChild (nSide);
 	if ((child > -1) && (child < SegCount ()))
-		SetSegmentChildNum (pRoot, child, recursion_level - 1);
+		SetSegmentChildNum (pRoot, child, nDepth - 1);
 	}
 }
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
-void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion_level, short* visited) 
-{
-	short			nSide, child, nImprove = 0;
-	ushort		nWall;
-	CSegment		*segP = GetSegment (nSegment);
-	CSegment		*prevSeg = null;
-	bool			bMarkChildren = false;
-
-// mark each child if child number is lower
-for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	// Skip if this is a door
-	nWall = segP->m_sides [nSide].m_info.nWall;
-	// .. if there is a wall and its a door
-	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
-		continue;
-	// mark segment if it has a child
-	child = segP->GetChild (nSide);
-	if ((child > -1) && (child < SegCount ()) && (recursion_level > visited [nSegment])) {
-		if (visited [nSegment] >= 0)
-			++nImprove;
-/*
-		if (pRoot) {
-			UnlinkSeg (segP, pRoot);
-			LinkSeg (segP, pRoot);
-			}
-*/
-		visited [nSegment] = recursion_level;
-		bMarkChildren = true;
-		break;
-		}
-	}
-//return if segment has no children or max recursion depth is reached
-if (!bMarkChildren || (recursion_level == 1))
-	return;
-
-// check each side of this segment for more children
-for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	// skip if there is a wall and its a door
-	nWall = segP->m_sides [nSide].m_info.nWall;
-	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
-		continue;
-	// check child
-	child = segP->GetChild (nSide);
-	if ((child > -1) && (child < SegCount ()))
-		SetSegmentChildNum (pRoot, child, recursion_level - 1, visited);
-	}
-}
-
-//--------------------------------------------------------------------------
-
-bool CMine::CalcSideLights (int nSegment, int nSide, 
-									 CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
-									 double* effect, double fLightScale, bool bIgnoreAngle)
+bool CLightManager::CalcSideLights (int nSegment, int nSide, 
+												CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
+												double* effect, double fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = GetSegment (nSegment);
 // calculate vector between center of source segment and center of child
@@ -853,39 +770,33 @@ CVertex B = center - sourceCenter;
 
 // calculate angle between vectors (use dot product equation)
 if (!bIgnoreAngle) {
-	double ratio, angle;
-	double A_dot_B = A ^ B;
 	double mag_A = A.Mag ();
 	double mag_B = B.Mag ();
-	if (mag_A == 0.0 || mag_B == 0.0)
+	if ((mag_A < 0.000001) || (mag_B < 0.000001))
 		return false;
-	ratio = A_dot_B / (mag_A * mag_B);
+	double A_dot_B = A ^ B;
+	double ratio = A_dot_B / (mag_A * mag_B);
 	ratio = ((double) ((int) (ratio * 1000.0))) / 1000.0;
 	if (ratio < -1.0 || ratio > 1.0) 
 		return false;
-	angle = acos (ratio);  // force a failure
-	// if angle is less than 180 degrees
-	// then we found a match
+	double angle = acos (ratio);  
+	// if angle is less than 180 degrees then we found a match
 	if (angle >= Radians (180.0))
 		return false;
 	}
 for (int j = 0; j < 4; j++) {
-	CVertex* corner = Vertices (segP->m_info.verts [sideVertTable [nSide][j]]);
+	CVertex* corner = vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][j]]);
 	double length = 20.0 * m_lightRenderDepth;
 	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
 	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
-	// light is recuded by 1/4
 	effect [j] = fLightScale;
-	if (length > 1.0)//if (length < 20.0 * m_lightRenderDepth) // (roughly 4 standard cube lengths)
+	if (length > 1.0) 
 		effect [j] /= (length * length);
-//	else
-//		effect [j] = 0;
 	}
-// if any of the effects are > 0, then increment the
-// light for that side
-return (effect [0] != 0 || effect [1] != 0 || effect [2] != 0 || effect [3] != 0);
+// if any of the effects are > 0, then increment the light for that side
+return (effect [0.0)] != 0.0) || (effect [1] != 0.0) || (effect [2] != 0.0) || (effect [3] != 0.0);
 }
 
-//--------------------------------------------------------------------------
-//eof light.cpp
+//---------------------------------------------------------------------------------
+//eof Illumination.cpp
