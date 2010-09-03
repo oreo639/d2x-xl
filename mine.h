@@ -37,9 +37,6 @@ extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
 #ifdef _DEBUG
 
 typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
-typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
-typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
-typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
 typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 
@@ -50,9 +47,6 @@ typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 #else
 
 typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
-typedef CColor lightColorList [SEGMENT_LIMIT * 6];
-typedef CColor texColorList [MAX_TEXTURES_D2];
-typedef CColor vertexColorList [VERTEX_LIMIT];
 typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 typedef CGameObject objectList [MAX_OBJECTS_D2];
 
@@ -79,10 +73,6 @@ class CMineData {
 		robotInfoList				robotInfo;
 		
 		// structure data
-		lightColorList				lightColors;
-		texColorList				texColors;
-		vertexColorList			vertexColors;
-		activeDoorList				activeDoors;
 		robotMakerList				robotMakers;
 		robotMakerList				equipMakers;
 		objectList					objects;
@@ -193,34 +183,9 @@ public:
 	inline CDoubleMatrix& SecretOrient ()
 		{ return MineData ().m_secretOrient; }
 
-	inline CColor *TexColors (int i = 0)
-		{ return MineData ().texColors + (i & 0x3fff); }
-	inline bool& UseTexColors (void)
-		{ return m_bUseTexColors; }
-	inline void SetTexColor (short nBaseTex, CColor *pc)	{
-		if (UseTexColors () && (IsLight (nBaseTex) != -1))
-			*TexColors (nBaseTex) = *pc;
-		}
-	inline CColor *GetTexColor (short nBaseTex, bool bIsTranspWall = false)	
-		{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : null; }
-	CColor *LightColor (int i = 0, int j = 0, bool bUseTexColors = true);
-	inline lightColorList& LightColors ()
-		{ return MineData ().lightColors; }
-	inline CColor *LightColors (int i, int j = 0)
-		{ return &MineData ().lightColors [i * 6 + j]; }
-	inline CColor *CurrLightColor ()
-		{ return LightColor (current.m_nSegment, current.m_nSide); }
-
-
-	byte *LoadDataResource (LPCTSTR pszRes, HGLOBAL& hGlobal, uint& nResSize);
-	short LoadDefaultLightAndColor (void);
-	bool HasCustomLightMap (void);
-	bool HasCustomLightColors (void);
 
 	short Load(const char *filename = null, bool bLoadFromHog = false);
 	short Save(const char *filename, bool bSaveToHog = false);
-	int WriteColorMap (CFileManager& fColorMap);
-	int ReadColorMap (CFileManager& fColorMap);
 	inline LPSTR LevelName (void)
 		{ return m_currentLevelName; }
 	inline int LevelNameSize (void)

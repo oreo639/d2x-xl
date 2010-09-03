@@ -91,9 +91,16 @@ return objectManager.GetObject (m_nObject);
 
 // -----------------------------------------------------------------------------
 
-CSelection::Vertex (void)
+CVertex CSelection::Vertex (void)
 {
 return vertexManager.GetVertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m_nPoint]]); 
+}
+
+// -----------------------------------------------------------------------------
+
+CColor* CSelection::CurrLightColor (void)
+{ 
+return lightManager.LightColor (current.m_nSegment, current.m_nSide); 
 }
 
 // -----------------------------------------------------------------------------

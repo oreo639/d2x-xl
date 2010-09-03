@@ -34,6 +34,7 @@ public:
 	CSide* Side (void);
 	CWall* Wall (void);
 	CGameObject* Object (void);
+	CColor* CurrLightColor (void);
 };
 
 extern CSelection selections [2];

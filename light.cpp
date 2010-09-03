@@ -1061,23 +1061,4 @@ return (effect [0] != 0 || effect [1] != 0 || effect [2] != 0 || effect [3] != 0
 }
 
 //--------------------------------------------------------------------------
-
-CColor *CMine::LightColor (int i, int j, bool bUseTexColors) 
-{ 
-if (bUseTexColors && UseTexColors ()) {
-	CWall *wallP = SideWall (i, j);
-	//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
-		{	//always use a side color for transp. walls
-		CColor *pc;
-		short t = GetSegment (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
-		if ((t > 0) && (pc = GetTexColor (t)))
-			return pc;
-		if (pc = GetTexColor (GetSegment (i)->m_sides [j].m_info.nBaseTex, wallP && (wallP->m_info.type == WALL_TRANSPARENT)))
-			return pc;
-		}
-	}	
-return LightColors (i, j); 
-}
-
-//--------------------------------------------------------------------------
 //eof light.cpp

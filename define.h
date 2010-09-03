@@ -86,8 +86,6 @@ inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
 #define EXTENDED_HAM 1
 #define NORMAL_HAM	0
 
-#define MAX_VARIABLE_LIGHTS 100
-
 #define LEVEL_VERSION		21	//current level version
 
 #define MAX_PLAYERS_D2		8
@@ -385,8 +383,8 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define TF_AUTOPLAY				128
 
 #define	MAX_LIGHT_DELTA_INDICES_STD	500
-#define	MAX_LIGHT_DELTA_VALUES_STD		10000
 #define	MAX_LIGHT_DELTA_INDICES_D2X	3000
+#define	MAX_LIGHT_DELTA_VALUES_STD		10000
 #define	MAX_LIGHT_DELTA_VALUES_D2X		50000
 #define	LIGHT_DELTA_SCALE     			2048	// Divide light to allow 3 bits integer, 5 bits fraction.
 
