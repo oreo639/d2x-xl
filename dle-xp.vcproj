@@ -1697,97 +1697,23 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="mineview.cpp"
-					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\mineview.drag.cpp"
+					RelativePath=".\MineView.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\mineview.draw.cpp"
+					RelativePath=".\MineView.drag.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\mineview.select.cpp"
+					RelativePath=".\MineView.draw.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\mineview.transform.cpp"
+					RelativePath=".\MineView.select.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MineView.transform.cpp"
 					>
 				</File>
 				<File
