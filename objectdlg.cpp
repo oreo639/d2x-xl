@@ -25,7 +25,7 @@ typedef struct tSliderData {
 } tSliderData;
 
 // list box tables
-int model_num_list [N_ROBOT_TYPES_D2] = {
+int modelNumList [N_ROBOT_TYPES_D2] = {
   0x00, 0x02, 0x04, 0x06, 0x08, 0x0a, 0x0c, 0x0e, 0x0f, 0x11,
   0x13, 0x14, 0x15, 0x16, 0x17, 0x19, 0x1a, 0x1c, 0x1d, 0x1f,
   0x21, 0x23, 0x25, 0x27, 0x28, 0x29, 0x2b, 0x2c, 0x2d, 0x2e,
@@ -36,12 +36,12 @@ int model_num_list [N_ROBOT_TYPES_D2] = {
 };
 
 #define MAX_EXP2_VCLIP_NUM_TABLE 4
-byte exp2_vclip_num_table [MAX_EXP2_VCLIP_NUM_TABLE] = {
+byte exp2VClipTable [MAX_EXP2_VCLIP_NUM_TABLE] = {
 	0x00, 0x03, 0x07, 0x3c
 	};
 
 #define MAX_WEAPON_TYPE_TABLE 30
-byte weapon_type_table [MAX_WEAPON_TYPE_TABLE] = {
+byte weaponTypeTable [MAX_WEAPON_TYPE_TABLE] = {
 	0x00, 0x05, 0x06, 0x0a, 0x0b, 0x0e, 0x11, 0x14, 0x15, 0x16,
 	0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x29, 0x2a, 0x2b, 0x2c, 0x2d,
 	0x2e, 0x30, 0x32, 0x34, 0x35, 0x37, 0x39, 0x3a, 0x3c, 0x3d
@@ -52,7 +52,7 @@ byte weapon_type_table [MAX_WEAPON_TYPE_TABLE] = {
 20: 46, 48, 50, 52, 53, 55, 57, 58, 60, 61
 */
 #define MAX_BEHAVIOR_TABLE 8
-byte behavior_table [MAX_BEHAVIOR_TABLE] = {
+byte aiBehaviorTable [MAX_BEHAVIOR_TABLE] = {
 	AIB_STILL, AIB_NORMAL, AIB_GET_BEHIND, AIB_RUN_FROM, AIB_FOLLOW_PATH, AIB_STATION, AIB_SNIPE
 	};
 
@@ -278,10 +278,10 @@ CreateImgWnd (&m_showSpawnWnd, IDC_OBJ_SHOW_SPAWN);
 CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);
 InitSliders ();
 UpdateSliders ();
-CBInit (CBObjType (), (char**) object_names, object_list, null, MAX_OBJECT_NUMBER);
-CBInit (CBSpawnType (), (char**) object_names, contentsList, null, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
-CBInit (CBObjClassAI (), (char**) ai_options, null, behavior_table, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
+CBInit (CBObjType (), (char**) objectNameTable, object_list, null, MAX_OBJECT_NUMBER);
+CBInit (CBSpawnType (), (char**) objectNameTable, contentsList, null, MAX_CONTAINS_NUMBER, 0, true);
+CBInit (CBObjAI (), (char**) ai_options, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
+CBInit (CBObjClassAI (), (char**) ai_options, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
 
 short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1: MAX_TEXTURES_D2;
 short i, j;
@@ -313,7 +313,7 @@ for (psz = pszBossTypes; *psz; psz++) {
 CGameObject *objP = theMine->CurrObj ();
 //CBInit (CBObjProps (), (char **) ROBOT_STRING_TABLE, null, null, ROBOT_IDS2, 1);
 //SelectItemData (CBObjProps (), (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id < N_ROBOT_TYPES_D2) ? objP->m_info.id: -1);
-CBInit (CBExplType (), (char **) "explosion", null, exp2_vclip_num_table, MAX_EXP2_VCLIP_NUM_TABLE, 2);
+CBInit (CBExplType (), (char **) "explosion", null, exp2VClipTable, MAX_EXP2_VCLIP_NUM_TABLE, 2);
 CBInit (CBWeapon1 (), (char **) 7000, null, null, MAX_WEAPON_TYPES, 3, true);
 CBInit (CBWeapon2 (), (char **) 7000, null, null, MAX_WEAPON_TYPES, 3, true);
 i = CBContType ()->AddString ("Robot");

@@ -64,7 +64,7 @@ for (i = 0; i <= theMine->Info ().objects.count; i++) {
 				drawable = TRUE;
 				}
 		case OBJ_POWERUP:
-			if (ViewObject (powerup_types [objP->m_info.id])) {
+			if (ViewObject (powerupTypeTable [objP->m_info.id])) {
 				drawable = TRUE;
 				}
 			break;

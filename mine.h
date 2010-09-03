@@ -26,8 +26,8 @@ extern byte sideLineTable[6][4];
 extern byte connectPointTable[8][3];
 extern char pointSideTable[8][3];
 extern char pointCornerTable[8][3];
-extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
-extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
+extern tTextureLight textureLightD1 [NUM_LIGHTS_D1];
+extern tTextureLight textureLightD2 [NUM_LIGHTS_D2];
 
 // Copyright (C) 1997 Bryan Aamot
 //**************************************************************************
@@ -109,7 +109,6 @@ public:
 	bool				m_bVertigo;
 	char*				m_pHxmExtraData;
 	int				m_nHxmExtraDataSize;
-	bool				m_bUseTexColors;
 // Constructor/Desctuctor
 public:
 	CMine();
@@ -226,7 +225,7 @@ public:
 	bool DeleteVariableLight (short nSegment = -1, short nSide = -1);
 	int IsExplodingLight(int nBaseTex);
 	bool VisibleWall (ushort nWall);
-	void SetCubeLight (double fLight, bool bAll = false, bool bDynCubeLights = false);
+	void SetSegmentLight (double fLight, bool bAll = false, bool bDynSegLights = false);
 	void ScaleCornerLight (double fLight, bool bAll = false);
 	void CalcAverageCornerLight (bool bAll = false);
 	void AutoAdjustLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);

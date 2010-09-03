@@ -77,6 +77,7 @@ public:
 	void SetTextures (short nTexture);
 
 	bool IsDoor (void);
+	bool IsVisible (void);
 	CSide* GetSide (void);
 	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
 	CTrigger* GetTrigger (void);

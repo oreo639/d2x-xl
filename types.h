@@ -142,11 +142,6 @@ typedef struct WCLIP {
 } WCLIP;
 
 typedef struct {
-  int    nBaseTex;
-  long   light;
-} TEXTURE_LIGHT;
-
-typedef struct {
   short x,y,z;
 } APOINT;
 

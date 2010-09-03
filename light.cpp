@@ -23,86 +23,6 @@ long defLightMap [MAX_TEXTURES_D2];
 // light_weight()
 //--------------------------------------------------------------------------
 
-int FindLight (int nTexture, TEXTURE_LIGHT *pTexLights, int nLights)
-{
-	int	l = 0;
-	int	r = nLights - 1;
-	int	m, t;
-
-while (l <= r) {
-	m = (l + r) / 2;
-	t = pTexLights [m].nBaseTex;
-	if (nTexture > t)
-		l = m + 1;
-	else if (nTexture < t)
-		r = m - 1;
-	else
-		return m;
-	}
-return -1;
-}
-
-//--------------------------------------------------------------------------
-
-void CreateLightMap (void)
-{
-#if 1
-theMine->LoadDefaultLightAndColor ();
-#else
-	TEXTURE_LIGHT	*pTexLights = (DLE.IsD1File ()) ? d1_texture_light : d2_texture_light;
-	int				i = ((DLE.IsD1File ()) ? sizeof (d1_texture_light) : sizeof (d2_texture_light)) / sizeof (TEXTURE_LIGHT);
-
-memset (lightMap, 0, sizeof (lightMap));
-while (i) {
-	--i;
-	CBRK (pTexLights [i].m_info.nBaseTex == 0);
-	lightMap [pTexLights [i].m_info.nBaseTex] = ((pTexLights [i].light * 100 + MAX_BRIGHTNESS / 2) / MAX_BRIGHTNESS) * (MAX_BRIGHTNESS / 100);
-	}
-memcpy (defLightMap, lightMap, sizeof (defLightMap));
-#endif
-}
-
-//--------------------------------------------------------------------------
-
-#if 0
-
-BOOL HasCustomLightMap (void)
-{
-#ifdef _DEBUG
-	int	i;
-
-i = memcmp (lightMap, defLightMap, sizeof (lightMap));
-if (i != 0) {
-	for (i = 0; i < MAX_TEXTURES_D2; i++)
-		if (lightMap [i] != defLightMap [i])
-			return TRUE;
-	}
-return FALSE;
-#else
-return memcmp (lightMap, defLightMap, sizeof (lightMap)) != 0;
-#endif
-}
-
-#endif
-
-//--------------------------------------------------------------------------
-
-int ReadLightMap (CFileManager& fp, uint nSize)
-{
-return fp.Read (lightMap, nSize, 1) != 1;
-}
-
-//--------------------------------------------------------------------------
-
-int WriteLightMap (CFileManager& fp)
-{
-return fp.Write (lightMap, sizeof (lightMap), 1) != 1;
-}
-
-//--------------------------------------------------------------------------
-// light_weight()
-//--------------------------------------------------------------------------
-
 byte CMine::LightWeight(short nBaseTex) 
 {
 #if 1
@@ -112,14 +32,14 @@ return (byte) ((lightMap [nBaseTex] - 1) / 0x0200L);
 
 #	if 1
 if (DLE.IsD1File ()) {
-	i = FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1);
+	i = FindLight (nBaseTex, textureLightD1, NUM_LIGHTS_D1);
 	if (i >= 0)
-		return (byte) ((d1_texture_light [i].light - 1) / 0x0200L);
+		return (byte) ((textureLightD1 [i].light - 1) / 0x0200L);
 	}
 else {
-	i = FindLight (nBaseTex, d2_texture_light, NUM_LIGHTS_D2);
+	i = FindLight (nBaseTex, textureLightD2, NUM_LIGHTS_D2);
 	if (i >= 0)
-		return (byte) ((d2_texture_light [i].light - 1) / 0x0200L);
+		return (byte) ((textureLightD2 [i].light - 1) / 0x0200L);
 	}
 return 0;
 #	else
@@ -128,17 +48,17 @@ return 0;
 if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
 	if (DLE.IsD1File ()) {
 		for (i=0;i<NUM_LIGHTS_D1;i++)
-			if (nBaseTex <= d1_texture_light[i].m_info.nBaseTex) 
+			if (nBaseTex <= textureLightD1[i].m_info.nBaseTex) 
 				break;
-		if (nBaseTex == d1_texture_light[i].m_info.nBaseTex)
-			result = (byte)((d1_texture_light[i].light - 1) / 0x0200L);
+		if (nBaseTex == textureLightD1[i].m_info.nBaseTex)
+			result = (byte)((textureLightD1[i].light - 1) / 0x0200L);
 		}
 	else {
 		for (i=0;i<NUM_LIGHTS_D2;i++)
-			if (nBaseTex <= d2_texture_light[i].m_info.nBaseTex) 
+			if (nBaseTex <= textureLightD2[i].m_info.nBaseTex) 
 				break;
-		if (nBaseTex == d2_texture_light[i].m_info.nBaseTex)
-			result = (byte)((d2_texture_light[i].light - 1) / 0x0200L);
+		if (nBaseTex == textureLightD2[i].m_info.nBaseTex)
+			result = (byte)((textureLightD2[i].light - 1) / 0x0200L);
 		}
 	}
 return (result);
@@ -146,60 +66,9 @@ return (result);
 #endif
 }
 
-//------------------------------------------------------------------------
-// GetVariableLight() - returns flicker light number
-//
-// returns -1 if not exists
-//------------------------------------------------------------------------
-
-
 //--------------------------------------------------------------------------
 
-bool CMine::VisibleWall (ushort nWall)
-{
-if (nWall == NO_WALL)
-	return false;
-CWall	*wallP = Walls (nWall);
-return (wallP->m_info.type != WALL_OPEN);
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-
-void CMine::SetCubeLight (double fLight, bool bAll, bool bDynCubeLights)
-{
-	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
-	CSegment *segP;
-	int	h, i, j, l, c, nSegment;
-
-undoManager.SetModified (TRUE);
-fLight /= 100.0;
-for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
-	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
-		if (!bDynCubeLights)
-			segP->m_info.staticLight = nLight;
-		else {
-			l = 0;
-			c = 0;
-			for (j = 0; j < 6; j++) {
-				for (i = 0; i < 4; i++) {
-					h = (ushort) segP->m_sides [j].m_info.uvls [i].l;
-					if (h || ((segP->GetChild (j) == -1) && !VisibleWall (segP->m_sides [j].m_info.nWall))) {
-						l += h;
-						c++;
-						}
-					}
-				}
-			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
-			}
-		}
-	}
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-
-void CMine::ScaleCornerLight (double fLight, bool bAll) 
+void LightManager::ScaleCornerLight (double fLight, bool bAll) 
 {
 	int segNum, segCount = SegCount ();
 	double scale;
@@ -226,19 +95,18 @@ scale = fLight / 100.0; // 100.0% = normal
 }
 
 //--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 typedef struct tAvgCornerLight {
 	ushort	light;
 	byte		count;
 } tAvgCornerLight;
 
-void CMine::CalcAverageCornerLight (bool bAll)
+void LightManager::CalcAverageCornerLight (bool bAll)
 {
-  int nSegment, segCount = SegCount (), wallCount = MineInfo ().walls.count;
-  tAvgCornerLight* max_brightness = new tAvgCornerLight [VertCount ()];
+  short nSegment, segCount = segmentManager.Count (), wallCount = wallManager.Count ();
+  tAvgCornerLight* maxBrightness = new tAvgCornerLight [vertexManager.Count ()];
 
-memset (max_brightness, 0, VertCount () * sizeof (tAvgCornerLight));
+memset (maxBrightness, 0, VertCount () * sizeof (tAvgCornerLight));
 
 // smooth corner light by averaging all corners which share a vertex
 undoManager.SetModified (TRUE);
@@ -247,43 +115,41 @@ undoManager.SetModified (TRUE);
 #pragma omp for
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = GetSegment (nSegment);
-		for (int pt = 0; pt < 8; pt++) {
-			int nVertex = segP->m_info.verts [pt];
+		for (int nPoint = 0; nPoint < 8; nPoint++) {
+			int nVertex = segP->m_info.verts [nPoint];
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
 				for (int i = 0; i < 3; i++) {
-					int nSide = pointSideTable [pt][i];
-					if ((segP->GetChild (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
-						int uvnum = pointCornerTable [pt][i];
-						if (max_brightness [nVertex].light < ushort (segP->m_sides [nSide].m_info.uvls [uvnum].l))
-							max_brightness [nVertex].light = ushort (segP->m_sides [nSide].m_info.uvls [uvnum].l);
-						max_brightness [nVertex].count++;
+					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
+					if (sideP->IsVisible ()) {
+						int nCorner = pointCornerTable [nPoint][i];
+						if (maxBrightness [nVertex].light < (ushort) sideP->m_info.uvls [nCorner].l)
+							maxBrightness [nVertex].light = (ushort) sideP->m_info.uvls [nCorner].l;
+						maxBrightness [nVertex].count++;
 						}
 					}
 				}
 			}
 		}
-			//	max_brightness = min(max_brightness,0x8000L);
+			//	maxBrightness = min(maxBrightness,0x8000L);
 #pragma omp for
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
 		CSegment *segP = GetSegment (nSegment);
-		for (int pt = 0; pt < 8; pt++) {
-			int nVertex = segP->m_info.verts [pt];
-			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
+		for (int nPoint = 0; nPoint < 8; nPoint++) {
+			int nVertex = segP->m_info.verts [nPoint];
+			if ((maxBrightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
 				for (int i = 0; i < 3; i++) {
-					int nSide = pointSideTable [pt][i];
-					if ((segP->GetChild (nSide) < 0) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
-						int uvnum = pointCornerTable [pt][i];
-						segP->m_sides [nSide].m_info.uvls [uvnum].l = max_brightness [nVertex].light /*/ max_brightness [nVertex].count*/;
-						}
+					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
+					if (sideP->IsVisible ())
+						sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light /*/ maxBrightness [nVertex].count*/;
 					}
 				}
 			}
 		}
-	}
-delete[] max_brightness;
+	} // omp parallel
+
+delete[] maxBrightness;
 }
 
-//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
 void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 

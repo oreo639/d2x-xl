@@ -13,6 +13,15 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+typedef struct tTextureLight {
+  int    nBaseTex;
+  long   light;
+} tTextureLight;
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 typedef struct tLightDeltaValue {
 	byte vertLight [4];
 } tLightDeltaValue;
@@ -118,6 +127,8 @@ class CLightManager {
 		texColorList			m_texColors;
 		vertexColorList		m_vertexColors;
 
+		bool						m_bUseTexColors;
+
 		inline lightDeltaIndexList& LightDeltaIndex (void) { return m_lightDeltaIndices; }
 
 		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
@@ -155,7 +166,6 @@ class CLightManager {
 		short WriteColorMap (CFileManager& fColorMap);
 		short ReadColorMap (CFileManager& fColorMap);
 };
-
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

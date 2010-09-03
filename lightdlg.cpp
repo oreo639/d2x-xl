@@ -134,7 +134,7 @@ if (m_bAvgCornerLight)
 if (m_bScaleLight)
 	theMine->ScaleCornerLight (m_fLightScale, bAll);
 if (m_bCubeLight)
-	theMine->SetCubeLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
+	theMine->SetSegmentLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
 	theMine->CalcDeltaLightData (m_fDeltaLight, (int) bAll);
 undoManager.Unlock ();

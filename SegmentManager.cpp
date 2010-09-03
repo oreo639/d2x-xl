@@ -2296,5 +2296,38 @@ for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
 		DeleteVertex(nVertex); 
 }
 
+//------------------------------------------------------------------------
+
+void CSegmentManager::SetLight (double fLight, bool bAll, bool bDynSegLights)
+{
+	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
+
+UndoManager.SetModified (TRUE);
+
+fLight /= 100.0;
+CSegment *segP = GetSegment (0);
+for (short nSegment = Count (); nSegment; nSegment--, segP++) {
+	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+		if (!bDynSegLights)
+			segP->m_info.staticLight = nLight;
+		else {
+			int l = 0;
+			int c = 0;
+			CSide* sideP = segP->m_sides;
+			for (short nSide = 0; nSide < 6; nSide++) {
+				for (short nCorner = 0; nCorner < 4; nCorner++) {
+					ushort h = (ushort) sideP [nSide].m_info.uvls [nCorner].l;
+					if (h || !sideP->IsVisible ()) {
+						l += h;
+						c++;
+						}
+					}
+				}
+			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
+			}
+		}
+	}
+}
+
 // ------------------------------------------------------------------------
 //eof segmentmanager.cpp

@@ -16,7 +16,7 @@ extern MISSION_DATA	missionData;
 ; // MAX_TEXTURES_D2
 extern int left,right,top,bottom;
 extern LPLOGPALETTE MyLogPalette;
-extern short d2_blastable_lights [];
+extern short blastableLightsD2 [];
 extern short d2_switches [];
 
 extern int bEnableDeltaShading;
@@ -88,8 +88,8 @@ extern char *ai_options [MAX_AI_OPTIONS_D2];
 extern int powerupSize [MAX_POWERUP_IDS_D2];
 extern int robotSize [MAX_ROBOT_IDS_TOTAL];
 extern int robot_shield [MAX_ROBOT_IDS_TOTAL];
-extern TEXTURE_LIGHT d1_texture_light[NUM_LIGHTS_D1];
-extern TEXTURE_LIGHT d2_texture_light[NUM_LIGHTS_D2];
+extern tTextureLight textureLightD1[NUM_LIGHTS_D1];
+extern tTextureLight textureLightD2[NUM_LIGHTS_D2];
 extern long lightMap [MAX_TEXTURES_D2];
 extern short add_segment_mode;
 extern char dlc_version[10];
@@ -119,8 +119,8 @@ extern short select_mode;
 #endif
 extern short edit_mode;
 extern tUVL   defaultUVLs[4];
-extern char  *object_names[MAX_OBJECT_TYPES];
-extern byte powerup_types[MAX_POWERUP_IDS_D2];
+extern char  *objectNameTable[MAX_OBJECT_TYPES];
+extern byte powerupTypeTable[MAX_POWERUP_IDS_D2];
 extern char  wall_type_names[6][10];
 extern char  wall_flag_names[8][14];
 extern char  wall_state_names[4][8];

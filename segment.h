@@ -139,6 +139,7 @@ public:
 	inline void SetWall (short nWall) { m_info.nWall = nWall; }
 	CWall* GetWall (void);
 	CTrigger* GetTrigger (void);
+	bool CSide::IsVisible (void);
 };
 
 // -----------------------------------------------------------------------------

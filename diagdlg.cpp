@@ -114,7 +114,7 @@ for (i = theMine->Info ().objects.count, j = 0; i; i--, j++, objP++)
 			m_nObjects [4]++;
 			break;
 		case OBJ_POWERUP:
-			switch (powerup_types [objP->m_info.id]) {
+			switch (powerupTypeTable [objP->m_info.id]) {
 				case POWERUP_WEAPON_MASK:
 					m_nObjects [4]++;
 					break;

@@ -128,8 +128,8 @@ class CSegmentManager {
 		void RenumberBotGens (void);
 		void RenumberEquipGens (void);
 
-		bool SetDefaultTexture (short nTexture = -1, short walltype = -1);
-		bool DefineSegment (short nSegment, byte type, short nTexture, short walltype = -1);
+		bool SetDefaultTexture (short nTexture = -1, short wallType = -1);
+		bool DefineSegment (short nSegment, byte type, short nTexture, short wallType = -1);
 		void UndefineSegment (short nSegment);
 
 		short ReadSegmentInfo (CFileManager& fp);
@@ -148,6 +148,8 @@ class CSegmentManager {
 			else if (*x < min)
 				*x = max;
 			}
+
+		void SetLight (double fLight, bool bAll, bool bDynSegLights);
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);

@@ -331,7 +331,7 @@ theMine->lightManager.Count () = 0;
 theMine->AutoAdjustLight (50.0, true);
 theMine->CalcAverageCornerLight (true);
 theMine->ScaleCornerLight (100.0, true);
-theMine->SetCubeLight (50.0, true);
+theMine->SetSegmentLight (50.0, true);
 theMine->CalcDeltaLightData (50.0, (int) true);
 
 // d2 reactor and secret cube

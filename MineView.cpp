@@ -711,7 +711,7 @@ switch(objP->m_info.type) {
 	case OBJ_WEAPON:
 		return ViewObject (eViewObjectsWeapons);
 	case OBJ_POWERUP:
-		switch (powerup_types [objP->m_info.id]) {
+		switch (powerupTypeTable [objP->m_info.id]) {
 			case POWERUP_WEAPON_MASK:
 				return ViewObject (eViewObjectsWeapons);
 			case POWERUP_POWERUP_MASK:

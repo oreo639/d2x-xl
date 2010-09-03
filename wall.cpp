@@ -196,6 +196,13 @@ return (m_info.type == WALL_BLASTABLE) || (m_info.type == WALL_DOOR);
 
 //------------------------------------------------------------------------------
 
+bool CWall::IsVisible (void)
+{
+return (wallP->m_info.type != WALL_OPEN);
+}
+
+//------------------------------------------------------------------------------
+
 int CWall::SetClip (short nTexture)
 {
 	char *ps, *pszName = textureManager.Name (nTexture);
