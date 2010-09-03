@@ -5385,6 +5385,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\GameObject.cpp"
+					>
+				</File>
+				<File
 					RelativePath="global.cpp"
 					>
 					<FileConfiguration
@@ -5722,84 +5726,6 @@
 				</File>
 				<File
 					RelativePath="MODIFY.CPP"
-					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="OBJECT.CPP"
 					>
 					<FileConfiguration
 						Name="Demo|Win32"
@@ -6651,6 +6577,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\GameObject.h"
+					>
+				</File>
+				<File
 					RelativePath="Global.h"
 					>
 				</File>
@@ -6676,10 +6606,6 @@
 				</File>
 				<File
 					RelativePath=".\MineInfo.h"
-					>
-				</File>
-				<File
-					RelativePath=".\object.h"
 					>
 				</File>
 				<File
