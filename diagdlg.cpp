@@ -146,7 +146,7 @@ int CDiagTool::CountTextures (void)
 	int nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));
-for (i = theMine->SegCount (); i; i--, segP++)
+for (i = segmentManager.Count (); i; i--, segP++)
 	for (j = 0, sideP = segP->m_sides; j < MAX_SIDES_PER_SEGMENT; j++, sideP++)
 		if ((segP->GetChild (j) == -1) || (sideP->m_info.nWall < h)) {
 			t = sideP->m_info.nBaseTex;
@@ -194,7 +194,7 @@ plc.DeleteAllItems ();
 for (psz = szItems, i = 0; *psz; psz++, i++)
 	plc.InsertItem (i, *psz);
 CountObjects ();
-plc.SetItemText (0, 1, ItemText (theMine->SegCount ()));
+plc.SetItemText (0, 1, ItemText (segmentManager.Count ()));
 plc.SetItemText (1, 1, ItemText (theMine->VertCount ()));
 plc.SetItemText (2, 1, ItemText (theMine->RobotMakerCount ()));
 plc.SetItemText (3, 1, ItemText (theMine->FuelCenterCount ()));

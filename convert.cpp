@@ -67,7 +67,7 @@ if (!(m_pTextures = (short *) m_res.Load (IDR_TEXTURE_D1D2)))
 
 CComboBox *pcb = CBD1 ();
 short	nSeg,	nSide, nTextures;
-short tnum [2], segCount = theMine->SegCount ();
+short tnum [2], segCount = segmentManager.Count ();
 char	szName [80];
 int h;
 CSegment *segP = theMine->Segments (0);
@@ -209,7 +209,7 @@ CHECKMINE;
   CTrigger		*trigP;
   CGameObject	*objP;
   short			nSegment, nSide, d1Texture, mode,
-					segCount = theMine->SegCount (),
+					segCount = segmentManager.Count (),
 					wallCount = theMine->MineInfo ().walls.count;
 
 textureManager.Release ();

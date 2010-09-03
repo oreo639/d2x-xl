@@ -204,20 +204,20 @@ if (IsD2File ()) {
 	ReactorStrength () = fp.ReadInt32 (); // reactor strength
 	if (LevelVersion () > 6) {
 		FlickerLightCount () = short (fp.ReadInt32 ());
-		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_FLICKERING_LIGHTS)) {
+		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_VARIABLE_LIGHTS)) {
 			for (int i = 0; i < FlickerLightCount (); i++)
-				FlickeringLights (i)->Read (fp);
+				VariableLights (i)->Read (fp);
 			} 
 		else {
 			if (FlickerLightCount () != 0) {
-				ErrorMsg ("Error reading flickering lights");
+				ErrorMsg ("Error reading variable lights");
 				FlickerLightCount () = 0;
 				}
 			}
 		}
 	// NOTE: d2 v1.1 has two levels at version 7 (b2 and f4),
-	//       both have 0 flickering lights
-	//    sprintf_s (message, sizeof (message),  "%d flickering lights", nflicks);
+	//       both have 0 variable lights
+	//    sprintf_s (message, sizeof (message),  "%d variable lights", nflicks);
 	//    DEBUGMSG(message);
 
 	// read secret cube number

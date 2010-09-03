@@ -82,7 +82,7 @@ void CTextureTool::UpdateLight (void)
 
 if (m_iLight < 0)
 	return;
-if (m_iLight >= MAX_FLICKERING_LIGHTS)
+if (m_iLight >= MAX_VARIABLE_LIGHTS)
 	return;
 
 uint nLightMask = 0;
@@ -91,7 +91,7 @@ for (int i = 0; i < 32; i++)
 		nLightMask |= (1 << i);
 long nDelay = I2X (m_nLightDelay) / 1000;
 
-CFlickeringLight* flP = theMine->FlickeringLights (m_iLight);
+CVariableLight* flP = theMine->VariableLights (m_iLight);
 if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
 	bUndo = undoManager.SetModified (TRUE);
 	undoManager.Lock ();
@@ -205,18 +205,18 @@ else {
 			}
 		}
 	}
-m_iLight = theMine->GetFlickeringLight ();
+m_iLight = theMine->GetVariableLight ();
 if (m_iLight < 0) {
 	OnLightOff ();
 	return;
 	}
 
-long nLightMask = theMine->FlickeringLights (m_iLight)->m_info.mask;
+long nLightMask = theMine->VariableLights (m_iLight)->m_info.mask;
 int i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
 m_szLight [32] = '\0';
-SetLightButtons (m_szLight, (int) (((1000 * theMine->FlickeringLights (m_iLight)->m_info.delay + F0_5) / F1_0)));
+SetLightButtons (m_szLight, (int) (((1000 * theMine->VariableLights (m_iLight)->m_info.delay + F0_5) / F1_0)));
 }
 
                         /*--------------------------*/
@@ -248,8 +248,8 @@ else {
 void CTextureTool::OnAddLight ()
 {
 if (m_iLight >= 0)
-	INFOMSG (" There is already a flickering light.")
-else if (0 <= (m_iLight = theMine->AddFlickeringLight (-1, -1, 0xAAAAAAAAL, F1_0 / 4))) {
+	INFOMSG (" There is already a variable light.")
+else if (0 <= (m_iLight = theMine->AddVariableLight (-1, -1, 0xAAAAAAAAL, F1_0 / 4))) {
 	UpdateLightWnd ();
 	DLE.MineView ()->Refresh ();
 	}
@@ -260,8 +260,8 @@ else if (0 <= (m_iLight = theMine->AddFlickeringLight (-1, -1, 0xAAAAAAAAL, F1_0
 void CTextureTool::OnDeleteLight ()
 {
 if (m_iLight < 0)
-	INFOMSG (" There is no flickering light.")
-else if (theMine->DeleteFlickeringLight ()) {
+	INFOMSG (" There is no variable light.")
+else if (theMine->DeleteVariableLight ()) {
 	m_iLight = -1;
 	UpdateLightWnd ();
 	DLE.MineView ()->Refresh ();
@@ -324,7 +324,7 @@ if (theMine->UseTexColors ()) {
 	CWall			*wallP;
 	bool			bAll = (theMine == null)->GotMarkedSides ();
 
-	for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
+	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 			if (sideP->m_info.nWall < 0)
 				continue;

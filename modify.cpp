@@ -13,7 +13,7 @@
 #include "palette.h"
 #include "dle-xp.h"
 
-#define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
 //This dialog is always active,
 //but is hidden or restored by user
@@ -29,14 +29,14 @@ bool CMine::EditGeoFwd (void)
 /* calculate center of current side */
 
 for (i = 0; i < 4; i++) {
-	int nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (current.m_nSegment)->m_info.verts [sideVertTable [current.m_nSide][i]];
    center += *Vertices (nVertex);
 	 }
 center /= 4.0;
 
 // calculate center of opposite of current side
 for (i = 0; i < 4; i++) {
-	int nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (current.m_nSegment)->m_info.verts [oppSideVertTable [current.m_nSide][i]];
    oppCenter += *Vertices (nVertex);
 	}
 oppCenter /= 4.0;
@@ -51,7 +51,7 @@ radius = v.Mag ();
 if (radius > 0.1)
 	v /= radius;
 else
-	v = CalcSideNormal (Current ()->nSegment, Current ()->nSide);
+	v = CalcSideNormal (current.m_nSegment, current.m_nSide);
 
 // move on x, y, and z
  undoManager.SetModified (TRUE);
@@ -72,14 +72,14 @@ bool CMine::EditGeoBack (void)
 
 /* calculate center of current side */
 for (i = 0; i < 4; i++) {
-	int nVertex = Segments (Current ()->nSegment)->m_info.verts [sideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (current.m_nSegment)->m_info.verts [sideVertTable [current.m_nSide][i]];
 	center += *Vertices (nVertex);
 	}
 center /= 4.0;
 
 // calculate center of oppisite current side
 for (i = 0; i < 4; i++) {
-	int nVertex = Segments (Current ()->nSegment)->m_info.verts [oppSideVertTable [Current ()->nSide][i]];
+	int nVertex = Segments (current.m_nSegment)->m_info.verts [oppSideVertTable [current.m_nSide][i]];
 	oppCenter += *Vertices (nVertex);
 	}
 oppCenter /= 4.0;
@@ -101,20 +101,20 @@ CDoubleVector v (center - oppCenter);
 	CSegment *segP;
 	bool		okToMove = true;
 
-segP = Segments (Current ()->nSegment);
-byte* sideNormalP = sideNormalTable [Current ()->nSide];
+segP = Segments (current.m_nSegment);
+byte* sideNormalP = sideNormalTable [current.m_nSide];
 switch (m_selectMode) {
 	case POINT_MODE:
-		if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][0]]), 
-						  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [Current ()->nPoint]][1]]))
+		if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [current.m_nPoint]][0]]), 
+						  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [current.m_nPoint]][1]]))
 			 - moveRate < 0.25) 
 			okToMove = false;
 		break;
 
 	case LINE_MODE:
 		for (i = 0; i < 2; i++) {
-			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][0]]), 
-							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(Current ()->nLine + i) % 4]][1]]))
+			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(current.m_nLine + i) % 4]][0]]), 
+							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(current.m_nLine + i) % 4]][1]]))
 				 - moveRate < 0.25) 
 				okToMove = false;
 			}
@@ -147,7 +147,7 @@ else {
 	if (radius > 0.1) 
 		v /= radius;
 	else 
-		v = CalcSideNormal (Current ()->nSegment,Current ()->nSide);
+		v = CalcSideNormal (current.m_nSegment,current.m_nSide);
 	// move on x, y, and z
 	undoManager.SetModified (TRUE);
 	undoManager.Lock ();
@@ -231,9 +231,9 @@ return ResizeItem (-moveRate);
 
 bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
-	int			nSegment = Current ()->nSegment;
-	int			nSide = Current ()->nSide;
-	CSegment*	segP = Segments (nSegment);
+	int			nSegment = current.m_nSegment;
+	int			nSide = current.m_nSide;
+	CSegment*	segP = GetSegment (nSegment);
 	CVertex		center, oppCenter;
 	int			i, pts [4];
 
@@ -299,9 +299,9 @@ return true;
 
 bool CMine::ResizeItem (double delta) 
 {
-	int nSegment = Current ()->nSegment;
-	int nSide = Current ()->nSide;
-	CSegment *segP = Segments (nSegment);
+	int nSegment = current.m_nSegment;
+	int nSide = current.m_nSide;
+	CSegment *segP = GetSegment (nSegment);
 	int i, j, point [4];
 	bool result = false;
 
@@ -310,15 +310,15 @@ switch (m_selectMode) {
 		return false;
 
 	case LINE_MODE:
-		point [0] = lineVertTable [sideLineTable [Current ()->nSide][Current ()->nLine]][0];
-		point [1] = lineVertTable [sideLineTable [Current ()->nSide][Current ()->nLine]][1];
+		point [0] = lineVertTable [sideLineTable [current.m_nSide][current.m_nLine]][0];
+		point [1] = lineVertTable [sideLineTable [current.m_nSide][current.m_nLine]][1];
 		return ResizeLine (segP, point [0], point [1], delta);
 
 	case SIDE_MODE:
 		undoManager.SetModified (TRUE);
 		undoManager.Lock ();
 		for (i = 0; i < 4; i++)
-			point [i] = sideVertTable [Current ()->nSide][i];
+			point [i] = sideVertTable [current.m_nSide][i];
 		// enlarge the diagonals
 		result = ResizeLine (segP, point [0], point [2], (int) (delta*sqrt(2.0))) &&
 				   ResizeLine (segP, point [1], point [3], (int) (delta*sqrt(2.0)));
@@ -376,8 +376,8 @@ bool CMine::MovePoints (int pt0, int pt1)
 	CDoubleVector	delta;
 	double			length;
 	int				i;
-	CSegment*		segP = Segments (Current ()->nSegment);
-	byte*			sideVertP = sideVertTable [Current ()->nSide];
+	CSegment*		segP = Segments (current.m_nSegment);
+	byte*			sideVertP = sideVertTable [current.m_nSide];
 	short				p0 = sideVertP [CURRENT_POINT(pt0)];
 	short				p1 = sideVertP [CURRENT_POINT(pt1)];
 
@@ -421,7 +421,7 @@ switch (m_selectMode){
 		bool bMoved = false;
 		for (i = 0; i < MAX_VERTICES; i++) {
 			if (VertStatus (i) & MARKED_MASK) {
-				*Vertices (i) += delta;
+				*.GetVertex (i) += delta;
 				bMoved = true;
 				}
 			}
@@ -478,11 +478,11 @@ return true;
 
 bool CMine::MoveOn (CDoubleVector delta) 
 {
-int nSegment = Current ()->nSegment;
-int nSide = Current ()->nSide;
-int nPoint = Current ()->nPoint;
-int nLine = Current ()->nLine;
-CSegment *segP = Segments (nSegment);
+int nSegment = current.m_nSegment;
+int nSide = current.m_nSide;
+int nPoint = current.m_nPoint;
+int nLine = current.m_nLine;
+CSegment *segP = GetSegment (nSegment);
 short i;
 
 undoManager.SetModified (TRUE);
@@ -518,7 +518,7 @@ switch (m_selectMode) {
 		CGameObject *objP = Objects (0);
 		for (i = 0; i < MAX_VERTICES; i++)
 			if (VertStatus (i) & MARKED_MASK)
-				*Vertices (i) += delta;
+				*.GetVertex (i) += delta;
 		for (i = MineInfo ().objects.count; i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
 				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
@@ -538,9 +538,9 @@ return true;
 
 bool CMine::SpinSelection (double angle) 
 {
-	int				nSegment = Current ()->nSegment;
-	int				nSide = Current ()->nSide;
-	CSegment*		segP = Segments (nSegment);
+	int				nSegment = current.m_nSegment;
+	int				nSide = current.m_nSide;
+	CSegment*		segP = GetSegment (nSegment);
 	CGameObject*	objP;
 	CDoubleMatrix* orient;
 	CVertex			center, oppCenter, normal;
@@ -599,7 +599,7 @@ switch (m_selectMode) {
 
 	case OBJECT_MODE:	// spin object vector
 		undoManager.SetModified (TRUE);
-		orient = (Current ()->nObject == MineInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
+		orient = (current.m_nObject == MineInfo ().objects.count) ? &SecretOrient () : &CurrObj ()->m_location.orient;
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');
@@ -639,7 +639,7 @@ switch (m_selectMode) {
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
 			if (VertStatus (i) & MARKED_MASK)
-				Vertices (i)->Rotate (center, oppCenter, angle);
+				.GetVertex (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
 		for (i = MineInfo ().objects.count; i; i--, objP++)

@@ -39,10 +39,15 @@ class CSegmentManager {
 		inline segmentList& Segments (void)
 			{ return m_segments; }
 
-		inline ushort& SegCount ()
+		inline ushort& Count ()
 			{ return m_nCount; }
 
 		inline CSegment *GetSegment (int i) { return &m_segments [i]; }
+
+		inline CSide* GetSide (CSideKey key) {
+			current.Get (key);
+			return &GetSegment (key.m_nSegment)->m_sides [key.m_nSide];
+			}
 
 		inline CSide* GetSide (short nSegment = -1, short nSide = -1) {
 			current.Get (nSegment, nSide);
@@ -50,6 +55,8 @@ class CSegmentManager {
 			}
 
 		CSide* GetOppositeSide (short nSegment = -1, short nSide = -1);
+
+		bool GetOppositeSide (CSideKey& key, short nSegment = -1, short nSide = -1);
 
 		inline CWall* GetWall (short nSegment = -1, short nSide = -1) {
 			return GetSide (nSegment, nSide)->GetWall ();

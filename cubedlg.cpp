@@ -96,9 +96,9 @@ void CSegmentTool::InitCBCubeNo (void)
 {
 CHECKMINE;
 CComboBox *pcb = CBCubeNo ();
-if (theMine->SegCount () != pcb->GetCount ()) {
+if (segmentManager.Count () != pcb->GetCount ()) {
 	pcb->ResetContent ();
-	for (int i = 0; i < theMine->SegCount (); i++) {
+	for (int i = 0; i < segmentManager.Count (); i++) {
 		_itoa_s (i, message, sizeof (message), 10);
 		pcb->AddString (message);
 		}
@@ -234,10 +234,10 @@ CSegment *segP = theMine->current.Segment ();
 // enable/disable "end of exit tunnel" button
 EndOfExit ()->EnableWindow (segP->GetChild (m_nSide) < 0);
 // enable/disable add cube button
-GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((theMine->SegCount () < MAX_SEGMENTS) &&
+GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS) &&
 													  (theMine->VertCount () < MAX_VERTICES - 4) &&
 													  (segP->GetChild (m_nSide) < 0));
-GetDlgItem (IDC_CUBE_DEL)->EnableWindow (theMine->SegCount () > 1);
+GetDlgItem (IDC_CUBE_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button
 GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBAvailBots ()->GetCount () > 0));
 GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBUsedBots ()->GetCount () > 0));
@@ -530,7 +530,7 @@ DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
-	for (short nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
+	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
 		if (segP->m_info.wallFlags & MARKED_MASK)
 			segP->m_info.owner = m_nOwner;
 	}
@@ -555,7 +555,7 @@ DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = theMine->Segments (0);
-	for (short nSegNum = 0; nSegNum < theMine->SegCount (); nSegNum++, segP++)
+	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
 		if (segP->m_info.wallFlags & MARKED_MASK)
 			segP->m_info.group = m_nGroup;
 	}
@@ -584,7 +584,7 @@ m_nLastCube = -1; //force Refresh() to rebuild all dialog data
 byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if (bMarked) {
 	nMinSeg = 0;
-	nMaxSeg = theMine->SegCount ();
+	nMaxSeg = segmentManager.Count ();
 	}
 else {
 	nMinSeg = int (theMine->current.Segment () - theMine->Segments (0));

@@ -11,7 +11,7 @@
 #include "dlcdoc.h"
 #include <signal.h>
 
-#define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
 //-------------------------------------------------------------------------
 // _matherr()
@@ -114,7 +114,7 @@ void CMine::UntwistSegment (short nSegment,short nSide)
   CSegment*	segP;
   short		verts [4];
 
-segP = Segments (nSegment);
+segP = GetSegment (nSegment);
 // calculate length from point 0 to opp_points
 CVertex* vert0 = Vertices (segP->m_info.verts [sideVertTable [nSide][0]]);
 for (j = 0; j < 4; j++) {
@@ -349,7 +349,7 @@ else {
 	for (spline = 0; spline < n_splines; spline++) {
 		segP = Segments (SegCount ());
 		// copy current segment
-		*segP = *Segments (Current ()->nSegment);
+		*segP = *Segments (current.m_nSegment);
 		// use last "n_spline" segments
 		nVertex = (MAX_VERTICES - 1) - spline * 4;
 		for (j = 0; j < 4; j++) {
@@ -432,10 +432,10 @@ void CMine::IncreaseSpline()
 
 //undoManager.UpdateBuffer(0);
 
-if (Current ()->nSegment == nSplineSeg1)
+if (current.m_nSegment == nSplineSeg1)
 	if (m_splineLength1 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength1 += SPLINE_INTERVAL;
-if (Current ()->nSegment == nSplineSeg2)
+if (current.m_nSegment == nSplineSeg2)
 	if (m_splineLength2 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength2 += SPLINE_INTERVAL;
 DLE.MineView ()->Refresh ();
@@ -450,10 +450,10 @@ void CMine::DecreaseSpline()
 
 //  undoManager.UpdateBuffer(0);
 
-if (Current ()->nSegment == nSplineSeg1)
+if (current.m_nSegment == nSplineSeg1)
 	if (m_splineLength1 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength1 -= SPLINE_INTERVAL;
-if (Current ()->nSegment == nSplineSeg2)
+if (current.m_nSegment == nSplineSeg2)
 	if (m_splineLength2 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength2 -= SPLINE_INTERVAL;
 DLE.MineView ()->Refresh ();

@@ -55,7 +55,7 @@ CRect	rc;
 wndP->GetClientRect (rc);
 
 if (nBaseTex < 0) {
-	segP = (nSegment < 0) ? theMine->current.Segment () : theMine->Segments (nSegment);
+	segP = (nSegment < 0) ? theMine->current.Segment () : segmentManager.GetSegment (nSegment);
 	sideP = (nSide < 0) ? theMine->current.Side () : segP->m_sides + nSide;
 	int nSide = current.m_nSide;
 	nBaseTex = sideP->m_info.nBaseTex;

@@ -53,7 +53,7 @@ origVertCount = VertCount ();
 
 // set origin
 segP = current.Segment ();
-nSide = Current ()->nSide;
+nSide = current.m_nSide;
 origin = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
 // set x'
 xPrime = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]]) - origin;
@@ -90,7 +90,7 @@ while (!fp.EoF ()) {
 		return(nNewSegs);
 		}
 	nSegment = SegCount ();
-	segP = Segments (nSegment);
+	segP = GetSegment (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	fscanf_s (fp.File (), "segment %hd\n", &segP->m_info.nIndex);
@@ -388,11 +388,11 @@ void CMine::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/)
 
 // set origin
 segP = current.Segment ();
-origin = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(0)]]);
+origin = *Vertices (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(0)]]);
 // set x'
-xPrime = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(1)]]) - origin;
+xPrime = *Vertices (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(1)]]) - origin;
 // calculate y'
-vVertex = *Vertices (segP->m_info.verts[sideVertTable[Current ()->nSide][CURRENT_POINT(3)]]) - origin;
+vVertex = *Vertices (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(3)]]) - origin;
 yPrime = CrossProduct (xPrime, vVertex);
 zPrime = CrossProduct (xPrime, yPrime);
 xPrime.Normalize ();
@@ -816,7 +816,7 @@ if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 DLE.MainFrame ()->InitProgress (SegCount ());
 for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--) {
 		DLE.MainFrame ()->Progress ().StepIt ();
-		if (Segments (nSegment)->m_info.wallFlags & MARKED_MASK) {
+		if (GetSegment (nSegment)->m_info.wallFlags & MARKED_MASK) {
 		if (SegCount () <= 1)
 			break;
 		if (Objects (0)->m_info.nSegment != nSegment)

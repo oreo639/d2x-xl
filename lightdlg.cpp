@@ -197,7 +197,7 @@ nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 
 bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
-for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			nVertex = segP->m_info.verts [sideVertTable [nSide][i]];

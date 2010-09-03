@@ -28,6 +28,16 @@ if (nPoint >= 0)
 
 // -----------------------------------------------------------------------------
 
+CSelection::Get (CSideKey& key)
+{
+if (key.m_nSegment < 0)
+	key.m_nSegment = m_nSegment;
+if (key.m_nSide < 0)
+	key.m_nSide = m_nSide;
+}
+
+// -----------------------------------------------------------------------------
+
 CSelection::Get (short& nSegment, short& nSide)
 {
 if (nSegment < 0)

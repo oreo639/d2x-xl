@@ -921,7 +921,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 // set all segment sides as not "pasted" yet
 	CSegment *segP = theMine->Segments (0);
 int nSegment;
-for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
+for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
     segP->m_info.nIndex = 0;
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
@@ -954,7 +954,7 @@ bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
-for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
 			if (segP->GetChild (nSide) == -1) {
@@ -998,7 +998,7 @@ bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
-for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++)
+for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
 		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
 			if (m_bUse1st && (sideP->m_info.nBaseTex != last_texture1))
@@ -1030,7 +1030,7 @@ CHECKMINE;
 if (nDepth <= 0) 
 	return;
 
-	CSegment	*segP = theMine->Segments (nSegment);
+	CSegment	*segP = segmentManager.GetSegment (nSegment);
 	CSide		*sideP = segP->m_sides + nSide;
 	short			old_texture1, 
 					old_texture2;
@@ -1105,7 +1105,7 @@ vert1 = segP->m_info.verts [point1];
 
 nSide = sideChildTable[nStartSide][nLine];
 nChild = segP->GetChild (nSide);
-if (nChild < 0 || nChild >= theMine->SegCount ())
+if (nChild < 0 || nChild >= segmentManager.Count ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 	segP = theMine->Segments (nChild);

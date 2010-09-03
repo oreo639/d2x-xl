@@ -26,6 +26,7 @@ public:
 	short m_nPoint;
 	short m_nObject;
 
+	void Get (CSideKey& key);
 	void Get (short& nSegment, short& nSide);
 	CSegment* Segment (void);
 	short Child (void);

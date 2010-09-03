@@ -57,7 +57,7 @@ if (sideP->GetWall () != null) {
 ushort nWall = Count ();
 
 if (nWall >= MAX_WALLS) {
-	ErrorMsg ("Maximum number of Walls () reached");
+	ErrorMsg ("Maximum number of walls reached");
 	return null;
 	}
 
@@ -90,6 +90,8 @@ return (sideP == null) ? null : sideP->GetWall ();
 
 void CWallManager::Delete (short nDelWall) 
 {
+if (nDelWall == NO_WALL)
+	return;
 CWall* delWallP = GetWall (nDelWall);
 if (delWallP == null) {
 	delWallP = current.Wall ();
@@ -154,7 +156,7 @@ if (wallP != null)
 
 bool CWallManager::ClipFromTexture (short nSegment, short nSide)
 {
-CWall *wallP = segmentManager.GetWall (nSegment, nSide);
+CWall* wallP = segmentManager.GetWall (nSegment, nSide);
 
 if (!(wallP && wallP->IsDoor ()))
 	return true;
@@ -164,6 +166,213 @@ short nBaseTex, nOvlTex;
 segmentManager.GetTextures (nSegment, nSide, nBaseTex, nOvlTex);
 
 return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddDoor (byte type, byte flags, byte keys, char nClip, short nTexture) 
+{
+  short 	nOppSeg, nOppSide;
+  ushort nWall;
+
+nWall = current.Side ()->m_info.nWall;
+if (nWall < Count ()) {
+	ErrorMsg ("There is already a wall on this side");
+	return false;
+	}
+if (Count () + 1 >= MAX_WALLS) {
+	ErrorMsg ("Maximum number of Walls reached");
+	return false;
+	}
+bool bUndo = undoManager.SetModified (TRUE);
+undoManager.Lock ();
+// add a door to the current segment/side
+if (Add (current.m_nSegment, current.m_nSide, type, flags, keys, nClip, nTexture)) {
+	// add a door to the opposite segment/side
+	if (GetOppositeSide (nOppSeg, nOppSide, current.m_nSegment, current.m_nSide) &&
+		 AddWall (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
+		undoManager.Unlock ();
+		DLE.MineView ()->Refresh ();
+		return true;
+		}
+	}
+undoManager.ResetModified (bUndo);
+return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddAutoDoor (char nClip, short nTexture) 
+{
+return AddDoor (WALL_DOOR, WALL_DOOR_AUTO, KEY_NONE, nClip,  nTexture);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddPrisonDoor (void) 
+{
+return AddDoor (WALL_BLASTABLE, 0, 0, -1, -1);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddGuideBotDoor (void) 
+{
+if (theMine->IsD1File ()) {
+	ErrorMsg ("Guide bot doors are not available in Descent 1");
+	return false;
+  }
+return AddDoor (WALL_BLASTABLE, 0, 0, 46, -1);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddFuelCell (void) 
+{
+return AddDoor (WALL_ILLUSION, 0, 0, -1, (IsD1File ()) ? 328 : 353);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddIllusionaryWall (void) 
+{
+return AddDoor (WALL_ILLUSION, 0, 0, -1, 0);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddForceField (void) 
+{
+if (IsD1File ()) {
+	ErrorMsg ("Force fields are not supported in Descent 1");
+   return false;
+	}
+return AddDoor (WALL_CLOSED, 0, 0, -1, 420);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddFan (void)
+{
+return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 325 : 354);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddWaterFall (void)
+{
+if (theMine->IsD1File ()) {
+	ErrorMsg ("Water falls are not supported in Descent 1");
+   return false;
+	}
+return AddDoor (WALL_ILLUSION, 0, 0, -1, 401);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddLavaFall (void) 
+{
+if (theMine->IsD1File ()) {
+	ErrorMsg ("Lava falls are not supported in Descent 1");
+   return false;
+	}
+return AddDoor (WALL_ILLUSION, 0, 0, -1, 408);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddGrate (void) 
+{
+return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 246 : 321);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddNormalExit (void) 
+{
+return AddExit (TT_EXIT);
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddExit (short type) 
+{
+
+ushort nWall = Segments (current.m_nSegment)->m_sides [current.m_nSide].m_info.nWall;
+if (nWall < Count ()) {
+	ErrorMsg ("There is already a wall on this side");
+	return false;
+	}
+if (Count () >= MAX_WALLS - 1) {
+	ErrorMsg ("Maximum number of walls reached");
+	return false;
+	}
+if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
+	ErrorMsg ("Maximum number of triggers reached");
+	return false;
+	}
+// make a new wall and a new trigger
+bool bUndo = undoManager.SetModified (TRUE);
+undoManager.Lock ();
+if (AddWall (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+// set clip number and texture
+	Walls () [Count ()-1].m_info.nClip = 10;
+	SetTexture (current.m_nSegment, current.m_nSide, 0, (IsD1File ()) ? 444 : 508);
+	AddTrigger (Count () - 1, type);
+// add a new wall and trigger to the opposite segment/side
+	short nOppSeg, nOppSide;
+	if (GetOppositeSide (nOppSeg, nOppSide, current.m_nSegment, current.m_nSide) &&
+		AddWall (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+		// set clip number and texture
+		Walls () [Count () - 1].m_info.nClip = 10;
+		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
+		AutoUpdateReactor();
+		undoManager.Unlock ();
+		DLE.MineView ()->Refresh ();
+		return true;
+		}
+	}
+undoManager.ResetModified (bUndo);
+return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool CWallManager::AddSecretExit (void) 
+{
+if (theMine->IsD1File ()) {
+    AddExit (TT_SECRET_EXIT);
+	 return false;
+	}
+if (Count () >= MAX_WALLS) {
+	ErrorMsg ("Maximum number of walls reached");
+	return false;
+	}
+if (triggerManager.Count () >= MAX_TRIGGERS - 1) {
+	ErrorMsg ("Maximum number of triggers reached");
+	return false;
+	}
+int last_segment = current.m_nSegment;
+bool bUndo = undoManager.SetModified (true);
+undoManager.Lock ();
+if (!AddSegment ()) {
+	undoManager.ResetModified (bUndo);
+	return false;
+	}
+int new_segment = current.m_nSegment;
+current.m_nSegment = last_segment;
+if (AddWall (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+	AddTrigger (Count () - 1, TT_SECRET_EXIT);
+	SecretCubeNum () = current.m_nSegment;
+	SetDefaultTexture (426, -1);
+	current.m_nSegment = new_segment;
+	SetDefaultTexture (426, -1);
+	DLE.MineView ()->Refresh ();
+	undoManager.Unlock ();
+	return true;
+	}
+undoManager.ResetModified (bUndo);
+return false;
 }
 
 //------------------------------------------------------------------------------

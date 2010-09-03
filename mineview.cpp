@@ -407,7 +407,7 @@ void CMineView::AdvanceLightTick (void)
 CHECKMINE;
 
 	LIGHT_TIMER *ltP = lightTimers;
-	CFlickeringLight *flP = theMine->FlickeringLights (0);
+	CVariableLight *flP = theMine->VariableLights (0);
 	int i, light_delay;
 
 for (i = theMine->FlickerLightCount (); i; i--, flP++, ltP++) {
@@ -434,7 +434,7 @@ bool CMineView::SetLightStatus (void)
 	CLightDeltaIndex *ldiP = theMine->LightDeltaIndex (0);
 	CLightDeltaValue *ldvP;
 	LIGHT_TIMER *ltP;
-	CFlickeringLight *flP = theMine->FlickeringLights (0);
+	CVariableLight *flP = theMine->VariableLights (0);
 	LIGHT_STATUS *pls;
 	bool bChange = false;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->MineInfo ().fileInfo.version >= 34);
@@ -442,16 +442,16 @@ bool CMineView::SetLightStatus (void)
 
 // search delta light index to see if current side has a light
 pls = lightStatus [0];
-for (i = theMine->SegCount (); i; i--)
+for (i = segmentManager.Count (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
 for (h = 0; h < theMine->MineInfo ().lightDeltaIndices.count; h++, ldiP++) {
 	nSrcSide = ldiP->m_nSegment;
 	nSrcSeg = ldiP->m_nSide;
-	j = theMine->GetFlickeringLight (nSrcSide, nSrcSeg);
+	j = theMine->GetVariableLight (nSrcSide, nSrcSeg);
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
-	if (j >= MAX_FLICKERING_LIGHTS)
+	if (j >= MAX_VARIABLE_LIGHTS)
 		continue;	//shouldn't happen 
 	ldvP = theMine->LightDeltaValues (ldiP->m_info.index);
 	for (i = ldiP->m_info.count; i; i--, ldvP++) {
@@ -460,11 +460,11 @@ for (h = 0; h < theMine->MineInfo ().lightDeltaIndices.count; h++, ldiP++) {
 		if (m_bShowLightSource) {
 			if ((nSegment != nSrcSeg) || (nSide != nSrcSide)) 
 				continue;
-			if (0 > theMine->GetFlickeringLight (nSegment, nSide))
+			if (0 > theMine->GetVariableLight (nSegment, nSide))
 				continue;
 			}
 		else {
-			if (((nSegment != nSrcSeg) || (nSide != nSrcSide)) && (0 <= theMine->GetFlickeringLight (nSegment, nSide)))
+			if (((nSegment != nSrcSeg) || (nSide != nSrcSide)) && (0 <= theMine->GetVariableLight (nSegment, nSide)))
 				continue;
 			}
 		pls = lightStatus [nSegment] + nSide;
@@ -1116,7 +1116,7 @@ bool CMineView::VertexVisible (int v)
 
 if (!m_nViewDist)
 	return true;
-for (i = theMine->SegCount (), segP = theMine->Segments (0); i; i--, segP++)
+for (i = segmentManager.Count (), segP = theMine->Segments (0); i; i--, segP++)
 	for (j = 0; j < MAX_VERTICES_PER_SEGMENT; j++)
 		if ((segP->m_info.verts [j] == v) && Visible (segP))
 			return true;
@@ -1168,7 +1168,7 @@ Refresh (false);
 
 void CMineView::CalcSegmentCenter (CVertex& pos, short nSegment)
 {
-CSegment *segP = theMine->Segments (nSegment);
+CSegment *segP = segmentManager.GetSegment (nSegment);
 CVertex *vMine = theMine->Vertices (0);
 short *vSeg = segP->m_info.verts;
 pos  =

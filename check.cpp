@@ -57,9 +57,9 @@ m_statsWidth = 0;
 
 bool CDiagTool::MarkSegment (short nSegment) 
 {
-if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
+if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return false;
-theMine->Segments (nSegment)->m_info.wallFlags &= ~MARKED_MASK;
+segmentManager.GetSegment (nSegment)->m_info.wallFlags &= ~MARKED_MASK;
 theMine->MarkSegment (nSegment);
 return true;
 }
@@ -129,7 +129,7 @@ double CDiagTool::CalcFlatnessRatio (short nSegment, short nSide)
   double		ratio;
   CVertex	vert [4];
   // copy vertnums into an array
-	CSegment*	segP = theMine->Segments (nSegment);
+	CSegment*	segP = segmentManager.GetSegment (nSegment);
 
 for (i = 0; i < 4; i++)
 	vert [i] = *theMine->Vertices (segP->m_info.verts[sideVertTable[nSide][i]]);
@@ -309,7 +309,7 @@ if (m_bAutoFixBugs) {
 DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
 // now do actual checking
-DLE.MainFrame ()->InitProgress (theMine->SegCount () * 3 + 
+DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 + 
 										  theMine->VertCount () +
 										  theMine->MineInfo ().walls.count * 2 +
 										  theMine->MineInfo ().triggers.count * 3 +
@@ -399,7 +399,7 @@ if ((theMine == null))
 	short	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
 	CSegment	*segP = theMine->Segments (0);
 
-for (i = theMine->SegCount (); i; i--, segP++)
+for (i = segmentManager.Count (); i; i--, segP++)
 	switch (segP->m_info.function) {
 		case SEGMENT_FUNC_ROBOTMAKER:
 			nBotGens++;
@@ -452,7 +452,7 @@ short sub_errors = m_nErrors [0];
 short sub_warnings = m_nErrors [1];
 LBBugs ()->AddString ("[Cubes]");
 
-for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
+for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 // check geometry of segment
 // 	Given that each point has 3 lines (called L1, L2, and L3),
@@ -516,7 +516,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 		}
 #endif
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		nChild = theMine->Segments (nSegment)->GetChild (nSide);
+		nChild = segmentManager.GetSegment (nSegment)->GetChild (nSide);
 // check nChild range 
 		if (nChild != -1 && nChild != -2) {
 			if (nChild < -2) {
@@ -524,7 +524,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 				if (UpdateStats (message, 1, nSegment, nSide))
 					return true;
 				}
-			else if (nChild >= theMine->SegCount ()) {
+			else if (nChild >= segmentManager.Count ()) {
 				sprintf_s (message, sizeof (message),"ERROR: Child out of range %d (cube=%d,side=%d)",nChild,nSegment,nSide);
 				if (UpdateStats (message, 1, nSegment, nSide)) 
 					return true;
@@ -540,7 +540,7 @@ for (nSegment = 0; nSegment < theMine->SegCount (); nSegment++, segP++) {
 					memset (match, 0, sizeof (match));
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
-							if (theMine->Segments (nSegment)->m_info.verts [sideVertTable [nSide][i]] ==
+							if (segmentManager.GetSegment (nSegment)->m_info.verts [sideVertTable [nSide][i]] ==
 								 theMine->Segments (nChild)->m_info.verts [sideVertTable [nSide2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
@@ -619,7 +619,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check segment range
 	nSegment = objP->m_info.nSegment;
-	if (nSegment < 0 || nSegment >= theMine->SegCount ()) {
+	if (nSegment < 0 || nSegment >= segmentManager.Count ()) {
 		if (m_bAutoFixBugs) {
 			objP->m_info.nSegment = nSegment = 0;
 			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
@@ -630,7 +630,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			return true;
 		}
 
-	if (nSegment < 0 || nSegment >= theMine->SegCount ()) {
+	if (nSegment < 0 || nSegment >= segmentManager.Count ()) {
 		if (m_bAutoFixBugs) {
 			objP->m_info.nSegment = 0;
 			sprintf_s (message, sizeof (message),"FIXED: Bad segment number (object=%d,nSegment=%d)",nObject,nSegment);
@@ -641,7 +641,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			return true;
 		}
 
-	segP = theMine->Segments (nSegment);
+	segP = segmentManager.GetSegment (nSegment);
     // make sure object is within its cube
     // find center of segment then find maximum distance
 	// of corner to center.  Calculate Objects () distance
@@ -932,7 +932,7 @@ if ((theMine == null))
 	short sub_errors = m_nErrors [0];
 	short sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Triggers]");
-	int segCount = theMine->SegCount ();
+	int segCount = segmentManager.Count ();
 	int trigCount = theMine->MineInfo ().triggers.count;
 	CTrigger *trigP = theMine->Triggers (0);
 	int wallCount = theMine->MineInfo ().walls.count;
@@ -1044,7 +1044,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 			// check segment range
 			nSegment = trigP->Segment (linknum);
 			nSide = trigP->Side (linknum);
-			if ((nSegment < 0) || ((nSide < 0) ? (nSegment >= theMine->ObjectCount ()) : (nSegment >= theMine->SegCount ()))) {
+			if ((nSegment < 0) || ((nSide < 0) ? (nSegment >= theMine->ObjectCount ()) : (nSegment >= segmentManager.Count ()))) {
 				if (m_bAutoFixBugs) {
 					if (theMine->DeleteTargetFromTrigger (trigP, linknum))
 						linknum--;
@@ -1076,7 +1076,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 						return true;
 				} else {
-					CSegment *segP = theMine->Segments (nSegment);
+					CSegment *segP = segmentManager.GetSegment (nSegment);
 					// check door opening trigP
 //						if (trigP->m_info.flags == TRIGGER_CONTROL_DOORS) {
 					if (DLE.IsD1File ()
@@ -1216,7 +1216,7 @@ return h;
 void CDiagTool::CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* matCenP, short nMatCens)
 {
 	CSegment*		segP = theMine->Segments (0);
-	short				n, h, i, j = theMine->SegCount ();
+	short				n, h, i, j = segmentManager.Count ();
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS_D2);
 for (h = i = 0; i < j; i++, segP++) {
@@ -1237,7 +1237,7 @@ for (h = i = 0; i < j; i++, segP++) {
 short CDiagTool::FixMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens, char* pszType)
 {
 	CSegment*	segP = theMine->Segments (0);
-	short			h, i, j = theMine->SegCount ();
+	short			h, i, j = segmentManager.Count ();
 	char			n;
 
 for (h = i = 0; i < j; i++, segP++) {
@@ -1287,7 +1287,7 @@ if (!m_bAutoFixBugs)
 	return nMatCens;
 
 	CSegment*	segP = theMine->Segments (0);
-	short			h, i, j = theMine->SegCount ();
+	short			h, i, j = segmentManager.Count ();
 	char			n;
 
 for (h = i = 0; i < j; i++, segP++) {
@@ -1339,7 +1339,7 @@ bool CDiagTool::CheckBotGens (void)
 if ((theMine == null)) 
 	return false;
 
-	short					h = theMine->SegCount (), i, nSegment = 0;
+	short					h = segmentManager.Count (), i, nSegment = 0;
 	bool					bOk = true;
 	short					nMatCenSegs, nMatCens = short (theMine->MineInfo ().botgen.count);
 	CSegment*			segP = theMine->Segments (0);
@@ -1413,7 +1413,7 @@ if ((theMine == null))
 	CSegment *segP;
 	CSide *sideP;
 	CWall *wallP = theMine->Walls (0), *w, *ow;
-	int segCount = theMine->SegCount ();
+	int segCount = segmentManager.Count ();
 	byte wallFixed [MAX_WALLS_D2];
 
 	short sub_errors = m_nErrors [0];
@@ -1492,7 +1492,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 		}
 		// check range of segment number that the wall points to
-	if (wallP->m_nSegment >= theMine->SegCount ()) {
+	if (wallP->m_nSegment >= segmentManager.Count ()) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall sits in non-existant cube (wall=%d, cube=%d)",
 					nWall,wallP->m_nSegment);
@@ -1648,8 +1648,8 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				}
 			else {
 				nSegment = theMine->Segments (wallP->m_nSegment)->GetChild (wallP->m_nSide);
-				CSegment *segP = theMine->Segments (nSegment);
-				if ((nSegment >= 0 && nSegment < theMine->SegCount ()) &&
+				CSegment *segP = segmentManager.GetSegment (nSegment);
+				if ((nSegment >= 0 && nSegment < segmentManager.Count ()) &&
 					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
@@ -1741,7 +1741,7 @@ for (nVertex = theMine->VertCount (); nVertex > 0; )
 
 // mark all used verts
 CSegment *segP = theMine->Segments (0);
-for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
+for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		theMine->VertStatus (segP->m_info.verts [point]) |= NEW_MASK;
 
@@ -1753,7 +1753,7 @@ for (nVertex = theMine->VertCount (); nVertex > 0; ) {
 			if (nVertex < --theMine->VertCount ())
 				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->VertCount () - nVertex) * sizeof (*theMine->Vertices (0)));
 			CSegment *segP = theMine->Segments (0);
-			for (nSegment = theMine->SegCount (); nSegment; nSegment--, segP++)
+			for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
 					if (segP->m_info.verts [point] >= nVertex)
 						segP->m_info.verts [point]--;

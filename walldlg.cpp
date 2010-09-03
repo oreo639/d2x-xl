@@ -441,7 +441,7 @@ CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 int i, j, nDeleted = 0;
-for (i = theMine->SegCount (); i; i--, segP++) {
+for (i = segmentManager.Count (); i; i--, segP++) {
 	sideP = segP->m_sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)

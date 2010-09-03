@@ -94,12 +94,12 @@ else if (IsD2File ()) {
 	// write reactor info
 	fp.Write (ReactorTime ());
 	fp.Write (ReactorStrength ());
-	// flickering light new for version 7
-	if (FlickerLightCount () > MAX_FLICKERING_LIGHTS) 
-		FlickerLightCount () = MAX_FLICKERING_LIGHTS;
+	// variable light new for version 7
+	if (FlickerLightCount () > MAX_VARIABLE_LIGHTS) 
+		FlickerLightCount () = MAX_VARIABLE_LIGHTS;
 	fp.WriteInt32 ((int) FlickerLightCount ());
 	for (i = 0; i < FlickerLightCount (); i++)
-		FlickeringLights (i)->Write (fp);
+		VariableLights (i)->Write (fp);
 
 	// write secret cube number
 	fp.Write (SecretCubeNum ());
@@ -231,16 +231,16 @@ fp.WriteInt16 (SegCount ());
 
 // write all vertices
 for (int i = 0; i < VertCount (); i++)
-	Vertices (i)->Write (fp);
+	.GetVertex (i)->Write (fp);
 
 // write segment information
 for (i = 0; i < SegCount (); i++)  
-	Segments (i)->Write (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+	GetSegment (i)->Write (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
 
 // for Descent 2, save special info here
 if (IsD2File ()) {
   for (i = 0; i < SegCount (); i++)  
-	  Segments (i)->WriteExtras (fp, IsD2XLevel () ? 2 : 1, true);
+	  GetSegment (i)->WriteExtras (fp, IsD2XLevel () ? 2 : 1, true);
   }
 
 if (IsD2XLevel ()) {

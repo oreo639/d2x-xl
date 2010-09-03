@@ -40,12 +40,11 @@ typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
 typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
 typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
 typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
-typedef CStaticArray< CActiveDoor, DOOR_LIMIT > activeDoorList;
 typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
-typedef CStaticArray< CFlickeringLight, MAX_FLICKERING_LIGHTS > flickeringLightList;
+typedef CStaticArray< CVariableLight, MAX_VARIABLE_LIGHTS > variableLightList;
 
 #define CLEAR(_b) (_b) [0].Reset((_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
@@ -57,12 +56,11 @@ typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
 typedef CColor lightColorList [SEGMENT_LIMIT * 6];
 typedef CColor texColorList [MAX_TEXTURES_D2];
 typedef CColor vertexColorList [VERTEX_LIMIT];
-typedef CActiveDoor activeDoorList [DOOR_LIMIT];
 typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 typedef CGameObject objectList [MAX_OBJECTS_D2];
 typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
-typedef CFlickeringLight flickeringLightList [MAX_FLICKERING_LIGHTS];
+typedef CVariableLight variableLightList [MAX_VARIABLE_LIGHTS];
 
 #define CLEAR(_b)	(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
@@ -96,8 +94,8 @@ class CMineData {
 		objectList					objects;
 		lightDeltaIndexList		lightDeltaIndices;
 		lightDeltaValueList		lightDeltaValues;
-		short							m_nFlickeringLights;
-		flickeringLightList		flickeringLights;
+		short							m_nVariableLights;
+		variableLightList		variableLights;
 };
 
 // -----------------------------------------------------------------------------
@@ -169,12 +167,6 @@ public:
 		{ return MineData ().robotInfo; }
 	inline robotInfoList& DefRobotInfo (void)
 		{ return m_defaultRobotInfo; }
-	inline lightDeltaIndexList& LightDeltaIndex ()
-		{ return MineData ().lightDeltaIndices; }
-	inline lightDeltaValueList& LightDeltaValues ()
-		{ return MineData ().lightDeltaValues; }
-	inline flickeringLightList& FlickeringLights ()
-		{ return MineData ().flickeringLights; }
 	//inline textureList& Textures ()
 	//	{ return textures; }
 
@@ -195,8 +187,8 @@ public:
 		{ return MineData ().lightDeltaIndices + i; }
 	inline CLightDeltaValue *LightDeltaValues (int i)
 		{ return MineData ().lightDeltaValues + i; }
-	inline CFlickeringLight *FlickeringLights (int i)
-		{ return MineData ().flickeringLights + i; }
+	inline CVariableLight *VariableLights (int i)
+		{ return MineData ().variableLights + i; }
 	//inline CTexture* Textures (int i, int j = 0)
 	//	{ return &textureManager.textures [i][j]; }
 
@@ -205,7 +197,7 @@ public:
 	inline CMineFileInfo& MineFileInfo ()
 		{ return MineData ().mineInfo.fileInfo; }
 	inline short& FlickerLightCount ()
-		{ return MineData ().m_nFlickeringLights; }
+		{ return MineData ().m_nVariableLights; }
 	long TotalSize (CMineItemInfo& gii)
 		{ return (int) gii.size * (int) gii.count; }
 	inline int& ReactorTime ()
@@ -275,14 +267,14 @@ public:
 	int IsWall (short nSegment = -1, short nSide = -1);
 	bool IsLava (int nBaseTex);
 	bool IsBlastableLight (int nBaseTex);
-	bool IsFlickeringLight (short nSegment, short nSide);
+	bool IsVariableLight (short nSegment, short nSide);
 	bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
 	void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
 	int FindDeltaLight (short nSegment, short nSide, short *pi = null);
 	byte LightWeight (short nBaseTex);
-	short GetFlickeringLight (short nSegment = -1, short nSide = -1);
-	short AddFlickeringLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
-	bool DeleteFlickeringLight (short nSegment = -1, short nSide = -1);
+	short GetVariableLight (short nSegment = -1, short nSide = -1);
+	short AddVariableLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
+	bool DeleteVariableLight (short nSegment = -1, short nSide = -1);
 	int IsExplodingLight(int nBaseTex);
 	bool VisibleWall (ushort nWall);
 	void SetCubeLight (double fLight, bool bAll = false, bool bDynCubeLights = false);

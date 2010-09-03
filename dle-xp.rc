@@ -6380,8 +6380,8 @@ BEGIN
     IDC_PREFS_BROWSE_D1PIG  "browse\nbrowse"
     IDC_PREFS_BROWSE_D2PIG  "browse\nbrowse"
     IDC_PREFS_BROWSE_MISSIONS "browse\nbrowse"
-    IDC_TEXLIGHT_ADD        "add flickering light\nadd flickering light"
-    IDC_TEXLIGHT_DELETE     "delete flickering light\ndelete flickering light"
+    IDC_TEXLIGHT_ADD        "add variable light\nadd variable light"
+    IDC_TEXLIGHT_DELETE     "delete variable light\ndelete variable light"
 END
 
 #endif    // English (U.S.) resources

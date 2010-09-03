@@ -195,7 +195,7 @@ void CReactorTool::OnAddTarget ()
 int nSegment, nSide;
 UpdateData (TRUE);
 sscanf_s (m_szTarget, "%d,%d", &nSegment, &nSide);
-if ((nSegment < 0) || (nSegment >= theMine->SegCount ()) || (nSide < 1) || (nSide > 6))
+if ((nSegment < 0) || (nSegment >= segmentManager.Count ()) || (nSide < 1) || (nSide > 6))
 	return;
 AddTarget (nSegment, nSide);
 }
@@ -266,7 +266,7 @@ if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTr
 	return;
 
 short nSegment = m_pTrigger->Segment (m_iTarget);
-if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
+if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	 return;
 short nSide = m_pTrigger->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))

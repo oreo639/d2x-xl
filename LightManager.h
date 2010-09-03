@@ -61,17 +61,17 @@ public:
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-typedef struct tFlickeringLight {
+typedef struct tVariableLight {
 	uint mask;    // bits with 1 = on, 0 = off
 	int timer;		 // always set to 0
 	int delay;      // time for each bit in mask (int seconds)
-} tFlickeringLight;
+} tVariableLight;
 
 // -----------------------------------------------------------------------------
 
-class CFlickeringLight : public CSideKey {
+class CVariableLight : public CSideKey {
 public:
-	tFlickeringLight m_info;
+	tVariableLight m_info;
 
 	void Read (CFileManager& fp) {
 		CSideKey::Read (fp);
@@ -91,6 +91,31 @@ public:
 		CSideKey::Clear ();
 		}
 };
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+#ifdef _DEBUG
+
+typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
+typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
+typedef CStaticArray< CVariableLight, MAX_VARIABLE_LIGHTS > variableLightList;
+
+
+#else
+
+typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
+typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
+typedef CVariableLight variableLightList [MAX_VARIABLE_LIGHTS];
+
+#endif
+
+class CLightManager {
+	public:
+		inline lightDeltaIndexList& LightDeltaIndex (void) { return m_lightDeltaIndices; }
+		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
+		inline variableLightList& VariableLights (void) { return m_variableLights; }
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

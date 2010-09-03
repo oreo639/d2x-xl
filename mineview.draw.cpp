@@ -40,7 +40,7 @@ if (bSetViewInfo)
 	m_view.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = theMine->VertCount ();
 APOINT *a = m_viewPoints + i;
-CVertex* vertP = theMine->Vertices (i);
+CVertex* vertP = vertexManager.GetVertex (i);
 for (; i--; ) {
 	if ((--vertP)->m_status == 255)
 		continue;
@@ -101,7 +101,7 @@ void CMineView::CalcSegDist (void)
 {
 CHECKMINE;
 
-	int			h, i, j, c, nDist, segNum = theMine->SegCount (), sideNum;
+	int			h, i, j, c, nDist, segNum = segmentManager.Count (), sideNum;
 	CSegment	*segI, *segJ;
 
 	static short segRef [SEGMENT_LIMIT];
@@ -208,7 +208,7 @@ CHECKMINE;
 
 CalcSegDist ();
 m_pDC->SelectObject(m_penGray);
-for (nSegment=0, segP = theMine->Segments (0);nSegment<theMine->SegCount ();nSegment++, segP++) {
+for (nSegment=0, segP = theMine->Segments (0);nSegment<segmentManager.Count ();nSegment++, segP++) {
 	if (!Visible (segP))
 		continue;
 	DrawCube (segP, bPartial);
@@ -276,12 +276,12 @@ if (m_viewMineFlags & eViewMineShading && (light_index = paletteManager.Current 
 	light_index += 256*5; // skip 3-byte palette + 1st 2 light tables
 
 // Draw Segments ()
-h = theMine->SegCount ();
+h = segmentManager.Count ();
 #pragma omp parallel
 {
 #	pragma omp for
 for (nSegment = 0; nSegment < h; nSegment++) {
-	CSegment* segP = theMine->Segments (nSegment);
+	CSegment* segP = segmentManager.GetSegment (nSegment);
 	for (iVertex = 0, zMax = LONG_MIN; iVertex < MAX_VERTICES_PER_SEGMENT; iVertex++)
 		if (zMax < (z = m_viewPoints [segP->m_info.verts [iVertex]].z))
 			zMax = z;
@@ -289,7 +289,7 @@ for (nSegment = 0; nSegment < h; nSegment++) {
 	szo [nSegment].zMax = zMax;
 	}
 } // omp parallel
-QSortCubes (0, theMine->SegCount () - 1);
+QSortCubes (0, segmentManager.Count () - 1);
 CalcSegDist ();
 for (nSegment = 0; nSegment < h; nSegment++) {
 	CSegment* segP = theMine->Segments (szo [nSegment].iSeg);
@@ -327,7 +327,7 @@ void CMineView::DrawCube (short nSegment,short nSide, short linenum, short point
 {
 CHECKMINE;
 
-	CSegment *segP = theMine->Segments (nSegment);
+	CSegment *segP = segmentManager.GetSegment (nSegment);
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
@@ -889,8 +889,8 @@ CHECKMINE;
 
 	// draw marked/special Segments () and Walls ()
 if (!clear_it) {
-	for (i = 0; i < theMine->SegCount (); i++) {
-		segP = theMine->Segments (i);
+	for (i = 0; i < segmentManager.Count (); i++) {
+		segP = segmentManager.GetSegment (i);
 		if (segP->m_info.wallFlags & MARKED_MASK) {
 			m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
 			DrawCubeQuick (segP);
@@ -1071,15 +1071,15 @@ void CMineView::DrawWalls(void)
 CHECKMINE;
 
 	CWall		*walls = theMine->Walls (0);
-	CSegment	*segments = theMine->Segments (0);
-	CVertex	*vertices = theMine->Vertices (0);
+	CSegment	*segments = segmentManager.GetSegment (0);
+	CVertex	*vertices = vertexManager.GetVertex (0);
 	CSegment	*segP;
 	short i,j;
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
 for (i=0;i<theMine->MineInfo ().walls.count;i++) {
-	if (walls [i].m_nSegment > theMine->SegCount ())
+	if (walls [i].m_nSegment > segmentManager.Count ())
 		continue;
 	segP = segments + (int)walls [i].m_nSegment;
 	if (!Visible (segP))
@@ -1186,11 +1186,11 @@ CHECKMINE;
 
 if (!m_pDC) return;
 
-  // now show flickering lights
+  // now show variable lights
   m_pDC->SelectObject(m_penYellow);
 
-  // find flickering light from
-CFlickeringLight* flP = theMine->FlickeringLights (0);
+  // find variable light from
+CVariableLight* flP = theMine->VariableLights (0);
 for (INT i = 0; i < theMine->FlickerLightCount (); i++, flP++)
 	if (Visible (theMine->Segments (flP->m_nSegment)))
 	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
@@ -1211,9 +1211,9 @@ CHECKMINE;
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
-if (nSegment >=0 && nSegment <=theMine->SegCount () && nSide>=0 && nSide<=5 ) {
+if (nSegment >=0 && nSegment <=segmentManager.Count () && nSide>=0 && nSide<=5 ) {
 	POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
-	segP = theMine->Segments (nSegment);
+	segP = segmentManager.GetSegment (nSegment);
 	for (j=0;j<4;j++) {
 		corners [j].x = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].x;
 		corners [j].y = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].y;
@@ -1337,9 +1337,9 @@ else {
 	objP->m_location.orient.fVec =  theMine->SecretOrient ().uVec;
 	// objP->m_location.orient =  theMine->secret_orient;
 	ushort nSegment = (ushort)theMine->SecretCubeNum ();
-	if (nSegment >= theMine->SegCount ())
+	if (nSegment >= segmentManager.Count ())
 		nSegment = 0;
-	if (!Visible (theMine->Segments (nSegment)))
+	if (!Visible (segmentManager.GetSegment (nSegment)))
 		return;
 	theMine->CalcSegCenter (objP->m_location.pos, nSegment); // define objP->position
 	}
@@ -1496,7 +1496,7 @@ CHECKMINE;
 //	short i;
 //	RECT rect;
 
-if (theMine->SegCount ()==0) 
+if (segmentManager.Count ()==0) 
 	return;
 
 // draw Objects ()

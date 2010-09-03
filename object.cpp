@@ -96,10 +96,10 @@ do {
 			CGameObject o = *Objects (l);
 			*Objects (l) = *Objects (r);
 			*Objects (r) = o;
-			if (Current ()->nObject == l)
-				Current ()->nObject = r;
-			else if (Current ()->nObject == r)
-				Current ()->nObject = l;
+			if (current.m_nObject == l)
+				current.m_nObject = r;
+			else if (current.m_nObject == r)
+				current.m_nObject = l;
 			}
 		l++;
 		r--;
@@ -147,7 +147,7 @@ objP->m_info.controlType = CT_NONE; /* player 0 only */
 objP->m_info.movementType = MT_PHYSICS;
 objP->m_info.renderType = RT_POLYOBJ;
 objP->m_info.flags	= 0;
-objP->m_info.nSegment = Current ()->nSegment;
+objP->m_info.nSegment = current.m_nSegment;
 objP->m_location.pos = location;
 objP->m_location.orient.rVec.Set (F1_0, 0, 0);
 objP->m_location.orient.uVec.Set (0, F1_0, 0);
@@ -177,7 +177,7 @@ void CMine::SetObjectData (char type)
 
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
-objP = Objects (Current ()->nObject);
+objP = Objects (current.m_nObject);
 id = objP->m_info.id;
 memset (&objP->mType, 0, sizeof (objP->mType));
 memset (&objP->cType, 0, sizeof (objP->cType));
@@ -384,7 +384,7 @@ if (type == OBJ_PLAYER || type == OBJ_COOP) {
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
 if (MineInfo ().objects.count == 0) {
-	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? Current ()->nSegment : nSegment);
+	MakeObject (Objects (0), OBJ_PLAYER, (nSegment < 0) ? current.m_nSegment : nSegment);
 	MineInfo ().objects.count = 1;
 	objnum = 0;
 	}
@@ -396,15 +396,15 @@ else {
 	memcpy (objP, current_obj, sizeof (CGameObject));
 	}
 objP->m_info.flags = 0;                                      // new: 1/27/97
-objP->m_info.nSegment = Current ()->nSegment;
+objP->m_info.nSegment = current.m_nSegment;
 // set object position in the center of the cube for now
-CalcSegCenter (objP->m_location.pos, Current ()->nSegment);
+CalcSegCenter (objP->m_location.pos, current.m_nSegment);
 objP->m_location.lastPos = objP->m_location.pos;
-Current ()->nObject = objnum;
+current.m_nObject = objnum;
 // bump position over if this is not the first object in the cube
 count = 0;
 for (i = 0; i < MineInfo ().objects.count - 1; i++)
-	if (Objects (i)->m_info.nSegment == Current ()->nSegment)
+	if (Objects (i)->m_info.nSegment == current.m_nSegment)
 		count++;
 objP->m_location.pos.v.y += count * 2 * F1_0;
 objP->m_location.lastPos.v.y += count * 2 * F1_0;
@@ -444,7 +444,7 @@ if (MineInfo ().objects.count == 1) {
 	return;
 	}
 if (nDelObj < 0)
-	nDelObj = Current ()->nObject;
+	nDelObj = current.m_nObject;
 if (nDelObj == MineInfo ().objects.count) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot delete the secret return.");

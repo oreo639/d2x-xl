@@ -144,7 +144,7 @@ mousePos.x = (short) xMouse;
 mousePos.y = (short) yMouse;
 mousePos.z = 0;
 do {
-	wrap (&next_segment, direction, 0, theMine->SegCount () - 1); /* point to next segment */
+	wrap (&next_segment, direction, 0, segmentManager.Count () - 1); /* point to next segment */
 	segP = theMine->Segments (next_segment);
 	if (!Visible (segP))
 		continue;
@@ -292,20 +292,20 @@ NextLine (-1);
 
 void CMineView::NextCube (int dir) 
 {
-if (theMine->SegCount () <= 0)
+if (segmentManager.Count () <= 0)
 	return;
 
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
 	//if (m_selectMode == CUBE_MODE)
-		wrap (&current.m_nSegment,dir,0, theMine->SegCount () - 1);
+		wrap (&current.m_nSegment,dir,0, segmentManager.Count () - 1);
 	Refresh (true);
 	//SetSelectMode (CUBE_MODE);
 	DrawHighlight (0);
 	}
 else {
 	//if (m_selectMode == CUBE_MODE)
-		wrap (&current.m_nSegment, dir, 0, theMine->SegCount () - 1);
+		wrap (&current.m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
 	//SetSelectMode (CUBE_MODE);
 	}

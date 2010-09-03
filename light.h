@@ -89,9 +89,9 @@ public:
 //DECLARE_RESPONSE_TABLE( CBlinkDialog );
 };
 
-void delete_flickering_light(ushort nSegment, ushort nSide);
-void add_flickering_light(ushort nSegment, ushort nSide, uint mask,int time);
-short get_flickering_light(ushort nSegment, ushort nSide);
+void delete_variable_light(ushort nSegment, ushort nSide);
+void add_variable_light(ushort nSegment, ushort nSide, uint mask,int time);
+short get_variable_light(ushort nSegment, ushort nSide);
 
 void set_segment_child_num(short nSegment,short recursion_level);
 byte light_weight(short nBaseTex);

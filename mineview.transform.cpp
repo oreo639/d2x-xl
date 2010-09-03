@@ -225,7 +225,7 @@ void CMineView::MarkVisibleVerts (bool bReset)
 	CSegment*	segP;
 
 segP = theMine->Segments (0);
-for (i = 0, h = theMine->SegCount (); i < h; i++, segP++) {
+for (i = 0, h = segmentManager.Count (); i < h; i++, segP++) {
 	byte status = bReset ? 0 : Visible (segP) ? 1 : 255;
 	for (int j = 0; j < 8; j++)
 		theMine->VertStatus (segP->m_info.verts [j]) = status;

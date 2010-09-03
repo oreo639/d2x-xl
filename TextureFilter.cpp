@@ -520,7 +520,7 @@ else {
 
 	memset (filterP, 0, (MAX_TEXTURES_D2 + 7) / 8);
 	m_nTextures [0] = 0;
-	for (nSegment = 0, segP = theMine->Segments (0); nSegment < theMine->SegCount (); nSegment++, segP++)
+	for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++)
       for (nSide = 0; nSide < 6; nSide++) {
 			ushort nWall = segP->m_sides [nSide].m_info.nWall;
 			if ((segP->GetChild (nSide) == -1) ||

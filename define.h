@@ -86,7 +86,7 @@ inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
 #define EXTENDED_HAM 1
 #define NORMAL_HAM	0
 
-#define MAX_FLICKERING_LIGHTS 100
+#define MAX_VARIABLE_LIGHTS 100
 
 #define LEVEL_VERSION		21	//current level version
 

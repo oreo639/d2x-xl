@@ -10,7 +10,10 @@
 #include "mine.h"
 #include "matrix.h"
 #include "cfile.h"
-#include "texturemanager.h"
+#include "TriggerManager.h"
+#include "WallManager.h"
+#include "SegmentManager.h"
+#include "TextureManager.h"
 #include "palette.h"
 #include "dle-xp.h"
 #include "robot.h"
@@ -23,7 +26,7 @@ CSegmentManager segmentManager;
 CWall* CSegmentManager::Wall (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
-return wallManager.Walls (Segments (nSegment)->m_sides [nSide].m_info.nWall);
+return wallManager.Walls (GetSegment (nSegment)->m_sides [nSide].m_info.nWall);
 }
 
 // -----------------------------------------------------------------------------
@@ -40,7 +43,7 @@ CDoubleVector CSegmentManager::CalcSideNormal (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
 
-	short* segVertP = Segments (nSegment)->m_info.verts;
+	short* segVertP = GetSegment (nSegment)->m_info.verts;
 	byte*	sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
@@ -53,7 +56,7 @@ CDoubleVector CSegmentManager::CalcSideCenter (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
 
-	short*	segVertP = Segments (nSegment)->m_info.verts;
+	short*	segVertP = GetSegment (nSegment)->m_info.verts;
 	byte*		sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
@@ -67,7 +70,7 @@ return v;
 
 void CSegmentManager::DeleteWalls (short nSegment)
 {
-	CSide *sideP = Segments (nSegment)->m_sides; 
+	CSide *sideP = GetSegment (nSegment)->m_sides; 
 
 for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 	wallManager.Delete (sideP [i].m_info.nWall);
@@ -89,7 +92,7 @@ for (int i = 0; i < m_nSegments; i++, segP++) {
 void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
 {
 CSegment *segP = Segments (0);
-for (nSegment = SegCount (); nSegment; nSegment--, segP++) {
+for (nSegment = Count (); nSegment; nSegment--, segP++) {
 	for (nVertex = 0; nVertex < 8; nVertex++) {
 		short* vertP = segP->m_info.verts;
 		if (vertP [nVertex] == nOldVert)
@@ -109,11 +112,11 @@ void CSegmentManager::Delete (short nDelSeg)
 	short				child; 
 	short				i, j; 
 
-if (SegCount () < 2)
+if (Count () < 2)
 	return; 
 if (nDelSeg < 0)
-	nDelSeg = Current ()->nSegment; 
-if (nDelSeg < 0 || nDelSeg >= SegCount ()) 
+	nDelSeg = current.m_nSegment; 
+if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 
 undoManager.SetModified (TRUE);
@@ -121,14 +124,14 @@ undoManager.Lock ();
 delSegP = Segments (nDelSeg); 
 UndefineSegment (nDelSeg);
 
-// delete any flickering lights that use this segment
+// delete any variable lights that use this segment
 for (int nSide = 0; nSide < 6; nSide++) {
-	DeleteTriggerTargets (nDelSeg, nSide); 
-	short index = GetFlickeringLight (nDelSeg, nSide); 
+	triggerManager.DeleteTargets (nDelSeg, nSide); 
+	short index = GetVariableLight (nDelSeg, nSide); 
 	if (index != -1) {
 		FlickerLightCount ()--; 
 		// put last light in place of deleted light
-		memcpy(FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (CFlickeringLight)); 
+		memcpy(VariableLights (index), VariableLights (FlickerLightCount ()), sizeof (CVariableLight)); 
 		}
 	}
 
@@ -138,12 +141,10 @@ DeleteWalls (nDelSeg);
 // delete any Walls () on child Segments () that connect to this segment
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	child = delSegP->GetChild (i); 
-	if (child >= 0 && child < SegCount ()) {
-		short	oppSegNum, oppSideNum;
-		GetOppositeSide (oppSegNum, oppSideNum, nDelSeg, i);
-		if (Segments (oppSegNum)->m_sides [oppSideNum].m_info.nWall != NO_WALL)
-			DeleteWall (Segments (oppSegNum)->m_sides [oppSideNum].m_info.nWall); 
-			}
+	if (child >= 0 && child < Count ()) {
+		CSideKey opp;
+		if (GetOppositeSide (opp, nDelSeg, i))
+			wallManager.Delete (GetSide (opp)->m_info.nWall); 
 		}
 
 	// delete any Objects () within segment
@@ -152,27 +153,6 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		DeleteObject(i); 
 		}
 	}
-#if 0 // done by UndefineSegment ()
-	// delete any robot centers with this
-	for (i = (ushort)MineInfo ().botgen.count - 1; i >= 0; i--) {
-		nSegment = BotGens (i)->m_info.nSegment; 
-		if (nSegment == nDelSeg) {
-			int nMatCens = --MineInfo ().botgen.count; 
-			if (i < nMatCens)
-			memcpy ((void *) BotGens (i), (void *) BotGens (nMatCens), sizeof (CRobotMaker)); 
-			}
-		}
-
-	// delete any equipment centers with this
-	for (i = (ushort) MineInfo ().equipgen.count - 1; i >= 0; i--) {
-		nSegment = EquipGens (i)->m_info.nSegment; 
-		if (nSegment == nDelSeg) {
-			MineInfo ().equipgen.count--; 
-			memcpy ((void *) EquipGens (i), (void *) EquipGens (i + 1), 
-					  (MineInfo ().equipgen.count - i) * sizeof (CRobotMaker)); 
-			}
-		}
-#endif
 	for (i = 0; i < MineInfo ().botgen.count; i++)
 		if (BotGens (i)->m_info.nSegment > nDelSeg)
 			BotGens (i)->m_info.nSegment--;
@@ -192,7 +172,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 
 	// update secret cube number if out of range now
 	nSegment = (ushort) SecretCubeNum (); 
-	if (nSegment >= SegCount () || nSegment== nDelSeg)
+	if (nSegment >= Count () || nSegment== nDelSeg)
 		SecretCubeNum () = 0; 
 
 	// update segment flags
@@ -200,14 +180,14 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
-	for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
+	for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (segP->GetChild (child) == nDelSeg) {
 
 				// subtract by 1 if segment is above deleted segment
-				Current ()->nSegment = nSegment; 
+				current.m_nSegment = nSegment; 
 				if (nSegment > nDelSeg) 
-					Current ()->nSegment--; 
+					current.m_nSegment--; 
 
 				// remove child number and update child bitmask
 				segP->SetChild (child, -1); 
@@ -215,7 +195,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + child;
 				SetTextures (nSegment, child, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
-				Segments (nSegment)->SetUV (child, 0, 0); 
+				GetSegment (nSegment)->SetUV (child, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
 					//segP->m_sides [child].m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale); 
@@ -227,19 +207,19 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 	}
 
 	// move other Segments () to deleted segment location
-	if (nDelSeg != SegCount ()-1) { // if this is not the last segment
+	if (nDelSeg != Count ()-1) { // if this is not the last segment
 
 		// mark each segment with it's real number
 		real_segnum = 0; 
-		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
+		for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
 			if(nDelSeg != nSegment)
 				segP->m_info.nIndex = real_segnum++; 
 
 		// replace all children with real numbers
-		for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++) {
+		for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 				if (segP->m_info.childFlags & (1 << child)
-					&& segP->GetChild (child) >= 0 && segP->GetChild (child) < SegCount ()) { // debug int
+					&& segP->GetChild (child) >= 0 && segP->GetChild (child) < Count ()) { // debug int
 					childSegP = Segments (segP->GetChild (child)); 
 					segP->SetChild (child, childSegP->m_info.nIndex); 
 				}
@@ -249,8 +229,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all wall segP numbers with real numbers
 		for (i = 0; i < MineInfo ().walls.count; i++) {
 			nSegment = (short) Walls (i)->m_nSegment; 
-			if (nSegment < SegCount ()) {
-				segP = Segments (nSegment); 
+			if (nSegment < Count ()) {
+				segP = GetSegment (nSegment); 
 				Walls (i)->m_nSegment = segP->m_info.nIndex; 
 				} 
 			else {
@@ -261,8 +241,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all trigger segP numbers with real numbers
 		for (i = NumTriggers (), trigP = Triggers (0); i; i--, trigP++) {
 			for (j = 0; j < trigP->m_count; j++) {
-				if (SegCount () > (nSegment = trigP->Segment (j)))
-					trigP->Segment (j) = Segments (nSegment)->m_info.nIndex; 
+				if (Count () > (nSegment = trigP->Segment (j)))
+					trigP->Segment (j) = GetSegment (nSegment)->m_info.nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -273,8 +253,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all trigger segP numbers with real numbers
 		for (i = NumObjTriggers (), trigP = ObjTriggers (0); i; i--, trigP++) {
 			for (j = 0; j < trigP->m_count; j++) {
-				if (SegCount () > (nSegment = trigP->Segment (j)))
-					trigP->Segment (j) = Segments (nSegment)->m_info.nIndex; 
+				if (Count () > (nSegment = trigP->Segment (j)))
+					trigP->Segment (j) = GetSegment (nSegment)->m_info.nIndex; 
 				else {
 					DeleteTargetFromTrigger (trigP, j, 0);
 					j--;
@@ -285,24 +265,24 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		// replace all object segP numbers with real numbers
 		for (i = 0; i < MineInfo ().objects.count; i++) {
 			objP = Objects (i); 
-			if (SegCount () > (nSegment = objP->m_info.nSegment))
-				objP->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
+			if (Count () > (nSegment = objP->m_info.nSegment))
+				objP->m_info.nSegment = GetSegment (nSegment)->m_info.nIndex; 
 			else
 				objP->m_info.nSegment = 0; // int object segment number
 			}
 
 		// replace robot centers segP numbers with real numbers
 		for (i = 0; i < MineInfo ().botgen.count; i++) {
-			if (SegCount () > (nSegment = BotGens (i)->m_info.nSegment))
-				BotGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
+			if (Count () > (nSegment = BotGens (i)->m_info.nSegment))
+				BotGens (i)->m_info.nSegment = GetSegment (nSegment)->m_info.nIndex; 
 			else
 				BotGens (i)->m_info.nSegment = 0; // int robot center nSegment
 			}
 
 		// replace equipment centers segP numbers with real numbers
 		for (i = 0; i < MineInfo ().equipgen.count; i++) {
-			if (SegCount () > (nSegment = EquipGens (i)->m_info.nSegment))
-				EquipGens (i)->m_info.nSegment = Segments (nSegment)->m_info.nIndex; 
+			if (Count () > (nSegment = EquipGens (i)->m_info.nSegment))
+				EquipGens (i)->m_info.nSegment = GetSegment (nSegment)->m_info.nIndex; 
 			else
 				EquipGens (i)->m_info.nSegment = 0; // int robot center nSegment
 			}
@@ -310,41 +290,41 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		// replace control segP numbers with real numbers
 		for (i = 0; i < MineInfo ().control.count; i++) {
 			for (j = 0; j < ReactorTriggers (i)->m_count; j++) {
-				if (SegCount () > (nSegment = ReactorTriggers (i)->Segment (j)))
-					ReactorTriggers (i)->Segment (j) = Segments (nSegment)->m_info.nIndex; 
+				if (Count () > (nSegment = ReactorTriggers (i)->Segment (j)))
+					ReactorTriggers (i)->Segment (j) = GetSegment (nSegment)->m_info.nIndex; 
 				else 
 					ReactorTriggers (i)->Segment (j) = 0; // int control center segment number
 			}
 		}
 
-		// replace flickering light segP numbers with real numbers
+		// replace variable light segP numbers with real numbers
 		for (i = 0; i < FlickerLightCount (); i++) {
-			if (SegCount () > (nSegment = FlickeringLights (i)->m_nSegment))
-				FlickeringLights (i)->m_nSegment = Segments (nSegment)->m_info.nIndex; 
+			if (Count () > (nSegment = VariableLights (i)->m_nSegment))
+				VariableLights (i)->m_nSegment = GetSegment (nSegment)->m_info.nIndex; 
 			else 
-				FlickeringLights (i)->m_nSegment = 0; // int object segment number
+				VariableLights (i)->m_nSegment = 0; // int object segment number
 			}
 
 		// replace secret cubenum with real number
-		if (SegCount () > (nSegment = (ushort) SecretCubeNum ()))
-			SecretCubeNum () = Segments (nSegment)->m_info.nIndex; 
+		if (Count () > (nSegment = (ushort) SecretCubeNum ()))
+			SecretCubeNum () = GetSegment (nSegment)->m_info.nIndex; 
 		else
 			SecretCubeNum () = 0; // int secret cube number
 
 		// move remaining Segments () down by 1
   }
 #if 1
-		if (int segC = (--SegCount () - nDelSeg)) {
+		if (int segC = (--Count () - nDelSeg)) {
 			memcpy (Segments (nDelSeg), Segments (nDelSeg + 1), segC * sizeof (CSegment));
 			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CColor));
 			}
 #else
-		for (nSegment = nDelSeg; nSegment < (SegCount ()-1); nSegment++) {
-			segP = Segments (nSegment); 
+		for (nSegment = nDelSeg; nSegment < (Count ()-1); nSegment++) {
+			segP = GetSegment (nSegment); 
 			childSegP = Segments (nSegment + 1); 
 			memcpy(segP, childSegP, sizeof (CSegment)); 
 			}
-  SegCount ()-- ; 
+  Count ()-- ; 
 #endif
 
 
@@ -352,8 +332,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
   DeleteUnusedVertices(); 
 
   // make sure current segment numbers are valid
-  if (Current1 ().nSegment >= SegCount ()) Current1 ().nSegment--; 
-  if (Current2 ().nSegment >= SegCount ()) Current2 ().nSegment--; 
+  if (Current1 ().nSegment >= Count ()) Current1 ().nSegment--; 
+  if (Current2 ().nSegment >= Count ()) Current2 ().nSegment--; 
   if (Current1 ().nSegment < 0) Current1 ().nSegment = 0; 
   if (Current2 ().nSegment < 0) Current2 ().nSegment = 0; 
 //DLE.MineView ()->Refresh (false); 
@@ -374,7 +354,7 @@ undoManager.Unlock ();
 //
 //  Changes - Now auto aligns u, v numbers based on parent textures
 //
-//  NEW - If there is a flickering light on the current side of this segment, 
+//  NEW - If there is a variable light on the current side of this segment, 
 //        it is deleted.
 //
 //        If cube is special (fuel center, robot maker, etc..) then textures
@@ -383,7 +363,7 @@ undoManager.Unlock ();
 
 void CSegmentManager::InitSegment (short nSegment)
 {
-Segments (nSegment)->Setup ();
+GetSegment (nSegment)->Setup ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -391,7 +371,7 @@ Segments (nSegment)->Setup ();
 bool CSegmentManager::Add (void)
 {
 	CSegment *newSegP, *curSegP; 
-	short i, nNewSeg, nNewSide, ncurrent.Side = Current ()->nSide; 
+	short i, nNewSeg, nNewSide, ncurrent.Side = current.m_nSide; 
 	short newVerts [4]; 
 	short nSegment, nSide; 
 
@@ -400,13 +380,13 @@ if (m_bSplineActive) {
 	return FALSE; 
 	}
 
-curSegP = Segments (Current ()->nSegment); 
+curSegP = Segments (current.m_nSegment); 
 
-if (SegCount () >= MAX_SEGMENTS) {
+if (Count () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
 	return FALSE;
 	}
-if (SegCount () >= MAX_SEGMENTS) {
+if (Count () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
@@ -424,7 +404,7 @@ newVerts [2] = newVerts [0] + 2;
 newVerts [3] = newVerts [0] + 3; 
 
 // get new segment
-nNewSeg = SegCount (); 
+nNewSeg = Count (); 
 newSegP = Segments (nNewSeg); 
 
 // define vertices
@@ -446,7 +426,7 @@ InitSegment (nNewSeg);
 // define children and special child
 newSegP->m_info.childFlags = 1 << oppSideTable [ncurrent.Side]; /* only opposite side connects to current_segment */
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
-	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? Current ()->nSegment : -1);
+	newSegP->SetChild (i, (newSegP->m_info.childFlags & (1 << i)) ? current.m_nSegment : -1);
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -467,12 +447,12 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 // define static light
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
-// delete flickering light if it exists
-short index = GetFlickeringLight (Current ()->nSegment, ncurrent.Side); 
+// delete variable light if it exists
+short index = GetVariableLight (current.m_nSegment, ncurrent.Side); 
 if (index != -1) {
 	FlickerLightCount ()--; 
 	// put last light in place of deleted light
-	memcpy( FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (CFlickeringLight)); 
+	memcpy( VariableLights (index), VariableLights (FlickerLightCount ()), sizeof (CVariableLight)); 
 	}
 
 // update current segment
@@ -482,18 +462,18 @@ curSegP->m_sides [ncurrent.Side].m_info.nOvlTex = 0;
 memset (curSegP->m_sides [ncurrent.Side].m_info.uvls, 0, sizeof (curSegP->m_sides [ncurrent.Side].m_info.uvls));
  
 // update number of Segments () and vertices and clear vertexStatus
-SegCount ()++;
+Count ()++;
 for (int i = 0; i < 4; i++)
 	Vertices (VertCount ()++)->m_status = 0;
 
 // link the new segment with any touching Segments ()
 CVertex *vNewSeg = Vertices (newSegP->m_info.verts [0]);
 CVertex *vSeg;
-for (nSegment = 0; nSegment < SegCount (); nSegment++) {
+for (nSegment = 0; nSegment < Count (); nSegment++) {
 	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (Segments (nSegment)->m_info.verts [0]);
+		vSeg = Vertices (GetSegment (nSegment)->m_info.verts [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
@@ -504,9 +484,9 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++) {
 	}
 // auto align textures new segment
 for (nNewSide = 0; nNewSide < 6; nNewSide++)
-	AlignTextures (Current ()->nSegment, nNewSide, nNewSeg, TRUE, TRUE); 
+	AlignTextures (current.m_nSegment, nNewSide, nNewSeg, TRUE, TRUE); 
 // set current segment to new segment
-Current ()->nSegment = nNewSeg; 
+current.m_nSegment = nNewSeg; 
 //		SetLinesToDraw(); 
 //DLE.MineView ()->Refresh (false); 
 //DLE.ToolView ()->Refresh (); 
@@ -521,7 +501,7 @@ return TRUE;
 //
 // ----------------------------------------------------------------------------- 
 
-#define CURRENT_POINT(a) ((Current ()->nPoint + (a))&0x03)
+#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
 void CSegmentManager::DefineVertices (short newVerts [4])
 {
@@ -532,7 +512,7 @@ void CSegmentManager::DefineVertices (short newVerts [4])
 	short				i, points [4]; 
 	CDoubleVector	center, oppCenter, newCenter, orthog; 
 
-curSegP = Segments (Current ()->nSegment); 
+curSegP = Segments (current.m_nSegment); 
 for (i = 0; i < 4; i++)
 	points [i] = CURRENT_POINT(i);
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
@@ -541,9 +521,9 @@ for (i = 0; i < 4; i++)
 switch (m_nAddMode) {
 	case (ORTHOGONAL):
 		{
-		center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
-		oppCenter = CalcSideCenter (Current ()->nSegment, oppSideTable [Current ()->nSide]); 
-		orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
+		center = CalcSideCenter (current.m_nSegment, current.m_nSide); 
+		oppCenter = CalcSideCenter (current.m_nSegment, oppSideTable [current.m_nSide]); 
+		orthog = CalcSideNormal (current.m_nSegment, current.m_nSide); 
 		// set the length of the new cube to be one standard cube length
 		// scale the vector
 		orthog *= 20; 
@@ -551,9 +531,9 @@ switch (m_nAddMode) {
 		newCenter = center + orthog; 
 		// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 		// point 0
-		a = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(0)]]); 
+		a = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
 		// point 1
-		b = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][CURRENT_POINT(1)]]); 
+		b = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
 		// center
 		c = Average (a, b);
 		// vector from center to point0 and its length
@@ -579,7 +559,7 @@ switch (m_nAddMode) {
 			A [i] += (newCenter - a); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			//nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]; 
+			//nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]; 
 			nVertex = newVerts [i];
 			*Vertices (nVertex) = A [i]; 
 			}
@@ -589,14 +569,14 @@ switch (m_nAddMode) {
 	// METHOD 2: orghogonal with right angle on new side
 	case (EXTEND):
 		{
-		center = CalcSideCenter (Current ()->nSegment, Current ()->nSide); 
-		oppCenter = CalcSideCenter (Current ()->nSegment, oppSideTable [Current ()->nSide]); 
-		orthog = CalcSideNormal (Current ()->nSegment, Current ()->nSide); 
+		center = CalcSideCenter (current.m_nSegment, current.m_nSide); 
+		oppCenter = CalcSideCenter (current.m_nSegment, oppSideTable [current.m_nSide]); 
+		orthog = CalcSideNormal (current.m_nSegment, current.m_nSide); 
 		// calculate the length of the new cube
 		orthog *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			CDoubleVector v = *Vertices (curSegP->m_info.verts [sideVertTable [Current ()->nSide][i]]);
+			CDoubleVector v = *Vertices (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]);
 			v += orthog;
 			*Vertices (newVerts [i]) = v; 
 			}
@@ -607,7 +587,7 @@ switch (m_nAddMode) {
 	case(MIRROR):
 		{
 		// copy side's four points into A
-		short nSide = Current ()->nSide;
+		short nSide = current.m_nSide;
 		for (i = 0; i < 4; i++) {
 			A [i] = *Vertices (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
 			A [i + 4] = *Vertices (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
@@ -653,7 +633,7 @@ switch (m_nAddMode) {
 			B [i].Set (C [i].v.x, C [i].v.y * cos (angle1) + C [i].v.z * sin (angle1), C [i].v.z * cos (angle1) - C [i].v.y * sin (angle1)); 
 
 		// and translate back
-		nVertex = curSegP->m_info.verts [sideVertTable [Current ()->nSide][0]]; 
+		nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][0]]; 
 		for (i = 4; i < 8; i++) 
 			A [i] = B [i] + *Vertices (nVertex); 
 
@@ -756,7 +736,7 @@ for (i = 0; i < 4; i++) {
 	// update all Segments () that use this vertex
 	if (oldVertex != newVertex) {
 		CSegment *segP = Segments (0);
-		for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+		for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				if (segP->m_info.verts [nVertex] == oldVertex)
 					segP->m_info.verts [nVertex] = newVertex; 
@@ -772,7 +752,7 @@ for (i = 0; i < 4; i++) {
 
 void CSegmentManager::CalcSegCenter (CVertex& pos, short nSegment) 
 {
-  short	*nVerts = Segments (nSegment)->m_info.verts; 
+  short	*nVerts = GetSegment (nSegment)->m_info.verts; 
   
 pos.Clear ();
 for (int i = 0; i < 8; i++)
@@ -785,7 +765,7 @@ pos /= 8.0;
 bool CSegmentManager::SideIsMarked (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
-CSegment *segP = Segments (nSegment);
+CSegment *segP = GetSegment (nSegment);
 for (int i = 0; i < 4; i++) {
 	if (!(VertStatus (segP->m_info.verts [sideVertTable [nSide][i]]) & MARKED_MASK))
 		return false;
@@ -795,7 +775,7 @@ return true;
 
 bool CSegmentManager::SegmentIsMarked (short nSegment)
 {
-CSegment *segP = Segments (nSegment);
+CSegment *segP = GetSegment (nSegment);
 for (int i = 0;  i < 8; i++)
 	if (!(VertStatus (segP->m_info.verts [i]) & MARKED_MASK))
 		return false;
@@ -811,7 +791,7 @@ return true;
 
 void CSegmentManager::Mark (short nSegment)
 {
-  CSegment *segP = Segments (nSegment); 
+  CSegment *segP = GetSegment (nSegment); 
 
 segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 
@@ -821,7 +801,7 @@ short nVertex;
 for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	VertStatus (nVertex) &= ~MARKED_MASK; 
 // ..then mark all verts for marked Segments ()
-for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
+for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		for (nVertex = 0; nVertex < 8; nVertex++)
 			VertStatus (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
@@ -836,7 +816,7 @@ void CSegmentManager::UpdateMarked (void)
 	CSegment *segP = Segments (0); 
 	int i; 
 // mark all cubes which have all 8 verts marked
-for (int i = 0; i < SegCount (); i++, segP++)
+for (int i = 0; i < Count (); i++, segP++)
 	if ((VertStatus (segP->m_info.verts [0]) & MARKED_MASK) &&
 		 (VertStatus (segP->m_info.verts [1]) & MARKED_MASK) &&
 		 (VertStatus (segP->m_info.verts [2]) & MARKED_MASK) &&
@@ -858,8 +838,8 @@ void CSegmentManager::MarkAll (void)
 {
 	int i; 
 
-for (i = 0; i < SegCount (); i++) 
-	Segments (i)->m_info.wallFlags |= MARKED_MASK; 
+for (i = 0; i < Count (); i++) 
+	GetSegment (i)->m_info.wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
 	VertStatus (i) |= MARKED_MASK; 
 //DLE.MineView ()->Refresh (); 
@@ -890,11 +870,11 @@ for (i = 0; i < MAX_VERTICES; i++, stat++)
 
 void CSegmentManager::ResetSide (short nSegment, short nSide)
 {
-if (nSegment < 0 || nSegment >= SegCount ()) 
+if (nSegment < 0 || nSegment >= Count ()) 
 	return; 
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
-CSegment *segP = Segments (nSegment); 
+CSegment *segP = GetSegment (nSegment); 
 segP->SetChild (nSide, -1); 
 segP->m_info.childFlags &= ~(1 << nSide); 
 CSide *sideP = segP->m_sides + nSide;
@@ -928,7 +908,7 @@ void CSegmentManager::UnlinkChild (short nParentSeg, short nSide)
 //  for (nSide = 0; nSide < 6; nSide++) {
 int nChildSeg = parentSegP->GetChild (nSide); 
 // does this side have a child?
-if (nChildSeg < 0 || nChildSeg >= SegCount ())
+if (nChildSeg < 0 || nChildSeg >= Count ())
 	return;
 CSegment *child_seg = Segments (nChildSeg); 
 // yes, see if child has a side which points to the parent
@@ -1017,14 +997,14 @@ if (VertCount () > (MAX_VERTICES - 1)) {
 	return; 
 	}
 
-segP = Segments (Current ()->nSegment); 
-vert = segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]; 
+segP = Segments (current.m_nSegment); 
+vert = segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 found = FALSE; 
 segP = Segments (0);
-for (nSegment = 0; (nSegment < SegCount ()) && !found; nSegment++, segP++)
-	if (nSegment != Current ()->nSegment)
+for (nSegment = 0; (nSegment < Count ()) && !found; nSegment++, segP++)
+	if (nSegment != current.m_nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
 			if (segP->m_info.verts [nVertex] == vert) {
 				found = TRUE; 
@@ -1048,8 +1028,8 @@ Vertices (VertCount ()).y = Vertices (vert).y;
 Vertices (VertCount ()).z = Vertices (vert).z; 
 */
 // replace existing point with new point
-segP = Segments (Current ()->nSegment); 
-segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]] = VertCount (); 
+segP = Segments (current.m_nSegment); 
+segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]] = VertCount (); 
 segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
@@ -1057,13 +1037,13 @@ VertStatus (VertCount ()++) = 0;
 
 int nSide;
 for (nSide = 0; nSide < 6; nSide++)
-	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [Current ()->nSide][Current ()->nPoint]]) &&
-		 GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, nSide)) {
+	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]) &&
+		 GetOppositeSide (nOppSeg, nOppSide, current.m_nSegment, nSide)) {
 		UnlinkChild (segP->GetChild (nSide), oppSideTable [nSide]);
-		UnlinkChild (Current ()->nSegment, nSide); 
+		UnlinkChild (current.m_nSegment, nSide); 
 		}
 
-	UnlinkChild(Current ()->nSegment, nSide); 
+	UnlinkChild(current.m_nSegment, nSide); 
 
 SetLinesToDraw(); 
 undoManager.Unlock ();
@@ -1094,15 +1074,15 @@ if (VertCount () > (MAX_VERTICES - 2)) {
 	return; 
 	}
 
-segP = Segments (Current ()->nSegment); 
+segP = Segments (current.m_nSegment); 
 for (i = 0; i < 2; i++) {
-	nLine = sideLineTable [Current ()->nSide][Current ()->nLine]; 
-	vert [i] = Segments (Current ()->nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
+	nLine = sideLineTable [current.m_nSide][current.m_nLine]; 
+	vert [i] = Segments (current.m_nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
 	segP = Segments (0);
-	for (nSegment = 0; (nSegment < SegCount ()) && !found [i]; nSegment++, segP++) {
-		if (nSegment != Current ()->nSegment) {
+	for (nSegment = 0; (nSegment < Count ()) && !found [i]; nSegment++, segP++) {
+		if (nSegment != current.m_nSegment) {
 			for (nVertex = 0; nVertex < 8; nVertex++) {
 				if (segP->m_info.verts [nVertex] == vert [i]) {
 					found [i] = TRUE; 
@@ -1122,7 +1102,7 @@ if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
-segP = Segments (Current ()->nSegment); 
+segP = Segments (current.m_nSegment); 
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (found [i]) {
@@ -1133,7 +1113,7 @@ for (i = 0; i < 2; i++)
 		vertices [VertCount ()].z = vertices [vert [i]].z; 
 		*/
 		// replace existing points with new points
-		nLine = sideLineTable [Current ()->nSide][Current ()->nLine]; 
+		nLine = sideLineTable [current.m_nSide][current.m_nLine]; 
 		segP->m_info.verts [lineVertTable [nLine][i]] = VertCount (); 
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
@@ -1142,9 +1122,9 @@ for (i = 0; i < 2; i++)
 int nSide;
 for (nSide = 0; nSide < 6; nSide++) {
 	if (IsLineOfSide (segP, nSide, nLine) && 
-		 GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, nSide)) {
+		 GetOppositeSide (nOppSeg, nOppSide, current.m_nSegment, nSide)) {
 		UnlinkChild (nOppSeg, nOppSide);
-		UnlinkChild (Current ()->nSegment, nSide); 
+		UnlinkChild (current.m_nSegment, nSide); 
 		}
 	}
 SetLinesToDraw(); 
@@ -1178,7 +1158,7 @@ if (m_bSplineActive) {
 
 segP = current.Segment (); 
 if (nSide < 0)
-	nSide = Current ()->nSide;
+	nSide = current.m_nSide;
 int nChildSeg = segP->GetChild (nSide); 
 if (nChildSeg == -1) {
 	ErrorMsg ("The current side is not connected to another cube"); 
@@ -1188,8 +1168,8 @@ if (nChildSeg == -1) {
 for (i = 0; i < 4; i++)
 	vert [i] = segP->m_info.verts [sideVertTable [nSide][i]]; 
 	// check to see if current points are shared by any other cubes
-for (nSegment = 0, segP = Segments (0); nSegment < SegCount (); nSegment++, segP++)
-	if (nSegment != Current ()->nSegment)
+for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
+	if (nSegment != current.m_nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = FALSE;
 			for (nVertex = 0; nVertex < 8; nVertex++)
@@ -1217,7 +1197,7 @@ if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
-segP = Segments (Current ()->nSegment); 
+segP = Segments (current.m_nSegment); 
 if (nFound < 4)
 	solidify = 0;
 if (!solidify) {
@@ -1241,7 +1221,7 @@ if (!solidify) {
 	int nSide;
 	for (nSide = 0; nSide < 6; nSide++)
 		if (nSide != oppSideTable [nSide])
-			UnlinkChild (Current ()->nSegment, nSide); 
+			UnlinkChild (current.m_nSegment, nSide); 
 	SetLinesToDraw(); 
 	INFOMSG (" Four new points were made for the current side."); 
 	}
@@ -1251,12 +1231,12 @@ else {
 	// yes, see if child has a side which points to the parent
 	int nChildSide;
 	for (nChildSide = 0; nChildSide < 6; nChildSide++)
-		if (childSegP->GetChild (nChildSide) == Current ()->nSegment) 
+		if (childSegP->GetChild (nChildSide) == current.m_nSegment) 
 			break; 
 	// if we found the matching side
 	if (nChildSide < 6)
 		ResetSide (nChildSeg, nChildSide); 
-	ResetSide (Current ()->nSegment, Current ()->nSide); 
+	ResetSide (current.m_nSegment, current.m_nSide); 
 	SetLinesToDraw(); 
 	}
 undoManager.Unlock ();
@@ -1446,7 +1426,7 @@ void CSegmentManager::SetLinesToDraw (void)
   CSegment *segP; 
   short nSegment, nSide; 
 
-for (nSegment = SegCount (), segP = Segments (0); nSegment; nSegment--, segP++) {
+for (nSegment = Count (), segP = Segments (0); nSegment; nSegment--, segP++) {
 	segP->m_info.mapBitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -1470,13 +1450,13 @@ void CSegmentManager::FixChildren (void)
 {
 short nNewSide, nSide, nSegment, nNewSeg; 
 
-nNewSeg = Current ()->nSegment; 
-nNewSide = Current ()->nSide; 
+nNewSeg = current.m_nSegment; 
+nNewSide = current.m_nSide; 
 CSegment *segP = Segments (0),
 			*newSegP = Segments (nNewSeg);
 CVertex	*vSeg, 
 			*vNewSeg = Vertices (newSegP->m_info.verts [0]);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP) {
+for (nSegment = 0; nSegment < Count (); nSegment++, segP) {
 	if (nSegment != nNewSeg) {
 		// first check to see if Segments () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
@@ -1527,7 +1507,7 @@ if (m_bSplineActive) {
 
 // figure out "other' cube
 if (solidify) {
-	if (Segments (Current ()->nSegment)->GetChild (Current ()->nSide) != -1) {
+	if (Segments (current.m_nSegment)->GetChild (current.m_nSide) != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
@@ -1542,7 +1522,7 @@ if (solidify) {
 		memcpy (&v1 [i], Vertices (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex));
 		}
 	minTotalRad = 1e300;
-	for (nSegment = 0, seg2 = Segments (0); nSegment < SegCount (); nSegment++, seg2++) {
+	for (nSegment = 0, seg2 = Segments (0); nSegment < Count (); nSegment++, seg2++) {
 		if (nSegment== cur1->nSegment)
 			continue; 
 		for (nSide = 0; nSide < 6; nSide++) {
@@ -1584,7 +1564,7 @@ if (solidify) {
 			// force break from loops
 				if (minTotalRad == 0) {
 					nSide = 6; 
-					nSegment = SegCount (); 
+					nSegment = Count (); 
 					}
 				}
 			}
@@ -1699,8 +1679,8 @@ if (QueryMsg("Are you sure you want to create a new cube which\n"
 				 "(the 'P' key selects the current point)") != IDYES)
 	return; 
 
-nNewSeg = SegCount (); 
-if (!(SegCount () < MAX_SEGMENTS)) {
+nNewSeg = Count (); 
+if (!(Count () < MAX_SEGMENTS)) {
 	if (!bExpertMode)
 		ErrorMsg ("The maximum number of Segments () has been reached.\n"
 					"Cannot add any more Segments ()."); 
@@ -1774,7 +1754,7 @@ for (i = 0; i < 4; i++) {
 	}
 
 // update number of Segments () and vertices
-SegCount ()++; 
+Count ()++; 
 undoManager.Unlock ();
 SetLinesToDraw(); 
 //DLE.MineView ()->Refresh ();
@@ -1786,7 +1766,7 @@ bool CSegmentManager::HaveMarkedSides ()
 {
 int	nSegment, nSide; 
 
-for (nSegment = 0; nSegment < SegCount (); nSegment++)
+for (nSegment = 0; nSegment < Count (); nSegment++)
 	for (nSide = 0; nSide < 6; nSide++)
 		if (SideIsMarked (nSegment, nSide))
 			return true;
@@ -1799,7 +1779,7 @@ short CSegmentManager::MarkedCount (bool bCheck)
 {
 	int	nSegment, nCount; 
 	CSegment *segP = Segments (0);
-for (nSegment = SegCount (), nCount = 0; nSegment; nSegment--, segP++)
+for (nSegment = Count (), nCount = 0; nSegment; nSegment--, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		if (bCheck)
 			return 1; 
@@ -1814,8 +1794,8 @@ return nCount;
 int CSegmentManager::IsWall (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide); 
-return (Segments (nSegment)->GetChild (nSide)== -1) ||
-		 (Segments (nSegment)->m_sides [nSide].m_info.nWall < MineInfo ().walls.count); 
+return (GetSegment (nSegment)->GetChild (nSide)== -1) ||
+		 (GetSegment (nSegment)->m_sides [nSide].m_info.nWall < MineInfo ().walls.count); 
 }
 
 
@@ -1980,52 +1960,40 @@ return return_code;
 // Returns - TRUE on success
 // ------------------------------------------------------------------------------ 
 
-bool CSegmentManager::GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment, short nSide)
+bool CSegmentManager::GetOppositeSide (CSideKey& opp, short nSegment, short nSide)
 {
   short nChildSeg, nChildSide; 
 
-nOppSeg = 0; 
-nOppSide = 0; 
 current.Get (nSegment, nSide); 
-if (nSegment < 0 || nSegment >= SegCount ())
+#ifdef _DEBUG
+if (nSegment < 0 || nSegment >= Count ())
 	return false; 
 if (nSide < 0 || nSide >= 6)
 	return false; 
-nChildSeg = Segments (nSegment)->GetChild (nSide); 
-if (nChildSeg < 0 || nChildSeg >= SegCount ())
+#endif
+nChildSeg = GetSegment (nSegment)->GetChild (nSide); 
+if (nChildSeg < 0 || nChildSeg >= Count ())
 	return false; 
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 	if (Segments (nChildSeg)->GetChild (nChildSide) == nSegment) {
-		nOppSeg = nChildSeg; 
-		nOppSide = nChildSide; 
+		opp.m_nSegment = nChildSeg; 
+		opp.m_nSide = nChildSide; 
 		return true; 
 		}
 	}
 return false; 
 }
 
-// ------------------------------------------------------------------------------ 
+// -----------------------------------------------------------------------------
 
 CSide* CSegmentManager::GetOppositeSide (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
-short nOppSeg, nOppSide;
-return GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide) ? GetSide (nOppSeg, nOppSide) : null;
+CSideKey opp;
+return GetOppositeSide (opp, nSegment, nSide) ? GetSide (nOppSeg, nOppSide) : null;
 }
 
-// ------------------------------------------------------------------------------ 
-
-                        /* -------------------------- */
-
-CSide* CSegmentManager::OppSide (void) 
-{
-short nOppSeg, nOppSide;
-if (!GetOppositeSide (nOppSeg, nOppSide))
-	return null;
-return Segments (nOppSeg)->m_sides + nOppSide;
-}
-
-                        /* -------------------------- */
+// -----------------------------------------------------------------------------
 
 bool CSegmentManager::SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex)
 {
@@ -2034,14 +2002,14 @@ bool CSegmentManager::SetTextures (short nSegment, short nSide, short nBaseTex, 
 bUndo = undoManager.SetModified (TRUE); 
 undoManager.Lock (); 
 current.Get (nSegment, nSide); 
-CSide *sideP = Segments (nSegment)->m_sides + nSide; 
+CSide *sideP = GetSegment (nSegment)->m_sides + nSide; 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
 	undoManager.ResetModified (bUndo);
 	return false;
 	}
 if ((IsLight (sideP->m_info.nBaseTex) == -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
-	DeleteFlickeringLight (nSegment, nSide); 
+	DeleteVariableLight (nSegment, nSide); 
 if (!WallClipFromTexture (nSegment, nSide))
 	CheckForDoor (nSegment, nSide); 
 undoManager.Unlock (); 
@@ -2050,11 +2018,11 @@ INFOMSG (message);
 return true;
 }
 
-                        /* -------------------------- */
+// -----------------------------------------------------------------------------
 
 void CSegmentManager::RenumberBotGens (void) 
 {
-	int			i, nMatCens, value, nSegment; 
+	int		i, nMatCens, value, nSegment; 
 	CSegment	*segP; 
 
 // number "matcen"
@@ -2062,7 +2030,7 @@ nMatCens = 0;
 for (i = 0; i < MineInfo ().botgen.count; i++) {
 	nSegment = BotGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
-		segP = Segments (nSegment); 
+		segP = GetSegment (nSegment); 
 		segP->m_info.value = i; 
 		if (segP->m_info.function== SEGMENT_FUNC_ROBOTMAKER)
 			segP->m_info.nMatCen = nMatCens++; 
@@ -2071,7 +2039,7 @@ for (i = 0; i < MineInfo ().botgen.count; i++) {
 
 // number "value"
 value = 0; 
-for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
+for (i = 0, segP = Segments (0); i < Count (); i++, segP++)
 	if (segP->m_info.function== SEGMENT_FUNC_NONE)
 		segP->m_info.value = 0; 
 	else
@@ -2090,7 +2058,7 @@ nMatCens = 0;
 for (i = 0; i < MineInfo ().equipgen.count; i++) {
 	nSegment = EquipGens (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
-		segP = Segments (nSegment); 
+		segP = GetSegment (nSegment); 
 		segP->m_info.value = i; 
 		if (segP->m_info.function== SEGMENT_FUNC_EQUIPMAKER)
 			segP->m_info.nMatCen = nMatCens++; 
@@ -2099,7 +2067,7 @@ for (i = 0; i < MineInfo ().equipgen.count; i++) {
 
 // number "value"
 value = 0; 
-for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)
+for (i = 0, segP = Segments (0); i < Count (); i++, segP++)
 	if (segP->m_info.function== SEGMENT_FUNC_NONE)
 		segP->m_info.value = 0; 
 	else
@@ -2114,7 +2082,7 @@ void CSegmentManager::Copyother.Segmentment ()
 
 if (Current1 ().nSegment == Current2 ().nSegment)
 	return; 
-short nSegment = Current ()->nSegment; 
+short nSegment = current.m_nSegment; 
 CSegment *otherSeg = other.Segment (); 
 bUndo = undoManager.SetModified (TRUE); 
 undoManager.Lock ();
@@ -2144,7 +2112,7 @@ bool CSegmentManager::SplitSegment (void)
 	int			h, i, j, k;
 	short			oppSides [6] = {2,3,0,1,5,4};
 
-if (SegCount () >= MAX_SEGMENTS - 6) {
+if (Count () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
@@ -2184,8 +2152,8 @@ for (nSide = 0; nSide < 6; nSide++) {
 VertCount () = h + 8;
 #if 1
 // create the surrounding segments
-for (nSegment = SegCount (), nSide = 0; nSide < 6; nSegment++, nSide++) {
-	segP = Segments (nSegment);
+for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
+	segP = GetSegment (nSegment);
 	nOppSide = oppSides [nSide];
 	for (vertNum = 0; vertNum < 4; vertNum++) {
 		i = sideVertTable [nSide][vertNum];
@@ -2254,11 +2222,11 @@ for (nSide = 0; nSide < 6; nSide++) {
 	}
 // join adjacent sides of the segments surrounding the center segment
 #if 1
-for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP++) {
+for (nSegment = 0, segP = Segments (Count ()); nSegment < 5; nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->GetChild (nSide) >= 0)
 			continue;
-		for (nChildSeg = nSegment + 1, childSegP = Segments (SegCount () + nChildSeg); 
+		for (nChildSeg = nSegment + 1, childSegP = Segments (Count () + nChildSeg); 
 			  nChildSeg < 6; 
 			  nChildSeg++, childSegP++) {
 			for (nChildSide = 0; nChildSide < 6; nChildSide++) {
@@ -2275,8 +2243,8 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 						}
 					}
 				if (h == 4) {
-					segP->SetChild (nSide, SegCount () + nChildSeg);
-					childSegP->SetChild (nChildSide, SegCount () + nSegment);
+					segP->SetChild (nSide, Count () + nChildSeg);
+					childSegP->SetChild (nChildSide, Count () + nSegment);
 					break;
 					}
 				}
@@ -2284,7 +2252,7 @@ for (nSegment = 0, segP = Segments (SegCount ()); nSegment < 5; nSegment++, segP
 		}
 	}
 #endif
-SegCount () += 6;
+Count () += 6;
 #endif
 undoManager.Unlock ();
 //DLE.MineView ()->Refresh ();
@@ -2307,7 +2275,7 @@ undoManager.SetModified (TRUE);
 memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices (0)));
 // update anyone pointing to this vertex
 CSegment *segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 	for (nVertex = 0; nVertex < 8; nVertex++)
 		if (segP->m_info.verts [nVertex] > nDeletedVert)
 			segP->m_info.verts [nVertex]--; 
@@ -2329,7 +2297,7 @@ for (nVertex = 0; nVertex < VertCount (); nVertex++)
 	VertStatus (nVertex) &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = Segments (0);
-for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
 		VertStatus (segP->m_info.verts [point]) |= NEW_MASK; 
 for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)

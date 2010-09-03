@@ -1,6 +1,6 @@
 #include <assert.h>
+#include <stdafx.h>
 
-#include "stdafx.h"
 #include "textures.h"
 #include "cfile.h"
 #include "dle-xp-res.h"
@@ -470,7 +470,7 @@ void CTextureManager::MarkUsedTextures (void)
 for (i = 0; i < h; i++)
 	m_textures [nVersion][i].m_info.bUsed = false;
 
-for (i = theMine->SegCount (); i; i--, segP++) {
+for (i = segmentManager.Count (); i; i--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (j = 6; j; j--, sideP++) {
 		if ((sideP->m_info.nChild < 0) || (sideP->m_info.nWall != NO_WALL)) {

@@ -16,9 +16,9 @@ bool CMine::SetDefaultTexture (short nTexture, short walltype)
 {
 if (nTexture < 0)
 	return true;
-short nSegment = Current ()->nSegment;
+short nSegment = current.m_nSegment;
 short nOppSeg, nOppSide;
-CSegment *segP = Segments (nSegment);
+CSegment *segP = GetSegment (nSegment);
 CSide *sideP = segP->m_sides;
 double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
@@ -38,12 +38,12 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 			sideP->m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale);
 			sideP->m_info.uvls [i].l = defaultUVLs [i].l;
 			}
-		Segments (nSegment)->SetUV (nSide, 0, 0);
+		GetSegment (nSegment)->SetUV (nSide, 0, 0);
 		}
 	else if (nTexture >= 0) {
 		if (walltype >= 0) {
 			if ((MineInfo ().walls.count < MAX_WALLS) &&
-				 (Segments (nSegment)->m_sides [nSide].m_info.nWall >= MineInfo ().walls.count))
+				 (GetSegment (nSegment)->m_sides [nSide].m_info.nWall >= MineInfo ().walls.count))
 				AddWall (nSegment, nSide, (byte) walltype, 0, KEY_NONE, -1, -1); // illusion
 			else
 				return false;
@@ -65,7 +65,7 @@ return true;
 
 void CMine::UndefineSegment (short nSegment)
 {
-	CSegment *segP = (nSegment < 0) ? current.Segment () : Segments (nSegment);
+	CSegment *segP = (nSegment < 0) ? current.Segment () : GetSegment (nSegment);
 
 nSegment = short (segP - Segments (0));
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
@@ -154,7 +154,7 @@ bool CMine::DefineSegment (short nSegment, byte type, short nTexture, short wall
 bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
 UndefineSegment (nSegment);
-CSegment *segP = (nSegment < 0) ? current.Segment () : Segments (nSegment);
+CSegment *segP = (nSegment < 0) ? current.Segment () : GetSegment (nSegment);
 segP->m_info.function = type;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture, walltype);
@@ -229,8 +229,8 @@ EquipGens (n_matcen)->m_info.hitPoints = 0;
 EquipGens (n_matcen)->m_info.interval = 0;
 EquipGens (n_matcen)->m_info.nSegment = nSegment;
 EquipGens (n_matcen)->m_info.nFuelCen = n_matcen;
-Segments (Current ()->nSegment)->m_info.value = 
-Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
+Segments (current.m_nSegment)->m_info.value = 
+Segments (current.m_nSegment)->m_info.nMatCen = n_matcen;
 MineInfo ().equipgen.count++;
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
@@ -267,8 +267,8 @@ BotGens (n_matcen)->m_info.hitPoints = 0;
 BotGens (n_matcen)->m_info.interval = 0;
 BotGens (n_matcen)->m_info.nSegment = nSegment;
 BotGens (n_matcen)->m_info.nFuelCen = n_matcen;
-Segments (Current ()->nSegment)->m_info.value = 
-Segments (Current ()->nSegment)->m_info.nMatCen = n_matcen;
+Segments (current.m_nSegment)->m_info.value = 
+Segments (current.m_nSegment)->m_info.nMatCen = n_matcen;
 MineInfo ().botgen.count++;
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
@@ -403,17 +403,17 @@ if ((IsD1File ()) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
 		ErrorMsg ("Repair centers are not available in Descent 1.");
 	return false;
 	}
-int last_segment = Current ()->nSegment;
+int last_segment = current.m_nSegment;
 bool bUndo = undoManager.SetModified (TRUE);
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
 	return false; 
 	}	
-int new_segment = Current ()->nSegment;
-Current ()->nSegment = last_segment;
+int new_segment = current.m_nSegment;
+current.m_nSegment = last_segment;
 if (bSetDefTextures && (nType == SEGMENT_FUNC_FUELCEN) && (MineInfo ().walls.count < MAX_WALLS))
-	AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
-Current ()->nSegment = new_segment;
+	AddWall (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1); // illusion
+current.m_nSegment = new_segment;
 if (!((nType == SEGMENT_FUNC_FUELCEN) ?
 	   DefineSegment (nSegment, nType,  bSetDefTextures ? ((IsD1File ()) ? 322 : 333) : -1, WALL_ILLUSION) :
 	   DefineSegment (nSegment, nType,  bSetDefTextures ? 433 : -1, -1)) //use the blue goal texture for repair centers
@@ -424,250 +424,6 @@ if (!((nType == SEGMENT_FUNC_FUELCEN) ?
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;
-}
-
-//---------------------------------------------------------------------------
-// TMainWindow - add_door()
-//
-// Action - Adds a wall to both sides of the current side
-//---------------------------------------------------------------------------
-
-bool CMine::AddDoor (byte type, byte flags, byte keys, char nClip, short nTexture) 
-{
-  short 	nOppSeg, nOppSide;
-  ushort nWall;
-
-nWall = current.Side ()->m_info.nWall;
-if (nWall < MineInfo ().walls.count) {
-	ErrorMsg ("There is already a wall on this side");
-	return false;
-	}
-if (MineInfo ().walls.count + 1 >= MAX_WALLS) {
-	ErrorMsg ("Maximum number of Walls reached");
-	return false;
-	}
-bool bUndo = undoManager.SetModified (TRUE);
-undoManager.Lock ();
-// add a door to the current segment/side
-if (AddWall (Current ()->nSegment, Current ()->nSide, type, flags, keys, nClip, nTexture)) {
-	// add a door to the opposite segment/side
-	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
-		 AddWall (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
-		undoManager.Unlock ();
-		DLE.MineView ()->Refresh ();
-		return true;
-		}
-	}
-undoManager.ResetModified (bUndo);
-return false;
-}
-
-//==========================================================================
-// MENU - Add Auto Door
-//==========================================================================
-
-bool CMine::AddAutoDoor (char nClip, short nTexture) 
-{
-return AddDoor (WALL_DOOR, WALL_DOOR_AUTO, KEY_NONE, nClip,  nTexture);
-}
-
-//==========================================================================
-// MENU - Add Prison Door
-//==========================================================================
-
-bool CMine::AddPrisonDoor () 
-{
-return AddDoor (WALL_BLASTABLE, 0, 0, -1, -1);
-}
-
-//==========================================================================
-// MENU - Add Guide bot door
-//==========================================================================
-
-bool CMine::AddGuideBotDoor() 
-{
-if (IsD1File ()) {
-	ErrorMsg ("Guide bot doors are not allowed in Descent 1");
-	return false;
-  }
-return AddDoor (WALL_BLASTABLE, 0, 0, 46, -1);
-}
-
-//==========================================================================
-// MENU - Add Fuel Cell
-//==========================================================================
-
-bool CMine::AddFuelCell () 
-{
-return AddDoor (WALL_ILLUSION, 0, 0, -1, (IsD1File ()) ? 328 : 353);
-}
-
-//==========================================================================
-// MENU - Add Illusionary Wall
-//==========================================================================
-
-bool CMine::AddIllusionaryWall () 
-{
-return AddDoor (WALL_ILLUSION, 0, 0, -1, 0);
-}
-
-//==========================================================================
-// MENU - Add ForceField
-//==========================================================================
-
-bool CMine::AddForceField () 
-{
-if (IsD1File ()) {
-	ErrorMsg ("Force fields are not supported in Descent 1");
-   return false;
-	}
-return AddDoor (WALL_CLOSED, 0, 0, -1, 420);
-}
-
-//==========================================================================
-// MENU - Add Fan
-//
-// note: -2 used for clip to so texture will be used for nOvlTex
-//==========================================================================
-
-bool CMine::AddFan ()
-{
-return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 325 : 354);
-}
-
-//==========================================================================
-// MENU - Add Water Fall
-//==========================================================================
-
-bool CMine::AddWaterFall ()
-{
-if (IsD1File ()) {
-	ErrorMsg ("Water falls are not supported in Descent 1");
-   return false;
-	}
-return AddDoor (WALL_ILLUSION, 0, 0, -1, 401);
-}
-
-//==========================================================================
-// MENU - Add Lava Fall
-//==========================================================================
-
-bool CMine::AddLavaFall() 
-{
-if (IsD1File ()) {
-	ErrorMsg ("Lava falls are not supported in Descent 1");
-   return false;
-	}
-  // key of 5 selects lava fall
-return AddDoor (WALL_ILLUSION, 0, 0, -1, 408);
-}
-
-//==========================================================================
-// MENU - Add Grate
-//
-// note: -2 used for clip to so texture will be used for nOvlTex
-//==========================================================================
-
-bool CMine::AddGrate() 
-{
-return AddDoor (WALL_CLOSED, 0, 0, -2, (IsD1File ()) ? 246 : 321);
-}
-
-//==========================================================================
-// MENU - Add Exit
-//==========================================================================
-
-bool CMine::AddNormalExit() 
-{
-return AddExit (TT_EXIT);
-}
-
-//--------------------------------------------------------------------------
-// add_exit()
-//
-// Action - adds a wall and a exit trigger to the current segment/side
-//--------------------------------------------------------------------------
-
-bool CMine::AddExit (short type) 
-{
-
-ushort nWall = Segments (Current ()->nSegment)->m_sides [Current ()->nSide].m_info.nWall;
-if (nWall < MineInfo ().walls.count) {
-	ErrorMsg ("There is already a wall on this side");
-	return false;
-	}
-if (MineInfo ().walls.count >= MAX_WALLS - 1) {
-	ErrorMsg ("Maximum number of walls reached");
-	return false;
-	}
-if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
-	ErrorMsg ("Maximum number of triggers reached");
-	return false;
-	}
-// make a new wall and a new trigger
-bool bUndo = undoManager.SetModified (TRUE);
-undoManager.Lock ();
-if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
-// set clip number and texture
-	Walls () [MineInfo ().walls.count-1].m_info.nClip = 10;
-	SetTexture (Current ()->nSegment, Current ()->nSide, 0, (IsD1File ()) ? 444 : 508);
-	AddTrigger (MineInfo ().walls.count - 1, type);
-// add a new wall and trigger to the opposite segment/side
-	short nOppSeg, nOppSide;
-	if (GetOppositeSide (nOppSeg, nOppSide, Current ()->nSegment, Current ()->nSide) &&
-		AddWall (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
-		// set clip number and texture
-		Walls () [MineInfo ().walls.count - 1].m_info.nClip = 10;
-		SetTexture (nOppSeg, nOppSide, 0, (IsD1File ()) ? 444 : 508);
-		AutoUpdateReactor();
-		undoManager.Unlock ();
-		DLE.MineView ()->Refresh ();
-		return true;
-		}
-	}
-undoManager.ResetModified (bUndo);
-return false;
-}
-
-//==========================================================================
-// MENU - Add secret exit
-//==========================================================================
-
-bool CMine::AddSecretExit () 
-{
-if (IsD1File ()) {
-    AddExit (TT_SECRET_EXIT);
-	 return false;
-	}
-if (MineInfo ().walls.count >= MAX_WALLS) {
-	ErrorMsg ("Maximum number of walls reached");
-	return false;
-	}
-if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
-	ErrorMsg ("Maximum number of triggers reached");
-	return false;
-	}
-int last_segment = Current ()->nSegment;
-bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
-if (!AddSegment ()) {
-	undoManager.ResetModified (bUndo);
-	return false;
-	}
-int new_segment = Current ()->nSegment;
-Current ()->nSegment = last_segment;
-if (AddWall (Current ()->nSegment, Current ()->nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
-	AddTrigger (MineInfo ().walls.count - 1, TT_SECRET_EXIT);
-	SecretCubeNum () = Current ()->nSegment;
-	SetDefaultTexture (426, -1);
-	Current ()->nSegment = new_segment;
-	SetDefaultTexture (426, -1);
-	DLE.MineView ()->Refresh ();
-	undoManager.Unlock ();
-	return true;
-	}
-undoManager.ResetModified (bUndo);
-return false;
 }
 
 
@@ -705,7 +461,7 @@ if (!GetTriggerResources (nWall))
 // make a new wall and a new trigger
 bool bUndo = undoManager.SetModified (TRUE);
 undoManager.Lock ();
-if (AddWall (Current ()->nSegment, Current ()->nSide, (byte) wall_type, wall_flags, KEY_NONE, -1, -1) &&
+if (AddWall (current.m_nSegment, current.m_nSide, (byte) wall_type, wall_flags, KEY_NONE, -1, -1) &&
 	 AddTrigger (MineInfo ().walls.count - 1, trigger_type)) {
 	short nTrigger = MineInfo ().triggers.count - 1;
 	// set link to trigger target

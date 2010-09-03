@@ -640,7 +640,7 @@ CSegment *segP = theMine->Segments (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 int i, j, nDeleted = 0;
-for (i = theMine->SegCount (); i; i--, segP++) {
+for (i = segmentManager.Count (); i; i--, segP++) {
 	sideP = segP->m_sides;
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)
@@ -689,7 +689,7 @@ else {
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;
 		}
-	if ((wallP->m_nSegment >= theMine->SegCount ()) || (wallP->m_nSegment < 0) || 
+	if ((wallP->m_nSegment >= segmentManager.Count ()) || (wallP->m_nSegment < 0) || 
 		 (wallP->m_nSide < 0) || (wallP->m_nSide > 5)) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
@@ -872,7 +872,7 @@ if (nSide < 0)
 	nSide = 0;
 else if (nSide > 6)
 	nSide = 6;
-if (nSegment > ((nSide == 0) ? theMine->ObjCount () : theMine->SegCount ()))
+if (nSegment > ((nSide == 0) ? theMine->ObjCount () : segmentManager.Count ()))
 	return;
 AddTarget (nSegment, nSide);
 }
@@ -957,7 +957,7 @@ m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->m_count))
 	return;
 short nSegment = m_pTrigger->Segment (m_iTarget);
-if ((nSegment < 0) || (nSegment >= theMine->SegCount ()))
+if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	 return;
 short nSide = m_pTrigger->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))

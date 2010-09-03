@@ -147,206 +147,12 @@ return (result);
 }
 
 //------------------------------------------------------------------------
-// GetFlickeringLight() - returns flicker light number
+// GetVariableLight() - returns flicker light number
 //
 // returns -1 if not exists
 //------------------------------------------------------------------------
 
-short CMine::GetFlickeringLight (short nSegment, short nSide) 
-{
-current.Get (nSegment, nSide);
-CFlickeringLight *flP = FlickeringLights (0);
-int i;
-for (i = FlickerLightCount (); i; i--, flP++)
-	if ((flP->m_nSegment == nSegment) && (flP->m_nSide == nSide))
-		break;
-if (i > 0)
-	return FlickerLightCount () - i;
-return -1;
-}
 
-
-
-bool CMine::IsFlickeringLight (short nSegment, short nSide)
-{
-return GetFlickeringLight (nSegment, nSide) >= 0;
-}
-
-//------------------------------------------------------------------------
-// add_flickering_light()
-//
-// returns index to newly created flickering light
-//------------------------------------------------------------------------
-
-short CMine::AddFlickeringLight (short nSegment, short nSide, uint mask,int time) 
-{
-current.Get (nSegment, nSide);
-if (GetFlickeringLight (nSegment,nSide) != -1) {
-	if (!bExpertMode)
-		ErrorMsg ("There is already a flickering light on this side");
-	return -1;
-	}
-// we are adding a new flickering light
-if (FlickerLightCount () >= MAX_FLICKERING_LIGHTS) {
-	if (!bExpertMode) {
-		sprintf_s (message, sizeof (message),
-					  "Maximum number of flickering lights (%d) have already been added",
-					  MAX_FLICKERING_LIGHTS);
-		ErrorMsg (message);
-		}
-	return -1;
-	}
-short nBaseTex = current.Side ()->m_info.nBaseTex & 0x1fff;
-short nOvlTex = current.Side ()->m_info.nOvlTex & 0x1fff;
-if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
-	if (!bExpertMode)
-		ErrorMsg ("Blinking lights can only be added to a side\n"
-					"that has a Texture with \" - light\" at the\n"
-					"end of its name.");
-	return -1;
-	}
-undoManager.SetModified (TRUE);
-CFlickeringLight *flP = FlickeringLights (FlickerLightCount ());
-flP->m_nSegment = nSegment;
-flP->m_nSide = nSide;
-flP->m_info.delay = time;
-flP->m_info.timer = time;
-flP->m_info.mask = mask;
-return ++FlickerLightCount ();
-}
-
-//------------------------------------------------------------------------
-// delete_flickering_light()
-//
-// removes a flickering light if it exists
-//------------------------------------------------------------------------
-
-bool CMine::DeleteFlickeringLight (short nSegment, short nSide) 
-{
-if (nSegment < 0)
-	nSegment = Current ()->nSegment;
-if (nSide < 0)
-	nSide = Current ()->nSide;
-short index = GetFlickeringLight (nSegment, nSide);
-if (index == -1) {
-//ErrorMsg ("There is no flickering light on this side.");
-	return false;
-	}
-undoManager.SetModified (TRUE);
-if (index < --FlickerLightCount ())
-// put last light in place of deleted light
-	memcpy (FlickeringLights (index), FlickeringLights (FlickerLightCount ()), sizeof (CFlickeringLight));
-return true;
-}
-
-//------------------------------------------------------------------------
-// IsLight()
-//
-// searches for a light in the list of lights
-// returns index if found, -1 if not in the list
-//------------------------------------------------------------------------
-
-int CMine::IsLight (int nBaseTex) 
-{
-#if 1
-return (lightMap [nBaseTex & 0x3fff] > 0) ? 0 : -1;
-#else
-#	if 1
-return (IsD1File ()) ?
-	FindLight (nBaseTex, d1_texture_light, NUM_LIGHTS_D1) : 
-	FindLight (nBaseTex, d2_texture_light, NUM_LIGHTS_D2);
-#	else
-	int retval = -1;
-	int i;
-	TEXTURE_LIGHT *t;
-	if (IsD1File ()) {
-		i = NUM_LIGHTS_D1;
-		t = d1_texture_light;
-		}
-	else {
-		i = NUM_LIGHTS_D2;
-		t = d2_texture_light;
-		}
-	for (; i; i--, t++)
-		if (nBaseTex <= t->m_info.nBaseTex)
-			break;
-	if (nBaseTex == t->m_info.nBaseTex)
-		return t - ((IsD1File ()) ? d1_texture_light : d2_texture_light);
-	return -1;
-#	if 0
-	for (i=0;i<NUM_LIGHTS_D1;i++) {
-		if (nBaseTex <= d1_texture_light[i].m_info.nBaseTex) break;
-	if (nBaseTex > 0) {
-		if (IsD1File ()) {
-			for (i=0;i<NUM_LIGHTS_D1;i++) {
-				if (nBaseTex <= d1_texture_light[i].m_info.nBaseTex) break;
-			}
-			if (nBaseTex == d1_texture_light[i].m_info.nBaseTex) {
-				retval = i;
-			}
-		} else {
-			for (i=0;i<NUM_LIGHTS_D2;i++) {
-				if (nBaseTex <= d2_texture_light[i].m_info.nBaseTex) break;
-			}
-			if (nBaseTex == d2_texture_light[i].m_info.nBaseTex) {
-				retval = i;
-			}
-		}
-	}
-	return retval;
-#		endif
-#	endif
-#endif
-}
-
-//------------------------------------------------------------------------
-// is_exploding_light()
-//
-//291 ceil024-l   292 ceil024b-f
-//293 ceil025-l   294 ceil025b-f
-//296 ceil028-l   297 ceil028b-f
-//298 ceil029-l   299 ceil029b-f
-//------------------------------------------------------------------------
-
-int CMine::IsExplodingLight(int nBaseTex) 
-{
-	switch (nBaseTex) {
-	case 291:
-	case 292:
-	case 293:
-	case 294:
-	case 296:
-	case 297:
-	case 298:
-	case 299:
-		return (1);
-	}
-	return(0);
-}
-
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-
-bool CMine::IsBlastableLight (int nBaseTex) 
-{
-nBaseTex &= 0x3fff;
-if (IsExplodingLight (nBaseTex))
-	return true;
-if (IsD1File ())
-	return false;
-for (short *p = d2_blastable_lights; *p >= 0; p++)
-	if (*p == nBaseTex)
-		return true;
-#if 0
-if (IsLight (nBaseTex))
-	for (p = d2_switches; *p >= 0; p++)
-		if (*p == nBaseTex)
-			return true;
-#endif
-return false;
-}
-
-//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
 bool CMine::VisibleWall (ushort nWall)
@@ -440,7 +246,7 @@ undoManager.SetModified (TRUE);
 	{
 #pragma omp for
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
-		CSegment *segP = Segments (nSegment);
+		CSegment *segP = GetSegment (nSegment);
 		for (int pt = 0; pt < 8; pt++) {
 			int nVertex = segP->m_info.verts [pt];
 			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
@@ -459,7 +265,7 @@ undoManager.SetModified (TRUE);
 			//	max_brightness = min(max_brightness,0x8000L);
 #pragma omp for
 	for (nSegment = 0; nSegment < segCount; nSegment++) {
-		CSegment *segP = Segments (nSegment);
+		CSegment *segP = GetSegment (nSegment);
 		for (int pt = 0; pt < 8; pt++) {
 			int nVertex = segP->m_info.verts [pt];
 			if ((max_brightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
@@ -766,12 +572,12 @@ delete[] visited;
 //	(0x00 = no effect, 0x20 is maximum effect)
 //
 // A little int to take care of too many delta light values leading
-// to some flickering lights not being visible in Descent:
+// to some variable lights not being visible in Descent:
 // For each recursion step, the delta light calculation will be executed
-// for all children of sides with flickering lights with exactly that
+// for all children of sides with variable lights with exactly that
 // distance (recursionDepth) to their parent. In case of too many delta 
 // light values for the full lighting depth at least the lighting of the
-// Segments () close to flickering lights will be computed properly.
+// Segments () close to variable lights will be computed properly.
 //------------------------------------------------------------------------
 
 void CMine::CalcDeltaLightData(double fLightScale, int force) 
@@ -863,7 +669,7 @@ fLightScale = 1.0; ///= 100.0;
 					 
 				}
 			if (!bCalcDeltas)
-				bCalcDeltas = IsFlickeringLight (nSourceSeg, nSourceSide);
+				bCalcDeltas = IsVariableLight (nSourceSeg, nSourceSide);
 			if (!bCalcDeltas) {
 				bool bb1 = IsBlastableLight (nTexture);
 				bool bb2 = IsBlastableLight (tmapnum2);
@@ -976,12 +782,12 @@ fLightScale = 1.0; ///= 100.0;
 						if (Walls (nWall)->m_info.type == WALL_OPEN) 
 							continue; // don't put light because there is no texture here
 						}
-					// don't affect non-flickering light emitting textures (e.g. lava)
+					// don't affect non-variable light emitting textures (e.g. lava)
 					nTexture = childSegP->m_sides [nChildSide].m_info.nBaseTex;
 					tmapnum2 = childSegP->m_sides [nChildSide].m_info.nOvlTex & 0x3fff;
 					if (m_nNoLightDeltas == 1) {
 						if (((IsLight (nTexture) >= 0) || (IsLight (tmapnum2) >= 0))
-							 && !IsFlickeringLight (nChildSeg, nChildSide))
+							 && !IsVariableLight (nChildSeg, nChildSide))
 							continue;
 						}
 					else if ((m_nNoLightDeltas == 2) && (IsLava (nTexture) || IsLava (tmapnum2)))
@@ -1111,7 +917,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion
 {
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
-	CSegment	*segP = Segments (nSegment);
+	CSegment	*segP = GetSegment (nSegment);
 	CSegment	*prevSeg = null;
 	bool			bMarkChildren = false;
 
@@ -1162,7 +968,7 @@ void CMine::SetSegmentChildNum (CSegment *pRoot, short nSegment, short recursion
 {
 	short			nSide, child, nImprove = 0;
 	ushort		nWall;
-	CSegment		*segP = Segments (nSegment);
+	CSegment		*segP = GetSegment (nSegment);
 	CSegment		*prevSeg = null;
 	bool			bMarkChildren = false;
 
@@ -1212,7 +1018,7 @@ bool CMine::CalcSideLights (int nSegment, int nSide,
 									 CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
 									 double* effect, double fLightScale, bool bIgnoreAngle)
 {
-	CSegment *segP = Segments (nSegment);
+	CSegment *segP = GetSegment (nSegment);
 // calculate vector between center of source segment and center of child
 CVertex center = CalcSideCenter (nSegment, nSide);
 CVertex A = vertex;
@@ -1263,10 +1069,10 @@ if (bUseTexColors && UseTexColors ()) {
 	//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
 		{	//always use a side color for transp. walls
 		CColor *pc;
-		short t = Segments (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
+		short t = GetSegment (i)->m_sides [j].m_info.nOvlTex & 0x3fff;
 		if ((t > 0) && (pc = GetTexColor (t)))
 			return pc;
-		if (pc = GetTexColor (Segments (i)->m_sides [j].m_info.nBaseTex, wallP && (wallP->m_info.type == WALL_TRANSPARENT)))
+		if (pc = GetTexColor (GetSegment (i)->m_sides [j].m_info.nBaseTex, wallP && (wallP->m_info.type == WALL_TRANSPARENT)))
 			return pc;
 		}
 	}	

@@ -220,15 +220,15 @@ public:
 //extern CLightDeltaValue CLightDeltaValues[MAX_LIGHT_DELTA_VALUES];
 //extern int	     Num_static_lights;
 
-typedef struct tFlickeringLight {
+typedef struct tVariableLight {
 	uint mask;    // bits with 1 = on, 0 = off
 	int timer;		 // always set to 0
 	int delay;      // time for each bit in mask (int seconds)
-} tFlickeringLight;
+} tVariableLight;
 
-class CFlickeringLight : public CSideKey {
+class CVariableLight : public CSideKey {
 public:
-	tFlickeringLight m_info;
+	tVariableLight m_info;
 
 	void Read (CFileManager& fp) {
 		CSideKey::Read (fp);
