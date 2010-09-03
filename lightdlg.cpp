@@ -123,7 +123,7 @@ UpdateData (TRUE);
 theMine->m_nNoLightDeltas = m_nNoLightDeltas;
 theMine->m_lightRenderDepth = m_lightRenderDepth;
 theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
-if (bAll = (theMine == null)->GotMarkedSides ())
+if (bAll = !segmentManager.HaveMarkedSides ())
 	INFOMSG (" light processing entire mine");
 undoManager.SetModified (TRUE);
 undoManager.Lock ();

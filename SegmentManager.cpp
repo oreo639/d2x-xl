@@ -753,7 +753,7 @@ pos /= 8.0;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::SideIsMarked (short nSegment, short nSide)
+bool CSegmentManager::IsMarked (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
 CSegment *segP = GetSegment (nSegment);
@@ -764,7 +764,9 @@ for (int i = 0; i < 4; i++) {
 return true;
 }
 
-bool CSegmentManager::SegmentIsMarked (short nSegment)
+// ----------------------------------------------------------------------------- 
+
+bool CSegmentManager::IsMarked (short nSegment)
 {
 CSegment *segP = GetSegment (nSegment);
 for (int i = 0;  i < 8; i++)
@@ -1753,7 +1755,7 @@ SetLinesToDraw();
 
 // ------------------------------------------------------------------------ 
 
-bool CSegmentManager::HaveMarkedSides ()
+bool CSegmentManager::HaveMarkedSides (void)
 {
 int	nSegment, nSide; 
 
@@ -1780,7 +1782,6 @@ return nCount;
 }
 
 // ------------------------------------------------------------------------ 
-
 
 int CSegmentManager::IsWall (short nSegment, short nSide)
 {

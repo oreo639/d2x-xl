@@ -93,10 +93,6 @@ class CSegmentManager {
 		bool Split (void);
 		bool Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin);
 		void CalcCenter (CVertex& pos, short nSegment);
-		void Mark (short nSegment);
-		void UpdateMarked (void);
-		bool IsMarked (short nSegment);
-		bool IsMarked (short nSegment, short nSide);
 
 		bool IsPointOfSide (CSegment *segP, int nSide, int nPoint);
 		bool IsLineOfSide (CSegment *segP, int nSide, int nLine);
@@ -116,9 +112,13 @@ class CSegmentManager {
 		void UpdateWall (short nOldWall, short nNewWall);
 		void UpdateVertex (short nOldVert, short nNewVert);
 
-		short	MarkedSegmentCount (bool bCheck = false);
-		bool GotMarkedSegments (void) { return MarkedSegmentCount (true) > 0; }
-		bool GotMarkedSides (void);
+		void Mark (short nSegment);
+		void UpdateMarked (void);
+		bool IsMarked (short nSegment);
+		bool IsMarked (short nSegment, short nSide);
+		short	MarkedCount (bool bCheck = false);
+		bool HaveMarkedSegments (void) { return MarkedCount (true) > 0; }
+		bool HaveMarkedSides (void);
 
 		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
 

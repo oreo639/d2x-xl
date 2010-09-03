@@ -202,10 +202,6 @@ public:
 	void Mark ();
 	void MarkAll ();
 	void UnmarkAll ();
-	void MarkSegment (short nSegment);
-	void UpdateMarkedCubes ();
-	bool SideIsMarked (short nSegment, short nSide);
-	bool SegmentIsMarked (short nSegment);
 
 	CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
 	CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
@@ -239,11 +235,6 @@ public:
 
 	void FixChildren();
 	void SetLinesToDraw ();
-
-	short	MarkedSegmentCount (bool bCheck = false);
-	bool	GotMarkedSegments (void)
-		{ return MarkedSegmentCount (true) > 0; }
-	bool GotMarkedSides ();
 
 	inline void SetSelectMode (short mode)
 		{ m_selectMode = mode; }

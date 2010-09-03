@@ -707,7 +707,7 @@ void CTextureTool::OnAlignStretch2Fit ()
 
 UpdateData (TRUE);
 undoManager.SetModified (TRUE);
-if ((theMine == null)->GotMarkedSides ()) {
+if (!segmentManager.HaveMarkedSides ()) {
 	for (i = 0; i < 4; i++) {
 		sideP->m_info.uvls [i].u = defaultUVLs [i].u / scale;
 		sideP->m_info.uvls [i].v = defaultUVLs [i].v / scale;

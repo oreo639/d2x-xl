@@ -27,7 +27,7 @@ return (byte) ((m_lightMap [nBaseTex] - 1) / 0x0200L);
 
 //--------------------------------------------------------------------------
 
-void LightManager::ScaleCornerLight (double fLight, bool bAll) 
+void CLightManager::ScaleCornerLight (double fLight, bool bAll) 
 {
 	int segNum, segCount = SegCount ();
 	double scale;
@@ -62,7 +62,7 @@ typedef struct tAvgCornerLight {
 	byte		count;
 } tAvgCornerLight;
 
-void LightManager::CalcAverageCornerLight (bool bAll)
+void CLightManager::CalcAverageCornerLight (bool bAll)
 {
   short nSegment, segCount = segmentManager.Count (), wallCount = wallManager.Count ();
   tAvgCornerLight* maxBrightness = new tAvgCornerLight [vertexManager.Count ()];
@@ -113,12 +113,12 @@ delete[] maxBrightness;
 
 //--------------------------------------------------------------------------
 
-void CMine::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
+void CLightManager::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
 	int			nSegment;
 	int			nTexture;
 	int			nSide;
-	uint		brightness;
+	uint			brightness;
 	CSegment*	segP;
 	CSide*		sideP;
 

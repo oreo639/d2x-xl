@@ -946,7 +946,7 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false,
-					bAll = (theMine == null)->GotMarkedSides ();
+					bAll = !segmentManager.HaveMarkedSides ();
 
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
@@ -990,7 +990,7 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSegment	*segP = theMine->Segments (0);
 	CSide		*sideP;
 	bool			bChange = false,
-					bAll = (theMine == null)->GotMarkedSides ();
+					bAll = !segmentManager.HaveMarkedSides ();
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
