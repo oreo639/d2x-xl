@@ -178,7 +178,7 @@ public:
 		Clear ();
 		m_info.nSegment = nSegment;
 		m_info.objFlags [0] = nFlags;
-		nFuelCen = nIndex;
+		m_info.nFuelCen = nIndex;
 		};
 };
 

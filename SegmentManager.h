@@ -178,10 +178,11 @@ class CSegmentManager {
 		void LinkSeg (CSegment *segP, CSegment *rootSegP);
 		void DeleteWalls (short nSegment);
 
-		bool CSegmentManager::Add (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null);
-
-
-		};
+		bool Add (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null);
+		bool SetDefaultTexture (short nTexture);
+		bool Define (short nSegment, byte type, short nTexture);
+		void Undefine (short nSegment);
+	};
 
 extern CSegmentManager segmentManager;
 

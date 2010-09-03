@@ -28,6 +28,7 @@ if (Count () >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
+return true;
 }
 
 //------------------------------------------------------------------------------
@@ -183,9 +184,8 @@ undoManager.Lock ();
 // add a door to the current segment/side
 if (Add (current.m_nSegment, current.m_nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
-	short nOppSeg, nOppSide;
-	if (segmentManager.GetOppositeSide (current, nOppSeg, nOppSide) &&
-		 Add (nOppSeg, nOppSide, type, flags, keys, nClip, nTexture)) {
+	CSideKey opp;
+	if (segmentManager.GetOppositeSide (opp) && Add (opp, type, flags, keys, nClip, nTexture)) {
 		undoManager.Unlock ();
 		//DLE.MineView ()->Refresh ();
 		return true;
@@ -292,7 +292,6 @@ return AddExit (TT_EXIT);
 
 bool CWallManager::AddExit (short type) 
 {
-
 if (!triggerManager.HaveResources ())
 	return false;
 // make a new wall and a new trigger
@@ -302,14 +301,13 @@ if (Add (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_N
 // set clip number and texture
 	GetWall (Count ()- 1)->m_info.nClip = 10;
 	segmentManager.SetTextures (current.m_nSegment, current.m_nSide, 0, theMine->IsD1File () ? 444 : 508);
-	AddTrigger (Count () - 1, type);
+	triggerManager.Add (Count () - 1, type);
 // add a new wall and trigger to the opposite segment/side
-	short nOppSeg, nOppSide;
-	if (segmentManager.GetOppositeSide (current, nOppSeg, nOppSide) &&
-		Add (nOppSeg, nOppSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+	CSideKey opp;
+	if (segmentManager.GetOppositeSide (opp) && Add (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
 		GetWall (Count () - 1)->m_info.nClip = 10;
-		segmentManager.SetTextures (nOppSeg, nOppSide, 0, theMine->IsD1File () ? 444 : 508);
+		segmentManager.SetTextures (opp.m_nSegment, opp.m_nSide, 0, theMine->IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();
 		//DLE.MineView ()->Refresh ();
@@ -331,21 +329,21 @@ if (theMine->IsD1File ()) {
 if (!triggerManager.HaveResources ())
 	return false;
 
-int lastSegment = current.m_nSegment;
+int nLastSeg = current.m_nSegment;
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (!segmentManager.Add ()) {
 	undoManager.ResetModified (bUndo);
 	return false;
 	}
-int newSegment = current.m_nSegment;
-current.m_nSegment = lastSegment;
+int nNewSeg = current.m_nSegment;
+current.m_nSegment = nLastSeg;
 if (Add (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	triggerManager.Add (Count () - 1, TT_SECRET_EXIT);
 	theMine->SecretSegment () = current.m_nSegment;
-	SetDefaultTexture (426, -1);
-	current.m_nSegment = newSegment;
-	SetDefaultTexture (426, -1);
+	segmentManager.SetDefaultTexture (426, -1);
+	current.m_nSegment = nNewSeg;
+	segmentManager.SetDefaultTexture (426, -1);
 	//DLE.MineView ()->Refresh ();
 	undoManager.Unlock ();
 	return true;
@@ -356,25 +354,28 @@ return false;
 
 // ----------------------------------------------------------------------------- 
 
-void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CWallManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
-for (int = 0; i < Count (); i++)
-	m_walls [i].Read (fp, info, nFileVersion);
+Count () = info.count;
+for (int i = 0; i < Count (); i++)
+	m_walls [i].Read (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CWallManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
-for (int = 0; i < Count (); i++)
-	m_walls [i].Write (fp, info, nFileVersion);
+info.count = Count ();
+info.offset = fp.Tell ();
+for (int i = 0; i < Count (); i++)
+	m_walls [i].Write (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void Clear (void)
+void CWallManager::Clear (void)
 {
-for (int = 0; i < Count (); i++)
+for (int i = 0; i < Count (); i++)
 	m_walls [i].Clear ();
 }
 
