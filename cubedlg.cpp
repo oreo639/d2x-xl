@@ -339,7 +339,7 @@ if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetChe
 // CSegmentTool - RefreshData
 //------------------------------------------------------------------------
 
-void CSegmentTool::Refresh () 
+void CSegmentTool::Refresh (void) 
 {
 if (!(m_bInited && theMine))
 	return;

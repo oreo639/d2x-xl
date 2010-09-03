@@ -2039,7 +2039,7 @@ for (i = 0, segP = GetSegment (0); i < Count (); i++, segP++)
 		segP->m_info.value = value++; 
 }
 
-                        /* -------------------------- */
+// -----------------------------------------------------------------------------
 
 void CSegmentManager::RenumberEquipGens (void) 
 {

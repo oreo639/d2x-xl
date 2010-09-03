@@ -81,6 +81,28 @@ SortObjTriggers ();
 
 //------------------------------------------------------------------------------
 
+void CMine::RenumberTargetObjs (void)
+{
+	CTrigger* trigP = GetTrigger (0);
+
+for (int i = Count (); i; i--, trigP++) {
+	CSideKey* targetP = trigP->m_targets;
+	for (int j = 0; j < trigP->m_count; ) {
+		if (targetP->m_nSide >= 0) 
+			targetP++;
+		else {
+			CGameObject* objP = objectManager.FindBySig (targetP->m_nSegment);
+			if (objP != null)
+				(targetP++)->m_nSegment = objectManager.Index (objP);
+			else 
+				trigP->Delete (j);
+			}
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
 CTrigger* CTriggerManager::AddToWall (short nWall, short type, bool bAddWall) 
 {
 	static short defWallTypes [NUM_TRIGGER_TYPES] = {

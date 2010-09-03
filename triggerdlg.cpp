@@ -850,7 +850,7 @@ if (FindTarget (nSegment, nSide) > -1) {
 	return;
 	}
 undoManager.SetModified (true);
-m_pTrigger->Add (nSegment, nSide + 1);
+m_pTrigger->Add (nSegment, nSide - 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_targets++);
