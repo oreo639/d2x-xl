@@ -524,7 +524,7 @@ else {
       for (nSide = 0; nSide < 6; nSide++) {
 			ushort nWall = segP->m_sides [nSide].m_info.nWall;
 			if ((segP->GetChild (nSide) == -1) ||
-				 (nWall < theMine->MineInfo ().walls.count && 
+				 (nWall < theMine->Info ().walls.count && 
 				  theMine->Walls (nWall)->m_info.type != WALL_OPEN)) {
 				int t = segP->m_sides [nSide].m_info.nBaseTex;
 				int i = TextureIndex (t);

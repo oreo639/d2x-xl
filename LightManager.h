@@ -113,9 +113,24 @@ typedef CVariableLight variableLightList [MAX_VARIABLE_LIGHTS];
 
 class CLightManager {
 	public:
+		variableLightList		variableLights;
+		short						m_nCount;
+		lightDeltaIndexList	lightDeltaIndices;
+		lightDeltaValueList	lightDeltaValues;
+
 		inline lightDeltaIndexList& LightDeltaIndex (void) { return m_lightDeltaIndices; }
+
 		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
+
 		inline variableLightList& VariableLights (void) { return m_variableLights; }
+
+		inline CLightDeltaIndex* GetLightDeltaIndex (int i) { return MineData ().lightDeltaIndices + i; }
+
+		inline CLightDeltaValue* GetLightDeltaValues (int i) { return MineData ().lightDeltaValues + i; }
+
+		inline CVariableLight* GetVariableLights (int i) { return MineData ().variableLights + i; }
+};
+
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

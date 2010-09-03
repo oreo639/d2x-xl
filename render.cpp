@@ -35,7 +35,7 @@ void TextureMap (CSegment *segP, short nSide,
 	CDoubleMatrix A, IA, B, UV;
 	//double A [3][3], IA [3][3], B [3][3], UV [3][3]; // transformation matrices
 	CUVL *uvls;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->MineInfo ().fileInfo.version >= 34);
+	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	
 	// TEMPORARY
 	CSideKey face (short (segP - theMine->Segments (0)), nSide);
@@ -101,7 +101,7 @@ for (i = 0; i < 4; i++) {
 	// first make sure we have allocated space for delta lights
 if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
-	int dlIdxCount = theMine->MineInfo ().lightDeltaIndices.count;
+	int dlIdxCount = theMine->Info ().lightDeltaIndices.count;
 	CLightDeltaValue* lightDeltaValues;
 	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
 		 (lightDeltaIndices = theMine->LightDeltaIndex (0)) &&

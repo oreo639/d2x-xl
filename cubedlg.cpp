@@ -212,7 +212,7 @@ bool CSegmentTool::IsBotMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < theMine->MineInfo ().botgen.count);
+	(segP->m_info.nMatCen < theMine->Info ().botgen.count);
 }
 
                         /*--------------------------*/
@@ -222,7 +222,7 @@ bool CSegmentTool::IsEquipMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < theMine->MineInfo ().equipgen.count);
+	(segP->m_info.nMatCen < theMine->Info ().equipgen.count);
 }
 
                         /*--------------------------*/
@@ -370,17 +370,17 @@ OnResetCoord ();
 LBTriggers()->ResetContent();
 CTrigger *trigP = theMine->Triggers (0);
 int nTrigger;
-for (nTrigger = 0; nTrigger < theMine->MineInfo ().triggers.count; nTrigger++, trigP++) {
+for (nTrigger = 0; nTrigger < theMine->Info ().triggers.count; nTrigger++, trigP++) {
 	for (i = 0; i < trigP->m_count; i++) {
 		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
 			CWall *wallP = theMine->Walls (0);
 			int nWall;
-			for (nWall = 0; nWall < theMine->MineInfo ().walls.count ;nWall++, wallP++) {
+			for (nWall = 0; nWall < theMine->Info ().walls.count ;nWall++, wallP++) {
 				if (wallP->m_info.nTrigger == nTrigger) 
 					break;
 				}
-			if (nWall < theMine->MineInfo ().walls.count) {
+			if (nWall < theMine->Info ().walls.count) {
 				sprintf_s (message, sizeof (message),  "%d,%d", (int) wallP->m_nSegment, (int) wallP->m_nSide + 1);
 				int h = LBTriggers ()->AddString (message);
 				LBTriggers ()->SetItemData (h, (int) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
@@ -700,12 +700,12 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 #else
 	if (m_nType == SEGMENT_FUNC_ROBOTMAKER) {
 		// remove matcen
-		int nMatCens = (int) theMine->MineInfo ().matcen.count;
+		int nMatCens = (int) theMine->Info ().matcen.count;
 		if (nMatCens > 0) {
 			// fill in deleted matcen
 			int nDelMatCen = theMine->current.Segment ()->value;
 			memcpy (theMine->BotGens (nDelMatCen), theMine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
-			theMine->MineInfo ().matcen.count--;
+			theMine->Info ().matcen.count--;
 			int i;
 			for (i = 0; i < 6; i++)
 				theMine->DeleteTriggerTargets (m_nSegment, i);

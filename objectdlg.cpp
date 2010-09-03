@@ -451,7 +451,7 @@ CStringResource res;
 CBObjNo ()->ResetContent ();
 CGameObject *objP = theMine->Objects (0);
 int i;
-for (i = 0; i < theMine->MineInfo ().objects.count; i++, objP++) {
+for (i = 0; i < theMine->Info ().objects.count; i++, objP++) {
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT: /* an evil enemy */
 			res.Load (ROBOT_STRING_TABLE + objP->m_info.id);
@@ -496,7 +496,7 @@ for (i = 0; i < theMine->MineInfo ().objects.count; i++, objP++) {
 	CBObjNo ()->AddString (message);
 	}
 // add secret object to list
-for (i = 0; i < theMine->MineInfo ().triggers.count; i++)
+for (i = 0; i < theMine->Info ().triggers.count; i++)
 	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
 		CBObjNo ()->AddString ("secret object");
 		break;
@@ -506,7 +506,7 @@ CBObjNo ()->SetCurSel (current.m_nObject);
 
 // if secret object, disable everything but the "move" button
 // and the object list, then return
-if (current.m_nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->Info ().objects.count) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
@@ -526,7 +526,7 @@ if (current.m_nObject == theMine->MineInfo ().objects.count) {
 		m_showObjWnd.GetClientRect (rc);
 		pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 		m_showObjWnd.ReleaseDC (pDC);
-		CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->MineInfo ().objects.count > 0);
+		CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->Info ().objects.count > 0);
 		UpdateData (FALSE);
 		}
 	return;
@@ -595,7 +595,7 @@ RefreshRobot ();
 UpdateSliders ();
 DrawObjectImages ();
 SetTextureOverride ();
-CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->MineInfo ().objects.count > 0);
+CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->Info ().objects.count > 0);
 UpdateData (FALSE);
 DLE.MineView ()->Refresh (FALSE);
 }
@@ -1010,12 +1010,12 @@ SetTextureOverride ();
 
 void CObjectTool::OnAdd () 
 {
-if (current.m_nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->Info ().objects.count) {
 	ErrorMsg ("Cannot add another secret return.");
 	return;
  }
 
-if (theMine->MineInfo ().objects.count >= MAX_OBJECTS) {
+if (theMine->Info ().objects.count >= MAX_OBJECTS) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return;
 	}
@@ -1029,11 +1029,11 @@ Refresh ();
 
 void CObjectTool::OnDelete ()
 {
-if (current.m_nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->Info ().objects.count) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-if (theMine->MineInfo ().objects.count == 1) {
+if (theMine->Info ().objects.count == 1) {
 	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
@@ -1059,7 +1059,7 @@ int nId = objP->m_info.id;
 objP = theMine->Objects (0);
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 int nDeleted = 0;
-for (int h = theMine->MineInfo ().objects.count, i = 0; i < h; ) {
+for (int h = theMine->Info ().objects.count, i = 0; i < h; ) {
 	if ((objP->m_info.type == nType) && (objP->m_info.id == nId) && (bAll || (theMine->Segments (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
 		theMine->DeleteObject (i);
 		nDeleted++;
@@ -1088,7 +1088,7 @@ CDoubleMatrix* orient;
 
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
-if (current.m_nObject == theMine->MineInfo ().objects.count) {
+if (current.m_nObject == theMine->Info ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
@@ -1121,14 +1121,14 @@ if (QueryMsg ("Are you sure you want to move the\n"
 	return;
 #endif
 undoManager.SetModified (TRUE);
-if (current.m_nObject == theMine->MineInfo ().objects.count)
+if (current.m_nObject == theMine->Info ().objects.count)
 	theMine->SecretCubeNum () = current.m_nSegment;
 else {
 	CGameObject *objP = theMine->CurrObj ();
 	theMine->CalcSegCenter (objP->m_location.pos, current.m_nSegment);
 	// bump position over if this is not the first object in the cube
 	int i, count = 0;
-	for (i = 0; i < theMine->MineInfo ().objects.count;i++)
+	for (i = 0; i < theMine->Info ().objects.count;i++)
 		if (theMine->Objects (i)->m_info.nSegment == current.m_nSegment)
 			count++;
 	objP->m_location.pos.v.y += count * 2 * F1_0;
@@ -1241,7 +1241,7 @@ int CObjectTool::GetObjectsOfAKind (int nType, CGameObject *objList [])
 	int i, nObjects = 0;
 	CGameObject *objP;
 
-for (i = theMine->MineInfo ().objects.count, objP = theMine->Objects (0); i; i--, objP++)
+for (i = theMine->Info ().objects.count, objP = theMine->Objects (0); i; i--, objP++)
 	if (objP->m_info.type == nType)
 		objList [nObjects++] = objP;
 return nObjects;
@@ -1677,7 +1677,7 @@ if (nId < 0)
 int nCount = 0;
 CGameObject *objP = theMine->Objects (0);
 int i;
-for (i = theMine->MineInfo ().objects.count; i; i--, objP++)
+for (i = theMine->Info ().objects.count; i; i--, objP++)
 	if ((objP->m_info.type == nType) && ((objP->m_info.type == OBJ_PLAYER) || (objP->m_info.type == OBJ_COOP) || (objP->m_info.id == nId))) 
 		nCount++;
 return nCount;

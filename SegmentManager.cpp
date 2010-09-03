@@ -23,10 +23,10 @@ CSegmentManager segmentManager;
 
 // -----------------------------------------------------------------------------
 
-CWall* CSegmentManager::Wall (short nSegment, short nSide)
+CWall* CSegmentManager::GetWall (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
-return wallManager.Walls (GetSegment (nSegment)->m_sides [nSide].m_info.nWall);
+return wallManager.GetWall (GetSegment (nSegment)->m_sides [nSide].m_info.nWall);
 }
 
 // -----------------------------------------------------------------------------
@@ -43,11 +43,12 @@ CDoubleVector CSegmentManager::CalcSideNormal (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
 
-	short* segVertP = GetSegment (nSegment)->m_info.verts;
-	byte*	sideVertP = &sideVertTable [nSide][0];
-	CDoubleVector	v;
+short* segVertP = GetSegment (nSegment)->m_info.verts;
+byte*	sideVertP = &sideVertTable [nSide][0];
 
-return -Normal (*Vertices (segVertP [sideVertP [0]]), *Vertices (segVertP [sideVertP [1]]), *Vertices (segVertP [sideVertP [3]]));
+return -Normal (*vertexManager.GetVertex (segVertP [sideVertP [0]]), 
+					 *vertexManager.GetVertex (segVertP [sideVertP [1]]), 
+					 *vertexManager.GetVertex (segVertP [sideVertP [3]]));
 }
 
 // -----------------------------------------------------------------------------
@@ -61,7 +62,7 @@ current.Get (nSegment, nSide);
 	CDoubleVector	v;
 
 for (int i = 0; i < 4; i++)
-	v += *Vertices (segVertP [sideVertP [i]]);
+	v += *vertexManager.GetVertex (segVertP [sideVertP [i]]);
 v /= 4.0;
 return v;
 }
@@ -76,25 +77,15 @@ for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 	wallManager.Delete (sideP [i].m_info.nWall);
 }
 
-// -----------------------------------------------------------------------------
-
-void CSegmentManager::UpdateWalls (short nOldWall, short nNewWall)
-{
-	CSegment* segP = m_segments;
-
-for (int i = 0; i < m_nSegments; i++, segP++) {
-	CSide* sideP = segP->m_sides;
-	for (int j = 0; j < 6; 
-}
-
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
 {
-CSegment *segP = Segments (0);
+CSegment *segP = GetSegment (0);
+
 for (nSegment = Count (); nSegment; nSegment--, segP++) {
+	short* vertP = segP->m_info.verts;
 	for (nVertex = 0; nVertex < 8; nVertex++) {
-		short* vertP = segP->m_info.verts;
 		if (vertP [nVertex] == nOldVert)
 			vertP [nVertex] == nNewVert;
 		}
@@ -121,7 +112,7 @@ if (nDelSeg < 0 || nDelSeg >= Count ())
 
 undoManager.SetModified (TRUE);
 undoManager.Lock ();
-delSegP = Segments (nDelSeg); 
+delSegP = GetSegment (nDelSeg); 
 UndefineSegment (nDelSeg);
 
 // delete any variable lights that use this segment
@@ -129,16 +120,16 @@ for (int nSide = 0; nSide < 6; nSide++) {
 	triggerManager.DeleteTargets (nDelSeg, nSide); 
 	short index = GetVariableLight (nDelSeg, nSide); 
 	if (index != -1) {
-		FlickerLightCount ()--; 
+		lightManager.Count ()--; 
 		// put last light in place of deleted light
-		memcpy(VariableLights (index), VariableLights (FlickerLightCount ()), sizeof (CVariableLight)); 
+		memcpy(VariableLights (index), VariableLights (lightManager.Count ()), sizeof (CVariableLight)); 
 		}
 	}
 
 	// delete any Walls () within segment (if defined)
 DeleteWalls (nDelSeg); 
 
-// delete any Walls () on child Segments () that connect to this segment
+// delete any Walls () on child GetSegment () that connect to this segment
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	child = delSegP->GetChild (i); 
 	if (child >= 0 && child < Count ()) {
@@ -180,7 +171,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
-	for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++) {
+	for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++) {
 		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 			if (segP->GetChild (child) == nDelSeg) {
 
@@ -206,21 +197,21 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		}
 	}
 
-	// move other Segments () to deleted segment location
+	// move other GetSegment () to deleted segment location
 	if (nDelSeg != Count ()-1) { // if this is not the last segment
 
 		// mark each segment with it's real number
 		real_segnum = 0; 
-		for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
+		for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++)
 			if(nDelSeg != nSegment)
 				segP->m_info.nIndex = real_segnum++; 
 
 		// replace all children with real numbers
-		for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++) {
+		for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++) {
 			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
 				if (segP->m_info.childFlags & (1 << child)
 					&& segP->GetChild (child) >= 0 && segP->GetChild (child) < Count ()) { // debug int
-					childSegP = Segments (segP->GetChild (child)); 
+					childSegP = GetSegment (segP->GetChild (child)); 
 					segP->SetChild (child, childSegP->m_info.nIndex); 
 				}
 			}
@@ -298,7 +289,7 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		}
 
 		// replace variable light segP numbers with real numbers
-		for (i = 0; i < FlickerLightCount (); i++) {
+		for (i = 0; i < lightManager.Count (); i++) {
 			if (Count () > (nSegment = VariableLights (i)->m_nSegment))
 				VariableLights (i)->m_nSegment = GetSegment (nSegment)->m_info.nIndex; 
 			else 
@@ -311,17 +302,17 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		else
 			SecretCubeNum () = 0; // int secret cube number
 
-		// move remaining Segments () down by 1
+		// move remaining GetSegment () down by 1
   }
 #if 1
 		if (int segC = (--Count () - nDelSeg)) {
-			memcpy (Segments (nDelSeg), Segments (nDelSeg + 1), segC * sizeof (CSegment));
+			memcpy (GetSegment (nDelSeg), GetSegment (nDelSeg + 1), segC * sizeof (CSegment));
 			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CColor));
 			}
 #else
 		for (nSegment = nDelSeg; nSegment < (Count ()-1); nSegment++) {
 			segP = GetSegment (nSegment); 
-			childSegP = Segments (nSegment + 1); 
+			childSegP = GetSegment (nSegment + 1); 
 			memcpy(segP, childSegP, sizeof (CSegment)); 
 			}
   Count ()-- ; 
@@ -347,7 +338,7 @@ undoManager.Unlock ();
 //	AddSegment()
 //
 //  ACTION - Add new segment at the end. solidifyally joins to adjacent
-//           Segments () if sides are identical.  Uses other current cube for
+//           GetSegment () if sides are identical.  Uses other current cube for
 //           textures.
 //
 //  Returns - TRUE on success
@@ -380,7 +371,7 @@ if (m_bSplineActive) {
 	return FALSE; 
 	}
 
-curSegP = Segments (current.m_nSegment); 
+curSegP = GetSegment (current.m_nSegment); 
 
 if (Count () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
@@ -405,7 +396,7 @@ newVerts [3] = newVerts [0] + 3;
 
 // get new segment
 nNewSeg = Count (); 
-newSegP = Segments (nNewSeg); 
+newSegP = GetSegment (nNewSeg); 
 
 // define vertices
 DefineVertices (newVerts); 
@@ -450,9 +441,9 @@ newSegP->m_info.staticLight = curSegP->m_info.staticLight;
 // delete variable light if it exists
 short index = GetVariableLight (current.m_nSegment, ncurrent.Side); 
 if (index != -1) {
-	FlickerLightCount ()--; 
+	lightManager.Count ()--; 
 	// put last light in place of deleted light
-	memcpy( VariableLights (index), VariableLights (FlickerLightCount ()), sizeof (CVariableLight)); 
+	memcpy( VariableLights (index), VariableLights (lightManager.Count ()), sizeof (CVariableLight)); 
 	}
 
 // update current segment
@@ -461,19 +452,19 @@ curSegP->m_sides [ncurrent.Side].m_info.nBaseTex = 0;
 curSegP->m_sides [ncurrent.Side].m_info.nOvlTex = 0; 
 memset (curSegP->m_sides [ncurrent.Side].m_info.uvls, 0, sizeof (curSegP->m_sides [ncurrent.Side].m_info.uvls));
  
-// update number of Segments () and vertices and clear vertexStatus
+// update number of GetSegment () and vertices and clear vertexStatus
 Count ()++;
 for (int i = 0; i < 4; i++)
-	Vertices (VertCount ()++)->m_status = 0;
+	vertexManager.GetVertex (VertCount ()++)->m_status = 0;
 
-// link the new segment with any touching Segments ()
-CVertex *vNewSeg = Vertices (newSegP->m_info.verts [0]);
+// link the new segment with any touching GetSegment ()
+CVertex *vNewSeg = vertexManager.GetVertex (newSegP->m_info.verts [0]);
 CVertex *vSeg;
 for (nSegment = 0; nSegment < Count (); nSegment++) {
 	if (nSegment != nNewSeg) {
-		// first check to see if Segments () are any where near each other
+		// first check to see if GetSegment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (GetSegment (nSegment)->m_info.verts [0]);
+		vSeg = vertexManager.GetVertex (GetSegment (nSegment)->m_info.verts [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
@@ -512,7 +503,7 @@ void CSegmentManager::DefineVertices (short newVerts [4])
 	short				i, points [4]; 
 	CDoubleVector	center, oppCenter, newCenter, orthog; 
 
-curSegP = Segments (current.m_nSegment); 
+curSegP = GetSegment (current.m_nSegment); 
 for (i = 0; i < 4; i++)
 	points [i] = CURRENT_POINT(i);
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
@@ -531,9 +522,9 @@ switch (m_nAddMode) {
 		newCenter = center + orthog; 
 		// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 		// point 0
-		a = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
+		a = orthog + *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
 		// point 1
-		b = orthog + *Vertices (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
+		b = orthog + *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
 		// center
 		c = Average (a, b);
 		// vector from center to point0 and its length
@@ -561,7 +552,7 @@ switch (m_nAddMode) {
 		for (i = 0; i < 4; i++) {
 			//nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]; 
 			nVertex = newVerts [i];
-			*Vertices (nVertex) = A [i]; 
+			*vertexManager.GetVertex (nVertex) = A [i]; 
 			}
 		}
 	break; 
@@ -576,9 +567,9 @@ switch (m_nAddMode) {
 		orthog *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			CDoubleVector v = *Vertices (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]);
+			CDoubleVector v = *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]);
 			v += orthog;
-			*Vertices (newVerts [i]) = v; 
+			*vertexManager.GetVertex (newVerts [i]) = v; 
 			}
 		}
 	break; 
@@ -589,8 +580,8 @@ switch (m_nAddMode) {
 		// copy side's four points into A
 		short nSide = current.m_nSide;
 		for (i = 0; i < 4; i++) {
-			A [i] = *Vertices (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
-			A [i + 4] = *Vertices (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
+			A [i] = *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
+			A [i + 4] = *vertexManager.GetVertex (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
 			}
 
 		// subtract point 0 from all points in A to form B points
@@ -635,10 +626,10 @@ switch (m_nAddMode) {
 		// and translate back
 		nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][0]]; 
 		for (i = 4; i < 8; i++) 
-			A [i] = B [i] + *Vertices (nVertex); 
+			A [i] = B [i] + *vertexManager.GetVertex (nVertex); 
 
 		for (i = 0; i < 4; i++)
-			*Vertices (newVerts [i]) = A [i + 4]; 
+			*vertexManager.GetVertex (newVerts [i]) = A [i + 4]; 
 		}
 	}
 }
@@ -646,12 +637,12 @@ switch (m_nAddMode) {
 // ----------------------------------------------------------------------------- 
 // LinkSegments()
 //
-//  Action - checks 2 Segments () and 2 sides to see if the vertices are identical
+//  Action - checks 2 GetSegment () and 2 sides to see if the vertices are identical
 //           If they are, then the segment sides are linked and the vertices
 //           are removed (nSide1 is the extra side).
 //
 //  Change - no longer links if segment already has a child
-//           no longer links Segments () if vert numbers are not in the right order
+//           no longer links GetSegment () if vert numbers are not in the right order
 //
 // ----------------------------------------------------------------------------- 
 
@@ -663,8 +654,8 @@ bool CSegmentManager::Link (short nSegment1, short nSide1, short nSegment2, shor
 	short			fail;
 	tVertMatch	match [4]; 
 
-	seg1 = Segments (nSegment1); 
-	seg2 = Segments (nSegment2); 
+	seg1 = GetSegment (nSegment1); 
+	seg2 = GetSegment (nSegment2); 
 
 // don't link to a segment which already has a child
 if (seg1->GetChild (nSide1) !=-1 || seg2->GetChild (nSide2) != -1)
@@ -672,8 +663,8 @@ if (seg1->GetChild (nSide1) !=-1 || seg2->GetChild (nSide2) != -1)
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
-	v1 [i] = *Vertices (seg1->m_info.verts [sideVertTable [nSide1][i]]);
-	v2 [i] = *Vertices (seg2->m_info.verts [sideVertTable [nSide2][i]]);
+	v1 [i] = *vertexManager.GetVertex (seg1->m_info.verts [sideVertTable [nSide1][i]]);
+	v2 [i] = *vertexManager.GetVertex (seg2->m_info.verts [sideVertTable [nSide2][i]]);
 	match [i].i = -1; 
 }
 
@@ -709,8 +700,8 @@ return TRUE;
 
 void CSegmentManager::LinkSides (short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match [4]) 
 {
-	CSegment*	seg1 = Segments (nSegment1); 
-	CSegment*	seg2 = Segments (nSegment2); 
+	CSegment*	seg1 = GetSegment (nSegment1); 
+	CSegment*	seg2 = GetSegment (nSegment2); 
 	short			nSegment, nVertex, oldVertex, newVertex; 
 	int			i; 
 
@@ -733,9 +724,9 @@ for (i = 0; i < 4; i++) {
 	// if either vert was marked, then mark the new vert
 	VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
 
-	// update all Segments () that use this vertex
+	// update all GetSegment () that use this vertex
 	if (oldVertex != newVertex) {
-		CSegment *segP = Segments (0);
+		CSegment *segP = GetSegment (0);
 		for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				if (segP->m_info.verts [nVertex] == oldVertex)
@@ -756,7 +747,7 @@ void CSegmentManager::CalcSegCenter (CVertex& pos, short nSegment)
   
 pos.Clear ();
 for (int i = 0; i < 8; i++)
-	pos += *Vertices (nVerts [i]);
+	pos += *vertexManager.GetVertex (nVerts [i]);
 pos /= 8.0;
 }
 
@@ -800,8 +791,8 @@ segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 short nVertex; 
 for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	VertStatus (nVertex) &= ~MARKED_MASK; 
-// ..then mark all verts for marked Segments ()
-for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
+// ..then mark all verts for marked GetSegment ()
+for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		for (nVertex = 0; nVertex < 8; nVertex++)
 			VertStatus (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
@@ -813,7 +804,7 @@ for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
 
 void CSegmentManager::UpdateMarked (void)
 {
-	CSegment *segP = Segments (0); 
+	CSegment *segP = GetSegment (0); 
 	int i; 
 // mark all cubes which have all 8 verts marked
 for (int i = 0; i < Count (); i++, segP++)
@@ -853,7 +844,7 @@ void CSegmentManager::UnmarkAll (void)
 {
 	short i; 
 
-CSegment *segP = Segments (0);
+CSegment *segP = GetSegment (0);
 for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 	segP->m_info.wallFlags &= ~MARKED_MASK; 
 byte& stat = VertStatus ();
@@ -901,7 +892,7 @@ undoManager.Unlock ();
 
 void CSegmentManager::UnlinkChild (short nParentSeg, short nSide) 
 {
-  CSegment *parentSegP = Segments (nParentSeg); 
+  CSegment *parentSegP = GetSegment (nParentSeg); 
 
 // loop on each side of the parent
 //	int nSide;
@@ -910,7 +901,7 @@ int nChildSeg = parentSegP->GetChild (nSide);
 // does this side have a child?
 if (nChildSeg < 0 || nChildSeg >= Count ())
 	return;
-CSegment *child_seg = Segments (nChildSeg); 
+CSegment *child_seg = GetSegment (nChildSeg); 
 // yes, see if child has a side which points to the parent
 int nChildSide;
 for (nChildSide = 0; nChildSide < 6; nChildSide++)
@@ -997,12 +988,12 @@ if (VertCount () > (MAX_VERTICES - 1)) {
 	return; 
 	}
 
-segP = Segments (current.m_nSegment); 
+segP = GetSegment (current.m_nSegment); 
 vert = segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 found = FALSE; 
-segP = Segments (0);
+segP = GetSegment (0);
 for (nSegment = 0; (nSegment < Count ()) && !found; nSegment++, segP++)
 	if (nSegment != current.m_nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
@@ -1021,14 +1012,14 @@ if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES)
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
 // create a new point (copy of other vertex)
-memcpy (Vertices (VertCount ()), Vertices (vert), sizeof (*Vertices (0)));
+memcpy (vertexManager.GetVertex (VertCount ()), vertexManager.GetVertex (vert), sizeof (*vertexManager.GetVertex (0)));
 /*
-Vertices (VertCount ()).x = Vertices (vert).x; 
-Vertices (VertCount ()).y = Vertices (vert).y; 
-Vertices (VertCount ()).z = Vertices (vert).z; 
+vertexManager.GetVertex (VertCount ()).x = vertexManager.GetVertex (vert).x; 
+vertexManager.GetVertex (VertCount ()).y = vertexManager.GetVertex (vert).y; 
+vertexManager.GetVertex (VertCount ()).z = vertexManager.GetVertex (vert).z; 
 */
 // replace existing point with new point
-segP = Segments (current.m_nSegment); 
+segP = GetSegment (current.m_nSegment); 
 segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]] = VertCount (); 
 segP->m_info.wallFlags &= ~MARKED_MASK; 
 
@@ -1074,13 +1065,13 @@ if (VertCount () > (MAX_VERTICES - 2)) {
 	return; 
 	}
 
-segP = Segments (current.m_nSegment); 
+segP = GetSegment (current.m_nSegment); 
 for (i = 0; i < 2; i++) {
 	nLine = sideLineTable [current.m_nSide][current.m_nLine]; 
-	vert [i] = Segments (current.m_nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
+	vert [i] = GetSegment (current.m_nSegment)->m_info.verts [lineVertTable [nLine][i]]; 
 	// check to see if current points are shared by any other cubes
 	found [i] = FALSE; 
-	segP = Segments (0);
+	segP = GetSegment (0);
 	for (nSegment = 0; (nSegment < Count ()) && !found [i]; nSegment++, segP++) {
 		if (nSegment != current.m_nSegment) {
 			for (nVertex = 0; nVertex < 8; nVertex++) {
@@ -1102,11 +1093,11 @@ if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
-segP = Segments (current.m_nSegment); 
+segP = GetSegment (current.m_nSegment); 
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (found [i]) {
-		memcpy (Vertices (VertCount ()), Vertices (vert [i]), sizeof (*Vertices (0)));
+		memcpy (vertexManager.GetVertex (VertCount ()), vertexManager.GetVertex (vert [i]), sizeof (*vertexManager.GetVertex (0)));
 		/*
 		vertices [VertCount ()].x = vertices [vert [i]].x; 
 		vertices [VertCount ()].y = vertices [vert [i]].y; 
@@ -1168,7 +1159,7 @@ if (nChildSeg == -1) {
 for (i = 0; i < 4; i++)
 	vert [i] = segP->m_info.verts [sideVertTable [nSide][i]]; 
 	// check to see if current points are shared by any other cubes
-for (nSegment = 0, segP = Segments (0); nSegment < Count (); nSegment++, segP++)
+for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++)
 	if (nSegment != current.m_nSegment)
 		for (i = 0, nFound = 0; i < 4; i++) {
 			found [i] = FALSE;
@@ -1197,14 +1188,14 @@ if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
-segP = Segments (current.m_nSegment); 
+segP = GetSegment (current.m_nSegment); 
 if (nFound < 4)
 	solidify = 0;
 if (!solidify) {
 	// create new points (copy of other vertices)
 	for (i = 0; i < 4; i++) {
 		if (found [i]) {
-			memcpy (Vertices (VertCount ()), Vertices (vert [i]), sizeof (*Vertices (0)));
+			memcpy (vertexManager.GetVertex (VertCount ()), vertexManager.GetVertex (vert [i]), sizeof (*vertexManager.GetVertex (0)));
 			/*
 			vertices [VertCount ()].x = vertices [vert [i]].x; 
 			vertices [VertCount ()].y = vertices [vert [i]].y; 
@@ -1227,7 +1218,7 @@ if (!solidify) {
 	}
 else {
 	// does this side have a child?
-	CSegment *childSegP = Segments (nChildSeg); 
+	CSegment *childSegP = GetSegment (nChildSeg); 
 	// yes, see if child has a side which points to the parent
 	int nChildSide;
 	for (nChildSide = 0; nChildSide < 6; nChildSide++)
@@ -1267,14 +1258,14 @@ if (Current1 ().nSegment== Current2 ().nSegment) {
 	}
 
 if (Current () == &Current1 ()) {
-	seg1 = Segments (Current1 ().nSegment); 
-	seg2 = Segments (Current2 ().nSegment); 
+	seg1 = GetSegment (Current1 ().nSegment); 
+	seg2 = GetSegment (Current2 ().nSegment); 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	}
 else {
-	seg1 = Segments (Current2 ().nSegment); 
-	seg2 = Segments (Current1 ().nSegment); 
+	seg1 = GetSegment (Current2 ().nSegment); 
+	seg2 = GetSegment (Current1 ().nSegment); 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1286,7 +1277,7 @@ if (vert1== vert2) {
 	return; 
 	}
 // make sure there are distances are close enough
-distance = Distance (*Vertices (vert1), *Vertices (vert2)); 
+distance = Distance (*vertexManager.GetVertex (vert1), *vertexManager.GetVertex (vert2)); 
 if (distance > JOIN_DISTANCE) {
 	ErrorMsg ("Points are too far apart to join"); 
 	return; 
@@ -1335,14 +1326,14 @@ if (Current1 ().nSegment == Current2 ().nSegment) {
 	}
 
 if (Current ()== &Current1 ()) {
-	seg1 = Segments (Current1 ().nSegment); 
-	seg2 = Segments (Current2 ().nSegment); 
+	seg1 = GetSegment (Current1 ().nSegment); 
+	seg2 = GetSegment (Current2 ().nSegment); 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	} 
 else {
-	seg1 = Segments (Current2 ().nSegment); 
-	seg2 = Segments (Current1 ().nSegment); 
+	seg1 = GetSegment (Current2 ().nSegment); 
+	seg2 = GetSegment (Current1 ().nSegment); 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1352,12 +1343,12 @@ for (i = 0; i < 2; i++) {
 	v1 = vert1 [i] = seg1->m_info.verts [lineVertTable [nLine][i]]; 
 	nLine = sideLineTable [cur2->nSide][cur2->nLine]; 
 	v2 = vert2 [i] = seg2->m_info.verts [lineVertTable [nLine][i]]; 
-	v1x [i] = Vertices (v1)->v.x; 
-	v1y [i] = Vertices (v1)->v.y; 
-	v1z [i] = Vertices (v1)->v.z; 
-	v2x [i] = Vertices (v2)->v.x; 
-	v2y [i] = Vertices (v2)->v.y; 
-	v2z [i] = Vertices (v2)->v.z; 
+	v1x [i] = vertexManager.GetVertex (v1)->v.x; 
+	v1y [i] = vertexManager.GetVertex (v1)->v.y; 
+	v1z [i] = vertexManager.GetVertex (v1)->v.z; 
+	v2x [i] = vertexManager.GetVertex (v2)->v.x; 
+	v2y [i] = vertexManager.GetVertex (v2)->v.y; 
+	v2z [i] = vertexManager.GetVertex (v2)->v.z; 
 	match [i] =-1; 
 	}
 
@@ -1426,7 +1417,7 @@ void CSegmentManager::SetLinesToDraw (void)
   CSegment *segP; 
   short nSegment, nSide; 
 
-for (nSegment = Count (), segP = Segments (0); nSegment; nSegment--, segP++) {
+for (nSegment = Count (), segP = GetSegment (0); nSegment; nSegment--, segP++) {
 	segP->m_info.mapBitmask |= 0xFFF; 
 	// if segment nSide has a child, clear bit for drawing line
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
@@ -1443,7 +1434,7 @@ for (nSegment = Count (), segP = Segments (0); nSegment; nSegment--, segP++) {
 // ----------------------------------------------------------------------------- 
 // FixChildren()
 //
-// Action - Updates linkage between current segment and all other Segments ()
+// Action - Updates linkage between current segment and all other GetSegment ()
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::FixChildren (void)
@@ -1452,21 +1443,21 @@ short nNewSide, nSide, nSegment, nNewSeg;
 
 nNewSeg = current.m_nSegment; 
 nNewSide = current.m_nSide; 
-CSegment *segP = Segments (0),
-			*newSegP = Segments (nNewSeg);
+CSegment *segP = GetSegment (0),
+			*newSegP = GetSegment (nNewSeg);
 CVertex	*vSeg, 
-			*vNewSeg = Vertices (newSegP->m_info.verts [0]);
+			*vNewSeg = vertexManager.GetVertex (newSegP->m_info.verts [0]);
 for (nSegment = 0; nSegment < Count (); nSegment++, segP) {
 	if (nSegment != nNewSeg) {
-		// first check to see if Segments () are any where near each other
+		// first check to see if GetSegment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = Vertices (segP->m_info.verts [0]);
+		vSeg = vertexManager.GetVertex (segP->m_info.verts [0]);
 		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 10.0 &&
 		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 10.0 &&
 		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 10.0) {
 			for (nSide = 0; nSide < 6; nSide++) {
 				if (!Link (nNewSeg, nNewSide, nSegment, nSide, 3)) {
-					// if these Segments () were linked, then unlink them
+					// if these GetSegment () were linked, then unlink them
 					if ((newSegP->GetChild (nNewSide) == nSegment) && (segP->GetChild (nSide) == nNewSeg)) {
 						newSegP->SetChild (nNewSide, -1); 
 						segP->SetChild (nSide, -1); 
@@ -1481,7 +1472,7 @@ for (nSegment = 0; nSegment < Count (); nSegment++, segP) {
 // ----------------------------------------------------------------------------- 
 //		       Joinsegments()
 //
-//  ACTION - Joins sides of current Segments ().  Finds closest corners.
+//  ACTION - Joins sides of current GetSegment ().  Finds closest corners.
 //	     If sides use vertices with the same coordinates, these vertices
 //	     are merged and the cube's are connected together.  Otherwise, a
 //           new cube is added added.
@@ -1507,7 +1498,7 @@ if (m_bSplineActive) {
 
 // figure out "other' cube
 if (solidify) {
-	if (Segments (current.m_nSegment)->GetChild (current.m_nSide) != -1) {
+	if (GetSegment (current.m_nSegment)->GetChild (current.m_nSide) != -1) {
 		if (!bExpertMode)
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
@@ -1517,18 +1508,18 @@ if (solidify) {
 	my_cube.nSegment = -1;
 	// find first cube (other than this cube) which shares all 4 points
 	// of the current side (points must be < 5.0 away)
-	seg1 = Segments (cur1->nSegment); 
+	seg1 = GetSegment (cur1->nSegment); 
 	for (i = 0; i < 4; i++) {
-		memcpy (&v1 [i], Vertices (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex));
+		memcpy (&v1 [i], vertexManager.GetVertex (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex));
 		}
 	minTotalRad = 1e300;
-	for (nSegment = 0, seg2 = Segments (0); nSegment < Count (); nSegment++, seg2++) {
+	for (nSegment = 0, seg2 = GetSegment (0); nSegment < Count (); nSegment++, seg2++) {
 		if (nSegment== cur1->nSegment)
 			continue; 
 		for (nSide = 0; nSide < 6; nSide++) {
 			fail = FALSE; 
 			for (i = 0; i < 4; i++) {
-				memcpy (&v2 [i], Vertices (seg2->m_info.verts[sideVertTable[nSide][i]]), sizeof (CVertex));
+				memcpy (&v2 [i], vertexManager.GetVertex (seg2->m_info.verts[sideVertTable[nSide][i]]), sizeof (CVertex));
 				}
 			for (i = 0; i < 4; i++)
 				match [i].b = 0; 
@@ -1595,14 +1586,14 @@ if (cur1->nSegment == cur2->nSegment) {
 	return; 
 	}
 
-seg1 = Segments (cur1->nSegment); 
-seg2 = Segments (cur2->nSegment); 
+seg1 = GetSegment (cur1->nSegment); 
+seg2 = GetSegment (cur2->nSegment); 
 
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (&v1 [i], Vertices (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex)); 
-	memcpy (&v2 [i], Vertices (seg2->m_info.verts [sideVertTable [cur2->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v1 [i], vertexManager.GetVertex (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v2 [i], vertexManager.GetVertex (seg2->m_info.verts [sideVertTable [cur2->nSide][i]]), sizeof (CVertex)); 
 	match [i].i = -1; 
 	}
 
@@ -1660,7 +1651,7 @@ if (max_radius >= JOIN_DISTANCE) {
 	return; 
 	}
 
-// if Segments () are too close to put a new segment between them, 
+// if GetSegment () are too close to put a new segment between them, 
 // then solidifyally link them together without asking
 if (min_radius <= 5) {
 	undoManager.SetModified (TRUE); 
@@ -1682,11 +1673,11 @@ if (QueryMsg("Are you sure you want to create a new cube which\n"
 nNewSeg = Count (); 
 if (!(Count () < MAX_SEGMENTS)) {
 	if (!bExpertMode)
-		ErrorMsg ("The maximum number of Segments () has been reached.\n"
-					"Cannot add any more Segments ()."); 
+		ErrorMsg ("The maximum number of GetSegment () has been reached.\n"
+					"Cannot add any more GetSegment ()."); 
 	return; 
 	}
-segP = Segments (nNewSeg); 
+segP = GetSegment (nNewSeg); 
 
 undoManager.SetModified (TRUE); 
 undoManager.Lock ();
@@ -1722,7 +1713,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if (segP->GetChild (nSide) == -1) {
 		SetTextures (nNewSeg, nSide, seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
-		Segments (nNewSeg)->SetUV (nSide, 0, 0); 
+		GetSegment (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
 	else {
 		SetTextures (nNewSeg, nSide, 0, 0); 
@@ -1753,7 +1744,7 @@ for (i = 0; i < 4; i++) {
 	seg2->m_sides [cur2->nSide].m_info.uvls [i].l = 0; 
 	}
 
-// update number of Segments () and vertices
+// update number of GetSegment () and vertices
 Count ()++; 
 undoManager.Unlock ();
 SetLinesToDraw(); 
@@ -1778,7 +1769,7 @@ return false;
 short CSegmentManager::MarkedCount (bool bCheck)
 {
 	int	nSegment, nCount; 
-	CSegment *segP = Segments (0);
+	CSegment *segP = GetSegment (0);
 for (nSegment = Count (), nCount = 0; nSegment; nSegment--, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		if (bCheck)
@@ -1803,7 +1794,7 @@ return (GetSegment (nSegment)->GetChild (nSide)== -1) ||
 
 int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
 {
-	CSegment*	segP = Segments (nStartSeg); 
+	CSegment*	segP = GetSegment (nStartSeg); 
 	CSegment*	childSegP; 
 	CSide*		sideP = segP->m_sides + nStartSide; 
 	CSide*		childSideP; 
@@ -1845,7 +1836,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 		}
 	if ((nChildSeg < 0) || ((nOnlyChildSeg != -1) && (nChildSeg != nOnlyChildSeg)))
 		continue;
-	childSegP = Segments (nChildSeg); 
+	childSegP = GetSegment (nChildSeg); 
 	// figure out which side of child shares two points w/ nStartSide
 	for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 		if ((nStartSeg == nOnlyChildSeg) && (nChildSide == nStartSide))
@@ -1975,7 +1966,7 @@ nChildSeg = GetSegment (nSegment)->GetChild (nSide);
 if (nChildSeg < 0 || nChildSeg >= Count ())
 	return false; 
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-	if (Segments (nChildSeg)->GetChild (nChildSide) == nSegment) {
+	if (GetSegment (nChildSeg)->GetChild (nChildSide) == nSegment) {
 		opp.m_nSegment = nChildSeg; 
 		opp.m_nSide = nChildSide; 
 		return true; 
@@ -2039,7 +2030,7 @@ for (i = 0; i < MineInfo ().botgen.count; i++) {
 
 // number "value"
 value = 0; 
-for (i = 0, segP = Segments (0); i < Count (); i++, segP++)
+for (i = 0, segP = GetSegment (0); i < Count (); i++, segP++)
 	if (segP->m_info.function== SEGMENT_FUNC_NONE)
 		segP->m_info.value = 0; 
 	else
@@ -2067,7 +2058,7 @@ for (i = 0; i < MineInfo ().equipgen.count; i++) {
 
 // number "value"
 value = 0; 
-for (i = 0, segP = Segments (0); i < Count (); i++, segP++)
+for (i = 0, segP = GetSegment (0); i < Count (); i++, segP++)
 	if (segP->m_info.function== SEGMENT_FUNC_NONE)
 		segP->m_info.value = 0; 
 	else
@@ -2103,7 +2094,7 @@ else {
 bool CSegmentManager::SplitSegment (void)
 {
 	CSegment*	centerSegP = current.Segment (), *segP, *childSegP;
-	short			nCenterSeg = short (centerSegP - Segments (0));
+	short			nCenterSeg = short (centerSegP - GetSegment (0));
 	short			nSegment, nChildSeg;
 	short			nSide, nOppSide, nChildSide;
 	short			vertNum, nWall;
@@ -2125,14 +2116,14 @@ for (nSide = 0; nSide < 6; nSide++) {
 	if (segP->GetChild (nSide) < 0)
 		continue;
 	for (vertNum = 0; vertNum < 4; vertNum++, h++)
-		*Vertices (h) = *Vertices (segP->m_info.verts [sideVertTable [nSide][vertNum]]);
+		*vertexManager.GetVertex (h) = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][vertNum]]);
 	}
 VertCount () = h;
 #endif
 // compute segment center
 segCenter.Clear ();
 for (i = 0; i < 8; i++)
-	segCenter += *Vertices (centerSegP->m_info.verts [i]);
+	segCenter += *vertexManager.GetVertex (centerSegP->m_info.verts [i]);
 segCenter /= 8.0;
 // add center segment
 // compute center segment vertices
@@ -2143,8 +2134,8 @@ for (nSide = 0; nSide < 6; nSide++) {
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
-		centerSegVert = Vertices (centerSegP->m_info.verts [j]);
-		segVert = Vertices (h + j);
+		centerSegVert = vertexManager.GetVertex (centerSegP->m_info.verts [j]);
+		segVert = vertexManager.GetVertex (h + j);
 		*segVert = Average (*centerSegVert, segCenter);
 		//centerSegP->m_info.verts [j] = h + j;
 		}
@@ -2194,7 +2185,7 @@ for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 		}
 	InitSegment (nSegment);
 	if ((segP->SetChild (nSide, centerSegP->GetChild (nSide))) > -1) {
-		for (childSegP = Segments (segP->GetChild (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
+		for (childSegP = GetSegment (segP->GetChild (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
 			if (childSegP->GetChild (nChildSide) == nCenterSeg) {
 				childSegP->SetChild (nChildSide, nSegment);
 				break;
@@ -2222,11 +2213,11 @@ for (nSide = 0; nSide < 6; nSide++) {
 	}
 // join adjacent sides of the segments surrounding the center segment
 #if 1
-for (nSegment = 0, segP = Segments (Count ()); nSegment < 5; nSegment++, segP++) {
+for (nSegment = 0, segP = GetSegment (Count ()); nSegment < 5; nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->GetChild (nSide) >= 0)
 			continue;
-		for (nChildSeg = nSegment + 1, childSegP = Segments (Count () + nChildSeg); 
+		for (nChildSeg = nSegment + 1, childSegP = GetSegment (Count () + nChildSeg); 
 			  nChildSeg < 6; 
 			  nChildSeg++, childSegP++) {
 			for (nChildSide = 0; nChildSide < 6; nChildSide++) {
@@ -2263,7 +2254,7 @@ return true;
 // DeleteVertex()
 //
 // ACTION - Removes a vertex from the vertices array and updates all the
-//	    Segments () vertices who's vertex is greater than the deleted vertex
+//	    GetSegment () vertices who's vertex is greater than the deleted vertex
 // ----------------------------------------------------------------------------- 
 
 void CSegmentManager::DeleteVertex (short nDeletedVert)
@@ -2272,9 +2263,9 @@ void CSegmentManager::DeleteVertex (short nDeletedVert)
 
 undoManager.SetModified (TRUE); 
 // fill in gap in vertex array and status
-memcpy (Vertices (nDeletedVert), Vertices (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*Vertices (0)));
+memcpy (vertexManager.GetVertex (nDeletedVert), vertexManager.GetVertex (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*vertexManager.GetVertex (0)));
 // update anyone pointing to this vertex
-CSegment *segP = Segments (0);
+CSegment *segP = GetSegment (0);
 for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 	for (nVertex = 0; nVertex < 8; nVertex++)
 		if (segP->m_info.verts [nVertex] > nDeletedVert)
@@ -2296,7 +2287,7 @@ void CSegmentManager::DeleteUnusedVertices (void)
 for (nVertex = 0; nVertex < VertCount (); nVertex++)
 	VertStatus (nVertex) &= ~NEW_MASK; 
 // mark all used verts
-CSegment *segP = Segments (0);
+CSegment *segP = GetSegment (0);
 for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
 		VertStatus (segP->m_info.verts [point]) |= NEW_MASK; 

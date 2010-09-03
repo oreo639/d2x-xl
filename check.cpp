@@ -90,9 +90,9 @@ if ((pbp->nLine >= 0) && (pbp->nLine < 4))
 	current.m_nLine = pbp->nLine;
 if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
 	current.m_nPoint = pbp->nPoint;
-if ((pbp->nWall >= 0) && (pbp->nWall < theMine->MineInfo ().walls.count))
+if ((pbp->nWall >= 0) && (pbp->nWall < theMine->Info ().walls.count))
 	nWall = pbp->nWall;
-else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < theMine->MineInfo ().triggers.count))
+else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < theMine->Info ().triggers.count))
 	wallP = wallManager.FindByTrigger (pbp->nTrigger);
 else
 	wallP = null;
@@ -105,7 +105,7 @@ if ((wallP != null) && MarkSegment ((wallP->m_nSegment))
 		current.m_nSegment = wallP->m_nSegment;
 		current.m_nSide = wallP->m_nSide;
 		}
-if ((pbp->nObject >= 0) && (pbp->nObject < theMine->MineInfo ().objects.count))
+if ((pbp->nObject >= 0) && (pbp->nObject < theMine->Info ().objects.count))
 	current.m_nObject = pbp->nObject;
 DLE.MineView ()->Refresh ();
 }
@@ -311,9 +311,9 @@ DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 // now do actual checking
 DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 + 
 										  theMine->VertCount () +
-										  theMine->MineInfo ().walls.count * 2 +
-										  theMine->MineInfo ().triggers.count * 3 +
-										  theMine->MineInfo ().objects.count * 2 +
+										  theMine->Info ().walls.count * 2 +
+										  theMine->Info ().triggers.count * 3 +
+										  theMine->Info ().objects.count * 2 +
 										  theMine->NumObjTriggers ());
 if (!CheckBotGens ())
 	if (!CheckEquipGens ())
@@ -460,14 +460,14 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->MineInfo ().botgen.count) || (theMine->BotGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().botgen.count) || (theMine->BotGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
 			}
 		}
 	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->MineInfo ().equipgen.count) || (theMine->EquipGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().equipgen.count) || (theMine->EquipGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
@@ -609,7 +609,7 @@ if ((theMine == null))
 	double			radius, max_radius, object_radius;
 	CGameObject*	objP = theMine->Objects (0);
 	CGameObject*	pPlayer = null;
-	int				objCount = theMine->MineInfo ().objects.count;
+	int				objCount = theMine->Info ().objects.count;
 	CSegment*		segP;
 
 short sub_errors = m_nErrors [0];
@@ -933,9 +933,9 @@ if ((theMine == null))
 	short sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Triggers]");
 	int segCount = segmentManager.Count ();
-	int trigCount = theMine->MineInfo ().triggers.count;
+	int trigCount = theMine->Info ().triggers.count;
 	CTrigger *trigP = theMine->Triggers (0);
-	int wallCount = theMine->MineInfo ().walls.count;
+	int wallCount = theMine->Info ().walls.count;
 	CWall *wallP;
 	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers (0);
 
@@ -1191,7 +1191,7 @@ return false;
 
 char CDiagTool::FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList)
 {
-	char	h = -1, i, j = char (theMine->MineInfo ().botgen.count);
+	char	h = -1, i, j = char (theMine->Info ().botgen.count);
 
 if (refList) {
 	for (i = 0; i < j; i++) {
@@ -1341,7 +1341,7 @@ if ((theMine == null))
 
 	short					h = segmentManager.Count (), i, nSegment = 0;
 	bool					bOk = true;
-	short					nMatCenSegs, nMatCens = short (theMine->MineInfo ().botgen.count);
+	short					nMatCenSegs, nMatCens = short (theMine->Info ().botgen.count);
 	CSegment*			segP = theMine->Segments (0);
 	CRobotMaker*		matCenP = theMine->BotGens (0);
 	short					segList [MAX_NUM_MATCENS_D2];
@@ -1352,7 +1352,7 @@ for (i = 0; i < nMatCens; i++)
 CountMatCenRefs (SEGMENT_FUNC_ROBOTMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
 AssignMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens);
-theMine->MineInfo ().botgen.count = CleanupMatCens (refList, matCenP, nMatCens);
+theMine->Info ().botgen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;
@@ -1366,7 +1366,7 @@ bool CDiagTool::CheckEquipGens (void)
 {
 	short					i, nSegment = 0;
 	bool					bOk = true;
-	int					nMatCenSegs, nMatCens = int (theMine->MineInfo ().equipgen.count);
+	int					nMatCenSegs, nMatCens = int (theMine->Info ().equipgen.count);
 	CRobotMaker*		matCenP = theMine->EquipGens (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
@@ -1376,7 +1376,7 @@ for (i = 0; i < nMatCens; i++)
 CountMatCenRefs (SEGMENT_FUNC_EQUIPMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
 AssignMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens);
-theMine->MineInfo ().equipgen.count = CleanupMatCens (refList, matCenP, nMatCens);
+theMine->Info ().equipgen.count = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;
@@ -1408,7 +1408,7 @@ if ((theMine == null))
 	return false;
 
 	short nSegment,nSide;
-	ushort nWall, wallCount = theMine->MineInfo ().walls.count, 
+	ushort nWall, wallCount = theMine->Info ().walls.count, 
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
 	CSide *sideP;
@@ -1540,7 +1540,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				}
 			}
 			// make sure trigger number of wall is in range
-		if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger >= theMine->MineInfo ().triggers.count)) {
+		if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger >= theMine->Info ().triggers.count)) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)",
@@ -1656,7 +1656,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 						if (segP->GetChild (nSide) == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
-						if (segP->m_sides[nSide].m_info.nWall >= theMine->MineInfo ().walls.count) {
+						if (segP->m_sides[nSide].m_info.nWall >= theMine->Info ().walls.count) {
 							sprintf_s (message, sizeof (message),
 										"WARNING: No matching wall for this wall (wall=%d, cube=%d)", 
 										nWall,nSegment);

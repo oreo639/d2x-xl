@@ -409,7 +409,7 @@ scroll_offset_y = 0;
 // abort if this is not a wall
 #ifndef _DEBUG
 ushort nWall = sideP->m_info.nWall;
-if (nWall >= theMine->MineInfo ().walls.count)
+if (nWall >= theMine->Info ().walls.count)
 	return;
 
 // abort if this wall is not a door

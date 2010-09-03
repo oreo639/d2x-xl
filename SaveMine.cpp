@@ -95,10 +95,10 @@ else if (IsD2File ()) {
 	fp.Write (ReactorTime ());
 	fp.Write (ReactorStrength ());
 	// variable light new for version 7
-	if (FlickerLightCount () > MAX_VARIABLE_LIGHTS) 
-		FlickerLightCount () = MAX_VARIABLE_LIGHTS;
-	fp.WriteInt32 ((int) FlickerLightCount ());
-	for (i = 0; i < FlickerLightCount (); i++)
+	if (lightManager.Count () > MAX_VARIABLE_LIGHTS) 
+		lightManager.Count () = MAX_VARIABLE_LIGHTS;
+	fp.WriteInt32 ((int) lightManager.Count ());
+	for (i = 0; i < lightManager.Count (); i++)
 		VariableLights (i)->Write (fp);
 
 	// write secret cube number

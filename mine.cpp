@@ -57,7 +57,7 @@ CLEAR (RobotInfo ());
 #endif
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
-FlickerLightCount () = 0;
+lightManager.Count () = 0;
 Current () = &Current1 ();
 *m_szBlockFile = '\0';
 MineInfo ().objects.Reset ();
@@ -322,7 +322,7 @@ SegCount () = 0;
 for (i = 0; i < MAX_VERTICES; i++) 
 	VertStatus (i) &= ~MARKED_MASK;
 VertCount () = 0;
-FlickerLightCount () = 0;
+lightManager.Count () = 0;
 // reset "howmany"
 MineInfo ().objects.Reset ();
 MineInfo ().walls.Reset ();

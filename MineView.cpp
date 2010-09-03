@@ -410,7 +410,7 @@ CHECKMINE;
 	CVariableLight *flP = theMine->VariableLights (0);
 	int i, light_delay;
 
-for (i = theMine->FlickerLightCount (); i; i--, flP++, ltP++) {
+for (i = theMine->lightManager.Count (); i; i--, flP++, ltP++) {
 	light_delay = (flP->m_info.delay * 100 /*+ F0_5*/) / F1_0;
 	if (light_delay) {
 		if (++ltP->ticks == light_delay) {
@@ -437,7 +437,7 @@ bool CMineView::SetLightStatus (void)
 	CVariableLight *flP = theMine->VariableLights (0);
 	LIGHT_STATUS *pls;
 	bool bChange = false;
-	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->MineInfo ().fileInfo.version >= 34);
+	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light
@@ -445,7 +445,7 @@ pls = lightStatus [0];
 for (i = segmentManager.Count (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
-for (h = 0; h < theMine->MineInfo ().lightDeltaIndices.count; h++, ldiP++) {
+for (h = 0; h < theMine->Info ().lightDeltaIndices.count; h++, ldiP++) {
 	nSrcSide = ldiP->m_nSegment;
 	nSrcSeg = ldiP->m_nSide;
 	j = theMine->GetVariableLight (nSrcSide, nSrcSeg);
@@ -738,7 +738,7 @@ if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = theMine->Objects (0); i < theMine->MineInfo ().objects.count; i++, objP++)
+	for (i = 0, objP = theMine->Objects (0); i < theMine->Info ().objects.count; i++, objP++)
 		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			other.m_nObject = i;
 			break;

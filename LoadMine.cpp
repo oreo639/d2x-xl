@@ -203,15 +203,15 @@ if (IsD2File ()) {
 	ReactorTime () = fp.ReadInt32 (); // base control center explosion time
 	ReactorStrength () = fp.ReadInt32 (); // reactor strength
 	if (LevelVersion () > 6) {
-		FlickerLightCount () = short (fp.ReadInt32 ());
-		if ((FlickerLightCount () > 0) && (FlickerLightCount () <= MAX_VARIABLE_LIGHTS)) {
-			for (int i = 0; i < FlickerLightCount (); i++)
+		lightManager.Count () = short (fp.ReadInt32 ());
+		if ((lightManager.Count () > 0) && (lightManager.Count () <= MAX_VARIABLE_LIGHTS)) {
+			for (int i = 0; i < lightManager.Count (); i++)
 				VariableLights (i)->Read (fp);
 			} 
 		else {
-			if (FlickerLightCount () != 0) {
+			if (lightManager.Count () != 0) {
 				ErrorMsg ("Error reading variable lights");
-				FlickerLightCount () = 0;
+				lightManager.Count () = 0;
 				}
 			}
 		}

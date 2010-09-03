@@ -345,7 +345,7 @@ CToolDlg::EnableControls (IDC_TRIGGER_SHOW_TEXTURE, IDC_TRIGGER_TEXTURE2, bEnabl
 
 int CTriggerTool::NumTriggers ()
 {
-return m_nClass ? theMine->NumObjTriggers () : theMine->MineInfo ().triggers.count;
+return m_nClass ? theMine->NumObjTriggers () : theMine->Info ().triggers.count;
 }
 
 								/*--------------------------*/
@@ -681,10 +681,10 @@ if (m_nClass) {
 	current.m_nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
 	}
 else {
-	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->MineInfo ().walls.count; nWall++, wallP++)
+	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->Info ().walls.count; nWall++, wallP++)
 		if (wallP->m_info.nTrigger == m_nTrigger)
 			break;
-	if (nWall >= theMine->MineInfo ().walls.count) {
+	if (nWall >= theMine->Info ().walls.count) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;

@@ -42,9 +42,6 @@ typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
 typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
 typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
-typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDeltaIndexList;
-typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
-typedef CStaticArray< CVariableLight, MAX_VARIABLE_LIGHTS > variableLightList;
 
 #define CLEAR(_b) (_b) [0].Reset((_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
@@ -58,9 +55,6 @@ typedef CColor texColorList [MAX_TEXTURES_D2];
 typedef CColor vertexColorList [VERTEX_LIMIT];
 typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 typedef CGameObject objectList [MAX_OBJECTS_D2];
-typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
-typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
-typedef CVariableLight variableLightList [MAX_VARIABLE_LIGHTS];
 
 #define CLEAR(_b)	(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
@@ -92,10 +86,6 @@ class CMineData {
 		robotMakerList				robotMakers;
 		robotMakerList				equipMakers;
 		objectList					objects;
-		lightDeltaIndexList		lightDeltaIndices;
-		lightDeltaValueList		lightDeltaValues;
-		short							m_nVariableLights;
-		variableLightList		variableLights;
 };
 
 // -----------------------------------------------------------------------------
@@ -183,21 +173,15 @@ public:
 		{ return MineData ().robotInfo + i; }
 	inline CRobotInfo *DefRobotInfo (int i)
 		{ return m_defaultRobotInfo + i; }
-	inline CLightDeltaIndex *LightDeltaIndex (int i)
-		{ return MineData ().lightDeltaIndices + i; }
-	inline CLightDeltaValue *LightDeltaValues (int i)
-		{ return MineData ().lightDeltaValues + i; }
-	inline CVariableLight *VariableLights (int i)
-		{ return MineData ().variableLights + i; }
+
 	//inline CTexture* Textures (int i, int j = 0)
 	//	{ return &textureManager.textures [i][j]; }
 
-	inline CMineInfo& MineInfo ()
+	inline CMineInfo& Info ()
 		{ return MineData ().mineInfo; }
-	inline CMineFileInfo& MineFileInfo ()
+	inline CMineFileInfo& FileInfo ()
 		{ return MineData ().mineInfo.fileInfo; }
-	inline short& FlickerLightCount ()
-		{ return MineData ().m_nVariableLights; }
+
 	long TotalSize (CMineItemInfo& gii)
 		{ return (int) gii.size * (int) gii.count; }
 	inline int& ReactorTime ()

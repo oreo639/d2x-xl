@@ -1078,7 +1078,7 @@ CHECKMINE;
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
-for (i=0;i<theMine->MineInfo ().walls.count;i++) {
+for (i=0;i<theMine->Info ().walls.count;i++) {
 	if (walls [i].m_nSegment > segmentManager.Count ())
 		continue;
 	segP = segments + (int)walls [i].m_nSegment;
@@ -1191,7 +1191,7 @@ if (!m_pDC) return;
 
   // find variable light from
 CVariableLight* flP = theMine->VariableLights (0);
-for (INT i = 0; i < theMine->FlickerLightCount (); i++, flP++)
+for (INT i = 0; i < theMine->lightManager.Count (); i++, flP++)
 	if (Visible (theMine->Segments (flP->m_nSegment)))
 	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
 }
@@ -1322,7 +1322,7 @@ CHECKMINE;
 	short y_max = m_viewHeight * 2;
 
 //  m_pDC->SelectObject(hrgnBackground);
-if (objnum >=0 && objnum < theMine->MineInfo ().objects.count) {
+if (objnum >=0 && objnum < theMine->Info ().objects.count) {
 	objP = theMine->Objects (objnum);
 	if (!Visible (theMine->Segments (objP->m_info.nSegment)))
 		return;
@@ -1471,15 +1471,15 @@ if (!ViewObject ())
 int i, j;
 if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
-	for(i = 0; i < theMine->MineInfo ().triggers.count; i++)
+	for(i = 0; i < theMine->Info ().triggers.count; i++)
 	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
-		DrawObject ((short)theMine->MineInfo ().objects.count, 0);
+		DrawObject ((short)theMine->Info ().objects.count, 0);
 		break; // only draw one secret exit
 		}
 	}
 HiliteTarget ();
 CGameObject *objP = theMine->Objects (0);
-for (i = theMine->MineInfo ().objects.count, j = 0; i; i--, j++, objP++)
+for (i = theMine->Info ().objects.count, j = 0; i; i--, j++, objP++)
 	if (ViewObject (objP))
 		DrawObject (j, 0);
 }
