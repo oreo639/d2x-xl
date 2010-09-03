@@ -228,16 +228,16 @@ return wallManager.Count ();
 // Mine - FindTrigger
 //------------------------------------------------------------------------------------
 
-short CTriggerManager::FindTarget (short nTrigger, short nSegment, short nSide, short nClass)
+CTrigger* CTriggerManager::FindByTarget (short nSegment, short nSide, short nTrigger)
 {
-	CTrigger *trigP = GetTrigger (0);
+	CTrigger *trigP = GetTrigger (nTrigger);
 	CSideKey key = CSideKey (nSegment, nSide);
 	int i, j;
 
 for (i = nTrigger; i < m_nCount [0]; i++, trigP++)
 	if (-1 < (j = trigP->Find (key)))
-		return i;
-return -1;
+		return trigP;
+return null;
 }
 
 //------------------------------------------------------------------------------------

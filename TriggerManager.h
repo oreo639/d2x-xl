@@ -82,8 +82,8 @@ class CTriggerManager {
 
 		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (Triggers (), Count (0), nSegment, nSide); }
 
-		bool AutoAddTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
-		bool AddDoorTrigger (short wall_type, ushort wall_flags, ushort trigger_type);
+		bool AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType);
+		bool AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType);
 		bool AddOpenDoor (void); 
 		bool AddRobotMaker (void); 
 		bool AddShield (void); 
@@ -94,7 +94,7 @@ class CTriggerManager {
 		bool AddSecretExit (void); 
 
 		short FindBySide (short& nTrigger, short nSegment, short nSide);
-		short FindTarget (short nTrigger, short nSegment, short nSide, short nClass = 0);
+		CTrigger* FindByTarget (short nSegment, short nSide, short nTrigger = 0);
 		short FindObjTarget (short nTrigger, short nSegment, short nSide);
 
 		void UpdateReactor (void);

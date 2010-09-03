@@ -78,6 +78,7 @@ public:
 
 	bool IsDoor (void);
 	bool IsVisible (void);
+	bool IsVariable (void);
 	CSide* GetSide (void);
 	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
 	CTrigger* GetTrigger (void);

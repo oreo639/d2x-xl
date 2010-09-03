@@ -341,7 +341,7 @@ int nSegCount = SegCount ();
 			if (childSegP->GetChild (nChildSide) >= 0) {
 				ushort nWall = childSegP->m_sides [nChildSide].m_info.nWall;
 				// .. but there is no wall ..
-				if (nWall >= MineInfo ().walls.count)
+				if (nWall >= theMine->Info ().walls.count)
 					continue;
 					// .. or its not a door ..
 				if (Walls (nWall)->m_info.type == WALL_OPEN)
@@ -406,8 +406,7 @@ int nSegCount = SegCount ();
 void CLightManager::CalcDeltaLightData (double fLightScale, int force) 
 {
 undoManager.SetModified (true);
-int nDepth;
-for (nDepth = m_deltaLightRenderDepth; nDepth; nDepth--)
+for (int nDepth = m_deltaLightRenderDepth; nDepth; nDepth--)
 	if (CalcLightDeltas (fLightScale, force, nDepth))
 		break;
 }
@@ -417,10 +416,10 @@ for (nDepth = m_deltaLightRenderDepth; nDepth; nDepth--)
 int CLightManager::FindLightDelta (short nSegment, short nSide, short *pi)
 {
 	int	i = pi ? *pi : 0;
-	int	j	= (int)MineInfo ().lightDeltaIndices.count++;
+	int	j	= (int)theMine->Info ().lightDeltaIndices.count++;
 	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
-if ((LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34)) {
+if ((LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34)) {
 	for (; i < j; i++, dliP++)
 		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
@@ -443,9 +442,9 @@ bool CLightManager::CalcLightDeltas (double fLightScale, int force, int nDepth)
 	int		nErrors = 0;
 	double	effect[4];
 
-MineInfo ().lightDeltaValues.count = 0;
-MineInfo ().lightDeltaIndices.count = 0;
-bool bWall, bD2XLights = (LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34);
+theMine->Info ().lightDeltaValues.count = 0;
+theMine->Info ().lightDeltaIndices.count = 0;
+bool bWall, bD2XLights = (LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel
@@ -459,53 +458,40 @@ fLightScale = 1.0; ///= 100.0;
 		if  (!(srcSegP->m_info.wallFlags & MARKED_MASK) && !force) 
 			continue;
 		// loop on all sides
-		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++) {
-			short nTexture = srcSegP->m_sides [nSourceSide].m_info.nBaseTex & 0x3fff;
-			short tmapnum2 = srcSegP->m_sides [nSourceSide].m_info.nOvlTex & 0x3fff;
-			short nTrigger;
-			bool bl1 = (bool) (IsLight (nTexture) != -1);
-			bool bl2 = (bool) (IsLight (tmapnum2) != -1);
+		CSide* sideP = segP->m_sides;
+		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++, sideP++) {
+			short nBaseTex, nOvlTex;
+			sideP->GetTextures (nBaseTex, nOvlTex);
+			bool bl1 = (IsLight (nBaseTex) != -1);
+			bool bl2 = (IsLight (nOvlTex) != -1);
 			if (!(bl1 || bl2))
 				continue;	// no lights on this side
 			bool bCalcDeltas = false;
 			// if the current side is a wall and has a light and is the target of a trigger
 			// than can make the wall appear/disappear, calculate delta lights for it
-			if ((bWall = (FindWall (nSourceSeg, nSourceSide) != null)) &&
-				 ((nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide)) >= 0)) {
-				char trigtype = Triggers (nTrigger)->m_info.type;
-				bCalcDeltas =
-					(trigtype == TT_ILLUSION_OFF) ||
-					(trigtype == TT_ILLUSION_ON) ||
-					(trigtype == TT_CLOSE_WALL) ||
-					(trigtype == TT_OPEN_WALL) ||
-					(trigtype == TT_LIGHT_OFF) ||
-					(trigtype == TT_LIGHT_ON);
-					 
-				}
+			CWall* wallP = segmentManager.GetWall (nSourceSeg, nSourceSide);
+			bCalcDeltas = (wallP != null) && wallP->IsVariable ();
 			if (!bCalcDeltas)
 				bCalcDeltas = IsVariableLight (nSourceSeg, nSourceSide);
 			if (!bCalcDeltas) {
-				bool bb1 = IsBlastableLight (nTexture);
-				bool bb2 = IsBlastableLight (tmapnum2);
+				bool bb1 = IsBlastableLight (nBaseTex);
+				bool bb2 = IsBlastableLight (nOvlTex);
 				if (bb1 == bb2)
 					bCalcDeltas = bb1;	// both lights blastable or not
 				else if (!(bb1 ? bl2 : bl1))	// i.e. one light blastable and the other texture not a non-blastable light 
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-				int nTrigger = FindTriggerTarget (0, nSourceSeg, nSourceSide);
-				if ((nTrigger >= 0) && (Triggers (nTrigger)->m_info.type >= TT_LIGHT_OFF))
+				CTrigger* trigP = triggerManager.FindTarget (nSourceSeg, nSourceSide);
+				if ((trigP != null) && (trigP->m_info.type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas)
 				continue;
-
-			short srcwall = srcSegP->m_sides [nSourceSide].m_info.nWall;
-			if ((srcSegP->GetChild (nSourceSide) != -1) &&
-				 ((srcwall >= MineInfo ().walls.count) || (Walls (srcwall)->m_info.type == WALL_OPEN)))
+			if ((wallP != null) && !wallP->IsVisible ())
 				continue;
 
-			if (MineInfo ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES) {
+			if (theMine->Info ().lightDeltaIndices.count >= MAX_LIGHT_DELTA_INDICES) {
 //#pragma omp critical
 				{
 				if (++nErrors == 1) {
@@ -523,20 +509,13 @@ fLightScale = 1.0; ///= 100.0;
 			// get index number and increment total number of lightDeltaIndices
 	//#pragma omp critical
 			{
-			lightDeltaIndexCount = int (MineInfo ().lightDeltaIndices.count++);
+			lightDeltaIndexCount = int (theMine->Info ().lightDeltaIndices.count++);
 			}
-			CLightDeltaIndex *dliP = LightDeltaIndex (lightDeltaIndexCount);
-			if (bD2XLights) {
-				dliP->m_nSegment = nSourceSeg;
-				dliP->m_nSide = nSourceSide;
-				dliP->m_info.count = 0; // will be incremented below
-				}
-			else {
-				dliP->m_nSegment = nSourceSeg;
-				dliP->m_nSide = nSourceSide;
-				dliP->m_info.count = 0; // will be incremented below
-				}
-			dliP->m_info.index = (short)MineInfo ().lightDeltaValues.count;
+			CLightDeltaIndex *dliP = GetLightDeltaIndex (lightDeltaIndexCount);
+			dliP->m_nSegment = nSourceSeg;
+			dliP->m_nSide = nSourceSide;
+			dliP->m_info.count = 0; // will be incremented below
+			dliP->m_info.index = (short)theMine->Info ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
 			A = -CalcSideNormal (nSourceSeg,nSourceSide);
@@ -574,7 +553,7 @@ fLightScale = 1.0; ///= 100.0;
 					if (childSegP->GetChild (nChildSide) >= 0) {
 						ushort nWall = childSegP->m_sides[nChildSide].m_info.nWall;
 						// .. if there is no wall ..
-						if (nWall >= MineInfo ().walls.count)
+						if (nWall >= theMine->Info ().walls.count)
 							continue;
 						// .. or its not a door ..
 						if (Walls (nWall)->m_info.type == WALL_OPEN) 
@@ -592,7 +571,7 @@ fLightScale = 1.0; ///= 100.0;
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
-						if ((MineInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (dliP->m_info.count == (bD2XLights ? 8191 : 255))) {
+						if ((theMine->Info ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (dliP->m_info.count == (bD2XLights ? 8191 : 255))) {
 //#pragma omp critical
 							{
 							if (++nErrors == 1) {
@@ -606,7 +585,7 @@ fLightScale = 1.0; ///= 100.0;
 						CLightDeltaValue* dl;
 	//#pragma omp critical
 						{
-						dl = LightDeltaValues (MineInfo ().lightDeltaValues.count++);
+						dl = LightDeltaValues (theMine->Info ().lightDeltaValues.count++);
 						}
 						dl->m_nSegment = nChildSeg;
 						dl->m_nSide = nChildSide;
@@ -621,7 +600,7 @@ fLightScale = 1.0; ///= 100.0;
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
 							undoManager.SetModified (true);
-							if ((MineInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
+							if ((theMine->Info ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{
 								if (++nErrors == 1) {
@@ -717,7 +696,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// Skip if this is a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
 	// .. if there is a wall and its a door
-	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
+	if ((nWall < theMine->Info ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
 	child = segP->GetChild (nSide);
@@ -743,7 +722,7 @@ if (!bMarkChildren || (nDepth == 1))
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	// skip if there is a wall and its a door
 	nWall = segP->m_sides [nSide].m_info.nWall;
-	if ((nWall < MineInfo ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
+	if ((nWall < theMine->Info ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
 	child = segP->GetChild (nSide);

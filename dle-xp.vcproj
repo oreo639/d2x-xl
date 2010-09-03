@@ -6655,10 +6655,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Illumination.h"
-					>
-				</File>
-				<File
 					RelativePath="io.h"
 					>
 				</File>

@@ -207,31 +207,6 @@ public:
 	CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
 	//double CalcLength (CFixVector* center1, CFixVector* center2);
 
-	int IsLight (int nBaseTex);
-	int IsWall (short nSegment = -1, short nSide = -1);
-	bool IsLava (int nBaseTex);
-	bool IsBlastableLight (int nBaseTex);
-	bool IsVariableLight (short nSegment, short nSide);
-	bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
-	void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
-	int FindDeltaLight (short nSegment, short nSide, short *pi = null);
-	byte LightWeight (short nBaseTex);
-	short GetVariableLight (short nSegment = -1, short nSide = -1);
-	short AddVariableLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
-	bool DeleteVariableLight (short nSegment = -1, short nSide = -1);
-	int IsExplodingLight(int nBaseTex);
-	bool VisibleWall (ushort nWall);
-	void SetSegmentLight (double fLight, bool bAll = false, bool bDynSegLights = false);
-	void ScaleCornerLight (double fLight, bool bAll = false);
-	void CalcAverageCornerLight (bool bAll = false);
-	void AutoAdjustLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);
-	void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
-	void Illuminate (short nSrcSide, short nSrcSeg, uint brightness, 
-						  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
-	void IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale);
-	bool CalcSideLights (int nSegment, int nSide, CVertex& source_center, 
-								CVertex* sourceCorner, CVertex& A, double *effect,
-								double fLightScale, bool bIgnoreAngle);
 
 	void FixChildren();
 	void SetLinesToDraw ();

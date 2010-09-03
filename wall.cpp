@@ -203,6 +203,22 @@ return (wallP->m_info.type != WALL_OPEN);
 
 //------------------------------------------------------------------------------
 
+bool CWall:IsVariable (void)
+{
+CTrigger* trigP = GetTrigger ();
+if (trigP == null)
+	return false;
+char trigType = trigP->m_info.type;
+return (trigType == TT_ILLUSION_OFF) ||
+		 (trigType == TT_ILLUSION_ON) ||
+		 (trigType == TT_CLOSE_WALL) ||
+		 (trigType == TT_OPEN_WALL) ||
+		 (trigType == TT_LIGHT_OFF) ||
+		 (trigType == TT_LIGHT_ON);
+}
+
+//------------------------------------------------------------------------------
+
 int CWall::SetClip (short nTexture)
 {
 	char *ps, *pszName = textureManager.Name (nTexture);

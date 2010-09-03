@@ -132,6 +132,8 @@ class CSegmentManager {
 		bool DefineSegment (short nSegment, byte type, short nTexture, short wallType = -1);
 		void UndefineSegment (short nSegment);
 
+		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
+
 		short ReadSegmentInfo (CFileManager& fp);
 		void WriteSegmentInfo (CFileManager& fp, short);
 		void CutBlock ();
