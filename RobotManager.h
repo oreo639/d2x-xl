@@ -13,10 +13,19 @@ typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
 
 class CRobotManager {
 	public:
-		robotInfoList	m_robotInfo;
-		byte*	m_pHxmExtraData;
-		int	m_nHxmExtraDataSize;
-		int	m_nRobotTypes;
+		robotInfoList	m_robotInfo [2];
+
+		byte*				m_pHxmExtraData;
+		int				m_nHxmExtraDataSize;
+		int				m_nRobotTypes;
+
+		inline robotInfoList& RobotInfo (void) { return m_robotInfo [0]; }
+
+		inline robotInfoList& DefRobotInfo (void) { return m_robotInfo [1]; }
+
+		inline CRobotInfo* GetRobotInfo (int i, int j = 0) { return &m_robotInfo [j][i]; }
+
+		inline CRobotInfo* GetDefRobotInfo (int i) { return GetRobotInfo (i, 1); }
 
 		void Init (void); 
 		void LoadResource (int nRobot); 

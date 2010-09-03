@@ -33,9 +33,9 @@ extern tTextureLight textureLightD2 [NUM_LIGHTS_D2];
 
 #ifdef _DEBUG
 
-#define CLEAR(_b) (_b) [0].Reset((_b).Length ())
+#define CLEAR(_b) (_b) [0].Reset((_b).Length (void))
 #define ASSIGN(_a,_b) (_a) = (_b)
-#define DATA(_b) (_b).Buffer ()
+#define DATA(_b) (_b).Buffer (void)
 
 #else
 
@@ -71,7 +71,6 @@ class CMine {
 		char				m_currentLevelName [256];	
 		CMineData		m_mineData;
 
-		robotInfoList	m_defaultRobotInfo;
 		HPALETTE			m_paletteHandle;
 		
 		// strings
@@ -94,21 +93,21 @@ class CMine {
 		int				m_nHxmExtraDataSize;
 	// Constructor/Desctuctor
 	public:
-		CMine();
-		~CMine();
+		CMine(void);
+		~CMine(void);
 		void Initialize (void);
 		void Reset (void);
 		void Default (void);
 		
 	public:
-		inline CMineData& MineData ()
+		inline CMineData& MineData (void)
 			{ return m_mineData; }
 
 		inline int LevelVersion (void) { return m_levelVersion; }
 		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
-		inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
-		inline bool IsStdLevel (void) { return LevelVersion () < 9; }
-		inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
+		inline bool IsD2XLevel (void) { return LevelVersion (void) >= 9; }
+		inline bool IsStdLevel (void) { return LevelVersion (void) < 9; }
+		inline bool LevelOutdated (void) { return LevelVersion (void) < LEVEL_VERSION; }
 		inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
 			
 		inline int FileType (void) { return m_fileType; }
@@ -119,83 +118,54 @@ class CMine {
 		inline vertexColorList& VertexColors (void)
 			{ return MineData ().vertexColors; }
 
-		inline robotMakerList& BotGens (void)
-			{ return MineData ().robotMakers; }
-		inline robotMakerList& EquipGens (void)
-			{ return MineData ().equipMakers; }
-		inline activeDoorList& ActiveDoors (void)
-			{ return MineData ().activeDoors; }
-		inline robotInfoList& RobotInfo (void)
-			{ return MineData ().robotInfo; }
-		inline robotInfoList& DefRobotInfo (void)
-			{ return m_defaultRobotInfo; }
-		//inline textureList& Textures ()
+		//inline textureList& Textures (void)
 		//	{ return textures; }
 
 		inline CColor *VertexColors (int i)
 			{ return &(MineData ().vertexColors [i]); }
 
-		inline CRobotMaker *BotGens (int i)
-			{ return MineData ().robotMakers + i; }
-		inline CRobotMaker *EquipGens (int i)
-			{ return MineData ().equipMakers + i; }
-		inline CActiveDoor *ActiveDoors (int i)
-			{ return MineData ().activeDoors + i; }
-		inline CRobotInfo *RobotInfo (int i)
-			{ return MineData ().robotInfo + i; }
-		inline CRobotInfo *DefRobotInfo (int i)
-			{ return m_defaultRobotInfo + i; }
 
 		//inline CTexture* Textures (int i, int j = 0)
 		//	{ return &textureManager.textures [i][j]; }
 
-		inline CMineInfo& Info ()
+		inline CMineInfo& Info (void)
 			{ return MineData ().mineInfo; }
-		inline CMineFileInfo& FileInfo ()
+		inline CMineFileInfo& FileInfo (void)
 			{ return MineData ().mineInfo.fileInfo; }
 
-		long TotalSize (CMineItemInfo& gii)
-			{ return (int) gii.size * (int) gii.count; }
-		inline int& ReactorTime ()
-			{ return MineData ().m_reactorTime; }
-		inline int& ReactorStrength ()
-			{ return MineData ().m_reactorStrength; }
-		inline int& SecretCubeNum ()
-			{ return MineData ().m_secretSegNum; }
-		inline CDoubleMatrix& SecretOrient ()
-			{ return MineData ().m_secretOrient; }
+		long TotalSize (CMineItemInfo& gii) { return (int) gii.size * (int) gii.count; }
 
+		inline int& ReactorTime (void) { return MineData ().m_reactorTime; }
+
+		inline int& ReactorStrength (void) { return MineData ().m_reactorStrength; }
+
+		inline int& SecretCubeNum (void) { return MineData ().m_secretSegNum; }
+
+		inline CDoubleMatrix& SecretOrient (void) { return MineData ().m_secretOrient; }
 
 		short Load(const char *filename = null, bool bLoadFromHog = false);
+
 		short Save(const char *filename, bool bSaveToHog = false);
-		inline LPSTR LevelName (void)
-			{ return m_currentLevelName; }
-		inline int LevelNameSize (void)
-			{ return sizeof m_currentLevelName; }
-		inline bool	SplineActive (void)
-			{ return m_bSplineActive; }
-		inline void SetSplineActive (bool bSplineActive)
-			{ m_bSplineActive = bSplineActive; }
 
-		void	MakeObject (CGameObject *objP, char type, short nSegment);
-		void	SetObjectData (char type);
-		bool	CopyObject (byte new_type, short nSegment = -1);
-		void  DeleteObject(short objectNumber = -1);
+		inline LPSTR LevelName (void) { return m_currentLevelName; }
 
-		void Mark ();
-		void MarkAll ();
-		void UnmarkAll ();
+		inline int LevelNameSize (void) { return sizeof m_currentLevelName; }
 
-		CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
-		CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
-		//double CalcLength (CFixVector* center1, CFixVector* center2);
+		inline bool	SplineActive (void) { return m_bSplineActive; }
+
+		inline void SetSplineActive (bool bSplineActive) { m_bSplineActive = bSplineActive; }
+
+		void Mark (void);
+		void MarkAll (void);
+		void UnmarkAll (void);
 
 
-		void FixChildren();
-		void SetLinesToDraw ();
+		void FixChildren(void);
 
-		inline void SetSelectMode (short mode)
-			{ m_selectMode = mode; }
+		void SetLinesToDraw (void);
+
+		inline void SetSelectMode (short mode) { m_selectMode = mode; }
+
 		int ScrollSpeed (ushort texture,int *x,int *y);
 
 		bool EditGeoFwd (void);
@@ -218,9 +188,6 @@ class CMine {
 		void LoadSideTextures (short segNum, short sideNum);
 
 		// trigger stuff
-		void DrawObject (CWnd *pWnd, int type, int id);
-		void ConvertWallNum (ushort wNumOld, ushort wNumNew);
-
 		bool GetTriggerResources (ushort& nWall);
 
 		int FuelCenterCount (void);
@@ -238,12 +205,12 @@ class CMine {
 
 		short ReadSegmentInfo (CFileManager& fp);
 		void WriteSegmentInfo (CFileManager& fp);
-		void CutBlock ();
+		void CutBlock (void);
 		void CopyBlock (char *pszBlkFile = null);
-		void PasteBlock (); 
+		void PasteBlock (void); 
 		int ReadBlock (char *name,int option); 
-		void QuickPasteBlock  ();
-		void DeleteBlock ();
+		void QuickPasteBlock  (void);
+		void DeleteBlock (void);
 
 		inline void wrap (short *x, short delta,short min,short max) {
 			*x += delta;
@@ -253,10 +220,10 @@ class CMine {
 				*x = max;
 			}
 
-		void TunnelGenerator ();
-		void IncreaseSpline ();
-		void DecreaseSpline ();
-		void CalcSpline ();
+		void TunnelGenerator (void);
+		void IncreaseSpline (void);
+		void DecreaseSpline (void);
+		void CalcSpline (void);
 		void UntwistSegment (short nSegment,short nSide);
 		int MatchingSide (int j);
 
@@ -278,7 +245,7 @@ class CMine {
 		short SaveMineDataCompiled (CFileManager& fp);
 		short SaveGameData (CFileManager& savefile);
 		void ClearMineData (void);
-		void UpdateDeltaLights ();
+		void UpdateDeltaLights (void);
 		void SortDLIndex (int left, int right);
 	};
 
@@ -286,15 +253,15 @@ class CMine {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-#define MAX_TEXTURES ((theMine == null) ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
-#define MAX_OBJECTS ((theMine == null) ? MAX_OBJECTS_D2 : theMine->IsStdLevel () ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
-#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
-#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
-#define MAX_PLAYERS ((theMine == null) ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
-#define ROBOT_IDS2 ((theMine == null) ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
-#define MAX_ROBOT_MAKERS ((theMine == null) ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
-#define MAX_LIGHT_DELTA_INDICES ((theMine == null) ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
-#define MAX_LIGHT_DELTA_VALUES ((theMine == null) ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
+#define MAX_TEXTURES ((theMine == null) ? MAX_TEXTURES_D2 : theMine->IsD1File (void) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
+#define MAX_OBJECTS ((theMine == null) ? MAX_OBJECTS_D2 : theMine->IsStdLevel (void) ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
+#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File (void) || (theMine->LevelVersion (void) < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
+#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File (void) || (theMine->LevelVersion (void) < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
+#define MAX_PLAYERS ((theMine == null) ? MAX_PLAYERS_D2 : theMine->IsStdLevel (void) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+#define ROBOT_IDS2 ((theMine == null) ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion (void) == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
+#define MAX_ROBOT_MAKERS ((theMine == null) ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File (void) || (theMine->LevelVersion (void) < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
+#define MAX_LIGHT_DELTA_INDICES ((theMine == null) ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File (void) || theMine->IsStdLevel (void)) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
+#define MAX_LIGHT_DELTA_VALUES ((theMine == null) ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File (void) || theMine->IsStdLevel (void)) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
 
 #define NO_WALL MAX_WALLS
 

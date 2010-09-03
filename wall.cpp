@@ -242,7 +242,7 @@ return -1;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-void CActiveDoor::Read (CFileManager& fp, int version, bool bFlag)
+void CDoor::Read (CFileManager& fp, int version, bool bFlag)
 {
 m_info.nParts = fp.ReadInt32 ();
 m_info.nFrontWall [0] = fp.ReadInt16 ();
@@ -254,7 +254,7 @@ m_info.time = fp.ReadInt32 ();
 
 // ------------------------------------------------------------------------
 
-void CActiveDoor::Write (CFileManager& fp, int version, bool bFlag)
+void CDoor::Write (CFileManager& fp, int version, bool bFlag)
 {
 fp.Write (m_info.nParts);
 fp.Write (m_info.nFrontWall [0]);

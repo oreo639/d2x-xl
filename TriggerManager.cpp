@@ -81,7 +81,7 @@ SortObjTriggers ();
 
 //------------------------------------------------------------------------------
 
-void CMine::RenumberTargetObjs (void)
+void CTriggerManager::RenumberTargetObjs (void)
 {
 	CTrigger* trigP = GetTrigger (0);
 
@@ -397,7 +397,7 @@ for (i = NumObjTriggers (); i > 0; )
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CTriggerManager::Read (CFileManager& fp, CTriggerManagerItemInfo& info, int nFileVersion)
 {
 if (info.offset < 0)
 	return;
@@ -437,7 +437,7 @@ else {
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CTriggerManager::Write (CFileManager& fp, CTriggerManagerItemInfo& info, int nFileVersion)
 {
 info.count = Count (0);
 if (Count (0) + Count (1) == 0)
@@ -469,6 +469,121 @@ void Clear (void)
 {
 for (int = 0; i < Count (); i++)
 	m_triggers [i].Clear ();
+}
+
+// ----------------------------------------------------------------------------- 
+
+bool CTriggerManager::HaveResources (ushort& nWall)
+{
+nWall = current.Side ()->m_info.nWall;
+if (nWall < MineInfo ().walls.count) {
+	ErrorMsg ("There is already a wall on this side");
+	return false;
+	}
+if (wallManager.Count () >= MAX_WALLS - 1) {
+	ErrorMsg ("Maximum number of walls reached");
+	return false;
+	}
+if (Count () >= MAX_TRIGGERS - 1) {
+	ErrorMsg ("Maximum number of triggers reached");
+	return false;
+	}
+return true;
+}
+
+//--------------------------------------------------------------------------
+// AddDoorTrigger
+//
+// Action - checks other cube's side to see if there is a door there,
+//          then adds a trigger for that door
+//--------------------------------------------------------------------------
+
+bool CTriggerManager::AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType) 
+{
+ushort nWall;
+if (!GetTriggerResources (nWall))
+	return false;
+// make a new wall and a new trigger
+bool bUndo = undoManager.SetModified (true);
+undoManager.Lock ();
+if (wallManager.Add (current.m_nSegment, current.m_nSide, (byte) wallType, wallFlags, KEY_NONE, -1, -1) &&
+	 triggerManager.AddToWall (wallManager.Count () - 1, triggerType)) {
+	Triggers (Count () - 1)->Add (other.m_nSegment, other.m_nSide);
+	undoManager.Unlock ();
+	DLE.MineView ()->Refresh ();
+	return true;
+	}
+undoManager.ResetModified (bUndo);
+return false;
+}
+
+// -----------------------------------------------------------------------------
+
+bool CTriggerManager::AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType) 
+{
+if (other.Wall () == null) {
+	ErrorMsg ("Other cube's side is not on a wall.\n\n"
+				"Hint: Select a wall using the 'other cube' and\n"
+				"select a trigger location using the 'current cube'.");
+	return false;
+	}
+// automatically change the trigger type to open if not a door
+if (other.Wall ()->m_info.type != WALL_DOOR)
+	triggerType = TT_OPEN_WALL;
+return AutoAddTrigger (wallType, wallFlags, triggerType);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CTriggerManager::AddOpenDoor (void) 
+{
+return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CTriggerManager::AddRobotMaker (void) 
+{
+if (other.Segment ()->m_info.function != SEGMENT_FUNC_ROBOTMAKER) {
+	ErrorMsg ("There is no robot maker cube selected.\n\n"
+				"Hint: Select a robot maker cube using the 'other cube' and\n"
+				"select a trigger location using the 'current cube'.");
+	return false;
+	}
+return AutoAddTrigger (WALL_OPEN, 0, TT_MATCEN);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CTriggerManager::AddShieldDrain (void) 
+{
+if (theMine->IsD2File ()) {
+	ErrorMsg ("Descent 2 does not support shield damage Triggers ()");
+   return false;
+	}
+return AutoAddTrigger (WALL_OPEN, 0, TT_SHIELD_DAMAGE);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CTriggerManager::AddEnergyDrain (void) 
+{
+if (theMine->IsD2File ()) {
+	ErrorMsg ("Descent 2 does not support energy drain Triggers ()");
+   return false;
+	}
+return AutoAddTrigger (WALL_OPEN, 0, TT_ENERGY_DRAIN);
+}
+
+// -----------------------------------------------------------------------------
+
+bool CTriggerManager::AddUnlock (void) 
+{
+if (theMine->IsD1File ()) {
+   ErrorMsg ("Control Panels are not supported in Descent 1.");
+   return false;
+	}
+return AddDoorTrigger (WALL_OVERLAY, WALL_WALL_SWITCH, TT_UNLOCK_DOOR);
 }
 
 // -----------------------------------------------------------------------------

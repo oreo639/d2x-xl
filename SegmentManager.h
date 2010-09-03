@@ -79,6 +79,14 @@ class CSegmentManager {
 
 		void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
 
+		inline robotMakerList& BotGens (void) { return m_robotMakers; }
+		
+		inline robotMakerList& EquipGens (void) { return m_equipMakers; }
+		
+		inline CRobotMaker* GetBotGen (int i) { return &m_robotMakers [i]; }
+		
+		inline CRobotMaker* GetEquipGen (int i) { return &m_equipMakers [i]; }
+
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 		inline int GetAddMode (void) { return m_nAddMode; }
 

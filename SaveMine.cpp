@@ -272,7 +272,7 @@ startOffset = fp.Tell ();
 // the size which is used by the game engine.
 MineInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
 MineInfo ().walls.size = 24;                            // 24 = sizeof (wall)
-MineInfo ().doors.size = 16;                            // 16 = sizeof (CActiveDoor)
+MineInfo ().doors.size = 16;                            // 16 = sizeof (CDoor)
 MineInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
 MineInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
 MineInfo ().botgen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CRobotMaker)
@@ -329,7 +329,7 @@ fp.Write (str, strlen (str) + 1, 1);
 
 SaveGameItem (fp, MineInfo ().objects, DATA (Objects ()));
 SaveGameItem (fp, MineInfo ().walls, DATA (Walls ()));
-SaveGameItem (fp, MineInfo ().doors, DATA (ActiveDoors ()));
+SaveGameItem (fp, MineInfo ().doors, DATA (Doors ()));
 SaveGameItem (fp, MineInfo ().triggers, DATA (Triggers ()));
 if (LevelVersion () >= 12) {
 	fp.Write (NumObjTriggers ());

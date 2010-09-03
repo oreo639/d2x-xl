@@ -89,8 +89,8 @@ class CTriggerManager {
 		bool AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType);
 		bool AddOpenDoor (void); 
 		bool AddRobotMaker (void); 
-		bool AddShield (void); 
-		bool AddEnergy (void); 
+		bool AddShieldDrain (void); 
+		bool AddEnergyDrain (void); 
 		bool AddUnlock (void); 
 		bool AddExit (short type); 
 		bool AddNormalExit (void); 

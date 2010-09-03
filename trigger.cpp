@@ -108,9 +108,7 @@ else if ((type == TT_MESSAGE) || (type == TT_SOUND))
 else 	
 	m_info.value = I2X (5); // 5% shield or energy damage
 m_info.time = -1;
-m_count = 0;
-for (int i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	m_targets [i].Clear ();
+this->CTriggerTarget::Clear ();
 }
 
 //------------------------------------------------------------------------------

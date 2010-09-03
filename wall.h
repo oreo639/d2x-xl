@@ -88,18 +88,18 @@ public:
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-typedef struct tActiveDoor {
+typedef struct tDoor {
   int		nParts;				// for linked walls
   short	nFrontWall [2];	// front wall numbers for this door
   short	nBackWall [2];		// back wall numbers for this door
   int		time;					// how long been opening, closing, waiting
-} tActiveDoor;
+} tDoor;
 
 //------------------------------------------------------------------------
 
-class CActiveDoor : public CGameItem {
+class CDoor : public CGameItem {
 public:
-	tActiveDoor	m_info;
+	tDoor	m_info;
 
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
