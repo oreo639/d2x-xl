@@ -29,6 +29,17 @@ class CObjectManager {
 
 		inline short& ObjCount () { return m_nCount; }
 
+		short FindObjBySig (short nSignature);
+		void InitRobotData (void);
+		int ReadHxmFile (CFileManager& fp, long fSize);
+		int WriteHxmFile (CFileManager& fp);
+		void SortObjects ();
+		void Sort (short left, short right);
+		int CmpObjects (CGameObject *pi, CGameObject *pm);
+		bool IsCustomRobot (int i);
+		bool HasCustomRobots (void);
+		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - m_objects; }
+
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Clear (void);

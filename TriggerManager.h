@@ -61,6 +61,9 @@ class CTriggerManager {
 
 		void SortObjTriggers (void);
 
+		void RenumberObjTriggers (void);
+		void RenumberTargetObjs (void);
+
 		void DeleteTarget (CSideKey key);
 
 		void DeleteTarget (CSideKey key, short nClass);

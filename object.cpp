@@ -15,118 +15,6 @@
 #include "cfile.h"
 
 //------------------------------------------------------------------------
-// SortObjects ()
-//------------------------------------------------------------------------
-
-static short sortObjType [MAX_OBJECT_TYPES] = {7, 8, 5, 4, 0, 2, 9, 3, 10, 6, 11, 12, 13, 14, 1, 16, 15, 17, 18, 19, 20};
-
-
-int CMine::QCmpObjects (CGameObject *pi, CGameObject *pm)
-{
-	short ti = sortObjType [pi->m_info.type];
-	short tm = sortObjType [pm->m_info.type];
-if (ti < tm)
-	return -1;
-if (ti > tm)
-	return 1;
-return (pi->m_info.id < pm->m_info.id) ? -1 : (pi->m_info.id > pm->m_info.id) ? 1 : 0;
-}
-
-
-short CMine::FindObjBySig (short signature)
-{
-	CGameObject*	objP = Objects (0);
-
-for (short i = ObjCount (); i; i--, objP++)
-	if (objP->m_info.signature == signature)
-		return short (objP - Objects (0));
-return -1;
-}
-
-
-void CMine::RenumberTriggerTargetObjs (void)
-{
-	CTrigger*	trigP = Triggers (0);
-
-for (int i = TriggerCount (); i; i--, trigP++) {
-	for (int j = 0; j < trigP->m_count; ) {
-		if (trigP->Side (j) >= 0) 
-			j++;
-		else {
-			int h = FindObjBySig (trigP->Segment (j));
-			if (h >= 0)
-				trigP->Side (j++) = h;
-			else if (j < --trigP->m_count) {
-				trigP [j] = trigP [trigP->m_count];
-				}
-			}
-		}
-	}
-}
-
-
-void CMine::RenumberObjTriggers (void)
-{
-	CTrigger*	trigP = ObjTriggers (0);
-	int			i;
-
-for (i = NumObjTriggers (); i; i--, trigP++)
-	trigP->m_info.nObject = FindObjBySig (trigP->m_info.nObject);
-i = NumObjTriggers ();
-while (i) {
-	if (ObjTriggers (--i)->m_info.nObject < 0)
-		DeleteObjTrigger (i);
-	}
-SortObjTriggers ();
-}
-
-
-void CMine::QSortObjects (short left, short right)
-{
-	CGameObject	median = *Objects ((left + right) / 2);
-	short	l = left, r = right;
-
-do {
-	while (QCmpObjects (Objects (l), &median) < 0)
-		l++;
-	while (QCmpObjects (Objects (r), &median) > 0)
-		r--;
-	if (l <= r) {
-		if (l < r) {
-			CGameObject o = *Objects (l);
-			*Objects (l) = *Objects (r);
-			*Objects (r) = o;
-			if (current.m_nObject == l)
-				current.m_nObject = r;
-			else if (current.m_nObject == r)
-				current.m_nObject = l;
-			}
-		l++;
-		r--;
-		}
-	}
-while (l < r);
-if (l < right)
-	QSortObjects (l, right);
-if (left < r)
-	QSortObjects (left, r);
-}
-
-
-void CMine::SortObjects ()
-{
-	int	i, j;
-
-if (m_bSortObjects && ( (i = MineInfo ().objects.count) > 1)) {
-	for (j = 0; j < i; j++)
-		Objects (j)->m_info.signature = j;
-	QSortObjects (0, i - 1);
-	RenumberObjTriggers ();
-	RenumberTriggerTargetObjs ();
-	}
-}
-
-//------------------------------------------------------------------------
 // make_object ()
 //
 // Action - Defines a standard object (currently assumed to be a player)
@@ -459,8 +347,8 @@ for (i = nDelObj; i < j; i++)
 if (nDelObj < --j)
 	memcpy (Objects (nDelObj), Objects (nDelObj + 1), (MineInfo ().objects.count - nDelObj) * sizeof (CGameObject));
 MineInfo ().objects.count = j;
-RenumberObjTriggers ();
-RenumberTriggerTargetObjs ();
+triggerManager.RenumberObjTriggers ();
+triggerManager.RenumberTargetObjs ();
 if (Current1 ().nObject >= j)
 	Current1 ().nObject = j - 1;
 if (Current2 ().nObject >= j)

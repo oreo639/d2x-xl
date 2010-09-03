@@ -64,6 +64,23 @@ if (h > 1) {
 
 //------------------------------------------------------------------------------
 
+void CTriggerManager::RenumberObjTriggers (void)
+{
+	CTrigger*	trigP = ObjTriggers (0);
+	int			i;
+
+for (i = NumObjTriggers (); i; i--, trigP++)
+	trigP->m_info.nObject = objectManager.Index (objectManager.FindBySig (trigP->m_info.nObject));
+i = NumObjTriggers ();
+while (i) {
+	if (ObjTriggers (--i)->m_info.nObject < 0)
+		DeleteObjTrigger (i);
+	}
+SortObjTriggers ();
+}
+
+//------------------------------------------------------------------------------
+
 CTrigger* CTriggerManager::AddToWall (short nWall, short type, bool bAddWall) 
 {
 	static short defWallTypes [NUM_TRIGGER_TYPES] = {

@@ -1794,7 +1794,7 @@ return (GetSegment (nSegment)->GetChild (nSide)== -1) ||
 
                         /* -------------------------- */
 
-int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides)
+int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, bool bAlign1st, bool bAlign2nd, char bAlignedSides)
 {
 	CSegment*	segP = GetSegment (nStartSeg); 
 	CSegment*	childSegP; 

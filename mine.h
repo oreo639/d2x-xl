@@ -214,7 +214,6 @@ public:
 	inline void SetSelectMode (short mode)
 		{ m_selectMode = mode; }
 	int ScrollSpeed (ushort texture,int *x,int *y);
-	int AlignTextures (short start_segment, short start_side, short only_child, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
 
 	bool EditGeoFwd (void);
 	bool EditGeoBack (void);
@@ -236,25 +235,16 @@ public:
 	void LoadSideTextures (short segNum, short sideNum);
 
 	// trigger stuff
-	short FindObjBySig (short nSignature);
-
 	void DrawObject (CWnd *pWnd, int type, int id);
 	void ConvertWallNum (ushort wNumOld, ushort wNumNew);
 
-	bool GetOppositeSide (short& nOppSeg, short& nOppSide, short nSegment = -1, short nSide = -1);
-	bool GetOppositeWall (short &nOppWall, short nSegment = -1, short nSide = -1);
-	CSide *OppSide ();
-	bool SetTexture (short nSegment, short nSide, short nTexture, short tmapnum2);
-	void CopyOtherCube ();
-	bool WallClipFromTexture (short nSegment, short nSide);
-	void CheckForDoor (short nSegment, short nSide);
 	void RenumberBotGens ();
 	void RenumberEquipGens ();
 
 	bool SetDefaultTexture (short nTexture = -1, short walltype = -1);
-	bool DefineSegment (short nSegment, byte type, short nTexture, short walltype = -1);
-	void UndefineSegment (short nSegment);
+
 	bool GetTriggerResources (ushort& nWall);
+
 	int FuelCenterCount (void);
 	inline int& RobotMakerCount (void) 
 		{ return MineInfo ().botgen.count; }
@@ -267,12 +257,9 @@ public:
 	inline int& ObjectCount (void) 
 		{ return MineInfo ().objects.count; }
 
-	void InitRobotData();
-	int WriteHxmFile (CFileManager& fp);
-	int ReadHxmFile (CFileManager& fp, long fSize);
 
-	short ReadSegmentInfo (CFileManager& file);
-	void WriteSegmentInfo (CFileManager& file, short /*nSegment*/);
+	short ReadSegmentInfo (CFileManager& fp);
+	void WriteSegmentInfo (CFileManager& fp);
 	void CutBlock ();
 	void CopyBlock (char *pszBlkFile = null);
 	void PasteBlock (); 
@@ -295,16 +282,6 @@ public:
 	void UntwistSegment (short nSegment,short nSide);
 	int MatchingSide (int j);
 
-	void SortObjects ();
-	void RenumberTriggerTargetObjs (void);
-	void RenumberObjTriggers (void);
-	void QSortObjects (short left, short right);
-	int QCmpObjects (CGameObject *pi, CGameObject *pm);
-	int QCmpObjTriggers (CTrigger *pi, CTrigger *pm);
-	void QSortObjTriggers (short left, short right);
-	void SortObjTriggers (void);
-	bool IsCustomRobot (int i);
-	BOOL HasCustomRobots();
 	short LoadMineSigAndType (CFileManager& fp);
 	void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
 

@@ -120,7 +120,7 @@ class CSegmentManager {
 		bool HaveMarkedSegments (void) { return MarkedCount (true) > 0; }
 		bool HaveMarkedSides (void);
 
-		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, BOOL bAlign1st, BOOL bAlign2nd, char bAlignedSides = 0);
+		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, bool bAlign1st, bool bAlign2nd, char bAlignedSides = 0);
 
 		CSide* OppSide (void);
 		bool SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex);
@@ -155,7 +155,6 @@ class CSegmentManager {
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
-		void Clear (void);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
