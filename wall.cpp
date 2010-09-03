@@ -239,29 +239,6 @@ return -1;
 }
 
 // ------------------------------------------------------------------------
-
-void CWall::ReadText (CFileManager& fp)
-{
-}
-
-// ------------------------------------------------------------------------
-
-void CWall::WriteText (CFileManager& fp)
-{
-fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
-fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
-fprintf (fp.File (), "        hps %d\n", wallP->m_info.hps);
-fprintf (fp.File (), "        type %d\n", wallP->m_info.type);
-fprintf (fp.File (), "        flags %d\n", wallP->m_info.flags);
-fprintf (fp.File (), "        state %d\n", wallP->m_info.state);
-fprintf (fp.File (), "        nClip %d\n", wallP->m_info.nClip);
-fprintf (fp.File (), "        keys %d\n", wallP->m_info.keys);
-fprintf (fp.File (), "        cloak %d\n", wallP->m_info.cloakValue);
-if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= MineInfo ().triggers.count))
-	fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
-}
-
-// ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 

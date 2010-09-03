@@ -76,16 +76,6 @@ public:
 		fp.Write (l);
 		}
 
-	void ReadText (CFileManager& fp) {
-		}
-
-	void WriteText (CFileManager& fp) {
-		fprintf (fp.File (), "    uvls %d %d %d\n",
-		sideP->m_info.uvls [j].u,
-		sideP->m_info.uvls [j].v,
-		sideP->m_info.uvls [j].l);
-		}
-
 	inline void Clear (void) { u = v = l = 0; }
 	inline void Set (short _u, short _v, short _l) { u = _u, v = _v, l = _l; }
 };

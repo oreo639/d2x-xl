@@ -22,8 +22,6 @@ public:
 	void Clear (void);
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
-	void ReadText (CFileManager& fp);
-	void WriteText (CFileManager& fp);
 
 	short Add (CSideKey key);
 	short Delete (short i = -1);
@@ -61,10 +59,6 @@ public:
 	virtual void Read (CFileManager& fp, int version, bool bObjTrigger);
 
 	virtual void Write (CFileManager& fp, int version, bool bObjTrigger);
-
-	void ReadText (CFileManager& fp);
-
-	void WriteText (CFileManager& fp);
 
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 

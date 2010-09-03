@@ -113,7 +113,6 @@ typedef struct tSegment {
 	int		staticLight;		// average static light in segment 
 	byte		childFlags;			// bit0 to 5: children, bit6: unused, bit7: special 
 	byte		wallFlags;			// bit0 to 5: door/walls, bit6: deleted, bit7: marked segment 
-	short		nIndex;				// used for cut & paste to help link children 
 	short		mapBitmask;		// which lines are drawn when displaying wireframe 
 	char		owner;
 	char		group;
@@ -129,8 +128,8 @@ public:
 public:
 	void Upgrade (void);
 	void Read (CFileManager& fp, int nLevelType, int nLevelVersion);
-	void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras);
 	void Write (CFileManager& fp, int nLevelType, int nLevelVersion);
+	void ReadExtras (CFileManager& fp, int nLevelType, int nLevelVersion, bool bExtras);
 	void WriteExtras (CFileManager& fp, int nLevelType, bool bExtras);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 

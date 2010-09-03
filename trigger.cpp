@@ -92,24 +92,6 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 }
 
 //------------------------------------------------------------------------------
-
-void CTriggerTargets::ReadText (CFileManager& fp)
-{
-}
-
-//------------------------------------------------------------------------------
-
-void CTriggerTargets::WriteText (CFileManager& fp)
-{
-for (int i = 0; i < MAX_TRIGGER_TARGETS; i++) {
-	if (segmentManager.GetSegment (m_targets [i].m_nSegment)->m_info.wallFlags & MARKED_MASK) {
-		fprintf (fp.File (), "			        seg %d\n", m_targets [i].m_nSegment);
-		fprintf (fp.File (), "			        side %d\n", m_targets [i].m_nSide);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -193,24 +175,6 @@ bool CTrigger::IsExit (void)
 return DLE.IsD1File () 
 		 ? (m_info.flags & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT)) != 0
 		 : (m_info.type == TT_EXIT) || (m_info.type == TT_SECRET_EXIT);
-}
-
-//------------------------------------------------------------------------------
-
-void CTrigger::WriteText (CFileManager& fp)
-{
-	int count, i;
-
-for (count = i = 0; i < m_count; i++)
-	if (segmentManager.GetSegment (m_targets [i].m_nSegment)->m_info.wallFlags & MARKED_MASK)
-		count++;
-fprintf (fp.File (), "        trigger %d\n", m_nIndex);
-fprintf (fp.File (), "			    type %d\n", m_info.type);
-fprintf (fp.File (), "			    flags %ld\n", m_info.flags);
-fprintf (fp.File (), "			    value %ld\n", m_info.value);
-fprintf (fp.File (), "			    timer %d\n", m_info.time);
-fprintf (fp.File (), "			    count %d\n", count);
-CTriggerTargets::WriteText (fp);
 }
 
 //------------------------------------------------------------------------------

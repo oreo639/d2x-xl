@@ -25,6 +25,22 @@ char *BLOCKOP_HINT =
 	"Would you like to proceed?";
 
 //---------------------------------------------------------------------------
+
+void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
+{
+o = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
+// set x'
+m.rVec = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]]) - origin;
+// calculate y'
+CVertex v = *vertexManager.GetVertex (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]]) - origin;
+m.uVec = CrossProduct (m.rVec, v);
+m.fVec = CrossProduct (m.rVec, m.uVec);
+m.rVec.Normalize ();
+m.uVec.Normalize ();
+m.fVec.Normalize ();
+}
+
+//---------------------------------------------------------------------------
 // ReadSegmentInfo()
 //
 // ACTION - Reads a segment's information in text form from a file.  Adds
@@ -34,7 +50,7 @@ char *BLOCKOP_HINT =
 // Change - Now reads verts relative to current side
 //---------------------------------------------------------------------------
 
-short CMine::ReadSegmentInfo (CFileManager& fp) 
+short CBlockManager::Read (CFileManager& fp) 
 {
 	CSegment			*segP;
 	CSide				*sideP;
@@ -42,8 +58,8 @@ short CMine::ReadSegmentInfo (CFileManager& fp)
 	short				i, j, test;
 	short				origVertCount, k;
 	CVertex			origin, vVertex;
-	CDoubleVector	xPrime, yPrime, zPrime, v;
-	CDoubleVector	xAxis, yAxis, zAxis;
+	CDoubleMatrix	m;
+	CDoubleVector	xAxis, yAxis, zAxis, v;
 	short				nNewSegs = 0, nNewWalls = 0, nNewTriggers = 0, nNewObjects = 0;
 	short				xlatSegNum [SEGMENT_LIMIT];
 	int				byteBuf;
@@ -54,27 +70,17 @@ origVertCount = VertCount ();
 // set origin
 segP = current.Segment ();
 nSide = current.m_nSide;
-origin = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(0)]]);
-// set x'
-xPrime = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(1)]]) - origin;
-// calculate y'
-vVertex = *Vertices (segP->m_info.verts [sideVertTable [nSide][CURRENT_POINT(3)]]) - origin;
-yPrime = CrossProduct (xPrime, CDoubleVector (vVertex));
-zPrime = CrossProduct (xPrime, yPrime);
-xPrime.Normalize ();
-yPrime.Normalize ();
-zPrime.Normalize ();
-
+MakeTransformation (m, origin);
 // now take the determinant
-xAxis.Set (yPrime.v.y * zPrime.v.z - zPrime.v.y * yPrime.v.z, 
-			  zPrime.v.y * xPrime.v.z - xPrime.v.y * zPrime.v.z, 
-			  xPrime.v.y * yPrime.v.z - yPrime.v.y * xPrime.v.z);
-yAxis.Set (zPrime.v.x * yPrime.v.z - yPrime.v.x * zPrime.v.z, 
-			  xPrime.v.x * zPrime.v.z - zPrime.v.x * xPrime.v.z,
-			  yPrime.v.x * xPrime.v.z - xPrime.v.x * yPrime.v.z);
-zAxis.Set (yPrime.v.x * zPrime.v.y - zPrime.v.x * yPrime.v.y,
-			  zPrime.v.x * xPrime.v.y - xPrime.v.x * zPrime.v.y,
-			  xPrime.v.x * yPrime.v.y - yPrime.v.x * xPrime.v.y);
+xAxis.Set (m.uVec.v.y * m.fVec.v.z - m.fVec.v.y * m.uVec.v.z, 
+			  m.fVec.v.y * m.rVec.v.z - m.rVec.v.y * m.fVec.v.z, 
+			  m.rVec.v.y * m.uVec.v.z - m.uVec.v.y * m.rVec.v.z);
+yAxis.Set (m.fVec.v.x * m.uVec.v.z - m.uVec.v.x * m.fVec.v.z, 
+			  m.rVec.v.x * m.fVec.v.z - m.fVec.v.x * m.rVec.v.z,
+			  m.uVec.v.x * m.rVec.v.z - m.rVec.v.x * m.uVec.v.z);
+zAxis.Set (m.uVec.v.x * m.fVec.v.y - m.fVec.v.x * m.uVec.v.y,
+			  m.fVec.v.x * m.rVec.v.y - m.rVec.v.x * m.fVec.v.y,
+			  m.rVec.v.x * m.uVec.v.y - m.uVec.v.x * m.rVec.v.y);
 
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
@@ -87,10 +93,10 @@ while (!fp.EoF ()) {
 // abort if there are not at least 8 vertices free
 	if (MAX_VERTICES - VertCount () < 8) {
 		ErrorMsg ("No more free vertices");
-		return(nNewSegs);
+		return nNewSegs;
 		}
-	nSegment = SegCount ();
-	segP = GetSegment (nSegment);
+	nSegment = segmentManager.SegCount ();
+	segP = segmentManager.GetSegment (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	fscanf_s (fp.File (), "segment %hd\n", &segP->m_info.nIndex);
@@ -267,7 +273,7 @@ while (!fp.EoF ()) {
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CVertex* vertP = Vertices (origVertCount);
+		CVertex* vertP = vertexManager.GetVertex (origVertCount);
 		for (k = origVertCount; k < VertCount (); k++, vertP++)
 			if (*vertP == v) {
 				segP->m_info.verts [i] = k;
@@ -278,7 +284,7 @@ while (!fp.EoF ()) {
 			nVertex = VertCount ();
 			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
-			*Vertices (nVertex) = v;
+			*vertexManager.GetVertex (nVertex) = v;
 			VertCount ()++;
 			}
 		}
@@ -375,7 +381,7 @@ return (nNewSegs);
 //
 //---------------------------------------------------------------------------
 
-void CMine::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/) 
+void CBlockManager::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/) 
 {
 	short				nSegment;
 	CSegment			*segP;
@@ -383,21 +389,21 @@ void CMine::WriteSegmentInfo (CFileManager& fp, short /*nSegment*/)
 	CWall				*wallP;
 	short				i,j;
 	CVertex			origin;
-	CDoubleVector	xPrime, yPrime, zPrime, vVertex;
+	CDoubleVector	m.rVec, m.uVec, m.fVec, vVertex;
 	short				nVertex;
 
 // set origin
 segP = current.Segment ();
-origin = *Vertices (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(0)]]);
+origin = *vertexManager.GetVertex (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(0)]]);
 // set x'
-xPrime = *Vertices (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(1)]]) - origin;
+m.rVec = *vertexManager.GetVertex (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(1)]]) - origin;
 // calculate y'
-vVertex = *Vertices (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(3)]]) - origin;
-yPrime = CrossProduct (xPrime, vVertex);
-zPrime = CrossProduct (xPrime, yPrime);
-xPrime.Normalize ();
-yPrime.Normalize ();
-zPrime.Normalize ();
+vVertex = *vertexManager.GetVertex (segP->m_info.verts[sideVertTable[current.m_nSide][CURRENT_POINT(3)]]) - origin;
+m.uVec = CrossProduct (m.rVec, vVertex);
+m.fVec = CrossProduct (m.rVec, m.uVec);
+m.rVec.Normalize ();
+m.uVec.Normalize ();
+m.fVec.Normalize ();
 
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
@@ -447,7 +453,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
-								fprintf (fp.File (), "			        seg %d\n", trigger->Segment (iTarget));
+								fprintf (fp.File (), "			        segP %d\n", trigger->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigger->Side (iTarget));
 								}
 						}
@@ -465,8 +471,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
-			vVertex = *Vertices (nVertex) - origin;
-			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ xPrime), D2X (vVertex ^ yPrime), D2X (vVertex ^ zPrime));
+			vVertex = *vertexManager.GetVertex (nVertex) - origin;
+			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (vVertex ^ m.rVec), D2X (vVertex ^ m.uVec), D2X (vVertex ^ m.fVec));
 			}
 		fprintf (fp.File (), "  staticLight %ld\n",segP->m_info.staticLight);
 		if (bExtBlkFmt) {
@@ -484,14 +490,14 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 // MENU - Cut
 //==========================================================================
 
-void CMine::CutBlock (void)
+void CBlockManager::CutBlock (void)
 {
   CFileManager fp;
   short nSegment;
   short count;
   char szFile [256] = "\0";
 
-if (tunnelMaker.Active ()) {
+if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -563,7 +569,7 @@ DLE.MineView ()->Refresh ();
 // MENU - Copy
 //==========================================================================
 
-void CMine::CopyBlock (char *pszBlockFile)
+void CBlockManager::CopyBlock (char *pszBlockFile)
 {
   CFileManager fp;
   char szFile [256] = "\0";
@@ -617,9 +623,9 @@ DLE.MineView ()->Refresh ();
 // MENU - Paste
 //==========================================================================
 
-void CMine::PasteBlock() 
+void CBlockManager::PasteBlock() 
 {
-if (tunnelMaker.Active ()) {
+if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -645,7 +651,7 @@ if (!ReadBlock (szFile, 0))
 // if option == 1, then "x blocks pasted" message is suppressed
 //==========================================================================
 
-int CMine::ReadBlock (char *pszBlockFile,int option) 
+int CBlockManager::ReadBlock (char *pszBlockFile,int option) 
 {
 	CSegment *segP,*seg2;
 	short nSegment,seg_offset;
@@ -717,8 +723,8 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						if (nSegment != segnum2) {
 							// first check to see if Segments () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							CVertex* v1 = Vertices (segP ->m_info.verts [0]);
-							CVertex* v2 = Vertices (seg2->m_info.verts [0]);
+							CVertex* v1 = vertexManager.GetVertex (segP ->m_info.verts [0]);
+							CVertex* v2 = vertexManager.GetVertex (seg2->m_info.verts [0]);
 							if (fabs (v1->v.x - v2->v.x) < 10.0 &&
 								 fabs (v1->v.y - v2->v.y) < 10.0 &&
 								 fabs (v1->v.z - v2->v.z) < 10.0) {
@@ -761,7 +767,7 @@ return 0;
 // MENU - Quick Paste
 //==========================================================================
 
-void CMine::QuickPasteBlock ()
+void CBlockManager::QuickPasteBlock ()
 {
 if (!*m_szBlockFile) {
 	PasteBlock ();
@@ -770,7 +776,7 @@ if (!*m_szBlockFile) {
 	return;
 	}
 
-if (tunnelMaker.Active ()) {
+if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -785,12 +791,12 @@ if (!ReadBlock (m_szBlockFile, 1))
 // MENU - Delete Block
 //==========================================================================
 
-void CMine::DeleteBlock (void)
+void CBlockManager::DeleteBlock (void)
 {
 
 short nSegment, count;
 
-if (tunnelMaker.Active ()) {
+if (m_bSplineActive) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
