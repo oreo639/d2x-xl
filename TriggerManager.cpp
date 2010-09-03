@@ -183,7 +183,7 @@ CTrigger* delTrigP = GetTrigger (nDelTrigger, 0);
 if (delTrigP == null)
 	return;
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
@@ -252,7 +252,7 @@ void CTriggerManager::UpdateReactor (void)
 {
   CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 // remove items from list that do not point to a wall
 for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
@@ -298,7 +298,7 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return null;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 short nTrigger = NumObjTriggers ();
 GetObjTrigger (nTrigger)->Setup (type, 0);

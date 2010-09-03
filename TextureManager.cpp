@@ -505,7 +505,7 @@ if (nCustom) {
 	int nRemoved = nCustom - CountCustomTextures ();
 	sprintf_s (message, sizeof (message), "%d custom m_textures %s removed", nRemoved, (nRemoved == 1) ? "was" : "were");
 	if (nRemoved)
-		undoManager.SetModified (TRUE);
+		undoManager.SetModified (true);
 	INFOMSG (message);
 	}
 }

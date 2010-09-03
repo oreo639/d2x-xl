@@ -62,7 +62,7 @@ if (nWall >= MAX_WALLS) {
 	}
 
 // link wall to segment/side
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 sideP->SetWall (nWall);
 CWall* wallP = GetWall (nWall);
@@ -102,7 +102,7 @@ if (delWallP == null)
 	return;
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.GetOppositeWall (delWallP->m_nSegment, delWallP->m_nSide);
@@ -184,7 +184,7 @@ if (Count () + 1 >= MAX_WALLS) {
 	ErrorMsg ("Maximum number of Walls reached");
 	return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 // add a door to the current segment/side
 if (Add (current.m_nSegment, current.m_nSide, type, flags, keys, nClip, nTexture)) {
@@ -312,7 +312,7 @@ if (MineInfo ().triggers.count >= MAX_TRIGGERS - 1) {
 	return false;
 	}
 // make a new wall and a new trigger
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (AddWall (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture

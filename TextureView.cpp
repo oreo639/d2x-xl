@@ -163,7 +163,7 @@ else {
 	theMine->SetTexture (-1, -1, nBaseTex, -1);
 	Refresh ();
 	}
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------
@@ -185,7 +185,7 @@ else {
 	theMine->SetTexture (-1, -1, -1, nBaseTex);
 	Refresh ();
 	}
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------

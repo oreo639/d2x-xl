@@ -730,7 +730,7 @@ if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *theMine->RobotInfo (i);
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 rInfo.m_info.bCustom |= 1;
 rInfo.m_info.scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
 rInfo.m_info.strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
@@ -1050,7 +1050,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CObjectTool::OnDeleteAll () 
 {
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = theMine->CurrObj ();
@@ -1086,7 +1086,7 @@ void CObjectTool::OnReset ()
 {
 CDoubleMatrix* orient;
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 if (current.m_nObject == theMine->Info ().objects.count) {
 	orient = &theMine->SecretOrient ();
@@ -1120,7 +1120,7 @@ if (QueryMsg ("Are you sure you want to move the\n"
 				 "current object to the current cube?\n") != IDYES)
 	return;
 #endif
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 if (current.m_nObject == theMine->Info ().objects.count)
 	theMine->SecretCubeNum () = current.m_nSegment;
 else {
@@ -1284,7 +1284,7 @@ CGameObject *objP = theMine->CurrObj ();
 CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
@@ -1379,7 +1379,7 @@ Refresh ();
 void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 theMine->CurrObj ()->m_info.contents.count = m_nSpawnQty;
 Refresh ();
 }
@@ -1392,7 +1392,7 @@ void CObjectTool::OnSetSpawnType ()
 {
 CGameObject *objP = theMine->CurrObj ();
 int selection;
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Unlock ();
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
@@ -1423,7 +1423,7 @@ void CObjectTool::OnSetSpawnId ()
 {
 CGameObject *objP = theMine->CurrObj ();
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 if (objP->m_info.contents.count < -1)
 	objP->m_info.contents.count = -1;
 int i = CBSpawnType ()->GetCurSel () - 1;
@@ -1436,7 +1436,7 @@ else {
 	objP->m_info.contents.id = -1;
 	}
 Refresh ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------
@@ -1445,7 +1445,7 @@ undoManager.SetModified (TRUE);
 
 void CObjectTool::OnSetObjAI ()
 {
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 CGameObject *objP = theMine->CurrObj ();
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
  	int index = CBObjAI ()->GetCurSel ();
@@ -1462,7 +1462,7 @@ if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 else
 	CBObjAI ()->SetCurSel (1); // Normal
 Refresh ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------
@@ -1474,7 +1474,7 @@ void CObjectTool::OnSetTexture ()
 CGameObject *objP = theMine->CurrObj ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
-	undoManager.SetModified (TRUE);
+	undoManager.SetModified (true);
 	int index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.tmap_override = 
 		(index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;

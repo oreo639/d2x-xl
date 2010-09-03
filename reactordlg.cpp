@@ -144,7 +144,7 @@ char szVal [5];
 if (!*szVal)
 	return;
 UpdateData (TRUE);
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 theMine->ReactorTime () = m_nCountDown;
 }
 
@@ -159,7 +159,7 @@ char szVal [5];
 if (!*szVal)
 	return;
 UpdateData (TRUE);
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 theMine->SecretCubeNum () = m_nSecretReturn;
 }
 
@@ -178,7 +178,7 @@ if (FindTarget (nSegment, nSide) >= 0) {
 	DEBUGMSG (" Reactor tool: Trigger already has this target.");
 	return;
 	}
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 m_pTrigger->Add (nSegment, nSide - 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
@@ -221,7 +221,7 @@ void CReactorTool::OnDeleteTarget ()
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())

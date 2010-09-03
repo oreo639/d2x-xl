@@ -302,7 +302,7 @@ UpdateData (TRUE);
 ClearBugList ();
 m_bCheckMsgs = true;
 if (m_bAutoFixBugs) {
-	undoManager.SetModified (TRUE);
+	undoManager.SetModified (true);
 	undoManager.Lock ();
 	}
   // set mode to BLOCK mode to make errors appear in red

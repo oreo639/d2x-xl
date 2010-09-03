@@ -4,7 +4,7 @@ void CVertexManager::Delete (short nDelVert)
 {
 	short nVertex, nSegment; 
 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 // fill in gap in vertex array and status
 if (nDelVert < --m_nCount) {
 	m_vertices [nDelVert] = m_vertices [m_nCount];

@@ -633,7 +633,7 @@ DLE.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTriggerAll () 
 {
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = theMine->Segments (0);
@@ -727,7 +727,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 m_pTrigger->m_info.type = m_nType;
 Refresh ();
 }
@@ -742,7 +742,7 @@ UpdateData (TRUE);
 if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TEXTURE))
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 UpdateData (FALSE);
 m_pTrigger->m_info.value = (int) (m_nStrength * F1_0);
 }
@@ -757,7 +757,7 @@ UpdateData (TRUE);
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 m_pTrigger->m_info.time = m_nTime;
 }
 
@@ -771,7 +771,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return false;
 SetTriggerPtr ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 if ((m_bD1Flags [i] = !m_bD1Flags [i]))
 //if ((m_bD1Flags [i] = ((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->GetCheck ()))
 	m_pTrigger->m_info.flags |= triggerFlagsD1 [i];
@@ -795,7 +795,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 j = d2FlagXlat [i];
 int h = 1 << j;
 m_pTrigger->m_info.flags ^= h;
@@ -849,7 +849,7 @@ if (FindTarget (nSegment, nSide) > -1) {
 	DEBUGMSG (" Trigger tool: Trigger already has this target.");
 	return;
 	}
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 m_pTrigger->Add (nSegment, nSide + 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
@@ -922,7 +922,7 @@ if (m_nTrigger == -1)
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 SetTriggerPtr ();
 m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
@@ -988,7 +988,7 @@ void CTriggerTool::OnPasteTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 theMine->Triggers () [m_nTrigger] = m_defTrigger;
 Refresh ();
 DLE.MineView ()->Refresh ();

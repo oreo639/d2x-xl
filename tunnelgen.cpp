@@ -344,7 +344,7 @@ else {
 		DLE.MineView ()->Refresh (false);
 		return;
 		}
-	undoManager.SetModified (TRUE);
+	undoManager.SetModified (true);
 	undoManager.Lock ();
 	for (spline = 0; spline < n_splines; spline++) {
 		segP = Segments (SegCount ());

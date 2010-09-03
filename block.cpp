@@ -533,7 +533,7 @@ DLE.MainFrame ()->Progress ().DestroyWindow ();
 // delete Segments () from last to first because SegCount ()
 // is effected for each deletion.  When all Segments () are marked
 // the SegCount () will be decremented for each nSegment in loop.
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MainFrame ()->InitProgress (SegCount ());
 CSegment *segP = Segments (SegCount ());
@@ -674,7 +674,7 @@ strcpy_s (m_szBlockFile, sizeof (m_szBlockFile), pszBlockFile); // remember file
 
 // unmark all Segments ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 segP = Segments (0);
@@ -803,7 +803,7 @@ if (!count) {
 	return;
 	}
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 

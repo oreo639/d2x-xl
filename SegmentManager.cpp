@@ -110,7 +110,7 @@ if (nDelSeg < 0)
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 delSegP = GetSegment (nDelSeg); 
 UndefineSegment (nDelSeg);
@@ -386,7 +386,7 @@ if (curSegP->GetChild (ncurrent.Side) >= 0) {
 	return FALSE;
 	}
 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 // get new verts
 newVerts [0] = VertCount (); 
@@ -865,7 +865,7 @@ void CSegmentManager::ResetSide (short nSegment, short nSide)
 {
 if (nSegment < 0 || nSegment >= Count ()) 
 	return; 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 CSegment *segP = GetSegment (nSegment); 
 segP->SetChild (nSide, -1); 
@@ -928,7 +928,7 @@ if (nChildSide < 6) {
 		// otherwise, they don't share all four points correctly
 		// so unlink the child from the parent
 		// and unlink the parent from the child
-		undoManager.SetModified (TRUE); 
+		undoManager.SetModified (true); 
 		undoManager.Lock ();
 		ResetSide (nChildSeg, nChildSide); 
 		ResetSide (nParentSeg, nSide); 
@@ -1011,7 +1011,7 @@ if (!found) {
 if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES) 
 	return; 
 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 // create a new point (copy of other vertex)
 memcpy (vertexManager.GetVertex (VertCount ()), vertexManager.GetVertex (vert), sizeof (*vertexManager.GetVertex (0)));
@@ -1093,7 +1093,7 @@ if (!(found [0] && found [1])) {
 
 if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 segP = GetSegment (current.m_nSegment); 
 // create a new points (copy of other vertices)
@@ -1188,7 +1188,7 @@ if (!solidify && (VertCount () > (MAX_VERTICES - nFound))) {
 if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 	return; 
 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 segP = GetSegment (current.m_nSegment); 
 if (nFound < 4)
@@ -1287,7 +1287,7 @@ if (distance > JOIN_DISTANCE) {
 if (QueryMsg("Are you sure you want to join the current point\n"
 				 "with the 'other' cube's current point?") != IDYES)
 	return; 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 // define vert numbers
 seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]] = vert2; 
@@ -1391,7 +1391,7 @@ if (fail) {
 	match [0] = 1; 
 	match [1] = 0; 
 	}
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
@@ -1657,7 +1657,7 @@ if (max_radius >= JOIN_DISTANCE) {
 // if GetSegment () are too close to put a new segment between them, 
 // then solidifyally link them together without asking
 if (min_radius <= 5) {
-	undoManager.SetModified (TRUE); 
+	undoManager.SetModified (true); 
 	undoManager.Lock ();
 	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 
 	SetLinesToDraw(); 
@@ -1682,7 +1682,7 @@ if (!(Count () < MAX_SEGMENTS)) {
 	}
 segP = GetSegment (nNewSeg); 
 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 undoManager.Lock ();
 // define children and special child
 // first clear all sides
@@ -1819,7 +1819,7 @@ int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOn
 		{0, 3, 2, 1} //{2, 3, 0, 1}
 		}; 
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 for (nLine = 0; nLine < 4; nLine++) {
 	// find vert numbers for the line's two end points
@@ -1992,7 +1992,7 @@ bool CSegmentManager::SetTextures (short nSegment, short nSide, short nBaseTex, 
 {
 	bool bUndo, bChange = false;
 
-bUndo = undoManager.SetModified (TRUE); 
+bUndo = undoManager.SetModified (true); 
 undoManager.Lock (); 
 current.Get (nSegment, nSide); 
 CSide *sideP = GetSegment (nSegment)->m_sides + nSide; 
@@ -2077,7 +2077,7 @@ if (Current1 ().nSegment == Current2 ().nSegment)
 	return; 
 short nSegment = current.m_nSegment; 
 CSegment *otherSeg = other.Segment (); 
-bUndo = undoManager.SetModified (TRUE); 
+bUndo = undoManager.SetModified (true); 
 undoManager.Lock ();
 int nSide;
 for (nSide = 0; nSide < 6; nSide++)
@@ -2109,7 +2109,7 @@ if (Count () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
-bUndo = undoManager.SetModified (TRUE); 
+bUndo = undoManager.SetModified (true); 
 undoManager.Lock ();
 h = VertCount ();
 #if 0
@@ -2263,7 +2263,7 @@ void CSegmentManager::DeleteVertex (short nDeletedVert)
 {
 	short nVertex, nSegment; 
 
-undoManager.SetModified (TRUE); 
+undoManager.SetModified (true); 
 // fill in gap in vertex array and status
 memcpy (vertexManager.GetVertex (nDeletedVert), vertexManager.GetVertex (nDeletedVert + 1), (VertCount () - 1 - nDeletedVert) * sizeof (*vertexManager.GetVertex (0)));
 // update anyone pointing to this vertex
@@ -2304,7 +2304,7 @@ void CSegmentManager::SetLight (double fLight, bool bAll, bool bDynSegLights)
 {
 	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
 
-UndoManager.SetModified (TRUE);
+UndoManager.SetModified (true);
 
 fLight /= 100.0;
 CSegment *segP = GetSegment (0);

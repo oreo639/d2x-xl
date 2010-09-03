@@ -151,7 +151,7 @@ segP->m_info.function = SEGMENT_FUNC_NONE;
 
 bool CMine::DefineSegment (short nSegment, byte type, short nTexture, short walltype)
 {
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 UndefineSegment (nSegment);
 CSegment *segP = (nSegment < 0) ? current.Segment () : GetSegment (nSegment);
@@ -177,7 +177,7 @@ for (segP = Segments (0), i = SegCount (); i; i--, segP++)
 		return false;
 		}
 #endif
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -211,7 +211,7 @@ if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -249,7 +249,7 @@ if (n_matcen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -285,7 +285,7 @@ if (IsD1File ()) {
 		ErrorMsg ("Flag goals are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -309,7 +309,7 @@ if (IsD1File ()) {
 		ErrorMsg ("Team start positions are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -333,7 +333,7 @@ if (IsD1File ()) {
 		ErrorMsg ("Blocked cubes are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -357,7 +357,7 @@ if (IsD1File ()) {
 		ErrorMsg ("Speed boost cubes are not available in Descent 1.");
 	return false;
 	}
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
@@ -404,7 +404,7 @@ if ((IsD1File ()) && (nType == SEGMENT_FUNC_REPAIRCEN)) {
 	return false;
 	}
 int last_segment = current.m_nSegment;
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 if (bCreate && !AddSegment ()) {
 	undoManager.ResetModified (bUndo);
 	return false; 
@@ -459,7 +459,7 @@ ushort nWall;
 if (!GetTriggerResources (nWall))
 	return false;
 // make a new wall and a new trigger
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (AddWall (current.m_nSegment, current.m_nSide, (byte) wall_type, wall_flags, KEY_NONE, -1, -1) &&
 	 AddTrigger (MineInfo ().walls.count - 1, trigger_type)) {

@@ -77,7 +77,7 @@ void CLightManager::ScaleCornerLight (double fLight, bool bAll)
 	int segNum, segCount = SegCount ();
 	double scale;
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 scale = fLight / 100.0; // 100.0% = normal
 //#pragma omp parallel 
 	{
@@ -115,7 +115,7 @@ void CLightManager::CalcAverageCornerLight (bool bAll)
 memset (maxBrightness, 0, VertCount () * sizeof (tAvgCornerLight));
 
 // smooth corner light by averaging all corners which share a vertex
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 #pragma omp parallel 
 	{
 #pragma omp for
@@ -168,7 +168,7 @@ void CLightManager::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTe
 	CSide*		sideP;
 
 // clear all lighting on marked cubes
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 if (bAll)
 	CLEAR (VertexColors ());
@@ -267,7 +267,7 @@ CUVL*		uvlP = segP->m_sides [nSide].m_info.uvls;
 uint	vertBrightness, lightBrightness;
 byte*	sideVerts = sideVertTable [nSide];
 
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 for (int i = 0; i < 4; i++, uvlP++) {
 	CColor* vertColorP = VertexColors (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;
@@ -405,7 +405,7 @@ int nSegCount = SegCount ();
 
 void CLightManager::CalcDeltaLightData (double fLightScale, int force) 
 {
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 int nDepth;
 for (nDepth = m_deltaLightRenderDepth; nDepth; nDepth--)
 	if (CalcLightDeltas (fLightScale, force, nDepth))
@@ -620,7 +620,7 @@ fLightScale = 1.0; ///= 100.0;
 
 					// calculate vector between center of source segment and center of child
 						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
-							undoManager.SetModified (TRUE);
+							undoManager.SetModified (true);
 							if ((MineInfo ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{
@@ -632,16 +632,12 @@ fLightScale = 1.0; ///= 100.0;
 								}
 								continue;
 								}
-							CLightDeltaValue *dl;
 //#pragma omp critical
-							{
-							dl = LightDeltaValues (MineInfo ().lightDeltaValues.count++);
-							}
+							CLightDeltaValue* dl = GetLightDeltaValue (theMine->Info ().lightDeltaValues.count++);
 							dl->m_nSegment = nChildSeg;
 							dl->m_nSide = nChildSide;
-							int iCorner;
-							for (iCorner = 0; iCorner < 4; iCorner++)
-								dl->m_info.vertLight [iCorner] = (byte) min(32, effect [iCorner]);
+							for (int nCorner = 0; nCorner < 4; nCorner++)
+								dl->m_info.vertLight [nCorner] = (byte) min(32, effect [nCorner]);
 							if (bD2XLights)
 								dliP->m_info.count++;
 							else

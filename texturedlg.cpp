@@ -895,7 +895,7 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSide *sideP = theMine->current.Side ();
 
 //CheckForDoor ();
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 theMine->SetTexture (current.m_nSegment, current.m_nSide, 
 						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 int i;
@@ -923,7 +923,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 int nSegment;
 for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
     segP->m_info.nIndex = 0;
-undoManager.SetModified (TRUE);
+undoManager.SetModified (true);
 undoManager.Lock ();
 PasteTexture (current.m_nSegment, current.m_nSide, 100);
 undoManager.Unlock ();
@@ -950,7 +950,7 @@ if (!(m_bUse1st || m_bUse2nd))
 
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
@@ -994,7 +994,7 @@ if (!(m_bUse1st || m_bUse2nd))
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
-bool bUndo = undoManager.SetModified (TRUE);
+bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
