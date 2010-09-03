@@ -4,6 +4,8 @@
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
+CTunnelMaker tunnelMaker;
+
 //------------------------------------------------------------------------------
 
 long CTunnelMaker::Faculty (int n) 

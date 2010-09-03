@@ -44,6 +44,8 @@ class CObjectManager {
 
 		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - &m_objects [0]; }
 
+		void SetIndex (void);
+
 		bool Copy (byte newType, short nSegment);
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);

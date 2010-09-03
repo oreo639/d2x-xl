@@ -28,6 +28,8 @@ class CTunnelMaker {
 		void ComputeSpline (void); 
 	};
 
+extern CTunnelMaker tunnelMaker;
+
 //------------------------------------------------------------------------------
 
 #endif //__tunnelmaker_h

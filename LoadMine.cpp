@@ -43,7 +43,7 @@ if ((theMine == null))
 	CFileManager fp;
 
 // first disable curve generator
-m_bSplineActive = FALSE;
+tunnelMaker.Active () = FALSE;
 
 //CLEAR (LightColors ());
 //CLEAR (VertexColors ());

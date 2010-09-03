@@ -76,6 +76,7 @@ undoManager.Lock ();
 sideP->SetWall (nWall);
 CWall* wallP = GetWall (nWall);
 wallP->Setup (nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
+wallP->m_nIndex = nWall;
 wallP->m_info.flags = flags;
 wallP->m_info.keys = keys;
 // update number of Walls () in mine
@@ -122,6 +123,7 @@ if (nDelWall < --Count ()) { // move last wall in list to position of deleted wa
 	CWall* lastWallP = GetWall (Count ());
 	segmentManager.GetSide (lastWallP->m_nSegment, lastWallP->m_nSide)->SetWall (nDelWall); // make last wall's side point to new wall position
 	*delWallP = *lastWallP;
+	delWallP->m_nIndex = Index (delWallP);
 	}
 
 undoManager.Unlock ();
@@ -354,11 +356,21 @@ return false;
 
 // ----------------------------------------------------------------------------- 
 
+void CWallManager::SetIndex (void)
+{
+for (short i = 0; i < Count (); i++)
+	m_walls [i].m_nIndex = i;
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CWallManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
 Count () = info.count;
-for (int i = 0; i < Count (); i++)
+for (short i = 0; i < Count (); i++) {
 	m_walls [i].Read (fp, nFileVersion);
+	m_walls [i].m_nIndex = i;
+	}
 }
 
 // ----------------------------------------------------------------------------- 
@@ -367,7 +379,7 @@ void CWallManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersio
 {
 info.count = Count ();
 info.offset = fp.Tell ();
-for (int i = 0; i < Count (); i++)
+for (short i = 0; i < Count (); i++)
 	m_walls [i].Write (fp, nFileVersion);
 }
 
@@ -375,7 +387,7 @@ for (int i = 0; i < Count (); i++)
 
 void CWallManager::Clear (void)
 {
-for (int i = 0; i < Count (); i++)
+for (short i = 0; i < Count (); i++)
 	m_walls [i].Clear ();
 }
 

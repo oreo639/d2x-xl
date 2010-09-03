@@ -57,7 +57,7 @@ void CTriggerManager::SortObjTriggers (void)
 
 if (h > 1) {
 	for (ushort i = 0; i < h; i++)
-		GetObjTrigger (i)->m_info.nIndex = i;
+		GetObjTrigger (i)->m_nIndex = i;
 	SortObjTriggers (0, h - 1);
 	}
 }
@@ -194,6 +194,7 @@ else
 short nTrigger = Count (0)++;
 CTrigger* trigP = GetTrigger (nTrigger);
 trigP->Setup (type, flags);
+trigP->m_nIndex = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
 undoManager.Unlock ();
@@ -230,6 +231,7 @@ if (nDelTrigger < --m_nCount [0]) {
 	// move the last trigger in the list to the deleted trigger's position
 	wallManager.UpdateTrigger (m_nCount [0], nDelTrigger);
 	*delTrigP = m_triggers [0][m_nCount [0]];
+	delTrigP->m_nIndex = Index (delTrigP);
 	}
 
 undoManager.Unlock ();
@@ -347,7 +349,7 @@ NumObjTriggers ()++;
 undoManager.Unlock ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
-	if (GetObjTrigger (--i)->m_info.nIndex == nTrigger)
+	if (GetObjTrigger (--i)->m_nIndex == nTrigger)
 		return GetObjTrigger (i);
 return GetObjTrigger (nTrigger);
 }
@@ -389,6 +391,14 @@ for (i = NumObjTriggers (); i > 0; )
 		DeleteFromObject (i);
 }
 
+// ----------------------------------------------------------------------------- 
+
+void CTriggerManager::SetIndex (void)
+{
+for (short i = 0; i < Count (); i++)
+	m_triggers [0][i].m_nIndex = i;
+}
+
 // -----------------------------------------------------------------------------
 
 void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
@@ -396,24 +406,28 @@ void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVers
 if (info.offset < 0)
 	return;
 Count (0) = info.count;
-for (short i = 0; i < info.count; i++)
+for (short i = 0; i < info.count; i++) {
 	m_triggers [0][i].Read (fp, nFileVersion, false);
+	m_triggers [0][i].m_nIndex = i;
+	}
 
 int bObjTriggersOk = 1;
 
 if (nFileVersion >= 33) {
 	NumObjTriggers () = fp.ReadInt32 ();
-	for (short i = 0; i < NumObjTriggers (); i++)
-		GetObjTrigger (i)->Read (fp, nFileVersion, true);
+	for (short i = 0; i < NumObjTriggers (); i++) {
+		m_triggers [1][i].Read (fp, nFileVersion, true);
+		m_triggers [1][i].m_nIndex = i;
+		}
 	if (nFileVersion >= 40) {
 		for (short i = 0; i < NumObjTriggers (); i++)
-			GetObjTrigger (i)->m_info.nObject = fp.ReadInt16 ();
+			m_triggers [1][i].m_info.nObject = fp.ReadInt16 ();
 		}
 	else {
 		for (short i = 0; i < NumObjTriggers (); i++) {
 			fp.ReadInt16 ();
 			fp.ReadInt16 ();
-			GetObjTrigger (i)->m_info.nObject = fp.ReadInt16 ();
+			m_triggers [1][i].m_info.nObject = fp.ReadInt16 ();
 			}
 		if (nFileVersion < 36)
 			fp.Seek (700 * sizeof (short), SEEK_CUR);

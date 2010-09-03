@@ -53,7 +53,7 @@ class CMine {
 		short				m_selectMode;
 		int				m_disableDrawing;
 		int				m_changesMade;
-		bool				m_bSplineActive;
+		bool				tunnelMaker.Active ();
 		int				m_nNoLightDeltas;
 		int				m_lightRenderDepth;
 		int				m_deltaLightRenderDepth;
@@ -116,9 +116,9 @@ class CMine {
 
 		inline int LevelNameSize (void) { return sizeof m_currentLevelName; }
 
-		inline bool	SplineActive (void) { return m_bSplineActive; }
+		inline bool	SplineActive (void) { return tunnelMaker.Active (); }
 
-		inline void SetSplineActive (bool bSplineActive) { m_bSplineActive = bSplineActive; }
+		inline void SetSplineActive (bool bSplineActive) { tunnelMaker.Active () = bSplineActive; }
 
 		void Mark (void);
 		void MarkAll (void);

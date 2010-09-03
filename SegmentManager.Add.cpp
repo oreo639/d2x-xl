@@ -9,7 +9,7 @@ bool CSegmentManager::Add (void)
 	short newVerts [4]; 
 	short nSegment, nSide; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return FALSE; 
 	}

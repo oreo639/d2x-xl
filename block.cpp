@@ -447,7 +447,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigger->m_count; iTarget++)
 							if (Segments (trigger->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
-								fprintf (fp.File (), "			        segP %d\n", trigger->Segment (iTarget));
+								fprintf (fp.File (), "			        seg %d\n", trigger->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigger->Side (iTarget));
 								}
 						}
@@ -491,7 +491,7 @@ void CMine::CutBlock (void)
   short count;
   char szFile [256] = "\0";
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -619,7 +619,7 @@ DLE.MineView ()->Refresh ();
 
 void CMine::PasteBlock() 
 {
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -770,7 +770,7 @@ if (!*m_szBlockFile) {
 	return;
 	}
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}
@@ -790,7 +790,7 @@ void CMine::DeleteBlock (void)
 
 short nSegment, count;
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message);
 	return;
 	}

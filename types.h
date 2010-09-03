@@ -13,9 +13,12 @@
 
 class CGameItem {
 public:
+	short m_nIndex;
+
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
+
 };
 
 // -----------------------------------------------------------------------------
@@ -66,10 +69,21 @@ public:
 		v = fp.ReadInt16 ();
 		l = fp.ReadInt16 ();
 		}
+
 	inline void Write (CFileManager& fp) {
 		fp.Write (u);
 		fp.Write (v);
 		fp.Write (l);
+		}
+
+	void ReadText (CFileManager& fp) {
+		}
+
+	void WriteText (CFileManager& fp) {
+		fprintf (fp.File (), "    uvls %d %d %d\n",
+		sideP->m_info.uvls [j].u,
+		sideP->m_info.uvls [j].v,
+		sideP->m_info.uvls [j].l);
 		}
 
 	inline void Clear (void) { u = v = l = 0; }

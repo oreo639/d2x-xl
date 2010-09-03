@@ -720,7 +720,7 @@ CSegment *segP;
 short vert, nSegment, nVertex, nOppSeg, nOppSide; 
 bool found; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
@@ -797,7 +797,7 @@ void CSegmentManager::SplitLines (void)
   short vert [2], nSegment, nVertex, nLine, nOppSeg, nOppSide, i; 
   bool found [2]; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
@@ -884,7 +884,7 @@ void CSegmentManager::SplitSegments (int solidify, int nSide)
   int vert [4], nSegment, nVertex, i, nFound = 0; 
   bool found [4]; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
@@ -987,7 +987,7 @@ void CSegmentManager::JoinPoints (void)
   int vert1, vert2; 
   CSelection *cur1, *cur2; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
@@ -1054,7 +1054,7 @@ void CSegmentManager::JoinLines (void)
   bool fail; 
   CSelection *cur1, *cur2; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
@@ -1233,7 +1233,7 @@ void CSegmentManager::Join (int solidify)
 	bool fail; 
 	CSelection *cur1, *cur2, my_cube; 
 
-if (m_bSplineActive) {
+if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}

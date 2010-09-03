@@ -55,6 +55,10 @@ class CTriggerManager {
 
 		inline short& NumObjTriggers (void) { return Count (1); }
 
+		short Index (CTrigger* trigP) { return (short) (trigP - &m_triggers [0][0]; }
+
+		void SetIndex (void);
+
 		inline reactorTriggerList& ReactorTriggers (void) { return m_reactorTriggers; }
 
 		inline CReactorTrigger* ReactorTriggers (int i) { return &m_reactorTriggers [i]; }

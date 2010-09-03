@@ -70,6 +70,8 @@ public:
  
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+	void ReadText (CFileManager& fp);
+	void WriteText (CFileManager& fp);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
 	void Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
