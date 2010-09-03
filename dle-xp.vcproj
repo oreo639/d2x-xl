@@ -5365,82 +5365,8 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath="ADD.CPP"
+					RelativePath=".\add.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="block.cpp"
@@ -5529,7 +5455,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\customtextures.cpp"
+					RelativePath=".\CustomTextures.cpp"
 					>
 				</File>
 				<File
@@ -5611,7 +5537,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\hogmanager.cpp"
+					RelativePath=".\HogManager.cpp"
 					>
 				</File>
 				<File
@@ -6861,7 +6787,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\customtextures.h"
+					RelativePath=".\CustomTextures.h"
 					>
 				</File>
 				<File
@@ -6873,7 +6799,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hogmanager.h"
+					RelativePath=".\HogManager.h"
 					>
 				</File>
 				<File
@@ -6881,7 +6807,7 @@
 					>
 				</File>
 				<File
-					RelativePath="LIGHT.H"
+					RelativePath=".\light.h"
 					>
 				</File>
 				<File
@@ -6901,10 +6827,6 @@
 					>
 				</File>
 				<File
-					RelativePath="MODIFY.H"
-					>
-				</File>
-				<File
 					RelativePath=".\object.h"
 					>
 				</File>
@@ -6917,7 +6839,7 @@
 					>
 				</File>
 				<File
-					RelativePath="POLY.H"
+					RelativePath=".\poly.h"
 					>
 				</File>
 				<File
@@ -6929,7 +6851,7 @@
 					>
 				</File>
 				<File
-					RelativePath="ROBOT.H"
+					RelativePath=".\robot.h"
 					>
 				</File>
 				<File
