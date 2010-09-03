@@ -17,10 +17,12 @@
 #ifdef _DEBUG
 
 typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
+typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
 
 #else
 
 typedef CSegment segmentList [SEGMENT_LIMIT];
+typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 
 #endif
 
@@ -28,9 +30,11 @@ typedef CSegment segmentList [SEGMENT_LIMIT];
 
 class CSegmentManager {
 	public:
-		segmentList	m_segments;
-		ushort		m_nCount;
-		int			m_nAddMode;
+		segmentList		m_segments;
+		ushort			m_nCount;
+		int				m_nAddMode;
+		robotMakerList	m_robotMakers;
+		robotMakerList	m_equipMakers;
 
 	public:
 		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
@@ -162,7 +166,7 @@ class CSegmentManager {
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
-		void ResetSide  (short nSegment, short nSide);
+		void ResetSide (short nSegment, short nSide);
 
 		void SetSegmentChildNum (CSegment *rootSegP, short nSegment, short recursionLevel);
 		void SetSegmentChildNum (CSegment *rootSegP, short nSegment, short recursionLevel, short* visited);

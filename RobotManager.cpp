@@ -6,8 +6,10 @@
 #include <io.h>
 
 #include "define.h"
+#include "global.h"
 #include "cfile.h"
 #include "PolyModel.h"
+#include "SegmentManager.h"
 #include "ObjectManager.h"
 #include "HogManager.h"
 #include "Robot.h"
@@ -29,7 +31,7 @@ int CRobotManager::ReadHAM (char *pszFile, int type)
   static char d2xHamSig [4] = {'M','A','H','X'};
 
 if (!pszFile) {
-	if (IsD2File ()) {
+	if (theMine->IsD2File ()) {
 		CFileManager::SplitPath (descentPath [1], szFile, null, null);
 		strcat_s (szFile, sizeof (szFile), "descent2.ham");
 		}

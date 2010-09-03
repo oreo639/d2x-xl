@@ -99,29 +99,17 @@ Default ();
 void CMine::Reset (void)
 {
 Current () = &Current1 ();
-Current1 ().nSegment = DEFAULT_SEGMENT;
-Current1 ().nPoint = DEFAULT_POINT;
-Current1 ().nLine = DEFAULT_LINE;
-Current1 ().nSide = DEFAULT_SIDE;
-Current1 ().nObject = DEFAULT_OBJECT;
-Current2 ().nSegment = DEFAULT_SEGMENT;
-Current2 ().nPoint = DEFAULT_POINT;
-Current2 ().nLine = DEFAULT_LINE;
-Current2 ().nSide = DEFAULT_SIDE;
-Current2 ().nObject = DEFAULT_OBJECT;
+current1.m_nSegment = DEFAULT_SEGMENT;
+current1.m_nPoint = DEFAULT_POINT;
+current1.m_nLine = DEFAULT_LINE;
+current1.m_nSide = DEFAULT_SIDE;
+current1.m_nObject = DEFAULT_OBJECT;
+current2.m_nSegment = DEFAULT_SEGMENT;
+current2.m_nPoint = DEFAULT_POINT;
+current2.m_nLine = DEFAULT_LINE;
+current2.m_nSide = DEFAULT_SIDE;
+current2.m_nObject = DEFAULT_OBJECT;
 DLE.ResetUndoBuffer ();
-}
-
-void CMine::ConvertWallNum (ushort wNumOld, ushort wNumNew)
-{
-CSegment *segP = Segments (0);
-CSide *sideP;
-int i, j;
-
-for (i = SegCount (); i; i--, segP++)
-	for (j = 0, sideP = segP->m_sides; j < 6; j++, sideP++)
-		if (sideP->m_info.nWall >= wNumOld)
-			sideP->m_info.nWall = wNumNew;
 }
 
 

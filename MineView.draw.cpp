@@ -1508,14 +1508,14 @@ if (!clear_it) {
 
 // draw highlighted Segments () (other first, then current)
 if (theMine->Current () == &theMine->Current1 ()) {
-	if (theMine->Current1 ().nSegment != theMine->Current2 ().nSegment)
-		DrawCube (theMine->Current2 ().nSegment, theMine->Current2 ().nSide, theMine->Current2 ().nLine, theMine->Current2 ().nPoint,clear_it);
-	DrawCube (theMine->Current1 ().nSegment, theMine->Current1 ().nSide, theMine->Current1 ().nLine, theMine->Current1 ().nPoint,clear_it);
+	if (theMine->current1.m_nSegment != theMine->current2.m_nSegment)
+		DrawCube (theMine->current2.m_nSegment, theMine->current2.m_nSide, theMine->current2.m_nLine, theMine->current2.m_nPoint,clear_it);
+	DrawCube (theMine->current1.m_nSegment, theMine->current1.m_nSide, theMine->current1.m_nLine, theMine->current1.m_nPoint,clear_it);
 	}
 else {
-	if (theMine->Current1 ().nSegment != theMine->Current2 ().nSegment)
-		DrawCube (theMine->Current1 ().nSegment, theMine->Current1 ().nSide, theMine->Current1 ().nLine, theMine->Current1 ().nPoint,clear_it);
-	DrawCube (theMine->Current2 ().nSegment, theMine->Current2 ().nSide, theMine->Current2 ().nLine, theMine->Current2 ().nPoint,clear_it);
+	if (theMine->current1.m_nSegment != theMine->current2.m_nSegment)
+		DrawCube (theMine->current1.m_nSegment, theMine->current1.m_nSide, theMine->current1.m_nLine, theMine->current1.m_nPoint,clear_it);
+	DrawCube (theMine->current2.m_nSegment, theMine->current2.m_nSide, theMine->current2.m_nLine, theMine->current2.m_nPoint,clear_it);
 	}
 
 // draw Walls ()

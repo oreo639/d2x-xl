@@ -168,7 +168,7 @@ int CMine::MatchingSide (int j)
   static int ret [4][4] = {{3,2,1,0},{2,1,0,3},{1,0,3,2},{0,3,2,1}};
   int offset;
 
-offset = (4 + Current1 ().nPoint - Current2 ().nPoint) % 4;
+offset = (4 + current1.m_nPoint - current2.m_nPoint) % 4;
 return ret [offset][j];
 }
 
@@ -292,18 +292,18 @@ if (!m_bSplineActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((Segments (Current1 ().nSegment)->GetChild (Current1 ().nSide) != -1) ||
-		 (Segments (Current2 ().nSegment)->GetChild (Current2 ().nSide) != -1)) {
+	if ((Segments (current1.m_nSegment)->GetChild (current1.m_nSide) != -1) ||
+		 (Segments (current2.m_nSegment)->GetChild (current2.m_nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of spline\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
 					"on sides which do not have cubes attached.");
 		return;
 		}
-	nSplineSeg1 = Current1 ().nSegment;
-	nSplineSeg2 = Current2 ().nSegment;
-	nSplineSide1 = Current1 ().nSide;
-	nSplineSide2 = Current2 ().nSide;
+	nSplineSeg1 = current1.m_nSegment;
+	nSplineSeg2 = current2.m_nSegment;
+	nSplineSide1 = current1.m_nSide;
+	nSplineSide2 = current2.m_nSide;
 	// define 4 data points for spline to work from
 	// center of current cube
 	points [0] = CalcSideCenter (nSplineSeg1, nSplineSide1);

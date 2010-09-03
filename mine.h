@@ -12,7 +12,7 @@
 #include "WallManager.h"
 #include "SegmentManager.h"
 #include "VertexManager.h"
-#include "MineInfo.h"
+#include "Info.h"
 #include "poly.h"
 
 #define MAX_LIGHT_DEPTH 6
@@ -30,25 +30,14 @@ extern tTextureLight textureLightD1 [NUM_LIGHTS_D1];
 extern tTextureLight textureLightD2 [NUM_LIGHTS_D2];
 
 // Copyright (C) 1997 Bryan Aamot
-//**************************************************************************
-// CLASS - Level
-//**************************************************************************
 
 #ifdef _DEBUG
-
-typedef CStaticArray< CRobotInfo, MAX_ROBOT_TYPES > robotInfoList;
-typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
-typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
 
 #define CLEAR(_b) (_b) [0].Reset((_b).Length ())
 #define ASSIGN(_a,_b) (_a) = (_b)
 #define DATA(_b) (_b).Buffer ()
 
 #else
-
-typedef CRobotInfo robotInfoList [MAX_ROBOT_TYPES];
-typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
-typedef CGameObject objectList [MAX_OBJECTS_D2];
 
 #define CLEAR(_b)	(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
@@ -63,253 +52,234 @@ typedef CGameObject objectList [MAX_OBJECTS_D2];
 class CMineData {
 	public:
 		CMineInfo					mineInfo;
-		
 		int							m_reactorTime;
 		int							m_reactorStrength;
 		int							m_secretSegNum;
 		CDoubleMatrix				m_secretOrient;
 		
 		// robot data
-		robotInfoList				robotInfo;
-		
 		// structure data
-		robotMakerList				robotMakers;
-		robotMakerList				equipMakers;
-		objectList					objects;
 };
 
 // -----------------------------------------------------------------------------
 
 class CMine {
-public:
-	// level info
-	int				m_fileType;
-	int				m_levelVersion;
-	char				m_currentLevelName [256];	
-	CMineData		m_mineData;
+	public:
+		// level info
+		int				m_fileType;
+		int				m_levelVersion;
+		char				m_currentLevelName [256];	
+		CMineData		m_mineData;
 
-	robotInfoList	m_defaultRobotInfo;
-	HPALETTE			m_paletteHandle;
-	
-	// strings
-	char				message[256];
-	char				m_startFolder [256];
-	short				m_selectMode;
-	int				m_disableDrawing;
-	int				m_changesMade;
-	bool				m_bSplineActive;
-	BOOL				m_bSortObjects;
-	int				m_nMaxSplines;
-	int				m_nNoLightDeltas;
-	int				m_lightRenderDepth;
-	int				m_deltaLightRenderDepth;
-	char				m_szBlockFile [256];
-	double			m_splineLength1,
-						m_splineLength2;
-	bool				m_bVertigo;
-	char*				m_pHxmExtraData;
-	int				m_nHxmExtraDataSize;
-// Constructor/Desctuctor
-public:
-	CMine();
-	~CMine();
-	void Initialize (void);
-	void Reset (void);
-	void Default (void);
-	
-public:
-	inline CMineData& MineData ()
-		{ return m_mineData; }
-
-	inline int LevelVersion (void) { return m_levelVersion; }
-	inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
-	inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
-	inline bool IsStdLevel (void) { return LevelVersion () < 9; }
-	inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
-	inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
+		robotInfoList	m_defaultRobotInfo;
+		HPALETTE			m_paletteHandle;
 		
-	inline int FileType (void) { return m_fileType; }
-	inline void SetFileType (int fileType) { m_fileType = fileType; }
-	inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
-	inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
+		// strings
+		char				message[256];
+		char				m_startFolder [256];
+		short				m_selectMode;
+		int				m_disableDrawing;
+		int				m_changesMade;
+		bool				m_bSplineActive;
+		BOOL				m_bSortObjects;
+		int				m_nMaxSplines;
+		int				m_nNoLightDeltas;
+		int				m_lightRenderDepth;
+		int				m_deltaLightRenderDepth;
+		char				m_szBlockFile [256];
+		double			m_splineLength1,
+							m_splineLength2;
+		bool				m_bVertigo;
+		char*				m_pHxmExtraData;
+		int				m_nHxmExtraDataSize;
+	// Constructor/Desctuctor
+	public:
+		CMine();
+		~CMine();
+		void Initialize (void);
+		void Reset (void);
+		void Default (void);
+		
+	public:
+		inline CMineData& MineData ()
+			{ return m_mineData; }
 
-	inline vertexColorList& VertexColors (void)
-		{ return MineData ().vertexColors; }
+		inline int LevelVersion (void) { return m_levelVersion; }
+		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
+		inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
+		inline bool IsStdLevel (void) { return LevelVersion () < 9; }
+		inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
+		inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
+			
+		inline int FileType (void) { return m_fileType; }
+		inline void SetFileType (int fileType) { m_fileType = fileType; }
+		inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
+		inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
-	inline robotMakerList& BotGens (void)
-		{ return MineData ().robotMakers; }
-	inline robotMakerList& EquipGens (void)
-		{ return MineData ().equipMakers; }
-	inline activeDoorList& ActiveDoors (void)
-		{ return MineData ().activeDoors; }
-	inline robotInfoList& RobotInfo (void)
-		{ return MineData ().robotInfo; }
-	inline robotInfoList& DefRobotInfo (void)
-		{ return m_defaultRobotInfo; }
-	//inline textureList& Textures ()
-	//	{ return textures; }
+		inline vertexColorList& VertexColors (void)
+			{ return MineData ().vertexColors; }
 
-	inline CColor *VertexColors (int i)
-		{ return &(MineData ().vertexColors [i]); }
+		inline robotMakerList& BotGens (void)
+			{ return MineData ().robotMakers; }
+		inline robotMakerList& EquipGens (void)
+			{ return MineData ().equipMakers; }
+		inline activeDoorList& ActiveDoors (void)
+			{ return MineData ().activeDoors; }
+		inline robotInfoList& RobotInfo (void)
+			{ return MineData ().robotInfo; }
+		inline robotInfoList& DefRobotInfo (void)
+			{ return m_defaultRobotInfo; }
+		//inline textureList& Textures ()
+		//	{ return textures; }
 
-	inline CRobotMaker *BotGens (int i)
-		{ return MineData ().robotMakers + i; }
-	inline CRobotMaker *EquipGens (int i)
-		{ return MineData ().equipMakers + i; }
-	inline CActiveDoor *ActiveDoors (int i)
-		{ return MineData ().activeDoors + i; }
-	inline CRobotInfo *RobotInfo (int i)
-		{ return MineData ().robotInfo + i; }
-	inline CRobotInfo *DefRobotInfo (int i)
-		{ return m_defaultRobotInfo + i; }
+		inline CColor *VertexColors (int i)
+			{ return &(MineData ().vertexColors [i]); }
 
-	//inline CTexture* Textures (int i, int j = 0)
-	//	{ return &textureManager.textures [i][j]; }
+		inline CRobotMaker *BotGens (int i)
+			{ return MineData ().robotMakers + i; }
+		inline CRobotMaker *EquipGens (int i)
+			{ return MineData ().equipMakers + i; }
+		inline CActiveDoor *ActiveDoors (int i)
+			{ return MineData ().activeDoors + i; }
+		inline CRobotInfo *RobotInfo (int i)
+			{ return MineData ().robotInfo + i; }
+		inline CRobotInfo *DefRobotInfo (int i)
+			{ return m_defaultRobotInfo + i; }
 
-	inline CMineInfo& Info ()
-		{ return MineData ().mineInfo; }
-	inline CMineFileInfo& FileInfo ()
-		{ return MineData ().mineInfo.fileInfo; }
+		//inline CTexture* Textures (int i, int j = 0)
+		//	{ return &textureManager.textures [i][j]; }
 
-	long TotalSize (CMineItemInfo& gii)
-		{ return (int) gii.size * (int) gii.count; }
-	inline int& ReactorTime ()
-		{ return MineData ().m_reactorTime; }
-	inline int& ReactorStrength ()
-		{ return MineData ().m_reactorStrength; }
-	inline int& SecretCubeNum ()
-		{ return MineData ().m_secretSegNum; }
-	inline CDoubleMatrix& SecretOrient ()
-		{ return MineData ().m_secretOrient; }
+		inline CMineInfo& Info ()
+			{ return MineData ().mineInfo; }
+		inline CMineFileInfo& FileInfo ()
+			{ return MineData ().mineInfo.fileInfo; }
 
-
-	short Load(const char *filename = null, bool bLoadFromHog = false);
-	short Save(const char *filename, bool bSaveToHog = false);
-	inline LPSTR LevelName (void)
-		{ return m_currentLevelName; }
-	inline int LevelNameSize (void)
-		{ return sizeof m_currentLevelName; }
-	inline bool	SplineActive (void)
-		{ return m_bSplineActive; }
-	inline void SetSplineActive (bool bSplineActive)
-		{ m_bSplineActive = bSplineActive; }
-
-	void	MakeObject (CGameObject *objP, char type, short nSegment);
-	void	SetObjectData (char type);
-	bool	CopyObject (byte new_type, short nSegment = -1);
-	void  DeleteObject(short objectNumber = -1);
-
-	void Mark ();
-	void MarkAll ();
-	void UnmarkAll ();
-
-	CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
-	CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
-	//double CalcLength (CFixVector* center1, CFixVector* center2);
-
-
-	void FixChildren();
-	void SetLinesToDraw ();
-
-	inline void SetSelectMode (short mode)
-		{ m_selectMode = mode; }
-	int ScrollSpeed (ushort texture,int *x,int *y);
-
-	bool EditGeoFwd (void);
-	bool EditGeoBack (void);
-	bool EditGeoUp (void);
-	bool EditGeoDown (void); 
-	bool EditGeoLeft (void); 
-	bool EditGeoRight (void); 
-	bool EditGeoRotLeft (void); 
-	bool EditGeoRotRight (void); 
-	bool EditGeoGrow (void); 
-	bool EditGeoShrink (void); 
-	bool RotateSelection(double angle, bool perpendicular); 
-	bool ResizeItem (double delta); 
-	bool MovePoints (int pt0, int pt1); 
-	bool ResizeLine (CSegment *segP, int point0, int point1, double delta); 
-	bool MoveOn (CDoubleVector delta); 
-	bool SpinSelection (double angle); 
-	//void SetUV (short segment, short side, short x, short y, double angle);
-	void LoadSideTextures (short segNum, short sideNum);
-
-	// trigger stuff
-	void DrawObject (CWnd *pWnd, int type, int id);
-	void ConvertWallNum (ushort wNumOld, ushort wNumNew);
-
-	void RenumberBotGens ();
-	void RenumberEquipGens ();
-
-	bool SetDefaultTexture (short nTexture = -1, short walltype = -1);
-
-	bool GetTriggerResources (ushort& nWall);
-
-	int FuelCenterCount (void);
-	inline int& RobotMakerCount (void) 
-		{ return MineInfo ().botgen.count; }
-	inline int& EquipMakerCount (void) 
-		{ return MineInfo ().equipgen.count; }
-	inline int& WallCount (void) 
-		{ return MineInfo ().walls.count; }
-	inline int& TriggerCount (void) 
-		{ return MineInfo ().triggers.count; }
-	inline int& ObjectCount (void) 
-		{ return MineInfo ().objects.count; }
+		long TotalSize (CMineItemInfo& gii)
+			{ return (int) gii.size * (int) gii.count; }
+		inline int& ReactorTime ()
+			{ return MineData ().m_reactorTime; }
+		inline int& ReactorStrength ()
+			{ return MineData ().m_reactorStrength; }
+		inline int& SecretCubeNum ()
+			{ return MineData ().m_secretSegNum; }
+		inline CDoubleMatrix& SecretOrient ()
+			{ return MineData ().m_secretOrient; }
 
 
-	short ReadSegmentInfo (CFileManager& fp);
-	void WriteSegmentInfo (CFileManager& fp);
-	void CutBlock ();
-	void CopyBlock (char *pszBlkFile = null);
-	void PasteBlock (); 
-	int ReadBlock (char *name,int option); 
-	void QuickPasteBlock  ();
-	void DeleteBlock ();
+		short Load(const char *filename = null, bool bLoadFromHog = false);
+		short Save(const char *filename, bool bSaveToHog = false);
+		inline LPSTR LevelName (void)
+			{ return m_currentLevelName; }
+		inline int LevelNameSize (void)
+			{ return sizeof m_currentLevelName; }
+		inline bool	SplineActive (void)
+			{ return m_bSplineActive; }
+		inline void SetSplineActive (bool bSplineActive)
+			{ m_bSplineActive = bSplineActive; }
 
-	inline void wrap (short *x, short delta,short min,short max) {
-		*x += delta;
-		if (*x > max)
-			*x = min;
-		else if (*x < min)
-			*x = max;
-		}
+		void	MakeObject (CGameObject *objP, char type, short nSegment);
+		void	SetObjectData (char type);
+		bool	CopyObject (byte new_type, short nSegment = -1);
+		void  DeleteObject(short objectNumber = -1);
 
-	void TunnelGenerator ();
-	void IncreaseSpline ();
-	void DecreaseSpline ();
-	void CalcSpline ();
-	void UntwistSegment (short nSegment,short nSide);
-	int MatchingSide (int j);
+		void Mark ();
+		void MarkAll ();
+		void UnmarkAll ();
 
-	short LoadMineSigAndType (CFileManager& fp);
-	void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
+		CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
+		CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
+		//double CalcLength (CFixVector* center1, CFixVector* center2);
 
-private:
-	short CreateNewLevel ();
-	void DefineVertices(short new_verts[4]);
-	void UnlinkChild(short parent_segnum,short nSide);
-	short FixIndexValues ();
-	void ResetSide (short nSegment,short nSide);
 
-	int ReadHamFile(char *fname = null, int type = NORMAL_HAM);
-	void ReadPigTextureTable();
-	void ReadRobotResource(int robot_number);
-	void ReadColor (CColor *pc, CFileManager& fp);
-	void SaveColor (CColor *pc, CFileManager& fp);
-	void LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
-	void SaveColors (CColor *pc, int nColors, CFileManager& fp);
-	void ClearGameItem (CGameItem* items, int nCount);
-	int LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
-	int SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag = false);
-	short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
-	short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
-	short LoadGameData(CFileManager& loadfile, bool bNewMine);
-	short SaveMineDataCompiled(CFileManager& fp);
-	short SaveGameData(CFileManager& savefile);
-	void ClearMineData();
-	void UpdateDeltaLights ();
-	void SortDLIndex (int left, int right);
+		void FixChildren();
+		void SetLinesToDraw ();
+
+		inline void SetSelectMode (short mode)
+			{ m_selectMode = mode; }
+		int ScrollSpeed (ushort texture,int *x,int *y);
+
+		bool EditGeoFwd (void);
+		bool EditGeoBack (void);
+		bool EditGeoUp (void);
+		bool EditGeoDown (void); 
+		bool EditGeoLeft (void); 
+		bool EditGeoRight (void); 
+		bool EditGeoRotLeft (void); 
+		bool EditGeoRotRight (void); 
+		bool EditGeoGrow (void); 
+		bool EditGeoShrink (void); 
+		bool RotateSelection(double angle, bool perpendicular); 
+		bool ResizeItem (double delta); 
+		bool MovePoints (int pt0, int pt1); 
+		bool ResizeLine (CSegment *segP, int point0, int point1, double delta); 
+		bool MoveOn (CDoubleVector delta); 
+		bool SpinSelection (double angle); 
+		//void SetUV (short segment, short side, short x, short y, double angle);
+		void LoadSideTextures (short segNum, short sideNum);
+
+		// trigger stuff
+		void DrawObject (CWnd *pWnd, int type, int id);
+		void ConvertWallNum (ushort wNumOld, ushort wNumNew);
+
+		bool GetTriggerResources (ushort& nWall);
+
+		int FuelCenterCount (void);
+		inline int& RobotMakerCount (void) 
+			{ return Info ().botgen.count; }
+		inline int& EquipMakerCount (void) 
+			{ return Info ().equipgen.count; }
+		inline int& WallCount (void) 
+			{ return Info ().walls.count; }
+		inline int& TriggerCount (void) 
+			{ return Info ().triggers.count; }
+		inline int& ObjectCount (void) 
+			{ return Info ().objects.count; }
+
+
+		short ReadSegmentInfo (CFileManager& fp);
+		void WriteSegmentInfo (CFileManager& fp);
+		void CutBlock ();
+		void CopyBlock (char *pszBlkFile = null);
+		void PasteBlock (); 
+		int ReadBlock (char *name,int option); 
+		void QuickPasteBlock  ();
+		void DeleteBlock ();
+
+		inline void wrap (short *x, short delta,short min,short max) {
+			*x += delta;
+			if (*x > max)
+				*x = min;
+			else if (*x < min)
+				*x = max;
+			}
+
+		void TunnelGenerator ();
+		void IncreaseSpline ();
+		void DecreaseSpline ();
+		void CalcSpline ();
+		void UntwistSegment (short nSegment,short nSide);
+		int MatchingSide (int j);
+
+		short LoadMineSigAndType (CFileManager& fp);
+		void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
+
+	private:
+		short CreateNewLevel (void);
+		void DefineVertices(short newVerts [4]);
+		void UnlinkChild(short parent_segnum,short nSide);
+		short FixIndexValues (void);
+
+		void ClearGameItem (CGameItem* items, int nCount);
+		int LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
+		int SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag = false);
+		short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
+		short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
+		short LoadGameData (CFileManager& loadfile, bool bNewMine);
+		short SaveMineDataCompiled (CFileManager& fp);
+		short SaveGameData (CFileManager& savefile);
+		void ClearMineData (void);
+		void UpdateDeltaLights ();
+		void SortDLIndex (int left, int right);
 	};
 
 // -----------------------------------------------------------------------------

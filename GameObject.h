@@ -9,6 +9,7 @@
 #include "cfile.h"
 #include "Types.h"
 #include "Vector.h"
+#include "Vertex.h"
 #include "ViewMatrix.h"
 
 //------------------------------------------------------------------------
