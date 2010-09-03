@@ -1,9 +1,11 @@
-#ifndef __file_h
-#define __file_h
+#ifndef __hogman_h
+#define __hogman_h
+
+#include "dle-xp-res.h"
 
 #define MAX_HOGFILES	1000
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------
 
 class CInputDialog : public CDialog {
 	public:
@@ -18,7 +20,7 @@ class CInputDialog : public CDialog {
 		void OnOK (void);
 };
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------
 
 typedef struct tHogFileData {
 	long	m_offs;
@@ -64,7 +66,7 @@ class CHogManager : public CDialog {
 	DECLARE_MESSAGE_MAP ()
 	};
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------
 
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags = 0, CWnd *pParentWnd = null);
 int SaveToHog (LPSTR szHogFile, LPSTR szSubFile, bool bSaveAs);
@@ -75,6 +77,6 @@ int ReadMissionFile (char *pszFile);
 int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs = true);
 int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int bCustomRobots, bool bSaveAs = true);
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------
 
-#endif //__file_h
+#endif //__hogman_h

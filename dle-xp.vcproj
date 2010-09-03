@@ -5885,82 +5885,8 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="POLY.CPP"
+					RelativePath=".\PolyModel.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="render.cpp"
@@ -6046,6 +5972,10 @@
 				</File>
 				<File
 					RelativePath=".\robot.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\RobotManager.cpp"
 					>
 				</File>
 				<File
@@ -6543,7 +6473,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\poly.h"
+					RelativePath=".\PolyModel.h"
 					>
 				</File>
 				<File
@@ -6556,6 +6486,10 @@
 				</File>
 				<File
 					RelativePath=".\robot.h"
+					>
+				</File>
+				<File
+					RelativePath=".\RobotManager.h"
 					>
 				</File>
 				<File

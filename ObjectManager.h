@@ -5,6 +5,7 @@
 #include "cfile.h"
 #include "carray.h"
 #include "Selection.h"
+#include "MineInfo.h"
 
 #ifdef _DEBUG
 
@@ -38,7 +39,7 @@ class CObjectManager {
 		void Sort (short left, short right);
 		bool IsCustomRobot (int i);
 		bool HasCustomRobots (void);
-		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - m_objects; }
+		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - &m_objects [0]; }
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);

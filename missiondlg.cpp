@@ -14,7 +14,7 @@
 #include "global.h"
 #include "render.h"
 #include "cfile.h"
-#include "hogmanager.h"
+#include "HogManager.h"
 
 #include <math.h>
 

@@ -15,7 +15,7 @@
 #include "robot.h"
 #include "dle-xp-res.h"
 #include "cfile.h"
-#include "hogmanager.h"
+#include "HogManager.h"
 #include "light.h"
 #include "palette.h"
 #include "io.h"

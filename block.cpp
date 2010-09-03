@@ -11,7 +11,7 @@
 #include "global.h"
 #include "toolview.h"
 #include "cfile.h"
-#include "hogmanager.h"
+#include "HogManager.h"
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 

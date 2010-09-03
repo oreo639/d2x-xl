@@ -4,15 +4,12 @@
 #include <string.h>
 #include <math.h>
 #include <io.h>
-#include "stophere.h"
+
 #include "define.h"
-#include "types.h"
-#include "dle-xp.h"
-#include "mine.h"
-#include "global.h"
-#include "toolview.h"
 #include "cfile.h"
-#include "hogmanager.h"
+#include "ObjectManager.h"
+#include "HogManager.h"
+#include "RobotManager.h"
 
 //------------------------------------------------------------------------------
 
@@ -242,7 +239,6 @@ if (m_pHxmExtraData) {
 fp.ReadInt32 (); // version (0x00000001)
 
 // read robot information
-//------------------------
 t = fp.ReadInt32 ();
 for (j = 0; j < t; j++) {
 	i = fp.ReadInt32 ();
