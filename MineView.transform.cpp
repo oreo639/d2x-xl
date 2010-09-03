@@ -228,7 +228,7 @@ segP = theMine->Segments (0);
 for (i = 0, h = segmentManager.Count (); i < h; i++, segP++) {
 	byte status = bReset ? 0 : Visible (segP) ? 1 : 255;
 	for (int j = 0; j < 8; j++)
-		theMine->VertStatus (segP->m_info.verts [j]) = status;
+		theMine->vertexManager.Status (segP->m_info.verts [j]) = status;
 	}
 }
 
@@ -247,7 +247,7 @@ CHECKMINE;
 MarkVisibleVerts ();
 vertP = theMine->Vertices (0);
 for (int i = 0, h = theMine->VertCount (); i < h; i++, vertP++) {
-	if (theMine->VertStatus (i)) {
+	if (theMine->vertexManager.Status (i)) {
 		vMin = Min (vMin, *vertP);
 		vMax = Max (vMax, *vertP);
 		}

@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "stophere.h"
+
 #include "define.h"
-#include "types.h"
-#include "dle-xp.h"
-#include "mine.h"
-#include "light.h"
+#include "Illumination.h"
 #include "global.h"
+#include "SegmentManager.h"
+#include "VertexManager.h"
+#include "WallManager.h"
 #include "TextureManager.h"
 
 // external globals
@@ -74,7 +74,7 @@ return (byte) ((m_lightMap [nBaseTex] - 1) / 0x0200L);
 
 void CLightManager::ScaleCornerLight (double fLight, bool bAll) 
 {
-	int segNum, segCount = SegCount ();
+	int nSegment, segCount = SegCount ();
 	double scale;
 
 undoManager.SetModified (true);
@@ -82,8 +82,8 @@ scale = fLight / 100.0; // 100.0% = normal
 //#pragma omp parallel 
 	{
 	//#pragma omp for
-	for (segNum = 0; segNum < segCount; segNum++) {
-		CSegment* segP = GetSegment (segNum);
+	for (nSegment = 0; nSegment < segCount; nSegment++) {
+		CSegment* segP = GetSegment (nSegment);
 		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
 			CSide* sideP = segP->m_sides;
 			for (int j = 0; j < 6; j++) {
@@ -123,7 +123,7 @@ undoManager.SetModified (true);
 		CSegment *segP = GetSegment (nSegment);
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
-			if (bAll || (VertStatus (nSegment) & MARKED_MASK)) {
+			if (bAll || (vertexManager.Status (nVertex) & MARKED_MASK)) {
 				for (int i = 0; i < 3; i++) {
 					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
 					if (sideP->IsVisible ()) {
@@ -142,7 +142,7 @@ undoManager.SetModified (true);
 		CSegment *segP = GetSegment (nSegment);
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
-			if ((maxBrightness [nVertex].count > 0) && (bAll || (VertStatus (nSegment) & MARKED_MASK))) {
+			if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nSegment) & MARKED_MASK))) {
 				for (int i = 0; i < 3; i++) {
 					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
 					if (sideP->IsVisible ())

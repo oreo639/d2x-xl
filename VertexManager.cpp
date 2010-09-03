@@ -23,14 +23,14 @@ void CVertexManager::DeleteUnusedVertices (void)
 	short nVertex, nSegment, point; 
 
 for (nVertex = 0; nVertex < VertCount (); nVertex++)
-	VertStatus (nVertex) &= ~NEW_MASK; 
+	vertexManager.Status (nVertex) &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
-		VertStatus (segP->m_info.verts [point]) |= NEW_MASK; 
+		vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK; 
 for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
-	if (!(VertStatus (nVertex) & NEW_MASK))
+	if (!(vertexManager.Status (nVertex) & NEW_MASK))
 		DeleteVertex(nVertex); 
 }
 

@@ -722,7 +722,7 @@ for (i = 0; i < 4; i++) {
 	newVertex = seg2->m_info.verts [sideVertTable [nSide2][match [i].i]]; 
 
 	// if either vert was marked, then mark the new vert
-	VertStatus (newVertex) |= (VertStatus (oldVertex) & MARKED_MASK); 
+	vertexManager.Status (newVertex) |= (vertexManager.Status (oldVertex) & MARKED_MASK); 
 
 	// update all GetSegment () that use this vertex
 	if (oldVertex != newVertex) {
@@ -758,7 +758,7 @@ bool CSegmentManager::IsMarked (short nSegment, short nSide)
 current.Get (nSegment, nSide);
 CSegment *segP = GetSegment (nSegment);
 for (int i = 0; i < 4; i++) {
-	if (!(VertStatus (segP->m_info.verts [sideVertTable [nSide][i]]) & MARKED_MASK))
+	if (!(vertexManager.Status (segP->m_info.verts [sideVertTable [nSide][i]]) & MARKED_MASK))
 		return false;
 	}
 return true;
@@ -770,7 +770,7 @@ bool CSegmentManager::IsMarked (short nSegment)
 {
 CSegment *segP = GetSegment (nSegment);
 for (int i = 0;  i < 8; i++)
-	if (!(VertStatus (segP->m_info.verts [i]) & MARKED_MASK))
+	if (!(vertexManager.Status (segP->m_info.verts [i]) & MARKED_MASK))
 		return false;
 return true;
 }
@@ -792,12 +792,12 @@ segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 // ..first clear all marked verts
 short nVertex; 
 for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
-	VertStatus (nVertex) &= ~MARKED_MASK; 
+	vertexManager.Status (nVertex) &= ~MARKED_MASK; 
 // ..then mark all verts for marked GetSegment ()
 for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		for (nVertex = 0; nVertex < 8; nVertex++)
-			VertStatus (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
+			vertexManager.Status (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -810,14 +810,14 @@ void CSegmentManager::UpdateMarked (void)
 	int i; 
 // mark all cubes which have all 8 verts marked
 for (int i = 0; i < Count (); i++, segP++)
-	if ((VertStatus (segP->m_info.verts [0]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [1]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [2]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [3]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [4]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [5]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [6]) & MARKED_MASK) &&
-		 (VertStatus (segP->m_info.verts [7]) & MARKED_MASK))
+	if ((vertexManager.Status (segP->m_info.verts [0]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [1]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [2]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [3]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [4]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [5]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [6]) & MARKED_MASK) &&
+		 (vertexManager.Status (segP->m_info.verts [7]) & MARKED_MASK))
 		segP->m_info.wallFlags |= MARKED_MASK; 
 	else
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
@@ -834,7 +834,7 @@ void CSegmentManager::MarkAll (void)
 for (i = 0; i < Count (); i++) 
 	GetSegment (i)->m_info.wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
-	VertStatus (i) |= MARKED_MASK; 
+	vertexManager.Status (i) |= MARKED_MASK; 
 //DLE.MineView ()->Refresh (); 
 }
 
@@ -849,7 +849,7 @@ void CSegmentManager::UnmarkAll (void)
 CSegment *segP = GetSegment (0);
 for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 	segP->m_info.wallFlags &= ~MARKED_MASK; 
-byte& stat = VertStatus ();
+byte& stat = vertexManager.Status ();
 for (i = 0; i < MAX_VERTICES; i++, stat++)
 	stat &= ~MARKED_MASK; 
 //	DLE.MineView ()->Refresh (); 
@@ -1026,7 +1026,7 @@ segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]] = VertCou
 segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
-VertStatus (VertCount ()++) = 0; 
+vertexManager.Status (VertCount ()++) = 0; 
 
 int nSide;
 for (nSide = 0; nSide < 6; nSide++)
@@ -1110,7 +1110,7 @@ for (i = 0; i < 2; i++)
 		segP->m_info.verts [lineVertTable [nLine][i]] = VertCount (); 
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
-		VertStatus (VertCount ()++) = 0; 
+		vertexManager.Status (VertCount ()++) = 0; 
 		}
 int nSide;
 for (nSide = 0; nSide < 6; nSide++) {
@@ -1208,7 +1208,7 @@ if (!solidify) {
 			segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 			// update total number of vertices
-			VertStatus (VertCount ()++) = 0; 
+			vertexManager.Status (VertCount ()++) = 0; 
 			}
 		}
 	int nSide;
@@ -2287,14 +2287,14 @@ void CSegmentManager::DeleteUnusedVertices (void)
 	short nVertex, nSegment, point; 
 
 for (nVertex = 0; nVertex < VertCount (); nVertex++)
-	VertStatus (nVertex) &= ~NEW_MASK; 
+	vertexManager.Status (nVertex) &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = GetSegment (0);
 for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
 	for (point = 0; point < 8; point++)
-		VertStatus (segP->m_info.verts [point]) |= NEW_MASK; 
+		vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK; 
 for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
-	if (!(VertStatus (nVertex) & NEW_MASK))
+	if (!(vertexManager.Status (nVertex) & NEW_MASK))
 		DeleteVertex(nVertex); 
 }
 

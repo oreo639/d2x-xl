@@ -951,7 +951,7 @@ else if (SelectMode (eSelectBlock)) // && edit_mode != EDIT_OFF) {
 else
 	m_pDC->SelectObject (m_penCyan);
 for (i=0;i<theMine->VertCount ();i++)
-	if (theMine->VertStatus (i) & MARKED_MASK)
+	if (theMine->vertexManager.Status (i) & MARKED_MASK)
 		if (IN_RANGE(m_viewPoints [i].x,x_max) && IN_RANGE(m_viewPoints [i].y,y_max))
 			m_pDC->Rectangle(m_viewPoints [i].x - 4, m_viewPoints [i].y - 4, m_viewPoints [i].x + 4, m_viewPoints [i].y + 4);
 }

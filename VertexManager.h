@@ -41,7 +41,7 @@ class CVertexManager {
 
 		inline CVertex *GetVertex (int i) { &m_vertices [i]; }
 
-		inline byte& VertStatus (int i = 0)
+		inline byte& Status (int i = 0)
 			{ return GetVertex (i)->m_status; }
 
 		inline ushort& Count (void)

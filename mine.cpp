@@ -320,7 +320,7 @@ for (i = 0; i < MAX_SEGMENTS; i++, segP++)
 SegCount () = 0;
 // initialize vertices
 for (i = 0; i < MAX_VERTICES; i++) 
-	VertStatus (i) &= ~MARKED_MASK;
+	vertexManager.Status (i) &= ~MARKED_MASK;
 VertCount () = 0;
 lightManager.Count () = 0;
 // reset "howmany"

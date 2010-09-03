@@ -1140,9 +1140,9 @@ for (i = 0; i < theMine->VertCount (); i++, pa++) {
 		 BETWEEN (m_clickPos.y, y, m_releasePos.y) &&
 		 VertexVisible (i)) {
 		if (m_clickState & MK_SHIFT)
-			theMine->VertStatus (i) &= ~MARKED_MASK;
+			theMine->vertexManager.Status (i) &= ~MARKED_MASK;
 		else
-			theMine->VertStatus (i) |= MARKED_MASK;
+			theMine->vertexManager.Status (i) |= MARKED_MASK;
 		m_bUpdate = true;
 		}
 	}

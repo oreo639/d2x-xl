@@ -276,7 +276,7 @@ while (!fp.EoF ()) {
 		// else make a new vertex
 		if (k == VertCount ()) {
 			nVertex = VertCount ();
-			VertStatus (nVertex) |= NEW_MASK;
+			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
 			*Vertices (nVertex) = v;
 			VertCount ()++;
@@ -284,7 +284,7 @@ while (!fp.EoF ()) {
 		}
 	// mark vertices
 	for (i = 0; i < 8; i++)
-		VertStatus (segP->m_info.verts [i]) |= MARKED_MASK;
+		vertexManager.Status (segP->m_info.verts [i]) |= MARKED_MASK;
 	fscanf_s (fp.File (), "  staticLight %ld\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
 		fscanf_s (fp.File (), "  special %d\n", &byteBuf);
@@ -685,8 +685,8 @@ for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 
 // unmark all vertices
 for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
-	VertStatus (nVertex) &= ~MARKED_MASK;
-	VertStatus (nVertex) &= ~NEW_MASK;
+	vertexManager.Status (nVertex) &= ~MARKED_MASK;
+	vertexManager.Status (nVertex) &= ~NEW_MASK;
 	}
 
 DLE.MainFrame ()->InitProgress (fp.Length ());
@@ -738,7 +738,7 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 	}
 // clear all new vertices as such
 for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
-	VertStatus (nVertex) &= ~NEW_MASK;
+	vertexManager.Status (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
 segP = Segments (0);
 for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)

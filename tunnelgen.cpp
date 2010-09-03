@@ -367,12 +367,12 @@ else {
 			if (spline == 0) {         // 1st segment
 				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = VertCount ();
 				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = Segments (nSplineSeg1)->m_info.verts [sideVertTable [nSplineSide1][j]];
-				VertStatus (VertCount ()++) = 0;
+				vertexManager.Status (VertCount ()++) = 0;
 				}
 			else if(spline < n_splines - 1) { // center segments
 				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = VertCount ();
 				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = VertCount () - 4;
-				VertStatus (VertCount ()++) = 0;
+				vertexManager.Status (VertCount ()++) = 0;
 				}
 			else {          // last segment
 				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = Segments (nSplineSeg2)->m_info.verts [sideVertTable [nSplineSide2][MatchingSide (j)]];

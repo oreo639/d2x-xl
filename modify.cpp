@@ -420,7 +420,7 @@ switch (m_selectMode){
 	case BLOCK_MODE:
 		bool bMoved = false;
 		for (i = 0; i < MAX_VERTICES; i++) {
-			if (VertStatus (i) & MARKED_MASK) {
+			if (vertexManager.Status (i) & MARKED_MASK) {
 				*.GetVertex (i) += delta;
 				bMoved = true;
 				}
@@ -517,7 +517,7 @@ switch (m_selectMode) {
 	case BLOCK_MODE:
 		CGameObject *objP = Objects (0);
 		for (i = 0; i < MAX_VERTICES; i++)
-			if (VertStatus (i) & MARKED_MASK)
+			if (vertexManager.Status (i) & MARKED_MASK)
 				*.GetVertex (i) += delta;
 		for (i = MineInfo ().objects.count; i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
@@ -638,7 +638,7 @@ switch (m_selectMode) {
 		oppCenter /= 4.0;
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
-			if (VertStatus (i) & MARKED_MASK)
+			if (vertexManager.Status (i) & MARKED_MASK)
 				.GetVertex (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);

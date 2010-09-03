@@ -1737,17 +1737,17 @@ if ((theMine == null))
   LBBugs ()->AddString ("[Misc]");
 
 for (nVertex = theMine->VertCount (); nVertex > 0; )
-	theMine->VertStatus (--nVertex) &= ~NEW_MASK;
+	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
 CSegment *segP = theMine->Segments (0);
 for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
-		theMine->VertStatus (segP->m_info.verts [point]) |= NEW_MASK;
+		theMine->vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK;
 
 for (nVertex = theMine->VertCount (); nVertex > 0; ) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	if (!(theMine->VertStatus (--nVertex) & NEW_MASK)) {
+	if (!(theMine->vertexManager.Status (--nVertex) & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
 			if (nVertex < --theMine->VertCount ())
@@ -1761,7 +1761,7 @@ for (nVertex = theMine->VertCount (); nVertex > 0; ) {
 		}
 	}
 for (nVertex = theMine->VertCount (); nVertex > 0; )
-	theMine->VertStatus (--nVertex) &= ~NEW_MASK;
+	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)
 		sprintf_s (message, sizeof (message),"FIXED: %d unused vertices found", nUnused);
