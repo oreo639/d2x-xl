@@ -406,7 +406,7 @@ void CMineView::AdvanceLightTick (void)
 {
 CHECKMINE;
 
-	LIGHT_TIMER *ltP = lightTimers;
+	tLightTimer *ltP = lightTimers;
 	CVariableLight *flP = theMine->VariableLights (0);
 	int i, light_delay;
 
@@ -433,9 +433,9 @@ bool CMineView::SetLightStatus (void)
 	int h, i, j;
 	CLightDeltaIndex *ldiP = theMine->LightDeltaIndex (0);
 	CLightDeltaValue *ldvP;
-	LIGHT_TIMER *ltP;
+	tLightTimer *ltP;
 	CVariableLight *flP = theMine->VariableLights (0);
-	LIGHT_STATUS *pls;
+	tLightStatus *pls;
 	bool bChange = false;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	short nSrcSide, nSrcSeg, nSegment, nSide;

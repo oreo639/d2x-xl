@@ -32,13 +32,11 @@ class CObjectManager {
 
 		short FindBySeg (short nSegment, short i = 0);
 		short FindBySig (short nSignature);
-		CGameObject FindRobot (short nId, short i);
+		CGameObject* FindRobot (short nId, short i = 0);
 		void InitRobotData (void);
 		int ReadHxmFile (CFileManager& fp, long fSize);
 		int WriteHxmFile (CFileManager& fp);
 		void Sort (short left, short right);
-		bool IsCustomRobot (int i);
-		bool HasCustomRobots (void);
 		inline short Index (CGameObject* objP) { return (objP == null) ? -1 : objP - &m_objects [0]; }
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);

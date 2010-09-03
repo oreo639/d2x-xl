@@ -17,7 +17,7 @@ typedef unsigned int uint;
 #define Query2Msg(a,i) AfxMessageBox(a,i)
 #define STATUSMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->StatusMsg(a);}
 #define INFOMSG(a) {if (DLE.MainFrame () && !DLE.MineView ()->DelayRefresh ()) DLE.MainFrame ()->InfoMsg(a);}
-#define DEBUGMSG(a) {if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
+#define DEBUGMSG(a) //{if (DLE.MainFrame ()) DLE.MainFrame ()->DebugMsg(a);}
 
 #define M_PI	3.141592653589793240
 #define M_PI_2	(M_PI / 2.0)

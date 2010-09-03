@@ -10,14 +10,14 @@
 // -----------------------------------------------------------------------------
 // define points for a given side 
 
-extern byte sideVertTable[6][4];
-extern byte oppSideTable[6];
-extern byte oppSideVertTable[6][4];
-extern byte lineVertTable[12][2];
-extern byte sideLineTable[6][4];
-extern byte connectPointTable[8][3];
-extern byte pointSideTable[8][3];
-extern byte pointCornerTable[8][3];
+extern byte sideVertTable [6][4];
+extern byte oppSideTable [6];
+extern byte oppSideVertTable [6][4];
+extern byte lineVertTable [12][2];
+extern byte sideLineTable [6][4];
+extern byte connectPointTable [8][3];
+extern byte pointSideTable [8][3];
+extern byte pointCornerTable [8][3];
 
 // -----------------------------------------------------------------------------
 //  Returns true if nSegment references a child, else returns false. 

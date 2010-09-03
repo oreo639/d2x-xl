@@ -46,7 +46,7 @@ class CSegmentManager {
 		inline ushort& Count ()
 			{ return m_nCount; }
 
-		inline short Index (CSegment* segP) { return (short) (segP - m_segments); }
+		inline short Index (CSegment* segP) { return (short) (segP - &m_segments [0]); }
 
 		inline CSegment *GetSegment (int i) { return &m_segments [i]; }
 
@@ -166,8 +166,6 @@ class CSegmentManager {
 			else if (*x < min)
 				*x = max;
 			}
-
-		void SetLight (double fLight, bool bAll, bool bDynSegLights);
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);

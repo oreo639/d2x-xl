@@ -9,6 +9,26 @@
 #include "Vector.h"
 #include "cfile.h"
 
+#define MAX_LIGHT_DEPTH 6
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+typedef struct {
+	short	ticks;
+	short	impulse;
+} tLightTimer;
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+typedef struct {
+	bool	bIsOn;
+	bool	bWasOn;
+} tLightStatus;
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -115,7 +135,7 @@ typedef CColor vertexColorList [VERTEX_LIMIT];
 #endif
 
 class CLightManager {
-	public:
+	private:
 		variableLightList		variableLights;
 		short						m_nCount;
 		lightDeltaIndexList	lightDeltaIndices;
@@ -124,17 +144,22 @@ class CLightManager {
 		lightColorList			m_lightColors;
 		texColorList			m_texColors;
 		vertexColorList		m_vertexColors;
-
 		bool						m_bUseTexColors;
+
+		tLightTimer				m_lightTimers [MAX_VARIABLE_LIGHTS];
+		tLightStatus			m_lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 
 		long						m_lightMap [MAX_TEXTURES_D2];
 		//long						m_defLightMap [MAX_TEXTURES_D2];
 
+	public:
 		inline lightDeltaIndexList& LightDeltaIndex (void) { return m_lightDeltaIndices; }
 
 		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
 
 		inline variableLightList& VariableLights (void) { return m_variableLights; }
+
+		inline vertexColorList& VertexColors (void) { return m_vertexColors; }
 
 		inline CLightDeltaIndex* GetLightDeltaIndex (short i) { return &m_lightDeltaIndices [i]; }
 
@@ -142,9 +167,13 @@ class CLightManager {
 
 		inline CVariableLight* GetVariableLight (short i) { return &m_variableLights [i]; }
 
+		inline CColor* GetVertexColor (int i) { return &m_vertexColors [i]; }
+
 		inline CColor* GetTexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
+
+		inline long* LightMap (int i = 0) { return &m_lightMap [i]; }
 
 		inline void SetTexColor (short nBaseTex, CColor *pc)	{
 			if (UseTexColors () && (IsLight (nBaseTex) != -1))

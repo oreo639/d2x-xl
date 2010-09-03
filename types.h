@@ -260,16 +260,6 @@ public:
 		}
 };
 
-typedef struct {
-	short	ticks;
-	short	impulse;
-} LIGHT_TIMER;
-
-typedef struct {
-	bool	bIsOn;
-	bool	bWasOn;
-} LIGHT_STATUS;
-
 #define MAX_LEVELS	1000
 
 typedef struct {

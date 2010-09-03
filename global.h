@@ -28,9 +28,6 @@ extern char SubFile[20];
 // robot related globals
 extern int preferences;
 //extern CVariableLight *variableLights;
-extern LIGHT_TIMER lightTimers [MAX_VARIABLE_LIGHTS];
-extern LIGHT_STATUS lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
-extern uint        N_robot_types;
 //extern CRobotInfo   *robotInfo;
 #if ALLOCATE_POLYOBJECT
 extern uint        N_robot_joints;
@@ -88,9 +85,6 @@ extern char *ai_options [MAX_AI_OPTIONS_D2];
 extern int powerupSize [MAX_POWERUP_IDS_D2];
 extern int robotSize [MAX_ROBOT_IDS_TOTAL];
 extern int robot_shield [MAX_ROBOT_IDS_TOTAL];
-extern tTextureLight textureLightD1[NUM_LIGHTS_D1];
-extern tTextureLight textureLightD2[NUM_LIGHTS_D2];
-extern long m_lightMap [MAX_TEXTURES_D2];
 extern short add_segment_mode;
 extern char dlc_version[10];
 extern char testers_name[20];
@@ -135,15 +129,6 @@ extern double moveRate;
 //extern double M[4][4];  /* 4x4 matrix used in coordinate transformation */
 //extern double IM[4][4]; /* inverse matrix of M[4][4] */
 extern double depthPerception;
-
-extern byte sideVertTable[6][4];
-extern byte oppSideTable[6];
-extern byte oppSideVertTable[6][4];
-extern byte lineVertTable[12][2];
-extern byte sideLineTable[6][4];
-extern byte connectPointTable[8][3];
-extern char pointSideTable[8][3];
-extern char pointCornerTable[8][3];
 
 extern byte doorClipTable [NUM_OF_CLIPS_D2];
 

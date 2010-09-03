@@ -6,30 +6,15 @@
 #include "carray.h"
 #include "Types.h"
 #include "Selection.h"
-#include "robot.h"
-#include "textures.h"
+#include "Textures.h"
+#include "MineInfo.h"
 #include "TriggerManager.h"
 #include "WallManager.h"
 #include "SegmentManager.h"
 #include "VertexManager.h"
-#include "Info.h"
-#include "poly.h"
-
-#define MAX_LIGHT_DEPTH 6
-
-// external data
-extern byte sideVertTable[6][4];
-extern byte oppSideTable[6];
-extern byte oppSideVertTable[6][4];
-extern byte lineVertTable[12][2];
-extern byte sideLineTable[6][4];
-extern byte connectPointTable[8][3];
-extern char pointSideTable[8][3];
-extern char pointCornerTable[8][3];
-extern tTextureLight textureLightD1 [NUM_LIGHTS_D1];
-extern tTextureLight textureLightD2 [NUM_LIGHTS_D2];
-
-// Copyright (C) 1997 Bryan Aamot
+#include "RobotManager.h"
+#include "ObjectManager.h"
+#include "HogManager.h"
 
 #ifdef _DEBUG
 
@@ -105,9 +90,9 @@ class CMine {
 
 		inline int LevelVersion (void) { return m_levelVersion; }
 		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
-		inline bool IsD2XLevel (void) { return LevelVersion (void) >= 9; }
-		inline bool IsStdLevel (void) { return LevelVersion (void) < 9; }
-		inline bool LevelOutdated (void) { return LevelVersion (void) < LEVEL_VERSION; }
+		inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
+		inline bool IsStdLevel (void) { return LevelVersion () < 9; }
+		inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
 		inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
 			
 		inline int FileType (void) { return m_fileType; }
@@ -115,14 +100,9 @@ class CMine {
 		inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
 		inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
-		inline vertexColorList& VertexColors (void)
-			{ return MineData ().vertexColors; }
-
 		//inline textureList& Textures (void)
 		//	{ return textures; }
 
-		inline CColor *VertexColors (int i)
-			{ return &(MineData ().vertexColors [i]); }
 
 
 		//inline CTexture* Textures (int i, int j = 0)

@@ -8,12 +8,8 @@
 #include "define.h"
 #include "global.h"
 #include "cfile.h"
-#include "PolyModel.h"
-#include "SegmentManager.h"
-#include "ObjectManager.h"
-#include "HogManager.h"
-#include "Robot.h"
-#include "RobotManager.h"
+#include "Mine.h"
+#include "ResourceManager.h"
 
 //------------------------------------------------------------------------------
 
@@ -98,8 +94,8 @@ else if (type == EXTENDED_HAM)  {
 		t = m_nRobotTypes - t0;
 		}
 	for (; t; t--, t0++) {
-		RobotInfo (t0)->Read (fp);
-		*DefRobotInfo (t0) = *RobotInfo (t0);
+		GetRobotInfo (t0)->Read (fp);
+		*GetDefRobotInfo (t0) = *GetRobotInfo (t0);
 		}
 
   // skip joints weapons, and powerups
@@ -222,7 +218,7 @@ int CRobotManager::ReadHXM (CFileManager& fp, long size)
 
 if (!fp.File ()) {
 	ErrorMsg ("Invalid file handle for reading HXM data.");
-	goto abort;
+	return 1;
 	}
 
 p = fp.Tell ();
@@ -235,10 +231,10 @@ if (id != 0x21584d48L) {
 	return 1;
 	}
 
-if (m_pHxmExtraData) {
-	free (m_pHxmExtraData);
-	m_pHxmExtraData = null;
-	m_nHxmExtraDataSize = 0;
+if (m_hxmExtraData) {
+	free (m_hxmExtraData);
+	m_hxmExtraData = null;
+	m_hxmExtraDataSize = 0;
 	}
 fp.ReadInt32 (); // version (0x00000001)
 
@@ -253,19 +249,20 @@ for (j = 0; j < t; j++) {
 		}
 	rInfo.Read (fp);
 	// compare this to existing data
-	if (memcmp (&rInfo, RobotInfo (i), sizeof (tRobotInfo)) != 0) {
-		memcpy (RobotInfo (i), &rInfo, sizeof (tRobotInfo));
-		RobotInfo (i)->m_info.bCustom = 1; // mark as custom
+	if (memcmp (&rInfo, GetRobotInfo (i), sizeof (tRobotInfo)) != 0) {
+		memcpy (GetRobotInfo (i), &rInfo, sizeof (tRobotInfo));
+		GetRobotInfo (i)->m_info.bCustom = 1; // mark as custom
 		}
 	}
 
-m_nHxmExtraDataSize = size - fp.Tell () + p;
-if (m_nHxmExtraDataSize > 0) {
-	if (!(m_pHxmExtraData = (char*) malloc (m_nHxmExtraDataSize))) {
+m_hxmExtraDataSize = size - fp.Tell () + p;
+if (m_hxmExtraDataSize > 0) {
+	m_hxmExtraData = new byte [m_hxmExtraDataSize];
+	if (m_hxmExtraData == null) {
 		ErrorMsg ("Couldn't allocate extra data from hxm file.\nThis data will be lost when saving the level!");
 		return 1;
 		}
-	if (fp.Read (m_pHxmExtraData, m_nHxmExtraDataSize, 1) != 1) {
+	if (fp.Read (m_hxmExtraData, m_hxmExtraDataSize, 1) != 1) {
 		ErrorMsg ("Couldn't read extra data from hxm file.\nThis data will be lost when saving the level!");
 		return 1;
 		}
@@ -277,13 +274,14 @@ return 0;
 
 int CRobotManager::WriteHXM (CFileManager& fp) 
 {
-	uint	i, t;
+	short i, t;
 
-	for (i = 0, t = 0; i < m_nRobotTypes; i++)
+for (i = 0, t = 0; i < m_nRobotTypes; i++)
 	if (IsCustomRobot (i))
 		t++;
-if (!(t || m_nHxmExtraDataSize))
+if ((t == 0) && (m_hxmExtraDataSize == 0))
 	return 0;
+
 if (!fp.File ()) {
 	ErrorMsg ("Invalid file handle for writing HXM data.");
 	return 1;
@@ -295,14 +293,14 @@ fp.WriteInt32 (1);   // version 1
 // write robot information
 fp.Write (t); // number of robot info structs stored
 for (i = 0; i < m_nRobotTypes; i++) {
-	if (RobotInfo (i)->m_info.bCustom) {
+	if (GetRobotInfo (i)->m_info.bCustom) {
 		fp.Write (i);
-		RobotInfo (i)->Write (fp);
+		GetRobotInfo (i)->Write (fp);
 		}
 	}
 
-if (m_nHxmExtraDataSize)
-	fp.Write (m_pHxmExtraData, m_nHxmExtraDataSize, 1);
+if (m_hxmExtraDataSize)
+	fp.Write (m_hxmExtraData, m_hxmExtraDataSize, 1);
 else {
 	// write zeros for the rest of the data
 	fp.WriteInt32 (0);  //number of joints
@@ -349,7 +347,7 @@ for (j = 0; j < t; j++) {
 	bufP += sizeof (uint);
 	// copy the robot info for one robot, or all robots
 	if ((j == nRobot) || (nRobot == -1)) 
-		memcpy (RobotInfo (i), bufP, sizeof (tRobotInfo));
+		memcpy (GetRobotInfo (i), bufP, sizeof (tRobotInfo));
 	bufP += sizeof (tRobotInfo);
 	}
 }
@@ -358,39 +356,38 @@ for (j = 0; j < t; j++) {
 
 bool CRobotManager::IsCustomRobot (int nId)
 {
-	bool				bFound = false;
-	CSegment*		segP;
-	CGameObject*	objP;
-
-if (!RobotInfo (nId)->m_info.bCustom) //changed?
+if (!GetRobotInfo (nId)->m_info.bCustom) //changed?
 	return false;
 	// check if actually different from defaults
-byte bCustom = DefRobotInfo (nId)->m_info.bCustom;
-DefRobotInfo (nId)->m_info.bCustom = RobotInfo (nId)->m_info.bCustom; //make sure it's equal for the comparison
-if (!memcmp (RobotInfo (nId), DefRobotInfo (nId), sizeof (tRobotInfo))) 
-	RobotInfo (nId)->m_info.bCustom = 0; //same as default
+
+bool bFound = false;
+
+byte bCustom = GetDefRobotInfo (nId)->m_info.bCustom;
+GetDefRobotInfo (nId)->m_info.bCustom = GetRobotInfo (nId)->m_info.bCustom; //make sure it's equal for the comparison
+if (!memcmp (GetRobotInfo (nId), GetDefRobotInfo (nId), sizeof (tRobotInfo))) 
+	GetRobotInfo (nId)->m_info.bCustom = 0; //same as default
 else { //they're different
 	// find a robot of that type
-	objP = objectManager.FindRobot (nId);
+	CGameObject* objP = objectManager.FindRobot (nId);
 	if (objP != null) // found one
 		bFound = true;
 	else { //no robot of that type present
 		// find a matcen producing a robot of that type
 		CSegment* segP;
-		for (short i = 0; (segP = segmentManager.FindRobotMaker) != null; i = segmentManager.Index (segP)) {
+		for (short i = 0; (segP = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (segP)) {
 			int nBotGen = segP->m_info.nMatCen;
 			if ((nId < 32) 
-				 ? segmentManager.BotGens (nBotGen)->m_info.objFlags [0] & (1 << nId) 
-				 : segmentManager.BotGens (nBotGen)->m_info.objFlags [1] & (1 << (nId - 32)))
+				 ? segmentManager.GetBotGen (nBotGen)->m_info.objFlags [0] & (1 << nId) 
+				 : segmentManager.GetBotGen (nBotGen)->m_info.objFlags [1] & (1 << (nId - 32)))
 				break;
 			}
 		if (segP != null) // found one
 			bFound = true;
 		else
-			RobotInfo (nId)->m_info.bCustom = 0; // no matcens or none producing that robot type
+			GetRobotInfo (nId)->m_info.bCustom = 0; // no matcens or none producing that robot type
 		}
 	}
-DefRobotInfo (nId)->m_info.bCustom = bCustom; //restore
+GetDefRobotInfo (nId)->m_info.bCustom = bCustom; //restore
 return bFound;
 }
 
@@ -401,7 +398,7 @@ bool CRobotManager::HasCustomRobots (void)
 for (int i = 0; i < (int) m_nRobotTypes; i++)
 	if (IsCustomRobot (i))
 		return true;
-return (m_nHxmExtraDataSize > 0);
+return (m_hxmExtraDataSize > 0);
 }
 
 //------------------------------------------------------------------------------
