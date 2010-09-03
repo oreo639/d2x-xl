@@ -6333,7 +6333,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\resourcemanager.cpp"
+					RelativePath=".\ResourceManager.cpp"
 					>
 				</File>
 				<File
@@ -6925,7 +6925,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\resourcemanager.h"
+					RelativePath=".\ResourceManager.h"
 					>
 				</File>
 				<File
