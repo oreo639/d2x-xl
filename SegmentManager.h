@@ -150,6 +150,8 @@ class CSegmentManager {
 
 		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
 
+		void SetLinesToDraw (void);
+
 		short ReadSegmentInfo (CFileManager& fp);
 		void WriteSegmentInfo (CFileManager& fp, short);
 		void CutBlock ();

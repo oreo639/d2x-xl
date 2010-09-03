@@ -270,7 +270,7 @@ if (d.DoModal () == IDOK) {
 	*m_szSubFile = '\0';
 	strcpy_s (theMine->LevelName (), theMine->LevelNameSize (), new_level_name);
 	theMine->Reset ();
-	theMine->SetLinesToDraw ();
+	segmentManager.SetLinesToDraw ();
 	DLE.MineView ()->ResetView (true);
 	memset (&missionData, 0, sizeof (missionData));
 	CreateLightMap ();

@@ -15,6 +15,7 @@
 #include "VertexManager.h"
 #include "RobotManager.h"
 #include "ObjectManager.h"
+#include "TunnelMaker.h"
 #include "HogManager.h"
 #include "UndoManager.h"
 
@@ -53,14 +54,10 @@ class CMine {
 		int				m_disableDrawing;
 		int				m_changesMade;
 		bool				m_bSplineActive;
-		BOOL				m_bSortObjects;
-		int				m_nMaxSplines;
 		int				m_nNoLightDeltas;
 		int				m_lightRenderDepth;
 		int				m_deltaLightRenderDepth;
 		char				m_szBlockFile [256];
-		double			m_splineLength1,
-							m_splineLength2;
 		bool				m_bVertigo;
 		char*				m_pHxmExtraData;
 		int				m_nHxmExtraDataSize;
@@ -129,8 +126,6 @@ class CMine {
 
 
 		void FixChildren(void);
-
-		void SetLinesToDraw (void);
 
 		inline void SetSelectMode (short mode) { m_selectMode = mode; }
 

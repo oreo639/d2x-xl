@@ -189,7 +189,7 @@ if (count == 1) {
 			// all unused vertices
 			theMine->DeleteUnusedVertices ();
 			theMine->FixChildren ();
-			theMine->SetLinesToDraw ();
+			segmentManager.SetLinesToDraw ();
 			}
 		}	
 	}
