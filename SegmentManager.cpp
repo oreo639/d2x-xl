@@ -1611,23 +1611,24 @@ for (i = 0; i < 4; i++) {
 		}
 	}
 
-fail = FALSE; 
+fail = false; 
 for (i = 0; i < 4; i++)
 	if (match [i].i == -1) {
-		fail = TRUE; 
+		fail = true; 
 		break; 
 	}
 
 // make sure there are matches for each and they are unique
-if (match [0].i == match [1].i) fail = TRUE; 
-else if (match [0].i == match [2].i) fail = TRUE; 
-else if (match [0].i == match [3].i) fail = TRUE; 
-else if (match [1].i == match [2].i) fail = TRUE; 
-else if (match [1].i == match [3].i) fail = TRUE; 
-else if (match [2].i == match [3].i) fail = TRUE; 
+if (!fail)
+	fail = (match [0].i == match [1].i) ||
+			 (match [0].i == match [2].i) ||
+			 (match [0].i == match [3].i) ||
+			 (match [1].i == match [2].i) ||
+			 (match [1].i == match [3].i) ||
+			 (match [2].i == match [3].i);
 
 if (fail) {
-	int offset = (4 + cur1->nPoint - (3 - cur2->nPoint))%4; 
+	int offset = (4 + cur1->nPoint - (3 - cur2->nPoint)) % 4; 
 	match [0].i = (offset + 3) % 4; 
 	match [1].i = (offset + 2) % 4; 
 	match [2].i = (offset + 1) % 4; 
@@ -1640,16 +1641,16 @@ max_radius = 0;
 for (i = 0; i < 4; i++) {
 	j = match [i].i; 
 	radius = Distance (v1 [i], v2 [j]);
-	min_radius = min(min_radius, radius); 
-	max_radius = max(max_radius, radius); 
+	minRadius = min (min_radius, radius); 
+	maxRadius = max (max_radius, radius); 
 	}
 
 // make sure there are distances are close enough
 if (max_radius >= JOIN_DISTANCE) {
 	if (!bExpertMode)
 		ErrorMsg ("Sides are too far apart to join.\n\n"
-					"Hint: Cubes should not exceed 200 in any dimension\n"
-					"or they will distort when viewed from close up."); 
+					 "Hint: Cubes should not exceed 200 in any dimension\n"
+					 "or they will distort when viewed from close up."); 
 	return; 
 	}
 
