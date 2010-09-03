@@ -17,13 +17,6 @@ public:
 	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
-	void Reset (int count) { 
-		CGameItem* i = this;
-		while (count--) {
-			Clear ();
-			i = i->Next ();
-			}
-		}
 };
 
 // -----------------------------------------------------------------------------

@@ -375,5 +375,29 @@ undoManager.ResetModified (bUndo);
 return false;
 }
 
+// ----------------------------------------------------------------------------- 
+
+void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+{
+for (int = 0; i < Count (); i++)
+	m_walls [i].Read (fp, info, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+{
+for (int = 0; i < Count (); i++)
+	m_walls [i].Write (fp, info, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Clear (void)
+{
+for (int = 0; i < Count (); i++)
+	m_walls [i].Clear ();
+}
+
 //------------------------------------------------------------------------------
 //eof wallmanager.cpp

@@ -101,6 +101,7 @@ class CTriggerManager {
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Clear (void);
 
 	private:
 		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);

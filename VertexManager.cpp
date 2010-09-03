@@ -1,3 +1,5 @@
+#include "VertexManager.h"
+
 // ----------------------------------------------------------------------------- 
 
 void CVertexManager::Delete (short nDelVert)
@@ -34,12 +36,24 @@ for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
 
 void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
+for (int = 0; i < Count (); i++)
+	m_vertices [i].Read (fp, info, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
 void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
+for (int = 0; i < Count (); i++)
+	m_vertices [i].Write (fp, info, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Clear (void)
+{
+for (int = 0; i < Count (); i++)
+	m_vertices [i].Clear ();
 }
 
 // ----------------------------------------------------------------------------- 

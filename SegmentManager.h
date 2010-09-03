@@ -155,6 +155,7 @@ class CSegmentManager {
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Clear (void);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

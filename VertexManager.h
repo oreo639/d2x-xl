@@ -52,6 +52,7 @@ class CVertexManager {
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Clear (void);
 	};
 
 extern CVertexManager vertexManager;

@@ -2331,6 +2331,30 @@ for (short nSegment = Count (); nSegment; nSegment--, segP++) {
 	}
 }
 
+// ----------------------------------------------------------------------------- 
+
+void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+{
+for (int = 0; i < Count (); i++)
+	m_segments [i].Read (fp, info, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+{
+for (int = 0; i < Count (); i++)
+	m_segments [i].Write (fp, info, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Clear (void)
+{
+for (int = 0; i < Count (); i++)
+	m_segments [i].Clear ();
+}
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------

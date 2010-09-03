@@ -1,6 +1,7 @@
 #ifndef __selection_h
 #define __selection_h
 
+#include "Vertex.h"
 #include "Trigger.h"
 #include "Wall.h"
 #include "Segment.h"
