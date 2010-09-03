@@ -341,8 +341,8 @@ public:
 		memset (&m_info, 0, sizeof (m_info)); 
 		m_location.Clear ();
 		}
-	void Create (byte type);
-	void Setup (byte type, short nSegment);
+	void Create (byte type, short nSegment);
+	void Setup (byte type);
 	void Draw (CWnd* wndP);
 
 	int CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b);

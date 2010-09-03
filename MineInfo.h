@@ -6,6 +6,8 @@
 # pragma pack(push, packing)
 # pragma pack(1)
 
+// -----------------------------------------------------------------------------
+
 class CMineFileInfo {
 public:
 	ushort  signature;
@@ -16,6 +18,8 @@ public:
 	void Write (CFileManager& fp);
 };
 
+// -----------------------------------------------------------------------------
+
 class CPlayerItemInfo {
 public:
 	int	 offset;
@@ -25,6 +29,8 @@ public:
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 };
+
+// -----------------------------------------------------------------------------
 
 class CMineItemInfo {
 public:
@@ -38,6 +44,8 @@ public:
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 };
+
+// -----------------------------------------------------------------------------
 
 class CMineInfo {
 public:
@@ -59,6 +67,22 @@ public:
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 };
+
+// -----------------------------------------------------------------------------
+
+class CMineData {
+	public:
+		CMineInfo					mineInfo;
+		int							m_reactorTime;
+		int							m_reactorStrength;
+		int							m_secretSegNum;
+		CDoubleMatrix				m_secretOrient;
+		
+		// robot data
+		// structure data
+};
+
+// -----------------------------------------------------------------------------
 
 #endif // __mineinfo_h
 

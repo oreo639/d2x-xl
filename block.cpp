@@ -551,10 +551,10 @@ fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
   // wrap back then forward to make sure segment is valid
-wrap (&current1.m_nSegment, -1, 0, SegCount () - 1);
-wrap (&current2.m_nSegment, 1, 0, SegCount () - 1);
-wrap (&current2.m_nSegment, -1, 0, SegCount () - 1);
-wrap (&current2.m_nSegment, 1, 0, SegCount () - 1);
+wrap (&selections [0].m_nSegment, -1, 0, SegCount () - 1);
+wrap (&selections [1].m_nSegment, 1, 0, SegCount () - 1);
+wrap (&selections [1].m_nSegment, -1, 0, SegCount () - 1);
+wrap (&selections [1].m_nSegment, 1, 0, SegCount () - 1);
 SetLinesToDraw ();
 DLE.MineView ()->Refresh ();
 }
@@ -825,10 +825,10 @@ for (nSegment = SegCount () - 1; nSegment >= 0; nSegment--) {
 	}
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 // wrap back then forward to make sure segment is valid
-wrap(&current1.m_nSegment,-1,0,SegCount () - 1);
-wrap(&current2.m_nSegment,1,0,SegCount () - 1);
-wrap(&current2.m_nSegment,-1,0,SegCount () - 1);
-wrap(&current2.m_nSegment,1,0,SegCount () - 1);
+wrap(&selections [0].m_nSegment,-1,0,SegCount () - 1);
+wrap(&selections [1].m_nSegment,1,0,SegCount () - 1);
+wrap(&selections [1].m_nSegment,-1,0,SegCount () - 1);
+wrap(&selections [1].m_nSegment,1,0,SegCount () - 1);
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();

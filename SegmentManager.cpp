@@ -336,14 +336,14 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
   vertexManager.DeleteUnused (); 
 
   // make sure current segment numbers are valid
-  if (current1.m_nSegment >= Count ()) 
-	  current1.m_nSegment--; 
-  if (current2.m_nSegment >= Count ()) 
-	  current2.m_nSegment--; 
-  if (current1.m_nSegment < 0) 
-	  current1.m_nSegment = 0; 
-  if (current2.m_nSegment < 0) 
-	  current2.m_nSegment = 0; 
+  if (selections [0].m_nSegment >= Count ()) 
+	  selections [0].m_nSegment--; 
+  if (selections [1].m_nSegment >= Count ()) 
+	  selections [1].m_nSegment--; 
+  if (selections [0].m_nSegment < 0) 
+	  selections [0].m_nSegment = 0; 
+  if (selections [1].m_nSegment < 0) 
+	  selections [1].m_nSegment = 0; 
 //DLE.MineView ()->Refresh (false); 
 //DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
@@ -991,7 +991,7 @@ if (m_bSplineActive) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (current1.m_nSegment== current2.m_nSegment) {
+if (selections [0].m_nSegment== selections [1].m_nSegment) {
 	ErrorMsg ("You cannot joint two points on the same cube.\n\n"
 				"Hint: The two golden circles represent the current point, \n"
 				"and the 'other' cube's current point.  Press 'P' to change the\n"
@@ -1000,14 +1000,14 @@ if (current1.m_nSegment== current2.m_nSegment) {
 	}
 
 if (Current () == &Current1 ()) {
-	seg1 = GetSegment (current1.m_nSegment); 
-	seg2 = GetSegment (current2.m_nSegment); 
+	seg1 = GetSegment (selections [0].m_nSegment); 
+	seg2 = GetSegment (selections [1].m_nSegment); 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	}
 else {
-	seg1 = GetSegment (current2.m_nSegment); 
-	seg2 = GetSegment (current1.m_nSegment); 
+	seg1 = GetSegment (selections [1].m_nSegment); 
+	seg2 = GetSegment (selections [0].m_nSegment); 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1059,7 +1059,7 @@ if (m_bSplineActive) {
 	return; 
 	}
 
-if (current1.m_nSegment == current2.m_nSegment) {
+if (selections [0].m_nSegment == selections [1].m_nSegment) {
 	ErrorMsg ("You cannot joint two lines on the same cube.\n\n"
 				"Hint: The two green lines represent the current line, \n"
 				"and the 'other' cube's current line.  Press 'L' to change\n"
@@ -1068,14 +1068,14 @@ if (current1.m_nSegment == current2.m_nSegment) {
 	}
 
 if (Current ()== &Current1 ()) {
-	seg1 = GetSegment (current1.m_nSegment); 
-	seg2 = GetSegment (current2.m_nSegment); 
+	seg1 = GetSegment (selections [0].m_nSegment); 
+	seg2 = GetSegment (selections [1].m_nSegment); 
 	cur1 = &Current1 (); 
 	cur2 = &Current2 (); 
 	} 
 else {
-	seg1 = GetSegment (current2.m_nSegment); 
-	seg2 = GetSegment (current1.m_nSegment); 
+	seg1 = GetSegment (selections [1].m_nSegment); 
+	seg2 = GetSegment (selections [0].m_nSegment); 
 	cur1 = &Current2 (); 
 	cur2 = &Current1 (); 
 	}
@@ -1813,7 +1813,7 @@ void CSegmentManager::Copyother.Segmentment ()
 {
 	bool bUndo, bChange = false;
 
-if (current1.m_nSegment == current2.m_nSegment)
+if (selections [0].m_nSegment == selections [1].m_nSegment)
 	return; 
 short nSegment = current.m_nSegment; 
 CSegment *otherSeg = other.Segment (); 

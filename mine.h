@@ -2,6 +2,7 @@
 #define __mine_h
 
 #include "define.h"
+#include "global.h"
 #include "cfile.h"
 #include "carray.h"
 #include "Types.h"
@@ -15,6 +16,7 @@
 #include "RobotManager.h"
 #include "ObjectManager.h"
 #include "HogManager.h"
+#include "UndoManager.h"
 
 #ifdef _DEBUG
 
@@ -32,20 +34,6 @@
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-class CMineData {
-	public:
-		CMineInfo					mineInfo;
-		int							m_reactorTime;
-		int							m_reactorStrength;
-		int							m_secretSegNum;
-		CDoubleMatrix				m_secretOrient;
-		
-		// robot data
-		// structure data
-};
-
 // -----------------------------------------------------------------------------
 
 class CMine {
@@ -233,15 +221,15 @@ class CMine {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-#define MAX_TEXTURES ((theMine == null) ? MAX_TEXTURES_D2 : theMine->IsD1File (void) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
-#define MAX_OBJECTS ((theMine == null) ? MAX_OBJECTS_D2 : theMine->IsStdLevel (void) ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
-#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File (void) || (theMine->LevelVersion (void) < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
-#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File (void) || (theMine->LevelVersion (void) < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
-#define MAX_PLAYERS ((theMine == null) ? MAX_PLAYERS_D2 : theMine->IsStdLevel (void) ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
-#define ROBOT_IDS2 ((theMine == null) ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion (void) == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
-#define MAX_ROBOT_MAKERS ((theMine == null) ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File (void) || (theMine->LevelVersion (void) < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
-#define MAX_LIGHT_DELTA_INDICES ((theMine == null) ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File (void) || theMine->IsStdLevel (void)) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
-#define MAX_LIGHT_DELTA_VALUES ((theMine == null) ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File (void) || theMine->IsStdLevel (void)) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
+#define MAX_TEXTURES ((theMine == null) ? MAX_TEXTURES_D2 : theMine->IsD1File () ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2)
+#define MAX_OBJECTS ((theMine == null) ? MAX_OBJECTS_D2 : theMine->IsStdLevel () ? MAX_OBJECTS_D1 : MAX_OBJECTS_D2)
+#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
+#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
+#define MAX_PLAYERS ((theMine == null) ? MAX_PLAYERS_D2 : theMine->IsStdLevel () ? MAX_PLAYERS_D2 : MAX_PLAYERS_D2X)
+#define ROBOT_IDS2 ((theMine == null) ? MAX_ROBOT_IDS_TOTAL : (theMine->LevelVersion () == 7) ? N_ROBOT_TYPES_D2 : MAX_ROBOT_IDS_TOTAL)
+#define MAX_ROBOT_MAKERS ((theMine == null) ? MAX_NUM_MATCENS_D2 : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_MATCENS_D1 : MAX_NUM_MATCENS_D2)
+#define MAX_LIGHT_DELTA_INDICES ((theMine == null) ? MAX_LIGHT_DELTA_INDICES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_INDICES_STD : MAX_LIGHT_DELTA_INDICES_D2X)
+#define MAX_LIGHT_DELTA_VALUES ((theMine == null) ? MAX_LIGHT_DELTA_VALUES_STD : (theMine->IsD1File () || theMine->IsStdLevel ()) ? MAX_LIGHT_DELTA_VALUES_STD : MAX_LIGHT_DELTA_VALUES_D2X)
 
 #define NO_WALL MAX_WALLS
 

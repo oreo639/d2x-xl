@@ -105,8 +105,8 @@ extern short  show_special;
 extern short  show_objects;
 extern short  show_powerups;
 #endif
-//extern CUBE  current1;
-//extern CUBE  current2;
+//extern CUBE  selections [0];
+//extern CUBE  selections [1];
 //extern CUBE  *current;
 #if 0
 extern short select_mode;

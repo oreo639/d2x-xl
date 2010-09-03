@@ -99,16 +99,16 @@ Default ();
 void CMine::Reset (void)
 {
 Current () = &Current1 ();
-current1.m_nSegment = DEFAULT_SEGMENT;
-current1.m_nPoint = DEFAULT_POINT;
-current1.m_nLine = DEFAULT_LINE;
-current1.m_nSide = DEFAULT_SIDE;
-current1.m_nObject = DEFAULT_OBJECT;
-current2.m_nSegment = DEFAULT_SEGMENT;
-current2.m_nPoint = DEFAULT_POINT;
-current2.m_nLine = DEFAULT_LINE;
-current2.m_nSide = DEFAULT_SIDE;
-current2.m_nObject = DEFAULT_OBJECT;
+selections [0].m_nSegment = DEFAULT_SEGMENT;
+selections [0].m_nPoint = DEFAULT_POINT;
+selections [0].m_nLine = DEFAULT_LINE;
+selections [0].m_nSide = DEFAULT_SIDE;
+selections [0].m_nObject = DEFAULT_OBJECT;
+selections [1].m_nSegment = DEFAULT_SEGMENT;
+selections [1].m_nPoint = DEFAULT_POINT;
+selections [1].m_nLine = DEFAULT_LINE;
+selections [1].m_nSide = DEFAULT_SIDE;
+selections [1].m_nObject = DEFAULT_OBJECT;
 DLE.ResetUndoBuffer ();
 }
 
