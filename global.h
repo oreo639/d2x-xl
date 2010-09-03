@@ -90,7 +90,7 @@ extern int robotSize [MAX_ROBOT_IDS_TOTAL];
 extern int robot_shield [MAX_ROBOT_IDS_TOTAL];
 extern tTextureLight textureLightD1[NUM_LIGHTS_D1];
 extern tTextureLight textureLightD2[NUM_LIGHTS_D2];
-extern long lightMap [MAX_TEXTURES_D2];
+extern long m_lightMap [MAX_TEXTURES_D2];
 extern short add_segment_mode;
 extern char dlc_version[10];
 extern char testers_name[20];

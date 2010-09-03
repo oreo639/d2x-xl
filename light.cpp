@@ -16,54 +16,13 @@
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp
 
-long lightMap [MAX_TEXTURES_D2];
-long defLightMap [MAX_TEXTURES_D2];
-
 //--------------------------------------------------------------------------
 // light_weight()
 //--------------------------------------------------------------------------
 
-byte CMine::LightWeight(short nBaseTex) 
+byte CLightManager::LightWeight (short nBaseTex) 
 {
-#if 1
-return (byte) ((lightMap [nBaseTex] - 1) / 0x0200L);
-#else
-  int i;
-
-#	if 1
-if (DLE.IsD1File ()) {
-	i = FindLight (nBaseTex, textureLightD1, NUM_LIGHTS_D1);
-	if (i >= 0)
-		return (byte) ((textureLightD1 [i].light - 1) / 0x0200L);
-	}
-else {
-	i = FindLight (nBaseTex, textureLightD2, NUM_LIGHTS_D2);
-	if (i >= 0)
-		return (byte) ((textureLightD2 [i].light - 1) / 0x0200L);
-	}
-return 0;
-#	else
-	byte result;
-
-if (nBaseTex >= 0 && nBaseTex < MAX_TEXTURES) {
-	if (DLE.IsD1File ()) {
-		for (i=0;i<NUM_LIGHTS_D1;i++)
-			if (nBaseTex <= textureLightD1[i].m_info.nBaseTex) 
-				break;
-		if (nBaseTex == textureLightD1[i].m_info.nBaseTex)
-			result = (byte)((textureLightD1[i].light - 1) / 0x0200L);
-		}
-	else {
-		for (i=0;i<NUM_LIGHTS_D2;i++)
-			if (nBaseTex <= textureLightD2[i].m_info.nBaseTex) 
-				break;
-		if (nBaseTex == textureLightD2[i].m_info.nBaseTex)
-			result = (byte)((textureLightD2[i].light - 1) / 0x0200L);
-		}
-	}
-return (result);
-#	endif
-#endif
+return (byte) ((m_lightMap [nBaseTex] - 1) / 0x0200L);
 }
 
 //--------------------------------------------------------------------------
@@ -79,14 +38,16 @@ scale = fLight / 100.0; // 100.0% = normal
 	{
 	//#pragma omp for
 	for (segNum = 0; segNum < segCount; segNum++) {
-		CSegment* segP = Segments (segNum);
+		CSegment* segP = GetSegment (segNum);
 		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+			CSide* sideP = segP->m_sides;
 			for (int j = 0; j < 6; j++) {
+				CUVL* uvlP = sideP->m_info.uvls;
 				for (int i = 0; i < 4; i++) {
-					double l = ((double) ((ushort) segP->m_sides [j].m_info.uvls [i].l)) * scale;
+					double l = ((double) ((ushort) uvlP [i].l)) * scale;
 					l = min (l, 0x8000);
 					l = max (l, 0);
-					segP->m_sides [j].m_info.uvls [i].l = (ushort) l;
+					uvlP [i].l = (ushort) l;
 					}
 				}
 			}

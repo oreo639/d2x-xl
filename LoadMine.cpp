@@ -312,59 +312,6 @@ SortObjects ();
 return return_code;
 }
 
-// ------------------------------------------------------------------------
-
-bool CMine::HasCustomLightMap (void)
-{
-CResource res;
-byte *dataP;
-if (!(dataP = res.Load (IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
-	return false;
-return memcmp (lightMap, dataP, sizeof (lightMap)) != 0;
-}
-
-// ------------------------------------------------------------------------
-
-bool CMine::HasCustomLightColors (void)
-{
-CResource res;
-byte *dataP;
-if (!(dataP = res.Load (IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
-	return false;
-return memcmp (DATA (MineData ().texColors), dataP, sizeof (MineData ().texColors)) != 0;
-}
-
-// ------------------------------------------------------------------------
-
-short CMine::LoadDefaultLightAndColor (void)
-{
-CResource res;
-byte *dataP;;
-if (!(dataP = res.Load (IsD1File () ? IDR_COLOR_D1 : IDR_COLOR_D2)))
-	return false;
-int i = res.Size () / (3 * sizeof (int) + sizeof (byte));
-#if _DEBUG
-if (i > (int) MineData ().texColors.Length ())
-	i = (int) MineData ().texColors.Length ();
-#else
-if (i > sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]))
-	i = sizeof (MineData ().texColors) / sizeof (MineData ().texColors [0]);
-#endif
-for (CColor *colorP = DATA (MineData ().texColors); i; i--, colorP++) {
-	colorP->m_info.index = *dataP++;
-	colorP->m_info.color.r = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	colorP->m_info.color.g = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	colorP->m_info.color.b = (double) *((int *) dataP) / (double) 0x7fffffff;
-	dataP += sizeof (int);
-	}
-
-if (!(dataP = res.Load (IsD1File () ? IDR_LIGHT_D1 : IDR_LIGHT_D2)))
-	return false;
-memcpy (lightMap, dataP, min (res.Size (), sizeof (lightMap)));
-return 1;
-}
 
 // ------------------------------------------------------------------------
 // FixIndexValues()

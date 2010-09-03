@@ -129,6 +129,9 @@ class CLightManager {
 
 		bool						m_bUseTexColors;
 
+		long						m_lightMap [MAX_TEXTURES_D2];
+		//long						m_defLightMap [MAX_TEXTURES_D2];
+
 		inline lightDeltaIndexList& LightDeltaIndex (void) { return m_lightDeltaIndices; }
 
 		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
@@ -137,11 +140,11 @@ class CLightManager {
 
 		inline CLightDeltaIndex* GetLightDeltaIndex (short i) { return &m_lightDeltaIndices [i]; }
 
-		inline CLightDeltaValue* GetLightDeltaValues (short i) { return &m_lightDeltaValues [i]; }
+		inline CLightDeltaValue* GetLightDeltaValue (short i) { return &m_lightDeltaValues [i]; }
 
 		inline CVariableLight* GetVariableLight (short i) { return &m_variableLights [i]; }
 
-		inline CColor *TexColors (short nTexture = 0) { return m_texColors + (nTexture & 0x1FFF); }
+		inline CColor* GetTexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
 
@@ -159,12 +162,20 @@ class CLightManager {
 
 		inline CColor* GetLightColor (short nSegment, short nSide = 0) { return &m_lightColors [nSegment * 6 + nSide]; }
 
-		short LoadDefaultLightAndColor (void);
+		short LoadDefaults (void);
 		bool HasCustomLightMap (void);
 		bool HasCustomLightColors (void);
 
-		short WriteColorMap (CFileManager& fColorMap);
-		short ReadColorMap (CFileManager& fColorMap);
+		void CreateLightMap (void);
+		int ReadLightMap (CFileManager& fp, uint nSize);
+		int WriteLightMap (CFileManager& fp);
+		short WriteColorMap (CFileManager& fp);
+		short ReadColorMap (CFileManager& fp);
+
+	private:
+		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
+		void CLightManager::SaveColors (CColor *pc, int nColors, CFileManager& fp);
+
 };
 
 // -----------------------------------------------------------------------------

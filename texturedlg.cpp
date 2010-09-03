@@ -1140,7 +1140,7 @@ void CTextureTool::GetBrightness (int nTexture)
 if (nTexture < 0)
 	nBrightness = 0;
 else {
-	nBrightness = lightMap [nTexture];
+	nBrightness = m_lightMap [nTexture];
 	if (nBrightness == MAX_BRIGHTNESS)
 		nBrightness = 100;
 	else
@@ -1165,7 +1165,7 @@ if (!bSemaphore) {
 
 	if (texture >= 0) {
 		m_nBrightness = nBrightness;
-		lightMap [texture] = ((nBrightness == 100) ? MAX_BRIGHTNESS : nBrightness * (MAX_BRIGHTNESS / 100));
+		m_lightMap [texture] = ((nBrightness == 100) ? MAX_BRIGHTNESS : nBrightness * (MAX_BRIGHTNESS / 100));
 		}
 	bSemaphore = FALSE;
 	}
