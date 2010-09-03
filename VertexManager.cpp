@@ -13,10 +13,6 @@ if (nDelVert < --m_nCount) {
 }
 
 // ----------------------------------------------------------------------------- 
-// DeleteUnusedVertices()
-//
-// ACTION - Deletes unused vertices
-// ----------------------------------------------------------------------------- 
 
 void CVertexManager::DeleteUnusedVertices (void)
 {
@@ -32,6 +28,18 @@ for (nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
 for (nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
 	if (!(vertexManager.Status (nVertex) & NEW_MASK))
 		DeleteVertex(nVertex); 
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+{
+}
+
+// ----------------------------------------------------------------------------- 
+
+void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+{
 }
 
 // ----------------------------------------------------------------------------- 
