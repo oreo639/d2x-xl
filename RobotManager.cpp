@@ -7,8 +7,10 @@
 
 #include "define.h"
 #include "cfile.h"
+#include "PolyModel.h"
 #include "ObjectManager.h"
 #include "HogManager.h"
+#include "Robot.h"
 #include "RobotManager.h"
 
 //------------------------------------------------------------------------------
@@ -86,12 +88,12 @@ else if (type == EXTENDED_HAM)  {
 	// read robot information
 	t = fp.ReadInt32 ();
 	t0 = (type == NORMAL_HAM) ? 0: N_ROBOT_TYPES_D2;
-	N_robot_types = t0 + t;
-	if (N_robot_types > MAX_ROBOT_TYPES) {
+	m_nRobotTypes = t0 + t;
+	if (m_nRobotTypes > MAX_ROBOT_TYPES) {
 		sprintf_s (message, sizeof (message), "Too many robots (%d) in <%s>.  Max is %d.",t,pszFile,MAX_ROBOT_TYPES-N_ROBOT_TYPES_D2);
 		ErrorMsg (message);
-		N_robot_types = MAX_ROBOT_TYPES;
-		t = N_robot_types - t0;
+		m_nRobotTypes = MAX_ROBOT_TYPES;
+		t = m_nRobotTypes - t0;
 		}
 	for (; t; t--, t0++) {
 		RobotInfo (t0)->Read (fp);
@@ -242,8 +244,8 @@ fp.ReadInt32 (); // version (0x00000001)
 t = fp.ReadInt32 ();
 for (j = 0; j < t; j++) {
 	i = fp.ReadInt32 ();
-	if (i >= (int) N_robot_types) {
-		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, N_robot_types - 1);
+	if (i >= (int) m_nRobotTypes) {
+		sprintf_s (message, sizeof (message), "Robots number (%d) out of range.  Range = [0..%d].", i, m_nRobotTypes - 1);
 		ErrorMsg (message);
 		return 1;
 		}
@@ -275,7 +277,7 @@ int CRobotManager::WriteHXM (CFileManager& fp)
 {
 	uint	i, t;
 
-	for (i = 0, t = 0; i < N_robot_types; i++)
+	for (i = 0, t = 0; i < m_nRobotTypes; i++)
 	if (IsCustomRobot (i))
 		t++;
 if (!(t || m_nHxmExtraDataSize))
@@ -290,7 +292,7 @@ fp.WriteInt32 (1);   // version 1
 
 // write robot information
 fp.Write (t); // number of robot info structs stored
-for (i = 0; i < N_robot_types; i++) {
+for (i = 0; i < m_nRobotTypes; i++) {
 	if (RobotInfo (i)->m_info.bCustom) {
 		fp.Write (i);
 		RobotInfo (i)->Write (fp);
@@ -336,7 +338,7 @@ if (!(bufP = res.Load ("ROBOT.HXM"))) {
 	return;
 	}
 t = (ushort) (*((uint *) bufP));
-N_robot_types = min (t, MAX_ROBOT_TYPES);
+m_nRobotTypes = min (t, MAX_ROBOT_TYPES);
 bufP += sizeof (uint);
 for (j = 0; j < t; j++) {
 	i = (ushort) (*((uint *) bufP));
@@ -394,7 +396,7 @@ return bFound;
 
 bool CRobotManager::HasCustomRobots (void) 
 {
-for (int i = 0; i < (int) N_robot_types; i++)
+for (int i = 0; i < (int) m_nRobotTypes; i++)
 	if (IsCustomRobot (i))
 		return true;
 return (m_nHxmExtraDataSize > 0);

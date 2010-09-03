@@ -70,32 +70,6 @@ extern byte pointCornerTable[8][3];
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-typedef struct tUVL {
-public:
-	short u, v, l; 
-} tUVL;
-
-class CUVL : public tUVL {
-public:
-	inline void Read (CFileManager& fp) {
-		u = fp.ReadInt16 ();
-		v = fp.ReadInt16 ();
-		l = fp.ReadInt16 ();
-		}
-	inline void Write (CFileManager& fp) {
-		fp.Write (u);
-		fp.Write (v);
-		fp.Write (l);
-		}
-
-	inline void Clear (void) { u = v = l = 0; }
-	inline void Set (short _u, short _v, short _l) { u = _u, v = _v, l = _l; }
-};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
 typedef struct tSide {
 	short		nChild;
 	ushort	nWall;		// (was short) Index into Walls array, which wall (probably door) is on this side 

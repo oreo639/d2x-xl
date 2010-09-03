@@ -1,6 +1,8 @@
 #ifndef __poly_h
 #define __poly_h
 
+#include "Vertex.h"
+#include "GameObject.h"
 #include "ViewMatrix.h"
 
 /* the followin numbers are set using the original D2 robots */

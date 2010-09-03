@@ -9,6 +9,7 @@
 #include "cfile.h"
 #include "Types.h"
 #include "Vector.h"
+#include "ViewMatrix.h"
 
 //------------------------------------------------------------------------
 
@@ -342,6 +343,10 @@ public:
 	void Create (byte type);
 	void Setup (byte type, short nSegment);
 	void Draw (CWnd* wndP);
+
+	int CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b);
+	int CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b);
+
 };
 
 //------------------------------------------------------------------------

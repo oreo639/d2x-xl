@@ -5,6 +5,7 @@
 #pragma pack (push, 1)
 #endif
 
+//------------------------------------------------------------------------------
 //describes a list of joint positions
 typedef struct tJointList {
 public:
@@ -21,6 +22,8 @@ public:
 		}
 } tJointList;
 
+//------------------------------------------------------------------------------
+
 typedef struct tRobotGunInfo {
 	CFixVector	points;
 	byte			subModels;
@@ -29,6 +32,8 @@ typedef struct tRobotGunInfo {
 	void Write (CFileManager& fp, int nField);
 } tRobotGunInfo;
 
+//------------------------------------------------------------------------------
+
 typedef struct tRobotExplInfo {
 	short			nClip;
 	short			nSound;
@@ -36,6 +41,8 @@ typedef struct tRobotExplInfo {
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 } tRobotExplInfo;
+
+//------------------------------------------------------------------------------
 
 typedef struct tRobotContentsInfo {
 	char			id;			// ID of powerup this robot can contain.
@@ -47,6 +54,8 @@ typedef struct tRobotContentsInfo {
 	void Write (CFileManager& fp);
 } tRobotContentsInfo;
 
+//------------------------------------------------------------------------------
+
 typedef struct tRobotSoundInfo {
 	byte			see;			// sound robot makes when it first sees the player
 	byte			attack;		// sound robot makes when it attacks the player
@@ -56,6 +65,8 @@ typedef struct tRobotSoundInfo {
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
 } tRobotSoundInfo;
+
+//------------------------------------------------------------------------------
 
 typedef struct tRobotCombatInfo {
 public:
@@ -70,6 +81,8 @@ public:
 	void Read (CFileManager& fp, int nField);
 	void Write (CFileManager& fp, int nField);
 } tRobotCombatInfo;
+
+//------------------------------------------------------------------------------
 
 typedef struct tRobotInfo {
 	int						nModel;		  // which polygon model?
@@ -123,7 +136,7 @@ class CRobotInfo : public CGameItem {
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
-BOOL HasCustomRobots ();
+//------------------------------------------------------------------------------
 
 #ifdef _WIN32
 #pragma pack (pop)

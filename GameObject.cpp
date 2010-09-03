@@ -6,19 +6,13 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
+
 #include "define.h"
 #include "types.h"
-#include "mine.h"
-#include "dle-xp.h"
-#include "global.h"
 #include "cfile.h"
+#include "ViewMatrix.h"
 
-//------------------------------------------------------------------------
-// make_object ()
-//
-// Action - Defines a standard object (currently assumed to be a player)
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void CGameObject::Create (byte type, short nSegment) 
 {
@@ -51,12 +45,7 @@ undoManager.Unlock ();
 return;
 }
 
-//------------------------------------------------------------------------
-// set_object_data ()
-//
-// Action - Sets control type, movement type, render type
-// 	    size, and shields (also nModel & texture if robot)
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void CGameObject::Setup (char type) 
 {
@@ -195,9 +184,7 @@ switch (type) {
 undoManager.Unlock ();
 }
 
-//------------------------------------------------------------------------
-/// CObjectTool - DrawObject
-//------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void CObject::Draw (CWnd* wndP)
 {
@@ -277,7 +264,7 @@ wndP->InvalidateRect (NULL, TRUE);
 wndP->UpdateWindow ();
 }
 
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 int CObjPhysicsInfo::Read (CFileManager& fp, int version)
 {
@@ -293,7 +280,7 @@ flags = fp.ReadInt16 ();
 return 1;
 }
 
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void CObjPhysicsInfo::Write (CFileManager& fp, int version)
 {
@@ -308,7 +295,7 @@ fp.WriteInt16 (turnroll);
 fp.WriteInt16 (flags);
 }
 
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 int CObjAIInfo::Read (CFileManager& fp, int version)
 {
@@ -665,8 +652,6 @@ return 1;
 }
 
 // ------------------------------------------------------------------------
-// WriteObject ()
-// ------------------------------------------------------------------------
 
 void CGameObject::Write (CFileManager& fp, int version, bool bFlag)
 {
@@ -763,5 +748,29 @@ switch (m_info.renderType) {
 	}
 }
 
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+int CGameObject::CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b) 
+{
+CVertex _a = m_location.orient * a;
+CVertex _b = m_location.orient * b;
+_a += m_location.pos;
+_a += view.m_move [0];
+_b += _a;
+return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
+}
+
+// -----------------------------------------------------------------------------
+
+int CGameObject::CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b) 
+{
+CVertex _a = m_location.orient * CDoubleVector (a);
+CVertex _b = m_location.orient * CDoubleVector (b);
+_a += m_location.pos;
+_a += view.m_move [0];
+_b += _a;
+return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
+}
+
+// -----------------------------------------------------------------------------
 // eof object.cpp

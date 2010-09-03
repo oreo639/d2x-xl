@@ -124,7 +124,7 @@ for (int i = start; i < end; i++) {
 
 void tModelRenderPoly::Draw (CViewMatrix* view, CDC* pDC) 
 {
-if (view->CheckNormal (renderObject, offset, normal)) {
+if (CheckNormal (view, offset, normal)) {
 	  int i, j;
 
 	POINT aPoints [MAX_POLYMODEL_POLY_POINTS];
