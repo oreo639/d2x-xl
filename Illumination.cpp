@@ -558,11 +558,11 @@ fLightScale = 1.0; ///= 100.0;
 					short nBaseTex = childSegP->m_sides [nChildSide].m_info.nBaseTex;
 					short nOvlTex = childSegP->m_sides [nChildSide].m_info.nOvlTex & 0x1fff;
 					if (m_nNoLightDeltas == 1) {
-						if (((IsLight (nTexture) >= 0) || (IsLight (tmapnum2) >= 0))
+						if (((IsLight (nTexture) >= 0) || (IsLight (nOvlTex) >= 0))
 							 && !IsVariableLight (nChildSeg, nChildSide))
 							continue;
 						}
-					else if ((m_nNoLightDeltas == 2) && (IsLava (nTexture) || IsLava (tmapnum2)))
+					else if ((m_nNoLightDeltas == 2) && (IsLava (nTexture) || IsLava (nOvlTex)))
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
@@ -580,7 +580,7 @@ fLightScale = 1.0; ///= 100.0;
 						CLightDeltaValue* dl;
 	//#pragma omp critical
 						{
-						dl = LightDeltaValues (theMine->Info ().lightDeltaValues.count++);
+						dl = LightDeltaValue (theMine->Info ().lightDeltaValues.count++);
 						}
 						dl->m_nSegment = nChildSeg;
 						dl->m_nSide = nChildSide;
@@ -624,55 +624,6 @@ fLightScale = 1.0; ///= 100.0;
 		}
 	}
 return (nErrors == 0);
-}
-
-//---------------------------------------------------------------------------------
-// SetSegmentChildNum()
-//
-// Action - Sets nIndex to child number from parent
-//---------------------------------------------------------------------------------
-
-void CLightManager::UnlinkSeg (CSegment *pSegment, CSegment *pRoot)
-{
-#if 0
-	short	prevSeg = pSegment->prevSeg;
-	short	nextSeg = pSegment->nextSeg;
-	short	thisSeg = pSegment - Segments ();
-
-CBRK ((prevSeg >= 0) && (Segments (prevSeg)->nextSeg < 0));
-if (prevSeg >= 0) {
-	Segments () [prevSeg].nextSeg = nextSeg;
-	pSegment->prevSeg = -1;
-	}
-if (nextSeg >= 0) {
-	Segments () [nextSeg].prevSeg = prevSeg;
-	pSegment->nextSeg = -1;
-	}
-#endif
-}
-
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
-
-void CLightManager::LinkSeg (CSegment *pSegment, CSegment *pRoot)
-{
-#if 0
-	short	prevSeg = pRoot->prevSeg;
-	short	nextSeg = pRoot->nextSeg;
-	short thisSeg = pSegment - Segments ();
-	short rootSeg = pRoot - Segments ();
-
-if (prevSeg < 0) {
-	pRoot->nextSeg = thisSeg;
-	}
-else {
-	Segments () [prevSeg].nextSeg = thisSeg;
-	pSegment->prevSeg = prevSeg;
-	}
-pRoot->prevSeg = thisSeg;
-pSegment->nextSeg = rootSeg;
-pSegment->rootSeg = rootSeg;
-#endif
 }
 
 //---------------------------------------------------------------------------------
