@@ -1,4 +1,12 @@
 #include "mine.h"
+#include "dle-xp.h"
+
+// ----------------------------------------------------------------------------- 
+
+short Add (void) 
+{ 
+return (Count () < MAX_SEGMENTS) ? Count ()++ : -1; 
+}
 
 // ----------------------------------------------------------------------------- 
 
@@ -122,8 +130,8 @@ for (nNewSide = 0; nNewSide < 6; nNewSide++)
 // set current segment to new segment
 current.m_nSegment = nNewSeg; 
 //		SetLinesToDraw(); 
-//DLE.MineView ()->Refresh (false); 
-//DLE.ToolView ()->Refresh (); 
+DLE.MineView ()->Refresh (false); 
+DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
 return TRUE; 
 }
@@ -151,7 +159,7 @@ if (bCreate) {
 	triggerManager.UpdateReactor ();
 	}
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 
@@ -171,7 +179,7 @@ if (bCreate && !Create ()) {
 	undoManager.ResetModified (bUndo);
 	return false; 
 	}	
-//DLE.MineView ()->DelayRefresh (true);
+DLE.MineView ()->DelayRefresh (true);
 if (!DefineSegment (nSegment, nFunction, -1)) {
 	undoManager.ResetModified (bUndo);
 	DLE.MineView ()->DelayRefresh (false);
@@ -179,8 +187,8 @@ if (!DefineSegment (nSegment, nFunction, -1)) {
 	}	
 undoManager.Unlock ();
 return true;
-//DLE.MineView ()->DelayRefresh (false);
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->DelayRefresh (false);
+DLE.MineView ()->Refresh ();
 }
 
 // ----------------------------------------------------------------------------- 

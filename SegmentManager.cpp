@@ -530,9 +530,6 @@ segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 
 // update vertices's marked status
 // ..first clear all marked verts
-short nVertex; 
-for (nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
-	vertexManager.Status (nVertex) &= ~MARKED_MASK; 
 // ..then mark all verts for marked GetSegment ()
 for (nSegment = 0, segP = GetSegment (0); nSegment < Count (); nSegment++, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)

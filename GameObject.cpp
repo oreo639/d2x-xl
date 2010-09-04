@@ -63,7 +63,7 @@ switch (type) {
 		m_info.movementType = MT_PHYSICS;
 		m_info.renderType = RT_POLYOBJ;
 		m_info.size = robotSize[id];
-		m_info.shields = robot_shield[id];
+		m_info.shields = robotShield[id];
 		rType.polyModelInfo.nModel = robotClip[id];
 		rType.polyModelInfo.tmap_override = -1; // set texture to none
 		cType.aiInfo.behavior = AIB_NORMAL;

@@ -50,7 +50,7 @@ bmWidth2 = bmWidth / 2;
 
 // define 4 corners of texture to be displayed on the screen
 for (i = 0; i < 4; i++) {
-	short nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
+	ushort nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
 	a [i].x = scrn [nVertex].x;
 	a [i].y = scrn [nVertex].y;
 	}

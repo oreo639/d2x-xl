@@ -417,7 +417,7 @@ void CTunnelMaker::ComputeSpline (void)
   double angle;
   int i,j;
   CSegment *segP;
-  short nVertex;
+  ushort nVertex;
   CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];

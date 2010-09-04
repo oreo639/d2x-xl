@@ -18,8 +18,8 @@
 #include "afxcview.h"
 #include "DlcDoc.h"
 #include "Matrix.h"
-#include "poly.h"
-#include "textures.h"
+#include "PolyModel.h"
+#include "Textures.h"
 
 #if OGL_RENDERING
 # include <gl\gl.h>
@@ -238,7 +238,7 @@ public:
 			return false;
 		if (!m_nViewDist)
 			return true;
-		return (segP->m_info.nIndex >= 0) && (segP->m_info.nIndex <= ViewDist ()); 
+		return (segP->m_nIndex >= 0) && (segP->m_nIndex <= ViewDist ()); 
 		}
 	void DrawMineCenter (CDC *pViewDC);
 	bool VertexVisible (int v);

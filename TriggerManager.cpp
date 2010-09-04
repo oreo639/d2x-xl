@@ -103,6 +103,13 @@ for (int i = NumObjTriggers (); i; i--, trigP++) {
 
 //------------------------------------------------------------------------------
 
+short Add (void) 
+{ 
+return HaveResources () ? Count (0)++ : NO_TRIGGER; 
+}
+
+//------------------------------------------------------------------------------
+
 CTrigger* CTriggerManager::AddToWall (short nWall, short type, bool bAddWall) 
 {
 	static short defWallTypes [NUM_TRIGGER_TYPES] = {

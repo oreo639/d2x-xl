@@ -38,7 +38,7 @@ typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 class CSegmentManager {
 	public:
 		segmentList		m_segments;
-		ushort			m_nCount;
+		short				m_nCount;
 		int				m_nAddMode;
 		robotMakerList	m_robotMakers;
 		robotMakerList	m_equipMakers;
@@ -50,7 +50,7 @@ class CSegmentManager {
 		inline segmentList& Segments (void)
 			{ return m_segments; }
 
-		inline ushort& Count ()
+		inline short& Count ()
 			{ return m_nCount; }
 
 		inline short Index (CSegment* segP) { return (short) (segP - &m_segments [0]); }
@@ -100,9 +100,10 @@ class CSegmentManager {
 		CSegment* FindRobotMaker (short i = 0);
 
 		// Operations
-		short Add (void) { return (Count () < MAX_SEGMENTS) ? Count ()++ : -1; }
+		short Add (void);
 		bool Create (void);
 		void Delete (short nDelSeg = -1);
+		void ResetSide (short nSegment, short nSide);
 
 		bool CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
 		bool CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
@@ -174,7 +175,6 @@ class CSegmentManager {
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
-		void ResetSide (short nSegment, short nSide);
 
 		void UnlinkSeg (CSegment *segP, CSegment *rootSegP);
 		void LinkSeg (CSegment *segP, CSegment *rootSegP);

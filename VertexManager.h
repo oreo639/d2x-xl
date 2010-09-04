@@ -50,7 +50,7 @@ class CVertexManager {
 
 		inline ushort Index (CVertex* vertP) { return (ushort) (vertP - &m_vertices [0]); }
 
-		CVertex* Add (void) { return (Count () < MAX_VERTICES) ? GetVertex (Count ()++) : null; }
+		ushort Add (void);
 
 		void Delete (short nDelVert);
 
@@ -61,6 +61,8 @@ class CVertexManager {
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 
 		void Clear (void);
+
+		void Unmark (void);
 	};
 
 extern CVertexManager vertexManager;

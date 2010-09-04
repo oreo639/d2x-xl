@@ -13,7 +13,7 @@
 #include "DlcDoc.h"
 #include "Matrix.h"
 #include "mineview.h"
-#include "poly.h"
+#include "PolyModel.h"
 #include "texturefilter.h"
 
                         /*--------------------------*/

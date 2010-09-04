@@ -10,11 +10,12 @@
 #endif // _MSC_VER >= 1000
 
 #include <afxwin.h>
+#include <afxext.h>
+#include <afxcview.h>
 
-#include "afxcview.h"
 #include "DlcDoc.h"
 #include "Matrix.h"
-#include "poly.h"
+#include "PolyModel.h"
 #include "define.h"
 #include "types.h"
 #include "global.h"
@@ -166,7 +167,7 @@ class CTexToolDlg : public CToolDlg
 
 	CTexToolDlg (UINT nIdTemplate = 0, CPropertySheet *pParent = null, 
 					 int nTexWndId = 0, int nTimerId = -1, COLORREF bkColor = RGB (0,0,0),
-					 bool bother.Segment = false);
+					 bool bOtherSegment = false);
 	~CTexToolDlg ();
 	bool Refresh (short nBaseTex = -1, short nOvlTex = -1, short nVisible = -1);
 	void AnimateTexture (void);
@@ -697,7 +698,7 @@ class CWallTool : public CTexToolDlg
 		afx_msg void OnDeleteWall ();
 		afx_msg void OnDeleteWallAll ();
 		afx_msg void OnLock ();
-		afx_msg void Onother.Side ();
+		afx_msg void OnOtherSide ();
 		afx_msg void OnSetWall ();
 		afx_msg void OnSetType ();
 		afx_msg void OnSetClip ();

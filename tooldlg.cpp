@@ -14,6 +14,7 @@
 #include "global.h"
 #include "render.h"
 #include "cfile.h"
+#include "Selection.h"
 
 #include <math.h>
 
@@ -265,14 +266,14 @@ END_MESSAGE_MAP()
 
 CTexToolDlg::CTexToolDlg (UINT nIdTemplate, CPropertySheet *pParent, 
 								  int nTexWndId, int nTimerId, COLORREF bkColor,
-								  bool bother.Segment)
+								  bool bOtherSegment)
 	: CToolDlg (nIdTemplate, pParent)
 {
 m_nTexWndId = nTexWndId;
 m_nTimerId = nTimerId;
 m_bkColor = bkColor;
 m_nTimer = -1;
-m_bother.Segment = bother.Segment;
+m_bother.Segment = bOtherSegment;
 }
 
                         /*--------------------------*/
@@ -316,7 +317,7 @@ if (nVisible > 0) {
 		short nSegment = m_bother.Segment ? other.m_nSegment : current.m_nSegment;
 		short nSide = m_bother.Segment ? other.m_nSide : current.m_nSide;
 		if (nVisible = theMine->IsWall (nSegment, nSide)) {
-			CSide *sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
+			CSide *sideP = m_bother.Segment ? other.Side () : current.Side ();
 			nBaseTex = sideP->m_info.nBaseTex;
 			nOvlTex = sideP->m_info.nOvlTex & 0x3fff;
 			}

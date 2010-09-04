@@ -12,7 +12,7 @@
 #include "define.h"
 #include "types.h"
 #include "global.h"
-#include "poly.h"
+#include "PolyModel.h"
 #include "cfile.h"
 /*
 extern HPEN hPenRed, hPenDkRed, hPenGreen, hPenDkGreen, hPenBlue, hPenCyan, hPenDkCyan, 

@@ -33,8 +33,7 @@ inline void Swap (_T& a, _T& b) { _T h = a; a = b; b = h; }
 
 // -----------------------------------------------------------------------------
 
-template<typename _T> 
-inline void Wrap (_T& value, _T delta, _T min, _T max) 
+inline void Wrap (short& value, short delta, short min, short max) 
 {
 value += delta;
 if (value > max)

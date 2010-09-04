@@ -32,6 +32,13 @@ return true;
 }
 
 //------------------------------------------------------------------------------
+
+short CWallManager::Add (void) 
+{ 
+return HaveResources () ? Count ()++ : NO_WALL; 
+}
+
+//------------------------------------------------------------------------------
 // Mine - add wall
 //
 // Returns - TRUE on success

@@ -49,12 +49,11 @@ class CMine {
 		HPALETTE			m_paletteHandle;
 		
 		// strings
-		char				message[256];
+		char				message [256];
 		char				m_startFolder [256];
 		short				m_selectMode;
 		int				m_disableDrawing;
 		int				m_changesMade;
-		bool				tunnelMaker.Active ();
 		int				m_nNoLightDeltas;
 		int				m_lightRenderDepth;
 		int				m_deltaLightRenderDepth;
@@ -109,17 +108,13 @@ class CMine {
 
 		inline CDoubleMatrix& SecretOrient (void) { return Data ().m_secretOrient; }
 
-		short Load(const char *filename = null, bool bLoadFromHog = false);
+		short Load (const char *filename = null, bool bLoadFromHog = false);
 
-		short Save(const char *filename, bool bSaveToHog = false);
+		short Save (const char *filename, bool bSaveToHog = false);
 
 		inline LPSTR LevelName (void) { return m_currentLevelName; }
 
 		inline int LevelNameSize (void) { return sizeof m_currentLevelName; }
-
-		inline bool	SplineActive (void) { return tunnelMaker.Active (); }
-
-		inline void SetSplineActive (bool bSplineActive) { tunnelMaker.Active () = bSplineActive; }
 
 		void Mark (void);
 		void MarkAll (void);

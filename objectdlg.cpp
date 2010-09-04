@@ -1318,7 +1318,7 @@ switch (objP->m_info.type) {
 
 	case OBJ_ROBOT:
 		objP->m_info.size = robotSize [objP->m_info.id];
-		objP->m_info.shields = robot_shield [objP->m_info.id];
+		objP->m_info.shields = robotShield [objP->m_info.id];
 		objP->rType.polyModelInfo.nModel = robotClip [objP->m_info.id];
 		break;
 

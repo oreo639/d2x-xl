@@ -84,7 +84,7 @@ extern byte powerupClip [MAX_POWERUP_IDS_D2];
 extern char *ai_options [MAX_AI_OPTIONS_D2];
 extern int powerupSize [MAX_POWERUP_IDS_D2];
 extern int robotSize [MAX_ROBOT_IDS_TOTAL];
-extern int robot_shield [MAX_ROBOT_IDS_TOTAL];
+extern int robotShield [MAX_ROBOT_IDS_TOTAL];
 extern short add_segment_mode;
 extern char dlc_version[10];
 extern char testers_name[20];

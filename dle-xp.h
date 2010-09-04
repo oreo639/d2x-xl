@@ -12,6 +12,8 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
+#include <windows.h>
+
 #include "dle-xp-res.h"       // main symbols
 #include "dlc_i.h"
 #include "mainfrm.h"
@@ -78,7 +80,7 @@ public:
 	//}}AFX_VIRTUAL
 
 // Implementation
-	COleTemplateServer m_server;
+	//COleTemplateServer m_server;
 		// Server object for document creation
 
 	//{{AFX_MSG(CDlcApp)
