@@ -188,7 +188,7 @@ class CSegmentManager {
 
 		CSide* OppSide (void);
 
-		bool SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex);
+		bool SetTextures (CSideKey key, short nBaseTex, short nOvlTex);
 
 		void CopyOtherSegment (void);
 

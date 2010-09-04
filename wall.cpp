@@ -27,7 +27,7 @@ void CWall::Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTex
 undoManager.SetModified (true);
 undoManager.Lock ();
 // define new wallP
-this->CSideKey = key;
+*((CSideKey*) this) = key;
 //m_nSegment = nSegment;
 //m_nSide = nSide;
 m_info.type = type;

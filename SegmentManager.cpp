@@ -185,26 +185,26 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
 	for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++) {
-		for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-			if (segP->GetChild (child) == nDelSeg) {
+		for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
+			if (segP->GetChild (nChild) == nDelSeg) {
 
 				// subtract by 1 if segment is above deleted segment
 				current.m_nSegment = nSegment; 
 				if (nSegment > nDelSeg) 
 					current.m_nSegment--; 
 
-				// remove child number and update child bitmask
-				segP->SetChild (child, -1); 
+				// remove nChild number and update nChild bitmask
+				segP->SetChild (nChild, -1); 
 
 				// define textures, (u, v) and light
-				CSide *sideP = delSegP->m_sides + child;
-				SetTextures (nSegment, child, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
-				Segment (nSegment)->SetUV (child, 0, 0); 
+				CSide *sideP = delSegP->m_sides + nChild;
+				SetTextures (CSideKey (nSegment, nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
+				Segment (nSegment)->SetUV (nChild, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (i = 0; i < 4; i++) {
-					//segP->m_sides [child].m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale); 
-					//segP->m_sides [child].m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale); 
-					segP->m_sides [child].m_info.uvls [i].l = delSegP->m_sides [child].m_info.uvls [i].l; 
+					//segP->m_sides [nChild].m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale); 
+					//segP->m_sides [nChild].m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale); 
+					segP->m_sides [nChild].m_info.uvls [i].l = delSegP->m_sides [nChild].m_info.uvls [i].l; 
 				}
 			}
 		}
@@ -221,11 +221,11 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 
 		// replace all children with real numbers
 		for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++) {
-			for (child = 0; child < MAX_SIDES_PER_SEGMENT; child++) {
-				if (segP->m_info.childFlags & (1 << child)
-					&& segP->GetChild (child) >= 0 && segP->GetChild (child) < Count ()) { // debug int
-					childSegP = Segment (segP->GetChild (child)); 
-					segP->SetChild (child, childSegP->m_info.nIndex); 
+			for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
+				if (segP->m_info.childFlags & (1 << nChild)
+					&& segP->GetChild (nChild) >= 0 && segP->GetChild (nChild) < Count ()) { // debug int
+					childSegP = Segment (segP->GetChild (nChild)); 
+					segP->SetChild (nChild, childSegP->m_info.nIndex); 
 				}
 			}
 		}
@@ -1451,16 +1451,13 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if (segP->GetChild (nSide) == -1) {
-		SetTextures (nNewSeg, nSide, seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
+		SetTextures (CSideKey (nNewSeg, nSide), seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
 		Segment (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
 	else {
-		SetTextures (nNewSeg, nSide, 0, 0); 
-		for (i = 0; i < 4; i++) {
-			segP->m_sides [nSide].m_info.uvls [i].u = 0; 
-			segP->m_sides [nSide].m_info.uvls [i].v = 0; 
-			segP->m_sides [nSide].m_info.uvls [i].l = 0; 
-			}
+		SetTextures (CSideKey (nNewSeg), nSide, 0, 0); 
+		for (i = 0; i < 4; i++) 
+			segP->m_sides [nSide].m_info.uvls [i].Clear (); 
 		}
 	}
 
@@ -1470,18 +1467,12 @@ segP->m_info.staticLight = seg1->m_info.staticLight;
 // update cur segment
 seg1->SetChild (cur1->nSide, nNewSeg); 
 SetTextures (cur1->nSegment, cur1->nSide, 0, 0); 
-for (i = 0; i < 4; i++) {
-	seg1->m_sides [cur1->nSide].m_info.uvls [i].u = 0; 
-	seg1->m_sides [cur1->nSide].m_info.uvls [i].v = 0; 
-	seg1->m_sides [cur1->nSide].m_info.uvls [i].l = 0; 
-	}
+for (i = 0; i < 4; i++) 
+	seg1->m_sides [cur1->nSide].m_info.uvls [i].Clear (); 
 seg2->SetChild (cur2->nSide, nNewSeg); 
-SetTextures (cur2->nSegment, cur2->nSide, 0, 0); 
-for (i = 0; i < 4; i++) {
-	seg2->m_sides [cur2->nSide].m_info.uvls [i].u = 0; 
-	seg2->m_sides [cur2->nSide].m_info.uvls [i].v = 0; 
-	seg2->m_sides [cur2->nSide].m_info.uvls [i].l = 0; 
-	}
+SetTextures (CSideKey (cur2->nSegment, cur2->nSide), 0, 0); 
+for (i = 0; i < 4; i++) 
+	seg2->m_sides [cur2->nSide].m_info.uvls [i].Clear (); 
 
 // update number of Segment () and vertices
 Count ()++; 
@@ -1724,23 +1715,23 @@ return OppositeSide (opp, nSegment, nSide) ? Side (nOppSeg, nOppSide) : null;
 
 // -----------------------------------------------------------------------------
 
-bool CSegmentManager::SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex)
+bool CSegmentManager::SetTextures (CSideKey key, short nBaseTex, short nOvlTex)
 {
 	bool bUndo, bChange = false;
 
 bUndo = undoManager.SetModified (true); 
 undoManager.Lock (); 
-current.Get (nSegment, nSide); 
-CSide *sideP = Segment (nSegment)->m_sides + nSide; 
+current.Get (key); 
+CSide *sideP = Side (key); 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
 	undoManager.ResetModified (bUndo);
 	return false;
 	}
 if ((IsLight (sideP->m_info.nBaseTex) == -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
-	DeleteVariableLight (nSegment, nSide); 
-if (!WallClipFromTexture (nSegment, nSide))
-	CheckForDoor (nSegment, nSide); 
+	DeleteVariableLight (key); 
+if (!wallManager.ClipFromTexture (key))
+	wallManager.CheckForDoor (key); 
 undoManager.Unlock (); 
 sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x3fff, sideP->m_info.nOvlTex & 0x3fff); 
 INFOMSG (message); 

@@ -57,7 +57,7 @@ CSegment *segP = segmentManager.Segment (key);
 CSide* sideP = segmentManager.Side (key);
 
 // if wall is an overlay, make sure there is no child
-short nChild = segP->GetChild (key.m_nSide);
+short nChild = segP->Child (key.m_nSide);
 if (type < 0)
 	type = (nChild == -1) ? WALL_OVERLAY : WALL_OPEN;
 
@@ -170,16 +170,16 @@ if (wallP != null)
 
 //------------------------------------------------------------------------------
 
-bool CWallManager::ClipFromTexture (short nSegment, short nSide)
+bool CWallManager::ClipFromTexture (CSideKey key)
 {
-CWall* wallP = segmentManager.Wall (CSideKey (nSegment, nSide));
+CWall* wallP = segmentManager.Wall (key);
 
 if (!(wallP && wallP->IsDoor ()))
 	return true;
 
 short nBaseTex, nOvlTex;
 
-segmentManager.Textures (CSideKey (nSegment, nSide), nBaseTex, nOvlTex);
+segmentManager.Textures (key, nBaseTex, nOvlTex);
 
 return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 }
@@ -309,14 +309,14 @@ undoManager.Lock ();
 if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Wall (Count ()- 1)->m_info.nClip = 10;
-	segmentManager.SetTextures (current.m_nSegment, current.m_nSide, 0, DLE.IsD1File () ? 444 : 508);
+	segmentManager.SetTextures (current, 0, DLE.IsD1File () ? 444 : 508);
 	triggerManager.Create (Count () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.OppositeSide (opp) && Create (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
 		Wall (Count () - 1)->m_info.nClip = 10;
-		segmentManager.SetTextures (opp.m_nSegment, opp.m_nSide, 0, DLE.IsD1File () ? 444 : 508);
+		segmentManager.SetTextures (opp, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();
 		DLE.MineView ()->Refresh ();
@@ -396,6 +396,31 @@ void CWallManager::Clear (void)
 {
 for (short i = 0; i < Count (); i++)
 	m_walls [i].Clear ();
+}
+
+//------------------------------------------------------------------------------
+// put up a warning if changing a door's texture
+
+void CWallManager::CheckForDoor (CSideKey key) 
+{
+if (bExpertMode)
+	return;
+
+current.Get (key);
+CWall* wallP = segmentManager.Wall (key);
+
+if (!wallP)
+ return;
+if (!wallP->IsDoor ())
+	return;
+
+ErrorMsg ("Changing the texture of a door only affects\n"
+			 "how the door will look before it is opened.\n"
+			 "You can use this trick to hide a door\n"
+			 "until it is used for the first time.\n\n"
+			 "Hint: To change the door animation,\n"
+			 "select \"Wall edit...\" from the Tools\n"
+			 "menu and change the clip number.");
 }
 
 //------------------------------------------------------------------------------
