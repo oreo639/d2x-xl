@@ -344,8 +344,8 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 	  selections [0].m_nSegment = 0; 
   if (selections [1].m_nSegment < 0) 
 	  selections [1].m_nSegment = 0; 
-//DLE.MineView ()->Refresh (false); 
-//DLE.ToolView ()->Refresh (); 
+DLE.MineView ()->Refresh (false); 
+DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
 }
 
@@ -572,7 +572,7 @@ for (i = 0; i < Count (); i++)
 	GetSegment (i)->m_info.wallFlags |= MARKED_MASK; 
 for (i = 0; i < VertCount (); i++) 
 	vertexManager.Status (i) |= MARKED_MASK; 
-//DLE.MineView ()->Refresh (); 
+DLE.MineView ()->Refresh (); 
 }
 
 //========================================================================== 
@@ -777,7 +777,7 @@ for (nSide = 0; nSide < 6; nSide++)
 
 SetLinesToDraw(); 
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 
 }
 
@@ -859,7 +859,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 	}
 SetLinesToDraw(); 
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
 
@@ -970,7 +970,7 @@ else {
 	SetLinesToDraw(); 
 	}
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -1032,7 +1032,7 @@ seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]] = vert2;
 //  delete_unused_vertices(); 
 FixChildren(); 
 SetLinesToDraw(); 
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 undoManager.Unlock ();
 }
 
@@ -1137,7 +1137,7 @@ for (i = 0; i < 2; i++) {
 	}
 FixChildren(); 
 SetLinesToDraw(); 
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 undoManager.Unlock ();
 }
 
@@ -1399,7 +1399,7 @@ if (min_radius <= 5) {
 	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 
 	SetLinesToDraw(); 
 	undoManager.Unlock ();
-	//DLE.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	return; 
 	}
 
@@ -1488,7 +1488,7 @@ for (i = 0; i < 4; i++) {
 Count ()++; 
 undoManager.Unlock ();
 SetLinesToDraw(); 
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 // ------------------------------------------------------------------------ 
@@ -1824,7 +1824,7 @@ if (!bChange)
 	undoManager.ResetModified (bUndo);
 else {
 	undoManager.Unlock ();
-	//DLE.MineView ()->Refresh (); 
+	DLE.MineView ()->Refresh (); 
 	}
 }
 
@@ -1985,7 +1985,7 @@ for (nSegment = 0, segP = GetSegment (Count ()); nSegment < 5; nSegment++, segP+
 Count () += 6;
 #endif
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 return true;
 }
 

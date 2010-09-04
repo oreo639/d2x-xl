@@ -1,9 +1,7 @@
 #include <afxwin.h>
 
-#include "SegmentManager.h"
-#include "ObjectManager.h"
-#include "TriggerManager.h"
-#include "UndoManager.h"
+#include "mine.h"
+#include "dle-xp.h"
 
 CTriggerManager triggerManager;
 
@@ -103,7 +101,7 @@ for (int i = NumObjTriggers (); i; i--, trigP++) {
 
 //------------------------------------------------------------------------------
 
-short Add (void) 
+short CTriggerManager::Add (void) 
 { 
 return HaveResources () ? Count (0)++ : NO_TRIGGER; 
 }
@@ -205,7 +203,7 @@ trigP->m_nIndex = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 return GetTrigger (nTrigger);
 }
 
@@ -242,7 +240,7 @@ if (nDelTrigger < --m_nCount [0]) {
 	}
 
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 UpdateReactor ();
 }
 
@@ -402,7 +400,7 @@ for (i = NumObjTriggers (); i > 0; )
 
 void CTriggerManager::SetIndex (void)
 {
-for (short i = 0; i < Count (); i++)
+for (short i = 0; i < Count (0); i++)
 	m_triggers [0][i].m_nIndex = i;
 }
 
@@ -525,7 +523,7 @@ if (wallManager.Create (current.m_nSegment, current.m_nSide, (byte) wallType, wa
 	 AddToWall (wallManager.Count (0) - 1, triggerType, false)) {
 	GetTrigger (Count (0) - 1)->Add (other.m_nSegment, other.m_nSide);
 	undoManager.Unlock ();
-	//DLE.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	return true;
 	}
 undoManager.ResetModified (bUndo);

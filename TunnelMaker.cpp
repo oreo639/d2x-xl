@@ -290,7 +290,7 @@ else {
 	m_bActive = false;
 	// ask if user wants to keep the new spline
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) {
-		//DLE.MineView ()->Refresh (false);
+		DLE.MineView ()->Refresh (false);
 		return;
 		}
 	undoManager.SetModified (true);
@@ -369,7 +369,7 @@ else {
 	undoManager.Unlock ();
 	}
 segmentManager.SetLinesToDraw ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
@@ -385,7 +385,7 @@ if (current.m_nSegment == nSplineSeg1)
 if (current.m_nSegment == nSplineSeg2)
 	if (m_splineLength2 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
 		m_splineLength2 += SPLINE_INTERVAL;
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
@@ -401,7 +401,7 @@ if (current.m_nSegment == nSplineSeg1)
 if (current.m_nSegment == nSplineSeg2)
 	if (m_splineLength2 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
 		m_splineLength2 -= SPLINE_INTERVAL;
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------

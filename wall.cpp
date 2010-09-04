@@ -131,7 +131,7 @@ else if (nTexture >= 0) {
 else
 	return;
 undoManager.Unlock ();
-//DLE.MineView ()->Refresh ();
+DLE.MineView ()->Refresh ();
 }
 
 // ------------------------------------------------------------------------
@@ -231,7 +231,7 @@ if (ps = strstr (pszName, "door")) {
 		if (nDoor == doorClipTable [i]) {
 			m_info.nClip = animClipTable [i];
 			undoManager.SetModified (true);
-			//DLE.MineView ()->Refresh ();
+			DLE.MineView ()->Refresh ();
 			return i;
 			}
 	}

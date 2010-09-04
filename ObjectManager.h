@@ -54,6 +54,8 @@ class CObjectManager {
 
 		void SetIndex (void);
 	
+		bool HaveResources (void);
+
 		inline short Add (void);
 
 		bool Create (byte newType, short nSegment);

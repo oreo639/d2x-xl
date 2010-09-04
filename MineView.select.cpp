@@ -398,7 +398,7 @@ void CMineView::SelectOtherSegment ()
 {
 theMine->Current () = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 (): &theMine->Current1 ();
 Refresh (true);
-//DLE.ToolView ()->CubeTool ()->Refresh ();
+DLE.ToolView ()->CubeTool ()->Refresh ();
 }
 
 
@@ -413,7 +413,7 @@ if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide))
 current.m_nSegment = nOppSeg;
 current.m_nSide = nOppSide;
 Refresh (true);
-//DLE.ToolView ()->CubeTool ()->Refresh ();
+DLE.ToolView ()->CubeTool ()->Refresh ();
 return true;
 }
 

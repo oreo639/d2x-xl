@@ -7,11 +7,8 @@
 #include <mmsystem.h>
 #include <stdio.h>
 
-#include "SegmentManager.h"
-#include "ObjectManager.h"
-#include "WallManager.h"
-#include "TextureManager.h"
-#include "UndoManager.h"
+#include "mine.h"
+#include "dle-xp.h"
 
 CWallManager wallManager;
 
@@ -89,7 +86,7 @@ wallP->m_info.keys = keys;
 // update number of Walls () in mine
 Count ()++;
 undoManager.Unlock ();
-////DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 return wallP;
 }
 
@@ -134,7 +131,7 @@ if (nDelWall < --Count ()) { // move last wall in list to position of deleted wa
 	}
 
 undoManager.Unlock ();
-////DLE.MineView ()->Refresh ();
+//DLE.MineView ()->Refresh ();
 triggerManager.UpdateReactor ();
 }
 
@@ -196,7 +193,7 @@ if (Create (current.m_nSegment, current.m_nSide, type, flags, keys, nClip, nText
 	CSideKey opp;
 	if (segmentManager.GetOppositeSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
 		undoManager.Unlock ();
-		//DLE.MineView ()->Refresh ();
+		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
@@ -294,7 +291,7 @@ return CreateDoor (WALL_CLOSED, 0, 0, -2, theMine->IsD1File () ? 246 : 321);
 
 bool CWallManager::CreateNormalExit (void) 
 {
-return AddExit (TT_EXIT);
+return CreateExit (TT_EXIT);
 }
 
 //------------------------------------------------------------------------------
@@ -319,7 +316,7 @@ if (Create (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KE
 		segmentManager.SetTextures (opp.m_nSegment, opp.m_nSide, 0, theMine->IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();
-		//DLE.MineView ()->Refresh ();
+		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
@@ -332,7 +329,7 @@ return false;
 bool CWallManager::CreateSecretExit (void) 
 {
 if (theMine->IsD1File ()) {
-    AddExit (TT_SECRET_EXIT);
+    CreateExit (TT_SECRET_EXIT);
 	 return false;
 	}
 if (!triggerManager.HaveResources ())
@@ -353,7 +350,7 @@ if (Create (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1,
 	segmentManager.SetDefaultTexture (426, -1);
 	current.m_nSegment = nNewSeg;
 	segmentManager.SetDefaultTexture (426, -1);
-	//DLE.MineView ()->Refresh ();
+	DLE.MineView ()->Refresh ();
 	undoManager.Unlock ();
 	return true;
 	}
