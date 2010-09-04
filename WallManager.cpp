@@ -32,7 +32,10 @@ return true;
 
 short CWallManager::Add (void) 
 { 
-return HaveResources () ? Count ()++ : NO_WALL; 
+if (!HaveResources ())
+	return NO_WALL;
+m_walls [Count ()++].Clear ();
+return Count ();
 }
 
 //------------------------------------------------------------------------------

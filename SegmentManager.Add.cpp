@@ -5,7 +5,10 @@
 
 short CSegmentManager::Add (void) 
 { 
-return (Count () < MAX_SEGMENTS) ? Count ()++ : -1; 
+if (Count () >= MAX_SEGMENTS)
+	return -1;
+m_segments [Count ()++].Clear ();
+return Count (); 
 }
 
 // ----------------------------------------------------------------------------- 

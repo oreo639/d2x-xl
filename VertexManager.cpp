@@ -6,7 +6,10 @@
 
 ushort CVertexManager::Add (void) 
 { 
-return (Count () < MAX_VERTICES) ? Count ()++ : 65535; 
+if (Count () >= MAX_VERTICES)
+	return 65535;
+m_vertices [Count ()++].Clear ();
+return Count (); 
 }
 
 // ----------------------------------------------------------------------------- 

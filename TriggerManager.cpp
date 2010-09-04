@@ -103,7 +103,10 @@ for (int i = NumObjTriggers (); i; i--, trigP++) {
 
 short CTriggerManager::Add (void) 
 { 
-return HaveResources () ? Count (0)++ : NO_TRIGGER; 
+if (!HaveResources ())
+	return NO_TRIGGER; 
+m_triggers [Count (0)++].Clear ();
+return Count (0);
 }
 
 //------------------------------------------------------------------------------
