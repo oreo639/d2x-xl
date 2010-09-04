@@ -733,7 +733,7 @@ void CMineView::HiliteTarget (void)
 {
 	int i, nTarget;
 
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;

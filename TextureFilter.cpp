@@ -523,7 +523,7 @@ else {
 	for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
       for (nSide = 0; nSide < 6; nSide++) {
 			ushort nWall = segP->m_sides [nSide].m_info.nWall;
-			if ((segP->GetChild (nSide) == -1) ||
+			if ((segP->Child (nSide) == -1) ||
 				 (nWall < theMine->Info ().walls.count && 
 				  wallManager.Wall (nWall)->m_info.type != WALL_OPEN)) {
 				int t = segP->m_sides [nSide].m_info.nBaseTex;

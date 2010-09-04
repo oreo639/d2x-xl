@@ -516,7 +516,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		}
 #endif
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		nChild = segmentManager.Segment (nSegment)->GetChild (nSide);
+		nChild = segmentManager.Segment (nSegment)->Child (nSide);
 // check nChild range 
 		if (nChild != -1 && nChild != -2) {
 			if (nChild < -2) {
@@ -533,7 +533,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 			// make sure nChild segment has a nChild from this segment
 			// and that it shares the same vertices as this segment
 				for (nSide2 = 0; nSide2 < MAX_SIDES_PER_SEGMENT; nSide2++) {
-					if (theMine->Segments (nChild)->GetChild (nSide2) == nSegment) 
+					if (theMine->Segments (nChild)->Child (nSide2) == nSegment) 
 						break;
 					}					
 				if (nSide2 < MAX_SIDES_PER_SEGMENT) {
@@ -596,7 +596,7 @@ return true;
 // ACTION - Checks object's: segment number, type, id, position, container.
 //          Makes sure the correct number of players coop-players, and
 //          control centers (robots) are used.
-//          Control center belongs to segment with special = SEGMENT_FUNC_CONTROLCEN
+//          Control center belongs to segment with special = SEGMENT_FUNC_REACTOR
 //--------------------------------------------------------------------------
 
 bool CDiagTool::CheckObjects () 
@@ -879,7 +879,7 @@ for (nObject=0;nObject<objCount;nObject++, objP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	type = objP->m_info.type;
 	if (type == OBJ_CNTRLCEN) {
-		if (theMine->Segments (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_CONTROLCEN) {
+		if (theMine->Segments (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
 			if (m_bAutoFixBugs && theMine->AddRobotMaker (objP->m_info.nSegment, false, false))
 				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
 			else
@@ -1647,13 +1647,13 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
-				nSegment = theMine->Segments (wallP->m_nSegment)->GetChild (wallP->m_nSide);
+				nSegment = theMine->Segments (wallP->m_nSegment)->Child (wallP->m_nSide);
 				CSegment *segP = segmentManager.Segment (nSegment);
 				if ((nSegment >= 0 && nSegment < segmentManager.Count ()) &&
 					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
-						if (segP->GetChild (nSide) == wallP->m_nSegment)
+						if (segP->Child (nSide) == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
 						if (segP->m_sides[nSide].m_info.nWall >= theMine->Info ().walls.count) {

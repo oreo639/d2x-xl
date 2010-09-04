@@ -350,9 +350,9 @@ current.m_nSegment = nLastSeg;
 if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	triggerManager.Create (Count () - 1, TT_SECRET_EXIT);
 	theMine->SecretSegment () = current.m_nSegment;
-	segmentManager.SetDefaultTexture (426, -1);
+	segmentManager.SetDefaultTexture (426);
 	current.m_nSegment = nNewSeg;
-	segmentManager.SetDefaultTexture (426, -1);
+	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
 	undoManager.Unlock ();
 	return true;

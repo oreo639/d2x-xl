@@ -101,9 +101,9 @@ class CSegmentManager {
 		
 		inline robotMakerList& EquipGens (void) { return m_equipMakers; }
 		
-		inline CRobotMaker* GetBotGen (int i) { return &m_robotMakers [i]; }
+		inline CRobotMaker* BotGen (int i) { return &m_robotMakers [i]; }
 		
-		inline CRobotMaker* GetEquipGen (int i) { return &m_equipMakers [i]; }
+		inline CRobotMaker* EquipGen (int i) { return &m_equipMakers [i]; }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 		inline int AddMode (void) { return m_nAddMode; }
@@ -196,7 +196,7 @@ class CSegmentManager {
 
 		void RenumberEquipGens (void);
 
-		bool SetDefaultTexture (short nTexture = -1, short wallType = -1);
+		bool SetDefaultTexture (short nTexture);
 
 		bool DefineSegment (short nSegment, byte type, short nTexture, short wallType = -1);
 
@@ -233,11 +233,12 @@ class CSegmentManager {
 		void LinkSeg (CSegment *segP, CSegment *rootSegP);
 		void DeleteWalls (short nSegment);
 
-		bool Create (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null);
-		bool SetDefaultTexture (short nTexture);
-		bool Define (short nSegment, byte type, short nTexture);
+		bool Create (short nSegment, bool bCreate, byte nFunction, short nTexture = -1, char* szError = null);
+		bool Define (short nSegment, byte nFunction, short nTexture);
 		void Undefine (short nSegment);
 		void ComputeVertices (short newVerts [4]);
+		int FuelCenterCount (void);
+		void RemoveMatCen (CSegment* segP, CRobotMaker* matCens, CMineItemInfo& info);
 	};
 
 extern CSegmentManager segmentManager;

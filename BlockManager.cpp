@@ -217,7 +217,7 @@ while (!fp.EoF ()) {
 				if (!segmentManager.CreateEquipMaker (nSegment, false, false))
 					segP->m_info.function = 0;
 				break;
-			case SEGMENT_FUNC_CONTROLCEN:
+			case SEGMENT_FUNC_REACTOR:
 				if (!segmentManager.CreateReactor (nSegment, false, false))
 					segP->m_info.function = 0;
 				break;
@@ -234,7 +234,7 @@ while (!fp.EoF ()) {
 	// calculate childFlags
 	segP->m_info.childFlags = 0;
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
-		if (segP->GetChild (i) >= 0)
+		if (segP->Child (i) >= 0)
 		segP->m_info.childFlags |= (1 << i);
 	nNewSegs++;
 	}
@@ -345,7 +345,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 			}
 		fprintf (fp.File (), "  children");
 		for (i = 0; i < 6; i++)
-			fprintf (fp.File (), " %d", segP->GetChild (i));
+			fprintf (fp.File (), " %d", segP->Child (i));
 		fprintf (fp.File (), "\n");
 		// save vertices
 		for (i = 0; i < 8; i++) {
@@ -568,7 +568,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 				seg2P = segmentManager.Segment (0);
 				short nSegOffset;
 				for (nSegOffset = 0; nSegOffset < segmentManager.Count (); nSegOffset++, seg2P++) {
-					if (segP->GetChild (nChild) == ~seg2P->m_nIndex) {
+					if (segP->Child (nChild) == ~seg2P->m_nIndex) {
 						segP->SetChild (nChild, nSegOffset);
 						break;
 						}

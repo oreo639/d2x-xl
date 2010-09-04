@@ -242,8 +242,8 @@ if (!m_bActive) {
 		return;
 		}
 	// make sure there are no children on either segment/side
-	if ((segmentManager.Segment (selections [0].m_nSegment)->GetChild (selections [0].m_nSide) != -1) ||
-		 (segmentManager.Segment (selections [1].m_nSegment)->GetChild (selections [1].m_nSide) != -1)) {
+	if ((segmentManager.Segment (selections [0].m_nSegment)->Child (selections [0].m_nSide) != -1) ||
+		 (segmentManager.Segment (selections [1].m_nSegment)->Child (selections [1].m_nSide) != -1)) {
 		ErrorMsg ("Starting and/or ending point of spline\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"

@@ -344,8 +344,8 @@ CHECKMINE;
 
 bShowFrames = GetCheck (IDC_TEXTURE_SHOWFRAMES);
 
-short texture1 = theMine->current.Side ()->m_info.nBaseTex;
-short texture2 = theMine->current.Side ()->m_info.nOvlTex & 0x3fff;
+short texture1 = current.Side ()->m_info.nBaseTex;
+short texture2 = current.Side ()->m_info.nOvlTex & 0x3fff;
 
 if ((texture1 < 0) || (texture1 >= MAX_TEXTURES))
 	texture1 = 0;
@@ -377,11 +377,11 @@ bool CTextureTool::SideHasLight (void)
 {
 if ((theMine == null)) return false;
 
-if	((theMine->IsLight (theMine->current.Side ()->m_info.nBaseTex) != -1) ||
-	 (((theMine->current.Side ()->m_info.nOvlTex & 0x3fff) != 0) &&
-	  (theMine->IsLight (theMine->current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
+if	((theMine->IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
+	 (((current.Side ()->m_info.nOvlTex & 0x3fff) != 0) &&
+	  (theMine->IsLight (current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
-CWall *pWall = theMine->current.Wall ();
+CWall *pWall = current.Wall ();
 return pWall && (pWall->m_info.type == WALL_TRANSPARENT);
 
 }
@@ -468,13 +468,13 @@ m_frame [0] = 0;
 m_frame [1] = 0;
 #endif
 
-segP = theMine->current.Segment ();
-sideP = theMine->current.Side ();
+segP = current.Segment ();
+sideP = current.Side ();
 colorP = theMine->CurrLightColor ();
 int nSide = current.m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
-pWall = theMine->current.Wall ();
+pWall = current.Wall ();
 m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->m_info.cloakValue : colorP->m_info.index;
 m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
 m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
@@ -509,7 +509,7 @@ for (i = 0; i < 4; i++) {
 	m_lights [j] = (double) ((ushort) sideP->m_info.uvls [i].l) / 327.68;
 	}
 
-if (segP->GetChild (nSide)==-1)
+if (segP->Child (nSide)==-1)
 	bShowTexture = TRUE;
 else {
 	ushort nWall = sideP->m_info.nWall;
@@ -635,7 +635,7 @@ return CToolDlg::OnKillActive ();
 
 void CTextureTool::AnimateTexture (void)
 {
-	CSegment *segP = theMine->current.Segment ();
+	CSegment *segP = current.Segment ();
 
 	ushort texture [2];
 	static int scroll_offset_x = 0;
@@ -644,7 +644,7 @@ void CTextureTool::AnimateTexture (void)
 	int x,y;
 	static int old_x,old_y;
 
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 
 texture [0] = sideP->m_info.nBaseTex & 0x3fff;
 texture [1] = sideP->m_info.nOvlTex;
@@ -769,7 +769,7 @@ void CTextureTool::SelectTexture (int nIdC, bool bFirst)
 {
 CHECKMINE;
 
-	CSide		*sideP = theMine->current.Side ();
+	CSide		*sideP = current.Side ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	int			index = pcb->GetCurSel ();
 	
@@ -793,7 +793,7 @@ void CTextureTool::OnSetLight ()
 CHECKMINE;
 
 UpdateData (TRUE);
-CSide *sideP = theMine->current.Side ();
+CSide *sideP = current.Side ();
 short mode = sideP->m_info.nOvlTex & 0xc000;
 int i, j;
 for (i = 0; i < 4; i++) {
@@ -835,7 +835,7 @@ void CTextureTool::OnSaveTexture ()
 CHECKMINE;
 
 	char			*t1Name, *t2Name;
-	CSide		*sideP = theMine->current.Side ();
+	CSide		*sideP = current.Side ();
 	CComboBox	*pcb;
 
 save_texture1 = sideP->m_info.nBaseTex & 0x3fff;
@@ -892,7 +892,7 @@ UpdateData (TRUE);
 if (!(m_bUse1st || m_bUse2nd))
 	return;
 
-	CSide *sideP = theMine->current.Side ();
+	CSide *sideP = current.Side ();
 
 //CheckForDoor ();
 undoManager.SetModified (true);
@@ -957,7 +957,7 @@ if (bAll)
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
-			if (segP->GetChild (nSide) == -1) {
+			if (segP->Child (nSide) == -1) {
 				bChange = true;
 				theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 				int i;
@@ -1005,7 +1005,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 				continue;
 			if (m_bUse2nd && ((sideP->m_info.nOvlTex & 0x3FFF) != last_texture2))
 				continue;
-			if ((segP->GetChild (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
+			if ((segP->Child (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
 				 continue;
 			if (theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
 				bChange = true;
@@ -1104,12 +1104,12 @@ vert0 = segP->m_info.verts [point0];
 vert1 = segP->m_info.verts [point1];
 
 nSide = sideChildTable[nStartSide][nLine];
-nChild = segP->GetChild (nSide);
+nChild = segP->Child (nSide);
 if (nChild < 0 || nChild >= segmentManager.Count ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 	segP = theMine->Segments (nChild);
-	if ((segP->GetChild (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < theMine->Info ().walls.count)) {
+	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < theMine->Info ().walls.count)) {
 		for (nChildLine = 0; nChildLine < 4;nChildLine++) {
 			// find vert numbers for the line's two end points
 			nChildPoint0 = lineVertTable [sideLineTable [nChildSide][nChildLine]][0];

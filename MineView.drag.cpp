@@ -27,7 +27,7 @@ if ((m_mouseState != eMouseStateInitDrag) && (m_mouseState != eMouseStateDrag))
 	return FALSE;
 
 	short nVert = sideVertTable [current.m_nSide] [current.m_nPoint];
-	short v = theMine->current.Segment ()->m_info.verts [nVert];
+	short v = current.Segment ()->m_info.verts [nVert];
 	short x = m_viewPoints [v].x;
 	short y = m_viewPoints [v].y;
 
@@ -60,8 +60,8 @@ int i;
 for (i = 0; i < 3; i++) {
 	m_pDC->MoveTo (x, y);
 	short nVert2 = connectPointTable [nVert] [i];
-	short x2 = m_viewPoints [theMine->current.Segment ()->m_info.verts [nVert2]].x;
-	short y2 = m_viewPoints [theMine->current.Segment ()->m_info.verts [nVert2]].y;
+	short x2 = m_viewPoints [current.Segment ()->m_info.verts [nVert2]].x;
+	short y2 = m_viewPoints [current.Segment ()->m_info.verts [nVert2]].y;
    m_pDC->LineTo (x2, y2);
 	if (rc.left > x2)
 		rc.left = x2;

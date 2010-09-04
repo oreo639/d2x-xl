@@ -628,40 +628,40 @@ void CDlcDoc::OnInsertObjectPlayerCopy ()
 void CDlcDoc::OnInsertObjectRobot ()
 {
 if (theMine->CopyObject (OBJ_ROBOT)) {
-	theMine->current.Object ()->m_info.id = 3; // class 1 drone
-	theMine->SetObjectData (theMine->current.Object ()->m_info.type);
+	current.Object ()->m_info.id = 3; // class 1 drone
+	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectWeapon ()
 {
 if (theMine->CopyObject (OBJ_WEAPON)) {
-	theMine->current.Object ()->m_info.id = 3; // laser
-	theMine->SetObjectData (theMine->current.Object ()->m_info.type);
+	current.Object ()->m_info.id = 3; // laser
+	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectPowerup ()
 {
 if (theMine->CopyObject (OBJ_POWERUP)) {
-	theMine->current.Object ()->m_info.id = 1; // energy boost
-	theMine->SetObjectData (theMine->current.Object ()->m_info.type);
+	current.Object ()->m_info.id = 1; // energy boost
+	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectGuideBot ()
 {
 if (theMine->CopyObject (OBJ_ROBOT)) {
-	theMine->current.Object ()->m_info.id = 33; // guide bot
-	theMine->SetObjectData (theMine->current.Object ()->m_info.type);
+	current.Object ()->m_info.id = 33; // guide bot
+	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
 }
 
 void CDlcDoc::OnInsertObjectReactor ()
 {
 if (theMine->CopyObject (OBJ_CNTRLCEN)) {
-	theMine->current.Object ()->m_info.id = 2; // standard reactor
-	theMine->SetObjectData (theMine->current.Object ()->m_info.type);
+	current.Object ()->m_info.id = 2; // standard reactor
+	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
 }
 

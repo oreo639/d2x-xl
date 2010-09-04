@@ -60,7 +60,7 @@ return segmentManager.Segment (m_nSegment);
 
 short CSelection::Child (void)
 {
-return Segment ()->GetChild (m_nSide);
+return Segment ()->Child (m_nSide);
 }
 
 // -----------------------------------------------------------------------------

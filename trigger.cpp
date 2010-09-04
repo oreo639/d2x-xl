@@ -43,9 +43,18 @@ return m_count;
 
 int CTriggerTargets::Delete (CSideKey key) 
 { 
-short i = Find (key);
-if (i >= 0)
-	Delete (i);
+if (key.m_nSegment < 0) {
+	// delete all sides of segment (-key.m_nSegment - 1) from the target list
+	key.m_nSegment = -key.m_nSegment - 1;
+	for (int i = m_nCount - 1; i >= 0; i--)
+		if (m_targets [i].m_nSegment == key.m_nSegment)
+			Delete (i);
+	}
+else {
+	short i = Find (key);
+	if (i >= 0)
+		Delete (i);
+	}
 return i;
 }
 

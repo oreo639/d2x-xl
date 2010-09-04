@@ -109,7 +109,7 @@ if (bEnableDeltaShading) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i < dlIdxCount; i++, dli++) {
-//				if (dli->m_info.nSegment == theMine->current->segP) {
+//				if (dli->m_info.nSegment == current->segP) {
 			// loop on each delta light till the segP/side is found
 				CLightDeltaValue *dlP = theMine->LightDeltaValues (dli->m_info.index);
 				h = dli->m_info.count;

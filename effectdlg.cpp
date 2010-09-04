@@ -96,7 +96,7 @@ CHECKMINE;
 	int			index, curSel = 0;
 
 cbEffects->ResetContent ();
-CGameObject *curObj = theMine->current.Object (),
+CGameObject *curObj = current.Object (),
 			*objP = theMine->Objects (0);
 int i;
 for (i = 0; i < theMine->Info ().objects.count; i++, objP++) {
@@ -156,7 +156,7 @@ void CEffectTool::DoDataExchange (CDataExchange *pDX)
 {
 if (!HaveData (pDX)) 
 	return;
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 if (objP->m_info.type != OBJ_EFFECT)
 	return;
 if (objP->m_info.id == SMOKE_ID) {
@@ -235,7 +235,7 @@ void CEffectTool::EnableControls (BOOL bEnable)
 {
 if (!(m_bInited && theMine))
 	return;
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 CToolDlg::EnableControls (IDC_SMOKE_LIFE, IDC_SMOKE_BRIGHTNESS, (objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == SMOKE_ID));
 CToolDlg::EnableControls (IDC_LIGHTNING_ID, IDC_LIGHTNING_RANDOM, (objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID));
 CToolDlg::EnableControls (IDC_SOUND_FILE, IDC_SOUND_VOLUME, (objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == SOUND_ID));
@@ -276,7 +276,7 @@ void CEffectTool::OnAddSmoke ()
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 objP->m_info.type = OBJ_EFFECT;
 objP->m_info.id = SMOKE_ID;
 objP->m_info.renderType = RT_SMOKE;
@@ -291,7 +291,7 @@ void CEffectTool::OnAddLightning ()
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 objP->m_info.type = OBJ_EFFECT;
 objP->m_info.id = LIGHTNING_ID;
 objP->m_info.renderType = RT_LIGHTNING;
@@ -306,7 +306,7 @@ void CEffectTool::OnAddSound ()
 {
 if (!AddEffect ())
 	return;
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 objP->m_info.type = OBJ_EFFECT;
 objP->m_info.id = SOUND_ID;
 objP->m_info.renderType = RT_SOUND;
@@ -328,7 +328,7 @@ if (theMine->Info ().objects.count == 1) {
 	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
-if (theMine->current.Object ()->m_info.type != OBJ_EFFECT) {
+if (current.Object ()->m_info.type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
 	}
@@ -343,7 +343,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CEffectTool::OnCopy ()
 {
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 if (objP->m_info.type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -361,7 +361,7 @@ else if (m_nBufferId == SOUND_ID)
 
 void CEffectTool::OnPaste ()
 {
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 if (objP->m_info.type != OBJ_EFFECT) {
 	ErrorMsg ("No effect object currently selected");
 	return;
@@ -420,7 +420,7 @@ if (nOld != nNew) {
 
 void CEffectTool::OnSetStyle ()
 {
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 objP->rType.lightningInfo.nStyle = CBStyle ()->GetCurSel () - 1;
 //Refresh ();
 }
@@ -432,7 +432,7 @@ void CEffectTool::HiliteTarget (void)
 #if 0
 	int i, nTarget;
 
-CGameObject *objP = theMine->current.Object ();
+CGameObject *objP = current.Object ();
 if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;

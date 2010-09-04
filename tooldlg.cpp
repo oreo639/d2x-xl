@@ -334,7 +334,7 @@ void CTexToolDlg::OnPaint ()
 {
 CToolDlg::OnPaint ();
 if (TextureIsVisible ()) {
-	CSide *sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
+	CSide *sideP = m_bother.Segment ? other.Side () : current.Side ();
 	PaintTexture (&m_textureWnd, m_bkColor, -1, -1, sideP->m_info.nBaseTex, sideP->m_info.nOvlTex & 0x1fff);
 	}
 else
@@ -374,13 +374,13 @@ void CTexToolDlg::AnimateTexture (void)
 if (!TextureIsVisible ())
 	return;
 
-	CSegment *segP = m_bother.Segment ? theMine->other.Segment () : theMine->current.Segment ();
+	CSegment *segP = m_bother.Segment ? other.Segment () : current.Segment ();
 
 	ushort texture [2];
 	int bScroll;
 	int x,y;
 
-	CSide	*sideP = m_bother.Segment ? theMine->other.Side () : theMine->current.Side ();
+	CSide	*sideP = m_bother.Segment ? other.Side () : current.Side ();
 
 texture [0] = sideP->m_info.nBaseTex & 0x3fff;
 texture [1] = sideP->m_info.nOvlTex;

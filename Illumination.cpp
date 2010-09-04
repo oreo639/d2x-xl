@@ -42,7 +42,7 @@ public:
 				// skip if there is a wall and its a door
 				CWall* wallP = segP->m_sides [nSide].Wall ();
 				if ((wallP == null) && (wallP->m_info.type != WALL_DOOR))
-					SetSegmentDepth (segP->GetChild (nSide), nDepth - 1, m_depth);
+					SetSegmentDepth (segP->Child (nSide), nDepth - 1, m_depth);
 				}
 			}
 		}
@@ -178,7 +178,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < SegCount (); nS
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || SideIsMarked (nSegment, nSide)))
 			continue;
-		if ((segP->GetChild (nSide) >= 0) && !VisibleWall (sideP->m_info.nWall))
+		if ((segP->Child (nSide) >= 0) && !VisibleWall (sideP->m_info.nWall))
 			continue;
 		if (bCopyTexLights)
 			LightColors (nSegment, nSide)->Clear ();
@@ -327,7 +327,7 @@ int nSegCount = SegCount ();
 			// if side has a child..
 			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
 				continue;
-			if (childSegP->GetChild (nChildSide) >= 0) {
+			if (childSegP->Child (nChildSide) >= 0) {
 				ushort nWall = childSegP->m_sides [nChildSide].m_info.nWall;
 				// .. but there is no wall ..
 				if (nWall >= theMine->Info ().walls.count)
@@ -539,7 +539,7 @@ fLightScale = 1.0; ///= 100.0;
 				// loop on child sides
 				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
-					if (childSegP->GetChild (nChildSide) >= 0) {
+					if (childSegP->Child (nChildSide) >= 0) {
 						ushort nWall = childSegP->m_sides[nChildSide].m_info.nWall;
 						// .. if there is no wall ..
 						if (nWall >= theMine->Info ().walls.count)
@@ -688,7 +688,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if ((nWall < theMine->Info ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// mark segment if it has a child
-	child = segP->GetChild (nSide);
+	child = segP->Child (nSide);
 	if ((child > -1) && (child < SegCount ()) && (nDepth > segP->m_info.nIndex)) {
 		if (segP->m_info.nIndex >= 0)
 			++nImprove;
@@ -714,7 +714,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if ((nWall < theMine->Info ().walls.count) && (Walls (nWall)->m_info.type == WALL_DOOR))
 		continue;
 	// check child
-	child = segP->GetChild (nSide);
+	child = segP->Child (nSide);
 	if ((child > -1) && (child < SegCount ()))
 		SetSegmentChildNum (pRoot, child, nDepth - 1);
 	}

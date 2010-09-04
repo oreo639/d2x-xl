@@ -109,14 +109,14 @@ CHECKMINE;
 for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
 	segI->m_info.nIndex = -1;
 segRef [0] = current.m_nSegment;	
-theMine->current.Segment ()->m_info.nIndex = 0;
+current.Segment ()->m_info.nIndex = 0;
 i = 1;
 h = j = 0;
 for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 	for (h = i; j < h; j++) {
 		segI = theMine->Segments (segRef [j]);
 		for (sideNum = 0; sideNum < 6; sideNum++) {
-			c = segI->GetChild (sideNum);
+			c = segI->Child (sideNum);
 			if (c < 0) 
 				continue;
 			segJ = theMine->Segments (c);
@@ -539,7 +539,7 @@ for (i = 0; i < 8; i++, pv++) {
 if (bPartial) {
 	uint nSide;
 	for (nSide=0; nSide<6; nSide++) {
-		if (segP->GetChild (nSide) >= 0)
+		if (segP->Child (nSide) >= 0)
 			continue;
 		
 		POINT	side [4], line [2], vert;
@@ -565,9 +565,9 @@ if (bPartial) {
 			// check childP cubes
 			commonVerts = 0;
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
-				if (segP->GetChild (chSegI) < 0)
+				if (segP->Child (chSegI) < 0)
 					continue;
-				childP = theMine->Segments (segP->GetChild (chSegI));
+				childP = theMine->Segments (segP->Child (chSegI));
 				// walk through childP cube's sides
 				commonVerts = 0;
 				for (chSideI = 0; (chSideI < 6) && (commonVerts < 2); chSideI++) {
@@ -819,7 +819,7 @@ CHECKMINE;
 
 		for (nSide = 0; nSide < 6; nSide++) {
 			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? null : theMine->Walls (nWall);
-			if ((segP->GetChild (nSide) == -1) ||
+			if ((segP->Child (nSide) == -1) ||
 				(wallP && (wallP->m_info.type != WALL_OPEN) && ((wallP->m_info.type != WALL_CLOAKED) || wallP->m_info.cloakValue))
 				)
 			{
@@ -904,7 +904,7 @@ if (!clear_it) {
 					m_pDC->SelectObject (m_penYellow);
 					DrawCubeQuick (segP);
 					break;
-				case SEGMENT_FUNC_CONTROLCEN:
+				case SEGMENT_FUNC_REACTOR:
 					m_pDC->SelectObject (m_penOrange);
 					DrawCubeQuick (segP);
 					break;
@@ -1566,13 +1566,13 @@ _itoa_s ((currSide = current.m_nSide) + 1, message + strlen (message), sizeof (m
 strcat_s (message, sizeof (message), " point:");
 _itoa_s (currPoint = current.m_nPoint, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " vertex:");
-_itoa_s (theMine->current.Segment ()->m_info.verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current.Segment ()->m_info.verts [sideVertTable [currSide][currPoint]], message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  textures:");
 strcat_s (message, sizeof (message), " 1st:");
-_itoa_s (theMine->current.Side ()->m_info.nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current.Side ()->m_info.nBaseTex, message + strlen (message), sizeof (message) - strlen (message), 10);
 strcat_s (message, sizeof (message), " 2nd:");
-_itoa_s (theMine->current.Side ()->m_info.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
+_itoa_s (current.Side ()->m_info.nOvlTex & 0x3fff, message + strlen (message), sizeof (message) - strlen (message), 10);
 
 strcat_s (message, sizeof (message), ",  zoom:");
 double zoom_factor = log (10 * m_size.v.x) / log (1.2);

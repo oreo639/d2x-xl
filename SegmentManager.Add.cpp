@@ -36,7 +36,7 @@ if (vertexManager.Count () >= MAX_VERTICES) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
-if (curSegP->GetChild (nCurSide) >= 0) {
+if (curSegP->Child (nCurSide) >= 0) {
 	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
 	return FALSE;
 	}
@@ -64,9 +64,9 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) /* no remaining children */
 
 // define textures
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-	if (newSegP->GetChild (nSide) < 0) {
+	if (newSegP->Child (nSide) < 0) {
 		// if other segment does not have a child (therefore it has a texture)
-		if ((curSegP->GetChild (nSide) < 0) && (curSegP->m_info.function == SEGMENT_FUNC_NONE)) {
+		if ((curSegP->Child (nSide) < 0) && (curSegP->m_info.function == SEGMENT_FUNC_NONE)) {
 			newSegP->m_sides [nSide].m_info.nBaseTex = curSegP->m_sides [nSide].m_info.nBaseTex; 
 			newSegP->m_sides [nSide].m_info.nOvlTex = curSegP->m_sides [nSide].m_info.nOvlTex; 
 			for (i = 0; i < 4; i++) 
@@ -113,7 +113,7 @@ for (nSegment = 0; nSegment < Count (); nSegment++) {
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
-					LinkSegments (nNewSeg, nNewSide, nSegment, nSide, 3);
+					Link (nNewSeg, nNewSide, nSegment, nSide, 3);
 		}
 	}
 // auto align textures new segment
@@ -130,34 +130,7 @@ return TRUE;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
-{
-bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
-if (bCreate && !Create ()) {
-	undoManager.ResetModified (bUndo);
-	return false; 
-	}
-if (!Define (nSegment, SEGMENT_FUNC_CONTROLCEN, bSetDefTextures ? (theMine->IsD1File () ? 10 : 357 : -1)) {
-	undoManager.ResetModified (bUndo);
-	return false; 
-	}	
-if (bCreate) {
-	if (!objectManager.Copy (OBJ_CNTRLCEN, nSegment)) {
-		undoManager.ResetModified (bUndo);
-		return false; 
-		}	
-	current.Object ()->m_info.id = theMine->IsD1File () ? 0 : 2;
-	triggerManager.UpdateReactor ();
-	}
-undoManager.Unlock ();
-DLE.MineView ()->Refresh ();
-return true;
-}
-
-// ----------------------------------------------------------------------------- 
-
-bool CSegmentManager::Create (short nSegment, short nFunction, bool bCreate = true, short nTexture = -1, char* szError = null)
+bool CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
 {
 if ((szError != null) && theMine->IsD1File ()) {
 	if (!bExpertMode)
@@ -172,15 +145,15 @@ if (bCreate && !Create ()) {
 	return false; 
 	}	
 DLE.MineView ()->DelayRefresh (true);
-if (!DefineSegment (nSegment, nFunction, -1)) {
+if (!Define (nSegment, nFunction, -1)) {
 	undoManager.ResetModified (bUndo);
 	DLE.MineView ()->DelayRefresh (false);
 	return false; 
 	}	
 undoManager.Unlock ();
-return true;
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
+return true;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -192,9 +165,9 @@ if (nMatCen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
-if (!Create (nSegment, SEGMENT_FUNC_EQUIPMAKER, bCreate))
+if (!Create (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER))
 	return false;
-GetEquipGen (nMatCen)->Setup (nSegment, nMatCen, 0);
+EquipGen (nMatCen)->Setup (nSegment, nMatCen, 0);
 Segment (current.m_nSegment)->m_info.value = 
 Segment (current.m_nSegment)->m_info.nMatCen = nMatCen;
 theMine->Info ().equipGen.count++;
@@ -210,16 +183,20 @@ if (nMatCen >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of robot makers reached");
 	 return false;
 	}
-if (!Create (nSegment, SEGMENT_FUNC_ROBOTMAKER, bCreate))
+if (!Create (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER))
 	return false;
-GetBotGen (nMatCen)->Setup (nSegment, nMatCen, 8);
+BotGen (nMatCen)->Setup (nSegment, nMatCen, 8);
 Segment (current.m_nSegment)->m_info.value = 
 Segment (current.m_nSegment)->m_info.nMatCen = nMatCen;
 theMine->Info ().botGen.count++;
-undoManager.Unlock ();
-DLE.MineView ()->DelayRefresh (false);
-DLE.MineView ()->Refresh ();
 return true;
+}
+
+// ----------------------------------------------------------------------------- 
+
+bool CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
+{
+return Create (nSegment, bCreate, SEGMENT_FUNC_REACTOR, bSetDefTextures ? theMine->IsD1File () ? 10 : 357 : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
@@ -256,7 +233,7 @@ int CSegmentManager::FuelCenterCount (void)
 {
 int nFuelCens = 0;
 CSegment *segP = Segment (0);
-for (int i = SegCount (); i > 0; i--, segP++)
+for (int i = Count (); i > 0; i--, segP++)
 	if ((segP->m_info.function == SEGMENT_FUNC_FUELCEN) || (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		nFuelCens++;
 return nFuelCens;
@@ -268,7 +245,7 @@ bool CSegmentManager::CreateFuelCenter (short nSegment, byte nType, bool bCreate
 {
 // count number of fuel centers
 int nFuelCen = FuelCenterCount ();
-CSegment *segP = Segments (0);
+CSegment *segP = Segment (0);
 if (nFuelCen >= MAX_NUM_FUELCENS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
@@ -282,10 +259,10 @@ if (nType == SEGMENT_FUNC_FUELCEN) {
 	if (bSetDefTextures) {
 		short nNewSeg = current.m_nSegment;
 		current.m_nSegment = nLastSeg;
-		if (wallManager.Create (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
-			short nOppSeg, nOppSide;
-			if (OppositeSide (current, nOppSeg, nOppSide)
-				wallManager.Create (nOppSeg, nOppSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
+		if (wallManager.Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+			CSideKey opp;
+			if (OppositeSide (opp))
+				wallManager.Create (opp, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
 		current.m_nSegment = nNewSeg;
 		}
@@ -322,7 +299,7 @@ for (i = 0; i < 4; i++)
 switch (m_nAddMode) {
 	case (ORTHOGONAL):
 		{
-		center = CalcCenter (current.m_nSegment, current.m_nSide); 
+		center = CalcSideCenter (current.m_nSegment, current.m_nSide); 
 		oppCenter = CalcSideCenter (current.m_nSegment, oppSideTable [current.m_nSide]); 
 		orthog = CalcSideNormal (current.m_nSegment, current.m_nSide); 
 		// set the length of the new cube to be one standard cube length
@@ -451,15 +428,15 @@ bool CSegmentManager::SetDefaultTexture (short nTexture)
 if (nTexture < 0)
 	return true;
 short nSegment = current.m_nSegment;
-short nOppSeg, nOppSide;
+
 CSegment *segP = Segment (nSegment);
-CSide *sideP = segP->m_sides;
 double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
+CSide *sideP = segP->m_sides;
 for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-	if (segP->GetChild (nSide) == -1) {
-		SetTextures (nSegment, nSide, nTexture, 0);
+	if (segP->Child (nSide) == -1) {
+		SetTextures (CSideKey (nSegment, nSide), nTexture, 0);
 		int i;
 		for (i = 0; i < 4; i++) {
 			sideP->m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale);
@@ -474,13 +451,13 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::Define (short nSegment, byte type, short nTexture)
+bool CSegmentManager::Define (short nSegment, byte nFunction, short nTexture)
 {
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 Undefine (nSegment);
 CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
-segP->m_info.function = type;
+segP->m_info.function = nFunction;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
 undoManager.Unlock ();
@@ -490,81 +467,68 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::Undefine (short nSegment)
+void CSegmentManager::RemoveMatCen (CSegment* segP, CRobotMaker* matCens, CMineItemInfo& info)
 {
-	CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
-
-nSegment = short (segP - Segments (0));
-if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-	// remove matcen
-	int nMatCens = (int) theMine->Info ().botGen.count;
-	if (nMatCens > 0) {
-		// fill in deleted matcen
-		int nDelMatCen = segP->m_info.nMatCen;
-		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
-			memcpy (GetBotGen (nDelMatCen), GetBotGen (nMatCens), sizeof (CRobotMaker));
-			GetBotGen (nDelMatCen)->m_info.nFuelCen = nDelMatCen;
-			segP->m_info.nMatCen = -1;
-			}
-		theMine->Info ().botGen.count--;
-		int i;
-		for (int i = 0; i < 6; i++)
-			DeleteTriggerTargets (nSegment, i);
-		CSegment *segP = Segments (0);
-		for (i = SegCount (); i; i--, s++)
-			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == nMatCens)) {
+if (info.count > 0) {
+	// fill in deleted matcen
+	int nDelMatCen = segP->m_info.nMatCen;
+	if ((nDelMatCen >= 0) && (nDelMatCen < --info.count)) {
+		// copy last matCen in list to deleted matCen's position
+		memcpy (&matCens [nDelMatCen], &matCens [info.count], sizeof (matCens [0]));
+		matCens [nDelMatCen].m_info.nFuelCen = nDelMatCen;
+		segP->m_info.nMatCen = -1;
+		// point owner of relocated matCen to that matCen's new position
+		CSegment *segP = Segment (0);
+		for (short nSegment = Count (); nSegment; nSegment--, segP++)
+			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == info.count)) {
 				segP->m_info.nMatCen = nDelMatCen;
 				break;
 				}
 		}
-	segP->m_info.nMatCen = -1;
-	}
-else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-	// remove matcen
-	int nMatCens = (int) theMine->Info ().equipGen.count;
-	if (nMatCens > 0) {
-		// fill in deleted matcen
-		int nDelMatCen = segP->m_info.nMatCen;
-		if ((nDelMatCen >= 0) && (nDelMatCen < --nMatCens)) {
-			memcpy (GetEquipGen (nDelMatCen), GetEquipGen (nMatCens), sizeof (CRobotMaker));
-			GetEquipGen (nDelMatCen)->m_info.nFuelCen = nDelMatCen;
-			segP->m_info.nMatCen = -1;
-			}
-		theMine->Info ().equipGen.count--;
-		int i;
-		for (int i = 0; i < 6; i++)
-			DeleteTriggerTargets (nSegment, i);
-		CSegment *segP = Segments (0);
-		nDelMatCen += (int) theMine->Info ().botGen.count;
-		for (i = SegCount (); i; i--, s++)
-			if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (s->m_info.nMatCen == nMatCens)) {
-				segP->m_info.nMatCen = nDelMatCen;
-				break;
-			}
+	// remove matCen from all robot maker triggers targetting it
+	CSideKey key = (-Index (segP) - 1, 0); 
+	for (int nClass = 0; nClass < 2; nClass++) {
+		CTrigger* trigP = triggerManager.Trigger (0, nClass);
+		for (int nTrigger = triggerManager.Count (nClass); nTrigger; nTrigger--, trigP++)
+			if (trigP->m_info.type == TT_MATCEN)
+				trigP->Delete (key);
 		}
-	segP->m_info.nMatCen = -1;
 	}
+segP->m_info.nMatCen = -1;
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CSegmentManager::Undefine (short nSegment)
+{
+	CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
+
+nSegment = short (segP - Segment (0));
+if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
+	RemoveMatCen (segP, BotGen (0), theMine->Info ().botGen);
+else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
+	RemoveMatCen (segP, EquipGen (0), theMine->Info ().equipGen);
 else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childSegP;
 	CSide *oppSideP, *sideP = segP->m_sides;
-	CWall *wallP;
-	short nOppSeg, nOppSide;
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-		if (segP->GetChild (nSide) < 0)	// assume no wall if no child segment at the current side
+		if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childSegP = Segment (segP->GetChild (nSide));
+		childSegP = Segment (segP->Child (nSide));
 		if (childSegP->m_info.function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
-		if ((wallP = Wall (nSegment, nSide)) && 
-			 (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
+		CWall *wallP = Wall (CSideKey (nSegment, nSide));
+		if ((wallP != null) && (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
 			wallManager.Delete (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
-		if (OppositeSide (CSideKey (nSegment, nSide), nOppSeg, nOppSide) &&
-			 (wallP = Wall (nSegment, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
-			oppSideP = Segments (nOppSeg)->m_sides + nOppSide;
+		CSideKey key (nSegment, nSide);
+		CSideKey opp;
+		if (OppositeSide (key, opp) &&
+			 (wallP = Wall (key)) && (wallP->m_info.type == WALL_ILLUSION)) {
+			oppSideP = Side (opp);
 			if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
-				DeleteWall (oppSideP->m_info.nWall);
+				wallManager.Delete (oppSideP->m_info.nWall);
 			}
 		}
 	}

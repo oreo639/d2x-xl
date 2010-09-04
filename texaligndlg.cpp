@@ -104,8 +104,8 @@ maxRect.y = minRect.y + 166;
 m_centerPt.x = minRect.x + 166 / 2;
 m_centerPt.y = minRect.y + 166 / 2;
 
-segP = theMine->current.Segment ();
-sideP = theMine->current.Side ();
+segP = current.Segment ();
+sideP = current.Side ();
 nSide = current.m_nSide;
 nLine = current.m_nLine;
 
@@ -191,7 +191,7 @@ if (theMine->IsWall ()) {
 
 			// check child for this line 
 			nChildSide = sideChildTable[nSide][nChildLine];
-			nChild = segP->GetChild (nChildSide);
+			nChild = segP->Child (nChildSide);
 			if (nChild > -1) {
 				childSegP = theMine->Segments (nChild);
 				// figure out which side of child shares two points w/ current->side
@@ -288,7 +288,7 @@ if (!m_bShowTexture)
 	CRgn			hRgn;
 	int			h, i, j, x, y;
 	POINT			offset;
-	CSide*		sideP = theMine->current.Side ();
+	CSide*		sideP = current.Side ();
 	CTexture		tex (textureManager.m_bmBuf);
 	ushort		scale;
 
@@ -324,7 +324,7 @@ void CTextureTool::OnAlignX ()
 UpdateData (TRUE);
 
 	int i,	delta;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 
 if (delta = (int) (sideP->m_info.uvls [current.m_nPoint].u - m_alignX / UV_FACTOR)) {
 	UpdateData (TRUE);
@@ -352,7 +352,7 @@ void CTextureTool::OnAlignY ()
 UpdateData (TRUE);
 
 	int i, delta;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 
 if (delta = (int) (sideP->m_info.uvls [current.m_nPoint].v - m_alignY / UV_FACTOR)) {
 	UpdateData (TRUE);
@@ -380,7 +380,7 @@ void CTextureTool::OnAlignRot ()
 UpdateData (TRUE);
   
 	double delta,dx,dy,angle;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 
 dx = sideP->m_info.uvls[1].u - sideP->m_info.uvls[0].u;
 dy = sideP->m_info.uvls[1].v - sideP->m_info.uvls[0].v;
@@ -393,7 +393,7 @@ RotateUV (delta, FALSE);
 
 void CTextureTool::RefreshAlignment ()
 {
-CSide * sideP = theMine->current.Side ();
+CSide * sideP = current.Side ();
 
 m_alignX = (double) sideP->m_info.uvls [current.m_nPoint].u * UV_FACTOR;
 m_alignY = (double) sideP->m_info.uvls [current.m_nPoint].v * UV_FACTOR;
@@ -417,7 +417,7 @@ void CTextureTool::RotateUV (double angle, bool bUpdate)
 {
 	int		i;
 	double	x, y, a, radius;
-	CSide	*	sideP = theMine->current.Side ();
+	CSide	*	sideP = current.Side ();
 
 UpdateData (TRUE);
 undoManager.SetModified (true);
@@ -445,7 +445,7 @@ UpdateAlignWnd ();
 
 void CTextureTool::HFlip (void)
 {
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 	short		h, i, l;
 
 UpdateData (TRUE);
@@ -475,7 +475,7 @@ UpdateAlignWnd ();
 
 void CTextureTool::VFlip (void)
 {
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 	short		h, i, l;
 
 UpdateData (TRUE);
@@ -506,7 +506,7 @@ UpdateAlignWnd ();
 void CTextureTool::HAlign (int dir)
 {
 	int		i;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 	double	delta = moveRate * (0x0800 / 8) / m_zoom * dir;
 
 UpdateData (TRUE);
@@ -534,7 +534,7 @@ UpdateAlignWnd ();
 void CTextureTool::VAlign (int dir)
 {
 	int		i;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 	double	delta = moveRate * (0x0800 / 8) / m_zoom * dir;
 
 UpdateData (TRUE);
@@ -618,7 +618,7 @@ RotateUV (-angleRate);
 void CTextureTool::OnHShrink ()
 {
 	int		i = current.m_nPoint;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 	double	delta = moveRate * 256 / m_zoom ;
 
 UpdateData (TRUE);
@@ -635,7 +635,7 @@ UpdateAlignWnd ();
 void CTextureTool::OnVShrink ()
 {
 	int		i = current.m_nPoint;
-	CSide	*sideP = theMine->current.Side ();
+	CSide	*sideP = current.Side ();
 	double	delta = moveRate * 256 / m_zoom;
 
 UpdateData (TRUE);
@@ -654,7 +654,7 @@ void CTextureTool::OnAlignReset ()
 UpdateData (TRUE);
 undoManager.SetModified (true);
 undoManager.Lock ();
-theMine->current.Segment ()->SetUV (current.m_nSide, 0, 0);
+current.Segment ()->SetUV (current.m_nSide, 0, 0);
 m_alignX = 0;
 m_alignY = 0;
 m_alignAngle = 0;
@@ -678,7 +678,7 @@ undoManager.Lock ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (theMine->SideIsMarked (nSegment, nSide)) {
-			if ((segP->GetChild (nSide) == -1) || 
+			if ((segP->Child (nSide) == -1) || 
 				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
 				segmentManager.Segment (nSegment)->SetUV (nSide,0,0);
@@ -699,7 +699,7 @@ UpdateAlignWnd ();
 
 void CTextureTool::OnAlignStretch2Fit ()
 {
-	CSide*		sideP = theMine->current.Side ();
+	CSide*		sideP = current.Side ();
 	uint		scale = 1; //textureManager.Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 	CSegment*	segP;
 	short			nSegment, nSide;
@@ -753,9 +753,9 @@ AlignChildTextures (nSegment, nSide, MAX_SEGMENTS);
 void CTextureTool::OnAlignAll (void)
 {
 // set all segment sides as not aligned yet
-	CSegment	*currSeg = theMine->current.Segment (),
+	CSegment	*currSeg = current.Segment (),
 					*segP = theMine->Segments (0);
-	CSide		*sideP = theMine->current.Side (),
+	CSide		*sideP = current.Side (),
 					*childSideP;
 	short			nSegment, 
 					nSide = current.m_nSide,
@@ -879,7 +879,7 @@ if (m_bIgnorePlane) {
 		for (child_sidenum = 0, childSideP = segP->m_sides; child_sidenum < 6; child_sidenum++, childSideP++) {
 			if (childSideP->m_info.nBaseTex == nBaseTex) {
 				for (nLine = 0; nLine < 4; nLine++) {
-					child_segnum = segP->GetChild (sideChildTable[child_sidenum][nLine]);
+					child_segnum = segP->Child (sideChildTable[child_sidenum][nLine]);
 					if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
 						continue;
 					childSeg = theMine->Segments (child_segnum);
@@ -897,7 +897,7 @@ if (m_bIgnorePlane) {
 //			if (childSideP->m_info.nBaseTex != sideP->m_info.nBaseTex)
 //				continue;
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->GetChild (sideChildTable[nSide][nLine]);
+			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
 			if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
@@ -917,7 +917,7 @@ else {
 		for (nLine = 0; nLine < 4; nLine++) {
 			if (nSide < 0)
 				continue;
-			child_segnum = segP->GetChild (sideChildTable[nSide][nLine]);
+			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
 			if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
@@ -929,7 +929,7 @@ else {
 			}
 /*
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->GetChild (sideChildTable[nSide][nLine]);
+			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
 			if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
 				continue;
 			childSeg = theMine->Segments (child_segnum);
@@ -968,7 +968,7 @@ if (m_zoom > 1.0/16.0) {
 
 void CTextureTool::Rot2nd (int iAngle)
 {
-	CSide *sideP = theMine->current.Side ();
+	CSide *sideP = current.Side ();
  
 if ((sideP->m_info.nOvlTex & 0x1fff) && ((sideP->m_info.nOvlTex & 0xc000) != rotMasks [iAngle])) {
 	undoManager.SetModified (true);

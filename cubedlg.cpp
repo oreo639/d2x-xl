@@ -230,13 +230,13 @@ return
 void CSegmentTool::EnableControls (BOOL bEnable)
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 // enable/disable "end of exit tunnel" button
-EndOfExit ()->EnableWindow (segP->GetChild (m_nSide) < 0);
+EndOfExit ()->EnableWindow (segP->Child (m_nSide) < 0);
 // enable/disable add cube button
 GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS) &&
 													  (theMine->VertCount () < MAX_VERTICES - 4) &&
-													  (segP->GetChild (m_nSide) < 0));
+													  (segP->Child (m_nSide) < 0));
 GetDlgItem (IDC_CUBE_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button
 GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBAvailBots ()->GetCount () > 0));
@@ -255,7 +255,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 undoManager.SetModified (true);
-m_nVertex = theMine->current.Segment ()->m_info.verts[sideVertTable[current.m_nSide][current.m_nPoint]];
+m_nVertex = current.Segment ()->m_info.verts[sideVertTable[current.m_nSide][current.m_nPoint]];
 theMine->Vertices (m_nVertex)->Set ((int) (m_nCoord [0] * 0x10000L), (int) (m_nCoord [1] * 0x10000L), (int) (m_nCoord [2] * 0x10000L));
 DLE.MineView ()->Refresh (false);
 }
@@ -265,7 +265,7 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-m_nVertex = theMine->current.Segment ()->m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]];
+m_nVertex = current.Segment ()->m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]];
 m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
 m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
 m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
@@ -283,7 +283,7 @@ if (Prop (nProp)->GetCheck ())
 	m_nProps |= 1 << nProp;
 else
 	m_nProps &= ~(1 << nProp);
-theMine->current.Segment ()->m_info.props = m_nProps;
+current.Segment ()->m_info.props = m_nProps;
 }
 
 void CSegmentTool::OnProp1 () { OnProp (0); }
@@ -330,7 +330,7 @@ CSegment *segP = theMine->Segments (m_nSegment);
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	int i;
 	for (i = 0; i < 6; i++)
-		if (segP->GetChild (i) == -1)
+		if (segP->Child (i) == -1)
 			theMine->SetTexture (m_nSegment, i, nTexture, 0);
 	}
 }
@@ -352,8 +352,8 @@ int h, i, j;
 theMine->RenumberBotGens ();
 theMine->RenumberEquipGens ();
 // update cube number combo box if number of cubes has changed
-CSegment *segP = theMine->current.Segment ();
-m_bEndOfExit = (segP->GetChild (current.m_nSide) == -2);
+CSegment *segP = current.Segment ();
+m_bEndOfExit = (segP->Child (current.m_nSide) == -2);
 m_nSegment = current.m_nSegment;
 m_nSide = current.m_nSide;
 m_nPoint = current.m_nPoint;
@@ -482,7 +482,7 @@ UpdateData (FALSE);
 void CSegmentTool::OnEndOfExit ()
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 undoManager.SetModified (true);
 if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
 	segP->SetChild (m_nSide, -2);
@@ -535,7 +535,7 @@ if (bMarked) {
 			segP->m_info.owner = m_nOwner;
 	}
 else 					
-	theMine->current.Segment ()->m_info.owner = m_nOwner;
+	current.Segment ()->m_info.owner = m_nOwner;
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 }
@@ -560,7 +560,7 @@ if (bMarked) {
 			segP->m_info.group = m_nGroup;
 	}
 else 					
-	theMine->current.Segment ()->m_info.group = m_nGroup;
+	current.Segment ()->m_info.group = m_nGroup;
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 }
@@ -587,7 +587,7 @@ if (bMarked) {
 	nMaxSeg = segmentManager.Count ();
 	}
 else {
-	nMinSeg = int (theMine->current.Segment () - theMine->Segments (0));
+	nMinSeg = int (current.Segment () - theMine->Segments (0));
 	nMaxSeg = nMinSeg + 1;
 	}
 CSegment* segP = theMine->Segments (nMinSeg);
@@ -624,7 +624,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				}
 			break;
 
-		case SEGMENT_FUNC_CONTROLCEN:
+		case SEGMENT_FUNC_REACTOR:
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
@@ -703,7 +703,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		int nMatCens = (int) theMine->Info ().matcen.count;
 		if (nMatCens > 0) {
 			// fill in deleted matcen
-			int nDelMatCen = theMine->current.Segment ()->value;
+			int nDelMatCen = current.Segment ()->value;
 			memcpy (theMine->BotGens (nDelMatCen), theMine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
 			theMine->Info ().matcen.count--;
 			int i;
@@ -713,14 +713,14 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		}
 	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
 		short nSegNum = current.m_nSegment;
-		CSegment *childseg, *segP = theMine->current.Segment ();
-		CSide *oppside, *sideP = theMine->current.Side ();
+		CSegment *childseg, *segP = current.Segment ();
+		CSide *oppside, *sideP = current.Side ();
 		CWall *wallP;
 		short nOppSeg, nOppSide;
 		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-			if (segP->GetChild (nSide) < 0)	// assume no wall if no child segment at the current side
+			if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 				continue;
-			childseg = theMine->Segments (segP->GetChild (nSide));
+			childseg = theMine->Segments (segP->Child (nSide));
 			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it
@@ -739,11 +739,11 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 	// update "special"
 	if (bChangeOk) {
 		m_nType = nType;
-		theMine->current.Segment ()->function = nType;
+		current.Segment ()->function = nType;
 		if (nType == SEGMENT_FUNC_NONE)
-			theMine->current.Segment ()->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
+			current.Segment ()->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 		else
-			theMine->current.Segment ()->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
+			current.Segment ()->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 		}
 #endif
 	}
@@ -779,7 +779,7 @@ void CSegmentTool::OnLight ()
 {
 CHECKMINE;
 UpdateData (TRUE);
-theMine->current.Segment ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
+current.Segment ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
 undoManager.SetModified (true);
 }
 
@@ -789,7 +789,7 @@ void CSegmentTool::OnDamage (int i)
 {
 CHECKMINE;
 UpdateData (TRUE);
-theMine->current.Segment ()->m_info.damage [i] = m_nDamage [i];
+current.Segment ()->m_info.damage [i] = m_nDamage [i];
 undoManager.SetModified (true);
 }
 
@@ -833,7 +833,7 @@ return j;
 void CSegmentTool::AddBot ()
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindBot (LBAvailBots (), szObj);
@@ -856,7 +856,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::AddEquip ()
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindEquip (LBAvailBots (), szObj);
@@ -879,7 +879,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnAddObj ()
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 if (IsBotMaker (segP))
 	AddBot ();
 else if (IsEquipMaker (segP))
@@ -893,7 +893,7 @@ else if (IsEquipMaker (segP))
 void CSegmentTool::DeleteBot () 
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindBot (LBUsedBots (), szObj);
@@ -916,7 +916,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::DeleteEquip () 
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindEquip (LBUsedBots (), szObj);
@@ -939,7 +939,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnDeleteObj () 
 {
 CHECKMINE;
-CSegment *segP = theMine->current.Segment ();
+CSegment *segP = current.Segment ();
 if (IsBotMaker (segP))
 	DeleteBot ();
 else if (IsEquipMaker (segP))

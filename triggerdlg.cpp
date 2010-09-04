@@ -424,7 +424,7 @@ if (pDC) {
 void CTriggerTool::DrawObjectImage ()
 {
 if (m_nClass) {
-	CGameObject *objP = theMine->current.Object ();
+	CGameObject *objP = current.Object ();
 	if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT) || (objP->m_info.type == OBJ_MONSTERBALL) || (objP->m_info.type == OBJ_SMOKE))
 		theMine->DrawObject (&m_showObjWnd, objP->m_info.type, objP->m_info.id);
 	}
@@ -555,7 +555,7 @@ if (m_nTrigger != -1) {
 	}
 CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumGeoTriggers () > 0);
 CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumGeoTriggers () > 0);
-sideP = theMine->other.Side ();
+sideP = other.Side ();
 CTexToolDlg::Refresh (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
 	PaintTexture (&m_showTexWnd, RGB (128,128,128), -1, -1, Texture1 (), Texture2 ());
@@ -1040,7 +1040,7 @@ return !m_nClass && (m_pTrigger != null) && (m_iTarget >= 0) && (m_iTarget < m_p
 
 void CTriggerTool::SelectTexture (int nIdC, bool bFirst)
 {
-	CSide		*sideP = theMine->current.Side ();
+	CSide		*sideP = current.Side ();
 	CComboBox	*pcb = bFirst ? CBTexture1 () : CBTexture2 ();
 	int			index = pcb->GetCurSel ();
 	
