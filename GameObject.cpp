@@ -1,16 +1,12 @@
 // Copyright (C) 1997 Bryan Aamot
-#include "stdafx.h"
-#include <malloc.h>
-#include <stdlib.h>
-#undef abs
-#include <math.h>
-#include <mmsystem.h>
-#include <stdio.h>
 
 #include "define.h"
 #include "types.h"
 #include "cfile.h"
 #include "ViewMatrix.h"
+#include "Selection.h"
+#include "UndoManager.h"
+#include "dle-xp.h"
 
 // -----------------------------------------------------------------------------
 
@@ -20,7 +16,7 @@ void CGameObject::Create (byte type, short nSegment)
 
 undoManager.SetModified (true);
 undoManager.Lock ();
-segmentManager.CalcSegCenter (location, nSegment);
+segmentManager.CalcCenter (location, nSegment);
 Clear ();
 m_info.signature = 0;
 m_info.type = type;
@@ -47,7 +43,7 @@ return;
 
 // -----------------------------------------------------------------------------
 
-void CGameObject::Setup (char type) 
+void CGameObject::Setup (byte type) 
 {
   int  id;
 
@@ -186,7 +182,7 @@ undoManager.Unlock ();
 
 // -----------------------------------------------------------------------------
 
-void CObject::Draw (CWnd* wndP)
+void CGameObject::Draw (CWnd* wndP)
 {
 	static int powerupTable [48] = {
 		 0,  1,  2,  3,  4,  5,  6, -1, -1, -1, 
@@ -208,13 +204,13 @@ switch (m_info.type) {
 		nBitmap = 0;
 		break;
 	case OBJ_ROBOT:
-		nBitmap = (id < 66) ? 1 + id : 118 + (id - 66);
+		nBitmap = (m_info.id < 66) ? 1 + m_info.id : 118 + (m_info.id - 66);
 		break;
 	case OBJ_CNTRLCEN:
 	if (theMine->IsD1File ())
 		nBitmap = 67;
 	else
-		switch (id) {
+		switch (m_info.id) {
 			case 1: nBitmap = 68; break;
 			case 2: nBitmap = 69; break;
 			case 3: nBitmap = 70; break;
@@ -266,7 +262,7 @@ wndP->UpdateWindow ();
 
 // -----------------------------------------------------------------------------
 
-int CObjPhysicsInfo::Read (CFileManager& fp, int version)
+void CObjPhysicsInfo::Read (CFileManager& fp, int version)
 {
 fp.ReadVector (velocity);
 fp.ReadVector (thrust);
@@ -277,7 +273,6 @@ fp.ReadVector (rotvel);
 fp.ReadVector (rotthrust);
 turnroll = fp.ReadFixAng ();
 flags = fp.ReadInt16 ();
-return 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -297,7 +292,7 @@ fp.WriteInt16 (flags);
 
 // -----------------------------------------------------------------------------
 
-int CObjAIInfo::Read (CFileManager& fp, int version)
+void CObjAIInfo::Read (CFileManager& fp, int version)
 {
 behavior = fp.ReadSByte ();
 for (int i = 0; i < MAX_AI_FLAGS; i++)
@@ -310,7 +305,6 @@ if (DLE.IsD1File ()) {
 	follow_path_start_seg = fp.ReadInt16 ();
 	follow_path_end_seg = fp.ReadInt16 ();
 	}
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -332,7 +326,7 @@ if (DLE.IsD1File ()) {
 
 // ------------------------------------------------------------------------
 
-int CObjExplosionInfo::Read (CFileManager& fp, int version)
+void CObjExplosionInfo::Read (CFileManager& fp, int version)
 {
 spawn_time = fp.ReadInt32 ();
 delete_time = fp.ReadInt32 ();
@@ -340,7 +334,6 @@ delete_objnum = (byte)fp.ReadInt16 ();
 next_attach = 
 prev_attach = 
 attach_parent =-1;
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -354,12 +347,11 @@ fp.Write (delete_objnum);
 
 // ------------------------------------------------------------------------
 
-int CObjLaserInfo::Read (CFileManager& fp, int version)
+void CObjLaserInfo::Read (CFileManager& fp, int version)
 {
 parent_type = fp.ReadInt16 ();
 parent_num = fp.ReadInt16 ();
 parent_signature = fp.ReadInt32 ();
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -373,10 +365,9 @@ fp.Write (parent_signature);
 
 // ------------------------------------------------------------------------
 
-int CObjPowerupInfo::Read (CFileManager& fp, int version)
+void CObjPowerupInfo::Read (CFileManager& fp, int version)
 {
 count = (version >= 25) ? fp.ReadInt32 () : 1;
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -389,10 +380,9 @@ if (version >= 25)
 
 // ------------------------------------------------------------------------
 
-int CObjLightInfo::Read (CFileManager& fp, int version)
+void CObjLightInfo::Read (CFileManager& fp, int version)
 {
 intensity = fp.ReadInt32 ();
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -404,7 +394,7 @@ fp.Write (intensity);
 
 // ------------------------------------------------------------------------
 
-int CObjPolyModelInfo::Read (CFileManager& fp, int version)
+void CObjPolyModelInfo::Read (CFileManager& fp, int version)
 {
 nModel = fp.ReadInt32 ();
 for (int i = 0; i < MAX_SUBMODELS; i++)
@@ -412,7 +402,6 @@ for (int i = 0; i < MAX_SUBMODELS; i++)
 subobj_flags = fp.ReadInt32 ();
 tmap_override = fp.ReadInt32 ();
 alt_textures = 0;
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -428,12 +417,11 @@ fp.Write (tmap_override);
 
 // ------------------------------------------------------------------------
 
-int CObjVClipInfo::Read (CFileManager& fp, int version)
+void CObjVClipInfo::Read (CFileManager& fp, int version)
 {
 vclip_num = fp.ReadInt32 ();
 frametime = fp.ReadInt32 ();
 framenum = fp.ReadSByte ();
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -447,7 +435,7 @@ fp.Write (framenum);
 
 // ------------------------------------------------------------------------
 
-int CSmokeInfo::Read (CFileManager& fp, int version)
+void CSmokeInfo::Read (CFileManager& fp, int version)
 {
 nLife = fp.ReadInt32 ();
 nSize [0] = fp.ReadInt32 ();
@@ -460,7 +448,6 @@ for (int i = 0; i < 4; i++)
 nSide = fp.ReadSByte ();
 nType = (version < 18) ? 0 : fp.ReadSByte ();
 bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -482,7 +469,7 @@ fp.Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-int CLightningInfo::Read (CFileManager& fp, int version)
+void CLightningInfo::Read (CFileManager& fp, int version)
 {
 nLife = fp.ReadInt32 ();
 nDelay = fp.ReadInt32 ();
@@ -506,7 +493,6 @@ bInPlane = fp.ReadSByte ();
 for (int i = 0; i < 4; i++)
 	color [i] = fp.ReadSByte ();
 bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
-return 1;
 }
 
 // ------------------------------------------------------------------------
@@ -539,12 +525,11 @@ fp.Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-int CSoundInfo::Read (CFileManager& fp, int version)
+void CSoundInfo::Read (CFileManager& fp, int version)
 {
 fp.Read (szFilename, 1, sizeof (szFilename));
 nVolume = fp.ReadInt32 ();
 bEnabled = (version < 19) ? 1 : fp.ReadSByte ();
-return 1;
 }
 // ------------------------------------------------------------------------
 
@@ -557,7 +542,7 @@ fp.Write (bEnabled);
 
 // ------------------------------------------------------------------------
 
-int CGameObject::Read (CFileManager& fp, int version, bool bFlag) 
+void CGameObject::Read (CFileManager& fp, int version, bool bFlag) 
 {
 m_info.type = fp.ReadSByte ();
 m_info.id = fp.ReadSByte ();
@@ -647,8 +632,6 @@ switch (m_info.renderType) {
 	default:
 	break;
 	}
-
-return 1;
 }
 
 // ------------------------------------------------------------------------
