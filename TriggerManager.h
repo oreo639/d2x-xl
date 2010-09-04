@@ -41,7 +41,7 @@ class CTriggerManager {
 	private:
 		triggerList				m_triggers [2];
 		reactorTriggerList	m_reactorTriggers;
-		short						m_nCount [2];
+		CMineItemInfo			m_info [2];
 		short						m_nReactorTriggers;
 
 	public:
@@ -53,17 +53,17 @@ class CTriggerManager {
 
 		inline objTriggerList& ObjTriggerList (void) { return TriggerList (1); }
 
-		inline CTrigger* Trigger (int i, int nClass = 0) { return IsValid (i, m_nCount [nClass]) ? &m_triggers [nClass][i] : null; }
+		inline CTrigger* Trigger (int i, int nClass = 0) { return IsValid (i, m_info [nClass].count) ? &m_triggers [nClass][i] : null; }
 
-		inline short& Count (int nClass) { return m_nCount [nClass]; }
+		inline int& Count (int nClass) { return m_info [nClass].count; }
 
-		inline short& NumGeoTriggers (void) { return Count (0); }
+		inline int& NumGeoTriggers (void) { return Count (0); }
+
+		inline int& NumObjTriggers (void) { return Count (1); }
 
 		inline CTrigger* GeoTrigger (int i) { return Trigger (i, 0); }
 
 		inline CTrigger* ObjTrigger (int i) { return Trigger (i, 1); }
-
-		inline short& NumObjTriggers (void) { return Count (1); }
 
 		short Index (CTrigger* trigP) { return (short) (trigP - &m_triggers [0][0]); }
 

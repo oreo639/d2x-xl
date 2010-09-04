@@ -208,14 +208,15 @@ class CLightManager {
 
 		int IsLight (int nBaseTex);
 		bool IsBlastableLight (int nBaseTex);
-		bool IsVariableLight (short nSegment, short nSide);
+		bool IsVariableLight (CSideKey key);
 
 		bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
 		void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
 		int FindDeltaLight (short nSegment, short nSide, short *pi = null);
-		short GetVariableLight (short nSegment = -1, short nSide = -1);
-		short AddVariableLight (short nSegment = -1, short nSide = -1, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
-		bool DeleteVariableLight (short nSegment = -1, short nSide = -1);
+		short VariableLight (CSideKey key);
+		short AddVariableLight (CSideKey key, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
+		bool DeleteVariableLight (CSideKey key);
+		void DeleteVariableLight (short index);
 		int IsExplodingLight(int nBaseTex);
 
 		void CreateLightMap (void);

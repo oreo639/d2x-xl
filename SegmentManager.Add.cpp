@@ -177,7 +177,7 @@ return true;
 
 bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures, EquipMakers (), m_matCenInfo [1], 
+return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures, EquipMaker (0), m_matCenInfo [1], 
 							"Maximum number of equipment makers reached");
 }
 
@@ -185,7 +185,7 @@ return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures
 
 bool CSegmentManager::CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures, EquipMakers (), m_matCenInfo [1], 
+return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures, RobotMaker (0), m_matCenInfo [1], 
 							"Maximum number of robot makers reached");
 }
 
@@ -531,6 +531,246 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 	}
 segP->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 segP->m_info.function = SEGMENT_FUNC_NONE;
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CSegmentManager::Delete (short nDelSeg)
+{
+	CSegment			*segP, *delSegP, *childSegP; 
+	CGameObject		*objP; 
+	CTrigger			*trigP;
+	ushort			nSegment, nRealSeg; 
+	short				child; 
+	short				i, j; 
+
+if (Count () < 2)
+	return; 
+if (nDelSeg < 0)
+	nDelSeg = current.m_nSegment; 
+if (nDelSeg < 0 || nDelSeg >= Count ()) 
+	return; 
+
+undoManager.SetModified (true);
+undoManager.Lock ();
+delSegP = Segment (nDelSeg); 
+UndefineSegment (nDelSeg);
+
+// delete any variable lights that use this segment
+for (int nSide = 0; nSide < 6; nSide++) {
+	CSideKey key (nDelSeg, nSide);
+	triggerManager.DeleteTargets (key); 
+	lightManager.DeleteVariableLight (key);
+	}
+
+	// delete any Walls () within segment (if defined)
+DeleteWalls (nDelSeg); 
+
+// delete any Walls () on child Segment () that connect to this segment
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	nChild = delSegP->Child (i); 
+	if (nChild >= 0 && nChild < Count ()) {
+		CSideKey opp, key (nDelSeg, i);
+		if (OppositeSide (key, opp)
+			wallManager.Delete (Side (opp)->m_info.nWall); 
+		}
+
+	// delete any Objects () within segment
+for (i = objectManager.Count (); i >= 0; i--) {
+	if (Objects (i)->m_info.nSegment == nDelSeg) {
+		objectManager.Delete (i); 
+		}
+	}
+	for (i = 0; i < RobotMakerCount (); i++)
+		if (RobotMaker (i)->m_info.nSegment > nDelSeg)
+			RobotMaker (i)->m_info.nSegment--;
+	for (i = 0; i < MineInfo ().equipGen.count; i++)
+		if (EquipMaker (i)->m_info.nSegment > nDelSeg)
+			EquipMaker (i)->m_info.nSegment--;
+	// delete any control segP with this segment
+	for (j = (ushort)MineInfo ().control.count - 1; j >= 0; j--) {
+		int count = ReactorTriggers (i)->m_count;
+		for (j = count - 1; j > 0; j--) {
+			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
+				// move last segment into this spot
+				ReactorTriggers (i)->Delete (j);
+				}
+			}
+		}
+
+	// update secret cube number if out of range now
+	nSegment = (ushort) SecretSegment (); 
+	if (nSegment >= Count () || nSegment == nDelSeg)
+		SecretSegment () = 0; 
+
+	// update segment flags
+	delSegP->m_info.wallFlags &= ~MARKED_MASK; 
+
+	// unlink any children with this segment number
+	CTexture* texP = textureManager.Textures (m_fileType);
+	for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++) {
+		for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
+			if (segP->Child (nChild) == nDelSeg) {
+
+				// subtract by 1 if segment is above deleted segment
+				current.m_nSegment = nSegment; 
+				if (nSegment > nDelSeg) 
+					current.m_nSegment--; 
+
+				// remove nChild number and update nChild bitmask
+				segP->SetChild (nChild, -1); 
+
+				// define textures, (u, v) and light
+				CSide *sideP = delSegP->m_sides + nChild;
+				SetTextures (CSideKey (nSegment, nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
+				Segment (nSegment)->SetUV (nChild, 0, 0); 
+				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
+				for (i = 0; i < 4; i++) {
+					//segP->m_sides [nChild].m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale); 
+					//segP->m_sides [nChild].m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale); 
+					segP->m_sides [nChild].m_info.uvls [i].l = delSegP->m_sides [nChild].m_info.uvls [i].l; 
+				}
+			}
+		}
+	}
+
+	// move other Segment () to deleted segment location
+	if (nDelSeg != Count ()-1) { // if this is not the last segment
+
+		// mark each segment with it's real number
+		nRealSeg = 0; 
+		for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++)
+			if(nDelSeg != nSegment)
+				segP->m_info.nIndex = nRealSeg++; 
+
+		// replace all children with real numbers
+		for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++) {
+			for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
+				if (segP->m_info.childFlags & (1 << nChild)
+					&& segP->Child (nChild) >= 0 && segP->Child (nChild) < Count ()) { // debug int
+					childSegP = Segment (segP->Child (nChild)); 
+					segP->SetChild (nChild, childSegP->m_info.nIndex); 
+				}
+			}
+		}
+
+		// replace all wall segP numbers with real numbers
+		for (i = 0; i < MineInfo ().walls.count; i++) {
+			nSegment = (short) Walls (i)->m_nSegment; 
+			if (nSegment < Count ()) {
+				segP = Segment (nSegment); 
+				Walls (i)->m_nSegment = segP->m_info.nIndex; 
+				} 
+			else {
+				Walls (i)->m_nSegment = 0; // int wall segment number
+			}
+		}
+
+		// replace all trigger segP numbers with real numbers
+		for (i = NumGeoTriggers (), trigP = Triggers (0); i; i--, trigP++) {
+			for (j = 0; j < trigP->m_count; j++) {
+				if (Count () > (nSegment = trigP->Segment (j)))
+					trigP->Segment (j) = Segment (nSegment)->m_info.nIndex; 
+				else {
+					DeleteTargetFromTrigger (trigP, j, 0);
+					j--;
+					}
+				}
+			}
+
+		// replace all trigger segP numbers with real numbers
+		for (i = NumObjTriggers (), trigP = ObjTriggers (0); i; i--, trigP++) {
+			for (j = 0; j < trigP->m_count; j++) {
+				if (Count () > (nSegment = trigP->Segment (j)))
+					trigP->Segment (j) = Segment (nSegment)->m_info.nIndex; 
+				else {
+					DeleteTargetFromTrigger (trigP, j, 0);
+					j--;
+					}
+				}
+			}
+
+		// replace all object segP numbers with real numbers
+		for (i = 0; i < MineInfo ().objects.count; i++) {
+			objP = Objects (i); 
+			if (Count () > (nSegment = objP->m_info.nSegment))
+				objP->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
+			else
+				objP->m_info.nSegment = 0; // int object segment number
+			}
+
+		// replace robot centers segP numbers with real numbers
+		for (i = 0; i < MineInfo ().botGen.count; i++) {
+			if (Count () > (nSegment = RobotMaker (i)->m_info.nSegment))
+				RobotMaker (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
+			else
+				RobotMaker (i)->m_info.nSegment = 0; // int robot center nSegment
+			}
+
+		// replace equipment centers segP numbers with real numbers
+		for (i = 0; i < MineInfo ().equipGen.count; i++) {
+			if (Count () > (nSegment = EquipMaker (i)->m_info.nSegment))
+				EquipMaker (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
+			else
+				EquipMaker (i)->m_info.nSegment = 0; // int robot center nSegment
+			}
+
+		// replace control segP numbers with real numbers
+		for (i = 0; i < MineInfo ().control.count; i++) {
+			for (j = 0; j < ReactorTriggers (i)->m_count; j++) {
+				if (Count () > (nSegment = ReactorTriggers (i)->Segment (j)))
+					ReactorTriggers (i)->Segment (j) = Segment (nSegment)->m_info.nIndex; 
+				else 
+					ReactorTriggers (i)->Segment (j) = 0; // int control center segment number
+			}
+		}
+
+		// replace variable light segP numbers with real numbers
+		for (i = 0; i < lightManager.Count (); i++) {
+			if (Count () > (nSegment = VariableLights (i)->m_nSegment))
+				VariableLights (i)->m_nSegment = Segment (nSegment)->m_info.nIndex; 
+			else 
+				VariableLights (i)->m_nSegment = 0; // int object segment number
+			}
+
+		// replace secret cubenum with real number
+		if (Count () > (nSegment = (ushort) SecretSegment ()))
+			SecretSegment () = Segment (nSegment)->m_info.nIndex; 
+		else
+			SecretSegment () = 0; // int secret cube number
+
+		// move remaining Segment () down by 1
+  }
+#if 1
+		if (int segC = (--Count () - nDelSeg)) {
+			memcpy (Segment (nDelSeg), Segment (nDelSeg + 1), segC * sizeof (CSegment));
+			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CColor));
+			}
+#else
+		for (nSegment = nDelSeg; nSegment < (Count ()-1); nSegment++) {
+			segP = Segment (nSegment); 
+			childSegP = Segment (nSegment + 1); 
+			memcpy(segP, childSegP, sizeof (CSegment)); 
+			}
+  Count ()-- ; 
+#endif
+
+
+  // delete all unused vertices
+  vertexManager.DeleteUnused (); 
+
+  // make sure current segment numbers are valid
+  if (selections [0].m_nSegment >= Count ()) 
+	  selections [0].m_nSegment--; 
+  if (selections [1].m_nSegment >= Count ()) 
+	  selections [1].m_nSegment--; 
+  if (selections [0].m_nSegment < 0) 
+	  selections [0].m_nSegment = 0; 
+  if (selections [1].m_nSegment < 0) 
+	  selections [1].m_nSegment = 0; 
+DLE.MineView ()->Refresh (false); 
+DLE.ToolView ()->Refresh (); 
+undoManager.Unlock ();
 }
 
 // ----------------------------------------------------------------------------- 

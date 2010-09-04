@@ -5991,6 +5991,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\SegmentManager.IO.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\SegmentManager.Join.cpp"
 					>
 				</File>

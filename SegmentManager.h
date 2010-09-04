@@ -194,7 +194,7 @@ class CSegmentManager {
 
 		bool IsMarked (short nSegment);
 
-		bool IsMarked (short nSegment, short nSide);
+		bool IsMarked (CSideKey key);
 
 		short	MarkedCount (bool bCheck = false);
 
@@ -240,9 +240,9 @@ class CSegmentManager {
 
 		void DeleteBlock ();
 
-		void ReadSegments (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void ReadSegments (CFileManager& fp, int nFileVersion);
 		
-		void WriteSegments (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void WriteSegments (CFileManager& fp, int nFileVersion);
 		
 		void ReadMatCens (CFileManager& fp, int nFileVersion, int nClass);
 		
@@ -255,6 +255,8 @@ class CSegmentManager {
 		void ReadEquipMakers (CFileManager& fp, int nFileVersion);
 		
 		void WriteEquipMakers (CFileManager& fp, int nFileVersion);
+
+		void Clear (void);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

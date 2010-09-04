@@ -411,10 +411,9 @@ for (short i = 0; i < Count (0); i++)
 
 void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
-if (info.offset < 0)
+if (m_info [0].offset < 0)
 	return;
-Count (0) = info.count;
-for (short i = 0; i < info.count; i++) {
+for (short i = 0; i < Count (0); i++) {
 	m_triggers [0][i].Read (fp, nFileVersion, false);
 	m_triggers [0][i].m_nIndex = i;
 	}
@@ -453,15 +452,14 @@ else {
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CTriggerManager::Write (CFileManager& fp, int nFileVersion)
 {
-info.count = Count (0);
 if (Count (0) + Count (1) == 0)
-	info.offset = -1;
+	m_info [0].offset = -1;
 else {
 	short i;
 
-	info.offset = fp.Tell ();
+	m_info [0].offset = fp.Tell ();
 
 	for (i = 0; i < Count (0); i++)
 		m_triggers [0][i].Write (fp, nFileVersion, false);
@@ -481,10 +479,10 @@ else {
 
 // ----------------------------------------------------------------------------- 
 
-void CTriggerManager::Clear (int nType)
+void CTriggerManager::Clear (int nClass)
 {
-for (int i = 0; i < Count (nType); i++)
-	m_triggers [nType][i].Clear ();
+for (int i = 0; i < Count (nClass); i++)
+	m_triggers [nClass][i].Clear ();
 }
 
 // ----------------------------------------------------------------------------- 

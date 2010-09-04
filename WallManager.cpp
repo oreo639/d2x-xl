@@ -373,9 +373,11 @@ for (short i = 0; i < Count (); i++)
 
 void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
-for (short i = 0; i < Count (0); i++) {
-	m_walls [i].Read (fp, nFileVersion);
-	m_walls [i].m_nIndex = i;
+if (m_info.offset >= 0) {
+	for (short i = 0; i < Count (0); i++) {
+		m_walls [i].Read (fp, nFileVersion);
+		m_walls [i].m_nIndex = i;
+		}
 	}
 }
 
@@ -383,9 +385,13 @@ for (short i = 0; i < Count (0); i++) {
 
 void CWallManager::WriteWalls (CFileManager& fp, int nFileVersion)
 {
-m_info [0].offset = fp.Tell ();
-for (short i = 0; i < Count (); i++)
-	m_walls [i].Write (fp, nFileVersion);
+if (Count (0) == 0)
+	m_info [0].offset = -1;
+else {
+	m_info [0].offset = fp.Tell ();
+	for (short i = 0; i < Count (); i++)
+		m_walls [i].Write (fp, nFileVersion);
+	}
 }
 
 // ----------------------------------------------------------------------------- 
