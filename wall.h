@@ -72,7 +72,7 @@ public:
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
-	void Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
+	void Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
 	void SetTextures (short nTexture);
 
 	bool IsDoor (void);

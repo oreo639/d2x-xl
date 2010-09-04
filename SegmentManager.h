@@ -57,34 +57,45 @@ class CSegmentManager {
 
 		inline CSegment *Segment (int i) { return &m_segments [i]; }
 
+		inline CSegment *Segment (CSideKey& key) { return Segment (key.m_nSegment); }
+
 		inline CSide* Side (CSideKey key) {
 			current.Get (key);
 			return &Segment (key.m_nSegment)->m_sides [key.m_nSide];
 			}
 
-		inline CSide* Side (short nSegment = -1, short nSide = -1) {
-			current.Get (nSegment, nSide);
-			return &Segment (nSegment)->m_sides [nSide];
+		inline CSide* Side (void) { return Side (CSideKey ()); }
+		//inline CSide* Side (short nSegment = -1, short nSide = -1) {
+		//	current.Get (nSegment, nSide);
+		//	return &Segment (nSegment)->m_sides [nSide];
+		//	}
+
+		//CSide* OppositeSide (short nSegment = -1, short nSide = -1);
+
+		CSide* OppositeSide (CSideKey key, CSideKey& opp);
+
+		inline CSide* OppositeSide (CSideKey& opp) { return OppositeSide (CSideKey (), opp); }
+		//CSide* OppositeSide (CSideKey opp, CSideKey& key, short nSegment = -1, short nSide = -1);
+
+		//inline CWall* Wall (short nSegment = -1, short nSide = -1) {
+		inline CWall* Wall (CSideKey key) { return Side (key)->Wall (); }
+
+		inline CWall* Wall (void) { return Wall (CSideKey ()); }
+
+		//inline CTrigger* Trigger (short nSegment = -1, short nSide = -1) {
+		inline CTrigger* Trigger (CSideKey key) { return Side (key)->Trigger (); }
+
+		inline CTrigger* Trigger (void) { return Trigger(CSideKey ()); }
+
+		//inline CWall* OppositeWall (short nSegment = -1, short nSide = -1) {
+		inline CWall* OppositeWall (CSideKey key) {
+			CSide* sideP = Side (key);
+			return (sideP == null) ? null : Side (key)->Wall ();
 			}
 
-		CSide* OppositeSide (short nSegment = -1, short nSide = -1);
+		inline CWall* OppositeWall (void) { return OppositeWall (CSideKey ()); }
 
-		bool OppositeSide (CSideKey& key, short nSegment = -1, short nSide = -1);
-
-		inline CWall* Wall (short nSegment = -1, short nSide = -1) {
-			return Side (nSegment, nSide)->Wall ();
-			}
-
-		inline CTrigger* Trigger (short nSegment = -1, short nSide = -1) {
-			return Side (nSegment, nSide)->Trigger ();
-			}
-
-		inline CWall* OppositeWall (short nSegment = -1, short nSide = -1) {
-			CSide* sideP = Side (nSegment, nSide);
-			return (sideP == null) ? null : Side (nSegment, nSide)->Wall ();
-			}
-
-		void Textures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
+		void Textures (CSideKey key, short& nBaseTex, short& nOvlTex);
 
 		inline robotMakerList& BotGens (void) { return m_robotMakers; }
 		
@@ -101,60 +112,94 @@ class CSegmentManager {
 
 		// Operations
 		short Add (void);
+
 		bool Create (void);
+
 		void Delete (short nDelSeg = -1);
+
 		void ResetSide (short nSegment, short nSide);
 
 		bool CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+
 		bool CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+
 		bool CreateEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+
 		bool CreateFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
+
 		bool CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+
 		bool CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+
 		bool CreateSpeedBoost (short nSegment, bool bCreate);
+
 		bool CreateSkybox (short nSegment, bool bCreate);
 
 		void Init (short nSegment);
+
 		bool Split (void);
+
 		bool Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin);
+
 		void CalcCenter (CVertex& pos, short nSegment);
 
 		bool IsPointOfSide (CSegment *segP, int nSide, int nPoint);
+
 		bool IsLineOfSide (CSegment *segP, int nSide, int nLine);
 
 		void JoinSegments (int automatic = 0);
+
 		void SplitSegments (int solidify = 0, int nSide = -1);
+
 		void JoinLines (void);
+
 		void JoinPoints (void);
+
 		void SplitLines (void);
+
 		void SplitPoints (void);
 
 		CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
+
 		CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
 		//double CalcLength (CFixVector* center1, CFixVector* center2);
 
 		void FixChildren (void);
+
 		void UpdateWall (short nOldWall, short nNewWall);
+
 		void UpdateVertex (short nOldVert, short nNewVert);
 
 		void Mark (short nSegment);
+
 		void UpdateMarked (void);
+
 		bool IsMarked (short nSegment);
+
 		bool IsMarked (short nSegment, short nSide);
+
 		short	MarkedCount (bool bCheck = false);
+
 		bool HaveMarkedSegments (void) { return MarkedCount (true) > 0; }
+
 		bool HaveMarkedSides (void);
 
 		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, bool bAlign1st, bool bAlign2nd, char bAlignedSides = 0);
 
 		CSide* OppSide (void);
+
 		bool SetTextures (short nSegment, short nSide, short nBaseTex, short nOvlTex);
+
 		void CopyOtherSegment (void);
+
 		void RenumberBotGens (void);
+
 		void RenumberEquipGens (void);
 
 		bool SetDefaultTexture (short nTexture = -1, short wallType = -1);
+
 		bool DefineSegment (short nSegment, byte type, short nTexture, short wallType = -1);
+
 		void UndefineSegment (short nSegment);
 
 		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
@@ -162,15 +207,23 @@ class CSegmentManager {
 		void SetLinesToDraw (void);
 
 		short ReadSegmentInfo (CFileManager& fp);
+
 		void WriteSegmentInfo (CFileManager& fp, short);
+
 		void CutBlock ();
+
 		void CopyBlock (char *filename = null);
+
 		void PasteBlock (); 
+
 		int ReadBlock (char *name,int option); 
+
 		void QuickPasteBlock ();
+
 		void DeleteBlock ();
 
 		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+
 		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
 
 	private:

@@ -22,13 +22,14 @@
 //       if nClip == -2, then texture is applied to nOvlTex instead
 //------------------------------------------------------------------------------
 
-void CWall::Setup (short nSegment, short nSide, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine) 
+void CWall::Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine) 
 {
 undoManager.SetModified (true);
 undoManager.Lock ();
 // define new wallP
-m_nSegment = nSegment;
-m_nSide = nSide;
+this->CSideKey = key;
+//m_nSegment = nSegment;
+//m_nSide = nSide;
 m_info.type = type;
 if (!bRedefine) {
 	m_info.nTrigger = NO_TRIGGER;

@@ -765,17 +765,16 @@ segP->m_info.wallFlags &= ~MARKED_MASK;
 // update total number of vertices
 vertexManager.Status (VertCount ()++) = 0; 
 
-int nSide;
-for (nSide = 0; nSide < 6; nSide++)
+for (short nSide = 0; nSide < 6; nSide++) {
 	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]) &&
 		 OppositeSide (nOppSeg, nOppSide, current.m_nSegment, nSide)) {
 		UnlinkChild (segP->GetChild (nSide), oppSideTable [nSide]);
 		UnlinkChild (current.m_nSegment, nSide); 
 		}
+	}	
+UnlinkChild (current.m_nSegment, nSide); 
 
-	UnlinkChild(current.m_nSegment, nSide); 
-
-SetLinesToDraw(); 
+SetLinesToDraw (); 
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 

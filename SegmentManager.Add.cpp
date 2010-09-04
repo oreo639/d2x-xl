@@ -83,7 +83,7 @@ short index = lightManager.GetVariableLight (current.m_nSegment, nCurSide);
 if (index != -1) {
 	lightManager.Count ()--; 
 	// put last light in place of deleted light
-	memcpy( VariableLights (index), VariableLights (lightManager.Count ()), sizeof (CVariableLight)); 
+	memcpy (lightManager.VariableLight (index), lightManager.VariableLight (lightManager.Count ()), sizeof (CVariableLight)); 
 	}
 
 // update current segment

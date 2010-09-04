@@ -148,7 +148,7 @@ if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger\nsince the maximum number of walls is already reached.");
 			return null;
 			}
-		wallP = wallManager.Create (-1, -1, (current.Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
+		wallP = wallManager.Create (CSideKey (), (current.Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
 			undoManager.ResetModified (bUndo);
@@ -519,7 +519,7 @@ if (!HaveResources ())
 // make a new wall and a new trigger
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (wallManager.Create (current.m_nSegment, current.m_nSide, (byte) wallType, wallFlags, KEY_NONE, -1, -1) &&
+if (wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1) &&
 	 AddToWall (wallManager.Count (0) - 1, triggerType, false)) {
 	Trigger (Count (0) - 1)->Add (other.m_nSegment, other.m_nSide);
 	undoManager.Unlock ();
