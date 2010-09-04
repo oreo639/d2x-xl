@@ -350,7 +350,7 @@ m_filter.Setup ();
 
 afx_msg BOOL CTextureView::OnEraseBkgnd (CDC* pDC)
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return FALSE;
 
    CRect    rc;

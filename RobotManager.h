@@ -54,6 +54,8 @@ class CRobotManager {
 		int ReadHXM (CFileManager& fp, long size); 
 	};
 
+extern CRobotManager robotManager;
+
 //------------------------------------------------------------------------
 
 #endif //__botman_h

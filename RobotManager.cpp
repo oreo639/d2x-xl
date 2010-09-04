@@ -11,6 +11,8 @@
 #include "Mine.h"
 #include "ResourceManager.h"
 
+CRobotManager robotManager;
+
 //------------------------------------------------------------------------------
 
 #define MAKESIG(_sig)	(uint) *((int *) &(_sig))

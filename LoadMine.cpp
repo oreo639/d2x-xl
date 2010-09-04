@@ -34,7 +34,7 @@
 
 short CMine::Load (const char *szFile, bool bLoadFromHog)
 {
-if ((theMine == null))
+if (theMine == null)
 	return 0;
 
 	char filename [256];

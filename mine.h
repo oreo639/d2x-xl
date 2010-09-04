@@ -220,8 +220,8 @@ class CMine {
 
 extern CMine* theMine;
 
-#define CHECKMINE			if ((theMine == null)) return;
-#define CHECKMINEV(_v)	if ((theMine == null)) return (_v);
+#define CHECKMINE			if (theMine == null) return;
+#define CHECKMINEV(_v)	if (theMine == null) return (_v);
 #define CHECKMINEF		CHECKMINE(FALSE);
 
 #endif //__mine_h

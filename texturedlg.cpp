@@ -375,7 +375,7 @@ for (i = 0; i < nTextures; i++) {
 
 bool CTextureTool::SideHasLight (void)
 {
-if ((theMine == null)) return false;
+if (theMine == null) return false;
 
 if	((theMine->IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
 	 (((current.Side ()->m_info.nOvlTex & 0x3fff) != 0) &&
@@ -411,7 +411,7 @@ else {
 
 void CTextureTool::OnPaint ()
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return;
 CTexToolDlg::OnPaint ();
 #if TEXTOOLDLG == 0

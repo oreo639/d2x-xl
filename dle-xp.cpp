@@ -253,7 +253,7 @@ BOOL CDlcApp::InitInstance()
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNew;
 	if (!ProcessShellCommand (cmdInfo))
 		return FALSE;
-	if ((theMine == null))
+	if (theMine == null)
 		theMine = new CMine;
 	textureManager.Setup ();
 	theMine->Load ();

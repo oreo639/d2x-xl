@@ -183,11 +183,6 @@ protected: // create from serialization only
 					m_yRenderOffs;
 	int			m_nViewDist;
 	int			m_nMineCenter;
-#if _DEBUG
-	CStaticArray< CPolyModel, MAX_POLYGON_MODELS > m_polyModels;
-#else
-	CPolyModel	m_polyModels [MAX_POLYGON_MODELS];
-#endif
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context
@@ -273,13 +268,6 @@ public:
 	void	DrawHighlight (short clear_it = 0);
 	void  DrawSpline (void);
 
-	CPolyModel* RenderModel (CGameObject* objP);
-	int	SetupModel(CGameObject *objP); // poly.c
-	void	SetModelPoints(int start, int end);
-	void	DrawModel();      // poly.c
-	void	InterpModelData(byte *model_data); // poly.c
-	void	DrawPoly (tModelRenderData *p);
-	int ReadModelData (char* filename, char* szSubFile, bool bCustom = false);
 	//void	ReadPolyModel (tPolyModel& polyModel, CFileManager& file);
 
 	// view control functions

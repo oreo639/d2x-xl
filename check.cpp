@@ -393,7 +393,7 @@ return true;
 
 bool CDiagTool::CheckSegTypes (void) 
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 	short	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
@@ -436,7 +436,7 @@ return false;
 
 bool CDiagTool::CheckSegments (void) 
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
   short nSegment, nSide, nChild, nSide2, pointnum;
@@ -569,7 +569,7 @@ return false;
 
 bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players)
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 int id = theMine->Objects (nObject)->m_info.id;
@@ -601,7 +601,7 @@ return true;
 
 bool CDiagTool::CheckObjects () 
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 	int				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
@@ -922,7 +922,7 @@ return false;
 
 bool CDiagTool::CheckTriggers ()
  {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 	int count, nTrigger, deltrignum, nWall, i;
@@ -1336,7 +1336,7 @@ return nMatCens;
 
 bool CDiagTool::CheckBotGens (void)
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 	short					h = segmentManager.Count (), i, nSegment = 0;
@@ -1404,7 +1404,7 @@ return theMine->Walls (nWall);
 
 bool CDiagTool::CheckWalls (void) 
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 	short nSegment,nSide;
@@ -1725,7 +1725,7 @@ return false;
 
 bool CDiagTool::CheckVertices (void) 
 {
-if ((theMine == null)) 
+if (theMine == null) 
 	return false;
 
 //  bool found;
