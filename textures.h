@@ -256,8 +256,8 @@ public:
 	void Load (CFileManager& fp, CPigTexture& info);
 	double Scale (short index = -1);
 
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) { };
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false) { };
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 

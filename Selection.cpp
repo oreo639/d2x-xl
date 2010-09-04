@@ -1,20 +1,23 @@
+
+#include "selection.h"
 #include "TriggerManager.h"
 #include "WallManager.h"
 #include "SegmentManager.h"
+#include "ObjectManager.h"
 #include "VertexManager.h"
-#include "selection.h"
+#include "LightManager.h"
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 CSelection selections [2];
-CSelection& current = selection [0];
-CSelection& other = selection [1];
+CSelection& current = selections [0];
+CSelection& other = selections [1];
 
 // -----------------------------------------------------------------------------
 
-void CSelection::Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1) 
+void CSelection::Setup (short nSegment, short nSide, short nLine, short nPoint) 
 {
 if (nSegment >= 0) 
 	m_nSegment = nSegment;
@@ -57,7 +60,7 @@ return segmentManager.GetSegment (m_nSegment);
 
 short CSelection::Child (void)
 {
-return Segment ()->Child (m_nSide);
+return Segment ()->GetChild (m_nSide);
 }
 
 // -----------------------------------------------------------------------------
@@ -91,7 +94,7 @@ return objectManager.GetObject (m_nObject);
 
 // -----------------------------------------------------------------------------
 
-CVertex CSelection::Vertex (void)
+CVertex* CSelection::Vertex (void)
 {
 return vertexManager.GetVertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m_nPoint]]); 
 }

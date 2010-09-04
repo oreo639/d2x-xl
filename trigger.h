@@ -56,9 +56,9 @@ public:
 	struct tTrigger m_info;
 	//inline CSideKey& operator[](uint i) { return targets [i]; }
 
-	virtual void Read (CFileManager& fp, int version, bool bObjTrigger);
+	void Read (CFileManager& fp, int version, bool bObjTrigger);
 
-	virtual void Write (CFileManager& fp, int version, bool bObjTrigger);
+	void Write (CFileManager& fp, int version, bool bObjTrigger);
 
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 

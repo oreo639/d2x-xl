@@ -33,7 +33,9 @@ public:
 	CSide* Side (void);
 	CWall* Wall (void);
 	CGameObject* Object (void);
+	CVertex* Vertex (void);
 	CColor* CurrLightColor (void);
+	void Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1);
 };
 
 extern CSelection selections [2];

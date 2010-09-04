@@ -8,6 +8,7 @@
 
 #include "Vector.h"
 #include "cfile.h"
+#include "carray.h"
 
 #define MAX_LIGHT_DEPTH 6
 
@@ -52,8 +53,8 @@ class CLightDeltaValue : public CSideKey, public CGameItem {
 public:
 	tLightDeltaValue m_info;
 
-	virtual void Read (CFileManager& fp, short version = 0, bool bFlag = false);
-	virtual void Write (CFileManager& fp, short version = 0, bool bFlag = false);
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
@@ -76,8 +77,8 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 public:
 	tLightDeltaIndex m_info;
 
-	virtual void Read (CFileManager& fp, short version, bool bD2X);
-	virtual void Write (CFileManager& fp, short version, bool bD2X);
+	void Read (CFileManager& fp, int version, bool bD2X);
+	void Write (CFileManager& fp, int version, bool bD2X);
 	virtual void Clear (void) { 
 		memset (&m_info, 0, sizeof (m_info)); 
 		CSideKey::Clear ();
@@ -136,10 +137,10 @@ typedef CColor vertexColorList [VERTEX_LIMIT];
 
 class CLightManager {
 	private:
-		variableLightList		variableLights;
+		variableLightList		m_variableLights;
 		short						m_nCount;
-		lightDeltaIndexList	lightDeltaIndices;
-		lightDeltaValueList	lightDeltaValues;
+		lightDeltaIndexList	m_lightDeltaIndices;
+		lightDeltaValueList	m_lightDeltaValues;
 
 		lightColorList			m_lightColors;
 		texColorList			m_texColors;
@@ -165,23 +166,25 @@ class CLightManager {
 
 		inline CLightDeltaValue* GetLightDeltaValue (short i) { return &m_lightDeltaValues [i]; }
 
-		inline CVariableLight* GetVariableLight (short i) { return &m_variableLights [i]; }
+		//inline CVariableLight* GetVariableLight (short i) { return &m_variableLights [i]; }
 
 		inline CColor* GetVertexColor (int i) { return &m_vertexColors [i]; }
 
-		inline CColor* GetTexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
+		//inline CColor* GetTexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
 
 		inline long* LightMap (int i = 0) { return &m_lightMap [i]; }
 
+		inline short& Count (void) { return m_nCount; }
+
 		inline void SetTexColor (short nBaseTex, CColor *pc)	{
 			if (UseTexColors () && (IsLight (nBaseTex) != -1))
-			*TexColors (nBaseTex) = *pc;
+			m_texColors [nBaseTex] = *pc;
 			}
 
-		inline CColor *GetTexColor (short nBaseTex, bool bIsTranspWall = false)	
-			{ return UseTexColors () && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? TexColors (nBaseTex) : null; }
+		inline CColor* GetTexColor (short nBaseTex, bool bIsTranspWall)	
+			{ return m_bUseTexColors && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? &m_texColors [nBaseTex] : null; }
 
 		inline lightColorList& LightColors (void) { return m_lightColors; }
 
@@ -201,6 +204,8 @@ class CLightManager {
 							  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
 		void IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale);
 
+		int FindLight (int nTexture, tTextureLight* texLightP, int nLights);
+
 		int IsLight (int nBaseTex);
 		bool IsBlastableLight (int nBaseTex);
 		bool IsVariableLight (short nSegment, short nSide);
@@ -214,10 +219,10 @@ class CLightManager {
 		int IsExplodingLight(int nBaseTex);
 
 		void CreateLightMap (void);
-		int ReadLightMap (CFileManager& fp, uint nSize);
-		int WriteLightMap (CFileManager& fp);
-		short WriteColorMap (CFileManager& fp);
-		short ReadColorMap (CFileManager& fp);
+		void ReadLightMap (CFileManager& fp, uint nSize);
+		void WriteLightMap (CFileManager& fp);
+		void WriteColorMap (CFileManager& fp);
+		void ReadColorMap (CFileManager& fp);
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);

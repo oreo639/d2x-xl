@@ -65,8 +65,6 @@ extern long ScrnMemMax;
 extern int ScrnWidth;
 extern int ScrnHeight;
 extern int m_fileType;
-extern CLightDeltaIndex *lightDeltaIndices;
-extern CLightDeltaValue *lightDeltaValues;
 extern short num_static_lights;
 extern char string [256];
 extern short nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;

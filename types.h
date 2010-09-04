@@ -15,8 +15,6 @@ class CGameItem {
 public:
 	short m_nIndex;
 
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) = 0;
 	virtual void Clear (void) = 0;
 
 };
@@ -102,8 +100,8 @@ public:
 	tColor	m_info;
 
 
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
@@ -193,76 +191,6 @@ struct sub {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-
-// New stuff, 10/14/95: For shooting out lights and monitors.
-// Light cast upon vert_light vertices in nSegment:nSide by some light
-
-typedef struct tLightDeltaValue {
-	byte vertLight [4];
-} tLightDeltaValue;
-
-class CLightDeltaValue : public CSideKey, public CGameItem {
-public:
-	tLightDeltaValue m_info;
-
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Clear (void) { 
-		memset (&m_info, 0, sizeof (m_info)); 
-		CSideKey::Clear ();
-		}
-};
-
-// Light at nSegment:nSide casts light on count sides beginning at index (in array CLightDeltaValues)
-typedef struct tLightDeltaIndex {
-	ushort count;
-	ushort index;
-} tLightDeltaIndex;
-
-class CLightDeltaIndex : public CSideKey, public CGameItem {
-public:
-	tLightDeltaIndex m_info;
-
-	virtual void Read (CFileManager& fp, int version, bool bD2X);
-	virtual void Write (CFileManager& fp, int version, bool bD2X);
-	virtual void Clear (void) { 
-		memset (&m_info, 0, sizeof (m_info)); 
-		CSideKey::Clear ();
-		}
-};
-
-//extern CLightDeltaIndex    Dl_indices[MAX_LIGHT_DELTA_INDICES];
-//extern CLightDeltaValue CLightDeltaValues[MAX_LIGHT_DELTA_VALUES];
-//extern int	     Num_static_lights;
-
-typedef struct tVariableLight {
-	uint mask;    // bits with 1 = on, 0 = off
-	int timer;		 // always set to 0
-	int delay;      // time for each bit in mask (int seconds)
-} tVariableLight;
-
-class CVariableLight : public CSideKey {
-public:
-	tVariableLight m_info;
-
-	void Read (CFileManager& fp) {
-		CSideKey::Read (fp);
-		m_info.mask = fp.ReadInt32 ();
-		m_info.timer = fp.ReadInt32 ();
-		m_info.delay = fp.ReadInt32 ();
-		}
-
-	void Write (CFileManager& fp) {
-		CSideKey::Write (fp);
-		fp.Write (m_info.mask);
-		fp.Write (m_info.timer);
-		fp.Write (m_info.delay);
-		}
-	void Clear (void) {
-		memset (&m_info, 0, sizeof (m_info));
-		CSideKey::Clear ();
-		}
-};
 
 #define MAX_LEVELS	1000
 

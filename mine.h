@@ -17,8 +17,10 @@
 #include "ObjectManager.h"
 #include "TunnelMaker.h"
 #include "BlockManager.h"
+#include "LightManager.h"
 #include "HogManager.h"
 #include "UndoManager.h"
+#include "ResourceManager.h"
 
 #ifdef _DEBUG
 

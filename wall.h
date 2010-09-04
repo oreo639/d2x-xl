@@ -101,8 +101,8 @@ class CDoor : public CGameItem {
 public:
 	tDoor	m_info;
 
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 
@@ -124,8 +124,8 @@ class CCloakingWall : public CGameItem {    // NEW for Descent 2
 public:
 	tCloakingWall m_info;
 
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 };
 

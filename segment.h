@@ -146,9 +146,9 @@ public:
 
 	void SetUV (short nSide, short x, short y);
 
-	virtual void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
 
-	virtual void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 
 	inline CSide* GetSide (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 

@@ -601,63 +601,6 @@ return nSegment;
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-int CLightDeltaValue::Read (CFileManager& fp, int version, bool bFlag)
-{
-m_nSegment = fp.ReadInt16 ();
-m_nSide = fp.ReadSByte ();
-fp.ReadSByte ();
-for (int i = 0; i < 4; i++)
-	m_info.vertLight [i] = fp.ReadSByte ();
-return 1;
-}
-
-// -----------------------------------------------------------------------------
-
-void CLightDeltaValue::Write (CFileManager& fp, int version, bool bFlag)
-{
-fp.Write (m_nSegment);
-fp.WriteSByte ((sbyte) m_nSide);
-fp.WriteByte (0);
-for (int i = 0; i < 4; i++)
-	fp.Write (m_info.vertLight [i]);
-}
-
-// -----------------------------------------------------------------------------
-
-int CLightDeltaIndex::Read (CFileManager& fp, int version, bool bD2X)
-{
-m_nSegment = fp.ReadInt16 ();
-if (bD2X) {
-	ushort h = fp.ReadInt16 ();
-	m_nSide = h & 7;
-	m_info.count = h >> 3;
-	}
-else {
-	m_nSide = fp.ReadSByte ();
-	m_info.count = fp.ReadSByte ();
-	}
-m_info.index = fp.ReadInt16 ();
-return 1;
-}
-
-// -----------------------------------------------------------------------------
-
-void CLightDeltaIndex::Write (CFileManager& fp, int version, bool bD2X)
-{
-fp.Write (m_nSegment);
-if (bD2X)
-	fp.WriteInt16 ((m_nSide & 7) | (m_info.count << 3));
-else {
-	fp.WriteSByte ((sbyte) m_nSide);
-	fp.WriteSByte ((sbyte) m_info.count);
-	}
-fp.Write (m_info.index);
-}
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
 int CRobotMaker::Read (CFileManager& fp, int version, bool bFlag)
 {
 m_info.objFlags [0] = fp.ReadInt32 ();
