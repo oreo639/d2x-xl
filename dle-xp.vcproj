@@ -6397,6 +6397,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Vector.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ViewMatrix.cpp"
 					>
 				</File>
@@ -6707,10 +6711,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\Vector.cpp"
-					>
-				</File>
-				<File
 					RelativePath="WALL.CPP"
 					>
 					<FileConfiguration
@@ -6890,6 +6890,10 @@
 				</File>
 				<File
 					RelativePath=".\SegmentManager.Mark.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SegmentManager.MatCens.cpp"
 					>
 				</File>
 				<File
