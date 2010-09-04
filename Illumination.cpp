@@ -1,17 +1,6 @@
 // Copyright (C) 1997 Bryan Aamot
-#include "stdafx.h"
-#include <windows.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-#include "define.h"
-#include "Illumination.h"
-#include "global.h"
-#include "SegmentManager.h"
-#include "VertexManager.h"
-#include "WallManager.h"
-#include "TextureManager.h"
+#include "mine.h"
+#include "dle-xp.h"
 
 // external globals
 extern int bEnableDeltaShading; // uvls.cpp

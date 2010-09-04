@@ -1,13 +1,5 @@
-#include <assert.h>
-#include <stdafx.h>
 
-#include "textures.h"
-#include "cfile.h"
-#include "dle-xp-res.h"
-#include "global.h"
-#include "palette.h"
-#include "customtextures.h"
-#include "TextureManager.h"
+#include "mine.h"
 #include "dle-xp.h"
 
 CTextureManager textureManager;
@@ -463,7 +455,7 @@ return 0;
 
 void CTextureManager::MarkUsedTextures (void)
 {
-	CSegment* segP = theMine->Segments (0);
+	CSegment* segP = segmentManager.GetSegment (0);
 	int nVersion = DLE.IsD1File () ? 0 : 1;
 	int i, j, h = MaxTextures (nVersion);
 

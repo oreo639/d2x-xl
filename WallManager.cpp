@@ -219,7 +219,7 @@ return CreateDoor (WALL_BLASTABLE, 0, 0, -1, -1);
 
 bool CWallManager::CreateGuideBotDoor (void) 
 {
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
 	ErrorMsg ("Guide bot doors are not available in Descent 1");
 	return false;
   }
@@ -230,7 +230,7 @@ return CreateDoor (WALL_BLASTABLE, 0, 0, 46, -1);
 
 bool CWallManager::CreateFuelCell (void) 
 {
-return CreateDoor (WALL_ILLUSION, 0, 0, -1, theMine->IsD1File () ? 328 : 353);
+return CreateDoor (WALL_ILLUSION, 0, 0, -1, DLE.IsD1File () ? 328 : 353);
 }
 
 //------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ return CreateDoor (WALL_ILLUSION, 0, 0, -1, 0);
 
 bool CWallManager::CreateForceField (void) 
 {
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
 	ErrorMsg ("Force fields are not supported in Descent 1");
    return false;
 	}
@@ -255,14 +255,14 @@ return CreateDoor (WALL_CLOSED, 0, 0, -1, 420);
 
 bool CWallManager::CreateFan (void)
 {
-return CreateDoor (WALL_CLOSED, 0, 0, -2, theMine->IsD1File () ? 325 : 354);
+return CreateDoor (WALL_CLOSED, 0, 0, -2, DLE.IsD1File () ? 325 : 354);
 }
 
 //------------------------------------------------------------------------------
 
 bool CWallManager::CreateWaterFall (void)
 {
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
 	ErrorMsg ("Water falls are not supported in Descent 1");
    return false;
 	}
@@ -273,7 +273,7 @@ return CreateDoor (WALL_ILLUSION, 0, 0, -1, 401);
 
 bool CWallManager::CreateLavaFall (void) 
 {
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
 	ErrorMsg ("Lava falls are not supported in Descent 1");
    return false;
 	}
@@ -284,7 +284,7 @@ return CreateDoor (WALL_ILLUSION, 0, 0, -1, 408);
 
 bool CWallManager::CreateGrate (void) 
 {
-return CreateDoor (WALL_CLOSED, 0, 0, -2, theMine->IsD1File () ? 246 : 321);
+return CreateDoor (WALL_CLOSED, 0, 0, -2, DLE.IsD1File () ? 246 : 321);
 }
 
 //------------------------------------------------------------------------------
@@ -306,14 +306,14 @@ undoManager.Lock ();
 if (Create (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	GetWall (Count ()- 1)->m_info.nClip = 10;
-	segmentManager.SetTextures (current.m_nSegment, current.m_nSide, 0, theMine->IsD1File () ? 444 : 508);
+	segmentManager.SetTextures (current.m_nSegment, current.m_nSide, 0, DLE.IsD1File () ? 444 : 508);
 	triggerManager.Create (Count () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.GetOppositeSide (opp) && Create (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
 		GetWall (Count () - 1)->m_info.nClip = 10;
-		segmentManager.SetTextures (opp.m_nSegment, opp.m_nSide, 0, theMine->IsD1File () ? 444 : 508);
+		segmentManager.SetTextures (opp.m_nSegment, opp.m_nSide, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();
 		DLE.MineView ()->Refresh ();
@@ -328,7 +328,7 @@ return false;
 
 bool CWallManager::CreateSecretExit (void) 
 {
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
     CreateExit (TT_SECRET_EXIT);
 	 return false;
 	}

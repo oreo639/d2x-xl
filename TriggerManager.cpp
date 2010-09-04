@@ -162,7 +162,7 @@ if (wallP == null) {
 	}
 // if D1, then convert type to flag value
 ushort flags;
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
 	switch(type) {
 		case TT_OPEN_DOOR:
 			flags = TRIGGER_CONTROL_DOORS;
@@ -592,7 +592,7 @@ return AutoAddTrigger (WALL_OPEN, 0, TT_ENERGY_DRAIN);
 
 bool CTriggerManager::AddUnlock (void) 
 {
-if (theMine->IsD1File ()) {
+if (DLE.IsD1File ()) {
    ErrorMsg ("Control Panels are not supported in Descent 1.");
    return false;
 	}

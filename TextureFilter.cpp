@@ -520,12 +520,12 @@ else {
 
 	memset (filterP, 0, (MAX_TEXTURES_D2 + 7) / 8);
 	m_nTextures [0] = 0;
-	for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++)
+	for (nSegment = 0, segP = segmentManager.GetSegment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
       for (nSide = 0; nSide < 6; nSide++) {
 			ushort nWall = segP->m_sides [nSide].m_info.nWall;
 			if ((segP->GetChild (nSide) == -1) ||
 				 (nWall < theMine->Info ().walls.count && 
-				  theMine->Walls (nWall)->m_info.type != WALL_OPEN)) {
+				  wallManager.GetWall (nWall)->m_info.type != WALL_OPEN)) {
 				int t = segP->m_sides [nSide].m_info.nBaseTex;
 				int i = TextureIndex (t);
 				int j = FilterIndex (t);
