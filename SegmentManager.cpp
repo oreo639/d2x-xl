@@ -23,7 +23,7 @@ CSegmentManager segmentManager;
 
 // ------------------------------------------------------------------------- 
 
-void CSegmentManager::CalcSegCenter (CVertex& pos, short nSegment) 
+void CSegmentManager::CalcCenter (CVertex& pos, short nSegment) 
 {
   short	*nVerts = Segment (nSegment)->m_info.verts; 
   
@@ -70,54 +70,34 @@ return -Normal (*vertexManager.Vertex (segVertP [sideVertP [0]]),
 // Returns - TRUE on success
 // ------------------------------------------------------------------------------ 
 
-bool CSegmentManager::OppositeSide (CSideKey& opp, short nSegment, short nSide)
+CSide* CSegmentManager::OppositeSide (CSideKey key, CSideKey& opp)
 {
-  short nChildSeg, nChildSide; 
-
-current.Get (nSegment, nSide); 
+current.Get (key); 
 #ifdef _DEBUG
-if (nSegment < 0 || nSegment >= Count ())
+if (key.m_nSegment < 0 || key.m_nSegment >= Count ())
 	return false; 
-if (nSide < 0 || nSide >= 6)
+if (key.m_nSide < 0 || key.m_nSide >= 6)
 	return false; 
 #endif
-nChildSeg = Segment (nSegment)->Child (nSide); 
+short nChildSeg = Segment (key.m_nSegment)->Child (key.m_nSide); 
 if (nChildSeg < 0 || nChildSeg >= Count ())
 	return false; 
-for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-	if (Segment (nChildSeg)->Child (nChildSide) == nSegment) {
+for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
+	if (Segment (nChildSeg)->Child (nChildSide) == key.m_nSegment) {
 		opp.m_nSegment = nChildSeg; 
 		opp.m_nSide = nChildSide; 
-		return true; 
+		return Side (opp); 
 		}
 	}
-return false; 
+return null; 
 }
 
 // -----------------------------------------------------------------------------
 
-CSide* CSegmentManager::OppositeSide (short nSegment, short nSide)
+int CSegmentManager::IsWall (CSideKey key)
 {
-current.Get (nSegment, nSide);
-CSideKey opp;
-return OppositeSide (opp, nSegment, nSide) ? Side (nOppSeg, nOppSide) : null;
-}
-
-// -----------------------------------------------------------------------------
-
-int CSegmentManager::IsWall (short nSegment, short nSide)
-{
-current.Get (nSegment, nSide); 
-return (Segment (nSegment)->Child (nSide)== -1) ||
-		 (Segment (nSegment)->m_sides [nSide].m_info.nWall < MineInfo ().walls.count); 
-}
-
-// -----------------------------------------------------------------------------
-
-CWall* CSegmentManager::Wall (short nSegment, short nSide)
-{
-current.Get (nSegment, nSide);
-return wallManager.Wall (Segment (nSegment)->m_sides [nSide].m_info.nWall);
+current.Get (key); 
+return (Segment (key.m_nSegment)->Child (key.m_nSide) == -1) || (Wall (key) != null);
 }
 
 // ----------------------------------------------------------------------------- 
@@ -136,11 +116,11 @@ void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
 {
 CSegment *segP = Segment (0);
 
-for (nSegment = Count (); nSegment; nSegment--, segP++) {
+for (short nSegment = Count (); nSegment; nSegment--, segP++) {
 	short* vertP = segP->m_info.verts;
-	for (nVertex = 0; nVertex < 8; nVertex++) {
+	for (short nVertex = 0; nVertex < 8; nVertex++) {
 		if (vertP [nVertex] == nOldVert)
-			vertP [nVertex] == nNewVert;
+			vertP [nVertex] = nNewVert;
 		}
 	}
 }
@@ -149,36 +129,13 @@ for (nSegment = Count (); nSegment; nSegment--, segP++) {
 
 void CSegmentManager::UpdateWall (short nOldWall, short nNewWall)
 {
-CSegment *segP = Segments (0);
-CSide *sideP;
-
-for (int i = SegCount (); i; i--, segP++)
-	for (int j = 0, sideP = segP->m_sides; j < 6; j++, sideP++)
+CSegment *segP = Segment (0);
+for (int i = Count (); i; i--, segP++) {
+	CSide* sideP = segP->m_sides;
+	for (int j = 0; j < 6; j++, sideP++)
 		if (sideP->m_info.nWall >= nOldWall)
 			sideP->m_info.nWall = nNewWall;
-}
-
-// ----------------------------------------------------------------------------- 
-//	AddSegment()
-//
-//  ACTION - Add new segment at the end. solidifyally joins to adjacent
-//           Segment () if sides are identical.  Uses other current cube for
-//           textures.
-//
-//  Returns - TRUE on success
-//
-//  Changes - Now auto aligns u, v numbers based on parent textures
-//
-//  NEW - If there is a variable light on the current side of this segment, 
-//        it is deleted.
-//
-//        If cube is special (fuel center, robot maker, etc..) then textures
-//        are set to default texture.
-// ----------------------------------------------------------------------------- 
-
-void CSegmentManager::InitSegment (short nSegment)
-{
-Segment (nSegment)->Setup ();
+	}
 }
 
 // ----------------------------------------------------------------------------- 
@@ -221,9 +178,10 @@ segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 // update vertices's marked status
 // ..first clear all marked verts
 // ..then mark all verts for marked Segment ()
-for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++)
+segP = Segment (0);
+for (short nSegment = Count (); nSegment; nSegment--, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
-		for (nVertex = 0; nVertex < 8; nVertex++)
+		for (short nVertex = 0; nVertex < 8; nVertex++)
 			vertexManager.Status (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
 }
 
@@ -280,12 +238,13 @@ for (i = 0; i < MAX_VERTICES; i++, stat++)
 
 bool CSegmentManager::HaveMarkedSides (void)
 {
-int	nSegment, nSide; 
-
-for (nSegment = 0; nSegment < Count (); nSegment++)
-	for (nSide = 0; nSide < 6; nSide++)
-		if (SideIsMarked (nSegment, nSide))
+CSegment* segP = Segment (0);
+for (short nSegment = Count (); nSegment; nSegment--, segP++) {
+	CSide* sideP = segP->m_sides;
+	for (short nSide = 0; nSide < 6; nSide++)
+		if (sideP->IsMarked ())
 			return true;
+	}
 return false; 
 }
 
@@ -293,9 +252,9 @@ return false;
 
 short CSegmentManager::MarkedCount (bool bCheck)
 {
-	int	nSegment, nCount; 
-	CSegment *segP = Segment (0);
-for (nSegment = Count (), nCount = 0; nSegment; nSegment--, segP++)
+int nCount = 0; 
+CSegment *segP = Segment (0);
+for (short nSegment = Count (); nSegment; nSegment--, segP++)
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		if (bCheck)
 			return 1; 
@@ -537,61 +496,41 @@ return true;
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::RenumberRobotMakers (void) 
+void CSegmentManager::RenumberMatCens (byte nFunction, short nClass) 
 {
-	int		i, nMatCens, value, nSegment; 
-	CSegment	*segP; 
-
-// number "matcen"
-nMatCens = 0; 
-for (i = 0; i < MineInfo ().botGen.count; i++) {
-	nSegment = RobotMakers (i)->m_info.nSegment; 
+int h, i = 0; 
+for (h = i = 0; i < MatCenCount (nClass); i++) {
+	short nSegment = m_matCens [i].m_info.nSegment; 
 	if (nSegment >= 0) {
-		segP = Segment (nSegment); 
+		CSegment* segP = Segment (nSegment); 
 		segP->m_info.value = i; 
-		if (segP->m_info.function== SEGMENT_FUNC_ROBOTMAKER)
-			segP->m_info.nMatCen = nMatCens++; 
+		if (segP->m_info.function == nFunction)
+			segP->m_info.nMatCen = h++; 
 		}
 	}
-
 // number "value"
-value = 0; 
-for (i = 0, segP = Segment (0); i < Count (); i++, segP++)
-	if (segP->m_info.function== SEGMENT_FUNC_NONE)
+for (h = i = 0, segP = Segment (0); i < Count (); i++, segP++)
+	if (segP->m_info.function == SEGMENT_FUNC_NONE)
 		segP->m_info.value = 0; 
 	else
-		segP->m_info.value = value++; 
+		segP->m_info.value = h++; 
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegmentManager::RenumberRobotMakers (void) 
+{
+RenumberMatCens (0);
 }
 
 // -----------------------------------------------------------------------------
 
 void CSegmentManager::RenumberEquipGens (void) 
 {
-	int		i, nMatCens, value, nSegment; 
-	CSegment	*segP; 
-
-// number "matcen"
-nMatCens = 0; 
-for (i = 0; i < MineInfo ().equipGen.count; i++) {
-	nSegment = EquipMakers (i)->m_info.nSegment; 
-	if (nSegment >= 0) {
-		segP = Segment (nSegment); 
-		segP->m_info.value = i; 
-		if (segP->m_info.function== SEGMENT_FUNC_EQUIPMAKER)
-			segP->m_info.nMatCen = nMatCens++; 
-		}
-	}
-
-// number "value"
-value = 0; 
-for (i = 0, segP = Segment (0); i < Count (); i++, segP++)
-	if (segP->m_info.function== SEGMENT_FUNC_NONE)
-		segP->m_info.value = 0; 
-	else
-		segP->m_info.value = value++; 
+RenumberMatCens (1);
 }
 
-                        /* -------------------------- */
+// ----------------------------------------------------------------------------- 
 
 void CSegmentManager::CopyOtherSegment (void)
 {
@@ -603,9 +542,8 @@ short nSegment = current.m_nSegment;
 CSegment *otherSeg = other.Segment (); 
 bUndo = undoManager.SetModified (true); 
 undoManager.Lock ();
-int nSide;
-for (nSide = 0; nSide < 6; nSide++)
-	if (SetTextures (nSegment, nSide, otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))
+for (int nSide = 0; nSide < 6; nSide++)
+	if (SetTextures (CSideKey (nSegment, nSide), otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))
 		bChange = true;
 if (!bChange)
 	undoManager.ResetModified (bUndo);
@@ -658,88 +596,6 @@ for (short nSegment = Count (); nSegment; nSegment--, segP++) {
 			}
 		}
 	}
-}
-
-// ----------------------------------------------------------------------------- 
-
-void ReadSegments (CFileManager& fp, int nFileVersion)
-{
-if (m_segmentInfo.offset >= 0) {
-	for (int i = 0; i < Count (); i++)
-		m_segments [i].Read (fp, nFileVersion);
-	}
-}
-
-// ----------------------------------------------------------------------------- 
-
-void WriteSegments (CFileManager& fp, int nFileVersion)
-{
-if (Count () == 0)
-	m_segmentInfo.offset = -1;
-else {
-	m_segmentInfo.offset = fp.Tell ();
-	for (int = 0; i < Count (); i++)
-		m_segments [i].Write (fp, nFileVersion);
-	}
-}
-
-// ----------------------------------------------------------------------------- 
-
-void ReadMatCens (CFileManager& fp, int nFileVersion, int nClass)
-{
-if (m_matCenInfo [nClass].offset >= 0) {
-	for (int i = 0; i < Count (nClass); i++)
-		m_matCens [nClass][i].Read (fp, nFileVersion);
-	}
-}
-
-// ----------------------------------------------------------------------------- 
-
-void WriteMatCens (CFileManager& fp, int nFileVersion, int nClass)
-{
-if (m_matCenInfo [nClass].count == 0)
-	m_matCenInfo [nClass].offset = -1;
-else {
-	m_matCenInfo [nClass].offset = fp.Tell ();
-	for (int = 0; i < Count (nClass); i++)
-		m_matCens [nClass][i].Write (fp, info, nFileVersion);
-	}
-}
-
-// ----------------------------------------------------------------------------- 
-
-void ReadRobotMakers (CFileManager& fp, int nFileVersion)
-{
-ReadMatCens (fp, nFileVersion, 1);
-}
-
-// ----------------------------------------------------------------------------- 
-
-void WriteRobotMakers (CFileManager& fp, int nFileVersion)
-{
-WriteMatCens (fp, nFileVersion, 1);
-}
-
-// ----------------------------------------------------------------------------- 
-
-void ReadEquipMakers (CFileManager& fp, int nFileVersion)
-{
-ReadMatCens (fp, nFileVersion, 1);
-}
-
-// ----------------------------------------------------------------------------- 
-
-void WriteEquipMakers (CFileManager& fp, int nFileVersion)
-{
-WriteMatCens (fp, nFileVersion, 1);
-}
-
-// ----------------------------------------------------------------------------- 
-
-void Clear (void)
-{
-for (int i = 0; i < Count (); i++)
-	m_segments [i].Clear ();
 }
 
 // ------------------------------------------------------------------------

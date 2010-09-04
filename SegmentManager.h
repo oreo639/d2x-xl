@@ -92,9 +92,14 @@ class CSegmentManager {
 		//CSide* OppositeSide (CSideKey opp, CSideKey& key, short nSegment = -1, short nSide = -1);
 
 		//inline CWall* Wall (short nSegment = -1, short nSide = -1) {
-		inline CWall* Wall (CSideKey key) { return Side (key)->Wall (); }
+		inline CWall* Wall (CSideKey key) { 
+			current.Get (key);
+			return Side (key)->Wall (); 
+			}
 
 		inline CWall* Wall (void) { return Wall (CSideKey ()); }
+
+		int IsWall (CSideKey key);
 
 		//inline CTrigger* Trigger (short nSegment = -1, short nSide = -1) {
 		inline CTrigger* Trigger (CSideKey key) { return Side (key)->Trigger (); }
@@ -190,6 +195,10 @@ class CSegmentManager {
 
 		void Mark (short nSegment);
 
+		void MarkAll (void);
+
+		void UnmarkAll (void);
+
 		void UpdateMarked (void);
 
 		bool IsMarked (short nSegment);
@@ -272,6 +281,7 @@ class CSegmentManager {
 		int FuelCenterCount (void);
 		void RemoveMatCen (CSegment* segP, CRobotMaker* matCens, CMineItemInfo& info);
 		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CRobotMaker* matCens, CMineItemInfo& info, char* szError);
+		void RenumberMatCens (byte nFunction, short nClass);
 	};
 
 extern CSegmentManager segmentManager;
