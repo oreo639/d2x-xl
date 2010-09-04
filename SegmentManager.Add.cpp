@@ -98,7 +98,7 @@ memset (curSegP->m_sides [nCurSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nC
 // update number of Segment () and vertices and clear vertexStatus
 Count ()++;
 for (int i = 0; i < 4; i++)
-	vertexManager.Vertex (VertCount ()++)->m_status = 0;
+	vertexManager.Add ();
 
 // link the new segment with any touching Segment ()
 CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);

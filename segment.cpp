@@ -4,17 +4,9 @@
 #include "dle-xp-res.h"
 
 #include < math.h>
-#include "define.h"
-#include "types.h"
-#include "global.h"
+
 #include "mine.h"
-#include "matrix.h"
-#include "cfile.h"
-#include "TextureManager.h"
-#include "palette.h"
 #include "dle-xp.h"
-#include "robot.h"
-#include "cfile.h"
 
 // -----------------------------------------------------------------------------
 // define points for a given side 
@@ -106,7 +98,7 @@ byte pointCornerTable[8][3] = {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-int CSide::Read (CFileManager& fp, bool bTextured)
+void CSide::Read (CFileManager& fp, bool bTextured)
 {
 if (bTextured) {
 	m_info.nBaseTex = fp.ReadInt16 ();
@@ -127,7 +119,6 @@ else {
 	for (int i = 0; i < 4; i++)
 		m_info.uvls [i].Clear ();
 	}
-return 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -197,13 +188,13 @@ return bChange;
 
 void CSide::GetTextures (short &nBaseTex, short &nOvlTex)
 {
-nBaseTex = m_info.BaseTex;
+nBaseTex = m_info.nBaseTex;
 nOvlTex = m_info.nOvlTex & 0x1FFF;
 }
 
 // -----------------------------------------------------------------------------
 
-void CSide::InitUVL (void)
+void CSide::InitUVL (short nTexture)
 {
 uint scale = (uint) textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 for (int i = 0; i < 4; i++) {
@@ -211,6 +202,7 @@ for (int i = 0; i < 4; i++) {
 	m_info.uvls [i].v = defaultUVLs [i].v / scale;
 	m_info.uvls [i].l = defaultUVLs [i].l;
 	}
+}
 
 // -----------------------------------------------------------------------------
 
@@ -329,7 +321,7 @@ m_info.staticLight = fp.ReadInt32 ();
 
 // -----------------------------------------------------------------------------
 
-int CSegment::Read (CFileManager& fp, int nLevelType, int nLevelVersion)
+void CSegment::Read (CFileManager& fp, int nLevelType, int nLevelVersion)
 {
 	int	i;
 
@@ -367,7 +359,6 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 // read in textures and uvls (0 to 60 bytes)
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  
 	m_sides [i].Read (fp, (Child (i) == -1) || ((m_info.wallFlags & (1 << i)) != 0));
-return 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -499,7 +490,7 @@ void CSegment::SetUV (short nSide, short x, short y)
 // copy side's four points into A
 
 for (i = 0; i < 4; i++)
-	A [i] = CDoubleVector (*theMine->Vertices (m_info.verts [sideVertTable [nSide][i]])); 
+	A [i] = CDoubleVector (*vertexManager.Vertex (m_info.verts [sideVertTable [nSide][i]])); 
 
 // subtract point 0 from all points in A to form B points
 for (i = 0; i < 4; i++) 
@@ -598,10 +589,17 @@ return nSegment;
 }
 
 // -----------------------------------------------------------------------------
+
+CVertex* CSegment::Vertex (short nVertex)
+{
+return vertexManager.Vertex (m_info.verts [nVertex]);
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-int CRobotMaker::Read (CFileManager& fp, int version, bool bFlag)
+void CRobotMaker::Read (CFileManager& fp, int version, bool bFlag)
 {
 m_info.objFlags [0] = fp.ReadInt32 ();
 if (DLE.IsD2File ())
@@ -610,7 +608,6 @@ m_info.hitPoints = fp.ReadInt32 ();
 m_info.interval = fp.ReadInt32 ();
 m_info.nSegment = fp.ReadInt16 ();
 m_info.nFuelCen = fp.ReadInt16 ();
-return 1;
 }
 
 // -----------------------------------------------------------------------------

@@ -85,16 +85,27 @@ public:
 	tSide m_info;
 
 	void Read (CFileManager& fp, bool bTextured);
+
 	void Write (CFileManager& fp);
+
 	void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+	
 	void Setup (void);
+	
 	void LoadTextures (void);
+	
 	void GetTextures (short &nBaseTex, short &nOvlTex);
+	
 	bool SetTextures (short nBaseTex, short nOvlTex);
-	void CSide::InitUVL (void);
+	
+	void InitUVL (short nTexture);
+	
 	inline void SetWall (short nWall) { m_info.nWall = nWall; }
+	
 	CWall* Wall (void);
+	
 	CTrigger* Trigger (void);
+	
 	bool CSide::IsVisible (void);
 };
 
@@ -152,7 +163,9 @@ public:
 
 	inline CSide* Side (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 
-	inline short GetChild (short nSide) { return m_sides [nSide].m_info.nChild; }
+	CVertex* CSegment::Vertex (short nVertex);
+
+	inline short Child (short nSide) { return m_sides [nSide].m_info.nChild; }
 
 	short SetChild (short nSide, short nSegment);
 
@@ -185,8 +198,11 @@ public:
 	tRobotMaker	m_info;
 
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+
 	void Setup (short nSegment, short nIndex, int nFlags) {
 		Clear ();
 		m_info.nSegment = nSegment;
