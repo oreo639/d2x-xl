@@ -36,8 +36,6 @@ class CVertexManager {
 		ushort		m_nCount;
 
 	public:
-		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
-
 		// Segment and side getters
 		// Vertex getters
 		inline vertexList& Vertices (void) { return m_vertices; }
@@ -52,7 +50,7 @@ class CVertexManager {
 
 		ushort Add (void);
 
-		void Delete (short nDelVert);
+		void Delete (ushort nDelVert);
 
 		void DeleteUnused (void);
 

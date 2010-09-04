@@ -1,8 +1,10 @@
-#include "VertexManager.h"
+
+#include "Mine.h"
+#include "dle-xp.h"
 
 // ----------------------------------------------------------------------------- 
 
-ushort Add (void) 
+ushort CVertexManager::Add (void) 
 { 
 return (Count () < MAX_VERTICES) ? Count ()++ : 65535; 
 }
@@ -21,42 +23,42 @@ if (nDelVert < --m_nCount) {
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::DeleteUnusedVertices (void)
+void CVertexManager::DeleteUnused (void)
 {
-for (ushort nVertex = 0; nVertex < VertCount (); nVertex++)
+for (ushort nVertex = 0; nVertex < Count (); nVertex++)
 	vertexManager.Status (nVertex) &= ~NEW_MASK; 
 // mark all used verts
-CSegment *segP = Segments (0);
-for (short nSegment = 0; nSegment < SegCount (); nSegment++, segP++)
+CSegment *segP = segmentManager.Segment (0);
+for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	for (short point = 0; point < 8; point++)
 		vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK; 
-for (ushort nVertex = VertCount () - 1; nVertex >= 0; nVertex--)
+for (ushort nVertex = Count () - 1; nVertex >= 0; nVertex--)
 	if (!(vertexManager.Status (nVertex) & NEW_MASK))
-		DeleteVertex(nVertex); 
+		Delete (nVertex); 
 }
 
 // ----------------------------------------------------------------------------- 
 
-void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CVertexManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
 Count () = info.count;
-for (int = 0; i < Count (); i++)
-	m_vertices [i].Read (fp, info, nFileVersion);
+for (int i = 0; i < Count (); i++)
+	m_vertices [i].Read (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CVertexManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
 {
-info.count () = count;
+info.count = Count ();
 info.offset = fp.Tell ();
-for (int = 0; i < Count (); i++)
-	m_vertices [i].Write (fp, info, nFileVersion);
+for (int i = 0; i < Count (); i++)
+	m_vertices [i].Write (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void VertexManager::Unmark (void)
+void CVertexManager::Unmark (void)
 {
 for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	vertexManager.Status (nVertex) &= ~MARKED_MASK; 
@@ -64,9 +66,9 @@ for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 
 // ----------------------------------------------------------------------------- 
 
-void Clear (void)
+void CVertexManager::Clear (void)
 {
-for (int = 0; i < Count (); i++)
+for (int i = 0; i < Count (); i++)
 	m_vertices [i].Clear ();
 }
 
