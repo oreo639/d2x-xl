@@ -190,7 +190,7 @@ class CLightManager {
 
 		inline CColor* LightColor (short nSegment, short nSide = 0) { return &m_lightColors [nSegment * 6 + nSide]; }
 
-		CColor* GetLightColor (short nSegment = -1, short nSide = -1, bool bUseTexColors = true);
+		CColor* LightColor (CSideKey key = CSideKey (), bool bUseTexColors = true);
 
 		short LoadDefaults (void);
 		bool HasCustomLightMap (void);

@@ -1,6 +1,7 @@
 // Copyright (C) 1997 Bryan Aamot
 
 #include "mine.h"
+#include "dle-xp.h"
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
