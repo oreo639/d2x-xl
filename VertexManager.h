@@ -48,7 +48,7 @@ class CVertexManager {
 
 		inline ushort Index (CVertex* vertP) { return (ushort) (vertP - &m_vertices [0]); }
 
-		ushort Add (void);
+		ushort Add (ushort count = 1);
 
 		void Delete (ushort nDelVert);
 

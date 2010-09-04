@@ -1,11 +1,8 @@
 // Segment.cpp
 
-#include "stdafx.h"
-#include "dle-xp-res.h"
-
-#include < math.h>
-
+#include "types.h"
 #include "mine.h"
+#include "dle-xp-res.h"
 #include "dle-xp.h"
 
 // -----------------------------------------------------------------------------
@@ -224,6 +221,21 @@ return (wallP == null) ? null : wallP->Trigger ();
 bool CSide::IsVisible (void)
 {
 return (m_info.nChild == -1) || wallManager.IsVisible (m_info.nWall);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSide::Reset (void)
+{
+m_info.nBaseTex = 0; 
+m_info.nOvlTex = 0; 
+CUVL* uvls = m_info.uvls;
+double scale = textureManager.Textures (theMine->FileType (), m_info.nBaseTex)->Scale (m_info.nBaseTex);
+for (int i = 0; i < 4; i++, uvls++) {
+	uvls->u = (short) (defaultUVLs [i].u / scale); 
+	uvls->v = (short) (defaultUVLs [i].v / scale); 
+	uvls->l = (ushort) DEFAULT_LIGHTING; 
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -593,6 +605,15 @@ return nSegment;
 CVertex* CSegment::Vertex (short nVertex)
 {
 return vertexManager.Vertex (m_info.verts [nVertex]);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::Reset (short nSide)
+{
+SetChild (nSide, -1); 
+m_info.childFlags &= ~(1 << nSide); 
+m_sides [nSide].Reset ();
 }
 
 // -----------------------------------------------------------------------------

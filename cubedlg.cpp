@@ -415,7 +415,7 @@ if (IsBotMaker (segP)) {
 	CStringResource res;
 
 	for (i = 0; i < 2; i++)
-		objFlags [i] = theMine->BotGens (nMatCen)->m_info.objFlags [i];
+		objFlags [i] = theMine->RobotMakers (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
@@ -441,7 +441,7 @@ else if (IsEquipMaker (segP)) {
 	CStringResource res;
 
 	for (i = 0; i < 2; i++)
-		objFlags [i] = theMine->EquipGens (nMatCen)->m_info.objFlags [i];
+		objFlags [i] = theMine->EquipMakers (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
@@ -704,7 +704,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		if (nMatCens > 0) {
 			// fill in deleted matcen
 			int nDelMatCen = current.Segment ()->value;
-			memcpy (theMine->BotGens (nDelMatCen), theMine->BotGens (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
+			memcpy (theMine->RobotMakers (nDelMatCen), theMine->RobotMakers (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
 			theMine->Info ().matcen.count--;
 			int i;
 			for (i = 0; i < 6; i++)
@@ -839,7 +839,7 @@ char szObj [80];
 int i = FindBot (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->BotGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+theMine->RobotMakers (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
@@ -862,7 +862,7 @@ char szObj [80];
 int i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS_D2))
 	return;
-theMine->EquipGens (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+theMine->EquipMakers (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
@@ -899,7 +899,7 @@ char szObj [80];
 int i = FindBot (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->BotGens (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+theMine->RobotMakers (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
@@ -922,7 +922,7 @@ char szObj [80];
 int i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->EquipGens (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+theMine->EquipMakers (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);

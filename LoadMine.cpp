@@ -572,9 +572,9 @@ if (MineInfo ().triggers.offset > -1) {
 
 if (0 > LoadGameItem (fp, MineInfo ().control, ReactorTriggers (0), -1, MAX_REACTOR_TRIGGERS, "Reactor triggers"))
 	return -1;
-if (0 > LoadGameItem (fp, MineInfo ().botGen, BotGens (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
+if (0 > LoadGameItem (fp, MineInfo ().botGen, RobotMakers (0), -1, MAX_ROBOT_MAKERS, "Robot makers"))
 	return -1;
-if (0 > LoadGameItem (fp, MineInfo ().equipGen, EquipGens (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
+if (0 > LoadGameItem (fp, MineInfo ().equipGen, EquipMakers (0), -1, MAX_ROBOT_MAKERS, "Equipment makers"))
 	return -1;
 if (IsD2File ()) {
 	if (0 > LoadGameItem (fp, MineInfo ().lightDeltaIndices, LightDeltaIndex (0), -1, MAX_LIGHT_DELTA_INDICES, "Light delta indices", (LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34)))

@@ -107,6 +107,8 @@ public:
 	CTrigger* Trigger (void);
 	
 	bool CSide::IsVisible (void);
+
+	void Reset (void);
 };
 
 // -----------------------------------------------------------------------------
@@ -170,6 +172,8 @@ public:
 	short SetChild (short nSide, short nSegment);
 
 	bool HasChild (short nChild) { return (m_info.childFlags & (1 << nChild)) != 0; }
+
+	void Reset (short nSide);
 
 private:
 	byte ReadWalls (CFileManager& fp, int nLevelVersion);

@@ -377,8 +377,8 @@ else { //they're different
 		for (short i = 0; (segP = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (segP)) {
 			int nBotGen = segP->m_info.nMatCen;
 			if ((nId < 32) 
-				 ? segmentManager.BotGen (nBotGen)->m_info.objFlags [0] & (1 << nId) 
-				 : segmentManager.BotGen (nBotGen)->m_info.objFlags [1] & (1 << (nId - 32)))
+				 ? segmentManager.RobotMaker (nBotGen)->m_info.objFlags [0] & (1 << nId) 
+				 : segmentManager.RobotMaker (nBotGen)->m_info.objFlags [1] & (1 << (nId - 32)))
 				break;
 			}
 		if (segP != null) // found one

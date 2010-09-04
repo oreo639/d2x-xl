@@ -371,10 +371,9 @@ for (short i = 0; i < Count (); i++)
 
 // ----------------------------------------------------------------------------- 
 
-void CWallManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
-Count () = info.count;
-for (short i = 0; i < Count (); i++) {
+for (short i = 0; i < Count (0); i++) {
 	m_walls [i].Read (fp, nFileVersion);
 	m_walls [i].m_nIndex = i;
 	}
@@ -382,12 +381,30 @@ for (short i = 0; i < Count (); i++) {
 
 // ----------------------------------------------------------------------------- 
 
-void CWallManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CWallManager::WriteWalls (CFileManager& fp, int nFileVersion)
 {
-info.count = Count ();
-info.offset = fp.Tell ();
+m_info [0].offset = fp.Tell ();
 for (short i = 0; i < Count (); i++)
 	m_walls [i].Write (fp, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CWallManager::ReadDoors (CFileManager& fp, int nFileVersion)
+{
+for (short i = 0; i < Count (1); i++) {
+	m_doors [i].Read (fp, nFileVersion);
+	m_doors [i].m_nIndex = i;
+	}
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CWallManager::WriteDoors (CFileManager& fp, int nFileVersion)
+{
+m_info [1].offset = fp.Tell ();
+for (short i = 0; i < Count (); i++)
+	m_doors [i].Write (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 

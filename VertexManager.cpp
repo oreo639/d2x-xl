@@ -4,11 +4,13 @@
 
 // ----------------------------------------------------------------------------- 
 
-ushort CVertexManager::Add (void) 
+ushort CVertexManager::Add (ushort count) 
 { 
-if (Count () >= MAX_VERTICES)
-	return 65535;
-m_vertices [Count ()++].Clear ();
+for (ushort i = 0; i < count; i++) {
+	if (Count () >= MAX_VERTICES)
+		return 65535;
+	m_vertices [Count ()++].Clear ();
+	}
 return Count (); 
 }
 

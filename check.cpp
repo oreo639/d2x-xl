@@ -460,14 +460,14 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().botGen.count) || (theMine->BotGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().botGen.count) || (theMine->RobotMakers (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
 			}
 		}
 	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().equipGen.count) || (theMine->EquipGens (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().equipGen.count) || (theMine->EquipMakers (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
@@ -1343,7 +1343,7 @@ if ((theMine == null))
 	bool					bOk = true;
 	short					nMatCenSegs, nMatCens = short (theMine->Info ().botGen.count);
 	CSegment*			segP = theMine->Segments (0);
-	CRobotMaker*		matCenP = theMine->BotGens (0);
+	CRobotMaker*		matCenP = theMine->RobotMakers (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
 
@@ -1367,7 +1367,7 @@ bool CDiagTool::CheckEquipGens (void)
 	short					i, nSegment = 0;
 	bool					bOk = true;
 	int					nMatCenSegs, nMatCens = int (theMine->Info ().equipGen.count);
-	CRobotMaker*		matCenP = theMine->EquipGens (0);
+	CRobotMaker*		matCenP = theMine->EquipMakers (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
 

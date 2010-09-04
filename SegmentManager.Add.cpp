@@ -158,38 +158,35 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, 
+												CRobotMaker* matCens, CMineItemInfo& info, char* szError) 
 {
-int nMatCen = (int) theMine->Info ().equipGen.count;
-if (nMatCen >= MAX_ROBOT_MAKERS) {
+if (info.count >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
-if (!Create (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER))
+if (!Create (nSegment, bCreate, nType))
 	return false;
-EquipGen (nMatCen)->Setup (nSegment, nMatCen, 0);
+matCens [info.count].Setup (nSegment, info.count, 0);
 Segment (current.m_nSegment)->m_info.value = 
-Segment (current.m_nSegment)->m_info.nMatCen = nMatCen;
-theMine->Info ().equipGen.count++;
+Segment (current.m_nSegment)->m_info.nMatCen = info.count++;
 return true;
+}
+
+// ----------------------------------------------------------------------------- 
+
+bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+{
+return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures, EquipMakers (), m_matCenInfo [1], 
+							"Maximum number of equipment makers reached");
 }
 
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-int nMatCen = (int) theMine->Info ().botGen.count;
-if (nMatCen >= MAX_ROBOT_MAKERS) {
-    ErrorMsg ("Maximum number of robot makers reached");
-	 return false;
-	}
-if (!Create (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER))
-	return false;
-BotGen (nMatCen)->Setup (nSegment, nMatCen, 8);
-Segment (current.m_nSegment)->m_info.value = 
-Segment (current.m_nSegment)->m_info.nMatCen = nMatCen;
-theMine->Info ().botGen.count++;
-return true;
+return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures, EquipMakers (), m_matCenInfo [1], 
+							"Maximum number of robot makers reached");
 }
 
 // ----------------------------------------------------------------------------- 
@@ -505,9 +502,9 @@ void CSegmentManager::Undefine (short nSegment)
 
 nSegment = short (segP - Segment (0));
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-	RemoveMatCen (segP, BotGen (0), theMine->Info ().botGen);
+	RemoveMatCen (segP, RobotMaker (0), theMine->Info ().botGen);
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
-	RemoveMatCen (segP, EquipGen (0), theMine->Info ().equipGen);
+	RemoveMatCen (segP, EquipMaker (0), theMine->Info ().equipGen);
 else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childSegP;
 	CSide *oppSideP, *sideP = segP->m_sides;

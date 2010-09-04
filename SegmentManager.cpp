@@ -158,11 +158,11 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 		}
 	}
 	for (i = 0; i < MineInfo ().botGen.count; i++)
-		if (BotGens (i)->m_info.nSegment > nDelSeg)
-			BotGens (i)->m_info.nSegment--;
+		if (RobotMakers (i)->m_info.nSegment > nDelSeg)
+			RobotMakers (i)->m_info.nSegment--;
 	for (i = 0; i < MineInfo ().equipGen.count; i++)
-		if (EquipGens (i)->m_info.nSegment > nDelSeg)
-			EquipGens (i)->m_info.nSegment--;
+		if (EquipMakers (i)->m_info.nSegment > nDelSeg)
+			EquipMakers (i)->m_info.nSegment--;
 	// delete any control segP with this segment
 	for (j = (ushort)MineInfo ().control.count - 1; j >= 0; j--) {
 		int count = ReactorTriggers (i)->m_count;
@@ -277,18 +277,18 @@ for (i = (ushort)MineInfo ().objects.count - 1; i >= 0; i--) {
 
 		// replace robot centers segP numbers with real numbers
 		for (i = 0; i < MineInfo ().botGen.count; i++) {
-			if (Count () > (nSegment = BotGens (i)->m_info.nSegment))
-				BotGens (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
+			if (Count () > (nSegment = RobotMakers (i)->m_info.nSegment))
+				RobotMakers (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
 			else
-				BotGens (i)->m_info.nSegment = 0; // int robot center nSegment
+				RobotMakers (i)->m_info.nSegment = 0; // int robot center nSegment
 			}
 
 		// replace equipment centers segP numbers with real numbers
 		for (i = 0; i < MineInfo ().equipGen.count; i++) {
-			if (Count () > (nSegment = EquipGens (i)->m_info.nSegment))
-				EquipGens (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
+			if (Count () > (nSegment = EquipMakers (i)->m_info.nSegment))
+				EquipMakers (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
 			else
-				EquipGens (i)->m_info.nSegment = 0; // int robot center nSegment
+				EquipMakers (i)->m_info.nSegment = 0; // int robot center nSegment
 			}
 
 		// replace control segP numbers with real numbers
@@ -604,20 +604,7 @@ if (nSegment < 0 || nSegment >= Count ())
 	return; 
 undoManager.SetModified (true); 
 undoManager.Lock ();
-CSegment *segP = Segment (nSegment); 
-segP->SetChild (nSide, -1); 
-segP->m_info.childFlags &= ~(1 << nSide); 
-CSide *sideP = segP->m_sides + nSide;
-sideP->m_info.nBaseTex = 0; 
-sideP->m_info.nOvlTex = 0; 
-CUVL *uvls = sideP->m_info.uvls;
-double scale = textureManager.Textures (m_fileType, sideP->m_info.nBaseTex)->Scale (sideP->m_info.nBaseTex);
-int i;
-for (i = 0; i < 4; i++, uvls++) {
-	uvls->u = (short) (defaultUVLs [i].u / scale); 
-	uvls->v = (short) (defaultUVLs [i].v / scale); 
-	uvls->l = (ushort) DEFAULT_LIGHTING; 
-	}
+Segment (nSegment)->ResetSide (nSide); 
 undoManager.Unlock ();
 }
 
@@ -683,9 +670,7 @@ else {
 
 bool CSegmentManager::IsPointOfSide (CSegment *segP, int nSide, int nPoint)
 {
-	int	i;
-
-for (i = 0; i < 4; i++)
+for (int i = 0; i < 4; i++)
 	if (sideVertTable [nSide][i] == nPoint)
 		return true;
 return false;
@@ -695,9 +680,7 @@ return false;
 
 bool CSegmentManager::IsLineOfSide (CSegment *segP, int nSide, int nLine)
 {
-	int	i;
-
-for (i = 0; i < 2; i++)
+for (int i = 0; i < 2; i++)
 	if (!IsPointOfSide (segP, nSide, lineVertTable [nLine][i]))
 		return false;
 return true;
@@ -1402,11 +1385,11 @@ if (min_radius <= 5) {
 	return; 
 	}
 
-if (QueryMsg("Are you sure you want to create a new cube which\n"
-				 "connects the current side with the 'other' side?\n\n"
-				 "Hint: Make sure you have the current point of each cube\n"
-				 "on the corners you to connected.\n"
-				 "(the 'P' key selects the current point)") != IDYES)
+if (QueryMsg ("Are you sure you want to create a new segment which\n"
+				  "connects the current side with the 'other' side?\n\n"
+				  "Hint: Make sure you have the current point of each segment\n"
+				  "on the corners you to connected.\n"
+				  "(the 'P' key selects the current point)") != IDYES)
 	return; 
 
 nNewSeg = Count (); 
@@ -1518,8 +1501,7 @@ return (Segment (nSegment)->Child (nSide)== -1) ||
 		 (Segment (nSegment)->m_sides [nSide].m_info.nWall < MineInfo ().walls.count); 
 }
 
-
-                        /* -------------------------- */
+// ------------------------------------------------------------------------ 
 
 int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, bool bAlign1st, bool bAlign2nd, char bAlignedSides)
 {
@@ -1740,7 +1722,7 @@ return true;
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::RenumberBotGens (void) 
+void CSegmentManager::RenumberRobotMakers (void) 
 {
 	int		i, nMatCens, value, nSegment; 
 	CSegment	*segP; 
@@ -1748,7 +1730,7 @@ void CSegmentManager::RenumberBotGens (void)
 // number "matcen"
 nMatCens = 0; 
 for (i = 0; i < MineInfo ().botGen.count; i++) {
-	nSegment = BotGens (i)->m_info.nSegment; 
+	nSegment = RobotMakers (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = Segment (nSegment); 
 		segP->m_info.value = i; 
@@ -1776,7 +1758,7 @@ void CSegmentManager::RenumberEquipGens (void)
 // number "matcen"
 nMatCens = 0; 
 for (i = 0; i < MineInfo ().equipGen.count; i++) {
-	nSegment = EquipGens (i)->m_info.nSegment; 
+	nSegment = EquipMakers (i)->m_info.nSegment; 
 	if (nSegment >= 0) {
 		segP = Segment (nSegment); 
 		segP->m_info.value = i; 
@@ -1796,7 +1778,7 @@ for (i = 0, segP = Segment (0); i < Count (); i++, segP++)
 
                         /* -------------------------- */
 
-void CSegmentManager::Copyother.Segmentment ()
+void CSegmentManager::CopyOtherSegment (void)
 {
 	bool bUndo, bChange = false;
 
@@ -1838,22 +1820,10 @@ if (Count () >= MAX_SEGMENTS - 6) {
 	}
 bUndo = undoManager.SetModified (true); 
 undoManager.Lock ();
-h = VertCount ();
-#if 0
-// isolate segment
-for (nSide = 0; nSide < 6; nSide++) {
-	if (segP->Child (nSide) < 0)
-		continue;
-	for (vertNum = 0; vertNum < 4; vertNum++, h++)
-		*vertexManager.Vertex (h) = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSide][vertNum]]);
-	}
-VertCount () = h;
-#endif
+//h = VertCount ();
 // compute segment center
-segCenter.Clear ();
-for (i = 0; i < 8; i++)
-	segCenter += *vertexManager.Vertex (centerSegP->m_info.verts [i]);
-segCenter /= 8.0;
+vertexManager.Add (8);
+segCenter = CalcCenter (Index (centerSegP));
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
@@ -1869,7 +1839,7 @@ for (nSide = 0; nSide < 6; nSide++) {
 		//centerSegP->m_info.verts [j] = h + j;
 		}
 	}
-VertCount () = h + 8;
+
 #if 1
 // create the surrounding segments
 for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
@@ -1878,10 +1848,6 @@ for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 	for (vertNum = 0; vertNum < 4; vertNum++) {
 		i = sideVertTable [nSide][vertNum];
 		segP->m_info.verts [i] = centerSegP->m_info.verts [i];
-#if 0
-		j = sideVertTable [nOppSide][vertNum];
-		segP->m_info.verts [j] = h + i;
-#else
 		if ((nSide & 1) || (nSide >= 4)) {
 			i = lineVertTable [sideLineTable [nSide][0]][0];
 			j = lineVertTable [sideLineTable [nOppSide][2]][0];
@@ -1910,7 +1876,6 @@ for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 			j = lineVertTable [sideLineTable [nOppSide][0]][0];
 			segP->m_info.verts [j] = h + i;
 			}
-#endif
 		}
 	InitSegment (nSegment);
 	if ((segP->SetChild (nSide, centerSegP->Child (nSide))) > -1) {
@@ -2026,25 +1991,71 @@ for (short nSegment = Count (); nSegment; nSegment--, segP++) {
 
 // ----------------------------------------------------------------------------- 
 
-void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void ReadSegments (CFileManager& fp, int nFileVersion)
 {
-for (int = 0; i < Count (); i++)
-	m_segments [i].Read (fp, info, nFileVersion);
+for (int i = 0; i < Count (); i++)
+	m_segments [i].Read (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void WriteSegments (CFileManager& fp, int nFileVersion)
 {
+m_segmentInfo.offset = fp.Tell ();
 for (int = 0; i < Count (); i++)
-	m_segments [i].Write (fp, info, nFileVersion);
+	m_segments [i].Write (fp, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void ReadMatCens (CFileManager& fp, int nFileVersion, int nClass)
+{
+for (int i = 0; i < Count (nClass); i++)
+	m_matCens [nClass][i].Read (fp, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void WriteMatCens (CFileManager& fp, int nFileVersion, int nClass)
+{
+m_matCenInfo [nClass].offset = fp.Tell ();
+for (int = 0; i < Count (nClass); i++)
+	m_matCens [nClass][i].Write (fp, info, nFileVersion);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void ReadRobotMakers (CFileManager& fp, int nFileVersion)
+{
+ReadMatCens (fp, nFileVersion, 1);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void WriteRobotMakers (CFileManager& fp, int nFileVersion)
+{
+WriteMatCens (fp, nFileVersion, 1);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void ReadEquipMakers (CFileManager& fp, int nFileVersion)
+{
+ReadMatCens (fp, nFileVersion, 1);
+}
+
+// ----------------------------------------------------------------------------- 
+
+void WriteEquipMakers (CFileManager& fp, int nFileVersion)
+{
+WriteMatCens (fp, nFileVersion, 1);
 }
 
 // ----------------------------------------------------------------------------- 
 
 void Clear (void)
 {
-for (int = 0; i < Count (); i++)
+for (int i = 0; i < Count (); i++)
 	m_segments [i].Clear ();
 }
 

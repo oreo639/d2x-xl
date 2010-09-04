@@ -38,10 +38,11 @@ typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 class CSegmentManager {
 	public:
 		segmentList		m_segments;
+		CMineItemInfo	m_segmentInfo;
 		short				m_nCount;
 		int				m_nAddMode;
-		robotMakerList	m_robotMakers;
-		robotMakerList	m_equipMakers;
+		robotMakerList	m_matCens [2];
+		CMineItemInfo	m_matCenInfo [2];
 
 	public:
 		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
@@ -50,8 +51,13 @@ class CSegmentManager {
 		inline segmentList& Segments (void)
 			{ return m_segments; }
 
-		inline short& Count ()
-			{ return m_nCount; }
+		inline int& Count () { return m_segmentInfo.count; }
+
+		inline int& MatCenCount (short nClass) { return m_matCenInfo [nClass].count; }
+
+		inline int& RobotMakerCount (void) { return MatCenCount (0); }
+
+		inline int& EquipMakerCount (void) { return MatCenCount (1); }
 
 		inline short Index (CSegment* segP) { return (short) (segP - &m_segments [0]); }
 
@@ -97,13 +103,13 @@ class CSegmentManager {
 
 		void Textures (CSideKey key, short& nBaseTex, short& nOvlTex);
 
-		inline robotMakerList& BotGens (void) { return m_robotMakers; }
+		inline robotMakerList& RobotMakers (void) { return m_matCens [0]; }
 		
-		inline robotMakerList& EquipGens (void) { return m_equipMakers; }
+		inline robotMakerList& EquipMakers (void) { return m_matCens [1]; }
 		
-		inline CRobotMaker* BotGen (int i) { return &m_robotMakers [i]; }
+		inline CRobotMaker* RobotMaker (int i) { return &m_matCens [0][i]; }
 		
-		inline CRobotMaker* EquipGen (int i) { return &m_equipMakers [i]; }
+		inline CRobotMaker* EquipMaker (int i) { return &m_matCens [1][i]; }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 		inline int AddMode (void) { return m_nAddMode; }
@@ -222,9 +228,21 @@ class CSegmentManager {
 
 		void DeleteBlock ();
 
-		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
-
-		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void ReadSegments (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		
+		void WriteSegments (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		
+		void ReadMatCens (CFileManager& fp, int nFileVersion, int nClass);
+		
+		void WriteMatCens (CFileManager& fp, int nFileVersion, int nClass);
+		
+		void ReadRobotMakers (CFileManager& fp, int nFileVersion);
+		
+		void WriteRobotMakers (CFileManager& fp, int nFileVersion);
+		
+		void ReadEquipMakers (CFileManager& fp, int nFileVersion);
+		
+		void WriteEquipMakers (CFileManager& fp, int nFileVersion);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
@@ -239,6 +257,7 @@ class CSegmentManager {
 		void ComputeVertices (short newVerts [4]);
 		int FuelCenterCount (void);
 		void RemoveMatCen (CSegment* segP, CRobotMaker* matCens, CMineItemInfo& info);
+		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CRobotMaker* matCens, CMineItemInfo& info, char* szError);
 	};
 
 extern CSegmentManager segmentManager;

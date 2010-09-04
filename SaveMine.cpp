@@ -342,9 +342,9 @@ if (LevelVersion () >= 12) {
 		}
 	}
 SaveGameItem (fp, MineInfo ().control, DATA (ReactorTriggers ()));
-SaveGameItem (fp, MineInfo ().botGen, DATA (BotGens ()));
+SaveGameItem (fp, MineInfo ().botGen, DATA (RobotMakers ()));
 if (IsD2File ()) {
-	SaveGameItem (fp, MineInfo ().equipGen, DATA (EquipGens ()));
+	SaveGameItem (fp, MineInfo ().equipGen, DATA (EquipMakers ()));
 	if (MineInfo ().lightDeltaIndices.count > 0) {
 		if ((LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34))
 			SortDLIndex (0, MineInfo ().lightDeltaIndices.count - 1);
