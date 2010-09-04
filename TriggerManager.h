@@ -47,17 +47,21 @@ class CTriggerManager {
 	public:
 		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
 
-		inline triggerList& Triggers (void) { return m_triggers [0]; }
+		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
 
-		inline objTriggerList& ObjTriggers (void) { return m_triggers [1]; }
+		inline triggerList& GeoTriggerList (void) { return TriggerList (1); }
 
-		inline CTrigger* GetTrigger (int i, int nClass = 0) { return IsValid (i, m_nCount [nClass]) ? &m_triggers [nClass][i] : null; }
+		inline objTriggerList& ObjTriggerList (void) { return TriggerList (1); }
+
+		inline CTrigger* Trigger (int i, int nClass = 0) { return IsValid (i, m_nCount [nClass]) ? &m_triggers [nClass][i] : null; }
 
 		inline short& Count (int nClass) { return m_nCount [nClass]; }
 
-		inline short& NumTriggers (void) { return Count (0); }
+		inline short& NumGeoTriggers (void) { return Count (0); }
 
-		inline CTrigger* GetObjTrigger (int i) { return GetTrigger (i, 1); }
+		inline CTrigger* GeoTrigger (int i) { return Trigger (i, 0); }
+
+		inline CTrigger* ObjTrigger (int i) { return Trigger (i, 1); }
 
 		inline short& NumObjTriggers (void) { return Count (1); }
 
@@ -96,7 +100,7 @@ class CTriggerManager {
 
 		void DeleteObjTriggers (short nObject);
 
-		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (Triggers (), Count (0), nSegment, nSide); }
+		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (GeoTriggerList (), Count (0), nSegment, nSide); }
 
 		bool AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType);
 		bool AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType);

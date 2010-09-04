@@ -214,17 +214,17 @@ for (int i = 0; i < 4; i++) {
 
 // -----------------------------------------------------------------------------
 
-CWall* CSide::GetWall (void)
+CWall* CSide::Wall (void)
 { 
-return wallManager.GetWall (m_info.nWall); 
+return wallManager.Wall (m_info.nWall); 
 }
 
 // -----------------------------------------------------------------------------
 
-CTrigger* CSide::GetTrigger (void)
+CTrigger* CSide::Trigger (void)
 { 
-CWall* wallP = wallManager.GetWall (m_info.nWall); 
-return (wallP == null) ? null : wallP->GetTrigger ();
+CWall* wallP = wallManager.Wall (m_info.nWall); 
+return (wallP == null) ? null : wallP->Trigger ();
 }
 
 // -----------------------------------------------------------------------------

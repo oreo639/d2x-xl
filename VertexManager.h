@@ -42,9 +42,9 @@ class CVertexManager {
 		// Vertex getters
 		inline vertexList& Vertices (void) { return m_vertices; }
 
-		inline CVertex *GetVertex (int i) { return &m_vertices [i]; }
+		inline CVertex *Vertex (int i) { return &m_vertices [i]; }
 
-		inline byte& Status (int i = 0) { return GetVertex (i)->m_status; }
+		inline byte& Status (int i = 0) { return Vertex (i)->m_status; }
 
 		inline ushort& Count (void) { return m_nCount; }
 

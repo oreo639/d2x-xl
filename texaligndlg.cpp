@@ -681,7 +681,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 			if ((segP->GetChild (nSide) == -1) || 
 				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
-				segmentManager.GetSegment (nSegment)->SetUV (nSide,0,0);
+				segmentManager.Segment (nSegment)->SetUV (nSide,0,0);
 				bModified = TRUE;
 				}
 			}
@@ -743,7 +743,7 @@ if (bStart) {
 		 segP->m_info.nIndex = 0; // all six sides not aligned yet
 	}
 // mark current side as aligned
-segmentManager.GetSegment (nSegment)->m_info.nIndex = 1;
+segmentManager.Segment (nSegment)->m_info.nIndex = 1;
 // call recursive function which aligns one at a time
 AlignChildTextures (nSegment, nSide, MAX_SEGMENTS);
 }
@@ -779,7 +779,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 	if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
 		continue;
 	if (nSegment != current.m_nSegment) {
-		segmentManager.GetSegment (nSegment)->SetUV (nSide, 0, 0);
+		segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
 		sangle = atan3 (sideP->m_info.uvls [(nChildLine + 1) & 3].v - sideP->m_info.uvls [nChildLine].v, 
 							 sideP->m_info.uvls [(nChildLine + 1) & 3].u - sideP->m_info.uvls [nChildLine].u); 
 		cangle = atan3 (childSideP->m_info.uvls [nChildLine].v - childSideP->m_info.uvls [(nChildLine + 1) & 3].v, 
@@ -848,7 +848,7 @@ if (nDepth <= 0)
 	return;
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return;
-segP = segmentManager.GetSegment (nSegment);
+segP = segmentManager.Segment (nSegment);
 if (segP->m_info.nIndex < 0)
 	return;
 
@@ -911,7 +911,7 @@ if (m_bIgnorePlane) {
 else {
 	while (pos < tos) {
 		nSegment = childList [pos++];
-		segP = segmentManager.GetSegment (nSegment);
+		segP = segmentManager.Segment (nSegment);
 		nSide = segP->m_info.nIndex;
 		segP->m_info.nIndex = -1;
 		for (nLine = 0; nLine < 4; nLine++) {

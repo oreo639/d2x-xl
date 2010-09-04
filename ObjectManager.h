@@ -34,9 +34,9 @@ class CObjectManager {
 	public:
 		inline bool IsValid (short i) { return (i >= 0) && (i < m_nCount); }
 
-		inline objectList& Objects (void) { return m_objects; }
-		inline CGameObject *GetObject (int i) 
-			{ return &m_objects [i]; }
+		inline objectList& ObjectList (void) { return m_objects; }
+
+		inline CGameObject *Object (int i)  { return &m_objects [i]; }
 
 		inline short& Count (void) { return m_nCount; }
 

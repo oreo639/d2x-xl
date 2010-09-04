@@ -154,7 +154,7 @@ class CLightManager {
 		//long						m_defLightMap [MAX_TEXTURES_D2];
 
 	public:
-		inline lightDeltaIndexList& LightDeltaIndex (void) { return m_lightDeltaIndices; }
+		inline lightDeltaIndexList& LightDeltaIndices (void) { return m_lightDeltaIndices; }
 
 		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
 
@@ -162,13 +162,13 @@ class CLightManager {
 
 		inline vertexColorList& VertexColors (void) { return m_vertexColors; }
 
-		inline CLightDeltaIndex* GetLightDeltaIndex (short i) { return &m_lightDeltaIndices [i]; }
+		inline CLightDeltaIndex* LightDeltaIndex (short i) { return &m_lightDeltaIndices [i]; }
 
-		inline CLightDeltaValue* GetLightDeltaValue (short i) { return &m_lightDeltaValues [i]; }
+		inline CLightDeltaValue* LightDeltaValue (short i) { return &m_lightDeltaValues [i]; }
 
-		//inline CVariableLight* GetVariableLight (short i) { return &m_variableLights [i]; }
+		inline CVariableLight* VariableLight (short i) { return &m_variableLights [i]; }
 
-		inline CColor* GetVertexColor (int i) { return &m_vertexColors [i]; }
+		inline CColor* VertexColor (int i) { return &m_vertexColors [i]; }
 
 		//inline CColor* GetTexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
@@ -188,9 +188,9 @@ class CLightManager {
 
 		inline lightColorList& LightColors (void) { return m_lightColors; }
 
-		CColor* LightColor (short nSegment = -1, short nSide = -1, bool bUseTexColors = true);
+		inline CColor* LightColor (short nSegment, short nSide = 0) { return &m_lightColors [nSegment * 6 + nSide]; }
 
-		inline CColor* GetLightColor (short nSegment, short nSide = 0) { return &m_lightColors [nSegment * 6 + nSide]; }
+		CColor* GetLightColor (short nSegment = -1, short nSide = -1, bool bUseTexColors = true);
 
 		short LoadDefaults (void);
 		bool HasCustomLightMap (void);

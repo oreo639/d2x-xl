@@ -32,7 +32,7 @@ m_nSide = nSide;
 m_info.type = type;
 if (!bRedefine) {
 	m_info.nTrigger = NO_TRIGGER;
-	m_info.linkedWall = -1; //GetOppositeWall (nOppWall, nSegment, nSide) ? nOppWall : -1;
+	m_info.linkedWall = -1; //OppositeWall (nOppWall, nSegment, nSide) ? nOppWall : -1;
 	}
 switch (type) {
 	case WALL_BLASTABLE:
@@ -89,7 +89,7 @@ m_info.keys = 0;
 m_info.controllingTrigger = 0;
 
 // set uvls of new texture
-segmentManager.GetSegment (nSegment)->SetUV (nSide, 0, 0);
+segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
 undoManager.Unlock ();
 }
 
@@ -114,7 +114,7 @@ void CWall::SetTextures (short nTexture)
 		{901,0}
 		};
 
-CSide *sideP = GetSide ();
+CSide *sideP = Side ();
 char nClip = m_info.nClip;
 
 undoManager.SetModified (true);
@@ -175,16 +175,16 @@ fp.Write (m_info.cloakValue);
 
 // ------------------------------------------------------------------------
 
-CSide* CWall::GetSide (void)
+CSide* CWall::Side (void)
 {
-return segmentManager.GetSide (m_nSegment, m_nSide);
+return segmentManager.Side (m_nSegment, m_nSide);
 }
 
 // ------------------------------------------------------------------------
 
-CTrigger* CWall::GetTrigger (void)
+CTrigger* CWall::Trigger (void)
 {
-return triggerManager.GetTrigger (m_info.nTrigger);
+return triggerManager.Trigger (m_info.nTrigger);
 }
 
 // ------------------------------------------------------------------------
@@ -205,7 +205,7 @@ return (wallP->m_info.type != WALL_OPEN);
 
 bool CWall:IsVariable (void)
 {
-CTrigger* trigP = GetTrigger ();
+CTrigger* trigP = Trigger ();
 if (trigP == null)
 	return false;
 char trigType = trigP->m_info.type;

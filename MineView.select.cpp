@@ -407,7 +407,7 @@ bool CMineView::Selectother.Side ()
 {
 short nOppSeg, nOppSide;
 
-if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide))
+if ((theMine == null)->OppositeSide (nOppSeg, nOppSide))
 	return false;
 
 current.m_nSegment = nOppSeg;

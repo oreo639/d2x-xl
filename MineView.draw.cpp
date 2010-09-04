@@ -40,7 +40,7 @@ if (bSetViewInfo)
 	m_view.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
 i = theMine->VertCount ();
 APOINT *a = m_viewPoints + i;
-CVertex* vertP = vertexManager.GetVertex (i);
+CVertex* vertP = vertexManager.Vertex (i);
 for (; i--; ) {
 	if ((--vertP)->m_status == 255)
 		continue;
@@ -281,7 +281,7 @@ h = segmentManager.Count ();
 {
 #	pragma omp for
 for (nSegment = 0; nSegment < h; nSegment++) {
-	CSegment* segP = segmentManager.GetSegment (nSegment);
+	CSegment* segP = segmentManager.Segment (nSegment);
 	for (iVertex = 0, zMax = LONG_MIN; iVertex < MAX_VERTICES_PER_SEGMENT; iVertex++)
 		if (zMax < (z = m_viewPoints [segP->m_info.verts [iVertex]].z))
 			zMax = z;
@@ -327,7 +327,7 @@ void CMineView::DrawCube (short nSegment,short nSide, short linenum, short point
 {
 CHECKMINE;
 
-	CSegment *segP = segmentManager.GetSegment (nSegment);
+	CSegment *segP = segmentManager.Segment (nSegment);
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
@@ -890,7 +890,7 @@ CHECKMINE;
 	// draw marked/special Segments () and Walls ()
 if (!clear_it) {
 	for (i = 0; i < segmentManager.Count (); i++) {
-		segP = segmentManager.GetSegment (i);
+		segP = segmentManager.Segment (i);
 		if (segP->m_info.wallFlags & MARKED_MASK) {
 			m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
 			DrawCubeQuick (segP);
@@ -1071,8 +1071,8 @@ void CMineView::DrawWalls(void)
 CHECKMINE;
 
 	CWall		*walls = theMine->Walls (0);
-	CSegment	*segments = segmentManager.GetSegment (0);
-	CVertex	*vertices = vertexManager.GetVertex (0);
+	CSegment	*segments = segmentManager.Segment (0);
+	CVertex	*vertices = vertexManager.Vertex (0);
 	CSegment	*segP;
 	short i,j;
 	short x_max = m_viewWidth * 2;
@@ -1213,7 +1213,7 @@ CHECKMINE;
 
 if (nSegment >=0 && nSegment <=segmentManager.Count () && nSide>=0 && nSide<=5 ) {
 	POINT corners [4],center,line_centers [4],diamond [4],fortyfive [4];
-	segP = segmentManager.GetSegment (nSegment);
+	segP = segmentManager.Segment (nSegment);
 	for (j=0;j<4;j++) {
 		corners [j].x = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].x;
 		corners [j].y = m_viewPoints [segP->m_info.verts [sideVertTable [nSide] [j]]].y;
@@ -1339,7 +1339,7 @@ else {
 	ushort nSegment = (ushort)theMine->SecretSegment ();
 	if (nSegment >= segmentManager.Count ())
 		nSegment = 0;
-	if (!Visible (segmentManager.GetSegment (nSegment)))
+	if (!Visible (segmentManager.Segment (nSegment)))
 		return;
 	theMine->CalcSegCenter (objP->m_location.pos, nSegment); // define objP->position
 	}

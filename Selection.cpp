@@ -53,7 +53,7 @@ if (nSide < 0)
 
 CSegment* CSelection::Segment (void)
 {
-return segmentManager.GetSegment (m_nSegment);
+return segmentManager.Segment (m_nSegment);
 }
 
 // -----------------------------------------------------------------------------
@@ -68,35 +68,35 @@ return Segment ()->GetChild (m_nSide);
 CSegment* CSelection::ChildSeg (void)
 {
 short nChild = Child ();
-return (nChild < 0) ? null : segmentManager.GetSegment (nChild);
+return (nChild < 0) ? null : segmentManager.Segment (nChild);
 }
 
 // -----------------------------------------------------------------------------
 
 CSide* CSelection::Side (void)
 {
-return segmentManager.GetSide (m_nSegment, m_nSide);
+return segmentManager.Side (m_nSegment, m_nSide);
 }
 
 // -----------------------------------------------------------------------------
 
 CWall* CSelection::Wall (void)
 {
-return segmentManager.GetWall (m_nSegment, m_nSide);
+return segmentManager.Wall (m_nSegment, m_nSide);
 }
 
 // -----------------------------------------------------------------------------
 
 CGameObject* CSelection::Object (void)
 {
-return objectManager.GetObject (m_nObject);
+return objectManager.Object (m_nObject);
 }
 
 // -----------------------------------------------------------------------------
 
 CVertex* CSelection::Vertex (void)
 {
-return vertexManager.GetVertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m_nPoint]]); 
+return vertexManager.Vertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m_nPoint]]); 
 }
 
 // -----------------------------------------------------------------------------

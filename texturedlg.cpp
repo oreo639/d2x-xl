@@ -1030,7 +1030,7 @@ CHECKMINE;
 if (nDepth <= 0) 
 	return;
 
-	CSegment	*segP = segmentManager.GetSegment (nSegment);
+	CSegment	*segP = segmentManager.Segment (nSegment);
 	CSide		*sideP = segP->m_sides + nSide;
 	short			old_texture1, 
 					old_texture2;

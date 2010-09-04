@@ -59,7 +59,7 @@ bool CDiagTool::MarkSegment (short nSegment)
 {
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return false;
-segmentManager.GetSegment (nSegment)->m_info.wallFlags &= ~MARKED_MASK;
+segmentManager.Segment (nSegment)->m_info.wallFlags &= ~MARKED_MASK;
 theMine->MarkSegment (nSegment);
 return true;
 }
@@ -129,7 +129,7 @@ double CDiagTool::CalcFlatnessRatio (short nSegment, short nSide)
   double		ratio;
   CVertex	vert [4];
   // copy vertnums into an array
-	CSegment*	segP = segmentManager.GetSegment (nSegment);
+	CSegment*	segP = segmentManager.Segment (nSegment);
 
 for (i = 0; i < 4; i++)
 	vert [i] = *theMine->Vertices (segP->m_info.verts[sideVertTable[nSide][i]]);
@@ -516,7 +516,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		}
 #endif
 	for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		nChild = segmentManager.GetSegment (nSegment)->GetChild (nSide);
+		nChild = segmentManager.Segment (nSegment)->GetChild (nSide);
 // check nChild range 
 		if (nChild != -1 && nChild != -2) {
 			if (nChild < -2) {
@@ -540,7 +540,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					memset (match, 0, sizeof (match));
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
-							if (segmentManager.GetSegment (nSegment)->m_info.verts [sideVertTable [nSide][i]] ==
+							if (segmentManager.Segment (nSegment)->m_info.verts [sideVertTable [nSide][i]] ==
 								 theMine->Segments (nChild)->m_info.verts [sideVertTable [nSide2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
@@ -641,7 +641,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 			return true;
 		}
 
-	segP = segmentManager.GetSegment (nSegment);
+	segP = segmentManager.Segment (nSegment);
     // make sure object is within its cube
     // find center of segment then find maximum distance
 	// of corner to center.  Calculate Objects () distance
@@ -1076,7 +1076,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 					if (UpdateStats (message, 1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 						return true;
 				} else {
-					CSegment *segP = segmentManager.GetSegment (nSegment);
+					CSegment *segP = segmentManager.Segment (nSegment);
 					// check door opening trigP
 //						if (trigP->m_info.flags == TRIGGER_CONTROL_DOORS) {
 					if (DLE.IsD1File ()
@@ -1099,7 +1099,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						}
 
 						// make sure oposite segment/side has a wallP too
-						if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide, nSegment, nSide)) {
+						if ((theMine == null)->OppositeSide (nOppSeg, nOppSide, nSegment, nSide)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
@@ -1391,7 +1391,7 @@ CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 {
 	short	oppSegnum, oppSidenum, nWall;
 
-if ((theMine == null)->GetOppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
+if ((theMine == null)->OppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
 	return null;
 nWall = theMine->Segments (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
 if ((nWall < 0) || (nWall > MAX_WALLS))
@@ -1571,7 +1571,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount)) {
 			if (m_bAutoFixBugs) {
 				short	oppSeg, oppSide, invLinkedWall = wallP->m_info.linkedWall;
-				if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
+				if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 					wallP->m_info.linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
 					if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount))
 						wallP->m_info.linkedWall = -1;
@@ -1587,7 +1587,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			}
 		else if (wallP->m_info.linkedWall >= 0) {
 			short	oppSeg, oppSide;
-			if (theMine->GetOppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
+			if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 				short oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
 					sprintf_s (message, sizeof (message),
@@ -1648,7 +1648,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				}
 			else {
 				nSegment = theMine->Segments (wallP->m_nSegment)->GetChild (wallP->m_nSide);
-				CSegment *segP = segmentManager.GetSegment (nSegment);
+				CSegment *segP = segmentManager.Segment (nSegment);
 				if ((nSegment >= 0 && nSegment < segmentManager.Count ()) &&
 					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
 					// find segment's child side

@@ -233,7 +233,7 @@ bool CMine::RotateSelection (double angle, bool perpendicular)
 {
 	int			nSegment = current.m_nSegment;
 	int			nSide = current.m_nSide;
-	CSegment*	segP = GetSegment (nSegment);
+	CSegment*	segP = Segment (nSegment);
 	CVertex		center, oppCenter;
 	int			i, pts [4];
 
@@ -301,7 +301,7 @@ bool CMine::ResizeItem (double delta)
 {
 	int nSegment = current.m_nSegment;
 	int nSide = current.m_nSide;
-	CSegment *segP = GetSegment (nSegment);
+	CSegment *segP = Segment (nSegment);
 	int i, j, point [4];
 	bool result = false;
 
@@ -421,7 +421,7 @@ switch (m_selectMode){
 		bool bMoved = false;
 		for (i = 0; i < MAX_VERTICES; i++) {
 			if (vertexManager.Status (i) & MARKED_MASK) {
-				*.GetVertex (i) += delta;
+				*.Vertex (i) += delta;
 				bMoved = true;
 				}
 			}
@@ -482,7 +482,7 @@ int nSegment = current.m_nSegment;
 int nSide = current.m_nSide;
 int nPoint = current.m_nPoint;
 int nLine = current.m_nLine;
-CSegment *segP = GetSegment (nSegment);
+CSegment *segP = Segment (nSegment);
 short i;
 
 undoManager.SetModified (true);
@@ -518,7 +518,7 @@ switch (m_selectMode) {
 		CGameObject *objP = Objects (0);
 		for (i = 0; i < MAX_VERTICES; i++)
 			if (vertexManager.Status (i) & MARKED_MASK)
-				*.GetVertex (i) += delta;
+				*.Vertex (i) += delta;
 		for (i = MineInfo ().objects.count; i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
 				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
@@ -540,7 +540,7 @@ bool CMine::SpinSelection (double angle)
 {
 	int				nSegment = current.m_nSegment;
 	int				nSide = current.m_nSide;
-	CSegment*		segP = GetSegment (nSegment);
+	CSegment*		segP = Segment (nSegment);
 	CGameObject*	objP;
 	CDoubleMatrix* orient;
 	CVertex			center, oppCenter, normal;
@@ -639,7 +639,7 @@ switch (m_selectMode) {
 		// rotate points about a point
 		for (i=0;i<VertCount ();i++)
 			if (vertexManager.Status (i) & MARKED_MASK)
-				.GetVertex (i)->Rotate (center, oppCenter, angle);
+				.Vertex (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
 		for (i = MineInfo ().objects.count; i; i--, objP++)

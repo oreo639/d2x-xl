@@ -358,7 +358,7 @@ segP [0] = theMine->current.Segment ();
 sideP [0] = theMine->current.Side ();
 nSegment [0] = current.m_nSegment;
 nSide [0] = current.m_nSide;
-if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
+if (theMine->OppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = theMine->Segments (nSegment [1]);
 	sideP [1] = segP [1]->m_sides + nSide [1];
 	}
@@ -477,7 +477,7 @@ CWall *CWallTool::GetOtherWall (void)
 {
 short nOppSeg, nOppSide;
 
-if ((theMine == null)->GetOppositeSide (nOppSeg, nOppSide))
+if ((theMine == null)->OppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = null;
 m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 return m_pWall [1] = (m_nWall [1] < theMine->Info ().walls.count ? theMine->Walls (m_nWall [1]) : null);
@@ -536,7 +536,7 @@ segP [0] = theMine->current.Segment ();
 sideP [0] = theMine->current.Side ();
 nSegment [0] = current.m_nSegment;
 nSide [0] = current.m_nSide;
-if (theMine->GetOppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
+if (theMine->OppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	segP [1] = theMine->Segments (nSegment [1]);
 	sideP [1] = segP [1]->m_sides + nSide [1];
 	}

@@ -724,12 +724,12 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 				continue;
 			// if there is a wall and it's a fuel cell delete it
-			if ((wall = theMine->GetWall (nSegNum, nSide)) && 
+			if ((wall = theMine->Wall (nSegNum, nSide)) && 
 				 (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333))
 				theMine->DeleteWall (sideP->m_info.nWall);
 			// if there is a wall at the opposite side and it's a fuel cell delete it
-			if (theMine->GetOppositeSide (nOppSeg, nOppSide, nSegNum, nSide) &&
-				 (wall = theMine->GetWall (nSegNum, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
+			if (theMine->OppositeSide (nOppSeg, nOppSide, nSegNum, nSide) &&
+				 (wall = theMine->Wall (nSegNum, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 				oppside = theMine->Segments (nOppSeg)->m_sides + nOppSide;
 				if (oppsideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333)
 					theMine->DeleteWall (oppsideP->nWall);

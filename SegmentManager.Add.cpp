@@ -3,7 +3,7 @@
 
 // ----------------------------------------------------------------------------- 
 
-short Add (void) 
+short CSegmentManager::Add (void) 
 { 
 return (Count () < MAX_SEGMENTS) ? Count ()++ : -1; 
 }
@@ -13,16 +13,17 @@ return (Count () < MAX_SEGMENTS) ? Count ()++ : -1;
 bool CSegmentManager::Create (void)
 {
 	CSegment *newSegP, *curSegP; 
-	short i, nNewSeg, nNewSide, nCurSide = current.m_nSide; 
-	short newVerts [4]; 
-	short nSegment, nSide; 
+	int		i;
+	short		nNewSeg, nNewSide, nCurSide = current.m_nSide; 
+	short		newVerts [4]; 
+	short		nSegment, nSide; 
 
 if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return FALSE; 
 	}
 
-curSegP = GetSegment (current.m_nSegment); 
+curSegP = Segment (current.m_nSegment); 
 
 if (Count () >= MAX_SEGMENTS) {
 	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
@@ -39,31 +40,19 @@ if (curSegP->GetChild (nCurSide) >= 0) {
 
 undoManager.SetModified (true); 
 undoManager.Lock ();
-// get new verts
-newVerts [0] = VertCount (); 
-newVerts [1] = newVerts [0] + 1; 
-newVerts [2] = newVerts [0] + 2; 
-newVerts [3] = newVerts [0] + 3; 
-
 // get new segment
 nNewSeg = Count (); 
-newSegP = GetSegment (nNewSeg); 
-
-// define vertices
-DefineVertices (newVerts); 
+newSegP = Segment (nNewSeg); 
 
 // define vert numbers for common side
-newSegP->m_info.verts [oppSideVertTable [nCurSide][0]] = curSegP->m_info.verts [sideVertTable [nCurSide][0]]; 
-newSegP->m_info.verts [oppSideVertTable [nCurSide][1]] = curSegP->m_info.verts [sideVertTable [nCurSide][1]]; 
-newSegP->m_info.verts [oppSideVertTable [nCurSide][2]] = curSegP->m_info.verts [sideVertTable [nCurSide][2]]; 
-newSegP->m_info.verts [oppSideVertTable [nCurSide][3]] = curSegP->m_info.verts [sideVertTable [nCurSide][3]]; 
+for (i = 0; i < 4; i++) {
+	newSegP->m_info.verts [oppSideVertTable [nCurSide][i]] = curSegP->m_info.verts [sideVertTable [nCurSide][i]]; 
+	// define vert numbers for new side
+	newVerts [i] = vertexManager.Add ();
+	newSegP->m_info.verts [sideVertTable [nCurSide][i]] = newVerts [i]; 
+	}
 
-// define vert numbers for new side
-newSegP->m_info.verts [sideVertTable [nCurSide][0]] = newVerts [0]; 
-newSegP->m_info.verts [sideVertTable [nCurSide][1]] = newVerts [1]; 
-newSegP->m_info.verts [sideVertTable [nCurSide][2]] = newVerts [2]; 
-newSegP->m_info.verts [sideVertTable [nCurSide][3]] = newVerts [3]; 
-
+ComputeVertices (newVerts); 
 newSegP->Setup ();
 // define children and special child
 newSegP->m_info.childFlags = 1 << oppSideTable [nCurSide]; /* only opposite side connects to current_segment */
@@ -90,7 +79,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete variable light if it exists
-short index = GetVariableLight (current.m_nSegment, nCurSide); 
+short index = lightManager.GetVariableLight (current.m_nSegment, nCurSide); 
 if (index != -1) {
 	lightManager.Count ()--; 
 	// put last light in place of deleted light
@@ -103,19 +92,19 @@ curSegP->m_sides [nCurSide].m_info.nBaseTex = 0;
 curSegP->m_sides [nCurSide].m_info.nOvlTex = 0; 
 memset (curSegP->m_sides [nCurSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nCurSide].m_info.uvls));
  
-// update number of GetSegment () and vertices and clear vertexStatus
+// update number of Segment () and vertices and clear vertexStatus
 Count ()++;
 for (int i = 0; i < 4; i++)
-	vertexManager.GetVertex (VertCount ()++)->m_status = 0;
+	vertexManager.Vertex (VertCount ()++)->m_status = 0;
 
-// link the new segment with any touching GetSegment ()
-CVertex *vNewSeg = vertexManager.GetVertex (newSegP->m_info.verts [0]);
+// link the new segment with any touching Segment ()
+CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
 CVertex *vSeg;
 for (nSegment = 0; nSegment < Count (); nSegment++) {
 	if (nSegment != nNewSeg) {
-		// first check to see if GetSegment () are any where near each other
+		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = vertexManager.GetVertex (GetSegment (nSegment)->m_info.verts [0]);
+		vSeg = vertexManager.Vertex (Segment (nSegment)->m_info.verts [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
@@ -203,8 +192,8 @@ if (nMatCen >= MAX_ROBOT_MAKERS) {
 if (!Create (nSegment, SEGMENT_FUNC_EQUIPMAKER, bCreate))
 	return false;
 GetEquipGen (nMatCen)->Setup (nSegment, nMatCen, 0);
-GetSegment (current.m_nSegment)->m_info.value = 
-GetSegment (current.m_nSegment)->m_info.nMatCen = nMatCen;
+Segment (current.m_nSegment)->m_info.value = 
+Segment (current.m_nSegment)->m_info.nMatCen = nMatCen;
 theMine->Info ().equipGen.count++;
 return true;
 }
@@ -221,8 +210,8 @@ if (nMatCen >= MAX_ROBOT_MAKERS) {
 if (!Create (nSegment, SEGMENT_FUNC_ROBOTMAKER, bCreate))
 	return false;
 GetBotGen (nMatCen)->Setup (nSegment, nMatCen, 8);
-GetSegment (current.m_nSegment)->m_info.value = 
-GetSegment (current.m_nSegment)->m_info.nMatCen = nMatCen;
+Segment (current.m_nSegment)->m_info.value = 
+Segment (current.m_nSegment)->m_info.nMatCen = nMatCen;
 theMine->Info ().botGen.count++;
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
@@ -263,7 +252,7 @@ return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cube
 int CSegmentManager::FuelCenterCount (void)
 {
 int nFuelCens = 0;
-CSegment *segP = GetSegment (0);
+CSegment *segP = Segment (0);
 for (int i = SegCount (); i > 0; i--, segP++)
 	if ((segP->m_info.function == SEGMENT_FUNC_FUELCEN) || (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		nFuelCens++;
@@ -292,7 +281,7 @@ if (nType == SEGMENT_FUNC_FUELCEN) {
 		current.m_nSegment = nLastSeg;
 		if (wallManager.Create (current.m_nSegment, current.m_nSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 			short nOppSeg, nOppSide;
-			if (GetOppositeSide (current, nOppSeg, nOppSide)
+			if (OppositeSide (current, nOppSeg, nOppSide)
 				wallManager.Create (nOppSeg, nOppSide, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
 		current.m_nSegment = nNewSeg;
@@ -321,7 +310,7 @@ void CSegmentManager::ComputeVertices (short newVerts [4])
 	short				i, points [4]; 
 	CDoubleVector	center, oppCenter, newCenter, orthog; 
 
-curSegP = GetSegment (current.m_nSegment); 
+curSegP = Segment (current.m_nSegment); 
 for (i = 0; i < 4; i++)
 	points [i] = CURRENT_POINT(i);
 	// METHOD 1: orthogonal with right angle on new side and standard cube side
@@ -340,9 +329,9 @@ switch (m_nAddMode) {
 		newCenter = center + orthog; 
 		// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
 		// point 0
-		a = orthog + *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
+		a = orthog + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
 		// point 1
-		b = orthog + *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
+		b = orthog + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
 		// center
 		c = Average (a, b);
 		// vector from center to point0 and its length
@@ -370,7 +359,7 @@ switch (m_nAddMode) {
 		for (i = 0; i < 4; i++) {
 			//nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]; 
 			nVertex = newVerts [i];
-			*vertexManager.GetVertex (nVertex) = A [i]; 
+			*vertexManager.Vertex (nVertex) = A [i]; 
 			}
 		}
 	break; 
@@ -385,9 +374,9 @@ switch (m_nAddMode) {
 		orthog *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			CDoubleVector v = *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]);
+			CDoubleVector v = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]);
 			v += orthog;
-			*vertexManager.GetVertex (newVerts [i]) = v; 
+			*vertexManager.Vertex (newVerts [i]) = v; 
 			}
 		}
 	break; 
@@ -398,8 +387,8 @@ switch (m_nAddMode) {
 		// copy side's four points into A
 		short nSide = current.m_nSide;
 		for (i = 0; i < 4; i++) {
-			A [i] = *vertexManager.GetVertex (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
-			A [i + 4] = *vertexManager.GetVertex (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
+			A [i] = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [nSide][i]]); 
+			A [i + 4] = *vertexManager.Vertex (curSegP->m_info.verts [oppSideVertTable [nSide][i]]); 
 			}
 
 		// subtract point 0 from all points in A to form B points
@@ -444,10 +433,10 @@ switch (m_nAddMode) {
 		// and translate back
 		nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][0]]; 
 		for (i = 4; i < 8; i++) 
-			A [i] = B [i] + *vertexManager.GetVertex (nVertex); 
+			A [i] = B [i] + *vertexManager.Vertex (nVertex); 
 
 		for (i = 0; i < 4; i++)
-			*vertexManager.GetVertex (newVerts [i]) = A [i + 4]; 
+			*vertexManager.Vertex (newVerts [i]) = A [i + 4]; 
 		}
 	}
 }
@@ -460,7 +449,7 @@ if (nTexture < 0)
 	return true;
 short nSegment = current.m_nSegment;
 short nOppSeg, nOppSide;
-CSegment *segP = GetSegment (nSegment);
+CSegment *segP = Segment (nSegment);
 CSide *sideP = segP->m_sides;
 double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
@@ -474,7 +463,7 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 			sideP->m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale);
 			sideP->m_info.uvls [i].l = defaultUVLs [i].l;
 			}
-		GetSegment (nSegment)->SetUV (nSide, 0, 0);
+		Segment (nSegment)->SetUV (nSide, 0, 0);
 		}
 	}
 return true;
@@ -487,7 +476,7 @@ bool CSegmentManager::Define (short nSegment, byte type, short nTexture)
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 Undefine (nSegment);
-CSegment *segP = (nSegment < 0) ? current.Segment () : GetSegment (nSegment);
+CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 segP->m_info.function = type;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
@@ -500,7 +489,7 @@ return true;
 
 void CSegmentManager::Undefine (short nSegment)
 {
-	CSegment *segP = (nSegment < 0) ? current.Segment () : GetSegment (nSegment);
+	CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 
 nSegment = short (segP - Segments (0));
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
@@ -560,16 +549,16 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (segP->GetChild (nSide) < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childSegP = GetSegment (segP->GetChild (nSide));
+		childSegP = Segment (segP->GetChild (nSide));
 		if (childSegP->m_info.function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
-		if ((wallP = GetWall (nSegment, nSide)) && 
+		if ((wallP = Wall (nSegment, nSide)) && 
 			 (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
 			wallManager.Delete (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
-		if (GetOppositeSide (CSideKey (nSegment, nSide), nOppSeg, nOppSide) &&
-			 (wallP = GetWall (nSegment, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
+		if (OppositeSide (CSideKey (nSegment, nSide), nOppSeg, nOppSide) &&
+			 (wallP = Wall (nSegment, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
 			oppSideP = Segments (nOppSeg)->m_sides + nOppSide;
 			if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
 				DeleteWall (oppSideP->m_info.nWall);

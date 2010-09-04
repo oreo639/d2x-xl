@@ -16,7 +16,7 @@ CWallManager wallManager;
 
 bool CWallManager::HaveResources (void)
 {
-CWall* wallP = segmentManager.GetWall ();
+CWall* wallP = segmentManager.Wall ();
 if (wallP != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
@@ -50,8 +50,8 @@ if (!HaveResources ())
 
 current.Get (nSegment, nSide);
 
-CSegment *segP = segmentManager.GetSegment (nSegment);
-CSide* sideP = segmentManager.GetSide (nSegment, nSide);
+CSegment *segP = segmentManager.Segment (nSegment);
+CSide* sideP = segmentManager.Side (nSegment, nSide);
 
 // if wall is an overlay, make sure there is no child
 short nChild = segP->GetChild (nSide);
@@ -78,7 +78,7 @@ ushort nWall = Count ();
 undoManager.SetModified (true);
 undoManager.Lock ();
 sideP->SetWall (nWall);
-CWall* wallP = GetWall (nWall);
+CWall* wallP = Wall (nWall);
 wallP->Setup (nSegment, nSide, nWall, (byte) type, nClip, nTexture, false);
 wallP->m_nIndex = nWall;
 wallP->m_info.flags = flags;
@@ -92,10 +92,10 @@ return wallP;
 
 //--------------------------------------------------------------------------
 
-CWall* CWallManager::GetOppositeWall (short nSegment, short nSide)
+CWall* CWallManager::OppositeWall (short nSegment, short nSide)
 {
-CSide* sideP = segmentManager.GetOppositeSide (nSegment, nSide);
-return (sideP == null) ? null : sideP->GetWall ();
+CSide* sideP = segmentManager.OppositeSide (nSegment, nSide);
+return (sideP == null) ? null : sideP->Wall ();
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void CWallManager::Delete (short nDelWall)
 {
 if (nDelWall == NO_WALL)
 	return;
-CWall* delWallP = GetWall (nDelWall);
+CWall* delWallP = Wall (nDelWall);
 if (delWallP == null) {
 	delWallP = current.Wall ();
 	nDelWall = Index (delWallP);
@@ -117,15 +117,15 @@ triggerManager.Delete (delWallP->m_info.nTrigger);
 undoManager.SetModified (true);
 undoManager.Lock ();
 // remove references to the deleted wall
-CWall* oppWallP = segmentManager.GetOppositeWall (delWallP->m_nSegment, delWallP->m_nSide);
+CWall* oppWallP = segmentManager.OppositeWall (delWallP->m_nSegment, delWallP->m_nSide);
 if (oppWallP != null) 
 	oppWallP->m_info.linkedWall = -1;
 
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
-segmentManager.GetSide (delWallP->m_nSegment, delWallP->m_nSide)->SetWall (NO_WALL);
+segmentManager.Side (delWallP->m_nSegment, delWallP->m_nSide)->SetWall (NO_WALL);
 if (nDelWall < --Count ()) { // move last wall in list to position of deleted wall
-	CWall* lastWallP = GetWall (Count ());
-	segmentManager.GetSide (lastWallP->m_nSegment, lastWallP->m_nSide)->SetWall (nDelWall); // make last wall's side point to new wall position
+	CWall* lastWallP = Wall (Count ());
+	segmentManager.Side (lastWallP->m_nSegment, lastWallP->m_nSide)->SetWall (nDelWall); // make last wall's side point to new wall position
 	*delWallP = *lastWallP;
 	delWallP->m_nIndex = Index (delWallP);
 	}
@@ -169,14 +169,14 @@ if (wallP != null)
 
 bool CWallManager::ClipFromTexture (short nSegment, short nSide)
 {
-CWall* wallP = segmentManager.GetWall (nSegment, nSide);
+CWall* wallP = segmentManager.Wall (nSegment, nSide);
 
 if (!(wallP && wallP->IsDoor ()))
 	return true;
 
 short nBaseTex, nOvlTex;
 
-segmentManager.GetTextures (nSegment, nSide, nBaseTex, nOvlTex);
+segmentManager.Textures (nSegment, nSide, nBaseTex, nOvlTex);
 
 return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 }
@@ -191,7 +191,7 @@ undoManager.Lock ();
 if (Create (current.m_nSegment, current.m_nSide, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	CSideKey opp;
-	if (segmentManager.GetOppositeSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
+	if (segmentManager.OppositeSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
 		undoManager.Unlock ();
 		DLE.MineView ()->Refresh ();
 		return true;
@@ -305,14 +305,14 @@ bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (Create (current.m_nSegment, current.m_nSide, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	GetWall (Count ()- 1)->m_info.nClip = 10;
+	Wall (Count ()- 1)->m_info.nClip = 10;
 	segmentManager.SetTextures (current.m_nSegment, current.m_nSide, 0, DLE.IsD1File () ? 444 : 508);
 	triggerManager.Create (Count () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	CSideKey opp;
-	if (segmentManager.GetOppositeSide (opp) && Create (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
+	if (segmentManager.OppositeSide (opp) && Create (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		GetWall (Count () - 1)->m_info.nClip = 10;
+		Wall (Count () - 1)->m_info.nClip = 10;
 		segmentManager.SetTextures (opp.m_nSegment, opp.m_nSide, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();

@@ -78,9 +78,9 @@ public:
 	bool IsDoor (void);
 	bool IsVisible (void);
 	bool IsVariable (void);
-	CSide* GetSide (void);
+	CSide* Side (void);
 	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
-	CTrigger* GetTrigger (void);
+	CTrigger* Trigger (void);
 	int SetClip (short nTexture);
 };
 

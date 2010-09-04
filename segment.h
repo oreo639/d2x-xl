@@ -93,8 +93,8 @@ public:
 	bool SetTextures (short nBaseTex, short nOvlTex);
 	void CSide::InitUVL (void);
 	inline void SetWall (short nWall) { m_info.nWall = nWall; }
-	CWall* GetWall (void);
-	CTrigger* GetTrigger (void);
+	CWall* Wall (void);
+	CTrigger* Trigger (void);
 	bool CSide::IsVisible (void);
 };
 
@@ -150,7 +150,7 @@ public:
 
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 
-	inline CSide* GetSide (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
+	inline CSide* Side (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 
 	inline short GetChild (short nSide) { return m_sides [nSide].m_info.nChild; }
 

@@ -55,7 +55,7 @@ CRect	rc;
 wndP->GetClientRect (rc);
 
 if (nBaseTex < 0) {
-	segP = (nSegment < 0) ? theMine->current.Segment () : segmentManager.GetSegment (nSegment);
+	segP = (nSegment < 0) ? theMine->current.Segment () : segmentManager.Segment (nSegment);
 	sideP = (nSide < 0) ? theMine->current.Side () : segP->m_sides + nSide;
 	int nSide = current.m_nSide;
 	nBaseTex = sideP->m_info.nBaseTex;
@@ -113,7 +113,7 @@ if (bShowTexture) {
 	else {
 		HGDIOBJ hgdiobj1;
 		bmTexture.LoadBitmap ((nOffset [bDescent1] < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
-		bmTexture.GetObject (sizeof (BITMAP), &bm);
+		bmTexture.Object (sizeof (BITMAP), &bm);
 		memDC.CreateCompatibleDC (pDC);
 		hgdiobj1 = memDC.SelectObject (bmTexture);
 		pDC->StretchBlt (0, 0, rc.Width (), rc.Height (), &memDC, 0, 0, 64, 64, SRCCOPY);
@@ -126,7 +126,7 @@ else if (bkColor < 0) {
 	HGDIOBJ hgdiobj;
 	// set bitmap
 	bmTexture.LoadBitmap ("NO_TEXTURE_BITMAP");
-	bmTexture.GetObject (sizeof (BITMAP), &bm);
+	bmTexture.Object (sizeof (BITMAP), &bm);
 	memDC.CreateCompatibleDC (pDC);
 	hgdiobj = memDC.SelectObject (bmTexture);
 	pDC->StretchBlt (0, 0, rc.Width (), rc.Height (), &memDC, 0, 0, 64, 64, SRCCOPY);

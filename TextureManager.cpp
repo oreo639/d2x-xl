@@ -455,7 +455,7 @@ return 0;
 
 void CTextureManager::MarkUsedTextures (void)
 {
-	CSegment* segP = segmentManager.GetSegment (0);
+	CSegment* segP = segmentManager.Segment (0);
 	int nVersion = DLE.IsD1File () ? 0 : 1;
 	int i, j, h = MaxTextures (nVersion);
 

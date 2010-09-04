@@ -20,11 +20,11 @@ void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
 {
 short* verts = current.Segment ()->m_info.verts;
 byte* sideVerts = sideVertTable [current.m_nSide];
-o = *vertexManager.GetVertex (verts [sideVerts [CURRENT_POINT(0)]]);
+o = *vertexManager.Vertex (verts [sideVerts [CURRENT_POINT(0)]]);
 // set x'
-m.rVec = *vertexManager.GetVertex (verts [sideVerts [CURRENT_POINT(1)]]) - o;
+m.rVec = *vertexManager.Vertex (verts [sideVerts [CURRENT_POINT(1)]]) - o;
 // calculate y'
-CVertex v = *vertexManager.GetVertex (verts [sideVerts [CURRENT_POINT(3)]]) - o;
+CVertex v = *vertexManager.Vertex (verts [sideVerts [CURRENT_POINT(3)]]) - o;
 m.uVec = CrossProduct (m.rVec, v);
 m.fVec = CrossProduct (m.rVec, m.uVec);
 m.rVec.Normalize ();
@@ -82,7 +82,7 @@ while (!fp.EoF ()) {
 		ErrorMsg ("No more free segments");
 		return nNewSegs;
 		}
-	CSegment* segP = segmentManager.GetSegment (nSegment);
+	CSegment* segP = segmentManager.Segment (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
 	fscanf_s (fp.File (), "segment %hd\n", &segP->m_nIndex);
@@ -142,13 +142,13 @@ while (!fp.EoF ()) {
 							w.m_info.nTrigger = NO_TRIGGER;
 						else {
 							w.m_info.nTrigger = (byte) triggerManager.Add ();
-							*triggerManager.GetTrigger (w.m_info.nTrigger) = t;
+							*triggerManager.Trigger (w.m_info.nTrigger) = t;
 							++nNewTriggers;
 							}
 						}
 					sideP->m_info.nWall = wallManager.Add ();
 					w.m_nSegment = nSegment;
-					*wallManager.GetWall (sideP->m_info.nWall) = w;
+					*wallManager.Wall (sideP->m_info.nWall) = w;
 					nNewWalls++;
 					}
 				}
@@ -175,7 +175,7 @@ while (!fp.EoF ()) {
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CVertex* vertP = vertexManager.GetVertex (origVertCount);
+		CVertex* vertP = vertexManager.Vertex (origVertCount);
 		for (k = vertexManager.Count () - origVertCount; k > 0; k--, vertP++)
 			if (*vertP == v) {
 				segP->m_info.verts [i] = k;
@@ -187,7 +187,7 @@ while (!fp.EoF ()) {
 			int nVertex = vertexManager.Count () - 1;
 			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
-			*vertexManager.GetVertex (nVertex) = v;
+			*vertexManager.Vertex (nVertex) = v;
 			}
 		}
 	// mark vertices
@@ -239,7 +239,7 @@ while (!fp.EoF ()) {
 	nNewSegs++;
 	}
 
-CTrigger *trigP = triggerManager.GetTrigger (triggerManager.Count (0));
+CTrigger *trigP = triggerManager.Trigger (triggerManager.Count (0));
 for (i = nNewTriggers; i; i--) {
 	trigP--;
 	for (j = 0; j < trigP->m_count; j++) {
@@ -289,7 +289,7 @@ void CBlockManager::Write (CFileManager& fp)
 // set origin
 MakeTransformation (m, origin);
 
-CSegment* segP = segmentManager.GetSegment (0);
+CSegment* segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	if (segP->m_info.wallFlags & MARKED_MASK) {
@@ -309,7 +309,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 				fprintf (fp.File (), "    nWall %d\n", 
 							(sideP->m_info.nWall < wallManager.Count ()) ? sideP->m_info.nWall : NO_WALL);
 				if (sideP->m_info.nWall < wallManager.Count ()) {
-					CWall* wallP = sideP->GetWall ();
+					CWall* wallP = sideP->Wall ();
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
 					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
 					fprintf (fp.File (), "        hps %d\n", wallP->m_info.hps);
@@ -322,11 +322,11 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= triggerManager.Count (0)))
 						fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
 					else {
-						CTrigger *trigP = wallP->GetTrigger ();
+						CTrigger *trigP = wallP->Trigger ();
 						int iTarget, count = 0;
 						// count trigP targets in marked area
 						for (iTarget = 0; iTarget < trigP->m_count; iTarget++)
-							if (segmentManager.GetSegment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
+							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
 						fprintf (fp.File (), "        trigP %d\n", wallP->m_info.nTrigger);
 						fprintf (fp.File (), "			    type %d\n", trigP->m_info.type);
@@ -335,7 +335,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 						fprintf (fp.File (), "			    timer %d\n", trigP->m_info.time);
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigP->m_count; iTarget++)
-							if (segmentManager.GetSegment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
+							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {
 								fprintf (fp.File (), "			        segP %d\n", trigP->Segment (iTarget));
 								fprintf (fp.File (), "			        side %d\n", trigP->Side (iTarget));
 								}
@@ -354,7 +354,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 			// k = (B*A)/(A*A) where B is the vertex relative to the origin
 			//                       A is the axis unit vVertexor (always 1)
 			nVertex = segP->m_info.verts [i];
-			CVertex v = *vertexManager.GetVertex (nVertex) - origin;
+			CVertex v = *vertexManager.Vertex (nVertex) - origin;
 			fprintf (fp.File (), "  vms_vector %d %ld %ld %ld\n", i, D2X (v ^ m.rVec), D2X (v ^ m.uVec), D2X (v ^ m.fVec));
 			}
 		fprintf (fp.File (), "  staticLight %ld\n",segP->m_info.staticLight);
@@ -415,7 +415,7 @@ DLE.MainFrame ()->Progress ().DestroyWindow ();
 undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
-CSegment *segP = segmentManager.GetSegment (segmentManager.Count ());
+CSegment *segP = segmentManager.Segment (segmentManager.Count ());
 for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
 	DLE.MainFrame ()->Progress ().StepIt ();
     if ((--segP)->m_info.wallFlags & MARKED_MASK) {
@@ -536,12 +536,12 @@ else {
 
 strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick paste
 
-// unmark all segmentManager.GetSegment ()
+// unmark all segmentManager.Segment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
-segP = segmentManager.GetSegment (0);
+segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->m_nIndex = nSegment;
 	segP->m_info.wallFlags &= ~MARKED_MASK;
@@ -557,15 +557,15 @@ DLE.MainFrame ()->InitProgress (fp.Length ());
 count = Read (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
-// int up the new segmentManager.GetSegment () children
-segP = segmentManager.GetSegment (0);
+// int up the new segmentManager.Segment () children
+segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	if (segP->m_nIndex < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
 		//  segment's offset number, otherwise set it to -1
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
 			if (segP->HasChild (nChild)) {
-				seg2P = segmentManager.GetSegment (0);
+				seg2P = segmentManager.Segment (0);
 				short nSegOffset;
 				for (nSegOffset = 0; nSegOffset < segmentManager.Count (); nSegOffset++, seg2P++) {
 					if (segP->GetChild (nChild) == ~seg2P->m_nIndex) {
@@ -575,14 +575,14 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					}
 				if (nSegOffset == segmentManager.Count ()) { // no child found
 					segmentManager.ResetSide (nSegment, nChild);
-					// auto link the new segment with any touching segmentManager.GetSegment ()
-					seg2P = segmentManager.GetSegment (0);
+					// auto link the new segment with any touching segmentManager.Segment ()
+					seg2P = segmentManager.Segment (0);
 					for (short nSegment2 = 0; nSegment2 < segmentManager.Count (); nSegment2++, seg2P++) {
 						if (nSegment != nSegment2) {
-							// first check to see if segmentManager.GetSegment () are any where near each other
+							// first check to see if segmentManager.Segment () are any where near each other
 							// use x, y, and z coordinate of first point of each segment for comparison
-							CVertex* v1 = vertexManager.GetVertex (segP ->m_info.verts [0]);
-							CVertex* v2 = vertexManager.GetVertex (seg2P->m_info.verts [0]);
+							CVertex* v1 = vertexManager.Vertex (segP ->m_info.verts [0]);
+							CVertex* v2 = vertexManager.Vertex (seg2P->m_info.verts [0]);
 							if (fabs (v1->v.x - v2->v.x) < 10.0 &&
 								 fabs (v1->v.y - v2->v.y) < 10.0 &&
 								 fabs (v1->v.z - v2->v.z) < 10.0) {
@@ -604,7 +604,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 	vertexManager.Status (nVertex) &= ~NEW_MASK;
 // now set all seg_numbers
-segP = segmentManager.GetSegment (0);
+segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	segP->m_nIndex = nSegment;
 fp.Close ();
@@ -660,8 +660,8 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 
-// delete segmentManager.GetSegment () from last to first because segmentManager.Count ()
-// is effected for each deletion.  When all segmentManager.GetSegment () are marked
+// delete segmentManager.Segment () from last to first because segmentManager.Count ()
+// is effected for each deletion.  When all segmentManager.Segment () are marked
 // the segmentManager.Count () will be decremented for each nSegment in loop.
 if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 	return;
@@ -669,10 +669,10 @@ if (QueryMsg ("Are you sure you want to delete the marked cubes?") != IDYES)
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 for (nSegment = segmentManager.Count () - 1; nSegment >= 0; nSegment--) {
 		DLE.MainFrame ()->Progress ().StepIt ();
-		if (segmentManager.GetSegment (nSegment)->m_info.wallFlags & MARKED_MASK) {
+		if (segmentManager.Segment (nSegment)->m_info.wallFlags & MARKED_MASK) {
 		if (segmentManager.Count () <= 1)
 			break;
-		if (objectManager.GetObject (0)->m_info.nSegment != nSegment)
+		if (objectManager.Object (0)->m_info.nSegment != nSegment)
 			segmentManager.Delete (nSegment); // delete segP w/o asking "are you sure"
 		}
 	}

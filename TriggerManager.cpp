@@ -55,7 +55,7 @@ void CTriggerManager::SortObjTriggers (void)
 
 if (h > 1) {
 	for (ushort i = 0; i < h; i++)
-		GetObjTrigger (i)->m_nIndex = i;
+		ObjTrigger (i)->m_nIndex = i;
 	SortObjTriggers (0, h - 1);
 	}
 }
@@ -64,14 +64,14 @@ if (h > 1) {
 
 void CTriggerManager::RenumberObjTriggers (void)
 {
-	CTrigger*	trigP = GetObjTrigger (0);
+	CTrigger*	trigP = ObjTrigger (0);
 	int			i;
 
 for (i = NumObjTriggers (); i; i--, trigP++)
 	trigP->m_info.nObject = objectManager.Index (objectManager.FindBySig (trigP->m_info.nObject));
 i = NumObjTriggers ();
 while (i) {
-	if (GetObjTrigger (--i)->m_info.nObject < 0)
+	if (ObjTrigger (--i)->m_info.nObject < 0)
 		DeleteFromObject (i);
 	}
 SortObjTriggers ();
@@ -81,7 +81,7 @@ SortObjTriggers ();
 
 void CTriggerManager::RenumberTargetObjs (void)
 {
-	CTrigger* trigP = GetTrigger (0);
+	CTrigger* trigP = Trigger (0);
 
 for (int i = NumObjTriggers (); i; i--, trigP++) {
 	CSideKey* targetP = trigP->m_targets;
@@ -128,7 +128,7 @@ CTrigger* CTriggerManager::AddToWall (short nWall, short type, bool bAddWall)
 		};
 
 // check if there's already a trigger on the current side
-if (segmentManager.GetTrigger () != null) {
+if (segmentManager.Trigger () != null) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
@@ -197,14 +197,14 @@ else
 	flags = 0;
 
 short nTrigger = Count (0)++;
-CTrigger* trigP = GetTrigger (nTrigger);
+CTrigger* trigP = Trigger (nTrigger);
 trigP->Setup (type, flags);
 trigP->m_nIndex = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
-return GetTrigger (nTrigger);
+return Trigger (nTrigger);
 }
 
 //------------------------------------------------------------------------------
@@ -223,7 +223,7 @@ if (nDelTrigger < 0) {
 	nDelTrigger = wallP->m_info.nTrigger;
 	}
 
-CTrigger* delTrigP = GetTrigger (nDelTrigger, 0);
+CTrigger* delTrigP = Trigger (nDelTrigger, 0);
 
 if (delTrigP == null)
 	return;
@@ -276,7 +276,7 @@ return wallManager.Count ();
 
 CTrigger* CTriggerManager::FindByTarget (short nSegment, short nSide, short i)
 {
-	CTrigger *trigP = GetTrigger (i);
+	CTrigger *trigP = Trigger (i);
 	CSideKey key = CSideKey (nSegment, nSide);
 
 for (; i < m_nCount [0]; i++, trigP++) {
@@ -308,8 +308,8 @@ for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 	}
 // add any exits to target list that are not already in it
 for (short nWall = 0; nWall < wallManager.Count (); nWall++) {
-	CWall* wallP = wallManager.GetWall (nWall);
-	CTrigger* trigP = wallP->GetTrigger ();
+	CWall* wallP = wallManager.Wall (nWall);
+	CTrigger* trigP = wallP->Trigger ();
 	if (trigP == null)
 		continue;
 	if (!trigP->IsExit ())
@@ -325,7 +325,7 @@ undoManager.Unlock ();
 
 CTrigger* CTriggerManager::AddToObject (short nObject, short type) 
 {
-	CGameObject* objP = (nObject < 0) ? current.Object () : objectManager.GetObject (nObject);
+	CGameObject* objP = (nObject < 0) ? current.Object () : objectManager.Object (nObject);
 
 if (objP == null) {
 	ErrorMsg ("Couldn't find object to attach triggers to.");
@@ -348,15 +348,15 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 short nTrigger = NumObjTriggers ();
-GetObjTrigger (nTrigger)->Setup (type, 0);
-GetObjTrigger (nTrigger)->m_info.nObject = nObject;
+ObjTrigger (nTrigger)->Setup (type, 0);
+ObjTrigger (nTrigger)->m_info.nObject = nObject;
 NumObjTriggers ()++;
 undoManager.Unlock ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
-	if (GetObjTrigger (--i)->m_nIndex == nTrigger)
-		return GetObjTrigger (i);
-return GetObjTrigger (nTrigger);
+	if (ObjTrigger (--i)->m_nIndex == nTrigger)
+		return ObjTrigger (i);
+return ObjTrigger (nTrigger);
 }
 
 //------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ void CTriggerManager::DeleteFromObject (short nDelTrigger)
 if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
 if (nDelTrigger < --NumObjTriggers ())
-	*GetObjTrigger (nDelTrigger) = *GetObjTrigger (NumObjTriggers ());
+	*ObjTrigger (nDelTrigger) = *ObjTrigger (NumObjTriggers ());
 }
 
 //------------------------------------------------------------------------------
@@ -376,7 +376,7 @@ void CTriggerManager::DeleteObjTriggers (short nObject)
 	short i = NumObjTriggers ();
 	
 while (i)
-	if (GetObjTrigger (--i)->m_info.nObject == nObject)
+	if (ObjTrigger (--i)->m_info.nObject == nObject)
 		DeleteFromObject (i);
 }
 
@@ -388,11 +388,11 @@ CSideKey key (nSegment, nSide);
 int i;
 
 for (i = 0; nTriggers; i++)
-	if (GetTrigger (i)->Delete (key))
+	if (Trigger (i)->Delete (key))
 		i--;
 
 for (i = NumObjTriggers (); i > 0; )
-	if (GetObjTrigger (--i)->Delete (key) == 0) // no targets left
+	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
 }
 
@@ -468,9 +468,9 @@ else {
 		if (NumObjTriggers () > 0) {
 			SortObjTriggers ();
 			for (i = 0; i < NumObjTriggers (); i++)
-				GetObjTrigger (i)->Write (fp, nFileVersion, true);
+				ObjTrigger (i)->Write (fp, nFileVersion, true);
 			for (i = 0; i < NumObjTriggers (); i++)
-				fp.WriteInt16 (GetObjTrigger (i)->m_info.nObject);
+				fp.WriteInt16 (ObjTrigger (i)->m_info.nObject);
 			}
 		}
 	}
@@ -521,7 +521,7 @@ bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (wallManager.Create (current.m_nSegment, current.m_nSide, (byte) wallType, wallFlags, KEY_NONE, -1, -1) &&
 	 AddToWall (wallManager.Count (0) - 1, triggerType, false)) {
-	GetTrigger (Count (0) - 1)->Add (other.m_nSegment, other.m_nSide);
+	Trigger (Count (0) - 1)->Add (other.m_nSegment, other.m_nSide);
 	undoManager.Unlock ();
 	DLE.MineView ()->Refresh ();
 	return true;

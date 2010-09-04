@@ -55,36 +55,36 @@ class CSegmentManager {
 
 		inline short Index (CSegment* segP) { return (short) (segP - &m_segments [0]); }
 
-		inline CSegment *GetSegment (int i) { return &m_segments [i]; }
+		inline CSegment *Segment (int i) { return &m_segments [i]; }
 
-		inline CSide* GetSide (CSideKey key) {
+		inline CSide* Side (CSideKey key) {
 			current.Get (key);
-			return &GetSegment (key.m_nSegment)->m_sides [key.m_nSide];
+			return &Segment (key.m_nSegment)->m_sides [key.m_nSide];
 			}
 
-		inline CSide* GetSide (short nSegment = -1, short nSide = -1) {
+		inline CSide* Side (short nSegment = -1, short nSide = -1) {
 			current.Get (nSegment, nSide);
-			return &GetSegment (nSegment)->m_sides [nSide];
+			return &Segment (nSegment)->m_sides [nSide];
 			}
 
-		CSide* GetOppositeSide (short nSegment = -1, short nSide = -1);
+		CSide* OppositeSide (short nSegment = -1, short nSide = -1);
 
-		bool GetOppositeSide (CSideKey& key, short nSegment = -1, short nSide = -1);
+		bool OppositeSide (CSideKey& key, short nSegment = -1, short nSide = -1);
 
-		inline CWall* GetWall (short nSegment = -1, short nSide = -1) {
-			return GetSide (nSegment, nSide)->GetWall ();
+		inline CWall* Wall (short nSegment = -1, short nSide = -1) {
+			return Side (nSegment, nSide)->Wall ();
 			}
 
-		inline CTrigger* GetTrigger (short nSegment = -1, short nSide = -1) {
-			return GetSide (nSegment, nSide)->GetTrigger ();
+		inline CTrigger* Trigger (short nSegment = -1, short nSide = -1) {
+			return Side (nSegment, nSide)->Trigger ();
 			}
 
-		inline CWall* GetOppositeWall (short nSegment = -1, short nSide = -1) {
-			CSide* sideP = GetSide (nSegment, nSide);
-			return (sideP == null) ? null : GetSide (nSegment, nSide)->GetWall ();
+		inline CWall* OppositeWall (short nSegment = -1, short nSide = -1) {
+			CSide* sideP = Side (nSegment, nSide);
+			return (sideP == null) ? null : Side (nSegment, nSide)->Wall ();
 			}
 
-		void GetTextures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
+		void Textures (short nSegment, short nSide, short& nBaseTex, short& nOvlTex);
 
 		inline robotMakerList& BotGens (void) { return m_robotMakers; }
 		
@@ -95,7 +95,7 @@ class CSegmentManager {
 		inline CRobotMaker* GetEquipGen (int i) { return &m_equipMakers [i]; }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
-		inline int GetAddMode (void) { return m_nAddMode; }
+		inline int AddMode (void) { return m_nAddMode; }
 
 		CSegment* FindRobotMaker (short i = 0);
 

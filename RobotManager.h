@@ -31,13 +31,13 @@ class CRobotManager {
 		int				m_nRobotTypes;
 
 	public:
-		inline robotInfoList& RobotInfo (void) { return m_robotInfo [0]; }
+		inline robotInfoList& RobotInfoList (void) { return m_robotInfo [0]; }
 
-		inline robotInfoList& DefRobotInfo (void) { return m_robotInfo [1]; }
+		inline robotInfoList& DefRobotInfoList (void) { return m_robotInfo [1]; }
 
-		inline CRobotInfo* GetRobotInfo (int i, int j = 0) { return &m_robotInfo [j][i]; }
+		inline CRobotInfo* RobotInfo (int i, int j = 0) { return &m_robotInfo [j][i]; }
 
-		inline CRobotInfo* GetDefRobotInfo (int i) { return GetRobotInfo (i, 1); }
+		inline CRobotInfo* DefRobotInfo (int i) { return RobotInfo (i, 1); }
 
 		void Init (void); 
 

@@ -231,16 +231,16 @@ fp.WriteInt16 (SegCount ());
 
 // write all vertices
 for (int i = 0; i < VertCount (); i++)
-	.GetVertex (i)->Write (fp);
+	.Vertex (i)->Write (fp);
 
 // write segment information
 for (i = 0; i < SegCount (); i++)  
-	GetSegment (i)->Write (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+	Segment (i)->Write (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
 
 // for Descent 2, save special info here
 if (IsD2File ()) {
   for (i = 0; i < SegCount (); i++)  
-	  GetSegment (i)->WriteExtras (fp, IsD2XLevel () ? 2 : 1, true);
+	  Segment (i)->WriteExtras (fp, IsD2XLevel () ? 2 : 1, true);
   }
 
 if (IsD2XLevel ()) {
