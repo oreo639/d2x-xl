@@ -35,6 +35,14 @@ typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
 
 //------------------------------------------------------------------------
 
+typedef struct tVertMatch {
+		short		b;
+		short		i;
+		double	d;
+	} tVertMatch; 
+
+//------------------------------------------------------------------------
+
 class CSegmentManager {
 	public:
 		segmentList		m_segments;
@@ -145,7 +153,11 @@ class CSegmentManager {
 
 		bool Split (void);
 
+		void Join (int solidify);
+
 		bool Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin);
+
+		void LinkSides (short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match [4]);
 
 		void CalcCenter (CVertex& pos, short nSegment);
 

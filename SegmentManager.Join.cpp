@@ -1,25 +1,7 @@
 // Segment.cpp
 
-#include "stdafx.h"
-#include "dle-xp-res.h"
-
-#include < math.h>
-#include "define.h"
-#include "types.h"
-#include "global.h"
 #include "mine.h"
-#include "matrix.h"
-#include "cfile.h"
-#include "TriggerManager.h"
-#include "WallManager.h"
-#include "SegmentManager.h"
-#include "TextureManager.h"
-#include "palette.h"
 #include "dle-xp.h"
-#include "robot.h"
-#include "cfile.h"
-
-CSegmentManager segmentManager;
 
 // ----------------------------------------------------------------------------- 
 // LinkSegments()
@@ -119,7 +101,7 @@ for (i = 0; i < 4; i++) {
 				if (segP->m_info.verts [nVertex] == oldVertex)
 					segP->m_info.verts [nVertex] = newVertex; 
 		// then delete the vertex
-		DeleteVertex (oldVertex); 
+		vertexManager.Delete (oldVertex); 
 		}
 	}
 }
@@ -134,7 +116,7 @@ void CSegmentManager::JoinPoints (void)
   CSegment *seg1, *seg2; 
  double distance; //v1x, v1y, v1z, v2x, v2y, v2z; 
   int vert1, vert2; 
-  CSelection *cur1, *cur2; 
+  CSelection * cur1, * cur2; 
 
 if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
@@ -144,24 +126,22 @@ if (selections [0].m_nSegment== selections [1].m_nSegment) {
 	ErrorMsg ("You cannot joint two points on the same cube.\n\n"
 				"Hint: The two golden circles represent the current point, \n"
 				"and the 'other' cube's current point.  Press 'P' to change the\n"
-				"Current () point or press the space bar to switch to the other cube."); 
+				"current point or press the space bar to switch to the other cube."); 
 	return;
 	}
 
-if (Current () == &Current1 ()) {
-	seg1 = Segment (selections [0].m_nSegment); 
-	seg2 = Segment (selections [1].m_nSegment); 
-	cur1 = &Current1 (); 
-	cur2 = &Current2 (); 
+if (current == selections [0]) {
+	cur1 = &selections [0]; 
+	cur2 = &selections [1]; 
 	}
 else {
-	seg1 = Segment (selections [1].m_nSegment); 
-	seg2 = Segment (selections [0].m_nSegment); 
-	cur1 = &Current2 (); 
-	cur2 = &Current1 (); 
+	cur1 = &selections [1]; 
+	cur2 = &selections [0]; 
 	}
-vert1 = seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]]; 
-vert2 = seg2->m_info.verts [sideVertTable [cur2->nSide][cur2->nPoint]]; 
+seg1 = Segment (cur1->m_nSegment); 
+seg2 = Segment (cur2->m_nSegment); 
+vert1 = seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]]; 
+vert2 = seg2->m_info.verts [sideVertTable [cur2->m_nSide][cur2->m_nPoint]]; 
 // make sure verts are different
 if (vert1== vert2) {
 	ErrorMsg ("These points are already joined."); 
@@ -179,7 +159,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 undoManager.SetModified (true); 
 undoManager.Lock ();
 // define vert numbers
-seg1->m_info.verts [sideVertTable [cur1->nSide][cur1->nPoint]] = vert2; 
+seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]] = vert2; 
 // delete any unused vertices
 //  delete_unused_vertices(); 
 FixChildren(); 
@@ -196,7 +176,7 @@ void CSegmentManager::JoinLines (void)
 {
   CSegment *seg1, *seg2; 
   double v1x [2], v1y [2], v1z [2], v2x [2], v2y [2], v2z [2]; 
-  double distance, min_radius; 
+  double distance, minRadius; 
   int v1, v2, vert1 [2], vert2 [2]; 
   short match [2]; 
   short i, j, nLine; 
@@ -216,23 +196,21 @@ if (selections [0].m_nSegment == selections [1].m_nSegment) {
 	return;
 	}
 
-if (Current ()== &Current1 ()) {
-	seg1 = Segment (selections [0].m_nSegment); 
-	seg2 = Segment (selections [1].m_nSegment); 
-	cur1 = &Current1 (); 
-	cur2 = &Current2 (); 
+if (current == selections [0]) {
+	cur1 = &selections [0]; 
+	cur2 = &selections [1]; 
 	} 
 else {
-	seg1 = Segment (selections [1].m_nSegment); 
-	seg2 = Segment (selections [0].m_nSegment); 
-	cur1 = &Current2 (); 
-	cur2 = &Current1 (); 
+	cur1 = &selections [1]; 
+	cur2 = &selections [0]; 
 	}
+seg1 = Segment (cur1->m_nSegment); 
+seg2 = Segment (cur2->m_nSegment); 
 
 for (i = 0; i < 2; i++) {
-	nLine = sideLineTable [cur1->nSide][cur1->nLine]; 
+	nLine = sideLineTable [cur1->m_nSide][cur1->m_nLine]; 
 	v1 = vert1 [i] = seg1->m_info.verts [lineVertTable [nLine][i]]; 
-	nLine = sideLineTable [cur2->nSide][cur2->nLine]; 
+	nLine = sideLineTable [cur2->m_nSide][cur2->m_nLine]; 
 	v2 = vert2 [i] = seg2->m_info.verts [lineVertTable [nLine][i]]; 
 	v1x [i] = vertexManager.Vertex (v1)->v.x; 
 	v1y [i] = vertexManager.Vertex (v1)->v.y; 
@@ -252,20 +230,20 @@ if (vert1 [0]== vert2 [0] || vert1 [0]== vert2 [1] ||
 
 // find closest for each point for each corner
 for (i = 0; i < 2; i++) {
-	min_radius = JOIN_DISTANCE; 
+	minRadius = JOIN_DISTANCE; 
 	for (j = 0; j < 2; j++) {
 		distance = sqrt((v1x [i] - v2x [j]) * (v1x [i] - v2x [j])
 					+ (v1y [i] - v2y [j]) * (v1y [i] - v2y [j])
 					+ (v1z [i] - v2z [j]) * (v1z [i] - v2z [j])); 
-		if (distance < min_radius) {
-			min_radius = distance; 
+		if (distance < minRadius) {
+			minRadius = distance; 
 			match [i] = j;  // remember which vertex it matched
 			}
 		}
 	}
 
 // make sure there are distances are close enough
-if (min_radius == JOIN_DISTANCE) {
+if (minRadius == JOIN_DISTANCE) {
 	ErrorMsg ("Lines are too far apart to join"); 
 	return; 
 	}
@@ -284,7 +262,7 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
-	nLine = sideLineTable [cur1->nSide][cur1->nLine]; 
+	nLine = sideLineTable [cur1->m_nSide][cur1->m_nLine]; 
 	seg1->m_info.verts [lineVertTable [nLine][i]] = vert2 [match [i]]; 
 	}
 FixChildren(); 
@@ -310,10 +288,10 @@ void CSegmentManager::Join (int solidify)
 	CSegment *seg1, *seg2; 
 	short h, i, j, nSide, nNewSeg, nSegment; 
 	CVertex v1 [4], v2 [4]; 
-	double radius, min_radius, max_radius, totalRad, minTotalRad; 
+	double radius, minRadius, maxRadius, totalRad, minTotalRad; 
 	tVertMatch match [4]; 
 	bool fail; 
-	CSelection *cur1, *cur2, my_cube; 
+	CSelection *cur1, *cur2, mySeg; 
 
 if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
@@ -327,18 +305,18 @@ if (solidify) {
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
 		}
-	cur1 = Current (); 
-	cur2 = &my_cube; 
-	my_cube.nSegment = -1;
+	cur1 = &current; 
+	cur2 = &mySeg; 
+	mySeg.m_nSegment = -1;
 	// find first cube (other than this cube) which shares all 4 points
 	// of the current side (points must be < 5.0 away)
-	seg1 = Segment (cur1->nSegment); 
+	seg1 = Segment (cur1->m_nSegment); 
 	for (i = 0; i < 4; i++) {
-		memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex));
+		memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]), sizeof (CVertex));
 		}
 	minTotalRad = 1e300;
 	for (nSegment = 0, seg2 = Segment (0); nSegment < Count (); nSegment++, seg2++) {
-		if (nSegment== cur1->nSegment)
+		if (nSegment== cur1->m_nSegment)
 			continue; 
 		for (nSide = 0; nSide < 6; nSide++) {
 			fail = FALSE; 
@@ -373,9 +351,9 @@ if (solidify) {
 				totalRad += match [i].d;
 			if (minTotalRad > totalRad) {
 				minTotalRad = totalRad;
-				my_cube.nSegment = nSegment; 
-				my_cube.nSide = nSide; 
-				my_cube.nPoint = 0; // should not be used
+				mySeg.m_nSegment = nSegment; 
+				mySeg.m_nSide = nSide; 
+				mySeg.m_nPoint = 0; // should not be used
 			// force break from loops
 				if (minTotalRad == 0) {
 					nSide = 6; 
@@ -384,7 +362,7 @@ if (solidify) {
 				}
 			}
 		}
-	if (my_cube.nSegment < 0) {
+	if (mySeg.m_nSegment < 0) {
 		if (!bExpertMode)
 			ErrorMsg ("Could not find another cube whose side is within\n"
 						"10.0 units from the current side"); 
@@ -392,16 +370,16 @@ if (solidify) {
 		}
 	}
 else
-	if (Current ()== &Current1 ()) {
-		cur1 = &Current1 (); 
-		cur2 = &Current2 (); 
+	if (current== selections [0]) {
+		cur1 = &selections [0]; 
+		cur2 = &selections [1]; 
 		}
 	else {
-		cur1 = &Current2 (); 
-		cur2 = &Current1 (); 
+		cur1 = &selections [1]; 
+		cur2 = &selections [0]; 
 		}
 
-if (cur1->nSegment == cur2->nSegment) {
+if (cur1->m_nSegment == cur2->m_nSegment) {
 	if (!bExpertMode)
 		ErrorMsg ("You cannot joint two sides on the same cube.\n\n"
 					"Hint: The two red squares represent the current side, \n"
@@ -410,24 +388,24 @@ if (cur1->nSegment == cur2->nSegment) {
 	return; 
 	}
 
-seg1 = Segment (cur1->nSegment); 
-seg2 = Segment (cur2->nSegment); 
+seg1 = Segment (cur1->m_nSegment); 
+seg2 = Segment (cur2->m_nSegment); 
 
 // figure out matching corners to join to.
 // get coordinates for calulaction and set match = none
 for (i = 0; i < 4; i++) {
-	memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->nSide][i]]), sizeof (CVertex)); 
-	memcpy (&v2 [i], vertexManager.Vertex (seg2->m_info.verts [sideVertTable [cur2->nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]), sizeof (CVertex)); 
+	memcpy (&v2 [i], vertexManager.Vertex (seg2->m_info.verts [sideVertTable [cur2->m_nSide][i]]), sizeof (CVertex)); 
 	match [i].i = -1; 
 	}
 
 // find closest for each point for each corner
 for (i = 0; i < 4; i++) {
-	min_radius = JOIN_DISTANCE; 
+	minRadius = JOIN_DISTANCE; 
 	for (j = 0; j < 4; j++) {
 		radius = Distance (v1 [i], v2 [j]);
-		if (radius < min_radius) {
-			min_radius = radius; 
+		if (radius < minRadius) {
+			minRadius = radius; 
 			match [i].i = j;  // remember which vertex it matched
 			}
 		}
@@ -450,7 +428,7 @@ if (!fail)
 			 (match [2].i == match [3].i);
 
 if (fail) {
-	int offset = (4 + cur1->nPoint - (3 - cur2->nPoint)) % 4; 
+	int offset = (4 + cur1->m_nPoint - (3 - cur2->m_nPoint)) % 4; 
 	match [0].i = (offset + 3) % 4; 
 	match [1].i = (offset + 2) % 4; 
 	match [2].i = (offset + 1) % 4; 
@@ -458,17 +436,17 @@ if (fail) {
 	}
 
 // determine min and max distances
-min_radius = JOIN_DISTANCE; 
-max_radius = 0; 
+minRadius = JOIN_DISTANCE; 
+maxRadius = 0; 
 for (i = 0; i < 4; i++) {
 	j = match [i].i; 
 	radius = Distance (v1 [i], v2 [j]);
-	minRadius = min (min_radius, radius); 
-	maxRadius = max (max_radius, radius); 
+	minRadius = min (minRadius, radius); 
+	maxRadius = max (maxRadius, radius); 
 	}
 
 // make sure there are distances are close enough
-if (max_radius >= JOIN_DISTANCE) {
+if (maxRadius >= JOIN_DISTANCE) {
 	if (!bExpertMode)
 		ErrorMsg ("Sides are too far apart to join.\n\n"
 					 "Hint: Cubes should not exceed 200 in any dimension\n"
@@ -478,10 +456,10 @@ if (max_radius >= JOIN_DISTANCE) {
 
 // if Segment () are too close to put a new segment between them, 
 // then solidifyally link them together without asking
-if (min_radius <= 5) {
+if (minRadius <= 5) {
 	undoManager.SetModified (true); 
 	undoManager.Lock ();
-	LinkSides (cur1->nSegment, cur1->nSide, cur2->nSegment, cur2->nSide, match); 
+	LinkSides (cur1->m_nSegment, cur1->m_nSide, cur2->m_nSegment, cur2->m_nSide, match); 
 	SetLinesToDraw(); 
 	undoManager.Unlock ();
 	DLE.MineView ()->Refresh ();
@@ -514,9 +492,9 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)  /* no remaining children */
 
 // now define two sides:
 // near side has opposite side number cube 1
-segP->SetChild (oppSideTable [cur1->nSide], cur1->nSegment); 
+segP->SetChild (oppSideTable [cur1->m_nSide], cur1->m_nSegment); 
 // far side has same side number as cube 1
-segP->SetChild (cur1->nSide, cur2->nSegment); 
+segP->SetChild (cur1->m_nSide, cur2->m_nSegment); 
 segP->m_info.owner = -1;
 segP->m_info.group = -1;
 segP->m_info.function = 0; 
@@ -525,8 +503,8 @@ segP->m_info.value =-1;
 
 // define vert numbers
 for (i = 0; i < 4; i++) {
-	segP->m_info.verts [oppSideVertTable [cur1->nSide][i]] = seg1->m_info.verts [sideVertTable [cur1->nSide][i]]; 
-	segP->m_info.verts [sideVertTable [cur1->nSide][i]] = seg2->m_info.verts [sideVertTable [cur2->nSide][match [i].i]]; 
+	segP->m_info.verts [oppSideVertTable [cur1->m_nSide][i]] = seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]; 
+	segP->m_info.verts [sideVertTable [cur1->m_nSide][i]] = seg2->m_info.verts [sideVertTable [cur2->m_nSide][match [i].i]]; 
 	}
 
 // define Walls ()
@@ -537,11 +515,11 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++)
 // define sides
 for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 	if (segP->Child (nSide) == -1) {
-		SetTextures (CSideKey (nNewSeg, nSide), seg1->m_sides [cur1->nSide].m_info.nBaseTex, seg1->m_sides [cur1->nSide].m_info.nOvlTex); 
+		SetTextures (CSideKey (nNewSeg, nSide), seg1->m_sides [cur1->m_nSide].m_info.nBaseTex, seg1->m_sides [cur1->m_nSide].m_info.nOvlTex); 
 		Segment (nNewSeg)->SetUV (nSide, 0, 0); 
 		}
 	else {
-		SetTextures (CSideKey (nNewSeg), nSide, 0, 0); 
+		SetTextures (CSideKey (nNewSeg, nSide), 0, 0); 
 		for (i = 0; i < 4; i++) 
 			segP->m_sides [nSide].m_info.uvls [i].Clear (); 
 		}
@@ -551,14 +529,14 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 segP->m_info.staticLight = seg1->m_info.staticLight; 
 
 // update cur segment
-seg1->SetChild (cur1->nSide, nNewSeg); 
-SetTextures (cur1->nSegment, cur1->nSide, 0, 0); 
+seg1->SetChild (cur1->m_nSide, nNewSeg); 
+SetTextures (*cur1, 0, 0); 
 for (i = 0; i < 4; i++) 
-	seg1->m_sides [cur1->nSide].m_info.uvls [i].Clear (); 
-seg2->SetChild (cur2->nSide, nNewSeg); 
-SetTextures (CSideKey (cur2->nSegment, cur2->nSide), 0, 0); 
+	seg1->m_sides [cur1->m_nSide].m_info.uvls [i].Clear (); 
+seg2->SetChild (cur2->m_nSide, nNewSeg); 
+SetTextures (CSideKey (cur2->m_nSegment, cur2->m_nSide), 0, 0); 
 for (i = 0; i < 4; i++) 
-	seg2->m_sides [cur2->nSide].m_info.uvls [i].Clear (); 
+	seg2->m_sides [cur2->m_nSide].m_info.uvls [i].Clear (); 
 
 // update number of Segment () and vertices
 Count ()++; 
