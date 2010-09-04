@@ -5643,10 +5643,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\MineColor.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\MineInfo.cpp"
 					>
 				</File>
