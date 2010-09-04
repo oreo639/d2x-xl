@@ -331,7 +331,7 @@ if (theMine->UseTexColors ()) {
 			wallP = theMine->Walls (sideP->m_info.nWall);
 			if (wallP->m_info.type != WALL_TRANSPARENT)
 				continue;
-			if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
+			if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
 				continue;
 			if (sideP->m_info.nBaseTex != nBaseTex)
 				continue;

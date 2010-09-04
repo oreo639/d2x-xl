@@ -190,20 +190,22 @@ for (short nSegment = Count (); nSegment; nSegment--, segP++)
 void CSegmentManager::UpdateMarked (void)
 {
 	CSegment *segP = Segment (0); 
-	int i; 
+
 // mark all cubes which have all 8 verts marked
-for (int i = 0; i < Count (); i++, segP++)
-	if ((vertexManager.Status (segP->m_info.verts [0]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [1]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [2]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [3]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [4]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [5]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [6]) & MARKED_MASK) &&
-		 (vertexManager.Status (segP->m_info.verts [7]) & MARKED_MASK))
+for (int i = 0; i < Count (); i++, segP++) {
+	short* vertP = segP->m_info.verts;
+	if ((vertexManager.Status (vertP [0]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [1]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [2]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [3]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [4]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [5]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [6]) & MARKED_MASK) &&
+		 (vertexManager.Status (vertP [7]) & MARKED_MASK))
 		segP->m_info.wallFlags |= MARKED_MASK; 
 	else
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -242,7 +244,7 @@ CSegment* segP = Segment (0);
 for (short nSegment = Count (); nSegment; nSegment--, segP++) {
 	CSide* sideP = segP->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++)
-		if (sideP->IsMarked ())
+		if (IsMarked (CSideKey (nSegment, nSide)))
 			return true;
 	}
 return false; 
@@ -275,7 +277,7 @@ if (nSegment < 0 || nSegment >= Count ())
 	return; 
 undoManager.SetModified (true); 
 undoManager.Lock ();
-Segment (nSegment)->ResetSide (nSide); 
+Segment (nSegment)->Reset (nSide); 
 undoManager.Unlock ();
 }
 
@@ -361,7 +363,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 		if (bAlignedSides & (1 << nChildSide))
 			continue;
 		// ignore children of different textures (or no texture)
-		if (!IsWall (nChildSeg, nChildSide))
+		if (!IsWall (CSideKey (nChildSeg, nChildSide)))
 			continue;
 		if (childSegP->m_sides [nChildSide].m_info.nBaseTex != sideP->m_info.nBaseTex)
 			continue;
@@ -484,12 +486,12 @@ if (!bChange) {
 	undoManager.ResetModified (bUndo);
 	return false;
 	}
-if ((IsLight (sideP->m_info.nBaseTex) == -1) && (IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
-	DeleteVariableLight (key); 
+if ((lightManager.IsLight (sideP->m_info.nBaseTex) == -1) && (lightManager.IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
+	lightManager.DeleteVariableLight (key); 
 if (!wallManager.ClipFromTexture (key))
 	wallManager.CheckForDoor (key); 
 undoManager.Unlock (); 
-sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x3fff, sideP->m_info.nOvlTex & 0x3fff); 
+sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x1fff, sideP->m_info.nOvlTex & 0x1fff); 
 INFOMSG (message); 
 return true;
 }
@@ -500,7 +502,7 @@ void CSegmentManager::RenumberMatCens (byte nFunction, short nClass)
 {
 int h, i = 0; 
 for (h = i = 0; i < MatCenCount (nClass); i++) {
-	short nSegment = m_matCens [i].m_info.nSegment; 
+	short nSegment = m_matCens [nClass][i].m_info.nSegment; 
 	if (nSegment >= 0) {
 		CSegment* segP = Segment (nSegment); 
 		segP->m_info.value = i; 
@@ -509,7 +511,8 @@ for (h = i = 0; i < MatCenCount (nClass); i++) {
 		}
 	}
 // number "value"
-for (h = i = 0, segP = Segment (0); i < Count (); i++, segP++)
+CSegment* segP = Segment (0);
+for (h = i = 0; i < Count (); i++, segP++)
 	if (segP->m_info.function == SEGMENT_FUNC_NONE)
 		segP->m_info.value = 0; 
 	else
@@ -520,14 +523,14 @@ for (h = i = 0, segP = Segment (0); i < Count (); i++, segP++)
 
 void CSegmentManager::RenumberRobotMakers (void) 
 {
-RenumberMatCens (0);
+RenumberMatCens (SEGMENT_FUNC_ROBOTMAKER, 0);
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::RenumberEquipGens (void) 
+void CSegmentManager::RenumberEquipMakers (void) 
 {
-RenumberMatCens (1);
+RenumberMatCens (SEGMENT_FUNC_EQUIPMAKER, 1);
 }
 
 // ----------------------------------------------------------------------------- 
@@ -555,7 +558,7 @@ else {
 
 // ----------------------------------------------------------------------------- 
 
-CSegment* CSegmentManager::FindRobotMaker (short i = 0)
+CSegment* CSegmentManager::FindRobotMaker (short i)
 {
 	CSegment* segP = Segment (i);
 
@@ -563,39 +566,6 @@ for (; i < Count (); i++, segP++)
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
 		return segP;
 return null;
-}
-
-// -----------------------------------------------------------------------------
-
-void CSegmentManager::SetLight (double fLight, bool bAll, bool bDynSegLights)
-{
-	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
-
-UndoManager.SetModified (true);
-
-fLight /= 100.0;
-CSegment *segP = Segment (0);
-for (short nSegment = Count (); nSegment; nSegment--, segP++) {
-	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
-		if (!bDynSegLights)
-			segP->m_info.staticLight = nLight;
-		else {
-			int l = 0;
-			int c = 0;
-			CSide* sideP = segP->m_sides;
-			for (short nSide = 0; nSide < 6; nSide++) {
-				for (short nCorner = 0; nCorner < 4; nCorner++) {
-					ushort h = (ushort) sideP [nSide].m_info.uvls [nCorner].l;
-					if (h || !sideP->IsVisible ()) {
-						l += h;
-						c++;
-						}
-					}
-				}
-			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
-			}
-		}
-	}
 }
 
 // ------------------------------------------------------------------------

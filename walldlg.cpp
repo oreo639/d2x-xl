@@ -446,7 +446,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)
 			continue;
-		if (bAll || theMine->SideIsMarked (i, j)) {
+		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
 			theMine->DeleteWall (sideP->m_info.nWall);
 			nDeleted++;
 			}

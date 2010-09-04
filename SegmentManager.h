@@ -203,7 +203,7 @@ class CSegmentManager {
 
 		bool IsMarked (short nSegment);
 
-		bool IsMarked (CSideKey key);
+		bool IsMarked (CSideKey key = CSideKey (-1, -1));
 
 		short	MarkedCount (bool bCheck = false);
 
@@ -219,17 +219,15 @@ class CSegmentManager {
 
 		void CopyOtherSegment (void);
 
-		void RenumberBotGens (void);
+		void RenumberRobotMakers (void);
 
-		void RenumberEquipGens (void);
+		void RenumberEquipMakers (void);
 
 		bool SetDefaultTexture (short nTexture);
 
 		bool DefineSegment (short nSegment, byte type, short nTexture, short wallType = -1);
 
 		void UndefineSegment (short nSegment);
-
-		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
 
 		void SetLinesToDraw (void);
 

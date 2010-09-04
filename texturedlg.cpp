@@ -956,7 +956,7 @@ if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
+		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 			if (segP->Child (nSide) == -1) {
 				bChange = true;
 				theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
@@ -1000,7 +1000,7 @@ if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++)
-		if (bAll || theMine->SideIsMarked (nSegment, nSide)) {
+		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 			if (m_bUse1st && (sideP->m_info.nBaseTex != last_texture1))
 				continue;
 			if (m_bUse2nd && ((sideP->m_info.nOvlTex & 0x3FFF) != last_texture2))

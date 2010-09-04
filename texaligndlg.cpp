@@ -677,7 +677,7 @@ bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
-		if (theMine->SideIsMarked (nSegment, nSide)) {
+		if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 			if ((segP->Child (nSide) == -1) || 
 				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
@@ -717,7 +717,7 @@ else {
 	undoManager.Lock ();
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-			if (theMine->SideIsMarked (nSegment, nSide)) {
+			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 				for (i = 0; i < 4; i++) {
 					sideP->m_info.uvls [i].u = defaultUVLs [i].u / scale;
 					sideP->m_info.uvls [i].v = defaultUVLs [i].v / scale;
@@ -776,7 +776,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 		continue;
 	if (m_bUse2nd && (sideP->m_info.nOvlTex != childSideP->m_info.nOvlTex))
 		continue;
-	if (!(bAll || theMine->SideIsMarked (nSegment, nSide)))
+	if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
 		continue;
 	if (nSegment != current.m_nSegment) {
 		segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
@@ -816,7 +816,7 @@ else {	// use all marked sides as alignment source
 	int nSegment, nSide;
 	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++)
 		for (nSide = 0; nSide < 6; nSide++)
-			if (theMine->SideIsMarked (nSegment, nSide)) 
+			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
 				AlignChildren (nSegment, nSide, true);
 	}
 undoManager.Unlock ();

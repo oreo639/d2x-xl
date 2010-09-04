@@ -648,7 +648,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		CWall *wallP = theMine->Walls (sideP->m_info.nWall);
 		if (wallP->m_info.nTrigger >= NumGeoTriggers ())
 			continue;
-		if (bAll || theMine->SideIsMarked (i, j)) {
+		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
 			theMine->DeleteTrigger (wallP->m_info.nTrigger);
 			nDeleted++;
 			}

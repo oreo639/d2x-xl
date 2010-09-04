@@ -203,6 +203,7 @@ class CLightManager {
 		void Illuminate (short nSrcSide, short nSrcSeg, uint brightness, 
 							  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
 		void IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale);
+		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
 
 		int FindLight (int nTexture, tTextureLight* texLightP, int nLights);
 
