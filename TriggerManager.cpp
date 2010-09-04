@@ -413,6 +413,7 @@ void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVers
 {
 if (m_info [0].offset < 0)
 	return;
+fp.Seek (m_info.offset);
 for (short i = 0; i < Count (0); i++) {
 	m_triggers [0][i].Read (fp, nFileVersion, false);
 	m_triggers [0][i].m_nIndex = i;

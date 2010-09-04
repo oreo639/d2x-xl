@@ -8,6 +8,7 @@
 void CSegmentManager::ReadSegments (CFileManager& fp, int nFileVersion)
 {
 if (m_segmentInfo.offset >= 0) {
+	fp.Seek (m_info.offset);
 	for (int i = 0; i < Count (); i++)
 		m_segments [i].Read (fp, nFileVersion);
 	}

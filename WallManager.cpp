@@ -374,6 +374,7 @@ for (short i = 0; i < Count (); i++)
 void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
 if (m_info.offset >= 0) {
+	fp.Seek (m_info.offset);
 	for (short i = 0; i < Count (0); i++) {
 		m_walls [i].Read (fp, nFileVersion);
 		m_walls [i].m_nIndex = i;

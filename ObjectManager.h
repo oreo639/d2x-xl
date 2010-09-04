@@ -27,9 +27,9 @@ typedef CGameObject objectList [MAX_OBJECTS_D2];
 
 class CObjectManager {
 	private:
-		objectList	m_objects;
-		short			m_nCount;
-		bool			m_bSortObjects;
+		objectList		m_objects;
+		CMineItemInfo	m_info;
+		bool				m_bSortObjects;
 
 	public:
 		inline bool IsValid (short i) { return (i >= 0) && (i < m_nCount); }
@@ -38,7 +38,7 @@ class CObjectManager {
 
 		inline CGameObject *Object (int i)  { return &m_objects [i]; }
 
-		inline short& Count (void) { return m_nCount; }
+		inline int& Count (void) { return m_info.count; }
 
 		void Delete (short nDelObj);
 
@@ -60,9 +60,9 @@ class CObjectManager {
 
 		bool Create (byte newType, short nSegment);
 
-		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Read (CFileManager& fp, int nFileVersion);
 
-		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Write (CFileManager& fp, int nFileVersion);
 
 		void Clear (void);
 
