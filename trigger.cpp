@@ -46,6 +46,7 @@ int CTriggerTargets::Delete (CSideKey key)
 short i = Find (key);
 if (i >= 0)
 	Delete (i);
+return i;
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +109,7 @@ else if ((type == TT_MESSAGE) || (type == TT_SOUND))
 else 	
 	m_info.value = I2X (5); // 5% shield or energy damage
 m_info.time = -1;
-this->CTriggerTarget::Clear ();
+CTriggerTargets::Clear ();
 }
 
 //------------------------------------------------------------------------------
