@@ -92,7 +92,7 @@ return true;
 void CSegmentManager::SplitPoints (void) 
 {
 CSegment *segP; 
-short vert, nSegment, nVertex, nOppSeg, nOppSide; 
+short vert, nSegment, nVertex; 
 bool found; 
 
 if (tunnelMaker.Active ()) {
@@ -144,13 +144,12 @@ segP->m_info.wallFlags &= ~MARKED_MASK;
 vertexManager.Status (vertexManager.Count ()++) = 0; 
 
 for (short nSide = 0; nSide < 6; nSide++) {
-	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]) &&
-		 OppositeSide (nOppSeg, nOppSide, current.m_nSegment, nSide)) {
-		UnlinkChild (segP->Child (nSide), oppSideTable [nSide]);
+	CSideKey opp, key (current.m_nSegment, nSide);
+	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]) && OppositeSide (key, opp)) {
+		UnlinkChild (opp.m_nSegment, opp.m_nSide);
 		UnlinkChild (current.m_nSegment, nSide); 
 		}
 	}	
-UnlinkChild (current.m_nSegment, nSide); 
 
 SetLinesToDraw (); 
 undoManager.Unlock ();
@@ -168,7 +167,7 @@ INFOMSG("A new point was made for the current point.");
 void CSegmentManager::SplitLines (void) 
 {
   CSegment *segP; 
-  short vert [2], nSegment, nVertex, nLine, nOppSeg, nOppSide, i; 
+  short vert [2], nSegment, nVertex, nLine, i; 
   bool found [2]; 
 
 if (tunnelMaker.Active ()) {
@@ -226,11 +225,10 @@ for (i = 0; i < 2; i++)
 		// update total number of vertices
 		vertexManager.Status (vertexManager.Count ()++) = 0; 
 		}
-int nSide;
-for (nSide = 0; nSide < 6; nSide++) {
-	if (IsLineOfSide (segP, nSide, nLine) && 
-		 OppositeSide (nOppSeg, nOppSide, current.m_nSegment, nSide)) {
-		UnlinkChild (nOppSeg, nOppSide);
+for (short nSide = 0; nSide < 6; nSide++) {
+	CSideKey opp, key (current.m_nSegment, nSide);
+	if (IsLineOfSide (segP, nSide, nLine) && OppositeSide (key, opp)) {
+		UnlinkChild (opp.m_nSegment, opp.m_nSide);
 		UnlinkChild (current.m_nSegment, nSide); 
 		}
 	}
@@ -372,8 +370,9 @@ bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 //h = vertexManager.Count ();
 // compute segment center
+h = vertexManager.Count ();
 vertexManager.Add (8);
-segCenter = CalcCenter (Index (centerSegP));
+CalcCenter (segCenter, Index (centerSegP));
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
@@ -427,7 +426,7 @@ for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 			segP->m_info.verts [j] = h + i;
 			}
 		}
-	InitSegment (nSegment);
+	Segment (nSegment)->Setup ();
 	if ((segP->SetChild (nSide, centerSegP->Child (nSide))) > -1) {
 		for (childSegP = Segment (segP->Child (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
 			if (childSegP->Child (nChildSide) == nCenterSeg) {
@@ -440,7 +439,7 @@ for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 	nWall = centerSegP->m_sides [nSide].m_info.nWall;
 	segP->m_sides [nSide].m_info.nWall = nWall;
 	if ((nWall >= 0) && (nWall != NO_WALL)) {
-		Walls (nWall)->m_nSegment = nSegment;
+		wallManager.Wall (nWall)->m_nSegment = nSegment;
 		centerSegP->m_sides [nSide].m_info.nWall = NO_WALL;
 		}
 	}
