@@ -5999,7 +5999,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\SegmentManager.Mark.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\SegmentManager.Split.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SegmentManager.Textures.cpp"
 					>
 				</File>
 				<File
