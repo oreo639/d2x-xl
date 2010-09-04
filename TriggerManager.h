@@ -111,16 +111,16 @@ class CTriggerManager {
 		bool AddNormalExit (void); 
 		bool AddSecretExit (void); 
 
-		short FindBySide (short& nTrigger, short nSegment, short nSide);
+		short FindBySide (short& nTrigger, CSideKey key);
 
-		CTrigger* FindByTarget (short nSegment, short nSide, short i = 0);
+		CTrigger* FindByTarget (CSideKey key, short i = 0);
 
 		void UpdateReactor (void);
 
 		bool HaveResources (void);
 
-		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
-		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Read (CFileManager& fp, int nFileVersion);
+		void Write (CFileManager& fp, int nFileVersion);
 		void Clear (void);
 
 	private:

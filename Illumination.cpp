@@ -13,9 +13,11 @@ extern int bEnableDeltaShading; // uvls.cpp
 class CVicinity {
 	private:
 		short* m_depth;
+		short m_null;
 
 	public:
 		CVicinity () {
+			m_null = -1;
 			m_depth = new short [segmentManager.Count ()];
 			if (m_depth != null)
 				memset (m_depth, 0, segmentManager.Count () * sizeof (m_depth [0]));
@@ -30,6 +32,8 @@ class CVicinity {
 
 		inline short Depth (short i) { return (m_depth == null) ? -1 : m_depth [i]; }
 
+		const short& operator[] (int i) { return m_depth ? m_depth [i] : m_null; } 
+
 		void Compute (short nSegment, short nDepth) {
 			if (nSegment < 0)
 				return;
@@ -43,7 +47,7 @@ class CVicinity {
 
 			if (nDepth > 0) {
 				// check each side of this segment for more children
-				CSegment* segP = segmentManager.segmentManager.Segment (nSegment);
+				CSegment* segP = segmentManager.Segment (nSegment);
 				for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 					// skip if there is a wall and its a door
 					CWall* wallP = segmentManager.Wall (CSideKey (nSegment, nSide));
@@ -167,27 +171,27 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 if (bAll)
 	CLEAR (VertexColors ());
-for (nSegment = segmentManager.Count (), segP = segmentManager.segmentManager.Segment (0); nSegment; nSegment--, segP++)
+for (nSegment = segmentManager.Count (), segP = segmentManager.Segment (0); nSegment; nSegment--, segP++)
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK))
 		for (nSide = 0, sideP = segP->m_sides; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 			for (int i = 0; i < 4; i++) {
 				sideP->m_info.uvls [i].l = 0;
 				if (!bAll)
-					VertexColors (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
+					VertexColor (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
 				}
 			}
 
 // Calculate cube side corner light values
 // for each marked side in the level
 // (range: 0 = min, 0x8000 = max)
-for (nSegment = 0, segP = segmentManager.segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
+for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
-		if (!(bAll || SideIsMarked (nSegment, nSide)))
+		if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
 			continue;
-		if ((segP->Child (nSide) >= 0) && !VisibleWall (sideP->m_info.nWall))
+		if (!segmentManager.IsWall (CSideKey (nSegment, nSide)))
 			continue;
 		if (bCopyTexLights)
-			LightColors (nSegment, nSide)->Clear ();
+			LightColor (nSegment, nSide)->Clear ();
 		brightness = 0;
 		nTexture = sideP->m_info.nBaseTex;
 		if ((nTexture >= 0) && (nTexture < MAX_TEXTURES))
@@ -264,7 +268,7 @@ byte*	sideVerts = sideVertTable [nSide];
 
 undoManager.SetModified (true);
 for (int i = 0; i < 4; i++, uvlP++) {
-	CColor* vertColorP = VertexColors (segP->m_info.verts [sideVerts [i]]);
+	CColor* vertColorP = VertexColor (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;
 	lightBrightness = (uint) (brightness * (effect ? effect [i] : fLightScale));
 	BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
@@ -278,21 +282,21 @@ for (int i = 0; i < 4; i++, uvlP++) {
 
 void CLightManager::Illuminate (short nSourceSeg, short nSourceSide, uint brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
 {
-	CSegment*	segP = segmentManager.segmentManager.Segment (0);
+	CSegment*	segP = segmentManager.Segment (0);
 	double		effect [4];
 	// find orthogonal angle of source segment
-	CVertex A = -CalcSideNormal (nSourceSeg, nSourceSide);
+	CVertex A = -segmentManager.CalcSideNormal (nSourceSeg, nSourceSide);
 	// remember to flip the sign since we want it to point inward
 	// calculate the center of the source segment
-	CVertex sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
-	// mark those Segments () within N children of current cube
+	CVertex sourceCenter = segmentManager.CalcSideCenter (nSourceSeg, nSourceSide);
+	// mark those segmentManager.Segment () within N children of current cube
 
 // set child numbers
-//Segments ()[nSourceSeg].nIndex = m_lightRenderDepth;
+//segmentManager.Segment ()[nSourceSeg].nIndex = m_renderDepth;
 
-segP = Segments (nSourceSeg);
+segP = segmentManager.Segment (nSourceSeg);
 CVicinity vicinity;
-vicinity.Compute (nSourceSeg, m_lightRenderDepth);	//mark all children that are at most lightRenderDepth segments away
+vicinity.Compute (nSourceSeg, m_renderDepth);	//mark all children that are at most lightRenderDepth segments away
 
 CColor *lightColorP = LightColor (nSourceSeg, nSourceSide);
 if (!lightColorP->m_info.index) {
@@ -302,7 +306,7 @@ if (!lightColorP->m_info.index) {
 	lightColorP->m_info.color.b = 1.0;
 	}
 if (UseTexColors () && bCopyTexLights) {
-	CColor* segColorP = LightColor (nSourceSeg, nSourceSide, false);
+	CColor* segColorP = LightColor (CSideKey (nSourceSeg, nSourceSide), false);
 	*segColorP = *lightColorP;
 	}
 bool bWall = false; 
@@ -314,10 +318,10 @@ int nSegCount = segmentManager.Count ();
 	{
 #pragma omp for private (effect)
 	for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
-		CSegment* childSegP = Segments (nChildSeg);
+		CSegment* childSegP = segmentManager.Segment (nChildSeg);
 		// skip if this is too far away
 #if 1//def _OPENMP
-		if (vicinity.m_depth [nChildSeg] == 0)
+		if (vicinity [nChildSeg] <= 0)
 			continue;
 #else
 		if (childSegP->m_info.nIndex < 0) 
@@ -327,11 +331,11 @@ int nSegCount = segmentManager.Count ();
 		CVertex sourceCorners [4];
 		byte* sideVerts = sideVertTable [nSourceSide];
 		for (int j = 0; j < 4; j++)
-			sourceCorners [j] = *Vertices (segP->m_info.verts [sideVerts [j]]);
+			sourceCorners [j] = *vertexManager.Vertex (segP->m_info.verts [sideVerts [j]]);
 		// loop on child sides
 		for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 			// if side has a child..
-			if (!(bAll || SideIsMarked (nChildSeg, nChildSide)))
+			if (!(bAll || segmentManager.IsMarked (CSideKey (nChildSeg, nChildSide))))
 				continue;
 			if (childSegP->Child (nChildSide) >= 0) {
 				ushort nWall = childSegP->m_sides [nChildSide].m_info.nWall;
@@ -339,7 +343,7 @@ int nSegCount = segmentManager.Count ();
 				if (nWall >= theMine->Info ().walls.count)
 					continue;
 					// .. or its not a door ..
-				if (Walls (nWall)->m_info.type == WALL_OPEN)
+				if (wallManager.Wall (nWall)->m_info.type == WALL_OPEN)
 					continue;
 				}
 
@@ -371,7 +375,7 @@ int nSegCount = segmentManager.Count ();
 //	For a given side, we calculate the distance and angle to all
 //	nearby sides.  A nearby side is a side which is on a cube
 //	which is a child or sub-child of the current cube.  Light does
-//	not shine through Walls ().
+//	not shine through wallManager.Wall ().
 //
 //	We use the following equation to calculate
 //	how much the light effects a side:
@@ -395,13 +399,13 @@ int nSegCount = segmentManager.Count ();
 // for all children of sides with variable lights with exactly that
 // distance (recursionDepth) to their parent. In case of too many delta 
 // light values for the full lighting depth at least the lighting of the
-// Segments () close to variable lights will be computed properly.
+// segmentManager.Segment () close to variable lights will be computed properly.
 //------------------------------------------------------------------------
 
 void CLightManager::CalcDeltaLightData (double fLightScale, int force) 
 {
 undoManager.SetModified (true);
-for (int nDepth = m_deltaLightRenderDepth; nDepth; nDepth--)
+for (int nDepth = m_deltaRenderDepth; nDepth; nDepth--)
 	if (CalcLightDeltas (fLightScale, force, nDepth))
 		break;
 }
@@ -414,7 +418,7 @@ int CLightManager::FindLightDelta (short nSegment, short nSide, short *pi)
 	int	j	= (int)theMine->Info ().lightDeltaIndices.count++;
 	CLightDeltaIndex	*dliP = LightDeltaIndex (0);
 
-if ((LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34)) {
+if ((theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34)) {
 	for (; i < j; i++, dliP++)
 		if ((dliP->m_nSegment == nSegment) && (dliP->m_nSide = (byte) nSide))
 			return i;
@@ -439,7 +443,8 @@ bool CLightManager::CalcLightDeltas (double fLightScale, int force, int nDepth)
 
 theMine->Info ().lightDeltaValues.count = 0;
 theMine->Info ().lightDeltaIndices.count = 0;
-bool bWall, bD2XLights = (LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
+
+bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 
 fLightScale = 1.0; ///= 100.0;
 #pragma omp parallel
@@ -448,12 +453,12 @@ fLightScale = 1.0; ///= 100.0;
 	for (nSourceSeg = 0; nSourceSeg < nSegCount; nSourceSeg++) {
 		if (nErrors)
 			continue;
-		CSegment* srcSegP = Segments (nSourceSeg);
+		CSegment* srcSegP = segmentManager.Segment (nSourceSeg);
 		// skip if not marked unless we are automatically saving
 		if  (!(srcSegP->m_info.wallFlags & MARKED_MASK) && !force) 
 			continue;
 		// loop on all sides
-		CSide* sideP = segP->m_sides;
+		CSide* sideP = srcSegP->m_sides;
 		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++, sideP++) {
 			short nBaseTex, nOvlTex;
 			sideP->GetTextures (nBaseTex, nOvlTex);
@@ -464,10 +469,11 @@ fLightScale = 1.0; ///= 100.0;
 			bool bCalcDeltas = false;
 			// if the current side is a wall and has a light and is the target of a trigger
 			// than can make the wall appear/disappear, calculate delta lights for it
-			CWall* wallP = segmentManager.Wall (nSourceSeg, nSourceSide);
+			CSideKey key (nSourceSeg, nSourceSide);
+			CWall* wallP = segmentManager.Wall (key);
 			bCalcDeltas = (wallP != null) && wallP->IsVariable ();
 			if (!bCalcDeltas)
-				bCalcDeltas = IsVariableLight (nSourceSeg, nSourceSide);
+				bCalcDeltas = IsVariableLight (key);
 			if (!bCalcDeltas) {
 				bool bb1 = IsBlastableLight (nBaseTex);
 				bool bb2 = IsBlastableLight (nOvlTex);
@@ -477,7 +483,7 @@ fLightScale = 1.0; ///= 100.0;
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
-				CTrigger* trigP = triggerManager.FindByTarget (nSourceSeg, nSourceSide);
+				CTrigger* trigP = triggerManager.FindByTarget (key);
 				if ((trigP != null) && (trigP->m_info.type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
@@ -513,16 +519,16 @@ fLightScale = 1.0; ///= 100.0;
 			dliP->m_info.index = (short)theMine->Info ().lightDeltaValues.count;
 
 			// find orthogonal angle of source segment
-			A = -CalcSideNormal (nSourceSeg,nSourceSide);
+			A = -segmentManager.CalcSideNormal (nSourceSeg,nSourceSide);
 
 			// calculate the center of the source segment
-			sourceCenter = CalcSideCenter (nSourceSeg, nSourceSide);
+			sourceCenter = segmentManager.CalcSideCenter (nSourceSeg, nSourceSide);
 
-			// mark those Segments () within N children of current cube
+			// mark those segmentManager.Segment () within N children of current cube
 			//(note: this is done once per light instead of once per segment
-			//       even though some Segments () have multiple lights.
+			//       even though some segmentManager.Segment () have multiple lights.
 			//       This actually reduces the number of calls since most
-			//       Segments () do not have lights)
+			//       segmentManager.Segment () do not have lights)
 			CVicinity vicinity;
 			vicinity.Compute (nSourceSeg, nDepth);
 
@@ -531,38 +537,38 @@ fLightScale = 1.0; ///= 100.0;
 			for (int j = 0; j < 4; j++) {
 				byte nVertex = sideVertTable [nSourceSide][j];
 				int h = srcSegP->m_info.verts [nVertex];
-				sourceCorners [j] = *Vertices (h);
+				sourceCorners [j] = *vertexManager.Vertex (h);
 				}
 
-			// loop on child Segments ()
+			// loop on child segmentManager.Segment ()
 			int nChildSeg;
 			for (nChildSeg = 0; nChildSeg < nSegCount; nChildSeg++) {
 				if (nErrors)
 					continue;
-				if (vicinity.m_depth [nChildSeg] == 0)
+				if (vicinity [nChildSeg] == 0)
 					continue;
-				CSegment* childSegP = Segments (nChildSeg);
+				CSegment* childSegP = segmentManager.Segment (nChildSeg);
 				// loop on child sides
 				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..
 					if (childSegP->Child (nChildSide) >= 0) {
-						ushort nWall = childSegP->m_sides[nChildSide].m_info.nWall;
+						CWall* wallP = childSegP->m_sides [nChildSide].Wall ();
 						// .. if there is no wall ..
-						if (nWall >= theMine->Info ().walls.count)
+						if (wallP == null)
 							continue;
 						// .. or its not a door ..
-						if (Walls (nWall)->m_info.type == WALL_OPEN) 
+						if (wallP->m_info.type == WALL_OPEN) 
 							continue; // don't put light because there is no texture here
 						}
 					// don't affect non-variable light emitting textures (e.g. lava)
 					short nBaseTex = childSegP->m_sides [nChildSide].m_info.nBaseTex;
 					short nOvlTex = childSegP->m_sides [nChildSide].m_info.nOvlTex & 0x1fff;
 					if (m_nNoLightDeltas == 1) {
-						if (((IsLight (nTexture) >= 0) || (IsLight (nOvlTex) >= 0))
-							 && !IsVariableLight (nChildSeg, nChildSide))
+						if (((IsLight (nBaseTex) >= 0) || (IsLight (nOvlTex) >= 0))
+							 && !IsVariableLight (CSideKey (nChildSeg, nChildSide)))
 							continue;
 						}
-					else if ((m_nNoLightDeltas == 2) && (IsLava (nTexture) || IsLava (nOvlTex)))
+					else if ((m_nNoLightDeltas == 2) && (textureManager.IsLava (nBaseTex) || textureManager.IsLava (nOvlTex)))
 						continue;
 					// if the child side is the same as the source side, then set light and continue
 					if (nChildSide == nSourceSide && nChildSeg == nSourceSeg) {
@@ -593,7 +599,7 @@ fLightScale = 1.0; ///= 100.0;
 						}
 
 					// calculate vector between center of source segment and center of child
-						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners , A, effect, fLightScale, bWall)) {
+						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, effect, fLightScale, wallP != null)) {
 							undoManager.SetModified (true);
 							if ((theMine->Info ().lightDeltaValues.count >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
@@ -634,7 +640,7 @@ bool CLightManager::CalcSideLights (int nSegment, int nSide,
 {
 	CSegment *segP = segmentManager.Segment (nSegment);
 // calculate vector between center of source segment and center of child
-CVertex center = CalcSideCenter (nSegment, nSide);
+CVertex center = segmentManager.CalcSideCenter (nSegment, nSide);
 CVertex A = vertex;
 CVertex B = center - sourceCenter;
 
@@ -656,16 +662,16 @@ if (!bIgnoreAngle) {
 	}
 for (int j = 0; j < 4; j++) {
 	CVertex* corner = vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSide][j]]);
-	double length = 20.0 * m_lightRenderDepth;
+	double length = 20.0 * m_renderDepth;
 	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
-	length /= 10.0 * m_lightRenderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
+	length /= 10.0 * m_renderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
 	effect [j] = fLightScale;
 	if (length > 1.0) 
 		effect [j] /= (length * length);
 	}
 // if any of the effects are > 0, then increment the light for that side
-return (effect [0.0)] != 0.0) || (effect [1] != 0.0) || (effect [2] != 0.0) || (effect [3] != 0.0);
+return (effect [0] != 0.0) || (effect [1] != 0.0) || (effect [2] != 0.0) || (effect [3] != 0.0);
 }
 
 //---------------------------------------------------------------------------------

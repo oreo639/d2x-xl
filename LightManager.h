@@ -151,6 +151,10 @@ class CLightManager {
 		tLightStatus			m_lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 
 		long						m_lightMap [MAX_TEXTURES_D2];
+
+		int						m_renderDepth;
+		int						m_deltaRenderDepth;
+		int						m_nNoLightDeltas;
 		//long						m_defLightMap [MAX_TEXTURES_D2];
 
 	public:
@@ -232,6 +236,10 @@ class CLightManager {
 
 		bool CalcSideLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorner, CVertex& A, 
 									double* effect, double fLightScale, bool bIgnoreAngle);
+
+		bool CalcLightDeltas (double fLightScale, int force, int nDepth);
+
+		int FindLightDelta (short nSegment, short nSide, short *pi);
 
 		byte LightWeight (short nBaseTex);
 };

@@ -235,10 +235,10 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
-if (nDelTrigger < --m_nCount [0]) {	
+if (nDelTrigger < --Count (0)) {	
 	// move the last trigger in the list to the deleted trigger's position
-	wallManager.UpdateTrigger (m_nCount [0], nDelTrigger);
-	*delTrigP = m_triggers [0][m_nCount [0]];
+	wallManager.UpdateTrigger (Count (0), nDelTrigger);
+	*delTrigP = m_triggers [0][Count (0)];
 	delTrigP->m_nIndex = Index (delTrigP);
 	}
 
@@ -254,7 +254,7 @@ UpdateReactor ();
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
 CTrigger* trigP = &m_triggers [nClass][0];
-for (int i = 0; i < m_nCount [nClass]; i++, trigP++)
+for (int i = 0; i < Count (nClass); i++, trigP++)
 	trigP->Delete (key);
 }
 
@@ -262,10 +262,10 @@ for (int i = 0; i < m_nCount [nClass]; i++, trigP++)
 // Mine - FindTrigger
 //------------------------------------------------------------------------------
 
-short CTriggerManager::FindBySide (short& nTrigger, short nSegment, short nSide)
+short CTriggerManager::FindBySide (short& nTrigger, CSideKey key)
 {
-current.Get (nSegment, nSide);
-CWall *wallP = wallManager.FindBySide (nSegment, nSide);
+current.Get (key);
+CWall *wallP = wallManager.FindBySide (key);
 if (wallP != null) {
 	nTrigger = wallP->m_info.nTrigger;
 	return wallManager.Index (wallP);
@@ -277,12 +277,11 @@ return wallManager.Count ();
 // Mine - FindTrigger
 //------------------------------------------------------------------------------------
 
-CTrigger* CTriggerManager::FindByTarget (short nSegment, short nSide, short i)
+CTrigger* CTriggerManager::FindByTarget (CSideKey key, short i)
 {
 	CTrigger *trigP = Trigger (i);
-	CSideKey key = CSideKey (nSegment, nSide);
 
-for (; i < m_nCount [0]; i++, trigP++) {
+for (; i < Count (0); i++, trigP++) {
 	int j = trigP->Find (key);
 	if (j >= 0)
 		return trigP;
@@ -409,11 +408,11 @@ for (short i = 0; i < Count (0); i++)
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CTriggerManager::Read (CFileManager& fp, int nFileVersion)
 {
 if (m_info [0].offset < 0)
 	return;
-fp.Seek (m_info.offset);
+fp.Seek (m_info [0].offset);
 for (short i = 0; i < Count (0); i++) {
 	m_triggers [0][i].Read (fp, nFileVersion, false);
 	m_triggers [0][i].m_nIndex = i;

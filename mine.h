@@ -25,13 +25,13 @@
 
 #ifdef _DEBUG
 
-#define CLEAR(_b) (_b) [0].Reset((_b).Length (void))
+#define CLEAR(_b) memset ((_b).Buffer (), 0, (_b).Size ())
 #define ASSIGN(_a,_b) (_a) = (_b)
 #define DATA(_b) (_b).Buffer (void)
 
 #else
 
-#define CLEAR(_b)	(_b)->Reset (sizeof (_b) / sizeof (_b [0]))
+#define CLEAR(_b)	memset ((_b), 0, sizeof (_b))
 #define ASSIGN(_a,_b) memcpy (_a, _b, sizeof (_a))
 #define DATA(_b) (_b)
 
