@@ -20,9 +20,9 @@ void CVertexManager::Delete (ushort nDelVert)
 {
 undoManager.SetModified (true); 
 // fill in gap in vertex array and status
-if (nDelVert < --m_nCount) {
-	m_vertices [nDelVert] = m_vertices [m_nCount];
-	segmentManager.UpdateVertex (m_nCount, nDelVert);
+if (nDelVert < --Count ()) {
+	m_vertices [nDelVert] = m_vertices [Count ()];
+	segmentManager.UpdateVertex (Count (), nDelVert);
 	}
 }
 
@@ -44,19 +44,17 @@ for (ushort nVertex = Count () - 1; nVertex >= 0; nVertex--)
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CVertexManager::Read (CFileManager& fp, int nFileVersion)
 {
-Count () = info.count;
 for (int i = 0; i < Count (); i++)
 	m_vertices [i].Read (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion)
+void CVertexManager::Write (CFileManager& fp, int nFileVersion)
 {
-info.count = Count ();
-info.offset = fp.Tell ();
+m_info.offset = fp.Tell ();
 for (int i = 0; i < Count (); i++)
 	m_vertices [i].Write (fp, nFileVersion);
 }

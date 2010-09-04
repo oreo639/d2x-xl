@@ -195,7 +195,7 @@ for (psz = szItems, i = 0; *psz; psz++, i++)
 	plc.InsertItem (i, *psz);
 CountObjects ();
 plc.SetItemText (0, 1, ItemText (segmentManager.Count ()));
-plc.SetItemText (1, 1, ItemText (theMine->VertCount ()));
+plc.SetItemText (1, 1, ItemText (theMine->vertexManager.Count ()));
 plc.SetItemText (2, 1, ItemText (theMine->RobotMakerCount ()));
 plc.SetItemText (3, 1, ItemText (theMine->FuelCenterCount ()));
 plc.SetItemText (4, 1, ItemText (theMine->WallCount ()));

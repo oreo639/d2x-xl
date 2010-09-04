@@ -224,13 +224,13 @@ short CMine::SaveMineDataCompiled (CFileManager& fp)
 fp.WriteSByte (COMPILED_MINE_VERSION);
 
 // write no. of vertices (2 bytes)
-fp.WriteInt16 (VertCount ());
+fp.WriteInt16 (vertexManager.Count ());
 
 // write number of Segments () (2 bytes)
 fp.WriteInt16 (SegCount ());
 
 // write all vertices
-for (int i = 0; i < VertCount (); i++)
+for (int i = 0; i < vertexManager.Count (); i++)
 	.Vertex (i)->Write (fp);
 
 // write segment information
@@ -244,7 +244,7 @@ if (IsD2File ()) {
   }
 
 if (IsD2XLevel ()) {
-	SaveColors (VertexColors (0), VertCount (), fp);
+	SaveColors (VertexColors (0), vertexManager.Count (), fp);
 	SaveColors (LightColors (0), SegCount () * 6, fp);
 	SaveColors (TexColors (0), MAX_TEXTURES_D2, fp);
 	}

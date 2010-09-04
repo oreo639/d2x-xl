@@ -235,7 +235,7 @@ CSegment *segP = current.Segment ();
 EndOfExit ()->EnableWindow (segP->Child (m_nSide) < 0);
 // enable/disable add cube button
 GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS) &&
-													  (theMine->VertCount () < MAX_VERTICES - 4) &&
+													  (theMine->vertexManager.Count () < MAX_VERTICES - 4) &&
 													  (segP->Child (m_nSide) < 0));
 GetDlgItem (IDC_CUBE_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button

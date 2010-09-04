@@ -38,7 +38,7 @@ m_view.Calculate (m_move.v.x, m_move.v.y, m_move.v.z);
 InitViewDimensions ();
 if (bSetViewInfo)
 	m_view.SetViewInfo (m_depthPerception, m_viewWidth, m_viewHeight);
-i = theMine->VertCount ();
+i = theMine->vertexManager.Count ();
 APOINT *a = m_viewPoints + i;
 CVertex* vertP = vertexManager.Vertex (i);
 for (; i--; ) {
@@ -75,7 +75,7 @@ for (; i--; ) {
 	}
 #if OGL_RENDERING 
 //flip mine over for OpenGL
-for (i = theMine->VertCount (), a = m_viewPoints; i--; a++) {
+for (i = theMine->vertexManager.Count (), a = m_viewPoints; i--; a++) {
 	a->y = rc.top + rc.bottom - a->
 		y;
 	a->z = minZ + maxZ - a->z;
@@ -950,7 +950,7 @@ else if (SelectMode (eSelectBlock)) // && edit_mode != EDIT_OFF) {
 	m_pDC->SelectObject (m_penRed);
 else
 	m_pDC->SelectObject (m_penCyan);
-for (i=0;i<theMine->VertCount ();i++)
+for (i=0;i<theMine->vertexManager.Count ();i++)
 	if (theMine->vertexManager.Status (i) & MARKED_MASK)
 		if (IN_RANGE(m_viewPoints [i].x,x_max) && IN_RANGE(m_viewPoints [i].y,y_max))
 			m_pDC->Rectangle(m_viewPoints [i].x - 4, m_viewPoints [i].y - 4, m_viewPoints [i].x + 4, m_viewPoints [i].y + 4);

@@ -32,8 +32,8 @@ typedef CVertex vertexList [VERTEX_LIMIT];
 
 class CVertexManager {
 	public:
-		vertexList	m_vertices;
-		ushort		m_nCount;
+		vertexList		m_vertices;
+		CMineItemInfo	m_info;
 
 	public:
 		// Segment and side getters
@@ -44,7 +44,7 @@ class CVertexManager {
 
 		inline byte& Status (int i = 0) { return Vertex (i)->m_status; }
 
-		inline ushort& Count (void) { return m_nCount; }
+		inline int& Count (void) { return m_info.count; }
 
 		inline ushort Index (CVertex* vertP) { return (ushort) (vertP - &m_vertices [0]); }
 
@@ -54,9 +54,9 @@ class CVertexManager {
 
 		void DeleteUnused (void);
 
-		void Read (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Read (CFileManager& fp, int nFileVersion);
 
-		void Write (CFileManager& fp, CMineItemInfo& info, int nFileVersion);
+		void Write (CFileManager& fp, int nFileVersion);
 
 		void Clear (void);
 

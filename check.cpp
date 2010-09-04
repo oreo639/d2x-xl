@@ -310,7 +310,7 @@ DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
 // now do actual checking
 DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 + 
-										  theMine->VertCount () +
+										  theMine->vertexManager.Count () +
 										  theMine->Info ().walls.count * 2 +
 										  theMine->Info ().triggers.count * 3 +
 										  theMine->Info ().objects.count * 2 +
@@ -1736,7 +1736,7 @@ if ((theMine == null))
   short sub_warnings = m_nErrors [1];
   LBBugs ()->AddString ("[Misc]");
 
-for (nVertex = theMine->VertCount (); nVertex > 0; )
+for (nVertex = theMine->vertexManager.Count (); nVertex > 0; )
 	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
@@ -1745,13 +1745,13 @@ for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		theMine->vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK;
 
-for (nVertex = theMine->VertCount (); nVertex > 0; ) {
+for (nVertex = theMine->vertexManager.Count (); nVertex > 0; ) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	if (!(theMine->vertexManager.Status (--nVertex) & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
-			if (nVertex < --theMine->VertCount ())
-				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->VertCount () - nVertex) * sizeof (*theMine->Vertices (0)));
+			if (nVertex < --theMine->vertexManager.Count ())
+				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->vertexManager.Count () - nVertex) * sizeof (*theMine->Vertices (0)));
 			CSegment *segP = theMine->Segments (0);
 			for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
@@ -1760,7 +1760,7 @@ for (nVertex = theMine->VertCount (); nVertex > 0; ) {
 			}
 		}
 	}
-for (nVertex = theMine->VertCount (); nVertex > 0; )
+for (nVertex = theMine->vertexManager.Count (); nVertex > 0; )
 	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)

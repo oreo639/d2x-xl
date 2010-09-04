@@ -39,7 +39,7 @@ Initialize ();
 
 void CMine::Initialize (void)
 {
-VertCount () = 0;
+vertexManager.Count () = 0;
 SegCount () = 0;
 #if 1
 CLEAR (Segments ());
@@ -290,7 +290,7 @@ vert [6] = CVertex (-10, -10, +10);
 vert [7] = CVertex (-10, +10, +10);
 
 SegCount () = 1;
-VertCount () = 8;
+vertexManager.Count () = 8;
 }
 
 // -----------------------------------------------------------------------------
@@ -309,7 +309,7 @@ SegCount () = 0;
 // initialize vertices
 for (i = 0; i < MAX_VERTICES; i++) 
 	vertexManager.Status (i) &= ~MARKED_MASK;
-VertCount () = 0;
+vertexManager.Count () = 0;
 lightManager.Count () = 0;
 // reset "howmany"
 MineInfo ().objects.Reset ();

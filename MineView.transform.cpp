@@ -84,7 +84,7 @@ if (!(m_xRenderOffs && m_yRenderOffs))
 	APOINT *a = m_viewPoints;
 
 int i;
-for (i = theMine->VertCount (); i; i--, a++) {
+for (i = theMine->vertexManager.Count (); i; i--, a++) {
 	a->x += m_xRenderOffs;
 	a->y += m_yRenderOffs;
 	}
@@ -246,7 +246,7 @@ CHECKMINE;
 
 MarkVisibleVerts ();
 vertP = theMine->Vertices (0);
-for (int i = 0, h = theMine->VertCount (); i < h; i++, vertP++) {
+for (int i = 0, h = theMine->vertexManager.Count (); i < h; i++, vertP++) {
 	if (theMine->vertexManager.Status (i)) {
 		vMin = Min (vMin, *vertP);
 		vMax = Max (vMax, *vertP);

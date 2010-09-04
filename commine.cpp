@@ -29,7 +29,7 @@ STDMETHODIMP CComMine::get_NumberOfCubes(long* pRetVal)
 
 STDMETHODIMP CComMine::get_NumberOfPoints(long* pRetVal)
 {
-	*pRetVal = _pMine->VertCount ();
+	*pRetVal = _pMine->vertexManager.Count ();
 	return S_OK;
 }
 

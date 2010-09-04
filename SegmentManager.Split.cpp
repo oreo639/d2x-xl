@@ -99,7 +99,7 @@ if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (VertCount () > (MAX_VERTICES - 1)) {
+if (vertexManager.Count () > (MAX_VERTICES - 1)) {
 	ErrorMsg ("Cannot unjoin these points because the\n"
 				"maximum number of points is reached."); 
 	return; 
@@ -129,19 +129,19 @@ if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES)
 undoManager.SetModified (true); 
 undoManager.Lock ();
 // create a new point (copy of other vertex)
-memcpy (vertexManager.Vertex (VertCount ()), vertexManager.Vertex (vert), sizeof (*vertexManager.Vertex (0)));
+memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert), sizeof (*vertexManager.Vertex (0)));
 /*
-vertexManager.Vertex (VertCount ()).x = vertexManager.Vertex (vert).x; 
-vertexManager.Vertex (VertCount ()).y = vertexManager.Vertex (vert).y; 
-vertexManager.Vertex (VertCount ()).z = vertexManager.Vertex (vert).z; 
+vertexManager.Vertex (vertexManager.Count ()).x = vertexManager.Vertex (vert).x; 
+vertexManager.Vertex (vertexManager.Count ()).y = vertexManager.Vertex (vert).y; 
+vertexManager.Vertex (vertexManager.Count ()).z = vertexManager.Vertex (vert).z; 
 */
 // replace existing point with new point
 segP = Segment (current.m_nSegment); 
-segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]] = VertCount (); 
+segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]] = vertexManager.Count (); 
 segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 // update total number of vertices
-vertexManager.Status (VertCount ()++) = 0; 
+vertexManager.Status (vertexManager.Count ()++) = 0; 
 
 for (short nSide = 0; nSide < 6; nSide++) {
 	if (IsPointOfSide (segP, nSide, segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]) &&
@@ -175,7 +175,7 @@ if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
 	return; 
 	}
-if (VertCount () > (MAX_VERTICES - 2)) {
+if (vertexManager.Count () > (MAX_VERTICES - 2)) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot unjoin these lines because\nthere are not enought points left."); 
 	return; 
@@ -213,18 +213,18 @@ segP = Segment (current.m_nSegment);
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
 	if (found [i]) {
-		memcpy (vertexManager.Vertex (VertCount ()), vertexManager.Vertex (vert [i]), sizeof (*vertexManager.Vertex (0)));
+		memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert [i]), sizeof (*vertexManager.Vertex (0)));
 		/*
-		vertices [VertCount ()].x = vertices [vert [i]].x; 
-		vertices [VertCount ()].y = vertices [vert [i]].y; 
-		vertices [VertCount ()].z = vertices [vert [i]].z; 
+		vertices [vertexManager.Count ()].x = vertices [vert [i]].x; 
+		vertices [vertexManager.Count ()].y = vertices [vert [i]].y; 
+		vertices [vertexManager.Count ()].z = vertices [vert [i]].z; 
 		*/
 		// replace existing points with new points
 		nLine = sideLineTable [current.m_nSide][current.m_nLine]; 
-		segP->m_info.verts [lineVertTable [nLine][i]] = VertCount (); 
+		segP->m_info.verts [lineVertTable [nLine][i]] = vertexManager.Count (); 
 		segP->m_info.wallFlags &= ~MARKED_MASK; 
 		// update total number of vertices
-		vertexManager.Status (VertCount ()++) = 0; 
+		vertexManager.Status (vertexManager.Count ()++) = 0; 
 		}
 int nSide;
 for (nSide = 0; nSide < 6; nSide++) {
@@ -294,7 +294,7 @@ for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++)
 
 found:
 
-if (!solidify && (VertCount () > (MAX_VERTICES - nFound))) {
+if (!solidify && (vertexManager.Count () > (MAX_VERTICES - nFound))) {
 	ErrorMsg ("Cannot unjoin this side because\nthere are not enough vertices left."); 
 	return; 
 	}
@@ -311,18 +311,18 @@ if (!solidify) {
 	// create new points (copy of other vertices)
 	for (i = 0; i < 4; i++) {
 		if (found [i]) {
-			memcpy (vertexManager.Vertex (VertCount ()), vertexManager.Vertex (vert [i]), sizeof (*vertexManager.Vertex (0)));
+			memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert [i]), sizeof (*vertexManager.Vertex (0)));
 			/*
-			vertices [VertCount ()].x = vertices [vert [i]].x; 
-			vertices [VertCount ()].y = vertices [vert [i]].y; 
-			vertices [VertCount ()].z = vertices [vert [i]].z; 
+			vertices [vertexManager.Count ()].x = vertices [vert [i]].x; 
+			vertices [vertexManager.Count ()].y = vertices [vert [i]].y; 
+			vertices [vertexManager.Count ()].z = vertices [vert [i]].z; 
 			*/
 			// replace existing points with new points
-			segP->m_info.verts [sideVertTable [nSide][i]] = VertCount (); 
+			segP->m_info.verts [sideVertTable [nSide][i]] = vertexManager.Count (); 
 			segP->m_info.wallFlags &= ~MARKED_MASK; 
 
 			// update total number of vertices
-			vertexManager.Status (VertCount ()++) = 0; 
+			vertexManager.Status (vertexManager.Count ()++) = 0; 
 			}
 		}
 	int nSide;
@@ -370,7 +370,7 @@ if (Count () >= MAX_SEGMENTS - 6) {
 	}
 bUndo = undoManager.SetModified (true); 
 undoManager.Lock ();
-//h = VertCount ();
+//h = vertexManager.Count ();
 // compute segment center
 vertexManager.Add (8);
 segCenter = CalcCenter (Index (centerSegP));

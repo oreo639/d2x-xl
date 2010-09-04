@@ -1133,7 +1133,7 @@ CHECKMINE;
 	int		x, y;
 
 int i;
-for (i = 0; i < theMine->VertCount (); i++, pa++) {
+for (i = 0; i < theMine->vertexManager.Count (); i++, pa++) {
 	x = pa->x;
 	y = pa->y;
 	if (BETWEEN (m_clickPos.x, x, m_releasePos.x) &&

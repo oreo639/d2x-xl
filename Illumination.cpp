@@ -101,7 +101,7 @@ void CLightManager::CalcAverageCornerLight (bool bAll)
   short nSegment, segCount = segmentManager.Count (), wallCount = wallManager.Count ();
   tAvgCornerLight* maxBrightness = new tAvgCornerLight [vertexManager.Count ()];
 
-memset (maxBrightness, 0, VertCount () * sizeof (tAvgCornerLight));
+memset (maxBrightness, 0, vertexManager.Count () * sizeof (tAvgCornerLight));
 
 // smooth corner light by averaging all corners which share a vertex
 undoManager.SetModified (true);

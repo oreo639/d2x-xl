@@ -345,7 +345,7 @@ switch (m_selectMode) {
 					min_pt (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
 					center;
 		CVertex* verts = Vertices (0);
-		for (i = VertCount (), j = 0; j < i; j++, verts++)
+		for (i = vertexManager.Count (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
 				max_pt = Max (max_pt, *verts);
 				min_pt = Min (min_pt, *verts);
@@ -353,7 +353,7 @@ switch (m_selectMode) {
 		center = Average (max_pt, min_pt);
 		double scale = ((double)(20*F1_0) + (double)delta)/(double)(20*F1_0);
 		verts = Vertices (0);
-		for (i = VertCount (), j = 0; j < i; j++, verts++)
+		for (i = vertexManager.Count (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
 				*verts -= center;
 				*verts *= scale;
@@ -637,7 +637,7 @@ switch (m_selectMode) {
 			}
 		oppCenter /= 4.0;
 		// rotate points about a point
-		for (i=0;i<VertCount ();i++)
+		for (i=0;i<vertexManager.Count ();i++)
 			if (vertexManager.Status (i) & MARKED_MASK)
 				.Vertex (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes

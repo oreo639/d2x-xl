@@ -346,7 +346,7 @@ for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
 		}
 	// check verts
 	for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= VertCount ())) {
+		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= vertexManager.Count ())) {
 			segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture [0]
 			checkErr |= (1 << 2);      // but it will prevent a crash
 			}
@@ -407,13 +407,13 @@ if (((IsD1File ()) && (n_segments > MAX_SEGMENTS_D1)) ||
 
 // if we are happy with the number of verts and Segments (), then proceed...
 //ClearMineData ();
-VertCount () = n_vertices;
+vertexManager.Count () = n_vertices;
 SegCount () = n_segments;
 
 // read all vertices
 CVertex* vertP = Vertices (0);
 size_t fPos = fp.Tell ();
-for (i = 0; i < VertCount (); i++, vertP++) {
+for (i = 0; i < vertexManager.Count (); i++, vertP++) {
 	vertP->Read (fp);
 	vertP->m_status = 0;
 	}
@@ -430,15 +430,15 @@ if (LevelVersion () == 9) {
 #if 1
 	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
 	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
-	LoadColors (VertexColors (0), VertCount (), 9, 15, fp);
+	LoadColors (VertexColors (0), vertexManager.Count (), 9, 15, fp);
 #else
 	fp.Read (LightColors (), sizeof (CColor), SegCount () * 6); //skip obsolete side colors 
 	fp.Read (LightColors (), sizeof (CColor), SegCount () * 6);
-	fp.Read (VertexColors (), sizeof (CColor), VertCount ());
+	fp.Read (VertexColors (), sizeof (CColor), vertexManager.Count ());
 #endif
 	}
 else if (LevelVersion () > 9) {
-	LoadColors (VertexColors (0), VertCount (), 9, 15, fp);
+	LoadColors (VertexColors (0), vertexManager.Count (), 9, 15, fp);
 	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
 	LoadColors (TexColors (0), MAX_TEXTURES_D2, 10, 16, fp);
 	}
