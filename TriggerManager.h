@@ -45,15 +45,13 @@ class CTriggerManager {
 		short						m_nReactorTriggers;
 
 	public:
-		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
-
 		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
 
 		inline triggerList& GeoTriggerList (void) { return TriggerList (1); }
 
 		inline objTriggerList& ObjTriggerList (void) { return TriggerList (1); }
 
-		inline CTrigger* Trigger (int i, int nClass = 0) { return IsValid (i, m_info [nClass].count) ? &m_triggers [nClass][i] : null; }
+		inline CTrigger* Trigger (int i, int nClass = 0) { return &m_triggers [nClass][i]; }
 
 		inline int& Count (int nClass) { return m_info [nClass].count; }
 

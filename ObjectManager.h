@@ -32,8 +32,6 @@ class CObjectManager {
 		bool				m_bSortObjects;
 
 	public:
-		inline bool IsValid (short i) { return (i >= 0) && (i < m_nCount); }
-
 		inline objectList& ObjectList (void) { return m_objects; }
 
 		inline CGameObject *Object (int i)  { return &m_objects [i]; }

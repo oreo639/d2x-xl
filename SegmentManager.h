@@ -53,8 +53,6 @@ class CSegmentManager {
 		CMineItemInfo	m_matCenInfo [2];
 
 	public:
-		inline bool IsValid (short i, short j) { return (i >= 0) && (i < j); }
-
 		// Segment and side getters
 		inline segmentList& Segments (void)
 			{ return m_segments; }
