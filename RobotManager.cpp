@@ -94,8 +94,8 @@ else if (type == EXTENDED_HAM)  {
 		t = m_nRobotTypes - t0;
 		}
 	for (; t; t--, t0++) {
-		GetRobotInfo (t0)->Read (fp);
-		*GetDefRobotInfo (t0) = *GetRobotInfo (t0);
+		RobotInfo (t0)->Read (fp);
+		*DefRobotInfo (t0) = *RobotInfo (t0);
 		}
 
   // skip joints weapons, and powerups
@@ -249,9 +249,9 @@ for (j = 0; j < t; j++) {
 		}
 	rInfo.Read (fp);
 	// compare this to existing data
-	if (memcmp (&rInfo, GetRobotInfo (i), sizeof (tRobotInfo)) != 0) {
-		memcpy (GetRobotInfo (i), &rInfo, sizeof (tRobotInfo));
-		GetRobotInfo (i)->m_info.bCustom = 1; // mark as custom
+	if (memcmp (&rInfo, RobotInfo (i), sizeof (tRobotInfo)) != 0) {
+		memcpy (RobotInfo (i), &rInfo, sizeof (tRobotInfo));
+		RobotInfo (i)->m_info.bCustom = 1; // mark as custom
 		}
 	}
 
@@ -293,9 +293,9 @@ fp.WriteInt32 (1);   // version 1
 // write robot information
 fp.Write (t); // number of robot info structs stored
 for (i = 0; i < m_nRobotTypes; i++) {
-	if (GetRobotInfo (i)->m_info.bCustom) {
+	if (RobotInfo (i)->m_info.bCustom) {
 		fp.Write (i);
-		GetRobotInfo (i)->Write (fp);
+		RobotInfo (i)->Write (fp);
 		}
 	}
 
@@ -347,7 +347,7 @@ for (j = 0; j < t; j++) {
 	bufP += sizeof (uint);
 	// copy the robot info for one robot, or all robots
 	if ((j == nRobot) || (nRobot == -1)) 
-		memcpy (GetRobotInfo (i), bufP, sizeof (tRobotInfo));
+		memcpy (RobotInfo (i), bufP, sizeof (tRobotInfo));
 	bufP += sizeof (tRobotInfo);
 	}
 }
@@ -356,16 +356,16 @@ for (j = 0; j < t; j++) {
 
 bool CRobotManager::IsCustomRobot (int nId)
 {
-if (!GetRobotInfo (nId)->m_info.bCustom) //changed?
+if (!RobotInfo (nId)->m_info.bCustom) //changed?
 	return false;
 	// check if actually different from defaults
 
 bool bFound = false;
 
-byte bCustom = GetDefRobotInfo (nId)->m_info.bCustom;
-GetDefRobotInfo (nId)->m_info.bCustom = GetRobotInfo (nId)->m_info.bCustom; //make sure it's equal for the comparison
-if (!memcmp (GetRobotInfo (nId), GetDefRobotInfo (nId), sizeof (tRobotInfo))) 
-	GetRobotInfo (nId)->m_info.bCustom = 0; //same as default
+byte bCustom = DefRobotInfo (nId)->m_info.bCustom;
+DefRobotInfo (nId)->m_info.bCustom = RobotInfo (nId)->m_info.bCustom; //make sure it's equal for the comparison
+if (!memcmp (RobotInfo (nId), DefRobotInfo (nId), sizeof (tRobotInfo))) 
+	RobotInfo (nId)->m_info.bCustom = 0; //same as default
 else { //they're different
 	// find a robot of that type
 	CGameObject* objP = objectManager.FindRobot (nId);
@@ -384,10 +384,10 @@ else { //they're different
 		if (segP != null) // found one
 			bFound = true;
 		else
-			GetRobotInfo (nId)->m_info.bCustom = 0; // no matcens or none producing that robot type
+			RobotInfo (nId)->m_info.bCustom = 0; // no matcens or none producing that robot type
 		}
 	}
-GetDefRobotInfo (nId)->m_info.bCustom = bCustom; //restore
+DefRobotInfo (nId)->m_info.bCustom = bCustom; //restore
 return bFound;
 }
 
