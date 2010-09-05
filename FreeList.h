@@ -18,7 +18,7 @@ class CFreeList {
 		_T*	m_buffer;
 
 	public:
-		CFreeList () : m_buffer(null), m_freeList(null), m_size (0), m_count(0) {}
+		CFreeList () : m_buffer (null), m_freeList (null), m_size (0), m_count (0) {}
 
 		~CFreeList () { Destroy (); }
 		

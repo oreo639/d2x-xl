@@ -33,8 +33,8 @@ if (nDelVert < --Count ()) {
 
 void CVertexManager::DeleteUnused (void)
 {
-for (ushort nVertex = 0; nVertex < Count (); nVertex++)
-	vertexManager.Status (nVertex) &= ~NEW_MASK; 
+for (CVertexIterator i; i; i++)
+	i->m_status &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = segmentManager.Segment (0);
 for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)

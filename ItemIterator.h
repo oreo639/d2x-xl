@@ -10,17 +10,18 @@ class CGameItemIterator {
 	protected:
 		int	m_nIndex;
 		_T*	m_buffer;
-		int	m_length;
+		int	m_count;
 		_T		m_null;
 
 	public:
-		CGameItemIterator (_T* buffer, int length) : m_nIndex(0), m_buffer(buffer), m_length(length) {}
+		CGameItemIterator (_T* buffer, int count) : m_nIndex(0), m_buffer(buffer), m_count(count) {}
 
 		//prefix increment
 		inline _T& operator++ () { 
 			do {
 				++m_nIndex;
 				} while (!end () && (dynamic_cast<CGameItem&> (m_buffer [m_nIndex]).m_nIndex < 0));
+			--m_count;
 			return *value; 
 			}
 
@@ -30,6 +31,7 @@ class CGameItemIterator {
 			do {
 				value = &m_buffer [m_nIndex++];
 				} while (!end () && (dynamic_cast<CGameItem&> (*value).m_nIndex < 0));
+			--m_count;
 			return *value; 
 			}
 
@@ -38,6 +40,7 @@ class CGameItemIterator {
 			do {
 				--m_nIndex;
 				} while (!end () && (dynamic_cast<CGameItem&> (m_buffer [m_nIndex]).m_nIndex < 0));
+			--m_count;
 			return m_buffer [m_nIndex]; 
 			}
 
@@ -47,6 +50,7 @@ class CGameItemIterator {
 			do {
 				value = &m_buffer [m_nIndex--];
 				} while (!end () && (dynamic_cast<CGameItem&> (*value).m_nIndex < 0));
+			--m_count;
 			return *value; 
 			}
 
@@ -55,9 +59,7 @@ class CGameItemIterator {
 			return *this;
 			}
 
-		inline const bool start (void) { return m_nIndex == 0; }
-
-		inline const bool end (void) { return m_nIndex == m_length; }
+		inline const bool end (void) { return m_count == 0; }
 
 		inline operator bool() { return !end (); }
 

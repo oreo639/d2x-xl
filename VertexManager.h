@@ -8,6 +8,7 @@
 #include "Selection.h"
 #include "SegmentManager.h"
 #include "FreeList.h"
+#include "ItemIterator.h"
 
 //------------------------------------------------------------------------
 
@@ -79,6 +80,13 @@ class CVertexManager  {
 	};
 
 extern CVertexManager vertexManager;
+
+//------------------------------------------------------------------------
+
+class CVertexIterator : public CGameItemIterator<CVertex> {
+	public:
+		CVertexIterator(int length = 0) : CGameItemIterator (vertexManager.Vertex (0), (length == 0) ? vertexManager.Count () : length) {}
+	};
 
 //------------------------------------------------------------------------
 
