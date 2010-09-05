@@ -1,6 +1,7 @@
 // Copyright (c) 1998 Bryan Aamot, Brainware
 
 #include "mine.h"
+#include "CustomTextures.h"
 #include "dle-xp.h"
 
 // -----------------------------------------------------------------------------
@@ -220,7 +221,7 @@ if (!bLoadFromHog) {
 			ReadPog (fp);
 			fp.Close ();
 			}
-		ReadHamFile ();
+		robotManager.ReadHAM ();
 		if (IsD2File ()) {
 			char szHogFile [256], szHamFile [256], *p;
 			long nSize, nPos;
@@ -235,7 +236,7 @@ if (!bLoadFromHog) {
 					*p = '\0';
 				strcat_s (szHamFile, sizeof (szHamFile), "missions\\d2x.ham");
 				if (ExportSubFile (szHogFile, szHamFile, nPos + sizeof (struct level_header), nSize)) {
-					m_bVertigo = ReadHamFile (szHamFile, EXTENDED_HAM) == 0;
+					m_bVertigo = robotManager.ReadHAM (szHamFile, EXTENDED_HAM) == 0;
 					_unlink (szHamFile);
 					}
 				}
@@ -246,7 +247,7 @@ if (!bLoadFromHog) {
 		else
 			strcat_s (filename, 256, ".hxm");
 		if (!fp.Open (filename, "rb")) {
-			ReadHxmFile (fp, -1);
+			robotManager.ReadHXM (fp, -1);
 			fp.Close ();
 			}
 		}
@@ -263,14 +264,12 @@ return return_code;
 
 short CMine::LoadMineDataCompiled (CFileManager& fp, bool bNewMine)
 {
-	int		i; 
-	byte		version;
 
 // read version (1 byte)
-version = byte (fp.ReadSByte ());
+byte version = fp.ReadByte ();
 
 // read number of vertices (2 bytes)
-ushort nVertices = ushort (fp.ReadInt16 ());
+ushort nVertices = fp.ReadUInt16 ();
 if (nVertices > VERTEX_LIMIT) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", nVertices);
 	ErrorMsg (message);
@@ -280,9 +279,9 @@ if (IsD1File () ? nVertices > MAX_VERTICES_D1 : IsStdLevel () && (nVertices > MA
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
-ushort nSegments = ushort (fp.ReadInt16 ());
+ushort nSegments = fp.ReadUInt16 ();
 if (nSegments > SEGMENT_LIMIT) {
-	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
+	sprintf_s (message, sizeof (message), "Too many Segments (%d)", nSegments);
 	ErrorMsg (message);
 	return 2;
 	}
@@ -297,13 +296,13 @@ vertexManager.Read (fp, FileInfo ().version);
 
 segmentManager.Count () = nSegments;
 segmentManager.FileOffset () = fp.Tell ();
-segmentManager.Read (fp, FileInfo ().version);
+segmentManager.ReadSegments (fp, FileInfo ().version);
 
 lightManager.ReadColors (fp);
 
 if (objectManager.Count () > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-			  Info ().objects.count, MAX_OBJECTS);
+			     objectManager.Count (), MAX_OBJECTS);
 	ErrorMsg (message);
 	}
 return 0;
@@ -356,39 +355,6 @@ triggerManager.Read (fp, FileInfo ().version);
 segmentManager.ReadMatCens (fp, FileInfo ().version);
 lightManager.ReadLightDeltas (fp, FileInfo ().version);
 return 0;
-}
-
-// -----------------------------------------------------------------------------
-
-int CMine::LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
-{
-if (info.offset < 0)
-	return 0;
-if (fp.Seek (info.offset, SEEK_SET))
-	return -1;
-if (info.count < 1)
-	return 0;
-if (info.count > nMaxCount) {
-	sprintf_s (message, sizeof (message),  "Error: Too many %s (%d/%d)", pszItem, info.count, nMaxCount);
-	ErrorMsg (message);
-	return -1;
-	}
-if (Info ().fileInfo.version < nMinVersion) {
-	sprintf_s (message, sizeof (message), "%s version < %d, walls not loaded", pszItem, nMinVersion);
-	ErrorMsg (message);
-	return 0;
-	}
-
-int nVersion =  Info ().fileInfo.version;
-for (int i = 0; i < info.count; i++) {
-	if (!items->Read (fp, nVersion, bFlag)) {
-		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
-		ErrorMsg (message);
-		return -1;
-		}
-	items = items->Next ();
-	}
-return info.count;
 }
 
 // -------------------------------------------------------------------------------

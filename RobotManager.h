@@ -47,7 +47,7 @@ class CRobotManager {
 
 		void LoadResource (int nRobot); 
 
-		int ReadHAM (char *pszFile, int type); 
+		int ReadHAM (char *pszFile = null, int type = NORMAL_HAM); 
 
 		int WriteHXM (CFileManager& fp); 
 

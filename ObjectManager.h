@@ -72,10 +72,10 @@ class CObjectManager {
 
 		bool& SortObjects (void) { return m_bSortObjects; }
 
+		void Sort (void);
+
 	private:
 		int Compare (CGameObject& pi, CGameObject& pm);
-
-		void Sort (void);
 };
 
 extern CObjectManager objectManager;
