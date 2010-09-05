@@ -37,7 +37,7 @@ class CGameItemIterator {
 		CGameItemIterator (_T* buffer, int bufSize) : m_index(0), m_buffer(buffer), m_bufSize(bufSize) {}
 
 		// post-increment
-		_T& operator++() { 
+		inline _T& operator++() { 
 			_T* value;
 			do {
 				value = &m_buffer [m_index];
@@ -47,25 +47,27 @@ class CGameItemIterator {
 			}
 
 		// pre-decrement
-		_T& operator--() { 
+		inline _T& operator--() { 
 			do {
 				m_index--;
 				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
 			return m_buffer [m_index]; 
 			}
 
-		CGameItemIterator& operator= (int i) { 
+		inline CGameItemIterator& operator= (int i) { 
 			m_index = i;
 			return *this;
 			}
 
-		const bool operator== (int i) { return m_index == i; }
+		inline operator bool() const { return !end (); }
 
-		const bool operator!= (int i) { return m_index != i; }
+		inline const bool operator== (int i) { return m_index == i; }
 
-		const bool start (void) { return m_index == 0; }
+		inline const bool operator!= (int i) { return m_index != i; }
 
-		const bool end (void) { return m_index == m_bufSize; }
+		inline const bool start (void) { return m_index == 0; }
+
+		inline const bool end (void) { return m_index == m_bufSize; }
 	};
 
 // -----------------------------------------------------------------------------
