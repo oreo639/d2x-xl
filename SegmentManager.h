@@ -58,7 +58,7 @@ class CSegmentManager {
 		CMineItemInfo	m_matCenInfo [2];
 
 	public:
-		inline void Reset (void) {
+		inline void ResetInfo (void) {
 			m_segmentInfo.Reset ();
 			m_matCenInfo [0].Reset ();
 			m_matCenInfo [1].Reset ();
@@ -198,7 +198,7 @@ class CSegmentManager {
 
 		void FixChildren (void);
 
-		void UpdateWall (short nOldWall, short nNewWall);
+		void UpdateWalls (short nOldWall, short nNewWall);
 
 		void UpdateVertex (short nOldVert, short nNewVert);
 
@@ -278,7 +278,7 @@ class CSegmentManager {
 		
 		void Clear (void);
 
-		void Fix (void);
+		int Fix (void);
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

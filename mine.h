@@ -80,7 +80,7 @@ class CMine {
 		inline void SetLevelVersion (int levelVersion) { m_levelVersion = levelVersion; }
 		inline bool IsD2XLevel (void) { return LevelVersion () >= 9; }
 		inline bool IsStdLevel (void) { return LevelVersion () < 9; }
-		inline bool LevelOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
+		inline bool LevelIsOutdated (void) { return LevelVersion () < LEVEL_VERSION; }
 		inline void UpdateLevelVersion (void) { SetLevelVersion (LEVEL_VERSION); }
 			
 		inline int FileType (void) { return m_fileType; }
@@ -157,10 +157,7 @@ class CMine {
 
 	private:
 		short CreateNewLevel (void);
-		short FixIndexValues (void) {
-			segmentManager.Fix ();
-			wallManager.Fix ();
-			}
+		int FixIndexValues (void) { return segmentManager.Fix () | wallManager.Fix (); }
 
 		short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
 		short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);

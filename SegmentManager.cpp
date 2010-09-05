@@ -111,7 +111,7 @@ for (short nSegment = Count (); nSegment; nSegment--, segP++) {
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::UpdateWall (short nOldWall, short nNewWall)
+void CSegmentManager::UpdateWalls (short nOldWall, short nNewWall)
 {
 CSegment *segP = Segment (0);
 for (int i = Count (); i; i--, segP++) {
@@ -191,22 +191,31 @@ else {
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::Fix (void)
+int CSegmentManager::Fix (void)
 {
+int errFlags = 0;
+
 CSegment *segP = Segments (0);
 for (short nSegment = SegCount (); nSegment > 0; nSegment--, segP++) {
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		CSide& side = segP->m_sides [nSide];
-		if (side.m_info.nWall >= wallManager.Count () && (side.m_info.nWall != NO_WALL)) 
+		if (side.m_info.nWall >= wallManager.Count () && (side.m_info.nWall != NO_WALL)) {
 			side.m_info.nWall = NO_WALL;
-		if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > Count ()))
+			errFlags |= 1;
+			}
+		if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > Count ())) {
 			segP->SetChild (nSide, -1);
+			errFlags |= 2;
+			}
 		}
 	for (short nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= vertexManager.Count ()))
+		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= vertexManager.Count ())) {
 			segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture
+			errFlags |= 4;
+			}
 		}
 	}
+return errFlags;
 }
 
 // -----------------------------------------------------------------------------

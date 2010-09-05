@@ -1,29 +1,7 @@
 // Copyright (c) 1998 Bryan Aamot, Brainware
 
-#include "stdafx.h"
-#include "dle-xp-res.h"
-
-#include < math.h>
-#include "define.h"
-#include "types.h"
-#include "global.h"
 #include "mine.h"
-#include "matrix.h"
-#include "cfile.h"
-#include "customtextures.h"
-#include "TextureManager.h"
-#include "palette.h"
 #include "dle-xp.h"
-#include "robot.h"
-#include "HogManager.h"
-#include "light.h"
-
-#ifdef ALLOCATE_tPolyModelS
-#undef ALLOCATE_tPolyModelS
-#endif
-#define ALLOCATE_tPolyModelS 0
-
-#define ENABLE_TEXT_DUMP 0
 
 // -----------------------------------------------------------------------------
 
@@ -33,21 +11,15 @@ if (theMine == null)
 	return 0;
 
 	char filename [256];
-	short checkErr;
 	bool bNewMine = false;
 	CFileManager fp;
 
-// first disable curve generator
-tunnelMaker.Active () = FALSE;
-
-//CLEAR (LightColors ());
-//CLEAR (VertexColors ());
-
+tunnelMaker.Disable ();
 // if no file passed, define a new level w/ 1 object
 if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
 else if (!CreateNewLevel ()) {
-	CreateLightMap ();
+	lightManager.CreateLightMap ();
 	CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
 	sprintf_s (filename, sizeof (filename), (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
 	bLoadFromHog = false;
@@ -57,17 +29,17 @@ else if (!CreateNewLevel ()) {
 m_disableDrawing = TRUE;
 
 LoadMine (filename, bLoadFromHog, bNewMine);
-if (!bNewMine && (IsD2XLevel ()) && (LevelOutdated ())) {
+if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
 	if (LevelVersion () < 15) {
-		ConvertWallNum (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
-		NumObjTriggers () = 0;
+		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+		triggerManager.NumObjTriggers () = 0;
 		}
 	UpdateLevelVersion ();
 	}
 //CalcDeltaLightData ();
-checkErr = FixIndexValues();
-if (checkErr != 0) {
-	sprintf_s (message, sizeof (message),  "File contains corrupted data. Would you like to load anyway? Error Code %#04x", checkErr);
+int errFlags = FixIndexValues();
+if (errFlags != 0) {
+	sprintf_s (message, sizeof (message),  "File contains corrupted data (error code %#04x). Would you like to load anyway? ", errFlags);
 	if (QueryMsg(message) != IDYES) {
 		if (!CreateNewLevel ()) {
 			CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
@@ -331,7 +303,7 @@ lightManager.ReadColors (fp);
 
 if (objectManager.Count () > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-			  MineInfo ().objects.count, MAX_OBJECTS);
+			  Info ().objects.count, MAX_OBJECTS);
 	ErrorMsg (message);
 	}
 return 0;
@@ -355,18 +327,18 @@ triggerManager.ResetInfo ();
 segmentManager.ResetInfo ();
 lightManager.ResetInfo ();
 
-// Read in MineFileInfo () to get size of saved fileinfo.
+// Read in FileInfo () to get size of saved fileinfo.
 if (fp.Seek (startOffset, SEEK_SET)) {
 	ErrorMsg ("Error seeking in mine.cpp");
 	return -1;
 	}
 // Check signature
-MineInfo ().Read (fp);
-if (MineFileInfo ().signature != 0x6705) {
+Info ().Read (fp);
+if (FileInfo ().signature != 0x6705) {
 	ErrorMsg ("Game data signature incorrect");
 	return -1;
 	}
-if (MineInfo ().fileInfo.version < 14) 
+if (Info ().fileInfo.version < 14) 
 	m_currentLevelName [0] = 0;
 else {  /*load mine filename */
 	for (char *p = m_currentLevelName; ; p++) {
@@ -401,13 +373,13 @@ if (info.count > nMaxCount) {
 	ErrorMsg (message);
 	return -1;
 	}
-if (MineInfo ().fileInfo.version < nMinVersion) {
+if (Info ().fileInfo.version < nMinVersion) {
 	sprintf_s (message, sizeof (message), "%s version < %d, walls not loaded", pszItem, nMinVersion);
 	ErrorMsg (message);
 	return 0;
 	}
 
-int nVersion =  MineInfo ().fileInfo.version;
+int nVersion =  Info ().fileInfo.version;
 for (int i = 0; i < info.count; i++) {
 	if (!items->Read (fp, nVersion, bFlag)) {
 		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
