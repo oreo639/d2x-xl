@@ -23,10 +23,6 @@ void CVertexManager::Delete (ushort nDelVert)
 {
 undoManager.SetModified (true); 
 m_free += (int) nDelVert;
-if (nDelVert < --Count ()) {
-	m_vertices [nDelVert] = m_vertices [Count ()];
-	segmentManager.UpdateVertex (Count (), nDelVert);
-	}
 }
 
 // ----------------------------------------------------------------------------- 
@@ -37,20 +33,24 @@ for (CVertexIterator i; i; i++)
 	i->m_status &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = segmentManager.Segment (0);
-for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
+for (CSegmentIterator i; i; i++) {
 	for (short point = 0; point < 8; point++)
-		vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK; 
-for (ushort nVertex = Count () - 1; nVertex >= 0; nVertex--)
-	if (!(vertexManager.Status (nVertex) & NEW_MASK))
-		Delete (nVertex); 
+		vertexManager.Status (i->m_info.verts [point]) |= NEW_MASK; 
+for (CVertexIterator i; i; i++)
+	if (!(i->m_status & NEW_MASK))
+		Delete (i->Index ()); 
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CVertexManager::Read (CFileManager& fp, int nFileVersion)
 {
-for (int i = 0; i < Count (); i++)
-	m_vertices [i].Read (fp, nFileVersion);
+ushort nVertex;
+
+for (int i = 0; i < Count (); i++) {
+	Add (&nVertex);
+	m_vertices [nVertex].Read (fp, nFileVersion);
+	}
 }
 
 // ----------------------------------------------------------------------------- 
@@ -58,24 +58,24 @@ for (int i = 0; i < Count (); i++)
 void CVertexManager::Write (CFileManager& fp, int nFileVersion)
 {
 m_info.offset = fp.Tell ();
-for (int i = 0; i < Count (); i++)
-	m_vertices [i].Write (fp, nFileVersion);
+for (CVertexIterator i; i; i++)
+	i->Write (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CVertexManager::Unmark (void)
 {
-for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
-	vertexManager.Status (nVertex) &= ~MARKED_MASK; 
+for (CVertexIterator i; i; i++)
+	i->m_status &= ~MARKED_MASK; 
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CVertexManager::Clear (void)
 {
-for (int i = 0; i < Count (); i++)
-	m_vertices [i].Clear ();
+for (CVertexIterator i; i; i++)
+	i->Clear ();
 }
 
 // ----------------------------------------------------------------------------- 
