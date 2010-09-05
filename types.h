@@ -139,6 +139,37 @@ public:
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+class CFreeList {
+	protected:
+		int*	m_freeList;
+		int	m_size;
+		int	m_freeItems;
+
+	public:
+		CFreeList (int size) : m_size (size) {
+			m_freeList = new int [size];
+			for (int i = 0, j = size; i < size; i++)
+				m_freeList [i] = --j;
+			}
+
+		const bool operator+ (int i) {
+			if (m_freeItems >= m_size)
+				return false;
+			m_freeList [m_freeItems++] = i;
+			return true;
+			}
+
+		const int operator- (int i) {
+			if (m_freeItems == 0)
+				return -1;
+			return m_freeList [m_freeItems--];
+			}
+	};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 typedef struct rgbColor {
 	double	r, g, b;
 } rgbColor;

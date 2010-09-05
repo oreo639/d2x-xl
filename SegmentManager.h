@@ -56,6 +56,7 @@ class CSegmentManager {
 		int				m_nAddMode;
 		robotMakerList	m_matCens [2];
 		CMineItemInfo	m_matCenInfo [2];
+		CFreeList		m_freeList;
 
 	public:
 		inline void ResetInfo (void) {
