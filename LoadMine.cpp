@@ -375,17 +375,11 @@ short CMine::LoadGameData (CFileManager& fp, bool bNewMine)
 startOffset = fp.Tell ();
 
 // Set default values
-objectManager.Reset ();
-wallManager.Reset ();
-MineInfo ().objects.Reset ();
-MineInfo ().walls.Reset ();
-MineInfo ().doors.Reset ();
-MineInfo ().triggers.Reset ();
-MineInfo ().control.Reset ();
-MineInfo ().botGen.Reset ();
-MineInfo ().equipGen.Reset ();
-MineInfo ().lightDeltaIndices.Reset ();
-MineInfo ().lightDeltaValues.Reset ();
+objectManager.ResetInfo ();
+wallManager.ResetInfo ();
+triggerManager.ResetInfo ();
+segmentManager.ResetInfo ();
+lightManager.ResetInfo ();
 
 //==================== = READ FILE INFO========================
 

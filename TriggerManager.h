@@ -45,7 +45,7 @@ class CTriggerManager {
 		CMineItemInfo			m_reactorInfo;
 
 	public:
-		void Reset (void) {
+		void ResetInfo (void) {
 			m_info [0].Clear ();
 			m_info [1].Clear ();
 			m_reactorInfo.Clear ();

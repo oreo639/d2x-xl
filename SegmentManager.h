@@ -53,9 +53,13 @@ class CSegmentManager {
 		CMineItemInfo	m_matCenInfo [2];
 
 	public:
+		inline void Reset (void) {
+			m_segmentInfo.Reset ();
+			m_matCentInfo [0].Reset ();
+			m_matCentInfo [1].Reset ();
+			}
 		// Segment and side getters
-		inline segmentList& Segments (void)
-			{ return m_segments; }
+		inline segmentList& Segments (void)	{ return m_segments; }
 
 		inline int& Count (void) { return m_segmentInfo.count; }
 

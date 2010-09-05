@@ -32,7 +32,7 @@ class CObjectManager {
 		bool				m_bSortObjects;
 
 	public:
-		inline void Reset (void) { m_info.Reset (); }
+		inline void ResetInfo (void) { m_info.Reset (); }
 
 		inline objectList& ObjectList (void) { return m_objects; }
 

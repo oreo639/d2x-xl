@@ -141,6 +141,8 @@ class CLightManager {
 		short						m_nCount;
 		lightDeltaIndexList	m_lightDeltaIndices;
 		lightDeltaValueList	m_lightDeltaValues;
+		CMineItemInfo			m_deltaIndexInfo;
+		CMineItemInfo			m_deltaValueInfo;
 
 		lightColorList			m_lightColors;
 		texColorList			m_texColors;
@@ -158,6 +160,11 @@ class CLightManager {
 		//long						m_defLightMap [MAX_TEXTURES_D2];
 
 	public:
+		inline void ResetInfo (void) {
+			m_deltaIndexInfo.Reset ();
+			m_deltaValueInfo.Reset ();
+			}
+
 		inline lightDeltaIndexList& LightDeltaIndices (void) { return m_lightDeltaIndices; }
 
 		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
@@ -231,6 +238,10 @@ class CLightManager {
 		void ReadColorMap (CFileManager& fp);
 		void ReadColors (CFileManager& fp);
 		void WriteColors (CFileManager& fp);
+		inline void ReadIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Read (fp); }
+		inline void WriteIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Write (fp); }
+		inline void ReadValueInfo (CFileManager& fp) { m_deltaValueInfo.Read (fp); }
+		inline void WriteValueInfo (CFileManager& fp) { m_deltaValueInfo.Write (fp); }
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
