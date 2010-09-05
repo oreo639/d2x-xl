@@ -7,8 +7,8 @@ short CSegmentManager::Add (void)
 { 
 if (Count () >= MAX_SEGMENTS)
 	return -1;
-m_segments [Count ()++].Clear ();
-return Count (); 
+m_segments [m_free.Get ()].Clear ();
+return Count ()++; 
 }
 
 // ----------------------------------------------------------------------------- 

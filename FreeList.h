@@ -68,6 +68,12 @@ class CFreeList {
 				m_freeList [m_freeItems++] = i;
 				}
 			}
+
+		inline const int operator-- () { return Get (); }
+
+		inline const int operator-- (int) { return Get (); }
+
+		inline const void operator+= (int i) { Put (i); }
 	};
 
 // -----------------------------------------------------------------------------
