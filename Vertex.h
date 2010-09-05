@@ -4,8 +4,10 @@
 // -----------------------------------------------------------------------------
 
 class CVertex : public CDoubleVector, public CGameItem {
-public:
+private:
 	byte m_status;
+
+public:
 	CVertex () : m_status(0) {}
 	CVertex (double x, double y, double z) : CDoubleVector (x, y, z) { m_status = 0; }
 	CVertex (tDoubleVector& _v) : CDoubleVector (_v) { m_status = 0; }
@@ -31,6 +33,8 @@ public:
 		v = other.v; 
 		return *this;
 		}
+
+	inline byte& Status (void) { return m_status; }
 };
 
 // -----------------------------------------------------------------------------

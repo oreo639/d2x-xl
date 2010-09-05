@@ -30,14 +30,14 @@ m_free += (int) nDelVert;
 void CVertexManager::DeleteUnused (void)
 {
 for (CVertexIterator i; i; i++)
-	i->m_status &= ~NEW_MASK; 
+	i->Status () &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = segmentManager.Segment (0);
 for (CSegmentIterator i; i; i++)
 	for (short point = 0; point < 8; point++)
 		vertexManager.Status (i->m_info.verts [point]) |= NEW_MASK; 
 for (CVertexIterator i; i; i++)
-	if (!(i->m_status & NEW_MASK))
+	if (!(i->Status () & NEW_MASK))
 		Delete (i.Index ()); 
 }
 
@@ -67,7 +67,7 @@ for (CVertexIterator i; i; i++)
 void CVertexManager::Unmark (void)
 {
 for (CVertexIterator i; i; i++)
-	i->m_status &= ~MARKED_MASK; 
+	i->Status () &= ~MARKED_MASK; 
 }
 
 // ----------------------------------------------------------------------------- 

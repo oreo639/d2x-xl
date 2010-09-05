@@ -50,7 +50,7 @@ class CVertexManager  {
 
 		inline CVertex *Vertex (int i) { return &m_vertices [i]; }
 
-		inline byte& Status (int i = 0) { return Vertex (i)->m_status; }
+		inline byte& Status (int i = 0) { return Vertex (i)->Status (); }
 
 		inline int& Count (void) { return m_info.count; }
 
