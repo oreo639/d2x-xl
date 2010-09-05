@@ -189,6 +189,10 @@ class CLightManager {
 
 		inline short& Count (void) { return m_nCount; }
 
+		inline int& DeltaIndexCount (void) { return m_deltaIndexInfo.count; }
+
+		inline int& DeltaValueCount (void) { return m_deltaValueInfo.count; }
+
 		inline void SetTexColor (short nBaseTex, CColor *pc)	{
 			if (UseTexColors () && (IsLight (nBaseTex) != -1))
 			m_texColors [nBaseTex] = *pc;
@@ -240,8 +244,8 @@ class CLightManager {
 		void WriteColors (CFileManager& fp);
 		void ReadVariableLights (CFileManager& fp);
 		void WriteVariableLights (CFileManager& fp);
-		void ReadLightDeltas (CFileManager& fp);
-		void WriteLightDeltas (CFileManager& fp);
+		void ReadLightDeltas (CFileManager& fp, int nFileVersion);
+		void WriteLightDeltas (CFileManager& fp, int nFileVersion);
 
 		inline void ReadDeltaIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Read (fp); }
 		inline void WriteDeltaIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Write (fp); }
@@ -252,6 +256,8 @@ class CLightManager {
 			ReadDeltaIndexInfo (fp);
 			ReadDeltaValueInfo (fp);
 			}
+
+		void SortDeltaIndex (void) { SortDeltaIndex (0, DeltaIndexCount () - 1); }
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
@@ -265,6 +271,8 @@ class CLightManager {
 		int FindLightDelta (short nSegment, short nSide, short *pi);
 
 		byte LightWeight (short nBaseTex);
+		
+		void SortDeltaIndex (int left, int right);
 };
 
 extern CLightManager lightManager;

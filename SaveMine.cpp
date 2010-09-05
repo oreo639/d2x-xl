@@ -160,47 +160,6 @@ return 0;
 
 // ------------------------------------------------------------------------
 
-void CMine::SortDLIndex (int left, int right)
-{
-	int	l = left,
-			r = right,
-			m = (left + right) / 2;
-	short	mSeg = LightDeltaIndex (m)->m_nSegment, 
-			mSide = LightDeltaIndex (m)->m_nSide;
-	CSideKey mKey = CSideKey (mSeg, mSide);
-	CLightDeltaIndex	*pl, *pr;
-
-do {
-	pl = LightDeltaIndex (l);
-	//while ((pl->m_nSegment < mSeg) || ((pl->m_nSegment == mSeg) && (pl->nSide < mSide))) {
-	while (*pl < mKey) {
-		pl++;
-		l++;
-		}
-	pr = LightDeltaIndex (r);
-	//while ((pr->m_info.nSegment > mSeg) || ((pr->m_info.nSegment == mSeg) && (pr->nSide > mSide))) {
-	while (*pr > mKey) {
-		pr--;
-		r--;
-		}
-	if (l <= r) {
-		if (l < r) {
-			CLightDeltaIndex	h = *pl;
-			*pl = *pr;
-			*pr = h;
-			}
-		l++;
-		r--;
-		}
-	} while (l <= r);
-if (right > l)
-   SortDLIndex (l, right);
-if (r > left)
-   SortDLIndex (left, r);
-}
-
-// ------------------------------------------------------------------------
-
 int CMine::SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag)
 {
 info.offset = fp.Tell ();

@@ -150,43 +150,6 @@ class CMine {
 		void LoadSideTextures (short segNum, short sideNum);
 
 		// trigger stuff
-		bool GetTriggerResources (ushort& nWall);
-
-		int FuelCenterCount (void);
-		inline int& RobotMakerCount (void) 
-			{ return Info ().botGen.count; }
-		inline int& EquipMakerCount (void) 
-			{ return Info ().equipGen.count; }
-		inline int& WallCount (void) 
-			{ return Info ().walls.count; }
-		inline int& TriggerCount (void) 
-			{ return Info ().triggers.count; }
-		inline int& ObjectCount (void) 
-			{ return Info ().objects.count; }
-
-
-		short ReadSegmentInfo (CFileManager& fp);
-		void WriteSegmentInfo (CFileManager& fp);
-		void CutBlock (void);
-		void CopyBlock (char *pszBlkFile = null);
-		void PasteBlock (void); 
-		int ReadBlock (char *name,int option); 
-		void QuickPasteBlock  (void);
-		void DeleteBlock (void);
-
-		inline void wrap (short *x, short delta,short min,short max) {
-			*x += delta;
-			if (*x > max)
-				*x = min;
-			else if (*x < min)
-				*x = max;
-			}
-
-		void TunnelGenerator (void);
-		void IncreaseSpline (void);
-		void DecreaseSpline (void);
-		void CalcSpline (void);
-		void UntwistSegment (short nSegment,short nSide);
 		int MatchingSide (int j);
 
 		short LoadMineSigAndType (CFileManager& fp);
@@ -194,13 +157,11 @@ class CMine {
 
 	private:
 		short CreateNewLevel (void);
-		void DefineVertices(short newVerts [4]);
-		void UnlinkChild(short parent_segnum,short nSide);
-		short FixIndexValues (void);
+		short FixIndexValues (void) {
+			segmentManager.Fix ();
+			wallManager.Fix ();
+			}
 
-		void ClearGameItem (CGameItem* items, int nCount);
-		int LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion,int nMaxCount, char *pszItem, bool bFlag = false);
-		int SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag = false);
 		short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
 		short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
 		short LoadGameData (CFileManager& loadfile, bool bNewMine);
