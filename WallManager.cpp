@@ -420,6 +420,24 @@ void CWallManager::Clear (void)
 {
 for (short i = 0; i < Count (); i++)
 	m_walls [i].Clear ();
+for (short i = 0; i < Count (1); i++)
+	m_doors [i].Clear ();
+}
+
+//------------------------------------------------------------------------------
+
+void CWallManager::Read (CFileManager& fp, int nFileVersion)
+{
+ReadWalls (fp, nFileVersion);
+ReadDoors (fp, nFileVersion);
+}
+
+//------------------------------------------------------------------------------
+
+void CWallManager::Write (CFileManager& fp, int nFileVersion)
+{
+WriteWalls (fp, nFileVersion);
+WriteDoors (fp, nFileVersion);
 }
 
 //------------------------------------------------------------------------------

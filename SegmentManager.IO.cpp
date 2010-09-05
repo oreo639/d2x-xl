@@ -89,6 +89,22 @@ WriteMatCens (fp, nFileVersion, 1);
 
 // ----------------------------------------------------------------------------- 
 
+void CSegmentManager::ReadMatCens (CFileManager& fp, int nFileVersion)
+{
+ReadRobotMakers ();
+ReadEquipMakers ();
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CSegmentManager::WriteMatCens (CFileManager& fp, int nFileVersion)
+{
+WriteRobotMakers ();
+WriteEquipMakers ();
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CSegmentManager::Clear (void)
 {
 for (int i = 0; i < Count (); i++)

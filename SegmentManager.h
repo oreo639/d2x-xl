@@ -267,6 +267,39 @@ class CSegmentManager {
 		
 		void WriteSegments (CFileManager& fp, int nFileVersion);
 		
+		void ReadMatCens (CFileManager& fp, int nFileVersion);
+		
+		void WriteMatCens (CFileManager& fp, int nFileVersion);
+		
+		void Clear (void);
+
+		void Fix (void);
+
+	private:
+		void UnlinkChild (short nParentSeg, short nSide);
+
+		void UnlinkSeg (CSegment *segP, CSegment *rootSegP);
+
+		void LinkSeg (CSegment *segP, CSegment *rootSegP);
+
+		void DeleteWalls (short nSegment);
+
+		bool Create (short nSegment, bool bCreate, byte nFunction, short nTexture = -1, char* szError = null);
+
+		bool Define (short nSegment, byte nFunction, short nTexture);
+
+		void Undefine (short nSegment);
+
+		void ComputeVertices (short newVerts [4]);
+
+		int FuelCenterCount (void);
+
+		void RemoveMatCen (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
+
+		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CMatCenter* matCens, CMineItemInfo& info, char* szError);
+
+		void RenumberMatCens (byte nFunction, short nClass);
+
 		void ReadMatCens (CFileManager& fp, int nFileVersion, int nClass);
 		
 		void WriteMatCens (CFileManager& fp, int nFileVersion, int nClass);
@@ -279,25 +312,6 @@ class CSegmentManager {
 		
 		void WriteEquipMakers (CFileManager& fp, int nFileVersion);
 
-		void Clear (void);
-
-		void Fix (void);
-
-	private:
-		void UnlinkChild (short nParentSeg, short nSide);
-
-		void UnlinkSeg (CSegment *segP, CSegment *rootSegP);
-		void LinkSeg (CSegment *segP, CSegment *rootSegP);
-		void DeleteWalls (short nSegment);
-
-		bool Create (short nSegment, bool bCreate, byte nFunction, short nTexture = -1, char* szError = null);
-		bool Define (short nSegment, byte nFunction, short nTexture);
-		void Undefine (short nSegment);
-		void ComputeVertices (short newVerts [4]);
-		int FuelCenterCount (void);
-		void RemoveMatCen (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
-		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CMatCenter* matCens, CMineItemInfo& info, char* szError);
-		void RenumberMatCens (byte nFunction, short nClass);
 	};
 
 extern CSegmentManager segmentManager;

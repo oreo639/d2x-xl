@@ -139,8 +139,8 @@ class CLightManager {
 	private:
 		variableLightList		m_variableLights;
 		short						m_nCount;
-		lightDeltaIndexList	m_lightDeltaIndices;
-		lightDeltaValueList	m_lightDeltaValues;
+		lightDeltaIndexList	m_deltaIndex;
+		lightDeltaValueList	m_deltaValues;
 		CMineItemInfo			m_deltaIndexInfo;
 		CMineItemInfo			m_deltaValueInfo;
 
@@ -165,17 +165,17 @@ class CLightManager {
 			m_deltaValueInfo.Reset ();
 			}
 
-		inline lightDeltaIndexList& LightDeltaIndices (void) { return m_lightDeltaIndices; }
+		inline lightDeltaIndexList& LightDeltaIndices (void) { return m_deltaIndex; }
 
-		inline lightDeltaValueList& LightDeltaValues (void) { return m_lightDeltaValues; }
+		inline lightDeltaValueList& LightDeltaValues (void) { return m_deltaValues; }
 
 		inline variableLightList& VariableLights (void) { return m_variableLights; }
 
 		inline vertexColorList& VertexColors (void) { return m_vertexColors; }
 
-		inline CLightDeltaIndex* LightDeltaIndex (short i) { return &m_lightDeltaIndices [i]; }
+		inline CLightDeltaIndex* LightDeltaIndex (short i) { return &m_deltaIndex [i]; }
 
-		inline CLightDeltaValue* LightDeltaValue (short i) { return &m_lightDeltaValues [i]; }
+		inline CLightDeltaValue* LightDeltaValue (short i) { return &m_deltaValues [i]; }
 
 		inline CVariableLight* VariableLight (short i) { return &m_variableLights [i]; }
 
