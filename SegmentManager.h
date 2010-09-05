@@ -63,6 +63,7 @@ class CSegmentManager {
 			m_segmentInfo.Reset ();
 			m_matCenInfo [0].Reset ();
 			m_matCenInfo [1].Reset ();
+			m_free.Reset ();
 			}
 		// Segment and side getters
 		inline segmentList& Segments (void)	{ return m_segments; }

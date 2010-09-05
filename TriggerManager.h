@@ -51,6 +51,7 @@ class CTriggerManager {
 			m_info [0].Reset ();
 			m_info [1].Reset ();
 			m_reactorInfo.Reset ();
+			m_free.Reset ();
 			}
 
 		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
@@ -147,11 +148,12 @@ class CTriggerManager {
 
 		void Clear (void);
 
-		TriggerManager () {
+		CTriggerManager () {
 			ResetInfo ();
 			Clear ();
 			m_free.Create (TRIGGER_LIMIT);
 			}
+
 	private:
 		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);
 		void SortObjTriggers (short left, short right);

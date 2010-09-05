@@ -32,26 +32,43 @@ class CGameItemIterator {
 		int	m_index;
 		_T*	m_buffer;
 		int	m_bufSize;
+		_T		m_null;
 
 	public:
 		CGameItemIterator (_T* buffer, int bufSize) : m_index(0), m_buffer(buffer), m_bufSize(bufSize) {}
 
-		// post-increment
-		inline _T& operator++() { 
-			_T& value;
+		//prefix increment
+		inline _T& operator++ () { 
 			do {
-				value = m_buffer [m_index];
-				m_index++;
-				} while (!end () || dynamic_cast<CGameItem&> (value).m_bUsed);
+				++m_index;
+				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
 			return *value; 
 			}
 
-		// pre-decrement
-		inline _T& operator--() { 
+		// postfix increment
+		inline _T& operator++ (int) { 
+			_T* value;
 			do {
-				m_index--;
+				value = &m_buffer [m_index++];
+				} while (!end () || dynamic_cast<CGameItem&> (*value).m_bUsed);
+			return *value; 
+			}
+
+		// prefix decrement
+		inline _T& operator-- () { 
+			do {
+				--m_index;
 				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
 			return m_buffer [m_index]; 
+			}
+
+		// postfix decrement
+		inline _T& operator-- (int) { 
+			_T* value;
+			do {
+				value = &m_buffer [m_index--];
+				} while (!end () || dynamic_cast<CGameItem&> (*value).m_bUsed);
+			return *value; 
 			}
 
 		inline CGameItemIterator& operator= (int i) { 
@@ -59,17 +76,17 @@ class CGameItemIterator {
 			return *this;
 			}
 
-		inline operator bool() const { return !end (); }
+		inline const bool start (void) { return m_index == 0; }
+
+		inline const bool end (void) { return m_index == m_bufSize; }
+
+		inline operator bool() { return !end (); }
 
 		inline const bool operator== (int i) { return m_index == i; }
 
 		inline const bool operator!= (int i) { return m_index != i; }
 
-		inline _T operator* () { return end () ? null : &m_buffer [m_index]; }
-
-		inline const bool start (void) { return m_index == 0; }
-
-		inline const bool end (void) { return m_index == m_bufSize; }
+		inline _T& operator* () { return end () ? m_null : m_buffer [m_index]; }
 	};
 
 // -----------------------------------------------------------------------------
@@ -136,58 +153,6 @@ public:
 	inline void Clear (void) { u = v = l = 0; }
 	inline void Set (short _u, short _v, short _l) { u = _u, v = _v, l = _l; }
 };
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-class CFreeList {
-	protected:
-		int*	m_freeList;
-		int	m_size;
-		int	m_freeItems;
-
-	public:
-		CFreeList () : m_freeList(null), m_size (0), m_freeItems(0) { Create (size); }
-
-		~CFreeList () { Destroy () };
-		
-		bool Create (int size) {
-			m_freeList = new int [size];
-			if (m_freeList == null)
-				return false;
-			m_size = size;
-			Reset ();
-			return true;
-			}
-
-		void Reset (void) {
-			m_freeItems = 0;
-			for (int i = m_size; m_freeItems < m_size; m_freeItems++)
-				m_freeList [m_freeItems] = --i;
-			}
-
-		void Destroy (void) {
-			if (m_freeList) {
-				delete[] m_freeList;
-				m_freeList = null;
-				}
-			m_size = 0;
-			}
-
-		const bool operator+ (int i) {
-			if (m_freeItems >= m_size)
-				return false;
-			m_freeList [m_freeItems++] = i;
-			return true;
-			}
-
-		const int operator- (int i) {
-			if (m_freeItems == 0)
-				return -1;
-			return m_freeList [m_freeItems--];
-			}
-	};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

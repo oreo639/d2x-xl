@@ -21,7 +21,7 @@ if (wallP != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (m_freeList.Empty ()) {
+if (m_free.Empty ()) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
@@ -34,7 +34,7 @@ short CWallManager::Add (void)
 { 
 if (!HaveResources ())
 	return NO_WALL;
-m_walls [m_freeList.Get ()].Clear ();
+m_walls [m_free.Get ()].Clear ();
 return WallCount ()++;
 }
 
@@ -126,7 +126,7 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
-m_freeList.Put (nDelWall);
+m_free.Put (nDelWall);
 WallCount ()--;
 
 undoManager.Unlock ();
@@ -138,9 +138,9 @@ triggerManager.UpdateReactor ();
 
 CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
-for (; i < WallCount (); i++)
-	if (m_walls [i] == key)
-		return &m_walls [i];
+for (CWallIterator i; i; i++)
+	if (*i == key)
+		return &*i;
 return null;
 }
 

@@ -16,9 +16,9 @@ class CFreeList {
 		int	m_freeItems;
 
 	public:
-		CFreeList () : m_freeList(null), m_size (0), m_freeItems(0) { Create (size); }
+		CFreeList () : m_freeList(null), m_size (0), m_freeItems(0) {}
 
-		~CFreeList () { Destroy () };
+		~CFreeList () { Destroy (); }
 		
 		bool Create (int size) {
 			m_freeList = new int [size];

@@ -40,7 +40,10 @@ class CVertexManager  {
 	public:
 		// Segment and side getters
 		// Vertex getters
-		void ResetInfo (void) { m_info.Reset (); }
+		void ResetInfo (void) { 
+			m_info.Reset (); 
+			m_free.Reset ();
+			}
 
 		inline vertexList& Vertices (void) { return m_vertices; }
 
@@ -68,7 +71,7 @@ class CVertexManager  {
 
 		void Unmark (void);
 
-		VertexManager () : CFreeList (VERTEX_LIMIT) {
+		CVertexManager () {
 			ResetInfo ();
 			Clear ();
 			m_free.Create (VERTEX_LIMIT);
