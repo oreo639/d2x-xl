@@ -7,6 +7,7 @@
 #include "Types.h"
 #include "Selection.h"
 #include "SegmentManager.h"
+#include "FreeList.h"
 
 //------------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ typedef CVertex vertexList [VERTEX_LIMIT];
 
 //------------------------------------------------------------------------
 
-class CVertexManager {
+class CVertexManager : CFreeList {
 	public:
 		vertexList		m_vertices;
 		CMineItemInfo	m_info;
@@ -65,6 +66,11 @@ class CVertexManager {
 		void Clear (void);
 
 		void Unmark (void);
+
+		VertexManager () : CFreeList (VERTEX_LIMIT) {
+			ResetInfo ();
+			Clear ();
+			}
 	};
 
 extern CVertexManager vertexManager;

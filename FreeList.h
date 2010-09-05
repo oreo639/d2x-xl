@@ -139,58 +139,6 @@ public:
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-class CFreeList {
-	protected:
-		int*	m_freeList;
-		int	m_size;
-		int	m_freeItems;
-
-	public:
-		CFreeList () : m_freeList(null), m_size (0), m_freeItems(0) { Create (size); }
-
-		~CFreeList () { Destroy () };
-		
-		bool Create (int size) {
-			m_freeList = new int [size];
-			if (m_freeList == null)
-				return false;
-			m_size = size;
-			Reset ();
-			return true;
-			}
-
-		void Reset (void) {
-			m_freeItems = 0;
-			for (int i = m_size; m_freeItems < m_size; m_freeItems++)
-				m_freeList [m_freeItems] = --i;
-			}
-
-		void Destroy (void) {
-			if (m_freeList) {
-				delete[] m_freeList;
-				m_freeList = null;
-				}
-			m_size = 0;
-			}
-
-		const bool operator+ (int i) {
-			if (m_freeItems >= m_size)
-				return false;
-			m_freeList [m_freeItems++] = i;
-			return true;
-			}
-
-		const int operator- (int i) {
-			if (m_freeItems == 0)
-				return -1;
-			return m_freeList [m_freeItems--];
-			}
-	};
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
 typedef struct rgbColor {
 	double	r, g, b;
 } rgbColor;

@@ -7,6 +7,7 @@
 #include "Types.h"
 #include "Selection.h"
 #include "MineInfo.h"
+#include "FreeList.h"
 
 //------------------------------------------------------------------------
 

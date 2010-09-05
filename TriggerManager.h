@@ -6,6 +6,7 @@
 #include "carray.h"
 #include "trigger.h"
 #include "MineInfo.h"
+#include "FreeList.h"
 
 //------------------------------------------------------------------------
 
