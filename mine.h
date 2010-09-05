@@ -22,6 +22,7 @@
 #include "HogManager.h"
 #include "UndoManager.h"
 #include "ResourceManager.h"
+#include "PaletteManager.h"
 
 #ifdef _DEBUG
 
