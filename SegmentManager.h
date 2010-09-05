@@ -319,4 +319,11 @@ extern CSegmentManager segmentManager;
 
 //------------------------------------------------------------------------
 
+class CSegmentIterator : public CGameItemIterator<CSegment> {
+	public:
+		CSegmentIterator() : CGameItemIterator (segmentManager.Segment (0), segmentManager.Count ()) {}
+	};
+
+//------------------------------------------------------------------------
+
 #endif //__segman_h

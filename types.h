@@ -30,17 +30,28 @@ template < class _T >
 class CGameItemIterator {
 	protected:
 		int	m_index;
-		int	m_end;
-		_T		m_buffer[];
+		_T*	m_buffer;
+		int	m_bufSize;
 
 	public:
-		CGameItemIterator (_T buffer[]) : m_index(0), m_buffer(buffer) { m_end = sizeof (buffer); }
+		CGameItemIterator (_T* buffer, int bufSize) : m_index(0), m_buffer(buffer), m_bufSize(bufSize) {}
 
+		// post-increment
 		_T& operator++() { 
+			_T* value;
 			do {
+				value = &m_buffer [m_index];
 				m_index++;
+				} while (!end () || dynamic_cast<CGameItem&> (value).m_bUsed);
+			return *value; 
+			}
+
+		// pre-decrement
+		_T& operator--() { 
+			do {
+				m_index--;
 				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
-			return m_buffer [m_index++]; 
+			return m_buffer [m_index]; 
 			}
 
 		CGameItemIterator& operator= (int i) { 
@@ -52,7 +63,9 @@ class CGameItemIterator {
 
 		const bool operator!= (int i) { return m_index != i; }
 
-		const bool end (void) { return m_index == m_end; }
+		const bool start (void) { return m_index == 0; }
+
+		const bool end (void) { return m_index == m_bufSize; }
 	};
 
 // -----------------------------------------------------------------------------
