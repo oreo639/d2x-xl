@@ -65,6 +65,8 @@ class CGameItemIterator {
 
 		inline const bool operator!= (int i) { return m_index != i; }
 
+		inline _T operator* () { return end () ? null : &m_buffer [m_index]; }
+
 		inline const bool start (void) { return m_index == 0; }
 
 		inline const bool end (void) { return m_index == m_bufSize; }

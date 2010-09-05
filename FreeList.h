@@ -47,6 +47,8 @@ class CFreeList {
 
 		inline int Free (void) { return m_freeItems; }
 
+		inline bool Empty (void) { return m_freeItems == 0; }
+
 		inline int Get (void) { return (m_freeItems > 0) ? m_freeList [--m_freeItems] : -1; }
 
 		inline void Put (int i) { 

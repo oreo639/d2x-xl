@@ -21,7 +21,7 @@ if (wallP != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (WallCount () >= MAX_WALLS - 1) {
+if (m_freeList.Empty ()) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
@@ -34,8 +34,8 @@ short CWallManager::Add (void)
 { 
 if (!HaveResources ())
 	return NO_WALL;
-m_walls [WallCount ()++].Clear ();
-return WallCount ();
+m_walls [m_freeList.Get ()].Clear ();
+return WallCount ()++;
 }
 
 //------------------------------------------------------------------------------
@@ -126,12 +126,8 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
-if (nDelWall < --WallCount ()) { // move last wall in list to position of deleted wall
-	CWall* lastWallP = Wall (WallCount ());
-	segmentManager.Side (*lastWallP)->SetWall (nDelWall); // make last wall's side point to new wall position
-	*delWallP = *lastWallP;
-	delWallP->m_nIndex = Index (delWallP);
-	}
+m_freeList.Put (nDelWall);
+WallCount ()--;
 
 undoManager.Unlock ();
 //DLE.MineView ()->Refresh ();
