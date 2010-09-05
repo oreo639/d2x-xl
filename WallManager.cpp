@@ -140,7 +140,7 @@ CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
 for (CWallIterator i; i; i++)
 	if (*i == key)
-		return &*i;
+		return &(*i);
 return null;
 }
 
@@ -148,9 +148,9 @@ return null;
 
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
-for (; i < WallCount (); i++)
-	if (m_walls [i].m_info.nTrigger == nTrigger)
-		return &m_walls [i];
+for (CWallIterator i; i; i++)
+	if (i->m_info.nTrigger == nTrigger)
+		return &(*i);
 return null;
 }
 
@@ -361,8 +361,8 @@ return false;
 
 void CWallManager::SetIndex (void)
 {
-for (short i = 0; i < WallCount (); i++)
-	m_walls [i].m_nIndex = i;
+for (CWallIterator i; i; i++)
+	i->m_nIndex = i;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -371,10 +371,12 @@ void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
 if (m_info [0].offset >= 0) {
 	fp.Seek (m_info [0].offset);
+	m_free.Reset ();
 	for (short i = 0; i < WallCount (); i++) {
 		if (i < MAX_WALLS) {
-			m_walls [i].Read (fp, nFileVersion);
-			m_walls [i].m_nIndex = i;
+			CWall* wallP = &m_walls [Add ()];
+			wallP->Read (fp, nFileVersion);
+			wallP->m_nIndex = i;
 			}
 		else {
 			CWall w;
@@ -395,8 +397,8 @@ if (WallCount () == 0)
 else {
 	m_info [0].size = 24;
 	m_info [0].offset = fp.Tell ();
-	for (short i = 0; i < WallCount (); i++)
-		m_walls [i].Write (fp, nFileVersion);
+	for (CWallIterator i; i; i++)
+		i->Write (fp, nFileVersion);
 	}
 }
 

@@ -31,11 +31,11 @@ class CGameItemIterator {
 	protected:
 		int	m_index;
 		_T*	m_buffer;
-		int	m_bufSize;
+		int	m_length;
 		_T		m_null;
 
 	public:
-		CGameItemIterator (_T* buffer, int bufSize) : m_index(0), m_buffer(buffer), m_bufSize(bufSize) {}
+		CGameItemIterator (_T* buffer, int length) : m_index(0), m_buffer(buffer), m_length(length) {}
 
 		//prefix increment
 		inline _T& operator++ () { 
@@ -78,13 +78,15 @@ class CGameItemIterator {
 
 		inline const bool start (void) { return m_index == 0; }
 
-		inline const bool end (void) { return m_index == m_bufSize; }
+		inline const bool end (void) { return m_index == m_length; }
 
 		inline operator bool() { return !end (); }
 
 		inline const bool operator== (int i) { return m_index == i; }
 
 		inline const bool operator!= (int i) { return m_index != i; }
+
+		inline _T* operator-> () { return end () ? null : &m_buffer [m_index]; }
 
 		inline _T& operator* () { return end () ? m_null : m_buffer [m_index]; }
 	};
