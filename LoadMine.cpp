@@ -383,7 +383,7 @@ objectManager.Read (fp, FileInfo ().version);
 wallManager.Read (fp, FileInfo ().version);
 triggerManager.Read (fp, FileInfo ().version);
 segmentManager.ReadMatCens (fp, FileInfo ().version);
-lightManager.Read (fp, FileInfo ().version);
+lightManager.ReadLightDeltas (fp, FileInfo ().version);
 return 0;
 }
 

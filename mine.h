@@ -66,8 +66,8 @@ class CMine {
 		int				m_nHxmExtraDataSize;
 	// Constructor/Desctuctor
 	public:
-		CMine(void);
-		~CMine(void);
+		CMine ();
+		~CMine ();
 		void Initialize (void);
 		void Reset (void);
 		void Default (void);

@@ -1,5 +1,5 @@
-#include "cfile.h"
-#include "MineInfo.h"
+
+#include "mine.h"
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -71,17 +71,16 @@ fileInfo.Read (fp);
 fp.Read (mineFilename, 1, sizeof (mineFilename));
 level = fp.ReadInt32 ();
 player.Read (fp);
-objects.Read (fp);
-walls.Read (fp);
-doors.Read (fp);
-triggers.Read (fp);
+objectManager.ReadInfo (fp);
+wallManager.ReadInfo (fp);
+triggerManager.ReadInfo (fp);
+CMineItemInfo links; // unused
 links.Read (fp);
-control.Read (fp);
-botGen.Read (fp);
-lightDeltaIndices.Read (fp);
-lightDeltaValues.Read (fp);
+triggerManager.ReadReactorInfo (fp);
+segmentManager.ReadRobotMakerInfo (fp);
+LightManager.ReadLightDeltaInfo (fp);
 if (fileInfo.size > 143)
-	equipGen.Read (fp);
+	segmentManager.ReadEquipMakerInfo (fp);
 }
 
 // -----------------------------------------------------------------------------
@@ -92,17 +91,16 @@ fileInfo.Write (fp);
 fp.Write (mineFilename, 1, sizeof (mineFilename));
 fp.Write (level);
 player.Write (fp);
-objects.Write (fp);
-walls.Write (fp);
-doors.Write (fp);
-triggers.Write (fp);
+objectManager.WriteInfo (fp);
+wallManager.WriteInfo (fp);
+triggerManager.WriteInfo (fp);
+CMineItemInfo links; // unused
 links.Write (fp);
-control.Write (fp);
-botGen.Write (fp);
-lightDeltaIndices.Write (fp);
-lightDeltaValues.Write (fp);
+triggerManager.WriteReactorInfo (fp);
+segmentManager.WriteRobotMakerInfo (fp);
+LightManager.WriteLightDeltaInfo (fp);
 if (fileInfo.size > 143)
-	equipGen.Write (fp);
+	segmentManager.WriteEquipMakerInfo (fp);
 }
 
 // -----------------------------------------------------------------------------

@@ -181,7 +181,7 @@ class CLightManager {
 
 		inline CColor* VertexColor (int i) { return &m_vertexColors [i]; }
 
-		//inline CColor* GetTexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
+		inline CColor* TexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
 
@@ -240,10 +240,18 @@ class CLightManager {
 		void WriteColors (CFileManager& fp);
 		void ReadVariableLights (CFileManager& fp);
 		void WriteVariableLights (CFileManager& fp);
-		inline void ReadIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Read (fp); }
-		inline void WriteIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Write (fp); }
-		inline void ReadValueInfo (CFileManager& fp) { m_deltaValueInfo.Read (fp); }
-		inline void WriteValueInfo (CFileManager& fp) { m_deltaValueInfo.Write (fp); }
+		void ReadLightDeltas (CFileManager& fp);
+		void WriteLightDeltas (CFileManager& fp);
+
+		inline void ReadDeltaIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Read (fp); }
+		inline void WriteDeltaIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Write (fp); }
+		inline void ReadDeltaValueInfo (CFileManager& fp) { m_deltaValueInfo.Read (fp); }
+		inline void WriteDeltaValueInfo (CFileManager& fp) { m_deltaValueInfo.Write (fp); }
+
+		inline void ReadLightDeltaInfo (CFileManager& fp) {
+			ReadDeltaIndexInfo (fp);
+			ReadDeltaValueInfo (fp);
+			}
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);

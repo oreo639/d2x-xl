@@ -53,16 +53,6 @@ public:
 	char					mineFilename[15];
 	int					level;
 	CPlayerItemInfo	player;
-	CMineItemInfo		objects;
-	CMineItemInfo		walls;
-	CMineItemInfo		doors;
-	CMineItemInfo		triggers;
-	CMineItemInfo		links;
-	CMineItemInfo		control;
-	CMineItemInfo		botGen;
-	CMineItemInfo		lightDeltaIndices;
-	CMineItemInfo		lightDeltaValues;
-	CMineItemInfo		equipGen;
 
 	void Read (CFileManager& fp);
 	void Write (CFileManager& fp);
