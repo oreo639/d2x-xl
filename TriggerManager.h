@@ -7,6 +7,7 @@
 #include "trigger.h"
 #include "MineInfo.h"
 #include "FreeList.h"
+#include "ItemIterator.h"
 
 //------------------------------------------------------------------------
 
