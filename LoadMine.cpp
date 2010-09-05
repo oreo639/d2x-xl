@@ -144,10 +144,10 @@ if (IsD2File ()) {
 	// try to find new pig file in same directory as Current () pig file
 	// 1) cut off old name
 	if (!bNewMine) {
-		if (descentPath [1] [0] != 0) {
+		if (descentPath [1][0] != 0) {
 			char *path = strrchr (descentPath [1], '\\');
 			if (!path) {
-				descentPath [1] [0] = null;
+				descentPath [1][0] = null;
 				} 
 			else {
 				path++;  // leave slash
@@ -195,24 +195,7 @@ LoadPaletteName (fp, bNewMine);
 if (IsD2File ()) {
 	ReactorTime () = fp.ReadInt32 (); // base control center explosion time
 	ReactorStrength () = fp.ReadInt32 (); // reactor strength
-	if (LevelVersion () > 6) {
-		lightManager.Count () = short (fp.ReadInt32 ());
-		if ((lightManager.Count () > 0) && (lightManager.Count () <= MAX_VARIABLE_LIGHTS)) {
-			for (int i = 0; i < lightManager.Count (); i++)
-				VariableLights (i)->Read (fp);
-			} 
-		else {
-			if (lightManager.Count () != 0) {
-				ErrorMsg ("Error reading variable lights");
-				lightManager.Count () = 0;
-				}
-			}
-		}
-	// NOTE: d2 v1.1 has two levels at version 7 (b2 and f4),
-	//       both have 0 variable lights
-	//    sprintf_s (message, sizeof (message),  "%d variable lights", nflicks);
-	//    DEBUGMSG(message);
-
+	lightManager.ReadVariableLights (fp);
 	// read secret cube number
 	SecretSegment () = fp.ReadInt32 ();
 	// read secret cube orientation?
@@ -297,7 +280,7 @@ if (!bLoadFromHog) {
 			}
 		}
 	}
-SortObjects ();
+objectManager.Sort ();
 return return_code;
 }
 
@@ -318,12 +301,11 @@ version = byte (fp.ReadSByte ());
 // read number of vertices (2 bytes)
 ushort nVertices = ushort (fp.ReadInt16 ());
 if (nVertices > VERTEX_LIMIT) {
-	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
+	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", nVertices);
 	ErrorMsg (message);
 	return(1);
 	}
-if (((IsD1File ()) && (n_vertices > MAX_VERTICES_D1)) ||
-	 ((IsD2File ()) && (IsStdLevel ()) && (n_vertices > MAX_VERTICES_D2)))
+if (IsD1File () ? nVertices > MAX_VERTICES_D1 : IsStdLevel () && (nVertices > MAX_VERTICES_D2))
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)

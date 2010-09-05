@@ -238,6 +238,8 @@ class CLightManager {
 		void ReadColorMap (CFileManager& fp);
 		void ReadColors (CFileManager& fp);
 		void WriteColors (CFileManager& fp);
+		void ReadVariableLights (CFileManager& fp);
+		void WriteVariableLights (CFileManager& fp);
 		inline void ReadIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Read (fp); }
 		inline void WriteIndexInfo (CFileManager& fp) { m_deltaIndexInfo.Write (fp); }
 		inline void ReadValueInfo (CFileManager& fp) { m_deltaValueInfo.Read (fp); }
