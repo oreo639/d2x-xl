@@ -38,9 +38,9 @@ class CGameItemIterator {
 
 		// post-increment
 		inline _T& operator++() { 
-			_T* value;
+			_T& value;
 			do {
-				value = &m_buffer [m_index];
+				value = m_buffer [m_index];
 				m_index++;
 				} while (!end () || dynamic_cast<CGameItem&> (value).m_bUsed);
 			return *value; 
