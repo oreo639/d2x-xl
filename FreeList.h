@@ -14,11 +14,11 @@ class CFreeList {
 	protected:
 		int*	m_freeList;
 		int	m_size;
-		int	m_freeItems;
+		int	m_count;
 		_T*	m_buffer;
 
 	public:
-		CFreeList () : m_buffer(null), m_freeList(null), m_size (0), m_freeItems(0) {}
+		CFreeList () : m_buffer(null), m_freeList(null), m_size (0), m_count(0) {}
 
 		~CFreeList () { Destroy (); }
 		
@@ -34,10 +34,10 @@ class CFreeList {
 
 		void Reset (void) {
 			if (m_freeList != null) {
-				m_freeItems = 0;
-				for (int i = m_size; m_freeItems < m_size; m_freeItems++) {
-					m_freeList [m_freeItems] = --i;
-					m_buffer [m_freeItems].m_bUsed = false;
+				m_count = 0;
+				for (int i = m_size; m_count < m_size; m_count++) {
+					m_freeList [m_count] = --i;
+					m_buffer [m_count].m_bUsed = false;
 					}
 				}
 			}
@@ -50,22 +50,22 @@ class CFreeList {
 			m_size = 0;
 			}
 
-		inline int Free (void) { return m_freeItems; }
+		inline int Free (void) { return m_count; }
 
-		inline bool Empty (void) { return m_freeItems == 0; }
+		inline bool Empty (void) { return m_count == 0; }
 
 		inline int Get (void) { 
-			if (m_freeItems <= 0) 
+			if (m_count <= 0) 
 				return -1;
-			int i = m_freeList [--m_freeItems];
-			m_buffer [i].m_bUsed = true;
+			int i = m_freeList [--m_count];
+			m_buffer [i].m_index = i;
 			return i;
 			}
 
 		inline void Put (int i) { 
-			if (m_freeItems < m_size) {
-				m_buffer [i].m_bUsed = false;
-				m_freeList [m_freeItems++] = i;
+			if (m_count < m_size) {
+				m_buffer [i].m_index = -1;
+				m_freeList [m_count++] = i;
 				}
 			}
 

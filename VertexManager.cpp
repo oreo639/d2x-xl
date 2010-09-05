@@ -4,14 +4,17 @@
 
 // ----------------------------------------------------------------------------- 
 
-ushort CVertexManager::Add (ushort count) 
+ushort CVertexManager::Add (ushort* nVertices, ushort count) 
 { 
+ushort nVertex;
 for (ushort i = 0; i < count; i++) {
-	if (Count () >= MAX_VERTICES)
-		return 65535;
-	m_vertices [Count ()++].Clear ();
+	if (m_free.Empty ())
+		return i;
+	nVertex = --m_free;
+	m_vertices [nVertex].Clear ();
+	nVertices [i] = nVertex;
 	}
-return Count (); 
+return count; 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -19,7 +22,7 @@ return Count ();
 void CVertexManager::Delete (ushort nDelVert)
 {
 undoManager.SetModified (true); 
-// fill in gap in vertex array and status
+m_free += (int) nDelVert;
 if (nDelVert < --Count ()) {
 	m_vertices [nDelVert] = m_vertices [Count ()];
 	segmentManager.UpdateVertex (Count (), nDelVert);

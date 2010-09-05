@@ -14,9 +14,8 @@
 class CGameItem {
 public:
 	short m_nIndex;
-	bool m_bUsed;
 
-	CGameItem () : m_nIndex(-1), m_bUsed(false) {}
+	CGameItem () : m_nIndex(-1) {}
 
 	virtual void Clear (void) = 0;
 
@@ -41,7 +40,7 @@ class CGameItemIterator {
 		inline _T& operator++ () { 
 			do {
 				++m_index;
-				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
+				} while (!end () && (dynamic_cast<CGameItem&> (m_buffer [m_index]).m_index < 0));
 			return *value; 
 			}
 
@@ -50,7 +49,7 @@ class CGameItemIterator {
 			_T* value;
 			do {
 				value = &m_buffer [m_index++];
-				} while (!end () || dynamic_cast<CGameItem&> (*value).m_bUsed);
+				} while (!end () && (dynamic_cast<CGameItem&> (*value).m_index < 0));
 			return *value; 
 			}
 
@@ -58,7 +57,7 @@ class CGameItemIterator {
 		inline _T& operator-- () { 
 			do {
 				--m_index;
-				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
+				} while (!end () && (dynamic_cast<CGameItem&> (m_buffer [m_index]).m_index < 0));
 			return m_buffer [m_index]; 
 			}
 
@@ -67,7 +66,7 @@ class CGameItemIterator {
 			_T* value;
 			do {
 				value = &m_buffer [m_index--];
-				} while (!end () || dynamic_cast<CGameItem&> (*value).m_bUsed);
+				} while (!end () && (dynamic_cast<CGameItem&> (*value).m_index < 0));
 			return *value; 
 			}
 

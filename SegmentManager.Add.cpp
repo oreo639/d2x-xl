@@ -5,10 +5,11 @@
 
 short CSegmentManager::Add (void) 
 { 
-if (Count () >= MAX_SEGMENTS)
+if (m_freeList.Empty ())
 	return -1;
-m_segments [m_free.Get ()].Clear ();
-return Count ()++; 
+int nSegment = --m_free;
+m_segments [nSegment].Clear ();
+return (short) nSegment; 
 }
 
 // ----------------------------------------------------------------------------- 

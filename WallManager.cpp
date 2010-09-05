@@ -34,8 +34,9 @@ short CWallManager::Add (void)
 { 
 if (!HaveResources ())
 	return NO_WALL;
-m_walls [--m_free].Clear ();
-return WallCount ()++;
+int nWall = --m_free;
+m_walls [nWall].Clear ();
+return (short) nWall;
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +127,7 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
-m_free += nDelWall;
+m_free += (int) nDelWall;
 WallCount ()--;
 
 undoManager.Unlock ();
