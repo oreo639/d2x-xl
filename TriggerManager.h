@@ -37,7 +37,7 @@ typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 
 //------------------------------------------------------------------------
 
-class CTriggerManager {
+class CTriggerManager : CFreeList {
 	private:
 		triggerList				m_triggers [2];
 		CMineItemInfo			m_info [2];
@@ -145,6 +145,10 @@ class CTriggerManager {
 
 		void Clear (void);
 
+		TriggerManager () : CFreeList (TRIGGER_LIMIT) {
+			ResetInfo ();
+			Clear ();
+			}
 	private:
 		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);
 		void SortObjTriggers (short left, short right);

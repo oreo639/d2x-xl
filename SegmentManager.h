@@ -48,7 +48,7 @@ typedef struct tVertMatch {
 
 //------------------------------------------------------------------------
 
-class CSegmentManager {
+class CSegmentManager : CFreeList {
 	public:
 		segmentList		m_segments;
 		CMineItemInfo	m_segmentInfo;
@@ -56,7 +56,6 @@ class CSegmentManager {
 		int				m_nAddMode;
 		robotMakerList	m_matCens [2];
 		CMineItemInfo	m_matCenInfo [2];
-		CFreeList		m_freeList;
 
 	public:
 		inline void ResetInfo (void) {
@@ -284,6 +283,11 @@ class CSegmentManager {
 		void Clear (void);
 
 		int Fix (void);
+
+		CSegmentManager () : CFreeList (SEGMENT_LIMIT) { 
+			ResetInfo ();
+			Clear ();
+			}
 
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);

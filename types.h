@@ -146,10 +146,31 @@ class CFreeList {
 		int	m_freeItems;
 
 	public:
-		CFreeList (int size) : m_size (size) {
+		CFreeList () : m_freeList(null), m_size (0), m_freeItems(0) { Create (size); }
+
+		~CFreeList () { Destroy () };
+		
+		bool Create (int size) {
 			m_freeList = new int [size];
-			for (int i = 0, j = size; i < size; i++)
-				m_freeList [i] = --j;
+			if (m_freeList == null)
+				return false;
+			m_size = size;
+			Reset ();
+			return true;
+			}
+
+		void Reset (void) {
+			m_freeItems = 0;
+			for (int i = m_size; m_freeItems < m_size; m_freeItems++)
+				m_freeList [m_freeItems] = --i;
+			}
+
+		void Destroy (void) {
+			if (m_freeList) {
+				delete[] m_freeList;
+				m_freeList = null;
+				}
+			m_size = 0;
 			}
 
 		const bool operator+ (int i) {
