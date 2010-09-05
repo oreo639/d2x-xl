@@ -37,7 +37,8 @@ class CFreeList {
 				m_freeItems = 0;
 				for (int i = m_size; m_freeItems < m_size; m_freeItems++) {
 					m_freeList [m_freeItems] = --i;
-					m_buffer [freeItems].m_bUsed = false;
+					m_buffer [m_freeItems].m_bUsed = false;
+					}
 				}
 			}
 

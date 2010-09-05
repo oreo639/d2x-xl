@@ -289,7 +289,7 @@ class CSegmentManager {
 		CSegmentManager () { 
 			ResetInfo ();
 			Clear ();
-			m_free.Create (Segments (0), SEGMENT_LIMIT);
+			m_free.Create (Segment (0), SEGMENT_LIMIT);
 			}
 
 	private:

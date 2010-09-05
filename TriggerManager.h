@@ -151,17 +151,24 @@ class CTriggerManager {
 		CTriggerManager () {
 			ResetInfo ();
 			Clear ();
-			m_free.Create (GeoTriggers (0), TRIGGER_LIMIT);
+			m_free.Create (GeoTrigger (0), TRIGGER_LIMIT);
 			}
 
 	private:
 		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);
+
 		void SortObjTriggers (short left, short right);
+
 		CTrigger* AddToWall (short nWall, short type, bool bAddWall);
+
 		CTrigger* AddToObject (short nObject, short type);
+
 		void DeleteFromWall (short nDelTrigger);
+
 		void DeleteFromObject (short nDelTrigger);
+
 		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
+
 		void Clear (int nType);
 };
 
