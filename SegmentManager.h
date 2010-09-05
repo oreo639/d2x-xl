@@ -272,10 +272,6 @@ class CSegmentManager {
 		
 		void WriteSegments (CFileManager& fp, int nFileVersion);
 		
-		void ReadMatCens (CFileManager& fp, int nFileVersion);
-		
-		void WriteMatCens (CFileManager& fp, int nFileVersion);
-		
 		void Clear (void);
 
 		int Fix (void);

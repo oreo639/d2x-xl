@@ -180,27 +180,21 @@ short CMine::SaveMineDataCompiled (CFileManager& fp)
 {
 	int	i;
 // write version (1 byte)
-fp.WriteSByte (COMPILED_MINE_VERSION);
+fp.WriteByte (COMPILED_MINE_VERSION);
 
 // write no. of vertices (2 bytes)
-fp.WriteInt16 (vertexManager.Count ());
+fp.WriteUInt16 (vertexManager.Count ());
 
 // write number of Segments () (2 bytes)
-fp.WriteInt16 (SegCount ());
+fp.WriteInt16 (segmentManager.Count ());
 
 // write all vertices
-for (int i = 0; i < vertexManager.Count (); i++)
-	.Vertex (i)->Write (fp);
+vertexManager.Write (fp, FileInfo ().version);
 
 // write segment information
-for (i = 0; i < SegCount (); i++)  
-	Segment (i)->Write (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
+segmentManager.WriteSegments (fp, FileInfo ().nVersion);
 
 // for Descent 2, save special info here
-if (IsD2File ()) {
-  for (i = 0; i < SegCount (); i++)  
-	  Segment (i)->WriteExtras (fp, IsD2XLevel () ? 2 : 1, true);
-  }
 
 if (IsD2XLevel ()) {
 	SaveColors (VertexColors (0), vertexManager.Count (), fp);

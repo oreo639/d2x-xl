@@ -8,7 +8,7 @@
 void CSegmentManager::ReadSegments (CFileManager& fp, int nFileVersion)
 {
 if (m_segmentInfo.offset >= 0) {
-	fp.Seek (m_info.offset);
+	fp.Seek (m_segmentInfo.offset);
 
 	int nLevelType = theMine->IsD2XLevel () ? 2 : theMine->IsD2File () ? 1 : 0;
 	int nLevelVersion = theMine->LevelVersion ();
@@ -26,8 +26,8 @@ if (m_segmentInfo.offset >= 0) {
 		Count () = MAX_SEGMENTS;
 	if (!theMine->IsD2File ())
 		return;
-	for (i = 0, segP = Segments (0); i < Count (); i++)   
-		m_segments [i].ReadExtras (fp, nLevelVersion, true);
+	for (i = 0; i < Count (); i++)   
+		m_segments [i].ReadExtras (fp, nLevelType, nLevelVersion, true);
 	}
 }
 
@@ -39,8 +39,17 @@ if (Count () == 0)
 	m_segmentInfo.offset = -1;
 else {
 	m_segmentInfo.offset = fp.Tell ();
+
+	int nLevelType = theMine->IsD2XLevel () ? 2 : theMine->IsD2File () ? 1 : 0;
+	int nLevelVersion = theMine->LevelVersion ();
+	int i;
+
 	for (int i = 0; i < Count (); i++)
-		m_segments [i].Write (fp, nFileVersion);
+		m_segments [i].Write (fp, nLevelType, nFileVersion);
+	if (!theMine->IsD2File ())
+		return;
+	for (int i = 0; i < Count (); i++)
+		m_segments [i].WriteExtras (fp, nLevelType, nFileVersion);
 	}
 }
 
@@ -53,7 +62,7 @@ if (m_matCenInfo [nClass].offset >= 0) {
 		if (i < MAX_MATCENS)
 			m_matCens [nClass][i].Read (fp, nFileVersion);
 		else {
-			CMatCen m;
+			CMatCenter m;
 			m.Read (fp, nFileVersion);
 			}
 		}
@@ -101,22 +110,6 @@ ReadMatCens (fp, nFileVersion, 1);
 void CSegmentManager::WriteEquipMakers (CFileManager& fp, int nFileVersion)
 {
 WriteMatCens (fp, nFileVersion, 1);
-}
-
-// ----------------------------------------------------------------------------- 
-
-void CSegmentManager::ReadMatCens (CFileManager& fp, int nFileVersion)
-{
-ReadRobotMakers ();
-ReadEquipMakers ();
-}
-
-// ----------------------------------------------------------------------------- 
-
-void CSegmentManager::WriteMatCens (CFileManager& fp, int nFileVersion)
-{
-WriteRobotMakers ();
-WriteEquipMakers ();
 }
 
 // ----------------------------------------------------------------------------- 
