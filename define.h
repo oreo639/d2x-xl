@@ -292,23 +292,12 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define MAX_POWERUP_IDS_D2				50
 #define MAX_POWERUP_IDS_USED			48
 #define MAX_POWERUP_IDS					(DLE.IsD1File () ? MAX_POWERUP_IDS_D1 : MAX_POWERUP_IDS_D2)
-#define MAX_TRIGGER_TARGETS			10
-
-#define MAX_DOORS_D1						50 // Maximum number of open doors Descent 1
-#define MAX_DOORS_D2						90 // Maximum number of open doors Descent 2
-#define DOOR_LIMIT						MAX_DOORS_D2
 
 #define MAX_OBJECTS_D1					350
 #define MAX_OBJECTS_D2					2000
 
-#define MAX_NUM_MATCENS_D1				20
-#define MAX_NUM_MATCENS_D2				100
 #define MAX_WALL_SWITCHES           50
 #define MAX_WALL_LINKS              100
-#define MAX_NUM_FUELCENS_D2			70
-#define MAX_NUM_REPAIRCENS_D2			70
-#define MAX_NUM_FUELCENS_D2X			500
-#define MAX_NUM_REPAIRCENS_D2X		500
 #define MAX_WALL_ANIMS_D1				30  // Maximum different types of doors Descent 1
 #define MAX_WALL_ANIMS_D2				60  // Maximum different types of doors Descent 2
 #define MAX_CLIP_FRAMES_D1	         20 // Descent 1

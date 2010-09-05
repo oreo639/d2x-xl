@@ -411,7 +411,7 @@ for (short i = 0; i < Count (0); i++)
 void CTriggerManager::ReadReactor (CFileManager& fp, int nFileVersion)
 {
 if (m_reactorInfo.offset >= 0) {
-	for (short i = 0; i < NumReactorTriggers (); i++) {
+	for (short i = 0; i < NumReactorTriggers (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
 }
@@ -423,7 +423,7 @@ void CTriggerManager::WriteReactor (CFileManager& fp, int nFileVersion)
 if (m_reactorInfo.count == 0) 
 	m_reactorInfo.offset = -1;
 else {
-	for (short i = 0; i < NumReactorTriggers (); i++) {
+	for (short i = 0; i < NumReactorTriggers (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
 }
@@ -436,9 +436,17 @@ if (m_info [0].offset < 0)
 	return;
 fp.Seek (m_info [0].offset);
 for (short i = 0; i < Count (0); i++) {
-	m_triggers [0][i].Read (fp, nFileVersion, false);
-	m_triggers [0][i].m_nIndex = i;
+	if (Count (0) < MAX_TRIGGERS) {
+		m_triggers [0][i].Read (fp, nFileVersion, false);
+		m_triggers [0][i].m_nIndex = i;
+		}
+	else {
+		CTrigger t;
+		t.Read (fp, nFileVersion, false);
+		}
 	}
+if (Count (0) > MAX_TRIGGERS)
+	Count (0) = MAX_TRIGGERS;
 
 int bObjTriggersOk = 1;
 

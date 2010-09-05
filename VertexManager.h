@@ -38,7 +38,7 @@ class CVertexManager {
 	public:
 		// Segment and side getters
 		// Vertex getters
-		void ResetInfo (void) { m_info.Clear (); }
+		void ResetInfo (void) { m_info.Reset (); }
 
 		inline vertexList& Vertices (void) { return m_vertices; }
 

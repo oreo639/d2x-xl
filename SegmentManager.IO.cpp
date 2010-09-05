@@ -14,8 +14,16 @@ if (m_segmentInfo.offset >= 0) {
 	int nLevelVersion = theMine->LevelVersion ();
 	int i;
 
-	for (i = 0; i < Count (); i++)
-		m_segments [i].Read (fp, nLevelType, nLevelVersion);
+	for (i = 0; i < Count (); i++) {
+		if (i < MAX_SEGMENTS)
+			m_segments [i].Read (fp, nLevelType, nLevelVersion);
+		else {
+			CSegment s;
+			s.Read (fp);
+			}
+		}
+	if (Count () > MAX_SEGMENTS)
+		Count () = MAX_SEGMENTS;
 	if (!theMine->IsD2File ())
 		return;
 	for (i = 0, segP = Segments (0); i < Count (); i++)   
@@ -41,8 +49,16 @@ else {
 void CSegmentManager::ReadMatCens (CFileManager& fp, int nFileVersion, int nClass)
 {
 if (m_matCenInfo [nClass].offset >= 0) {
-	for (int i = 0; i < MatCenCount (nClass); i++)
-		m_matCens [nClass][i].Read (fp, nFileVersion);
+	for (int i = 0; i < MatCenCount (nClass); i++) {
+		if (i < MAX_MATCENS)
+			m_matCens [nClass][i].Read (fp, nFileVersion);
+		else {
+			CMatCen m;
+			m.Read (fp, nFileVersion);
+			}
+		}
+	if (MatCenCount (nClass) > MAX_MATCENS)
+		MatCenCount (nClass) = MAX_MATCENS;
 	}
 }
 

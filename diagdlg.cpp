@@ -206,8 +206,8 @@ for (i = 0; i < 8; i++)
 plc.SetItemText (15, 1, ItemText (CountTextures ()));
 plc.SetItemText (0, 2, ItemText (MAX_SEGMENTS));
 plc.SetItemText (1, 2, ItemText (MAX_VERTICES));
-plc.SetItemText (2, 2, ItemText (MAX_ROBOT_MAKERS));
-plc.SetItemText (3, 2, ItemText (MAX_NUM_FUELCENS));
+plc.SetItemText (2, 2, ItemText (MAX_MATCENS));
+plc.SetItemText (3, 2, ItemText (MAX_NUM_RECHARGERS));
 plc.SetItemText (4, 2, ItemText (MAX_WALLS));
 plc.SetItemText (5, 2, ItemText (MAX_TRIGGERS));
 plc.SetItemText (6, 2, ItemText (MAX_OBJECTS));

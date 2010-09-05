@@ -315,8 +315,7 @@ if (nSegments > SEGMENT_LIMIT) {
 	ErrorMsg (message);
 	return 2;
 	}
-if (((IsD1File ()) && (n_segments > MAX_SEGMENTS_D1)) ||
-	 ((IsD2File ()) && (IsStdLevel ()) && (n_segments > MAX_SEGMENTS_D2)))
+if (IsD1File () ? nVertices > MAX_SEGMENTS_D1 : IsStdLevel () && (nVertices > MAX_SEGMENTS_D2))
 	ErrorMsg ("Warning: Too many Segments for this level version");
 
 // if we are happy with the number of verts and Segments (), then proceed...

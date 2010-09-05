@@ -16,8 +16,13 @@
 
 #define MAX_SEGMENTS ((theMine == null) ? MAX_SEGMENTS_D2 : theMine->IsD1File () ? MAX_SEGMENTS_D1  : theMine->IsStdLevel () ? MAX_SEGMENTS_D2 : SEGMENT_LIMIT)
 
-#define MAX_NUM_FUELCENS ((theMine == null) ? MAX_NUM_FUELCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_FUELCENS_D2 : MAX_NUM_FUELCENS_D2X)
-#define MAX_NUM_REPAIRCENS ((theMine == null) ? MAX_NUM_REPAIRCENS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_REPAIRCENS_D2 : MAX_NUM_REPAIRCENS_D2X)
+#define MAX_NUM_MATCENS_D1			20
+#define MAX_NUM_MATCENS_D2			100
+
+#define MAX_NUM_RECHARGERS_D2		70
+#define MAX_NUM_RECHARGERS_D2X	500
+
+#define MAX_NUM_RECHARGERS ((theMine == null) ? MAX_NUM_RECHARGERS_D2X : (theMine->IsD1File () || (theMine->LevelVersion () < 12)) ? MAX_NUM_RECHARGERS_D2 : MAX_NUM_RECHARGERS_D2X)
 
 //------------------------------------------------------------------------
 
@@ -55,8 +60,8 @@ class CSegmentManager {
 	public:
 		inline void Reset (void) {
 			m_segmentInfo.Reset ();
-			m_matCentInfo [0].Reset ();
-			m_matCentInfo [1].Reset ();
+			m_matCenInfo [0].Reset ();
+			m_matCenInfo [1].Reset ();
 			}
 		// Segment and side getters
 		inline segmentList& Segments (void)	{ return m_segments; }
@@ -251,9 +256,9 @@ class CSegmentManager {
 
 		void DeleteBlock ();
 
-		inline void ReadInfo (CFileManager& fp) { m_info.Read (fp); }
+		inline void ReadInfo (CFileManager& fp) { m_segmentInfo.Read (fp); }
 
-		inline void WriteInfo (CFileManager& fp) { m_info.Write (fp); }
+		inline void WriteInfo (CFileManager& fp) { m_segmentInfo.Write (fp); }
 
 		inline void ReadRobotMakerInfo (CFileManager& fp) { m_matCenInfo [0].Read (fp); }
 

@@ -21,7 +21,7 @@ if (wallP != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (Count () >= MAX_WALLS - 1) {
+if (WallCount () >= MAX_WALLS - 1) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
@@ -34,8 +34,8 @@ short CWallManager::Add (void)
 { 
 if (!HaveResources ())
 	return NO_WALL;
-m_walls [Count ()++].Clear ();
-return Count ();
+m_walls [WallCount ()++].Clear ();
+return WallCount ();
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ else {
 		}
 	}
 
-ushort nWall = Count ();
+ushort nWall = WallCount ();
 
 // link wall to segment/side
 undoManager.SetModified (true);
@@ -87,7 +87,7 @@ wallP->m_nIndex = nWall;
 wallP->m_info.flags = flags;
 wallP->m_info.keys = keys;
 // update number of Walls () in mine
-Count ()++;
+WallCount ()++;
 undoManager.Unlock ();
 //DLE.MineView ()->Refresh ();
 return wallP;
@@ -126,8 +126,8 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
-if (nDelWall < --Count ()) { // move last wall in list to position of deleted wall
-	CWall* lastWallP = Wall (Count ());
+if (nDelWall < --WallCount ()) { // move last wall in list to position of deleted wall
+	CWall* lastWallP = Wall (WallCount ());
 	segmentManager.Side (*lastWallP)->SetWall (nDelWall); // make last wall's side point to new wall position
 	*delWallP = *lastWallP;
 	delWallP->m_nIndex = Index (delWallP);
@@ -142,7 +142,7 @@ triggerManager.UpdateReactor ();
 
 CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
-for (; i < Count (); i++)
+for (; i < WallCount (); i++)
 	if (m_walls [i] == key)
 		return &m_walls [i];
 return null;
@@ -152,7 +152,7 @@ return null;
 
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
-for (; i < Count (); i++)
+for (; i < WallCount (); i++)
 	if (m_walls [i].m_info.nTrigger == nTrigger)
 		return &m_walls [i];
 return null;
@@ -308,14 +308,14 @@ bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	Wall (Count ()- 1)->m_info.nClip = 10;
+	Wall (WallCount ()- 1)->m_info.nClip = 10;
 	segmentManager.SetTextures (current, 0, DLE.IsD1File () ? 444 : 508);
-	triggerManager.Create (Count () - 1, type);
+	triggerManager.Create (WallCount () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.OppositeSide (opp) && Create (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		Wall (Count () - 1)->m_info.nClip = 10;
+		Wall (WallCount () - 1)->m_info.nClip = 10;
 		segmentManager.SetTextures (opp, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.Unlock ();
@@ -348,7 +348,7 @@ if (!segmentManager.Create ()) {
 int nNewSeg = current.m_nSegment;
 current.m_nSegment = nLastSeg;
 if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
-	triggerManager.Create (Count () - 1, TT_SECRET_EXIT);
+	triggerManager.Create (WallCount () - 1, TT_SECRET_EXIT);
 	theMine->SecretSegment () = current.m_nSegment;
 	segmentManager.SetDefaultTexture (426);
 	current.m_nSegment = nNewSeg;
@@ -365,7 +365,7 @@ return false;
 
 void CWallManager::SetIndex (void)
 {
-for (short i = 0; i < Count (); i++)
+for (short i = 0; i < WallCount (); i++)
 	m_walls [i].m_nIndex = i;
 }
 
@@ -375,10 +375,18 @@ void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
 if (m_info [0].offset >= 0) {
 	fp.Seek (m_info [0].offset);
-	for (short i = 0; i < Count (0); i++) {
-		m_walls [i].Read (fp, nFileVersion);
-		m_walls [i].m_nIndex = i;
+	for (short i = 0; i < WallCount (); i++) {
+		if (i < MAX_WALLS) {
+			m_walls [i].Read (fp, nFileVersion);
+			m_walls [i].m_nIndex = i;
+			}
+		else {
+			CWall w;
+			w.Read (fp, nFileVersion);
+			}
 		}
+	if (WallCount () > MAX_WALLS)
+		WallCount () = MAX_WALLS;
 	}
 }
 
@@ -386,11 +394,11 @@ if (m_info [0].offset >= 0) {
 
 void CWallManager::WriteWalls (CFileManager& fp, int nFileVersion)
 {
-if (Count (0) == 0)
+if (WallCount () == 0)
 	m_info [0].offset = -1;
 else {
 	m_info [0].offset = fp.Tell ();
-	for (short i = 0; i < Count (); i++)
+	for (short i = 0; i < WallCount (); i++)
 		m_walls [i].Write (fp, nFileVersion);
 	}
 }
@@ -399,9 +407,20 @@ else {
 
 void CWallManager::ReadDoors (CFileManager& fp, int nFileVersion)
 {
-for (short i = 0; i < Count (1); i++) {
-	m_doors [i].Read (fp, nFileVersion);
-	m_doors [i].m_nIndex = i;
+if (m_info [1].offset >= 0) {
+	fp.Seek (m_info [1].offset);
+	for (short i = 0; i < DoorCount (); i++) {
+		if (i < MAX_DOORS) {
+			m_doors [i].Read (fp, nFileVersion);
+			m_doors [i].m_nIndex = i;
+			}
+		else {
+			CDoor d;
+			d.Read (fp, nFileVersion);
+			}
+		}
+	if (DoorCount () > MAX_DOORS)
+		DoorCount () = MAX_DOORS;
 	}
 }
 
@@ -410,7 +429,7 @@ for (short i = 0; i < Count (1); i++) {
 void CWallManager::WriteDoors (CFileManager& fp, int nFileVersion)
 {
 m_info [1].offset = fp.Tell ();
-for (short i = 0; i < Count (); i++)
+for (short i = 0; i < WallCount (); i++)
 	m_doors [i].Write (fp, nFileVersion);
 }
 
@@ -418,9 +437,9 @@ for (short i = 0; i < Count (); i++)
 
 void CWallManager::Clear (void)
 {
-for (short i = 0; i < Count (); i++)
+for (short i = 0; i < WallCount (); i++)
 	m_walls [i].Clear ();
-for (short i = 0; i < Count (1); i++)
+for (short i = 0; i < DoorCount (); i++)
 	m_doors [i].Clear ();
 }
 
@@ -469,12 +488,12 @@ ErrorMsg ("Changing the texture of a door only affects\n"
 
 void CWallManager::Fix (void)
 {
-CWall *wallP = Walls (0);
-for (short nWall = Count (0); nWall > 0; nWall--, wallP++) {
+CWall *wallP = Wall (0);
+for (short nWall = WallCount (); nWall > 0; nWall--, wallP++) {
 	// check nSegment
-	if (wallP->m_nSegment < 0 || wallP->m_nSegment > segmentManager.Count ()) {
+	if (wallP->m_nSegment < 0 || wallP->m_nSegment > segmentManager.Count ()) 
 		wallP->m_nSegment = 0;
-	if ((wallP->m_nSide < 0) || (wallP->m_nSide > 5)) {
+	if ((wallP->m_nSide < 0) || (wallP->m_nSide > 5)) 
 		wallP->m_nSide = 0;
 	}
 }

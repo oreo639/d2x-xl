@@ -161,7 +161,7 @@ return true;
 bool CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, 
 												CMatCenter* matCens, CMineItemInfo& info, char* szError) 
 {
-if (info.count >= MAX_ROBOT_MAKERS) {
+if (info.count >= MAX_MATCENS) {
     ErrorMsg ("Maximum number of equipment makers reached");
 	 return false;
 	}
@@ -243,7 +243,7 @@ bool CSegmentManager::CreateFuelCenter (short nSegment, byte nType, bool bCreate
 // count number of fuel centers
 int nFuelCen = FuelCenterCount ();
 CSegment *segP = Segment (0);
-if (nFuelCen >= MAX_NUM_FUELCENS) {
+if (nFuelCen >= MAX_NUM_RECHARGERS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
 	}

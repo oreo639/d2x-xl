@@ -46,9 +46,9 @@ class CTriggerManager {
 
 	public:
 		void ResetInfo (void) {
-			m_info [0].Clear ();
-			m_info [1].Clear ();
-			m_reactorInfo.Clear ();
+			m_info [0].Reset ();
+			m_info [1].Reset ();
+			m_reactorInfo.Reset ();
 			}
 
 		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
@@ -138,6 +138,10 @@ class CTriggerManager {
 		void Read (CFileManager& fp, int nFileVersion);
 
 		void Write (CFileManager& fp, int nFileVersion);
+
+		void ReadReactor (CFileManager& fp, int nFileVersion);
+
+		void WriteReactor (CFileManager& fp, int nFileVersion);
 
 		void Clear (void);
 
