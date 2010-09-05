@@ -33,12 +33,12 @@ for (CVertexIterator i; i; i++)
 	i->m_status &= ~NEW_MASK; 
 // mark all used verts
 CSegment *segP = segmentManager.Segment (0);
-for (CSegmentIterator i; i; i++) {
+for (CSegmentIterator i; i; i++)
 	for (short point = 0; point < 8; point++)
 		vertexManager.Status (i->m_info.verts [point]) |= NEW_MASK; 
 for (CVertexIterator i; i; i++)
 	if (!(i->m_status & NEW_MASK))
-		Delete (i->Index ()); 
+		Delete (i.Index ()); 
 }
 
 // ----------------------------------------------------------------------------- 
