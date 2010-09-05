@@ -44,7 +44,7 @@ class CTriggerManager {
 		CMineItemInfo			m_info [2];
 		reactorTriggerList	m_reactorTriggers;
 		CMineItemInfo			m_reactorInfo;
-		CFreeList				m_free;
+		CFreeList<CTrigger>	m_free;
 
 	public:
 		void ResetInfo (void) {
@@ -151,7 +151,7 @@ class CTriggerManager {
 		CTriggerManager () {
 			ResetInfo ();
 			Clear ();
-			m_free.Create (TRIGGER_LIMIT);
+			m_free.Create (GeoTriggers (0), TRIGGER_LIMIT);
 			}
 
 	private:

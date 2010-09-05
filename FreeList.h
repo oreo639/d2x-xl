@@ -9,21 +9,24 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+template <class _T>
 class CFreeList {
 	protected:
 		int*	m_freeList;
 		int	m_size;
 		int	m_freeItems;
+		_T*	m_buffer;
 
 	public:
-		CFreeList () : m_freeList(null), m_size (0), m_freeItems(0) {}
+		CFreeList () : m_buffer(null), m_freeList(null), m_size (0), m_freeItems(0) {}
 
 		~CFreeList () { Destroy (); }
 		
-		bool Create (int size) {
+		bool Create (_T* buffer, int size) {
 			m_freeList = new int [size];
 			if (m_freeList == null)
 				return false;
+			m_buffer = buffer;
 			m_size = size;
 			Reset ();
 			return true;
@@ -32,8 +35,9 @@ class CFreeList {
 		void Reset (void) {
 			if (m_freeList != null) {
 				m_freeItems = 0;
-				for (int i = m_size; m_freeItems < m_size; m_freeItems++)
+				for (int i = m_size; m_freeItems < m_size; m_freeItems++) {
 					m_freeList [m_freeItems] = --i;
+					m_buffer [freeItems].m_bUsed = false;
 				}
 			}
 
@@ -49,11 +53,19 @@ class CFreeList {
 
 		inline bool Empty (void) { return m_freeItems == 0; }
 
-		inline int Get (void) { return (m_freeItems > 0) ? m_freeList [--m_freeItems] : -1; }
+		inline int Get (void) { 
+			if (m_freeItems <= 0) 
+				return -1;
+			int i = m_freeList [--m_freeItems];
+			m_buffer [i].m_bUsed = true;
+			return i;
+			}
 
 		inline void Put (int i) { 
-			if (m_freeItems < m_size)
+			if (m_freeItems < m_size) {
+				m_buffer [i].m_bUsed = false;
 				m_freeList [m_freeItems++] = i;
+				}
 			}
 	};
 

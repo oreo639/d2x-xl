@@ -33,9 +33,9 @@ typedef CVertex vertexList [VERTEX_LIMIT];
 
 class CVertexManager  {
 	public:
-		vertexList		m_vertices;
-		CMineItemInfo	m_info;
-		CFreeList		m_free;
+		vertexList				m_vertices;
+		CMineItemInfo			m_info;
+		CFreeList<CVertex>	m_free;
 
 	public:
 		// Segment and side getters
@@ -74,7 +74,7 @@ class CVertexManager  {
 		CVertexManager () {
 			ResetInfo ();
 			Clear ();
-			m_free.Create (VERTEX_LIMIT);
+			m_free.Create (Vertex (0), VERTEX_LIMIT);
 			}
 	};
 
