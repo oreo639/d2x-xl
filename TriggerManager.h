@@ -160,4 +160,21 @@ extern CTriggerManager triggerManager;
 
 //------------------------------------------------------------------------
 
+class CTriggerIterator : public CGameItemIterator<CTrigger> {
+	public:
+		CTriggerIterator(int nClass) : CGameItemIterator (triggerManager.Trigger (0, nClass), triggerManager.Count (nClass)) {}
+	};
+
+class CGeoTriggerIterator : public CTriggerIterator {
+	public:
+		CGeoTriggerIterator () : CTriggerIterator(0) {}
+	};
+
+class CObjTriggerIterator : public CTriggerIterator {
+	public:
+		CObjTriggerIterator () : CTriggerIterator(0) {}
+	};
+
+//------------------------------------------------------------------------
+
 #endif //__trigman_h
