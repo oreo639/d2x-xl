@@ -78,6 +78,7 @@ void CSegmentManager::WriteMatCens (CFileManager& fp, int nFileVersion, int nCla
 if (m_matCenInfo [nClass].count == 0)
 	m_matCenInfo [nClass].offset = -1;
 else {
+	m_matCenInfo [nClass].size = (theMine->IsD1File () || (nClass == 0)) ? 16 : 20; 
 	m_matCenInfo [nClass].offset = fp.Tell ();
 	for (int i = 0; i < MatCenCount (nClass); i++)
 		m_matCens [nClass][i].Write (fp, nFileVersion);

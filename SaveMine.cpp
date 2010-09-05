@@ -1,37 +1,9 @@
 // Copyright (c) 1998 Bryan Aamot, Brainware
-
-#include "stdafx.h"
-#include "dle-xp-res.h"
-
-#include < math.h>
-#include "define.h"
-#include "types.h"
-#include "global.h"
 #include "mine.h"
-#include "matrix.h"
-#include "cfile.h"
-#include "customtextures.h"
-#include "TextureManager.h"
-#include "palette.h"
+#include "CustomTextures.h"
 #include "dle-xp.h"
-#include "robot.h"
-#include "HogManager.h"
-#include "light.h"
-
-#ifdef ALLOCATE_tPolyModelS
-#undef ALLOCATE_tPolyModelS
-#endif
-#define ALLOCATE_tPolyModelS 0
-
-#define ENABLE_TEXT_DUMP 0
 
 // -----------------------------------------------------------------------------
-// ReadObject()
-// ------------------------------------------------------------------------
-// CMine - save()
-//
-// ACTION -  saves a level (.RDL) file to disk
-// ------------------------------------------------------------------------
 
 short CMine::Save (const char * szFile, bool bSaveToHog)
 {
@@ -56,8 +28,7 @@ if (LevelVersion () < 7 && IsD2File ()) {
 }
 if ((IsD2XLevel ()) && (LevelIsOutdated ())) {
 	UpdateLevelVersion ();
-	//if (LevelVersion () < 15)
-		ConvertWallNum (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+	segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
 	}
 
 // write version
@@ -95,12 +66,7 @@ else if (IsD2File ()) {
 	fp.Write (ReactorTime ());
 	fp.Write (ReactorStrength ());
 	// variable light new for version 7
-	if (lightManager.Count () > MAX_VARIABLE_LIGHTS) 
-		lightManager.Count () = MAX_VARIABLE_LIGHTS;
-	fp.WriteInt32 ((int) lightManager.Count ());
-	for (i = 0; i < lightManager.Count (); i++)
-		VariableLights (i)->Write (fp);
-
+	lightManager.WriteVariableLights (fp);
 	// write secret cube number
 	fp.Write (SecretSegment ());
 	// write secret cube orientation?
@@ -146,30 +112,18 @@ if (textureManager.HasCustomTextures () && !bSaveToHog) {
 		}
 	}
 
-if (HasCustomRobots () && !bSaveToHog) {
+if (robotManager.HasCustomRobots () && !bSaveToHog) {
 	char* ps = strstr (filename, ".");
 	if (ps)
 		strcpy_s (ps, sizeof (filename) - (ps - filename), ".hxm");
 	else
 		strcat_s (filename, sizeof (filename), ".hxm");
 	if (!fp.Open (filename, "wb"))
-		WriteHxmFile (fp);
+		robotManager.WriteHXM (fp);
 	}
 return 0;
 }
 
-// ------------------------------------------------------------------------
-
-int CMine::SaveGameItem (CFileManager& fp, CMineItemInfo& info, CGameItem* items, bool bFlag)
-{
-info.offset = fp.Tell ();
-for (int i = 0; i < info.count; i++) {
-	items->Write (fp, MineInfo ().fileInfo.version, bFlag);
-	items = items->Next ();
-	}
-return info.count;
-}
-									
 // ------------------------------------------------------------------------
 // SaveMineDataCompiled()
 //
@@ -178,29 +132,19 @@ return info.count;
 
 short CMine::SaveMineDataCompiled (CFileManager& fp)
 {
-	int	i;
 // write version (1 byte)
 fp.WriteByte (COMPILED_MINE_VERSION);
-
 // write no. of vertices (2 bytes)
 fp.WriteUInt16 (vertexManager.Count ());
-
 // write number of Segments () (2 bytes)
 fp.WriteInt16 (segmentManager.Count ());
-
 // write all vertices
 vertexManager.Write (fp, FileInfo ().version);
-
 // write segment information
-segmentManager.WriteSegments (fp, FileInfo ().nVersion);
-
+segmentManager.WriteSegments (fp, FileInfo ().version);
 // for Descent 2, save special info here
-
-if (IsD2XLevel ()) {
-	SaveColors (VertexColors (0), vertexManager.Count (), fp);
-	SaveColors (LightColors (0), SegCount () * 6, fp);
-	SaveColors (TexColors (0), MAX_TEXTURES_D2, fp);
-	}
+if (IsD2XLevel ())
+	LightManager.SaveColors (fp);
 return 0;
 }
 
@@ -213,53 +157,37 @@ return 0;
 
 short CMine::SaveGameData(CFileManager& fp)
 {
-int i;
-int startOffset, endOffset;
-
-startOffset = fp.Tell ();
+int startOffset = fp.Tell ();
 
 //==================== = WRITE FILE INFO========================
 
 // Do not assume the "sizeof" values are the same as what was read when level was loaded.
 // Also be careful no to use sizeof () because the editor's internal size may not match
 // the size which is used by the game engine.
-MineInfo ().objects.size = 0x108;                         // 248 = sizeof (object)
-MineInfo ().walls.size = 24;                            // 24 = sizeof (wall)
-MineInfo ().doors.size = 16;                            // 16 = sizeof (CDoor)
-MineInfo ().triggers.size = (m_fileType== RDL_FILE) ? 54:52; // 54 = sizeof (trigger)
-MineInfo ().control.size = 42;                            // 42 = sizeof (CReactorTrigger)
-MineInfo ().botGen.size = (m_fileType== RDL_FILE) ? 16:20; // 20 = sizeof (CMatCenter)
-MineInfo ().equipGen.size = 20; // 20 = sizeof (CMatCenter)
-MineInfo ().lightDeltaIndices.size = 6;                             // 6 = sizeof (CLightDeltaIndex)
-MineInfo ().lightDeltaValues.size = 8;                             // 8 = sizeof (CLightDeltaValue)
-
-if (m_fileType== RDL_FILE) {
-	MineInfo ().fileInfo.signature = 0x6705;
-	MineInfo ().fileInfo.version = 25;
-	MineInfo ().fileInfo.size = 119;
-	MineInfo ().level = 0;
+if (IsD1File ()) {
+	Info ().fileInfo.signature = 0x6705;
+	Info ().fileInfo.version = 25;
+	Info ().fileInfo.size = 119;
+	Info ().level = 0;
 	}
 else {
-	MineInfo ().fileInfo.signature = 0x6705;
-	MineInfo ().fileInfo.version = (LevelVersion () < 13) ? 31 : 40;
-	MineInfo ().fileInfo.size = (LevelVersion () < 13) ? 143 : sizeof (MineInfo ()); // same as sizeof (MineInfo ())
-	MineInfo ().level = 0;
+	Info ().fileInfo.signature = 0x6705;
+	Info ().fileInfo.version = (LevelVersion () < 13) ? 31 : 40;
+	Info ().fileInfo.size = (LevelVersion () < 13) ? 143 : sizeof (Info ()); // same as sizeof (Info ())
+	Info ().level = 0;
 }
 
-MineInfo ().Write (fp);
-if (MineInfo ().fileInfo.version >= 14) {  /*save mine filename */
+Info ().Write (fp);
+if (Info ().fileInfo.version >= 14) {  /*save mine filename */
 	fp.Write (m_currentLevelName, sizeof (char), strlen (m_currentLevelName));
 }
-if (IsD2File ()) {
+if (IsD2File ())
 	fp.Write ("\n", 1, 1); // write an end - of - line
-} else {
+else
 	fp.Write ("", 1, 1);   // write a null
-}
 
 // write pof names from resource file
-byte*				savePofNamesP;
-short				nSavePofNames, nPofs;
-CResource	res;
+short	nSavePofNames;
 
 if (IsD2File ()) {
 	nSavePofNames = 166;
@@ -267,53 +195,32 @@ if (IsD2File ()) {
 	}
 else {
 	nSavePofNames = 78;
-	nPofs = 25;   // Don't know exactly what this value is for or why it is 25?
-	fp.Write (&nPofs, 2, 1);
+	fp.WriteShort (25);	// Don't know exactly what this value is for or why it is 25?
 	}
 
-if (!(savePofNamesP = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2)))
+CResource res;
+if (!(savePofNames = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2)))
 	return 1;
 
-fp.Write (savePofNamesP, nSavePofNames, 13); // 13 characters each
+fp.Write (savePofNames, nSavePofNames, 13); // 13 characters each
 
-MineInfo ().player.offset = fp.Tell ();
+Info ().player.offset = fp.Tell ();
 char* str = "Made with Descent Level Editor XP 32\0\0\0\0\0\0\0";
 fp.Write (str, strlen (str) + 1, 1);
 
-SaveGameItem (fp, MineInfo ().objects, DATA (Objects ()));
-SaveGameItem (fp, MineInfo ().walls, DATA (Walls ()));
-SaveGameItem (fp, MineInfo ().doors, DATA (Doors ()));
-SaveGameItem (fp, MineInfo ().triggers, DATA (Triggers ()));
-if (LevelVersion () >= 12) {
-	fp.Write (NumObjTriggers ());
-	if (NumObjTriggers ()) {
-		SortObjTriggers ();
-		for (i = 0; i < NumObjTriggers (); i++)
-			ObjTriggers (i)->Write (fp, MineInfo ().fileInfo.version, true);
-		for (i = 0; i < NumObjTriggers (); i++)
-			fp.WriteInt16 (ObjTriggers (i)->m_info.nObject);
-		}
-	}
-SaveGameItem (fp, MineInfo ().control, DATA (ReactorTriggers ()));
-SaveGameItem (fp, MineInfo ().botGen, DATA (RobotMakers ()));
+objectManager.Write (fp, FileInfo ().version);
+wallManager.Write (fp, FileInfo ().version);
+triggerManager.Write (fp, FileInfo ().version);
+triggerManager.WriteReactor (fp, FileInfo ().version);
+segmentManager.WriteRobotMakers (fp, FileInfo ().version);
 if (IsD2File ()) {
-	SaveGameItem (fp, MineInfo ().equipGen, DATA (EquipMakers ()));
-	if (MineInfo ().lightDeltaIndices.count > 0) {
-		if ((LevelVersion () >= 15) && (MineInfo ().fileInfo.version >= 34))
-			SortDLIndex (0, MineInfo ().lightDeltaIndices.count - 1);
-		SaveGameItem (fp, MineInfo ().lightDeltaIndices, DATA (LightDeltaIndex ()));
-		SaveGameItem (fp, MineInfo ().lightDeltaValues, DATA (LightDeltaValues ()));
-		}
+	segmentManager.WriteEquipMakers (fp, FileInfo ().version);
+	lightManager.WriteLightDeltas (fp, FileInfo ().version);
 	}
 
-endOffset = fp.Tell ();
-
-//==================== = UPDATE FILE INFO OFFSETS====================== =
 fp.Seek (startOffset, SEEK_SET);
-fp.Write (&MineInfo (), MineInfo ().fileInfo.size, 1);
-
-//============ = LEAVE ROUTINE AT LAST WRITTEN OFFSET================== = */
-fp.Seek (endOffset, SEEK_SET);
+fp.Write (&Info (), Info ().fileInfo.size, 1);
+fp.Seek (0, SEEK_END);
 return 0;
 }
 

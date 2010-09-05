@@ -138,7 +138,7 @@ typedef CColor vertexColorList [VERTEX_LIMIT];
 class CLightManager {
 	private:
 		variableLightList		m_variableLights;
-		short						m_nCount;
+		int						m_nCount;
 		lightDeltaIndexList	m_deltaIndex;
 		lightDeltaValueList	m_deltaValues;
 		CMineItemInfo			m_deltaIndexInfo;
@@ -187,7 +187,7 @@ class CLightManager {
 
 		inline long* LightMap (int i = 0) { return &m_lightMap [i]; }
 
-		inline short& Count (void) { return m_nCount; }
+		inline int& Count (void) { return m_nCount; }
 
 		inline int& DeltaIndexCount (void) { return m_deltaIndexInfo.count; }
 

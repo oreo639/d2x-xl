@@ -397,6 +397,7 @@ void CWallManager::WriteWalls (CFileManager& fp, int nFileVersion)
 if (WallCount () == 0)
 	m_info [0].offset = -1;
 else {
+	m_info [0].size = 24;
 	m_info [0].offset = fp.Tell ();
 	for (short i = 0; i < WallCount (); i++)
 		m_walls [i].Write (fp, nFileVersion);
@@ -428,9 +429,14 @@ if (m_info [1].offset >= 0) {
 
 void CWallManager::WriteDoors (CFileManager& fp, int nFileVersion)
 {
-m_info [1].offset = fp.Tell ();
-for (short i = 0; i < WallCount (); i++)
-	m_doors [i].Write (fp, nFileVersion);
+if (DoorCount () == 0)
+	m_info [1].offset = -1;
+else {
+	m_info [1].size = 16;
+	m_info [1].offset = fp.Tell ();
+	for (short i = 0; i < WallCount (); i++)
+		m_doors [i].Write (fp, nFileVersion);
+	}
 }
 
 // ----------------------------------------------------------------------------- 

@@ -423,6 +423,8 @@ void CTriggerManager::WriteReactor (CFileManager& fp, int nFileVersion)
 if (m_reactorInfo.count == 0) 
 	m_reactorInfo.offset = -1;
 else {
+	m_reactorInfo.size = 42;
+	m_reactorInfo.offset = fp.Tell ();
 	for (short i = 0; i < NumReactorTriggers (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
@@ -489,6 +491,7 @@ if (Count (0) + Count (1) == 0)
 else {
 	short i;
 
+	m_info [0].size = theMine->IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
 	m_info [0].offset = fp.Tell ();
 
 	for (i = 0; i < Count (0); i++)

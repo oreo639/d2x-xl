@@ -543,6 +543,9 @@ else if (theMine->LevelVersion () > 9) {
 
 void CLightManager::WriteColors (CFileManager& fp)
 {
+SaveColors (VertexColor (0), vertexManager.Count (), fp);
+SaveColors (LightColor (0), segmentManager.Count () * 6, fp);
+SaveColors (TexColor (0), MAX_TEXTURES_D2, fp);
 }
 
 //------------------------------------------------------------------------------
@@ -564,11 +567,25 @@ if (theMine->LevelVersion () > 6) {
 
 //------------------------------------------------------------------------------
 
+void CLightManager::WriteVariableLights (CFileManager& fp)
+{
+if (theMine->LevelVersion () > 6) {
+	 fp.Write (lightManager.Count ());
+	for (int i = 0; i < lightManager.Count (); i++) {
+		VariableLight (i)->Write (fp);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
 void CLightManager::ReadLightDeltas (CFileManager& fp, int nFileVersion)
 {
 if (theMine->IsD2File ()) {
-	int i;
+
 	bool bD2X = (theMine->LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
+	int i;
+
 	for (i = 0; i < m_deltaIndexInfo.count; i++)
 		m_deltaIndex [i].Read (fp, nFileVersion, bD2X);
 	for (i = 0; i < m_deltaValueInfo.count; i++)
@@ -580,7 +597,22 @@ if (theMine->IsD2File ()) {
 
 void CLightManager::WriteLightDeltas (CFileManager& fp, int nFileVersion)
 {
-if (theMine->IsD2File ()) {
+if (DeltaIndexCount () > 0) {
+	if ((theMine->LevelVersion () >= 15) && (nFileVersion >= 34))
+		lightManager.SortDeltaIndex ();
+
+	bool bD2X = (theMine->LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
+	int i;
+
+	m_deltaIndexInfo.size = 6;
+	m_deltaIndexInfo.offset = fp.Tell ();
+	for (i = 0; i < m_deltaIndexInfo.count; i++)
+		m_deltaIndex [i].Write (fp, nFileVersion, bD2X);
+
+	m_deltaValueInfo.size = 8;
+	m_deltaValueInfo.offset = fp.Tell ();
+	for (i = 0; i < m_deltaValueInfo.count; i++)
+		m_deltaValues [i].Write (fp, nFileVersion);
 	}
 }
 
