@@ -381,7 +381,7 @@ byte CSegment::WriteWalls (CFileManager& fp, int nLevelVersion)
 
 m_info.wallFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if (m_sides [i].m_info.nWall < theMine->Info ().walls.count) 
+	if (m_sides [i].m_info.nWall < wallManager.WallCount ()) 
 		m_info.wallFlags |= (1 << i);
 	}
 fp.Write (m_info.wallFlags);

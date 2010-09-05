@@ -14,10 +14,46 @@
 class CGameItem {
 public:
 	short m_nIndex;
+	bool m_bUsed;
+
+	CGameItem () : m_nIndex(-1), m_bUsed(false) {}
 
 	virtual void Clear (void) = 0;
 
 };
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+template < class _T >
+class CGameItemIterator {
+	protected:
+		int	m_index;
+		int	m_end;
+		_T		m_buffer[];
+
+	public:
+		CGameItemIterator (_T buffer[]) : m_index(0), m_buffer(buffer) { m_end = sizeof (buffer); }
+
+		_T& operator++() { 
+			do {
+				m_index++;
+				} while (!end () || dynamic_cast<CGameItem&> (m_buffer [m_index]).m_bUsed);
+			return m_buffer [m_index++]; 
+			}
+
+		CGameItemIterator& operator= (int i) { 
+			m_index = i;
+			return *this;
+			}
+
+		const bool operator== (int i) { return m_index == i; }
+
+		const bool operator!= (int i) { return m_index != i; }
+
+		const bool end (void) { return m_index == m_end; }
+	};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
