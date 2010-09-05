@@ -190,6 +190,26 @@ else {
 }
 
 // -----------------------------------------------------------------------------
+
+void CSegmentManager::Fix (void)
+{
+CSegment *segP = Segments (0);
+for (short nSegment = SegCount (); nSegment > 0; nSegment--, segP++) {
+	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
+		CSide& side = segP->m_sides [nSide];
+		if (side.m_info.nWall >= wallManager.Count () && (side.m_info.nWall != NO_WALL)) 
+			side.m_info.nWall = NO_WALL;
+		if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > Count ()))
+			segP->SetChild (nSide, -1);
+		}
+	for (short nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
+		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= vertexManager.Count ()))
+			segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 //eof segmentmanager.cpp

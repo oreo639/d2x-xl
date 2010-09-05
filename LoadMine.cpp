@@ -25,12 +25,7 @@
 
 #define ENABLE_TEXT_DUMP 0
 
-//==========================================================================
-// CMine - load()
-//
-// ACTION -  loads a level (.RDL) file from disk
-//
-//==========================================================================
+// -----------------------------------------------------------------------------
 
 short CMine::Load (const char *szFile, bool bLoadFromHog)
 {
@@ -90,8 +85,7 @@ m_disableDrawing = FALSE;
 return 0;
 }
 
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 short CMine::LoadMineSigAndType (CFileManager& fp)
 {
@@ -119,8 +113,8 @@ else {
 return 0;
 }
 
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void CMine::LoadPaletteName (CFileManager& fp, bool bNewMine)
 {
@@ -167,8 +161,7 @@ if (IsD2File ()) {
 	}
 }
 
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 short CMine::LoadMine (char *filename, bool bLoadFromHog, bool bNewMine)
 {
@@ -312,80 +305,23 @@ SortObjects ();
 return return_code;
 }
 
-
-// ------------------------------------------------------------------------
-// FixIndexValues()
-//
-// Action - This routine attempts to int array index values to prevent
-//          the editor from crashing when the level is drawn.
-//
-// Returns - 0 if no error is detected
-// ------------------------------------------------------------------------
-
-short CMine::FixIndexValues(void)
-{
-	short 	nSegment, nSide, nVertex;
-	ushort	nWall;
-	short 	checkErr;
-
-checkErr = 0;
-CSegment *segP = Segments (0);
-for(nSegment = 0; nSegment < SegCount (); nSegment++, segP++) {
-	for(nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
-		// check wall numbers
-		CSide& side = segP->m_sides [nSide];
-		if (side.m_info.nWall >= MineInfo ().walls.count && side.m_info.nWall != NO_WALL) {
-			side.m_info.nWall = NO_WALL;
-			checkErr |= (1 << 0);
-			}
-		// check children
-		if ((segP->Child (nSide) < -2) || (segP->Child (nSide) > (short)SegCount ())) {
-			segP->SetChild (nSide, -1);
-			checkErr |= (1 << 1);
-			}
-		}
-	// check verts
-	for(nVertex = 0; nVertex < MAX_VERTICES_PER_SEGMENT; nVertex++) {
-		if ((segP->m_info.verts [nVertex] < 0) || (segP->m_info.verts [nVertex] >= vertexManager.Count ())) {
-			segP->m_info.verts [nVertex] = 0;  // this will cause a bad looking picture [0]
-			checkErr |= (1 << 2);      // but it will prevent a crash
-			}
-		}
-	}
-CWall *wallP = Walls (0);
-for (nWall = 0; nWall < MineInfo ().walls.count; nWall++, wallP++) {
-	// check nSegment
-	if (wallP->m_nSegment < 0 || wallP->m_nSegment > SegCount ()) {
-		wallP->m_nSegment = 0;
-		checkErr |= (1 << 3);
-		}
-	// check nSide
-	if (wallP->m_nSide < 0 || wallP->m_nSide > 5) {
-		wallP->m_nSide = 0;
-		checkErr |= (1 << 4);
-		}
-	}
-return checkErr;
-}
-
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // LoadMineDataCompiled()
 //
 // ACTION - Reads a mine data portion of RDL file.
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 short CMine::LoadMineDataCompiled (CFileManager& fp, bool bNewMine)
 {
 	int		i; 
 	byte		version;
-	ushort   n_vertices;
-	ushort   n_segments;
 
 // read version (1 byte)
 version = byte (fp.ReadSByte ());
+
 // read number of vertices (2 bytes)
-n_vertices = ushort (fp.ReadInt16 ());
-if (n_vertices > VERTEX_LIMIT) {
+ushort nVertices = ushort (fp.ReadInt16 ());
+if (nVertices > VERTEX_LIMIT) {
 	sprintf_s (message, sizeof (message),  "Too many vertices (%d)", n_vertices);
 	ErrorMsg (message);
 	return(1);
@@ -395,8 +331,8 @@ if (((IsD1File ()) && (n_vertices > MAX_VERTICES_D1)) ||
 	ErrorMsg ("Warning: Too many vertices for this level version");
 
 // read number of Segments () (2 bytes)
-n_segments = ushort (fp.ReadInt16 ());
-if (n_segments > SEGMENT_LIMIT) {
+ushort nSegments = ushort (fp.ReadInt16 ());
+if (nSegments > SEGMENT_LIMIT) {
 	sprintf_s (message, sizeof (message), "Too many Segments (%d)", n_segments);
 	ErrorMsg (message);
 	return 2;
@@ -407,88 +343,30 @@ if (((IsD1File ()) && (n_segments > MAX_SEGMENTS_D1)) ||
 
 // if we are happy with the number of verts and Segments (), then proceed...
 //ClearMineData ();
-vertexManager.Count () = n_vertices;
-SegCount () = n_segments;
+vertexManager.Count () = nVertices;
+vertexManager.FileOffset () = fp.Tell ();
+vertexManager.Read (fp, FileVersion ());
 
-// read all vertices
-CVertex* vertP = Vertices (0);
-size_t fPos = fp.Tell ();
-for (i = 0; i < vertexManager.Count (); i++, vertP++) {
-	vertP->Read (fp);
-	vertP->m_status = 0;
-	}
+segmentManager.Count () = nSegments;
+segmentManager.FileOffset () = fp.Tell ();
+segmentManager.Read (fp, FileVersion ());
 
-// read segment information
-CSegment *segP;
-for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)   
-	segP->Read (fp, IsD2XLevel () ? 2 : IsD2File () ? 1 : 0, LevelVersion());
-if (IsD2File ())
-	for (i = 0, segP = Segments (0); i < SegCount (); i++, segP++)   
-		segP->ReadExtras (fp, IsD2XLevel () ? 2 : 1, LevelVersion(), true);
+lightManager.ReadColors (fp);
 
-if (LevelVersion () == 9) {
-#if 1
-	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
-	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
-	LoadColors (VertexColors (0), vertexManager.Count (), 9, 15, fp);
-#else
-	fp.Read (LightColors (), sizeof (CColor), SegCount () * 6); //skip obsolete side colors 
-	fp.Read (LightColors (), sizeof (CColor), SegCount () * 6);
-	fp.Read (VertexColors (), sizeof (CColor), vertexManager.Count ());
-#endif
-	}
-else if (LevelVersion () > 9) {
-	LoadColors (VertexColors (0), vertexManager.Count (), 9, 15, fp);
-	LoadColors (LightColors (0), SegCount () * 6, 9, 14, fp);
-	LoadColors (TexColors (0), MAX_TEXTURES_D2, 10, 16, fp);
-	}
-if (MineInfo ().objects.count > MAX_OBJECTS) {
+if (objectManager.Count () > MAX_OBJECTS) {
 	sprintf_s (message, sizeof (message),  "Warning: Max number of objects for this level version exceeded (%ld/%d)", 
-			  MineInfo ().objects.count, MAX_OBJECTS_D2);
+			  MineInfo ().objects.count, MAX_OBJECTS);
 	ErrorMsg (message);
 	}
 return 0;
 }
 
-// ------------------------------------------------------------------------
-
-int CMine::LoadGameItem (CFileManager& fp, CMineItemInfo info, CGameItem* items, int nMinVersion, int nMaxCount, char *pszItem, bool bFlag)
-{
-if (info.offset < 0)
-	return 0;
-if (fp.Seek (info.offset, SEEK_SET))
-	return -1;
-if (info.count < 1)
-	return 0;
-if (info.count > nMaxCount) {
-	sprintf_s (message, sizeof (message),  "Error: Too many %s (%d/%d)", pszItem, info.count, nMaxCount);
-	ErrorMsg (message);
-	return -1;
-	}
-if (MineInfo ().fileInfo.version < nMinVersion) {
-	sprintf_s (message, sizeof (message), "%s version < %d, walls not loaded", pszItem, nMinVersion);
-	ErrorMsg (message);
-	return 0;
-	}
-
-int nVersion =  MineInfo ().fileInfo.version;
-for (int i = 0; i < info.count; i++) {
-	if (!items->Read (fp, nVersion, bFlag)) {
-		sprintf_s (message, sizeof (message), "Error reading %s", pszItem);
-		ErrorMsg (message);
-		return -1;
-		}
-	items = items->Next ();
-	}
-return info.count;
-}
-
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // LoadGameData()
 //
 // ACTION - Loads the player, object, wall, door, trigger, and
 //          materialogrifizationator data from an RDL file.
-// ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 short CMine::LoadGameData (CFileManager& fp, bool bNewMine) 
 {
@@ -497,6 +375,8 @@ short CMine::LoadGameData (CFileManager& fp, bool bNewMine)
 startOffset = fp.Tell ();
 
 // Set default values
+objectManager.Reset ();
+wallManager.Reset ();
 MineInfo ().objects.Reset ();
 MineInfo ().walls.Reset ();
 MineInfo ().doors.Reset ();
@@ -586,5 +466,5 @@ if (IsD2File ()) {
 return 0;
 }
 
-// --------------------------------------------------------------------------
+// -------------------------------------------------------------------------------
 //eof mine.cpp

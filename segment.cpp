@@ -620,7 +620,7 @@ m_sides [nSide].Reset ();
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-void CRobotMaker::Read (CFileManager& fp, int version, bool bFlag)
+void CMatCenter::Read (CFileManager& fp, int version, bool bFlag)
 {
 m_info.objFlags [0] = fp.ReadInt32 ();
 if (DLE.IsD2File ())
@@ -633,7 +633,7 @@ m_info.nFuelCen = fp.ReadInt16 ();
 
 // -----------------------------------------------------------------------------
 
-void CRobotMaker::Write (CFileManager& fp, int version, bool bFlag)
+void CMatCenter::Write (CFileManager& fp, int version, bool bFlag)
 {
 fp.Write (m_info.objFlags [0]);
 if (DLE.IsD2File ())

@@ -24,12 +24,12 @@
 #ifdef _DEBUG
 
 typedef CStaticArray< CSegment, SEGMENT_LIMIT > segmentList;
-typedef CStaticArray< CRobotMaker, MAX_NUM_MATCENS_D2 > robotMakerList;
+typedef CStaticArray< CMatCenter, MAX_NUM_MATCENS_D2 > robotMakerList;
 
 #else
 
 typedef CSegment segmentList [SEGMENT_LIMIT];
-typedef CRobotMaker robotMakerList [MAX_NUM_MATCENS_D2];
+typedef CMatCenter robotMakerList [MAX_NUM_MATCENS_D2];
 
 #endif
 
@@ -57,7 +57,9 @@ class CSegmentManager {
 		inline segmentList& Segments (void)
 			{ return m_segments; }
 
-		inline int& Count () { return m_segmentInfo.count; }
+		inline int& Count (void) { return m_segmentInfo.count; }
+
+		inline int& FileOffset (void) { return m_segmentInfo.offset; }
 
 		inline int& MatCenCount (short nClass) { return m_matCenInfo [nClass].count; }
 
@@ -118,9 +120,9 @@ class CSegmentManager {
 		
 		inline robotMakerList& EquipMakers (void) { return m_matCens [1]; }
 		
-		inline CRobotMaker* RobotMaker (int i) { return &m_matCens [0][i]; }
+		inline CMatCenter* RobotMaker (int i) { return &m_matCens [0][i]; }
 		
-		inline CRobotMaker* EquipMaker (int i) { return &m_matCens [1][i]; }
+		inline CMatCenter* EquipMaker (int i) { return &m_matCens [1][i]; }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 		inline int AddMode (void) { return m_nAddMode; }
@@ -245,6 +247,18 @@ class CSegmentManager {
 
 		void DeleteBlock ();
 
+		inline void ReadInfo (CFileManager& fp) { m_info.Read (fp); }
+
+		inline void WriteInfo (CFileManager& fp) { m_info.Write (fp); }
+
+		inline void ReadRobotMakerInfo (CFileManager& fp) { m_matCenInfo [0].Read (fp); }
+
+		inline void WriteRobotMakerInfo (CFileManager& fp) { m_matCenInfo [0].Write (fp); }
+
+		inline void ReadEquipMakerInfo (CFileManager& fp) { m_matCenInfo [1].Read (fp); }
+
+		inline void WriteEquipMakerInfo (CFileManager& fp) { m_matCenInfo [1].Write (fp); }
+
 		void ReadSegments (CFileManager& fp, int nFileVersion);
 		
 		void WriteSegments (CFileManager& fp, int nFileVersion);
@@ -263,6 +277,8 @@ class CSegmentManager {
 
 		void Clear (void);
 
+		void Fix (void);
+
 	private:
 		void UnlinkChild (short nParentSeg, short nSide);
 
@@ -275,8 +291,8 @@ class CSegmentManager {
 		void Undefine (short nSegment);
 		void ComputeVertices (short newVerts [4]);
 		int FuelCenterCount (void);
-		void RemoveMatCen (CSegment* segP, CRobotMaker* matCens, CMineItemInfo& info);
-		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CRobotMaker* matCens, CMineItemInfo& info, char* szError);
+		void RemoveMatCen (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
+		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CMatCenter* matCens, CMineItemInfo& info, char* szError);
 		void RenumberMatCens (byte nFunction, short nClass);
 	};
 

@@ -38,6 +38,8 @@ class CVertexManager {
 	public:
 		// Segment and side getters
 		// Vertex getters
+		void Reset (void) { m_info.Clear (); }
+
 		inline vertexList& Vertices (void) { return m_vertices; }
 
 		inline CVertex *Vertex (int i) { return &m_vertices [i]; }
@@ -45,6 +47,8 @@ class CVertexManager {
 		inline byte& Status (int i = 0) { return Vertex (i)->m_status; }
 
 		inline int& Count (void) { return m_info.count; }
+
+		inline int& FileOffset (void) { return m_info.offset; }
 
 		inline ushort Index (CVertex* vertP) { return (ushort) (vertP - &m_vertices [0]); }
 

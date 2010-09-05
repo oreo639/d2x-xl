@@ -159,7 +159,7 @@ return true;
 // ----------------------------------------------------------------------------- 
 
 bool CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, 
-												CRobotMaker* matCens, CMineItemInfo& info, char* szError) 
+												CMatCenter* matCens, CMineItemInfo& info, char* szError) 
 {
 if (info.count >= MAX_ROBOT_MAKERS) {
     ErrorMsg ("Maximum number of equipment makers reached");
@@ -168,8 +168,8 @@ if (info.count >= MAX_ROBOT_MAKERS) {
 if (!Create (nSegment, bCreate, nType))
 	return false;
 matCens [info.count].Setup (nSegment, info.count, 0);
-Segment (current.m_nSegment)->m_info.value = 
-Segment (current.m_nSegment)->m_info.nMatCen = info.count++;
+current.Segment ()->m_info.value = 
+current.Segment ()->m_info.nMatCen = info.count++;
 return true;
 }
 
@@ -464,7 +464,7 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::RemoveMatCen (CSegment* segP, CRobotMaker* matCens, CMineItemInfo& info)
+void CSegmentManager::RemoveMatCen (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info)
 {
 if (info.count > 0) {
 	// fill in deleted matcen

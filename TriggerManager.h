@@ -40,11 +40,17 @@ typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 class CTriggerManager {
 	private:
 		triggerList				m_triggers [2];
-		reactorTriggerList	m_reactorTriggers;
 		CMineItemInfo			m_info [2];
-		short						m_nReactorTriggers;
+		reactorTriggerList	m_reactorTriggers;
+		CMineItemInfo			m_reactorInfo;
 
 	public:
+		void Reset (void) {
+			m_info [0].Clear ();
+			m_info [1].Clear ();
+			m_reactorInfo.Clear ();
+			}
+
 		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
 
 		inline triggerList& GeoTriggerList (void) { return TriggerList (1); }
@@ -58,6 +64,8 @@ class CTriggerManager {
 		inline int& NumGeoTriggers (void) { return Count (0); }
 
 		inline int& NumObjTriggers (void) { return Count (1); }
+
+		inline int& NumReactorTriggers (void) { return m_reactorInfo.count; }
 
 		inline CTrigger* GeoTrigger (int i) { return Trigger (i, 0); }
 
@@ -119,8 +127,18 @@ class CTriggerManager {
 
 		bool HaveResources (void);
 
+		inline void ReadInfo (CFileManager& fp) { m_info [0].Read (fp); }
+
+		inline void WriteInfo (CFileManager& fp) { m_info [0].Write (fp); }
+
+		inline void ReadReactorInfo (CFileManager& fp) { m_reactorInfo.Read (fp); }
+
+		inline void WriteReactorInfo (CFileManager& fp) { m_reactorInfo.Write (fp); }
+
 		void Read (CFileManager& fp, int nFileVersion);
+
 		void Write (CFileManager& fp, int nFileVersion);
+
 		void Clear (void);
 
 	private:

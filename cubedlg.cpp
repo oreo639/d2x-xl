@@ -704,7 +704,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		if (nMatCens > 0) {
 			// fill in deleted matcen
 			int nDelMatCen = current.Segment ()->value;
-			memcpy (theMine->RobotMakers (nDelMatCen), theMine->RobotMakers (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CRobotMaker));
+			memcpy (theMine->RobotMakers (nDelMatCen), theMine->RobotMakers (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CMatCenter));
 			theMine->Info ().matcen.count--;
 			int i;
 			for (i = 0; i < 6; i++)

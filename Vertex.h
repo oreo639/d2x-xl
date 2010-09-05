@@ -11,7 +11,10 @@ public:
 	CVertex (tDoubleVector& _v) : CDoubleVector (_v) { m_status = 0; }
 	CVertex (CDoubleVector _v) : CDoubleVector (_v) { m_status = 0; }
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false) { fp.ReadVector (v); }
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false) { 
+		m_status = 0;
+		fp.ReadVector (v); 
+		}
 
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.WriteVector (v); }
 

@@ -32,6 +32,8 @@ class CObjectManager {
 		bool				m_bSortObjects;
 
 	public:
+		inline void Reset (void) { m_info.Reset (); }
+
 		inline objectList& ObjectList (void) { return m_objects; }
 
 		inline CGameObject *Object (int i)  { return &m_objects [i]; }
@@ -57,6 +59,10 @@ class CObjectManager {
 		inline short Add (void);
 
 		bool Create (byte newType, short nSegment);
+
+		inline void ReadInfo (CFileManager& fp) { m_info.Read (fp); }
+
+		inline void WriteInfo (CFileManager& fp) { m_info.Write (fp); }
 
 		void Read (CFileManager& fp, int nFileVersion);
 

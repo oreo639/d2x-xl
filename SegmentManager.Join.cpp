@@ -162,8 +162,8 @@ undoManager.Lock ();
 seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]] = vert2; 
 // delete any unused vertices
 //  delete_unused_vertices(); 
-FixChildren(); 
-SetLinesToDraw(); 
+FixChildren (); 
+SetLinesToDraw (); 
 DLE.MineView ()->Refresh ();
 undoManager.Unlock ();
 }

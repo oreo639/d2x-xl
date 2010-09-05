@@ -1189,7 +1189,7 @@ return false;
 
 //------------------------------------------------------------------------
 
-char CDiagTool::FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList)
+char CDiagTool::FindMatCen (CMatCenter* matCenP, short nSegment, short* refList)
 {
 	char	h = -1, i, j = char (theMine->Info ().botGen.count);
 
@@ -1213,7 +1213,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-void CDiagTool::CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* matCenP, short nMatCens)
+void CDiagTool::CountMatCenRefs (int nSpecialType, short* refList, CMatCenter* matCenP, short nMatCens)
 {
 	CSegment*		segP = theMine->Segments (0);
 	short				n, h, i, j = segmentManager.Count ();
@@ -1234,7 +1234,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 //------------------------------------------------------------------------
 
-short CDiagTool::FixMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens, char* pszType)
+short CDiagTool::FixMatCens (int nSpecialType, short* segList, short* refList, CMatCenter* matCenP, short nMatCens, char* pszType)
 {
 	CSegment*	segP = theMine->Segments (0);
 	short			h, i, j = segmentManager.Count ();
@@ -1281,7 +1281,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-short CDiagTool::AssignMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens)
+short CDiagTool::AssignMatCens (int nSpecialType, short* segList, short* refList, CMatCenter* matCenP, short nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
@@ -1310,7 +1310,7 @@ return h;
 
 //------------------------------------------------------------------------
 
-short CDiagTool::CleanupMatCens (short* refList, CRobotMaker* matCenP, short nMatCens)
+short CDiagTool::CleanupMatCens (short* refList, CMatCenter* matCenP, short nMatCens)
 {
 if (!m_bAutoFixBugs)
 	return nMatCens;
@@ -1343,7 +1343,7 @@ if (theMine == null)
 	bool					bOk = true;
 	short					nMatCenSegs, nMatCens = short (theMine->Info ().botGen.count);
 	CSegment*			segP = theMine->Segments (0);
-	CRobotMaker*		matCenP = theMine->RobotMakers (0);
+	CMatCenter*		matCenP = theMine->RobotMakers (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
 
@@ -1367,7 +1367,7 @@ bool CDiagTool::CheckEquipGens (void)
 	short					i, nSegment = 0;
 	bool					bOk = true;
 	int					nMatCenSegs, nMatCens = int (theMine->Info ().equipGen.count);
-	CRobotMaker*		matCenP = theMine->EquipMakers (0);
+	CMatCenter*		matCenP = theMine->EquipMakers (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
 

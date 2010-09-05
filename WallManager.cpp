@@ -448,4 +448,18 @@ ErrorMsg ("Changing the texture of a door only affects\n"
 }
 
 //------------------------------------------------------------------------------
+
+void CWallManager::Fix (void)
+{
+CWall *wallP = Walls (0);
+for (short nWall = Count (0); nWall > 0; nWall--, wallP++) {
+	// check nSegment
+	if (wallP->m_nSegment < 0 || wallP->m_nSegment > segmentManager.Count ()) {
+		wallP->m_nSegment = 0;
+	if ((wallP->m_nSide < 0) || (wallP->m_nSide > 5)) {
+		wallP->m_nSide = 0;
+	}
+}
+
+//------------------------------------------------------------------------------
 //eof wallmanager.cpp

@@ -9,8 +9,17 @@ void CSegmentManager::ReadSegments (CFileManager& fp, int nFileVersion)
 {
 if (m_segmentInfo.offset >= 0) {
 	fp.Seek (m_info.offset);
-	for (int i = 0; i < Count (); i++)
-		m_segments [i].Read (fp, nFileVersion);
+
+	int nLevelType = theMine->IsD2XLevel () ? 2 : theMine->IsD2File () ? 1 : 0;
+	int nLevelVersion = theMine->LevelVersion ();
+	int i;
+
+	for (i = 0; i < Count (); i++)
+		m_segments [i].Read (fp, nLevelType, nLevelVersion);
+	if (!theMine->IsD2File ())
+		return;
+	for (i = 0, segP = Segments (0); i < Count (); i++)   
+		m_segments [i].ReadExtras (fp, nLevelVersion, true);
 	}
 }
 

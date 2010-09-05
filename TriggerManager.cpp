@@ -408,6 +408,28 @@ for (short i = 0; i < Count (0); i++)
 
 // -----------------------------------------------------------------------------
 
+void CTriggerManager::ReadReactor (CFileManager& fp, int nFileVersion)
+{
+if (m_reactorInfo.offset >= 0) {
+	for (short i = 0; i < NumReactorTriggers (); i++) {
+		m_reactorTriggers [i].Read (fp, nFileVersion);
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CTriggerManager::WriteReactor (CFileManager& fp, int nFileVersion)
+{
+if (m_reactorInfo.count == 0) 
+	m_reactorInfo.offset = -1;
+else {
+	for (short i = 0; i < NumReactorTriggers (); i++) {
+		m_reactorTriggers [i].Read (fp, nFileVersion);
+	}
+}
+
+// -----------------------------------------------------------------------------
+
 void CTriggerManager::Read (CFileManager& fp, int nFileVersion)
 {
 if (m_info [0].offset < 0)

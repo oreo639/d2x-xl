@@ -159,9 +159,9 @@ public:
 
 	void SetUV (short nSide, short x, short y);
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false) {};
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false) {}
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {}
 
 	inline CSide* Side (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 
@@ -186,20 +186,20 @@ private:
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-typedef struct tRobotMaker {
+typedef struct tMatCenter {
 	int  objFlags [2]; /* Up to 32 different Descent 1 robots */
 	//  int  robot_flags2;// Additional 32 robots for Descent 2
 	int    hitPoints;  /* How hard it is to destroy this particular matcen */
 	int    interval;    /* Interval between materializations */
 	short  nSegment;      /* Segment this is attached to. */
 	short  nFuelCen; /* Index in fuelcen array. */
-} tRobotMaker;
+} tMatCenter;
 
 // -----------------------------------------------------------------------------
 
-class CRobotMaker : public CGameItem {
+class CMatCenter : public CGameItem {
 public:
-	tRobotMaker	m_info;
+	tMatCenter	m_info;
 
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 	

@@ -229,6 +229,8 @@ class CLightManager {
 		void WriteLightMap (CFileManager& fp);
 		void WriteColorMap (CFileManager& fp);
 		void ReadColorMap (CFileManager& fp);
+		void ReadColors (CFileManager& fp);
+		void WriteColors (CFileManager& fp);
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);

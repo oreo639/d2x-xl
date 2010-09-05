@@ -276,11 +276,11 @@ class CDiagTool : public CToolDlg
 		bool CheckBotGens ();
 		bool CheckEquipGens ();
 		bool MarkSegment (short nSegment);
-		char FindMatCen (CRobotMaker* matCenP, short nSegment, short* refList = null);
-		void CountMatCenRefs (int nSpecialType, short* refList, CRobotMaker* matCenP, short nMatCens);
-		short FixMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens, char* pszType);
-		short AssignMatCens (int nSpecialType, short* segList, short* refList, CRobotMaker* matCenP, short nMatCens);
-		short CleanupMatCens (short* refList, CRobotMaker* matCenP, short nMatCens);
+		char FindMatCen (CMatCenter* matCenP, short nSegment, short* refList = null);
+		void CountMatCenRefs (int nSpecialType, short* refList, CMatCenter* matCenP, short nMatCens);
+		short FixMatCens (int nSpecialType, short* segList, short* refList, CMatCenter* matCenP, short nMatCens, char* pszType);
+		short AssignMatCens (int nSpecialType, short* segList, short* refList, CMatCenter* matCenP, short nMatCens);
+		short CleanupMatCens (short* refList, CMatCenter* matCenP, short nMatCens);
 
 		inline CListView *LVStats ()
 			{ return (CListView *) GetDlgItem (IDC_DIAG_STATS); }

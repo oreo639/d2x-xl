@@ -54,6 +54,8 @@ size  = fp.ReadInt32 ();
 
 void CMineItemInfo::Write (CFileManager& fp) 
 {
+if (count == 0)
+	offset = -1;
 fp.Write (offset);
 fp.Write (count);
 fp.Write (size);
