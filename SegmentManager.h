@@ -272,6 +272,14 @@ class CSegmentManager {
 		
 		void WriteSegments (CFileManager& fp, int nFileVersion);
 		
+		void ReadRobotMakers (CFileManager& fp, int nFileVersion);
+		
+		void WriteRobotMakers (CFileManager& fp, int nFileVersion);
+		
+		void ReadEquipMakers (CFileManager& fp, int nFileVersion);
+		
+		void WriteEquipMakers (CFileManager& fp, int nFileVersion);
+
 		void Clear (void);
 
 		int Fix (void);
@@ -304,15 +312,7 @@ class CSegmentManager {
 		void ReadMatCens (CFileManager& fp, int nFileVersion, int nClass);
 		
 		void WriteMatCens (CFileManager& fp, int nFileVersion, int nClass);
-		
-		void ReadRobotMakers (CFileManager& fp, int nFileVersion);
-		
-		void WriteRobotMakers (CFileManager& fp, int nFileVersion);
-		
-		void ReadEquipMakers (CFileManager& fp, int nFileVersion);
-		
-		void WriteEquipMakers (CFileManager& fp, int nFileVersion);
-
+	
 	};
 
 extern CSegmentManager segmentManager;

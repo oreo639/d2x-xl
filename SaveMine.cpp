@@ -11,7 +11,6 @@ short CMine::Save (const char * szFile, bool bSaveToHog)
 	char				filename [256];
 	int				minedataOffset, gamedataOffset, hostageTextOffset;
 	int				mineErr, gameErr;
-	int				i;
 
 strcpy_s (filename, sizeof (filename), szFile);
 if (fp.Open (filename, "wb"))
@@ -144,7 +143,7 @@ vertexManager.Write (fp, FileInfo ().version);
 segmentManager.WriteSegments (fp, FileInfo ().version);
 // for Descent 2, save special info here
 if (IsD2XLevel ())
-	LightManager.SaveColors (fp);
+	lightManager.WriteColors (fp);
 return 0;
 }
 
@@ -195,11 +194,12 @@ if (IsD2File ()) {
 	}
 else {
 	nSavePofNames = 78;
-	fp.WriteShort (25);	// Don't know exactly what this value is for or why it is 25?
+	fp.WriteInt16 (25);	// Don't know exactly what this value is for or why it is 25?
 	}
 
 CResource res;
-if (!(savePofNames = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2)))
+byte* savePofNames = res.Load (IsD1File () ? IDR_POF_NAMES1 : IDR_POF_NAMES2);
+if (savePofNames == null)
 	return 1;
 
 fp.Write (savePofNames, nSavePofNames, 13); // 13 characters each
