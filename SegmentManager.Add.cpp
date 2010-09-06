@@ -24,23 +24,23 @@ bool CSegmentManager::Create (void)
 	short		nSide; 
 
 if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
-	return FALSE; 
+	ErrorMsg (szTunnelMakerError); 
+	return false; 
 	}
 
 curSegP = Segment (current.m_nSegment); 
 
 if (Full ()) {
 	ErrorMsg ("Cannot add a new segment because\nthe maximum number of segments has been reached."); 
-	return FALSE;
+	return false;
 	}
 if (vertexManager.Full ()) {
 	ErrorMsg ("Cannot add a new segment because\nthe maximum number of vertices has been reached."); 
-	return FALSE;
+	return false;
 	}
 if (curSegP->Child (nCurSide) >= 0) {
 	ErrorMsg ("Can not add a new segment to a side\nwhich already has a segment attached."); 
-	return FALSE;
+	return false;
 	}
 
 undoManager.SetModified (true); 
@@ -100,12 +100,11 @@ memset (sideP->m_info.uvls, 0, sizeof (sideP->m_info.uvls));
  
 // link the new segment with any touching Segment ()
 CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
-CVertex *vSeg;
 for (CSegmentIterator i; i; i++) {
 	if (i.Index () != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = vertexManager.Vertex (i->m_info.verts [0]);
+		CVertex *vSeg = vertexManager.Vertex (i->m_info.verts [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
@@ -116,14 +115,14 @@ for (CSegmentIterator i; i; i++) {
 	}
 // auto align textures new segment
 for (nNewSide = 0; nNewSide < 6; nNewSide++)
-	AlignTextures (current.m_nSegment, nNewSide, nNewSeg, TRUE, TRUE); 
+	AlignTextures (current.m_nSegment, nNewSide, nNewSeg, true, true); 
 // set current segment to new segment
 current.m_nSegment = nNewSeg; 
 //		SetLinesToDraw(); 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
-return TRUE; 
+return true; 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -293,9 +292,9 @@ for (i = 0; i < 4; i++)
 switch (m_nAddMode) {
 	case (ORTHOGONAL):
 		{
-		center = CalcSideCenter (current.m_nSegment, current.m_nSide); 
-		oppCenter = CalcSideCenter (current.m_nSegment, oppSideTable [current.m_nSide]); 
-		orthog = CalcSideNormal (current.m_nSegment, current.m_nSide); 
+		center = CalcSideCenter (current); 
+		oppCenter = CalcSideCenter (CSideKey (current.m_nSegment, oppSideTable [current.m_nSide])); 
+		orthog = CalcSideNormal (current); 
 		// set the length of the new cube to be one standard cube length
 		// scale the vector
 		orthog *= 20; 
@@ -341,9 +340,9 @@ switch (m_nAddMode) {
 	// METHOD 2: orghogonal with right angle on new side
 	case (EXTEND):
 		{
-		center = CalcSideCenter (current.m_nSegment, current.m_nSide); 
-		oppCenter = CalcSideCenter (current.m_nSegment, oppSideTable [current.m_nSide]); 
-		orthog = CalcSideNormal (current.m_nSegment, current.m_nSide); 
+		center = CalcSideCenter (current); 
+		oppCenter = CalcSideCenter (CSideKey (current.m_nSegment, oppSideTable [current.m_nSide])); 
+		orthog = CalcSideNormal (current); 
 		// calculate the length of the new cube
 		orthog *= Distance (center, oppCenter); 
 		// set the new vertices
@@ -472,20 +471,22 @@ if (info.count > 0) {
 		matCens [nDelMatCen].m_info.nFuelCen = nDelMatCen;
 		segP->m_info.nMatCen = -1;
 		// point owner of relocated matCen to that matCen's new position
-		CSegment *segP = Segment (0);
-		for (short nSegment = Count (); nSegment; nSegment--, segP++)
+		for (CSegmentIterator i; i; i++) {
+			CSegment *segP = &(*i);
 			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == info.count)) {
 				segP->m_info.nMatCen = nDelMatCen;
 				break;
 				}
+			}
 		}
 	// remove matCen from all robot maker triggers targetting it
 	CSideKey key = (-Index (segP) - 1, 0); 
 	for (int nClass = 0; nClass < 2; nClass++) {
 		CTrigger* trigP = triggerManager.Trigger (0, nClass);
-		for (CTriggerIterator (nClass); i; i++)
+		for (CTriggerIterator i (nClass); i; i++) {
 			if (i->m_info.type == TT_MATCEN)
 				i->Delete (key);
+			}
 		}
 	}
 segP->m_info.nMatCen = -1;
