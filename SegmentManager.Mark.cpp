@@ -43,11 +43,12 @@ segP->m_info.wallFlags ^= MARKED_MASK; /* flip marked bit */
 // update vertices's marked status
 // ..first clear all marked verts
 // ..then mark all verts for marked Segment ()
-segP = Segment (0);
-for (short nSegment = Count (); nSegment; nSegment--, segP++)
+for (CSegmentIterator si; si; si++) {
+	CSegment* segP = &(*si);
 	if (segP->m_info.wallFlags & MARKED_MASK)
 		for (short nVertex = 0; nVertex < 8; nVertex++)
-			vertexManager.Status (segP->m_info.verts [nVertex]) |= MARKED_MASK; 
+			segP->Vertex (nVertex)->Status () |= MARKED_MASK; 
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -57,7 +58,8 @@ void CSegmentManager::UpdateMarked (void)
 	CSegment *segP = Segment (0); 
 
 // mark all cubes which have all 8 verts marked
-for (int i = 0; i < Count (); i++, segP++) {
+for (CSegmentIterator si; si; si++) {
+	CSegment* segP = &(*si);
 	short* vertP = segP->m_info.verts;
 	if ((vertexManager.Status (vertP [0]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [1]) & MARKED_MASK) &&
@@ -75,39 +77,36 @@ for (int i = 0; i < Count (); i++, segP++) {
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::MarkAll (void) 
+void CSegmentManager::MarkAll (byte mask) 
 {
-	int i; 
-
-for (i = 0; i < Count (); i++) 
-	Segment (i)->m_info.wallFlags |= MARKED_MASK; 
-for (i = 0; i < vertexManager.Count (); i++) 
-	vertexManager.Status (i) |= MARKED_MASK; 
+for (CSegmentIterator si; si; si++) {
+	CSegment* segP = &(*si);
+	segP->m_info.wallFlags |= mask; 
+	for (short i = 0; i < 8; i++)
+		segP->Vertex (i)->Status () |= mask;
+	}
 DLE.MineView ()->Refresh (); 
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegmentManager::UnmarkAll (void) 
+void CSegmentManager::UnmarkAll (byte mask) 
 {
-	short i; 
-
-CSegment *segP = Segment (0);
-for (i = 0; i < MAX_SEGMENTS; i++, segP++)
-	segP->m_info.wallFlags &= ~MARKED_MASK; 
-byte& stat = vertexManager.Status ();
-for (i = 0; i < MAX_VERTICES; i++, stat++)
-	stat &= ~MARKED_MASK; 
-//	DLE.MineView ()->Refresh (); 
+for (CSegmentIterator si; si; si++)
+	CSegment* segP = &(*si);
+	segP->m_info.wallFlags &= ~mask; 
+	for (short i = 0; i < 8; i++)
+		segP->Vertex (i)->Status () &= ~mask;
+	}
+DLE.MineView ()->Refresh (); 
 }
 
 // ------------------------------------------------------------------------ 
 
 bool CSegmentManager::HaveMarkedSides (void)
 {
-CSegment* segP = Segment (0);
-for (short nSegment = Count (); nSegment; nSegment--, segP++) {
-	CSide* sideP = segP->m_sides;
+for (CSegmentIterator si; si; si++) {
+	CSide* sideP = si->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++)
 		if (IsMarked (CSideKey (nSegment, nSide)))
 			return true;
@@ -120,13 +119,14 @@ return false;
 short CSegmentManager::MarkedCount (bool bCheck)
 {
 int nCount = 0; 
-CSegment *segP = Segment (0);
-for (short nSegment = Count (); nSegment; nSegment--, segP++)
-	if (segP->m_info.wallFlags & MARKED_MASK)
+for (CSegmentIterator si; si; si++) {
+	if (si->m_info.wallFlags & MARKED_MASK) {
 		if (bCheck)
 			return 1; 
 		else
 			++nCount; 
+		}
+	}
 return nCount; 
 }
 

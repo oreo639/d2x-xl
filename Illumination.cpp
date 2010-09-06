@@ -80,8 +80,8 @@ scale = fLight / 100.0; // 100.0% = normal
 //#pragma omp parallel 
 	{
 	//#pragma omp for
-	for (CSegmentIterator i; i; i++) {
-		CSegment* segP = &(*i);
+	for (CSegmentIterator si; si; si++) {
+		CSegment* segP = &(*si);
 		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
 			CSide* sideP = segP->m_sides;
 			for (int j = 0; j < 6; j++) {
@@ -116,8 +116,8 @@ undoManager.SetModified (true);
 //#pragma omp parallel 
 	{
 //#pragma omp for
-	for (CSegmentIterator i; i; i++) {
-		CSegment *segP = &(*i);
+	for (CSegmentIterator si; si; si++) {
+		CSegment *segP = &(*si);
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
 			if (bAll || (vertexManager.Status (nVertex) & MARKED_MASK)) {
@@ -135,8 +135,8 @@ undoManager.SetModified (true);
 		}
 			//	maxBrightness = min(maxBrightness,0x8000L);
 //#pragma omp for
-	for (CSegmentIterator i; i; i++) {
-		CSegment *segP = &(*i);
+	for (CSegmentIterator si; si; si++) {
+		CSegment *segP = &(*si);
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
 			if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & MARKED_MASK))) {
@@ -162,8 +162,8 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 if (bAll)
 	CLEAR (VertexColors ());
-for (CSegmentIterator i; i; i++) {
-	CSegment *segP = &(*i);
+for (CSegmentIterator si; si; si++) {
+	CSegment *segP = &(*si);
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
@@ -179,9 +179,9 @@ for (CSegmentIterator i; i; i++) {
 // Calculate cube side corner light values
 // for each marked side in the level
 // (range: 0 = min, 0x8000 = max)
-for (CSegmentIterator i; i; i++) {
-	CSegment *segP = &(*i);
-	short nSegment = (short) i.Index ();
+for (CSegmentIterator si; si; si++) {
+	CSegment *segP = &(*si);
+	short nSegment = (short) si.Index ();
 	CSide* sideP = segP->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
@@ -312,12 +312,12 @@ bool bWall = false;
 //#pragma omp parallel 
 	{
 //#pragma omp for private (effect)
-	for (CSegmentIterator i; i; i++) {
+	for (CSegmentIterator si; si; si++) {
 		// skip if this is too far away
-		int nChildSeg = i.Index ();
+		int nChildSeg = si.Index ();
 		if (vicinity [nChildSeg] <= 0)
 			continue;
-		CSegment *childSegP = &(*i);
+		CSegment *childSegP = &(*si);
 		// setup source corner vertex for length calculation later
 		CVertex sourceCorners [4];
 		byte* sideVerts = sideVertTable [nSourceSide];
@@ -432,15 +432,15 @@ fLightScale = 1.0; ///= 100.0;
 //#pragma omp parallel
 	{
 //#pragma omp for private (effect)
-	for (CSegmentIterator i; i; i++) {
+	for (CSegmentIterator si; si; si++) {
 		if (nErrors)
 			continue;
-		CSegment* srcSegP = &(*i);
+		CSegment* srcSegP = &(*si);
 		// skip if not marked unless we are automatically saving
 		if  (!(srcSegP->m_info.wallFlags & MARKED_MASK) && !force) 
 			continue;
 		// loop on all sides
-		short nSourceSeg = (short) i.Index ();
+		short nSourceSeg = (short) si.Index ();
 		CSide* sideP = srcSegP->m_sides;
 		for (int nSourceSide = 0; nSourceSide < 6; nSourceSide++, sideP++) {
 			short nBaseTex, nOvlTex;
@@ -524,13 +524,13 @@ fLightScale = 1.0; ///= 100.0;
 				}
 
 			// loop on child segmentManager.Segment ()
-			for (CSegmentIterator j; j; j++) {
+			for (CSegmentIterator sj; sj; sj++) {
 				if (nErrors)
 					continue;
-				int nChildSeg = j.Index ();
+				int nChildSeg = sj.Index ();
 				if (vicinity [nChildSeg] == 0)
 					continue;
-				CSegment *childSegP = &(*j);
+				CSegment *childSegP = &(*sj);
 				// loop on child sides
 				for (int nChildSide = 0; nChildSide < 6; nChildSide++) {
 					// if texture has a child..

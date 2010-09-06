@@ -140,9 +140,9 @@ triggerManager.UpdateReactor ();
 
 CWall *CWallManager::FindBySide (CSideKey key, int i)
 {
-for (CWallIterator i; i; i++)
-	if (*i == key)
-		return &(*i);
+for (CWallIterator wi; wi; wi++)
+	if (*wi == key)
+		return &(*wi);
 return null;
 }
 
@@ -150,9 +150,9 @@ return null;
 
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
-for (CWallIterator i; i; i++)
-	if (i->m_info.nTrigger == nTrigger)
-		return &(*i);
+for (CWallIterator wi; wi; wi++)
+	if (wi->m_info.nTrigger == nTrigger)
+		return &(*wi);
 return null;
 }
 
@@ -364,8 +364,8 @@ return false;
 void CWallManager::SetIndex (void)
 {
 int j = 0;
-for (CWallIterator i; i; i++)
-	i->m_nIndex = j++;
+for (CWallIterator wi; wi; wi++)
+	wi->m_nIndex = j++;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -400,8 +400,8 @@ if (WallCount () == 0)
 else {
 	m_info [0].size = 24;
 	m_info [0].offset = fp.Tell ();
-	for (CWallIterator i; i; i++)
-		i->Write (fp, nFileVersion);
+	for (CWallIterator wi; wi; wi++)
+		wi->Write (fp, nFileVersion);
 	}
 }
 

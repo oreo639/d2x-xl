@@ -95,7 +95,7 @@ for (i = 0; i < 4; i++) {
 
 	// update all Segment () that use this vertex
 	if (oldVertex != newVertex) {
-		for (CSegmentIterator i; i; i++) {
+		for (CSegmentIterator si; si; si++) {
 			CSegment *segP = &(*i);
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				if (segP->m_info.verts [nVertex] == oldVertex)
@@ -557,7 +557,7 @@ short nNewSide = current.m_nSide;
 CSegment*	newSegP = Segment (nNewSeg);
 CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
 
-for (CSegmentIterator i; i; i++) {
+for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*i);
 	short nSegment = i.Index ();
 	if (nSegment != nNewSeg) {

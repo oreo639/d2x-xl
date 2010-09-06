@@ -100,7 +100,7 @@ memset (sideP->m_info.uvls, 0, sizeof (sideP->m_info.uvls));
  
 // link the new segment with any touching Segment ()
 CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
-for (CSegmentIterator i; i; i++) {
+for (CSegmentIterator si; si; si++) {
 	if (i.Index () != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
@@ -226,7 +226,7 @@ return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cube
 int CSegmentManager::FuelCenterCount (void)
 {
 int nFuelCens = 0;
-for (CSegmentIterator i; i; i++) 
+for (CSegmentIterator si; si; si++) 
 	if ((i->m_info.function == SEGMENT_FUNC_FUELCEN) || (i->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		nFuelCens++;
 return nFuelCens;
@@ -471,7 +471,7 @@ if (info.count > 0) {
 		matCens [nDelMatCen].m_info.nFuelCen = nDelMatCen;
 		segP->m_info.nMatCen = -1;
 		// point owner of relocated matCen to that matCen's new position
-		for (CSegmentIterator i; i; i++) {
+		for (CSegmentIterator si; si; si++) {
 			CSegment *segP = &(*i);
 			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == info.count)) {
 				segP->m_info.nMatCen = nDelMatCen;
@@ -587,7 +587,7 @@ for (short i = triggerManager.NumReactorTriggers (); i > 0; )
 
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
-	for (CSegmentIterator i; i; i++) {
+	for (CSegmentIterator si; si; si++) {
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
 			if (i->Child (nChild) == nDelSeg) {
 				// remove nChild number and update nChild bitmask

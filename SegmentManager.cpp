@@ -95,8 +95,8 @@ void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
 {
 CSegment *segP = Segment (0);
 
-for (CSegmentIterator i; i; i++) {
-	ushort* vertP = i->m_info.verts;
+for (CSegmentIterator si; si; si++) {
+	ushort* vertP = si->m_info.verts;
 	for (short nVertex = 0; nVertex < 8; nVertex++) {
 		if (vertP [nVertex] == nOldVert)
 			vertP [nVertex] = nNewVert;
@@ -190,8 +190,8 @@ int CSegmentManager::Fix (void)
 {
 int errFlags = 0;
 
-for (CSegmentIterator i; i; i++) {
-	CSegment *segP = &(*i);
+for (CSegmentIterator si; si; si++) {
+	CSegment *segP = &(*si);
 	for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 		CSide& side = segP->m_sides [nSide];
 		if ((side.m_info.nWall >= wallManager.Count ()) || !side.Wall ()->Used ()) {

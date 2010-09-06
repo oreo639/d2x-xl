@@ -206,9 +206,9 @@ class CSegmentManager {
 
 		void Mark (short nSegment);
 
-		void MarkAll (void);
+		void MarkAll (byte mask = MARKED_MASK);
 
-		void UnmarkAll (void);
+		void UnmarkAll (byte mask = MARKED_MASK);
 
 		void UpdateMarked (void);
 

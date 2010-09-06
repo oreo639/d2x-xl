@@ -278,10 +278,10 @@ return NO_WALL;
 
 CTrigger* CTriggerManager::FindByTarget (CSideKey key, short i)
 {
-for (CWallTriggerIterator i; i; i++) {
-	int j = i->Find (key);
+for (CWallTriggerIterator ti; ti; ti++) {
+	int j = ti->Find (key);
 	if (j >= 0)
-		return &(*i);
+		return &(*ti);
 	}
 return null;
 }
@@ -306,8 +306,8 @@ for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 		reactorTrigger->Delete (nTarget);
 	}
 // add any exits to target list that are not already in it
-for (CWallIterator i; i; i++) {
-	CWall* wallP = &(*i);
+for (CWallIterator wi; wi; wi++) {
+	CWall* wallP = &(*wi);
 	CTrigger* trigP = wallP->Trigger ();
 	if (trigP == null)
 		continue;
@@ -383,8 +383,8 @@ for (short i = NumObjTriggers (); i; )
 
 void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, CSideKey key) 
 {
-for (CWallTriggerIterator i; i; i++)
-	i->Delete (key);
+for (CWallTriggerIterator ti; ti; ti++)
+	ti->Delete (key);
 
 for (short i = NumObjTriggers (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
@@ -396,8 +396,8 @@ for (short i = NumObjTriggers (); i > 0; )
 void CTriggerManager::SetIndex (void)
 {
 int j = 0;
-for (CWallTriggerIterator i; i; i++)
-	i->m_nIndex = j++;
+for (CWallTriggerIterator ti; ti; ti++)
+	ti->m_nIndex = j++;
 }
 
 // -----------------------------------------------------------------------------
@@ -489,8 +489,8 @@ else {
 	m_info [0].size = theMine->IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
 	m_info [0].offset = fp.Tell ();
 
-	for (CWallTriggerIterator i; i; i++)
-		i->Write (fp, nFileVersion, false);
+	for (CWallTriggerIterator ti; ti; ti++)
+		ti->Write (fp, nFileVersion, false);
 
 	if (theMine->LevelVersion () >= 12) {
 		fp.Write (NumObjTriggers ());

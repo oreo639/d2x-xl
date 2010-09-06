@@ -31,16 +31,12 @@ Count ()--;
 
 void CVertexManager::DeleteUnused (void)
 {
-for (CVertexIterator i; i; i++)
-	i->Status () &= ~NEW_MASK; 
+UnmarkAll (NEW_MASK);
 // mark all used verts
-CSegment *segP = segmentManager.Segment (0);
-for (CSegmentIterator i; i; i++)
-	for (short point = 0; point < 8; point++)
-		vertexManager.Status (i->m_info.verts [point]) |= NEW_MASK; 
-for (CVertexIterator i; i; i++)
-	if (!(i->Status () & NEW_MASK))
-		Delete (i.Index ()); 
+segmentManager.MarkAll (NEW_MASK);
+for (CVertexIterator vi; vi; vi++)
+	if (!(vi->Status () & NEW_MASK))
+		Delete (vi.Index ()); 
 }
 
 // ----------------------------------------------------------------------------- 
@@ -48,8 +44,8 @@ for (CVertexIterator i; i; i++)
 void CVertexManager::SetIndex (void)
 {
 int j = 0;
-for (CVertexIterator i; i; i++)
-	i->m_nIndex = j++;
+for (CVertexIterator vi; vi; vi++)
+	vi->m_nIndex = j++;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -69,24 +65,32 @@ for (int i = 0; i < Count (); i++) {
 void CVertexManager::Write (CFileManager& fp, int nFileVersion)
 {
 m_info.offset = fp.Tell ();
-for (CVertexIterator i; i; i++)
-	i->Write (fp, nFileVersion);
+for (CVertexIterator vi; vi; vi++)
+	vi->Write (fp, nFileVersion);
 }
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::Unmark (void)
+void CVertexManager::MarkAll (void)
 {
-for (CVertexIterator i; i; i++)
-	i->Status () &= ~MARKED_MASK; 
+for (CVertexIterator vi; vi; vi++)
+	vi->Status () |= MARKED_MASK; 
+}
+
+// ----------------------------------------------------------------------------- 
+
+void CVertexManager::UnmarkAll (void)
+{
+for (CVertexIterator vi; vi; vi++)
+	vi->Status () &= ~MARKED_MASK; 
 }
 
 // ----------------------------------------------------------------------------- 
 
 void CVertexManager::Clear (void)
 {
-for (CVertexIterator i; i; i++)
-	i->Clear ();
+for (CVertexIterator vi; vi; vi++)
+	vi->Clear ();
 }
 
 // ----------------------------------------------------------------------------- 

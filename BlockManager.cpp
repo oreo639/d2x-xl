@@ -239,8 +239,8 @@ while (!fp.EoF ()) {
 	nNewSegs++;
 	}
 
-for (CWallTriggerIterator i; i; i++) {
-	CTrigger *trigP = &(*i);
+for (CWallTriggerIterator ti; ti; ti++) {
+	CTrigger *trigP = &(*ti);
 	for (j = 0; j < trigP->m_count; j++) {
 		if (trigP->Segment (j) >= 0)
 			trigP->Segment (j) = xlatSegNum [trigP->Segment (j)];

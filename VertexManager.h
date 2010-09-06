@@ -74,7 +74,9 @@ class CVertexManager  {
 
 		void Clear (void);
 
-		void Unmark (void);
+		void MarkAll (byte mask = MARKED_MASK);
+
+		void UnmarkAll (byte mask = MARKED_MASK);
 
 		CVertexManager () {
 			ResetInfo ();

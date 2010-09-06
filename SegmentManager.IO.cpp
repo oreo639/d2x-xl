@@ -8,7 +8,7 @@
 void CSegmentManager::SetIndex (void)
 {
 int j = 0;
-for (CSegmentIterator i; i; i++)
+for (CSegmentIterator si; si; si++)
 	i->m_nIndex = j++;
 }
 
