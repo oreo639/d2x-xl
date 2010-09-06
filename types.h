@@ -13,7 +13,7 @@
 
 class CGameItem {
 public:
-	short m_nIndex;
+	int m_nIndex;
 
 	CGameItem () : m_nIndex(-1) {}
 

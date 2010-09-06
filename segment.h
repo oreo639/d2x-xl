@@ -116,7 +116,7 @@ public:
 // -----------------------------------------------------------------------------
 
 typedef struct tSegment {
-	short		verts [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
+	ushort	verts [MAX_VERTICES_PER_SEGMENT];	// vertex ids of 4 front and 4 back vertices 
 	byte		function;			// special property of a segment (such as damaging, trigger, etc.) 
 	byte		props;
 	char		nMatCen;				// which center segment is associated with, high bit set 

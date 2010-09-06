@@ -126,7 +126,7 @@ CWall* oppWallP = segmentManager.OppositeWall (*delWallP);
 if (oppWallP != null) 
 	oppWallP->m_info.linkedWall = -1;
 
-triggerManager.DeleteTargets (delWallP->m_nSegment, delWallP->m_nSide);
+triggerManager.DeleteTargets (*delWallP);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
 m_free += (int) nDelWall;
 WallCount ()--;
@@ -363,8 +363,9 @@ return false;
 
 void CWallManager::SetIndex (void)
 {
+int j = 0;
 for (CWallIterator i; i; i++)
-	i->m_nIndex = i;
+	i->m_nIndex = j++;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -376,7 +377,7 @@ if (m_info [0].offset >= 0) {
 	m_free.Reset ();
 	for (short i = 0; i < WallCount (); i++) {
 		if (i < MAX_WALLS) {
-			CWall* wallP = &m_walls [Add ()];
+			CWall* wallP = Wall (Add ());
 			wallP->Read (fp, nFileVersion);
 			wallP->m_nIndex = i;
 			}

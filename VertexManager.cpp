@@ -45,6 +45,15 @@ for (CVertexIterator i; i; i++)
 
 // ----------------------------------------------------------------------------- 
 
+void CVertexManager::SetIndex (void)
+{
+int j = 0;
+for (CVertexIterator i; i; i++)
+	i->m_nIndex = j++;
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CVertexManager::Read (CFileManager& fp, int nFileVersion)
 {
 ushort nVertex;

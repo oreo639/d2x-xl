@@ -7,12 +7,8 @@
 #include <mmsystem.h>
 #include <stdio.h>
 
-#include "define.h"
-#include "types.h"
-#include "cfile.h"
-#include "wall.h"
-#include "TextureManager.h"
-#include "UndoManager.h"
+#include "mine.h"
+#include "dle-xp.h"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -56,18 +52,18 @@ switch (type) {
 		m_info.hps = 0;
 		// define texture to be energy
 		if (nTexture == -1)
-			segmentManager.SetTextures (nSegment, nSide, theMine->IsD1File () ? 328 : 353, 0); // energy
+			segmentManager.SetTextures (key, theMine->IsD1File () ? 328 : 353, 0); // energy
 		else if (nClip == -2)
-			segmentManager.SetTextures (nSegment, nSide, 0, nTexture);
+			segmentManager.SetTextures (key, 0, nTexture);
 		else
-			segmentManager.SetTextures (nSegment, nSide, nTexture, 0);
+			segmentManager.SetTextures (key, nTexture, 0);
 		break;
 
 	case WALL_OVERLAY: // d2 only
 		m_info.nClip = -1;
 		m_info.hps = 0;
 		// define box01a
-		segmentManager.SetTextures (nSegment, nSide, -1, 414);
+		segmentManager.SetTextures (key, -1, 414);
 		break;
 
 	case WALL_CLOAKED:
@@ -81,7 +77,7 @@ switch (type) {
 	default:
 		m_info.nClip = -1;
 		m_info.hps = 0;
-		segmentManager.SetTextures (nSegment, nSide, nTexture, 0);
+		segmentManager.SetTextures (key, nTexture, 0);
 		break;
 	}
 m_info.flags = 0;
@@ -90,7 +86,7 @@ m_info.keys = 0;
 m_info.controllingTrigger = 0;
 
 // set uvls of new texture
-segmentManager.Segment (nSegment)->SetUV (nSide, 0, 0);
+segmentManager.Segment (key.m_nSegment)->SetUV (key.m_nSide, 0, 0);
 undoManager.Unlock ();
 }
 
@@ -157,7 +153,7 @@ m_info.cloakValue = fp.ReadSByte ();
 
 void CWall::Write (CFileManager& fp, int version, bool bFlag)
 {
-fp.WriteInt32 ((int) m_nSegment);
+fp.WriteInt32 (segmentManager.Segment (m_nSegment)->m_nIndex);
 fp.WriteInt32 ((int) m_nSide); 
 fp.Write (m_info.hps);
 fp.Write (m_info.linkedWall);
@@ -166,8 +162,11 @@ if (version < 37)
 	fp.WriteSByte ((sbyte) m_info.flags);
 else
 	fp.Write (m_info.flags);         
-fp.Write (m_info.state);         
-fp.Write (m_info.nTrigger);       
+fp.Write (m_info.state);   
+if (m_info.nTrigger == NO_TRIGGER)
+	fp.Write (m_info.nTrigger);       
+else
+	fp.WriteByte ((byte) triggerManager.Trigger (m_info.nTrigger)->m_nIndex);
 fp.Write (m_info.nClip);      
 fp.Write (m_info.keys);          
 fp.Write (m_info.controllingTrigger);
@@ -178,7 +177,7 @@ fp.Write (m_info.cloakValue);
 
 CSide* CWall::Side (void)
 {
-return segmentManager.Side (m_nSegment, m_nSide);
+return segmentManager.Side (*this);
 }
 
 // ------------------------------------------------------------------------
@@ -199,12 +198,12 @@ return (m_info.type == WALL_BLASTABLE) || (m_info.type == WALL_DOOR);
 
 bool CWall::IsVisible (void)
 {
-return (wallP->m_info.type != WALL_OPEN);
+return (m_info.type != WALL_OPEN);
 }
 
 //------------------------------------------------------------------------------
 
-bool CWall:IsVariable (void)
+bool CWall::IsVariable (void)
 {
 CTrigger* trigP = Trigger ();
 if (trigP == null)

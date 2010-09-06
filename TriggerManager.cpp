@@ -137,7 +137,7 @@ if (segmentManager.Trigger () != null) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
-if (Count (0) >= MAX_TRIGGERS) {
+if (m_free.Empty ()) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return null;
 	}
@@ -201,11 +201,12 @@ if (DLE.IsD1File ()) {
 else
 	flags = 0;
 
-short nTrigger = Count (0)++;
+int nTrigger = --m_free;
 CTrigger* trigP = Trigger (nTrigger);
 trigP->Setup (type, flags);
 trigP->m_nIndex = nTrigger;
 wallP->SetTrigger (nTrigger);
+Count (0)++;
 UpdateReactor ();
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
@@ -277,12 +278,10 @@ return wallManager.Count ();
 
 CTrigger* CTriggerManager::FindByTarget (CSideKey key, short i)
 {
-	CTrigger *trigP = Trigger (i);
-
-for (; i < Count (0); i++, trigP++) {
-	int j = trigP->Find (key);
+for (CWallTriggerIterator i; i; i++) {
+	int j = i->Find (key);
 	if (j >= 0)
-		return trigP;
+		return &(*i);
 	}
 return null;
 }
@@ -396,8 +395,9 @@ for (i = NumObjTriggers (); i > 0; )
 
 void CTriggerManager::SetIndex (void)
 {
+int j = 0;
 for (CWallTriggerIterator i; i; i++)
-	i->m_nIndex = i;
+	i->m_nIndex = j++;
 }
 
 // -----------------------------------------------------------------------------
@@ -433,8 +433,9 @@ if (m_info [0].offset < 0)
 fp.Seek (m_info [0].offset);
 for (short i = 0; i < Count (0); i++) {
 	if (Count (0) < MAX_TRIGGERS) {
-		m_triggers [0][i].Read (fp, nFileVersion, false);
-		m_triggers [0][i].m_nIndex = i;
+		CTrigger* trigP = WallTrigger (--m_free);
+		trigP->Read (fp, nFileVersion, false);
+		trigP->m_nIndex = i;
 		}
 	else {
 		CTrigger t;

@@ -54,6 +54,8 @@ class CVertexManager  {
 
 		inline int& Count (void) { return m_info.count; }
 
+		inline bool Full (void) { return m_free.Empty (); }
+
 		inline int& FileOffset (void) { return m_info.offset; }
 
 		inline ushort Index (CVertex* vertP) { return (ushort) (vertP - &m_vertices [0]); }
@@ -64,6 +66,8 @@ class CVertexManager  {
 
 		void DeleteUnused (void);
 
+		void SetIndex (void);
+
 		void Read (CFileManager& fp, int nFileVersion);
 
 		void Write (CFileManager& fp, int nFileVersion);
@@ -71,8 +75,6 @@ class CVertexManager  {
 		void Clear (void);
 
 		void Unmark (void);
-
-		inline bool Full (void) { return m_free.Empty (); }
 
 		CVertexManager () {
 			ResetInfo ();

@@ -258,6 +258,8 @@ class CSegmentManager {
 
 		void DeleteBlock ();
 
+		void SetIndex (void);
+
 		inline void ReadInfo (CFileManager& fp) { m_segmentInfo.Read (fp); }
 
 		inline void WriteInfo (CFileManager& fp) { m_segmentInfo.Write (fp); }

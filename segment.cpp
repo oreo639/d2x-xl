@@ -381,7 +381,7 @@ byte CSegment::WriteWalls (CFileManager& fp, int nLevelVersion)
 
 m_info.wallFlags = 0;
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	if (m_sides [i].m_info.nWall < wallManager.WallCount ()) 
+	if (m_sides [i].m_info.nWall != NO_WALL) 
 		m_info.wallFlags |= (1 << i);
 	}
 fp.Write (m_info.wallFlags);
@@ -389,10 +389,11 @@ fp.Write (m_info.wallFlags);
 // write wall numbers
 for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_info.wallFlags & (1 << i)) {
+		CWall* wallP = m_sides [i].Wall ();
 		if (nLevelVersion >= 13)
-			fp.Write (m_sides [i].m_info.nWall);
+			fp.WriteUInt16 ((ushort) wallP->m_nIndex);
 		else
-			fp.WriteSByte ((sbyte) m_sides [i].m_info.nWall);
+			fp.WriteSByte ((sbyte) wallP->m_nIndex);
 		}
 	}
 return m_info.wallFlags;
@@ -449,7 +450,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 
 // write vertex numbers (16 bytes)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	fp.Write (m_info.verts [i]);
+	fp.WriteUInt16 ((ushort) vertexManager.Vertex (m_info.verts [i])->m_nIndex);
 
 // write special info (0 to 4 bytes)
 if ((m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (m_info.nMatCen == -1)) {

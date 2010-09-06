@@ -43,15 +43,21 @@ return m_count;
 
 int CTriggerTargets::Delete (CSideKey key) 
 { 
+	short i = -1;
+
 if (key.m_nSegment < 0) {
 	// delete all sides of segment (-key.m_nSegment - 1) from the target list
 	key.m_nSegment = -key.m_nSegment - 1;
-	for (int i = m_nCount - 1; i >= 0; i--)
-		if (m_targets [i].m_nSegment == key.m_nSegment)
-			Delete (i);
+	for (int j = m_count - 1; j >= 0; j--) {
+		if (m_targets [j].m_nSegment == key.m_nSegment) {
+			Delete (j);
+			if (i < 0)
+				i = j;
+			}
+		}
 	}
 else {
-	short i = Find (key);
+	i = Find (key);
 	if (i >= 0)
 		Delete (i);
 	}
@@ -96,7 +102,7 @@ void CTriggerTargets::Write (CFileManager& fp)
 	int i;
 
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp.Write (m_targets [i].m_nSegment);
+	fp.WriteInt16 ((short) segmentManager.Segment (m_targets [i].m_nSegment)->m_nIndex);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp.Write (m_targets [i].m_nSide);
 }

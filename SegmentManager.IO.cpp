@@ -5,6 +5,15 @@
 
 // ----------------------------------------------------------------------------- 
 
+void CSegmentManager::SetIndex (void)
+{
+int j = 0;
+for (CSegmentIterator i; i; i++)
+	i->m_nIndex = j++;
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CSegmentManager::ReadSegments (CFileManager& fp, int nFileVersion)
 {
 if (m_segmentInfo.offset >= 0) {
