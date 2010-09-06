@@ -9,11 +9,10 @@ CSegmentManager segmentManager;
 
 void CSegmentManager::CalcCenter (CVertex& pos, short nSegment) 
 {
-  short	*nVerts = Segment (nSegment)->m_info.verts; 
-  
 pos.Clear ();
+CSegment* segP = Segment (nSegment);
 for (int i = 0; i < 8; i++)
-	pos += *vertexManager.Vertex (nVerts [i]);
+	pos += *segP->Vertex (i);
 pos /= 8.0;
 }
 
@@ -23,12 +22,12 @@ CDoubleVector CSegmentManager::CalcSideCenter (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
 
-	short*	segVertP = Segment (nSegment)->m_info.verts;
+	CSegment*	segP = Segment (nSegment);
 	byte*		sideVertP = &sideVertTable [nSide][0];
 	CDoubleVector	v;
 
 for (int i = 0; i < 4; i++)
-	v += *vertexManager.Vertex (segVertP [sideVertP [i]]);
+	v += *segP->Vertex (sideVertP [i]);
 v /= 4.0;
 return v;
 }
@@ -39,12 +38,10 @@ CDoubleVector CSegmentManager::CalcSideNormal (short nSegment, short nSide)
 {
 current.Get (nSegment, nSide);
 
-short* segVertP = Segment (nSegment)->m_info.verts;
+CSegment* segP = Segment (nSegment);
 byte*	sideVertP = &sideVertTable [nSide][0];
 
-return -Normal (*vertexManager.Vertex (segVertP [sideVertP [0]]), 
-					 *vertexManager.Vertex (segVertP [sideVertP [1]]), 
-					 *vertexManager.Vertex (segVertP [sideVertP [3]]));
+return -Normal (*segP->Vertex (sideVertP [0]), *segP->Vertex (sideVertP [1]), *segP->Vertex (sideVertP [3]));
 }
 
 // ------------------------------------------------------------------------------ 
@@ -100,8 +97,8 @@ void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
 {
 CSegment *segP = Segment (0);
 
-for (short nSegment = Count (); nSegment; nSegment--, segP++) {
-	short* vertP = segP->m_info.verts;
+for (CSegmentIterator i; i; i++) {
+	ushort* vertP = i->m_info.verts;
 	for (short nVertex = 0; nVertex < 8; nVertex++) {
 		if (vertP [nVertex] == nOldVert)
 			vertP [nVertex] = nNewVert;

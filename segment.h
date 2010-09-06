@@ -165,7 +165,7 @@ public:
 
 	inline CSide* Side (short i) { return ((i < 0) || (i > 5)) ? null : &m_sides [i]; }
 
-	CVertex* CSegment::Vertex (short nVertex);
+	CVertex* Vertex (short nVertex);
 
 	inline short Child (short nSide) { return m_sides [nSide].m_info.nChild; }
 
