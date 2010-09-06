@@ -16,9 +16,19 @@ char *BLOCKOP_HINT =
 
 //------------------------------------------------------------------------------
 
+bool CBlockManager::CheckTunnelMaker (void)
+{
+if (!tunnelMaker.Active ())
+	return false;
+ErrorMsg (szTunnelMakerError);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+
 void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
 {
-short* verts = current.Segment ()->m_info.verts;
+ushort* verts = current.Segment ()->m_info.verts;
 byte* sideVerts = sideVertTable [current.m_nSide];
 o = *vertexManager.Vertex (verts [sideVerts [CURRENT_POINT(0)]]);
 // set x'
@@ -183,8 +193,8 @@ while (!fp.EoF ()) {
 				}
 		// else make a new vertex
 		if (k == 0) {
-			vertexManager.Add ();
-			int nVertex = vertexManager.Count () - 1;
+			ushort nVertex;
+			vertexManager.Add (&nVertex);
 			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
 			*vertexManager.Vertex (nVertex) = v;
@@ -373,10 +383,8 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 
 void CBlockManager::Cut (void)
 {
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message);
+if (CheckTunnelMaker ()) 
 	return;
-	}
 
   // make sure some cubes are marked
 short count = segmentManager.MarkedCount ();
@@ -489,10 +497,8 @@ DLE.MineView ()->Refresh ();
 
 void CBlockManager::Paste (void) 
 {
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message);
+if (CheckTunnelMaker ()) 
 	return;
-	}
 // Initialize data for fp open dialog
   char szFile [256] = "\0";
 
@@ -621,18 +627,11 @@ void CBlockManager::QuickPaste (void)
 {
 if (!*m_filename) {
 	Paste ();
-//	ErrorMsg ("You must first use one of the cut or paste commands\n"
-//				"before you use the Quick Paste command");
 	return;
 	}
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message);
+if (CheckTunnelMaker ()) 
 	return;
-	}
-
-//undoManager.UpdateBuffer(0);
-
 if (!Read (m_filename))
 	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 }
@@ -643,10 +642,8 @@ void CBlockManager::Delete (void)
 {
 short nSegment, count;
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message);
+if (CheckTunnelMaker ()) 
 	return;
-	}
 // make sure some cubes are marked
 count = segmentManager.MarkedCount ();
 if (!count) {
