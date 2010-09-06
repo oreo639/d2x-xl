@@ -310,10 +310,10 @@ else {
 			nVertex = 4 * nSegment + j;
 			if (nSegment == 0) {         // 1st segment
 				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [0].m_nSegment)->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 				}
 			else if (nSegment == m_nLength - 1) { // last segment
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [1].m_nSegment)->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
 				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
 				}
 			else { // intermediate segments
@@ -338,12 +338,12 @@ else {
 		if (nSegment == 0) {
 			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
 			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
-			segmentManager.Segment (m_info [0].m_nSegment)->SetChild (m_info [0].m_nSide, segmentManager.Count ());
+			m_info [0].Segment ()->SetChild (m_info [0].m_nSide, segmentManager.Count ());
 			} 
 		else if (nSegment == m_nLength - 1) {
 			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
 			segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
-			segmentManager.Segment (m_info [1].m_nSegment)->SetChild (m_info [1].m_nSide, segmentManager.Count ());
+			m_info [1].Segment ()->SetChild (m_info [1].m_nSide, segmentManager.Count ());
 			}
 		else  {
 			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
@@ -443,10 +443,10 @@ for (i = 0; i <= m_nLength; i++)
 // make all points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
 	rel_pts [i] = points [i] - points [0];
-segP = segmentManager.Segment (m_info [0].m_nSegment);
+segP = m_info [0].Segment ();
 for (i = 0; i < 4; i++) 
 	rel_side_pts [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - points [0];
-segP = segmentManager.Segment (m_info [1].m_nSegment);
+segP = m_info [1].Segment ();
 for (i = 0; i < 4; i++)
 	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - points [0];
 for (i = 0; i < m_nLength; i++) {
@@ -526,7 +526,7 @@ for (i = 0; i < m_nLength; i++) {
 	for (j = 0; j < 4; j++) {
 		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
 		angle  = ((double) i / (double) m_nLength) * delta_angle [j] + theta [0][j];
-		length = ((double) i / (double) m_nLength) * radius [1][MatchingSide (j)] + (((double) m_nLength- (double) i) / (double) m_nLength) * radius [0][j];
+		length = ((double) i / (double) m_nLength) * radius [1][MatchingSide (j)] + (((double) m_nLength - (double) i) / (double) m_nLength) * radius [0][j];
 		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
@@ -543,7 +543,7 @@ for (i = 0; i < m_nLength; i++) {
 	for (j = 0; j < 4; j++) {
 		if (i == 0) {         // 1st segment
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
-			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [0].m_nSegment)->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
 		else {
 			if(i < m_nLength - 1) { // center segments
@@ -551,7 +551,7 @@ for (i = 0; i < m_nLength; i++) {
 				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
 				} 
 			else {          // last segment
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [1].m_nSegment)->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
 				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
 				}
 			}

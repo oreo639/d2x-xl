@@ -14,6 +14,8 @@ char	szTunnelMakerError [] = "You must exit spline creation before preforming th
 class CTunnelInfo : public CSideKey {
 public:
 	double	m_length;
+
+	CSegment* Segment (void) { return segmentManager.Segment (m_nSegment); }
 	};
 
 //------------------------------------------------------------------------
