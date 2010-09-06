@@ -59,8 +59,7 @@ void CSegmentManager::UpdateMarked (void)
 
 // mark all cubes which have all 8 verts marked
 for (CSegmentIterator si; si; si++) {
-	CSegment* segP = &(*si);
-	short* vertP = segP->m_info.verts;
+	ushort* vertP = si->m_info.verts;
 	if ((vertexManager.Status (vertP [0]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [1]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [2]) & MARKED_MASK) &&
@@ -69,9 +68,9 @@ for (CSegmentIterator si; si; si++) {
 		 (vertexManager.Status (vertP [5]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [6]) & MARKED_MASK) &&
 		 (vertexManager.Status (vertP [7]) & MARKED_MASK))
-		segP->m_info.wallFlags |= MARKED_MASK; 
+		si->m_info.wallFlags |= MARKED_MASK; 
 	else
-		segP->m_info.wallFlags &= ~MARKED_MASK; 
+		si->m_info.wallFlags &= ~MARKED_MASK; 
 	}
 }
 
@@ -92,7 +91,7 @@ DLE.MineView ()->Refresh ();
 
 void CSegmentManager::UnmarkAll (byte mask) 
 {
-for (CSegmentIterator si; si; si++)
+for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*si);
 	segP->m_info.wallFlags &= ~mask; 
 	for (short i = 0; i < 8; i++)
@@ -107,6 +106,7 @@ bool CSegmentManager::HaveMarkedSides (void)
 {
 for (CSegmentIterator si; si; si++) {
 	CSide* sideP = si->m_sides;
+	short nSegment = si.Index ();
 	for (short nSide = 0; nSide < 6; nSide++)
 		if (IsMarked (CSideKey (nSegment, nSide)))
 			return true;

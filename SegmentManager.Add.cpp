@@ -101,16 +101,16 @@ memset (sideP->m_info.uvls, 0, sizeof (sideP->m_info.uvls));
 // link the new segment with any touching Segment ()
 CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
 for (CSegmentIterator si; si; si++) {
-	if (i.Index () != nNewSeg) {
+	if (si.Index () != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		CVertex *vSeg = vertexManager.Vertex (i->m_info.verts [0]);
+		CVertex *vSeg = vertexManager.Vertex (si->m_info.verts [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
-					Link (nNewSeg, nNewSide, i.Index (), nSide, 3);
+					Link (nNewSeg, nNewSide, si.Index (), nSide, 3);
 		}
 	}
 // auto align textures new segment
@@ -227,7 +227,7 @@ int CSegmentManager::FuelCenterCount (void)
 {
 int nFuelCens = 0;
 for (CSegmentIterator si; si; si++) 
-	if ((i->m_info.function == SEGMENT_FUNC_FUELCEN) || (i->m_info.function == SEGMENT_FUNC_REPAIRCEN))
+	if ((si->m_info.function == SEGMENT_FUNC_FUELCEN) || (si->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		nFuelCens++;
 return nFuelCens;
 }
@@ -472,7 +472,7 @@ if (info.count > 0) {
 		segP->m_info.nMatCen = -1;
 		// point owner of relocated matCen to that matCen's new position
 		for (CSegmentIterator si; si; si++) {
-			CSegment *segP = &(*i);
+			CSegment *segP = &(*si);
 			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == info.count)) {
 				segP->m_info.nMatCen = nDelMatCen;
 				break;
@@ -589,19 +589,19 @@ for (short i = triggerManager.NumReactorTriggers (); i > 0; )
 	CTexture* texP = textureManager.Textures (m_fileType);
 	for (CSegmentIterator si; si; si++) {
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
-			if (i->Child (nChild) == nDelSeg) {
+			if (si->Child (nChild) == nDelSeg) {
 				// remove nChild number and update nChild bitmask
-				i->SetChild (nChild, -1); 
+				si->SetChild (nChild, -1); 
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + nChild;
-				SetTextures (CSideKey (i.Index (), nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
+				SetTextures (CSideKey (si.Index (), nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
 				Segment (nSegment)->SetUV (nChild, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (short j = 0; j < 4; j++) {
 					//segP->m_sides [nChild].m_info.uvls [j].u = (short) ((double) defaultUVLs [j].u / scale); 
 					//segP->m_sides [nChild].m_info.uvls [j].v = (short) ((double) defaultUVLs [j].v / scale); 
-					i->m_sides [nChild].m_info.uvls [j].l = delSegP->m_sides [nChild].m_info.uvls [j].l; 
+					si->m_sides [nChild].m_info.uvls [j].l = delSegP->m_sides [nChild].m_info.uvls [j].l; 
 				}
 			}
 		}
