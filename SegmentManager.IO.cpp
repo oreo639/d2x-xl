@@ -51,14 +51,13 @@ else {
 
 	int nLevelType = theMine->IsD2XLevel () ? 2 : theMine->IsD2File () ? 1 : 0;
 	int nLevelVersion = theMine->LevelVersion ();
-	int i;
 
 	for (int i = 0; i < Count (); i++)
 		m_segments [i].Write (fp, nLevelType, nFileVersion);
 	if (!theMine->IsD2File ())
 		return;
 	for (int i = 0; i < Count (); i++)
-		m_segments [i].WriteExtras (fp, nLevelType, nFileVersion);
+		m_segments [i].WriteExtras (fp, nLevelType, true);
 	}
 }
 
