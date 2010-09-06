@@ -18,12 +18,12 @@ pos /= 8.0;
 
 // -----------------------------------------------------------------------------
 
-CDoubleVector CSegmentManager::CalcSideCenter (short nSegment, short nSide)
+CDoubleVector CSegmentManager::CalcSideCenter (CSideKey key)
 {
-current.Get (nSegment, nSide);
+current.Get (key);
 
-	CSegment*	segP = Segment (nSegment);
-	byte*		sideVertP = &sideVertTable [nSide][0];
+	CSegment*	segP = Segment (key.m_nSegment);
+	byte*		sideVertP = &sideVertTable [key.m_nSide][0];
 	CDoubleVector	v;
 
 for (int i = 0; i < 4; i++)
@@ -34,13 +34,11 @@ return v;
 
 // -----------------------------------------------------------------------------
 
-CDoubleVector CSegmentManager::CalcSideNormal (short nSegment, short nSide)
+CDoubleVector CSegmentManager::CalcSideNormal (CSideKey key)
 {
-current.Get (nSegment, nSide);
-
-CSegment* segP = Segment (nSegment);
-byte*	sideVertP = &sideVertTable [nSide][0];
-
+current.Get (key);
+CSegment* segP = Segment (key.m_nSegment);
+byte*	sideVertP = &sideVertTable [key.m_nSide][0];
 return -Normal (*segP->Vertex (sideVertP [0]), *segP->Vertex (sideVertP [1]), *segP->Vertex (sideVertP [3]));
 }
 

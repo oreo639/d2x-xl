@@ -10,7 +10,7 @@
 #include "mineview.h"
 #include "toolview.h"
 
-#include "palette.h"
+#include "PaletteManager.h"
 #include "textures.h"
 #include "global.h"
 #include "render.h"

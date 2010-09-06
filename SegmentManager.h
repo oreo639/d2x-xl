@@ -193,9 +193,9 @@ class CSegmentManager {
 
 		void SplitPoints (void);
 
-		CDoubleVector CalcSideNormal (short nSegment = -1, short nSide = -1);
+		CDoubleVector CalcSideNormal (CSideKey key = CSideKey (-1, -1));
 
-		CDoubleVector CalcSideCenter (short nSegment = -1, short nSide = -1);
+		CDoubleVector CalcSideCenter (CSideKey key = CSideKey (-1, -1));
 		//double CalcLength (CFixVector* center1, CFixVector* center2);
 
 		void FixChildren (void);

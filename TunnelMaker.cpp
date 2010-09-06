@@ -28,7 +28,7 @@ return ((double)Faculty (n) / ((double)Faculty (i) * (double) Faculty (n-i)));
 }
 
 //------------------------------------------------------------------------------
-//   Blend(i,n,u) - returns a weighted coefficient for each point in a spline
+//   Blend(i,n,u) - returns a weighted coefficient for each point in a nSegment
 //------------------------------------------------------------------------------
 
 double CTunnelMaker::Blend (int i, int n, double u) 
@@ -216,7 +216,7 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 //------------------------------------------------------------------------------
 // MENU - Tunnel Generator
 //
-// Action - This is like a super "join" feature which uses splines to
+// Action - This is like a super "join" feature which uses tunnels to
 //          connect the cubes.  The number of cubes is determined
 //          automatically.
 //------------------------------------------------------------------------------
@@ -227,136 +227,127 @@ void CTunnelMaker::Create (void)
 //  undoManager.UpdateBuffer(0);
 
 double		length;
-int			i, j, nVertex, spline;
+int			i, nVertex, nSegment;
 CSegment*	segP;
 
 if (!m_bActive) {
-	m_nMaxSplines = MAX_SEGMENTS - segmentManager.Count ();
-	if (m_nMaxSplines > MAX_SPLINES)
-		m_nMaxSplines = MAX_SPLINES;
-	else if (m_nMaxSplines < 3) {
-//	if ((vertexManager.Count () + 3 /*MAX_SPLINES*/ * 4 > MAX_VERTICES) ||
-//		 (segmentManager.Count () + 3 /*MAX_SPLINES*/ > MAX_SEGMENTS)) {
+	m_nMaxSegments = MAX_SEGMENTS - segmentManager.Count ();
+	if (m_nMaxSegments > MAX_TUNNEL_SEGMENTS)
+		m_nMaxSegments = MAX_TUNNEL_SEGMENTS;
+	else if (m_nMaxSegments < 3) {
+//	if ((vertexManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ * 4 > MAX_VERTICES) ||
+//		 (segmentManager.Count () + 3 /*MAX_TUNNEL_SEGMENTS*/ > MAX_SEGMENTS)) {
 		ErrorMsg ("Insufficient number of free vertices and/or segments\n"
-					"to use the tunnel generator.");
+					"to use the nSegment generator.");
 		return;
 		}
 	// make sure there are no children on either segment/side
 	if ((segmentManager.Segment (selections [0].m_nSegment)->Child (selections [0].m_nSide) != -1) ||
 		 (segmentManager.Segment (selections [1].m_nSegment)->Child (selections [1].m_nSide) != -1)) {
-		ErrorMsg ("Starting and/or ending point of spline\n"
+		ErrorMsg ("Starting and/or ending point of nSegment\n"
 					"already have cube(s) attached.\n\n"
 					"Hint: Put the current cube and the alternate cube\n"
 					"on sides which do not have cubes attached.");
 		return;
 		}
-	nSplineSeg1 = selections [0].m_nSegment;
-	nSplineSeg2 = selections [1].m_nSegment;
-	nSplineSide1 = selections [0].m_nSide;
-	nSplineSide2 = selections [1].m_nSide;
-	// define 4 data points for spline to work from
+
+	dynamic_cast<CSideKey&> (m_info [0]) = dynamic_cast<CSideKey&> (selections [0]);
+	dynamic_cast<CSideKey&> (m_info [1]) = dynamic_cast<CSideKey&> (selections [1]);
+	// define 4 data points for nSegment to work from
 	// center of current cube
-	points [0] = segmentManager.CalcSideCenter (nSplineSeg1, nSplineSide1);
+	points [0] = segmentManager.CalcSideCenter (m_info [0]);
 	// center of other cube
-	points [3] = segmentManager.CalcSideCenter (nSplineSeg2, nSplineSide2);
+	points [3] = segmentManager.CalcSideCenter (m_info [1]);
 	// calculate length between cubes
-	length = Distance (*points, points [3]);
-	// base spline length on distance between cubes
-	m_splineLength1 = (length / 3);
-	if (m_splineLength1 < MIN_SPLINE_LENGTH)
-		m_splineLength1 = MIN_SPLINE_LENGTH;
-	if (m_splineLength1 > MAX_SPLINE_LENGTH)
-		m_splineLength1 = MAX_SPLINE_LENGTH;
-	m_splineLength2 = (length / 3);
-	if (m_splineLength2 < MIN_SPLINE_LENGTH)
-		m_splineLength2 = MIN_SPLINE_LENGTH;
-	if (m_splineLength2 > MAX_SPLINE_LENGTH)
-		m_splineLength2 = MAX_SPLINE_LENGTH;
+	length = Distance (points [0], points [3]);
 	if (length < 50) {
-		ErrorMsg ("End points of tunnel are too close.\n\n"
+		ErrorMsg ("End points of nSegment are too close.\n\n"
 					"Hint: Select two sides which are further apart\n"
 					"using the spacebar and left/right arrow keys,\n"
 					"then try again.");
 		return;
 		}
+	// base nSegment length on distance between cubes
+	for (i = 0; i < 2; i++) {
+		m_info [i].m_length = (length / 3);
+		if (m_info [i].m_length < MIN_TUNNEL_LENGTH)
+			m_info [i].m_length = MIN_TUNNEL_LENGTH;
+		else if (m_info [i].m_length > MAX_TUNNEL_LENGTH)
+			m_info [i].m_length = MAX_TUNNEL_LENGTH;
+		}
 	if (!bExpertMode)
-		ErrorMsg ("Place the current cube on one of the tunnel end points.\n\n"
+		ErrorMsg ("Place the current cube on one of the nSegment end points.\n\n"
 				  "Use the ']' and '[' keys to adjust the length of the red\n"
-				  "spline segment.\n\n"
+				  "nSegment segment.\n\n"
 				  "Press 'P' to rotate the point connections.\n\n"
 				  "Press 'G' or select Tools/Tunnel Generator when you are finished.");
+
+	for (i = 0; i < m_nLength; i++)
+		m_nSegments [i] = segmentManager.Add ();
+	for (i = 0; i < 4 * m_nLength; i++)
+		m_nVertices [i] = segmentManager.Add ();
+
 	m_bActive = true;
 	}
 else {
 	m_bActive = false;
-	// ask if user wants to keep the new spline
+	// ask if user wants to keep the new nSegment
 	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) {
+		for (i = m_nLength; i > 0; )
+			segmentManager.Delete (m_nSegments [--i]);
+		for (i = m_nLength * 4; i > 0; )
+			vertexManager.Delete (m_nVertices [--i]);
 		DLE.MineView ()->Refresh (false);
 		return;
 		}
 	undoManager.SetModified (true);
 	undoManager.Lock ();
-	for (spline = 0; spline < n_splines; spline++) {
-		segP = segmentManager.Segment (segmentManager.Count ());
+	for (nSegment = 0; nSegment < m_nLength; nSegment++) {
+		segP = segmentManager.Segment (m_nSegments [nSegment]);
 		// copy current segment
 		*segP = *segmentManager.Segment (current.m_nSegment);
-		// use last "n_spline" segments
-		nVertex = (MAX_VERTICES - 1) - spline * 4;
-		for (j = 0; j < 4; j++) {
-			if (vertexManager.Count () >= MAX_VERTICES)
-				DEBUGMSG (" Tunnel generator: Vertex count out of range.")
-			else if ((nVertex - j < 0) || (nVertex - j >= MAX_VERTICES))
-				DEBUGMSG (" Tunnel generator: Vertex number out of range.")
-			else
-				*vertexManager.Vertex (vertexManager.Count ()) = *vertexManager.Vertex (nVertex - j);
-/*
-			vertices [vertexManager.Count ()].x = vertices [nVertex-j].x;
-			vertices [vertexManager.Count ()].y = vertices [nVertex-j].y;
-			vertices [vertexManager.Count ()].z = vertices [nVertex-j].z;
-*/
-			if (spline == 0) {         // 1st segment
-				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = vertexManager.Count ();
-				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = segmentManager.Segment (nSplineSeg1)->m_info.verts [sideVertTable [nSplineSide1][j]];
-				vertexManager.Status (vertexManager.Count ()++) = 0;
+		for (short j = 0; j < 4; j++) {
+			nVertex = 4 * nSegment + j;
+			if (nSegment == 0) {         // 1st segment
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [0].m_nSegment)->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 				}
-			else if(spline < n_splines - 1) { // center segments
-				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = vertexManager.Count ();
-				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = vertexManager.Count () - 4;
-				vertexManager.Status (vertexManager.Count ()++) = 0;
+			else if (nSegment == m_nLength - 1) { // last segment
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [1].m_nSegment)->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
 				}
-			else {          // last segment
-				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = segmentManager.Segment (nSplineSeg2)->m_info.verts [sideVertTable [nSplineSide2][MatchingSide (j)]];
-				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = vertexManager.Count () - 4 + j;
+			else { // intermediate segments
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
 				}
 			}
 		// int twisted segments
-		UntwistSegment (segmentManager.Count (), nSplineSide1);
+		UntwistSegment (m_nSegments [nSegment], m_info [0].m_nSide);
 		// define children and sides (textures and nWall)
-		for (j = 0; j < 6; j++) {
-			segP->SetChild (j, -1);
-			segP->m_sides [j].m_info.nBaseTex = 0;
-			segP->m_sides [j].m_info.nOvlTex = 0;
-			segP->m_sides [j].m_info.nWall = NO_WALL;
-			for (i = 0; i < 4; i++) {
-//	    segP->m_sides [j].uvls [i].u = defaultUVLs [i].u;
-//	    segP->m_sides [j].uvls [i].v = defaultUVLs [i].v;
-				segP->m_sides [j].m_info.uvls [i].l = (ushort) DEFAULT_LIGHTING;
+		CSide* sideP = segP->m_sides;
+		for (short nSide = 6; nSide > 0; nSide--, sideP++) {
+			segP->SetChild (nSide, -1);
+			sideP->m_info.nBaseTex = 0;
+			sideP->m_info.nOvlTex = 0;
+			sideP->m_info.nWall = NO_WALL;
+			for (short nUVL = 0; nUVL < 4; nUVL++) {
+				sideP->m_info.uvls [nUVL].l = (ushort) DEFAULT_LIGHTING;
 				}
-			segP->SetUV (j,0,0);
+			segP->SetUV (nSide, 0, 0);
 			}
-		if (spline == 0) {
-			segP->SetChild (oppSideTable [nSplineSide1], nSplineSeg1);
-			segP->SetChild (nSplineSide1, segmentManager.Count () + 1);
-			segmentManager.Segment (nSplineSeg1)->SetChild (nSplineSide1, segmentManager.Count ());
+		if (nSegment == 0) {
+			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
+			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
+			segmentManager.Segment (m_info [0].m_nSegment)->SetChild (m_info [0].m_nSide, segmentManager.Count ());
 			} 
-		else if (spline < n_splines-1) {
-			segP->SetChild (oppSideTable [nSplineSide1], segmentManager.Count () - 1);
-			segP->SetChild (nSplineSide1, segmentManager.Count () + 1);
+		else if (nSegment == m_nLength - 1) {
+			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
+			segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
+			segmentManager.Segment (m_info [1].m_nSegment)->SetChild (m_info [1].m_nSide, segmentManager.Count ());
 			}
-		else {
-			segP->SetChild (oppSideTable [nSplineSide1], segmentManager.Count () - 1);
-			segP->SetChild (nSplineSide1, nSplineSeg2);
-			segmentManager.Segment (nSplineSeg2)->SetChild (nSplineSide2, segmentManager.Count ());
+		else  {
+			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
+			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]); // next tunnel segment
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
 		segP->m_info.owner = -1;
@@ -375,44 +366,44 @@ DLE.MineView ()->Refresh ();
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::IncreaseSpline (void) 
+void CTunnelMaker::Stretch (void) 
 {
 
 //undoManager.UpdateBuffer(0);
 
-if (current.m_nSegment == nSplineSeg1)
-	if (m_splineLength1 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
-		m_splineLength1 += SPLINE_INTERVAL;
-if (current.m_nSegment == nSplineSeg2)
-	if (m_splineLength2 < (MAX_SPLINE_LENGTH-SPLINE_INTERVAL))
-		m_splineLength2 += SPLINE_INTERVAL;
+if (current.m_nSegment == m_info [0].m_nSegment)
+	if (m_info [0].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		m_info [0].m_length += TUNNEL_INTERVAL;
+if (current.m_nSegment == m_info [1].m_nSegment)
+	if (m_info [1].m_length < (MAX_TUNNEL_LENGTH - TUNNEL_INTERVAL))
+		m_info [1].m_length += TUNNEL_INTERVAL;
 DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::DecreaseSpline (void) 
+void CTunnelMaker::Shrink (void) 
 {
 
 //  undoManager.UpdateBuffer(0);
 
-if (current.m_nSegment == nSplineSeg1)
-	if (m_splineLength1 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
-		m_splineLength1 -= SPLINE_INTERVAL;
-if (current.m_nSegment == nSplineSeg2)
-	if (m_splineLength2 > (MIN_SPLINE_LENGTH+SPLINE_INTERVAL))
-		m_splineLength2 -= SPLINE_INTERVAL;
+if (current.m_nSegment == m_info [0].m_nSegment)
+	if (m_info [0].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		m_info [0].m_length -= TUNNEL_INTERVAL;
+if (current.m_nSegment == m_info [1].m_nSegment)
+	if (m_info [1].m_length > (MIN_TUNNEL_LENGTH + TUNNEL_INTERVAL))
+		m_info [1].m_length -= TUNNEL_INTERVAL;
 DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------------
-// ComputeSpline ()
+// ComputeTunnel ()
 //
 // Note: this routine is called by dmb.cpp - update_display() everytime
 //       the display is redrawn.
 //------------------------------------------------------------------------------
 
-void CTunnelMaker::ComputeSpline (void) 
+void CTunnelMaker::ComputeTunnel (void) 
 {
   double length;
   double angle;
@@ -423,43 +414,43 @@ void CTunnelMaker::ComputeSpline (void)
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];
   CVertex rel_side_pts [2][4]; // side points reletave to center of side 1
-  CVertex rel_pts [4]; // 4 points of spline reletave to 1st point
-  CVertex rel_spline_pts [MAX_SPLINES];
+  CVertex rel_pts [4]; // 4 points of nSegment reletave to 1st point
+  CVertex relTunnelPoints [MAX_TUNNEL_SEGMENTS];
   double y,z;
   double ySpin,zSpin;
 
 // center of both cubes
-points [0] = segmentManager.CalcSideCenter (nSplineSeg1, nSplineSide1);
-points [3] = segmentManager.CalcSideCenter (nSplineSeg2, nSplineSide2);
+points [0] = segmentManager.CalcSideCenter (m_info [0]);
+points [3] = segmentManager.CalcSideCenter (m_info [1]);
 // point orthogonal to center of current cube
-points [1] = segmentManager.CalcSideNormal (nSplineSeg1, nSplineSide1);
-points [1] *= m_splineLength1;
+points [1] = segmentManager.CalcSideNormal (m_info [0]);
+points [1] *= m_info [0].m_length;
 points [1] += points [0];
 // point orthogonal to center of other cube
-points [2] = segmentManager.CalcSideNormal (nSplineSeg2, nSplineSide2);
-points [2] *= m_splineLength2;
+points [2] = segmentManager.CalcSideNormal (m_info [1]);
+points [2] *= m_info [1].m_length;
 points [2] += points [3];
 
 // calculate number of segments (min=1)
 length = Distance (*points, points [3]);
-n_splines = (int) ((fabs (m_splineLength1) + fabs (m_splineLength2)) / 20 + length / 40.0);
-n_splines = min (n_splines, m_nMaxSplines - 1);
+m_nLength = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
+m_nLength = min (m_nLength, m_nMaxSegments - 1);
 
-// calculate spline points
-for (i = 0; i <= n_splines; i++) 
-	splinePoints [i] = BezierFcn ((double) i / (double) n_splines, 4, points);
+// calculate nSegment points
+for (i = 0; i <= m_nLength; i++) 
+	m_points [i] = BezierFcn ((double) i / (double) m_nLength, 4, points);
 
 // make all points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
 	rel_pts [i] = points [i] - points [0];
-segP = segmentManager.Segment (nSplineSeg1);
+segP = segmentManager.Segment (m_info [0].m_nSegment);
 for (i = 0; i < 4; i++) 
-	rel_side_pts [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSplineSide1][i]]) - points [0];
-segP = segmentManager.Segment (nSplineSeg2);
+	rel_side_pts [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - points [0];
+segP = segmentManager.Segment (m_info [1].m_nSegment);
 for (i = 0; i < 4; i++)
-	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSplineSide2][i]]) - points [0];
-for (i = 0; i < n_splines; i++) {
-	rel_spline_pts [i] = splinePoints [i] - points [0];
+	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - points [0];
+for (i = 0; i < m_nLength; i++) {
+	relTunnelPoints [i] = m_points [i] - points [0];
 }
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
@@ -468,13 +459,13 @@ zSpin = atan3 (rel_pts [1].v.y, rel_pts [1].v.x * cos (ySpin)-rel_pts [1].v.z * 
 
 // spin all points reletave to first face (rotation)
 for (i = 0; i < 4; i++) {
-	SpinPoint (rel_pts + i,ySpin,zSpin);
+	SpinPoint (rel_pts + i, ySpin, zSpin);
 	for (j = 0; j < 2; j++) 
-		SpinPoint (rel_side_pts [j] + i,ySpin,zSpin);
+		SpinPoint (rel_side_pts [j] + i, ySpin, zSpin);
 	}
 
-for (i = 0; i < n_splines; i++) 
-	SpinPoint (rel_spline_pts + i,ySpin,zSpin);
+for (i = 0; i < m_nLength; i++) 
+	SpinPoint (relTunnelPoints + i,ySpin,zSpin);
 
 // determine polar coordinates of the 1st side (simply y,z coords)
 for (i = 0; i < 4; i++) {
@@ -497,17 +488,17 @@ for (i = 0; i < 4; i++) {
 for (j = 0; j < 4; j++) {
 	delta_angle [j] = theta [1][MatchingSide (j)] - theta [0][j];
 	if (delta_angle [j] < M_PI) 
-		delta_angle [j] += 2*M_PI;
+		delta_angle [j] += 2 * M_PI;
 	if (delta_angle [j] > M_PI) 
-		delta_angle [j] -= 2*M_PI;
+		delta_angle [j] -= 2 * M_PI;
 	}
 
 // make sure delta angles do not cross PI & -PI
 for (i = 1; i < 4; i++) {
 	if (delta_angle [i] > delta_angle [0] + M_PI) 
-		delta_angle [i] -= 2*M_PI;
+		delta_angle [i] -= 2 * M_PI;
 	if (delta_angle [i] < delta_angle [0] - M_PI) 
-		delta_angle [i] += 2*M_PI;
+		delta_angle [i] += 2 * M_PI;
 	}
 
 #if 0
@@ -530,46 +521,46 @@ DebugMsg(message);
 
 // calculate segment vertices as weighted average between the two sides
 // then spin vertices in the direction of the segment vector
-for (i = 0; i < n_splines; i++) {
-	nVertex = (MAX_VERTICES-1) - (i * 4);
+nVertex = 0;
+for (i = 0; i < m_nLength; i++) {
 	for (j = 0; j < 4; j++) {
-		CVertex* vert = vertexManager.Vertex (nVertex - j);
-		angle  = ((double) i / (double) n_splines) * delta_angle [j] + theta [0][j];
-		length = ((double) i / (double) n_splines) * radius [1][MatchingSide (j)] + (((double) n_splines- (double) i) / (double) n_splines) * radius [0][j];
-		*vert = RectPoints (angle, length, &rel_spline_pts [i], &rel_spline_pts [i+1]);
+		CVertex* vertP = vertexManager.Vertex (m_nVertices [nVertex++]);
+		angle  = ((double) i / (double) m_nLength) * delta_angle [j] + theta [0][j];
+		length = ((double) i / (double) m_nLength) * radius [1][MatchingSide (j)] + (((double) m_nLength- (double) i) / (double) m_nLength) * radius [0][j];
+		*vertP = RectPoints (angle, length, &relTunnelPoints [i], &relTunnelPoints [i+1]);
 		// spin vertices
-		SpinBackPoint (vert, ySpin, zSpin);
+		SpinBackPoint (vertP, ySpin, zSpin);
 		// translate point back
-		*vert += points [0];
+		*vertP += points [0];
 		}
 	}
 
   // define segment vert numbers
-for (i = 0; i < n_splines; i++) {
-	// use last "n_spline" segments
-	segP = segmentManager.Segment (MAX_SEGMENTS - 1 - i);
-	nVertex = MAX_VERTICES - 1 - i * 4;
+for (i = 0; i < m_nLength; i++) {
+	// use last "n_tunnel" segments
+	segP = segmentManager.Segment (m_nSegments [i]);
+	nVertex = i * 4;
 	for (j = 0; j < 4; j++) {
 		if (i == 0) {         // 1st segment
-			segP->m_info.verts [sideVertTable [nSplineSide1][j]] = nVertex - j;
-			segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = segmentManager.Segment (nSplineSeg1)->m_info.verts [sideVertTable [nSplineSide1][j]];
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [0].m_nSegment)->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
 			}
 		else {
-			if(i < n_splines - 1) { // center segments
-				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = nVertex - j;
-				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = nVertex + 4 - j;
+			if(i < m_nLength - 1) { // center segments
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = nVertex + j;
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
 				} 
 			else {          // last segment
-				segP->m_info.verts [sideVertTable [nSplineSide1][j]] = segmentManager.Segment (nSplineSeg2)->m_info.verts [sideVertTable [nSplineSide2][MatchingSide (j)]];
-				segP->m_info.verts [oppSideVertTable [nSplineSide1][j]] = nVertex + 4 - j;
+				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = segmentManager.Segment (m_info [1].m_nSegment)->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = nVertex - 4 + j;
 				}
 			}
 		}
 	}
 
   // int twisted segments
-for (i = 0; i < n_splines; i++)
-	UntwistSegment ((MAX_SEGMENTS - 1) - i, nSplineSide1);
+for (i = 0; i < m_nLength; i++)
+	UntwistSegment (m_nSegments [i], m_info [0].m_nSide);
 }
 
 //------------------------------------------------------------------------------

@@ -11,11 +11,11 @@
 #include "matrix.h"
 #include "cfile.h"
 #include "textures.h"
-#include "palette.h"
+#include "PaletteManager.h"
 #include "dle-xp.h"
 #include "robot.h"
 #include "HogManager.h"
-#include "palette.h"
+#include "PaletteManager.h"
 #include "light.h"
 
 #ifdef ALLOCATE_tPolyModelS

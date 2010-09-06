@@ -34,7 +34,7 @@ int preferences = 0;
 //CVariableLight *variableLights=0;
 tLightTimer lightTimers [MAX_VARIABLE_LIGHTS];
 tLightStatus lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
-uint       N_robot_types = 0;
+//uint       N_robot_types = 0;
 //CRobotInfo   *robotInfo;     // MAX_ROBOT_TYPES
 
 #if ALLOCATE_POLYOBJECT
@@ -76,13 +76,6 @@ int file_type = RL2_FILE;
 short	     num_static_lights=0;
 
 char		string [256];
-short		nSplineSeg1, nSplineSeg2, nSplineSide1, nSplineSide2;
-char		spline_error_message []  =  "You must exit spline creation before preforming this function";
-CVertex	splinePoints [MAX_SPLINES];
-CVertex	points [4];
-short		n_splines = 0;
-short		spline_length1 = 20, spline_length2 = 20;
-short		spline_active = 0;
 
 byte object_list[MAX_OBJECT_NUMBER] = {
 	OBJ_ROBOT,

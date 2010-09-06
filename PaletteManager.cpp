@@ -11,7 +11,7 @@
 #include "mine.h"
 #include "global.h"
 #include "cfile.h"
-#include "palette.h"
+#include "PaletteManager.h"
 
 HGLOBAL hPalette;
 

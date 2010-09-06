@@ -7,7 +7,7 @@
 #include "dlcDoc.h"
 #include "mineview.h"
 
-#include "palette.h"
+#include "PaletteManager.h"
 #include "TextureManager.h"
 #include "global.h"
 #include "render.h"

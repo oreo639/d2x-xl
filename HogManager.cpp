@@ -17,7 +17,7 @@
 #include "cfile.h"
 #include "HogManager.h"
 #include "light.h"
-#include "palette.h"
+#include "PaletteManager.h"
 #include "io.h"
 
 // local globals

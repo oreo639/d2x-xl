@@ -10,7 +10,7 @@
 #include "matrix.h"
 #include "cfile.h"
 #include "textures.h"
-#include "palette.h"
+#include "PaletteManager.h"
 #include "dle-xp.h"
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)

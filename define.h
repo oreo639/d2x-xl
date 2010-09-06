@@ -158,11 +158,6 @@ return (int) ((double) n / (double) m * 65536.0);
 #define ENABLE_BUTTON(id)  EnableWindow(GetDlgItem(HWindow,id),TRUE);
 
 // spline related constants
-#define MAX_SPLINES 32
-#define MAX_SPLINE_LENGTH 1000
-#define MIN_SPLINE_LENGTH 10
-#define SPLINE_INTERVAL 10
-
 // object related constants
 #define AIB_STILL                0x80
 #define AIB_NORMAL               0x81

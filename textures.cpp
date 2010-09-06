@@ -5,7 +5,7 @@
 #include "cfile.h"
 #include "dle-xp-res.h"
 #include "global.h"
-#include "palette.h"
+#include "PaletteManager.h"
 #include "TextureManager.h"
 #include "dle-xp.h"
 

@@ -9,7 +9,7 @@
 #include "mine.h"
 #include "global.h"
 #include "dlcdoc.h"
-#include "palette.h"
+#include "PaletteManager.h"
 #include "TextureManager.h"
 
 BEGIN_MESSAGE_MAP (CConvertDlg, CDialog)
