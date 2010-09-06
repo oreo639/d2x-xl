@@ -286,6 +286,8 @@ class CSegmentManager {
 
 		int Fix (void);
 
+		inline bool Full (void) { return m_free.Empty (); }
+
 		CSegmentManager () { 
 			ResetInfo ();
 			Clear ();
@@ -307,7 +309,7 @@ class CSegmentManager {
 
 		void Undefine (short nSegment);
 
-		void ComputeVertices (short newVerts [4]);
+		void ComputeVertices (ushort newVerts [4]);
 
 		int FuelCenterCount (void);
 

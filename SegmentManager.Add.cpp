@@ -21,7 +21,7 @@ bool CSegmentManager::Create (void)
 	int		i;
 	short		nNewSeg, nNewSide, nCurSide = current.m_nSide; 
 	ushort	newVerts [4]; 
-	short		nSegment, nSide; 
+	short		nSide; 
 
 if (tunnelMaker.Active ()) {
 	ErrorMsg (spline_error_message); 
@@ -30,23 +30,23 @@ if (tunnelMaker.Active ()) {
 
 curSegP = Segment (current.m_nSegment); 
 
-if (Count () >= MAX_SEGMENTS) {
-	ErrorMsg ("Cannot add a new cube because\nthe maximum number of cubes has been reached."); 
+if (Full ()) {
+	ErrorMsg ("Cannot add a new segment because\nthe maximum number of segments has been reached."); 
 	return FALSE;
 	}
-if (vertexManager.Count () >= MAX_VERTICES) {
-	ErrorMsg ("Cannot add a new cube because\nthe maximum number of vertices has been reached."); 
+if (vertexManager.Full ()) {
+	ErrorMsg ("Cannot add a new segment because\nthe maximum number of vertices has been reached."); 
 	return FALSE;
 	}
 if (curSegP->Child (nCurSide) >= 0) {
-	ErrorMsg ("Can not add a new cube to a side\nwhich already has a cube attached."); 
+	ErrorMsg ("Can not add a new segment to a side\nwhich already has a segment attached."); 
 	return FALSE;
 	}
 
 undoManager.SetModified (true); 
 undoManager.Lock ();
 // get new segment
-nNewSeg = Count (); 
+nNewSeg = Add (); 
 newSegP = Segment (nNewSeg); 
 
 // define vert numbers for common side
@@ -84,7 +84,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete variable light if it exists
-short index = lightManager.GetVariableLight (current.m_nSegment, nCurSide); 
+short index = lightManager.VariableLight (CSideKey (current.m_nSegment, nCurSide)); 
 if (index != -1) {
 	lightManager.Count ()--; 
 	// put last light in place of deleted light
@@ -93,29 +93,25 @@ if (index != -1) {
 
 // update current segment
 curSegP->SetChild (nCurSide, nNewSeg); 
-curSegP->m_sides [nCurSide].m_info.nBaseTex = 0; 
-curSegP->m_sides [nCurSide].m_info.nOvlTex = 0; 
-memset (curSegP->m_sides [nCurSide].m_info.uvls, 0, sizeof (curSegP->m_sides [nCurSide].m_info.uvls));
+CSide* sideP = &curSegP->m_sides [nCurSide];
+sideP->m_info.nBaseTex = 0; 
+sideP->m_info.nOvlTex = 0; 
+memset (sideP->m_info.uvls, 0, sizeof (sideP->m_info.uvls));
  
-// update number of Segment () and vertices and clear vertexStatus
-Count ()++;
-for (int i = 0; i < 4; i++)
-	vertexManager.Add ();
-
 // link the new segment with any touching Segment ()
 CVertex *vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
 CVertex *vSeg;
-for (nSegment = 0; nSegment < Count (); nSegment++) {
-	if (nSegment != nNewSeg) {
+for (CSegmentIterator i; i; i++) {
+	if (i.Index () != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = vertexManager.Vertex (Segment (nSegment)->m_info.verts [0]);
+		vSeg = vertexManager.Vertex (i->m_info.verts [0]);
 		if (fabs (vNewSeg->v.x - vSeg->v.x) < 10.0 &&
 			 fabs (vNewSeg->v.y - vSeg->v.y) < 10.0 &&
 			 fabs (vNewSeg->v.z - vSeg->v.z) < 10.0)
 			for (nNewSide = 0; nNewSide < 6; nNewSide++)
 				for (nSide = 0; nSide < 6; nSide++)
-					Link (nNewSeg, nNewSide, nSegment, nSide, 3);
+					Link (nNewSeg, nNewSide, i.Index (), nSide, 3);
 		}
 	}
 // auto align textures new segment
@@ -231,9 +227,8 @@ return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cube
 int CSegmentManager::FuelCenterCount (void)
 {
 int nFuelCens = 0;
-CSegment *segP = Segment (0);
-for (int i = Count (); i > 0; i--, segP++)
-	if ((segP->m_info.function == SEGMENT_FUNC_FUELCEN) || (segP->m_info.function == SEGMENT_FUNC_REPAIRCEN))
+for (CSegmentIterator i; i; i++) 
+	if ((i->m_info.function == SEGMENT_FUNC_FUELCEN) || (i->m_info.function == SEGMENT_FUNC_REPAIRCEN))
 		nFuelCens++;
 return nFuelCens;
 }
@@ -504,9 +499,9 @@ void CSegmentManager::Undefine (short nSegment)
 
 nSegment = short (segP - Segment (0));
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-	RemoveMatCen (segP, RobotMaker (0), theMine->Info ().botGen);
+	RemoveMatCen (segP, RobotMaker (0), m_matCenInfo [0]);
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
-	RemoveMatCen (segP, EquipMaker (0), theMine->Info ().equipGen);
+	RemoveMatCen (segP, EquipMaker (0), m_matCenInfo [1]);
 else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
 	CSegment *childSegP;
 	CSide *oppSideP, *sideP = segP->m_sides;
@@ -539,13 +534,6 @@ segP->m_info.function = SEGMENT_FUNC_NONE;
 
 void CSegmentManager::Delete (short nDelSeg)
 {
-	CSegment			*segP, *delSegP, *childSegP; 
-	CGameObject		*objP; 
-	CTrigger			*trigP;
-	ushort			nSegment, nRealSeg; 
-	short				child; 
-	short				i, j; 
-
 if (Count () < 2)
 	return; 
 if (nDelSeg < 0)
@@ -555,7 +543,7 @@ if (nDelSeg < 0 || nDelSeg >= Count ())
 
 undoManager.SetModified (true);
 undoManager.Lock ();
-delSegP = Segment (nDelSeg); 
+CSegment* delSegP = Segment (nDelSeg); 
 UndefineSegment (nDelSeg);
 
 // delete any variable lights that use this segment
@@ -569,29 +557,29 @@ for (int nSide = 0; nSide < 6; nSide++) {
 DeleteWalls (nDelSeg); 
 
 // delete any Walls () on child Segment () that connect to this segment
-for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	nChild = delSegP->Child (i); 
+for (short i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
+	short nChild = delSegP->Child (i); 
 	if (nChild >= 0 && nChild < Count ()) {
 		CSideKey opp, key (nDelSeg, i);
-		if (OppositeSide (key, opp)
+		if (OppositeSide (key, opp))
 			wallManager.Delete (Side (opp)->m_info.nWall); 
-		}
-
-	// delete any Objects () within segment
-for (i = objectManager.Count (); i >= 0; i--) {
-	if (Objects (i)->m_info.nSegment == nDelSeg) {
-		objectManager.Delete (i); 
 		}
 	}
 
+	// delete any Objects () within segment
+for (short i = objectManager.Count (); i >= 0; i--) {
+	if (objectManager.Object (i)->m_info.nSegment == nDelSeg)
+		objectManager.Delete (i); 
+	}
+
 // delete any control segP with this segment
-for (i = triggerManager.ReactorCount (); i > 0; )
-	ReactorTriggers (--i).Delete (CSideKey (-nDelSeg - 1));
+for (short i = triggerManager.NumReactorTriggers (); i > 0; )
+	triggerManager.ReactorTrigger (--i)->Delete (CSideKey (-nDelSeg - 1));
 
 	// update secret cube number if out of range now
-	nSegment = (ushort) SecretSegment (); 
+	short nSegment = (short) theMine->SecretSegment (); 
 	if (nSegment >= Count () || nSegment == nDelSeg)
-		SecretSegment () = 0; 
+		theMine->SecretSegment () = 0; 
 
 	// update segment flags
 	delSegP->m_info.wallFlags &= ~MARKED_MASK; 
@@ -599,20 +587,20 @@ for (i = triggerManager.ReactorCount (); i > 0; )
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
 	for (CSegmentIterator i; i; i++) {
-		for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
+		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
 			if (i->Child (nChild) == nDelSeg) {
 				// remove nChild number and update nChild bitmask
-				segP->SetChild (nChild, -1); 
+				i->SetChild (nChild, -1); 
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + nChild;
-				SetTextures (CSideKey (nSegment, nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
+				SetTextures (CSideKey (i.Index (), nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
 				Segment (nSegment)->SetUV (nChild, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
-				for (i = 0; i < 4; i++) {
-					//segP->m_sides [nChild].m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale); 
-					//segP->m_sides [nChild].m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale); 
-					segP->m_sides [nChild].m_info.uvls [i].l = delSegP->m_sides [nChild].m_info.uvls [i].l; 
+				for (short j = 0; j < 4; j++) {
+					//segP->m_sides [nChild].m_info.uvls [j].u = (short) ((double) defaultUVLs [j].u / scale); 
+					//segP->m_sides [nChild].m_info.uvls [j].v = (short) ((double) defaultUVLs [j].v / scale); 
+					i->m_sides [nChild].m_info.uvls [j].l = delSegP->m_sides [nChild].m_info.uvls [j].l; 
 				}
 			}
 		}

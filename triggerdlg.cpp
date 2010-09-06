@@ -343,7 +343,7 @@ CToolDlg::EnableControls (IDC_TRIGGER_SHOW_TEXTURE, IDC_TRIGGER_TEXTURE2, bEnabl
 
 								/*--------------------------*/
 
-int CTriggerTool::NumGeoTriggers ()
+int CTriggerTool::NumWallTriggers ()
 {
 return m_nClass ? theMine->NumObjTriggers () : theMine->Info ().triggers.count;
 }
@@ -354,7 +354,7 @@ void CTriggerTool::InitCBTriggerNo ()
 {
 CComboBox *pcb = CBTriggerNo ();
 pcb->ResetContent ();
-int i, j = NumGeoTriggers ();
+int i, j = NumWallTriggers ();
 for (i = 0; i < j; i++) {
 	_itoa_s (i, message, sizeof (message), 10);
 	pcb->AddString (message);
@@ -553,8 +553,8 @@ if (m_nTrigger != -1) {
 		}
 	OnSetTarget ();
 	}
-CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumGeoTriggers () > 0);
-CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumGeoTriggers () > 0);
+CToolDlg::EnableControls (IDC_TRIGGER_TRIGGERNO, IDC_TRIGGER_TRIGGERNO, NumWallTriggers () > 0);
+CToolDlg::EnableControls (IDC_TRIGGER_DELETEALL, IDC_TRIGGER_DELETEALL, NumWallTriggers () > 0);
 sideP = other.Side ();
 CTexToolDlg::Refresh (sideP->m_info.nBaseTex, sideP->m_info.nOvlTex, 1);
 if ((m_nTrigger >= 0) && (m_nType == TT_CHANGE_TEXTURE))
@@ -646,7 +646,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)
 			continue;
 		CWall *wallP = theMine->Walls (sideP->m_info.nWall);
-		if (wallP->m_info.nTrigger >= NumGeoTriggers ())
+		if (wallP->m_info.nTrigger >= NumWallTriggers ())
 			continue;
 		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
 			theMine->DeleteTrigger (wallP->m_info.nTrigger);
@@ -675,7 +675,7 @@ CWall *wallP;
 
 // find first wall with this trigger
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
-if ((m_nTrigger == -1) || (m_nTrigger >= NumGeoTriggers ()))
+if ((m_nTrigger == -1) || (m_nTrigger >= NumWallTriggers ()))
 	return;
 if (m_nClass) {
 	current.m_nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;

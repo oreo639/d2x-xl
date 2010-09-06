@@ -72,6 +72,8 @@ class CVertexManager  {
 
 		void Unmark (void);
 
+		inline bool Full (void) { return m_free.Empty (); }
+
 		CVertexManager () {
 			ResetInfo ();
 			Clear ();

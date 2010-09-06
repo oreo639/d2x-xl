@@ -57,7 +57,7 @@ class CTriggerManager {
 
 		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
 
-		inline triggerList& GeoTriggerList (void) { return TriggerList (1); }
+		inline triggerList& WallTriggerList (void) { return TriggerList (1); }
 
 		inline objTriggerList& ObjTriggerList (void) { return TriggerList (1); }
 
@@ -65,13 +65,13 @@ class CTriggerManager {
 
 		inline int& Count (int nClass) { return m_info [nClass].count; }
 
-		inline int& NumGeoTriggers (void) { return Count (0); }
+		inline int& NumWallTriggers (void) { return Count (0); }
 
 		inline int& NumObjTriggers (void) { return Count (1); }
 
 		inline int& NumReactorTriggers (void) { return m_reactorInfo.count; }
 
-		inline CTrigger* GeoTrigger (int i) { return Trigger (i, 0); }
+		inline CTrigger* WallTrigger (int i) { return Trigger (i, 0); }
 
 		inline CTrigger* ObjTrigger (int i) { return Trigger (i, 1); }
 
@@ -81,7 +81,7 @@ class CTriggerManager {
 
 		inline reactorTriggerList& ReactorTriggers (void) { return m_reactorTriggers; }
 
-		inline CReactorTrigger* ReactorTriggers (int i) { return &m_reactorTriggers [i]; }
+		inline CReactorTrigger* ReactorTrigger (int i) { return &m_reactorTriggers [i]; }
 
 		void SortObjTriggers (void);
 
@@ -110,7 +110,7 @@ class CTriggerManager {
 
 		void DeleteObjTriggers (short nObject);
 
-		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (GeoTriggerList (), Count (0), CSideKey key); }
+		inline void DeleteTargets (CSideKey key) { DeleteTargets (WallTriggerList (), Count (0), key); }
 
 		bool AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType);
 		bool AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType);
@@ -152,7 +152,7 @@ class CTriggerManager {
 		CTriggerManager () {
 			ResetInfo ();
 			Clear ();
-			m_free.Create (GeoTrigger (0), TRIGGER_LIMIT);
+			m_free.Create (WallTrigger (0), TRIGGER_LIMIT);
 			}
 
 	private:
@@ -184,7 +184,7 @@ class CTriggerIterator : public CGameItemIterator<CTrigger> {
 
 class CWallTriggerIterator : public CTriggerIterator {
 	public:
-		CGeoTriggerIterator () : CTriggerIterator(0) {}
+		CWallTriggerIterator () : CTriggerIterator(0) {}
 	};
 
 class CObjTriggerIterator : public CTriggerIterator {
