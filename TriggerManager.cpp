@@ -107,7 +107,7 @@ if (!HaveResources ())
 	return NO_TRIGGER; 
 int nTrigger = --m_free;
 m_triggers [nTrigger].Clear ();
-Count ()++;
+NumWallTriggers ()++;
 return nTrigger;
 }
 
@@ -239,7 +239,7 @@ undoManager.Lock ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
 m_free += nDelTrigger;
-Count ()--;
+NumWallTriggers ()--;
 
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
@@ -296,7 +296,7 @@ return null;
 
 void CTriggerManager::UpdateReactor (void) 
 {
-  CReactorTrigger *reactorTrigger = ReactorTriggers (0);	// only one reactor trigger per level
+  CReactorTrigger *reactorTrigger = ReactorTrigger (0);	// only one reactor trigger per level
 
 undoManager.SetModified (true);
 undoManager.Lock ();
@@ -367,16 +367,14 @@ if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
 if (nDelTrigger < --NumObjTriggers ())
 	*ObjTrigger (nDelTrigger) = *ObjTrigger (NumObjTriggers ());
-ObjTrigger (NumObjTriggers ()->m_nIndex = -1; // mark as unused (needed by the trigger iterator)
+ObjTrigger (NumObjTriggers ())->m_nIndex = -1; // mark as unused (needed by the trigger iterator)
 }
 
 //------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteObjTriggers (short nObject) 
 {
-	short i = NumObjTriggers ();
-	
-while (i)
+for (short i = NumObjTriggers (); i; )
 	if (ObjTrigger (--i)->m_info.nObject == nObject)
 		DeleteFromObject (i);
 }
@@ -388,7 +386,7 @@ void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, CSid
 for (CWallTriggerIterator i; i; i++)
 	i->Delete (key);
 
-for (i = NumObjTriggers (); i > 0; )
+for (short i = NumObjTriggers (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
 }
@@ -553,7 +551,7 @@ undoManager.Lock ();
 CWall* wallP = wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
 if (wallP != null) {
 	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
-	if (trigP != null) {
+	if (trigP != null) 
 		trigP->Add (other.m_nSegment, other.m_nSide);
 	undoManager.Unlock ();
 	DLE.MineView ()->Refresh ();
