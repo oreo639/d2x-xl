@@ -105,8 +105,10 @@ short CTriggerManager::Add (void)
 { 
 if (!HaveResources ())
 	return NO_TRIGGER; 
-m_triggers [Count (0)++].Clear ();
-return Count (0);
+int nTrigger = --m_free;
+m_triggers [nTrigger].Clear ();
+Count ()++;
+return nTrigger;
 }
 
 //------------------------------------------------------------------------------
@@ -235,12 +237,8 @@ undoManager.SetModified (true);
 undoManager.Lock ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
-if (nDelTrigger < --Count (0)) {	
-	// move the last trigger in the list to the deleted trigger's position
-	wallManager.UpdateTrigger (Count (0), nDelTrigger);
-	*delTrigP = m_triggers [0][Count (0)];
-	delTrigP->m_nIndex = Index (delTrigP);
-	}
+m_free += nDelTrigger;
+Count ()--;
 
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
@@ -532,7 +530,7 @@ bool CTriggerManager::HaveResources (void)
 {
 if (!wallManager.HaveResources ())
 	return false;
-if (Count (0) >= MAX_TRIGGERS - 1) {
+if (m_free.Empty ()) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}

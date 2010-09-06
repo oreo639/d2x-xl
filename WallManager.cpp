@@ -36,6 +36,7 @@ if (!HaveResources ())
 	return NO_WALL;
 int nWall = --m_free;
 m_walls [nWall].Clear ();
+WallCount ()++;
 return (short) nWall;
 }
 
