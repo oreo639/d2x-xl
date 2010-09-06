@@ -324,17 +324,7 @@ else {
 		// int twisted segments
 		UntwistSegment (m_nSegments [nSegment], m_info [0].m_nSide);
 		// define children and sides (textures and nWall)
-		CSide* sideP = segP->m_sides;
-		for (short nSide = 6; nSide > 0; nSide--, sideP++) {
-			segP->SetChild (nSide, -1);
-			sideP->m_info.nBaseTex = 0;
-			sideP->m_info.nOvlTex = 0;
-			sideP->m_info.nWall = NO_WALL;
-			for (short nUVL = 0; nUVL < 4; nUVL++) {
-				sideP->m_info.uvls [nUVL].l = (ushort) DEFAULT_LIGHTING;
-				}
-			segP->SetUV (nSide, 0, 0);
-			}
+		segP->Setup ();
 		if (nSegment == 0) {
 			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
 			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
@@ -350,13 +340,6 @@ else {
 			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]); // next tunnel segment
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
-		segP->m_info.owner = -1;
-		segP->m_info.group = -1;
-		segP->m_info.function = 0;
-		segP->m_info.nMatCen = -1;
-		segP->m_info.value = -1;
-		segP->m_info.wallFlags = 0; // make sure segment is not marked
-		segmentManager.Count ()++;
 		}
 	undoManager.Unlock ();
 	}
