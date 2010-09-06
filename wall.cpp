@@ -164,7 +164,7 @@ else
 	fp.Write (m_info.flags);         
 fp.Write (m_info.state);   
 if (m_info.nTrigger == NO_TRIGGER)
-	fp.Write (m_info.nTrigger);       
+	fp.WriteByte (NO_TRIGGER);       
 else
 	fp.WriteByte ((byte) triggerManager.Trigger (m_info.nTrigger)->m_nIndex);
 fp.Write (m_info.nClip);      

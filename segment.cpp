@@ -363,7 +363,7 @@ if (nLevelVersion == 0)
 m_info.wallFlags = byte (fp.ReadSByte ());
 
 // read in wall numbers (0 to 6 bytes)
-for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) 
+for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 	m_sides [i].m_info.nWall = (m_info.wallFlags & (1 << i)) 
 										? ushort ((nLevelVersion < 13) ? fp.ReadSByte () : fp.ReadInt16 ())
 										: NO_WALL;
