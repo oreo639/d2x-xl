@@ -110,7 +110,7 @@ class CTriggerManager {
 
 		void DeleteObjTriggers (short nObject);
 
-		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (GeoTriggerList (), Count (0), nSegment, nSide); }
+		inline void DeleteTargets (short nSegment, short nSide) { DeleteTargets (GeoTriggerList (), Count (0), CSideKey key); }
 
 		bool AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType);
 		bool AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType);
@@ -168,7 +168,7 @@ class CTriggerManager {
 
 		void DeleteFromObject (short nDelTrigger);
 
-		void DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide);
+		void DeleteTargets (triggerList triggers, short nTriggers, CSideKey key);
 
 		void Clear (int nType);
 };
@@ -182,7 +182,7 @@ class CTriggerIterator : public CGameItemIterator<CTrigger> {
 		CTriggerIterator(int nClass) : CGameItemIterator (triggerManager.Trigger (0, nClass), triggerManager.Count (nClass)) {}
 	};
 
-class CGeoTriggerIterator : public CTriggerIterator {
+class CWallTriggerIterator : public CTriggerIterator {
 	public:
 		CGeoTriggerIterator () : CTriggerIterator(0) {}
 	};

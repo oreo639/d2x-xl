@@ -382,14 +382,10 @@ while (i)
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, short nSegment, short nSide) 
+void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, CSideKey key) 
 {
-CSideKey key (nSegment, nSide);
-int i;
-
-for (i = 0; nTriggers; i++)
-	if (Trigger (i)->Delete (key))
-		i--;
+for (CWallTriggerIterator i; i; i++)
+	i->Delete (key);
 
 for (i = NumObjTriggers (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
@@ -400,8 +396,8 @@ for (i = NumObjTriggers (); i > 0; )
 
 void CTriggerManager::SetIndex (void)
 {
-for (short i = 0; i < Count (0); i++)
-	m_triggers [0][i].m_nIndex = i;
+for (CWallTriggerIterator i; i; i++)
+	i->m_nIndex = i;
 }
 
 // -----------------------------------------------------------------------------

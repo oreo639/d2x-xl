@@ -5,10 +5,11 @@
 
 short CSegmentManager::Add (void) 
 { 
-if (m_freeList.Empty ())
+if (m_free.Empty ())
 	return -1;
 int nSegment = --m_free;
 m_segments [nSegment].Clear ();
+Count ()++;
 return (short) nSegment; 
 }
 
@@ -19,7 +20,7 @@ bool CSegmentManager::Create (void)
 	CSegment *newSegP, *curSegP; 
 	int		i;
 	short		nNewSeg, nNewSide, nCurSide = current.m_nSide; 
-	short		newVerts [4]; 
+	ushort	newVerts [4]; 
 	short		nSegment, nSide; 
 
 if (tunnelMaker.Active ()) {
@@ -52,7 +53,7 @@ newSegP = Segment (nNewSeg);
 for (i = 0; i < 4; i++) {
 	newSegP->m_info.verts [oppSideVertTable [nCurSide][i]] = curSegP->m_info.verts [sideVertTable [nCurSide][i]]; 
 	// define vert numbers for new side
-	newVerts [i] = vertexManager.Add ();
+	vertexManager.Add (&newVerts [i]);
 	newSegP->m_info.verts [sideVertTable [nCurSide][i]] = newVerts [i]; 
 	}
 
@@ -279,12 +280,12 @@ return true;
 
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
 
-void CSegmentManager::ComputeVertices (short newVerts [4])
+void CSegmentManager::ComputeVertices (ushort newVerts [4])
 {
 	CSegment*		curSegP; 
 	CDoubleVector	A [8], B [8], C [8], D [8], E [8], a, b, c, d, v; 
 	double			length; 
-	short				nVertex; 
+	ushort			nVertex; 
 	short				i, points [4]; 
 	CDoubleVector	center, oppCenter, newCenter, orthog; 
 
@@ -582,22 +583,10 @@ for (i = objectManager.Count (); i >= 0; i--) {
 		objectManager.Delete (i); 
 		}
 	}
-	for (i = 0; i < RobotMakerCount (); i++)
-		if (RobotMaker (i)->m_info.nSegment > nDelSeg)
-			RobotMaker (i)->m_info.nSegment--;
-	for (i = 0; i < MineInfo ().equipGen.count; i++)
-		if (EquipMaker (i)->m_info.nSegment > nDelSeg)
-			EquipMaker (i)->m_info.nSegment--;
-	// delete any control segP with this segment
-	for (j = (ushort)MineInfo ().control.count - 1; j >= 0; j--) {
-		int count = ReactorTriggers (i)->m_count;
-		for (j = count - 1; j > 0; j--) {
-			if (ReactorTriggers (i)->Segment (j) == nDelSeg) {
-				// move last segment into this spot
-				ReactorTriggers (i)->Delete (j);
-				}
-			}
-		}
+
+// delete any control segP with this segment
+for (i = triggerManager.ReactorCount (); i > 0; )
+	ReactorTriggers (--i).Delete (CSideKey (-nDelSeg - 1));
 
 	// update secret cube number if out of range now
 	nSegment = (ushort) SecretSegment (); 
@@ -609,15 +598,9 @@ for (i = objectManager.Count (); i >= 0; i--) {
 
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
-	for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++) {
+	for (CSegmentIterator i; i; i++) {
 		for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
-			if (segP->Child (nChild) == nDelSeg) {
-
-				// subtract by 1 if segment is above deleted segment
-				current.m_nSegment = nSegment; 
-				if (nSegment > nDelSeg) 
-					current.m_nSegment--; 
-
+			if (i->Child (nChild) == nDelSeg) {
 				// remove nChild number and update nChild bitmask
 				segP->SetChild (nChild, -1); 
 
@@ -635,140 +618,21 @@ for (i = objectManager.Count (); i >= 0; i--) {
 		}
 	}
 
-	// move other Segment () to deleted segment location
-	if (nDelSeg != Count ()-1) { // if this is not the last segment
+m_free += nDelSeg;
+Count ()--;
 
-		// mark each segment with it's real number
-		nRealSeg = 0; 
-		for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++)
-			if(nDelSeg != nSegment)
-				segP->m_info.nIndex = nRealSeg++; 
+// delete all unused vertices
+vertexManager.DeleteUnused (); 
 
-		// replace all children with real numbers
-		for (nSegment = 0, segP = Segment (0); nSegment < Count (); nSegment++, segP++) {
-			for (nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
-				if (segP->m_info.childFlags & (1 << nChild)
-					&& segP->Child (nChild) >= 0 && segP->Child (nChild) < Count ()) { // debug int
-					childSegP = Segment (segP->Child (nChild)); 
-					segP->SetChild (nChild, childSegP->m_info.nIndex); 
-				}
-			}
-		}
-
-		// replace all wall segP numbers with real numbers
-		for (i = 0; i < MineInfo ().walls.count; i++) {
-			nSegment = (short) Walls (i)->m_nSegment; 
-			if (nSegment < Count ()) {
-				segP = Segment (nSegment); 
-				Walls (i)->m_nSegment = segP->m_info.nIndex; 
-				} 
-			else {
-				Walls (i)->m_nSegment = 0; // int wall segment number
-			}
-		}
-
-		// replace all trigger segP numbers with real numbers
-		for (i = NumGeoTriggers (), trigP = Triggers (0); i; i--, trigP++) {
-			for (j = 0; j < trigP->m_count; j++) {
-				if (Count () > (nSegment = trigP->Segment (j)))
-					trigP->Segment (j) = Segment (nSegment)->m_info.nIndex; 
-				else {
-					DeleteTargetFromTrigger (trigP, j, 0);
-					j--;
-					}
-				}
-			}
-
-		// replace all trigger segP numbers with real numbers
-		for (i = NumObjTriggers (), trigP = ObjTriggers (0); i; i--, trigP++) {
-			for (j = 0; j < trigP->m_count; j++) {
-				if (Count () > (nSegment = trigP->Segment (j)))
-					trigP->Segment (j) = Segment (nSegment)->m_info.nIndex; 
-				else {
-					DeleteTargetFromTrigger (trigP, j, 0);
-					j--;
-					}
-				}
-			}
-
-		// replace all object segP numbers with real numbers
-		for (i = 0; i < MineInfo ().objects.count; i++) {
-			objP = Objects (i); 
-			if (Count () > (nSegment = objP->m_info.nSegment))
-				objP->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
-			else
-				objP->m_info.nSegment = 0; // int object segment number
-			}
-
-		// replace robot centers segP numbers with real numbers
-		for (i = 0; i < MineInfo ().botGen.count; i++) {
-			if (Count () > (nSegment = RobotMaker (i)->m_info.nSegment))
-				RobotMaker (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
-			else
-				RobotMaker (i)->m_info.nSegment = 0; // int robot center nSegment
-			}
-
-		// replace equipment centers segP numbers with real numbers
-		for (i = 0; i < MineInfo ().equipGen.count; i++) {
-			if (Count () > (nSegment = EquipMaker (i)->m_info.nSegment))
-				EquipMaker (i)->m_info.nSegment = Segment (nSegment)->m_info.nIndex; 
-			else
-				EquipMaker (i)->m_info.nSegment = 0; // int robot center nSegment
-			}
-
-		// replace control segP numbers with real numbers
-		for (i = 0; i < MineInfo ().control.count; i++) {
-			for (j = 0; j < ReactorTriggers (i)->m_count; j++) {
-				if (Count () > (nSegment = ReactorTriggers (i)->Segment (j)))
-					ReactorTriggers (i)->Segment (j) = Segment (nSegment)->m_info.nIndex; 
-				else 
-					ReactorTriggers (i)->Segment (j) = 0; // int control center segment number
-			}
-		}
-
-		// replace variable light segP numbers with real numbers
-		for (i = 0; i < lightManager.Count (); i++) {
-			if (Count () > (nSegment = VariableLights (i)->m_nSegment))
-				VariableLights (i)->m_nSegment = Segment (nSegment)->m_info.nIndex; 
-			else 
-				VariableLights (i)->m_nSegment = 0; // int object segment number
-			}
-
-		// replace secret cubenum with real number
-		if (Count () > (nSegment = (ushort) SecretSegment ()))
-			SecretSegment () = Segment (nSegment)->m_info.nIndex; 
-		else
-			SecretSegment () = 0; // int secret cube number
-
-		// move remaining Segment () down by 1
-  }
-#if 1
-		if (int segC = (--Count () - nDelSeg)) {
-			memcpy (Segment (nDelSeg), Segment (nDelSeg + 1), segC * sizeof (CSegment));
-			memcpy (LightColors (nDelSeg), LightColors (nDelSeg + 1), segC * 6 * sizeof (CColor));
-			}
-#else
-		for (nSegment = nDelSeg; nSegment < (Count ()-1); nSegment++) {
-			segP = Segment (nSegment); 
-			childSegP = Segment (nSegment + 1); 
-			memcpy(segP, childSegP, sizeof (CSegment)); 
-			}
-  Count ()-- ; 
-#endif
-
-
-  // delete all unused vertices
-  vertexManager.DeleteUnused (); 
-
-  // make sure current segment numbers are valid
-  if (selections [0].m_nSegment >= Count ()) 
-	  selections [0].m_nSegment--; 
-  if (selections [1].m_nSegment >= Count ()) 
-	  selections [1].m_nSegment--; 
-  if (selections [0].m_nSegment < 0) 
-	  selections [0].m_nSegment = 0; 
-  if (selections [1].m_nSegment < 0) 
-	  selections [1].m_nSegment = 0; 
+// make sure current segment numbers are valid
+if (selections [0].m_nSegment >= Count ()) 
+  selections [0].m_nSegment--; 
+if (selections [1].m_nSegment >= Count ()) 
+  selections [1].m_nSegment--; 
+if (selections [0].m_nSegment < 0) 
+  selections [0].m_nSegment = 0; 
+if (selections [1].m_nSegment < 0) 
+  selections [1].m_nSegment = 0; 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
