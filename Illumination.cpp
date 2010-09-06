@@ -107,7 +107,6 @@ typedef struct tAvgCornerLight {
 
 void CLightManager::CalcAverageCornerLight (bool bAll)
 {
-  short wallCount = wallManager.Count ();
   tAvgCornerLight* maxBrightness = new tAvgCornerLight [vertexManager.Count ()];
 
 memset (maxBrightness, 0, vertexManager.Count () * sizeof (tAvgCornerLight));

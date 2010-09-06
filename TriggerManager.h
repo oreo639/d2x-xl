@@ -61,7 +61,7 @@ class CTriggerManager {
 
 		inline objTriggerList& ObjTriggerList (void) { return TriggerList (1); }
 
-		inline CTrigger* Trigger (int i, int nClass = 0) { return &m_triggers [nClass][i]; }
+		inline CTrigger* Trigger (int i, int nClass = 0) { return (i == NO_TRIGGER) ? null : &m_triggers [nClass][i]; }
 
 		inline int& Count (int nClass) { return m_info [nClass].count; }
 

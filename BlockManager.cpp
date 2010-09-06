@@ -316,9 +316,8 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 				sideP->m_info.uvls [j].l);
 				}
 			if (bExtBlkFmt) {
-				fprintf (fp.File (), "    nWall %d\n", 
-							(sideP->m_info.nWall < wallManager.Count ()) ? sideP->m_info.nWall : NO_WALL);
-				if (sideP->m_info.nWall < wallManager.Count ()) {
+				fprintf (fp.File (), "    nWall %d\n", sideP->m_info.nWall);
+				if (sideP->m_info.nWall != NO_WALL) {
 					CWall* wallP = sideP->Wall ();
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
 					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);

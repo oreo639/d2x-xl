@@ -269,7 +269,7 @@ if (wallP != null) {
 	nTrigger = wallP->m_info.nTrigger;
 	return wallManager.Index (wallP);
 	}
-return wallManager.Count ();
+return NO_WALL;
 }
 
 //------------------------------------------------------------------------------------
@@ -306,8 +306,8 @@ for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 		reactorTrigger->Delete (nTarget);
 	}
 // add any exits to target list that are not already in it
-for (short nWall = 0; nWall < wallManager.Count (); nWall++) {
-	CWall* wallP = wallManager.Wall (nWall);
+for (CWallIterator i; i; i++) {
+	CWall* wallP = &(*i);
 	CTrigger* trigP = wallP->Trigger ();
 	if (trigP == null)
 		continue;
@@ -548,9 +548,11 @@ if (!HaveResources ())
 // make a new wall and a new trigger
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1) &&
-	 AddToWall (wallManager.Count (0) - 1, triggerType, false)) {
-	Trigger (Count (0) - 1)->Add (other.m_nSegment, other.m_nSide);
+CWall* wallP = wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
+if (wallP != null) {
+	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
+	if (trigP != null) {
+		trigP->Add (other.m_nSegment, other.m_nSide);
 	undoManager.Unlock ();
 	DLE.MineView ()->Refresh ();
 	return true;

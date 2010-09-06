@@ -19,6 +19,8 @@ public:
 
 	virtual void Clear (void) = 0;
 
+	virtual bool Used (void) { return m_nIndex >= 0; }
+
 };
 
 // -----------------------------------------------------------------------------
