@@ -189,7 +189,7 @@ class CWallTriggerIterator : public CTriggerIterator {
 
 class CObjTriggerIterator : public CTriggerIterator {
 	public:
-		CObjTriggerIterator () : CTriggerIterator(0) {}
+		CObjTriggerIterator () : CTriggerIterator(1) {}
 	};
 
 //------------------------------------------------------------------------

@@ -249,14 +249,13 @@ while (!fp.EoF ()) {
 	nNewSegs++;
 	}
 
-CTrigger *trigP = triggerManager.Trigger (triggerManager.Count (0));
-for (i = nNewTriggers; i; i--) {
-	trigP--;
+for (CWallTriggerIterator i; i; i++) {
+	CTrigger *trigP = &(*i);
 	for (j = 0; j < trigP->m_count; j++) {
 		if (trigP->Segment (j) >= 0)
 			trigP->Segment (j) = xlatSegNum [trigP->Segment (j)];
 		else if (trigP->m_count == 1) {
-			triggerManager.Delete (triggerManager.Index (trigP));
+			triggerManager.Delete (i.Index ());
 			i--;
 			}
 		else {
@@ -328,7 +327,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					fprintf (fp.File (), "        nClip %d\n", wallP->m_info.nClip);
 					fprintf (fp.File (), "        keys %d\n", wallP->m_info.keys);
 					fprintf (fp.File (), "        cloak %d\n", wallP->m_info.cloakValue);
-					if ((wallP->m_info.nTrigger < 0) || (wallP->m_info.nTrigger >= triggerManager.Count (0)))
+					if (wallP->m_info.nTrigger == NO_TRIGGER)
 						fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
 					else {
 						CTrigger *trigP = wallP->Trigger ();

@@ -798,7 +798,7 @@ class CTriggerTool : public CTexToolDlg
 		virtual BOOL TextureIsVisible ();
 		bool FindTrigger (short &nTrigger);
 		bool TriggerHasSlider (void);
-		int NumWallTriggers ();
+		int NumTriggers ();
 		void OnSelect1st ();
 		void OnSelect2nd ();
 		void SelectTexture (int nIdC, bool bFirst);

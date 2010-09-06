@@ -483,9 +483,9 @@ if (info.count > 0) {
 	CSideKey key = (-Index (segP) - 1, 0); 
 	for (int nClass = 0; nClass < 2; nClass++) {
 		CTrigger* trigP = triggerManager.Trigger (0, nClass);
-		for (int nTrigger = triggerManager.Count (nClass); nTrigger; nTrigger--, trigP++)
-			if (trigP->m_info.type == TT_MATCEN)
-				trigP->Delete (key);
+		for (CTriggerIterator (nClass); i; i++)
+			if (i->m_info.type == TT_MATCEN)
+				i->Delete (key);
 		}
 	}
 segP->m_info.nMatCen = -1;

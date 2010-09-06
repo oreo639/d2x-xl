@@ -202,11 +202,11 @@ else
 	flags = 0;
 
 int nTrigger = --m_free;
+Count (0)++;
 CTrigger* trigP = Trigger (nTrigger);
 trigP->Setup (type, flags);
 trigP->m_nIndex = nTrigger;
 wallP->SetTrigger (nTrigger);
-Count (0)++;
 UpdateReactor ();
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
@@ -346,10 +346,11 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	}
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-short nTrigger = NumObjTriggers ();
-ObjTrigger (nTrigger)->Setup (type, 0);
-ObjTrigger (nTrigger)->m_info.nObject = nObject;
-NumObjTriggers ()++;
+short nTrigger = NumObjTriggers ()++;
+CTrigger* trigP = ObjTrigger (nTrigger);
+trigP->Setup (type, 0);
+trigP->m_info.nObject = nObject;
+trigP->m_nIndex = nTrigger;
 undoManager.Unlock ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
@@ -366,6 +367,7 @@ if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
 if (nDelTrigger < --NumObjTriggers ())
 	*ObjTrigger (nDelTrigger) = *ObjTrigger (NumObjTriggers ());
+ObjTrigger (NumObjTriggers ()->m_nIndex = -1; // mark as unused (needed by the trigger iterator)
 }
 
 //------------------------------------------------------------------------------
@@ -489,8 +491,8 @@ else {
 	m_info [0].size = theMine->IsD1File () ? 54 : 52; // 54 = sizeof (trigger)
 	m_info [0].offset = fp.Tell ();
 
-	for (i = 0; i < Count (0); i++)
-		m_triggers [0][i].Write (fp, nFileVersion, false);
+	for (CWallTriggerIterator i; i; i++)
+		i->Write (fp, nFileVersion, false);
 
 	if (theMine->LevelVersion () >= 12) {
 		fp.Write (NumObjTriggers ());
