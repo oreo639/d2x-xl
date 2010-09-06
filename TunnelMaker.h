@@ -34,7 +34,13 @@ class CTunnelMaker {
 	public:
 		void Create (void); 
 
-		bool Active (void) { return m_bActive; }
+		bool Active (bool bMsg = true) { 
+			if (!m_bActive)
+				return false; 
+			if (bMsg)
+				ErrorMsg (szTunnelMakerError); 
+			return true;
+			}
 
 		void Disable (void) { m_bActive = false; }
 

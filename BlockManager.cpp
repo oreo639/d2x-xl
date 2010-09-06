@@ -16,16 +16,6 @@ char *BLOCKOP_HINT =
 
 //------------------------------------------------------------------------------
 
-bool CBlockManager::CheckTunnelMaker (void)
-{
-if (!tunnelMaker.Active ())
-	return false;
-ErrorMsg (szTunnelMakerError);
-	return true;
-}
-
-//------------------------------------------------------------------------------
-
 void CBlockManager::MakeTransformation (CDoubleMatrix& m, CDoubleVector& o)
 {
 ushort* verts = current.Segment ()->m_info.verts;
@@ -381,7 +371,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 
 void CBlockManager::Cut (void)
 {
-if (CheckTunnelMaker ()) 
+if (tunnelMaker.Active ()) 
 	return;
 
   // make sure some cubes are marked
@@ -495,7 +485,7 @@ DLE.MineView ()->Refresh ();
 
 void CBlockManager::Paste (void) 
 {
-if (CheckTunnelMaker ()) 
+if (tunnelMaker.Active ()) 
 	return;
 // Initialize data for fp open dialog
   char szFile [256] = "\0";
@@ -628,7 +618,7 @@ if (!*m_filename) {
 	return;
 	}
 
-if (CheckTunnelMaker ()) 
+if (tunnelMaker.Active ()) 
 	return;
 if (!Read (m_filename))
 	DLE.MineView ()->SetSelectMode (BLOCK_MODE);
@@ -640,7 +630,7 @@ void CBlockManager::Delete (void)
 {
 short nSegment, count;
 
-if (CheckTunnelMaker ()) 
+if (tunnelMaker.Active ()) 
 	return;
 // make sure some cubes are marked
 count = segmentManager.MarkedCount ();

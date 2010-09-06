@@ -71,7 +71,7 @@ void CSegmentManager::LinkSides (short nSegment1, short nSide1, short nSegment2,
 {
 	CSegment*	seg1 = Segment (nSegment1); 
 	CSegment*	seg2 = Segment (nSegment2); 
-	short			nSegment, nVertex, oldVertex, newVertex; 
+	short			nVertex, oldVertex, newVertex; 
 	int			i; 
 
 seg1->SetChild (nSide1, nSegment2); 
@@ -95,11 +95,12 @@ for (i = 0; i < 4; i++) {
 
 	// update all Segment () that use this vertex
 	if (oldVertex != newVertex) {
-		CSegment *segP = Segment (0);
-		for (nSegment = 0; nSegment < Count (); nSegment++, segP++)
+		for (CSegmentIterator i; i; i++) {
+			CSegment *segP = &(*i);
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				if (segP->m_info.verts [nVertex] == oldVertex)
 					segP->m_info.verts [nVertex] = newVertex; 
+			}
 		// then delete the vertex
 		vertexManager.Delete (oldVertex); 
 		}
@@ -118,10 +119,9 @@ void CSegmentManager::JoinPoints (void)
   int vert1, vert2; 
   CSelection * cur1, * cur2; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
+if (tunnelMaker.Active ()) 
 	return; 
-	}
+
 if (selections [0].m_nSegment== selections [1].m_nSegment) {
 	ErrorMsg ("You cannot joint two points on the same cube.\n\n"
 				"Hint: The two golden circles represent the current point, \n"
@@ -183,10 +183,8 @@ void CSegmentManager::JoinLines (void)
   bool fail; 
   CSelection *cur1, *cur2; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
+if (tunnelMaker.Active ())
 	return; 
-	}
 
 if (selections [0].m_nSegment == selections [1].m_nSegment) {
 	ErrorMsg ("You cannot joint two lines on the same cube.\n\n"
@@ -293,10 +291,8 @@ void CSegmentManager::Join (int solidify)
 	bool fail; 
 	CSelection *cur1, *cur2, mySeg; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
+if (tunnelMaker.Active ()) 
 	return; 
-	}
 
 // figure out "other' cube
 if (solidify) {
@@ -315,9 +311,11 @@ if (solidify) {
 		memcpy (&v1 [i], vertexManager.Vertex (seg1->m_info.verts [sideVertTable [cur1->m_nSide][i]]), sizeof (CVertex));
 		}
 	minTotalRad = 1e300;
-	for (nSegment = 0, seg2 = Segment (0); nSegment < Count (); nSegment++, seg2++) {
-		if (nSegment== cur1->m_nSegment)
+	for (CSegmentIterator si; si; si++) {
+		nSegment = si.Index ();
+		if (nSegment == cur1->m_nSegment)
 			continue; 
+		seg2 = &(*si);
 		for (nSide = 0; nSide < 6; nSide++) {
 			fail = FALSE; 
 			for (i = 0; i < 4; i++) {
@@ -553,23 +551,23 @@ DLE.MineView ()->Refresh ();
 
 void CSegmentManager::FixChildren (void)
 {
-short nNewSide, nSide, nSegment, nNewSeg; 
+short nNewSeg = current.m_nSegment; 
+short nNewSide = current.m_nSide; 
 
-nNewSeg = current.m_nSegment; 
-nNewSide = current.m_nSide; 
-CSegment *segP = Segment (0),
-			*newSegP = Segment (nNewSeg);
-CVertex	*vSeg, 
-			*vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
-for (nSegment = 0; nSegment < Count (); nSegment++, segP) {
+CSegment*	newSegP = Segment (nNewSeg);
+CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
+
+for (CSegmentIterator i; i; i++) {
+	CSegment* segP = &(*i);
+	short nSegment = i.Index ();
 	if (nSegment != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
-		vSeg = vertexManager.Vertex (segP->m_info.verts [0]);
+		CVertex* vSeg = vertexManager.Vertex (segP->m_info.verts [0]);
 		if (fabs ((double) (vNewSeg->v.x - vSeg->v.x)) < 10.0 &&
 		    fabs ((double) (vNewSeg->v.y - vSeg->v.y)) < 10.0 &&
 		    fabs ((double) (vNewSeg->v.z - vSeg->v.z)) < 10.0) {
-			for (nSide = 0; nSide < 6; nSide++) {
+			for (short nSide = 0; nSide < 6; nSide++) {
 				if (!Link (nNewSeg, nNewSide, nSegment, nSide, 3)) {
 					// if these Segment () were linked, then unlink them
 					if ((newSegP->Child (nNewSide) == nSegment) && (segP->Child (nSide) == nNewSeg)) {
