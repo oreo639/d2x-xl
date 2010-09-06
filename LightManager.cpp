@@ -398,7 +398,8 @@ undoManager.SetModified (true);
 
 fLight /= 100.0;
 CSegment *segP = segmentManager.Segment (0);
-for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++) {
+for (CSegmentIterator i; i; i++) {
+	CSegment* segP = &(*i);
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
 		if (!bDynSegLights)
 			segP->m_info.staticLight = nLight;
