@@ -95,10 +95,9 @@ CSegment *segP;
 short vert, nSegment, nVertex; 
 bool found; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
+if (tunnelMaker.Active ())
 	return; 
-	}
+	
 if (vertexManager.Count () > (MAX_VERTICES - 1)) {
 	ErrorMsg ("Cannot unjoin these points because the\n"
 				"maximum number of points is reached."); 
@@ -170,10 +169,9 @@ void CSegmentManager::SplitLines (void)
   short vert [2], nSegment, nVertex, nLine, i; 
   bool found [2]; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
+if (tunnelMaker.Active ()) 
 	return; 
-	}
+
 if (vertexManager.Count () > (MAX_VERTICES - 2)) {
 	if (!bExpertMode)
 		ErrorMsg ("Cannot unjoin these lines because\nthere are not enought points left."); 
@@ -256,10 +254,8 @@ void CSegmentManager::SplitSegments (int solidify, int nSide)
   int vert [4], nSegment, nVertex, i, nFound = 0; 
   bool found [4]; 
 
-if (tunnelMaker.Active ()) {
-	ErrorMsg (spline_error_message); 
+if (tunnelMaker.Active ())
 	return; 
-	}
 
 segP = current.Segment (); 
 if (nSide < 0)
@@ -359,7 +355,7 @@ bool CSegmentManager::Split (void)
 	short			vertNum, nWall;
 	CVertex		segCenter, *segVert, *centerSegVert;
 	bool			bVertDone [8], bUndo;
-	int			h, i, j, k;
+	int			i, j, k;
 	short			oppSides [6] = {2,3,0,1,5,4};
 
 if (Count () >= MAX_SEGMENTS - 6) {
@@ -370,8 +366,8 @@ bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 //h = vertexManager.Count ();
 // compute segment center
-h = vertexManager.Count ();
-vertexManager.Add (8);
+ushort nVertices [8];
+vertexManager.Add (nVertices, 8);
 CalcCenter (segCenter, Index (centerSegP));
 // add center segment
 // compute center segment vertices
@@ -383,15 +379,15 @@ for (nSide = 0; nSide < 6; nSide++) {
 			continue;
 		bVertDone [j] = true;
 		centerSegVert = vertexManager.Vertex (centerSegP->m_info.verts [j]);
-		segVert = vertexManager.Vertex (h + j);
+		segVert = vertexManager.Vertex (nVertices [j]);
 		*segVert = Average (*centerSegVert, segCenter);
 		//centerSegP->m_info.verts [j] = h + j;
 		}
 	}
 
-#if 1
 // create the surrounding segments
-for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
+for (nSide = 0; nSide < 6; nSide++) {
+	nSegment = Add ();
 	segP = Segment (nSegment);
 	nOppSide = oppSides [nSide];
 	for (vertNum = 0; vertNum < 4; vertNum++) {
@@ -400,33 +396,33 @@ for (nSegment = Count (), nSide = 0; nSide < 6; nSegment++, nSide++) {
 		if ((nSide & 1) || (nSide >= 4)) {
 			i = lineVertTable [sideLineTable [nSide][0]][0];
 			j = lineVertTable [sideLineTable [nOppSide][2]][0];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			i = lineVertTable [sideLineTable [nSide][0]][1];
 			j = lineVertTable [sideLineTable [nOppSide][2]][1];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			i = lineVertTable [sideLineTable [nSide][2]][0];
 			j = lineVertTable [sideLineTable [nOppSide][0]][0];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			i = lineVertTable [sideLineTable [nSide][2]][1];
 			j = lineVertTable [sideLineTable [nOppSide][0]][1];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			}
 		else {
 			i = lineVertTable [sideLineTable [nSide][0]][0];
 			j = lineVertTable [sideLineTable [nOppSide][2]][1];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			i = lineVertTable [sideLineTable [nSide][0]][1];
 			j = lineVertTable [sideLineTable [nOppSide][2]][0];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			i = lineVertTable [sideLineTable [nSide][2]][0];
 			j = lineVertTable [sideLineTable [nOppSide][0]][1];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			i = lineVertTable [sideLineTable [nSide][2]][1];
 			j = lineVertTable [sideLineTable [nOppSide][0]][0];
-			segP->m_info.verts [j] = h + i;
+			segP->m_info.verts [j] = nVertices [i];
 			}
 		}
-	Segment (nSegment)->Setup ();
+	segP->Setup ();
 	if ((segP->SetChild (nSide, centerSegP->Child (nSide))) > -1) {
 		for (childSegP = Segment (segP->Child (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
 			if (childSegP->Child (nChildSide) == nCenterSeg) {
@@ -451,11 +447,10 @@ for (nSide = 0; nSide < 6; nSide++) {
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
-		centerSegP->m_info.verts [j] = h + j;
+		centerSegP->m_info.verts [j] = nVertices [j];
 		}
 	}
 // join adjacent sides of the segments surrounding the center segment
-#if 1
 for (nSegment = 0, segP = Segment (Count ()); nSegment < 5; nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segP->Child (nSide) >= 0)
@@ -466,7 +461,7 @@ for (nSegment = 0, segP = Segment (Count ()); nSegment < 5; nSegment++, segP++) 
 			for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 				if (childSegP->Child (nChildSide)  >= 0)
 					continue;
-				h = 0;
+				int h = 0;
 				for (i = 0; i < 4; i++) {
 					k = segP->m_info.verts [sideVertTable [nSide][i]];
 					for (j = 0; j < 4; j++) {
@@ -485,9 +480,7 @@ for (nSegment = 0, segP = Segment (Count ()); nSegment < 5; nSegment++, segP++) 
 			}
 		}
 	}
-#endif
-Count () += 6;
-#endif
+
 undoManager.Unlock ();
 DLE.MineView ()->Refresh ();
 return true;

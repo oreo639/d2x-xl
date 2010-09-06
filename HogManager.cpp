@@ -6,6 +6,7 @@
 
 #include "mine.h"
 #include "dle-xp.h"
+#include "TimeDate.h"
 #include "CustomTextures.h"
 
 //------------------------------------------------------------------------------
@@ -477,7 +478,7 @@ if (pszExt) {
 		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 		robotManager.ReadHXM (fSrc, size);
 		int i, count;
-		for (i = 0, count = 0; i < (int) robotManager.m_nRobotTypes; i++)
+		for (i = 0, count = 0; i < (int) robotManager.NumTypes (); i++)
 			if (robotManager.RobotInfo (i)->m_info.bCustom)
 				count++;
 		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);

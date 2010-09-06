@@ -96,7 +96,7 @@ for (i = 0; i < 4; i++) {
 	// update all Segment () that use this vertex
 	if (oldVertex != newVertex) {
 		for (CSegmentIterator si; si; si++) {
-			CSegment *segP = &(*i);
+			CSegment *segP = &(*si);
 			for (nVertex = 0; nVertex < 8; nVertex++)
 				if (segP->m_info.verts [nVertex] == oldVertex)
 					segP->m_info.verts [nVertex] = newVertex; 
@@ -558,8 +558,8 @@ CSegment*	newSegP = Segment (nNewSeg);
 CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
 
 for (CSegmentIterator si; si; si++) {
-	CSegment* segP = &(*i);
-	short nSegment = i.Index ();
+	CSegment* segP = &(*si);
+	short nSegment = si.Index ();
 	if (nSegment != nNewSeg) {
 		// first check to see if Segment () are any where near each other
 		// use x, y, and z coordinate of first point of each segment for comparison
