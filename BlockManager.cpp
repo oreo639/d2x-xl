@@ -245,7 +245,7 @@ for (CWallTriggerIterator ti; ti; ti++) {
 		if (trigP->Segment (j) >= 0)
 			trigP->Segment (j) = xlatSegNum [trigP->Segment (j)];
 		else if (trigP->m_count == 1) {
-			triggerManager.Delete (i.Index ());
+			triggerManager.Delete (ti.Index ());
 			i--;
 			}
 		else {

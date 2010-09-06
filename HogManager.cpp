@@ -3,23 +3,12 @@
 #include <math.h>
 #include <io.h>
 #include <string.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
-#include "mine.h"
-#include "global.h"
-#include "robot.h"
-#include "customtextures.h"
-#include "TextureManager.h"
-#include "robot.h"
-#include "dle-xp-res.h"
-#include "cfile.h"
-#include "HogManager.h"
-#include "light.h"
-#include "PaletteManager.h"
-#include "io.h"
 
+#include "mine.h"
+#include "dle-xp.h"
+#include "CustomTextures.h"
+
+//------------------------------------------------------------------------------
 // local globals
 char *VERTIGO_HINT =
 	"Vertigo levels allow you to use 12 robots in addition\n"
@@ -30,6 +19,7 @@ char *VERTIGO_HINT =
 
 char cut_paste_filename [256] = "";
 
+//------------------------------------------------------------------------------
 // local prototypes
 int read_block_file(char *name,int option);
 void strip_extension(char *str);
@@ -40,11 +30,11 @@ bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long s
 void RenameSubFile ();
 void DeleteLevelSubFiles(CFileManager& fp,char *name);
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 static byte dataBuf [65536];
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int AddFileData (CListBox *plb, int index, int size, int offset, int fileno)
 {
@@ -62,7 +52,7 @@ plb->SetItemDataPtr (index, (void *) pfd);
 return index;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void ClearFileList (CListBox *plb)
 {
@@ -75,7 +65,7 @@ for (i = 0; i < h; i++)
 plb->ResetContent ();
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CInputDialog::CInputDialog (CWnd *pParentWnd, LPSTR pszTitle, LPSTR pszPrompt, LPSTR pszBuf, size_t nBufSize)
 	: CDialog (IDD_INPDLG, pParentWnd)
@@ -86,7 +76,7 @@ m_pszBuf = pszBuf;
 m_nBufSize = nBufSize;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CInputDialog::OnInitDialog (void)
 {
@@ -95,7 +85,7 @@ SetWindowText (m_pszTitle);
 return TRUE;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CInputDialog::DoDataExchange (CDataExchange * pDX)
 {
@@ -103,7 +93,7 @@ DDX_Text (pDX, IDC_INPDLG_PROMPT, m_pszPrompt, int (strlen (m_pszPrompt)));
 DDX_Text (pDX, IDC_INPDLG_BUF, m_pszBuf, int (m_nBufSize));
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CInputDialog::OnOK (void)
 {
@@ -111,7 +101,7 @@ UpdateData (TRUE);
 CDialog::OnOK ();
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CHogManager, CDialog)
 	ON_BN_CLICKED (IDC_HOG_RENAME, OnRename)
@@ -123,7 +113,7 @@ BEGIN_MESSAGE_MAP (CHogManager, CDialog)
 	ON_LBN_DBLCLK (IDC_HOG_FILES, OnOK)
 END_MESSAGE_MAP ()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 bool BrowseForFile (BOOL bOpen, LPSTR pszDefExt, LPSTR pszFile, LPSTR pszFilter, DWORD nFlags, CWnd *pParentWnd)
 {
@@ -161,7 +151,7 @@ strcpy_s (pszFile, 256, d.GetPathName ());
 return true;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CHogManager::CHogManager (CWnd *pParentWnd, LPSTR pszFile, LPSTR pszSubFile)
 	: CDialog (IDD_HOGMANAGER, pParentWnd) 
@@ -172,7 +162,7 @@ m_pszSubFile = pszSubFile;
 m_bShowAll = false;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::EndDialog (int nResult)
 {
@@ -181,7 +171,7 @@ if (m_bInited)
 CDialog::EndDialog (nResult);
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::Reset (void)
 {
@@ -195,7 +185,7 @@ m_fileData.m_nFreeList = 0;
 */
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CHogManager::OnInitDialog (void)
 {
@@ -208,7 +198,7 @@ EndDialog (0);
 return FALSE;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::DoDataExchange (CDataExchange * pDX)
 {
@@ -220,14 +210,14 @@ DDX_Text (pDX, IDC_HOG_OFFSET, offset);
 DDX_Check (pDX, IDC_HOG_FILTER, m_bShowAll);
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::OnCancel (void)
 {
 CDialog::OnCancel ();
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::OnFilter (void)
 {
@@ -236,21 +226,21 @@ if (!ReadHogData ())
 	EndDialog (0);
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::OnSetFile (void)
 {
 UpdateData (FALSE);
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CHogManager::ClearFileList (void)
 {
 ::ClearFileList (LBFiles ());
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CHogManager::DeleteFile (int index)
 {
@@ -265,7 +255,7 @@ LBFiles ()->DeleteString (index);
 return 0;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CHogManager::AddFile (LPSTR pszName, long size, long offset, int fileno)
 {
@@ -279,7 +269,7 @@ LBFiles ()->SetCurSel (index);
 return 0;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CHogManager::GetFileData (int index, long *size, long *offset)
 {
@@ -297,14 +287,14 @@ if (offset)
 return pfd->m_fileno;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CHogManager::AddFileData (int index, long size, long offset, int fileno)
 {
 return ::AddFileData (LBFiles (), index, size, offset, fileno);
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CHogManager::FindFilename (LPSTR pszName)
 {
@@ -320,9 +310,9 @@ for (h = plb->GetCount (), i = 0; i < h; i++) {
 return -1;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - read hog data
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CHogManager::ReadHogData () 
 {
@@ -334,9 +324,9 @@ UpdateData (FALSE);
 return true;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - load level
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CHogManager::LoadLevel (LPSTR pszFile, LPSTR pszSubFile) 
 {
@@ -420,11 +410,11 @@ if (pszExt) {
 			GetFileData (index, &size, &offset);
 		}
 	if ((size < 0) || (offset < 0))
-		CreateLightMap ();
+		lightManager.CreateLightMap ();
 	else {
 		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 		int h = fSrc.Tell ();
-		ReadLightMap (fSrc, size);
+		lightManager.ReadLightMap (fSrc, size);
 		h = fSrc.Tell () - h;
 		}
 	}
@@ -443,7 +433,7 @@ else {
 if ((size >= 0) && (offset >= 0)) {
 	fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
 	int h = fSrc.Tell ();
-	theMine->ReadColorMap (fSrc);
+	lightManager.ReadColorMap (fSrc);
 	h = fSrc.Tell () - h;
 	}
 paletteManager.Reload ();
@@ -485,10 +475,10 @@ if (pszExt) {
 		}
 	if ((size >= 0) && (offset >= 0)) {
 		fSrc.Seek (sizeof (struct level_header) + offset, SEEK_SET);
-		theMine->ReadHxmFile (fSrc, size);
+		robotManager.ReadHXM (fSrc, size);
 		int i, count;
-		for (i = 0, count = 0; i < (int) N_robot_types;i++)
-			if (theMine->RobotInfo (i)->m_info.bCustom)
+		for (i = 0, count = 0; i < (int) robotManager.m_nRobotTypes; i++)
+			if (robotManager.RobotInfo (i)->m_info.bCustom)
 				count++;
 		sprintf_s (message, sizeof (message)," Hog manager: %d custom robots read", count);
 		DEBUGMSG (message);
@@ -501,11 +491,11 @@ errorExit:
 return funcRes;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager::Ok()
 //
 // Saves fp to a temporary fp called dle_temp.rdl so editor can load it
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CHogManager::OnOK () 
 {
@@ -563,9 +553,9 @@ LoadLevel ();
 CDialog::OnOK ();
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager::RenameMsg()
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CHogManager::OnRename ()
 {
@@ -617,11 +607,11 @@ else {
 fp.Close ();
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - ImportMsg
 //
 // Adds fp to the end of the list
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CHogManager::OnImport (void) 
 {
@@ -711,11 +701,11 @@ fDest.Close ();
 AddFile (lh.name, lh.size, offset, LBFiles ()->GetCount ());
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - ExportMsg
 //
 // Exports selected item to a fp
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CHogManager::OnExport (void) 
 {
@@ -743,7 +733,7 @@ if (!BrowseForFile (FALSE, "", szFile, "All Files|*.*||",
 ExportSubFile (m_pszFile, szFile, offset, lh.size);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - DeleteMsg
 //
 // Deletes an item from a HOG fp using the following steps:
@@ -752,7 +742,7 @@ ExportSubFile (m_pszFile, szFile, offset, lh.size);
 // 2) Deletes original HOG fp
 // 3) Renames new fp to original fp's name
 //
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void CHogManager::OnDelete (void) 
 {
@@ -791,9 +781,9 @@ ReadHogData ();
 LBFiles ()->SetCurSel ((delete_index < nFiles - 1) ? delete_index : nFiles - 1);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - read hog data
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool ReadHogData (LPSTR pszFile, CListBox *plb, bool bAllFiles, bool bOnlyLevels, bool bGetFileData) 
 {
@@ -864,9 +854,9 @@ plb->SetCurSel (index);
 return true;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // CHogManager - read hog data
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool FindFileData (LPSTR pszFile, LPSTR pszSubFile, long *nSize, long *nPos, BOOL bVerbose) 
 {
@@ -920,9 +910,9 @@ fp.Close ();
 return false;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // extract_from_hog()
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool ExportSubFile (const char *pszSrc, const char *pszDest, long offset, long size) 
 {
@@ -954,9 +944,9 @@ return (size == 0);
 }
 
 
-//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 // delete_sub_file()
-//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 
 void DeleteSubFile (CFileManager& fp, long size, long offset, int num_entries, int delete_index) 
 {
@@ -979,9 +969,9 @@ if (delete_index < num_entries - 1) {
 _chsize (_fileno (fp.File ()), offset);
 }
 
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // strip_extension
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 void strip_extension(char *str) 
 {
@@ -990,11 +980,11 @@ if (ext)
 	*ext = '\0';
 }
 
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // DeleteLevelSubFiles()
 //
 // deletes sub-files with same base name from hog
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 #define MAX_REGNUM 6
 
@@ -1068,9 +1058,8 @@ fp.Close ();
 
 #undef MAX_REGNUM
 
-//==========================================================================
+//------------------------------------------------------------------------------
 // write_sub_file()
-//==========================================================================
 
 int WriteSubFile (CFileManager& fDest, char *szSrc, char *szLevel) 
 {
@@ -1102,7 +1091,7 @@ fSrc.Close ();
 return lh.size + sizeof (lh);
 }
 
-//==========================================================================
+//------------------------------------------------------------------------------
 // make_hog()
 //
 // Action - makes a HOG fp which includes three files
@@ -1112,13 +1101,11 @@ return lh.size + sizeof (lh);
 //          also makes a mission fp for this HOG fp
 //
 // Changes - now saves rl2 files
-//==========================================================================
+//------------------------------------------------------------------------------
 
 typedef int (* subFileWriter) (CFileManager&);
 
-//--------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 int WriteCustomFile (CFileManager&fp, const int nType, const char* szFolder, const char* szFile)
 {
@@ -1131,13 +1118,13 @@ CFileManager::SplitPath (szFolder, szTmp, null, null);
 sprintf_s (szTmp, sizeof (szTmp), "%sdle_temp%s", szFolder, extensions [nType]);
 if (fTmp.Open (szTmp, "wb"))
 	return 1;
-int i;
+int i = 0;
 switch (nType) {
 	case 0:
-		i = WriteLightMap (fTmp);
+		lightManager.WriteLightMap (fTmp);
 		break;
 	case 1:
-		i = theMine->WriteColorMap (fTmp);
+		lightManager.WriteColorMap (fTmp);
 		break;
 	case 2:
 		i = paletteManager.SaveCustom (fTmp);
@@ -1146,7 +1133,7 @@ switch (nType) {
 		i = CreatePog (fTmp);
 		break;
 	case 4:
-		i = theMine->WriteHxmFile (fTmp);
+		i = robotManager.WriteHXM (fTmp);
 		break;
 	default:
 		i = 1;
@@ -1161,26 +1148,26 @@ CFileManager::Delete (szTmp);
 return i;
 }
 
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 void WriteCustomFiles (CFileManager& fp, char* szFolder, char* szFile, bool bCreate = false)
 {
 	static char* szPogQuery = "This level contains custom textures.\nWould you like save these textures into the HOG fp?\n\nNote: You must use version 1.2 or higher of Descent2 to see\nthe textures when you play the game.";
 	static char* szHxmQuery = "This level contains custom robot settings.\nWould you like save these changes into the HOG fp?\n\nNote: You must use version 1.2 or higher of Descent2 for\nthe changes to take effect.";
 
-if (theMine->HasCustomLightMap ())
+if (lightManager.HasCustomLightMap ())
 	WriteCustomFile (fp, 0, szFolder, szFile);
-if (theMine->HasCustomLightColors ())
+if (lightManager.HasCustomLightColors ())
 	WriteCustomFile (fp, 1, szFolder, szFile);
 if (paletteManager.Custom () != null)
 	WriteCustomFile (fp, 2, szFolder, szFile);
 if (textureManager.HasCustomTextures () && (!bCreate || bExpertMode || QueryMsg (szPogQuery) == IDYES)) 
 	WriteCustomFile (fp, 3, szFolder, szFile);
-if (theMine->HasCustomRobots () && (!bCreate || bExpertMode || QueryMsg (szHxmQuery) == IDYES)) 
+if (robotManager.HasCustomRobots () && (!bCreate || bExpertMode || QueryMsg (szHxmQuery) == IDYES)) 
 	WriteCustomFile (fp, 4, szFolder, szFile);
 }
 
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 int MakeHog (char *rdlFilename, char *hogFilename, char*szSubFile, bool bSaveAs) 
 {
@@ -1226,95 +1213,7 @@ sprintf_s (szTmp, sizeof (szTmp), DLE.IsD1File () ? "%s.rdl" : "%s.rl2", szFile)
 WriteSubFile (fp, rdlFilename, szTmp);
 CFileManager::Delete (szTmp);
 
-#if 1
-
 WriteCustomFiles (fp, szFolder, szFile, true);
-
-#else
-
-if (theMine->HasCustomLightMap ()) {
-	CFileManager::SplitPath (hogFilename, szTmp, null, null);
-	strcat_s (szTmp, sizeof (szTmp), "dle_temp.lgt");
-	fTmp.Open (szTmp, "wb");
-	if (fTmp) {
-		if (!WriteLightMap (fTmp)) {
-			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.lgt", szBaseName);
-			WriteSubFile (fp, szTmp, szBase);
-			}
-		else
-			fclose (fTmp);
-		_unlink (szTmp);
-		}
-	}
-
-if (theMine->HasCustomLightColors ())
-	WriteCustomFile (fp, 0, szFolder, 
-{
-	CFileManager::SplitPath (hogFilename, szTmp, null, null);
-	strcat_s (szTmp, sizeof (szTmp), "dle_temp.clr");
-	fTmp.Open (szTmp, "wb");
-	if (fTmp) {
-		if ((theMine == null)->WriteColorMap (fTmp)) {
-			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.clr", szBaseName);
-			WriteSubFile (fp, szTmp, szBase);
-			}
-		else
-			fclose (fTmp);
-		_unlink (szTmp);
-		}
-	}
-	
-if (HasCustomPalette ()) {
-	CFileManager::SplitPath (hogFilename, szTmp, null, null);
-	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pal");
-	fTmp.Open (szTmp,"wb");
-	if (fTmp) {
-		if (!paletteManager.SaveCustom (fTmp)) {
-			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.pal", szBaseName);
-			WriteSubFile (fp, szTmp, szBase);
-			}
-		else
-			fclose (fTmp);
-		_unlink (szTmp);
-		}
-	}
-
-// if textures have changed, ask if user wants to create a pog fp
-if (textureManager.HasCustomTextures () && (bExpertMode || QueryMsg (szPogQuery))) {
-	CFileManager::SplitPath (hogFilename, szTmp, null, null);
-	strcat_s (szTmp, sizeof (szTmp), "dle_temp.pog");
-	fTmp.Open (szTmp,"wb");
-	if (fTmp) {
-		if (!CreatePog (fTmp)) {
-			fclose (fTmp);
-			sprintf_s (szBase, sizeof (szBase), "%s.pog", szBaseName);
-			WriteSubFile (fp, szTmp, szBase);
-			custom_textures = 1;
-			}
-		else
-			fclose (fTmp);
-		_unlink (szTmp);
-		}
-	}
-// if robot info has changed, ask if user wants to create a hxm fp
-if (theMine->HasCustomRobots () && (bExpertMode || QueryMsg (szHxmQuery) == IDYES)) {
-	CFileManager::SplitPath (hogFilename, szTmp, null, null);
-	strcat_s (szTmp, sizeof (szTmp), "dle_temp.hxm");
-	fTmp.Open (szTmp, "wb");
-	if (fTmp) {
-		if ((theMine == null)->WriteHxmFile (fTmp)) {
-			sprintf_s (szBase, sizeof (szBase), "%s.hxm", szBaseName);
-			WriteSubFile (fp, szTmp, szBase);
-			custom_robots = 1;
-			}
-		_unlink (szTmp);
-		}
-	}
-
-#endif
 
 fp.Close ();
 MakeMissionFile (hogFilename, szSubFile, custom_textures, custom_robots, bSaveAs);
@@ -1438,94 +1337,14 @@ theMine->Save (szTmp, true);
 WriteSubFile (fp, szTmp, szSubFile);
 CFileManager::Delete (szTmp);
 
-#if 1
-
 WriteCustomFiles (fp, szFolder, szFile);
-
-#else
-
-char subName [256];
-
-if (theMine->HasCustomLightMap ()) {
-	CFileManager::SplitPath (szHogFile, szFolder, null, null);
-	strcat_s (szFolder, sizeof (szFolder), "dle_temp.lgt");
-	fTmp.Open (szFolder, "wb");
-	bool bOk = false;
-	if (fTmp) {
-		if (!WriteLightMap (fTmp)) {
-			fclose (fTmp);
-			sprintf_s (subName, sizeof (subName), "%s.lgt", szFile);
-			WriteSubFile (fp, szFolder, subName);
-			bOk = true;
-			}
-		else
-			fclose (fTmp);
-		_unlink (szFolder);
-		}
-	if (!bOk)
-		ErrorMsg ("Error writing custom light map.");
-	}
-
-if (theMine->HasCustomLightColors ()) {
-	CFileManager::SplitPath (szHogFile, szFolder, null, null);
-	strcat_s (szFolder, sizeof (szFolder), "dle_temp.clr");
-	fTmp.Open (szFolder, "wb");
-	if (fTmp) {
-		if ((theMine == null)->WriteColorMap (fTmp)) {
-			fclose (fTmp);
-			sprintf_s (subName, sizeof (subName), "%s.clr", szFile);
-			WriteSubFile (fp, szFolder, subName);
-			}
-		else
-			fclose (fTmp);
-		_unlink (szFolder);
-		}
-	}
-
-if (textureManager.HasCustomTextures ()) {
-	CFileManager::SplitPath (szHogFile, szFolder, null, null);
-	strcat_s (szFolder, sizeof (szFolder), "dle_temp.hxm");
-	fTmp.Open (szFolder, "wb");
-	bool bOk = false;
-	if (fTmp) {
-		if (!CreatePog (fTmp)) {
-			sprintf_s (subName, sizeof (subName), "%s.pog", szFile);
-			WriteSubFile (fp, szFolder, subName);
-			bOk = true;
-			}
-		fclose (fTmp);
-		_unlink (szFolder);
-		}
-	if (!bOk)
-		ErrorMsg ("Error writing custom textures.");
-	}
-
-if (theMine->HasCustomRobots ()) {
-	CFileManager::SplitPath (szHogFile, szFolder, null, null);
-	strcat_s (szFolder, sizeof (szFolder), "dle_temp.hxm");
-	fTmp.Open (szFolder, "wb");
-	bool bOk = false;
-	if (fTmp) {
-		if ((theMine == null)->WriteHxmFile (fTmp)) {
-			sprintf_s (subName, sizeof (subName), "%s.hxm", szFile);
-			WriteSubFile (fp, szFolder, subName);
-			bOk = true;
-			}
-		_unlink (szFolder);
-		}
-	if (!bOk)
-		ErrorMsg ("Error writing custom robots.");
-	}
-
-#endif
 
 fp.Close ();
 return 0;
 }
 
-//==========================================================================
+//------------------------------------------------------------------------------
 // write_mission_file()
-//==========================================================================
 
 static LPSTR szMissionName [] = {"name", "zname", "d2x-name", null};
 static LPSTR szMissionInfo [] = {"editor", "build_time", "date", "revision", "author", "email", "web_site", "briefing", null};
@@ -1540,7 +1359,7 @@ static LPSTR szBool [] = {"no", "yes", null};
 
 static LPSTR *szTags [] = {szMissionName, szMissionInfo, szMissionType, szMissionFlags, szCustomFlags, szAuthorFlags, szNumLevels, szNumSecrets};
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int atob (LPSTR psz, size_t nSize)
 {
@@ -1552,7 +1371,7 @@ for (i = 0; i < 2; i++)
 return 0;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int ReadMissionFile (char *pszFile) 
 {
@@ -1661,7 +1480,7 @@ fclose (fMsn);
 return 0;
 }
 
-                         /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int WriteMissionFile (char *pszFile, int levelVersion, bool bSaveAs) 
 {
@@ -1728,9 +1547,8 @@ fclose (fMsn);
 return 0;
 }
 
-//==========================================================================
+//------------------------------------------------------------------------------
 // make_mission_file()
-//==========================================================================
 
 int MakeMissionFile (char *pszFile, char *pszSubFile, int bCustomTextures, int bCustomRobots, bool bSaveAs) 
 {
@@ -1762,4 +1580,5 @@ missionData.customFlags [1] = bCustomRobots;
 return WriteMissionFile (pszFile, DLE.LevelVersion (), bSaveAs);
 }
 
+//------------------------------------------------------------------------------
 // eof fp.cpp
