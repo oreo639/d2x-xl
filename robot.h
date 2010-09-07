@@ -143,6 +143,8 @@ class CRobotInfo : public CGameItem {
 		virtual void Backup (eEditType editType = opModify);
 
 		virtual CGameItem* Copy (CGameItem* destP);
+
+		inline tRobotInfo& Info (void) { return m_info; }
 };
 
 //------------------------------------------------------------------------------

@@ -250,25 +250,26 @@ fp.Write (m_info.always_0xabcd);
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this segment for the undo manager
-// if segment was modified, make a copy of the current segment
-// if segment was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
+
+CGameItem* CRobotInfo::Copy (CGameItem* destP)
+{
+if (destP != null)
+	*dynamic_cast<CRobotInfo*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
 
 CGameItem* CRobotInfo::Clone (void)
 {
-CRobotInfo* cloneP = new CRobotInfo;	// only make a copy if modified
-if (cloneP != null)
-	*cloneP = *this;
-return cloneP;
+return Copy (new CRobotInfo);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------
 
 void CRobotInfo::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, editType);
+Id () = undoManager.Backup (this, editType);
 }
 
 //--------------------------------------------------------------------------

@@ -132,7 +132,7 @@ switch (m_object->m_info.type) {
 		}
 		break;
 	case OBJ_ROBOT:
-		nModel = robotManager.RobotInfo ((m_object->m_info.id >= N_ROBOT_TYPES_D2) ? m_object->m_info.id /*- N_ROBOT_TYPES_D2*/ : m_object->m_info.id)->m_info.nModel;
+		nModel = robotManager.RobotInfo ((m_object->m_info.id >= N_ROBOT_TYPES_D2) ? m_object->m_info.id /*- N_ROBOT_TYPES_D2*/ : m_object->m_info.id)->Info ().nModel;
 		break;
 	default:
 		return null;
