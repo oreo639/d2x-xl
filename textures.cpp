@@ -274,7 +274,7 @@ return cloneP;
 void CTexture::Backup (eEditType editType = opModify)
 {
 if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, opModify);
+	m_nBackup = undoManager.Backup (this, editType);
 }
 
 //------------------------------------------------------------------------

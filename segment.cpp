@@ -729,7 +729,7 @@ return destP;
 
 void CMatCenter::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------

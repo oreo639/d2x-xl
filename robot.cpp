@@ -265,10 +265,10 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CRobotInfo::Backup (eEditType editType = opModify)
+void CRobotInfo::Backup (eEditType editType)
 {
 if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itRobotInfo, opModify);
+	m_nBackup = undoManager.Backup (this, editType);
 }
 
 //--------------------------------------------------------------------------

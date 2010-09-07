@@ -773,9 +773,9 @@ return Copy (new CGameObject);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CGameObject::Backup (eEditType editType = opModify)
+void CGameObject::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------

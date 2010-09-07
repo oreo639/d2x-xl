@@ -213,7 +213,7 @@ return Copy (new CTrigger);	// only make a copy if modified
 
 void CTrigger::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 //------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ return cloneP;
 
 void CReactorTrigger::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 //------------------------------------------------------------------------------

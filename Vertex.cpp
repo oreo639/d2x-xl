@@ -39,9 +39,9 @@ return Copy (new CVertex);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Backup (eEditType editType = opModify)
+void CVertex::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------

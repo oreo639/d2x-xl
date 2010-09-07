@@ -95,9 +95,9 @@ return Copy (new CColor);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CColor::Backup (eEditType editType = opModify)
+void CColor::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 //------------------------------------------------------------------------------
@@ -529,9 +529,9 @@ return Copy (new CLightDeltaValue);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaValue::Backup (eEditType editType = opModify)
+void CLightDeltaValue::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------
@@ -585,9 +585,9 @@ return Copy (new CLightDeltaIndex);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaIndex::Backup (eEditType editType = opModify)
+void CLightDeltaIndex::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------

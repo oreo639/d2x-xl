@@ -258,7 +258,7 @@ return Copy (new CWall);	// only make a copy if modified
 
 void CWall::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // ------------------------------------------------------------------------
@@ -307,7 +307,7 @@ return Copy (new CDoor);	// only make a copy if modified
 
 void CDoor::Backup (eEditType editType)
 {
-Id () = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, editType);
 }
 
 // ------------------------------------------------------------------------
