@@ -85,10 +85,10 @@ while (!fp.EoF ()) {
 	CSegment* segP = segmentManager.Segment (nSegment);
 	segP->m_info.owner = -1;
 	segP->m_info.group = -1;
-	fscanf_s (fp.File (), "segment %hd\n", &segP->m_nIndex);
-	xlatSegNum [segP->m_nIndex] = nSegment;
+	fscanf_s (fp.File (), "segment %hd\n", &segP->Index ());
+	xlatSegNum [segP->Index ()] = nSegment;
 	// invert segment number so its children can be children can be fixed later
-	segP->m_nIndex = ~segP->m_nIndex;
+	segP->Index () = ~segP->Index ();
 
 	// read in side information 
 	CSide* sideP = segP->m_sides;
@@ -537,7 +537,7 @@ undoManager.Lock ();
 DLE.MineView ()->DelayRefresh (true);
 segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
-	segP->m_nIndex = nSegment;
+	segP->Index () = nSegment;
 	segP->m_info.wallFlags &= ~MARKED_MASK;
 	}
 
@@ -554,7 +554,7 @@ DLE.MainFrame ()->Progress ().DestroyWindow ();
 // int up the new segmentManager.Segment () children
 segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
-	if (segP->m_nIndex < 0) {  // if segment was just inserted
+	if (segP->Index () < 0) {  // if segment was just inserted
 		// if child has a segment number that was just inserted, set it to the
 		//  segment's offset number, otherwise set it to -1
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
@@ -562,7 +562,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 				seg2P = segmentManager.Segment (0);
 				short nSegOffset;
 				for (nSegOffset = 0; nSegOffset < segmentManager.Count (); nSegOffset++, seg2P++) {
-					if (segP->Child (nChild) == ~seg2P->m_nIndex) {
+					if (segP->Child (nChild) == ~seg2P->Index ()) {
 						segP->SetChild (nChild, nSegOffset);
 						break;
 						}
@@ -600,7 +600,7 @@ for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
 // now set all seg_numbers
 segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
-	segP->m_nIndex = nSegment;
+	segP->Index () = nSegment;
 fp.Close ();
 DLE.MineView ()->Refresh ();
 undoManager.Unlock ();

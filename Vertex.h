@@ -25,11 +25,15 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		virtual void Clear (void);
 
-		virtual CGameItem* Clone (eEditType editType = opModify);
+		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType);
 
 		virtual CGameItem* Copy (CGameItem* destP);
+
+		virtual void Undo (void);
+
+		virtual void Redo (void);
 
 		// c'tors
 		CVertex () : CGameItem (itVertex), m_status(0) {}

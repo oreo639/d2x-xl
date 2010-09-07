@@ -102,7 +102,7 @@ void CTriggerTargets::Write (CFileManager& fp)
 	int i;
 
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
-	fp.WriteInt16 ((short) segmentManager.Segment (m_targets [i].m_nSegment)->m_nIndex);
+	fp.WriteInt16 ((short) segmentManager.Segment (m_targets [i].m_nSegment)->Index ());
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp.Write (m_targets [i].m_nSide);
 }
@@ -194,37 +194,26 @@ return DLE.IsD1File ()
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this vertex for the undo manager
-// if vertex was modified, make a copy of the current vertex
-// if vertex was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
+
+CGameItem* CTrigger::Copy (CGameItem* destP)
+{
+if (destP != null)
+	*dynamic_cast<CTrigger*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
 
 CGameItem* CTrigger::Clone (void)
 {
-CTrigger* cloneP = new CTrigger;	// only make a copy if modified
-if (cloneP != null) 
-	*cloneP = *this;
-return cloneP;
+return Copy (new CTrigger);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------
 
-bool CTrigger::Backup (eEditType editType)
+void CTrigger::Backup (eEditType editType)
 {
-if (HaveBackup ())
-	return false;
-m_nBackup = undoManager.Backup (this, opModify);
-return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void CTrigger::Save (void)
-{
-if (!Backup ()) {
-	*dynamic_cast<CTrigger*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
+Id () = undoManager.Backup (this, opModify);
 }
 
 //------------------------------------------------------------------------------
@@ -257,7 +246,7 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 
 // -----------------------------------------------------------------------------
 
-virtual void CTrigger::Clear (void) 
+void CTrigger::Clear (void) 
 { 
 memset (&m_info, 0, sizeof (m_info)); 
 CTriggerTargets::Clear ();
@@ -281,8 +270,7 @@ return cloneP;
 
 void CReactorTrigger::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, opModify);
+Id () = undoManager.Backup (this, opModify);
 }
 
 //------------------------------------------------------------------------------

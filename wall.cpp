@@ -153,7 +153,7 @@ m_info.cloakValue = fp.ReadSByte ();
 
 void CWall::Write (CFileManager& fp, int version, bool bFlag)
 {
-fp.WriteInt32 (segmentManager.Segment (m_nSegment)->m_nIndex);
+fp.WriteInt32 (segmentManager.Segment (m_nSegment)->Index ());
 fp.WriteInt32 ((int) m_nSide); 
 fp.Write (m_info.hps);
 fp.Write (m_info.linkedWall);
@@ -166,7 +166,7 @@ fp.Write (m_info.state);
 if (m_info.nTrigger == NO_TRIGGER)
 	fp.WriteByte (NO_TRIGGER);       
 else
-	fp.WriteByte ((byte) triggerManager.Trigger (m_info.nTrigger)->m_nIndex);
+	fp.WriteByte ((byte) triggerManager.Trigger (m_info.nTrigger)->Index ());
 fp.Write (m_info.nClip);      
 fp.Write (m_info.keys);          
 fp.Write (m_info.controllingTrigger);
@@ -229,7 +229,7 @@ if (ps = strstr (pszName, "door")) {
 	int nDoor = atol (ps + 4);
 	for (int i = 1; i < NUM_OF_CLIPS_D2; i++)
 		if (nDoor == doorClipTable [i]) {
-			Save ();
+			Backup ();
 			m_info.nClip = animClipTable [i];
 			DLE.MineView ()->Refresh ();
 			return i;
@@ -256,7 +256,7 @@ return Copy (new CWall);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CWall::Backup (eEditType editType = opModify)
+void CWall::Backup (eEditType editType)
 {
 Id () = undoManager.Backup (this, opModify);
 }
@@ -305,7 +305,7 @@ return Copy (new CDoor);	// only make a copy if modified
 
 // -----------------------------------------------------------------------------
 
-void CDoor::Backup (eEditType editType = opModify)
+void CDoor::Backup (eEditType editType)
 {
 Id () = undoManager.Backup (this, opModify);
 }

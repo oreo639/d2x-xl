@@ -86,7 +86,7 @@ undoManager.Lock ();
 sideP->SetWall (nWall);
 CWall* wallP = Wall (nWall);
 wallP->Setup (key, nWall, (byte) type, nClip, nTexture, false);
-wallP->m_nIndex = nWall;
+wallP->Index () = nWall;
 wallP->m_info.flags = flags;
 wallP->m_info.keys = keys;
 // update number of Walls () in mine
@@ -367,7 +367,7 @@ void CWallManager::SetIndex (void)
 {
 int j = 0;
 for (CWallIterator wi; wi; wi++)
-	wi->m_nIndex = j++;
+	wi->Index () = j++;
 }
 
 // ----------------------------------------------------------------------------- 
@@ -381,7 +381,7 @@ if (m_info [0].offset >= 0) {
 		if (i < MAX_WALLS) {
 			CWall* wallP = Wall (Add ());
 			wallP->Read (fp, nFileVersion);
-			wallP->m_nIndex = i;
+			wallP->Index () = i;
 			}
 		else {
 			CWall w;

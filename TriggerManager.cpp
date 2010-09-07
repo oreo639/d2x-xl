@@ -55,7 +55,7 @@ void CTriggerManager::SortObjTriggers (void)
 
 if (h > 1) {
 	for (ushort i = 0; i < h; i++)
-		ObjTrigger (i)->m_nIndex = i;
+		ObjTrigger (i)->Index () = i;
 	SortObjTriggers (0, h - 1);
 	}
 }
@@ -205,7 +205,7 @@ int nTrigger = --m_free;
 Count (0)++;
 CTrigger* trigP = Trigger (nTrigger);
 trigP->Setup (type, flags);
-trigP->m_nIndex = nTrigger;
+trigP->Index () = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
 undoManager.Unlock ();
@@ -350,11 +350,11 @@ short nTrigger = NumObjTriggers ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
 trigP->m_info.nObject = nObject;
-trigP->m_nIndex = nTrigger;
+trigP->Index () = nTrigger;
 undoManager.Unlock ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
-	if (ObjTrigger (--i)->m_nIndex == nTrigger)
+	if (ObjTrigger (--i)->Index () == nTrigger)
 		return ObjTrigger (i);
 return ObjTrigger (nTrigger);
 }
@@ -367,7 +367,7 @@ if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
 	return;
 if (nDelTrigger < --NumObjTriggers ())
 	*ObjTrigger (nDelTrigger) = *ObjTrigger (NumObjTriggers ());
-ObjTrigger (NumObjTriggers ())->m_nIndex = -1; // mark as unused (needed by the trigger iterator)
+ObjTrigger (NumObjTriggers ())->Index () = -1; // mark as unused (needed by the trigger iterator)
 }
 
 //------------------------------------------------------------------------------
@@ -397,7 +397,7 @@ void CTriggerManager::SetIndex (void)
 {
 int j = 0;
 for (CWallTriggerIterator ti; ti; ti++)
-	ti->m_nIndex = j++;
+	ti->Index () = j++;
 }
 
 // -----------------------------------------------------------------------------
@@ -435,7 +435,7 @@ for (short i = 0; i < Count (0); i++) {
 	if (Count (0) < MAX_TRIGGERS) {
 		CTrigger* trigP = WallTrigger (--m_free);
 		trigP->Read (fp, nFileVersion, false);
-		trigP->m_nIndex = i;
+		trigP->Index () = i;
 		}
 	else {
 		CTrigger t;

@@ -47,7 +47,7 @@ void CVertexManager::SetIndex (void)
 {
 int j = 0;
 for (CVertexIterator vi; vi; vi++)
-	vi->m_nIndex = j++;
+	vi->Index () = j++;
 }
 
 // ----------------------------------------------------------------------------- 
