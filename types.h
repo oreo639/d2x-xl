@@ -2,8 +2,8 @@
 #define __types_h
 
 #include "define.h"
+#include "GameItem.h"
 #include "FileManager.h"
-#include "crc.h"
 
 # pragma pack(push, packing)
 # pragma pack(1)
@@ -102,7 +102,7 @@ public:
 
 	virtual CGameItem* Clone (eEditType editType);
 
-	virtual bool Backup (eEditType editType = opModify);
+	virtual void Backup (eEditType editType = opModify);
 
 	virtual void Save (void);
 };

@@ -162,7 +162,7 @@ else {
 
 //------------------------------------------------------------------------------
 
-int CUndoManager::Backup (CGameItem* parent, eItemType itemType, eEditType editType) 
+int CUndoManager::Backup (CGameItem* parent, eEditType editType) 
 { 
 CGameItem* itemP = parent->Clone (editType);
 if (itemP != null) {

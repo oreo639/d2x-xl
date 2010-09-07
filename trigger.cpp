@@ -209,10 +209,22 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CTrigger::Backup (eEditType editType)
+bool CTrigger::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+if (HaveBackup ())
+	return false;
+m_nBackup = undoManager.Backup (this, opModify);
+return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void CTrigger::Save (void)
+{
+if (!Backup ()) {
+	*dynamic_cast<CTrigger*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -270,7 +282,7 @@ return cloneP;
 void CReactorTrigger::Backup (eEditType editType)
 {
 if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+	m_nBackup = undoManager.Backup (this, opModify);
 }
 
 //------------------------------------------------------------------------------

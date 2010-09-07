@@ -177,7 +177,7 @@ public:
 
 	virtual CGameItem* Clone (eEditType editType);
 
-	virtual bool Backup (eEditType editType = opModify);
+	virtual void Backup (eEditType editType = opModify);
 
 	virtual void CSegment::Undo (void);
 
@@ -225,6 +225,8 @@ public:
 	virtual CGameItem* Clone (eEditType editType);
 
 	virtual void Backup (eEditType editType = opModify);
+
+	virtual void Save (void);
 };
 
 // -----------------------------------------------------------------------------

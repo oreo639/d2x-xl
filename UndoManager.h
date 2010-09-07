@@ -62,7 +62,7 @@ class CUndoManager
 
 		inline CUndoItem* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
 
-		int Backup (CGameItem* parent, eItemType itemType, eEditType editType);
+		int Backup (CGameItem* parent, eEditType editType);
 
 		inline int Id (void) { return m_nId; }
 

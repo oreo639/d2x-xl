@@ -27,7 +27,7 @@ public:
 
 	virtual CGameItem* Clone (eEditType editType = opModify);
 
-	virtual bool Backup (eEditType editType);
+	virtual void Backup (eEditType editType);
 
 	virtual void Save (void);
 

@@ -229,7 +229,7 @@ if (ps = strstr (pszName, "door")) {
 	int nDoor = atol (ps + 4);
 	for (int i = 1; i < NUM_OF_CLIPS_D2; i++)
 		if (nDoor == doorClipTable [i]) {
-			Backup ();
+			Save ();
 			m_info.nClip = animClipTable [i];
 			DLE.MineView ()->Refresh ();
 			return i;
@@ -256,10 +256,13 @@ return cloneP;
 
 void CWall::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ()) {
-	m_nBackup = undoManager.Backup (this, itSegment, opModify);
-	undoManager.SetModified (true);
+if (HaveBackup ()) {
+	*dynamic_cast<CWall*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
 	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
 }
 
 // ------------------------------------------------------------------------
@@ -306,8 +309,13 @@ return cloneP;
 
 void CDoor::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+if (HaveBackup ()) {
+	*dynamic_cast<CDoor*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
 }
 
 // ------------------------------------------------------------------------

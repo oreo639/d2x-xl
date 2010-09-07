@@ -68,6 +68,8 @@ public:
 
 	virtual void Backup (eEditType editType = opModify);
 
+	virtual void Save (void);
+
 	void Setup (short type, short flags);
 
 	bool IsExit (void);
@@ -96,6 +98,8 @@ public:
 	virtual CGameItem* Clone (eEditType editType);
 
 	virtual void Backup (eEditType editType = opModify);
+
+	virtual void Save (void);
 };
 
 //------------------------------------------------------------------------

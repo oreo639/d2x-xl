@@ -39,20 +39,13 @@ return cloneP;
 
 void CVertex::Backup (eEditType editType)
 {
-if (HaveBackup ())
-	return false;
-m_nBackup = undoManager.Backup (this, itSegment, opModify);
-return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void CVertex::Save (void)
-{
-if (!Backup ()) {
+if (HaveBackup ()) {
 	*dynamic_cast<CVertex*> (m_backup) = *this;
 	m_backup->Id () = undoManager.Id ();
 	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
 }
 
 // -----------------------------------------------------------------------------

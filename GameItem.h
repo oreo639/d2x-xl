@@ -49,7 +49,7 @@ class CGameItem {
 
 		virtual void Clear (void) {}
 
-		virtual bool Backup (eEditType editType = opModify) { return false; }
+		virtual void Backup (eEditType editType = opModify) { return false; }
 
 		virtual void Save (void) {}
 

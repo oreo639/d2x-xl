@@ -89,23 +89,15 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-bool CColor::Backup (eEditType editType = opModify)
+void CColor::Backup (eEditType editType = opModify)
 {
-if ((m_backup != null) && (m_nBackup == undoManager.Id ())
-	return false;
-m_nBackup = undoManager.Backup (this, itMatCenter, opModify);
-return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void CColor::Save (void)
-{
-{
-if (!Backup ()) {
+if (HaveBackup ()) {
 	*dynamic_cast<CColor*> (m_backup) = *this;
 	m_backup->Id () = undoManager.Id ();
 	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------------
@@ -535,22 +527,15 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-bool CLightDeltaValue::Backup (eEditType editType = opModify)
+void CLightDeltaValue::Backup (eEditType editType = opModify)
 {
-if (HaveBackup ())
-	return false;
-m_nBackup = undoManager.Backup (this, itLightDeltaValue, opModify);
-return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void CDeltaLightValue::Save (void)
-{
-if (!Backup ()) {
+if (HaveBackup ()) {
 	*dynamic_cast<CDeltaLightValue*> (m_backup) = *this;
 	m_backup->Id () = undoManager.Id ();
 	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
 }
 
 // -----------------------------------------------------------------------------
@@ -600,20 +585,13 @@ return cloneP;
 
 void CLightDeltaIndex::Backup (eEditType editType = opModify)
 {
-if (HaveBackup ())
-	return false;
-m_nBackup = undoManager.Backup (this, itCLightDeltaIndex, opModify);
-return true;
-}
-
-// -----------------------------------------------------------------------------
-
-void CDeltaLightIndex::Save (void)
-{
-if (!Backup ()) {
+if (HaveBackup ()) {
 	*dynamic_cast<CDeltaLightIndex*> (m_backup) = *this;
 	m_backup->Id () = undoManager.Id ();
 	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
 }
 
 // -----------------------------------------------------------------------------

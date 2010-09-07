@@ -773,8 +773,19 @@ return cloneP;
 
 void CGameObject::Backup (eEditType editType = opModify)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itGameObject, opModify);
+// -----------------------------------------------------------------------------
+
+void CWall::Backup (eEditType editType)
+{
+if (HaveBackup ()) {
+	*dynamic_cast<CGameObject*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
+else
+	m_nBackup = undoManager.Backup (this, opModify);
+undoManager.SetModified (true);
+}
+
 }
 
 // -----------------------------------------------------------------------------
