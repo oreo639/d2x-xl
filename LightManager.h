@@ -7,7 +7,7 @@
 # pragma pack(1)
 
 #include "Vector.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "carray.h"
 
 #define MAX_LIGHT_DEPTH 6

@@ -5,7 +5,7 @@
 
 #include "define.h"
 #include "Types.h"
-#include "cfile.h"
+#include "FileManager.h"
 
 // -----------------------------------------------------------------------------
 // define points for a given side 
@@ -174,6 +174,10 @@ public:
 	bool HasChild (short nChild) { return (m_info.childFlags & (1 << nChild)) != 0; }
 
 	void Reset (short nSide);
+
+	CGameItem* Clone (eEditType editType);
+
+	CSegment () : CGameItem (itSegment) {}
 
 private:
 	byte ReadWalls (CFileManager& fp, int nLevelVersion);

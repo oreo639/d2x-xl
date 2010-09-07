@@ -9,7 +9,7 @@
 
 #include "define.h"
 #include "types.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "trigger.h"
 #include "dle-xp.h"
 

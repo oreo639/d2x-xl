@@ -19,7 +19,7 @@
 #include "crcccitt.h"
 
 /* CCITT 16 bit CRC table build using feedback value of 0x8408 */
-static const tCrc crc16_table[256] = {
+static const uint crc16_table[256] = {
    0x0000,0x1189,0x2312,0x329b,0x4624,0x57ad,0x6536,0x74bf,
    0x8c48,0x9dc1,0xaf5a,0xbed3,0xca6c,0xdbe5,0xe97e,0xf8f7,
    0x1891,0x0918,0x3b83,0x2a0a,0x5eb5,0x4f3c,0x7da7,0x6c2e,
@@ -56,7 +56,7 @@ static const tCrc crc16_table[256] = {
 /* CCITT32,IEEE 802, ANSI X3.66
     32 bit crc table built using feedback value of 0xedb88320
 */
-static const tCrc crc32_table[256] = {
+static const uint crc32_table[256] = {
    0x00000000,0x77073096,0xee0e612c,0x990951ba,0x076dc419,0x706af48f,0xe963a535,0x9e6495a3,
    0x0edb8832,0x79dcb8a4,0xe0d5e91e,0x97d2d988,0x09b64c2b,0x7eb17cbd,0xe7b82d07,0x90bf1d91,
    0x1db71064,0x6ab020f2,0xf3b97148,0x84be41de,0x1adad47d,0x6ddde4eb,0xf4d4b551,0x83d385c7,
@@ -94,7 +94,7 @@ static const tCrc crc32_table[256] = {
 /* compute 16 bit CCITT crc on the fly, doesn't use table
    use this one if you are tight on space.
 */
-tCrc Crc16f (tCrc crc, unsigned char * bufP, long bufSize)
+uint Crc16f (uint crc, unsigned char * bufP, long bufSize)
 {
 for (; bufSize; bufSize--, bufP++)
    {
@@ -106,7 +106,7 @@ return crc;
 }
 
 /* compute 16 bit CCITT crc using the table */
-tCrc Crc16 (tCrc crc, unsigned char * bufP, long bufSize)
+uint Crc16 (uint crc, unsigned char * bufP, long bufSize)
 {
 for (; bufSize; bufSize--, bufP++)
    crc = (crc >> 8) ^ crc16_table [*bufP ^ (crc & 0xff)];
@@ -114,7 +114,7 @@ return crc;
 }
 
 /* compute 32 bit CCITT crc from a table */
-tCrc Crc32 (tCrc crc, unsigned char * bufP, long bufSize)
+uint Crc32 (uint crc, unsigned char * bufP, long bufSize)
 {
 for (; bufSize; bufSize--, bufP++)
    crc = (crc >> 8) ^ crc32_table [*bufP ^ (crc & 0xff)];

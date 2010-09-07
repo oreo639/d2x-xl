@@ -2,7 +2,7 @@
 #define __types_h
 
 #include "define.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "crc.h"
 
 # pragma pack(push, packing)
@@ -14,6 +14,7 @@
 
 typedef enum {
 	itUndefined,
+	itVertex,
 	itSegment,
 	itWall,
 	itTrigger,
@@ -25,7 +26,7 @@ typedef enum {
 	} eItemType;
 
 typedef enum {
-	opAdd, opDelete, opModify;
+	opNone, opAdd, opDelete, opModify
 } eEditType;
 
 class CGameItem {
@@ -38,7 +39,7 @@ public:
 	CGameItem*	m_prev;
 	CGameItem*	m_next;
 
-	CGameItem () : m_nIndex (-1), m_nBackup (-1), m_type (itUndefined), m_prev (null), m_next (null) {}
+	CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_nBackup (-1), m_itemType (itemType), m_editType (opNone), m_prev (null), m_next (null) {}
 
 	virtual void Clear (void) = 0;
 
@@ -62,7 +63,7 @@ public:
 
 	virtual CGameItem* Backup (void) = 0;
 
-	virtual CGameItem* Clone (void) = 0;
+	virtual CGameItem* Clone (eEditType editType) = 0;
 	};
 
 // -----------------------------------------------------------------------------

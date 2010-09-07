@@ -618,20 +618,29 @@ m_sides [nSide].Reset ();
 }
 
 // -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
 
-CGameItem* CSegment::Clone (void)
+CGameItem* CSegment::Clone (eEditType editType)
 {
-CSegment* cloneP = new CSegment;
-if (cloneP != 0) {
-	*cloneP = *this;
-	cloneP->m_type = itSegment;
+CSegment* cloneP;
+if (editType == opModified)
+	cloneP = new CGameItem (itSegment);
+else {
+	cloneP = new CSegment;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
 	}
 return cloneP;
 }
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Backup (void)
+void CSegment::Backup (eEditType editType = opModify)
 {
 if (m_nBackup != undoManager.Id ())
 	m_nBackup = undoManager.Backup (this, itSegment, opModify);

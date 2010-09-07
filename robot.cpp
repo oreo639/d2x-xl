@@ -11,7 +11,7 @@
 #include "mine.h"
 #include "global.h"
 #include "toolview.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "HogManager.h"
 
 //------------------------------------------------------------------------

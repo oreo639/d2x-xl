@@ -2,7 +2,7 @@
 #define __objman_h
 
 #include "define.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "carray.h"
 #include "Selection.h"
 #include "MineInfo.h"

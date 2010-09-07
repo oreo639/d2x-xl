@@ -2,7 +2,7 @@
 #define __trigman_h
 
 #include "define.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "carray.h"
 #include "trigger.h"
 #include "MineInfo.h"

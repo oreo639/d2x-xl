@@ -25,7 +25,7 @@ COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 #	include <errno.h>
 #endif
 
-#include "cfile.h"
+#include "FileManager.h"
 //#include "findfile.h"
 
 #define INTEL_SHORT

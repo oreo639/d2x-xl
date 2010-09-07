@@ -10,7 +10,7 @@
 #include "dle-xp.h"
 #include "mine.h"
 #include "global.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "PaletteManager.h"
 
 HGLOBAL hPalette;

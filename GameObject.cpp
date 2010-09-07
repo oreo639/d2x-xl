@@ -2,7 +2,7 @@
 
 #include "define.h"
 #include "types.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "ViewMatrix.h"
 #include "Selection.h"
 #include "UndoManager.h"

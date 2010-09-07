@@ -6559,6 +6559,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\Vertex.cpp"
+					>
+				</File>
+				<File
 					RelativePath="WALL.CPP"
 					>
 					<FileConfiguration

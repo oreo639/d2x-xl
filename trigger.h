@@ -6,7 +6,7 @@
 # pragma pack(push, packing)
 # pragma pack(1)
 
-#include "cfile.h"
+#include "FileManager.h"
 #include "Types.h"
 
 //------------------------------------------------------------------------

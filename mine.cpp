@@ -9,7 +9,7 @@
 #include "global.h"
 #include "mine.h"
 #include "matrix.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "textures.h"
 #include "PaletteManager.h"
 #include "dle-xp.h"

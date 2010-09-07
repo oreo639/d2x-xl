@@ -2,7 +2,7 @@
 #define __vertman_h
 
 #include "define.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "carray.h"
 #include "Types.h"
 #include "Selection.h"

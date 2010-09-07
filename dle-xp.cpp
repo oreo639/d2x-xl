@@ -14,7 +14,7 @@
 #include "ComObj.h"
 #include "global.h"
 #include "TextureManager.h"
-#include "cfile.h"
+#include "FileManager.h"
 
 int nLayout = 1;
 

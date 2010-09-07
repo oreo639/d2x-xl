@@ -11,7 +11,7 @@
 #include "TextureManager.h"
 #include "global.h"
 #include "render.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "light.h"
 #include "toolview.h"
 #include "texturefilter.h"

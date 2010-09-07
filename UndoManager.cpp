@@ -190,7 +190,7 @@ return Id ();
 
 //------------------------------------------------------------------------------
 
-int CUndoManager::Count ()
+int CUndoManager::Count (void)
 {
 	tUndoBuffer	*p;
 	int			i;

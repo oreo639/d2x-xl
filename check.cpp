@@ -11,7 +11,7 @@
 #include "textures.h"
 #include "global.h"
 #include "render.h"
-#include "cfile.h"
+#include "FileManager.h"
 
 #include <math.h>
 

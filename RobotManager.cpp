@@ -7,7 +7,7 @@
 
 #include "define.h"
 #include "global.h"
-#include "cfile.h"
+#include "FileManager.h"
 #include "Mine.h"
 #include "ResourceManager.h"
 
