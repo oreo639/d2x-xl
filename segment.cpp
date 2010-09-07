@@ -678,8 +678,12 @@ switch (EditType ()) {
 
 void CSegment::Save (void)
 {
-if (m_backup != null)
+if ((m_backup == null) || (m_backup->Id () != undoManager.Id ())
+	Backup ();
+else {
 	*dynamic_cast<CSegment*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
 }
 
 // -----------------------------------------------------------------------------

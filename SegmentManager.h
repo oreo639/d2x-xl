@@ -57,6 +57,7 @@ class CSegmentManager {
 		int						m_nAddMode;
 		robotMakerList			m_matCens [2];
 		CMineItemInfo			m_matCenInfo [2];
+		bool						m_bCreating;
 
 	public:
 		inline void ResetInfo (void) {
@@ -238,10 +239,6 @@ class CSegmentManager {
 
 		bool SetDefaultTexture (short nTexture);
 
-		bool DefineSegment (short nSegment, byte type, short nTexture, short wallType = -1);
-
-		void UndefineSegment (short nSegment);
-
 		void SetLinesToDraw (void);
 
 		short ReadSegmentInfo (CFileManager& fp);
@@ -292,7 +289,7 @@ class CSegmentManager {
 
 		inline bool Full (void) { return m_free.Empty (); }
 
-		CSegmentManager () { 
+		CSegmentManager () : m_bCreating (false) { 
 			ResetInfo ();
 			Clear ();
 			m_free.Create (Segment (0), SEGMENT_LIMIT);

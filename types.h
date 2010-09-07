@@ -34,6 +34,7 @@ typedef enum {
 class CGameItem {
 	protected:
 		int			m_nIndex;
+		int			m_nId;
 		eItemType	m_itemType;
 		CGameItem*	m_backup;
 
@@ -43,6 +44,8 @@ class CGameItem {
 		inline bool Used (void) { return m_nIndex >= 0; }
 
 		inline int& Index (void) { return m_nIndex; }
+
+		inline int& Id (void) { return m_nId; }
 
 		virtual void Clear (void) {}
 

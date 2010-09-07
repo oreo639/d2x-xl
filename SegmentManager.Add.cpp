@@ -36,8 +36,6 @@ if (tunnelMaker.Active ()) {
 	return -1; 
 	}
 
-curSegP = Segment (current.m_nSegment); 
-
 if (Full ()) {
 	ErrorMsg ("Cannot add a new segment because\nthe maximum number of segments has been reached."); 
 	return -1;
@@ -46,6 +44,9 @@ if (vertexManager.Full ()) {
 	ErrorMsg ("Cannot add a new segment because\nthe maximum number of vertices has been reached."); 
 	return -1;
 	}
+
+curSegP = Segment (current.m_nSegment); 
+
 if (curSegP->Child (nCurSide) >= 0) {
 	ErrorMsg ("Can not add a new segment to a side\nwhich already has a segment attached."); 
 	return -1;
@@ -54,6 +55,7 @@ if (curSegP->Child (nCurSide) >= 0) {
 undoManager.SetModified (true); 
 undoManager.Lock ();
 // get new segment
+m_bCreating = true;
 nNewSeg = Add (); 
 newSegP = Segment (nNewSeg); 
 
@@ -92,12 +94,7 @@ for (nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 newSegP->m_info.staticLight = curSegP->m_info.staticLight; 
 
 // delete variable light if it exists
-short index = lightManager.VariableLight (CSideKey (current.m_nSegment, nCurSide)); 
-if (index != -1) {
-	lightManager.Count ()--; 
-	// put last light in place of deleted light
-	memcpy (lightManager.VariableLight (index), lightManager.VariableLight (lightManager.Count ()), sizeof (CVariableLight)); 
-	}
+lightManager.DeleteVariableLight (CSideKey (current.m_nSegment, nCurSide)); 
 
 // update current segment
 curSegP->SetChild (nCurSide, nNewSeg); 
@@ -131,12 +128,13 @@ current.Segment ()->Backup (opAdd);
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
 undoManager.Unlock ();
+m_bCreating = false;
 return nNewSeg; 
 }
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
+short CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
 {
 if ((szError != null) && theMine->IsD1File ()) {
 	if (!bExpertMode)
@@ -145,20 +143,26 @@ if ((szError != null) && theMine->IsD1File ()) {
 	}
 
 undoManager.Lock ();
-if (bCreate && !Create (nSegment)) {
-	Remove (nSegment);
-	undoManager.ResetModified (bUndo);
-	return false; 
+if (bCreate) {
+	nSegment = Create (nSegment);
+	if (nSegment < 0) {
+		Remove (nSegment, false);
+		undoManager.ResetModified (bUndo);
+		return false; 
+		}
 	}	
 DLE.MineView ()->DelayRefresh (true);
+m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
 	if (bCreate)
-		Remove (nSegment);
+		Remove (nSegment, false);
 	undoManager.ResetModified (bUndo);
 	DLE.MineView ()->DelayRefresh (false);
+	m_bCreating = false;
 	return false; 
 	}	
 Segment (nSegment)->Save ();
+m_bCreating = false;
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
@@ -262,12 +266,14 @@ if (nFuelCen >= MAX_NUM_RECHARGERS) {
 
 CSegment *segP = Segment (0);
 
-if (nType == SEGMENT_FUNC_FUELCEN) {
+if (nType == SEGMENT_FUNC_REPAIRCEN)
+	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.");
+else {
 	short nLastSeg = current.m_nSegment;
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? theMine->IsD1File () ? 322 : 333 : -1);
 	if (nSegment < 0)
 		return -1;
-	if (bSetDefTextures) {
+	if (bSetDefTextures) { // add energy spark walls to fuel center sides
 		current.m_nSegment = nLastSeg;
 		if (wallManager.Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1) != null) {
 			CSideKey opp;
@@ -278,12 +284,6 @@ if (nType == SEGMENT_FUNC_FUELCEN) {
 		current.m_nSegment = nSegment;
 		}
 	}
-else if (nType == SEGMENT_FUNC_REPAIRCEN) {
-	if (Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.") < 0)
-		return -1;
-	}
-else
-	return -1;
 return nSegment;
 }
 
@@ -427,8 +427,11 @@ switch (m_nAddMode) {
 		for (i = 4; i < 8; i++) 
 			A [i] = B [i] + *vertexManager.Vertex (nVertex); 
 
-		for (i = 0; i < 4; i++)
-			*vertexManager.Vertex (newVerts [i]) = A [i + 4]; 
+		for (i = 0; i < 4; i++) {
+			nVertex = newVerts [i];
+			*vertexManager.Vertex (nVertex) = A [i + 4]; 
+			vertexManager.Vertex (nVertex)->Save ();
+			}
 		}
 	}
 }
@@ -439,9 +442,12 @@ bool CSegmentManager::SetDefaultTexture (short nTexture)
 {
 if (nTexture < 0)
 	return true;
-short nSegment = current.m_nSegment;
 
+short nSegment = current.m_nSegment;
 CSegment *segP = Segment (nSegment);
+
+if (!m_bCreating)
+	segP->Backup ();
 double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
@@ -449,8 +455,7 @@ CSide *sideP = segP->m_sides;
 for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 	if (segP->Child (nSide) == -1) {
 		SetTextures (CSideKey (nSegment, nSide), nTexture, 0);
-		int i;
-		for (i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			sideP->m_info.uvls [i].u = (short) ((double) defaultUVLs [i].u / scale);
 			sideP->m_info.uvls [i].v = (short) ((double) defaultUVLs [i].v / scale);
 			sideP->m_info.uvls [i].l = defaultUVLs [i].l;
@@ -467,8 +472,10 @@ bool CSegmentManager::Define (short nSegment, byte nFunction, short nTexture)
 {
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-Undefine (nSegment);
 CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
+if (!m_bCreating)
+	segP->Backup ();
+Undefine (Index (segP));
 segP->m_info.function = nFunction;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
@@ -493,6 +500,7 @@ if (info.count > 0) {
 		for (CSegmentIterator si; si; si++) {
 			CSegment *segP = &(*si);
 			if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == info.count)) {
+				segP->Backup ();
 				segP->m_info.nMatCen = nDelMatCen;
 				break;
 				}
@@ -564,7 +572,7 @@ if (nDelSeg < 0 || nDelSeg >= Count ())
 undoManager.Lock ();
 CSegment* delSegP = Segment (nDelSeg); 
 delSegP->Backup (opDelete);
-UndefineSegment (nDelSeg);
+Undefine (nDelSeg);
 
 // delete any variable lights that use this segment
 for (int nSide = 0; nSide < 6; nSide++) {

@@ -11,7 +11,8 @@ for (ushort i = 0; i < count; i++) {
 	if (m_free.Empty ())
 		return i;
 	nVertex = --m_free;
-	m_vertices [nVertex].Clear ();
+	Vertex (nVertex)->Clear ();
+	Vertex (nVertex)->Backup (opAdd);
 	nVertices [i] = nVertex;
 	Count ()++;
 	}
@@ -23,6 +24,7 @@ return count;
 void CVertexManager::Delete (ushort nDelVert)
 {
 undoManager.SetModified (true); 
+Vertex (nDelVert)->Backup (opDelete);
 m_free += (int) nDelVert;
 Count ()--;
 }

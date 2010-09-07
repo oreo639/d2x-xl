@@ -168,6 +168,7 @@ CGameItem* itemP = parent->Clone (editType);
 if (itemP != null) {
 	Append ();
 	SetModified (true);
+	itemP->Id () = Id ();
 	Tail ()->Setup (parent, editType, Id ());
 	}
 return Id ();
