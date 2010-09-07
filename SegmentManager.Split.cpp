@@ -349,14 +349,11 @@ DLE.MineView ()->Refresh ();
 bool CSegmentManager::Split (void)
 {
 	CSegment*	centerSegP = current.Segment (), *segP, *childSegP;
-	short			nCenterSeg = short (centerSegP - Segment (0));
-	short			nSegment, nChildSeg;
-	short			nSide, nOppSide, nChildSide;
-	short			vertNum, nWall;
-	CVertex		segCenter, *segVert, *centerSegVert;
+	short			nCenterSeg = segmentManager.Index (centerSegP);
+	short			nNewSegs [6];
+	ushort		nNewVerts [8];
+	CVertex		segCenter;
 	bool			bVertDone [8], bUndo;
-	int			i, j, k;
-	short			oppSides [6] = {2,3,0,1,5,4};
 
 if (Count () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
@@ -366,65 +363,63 @@ bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 //h = vertexManager.Count ();
 // compute segment center
-ushort nVertices [8];
-vertexManager.Add (nVertices, 8);
+vertexManager.Add (nNewVerts, 8);
 CalcCenter (segCenter, Index (centerSegP));
 // add center segment
 // compute center segment vertices
 memset (bVertDone, 0, sizeof (bVertDone));
-for (nSide = 0; nSide < 6; nSide++) {
-	for (vertNum = 0; vertNum < 4; vertNum++) {
-		j = sideVertTable [nSide][vertNum];
+for (short nSide = 0; nSide < 6; nSide++) {
+	for (short nVertex = 0; nVertex < 4; nVertex++) {
+		short j = sideVertTable [nSide][nVertex];
 		if (bVertDone [j])
 			continue;
 		bVertDone [j] = true;
-		centerSegVert = vertexManager.Vertex (centerSegP->m_info.verts [j]);
-		segVert = vertexManager.Vertex (nVertices [j]);
-		*segVert = Average (*centerSegVert, segCenter);
-		//centerSegP->m_info.verts [j] = h + j;
+		*vertexManager.Vertex (nNewVerts [j]) = Average (*centerSegP->Vertex (j), segCenter);
 		}
 	}
 
 // create the surrounding segments
-for (nSide = 0; nSide < 6; nSide++) {
-	nSegment = Add ();
-	segP = Segment (nSegment);
-	nOppSide = oppSides [nSide];
-	for (vertNum = 0; vertNum < 4; vertNum++) {
-		i = sideVertTable [nSide][vertNum];
+for (short nSide = 0; nSide < 6; nSide++) {
+	nNewSegs [nSide] = Add ();
+	short nSegment = nNewSegs [nSide];
+	CSegment* segP = Segment (nSegment);
+	short nOppSide = oppSideTable [nSide];
+	for (short nVertex = 0; nVertex < 4; nVertex++) {
+		ushort j, i = sideVertTable [nSide][nVertex];
 		segP->m_info.verts [i] = centerSegP->m_info.verts [i];
 		if ((nSide & 1) || (nSide >= 4)) {
 			i = lineVertTable [sideLineTable [nSide][0]][0];
 			j = lineVertTable [sideLineTable [nOppSide][2]][0];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			i = lineVertTable [sideLineTable [nSide][0]][1];
 			j = lineVertTable [sideLineTable [nOppSide][2]][1];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			i = lineVertTable [sideLineTable [nSide][2]][0];
 			j = lineVertTable [sideLineTable [nOppSide][0]][0];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			i = lineVertTable [sideLineTable [nSide][2]][1];
 			j = lineVertTable [sideLineTable [nOppSide][0]][1];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			}
 		else {
 			i = lineVertTable [sideLineTable [nSide][0]][0];
 			j = lineVertTable [sideLineTable [nOppSide][2]][1];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			i = lineVertTable [sideLineTable [nSide][0]][1];
 			j = lineVertTable [sideLineTable [nOppSide][2]][0];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			i = lineVertTable [sideLineTable [nSide][2]][0];
 			j = lineVertTable [sideLineTable [nOppSide][0]][1];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			i = lineVertTable [sideLineTable [nSide][2]][1];
 			j = lineVertTable [sideLineTable [nOppSide][0]][0];
-			segP->m_info.verts [j] = nVertices [i];
+			segP->m_info.verts [j] = nNewVerts [i];
 			}
 		}
 	segP->Setup ();
 	if ((segP->SetChild (nSide, centerSegP->Child (nSide))) > -1) {
-		for (childSegP = Segment (segP->Child (nSide)), nChildSide = 0; nChildSide < 6; nChildSide++)
+		CSegment* childSegP = Segment (segP->Child (nSide));
+		for (short nChildSide = 0; nChildSide < 6; nChildSide++)
 			if (childSegP->Child (nChildSide) == nCenterSeg) {
 				childSegP->SetChild (nChildSide, nSegment);
 				break;
@@ -432,39 +427,42 @@ for (nSide = 0; nSide < 6; nSide++) {
 			}
 	segP->SetChild (nOppSide, nCenterSeg);
 	centerSegP->SetChild (nSide, nSegment);
-	nWall = centerSegP->m_sides [nSide].m_info.nWall;
-	segP->m_sides [nSide].m_info.nWall = nWall;
-	if ((nWall >= 0) && (nWall != NO_WALL)) {
-		wallManager.Wall (nWall)->m_nSegment = nSegment;
+	CWall* wallP = centerSegP->m_sides [nSide].Wall ();
+	if (wallP == NULL)
+		segP->m_sides [nSide].m_info.nWall = NO_WALL;
+	else {
+		segP->m_sides [nSide].m_info.nWall = wallManager.Index (wallP);
+		wallP->m_nSegment = nSegment;
 		centerSegP->m_sides [nSide].m_info.nWall = NO_WALL;
 		}
 	}
 // relocate center segment vertex indices
 memset (bVertDone, 0, sizeof (bVertDone));
-for (nSide = 0; nSide < 6; nSide++) {
-	for (vertNum = 0; vertNum < 4; vertNum++) {
-		j = sideVertTable [nSide][vertNum];
-		if (bVertDone [j])
+for (short nSide = 0; nSide < 6; nSide++) {
+	for (short nVertex = 0; nVertex < 4; nVertex++) {
+		ushort i = sideVertTable [nSide][nVertex];
+		if (bVertDone [i])
 			continue;
-		bVertDone [j] = true;
-		centerSegP->m_info.verts [j] = nVertices [j];
+		bVertDone [i] = true;
+		centerSegP->m_info.verts [i] = nNewVerts [i];
 		}
 	}
 // join adjacent sides of the segments surrounding the center segment
-for (nSegment = 0, segP = Segment (Count ()); nSegment < 5; nSegment++, segP++) {
-	for (nSide = 0; nSide < 6; nSide++) {
+// don't process 6th segment as this is handled by processing the 1st one already
+for (short nSegment = 0; nSegment < 5; nSegment++) {
+	segP = Segment (nNewSegs [nSegment]);
+	for (short nSide = 0; nSide < 6; nSide++) {
 		if (segP->Child (nSide) >= 0)
 			continue;
-		for (nChildSeg = nSegment + 1, childSegP = Segment (Count () + nChildSeg); 
-			  nChildSeg < 6; 
-			  nChildSeg++, childSegP++) {
-			for (nChildSide = 0; nChildSide < 6; nChildSide++) {
+		for (short nChildSeg = nSegment + 1; nChildSeg < 6; nChildSeg++) {
+			childSegP = Segment (nNewSegs [nChildSeg]);
+			for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
 				if (childSegP->Child (nChildSide)  >= 0)
 					continue;
-				int h = 0;
-				for (i = 0; i < 4; i++) {
-					k = segP->m_info.verts [sideVertTable [nSide][i]];
-					for (j = 0; j < 4; j++) {
+				short h = 0;
+				for (short i = 0; i < 4; i++) {
+					ushort k = segP->m_info.verts [sideVertTable [nSide][i]];
+					for (short j = 0; j < 4; j++) {
 						if (k == childSegP->m_info.verts [sideVertTable [nChildSide][j]]) {
 							h++;
 							break;
