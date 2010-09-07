@@ -718,9 +718,11 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CMatCenter::Copy (CGameItem* destP)
+CGameItem* CMatCenter::Copy (CGameItem* destP)
 {
-*dynamic_cast<CMatCenter*> (destP) = *this;
+if (destP != null)
+	*dynamic_cast<CMatCenter*> (destP) = *this;
+return destP;
 }
 
 // -----------------------------------------------------------------------------

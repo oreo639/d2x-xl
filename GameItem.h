@@ -58,7 +58,7 @@ class CGameItem {
 
 		virtual CGameItem* Clone (void) { return null; }
 
-		virtual CGameItem* Copy (CGameItem* destP) {}
+		virtual CGameItem* Copy (CGameItem* destP) { return null; }
 
 		virtual void Undo (void) {}
 

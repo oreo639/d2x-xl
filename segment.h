@@ -181,6 +181,8 @@ public:
 
 	virtual CGameItem* Copy (CGameItem* destP);
 
+	virtual void Redo (void);
+
 	virtual void Undo (void);
 
 	CSegment () : CGameItem (itSegment) {}
