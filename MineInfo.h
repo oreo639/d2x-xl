@@ -62,14 +62,11 @@ public:
 
 class CMineData {
 	public:
-		CMineInfo					mineInfo;
-		int							m_reactorTime;
-		int							m_reactorStrength;
-		int							m_secretSegNum;
-		CDoubleMatrix				m_secretOrient;
-		
-		// robot data
-		// structure data
+		CMineInfo			m_info;
+		int					m_reactorTime;
+		int					m_reactorStrength;
+		int					m_secretSegNum;
+		CDoubleMatrix		m_secretOrient;
 };
 
 // -----------------------------------------------------------------------------

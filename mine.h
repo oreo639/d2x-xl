@@ -89,18 +89,9 @@ class CMine {
 		inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
 		inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
 
-		//inline textureList& Textures (void)
-		//	{ return textures; }
+		inline CMineInfo& Info (void)	{ return Data ().m_info; }
 
-
-
-		//inline CTexture* Textures (int i, int j = 0)
-		//	{ return &textureManager.textures [i][j]; }
-
-		inline CMineInfo& Info (void)
-			{ return Data ().mineInfo; }
-		inline CMineFileInfo& FileInfo (void)
-			{ return Data ().mineInfo.fileInfo; }
+		inline CMineFileInfo& FileInfo (void) { return Data ().m_info.fileInfo; }
 
 		long TotalSize (CMineItemInfo& gii) { return (int) gii.size * (int) gii.count; }
 
@@ -124,8 +115,6 @@ class CMine {
 		void MarkAll (void);
 		void UnmarkAll (void);
 
-
-		void FixChildren(void);
 
 		inline void SetSelectMode (short mode) { m_selectMode = mode; }
 
