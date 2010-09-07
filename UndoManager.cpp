@@ -175,7 +175,22 @@ else if (m_delay)
 
 //------------------------------------------------------------------------------
 
-int CUndoManager::UndoCount ()
+int CUndoManager::Backup (CGameItem* parent, eItemTyper itemType, eEditType editType) 
+{ 
+CGameItem* backup = parent->Clone ();
+if (backupP != null) {
+	backup->m_parent = parent;
+	backup->m_itemType = itemType;
+	backup->m_editType = editType;
+	backup->m_nBackup = Id ();
+	backup->Link (Tail ()); 
+	}
+return Id ();
+}
+
+//------------------------------------------------------------------------------
+
+int CUndoManager::Count ()
 {
 	tUndoBuffer	*p;
 	int			i;

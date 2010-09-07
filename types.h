@@ -12,17 +12,58 @@
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+typedef enum {
+	itUndefined,
+	itSegment,
+	itWall,
+	itTrigger,
+	itObject,
+	itRobot,
+	itVariableLight,
+	itDeltaLightValue,
+	itDeltaLightIndex
+	} eItemType;
+
+typedef enum {
+	opAdd, opDelete, opModify;
+} eEditType;
+
 class CGameItem {
 public:
-	int m_nIndex;
+	int			m_nIndex;
+	int			m_nBackup; // used by undo manager
+	eItemType	m_itemType;
+	eEditType	m_editType;
+	CGameItem*	m_parent;
+	CGameItem*	m_prev;
+	CGameItem*	m_next;
 
-	CGameItem () : m_nIndex(-1) {}
+	CGameItem () : m_nIndex (-1), m_nBackup (-1), m_type (itUndefined), m_prev (null), m_next (null) {}
 
 	virtual void Clear (void) = 0;
 
 	virtual bool Used (void) { return m_nIndex >= 0; }
 
-};
+	void Link (CGameItem* pred) {
+		m_prev = pred;
+		if (pred != null) {
+			m_next = pred->m_next;
+			pred->m_next = m_prev;
+			}
+		}
+
+	void Unlink (void) {
+		if (m_prev != null)
+			m_prev->m_next = m_next;
+		if (m_next != null)
+			m_next->m_prev = m_prev;
+		m_prev = m_next = null;
+		}
+
+	virtual CGameItem* Backup (void) = 0;
+
+	virtual CGameItem* Clone (void) = 0;
+	};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
