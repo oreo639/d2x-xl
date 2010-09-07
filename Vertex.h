@@ -29,7 +29,7 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		virtual void Backup (eEditType editType);
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 
 		// c'tors
 		CVertex () : CGameItem (itVertex), m_status(0) {}

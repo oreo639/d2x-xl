@@ -618,30 +618,26 @@ m_sides [nSide].Reset ();
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this segment for the undo manager
-// if segment was modified, make a copy of the current segment
-// if segment was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
-CGameItem* CSegment::Clone (eEditType editType)
+CGameItem* CSegment::Copy (CGameItem* destP)
 {
-CSegment* cloneP = new CSegment;	// only make a copy if modified
-if (cloneP != null)
-	*cloneP = *this;
-return m_parent = cloneP;
+if (destP != null)
+	*dynamic_cast<CSegment*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
+
+CGameItem* CSegment::Clone (void)
+{
+return Copy (new CSegment);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------
 
 void CSegment::Backup (eEditType editType)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CSegment*> (m_parent) = *this;
-	m_parent->SetParent (this); // need to restore after copying over it
-	}
-else 
-	Id () = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------
@@ -712,7 +708,7 @@ fp.Write (m_info.nFuelCen);
 // if segment was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CMatCenter::Clone (eEditType editType)
+CGameItem* CMatCenter::Clone (void)
 {
 CMatCenter* cloneP = new CMatCenter;	// only make a copy if modified
 if (cloneP != null)
@@ -722,7 +718,7 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void Copy (CGameItem* destP)
+void CMatCenter::Copy (CGameItem* destP)
 {
 *dynamic_cast<CMatCenter*> (destP) = *this;
 }
@@ -732,7 +728,6 @@ void Copy (CGameItem* destP)
 void CMatCenter::Backup (eEditType editType)
 {
 Id () = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
 }
 
 // -----------------------------------------------------------------------------

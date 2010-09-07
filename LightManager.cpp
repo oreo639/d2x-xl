@@ -79,25 +79,25 @@ fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CColor::Clone (eEditType editType)
+CGameItem* CColor::Copy (CGameItem* destP)
 {
-CColor* cloneP = new CColor;	// only make a copy if modified
-if (cloneP != null)
-	*cloneP = *this;
-return cloneP;
+if (destP != null)
+	*dynamic_cast<CColor*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
+
+CGameItem* CColor::Clone (void)
+{
+return Copy (new CColor);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------
 
 void CColor::Backup (eEditType editType = opModify)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CColor*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+Id () = undoManager.Backup (this, opModify);
 }
 
 //------------------------------------------------------------------------------
@@ -512,30 +512,26 @@ for (int i = 0; i < 4; i++)
 
 
 // -----------------------------------------------------------------------------
-// make a copy of this segment for the undo manager
-// if segment was modified, make a copy of the current segment
-// if segment was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
-CGameItem* CLightDeltaValue::Clone (eEditType editType)
+CGameItem* CLightDeltaValue::Copy (CGameItem* destP)
 {
-CLightDeltaValue* cloneP = new CLightDeltaValue;	// only make a copy if modified
-if (cloneP != null)
-	*cloneP = *this;
-return cloneP;
+if (destP != null)
+	*dynamic_cast<CLightDeltaValue*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
+
+CGameItem* CLightDeltaValue::Clone (void)
+{
+return Copy (new CLightDeltaValue);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------
 
 void CLightDeltaValue::Backup (eEditType editType = opModify)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CDeltaLightValue*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+Id () = undoManager.Backup (this, opModify);
 }
 
 // -----------------------------------------------------------------------------
@@ -573,25 +569,25 @@ fp.Write (m_info.index);
 
 // -----------------------------------------------------------------------------
 
-CGameItem* CLightDeltaIndex::Clone (eEditType editType)
+CGameItem* CLightDeltaIndex::Copy (CGameItem* destP)
 {
-CDeltaLightIndex* cloneP = new CLightDeltaIndex;	// only make a copy if modified
-if (cloneP != null)
-	*cloneP = *this;
-return cloneP;
+if (destP != null)
+	*dynamic_cast<CLightDeltaIndex*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
+
+CGameItem* CLightDeltaIndex::Clone (void)
+{
+return Copy (new CLightDeltaIndex);	// only make a copy if modified
 }
 
 // -----------------------------------------------------------------------------
 
 void CLightDeltaIndex::Backup (eEditType editType = opModify)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CDeltaLightIndex*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+Id () = undoManager.Backup (this, opModify);
 }
 
 // -----------------------------------------------------------------------------

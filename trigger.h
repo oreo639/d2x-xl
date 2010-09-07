@@ -64,11 +64,11 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 
 		virtual void Clear (void);
 
-		virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 
 		void Setup (short type, short flags);
 
@@ -95,11 +95,11 @@ class CReactorTrigger : public CTriggerTargets, public CGameItem {
 
 		virtual void Clear (void) { CTriggerTargets::Clear (); }
 
-		virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 };
 
 //------------------------------------------------------------------------

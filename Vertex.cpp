@@ -22,30 +22,26 @@ fp.WriteVector (v);
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this vertex for the undo manager
-// if vertex was modified, make a copy of the current vertex
-// if vertex was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
-CGameItem* CVertex::Clone (eEditType editType)
+CGameItem* CVertex::Copy (CGameItem* destP)
 {
-CVertex* cloneP = new CVertex;	// only make a copy if modified
-if (cloneP != null) 
-	*cloneP = *this;
-return cloneP;
+if (destP != null)
+	*dynamic_cast<CVertex*> (destP) = *this;
+return destP;
 }
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Backup (eEditType editType)
+CGameItem* CVertex::Clone (void)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CVertex*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+return Copy (new CVertex);	// only make a copy if modified
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Backup (eEditType editType = opModify)
+{
+Id () = undoManager.Backup (this, opModify);
 }
 
 // -----------------------------------------------------------------------------

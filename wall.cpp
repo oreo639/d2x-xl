@@ -239,30 +239,26 @@ return -1;
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this vertex for the undo manager
-// if vertex was modified, make a copy of the current vertex
-// if vertex was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
-CGameItem* CWall::Clone (eEditType editType)
+CGameItem* CWall::Copy (CGameItem* destP)
 {
-CWall* cloneP = new CWall;	// only make a copy if modified
-if (cloneP != null) 
-	*cloneP = *this;
-return cloneP;
+if (destP != null)
+	*dynamic_cast<CWall*> (destP) = *this;
+return destP;
 }
 
 // -----------------------------------------------------------------------------
 
-void CWall::Backup (eEditType editType)
+CGameItem* CWall::Clone (void)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CWall*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+return Copy (new CWall);	// only make a copy if modified
+}
+
+// -----------------------------------------------------------------------------
+
+void CWall::Backup (eEditType editType = opModify)
+{
+Id () = undoManager.Backup (this, opModify);
 }
 
 // ------------------------------------------------------------------------
@@ -292,30 +288,26 @@ fp.Write (m_info.time);
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this vertex for the undo manager
-// if vertex was modified, make a copy of the current vertex
-// if vertex was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
-CGameItem* CDoor::Clone (eEditType editType)
+CGameItem* CDoor::Copy (CGameItem* destP)
 {
-CDoor* cloneP = new CDoor;	// only make a copy if modified
-if (cloneP != null) 
-	*cloneP = *this;
-return cloneP;
+if (destP != null)
+	*dynamic_cast<CDoor*> (destP) = *this;
+return destP;
 }
 
 // -----------------------------------------------------------------------------
 
-void CDoor::Backup (eEditType editType)
+CGameItem* CDoor::Clone (void)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CDoor*> (m_parent) = *this;
-	m_parent->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, opModify);
-undoManager.SetModified (true);
+return Copy (new CDoor);	// only make a copy if modified
+}
+
+// -----------------------------------------------------------------------------
+
+void CDoor::Backup (eEditType editType = opModify)
+{
+Id () = undoManager.Backup (this, opModify);
 }
 
 // ------------------------------------------------------------------------

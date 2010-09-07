@@ -19,9 +19,9 @@ class CUndoItem {
 	public:
 		CGameItem*	m_item;
 		CGameItem*	m_parent;
-		int			m_nId; // used by undo manager
+		uint			m_nId; // used by undo manager
 
-		inline int& Id (void) { return m_nId; }
+		inline uint& Id (void) { return m_nId; }
 
 		inline CGameItem* Parent (void) { return m_parent; }
 

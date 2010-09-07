@@ -261,7 +261,7 @@ return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 // if segment was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CTexture::Clone (eEditType editType)
+CGameItem* CTexture::Clone (void)
 {
 cloneP = new CTexture;	// only make a copy if modified
 if (cloneP != null)

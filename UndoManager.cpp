@@ -168,14 +168,15 @@ else {
 
 int CUndoManager::Backup (CGameItem* parent, eEditType editType) 
 { 
-if (parent->Id () == Id ()) {
+SetModified (true);
+if (parent->Id () == Id ()) { // item backup up in this batch already, so update the backup
 	CGameItem* backup = parent->Parent ();
 	parent->Copy (backup);
 	backup->SetParent (parent);
 	return parent->Id ();
 	}
-else {
-	CGameItem* item = parent->Clone (editType);
+else { // create a new backup
+	CGameItem* item = parent->Clone ();
 	if (item != null) {
 		Append ();
 		SetModified (true);

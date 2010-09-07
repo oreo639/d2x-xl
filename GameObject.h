@@ -354,11 +354,11 @@ class CGameObject : public CGameItem {
 			m_location.Clear ();
 			}
 
-		virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 	};
 
 //------------------------------------------------------------------------

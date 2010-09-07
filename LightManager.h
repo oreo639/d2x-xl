@@ -62,11 +62,11 @@ class CLightDeltaValue : public CSideKey, public CGameItem {
 			CSideKey::Clear ();
 			}
 
-		virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 };
 
 // -----------------------------------------------------------------------------
@@ -94,11 +94,11 @@ class CLightDeltaIndex : public CSideKey, public CGameItem {
 			CSideKey::Clear ();
 			}
 
-		virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Copy (CGameItem* destP);
 };
 
 // -----------------------------------------------------------------------------

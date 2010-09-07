@@ -199,7 +199,7 @@ return DLE.IsD1File ()
 // if vertex was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CTrigger::Clone (eEditType editType)
+CGameItem* CTrigger::Clone (void)
 {
 CTrigger* cloneP = new CTrigger;	// only make a copy if modified
 if (cloneP != null) 
@@ -269,7 +269,7 @@ CTriggerTargets::Clear ();
 // if vertex was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CReactorTrigger::Clone (eEditType editType)
+CGameItem* CReactorTrigger::Clone (void)
 {
 CReactorTrigger* cloneP = new CReactorTrigger;	// only make a copy if modified
 if (cloneP != null) 

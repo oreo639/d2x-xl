@@ -255,7 +255,7 @@ fp.Write (m_info.always_0xabcd);
 // if segment was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CRobotInfo::Clone (eEditType editType)
+CGameItem* CRobotInfo::Clone (void)
 {
 CRobotInfo* cloneP = new CRobotInfo;	// only make a copy if modified
 if (cloneP != null)

@@ -34,7 +34,7 @@ typedef enum {
 class CGameItem {
 	protected:
 		int			m_nIndex;
-		int			m_nId;
+		uint			m_nId;
 		eItemType	m_itemType;
 		eEditType	m_editType;
 		CGameItem*	m_parent;
@@ -46,7 +46,7 @@ class CGameItem {
 
 		inline int& Index (void) { return m_nIndex; }
 
-		inline int& Id (void) { return m_nId; }
+		inline uint& Id (void) { return m_nId; }
 
 		inline eItemType& ItemType (void) { return m_itemType; }
 
@@ -56,7 +56,9 @@ class CGameItem {
 
 		virtual void Backup (eEditType editType = opModify) {}
 
-		virtual void Copy (CGameItem* destP);
+		virtual CGameItem* Clone (void) { return null; }
+
+		virtual CGameItem* Copy (CGameItem* destP) {}
 
 		virtual void Undo (void) {}
 
@@ -65,10 +67,6 @@ class CGameItem {
 		inline CGameItem* Parent (void) { return m_parent; }
 
 		inline void SetParent (CGameItem* parent) { m_parent = parent; }
-
-		virtual CGameItem* Clone (eEditType editType) { return null; }
-
-		virtual void Copy (CGameItem* destP);
 	};
 
 // -----------------------------------------------------------------------------
