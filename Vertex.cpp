@@ -1,4 +1,19 @@
 // -----------------------------------------------------------------------------
+
+void Read (CFileManager& fp, int version, bool bFlag) 
+{ 
+m_status = 0;
+fp.ReadVector (v); 
+}
+
+// -----------------------------------------------------------------------------
+
+void Write (CFileManager& fp, int version, bool bFlag) 
+{ 
+fp.WriteVector (v); 
+}
+
+// -----------------------------------------------------------------------------
 // make a copy of this vertex for the undo manager
 // if vertex was modified, make a copy of the current vertex
 // if vertex was added or deleted, just make a new CGameItem instance and 

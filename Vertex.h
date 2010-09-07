@@ -8,12 +8,9 @@ private:
 	byte m_status;
 
 public:
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false) { 
-		m_status = 0;
-		fp.ReadVector (v); 
-		}
+	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false) { fp.WriteVector (v); }
+	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
 	virtual void Clear (void) { 
 		m_status = 0;
