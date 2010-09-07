@@ -5843,6 +5843,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\GameItem.cpp"
+					>
+				</File>
+				<File
 					RelativePath="global.cpp"
 					>
 					<FileConfiguration
@@ -6266,6 +6270,10 @@
 				</File>
 				<File
 					RelativePath="Define.h"
+					>
+				</File>
+				<File
+					RelativePath=".\GameItem.h"
 					>
 				</File>
 				<File

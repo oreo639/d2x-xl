@@ -636,10 +636,20 @@ return cloneP;
 
 void CSegment::Backup (eEditType editType)
 {
-if ((m_backup != null) && (m_backup->Id () == undoManager.Id ())
+if (HaveBackup ())
 	return false;
 m_nBackup = undoManager.Backup (this, itSegment, opModify);
 return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::Save (void)
+{
+if (!Backup ()) {
+	*dynamic_cast<CSegment*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -673,16 +683,6 @@ switch (EditType ()) {
 	case opModify:
 		*Parent () = *this;
 		break;
-	}
-}
-
-// -----------------------------------------------------------------------------
-
-void CSegment::Save (void)
-{
-if (!Backup ()) {
-	*dynamic_cast<CSegment*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
 	}
 }
 

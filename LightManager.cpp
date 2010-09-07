@@ -251,9 +251,9 @@ int CLightManager::IsExplodingLight (int nBaseTex)
 	case 297:
 	case 298:
 	case 299:
-		return (1);
+		return 1;
 	}
-	return(0);
+return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -265,7 +265,7 @@ if (IsExplodingLight (nBaseTex))
 	return true;
 if (theMine->IsD1File ())
 	return false;
-for (short *p = blastableLightsD2; *p >= 0; p++)
+for (short* p = blastableLightsD2; *p >= 0; p++)
 	if (*p == nBaseTex)
 		return true;
 return false;
@@ -535,13 +535,27 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CLightDeltaValue::Backup (eEditType editType = opModify)
+bool CLightDeltaValue::Backup (eEditType editType = opModify)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itLightDeltaValue, opModify);
+if (HaveBackup ())
+	return false;
+m_nBackup = undoManager.Backup (this, itLightDeltaValue, opModify);
+return true;
 }
 
-/// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+void CDeltaLightValue::Save (void)
+{
+if (!Backup ()) {
+	*dynamic_cast<CDeltaLightValue*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
+}
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void CLightDeltaIndex::Read (CFileManager& fp, int version, bool bD2X)
 {
@@ -586,10 +600,24 @@ return cloneP;
 
 void CLightDeltaIndex::Backup (eEditType editType = opModify)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itCLightDeltaIndex, opModify);
+if (HaveBackup ())
+	return false;
+m_nBackup = undoManager.Backup (this, itCLightDeltaIndex, opModify);
+return true;
 }
 
+// -----------------------------------------------------------------------------
+
+void CDeltaLightIndex::Save (void)
+{
+if (!Backup ()) {
+	*dynamic_cast<CDeltaLightIndex*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
+}
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 void CLightManager::ReadColors (CFileManager& fp)

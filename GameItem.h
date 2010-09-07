@@ -1,5 +1,5 @@
-#ifndef __types_h
-#define __types_h
+#ifndef __gameitem_h
+#define __gameitem_h
 
 #include "define.h"
 #include "FileManager.h"
@@ -59,14 +59,14 @@ class CGameItem {
 
 		inline CGameItem* Backup (void) { return m_backup; }
 
-		void HaveBackup (void);
-
 		virtual CGameItem* Clone (eEditType editType) { return null; }
+
+		bool HaveBackup (void);
 	};
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-#endif // __types_h
+#endif // __gameitem_h
 

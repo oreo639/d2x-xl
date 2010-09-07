@@ -39,8 +39,8 @@ return cloneP;
 
 void CVertex::Backup (eEditType editType)
 {
-if ((m_backup != null) && (m_backup->Id () == undoManager.Id ())
-	 return false;
+if (HaveBackup ())
+	return false;
 m_nBackup = undoManager.Backup (this, itSegment, opModify);
 return true;
 }
