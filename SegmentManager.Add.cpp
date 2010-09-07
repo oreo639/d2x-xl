@@ -178,7 +178,7 @@ if (!Create (nSegment, bCreate, nType))
 matCens [info.count].Setup (nSegment, info.count, 0);
 current.Segment ()->m_info.value = 
 current.Segment ()->m_info.nMatCen = info.count++;
-undoManager.Tail ()->Backup
+*undoManager.Tail ()->Item () = *current.Segment ();
 return true;
 }
 

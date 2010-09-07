@@ -25,7 +25,9 @@ class CUndoItem {
 
 		inline int& BackupId (void) { return m_nBackupId; }
 
-		inline CGameItem* &Parent (void) { return m_parent; }
+		inline CGameItem* Parent (void) { return m_parent; }
+
+		inline CGameItem* Item (void) { return m_item; }
 
 		inline CGameItem* &Prev (void) { return m_prev; }
 
