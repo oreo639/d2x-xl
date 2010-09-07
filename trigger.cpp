@@ -193,6 +193,32 @@ return DLE.IsD1File ()
 		 : (m_info.type == TT_EXIT) || (m_info.type == TT_SECRET_EXIT);
 }
 
+// -----------------------------------------------------------------------------
+// make a copy of this vertex for the undo manager
+// if vertex was modified, make a copy of the current vertex
+// if vertex was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CTrigger::Clone (eEditType editType)
+{
+if (editType == opModify)
+	return new CGameItem (itTrigger);
+CTrigger* cloneP = new CTrigger;	// only make a copy if modified
+if (cloneP == null) {
+	return null;
+	*cloneP = *this;
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CTrigger::Backup (eEditType editType)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+}
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -219,6 +245,40 @@ for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp.Write (m_targets [i].m_nSegment);
 for (i = 0; i < MAX_TRIGGER_TARGETS; i++)
 	fp.Write (m_targets [i].m_nSide);
+}
+
+// -----------------------------------------------------------------------------
+
+virtual void CTrigger::Clear (void) 
+{ 
+memset (&m_info, 0, sizeof (m_info)); 
+CTriggerTargets::Clear ();
+}
+
+// -----------------------------------------------------------------------------
+// make a copy of this vertex for the undo manager
+// if vertex was modified, make a copy of the current vertex
+// if vertex was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CReactorTrigger::Clone (eEditType editType)
+{
+if (editType == opModify)
+	return new CGameItem (itReactorTrigger);
+CReactorTrigger* cloneP = new CReactorTrigger;	// only make a copy if modified
+if (cloneP == null) {
+	return null;
+	*cloneP = *this;
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CReactorTrigger::Backup (eEditType editType)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itSegment, opModify);
 }
 
 //------------------------------------------------------------------------------

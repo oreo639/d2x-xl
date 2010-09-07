@@ -12,11 +12,6 @@ public:
 
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	virtual void Clear (void) { 
-		m_status = 0;
-		this->CDoubleVector::Clear ();
-		}
-
 	inline const CVertex& operator= (const CVertex& other) { 
 		v = other.v, m_status = other.m_status; 
 		return *this;
@@ -28,9 +23,11 @@ public:
 
 	inline byte& Status (void) { return m_status; }
 
-	CGameItem* Clone (eEditType editType);
+	virtual void Clear (void);
 
-	void Backup (eEditType editType = opModify);
+	virtual CGameItem* Clone (eEditType editType = opModify);
+
+	virtual void Backup (eEditType editType);
 
 	// c'tors
 	CVertex () : CGameItem (itVertex), m_status(0) {}

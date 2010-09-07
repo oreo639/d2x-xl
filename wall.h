@@ -65,23 +65,37 @@ typedef struct tWall {
 //------------------------------------------------------------------------
 
 class CWall : public CSideKey, public CGameItem {
-public:
+private:
 	tWall		m_info;
  
+public:
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+	
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-
+	
 	void Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine);
+	
 	void SetTextures (short nTexture);
 
 	bool IsDoor (void);
+	
 	bool IsVisible (void);
+	
 	bool IsVariable (void);
+	
 	CSide* Side (void);
+	
 	inline void SetTrigger (short nTrigger) { m_info.nTrigger = (byte) nTrigger; }
+	
 	CTrigger* Trigger (void);
+	
 	int SetClip (short nTexture);
+
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
 };
 
 //------------------------------------------------------------------------
@@ -98,12 +112,19 @@ typedef struct tDoor {
 //------------------------------------------------------------------------
 
 class CDoor : public CGameItem {
-public:
+private:
 	tDoor	m_info;
 
+public:
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
 };
 
 //------------------------------------------------------------------------

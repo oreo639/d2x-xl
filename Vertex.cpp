@@ -1,6 +1,14 @@
+
+#include "define.h"
+#include "Types.h"
+#include "Vector.h"
+#include "Vertex.h"
+#include "FileManager.h"
+#include "UndoManager.h"
+
 // -----------------------------------------------------------------------------
 
-void Read (CFileManager& fp, int version, bool bFlag) 
+void CVertex::Read (CFileManager& fp, int version, bool bFlag) 
 { 
 m_status = 0;
 fp.ReadVector (v); 
@@ -8,7 +16,7 @@ fp.ReadVector (v);
 
 // -----------------------------------------------------------------------------
 
-void Write (CFileManager& fp, int version, bool bFlag) 
+void CVertex::Write (CFileManager& fp, int version, bool bFlag) 
 { 
 fp.WriteVector (v); 
 }
@@ -21,25 +29,30 @@ fp.WriteVector (v);
 
 CGameItem* CVertex::Clone (eEditType editType)
 {
-CVertex* cloneP;
-if (editType == opModified)
-	cloneP = new CGameItem (itSegment);
-else {
-	cloneP = new CVertex;	// only make a copy if modified
-	if (cloneP == null)
-		return null;
-		*cloneP = *this;
-		}
+if (editType == opModify)
+	return new CGameItem (itVertex);
+CVertex* cloneP = new CVertex;	// only make a copy if modified
+if (cloneP == null) {
+	return null;
+	*cloneP = *this;
 	}
 return cloneP;
 }
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Backup (eEditType editType = opModify)
+void CVertex::Backup (eEditType editType)
 {
 if (m_nBackup != undoManager.Id ())
 	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Clear (void)
+{
+m_status = 0;
+CDoubleVector::Clear ();
 }
 
 // -----------------------------------------------------------------------------

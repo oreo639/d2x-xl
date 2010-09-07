@@ -238,6 +238,32 @@ if (ps = strstr (pszName, "door")) {
 return -1;
 }
 
+// -----------------------------------------------------------------------------
+// make a copy of this vertex for the undo manager
+// if vertex was modified, make a copy of the current vertex
+// if vertex was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CWall::Clone (eEditType editType)
+{
+if (editType == opModify)
+	return new CGameItem (itWall);
+CWall* cloneP = new CWall;	// only make a copy if modified
+if (cloneP == null) {
+	return null;
+	*cloneP = *this;
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CWall::Backup (eEditType editType)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+}
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -262,6 +288,32 @@ fp.Write (m_info.nFrontWall [1]);
 fp.Write (m_info.nBackWall [0]); 
 fp.Write (m_info.nBackWall [1]); 
 fp.Write (m_info.time);		  
+}
+
+// -----------------------------------------------------------------------------
+// make a copy of this vertex for the undo manager
+// if vertex was modified, make a copy of the current vertex
+// if vertex was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CDoor::Clone (eEditType editType)
+{
+if (editType == opModify)
+	return new CGameItem (itDoor);
+CDoor* cloneP = new CDoor;	// only make a copy if modified
+if (cloneP == null) {
+	return null;
+	*cloneP = *this;
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CDoor::Backup (eEditType editType)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itSegment, opModify);
 }
 
 // ------------------------------------------------------------------------

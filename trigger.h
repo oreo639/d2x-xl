@@ -62,12 +62,14 @@ public:
 
 	void Write (CFileManager& fp, int version, bool bObjTrigger);
 
-	virtual void Clear (void) { 
-		memset (&m_info, 0, sizeof (m_info)); 
-		CTriggerTargets::Clear ();
-		}
+	virtual void Clear (void);
 
-	void CTrigger::Setup (short type, short flags);
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
+
+	void Setup (short type, short flags);
+
 	bool IsExit (void);
 
 	inline const bool operator< (const CTrigger& other) {
@@ -84,10 +86,16 @@ public:
 
 class CReactorTrigger : public CTriggerTargets, public CGameItem {
 public:
+
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+
 	virtual void Clear (void) { CTriggerTargets::Clear (); }
 
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
 };
 
 //------------------------------------------------------------------------

@@ -626,7 +626,7 @@ m_sides [nSide].Reset ();
 CGameItem* CSegment::Clone (eEditType editType)
 {
 CSegment* cloneP;
-if (editType == opModified)
+if (editType == opModify)
 	cloneP = new CGameItem (itSegment);
 else {
 	cloneP = new CSegment;	// only make a copy if modified

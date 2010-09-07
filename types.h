@@ -61,7 +61,7 @@ public:
 		m_prev = m_next = null;
 		}
 
-	virtual CGameItem* Backup (void) = 0;
+	virtual void Backup (eEditType editType = opModify) = 0;
 
 	virtual CGameItem* Clone (eEditType editType) = 0;
 	};
