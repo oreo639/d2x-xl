@@ -126,7 +126,6 @@ bool CUndoManager::Revert (void)
 {
 if (!m_enabled || m_delay || !m_nHead)
 	return false;
-m_nCurrent = m_nTail;
 Truncate ();
 return true;
 }
@@ -185,16 +184,7 @@ return Id ();
 
 int CUndoManager::Count (void)
 {
-	tUndoBuffer	*p;
-	int			i;
-
-if (!m_enabled)
-	return 0;
-if (!(p = m_nHead))
-	return 0;
-for (i = 1; p != m_nCurrent; p = p->nextBuf)
-	i++;
-return i;
+return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - sizeof (m_buffer);
 }
 
 //------------------------------------------------------------------------------

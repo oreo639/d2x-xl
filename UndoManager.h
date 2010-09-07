@@ -3,7 +3,7 @@
 
 #include "mine.h"
 
-#define MAX_UNDOS		100
+#define MAX_UNDOS		100000
 
 //------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ class CUndoItem {
 class CUndoManager
 {
 	private:
-		CUndoItem	m_buffer [100000];
+		CUndoItem	m_buffer [MAX_UNDOS];
 		int			m_nHead;
 		int			m_nTail;
 		int			m_nCurrent;
