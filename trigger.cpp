@@ -201,7 +201,7 @@ return DLE.IsD1File ()
 
 CGameItem* CTrigger::Clone (eEditType editType)
 {
-if (editType == opModify)
+if (editType == opAdd)
 	return new CGameItem (itTrigger);
 CTrigger* cloneP = new CTrigger;	// only make a copy if modified
 if (cloneP == null) {
@@ -263,7 +263,7 @@ CTriggerTargets::Clear ();
 
 CGameItem* CReactorTrigger::Clone (eEditType editType)
 {
-if (editType == opModify)
+if (editType == opAdd)
 	return new CGameItem (itReactorTrigger);
 CReactorTrigger* cloneP = new CReactorTrigger;	// only make a copy if modified
 if (cloneP == null) {

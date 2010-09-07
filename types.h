@@ -32,40 +32,25 @@ typedef enum {
 } eEditType;
 
 class CGameItem {
-public:
-	int			m_nIndex;
-	int			m_nBackup; // used by undo manager
-	eItemType	m_itemType;
-	eEditType	m_editType;
-	CGameItem*	m_parent;
-	CGameItem*	m_prev;
-	CGameItem*	m_next;
+	protected:
+		int			m_nIndex;
+		int			m_nBackupId; // used by undo manager
+		eItemType	m_itemType;
 
-	CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_nBackup (-1), m_itemType (itemType), m_editType (opNone), m_prev (null), m_next (null) {}
+	public:
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_nBackup (-1), m_itemType (itemType), m_editType (opNone), m_prev (null), m_next (null) {}
 
-	inline bool Used (void) { return m_nIndex >= 0; }
+		inline bool Used (void) { return m_nIndex >= 0; }
 
-	void Link (CGameItem* pred) {
-		m_prev = pred;
-		if (pred != null) {
-			m_next = pred->m_next;
-			pred->m_next = m_prev;
-			}
-		}
+		inline int& Index (void) { return m_nIndex; }
 
-	void Unlink (void) {
-		if (m_prev != null)
-			m_prev->m_next = m_next;
-		if (m_next != null)
-			m_next->m_prev = m_prev;
-		m_prev = m_next = null;
-		}
+		virtual void Clear (void) {}
 
-	virtual void Clear (void) {}
+		virtual void Backup (eEditType editType = opModify) {}
 
-	virtual void Backup (eEditType editType = opModify) {}
+		virtual void Backup (void) {}
 
-	virtual CGameItem* Clone (eEditType editType) { return null; }
+		virtual CGameItem* Clone (eEditType editType) { return null; }
 	};
 
 // -----------------------------------------------------------------------------

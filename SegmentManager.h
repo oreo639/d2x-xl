@@ -141,9 +141,11 @@ class CSegmentManager {
 		CSegment* FindRobotMaker (short i = 0);
 
 		// Operations
-		short Add (void);
+		short Add (bool bBackup = true);
 
-		bool Create (void);
+		void Remove (short nDelSeg, bool bBackup = true);
+
+		bool Create (short& nNewSeg);
 
 		void Delete (short nDelSeg = -1);
 

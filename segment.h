@@ -179,6 +179,8 @@ public:
 
 	virtual void Backup (eEditType editType = opModify);
 
+	virtual void CSegment::Undo (void);
+
 	CSegment () : CGameItem (itSegment) {}
 
 private:

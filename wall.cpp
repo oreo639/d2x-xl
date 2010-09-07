@@ -229,8 +229,8 @@ if (ps = strstr (pszName, "door")) {
 	int nDoor = atol (ps + 4);
 	for (int i = 1; i < NUM_OF_CLIPS_D2; i++)
 		if (nDoor == doorClipTable [i]) {
+			Backup ();
 			m_info.nClip = animClipTable [i];
-			undoManager.SetModified (true);
 			DLE.MineView ()->Refresh ();
 			return i;
 			}
@@ -246,7 +246,7 @@ return -1;
 
 CGameItem* CWall::Clone (eEditType editType)
 {
-if (editType == opModify)
+if (editType == opAdd)
 	return new CGameItem (itWall);
 CWall* cloneP = new CWall;	// only make a copy if modified
 if (cloneP == null) {
@@ -260,8 +260,10 @@ return cloneP;
 
 void CWall::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
+if (m_nBackup != undoManager.Id ()) {
 	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+	undoManager.SetModified (true);
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -298,7 +300,7 @@ fp.Write (m_info.time);
 
 CGameItem* CDoor::Clone (eEditType editType)
 {
-if (editType == opModify)
+if (editType == opAdd)
 	return new CGameItem (itDoor);
 CDoor* cloneP = new CDoor;	// only make a copy if modified
 if (cloneP == null) {

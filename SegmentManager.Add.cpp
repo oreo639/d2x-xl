@@ -15,11 +15,19 @@ return (short) nSegment;
 
 // ----------------------------------------------------------------------------- 
 
-bool CSegmentManager::Create (void)
+void CSegmentManager::Remove (short nDelSeg)
+{
+m_free += nDelSeg;
+Count ()--;
+}
+
+// ----------------------------------------------------------------------------- 
+
+bool CSegmentManager::Create (short& nNewSeg)
 {
 	CSegment *newSegP, *curSegP; 
 	int		i;
-	short		nNewSeg, nNewSide, nCurSide = current.m_nSide; 
+	short		nNewSide, nCurSide = current.m_nSide; 
 	ushort	newVerts [4]; 
 	short		nSide; 
 
@@ -135,18 +143,21 @@ if ((szError != null) && theMine->IsD1File ()) {
 	return false;
 	}
 
-bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
-if (bCreate && !Create ()) {
+if (bCreate && !Create (nSegment)) {
+	Remove (nSegment);
 	undoManager.ResetModified (bUndo);
 	return false; 
 	}	
 DLE.MineView ()->DelayRefresh (true);
 if (!Define (nSegment, nFunction, -1)) {
+	if (bCreate)
+		Remove (nSegment);
 	undoManager.ResetModified (bUndo);
 	DLE.MineView ()->DelayRefresh (false);
 	return false; 
 	}	
+Segment (nSegment)->Backup (opAdd);
 undoManager.Unlock ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
@@ -159,7 +170,7 @@ bool CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bo
 												CMatCenter* matCens, CMineItemInfo& info, char* szError) 
 {
 if (info.count >= MAX_MATCENS) {
-    ErrorMsg ("Maximum number of equipment makers reached");
+    ErrorMsg (szError);
 	 return false;
 	}
 if (!Create (nSegment, bCreate, nType))
@@ -167,6 +178,7 @@ if (!Create (nSegment, bCreate, nType))
 matCens [info.count].Setup (nSegment, info.count, 0);
 current.Segment ()->m_info.value = 
 current.Segment ()->m_info.nMatCen = info.count++;
+undoManager.Tail ()->Backup
 return true;
 }
 
@@ -174,6 +186,10 @@ return true;
 
 bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
+if (!theMine->IsD2XFile ()) {
+	ErrorMsg ("Equipment makers are only available in D2X-XL levels.");
+	return false;
+	}
 return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures, EquipMaker (0), m_matCenInfo [1], 
 							"Maximum number of equipment makers reached");
 }
@@ -182,7 +198,7 @@ return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures
 
 bool CSegmentManager::CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
-return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures, RobotMaker (0), m_matCenInfo [1], 
+return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures, RobotMaker (0), m_matCenInfo [0], 
 							"Maximum number of robot makers reached");
 }
 
@@ -542,9 +558,9 @@ if (nDelSeg < 0)
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 
-undoManager.SetModified (true);
 undoManager.Lock ();
 CSegment* delSegP = Segment (nDelSeg); 
+delSegP->Backup (opDelete);
 UndefineSegment (nDelSeg);
 
 // delete any variable lights that use this segment
@@ -607,8 +623,7 @@ for (short i = triggerManager.NumReactorTriggers (); i > 0; )
 		}
 	}
 
-m_free += nDelSeg;
-Count ()--;
+Remove (nDelSeg);
 
 // delete all unused vertices
 vertexManager.DeleteUnused (); 

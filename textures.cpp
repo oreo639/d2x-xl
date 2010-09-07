@@ -264,7 +264,7 @@ return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 CGameItem* CTexture::Clone (eEditType editType)
 {
 CTexture* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itSegment);
 else {
 	cloneP = new CTexture;	// only make a copy if modified

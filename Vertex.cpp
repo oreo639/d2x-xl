@@ -29,7 +29,7 @@ fp.WriteVector (v);
 
 CGameItem* CVertex::Clone (eEditType editType)
 {
-if (editType == opModify)
+if (editType == opAdd)
 	return new CGameItem (itVertex);
 CVertex* cloneP = new CVertex;	// only make a copy if modified
 if (cloneP == null) {

@@ -15,12 +15,51 @@ typedef struct tUndoBuffer {
 
 //------------------------------------------------------------------------------
 
+class CUndoItem {
+	public:
+		eEditType	m_editType;
+		CGameItem*	m_item;
+		CGameItem*	m_parent;
+		CGameItem*	m_prev;
+		CGameItem*	m_next;
+
+		inline int& BackupId (void) { return m_nBackupId; }
+
+		inline CGameItem* &Parent (void) { return m_parent; }
+
+		inline CGameItem* &Prev (void) { return m_prev; }
+
+		inline CGameItem* &Next (void) { return m_next; }
+
+		inline void Link (CGameItem* pred) {
+			m_prev = pred;
+			if (pred != null) {
+				m_next = pred->m_next;
+				pred->m_next = m_prev;
+				}
+			}
+
+		inline void Unlink (void) {
+			if (m_prev != null)
+				m_prev->m_next = m_next;
+			if (m_next != null)
+				m_next->m_prev = m_prev;
+			m_prev = m_next = null;
+			}
+	};
+
+//------------------------------------------------------------------------------
+
 class CUndoManager
 {
 	private:
-		CGameItem*	m_head;
-		CGameItem*	m_tail;
-		CGameItem*	m_current;
+		CUndoItem	m_buffer [100000];
+		int			m_nHead;
+		int			m_nTail;
+		int			m_nCurrent;
+		//CUndoItem*	m_head;
+		//CUndoItem*	m_tail;
+		//CUndoItem*	m_current;
 		int			m_maxSize;
 		int			m_size;
 		int			m_delay;
@@ -29,9 +68,11 @@ class CUndoManager
 		int			m_nId;
 
 	public:
-		inline CGameItem* Head (void) { return m_head; }
+		inline CGameItem* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_head]; }
 
-		inline CGameItem* Tail (void) { return m_tail; }
+		inline CGameItem* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [m_nTail]; }
+
+		inline CGameItem* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
 
 		int Backup (CGameItem* parent, eItemType itemType, eEditType editType);
 

@@ -626,7 +626,7 @@ m_sides [nSide].Reset ();
 CGameItem* CSegment::Clone (eEditType editType)
 {
 CSegment* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itSegment);
 else {
 	cloneP = new CSegment;	// only make a copy if modified
@@ -644,6 +644,40 @@ void CSegment::Backup (eEditType editType = opModify)
 {
 if (m_nBackup != undoManager.Id ())
 	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::Undo (void)
+{
+switch (EditType ()) {
+	case opAdd:
+		segmentManager.Remove (segmentManager.Index (this), false);
+		break;
+	case opDelete:
+		segmentManager.Add (false);
+		// fall through
+	case opModify:
+		*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CSegment::Redo (void)
+{
+switch (EditType ()) {
+	case opDelete:
+		segmentManager.Remove (segmentManager.Index (this));
+		break;
+	case opAdd:
+		segmentManager.Add (false);
+		// fall through
+	case opModify:
+		*Parent () = *this;
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -683,7 +717,7 @@ fp.Write (m_info.nFuelCen);
 CGameItem* CMatCenter::Clone (eEditType editType)
 {
 CMatCenter* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itMatCenter);
 else {
 	cloneP = new CMatCenter;	// only make a copy if modified

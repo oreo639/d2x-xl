@@ -764,7 +764,7 @@ return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
 CGameItem* CGameObject::Clone (eEditType editType)
 {
 CGameObject* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itGameObject);
 else {
 	cloneP = new CGameObject;	// only make a copy if modified

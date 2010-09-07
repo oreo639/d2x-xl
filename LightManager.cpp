@@ -86,7 +86,7 @@ fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 CGameItem* CColor::Clone (eEditType editType)
 {
 CColor* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itMatCenter);
 else {
 	cloneP = new CColor;	// only make a copy if modified
@@ -526,7 +526,7 @@ for (int i = 0; i < 4; i++)
 CGameItem* CLightDeltaValue::Clone (eEditType editType)
 {
 CLightDeltaValue* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itLightDeltaValue);
 else {
 	cloneP = new CLightDeltaValue;	// only make a copy if modified
@@ -586,7 +586,7 @@ fp.Write (m_info.index);
 CGameItem* CLightDeltaIndex::Clone (eEditType editType)
 {
 CLightDeltaIndex* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itLightDeltaIndex);
 else {
 	cloneP = new CLightDeltaIndex;	// only make a copy if modified

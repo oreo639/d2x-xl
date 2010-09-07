@@ -36,6 +36,7 @@ if (!HaveResources ())
 	return NO_WALL;
 int nWall = --m_free;
 m_walls [nWall].Clear ();
+m_walls [nWall].Backup (opAdd);
 WallCount ()++;
 return (short) nWall;
 }
@@ -117,6 +118,7 @@ if (delWallP == null) {
 
 if (delWallP == null)
 	return;
+delWallP->Backup (opDelete);
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
 undoManager.SetModified (true);

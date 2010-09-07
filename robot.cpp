@@ -258,7 +258,7 @@ fp.Write (m_info.always_0xabcd);
 CGameItem* CRobotInfo::Clone (eEditType editType)
 {
 CRobotInfo* cloneP;
-if (editType == opModify)
+if (editType == opAdd)
 	cloneP = new CGameItem (itRobotInfo);
 else {
 	cloneP = new CRobotInfo;	// only make a copy if modified
