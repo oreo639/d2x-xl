@@ -391,9 +391,9 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (m_info.wallFlags & (1 << i)) {
 		CWall* wallP = m_sides [i].Wall ();
 		if (nLevelVersion >= 13)
-			fp.WriteUInt16 ((ushort) wallP->m_nIndex);
+			fp.WriteUInt16 ((ushort) wallP->Index ());
 		else
-			fp.WriteSByte ((sbyte) wallP->m_nIndex);
+			fp.WriteSByte ((sbyte) wallP->Index ());
 		}
 	}
 return m_info.wallFlags;
@@ -450,7 +450,7 @@ for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 
 // write vertex numbers (16 bytes)
 for (i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
-	fp.WriteUInt16 ((ushort) vertexManager.Vertex (m_info.verts [i])->m_nIndex);
+	fp.WriteUInt16 ((ushort) vertexManager.Vertex (m_info.verts [i])->Index ());
 
 // write special info (0 to 4 bytes)
 if ((m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (m_info.nMatCen == -1)) {
@@ -634,10 +634,12 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CSegment::Backup (eEditType editType = opModify)
+void CSegment::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+if ((m_backup != null) && (m_backup->Id () == undoManager.Id ())
+	return false;
+m_nBackup = undoManager.Backup (this, itSegment, opModify);
+return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -678,9 +680,7 @@ switch (EditType ()) {
 
 void CSegment::Save (void)
 {
-if ((m_backup == null) || (m_backup->Id () != undoManager.Id ())
-	Backup ();
-else {
+if (!Backup ()) {
 	*dynamic_cast<CSegment*> (m_backup) = *this;
 	m_backup->Id () = undoManager.Id ();
 	}

@@ -6,6 +6,7 @@
 #include "FileManager.h"
 #include "carray.h"
 #include "Types.h"
+#include "GameItem.h"
 #include "Selection.h"
 #include "Textures.h"
 #include "MineInfo.h"

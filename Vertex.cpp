@@ -39,8 +39,20 @@ return cloneP;
 
 void CVertex::Backup (eEditType editType)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+if ((m_backup != null) && (m_backup->Id () == undoManager.Id ())
+	 return false;
+m_nBackup = undoManager.Backup (this, itSegment, opModify);
+return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Save (void)
+{
+if (!Backup ()) {
+	*dynamic_cast<CVertex*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -74,19 +86,6 @@ switch (EditType ()) {
 	case opModify:
 		*Parent () = *this;
 		break;
-	}
-}
-
-// -----------------------------------------------------------------------------
-
-void CVertex::Save (void)
-{
-{
-if ((m_backup == null) || (m_backup->Id () != undoManager.Id ())
-	Backup ();
-else {
-	*dynamic_cast<CVertex*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
 	}
 }
 

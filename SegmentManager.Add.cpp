@@ -525,7 +525,8 @@ void CSegmentManager::Undefine (short nSegment)
 {
 	CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 
-nSegment = short (segP - Segment (0));
+segP->Save ();
+nSegment = Index (segP);
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
 	RemoveMatCen (segP, RobotMaker (0), m_matCenInfo [0]);
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 

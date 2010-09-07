@@ -78,10 +78,6 @@ fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this segment for the undo manager
-// if segment was modified, make a copy of the current segment
-// if segment was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
 CGameItem* CColor::Clone (eEditType editType)
 {
@@ -93,10 +89,23 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CColor::Backup (eEditType editType = opModify)
+bool CColor::Backup (eEditType editType = opModify)
 {
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itMatCenter, opModify);
+if ((m_backup != null) && (m_nBackup == undoManager.Id ())
+	return false;
+m_nBackup = undoManager.Backup (this, itMatCenter, opModify);
+return true;
+}
+
+// -----------------------------------------------------------------------------
+
+void CColor::Save (void)
+{
+{
+if (!Backup ()) {
+	*dynamic_cast<CColor*> (m_backup) = *this;
+	m_backup->Id () = undoManager.Id ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -564,10 +573,6 @@ fp.Write (m_info.index);
 }
 
 // -----------------------------------------------------------------------------
-// make a copy of this segment for the undo manager
-// if segment was modified, make a copy of the current segment
-// if segment was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
 
 CGameItem* CLightDeltaIndex::Clone (eEditType editType)
 {

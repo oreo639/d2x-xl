@@ -27,7 +27,9 @@ public:
 
 	virtual CGameItem* Clone (eEditType editType = opModify);
 
-	virtual void Backup (eEditType editType);
+	virtual bool Backup (eEditType editType);
+
+	virtual void Save (void);
 
 	// c'tors
 	CVertex () : CGameItem (itVertex), m_status(0) {}
