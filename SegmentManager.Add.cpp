@@ -178,7 +178,7 @@ if (!Create (nSegment, bCreate, nType))
 matCens [info.count].Setup (nSegment, info.count, 0);
 current.Segment ()->m_info.value = 
 current.Segment ()->m_info.nMatCen = info.count++;
-*undoManager.Tail ()->Item () = *current.Segment ();
+current.Segment ()->Save (); // overwrite backup
 return true;
 }
 
@@ -254,12 +254,12 @@ bool CSegmentManager::CreateFuelCenter (short nSegment, byte nType, bool bCreate
 {
 // count number of fuel centers
 int nFuelCen = FuelCenterCount ();
-CSegment *segP = Segment (0);
 if (nFuelCen >= MAX_NUM_RECHARGERS) {
 	ErrorMsg ("Maximum number of fuel centers reached.");
 	return false;
 	}
 
+CSegment *segP = Segment (0);
 
 if (nType == SEGMENT_FUNC_FUELCEN) {
 	short nLastSeg = current.m_nSegment;
@@ -268,11 +268,12 @@ if (nType == SEGMENT_FUNC_FUELCEN) {
 	if (bSetDefTextures) {
 		short nNewSeg = current.m_nSegment;
 		current.m_nSegment = nLastSeg;
-		if (wallManager.Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
+		if (wallManager.Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1) != null) {
 			CSideKey opp;
 			if (OppositeSide (opp))
 				wallManager.Create (opp, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
+		Save ();
 		current.m_nSegment = nNewSeg;
 		}
 	}
@@ -297,7 +298,7 @@ void CSegmentManager::ComputeVertices (ushort newVerts [4])
 	double			length; 
 	ushort			nVertex; 
 	short				i, points [4]; 
-	CDoubleVector	center, oppCenter, newCenter, orthog; 
+	CDoubleVector	center, oppCenter, newCenter, vNormal; 
 
 curSegP = Segment (current.m_nSegment); 
 for (i = 0; i < 4; i++)
@@ -310,17 +311,17 @@ switch (m_nAddMode) {
 		{
 		center = CalcSideCenter (current); 
 		oppCenter = CalcSideCenter (CSideKey (current.m_nSegment, oppSideTable [current.m_nSide])); 
-		orthog = CalcSideNormal (current); 
+		vNormal = CalcSideNormal (current); 
 		// set the length of the new cube to be one standard cube length
 		// scale the vector
-		orthog *= 20; 
+		vNormal *= 20; 
 		// figure out new center
-		newCenter = center + orthog; 
-		// new method: extend points 0 and 1 with orthog, then move point 0 toward point 1.
+		newCenter = center + vNormal; 
+		// new method: extend points 0 and 1 with vNormal, then move point 0 toward point 1.
 		// point 0
-		a = orthog + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
+		a = vNormal + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(0)]]); 
 		// point 1
-		b = orthog + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
+		b = vNormal + *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][CURRENT_POINT(1)]]); 
 		// center
 		c = Average (a, b);
 		// vector from center to point0 and its length
@@ -333,8 +334,8 @@ switch (m_nAddMode) {
 		A [points [0]] = c + d; 
 		// set point 1
 		A [points [1]] = c - d; 
-		// point 2 is orthogonal to the vector 01 and the orthog vector
-		c = -CrossProduct (A [points [0]] - A [points [1]], orthog);
+		// point 2 is orthogonal to the vector 01 and the vNormal vector
+		c = -CrossProduct (A [points [0]] - A [points [1]], vNormal);
 		c.Normalize ();
 		// normalize the vector
 		A [points [2]] = A [points [1]] + (c * 20); 
@@ -349,6 +350,7 @@ switch (m_nAddMode) {
 			//nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]; 
 			nVertex = newVerts [i];
 			*vertexManager.Vertex (nVertex) = A [i]; 
+			vertexManager.Vertex (nVertex)->Save (); // update the newly added vertex instead of creating a new backup
 			}
 		}
 	break; 
@@ -358,14 +360,14 @@ switch (m_nAddMode) {
 		{
 		center = CalcSideCenter (current); 
 		oppCenter = CalcSideCenter (CSideKey (current.m_nSegment, oppSideTable [current.m_nSide])); 
-		orthog = CalcSideNormal (current); 
+		vNormal = CalcSideNormal (current); 
 		// calculate the length of the new cube
-		orthog *= Distance (center, oppCenter); 
+		vNormal *= Distance (center, oppCenter); 
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
-			CDoubleVector v = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]);
-			v += orthog;
-			*vertexManager.Vertex (newVerts [i]) = v; 
+			nVertex = newVerts [i];
+			*vertexManager.Vertex (nVertex) = vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]) + vNormal; 
+			vertexManager.Vertex (nVertex)->Save (); // do not create a new backup right after adding this vertex
 			}
 		}
 	break; 

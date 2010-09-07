@@ -35,9 +35,10 @@ class CGameItem {
 	protected:
 		int			m_nIndex;
 		eItemType	m_itemType;
+		CGameItem*	m_backup;
 
 	public:
-		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType) {}
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_backup (null) {}
 
 		inline bool Used (void) { return m_nIndex >= 0; }
 
@@ -47,9 +48,13 @@ class CGameItem {
 
 		virtual void Backup (eEditType editType = opModify) {}
 
+		virtual void Save (void) {}
+
 		virtual void Undo (void) {}
 
 		virtual void Redo (void) {}
+
+		inline CGameItem* Backup (void) { return m_backup; }
 
 		virtual CGameItem* Clone (eEditType editType) { return null; }
 	};

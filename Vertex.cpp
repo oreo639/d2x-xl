@@ -29,13 +29,9 @@ fp.WriteVector (v);
 
 CGameItem* CVertex::Clone (eEditType editType)
 {
-if (editType == opAdd)
-	return new CGameItem (itVertex);
 CVertex* cloneP = new CVertex;	// only make a copy if modified
-if (cloneP == null) {
-	return null;
+if (cloneP != null) 
 	*cloneP = *this;
-	}
 return cloneP;
 }
 
@@ -45,6 +41,48 @@ void CVertex::Backup (eEditType editType)
 {
 if (m_nBackup != undoManager.Id ())
 	m_nBackup = undoManager.Backup (this, itSegment, opModify);
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Undo (void)
+{
+switch (EditType ()) {
+	case opAdd:
+		vertexManager.Remove (vertexManager.Index (this), false);
+		break;
+	case opDelete:
+		vertexManager.Add (false);
+		// fall through
+	case opModify:
+		*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Redo (void)
+{
+switch (EditType ()) {
+	case opDelete:
+		vertexManager.Remove (vertexManager.Index (this));
+		break;
+	case opAdd:
+		vertexManager.Add (false);
+		// fall through
+	case opModify:
+		*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Save (void)
+{
+if (m_backup != null)
+	*dynamic_cast<CVertex*> (m_backup) = *this;
 }
 
 // -----------------------------------------------------------------------------

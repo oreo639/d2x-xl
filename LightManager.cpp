@@ -85,16 +85,9 @@ fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 
 CGameItem* CColor::Clone (eEditType editType)
 {
-CColor* cloneP;
-if (editType == opAdd)
-	cloneP = new CGameItem (itMatCenter);
-else {
-	cloneP = new CColor;	// only make a copy if modified
-	if (cloneP == null)
-		return null;
-		*cloneP = *this;
-		}
-	}
+CColor* cloneP = new CColor;	// only make a copy if modified
+if (cloneP != null)
+	*cloneP = *this;
 return cloneP;
 }
 
@@ -525,16 +518,9 @@ for (int i = 0; i < 4; i++)
 
 CGameItem* CLightDeltaValue::Clone (eEditType editType)
 {
-CLightDeltaValue* cloneP;
-if (editType == opAdd)
-	cloneP = new CGameItem (itLightDeltaValue);
-else {
-	cloneP = new CLightDeltaValue;	// only make a copy if modified
-	if (cloneP == null)
-		return null;
-		*cloneP = *this;
-		}
-	}
+CLightDeltaValue* cloneP = new CLightDeltaValue;	// only make a copy if modified
+if (cloneP != null)
+	*cloneP = *this;
 return cloneP;
 }
 
@@ -585,16 +571,9 @@ fp.Write (m_info.index);
 
 CGameItem* CLightDeltaIndex::Clone (eEditType editType)
 {
-CLightDeltaIndex* cloneP;
-if (editType == opAdd)
-	cloneP = new CGameItem (itLightDeltaIndex);
-else {
-	cloneP = new CLightDeltaIndex;	// only make a copy if modified
-	if (cloneP == null)
-		return null;
-		*cloneP = *this;
-		}
-	}
+CDeltaLightIndex* cloneP = new CLightDeltaIndex;	// only make a copy if modified
+if (cloneP != null)
+	*cloneP = *this;
 return cloneP;
 }
 

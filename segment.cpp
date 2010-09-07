@@ -625,16 +625,10 @@ m_sides [nSide].Reset ();
 
 CGameItem* CSegment::Clone (eEditType editType)
 {
-CSegment* cloneP;
-if (editType == opAdd)
-	cloneP = new CGameItem (itSegment);
-else {
-	cloneP = new CSegment;	// only make a copy if modified
-	if (cloneP == null)
-		return null;
-		*cloneP = *this;
-		}
-	}
+CSegment* cloneP = new CSegment;	// only make a copy if modified
+if (cloneP != null)
+	*cloneP = *this;
+m_backup = cloneP;
 return cloneP;
 }
 
@@ -681,6 +675,14 @@ switch (EditType ()) {
 }
 
 // -----------------------------------------------------------------------------
+
+void CSegment::Save (void)
+{
+if (m_backup != null)
+	*dynamic_cast<CSegment*> (m_backup) = *this;
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
@@ -716,16 +718,9 @@ fp.Write (m_info.nFuelCen);
 
 CGameItem* CMatCenter::Clone (eEditType editType)
 {
-CMatCenter* cloneP;
-if (editType == opAdd)
-	cloneP = new CGameItem (itMatCenter);
-else {
-	cloneP = new CMatCenter;	// only make a copy if modified
-	if (cloneP == null)
-		return null;
-		*cloneP = *this;
-		}
-	}
+CMatCenter* cloneP = new CMatCenter;	// only make a copy if modified
+if (cloneP != null)
+	*cloneP = *this;
 return cloneP;
 }
 

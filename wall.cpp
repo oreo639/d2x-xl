@@ -246,13 +246,9 @@ return -1;
 
 CGameItem* CWall::Clone (eEditType editType)
 {
-if (editType == opAdd)
-	return new CGameItem (itWall);
 CWall* cloneP = new CWall;	// only make a copy if modified
-if (cloneP == null) {
-	return null;
+if (cloneP != null) 
 	*cloneP = *this;
-	}
 return cloneP;
 }
 
@@ -300,13 +296,9 @@ fp.Write (m_info.time);
 
 CGameItem* CDoor::Clone (eEditType editType)
 {
-if (editType == opAdd)
-	return new CGameItem (itDoor);
 CDoor* cloneP = new CDoor;	// only make a copy if modified
-if (cloneP == null) {
-	return null;
+if (cloneP != null) 
 	*cloneP = *this;
-	}
 return cloneP;
 }
 
