@@ -32,7 +32,7 @@ class CUndoItem {
 
 		inline void Redo (void) { m_item->Redo (); }
 
-		void Setup (CGameItem* parent, eEditType editType, int nBackupId);
+		void Setup (CGameItem* item, CGameItem* parent, eEditType editType, int nBackupId);
 
 	};
 

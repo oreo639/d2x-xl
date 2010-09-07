@@ -8,10 +8,12 @@ CUndoManager undoManager;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-void CUndoItem::Setup (CGameItem* parent, eEditType editType, int nBackupId)
+void CUndoItem::Setup (CGameItem* item, CGameItem* parent, eEditType editType, int nBackupId)
 {
 m_parent = parent; 
-m_editType = editType;
+m_item = item;
+m_parent->Id () = m_item->Id () = Id (); // copy these to parent to make subsequent cloning simpler
+m_parent->EditType () = m_item->EditType () = editType;
 m_nBackupId = nBackupId;
 }
 
@@ -164,12 +166,11 @@ else {
 
 int CUndoManager::Backup (CGameItem* parent, eEditType editType) 
 { 
-CGameItem* itemP = parent->Clone (editType);
-if (itemP != null) {
+CGameItem* item = parent->Clone (editType);
+if (item != null) {
 	Append ();
 	SetModified (true);
-	itemP->Id () = Id ();
-	Tail ()->Setup (parent, editType, Id ());
+	Tail ()->Setup (item, parent, editType, Id ());
 	}
 return Id ();
 }

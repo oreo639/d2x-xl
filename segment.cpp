@@ -628,18 +628,15 @@ CGameItem* CSegment::Clone (eEditType editType)
 CSegment* cloneP = new CSegment;	// only make a copy if modified
 if (cloneP != null)
 	*cloneP = *this;
-m_backup = cloneP;
-return cloneP;
+return m_backup = cloneP;
 }
 
 // -----------------------------------------------------------------------------
 
 void CSegment::Backup (eEditType editType)
 {
-if (HaveBackup ()) {
+if (HaveBackup ())
 	*dynamic_cast<CSegment*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
-	}
 else 
 	m_nBackup = undoManager.Backup (this, opModify);
 undoManager.SetModified (true);

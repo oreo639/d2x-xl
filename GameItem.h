@@ -36,10 +36,11 @@ class CGameItem {
 		int			m_nIndex;
 		int			m_nId;
 		eItemType	m_itemType;
+		eEditType	m_editType;
 		CGameItem*	m_backup;
 
 	public:
-		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_backup (null) {}
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_backup (null) {}
 
 		inline bool Used (void) { return m_nIndex >= 0; }
 
