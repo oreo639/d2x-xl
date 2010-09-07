@@ -233,7 +233,7 @@ public:
 			return false;
 		if (!m_nViewDist)
 			return true;
-		return (segP->m_nIndex >= 0) && (segP->m_nIndex <= ViewDist ()); 
+		return (segP->Index () >= 0) && (segP->Index () <= ViewDist ()); 
 		}
 	void DrawMineCenter (CDC *pViewDC);
 	bool VertexVisible (int v);

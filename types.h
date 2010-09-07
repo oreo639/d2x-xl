@@ -34,11 +34,10 @@ typedef enum {
 class CGameItem {
 	protected:
 		int			m_nIndex;
-		int			m_nBackupId; // used by undo manager
 		eItemType	m_itemType;
 
 	public:
-		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_nBackup (-1), m_itemType (itemType), m_editType (opNone), m_prev (null), m_next (null) {}
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType) {}
 
 		inline bool Used (void) { return m_nIndex >= 0; }
 
@@ -48,7 +47,9 @@ class CGameItem {
 
 		virtual void Backup (eEditType editType = opModify) {}
 
-		virtual void Backup (void) {}
+		virtual void Undo (void) {}
+
+		virtual void Redo (void) {}
 
 		virtual CGameItem* Clone (eEditType editType) { return null; }
 	};
@@ -155,67 +156,8 @@ public:
 // -----------------------------------------------------------------------------
 
 typedef struct {
-  ushort index;
-} BITMAP_INDEX;
-
-typedef struct {
-  byte	flags;		    //values defined above
-  byte	pad[3];	    //keep alignment
-  int		lighting;	    //how much light this casts
-  int		damage;	    //how much damage being against this does (for lava)
-  short	eclip_num;	    //the eclip that changes this, or -1
-  short	destroyed;	    //bitmap to show when destroyed, or -1
-  short	slide_u, slide_v;   //slide rates of texture, stored in 8:8 int
-} TMAP_INFO;
-
-typedef struct VCLIP {
-  int		play_time;  //total time (in seconds) of clip
-  int	num_frames;
-  int		frame_time; //time (in seconds) of each frame
-  int	flags;
-  short	sound_num;
-  ushort	frames[VCLIP_MAX_FRAMES];
-  int		light_value;
-} VCLIP;
-
-typedef struct ECLIP {
-  VCLIP   vc;			   //imbedded vclip
-  int		 time_left;		   //for sequencing
-  int	 frame_count;		   //for sequencing
-  short	 changing_wall_texture;	   //Which element of Textures array to replace.
-  short	 changing_object_texture;  //Which element of ObjBitmapPtrs array to replace.
-  int	 flags;			   //see above
-  int	 critClip;		   //use this clip instead of above one when mine critical
-  int	 dest_bm_num;		//use this bitmap when monitor destroyed
-  int	 dest_vclip;		//what vclip to play when exploding
-  int	 dest_eclip;		//what eclip to play when exploding
-  int	 destSize;		//3d size of explosion
-  int	 sound_num;		//what sound this makes
-  int	 nSegment,nSide;	//what segP & side, for one-shot clips
-} ECLIP;
-
-typedef struct WCLIP {
-  int		 play_time;
-  short	 num_frames;
-  short	 frames[MAX_CLIP_FRAMES_D2];
-  short	 open_sound;
-  short	 close_sound;
-  short	 flags;
-  char	 filename[13];
-  char	 pad;
-} WCLIP;
-
-typedef struct {
   short x,y,z;
 } APOINT;
-
-typedef struct {
-  short nSegment;
-  short nSide;
-  short nLine;
-  short nPoint;
-  short nObject;
-} SEGMENT;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

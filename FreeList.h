@@ -37,7 +37,7 @@ class CFreeList {
 				m_count = 0;
 				for (int i = m_size; m_count < m_size; m_count++) {
 					m_freeList [m_count] = --i;
-					m_buffer [m_count].m_nIndex = -1;
+					m_buffer [m_count].Index () = -1;
 					}
 				}
 			}

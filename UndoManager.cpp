@@ -5,6 +5,19 @@
 CUndoManager undoManager;
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+void CUndoItem::Setup (CGameItem* parent, eEditType editType, int nBackupId)
+{
+m_parent = parent; 
+m_editType = editType;
+m_nBackupId = nBackupId;
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 CUndoManager::CUndoManager (int maxSize)
 {
@@ -44,7 +57,7 @@ return b;
 
 void CUndoManager::Truncate (void)
 {
-for (int i = m_nCurrent; i != m_nTail; i = ++i % sizeof (m_buffer)) {
+for (int i = m_nCurrent; i != m_nTail; i = ++i % sizeof (m_buffer)) 
 	delete m_buffer [i].m_item;
 m_nTail = m_nCurrent;
 }
@@ -53,8 +66,6 @@ m_nTail = m_nCurrent;
 
 bool CUndoManager::Update (bool bForce)
 {
-	tUndoBuffer	*p;
-
 if (!m_enabled || m_delay)
 	return false;
 m_nCurrent = m_nTail;
@@ -77,12 +88,6 @@ return m_maxSize = maxSize;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Undo (CGameItem* itemP)
-{
-}
-
-//------------------------------------------------------------------------------
-
 bool CUndoManager::Undo (void)
 {
 if (!m_enabled)
@@ -92,15 +97,10 @@ if (m_nCurrent == m_nHead)
 int nId = Current ()->BackupId ();
 do {
 	Current ()->Undo ();
-	m_nCurrent = Current ()->Prev ();
+	if (--m_nCurrent < 0)
+		m_nCurrent = sizeof (m_buffer) - 1;
 	} while ((m_nCurrent != m_nHead) && (Current ()->BackupId () == nId));
 return true;
-}
-
-//------------------------------------------------------------------------------
-
-void CUndoManager::Redo (CGameItem* itemP)
-{
 }
 
 //------------------------------------------------------------------------------
@@ -114,9 +114,8 @@ if (m_nCurrent == m_nTail)
 int nId = Current ()->BackupId ();
 do {
 	Current ()->Redo ();
-	m_nCurrent = Current ()->Next ();
+	m_nCurrent = ++m_nCurrent % sizeof (m_buffer);
 	} while ((m_nCurrent != m_nTail) && (Current ()->BackupId () == nId));
-if (m_nCurrent)
 return true;
 }
 
@@ -149,6 +148,7 @@ void CUndoManager::Append (void)
 if (m_nHead = -1)
 	m_nHead = m_nTail = m_nCurrent = 0;
 else {
+	Truncate ();
 	m_nTail = ++m_nTail % sizeof (m_buffer);
 	if (m_nTail == m_nHead) {	// buffer full
 		int nId = Head ()->BackupId ();
@@ -164,18 +164,11 @@ else {
 
 int CUndoManager::Backup (CGameItem* parent, eItemType itemType, eEditType editType) 
 { 
-CGameItem* itemP = parent->Clone ();
+CGameItem* itemP = parent->Clone (editType);
 if (itemP != null) {
 	Append ();
 	SetModified (true);
-	itemP->m_parent = parent; 
-	itemP->m_nIndex = parent->m_nIndex;
-	itemP->m_itemType = itemType;
-	itemP->m_editType = editType;
-	itemP->m_nBackup = Id ();
-	Truncate ();
-	m_nTail = m_nCurrent;
-	itemP->Link (Tail ()); 
+	Tail ()->Setup (parent, editType, Id ());
 	}
 return Id ();
 }
@@ -213,4 +206,6 @@ if (m_nModified) {
 	}
 }
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

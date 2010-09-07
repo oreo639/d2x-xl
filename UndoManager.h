@@ -17,11 +17,10 @@ typedef struct tUndoBuffer {
 
 class CUndoItem {
 	public:
-		eEditType	m_editType;
 		CGameItem*	m_item;
 		CGameItem*	m_parent;
-		CGameItem*	m_prev;
-		CGameItem*	m_next;
+		eEditType	m_editType;
+		int			m_nBackupId; // used by undo manager
 
 		inline int& BackupId (void) { return m_nBackupId; }
 
@@ -29,25 +28,12 @@ class CUndoItem {
 
 		inline CGameItem* Item (void) { return m_item; }
 
-		inline CGameItem* &Prev (void) { return m_prev; }
+		inline void Undo (void) { m_item->Undo (); }
 
-		inline CGameItem* &Next (void) { return m_next; }
+		inline void Redo (void) { m_item->Redo (); }
 
-		inline void Link (CGameItem* pred) {
-			m_prev = pred;
-			if (pred != null) {
-				m_next = pred->m_next;
-				pred->m_next = m_prev;
-				}
-			}
+		void Setup (CGameItem* parent, eEditType editType, int nBackupId);
 
-		inline void Unlink (void) {
-			if (m_prev != null)
-				m_prev->m_next = m_next;
-			if (m_next != null)
-				m_next->m_prev = m_prev;
-			m_prev = m_next = null;
-			}
 	};
 
 //------------------------------------------------------------------------------
@@ -70,11 +56,11 @@ class CUndoManager
 		int			m_nId;
 
 	public:
-		inline CGameItem* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_head]; }
+		inline CUndoItem* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_nHead]; }
 
-		inline CGameItem* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [m_nTail]; }
+		inline CUndoItem* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [m_nTail]; }
 
-		inline CGameItem* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
+		inline CUndoItem* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
 
 		int Backup (CGameItem* parent, eItemType itemType, eEditType editType);
 
@@ -94,7 +80,7 @@ class CUndoManager
 
 		void Delay (bool bDelay);
 
-		int UndoCount ();
+		int Count ();
 
 		int Enable (int bEnable);
 
@@ -113,6 +99,9 @@ class CUndoManager
 		CUndoManager (int maxSize = 100);
 
 		~CUndoManager ();
+
+private:
+		void Append (void);
 };
 
 extern CUndoManager undoManager;
