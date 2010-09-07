@@ -305,59 +305,61 @@ typedef struct tGameObject {
 } tGameObject;
 
 class CGameObject : public CGameItem {
-public:
-	tGameObject			m_info;
-	CObjLocationInfo	m_location;
+	public:
+		tGameObject			m_info;
+		CObjLocationInfo	m_location;
 
-	// movement info, determined by MOVEMENT_TYPE 
-	union {
-		CObjPhysicsInfo	physInfo; // a physics object 
-		tFixVector			spinRate; // for spinning objects 
-		} mType;
+		// movement info, determined by MOVEMENT_TYPE 
+		union {
+			CObjPhysicsInfo	physInfo; // a physics object 
+			tFixVector			spinRate; // for spinning objects 
+			} mType;
 
-	// control info, determined by CONTROL_TYPE 
-	union {
-		CObjLaserInfo     laserInfo;
-		CObjExplosionInfo explInfo;   //NOTE: debris uses this also 
-		CObjAIInfo			aiInfo;
-		CObjLightInfo     lightInfo;  //why put this here?  Didn't know what else to do with it. 
-		CObjPowerupInfo   powerupInfo;
-		} cType;
+		// control info, determined by CONTROL_TYPE 
+		union {
+			CObjLaserInfo     laserInfo;
+			CObjExplosionInfo explInfo;   //NOTE: debris uses this also 
+			CObjAIInfo			aiInfo;
+			CObjLightInfo     lightInfo;  //why put this here?  Didn't know what else to do with it. 
+			CObjPowerupInfo   powerupInfo;
+			} cType;
 
-	// render info, determined by RENDER_TYPE 
-	union {
-		CObjPolyModelInfo	polyModelInfo;     //polygon model 
-		CObjVClipInfo		vClipInfo;    //vclip 
-		CSmokeInfo			smokeInfo;
-		CLightningInfo		lightningInfo;
-		CSoundInfo			soundInfo;
-		} rType;
+		// render info, determined by RENDER_TYPE 
+		union {
+			CObjPolyModelInfo	polyModelInfo;     //polygon model 
+			CObjVClipInfo		vClipInfo;    //vclip 
+			CSmokeInfo			smokeInfo;
+			CLightningInfo		lightningInfo;
+			CSoundInfo			soundInfo;
+			} rType;
 
-	// CGameObject () { memset (this, 0, sizeof (*this)); }
+		// CGameObject () { memset (this, 0, sizeof (*this)); }
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	void Create (byte type, short nSegment);
+		void Create (byte type, short nSegment);
 
-	void Setup (byte type);
+		void Setup (byte type);
 
-	void Draw (CWnd* wndP);
+		void Draw (CWnd* wndP);
 
-	int CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b);
+		int CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b);
 
-	int CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b);
+		int CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b);
 
-	virtual void Clear (void) {
-		memset (&m_info, 0, sizeof (m_info)); 
-		m_location.Clear ();
-		}
+		virtual void Clear (void) {
+			memset (&m_info, 0, sizeof (m_info)); 
+			m_location.Clear ();
+			}
 
-	virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (eEditType editType);
 
-	virtual void Backup (eEditType editType = opModify);
-};
+		virtual void Backup (eEditType editType = opModify);
+
+		virtual void Copy (CGameItem* destP);
+	};
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------

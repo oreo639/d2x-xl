@@ -222,8 +222,8 @@ return true;
 void CTrigger::Save (void)
 {
 if (!Backup ()) {
-	*dynamic_cast<CTrigger*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CTrigger*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 }
 

@@ -12,7 +12,9 @@ void CUndoItem::Setup (CGameItem* item, CGameItem* parent, eEditType editType, i
 {
 m_parent = parent; 
 m_item = item;
-m_parent->Id () = m_item->Id () = Id (); // copy these to parent to make subsequent cloning simpler
+m_parent->SetParent (m_item);
+m_item->SetParent (m_parent);
+m_item->Id () = Id (); // copy these to parent to make subsequent cloning simpler
 m_parent->EditType () = m_item->EditType () = editType;
 m_nBackupId = nBackupId;
 }
@@ -96,12 +98,12 @@ if (!m_enabled)
 	return false;
 if (m_nCurrent == m_nHead)
 	return false;
-int nId = Current ()->BackupId ();
+int nId = Current ()->Id ();
 do {
 	Current ()->Undo ();
 	if (--m_nCurrent < 0)
 		m_nCurrent = sizeof (m_buffer) - 1;
-	} while ((m_nCurrent != m_nHead) && (Current ()->BackupId () == nId));
+	} while ((m_nCurrent != m_nHead) && (Current ()->Id () == nId));
 return true;
 }
 
@@ -113,11 +115,11 @@ if (!m_enabled)
 	return false;
 if (m_nCurrent == m_nTail)
 	return false;
-int nId = Current ()->BackupId ();
+int nId = Current ()->Id ();
 do {
 	Current ()->Redo ();
 	m_nCurrent = ++m_nCurrent % sizeof (m_buffer);
-	} while ((m_nCurrent != m_nTail) && (Current ()->BackupId () == nId));
+	} while ((m_nCurrent != m_nTail) && (Current ()->Id () == nId));
 return true;
 }
 
@@ -153,11 +155,11 @@ else {
 	Truncate ();
 	m_nTail = ++m_nTail % sizeof (m_buffer);
 	if (m_nTail == m_nHead) {	// buffer full
-		int nId = Head ()->BackupId ();
+		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
 			m_nHead = ++m_nHead % sizeof (m_buffer);
 			delete Head ()->m_item;
-			} while (Head ()->BackupId () == nId);
+			} while (Head ()->Id () == nId);
 		}
 	}
 }
@@ -166,13 +168,21 @@ else {
 
 int CUndoManager::Backup (CGameItem* parent, eEditType editType) 
 { 
-CGameItem* item = parent->Clone (editType);
-if (item != null) {
-	Append ();
-	SetModified (true);
-	Tail ()->Setup (item, parent, editType, Id ());
+if (parent->Id () == Id ()) {
+	CGameItem* backup = parent->Parent ();
+	parent->Copy (backup);
+	backup->SetParent (parent);
+	return parent->Id ();
 	}
-return Id ();
+else {
+	CGameItem* item = parent->Clone (editType);
+	if (item != null) {
+		Append ();
+		SetModified (true);
+		Tail ()->Setup (item, parent, editType, Id ());
+		}
+	return Id ();
+	}
 }
 
 //------------------------------------------------------------------------------

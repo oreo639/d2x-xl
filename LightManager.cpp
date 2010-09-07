@@ -92,8 +92,8 @@ return cloneP;
 void CColor::Backup (eEditType editType = opModify)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CColor*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CColor*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);
@@ -530,8 +530,8 @@ return cloneP;
 void CLightDeltaValue::Backup (eEditType editType = opModify)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CDeltaLightValue*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CDeltaLightValue*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);
@@ -586,8 +586,8 @@ return cloneP;
 void CLightDeltaIndex::Backup (eEditType editType = opModify)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CDeltaLightIndex*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CDeltaLightIndex*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);

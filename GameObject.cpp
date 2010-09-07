@@ -778,8 +778,8 @@ void CGameObject::Backup (eEditType editType = opModify)
 void CWall::Backup (eEditType editType)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CGameObject*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CGameObject*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);

@@ -141,6 +141,8 @@ class CRobotInfo : public CGameItem {
 		virtual CGameItem* Clone (eEditType editType);
 
 		virtual void Backup (eEditType editType = opModify);
+
+		virtual void Copy (CGameItem* destP);
 };
 
 //------------------------------------------------------------------------------

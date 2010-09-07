@@ -179,7 +179,9 @@ public:
 
 	virtual void Backup (eEditType editType = opModify);
 
-	virtual void CSegment::Undo (void);
+	virtual void Copy (CGameItem* destP);
+
+	virtual void Undo (void);
 
 	CSegment () : CGameItem (itSegment) {}
 
@@ -226,7 +228,11 @@ public:
 
 	virtual void Backup (eEditType editType = opModify);
 
-	virtual void Save (void);
+	virtual void Copy (CGameItem* destP);
+
+	virtual void Undo (void);
+
+	virtual void Redo (void);
 };
 
 // -----------------------------------------------------------------------------

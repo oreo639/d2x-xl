@@ -628,17 +628,19 @@ CGameItem* CSegment::Clone (eEditType editType)
 CSegment* cloneP = new CSegment;	// only make a copy if modified
 if (cloneP != null)
 	*cloneP = *this;
-return m_backup = cloneP;
+return m_parent = cloneP;
 }
 
 // -----------------------------------------------------------------------------
 
 void CSegment::Backup (eEditType editType)
 {
-if (HaveBackup ())
-	*dynamic_cast<CSegment*> (m_backup) = *this;
+if (HaveBackup ()) {
+	*dynamic_cast<CSegment*> (m_parent) = *this;
+	m_parent->SetParent (this); // need to restore after copying over it
+	}
 else 
-	m_nBackup = undoManager.Backup (this, opModify);
+	Id () = undoManager.Backup (this, opModify);
 undoManager.SetModified (true);
 }
 
@@ -720,14 +722,16 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CMatCenter::Backup (eEditType editType = opModify)
+void Copy (CGameItem* destP)
 {
-if (HaveBackup ()) {
-	*dynamic_cast<CMatCenter*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
-	}
-else
-	m_nBackup = undoManager.Backup (this, itMatCenter, opModify);
+*dynamic_cast<CMatCenter*> (destP) = *this;
+}
+
+// -----------------------------------------------------------------------------
+
+void CMatCenter::Backup (eEditType editType)
+{
+Id () = undoManager.Backup (this, opModify);
 undoManager.SetModified (true);
 }
 

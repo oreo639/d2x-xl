@@ -257,8 +257,8 @@ return cloneP;
 void CWall::Backup (eEditType editType)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CWall*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CWall*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);
@@ -310,8 +310,8 @@ return cloneP;
 void CDoor::Backup (eEditType editType)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CDoor*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CDoor*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);

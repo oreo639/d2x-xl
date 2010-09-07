@@ -5,7 +5,7 @@
 
 bool CGameItem::HaveBackup (void)
 {
-return (m_backup != null) && (m_backup.Id () == undoManager.Id ());
+return (m_parent != null) && (m_parent.Id () == undoManager.Id ());
 }
 
 // -----------------------------------------------------------------------------

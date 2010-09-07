@@ -40,8 +40,8 @@ return cloneP;
 void CVertex::Backup (eEditType editType)
 {
 if (HaveBackup ()) {
-	*dynamic_cast<CVertex*> (m_backup) = *this;
-	m_backup->Id () = undoManager.Id ();
+	*dynamic_cast<CVertex*> (m_parent) = *this;
+	m_parent->Id () = undoManager.Id ();
 	}
 else
 	m_nBackup = undoManager.Backup (this, opModify);

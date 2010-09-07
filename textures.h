@@ -238,36 +238,38 @@ typedef struct tTexture {
 } tTexture;
 
 class CTexture : public CGameItem {
-public:
-	tTexture	m_info;
+	public:
+		tTexture	m_info;
 
-	CTexture (byte *dataP = null) {
-		Clear ();
-		m_info.bmData = dataP;
-		m_info.bExtData = (dataP != null);
-		}
+		CTexture (byte *dataP = null) {
+			Clear ();
+			m_info.bmData = dataP;
+			m_info.bExtData = (dataP != null);
+			}
 
-	void Release (void);
+		void Release (void);
 
-	~CTexture() { Release (); }
+		~CTexture() { Release (); }
 
-	bool Allocate (int nSize, int nTexture);
+		bool Allocate (int nSize, int nTexture);
 
-	int Load (CFileManager& fp, short nTexture, int nVersion = -1);
+		int Load (CFileManager& fp, short nTexture, int nVersion = -1);
 
-	void Load (CFileManager& fp, CPigTexture& info);
+		void Load (CFileManager& fp, CPigTexture& info);
 
-	double Scale (short index = -1);
+		double Scale (short index = -1);
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false) { };
+		void Read (CFileManager& fp, int version = 0, bool bFlag = false) { };
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+		void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
-	virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (eEditType editType);
 
-	virtual void Backup (eEditType editType = opModify);
+		virtual void Backup (eEditType editType = opModify);
+
+		virtual void Copy (CGameItem* destP);
 };
 
 //------------------------------------------------------------------------

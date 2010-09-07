@@ -91,20 +91,20 @@ typedef struct tColor {
 // -----------------------------------------------------------------------------
 
 class CColor : public CGameItem {
-public:
-	tColor	m_info;
+	public:
+		tColor	m_info;
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
-	virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (eEditType editType);
 
-	virtual void Backup (eEditType editType = opModify);
+		virtual void Backup (eEditType editType = opModify);
 
-	virtual void Save (void);
+		virtual void Copy (CGameItem* destP);
 };
 
 // -----------------------------------------------------------------------------

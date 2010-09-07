@@ -54,52 +54,52 @@ typedef struct tTrigger {
 //------------------------------------------------------------------------
 
 class CTrigger : public CTriggerTargets, public CGameItem {
-public:
-	struct tTrigger m_info;
-	//inline CSideKey& operator[](uint i) { return targets [i]; }
+	public:
+		struct tTrigger m_info;
+		//inline CSideKey& operator[](uint i) { return targets [i]; }
 
-	void Read (CFileManager& fp, int version, bool bObjTrigger);
+		void Read (CFileManager& fp, int version, bool bObjTrigger);
 
-	void Write (CFileManager& fp, int version, bool bObjTrigger);
+		void Write (CFileManager& fp, int version, bool bObjTrigger);
 
-	virtual void Clear (void);
+		virtual void Clear (void);
 
-	virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (eEditType editType);
 
-	virtual void Backup (eEditType editType = opModify);
+		virtual void Backup (eEditType editType = opModify);
 
-	virtual void Save (void);
+		virtual void Copy (CGameItem* destP);
 
-	void Setup (short type, short flags);
+		void Setup (short type, short flags);
 
-	bool IsExit (void);
+		bool IsExit (void);
 
-	inline const bool operator< (const CTrigger& other) {
-		return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 
-		}
-	inline const bool operator> (const CTrigger& other) {
-		return (m_info.nObject > other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type > other.m_info.type)); 
-		}
-};
+		inline const bool operator< (const CTrigger& other) {
+			return (m_info.nObject < other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type < other.m_info.type)); 
+			}
+		inline const bool operator> (const CTrigger& other) {
+			return (m_info.nObject > other.m_info.nObject) || ((m_info.nObject == other.m_info.nObject) && (m_info.type > other.m_info.type)); 
+			}
+	};
 
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
 class CReactorTrigger : public CTriggerTargets, public CGameItem {
-public:
+	public:
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	virtual void Clear (void) { CTriggerTargets::Clear (); }
+		virtual void Clear (void) { CTriggerTargets::Clear (); }
 
-	virtual CGameItem* Clone (eEditType editType);
+		virtual CGameItem* Clone (eEditType editType);
 
-	virtual void Backup (eEditType editType = opModify);
+		virtual void Backup (eEditType editType = opModify);
 
-	virtual void Save (void);
+		virtual void Copy (CGameItem* destP);
 };
 
 //------------------------------------------------------------------------

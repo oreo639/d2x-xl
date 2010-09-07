@@ -37,10 +37,10 @@ class CGameItem {
 		int			m_nId;
 		eItemType	m_itemType;
 		eEditType	m_editType;
-		CGameItem*	m_backup;
+		CGameItem*	m_parent;
 
 	public:
-		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_backup (null) {}
+		CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_itemType (itemType), m_editType (opNone), m_parent (null) {}
 
 		inline bool Used (void) { return m_nIndex >= 0; }
 
@@ -48,21 +48,27 @@ class CGameItem {
 
 		inline int& Id (void) { return m_nId; }
 
+		inline eItemType& ItemType (void) { return m_itemType; }
+
+		inline eEditType& EditType (void) { return m_editType; }
+
 		virtual void Clear (void) {}
 
-		virtual void Backup (eEditType editType = opModify) { return false; }
+		virtual void Backup (eEditType editType = opModify) {}
 
-		virtual void Save (void) {}
+		virtual void Copy (CGameItem* destP);
 
 		virtual void Undo (void) {}
 
 		virtual void Redo (void) {}
 
-		inline CGameItem* Backup (void) { return m_backup; }
+		inline CGameItem* Parent (void) { return m_parent; }
+
+		inline void SetParent (CGameItem* parent) { m_parent = parent; }
 
 		virtual CGameItem* Clone (eEditType editType) { return null; }
 
-		bool HaveBackup (void);
+		virtual void Copy (CGameItem* destP);
 	};
 
 // -----------------------------------------------------------------------------
