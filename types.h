@@ -43,9 +43,7 @@ public:
 
 	CGameItem (eItemType itemType = itUndefined) : m_nIndex (-1), m_nBackup (-1), m_itemType (itemType), m_editType (opNone), m_prev (null), m_next (null) {}
 
-	virtual void Clear (void) = 0;
-
-	virtual bool Used (void) { return m_nIndex >= 0; }
+	inline bool Used (void) { return m_nIndex >= 0; }
 
 	void Link (CGameItem* pred) {
 		m_prev = pred;
@@ -63,9 +61,11 @@ public:
 		m_prev = m_next = null;
 		}
 
-	virtual void Backup (eEditType editType = opModify) = 0;
+	virtual void Clear (void) {}
 
-	virtual CGameItem* Clone (eEditType editType) = 0;
+	virtual void Backup (eEditType editType = opModify) {}
+
+	virtual CGameItem* Clone (eEditType editType) { return null; }
 	};
 
 // -----------------------------------------------------------------------------
