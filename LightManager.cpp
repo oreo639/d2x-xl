@@ -77,6 +77,35 @@ fp.WriteInt32 ((int) (m_info.color.g * 0x7fffffff + 0.5));
 fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
 }
 
+// -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CColor::Clone (eEditType editType)
+{
+CColor* cloneP;
+if (editType == opModify)
+	cloneP = new CGameItem (itMatCenter);
+else {
+	cloneP = new CColor;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CColor::Backup (eEditType editType = opModify)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itMatCenter, opModify);
+}
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -494,13 +523,13 @@ for (int i = 0; i < 4; i++)
 // if segment was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CCLightDeltaValue::Clone (eEditType editType)
+CGameItem* CLightDeltaValue::Clone (eEditType editType)
 {
-CCLightDeltaValue* cloneP;
+CLightDeltaValue* cloneP;
 if (editType == opModify)
-	cloneP = new CGameItem (itCLightDeltaValue);
+	cloneP = new CGameItem (itLightDeltaValue);
 else {
-	cloneP = new CCLightDeltaValue;	// only make a copy if modified
+	cloneP = new CLightDeltaValue;	// only make a copy if modified
 	if (cloneP == null)
 		return null;
 		*cloneP = *this;
@@ -511,10 +540,10 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CCLightDeltaValue::Backup (eEditType editType = opModify)
+void CLightDeltaValue::Backup (eEditType editType = opModify)
 {
 if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, itCLightDeltaValue, opModify);
+	m_nBackup = undoManager.Backup (this, itLightDeltaValue, opModify);
 }
 
 /// -----------------------------------------------------------------------------
@@ -554,13 +583,13 @@ fp.Write (m_info.index);
 // if segment was added or deleted, just make a new CGameItem instance and 
 // mark the operation there
 
-CGameItem* CCLightDeltaIndex::Clone (eEditType editType)
+CGameItem* CLightDeltaIndex::Clone (eEditType editType)
 {
-CCLightDeltaIndex* cloneP;
+CLightDeltaIndex* cloneP;
 if (editType == opModify)
-	cloneP = new CGameItem (itCLightDeltaIndex);
+	cloneP = new CGameItem (itLightDeltaIndex);
 else {
-	cloneP = new CCLightDeltaIndex;	// only make a copy if modified
+	cloneP = new CLightDeltaIndex;	// only make a copy if modified
 	if (cloneP == null)
 		return null;
 		*cloneP = *this;
@@ -571,7 +600,7 @@ return cloneP;
 
 // -----------------------------------------------------------------------------
 
-void CCLightDeltaIndex::Backup (eEditType editType = opModify)
+void CLightDeltaIndex::Backup (eEditType editType = opModify)
 {
 if (m_nBackup != undoManager.Id ())
 	m_nBackup = undoManager.Backup (this, itCLightDeltaIndex, opModify);

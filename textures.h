@@ -252,13 +252,22 @@ public:
 	~CTexture() { Release (); }
 
 	bool Allocate (int nSize, int nTexture);
+
 	int Load (CFileManager& fp, short nTexture, int nVersion = -1);
+
 	void Load (CFileManager& fp, CPigTexture& info);
+
 	double Scale (short index = -1);
 
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false) { };
+
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
+
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
 };
 
 //------------------------------------------------------------------------
