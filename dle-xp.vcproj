@@ -5835,10 +5835,6 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\cfile.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\cquicksort.cpp"
 					>
 				</File>
@@ -6262,10 +6258,6 @@
 				>
 				<File
 					RelativePath=".\carray.h"
-					>
-				</File>
-				<File
-					RelativePath=".\cfile.h"
 					>
 				</File>
 				<File
@@ -6713,6 +6705,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\FileManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\HogManager.cpp"
 					>
 				</File>
@@ -6814,6 +6810,10 @@
 				</File>
 				<File
 					RelativePath=".\CustomTextures.h"
+					>
+				</File>
+				<File
+					RelativePath=".\FileManager.h"
 					>
 				</File>
 				<File
