@@ -23,7 +23,7 @@ current.Get (key);
 CSide *sideP = Side (key); 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 	return false;
 	}
 if ((lightManager.IsLight (sideP->m_info.nBaseTex) == -1) && (lightManager.IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))

@@ -177,7 +177,7 @@ for (int nSide = 0; nSide < 6; nSide++)
 	if (SetTextures (CSideKey (nSegment, nSide), otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))
 		bChange = true;
 if (!bChange)
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 else {
 	undoManager.Unlock ();
 	DLE.MineView ()->Refresh (); 

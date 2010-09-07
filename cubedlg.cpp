@@ -601,7 +601,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				goto errorExit;
 			if ((theMine == null)->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
-				undoManager.ResetModified (bUndo);
+				undoManager.Unroll (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -619,7 +619,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
-				undoManager.ResetModified (bUndo);
+				undoManager.Unroll (bUndo);
 				goto funcExit;
 				}
 			break;
@@ -628,7 +628,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
-				undoManager.ResetModified (bUndo);
+				undoManager.Unroll (bUndo);
 				goto funcExit;
 				}
 			break;

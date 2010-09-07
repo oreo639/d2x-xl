@@ -63,7 +63,10 @@ void CUndoManager::Truncate (void)
 {
 for (int i = m_nCurrent; i != m_nTail; i = ++i % sizeof (m_buffer)) 
 	delete m_buffer [i].m_item;
-m_nTail = m_nCurrent;
+if (m_nCurrent == m_nHead)
+	m_nHead = m_nTail = m_nCurrent = -1;
+else
+	m_nTail = m_nCurrent;
 }
 
 //------------------------------------------------------------------------------
@@ -129,6 +132,7 @@ bool CUndoManager::Revert (void)
 {
 if (!m_enabled || m_delay || !m_nHead)
 	return false;
+Undo ();
 Truncate ();
 return true;
 }
@@ -208,11 +212,11 @@ return false;
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::ResetModified (bool bRevert) 
+void CUndoManager::Unroll (bool bRevert) 
 {
 if (m_nModified) {
 	if (!--m_nModified)
-		SetModified (FALSE);
+		SetModified (false);
 	Unlock ();
 	if (bRevert)
 		Revert ();

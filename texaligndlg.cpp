@@ -690,7 +690,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 if (bModified)
 	undoManager.Unlock ();
 else
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
 }

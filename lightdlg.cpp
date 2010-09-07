@@ -211,7 +211,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 if (bChange)
 	undoManager.Unlock ();
 else
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 DLE.MineView ()->Refresh ();
 }
 

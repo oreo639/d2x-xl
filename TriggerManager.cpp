@@ -156,7 +156,7 @@ if (wallP == null) {
 		wallP = wallManager.Create (CSideKey (), (current.Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
-			undoManager.ResetModified (bUndo);
+			undoManager.Unroll (bUndo);
 			return null;
 			}
 		}
@@ -557,7 +557,7 @@ if (wallP != null) {
 	DLE.MineView ()->Refresh ();
 	return true;
 	}
-undoManager.ResetModified (bUndo);
+undoManager.Unroll (bUndo);
 return false;
 }
 

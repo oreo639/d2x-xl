@@ -93,7 +93,7 @@ class CUndoManager
 
 		bool SetModified (bool bModified);
 
-		void ResetModified (bool bRevert);
+		void Unroll (bool bRevert);
 
 		CUndoManager (int maxSize = 100);
 

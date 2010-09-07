@@ -200,7 +200,7 @@ if (Create (current, type, flags, keys, nClip, nTexture)) {
 		return true;
 		}
 	}
-undoManager.ResetModified (bUndo);
+undoManager.Unroll (bUndo);
 return false;
 }
 
@@ -323,7 +323,7 @@ if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		return true;
 		}
 	}
-undoManager.ResetModified (bUndo);
+undoManager.Unroll (bUndo);
 return false;
 }
 
@@ -342,7 +342,7 @@ int nLastSeg = current.m_nSegment;
 bool bUndo = undoManager.SetModified (true);
 undoManager.Lock ();
 if (!segmentManager.Create ()) {
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 	return false;
 	}
 int nNewSeg = current.m_nSegment;
@@ -357,7 +357,7 @@ if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	undoManager.Unlock ();
 	return true;
 	}
-undoManager.ResetModified (bUndo);
+undoManager.Unroll (bUndo);
 return false;
 }
 

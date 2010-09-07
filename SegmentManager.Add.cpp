@@ -147,7 +147,7 @@ if (bCreate) {
 	nSegment = Create (nSegment);
 	if (nSegment < 0) {
 		Remove (nSegment, false);
-		undoManager.ResetModified (bUndo);
+		undoManager.Unroll (bUndo);
 		return false; 
 		}
 	}	
@@ -156,7 +156,7 @@ m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
 	if (bCreate)
 		Remove (nSegment, false);
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 	DLE.MineView ()->DelayRefresh (false);
 	m_bCreating = false;
 	return false; 

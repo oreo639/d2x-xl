@@ -661,7 +661,7 @@ if (nDeleted) {
 	Refresh ();
 	}
 else
-	undoManager.ResetModified (bUndo);
+	undoManager.Unroll (bUndo);
 }
 
 //------------------------------------------------------------------------
