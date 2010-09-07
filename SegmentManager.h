@@ -145,27 +145,27 @@ class CSegmentManager {
 
 		void Remove (short nDelSeg, bool bBackup = true);
 
-		bool Create (short& nNewSeg);
+		short Create (void);
 
 		void Delete (short nDelSeg = -1);
 
 		void ResetSide (short nSegment, short nSide);
 
-		bool CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		short CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
 
-		bool CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		short CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
 
-		bool CreateEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		short CreateEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
 
-		bool CreateFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
+		short CreateFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
 
-		bool CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+		short CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
 
-		bool CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+		short CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
 
-		bool CreateSpeedBoost (short nSegment, bool bCreate);
+		short CreateSpeedBoost (short nSegment, bool bCreate);
 
-		bool CreateSkybox (short nSegment, bool bCreate);
+		short CreateSkybox (short nSegment, bool bCreate);
 
 		void Init (short nSegment);
 
