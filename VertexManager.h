@@ -78,6 +78,8 @@ class CVertexManager  {
 
 		void UnmarkAll (byte mask = MARKED_MASK);
 
+		CVertex* Find (CDoubleVector v);
+
 		CVertexManager () {
 			ResetInfo ();
 			Clear ();

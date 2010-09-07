@@ -779,4 +779,38 @@ Id () = undoManager.Backup (this, editType);
 }
 
 // -----------------------------------------------------------------------------
+
+void CVertex::Undo (void)
+{
+switch (EditType ()) {
+	case opAdd:
+		objectManager.Delete (Index (), false);
+		break;
+	case opDelete:
+		objectManager.Add (false);
+		// fall through
+	case opModify:
+		*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CVertex::Redo (void)
+{
+switch (EditType ()) {
+	case opDelete:
+		objectManager.Delete (Index ());
+		break;
+	case opAdd:
+		objectManager.Add (false);
+		// fall through
+	case opModify:
+		*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
 // eof object.cpp

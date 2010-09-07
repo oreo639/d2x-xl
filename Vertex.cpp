@@ -50,7 +50,7 @@ void CVertex::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		vertexManager.Delete (vertexManager.Index (this), false);
+		vertexManager.Delete (Index (), false);
 		break;
 	case opDelete:
 		vertexManager.Add (false);
@@ -67,7 +67,7 @@ void CVertex::Redo (void)
 {
 switch (EditType ()) {
 	case opDelete:
-		vertexManager.Delete (vertexManager.Index (this));
+		vertexManager.Delete (Index ());
 		break;
 	case opAdd:
 		vertexManager.Add (false);

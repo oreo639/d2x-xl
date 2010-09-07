@@ -21,7 +21,7 @@ class CGameItemIterator {
 		inline _T& operator++ () { 
 			do {
 				m_value = &m_buffer [m_index++];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).m_nIndex < 0));
+				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
 			--m_count;
 			return *m_value; 
 			}
@@ -31,7 +31,7 @@ class CGameItemIterator {
 			_T* m_value;
 			do {
 				m_value = &m_buffer [m_index++];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).m_nIndex < 0));
+				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
 			--m_count;
 			return *m_value; 
 			}
@@ -40,7 +40,7 @@ class CGameItemIterator {
 		inline _T& operator-- () { 
 			do {
 				m_value = m_buffer [--m_index];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).m_nIndex < 0));
+				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
 			--m_count;
 			return *m_value; 
 			}
@@ -49,7 +49,7 @@ class CGameItemIterator {
 		inline _T& operator-- (int) { 
 			do {
 				m_value = &m_buffer [m_index--];
-				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).m_nIndex < 0));
+				} while (!end () && (dynamic_cast<CGameItem&> (*m_value).Index () < 0));
 			--m_count;
 			return *m_value; 
 			}

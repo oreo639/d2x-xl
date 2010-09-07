@@ -30,13 +30,14 @@ return true;
 
 //------------------------------------------------------------------------------
 
-short CWallManager::Add (void) 
+short CWallManager::Add (bool bBackup) 
 { 
 if (!HaveResources ())
 	return NO_WALL;
 int nWall = --m_free;
 m_walls [nWall].Clear ();
-m_walls [nWall].Backup (opAdd);
+if (bBackup)
+	m_walls [nWall].Backup (opAdd);
 WallCount ()++;
 return (short) nWall;
 }

@@ -58,13 +58,13 @@ class CFreeList {
 			if (m_count <= 0) 
 				return -1;
 			int i = m_freeList [--m_count];
-			m_buffer [i].m_nIndex = i;
+			m_buffer [i].Index () = i;
 			return i;
 			}
 
 		inline void Put (int i) { 
 			if (m_count < m_size) {
-				m_buffer [i].m_nIndex = -1;
+				m_buffer [i].Index () = -1;
 				m_freeList [m_count++] = i;
 				}
 			}

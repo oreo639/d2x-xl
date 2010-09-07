@@ -43,6 +43,16 @@ for (CVertexIterator vi; vi; vi++)
 
 // ----------------------------------------------------------------------------- 
 
+CVertex* CVertexManager::Find (CDoubleVector v)
+{
+for (CVertexIterator vi; vi; vi++)
+	if (*vi == v)
+		return &(*vi);
+return null;
+}
+
+// ----------------------------------------------------------------------------- 
+
 void CVertexManager::SetIndex (void)
 {
 int j = 0;

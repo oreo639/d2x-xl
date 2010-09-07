@@ -141,15 +141,19 @@ while (!fp.EoF ()) {
 						if (!triggerManager.HaveResources ())
 							w.m_info.nTrigger = NO_TRIGGER;
 						else {
-							w.m_info.nTrigger = (byte) triggerManager.Add ();
-							*triggerManager.Trigger (w.m_info.nTrigger) = t;
+							w.m_info.nTrigger = (byte) triggerManager.Add (false);
+							CTrigger* trigP = triggerManager.Trigger (w.m_info.nTrigger);
+							*trigP = t;
+							trigP->Backup (opNew);
 							++nNewTriggers;
 							}
 						}
-					sideP->m_info.nWall = wallManager.Add ();
+					sideP->m_info.nWall = wallManager.Add (false);
 					w.m_nSegment = nSegment;
-					*wallManager.Wall (sideP->m_info.nWall) = w;
-					nNewWalls++;
+					CWall* wallP = wallManager.Wall (sideP->m_info.nWall);
+					*wallP = w;
+					wallP->Backup (opNew);
+					++nNewWalls;
 					}
 				}
 			}
@@ -289,8 +293,9 @@ void CBlockManager::Write (CFileManager& fp)
 MakeTransformation (m, origin);
 
 CSegment* segP = segmentManager.Segment (0);
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
+for (CSegmentIterator si; si; si++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
+	CSegment* segP = &(*i);
 	if (segP->m_info.wallFlags & MARKED_MASK) {
 		fprintf (fp.File (), "segment %d\n",nSegment);
 		CSide* sideP = segP->m_sides;
