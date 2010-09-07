@@ -3,6 +3,8 @@
 
 #include "mine.h"
 
+#define MAX_UNDOS		100
+
 //------------------------------------------------------------------------------
 
 typedef struct tUndoBuffer {

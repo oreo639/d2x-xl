@@ -420,7 +420,7 @@ if (pszExt) {
 		}
 	}
 
-//memset (theMine->TexColors (), 0, sizeof (theMine->MineData ().texColors));
+//memset (theMine->TexColors (), 0, sizeof (theMine->Data ().texColors));
 sprintf_s (pszExt, 5, ".clr");
 if (pszSubFile)
 	FindFileData (pszFile, message, &size, &offset);

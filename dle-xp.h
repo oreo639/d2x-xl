@@ -26,8 +26,6 @@ extern int nLayout;
 // See dlc.cpp for the implementation of this class
 //
 
-#define MAX_UNDOS		100
-
 class CDlcApp : public CWinApp
 {
 public:

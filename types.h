@@ -3,6 +3,7 @@
 
 #include "define.h"
 #include "cfile.h"
+#include "crc.h"
 
 # pragma pack(push, packing)
 # pragma pack(1)

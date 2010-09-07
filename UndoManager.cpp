@@ -1,4 +1,6 @@
-#include "UndoManager.h"
+
+#include "mine.h"
+#include "dle-xp.h"
 
 CUndoManager undoManager;
 
@@ -67,7 +69,7 @@ bool CUndoManager::Update (bool bForce)
 if (!m_enabled || m_delay)
 	return false;
 if (!bForce && m_head &&
-	 !memcmp (&m_current->undoBuffer, &theMine->MineData (), sizeof (struct tMineData)))
+	 !memcmp (&m_current->undoBuffer, &theMine->Data (), sizeof (CMineData)))
 	return true;
 if (m_current != m_tail) {
 	if (m_current)
@@ -97,7 +99,7 @@ else if (m_head) {
 else
 	return false;
 m_tail->nextBuf = null;
-memcpy (&m_tail->undoBuffer, &theMine->MineData (), sizeof (struct tMineData));
+memcpy (&m_tail->undoBuffer, &theMine->Data (), sizeof (CMineData));
 m_current = m_tail;
 return true;
 }
@@ -128,7 +130,7 @@ if (!m_current)
 	return false;
 if (m_current != m_head)
 	m_current = m_current->prevBuf;
-memcpy (&theMine->MineData (), &m_current->undoBuffer, sizeof (struct tMineData));
+memcpy (&theMine->Data (), &m_current->undoBuffer, sizeof (CMineData));
 return true;
 }
 
@@ -144,7 +146,7 @@ if (m_current)
 	m_current = m_current->nextBuf;
 else
 	m_current = m_head;
-memcpy (&theMine->MineData (), &m_current->undoBuffer, sizeof (struct tMineData));
+memcpy (&theMine->Data (), &m_current->undoBuffer, sizeof (CMineData));
 if (m_current == m_tail)
 	Truncate ();
 return true;
@@ -189,12 +191,12 @@ return i;
 
 //------------------------------------------------------------------------------
 
-bool UndoManager::SetModified (bool bModified) 
+bool CUndoManager::SetModified (bool bModified) 
 {
 DLE.GetDocument ()->SetModifiedFlag (bModified);
 if (bModified) {
 	m_nModified++;
-	return UpdateBuffer ();
+	return Update ();
 	}
 m_nModified = 0;
 return false;
@@ -202,14 +204,14 @@ return false;
 
 //------------------------------------------------------------------------------
 
-void UndoManager::ResetModified (bool bRevert) 
+void CUndoManager::ResetModified (bool bRevert) 
 {
 if (m_nModified) {
 	if (!--m_nModified)
 		SetModified (FALSE);
 	Unlock ();
 	if (bRevert)
-		RevertBuffer ();
+		Revert ();
 	}
 }
 
