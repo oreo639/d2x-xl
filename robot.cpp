@@ -249,6 +249,35 @@ for (i = 0; i <= MAX_GUNS; i++)
 fp.Write (m_info.always_0xabcd);
 }
 
+// -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CRobotInfo::Clone (eEditType editType)
+{
+CRobotInfo* cloneP;
+if (editType == opModify)
+	cloneP = new CGameItem (itRobotInfo);
+else {
+	cloneP = new CRobotInfo;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CRobotInfo::Backup (eEditType editType = opModify)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itRobotInfo, opModify);
+}
+
 //--------------------------------------------------------------------------
 //eof robot.cpp
 

@@ -50,15 +50,21 @@ typedef struct tLightDeltaValue {
 // -----------------------------------------------------------------------------
 
 class CLightDeltaValue : public CSideKey, public CGameItem {
-public:
-	tLightDeltaValue m_info;
+	public:
+		tLightDeltaValue m_info;
 
-	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
-	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
-	virtual void Clear (void) { 
-		memset (&m_info, 0, sizeof (m_info)); 
-		CSideKey::Clear ();
-		}
+		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+
+		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+
+		virtual void Clear (void) { 
+			memset (&m_info, 0, sizeof (m_info)); 
+			CSideKey::Clear ();
+			}
+
+		virtual CGameItem* Clone (eEditType editType);
+
+		virtual void Backup (eEditType editType = opModify);
 };
 
 // -----------------------------------------------------------------------------
@@ -74,15 +80,21 @@ typedef struct tLightDeltaIndex {
 // -----------------------------------------------------------------------------
 
 class CLightDeltaIndex : public CSideKey, public CGameItem {
-public:
-	tLightDeltaIndex m_info;
+	public:
+		tLightDeltaIndex m_info;
 
-	void Read (CFileManager& fp, int version, bool bD2X);
-	void Write (CFileManager& fp, int version, bool bD2X);
-	virtual void Clear (void) { 
-		memset (&m_info, 0, sizeof (m_info)); 
-		CSideKey::Clear ();
-		}
+		void Read (CFileManager& fp, int version, bool bD2X);
+
+		void Write (CFileManager& fp, int version, bool bD2X);
+
+		virtual void Clear (void) { 
+			memset (&m_info, 0, sizeof (m_info)); 
+			CSideKey::Clear ();
+			}
+
+		virtual CGameItem* Clone (eEditType editType);
+
+		virtual void Backup (eEditType editType = opModify);
 };
 
 // -----------------------------------------------------------------------------

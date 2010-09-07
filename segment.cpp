@@ -675,6 +675,35 @@ fp.Write (m_info.nFuelCen);
 }
 
 // -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CMatCenter::Clone (eEditType editType)
+{
+CMatCenter* cloneP;
+if (editType == opModify)
+	cloneP = new CGameItem (itMatCenter);
+else {
+	cloneP = new CMatCenter;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CMatCenter::Backup (eEditType editType = opModify)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itMatCenter, opModify);
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 //eof segment.cpp

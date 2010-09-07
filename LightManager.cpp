@@ -487,7 +487,37 @@ for (int i = 0; i < 4; i++)
 	fp.Write (m_info.vertLight [i]);
 }
 
+
 // -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CCLightDeltaValue::Clone (eEditType editType)
+{
+CCLightDeltaValue* cloneP;
+if (editType == opModify)
+	cloneP = new CGameItem (itCLightDeltaValue);
+else {
+	cloneP = new CCLightDeltaValue;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CCLightDeltaValue::Backup (eEditType editType = opModify)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itCLightDeltaValue, opModify);
+}
+
+/// -----------------------------------------------------------------------------
 
 void CLightDeltaIndex::Read (CFileManager& fp, int version, bool bD2X)
 {
@@ -516,6 +546,35 @@ else {
 	fp.WriteSByte ((sbyte) m_info.count);
 	}
 fp.Write (m_info.index);
+}
+
+// -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CCLightDeltaIndex::Clone (eEditType editType)
+{
+CCLightDeltaIndex* cloneP;
+if (editType == opModify)
+	cloneP = new CGameItem (itCLightDeltaIndex);
+else {
+	cloneP = new CCLightDeltaIndex;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CCLightDeltaIndex::Backup (eEditType editType = opModify)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itCLightDeltaIndex, opModify);
 }
 
 //------------------------------------------------------------------------------

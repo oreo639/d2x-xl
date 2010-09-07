@@ -756,4 +756,33 @@ return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
 }
 
 // -----------------------------------------------------------------------------
+// make a copy of this segment for the undo manager
+// if segment was modified, make a copy of the current segment
+// if segment was added or deleted, just make a new CGameItem instance and 
+// mark the operation there
+
+CGameItem* CGameObject::Clone (eEditType editType)
+{
+CGameObject* cloneP;
+if (editType == opModify)
+	cloneP = new CGameItem (itGameObject);
+else {
+	cloneP = new CGameObject;	// only make a copy if modified
+	if (cloneP == null)
+		return null;
+		*cloneP = *this;
+		}
+	}
+return cloneP;
+}
+
+// -----------------------------------------------------------------------------
+
+void CGameObject::Backup (eEditType editType = opModify)
+{
+if (m_nBackup != undoManager.Id ())
+	m_nBackup = undoManager.Backup (this, itGameObject, opModify);
+}
+
+// -----------------------------------------------------------------------------
 // eof object.cpp

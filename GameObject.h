@@ -336,18 +336,27 @@ public:
 	// CGameObject () { memset (this, 0, sizeof (*this)); }
 
 	void Read (CFileManager& fp, int version = 0, bool bFlag = false);
+
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
+
+	void Create (byte type, short nSegment);
+
+	void Setup (byte type);
+
+	void Draw (CWnd* wndP);
+
+	int CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b);
+
+	int CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b);
+
 	virtual void Clear (void) {
 		memset (&m_info, 0, sizeof (m_info)); 
 		m_location.Clear ();
 		}
-	void Create (byte type, short nSegment);
-	void Setup (byte type);
-	void Draw (CWnd* wndP);
 
-	int CheckNormal (CViewMatrix& view, CVertex& a, CVertex& b);
-	int CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b);
+	virtual CGameItem* Clone (eEditType editType);
 
+	virtual void Backup (eEditType editType = opModify);
 };
 
 //------------------------------------------------------------------------

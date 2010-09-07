@@ -175,7 +175,9 @@ public:
 
 	void Reset (short nSide);
 
-	CGameItem* Clone (eEditType editType);
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
 
 	CSegment () : CGameItem (itSegment) {}
 
@@ -209,14 +211,18 @@ public:
 	
 	void Write (CFileManager& fp, int version = 0, bool bFlag = false);
 
-	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-
 	void Setup (short nSegment, short nIndex, int nFlags) {
 		Clear ();
 		m_info.nSegment = nSegment;
 		m_info.objFlags [0] = nFlags;
 		m_info.nFuelCen = nIndex;
 		};
+
+	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
+
+	virtual CGameItem* Clone (eEditType editType);
+
+	virtual void Backup (eEditType editType = opModify);
 };
 
 // -----------------------------------------------------------------------------
