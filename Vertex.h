@@ -27,7 +27,7 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		virtual CGameItem* Clone (void);
 
-		virtual void Backup (eEditType editType);
+		virtual void Backup (eEditType editType = opModify);
 
 		virtual CGameItem* Copy (CGameItem* destP);
 

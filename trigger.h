@@ -54,9 +54,12 @@ typedef struct tTrigger {
 //------------------------------------------------------------------------
 
 class CTrigger : public CTriggerTargets, public CGameItem {
-	public:
+	private:
 		struct tTrigger m_info;
 		//inline CSideKey& operator[](uint i) { return targets [i]; }
+
+	public:
+		inline tTrigger& Info (void) { return m_info; }
 
 		void Read (CFileManager& fp, int version, bool bObjTrigger);
 

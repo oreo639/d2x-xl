@@ -44,7 +44,7 @@ m.fVec.Normalize ();
 
 short CBlockManager::Read (CFileManager& fp) 
 {
-	int				i, j, k;
+	int				i, j;
 	short				origVertCount;
 	CDoubleMatrix	m;
 	CDoubleVector	xAxis, yAxis, zAxis, origin;
@@ -116,20 +116,20 @@ while (!fp.EoF ()) {
 				t.Clear ();
 				fscanf_s (fp.File (), "        segment %ld\n", &w.m_nSegment);
 				fscanf_s (fp.File (), "        side %ld\n", &w.m_nSide);
-				fscanf_s (fp.File (), "        hps %ld\n", &w.m_info.hps);
-				fscanf_s (fp.File (), "        type %d\n", &w.m_info.type);
-				fscanf_s (fp.File (), "        flags %d\n", &w.m_info.flags);
-				fscanf_s (fp.File (), "        state %d\n", &w.m_info.state);
-				fscanf_s (fp.File (), "        nClip %d\n", &w.m_info.nClip);
-				fscanf_s (fp.File (), "        keys %d\n", &w.m_info.keys);
-				fscanf_s (fp.File (), "        cloak %d\n", &w.m_info.cloakValue);
+				fscanf_s (fp.File (), "        hps %ld\n", &w.Info ().hps);
+				fscanf_s (fp.File (), "        type %d\n", &w.Info ().type);
+				fscanf_s (fp.File (), "        flags %d\n", &w.Info ().flags);
+				fscanf_s (fp.File (), "        state %d\n", &w.Info ().state);
+				fscanf_s (fp.File (), "        nClip %d\n", &w.Info ().nClip);
+				fscanf_s (fp.File (), "        keys %d\n", &w.Info ().keys);
+				fscanf_s (fp.File (), "        cloak %d\n", &w.Info ().cloakValue);
 				fscanf_s (fp.File (), "        trigger %d\n", &byteBuf);
-				w.m_info.nTrigger = byteBuf;
-				if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
-					fscanf_s (fp.File (), "			    type %d\n", &t.m_info.type);
-					fscanf_s (fp.File (), "			    flags %hd\n", &t.m_info.flags);
-					fscanf_s (fp.File (), "			    value %ld\n", &t.m_info.value);
-					fscanf_s (fp.File (), "			    timer %d\n", &t.m_info.time);
+				w.Info ().nTrigger = byteBuf;
+				if ((w.Info ().nTrigger >= 0) && (w.Info ().nTrigger < MAX_TRIGGERS)) {
+					fscanf_s (fp.File (), "			    type %d\n", &t.Info ().type);
+					fscanf_s (fp.File (), "			    flags %hd\n", &t.Info ().flags);
+					fscanf_s (fp.File (), "			    value %ld\n", &t.Info ().value);
+					fscanf_s (fp.File (), "			    timer %d\n", &t.Info ().time);
 					fscanf_s (fp.File (), "			    count %hd\n", &t.m_count);
 					for (i = 0; i < t.m_count; i++) {
 						fscanf_s (fp.File (), "			        segP %hd\n", &t.m_targets [i].m_nSegment);
@@ -137,14 +137,14 @@ while (!fp.EoF ()) {
 						}
 					}
 				if (wallManager.HaveResources ()) {
-					if ((w.m_info.nTrigger >= 0) && (w.m_info.nTrigger < MAX_TRIGGERS)) {
+					if ((w.Info ().nTrigger >= 0) && (w.Info ().nTrigger < MAX_TRIGGERS)) {
 						if (!triggerManager.HaveResources ())
-							w.m_info.nTrigger = NO_TRIGGER;
+							w.Info ().nTrigger = NO_TRIGGER;
 						else {
-							w.m_info.nTrigger = (byte) triggerManager.Add (false);
-							CTrigger* trigP = triggerManager.Trigger (w.m_info.nTrigger);
+							w.Info ().nTrigger = (byte) triggerManager.Add (false);
+							CTrigger* trigP = triggerManager.Trigger (w.Info ().nTrigger);
 							*trigP = t;
-							trigP->Backup (opNew);
+							trigP->Backup (opAdd);
 							++nNewTriggers;
 							}
 						}
@@ -152,7 +152,7 @@ while (!fp.EoF ()) {
 					w.m_nSegment = nSegment;
 					CWall* wallP = wallManager.Wall (sideP->m_info.nWall);
 					*wallP = w;
-					wallP->Backup (opNew);
+					wallP->Backup (opAdd);
 					++nNewWalls;
 					}
 				}
@@ -179,24 +179,22 @@ while (!fp.EoF ()) {
 		v += origin;
 		// add a new vertex
 		// if this is the same as another vertex, then use that vertex number instead
-		CVertex* vertP = vertexManager.Vertex (origVertCount);
-		for (k = vertexManager.Count () - origVertCount; k > 0; k--, vertP++)
-			if (*vertP == v) {
-				segP->m_info.verts [i] = k;
-				break;
-				}
+		CVertex* vertP = vertexManager.Find (v);
+		if (vertP != null)
+			segP->m_info.verts [i] = vertexManager.Index (vertP);
 		// else make a new vertex
-		if (k == 0) {
+		else  {
 			ushort nVertex;
 			vertexManager.Add (&nVertex);
 			vertexManager.Status (nVertex) |= NEW_MASK;
 			segP->m_info.verts [i] = nVertex;
 			*vertexManager.Vertex (nVertex) = v;
+			vertexManager.Vertex (nVertex)->Backup ();
 			}
 		}
 	// mark vertices
 	for (i = 0; i < 8; i++)
-		vertexManager.Status (segP->m_info.verts [i]) |= MARKED_MASK;
+		segP->Vertex (i)->Status () |= MARKED_MASK;
 	fscanf_s (fp.File (), "  staticLight %ld\n", &segP->m_info.staticLight);
 	if (bExtBlkFmt) {
 		fscanf_s (fp.File (), "  special %d\n", &segP->m_info.function);
@@ -240,6 +238,7 @@ while (!fp.EoF ()) {
 	for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++)
 		if (segP->Child (i) >= 0)
 		segP->m_info.childFlags |= (1 << i);
+	segP->Backup ();
 	nNewSegs++;
 	}
 
@@ -282,8 +281,7 @@ return (nNewSegs);
 
 void CBlockManager::Write (CFileManager& fp) 
 {
-	short				nSegment;
-	short				i,j;
+	short				i, j;
 	CVertex			origin;
 	CDoubleMatrix	m;
 	CDoubleVector	v;
@@ -295,9 +293,10 @@ MakeTransformation (m, origin);
 CSegment* segP = segmentManager.Segment (0);
 for (CSegmentIterator si; si; si++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	CSegment* segP = &(*i);
+	CSegment* segP = &(*si);
+	short nSegment = si.Index ();
 	if (segP->m_info.wallFlags & MARKED_MASK) {
-		fprintf (fp.File (), "segment %d\n",nSegment);
+		fprintf (fp.File (), "segment %d\n", nSegment);
 		CSide* sideP = segP->m_sides;
 		for (i = 0; i < MAX_SIDES_PER_SEGMENT; i++, sideP++) {
 			fprintf (fp.File (), "  side %d\n",i);
@@ -315,14 +314,14 @@ for (CSegmentIterator si; si; si++) {
 					CWall* wallP = sideP->Wall ();
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
 					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
-					fprintf (fp.File (), "        hps %d\n", wallP->m_info.hps);
-					fprintf (fp.File (), "        type %d\n", wallP->m_info.type);
-					fprintf (fp.File (), "        flags %d\n", wallP->m_info.flags);
-					fprintf (fp.File (), "        state %d\n", wallP->m_info.state);
-					fprintf (fp.File (), "        nClip %d\n", wallP->m_info.nClip);
-					fprintf (fp.File (), "        keys %d\n", wallP->m_info.keys);
-					fprintf (fp.File (), "        cloak %d\n", wallP->m_info.cloakValue);
-					if (wallP->m_info.nTrigger == NO_TRIGGER)
+					fprintf (fp.File (), "        hps %d\n", wallP->Info ().hps);
+					fprintf (fp.File (), "        type %d\n", wallP->Info ().type);
+					fprintf (fp.File (), "        flags %d\n", wallP->Info ().flags);
+					fprintf (fp.File (), "        state %d\n", wallP->Info ().state);
+					fprintf (fp.File (), "        nClip %d\n", wallP->Info ().nClip);
+					fprintf (fp.File (), "        keys %d\n", wallP->Info ().keys);
+					fprintf (fp.File (), "        cloak %d\n", wallP->Info ().cloakValue);
+					if (wallP->Info ().nTrigger == NO_TRIGGER)
 						fprintf (fp.File (), "        trigger %u\n", NO_TRIGGER);
 					else {
 						CTrigger *trigP = wallP->Trigger ();
@@ -331,11 +330,11 @@ for (CSegmentIterator si; si; si++) {
 						for (iTarget = 0; iTarget < trigP->m_count; iTarget++)
 							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
-						fprintf (fp.File (), "        trigP %d\n", wallP->m_info.nTrigger);
-						fprintf (fp.File (), "			    type %d\n", trigP->m_info.type);
-						fprintf (fp.File (), "			    flags %ld\n", trigP->m_info.flags);
-						fprintf (fp.File (), "			    value %ld\n", trigP->m_info.value);
-						fprintf (fp.File (), "			    timer %d\n", trigP->m_info.time);
+						fprintf (fp.File (), "        trigP %d\n", wallP->Info ().nTrigger);
+						fprintf (fp.File (), "			    type %d\n", trigP->Info ().type);
+						fprintf (fp.File (), "			    flags %ld\n", trigP->Info ().flags);
+						fprintf (fp.File (), "			    value %ld\n", trigP->Info ().value);
+						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);
 						fprintf (fp.File (), "			    count %d\n", count);
 						for (iTarget = 0; iTarget < trigP->m_count; iTarget++)
 							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK) {

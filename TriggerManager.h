@@ -95,7 +95,7 @@ class CTriggerManager {
 
 		inline void DeleteTarget (short nSegment, short nSide) { DeleteTarget (CSideKey (nSegment, nSide)); }
 
-		short Add (void);
+		short Add (bool bBackup = true);
 
 		inline CTrigger* Create (short nItem, short type, bool bAddWall = false) {
 			return (nItem < 0) ? AddToObject (-nItem - 1, type) : AddToWall (nItem, type, bAddWall);

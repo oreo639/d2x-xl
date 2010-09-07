@@ -69,6 +69,8 @@ class CWall : public CSideKey, public CGameItem {
 		tWall		m_info;
 	 
 	public:
+		inline tWall& Info (void) { return m_info; }
+
 		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 		
 		void Write (CFileManager& fp, int version = 0, bool bFlag = false);
