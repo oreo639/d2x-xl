@@ -54,105 +54,9 @@ short blastableLightsD2 [] = {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-short CLightManager::VariableLight (CSideKey key) 
-{
-current.Get (key);
-CVariableLight* flP = VariableLight (0);
-int i;
-for (i = Count (); i; i--, flP++)
-	if (*flP == key)
-		break;
-if (i > 0)
-	return Count () - i;
-return -1;
-}
-
-//------------------------------------------------------------------------------
-
 bool CLightManager::IsVariableLight (CSideKey key)
 {
 return VariableLight (key) >= 0;
-}
-
-//------------------------------------------------------------------------------
-
-CVariableLight CLightManager::AddVariableLight (short index) 
-{
-if (Count () >= MAX_VARIABLE_LIGHTS) {
-	if (!bExpertMode && (index < 0)) {
-		sprintf_s (message, sizeof (message),
-					  "Maximum number of variable lights (%d) have already been added",
-					  MAX_VARIABLE_LIGHTS);
-		ErrorMsg (message);
-		}
-	return null;
-	}
-
-short nBaseTex, nOvlTex;
-current.Side ()->GetTextures (nBaseTex, nOvlTex);
-if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
-	if (!bExpertMode && (index < 0))
-		ErrorMsg ("Blinking lights can only be added to a side\n"
-					 "that has a light emitting texture.\n"
-					 "Hint: You can use the texture tool's brightness control\n"
-					 "to make any texture emit light.");
-	return null;
-	}
-if (index < 0)
-	index = Count ()++;
-VariableLight (Count ()++) = VariableLight (index);
-return VariableLight (index);
-}
-
-//------------------------------------------------------------------------------
-
-short CLightManager::AddVariableLight (CSideKey key, uint mask, int time) 
-{
-current.Get (key);
-if (VariableLight (key) != -1) {
-	if (!bExpertMode)
-		ErrorMsg ("There is already a variable light on this side");
-	return -1;
-	}
-// we are adding a new variable light
-CVariableLight lightP = Add ();
-
-if (lightP == null)
-	return -1;
-
-lightP->Setup (key, time, mask);
-lightP->Backup (opAdd);
-
-return Count ();
-}
-
-//------------------------------------------------------------------------------
-
-void CLightManager::DeleteVariableLight (short index, bool bUndo) 
-{
-if (index > -1) {
-	if (!bUndo) {
-		VariableLight (index)->Index () = index;
-		VariableLight (index)->Backup (opDelete);
-		}
-	if (index < --Count ()) {
-		memcpy (VariableLight (index), VariableLight (m_nCount), sizeof (CVariableLight));
-		if (!bUndo)
-			VariableLight (index)->Backup (opMove);
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-
-bool CLightManager::DeleteVariableLight (CSideKey key) 
-{
-current.Get (key);
-short index = VariableLight (key);
-if (index == -1)
-	return false;
-DeleteVariableLight (index);
-return true;
 }
 
 //------------------------------------------------------------------------------
@@ -193,6 +97,104 @@ for (short* p = blastableLightsD2; *p >= 0; p++)
 	if (*p == nBaseTex)
 		return true;
 return false;
+}
+
+//------------------------------------------------------------------------------
+
+short CLightManager::VariableLight (CSideKey key) 
+{
+current.Get (key);
+CVariableLight* flP = VariableLight (0);
+int i;
+for (i = Count (); i; i--, flP++)
+	if (*flP == key)
+		break;
+if (i > 0)
+	return Count () - i;
+return -1;
+}
+
+//------------------------------------------------------------------------------
+
+CVariableLight CLightManager::AddVariableLight (short index) 
+{
+if (Count () >= MAX_VARIABLE_LIGHTS) {
+	if (!bExpertMode && (index < 0)) {
+		sprintf_s (message, sizeof (message),
+					  "Maximum number of variable lights (%d) have already been added",
+					  MAX_VARIABLE_LIGHTS);
+		ErrorMsg (message);
+		}
+	return null;
+	}
+
+short nBaseTex, nOvlTex;
+current.Side ()->GetTextures (nBaseTex, nOvlTex);
+if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
+	if (!bExpertMode && (index < 0))
+		ErrorMsg ("Blinking lights can only be added to a side\n"
+					 "that has a light emitting texture.\n"
+					 "Hint: You can use the texture tool's brightness control\n"
+					 "to make any texture emit light.");
+	return null;
+	}
+if (index < 0)
+	index = Count ();
+Count ()++;
+return VariableLight (index);
+}
+
+//------------------------------------------------------------------------------
+
+short CLightManager::AddVariableLight (CSideKey key, uint mask, int time) 
+{
+current.Get (key);
+if (VariableLight (key) != -1) {
+	if (!bExpertMode)
+		ErrorMsg ("There is already a variable light on this side");
+	return -1;
+	}
+// we are adding a new variable light
+CVariableLight lightP = Add ();
+
+if (lightP == null)
+	return -1;
+
+lightP->Setup (key, time, mask);
+lightP->Backup (opAdd);
+
+return Count ();
+}
+
+//------------------------------------------------------------------------------
+
+void CLightManager::DeleteVariableLight (short index, bool bUndo) 
+{
+if (index > -1) {
+	if (!bUndo) {
+		VariableLight (index)->Index () = index;
+		VariableLight (index)->Backup (opDelete);
+		}
+	if (index < --Count ()) {
+		if (!bUndo) {
+			VariableLight (index)->Index () = Count ();
+			VariableLight (index)->Backup (opMove);
+			}
+		memcpy (VariableLight (index), VariableLight (m_nCount), sizeof (CVariableLight));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+bool CLightManager::DeleteVariableLight (CSideKey key) 
+{
+current.Get (key);
+short index = VariableLight (key);
+if (index == -1)
+	return false;
+DeleteVariableLight (index);
+return true;
 }
 
 //------------------------------------------------------------------------------
@@ -353,8 +355,7 @@ void CLightManager::SetLight (double fLight, bool bAll, bool bDynSegLights)
 {
 	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
 
-undoManager.SetModified (true);
-
+undoManager.Begin ();
 fLight /= 100.0;
 CSegment *segP = segmentManager.Segment (0);
 for (CSegmentIterator si; si; si++) {
@@ -375,10 +376,12 @@ for (CSegmentIterator si; si; si++) {
 						}
 					}
 				}
+			segP->Backup ();
 			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
 			}
 		}
 	}
+undoManager.End ();
 }
 
 // ------------------------------------------------------------------------
@@ -424,10 +427,6 @@ if (r > left)
 void SortDeltaIndex (void) 
 { 
 SortDeltaIndex (0, DeltaIndexCount () - 1); 
-CLightDeltaIndex* lightP = LightDeltaIndex (0);
-for (int i = DeltaIndexCount (); i; i--, lightP++)
-	if (lightP->Parent () != null
-	DeltaLightIndex (i)->Index () = i;
 }
 
 // -----------------------------------------------------------------------------

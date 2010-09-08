@@ -130,6 +130,9 @@ switch (EditType ()) {
 		if (Parent ())
 			*Parent () = *this;
 		break;
+	case opMove:
+		lightManager.VariableLight (lightManager.Count ()) = *this;
+		break;
 	}
 }
 
@@ -147,6 +150,9 @@ switch (EditType ()) {
 	case opModify:
 		if (Parent ())
 			*Parent () = *this;
+		break;
+	case opMove:
+		lightManager.VariableLight (Index ()) = *this;
 		break;
 	}
 }
