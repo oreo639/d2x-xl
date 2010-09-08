@@ -93,6 +93,65 @@ m_info.mask = mask;
 }
 
 // -----------------------------------------------------------------------------
+
+CGameItem* CVariableLight::Copy (CGameItem* destP)
+{
+if (destP != null)
+	*dynamic_cast<CVariableLight*> (destP) = *this;
+return destP;
+}
+
+// -----------------------------------------------------------------------------
+
+CGameItem* CVariableLight::Clone (void)
+{
+return Copy (new CVariableLight);	// only make a copy if modified
+}
+
+// -----------------------------------------------------------------------------
+
+void CVariableLight::Backup (eEditType editType)
+{
+Id () = undoManager.Backup (this, editType);
+}
+
+// -----------------------------------------------------------------------------
+
+void CVariableLight::Undo (void)
+{
+switch (EditType ()) {
+	case opAdd:
+		lightManager.Remove (Index (), false);
+		break;
+	case opDelete:
+		Parent () = lightManager.Add (false);
+		// fall through
+	case opModify:
+		if (Parent ())
+			*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CVariableLight::Redo (void)
+{
+switch (EditType ()) {
+	case opDelete:
+		segmentManager.Remove (Index ());
+		break;
+	case opAdd:
+		Parent () = segmentManager.Add (false);
+		// fall through
+	case opModify:
+		if (Parent ())
+			*Parent () = *this;
+		break;
+	}
+}
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 

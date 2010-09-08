@@ -7,6 +7,7 @@
 #include "carray.h"
 #include "Types.h"
 #include "GameItem.h"
+#include "Light.h"
 #include "Selection.h"
 #include "Textures.h"
 #include "MineInfo.h"

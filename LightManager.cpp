@@ -50,96 +50,6 @@ short blastableLightsD2 [] = {
 	420, 432, 431,  -1
 	};
 
-// ------------------------------------------------------------------------
-
-void CColor::Read (CFileManager& fp, int version, bool bNewFormat)
-{
-m_info.index = fp.ReadSByte ();
-if (bNewFormat) {
-	m_info.color.r = double (fp.ReadInt32 ()) / double (0x7fffffff);
-	m_info.color.g = double (fp.ReadInt32 ()) / double (0x7fffffff);
-	m_info.color.b = double (fp.ReadInt32 ()) / double (0x7fffffff);
-	}
-else {
-	m_info.color.r = fp.ReadDouble ();
-	m_info.color.g = fp.ReadDouble ();
-	m_info.color.b = fp.ReadDouble ();
-	}
-}
-
-// ------------------------------------------------------------------------
-
-void CColor::Write (CFileManager& fp, int version, bool bFlag) 
-{
-fp.Write (m_info.index);
-fp.WriteInt32 ((int) (m_info.color.r * 0x7fffffff + 0.5));
-fp.WriteInt32 ((int) (m_info.color.g * 0x7fffffff + 0.5));
-fp.WriteInt32 ((int) (m_info.color.b * 0x7fffffff + 0.5));
-}
-
-// -----------------------------------------------------------------------------
-
-CGameItem* CColor::Copy (CGameItem* destP)
-{
-if (destP != null)
-	*dynamic_cast<CColor*> (destP) = *this;
-return destP;
-}
-
-// -----------------------------------------------------------------------------
-
-CGameItem* CColor::Clone (void)
-{
-return Copy (new CColor);	// only make a copy if modified
-}
-
-// -----------------------------------------------------------------------------
-
-void CColor::Backup (eEditType editType)
-{
-Id () = undoManager.Backup (this, editType);
-}
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-void CVariableLight::Read (CFileManager& fp) 
-{
-CSideKey::Read (fp);
-m_info.mask = fp.ReadInt32 ();
-m_info.timer = fp.ReadInt32 ();
-m_info.delay = fp.ReadInt32 ();
-}
-
-//------------------------------------------------------------------------------
-
-void CVariableLight::Write (CFileManager& fp) 
-{
-CSideKey::Write (fp);
-fp.Write (m_info.mask);
-fp.Write (m_info.timer);
-fp.Write (m_info.delay);
-}
-
-//------------------------------------------------------------------------------
-
-void CVariableLight::Clear (void) 
-{
-memset (&m_info, 0, sizeof (m_info));
-CSideKey::Clear ();
-}
-
-//------------------------------------------------------------------------------
-
-void CVariableLight::Setup (CSideKey key, short time, short mask)
-{
-m_nSegment = key.m_nSegment;
-m_nSide = key.m_nSide;
-m_info.delay = m_info.timer = time;
-m_info.mask = mask;
-}
-
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -166,7 +76,34 @@ return VariableLight (key) >= 0;
 
 //------------------------------------------------------------------------------
 
-short CLightManager::AddVariableLight (CSideKey key, uint mask,int time) 
+CVariableLight CLightManager::AddVariableLight (bool bVerbose) 
+{
+if (Count () >= MAX_VARIABLE_LIGHTS) {
+	if (!bExpertMode && bVerbose) {
+		sprintf_s (message, sizeof (message),
+					  "Maximum number of variable lights (%d) have already been added",
+					  MAX_VARIABLE_LIGHTS);
+		ErrorMsg (message);
+		}
+	return null;
+	}
+
+short nBaseTex, nOvlTex;
+current.Side ()->GetTextures (nBaseTex, nOvlTex);
+if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
+	if (!bExpertMode && bVerbose)
+		ErrorMsg ("Blinking lights can only be added to a side\n"
+					 "that has a light emitting texture.\n"
+					 "Hint: You can use the texture tool's brightness control\n"
+					 "to make any texture emit light.");
+	return null;
+	}
+return VariableLight (Count ()++);
+}
+
+//------------------------------------------------------------------------------
+
+short CLightManager::AddVariableLight (CSideKey key, uint mask, int time) 
 {
 current.Get (key);
 if (VariableLight (key) != -1) {
@@ -175,29 +112,21 @@ if (VariableLight (key) != -1) {
 	return -1;
 	}
 // we are adding a new variable light
-if (Count () >= MAX_VARIABLE_LIGHTS) {
-	if (!bExpertMode) {
-		sprintf_s (message, sizeof (message),
-					  "Maximum number of variable lights (%d) have already been added",
-					  MAX_VARIABLE_LIGHTS);
-		ErrorMsg (message);
-		}
-	return -1;
-	}
-short nBaseTex, nOvlTex;
-current.Side ()->GetTextures (nBaseTex, nOvlTex);
+CVariableLight lightP = Add ();
 
-if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
-	if (!bExpertMode)
-		ErrorMsg ("Blinking lights can only be added to a side\n"
-					 "that has a light emitting texture.\n"
-					 "Hint: You can use the texture tool's brightness control\n"
-					 "to make any texture emit light.");
+if (lightP == null)
 	return -1;
+
+lightP->Setup (key, time, mask);
+lightP->Backup (opAdd);
 	}
-VariableLight (m_nCount)->Setup (key, time, mask);
-VariableLight (m_nCount)->Backup (opAdd);
-return Count ()++;
+return Count ();
+}
+
+//------------------------------------------------------------------------------
+
+CVariableLight CLightManager::AddVariableLight (void) 
+{
 }
 
 //------------------------------------------------------------------------------
@@ -492,112 +421,6 @@ if (r > left)
 }
 
 // -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-void CLightDeltaValue::Read (CFileManager& fp, int version, bool bFlag)
-{
-m_nSegment = fp.ReadInt16 ();
-m_nSide = fp.ReadSByte ();
-fp.ReadSByte ();
-for (int i = 0; i < 4; i++)
-	m_info.vertLight [i] = fp.ReadSByte ();
-}
-
-// -----------------------------------------------------------------------------
-
-void CLightDeltaValue::Write (CFileManager& fp, int version, bool bFlag)
-{
-fp.Write (m_nSegment);
-fp.WriteSByte ((sbyte) m_nSide);
-fp.WriteByte (0);
-for (int i = 0; i < 4; i++)
-	fp.Write (m_info.vertLight [i]);
-}
-
-
-// -----------------------------------------------------------------------------
-
-CGameItem* CLightDeltaValue::Copy (CGameItem* destP)
-{
-if (destP != null)
-	*dynamic_cast<CLightDeltaValue*> (destP) = *this;
-return destP;
-}
-
-// -----------------------------------------------------------------------------
-
-CGameItem* CLightDeltaValue::Clone (void)
-{
-return Copy (new CLightDeltaValue);	// only make a copy if modified
-}
-
-// -----------------------------------------------------------------------------
-
-void CLightDeltaValue::Backup (eEditType editType)
-{
-Id () = undoManager.Backup (this, editType);
-}
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-void CLightDeltaIndex::Read (CFileManager& fp, int version, bool bD2X)
-{
-m_nSegment = fp.ReadInt16 ();
-if (bD2X) {
-	ushort h = fp.ReadInt16 ();
-	m_nSide = h & 7;
-	m_info.count = h >> 3;
-	}
-else {
-	m_nSide = fp.ReadSByte ();
-	m_info.count = fp.ReadSByte ();
-	}
-m_info.index = fp.ReadInt16 ();
-}
-
-// -----------------------------------------------------------------------------
-
-void CLightDeltaIndex::Write (CFileManager& fp, int version, bool bD2X)
-{
-fp.Write (m_nSegment);
-if (bD2X)
-	fp.WriteInt16 ((m_nSide & 7) | (m_info.count << 3));
-else {
-	fp.WriteSByte ((sbyte) m_nSide);
-	fp.WriteSByte ((sbyte) m_info.count);
-	}
-fp.Write (m_info.index);
-}
-
-// -----------------------------------------------------------------------------
-
-CGameItem* CLightDeltaIndex::Copy (CGameItem* destP)
-{
-if (destP != null)
-	*dynamic_cast<CLightDeltaIndex*> (destP) = *this;
-return destP;
-}
-
-// -----------------------------------------------------------------------------
-
-CGameItem* CLightDeltaIndex::Clone (void)
-{
-return Copy (new CLightDeltaIndex);	// only make a copy if modified
-}
-
-// -----------------------------------------------------------------------------
-
-void CLightDeltaIndex::Backup (eEditType editType)
-{
-Id () = undoManager.Backup (this, editType);
-}
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 
 void CLightManager::ReadColors (CFileManager& fp)
 {
