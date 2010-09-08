@@ -113,13 +113,16 @@ typedef struct tVariableLight {
 
 // -----------------------------------------------------------------------------
 
-class CVariableLight : public CSideKey {
+class CVariableLight : public CSideKey, public CGameItem {
 public:
 	tVariableLight m_info;
 
 	void Read (CFileManager& fp);
+	
 	void Write (CFileManager& fp);
+	
 	void Clear (void);
+	
 	void Setup (CSideKey key, short time, short mask);
 };
 

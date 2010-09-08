@@ -195,9 +195,9 @@ if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
 					 "to make any texture emit light.");
 	return -1;
 	}
-undoManager.SetModified (true);
 VariableLight (m_nCount)->Setup (key, time, mask);
-return ++Count ();
+VariableLight (m_nCount)->Backup (opAdd);
+return Count ()++;
 }
 
 //------------------------------------------------------------------------------
@@ -205,9 +205,10 @@ return ++Count ();
 void CLightManager::DeleteVariableLight (short index) 
 {
 if (index > -1) {
-	undoManager.SetModified (true);
-	if (index < --Count ())
+	if (index < --Count ()) {
+		VariableLight (index)->Backup (opDelete);
 		memcpy (VariableLight (index), VariableLight (m_nCount), sizeof (CVariableLight));
+		}
 	}
 }
 
