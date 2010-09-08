@@ -150,7 +150,7 @@ undoManager.Begin ();
 							segP->Backup ();
 							bUndo = false;
 							}
-						sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light /*/ maxBrightness [nVertex].count*/;
+						sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light;
 						}
 					}
 				}
@@ -164,22 +164,25 @@ delete[] maxBrightness;
 
 //---------------------------------------------------------------------------------
 
-void CLightManager::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
+void CLightManager::ComputeStaticLight (double m_fLightScale, bool bAll, bool bCopyTexLights) 
 {
 // clear all lighting on marked cubes
+m_fLightScale = fLightScale;
 undoManager.Begin ();
 if (bAll)
 	CLEAR (VertexColors ());
-for (CSegmentIterator si; si; si++) {
-	CSegment *segP = &(*si);
-	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
-		segP->Backup ();
-		CSide* sideP = segP->m_sides;
-		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
-			for (int i = 0; i < 4; i++) {
-				sideP->m_info.uvls [i].l = 0;
-				if (!bAll)
-					VertexColor (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
+else {
+	for (CSegmentIterator si; si; si++) {
+		CSegment *segP = &(*si);
+		if (segP->m_info.wallFlags & MARKED_MASK) {
+			segP->Backup ();
+			CSide* sideP = segP->m_sides;
+			for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
+				for (int i = 0; i < 4; i++) {
+					sideP->m_info.uvls [i].l = 0;
+					if (!bAll)
+						VertexColor (segP->m_info.verts [sideVertTable [nSide][i]])->Clear ();
+					}
 				}
 			}
 		}
@@ -198,7 +201,7 @@ for (CSegmentIterator si; si; si++) {
 		if (!segmentManager.IsWall (CSideKey (nSegment, nSide)))
 			continue;
 		if (bCopyTexLights)
-			LightColor (nSegment, nSide)->Clear ();
+			FaceColor (nSegment, nSide)->Clear ();
 		uint brightness = 0;
 		int nTexture = sideP->m_info.nBaseTex;
 		if ((nTexture >= 0) && (nTexture < MAX_TEXTURES))
@@ -207,7 +210,7 @@ for (CSegmentIterator si; si; si++) {
 		if ((nTexture > 0) && (nTexture < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (nTexture));
 		if (brightness > 0)
-			Illuminate (nSegment, nSide, (uint) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
+			GatherLight (nSegment, nSide, (uint) (brightness * 2 * m_fLightScale), 1.0, bAll, bCopyTexLights);
 		}
 	}
 undoManager.End ();
@@ -267,7 +270,7 @@ else
 
 //---------------------------------------------------------------------------------
 
-void CLightManager::IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale)
+void CLightManager::GatherFaceLight (CSegment* segP, short nSide, uint brightness, CColor* lightColorP)
 {
 CUVL*	uvlP = segP->m_sides [nSide].m_info.uvls;
 uint	vertBrightness, lightBrightness;
@@ -276,7 +279,7 @@ byte*	sideVerts = sideVertTable [nSide];
 for (int i = 0; i < 4; i++, uvlP++) {
 	CColor* vertColorP = VertexColor (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;
-	lightBrightness = (uint) (brightness * (effect ? effect [i] : fLightScale));
+	lightBrightness = (uint) (brightness * (m_cornerLights ? m_cornerLights [i] : m_fLightScale));
 	BlendColors (lightColorP, vertColorP, lightBrightness, vertBrightness);
 	vertBrightness += lightBrightness;
 	vertBrightness = min (0x8000, vertBrightness);
@@ -285,11 +288,14 @@ for (int i = 0; i < 4; i++, uvlP++) {
 }
 
 //---------------------------------------------------------------------------------
+// Walk through all segments up to a given max. distance from the source segment
+// and add the light of any light sources in these segments to the the source side's
+// color.
 
-void CLightManager::Illuminate (short nSourceSeg, short nSourceSide, uint brightness, double fLightScale, bool bAll, bool bCopyTexLights) 
+void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brightness, bool bAll, bool bCopyTexLights) 
 {
 	CSegment*	segP = segmentManager.Segment (0);
-	double		effect [4];
+	double		m_cornerLights [4];
 	// find orthogonal angle of source segment
 	CVertex A = -segmentManager.CalcSideNormal (CSideKey (nSourceSeg, nSourceSide));
 	// remember to flip the sign since we want it to point inward
@@ -312,14 +318,14 @@ if (!lightColorP->m_info.index) {
 	lightColorP->m_info.color.b = 1.0;
 	}
 if (UseTexColors () && bCopyTexLights) {
-	CColor* segColorP = LightColor (CSideKey (nSourceSeg, nSourceSide), false);
-	*segColorP = *lightColorP;
+	CColor* colorP = LightColor (CSideKey (nSourceSeg, nSourceSide), false);
+	*lightColorP = *colorP;
 	}
 bool bWall = false; 
 
 //#pragma omp parallel 
 	{
-//#pragma omp for private (effect)
+//#pragma omp for private (m_cornerLights)
 	for (CSegmentIterator si; si; si++) {
 		// skip if this is too far away
 		int nChildSeg = si.Index ();
@@ -344,20 +350,20 @@ bool bWall = false;
 
 			// if the child side is the same as the source side, then set light and continue
 			if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg)) {
-				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, null, fLightScale);
+				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP, null, m_fLightScale);
 				continue;
 				}
 
 			// calculate vector between center of source segment and center of child
-			if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, effect, fLightScale, bWall)) 
-				IlluminateSide (childSegP, nChildSide, brightness, lightColorP, effect, fLightScale);
+			if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, m_fLightScale, bWall)) 
+				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP, m_fLightScale);
 			}
 		}
 	}
 }
 
 //------------------------------------------------------------------------
-// CalcDeltaLightData()
+// ComputeVariableLight()
 //
 // Action - Calculates lightDeltaIndices and CLightDeltaValues arrays.
 //
@@ -372,7 +378,7 @@ bool bWall = false;
 //	We use the following equation to calculate
 //	how much the light effects a side:
 //              if (angle < 120 degrees)
-//		  effect = k / distance
+//		  m_cornerLights = k / distance
 //
 //	where,
 //
@@ -383,7 +389,7 @@ bool bWall = false;
 //		k = 0x20 (maximum value for CLightDeltaValue)
 //
 //	Delta light values are stored for each corner of the effected side.
-//	(0x00 = no effect, 0x20 is maximum effect)
+//	(0x00 = no m_cornerLights, 0x20 is maximum m_cornerLights)
 //
 // A little int to take care of too many delta light values leading
 // to some variable lights not being visible in Descent:
@@ -394,11 +400,12 @@ bool bWall = false;
 // segmentManager.Segment () close to variable lights will be computed properly.
 //------------------------------------------------------------------------
 
-void CLightManager::CalcDeltaLightData (double fLightScale, int force) 
+void CLightManager::ComputeVariableLight (double m_fLightScale, int force) 
 {
-undoManager.SetModified (true);
+undoManager.Begin ();
+m_fLightScale = fLightScale;
 for (int nDepth = m_deltaRenderDepth; nDepth; nDepth--)
-	if (CalcLightDeltas (fLightScale, force, nDepth))
+	if (CalcLightDeltas (m_fLightScale, force, nDepth))
 		break;
 }
 
@@ -425,21 +432,21 @@ return -1;
 
 //---------------------------------------------------------------------------------
 
-bool CLightManager::CalcLightDeltas (double fLightScale, int force, int nDepth) 
+bool CLightManager::CalcLightDeltas (int force, int nDepth) 
 {
 	// initialize totals
 	int		nErrors = 0;
-	double	effect[4];
+	double	m_cornerLights[4];
 
 DeltaValueCount () = 0;
 DeltaIndexCount () = 0;
 
 bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 
-fLightScale = 1.0; ///= 100.0;
+m_fLightScale = 1.0; ///= 100.0;
 //#pragma omp parallel
 	{
-//#pragma omp for private (effect)
+//#pragma omp for private (m_cornerLights)
 	for (CSegmentIterator si; si; si++) {
 		if (nErrors)
 			continue;
@@ -584,13 +591,13 @@ fLightScale = 1.0; ///= 100.0;
 						dl->m_info.vertLight [0] =
 						dl->m_info.vertLight [1] =
 						dl->m_info.vertLight [2] =
-						dl->m_info.vertLight [3] = (byte) min (32, 32 * fLightScale);
+						dl->m_info.vertLight [3] = (byte) min (32, 32 * m_fLightScale);
 						dliP->m_info.count++;
 						continue;
 						}
 
 					// calculate vector between center of source segment and center of child
-						if (CalcSideLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, effect, fLightScale, wallP != null)) {
+						if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, m_fLightScale, wallP != null)) {
 							undoManager.SetModified (true);
 							if ((DeltaValueCount () >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
@@ -608,7 +615,7 @@ fLightScale = 1.0; ///= 100.0;
 							dl->m_nSegment = nChildSeg;
 							dl->m_nSide = nChildSide;
 							for (int nCorner = 0; nCorner < 4; nCorner++)
-								dl->m_info.vertLight [nCorner] = (byte) min(32, effect [nCorner]);
+								dl->m_info.vertLight [nCorner] = (byte) min(32, m_cornerLights [nCorner]);
 							if (bD2XLights)
 								dliP->m_info.count++;
 							else
@@ -625,9 +632,8 @@ return (nErrors == 0);
 
 //---------------------------------------------------------------------------------
 
-bool CLightManager::CalcSideLights (int nSegment, int nSide, 
-												CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
-												double* effect, double fLightScale, bool bIgnoreAngle)
+bool CLightManager::CalcCornerLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
+												  double m_fLightScale, bool bIgnoreAngle)
 {
 	CSegment *segP = segmentManager.Segment (nSegment);
 // calculate vector between center of source segment and center of child
@@ -657,12 +663,12 @@ for (int j = 0; j < 4; j++) {
 	for (int i = 0; i < 4; i++)
 		length = min (length, Distance (sourceCorners [i], *corner));
 	length /= 10.0 * m_renderDepth / 6.0; // divide by 1/2 a cubes length so opposite side
-	effect [j] = fLightScale;
+	m_cornerLights [j] = m_fLightScale;
 	if (length > 1.0) 
-		effect [j] /= (length * length);
+		m_cornerLights [j] /= (length * length);
 	}
 // if any of the effects are > 0, then increment the light for that side
-return (effect [0] != 0.0) || (effect [1] != 0.0) || (effect [2] != 0.0) || (effect [3] != 0.0);
+return (m_cornerLights [0] != 0.0) || (m_cornerLights [1] != 0.0) || (m_cornerLights [2] != 0.0) || (m_cornerLights [3] != 0.0);
 }
 
 //---------------------------------------------------------------------------------

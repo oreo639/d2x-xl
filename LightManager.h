@@ -62,6 +62,9 @@ class CLightManager {
 		int						m_renderDepth;
 		int						m_deltaRenderDepth;
 		int						m_nNoLightDeltas;
+
+		double					m_cornerLights [4];
+		double					m_fLightScale;
 		//long						m_defLightMap [MAX_TEXTURES_D2];
 
 	public:
@@ -118,11 +121,7 @@ class CLightManager {
 
 		void ScaleCornerLight (double fLight, bool bAll = false);
 		void CalcAverageCornerLight (bool bAll = false);
-		void AutoAdjustLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);
-		void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
-		void Illuminate (short nSrcSide, short nSrcSeg, uint brightness, 
-							  double fLightScale, bool bAll = false, bool bCopyTexLights = false);
-		void IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale);
+		void ComputeStaticLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);
 		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
 
 		int FindLight (int nTexture, tTextureLight* texLightP, int nLights);
@@ -132,7 +131,7 @@ class CLightManager {
 		bool IsVariableLight (CSideKey key);
 
 		bool CalcDeltaLights (double fLightScale, int force, int recursion_depth);
-		void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
+		void ComputeVariableLight (double fLightScale = 1.0, int force = 1);
 		int FindDeltaLight (short nSegment, short nSide, short *pi = null);
 		short VariableLight (CSideKey key);
 		CVariableLight* AddVariableLight (short index = -1);
@@ -167,18 +166,26 @@ class CLightManager {
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);
+
 		void CLightManager::SaveColors (CColor *pc, int nColors, CFileManager& fp);
 
-		bool CalcSideLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorner, CVertex& A, 
-									double* effect, double fLightScale, bool bIgnoreAngle);
+		bool CalcCornerLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorner, CVertex& A, bool bIgnoreAngle);
 
-		bool CalcLightDeltas (double fLightScale, int force, int nDepth);
+		bool CalcLightDeltas (int force, int nDepth);
 
 		int FindLightDelta (short nSegment, short nSide, short *pi);
 
 		byte LightWeight (short nBaseTex);
 		
 		void SortDeltaIndex (int left, int right);
+
+		void UnsortDeltaIndex (int left = 0, int right = DeltaIndexCount () - 1);
+
+		void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
+
+		void GatherLight (short nSrcSide, short nSrcSeg, uint brightness, bool bAll = false, bool bCopyTexLights = false);
+
+		void GatherFaceLight (CSegment* segP, short nSide, uint brightness, CColor* lightColorP);
 };
 
 extern CLightManager lightManager;

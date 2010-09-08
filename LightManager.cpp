@@ -207,13 +207,13 @@ if (bUseTexColors && UseTexColors ()) {
 	segmentManager.Textures (key, nBaseTex, nOvlTex);
 	CColor *colorP;
 	if (nOvlTex > 0) {
-		colorP = &m_texColors [nOvlTex];
+		colorP = GetTexColor (nOvlTex);
 		if (colorP != null)
 			return colorP;
 		}
 	CWall* wallP = segmentManager.Wall (key);
-	colorP = GetTexColor (nBaseTex, (wallP != null));
-	if ((colorP != null) && (wallP->Info ().type == WALL_TRANSPARENT))
+	colorP = GetTexColor (nBaseTex, (wallP != null) && (wallP->Info ().type == WALL_TRANSPARENT));
+	if ((colorP != null) && )
 		return colorP;
 	}	
 return FaceColor (key.m_nSegment, key.m_nSide); 
@@ -422,10 +422,48 @@ if (r > left)
    SortDeltaIndex (left, r);
 }
 
+// ------------------------------------------------------------------------
+
+void CLightManager::UnsortDeltaIndex (int left, int right)
+{
+	int	l = left,
+			r = right,
+			m = (left + right) / 2;
+	int	mKey = LightDeltaIndex (m)->Index ();
+	CLightDeltaIndex	*pl, *pr;
+
+do {
+	pl = LightDeltaIndex (l);
+	//while ((pl->m_nSegment < mSeg) || ((pl->m_nSegment == mSeg) && (pl->nSide < mSide))) {
+	while (pl->Index () < mKey) {
+		pl++;
+		l++;
+		}
+	pr = LightDeltaIndex (r);
+	//while ((pr->m_info.nSegment > mSeg) || ((pr->m_info.nSegment == mSeg) && (pr->nSide > mSide))) {
+	while (pr->Index () > mKey) {
+		pr--;
+		r--;
+		}
+	if (l <= r) {
+		if (l < r)
+			Swap (*pl, *pr);
+		l++;
+		r--;
+		}
+	} while (l <= r);
+if (right > l)
+   UnsortDeltaIndex (l, right);
+if (r > left)
+   UnsortDeltaIndex (left, r);
+}
+
 // -----------------------------------------------------------------------------
 
 void SortDeltaIndex (void) 
 { 
+for (int i = 0; i < DeltaIndexCount (); i++)
+	LightDeltaIndex (i)->Index () = i;
 SortDeltaIndex (0, DeltaIndexCount () - 1); 
 }
 
@@ -525,6 +563,7 @@ if (DeltaIndexCount () > 0) {
 	m_deltaValueInfo.offset = fp.Tell ();
 	for (i = 0; i < m_deltaValueInfo.count; i++)
 		m_deltaValues [i].Write (fp, nFileVersion);
+	UnsortDeltaIndex (); // otherwise the undo manager will screw up
 	}
 }
 

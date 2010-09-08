@@ -128,7 +128,7 @@ if (bAll = !segmentManager.HaveMarkedSides ())
 undoManager.SetModified (true);
 undoManager.Begin ();
 if (m_bIlluminate)
-	theMine->AutoAdjustLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
+	theMine->ComputeStaticLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
 if (m_bAvgCornerLight)
 	theMine->CalcAverageCornerLight (bAll);
 if (m_bScaleLight)
@@ -136,7 +136,7 @@ if (m_bScaleLight)
 if (m_bCubeLight)
 	theMine->SetSegmentLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
-	theMine->CalcDeltaLightData (m_fDeltaLight, (int) bAll);
+	theMine->ComputeVariableLight (m_fDeltaLight, (int) bAll);
 undoManager.End ();
 DLE.MineView ()->Refresh ();
 }

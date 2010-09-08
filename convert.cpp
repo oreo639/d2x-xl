@@ -328,11 +328,11 @@ for (i = 0, objP = theMine->Objects (0); i < theMine->Info ().objects.count; i++
 theMine->Info ().lightDeltaIndices.count = 0;
 theMine->Info ().lightDeltaValues.count = 0;
 lightManager.Count () = 0;
-lightManager.AutoAdjustLight (50.0, true);
+lightManager.ComputeStaticLight (50.0, true);
 lightManager.CalcAverageCornerLight (true);
 lightManager.ScaleCornerLight (100.0, true);
 lightManager.SetSegmentLight (50.0, true);
-lightManager.CalcDeltaLightData (50.0, 1);
+lightManager.ComputeVariableLight (50.0, 1);
 
 // d2 reactor and secret cube
 //----------------------------------------------

@@ -37,7 +37,7 @@ if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
 		}
 	UpdateLevelVersion ();
 	}
-//CalcDeltaLightData ();
+//ComputeVariableLight ();
 int errFlags = FixIndexValues();
 if (errFlags != 0) {
 	sprintf_s (message, sizeof (message),  "File contains corrupted data (error code %#04x). Would you like to load anyway? ", errFlags);
