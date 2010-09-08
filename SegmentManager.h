@@ -132,9 +132,11 @@ class CSegmentManager {
 		
 		inline robotMakerList& EquipMakers (void) { return m_matCens [1]; }
 		
-		inline CMatCenter* RobotMaker (int i) { return &m_matCens [0][i]; }
+		inline CMatCenter* MatCenter (int i, int nClass) { return &m_matCens [nClass][i]; }
 		
-		inline CMatCenter* EquipMaker (int i) { return &m_matCens [1][i]; }
+		inline CMatCenter* RobotMaker (int i) { return MatCenter (i, 0); }
+		
+		inline CMatCenter* EquipMaker (int i) { return MatCenter (i, 1); }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
 		inline int AddMode (void) { return m_nAddMode; }

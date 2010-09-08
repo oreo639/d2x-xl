@@ -23,6 +23,205 @@ m_nBackupId = nBackupId;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+bool CUndoData::Destroy (void) 
+{
+if (m_vertices != null) {
+	delete[] m_vertices;
+	m_vertices = null;
+	m_nVertices = 0;
+	}
+
+if (m_segments != null) {
+	delete[] m_segments;
+	m_segments = null;
+	m_nSegments = 0;
+	}
+
+for (int i = 0; i < 2; i++)
+	if (m_matCens [i] != null) {
+		delete[] m_matCens [i];
+		m_matCens [i] = null;
+		m_nMatCens [i] = 0;
+		}
+
+if (m_walls != null) {
+	delete[] m_walls;
+	m_walls = null;
+	m_nWalls = 0;
+	}
+
+if (m_triggers != null) {
+	delete[] m_triggers;
+	m_triggers = null;
+	m_nTriggers = 0;
+	}
+
+if (m_objects != null) {
+	delete[] m_objects;
+	m_objects = null;
+	m_nObjects = 0;
+	}
+
+if (m_robots != null) {
+	delete[] m_robots;
+	m_robots = null;
+	m_nRobots = 0;
+	}
+
+if (m_variableLights != null) {
+	delete[] m_variableLights;
+	m_variableLights = null;
+	m_nVariableLights = 0;
+	}
+
+if (m_faceColors != null) {
+	delete[] m_faceColors;
+	m_faceColors = null;
+	m_nFaceColors = 0;
+	}
+
+if (m_textureColors != null) {
+	delete[] m_textureColors;
+	m_textureColors = null;
+	m_nTextureColors = 0;
+	}
+
+if (m_vertexColors != null) {
+	delete[] m_vertexColors;
+	m_vertexColors = null;
+	m_nVertexColors = 0;
+	}
+
+if (m_deltaIndices != null) {
+	delete[] m_deltaIndices;
+	m_deltaIndices = null;
+	m_nDeltaIndices = 0;
+	}
+
+if (m_deltaValues != null) {
+	delete[] m_deltaValues;
+	m_deltaValues = null;
+	m_nDeltaValues = 0;
+	}
+
+return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool CUndoData::Save (undoData data) 
+{
+if (data & udVertices) {
+	m_vertices = new CVertex [m_nVertices = vertexManager.Count ()];
+	if (m_vertices == null)
+		return Destroy ();
+	int i = 0;
+	for (CVertexIterator it; it; it++)
+		it->Index () = it.Index ();
+		m_vertices [i++] = it;
+		}
+	}
+
+if (data & udSegments) {
+	m_segments = new CSegment [m_nSegments = segmentManager.Count ()];
+	if (m_segments == null)
+		return Destroy ();
+	int i = 0;
+	for (CSegmentIterator it; it; it++)
+		it->Index () = it.Index ();
+		m_segments [i++] = it;
+		}
+	}
+
+if (data & udMatCens) {
+	for (int i = 0; i < 2; i++) {
+		if ((m_nMatCens [i] = segmentManager.MatCenCount (i)) > 0) {
+			m_matCens [i] = new CMatCenter [m_nMatCens [i]];
+			if (m_matCens [i] == null)
+				return Destroy ();
+			memcpy (m_matCens [i], segmentManager.MatCenters (i), m_nMatCens [i] * sizeof (CMatCenter));
+			}
+		}
+	}
+
+if (data & udWalls) {
+	m_walls = new CWall [m_nWalls = wallManager.Count ()];
+	if (m_walls == null)
+		return Destroy ();
+	int i = 0;
+	for (CWallIterator it; it; it++)
+		it->Index () = it.Index ();
+		m_walls [i++] = it;
+		}
+	}
+
+if (data & udTriggers) {
+	m_triggers = new CTrigger [m_nTriggers = triggerManager.Count ()];
+	if (m_triggers == null)
+		return Destroy ();
+	int i = 0;
+	for (CTriggerIterator it; it; it++)
+		it->Index () = it.Index ();
+		m_triggers [i++] = it;
+		}
+	}
+
+if (data & udObjects) {
+	m_objects = new CGameObject [m_nObjects = objectManager.Count ()];
+	if (m_objects == null)
+		return Destroy ();
+	memcpy (m_objects, objectManager.Object (0), m_nObjects * sizeof (CGameObject));
+	}
+
+if (data & udRobots) {
+	m_robots = new CRobotInfo [m_nRobots = robotManager.Count ()];
+	if (m_robots == null)
+		return Destroy ();
+	memcpy (m_robots, robotManager.RobotInfo (0), m_nRobots * sizeof (CRobotInfo));
+	}
+
+if (data & udVariableLights) {
+	m_variableLights = new CVariableLights [m_nVariableLights = lightManager.Count ()];
+	if (m_variableLights == null)
+		return Destroy ();
+	memcpy (m_variableLights, lightManager.VariableLight (0), m_nVariableLights * sizeof (CVariableLight));
+	}
+
+if (data & udStaticLight) {
+	 m_faceColors = new CFaceColor [m_nFaceColors = segmentManager.m_nSegments * 6];
+	 if (m_faceColors == null)
+		 return Destroy ();
+	 memcpy (m_faceColors, lightManager.FaceColor (0), m_nFaceColors * sizeof (CFaceColor));
+
+	 m_textureColors = new CTextureColor [m_nTextureColors = MAX_TEXTURES_D2];
+	 if (m_textureColors == null)
+		 return Destroy ();
+	 memcpy (m_textureColors, lightManager.TexColor (0), m_nTextureColors * sizeof (CTextureColor));
+
+	 m_vertexColors = new CVertexColor [m_nVertexColors = vertexManager.Count ()];
+	 if (m_vertexColors == null)
+		 return Destroy ();
+	 memcpy (m_vertexColors, lightManager.TexColor (0), m_nVertexColors * sizeof (CVertexColor));
+	}
+
+if (data & udDynamicLight) {
+	m_deltaIndices = new CLightDeltaIndex [m_nDeltaIndices = lightManager.DeltaIndexCount ()];
+	if (m_deltaIndices == null)
+		return Destroy ();
+	memcpy (m_deltaIndices, lightManager.LightDeltaIndex (0), m_nDeltaIndices * sizeof (CLightDeltaIndex));
+
+	m_seltaValues = new CLightDeltaValue [m_nDeltaValues = lightManager.DeltaValueCount ()];
+	if (m_deltaValues == null)
+		return Destroy ();
+	memcpy (m_deltaValues, lightManager.LightDeltaValue (0), m_nDeltaValues * sizeof (CLightDeltaValue));
+	}
+return true;
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 CUndoManager::CUndoManager (int maxSize)
 {
 m_nHead = m_nTail = m_nCurrent = -1;
@@ -201,6 +400,17 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 //------------------------------------------------------------------------------
 
 void CUndoManager::Begin (void) 
+{
+if (0 == m_nModified++) {
+	SetModified (true);
+	Update ();
+	}
+Lock ();
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Begin (undoData data) 
 {
 if (0 == m_nModified++) {
 	SetModified (true);
