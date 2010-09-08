@@ -271,14 +271,18 @@ current.Get (key);
 if (bUseTexColors && UseTexColors ()) {
 	short nBaseTex, nOvlTex;
 	segmentManager.Textures (key, nBaseTex, nOvlTex);
-	CColor *pc;
-	if ((nOvlTex > 0) && (pc = &m_texColors [nOvlTex]))
-		return pc;
+	CColor *colorP;
+	if (nOvlTex > 0) {
+		colorP = &m_texColors [nOvlTex];
+		if (colorP != null)
+			return colorP;
+		}
 	CWall* wallP = segmentManager.Wall (key);
-	if (pc = GetTexColor (nBaseTex, (wallP != null) && (wallP->m_info.type == WALL_TRANSPARENT)))
-		return pc;
+	colorP = GetTexColor (nBaseTex, (wallP != null));
+	if ((colorP != null) && (wallP->Info ().type == WALL_TRANSPARENT))
+		return colorP;
 	}	
-return LightColor (key.m_nSegment, key.m_nSide); 
+return FaceColor (key.m_nSegment, key.m_nSide); 
 }
 
 //------------------------------------------------------------------------------
@@ -598,18 +602,18 @@ void CLightManager::ReadColors (CFileManager& fp)
 {
 if (theMine->LevelVersion () == 9) {
 #if 1
-	LoadColors (LightColor (0), segmentManager.Count () * 6, 9, 14, fp);
-	LoadColors (LightColor (0), segmentManager.Count () * 6, 9, 14, fp);
+	LoadColors (FaceColor (0), segmentManager.Count () * 6, 9, 14, fp);
+	LoadColors (FaceColor (0), segmentManager.Count () * 6, 9, 14, fp);
 	LoadColors (VertexColor (0), vertexManager.Count (), 9, 15, fp);
 #else
-	fp.Read (LightColors (), sizeof (CColor), segmentManager.Count () * 6); //skip obsolete side colors 
-	fp.Read (LightColors (), sizeof (CColor), segmentManager.Count () * 6);
+	fp.Read (FaceColors (), sizeof (CColor), segmentManager.Count () * 6); //skip obsolete side colors 
+	fp.Read (FaceColors (), sizeof (CColor), segmentManager.Count () * 6);
 	fp.Read (VertexColors (), sizeof (CColor), vertexManager.Count ());
 #endif
 	}
 else if (theMine->LevelVersion () > 9) {
 	LoadColors (VertexColor (0), vertexManager.Count (), 9, 15, fp);
-	LoadColors (LightColor (0), segmentManager.Count () * 6, 9, 14, fp);
+	LoadColors (FaceColor (0), segmentManager.Count () * 6, 9, 14, fp);
 	LoadColors (TexColor (0), MAX_TEXTURES_D2, 10, 16, fp);
 	}
 }
@@ -619,7 +623,7 @@ else if (theMine->LevelVersion () > 9) {
 void CLightManager::WriteColors (CFileManager& fp)
 {
 SaveColors (VertexColor (0), vertexManager.Count (), fp);
-SaveColors (LightColor (0), segmentManager.Count () * 6, fp);
+SaveColors (FaceColor (0), segmentManager.Count () * 6, fp);
 SaveColors (TexColor (0), MAX_TEXTURES_D2, fp);
 }
 

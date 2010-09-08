@@ -167,13 +167,13 @@ delete[] maxBrightness;
 void CLightManager::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
 // clear all lighting on marked cubes
-undoManager.SetModified (true);
 undoManager.Begin ();
 if (bAll)
 	CLEAR (VertexColors ());
 for (CSegmentIterator si; si; si++) {
 	CSegment *segP = &(*si);
 	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+		segP->Backup ();
 		CSide* sideP = segP->m_sides;
 		for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++, sideP++) {
 			for (int i = 0; i < 4; i++) {
@@ -269,11 +269,10 @@ else
 
 void CLightManager::IlluminateSide (CSegment* segP, short nSide, uint brightness, CColor* lightColorP, double* effect, double fLightScale)
 {
-CUVL*		uvlP = segP->m_sides [nSide].m_info.uvls;
+CUVL*	uvlP = segP->m_sides [nSide].m_info.uvls;
 uint	vertBrightness, lightBrightness;
 byte*	sideVerts = sideVertTable [nSide];
 
-undoManager.SetModified (true);
 for (int i = 0; i < 4; i++, uvlP++) {
 	CColor* vertColorP = VertexColor (segP->m_info.verts [sideVerts [i]]);
 	vertBrightness = (ushort) uvlP->l;

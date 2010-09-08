@@ -135,9 +135,9 @@ typedef CStaticArray< CLightDeltaIndex, MAX_LIGHT_DELTA_INDICES_D2X > lightDelta
 typedef CStaticArray< CLightDeltaValue, MAX_LIGHT_DELTA_VALUES_D2X > lightDeltaValueList;
 typedef CStaticArray< CVariableLight, MAX_VARIABLE_LIGHTS > variableLightList;
 
-typedef CStaticArray< CColor, SEGMENT_LIMIT * 6 > lightColorList;
-typedef CStaticArray< CColor, MAX_TEXTURES_D2 > texColorList;
-typedef CStaticArray< CColor, VERTEX_LIMIT > vertexColorList;
+typedef CStaticArray< CFaceColor, SEGMENT_LIMIT * 6 > faceColorList;
+typedef CStaticArray< CTextureColor, MAX_TEXTURES_D2 > texColorList;
+typedef CStaticArray< CVertexColor, VERTEX_LIMIT > vertexColorList;
 
 #else
 
@@ -145,9 +145,9 @@ typedef CLightDeltaIndex lightDeltaIndexList [MAX_LIGHT_DELTA_INDICES_D2X];
 typedef CLightDeltaValue lightDeltaValueList [MAX_LIGHT_DELTA_VALUES_D2X];
 typedef CVariableLight variableLightList [MAX_VARIABLE_LIGHTS];
 
-typedef CColor lightColorList [SEGMENT_LIMIT * 6];
-typedef CColor texColorList [MAX_TEXTURES_D2];
-typedef CColor vertexColorList [VERTEX_LIMIT];
+typedef CFaceColor faceColorList [SEGMENT_LIMIT * 6];
+typedef CTextureColor texColorList [MAX_TEXTURES_D2];
+typedef CVertexColor vertexColorList [VERTEX_LIMIT];
 
 #endif
 
@@ -160,7 +160,7 @@ class CLightManager {
 		CMineItemInfo			m_deltaIndexInfo;
 		CMineItemInfo			m_deltaValueInfo;
 
-		lightColorList			m_lightColors;
+		faceColorList			m_faceColors;
 		texColorList			m_texColors;
 		vertexColorList		m_vertexColors;
 		bool						m_bUseTexColors;
@@ -197,7 +197,7 @@ class CLightManager {
 
 		inline CColor* VertexColor (int i) { return &m_vertexColors [i]; }
 
-		inline CColor* TexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
+		inline CTextureColor* TexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
 
@@ -209,17 +209,17 @@ class CLightManager {
 
 		inline int& DeltaValueCount (void) { return m_deltaValueInfo.count; }
 
-		inline void SetTexColor (short nBaseTex, CColor *pc)	{
+		inline void SetTexColor (short nBaseTex, CColor* colorP)	{
 			if (UseTexColors () && (IsLight (nBaseTex) != -1))
-			m_texColors [nBaseTex] = *pc;
+				m_texColors [nBaseTex] = *colorP;
 			}
 
-		inline CColor* GetTexColor (short nBaseTex, bool bIsTranspWall)	
-			{ return m_bUseTexColors && (bIsTranspWall || (IsLight (nBaseTex) != -1)) ? &m_texColors [nBaseTex] : null; }
+		inline CColor* GetTexColor (short nTexture, bool bIsTranspWall)	
+			{ return m_bUseTexColors && (bIsTranspWall || (IsLight (nTexture) != -1)) ? &m_texColors [nTexture] : null; }
 
-		inline lightColorList& LightColors (void) { return m_lightColors; }
+		inline faceColorList& FaceColors (void) { return m_faceColors; }
 
-		inline CColor* LightColor (short nSegment, short nSide = 0) { return &m_lightColors [nSegment * 6 + nSide]; }
+		inline CFaceColor* FaceColor (short nSegment, short nSide = 0) { return &m_faceColors [nSegment * 6 + nSide]; }
 
 		CColor* LightColor (CSideKey key = CSideKey (), bool bUseTexColors = true);
 

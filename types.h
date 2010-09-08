@@ -105,6 +105,39 @@ class CColor : public CGameItem {
 		virtual void Backup (eEditType editType = opModify);
 
 		virtual CGameItem* Copy (CGameItem* destP);
+
+		CColor (eItemType itemType = itUndefined) : CGameItem (itemType) {}
+};
+
+
+class CFaceColor : public CColor {
+	public:
+		CFaceColor () : CColor (itFaceColor) {}
+
+		inline const CFaceColor& operator= (const CColor& other) { 
+			m_info = other.m_info; 
+			return *this;
+			}
+};
+
+class CTextureColor : public CColor {
+	public:
+		CTextureColor () : CColor (itTextureColor) {}
+
+		inline const CTextureColor& operator= (const CColor& other) { 
+			m_info = other.m_info; 
+			return *this;
+			}
+};
+
+class CVertexColor : public CColor {
+	public:
+		CVertexColor () : CColor (itVertexColor) {}
+
+		inline const CVertexColor& operator= (const CColor& other) { 
+			m_info = other.m_info; 
+			return *this;
+			}
 };
 
 // -----------------------------------------------------------------------------

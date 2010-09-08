@@ -24,7 +24,10 @@ typedef enum {
 	itRobot,
 	itVariableLight,
 	itDeltaLightValue,
-	itDeltaLightIndex
+	itDeltaLightIndex,
+	itTextureColor,
+	itFaceColor,
+	itVertexColor
 	} eItemType;
 
 typedef enum {
