@@ -37,6 +37,40 @@ class CUndoItem {
 
 //------------------------------------------------------------------------------
 
+class CUndoData {
+public:
+	CVertex*				m_vertices;
+	int					m_nVertices;
+	CSegment*			m_segments;
+	int					m_nSegments;
+	CMatCenter*			m_matCenters [2];
+	int					m_nMatCenters [2];
+	CWall*				m_walls;
+	int					m_nWalls;
+	CDoor*				m_doors;
+	int					m_nDoors;
+	CTrigger*			m_triggers;
+	int					m_nTriggers;
+	CGameObject*		m_objects;
+	int					m_nObjects;
+	CRobotInfo*			m_robotInfo;
+	int					m_nRobots;
+	CLightDeltaIndex*	m_deltaIndices;
+	int					m_nDeltaIndices;
+	CLightDeltaValue*	m_deltaValues;
+	int					m_nDeltaValues;
+	CVariableLight*	m_variableLights;
+	int					m_nVariableLights;
+	CFaceColor*			m_faceColors;
+	int					m_nFaceColors;
+	CTextureColor*		m_textureColors;
+	int					m_nTextureColors;
+	CVertexColor*		m_vertexColors;
+	int					m_nVertexColors;
+};
+
+//------------------------------------------------------------------------------
+
 class CUndoManager
 {
 	private:
