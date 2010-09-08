@@ -15,7 +15,7 @@ void CGameObject::Create (byte type, short nSegment)
   CVertex	location;
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 segmentManager.CalcCenter (location, nSegment);
 Clear ();
 m_info.signature = 0;
@@ -37,7 +37,7 @@ rType.polyModelInfo.tmap_override = -1;
 m_info.contents.type = 0;
 m_info.contents.id = 0;
 m_info.contents.count = 0;
-undoManager.Unlock ();
+undoManager.End () ();
 return;
 }
 
@@ -48,7 +48,7 @@ void CGameObject::Setup (byte type)
   int  id;
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 id = m_info.id;
 memset (&mType, 0, sizeof (mType));
 memset (&cType, 0, sizeof (cType));
@@ -177,7 +177,7 @@ switch (type) {
 		m_info.size = f1_0;
 		m_info.shields = DEFAULT_SHIELD;
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 }
 
 // -----------------------------------------------------------------------------

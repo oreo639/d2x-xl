@@ -413,7 +413,7 @@ Write (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 CSegment *segP = segmentManager.Segment (segmentManager.Count ());
 for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
@@ -425,7 +425,7 @@ for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
 		}
 	}
 DLE.MainFrame ()->Progress ().DestroyWindow ();
-undoManager.Unlock ();
+undoManager.End () ();
 fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
@@ -537,7 +537,7 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 // unmark all segmentManager.Segment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
@@ -607,7 +607,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	segP->Index () = nSegment;
 fp.Close ();
 DLE.MineView ()->Refresh ();
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return 0;
@@ -646,7 +646,7 @@ if (!count) {
 	}
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 
 // delete segmentManager.Segment () from last to first because segmentManager.Count ()
@@ -671,7 +671,7 @@ Wrap (selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [0].m_nSegment, 1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 }

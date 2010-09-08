@@ -435,7 +435,7 @@ if (bRefresh) {
 void CWallTool::OnDeleteWallAll () 
 {
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = theMine->Segments (0);
 CSide *sideP;
@@ -454,12 +454,12 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.Unlock ();
+	undoManager.End () ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 }
 
 //------------------------------------------------------------------------
@@ -571,13 +571,13 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		if ((wallP->m_info.type == WALL_BLASTABLE) || (wallP->m_info.type == WALL_DOOR)) {
 			if (m_nWall [bSide] < theMine->Info ().walls.count) {
 				undoManager.SetModified (true);
-				undoManager.Lock ();
+				undoManager.Begin ();
 				nClip = animClipTable [m_nClip];
 				wallP->m_info.nClip = nClip;
 				// define door textures based on clip number
 				if (wallP->m_info.nClip >= 0)
 					theMine->SetWallTextures (m_nWall [bSide], m_defTexture);
-				undoManager.Unlock ();
+				undoManager.End () ();
 				DLE.MineView ()->Refresh ();
 				Refresh ();
 				}

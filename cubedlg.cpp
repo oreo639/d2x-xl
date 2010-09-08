@@ -525,7 +525,7 @@ CHECKMINE;
 
 
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
@@ -536,7 +536,7 @@ if (bMarked) {
 	}
 else 					
 	current.Segment ()->m_info.owner = m_nOwner;
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -550,7 +550,7 @@ CHECKMINE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
@@ -561,7 +561,7 @@ if (bMarked) {
 	}
 else 					
 	current.Segment ()->m_info.group = m_nGroup;
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -578,7 +578,7 @@ CHECKMINE;
 	int		nSegNum, nMinSeg, nMaxSeg;
 
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 m_nLastCube = -1; //force Refresh() to rebuild all dialog data
 byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
@@ -601,7 +601,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				goto errorExit;
 			if ((theMine == null)->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
-				undoManager.Unroll (bUndo);
+				undoManager.Unroll ();
 				goto funcExit;
 				}
 			break;
@@ -619,7 +619,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
-				undoManager.Unroll (bUndo);
+				undoManager.Unroll ();
 				goto funcExit;
 				}
 			break;
@@ -628,7 +628,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			if (nType == m_nType)
 				continue;
 			if ((theMine == null)->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
-				undoManager.Unroll (bUndo);
+				undoManager.Unroll ();
 				goto funcExit;
 				}
 			break;
@@ -750,7 +750,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 errorExit:
 
-undoManager.Unlock ();
+undoManager.End () ();
 theMine->AutoUpdateReactor ();
 undoManager.SetModified (true);
 

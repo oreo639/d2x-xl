@@ -64,7 +64,7 @@ public:
 	inline CSize& ToolSize ()
 		{ return ToolView ()->ToolSize (); }
 	bool SetModified (BOOL bModified);
-	void Unroll (bool bRevertUndo);
+	void End (bool bRevertUndo);
 	CDocument* CDlcApp::OpenDocumentFile(LPCTSTR lpszFileName);
 	void WritePrivateProfileInt (LPSTR szKey, int nValue);
 	void SaveLayout ();

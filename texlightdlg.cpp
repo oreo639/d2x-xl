@@ -94,10 +94,10 @@ long nDelay = I2X (m_nLightDelay) / 1000;
 CVariableLight* flP = theMine->VariableLights (m_iLight);
 if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
 	bUndo = undoManager.SetModified (true);
-	undoManager.Lock ();
+	undoManager.Begin ();
 	flP->m_info.mask = nLightMask;
 	flP->m_info.delay = nDelay;
-	undoManager.Unlock ();
+	undoManager.End () ();
 	}
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }

@@ -653,14 +653,14 @@ void CTextureTool::OnAlignReset ()
 {
 UpdateData (TRUE);
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 current.Segment ()->SetUV (current.m_nSide, 0, 0);
 m_alignX = 0;
 m_alignY = 0;
 m_alignAngle = 0;
 Rot2nd (0);
 UpdateData (FALSE);
-undoManager.Unlock ();
+undoManager.End () ();
 UpdateAlignWnd ();
 }
 
@@ -674,7 +674,7 @@ void CTextureTool::OnAlignResetMarked ()
 
 UpdateData (TRUE);
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0; nSide < 6; nSide++) {
 		if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
@@ -688,9 +688,9 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 		}
 	}
 if (bModified)
-	undoManager.Unlock ();
+	undoManager.End () ();
 else
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
 }
@@ -714,7 +714,7 @@ if (!segmentManager.HaveMarkedSides ()) {
 		}
 	}
 else {
-	undoManager.Lock ();
+	undoManager.Begin ();
 	for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
@@ -725,7 +725,7 @@ else {
 				}
 			}
 		}
-	undoManager.Unlock ();
+	undoManager.End () ();
 	}
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
@@ -764,7 +764,7 @@ void CTextureTool::OnAlignAll (void)
 
 UpdateData (TRUE);
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 bool bAll = (theMine == null)->GotMarkedSegments ();
 for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count (); nSegment++, segP++)
 	 segP->m_info.nIndex = 0;
@@ -797,7 +797,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 		}
 	AlignChildren (nSegment, nSide, false);
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 UpdateAlignWnd ();
 }
 
@@ -808,7 +808,7 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 if ((theMine == null)->GotMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (current.m_nSegment, current.m_nSide, true);
@@ -819,7 +819,7 @@ else {	// use all marked sides as alignment source
 			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
 				AlignChildren (nSegment, nSide, true);
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 UpdateAlignWnd ();
 }
 

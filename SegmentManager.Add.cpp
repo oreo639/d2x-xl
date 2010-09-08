@@ -53,7 +53,7 @@ if (curSegP->Child (nCurSide) >= 0) {
 	}
 
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 // get new segment
 m_bCreating = true;
 nNewSeg = Add (); 
@@ -127,7 +127,7 @@ current.Segment ()->Backup (opAdd);
 //		SetLinesToDraw(); 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
-undoManager.Unlock ();
+undoManager.End () ();
 m_bCreating = false;
 return nNewSeg; 
 }
@@ -142,12 +142,12 @@ if ((szError != null) && theMine->IsD1File ()) {
 	return false;
 	}
 
-undoManager.Lock ();
+undoManager.Begin ();
 if (bCreate) {
 	nSegment = Create (nSegment);
 	if (nSegment < 0) {
 		Remove (nSegment, false);
-		undoManager.Unroll (bUndo);
+		undoManager.Unroll ();
 		return false; 
 		}
 	}	
@@ -156,14 +156,14 @@ m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
 	if (bCreate)
 		Remove (nSegment, false);
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 	DLE.MineView ()->DelayRefresh (false);
 	m_bCreating = false;
 	return false; 
 	}	
 Segment (nSegment)->Save ();
 m_bCreating = false;
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return true;
@@ -471,7 +471,7 @@ return true;
 bool CSegmentManager::Define (short nSegment, byte nFunction, short nTexture)
 {
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 if (!m_bCreating)
 	segP->Backup ();
@@ -479,7 +479,7 @@ Undefine (Index (segP));
 segP->m_info.function = nFunction;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -570,7 +570,7 @@ if (nDelSeg < 0)
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 
-undoManager.Lock ();
+undoManager.Begin ();
 CSegment* delSegP = Segment (nDelSeg); 
 delSegP->Backup (opDelete);
 Undefine (nDelSeg);
@@ -651,7 +651,7 @@ if (selections [1].m_nSegment < 0)
   selections [1].m_nSegment = 0; 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
-undoManager.Unlock ();
+undoManager.End () ();
 }
 
 // ----------------------------------------------------------------------------- 

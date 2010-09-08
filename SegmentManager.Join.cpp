@@ -157,7 +157,7 @@ if (QueryMsg("Are you sure you want to join the current point\n"
 				 "with the 'other' cube's current point?") != IDYES)
 	return; 
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 // define vert numbers
 seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]] = vert2; 
 // delete any unused vertices
@@ -165,7 +165,7 @@ seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]] = vert2;
 FixChildren (); 
 SetLinesToDraw (); 
 DLE.MineView ()->Refresh ();
-undoManager.Unlock ();
+undoManager.End () ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -257,7 +257,7 @@ if (fail) {
 	match [1] = 0; 
 	}
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 // define vert numbers
 for (i = 0; i < 2; i++) {
 	nLine = sideLineTable [cur1->m_nSide][cur1->m_nLine]; 
@@ -266,7 +266,7 @@ for (i = 0; i < 2; i++) {
 FixChildren(); 
 SetLinesToDraw(); 
 DLE.MineView ()->Refresh ();
-undoManager.Unlock ();
+undoManager.End () ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -456,10 +456,10 @@ if (maxRadius >= JOIN_DISTANCE) {
 // then solidifyally link them together without asking
 if (minRadius <= 5) {
 	undoManager.SetModified (true); 
-	undoManager.Lock ();
+	undoManager.Begin ();
 	LinkSides (cur1->m_nSegment, cur1->m_nSide, cur2->m_nSegment, cur2->m_nSide, match); 
 	SetLinesToDraw(); 
-	undoManager.Unlock ();
+	undoManager.End () ();
 	DLE.MineView ()->Refresh ();
 	return; 
 	}
@@ -481,7 +481,7 @@ if (!(Count () < MAX_SEGMENTS)) {
 segP = Segment (nNewSeg); 
 
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 // define children and special child
 // first clear all sides
 segP->m_info.childFlags = 0; 
@@ -538,7 +538,7 @@ for (i = 0; i < 4; i++)
 
 // update number of Segment () and vertices
 Count ()++; 
-undoManager.Unlock ();
+undoManager.End () ();
 SetLinesToDraw(); 
 DLE.MineView ()->Refresh ();
 }

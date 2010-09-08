@@ -47,11 +47,10 @@ if (nChildSide < 6) {
 		// otherwise, they don't share all four points correctly
 		// so unlink the child from the parent
 		// and unlink the parent from the child
-		undoManager.SetModified (true); 
-		undoManager.Lock ();
+		undoManager.Begin ();
 		ResetSide (nChildSeg, nChildSide); 
 		ResetSide (nParentSeg, nSide); 
-		undoManager.Unlock ();
+		undoManager.End () ();
 		}
 	}
 else {
@@ -126,7 +125,7 @@ if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES)
 	return; 
 
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 // create a new point (copy of other vertex)
 memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert), sizeof (*vertexManager.Vertex (0)));
 /*
@@ -151,7 +150,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	}	
 
 SetLinesToDraw (); 
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 
 }
@@ -205,7 +204,7 @@ if (!(found [0] && found [1])) {
 if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 segP = Segment (current.m_nSegment); 
 // create a new points (copy of other vertices)
 for (i = 0; i < 2; i++)
@@ -231,7 +230,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 		}
 	}
 SetLinesToDraw(); 
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
@@ -297,7 +296,7 @@ if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 	return; 
 
 undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 segP = Segment (current.m_nSegment); 
 if (nFound < 4)
 	solidify = 0;
@@ -340,7 +339,7 @@ else {
 	ResetSide (current.m_nSegment, current.m_nSide); 
 	SetLinesToDraw(); 
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -360,7 +359,7 @@ if (Count () >= MAX_SEGMENTS - 6) {
 	return false;
 	}
 bUndo = undoManager.SetModified (true); 
-undoManager.Lock ();
+undoManager.Begin ();
 //h = vertexManager.Count ();
 // compute segment center
 vertexManager.Add (nNewVerts, 8);
@@ -479,7 +478,7 @@ for (short nSegment = 0; nSegment < 5; nSegment++) {
 		}
 	}
 
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 return true;
 }

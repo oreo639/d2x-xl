@@ -83,7 +83,7 @@ ushort nWall = WallCount ();
 
 // link wall to segment/side
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 sideP->SetWall (nWall);
 CWall* wallP = Wall (nWall);
 wallP->Setup (key, nWall, (byte) type, nClip, nTexture, false);
@@ -92,7 +92,7 @@ wallP->m_info.flags = flags;
 wallP->m_info.keys = keys;
 // update number of Walls () in mine
 WallCount ()++;
-undoManager.Unlock ();
+undoManager.End () ();
 //DLE.MineView ()->Refresh ();
 return wallP;
 }
@@ -123,7 +123,7 @@ delWallP->Backup (opDelete);
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.OppositeWall (*delWallP);
 if (oppWallP != null) 
@@ -134,7 +134,7 @@ segmentManager.Side (*delWallP)->SetWall (NO_WALL);
 m_free += (int) nDelWall;
 WallCount ()--;
 
-undoManager.Unlock ();
+undoManager.End () ();
 //DLE.MineView ()->Refresh ();
 triggerManager.UpdateReactor ();
 }
@@ -190,18 +190,18 @@ return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 bool CWallManager::CreateDoor (byte type, byte flags, byte keys, char nClip, short nTexture) 
 {
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 // add a door to the current segment/side
 if (Create (current, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.OppositeSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
-		undoManager.Unlock ();
+		undoManager.End () ();
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
-undoManager.Unroll (bUndo);
+undoManager.Unroll ();
 return false;
 }
 
@@ -305,8 +305,7 @@ bool CWallManager::CreateExit (short type)
 if (!triggerManager.HaveResources ())
 	return false;
 // make a new wall and a new trigger
-bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Wall (WallCount ()- 1)->m_info.nClip = 10;
@@ -319,12 +318,12 @@ if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		Wall (WallCount () - 1)->m_info.nClip = 10;
 		segmentManager.SetTextures (opp, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
-		undoManager.Unlock ();
+		undoManager.End ();
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
 	}
-undoManager.Unroll (bUndo);
+undoManager.Unroll ();
 return false;
 }
 
@@ -340,10 +339,9 @@ if (!triggerManager.HaveResources ())
 	return false;
 
 int nLastSeg = current.m_nSegment;
-bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 if (!segmentManager.Create ()) {
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 	return false;
 	}
 int nNewSeg = current.m_nSegment;
@@ -355,10 +353,10 @@ if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	current.m_nSegment = nNewSeg;
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
-	undoManager.Unlock ();
+	undoManager.End () ();
 	return true;
 	}
-undoManager.Unroll (bUndo);
+undoManager.Unroll ();
 return false;
 }
 

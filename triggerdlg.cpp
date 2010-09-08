@@ -634,7 +634,7 @@ DLE.MineView ()->Refresh ();
 void CTriggerTool::OnDeleteTriggerAll () 
 {
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = theMine->Segments (0);
 CSide *sideP;
@@ -656,12 +656,12 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.Unlock ();
+	undoManager.End () ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 }
 
 //------------------------------------------------------------------------

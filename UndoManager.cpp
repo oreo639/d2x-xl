@@ -75,17 +75,6 @@ else {
 
 //------------------------------------------------------------------------------
 
-bool CUndoManager::Update (bool bForce)
-{
-if (!m_enabled || m_delay)
-	return false;
-m_nCurrent = m_nTail;
-m_nId++;
-return true;
-}
-
-//------------------------------------------------------------------------------
-
 int CUndoManager::SetMaxSize (int maxSize)
 {
 if (maxSize < 1)
@@ -129,29 +118,6 @@ do {
 	m_nCurrent = ++m_nCurrent % sizeof (m_buffer);
 	} while ((m_nCurrent != m_nTail) && (Current ()->Id () == nId));
 return true;
-}
-
-//------------------------------------------------------------------------------
-
-bool CUndoManager::Revert (void)
-{
-if (!m_enabled || m_delay || !m_nHead)
-	return false;
-Undo ();
-Truncate ();
-return true;
-}
-
-//------------------------------------------------------------------------------
-
-void CUndoManager::Delay (bool bDelay)
-{
-if (bDelay) {
-	if (m_delay++ == 0)
-		m_nId++;
-	}
-else if (m_delay)
-	m_delay--;
 }
 
 //------------------------------------------------------------------------------
@@ -204,27 +170,72 @@ return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - sizeo
 
 //------------------------------------------------------------------------------
 
-bool CUndoManager::SetModified (bool bModified) 
+bool CUndoManager::Update (bool bForce)
+{
+if (!m_enabled || m_delay)
+	return false;
+m_nCurrent = m_nTail;
+m_nId++;
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Delay (bool bDelay)
+{
+if (bDelay)
+	m_delay++;
+else if (m_delay > 0)
+	m_delay--;
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::SetModified (bool bModified) 
 {
 DLE.GetDocument ()->SetModifiedFlag (bModified);
-if (bModified) {
-	if (0 == m_nModified++)
-		return Update ();
-	}
-m_nModified = 0;
-return false;
 }  
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Unroll (bool bRevert) 
+void CUndoManager::Begin (void) 
 {
-if (m_nModified) {
-	if (!--m_nModified)
-		SetModified (false);
+if (0 == m_nModified++) {
+	SetModified (true);
+	Update ();
+	}
+Lock ();
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::End (void) 
+{
+if (m_nModified > 0) {
 	Unlock ();
-	if (bRevert)
-		Revert ();
+	if (--m_nModified == 0))
+		Update ();
+	}
+}
+
+//------------------------------------------------------------------------------
+
+bool CUndoManager::Revert (void)
+{
+if (!m_enabled || m_delay || !m_nHead)
+	return false;
+Undo ();
+Truncate ();
+return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Unroll (void) 
+{
+if (--m_nModified == 0) {
+	SetModified (false);
+	Revert ();
 	}
 }
 

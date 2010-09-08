@@ -300,8 +300,7 @@ else {
 		DLE.MineView ()->Refresh (false);
 		return;
 		}
-	undoManager.SetModified (true);
-	undoManager.Lock ();
+	undoManager.Begin ();
 	for (nSegment = 0; nSegment < m_nLength; nSegment++) {
 		segP = segmentManager.Segment (m_nSegments [nSegment]);
 		// copy current segment
@@ -341,7 +340,7 @@ else {
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
 		}
-	undoManager.Unlock ();
+	undoManager.End () ();
 	}
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->Refresh ();

@@ -55,10 +55,10 @@ else
 
 // move on x, y, and z
  undoManager.SetModified (true);
- undoManager.Lock ();
+ undoManager.Begin ();
  v *= moveRate;
  MoveOn (v);
- undoManager.Unlock ();
+ undoManager.End () ();
  return true;
 }
 
@@ -150,10 +150,10 @@ else {
 		v = CalcSideNormal (current.m_nSegment,current.m_nSide);
 	// move on x, y, and z
 	undoManager.SetModified (true);
-	undoManager.Lock ();
+	undoManager.Begin ();
 	v *= -moveRate;
 	MoveOn (v);
-	undoManager.Unlock ();
+	undoManager.End () ();
 	}
 undoManager.SetModified (true);
 return true;
@@ -248,7 +248,7 @@ switch (m_selectMode){
 
 	case SIDE_MODE:	// spin side around the opposite side
 		undoManager.SetModified (true);
-		undoManager.Lock ();
+		undoManager.Begin ();
 		if (perpendicular) { // use lines 0 and 2
 			pts [0] = 1;
 			pts [1] = 2;
@@ -270,7 +270,7 @@ switch (m_selectMode){
 		// rotate points around a line
 		for (i = 0; i < 4; i++)
 			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
-		undoManager.Unlock ();	
+		undoManager.End () ();	
 		break;
 	
 	case CUBE_MODE:
@@ -316,24 +316,24 @@ switch (m_selectMode) {
 
 	case SIDE_MODE:
 		undoManager.SetModified (true);
-		undoManager.Lock ();
+		undoManager.Begin ();
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [current.m_nSide][i];
 		// enlarge the diagonals
 		result = ResizeLine (segP, point [0], point [2], (int) (delta*sqrt(2.0))) &&
 				   ResizeLine (segP, point [1], point [3], (int) (delta*sqrt(2.0)));
-		undoManager.Unlock ();
+		undoManager.End () ();
 		return result;
 
 	case CUBE_MODE:
 		// enlarge the diagonals
 		undoManager.SetModified (true);
-		undoManager.Lock ();
+		undoManager.Begin ();
 		result = ResizeLine (segP, 0, 6, (int) (delta*sqrt(3.0))) &&
 				   ResizeLine (segP, 1, 7, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 2, 4, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 3, 5, (int) (delta*sqrt(3.0)));
-		undoManager.Unlock ();
+		undoManager.End () ();
 		return result;
 
 	case OBJECT_MODE:

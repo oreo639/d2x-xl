@@ -91,9 +91,13 @@ class CUndoManager
 
 		inline void Unlock () { Delay (false); }
 
-		bool SetModified (bool bModified);
+		void SetModified (bool bModified);
 
-		void Unroll (bool bRevert);
+		void Begin (void);
+
+		void End (void);
+
+		void Unroll (void);
 
 		CUndoManager (int maxSize = 100);
 

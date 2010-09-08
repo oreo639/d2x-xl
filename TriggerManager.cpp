@@ -143,7 +143,7 @@ if (m_free.Empty ()) {
 	}
 // if no wall at current side, try to add a wall of proper type
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 
 CWall* wallP = current.Wall ();
 
@@ -156,7 +156,7 @@ if (wallP == null) {
 		wallP = wallManager.Create (CSideKey (), (current.Child () < 0) ? WALL_OVERLAY : defWallTypes [type], 0, 0, -1, defWallTextures [type]);
 		if (wallP == null) {
 			ErrorMsg ("Cannot add a wall for this trigger.");
-			undoManager.Unroll (bUndo);
+			undoManager.Unroll ();
 			return null;
 			}
 		}
@@ -208,7 +208,7 @@ trigP->Setup (type, flags);
 trigP->Index () = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 return Trigger (nTrigger);
 }
@@ -235,13 +235,13 @@ if (delTrigP == null)
 	return;
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
 m_free += nDelTrigger;
 NumWallTriggers ()--;
 
-undoManager.Unlock ();
+undoManager.End () ();
 DLE.MineView ()->Refresh ();
 UpdateReactor ();
 }
@@ -299,7 +299,7 @@ void CTriggerManager::UpdateReactor (void)
   CReactorTrigger *reactorTrigger = ReactorTrigger (0);	// only one reactor trigger per level
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 // remove items from list that do not point to a wall
 for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 	if (!wallManager.FindBySide (reactorTrigger->m_targets [nTarget]))
@@ -317,7 +317,7 @@ for (CWallIterator wi; wi; wi++) {
 		continue;
 	reactorTrigger->Add (*wallP);
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 }
 
 //------------------------------------------------------------------------------------
@@ -345,13 +345,13 @@ if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
 	return null;
 	}
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 short nTrigger = NumObjTriggers ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
 trigP->m_info.nObject = nObject;
 trigP->Index () = nTrigger;
-undoManager.Unlock ();
+undoManager.End () ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
 	if (ObjTrigger (--i)->Index () == nTrigger)
@@ -547,17 +547,17 @@ if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 CWall* wallP = wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
 if (wallP != null) {
 	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
 	if (trigP != null) 
 		trigP->Add (other.m_nSegment, other.m_nSide);
-	undoManager.Unlock ();
+	undoManager.End () ();
 	DLE.MineView ()->Refresh ();
 	return true;
 	}
-undoManager.Unroll (bUndo);
+undoManager.Unroll ();
 return false;
 }
 

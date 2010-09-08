@@ -18,19 +18,19 @@ bool CSegmentManager::SetTextures (CSideKey key, short nBaseTex, short nOvlTex)
 	bool bUndo, bChange = false;
 
 bUndo = undoManager.SetModified (true); 
-undoManager.Lock (); 
+undoManager.Begin (); 
 current.Get (key); 
 CSide *sideP = Side (key); 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 	return false;
 	}
 if ((lightManager.IsLight (sideP->m_info.nBaseTex) == -1) && (lightManager.IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
 	lightManager.DeleteVariableLight (key); 
 if (!wallManager.ClipFromTexture (key))
 	wallManager.CheckForDoor (key); 
-undoManager.Unlock (); 
+undoManager.End () (); 
 sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x1fff, sideP->m_info.nOvlTex & 0x1fff); 
 INFOMSG (message); 
 return true;
@@ -64,7 +64,7 @@ int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOn
 		}; 
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 for (nLine = 0; nLine < 4; nLine++) {
 	// find vert numbers for the line's two end points
 	point0 = lineVertTable [sideLineTable [nStartSide][nLine]][0]; 
@@ -186,7 +186,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 			}
 		}
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 return return_code; 
 }
 

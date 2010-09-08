@@ -159,7 +159,7 @@ void CLightManager::AutoAdjustLight (double fLightScale, bool bAll, bool bCopyTe
 {
 // clear all lighting on marked cubes
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 if (bAll)
 	CLEAR (VertexColors ());
 for (CSegmentIterator si; si; si++) {
@@ -201,7 +201,7 @@ for (CSegmentIterator si; si; si++) {
 			Illuminate (nSegment, nSide, (uint) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
 		}
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 }
 
 //---------------------------------------------------------------------------------

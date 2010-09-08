@@ -303,7 +303,7 @@ ClearBugList ();
 m_bCheckMsgs = true;
 if (m_bAutoFixBugs) {
 	undoManager.SetModified (true);
-	undoManager.Lock ();
+	undoManager.Begin ();
 	}
   // set mode to BLOCK mode to make errors appear in red
 DLE.MineView ()->SetSelectMode (BLOCK_MODE);
@@ -326,7 +326,7 @@ if (!CheckBotGens ())
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 LBBugs ()->SetCurSel (0);
 if (m_bAutoFixBugs)
-	undoManager.Unlock ();
+	undoManager.End () ();
 }
 
 //--------------------------------------------------------------------------

@@ -1051,7 +1051,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 void CObjectTool::OnDeleteAll () 
 {
 bool bUndo = undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = current.Object ();
 int nType = objP->m_info.type;
@@ -1070,12 +1070,12 @@ for (int h = theMine->Info ().objects.count, i = 0; i < h; ) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.Unlock ();
+	undoManager.End () ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
 else
-	undoManager.Unroll (bUndo);
+	undoManager.Unroll ();
 }
 
 //------------------------------------------------------------------------
@@ -1087,7 +1087,7 @@ void CObjectTool::OnReset ()
 CDoubleMatrix* orient;
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 if (current.m_nObject == theMine->Info ().objects.count) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
@@ -1095,7 +1095,7 @@ if (current.m_nObject == theMine->Info ().objects.count) {
 	orient = &current.Object ()->m_location.orient;
 	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
-undoManager.Unlock ();
+undoManager.End () ();
 Refresh ();
 DLE.MineView ()->Refresh (false);
 }
@@ -1285,7 +1285,7 @@ CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
 undoManager.SetModified (true);
-undoManager.Lock ();
+undoManager.Begin ();
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
 		SetNewObjId (objP, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
@@ -1368,7 +1368,7 @@ switch (objP->m_info.type) {
 	}
 theMine->SortObjects ();
 SelectItemData (pcb, objP->m_info.id);
-undoManager.Unlock ();
+undoManager.End () ();
 Refresh ();
 }
 
@@ -1393,7 +1393,7 @@ void CObjectTool::OnSetSpawnType ()
 CGameObject *objP = current.Object ();
 int selection;
 undoManager.SetModified (true);
-undoManager.Unlock ();
+undoManager.End () ();
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
@@ -1412,7 +1412,7 @@ else {
 	OnSetSpawnQty ();
 	OnSetSpawnId ();
 	}
-undoManager.Lock ();
+undoManager.Begin ();
 }
 
 //------------------------------------------------------------------------
