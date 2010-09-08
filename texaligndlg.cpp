@@ -660,7 +660,7 @@ m_alignY = 0;
 m_alignAngle = 0;
 Rot2nd (0);
 UpdateData (FALSE);
-undoManager.End () ();
+undoManager.End ();
 UpdateAlignWnd ();
 }
 
@@ -688,7 +688,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 		}
 	}
 if (bModified)
-	undoManager.End () ();
+	undoManager.End ();
 else
 	undoManager.Unroll ();
 DLE.MineView ()->Refresh (false);
@@ -725,7 +725,7 @@ else {
 				}
 			}
 		}
-	undoManager.End () ();
+	undoManager.End ();
 	}
 DLE.MineView ()->Refresh (false);
 UpdateAlignWnd ();
@@ -797,7 +797,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segmentManager.Count
 		}
 	AlignChildren (nSegment, nSide, false);
 	}
-undoManager.End () ();
+undoManager.End ();
 UpdateAlignWnd ();
 }
 
@@ -819,7 +819,7 @@ else {	// use all marked sides as alignment source
 			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
 				AlignChildren (nSegment, nSide, true);
 	}
-undoManager.End () ();
+undoManager.End ();
 UpdateAlignWnd ();
 }
 

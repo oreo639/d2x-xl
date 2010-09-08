@@ -97,7 +97,7 @@ if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
 	undoManager.Begin ();
 	flP->m_info.mask = nLightMask;
 	flP->m_info.delay = nDelay;
-	undoManager.End () ();
+	undoManager.End ();
 	}
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
 }

@@ -127,7 +127,7 @@ current.Segment ()->Backup (opAdd);
 //		SetLinesToDraw(); 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
-undoManager.End () ();
+undoManager.End ();
 m_bCreating = false;
 return nNewSeg; 
 }
@@ -163,7 +163,7 @@ if (!Define (nSegment, nFunction, -1)) {
 	}	
 Segment (nSegment)->Save ();
 m_bCreating = false;
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return true;
@@ -479,7 +479,7 @@ Undefine (Index (segP));
 segP->m_info.function = nFunction;
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 SetDefaultTexture (nTexture);
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 return true;
 }
@@ -651,7 +651,7 @@ if (selections [1].m_nSegment < 0)
   selections [1].m_nSegment = 0; 
 DLE.MineView ()->Refresh (false); 
 DLE.ToolView ()->Refresh (); 
-undoManager.End () ();
+undoManager.End ();
 }
 
 // ----------------------------------------------------------------------------- 

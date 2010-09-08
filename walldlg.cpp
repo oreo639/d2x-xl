@@ -454,7 +454,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.End () ();
+	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
@@ -577,7 +577,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				// define door textures based on clip number
 				if (wallP->m_info.nClip >= 0)
 					theMine->SetWallTextures (m_nWall [bSide], m_defTexture);
-				undoManager.End () ();
+				undoManager.End ();
 				DLE.MineView ()->Refresh ();
 				Refresh ();
 				}

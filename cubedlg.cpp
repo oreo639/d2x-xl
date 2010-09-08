@@ -536,7 +536,7 @@ if (bMarked) {
 	}
 else 					
 	current.Segment ()->m_info.owner = m_nOwner;
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -561,7 +561,7 @@ if (bMarked) {
 	}
 else 					
 	current.Segment ()->m_info.group = m_nGroup;
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 }
 
@@ -750,7 +750,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 errorExit:
 
-undoManager.End () ();
+undoManager.End ();
 theMine->AutoUpdateReactor ();
 undoManager.SetModified (true);
 

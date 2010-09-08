@@ -137,7 +137,7 @@ if (m_bCubeLight)
 	theMine->SetSegmentLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
 	theMine->CalcDeltaLightData (m_fDeltaLight, (int) bAll);
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -209,7 +209,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		}
 	}
 if (bChange)
-	undoManager.End () ();
+	undoManager.End ();
 else
 	undoManager.Unroll ();
 DLE.MineView ()->Refresh ();

@@ -926,7 +926,7 @@ for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 undoManager.SetModified (true);
 undoManager.Begin ();
 PasteTexture (current.m_nSegment, current.m_nSide, 100);
-undoManager.End () ();
+undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -968,7 +968,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 		}
 	}
 if (bChange)
-	undoManager.End () ();
+	undoManager.End ();
 else
 	undoManager.Unroll ();
 Refresh ();
@@ -1014,7 +1014,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 //				sideP->m_info.uvls [i].l = save_uvls [i].l;
 			}
 if (bChange)
-	undoManager.End () ();
+	undoManager.End ();
 else
 	undoManager.Unroll ();
 Refresh ();

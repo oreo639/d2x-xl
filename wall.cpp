@@ -87,7 +87,7 @@ m_info.controllingTrigger = 0;
 
 // set uvls of new texture
 segmentManager.Segment (key.m_nSegment)->SetUV (key.m_nSide, 0, 0);
-undoManager.End () ();
+undoManager.End ();
 }
 
 //--------------------------------------------------------------------------
@@ -127,7 +127,7 @@ else if (nTexture >= 0) {
 	}
 else
 	return;
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 }
 

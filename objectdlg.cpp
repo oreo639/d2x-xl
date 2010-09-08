@@ -1070,7 +1070,7 @@ for (int h = theMine->Info ().objects.count, i = 0; i < h; ) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.End () ();
+	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
@@ -1095,7 +1095,7 @@ if (current.m_nObject == theMine->Info ().objects.count) {
 	orient = &current.Object ()->m_location.orient;
 	orient->Set (1, 0, 0, 1, 0, 0, 0, 0, 1);
 	}
-undoManager.End () ();
+undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh (false);
 }
@@ -1368,7 +1368,7 @@ switch (objP->m_info.type) {
 	}
 theMine->SortObjects ();
 SelectItemData (pcb, objP->m_info.id);
-undoManager.End () ();
+undoManager.End ();
 Refresh ();
 }
 
@@ -1393,7 +1393,7 @@ void CObjectTool::OnSetSpawnType ()
 CGameObject *objP = current.Object ();
 int selection;
 undoManager.SetModified (true);
-undoManager.End () ();
+undoManager.End ();
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;

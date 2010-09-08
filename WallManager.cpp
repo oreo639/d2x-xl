@@ -92,7 +92,7 @@ wallP->m_info.flags = flags;
 wallP->m_info.keys = keys;
 // update number of Walls () in mine
 WallCount ()++;
-undoManager.End () ();
+undoManager.End ();
 //DLE.MineView ()->Refresh ();
 return wallP;
 }
@@ -134,7 +134,7 @@ segmentManager.Side (*delWallP)->SetWall (NO_WALL);
 m_free += (int) nDelWall;
 WallCount ()--;
 
-undoManager.End () ();
+undoManager.End ();
 //DLE.MineView ()->Refresh ();
 triggerManager.UpdateReactor ();
 }
@@ -196,7 +196,7 @@ if (Create (current, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.OppositeSide (opp) && Create (opp, type, flags, keys, nClip, nTexture)) {
-		undoManager.End () ();
+		undoManager.End ();
 		DLE.MineView ()->Refresh ();
 		return true;
 		}
@@ -353,7 +353,7 @@ if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	current.m_nSegment = nNewSeg;
 	segmentManager.SetDefaultTexture (426);
 	DLE.MineView ()->Refresh ();
-	undoManager.End () ();
+	undoManager.End ();
 	return true;
 	}
 undoManager.Unroll ();

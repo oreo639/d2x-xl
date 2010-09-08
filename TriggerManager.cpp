@@ -208,7 +208,7 @@ trigP->Setup (type, flags);
 trigP->Index () = nTrigger;
 wallP->SetTrigger (nTrigger);
 UpdateReactor ();
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 return Trigger (nTrigger);
 }
@@ -241,7 +241,7 @@ wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
 m_free += nDelTrigger;
 NumWallTriggers ()--;
 
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 UpdateReactor ();
 }
@@ -317,7 +317,7 @@ for (CWallIterator wi; wi; wi++) {
 		continue;
 	reactorTrigger->Add (*wallP);
 	}
-undoManager.End () ();
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------------------
@@ -351,7 +351,7 @@ CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
 trigP->m_info.nObject = nObject;
 trigP->Index () = nTrigger;
-undoManager.End () ();
+undoManager.End ();
 SortObjTriggers ();
 for (ushort i = NumObjTriggers (); i; )
 	if (ObjTrigger (--i)->Index () == nTrigger)
@@ -553,7 +553,7 @@ if (wallP != null) {
 	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
 	if (trigP != null) 
 		trigP->Add (other.m_nSegment, other.m_nSide);
-	undoManager.End () ();
+	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	return true;
 	}

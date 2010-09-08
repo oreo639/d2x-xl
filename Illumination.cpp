@@ -75,7 +75,7 @@ void CLightManager::ScaleCornerLight (double fLight, bool bAll)
 {
 	double scale;
 
-undoManager.SetModified (true);
+undoManager.Begin ();
 scale = fLight / 100.0; // 100.0% = normal
 //#pragma omp parallel 
 	{
@@ -83,6 +83,7 @@ scale = fLight / 100.0; // 100.0% = normal
 	for (CSegmentIterator si; si; si++) {
 		CSegment* segP = &(*si);
 		if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+			segP->Backup ();
 			CSide* sideP = segP->m_sides;
 			for (int j = 0; j < 6; j++) {
 				CUVL* uvlP = sideP->m_info.uvls;
@@ -96,6 +97,7 @@ scale = fLight / 100.0; // 100.0% = normal
 			}
 		}
 	}
+undoManager.End ();
 }
 
 //---------------------------------------------------------------------------------
@@ -111,8 +113,8 @@ void CLightManager::CalcAverageCornerLight (bool bAll)
 
 memset (maxBrightness, 0, vertexManager.Count () * sizeof (tAvgCornerLight));
 
+undoManager.Begin ();
 // smooth corner light by averaging all corners which share a vertex
-undoManager.SetModified (true);
 //#pragma omp parallel 
 	{
 //#pragma omp for
@@ -137,19 +139,26 @@ undoManager.SetModified (true);
 //#pragma omp for
 	for (CSegmentIterator si; si; si++) {
 		CSegment *segP = &(*si);
+		bool bBackup = false;
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
 			if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & MARKED_MASK))) {
 				for (int i = 0; i < 3; i++) {
 					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
-					if (sideP->IsVisible ())
+					if (sideP->IsVisible ()) {
+						if (bBackup) {
+							segP->Backup ();
+							bBackup = false;
+							}
 						sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light /*/ maxBrightness [nVertex].count*/;
+						}
 					}
 				}
 			}
 		}
 	} // omp parallel
 
+undoManager.End ();
 delete[] maxBrightness;
 }
 
@@ -201,7 +210,7 @@ for (CSegmentIterator si; si; si++) {
 			Illuminate (nSegment, nSide, (uint) (brightness * 2 * fLightScale), 1.0, bAll, bCopyTexLights);
 		}
 	}
-undoManager.End () ();
+undoManager.End ();
 }
 
 //---------------------------------------------------------------------------------

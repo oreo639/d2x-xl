@@ -340,7 +340,7 @@ else {
 			}
 		// define child bitmask, special, matcen, value, and wall bitmask
 		}
-	undoManager.End () ();
+	undoManager.End ();
 	}
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->Refresh ();

@@ -425,7 +425,7 @@ for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
 		}
 	}
 DLE.MainFrame ()->Progress ().DestroyWindow ();
-undoManager.End () ();
+undoManager.End ();
 fp.Close ();
 sprintf_s (message, sizeof (message), " Block tool: %d blocks cut to '%s' relative to current side.", count, szFile);
 DEBUGMSG (message);
@@ -607,7 +607,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 	segP->Index () = nSegment;
 fp.Close ();
 DLE.MineView ()->Refresh ();
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 return 0;
@@ -671,7 +671,7 @@ Wrap (selections [0].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [0].m_nSegment, 1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, -1, 0, segmentManager.Count () - 1);
 Wrap (selections [1].m_nSegment, 1, 0, segmentManager.Count () - 1);
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
 DLE.MineView ()->Refresh ();
 }

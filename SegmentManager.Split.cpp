@@ -50,7 +50,7 @@ if (nChildSide < 6) {
 		undoManager.Begin ();
 		ResetSide (nChildSeg, nChildSide); 
 		ResetSide (nParentSeg, nSide); 
-		undoManager.End () ();
+		undoManager.End ();
 		}
 	}
 else {
@@ -124,7 +124,6 @@ if (!found) {
 if (QueryMsg("Are you sure you want to unjoin this point?") != IDYES) 
 	return; 
 
-undoManager.SetModified (true); 
 undoManager.Begin ();
 // create a new point (copy of other vertex)
 memcpy (vertexManager.Vertex (vertexManager.Count ()), vertexManager.Vertex (vert), sizeof (*vertexManager.Vertex (0)));
@@ -150,7 +149,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 	}	
 
 SetLinesToDraw (); 
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 INFOMSG("A new point was made for the current point."); 
 }
@@ -203,7 +202,6 @@ if (!(found [0] && found [1])) {
 
 if (QueryMsg ("Are you sure you want to unjoin this line?") != IDYES)
 	return; 
-undoManager.SetModified (true); 
 undoManager.Begin ();
 segP = Segment (current.m_nSegment); 
 // create a new points (copy of other vertices)
@@ -230,7 +228,7 @@ for (short nSide = 0; nSide < 6; nSide++) {
 		}
 	}
 SetLinesToDraw(); 
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 INFOMSG ("Two new points were made for the current line."); 
 }
@@ -295,7 +293,6 @@ if (!solidify && (vertexManager.Count () > (MAX_VERTICES - nFound))) {
 if (QueryMsg ("Are you sure you want to unjoin this side?") != IDYES)
 	return; 
 
-undoManager.SetModified (true); 
 undoManager.Begin ();
 segP = Segment (current.m_nSegment); 
 if (nFound < 4)
@@ -339,7 +336,7 @@ else {
 	ResetSide (current.m_nSegment, current.m_nSide); 
 	SetLinesToDraw(); 
 	}
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -358,7 +355,6 @@ if (Count () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 
 	return false;
 	}
-bUndo = undoManager.SetModified (true); 
 undoManager.Begin ();
 //h = vertexManager.Count ();
 // compute segment center
@@ -478,7 +474,7 @@ for (short nSegment = 0; nSegment < 5; nSegment++) {
 		}
 	}
 
-undoManager.End () ();
+undoManager.End ();
 DLE.MineView ()->Refresh ();
 return true;
 }

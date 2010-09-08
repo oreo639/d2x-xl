@@ -37,7 +37,7 @@ rType.polyModelInfo.tmap_override = -1;
 m_info.contents.type = 0;
 m_info.contents.id = 0;
 m_info.contents.count = 0;
-undoManager.End () ();
+undoManager.End ();
 return;
 }
 
@@ -177,7 +177,7 @@ switch (type) {
 		m_info.size = f1_0;
 		m_info.shields = DEFAULT_SHIELD;
 	}
-undoManager.End () ();
+undoManager.End ();
 }
 
 // -----------------------------------------------------------------------------

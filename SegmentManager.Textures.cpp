@@ -30,7 +30,7 @@ if ((lightManager.IsLight (sideP->m_info.nBaseTex) == -1) && (lightManager.IsLig
 	lightManager.DeleteVariableLight (key); 
 if (!wallManager.ClipFromTexture (key))
 	wallManager.CheckForDoor (key); 
-undoManager.End () (); 
+undoManager.End (); 
 sprintf_s (message, sizeof (message), "side has textures %d, %d", sideP->m_info.nBaseTex & 0x1fff, sideP->m_info.nOvlTex & 0x1fff); 
 INFOMSG (message); 
 return true;
@@ -186,7 +186,7 @@ for (nLine = 0; nLine < 4; nLine++) {
 			}
 		}
 	}
-undoManager.End () ();
+undoManager.End ();
 return return_code; 
 }
 

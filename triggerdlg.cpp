@@ -656,7 +656,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	}
 DLE.MineView ()->DelayRefresh (false);
 if (nDeleted) {
-	undoManager.End () ();
+	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}

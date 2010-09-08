@@ -174,8 +174,10 @@ bool CUndoManager::Update (bool bForce)
 {
 if (!m_enabled || m_delay)
 	return false;
-m_nCurrent = m_nTail;
-m_nId++;
+if (m_nCurrent != m_nTail) {
+	m_nCurrent = m_nTail;
+	m_nId++;
+	}
 return true;
 }
 
@@ -213,7 +215,7 @@ void CUndoManager::End (void)
 {
 if (m_nModified > 0) {
 	Unlock ();
-	if (--m_nModified == 0))
+	if (--m_nModified == 0)
 		Update ();
 	}
 }

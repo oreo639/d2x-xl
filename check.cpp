@@ -326,7 +326,7 @@ if (!CheckBotGens ())
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 LBBugs ()->SetCurSel (0);
 if (m_bAutoFixBugs)
-	undoManager.End () ();
+	undoManager.End ();
 }
 
 //--------------------------------------------------------------------------

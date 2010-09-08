@@ -130,7 +130,7 @@ if (nSegment < 0 || nSegment >= Count ())
 undoManager.SetModified (true); 
 undoManager.Begin ();
 Segment (nSegment)->Reset (nSide); 
-undoManager.End () ();
+undoManager.End ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -179,7 +179,7 @@ for (int nSide = 0; nSide < 6; nSide++)
 if (!bChange)
 	undoManager.Unroll ();
 else {
-	undoManager.End () ();
+	undoManager.End ();
 	DLE.MineView ()->Refresh (); 
 	}
 }
