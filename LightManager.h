@@ -135,10 +135,10 @@ class CLightManager {
 		void CalcDeltaLightData (double fLightScale = 1.0, int force = 1);
 		int FindDeltaLight (short nSegment, short nSide, short *pi = null);
 		short VariableLight (CSideKey key);
-		CVariableLight* CLightManager::AddVariableLight (bool bVerbose = true);
+		CVariableLight* AddVariableLight (short index = -1);
 		short AddVariableLight (CSideKey key, uint mask = 0xAAAAAAAA, int time = 0x10000 / 4);
 		bool DeleteVariableLight (CSideKey key);
-		void DeleteVariableLight (short index);
+		void DeleteVariableLight (short index, bool bUndo = false);
 		int IsExplodingLight(int nBaseTex);
 
 		void CreateLightMap (void);
@@ -163,7 +163,7 @@ class CLightManager {
 			ReadDeltaValueInfo (fp);
 			}
 
-		void SortDeltaIndex (void) { SortDeltaIndex (0, DeltaIndexCount () - 1); }
+		void SortDeltaIndex (void);
 
 	private:
 		void CLightManager::LoadColors (CColor *pc, int nColors, int nFirstVersion, int nNewVersion, CFileManager& fp);

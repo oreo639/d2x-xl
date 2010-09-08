@@ -31,7 +31,7 @@ typedef enum {
 	} eItemType;
 
 typedef enum {
-	opNone, opAdd, opDelete, opModify
+	opNone, opAdd, opDelete, opModify, opMove
 } eEditType;
 
 class CGameItem {

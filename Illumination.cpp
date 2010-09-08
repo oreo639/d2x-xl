@@ -139,16 +139,16 @@ undoManager.Begin ();
 //#pragma omp for
 	for (CSegmentIterator si; si; si++) {
 		CSegment *segP = &(*si);
-		bool bBackup = false;
+		bool bUndo = false;
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
 			if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & MARKED_MASK))) {
 				for (int i = 0; i < 3; i++) {
 					CSide* sideP = &segP->m_sides [pointSideTable [nPoint][i]];
 					if (sideP->IsVisible ()) {
-						if (bBackup) {
+						if (!bUndo) {
 							segP->Backup ();
-							bBackup = false;
+							bUndo = false;
 							}
 						sideP->m_info.uvls [pointCornerTable [nPoint][i]].l = maxBrightness [nVertex].light /*/ maxBrightness [nVertex].count*/;
 						}

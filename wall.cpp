@@ -267,10 +267,10 @@ void CWall::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		wallManager.Remove (Index (), false);
+		wallManager.Remove (Index (), true);
 		break;
 	case opDelete:
-		wallManager.Add (false);
+		wallManager.Add (true);
 		// fall through
 	case opModify:
 		*Parent () = *this;

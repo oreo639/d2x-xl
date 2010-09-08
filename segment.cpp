@@ -646,10 +646,10 @@ void CSegment::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		segmentManager.Remove (Index (), false);
+		segmentManager.Remove (Index (), true);
 		break;
 	case opDelete:
-		segmentManager.Add (false);
+		segmentManager.Add (true);
 		// fall through
 	case opModify:
 		*Parent () = *this;
@@ -666,7 +666,7 @@ switch (EditType ()) {
 		segmentManager.Remove (Index ());
 		break;
 	case opAdd:
-		segmentManager.Add (false);
+		segmentManager.Add (true);
 		// fall through
 	case opModify:
 		*Parent () = *this;

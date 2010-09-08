@@ -784,10 +784,10 @@ void CVertex::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		objectManager.Delete (Index (), false);
+		objectManager.Delete (Index (), true);
 		break;
 	case opDelete:
-		objectManager.Add (false);
+		objectManager.Add (true);
 		// fall through
 	case opModify:
 		*Parent () = *this;

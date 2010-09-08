@@ -121,10 +121,10 @@ void CVariableLight::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		lightManager.Remove (Index (), false);
+		lightManager.DeleteVariableLight (Index (), true);
 		break;
 	case opDelete:
-		Parent () = lightManager.Add (false);
+		Parent () = lightManager.Add (true);
 		// fall through
 	case opModify:
 		if (Parent ())
@@ -139,10 +139,10 @@ void CVariableLight::Redo (void)
 {
 switch (EditType ()) {
 	case opDelete:
-		segmentManager.Remove (Index ());
+		lightManager.DeleteVariableLight (Index (), true);
 		break;
 	case opAdd:
-		Parent () = segmentManager.Add (false);
+		Parent () = segmentManager.Add (true);
 		// fall through
 	case opModify:
 		if (Parent ())

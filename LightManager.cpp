@@ -76,10 +76,10 @@ return VariableLight (key) >= 0;
 
 //------------------------------------------------------------------------------
 
-CVariableLight CLightManager::AddVariableLight (bool bVerbose) 
+CVariableLight CLightManager::AddVariableLight (short index) 
 {
 if (Count () >= MAX_VARIABLE_LIGHTS) {
-	if (!bExpertMode && bVerbose) {
+	if (!bExpertMode && (index < 0)) {
 		sprintf_s (message, sizeof (message),
 					  "Maximum number of variable lights (%d) have already been added",
 					  MAX_VARIABLE_LIGHTS);
@@ -91,14 +91,17 @@ if (Count () >= MAX_VARIABLE_LIGHTS) {
 short nBaseTex, nOvlTex;
 current.Side ()->GetTextures (nBaseTex, nOvlTex);
 if ((IsLight (nBaseTex) == -1) && (IsLight (nOvlTex) == -1)) {
-	if (!bExpertMode && bVerbose)
+	if (!bExpertMode && (index < 0))
 		ErrorMsg ("Blinking lights can only be added to a side\n"
 					 "that has a light emitting texture.\n"
 					 "Hint: You can use the texture tool's brightness control\n"
 					 "to make any texture emit light.");
 	return null;
 	}
-return VariableLight (Count ()++);
+if (index < 0)
+	index = Count ()++;
+VariableLight (Count ()++) = VariableLight (index);
+return VariableLight (index);
 }
 
 //------------------------------------------------------------------------------
@@ -119,24 +122,23 @@ if (lightP == null)
 
 lightP->Setup (key, time, mask);
 lightP->Backup (opAdd);
-	}
+
 return Count ();
 }
 
 //------------------------------------------------------------------------------
 
-CVariableLight CLightManager::AddVariableLight (void) 
-{
-}
-
-//------------------------------------------------------------------------------
-
-void CLightManager::DeleteVariableLight (short index) 
+void CLightManager::DeleteVariableLight (short index, bool bUndo) 
 {
 if (index > -1) {
-	if (index < --Count ()) {
+	if (!bUndo) {
+		VariableLight (index)->Index () = index;
 		VariableLight (index)->Backup (opDelete);
+		}
+	if (index < --Count ()) {
 		memcpy (VariableLight (index), VariableLight (m_nCount), sizeof (CVariableLight));
+		if (!bUndo)
+			VariableLight (index)->Backup (opMove);
 		}
 	}
 }
@@ -405,11 +407,8 @@ do {
 		r--;
 		}
 	if (l <= r) {
-		if (l < r) {
-			CLightDeltaIndex	h = *pl;
-			*pl = *pr;
-			*pr = h;
-			}
+		if (l < r)
+			Swap (*pl, *pr);
 		l++;
 		r--;
 		}
@@ -418,6 +417,17 @@ if (right > l)
    SortDeltaIndex (l, right);
 if (r > left)
    SortDeltaIndex (left, r);
+}
+
+// -----------------------------------------------------------------------------
+
+void SortDeltaIndex (void) 
+{ 
+SortDeltaIndex (0, DeltaIndexCount () - 1); 
+CLightDeltaIndex* lightP = LightDeltaIndex (0);
+for (int i = DeltaIndexCount (); i; i--, lightP++)
+	if (lightP->Parent () != null
+	DeltaLightIndex (i)->Index () = i;
 }
 
 // -----------------------------------------------------------------------------
@@ -501,8 +511,8 @@ if (theMine->IsD2File ()) {
 void CLightManager::WriteLightDeltas (CFileManager& fp, int nFileVersion)
 {
 if (DeltaIndexCount () > 0) {
-	if ((theMine->LevelVersion () >= 15) && (nFileVersion >= 34))
-		lightManager.SortDeltaIndex ();
+	if ((theMine->LevelVersion () >= 15) && (nFileVersion >= 34)) 
+		SortDeltaIndex ();
 
 	bool bD2X = (theMine->LevelVersion () >= 15) && (theMine->FileInfo ().version >= 34);
 	int i;
