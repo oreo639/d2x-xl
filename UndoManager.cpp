@@ -63,10 +63,14 @@ void CUndoManager::Truncate (void)
 {
 for (int i = m_nCurrent; i != m_nTail; i = ++i % sizeof (m_buffer)) 
 	delete m_buffer [i].m_item;
-if (m_nCurrent == m_nHead)
+if (m_nCurrent == m_nHead) {
 	m_nHead = m_nTail = m_nCurrent = -1;
-else
+	m_nId = 0;
+	}
+else {
 	m_nTail = m_nCurrent;
+	m_nId = Current ()->Id ();
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -76,6 +80,7 @@ bool CUndoManager::Update (bool bForce)
 if (!m_enabled || m_delay)
 	return false;
 m_nCurrent = m_nTail;
+m_nId++;
 return true;
 }
 
@@ -203,8 +208,8 @@ bool CUndoManager::SetModified (bool bModified)
 {
 DLE.GetDocument ()->SetModifiedFlag (bModified);
 if (bModified) {
-	m_nModified++;
-	return Update ();
+	if (0 == m_nModified++)
+		return Update ();
 	}
 m_nModified = 0;
 return false;
