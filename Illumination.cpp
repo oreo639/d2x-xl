@@ -75,7 +75,7 @@ void CLightManager::ScaleCornerLight (double fLight, bool bAll)
 {
 	double scale;
 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 scale = fLight / 100.0; // 100.0% = normal
 //#pragma omp parallel 
 	{
@@ -113,7 +113,7 @@ void CLightManager::CalcAverageCornerLight (bool bAll)
 
 memset (maxBrightness, 0, vertexManager.Count () * sizeof (tAvgCornerLight));
 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 // smooth corner light by averaging all corners which share a vertex
 //#pragma omp parallel 
 	{
@@ -168,7 +168,7 @@ void CLightManager::ComputeStaticLight (double m_fLightScale, bool bAll, bool bC
 {
 // clear all lighting on marked cubes
 m_fLightScale = fLightScale;
-undoManager.Begin ();
+undoManager.Begin (udSegments | udStaticLight);
 if (bAll)
 	CLEAR (VertexColors ());
 else {
@@ -402,11 +402,12 @@ bool bWall = false;
 
 void CLightManager::ComputeVariableLight (double m_fLightScale, int force) 
 {
-undoManager.Begin ();
 m_fLightScale = fLightScale;
+undoManager.Begin (udDynamicLight);
 for (int nDepth = m_deltaRenderDepth; nDepth; nDepth--)
 	if (CalcLightDeltas (m_fLightScale, force, nDepth))
 		break;
+undoManager.End ();
 }
 
 //---------------------------------------------------------------------------------
@@ -598,7 +599,6 @@ m_fLightScale = 1.0; ///= 100.0;
 
 					// calculate vector between center of source segment and center of child
 						if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, m_fLightScale, wallP != null)) {
-							undoManager.Begin (true);
 							if ((DeltaValueCount () >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{
@@ -669,6 +669,41 @@ for (int j = 0; j < 4; j++) {
 	}
 // if any of the effects are > 0, then increment the light for that side
 return (m_cornerLights [0] != 0.0) || (m_cornerLights [1] != 0.0) || (m_cornerLights [2] != 0.0) || (m_cornerLights [3] != 0.0);
+}
+
+// -----------------------------------------------------------------------------
+
+void CLightManager::SetLight (double fLight, bool bAll, bool bDynSegLights)
+{
+	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
+
+undoManager.Begin (udSegments);
+fLight /= 100.0;
+CSegment *segP = segmentManager.Segment (0);
+for (CSegmentIterator si; si; si++) {
+	CSegment* segP = &(*si);
+	if (bAll || (segP->m_info.wallFlags & MARKED_MASK)) {
+		if (!bDynSegLights)
+			segP->m_info.staticLight = nLight;
+		else {
+			int l = 0;
+			int c = 0;
+			CSide* sideP = segP->m_sides;
+			for (short nSide = 0; nSide < 6; nSide++) {
+				for (short nCorner = 0; nCorner < 4; nCorner++) {
+					ushort h = (ushort) sideP [nSide].m_info.uvls [nCorner].l;
+					if (h || !sideP->IsVisible ()) {
+						l += h;
+						c++;
+						}
+					}
+				}
+			segP->Backup ();
+			segP->m_info.staticLight = (int) (c ? fLight * ((double) l / (double) c) * 2 : nLight);
+			}
+		}
+	}
+undoManager.End ();
 }
 
 //---------------------------------------------------------------------------------

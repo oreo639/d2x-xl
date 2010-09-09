@@ -35,6 +35,13 @@ class CVertex : public CDoubleVector, public CGameItem {
 
 		virtual void Redo (void);
 
+		inline void Mark (byte mask = MARKED_MASK) { m_status |= mask; }
+
+		inline void Unmark (byte mask = MARKED_MASK) { m_status &= ~mask; }
+
+		inline bool IsMarked (byte mask = MARKED_MASK) { return (m_status & mask) != 0; }
+
+
 		// c'tors
 		CVertex () : CGameItem (itVertex), m_status(0) {}
 		

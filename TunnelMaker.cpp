@@ -300,7 +300,7 @@ else {
 		DLE.MineView ()->Refresh (false);
 		return;
 		}
-	undoManager.Begin ();
+	undoManager.Begin (udSegments | udVertices);
 	for (nSegment = 0; nSegment < m_nLength; nSegment++) {
 		segP = segmentManager.Segment (m_nSegments [nSegment]);
 		// copy current segment

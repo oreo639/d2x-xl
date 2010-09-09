@@ -70,6 +70,8 @@ zAxis.Set (m.uVec.v.x * m.fVec.v.y - m.fVec.v.x * m.uVec.v.y,
 
 nNewSegs = 0;
 memset (xlatSegNum, 0xff, sizeof (xlatSegNum));
+
+undoManager.Begin (udAll);
 while (!fp.EoF ()) {
 	DLE.MainFrame ()->Progress ().SetPos (fp.Tell ());
 // abort if there are not at least 8 vertices free
@@ -256,7 +258,7 @@ for (CWallTriggerIterator ti; ti; ti++) {
 			}
 		}
 	}
-
+undoManager.End ();
 sprintf_s (message, sizeof (message),
 			" Block tool: %d blocks, %d walls, %d triggers pasted.", 
 			nNewSegs, nNewWalls, nNewTriggers);
@@ -412,8 +414,7 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 Write (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udAll);
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 CSegment *segP = segmentManager.Segment (segmentManager.Count ());
 for (short nSegment = segmentManager.Count () - 1; nSegment; nSegment--) {
@@ -536,20 +537,17 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 
 // unmark all segmentManager.Segment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udAll);
 DLE.MineView ()->DelayRefresh (true);
 segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < MAX_SEGMENTS; nSegment++, segP++) {
 	segP->Index () = nSegment;
-	segP->m_info.wallFlags &= ~MARKED_MASK;
+	segP->Unmark ();
 	}
 
 // unmark all vertices
-for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++) {
-	vertexManager.Status (nVertex) &= ~MARKED_MASK;
-	vertexManager.Status (nVertex) &= ~NEW_MASK;
-	}
+for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++) 
+	vertexManager.Vertex (nVertex)->Unmark (MARKED_MASK | NEW_MASK);
 
 DLE.MainFrame ()->InitProgress (fp.Length ());
 count = Read (fp);
@@ -600,7 +598,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	}
 // clear all new vertices as such
 for (ushort nVertex = 0; nVertex < MAX_VERTICES; nVertex++)
-	vertexManager.Status (nVertex) &= ~NEW_MASK;
+	vertexManager.Vertex (nVertex)->Unmark (NEW_MASK);
 // now set all seg_numbers
 segP = segmentManager.Segment (0);
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
@@ -645,8 +643,7 @@ if (!count) {
 	return;
 	}
 
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udAll);
 DLE.MineView ()->DelayRefresh (true);
 
 // delete segmentManager.Segment () from last to first because segmentManager.Count ()
