@@ -86,7 +86,7 @@ class CTriggerManager {
 
 		inline int& ReactorTime (void) { return m_reactorData.time; }
 
-		inline int& ReactorStrengh (void) { return m_reactorData.strength; }
+		inline int& ReactorStrength (void) { return m_reactorData.strength; }
 
 		inline CTrigger* Trigger (int i, int nClass = 0) { return (i == NO_TRIGGER) ? null : &m_triggers [nClass][i]; }
 

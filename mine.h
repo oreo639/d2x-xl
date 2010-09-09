@@ -97,13 +97,13 @@ class CMine {
 
 		long TotalSize (CMineItemInfo& gii) { return (int) gii.size * (int) gii.count; }
 
-		inline int& ReactorTime (void) { return Data ().m_reactorTime; }
+		inline int& ReactorTime (void) { return triggerManager.ReactorTime (); }
 
-		inline int& ReactorStrength (void) { return Data ().m_reactorStrength; }
+		inline int& ReactorStrength (void) { return triggerManager.ReactorStrength (); }
 
-		inline int& SecretSegment (void) { return Data ().m_secretSegNum; }
+		inline int& SecretSegment (void) { return segmentManager.SecretSegment (); }
 
-		inline CDoubleMatrix& SecretOrient (void) { return Data ().m_secretOrient; }
+		inline CDoubleMatrix& SecretOrient (void) { segmentManager.SecretOrient (); }
 
 		short Load (const char *filename = null, bool bLoadFromHog = false);
 

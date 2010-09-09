@@ -55,7 +55,7 @@ class CVertexManager  {
 		inline byte& Status (int i = 0) { return Vertex (i)->Status (); }
 
 		inline int& Count (void) { return m_info.count; }
-#ifdef USE_FREELIST
+#if USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
 #else
 		bool Full (void);

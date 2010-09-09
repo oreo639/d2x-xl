@@ -63,6 +63,8 @@ class CLightManager {
 		int						m_deltaRenderDepth;
 		int						m_nNoLightDeltas;
 
+		int						m_nTexColorCount;	// dummy for undo system
+
 		double					m_cornerLights [4];
 		double					m_fLightScale;
 		//long						m_defLightMap [MAX_TEXTURES_D2];
@@ -87,7 +89,7 @@ class CLightManager {
 
 		inline CVariableLight* VariableLight (short i) { return &m_variableLights [i]; }
 
-		inline CColor* VertexColor (int i) { return &m_vertexColors [i]; }
+		inline CVertexColor* VertexColor (int i) { return &m_vertexColors [i]; }
 
 		inline CTextureColor* TexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
 
@@ -96,6 +98,8 @@ class CLightManager {
 		inline long* LightMap (int i = 0) { return &m_lightMap [i]; }
 
 		inline int& Count (void) { return m_nCount; }
+
+		inline int& TexColorCount (void) { return m_nTexColorCount = MAX_TEXTURES_D2; }
 
 		inline int& DeltaIndexCount (void) { return m_deltaIndexInfo.count; }
 
@@ -179,7 +183,9 @@ class CLightManager {
 		
 		void SortDeltaIndex (int left, int right);
 
-		void UnsortDeltaIndex (int left = 0, int right = DeltaIndexCount () - 1);
+		void UnsortDeltaIndex (int left, int right);
+
+		void UnsortDeltaIndex (void);
 
 		void BlendColors (CColor *psc, CColor *pdc, double srcBr, double destBr);
 

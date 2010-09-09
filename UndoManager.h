@@ -45,23 +45,28 @@ class CUndoItem {
 		_T*	m_backup;
 		_T*	m_source;
 		int	m_length;
+		int	m_lengthFactor;
 		int*	m_sourceLength;
+		uint	m_nId; // used by undo manager
 
-		bool Create (_T* source, int& length) {
+		bool Create (_T* source, int& length, int lengthFactor) {
 			if (length > 0) {
-				m_backup = new _T [length];
-				if (m_backup == null)
+				m_length = length * lengthFactor;
+				m_backup = new _T [m_length];
+				if (m_backup == null) {
+					m_length = -1;
 					return false;
+					}
 				}
 			m_source = source;
-			m_length = length;
+			m_lengthFactor = lengthFactor;
 			m_sourceLength = &length;
 			return true;
 			}
 
-		bool Backup (_T* source, int& length) {
+		bool Backup (_T* source, int& length, int lengthFactor = 1) {
 			if (m_backup == null) {
-				if (!Create (source, length)
+				if (!Create (source, length, lengthFactor))
 					return false;
 				if (length > 0)
 					memcpy (m_backup, m_source, m_length * sizeof (_T));
@@ -88,6 +93,7 @@ class CUndoItem {
 			m_backup = null;
 			m_source = null;
 			m_length = -1;
+			m_lengthFactor = 1;
 			m_sourceLength = null;
 			}
 
@@ -107,7 +113,7 @@ class CUndoItem {
 
 		inline bool Empty (void) { return m_backup == null; }
 
-		CUndoItem () : m_buffer (null), m_source (null), m_length (-1), m_sourceLength (null) {}
+		CUndoItem () : m_backup (null), m_source (null), m_length (-1), m_lengthFactor (1), m_sourceLength (null) {}
 
 		~CUndoItem () { Destroy (); }
 	};
@@ -143,7 +149,7 @@ public:
 	CUndoItem<CMatCenter>			m_robotMakers;
 	CUndoItem<CMatCenter>			m_equipMakers;
 	CUndoItem<CWall>					m_walls;
-	CUndoItem<CDoor>					m_door;
+	CUndoItem<CDoor>					m_doors;
 	CUndoItem<CTrigger>				m_triggers [2];
 	CUndoItem<CGameObject>			m_objects;
 	CUndoItem<CRobotInfo>			m_robotInfo;
@@ -154,9 +160,13 @@ public:
 	CUndoItem<CTextureColor>		m_textureColors;
 	CUndoItem<CVertexColor>			m_vertexColors;
 
+	uint m_nId;
+
+	inline uint& Id (void) { return m_nId; }
+
 	void Backup (eUndoFlags dataFlags);
 
-	void Cleanup (void);
+	bool Cleanup (void);
 
 	void Restore (void);
 
@@ -164,7 +174,7 @@ public:
 
 	void Reset (void) { memset (this, 0, sizeof (*this)); }
 
-	CUndoData () { Reset (); }
+	CUndoData () : m_nId (0) { Reset (); }
 
 	~CUndoData () { Destroy (); }
 	};
@@ -187,7 +197,7 @@ class CUndoManager
 		int			m_delay;
 		int			m_enabled;
 		int			m_nModified;
-		int			m_nId;
+		uint			m_nId;
 
 	public:
 		inline CUndoData* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_nHead]; }
@@ -200,7 +210,7 @@ class CUndoManager
 
 		void Backup (void);
 
-		inline int Id (void) { return m_nId; }
+		inline uint& Id (void) { return m_nId; }
 
 		bool Update (bool bForce = false);
 

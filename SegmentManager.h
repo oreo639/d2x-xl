@@ -77,25 +77,25 @@ class CSegmentManager {
 		CMineItemInfo			m_matCenInfo [2];
 		bool						m_bCreating;
 
-		int						m_nSecretSegment;
-		CDoubleMatrix			m_secretOrient;
-
+		CSecretData				m_secretData;
 
 	public:
 		inline void ResetInfo (void) {
 			m_segmentInfo.Reset ();
 			m_matCenInfo [0].Reset ();
 			m_matCenInfo [1].Reset ();
+#if USE_FREELST
 			m_free.Reset ();
+#endif
 			}
 		// Segment and side getters
 		inline segmentList& Segments (void)	{ return m_segments; }
 
 		inline CSecretData& SecretData (void) { return m_secretData; }
 
-		inline int& SecretSegment (void) { return m_nSecretSegment; }
+		inline int& SecretSegment (void) { return SecretData ().nSegment; }
 
-		inline CDoubleMatrix& SecretOrient (void) { return m_secretOrient; }
+		inline CDoubleMatrix& SecretOrient (void) { return SecretData ().orient; }
 
 		inline int& Count (void) { return m_segmentInfo.count; }
 
@@ -319,13 +319,15 @@ class CSegmentManager {
 #if USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
 #else
-		inline bool Full (void) { return Count () >= MAX_SEGMENTS; }
+		bool Full (void);
 #endif
 
 		CSegmentManager () : m_bCreating (false) { 
 			ResetInfo ();
 			Clear ();
+#if USE_FREELST
 			m_free.Create (Segment (0), SEGMENT_LIMIT);
+#endif
 			}
 
 	private:

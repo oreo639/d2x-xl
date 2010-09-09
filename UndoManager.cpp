@@ -8,6 +8,8 @@ CUndoManager undoManager;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+#if DETAIL_BACKUP
+
 void CUndoItem::Setup (CGameItem* item, CGameItem* parent, eEditType editType, int nBackupId)
 {
 m_parent = parent; 
@@ -18,6 +20,8 @@ m_item->Id () = Id (); // copy these to parent to make subsequent cloning simple
 m_parent->EditType () = m_item->EditType () = editType;
 m_nBackupId = nBackupId;
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -39,8 +43,8 @@ if (m_triggers [0].Cleanup ()) bEmpty = false;
 if (m_triggers [1].Cleanup ()) bEmpty = false;
 if (m_objects.Cleanup ()) bEmpty = false;
 if (m_robotInfo.Cleanup ()) bEmpty = false;
-if (m_deltaLightIndices.Cleanup ()) bEmpty = false;
-if (m_deltaLightValues.Cleanup ()) bEmpty = false;
+if (m_deltaIndices.Cleanup ()) bEmpty = false;
+if (m_deltaValues.Cleanup ()) bEmpty = false;
 if (m_variableLights.Cleanup ()) bEmpty = false;
 if (m_faceColors.Cleanup ()) bEmpty = false;
 if (m_textureColors.Cleanup ()) bEmpty = false;
@@ -50,7 +54,7 @@ return bEmpty;
 
 //------------------------------------------------------------------------------
 
-bool CUndoData::Destroy (void) 
+void CUndoData::Destroy (void) 
 {
 m_vertices.Destroy ();
 m_segments.Destroy ();
@@ -62,18 +66,17 @@ m_triggers [0].Destroy ();
 m_triggers [1].Destroy ();
 m_objects.Destroy ();
 m_robotInfo.Destroy ();
-m_deltaLightIndices.Destroy ();
-m_deltaLightValues.Destroy ();
+m_deltaIndices.Destroy ();
+m_deltaValues.Destroy ();
 m_variableLights.Destroy ();
 m_faceColors.Destroy ();
 m_textureColors.Destroy ();
 m_vertexColors.Destroy ();
-return false;
 }
 
 //------------------------------------------------------------------------------
 
-void CUndoData::Backup (undoData dataFlags) 
+void CUndoData::Backup (eUndoFlags dataFlags) 
 {
 if (dataFlags & udVertices) 
 	m_vertices.Backup (vertexManager.Vertex (0), vertexManager.Count ());
@@ -95,11 +98,11 @@ if (dataFlags & udWalls)
 if (dataFlags & udTriggers) {
 	m_triggers [0].Backup (triggerManager.Trigger (0, 0), triggerManager.Count (0));
 	m_triggers [1].Backup (triggerManager.Trigger (0, 1), triggerManager.Count (1));
-	m_reactorData = segmentManager.ReactorData ();
+	m_reactorData = triggerManager.ReactorData ();
 	}	
 
 if (dataFlags & udObjects) 
-	m_objects.Backup (objectManager.Objects (0), objectManager.Count ());
+	m_objects.Backup (objectManager.Object (0), objectManager.Count ());
 
 if (dataFlags & udRobots) 
 	m_robotInfo.Backup (robotManager.RobotInfo (0), robotManager.Count ());
@@ -108,8 +111,8 @@ if (dataFlags & udVariableLights)
 	m_variableLights.Backup (lightManager.VariableLight (0), lightManager.Count ());
 
 if (dataFlags & udStaticLight) {
-	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.m_nSegments * 6);
-	 m_textureColors.Backup (lightManager.TexColor (0), MAX_TEXTURES_D2);
+	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.Count (), 6);
+	 m_textureColors.Backup (lightManager.TexColor (0), lightManager.TexColorCount ());
 	 m_vertexColors.Backup (lightManager.VertexColor (0), vertexManager.Count ());
 	}
 
@@ -121,49 +124,25 @@ if (dataFlags & udDynamicLight) {
 
 //------------------------------------------------------------------------------
 
-void CUndoData::Restore (undoData dataFlags) 
+void CUndoData::Restore (void) 
 {
-if (dataFlags & udVertices) 
-	m_vertices.Restore ();
-
-if (dataFlags & udSegments) {
-	m_segments.Restore ();
-	segmentManager.SecretData () = m_secretData;
-	}
-
-if (dataFlags & udMatCens) {
-	m_robotMakers.Restore ();
-	m_equipMakers.Restore ();
-	}
-
-if (dataFlags & udWalls) 
-	!m_walls.Restore ();
-
-if (dataFlags & udTriggers) {
-	m_triggers [0].Restore ();
-	m_triggers [1].Restore ();
-	triggerManager.ReactorData () = m_reactorData;
-	}
-
-if (dataFlags & udObjects) 
-	m_objects.Restore ();
-
-if (dataFlags & udRobots) 
-	m_robotInfo.Restore ();
-
-if (dataFlags & udVariableLights) 
-	m_variableLights.Restore ();
-
-if (dataFlags & udStaticLight) {
-	 m_faceColors.Restore ();
-	 m_textureColors.Restore ();
-	 m_vertexColors.Restore ();
-	}
-
-if (dataFlags & udDynamicLight) {
-	m_deltaIndices.Restore ();
-	m_deltaValues.Restore ();
-	}
+m_vertices.Restore ();
+m_segments.Restore ();
+segmentManager.SecretData () = m_secretData;
+m_robotMakers.Restore ();
+m_equipMakers.Restore ();
+m_walls.Restore ();
+m_triggers [0].Restore ();
+m_triggers [1].Restore ();
+triggerManager.ReactorData () = m_reactorData;
+m_objects.Restore ();
+m_robotInfo.Restore ();
+m_variableLights.Restore ();
+m_faceColors.Restore ();
+m_textureColors.Restore ();
+m_vertexColors.Restore ();
+m_deltaIndices.Restore ();
+m_deltaValues.Restore ();
 }
 
 //------------------------------------------------------------------------------
@@ -318,6 +297,8 @@ else { // create a new backup
 		}
 	return Id ();
 	}
+#else
+return Id ();
 #endif
 }
 
@@ -374,7 +355,7 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Begin (undoFlags dataFlags) 
+void CUndoManager::Begin (eUndoFlags dataFlags) 
 {
 if (0 == m_nModified++) 
 	Update ();
