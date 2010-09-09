@@ -14,6 +14,13 @@ CWallManager wallManager;
 
 //------------------------------------------------------------------------------
 
+bool CWallManager::Full (void)
+{
+return WallCount () >= MAX_WALLS;
+}
+
+//------------------------------------------------------------------------------
+
 bool CWallManager::HaveResources (void)
 {
 CWall* wallP = segmentManager.Wall ();
@@ -96,8 +103,8 @@ sideP->SetWall (nWall);
 CWall* wallP = Wall (nWall);
 wallP->Setup (key, nWall, (byte) type, nClip, nTexture, false);
 wallP->Index () = nWall;
-wallP->m_info.flags = flags;
-wallP->m_info.keys = keys;
+wallP->Info ().flags = flags;
+wallP->Info ().keys = keys;
 // update number of Walls () in mine
 WallCount ()++;
 undoManager.End ();
@@ -127,7 +134,7 @@ WallCount ()--;
 if (nDelWall < --Count ()) {
 	CWall* delWallP = Wall (nDelWall);
 	*delWallP = *Wall (Count ());
-	segmentManager.Side (delWallP)->SetWall (nDelWall);
+	segmentManager.Side (*delWallP)->SetWall (nDelWall);
 	}
 
 #endif
@@ -150,11 +157,11 @@ if (delWallP == null)
 undoManager.Begin (udSegments | udWalls | udTriggers);
 delWallP->Backup (opDelete);
 // if trigger exists, remove it as well
-triggerManager.DeleteFromWall (delWallP->m_info.nTrigger);
+triggerManager.DeleteFromWall (delWallP->Info ().nTrigger);
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.OppositeWall (*delWallP);
 if (oppWallP != null) 
-	oppWallP->m_info.linkedWall = -1;
+	oppWallP->Info ().linkedWall = -1;
 
 triggerManager.DeleteTargets (*delWallP);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
@@ -181,7 +188,7 @@ return null;
 CWall* CWallManager::FindByTrigger (short nTrigger, int i)
 {
 for (CWallIterator wi; wi; wi++)
-	if (wi->m_info.nTrigger == nTrigger)
+	if (wi->Info ().nTrigger == nTrigger)
 		return &(*wi);
 return null;
 }
@@ -360,14 +367,14 @@ if (!triggerManager.HaveResources ())
 undoManager.Begin (udSegments | udWalls);
 if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
-	Wall (WallCount ()- 1)->m_info.nClip = 10;
+	Wall (WallCount ()- 1)->Info ().nClip = 10;
 	segmentManager.SetTextures (current, 0, DLE.IsD1File () ? 444 : 508);
 	triggerManager.Create (WallCount () - 1, type);
 // add a new wall and trigger to the opposite segment/side
 	CSideKey opp;
 	if (segmentManager.OppositeSide (opp) && Create (opp, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		// set clip number and texture
-		Wall (WallCount () - 1)->m_info.nClip = 10;
+		Wall (WallCount () - 1)->Info ().nClip = 10;
 		segmentManager.SetTextures (opp, 0, DLE.IsD1File () ? 444 : 508);
 		triggerManager.UpdateReactor ();
 		undoManager.End ();
@@ -427,7 +434,9 @@ void CWallManager::ReadWalls (CFileManager& fp, int nFileVersion)
 {
 if (m_info [0].offset >= 0) {
 	fp.Seek (m_info [0].offset);
+#if USE_FREELIST
 	m_free.Reset ();
+#endif
 	for (short i = 0; i < WallCount (); i++) {
 		if (i < MAX_WALLS) {
 			CWall* wallP = Wall (Add ());
@@ -467,7 +476,7 @@ if (m_info [1].offset >= 0) {
 	for (short i = 0; i < DoorCount (); i++) {
 		if (i < MAX_DOORS) {
 			m_doors [i].Read (fp, nFileVersion);
-			m_doors [i].m_nIndex = i;
+			m_doors [i].Index () = i;
 			}
 		else {
 			CDoor d;

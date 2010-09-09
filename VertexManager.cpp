@@ -4,7 +4,7 @@
 
 // ----------------------------------------------------------------------------- 
 
-bool Full (void) 
+bool CVertexManager::Full (void) 
 { 
 return Count () >= MAX_VERTICES; 
 }
@@ -60,8 +60,8 @@ undoManager.Begin (udVertices);
 if (nDelVert < --Count ()) {
 	*Vertex (nDelVert) = *Vertex (Count ());
 	segmentManager.UpdateVertices (Count (), nDelVert);
+	}
 undoManager.End ();
-return Count ();
 
 #endif //USE_FREELIST
 }
