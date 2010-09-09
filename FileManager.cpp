@@ -18,7 +18,6 @@ COPYRIGHT 1993-1999 PARALLAX SOFTWARE CORPORATION.  ALL RIGHTS RESERVED.
 #include <stdio.h>
 #include <string.h>
 #if defined (_WIN32_WCE) || defined (_WIN32)
-#	include <windows.h>
 #	include <sys/stat.h>
 #else
 #	include <sys/stat.h>
@@ -403,7 +402,6 @@ byte CFileManager::ReadByte (void) { ReadScalar (byte) }
 char CFileManager::ReadChar (void) { ReadScalar (char) }
 float CFileManager::ReadFloat (void) { ReadScalar (float) }
 double CFileManager::ReadDouble (void) { ReadScalar (double) }
-int CFileManager::ReadInt32 (void) { ReadScalar (int) }
 short CFileManager::ReadFixAng (void) { ReadScalar (short) }
 
 int CFileManager::WriteInt32 (int v) { WriteScalar (v) }
@@ -415,8 +413,6 @@ int CFileManager::WriteByte (byte v) { WriteScalar (v) }
 int CFileManager::WriteChar (char v) { WriteScalar (v) }
 int CFileManager::WriteFloat (float v) { WriteScalar (v) }
 int CFileManager::WriteDouble (double v) { WriteScalar (v) }
-int CFileManager::WriteInt32 (int v) { WriteScalar (v) }
-int CFileManager::WriteInt16 (short v) { WriteScalar (v) }
 
 // ----------------------------------------------------------------------------
 

@@ -51,7 +51,7 @@ class CVicinity {
 				for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 					// skip if there is a wall and its a door
 					CWall* wallP = segmentManager.Wall (CSideKey (nSegment, nSide));
-					if ((wallP == null) && (wallP->m_info.type != WALL_DOOR))
+					if ((wallP == null) && (wallP->Info ().type != WALL_DOOR))
 						Compute (segP->Child (nSide), nDepth - 1);
 					}
 				}
@@ -139,7 +139,7 @@ undoManager.Begin (udSegments);
 //#pragma omp for
 	for (CSegmentIterator si; si; si++) {
 		CSegment *segP = &(*si);
-		bool = false;
+		bool bUndo = false;
 		for (int nPoint = 0; nPoint < 8; nPoint++) {
 			int nVertex = segP->m_info.verts [nPoint];
 			if ((maxBrightness [nVertex].count > 0) && (bAll || (vertexManager.Status (nVertex) & MARKED_MASK))) {
@@ -164,7 +164,7 @@ delete[] maxBrightness;
 
 //---------------------------------------------------------------------------------
 
-void CLightManager::ComputeStaticLight (double m_fLightScale, bool bAll, bool bCopyTexLights) 
+void CLightManager::ComputeStaticLight (double fLightScale, bool bAll, bool bCopyTexLights) 
 {
 // clear all lighting on marked cubes
 m_fLightScale = fLightScale;
@@ -210,7 +210,7 @@ for (CSegmentIterator si; si; si++) {
 		if ((nTexture > 0) && (nTexture < MAX_TEXTURES))
 			brightness = max (brightness, LightWeight (nTexture));
 		if (brightness > 0)
-			GatherLight (nSegment, nSide, (uint) (brightness * 2 * m_fLightScale), 1.0, bAll, bCopyTexLights);
+			GatherLight (nSegment, nSide, (uint) (brightness * 2 * m_fLightScale), bAll, bCopyTexLights);
 		}
 	}
 undoManager.End ();
@@ -295,7 +295,6 @@ for (int i = 0; i < 4; i++, uvlP++) {
 void CLightManager::GatherLight (short nSourceSeg, short nSourceSide, uint brightness, bool bAll, bool bCopyTexLights) 
 {
 	CSegment*	segP = segmentManager.Segment (0);
-	double		m_cornerLights [4];
 	// find orthogonal angle of source segment
 	CVertex A = -segmentManager.CalcSideNormal (CSideKey (nSourceSeg, nSourceSide));
 	// remember to flip the sign since we want it to point inward
@@ -310,7 +309,7 @@ segP = segmentManager.Segment (nSourceSeg);
 CVicinity vicinity;
 vicinity.Compute (nSourceSeg, m_renderDepth);	//mark all children that are at most lightRenderDepth segments away
 
-CColor *lightColorP = LightColor (nSourceSeg, nSourceSide);
+CColor *lightColorP = LightColor (CSideKey (nSourceSeg, nSourceSide));
 if (!lightColorP->m_info.index) {
 	lightColorP->m_info.index = 255;
 	lightColorP->m_info.color.r =
@@ -350,13 +349,13 @@ bool bWall = false;
 
 			// if the child side is the same as the source side, then set light and continue
 			if ((nChildSide == nSourceSide) && (nChildSeg == nSourceSeg)) {
-				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP, null, m_fLightScale);
+				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP);
 				continue;
 				}
 
 			// calculate vector between center of source segment and center of child
-			if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, m_fLightScale, bWall)) 
-				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP, m_fLightScale);
+			if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, bWall)) 
+				GatherFaceLight (childSegP, nChildSide, brightness, lightColorP);
 			}
 		}
 	}
@@ -400,12 +399,12 @@ bool bWall = false;
 // segmentManager.Segment () close to variable lights will be computed properly.
 //------------------------------------------------------------------------
 
-void CLightManager::ComputeVariableLight (double m_fLightScale, int force) 
+void CLightManager::ComputeVariableLight (double fLightScale, int force) 
 {
 m_fLightScale = fLightScale;
 undoManager.Begin (udDynamicLight);
 for (int nDepth = m_deltaRenderDepth; nDepth; nDepth--)
-	if (CalcLightDeltas (m_fLightScale, force, nDepth))
+	if (CalcLightDeltas (force, nDepth))
 		break;
 undoManager.End ();
 }
@@ -483,7 +482,7 @@ m_fLightScale = 1.0; ///= 100.0;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
 				CTrigger* trigP = triggerManager.FindByTarget (key);
-				if ((trigP != null) && (trigP->m_info.type >= TT_LIGHT_OFF))
+				if ((trigP != null) && (trigP->Info ().type >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas)
@@ -556,7 +555,7 @@ m_fLightScale = 1.0; ///= 100.0;
 						if (wallP == null)
 							continue;
 						// .. or its not a door ..
-						if (wallP->m_info.type == WALL_OPEN) 
+						if (wallP->Info ().type == WALL_OPEN) 
 							continue; // don't put light because there is no texture here
 						}
 					// don't affect non-variable light emitting textures (e.g. lava)
@@ -598,7 +597,7 @@ m_fLightScale = 1.0; ///= 100.0;
 						}
 
 					// calculate vector between center of source segment and center of child
-						if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, m_fLightScale, wallP != null)) {
+						if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, wallP != null)) {
 							if ((DeltaValueCount () >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{
@@ -632,8 +631,7 @@ return (nErrors == 0);
 
 //---------------------------------------------------------------------------------
 
-bool CLightManager::CalcCornerLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, 
-												  double m_fLightScale, bool bIgnoreAngle)
+bool CLightManager::CalcCornerLights (int nSegment, int nSide, CVertex& sourceCenter, CVertex* sourceCorners, CVertex& vertex, bool bIgnoreAngle)
 {
 	CSegment *segP = segmentManager.Segment (nSegment);
 // calculate vector between center of source segment and center of child

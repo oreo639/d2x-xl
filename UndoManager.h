@@ -176,7 +176,7 @@ public:
 
 	inline uint& Id (void) { return m_nId; }
 
-	void Backup (eUndoFlags dataFlags);
+	void Backup (int dataFlags);
 
 	bool Cleanup (void);
 
@@ -254,7 +254,7 @@ class CUndoManager
 
 		void SetModified (bool bModified);
 
-		void Begin (eUndoFlags dataFlags);
+		void Begin (int dataFlags);
 
 		void End (void);
 

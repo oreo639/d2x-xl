@@ -80,7 +80,7 @@ m_reactorData.Destroy ();
 
 //------------------------------------------------------------------------------
 
-void CUndoData::Backup (eUndoFlags dataFlags) 
+void CUndoData::Backup (int dataFlags) 
 {
 if (dataFlags & udVertices) 
 	m_vertices.Backup (vertexManager.Vertex (0), &vertexManager.Count ());
@@ -360,7 +360,7 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Begin (eUndoFlags dataFlags) 
+void CUndoManager::Begin (int dataFlags) 
 {
 if (0 == m_nModified++) 
 	Update ();

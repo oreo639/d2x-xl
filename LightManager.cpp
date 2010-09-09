@@ -116,7 +116,7 @@ return -1;
 
 //------------------------------------------------------------------------------
 
-CVariableLight CLightManager::AddVariableLight (short index) 
+CVariableLight* CLightManager::AddVariableLight (short index) 
 {
 if (Count () >= MAX_VARIABLE_LIGHTS) {
 	if (!bExpertMode && (index < 0)) {
@@ -157,7 +157,7 @@ if (VariableLight (key) != -1) {
 	}
 // we are adding a new variable light
 undoManager.Begin (udVariableLights);
-CVariableLight lightP = Add ();
+CVariableLight* lightP = AddVariableLight ();
 if (lightP == null) {
 	undoManager.End ();
 	return -1;
@@ -211,7 +211,7 @@ if (bUseTexColors && UseTexColors ()) {
 	segmentManager.Textures (key, nBaseTex, nOvlTex);
 	CColor *colorP;
 	if (nOvlTex > 0) {
-		colorP = GetTexColor (nOvlTex);
+		colorP = GetTexColor (nOvlTex, false);
 		if (colorP != null)
 			return colorP;
 		}
@@ -381,7 +381,7 @@ if (r > left)
 
 // -----------------------------------------------------------------------------
 
-void SortDeltaIndex (void) 
+void CLightManager::SortDeltaIndex (void) 
 { 
 for (int i = 0; i < DeltaIndexCount (); i++)
 	LightDeltaIndex (i)->Index () = i;
@@ -390,7 +390,7 @@ SortDeltaIndex (0, DeltaIndexCount () - 1);
 
 // -----------------------------------------------------------------------------
 
-void UnsortDeltaIndex (void) 
+void CLightManager::UnsortDeltaIndex (void) 
 { 
 UnsortDeltaIndex (0, DeltaIndexCount () - 1); 
 }

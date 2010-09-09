@@ -124,7 +124,7 @@ switch (EditType ()) {
 		lightManager.DeleteVariableLight (Index (), false);
 		break;
 	case opDelete:
-		Parent () = lightManager.AddVariableLight (-1);
+		SetParent (lightManager.AddVariableLight (-1));
 		// fall through
 	case opModify:
 		if (Parent ())
@@ -145,7 +145,7 @@ switch (EditType ()) {
 		lightManager.DeleteVariableLight (Index (), false);
 		break;
 	case opAdd:
-		Parent () = lightManager.AddVariableLight (-1);
+		SetParent (lightManager.AddVariableLight (-1));
 		// fall through
 	case opModify:
 		if (Parent ())

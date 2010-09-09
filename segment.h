@@ -195,7 +195,7 @@ public:
 
 	inline void Mark (byte mask = MARKED_MASK) { m_info.wallFlags |= mask; }
 
-	inline void Unark (byte mask = MARKED_MASK) { m_info.wallFlags &= ~mask; }
+	inline void Unmark (byte mask = MARKED_MASK) { m_info.wallFlags &= ~mask; }
 
 	inline bool IsMarked (byte mask = MARKED_MASK) { return (m_info.wallFlags & mask) != 0; }
 
