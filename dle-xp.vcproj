@@ -6581,11 +6581,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Illumination.cpp"
+					RelativePath=".\LightManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\LightManager.cpp"
+					RelativePath=".\LightManager.Illuminate.cpp"
 					>
 				</File>
 				<File
