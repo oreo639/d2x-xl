@@ -33,7 +33,7 @@ LoadMine (filename, bLoadFromHog, bNewMine);
 if (!bNewMine && IsD2XLevel () && LevelIsOutdated ()) {
 	if (LevelVersion () < 15) {
 		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
-		triggerManager.NumObjTriggers () = 0;
+		triggerManager.ObjTriggerCount () = 0;
 		}
 	UpdateLevelVersion ();
 	}

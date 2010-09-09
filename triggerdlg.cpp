@@ -448,7 +448,7 @@ else {
 	if (m_nClass) {
 		if (current.m_nObject == theMine->ObjTriggers (m_nTrigger)->m_info.nObject)
 			return false;
-		for (int i = 0, j = theMine->NumObjTriggers (); j; j--, i++) {
+		for (int i = 0, j = theMine->ObjTriggerCount (); j; j--, i++) {
 			if (current.m_nObject == theMine->ObjTriggers (i)->m_info.nObject) {
 				m_nTrigger = i;
 				return false;

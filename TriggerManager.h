@@ -65,9 +65,9 @@ class CTriggerManager {
 
 		inline int& Count (int nClass) { return m_info [nClass].count; }
 
-		inline int& NumWallTriggers (void) { return Count (0); }
+		inline int& WallTriggerCount (void) { return Count (0); }
 
-		inline int& NumObjTriggers (void) { return Count (1); }
+		inline int& ObjTriggerCount (void) { return Count (1); }
 
 		inline int& NumReactorTriggers (void) { return m_reactorInfo.count; }
 

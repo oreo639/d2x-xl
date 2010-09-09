@@ -51,7 +51,7 @@ if (left < r)
 
 void CTriggerManager::SortObjTriggers (void)
 {
-	int	h = NumObjTriggers ();
+	int	h = ObjTriggerCount ();
 
 if (h > 1) {
 	for (ushort i = 0; i < h; i++)
@@ -67,9 +67,9 @@ void CTriggerManager::RenumberObjTriggers (void)
 	CTrigger*	trigP = ObjTrigger (0);
 	int			i;
 
-for (i = NumObjTriggers (); i; i--, trigP++)
+for (i = ObjTriggerCount (); i; i--, trigP++)
 	trigP->m_info.nObject = objectManager.Index (objectManager.FindBySig (trigP->m_info.nObject));
-i = NumObjTriggers ();
+i = ObjTriggerCount ();
 while (i) {
 	if (ObjTrigger (--i)->m_info.nObject < 0)
 		DeleteFromObject (i);
@@ -83,7 +83,7 @@ void CTriggerManager::RenumberTargetObjs (void)
 {
 	CTrigger* trigP = Trigger (0);
 
-for (int i = NumObjTriggers (); i; i--, trigP++) {
+for (int i = ObjTriggerCount (); i; i--, trigP++) {
 	CSideKey* targetP = trigP->m_targets;
 	for (int j = 0; j < trigP->m_count; ) {
 		if (targetP->m_nSide >= 0) 
@@ -107,7 +107,7 @@ if (!HaveResources ())
 	return NO_TRIGGER; 
 int nTrigger = --m_free;
 m_triggers [nTrigger].Clear ();
-NumWallTriggers ()++;
+WallTriggerCount ()++;
 return nTrigger;
 }
 
@@ -238,8 +238,18 @@ undoManager.SetModified (true);
 undoManager.Begin ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
+
+#if USE_FREELIST
 m_free += nDelTrigger;
-NumWallTriggers ()--;
+WallTriggerCount ()--;
+#else
+if (nDelTrigger < --WallTriggerCount ()) {
+	*delTrigP = WallTrigger (Count ());
+	CWall* wallP = wallManager.FindByTrigger (Count ());
+	if (wallP != null)
+		wallP->Info ().nTrigger = nDelTrigger;
+	}
+#endif
 
 undoManager.End ();
 DLE.MineView ()->Refresh ();
@@ -340,20 +350,20 @@ if ((objP->m_info.type != OBJ_ROBOT) &&
 	return null;
 	}
 
-if (NumObjTriggers () >= MAX_OBJ_TRIGGERS) {
+if (ObjTriggerCount () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return null;
 	}
 bool bUndo = undoManager.SetModified (true);
 undoManager.Begin ();
-short nTrigger = NumObjTriggers ()++;
+short nTrigger = ObjTriggerCount ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
 trigP->m_info.nObject = nObject;
 trigP->Index () = nTrigger;
 undoManager.End ();
 SortObjTriggers ();
-for (ushort i = NumObjTriggers (); i; )
+for (ushort i = ObjTriggerCount (); i; )
 	if (ObjTrigger (--i)->Index () == nTrigger)
 		return ObjTrigger (i);
 return ObjTrigger (nTrigger);
@@ -363,18 +373,18 @@ return ObjTrigger (nTrigger);
 
 void CTriggerManager::DeleteFromObject (short nDelTrigger) 
 {
-if ((nDelTrigger < 0) || (nDelTrigger >= NumObjTriggers ()))
+if ((nDelTrigger < 0) || (nDelTrigger >= ObjTriggerCount ()))
 	return;
-if (nDelTrigger < --NumObjTriggers ())
-	*ObjTrigger (nDelTrigger) = *ObjTrigger (NumObjTriggers ());
-ObjTrigger (NumObjTriggers ())->Index () = -1; // mark as unused (needed by the trigger iterator)
+if (nDelTrigger < --ObjTriggerCount ())
+	*ObjTrigger (nDelTrigger) = *ObjTrigger (ObjTriggerCount ());
+ObjTrigger (ObjTriggerCount ())->Index () = -1; // mark as unused (needed by the trigger iterator)
 }
 
 //------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteObjTriggers (short nObject) 
 {
-for (short i = NumObjTriggers (); i; )
+for (short i = ObjTriggerCount (); i; )
 	if (ObjTrigger (--i)->m_info.nObject == nObject)
 		DeleteFromObject (i);
 }
@@ -386,7 +396,7 @@ void CTriggerManager::DeleteTargets (CSideKey key)
 for (CWallTriggerIterator ti; ti; ti++)
 	ti->Delete (key);
 
-for (short i = NumObjTriggers (); i > 0; )
+for (short i = ObjTriggerCount (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
 }
@@ -456,17 +466,17 @@ if (Count (0) > MAX_TRIGGERS)
 int bObjTriggersOk = 1;
 
 if (nFileVersion >= 33) {
-	NumObjTriggers () = fp.ReadInt32 ();
-	for (short i = 0; i < NumObjTriggers (); i++) {
+	ObjTriggerCount () = fp.ReadInt32 ();
+	for (short i = 0; i < ObjTriggerCount (); i++) {
 		m_triggers [1][i].Read (fp, nFileVersion, true);
 		m_triggers [1][i].m_nIndex = i;
 		}
 	if (nFileVersion >= 40) {
-		for (short i = 0; i < NumObjTriggers (); i++)
+		for (short i = 0; i < ObjTriggerCount (); i++)
 			m_triggers [1][i].m_info.nObject = fp.ReadInt16 ();
 		}
 	else {
-		for (short i = 0; i < NumObjTriggers (); i++) {
+		for (short i = 0; i < ObjTriggerCount (); i++) {
 			fp.ReadInt16 ();
 			fp.ReadInt16 ();
 			m_triggers [1][i].m_info.nObject = fp.ReadInt16 ();
@@ -477,10 +487,10 @@ if (nFileVersion >= 33) {
 			fp.Seek (2 * sizeof (short) * fp.ReadInt16 (), SEEK_CUR);
 		}
 	}
-if (bObjTriggersOk && NumObjTriggers ())
+if (bObjTriggersOk && ObjTriggerCount ())
 	SortObjTriggers ();
 else {
-	NumObjTriggers () = 0;
+	ObjTriggerCount () = 0;
 	Clear (1);
 	}
 }
@@ -501,12 +511,12 @@ else {
 		ti->Write (fp, nFileVersion, false);
 
 	if (theMine->LevelVersion () >= 12) {
-		fp.Write (NumObjTriggers ());
-		if (NumObjTriggers () > 0) {
+		fp.Write (ObjTriggerCount ());
+		if (ObjTriggerCount () > 0) {
 			SortObjTriggers ();
-			for (i = 0; i < NumObjTriggers (); i++)
+			for (i = 0; i < ObjTriggerCount (); i++)
 				ObjTrigger (i)->Write (fp, nFileVersion, true);
-			for (i = 0; i < NumObjTriggers (); i++)
+			for (i = 0; i < ObjTriggerCount (); i++)
 				fp.WriteInt16 (ObjTrigger (i)->m_info.nObject);
 			}
 		}

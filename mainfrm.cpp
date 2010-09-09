@@ -1612,7 +1612,7 @@ else {
 		else
 			ErrorMsg ("Mine converted to a D2X-XL level.");
 		theMine->ConvertWallNum (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
-		theMine->NumObjTriggers () = 0;
+		theMine->ObjTriggerCount () = 0;
 		}
 	else {
 		theMine->SetLevelVersion (7);

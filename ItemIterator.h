@@ -1,6 +1,8 @@
 #ifndef __itemiterator_h
 #define __itemiterator_h
 
+#include "freelist.h"
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -16,7 +18,7 @@ class CGameItemIterator {
 
 	public:
 		CGameItemIterator (_T* buffer, int count) : m_index(0), m_buffer(buffer), m_count(count) {}
-
+#if USE_FREELIST
 		//prefix increment
 		inline _T& operator++ () { 
 			do {
@@ -53,7 +55,39 @@ class CGameItemIterator {
 			--m_count;
 			return *m_value; 
 			}
+#else //USE_FREELIST
+		//prefix increment
+		inline _T& operator++ () { 
+			if (m_index >= m_count)
+				return m_null;
+			--m_count;
+			return m_buffer [m_index++];
+			}
 
+		// postfix increment
+		inline _T& operator++ (int) { 
+			if (m_index >= m_count - 1)
+				return m_null;
+			--m_count;
+			return m_buffer [++m_index];
+			}
+
+		// prefix decrement
+		inline _T& operator-- () { 
+			if (m_index < 0)
+				return m_null;
+			--m_count;
+			return m_buffer [m_index--];
+			}
+
+		// postfix decrement
+		inline _T& operator-- (int) { 
+			if (m_index <= 0)
+				return m_null;
+			--m_count;
+			return m_buffer [--m_index];
+			}
+#endif // USE_FREELIST
 		inline CGameItemIterator& operator= (int i) { 
 			m_index = i;
 			return *this;

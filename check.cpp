@@ -314,7 +314,7 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 +
 										  theMine->Info ().walls.count * 2 +
 										  theMine->Info ().triggers.count * 3 +
 										  theMine->Info ().objects.count * 2 +
-										  theMine->NumObjTriggers ());
+										  theMine->ObjTriggerCount ());
 if (!CheckBotGens ())
 	if (!CheckEquipGens ())
 		if (!CheckSegments ())
@@ -1166,7 +1166,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	}
 
-trigCount = theMine->NumObjTriggers ();
+trigCount = theMine->ObjTriggerCount ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	trigP = theMine->ObjTriggers (nTrigger);

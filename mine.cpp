@@ -137,7 +137,7 @@ size_t nBytes = fp.Write (dataP, sizeof (byte), (ushort) res.Size ());
 fp.Close ();
 if (nBytes != res.Size ())
 	return 1;
-NumObjTriggers () = 0;
+ObjTriggerCount () = 0;
 return 0;
 }
 
