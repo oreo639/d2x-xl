@@ -90,6 +90,7 @@ class CMine {
 		inline void SetFileType (int fileType) { m_fileType = fileType; }
 		inline bool IsD1File (void) { return m_fileType == RDL_FILE; }
 		inline bool IsD2File (void) { return m_fileType != RDL_FILE; }
+		inline bool IsD2XFile (void) { return IsD2File () && IsD2XLevel (); }
 
 		inline CMineInfo& Info (void)	{ return Data ().m_info; }
 

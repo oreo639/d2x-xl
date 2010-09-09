@@ -3,7 +3,7 @@
 
 // ----------------------------------------------------------------------------- 
 
-bool Full (void) 
+bool CSegmentManager::Full (void) 
 { 
 return Count () >= MAX_SEGMENTS; 
 }
@@ -44,7 +44,7 @@ if (nDelSeg < --Count ()) {
 	triggerManager.UpdateTargets (Count (), nDelSeg);
 	objectManager.UpdateSegments (Count (), nDelSeg);
 	// update all walls inside the moved segment
-	CSide* sideP = Segment (nDelSeg)->Child (0);
+	CSide* sideP = Segment (nDelSeg)->Side (0);
 	for (int i = 0; i < 6; i++, sideP++) {
 		CWall* wallP = sideP->Wall ();
 		if (wallP != null)
@@ -166,7 +166,7 @@ return nNewSeg;
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
+bool CSegmentManager::Create (short nSegment, bool bCreate, byte nFunction, short nTexture, char* szError)
 {
 if ((szError != null) && theMine->IsD1File ()) {
 	if (!bExpertMode)
@@ -174,12 +174,11 @@ if ((szError != null) && theMine->IsD1File ()) {
 	return false;
 	}
 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 if (bCreate) {
-	nSegment = Create (nSegment);
+	nSegment = Add ();
 	if (nSegment < 0) {
-		Remove (nSegment, false);
-		undoManager.Unroll ();
+		Remove (nSegment);
 		return false; 
 		}
 	}	
@@ -187,13 +186,13 @@ DLE.MineView ()->DelayRefresh (true);
 m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
 	if (bCreate)
-		Remove (nSegment, false);
+		Remove (nSegment);
 	undoManager.End ();
 	DLE.MineView ()->DelayRefresh (false);
 	m_bCreating = false;
 	return false; 
 	}	
-Segment (nSegment)->Save ();
+Segment (nSegment)->Backup ();
 m_bCreating = false;
 undoManager.End ();
 DLE.MineView ()->DelayRefresh (false);
@@ -203,16 +202,16 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, 
+bool CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, 
 												 CMatCenter* matCens, CMineItemInfo& info, char* szError) 
 {
 if (info.count >= MAX_MATCENS) {
     ErrorMsg (szError);
-	 return -1;
+	 return false;
 	}
 undoManager.Begin (udSegments);
-if (Create (nSegment, bCreate, nType) < 0)
-	return -1;
+if (!Create (nSegment, bCreate, nType))
+	return false;
 matCens [info.count].Setup (nSegment, info.count, 0);
 Segment (nSegment)->m_info.value = 
 Segment (nSegment)->m_info.nMatCen = info.count++;
@@ -223,11 +222,11 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateEquipMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
 if (!theMine->IsD2XFile ()) {
 	ErrorMsg ("Equipment makers are only available in D2X-XL levels.");
-	return -1;
+	return false;
 	}
 return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures, EquipMaker (0), m_matCenInfo [1], 
 							"Maximum number of equipment makers reached");
@@ -235,7 +234,7 @@ return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_EQUIPMAKER, bSetDefTextures
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateRobotMaker (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
 return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures, RobotMaker (0), m_matCenInfo [0], 
 							"Maximum number of robot makers reached");
@@ -243,35 +242,35 @@ return CreateMatCen (nSegment, bCreate, SEGMENT_FUNC_ROBOTMAKER, bSetDefTextures
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
+bool CSegmentManager::CreateReactor (short nSegment, bool bCreate, bool bSetDefTextures) 
 {
 return Create (nSegment, bCreate, SEGMENT_FUNC_REACTOR, bSetDefTextures ? theMine->IsD1File () ? 10 : 357 : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
+bool CSegmentManager::CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
 {
 return Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Flag goals are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
+bool CSegmentManager::CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture) 
 {
 return Create (nSegment, bCreate, nType, bSetDefTextures ? nTexture : -1, "Team start positions are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateSkybox (short nSegment, bool bCreate) 
+bool CSegmentManager::CreateSkybox (short nSegment, bool bCreate) 
 {
 return Create (nSegment, bCreate, SEGMENT_FUNC_SKYBOX, -1, "Skyboxes are not available in Descent 1.");
 }
 
 // ----------------------------------------------------------------------------- 
 
-short CSegmentManager::CreateSpeedBoost (short nSegment, bool bCreate) 
+bool CSegmentManager::CreateSpeedBoost (short nSegment, bool bCreate) 
 {
 return Create (nSegment, bCreate, SEGMENT_FUNC_SPEEDBOOST, -1, "Speed boost cubes are not available in Descent 1.");
 }
@@ -315,7 +314,7 @@ else {
 			if (OppositeSide (opp))
 				wallManager.Create (opp, WALL_ILLUSION, 0, KEY_NONE, -1, -1);
 			}
-		Segment (nSegment)->Save ();
+		Segment (nSegment)->Backup ();
 		current.m_nSegment = nSegment;
 		}
 	}
@@ -387,7 +386,7 @@ switch (m_nAddMode) {
 			//nVertex = curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]; 
 			nVertex = newVerts [i];
 			*vertexManager.Vertex (nVertex) = A [i]; 
-			vertexManager.Vertex (nVertex)->Save (); // update the newly added vertex instead of creating a new backup
+			vertexManager.Vertex (nVertex)->Backup (); // update the newly added vertex instead of creating a new backup
 			}
 		}
 	break; 
@@ -403,8 +402,8 @@ switch (m_nAddMode) {
 		// set the new vertices
 		for (i = 0; i < 4; i++) {
 			nVertex = newVerts [i];
-			*vertexManager.Vertex (nVertex) = vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]) + vNormal; 
-			vertexManager.Vertex (nVertex)->Save (); // do not create a new backup right after adding this vertex
+			*vertexManager.Vertex (nVertex) = *vertexManager.Vertex (curSegP->m_info.verts [sideVertTable [current.m_nSide][i]]) + vNormal; 
+			vertexManager.Vertex (nVertex)->Backup (); // do not create a new backup right after adding this vertex
 			}
 		}
 	break; 
@@ -466,7 +465,7 @@ switch (m_nAddMode) {
 		for (i = 0; i < 4; i++) {
 			nVertex = newVerts [i];
 			*vertexManager.Vertex (nVertex) = A [i + 4]; 
-			vertexManager.Vertex (nVertex)->Save ();
+			vertexManager.Vertex (nVertex)->Backup ();
 			}
 		}
 	}
@@ -549,7 +548,7 @@ if (info.count > 0) {
 		for (int nClass = 0; nClass < 2; nClass++) {
 			CTrigger* trigP = triggerManager.Trigger (0, nClass);
 			for (CTriggerIterator i (nClass); i; i++) {
-				if (i->m_info.type == TT_MATCEN)
+				if (i->Info ().type == TT_MATCEN)
 					i->Delete (key);
 				}
 			}
@@ -565,7 +564,7 @@ void CSegmentManager::Undefine (short nSegment)
 {
 	CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 
-segP->Save ();
+segP->Backup ();
 nSegment = Index (segP);
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
 	RemoveMatCenter (segP, RobotMaker (0), m_matCenInfo [0]);
@@ -583,13 +582,13 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 		// if there is a wall and it's a fuel cell delete it
 		CSideKey key (nSegment, nSide);
 		CWall *wallP = Wall (key);
-		if ((wallP != null) && (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
+		if ((wallP != null) && (wallP->Info ().type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
 			wallManager.Delete (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		CSideKey opp;
 		if (OppositeSide (key, opp)) {
 			wallP = Wall (opp);
-			if ((wallP != null) && (wallP->m_info.type == WALL_ILLUSION)) {
+			if ((wallP != null) && (wallP->Info ().type == WALL_ILLUSION)) {
 				CSide* oppSideP = Side (opp);
 				if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
 					wallManager.Delete (oppSideP->m_info.nWall);
@@ -672,7 +671,7 @@ for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 				for (short j = 0; j < 4; j++) {
 					//segP->m_sides [nChild].m_info.uvls [j].u = (short) ((double) defaultUVLs [j].u / scale); 
 					//segP->m_sides [nChild].m_info.uvls [j].v = (short) ((double) defaultUVLs [j].v / scale); 
-					segP->Uvls (nSide) [j].l = delSegP->Uvls (nSide) [j]->l; 
+					segP->Uvls (nChild) [j].l = delSegP->Uvls (nChild) [j].l; 
 				}
 			}
 		}

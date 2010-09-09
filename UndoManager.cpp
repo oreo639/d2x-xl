@@ -88,11 +88,10 @@ if (dataFlags & udVertices)
 if (dataFlags & udSegments)
 	m_segments.Backup (segmentManager.Segment (0), &segmentManager.Count ());
 
-if (dataFlags & udRobotMakers)
+if (dataFlags & udMatCenters) {
 	m_robotMakers.Backup (segmentManager.RobotMaker (0), &segmentManager.RobotMakerCount ());
-
-if (dataFlags & udEquipMakers)
 	m_equipMakers.Backup (segmentManager.EquipMaker (0), &segmentManager.EquipMakerCount ());
+	}
 
 if (dataFlags & udWalls) 
 	m_walls.Backup (wallManager.Wall (0), &wallManager.WallCount ());

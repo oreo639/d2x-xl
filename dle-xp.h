@@ -54,7 +54,7 @@ public:
 		{ return theMine ? theMine->LevelVersion () : 7; }
 	inline bool IsD1File (void) { return FileType () == RDL_FILE; }
 	inline bool IsD2File (void) { return FileType () != RDL_FILE; }
-	inline bool IsD2XFile (void) { return (FileType () != RDL_FILE) && (LevelVersion () >= 12); }
+	inline bool IsD2XFile (void) { return (FileType () != RDL_FILE) && (LevelVersion () >= 9); }
 	inline CWnd *TexturePane ()
 		{ return MainFrame ()->TexturePane (); }
 	inline CWnd *MinePane ()

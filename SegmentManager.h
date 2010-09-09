@@ -53,7 +53,7 @@ class CSegmentManager {
 	public:
 		segmentList				m_segments;
 		CMineItemInfo			m_segmentInfo;
-		FREELIST(CSegment);
+		FREELIST(CSegment)
 		int						m_nAddMode;
 		robotMakerList			m_matCens [2];
 		CMineItemInfo			m_matCenInfo [2];
@@ -146,9 +146,9 @@ class CSegmentManager {
 		CSegment* FindRobotMaker (short i = 0);
 
 		// Operations
-		short Add (bool bUndo = false);
+		short Add (void);
 
-		void Remove (short nDelSeg, bool bUndo = false);
+		void Remove (short nDelSeg);
 
 		short Create (void);
 
@@ -156,21 +156,21 @@ class CSegmentManager {
 
 		void ResetSide (short nSegment, short nSide);
 
-		short CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateReactor (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
 
-		short CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateRobotMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
 
-		short CreateEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+		bool CreateEquipMaker (short nSegment = -1, bool bCreate = true, bool bSetDefTextures = true); 
+
+		bool CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+
+		bool CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
+
+		bool CreateSpeedBoost (short nSegment, bool bCreate);
+
+		bool CreateSkybox (short nSegment, bool bCreate);
 
 		short CreateFuelCenter (short nSegment = -1, byte nType = SEGMENT_FUNC_FUELCEN, bool bCreate = true, bool bSetDefTextures = true); 
-
-		short CreateGoal (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
-
-		short CreateTeam (short nSegment, bool bCreate, bool bSetDefTextures, byte nType, short nTexture);
-
-		short CreateSpeedBoost (short nSegment, bool bCreate);
-
-		short CreateSkybox (short nSegment, bool bCreate);
 
 		void Init (short nSegment);
 
