@@ -163,6 +163,7 @@ class CDoubleVector {
 	inline void Write (CFileManager& fp) { v.Write (fp); }
 #endif
 	inline const bool operator== (const CDoubleVector other);
+	inline const bool operator!= (const CDoubleVector other);
 	inline double& CDoubleVector::operator[] (const size_t i);
 	inline const CDoubleVector& operator= (const tDoubleVector& other);
 	inline const CDoubleVector& operator= (const CDoubleVector& other);
@@ -185,7 +186,7 @@ class CDoubleVector {
 
 	inline const double Mag (void) { return sqrt (v.x * v.x + v.y * v.y + v.z * v.z); }
 	inline const CDoubleVector& Normalize (void) { *this /= Mag (); return *this; }
-	void CDoubleVector::Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
+	void Rotate (CDoubleVector& origin, CDoubleVector& normal, double angle);
 };
 
 // -----------------------------------------------------------------------------
@@ -290,6 +291,10 @@ inline const int CFixVector::Mag (void) { return D2X (CDoubleVector (*this).Mag 
 
 inline const bool CDoubleVector::operator== (const CDoubleVector other) {
 	return (v.x == other.v.x) && (v.y == other.v.y) && (v.z == other.v.z);
+}
+
+inline const bool CDoubleVector::operator!= (const CDoubleVector other) {
+	return (v.x != other.v.x) || (v.y != other.v.y) || (v.z != other.v.z);
 }
 
 inline double& CDoubleVector::operator[] (const size_t i) { return ((double*) &v) [i]; }

@@ -43,7 +43,9 @@ class CVertexManager  {
 		// Vertex getters
 		void ResetInfo (void) { 
 			m_info.Reset (); 
+#if USE_FREELIST
 			m_free.Reset ();
+#endif
 			}
 
 		inline vertexList& Vertices (void) { return m_vertices; }
@@ -56,7 +58,7 @@ class CVertexManager  {
 #ifdef USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
 #else
-		inline bool Full (void) { return Count () >= MAX_VERTICES; }
+		bool Full (void);
 #endif
 
 		inline int& FileOffset (void) { return m_info.offset; }
@@ -86,7 +88,9 @@ class CVertexManager  {
 		CVertexManager () {
 			ResetInfo ();
 			Clear ();
+#if USE_FREELIST
 			m_free.Create (Vertex (0), VERTEX_LIMIT);
+#endif
 			}
 	};
 

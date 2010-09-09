@@ -71,7 +71,9 @@ class CTriggerManager {
 			m_info [0].Reset ();
 			m_info [1].Reset ();
 			m_reactorInfo.Reset ();
+#if USE_FREELIST
 			m_free.Reset ();
+#endif
 			}
 
 		inline triggerList& TriggerList (int i) { return m_triggers [i]; }
@@ -170,7 +172,7 @@ class CTriggerManager {
 #if USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
 #else
-		inline bool Full (void) { return Count () >= MAX_TRIGGERS; }
+		bool Full (void);
 #endif
 		inline void ReadInfo (CFileManager& fp) { m_info [0].Read (fp); }
 
@@ -193,7 +195,9 @@ class CTriggerManager {
 		CTriggerManager () {
 			ResetInfo ();
 			Clear ();
+#if USE_FREELIST
 			m_free.Create (WallTrigger (0), TRIGGER_LIMIT);
+#endif
 			}
 
 	private:

@@ -7,6 +7,13 @@ CTriggerManager triggerManager;
 
 //------------------------------------------------------------------------------
 
+bool Full (void) 
+{ 
+return Count (0) >= MAX_TRIGGERS; 
+}
+
+//------------------------------------------------------------------------------
+
 int CTriggerManager::CmpObjTriggers (CTrigger& pi, CTrigger& pm)
 {
 	short i = pi.m_info.nObject;
@@ -111,10 +118,15 @@ short CTriggerManager::Add (void)
 { 
 if (!HaveResources ())
 	return NO_TRIGGER; 
+
+#if USE_FREELIST
 int nTrigger = --m_free;
 m_triggers [nTrigger].Clear ();
 WallTriggerCount ()++;
 return nTrigger;
+#else
+return WallTriggerCount ()++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -206,8 +218,12 @@ if (DLE.IsD1File ()) {
 else
 	flags = 0;
 
+#if USE_FREELIST
 int nTrigger = --m_free;
 Count (0)++;
+#else
+nTrigger = Count (0)++;
+#endif
 CTrigger* trigP = Trigger (nTrigger);
 trigP->Setup (type, flags);
 trigP->Index () = nTrigger;
@@ -464,7 +480,11 @@ if (m_info [0].offset < 0)
 fp.Seek (m_info [0].offset);
 for (short i = 0; i < Count (0); i++) {
 	if (Count (0) < MAX_TRIGGERS) {
+#if USE_FREELIST
 		CTrigger* trigP = WallTrigger (--m_free);
+#else
+		CTrigger* trigP = WallTrigger (Count ()++);
+#endif
 		trigP->Read (fp, nFileVersion, false);
 		trigP->Index () = i;
 		}
