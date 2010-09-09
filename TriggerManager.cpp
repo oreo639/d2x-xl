@@ -54,9 +54,11 @@ void CTriggerManager::SortObjTriggers (void)
 	int	h = ObjTriggerCount ();
 
 if (h > 1) {
+	undoManager.Begin (udTriggers);
 	for (ushort i = 0; i < h; i++)
 		ObjTrigger (i)->Index () = i;
 	SortObjTriggers (0, h - 1);
+	undoManager.End ();
 	}
 }
 
@@ -67,6 +69,7 @@ void CTriggerManager::RenumberObjTriggers (void)
 	CTrigger*	trigP = ObjTrigger (0);
 	int			i;
 
+undoManager.Begin (udTriggers);
 for (i = ObjTriggerCount (); i; i--, trigP++)
 	trigP->m_info.nObject = objectManager.Index (objectManager.FindBySig (trigP->m_info.nObject));
 i = ObjTriggerCount ();
@@ -75,6 +78,7 @@ while (i) {
 		DeleteFromObject (i);
 	}
 SortObjTriggers ();
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------------
@@ -83,6 +87,7 @@ void CTriggerManager::RenumberTargetObjs (void)
 {
 	CTrigger* trigP = Trigger (0);
 
+undoManager.Begin (udTriggers);
 for (int i = ObjTriggerCount (); i; i--, trigP++) {
 	CSideKey* targetP = trigP->m_targets;
 	for (int j = 0; j < trigP->m_count; ) {
@@ -97,6 +102,7 @@ for (int i = ObjTriggerCount (); i; i--, trigP++) {
 			}
 		}
 	}
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------------
@@ -142,8 +148,7 @@ if (Full ()) {
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
-bool bUndo = undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udTriggers);
 
 CWall* wallP = current.Wall ();
 
@@ -214,8 +219,6 @@ return Trigger (nTrigger);
 }
 
 //------------------------------------------------------------------------------
-// Mine - DeleteTrigger
-//------------------------------------------------------------------------------
 
 void CTriggerManager::DeleteFromWall (short nDelTrigger) 
 {
@@ -234,11 +237,8 @@ CTrigger* delTrigP = Trigger (nDelTrigger, 0);
 if (delTrigP == null)
 	return;
 
-undoManager.Begin (true);
-undoManager.Begin ();
-
+undoManager.Begin (udTriggers);
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
-
 #if USE_FREELIST
 m_free += nDelTrigger;
 WallTriggerCount ()--;
@@ -263,8 +263,10 @@ UpdateReactor ();
 void CTriggerManager::DeleteTarget (CSideKey key, short nClass) 
 {
 CTrigger* trigP = &m_triggers [nClass][0];
+undoManager.Begin (udTriggers);
 for (int i = 0; i < Count (nClass); i++, trigP++)
 	trigP->Delete (key);
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------------
@@ -353,8 +355,8 @@ if (ObjTriggerCount () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return null;
 	}
-bool bUndo = undoManager.Begin (true);
-undoManager.Begin ();
+
+undoManager.Begin (udTriggers);
 short nTrigger = ObjTriggerCount ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
@@ -365,6 +367,8 @@ SortObjTriggers ();
 for (ushort i = ObjTriggerCount (); i; )
 	if (ObjTrigger (--i)->Index () == nTrigger)
 		return ObjTrigger (i);
+undoManager.End ();
+
 return ObjTrigger (nTrigger);
 }
 
@@ -374,9 +378,11 @@ void CTriggerManager::DeleteFromObject (short nDelTrigger)
 {
 if ((nDelTrigger < 0) || (nDelTrigger >= ObjTriggerCount ()))
 	return;
+undoManager.Begin (udTriggers);
 if (nDelTrigger < --ObjTriggerCount ())
 	*ObjTrigger (nDelTrigger) = *ObjTrigger (ObjTriggerCount ());
 ObjTrigger (ObjTriggerCount ())->Index () = -1; // mark as unused (needed by the trigger iterator)
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------------
@@ -567,8 +573,7 @@ bool CTriggerManager::AutoAddTrigger (short wallType, ushort wallFlags, ushort t
 if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
-bool bUndo = undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udTriggers);
 CWall* wallP = wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
 if (wallP != null) {
 	CTrigger* trigP = AddToWall (wallManager.Index (wallP), triggerType, false);
@@ -578,7 +583,7 @@ if (wallP != null) {
 	DLE.MineView ()->Refresh ();
 	return true;
 	}
-undoManager.Unroll ();
+undoManager.End ();
 return false;
 }
 

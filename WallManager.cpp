@@ -190,8 +190,11 @@ void CWallManager::UpdateTrigger (short nOldTrigger, short nNewTrigger)
 {
 	CWall* wallP = FindByTrigger (nOldTrigger);
 
-if (wallP != null)
+if (wallP != null) {
+	undoManager.Begin (udWalls);
 	wallP->SetTrigger (nNewTrigger);
+	undoManager.End ();
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -15,6 +15,7 @@ if (theMine == null)
 	bool bNewMine = false;
 	CFileManager fp;
 
+undoManager.Reset ();
 tunnelMaker.Disable ();
 // if no file passed, define a new level w/ 1 object
 if (szFile && *szFile)
