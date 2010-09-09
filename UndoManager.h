@@ -3,7 +3,7 @@
 
 #include "mine.h"
 
-#define MAX_UNDOS			100
+#define MAX_UNDOS			500
 #define DETAIL_BACKUP	0
 
 //------------------------------------------------------------------------------

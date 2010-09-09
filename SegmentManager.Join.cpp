@@ -17,18 +17,17 @@
 
 bool CSegmentManager::Link (short nSegment1, short nSide1, short nSegment2, short nSide2, double margin)
 {
-	CSegment		* seg1, * seg2; 
 	short			i, j; 
 	CVertex		v1 [4], v2 [4]; 
 	short			fail;
 	tVertMatch	match [4]; 
 
-	seg1 = Segment (nSegment1); 
-	seg2 = Segment (nSegment2); 
+CSegment* seg1 = Segment (nSegment1); 
+CSegment* seg2 = Segment (nSegment2); 
 
 // don't link to a segment which already has a child
 if (seg1->Child (nSide1) !=-1 || seg2->Child (nSide2) != -1)
-	return FALSE; 
+	return false; 
 
 // copy vertices for comparison later (makes code more readable)
 for (i = 0; i < 4; i++) {
@@ -49,17 +48,17 @@ for (i = 0; i < 4; i++)
 			else
 				match [j].i = i;  // remember which vertex it matched
 if (match [0].i == -1)
-	return FALSE;
+	return false;
 
 static int matches [][4] = {{0,3,2,1},{1,0,3,2},{2,1,0,3},{3,2,1,0}};
 
 for (i = 1; i < 4; i++)
 	if (match [i].i != matches [match [0].i][i])
-		return FALSE;
+		return false;
 // make sure verts match in the correct order
 // if not failed and match found for each
 LinkSides (nSegment1, nSide1, nSegment2, nSide2, match); 
-return TRUE; 
+return true; 
 }
 
 
@@ -74,6 +73,7 @@ void CSegmentManager::LinkSides (short nSegment1, short nSide1, short nSegment2,
 	short			nVertex, oldVertex, newVertex; 
 	int			i; 
 
+undoManager.Begin (udSegments);
 seg1->SetChild (nSide1, nSegment2); 
 seg1->m_sides [nSide1].m_info.nBaseTex = 0; 
 seg1->m_sides [nSide1].m_info.nOvlTex = 0; 
@@ -105,6 +105,7 @@ for (i = 0; i < 4; i++) {
 		vertexManager.Delete (oldVertex); 
 		}
 	}
+undoManager.End ();
 }
 
 
@@ -156,15 +157,15 @@ if (distance > JOIN_DISTANCE) {
 if (QueryMsg("Are you sure you want to join the current point\n"
 				 "with the 'other' cube's current point?") != IDYES)
 	return; 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 // define vert numbers
 seg1->m_info.verts [sideVertTable [cur1->m_nSide][cur1->m_nPoint]] = vert2; 
 // delete any unused vertices
-//  delete_unused_vertices(); 
+//  vertexManager.DeleteUnused (); 
 FixChildren (); 
+undoManager.End ();
 SetLinesToDraw (); 
 DLE.MineView ()->Refresh ();
-undoManager.End ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -215,7 +216,7 @@ for (i = 0; i < 2; i++) {
 	v2x [i] = vertexManager.Vertex (v2)->v.x; 
 	v2y [i] = vertexManager.Vertex (v2)->v.y; 
 	v2z [i] = vertexManager.Vertex (v2)->v.z; 
-	match [i] =-1; 
+	match [i] = -1; 
 	}
 
 // make sure verts are different
@@ -248,23 +249,23 @@ if (minRadius == JOIN_DISTANCE) {
 if (QueryMsg("Are you sure you want to join the current line\n"
 				 "with the 'other' cube's current line?") != IDYES)
 	return; 
-fail = FALSE; 
+fail = false; 
 // make sure there are matches for each and they are unique
 fail = (match [0] == match [1]);
 if (fail) {
 	match [0] = 1; 
 	match [1] = 0; 
 	}
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 // define vert numbers
 for (i = 0; i < 2; i++) {
 	nLine = sideLineTable [cur1->m_nSide][cur1->m_nLine]; 
 	seg1->m_info.verts [lineVertTable [nLine][i]] = vert2 [match [i]]; 
 	}
-FixChildren(); 
-SetLinesToDraw(); 
-DLE.MineView ()->Refresh ();
+FixChildren (); 
 undoManager.End ();
+SetLinesToDraw (); 
+DLE.MineView ()->Refresh ();
 }
 
 // ----------------------------------------------------------------------------- 
@@ -299,6 +300,7 @@ if (solidify) {
 			ErrorMsg ("The current side is already joined to another cube"); 
 		return; 
 		}
+
 	cur1 = &current; 
 	cur2 = &mySeg; 
 	mySeg.m_nSegment = -1;
@@ -315,7 +317,7 @@ if (solidify) {
 			continue; 
 		seg2 = &(*si);
 		for (nSide = 0; nSide < 6; nSide++) {
-			fail = FALSE; 
+			fail = false; 
 			for (i = 0; i < 4; i++) {
 				memcpy (&v2 [i], vertexManager.Vertex (seg2->m_info.verts[sideVertTable[nSide][i]]), sizeof (CVertex));
 				}
@@ -334,7 +336,7 @@ if (solidify) {
 						}
 					}
 				if (h < 0) {
-					fail = TRUE;
+					fail = true;
 					break;
 					}
 				match [i].i = h;
@@ -360,8 +362,7 @@ if (solidify) {
 		}
 	if (mySeg.m_nSegment < 0) {
 		if (!bExpertMode)
-			ErrorMsg ("Could not find another cube whose side is within\n"
-						"10.0 units from the current side"); 
+			ErrorMsg ("Could not find another segment whose side is within\n10.0 units from the current side"); 
 		return; 
 		}
 	}
@@ -453,7 +454,7 @@ if (maxRadius >= JOIN_DISTANCE) {
 // if Segment () are too close to put a new segment between them, 
 // then solidifyally link them together without asking
 if (minRadius <= 5) {
-	undoManager.Begin ();
+	undoManager.Begin (udSegments);
 	LinkSides (cur1->m_nSegment, cur1->m_nSide, cur2->m_nSegment, cur2->m_nSide, match); 
 	SetLinesToDraw(); 
 	undoManager.End ();
@@ -477,7 +478,7 @@ if (!(Count () < MAX_SEGMENTS)) {
 	}
 segP = Segment (nNewSeg); 
 
-undoManager.Begin ();
+	undoManager.Begin (udSegments);
 // define children and special child
 // first clear all sides
 segP->m_info.childFlags = 0; 
@@ -553,6 +554,7 @@ short nNewSide = current.m_nSide;
 CSegment*	newSegP = Segment (nNewSeg);
 CVertex*		vNewSeg = vertexManager.Vertex (newSegP->m_info.verts [0]);
 
+undoManager.Begin (udSegments);
 for (CSegmentIterator si; si; si++) {
 	CSegment* segP = &(*si);
 	short nSegment = si.Index ();
@@ -575,6 +577,7 @@ for (CSegmentIterator si; si; si++) {
 			}
 		}
 	}
+undoManager.End ();
 }
 
 // ------------------------------------------------------------------------
