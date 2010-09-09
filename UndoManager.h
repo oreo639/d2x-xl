@@ -67,12 +67,12 @@ class CUndoItem {
 			}
 
 	public:
-		bool Backup (_T* source, int& length) {
-			int i = Create (source, length);
+		bool Backup (_T* source, int* length) {
+			int i = Create (source, *length);
 			if (i < 0)
 				return false;
 			if (i > 0)
-				m_sourceLength = &length;
+				m_sourceLength = length;
 			return true;
 			}
 
@@ -102,7 +102,6 @@ class CUndoItem {
 			m_backup = null;
 			m_source = null;
 			m_length = -1;
-			m_lengthFactor = 1;
 			m_sourceLength = null;
 			}
 
@@ -122,7 +121,7 @@ class CUndoItem {
 
 		inline bool Empty (void) { return m_backup == null; }
 
-		CUndoItem () : m_backup (null), m_source (null), m_length (-1), m_lengthFactor (1), m_sourceLength (null) {}
+		CUndoItem () : m_backup (null), m_source (null), m_length (-1), m_sourceLength (null) {}
 
 		~CUndoItem () { Destroy (); }
 	};

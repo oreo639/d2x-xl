@@ -40,6 +40,7 @@ if (m_doors.Cleanup ()) bEmpty = false;
 if (m_triggers [0].Cleanup ()) bEmpty = false;
 if (m_triggers [1].Cleanup ()) bEmpty = false;
 if (m_reactorTriggers.Cleanup ()) bEmpty = false;
+if (m_reactorData.Cleanup ()) bEmpty = false;
 if (m_objects.Cleanup ()) bEmpty = false;
 if (m_secretExit.Cleanup ()) bEmpty = false;
 if (m_robotInfo.Cleanup ()) bEmpty = false;
@@ -82,37 +83,37 @@ m_reactorData.Destroy ();
 void CUndoData::Backup (eUndoFlags dataFlags) 
 {
 if (dataFlags & udVertices) 
-	m_vertices.Backup (vertexManager.Vertex (0), vertexManager.Count ());
+	m_vertices.Backup (vertexManager.Vertex (0), &vertexManager.Count ());
 
 if (dataFlags & udSegments)
-	m_segments.Backup (segmentManager.Segment (0), segmentManager.Count ());
+	m_segments.Backup (segmentManager.Segment (0), &segmentManager.Count ());
 
 if (dataFlags & udRobotMakers)
-	m_robotMakers.Backup (segmentManager.RobotMaker (0), segmentManager.RobotMakerCount ());
+	m_robotMakers.Backup (segmentManager.RobotMaker (0), &segmentManager.RobotMakerCount ());
 
 if (dataFlags & udEquipMakers)
-	m_equipMakers.Backup (segmentManager.EquipMaker (0), segmentManager.EquipMakerCount ());
+	m_equipMakers.Backup (segmentManager.EquipMaker (0), &segmentManager.EquipMakerCount ());
 
 if (dataFlags & udWalls) 
-	m_walls.Backup (wallManager.Wall (0), wallManager.WallCount ());
+	m_walls.Backup (wallManager.Wall (0), &wallManager.WallCount ());
 
 if (dataFlags & udTriggers) {
-	m_triggers [0].Backup (triggerManager.Trigger (0, 0), triggerManager.Count (0));
-	m_triggers [1].Backup (triggerManager.Trigger (0, 1), triggerManager.Count (1));
-	m_reactorTriggers.Backup (triggerManager.ReactorTrigger (0), triggerManager.ReactorTriggerCount ());
-	m_reactorData.Backup (triggerManager.ReactorData ());
+	m_triggers [0].Backup (triggerManager.Trigger (0, 0), &triggerManager.Count (0));
+	m_triggers [1].Backup (triggerManager.Trigger (0, 1), &triggerManager.Count (1));
+	m_reactorTriggers.Backup (triggerManager.ReactorTrigger (0), &triggerManager.ReactorTriggerCount ());
+	m_reactorData.Backup (&triggerManager.ReactorData ());
 	}	
 
 if (dataFlags & udObjects) {
-	m_objects.Backup (objectManager.Object (0), objectManager.Count ());
-	m_secretExit.Backup (objectManager.SecretExit ());
+	m_objects.Backup (objectManager.Object (0), &objectManager.Count ());
+	m_secretExit.Backup (&objectManager.SecretExit ());
 	}
 
 if (dataFlags & udRobots) 
-	m_robotInfo.Backup (robotManager.RobotInfo (0), robotManager.Count ());
+	m_robotInfo.Backup (robotManager.RobotInfo (0), &robotManager.Count ());
 
 if (dataFlags & udVariableLights) 
-	m_variableLights.Backup (lightManager.VariableLight (0), lightManager.Count ());
+	m_variableLights.Backup (lightManager.VariableLight (0), &lightManager.Count ());
 
 if (dataFlags & udStaticLight) {
 	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.Count () * 6);
@@ -121,8 +122,8 @@ if (dataFlags & udStaticLight) {
 	}
 
 if (dataFlags & udDynamicLight) {
-	m_deltaIndices.Backup (lightManager.LightDeltaIndex (0), lightManager.DeltaIndexCount ());
-	m_deltaValues.Backup (lightManager.LightDeltaValue (0), lightManager.DeltaValueCount ());
+	m_deltaIndices.Backup (lightManager.LightDeltaIndex (0), &lightManager.DeltaIndexCount ());
+	m_deltaValues.Backup (lightManager.LightDeltaValue (0), &lightManager.DeltaValueCount ());
 	}
 }
 
