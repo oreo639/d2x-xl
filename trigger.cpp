@@ -76,6 +76,15 @@ return -1;
 
 //------------------------------------------------------------------------------
 
+void CTriggerTargets::Update (short nOldSeg, short nNewSeg) 
+{ 
+for (int i = 0; i < m_count; i++)
+	if (m_targets [i].m_nSegment == nOldSeg)
+		m_targets [i].m_nSegment = nNewSeg;
+}
+
+//------------------------------------------------------------------------------
+
 void CTriggerTargets::Clear (void) 
 { 
 m_count = 0;

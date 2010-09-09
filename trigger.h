@@ -28,6 +28,7 @@ public:
 	short Add (CSideKey key);
 	short Delete (short i = -1);
 	int Delete (CSideKey key);
+	void Update (short nOldSeg, short nNewSeg);
 	int Find (CSideKey key);
 
 	inline short Add (short nSegment, short nSide) { return Add (CSideKey (nSegment, nSide)); }

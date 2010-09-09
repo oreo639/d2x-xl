@@ -1,13 +1,16 @@
 #ifndef __freelist_h
 #define __freelist_h
 
-
 # pragma pack(push, packing)
 # pragma pack(1)
 
+#define USE_FREELIST 0
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+
+#if USE_FREELIST
 
 template <class _T>
 class CFreeList {
@@ -75,6 +78,14 @@ class CFreeList {
 
 		inline const void operator+= (int i) { Put (i); }
 	};
+
+#define FREELIST(_T) CFreeList<_T> m_free;
+
+#else // USE_FREELIST
+
+#define FREELIST(_T)
+
+#endif // USE_FREELIST
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

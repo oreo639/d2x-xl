@@ -110,17 +110,28 @@ class CTriggerManager {
 
 		void DeleteObjTriggers (short nObject);
 
-		inline void DeleteTargets (CSideKey key) { DeleteTargets (WallTriggerList (), Count (0), key); }
+		void DeleteTargets (CSideKey key);
+
+		void UpdateTargets (short nOldSeg, short nNewSeg);
 
 		bool AutoAddTrigger (short wallType, ushort wallFlags, ushort triggerType);
+
 		bool AddDoorTrigger (short wallType, ushort wallFlags, ushort triggerType);
+
 		bool AddOpenDoor (void); 
+
 		bool AddRobotMaker (void); 
+
 		bool AddShieldDrain (void); 
+
 		bool AddEnergyDrain (void); 
+
 		bool AddUnlock (void); 
+
 		bool AddExit (short type); 
+
 		bool AddNormalExit (void); 
+
 		bool AddSecretExit (void); 
 
 		short FindBySide (short& nTrigger, CSideKey key);
@@ -167,8 +178,6 @@ class CTriggerManager {
 		void DeleteFromWall (short nDelTrigger);
 
 		void DeleteFromObject (short nDelTrigger);
-
-		void DeleteTargets (triggerList triggers, short nTriggers, CSideKey key);
 
 		void Clear (int nType);
 };

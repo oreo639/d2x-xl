@@ -74,6 +74,8 @@ class CObjectManager {
 
 		void Sort (void);
 
+		void UpdateSegments (short nOldSeg, short nNewSeg);
+
 	private:
 		int Compare (CGameObject& pi, CGameObject& pm);
 };

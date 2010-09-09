@@ -381,7 +381,7 @@ for (short i = NumObjTriggers (); i; )
 
 // -----------------------------------------------------------------------------
 
-void CTriggerManager::DeleteTargets (triggerList triggers, short nTriggers, CSideKey key) 
+void CTriggerManager::DeleteTargets (CSideKey key) 
 {
 for (CWallTriggerIterator ti; ti; ti++)
 	ti->Delete (key);
@@ -389,6 +389,14 @@ for (CWallTriggerIterator ti; ti; ti++)
 for (short i = NumObjTriggers (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
+}
+
+// -----------------------------------------------------------------------------
+
+void CTriggerManager::UpdateTargets (short nOldSeg, short nNewSeg) 
+{
+for (CWallTriggerIterator ti; ti; ti++)
+	ti->Update (nOldSeg, nNewSeg);
 }
 
 // ----------------------------------------------------------------------------- 

@@ -53,7 +53,7 @@ class CSegmentManager {
 	public:
 		segmentList				m_segments;
 		CMineItemInfo			m_segmentInfo;
-		CFreeList<CSegment>	m_free;
+		FREELIST(CSegment);
 		int						m_nAddMode;
 		robotMakerList			m_matCens [2];
 		CMineItemInfo			m_matCenInfo [2];
@@ -207,7 +207,7 @@ class CSegmentManager {
 
 		void UpdateWalls (short nOldWall, short nNewWall);
 
-		void UpdateVertex (short nOldVert, short nNewVert);
+		void UpdateVertices (short nOldVert, short nNewVert);
 
 		void Mark (short nSegment);
 

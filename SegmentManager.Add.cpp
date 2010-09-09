@@ -17,8 +17,25 @@ return (short) nSegment;
 
 void CSegmentManager::Remove (short nDelSeg)
 {
+#if USE_FREELSIT
 m_free += nDelSeg;
 Count ()--;
+#else
+if (nDelSeg < --Count ()) {
+	// move the last segment in the segment list to the deleted segment's position
+	*Segment (nDelSeg) = *Segment (Count ());
+	// update all trigger targets pointing at the moved segment
+	triggerManager.UpdateTargets (Count (), nDelSeg);
+	objectManager.UpdateSegments (Count (), nDelSeg);
+	// update all walls inside the moved segment
+	CSide* sideP = Segment (nDelSeg)->Child (0);
+	for (int i = 0; i < 6; i++, sideP++) {
+		CWall* wallP = sideP->Wall ();
+		if (wallP != null)
+			wallP->m_nSegment = nDelSeg;
+		}
+	}
+#endif
 }
 
 // ----------------------------------------------------------------------------- 
@@ -587,8 +604,7 @@ DeleteWalls (nDelSeg);
 
 // delete any Walls () on child Segment () that connect to this segment
 for (short i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
-	short nChild = delSegP->Child (i); 
-	if (nChild >= 0 && nChild < Count ()) {
+	if (delSegP->Child (i) >= 0) {
 		CSideKey opp, key (nDelSeg, i);
 		if (OppositeSide (key, opp))
 			wallManager.Delete (Side (opp)->m_info.nWall); 
@@ -611,30 +627,30 @@ for (short i = triggerManager.NumReactorTriggers (); i > 0; )
 		theMine->SecretSegment () = 0; 
 
 	// update segment flags
-	delSegP->m_info.wallFlags &= ~MARKED_MASK; 
+	delSegP->Unmark (); 
 
 	// unlink any children with this segment number
 	CTexture* texP = textureManager.Textures (m_fileType);
 	for (CSegmentIterator si; si; si++) {
+		CSegment* segP = &(*si);
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {
 			if (si->Child (nChild) == nDelSeg) {
 				// remove nChild number and update nChild bitmask
-				si->SetChild (nChild, -1); 
+				segP->SetChild (nChild, -1); 
 
 				// define textures, (u, v) and light
 				CSide *sideP = delSegP->m_sides + nChild;
-				SetTextures (CSideKey (si.Index (), nChild), sideP->m_info.nBaseTex, sideP->m_info.nOvlTex); 
-				Segment (nSegment)->SetUV (nChild, 0, 0); 
+				SetTextures (CSideKey (si.Index (), nChild), sideP->BaseTex (), sideP->OvlTex ()); 
+				segP->SetUV (nChild, 0, 0); 
 				double scale = texP [sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 				for (short j = 0; j < 4; j++) {
 					//segP->m_sides [nChild].m_info.uvls [j].u = (short) ((double) defaultUVLs [j].u / scale); 
 					//segP->m_sides [nChild].m_info.uvls [j].v = (short) ((double) defaultUVLs [j].v / scale); 
-					si->m_sides [nChild].m_info.uvls [j].l = delSegP->m_sides [nChild].m_info.uvls [j].l; 
+					segP->Uvls (nSide) [j].l = delSegP->Uvls (nSide) [j]->l; 
 				}
 			}
 		}
 	}
-
 Remove (nDelSeg);
 
 // delete all unused vertices

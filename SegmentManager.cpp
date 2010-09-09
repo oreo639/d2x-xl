@@ -91,7 +91,7 @@ for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::UpdateVertex (short nOldVert, short nNewVert)
+void CSegmentManager::UpdateVertices (short nOldVert, short nNewVert)
 {
 CSegment *segP = Segment (0);
 

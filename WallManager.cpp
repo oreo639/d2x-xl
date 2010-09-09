@@ -171,6 +171,26 @@ if (wallP != null)
 
 //------------------------------------------------------------------------------
 
+CWall* CWallManager::FindBySegment (short nSegment, int i)
+{
+for (CWallIterator wi; wi; wi++)
+	if (wi->m_nSegment == nSegment)
+		return &(*wi);
+return null;
+}
+
+//------------------------------------------------------------------------------
+
+void CWallManager::UpdateSegment (short nOldSegment, short nNewSegment)
+{
+	CWall* wallP = FindBySegment (nOldSegment);
+
+if (wallP != null)
+	wallP->m_nSegment = nNewSegment;
+}
+
+//------------------------------------------------------------------------------
+
 bool CWallManager::ClipFromTexture (CSideKey key)
 {
 CWall* wallP = segmentManager.Wall (key);

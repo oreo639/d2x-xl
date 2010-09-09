@@ -101,6 +101,12 @@ public:
 	void InitUVL (short nTexture);
 	
 	inline void SetWall (short nWall) { m_info.nWall = nWall; }
+
+	inline short BaseTex (void) { return m_info.nBaseTex; }
+	
+	inline short OvlTex (void) { return m_info.nOvlTex; }
+
+	inline CUVL* Uvls (void) { return m_info.uvls; }
 	
 	CWall* Wall (void);
 	
@@ -184,6 +190,16 @@ public:
 	virtual void Redo (void);
 
 	virtual void Undo (void);
+
+	inline CUVL* Uvls (short nSide) { return Side (nSide)->Uvls (); }
+
+	inline void Mark (byte mask = MARKED_MASK) { m_info.wallFlags |= mask; }
+
+	inline void Unark (byte mask = MARKED_MASK) { m_info.wallFlags &= ~mask; }
+
+	inline bool IsMarked (byte mask = MARKED_MASK) { return (m_info.wallFlags & mask) != 0; }
+
+	inline const CSide& operator[] (uint i) { return m_sides [i]; }
 
 	CSegment () : CGameItem (itSegment) {}
 
