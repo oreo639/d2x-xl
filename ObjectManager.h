@@ -65,7 +65,7 @@ class CObjectManager {
 
 		inline int& Count (void) { return m_info.count; }
 
-		void Delete (short nDelObj);
+		void Delete (short nDelObj, bool bUndo = true);
 
 		CGameObject* FindBySeg (short nSegment, short i = 0);
 
@@ -81,7 +81,7 @@ class CObjectManager {
 	
 		bool HaveResources (void);
 
-		inline short Add (void);
+		inline short Add (bool bUndo = true);
 
 		bool Create (byte newType, short nSegment);
 

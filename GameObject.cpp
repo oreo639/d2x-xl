@@ -789,10 +789,10 @@ void CGameObject::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		objectManager.Delete (Index (), true);
+		objectManager.Delete (Index (), false);
 		break;
 	case opDelete:
-		objectManager.Add (true);
+		objectManager.Add (false);
 		// fall through
 	case opModify:
 		*Parent () = *this;
