@@ -53,7 +53,7 @@ for (i = 0; i < objectManager.Count (); i++) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter (objP->m_location.pos, (ushort)theMine->SecretSegment ());
+		CalcSegmentCenter (objP->m_location.pos, (ushort)objectManager.SecretSegment ());
 		}
 	else
 		objP = objectManager.Object (i);

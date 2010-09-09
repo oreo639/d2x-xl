@@ -369,11 +369,11 @@ void CTriggerTool::InitLBTargets ()
 CListBox *plb = LBTargets ();
 m_iTarget = plb->GetCurSel ();
 plb->ResetContent ();
-if (m_pTrigger) {
-	m_targets = m_pTrigger->m_count;
+if (m_triggerP) {
+	m_targets = m_triggerP->m_count;
 	int i;
 	for (i = 0; i < m_targets ; i++) {
-		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_pTrigger->Segment (i), m_pTrigger->Side (i) + 1);
+		sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d, %d", m_triggerP->Segment (i), m_triggerP->Side (i) + 1);
 		plb->AddString (m_szTarget);
 		}
 	if ((m_iTarget < 0) || (m_iTarget >= m_targets))
@@ -391,17 +391,17 @@ plb->SetCurSel (m_iTarget);
 void CTriggerTool::SetTriggerPtr (void)
 {
 if (m_nTrigger == -1) {
-	m_pTrigger = null;
+	m_triggerP = null;
 	m_nStdTrigger = 
 	m_nObjTrigger = -1;
 	ClearObjWindow ();
 	}	
 else if (m_nClass) {
-	m_pTrigger = theMine->ObjTriggers (m_nTrigger);
+	m_triggerP = theMine->ObjTriggers (m_nTrigger);
 	DrawObjectImage ();
 	}
 else {
-	m_pTrigger = wallManager.Trigger (m_nTrigger);
+	m_triggerP = wallManager.Trigger (m_nTrigger);
 	ClearObjWindow ();
 	}
 }
@@ -499,7 +499,7 @@ if (m_nClass || (m_nTrigger == -1)) {
 	}
 if (m_nTrigger != -1) {
 	SetTriggerPtr ();
-	m_nType = m_pTrigger->m_info.type;
+	m_nType = m_triggerP->m_info.type;
 	if (m_nType != TT_CHANGE_TEXTURE) {
 		cbTexture1->SetCurSel (cbTexture1->SelectString (-1, "(none)"));  // unselect if string not found
 		cbTexture2->SetCurSel (cbTexture2->SelectString (-1, "(none)"));  // unselect if string not found
@@ -518,8 +518,8 @@ if (m_nTrigger != -1) {
 	EnableControls (TRUE);
 	if (!m_nClass)
 		GetDlgItem (IDC_TRIGGER_ADD)->EnableWindow (FALSE);
-	m_nTime = m_pTrigger->m_info.time;
-	m_targets = m_pTrigger->m_count;
+	m_nTime = m_triggerP->m_info.time;
+	m_targets = m_triggerP->m_count;
 	InitLBTargets ();
 	//TriggerCubeSideList ();
 	// if D2 file, use trigger.type
@@ -527,29 +527,29 @@ if (m_nTrigger != -1) {
 		SelectItemData (CBType (), m_nType);
 		CToolDlg::EnableControls (IDC_TRIGGER_CONTROLDOORS, IDC_TRIGGER_CLOSEWALL, FALSE);
 		CToolDlg::EnableControls (IDC_TRIGGER_ADD_SHIELDDRAIN, IDC_TRIGGER_ADD_ENERGYDRAIN, FALSE);
-		m_bD2Flags [0] = ((m_pTrigger->m_info.flags & TF_NO_MESSAGE) != 0);
-		m_bD2Flags [1] = ((m_pTrigger->m_info.flags & TF_ONE_SHOT) != 0);
+		m_bD2Flags [0] = ((m_triggerP->m_info.flags & TF_NO_MESSAGE) != 0);
+		m_bD2Flags [1] = ((m_triggerP->m_info.flags & TF_ONE_SHOT) != 0);
 		m_bD2Flags [2] = 0;
-		m_bD2Flags [3] = ((m_pTrigger->m_info.flags & TF_PERMANENT) != 0);
-		m_bD2Flags [4] = ((m_pTrigger->m_info.flags & TF_ALTERNATE) != 0);
-		m_bD2Flags [5] = ((m_pTrigger->m_info.flags & TF_SET_ORIENT) != 0);
-		m_bD2Flags [6] = ((m_pTrigger->m_info.flags & TF_SILENT) != 0);
-		m_bD2Flags [7] = ((m_pTrigger->m_info.flags & TF_AUTOPLAY) != 0);
+		m_bD2Flags [3] = ((m_triggerP->m_info.flags & TF_PERMANENT) != 0);
+		m_bD2Flags [4] = ((m_triggerP->m_info.flags & TF_ALTERNATE) != 0);
+		m_bD2Flags [5] = ((m_triggerP->m_info.flags & TF_SET_ORIENT) != 0);
+		m_bD2Flags [6] = ((m_triggerP->m_info.flags & TF_SILENT) != 0);
+		m_bD2Flags [7] = ((m_triggerP->m_info.flags & TF_AUTOPLAY) != 0);
 		if (m_nType == TT_SPEEDBOOST)
-			m_nSliderValue = m_pTrigger->m_info.value;
+			m_nSliderValue = m_triggerP->m_info.value;
 		if (m_nType == TT_TELEPORT)
-			m_nSliderValue = m_pTrigger->m_info.value;
+			m_nSliderValue = m_triggerP->m_info.value;
 		if (m_nType == TT_SPAWN_BOT)
-			m_nSliderValue = m_pTrigger->m_info.value;
+			m_nSliderValue = m_triggerP->m_info.value;
 		else if (m_nType != TT_CHANGE_TEXTURE)
-			m_nStrength = (double) m_pTrigger->m_info.value / F1_0;
+			m_nStrength = (double) m_triggerP->m_info.value / F1_0;
 		}
 	else {
 		CBType ()->EnableWindow (FALSE);
 		CToolDlg::EnableControls (IDC_TRIGGER_NOMESSAGE, IDC_TRIGGER_ONESHOT, FALSE);
 		for (i = 0; i < MAX_TRIGGER_FLAGS; i++)
-			m_bD1Flags [i] = ((m_pTrigger->m_info.flags & triggerFlagsD1 [i]) != 0);
-		m_nStrength = (double) m_pTrigger->m_info.value / F1_0;
+			m_bD1Flags [i] = ((m_triggerP->m_info.flags & triggerFlagsD1 [i]) != 0);
+		m_nStrength = (double) m_triggerP->m_info.value / F1_0;
 		}
 	OnSetTarget ();
 	}
@@ -571,7 +571,7 @@ void CTriggerTool::OnStandardTrigger (void)
 m_nObjTrigger = m_nTrigger;
 m_nClass = 0;
 UpdateData (FALSE);
-m_pTrigger = m_pStdTrigger;
+m_triggerP = m_pStdTrigger;
 m_nTrigger = m_nStdTrigger;
 Refresh ();
 }
@@ -581,10 +581,10 @@ Refresh ();
 void CTriggerTool::OnObjectTrigger (void)
 {
 m_nStdTrigger = m_nTrigger;
-m_pStdTrigger = m_pTrigger;
+m_pStdTrigger = m_triggerP;
 m_nClass = 1;
 UpdateData (FALSE);
-m_pTrigger = theMine->ObjTriggers (m_nTrigger);
+m_triggerP = theMine->ObjTriggers (m_nTrigger);
 m_nTrigger = m_nObjTrigger;
 Refresh ();
 }
@@ -598,12 +598,12 @@ void CTriggerTool::OnAddTrigger ()
 //m_nTrigger = nTrigger;
 m_bAutoAddWall = ((CButton *) GetDlgItem (IDC_TRIGGER_AUTOADDWALL))->GetCheck ();
 if (m_nClass) {
-	m_pTrigger = theMine->AddObjTrigger (-1, m_nType);
-	m_nTrigger = m_pTrigger ? int (m_pTrigger - theMine->ObjTriggers (0)) : -1; 
+	m_triggerP = theMine->AddObjTrigger (-1, m_nType);
+	m_nTrigger = m_triggerP ? int (m_triggerP - theMine->ObjTriggers (0)) : -1; 
 	}
 else {
-	m_pTrigger = theMine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_pTrigger ? int (m_pTrigger - wallManager.Trigger (0)) : -1;
+	m_triggerP = theMine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
+	m_nTrigger = m_triggerP ? int (m_triggerP - wallManager.Trigger (0)) : -1;
 	}
 // Redraw trigger window
 Refresh ();
@@ -633,8 +633,7 @@ DLE.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTriggerAll () 
 {
-bool bUndo = undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udTriggers);
 DLE.MineView ()->DelayRefresh (true);
 CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
@@ -655,13 +654,11 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		}
 	}
 DLE.MineView ()->DelayRefresh (false);
+undoManager.End ();
 if (nDeleted) {
-	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
-else
-	undoManager.Unroll ();
 }
 
 //------------------------------------------------------------------------
@@ -727,8 +724,9 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.Begin (true);
-m_pTrigger->m_info.type = m_nType;
+undoManager.Begin (udTriggers);
+m_triggerP->m_info.type = m_nType;
+undoManager.End ();
 Refresh ();
 }
 
@@ -742,9 +740,10 @@ UpdateData (TRUE);
 if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TEXTURE))
 	return;
 SetTriggerPtr ();
-undoManager.Begin (true);
 UpdateData (FALSE);
-m_pTrigger->m_info.value = (int) (m_nStrength * F1_0);
+undoManager.Begin (udTriggers);
+m_triggerP->m_info.value = (int) (m_nStrength * F1_0);
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -757,8 +756,9 @@ UpdateData (TRUE);
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.Begin (true);
-m_pTrigger->m_info.time = m_nTime;
+undoManager.Begin (udTriggers);
+m_triggerP->m_info.time = m_nTime;
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -771,19 +771,20 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return false;
 SetTriggerPtr ();
-undoManager.Begin (true);
+undoManager.Begin (udTriggers);
 if ((m_bD1Flags [i] = !m_bD1Flags [i]))
 //if ((m_bD1Flags [i] = ((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->GetCheck ()))
-	m_pTrigger->m_info.flags |= triggerFlagsD1 [i];
+	m_triggerP->m_info.flags |= triggerFlagsD1 [i];
 else
-	m_pTrigger->m_info.flags &= ~triggerFlagsD1 [i];
+	m_triggerP->m_info.flags &= ~triggerFlagsD1 [i];
 ((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + i))->SetCheck (m_bD1Flags [i]);
 if (m_bD1Flags [i] && (j >= 0)) {
 	m_bD1Flags [j] = 0;
-	m_pTrigger->m_info.flags &= ~triggerFlagsD1 [j];
+	m_triggerP->m_info.flags &= ~triggerFlagsD1 [j];
 	((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->SetCheck (0);
 	}
 UpdateData (FALSE);
+undoManager.End ();
 return m_bD1Flags [i] != 0;
 }
 
@@ -795,13 +796,14 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.Begin (true);
+undoManager.Begin (udTriggers);
 j = d2FlagXlat [i];
 int h = 1 << j;
-m_pTrigger->m_info.flags ^= h;
-m_bD2Flags [j] = ((m_pTrigger->m_info.flags & h) != 0);
+m_triggerP->m_info.flags ^= h;
+m_bD2Flags [j] = ((m_triggerP->m_info.flags & h) != 0);
 ((CButton *) GetDlgItem (IDC_TRIGGER_NOMESSAGE + i))->SetCheck (m_bD2Flags [j]);
 UpdateData (FALSE);
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -840,7 +842,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-m_targets = m_pTrigger->m_count;
+m_targets = m_triggerP->m_count;
 if (m_targets >= MAX_TRIGGER_TARGETS) {
 	DEBUGMSG (" Trigger tool: No more targets possible for this trigger.");
 	return;
@@ -849,8 +851,9 @@ if (FindTarget (nSegment, nSide) > -1) {
 	DEBUGMSG (" Trigger tool: Trigger already has this target.");
 	return;
 	}
-undoManager.Begin (true);
-m_pTrigger->Add (nSegment, nSide - 1);
+undoManager.Begin (udTriggers);
+m_triggerP->Add (nSegment, nSide - 1);
+undoManager.End ();
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
 LBTargets ()->SetCurSel (m_targets++);
@@ -887,8 +890,8 @@ if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
 if ((DLE.IsD1File ()) 
-	 ? (m_pTrigger->m_info.flags & TRIGGER_MATCEN) != 0 
-	 : (m_pTrigger->m_info.type == TT_MATCEN) && (segmentManager.Segment (other->nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
+	 ? (m_triggerP->m_info.flags & TRIGGER_MATCEN) != 0 
+	 : (m_triggerP->m_info.type == TT_MATCEN) && (segmentManager.Segment (other->nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
 	) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
@@ -922,9 +925,10 @@ if (m_nTrigger == -1)
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-undoManager.Begin (true);
 SetTriggerPtr ();
-m_targets = m_pTrigger->Delete (m_iTarget);
+undoManager.Begin (udTriggers);
+m_targets = m_triggerP->Delete (m_iTarget);
+undoManager.End ();
 LBTargets ()->DeleteString (m_iTarget);
 if (m_iTarget >= LBTargets ()->GetCount ())
 	m_iTarget--;
@@ -936,7 +940,7 @@ Refresh ();
 
 int CTriggerTool::FindTarget (short nSegment, short nSide)
 {
-return m_pTrigger->Find (nSegment, nSide);
+return m_triggerP->Find (nSegment, nSide);
 }
 
 //------------------------------------------------------------------------
@@ -954,20 +958,20 @@ SetTriggerPtr ();
 // get affected cube/side list box index
 m_iTarget = LBTargets ()->GetCurSel ();
 // if selected and within range, then set "other" cube/side
-if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_pTrigger->m_count))
+if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS) || (m_iTarget >= m_triggerP->m_count))
 	return;
-short nSegment = m_pTrigger->Segment (m_iTarget);
+short nSegment = m_triggerP->Segment (m_iTarget);
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	 return;
-short nSide = m_pTrigger->Side (m_iTarget);
+short nSide = m_triggerP->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
 
 CSelection *other = theMine->Other ();
 if ((current.m_nSegment == nSegment) && (current.m_nSide == nSide))
 	return;
-other->nSegment = m_pTrigger->Segment (m_iTarget);
-other->nSide = m_pTrigger->Side (m_iTarget);
+other->nSegment = m_triggerP->Segment (m_iTarget);
+other->nSide = m_triggerP->Side (m_iTarget);
 DLE.MineView ()->Refresh ();
 }
 
@@ -988,8 +992,9 @@ void CTriggerTool::OnPasteTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-undoManager.Begin (true);
-wallManager.Trigger () [m_nTrigger] = m_defTrigger;
+undoManager.Begin (udTriggers);
+*triggerManager.Trigger (m_nTrigger) = m_defTrigger;
+undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -1033,7 +1038,7 @@ theMine->AddUnlockTrigger ();
 
 BOOL CTriggerTool::TextureIsVisible ()
 {
-return !m_nClass && (m_pTrigger != null) && (m_iTarget >= 0) && (m_iTarget < m_pTrigger->m_count);
+return !m_nClass && (m_triggerP != null) && (m_iTarget >= 0) && (m_iTarget < m_triggerP->m_count);
 }
 
                         /*--------------------------*/
@@ -1077,7 +1082,7 @@ void CTriggerTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrol
 	int	nPos = pScrollBar->GetScrollPos ();
 	CRect	rc;
 
-if (!m_pTrigger || !TriggerHasSlider ())
+if (!m_triggerP || !TriggerHasSlider ())
 	return;
 if (pScrollBar == SpeedBoostSlider ()) {
 	switch (scrollCode) {
@@ -1104,7 +1109,7 @@ if (pScrollBar == SpeedBoostSlider ()) {
 		nPos = 1;
 	else if (nPos > 10)
 		nPos = 10;
-	m_nSliderValue = m_pTrigger->m_info.value = nPos;
+	m_nSliderValue = m_triggerP->m_info.value = nPos;
 	UpdateData (FALSE);
 #if 0
 	pScrollBar->SetScrollPos (nPos, TRUE);

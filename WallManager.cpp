@@ -399,7 +399,7 @@ int nNewSeg = current.m_nSegment;
 current.m_nSegment = nLastSeg;
 if (Create (current, WALL_ILLUSION, 0, KEY_NONE, -1, -1)) {
 	triggerManager.Create (WallCount () - 1, TT_SECRET_EXIT);
-	theMine->SecretSegment () = current.m_nSegment;
+	objectManager.SecretSegment () = current.m_nSegment;
 	segmentManager.SetDefaultTexture (426);
 	current.m_nSegment = nNewSeg;
 	segmentManager.SetDefaultTexture (426);

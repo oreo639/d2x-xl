@@ -127,8 +127,7 @@ void CSegmentManager::ResetSide (short nSegment, short nSide)
 {
 if (nSegment < 0 || nSegment >= Count ()) 
 	return; 
-undoManager.Begin (true); 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 Segment (nSegment)->Reset (nSide); 
 undoManager.End ();
 }
@@ -165,23 +164,19 @@ for (nSegment = Count (), segP = Segment (0); nSegment; nSegment--, segP++) {
 
 void CSegmentManager::CopyOtherSegment (void)
 {
-	bool bUndo, bChange = false;
+	bool bChange = false;
 
 if (selections [0].m_nSegment == selections [1].m_nSegment)
 	return; 
 short nSegment = current.m_nSegment; 
 CSegment *otherSeg = other.Segment (); 
-bUndo = undoManager.Begin (true); 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 for (int nSide = 0; nSide < 6; nSide++)
 	if (SetTextures (CSideKey (nSegment, nSide), otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))
 		bChange = true;
-if (!bChange)
-	undoManager.Unroll ();
-else {
-	undoManager.End ();
+undoManager.End ();
+if (bChange)
 	DLE.MineView ()->Refresh (); 
-	}
 }
 
 // -----------------------------------------------------------------------------

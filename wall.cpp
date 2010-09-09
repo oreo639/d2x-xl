@@ -20,8 +20,7 @@
 
 void CWall::Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine) 
 {
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udWalls);
 // define new wallP
 *((CSideKey*) this) = key;
 //m_nSegment = nSegment;
@@ -114,8 +113,7 @@ void CWall::SetTextures (short nTexture)
 CSide *sideP = Side ();
 char nClip = m_info.nClip;
 
-undoManager.Begin (true);
-undoManager.Begin ();
+		undoManager.Begin (udWalls);
 if (IsDoor ()) {
 	if (theMine->IsD1File ())
 		sideP->SetTextures (wallTexturesD1 [nClip][0], wallTexturesD1 [nClip][1]);

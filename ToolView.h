@@ -237,7 +237,7 @@ class CDiagTool : public CToolDlg
 		int			m_nErrors [2];
 		int			m_bAutoFixBugs;
 		int			m_bShowWarnings;
-		CReactorTrigger	*m_pTrigger;
+		CReactorTrigger	*m_triggerP;
 		bool			m_bCheckMsgs;
 		int			m_statsWidth;
 
@@ -304,7 +304,7 @@ class CReactorTool : public CToolDlg
 		int			m_nCountDown;
 		int			m_nSecretReturn;
 		char			m_szTarget [40];
-		CReactorTrigger	*m_pTrigger;
+		CReactorTrigger	*m_triggerP;
 
 		CReactorTool (CPropertySheet *pParent = null);
       virtual BOOL OnInitDialog ();
@@ -668,7 +668,7 @@ class CWallTool : public CTexToolDlg
 		int		m_bKeys [4];
 		int		m_bFlags [MAX_WALL_FLAGS];
 		char		m_szMsg [256];
-		CWall	*m_pWall [2];
+		CWall	*m_wallP [2];
 		CWall	m_defWall;
 		CWall	m_defDoor;
 		short		m_defTexture;
@@ -764,7 +764,7 @@ class CTriggerTool : public CTexToolDlg
 		int					m_nSliderValue;
 		double				m_nStrength;
 		CTrigger			m_defTrigger;
-		CTrigger			*m_pTrigger;
+		CTrigger			*m_triggerP;
 		int					m_nTrigger;
 		CTrigger			*m_pStdTrigger;
 		int					m_nStdTrigger;
@@ -859,16 +859,16 @@ class CTriggerTool : public CTexToolDlg
 		inline CComboBox *CBTexture2 ()
 			{ return CBCtrl(IDC_TRIGGER_TEXTURE2); }
 		inline short Texture1 (void)
-			{ return (short) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->Info ().value & 0xffff : 0); }
+			{ return (short) ((m_nTrigger >= 0) && (m_triggerP && (m_nType == TT_CHANGE_TEXTURE)) ? m_triggerP->Info ().value & 0xffff : 0); }
 		inline short Texture2 (void)
-			{ return (short) ((m_nTrigger >= 0) && (m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) ? m_pTrigger->Info ().value >> 16 : 0); }
+			{ return (short) ((m_nTrigger >= 0) && (m_triggerP && (m_nType == TT_CHANGE_TEXTURE)) ? m_triggerP->Info ().value >> 16 : 0); }
 		inline void SetTexture (short texture1, short texture2) {
-			if ((m_nTrigger >= 0) && m_pTrigger && (m_nType == TT_CHANGE_TEXTURE)) {
+			if ((m_nTrigger >= 0) && m_triggerP && (m_nType == TT_CHANGE_TEXTURE)) {
 				if (texture1 < 0)
 					texture1 = Texture1 ();
 				if (texture2 < 0)
 					texture2 = Texture2 ();
-				m_pTrigger->Info ().value = (int) (texture2 << 16) + (int) texture1; 
+				m_triggerP->Info ().value = (int) (texture2 << 16) + (int) texture1; 
 				}
 			}
 

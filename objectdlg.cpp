@@ -536,7 +536,7 @@ if (current.m_nObject == objectManager.Count ()) {
 // dialog.
 objP = current.Object ();
 sprintf_s (m_szInfo, sizeof (m_szInfo), "cube %d", objP->m_info.nSegment);
-if (/*(objectSelection [objP->m_info.type] == 0) &&*/ theMine->RobotInfo (objP->m_info.id)->m_info.bCustom)
+if (/*(objectSelection [objP->m_info.type] == 0) &&*/ robotManager.RobotInfo (objP->m_info.id)->m_info.bCustom)
 	strcat_s (m_szInfo, sizeof (m_szInfo), "\r\nmodified");
 
 CBObjType ()->SetCurSel (objectSelection [objP->m_info.type]);
@@ -590,7 +590,7 @@ if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 	}
 else
 	CBObjAI ()->SetCurSel (1); // Normal
-m_bEndsLevel = (objP->m_info.type == OBJ_ROBOT) && (theMine->RobotInfo (objP->m_info.id)->m_info.bossFlag > 0);
+m_bEndsLevel = (objP->m_info.type == OBJ_ROBOT) && (robotManager.RobotInfo (objP->m_info.id)->m_info.bossFlag > 0);
 RefreshRobot ();
 UpdateSliders ();
 DrawObjectImages ();
@@ -657,7 +657,7 @@ if ((nType = object_list [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
 	return;
 	}
 i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-rInfo = *theMine->RobotInfo (i);
+rInfo = *robotManager.RobotInfo (i);
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 CBContId ()->ResetContent ();
 switch (rInfo.m_info.contents.type) {
@@ -729,7 +729,7 @@ i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
-rInfo = *theMine->RobotInfo (i);
+rInfo = *robotManager.RobotInfo (i);
 rInfo.m_info.bCustom |= 1;
 rInfo.m_info.scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
 rInfo.m_info.strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
@@ -798,7 +798,7 @@ if (0 <= (index = CBContType ()->GetCurSel ()))
 if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
 	rInfo.m_info.contents.id = (byte) CBContId ()->GetItemData (index);
 undoManager.Begin (udRobots);
-*theMine->RobotInfo (i) = rInfo;
+*robotManager.RobotInfo (i) = rInfo;
 undoManager.End ();
 }
 
@@ -1119,7 +1119,7 @@ if (QueryMsg ("Are you sure you want to move the\n"
 #endif
 undoManager.Begin (udObjects);
 if (current.m_nObject == objectManager.Count ())
-	theMine->SecretSegment () = current.m_nSegment;
+	objectManager.SecretSegment () = current.m_nSegment;
 else {
 	CGameObject *objP = current.Object ();
 	theMine->CalcSegCenter (objP->m_location.pos, current.m_nSegment);
@@ -1281,8 +1281,7 @@ CGameObject *objP = current.Object ();
 CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udObjects);
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
 		SetNewObjId (objP, OBJ_PLAYER, nCurSel, MAX_PLAYERS);
@@ -1376,8 +1375,9 @@ Refresh ();
 void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
-undoManager.Begin (true);
+undoManager.Begin (udObjects);
 current.Object ()->m_info.contents.count = m_nSpawnQty;
+undoManager.End ();
 Refresh ();
 }
 
@@ -1389,8 +1389,7 @@ void CObjectTool::OnSetSpawnType ()
 {
 CGameObject *objP = current.Object ();
 int selection;
-undoManager.Begin (true);
-undoManager.End ();
+undoManager.Begin (udObjects);
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
 	objP->m_info.contents.count = 0;
@@ -1409,7 +1408,7 @@ else {
 	OnSetSpawnQty ();
 	OnSetSpawnId ();
 	}
-undoManager.Begin ();
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -1420,7 +1419,7 @@ void CObjectTool::OnSetSpawnId ()
 {
 CGameObject *objP = current.Object ();
 
-undoManager.Begin (true);
+undoManager.Begin (udObjects);
 if (objP->m_info.contents.count < -1)
 	objP->m_info.contents.count = -1;
 int i = CBSpawnType ()->GetCurSel () - 1;
@@ -1433,7 +1432,7 @@ else {
 	objP->m_info.contents.id = -1;
 	}
 Refresh ();
-undoManager.Begin (true);
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -1442,7 +1441,7 @@ undoManager.Begin (true);
 
 void CObjectTool::OnSetObjAI ()
 {
-undoManager.Begin (true);
+undoManager.Begin (udObjects);
 CGameObject *objP = current.Object ();
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
  	int index = CBObjAI ()->GetCurSel ();
@@ -1459,7 +1458,7 @@ if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 else
 	CBObjAI ()->SetCurSel (1); // Normal
 Refresh ();
-undoManager.Begin (true);
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -1471,10 +1470,10 @@ void CObjectTool::OnSetTexture ()
 CGameObject *objP = current.Object ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
-	undoManager.Begin (true);
+	undoManager.Begin (udObjects);
 	int index = CBObjTexture ()->GetCurSel ();
-	objP->rType.polyModelInfo.nOverrideTexture = 
-		(index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;
+	objP->rType.polyModelInfo.nOverrideTexture = (index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;
+	undoManager.End ();
 	Refresh ();
 	}
 }
@@ -1488,7 +1487,9 @@ void CObjectTool::OnDefault ()
 if (object_list [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
 int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-memcpy (theMine->RobotInfo (i), theMine->DefRobotInfo (i), sizeof (tRobotInfo));
+undoManager.Begin (udRobots);
+memcpy (robotManager.RobotInfo (i), robotManager.DefRobotInfo (i), sizeof (tRobotInfo));
+undoManager.End ();
 Refresh ();
 }
 
@@ -1556,7 +1557,7 @@ int i = CBContType ()->GetCurSel ();
 if (0 > i)
 	return;
 int j = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
-CRobotInfo *rInfo = theMine->RobotInfo (j);
+CRobotInfo *rInfo = robotManager.RobotInfo (j);
 rInfo->m_info.contents.type = (byte) CBContType ()->GetItemData (i);
 RefreshRobot ();
 }

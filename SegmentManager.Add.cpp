@@ -648,9 +648,9 @@ for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 	triggerManager.ReactorTrigger (--i)->Delete (CSideKey (-nDelSeg - 1));
 
 	// update secret cube number if out of range now
-	short nSegment = (short) theMine->SecretSegment (); 
+	short nSegment = (short) objectManager.SecretSegment (); 
 	if (nSegment >= Count () || nSegment == nDelSeg)
-		theMine->SecretSegment () = 0; 
+		objectManager.SecretSegment () = 0; 
 
 	// update segment flags
 	delSegP->Unmark (); 

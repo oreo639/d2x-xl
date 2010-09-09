@@ -336,9 +336,9 @@ lightManager.ComputeVariableLight (50.0, 1);
 
 // d2 reactor and secret cube
 //----------------------------------------------
-theMine->ReactorTime () = 0x1e;
+triggerManager.ReactorTime () = 0x1e;
 theMine->ReactorStrength () = 0xffffffffL;
-theMine->SecretSegment () = 0L;
+objectManager.SecretSegment () = 0L;
 
 objectManager.SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 DLE.MineView ()->ResetView (true);
