@@ -1513,18 +1513,18 @@ else
 
 void CMainFrame::OnSelNextCube ()
 {
-if (MineView ()->SelectMode (CUBE_MODE))
+if (MineView ()->SelectMode (SEGMENT_MODE))
 	MineView ()->NextCube ();
 else
-	MineView ()->SetSelectMode (CUBE_MODE);
+	MineView ()->SetSelectMode (SEGMENT_MODE);
 }
 
 void CMainFrame::OnSelPrevCube ()
 {
-if (MineView ()->SelectMode (CUBE_MODE))
+if (MineView ()->SelectMode (SEGMENT_MODE))
 	MineView ()->PrevCube ();
 else
-	MineView ()->SetSelectMode (CUBE_MODE);
+	MineView ()->SetSelectMode (SEGMENT_MODE);
 }
 
 void CMainFrame::OnSelNextObject ()

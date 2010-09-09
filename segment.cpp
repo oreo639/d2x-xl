@@ -579,13 +579,14 @@ switch (x) {
 	break; 
 	}
 #else
-undoManager.Begin (true); 
+undoManager.Begin (udSegments); 
 m_sides [nSide].LoadTextures ();
 double scale = 1.0; //textureManager.Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {
 	uvls->v = (short) ((y + D2X (E [i].v.x / 640)) / scale); 
 	uvls->u = (short) ((x - D2X (E [i].v.y / 640)) / scale); 
 	}
+undoManager.End ();
 #endif
 }
 

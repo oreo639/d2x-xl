@@ -1169,7 +1169,7 @@ Refresh (false);
 void CMineView::CalcSegmentCenter (CVertex& pos, short nSegment)
 {
 CSegment *segP = segmentManager.Segment (nSegment);
-CVertex *vMine = theMine->Vertices (0);
+CVertex *vMine = theMine->vertexManager.Vertex (0);
 short *vSeg = segP->m_info.verts;
 pos  =
    vMine [vSeg [0]] +

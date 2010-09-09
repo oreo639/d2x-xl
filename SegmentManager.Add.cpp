@@ -644,7 +644,7 @@ for (short i = objectManager.Count (); i >= 0; i--) {
 	}
 
 // delete any control segP with this segment
-for (short i = triggerManager.NumReactorTriggers (); i > 0; )
+for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 	triggerManager.ReactorTrigger (--i)->Delete (CSideKey (-nDelSeg - 1));
 
 	// update secret cube number if out of range now

@@ -172,7 +172,7 @@ public:
 	int      nModel;				// which polygon model 
 	tAngleVector anim_angles[MAX_SUBMODELS];  // angles for each subobject 
 	int      subobj_flags;     // specify which subobjs to draw 
-	int      tmap_override;    // if this is not -1, map all face to this 
+	int      nOverrideTexture;    // if this is not -1, map all face to this 
 	byte     alt_textures;     // if not -1, use these textures instead 
 
 	void Read (CFileManager& fp, int version);
@@ -349,16 +349,26 @@ class CGameObject : public CGameItem {
 
 		int CheckNormal (CViewMatrix& view, CFixVector& a, CFixVector& b);
 
+		CSegment* Segment (void);
+
+		inline CDoubleVector& Position (void) { return m_location.pos; }
+
+		inline CDoubleMatrix& Orient (void) { return m_location.orient; }
+
 		virtual void Clear (void) {
 			memset (&m_info, 0, sizeof (m_info)); 
 			m_location.Clear ();
 			}
-
+		
 		virtual CGameItem* Clone (void);
 
 		virtual void Backup (eEditType editType = opModify);
 
 		virtual CGameItem* Copy (CGameItem* destP);
+
+		virtual void Undo (void);
+
+		virtual void Redo (void);
 	};
 
 //------------------------------------------------------------------------

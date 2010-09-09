@@ -140,7 +140,7 @@ void CAdvObjTool::Refresh ()
 {
 if (!(m_bInited && theMine))
 	return;
-if ((theMine == null)->MineInfo ().objects.count) {
+if ((theMine == null)->objectManager.Count ()) {
 	EnableControls (IDC_ADVOBJ_SIZE, IDC_ADVOBJ_RTZ, FALSE);
 	return;
 	}

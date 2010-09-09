@@ -730,7 +730,6 @@ if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *theMine->RobotInfo (i);
-undoManager.Begin (true);
 rInfo.m_info.bCustom |= 1;
 rInfo.m_info.scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
 rInfo.m_info.strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
@@ -798,7 +797,9 @@ if (0 <= (index = CBContType ()->GetCurSel ()))
 	rInfo.m_info.contents.type = (byte) CBContType ()->GetItemData (index);
 if (0 <= (index = CBContId ()->GetCurSel ()) - 1)
 	rInfo.m_info.contents.id = (byte) CBContId ()->GetItemData (index);
+undoManager.Begin (udRobots);
 *theMine->RobotInfo (i) = rInfo;
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -813,7 +814,7 @@ short tnum = 0, tnum2 = -1;
 if (objP->m_info.renderType != RT_POLYOBJ)
 	CBObjTexture ()->SetCurSel (0);
 else {
-	tnum = (short) current.Object ()->rType.polyModelInfo.tmap_override;
+	tnum = (short) current.Object ()->rType.polyModelInfo.nOverrideTexture;
 	if ((tnum < 0) || (tnum >= ((DLE.IsD1File ()) ? MAX_TEXTURES_D1 : MAX_TEXTURES_D2))) {
 		CBObjTexture ()->SetCurSel (0);
 		tnum = 0;	// -> force PaintTexture to clear the texture display window
@@ -1050,8 +1051,7 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CObjectTool::OnDeleteAll () 
 {
-bool bUndo = undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udObjects);
 DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = current.Object ();
 int nType = objP->m_info.type;
@@ -1069,13 +1069,11 @@ for (int h = objectManager.Count (), i = 0; i < h; ) {
 		i++, objP++;
 	}
 DLE.MineView ()->DelayRefresh (false);
+undoManager.End ();
 if (nDeleted) {
-	undoManager.End ();
 	DLE.MineView ()->Refresh ();
 	Refresh ();
 	}
-else
-	undoManager.Unroll ();
 }
 
 //------------------------------------------------------------------------
@@ -1086,10 +1084,9 @@ void CObjectTool::OnReset ()
 {
 CDoubleMatrix* orient;
 
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udObjects);
 if (current.m_nObject == objectManager.Count ()) {
-	orient = &theMine->SecretOrient ();
+	orient = &objectManager.SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
 	orient = &current.Object ()->m_location.orient;
@@ -1120,7 +1117,7 @@ if (QueryMsg ("Are you sure you want to move the\n"
 				 "current object to the current cube?\n") != IDYES)
 	return;
 #endif
-undoManager.Begin (true);
+undoManager.Begin (udObjects);
 if (current.m_nObject == objectManager.Count ())
 	theMine->SecretSegment () = current.m_nSegment;
 else {
@@ -1476,7 +1473,7 @@ CGameObject *objP = current.Object ();
 if (objP->m_info.renderType == RT_POLYOBJ) {
 	undoManager.Begin (true);
 	int index = CBObjTexture ()->GetCurSel ();
-	objP->rType.polyModelInfo.tmap_override = 
+	objP->rType.polyModelInfo.nOverrideTexture = 
 		(index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;
 	Refresh ();
 	}

@@ -156,7 +156,7 @@ if (m_pHxmExtraData) {
 	}
 
 CSegment& seg = *Segments (0);
-CVertex *vert = Vertices (0);
+CVertex *vert = vertexManager.Vertex (0);
 
 seg.m_sides [0].m_info.nWall = NO_WALL;
 seg.m_sides [0].m_info.nBaseTex = 0;

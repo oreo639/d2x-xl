@@ -125,15 +125,15 @@ public:
 	
 	void Setup (CSideKey key, short time, short mask);
 
-	CGameItem* Copy (CGameItem* destP);
+	virtual CGameItem* Copy (CGameItem* destP);
 
-	CGameItem* Clone (void);
+	virtual CGameItem* Clone (void);
 	
-	void Backup (eEditType editType);
+	virtual void Backup (eEditType editType);
 
-	void Undo (void);
+	virtual void Undo (void);
 
-	void Redo (void);
+	virtual void Redo (void);
 };
 
 // -----------------------------------------------------------------------------

@@ -49,24 +49,6 @@ typedef struct tVertMatch {
 
 //------------------------------------------------------------------------
 
-class CSecretData {
-	public:
-		int nSegment;
-		CDoubleMatrix orient;
-
-	inline const CSecretData& operator= (const CSecretData& other) { 
-		nSegment = other.nSegment;
-		orient = other.orient;
-		return *this;
-		}
-
-	inline const bool operator== (const CSecretData& other) { return (nSegment == other.nSegment) && (orient == other.orient); }
-
-	inline const bool operator!= (const CSecretData& other) { return (nSegment != other.nSegment) || (orient != other.orient); }
-};
-
-//------------------------------------------------------------------------
-
 class CSegmentManager {
 	public:
 		segmentList				m_segments;
@@ -76,8 +58,6 @@ class CSegmentManager {
 		robotMakerList			m_matCens [2];
 		CMineItemInfo			m_matCenInfo [2];
 		bool						m_bCreating;
-
-		CSecretData				m_secretData;
 
 	public:
 		inline void ResetInfo (void) {
@@ -90,12 +70,6 @@ class CSegmentManager {
 			}
 		// Segment and side getters
 		inline segmentList& Segments (void)	{ return m_segments; }
-
-		inline CSecretData& SecretData (void) { return m_secretData; }
-
-		inline int& SecretSegment (void) { return SecretData ().nSegment; }
-
-		inline CDoubleMatrix& SecretOrient (void) { return SecretData ().orient; }
 
 		inline int& Count (void) { return m_segmentInfo.count; }
 

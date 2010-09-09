@@ -452,7 +452,7 @@ for (CWallTriggerIterator ti; ti; ti++)
 void CTriggerManager::ReadReactor (CFileManager& fp, int nFileVersion)
 {
 if (m_reactorInfo.offset >= 0) {
-	for (short i = 0; i < NumReactorTriggers (); i++)
+	for (short i = 0; i < ReactorTriggerCount (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
 }
@@ -466,7 +466,7 @@ if (m_reactorInfo.count == 0)
 else {
 	m_reactorInfo.size = 42;
 	m_reactorInfo.offset = fp.Tell ();
-	for (short i = 0; i < NumReactorTriggers (); i++)
+	for (short i = 0; i < ReactorTriggerCount (); i++)
 		m_reactorTriggers [i].Read (fp, nFileVersion);
 	}
 }

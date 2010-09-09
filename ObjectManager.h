@@ -15,6 +15,24 @@
 
 //------------------------------------------------------------------------
 
+class CSecretExit {
+	public:
+		int nSegment;
+		CDoubleMatrix orient;
+
+	inline const CSecretExit& operator= (const CSecretExit& other) { 
+		nSegment = other.nSegment;
+		orient = other.orient;
+		return *this;
+		}
+
+	inline const bool operator== (const CSecretExit& other) { return (nSegment == other.nSegment) && (orient == other.orient); }
+
+	inline const bool operator!= (const CSecretExit& other) { return (nSegment != other.nSegment) || (orient != other.orient); }
+};
+
+//------------------------------------------------------------------------
+
 #ifdef _DEBUG
 
 typedef CStaticArray< CGameObject, MAX_OBJECTS_D2 > objectList;
@@ -29,12 +47,19 @@ class CObjectManager {
 	private:
 		objectList		m_objects;
 		CMineItemInfo	m_info;
+		CSecretExit		m_secretExit;
 		bool				m_bSortObjects;
 
 	public:
 		inline void ResetInfo (void) { m_info.Reset (); }
 
 		inline objectList& ObjectList (void) { return m_objects; }
+
+		inline CSecretExit& SecretExit (void) { return m_secretExit; }
+
+		inline int& SecretSegment (void) { return m_secretExit.nSegment; }
+
+		inline CDoubleMatrix& SecretOrient (void) { return m_secretExit.orient; }
 
 		inline CGameObject *Object (int i)  { return &m_objects [i]; }
 

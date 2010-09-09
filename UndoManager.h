@@ -15,6 +15,8 @@ typedef struct tUndoBuffer {
 } tUndoBuffer;
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #if DETAIL_BACKUP
 
@@ -41,45 +43,52 @@ class CUndoItem {
 
 template< class _T >
 class CUndoItem {
-	public:
+	private:
 		_T*	m_backup;
 		_T*	m_source;
 		int	m_length;
-		int	m_lengthFactor;
 		int*	m_sourceLength;
 		uint	m_nId; // used by undo manager
 
-		bool Create (_T* source, int& length, int lengthFactor) {
+		int Create (_T* source, int length) {
+			if (m_backup != null) 
+				return -1;
 			if (length > 0) {
-				m_length = length * lengthFactor;
-				m_backup = new _T [m_length];
+				m_length = length;
+				m_backup = new _T [length];
 				if (m_backup == null) {
 					m_length = -1;
-					return false;
+					return 0;
 					}
 				}
 			m_source = source;
-			m_lengthFactor = lengthFactor;
-			m_sourceLength = &length;
+			memcpy (m_backup, m_source, m_length * sizeof (_T));
+			return 1;
+			}
+
+	public:
+		bool Backup (_T* source, int& length) {
+			int i = Create (source, length);
+			if (i < 0)
+				return false;
+			if (i > 0)
+				m_sourceLength = &length;
 			return true;
 			}
 
-		bool Backup (_T* source, int& length, int lengthFactor = 1) {
-			if (m_backup == null) {
-				if (!Create (source, length, lengthFactor))
-					return false;
-				if (length > 0)
-					memcpy (m_backup, m_source, m_length * sizeof (_T));
-				}
-			return true;
+		inline bool Backup (_T* source, int length = 1) {
+			m_sourceLength = null;
+			return Create (source, length) >= 0;
 			}
 
-		void Restore (void) {
-			if (m_length >= 0) {
-				if (m_backup != null)
-					memcpy (m_source, m_backup, m_length * sizeof (_T));
+		bool Restore (void) {
+			if (m_length < 0)
+				return false;
+			if (m_backup != null)
+				memcpy (m_source, m_backup, m_length * sizeof (_T));
+			if (m_sourceLength != null)
 				*m_sourceLength = m_length;
-				}
+			return true;
 			}	
 
 		void Destroy (void) {
@@ -121,6 +130,8 @@ class CUndoItem {
 #endif //DETAIL_BACKUP
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 typedef enum {
 	udVertices = 1,
@@ -135,15 +146,14 @@ typedef enum {
 	udVariableLights = 512,
 	udStaticLight = 1024,
 	udDynamicLight = 2048,
-	udAll = 0x7FF
+	udLight = 0xE00,
+	udAll = 0xFFF
 } eUndoFlags;
 
+//------------------------------------------------------------------------------
 
 class CUndoData {
 public:
-	CSecretData							m_secretData;
-	CReactorData						m_reactorData;
-
 	CUndoItem<CVertex>				m_vertices;
 	CUndoItem<CSegment>				m_segments;
 	CUndoItem<CMatCenter>			m_robotMakers;
@@ -151,6 +161,7 @@ public:
 	CUndoItem<CWall>					m_walls;
 	CUndoItem<CDoor>					m_doors;
 	CUndoItem<CTrigger>				m_triggers [2];
+	CUndoItem<CReactorTrigger>		m_reactorTriggers;
 	CUndoItem<CGameObject>			m_objects;
 	CUndoItem<CRobotInfo>			m_robotInfo;
 	CUndoItem<CLightDeltaIndex>	m_deltaIndices;
@@ -159,6 +170,8 @@ public:
 	CUndoItem<CFaceColor>			m_faceColors;
 	CUndoItem<CTextureColor>		m_textureColors;
 	CUndoItem<CVertexColor>			m_vertexColors;
+	CUndoItem<CSecretExit>			m_secretExit;
+	CUndoItem<CReactorData>			m_reactorData;
 
 	uint m_nId;
 
@@ -179,6 +192,8 @@ public:
 	~CUndoData () { Destroy (); }
 	};
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 class CUndoManager
@@ -256,6 +271,8 @@ private:
 
 extern CUndoManager undoManager;
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 #endif //__undoman_h

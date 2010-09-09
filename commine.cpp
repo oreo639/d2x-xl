@@ -48,7 +48,7 @@ STDMETHODIMP CComMine::get_NumberOfTriggers(long* pRetVal)
 
 STDMETHODIMP CComMine::get_NumberOfObjects(long* pRetVal)
 {
-	*pRetVal = _pMine->MineInfo ().objects.count;
+	*pRetVal = _pMine->objectManager.Count ();
 	return S_OK;
 }
 
@@ -82,7 +82,7 @@ STDMETHODIMP CComMine::get_Object(VARIANT index, LPDISPATCH* pVal)
 		CComVariant var(index);
 		if (SUCCEEDED(var.ChangeType(VT_I4)))
 		{
-			if (var.lVal < _pMine->MineInfo ().objects.count)
+			if (var.lVal < _pMine->objectManager.Count ())
 			{
 				CComObject<CComObj>* pObject = new CComObject<CComObj>();
 				pObject->_pObject = &_pMine->Objects ()[var.lVal];

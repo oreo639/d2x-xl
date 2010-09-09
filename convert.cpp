@@ -340,7 +340,7 @@ theMine->ReactorTime () = 0x1e;
 theMine->ReactorStrength () = 0xffffffffL;
 theMine->SecretSegment () = 0L;
 
-theMine->SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
+objectManager.SecretOrient ().Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 DLE.MineView ()->ResetView (true);
 CDialog::OnOK ();
 }

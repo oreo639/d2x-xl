@@ -153,7 +153,7 @@ if (nFlags & MK_SHIFT) {
 	CGameObject *objP = objectManager.Object (current.m_nObject);
    if (objP->m_info.renderType != RT_POLYOBJ) 
 		return;
-	objP->rType.polyModelInfo.tmap_override = nBaseTex;
+	objP->rType.polyModelInfo.nOverrideTexture = nBaseTex;
   } 
 else if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->SetTexture (nBaseTex, -1);

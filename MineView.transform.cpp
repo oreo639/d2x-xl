@@ -245,7 +245,7 @@ CHECKMINE;
 	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 
 MarkVisibleVerts ();
-vertP = theMine->Vertices (0);
+vertP = theMine->vertexManager.Vertex (0);
 for (int i = 0, h = theMine->vertexManager.Count (); i < h; i++, vertP++) {
 	if (theMine->vertexManager.Status (i)) {
 		vMin = Min (vMin, *vertP);
@@ -285,7 +285,7 @@ void CMineView::CenterCube (void)
 CHECKMINE;
 
 	CSegment& seg = segmentManager.Segment (0) [m_Current->nSegment];
-	CVertex *vMine = theMine->Vertices (0);
+	CVertex *vMine = theMine->vertexManager.Vertex (0);
 	short *vSeg = seg.m_info.verts;
 
 m_move = (vMine [vSeg [0]] +

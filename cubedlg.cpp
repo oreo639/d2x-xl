@@ -852,7 +852,6 @@ LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-undoManager.Begin (true);
 DLE.MineView ()->Refresh ();
 }
 
@@ -876,7 +875,6 @@ LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-undoManager.Begin (true);
 DLE.MineView ()->Refresh ();
 }
 

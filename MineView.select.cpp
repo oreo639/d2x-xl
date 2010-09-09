@@ -297,17 +297,17 @@ if (segmentManager.Count () <= 0)
 
 if (0) {//!ViewOption (eViewPartialLines)) {
 	DrawHighlight (1);
-	//if (m_selectMode == CUBE_MODE)
+	//if (m_selectMode == SEGMENT_MODE)
 		wrap (&current.m_nSegment,dir,0, segmentManager.Count () - 1);
 	Refresh (true);
-	//SetSelectMode (CUBE_MODE);
+	//SetSelectMode (SEGMENT_MODE);
 	DrawHighlight (0);
 	}
 else {
-	//if (m_selectMode == CUBE_MODE)
+	//if (m_selectMode == SEGMENT_MODE)
 		wrap (&current.m_nSegment, dir, 0, segmentManager.Count () - 1);
 	Refresh (true);
-	//SetSelectMode (CUBE_MODE);
+	//SetSelectMode (SEGMENT_MODE);
 	}
 }
 

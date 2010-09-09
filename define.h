@@ -247,7 +247,7 @@ inline double Degrees (double a) { return a * (180.0 / PI); }
 #define POINT_MODE     0
 #define LINE_MODE      1
 #define SIDE_MODE      2
-#define CUBE_MODE      3
+#define SEGMENT_MODE      3
 #define OBJECT_MODE    4
 #define BLOCK_MODE     5
 #define N_SELECT_MODES 6

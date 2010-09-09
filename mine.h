@@ -101,9 +101,9 @@ class CMine {
 
 		inline int& ReactorStrength (void) { return triggerManager.ReactorStrength (); }
 
-		inline int& SecretSegment (void) { return segmentManager.SecretSegment (); }
+		inline int& SecretSegment (void) { return objectManager.SecretSegment (); }
 
-		inline CDoubleMatrix& SecretOrient (void) { segmentManager.SecretOrient (); }
+		inline CDoubleMatrix& SecretOrient (void) { objectManager.SecretOrient (); }
 
 		short Load (const char *filename = null, bool bLoadFromHog = false);
 
@@ -112,11 +112,6 @@ class CMine {
 		inline LPSTR LevelName (void) { return m_currentLevelName; }
 
 		inline int LevelNameSize (void) { return sizeof m_currentLevelName; }
-
-		void Mark (void);
-		void MarkAll (void);
-		void UnmarkAll (void);
-
 
 		inline void SetSelectMode (short mode) { m_selectMode = mode; }
 
@@ -138,11 +133,7 @@ class CMine {
 		bool ResizeLine (CSegment *segP, int point0, int point1, double delta); 
 		bool MoveOn (CDoubleVector delta); 
 		bool SpinSelection (double angle); 
-		//void SetUV (short segment, short side, short x, short y, double angle);
-		void LoadSideTextures (short segNum, short sideNum);
-
-		// trigger stuff
-		int MatchingSide (int j);
+		void LoadSideTextures (short nSegment, short nSide);
 
 		short LoadMineSigAndType (CFileManager& fp);
 		void LoadPaletteName (CFileManager& fp, bool bNewMine = false);
@@ -153,12 +144,10 @@ class CMine {
 
 		short LoadMineDataCompiled (CFileManager& fp, bool bNewMine);
 		short LoadMine (char *filename, bool bLoadFromHog, bool bNewMine);
-		short LoadGameData (CFileManager& loadfile, bool bNewMine);
+		short LoadGameData (CFileManager& fp, bool bNewMine);
 		short SaveMineDataCompiled (CFileManager& fp);
-		short SaveGameData (CFileManager& savefile);
+		short SaveGameData (CFileManager& fp);
 		void ClearMineData (void);
-		void UpdateDeltaLights (void);
-		void SortDLIndex (int left, int right);
 	};
 
 // -----------------------------------------------------------------------------

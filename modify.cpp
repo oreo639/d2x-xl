@@ -30,14 +30,14 @@ bool CMine::EditGeoFwd (void)
 
 for (i = 0; i < 4; i++) {
 	int nVertex = Segments (current.m_nSegment)->m_info.verts [sideVertTable [current.m_nSide][i]];
-   center += *Vertices (nVertex);
+   center += *vertexManager.Vertex (nVertex);
 	 }
 center /= 4.0;
 
 // calculate center of opposite of current side
 for (i = 0; i < 4; i++) {
 	int nVertex = Segments (current.m_nSegment)->m_info.verts [oppSideVertTable [current.m_nSide][i]];
-   oppCenter += *Vertices (nVertex);
+   oppCenter += *vertexManager.Vertex (nVertex);
 	}
 oppCenter /= 4.0;
 
@@ -54,7 +54,6 @@ else
 	v = CalcSideNormal (current.m_nSegment, current.m_nSide);
 
 // move on x, y, and z
- undoManager.Begin (true);
  undoManager.Begin ();
  v *= moveRate;
  MoveOn (v);
@@ -62,8 +61,8 @@ else
  return true;
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoBack (void) 
 {
@@ -73,14 +72,14 @@ bool CMine::EditGeoBack (void)
 /* calculate center of current side */
 for (i = 0; i < 4; i++) {
 	int nVertex = Segments (current.m_nSegment)->m_info.verts [sideVertTable [current.m_nSide][i]];
-	center += *Vertices (nVertex);
+	center += *vertexManager.Vertex (nVertex);
 	}
 center /= 4.0;
 
 // calculate center of oppisite current side
 for (i = 0; i < 4; i++) {
 	int nVertex = Segments (current.m_nSegment)->m_info.verts [oppSideVertTable [current.m_nSide][i]];
-	oppCenter += *Vertices (nVertex);
+	oppCenter += *vertexManager.Vertex (nVertex);
 	}
 oppCenter /= 4.0;
 
@@ -105,16 +104,16 @@ segP = Segments (current.m_nSegment);
 byte* sideNormalP = sideNormalTable [current.m_nSide];
 switch (m_selectMode) {
 	case POINT_MODE:
-		if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [current.m_nPoint]][0]]), 
-						  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [current.m_nPoint]][1]]))
+		if (Distance (*vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideNormalP [current.m_nPoint]][0]]), 
+						  *vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideNormalP [current.m_nPoint]][1]]))
 			 - moveRate < 0.25) 
 			okToMove = false;
 		break;
 
 	case LINE_MODE:
 		for (i = 0; i < 2; i++) {
-			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(current.m_nLine + i) % 4]][0]]), 
-							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [(current.m_nLine + i) % 4]][1]]))
+			if (Distance (*vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideNormalP [(current.m_nLine + i) % 4]][0]]), 
+							  *vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideNormalP [(current.m_nLine + i) % 4]][1]]))
 				 - moveRate < 0.25) 
 				okToMove = false;
 			}
@@ -122,8 +121,8 @@ switch (m_selectMode) {
 
 	case SIDE_MODE:
 		for (i = 0; i < 4; i++) {
-			if (Distance (*Vertices (segP->m_info.verts [lineVertTable [sideNormalP [i]][0]]), 
-							  *Vertices (segP->m_info.verts [lineVertTable [sideNormalP [i]][1]]))
+			if (Distance (*vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideNormalP [i]][0]]), 
+							  *vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideNormalP [i]][1]]))
 				 - moveRate < 0.25) 
 			okToMove = false;
 			}
@@ -149,85 +148,75 @@ else {
 	else 
 		v = CalcSideNormal (current.m_nSegment,current.m_nSide);
 	// move on x, y, and z
-	undoManager.Begin (true);
-	undoManager.Begin ();
 	v *= -moveRate;
 	MoveOn (v);
-	undoManager.End ();
 	}
-undoManager.Begin (true);
 return true;
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoRotRight (void)
 {
 return SpinSelection (angleRate);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoRotLeft (void)
 {
 return SpinSelection (-angleRate);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoUp (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,FALSE) : MovePoints (1,0);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,false) : MovePoints (1,0);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoDown (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (-angleRate, FALSE) : MovePoints (0,1);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (-angleRate, false) : MovePoints (0,1);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoRight (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,TRUE) : MovePoints(3,0);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (angleRate,true) : MovePoints(3,0);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 bool CMine::EditGeoLeft (void) 
 {
-return (m_selectMode == SIDE_MODE) ? RotateSelection (-angleRate,TRUE) : MovePoints(0,3);
+return (m_selectMode == SIDE_MODE) ? RotateSelection (-angleRate,true) : MovePoints(0,3);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 bool CMine::EditGeoGrow (void) 
 {
 return ResizeItem (moveRate);
 }
 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 bool CMine::EditGeoShrink (void) 
 {
 return ResizeItem (-moveRate);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //                    RotateSelection()
 //
 // ACTION - rotates a side about the opposite side.  The line is drawn
 //          between the center points of lines 0 and 2.  If perpendicular
-//          is TRUE, then the lines 1 and 3 are used instead.
-//------------------------------------------------------------------------
+//          is true, then the lines 1 and 3 are used instead.
+//------------------------------------------------------------------------------
 
 bool CMine::RotateSelection (double angle, bool perpendicular) 
 {
@@ -247,8 +236,6 @@ switch (m_selectMode){
 		return false;
 
 	case SIDE_MODE:	// spin side around the opposite side
-		undoManager.Begin (true);
-		undoManager.Begin ();
 		if (perpendicular) { // use lines 0 and 2
 			pts [0] = 1;
 			pts [1] = 2;
@@ -262,18 +249,19 @@ switch (m_selectMode){
 			pts [3] = 3;
 			}
 		// calculate center opp side line 0
-		oppCenter = Average (*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [0]]]),
-									*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [1]]]));
+		oppCenter = Average (*vertexManager.Vertex (segP->m_info.verts [oppSideVertTable [nSide][pts [0]]]),
+									*vertexManager.Vertex (segP->m_info.verts [oppSideVertTable [nSide][pts [1]]]));
 		// calculate center opp side line 2
-		center = Average (*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [2]]]),
-								*Vertices (segP->m_info.verts [oppSideVertTable [nSide][pts [3]]]));
+		center = Average (*vertexManager.Vertex (segP->m_info.verts [oppSideVertTable [nSide][pts [2]]]),
+								*vertexManager.Vertex (segP->m_info.verts [oppSideVertTable [nSide][pts [3]]]));
 		// rotate points around a line
+		undoManager.Begin (udVertices);
 		for (i = 0; i < 4; i++)
 			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
 		undoManager.End ();	
 		break;
 	
-	case CUBE_MODE:
+	case SEGMENT_MODE:
 		ErrorMsg ("Cannot bend a cube");
 		return false;
 	
@@ -312,23 +300,24 @@ switch (m_selectMode) {
 	case LINE_MODE:
 		point [0] = lineVertTable [sideLineTable [current.m_nSide][current.m_nLine]][0];
 		point [1] = lineVertTable [sideLineTable [current.m_nSide][current.m_nLine]][1];
-		return ResizeLine (segP, point [0], point [1], delta);
+		undoManager.Begin (udVertices);
+		result = ResizeLine (segP, point [0], point [1], delta);
+		undoManager.End ();
+		return result;
 
 	case SIDE_MODE:
-		undoManager.Begin (true);
-		undoManager.Begin ();
 		for (i = 0; i < 4; i++)
 			point [i] = sideVertTable [current.m_nSide][i];
 		// enlarge the diagonals
+		undoManager.Begin (udVertices);
 		result = ResizeLine (segP, point [0], point [2], (int) (delta*sqrt(2.0))) &&
 				   ResizeLine (segP, point [1], point [3], (int) (delta*sqrt(2.0)));
 		undoManager.End ();
 		return result;
 
-	case CUBE_MODE:
+	case SEGMENT_MODE:
 		// enlarge the diagonals
-		undoManager.Begin (true);
-		undoManager.Begin ();
+		undoManager.Begin (udVertices);
 		result = ResizeLine (segP, 0, 6, (int) (delta*sqrt(3.0))) &&
 				   ResizeLine (segP, 1, 7, (int) (delta*sqrt(3.0))) &&
 					ResizeLine (segP, 2, 4, (int) (delta*sqrt(3.0))) &&
@@ -340,36 +329,36 @@ switch (m_selectMode) {
 		return false;
 
 	case BLOCK_MODE:
-		undoManager.Begin (true);
 		CVertex	max_pt (-0x7fffffffL, -0x7fffffffL, -0x7fffffffL), 
 					min_pt (0x7fffffffL, 0x7fffffffL, 0x7fffffffL), 
 					center;
-		CVertex* verts = Vertices (0);
+		CVertex* verts = vertexManager.Vertex (0);
 		for (i = vertexManager.Count (), j = 0; j < i; j++, verts++)
 			if (verts->m_status & MARKED_MASK) {
 				max_pt = Max (max_pt, *verts);
 				min_pt = Min (min_pt, *verts);
 				}
 		center = Average (max_pt, min_pt);
-		double scale = ((double)(20*F1_0) + (double)delta)/(double)(20*F1_0);
-		verts = Vertices (0);
-		for (i = vertexManager.Count (), j = 0; j < i; j++, verts++)
-			if (verts->m_status & MARKED_MASK) {
-				*verts -= center;
-				*verts *= scale;
-				*verts += center;
+		undoManager.Begin (udVertices);
+		vertP = vertexManager.Vertex (0);
+		for (i = vertexManager.Count (), j = 0; j < i; j++, vertP++)
+			if (vertP->IsMarked ()) {
+				*vertP -= center;
+				*vertP *= scale;
+				*vertP += center;
 				}
-	return true;
+		undoManager.End ();
+		return true;
 	}
 return false;
 }
 
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // MovePoints()
 //
 // moves blocks, sides, cubes, lines, and points in the direction
 // of the current line.
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 bool CMine::MovePoints (int pt0, int pt1) 
 {
@@ -377,11 +366,11 @@ bool CMine::MovePoints (int pt0, int pt1)
 	double			length;
 	int				i;
 	CSegment*		segP = Segments (current.m_nSegment);
-	byte*			sideVertP = sideVertTable [current.m_nSide];
+	byte*				sideVertP = sideVertTable [current.m_nSide];
 	short				p0 = sideVertP [CURRENT_POINT(pt0)];
 	short				p1 = sideVertP [CURRENT_POINT(pt1)];
 
-delta = *Vertices (segP->m_info.verts [p1]) - *Vertices (segP->m_info.verts [p0]);
+delta = *vertexManager.Vertex (segP->m_info.verts [p1]) - *vertexManager.Vertex (segP->m_info.verts [p0]);
 length = delta.Mag ();
 if (length < 1.0) 
 	delta.Set (moveRate, 0, 0);
@@ -390,52 +379,58 @@ else
 
 switch (m_selectMode){
 	case POINT_MODE:
-		*Vertices (segP->m_info.verts [p0]) += delta;
-		undoManager.Begin (true);
+		undoManager.Begin (udVertices);
+		*vertexManager.Vertex (segP->m_info.verts [p0]) += delta;
+		undoManager.End ();
 		break;
 
 	case LINE_MODE:
-		*Vertices (segP->m_info.verts [p0]) += delta;
-		*Vertices (segP->m_info.verts [p1]) += delta;
-		undoManager.Begin (true);
+		undoManager.Begin (udVertices);
+		*vertexManager.Vertex (segP->m_info.verts [p0]) += delta;
+		*vertexManager.Vertex (segP->m_info.verts [p1]) += delta;
+		undoManager.End ();
 		break;
 
 	case SIDE_MODE:
+		undoManager.Begin (udVertices);
 		for (i = 0; i < 4; i++)
-			*Vertices (segP->m_info.verts [sideVertP [i]]) += delta;
-		undoManager.Begin (true);
+			*vertexManager.Vertex (segP->m_info.verts [sideVertP [i]]) += delta;
+		undoManager.End ();
 		break;
 
-	case CUBE_MODE:
+	case SEGMENT_MODE:
+		undoManager.Begin (udVertices);
 		for (i = 0; i < 8; i++) 
-			*Vertices (segP->m_info.verts [i]) += delta;
-		undoManager.Begin (true);
+			*vertexManager.Vertex (segP->m_info.verts [i]) += delta;
+		undoManager.End ();
 		break;
 
 	case OBJECT_MODE:
-		current.Object ()->m_location.pos += delta;
-		undoManager.Begin (true);
+		undoManager.Begin (udObjects);
+		current.Object ()->Position () += delta;
+		undoManager.End ();
 		break;
 
 	case BLOCK_MODE:
 		bool bMoved = false;
+		undoManager.Begin (udVertices);
 		for (i = 0; i < MAX_VERTICES; i++) {
 			if (vertexManager.Status (i) & MARKED_MASK) {
-				*.Vertex (i) += delta;
+				*vertexManager.Vertex (i) += delta;
 				bMoved = true;
 				}
 			}
-		undoManager.Begin (bMoved);
+		undoManager.End ();
 		break;
 	}
 return true;
 }
 
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 //     				ResizeLine()
 //
 // prevent lines from being bigger than 8*20 and less than 3
-//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 bool CMine::ResizeLine (CSegment *segP, int point0, int point1, double delta) 
 {
@@ -485,44 +480,56 @@ int nLine = current.m_nLine;
 CSegment *segP = Segment (nSegment);
 short i;
 
-undoManager.Begin (true);
 switch (m_selectMode) {
 	case POINT_MODE:
-		*Vertices (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += delta;
+		undoManager.Begin (udVertices);
+		*vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSide][nPoint]]) += delta;
+		undoManager.End ();
 		break;
 
 	case LINE_MODE:
-		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]) += delta;
-		*Vertices (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]) += delta;
+		undoManager.Begin (udVertices);
+		*vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][0]]) += delta;
+		*vertexManager.Vertex (segP->m_info.verts [lineVertTable [sideLineTable [nSide][nLine]][1]]) += delta;
+		undoManager.End ();
 		break;
 
 	case SIDE_MODE:
+		undoManager.Begin (udVertices);
 		for (i = 0; i < 4; i++)
-			*Vertices (segP->m_info.verts [sideVertTable [nSide][i]]) += delta;
+			*vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSide][i]]) += delta;
+		undoManager.End ();
 		break;
 
-	case CUBE_MODE:
+	case SEGMENT_MODE:
+		undoManager.Begin (udVertices | udObjects);
 		for (i = 0; i < 8; i++)
-			*Vertices (segP->m_info.verts [i]) += delta;
-		for (i = 0; i < MineInfo ().objects.count; i++)
-			if (Objects (i)->m_info.nSegment == nSegment)
-				Objects (i)->m_location.pos += delta;
+			*vertexManager.Vertex (segP->m_info.verts [i]) += delta;
+		CGameObject* objP = objectManager.Object (0);
+		for (i = objectManager.Count (); i; i--, objP++)
+			if (objP->m_info.nSegment == nSegment)
+				objP->Position () += delta;
+		undoManager.End ();
 		break;
 
 	case OBJECT_MODE:
-		current.Object ()->m_location.pos += delta;
+		undoManager.Begin (udObjects);
+		current.Object ()->Position () += delta;
+		undoManager.End ();
 		break;
 	break;
 
 	case BLOCK_MODE:
-		CGameObject *objP = Objects (0);
+		undoManager.Begin (udObjects);
+		CGameObject *objP = objectManager.Object (0);
 		for (i = 0; i < MAX_VERTICES; i++)
 			if (vertexManager.Status (i) & MARKED_MASK)
-				*.Vertex (i) += delta;
-		for (i = MineInfo ().objects.count; i; i--, objP++)
+				*vertexManager.Vertex (i) += delta;
+		for (i = objectManager.Count (); i; i--, objP++)
 			if (objP->m_info.nSegment >= 0)
-				if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-					objP->m_location.pos += delta;
+				if (objP->Segment ()->IsMarked ())
+					objP->Position () += delta;
+		undoManager.End ();
 		break;
 	}
 return true;
@@ -558,10 +565,9 @@ switch (m_selectMode) {
 	
 	case SIDE_MODE: // spin side around its center in the plane of the side
 		// calculate center of current side
-		undoManager.Begin (true);
 		center.Clear ();
 		for (i = 0; i < 4; i++) {
-			center += *Vertices (segP->m_info.verts [sideVertTable [nSide][i]]);
+			center += *vertexManager.Vertex (segP->m_info.verts [sideVertTable [nSide][i]]);
 			}
 		center /= 4.0;
 		// calculate orthogonal vector from lines which intersect point 0
@@ -576,30 +582,33 @@ switch (m_selectMode) {
 		// set opposite center
 		oppCenter = center + normal;
 		/* rotate points around a line */
+		undoManager.Begin (udVertices);
 		for (i = 0; i < 4; i++)
 			Vertices (segP->m_info.verts [sideVertTable [nSide][i]])->Rotate (center, oppCenter, angle);
+		undoManager.End ();
 		break;
 
-	case CUBE_MODE:	// spin cube around the center of the cube using screen's perspective
+	case SEGMENT_MODE:	// spin cube around the center of the cube using screen's perspective
 		// calculate center of current cube
-		undoManager.Begin (true);
 		center.Clear ();
 		for (i = 0; i < 8; i++) 
-			center += *Vertices (segP->m_info.verts [i]);
+			center += *vertexManager.Vertex (segP->m_info.verts [i]);
 		center /= 8.0;
 		// calculate center of oppisite current side
 		oppCenter.Clear ();
 		for (i = 0; i < 4; i++) 
-			oppCenter += *Vertices (segP->m_info.verts [oppSideVertTable [nSide][i]]);
+			oppCenter += *vertexManager.Vertex (segP->m_info.verts [oppSideVertTable [nSide][i]]);
 		oppCenter /= 4.0;
 		// rotate points about a point
+		undoManager.Begin (udVertices);
 		for (i = 0; i < 8; i++)
 			Vertices (segP->m_info.verts [i])->Rotate (center, oppCenter, angle);
+		undoManager.End ();
 		break;
 
 	case OBJECT_MODE:	// spin object vector
-		undoManager.Begin (true);
-		orient = (current.m_nObject == MineInfo ().objects.count) ? &SecretOrient () : &current.Object ()->m_location.orient;
+		undoManager.Begin (udObjects);
+		orient = (current.m_nObject == objectManager.Count ()) ? &segmentManager.SecretOrient () : &current.Object ()->Orient ();
 		switch (nSide) {
 			case 0:
 				orient->Rotate (angle, 'x');
@@ -620,31 +629,33 @@ switch (m_selectMode) {
 				orient->Rotate (-angle, 'z');
 				break;
 			}
+		undoManager.End ();
 		break;
 
 	case BLOCK_MODE:
-		undoManager.Begin (true);
 		// calculate center of current cube
 		center.Clear ();
 		for (i = 0; i < 8; i++) {
-			center += *Vertices (segP->m_info.verts [i]);
+			center += *vertexManager.Vertex (segP->m_info.verts [i]);
 			}
 		center /= 8.0;
 		// calculate center of oppisite current side
 		oppCenter.Clear ();
 		for (i = 0; i < 4; i++) {
-			oppCenter += *Vertices (segP->m_info.verts [oppSideVertTable [nSide][i]]);
+			oppCenter += *vertexManager.Vertex (segP->m_info.verts [oppSideVertTable [nSide][i]]);
 			}
 		oppCenter /= 4.0;
 		// rotate points about a point
-		for (i=0;i<vertexManager.Count ();i++)
+		undoManager.Begin (udVertices | udObjects);
+		for (i = 0; i < vertexManager.Count (); i++)
 			if (vertexManager.Status (i) & MARKED_MASK)
-				.Vertex (i)->Rotate (center, oppCenter, angle);
+				vertexManager.Vertex (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
 		objP = Objects (0);
-		for (i = MineInfo ().objects.count; i; i--, objP++)
-			if (Segments (objP->m_info.nSegment)->m_info.wallFlags & MARKED_MASK)
-				objP->m_location.pos.Rotate (center, oppCenter, angle);
+		for (i = objectManager.Count (); i; i--, objP++)
+			if (objP->Segment ()->IsMarked ())
+				objP->Position ().Rotate (center, oppCenter, angle);
+		undoManager.End ();
 		break;
 	}
 return true;

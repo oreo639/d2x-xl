@@ -834,7 +834,7 @@ CHECKMINE;
 			if (a.v.x * b.v.y > a.v.y * b.v.x) {
 				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
 					DrawAnimDirArrows (sideP->BaseTex (), &tex);
-					TextureMap (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
+					RenderFace (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
 								   light_index, screenP, m_viewPoints, width, height, rowOffset);
 				}
 			}
@@ -969,7 +969,7 @@ CHECKMINE;
 	}
 	else
 	{
-		if (m_selectMode == CUBE_MODE)
+		if (m_selectMode == SEGMENT_MODE)
 		{
 			m_pDC->SelectObject(m_penRed);
 		} else {
@@ -1285,7 +1285,7 @@ for (i = 0; i < n_splines; i++, segP--)
 //			  DrawObject()
 //
 // Changed: 0=normal,1=gray,2=black
-//        if (objnum == (MineInfo ().objects.count
+//        if (objnum == (objectManager.Count ()
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
@@ -1328,9 +1328,9 @@ else {
 	objP = &temp_obj;
 	objP->m_info.type = -1;
 	// theMine->secret_orient = Objects () [0]->orient;
-	objP->m_location.orient.rVec = -theMine->SecretOrient ().rVec;
-	objP->m_location.orient.uVec =  theMine->SecretOrient ().fVec;
-	objP->m_location.orient.fVec =  theMine->SecretOrient ().uVec;
+	objP->m_location.orient.rVec = -objectManager.SecretOrient ().rVec;
+	objP->m_location.orient.uVec =  objectManager.SecretOrient ().fVec;
+	objP->m_location.orient.fVec =  objectManager.SecretOrient ().uVec;
 	// objP->m_location.orient =  theMine->secret_orient;
 	ushort nSegment = (ushort)theMine->SecretSegment ();
 	if (nSegment >= segmentManager.Count ())

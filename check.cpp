@@ -301,10 +301,8 @@ CHECKMINE;
 UpdateData (TRUE);
 ClearBugList ();
 m_bCheckMsgs = true;
-if (m_bAutoFixBugs) {
-	undoManager.Begin (true);
-	undoManager.Begin ();
-	}
+if (m_bAutoFixBugs)
+	undoManager.Begin (udAll);
   // set mode to BLOCK mode to make errors appear in red
 DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
@@ -1751,7 +1749,7 @@ for (nVertex = theMine->vertexManager.Count (); nVertex > 0; ) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
 			if (nVertex < --theMine->vertexManager.Count ())
-				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->vertexManager.Count () - nVertex) * sizeof (*theMine->Vertices (0)));
+				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->vertexManager.Count () - nVertex) * sizeof (*theMine->vertexManager.Vertex (0)));
 			CSegment *segP = segmentManager.Segment (0);
 			for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)

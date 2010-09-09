@@ -14,8 +14,7 @@ void CGameObject::Create (byte type, short nSegment)
 {
   CVertex	location;
 
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udObjects);
 segmentManager.CalcCenter (location, nSegment);
 Clear ();
 m_info.signature = 0;
@@ -33,7 +32,7 @@ m_location.orient.fVec.Set (0, 0, I2X (1));
 m_info.size = PLAYER_SIZE;
 m_info.shields = DEFAULT_SHIELD;
 rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
-rType.polyModelInfo.tmap_override = -1;
+rType.polyModelInfo.nOverrideTexture = -1;
 m_info.contents.type = 0;
 m_info.contents.id = 0;
 m_info.contents.count = 0;
@@ -47,8 +46,7 @@ void CGameObject::Setup (byte type)
 {
   int  id;
 
-undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udObjects);
 id = m_info.id;
 memset (&mType, 0, sizeof (mType));
 memset (&cType, 0, sizeof (cType));
@@ -61,7 +59,7 @@ switch (type) {
 		m_info.size = robotSize[id];
 		m_info.shields = robotShield[id];
 		rType.polyModelInfo.nModel = robotClip[id];
-		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to none
 		cType.aiInfo.behavior = AIB_NORMAL;
 		break;
 
@@ -81,7 +79,7 @@ switch (type) {
 		m_info.size = PLAYER_SIZE;
 		m_info.shields = DEFAULT_SHIELD;
 		rType.polyModelInfo.nModel = PLAYER_CLIP_NUMBER;
-		rType.polyModelInfo.tmap_override = -1; // set texture to normal
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to normal
 		break;
 
 	case OBJ_WEAPON: // a poly-type weapon
@@ -91,7 +89,7 @@ switch (type) {
 		m_info.size = WEAPON_SIZE;
 		m_info.shields = WEAPON_SHIELD;
 		rType.polyModelInfo.nModel = MINE_CLIP_NUMBER;
-		rType.polyModelInfo.tmap_override = -1; // set texture to normal
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to normal
 		mType.physInfo.mass = 65536L;
 		mType.physInfo.drag = 2162;
 		mType.physInfo.rotvel.x = 0;
@@ -133,7 +131,7 @@ switch (type) {
 				}
 			rType.polyModelInfo.nModel = model;
 			}
-		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to none
 		break;
 
 	case OBJ_COOP: // a cooperative player object
@@ -143,7 +141,7 @@ switch (type) {
 		m_info.size = PLAYER_SIZE;
 		m_info.shields = DEFAULT_SHIELD;
 		rType.polyModelInfo.nModel = COOP_CLIP_NUMBER;
-		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to none
 		break;
 
 	case OBJ_CAMBOT:
@@ -155,7 +153,7 @@ switch (type) {
 		m_info.size = robotSize[0];
 		m_info.shields = DEFAULT_SHIELD;
 		rType.polyModelInfo.nModel = robotClip [0];
-		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to none
 		cType.aiInfo.behavior = AIB_STILL;
 		break;
 
@@ -166,7 +164,7 @@ switch (type) {
 		m_info.size = robotSize[0];
 		m_info.shields = DEFAULT_SHIELD;
 		rType.vClipInfo.vclip_num = VCLIP_BIG_EXPLOSION;
-		rType.polyModelInfo.tmap_override = -1; // set texture to none
+		rType.polyModelInfo.nOverrideTexture = -1; // set texture to none
 		cType.aiInfo.behavior = AIB_STILL;
 		break;
 
@@ -400,7 +398,7 @@ nModel = fp.ReadInt32 ();
 for (int i = 0; i < MAX_SUBMODELS; i++)
 	fp.ReadVector (anim_angles [i]);
 subobj_flags = fp.ReadInt32 ();
-tmap_override = fp.ReadInt32 ();
+nOverrideTexture = fp.ReadInt32 ();
 alt_textures = 0;
 }
 
@@ -412,7 +410,7 @@ fp.Write (nModel);
 for (int i = 0; i < MAX_SUBMODELS; i++)
 	fp.WriteVector (anim_angles [i]);
 fp.Write (subobj_flags);
-fp.Write (tmap_override);
+fp.Write (nOverrideTexture);
 }
 
 // ------------------------------------------------------------------------
@@ -757,6 +755,13 @@ return Dot (view.m_mat [0].fVec, _a) > Dot (view.m_mat [0].fVec, _b);
 
 // -----------------------------------------------------------------------------
 
+CSegment* CGameObject::Segment (void) 
+{ 
+return segmentManager.Segment (m_info.nSegment); 
+}
+
+// -----------------------------------------------------------------------------
+
 CGameItem* CGameObject::Copy (CGameItem* destP)
 {
 if (destP != null)
@@ -780,7 +785,7 @@ Id () = undoManager.Backup (this, editType);
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Undo (void)
+void CGameObject::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
@@ -797,7 +802,7 @@ switch (EditType ()) {
 
 // -----------------------------------------------------------------------------
 
-void CVertex::Redo (void)
+void CGameObject::Redo (void)
 {
 switch (EditType ()) {
 	case opDelete:

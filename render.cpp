@@ -18,10 +18,10 @@ extern byte sideVertTable [6][4];
 int bEnableDeltaShading = 0;
 
 //------------------------------------------------------------------------
-// TextureMap()
+// RenderFace()
 //------------------------------------------------------------------------
 
-void TextureMap (CSegment *segP, short nSide,
+void RenderFace (CSegment *segP, short nSide,
 					  byte *bmData, ushort bmWidth, ushort bmHeight,
 					  byte *lightIndex,
 					  byte *screenBuffer, APOINT* scrn,

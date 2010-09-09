@@ -31,8 +31,6 @@ bool CUndoData::Cleanup (void)
 {
 	bool bEmpty = true;
 
-if (m_secretData != segmentManager.SecretData ()) bEmpty = false;
-if (m_reactorData != triggerManager.ReactorData ()) bEmpty = false;
 if (m_vertices.Cleanup ()) bEmpty = false;
 if (m_segments.Cleanup ()) bEmpty = false;
 if (m_robotMakers.Cleanup ()) bEmpty = false;
@@ -41,7 +39,9 @@ if (m_walls.Cleanup ()) bEmpty = false;
 if (m_doors.Cleanup ()) bEmpty = false;
 if (m_triggers [0].Cleanup ()) bEmpty = false;
 if (m_triggers [1].Cleanup ()) bEmpty = false;
+if (m_reactorTriggers.Cleanup ()) bEmpty = false;
 if (m_objects.Cleanup ()) bEmpty = false;
+if (m_secretExit.Cleanup ()) bEmpty = false;
 if (m_robotInfo.Cleanup ()) bEmpty = false;
 if (m_deltaIndices.Cleanup ()) bEmpty = false;
 if (m_deltaValues.Cleanup ()) bEmpty = false;
@@ -64,6 +64,7 @@ m_walls.Destroy ();
 m_doors.Destroy ();
 m_triggers [0].Destroy ();
 m_triggers [1].Destroy ();
+m_reactorTriggers.Destroy ();
 m_objects.Destroy ();
 m_robotInfo.Destroy ();
 m_deltaIndices.Destroy ();
@@ -72,6 +73,8 @@ m_variableLights.Destroy ();
 m_faceColors.Destroy ();
 m_textureColors.Destroy ();
 m_vertexColors.Destroy ();
+m_secretExit.Destroy ();
+m_reactorData.Destroy ();
 }
 
 //------------------------------------------------------------------------------
@@ -81,10 +84,8 @@ void CUndoData::Backup (eUndoFlags dataFlags)
 if (dataFlags & udVertices) 
 	m_vertices.Backup (vertexManager.Vertex (0), vertexManager.Count ());
 
-if (dataFlags & udSegments) {
+if (dataFlags & udSegments)
 	m_segments.Backup (segmentManager.Segment (0), segmentManager.Count ());
-	m_secretData = segmentManager.SecretData ();
-	}
 
 if (dataFlags & udRobotMakers)
 	m_robotMakers.Backup (segmentManager.RobotMaker (0), segmentManager.RobotMakerCount ());
@@ -98,11 +99,14 @@ if (dataFlags & udWalls)
 if (dataFlags & udTriggers) {
 	m_triggers [0].Backup (triggerManager.Trigger (0, 0), triggerManager.Count (0));
 	m_triggers [1].Backup (triggerManager.Trigger (0, 1), triggerManager.Count (1));
-	m_reactorData = triggerManager.ReactorData ();
+	m_reactorTriggers.Backup (triggerManager.ReactorTrigger (0), triggerManager.ReactorTriggerCount ());
+	m_reactorData.Backup (triggerManager.ReactorData ());
 	}	
 
-if (dataFlags & udObjects) 
+if (dataFlags & udObjects) {
 	m_objects.Backup (objectManager.Object (0), objectManager.Count ());
+	m_secretExit.Backup (objectManager.SecretExit ());
+	}
 
 if (dataFlags & udRobots) 
 	m_robotInfo.Backup (robotManager.RobotInfo (0), robotManager.Count ());
@@ -111,8 +115,8 @@ if (dataFlags & udVariableLights)
 	m_variableLights.Backup (lightManager.VariableLight (0), lightManager.Count ());
 
 if (dataFlags & udStaticLight) {
-	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.Count (), 6);
-	 m_textureColors.Backup (lightManager.TexColor (0), lightManager.TexColorCount ());
+	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.Count () * 6);
+	 m_textureColors.Backup (lightManager.TexColor (0), MAX_TEXTURES_D2);
 	 m_vertexColors.Backup (lightManager.VertexColor (0), vertexManager.Count ());
 	}
 
@@ -128,14 +132,14 @@ void CUndoData::Restore (void)
 {
 m_vertices.Restore ();
 m_segments.Restore ();
-segmentManager.SecretData () = m_secretData;
 m_robotMakers.Restore ();
 m_equipMakers.Restore ();
 m_walls.Restore ();
 m_triggers [0].Restore ();
+m_reactorData.Restore ();
 m_triggers [1].Restore ();
-triggerManager.ReactorData () = m_reactorData;
 m_objects.Restore ();
+m_secretExit.Restore ();
 m_robotInfo.Restore ();
 m_variableLights.Restore ();
 m_faceColors.Restore ();
