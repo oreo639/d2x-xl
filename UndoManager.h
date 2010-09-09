@@ -3,7 +3,8 @@
 
 #include "mine.h"
 
-#define MAX_UNDOS		100000
+#define MAX_UNDOS			100
+#define DETAIL_BACKUP	0
 
 //------------------------------------------------------------------------------
 
@@ -14,6 +15,8 @@ typedef struct tUndoBuffer {
 } tUndoBuffer;
 
 //------------------------------------------------------------------------------
+
+#if DETAIL_BACKUP
 
 class CUndoItem {
 	public:
@@ -32,8 +35,84 @@ class CUndoItem {
 		inline void Redo (void) { m_item->Redo (); }
 
 		void Setup (CGameItem* item, CGameItem* parent, eEditType editType, int nBackupId);
-
 	};
+
+#else //DETAIL_BACKUP
+
+template< class _T >
+class CUndoItem {
+	public:
+		_T*	m_backup;
+		_T*	m_source;
+		int	m_length;
+		int*	m_sourceLength;
+
+		bool Create (_T* source, int& length) {
+			if (length > 0) {
+				m_backup = new _T [length];
+				if (m_backup == null)
+					return false;
+				}
+			m_source = source;
+			m_length = length;
+			m_sourceLength = &length;
+			return true;
+			}
+
+		bool Backup (_T* source, int& length) {
+			if (m_backup == null) {
+				if (!Create (source, length)
+					return false;
+				if (length > 0)
+					memcpy (m_backup, m_source, m_length * sizeof (_T));
+				}
+			return true;
+			}
+
+		void Restore (void) {
+			if (m_length >= 0) {
+				if (m_backup != null)
+					memcpy (m_source, m_backup, m_length * sizeof (_T));
+				*m_sourceLength = m_length;
+				}
+			}	
+
+		void Destroy (void) {
+			if (m_backup != null) {
+				delete[] m_backup;
+				Reset ();
+				}
+			}
+
+		void Reset (void) {
+			m_backup = null;
+			m_source = null;
+			m_length = -1;
+			m_sourceLength = null;
+			}
+
+		bool Diff (void) {
+			if (m_length < 0)
+				return false;
+			if (m_length != *m_sourceLength)
+				return true;
+			return memcmp (m_backup, m_source, m_length * sizeof (_T)) != 0;
+			}
+
+		bool Cleanup (void) {
+			if (!Diff ())
+				Destroy ();
+			return !Empty ();
+			}
+
+		inline bool Empty (void) { return m_backup == null; }
+
+		CUndoItem () : m_buffer (null), m_source (null), m_length (-1), m_sourceLength (null) {}
+
+		~CUndoItem () { Destroy (); }
+	};
+
+#endif //DETAIL_BACKUP
 
 //------------------------------------------------------------------------------
 
@@ -47,53 +126,56 @@ typedef enum {
 	udTriggers = 64,
 	udObjects = 128,
 	udRobots = 256,
-	udVariableLights = 1024,
-	udStaticLight = 2048,
-	udDynamicLight = 4096
-} undoData;
+	udVariableLights = 512,
+	udStaticLight = 1024,
+	udDynamicLight = 2048,
+	udAll = 0x7FF
+} eUndoFlags;
 
 
 class CUndoData {
 public:
-	CVertex*				m_vertices;
-	int					m_nVertices;
-	CSegment*			m_segments;
-	int					m_nSegments;
-	CMatCenter*			m_matCenters [2];
-	int					m_nMatCenters [2];
-	CWall*				m_walls;
-	int					m_nWalls;
-	CDoor*				m_doors;
-	int					m_nDoors;
-	CTrigger*			m_triggers;
-	int					m_nTriggers;
-	CGameObject*		m_objects;
-	int					m_nObjects;
-	CRobotInfo*			m_robotInfo;
-	int					m_nRobots;
-	CLightDeltaIndex*	m_deltaIndices;
-	int					m_nDeltaIndices;
-	CLightDeltaValue*	m_deltaValues;
-	int					m_nDeltaValues;
-	CVariableLight*	m_variableLights;
-	int					m_nVariableLights;
-	CFaceColor*			m_faceColors;
-	int					m_nFaceColors;
-	CTextureColor*		m_textureColors;
-	int					m_nTextureColors;
-	CVertexColor*		m_vertexColors;
-	int					m_nVertexColors;
-};
+	CUndoItem<CVertex>				m_vertices;
+	CUndoItem<CSegment>				m_segments;
+	CUndoItem<CMatCenter>			m_robotMakers;
+	CUndoItem<CMatCenter>			m_equipMakers;
+	CUndoItem<CWall>					m_walls;
+	CUndoItem<CDoor>					m_door;
+	CUndoItem<CTrigger>				m_triggers;
+	CUndoItem<CGameObject>			m_objects;
+	CUndoItem<CRobotInfo>			m_robotInfo;
+	CUndoItem<CLightDeltaIndex>	m_deltaIndices;
+	CUndoItem<CLightDeltaValue>	m_deltaValues;
+	CUndoItem<CVariableLight>		m_variableLights;
+	CUndoItem<CFaceColor>			m_faceColors;
+	CUndoItem<CTextureColor>		m_textureColors;
+	CUndoItem<CVertexColor>			m_vertexColors;
+
+	void Backup (eUndoFlags dataFlags);
+
+	void Cleanup (void);
+
+	void Restore (void);
+
+	void Destroy ();
+
+	void Reset (void) { memset (this, 0, sizeof (*this)); }
+
+	CUndoData () { Reset (); }
+
+	~CUndoData () { Destroy (); }
+	};
 
 //------------------------------------------------------------------------------
 
 class CUndoManager
 {
 	private:
-		CUndoItem	m_buffer [MAX_UNDOS];
+		CUndoData	m_buffer [MAX_UNDOS];
 		int			m_nHead;
 		int			m_nTail;
 		int			m_nCurrent;
+		CUndoData	m_current;
 		//CUndoItem*	m_head;
 		//CUndoItem*	m_tail;
 		//CUndoItem*	m_current;
@@ -105,13 +187,15 @@ class CUndoManager
 		int			m_nId;
 
 	public:
-		inline CUndoItem* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_nHead]; }
+		inline CUndoData* Head (void) { return (m_nHead < 0) ? null : &m_buffer [m_nHead]; }
 
-		inline CUndoItem* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [m_nTail]; }
+		inline CUndoData* Tail (void) { return (m_nTail < 0) ? null : &m_buffer [m_nTail]; }
 
-		inline CUndoItem* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
+		inline CUndoData* Current (void) { return (m_nCurrent < 0) ? null : &m_buffer [m_nCurrent]; }
 
 		int Backup (CGameItem* parent, eEditType editType);
+
+		void Backup (void);
 
 		inline int Id (void) { return m_nId; }
 
@@ -143,7 +227,7 @@ class CUndoManager
 
 		void SetModified (bool bModified);
 
-		void Begin (void);
+		void Begin (eUndoFlags dataFlags);
 
 		void End (void);
 

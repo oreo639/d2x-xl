@@ -39,7 +39,7 @@ class CRobotManager {
 
 		inline CRobotInfo* DefRobotInfo (int i) { return RobotInfo (i, 1); }
 
-		inline int& NumTypes (void) { return m_nRobotTypes; }
+		inline int& Count (void) { return m_nRobotTypes; }
 
 		void Init (void); 
 

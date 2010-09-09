@@ -23,199 +23,132 @@ m_nBackupId = nBackupId;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+bool CUndoData::Cleanup (void) 
+{
+	bool bEmpty = true;
+
+if (m_vertices.Cleanup ()) bEmpty = false;
+if (m_segments.Cleanup ()) bEmpty = false;
+if (m_robotMakers.Cleanup ()) bEmpty = false;
+if (m_equipMakers.Cleanup ()) bEmpty = false;
+if (m_walls.Cleanup ()) bEmpty = false;
+if (m_doors.Cleanup ()) bEmpty = false;
+if (m_triggers.Cleanup ()) bEmpty = false;
+if (m_objects.Cleanup ()) bEmpty = false;
+if (m_robotInfo.Cleanup ()) bEmpty = false;
+if (m_deltaLightIndices.Cleanup ()) bEmpty = false;
+if (m_deltaLightValues.Cleanup ()) bEmpty = false;
+if (m_variableLights.Cleanup ()) bEmpty = false;
+if (m_faceColors.Cleanup ()) bEmpty = false;
+if (m_textureColors.Cleanup ()) bEmpty = false;
+if (m_vertexColors.Cleanup ()) bEmpty = false;
+return bEmpty;
+}
+
+//------------------------------------------------------------------------------
+
 bool CUndoData::Destroy (void) 
 {
-if (m_vertices != null) {
-	delete[] m_vertices;
-	m_vertices = null;
-	m_nVertices = 0;
-	}
-
-if (m_segments != null) {
-	delete[] m_segments;
-	m_segments = null;
-	m_nSegments = 0;
-	}
-
-for (int i = 0; i < 2; i++)
-	if (m_matCens [i] != null) {
-		delete[] m_matCens [i];
-		m_matCens [i] = null;
-		m_nMatCens [i] = 0;
-		}
-
-if (m_walls != null) {
-	delete[] m_walls;
-	m_walls = null;
-	m_nWalls = 0;
-	}
-
-if (m_triggers != null) {
-	delete[] m_triggers;
-	m_triggers = null;
-	m_nTriggers = 0;
-	}
-
-if (m_objects != null) {
-	delete[] m_objects;
-	m_objects = null;
-	m_nObjects = 0;
-	}
-
-if (m_robots != null) {
-	delete[] m_robots;
-	m_robots = null;
-	m_nRobots = 0;
-	}
-
-if (m_variableLights != null) {
-	delete[] m_variableLights;
-	m_variableLights = null;
-	m_nVariableLights = 0;
-	}
-
-if (m_faceColors != null) {
-	delete[] m_faceColors;
-	m_faceColors = null;
-	m_nFaceColors = 0;
-	}
-
-if (m_textureColors != null) {
-	delete[] m_textureColors;
-	m_textureColors = null;
-	m_nTextureColors = 0;
-	}
-
-if (m_vertexColors != null) {
-	delete[] m_vertexColors;
-	m_vertexColors = null;
-	m_nVertexColors = 0;
-	}
-
-if (m_deltaIndices != null) {
-	delete[] m_deltaIndices;
-	m_deltaIndices = null;
-	m_nDeltaIndices = 0;
-	}
-
-if (m_deltaValues != null) {
-	delete[] m_deltaValues;
-	m_deltaValues = null;
-	m_nDeltaValues = 0;
-	}
-
+m_vertices.Destroy ();
+m_segments.Destroy ();
+m_robotMakers.Destroy ();
+m_equipMakers.Destroy ();
+m_walls.Destroy ();
+m_doors.Destroy ();
+m_triggers.Destroy ();
+m_objects.Destroy ();
+m_robotInfo.Destroy ();
+m_deltaLightIndices.Destroy ();
+m_deltaLightValues.Destroy ();
+m_variableLights.Destroy ();
+m_faceColors.Destroy ();
+m_textureColors.Destroy ();
+m_vertexColors.Destroy ();
 return false;
 }
 
 //------------------------------------------------------------------------------
 
-bool CUndoData::Save (undoData data) 
+void CUndoData::Backup (undoData dataFlags) 
 {
-if (data & udVertices) {
-	m_vertices = new CVertex [m_nVertices = vertexManager.Count ()];
-	if (m_vertices == null)
-		return Destroy ();
-	int i = 0;
-	for (CVertexIterator it; it; it++)
-		it->Index () = it.Index ();
-		m_vertices [i++] = it;
-		}
+if (dataFlags & udVertices) 
+	m_vertices.Backup (vertexManager.Vertex (0), vertexManager.Count ());
+
+if (dataFlags & udSegments) 
+	!m_segments.Backup (segmentManager.Segment (0), segmentManager.Count ());
+
+if (dataFlags & udMatCens) {
+	m_robotMakers.Backup (segmentManager.RobotMaker (0), segmentManager.RobotMakerCount ());
+	m_equipMakers.Backup (segmentManager.EquipMaker (0), segmentManager.EquipMakerCount ());
 	}
 
-if (data & udSegments) {
-	m_segments = new CSegment [m_nSegments = segmentManager.Count ()];
-	if (m_segments == null)
-		return Destroy ();
-	int i = 0;
-	for (CSegmentIterator it; it; it++)
-		it->Index () = it.Index ();
-		m_segments [i++] = it;
-		}
+if (dataFlags & udWalls) 
+	!m_walls.Backup (wallManager.Wall (0), wallManager.WallCount ());
+
+if (dataFlags & udTriggers) 
+	!m_triggers.Backup (triggerManager.Trigger (0), triggerManager.Count ());
+
+if (dataFlags & udObjects) 
+	!m_objects.Backup (objectManager.Objects (0), objectManager.Count ());
+
+if (dataFlags & udRobots) 
+	!m_robotInfo.Backup (robotManager.RobotInfo (0), robotManager.Count ());
+
+if (dataFlags & udVariableLights) 
+	!m_variableLights.Backup (lightManager.VariableLight (0), lightManager.Count ());
+
+if (dataFlags & udStaticLight) {
+	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.m_nSegments * 6);
+	 m_textureColors.Backup (lightManager.TexColor (0), MAX_TEXTURES_D2);
+	 m_vertexColors.Backup (lightManager.VertexColor (0), vertexManager.Count ());
 	}
 
-if (data & udMatCens) {
-	for (int i = 0; i < 2; i++) {
-		if ((m_nMatCens [i] = segmentManager.MatCenCount (i)) > 0) {
-			m_matCens [i] = new CMatCenter [m_nMatCens [i]];
-			if (m_matCens [i] == null)
-				return Destroy ();
-			memcpy (m_matCens [i], segmentManager.MatCenters (i), m_nMatCens [i] * sizeof (CMatCenter));
-			}
-		}
+if (dataFlags & udDynamicLight) {
+	m_deltaIndices.Backup (lightManager.LightDeltaIndex (0), lightManager.DeltaIndexCount ());
+	m_deltaValues.Backup (lightManager.LightDeltaValue (0), lightManager.DeltaValueCount ());
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoData::Restore (undoData dataFlags) 
+{
+if (dataFlags & udVertices) 
+	m_vertices.Restore ();
+
+if (dataFlags & udSegments) 
+	!m_segments.Restore ();
+
+if (dataFlags & udMatCens) {
+	m_robotMakers.Restore ();
+	m_equipMakers.Restore ();
 	}
 
-if (data & udWalls) {
-	m_walls = new CWall [m_nWalls = wallManager.Count ()];
-	if (m_walls == null)
-		return Destroy ();
-	int i = 0;
-	for (CWallIterator it; it; it++)
-		it->Index () = it.Index ();
-		m_walls [i++] = it;
-		}
+if (dataFlags & udWalls) 
+	!m_walls.Restore ();
+
+if (dataFlags & udTriggers) 
+	!m_triggers.Restore ();
+
+if (dataFlags & udObjects) 
+	!m_objects.Restore ();
+
+if (dataFlags & udRobots) 
+	!m_robotInfo.Restore ();
+
+if (dataFlags & udVariableLights) 
+	!m_variableLights.Restore ();
+
+if (dataFlags & udStaticLight) {
+	 m_faceColors.Restore ();
+	 m_textureColors.Restore ();
+	 m_vertexColors.Restore ();
 	}
 
-if (data & udTriggers) {
-	m_triggers = new CTrigger [m_nTriggers = triggerManager.Count ()];
-	if (m_triggers == null)
-		return Destroy ();
-	int i = 0;
-	for (CTriggerIterator it; it; it++)
-		it->Index () = it.Index ();
-		m_triggers [i++] = it;
-		}
+if (dataFlags & udDynamicLight) {
+	m_deltaIndices.Restore ();
+	m_deltaValues.Restore ();
 	}
-
-if (data & udObjects) {
-	m_objects = new CGameObject [m_nObjects = objectManager.Count ()];
-	if (m_objects == null)
-		return Destroy ();
-	memcpy (m_objects, objectManager.Object (0), m_nObjects * sizeof (CGameObject));
-	}
-
-if (data & udRobots) {
-	m_robots = new CRobotInfo [m_nRobots = robotManager.Count ()];
-	if (m_robots == null)
-		return Destroy ();
-	memcpy (m_robots, robotManager.RobotInfo (0), m_nRobots * sizeof (CRobotInfo));
-	}
-
-if (data & udVariableLights) {
-	m_variableLights = new CVariableLights [m_nVariableLights = lightManager.Count ()];
-	if (m_variableLights == null)
-		return Destroy ();
-	memcpy (m_variableLights, lightManager.VariableLight (0), m_nVariableLights * sizeof (CVariableLight));
-	}
-
-if (data & udStaticLight) {
-	 m_faceColors = new CFaceColor [m_nFaceColors = segmentManager.m_nSegments * 6];
-	 if (m_faceColors == null)
-		 return Destroy ();
-	 memcpy (m_faceColors, lightManager.FaceColor (0), m_nFaceColors * sizeof (CFaceColor));
-
-	 m_textureColors = new CTextureColor [m_nTextureColors = MAX_TEXTURES_D2];
-	 if (m_textureColors == null)
-		 return Destroy ();
-	 memcpy (m_textureColors, lightManager.TexColor (0), m_nTextureColors * sizeof (CTextureColor));
-
-	 m_vertexColors = new CVertexColor [m_nVertexColors = vertexManager.Count ()];
-	 if (m_vertexColors == null)
-		 return Destroy ();
-	 memcpy (m_vertexColors, lightManager.TexColor (0), m_nVertexColors * sizeof (CVertexColor));
-	}
-
-if (data & udDynamicLight) {
-	m_deltaIndices = new CLightDeltaIndex [m_nDeltaIndices = lightManager.DeltaIndexCount ()];
-	if (m_deltaIndices == null)
-		return Destroy ();
-	memcpy (m_deltaIndices, lightManager.LightDeltaIndex (0), m_nDeltaIndices * sizeof (CLightDeltaIndex));
-
-	m_seltaValues = new CLightDeltaValue [m_nDeltaValues = lightManager.DeltaValueCount ()];
-	if (m_deltaValues == null)
-		return Destroy ();
-	memcpy (m_deltaValues, lightManager.LightDeltaValue (0), m_nDeltaValues * sizeof (CLightDeltaValue));
-	}
-return true;
 }
 
 //------------------------------------------------------------------------------
@@ -296,7 +229,7 @@ if (m_nCurrent == m_nHead)
 	return false;
 int nId = Current ()->Id ();
 do {
-	Current ()->Undo ();
+	Current ()->Restore ();
 	if (--m_nCurrent < 0)
 		m_nCurrent = sizeof (m_buffer) - 1;
 	} while ((m_nCurrent != m_nHead) && (Current ()->Id () == nId));
@@ -313,7 +246,7 @@ if (m_nCurrent == m_nTail)
 	return false;
 int nId = Current ()->Id ();
 do {
-	Current ()->Redo ();
+	Current ()->Restore ();
 	m_nCurrent = ++m_nCurrent % sizeof (m_buffer);
 	} while ((m_nCurrent != m_nTail) && (Current ()->Id () == nId));
 return true;
@@ -332,7 +265,11 @@ else {
 		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
 			m_nHead = ++m_nHead % sizeof (m_buffer);
+#if DETAIL_BACKUP
 			delete Head ()->m_item;
+#else
+			Head ()->Destroy ();
+#endif
 			} while (Head ()->Id () == nId);
 		}
 	}
@@ -342,6 +279,7 @@ else {
 
 int CUndoManager::Backup (CGameItem* parent, eEditType editType) 
 { 
+#if USE_FREELIST
 SetModified (true);
 if (parent->Id () == Id ()) { // item backup up in this batch already, so update the backup
 	CGameItem* backup = parent->Parent ();
@@ -357,6 +295,20 @@ else { // create a new backup
 		Tail ()->Setup (item, parent, editType, Id ());
 		}
 	return Id ();
+	}
+#endif
+}
+
+//------------------------------------------------------------------------------
+
+void CUndoManager::Backup (void)
+{
+if (m_current.Cleanup ()) 
+	Id ()--;
+else {
+	Append ();
+	*Tail () = m_current;
+	m_current.Reset ();
 	}
 }
 
@@ -399,23 +351,11 @@ DLE.GetDocument ()->SetModifiedFlag (bModified);
 
 //------------------------------------------------------------------------------
 
-void CUndoManager::Begin (void) 
+void CUndoManager::Begin (undoFlags dataFlags) 
 {
-if (0 == m_nModified++) {
-	SetModified (true);
+if (0 == m_nModified++) 
 	Update ();
-	}
-Lock ();
-}
-
-//------------------------------------------------------------------------------
-
-void CUndoManager::Begin (undoData data) 
-{
-if (0 == m_nModified++) {
-	SetModified (true);
-	Update ();
-	}
+m_current.Backup (dataFlags);
 Lock ();
 }
 
