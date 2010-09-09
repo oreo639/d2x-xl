@@ -23,10 +23,20 @@ return count;
 
 void CVertexManager::Delete (ushort nDelVert)
 {
-undoManager.SetModified (true); 
+#if USE_FREELIST
+
 Vertex (nDelVert)->Backup (opDelete);
 m_free += (int) nDelVert;
 Count ()--;
+
+#else //USE_FREELIST
+
+if (nDelVert < --Count ()) {
+	*Vertex (nDelVert) = *Vertex (Count ());
+	segmentManager.UpdateVertices (Count (), nDelVert);
+return Count ();
+
+#endif //USE_FREELIST
 }
 
 // ----------------------------------------------------------------------------- 
