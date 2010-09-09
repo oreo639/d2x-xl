@@ -75,14 +75,14 @@ return (nChild < 0) ? null : segmentManager.Segment (nChild);
 
 CSide* CSelection::Side (void)
 {
-return segmentManager.Side (m_nSegment, m_nSide);
+return segmentManager.Side (*this);
 }
 
 // -----------------------------------------------------------------------------
 
 CWall* CSelection::Wall (void)
 {
-return segmentManager.Wall (m_nSegment, m_nSide);
+return segmentManager.Wall (*this);
 }
 
 // -----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ return vertexManager.Vertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m
 
 CColor* CSelection::CurrLightColor (void)
 { 
-return lightManager.LightColor (current.m_nSegment, current.m_nSide); 
+return lightManager.LightColor (*this); 
 }
 
 // -----------------------------------------------------------------------------

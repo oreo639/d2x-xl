@@ -7,7 +7,7 @@ CTriggerManager triggerManager;
 
 //------------------------------------------------------------------------------
 
-bool Full (void) 
+bool CTriggerManager::Full (void) 
 { 
 return Count (0) >= MAX_TRIGGERS; 
 }
@@ -16,15 +16,15 @@ return Count (0) >= MAX_TRIGGERS;
 
 int CTriggerManager::CmpObjTriggers (CTrigger& pi, CTrigger& pm)
 {
-	short i = pi.m_info.nObject;
-	short m = pm.m_info.nObject;
+	short i = pi.Info ().nObject;
+	short m = pm.Info ().nObject;
 
 if (i < m)
 	return -1;
 if (i > m)
 	return 1;
-i = pi.m_info.type;
-m = pm.m_info.type;
+i = pi.Info ().type;
+m = pm.Info ().type;
 return (i < m) ? -1 : (i > m) ? 1 : 0;
 }
 
@@ -78,10 +78,10 @@ void CTriggerManager::RenumberObjTriggers (void)
 
 undoManager.Begin (udTriggers);
 for (i = ObjTriggerCount (); i; i--, trigP++)
-	trigP->m_info.nObject = objectManager.Index (objectManager.FindBySig (trigP->m_info.nObject));
+	trigP->Info ().nObject = objectManager.Index (objectManager.FindBySig (trigP->Info ().nObject));
 i = ObjTriggerCount ();
 while (i) {
-	if (ObjTrigger (--i)->m_info.nObject < 0)
+	if (ObjTrigger (--i)->Info ().nObject < 0)
 		DeleteFromObject (i);
 	}
 SortObjTriggers ();
@@ -245,7 +245,7 @@ if (nDelTrigger < 0) {
 	CWall* wallP = current.Wall ();
 	if (wallP == null)
 		return;
-	nDelTrigger = wallP->m_info.nTrigger;
+	nDelTrigger = wallP->Info ().nTrigger;
 	}
 
 CTrigger* delTrigP = Trigger (nDelTrigger, 0);
@@ -261,11 +261,11 @@ m_free += nDelTrigger;
 WallTriggerCount ()--;
 #else
 if (nDelTrigger < --WallTriggerCount ()) {
-	*delTrigP = WallTrigger (Count ());
-	CWall* wallP = wallManager.FindByTrigger (Count ());
+	*delTrigP = *WallTrigger (WallTriggerCount ());
+	CWall* wallP = wallManager.FindByTrigger (WallTriggerCount ());
 	if (wallP != null) {
 		undoManager.Begin (udWalls);
-		wallP->Info ().nTrigger = nDelTrigger;
+		wallP->Info ().nTrigger = (byte) nDelTrigger;
 		undoManager.End ();
 		}
 	}
@@ -298,7 +298,7 @@ short CTriggerManager::FindBySide (short& nTrigger, CSideKey key)
 current.Get (key);
 CWall *wallP = wallManager.FindBySide (key);
 if (wallP != null) {
-	nTrigger = wallP->m_info.nTrigger;
+	nTrigger = wallP->Info ().nTrigger;
 	return wallManager.Index (wallP);
 	}
 return NO_WALL;
@@ -362,11 +362,11 @@ if (objP == null) {
 	return null;
 	}
 
-if ((objP->m_info.type != OBJ_ROBOT) && 
-	 (objP->m_info.type != OBJ_CAMBOT) &&
-	 (objP->m_info.type != OBJ_POWERUP) &&
-	 (objP->m_info.type != OBJ_HOSTAGE) &&
-	 (objP->m_info.type != OBJ_CNTRLCEN)) {
+if ((objP->Info ().type != OBJ_ROBOT) && 
+	 (objP->Info ().type != OBJ_CAMBOT) &&
+	 (objP->Info ().type != OBJ_POWERUP) &&
+	 (objP->Info ().type != OBJ_HOSTAGE) &&
+	 (objP->Info ().type != OBJ_CNTRLCEN)) {
 	ErrorMsg ("Object triggers can only be attached to robots, reactors, hostages, powerups and cameras.");
 	return null;
 	}
@@ -380,7 +380,7 @@ undoManager.Begin (udTriggers);
 short nTrigger = ObjTriggerCount ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
 trigP->Setup (type, 0);
-trigP->m_info.nObject = nObject;
+trigP->Info ().nObject = nObject;
 trigP->Index () = nTrigger;
 undoManager.End ();
 SortObjTriggers ();
@@ -411,7 +411,7 @@ void CTriggerManager::DeleteObjTriggers (short nObject)
 {
 undoManager.Begin (udTriggers);
 for (short i = ObjTriggerCount (); i; )
-	if (ObjTrigger (--i)->m_info.nObject == nObject)
+	if (ObjTrigger (--i)->Info ().nObject == nObject)
 		DeleteFromObject (i);
 undoManager.End ();
 }
@@ -483,7 +483,7 @@ for (short i = 0; i < Count (0); i++) {
 #if USE_FREELIST
 		CTrigger* trigP = WallTrigger (--m_free);
 #else
-		CTrigger* trigP = WallTrigger (Count ()++);
+		CTrigger* trigP = WallTrigger (WallTriggerCount ()++);
 #endif
 		trigP->Read (fp, nFileVersion, false);
 		trigP->Index () = i;
@@ -502,17 +502,17 @@ if (nFileVersion >= 33) {
 	ObjTriggerCount () = fp.ReadInt32 ();
 	for (short i = 0; i < ObjTriggerCount (); i++) {
 		m_triggers [1][i].Read (fp, nFileVersion, true);
-		m_triggers [1][i].m_nIndex = i;
+		m_triggers [1][i].Index () = i;
 		}
 	if (nFileVersion >= 40) {
 		for (short i = 0; i < ObjTriggerCount (); i++)
-			m_triggers [1][i].m_info.nObject = fp.ReadInt16 ();
+			m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
 		}
 	else {
 		for (short i = 0; i < ObjTriggerCount (); i++) {
 			fp.ReadInt16 ();
 			fp.ReadInt16 ();
-			m_triggers [1][i].m_info.nObject = fp.ReadInt16 ();
+			m_triggers [1][i].Info ().nObject = fp.ReadInt16 ();
 			}
 		if (nFileVersion < 36)
 			fp.Seek (700 * sizeof (short), SEEK_CUR);
@@ -550,7 +550,7 @@ else {
 			for (i = 0; i < ObjTriggerCount (); i++)
 				ObjTrigger (i)->Write (fp, nFileVersion, true);
 			for (i = 0; i < ObjTriggerCount (); i++)
-				fp.WriteInt16 (ObjTrigger (i)->m_info.nObject);
+				fp.WriteInt16 (ObjTrigger (i)->Info ().nObject);
 			}
 		}
 	}
@@ -622,7 +622,7 @@ if (other.Wall () == null) {
 	return false;
 	}
 // automatically change the trigger type to open if not a door
-if (other.Wall ()->m_info.type != WALL_DOOR)
+if (other.Wall ()->Info ().type != WALL_DOOR)
 	triggerType = TT_OPEN_WALL;
 return AutoAddTrigger (wallType, wallFlags, triggerType);
 }
@@ -638,7 +638,7 @@ return AddDoorTrigger (WALL_OPEN,0,TT_OPEN_DOOR);
 
 bool CTriggerManager::AddRobotMaker (void) 
 {
-if (other.Segment ()->m_info.function != SEGMENT_FUNC_ROBOTMAKER) {
+if (other.Segment ()->Info ().function != SEGMENT_FUNC_ROBOTMAKER) {
 	ErrorMsg ("There is no robot maker cube selected.\n\n"
 				"Hint: Select a robot maker cube using the 'other cube' and\n"
 				"select a trigger location using the 'current cube'.");

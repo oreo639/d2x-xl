@@ -334,6 +334,7 @@ class CGameObject : public CGameItem {
 			} rType;
 
 		// CGameObject () { memset (this, 0, sizeof (*this)); }
+		inline tGameObject& Info (void) { return m_info; }
 
 		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 

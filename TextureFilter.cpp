@@ -524,7 +524,7 @@ else {
       for (nSide = 0; nSide < 6; nSide++) {
 			ushort nWall = segP->m_sides [nSide].m_info.nWall;
 			if ((segP->Child (nSide) == -1) ||
-				 ((nWall != NO_WALL) && wallManager.Wall (nWall)->m_info.type != WALL_OPEN)) {
+				 ((nWall != NO_WALL) && wallManager.Wall (nWall)->Info ().type != WALL_OPEN)) {
 				int t = segP->m_sides [nSide].m_info.nBaseTex;
 				int i = TextureIndex (t);
 				int j = FilterIndex (t);

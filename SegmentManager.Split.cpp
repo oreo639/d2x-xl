@@ -102,12 +102,12 @@ if (vertexManager.Count () > (MAX_VERTICES - 1)) {
 	return; 
 	}
 
-segP = Segment (current.m_nSegment); 
+CSegment* segP = Segment (current.m_nSegment); 
 vert = segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
 
 // check to see if current point is shared by any other cubes
 bool found = false; 
-CSegment* segP = Segment (0);
+segP = Segment (0);
 for (nSegment = 0; (nSegment < Count ()) && !found; nSegment++, segP++)
 	if (nSegment != current.m_nSegment)
 		for (nVertex = 0; nVertex < 8; nVertex++)
