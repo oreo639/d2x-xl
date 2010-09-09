@@ -193,14 +193,21 @@ return b;
 
 void CUndoManager::Truncate (void)
 {
-for (int i = m_nCurrent; i != m_nTail; i = ++i % sizeof (m_buffer)) 
-	delete m_buffer [i].m_item;
+for (;;) {
+	m_buffer [m_nTail].Destroy ();
+	if (m_nTail == m_nCurrent)
+		break;
+	if (--m_nTail < 0)
+		m_nTail = sizeof (m_buffer) - 1;
+	}
 if (m_nCurrent == m_nHead) {
 	m_nHead = m_nTail = m_nCurrent = -1;
 	m_nId = 0;
 	}
 else {
-	m_nTail = m_nCurrent;
+	if (--m_nTail < 0)
+		m_nTail = sizeof (m_buffer) - 1;
+	m_nCurrent = m_nTail;
 	m_nId = Current ()->Id ();
 	}
 }
@@ -306,6 +313,7 @@ void CUndoManager::Backup (void)
 if (m_current.Cleanup ()) 
 	Id ()--;
 else {
+	SetModified (true);
 	Append ();
 	*Tail () = m_current;
 	m_current.Reset ();
