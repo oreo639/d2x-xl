@@ -253,7 +253,7 @@ for (j = 0; j < t; j++) {
 	// compare this to existing data
 	if (memcmp (&rInfo, RobotInfo (i), sizeof (tRobotInfo)) != 0) {
 		memcpy (RobotInfo (i), &rInfo, sizeof (tRobotInfo));
-		RobotInfo (i)->m_info.bCustom = 1; // mark as custom
+		RobotInfo (i)->Info ().bCustom = 1; // mark as custom
 		}
 	}
 
@@ -295,7 +295,7 @@ fp.WriteInt32 (1);   // version 1
 // write robot information
 fp.Write (t); // number of robot info structs stored
 for (i = 0; i < m_nRobotTypes; i++) {
-	if (RobotInfo (i)->m_info.bCustom) {
+	if (RobotInfo (i)->Info ().bCustom) {
 		fp.Write (i);
 		RobotInfo (i)->Write (fp);
 		}
@@ -358,16 +358,16 @@ for (j = 0; j < t; j++) {
 
 bool CRobotManager::IsCustomRobot (int nId)
 {
-if (!RobotInfo (nId)->m_info.bCustom) //changed?
+if (!RobotInfo (nId)->Info ().bCustom) //changed?
 	return false;
 	// check if actually different from defaults
 
 bool bFound = false;
 
-byte bCustom = DefRobotInfo (nId)->m_info.bCustom;
-DefRobotInfo (nId)->m_info.bCustom = RobotInfo (nId)->m_info.bCustom; //make sure it's equal for the comparison
+byte bCustom = DefRobotInfo (nId)->Info ().bCustom;
+DefRobotInfo (nId)->Info ().bCustom = RobotInfo (nId)->Info ().bCustom; //make sure it's equal for the comparison
 if (!memcmp (RobotInfo (nId), DefRobotInfo (nId), sizeof (tRobotInfo))) 
-	RobotInfo (nId)->m_info.bCustom = 0; //same as default
+	RobotInfo (nId)->Info ().bCustom = 0; //same as default
 else { //they're different
 	// find a robot of that type
 	CGameObject* objP = objectManager.FindRobot (nId);
@@ -377,19 +377,19 @@ else { //they're different
 		// find a matcen producing a robot of that type
 		CSegment* segP;
 		for (short i = 0; (segP = segmentManager.FindRobotMaker (i)) != null; i = segmentManager.Index (segP)) {
-			int nBotGen = segP->m_info.nMatCen;
+			int nBotGen = segP->Info ().nMatCen;
 			if ((nId < 32) 
-				 ? segmentManager.RobotMaker (nBotGen)->m_info.objFlags [0] & (1 << nId) 
-				 : segmentManager.RobotMaker (nBotGen)->m_info.objFlags [1] & (1 << (nId - 32)))
+				 ? segmentManager.RobotMaker (nBotGen)->Info ().objFlags [0] & (1 << nId) 
+				 : segmentManager.RobotMaker (nBotGen)->Info ().objFlags [1] & (1 << (nId - 32)))
 				break;
 			}
 		if (segP != null) // found one
 			bFound = true;
 		else
-			RobotInfo (nId)->m_info.bCustom = 0; // no matcens or none producing that robot type
+			RobotInfo (nId)->Info ().bCustom = 0; // no matcens or none producing that robot type
 		}
 	}
-DefRobotInfo (nId)->m_info.bCustom = bCustom; //restore
+DefRobotInfo (nId)->Info ().bCustom = bCustom; //restore
 return bFound;
 }
 

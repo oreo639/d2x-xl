@@ -161,6 +161,8 @@ public:
 			m_sides [i].Clear ();
 		}
 
+	inline tSegment& Info (void) { return m_info; }
+
 	void Setup (void);
 
 	void SetUV (short nSide, short x, short y);
@@ -239,6 +241,8 @@ public:
 		m_info.objFlags [0] = nFlags;
 		m_info.nFuelCen = nIndex;
 		};
+
+	inline tMatCenter& Info (void) { return m_info; }
 
 	virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
 
