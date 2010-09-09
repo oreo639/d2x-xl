@@ -150,7 +150,7 @@ if (delWallP == null)
 undoManager.Begin (udSegments | udWalls | udTriggers);
 delWallP->Backup (opDelete);
 // if trigger exists, remove it as well
-triggerManager.Delete (delWallP->m_info.nTrigger);
+triggerManager.DeleteFromWall (delWallP->m_info.nTrigger);
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.OppositeWall (*delWallP);
 if (oppWallP != null) 
@@ -158,6 +158,7 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (*delWallP);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
+Remove (nDelWall);
 
 undoManager.End ();
 //DLE.MineView ()->Refresh ();
@@ -213,8 +214,11 @@ void CWallManager::UpdateSegment (short nOldSegment, short nNewSegment)
 {
 	CWall* wallP = FindBySegment (nOldSegment);
 
-if (wallP != null)
+if (wallP != null) {
+	undoManager.Begin (udWalls);
 	wallP->m_nSegment = nNewSegment;
+	undoManager.End ();
+	}
 }
 
 //------------------------------------------------------------------------------

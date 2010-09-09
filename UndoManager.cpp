@@ -27,6 +27,8 @@ bool CUndoData::Cleanup (void)
 {
 	bool bEmpty = true;
 
+if (m_secretData != segmentManager.SecretData ()) bEmpty = false;
+if (m_reactorData != triggerManager.ReactorData ()) bEmpty = false;
 if (m_vertices.Cleanup ()) bEmpty = false;
 if (m_segments.Cleanup ()) bEmpty = false;
 if (m_robotMakers.Cleanup ()) bEmpty = false;
@@ -76,8 +78,10 @@ void CUndoData::Backup (undoData dataFlags)
 if (dataFlags & udVertices) 
 	m_vertices.Backup (vertexManager.Vertex (0), vertexManager.Count ());
 
-if (dataFlags & udSegments) 
-	!m_segments.Backup (segmentManager.Segment (0), segmentManager.Count ());
+if (dataFlags & udSegments) {
+	m_segments.Backup (segmentManager.Segment (0), segmentManager.Count ());
+	m_secretData = segmentManager.SecretData ();
+	}
 
 if (dataFlags & udRobotMakers)
 	m_robotMakers.Backup (segmentManager.RobotMaker (0), segmentManager.RobotMakerCount ());
@@ -91,6 +95,7 @@ if (dataFlags & udWalls)
 if (dataFlags & udTriggers) {
 	m_triggers [0].Backup (triggerManager.Trigger (0, 0), triggerManager.Count (0));
 	m_triggers [1].Backup (triggerManager.Trigger (0, 1), triggerManager.Count (1));
+	m_reactorData = segmentManager.ReactorData ();
 	}	
 
 if (dataFlags & udObjects) 
@@ -121,8 +126,10 @@ void CUndoData::Restore (undoData dataFlags)
 if (dataFlags & udVertices) 
 	m_vertices.Restore ();
 
-if (dataFlags & udSegments) 
+if (dataFlags & udSegments) {
 	m_segments.Restore ();
+	segmentManager.SecretData () = m_secretData;
+	}
 
 if (dataFlags & udMatCens) {
 	m_robotMakers.Restore ();
@@ -135,6 +142,7 @@ if (dataFlags & udWalls)
 if (dataFlags & udTriggers) {
 	m_triggers [0].Restore ();
 	m_triggers [1].Restore ();
+	triggerManager.ReactorData () = m_reactorData;
 	}
 
 if (dataFlags & udObjects) 

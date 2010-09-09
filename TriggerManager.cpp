@@ -239,6 +239,7 @@ if (delTrigP == null)
 
 undoManager.Begin (udTriggers);
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
+
 #if USE_FREELIST
 m_free += nDelTrigger;
 WallTriggerCount ()--;
@@ -246,8 +247,11 @@ WallTriggerCount ()--;
 if (nDelTrigger < --WallTriggerCount ()) {
 	*delTrigP = WallTrigger (Count ());
 	CWall* wallP = wallManager.FindByTrigger (Count ());
-	if (wallP != null)
+	if (wallP != null) {
+		undoManager.Begin (udWalls);
 		wallP->Info ().nTrigger = nDelTrigger;
+		undoManager.End ();
+		}
 	}
 #endif
 

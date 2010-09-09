@@ -39,12 +39,31 @@ typedef CReactorTrigger reactorTriggerList [MAX_REACTOR_TRIGGERS];
 
 //------------------------------------------------------------------------
 
+class CReactorData {
+	public:
+		int	time;
+		int	strength;
+
+	inline const CReactorData& operator= (const CReactorData& other) { 
+		time = other.time;
+		strength = other.strength;
+		return *this;
+		}
+
+	inline const bool operator== (const CReactorData& other) { return (time == other.time) && (strength == other.strength); }
+
+	inline const bool operator!= (const CReactorData& other) { return (time != other.time) || (strength != other.strength); }
+};
+
+//------------------------------------------------------------------------
+
 class CTriggerManager {
 	private:
 		triggerList				m_triggers [2];
 		CMineItemInfo			m_info [2];
 		reactorTriggerList	m_reactorTriggers;
 		CMineItemInfo			m_reactorInfo;
+		CReactorData			m_reactorData;
 		FREELIST(CTrigger)
 
 	public:
@@ -60,6 +79,12 @@ class CTriggerManager {
 		inline triggerList& WallTriggerList (void) { return TriggerList (1); }
 
 		inline objTriggerList& ObjTriggerList (void) { return TriggerList (1); }
+
+		inline CReactorData& ReactorData (void) { return m_reactorData; }
+
+		inline int& ReactorTime (void) { return m_reactorData.time; }
+
+		inline int& ReactorStrengh (void) { return m_reactorData.strength; }
 
 		inline CTrigger* Trigger (int i, int nClass = 0) { return (i == NO_TRIGGER) ? null : &m_triggers [nClass][i]; }
 

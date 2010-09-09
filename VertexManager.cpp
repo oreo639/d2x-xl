@@ -27,7 +27,9 @@ if (Count () + count > MAX_VERTICES)
 	return 0;
 for (ushort i = 0; i < count; i++)
 	nVertices [i] = Count () + i;
+undoManager.Begin (udVertices);
 Count () += count;
+undoManager.End ();
 return count;
 
 #endif //USE_FREELIST
@@ -45,9 +47,11 @@ Count ()--;
 
 #else //USE_FREELIST
 
+undoManager.Begin (udVertices);
 if (nDelVert < --Count ()) {
 	*Vertex (nDelVert) = *Vertex (Count ());
 	segmentManager.UpdateVertices (Count (), nDelVert);
+undoManager.End ();
 return Count ();
 
 #endif //USE_FREELIST
@@ -60,9 +64,11 @@ void CVertexManager::DeleteUnused (void)
 UnmarkAll (NEW_MASK);
 // mark all used verts
 segmentManager.MarkAll (NEW_MASK);
+undoManager.Begin (udVertices);
 for (CVertexIterator vi; vi; vi++)
 	if (!(vi->Status () & NEW_MASK))
 		Delete (vi.Index ()); 
+undoManager.End ();
 }
 
 // ----------------------------------------------------------------------------- 

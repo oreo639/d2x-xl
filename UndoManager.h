@@ -135,6 +135,9 @@ typedef enum {
 
 class CUndoData {
 public:
+	CSecretData							m_secretData;
+	CReactorData						m_reactorData;
+
 	CUndoItem<CVertex>				m_vertices;
 	CUndoItem<CSegment>				m_segments;
 	CUndoItem<CMatCenter>			m_robotMakers;

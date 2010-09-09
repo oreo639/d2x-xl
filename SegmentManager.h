@@ -49,6 +49,24 @@ typedef struct tVertMatch {
 
 //------------------------------------------------------------------------
 
+class CSecretData {
+	public:
+		int nSegment;
+		CDoubleMatrix orient;
+
+	inline const CSecretData& operator= (const CSecretData& other) { 
+		nSegment = other.nSegment;
+		orient = other.orient;
+		return *this;
+		}
+
+	inline const bool operator== (const CSecretData& other) { return (nSegment == other.nSegment) && (orient == other.orient); }
+
+	inline const bool operator!= (const CSecretData& other) { return (nSegment != other.nSegment) || (orient != other.orient); }
+};
+
+//------------------------------------------------------------------------
+
 class CSegmentManager {
 	public:
 		segmentList				m_segments;
@@ -59,6 +77,10 @@ class CSegmentManager {
 		CMineItemInfo			m_matCenInfo [2];
 		bool						m_bCreating;
 
+		int						m_nSecretSegment;
+		CDoubleMatrix			m_secretOrient;
+
+
 	public:
 		inline void ResetInfo (void) {
 			m_segmentInfo.Reset ();
@@ -68,6 +90,12 @@ class CSegmentManager {
 			}
 		// Segment and side getters
 		inline segmentList& Segments (void)	{ return m_segments; }
+
+		inline CSecretData& SecretData (void) { return m_secretData; }
+
+		inline int& SecretSegment (void) { return m_nSecretSegment; }
+
+		inline CDoubleMatrix& SecretOrient (void) { return m_secretOrient; }
 
 		inline int& Count (void) { return m_segmentInfo.count; }
 
@@ -319,7 +347,7 @@ class CSegmentManager {
 
 		int FuelCenterCount (void);
 
-		void RemoveMatCen (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
+		void RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
 
 		bool CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, CMatCenter* matCens, CMineItemInfo& info, char* szError);
 

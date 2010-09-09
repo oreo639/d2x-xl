@@ -78,18 +78,17 @@ if (curSegP->Child (nCurSide) >= 0) {
 	return -1;
 	}
 
-undoManager.Begin (true); 
-undoManager.Begin ();
+undoManager.Begin (udSegments); 
 // get new segment
 m_bCreating = true;
 nNewSeg = Add (); 
 newSegP = Segment (nNewSeg); 
 
+vertexManager.Add (newVerts, 4);
 // define vert numbers for common side
 for (i = 0; i < 4; i++) {
 	newSegP->m_info.verts [oppSideVertTable [nCurSide][i]] = curSegP->m_info.verts [sideVertTable [nCurSide][i]]; 
 	// define vert numbers for new side
-	vertexManager.Add (&newVerts [i]);
 	newSegP->m_info.verts [sideVertTable [nCurSide][i]] = newVerts [i]; 
 	}
 
@@ -182,7 +181,7 @@ m_bCreating = true;
 if (!Define (nSegment, nFunction, -1)) {
 	if (bCreate)
 		Remove (nSegment, false);
-	undoManager.Unroll ();
+	undoManager.End ();
 	DLE.MineView ()->DelayRefresh (false);
 	m_bCreating = false;
 	return false; 
@@ -198,18 +197,20 @@ return true;
 // ----------------------------------------------------------------------------- 
 
 short CSegmentManager::CreateMatCen (short nSegment, bool bCreate, byte nType, bool bSetDefTextures, 
-												CMatCenter* matCens, CMineItemInfo& info, char* szError) 
+												 CMatCenter* matCens, CMineItemInfo& info, char* szError) 
 {
 if (info.count >= MAX_MATCENS) {
     ErrorMsg (szError);
 	 return -1;
 	}
+undoManager.Begin (udSegments);
 if (Create (nSegment, bCreate, nType) < 0)
 	return -1;
 matCens [info.count].Setup (nSegment, info.count, 0);
 Segment (nSegment)->m_info.value = 
 Segment (nSegment)->m_info.nMatCen = info.count++;
-Segment (nSegment)->Save (); // overwrite backup
+Segment (nSegment)->Backup (); // overwrite backup
+undoManager.End ();
 return true;
 }
 
@@ -292,6 +293,7 @@ if (nFuelCen >= MAX_NUM_RECHARGERS) {
 
 CSegment *segP = Segment (0);
 
+undoManager.Begin (udSegments);
 if (nType == SEGMENT_FUNC_REPAIRCEN)
 	nSegment = Create (nSegment, bCreate, nType, bSetDefTextures ? 433 : -1, "Repair centers are not available in Descent 1.");
 else {
@@ -310,6 +312,7 @@ else {
 		current.m_nSegment = nSegment;
 		}
 	}
+undoManager.End ();
 return nSegment;
 }
 
@@ -475,6 +478,8 @@ CSegment *segP = Segment (nSegment);
 if (!m_bCreating)
 	segP->Backup ();
 double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
+
+undoManager.Begin (udSegments);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
 // set textures
 CSide *sideP = segP->m_sides;
@@ -489,6 +494,7 @@ for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		Segment (nSegment)->SetUV (nSide, 0, 0);
 		}
 	}
+undoManager.End ();
 return true;
 }
 
@@ -496,8 +502,7 @@ return true;
 
 bool CSegmentManager::Define (short nSegment, byte nFunction, short nTexture)
 {
-bool bUndo = undoManager.Begin (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 if (!m_bCreating)
 	segP->Backup ();
@@ -512,13 +517,14 @@ return true;
 
 // ----------------------------------------------------------------------------- 
 
-void CSegmentManager::RemoveMatCen (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info)
+void CSegmentManager::RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info)
 {
 if (info.count > 0) {
 	// fill in deleted matcen
 	int nDelMatCen = segP->m_info.nMatCen;
 	if ((nDelMatCen >= 0) && (nDelMatCen < --info.count)) {
 		// copy last matCen in list to deleted matCen's position
+		undoManager.Begin (udSegments | udMatCenters);
 		memcpy (&matCens [nDelMatCen], &matCens [info.count], sizeof (matCens [0]));
 		matCens [nDelMatCen].m_info.nFuelCen = nDelMatCen;
 		segP->m_info.nMatCen = -1;
@@ -531,15 +537,16 @@ if (info.count > 0) {
 				break;
 				}
 			}
-		}
-	// remove matCen from all robot maker triggers targetting it
-	CSideKey key = (-Index (segP) - 1, 0); 
-	for (int nClass = 0; nClass < 2; nClass++) {
-		CTrigger* trigP = triggerManager.Trigger (0, nClass);
-		for (CTriggerIterator i (nClass); i; i++) {
-			if (i->m_info.type == TT_MATCEN)
-				i->Delete (key);
+		// remove matCen from all robot maker triggers targetting it
+		CSideKey key = (-Index (segP) - 1, 0); 
+		for (int nClass = 0; nClass < 2; nClass++) {
+			CTrigger* trigP = triggerManager.Trigger (0, nClass);
+			for (CTriggerIterator i (nClass); i; i++) {
+				if (i->m_info.type == TT_MATCEN)
+					i->Delete (key);
+				}
 			}
+		undoManager.End ();
 		}
 	}
 segP->m_info.nMatCen = -1;
@@ -554,32 +561,35 @@ void CSegmentManager::Undefine (short nSegment)
 segP->Save ();
 nSegment = Index (segP);
 if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER)
-	RemoveMatCen (segP, RobotMaker (0), m_matCenInfo [0]);
+	RemoveMatCenter (segP, RobotMaker (0), m_matCenInfo [0]);
 else if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) 
-	RemoveMatCen (segP, EquipMaker (0), m_matCenInfo [1]);
+	RemoveMatCenter (segP, EquipMaker (0), m_matCenInfo [1]);
 else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell walls
-	CSegment *childSegP;
-	CSide *oppSideP, *sideP = segP->m_sides;
+	undoManager.Begin (udSegments);
+	CSide *sideP = segP->m_sides;
 	for (short nSide = 0; nSide < 6; nSide++, sideP++) {
 		if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
 			continue;
-		childSegP = Segment (segP->Child (nSide));
+		CSegment* childSegP = Segment (segP->Child (nSide));
 		if (childSegP->m_info.function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
 			continue;
 		// if there is a wall and it's a fuel cell delete it
-		CWall *wallP = Wall (CSideKey (nSegment, nSide));
+		CSideKey key (nSegment, nSide);
+		CWall *wallP = Wall (key);
 		if ((wallP != null) && (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
 			wallManager.Delete (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
-		CSideKey key (nSegment, nSide);
 		CSideKey opp;
-		if (OppositeSide (key, opp) &&
-			 (wallP = Wall (key)) && (wallP->m_info.type == WALL_ILLUSION)) {
-			oppSideP = Side (opp);
-			if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
-				wallManager.Delete (oppSideP->m_info.nWall);
+		if (OppositeSide (key, opp)) {
+			wallP = Wall (opp);
+			if ((wallP != null) && (wallP->m_info.type == WALL_ILLUSION)) {
+				CSide* oppSideP = Side (opp);
+				if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
+					wallManager.Delete (oppSideP->m_info.nWall);
+				}
 			}
 		}
+	undoManager.End ();
 	}
 segP->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
 segP->m_info.function = SEGMENT_FUNC_NONE;
@@ -596,7 +606,7 @@ if (nDelSeg < 0)
 if (nDelSeg < 0 || nDelSeg >= Count ()) 
 	return; 
 
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 CSegment* delSegP = Segment (nDelSeg); 
 delSegP->Backup (opDelete);
 Undefine (nDelSeg);
@@ -608,10 +618,10 @@ for (int nSide = 0; nSide < 6; nSide++) {
 	lightManager.DeleteVariableLight (key);
 	}
 
-	// delete any Walls () within segment (if defined)
+// delete any Walls () within segment (if defined)
 DeleteWalls (nDelSeg); 
 
-// delete any Walls () on child Segment () that connect to this segment
+// delete any walls from adjacent segments' sides connecting to this segment
 for (short i = 0; i < MAX_SIDES_PER_SEGMENT; i++) {
 	if (delSegP->Child (i) >= 0) {
 		CSideKey opp, key (nDelSeg, i);

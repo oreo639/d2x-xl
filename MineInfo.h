@@ -63,10 +63,6 @@ public:
 class CMineData {
 	public:
 		CMineInfo			m_info;
-		int					m_reactorTime;
-		int					m_reactorStrength;
-		int					m_secretSegNum;
-		CDoubleMatrix		m_secretOrient;
 };
 
 // -----------------------------------------------------------------------------
