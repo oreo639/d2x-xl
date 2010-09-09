@@ -14,7 +14,7 @@ void CGameObject::Create (byte type, short nSegment)
 {
   CVertex	location;
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 segmentManager.CalcCenter (location, nSegment);
 Clear ();
@@ -47,7 +47,7 @@ void CGameObject::Setup (byte type)
 {
   int  id;
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 id = m_info.id;
 memset (&mType, 0, sizeof (mType));

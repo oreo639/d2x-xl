@@ -124,6 +124,16 @@ public:
 	void Clear (void);
 	
 	void Setup (CSideKey key, short time, short mask);
+
+	CGameItem* Copy (CGameItem* destP);
+
+	CGameItem* Clone (void);
+	
+	void Backup (eEditType editType);
+
+	void Undo (void);
+
+	void Redo (void);
 };
 
 // -----------------------------------------------------------------------------

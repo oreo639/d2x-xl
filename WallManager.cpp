@@ -21,7 +21,7 @@ if (wallP != null) {
 	ErrorMsg ("There is already a wall on this side");
 	return false;
 	}
-if (m_free.Empty ()) {
+if (Full ()) {
 	ErrorMsg ("Maximum number of walls reached");
 	return false;
 	}
@@ -34,12 +34,21 @@ short CWallManager::Add (bool bUndo)
 { 
 if (!HaveResources ())
 	return NO_WALL;
+
+#if USE_FREELIST
+
 int nWall = --m_free;
 m_walls [nWall].Clear ();
 if (!bUndo)
 	m_walls [nWall].Backup (opAdd);
 WallCount ()++;
 return (short) nWall;
+
+#else
+
+return (short) WallCount ()++;
+
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -82,8 +91,7 @@ else {
 ushort nWall = WallCount ();
 
 // link wall to segment/side
-undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments | udWalls);
 sideP->SetWall (nWall);
 CWall* wallP = Wall (nWall);
 wallP->Setup (key, nWall, (byte) type, nClip, nTexture, false);
@@ -107,6 +115,26 @@ return (sideP == null) ? null : sideP->Wall ();
 
 //------------------------------------------------------------------------------
 
+void CWallManager::Remove (short nDelWall) 
+{
+#if USE_FREELIST
+
+m_free += (int) nDelWall;
+WallCount ()--;
+
+#else
+
+if (nDelWall < --Count ()) {
+	CWall* delWallP = Wall (nDelWall);
+	*delWallP = *Wall (Count ());
+	segmentManager.Side (delWallP)->SetWall (nDelWall);
+	}
+
+#endif
+}
+
+//------------------------------------------------------------------------------
+
 void CWallManager::Delete (short nDelWall) 
 {
 if (nDelWall == NO_WALL)
@@ -119,11 +147,10 @@ if (delWallP == null) {
 
 if (delWallP == null)
 	return;
+undoManager.Begin (udSegments | udWalls | udTriggers);
 delWallP->Backup (opDelete);
 // if trigger exists, remove it as well
 triggerManager.Delete (delWallP->m_info.nTrigger);
-undoManager.SetModified (true);
-undoManager.Begin ();
 // remove references to the deleted wall
 CWall* oppWallP = segmentManager.OppositeWall (*delWallP);
 if (oppWallP != null) 
@@ -131,8 +158,6 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (*delWallP);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
-m_free += (int) nDelWall;
-WallCount ()--;
 
 undoManager.End ();
 //DLE.MineView ()->Refresh ();
@@ -209,8 +234,7 @@ return (wallP->SetClip (nOvlTex) >= 0) || (wallP->SetClip (nBaseTex) >= 0);
 
 bool CWallManager::CreateDoor (byte type, byte flags, byte keys, char nClip, short nTexture) 
 {
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments | udWalls);
 // add a door to the current segment/side
 if (Create (current, type, flags, keys, nClip, nTexture)) {
 	// add a door to the opposite segment/side
@@ -221,7 +245,7 @@ if (Create (current, type, flags, keys, nClip, nTexture)) {
 		return true;
 		}
 	}
-undoManager.Unroll ();
+undoManager.End ();
 return false;
 }
 
@@ -325,7 +349,7 @@ bool CWallManager::CreateExit (short type)
 if (!triggerManager.HaveResources ())
 	return false;
 // make a new wall and a new trigger
-undoManager.Begin ();
+undoManager.Begin (udSegments | udWalls);
 if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 // set clip number and texture
 	Wall (WallCount ()- 1)->m_info.nClip = 10;
@@ -343,7 +367,7 @@ if (Create (current, WALL_DOOR, WALL_DOOR_LOCKED, KEY_NONE, -1, -1)) {
 		return true;
 		}
 	}
-undoManager.Unroll ();
+undoManager.End ();
 return false;
 }
 
@@ -359,7 +383,7 @@ if (!triggerManager.HaveResources ())
 	return false;
 
 int nLastSeg = current.m_nSegment;
-undoManager.Begin ();
+undoManager.Begin (udSegments | udWalls);
 if (!segmentManager.Create ()) {
 	undoManager.Unroll ();
 	return false;

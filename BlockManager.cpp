@@ -412,7 +412,7 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 Write (fp);
 DLE.MainFrame ()->Progress ().DestroyWindow ();
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 DLE.MainFrame ()->InitProgress (segmentManager.Count ());
 CSegment *segP = segmentManager.Segment (segmentManager.Count ());
@@ -536,7 +536,7 @@ strcpy_s (m_filename, sizeof (m_filename), filename); // remember file for quick
 
 // unmark all segmentManager.Segment ()
 // set up all seg_numbers (makes sure there are no negative seg_numbers)
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 segP = segmentManager.Segment (0);
@@ -645,7 +645,7 @@ if (!count) {
 	return;
 	}
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 

@@ -213,7 +213,7 @@ if (bUseTexColors && UseTexColors ()) {
 		}
 	CWall* wallP = segmentManager.Wall (key);
 	colorP = GetTexColor (nBaseTex, (wallP != null) && (wallP->Info ().type == WALL_TRANSPARENT));
-	if ((colorP != null) && )
+	if (colorP != null)
 		return colorP;
 	}	
 return FaceColor (key.m_nSegment, key.m_nSide); 

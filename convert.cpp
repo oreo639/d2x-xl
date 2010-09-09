@@ -70,7 +70,7 @@ short	nSeg,	nSide, nTextures;
 short tnum [2], segCount = segmentManager.Count ();
 char	szName [80];
 int h;
-CSegment *segP = theMine->Segments (0);
+CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
 // add textures that have been used to Texture 1 combo box
 for (nSeg = segCount; nSeg; nSeg--, segP++) {
@@ -219,7 +219,7 @@ theMine->SetFileType (RL2_FILE);
 paletteManager.Reload ();
 
   // convert textures
-for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
+for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegment++, segP++) {
 	segP->m_info.s2Flags = 0;
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++) {
 		if ((segP->Child (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < wallCount)) {
@@ -244,14 +244,14 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 
 // defined D2 wall parameters
 //--------------------------------------
-for (i = 0, wallP = theMine->Walls (0); i < wallCount; i++, wallP++) {
+for (i = 0, wallP = wallManager.Wall (0); i < wallCount; i++, wallP++) {
 	wallP->m_info.controllingTrigger = 0;
 	wallP->m_info.cloakValue = 0;
 	}
 
 // change trigP type and flags
 //-------------------------------------------
-for (i = 0, trigP = theMine->Triggers (0); i < theMine->Info ().triggers.count; i++, trigP++) {
+for (i = 0, trigP = wallManager.Trigger (0); i < theMine->Info ().triggers.count; i++, trigP++) {
 	switch (trigP->m_info.flags) {
 		case TRIGGER_CONTROL_DOORS:
 			trigP->m_info.type = TT_OPEN_DOOR;
@@ -290,17 +290,17 @@ for (i = 0, trigP = theMine->Triggers (0); i < theMine->Info ().triggers.count; 
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < theMine->Info ().botGen.count; i++) {
-	theMine->RobotMakers (i)->m_info.objFlags [1] = 0;
-	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
+	segmentManager.RobotMaker (i)->m_info.objFlags [1] = 0;
+	for (j = 0, segP = segmentManager.Segment (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == i))
-				theMine->RobotMakers (i)->m_info.nFuelCen = (short)(segP->m_info.value);
+				segmentManager.RobotMaker (i)->m_info.nFuelCen = (short)(segP->m_info.value);
 	}
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
 for (i = 0; i < theMine->Info ().equipGen.count; i++) {
 	theMine->EquipMakers (i)->m_info.objFlags [1] = 0;
-	for (j = 0, segP = theMine->Segments (0); j <= segCount; j++, segP++)
+	for (j = 0, segP = segmentManager.Segment (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nMatCen == i))
 				theMine->EquipMakers (i)->m_info.nFuelCen = (short)(segP->m_info.value);
 	}
@@ -308,7 +308,7 @@ for (i = 0; i < theMine->Info ().equipGen.count; i++) {
 // Objects ()
 //-----------------------------------------------
 
-for (i = 0, objP = theMine->Objects (0); i < theMine->Info ().objects.count; i++, objP++) {
+for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++) {
 // int clip numbers for poly Objects () (except robots)
 	switch (objP->m_info.type) {
 		case OBJ_PLAYER   : // the player on the console

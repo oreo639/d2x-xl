@@ -414,7 +414,7 @@ if (nWall >= theMine->Info ().walls.count)
 	return;
 
 // abort if this wall is not a door
-//if (theMine->Walls (nWall)->m_info.type != WALL_DOOR)
+//if (wallManager.Wall (nWall)->m_info.type != WALL_DOOR)
 //	return;
 #endif
 	int i;

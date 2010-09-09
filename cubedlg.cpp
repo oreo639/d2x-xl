@@ -19,8 +19,8 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_SETCOORD, OnSetCoord)
 	ON_BN_CLICKED (IDC_CUBE_RESETCOORD, OnResetCoord)
 	ON_BN_CLICKED (IDC_CUBE_ADD, OnAddCube)
-	ON_BN_CLICKED (IDC_CUBE_ADD_MATCEN, OnAddBotGen)
-	ON_BN_CLICKED (IDC_CUBE_ADD_EQUIPMAKER, OnAddEquipGen)
+	ON_BN_CLICKED (IDC_CUBE_ADD_MATCEN, OnAddRobotMaker)
+	ON_BN_CLICKED (IDC_CUBE_ADD_EQUIPMAKER, OnAddEquipMaker)
 	ON_BN_CLICKED (IDC_CUBE_ADD_FUELCEN, OnAddFuelCen)
 	ON_BN_CLICKED (IDC_CUBE_ADD_REPAIRCEN, OnAddRepairCen)
 	ON_BN_CLICKED (IDC_CUBE_ADD_CONTROLCEN, OnAddControlCen)
@@ -43,8 +43,8 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_POINT2, OnPoint2)
 	ON_BN_CLICKED (IDC_CUBE_POINT3, OnPoint3)
 	ON_BN_CLICKED (IDC_CUBE_POINT4, OnPoint4)
-	ON_BN_CLICKED (IDC_CUBE_ADDBOT, OnAddObj)
-	ON_BN_CLICKED (IDC_CUBE_DELBOT, OnDeleteObj)
+	ON_BN_CLICKED (IDC_CUBE_ADDBOT, OnAddMatCenter)
+	ON_BN_CLICKED (IDC_CUBE_DELBOT, OnDeleteMatCenter)
 	ON_BN_CLICKED (IDC_CUBE_TRIGGERDETAILS, OnTriggerDetails)
 	ON_BN_CLICKED (IDC_CUBE_WALLDETAILS, OnWallDetails)
 	ON_CBN_SELCHANGE (IDC_CUBE_CUBENO, OnSetCube)
@@ -85,8 +85,8 @@ m_nLight = 0;
 m_nLastCube =
 m_nLastSide = -1;
 m_bSetDefTexture = 0;
-m_nOwner = theMine->Segments (0)->m_info.owner;
-m_nGroup = theMine->Segments (0)->m_info.group;
+m_nOwner = segmentManager.Segment (0)->m_info.owner;
+m_nGroup = segmentManager.Segment (0)->m_info.group;
 memset (m_nCoord, 0, sizeof (m_nCoord));
 }
 
@@ -207,7 +207,7 @@ return CToolDlg::OnSetActive ();
 
                         /*--------------------------*/
 
-bool CSegmentTool::IsBotMaker (CSegment *segP)
+bool CSegmentTool::IsRobotMaker (CSegment *segP)
 {
 return 
 	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
@@ -239,8 +239,8 @@ GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS
 													  (segP->Child (m_nSide) < 0));
 GetDlgItem (IDC_CUBE_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button
-GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBAvailBots ()->GetCount () > 0));
-GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsBotMaker (segP) || IsEquipMaker (segP)) && (LBUsedBots ()->GetCount () > 0));
+GetDlgItem (IDC_CUBE_ADDBOT)->EnableWindow ((IsRobotMaker (segP) || IsEquipMaker (segP)) && (LBAvailBots ()->GetCount () > 0));
+GetDlgItem (IDC_CUBE_DELBOT)->EnableWindow ((IsRobotMaker (segP) || IsEquipMaker (segP)) && (LBUsedBots ()->GetCount () > 0));
 GetDlgItem (IDC_CUBE_WALLDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_TRIGGERDETAILS)->EnableWindow (LBTriggers ()->GetCount () > 0);
 GetDlgItem (IDC_CUBE_ADD_REPAIRCEN)->EnableWindow (DLE.IsD2File ());
@@ -254,9 +254,9 @@ void CSegmentTool::OnSetCoord (void)
 {
 CHECKMINE;
 UpdateData (TRUE);
-undoManager.SetModified (true);
-m_nVertex = current.Segment ()->m_info.verts[sideVertTable[current.m_nSide][current.m_nPoint]];
-theMine->Vertices (m_nVertex)->Set ((int) (m_nCoord [0] * 0x10000L), (int) (m_nCoord [1] * 0x10000L), (int) (m_nCoord [2] * 0x10000L));
+undoManager.Begin (udVertices);
+current.Segment ()->Vertex (m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]])->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
+undoManager.End ();
 DLE.MineView ()->Refresh (false);
 }
 
@@ -265,10 +265,10 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-m_nVertex = current.Segment ()->m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]];
-m_nCoord [0] = (double) theMine->Vertices (m_nVertex)->v.x / 0x10000L;
-m_nCoord [1] = (double) theMine->Vertices (m_nVertex)->v.y / 0x10000L;
-m_nCoord [2] = (double) theMine->Vertices (m_nVertex)->v.z / 0x10000L;
+CVertex* vertP = current.Segment ()->Vertex (m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]]);
+m_nCoord [0] = vertP->v.x;
+m_nCoord [1] = vertP->v.y;
+m_nCoord [2] = vertP->v.z;
 UpdateData (FALSE);
 DLE.MineView ()->Refresh (false);
 }
@@ -278,12 +278,13 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnProp (int nProp)
 {
 CHECKMINE;
-undoManager.SetModified (true);
+undoManager.Begin (udSegments);
 if (Prop (nProp)->GetCheck ())
 	m_nProps |= 1 << nProp;
 else
 	m_nProps &= ~(1 << nProp);
 current.Segment ()->m_info.props = m_nProps;
+undoManager.End ();
 }
 
 void CSegmentTool::OnProp1 () { OnProp (0); }
@@ -326,12 +327,12 @@ void CSegmentTool::OnPoint4 () { OnPoint (3); }
 
 void CSegmentTool::SetDefTexture (short nTexture)
 {
-CSegment *segP = theMine->Segments (m_nSegment);
+CSegment *segP = segmentManager.Segment (m_nSegment);
 if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetCheck ()) {
 	int i;
 	for (i = 0; i < 6; i++)
 		if (segP->Child (i) == -1)
-			theMine->SetTexture (m_nSegment, i, nTexture, 0);
+			segmentManager.SetTextures (m_nSegment, i, nTexture, 0);
 	}
 }
 
@@ -368,13 +369,13 @@ SelectItemData (CBType (), m_nType);
 OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
-CTrigger *trigP = theMine->Triggers (0);
+CTrigger *trigP = wallManager.Trigger (0);
 int nTrigger;
 for (nTrigger = 0; nTrigger < theMine->Info ().triggers.count; nTrigger++, trigP++) {
 	for (i = 0; i < trigP->m_count; i++) {
 		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
-			CWall *wallP = theMine->Walls (0);
+			CWall *wallP = wallManager.Wall (0);
 			int nWall;
 			for (nWall = 0; nWall < theMine->Info ().walls.count ;nWall++, wallP++) {
 				if (wallP->m_info.nTrigger == nTrigger) 
@@ -406,7 +407,7 @@ if (!LBTriggers()->GetCount()) {
 m_nLight = ((double) segP->m_info.staticLight) / (24 * 327.68);
 
 CListBox *plb [2] = { LBAvailBots (), LBUsedBots () };
-if (IsBotMaker (segP)) {
+if (IsRobotMaker (segP)) {
 	int nMatCen = segP->m_info.nMatCen;
 	// if # of items in list box totals to less than the number of robots
 	//    if (LBAvailBots ()->GetCount() + LBAvailBots ()->GetCount() < MAX_ROBOT_IDS) {
@@ -415,7 +416,7 @@ if (IsBotMaker (segP)) {
 	CStringResource res;
 
 	for (i = 0; i < 2; i++)
-		objFlags [i] = theMine->RobotMakers (nMatCen)->m_info.objFlags [i];
+		objFlags [i] = segmentManager.RobotMaker (nMatCen)->m_info.objFlags [i];
 	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
@@ -483,13 +484,10 @@ void CSegmentTool::OnEndOfExit ()
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-undoManager.SetModified (true);
-if (m_bEndOfExit = EndOfExit ()->GetCheck ()) {
-	segP->SetChild (m_nSide, -2);
-	}
-else {
-	segP->SetChild (m_nSide, -1);
-	}
+undoManager.Begin (udSegments);
+m_bEndOfExit = EndOfExit ()->GetCheck ();
+segP->SetChild (m_nSide, m_bEndOfExit ? -2 : -1);
+undoManager.End ();
 }
 
 //------------------------------------------------------------------------
@@ -524,14 +522,13 @@ CHECKMINE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
 
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
-	CSegment *segP = theMine->Segments (0);
+	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->m_info.wallFlags & MARKED_MASK)
+		if (segP->Marked ())
 			segP->m_info.owner = m_nOwner;
 	}
 else 					
@@ -549,14 +546,13 @@ CHECKMINE;
 	BOOL	bChangeOk = TRUE;
 	BOOL	bMarked = theMine->GotMarkedSegments ();
 
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
 UpdateData (TRUE);
 if (bMarked) {
-	CSegment *segP = theMine->Segments (0);
+	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->m_info.wallFlags & MARKED_MASK)
+		if (segP->Marked ())
 			segP->m_info.group = m_nGroup;
 	}
 else 					
@@ -577,8 +573,6 @@ CHECKMINE;
 	BOOL		bMarked = theMine->GotMarkedSegments ();
 	int		nSegNum, nMinSeg, nMaxSeg;
 
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 m_nLastCube = -1; //force Refresh() to rebuild all dialog data
 byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
@@ -587,12 +581,13 @@ if (bMarked) {
 	nMaxSeg = segmentManager.Count ();
 	}
 else {
-	nMinSeg = int (current.Segment () - theMine->Segments (0));
+	nMinSeg = int (current.Segment () - segmentManager.Segment (0));
 	nMaxSeg = nMinSeg + 1;
 	}
-CSegment* segP = theMine->Segments (nMinSeg);
+undoManager.Begin (udSegments);
+CSegment* segP = segmentManager.Segment (nMinSeg);
 for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
-	if (bMarked && !(segP->m_info.wallFlags & MARKED_MASK))
+	if (bMarked && !segP->Marked ())
 		continue;
 	m_nType = segP->m_info.function;
 	switch(nType) {
@@ -695,64 +690,13 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		default:
 			break;
 		}
-#if 1
 	m_nType = nType;
-#else
-	if (m_nType == SEGMENT_FUNC_ROBOTMAKER) {
-		// remove matcen
-		int nMatCens = (int) theMine->Info ().matcen.count;
-		if (nMatCens > 0) {
-			// fill in deleted matcen
-			int nDelMatCen = current.Segment ()->value;
-			memcpy (theMine->RobotMakers (nDelMatCen), theMine->RobotMakers (nDelMatCen + 1), (nMatCens - 1 - nDelMatCen) * sizeof (CMatCenter));
-			theMine->Info ().matcen.count--;
-			int i;
-			for (i = 0; i < 6; i++)
-				theMine->DeleteTriggerTargets (m_nSegment, i);
-			}
-		}
-	else if (m_nType == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell Walls ()
-		short nSegNum = current.m_nSegment;
-		CSegment *childseg, *segP = current.Segment ();
-		CSide *oppside, *sideP = current.Side ();
-		CWall *wallP;
-		short nOppSeg, nOppSide;
-		for (short nSide = 0; nSide < 6; nSide++, sideP++) {
-			if (segP->Child (nSide) < 0)	// assume no wall if no child segment at the current side
-				continue;
-			childseg = theMine->Segments (segP->Child (nSide));
-			if (childseg->function == SEGMENT_FUNC_FUELCEN)	// don't delete if child segment is fuel center
-				continue;
-			// if there is a wall and it's a fuel cell delete it
-			if ((wall = theMine->Wall (nSegNum, nSide)) && 
-				 (wallP->m_info.type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333))
-				theMine->DeleteWall (sideP->m_info.nWall);
-			// if there is a wall at the opposite side and it's a fuel cell delete it
-			if (theMine->OppositeSide (nOppSeg, nOppSide, nSegNum, nSide) &&
-				 (wall = theMine->Wall (nSegNum, nSide)) && (wallP->m_info.type == WALL_ILLUSION)) {
-				oppside = theMine->Segments (nOppSeg)->m_sides + nOppSide;
-				if (oppsideP->m_info.nBaseTex == (IsD1File ()) ? 322 : 333)
-					theMine->DeleteWall (oppsideP->nWall);
-				}
-			}
-		}
-	// update "special"
-	if (bChangeOk) {
-		m_nType = nType;
-		current.Segment ()->function = nType;
-		if (nType == SEGMENT_FUNC_NONE)
-			current.Segment ()->m_info.childFlags &= ~(1 << MAX_SIDES_PER_SEGMENT);
-		else
-			current.Segment ()->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
-		}
-#endif
 	}
 
 errorExit:
 
 undoManager.End ();
-theMine->AutoUpdateReactor ();
-undoManager.SetModified (true);
+triggerManager.UpdateReactor ();
 
 funcExit:
 
@@ -779,8 +723,9 @@ void CSegmentTool::OnLight ()
 {
 CHECKMINE;
 UpdateData (TRUE);
+undoManager.Begin (udSegments);
 current.Segment ()->m_info.staticLight = (int) (m_nLight * 24 * 327.68);
-undoManager.SetModified (true);
+undoManager.End ();
 }
 
                         /*--------------------------*/
@@ -789,8 +734,9 @@ void CSegmentTool::OnDamage (int i)
 {
 CHECKMINE;
 UpdateData (TRUE);
+undoManager.Begin (udSegments);
 current.Segment ()->m_info.damage [i] = m_nDamage [i];
-undoManager.SetModified (true);
+undoManager.End ();
 }
 
 void CSegmentTool::OnDamage0 () { OnDamage (0); }
@@ -798,7 +744,7 @@ void CSegmentTool::OnDamage1 () { OnDamage (1); }
 
                         /*--------------------------*/
 
-int CSegmentTool::FindBot (CListBox *plb, LPSTR pszObj)
+int CSegmentTool::FindRobotMaker (CListBox *plb, LPSTR pszObj)
 {
 	int i, j;
 
@@ -813,7 +759,7 @@ return j;
 
                         /*--------------------------*/
 
-int CSegmentTool::FindEquip (CListBox *plb, LPSTR pszObj)
+int CSegmentTool::FindEquipMaker (CListBox *plb, LPSTR pszObj)
 {
 	int i, j;
 
@@ -830,22 +776,22 @@ return j;
 // 
 //------------------------------------------------------------------------
 
-void CSegmentTool::AddBot ()
+void CSegmentTool::AddRobotMaker ()
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindBot (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->RobotMakers (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+undoManager.Begin (udRobotMaker);
+segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+undoManager.End ();
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
 LBUsedBots ()->SetItemData (h, i);
-undoManager.SetModified (true);
 DLE.MineView ()->Refresh ();
 }
 
@@ -853,22 +799,22 @@ DLE.MineView ()->Refresh ();
 // 
 //------------------------------------------------------------------------
 
-void CSegmentTool::AddEquip ()
+void CSegmentTool::AddEquipMaker ()
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS_D2))
 	return;
-theMine->EquipMakers (matcen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+undoManager.Begin (udEquipMaker);
+theMine->EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+undoManager.End ();
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
 LBAvailBots ()->SetCurSel (h);
 h = LBUsedBots ()->AddString (szObj);
 LBUsedBots ()->SetItemData (h, i);
-undoManager.SetModified (true);
 DLE.MineView ()->Refresh ();
 }
 
@@ -876,36 +822,37 @@ DLE.MineView ()->Refresh ();
 // CSegmentTool - AddMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnAddObj ()
+void CSegmentTool::OnAddMatCenter ()
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-if (IsBotMaker (segP))
-	AddBot ();
+if (IsRobotMaker (segP))
+	AddRobotMaker ();
 else if (IsEquipMaker (segP))
-	AddEquip ();
+	AddEquipMaker ();
 }
 
 //------------------------------------------------------------------------
 // CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::DeleteBot () 
+void CSegmentTool::DeleteRobotMaker () 
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindBot (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->RobotMakers (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+undoManager.Begin (udRobotMaker);
+segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+undoManager.End ();
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-undoManager.SetModified (true);
+undoManager.Begin (true);
 DLE.MineView ()->Refresh ();
 }
 
@@ -917,18 +864,19 @@ void CSegmentTool::DeleteEquip ()
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-int matcen = segP->m_info.nMatCen;
 char szObj [80];
 int i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-theMine->EquipMakers (matcen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+undoManager.Begin (udEquipMaker);
+theMine->EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+undoManager.End ();
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
 LBUsedBots ()->SetCurSel (h);
 h = LBAvailBots ()->AddString (szObj);
 LBAvailBots ()->SetItemData (h, i);
-undoManager.SetModified (true);
+undoManager.Begin (true);
 DLE.MineView ()->Refresh ();
 }
 
@@ -936,14 +884,14 @@ DLE.MineView ()->Refresh ();
 // CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnDeleteObj () 
+void CSegmentTool::OnDeleteMatCenter () 
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
-if (IsBotMaker (segP))
-	DeleteBot ();
+if (IsRobotMaker (segP))
+	DeleteRobotMaker ();
 else if (IsEquipMaker (segP))
-	DeleteEquip ();
+	DeleteEquipMaker ();
 }
 
 //------------------------------------------------------------------------

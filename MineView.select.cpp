@@ -41,22 +41,22 @@ closest_radius = 1.0E30;
 int enable_secret = FALSE;
 if (DLE.IsD2File ())
 	for(i=0;i<(short)theMine->Info ().triggers.count;i++)
-		if (theMine->Triggers (i)->m_info.type ==TT_SECRET_EXIT) {
+		if (wallManager.Trigger (i)->m_info.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
 			break;
 			}
 
-for (i = 0; i <= theMine->Info ().objects.count; i++) {
+for (i = 0; i < objectManager.Count (); i++) {
 	BOOL drawable = FALSE;
 	// define temp object type and position for secret object selection
-	if (i == theMine->Info ().objects.count && DLE.IsD2File () && enable_secret) {
+	if (i == objectManager.Count () && DLE.IsD2File () && enable_secret) {
 		objP = &temp_obj;
 		objP->m_info.type = OBJ_PLAYER;
 		// define objP->position
 		CalcSegmentCenter (objP->m_location.pos, (ushort)theMine->SecretSegment ());
 		}
 	else
-		objP = theMine->Objects (i);
+		objP = objectManager.Object (i);
 #if 0
 	switch(objP->m_info.type) {
 		case OBJ_WEAPON:
@@ -145,7 +145,7 @@ mousePos.y = (short) yMouse;
 mousePos.z = 0;
 do {
 	wrap (&next_segment, direction, 0, segmentManager.Count () - 1); /* point to next segment */
-	segP = theMine->Segments (next_segment);
+	segP = segmentManager.Segment (next_segment);
 	if (!Visible (segP))
 		continue;
 	for (i = 0; i < 6; i++) {
@@ -336,7 +336,7 @@ void CMineView::ForwardCube (int dir)
 	bool bFwd = (dir == 1);
 
 DrawHighlight (1);
-segP = theMine->Segments (current.m_nSegment);
+segP = segmentManager.Segment (current.m_nSegment);
 nChild = segP->Child (bFwd ? current.m_nSide: oppSideTable [current.m_nSide]);
 if (nChild <= -1) {
 	// first try to find a non backwards route
@@ -359,7 +359,7 @@ if (nChild <= -1) {
 		}
 	}
 if (nChild > -1) {
-	childSegP = theMine->Segments (nChild);
+	childSegP = segmentManager.Segment (nChild);
 // try to select side which is in same direction as current side
 	for (nSide=0;nSide<6;nSide++) {
 		if (childSegP->Child (nSide) == current.m_nSegment) {
@@ -427,9 +427,9 @@ void CMineView::NextObject (int dir)
   short new_object = current.m_nObject;
 
 //  DrawHighlight (1);
-if (theMine->Info ().objects.count > 1) {
+if (objectManager.Count () > 1) {
 //	if (m_selectMode == OBJECT_MODE)
-		wrap(&new_object,dir,0, (short)theMine->Info ().objects.count - 1) ;
+		wrap(&new_object,dir,0, (short)objectManager.Count () - 1) ;
 	Refresh (true);
 	}
 //SetSelectMode (OBJECT_MODE);

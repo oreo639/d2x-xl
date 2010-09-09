@@ -141,7 +141,7 @@ public:
 	CUndoItem<CMatCenter>			m_equipMakers;
 	CUndoItem<CWall>					m_walls;
 	CUndoItem<CDoor>					m_door;
-	CUndoItem<CTrigger>				m_triggers;
+	CUndoItem<CTrigger>				m_triggers [2];
 	CUndoItem<CGameObject>			m_objects;
 	CUndoItem<CRobotInfo>			m_robotInfo;
 	CUndoItem<CLightDeltaIndex>	m_deltaIndices;

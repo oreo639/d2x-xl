@@ -17,13 +17,12 @@ bool CSegmentManager::SetTextures (CSideKey key, short nBaseTex, short nOvlTex)
 {
 	bool bUndo, bChange = false;
 
-bUndo = undoManager.SetModified (true); 
-undoManager.Begin (); 
+undoManager.Begin (udSegments); 
 current.Get (key); 
 CSide *sideP = Side (key); 
 bChange = sideP->SetTextures (nBaseTex, nOvlTex);
 if (!bChange) {
-	undoManager.Unroll ();
+	//undoManager.Unroll ();
 	return false;
 	}
 if ((lightManager.IsLight (sideP->m_info.nBaseTex) == -1) && (lightManager.IsLight (sideP->m_info.nOvlTex & 0x3fff) == -1))
@@ -63,8 +62,7 @@ int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOn
 		{0, 3, 2, 1} //{2, 3, 0, 1}
 		}; 
 
-undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 for (nLine = 0; nLine < 4; nLine++) {
 	// find vert numbers for the line's two end points
 	point0 = lineVertTable [sideLineTable [nStartSide][nLine]][0]; 

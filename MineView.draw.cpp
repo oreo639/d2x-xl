@@ -106,7 +106,7 @@ CHECKMINE;
 
 	static short segRef [SEGMENT_LIMIT];
 
-for (i = segNum, segI = theMine->Segments (0); i; i--, segI++)
+for (i = segNum, segI = segmentManager.Segment (0); i; i--, segI++)
 	segI->m_info.nIndex = -1;
 segRef [0] = current.m_nSegment;	
 current.Segment ()->m_info.nIndex = 0;
@@ -114,12 +114,12 @@ i = 1;
 h = j = 0;
 for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 	for (h = i; j < h; j++) {
-		segI = theMine->Segments (segRef [j]);
+		segI = segmentManager.Segment (segRef [j]);
 		for (sideNum = 0; sideNum < 6; sideNum++) {
 			c = segI->Child (sideNum);
 			if (c < 0) 
 				continue;
-			segJ = theMine->Segments (c);
+			segJ = segmentManager.Segment (c);
 			if (segJ->m_info.nIndex != -1)
 				continue;
 			segJ->m_info.nIndex = nDist;
@@ -208,7 +208,7 @@ CHECKMINE;
 
 CalcSegDist ();
 m_pDC->SelectObject(m_penGray);
-for (nSegment=0, segP = theMine->Segments (0);nSegment<segmentManager.Count ();nSegment++, segP++) {
+for (nSegment=0, segP = segmentManager.Segment (0);nSegment<segmentManager.Count ();nSegment++, segP++) {
 	if (!Visible (segP))
 		continue;
 	DrawCube (segP, bPartial);
@@ -292,7 +292,7 @@ for (nSegment = 0; nSegment < h; nSegment++) {
 QSortCubes (0, segmentManager.Count () - 1);
 CalcSegDist ();
 for (nSegment = 0; nSegment < h; nSegment++) {
-	CSegment* segP = theMine->Segments (szo [nSegment].iSeg);
+	CSegment* segP = segmentManager.Segment (szo [nSegment].iSeg);
 	if (Visible (segP))
 	 	DrawCubeTextured (segP, light_index);
 	}
@@ -567,7 +567,7 @@ if (bPartial) {
 			for (chSegI = 0; (chSegI < 6) && (commonVerts < 2); chSegI++) {
 				if (segP->Child (chSegI) < 0)
 					continue;
-				childP = theMine->Segments (segP->Child (chSegI));
+				childP = segmentManager.Segment (segP->Child (chSegI));
 				// walk through childP cube's sides
 				commonVerts = 0;
 				for (chSideI = 0; (chSideI < 6) && (commonVerts < 2); chSideI++) {
@@ -809,37 +809,33 @@ CHECKMINE;
 	{
 
 		CTexture tex (textureManager.m_bmBuf);
-		byte *pm_viewPointsMem = (byte *)m_pvBits;
+		byte* screenP = (byte *)m_pvBits;
 		ushort width = m_viewWidth;
 		ushort height = m_viewHeight;
 		ushort rowOffset = (m_viewWidth + 3) & ~3;
-		ushort nSide = 5;
-		CWall *wallP;
-		ushort nWall = NO_WALL;
 
-		for (nSide = 0; nSide < 6; nSide++) {
-			wallP = ((nWall = segP->m_sides [nSide].m_info.nWall) == NO_WALL) ? null : theMine->Walls (nWall);
-			if ((segP->Child (nSide) == -1) ||
-				(wallP && (wallP->m_info.type != WALL_OPEN) && ((wallP->m_info.type != WALL_CLOAKED) || wallP->m_info.cloakValue))
-				)
-			{
-				APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];
-				APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][1]]];
-				APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][3]]];
+		CSide* sideP = segP->m_sides;
+		for (short nSide = 0; nSide < 6; nSide++) {
+			if (segP->Child (nSide) != -1) { // not a solid side
+				CWall* wallP = sideP->Wall ();
+				if (wallP == null) // no wall either
+					continue;
+				if (wallP->m_info.type == WALL_OPEN) // invisible wall
+					continue;
+				if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->m_info.cloakValue == 0)) // invisible cloaked wall
+					continue;
+				}
+			APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];
+			APOINT& p1 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][1]]];
+			APOINT& p3 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][3]]];
 
-				CDoubleVector a,b;
-				a.v.x = (double) (p1.x - p0.x);
-				a.v.y = (double) (p1.y - p0.y);
-				b.v.x = (double) (p3.x - p0.x);
-				b.v.y = (double) (p3.y - p0.y);
-				if (a.v.x * b.v.y > a.v.y * b.v.x) {
-					short texture1 = segP->m_sides [nSide].m_info.nBaseTex;
-					short texture2 = segP->m_sides [nSide].m_info.nOvlTex;
-					if (!textureManager.Define (texture1, texture2, &tex, 0, 0)) {
-						DrawAnimDirArrows (texture1, &tex);
-						TextureMap (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
-									   light_index, pm_viewPointsMem, m_viewPoints, width, height, rowOffset);
-					}
+			CDoubleVector	a ((double) (p1.x - p0.x), (double) (p1.y - p0.y), 0.0), 
+								b ((double) (p3.x - p0.x), (double) (p3.y - p0.y), 0.0);
+			if (a.v.x * b.v.y > a.v.y * b.v.x) {
+				if (!textureManager.Define (sideP->BaseTex (), sideP->OvlTex (), &tex, 0, 0)) {
+					DrawAnimDirArrows (sideP->BaseTex (), &tex);
+					TextureMap (segP, nSide, tex.m_info.bmData, tex.m_info.width, tex.m_info.height, 
+								   light_index, screenP, m_viewPoints, width, height, rowOffset);
 				}
 			}
 		}
@@ -1070,7 +1066,7 @@ void CMineView::DrawWalls(void)
 {
 CHECKMINE;
 
-	CWall		*walls = theMine->Walls (0);
+	CWall		*walls = wallManager.Wall (0);
 	CSegment	*segments = segmentManager.Segment (0);
 	CVertex	*vertices = vertexManager.Vertex (0);
 	CSegment	*segP;
@@ -1192,7 +1188,7 @@ if (!m_pDC) return;
   // find variable light from
 CVariableLight* flP = theMine->VariableLights (0);
 for (INT i = 0; i < theMine->lightManager.Count (); i++, flP++)
-	if (Visible (theMine->Segments (flP->m_nSegment)))
+	if (Visible (segmentManager.Segment (flP->m_nSegment)))
 	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
 }
 
@@ -1280,7 +1276,7 @@ m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES;
 for (h = n_splines * 4, i = 0; i < h; i++)
 	m_view.Project (*theMine->Vertices (--j), m_viewPoints [j]);
-CSegment *segP = theMine->Segments (MAX_SEGMENTS - 1);
+CSegment *segP = segmentManager.Segment (MAX_SEGMENTS - 1);
 for (i = 0; i < n_splines; i++, segP--)
 	DrawCubeQuick (segP);
 }
@@ -1322,9 +1318,9 @@ CHECKMINE;
 	short y_max = m_viewHeight * 2;
 
 //  m_pDC->SelectObject(hrgnBackground);
-if (objnum >=0 && objnum < theMine->Info ().objects.count) {
-	objP = theMine->Objects (objnum);
-	if (!Visible (theMine->Segments (objP->m_info.nSegment)))
+if (objnum >=0 && objnum < objectManager.Count ()) {
+	objP = objectManager.Object (objnum);
+	if (!Visible (segmentManager.Segment (objP->m_info.nSegment)))
 		return;
 	}
 else {
@@ -1472,14 +1468,14 @@ int i, j;
 if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < theMine->Info ().triggers.count; i++)
-	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
-		DrawObject ((short)theMine->Info ().objects.count, 0);
+	if (wallManager.Trigger (i)->m_info.type == TT_SECRET_EXIT) {
+		DrawObject ((short)objectManager.Count (), 0);
 		break; // only draw one secret exit
 		}
 	}
 HiliteTarget ();
-CGameObject *objP = theMine->Objects (0);
-for (i = theMine->Info ().objects.count, j = 0; i; i--, j++, objP++)
+CGameObject *objP = objectManager.Object (0);
+for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 	if (ViewObject (objP))
 		DrawObject (j, 0);
 }
@@ -1533,7 +1529,7 @@ if (theMine->TunnelMaker.Active ())
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    strcat_s (message, sizeof (message), "  point (x,y,z): (");
-   short vertex = theMine->Segments (0) [current.m_nSegment].m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]];
+   short vertex = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
 				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);

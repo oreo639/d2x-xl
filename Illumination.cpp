@@ -598,7 +598,7 @@ m_fLightScale = 1.0; ///= 100.0;
 
 					// calculate vector between center of source segment and center of child
 						if (CalcCornerLights (nChildSeg, nChildSide, sourceCenter, sourceCorners, A, m_fLightScale, wallP != null)) {
-							undoManager.SetModified (true);
+							undoManager.Begin (true);
 							if ((DeltaValueCount () >= MAX_LIGHT_DELTA_VALUES) || (bD2XLights ? dliP->m_info.count == 8191 : dliP->m_info.count == 255)) {
 //#pragma omp critical
 								{

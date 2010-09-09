@@ -20,7 +20,7 @@
 
 void CWall::Setup (CSideKey key, ushort nWall, byte type, char nClip, short nTexture, bool bRedefine) 
 {
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 // define new wallP
 *((CSideKey*) this) = key;
@@ -114,7 +114,7 @@ void CWall::SetTextures (short nTexture)
 CSide *sideP = Side ();
 char nClip = m_info.nClip;
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 if (IsDoor ()) {
 	if (theMine->IsD1File ())

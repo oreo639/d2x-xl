@@ -738,7 +738,7 @@ if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = theMine->Objects (0); i < theMine->Info ().objects.count; i++, objP++)
+	for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++)
 		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			other.m_nObject = i;
 			break;
@@ -1116,7 +1116,7 @@ bool CMineView::VertexVisible (int v)
 
 if (!m_nViewDist)
 	return true;
-for (i = segmentManager.Count (), segP = theMine->Segments (0); i; i--, segP++)
+for (i = segmentManager.Count (), segP = segmentManager.Segment (0); i; i--, segP++)
 	for (j = 0; j < MAX_VERTICES_PER_SEGMENT; j++)
 		if ((segP->m_info.verts [j] == v) && Visible (segP))
 			return true;

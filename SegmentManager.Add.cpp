@@ -78,7 +78,7 @@ if (curSegP->Child (nCurSide) >= 0) {
 	return -1;
 	}
 
-undoManager.SetModified (true); 
+undoManager.Begin (true); 
 undoManager.Begin ();
 // get new segment
 m_bCreating = true;
@@ -496,7 +496,7 @@ return true;
 
 bool CSegmentManager::Define (short nSegment, byte nFunction, short nTexture)
 {
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 CSegment *segP = (nSegment < 0) ? current.Segment () : Segment (nSegment);
 if (!m_bCreating)

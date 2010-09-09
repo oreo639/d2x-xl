@@ -91,12 +91,11 @@ for (int i = 0; i < 32; i++)
 		nLightMask |= (1 << i);
 long nDelay = I2X (m_nLightDelay) / 1000;
 
-CVariableLight* flP = theMine->VariableLights (m_iLight);
-if ((flP->m_info.mask != nLightMask) || (flP->m_info.delay != nDelay)) {
-	bUndo = undoManager.SetModified (true);
-	undoManager.Begin ();
-	flP->m_info.mask = nLightMask;
-	flP->m_info.delay = nDelay;
+CVariableLight* vlP = theMine->VariableLights (m_iLight);
+if ((vlP->m_info.mask != nLightMask) || (vlP->m_info.delay != nDelay)) {
+	undoManager.Begin (udVariableLight);
+	vlP->m_info.mask = nLightMask;
+	vlP->m_info.delay = nDelay;
 	undoManager.End ();
 	}
 //m_nLightDelay = (1000 * nDelay + F0_5) / F1_0;
@@ -319,7 +318,7 @@ void CTextureTool::SetWallColor (void)
 if (theMine->UseTexColors ()) {
 	short			nSegment, nSide;
 	short			nBaseTex = current.Side ()->m_info.nBaseTex;
-	CSegment*	segP = theMine->Segments (0);
+	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
 	CWall			*wallP;
 	bool			bAll = !segmentManager.HaveMarkedSides ();
@@ -328,7 +327,7 @@ if (theMine->UseTexColors ()) {
 		for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 			if (sideP->m_info.nWall < 0)
 				continue;
-			wallP = theMine->Walls (sideP->m_info.nWall);
+			wallP = wallManager.Wall (sideP->m_info.nWall);
 			if (wallP->m_info.type != WALL_TRANSPARENT)
 				continue;
 			if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))

@@ -224,7 +224,7 @@ void CMineView::MarkVisibleVerts (bool bReset)
 	int			h, i;
 	CSegment*	segP;
 
-segP = theMine->Segments (0);
+segP = segmentManager.Segment (0);
 for (i = 0, h = segmentManager.Count (); i < h; i++, segP++) {
 	byte status = bReset ? 0 : Visible (segP) ? 1 : 255;
 	for (int j = 0; j < 8; j++)
@@ -284,7 +284,7 @@ void CMineView::CenterCube (void)
 {
 CHECKMINE;
 
-	CSegment& seg = theMine->Segments (0) [m_Current->nSegment];
+	CSegment& seg = segmentManager.Segment (0) [m_Current->nSegment];
 	CVertex *vMine = theMine->Vertices (0);
 	short *vSeg = seg.m_info.verts;
 
@@ -310,7 +310,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -theMine->Objects (m_Current->nObject)->m_location.pos;
+m_move = -objectManager.Object (m_Current->nObject)->m_location.pos;
 Refresh (false);
 }
 

@@ -91,11 +91,11 @@ return szText;
 
 void CDiagTool::CountObjects (void)
 {
-CGameObject *objP = theMine->Objects (0);
+CGameObject *objP = objectManager.Object (0);
 memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 int i, j;
-for (i = theMine->Info ().objects.count, j = 0; i; i--, j++, objP++)
+for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
@@ -139,7 +139,7 @@ for (i = theMine->Info ().objects.count, j = 0; i; i--, j++, objP++)
 
 int CDiagTool::CountTextures (void)
 {
-	CSegment *segP = theMine->Segments (0);
+	CSegment *segP = segmentManager.Segment (0);
 	CSide *sideP;
 	char bUsed [(MAX_TEXTURES_D2 + 7) / 8];
 	int t, i, j, h = theMine->Info ().walls.count;

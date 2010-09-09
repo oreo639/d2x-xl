@@ -579,7 +579,7 @@ switch (x) {
 	break; 
 	}
 #else
-undoManager.SetModified (true); 
+undoManager.Begin (true); 
 m_sides [nSide].LoadTextures ();
 double scale = 1.0; //textureManager.Textures () [m_fileType][sideP->m_info.nBaseTex].Scale (sideP->m_info.nBaseTex);
 for (i = 0; i < 4; i++, uvls++) {

@@ -290,7 +290,7 @@ else {
 	else
 		sprintf_s (m_szMsg, sizeof (m_szMsg), "cube = %ld, side = %ld, trigger= %d", m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide, (int)m_pWall [0]->m_info.nTrigger);
 
-	m_nWall [0] = int (m_pWall [0] - theMine->Walls (0));
+	m_nWall [0] = int (m_pWall [0] - wallManager.Wall (0));
 	GetOtherWall ();
 	m_nSegment = m_pWall [0]->m_nSegment;
 	m_nSide = m_pWall [0]->m_nSide + 1;
@@ -318,7 +318,7 @@ else {
 		m_bKeys [i] = ((m_pWall [0]->m_info.keys & (1 << i)) != 0);
 	if (!m_bLock) {
 		m_defWall = *m_pWall [0];
-		i = theMine->Segments (m_defWall.m_nSegment)->m_sides [m_defWall.m_nSide].m_info.nBaseTex;
+		i = segmentManager.Segment (m_defWall.m_nSegment)->m_sides [m_defWall.m_nSide].m_info.nBaseTex;
 		if (m_defWall.m_info.type == WALL_CLOAKED)
 			m_defOvlTexture = i;
 		else
@@ -359,7 +359,7 @@ sideP [0] = current.Side ();
 nSegment [0] = current.m_nSegment;
 nSide [0] = current.m_nSide;
 if (theMine->OppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
-	segP [1] = theMine->Segments (nSegment [1]);
+	segP [1] = segmentManager.Segment (nSegment [1]);
 	sideP [1] = segP [1]->m_sides + nSide [1];
 	}
 
@@ -412,7 +412,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
 		nWall--;
 	if (nWall >= 0) {
 		m_bDelayRefresh = true;
-		theMine->DeleteWall ((ushort) nWall);
+		wallManager.Delete ((ushort) nWall);
 		m_bDelayRefresh = false;
 		bRefresh = true;
 		}
@@ -434,10 +434,9 @@ if (bRefresh) {
 
 void CWallTool::OnDeleteWallAll () 
 {
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udWalls | udTriggers);
 DLE.MineView ()->DelayRefresh (true);
-CSegment *segP = theMine->Segments (0);
+CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 int i, j, nDeleted = 0;
@@ -447,7 +446,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)
 			continue;
 		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
-			theMine->DeleteWall (sideP->m_info.nWall);
+			wallManager.Delete (sideP->m_info.nWall);
 			nDeleted++;
 			}
 		}
@@ -479,8 +478,8 @@ short nOppSeg, nOppSide;
 
 if ((theMine == null)->OppositeSide (nOppSeg, nOppSide))
 	return m_pWall [1] = null;
-m_nWall [1] = theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall;
-return m_pWall [1] = (m_nWall [1] < theMine->Info ().walls.count ? theMine->Walls (m_nWall [1]) : null);
+m_nWall [1] = segmentManager.Segment (nOppSeg)->m_sides [nOppSide].m_info.nWall;
+return m_pWall [1] = (m_nWall [1] < theMine->Info ().walls.count ? wallManager.Wall (m_nWall [1]) : null);
 }
 
                         /*--------------------------*/
@@ -494,7 +493,7 @@ if (m_nWall [0] < 0) {
 	m_pWall [1] = null;
 	return false;
 	}
-m_pWall [0] = theMine->Walls (m_nWall [0]);
+m_pWall [0] = wallManager.Wall (m_nWall [0]);
 theMine->SetCurrent (m_pWall [0]->m_nSegment, m_pWall [0]->m_nSide);
 m_nTrigger = m_pWall [0]->m_info.nTrigger;
 GetOtherWall ();
@@ -530,14 +529,14 @@ if ((nType > WALL_CLOAKED) && (theMine->IsStdLevel ()))
 m_defWall.m_info.type = m_nType = nType;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
-m_pWall [0] = theMine->Walls (m_nWall [0]);
+m_pWall [0] = wallManager.Wall (m_nWall [0]);
 */
 segP [0] = current.Segment ();
 sideP [0] = current.Side ();
 nSegment [0] = current.m_nSegment;
 nSide [0] = current.m_nSide;
 if (theMine->OppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
-	segP [1] = theMine->Segments (nSegment [1]);
+	segP [1] = segmentManager.Segment (nSegment [1]);
 	sideP [1] = segP [1]->m_sides + nSide [1];
 	}
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
@@ -546,7 +545,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		short nOvlTex = sideP [bSide]->m_info.nOvlTex;
 		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_pWall [0]->m_info.nClip, -1, true);
 		if ((wallP->m_info.type == WALL_OPEN) || (wallP->m_info.type == WALL_CLOSED))
-			theMine->SetTexture (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
+			segmentManager.SetTextures (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
 //		else if ((wallP->m_info.type == WALL_CLOAKED) || (wallP->m_info.type == WALL_TRANSPARENT))
 //			wallP->m_info.cloakValue = m_defWall.cloakValue;
 		}
@@ -562,7 +561,7 @@ void CWallTool::OnSetClip ()
 	CWall	*wallP;
 /*
 m_nWall [0] = CBWallNo ()->GetCurSel ();
-m_pWall [0] = theMine->Walls () + m_nWall [0];
+m_pWall [0] = wallManager.Wall () + m_nWall [0];
 */
 GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
@@ -570,7 +569,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_pWall [bSide])
 		if ((wallP->m_info.type == WALL_BLASTABLE) || (wallP->m_info.type == WALL_DOOR)) {
 			if (m_nWall [bSide] < theMine->Info ().walls.count) {
-				undoManager.SetModified (true);
+				undoManager.Begin (true);
 				undoManager.Begin ();
 				nClip = animClipTable [m_nClip];
 				wallP->m_info.nClip = nClip;
@@ -595,7 +594,7 @@ memset (m_bKeys, 0, sizeof (m_bKeys));
 m_bKeys [i] = TRUE;
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
-		undoManager.SetModified (true);
+		undoManager.Begin (true);
 		m_pWall [bSide]->m_info.keys = (1 << i);
 		Refresh ();
 		}
@@ -607,7 +606,7 @@ GetWalls ();
 m_bFlags [i] = BtnCtrl (IDC_WALL_BLASTED + i)->GetCheck ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
-		undoManager.SetModified (true);
+		undoManager.Begin (true);
 		if (m_bFlags [i])
 			m_pWall [bSide]->m_info.flags |= wall_flags [i];
 		else
@@ -638,7 +637,7 @@ void CWallTool::OnStrength ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
-		undoManager.SetModified (true);
+		undoManager.Begin (true);
 		m_pWall [bSide]->m_info.hps = (int) m_nStrength * F1_0;
 		if ((m_pWall [bSide]->m_info.type == WALL_TRANSPARENT) && m_bFlyThrough)
 			m_pWall [bSide]->m_info.hps = -m_pWall [bSide]->m_info.hps;
@@ -652,7 +651,7 @@ void CWallTool::OnCloak ()
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_pWall [bSide]) {
 		UpdateData (TRUE);
-		undoManager.SetModified (true);
+		undoManager.Begin (true);
 		m_defWall.m_info.cloakValue =
 		m_pWall [bSide]->m_info.cloakValue = (char) (m_nCloak * 31.0 / 100.0) % 32;
 		}

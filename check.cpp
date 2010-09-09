@@ -105,7 +105,7 @@ if ((wallP != null) && MarkSegment ((wallP->m_nSegment))
 		current.m_nSegment = wallP->m_nSegment;
 		current.m_nSide = wallP->m_nSide;
 		}
-if ((pbp->nObject >= 0) && (pbp->nObject < theMine->Info ().objects.count))
+if ((pbp->nObject >= 0) && (pbp->nObject < objectManager.Count ()))
 	current.m_nObject = pbp->nObject;
 DLE.MineView ()->Refresh ();
 }
@@ -302,7 +302,7 @@ UpdateData (TRUE);
 ClearBugList ();
 m_bCheckMsgs = true;
 if (m_bAutoFixBugs) {
-	undoManager.SetModified (true);
+	undoManager.Begin (true);
 	undoManager.Begin ();
 	}
   // set mode to BLOCK mode to make errors appear in red
@@ -313,7 +313,7 @@ DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 +
 										  theMine->vertexManager.Count () +
 										  theMine->Info ().walls.count * 2 +
 										  theMine->Info ().triggers.count * 3 +
-										  theMine->Info ().objects.count * 2 +
+										  objectManager.Count () * 2 +
 										  theMine->ObjTriggerCount ());
 if (!CheckBotGens ())
 	if (!CheckEquipGens ())
@@ -397,7 +397,7 @@ if (theMine == null)
 	return false;
 
 	short	i, nBotGens = 0, nEquipGens = 0, nFuelCens = 0;
-	CSegment	*segP = theMine->Segments (0);
+	CSegment	*segP = segmentManager.Segment (0);
 
 for (i = segmentManager.Count (); i; i--, segP++)
 	switch (segP->m_info.function) {
@@ -444,7 +444,7 @@ if (theMine == null)
   short i, j;
   double angle,flatness;
   short match[4];
-  CSegment *segP = theMine->Segments (0);
+  CSegment *segP = segmentManager.Segment (0);
 
   // check Segments ()
   //--------------------------------------------------------------
@@ -460,7 +460,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().botGen.count) || (theMine->RobotMakers (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= theMine->Info ().botGen.count) || (segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
 				theMine->UndefineSegment (nSegment);
@@ -533,7 +533,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 			// make sure nChild segment has a nChild from this segment
 			// and that it shares the same vertices as this segment
 				for (nSide2 = 0; nSide2 < MAX_SIDES_PER_SEGMENT; nSide2++) {
-					if (theMine->Segments (nChild)->Child (nSide2) == nSegment) 
+					if (segmentManager.Segment (nChild)->Child (nSide2) == nSegment) 
 						break;
 					}					
 				if (nSide2 < MAX_SIDES_PER_SEGMENT) {
@@ -541,7 +541,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 					for (i = 0; i < 4; i++)
 						for (j = 0; j < 4; j++)
 							if (segmentManager.Segment (nSegment)->m_info.verts [sideVertTable [nSide][i]] ==
-								 theMine->Segments (nChild)->m_info.verts [sideVertTable [nSide2][j]])
+								 segmentManager.Segment (nChild)->m_info.verts [sideVertTable [nSide2][j]])
 								match[i]++;
 					if (match[0]!=1 || match[1]!=1 || match[2]!=1 || match[3]!=1) {
 						sprintf_s (message, sizeof (message),"WARNING:Child cube does not share points of cube (cube=%d,side=%d,nChild=%d)",nSegment,nSide,nChild);
@@ -572,7 +572,7 @@ bool CDiagTool::CheckAndFixPlayer (int nMin, int nMax, int nObject, int* players
 if (theMine == null) 
 	return false;
 
-int id = theMine->Objects (nObject)->m_info.id;
+int id = objectManager.Object (nObject)->m_info.id;
 if ((id < nMin) || (id > nMax))
 	sprintf_s (message, sizeof (message), "WARNING: Invalid player id (Object %d)", id, nObject);
 else if (players [id])
@@ -584,8 +584,8 @@ else {
 if (m_bAutoFixBugs) {
 	for (id = nMin; (id < nMax) && players [id]; id++)
 		;
-	theMine->Objects (nObject)->m_info.id = (id < nMax) ? id : nMax - 1;
-	players [theMine->Objects (nObject)->m_info.id]++;
+	objectManager.Object (nObject)->m_info.id = (id < nMax) ? id : nMax - 1;
+	players [objectManager.Object (nObject)->m_info.id]++;
 	}
 return true;
 }
@@ -607,9 +607,9 @@ if (theMine == null)
 	int				h, nObject, type, id, count, players [16 + MAX_COOP_PLAYERS], nSegment, flags, corner, nPlayers [2], bFix;
 	CVertex			center;
 	double			radius, max_radius, object_radius;
-	CGameObject*	objP = theMine->Objects (0);
+	CGameObject*	objP = objectManager.Object (0);
 	CGameObject*	pPlayer = null;
-	int				objCount = theMine->Info ().objects.count;
+	int				objCount = objectManager.Count ();
 	CSegment*		segP;
 
 short sub_errors = m_nErrors [0];
@@ -787,12 +787,12 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
   }
 
   // make sure object 0 is player 0; if not int it
-if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->m_info.id != 0) {
+if (objectManager.Object (0)->m_info.type != OBJ_PLAYER || objectManager.Object (0)->m_info.id != 0) {
 	if (m_bAutoFixBugs) {
 		CGameObject h;
 		memcpy (&h, pPlayer, sizeof (CGameObject));
-		memcpy (pPlayer, theMine->Objects (0), sizeof (CGameObject));
-		memcpy (theMine->Objects (0), pPlayer, sizeof (CGameObject));
+		memcpy (pPlayer, objectManager.Object (0), sizeof (CGameObject));
+		memcpy (objectManager.Object (0), pPlayer, sizeof (CGameObject));
 		strcpy_s (message, sizeof (message), "FIXED: Object 0 was not Player 0.");
 		if (UpdateStats (message, 0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
@@ -810,7 +810,7 @@ if (theMine->Objects (0)->m_info.type != OBJ_PLAYER || theMine->Objects (0)->m_i
 	memset (nPlayers, 0, sizeof (nPlayers));
 	bFix = 0;
 	// count each
-	objP = theMine->Objects (0);
+	objP = objectManager.Object (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
 		if (objP->m_info.type == OBJ_PLAYER) {
 			nPlayers [0]++;
@@ -836,7 +836,7 @@ if (m_bAutoFixBugs) {
 			if (players [id] != 0) 
 				players [id] = ++i;
 		}
-	objP = theMine->Objects (0);
+	objP = objectManager.Object (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
 		if (objP->m_info.type == OBJ_PLAYER) {
 			if ((bFix & 1) && (objP->m_info.id >= 0) && (objP->m_info.id < MAX_PLAYERS))
@@ -874,12 +874,12 @@ else if (nPlayers [1] > 3) {
 
   // make sure there is only one control center
 count = 0;
-objP = theMine->Objects (0);
+objP = objectManager.Object (0);
 for (nObject=0;nObject<objCount;nObject++, objP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	type = objP->m_info.type;
 	if (type == OBJ_CNTRLCEN) {
-		if (theMine->Segments (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
+		if (segmentManager.Segment (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
 			if (m_bAutoFixBugs && theMine->AddRobotMaker (objP->m_info.nSegment, false, false))
 				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
 			else
@@ -934,7 +934,7 @@ if (theMine == null)
 	LBBugs ()->AddString ("[Triggers]");
 	int segCount = segmentManager.Count ();
 	int trigCount = theMine->Info ().triggers.count;
-	CTrigger *trigP = theMine->Triggers (0);
+	CTrigger *trigP = wallManager.Trigger (0);
 	int wallCount = theMine->Info ().walls.count;
 	CWall *wallP;
 	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers (0);
@@ -942,7 +942,7 @@ if (theMine == null)
 	// make sure trigP is linked to exactly one wallP
 for (i = 0; i < reactorTrigger->m_count; i++)
 	if ((reactorTrigger->Segment (i) >= segCount) ||
-		(theMine->Segments (reactorTrigger->Segment (i))->m_sides [reactorTrigger->Side (i)].m_info.nWall >= wallCount)) {
+		(segmentManager.Segment (reactorTrigger->Segment (i))->m_sides [reactorTrigger->Side (i)].m_info.nWall >= wallCount)) {
 		if (m_bAutoFixBugs) {
 			reactorTrigger->Delete (i);
 			strcpy_s (message, sizeof (message), "FIXED: Reactor has invalid trigP target.");
@@ -958,7 +958,7 @@ for (i = 0; i < reactorTrigger->m_count; i++)
 for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
-	wallP = theMine->Walls (0);
+	wallP = wallManager.Wall (0);
 	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		if (wallP->m_info.nTrigger == nTrigger) {
 			// if exit, make sure it is linked to CReactorTrigger
@@ -971,7 +971,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				// if did not find it
 				if (i>=theMine->ReactorTriggers (0)->m_count) {
 					if (m_bAutoFixBugs) {
-						theMine->AutoUpdateReactor ();
+						triggerManager.UpdateReactor ();
 						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
 						}
 					else
@@ -1003,7 +1003,7 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	}
 
 short trigSeg, trigSide;
-trigP = theMine->Triggers (0);
+trigP = wallManager.Trigger (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	wallP = wallManager.FindByTrigger (nTrigger);
@@ -1104,7 +1104,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						else {
-							if (theMine->Segments (nOppSeg)->m_sides [nOppSide].m_info.nWall >= wallCount) {
+							if (segmentManager.Segment (nOppSeg)->m_sides [nOppSide].m_info.nWall >= wallCount) {
 								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 								}
@@ -1145,7 +1145,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 
 // make sure there is exactly one exit and its linked to the CReactorTrigger
 count = 0;
-trigP = theMine->Triggers (0);
+trigP = wallManager.Trigger (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	wallP = wallManager.FindByTrigger (nTrigger);
@@ -1215,7 +1215,7 @@ return h;
 
 void CDiagTool::CountMatCenRefs (int nSpecialType, short* refList, CMatCenter* matCenP, short nMatCens)
 {
-	CSegment*		segP = theMine->Segments (0);
+	CSegment*		segP = segmentManager.Segment (0);
 	short				n, h, i, j = segmentManager.Count ();
 
 memset (refList, 0, sizeof (*refList) * MAX_NUM_MATCENS_D2);
@@ -1236,7 +1236,7 @@ for (h = i = 0; i < j; i++, segP++) {
 
 short CDiagTool::FixMatCens (int nSpecialType, short* segList, short* refList, CMatCenter* matCenP, short nMatCens, char* pszType)
 {
-	CSegment*	segP = theMine->Segments (0);
+	CSegment*	segP = segmentManager.Segment (0);
 	short			h, i, j = segmentManager.Count ();
 	char			n;
 
@@ -1286,7 +1286,7 @@ short CDiagTool::AssignMatCens (int nSpecialType, short* segList, short* refList
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
-	CSegment*	segP = theMine->Segments (0);
+	CSegment*	segP = segmentManager.Segment (0);
 	short			h, i, j = segmentManager.Count ();
 	char			n;
 
@@ -1315,7 +1315,7 @@ short CDiagTool::CleanupMatCens (short* refList, CMatCenter* matCenP, short nMat
 if (!m_bAutoFixBugs)
 	return nMatCens;
 
-	CSegment*	segP = theMine->Segments (0);
+	CSegment*	segP = segmentManager.Segment (0);
 	
 for (int i = 0; i < nMatCens; i) {
 	if (refList [i] < 0) 
@@ -1342,8 +1342,8 @@ if (theMine == null)
 	short					h = segmentManager.Count (), i, nSegment = 0;
 	bool					bOk = true;
 	short					nMatCenSegs, nMatCens = short (theMine->Info ().botGen.count);
-	CSegment*			segP = theMine->Segments (0);
-	CMatCenter*		matCenP = theMine->RobotMakers (0);
+	CSegment*			segP = segmentManager.Segment (0);
+	CMatCenter*		matCenP = segmentManager.RobotMaker (0);
 	short					segList [MAX_NUM_MATCENS_D2];
 	short					refList [MAX_NUM_MATCENS_D2];
 
@@ -1393,10 +1393,10 @@ CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 
 if ((theMine == null)->OppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
 	return null;
-nWall = theMine->Segments (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
+nWall = segmentManager.Segment (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
 if ((nWall < 0) || (nWall > MAX_WALLS))
 	return null;
-return theMine->Walls (nWall);
+return wallManager.Wall (nWall);
 }
 
 //--------------------------------------------------------------------------
@@ -1412,7 +1412,7 @@ if (theMine == null)
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
 	CSide *sideP;
-	CWall *wallP = theMine->Walls (0), *w, *ow;
+	CWall *wallP = wallManager.Wall (0), *w, *ow;
 	int segCount = segmentManager.Count ();
 	byte wallFixed [MAX_WALLS_D2];
 
@@ -1422,7 +1422,7 @@ if (theMine == null)
 
 memset (wallFixed, 0, sizeof (wallFixed));
 *message = '\0';
-for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++, segP++) {
+for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		nWall = sideP->m_info.nWall;
 		if ((nWall < 0) || (nWall >= wallCount) || (nWall >= maxWalls)) {
@@ -1430,7 +1430,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				sideP->m_info.nWall = NO_WALL;
 			continue;
 			}
-		w = theMine->Walls (nWall);
+		w = wallManager.Wall (nWall);
 		if (w->m_nSegment != nSegment) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
@@ -1439,7 +1439,7 @@ for (nSegment = 0, segP = theMine->Segments (0); nSegment < segCount; nSegment++
 				if (wallFixed [nWall])
 					sideP->m_info.nWall = NO_WALL;
 				else {
-					if (theMine->Segments (w->m_nSegment)->m_sides [w->m_nSide].m_info.nWall == nWall)
+					if (segmentManager.Segment (w->m_nSegment)->m_sides [w->m_nSide].m_info.nWall == nWall)
 						sideP->m_info.nWall = NO_WALL;
 					else {
 						w->m_nSegment = nSegment;
@@ -1507,14 +1507,14 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		}
 	else {
 		// check to make sure segment points back to wall
-		sideP = theMine->Segments (wallP->m_nSegment)->m_sides + wallP->m_nSide;
+		sideP = segmentManager.Segment (wallP->m_nSegment)->m_sides + wallP->m_nSide;
 		if (sideP->m_info.nWall != nWall) {
-			w = theMine->Walls (nWall);
+			w = wallManager.Wall (nWall);
 			if ((nWall < wallCount) && (w->m_nSegment == wallP->m_nSegment) && (w->m_nSide == wallP->m_nSide)) {
 				if (m_bAutoFixBugs) {
 					sprintf_s (message, sizeof (message),
 								"FIXED: Duplicate wall found (wall=%d, cube=%d)", nWall, wallP->m_nSegment);
-					theMine->DeleteWall (nWall);
+					wallManager.Delete (nWall);
 					nWall--;
 					wallP--;
 					wallCount--;
@@ -1572,7 +1572,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			if (m_bAutoFixBugs) {
 				short	oppSeg, oppSide, invLinkedWall = wallP->m_info.linkedWall;
 				if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-					wallP->m_info.linkedWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
+					wallP->m_info.linkedWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
 					if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount))
 						wallP->m_info.linkedWall = -1;
 					sprintf_s (message, sizeof (message),
@@ -1588,12 +1588,12 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 		else if (wallP->m_info.linkedWall >= 0) {
 			short	oppSeg, oppSide;
 			if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-				short oppWall = theMine->Segments (oppSeg)->m_sides [oppSide].m_info.nWall;
+				short oppWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
 				if ((oppWall < 0) || (oppWall >= wallCount)) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, theMine->Walls (wallP->m_info.linkedWall)->m_info.nSegment, theMine->Walls (wallP->m_info.linkedWall)->nSide);
+						nWall, wallManager.Wall (wallP->m_info.linkedWall)->m_info.nSegment, wallManager.Wall (wallP->m_info.linkedWall)->nSide);
 						if (m_bAutoFixBugs)
 							wallP->m_info.linkedWall = -1;
 					}
@@ -1601,7 +1601,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, theMine->Walls (wallP->m_info.linkedWall)->m_info.nSegment, theMine->Walls (wallP->m_info.linkedWall)->nSide);
+						nWall, wallManager.Wall (wallP->m_info.linkedWall)->m_info.nSegment, wallManager.Wall (wallP->m_info.linkedWall)->nSide);
 						if (m_bAutoFixBugs)
 							wallP->m_info.linkedWall = oppWall;
 					}
@@ -1610,7 +1610,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
-					nWall, theMine->Walls (wallP->m_info.linkedWall)->m_info.nSegment, theMine->Walls (wallP->m_info.linkedWall)->nSide);
+					nWall, wallManager.Wall (wallP->m_info.linkedWall)->m_info.nSegment, wallManager.Wall (wallP->m_info.linkedWall)->nSide);
 				if (m_bAutoFixBugs)
 					wallP->m_info.linkedWall = -1;
 				}
@@ -1640,14 +1640,14 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 			}
 			// Make sure there is a child to the segment
 		if (wallP->m_info.type != WALL_OVERLAY) {
-			if (!(theMine->Segments (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
+			if (!(segmentManager.Segment (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
 				sprintf_s (message, sizeof (message),
 							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
 							nWall,wallP->m_nSegment);
 				if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 				}
 			else {
-				nSegment = theMine->Segments (wallP->m_nSegment)->Child (wallP->m_nSide);
+				nSegment = segmentManager.Segment (wallP->m_nSegment)->Child (wallP->m_nSide);
 				CSegment *segP = segmentManager.Segment (nSegment);
 				if ((nSegment >= 0 && nSegment < segmentManager.Count ()) &&
 					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
@@ -1665,8 +1665,8 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 						else {
 							ushort wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
-								 ((wallP->m_info.nClip != theMine->Walls (wallnum2)->m_info.nClip ||
-									wallP->m_info.type != theMine->Walls (wallnum2)->m_info.type))) {
+								 ((wallP->m_info.nClip != wallManager.Wall (wallnum2)->m_info.nClip ||
+									wallP->m_info.type != wallManager.Wall (wallnum2)->m_info.type))) {
 								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
 											nWall,nSegment);
@@ -1681,7 +1681,7 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	}
 
 	// make sure segP's wall points back to the segment
-segP = theMine->Segments (0);
+segP = segmentManager.Segment (0);
 for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	sideP = segP->m_sides;
@@ -1697,9 +1697,9 @@ for (nSegment=0;nSegment<segCount;nSegment++, segP++) {
 					sprintf_s (message, sizeof (message),"ERROR: Cube has an invalid wall number (wall=%d, cube=%d)",nWall,nSegment);
 				if (UpdateStats (message,1, nSegment, nSide)) return true;
 			} else {
-				if (theMine->Walls (nWall)->m_nSegment != nSegment) {
+				if (wallManager.Wall (nWall)->m_nSegment != nSegment) {
 					if (m_bAutoFixBugs) {
-						theMine->Walls (nWall)->m_nSegment = nSegment;
+						wallManager.Wall (nWall)->m_nSegment = nSegment;
 						sprintf_s (message, sizeof (message),"FIXED: Cube's wall does not sit in cube (wall=%d, cube=%d)",nWall,nSegment);
 						}
 					else
@@ -1740,7 +1740,7 @@ for (nVertex = theMine->vertexManager.Count (); nVertex > 0; )
 	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
-CSegment *segP = theMine->Segments (0);
+CSegment *segP = segmentManager.Segment (0);
 for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
 		theMine->vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK;
@@ -1752,7 +1752,7 @@ for (nVertex = theMine->vertexManager.Count (); nVertex > 0; ) {
 		if (m_bAutoFixBugs) {
 			if (nVertex < --theMine->vertexManager.Count ())
 				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->vertexManager.Count () - nVertex) * sizeof (*theMine->Vertices (0)));
-			CSegment *segP = theMine->Segments (0);
+			CSegment *segP = segmentManager.Segment (0);
 			for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
 					if (segP->m_info.verts [point] >= nVertex)

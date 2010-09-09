@@ -150,7 +150,7 @@ CHECKMINE;
 if (PickTexture (point, nBaseTex))
 	return;
 if (nFlags & MK_SHIFT) {
-	CGameObject *objP = theMine->Objects (current.m_nObject);
+	CGameObject *objP = objectManager.Object (current.m_nObject);
    if (objP->m_info.renderType != RT_POLYOBJ) 
 		return;
 	objP->rType.polyModelInfo.tmap_override = nBaseTex;
@@ -160,10 +160,9 @@ else if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	theMine->SetTexture (-1, -1, nBaseTex, -1);
+	segmentManager.SetTextures (-1, -1, nBaseTex, -1);
 	Refresh ();
 	}
-undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------
@@ -182,10 +181,9 @@ if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	theMine->SetTexture (-1, -1, -1, nBaseTex);
+	segmentManager.SetTextures (-1, -1, -1, nBaseTex);
 	Refresh ();
 	}
-undoManager.SetModified (true);
 }
 
 //------------------------------------------------------------------------

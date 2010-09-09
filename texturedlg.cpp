@@ -677,7 +677,7 @@ if (nWall >= theMine->Info ().walls.count)
 	return;
 
 // abort if this wall is not a door
-if (theMine->Walls () [nWall].type != WALL_DOOR)
+if (wallManager.Wall () [nWall].type != WALL_DOOR)
 	return;
 #endif
 	int i;
@@ -778,9 +778,9 @@ if (index <= 0)
 else {
 	short texture = (short) pcb->GetItemData (index);
 	if (bFirst)
-		theMine->SetTexture (-1, -1, texture, -1);
+		segmentManager.SetTextures (-1, -1, texture, -1);
 	else
-		theMine->SetTexture (-1, -1, -1, texture);
+		segmentManager.SetTextures (-1, -1, -1, texture);
 	}
 Refresh ();
 DLE.MineView ()->Refresh ();
@@ -895,12 +895,11 @@ if (!(m_bUse1st || m_bUse2nd))
 	CSide *sideP = current.Side ();
 
 //CheckForDoor ();
-undoManager.SetModified (true);
-theMine->SetTexture (current.m_nSegment, current.m_nSide, 
-						  m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
-int i;
-for (i = 0; i < 4; i++)
+undoManager.Begin (udSegments);
+segmentManager.SetTextures (current, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+for (int i = 0; i < 4; i++)
 	sideP->m_info.uvls [i].l = save_uvls [i].l;
+undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -919,12 +918,10 @@ if (save_texture1 == -1 || save_texture2 == -1)
 	return;
 //CheckForDoor ();
 // set all segment sides as not "pasted" yet
-	CSegment *segP = theMine->Segments (0);
-int nSegment;
-for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
-    segP->m_info.nIndex = 0;
-undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
+CSegment *segP = segmentManager.Segment (0);
+for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
+	segP->m_info.nIndex = 0;
 PasteTexture (current.m_nSegment, current.m_nSide, 100);
 undoManager.End ();
 Refresh ();
@@ -943,23 +940,20 @@ if (!(m_bUse1st || m_bUse2nd))
 
 	short			nSegment,
 					nSide;
-	CSegment	*segP = theMine->Segments (0);
-	CSide		*sideP;
-	bool			bChange = false,
-					bAll = !segmentManager.HaveMarkedSides ();
+	CSegment*	segP = segmentManager.Segment (0);
+	CSide*		sideP;
+	bool			bAll = !segmentManager.HaveMarkedSides ();
 
 if (bAll && (QueryMsg ("Paste texture to entire mine?") != IDYES))
 	return;
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 if (bAll)
 	INFOMSG (" Pasting texture in entire mine.");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 			if (segP->Child (nSide) == -1) {
-				bChange = true;
-				theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+				segmentManager.SetTextures (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 				int i;
 				for (i = 0; i < 4; i++)
 					sideP->m_info.uvls [i].l = save_uvls [i].l;
@@ -967,10 +961,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 			}
 		}
 	}
-if (bChange)
-	undoManager.End ();
-else
-	undoManager.Unroll ();
+undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -987,15 +978,13 @@ if (!(m_bUse1st || m_bUse2nd))
 
 	short			nSegment,
 					nSide;
-	CSegment	*segP = theMine->Segments (0);
-	CSide		*sideP;
-	bool			bChange = false,
-					bAll = !segmentManager.HaveMarkedSides ();
+	CSegment*	segP = segmentManager.Segment (0);
+	CSide*		sideP;
+	bool			bAll = !segmentManager.HaveMarkedSides ();
 
 if (bAll && (QueryMsg ("Replace textures in entire mine?") != IDYES))
 	return;
-bool bUndo = undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udSegments);
 if (bAll)
 	INFOMSG (" Replacing textures in entire mine.");
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
@@ -1007,16 +996,9 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 				continue;
 			if ((segP->Child (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
 				 continue;
-			if (theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1))
-				bChange = true;
-//			int i;
-//			for (i = 0; i < 4; i++)
-//				sideP->m_info.uvls [i].l = save_uvls [i].l;
+			segmentManager.SetTextures (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 			}
-if (bChange)
-	undoManager.End ();
-else
-	undoManager.Unroll ();
+undoManager.End ();
 Refresh ();
 DLE.MineView ()->Refresh ();
 }
@@ -1030,8 +1012,8 @@ CHECKMINE;
 if (nDepth <= 0) 
 	return;
 
-	CSegment	*segP = segmentManager.Segment (nSegment);
-	CSide		*sideP = segP->m_sides + nSide;
+	CSegment*	segP = segmentManager.Segment (nSegment);
+	CSide*		sideP = segP->m_sides + nSide;
 	short			old_texture1, 
 					old_texture2;
 	int			i;
@@ -1046,40 +1028,29 @@ if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES))
 // mark segment as "pasted"
 segP->m_info.nIndex = 1;
 // paste texture
-theMine->SetTexture (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 for (i = 0; i < 4; i++)
 	sideP->m_info.uvls [i].l = save_uvls [i].l;
 
 // now check each adjing side to see it has the same texture
 for (i = 0; i < 4; i++) {
-	short adj_segnum, adj_sidenum;
-	if (GetAdjacentSide (nSegment, nSide, i, &adj_segnum, &adj_sidenum)) {
+	short nAdjSeg, nAdjSide;
+	if (GetAdjacentSide (nSegment, nSide, i, &nAdjSeg, &nAdjSide)) {
 		// if adj matches and its not "pasted" yet
-		segP = theMine->Segments (adj_segnum);
-		sideP = segP->m_sides + adj_sidenum;
-#if 0
-		if (segP->m_info.nIndex)
-			continue;
-		if (m_bUse1st && (sideP->m_info.nBaseTex != old_texture1))
-			continue;
-		if (m_bUse2nd && (sideP->m_info.nOvlTex != old_texture2))
-			continue;
-		PasteTexture (adj_segnum, adj_sidenum, --nDepth);
-#else
+		segP = segmentManager.Segment (nAdjSeg);
+		sideP = segP->m_sides + nAdjSide;
 		if ((segP->m_info.nIndex == 0) &&
 			 (!m_bUse1st || (sideP->m_info.nBaseTex == old_texture1)) &&
 			 (!m_bUse2nd || (sideP->m_info.nOvlTex == old_texture2))) {
-			PasteTexture (adj_segnum, adj_sidenum, --nDepth);
+			PasteTexture (nAdjSeg, nAdjSide, --nDepth);
 			}
-#endif
 		}
 	}
 }
 
                         /*--------------------------*/
 
-bool CTextureTool::GetAdjacentSide (short nStartSeg, short nStartSide, short nLine,
-												short *nAdjSeg, short *nAdjSide) 
+bool CTextureTool::GetAdjacentSide (short nStartSeg, short nStartSide, short nLine, short *nAdjSeg, short *nAdjSide) 
 {
 	CSegment *segP;
 	short nSide, nChild;
@@ -1099,7 +1070,7 @@ bool CTextureTool::GetAdjacentSide (short nStartSeg, short nStartSide, short nLi
   // find vert numbers for the line's two end points
 point0 = lineVertTable [sideLineTable[nStartSide][nLine]][0];
 point1 = lineVertTable [sideLineTable[nStartSide][nLine]][1];
-segP = theMine->Segments (nStartSeg);
+segP = segmentManager.Segment (nStartSeg);
 vert0 = segP->m_info.verts [point0];
 vert1 = segP->m_info.verts [point1];
 
@@ -1108,7 +1079,7 @@ nChild = segP->Child (nSide);
 if (nChild < 0 || nChild >= segmentManager.Count ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
-	segP = theMine->Segments (nChild);
+	segP = segmentManager.Segment (nChild);
 	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < theMine->Info ().walls.count)) {
 		for (nChildLine = 0; nChildLine < 4;nChildLine++) {
 			// find vert numbers for the line's two end points

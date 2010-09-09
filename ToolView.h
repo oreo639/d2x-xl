@@ -574,9 +574,9 @@ class CSegmentTool : public CToolDlg
 		void Refresh ();
 		void OnSide (int nSide);
 		void OnPoint (int nPoint);
-		int FindBot (CListBox *plb, LPSTR pszBot = null);
-		int FindEquip (CListBox *plb, LPSTR pszBot = null);
-		bool IsBotMaker (CSegment *segP);
+		int FindRobotMaker (CListBox *plb, LPSTR pszBot = null);
+		int FindEquipMaker (CListBox *plb, LPSTR pszBot = null);
+		bool IsRobotMaker (CSegment *segP);
 		bool IsEquipMaker (CSegment *segP);
 		void SetDefTexture (short nTexture);
 	
@@ -609,24 +609,24 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnPoint3 ();
 		afx_msg void OnPoint4 ();
 		afx_msg void OnAddCube ();
-		afx_msg void OnAddBotGen ();
 		afx_msg void OnAddFuelCen ();
-		afx_msg void OnAddEquipGen ();
 		afx_msg void OnAddRepairCen ();
 		afx_msg void OnAddControlCen ();
 		afx_msg void OnSplitCube ();
 		afx_msg void OnDeleteCube ();
 		afx_msg void OnOtherCube ();
-		afx_msg void OnAddObj ();
-		afx_msg void OnDeleteObj ();
+		afx_msg void OnAddMatCenter ();
+		afx_msg void OnDeleteMatCenter ();
+		afx_msg void OnAddRobotMaker ();
+		afx_msg void OnAddEquipMaker ();
 		afx_msg void OnWallDetails ();
 		afx_msg void OnTriggerDetails ();
 		afx_msg void OnEndOfExit ();
 
-		void AddBot (void);
-		void DeleteBot (void);
-		void AddEquip (void);
-		void DeleteEquip (void);
+		void AddRobotMaker (void);
+		void DeleteRobotMaker (void);
+		void AddEquipMaker (void);
+		void DeleteEquipMaker (void);
 
 		inline CComboBox *CBCubeNo ()
 			{ return CBCtrl(IDC_CUBE_CUBENO); }

@@ -449,9 +449,9 @@ CStringResource res;
 
 // update object list box
 CBObjNo ()->ResetContent ();
-CGameObject *objP = theMine->Objects (0);
+CGameObject *objP = objectManager.Object (0);
 int i;
-for (i = 0; i < theMine->Info ().objects.count; i++, objP++) {
+for (i = 0; i < objectManager.Count (); i++, objP++) {
 	switch(objP->m_info.type) {
 		case OBJ_ROBOT: /* an evil enemy */
 			res.Load (ROBOT_STRING_TABLE + objP->m_info.id);
@@ -497,7 +497,7 @@ for (i = 0; i < theMine->Info ().objects.count; i++, objP++) {
 	}
 // add secret object to list
 for (i = 0; i < theMine->Info ().triggers.count; i++)
-	if (theMine->Triggers (i)->m_info.type == TT_SECRET_EXIT) {
+	if (wallManager.Trigger (i)->m_info.type == TT_SECRET_EXIT) {
 		CBObjNo ()->AddString ("secret object");
 		break;
 		}
@@ -506,7 +506,7 @@ CBObjNo ()->SetCurSel (current.m_nObject);
 
 // if secret object, disable everything but the "move" button
 // and the object list, then return
-if (current.m_nObject == theMine->Info ().objects.count) {
+if (current.m_nObject == objectManager.Count ()) {
 	CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDC_OBJ_SPAWN_QTY, FALSE);
 	CBObjNo ()->EnableWindow (TRUE);
 	BtnCtrl (IDC_OBJ_MOVE)->EnableWindow (TRUE);
@@ -526,7 +526,7 @@ if (current.m_nObject == theMine->Info ().objects.count) {
 		m_showObjWnd.GetClientRect (rc);
 		pDC->FillSolidRect (&rc, IMG_BKCOLOR);
 		m_showObjWnd.ReleaseDC (pDC);
-		CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->Info ().objects.count > 0);
+		CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, objectManager.Count () > 0);
 		UpdateData (FALSE);
 		}
 	return;
@@ -595,7 +595,7 @@ RefreshRobot ();
 UpdateSliders ();
 DrawObjectImages ();
 SetTextureOverride ();
-CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, theMine->Info ().objects.count > 0);
+CToolDlg::EnableControls (IDC_OBJ_DELETEALL, IDC_OBJ_DELETEALL, objectManager.Count () > 0);
 UpdateData (FALSE);
 DLE.MineView ()->Refresh (FALSE);
 }
@@ -730,7 +730,7 @@ if (i < 0 || i >= ROBOT_IDS2)
 	i = 0;
 j = SlCtrl (IDC_OBJ_SKILL)->GetPos ();
 rInfo = *theMine->RobotInfo (i);
-undoManager.SetModified (true);
+undoManager.Begin (true);
 rInfo.m_info.bCustom |= 1;
 rInfo.m_info.scoreValue = (int) (SlCtrl (IDC_OBJ_SCORE)->GetPos () * SliderFactor (IDC_OBJ_SCORE));
 rInfo.m_info.strength = (int) fix_exp (SlCtrl (IDC_OBJ_STRENGTH)->GetPos ());
@@ -947,9 +947,9 @@ switch(type) {
 			}
 #if 0//def _DEBUG // hack to int bogus powerup ids
 		CGameObject *objP;
-		for (i = 0, objP = theMine->Objects (0); i < theMine->objectManager.Count (); i++, objP++)
+		for (i = 0, objP = objectManager.Object (0); i < theMine->objectManager.Count (); i++, objP++)
 			if ((objP->m_info.type == OBJ_POWERUP) && (xlat [objP->m_info.id] == -1)) {
-				for (i = 0, objP = theMine->Objects (0); i < theMine->objectManager.Count (); i++, objP++)
+				for (i = 0, objP = objectManager.Object (0); i < theMine->objectManager.Count (); i++, objP++)
 					if (objP->m_info.type == OBJ_POWERUP)
 						objP->m_info.id = xlat [objP->m_info.id]; 
 				break;
@@ -1010,12 +1010,12 @@ SetTextureOverride ();
 
 void CObjectTool::OnAdd () 
 {
-if (current.m_nObject == theMine->Info ().objects.count) {
+if (current.m_nObject == objectManager.Count ()) {
 	ErrorMsg ("Cannot add another secret return.");
 	return;
  }
 
-if (theMine->Info ().objects.count >= MAX_OBJECTS) {
+if (objectManager.Count () >= MAX_OBJECTS) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return;
 	}
@@ -1029,11 +1029,11 @@ Refresh ();
 
 void CObjectTool::OnDelete ()
 {
-if (current.m_nObject == theMine->Info ().objects.count) {
+if (current.m_nObject == objectManager.Count ()) {
 	ErrorMsg ("Cannot delete the secret return.");
 	return;
 	}
-if (theMine->Info ().objects.count == 1) {
+if (objectManager.Count () == 1) {
 	ErrorMsg ("Cannot delete the last object");
 	return;
 	}
@@ -1050,17 +1050,17 @@ if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
 
 void CObjectTool::OnDeleteAll () 
 {
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
 CGameObject *objP = current.Object ();
 int nType = objP->m_info.type;
 int nId = objP->m_info.id;
-objP = theMine->Objects (0);
+objP = objectManager.Object (0);
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 int nDeleted = 0;
-for (int h = theMine->Info ().objects.count, i = 0; i < h; ) {
-	if ((objP->m_info.type == nType) && (objP->m_info.id == nId) && (bAll || (theMine->Segments (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
+for (int h = objectManager.Count (), i = 0; i < h; ) {
+	if ((objP->m_info.type == nType) && (objP->m_info.id == nId) && (bAll || (segmentManager.Segment (objP->m_info.nSegment)->m_info.wallFlags &= MARKED_MASK))) {
 		theMine->DeleteObject (i);
 		nDeleted++;
 		h--;
@@ -1086,9 +1086,9 @@ void CObjectTool::OnReset ()
 {
 CDoubleMatrix* orient;
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
-if (current.m_nObject == theMine->Info ().objects.count) {
+if (current.m_nObject == objectManager.Count ()) {
 	orient = &theMine->SecretOrient ();
 	orient->Set (1, 0, 0, 0, 0, 1, 0, 1, 0);
 } else {
@@ -1120,16 +1120,16 @@ if (QueryMsg ("Are you sure you want to move the\n"
 				 "current object to the current cube?\n") != IDYES)
 	return;
 #endif
-undoManager.SetModified (true);
-if (current.m_nObject == theMine->Info ().objects.count)
+undoManager.Begin (true);
+if (current.m_nObject == objectManager.Count ())
 	theMine->SecretSegment () = current.m_nSegment;
 else {
 	CGameObject *objP = current.Object ();
 	theMine->CalcSegCenter (objP->m_location.pos, current.m_nSegment);
 	// bump position over if this is not the first object in the cube
 	int i, count = 0;
-	for (i = 0; i < theMine->Info ().objects.count;i++)
-		if (theMine->Objects (i)->m_info.nSegment == current.m_nSegment)
+	for (i = 0; i < objectManager.Count ();i++)
+		if (objectManager.Object (i)->m_info.nSegment == current.m_nSegment)
 			count++;
 	objP->m_location.pos.v.y += count * 2 * F1_0;
 	objP->m_location.lastPos.v.y += count * 2 * F1_0;
@@ -1157,7 +1157,7 @@ DLE.MineView ()->RefreshObject (old_object, new_object);
 
 bool CObjectTool::SetPlayerId (CGameObject *objP, int objType, int *ids, int numIds, char *pszError)
 {
-CGameObject *o = theMine->Objects (0);
+CGameObject *o = objectManager.Object (0);
 int		i, n = 0;
 
 for (i = theMine->objectManager.Count (); i && (n < numIds); i--, o++)
@@ -1241,7 +1241,7 @@ int CObjectTool::GetObjectsOfAKind (int nType, CGameObject *objList [])
 	int i, nObjects = 0;
 	CGameObject *objP;
 
-for (i = theMine->Info ().objects.count, objP = theMine->Objects (0); i; i--, objP++)
+for (i = objectManager.Count (), objP = objectManager.Object (0); i; i--, objP++)
 	if (objP->m_info.type == nType)
 		objList [nObjects++] = objP;
 return nObjects;
@@ -1284,7 +1284,7 @@ CGameObject *objP = current.Object ();
 CComboBox *pcb = CBObjId ();
 int nCurSel = int (pcb->GetItemData (pcb->GetCurSel ()));
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 switch (objP->m_info.type) {
 	case OBJ_PLAYER:
@@ -1379,7 +1379,7 @@ Refresh ();
 void CObjectTool::OnSetSpawnQty ()
 {
 UpdateData (TRUE);
-undoManager.SetModified (true);
+undoManager.Begin (true);
 current.Object ()->m_info.contents.count = m_nSpawnQty;
 Refresh ();
 }
@@ -1392,7 +1392,7 @@ void CObjectTool::OnSetSpawnType ()
 {
 CGameObject *objP = current.Object ();
 int selection;
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.End ();
 int i = CBSpawnType ()->GetCurSel () - 1;
 if ((i < 0) || (i == MAX_CONTAINS_NUMBER)) {
@@ -1423,7 +1423,7 @@ void CObjectTool::OnSetSpawnId ()
 {
 CGameObject *objP = current.Object ();
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 if (objP->m_info.contents.count < -1)
 	objP->m_info.contents.count = -1;
 int i = CBSpawnType ()->GetCurSel () - 1;
@@ -1436,7 +1436,7 @@ else {
 	objP->m_info.contents.id = -1;
 	}
 Refresh ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 }
 
 //------------------------------------------------------------------------
@@ -1445,7 +1445,7 @@ undoManager.SetModified (true);
 
 void CObjectTool::OnSetObjAI ()
 {
-undoManager.SetModified (true);
+undoManager.Begin (true);
 CGameObject *objP = current.Object ();
 if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
  	int index = CBObjAI ()->GetCurSel ();
@@ -1462,7 +1462,7 @@ if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT)) {
 else
 	CBObjAI ()->SetCurSel (1); // Normal
 Refresh ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 }
 
 //------------------------------------------------------------------------
@@ -1474,7 +1474,7 @@ void CObjectTool::OnSetTexture ()
 CGameObject *objP = current.Object ();
 
 if (objP->m_info.renderType == RT_POLYOBJ) {
-	undoManager.SetModified (true);
+	undoManager.Begin (true);
 	int index = CBObjTexture ()->GetCurSel ();
 	objP->rType.polyModelInfo.tmap_override = 
 		(index > 0) ? (short)CBObjTexture ()->GetItemData (index): -1;
@@ -1675,9 +1675,9 @@ if (nType < 0)
 if (nId < 0)
 	nId =  current.Object ()->m_info.id;
 int nCount = 0;
-CGameObject *objP = theMine->Objects (0);
+CGameObject *objP = objectManager.Object (0);
 int i;
-for (i = theMine->Info ().objects.count; i; i--, objP++)
+for (i = objectManager.Count (); i; i--, objP++)
 	if ((objP->m_info.type == nType) && ((objP->m_info.type == OBJ_PLAYER) || (objP->m_info.type == OBJ_COOP) || (objP->m_info.id == nId))) 
 		nCount++;
 return nCount;

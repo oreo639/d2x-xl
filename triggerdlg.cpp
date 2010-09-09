@@ -401,7 +401,7 @@ else if (m_nClass) {
 	DrawObjectImage ();
 	}
 else {
-	m_pTrigger = theMine->Triggers (m_nTrigger);
+	m_pTrigger = wallManager.Trigger (m_nTrigger);
 	ClearObjWindow ();
 	}
 }
@@ -603,7 +603,7 @@ if (m_nClass) {
 	}
 else {
 	m_pTrigger = theMine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_pTrigger ? int (m_pTrigger - theMine->Triggers (0)) : -1;
+	m_nTrigger = m_pTrigger ? int (m_pTrigger - wallManager.Trigger (0)) : -1;
 	}
 // Redraw trigger window
 Refresh ();
@@ -633,10 +633,10 @@ DLE.MineView ()->Refresh ();
 
 void CTriggerTool::OnDeleteTriggerAll () 
 {
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 DLE.MineView ()->DelayRefresh (true);
-CSegment *segP = theMine->Segments (0);
+CSegment *segP = segmentManager.Segment (0);
 CSide *sideP;
 bool bAll = (theMine->MarkedSegmentCount (true) == 0);
 int i, j, nDeleted = 0;
@@ -645,7 +645,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, sideP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)
 			continue;
-		CWall *wallP = theMine->Walls (sideP->m_info.nWall);
+		CWall *wallP = wallManager.Wall (sideP->m_info.nWall);
 		if (wallP->m_info.nTrigger >= NumTriggers ())
 			continue;
 		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
@@ -681,7 +681,7 @@ if (m_nClass) {
 	current.m_nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
 	}
 else {
-	for (nWall = 0, wallP = theMine->Walls (0); nWall < theMine->Info ().walls.count; nWall++, wallP++)
+	for (nWall = 0, wallP = wallManager.Wall (0); nWall < theMine->Info ().walls.count; nWall++, wallP++)
 		if (wallP->m_info.nTrigger == m_nTrigger)
 			break;
 	if (nWall >= theMine->Info ().walls.count) {
@@ -727,7 +727,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 m_pTrigger->m_info.type = m_nType;
 Refresh ();
 }
@@ -742,7 +742,7 @@ UpdateData (TRUE);
 if ((m_nTrigger == -1) || (m_nType == TT_SPEEDBOOST) || (m_nType == TT_CHANGE_TEXTURE))
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 UpdateData (FALSE);
 m_pTrigger->m_info.value = (int) (m_nStrength * F1_0);
 }
@@ -757,7 +757,7 @@ UpdateData (TRUE);
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 m_pTrigger->m_info.time = m_nTime;
 }
 
@@ -771,7 +771,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return false;
 SetTriggerPtr ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 if ((m_bD1Flags [i] = !m_bD1Flags [i]))
 //if ((m_bD1Flags [i] = ((CButton *) GetDlgItem (IDC_TRIGGER_CONTROLDOORS + j))->GetCheck ()))
 	m_pTrigger->m_info.flags |= triggerFlagsD1 [i];
@@ -795,7 +795,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
 SetTriggerPtr ();
-undoManager.SetModified (true);
+undoManager.Begin (true);
 j = d2FlagXlat [i];
 int h = 1 << j;
 m_pTrigger->m_info.flags ^= h;
@@ -849,7 +849,7 @@ if (FindTarget (nSegment, nSide) > -1) {
 	DEBUGMSG (" Trigger tool: Trigger already has this target.");
 	return;
 	}
-undoManager.SetModified (true);
+undoManager.Begin (true);
 m_pTrigger->Add (nSegment, nSide - 1);
 sprintf_s (m_szTarget, sizeof (m_szTarget), "   %d,%d", nSegment, nSide);
 LBTargets ()->AddString (m_szTarget);
@@ -888,7 +888,7 @@ if (m_nTrigger == -1)
 SetTriggerPtr ();
 if ((DLE.IsD1File ()) 
 	 ? (m_pTrigger->m_info.flags & TRIGGER_MATCEN) != 0 
-	 : (m_pTrigger->m_info.type == TT_MATCEN) && (theMine->Segments (other->nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
+	 : (m_pTrigger->m_info.type == TT_MATCEN) && (segmentManager.Segment (other->nSegment)->m_info.function != SEGMENT_FUNC_ROBOTMAKER)
 	) {
 	DEBUGMSG (" Trigger tool: Target is no robot maker");
 	return;
@@ -922,7 +922,7 @@ if (m_nTrigger == -1)
 m_iTarget = LBTargets ()->GetCurSel ();
 if ((m_iTarget < 0) || (m_iTarget >= MAX_TRIGGER_TARGETS))
 	return;
-undoManager.SetModified (true);
+undoManager.Begin (true);
 SetTriggerPtr ();
 m_targets = m_pTrigger->Delete (m_iTarget);
 LBTargets ()->DeleteString (m_iTarget);
@@ -978,7 +978,7 @@ void CTriggerTool::OnCopyTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-m_defTrigger = theMine->Triggers () [m_nTrigger];
+m_defTrigger = wallManager.Trigger () [m_nTrigger];
 }
 
                         /*--------------------------*/
@@ -988,8 +988,8 @@ void CTriggerTool::OnPasteTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-undoManager.SetModified (true);
-theMine->Triggers () [m_nTrigger] = m_defTrigger;
+undoManager.Begin (true);
+wallManager.Trigger () [m_nTrigger] = m_defTrigger;
 Refresh ();
 DLE.MineView ()->Refresh ();
 }

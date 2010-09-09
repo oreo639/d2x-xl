@@ -38,7 +38,7 @@ void TextureMap (CSegment *segP, short nSide,
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	
 	// TEMPORARY
-	CSideKey face (short (segP - theMine->Segments (0)), nSide);
+	CSideKey face (short (segP - segmentManager.Segment (0)), nSide);
 	short flickLight = theMine->GetVariableLight (face.m_nSegment, face.m_nSide);
 	short deltaLight, scanLight;
 	short light [4];

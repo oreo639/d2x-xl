@@ -125,7 +125,7 @@ theMine->m_lightRenderDepth = m_lightRenderDepth;
 theMine->m_deltaLightRenderDepth = m_deltaLightRenderDepth;
 if (bAll = !segmentManager.HaveMarkedSides ())
 	INFOMSG (" light processing entire mine");
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 if (m_bIlluminate)
 	theMine->ComputeStaticLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
@@ -191,11 +191,11 @@ UpdateData (TRUE);
 nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 
 	short			nSegment, nSide, nVertex, i;
-	CSegment*	segP = theMine->Segments (0);
+	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
 	bool			bChange = false;
 
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {

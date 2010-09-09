@@ -33,7 +33,8 @@ if (m_robotMakers.Cleanup ()) bEmpty = false;
 if (m_equipMakers.Cleanup ()) bEmpty = false;
 if (m_walls.Cleanup ()) bEmpty = false;
 if (m_doors.Cleanup ()) bEmpty = false;
-if (m_triggers.Cleanup ()) bEmpty = false;
+if (m_triggers [0].Cleanup ()) bEmpty = false;
+if (m_triggers [1].Cleanup ()) bEmpty = false;
 if (m_objects.Cleanup ()) bEmpty = false;
 if (m_robotInfo.Cleanup ()) bEmpty = false;
 if (m_deltaLightIndices.Cleanup ()) bEmpty = false;
@@ -55,7 +56,8 @@ m_robotMakers.Destroy ();
 m_equipMakers.Destroy ();
 m_walls.Destroy ();
 m_doors.Destroy ();
-m_triggers.Destroy ();
+m_triggers [0].Destroy ();
+m_triggers [1].Destroy ();
 m_objects.Destroy ();
 m_robotInfo.Destroy ();
 m_deltaLightIndices.Destroy ();
@@ -77,25 +79,28 @@ if (dataFlags & udVertices)
 if (dataFlags & udSegments) 
 	!m_segments.Backup (segmentManager.Segment (0), segmentManager.Count ());
 
-if (dataFlags & udMatCens) {
+if (dataFlags & udRobotMakers)
 	m_robotMakers.Backup (segmentManager.RobotMaker (0), segmentManager.RobotMakerCount ());
+
+if (dataFlags & udEquipMakers)
 	m_equipMakers.Backup (segmentManager.EquipMaker (0), segmentManager.EquipMakerCount ());
-	}
 
 if (dataFlags & udWalls) 
-	!m_walls.Backup (wallManager.Wall (0), wallManager.WallCount ());
+	m_walls.Backup (wallManager.Wall (0), wallManager.WallCount ());
 
-if (dataFlags & udTriggers) 
-	!m_triggers.Backup (triggerManager.Trigger (0), triggerManager.Count ());
+if (dataFlags & udTriggers) {
+	m_triggers [0].Backup (triggerManager.Trigger (0, 0), triggerManager.Count (0));
+	m_triggers [1].Backup (triggerManager.Trigger (0, 1), triggerManager.Count (1));
+	}	
 
 if (dataFlags & udObjects) 
-	!m_objects.Backup (objectManager.Objects (0), objectManager.Count ());
+	m_objects.Backup (objectManager.Objects (0), objectManager.Count ());
 
 if (dataFlags & udRobots) 
-	!m_robotInfo.Backup (robotManager.RobotInfo (0), robotManager.Count ());
+	m_robotInfo.Backup (robotManager.RobotInfo (0), robotManager.Count ());
 
 if (dataFlags & udVariableLights) 
-	!m_variableLights.Backup (lightManager.VariableLight (0), lightManager.Count ());
+	m_variableLights.Backup (lightManager.VariableLight (0), lightManager.Count ());
 
 if (dataFlags & udStaticLight) {
 	 m_faceColors.Backup (lightManager.FaceColor (0), segmentManager.m_nSegments * 6);
@@ -117,7 +122,7 @@ if (dataFlags & udVertices)
 	m_vertices.Restore ();
 
 if (dataFlags & udSegments) 
-	!m_segments.Restore ();
+	m_segments.Restore ();
 
 if (dataFlags & udMatCens) {
 	m_robotMakers.Restore ();
@@ -127,17 +132,19 @@ if (dataFlags & udMatCens) {
 if (dataFlags & udWalls) 
 	!m_walls.Restore ();
 
-if (dataFlags & udTriggers) 
-	!m_triggers.Restore ();
+if (dataFlags & udTriggers) {
+	m_triggers [0].Restore ();
+	m_triggers [1].Restore ();
+	}
 
 if (dataFlags & udObjects) 
-	!m_objects.Restore ();
+	m_objects.Restore ();
 
 if (dataFlags & udRobots) 
-	!m_robotInfo.Restore ();
+	m_robotInfo.Restore ();
 
 if (dataFlags & udVariableLights) 
-	!m_variableLights.Restore ();
+	m_variableLights.Restore ();
 
 if (dataFlags & udStaticLight) {
 	 m_faceColors.Restore ();
@@ -286,7 +293,7 @@ else {
 
 int CUndoManager::Backup (CGameItem* parent, eEditType editType) 
 { 
-#if USE_FREELIST
+#if DETAIL_BACKUP
 SetModified (true);
 if (parent->Id () == Id ()) { // item backup up in this batch already, so update the backup
 	CGameItem* backup = parent->Parent ();

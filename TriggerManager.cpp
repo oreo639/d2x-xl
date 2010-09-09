@@ -142,7 +142,7 @@ if (Full ()) {
 	return null;
 	}
 // if no wall at current side, try to add a wall of proper type
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 
 CWall* wallP = current.Wall ();
@@ -234,7 +234,7 @@ CTrigger* delTrigP = Trigger (nDelTrigger, 0);
 if (delTrigP == null)
 	return;
 
-undoManager.SetModified (true);
+undoManager.Begin (true);
 undoManager.Begin ();
 
 wallManager.UpdateTrigger (nDelTrigger, NO_TRIGGER);
@@ -308,8 +308,7 @@ void CTriggerManager::UpdateReactor (void)
 {
   CReactorTrigger *reactorTrigger = ReactorTrigger (0);	// only one reactor trigger per level
 
-undoManager.SetModified (true);
-undoManager.Begin ();
+undoManager.Begin (udTriggers);
 // remove items from list that do not point to a wall
 for (short nTarget = 0; nTarget < reactorTrigger->m_count; nTarget++) {
 	if (!wallManager.FindBySide (reactorTrigger->m_targets [nTarget]))
@@ -354,7 +353,7 @@ if (ObjTriggerCount () >= MAX_OBJ_TRIGGERS) {
 	ErrorMsg ("The maximum number of object triggers has been reached.");
 	return null;
 	}
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 short nTrigger = ObjTriggerCount ()++;
 CTrigger* trigP = ObjTrigger (nTrigger);
@@ -384,21 +383,25 @@ ObjTrigger (ObjTriggerCount ())->Index () = -1; // mark as unused (needed by the
 
 void CTriggerManager::DeleteObjTriggers (short nObject) 
 {
+undoManager.Begin (udTriggers);
 for (short i = ObjTriggerCount (); i; )
 	if (ObjTrigger (--i)->m_info.nObject == nObject)
 		DeleteFromObject (i);
+undoManager.End ();
 }
 
 // -----------------------------------------------------------------------------
 
 void CTriggerManager::DeleteTargets (CSideKey key) 
 {
+undoManager.Begin (udTriggers);
 for (CWallTriggerIterator ti; ti; ti++)
 	ti->Delete (key);
 
 for (short i = ObjTriggerCount (); i > 0; )
 	if (ObjTrigger (--i)->Delete (key) == 0) // no targets left
 		DeleteFromObject (i);
+undoManager.End ();
 }
 
 // -----------------------------------------------------------------------------
@@ -564,7 +567,7 @@ bool CTriggerManager::AutoAddTrigger (short wallType, ushort wallFlags, ushort t
 if (!HaveResources ())
 	return false;
 // make a new wall and a new trigger
-bool bUndo = undoManager.SetModified (true);
+bool bUndo = undoManager.Begin (true);
 undoManager.Begin ();
 CWall* wallP = wallManager.Create (current, (byte) wallType, wallFlags, KEY_NONE, -1, -1);
 if (wallP != null) {

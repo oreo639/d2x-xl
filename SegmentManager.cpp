@@ -127,7 +127,7 @@ void CSegmentManager::ResetSide (short nSegment, short nSide)
 {
 if (nSegment < 0 || nSegment >= Count ()) 
 	return; 
-undoManager.SetModified (true); 
+undoManager.Begin (true); 
 undoManager.Begin ();
 Segment (nSegment)->Reset (nSide); 
 undoManager.End ();
@@ -171,7 +171,7 @@ if (selections [0].m_nSegment == selections [1].m_nSegment)
 	return; 
 short nSegment = current.m_nSegment; 
 CSegment *otherSeg = other.Segment (); 
-bUndo = undoManager.SetModified (true); 
+bUndo = undoManager.Begin (true); 
 undoManager.Begin ();
 for (int nSide = 0; nSide < 6; nSide++)
 	if (SetTextures (CSideKey (nSegment, nSide), otherSeg->m_sides [nSide].m_info.nBaseTex, otherSeg->m_sides [nSide].m_info.nOvlTex))
