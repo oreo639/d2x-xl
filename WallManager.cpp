@@ -158,6 +158,7 @@ if (oppWallP != null)
 
 triggerManager.DeleteTargets (*delWallP);
 segmentManager.Side (*delWallP)->SetWall (NO_WALL);
+delWallP->Backup ();
 Remove (nDelWall);
 
 undoManager.End ();

@@ -100,6 +100,10 @@ class CWall : public CSideKey, public CGameItem {
 		virtual void Backup (eEditType editType = opModify);
 
 		virtual CGameItem* Copy (CGameItem* destP);
+
+		virtual void Undo (void);
+
+		virtual void Redo (void);
 	};
 
 //------------------------------------------------------------------------

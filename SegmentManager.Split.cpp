@@ -333,7 +333,7 @@ bool CSegmentManager::Split (void)
 	short			nNewSegs [6];
 	ushort		nNewVerts [8];
 	CVertex		segCenter;
-	bool			bVertDone [8], bUndo;
+	bool			bVertDone [8];
 
 if (Count () >= MAX_SEGMENTS - 6) {
 	ErrorMsg ("Cannot split this cube because\nthe maximum number of cubes would be exceeded."); 

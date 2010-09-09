@@ -78,7 +78,7 @@ SetLightString ();
 
 void CTextureTool::UpdateLight (void)
 {
-	bool bUndo, bChange = false;
+	bool bChange = false;
 
 if (m_iLight < 0)
 	return;

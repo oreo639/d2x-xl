@@ -50,10 +50,11 @@ void CVertex::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		vertexManager.Delete (Index (), true);
+		vertexManager.Delete (Index (), false);
 		break;
 	case opDelete:
-		vertexManager.Add (true);
+		ushort nVertex;
+		vertexManager.Add (&nVertex, 1, false);
 		// fall through
 	case opModify:
 		*Parent () = *this;

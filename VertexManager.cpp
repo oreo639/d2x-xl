@@ -11,7 +11,7 @@ return Count () >= MAX_VERTICES;
 
 // ----------------------------------------------------------------------------- 
 
-ushort CVertexManager::Add (ushort* nVertices, ushort count) 
+ushort CVertexManager::Add (ushort* nVertices, ushort count, bool bUndo) 
 { 
 
 #if USE_FREELIST
@@ -22,7 +22,8 @@ for (ushort i = 0; i < count; i++) {
 		return i;
 	nVertex = --m_free;
 	Vertex (nVertex)->Clear ();
-	Vertex (nVertex)->Backup (opAdd);
+	if (bUndo)
+		Vertex (nVertex)->Backup (opAdd);
 	nVertices [i] = nVertex;
 	Count ()++;
 	}
@@ -44,11 +45,12 @@ return count;
 
 // ----------------------------------------------------------------------------- 
 
-void CVertexManager::Delete (ushort nDelVert)
+void CVertexManager::Delete (ushort nDelVert, bool bUndo)
 {
 #if USE_FREELIST
 
-Vertex (nDelVert)->Backup (opDelete);
+if (bUndo)
+	Vertex (nDelVert)->Backup (opDelete);
 m_free += (int) nDelVert;
 Count ()--;
 

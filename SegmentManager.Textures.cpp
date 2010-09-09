@@ -15,7 +15,7 @@ Side (key)->GetTextures (nBaseTex, nOvlTex);
 
 bool CSegmentManager::SetTextures (CSideKey key, short nBaseTex, short nOvlTex)
 {
-	bool bUndo, bChange = false;
+	bool bChange = false;
 
 undoManager.Begin (udSegments); 
 current.Get (key); 

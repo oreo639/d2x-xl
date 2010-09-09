@@ -206,7 +206,7 @@ bool CWall::IsVariable (void)
 CTrigger* trigP = Trigger ();
 if (trigP == null)
 	return false;
-char trigType = trigP->m_info.type;
+char trigType = trigP->Info ().type;
 return (trigType == TT_ILLUSION_OFF) ||
 		 (trigType == TT_ILLUSION_ON) ||
 		 (trigType == TT_CLOSE_WALL) ||
@@ -265,7 +265,7 @@ void CWall::Undo (void)
 {
 switch (EditType ()) {
 	case opAdd:
-		wallManager.Remove (Index (), true);
+		wallManager.Remove (Index ());
 		break;
 	case opDelete:
 		wallManager.Add (true);
