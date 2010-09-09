@@ -67,7 +67,7 @@ class CGameItem {
 
 		virtual void Redo (void) {}
 
-		inline CGameItem* Parent (void) { return m_parent; }
+		inline CGameItem*& Parent (void) { return m_parent; }
 
 		inline void SetParent (CGameItem* parent) { m_parent = parent; }
 	};
