@@ -45,7 +45,7 @@ class CTriggerManager {
 		CMineItemInfo			m_info [2];
 		reactorTriggerList	m_reactorTriggers;
 		CMineItemInfo			m_reactorInfo;
-		CFreeList<CTrigger>	m_free;
+		FREELIST(CTrigger)
 
 	public:
 		void ResetInfo (void) {

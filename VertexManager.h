@@ -36,7 +36,7 @@ class CVertexManager  {
 	public:
 		vertexList				m_vertices;
 		CMineItemInfo			m_info;
-		CFreeList<CVertex>	m_free;
+		FREELIST(CVertex)
 
 	public:
 		// Segment and side getters

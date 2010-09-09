@@ -6,6 +6,9 @@
 
 ushort CVertexManager::Add (ushort* nVertices, ushort count) 
 { 
+
+#if USE_FREELIST
+
 ushort nVertex;
 for (ushort i = 0; i < count; i++) {
 	if (m_free.Empty ())
@@ -17,6 +20,17 @@ for (ushort i = 0; i < count; i++) {
 	Count ()++;
 	}
 return count; 
+
+#else //USE_FREELIST
+
+if (Count () + count > MAX_VERTICES)
+	return 0;
+for (ushort i = 0; i < count; i++)
+	nVertices [i] = Count () + i;
+Count () += count;
+return count;
+
+#endif //USE_FREELIST
 }
 
 // ----------------------------------------------------------------------------- 
