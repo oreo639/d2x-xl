@@ -288,8 +288,11 @@ class CSegmentManager {
 		void Clear (void);
 
 		int Fix (void);
-
+#if USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
+#else
+		inline bool Full (void) { return Count () >= MAX_SEGMENTS; }
+#endif
 
 		CSegmentManager () : m_bCreating (false) { 
 			ResetInfo ();

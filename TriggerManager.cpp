@@ -137,7 +137,7 @@ if (segmentManager.Trigger () != null) {
 	ErrorMsg ("There is already a trigger on this side");
 	return null;
 	}
-if (m_free.Empty ()) {
+if (Full ()) {
 	ErrorMsg ("The maximum number of triggers has been reached.");
 	return null;
 	}
@@ -545,7 +545,7 @@ bool CTriggerManager::HaveResources (void)
 {
 if (!wallManager.HaveResources ())
 	return false;
-if (m_free.Empty ()) {
+if (Full ()) {
 	ErrorMsg ("Maximum number of triggers reached");
 	return false;
 	}

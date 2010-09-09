@@ -142,6 +142,11 @@ class CTriggerManager {
 
 		bool HaveResources (void);
 
+#if USE_FREELIST
+		inline bool Full (void) { return m_free.Empty (); }
+#else
+		inline bool Full (void) { return Count () >= MAX_TRIGGERS; }
+#endif
 		inline void ReadInfo (CFileManager& fp) { m_info [0].Read (fp); }
 
 		inline void WriteInfo (CFileManager& fp) { m_info [0].Write (fp); }
