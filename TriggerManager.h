@@ -204,7 +204,7 @@ class CTriggerManager {
 
 		CTrigger* AddToObject (short nObject, short type);
 
-		void DeleteFromWall (short nDelTrigger);
+		void DeleteFromWall (short nDelTrigger = -1);
 
 		void DeleteFromObject (short nDelTrigger);
 
