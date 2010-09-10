@@ -86,12 +86,12 @@ public:
 //------------------------------------------------------------------------------
 
 class CModelRenderData {
-public:
-	ushort				nPoints;
-	CVertex				points [MAX_POLYMODEL_POINTS];
-	ushort				nPolys;
-	CModelRenderPoly	polys [MAX_POLYMODEL_POLYS];
-} tModelRenderData;
+	public:
+		ushort				nPoints;
+		CVertex				points [MAX_POLYMODEL_POINTS];
+		ushort				nPolys;
+		CModelRenderPoly	polys [MAX_POLYMODEL_POLYS];
+	};
 
 //------------------------------------------------------------------------------
 
@@ -160,8 +160,6 @@ public:
 
 		void Render (byte* p);
 };
-
-extern CPolyModel* renderModel;
 
 //------------------------------------------------------------------------------
 

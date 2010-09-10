@@ -237,7 +237,7 @@ typedef struct tTexture {
 	byte		nFormat;	// 0: Bitmap, 1: TGA (RGB)
 } tTexture;
 
-class CTexture : public CGameItem {
+class CTexture {
 	public:
 		tTexture	m_info;
 
@@ -264,8 +264,6 @@ class CTexture : public CGameItem {
 		void Write (CFileManager& fp, int version = 0, bool bFlag = false) {};
 
 		virtual void Clear (void) { memset (&m_info, 0, sizeof (m_info)); }
-
-		virtual CGameItem* Clone (void);
 };
 
 //------------------------------------------------------------------------
