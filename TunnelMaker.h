@@ -42,11 +42,13 @@ class CTunnelMaker {
 			return true;
 			}
 
-		void Disable (void) { m_bActive = false; }
-
 		void Stretch (void); 
 
 		void Shrink (void); 
+
+		void Realize (void);
+
+		void Destroy (void);
 
 		inline int Length (void) { return m_nLength; }
 

@@ -27,28 +27,34 @@
 # include <gl\glaux.h>
 #endif
 
+// -----------------------------------------------------------------------------
+
 enum eObjectViewFlags {
 	eViewObjectsNone          = 0,
-	eViewObjectsRobots        = (1<<0),
-	eViewObjectsPlayers		  = (1<<1),
-	eViewObjectsWeapons       = (1<<2),
-	eViewObjectsPowerups      = (1<<3),
-	eViewObjectsKeys          = (1<<4),
-	eViewObjectsHostages      = (1<<5),
-	eViewObjectsControlCenter = (1<<6),
-	eViewObjectsEffects       = (1<<7),
+	eViewObjectsRobots        = (1 << 0),
+	eViewObjectsPlayers		  = (1 << 1),
+	eViewObjectsWeapons       = (1 << 2),
+	eViewObjectsPowerups      = (1 << 3),
+	eViewObjectsKeys          = (1 << 4),
+	eViewObjectsHostages      = (1 << 5),
+	eViewObjectsControlCenter = (1 << 6),
+	eViewObjectsEffects       = (1 << 7),
 	eViewObjectsAll           = 0xff
 	};
 
+// -----------------------------------------------------------------------------
+
 enum eMineViewFlags {
-	eViewMineWalls            = (1<<0),
-	eViewMineSpecial          = (1<<1),
-	eViewMineLights           = (1<<2),
-	eViewMineShading          = (1<<3),
-	eViewMineDeltaLights		  = (1<<4),
-	eViewMineUsedTextures	  = (1<<5),
-	eViewMineSkyBox			  = (1<<6)
+	eViewMineWalls            = (1 << 0),
+	eViewMineSpecial          = (1 << 1),
+	eViewMineLights           = (1 << 2),
+	eViewMineShading          = (1 << 3),
+	eViewMineDeltaLights		  = (1 << 4),
+	eViewMineUsedTextures	  = (1 << 5),
+	eViewMineSkyBox			  = (1 << 6)
 	};
+
+// -----------------------------------------------------------------------------
 
 enum eViewOptions {
 	eViewAllLines = 0,
@@ -58,6 +64,8 @@ enum eViewOptions {
 	eViewTextureMapped
 	};
 
+// -----------------------------------------------------------------------------
+
 enum eSelectModes {
 	eSelectPoint	= POINT_MODE,
 	eSelectLine		= LINE_MODE,
@@ -66,6 +74,8 @@ enum eSelectModes {
 	eSelectObject	= OBJECT_MODE,
 	eSelectBlock	= BLOCK_MODE
 	};
+
+// -----------------------------------------------------------------------------
 
 enum eMouseStates
 {
@@ -83,8 +93,22 @@ enum eMouseStates
 	eMouseStateCount	//must always be last tag
 };
 
-                        /*--------------------------*/
-                        
+// -----------------------------------------------------------------------------
+
+typedef struct {
+	short	ticks;
+	short	impulse;
+} tLightTimer;
+
+// -----------------------------------------------------------------------------
+
+typedef struct {
+	bool	bIsOn;
+	bool	bWasOn;
+} tLightStatus;
+
+// -----------------------------------------------------------------------------
+
 class CMineView : public CView
 {
 protected: // create from serialization only
@@ -183,6 +207,10 @@ protected: // create from serialization only
 					m_yRenderOffs;
 	int			m_nViewDist;
 	int			m_nMineCenter;
+
+	tLightTimer		m_lightTimers [MAX_VARIABLE_LIGHTS];
+	tLightStatus	m_lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
+
 
 #if OGL_RENDERING
 	HGLRC           m_glRC; // Permanent Rendering Context

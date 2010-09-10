@@ -32,8 +32,6 @@ bool bExtBlkFmt = false;
 int preferences = 0;
 
 //CVariableLight *variableLights=0;
-tLightTimer lightTimers [MAX_VARIABLE_LIGHTS];
-tLightStatus lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 //uint       N_robot_types = 0;
 //CRobotInfo   *robotInfo;     // MAX_ROBOT_TYPES
 

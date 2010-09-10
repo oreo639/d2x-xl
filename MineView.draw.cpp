@@ -1187,7 +1187,7 @@ if (!m_pDC) return;
 
   // find variable light from
 CVariableLight* flP = theMine->VariableLights (0);
-for (INT i = 0; i < theMine->lightManager.Count (); i++, flP++)
+for (INT i = 0; i < lightManager.Count (); i++, flP++)
 	if (Visible (segmentManager.Segment (flP->m_nSegment)))
 	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
 }

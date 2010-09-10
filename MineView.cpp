@@ -153,7 +153,7 @@ Reset ();
 void CMineView::Reset (void)
 {
 m_viewWidth = m_viewHeight = m_viewDepth = 0;	// force OnDraw to initialize these
-theMine->SetSplineActive (false);
+tunnelMaker.Destroy ();
 m_bUpdate = true;
 m_mouseState  = 
 m_lastMouseState = eMouseStateIdle;
@@ -339,7 +339,7 @@ if (m_bUpdate) {
 		SetViewPoints ();
 		ShiftViewPoints ();
 		// make a local copy the mine's selection
-		m_Current = theMine->Current ();
+		m_Current = &current;
 
 		// draw the level
 		switch(m_viewOption)	{
@@ -406,11 +406,11 @@ void CMineView::AdvanceLightTick (void)
 {
 CHECKMINE;
 
-	tLightTimer *ltP = lightTimers;
-	CVariableLight *flP = theMine->VariableLights (0);
+	tLightTimer *ltP = m_lightTimers;
+	CVariableLight *flP = lightManager.VariableLight (0);
 	int i, light_delay;
 
-for (i = theMine->lightManager.Count (); i; i--, flP++, ltP++) {
+for (i = lightManager.Count (); i; i--, flP++, ltP++) {
 	light_delay = (flP->m_info.delay * 100 /*+ F0_5*/) / F1_0;
 	if (light_delay) {
 		if (++ltP->ticks == light_delay) {
@@ -431,45 +431,45 @@ static int qqq1 = -1, qqq2 = 0;
 bool CMineView::SetLightStatus (void)
 {
 	int h, i, j;
-	CLightDeltaIndex *ldiP = theMine->LightDeltaIndex (0);
+	CLightDeltaIndex *ldiP = lightManager.LightDeltaIndex (0);
 	CLightDeltaValue *ldvP;
 	tLightTimer *ltP;
-	CVariableLight *flP = theMine->VariableLights (0);
+	CVariableLight *flP = lightManager.VariableLight (0);
 	tLightStatus *pls;
 	bool bChange = false;
 	bool bD2XLights = (theMine->LevelVersion () >= 15) && (theMine->Info ().fileInfo.version >= 34);
 	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light
-pls = lightStatus [0];
+pls = m_lightStatus [0];
 for (i = segmentManager.Count (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
 for (h = 0; h < lightManager.DeltaIndexCount (); h++, ldiP++) {
 	nSrcSide = ldiP->m_nSegment;
 	nSrcSeg = ldiP->m_nSide;
-	j = theMine->GetVariableLight (nSrcSide, nSrcSeg);
+	j = lightManager.VariableLight (CSideKey (nSrcSide, nSrcSeg));
 	if (j < 0)
 		continue;	//shouldn't happen here, as there is a delta light value, but you never know ...
 	if (j >= MAX_VARIABLE_LIGHTS)
 		continue;	//shouldn't happen 
-	ldvP = theMine->LightDeltaValues (ldiP->m_info.index);
+	ldvP = lightManager.LightDeltaValue (ldiP->m_info.index);
 	for (i = ldiP->m_info.count; i; i--, ldvP++) {
 		nSegment = ldvP->m_nSegment;
 		nSide = ldvP->m_nSide;
 		if (m_bShowLightSource) {
 			if ((nSegment != nSrcSeg) || (nSide != nSrcSide)) 
 				continue;
-			if (0 > theMine->GetVariableLight (nSegment, nSide))
+			if (0 > lightManager.VariableLight (CSideKey (nSegment, nSide)))
 				continue;
 			}
 		else {
-			if (((nSegment != nSrcSeg) || (nSide != nSrcSide)) && (0 <= theMine->GetVariableLight (nSegment, nSide)))
+			if (((nSegment != nSrcSeg) || (nSide != nSrcSide)) && (0 <= lightManager.VariableLight (CSideKey (nSegment, nSide))))
 				continue;
 			}
-		pls = lightStatus [nSegment] + nSide;
-		ltP = lightTimers + j;
-		pls->bIsOn = (flP [j].m_info.mask & (1 << lightTimers [j].impulse)) != 0;
+		pls = m_lightStatus [nSegment] + nSide;
+		ltP = m_lightTimers + j;
+		pls->bIsOn = (flP [j].m_info.mask & (1 << m_lightTimers [j].impulse)) != 0;
 		if (pls->bWasOn != pls->bIsOn)
 			bChange = true;
 		}
@@ -521,8 +521,8 @@ if (bEnableDeltaShading = bEnable) {
 		m_nFrameRate = nFrameRate;
 	if (bShowLightSource != -1)
 		m_bShowLightSource = bShowLightSource;
-	memset (lightTimers, 0, sizeof (lightTimers));
-	memset (lightStatus, 0xff, sizeof (lightStatus));
+	memset (m_lightTimers, 0, sizeof (m_lightTimers));
+	memset (m_lightStatus, 0xff, sizeof (m_lightStatus));
 	}
 else if (m_lightTimer != -1) {
 	KillTimer (m_lightTimer);
@@ -949,7 +949,7 @@ if (change.x || change.y) {
 			if (nFlags & MK_CONTROL)
 				SetMouseState (eMouseStateZoom);
 			else {
-				int v = theMine->CurrVert ();
+				int v = vertexManager.Index (current.Vertex ());
 				if ((abs (m_clickPos.x - m_viewPoints [v].x) < 5) && 
 					 (abs (m_clickPos.y - m_viewPoints [v].y) < 5)) {
 					SetMouseState (eMouseStateInitDrag);
@@ -1147,7 +1147,7 @@ for (i = 0; i < vertexManager.Count (); i++, pa++) {
 		}
 	}
 if (m_bUpdate) {
-	theMine->UpdateMarkedSegments ();
+	segmentManager.UpdateMarked ();
 	Refresh ();
 	}
 }
@@ -1170,7 +1170,7 @@ void CMineView::CalcSegmentCenter (CVertex& pos, short nSegment)
 {
 CSegment *segP = segmentManager.Segment (nSegment);
 CVertex *vMine = vertexManager.Vertex (0);
-short *vSeg = segP->m_info.verts;
+ushort *vSeg = segP->m_info.verts;
 pos  =
    vMine [vSeg [0]] +
    vMine [vSeg [1]] +

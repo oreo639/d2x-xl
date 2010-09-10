@@ -214,6 +214,65 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 }
 
 //------------------------------------------------------------------------------
+
+void CTunnelMaker::Realize (void)
+{
+undoManager.Begin (udSegments | udVertices);
+for (nSegment = 0; nSegment < m_nLength; nSegment++) {
+	segP = segmentManager.Segment (m_nSegments [nSegment]);
+	// copy current segment
+	*segP = *segmentManager.Segment (current.m_nSegment);
+	for (short j = 0; j < 4; j++) {
+		nVertex = 4 * nSegment + j;
+		if (nSegment == 0) {         // 1st segment
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
+			}
+		else if (nSegment == m_nLength - 1) { // last segment
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
+			}
+		else { // intermediate segments
+			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
+			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
+			}
+		}
+	// int twisted segments
+	UntwistSegment (m_nSegments [nSegment], m_info [0].m_nSide);
+	// define children and sides (textures and nWall)
+	segP->Setup ();
+	if (nSegment == 0) {
+		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
+		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
+		m_info [0].Segment ()->SetChild (m_info [0].m_nSide, segmentManager.Count ());
+		} 
+	else if (nSegment == m_nLength - 1) {
+		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
+		segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
+		m_info [1].Segment ()->SetChild (m_info [1].m_nSide, segmentManager.Count ());
+		}
+	else  {
+		segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
+		segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]); // next tunnel segment
+		}
+	// define child bitmask, special, matcen, value, and wall bitmask
+	}
+undoManager.End ();
+}
+
+//------------------------------------------------------------------------------
+
+void CTunnelMaker::Destroy (void)
+{
+for (i = m_nLength; i > 0; )
+	segmentManager.Delete (m_nSegments [--i]);
+for (i = m_nLength * 4; i > 0; )
+	vertexManager.Delete (m_nVertices [--i]);
+m_bActive = false;
+DLE.MineView ()->Refresh (false);
+}
+
+//------------------------------------------------------------------------------
 // MENU - Tunnel Generator
 //
 // Action - This is like a super "join" feature which uses tunnels to
@@ -292,55 +351,12 @@ if (!m_bActive) {
 else {
 	m_bActive = false;
 	// ask if user wants to keep the new nSegment
-	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES) {
-		for (i = m_nLength; i > 0; )
-			segmentManager.Delete (m_nSegments [--i]);
-		for (i = m_nLength * 4; i > 0; )
-			vertexManager.Delete (m_nVertices [--i]);
-		DLE.MineView ()->Refresh (false);
+	if (Query2Msg ("Do you want to keep this tunnel?", MB_YESNO) != IDYES)
+		Destroy ();
+	else
+		Realize ();
 		return;
 		}
-	undoManager.Begin (udSegments | udVertices);
-	for (nSegment = 0; nSegment < m_nLength; nSegment++) {
-		segP = segmentManager.Segment (m_nSegments [nSegment]);
-		// copy current segment
-		*segP = *segmentManager.Segment (current.m_nSegment);
-		for (short j = 0; j < 4; j++) {
-			nVertex = 4 * nSegment + j;
-			if (nSegment == 0) {         // 1st segment
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];
-				}
-			else if (nSegment == m_nLength - 1) { // last segment
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_info [1].Segment ()->m_info.verts [sideVertTable [m_info [1].m_nSide][MatchingSide (j)]];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4 + j];
-				}
-			else { // intermediate segments
-				segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
-				segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex - 4];
-				}
-			}
-		// int twisted segments
-		UntwistSegment (m_nSegments [nSegment], m_info [0].m_nSide);
-		// define children and sides (textures and nWall)
-		segP->Setup ();
-		if (nSegment == 0) {
-			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_info [0].m_nSegment);
-			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]);
-			m_info [0].Segment ()->SetChild (m_info [0].m_nSide, segmentManager.Count ());
-			} 
-		else if (nSegment == m_nLength - 1) {
-			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
-			segP->SetChild (m_info [0].m_nSide, m_info [1].m_nSegment);
-			m_info [1].Segment ()->SetChild (m_info [1].m_nSide, segmentManager.Count ());
-			}
-		else  {
-			segP->SetChild (oppSideTable [m_info [0].m_nSide], m_nSegments [nSegment - 1]); // previous tunnel segment
-			segP->SetChild (m_info [0].m_nSide, m_nSegments [nSegment + 1]); // next tunnel segment
-			}
-		// define child bitmask, special, matcen, value, and wall bitmask
-		}
-	undoManager.End ();
 	}
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->Refresh ();

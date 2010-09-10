@@ -54,9 +54,6 @@ class CLightManager {
 		vertexColorList		m_vertexColors;
 		bool						m_bUseTexColors;
 
-		tLightTimer				m_lightTimers [MAX_VARIABLE_LIGHTS];
-		tLightStatus			m_lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
-
 		long						m_lightMap [MAX_TEXTURES_D2];
 
 		int						m_renderDepth;

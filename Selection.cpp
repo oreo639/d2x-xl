@@ -101,7 +101,7 @@ return vertexManager.Vertex (Segment ()->m_info.verts [sideVertTable [m_nSide][m
 
 // -----------------------------------------------------------------------------
 
-CColor* CSelection::CurrLightColor (void)
+CColor* CSelection::LightColor (void)
 { 
 return lightManager.LightColor (*this); 
 }
