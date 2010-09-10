@@ -35,7 +35,7 @@ public:
 	CWall* Wall (void);
 	CGameObject* Object (void);
 	CVertex* Vertex (void);
-	CColor* CurrLightColor (void);
+	CColor* LightColor (void);
 	void Setup (short nSegment = -1, short nSide = -1, short nLine = -1, short nPoint = -1);
 };
 

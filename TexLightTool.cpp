@@ -89,11 +89,11 @@ uint nLightMask = 0;
 for (int i = 0; i < 32; i++)
 	if (m_szLight [i] == '1')
 		nLightMask |= (1 << i);
-long nDelay = I2X (m_nLightDelay) / 1000;
+short nDelay = (short) (I2X (m_nLightDelay) / 1000);
 
-CVariableLight* vlP = theMine->VariableLights (m_iLight);
+CVariableLight* vlP = lightManager.VariableLight (m_iLight);
 if ((vlP->m_info.mask != nLightMask) || (vlP->m_info.delay != nDelay)) {
-	undoManager.Begin (udVariableLight);
+	undoManager.Begin (udVariableLights);
 	vlP->m_info.mask = nLightMask;
 	vlP->m_info.delay = nDelay;
 	undoManager.End ();
@@ -189,13 +189,13 @@ if (!SideHasLight ()) {
 	if (m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = FALSE);
 	if (theMine->IsD2XLevel ())
-		theMine->CurrLightColor ()->Clear ();
+		current.LightColor ()->Clear ();
 	}
 else {
 	if (!m_bLightEnabled)
 		EnableLightControls (m_bLightEnabled = TRUE);
 	if (theMine->IsD2XLevel ()) {
-		CColor *plc = theMine->CurrLightColor ();
+		CColor *plc = current.LightColor ();
 		if (!plc->m_info.index) {	// set light color to white for new lights
 			plc->m_info.index = 255;
 			plc->m_info.color.r =
@@ -204,18 +204,18 @@ else {
 			}
 		}
 	}
-m_iLight = theMine->GetVariableLight ();
+m_iLight = lightManager.VariableLight ();
 if (m_iLight < 0) {
 	OnLightOff ();
 	return;
 	}
 
-long nLightMask = theMine->VariableLights (m_iLight)->m_info.mask;
+long nLightMask = lightManager.VariableLight (m_iLight)->m_info.mask;
 int i;
 for (i = 0; i < 32; i++)
 	m_szLight [i] = (nLightMask & (1 << i)) ? '1' : '0';
 m_szLight [32] = '\0';
-SetLightButtons (m_szLight, (int) (((1000 * theMine->VariableLights (m_iLight)->m_info.delay + F0_5) / F1_0)));
+SetLightButtons (m_szLight, (int) (((1000 * lightManager.VariableLight (m_iLight)->m_info.delay + F0_5) / F1_0)));
 }
 
                         /*--------------------------*/
@@ -248,7 +248,7 @@ void CTextureTool::OnAddLight ()
 {
 if (m_iLight >= 0)
 	INFOMSG (" There is already a variable light.")
-else if (0 <= (m_iLight = theMine->AddVariableLight (-1, -1, 0xAAAAAAAAL, F1_0 / 4))) {
+else if (0 <= (m_iLight = lightManager.AddVariableLight (current, 0xAAAAAAAAL, F1_0 / 4))) {
 	UpdateLightWnd ();
 	DLE.MineView ()->Refresh ();
 	}
@@ -260,7 +260,7 @@ void CTextureTool::OnDeleteLight ()
 {
 if (m_iLight < 0)
 	INFOMSG (" There is no variable light.")
-else if (theMine->DeleteVariableLight ()) {
+else if (lightManager.DeleteVariableLight ()) {
 	m_iLight = -1;
 	UpdateLightWnd ();
 	DLE.MineView ()->Refresh ();
@@ -315,7 +315,7 @@ void CTextureTool::OnLight32 () { ToggleLight (32); }
 
 void CTextureTool::SetWallColor (void)
 {
-if (theMine->UseTexColors ()) {
+if (lightManager.UseTexColors ()) {
 	short			nSegment, nSide;
 	short			nBaseTex = current.Side ()->m_info.nBaseTex;
 	CSegment*	segP = segmentManager.Segment (0);
@@ -357,7 +357,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				wallP->Info ().cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}
-			CColor *psc = theMine->CurrLightColor ();
+			CColor *psc = current.LightColor ();
 			if (psc->m_info.index = m_nColorIndex) {
 				psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
 				psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
@@ -370,8 +370,8 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				}
 			//if (!wallP || (wallP->Type () != WALL_TRANSPARENT)) 
 				{
-				theMine->SetTexColor (current.Side ()->m_info.nBaseTex, psc);
-				theMine->SetTexColor (current.Side ()->m_info.nOvlTex, psc);
+				lightManager.SetTexColor (current.Side ()->m_info.nBaseTex, psc);
+				lightManager.SetTexColor (current.Side ()->m_info.nOvlTex, psc);
 				}
 			UpdateData (FALSE);
 			UpdatePaletteWnd ();
@@ -393,7 +393,7 @@ cc.rgbResult = RGB (m_rgbColor.peRed, m_rgbColor.peGreen, m_rgbColor.peBlue);
 cc.lpCustColors = m_custColors;
 cc.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT | CC_SHOWHELP;
 if (ChooseColor (&cc)) {
-	CColor *psc = theMine->CurrLightColor ();
+	CColor *psc = current.LightColor ();
 	psc->m_info.index = m_nColorIndex = 255;
 	m_rgbColor.peBlue = ((byte) (cc.rgbResult >> 16)) & 0xFF;
 	m_rgbColor.peGreen = ((byte) (cc.rgbResult >> 8)) & 0xFF;
@@ -401,8 +401,8 @@ if (ChooseColor (&cc)) {
 	psc->m_info.color.r = (double) m_rgbColor.peRed / 255.0;
 	psc->m_info.color.g = (double) m_rgbColor.peGreen / 255.0;
 	psc->m_info.color.b = (double) m_rgbColor.peBlue / 255.0;
-	theMine->SetTexColor (current.Side ()->m_info.nBaseTex, psc);
-	theMine->SetTexColor (current.Side ()->m_info.nOvlTex, psc);
+	lightManager.SetTexColor (current.Side ()->m_info.nBaseTex, psc);
+	lightManager.SetTexColor (current.Side ()->m_info.nOvlTex, psc);
 	UpdatePaletteWnd ();
 	}
 }

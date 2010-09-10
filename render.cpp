@@ -39,7 +39,7 @@ void RenderFace (CSegment *segP, short nSide,
 	
 	// TEMPORARY
 	CSideKey face (short (segP - segmentManager.Segment (0)), nSide);
-	short flickLight = theMine->GetVariableLight (face.m_nSegment, face.m_nSide);
+	short flickLight = lightManager.VariableLight (face.m_nSegment, face.m_nSide);
 	short deltaLight, scanLight;
 	short light [4];
 	ushort bmWidth2;
