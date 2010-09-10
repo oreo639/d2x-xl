@@ -578,7 +578,7 @@ m_invMove [0] = m_invMat [0] * m_move [0];
 
 //------------------------------------------------------------------------------
 
-void CViewMatrix::Project (CVertex& vertex, APOINT& apoint) 
+void CViewMatrix::Project (CDoubleVector& vertex, APOINT& apoint) 
 {
 	CDoubleVector	r, v = vertex;
 
@@ -606,11 +606,11 @@ vertex = r;
 }
 
 //------------------------------------------------------------------------------
-
+#if 0
 int CViewMatrix::CheckNormal (CGameObject *objP, CVertex& a, CVertex& b) 
 {
-CVertex _a = objP->m_location.orient * a;
-CVertex _b = objP->m_location.orient * b;
+CVertex _a = objP->Orient () * a;
+CVertex _b = objP->Orient () * b;
 _a += objP->Position ();
 _a += m_move [0];
 _b += _a;
@@ -621,13 +621,13 @@ return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
 
 int CViewMatrix::CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b) 
 {
-CVertex _a = objP->m_location.orient * CDoubleVector (a);
-CVertex _b = objP->m_location.orient * CDoubleVector (b);
+CVertex _a = objP->Orient () * CDoubleVector (a);
+CVertex _b = objP->Orient () * CDoubleVector (b);
 _a += objP->Position ();
 _a += m_move [0];
 _b += _a;
 return Dot (m_mat [0].fVec, _a) > Dot (m_mat [0].fVec, _b);
 }
-
+#endif
 // -----------------------------------------------------------------------------
 // eof

@@ -377,9 +377,9 @@ bool CTextureTool::SideHasLight (void)
 {
 if (theMine == null) return false;
 
-if	((textureManager.IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
+if	((lightManager.IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
 	 (((current.Side ()->OvlTex () & 0x3fff) != 0) &&
-	  (textureManager.IsLight (current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
+	  (lightManager.IsLight (current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
 CWall *wallP = current.Wall ();
 return (wallP != null) && (wallP->Type () == WALL_TRANSPARENT);
@@ -1111,7 +1111,7 @@ void CTextureTool::GetBrightness (int nTexture)
 if (nTexture < 0)
 	nBrightness = 0;
 else {
-	nBrightness = m_lightMap [nTexture];
+	nBrightness = *lightManager.LightMap (nTexture);
 	if (nBrightness == MAX_BRIGHTNESS)
 		nBrightness = 100;
 	else
@@ -1136,7 +1136,7 @@ if (!bSemaphore) {
 
 	if (texture >= 0) {
 		m_nBrightness = nBrightness;
-		m_lightMap [texture] = ((nBrightness == 100) ? MAX_BRIGHTNESS : nBrightness * (MAX_BRIGHTNESS / 100));
+		*lightManager.LightMap (texture) = ((nBrightness == 100) ? MAX_BRIGHTNESS : nBrightness * (MAX_BRIGHTNESS / 100));
 		}
 	bSemaphore = FALSE;
 	}

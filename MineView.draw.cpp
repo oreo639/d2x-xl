@@ -1330,7 +1330,8 @@ else {
 		nSegment = 0;
 	if (!Visible (segmentManager.Segment (nSegment)))
 		return;
-	segmentManager.CalcCenter (objP->Position (), nSegment); // define objP->position
+	CVertex center;
+	objP->Position () = segmentManager.CalcCenter (center, nSegment); // define objP->position
 	}
 
 switch (clear_it) {

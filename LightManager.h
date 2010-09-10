@@ -81,7 +81,7 @@ class CLightManager {
 		vertexColorList		m_vertexColors;
 		bool						m_bUseTexColors;
 
-		long						m_lightMap [MAX_TEXTURES_D2];
+		int						m_lightMap [MAX_TEXTURES_D2];
 
 		int						m_renderDepth;
 		int						m_deltaRenderDepth;
@@ -126,7 +126,7 @@ class CLightManager {
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
 
-		inline long* LightMap (int i = 0) { return &m_lightMap [i]; }
+		inline int* LightMap (int i = 0) { return &m_lightMap [i]; }
 
 		inline int& Count (void) { return m_nCount; }
 

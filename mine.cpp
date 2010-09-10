@@ -55,15 +55,11 @@ lightManager.Count () = 0;
 current = selections [0];
 other = selections [1];
 *m_szBlockFile = '\0';
-Info ().objects.Reset ();
-Info ().walls.Reset ();
-Info ().doors.Reset ();
-Info ().triggers.Reset ();
-Info ().control.Reset ();
-Info ().botGen.Reset ();
-Info ().equipGen.Reset ();
-Info ().lightDeltaIndices.Reset ();
-Info ().lightDeltaValues.Reset ();
+segmentManager.ResetInfo ();
+wallManager.ResetInfo ();
+triggerManager.ResetInfo ();
+lightManager.ResetInfo ();
+objectManager.ResetInfo ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
@@ -72,7 +68,7 @@ m_bVertigo = false;
 m_pHxmExtraData = null;
 m_nHxmExtraDataSize = 0;
 lightManager.UseTexColors () = false;
-LoadDefaultLightAndColor ();
+lightManager.LoadDefaults ();
 Reset ();
 Default ();
 //	strcpy (descentPath [1], "d:\\games\\descent\\d2\\");
@@ -105,7 +101,7 @@ selections [1].m_nPoint = DEFAULT_POINT;
 selections [1].m_nLine = DEFAULT_LINE;
 selections [1].m_nSide = DEFAULT_SIDE;
 selections [1].m_nObject = DEFAULT_OBJECT;
-DLE.ResetUndoBuffer ();
+undoManager.Reset ();
 }
 
 
@@ -125,7 +121,7 @@ if (!dataP)
 
 CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-ASSIGN (robotManager.RobotInfo (), robotManager.DefRobotInfo ());
+ASSIGN (robotManager.RobotInfoList (), robotManager.DefRobotInfoList ());
 CFileManager fp;
 if (fp.Open (message, "wb")) 
 	return 2;
@@ -272,7 +268,7 @@ seg.m_info.s2Flags = 0;
 seg.m_info.staticLight = 263152L;
 seg.m_info.childFlags = 0;
 seg.m_info.wallFlags = 0;
-seg.m_info.nIndex = 0;
+seg.Index () = 0;
 seg.m_info.mapBitmask = 0;
 
 CVertex *vertP = vertexManager.Vertex (0);
@@ -314,17 +310,6 @@ wallManager.ResetInfo ();
 triggerManager.ResetInfo ();
 lightManager.ResetInfo ();
 objectManager.ResetInfo ();
-robotManager.ResetInfo ();
-}
-
-// ----------------------------------------------------------------------------------
-
-void CMine::ClearGameItem (CGameItem* items, int nCount)
-{
-for (int i = 0; i < nCount; i++) {
-	items->Clear ();
-	items = items->Next ();
-	}
 }
 
 // ----------------------------------------------------------------------------------

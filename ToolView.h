@@ -613,7 +613,7 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnAddRepairCen ();
 		afx_msg void OnAddControlCen ();
 		afx_msg void OnSplitCube ();
-		afx_msg void OnDeleteCube ();
+		afx_msg void OnDeleteSegment ();
 		afx_msg void OnOtherCube ();
 		afx_msg void OnAddMatCenter ();
 		afx_msg void OnDeleteMatCenter ();

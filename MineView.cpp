@@ -403,7 +403,7 @@ void CMineView::AdvanceLightTick (void)
 {
 CHECKMINE;
 
-	tLightTimer *ltP = m_lightTimers;
+	tLightTimer *ltP = lightManager.LightTimer (0);
 	CVariableLight *flP = lightManager.VariableLight (0);
 	int i, delay;
 
@@ -438,7 +438,7 @@ bool CMineView::SetLightStatus (void)
 	short nSrcSide, nSrcSeg, nSegment, nSide;
 
 // search delta light index to see if current side has a light
-pls = m_lightStatus [0];
+pls = lightManager.LightStatus (0);
 for (i = segmentManager.Count (); i; i--)
 	for (j = 0; j < MAX_SIDES_PER_SEGMENT; j++, pls++)
 		pls->bWasOn = pls->bIsOn;
@@ -464,9 +464,9 @@ for (h = 0; h < lightManager.DeltaIndexCount (); h++, ldiP++) {
 			if (((nSegment != nSrcSeg) || (nSide != nSrcSide)) && (0 <= lightManager.VariableLight (CSideKey (nSegment, nSide))))
 				continue;
 			}
-		pls = m_lightStatus [nSegment] + nSide;
+		pls = lightManager.LightStatus (nSegment, nSide);
 		ltP = lightManager.LightTimer (j);
-		pls->bIsOn = (flP [j].m_info.mask & (1 << lightManager.LightTimers (j)->impulse)) != 0;
+		pls->bIsOn = (flP [j].m_info.mask & (1 << lightManager.LightTimer (j)->impulse)) != 0;
 		if (pls->bWasOn != pls->bIsOn)
 			bChange = true;
 		}
@@ -734,13 +734,15 @@ if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget) {
-	CObject* objP = objectManager.Object (0);
-	for (i = objectManager.Count (); i; i--, objP++)
+	CGameObject* objP = objectManager.Object (0);
+	for (i = objectManager.Count (); i; i--, objP++) {
 		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			other.m_nObject = i;
 			break;
 			return;
 			}
+		}
+	}
 }
  
 /////////////////////////////////////////////////////////////////////////////
@@ -1109,14 +1111,13 @@ Refresh ();
 bool CMineView::VertexVisible (int v)
 {
 	CSegment	*segP;
-	int			i, j;
 
 if (!m_nViewDist)
 	return true;
 for (CSegmentIterator si; si; si++) {
 	segP = &(*si);
-	for (j = 0; j < MAX_VERTICES_PER_SEGMENT; j++)
-		if ((segP->m_info.verts [j] == v) && Visible (segP))
+	for (short i = 0; i < MAX_VERTICES_PER_SEGMENT; i++)
+		if ((segP->m_info.verts [i] == v) && Visible (segP))
 			return true;
 	}
 return false;

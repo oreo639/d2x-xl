@@ -16,7 +16,7 @@ if (theMine == null)
 	CFileManager fp;
 
 undoManager.Reset ();
-tunnelMaker.Disable ();
+tunnelMaker.Destroy ();
 // if no file passed, define a new level w/ 1 object
 if (szFile && *szFile)
 	strcpy_s (filename, sizeof (filename), szFile);
@@ -353,8 +353,9 @@ else {  /*load mine filename */
 objectManager.Read (fp, FileInfo ().version);
 wallManager.Read (fp, FileInfo ().version);
 triggerManager.Read (fp, FileInfo ().version);
-segmentManager.ReadMatCens (fp, FileInfo ().version);
+segmentManager.ReadRobotMakers (fp, FileInfo ().version);
 lightManager.ReadLightDeltas (fp, FileInfo ().version);
+segmentManager.ReadEquipMakers (fp, FileInfo ().version);
 return 0;
 }
 

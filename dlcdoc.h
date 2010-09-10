@@ -65,12 +65,12 @@ protected:
 	afx_msg void OnSaveFile();
 	afx_msg void OnSaveFileAs();
 	afx_msg void OnRunLevel();
-	afx_msg void OnInsertCube();
-	afx_msg void OnDeleteCube();
-	afx_msg void OnInsertCubeReactor ();
-	afx_msg void OnInsertCubeRobotMaker ();
-	afx_msg void OnInsertCubeFuelCenter ();
-	afx_msg void OnInsertCubeRepairCenter ();
+	afx_msg void OnInsertSegment();
+	afx_msg void OnDeleteSegment();
+	afx_msg void OnInsertSegReactor ();
+	afx_msg void OnInsertSegRobotMaker ();
+	afx_msg void OnInsertSegFuelCenter ();
+	afx_msg void OnInsertSegRepairCenter ();
 	afx_msg void OnInsertDoorNormal ();
 	afx_msg void OnInsertDoorPrison ();
 	afx_msg void OnInsertDoorGuideBot ();

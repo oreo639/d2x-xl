@@ -4559,10 +4559,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\CRC.cpp"
-					>
-				</File>
-				<File
 					RelativePath="global.cpp"
 					>
 					<FileConfiguration
@@ -4978,10 +4974,6 @@
 				>
 				<File
 					RelativePath=".\carray.h"
-					>
-				</File>
-				<File
-					RelativePath=".\CRC.h"
 					>
 				</File>
 				<File

@@ -188,7 +188,7 @@ if (!::IsWindow(m_hWnd))
 UpdateData (TRUE);
 nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 
-	short			nSegment, nSide, nVertex, i;
+	short			nSide, nVertex, i;
 	CSegment*	segP = segmentManager.Segment (0);
 	CSide*		sideP;
 	bool			bChange = false;

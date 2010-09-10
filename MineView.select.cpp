@@ -53,7 +53,8 @@ for (i = 0; i < objectManager.Count (); i++) {
 		objP = &temp_obj;
 		objP->Type () = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter (objP->Position (), (ushort)objectManager.SecretSegment ());
+		CVertex center;
+		objP->Position () = segmentManager.CalcCenter (center, (short) objectManager.SecretSegment ());
 		}
 	else
 		objP = objectManager.Object (i);

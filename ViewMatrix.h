@@ -38,13 +38,16 @@ public:
 	//void Multiply (double A[4][4], double B[4][4]);
 	void Calculate (double xMove, double yMove, double zMove);
 	void CalculateInverse (double xMove, double yMove, double zMove);
-	void Project (CVertex& vert, APOINT& apoint);
+	void Project (CDoubleVector& vert, APOINT& apoint);
 	void Unproject (CVertex& vert, APOINT& apoint);
 	inline double Aspect (void) { return (double) m_viewHeight / (double) m_viewWidth; }
 	inline double Scale (void) { return m_scale [0]; }
 	void Push (void);
 	void Pop (void);
 	void Unrotate (void);
+	//int CheckNormal (CGameObject *objP, CVertex& a, CVertex& b);
+	//int CheckNormal (CGameObject *objP, CFixVector& a, CFixVector& b);
+
 };
 
 #endif //__viewmatrix_h

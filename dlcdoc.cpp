@@ -53,11 +53,11 @@ BEGIN_MESSAGE_MAP(CDlcDoc, CDocument)
 	ON_COMMAND(ID_SAVEFILE, OnSaveFile)
 	ON_COMMAND(ID_SAVEFILE_AS, OnSaveFileAs)
 	ON_COMMAND(ID_RUN_LEVEL, OnRunLevel)
-	ON_COMMAND(ID_INSERT_CUBE, OnInsertCube)
-	ON_COMMAND(ID_INSERT_CUBE_REACTOR, OnInsertCubeReactor)
-	ON_COMMAND(ID_INSERT_CUBE_ROBOTMAKER, OnInsertCubeRobotMaker)
-	ON_COMMAND(ID_INSERT_CUBE_FUELCENTER, OnInsertCubeFuelCenter)
-	ON_COMMAND(ID_INSERT_CUBE_REPAIRCENTER, OnInsertCubeRepairCenter)
+	ON_COMMAND(ID_INSERT_CUBE, OnInsertSegment)
+	ON_COMMAND(ID_INSERT_CUBE_REACTOR, OnInsertSegReactor)
+	ON_COMMAND(ID_INSERT_CUBE_ROBOTMAKER, OnInsertSegRobotMaker)
+	ON_COMMAND(ID_INSERT_CUBE_FUELCENTER, OnInsertSegFuelCenter)
+	ON_COMMAND(ID_INSERT_CUBE_REPAIRCENTER, OnInsertSegRepairCenter)
 	ON_COMMAND(ID_INSERT_OBJECT_PLAYERCOPY, OnInsertObjectPlayerCopy)
 	ON_COMMAND(ID_INSERT_OBJECT_PLAYER, OnInsertObjectPlayer)
 	ON_COMMAND(ID_INSERT_OBJECT_ROBOT, OnInsertObjectRobot)
@@ -83,7 +83,7 @@ BEGIN_MESSAGE_MAP(CDlcDoc, CDocument)
 	ON_COMMAND(ID_INSERT_WALL_GRATE, OnInsertWallGrate)
 	ON_COMMAND(ID_INSERT_WALL_WATERFALL, OnInsertWallWaterfall)
 	ON_COMMAND(ID_INSERT_WALL_LAVAFALL, OnInsertWallLavafall)
-	ON_COMMAND(ID_DELETE_CUBE, OnDeleteCube)
+	ON_COMMAND(ID_DELETE_CUBE, OnDeleteSegment)
 	ON_COMMAND(ID_DELETE_OBJECT, OnDeleteObject)
 	ON_COMMAND(ID_DELETE_WALL, OnDeleteWall)
 	ON_COMMAND(ID_DELETE_TRIGGER, OnDeleteTrigger)
@@ -227,11 +227,11 @@ return TRUE;
 
 void CDlcDoc::CreateNewLevel ()
 {
-char	new_level_name [256];
+char	newLevelName [256];
 int	newFileType = 1;
-strcpy_s (new_level_name, sizeof (new_level_name), "(untitled)");
+strcpy_s (newLevelName, sizeof (newLevelName), "(untitled)");
 
-CNewFileDlg	d (DLE.MainFrame (), new_level_name, &newFileType);
+CNewFileDlg	d (DLE.MainFrame (), newLevelName, &newFileType);
 if (d.DoModal () == IDOK) {
 	theMine->Default ();
 	DLE.MineView ()->Reset ();
@@ -264,16 +264,16 @@ if (d.DoModal () == IDOK) {
 			break;
 		case 3:
 			theMine->UpdateLevelVersion ();
-			theMine->ConvertWallNum (MAX_WALLS_D2, WALL_LIMIT
+			segmentManager.UpdateWalls (MAX_WALLS_D2, WALL_LIMIT
 				);
 		}
 	*m_szSubFile = '\0';
-	strcpy_s (theMine->LevelName (), theMine->LevelNameSize (), new_level_name);
+	strcpy_s (theMine->LevelName (), theMine->LevelNameSize (), newLevelName);
 	theMine->Reset ();
 	segmentManager.SetLinesToDraw ();
 	DLE.MineView ()->ResetView (true);
 	memset (&missionData, 0, sizeof (missionData));
-	CreateLightMap ();
+	lightManager.CreateLightMap ();
 	DLE.TextureView ()->Setup ();
 	DLE.ToolView ()->TextureTool ()->LoadTextureListBoxes ();
 	DLE.ToolView ()->MissionTool ()->Refresh ();
@@ -342,7 +342,7 @@ if (!pszSubFile)
 _strlwr_s (pszFile, 256);
 strcpy_s (szFile, sizeof (szFile), pszFile);
 strcpy_s (szSubFile, sizeof (szSubFile), pszSubFile);
-CreateLightMap ();
+lightManager.CreateLightMap ();
 if (strstr (pszFile, ".hog")) {
 	CHogManager	hm (DLE.MainFrame (), szFile, szSubFile);
 	if (pszSubFile != m_szSubFile) {
@@ -494,119 +494,119 @@ if (p) {
 
                         /*--------------------------*/
 
-void CDlcDoc::OnInsertCube() 
+void CDlcDoc::OnInsertSegment() 
 {
-theMine->AddSegment ();
+segmentManager.Add ();
 }
 
-void CDlcDoc::OnDeleteCube() 
+void CDlcDoc::OnDeleteSegment() 
 {
-theMine->DeleteSegment();
+segmentManager.Delete ();
 }
 
-void CDlcDoc::OnInsertCubeReactor ()
+void CDlcDoc::OnInsertSegReactor ()
 {
-theMine->AddReactor ();
+segmentManager.CreateReactor ();
 }
 
-void CDlcDoc::OnInsertCubeRobotMaker ()
+void CDlcDoc::OnInsertSegRobotMaker ()
 {
-theMine->AddRobotMaker ();
+segmentManager.CreateRobotMaker ();
 }
 
-void CDlcDoc::OnInsertCubeFuelCenter ()
+void CDlcDoc::OnInsertSegFuelCenter ()
 {
-theMine->AddFuelCenter ();
+segmentManager.CreateFuelCenter ();
 }
 
-void CDlcDoc::OnInsertCubeRepairCenter ()
+void CDlcDoc::OnInsertSegRepairCenter ()
 {
-theMine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
+segmentManager.CreateFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
 void CDlcDoc::OnInsertDoorNormal ()
 {
-theMine->AddAutoDoor ();
+wallManager.CreateAutoDoor ();
 }
 
 void CDlcDoc::OnInsertDoorPrison ()
 {
-theMine->AddPrisonDoor ();
+wallManager.CreatePrisonDoor ();
 }
 
 void CDlcDoc::OnInsertDoorGuideBot ()
 {
-theMine->AddGuideBotDoor ();
+wallManager.CreateGuideBotDoor ();
 }
 
 void CDlcDoc::OnInsertDoorExit ()
 {
-theMine->AddNormalExit ();
+wallManager.CreateNormalExit ();
 }
 
 void CDlcDoc::OnInsertDoorSecretExit ()
 {
-theMine->AddSecretExit ();
+wallManager.CreateSecretExit ();
 }
 
 void CDlcDoc::OnInsertTriggerOpenDoor ()
 {
-theMine->AddOpenDoorTrigger ();
+triggerManager.AddOpenDoor ();
 }
 
 void CDlcDoc::OnInsertTriggerRobotMaker ()
 {
-theMine->AddRobotMakerTrigger ();
+triggerManager.AddRobotMaker ();
 }
 
 void CDlcDoc::OnInsertTriggerShieldDrain ()
 {
-theMine->AddShieldTrigger ();
+triggerManager.AddShield ();
 }
 
 void CDlcDoc::OnInsertTriggerEnergyDrain ()
 {
-theMine->AddEnergyTrigger ();
+triggerManager.AddEnergy ();
 }
 
 void CDlcDoc::OnInsertTriggerControlPanel ()
 {
-theMine->AddUnlockTrigger ();
+triggerManager.AddUnlock ();
 }
 
 void CDlcDoc::OnInsertWallFuelCells ()
 {
-theMine->AddFuelCell ();
+wallManager.CreateFuelCell ();
 }
 
 void CDlcDoc::OnInsertWallIllusion ()
 {
-theMine->AddIllusionaryWall ();
+wallManager.CreateIllusionaryWall ();
 }
 
 void CDlcDoc::OnInsertWallForceField ()
 {
-theMine->AddForceField ();
+wallManager.CreateForceField ();
 }
 
 void CDlcDoc::OnInsertWallFan ()
 {
-theMine->AddFan ();
+wallManager.CreateFan ();
 }
 
 void CDlcDoc::OnInsertWallGrate ()
 {
-theMine->AddGrate ();
+wallManager.CreateGrate ();
 }
 
 void CDlcDoc::OnInsertWallWaterfall ()
 {
-theMine->AddWaterFall ();
+wallManager.CreateWaterFall ();
 }
 
 void CDlcDoc::OnInsertWallLavafall ()
 {
-theMine->AddLavaFall ();
+wallManager.CreateLavaFall ();
 }
 
 void CDlcDoc::OnInsertObjectPlayer ()
@@ -628,40 +628,40 @@ void CDlcDoc::OnInsertObjectPlayerCopy ()
 void CDlcDoc::OnInsertObjectRobot ()
 {
 if (objectManager.Create (OBJ_ROBOT)) {
-	current.Object ()->m_info.id = 3; // class 1 drone
-	theMine->SetObjectData (current.Object ()->m_info.type);
+	current.Object ()->Id () = 3; // class 1 drone
+	current.Object ()->Setup (current.Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectWeapon ()
 {
 if (objectManager.Create (OBJ_WEAPON)) {
-	current.Object ()->m_info.id = 3; // laser
-	theMine->SetObjectData (current.Object ()->m_info.type);
+	current.Object ()->Id () = 3; // laser
+	current.Object ()->Setup (current.Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectPowerup ()
 {
 if (objectManager.Create (OBJ_POWERUP)) {
-	current.Object ()->m_info.id = 1; // energy boost
-	theMine->SetObjectData (current.Object ()->m_info.type);
+	current.Object ()->Id () = 1; // energy boost
+	current.Object ()->Setup (current.Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectGuideBot ()
 {
 if (objectManager.Create (OBJ_ROBOT)) {
-	current.Object ()->m_info.id = 33; // guide bot
-	theMine->SetObjectData (current.Object ()->m_info.type);
+	current.Object ()->Id () = 33; // guide bot
+	current.Object ()->Setup (current.Object ()->Type ());
 	}
 }
 
 void CDlcDoc::OnInsertObjectReactor ()
 {
 if (objectManager.Create (OBJ_CNTRLCEN)) {
-	current.Object ()->m_info.id = 2; // standard reactor
-	theMine->SetObjectData (current.Object ()->m_info.type);
+	current.Object ()->Id () = 2; // standard reactor
+	current.Object ()->Setup (current.Object ()->Type ());
 	}
 }
 
@@ -678,42 +678,42 @@ wallManager.Delete ();
 
 void CDlcDoc::OnDeleteTrigger ()
 {
-triggerManager.Delete ();
+triggerManager.DeleteFromWall ();
 }
 
 void CDlcDoc::OnCutBlock ()
 {
-theMine->CutBlock ();
+blockManager.Cut ();
 }
 
 void CDlcDoc::OnCopyBlock ()
 {
-theMine->CopyBlock ();
+blockManager.Copy();
 }
 
-void CDlcDoc::OnQuickCopyBlock ()
+void CDlcDoc::OnQuickCopy()
 {
-theMine->CopyBlock ("dle_temp.blx");
+blockManager.Copy("dle_temp.blx");
 }
 
-void CDlcDoc::OnPasteBlock ()
+void CDlcDoc::OnPaste()
 {
-theMine->PasteBlock ();
+blockManager.Paste();
 }
 
-void CDlcDoc::OnQuickPasteBlock ()
+void CDlcDoc::OnQuickPaste()
 {
-theMine->QuickPasteBlock ();
+blockManager.QuickPaste();
 }
 
-void CDlcDoc::OnDeleteBlock ()
+void CDlcDoc::OnDelete()
 {
-theMine->DeleteBlock ();
+blockManager.Delete();
 }
 
 void CDlcDoc::OnCopyOtherCube ()
 {
-theMine->Copyother.Segmentment ();
+segmentManager.CopyOtherSegment ();
 }
 
 
