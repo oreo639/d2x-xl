@@ -7,12 +7,9 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
+
 #include "mine.h"
 #include "dle-xp.h"
-#include "global.h"
 #include "toolview.h"
 #include "TextureManager.h"
 
@@ -1020,7 +1017,7 @@ if (objectManager.Count () >= MAX_OBJECTS) {
 	ErrorMsg ("Maximum numbers of objects reached");
 	return;
 	}
-theMine->CopyObject (OBJ_NONE);
+objectManager.Create (OBJ_NONE);
 Refresh ();
 }
 

@@ -4,12 +4,9 @@
 #include <string.h>
 #include <math.h>
 #include <io.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
+
 #include "mine.h"
-#include "global.h"
+#include "dle-xp.h"
 #include "toolview.h"
 #include "FileManager.h"
 #include "HogManager.h"

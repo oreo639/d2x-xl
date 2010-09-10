@@ -611,23 +611,23 @@ theMine->AddLavaFall ();
 
 void CDlcDoc::OnInsertObjectPlayer ()
 {
-theMine->CopyObject (OBJ_PLAYER);
+objectManager.Create (OBJ_PLAYER);
 }
 
 void CDlcDoc::OnInsertObjectCoopPlayer ()
 {
-theMine->CopyObject (OBJ_COOP);
+objectManager.Create (OBJ_COOP);
 }
 
 void CDlcDoc::OnInsertObjectPlayerCopy ()
 {
 
-	theMine->CopyObject (OBJ_NONE);
+	objectManager.Create (OBJ_NONE);
 }
 
 void CDlcDoc::OnInsertObjectRobot ()
 {
-if (theMine->CopyObject (OBJ_ROBOT)) {
+if (objectManager.Create (OBJ_ROBOT)) {
 	current.Object ()->m_info.id = 3; // class 1 drone
 	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
@@ -635,7 +635,7 @@ if (theMine->CopyObject (OBJ_ROBOT)) {
 
 void CDlcDoc::OnInsertObjectWeapon ()
 {
-if (theMine->CopyObject (OBJ_WEAPON)) {
+if (objectManager.Create (OBJ_WEAPON)) {
 	current.Object ()->m_info.id = 3; // laser
 	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
@@ -643,7 +643,7 @@ if (theMine->CopyObject (OBJ_WEAPON)) {
 
 void CDlcDoc::OnInsertObjectPowerup ()
 {
-if (theMine->CopyObject (OBJ_POWERUP)) {
+if (objectManager.Create (OBJ_POWERUP)) {
 	current.Object ()->m_info.id = 1; // energy boost
 	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
@@ -651,7 +651,7 @@ if (theMine->CopyObject (OBJ_POWERUP)) {
 
 void CDlcDoc::OnInsertObjectGuideBot ()
 {
-if (theMine->CopyObject (OBJ_ROBOT)) {
+if (objectManager.Create (OBJ_ROBOT)) {
 	current.Object ()->m_info.id = 33; // guide bot
 	theMine->SetObjectData (current.Object ()->m_info.type);
 	}
@@ -659,7 +659,7 @@ if (theMine->CopyObject (OBJ_ROBOT)) {
 
 void CDlcDoc::OnInsertObjectReactor ()
 {
-if (theMine->CopyObject (OBJ_CNTRLCEN)) {
+if (objectManager.Create (OBJ_CNTRLCEN)) {
 	current.Object ()->m_info.id = 2; // standard reactor
 	theMine->SetObjectData (current.Object ()->m_info.type);
 	}

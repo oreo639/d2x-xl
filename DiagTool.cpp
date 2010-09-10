@@ -142,7 +142,7 @@ int CDiagTool::CountTextures (void)
 	CSegment *segP = segmentManager.Segment (0);
 	CSide *sideP;
 	char bUsed [(MAX_TEXTURES_D2 + 7) / 8];
-	int t, i, j, h = wallManager.WallCount;
+	int t, i, j, h = wallManager.WallCount ();
 	int nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));
@@ -173,7 +173,7 @@ CHECKMINE;
 if (!Inited ())
 	return;
 ClearBugList ();
-theMine->UnmarkAll ();
+segmentManager.UnmarkAll ();
 }
                         /*--------------------------*/
 
@@ -195,12 +195,12 @@ for (psz = szItems, i = 0; *psz; psz++, i++)
 	plc.InsertItem (i, *psz);
 CountObjects ();
 plc.SetItemText (0, 1, ItemText (segmentManager.Count ()));
-plc.SetItemText (1, 1, ItemText (theMine->vertexManager.Count ()));
-plc.SetItemText (2, 1, ItemText (theMine->RobotMakerCount ()));
-plc.SetItemText (3, 1, ItemText (theMine->FuelCenterCount ()));
-plc.SetItemText (4, 1, ItemText (theMine->WallCount ()));
-plc.SetItemText (5, 1, ItemText (theMine->TriggerCount ()));
-plc.SetItemText (6, 1, ItemText (theMine->ObjectCount ()));
+plc.SetItemText (1, 1, ItemText (vertexManager.Count ()));
+plc.SetItemText (2, 1, ItemText (segmentManager.RobotMakerCount ()));
+plc.SetItemText (3, 1, ItemText (segmentManager.FuelCenterCount ()));
+plc.SetItemText (4, 1, ItemText (wallManager.WallCount ()));
+plc.SetItemText (5, 1, ItemText (triggerManager.WallTriggerCount ()));
+plc.SetItemText (6, 1, ItemText (objectManager.Count ()));
 for (i = 0; i < 8; i++)
 	plc.SetItemText (7 + i, 1, ItemText (m_nObjects [i]));
 plc.SetItemText (15, 1, ItemText (CountTextures ()));

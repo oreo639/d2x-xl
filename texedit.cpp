@@ -5,16 +5,10 @@
 #include <string.h>
 #include <commdlg.h>
 #include <math.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
+
 #include "mine.h"
-#include "global.h"
-#include "dle-xp-res.h"
-#include "textures.h"
 #include "dle-xp.h"
-#include "texedit.h"
+#include "toolview.h"
 #include "PaletteManager.h"
 #include "TextureManager.h"
 

@@ -2,12 +2,9 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include <string.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
+
 #include "mine.h"
-#include "global.h"
+#include "dle-xp.h"
 #include "dlcdoc.h"
 #include "PaletteManager.h"
 #include "TextureManager.h"

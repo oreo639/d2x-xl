@@ -6,12 +6,9 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
+
 #include "mine.h"
-#include "global.h"
+#include "dle-xp.h"
 #include "toolview.h"
 
                         /*--------------------------*/
@@ -266,7 +263,7 @@ if (objectManager.Count () >= MAX_OBJECTS) {
 	return false;
 	}
 UpdateData (TRUE);
-theMine->CopyObject (OBJ_EFFECT);
+objectManager.Create (OBJ_EFFECT);
 return true;
 }
 
@@ -333,7 +330,7 @@ if (current.Object ()->m_info.type != OBJ_EFFECT) {
 	return;
 	}
 if (QueryMsg ("Are you sure you want to delete this object?") == IDYES) {
-	theMine->DeleteObject ();
+	objectManager.Delete ();
 	Refresh ();
 	DLE.MineView ()->Refresh (false);
 	}
@@ -388,11 +385,11 @@ if (m_nBufferId < 0) {
 	return;
 	}
 CGameObject *objP = objectManager.Object (0);
-boolean bAll = (theMine == null)->GotMarkedSegments ();
+boolean bAll = segmentManager.HaveMarkedSegments ();
 
 int i;
-for (i = theMine->objectManager.Count (); i; i--, objP++)
-	if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == m_nBufferId) && (bAll || theMine->SegmentIsMarked (objP->m_info.nSegment)))
+for (i = objectManager.Count (); i; i--, objP++)
+	if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == m_nBufferId) && (bAll || objP->Segment ()->IsMarked ()))
 		if (m_nBufferId == SMOKE_ID)
 			objP->rType.smokeInfo = m_smoke;
 		else if (m_nBufferId == LIGHTNING_ID)

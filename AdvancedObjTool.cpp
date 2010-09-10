@@ -7,12 +7,9 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
+
 #include "mine.h"
 #include "dle-xp.h"
-#include "global.h"
 #include "toolview.h"
 #include "textures.h"
 

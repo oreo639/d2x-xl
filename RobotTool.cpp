@@ -3,12 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dlc.h"
+
 #include "mine.h"
-#include "global.h"
+#include "dle-xp.h"
 #include "toolview.h"
 
 // local prototypes

@@ -6,12 +6,9 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
-#include "dle-xp.h"
+
 #include "mine.h"
-#include "global.h"
+#include "dle-xp.h"
 #include "toolview.h"
 #include "TextureManager.h"
 

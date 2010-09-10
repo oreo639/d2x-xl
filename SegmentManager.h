@@ -81,6 +81,8 @@ class CSegmentManager {
 
 		inline int& EquipMakerCount (void) { return MatCenCount (1); }
 
+		int FuelCenterCount (void);
+
 		inline short Index (CSegment* segP) { return (short) (segP - &m_segments [0]); }
 
 		inline CSegment *Segment (int i) { return &m_segments [i]; }
@@ -321,8 +323,6 @@ class CSegmentManager {
 		bool Define (short nSegment, byte nFunction, short nTexture);
 
 		void ComputeVertices (ushort newVerts [4]);
-
-		int FuelCenterCount (void);
 
 		void RemoveMatCenter (CSegment* segP, CMatCenter* matCens, CMineItemInfo& info);
 
