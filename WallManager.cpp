@@ -146,14 +146,19 @@ void CWallManager::Delete (short nDelWall)
 {
 if (nDelWall == NO_WALL)
 	return;
-CWall* delWallP = Wall (nDelWall);
-if (delWallP == null) {
+CWall* delWallP;
+if (nDelWall < 0)
 	delWallP = current.Wall ();
-	nDelWall = Index (delWallP);
+else {
+	delWallP = Wall (nDelWall);
+	if (delWallP == null) {
+		delWallP = current.Wall ();
+		nDelWall = Index (delWallP);
+		}
 	}
-
 if (delWallP == null)
 	return;
+
 undoManager.Begin (udSegments | udWalls | udTriggers);
 delWallP->Backup (opDelete);
 // if trigger exists, remove it as well

@@ -668,12 +668,12 @@ if (objectManager.Create (OBJ_CNTRLCEN)) {
 void CDlcDoc::OnDeleteObject ()
 {
 if ((QueryMsg ("Are you sure you want to delete this object?") == IDYES))
-	theMine->DeleteObject ();
+	objectManager.Delete ();
 }
 
 void CDlcDoc::OnDeleteWall ()
 {
-wallManager.Delete (current.m_nWall);
+wallManager.Delete ();
 }
 
 void CDlcDoc::OnDeleteTrigger ()
