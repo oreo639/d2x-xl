@@ -9,7 +9,7 @@
 #include "mine.h"
 #include "dle-xp.h"
 
-CRenderModel renderModel;
+CModelRenderer modelRenderer;
 
 //------------------------------------------------------------------------------
 // CONSTANTS

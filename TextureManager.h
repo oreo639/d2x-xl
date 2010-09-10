@@ -21,62 +21,61 @@ typedef CTexture* textureList;
 #endif
 
 class CTextureManager {
-public:
-	uint m_nTextures [2];
-	char** m_names [2];
-	textureList m_textures [2];
-	ushort* m_index [2];
-	uint m_nOffsets [2];
-	CPigTexture* m_info [2];
-	CPigHeader m_header [2];
-	byte m_bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
-	char m_pigFiles [2][256];
-	CExtraTexture*	m_extra;
+	public:
+		uint m_nTextures [2];
+		char** m_names [2];
+		textureList m_textures [2];
+		ushort* m_index [2];
+		uint m_nOffsets [2];
+		CPigTexture* m_info [2];
+		CPigHeader m_header [2];
+		byte m_bmBuf [512 * 512 * 32 * 4];	// max texture size: 512x512, RGBA, 32 frames
+		char m_pigFiles [2][256];
+		CExtraTexture*	m_extra;
 
-	inline CTexture* Textures (int nVersion, int nTexture = 0) { return &m_textures [nVersion][nTexture]; }
+		inline CTexture* Textures (int nVersion, int nTexture = 0) { return &m_textures [nVersion][nTexture]; }
 
-	inline CPigTexture& Info (int nVersion, int nTexture = 0) { return m_info [nVersion][m_index [nVersion][nTexture] - 1]; }
+		inline CPigTexture& Info (int nVersion, int nTexture = 0) { return m_info [nVersion][m_index [nVersion][nTexture] - 1]; }
 
-	int MaxTextures (int nVersion = -1);
-	
-	void LoadTextures (int nVersion = -1);
-	
-	bool Check (int nTexture);
-	
-	void Load (ushort nBaseTex, ushort nOvlTex);
-	
-	int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
-	
-	void Release (bool bDeleteAll = false, bool bDeleteUnused = false);
-	
-	bool HasCustomTextures (void);
-	
-	int CountCustomTextures (void);
-	
-	void MarkUsedTextures (void);
-	
-	void RemoveUnusedTextures (void);
-	
-	CFileManager* OpenPigFile (int nVersion);
-	
-	CTexture* AddExtra (ushort nIndex);
+		int MaxTextures (int nVersion = -1);
+		
+		void LoadTextures (int nVersion = -1);
+		
+		bool Check (int nTexture);
+		
+		void Load (ushort nBaseTex, ushort nOvlTex);
+		
+		int Define (short nBaseTex, short nOvlTex, CTexture* pDestTex, int x0, int y0);
+		
+		void Release (bool bDeleteAll = false, bool bDeleteUnused = false);
+		
+		bool HasCustomTextures (void);
+		
+		int CountCustomTextures (void);
+		
+		void MarkUsedTextures (void);
+		
+		void RemoveUnusedTextures (void);
+		
+		CFileManager* OpenPigFile (int nVersion);
+		
+		CTexture* AddExtra (ushort nIndex);
 
-	inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
-	
-	int Version (void);
-	
-	inline char* Name (short nTexture) { 
-		char* p = m_names [Version ()][nTexture]; 
-		return p ? p : "";
-		}
-	
-	CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
+		inline bool HaveInfo (int nVersion) { return m_info [nVersion] != null; }
+		
+		int Version (void);
+		
+		inline char* Name (short nTexture) { 
+			char* p = m_names [Version ()][nTexture]; 
+			return p ? p : "";
+			}
+		
+		CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
 
-	inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null);
+		inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null);
 
-	int ScrollSpeed (UINT16 texture, int *x, int *y);
-
-}
+		int ScrollSpeed (UINT16 texture, int *x, int *y);
+	};
 
 
 
