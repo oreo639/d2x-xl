@@ -160,7 +160,7 @@ else if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	segmentManager.SetTextures (-1, -1, nBaseTex, -1);
+	segmentManager.SetTextures (current, nBaseTex, -1);
 	Refresh ();
 	}
 }
@@ -181,7 +181,7 @@ if (nFlags & MK_CONTROL) {
 	DLE.ToolView ()->TriggerTool ()->Refresh ();
 	}
 else {
-	segmentManager.SetTextures (-1, -1, -1, nBaseTex);
+	segmentManager.SetTextures (current, -1, nBaseTex);
 	Refresh ();
 	}
 }

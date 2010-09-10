@@ -377,12 +377,12 @@ bool CTextureTool::SideHasLight (void)
 {
 if (theMine == null) return false;
 
-if	((theMine->IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
-	 (((current.Side ()->m_info.nOvlTex & 0x3fff) != 0) &&
-	  (theMine->IsLight (current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
+if	((textureManager.IsLight (current.Side ()->m_info.nBaseTex) != -1) ||
+	 (((current.Side ()->OvlTex () & 0x3fff) != 0) &&
+	  (textureManager.IsLight (current.Side ()->m_info.nOvlTex & 0x3fff) != -1)))
 	return true;
-CWall *pWall = current.Wall ();
-return pWall && (pWall->m_info.type == WALL_TRANSPARENT);
+CWall *wallP = current.Wall ();
+return (wallP != null) && (wallP->Type () == WALL_TRANSPARENT);
 
 }
 
@@ -454,7 +454,7 @@ if (m_bInitTextureListBoxes) {
 	int			i, j;
 	CSegment*	segP;
 	CSide*		sideP;
-	CWall*		pWall;
+	CWall*		wallP;
 	CColor*		colorP;
 // enable buttons as required
 /*
@@ -470,12 +470,12 @@ m_frame [1] = 0;
 
 segP = current.Segment ();
 sideP = current.Side ();
-colorP = theMine->CurrLightColor ();
+colorP = current.LightColor ();
 int nSide = current.m_nSide;
 texture1 = sideP->m_info.nBaseTex;
 texture2 = sideP->m_info.nOvlTex & 0x3fff;
-pWall = current.Wall ();
-m_nColorIndex = (pWall && (pWall->m_info.type == WALL_TRANSPARENT)) ? pWall->m_info.cloakValue : colorP->m_info.index;
+wallP = current.Wall ();
+m_nColorIndex = (wallP && (wallP->Type () == WALL_TRANSPARENT)) ? wallP->Info ().cloakValue : colorP->m_info.index;
 m_rgbColor.peRed = (char) (255.0 * colorP->m_info.color.r);
 m_rgbColor.peGreen = (char) (255.0 * colorP->m_info.color.g);
 m_rgbColor.peBlue = (char) (255.0 * colorP->m_info.color.b);
@@ -513,7 +513,7 @@ if (segP->Child (nSide)==-1)
 	bShowTexture = TRUE;
 else {
 	ushort nWall = sideP->m_info.nWall;
-	bShowTexture = (nWall < wallManager.WallCount);
+	bShowTexture = (nWall >= 0) && (nWall < wallManager.WallCount ());
 	}
 if (bShowTexture) {
 	if ((texture1!=last_texture1) || (texture2!=last_texture2) || (mode!=last_mode)) {
@@ -778,9 +778,9 @@ if (index <= 0)
 else {
 	short texture = (short) pcb->GetItemData (index);
 	if (bFirst)
-		segmentManager.SetTextures (-1, -1, texture, -1);
+		segmentManager.SetTextures (current, texture, -1);
 	else
-		segmentManager.SetTextures (-1, -1, -1, texture);
+		segmentManager.SetTextures (current, -1, texture);
 	}
 Refresh ();
 DLE.MineView ()->Refresh ();
@@ -921,7 +921,7 @@ if (save_texture1 == -1 || save_texture2 == -1)
 undoManager.Begin (udSegments);
 CSegment *segP = segmentManager.Segment (0);
 for (short nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
-	segP->m_info.nIndex = 0;
+	segP->Index () = 0;
 PasteTexture (current.m_nSegment, current.m_nSide, 100);
 undoManager.End ();
 Refresh ();
@@ -953,7 +953,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		if (bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
 			if (segP->Child (nSide) == -1) {
-				segmentManager.SetTextures (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+				segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 				int i;
 				for (i = 0; i < 4; i++)
 					sideP->m_info.uvls [i].l = save_uvls [i].l;
@@ -996,7 +996,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++)
 				continue;
 			if ((segP->Child (nSide) >= 0) && (sideP->m_info.nWall == NO_WALL))
 				 continue;
-			segmentManager.SetTextures (nSegment, nSide, m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
+			segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 			}
 undoManager.End ();
 Refresh ();
@@ -1026,7 +1026,7 @@ if ((old_texture1 < 0) || (old_texture1 >= MAX_TEXTURES))
 if ((old_texture2 < 0) || (old_texture2 >= MAX_TEXTURES))
 	old_texture2 = 0;
 // mark segment as "pasted"
-segP->m_info.nIndex = 1;
+segP->Index () = 1;
 // paste texture
 segmentManager.SetTextures (CSideKey (nSegment, nSide), m_bUse1st ? save_texture1 : -1, m_bUse2nd ? save_texture2 : -1);
 for (i = 0; i < 4; i++)
@@ -1039,7 +1039,7 @@ for (i = 0; i < 4; i++) {
 		// if adj matches and its not "pasted" yet
 		segP = segmentManager.Segment (nAdjSeg);
 		sideP = segP->m_sides + nAdjSide;
-		if ((segP->m_info.nIndex == 0) &&
+		if ((segP->Index () == 0) &&
 			 (!m_bUse1st || (sideP->m_info.nBaseTex == old_texture1)) &&
 			 (!m_bUse2nd || (sideP->m_info.nOvlTex == old_texture2))) {
 			PasteTexture (nAdjSeg, nAdjSide, --nDepth);
@@ -1080,7 +1080,7 @@ if (nChild < 0 || nChild >= segmentManager.Count ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 	segP = segmentManager.Segment (nChild);
-	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < wallManager.WallCount)) {
+	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].Wall () != null)) {
 		for (nChildLine = 0; nChildLine < 4;nChildLine++) {
 			// find vert numbers for the line's two end points
 			nChildPoint0 = lineVertTable [sideLineTable [nChildSide][nChildLine]][0];
