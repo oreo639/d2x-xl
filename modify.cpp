@@ -339,7 +339,7 @@ switch (m_selectMode) {
 		center = Average (max_pt, min_pt);
 		undoManager.Begin (udVertices);
 		vertP = vertexManager.Vertex (0);
-		double scale = (D2X (20.0) + (double) inc) / D2X (20.0);
+		double scale = (20.0 + delta) / 20.0;
 		for (i = vertexManager.Count (), j = 0; j < i; j++, vertP++)
 			if (vertP->IsMarked ()) {
 				*vertP -= center;
@@ -476,7 +476,7 @@ int nSegment = current.m_nSegment;
 int nSide = current.m_nSide;
 int nPoint = current.m_nPoint;
 int nLine = current.m_nLine;
-CSegment *segP = Segment (nSegment);
+CSegment *segP = current.Segment ();
 CGameObject* objP;
 short i;
 
@@ -651,7 +651,7 @@ switch (m_selectMode) {
 			if (vertexManager.Status (i) & MARKED_MASK)
 				vertexManager.Vertex (i)->Rotate (center, oppCenter, angle);
 		// rotate Objects () within marked cubes
-		objP = objectManagber.Object (0);
+		objP = objectManager.Object (0);
 		for (i = objectManager.Count (); i; i--, objP++)
 			if (objP->Segment ()->IsMarked ())
 				objP->Position ().Rotate (center, oppCenter, angle);

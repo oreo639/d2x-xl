@@ -111,7 +111,7 @@ if (bEnableDeltaShading) {
 		for (i = 0; i < dlIdxCount; i++, dli++) {
 //				if (dli->m_info.nSegment == current->segP) {
 			// loop on each delta light till the segP/side is found
-				CLightDeltaValue *dlP = theMine->LightDeltaValue (dli->m_info.index);
+				CLightDeltaValue *dlP = lightManager.LightDeltaValue (dli->m_info.index);
 				h = dli->m_info.count;
 				for (j = 0; j < h; j++, dlP++) {
 					if (*dlP == face) {

@@ -40,21 +40,15 @@ Initialize ();
 void CMine::Initialize (void)
 {
 vertexManager.Count () = 0;
-SegCount () = 0;
-#if 1
-CLEAR (Segments ());
-CLEAR (Objects ());
-CLEAR (Vertices ());
-CLEAR (Walls ());
-CLEAR (Triggers ());
-CLEAR (ObjTriggers ());
-CLEAR (ReactorTriggers ());
-CLEAR (RobotMakers ());
-CLEAR (EquipMakers ());
-//CLEAR (Textures () [0]);
-//CLEAR (Textures () [1]);
-CLEAR (RobotInfo ());
-#endif
+segmentManager.Count () = 0;
+segmentManager.RobotMakerCount () = 0;
+segmentManager.EquipMakerCount () = 0;
+wallManager.WallCount () = 0;
+wallManager.DoorCount () = 0;
+triggerManager.WallTriggerCount () = 0;
+triggerManager.ObjTriggerCount () = 0;
+triggerManager.ReactorCount () = 0;
+objectManager.Count () = 0;
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
 lightManager.Count () = 0;
@@ -99,6 +93,8 @@ Default ();
 void CMine::Reset (void)
 {
 Current () = &Current1 ();
+current = selections [0];
+other = selections [1];
 selections [0].m_nSegment = DEFAULT_SEGMENT;
 selections [0].m_nPoint = DEFAULT_POINT;
 selections [0].m_nLine = DEFAULT_LINE;
@@ -289,7 +285,7 @@ vert [5] = CVertex (+10, -10, +10);
 vert [6] = CVertex (-10, -10, +10);
 vert [7] = CVertex (-10, +10, +10);
 
-SegCount () = 1;
+segmentManager.Count () = 1;
 vertexManager.Count () = 8;
 }
 

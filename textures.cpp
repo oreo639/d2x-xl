@@ -113,7 +113,7 @@ if (bShowTexture) {
 	else {
 		HGDIOBJ hgdiobj1;
 		bmTexture.LoadBitmap ((nOffset [bDescent1] < 0) ? "NO_PIG_BITMAP" : "WRONG_PIG_BITMAP");
-		bmTexture.Object (sizeof (BITMAP), &bm);
+		bmTexture.GetObject (sizeof (BITMAP), &bm);
 		memDC.CreateCompatibleDC (pDC);
 		hgdiobj1 = memDC.SelectObject (bmTexture);
 		pDC->StretchBlt (0, 0, rc.Width (), rc.Height (), &memDC, 0, 0, 64, 64, SRCCOPY);
@@ -126,7 +126,7 @@ else if (bkColor < 0) {
 	HGDIOBJ hgdiobj;
 	// set bitmap
 	bmTexture.LoadBitmap ("NO_TEXTURE_BITMAP");
-	bmTexture.Object (sizeof (BITMAP), &bm);
+	bmTexture.GetObject (sizeof (BITMAP), &bm);
 	memDC.CreateCompatibleDC (pDC);
 	hgdiobj = memDC.SelectObject (bmTexture);
 	pDC->StretchBlt (0, 0, rc.Width (), rc.Height (), &memDC, 0, 0, 64, 64, SRCCOPY);

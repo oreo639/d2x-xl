@@ -568,7 +568,8 @@ m_mat [0] = m_invMat [0].Inverse ();
 m_move [0].Set (xMove, yMove, zMove);
 }
 
-v
+//------------------------------------------------------------------------------
+
 void CViewMatrix::CalculateInverse (double xMove, double yMove, double zMove) 
 {
 m_invMat [0] = m_mat [0].Inverse ();

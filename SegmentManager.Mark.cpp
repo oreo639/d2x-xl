@@ -138,22 +138,22 @@ void CSegmentManager::MarkSelected (void)
 	CSegment *segP = current.Segment (); 
 	int i, p [8], nPoints; 
 
-switch (DLE.MineView ()->SelectMode ()) {
+switch (DLE.MineView ()->GetSelectMode ()) {
 	case eSelectPoint:
 		nPoints = 1; 
-		p [0] = segP->verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
+		p [0] = segP->Info ().verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
 		break; 
 
 	case eSelectLine:
 		nPoints = 2; 
-		p [0] = segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
-		p [1] = segP->m_info.verts [sideVertTable [current.m_nSide][(current.m_nPoint + 1) & 3]]; 
+		p [0] = segP->Info ().verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
+		p [1] = segP->Info ().verts [sideVertTable [current.m_nSide][(current.m_nPoint + 1) & 3]]; 
 		break; 
 
 	case eSelectSide:
 		nPoints = 4; 
 		for (i = 0; i < nPoints; i++)
-			p [i] = segP->verts [sideVertTable [current.m_nSide][i]]; 
+			p [i] = segP->Info ().verts [sideVertTable [current.m_nSide][i]]; 
 		break; 
 	default:
 		bSegMark = true; 
