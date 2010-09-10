@@ -13,13 +13,65 @@
 #include "toolview.h"
 #include "TextureManager.h"
 
-typedef struct tSliderData {
-	int	nId;
-	int	nMin;
-	int	nMax;
-	long	nFactor;
-	char	**pszLabels;
-} tSliderData;
+//------------------------------------------------------------------------------
+
+char *objectNameTable [MAX_OBJECT_TYPES] = {
+	"Wall",
+	"Fireball",
+	"Robot",
+	"Hostage",
+	"Player",
+	"Mine",
+	"Camera",
+	"Power Up",
+	"Debris",
+	"Reactor",
+	"Flare",
+	"Clutter",
+	"Ghost",
+	"Light",
+	"CoOp",
+	"Marker",
+	"Camera",
+	"Monsterball",
+	"Smoke",
+	"Explosion",
+	"Effect"
+};
+
+char *aiOptionTable [MAX_AI_OPTIONS_D2] = {
+	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
+};
+
+byte objectList [MAX_OBJECT_NUMBER] = {
+	OBJ_ROBOT,
+	OBJ_HOSTAGE,
+	OBJ_PLAYER,
+	OBJ_WEAPON,
+	OBJ_POWERUP,
+	OBJ_CNTRLCEN,
+	OBJ_COOP,
+	OBJ_CAMBOT,
+	OBJ_MONSTERBALL,
+	OBJ_SMOKE,
+	OBJ_EXPLOSION,
+	OBJ_EFFECT
+};
+
+byte contentsList [MAX_CONTAINS_NUMBER] = {
+	OBJ_ROBOT,
+	OBJ_POWERUP
+};
+
+// the following array is used to select a list item by objP->Type ()
+char objectSelection [MAX_OBJECT_TYPES] = {
+	-1, -1, 0, 1, 2, 3, -1, 4, -1, 5, -1, -1, -1, -1, 6, -1, 7, 8, 9, 10, 11
+};
+char contentsSelection [MAX_OBJECT_TYPES] = {
+	-1, -1, 0, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+};
+
+//------------------------------------------------------------------------------
 
 // list box tables
 int modelNumList [N_ROBOT_TYPES_D2] = {
@@ -66,7 +118,16 @@ int nExplosionIds [] = {7, 58, 0, 60, 106};
 
 int powerupIdStrXlat [MAX_POWERUP_IDS_D2];
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
+
+typedef struct tSliderData {
+	int	nId;
+	int	nMin;
+	int	nMax;
+	long	nFactor;
+	char	**pszLabels;
+} tSliderData;
+
 
 static tSliderData sliderData [] = {
 	{IDC_OBJ_SCORE, 0, 600, 50, null},
@@ -92,12 +153,14 @@ static tSliderData sliderData [] = {
 	{IDC_OBJ_CONT_PROB, 0, 16, 1, null}
 	};
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int fix_exp(int x);
 int fix_log(int x);
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP (CObjectTool, CToolDlg)
 	ON_WM_HSCROLL ()
@@ -145,7 +208,9 @@ BEGIN_MESSAGE_MAP (CObjectTool, CToolDlg)
 	ON_EN_UPDATE (IDC_OBJ_SPAWN_QTY, OnSetSpawnQty)
 END_MESSAGE_MAP ()
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 CObjectTool::CObjectTool (CPropertySheet *pParent)
 	: CToolDlg (nLayout ? IDD_OBJECTDATA2: IDD_OBJECTDATA, pParent)
@@ -153,7 +218,7 @@ CObjectTool::CObjectTool (CPropertySheet *pParent)
 //Reset ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 CObjectTool::~CObjectTool ()
 {
@@ -164,7 +229,7 @@ if (m_bInited) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::UpdateSliders (int i)
 {
@@ -190,7 +255,7 @@ for (i = min; i < max; i++, psd++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::InitSliders ()
 {
@@ -203,7 +268,7 @@ for (i = 0; i < h; i++, psd++) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::CBInit (CComboBox *pcb, char** pszNames, byte *pIndex, byte *pItemData, int nMax, int nType, bool bAddNone)
 {
@@ -249,7 +314,7 @@ for (int i = 0; i < nMax; i++) {
 pcb->SetCurSel (0);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 double CObjectTool::SliderFactor (int nId)
 {
@@ -262,7 +327,7 @@ for (i = 0; i < h; i++, psd++)
 return 1.0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 char *pszBossTypes [] = {"none", "Boss 1", "Boss 2", "Red Fatty", "Water Boss", "Fire Boss", "Ice Boss", "Alien 1", "Alien 2", "Vertigo", "Red Guard", null};
 
@@ -275,10 +340,10 @@ CreateImgWnd (&m_showSpawnWnd, IDC_OBJ_SHOW_SPAWN);
 CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);
 InitSliders ();
 UpdateSliders ();
-CBInit (CBObjType (), (char**) objectNameTable, object_list, null, MAX_OBJECT_NUMBER);
+CBInit (CBObjType (), (char**) objectNameTable, objectList, null, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) objectNameTable, contentsList, null, MAX_CONTAINS_NUMBER, 0, true);
-CBInit (CBObjAI (), (char**) ai_options, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
-CBInit (CBObjClassAI (), (char**) ai_options, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
+CBInit (CBObjAI (), (char**) aiOptionTable, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
+CBInit (CBObjClassAI (), (char**) aiOptionTable, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
 
 short nTextures = (DLE.IsD1File ()) ? MAX_TEXTURES_D1: MAX_TEXTURES_D2;
 short i, j;
@@ -342,7 +407,7 @@ m_bInited = true;
 return TRUE;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::DoDataExchange (CDataExchange *pDX)
 {
@@ -359,7 +424,7 @@ if (!pDX->m_bSaveAndValidate) {
 DDX_Check (pDX, IDC_OBJ_SORT, objectManager.SortObjects ());
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 BOOL CObjectTool::OnSetActive ()
 {
@@ -367,21 +432,21 @@ Refresh ();
 return CToolDlg::OnSetActive ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::Reset ()
 {
 //m_nSpawnQty = 0;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::EnableControls (BOOL bEnable)
 {
 CToolDlg::EnableControls (IDC_OBJ_OBJNO, IDT_OBJ_CONT_PROB, bEnable);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CObjectTool::GetSliderData (CScrollBar *pScrollBar)
 {
@@ -393,7 +458,7 @@ for (i = 0; i < h; i++)
 return -1;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::OnHScroll (UINT scrollCode, UINT thumbPos, CScrollBar *pScrollBar)
 {
@@ -434,7 +499,7 @@ else
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::Refresh ()
 {
@@ -597,7 +662,7 @@ UpdateData (FALSE);
 DLE.MineView ()->Refresh (FALSE);
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::RefreshRobot ()
 {
@@ -605,7 +670,7 @@ void CObjectTool::RefreshRobot ()
   CRobotInfo robotInfo;
 
   // get selection
-if ((nType = object_list [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
+if ((nType = objectList [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
 	CBContId ()->SetCurSel (-1);
 	CBWeapon1 ()->SetCurSel (-1);
 	CBWeapon2 ()->SetCurSel (-1);
@@ -714,7 +779,7 @@ SlCtrl (IDC_OBJ_CONT_PROB)->SetPos ((int) (robotInfo.Info ().contents.prob / Sli
 SlCtrl (IDC_OBJ_CONT_COUNT)->SetPos ((int) (robotInfo.Info ().contents.count / SliderFactor (IDC_OBJ_CONT_COUNT)));
 }
   
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 void CObjectTool::UpdateRobot ()
 {
@@ -1176,7 +1241,7 @@ return true;
 void CObjectTool::OnSetObjType () 
 {
 CGameObject *objP = current.Object ();
-int selection = object_list [CBObjType ()->GetCurSel ()];
+int selection = objectList [CBObjType ()->GetCurSel ()];
 if (DLE.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
@@ -1480,7 +1545,7 @@ if (objP->m_info.renderType == RT_POLYOBJ) {
 
 void CObjectTool::OnDefault ()
 {
-if (object_list [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
+if (objectList [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
 int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 undoManager.Begin (udRobots);
@@ -1489,63 +1554,63 @@ undoManager.End ();
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetSoundExplode ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetSoundSee ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetSoundAttack ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetSoundClaw ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetSoundDeath ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetObjClassAI ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetWeapon1 ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetWeapon2 ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetContType ()
 {
@@ -1558,91 +1623,91 @@ robotInfo->Info ().contents.type = (byte) CBContType ()->GetItemData (i);
 RefreshRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSetContId ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAIKamikaze ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAICompanion ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAIThief ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAISmartBlobs ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAIPursue ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAICharge ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAIEDrain ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAIEndsLevel ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnAIBossType ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnBright ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnCloaked ()
 {
 UpdateRobot ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnMultiplayer ()
 {
@@ -1650,7 +1715,7 @@ current.Object ()->m_info.multiplayer = BtnCtrl (IDC_OBJ_MULTIPLAYER)->GetCheck 
 Refresh ();
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 afx_msg void CObjectTool::OnSort ()
 {
@@ -1660,7 +1725,7 @@ if ((objectManager.SortObjects () = BtnCtrl (IDC_OBJ_SORT)->GetCheck ())) {
 	}
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int CObjectTool::ObjOfAKindCount (int nType, int nId)
 {
@@ -1677,20 +1742,24 @@ for (i = objectManager.Count (); i; i--, objP++)
 return nCount;
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int fix_log(int x) 
 {
 return (x >= 1) ? (int) (log ((double) x) + 0.5): 0; // round (assume value is positive)
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
 
 int fix_exp(int x) 
 {
 return (x >= 0 && x <= 21) ? (int) (exp ((double) x) + 0.5): 1; // round (assume value is positive)
 }
 
-                        /*--------------------------*/
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 //eof objectdlg.cpp

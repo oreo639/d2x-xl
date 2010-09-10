@@ -14,6 +14,18 @@
 
 //------------------------------------------------------------------------
 
+extern int powerupSize [MAX_POWERUP_IDS_D2];
+
+extern int robotSize [MAX_ROBOT_IDS_TOTAL];
+
+extern int robotShield [MAX_ROBOT_IDS_TOTAL];
+
+extern byte robotClip [MAX_ROBOT_IDS_TOTAL];
+
+extern byte powerupClip [MAX_POWERUP_IDS_D2];
+
+//------------------------------------------------------------------------
+
 typedef struct {
   short jointnum;
   CAngleVector angles;

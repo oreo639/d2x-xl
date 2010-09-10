@@ -483,7 +483,7 @@ CSegment *segP = Segment (nSegment);
 
 if (!m_bCreating)
 	segP->Backup ();
-double scale = textureManager.Textures (m_fileType, nTexture)->Scale (nTexture);
+double scale = textureManager.Textures (theMine->FileType (), nTexture)->Scale (nTexture);
 
 undoManager.Begin (udSegments);
 segP->m_info.childFlags |= (1 << MAX_SIDES_PER_SEGMENT);
@@ -655,7 +655,7 @@ for (short i = triggerManager.ReactorTriggerCount (); i > 0; )
 	delSegP->Unmark (); 
 
 	// unlink any children with this segment number
-	CTexture* texP = textureManager.Textures (m_fileType);
+	CTexture* texP = textureManager.Textures (theMine->FileType ());
 	for (CSegmentIterator si; si; si++) {
 		CSegment* segP = &(*si);
 		for (short nChild = 0; nChild < MAX_SIDES_PER_SEGMENT; nChild++) {

@@ -222,7 +222,7 @@ else
 int nTrigger = --m_free;
 Count (0)++;
 #else
-nTrigger = Count (0)++;
+short nTrigger = Count (0)++;
 #endif
 CTrigger* trigP = Trigger (nTrigger);
 trigP->Setup (type, flags);

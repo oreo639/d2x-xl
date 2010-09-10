@@ -314,7 +314,7 @@ else {
 	m_nClip = i;
 	CBClipNo ()->SetCurSel ((i < NUM_OF_CLIPS_D2) ? i : 0);
 	for (i = 0; i < MAX_WALL_FLAGS; i++)
-		m_bFlags [i] = ((m_wallP [0]->Info ().flags & wall_flags [i]) != 0);
+		m_bFlags [i] = ((m_wallP [0]->Info ().flags & wallFlagTable [i]) != 0);
 	for (i = 0; i < 4; i++)
 		m_bKeys [i] = ((m_wallP [0]->Info ().keys & (1 << i)) != 0);
 	if (!m_bLock) {
@@ -603,9 +603,9 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (m_wallP [bSide]) {
 		undoManager.Begin (udWalls);
 		if (m_bFlags [i])
-			m_wallP [bSide]->Info ().flags |= wall_flags [i];
+			m_wallP [bSide]->Info ().flags |= wallFlagTable [i];
 		else
-			m_wallP [bSide]->Info ().flags &= ~wall_flags [i];
+			m_wallP [bSide]->Info ().flags &= ~wallFlagTable [i];
 		undoManager.End ();
 		Refresh ();
 		}

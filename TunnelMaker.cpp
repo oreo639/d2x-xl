@@ -46,7 +46,7 @@ return partial;
 }
 
 //------------------------------------------------------------------------------
-//   BezierFcn(pt,u,n,p [][]) - sets (x,y,z) for u=#/segs based on points p
+//   BezierFcn(pt,u,n,p [][]) - sets (x,y,z) for u=#/segs based on m_points p
 //------------------------------------------------------------------------------
 
 CVertex CTunnelMaker::BezierFcn (double u, int npts, CVertex* p) 
@@ -119,7 +119,7 @@ point->Set (tx * cos (-ySpin) - tz * sin (-ySpin), ty, tx * sin (-ySpin) + tz * 
 //------------------------------------------------------------------------------
 // MatchingSide ()
 //
-// Action - Returns matching side depending on the current points
+// Action - Returns matching side depending on the current m_points
 //------------------------------------------------------------------------------
 
 int CTunnelMaker::MatchingSide (int j) 
@@ -133,8 +133,8 @@ return ret [offset][j];
 
 //------------------------------------------------------------------------------
 //
-// Action - Spins points which lie in the y-z plane orthagonal to a normal
-//          Uses normal as center for translating points.
+// Action - Spins m_points which lie in the y-z plane orthagonal to a normal
+//          Uses normal as center for translating m_points.
 //
 // Changes - Chooses axis to normalizes on based on "normal" direction
 //------------------------------------------------------------------------------
@@ -319,15 +319,15 @@ if (!m_bActive) {
 
 	dynamic_cast<CSideKey&> (m_info [0]) = dynamic_cast<CSideKey&> (selections [0]);
 	dynamic_cast<CSideKey&> (m_info [1]) = dynamic_cast<CSideKey&> (selections [1]);
-	// define 4 data points for nSegment to work from
+	// define 4 data m_points for nSegment to work from
 	// center of current cube
-	points [0] = segmentManager.CalcSideCenter (m_info [0]);
+	m_points [0] = segmentManager.CalcSideCenter (m_info [0]);
 	// center of other cube
-	points [3] = segmentManager.CalcSideCenter (m_info [1]);
+	m_points [3] = segmentManager.CalcSideCenter (m_info [1]);
 	// calculate length between cubes
-	length = Distance (points [0], points [3]);
+	length = Distance (m_points [0], m_points [3]);
 	if (length < 50) {
-		ErrorMsg ("End points of nSegment are too close.\n\n"
+		ErrorMsg ("End m_points of nSegment are too close.\n\n"
 					"Hint: Select two sides which are further apart\n"
 					"using the spacebar and left/right arrow keys,\n"
 					"then try again.");
@@ -342,7 +342,7 @@ if (!m_bActive) {
 			m_info [i].m_length = MAX_TUNNEL_LENGTH;
 		}
 	if (!bExpertMode)
-		ErrorMsg ("Place the current cube on one of the nSegment end points.\n\n"
+		ErrorMsg ("Place the current cube on one of the nSegment end m_points.\n\n"
 				  "Use the ']' and '[' keys to adjust the length of the red\n"
 				  "nSegment segment.\n\n"
 				  "Press 'P' to rotate the point connections.\n\n"
@@ -416,51 +416,51 @@ void CTunnelMaker::ComputeTunnel (void)
   CVertex vertex;
   double theta [2][4],radius [2][4]; // polor coordinates of sides
   double delta_angle [4];
-  CVertex rel_side_pts [2][4]; // side points reletave to center of side 1
-  CVertex rel_pts [4]; // 4 points of nSegment reletave to 1st point
+  CVertex rel_side_pts [2][4]; // side m_points reletave to center of side 1
+  CVertex rel_pts [4]; // 4 m_points of nSegment reletave to 1st point
   CVertex relTunnelPoints [MAX_TUNNEL_SEGMENTS];
   double y,z;
   double ySpin,zSpin;
 
 // center of both cubes
-points [0] = segmentManager.CalcSideCenter (m_info [0]);
-points [3] = segmentManager.CalcSideCenter (m_info [1]);
+m_points [0] = segmentManager.CalcSideCenter (m_info [0]);
+m_points [3] = segmentManager.CalcSideCenter (m_info [1]);
 // point orthogonal to center of current cube
-points [1] = segmentManager.CalcSideNormal (m_info [0]);
-points [1] *= m_info [0].m_length;
-points [1] += points [0];
+m_points [1] = segmentManager.CalcSideNormal (m_info [0]);
+m_points [1] *= m_info [0].m_length;
+m_points [1] += m_points [0];
 // point orthogonal to center of other cube
-points [2] = segmentManager.CalcSideNormal (m_info [1]);
-points [2] *= m_info [1].m_length;
-points [2] += points [3];
+m_points [2] = segmentManager.CalcSideNormal (m_info [1]);
+m_points [2] *= m_info [1].m_length;
+m_points [2] += m_points [3];
 
 // calculate number of segments (min=1)
-length = Distance (*points, points [3]);
+length = Distance (*m_points, m_points [3]);
 m_nLength = (int) ((fabs (m_info [0].m_length) + fabs (m_info [1].m_length)) / 20 + length / 40.0);
 m_nLength = min (m_nLength, m_nMaxSegments - 1);
 
-// calculate nSegment points
+// calculate nSegment m_points
 for (i = 0; i <= m_nLength; i++) 
-	m_points [i] = BezierFcn ((double) i / (double) m_nLength, 4, points);
+	m_points [i] = BezierFcn ((double) i / (double) m_nLength, 4, m_points);
 
-// make all points reletave to first face (translation)
+// make all m_points reletave to first face (translation)
 for (i = 0; i < 4; i++) 
-	rel_pts [i] = points [i] - points [0];
+	rel_pts [i] = m_points [i] - m_points [0];
 segP = m_info [0].Segment ();
 for (i = 0; i < 4; i++) 
-	rel_side_pts [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - points [0];
+	rel_side_pts [0][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [0].m_nSide][i]]) - m_points [0];
 segP = m_info [1].Segment ();
 for (i = 0; i < 4; i++)
-	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - points [0];
+	rel_side_pts [1][i] = *vertexManager.Vertex (segP->m_info.verts [sideVertTable [m_info [1].m_nSide][i]]) - m_points [0];
 for (i = 0; i < m_nLength; i++) {
-	relTunnelPoints [i] = m_points [i] - points [0];
+	relTunnelPoints [i] = m_points [i] - m_points [0];
 }
 
 // determine y-spin and z-spin to put 1st orthogonal vector onto the x-axis
 ySpin = -atan3 (rel_pts [1].v.z, rel_pts [1].v.x); // to y-z plane
 zSpin = atan3 (rel_pts [1].v.y, rel_pts [1].v.x * cos (ySpin)-rel_pts [1].v.z * sin (ySpin)); // to x axis
 
-// spin all points reletave to first face (rotation)
+// spin all m_points reletave to first face (rotation)
 for (i = 0; i < 4; i++) {
 	SpinPoint (rel_pts + i, ySpin, zSpin);
 	for (j = 0; j < 2; j++) 
@@ -534,7 +534,7 @@ for (i = 0; i < m_nLength; i++) {
 		// spin vertices
 		SpinBackPoint (vertP, ySpin, zSpin);
 		// translate point back
-		*vertP += points [0];
+		*vertP += m_points [0];
 		}
 	}
 
