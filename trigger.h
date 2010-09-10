@@ -21,20 +21,33 @@ public:
 	CSideKey	m_targets [MAX_TRIGGER_TARGETS];
 
 	CTriggerTargets () { m_count = 0; }
+
 	void Clear (void);
+
 	void Read (CFileManager& fp);
+
 	void Write (CFileManager& fp);
 
 	short Add (CSideKey key);
+
 	short Delete (short i = -1);
+
 	int Delete (CSideKey key);
+
 	void Update (short nOldSeg, short nNewSeg);
+
 	int Find (CSideKey key);
 
 	inline short Add (short nSegment, short nSide) { return Add (CSideKey (nSegment, nSide)); }
+
 	inline short Pop (void) { return Delete (m_count - 1); }
+
 	inline int Find (short nSegment, short nSide) { return Find (CSideKey (nSegment, nSide)); }
+
+	inline CSideKey Target (uint i) { return m_targets [i]; }
+
 	inline short& Segment (uint i) { return m_targets [i].m_nSegment; }
+
 	inline short& Side (uint i) { return m_targets [i].m_nSide; }
 
 	inline CSideKey& operator[](uint i) { return m_targets [i]; }

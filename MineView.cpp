@@ -691,7 +691,7 @@ else {
 
 bool CMineView::ViewObject (CGameObject *objP)
 {
-switch(objP->m_info.type) {
+switch(objP->Type ()) {
 	case OBJ_ROBOT:
 	case OBJ_CAMBOT:
 	case OBJ_SMOKE:
@@ -708,7 +708,7 @@ switch(objP->m_info.type) {
 	case OBJ_WEAPON:
 		return ViewObject (eViewObjectsWeapons);
 	case OBJ_POWERUP:
-		switch (powerupTypeTable [objP->m_info.id]) {
+		switch (powerupTypeTable [objP->Id ()]) {
 			case POWERUP_WEAPON_MASK:
 				return ViewObject (eViewObjectsWeapons);
 			case POWERUP_POWERUP_MASK:
@@ -731,13 +731,13 @@ void CMineView::HiliteTarget (void)
 	int i, nTarget;
 
 CGameObject *objP = current.Object ();
-if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
+if ((objP->Type () != OBJ_EFFECT) || (objP->Id () != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;
 if (nTarget = objP->rType.lightningInfo.nTarget) {
 	CObject* objP = objectManager.Object (0);
 	for (i = objectManager.Count (); i; i--, objP++)
-		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
+		if ((objP->Type () == OBJ_EFFECT) && (objP->Id () == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			other.m_nObject = i;
 			break;
 			return;

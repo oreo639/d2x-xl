@@ -48,7 +48,7 @@ class CObjectManager {
 		objectList		m_objects;
 		CMineItemInfo	m_info;
 		CSecretExit		m_secretExit;
-		bool				m_bSortObjects;
+		int				m_bSortObjects;
 
 	public:
 		inline void ResetInfo (void) { m_info.Reset (); }
@@ -81,6 +81,8 @@ class CObjectManager {
 	
 		bool HaveResources (void);
 
+		int& SortObjects (void) { return m_bSortObjects; }
+
 		inline short Add (bool bUndo = true);
 
 		bool Create (byte newType, short nSegment = -1);
@@ -94,8 +96,6 @@ class CObjectManager {
 		void Write (CFileManager& fp, int nFileVersion);
 
 		void Clear (void);
-
-		bool& SortObjects (void) { return m_bSortObjects; }
 
 		void Sort (void);
 

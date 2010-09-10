@@ -307,7 +307,7 @@ for (i = 0; i < segmentManager.EquipMakerCount (); i++) {
 
 for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++) {
 // int clip numbers for poly Objects () (except robots)
-	switch (objP->m_info.type) {
+	switch (objP->Type ()) {
 		case OBJ_PLAYER   : // the player on the console
 			objP->rType.polyModelInfo.nModel = D2_PLAYER_CLIP_NUMBER;
 			break;

@@ -1319,7 +1319,7 @@ if (nObject >=0 && nObject < objectManager.Count ()) {
 else {
 	// secret return
 	objP = &temp_obj;
-	objP->m_info.type = -1;
+	objP->Type () = -1;
 	// theMine->secret_orient = Objects () [0]->orient;
 	objP->m_location.orient.rVec = -objectManager.SecretOrient ().rVec;
 	objP->m_location.orient.uVec =  objectManager.SecretOrient ().fVec;
@@ -1330,7 +1330,7 @@ else {
 		nSegment = 0;
 	if (!Visible (segmentManager.Segment (nSegment)))
 		return;
-	segmentManager.CalcCenter (objP->m_location.pos, nSegment); // define objP->position
+	segmentManager.CalcCenter (objP->Position (), nSegment); // define objP->position
 	}
 
 switch (clear_it) {
@@ -1339,7 +1339,7 @@ switch (clear_it) {
 		if (m_selectMode == OBJECT_MODE && nObject == current.m_nObject) 
 			m_pDC->SelectObject(m_penRed); // RED
 		else {
-			switch(objP->m_info.type) {
+			switch(objP->Type ()) {
 				case OBJ_ROBOT: /* an evil enemy */
 				case OBJ_CAMBOT: /* an evil enemy */
 				case OBJ_EXPLOSION:
@@ -1382,7 +1382,7 @@ switch (clear_it) {
 // then translate object
 //CBRK (nObject == 45);
 for (poly = 0; poly < MAX_POLY; poly++) {
-	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_location.orient, objP->m_location.pos);
+	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_location.orient, objP->Position ());
 	m_view.Project (pt [poly], poly_draw [poly]);
 	}
 
@@ -1396,8 +1396,8 @@ for (i = 0; i < 6; i++)
 
 if ((DLE.IsD2File ()) &&
 	 (nObject == current.m_nObject) &&
-	 (objP->m_info.type != OBJ_CAMBOT) && (objP->m_info.type != OBJ_MONSTERBALL) && 
-	 (objP->m_info.type != OBJ_EXPLOSION) && (objP->m_info.type != OBJ_SMOKE) && (objP->m_info.type != OBJ_EFFECT) &&
+	 (objP->Type () != OBJ_CAMBOT) && (objP->Type () != OBJ_MONSTERBALL) && 
+	 (objP->Type () != OBJ_EXPLOSION) && (objP->Type () != OBJ_SMOKE) && (objP->Type () != OBJ_EFFECT) &&
 	 (objP->m_info.renderType == RT_POLYOBJ) &&
 	 !modelRenderer.Setup (objP, &m_view, m_pDC)) {
 	if (clear_it)
@@ -1426,7 +1426,7 @@ if ((nObject == current.m_nObject) || (nObject == other.m_nObject)) {
 
 	pt [0] =
 	pt [1] =
-	pt [2] = objP->m_location.pos;
+	pt [2] = objP->Position ();
 	pt [1].v.x -= objP->m_info.size;
 	pt [2].v.x += objP->m_info.size;
 	m_view.Project (pt [0], poly_draw [0]);

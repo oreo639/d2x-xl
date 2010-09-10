@@ -336,6 +336,10 @@ class CGameObject : public CGameItem {
 		// CGameObject () { memset (this, 0, sizeof (*this)); }
 		inline tGameObject& Info (void) { return m_info; }
 
+		inline byte& Id (void) { return m_info.id; }
+
+		inline byte& Type (void) { return m_info.type; }
+
 		void Read (CFileManager& fp, int version = 0, bool bFlag = false);
 
 		void Write (CFileManager& fp, int version = 0, bool bFlag = false);

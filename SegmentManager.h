@@ -185,7 +185,7 @@ class CSegmentManager {
 
 		void LinkSides (short nSegment1, short nSide1, short nSegment2, short nSide2, tVertMatch match [4]);
 
-		void CalcCenter (CVertex& pos, short nSegment);
+		CVertex& CalcCenter (CVertex& pos, short nSegment);
 
 		bool IsPointOfSide (CSegment *segP, int nSide, int nPoint);
 

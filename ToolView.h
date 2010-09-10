@@ -386,7 +386,7 @@ class CObjectTool : public CToolDlg
 		void DrawObjectImages ();
 		void DrawObject (CWnd *pWnd, int type, int id);
 		void SetTextureOverride ();
-		bool SetPlayerId (CGameObject *objP, int objType, int *ids, int maxIds, char *pszError);
+		bool SetPlayerId (CGameObject& obj, int objType, int *ids, int maxIds, char *pszError);
 		void SetObjectId (CComboBox *pcb, short type, short id, short flag = 0);
 
 		void CBInit (CComboBox *pcb, char* pszNames [], byte *pIndex, byte *pItemData, int nMax, int nType = 0, bool bAddNone = false);

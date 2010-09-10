@@ -95,7 +95,7 @@ byte contentsList[MAX_CONTAINS_NUMBER] = {
 	OBJ_POWERUP
 };
 
-// the following array is used to select a list item by objP->m_info.type
+// the following array is used to select a list item by objP->Type ()
 char objectSelection [MAX_OBJECT_TYPES] = {
 	-1, -1, 0, 1, 2, 3, -1, 4, -1, 5, -1, -1, -1, -1, 6, -1, 7, 8, 9, 10, 11
 };

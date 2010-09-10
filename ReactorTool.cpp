@@ -122,7 +122,7 @@ void CReactorTool::Refresh ()
 if (!(m_bInited && theMine))
 	return;
 EnableControls (DLE.IsD2File ());
-m_triggerP = theMine->ReactorTriggers (m_nTrigger);
+m_triggerP = triggerManager.ReactorTrigger (m_nTrigger);
 m_nCountDown = triggerManager.ReactorTime ();
 m_nSecretReturn = objectManager.SecretSegment ();
 InitLBTargets ();
@@ -204,12 +204,12 @@ AddTarget (nSegment, nSide);
 
 void CReactorTool::OnAddWallTarget ()
 {
-CSelection *other = (current == selections [0]) ? &theMine->Current2 () : selections [0];
-int i = FindTarget (other->nSegment, other->nSide);
+CSelection& other = selections [current == selections [0]];
+int i = FindTarget (other.m_nSegment, other.m_nSide);
 if (i >= 0)
 	return;
 LBTargets ()->SetCurSel (i);
-AddTarget (other->nSegment, other->nSide + 1);
+AddTarget (other.m_nSegment, other.m_nSide + 1);
 }
 
 //------------------------------------------------------------------------
@@ -242,8 +242,8 @@ return m_triggerP->Find (nSegment, nSide);
 
 void CReactorTool::OnDeleteWallTarget ()
 {
-CSelection *other = (current == selections [0]) ? &theMine->Current2 () : selections [0];
-int i = FindTarget (other->nSegment, other->nSide);
+CSelection& other = selections [current == selections [0]];
+int i = FindTarget (other.m_nSegment, other.m_nSide);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");
 	return;
@@ -272,12 +272,9 @@ if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 short nSide = m_triggerP->Side (m_iTarget);
 if ((nSide < 0) || (nSide > 5))
 	return;
-
-CSelection *other = theMine->Other ();
 if ((current.m_nSegment == nSegment) && (current.m_nSide == nSide))
 	return;
-other->nSegment = m_triggerP->Segment (m_iTarget);
-other->nSide = m_triggerP->Side (m_iTarget);
+(CSideKey) other = m_triggerP->Target (m_iTarget);
 DLE.MineView ()->Refresh ();
 }
 

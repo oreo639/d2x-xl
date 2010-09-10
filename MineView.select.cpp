@@ -51,25 +51,25 @@ for (i = 0; i < objectManager.Count (); i++) {
 	// define temp object type and position for secret object selection
 	if (i == objectManager.Count () && DLE.IsD2File () && enable_secret) {
 		objP = &temp_obj;
-		objP->m_info.type = OBJ_PLAYER;
+		objP->Type () = OBJ_PLAYER;
 		// define objP->position
-		CalcSegmentCenter (objP->m_location.pos, (ushort)objectManager.SecretSegment ());
+		CalcSegmentCenter (objP->Position (), (ushort)objectManager.SecretSegment ());
 		}
 	else
 		objP = objectManager.Object (i);
 #if 0
-	switch(objP->m_info.type) {
+	switch(objP->Type ()) {
 		case OBJ_WEAPON:
 			if (ViewObject (eViewObjectsPowerups | eViewObjectsWeapons)) {
 				drawable = true;
 				}
 		case OBJ_POWERUP:
-			if (ViewObject (powerupTypeTable [objP->m_info.id])) {
+			if (ViewObject (powerupTypeTable [objP->Id ()])) {
 				drawable = true;
 				}
 			break;
 		default:
-			if(ViewObject (1<<objP->m_info.type))
+			if(ViewObject (1<<objP->Type ()))
 				drawable = true;
 		}
 	if (drawable) 
@@ -78,7 +78,7 @@ for (i = 0; i < objectManager.Count (); i++) {
 #endif
 		{
 		// translate object's position to screen coordinates
-		m_view.Project (objP->m_location.pos, pt);
+		m_view.Project (objP->Position (), pt);
 		// calculate radius^2 (don't bother to take square root)
 		double dx = (double)pt.x - (double)xMouse;
 		double dy = (double)pt.y - (double)yMouse;

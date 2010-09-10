@@ -223,8 +223,8 @@ return fabs (angle);  // angle should be positive since acos returns 0 to PI but
 
 int CDiagTool::CheckId (CGameObject *objP) 
 {
-	int type = objP->m_info.type;
-	int id = objP->m_info.id;
+	int type = objP->Type ();
+	int id = objP->Id ();
 
 	switch (type) {
 	case OBJ_ROBOT: /* an evil enemy */
@@ -265,7 +265,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 		}
 		if (!m_bAutoFixBugs)
 			return 1;
-		objP->m_info.id = DLE.IsD1File () ? 1 : 2;
+		objP->Id () = DLE.IsD1File () ? 1 : 2;
 		return 2;
 		break;
 
@@ -279,7 +279,7 @@ int CDiagTool::CheckId (CGameObject *objP)
 		if (id != SMALLMINE_ID) {
 			if (!m_bAutoFixBugs)
 				return 1;
-			objP->m_info.id = SMALLMINE_ID;
+			objP->Id () = SMALLMINE_ID;
 			return 2;
 		}
 	}
@@ -656,8 +656,8 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		 radius = Distance (*vertexManager.Vertex (segP->m_info.verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }
-	object_radius = Distance (objP->m_location.pos, center);
-   if ((object_radius > max_radius) && (objP->m_info.type != OBJ_EFFECT)) {
+	object_radius = Distance (objP->Position (), center);
+   if ((object_radius > max_radius) && (objP->Type () != OBJ_EFFECT)) {
       sprintf_s (message, sizeof (message),"ERROR: Object is outside of cube (object=%d,cube=%d)",nObject,nSegment);
       if (UpdateStats (message, 1, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
@@ -677,45 +677,45 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     }
 
     // check type range
-	 if ((objP->m_info.id < 0) || (objP->m_info.id > 255)) {
+	 if ((objP->Id () < 0) || (objP->Id () > 255)) {
 		 if (m_bAutoFixBugs) {
-			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",nObject, objP->m_info.id);
-			objP->m_info.id = 0;
+			sprintf_s (message, sizeof (message),"FIXED: Illegal object id (object=%d,id =%d)",nObject, objP->Id ());
+			objP->Id () = 0;
 			}
 		 else
-			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",nObject, objP->m_info.id);
+			sprintf_s (message, sizeof (message),"WARNING: Illegal object id (object=%d,id =%d)",nObject, objP->Id ());
 		}
-	type = objP->m_info.type;
+	type = objP->Type ();
     switch (type) {
 	  case OBJ_PLAYER:
 		  if (!pPlayer)
 			  pPlayer = objP;
-			if (objP->m_info.id >= MAX_PLAYERS) {
+			if (objP->Id () >= MAX_PLAYERS) {
 				if (m_bAutoFixBugs) {
-					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",nObject, objP->m_info.id);
-				objP->m_info.id = MAX_PLAYERS - 1;
+					sprintf_s (message, sizeof (message),"FIXED: Illegal player id (object=%d,id =%d)",nObject, objP->Id ());
+				objP->Id () = MAX_PLAYERS - 1;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->m_info.id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal player id (object=%d,id =%d)",nObject, objP->Id ());
 			}
 	  case OBJ_COOP:
-		  if (objP->m_info.id > 2) {
+		  if (objP->Id () > 2) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->m_info.id);
-				objP->m_info.id = 2;
+				sprintf_s (message, sizeof (message),"FIXED: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
+				objP->Id () = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->m_info.id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal coop player id (object=%d,id =%d)",nObject, objP->Id ());
 			}
 			break;
 	  case OBJ_EFFECT:
-		  if (objP->m_info.id > SOUND_ID) {
+		  if (objP->Id () > SOUND_ID) {
 			if (m_bAutoFixBugs) {
-				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->m_info.id);
-				objP->m_info.id = 2;
+				sprintf_s (message, sizeof (message),"FIXED: effect id (object=%d,id =%d)",nObject, objP->Id ());
+				objP->Id () = 2;
 				}
 			else
-				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->m_info.id);
+				sprintf_s (message, sizeof (message),"WARNING: Illegal effect id (object=%d,id =%d)",nObject, objP->Id ());
 			}
 			break;
 	  case OBJ_ROBOT:
@@ -740,7 +740,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 		if (UpdateStats (message,0, nSegment, -1, -1, -1, -1, -1, -1, nObject))
 			return true;
     }
-    id = objP->m_info.id;
+    id = objP->Id ();
 
     // check id range
     if (h = CheckId (objP)) {
@@ -812,12 +812,12 @@ if (objectManager.Object (0)->m_info.type != OBJ_PLAYER || objectManager.Object 
 	// count each
 	objP = objectManager.Object (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
-		if (objP->m_info.type == OBJ_PLAYER) {
+		if (objP->Type () == OBJ_PLAYER) {
 			nPlayers [0]++;
 			if (CheckAndFixPlayer (0, MAX_PLAYERS, nObject, players))
 				bFix |= 1;
 			}
-		else if (objP->m_info.type == OBJ_COOP) {
+		else if (objP->Type () == OBJ_COOP) {
 			nPlayers [1]++;
 			if (CheckAndFixPlayer (0, 3, nObject, players + MAX_PLAYERS))
 				bFix |= 2;
@@ -838,13 +838,13 @@ if (m_bAutoFixBugs) {
 		}
 	objP = objectManager.Object (0);
 	for (nObject = 0; nObject < objCount; nObject++, objP++) {
-		if (objP->m_info.type == OBJ_PLAYER) {
-			if ((bFix & 1) && (objP->m_info.id >= 0) && (objP->m_info.id < MAX_PLAYERS))
-				objP->m_info.id = players [objP->m_info.id] - 1;
+		if (objP->Type () == OBJ_PLAYER) {
+			if ((bFix & 1) && (objP->Id () >= 0) && (objP->Id () < MAX_PLAYERS))
+				objP->Id () = players [objP->Id ()] - 1;
 			}
-		else if (objP->m_info.type == OBJ_COOP) {
-			if ((bFix & 2) && (objP->m_info.id >= MAX_PLAYERS) && (objP->m_info.id < MAX_PLAYERS + MAX_COOP_PLAYERS))
-				objP->m_info.id = players [objP->m_info.id] - 1;
+		else if (objP->Type () == OBJ_COOP) {
+			if ((bFix & 2) && (objP->Id () >= MAX_PLAYERS) && (objP->Id () < MAX_PLAYERS + MAX_COOP_PLAYERS))
+				objP->Id () = players [objP->Id ()] - 1;
 			}
 		}
 	}
@@ -877,7 +877,7 @@ count = 0;
 objP = objectManager.Object (0);
 for (nObject=0;nObject<objCount;nObject++, objP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	type = objP->m_info.type;
+	type = objP->Type ();
 	if (type == OBJ_CNTRLCEN) {
 		if (segmentManager.Segment (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
 			if (m_bAutoFixBugs && segmentManager.CreateRobotMaker (objP->m_info.nSegment, false, false))

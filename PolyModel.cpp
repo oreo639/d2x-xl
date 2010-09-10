@@ -114,7 +114,7 @@ if (slash)
 else
 	filename[0] = '\0';
 
-bool bCustom = (objP->m_info.type == OBJ_ROBOT) && (objP->m_info.id >= N_ROBOT_TYPES_D2);
+bool bCustom = (objP->Type () == OBJ_ROBOT) && (objP->Id () >= N_ROBOT_TYPES_D2);
 
 if (bCustom) {
 	char *psz = strstr (filename, "data");

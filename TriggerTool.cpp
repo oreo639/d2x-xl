@@ -422,8 +422,8 @@ void CTriggerTool::DrawObjectImage ()
 {
 if (m_nClass) {
 	CGameObject *objP = current.Object ();
-	if ((objP->m_info.type == OBJ_ROBOT) || (objP->m_info.type == OBJ_CAMBOT) || (objP->m_info.type == OBJ_MONSTERBALL) || (objP->m_info.type == OBJ_SMOKE))
-		theMine->DrawObject (&m_showObjWnd, objP->m_info.type, objP->m_info.id);
+	if ((objP->Type () == OBJ_ROBOT) || (objP->Type () == OBJ_CAMBOT) || (objP->Type () == OBJ_MONSTERBALL) || (objP->Type () == OBJ_SMOKE))
+		theMine->DrawObject (&m_showObjWnd, objP->Type (), objP->Id ());
 	}
 }
 
@@ -872,7 +872,7 @@ if (nSide < 0)
 	nSide = 0;
 else if (nSide > 6)
 	nSide = 6;
-if (nSegment > ((nSide == 0) ? theMine->objectManager.Count () : segmentManager.Count ()))
+if (nSegment > ((nSide == 0) ? objectManager.Count () : segmentManager.Count ()))
 	return;
 AddTarget (nSegment, nSide);
 }

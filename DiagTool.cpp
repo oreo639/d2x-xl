@@ -96,7 +96,7 @@ memset (m_nObjects, 0, sizeof (m_nObjects));
 memset (m_nContained, 0, sizeof (m_nContained));
 int i, j;
 for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
-	switch(objP->m_info.type) {
+	switch(objP->Type ()) {
 		case OBJ_ROBOT:
 			m_nObjects [0]++;
 			m_nContained [0] += objP->m_info.contents.count;
@@ -114,7 +114,7 @@ for (i = objectManager.Count (), j = 0; i; i--, j++, objP++)
 			m_nObjects [4]++;
 			break;
 		case OBJ_POWERUP:
-			switch (powerupTypeTable [objP->m_info.id]) {
+			switch (powerupTypeTable [objP->Id ()]) {
 				case POWERUP_WEAPON_MASK:
 					m_nObjects [4]++;
 					break;
