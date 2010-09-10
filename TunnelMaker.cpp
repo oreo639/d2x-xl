@@ -3,9 +3,17 @@
 #include "mine.h"
 #include "dle-xp.h"
 
-#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
+//------------------------------------------------------------------------------
 
 CTunnelMaker tunnelMaker;
+
+//------------------------------------------------------------------------------
+
+#define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
+
+//------------------------------------------------------------------------------
+
+char szTunnelMakerError [] = "You must exit spline creation before preforming this function";
 
 //------------------------------------------------------------------------------
 

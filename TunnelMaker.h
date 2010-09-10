@@ -7,7 +7,7 @@
 #define MIN_TUNNEL_LENGTH		10
 #define TUNNEL_INTERVAL			10
 
-char	szTunnelMakerError [] = "You must exit spline creation before preforming this function";
+extern char szTunnelMakerError [];
 
 //------------------------------------------------------------------------
 
