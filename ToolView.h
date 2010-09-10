@@ -668,9 +668,9 @@ class CWallTool : public CTexToolDlg
 		int		m_bKeys [4];
 		int		m_bFlags [MAX_WALL_FLAGS];
 		char		m_szMsg [256];
-		CWall	*m_wallP [2];
-		CWall	m_defWall;
-		CWall	m_defDoor;
+		CWall*	m_wallP [2];
+		CWall		m_defWall;
+		CWall		m_defDoor;
 		short		m_defTexture;
 		short		m_defDoorTexture;
 		short		m_defOvlTexture;
