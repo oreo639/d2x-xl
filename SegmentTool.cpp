@@ -18,9 +18,9 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_ADD, OnAddSegment)
 	ON_BN_CLICKED (IDC_CUBE_ADD_MATCEN, OnAddRobotMaker)
 	ON_BN_CLICKED (IDC_CUBE_ADD_EQUIPMAKER, OnAddEquipMaker)
-	ON_BN_CLICKED (IDC_CUBE_ADD_FUELCEN, OnAddFuelCen)
-	ON_BN_CLICKED (IDC_CUBE_ADD_REPAIRCEN, OnAddRepairCen)
-	ON_BN_CLICKED (IDC_CUBE_ADD_CONTROLCEN, OnAddControlCen)
+	ON_BN_CLICKED (IDC_CUBE_ADD_FUELCEN, OnAddFuelCenter)
+	ON_BN_CLICKED (IDC_CUBE_ADD_REPAIRCEN, OnAddRepairCenter)
+	ON_BN_CLICKED (IDC_CUBE_ADD_CONTROLCEN, OnAddReactor)
 	ON_BN_CLICKED (IDC_CUBE_SPLIT, OnSplitSegment)
 	ON_BN_CLICKED (IDC_CUBE_DEL, OnDeleteSegment)
 	ON_BN_CLICKED (IDC_CUBE_OTHER, OnOtherSegment)
@@ -252,7 +252,7 @@ void CSegmentTool::OnSetCoord (void)
 CHECKMINE;
 UpdateData (TRUE);
 undoManager.Begin (udVertices);
-current.Segment ()->Vertex (m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]])->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
+current.Segment ()->Vertex (current.Segment ()->m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]])->Set (m_nCoord [0], m_nCoord [1], m_nCoord [2]);
 undoManager.End ();
 DLE.MineView ()->Refresh (false);
 }
@@ -262,7 +262,7 @@ DLE.MineView ()->Refresh (false);
 void CSegmentTool::OnResetCoord (void)
 {
 CHECKMINE;
-CVertex* vertP = current.Segment ()->Vertex (m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]]);
+CVertex* vertP = current.Segment ()->Vertex (current.Segment ()->m_info.verts [sideVertTable[current.m_nSide][current.m_nPoint]]);
 m_nCoord [0] = vertP->v.x;
 m_nCoord [1] = vertP->v.y;
 m_nCoord [2] = vertP->v.z;
@@ -374,11 +374,11 @@ for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, tr
 			// find the wallP with this trigP
 			CWall *wallP = wallManager.Wall (0);
 			int nWall;
-			for (nWall = 0; nWall < wallManager.WallCount ;nWall++, wallP++) {
+			for (nWall = 0; nWall < wallManager.WallCount (); nWall++, wallP++) {
 				if (wallP->Info ().nTrigger == nTrigger) 
 					break;
 				}
-			if (nWall < wallManager.WallCount) {
+			if (nWall < wallManager.WallCount ()) {
 				sprintf_s (message, sizeof (message),  "%d,%d", (int) wallP->m_nSegment, (int) wallP->m_nSide + 1);
 				int h = LBTriggers ()->AddString (message);
 				LBTriggers ()->SetItemData (h, (int) wallP->m_nSegment * 0x10000L + wallP->m_nSide);
@@ -387,10 +387,9 @@ for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, tr
 		}
 	}
 // show if this is cube/side is trigPed by the control_center
-CReactorTrigger* reactorTrigger = ReactorTriggers (0);
-int control;
-for (control = 0; control < MAX_REACTOR_TRIGGERS; control++, reactorTrigger++) {
-	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide))) {
+CReactorTrigger* reactorTrigger = triggerManager.ReactorTrigger (0);
+for (short nTrigger = 0; nTrigger < MAX_REACTOR_TRIGGERS; nTrigger++, reactorTrigger++) {
+	if (-1 < (reactorTrigger->Find (CSideKey (m_nSegment, m_nSide)))) {
 		LBTriggers ()->AddString ("Reactor");
 		break;
 		}
@@ -494,7 +493,7 @@ undoManager.End ();
 void CSegmentTool::OnAddSegment () 
 {
 CHECKMINE;
-AddSegment ();
+segmentManager.Create ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -505,7 +504,7 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnDeleteSegment () 
 {
 CHECKMINE;
-DeleteSegment (current.m_nSegment);
+segmentManager.Delete (current.m_nSegment);
 DLE.MineView ()->Refresh ();
 }
 
@@ -525,7 +524,7 @@ UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->Marked ())
+		if (segP->IsMarked ())
 			segP->m_info.owner = m_nOwner;
 	}
 else 					
@@ -584,7 +583,7 @@ else {
 undoManager.Begin (udSegments);
 CSegment* segP = segmentManager.Segment (nMinSeg);
 for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
-	if (bMarked && !segP->Marked ())
+	if (bMarked && !segP->IsMarked ())
 		continue;
 	m_nType = segP->m_info.function;
 	switch(nType) {
@@ -600,7 +599,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 		// check to see if we are adding a fuel center
 		case SEGMENT_FUNC_REPAIRCEN:
-			if (IsStdLevel ()) {
+			if (theMine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -629,13 +628,13 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_GOAL_RED:
 			if (nType == m_nType)
 				continue;
-			if (segmentManager.CreateGoalSegment (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
+			if (segmentManager.CreateGoal (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
 				goto errorExit;		
 			break;
 
 		case SEGMENT_FUNC_TEAM_BLUE:
 		case SEGMENT_FUNC_TEAM_RED:
-			if (IsStdLevel ()) {
+			if (theMine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -643,34 +642,34 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				}
 			if (nType == m_nType)
 				continue;
-			if (segmentManager.CreateTeamSegment (nSegNum, false, false, nType, -1))
+			if (segmentManager.CreateTeam (nSegNum, false, false, nType, -1))
 				goto errorExit;		
 			break;
 
 		case SEGMENT_FUNC_SPEEDBOOST:
-			if (IsStdLevel ()) {
+			if (theMine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (segmentManager.CreateSpeedBoostSegment (nSegNum, false))
+			if (segmentManager.CreateSpeedBoost (nSegNum, false))
 				goto errorExit;
 			break;
 
 		case SEGMENT_FUNC_SKYBOX:
-			if (IsStdLevel ()) {
+			if (theMine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if (segmentManager.CreateSkyboxSegment (nSegNum, false))
+			if (segmentManager.CreateSkybox (nSegNum, false))
 				goto errorExit;
 			break;
 
 		case SEGMENT_FUNC_EQUIPMAKER:
-			if (IsStdLevel ()) {
+			if (theMine->IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -681,7 +680,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 			break;
 
 		case SEGMENT_FUNC_NONE:
-			UndefineSegment (nSegNum);
+			segmentManager.Undefine (nSegNum);
 			break;
 
 		default:
@@ -778,10 +777,10 @@ void CSegmentTool::AddRobotMaker ()
 CHECKMINE;
 CSegment *segP = current.Segment ();
 char szObj [80];
-int i = FindBot (LBAvailBots (), szObj);
+int i = FindRobotMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-undoManager.Begin (udRobotMaker);
+undoManager.Begin (udMatCenters);
 segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 undoManager.End ();
 int h = LBAvailBots ()->GetCurSel ();
@@ -801,11 +800,11 @@ void CSegmentTool::AddEquipMaker ()
 CHECKMINE;
 CSegment *segP = current.Segment ();
 char szObj [80];
-int i = FindEquip (LBAvailBots (), szObj);
+int i = FindEquipMaker (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS_D2))
 	return;
-undoManager.Begin (udEquipMaker);
-EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+undoManager.Begin (udMatCenters);
+segmentManager.EquipMaker (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 undoManager.End ();
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
@@ -838,10 +837,10 @@ void CSegmentTool::DeleteRobotMaker ()
 CHECKMINE;
 CSegment *segP = current.Segment ();
 char szObj [80];
-int i = FindBot (LBUsedBots (), szObj);
+int i = FindRobotMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-undoManager.Begin (udRobotMaker);
+undoManager.Begin (udMatCenters);
 segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 undoManager.End ();
 int h = LBUsedBots ()->GetCurSel ();
@@ -856,16 +855,16 @@ DLE.MineView ()->Refresh ();
 // CSegmentTool - DelMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::DeleteEquip () 
+void CSegmentTool::DeleteEquipMaker () 
 {
 CHECKMINE;
 CSegment *segP = current.Segment ();
 char szObj [80];
-int i = FindEquip (LBUsedBots (), szObj);
+int i = FindEquipMaker (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
-undoManager.Begin (udEquipMaker);
-EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+undoManager.Begin (udMatCenters);
+segmentManager.EquipMaker (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 undoManager.End ();
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
@@ -940,7 +939,7 @@ DLE.MineView ()->Refresh ();
 
                         /*--------------------------*/
 
-void CSegmentTool::OnAddBotGen ()
+void CSegmentTool::OnAddRobotMaker ()
 {
 CHECKMINE;
 AddRobotMaker ();
@@ -950,7 +949,7 @@ Refresh ();
 
                         /*--------------------------*/
 
-void CSegmentTool::OnAddEquipGen ()
+void CSegmentTool::OnAddEquipMaker ()
 {
 CHECKMINE;
 AddEquipMaker ();
@@ -960,26 +959,26 @@ Refresh ();
 
                         /*--------------------------*/
 
-void CSegmentTool::OnAddFuelCen ()
+void CSegmentTool::OnAddFuelCenter ()
 {
 CHECKMINE;
-AddFuelCenter ();
+segmentManager.CreateFuelCenter ();
 }
 
                         /*--------------------------*/
 
-void CSegmentTool::OnAddRepairCen ()
+void CSegmentTool::OnAddRepairCenter ()
 {
 CHECKMINE;
-AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
+segmentManager.CreateFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
                         /*--------------------------*/
 
-void CSegmentTool::OnAddControlCen ()
+void CSegmentTool::OnAddReactor ()
 {
 CHECKMINE;
-AddReactor ();
+segmentManager.CreateReactor ();
 }
 
                         /*--------------------------*/
@@ -987,7 +986,7 @@ AddReactor ();
 void CSegmentTool::OnSplitSegment ()
 {
 CHECKMINE;
-SplitSegment ();
+segmentManager.Split ();
 }
 
                         /*--------------------------*/

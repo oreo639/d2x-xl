@@ -609,9 +609,9 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnPoint3 ();
 		afx_msg void OnPoint4 ();
 		afx_msg void OnAddSegment ();
-		afx_msg void OnAddFuelCen ();
-		afx_msg void OnAddRepairCen ();
-		afx_msg void OnAddControlCen ();
+		afx_msg void OnAddFuelCenter ();
+		afx_msg void OnAddRepairCenter ();
+		afx_msg void OnAddReactor ();
 		afx_msg void OnSplitSegment ();
 		afx_msg void OnDeleteSegment ();
 		afx_msg void OnOtherSegment ();
