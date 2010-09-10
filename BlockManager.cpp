@@ -317,7 +317,7 @@ for (CSegmentIterator si; si; si++) {
 					fprintf (fp.File (), "        segment %d\n", wallP->m_nSegment);
 					fprintf (fp.File (), "        side %d\n", wallP->m_nSide);
 					fprintf (fp.File (), "        hps %d\n", wallP->Info ().hps);
-					fprintf (fp.File (), "        type %d\n", wallP->Info ().type);
+					fprintf (fp.File (), "        type %d\n", wallP->Type ());
 					fprintf (fp.File (), "        flags %d\n", wallP->Info ().flags);
 					fprintf (fp.File (), "        state %d\n", wallP->Info ().state);
 					fprintf (fp.File (), "        nClip %d\n", wallP->Info ().nClip);
@@ -333,7 +333,7 @@ for (CSegmentIterator si; si; si++) {
 							if (segmentManager.Segment (trigP->Segment (iTarget))->m_info.wallFlags & MARKED_MASK)
 								count++;
 						fprintf (fp.File (), "        trigP %d\n", wallP->Info ().nTrigger);
-						fprintf (fp.File (), "			    type %d\n", trigP->Info ().type);
+						fprintf (fp.File (), "			    type %d\n", trigP->Type ());
 						fprintf (fp.File (), "			    flags %ld\n", trigP->Info ().flags);
 						fprintf (fp.File (), "			    value %ld\n", trigP->Info ().value);
 						fprintf (fp.File (), "			    timer %d\n", trigP->Info ().time);

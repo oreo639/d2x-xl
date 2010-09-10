@@ -373,17 +373,17 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 			theMine->AddWall (-1, -1, WALL_OVERLAY, 0, KEY_NONE, -2, m_defOvlTexture);
 		else if (wallP = theMine->AddWall (nSegment [bSide], nSide [bSide], m_defWall.m_info.type, m_defWall.m_info.flags, 
 													m_defWall.m_info.keys, m_defWall.m_info.nClip, m_defTexture)) {
-			if (wallP->m_info.type == m_defWall.m_info.type) {
-				wallP->m_info.hps = m_defWall.m_info.hps;
-				wallP->m_info.cloakValue = m_defWall.m_info.cloakValue;
+			if (wallP->Type () == m_defWall.m_info.type) {
+				wallP->Info ().hps = m_defWall.m_info.hps;
+				wallP->Info ().cloakValue = m_defWall.m_info.cloakValue;
 				}
-			else if (wallP->m_info.type == WALL_CLOAKED) {
-				wallP->m_info.hps = 0;
-				wallP->m_info.cloakValue = 16;
+			else if (wallP->Type () == WALL_CLOAKED) {
+				wallP->Info ().hps = 0;
+				wallP->Info ().cloakValue = 16;
 				}
 			else {
-				wallP->m_info.hps = 0;
-				wallP->m_info.cloakValue = 31;
+				wallP->Info ().hps = 0;
+				wallP->Info ().cloakValue = 31;
 				}
 			}
 			// update main window
@@ -544,10 +544,10 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 		short nBaseTex  = sideP [bSide]->m_info.nBaseTex;
 		short nOvlTex = sideP [bSide]->m_info.nOvlTex;
 		theMine->DefineWall (nSegment [bSide], nSide [bSide], m_nWall [bSide], m_nType, m_wallP [0]->m_info.nClip, -1, true);
-		if ((wallP->m_info.type == WALL_OPEN) || (wallP->m_info.type == WALL_CLOSED))
+		if ((wallP->Type () == WALL_OPEN) || (wallP->Type () == WALL_CLOSED))
 			segmentManager.SetTextures (wallP->m_nSegment, wallP->m_nSide, nBaseTex, nOvlTex);
-//		else if ((wallP->m_info.type == WALL_CLOAKED) || (wallP->m_info.type == WALL_TRANSPARENT))
-//			wallP->m_info.cloakValue = m_defWall.cloakValue;
+//		else if ((wallP->Type () == WALL_CLOAKED) || (wallP->Type () == WALL_TRANSPARENT))
+//			wallP->Info ().cloakValue = m_defWall.cloakValue;
 		}
 DLE.MineView ()->Refresh ();
 Refresh ();
@@ -567,13 +567,13 @@ GetWalls ();
 m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_wallP [bSide])
-		if ((wallP->m_info.type == WALL_BLASTABLE) || (wallP->m_info.type == WALL_DOOR)) {
+		if ((wallP->Type () == WALL_BLASTABLE) || (wallP->Type () == WALL_DOOR)) {
 			if (m_nWall [bSide] < theMine->Info ().walls.count) {
 				undoManager.Begin (udWalls);
 				nClip = animClipTable [m_nClip];
-				wallP->m_info.nClip = nClip;
+				wallP->Info ().nClip = nClip;
 				// define door textures based on clip number
-				if (wallP->m_info.nClip >= 0)
+				if (wallP->Info ().nClip >= 0)
 					wallManager.SetTextures (m_nWall [bSide], m_defTexture);
 				undoManager.End ();
 				DLE.MineView ()->Refresh ();
@@ -581,7 +581,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 				}
 			}
 		else
-			wallP->m_info.nClip = -1;
+			wallP->Info ().nClip = -1;
 }
 
                         /*--------------------------*/

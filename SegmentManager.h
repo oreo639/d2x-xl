@@ -290,6 +290,9 @@ class CSegmentManager {
 		void Clear (void);
 
 		int Fix (void);
+
+		void Undefine (short nSegment);
+
 #if USE_FREELIST
 		inline bool Full (void) { return m_free.Empty (); }
 #else
@@ -316,8 +319,6 @@ class CSegmentManager {
 		bool Create (short nSegment, bool bCreate, byte nFunction, short nTexture = -1, char* szError = null);
 
 		bool Define (short nSegment, byte nFunction, short nTexture);
-
-		void Undefine (short nSegment);
 
 		void ComputeVertices (ushort newVerts [4]);
 

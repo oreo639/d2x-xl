@@ -245,8 +245,8 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 // defined D2 wall parameters
 //--------------------------------------
 for (i = 0, wallP = wallManager.Wall (0); i < wallCount; i++, wallP++) {
-	wallP->m_info.controllingTrigger = 0;
-	wallP->m_info.cloakValue = 0;
+	wallP->Info ().controllingTrigger = 0;
+	wallP->Info ().cloakValue = 0;
 	}
 
 // change trigP type and flags
@@ -254,22 +254,22 @@ for (i = 0, wallP = wallManager.Wall (0); i < wallCount; i++, wallP++) {
 for (i = 0, trigP = wallManager.Trigger (0); i < theMine->Info ().triggers.count; i++, trigP++) {
 	switch (trigP->m_info.flags) {
 		case TRIGGER_CONTROL_DOORS:
-			trigP->m_info.type = TT_OPEN_DOOR;
+			trigP->Type () = TT_OPEN_DOOR;
 			break;
 		case TRIGGER_EXIT:
-			trigP->m_info.type = TT_EXIT;
+			trigP->Type () = TT_EXIT;
 			break;
 		case TRIGGER_MATCEN:
-			trigP->m_info.type = TT_MATCEN;
+			trigP->Type () = TT_MATCEN;
 			break;
 		case TRIGGER_ILLUSION_OFF:
-			trigP->m_info.type = TT_ILLUSION_OFF;
+			trigP->Type () = TT_ILLUSION_OFF;
 			break;
 		case TRIGGER_ILLUSION_ON:
-			trigP->m_info.type = TT_ILLUSION_ON;
+			trigP->Type () = TT_ILLUSION_ON;
 			break;
 		case TRIGGER_SECRET_EXIT:
-			trigP->m_info.type = TT_SECRET_EXIT;
+			trigP->Type () = TT_SECRET_EXIT;
 			break;
 
 		// unsupported types

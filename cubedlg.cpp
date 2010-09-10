@@ -378,7 +378,7 @@ for (nTrigger = 0; nTrigger < theMine->Info ().triggers.count; nTrigger++, trigP
 			CWall *wallP = wallManager.Wall (0);
 			int nWall;
 			for (nWall = 0; nWall < theMine->Info ().walls.count ;nWall++, wallP++) {
-				if (wallP->m_info.nTrigger == nTrigger) 
+				if (wallP->Info ().nTrigger == nTrigger) 
 					break;
 				}
 			if (nWall < theMine->Info ().walls.count) {

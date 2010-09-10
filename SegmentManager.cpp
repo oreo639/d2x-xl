@@ -54,13 +54,13 @@ CSide* CSegmentManager::OppositeSide (CSideKey key, CSideKey& opp)
 current.Get (key); 
 #ifdef _DEBUG
 if (key.m_nSegment < 0 || key.m_nSegment >= Count ())
-	return false; 
+	return null; 
 if (key.m_nSide < 0 || key.m_nSide >= 6)
-	return false; 
+	return null; 
 #endif
 short nChildSeg = Segment (key.m_nSegment)->Child (key.m_nSide); 
 if (nChildSeg < 0 || nChildSeg >= Count ())
-	return false; 
+	return null; 
 for (short nChildSide = 0; nChildSide < 6; nChildSide++) {
 	if (Segment (nChildSeg)->Child (nChildSide) == key.m_nSegment) {
 		opp.m_nSegment = nChildSeg; 

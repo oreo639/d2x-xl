@@ -206,7 +206,7 @@ bool CWall::IsVariable (void)
 CTrigger* trigP = Trigger ();
 if (trigP == null)
 	return false;
-char trigType = trigP->Info ().type;
+char trigType = trigP->Type ();
 return (trigType == TT_ILLUSION_OFF) ||
 		 (trigType == TT_ILLUSION_ON) ||
 		 (trigType == TT_CLOSE_WALL) ||

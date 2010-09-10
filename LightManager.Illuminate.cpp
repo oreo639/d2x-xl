@@ -51,7 +51,7 @@ class CVicinity {
 				for (short nSide = 0; nSide < MAX_SIDES_PER_SEGMENT; nSide++) {
 					// skip if there is a wall and its a door
 					CWall* wallP = segmentManager.Wall (CSideKey (nSegment, nSide));
-					if ((wallP == null) && (wallP->Info ().type != WALL_DOOR))
+					if ((wallP == null) && (wallP->Type () != WALL_DOOR))
 						Compute (segP->Child (nSide), nDepth - 1);
 					}
 				}
@@ -482,7 +482,7 @@ m_fLightScale = 1.0; ///= 100.0;
 				}
 			if (!bCalcDeltas) {	//check if light is target of a "light on/off" trigger
 				CTrigger* trigP = triggerManager.FindByTarget (key);
-				if ((trigP != null) && (trigP->Info ().type >= TT_LIGHT_OFF))
+				if ((trigP != null) && (trigP->Type () >= TT_LIGHT_OFF))
 					bCalcDeltas = true;
 				}
 			if (!bCalcDeltas)
@@ -555,7 +555,7 @@ m_fLightScale = 1.0; ///= 100.0;
 						if (wallP == null)
 							continue;
 						// .. or its not a door ..
-						if (wallP->Info ().type == WALL_OPEN) 
+						if (wallP->Type () == WALL_OPEN) 
 							continue; // don't put light because there is no texture here
 						}
 					// don't affect non-variable light emitting textures (e.g. lava)

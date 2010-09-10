@@ -645,10 +645,10 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		if (sideP->m_info.nWall >= MAX_WALLS)
 			continue;
 		CWall *wallP = wallManager.Wall (sideP->m_info.nWall);
-		if (wallP->m_info.nTrigger >= NumTriggers ())
+		if (wallP->Info ().nTrigger >= NumTriggers ())
 			continue;
 		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
-			theMine->DeleteTrigger (wallP->m_info.nTrigger);
+			theMine->DeleteTrigger (wallP->Info ().nTrigger);
 			nDeleted++;
 			}
 		}
@@ -679,7 +679,7 @@ if (m_nClass) {
 	}
 else {
 	for (nWall = 0, wallP = wallManager.Wall (0); nWall < theMine->Info ().walls.count; nWall++, wallP++)
-		if (wallP->m_info.nTrigger == m_nTrigger)
+		if (wallP->Info ().nTrigger == m_nTrigger)
 			break;
 	if (nWall >= theMine->Info ().walls.count) {
 		EnableControls (FALSE);

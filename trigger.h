@@ -62,6 +62,8 @@ class CTrigger : public CTriggerTargets, public CGameItem {
 	public:
 		inline tTrigger& Info (void) { return m_info; }
 
+		inline byte& Type (void) { return m_info.type; }
+
 		void Read (CFileManager& fp, int version, bool bObjTrigger);
 
 		void Write (CFileManager& fp, int version, bool bObjTrigger);

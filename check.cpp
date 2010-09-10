@@ -59,8 +59,8 @@ bool CDiagTool::MarkSegment (short nSegment)
 {
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return false;
-segmentManager.Segment (nSegment)->m_info.wallFlags &= ~MARKED_MASK;
-theMine->MarkSegment (nSegment);
+segmentManager.Segment (nSegment)->Unmark (MARKED_MASK);
+segmentManager.Segment (nSegment)->Mark (MARKED_MASK);
 return true;
 }
 
@@ -80,7 +80,7 @@ if ((i < 0) || (i >= LBBugs ()->GetCount ()))
 tBugPos *pbp = (tBugPos *) LBBugs ()->GetItemDataPtr (i);
 if (!pbp)
 	return;
-theMine->UnmarkAll ();
+segmentManager.UnmarkAll ();
 if (bCurSeg = MarkSegment (pbp->nSegment))
 	current.m_nSegment = pbp->nSegment;
 MarkSegment (pbp->nChild);
@@ -90,13 +90,13 @@ if ((pbp->nLine >= 0) && (pbp->nLine < 4))
 	current.m_nLine = pbp->nLine;
 if ((pbp->nPoint >= 0) && (pbp->nPoint < 8))
 	current.m_nPoint = pbp->nPoint;
-if ((pbp->nWall >= 0) && (pbp->nWall < theMine->Info ().walls.count))
+if ((pbp->nWall >= 0) && (pbp->nWall < wallManager.WallCount ()))
 	nWall = pbp->nWall;
-else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < theMine->Info ().triggers.count))
+else if ((pbp->nTrigger >= 0) && (pbp->nTrigger < triggerManager.WallTriggerCount ()))
 	wallP = wallManager.FindByTrigger (pbp->nTrigger);
 else
 	wallP = null;
-if ((wallP != null) && MarkSegment ((wallP->m_nSegment))
+if ((wallP != null) && MarkSegment (wallP->m_nSegment))
 	if (bCurSeg) {
 		other.m_nSegment = wallP->m_nSegment;
 		other.m_nSide = wallP->m_nSide;
@@ -132,7 +132,7 @@ double CDiagTool::CalcFlatnessRatio (short nSegment, short nSide)
 	CSegment*	segP = segmentManager.Segment (nSegment);
 
 for (i = 0; i < 4; i++)
-	vert [i] = *theMine->Vertices (segP->m_info.verts[sideVertTable[nSide][i]]);
+	vert [i] = *vertexManager.Vertex (segP->m_info.verts[sideVertTable[nSide][i]]);
 
 length1 = CalcDistance (vert + 0, vert + 1, vert + 2);
 length2 = CalcDistance (vert + 0, vert + 1, vert + 3);
@@ -184,10 +184,10 @@ double CDiagTool::CalcAngle (short vert0,short vert1,short vert2,short vert3)
   CDoubleVector line1,line2,line3,orthog;
   double ratio;
   double dot_product, magnitude1, magnitude2,angle;
-  CVertex* v0 = theMine->Vertices (vert0);
-  CVertex* v1 = theMine->Vertices (vert1);
-  CVertex* v2 = theMine->Vertices (vert2);
-  CVertex* v3 = theMine->Vertices (vert3);
+  CVertex* v0 = vertexManager.Vertex (vert0);
+  CVertex* v1 = vertexManager.Vertex (vert1);
+  CVertex* v2 = vertexManager.Vertex (vert2);
+  CVertex* v3 = vertexManager.Vertex (vert3);
       // define lines
 line1 = *v1 - *v0;
 line2 = *v2 - *v0;
@@ -308,11 +308,11 @@ DLE.MineView ()->SetSelectMode (BLOCK_MODE);
 
 // now do actual checking
 DLE.MainFrame ()->InitProgress (segmentManager.Count () * 3 + 
-										  theMine->vertexManager.Count () +
-										  theMine->Info ().walls.count * 2 +
-										  theMine->Info ().triggers.count * 3 +
+										  vertexManager.Count () +
+										  wallManager.WallCount () * 2 +
+										  triggerManager.WallTriggerCount () * 3 +
 										  objectManager.Count () * 2 +
-										  theMine->ObjTriggerCount ());
+										  triggerManager.ObjTriggerCount ());
 if (!CheckBotGens ())
 	if (!CheckEquipGens ())
 		if (!CheckSegments ())
@@ -411,10 +411,10 @@ for (i = segmentManager.Count (); i; i--, segP++)
 		default:
 			break;
 	}
-if (nBotGens != theMine->RobotMakerCount ()) {
+if (nBotGens != segmentManager.RobotMakerCount ()) {
 	if (m_bAutoFixBugs) {
 		sprintf_s (message, sizeof (message), "FIXED: Invalid robot maker count");
-		theMine->RobotMakerCount () = nBotGens;
+		segmentManager.RobotMakerCount () = nBotGens;
 		}
 	else
 		sprintf_s (message, sizeof (message),"ERROR: Invalid robot maker count");
@@ -437,10 +437,9 @@ bool CDiagTool::CheckSegments (void)
 if (theMine == null) 
 	return false;
 
-  short nSegment, nSide, nChild, nSide2, pointnum;
+  short nSegment, nSide, nChild, nSide2;
   short vert0, vert1, vert2, vert3;
   short i, j;
-  double angle,flatness;
   short match[4];
   CSegment *segP = segmentManager.Segment (0);
 
@@ -458,40 +457,43 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 //	between L3 and V1 must be less than PI/2.
 //
 	if (segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().botGen.count) || (segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= segmentManager.RobotMakerCount ()) || (segmentManager.RobotMaker (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
-				theMine->UndefineSegment (nSegment);
+				segmentManager.Undefine (nSegment);
 			}
 		}
 	if (segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) {
-		if ((segP->m_info.nMatCen >= theMine->Info ().equipGen.count) || (theMine->EquipMakers (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
+		if ((segP->m_info.nMatCen >= segmentManager.EquipMakerCount ()) || (segmentManager.EquipMaker (segP->m_info.nMatCen)->m_info.nSegment != nSegment)) {
 	 		sprintf_s (message, sizeof (message), "%s: Segment has invalid type (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 			if (m_bAutoFixBugs)
-				theMine->UndefineSegment (nSegment);
+				segmentManager.Undefine (nSegment);
 			}
 		}
 
-	for (pointnum = 0; pointnum < 8; pointnum++) {
+	short nPoint;
+	for (nPoint = 0; nPoint < 8; nPoint++) {
 // define vert numbers
-		vert0 = segP->m_info.verts[pointnum];
-		vert1 = segP->m_info.verts[connectPointTable[pointnum][0]];
-		vert2 = segP->m_info.verts[connectPointTable[pointnum][1]];
-		vert3 = segP->m_info.verts[connectPointTable[pointnum][2]];
-		angle = CalcAngle (vert0,vert1,vert2,vert3);
-		angle = max (angle,CalcAngle (vert0,vert2,vert3,vert1));
-		angle = max (angle,CalcAngle (vert0,vert3,vert1,vert2));
+		vert0 = segP->m_info.verts [nPoint];
+		vert1 = segP->m_info.verts [connectPointTable [nPoint][0]];
+		vert2 = segP->m_info.verts [connectPointTable [nPoint][1]];
+		vert3 = segP->m_info.verts [connectPointTable [nPoint][2]];
+		double angle = CalcAngle (vert0, vert1, vert2, vert3);
+		double a = CalcAngle (vert0, vert2, vert3, vert1);
+		angle = max (angle, a);
+		a = CalcAngle (vert0, vert3, vert1, vert2);
+		angle = max (angle, a);
 		if (angle > M_PI_2) {
-			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",nSegment,pointnum, (int) ( (angle*180.0)/M_PI));
-			if (UpdateStats (message, 0, nSegment, -1, -1, pointnum))
+			sprintf_s (message, sizeof (message), "WARNING: Illegal cube geometry (cube=%d,point=%d,angle=%d)",nSegment,nPoint, (int) ( (angle*180.0)/M_PI));
+			if (UpdateStats (message, 0, nSegment, -1, -1, nPoint))
 				return true;
 			break; // from for loop
 			}
 		}
-	if (pointnum == 8) { // angles must be ok from last test
+	if (nPoint == 8) { // angles must be ok from last test
 // now test for flat sides
 		for (nSide = 0; nSide < 6; nSide++) {
-			flatness = CalcFlatnessRatio (nSegment,nSide);
+			double flatness = CalcFlatnessRatio (nSegment,nSide);
 			if (flatness < 0.80) {
 				sprintf_s (message, sizeof (message),"ERROR: Illegal cube geometry (cube=%d,side=%d,flatness=%d%%)",nSegment,nSide, (int) (flatness*100));
 				if (UpdateStats (message, 1, nSegment, nSide))
@@ -504,8 +506,8 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 // Check length of each line.
 #if 0
 	for (linenum=0;linenum<12;linenum++) {
-		length = theMine->CalcLength (theMine->Vertices (segP->m_info.verts[lineVertTable[linenum][0]]),
-											  theMine->Vertices (segP->m_info.verts[lineVertTable[linenum][1]]));
+		length = theMine->CalcLength (vertexManager.Vertex (segP->m_info.verts[lineVertTable[linenum][0]]),
+											  vertexManager.Vertex (segP->m_info.verts[lineVertTable[linenum][1]]));
 		if (length < (double)F1_0) {
 			sprintf_s (message, sizeof (message),"WARNING: Line length too short (cube=%d,line=%d)",nSegment,linenum);
 			if (UpdateStats (message, 0, nSegment, -1, linenum))
@@ -646,12 +648,12 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
     // from center and make sure it is less than max corner.
     center.Clear ();
     for (corner = 0; corner < 8; corner++) {
-      center += *theMine->Vertices (segP->m_info.verts[corner]);
+      center += *vertexManager.Vertex (segP->m_info.verts[corner]);
     }
     center /= 8.0;
     max_radius = 0;
     for (corner = 0; corner < 8; corner++) {
-		 radius = Distance (*theMine->Vertices (segP->m_info.verts[corner]), center);
+		 radius = Distance (*vertexManager.Vertex (segP->m_info.verts[corner]), center);
 		 max_radius = max (max_radius,radius);
 		 }
 	object_radius = Distance (objP->m_location.pos, center);
@@ -730,7 +732,7 @@ for (nObject = 0;nObject < objCount ; nObject++, objP++) {
 				break;
 	  default:
 		 if (m_bAutoFixBugs) {
-			 theMine->DeleteObject (nObject);
+			 objectManager.Delete (nObject);
 			sprintf_s (message, sizeof (message),"FIXED: Illegal object type (object=%d,type=%d)",nObject,type);
 			}
 		 else
@@ -878,7 +880,7 @@ for (nObject=0;nObject<objCount;nObject++, objP++) {
 	type = objP->m_info.type;
 	if (type == OBJ_CNTRLCEN) {
 		if (segmentManager.Segment (objP->m_info.nSegment)->m_info.function != SEGMENT_FUNC_REACTOR) {
-			if (m_bAutoFixBugs && theMine->AddRobotMaker (objP->m_info.nSegment, false, false))
+			if (m_bAutoFixBugs && segmentManager.CreateRobotMaker (objP->m_info.nSegment, false, false))
 				sprintf_s (message, sizeof (message),"FIXED: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
 			else
 				sprintf_s (message, sizeof (message),"WARNING: Reactor belongs to a segment of wrong type (objP=%d, segP=%d)",nObject,objP->m_info.nSegment);
@@ -923,19 +925,18 @@ bool CDiagTool::CheckTriggers ()
 if (theMine == null) 
 	return false;
 
-	int count, nTrigger, deltrignum, nWall, i;
-	int nSegment, nSide, linknum;
-	short nOppSeg, nOppSide;
+	int count, nTrigger, nDelTrigger, nWall, i;
+	int nSegment, nSide, nTarget;
 
 	short sub_errors = m_nErrors [0];
 	short sub_warnings = m_nErrors [1];
 	LBBugs ()->AddString ("[Triggers]");
 	int segCount = segmentManager.Count ();
-	int trigCount = theMine->Info ().triggers.count;
-	CTrigger *trigP = wallManager.Trigger (0);
-	int wallCount = theMine->Info ().walls.count;
+	int trigCount = triggerManager.WallTriggerCount ();
+	CTrigger *trigP = triggerManager.Trigger (0);
+	int wallCount = wallManager.WallCount ();
 	CWall *wallP;
-	CReactorTrigger *reactorTrigger = theMine->ReactorTriggers (0);
+	CReactorTrigger *reactorTrigger = triggerManager.ReactorTrigger (0);
 
 	// make sure trigP is linked to exactly one wallP
 for (i = 0; i < reactorTrigger->m_count; i++)
@@ -953,21 +954,21 @@ for (i = 0; i < reactorTrigger->m_count; i++)
 				return true;
 			}
 		}
-for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
+for (nTrigger = nDelTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	count = 0;
 	wallP = wallManager.Wall (0);
 	for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
-		if (wallP->m_info.nTrigger == nTrigger) {
+		if (wallP->Info ().nTrigger == nTrigger) {
 			// if exit, make sure it is linked to CReactorTrigger
-			int tt = trigP->m_info.type;
-			int tf = trigP->m_info.flags;
+			int tt = trigP->Type ();
+			int tf = trigP->Info ().flags;
 			if (DLE.IsD1File () ? tf & (TRIGGER_EXIT | TRIGGER_SECRET_EXIT) : tt == TT_EXIT) {
 				for (i = 0; i < reactorTrigger->m_count; i++)
 					if (*((CSideKey*) (reactorTrigger)) == *((CSideKey*) (wallP)))
 						break; // found it
 				// if did not find it
-				if (i>=theMine->ReactorTriggers (0)->m_count) {
+				if (i >= triggerManager.ReactorTriggerCount ()) {
 					if (m_bAutoFixBugs) {
 						triggerManager.UpdateReactor ();
 						sprintf_s (message, sizeof (message),"FIXED: Exit not linked to reactor (cube=%d, side=%d)", wallP->m_nSegment, wallP->m_nSide);
@@ -980,28 +981,28 @@ for (nTrigger = deltrignum = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				}
 			count++;
 			if (count >1) {
-				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wallP (trig=%d, wallP=%d)",nTrigger,nWall);
+				sprintf_s (message, sizeof (message),"WARNING: Trigger belongs to more than one wall (trig=%d, wallP=%d)",nTrigger,nWall);
 				if (UpdateStats (message,0, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 		}
 	}
 	if (count < 1) {
 		if (m_bAutoFixBugs) {
-			theMine->DeleteTrigger (nTrigger);
+			triggerManager.Delete (nTrigger);
 			nTrigger--;
 			trigP--;
 			trigCount--;
-			sprintf_s (message, sizeof (message),"FIXED: Unused trigP (trigP=%d)",nTrigger + deltrignum);
-			deltrignum++;
+			sprintf_s (message, sizeof (message),"FIXED: Unused trigger (trigger=%d)", nTrigger + nDelTrigger);
+			nDelTrigger++;
 			}
 		else
-			sprintf_s (message, sizeof (message),"WARNING: Unused trigP (trigP=%d)",nTrigger);
+			sprintf_s (message, sizeof (message),"WARNING: Unused trigger (trigger=%d)", nTrigger);
 		if (UpdateStats (message,0,1)) return true;
 		}
 	}
 
 short trigSeg, trigSide;
-trigP = wallManager.Trigger (0);
+trigP = triggerManager.Trigger (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	wallP = wallManager.FindByTrigger (nTrigger);
@@ -1012,8 +1013,8 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	else
 		trigSeg = trigSide = -1;
 	// check number of links of trigP (only for
-	int tt = trigP->m_info.type;
-	int tf = trigP->m_info.flags;
+	int tt = trigP->Type ();
+	int tf = trigP->Info ().flags;
 	if (trigP->m_count == 0) {
 		if (DLE.IsD1File ()
 			 ? tf & (TRIGGER_CONTROL_DOORS | TRIGGER_ON | TRIGGER_ONE_SHOT | TRIGGER_MATCEN | TRIGGER_ILLUSION_OFF | TRIGGER_ILLUSION_ON) 
@@ -1027,27 +1028,27 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	else {
 		// check range of links
-		for (linknum = 0; linknum < trigP->m_count; linknum++) {
-			if (linknum >= MAX_TRIGGER_TARGETS) {
+		for (nTarget = 0; nTarget < trigP->m_count; nTarget++) {
+			if (nTarget >= MAX_TRIGGER_TARGETS) {
 				if (m_bAutoFixBugs) {
 					trigP->m_count = MAX_TRIGGER_TARGETS;
-					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,linknum);
+					sprintf_s (message, sizeof (message),"FIXED: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,nTarget);
 					}
 				else
-					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,linknum);
+					sprintf_s (message, sizeof (message),"WARNING: Trigger has too many targets (trigP=%d, number of links=%d)",nTrigger,nTarget);
 				if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) 
 					return true;
 				break;
 				}
 			// check segment range
-			nSegment = trigP->Segment (linknum);
-			nSide = trigP->Side (linknum);
-			if ((nSegment < 0) || ((nSide < 0) ? (nSegment >= theMine->ObjectCount ()) : (nSegment >= segmentManager.Count ()))) {
+			nSegment = trigP->Segment (nTarget);
+			nSide = trigP->Side (nTarget);
+			if ((nSegment < 0) || ((nSide < 0) ? (nSegment >= objectManager.Count ()) : (nSegment >= segmentManager.Count ()))) {
 				if (m_bAutoFixBugs) {
-					if (theMine->DeleteTargetFromTrigger (trigP, linknum))
-						linknum--;
+					if (trigP->Delete (nTarget))
+						nTarget--;
 					else { // => trigP deleted
-						linknum = MAX_TRIGGER_TARGETS;	// take care of the loops
+						nTarget = MAX_TRIGGER_TARGETS;	// take care of the loops
 						trigP--;
 						}
 					sprintf_s (message, sizeof (message),"FIXED: Trigger points to non-existant %s (trigP=%d, cube=%d)", 
@@ -1076,17 +1077,17 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 				} else {
 					CSegment *segP = segmentManager.Segment (nSegment);
 					// check door opening trigP
-//						if (trigP->m_info.flags == TRIGGER_CONTROL_DOORS) {
+//						if (trigP->Info ().flags == TRIGGER_CONTROL_DOORS) {
 					if (DLE.IsD1File ()
 						 ? tf & TRIGGER_CONTROL_DOORS 
 						 : tt==TT_OPEN_DOOR || tt==TT_CLOSE_DOOR || tt==TT_LOCK_DOOR || tt==TT_UNLOCK_DOOR) {
 						// make sure trigP points to a wallP if it controls doors
 						if (segP->m_sides[nSide].m_info.nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
-								if (theMine->DeleteTargetFromTrigger (trigP, linknum))
-									linknum--;
+								if (trigP->Delete (nTarget))
+									nTarget--;
 								else {
-									linknum = MAX_TRIGGER_TARGETS;
+									nTarget = MAX_TRIGGER_TARGETS;
 									trigP--;
 									}
 								sprintf_s (message, sizeof (message),"FIXED: Trigger does not target a door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
@@ -1097,12 +1098,14 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						}
 
 						// make sure oposite segment/side has a wallP too
-						if ((theMine == null)->OppositeSide (nOppSeg, nOppSide, nSegment, nSide)) {
-							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
+						CSideKey opp;
+						CSide* oppSideP = segmentManager.OppositeSide (CSideKey (nSegment, nSide), opp);
+						if (oppSideP == null) {
+							sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))", nTrigger, nSegment, nSide);
 							if (UpdateStats (message, 0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						else {
-							if (segmentManager.Segment (nOppSeg)->m_sides [nOppSide].m_info.nWall >= wallCount) {
+							if (oppSideP->Wall () == null) {
 								sprintf_s (message, sizeof (message),"WARNING: Trigger opens a single sided door (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
 								if (UpdateStats (message,1, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 								}
@@ -1115,10 +1118,10 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 						// make sure trigP points to a wallP if it controls doors
 						if (segP->m_sides [nSide].m_info.nWall >= wallCount) {
 							if (m_bAutoFixBugs) {
-								if (theMine->DeleteTargetFromTrigger (trigP, linknum))
-									linknum--;
+								if (trigP->Delete (nTarget))
+									nTarget--;
 								else {
-									linknum = MAX_TRIGGER_TARGETS;
+									nTarget = MAX_TRIGGER_TARGETS;
 									trigP--;
 									}
 								sprintf_s (message, sizeof (message),"FIXED: Trigger target does not exist (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
@@ -1128,7 +1131,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 							if (UpdateStats (message,0, trigSeg, trigSide, -1, -1, -1, -1, nTrigger)) return true;
 							}
 						}
-//						if (trigP->m_info.flags == TRIGGER_MATCEN) {
+//						if (trigP->Info ().flags == TRIGGER_MATCEN) {
 					else if (DLE.IsD1File () ? tf & TRIGGER_MATCEN : tt == TT_MATCEN) {
 						if ((segP->m_info.function != SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.function != SEGMENT_FUNC_EQUIPMAKER)) {
 							sprintf_s (message, sizeof (message),"WARNING: Trigger does not target a robot or equipment maker (trigP=%d, link= (%d,%d))",nTrigger,nSegment,nSide);
@@ -1143,7 +1146,7 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 
 // make sure there is exactly one exit and its linked to the CReactorTrigger
 count = 0;
-trigP = wallManager.Trigger (0);
+trigP = triggerManager.Trigger (0);
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	wallP = wallManager.FindByTrigger (nTrigger);
@@ -1153,8 +1156,8 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	else
 		trigSeg = trigSide = -1;
-	int tt = trigP->m_info.type;
-	int tf = trigP->m_info.flags;
+	int tt = trigP->Type ();
+	int tf = trigP->Info ().flags;
 	if (DLE.IsD1File () ? tf & TRIGGER_EXIT : tt == TT_EXIT) {
 		count++;
 		if (count >1) {
@@ -1164,13 +1167,13 @@ for (nTrigger = 0; nTrigger < trigCount; nTrigger++, trigP++) {
 		}
 	}
 
-trigCount = theMine->ObjTriggerCount ();
+trigCount = triggerManager.ObjTriggerCount ();
 for (nTrigger = 0; nTrigger < trigCount; nTrigger++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	trigP = theMine->ObjTriggers (nTrigger);
-	if ((trigP->m_info.type != TT_MESSAGE) && (trigP->m_info.type != TT_SOUND) && (trigP->m_info.type != TT_COUNTDOWN) && !trigP->m_count) {
-		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->m_info.nObject);
-		if (UpdateStats (message,0, nTrigger, trigP->m_info.nObject, -1, -1, -1, -1, nTrigger)) return true;
+	trigP = triggerManager.ObjTrigger (nTrigger);
+	if ((trigP->Type () != TT_MESSAGE) && (trigP->Type () != TT_SOUND) && (trigP->Type () != TT_COUNTDOWN) && !trigP->m_count) {
+		sprintf_s (message, sizeof (message), "ERROR: Object trigP has no targets (trigP=%d, object=%d))", nTrigger, trigP->Info ().nObject);
+		if (UpdateStats (message,0, nTrigger, trigP->Info ().nObject, -1, -1, -1, -1, nTrigger)) return true;
 		}
 	}
 if (count < 1) {
@@ -1189,7 +1192,7 @@ return false;
 
 char CDiagTool::FindMatCen (CMatCenter* matCenP, short nSegment, short* refList)
 {
-	char	h = -1, i, j = char (theMine->Info ().botGen.count);
+	char	h = -1, i, j = char (segmentManager.RobotMakerCount ());
 
 if (refList) {
 	for (i = 0; i < j; i++) {
@@ -1271,7 +1274,7 @@ for (h = i = 0; i < j; i++, segP++) {
 	else {
 		sprintf_s (message, sizeof (message), "%s: Too many %s makers", m_bAutoFixBugs ? "FIXED" : "ERROR", pszType, i);
 		if (m_bAutoFixBugs) 
-			theMine->UndefineSegment (i);
+			segmentManager.Undefine (i);
 		}
 	}
 return h;
@@ -1301,7 +1304,7 @@ for (h = i = 0; i < j; i++, segP++) {
 		refList [n] = -1;
 		}
 	else if (m_bAutoFixBugs)
-		theMine->UndefineSegment (i);
+		segmentManager.Undefine (i);
 	}
 return h;
 }
@@ -1339,7 +1342,7 @@ if (theMine == null)
 
 	short					h = segmentManager.Count (), i, nSegment = 0;
 	bool					bOk = true;
-	short					nMatCenSegs, nMatCens = short (theMine->Info ().botGen.count);
+	short					nMatCenSegs, nMatCens = short (segmentManager.RobotMakerCount ());
 	CSegment*			segP = segmentManager.Segment (0);
 	CMatCenter*		matCenP = segmentManager.RobotMaker (0);
 	short					segList [MAX_NUM_MATCENS_D2];
@@ -1350,7 +1353,7 @@ for (i = 0; i < nMatCens; i++)
 CountMatCenRefs (SEGMENT_FUNC_ROBOTMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens, "Robot");
 AssignMatCens (SEGMENT_FUNC_ROBOTMAKER, segList, refList, matCenP, nMatCens);
-theMine->Info ().botGen.count = CleanupMatCens (refList, matCenP, nMatCens);
+segmentManager.RobotMakerCount () = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Robot maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;
@@ -1362,19 +1365,19 @@ return false;
 
 bool CDiagTool::CheckEquipGens (void)
 {
-	short					i, nSegment = 0;
-	bool					bOk = true;
-	int					nMatCenSegs, nMatCens = int (theMine->Info ().equipGen.count);
-	CMatCenter*		matCenP = theMine->EquipMakers (0);
-	short					segList [MAX_NUM_MATCENS_D2];
-	short					refList [MAX_NUM_MATCENS_D2];
+	short				i, nSegment = 0;
+	bool				bOk = true;
+	int				nMatCenSegs, nMatCens = int (segmentManager.EquipMakerCount ());
+	CMatCenter*		matCenP = segmentManager.EquipMaker (0);
+	short				segList [MAX_NUM_MATCENS_D2];
+	short				refList [MAX_NUM_MATCENS_D2];
 
 for (i = 0; i < nMatCens; i++)
 	matCenP [i].m_info.nFuelCen = i;
 CountMatCenRefs (SEGMENT_FUNC_EQUIPMAKER, refList, matCenP, nMatCens);
 nMatCenSegs = FixMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens, "Equipment");
 AssignMatCens (SEGMENT_FUNC_EQUIPMAKER, segList, refList, matCenP, nMatCens);
-theMine->Info ().equipGen.count = CleanupMatCens (refList, matCenP, nMatCens);
+segmentManager.EquipMakerCount () = CleanupMatCens (refList, matCenP, nMatCens);
 if (!bOk) {
 	sprintf_s (message, sizeof (message), "%s: Equipment maker list corrupted (segment=%d))", m_bAutoFixBugs ? "FIXED" : "ERROR", nSegment);
 	if (UpdateStats (message, 0)) return true;
@@ -1387,14 +1390,10 @@ return false;
 
 CWall *CDiagTool::OppWall (ushort nSegment, ushort nSide)
 {
-	short	oppSegnum, oppSidenum, nWall;
+	CSideKey	opp;
+	CSide*	sideP = segmentManager.OppositeSide (CSideKey (nSegment, nSide), opp);
 
-if ((theMine == null)->OppositeSide (oppSegnum, oppSidenum, nSegment, nSide))
-	return null;
-nWall = segmentManager.Segment (oppSegnum)->m_sides [oppSidenum].m_info.nWall;
-if ((nWall < 0) || (nWall > MAX_WALLS))
-	return null;
-return wallManager.Wall (nWall);
+return (sideP == null) ? null : sideP->Wall ();
 }
 
 //--------------------------------------------------------------------------
@@ -1406,7 +1405,7 @@ if (theMine == null)
 	return false;
 
 	short nSegment,nSide;
-	ushort nWall, wallCount = theMine->Info ().walls.count, 
+	ushort nWall, wallCount = wallManager.WallCount (), 
 			 maxWalls = MAX_WALLS;
 	CSegment *segP;
 	CSide *sideP;
@@ -1461,7 +1460,7 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 					sideP->m_info.nWall = NO_WALL;
 				else {
 					ow = OppWall (nSegment, nSide);
-					if (ow && (ow->m_info.type == w->m_info.type)) {
+					if (ow && (ow->Type () == w->Type ())) {
 						segP->m_sides [w->m_nSide].m_info.nWall = NO_WALL;
 						w->m_nSide = nSide;
 						}
@@ -1483,10 +1482,10 @@ for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segCount; nSegm
 for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 	DLE.MainFrame ()->Progress ().StepIt ();
 	// check wall range type
-	if (wallP->m_info.type > (DLE.IsD1File () ? WALL_CLOSED : theMine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
+	if (wallP->Type () > (DLE.IsD1File () ? WALL_CLOSED : theMine->IsStdLevel () ? WALL_CLOAKED : WALL_TRANSPARENT)) {
 		sprintf_s (message, sizeof (message),
 					"ERROR: Wall type out of range (wall=%d, type=%d)",
-					nWall,wallP->m_info.type);
+					nWall,wallP->Type ());
 		if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 		}
 		// check range of segment number that the wall points to
@@ -1538,52 +1537,52 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				}
 			}
 			// make sure trigger number of wall is in range
-		if ((wallP->m_info.nTrigger != NO_TRIGGER) && (wallP->m_info.nTrigger >= theMine->Info ().triggers.count)) {
+		if ((wallP->Info ().nTrigger != NO_TRIGGER) && (wallP->Info ().nTrigger >= triggerManager.WallTriggerCount ())) {
 			if (m_bAutoFixBugs) {
 				sprintf_s (message, sizeof (message),
 							"FIXED: Wall has invalid trigger (wall=%d, trigger=%d)",
-							nWall, wallP->m_info.nTrigger);
-				wallP->m_info.nTrigger = NO_TRIGGER;
+							nWall, wallP->Info ().nTrigger);
+				wallP->Info ().nTrigger = NO_TRIGGER;
 				}
 			else
 				sprintf_s (message, sizeof (message),
 							"ERROR: Wall has invalid trigger (wall=%d, trigger=%d)",
-							nWall, wallP->m_info.nTrigger);
+							nWall, wallP->Info ().nTrigger);
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 #if 1 // linked walls not supported in DLE-XP and D2X-XL
-		if (wallP->m_info.linkedWall != -1) {
-			short invLinkedWall = wallP->m_info.linkedWall;
+		if (wallP->Info ().linkedWall != -1) {
+			short invLinkedWall = wallP->Info ().linkedWall;
 			if (m_bAutoFixBugs) {
-				wallP->m_info.linkedWall = -1;
+				wallP->Info ().linkedWall = -1;
 				sprintf_s (message, sizeof (message),
 							  "FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-							  nWall, invLinkedWall, wallP->m_info.linkedWall);
+							  nWall, invLinkedWall, wallP->Info ().linkedWall);
 				}
 			else
 				sprintf_s (message, sizeof (message),
 							  "ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-							  nWall, invLinkedWall, wallP->m_info.linkedWall);
+							  nWall, invLinkedWall, wallP->Info ().linkedWall);
 			}
 #else
-		if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount)) {
+		if ((wallP->Info ().linkedWall < -1) || (wallP->Info ().linkedWall >= wallCount)) {
 			if (m_bAutoFixBugs) {
-				short	oppSeg, oppSide, invLinkedWall = wallP->m_info.linkedWall;
+				short	oppSeg, oppSide, invLinkedWall = wallP->Info ().linkedWall;
 				if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
-					wallP->m_info.linkedWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
-					if ((wallP->m_info.linkedWall < -1) || (wallP->m_info.linkedWall >= wallCount))
-						wallP->m_info.linkedWall = -1;
+					wallP->Info ().linkedWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
+					if ((wallP->Info ().linkedWall < -1) || (wallP->Info ().linkedWall >= wallCount))
+						wallP->Info ().linkedWall = -1;
 					sprintf_s (message, sizeof (message),
 						"FIXED: Wall has invalid linked wall (wall=%d, linked wall=%d [%d])",
-						nWall, invLinkedWall, wallP->m_info.linkedWall);
+						nWall, invLinkedWall, wallP->Info ().linkedWall);
 					}
 				}
 			else
 				sprintf_s (message, sizeof (message),
 					"ERROR: Wall has invalid linked wall (wall=%d, linked wall=%d)",
-					nWall,wallP->m_info.linkedWall);
+					nWall,wallP->Info ().linkedWall);
 			}
-		else if (wallP->m_info.linkedWall >= 0) {
+		else if (wallP->Info ().linkedWall >= 0) {
 			short	oppSeg, oppSide;
 			if (theMine->OppositeSide (oppSeg, oppSide, wallP->m_nSegment, wallP->m_nSide)) {
 				short oppWall = segmentManager.Segment (oppSeg)->m_sides [oppSide].m_info.nWall;
@@ -1591,53 +1590,53 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to non-existant wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, wallManager.Wall (wallP->m_info.linkedWall)->m_info.nSegment, wallManager.Wall (wallP->m_info.linkedWall)->nSide);
+						nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wallP->m_info.linkedWall = -1;
+							wallP->Info ().linkedWall = -1;
 					}
-				else if (wallP->m_info.linkedWall != oppWall) {
+				else if (wallP->Info ().linkedWall != oppWall) {
 					sprintf_s (message, sizeof (message),
 						"%s: Wall links to wrong opposite wall (wall=%d, linked side=%d,%d)",
 						m_bAutoFixBugs ? "FIXED" : "ERROR",
-						nWall, wallManager.Wall (wallP->m_info.linkedWall)->m_info.nSegment, wallManager.Wall (wallP->m_info.linkedWall)->nSide);
+						nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
 						if (m_bAutoFixBugs)
-							wallP->m_info.linkedWall = oppWall;
+							wallP->Info ().linkedWall = oppWall;
 					}
 				}
 			else {
 				sprintf_s (message, sizeof (message),
 					"%s: Wall links to non-existant side (wall=%d, linked side=%d,%d)",
 					m_bAutoFixBugs ? "FIXED" : "ERROR",
-					nWall, wallManager.Wall (wallP->m_info.linkedWall)->m_info.nSegment, wallManager.Wall (wallP->m_info.linkedWall)->nSide);
+					nWall, wallManager.Wall (wallP->Info ().linkedWall)->m_info.nSegment, wallManager.Wall (wallP->Info ().linkedWall)->nSide);
 				if (m_bAutoFixBugs)
-					wallP->m_info.linkedWall = -1;
+					wallP->Info ().linkedWall = -1;
 				}
 			}
 #endif
 		if (UpdateStats (message, 1, wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			// check wall nClip
-		if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->m_info.cloakValue > 31)) {
+		if ((wallP->Type () == WALL_CLOAKED) && (wallP->Info ().cloakValue > 31)) {
 			if (m_bAutoFixBugs) {
-				wallP->m_info.cloakValue = 31;
+				wallP->Info ().cloakValue = 31;
 				sprintf_s (message, sizeof (message), "FIXED: Wall has invalid cloak value (wall=%d)", nWall);
 					}
 			else
 				sprintf_s (message, sizeof (message), "ERROR: Wall has invalid cloak value (wall=%d)", nWall);
 			}
-		if ((wallP->m_info.type == WALL_BLASTABLE || wallP->m_info.type == WALL_DOOR) &&
-			 (   wallP->m_info.nClip < 0
-			  || wallP->m_info.nClip == 2
-//			     || wallP->m_info.nClip == 7
-			  || wallP->m_info.nClip == 8
-			  || (DLE.IsD1File () && wallP->m_info.nClip > 25)
-			  || (DLE.IsD2File () && wallP->m_info.nClip > 50))) {
+		if ((wallP->Type () == WALL_BLASTABLE || wallP->Type () == WALL_DOOR) &&
+			 (   wallP->Info ().nClip < 0
+			  || wallP->Info ().nClip == 2
+//			     || wallP->Info ().nClip == 7
+			  || wallP->Info ().nClip == 8
+			  || (DLE.IsD1File () && wallP->Info ().nClip > 25)
+			  || (DLE.IsD2File () && wallP->Info ().nClip > 50))) {
 			sprintf_s (message, sizeof (message),
 						"ERROR: Illegal wall clip number (wall=%d, clip number=%d)",
-						nWall,wallP->m_info.nClip);
+						nWall,wallP->Info ().nClip);
 			if (UpdateStats (message,1,wallP->m_nSegment, wallP->m_nSide, -1, -1, -1, nWall)) return true;
 			}
 			// Make sure there is a child to the segment
-		if (wallP->m_info.type != WALL_OVERLAY) {
+		if (wallP->Type () != WALL_OVERLAY) {
 			if (!(segmentManager.Segment (wallP->m_nSegment)->m_info.childFlags & (1<< wallP->m_nSide))) {
 				sprintf_s (message, sizeof (message),
 							"ERROR: No adjacent cube for this door (wall=%d, cube=%d)",
@@ -1648,13 +1647,13 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 				nSegment = segmentManager.Segment (wallP->m_nSegment)->Child (wallP->m_nSide);
 				CSegment *segP = segmentManager.Segment (nSegment);
 				if ((nSegment >= 0 && nSegment < segmentManager.Count ()) &&
-					 (wallP->m_info.type == WALL_DOOR || wallP->m_info.type == WALL_ILLUSION)) {
+					 (wallP->Type () == WALL_DOOR || wallP->Type () == WALL_ILLUSION)) {
 					// find segment's child side
 					for (nSide=0;nSide<6;nSide++)
 						if (segP->Child (nSide) == wallP->m_nSegment)
 							break;
 					if (nSide != 6) {  // if child's side found
-						if (segP->m_sides[nSide].m_info.nWall >= theMine->Info ().walls.count) {
+						if (segP->m_sides[nSide].m_info.nWall >= wallManager.WallCount ()) {
 							sprintf_s (message, sizeof (message),
 										"WARNING: No matching wall for this wall (wall=%d, cube=%d)", 
 										nWall,nSegment);
@@ -1663,8 +1662,8 @@ for (nWall = 0; nWall < wallCount; nWall++, wallP++) {
 						else {
 							ushort wallnum2 = segP->m_sides[nSide].m_info.nWall;
 							if ((wallnum2 < wallCount) &&
-								 ((wallP->m_info.nClip != wallManager.Wall (wallnum2)->m_info.nClip ||
-									wallP->m_info.type != wallManager.Wall (wallnum2)->m_info.type))) {
+								 ((wallP->Info ().nClip != wallManager.Wall (wallnum2)->Info ().nClip ||
+									wallP->Type () != wallManager.Wall (wallnum2)->Type ()))) {
 								sprintf_s (message, sizeof (message),
 											"WARNING: Matching wall for this wall is of different type or clip no. (wall=%d, cube=%d)",
 											nWall,nSegment);
@@ -1734,22 +1733,22 @@ if (theMine == null)
   short sub_warnings = m_nErrors [1];
   LBBugs ()->AddString ("[Misc]");
 
-for (nVertex = theMine->vertexManager.Count (); nVertex > 0; )
-	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
+for (nVertex = vertexManager.Count (); nVertex > 0; )
+	vertexManager.Status (--nVertex) &= ~NEW_MASK;
 
 // mark all used verts
 CSegment *segP = segmentManager.Segment (0);
 for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 	for (point = 0; point < 8; point++)
-		theMine->vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK;
+		vertexManager.Status (segP->m_info.verts [point]) |= NEW_MASK;
 
-for (nVertex = theMine->vertexManager.Count (); nVertex > 0; ) {
+for (nVertex = vertexManager.Count (); nVertex > 0; ) {
 	DLE.MainFrame ()->Progress ().StepIt ();
-	if (!(theMine->vertexManager.Status (--nVertex) & NEW_MASK)) {
+	if (!(vertexManager.Status (--nVertex) & NEW_MASK)) {
 		nUnused++;
 		if (m_bAutoFixBugs) {
-			if (nVertex < --theMine->vertexManager.Count ())
-				memcpy (theMine->Vertices (nVertex), theMine->Vertices (nVertex + 1), (theMine->vertexManager.Count () - nVertex) * sizeof (*theMine->vertexManager.Vertex (0)));
+			if (nVertex < --vertexManager.Count ())
+				memcpy (vertexManager.Vertex (nVertex), vertexManager.Vertex (nVertex + 1), (vertexManager.Count () - nVertex) * sizeof (*vertexManager.Vertex (0)));
 			CSegment *segP = segmentManager.Segment (0);
 			for (nSegment = segmentManager.Count (); nSegment; nSegment--, segP++)
 				for (point = 0; point < 8; point++)
@@ -1758,8 +1757,8 @@ for (nVertex = theMine->vertexManager.Count (); nVertex > 0; ) {
 			}
 		}
 	}
-for (nVertex = theMine->vertexManager.Count (); nVertex > 0; )
-	theMine->vertexManager.Status (--nVertex) &= ~NEW_MASK;
+for (nVertex = vertexManager.Count (); nVertex > 0; )
+	vertexManager.Status (--nVertex) &= ~NEW_MASK;
 if (nUnused) {
 	if (m_bAutoFixBugs)
 		sprintf_s (message, sizeof (message),"FIXED: %d unused vertices found", nUnused);

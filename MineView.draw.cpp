@@ -820,9 +820,9 @@ CHECKMINE;
 				CWall* wallP = sideP->Wall ();
 				if (wallP == null) // no wall either
 					continue;
-				if (wallP->m_info.type == WALL_OPEN) // invisible wall
+				if (wallP->Type () == WALL_OPEN) // invisible wall
 					continue;
-				if ((wallP->m_info.type == WALL_CLOAKED) && (wallP->m_info.cloakValue == 0)) // invisible cloaked wall
+				if ((wallP->Type () == WALL_CLOAKED) && (wallP->Info ().cloakValue == 0)) // invisible cloaked wall
 					continue;
 				}
 			APOINT& p0 = m_viewPoints [segP->m_info.verts [sideVertTable [nSide][0]]];

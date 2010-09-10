@@ -582,13 +582,13 @@ else if (segP->m_info.function == SEGMENT_FUNC_FUELCEN) { //remove all fuel cell
 		// if there is a wall and it's a fuel cell delete it
 		CSideKey key (nSegment, nSide);
 		CWall *wallP = Wall (key);
-		if ((wallP != null) && (wallP->Info ().type == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
+		if ((wallP != null) && (wallP->Type () == WALL_ILLUSION) && (sideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333)))
 			wallManager.Delete (sideP->m_info.nWall);
 		// if there is a wall at the opposite side and it's a fuel cell delete it
 		CSideKey opp;
 		if (OppositeSide (key, opp)) {
 			wallP = Wall (opp);
-			if ((wallP != null) && (wallP->Info ().type == WALL_ILLUSION)) {
+			if ((wallP != null) && (wallP->Type () == WALL_ILLUSION)) {
 				CSide* oppSideP = Side (opp);
 				if (oppSideP->m_info.nBaseTex == (theMine->IsD1File () ? 322 : 333))
 					wallManager.Delete (oppSideP->m_info.nWall);

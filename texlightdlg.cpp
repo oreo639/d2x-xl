@@ -328,13 +328,13 @@ if (theMine->UseTexColors ()) {
 			if (sideP->m_info.nWall < 0)
 				continue;
 			wallP = wallManager.Wall (sideP->m_info.nWall);
-			if (wallP->m_info.type != WALL_TRANSPARENT)
+			if (wallP->Type () != WALL_TRANSPARENT)
 				continue;
 			if (!(bAll || segmentManager.IsMarked (CSideKey (nSegment, nSide))))
 				continue;
 			if (sideP->m_info.nBaseTex != nBaseTex)
 				continue;
-			wallP->m_info.cloakValue = m_nColorIndex;
+			wallP->Info ().cloakValue = m_nColorIndex;
 			}
 		}
 	}
@@ -353,8 +353,8 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 		point.y -= rcPal.top;
 		if (m_paletteWnd.SelectColor (point, m_nColorIndex, &m_rgbColor)) {
 			CWall *wallP = current.Wall ();
-			if (wallP && (wallP->m_info.type == WALL_TRANSPARENT)) {
-				wallP->m_info.cloakValue = m_nColorIndex;
+			if (wallP && (wallP->Type () == WALL_TRANSPARENT)) {
+				wallP->Info ().cloakValue = m_nColorIndex;
 				SetWallColor ();
 				}
 			CColor *psc = theMine->CurrLightColor ();
@@ -368,7 +368,7 @@ if (/*(theMine->IsD2XLevel ()) &&*/ SideHasLight ()) {
 				psc->m_info.color.g =
 				psc->m_info.color.b = 1.0;
 				}
-			//if (!wallP || (wallP->m_info.type != WALL_TRANSPARENT)) 
+			//if (!wallP || (wallP->Type () != WALL_TRANSPARENT)) 
 				{
 				theMine->SetTexColor (current.Side ()->m_info.nBaseTex, psc);
 				theMine->SetTexColor (current.Side ()->m_info.nOvlTex, psc);
