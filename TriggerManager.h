@@ -200,6 +200,10 @@ class CTriggerManager {
 #endif
 			}
 
+		CTrigger* AddToWall (short nWall, short type, bool bAddWall);
+
+		CTrigger* AddToObject (short nObject, short type);
+
 		void DeleteFromWall (short nDelTrigger);
 
 		void DeleteFromObject (short nDelTrigger);
@@ -208,10 +212,6 @@ class CTriggerManager {
 		int CmpObjTriggers (CTrigger& pi, CTrigger& pm);
 
 		void SortObjTriggers (short left, short right);
-
-		CTrigger* AddToWall (short nWall, short type, bool bAddWall);
-
-		CTrigger* AddToObject (short nObject, short type);
 
 		void Clear (int nType);
 };

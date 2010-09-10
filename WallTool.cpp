@@ -172,7 +172,7 @@ void CWallTool::InitCBWallNo ()
 CComboBox *pcb = CBWallNo ();
 pcb->ResetContent ();
 int i;
-for (i = 0; i < wallManager.WallCount; i++) {
+for (i = 0; i < wallManager.WallCount (); i++) {
 	_itoa_s (i, message, sizeof (message), 10);
 	pcb->AddString (message);
 	}
@@ -364,7 +364,7 @@ if (theMine->OppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (sideP [bSide]->m_info.nWall < wallManager.WallCount)
+	if (sideP [bSide]->m_info.nWall < wallManager.WallCount ())
 		ErrorMsg ("There is already a wall at that side of the current cube.");
 	else if (wallManager.WallCount >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
@@ -568,7 +568,7 @@ m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_wallP [bSide])
 		if ((wallP->Type () == WALL_BLASTABLE) || (wallP->Type () == WALL_DOOR)) {
-			if (m_nWall [bSide] < wallManager.WallCount) {
+			if (m_nWall [bSide] < wallManager.WallCount ()) {
 				undoManager.Begin (udWalls);
 				nClip = animClipTable [m_nClip];
 				wallP->Info ().nClip = nClip;

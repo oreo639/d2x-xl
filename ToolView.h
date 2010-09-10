@@ -763,12 +763,12 @@ class CTriggerTool : public CTexToolDlg
 		int					m_bD2Flags [16];
 		int					m_nSliderValue;
 		double				m_nStrength;
-		CTrigger			m_defTrigger;
-		CTrigger			*m_triggerP;
+		CTrigger				m_defTrigger;
+		CTrigger*			m_triggerP;
 		int					m_nTrigger;
-		CTrigger			*m_pStdTrigger;
+		CTrigger*			m_pStdTrigger;
 		int					m_nStdTrigger;
-		CTrigger			*m_pObjTrigger;
+		CTrigger*			m_pObjTrigger;
 		int					m_nObjTrigger;
 		char					m_szTarget [40];
 		int					m_bAutoAddWall;
@@ -798,7 +798,7 @@ class CTriggerTool : public CTexToolDlg
 		virtual BOOL TextureIsVisible ();
 		bool FindTrigger (short &nTrigger);
 		bool TriggerHasSlider (void);
-		int NumTriggers ();
+		int TriggerCount ();
 		void OnSelect1st ();
 		void OnSelect2nd ();
 		void SelectTexture (int nIdC, bool bFirst);

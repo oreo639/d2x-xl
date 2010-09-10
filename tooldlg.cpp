@@ -410,7 +410,7 @@ scroll_offset_y = 0;
 // abort if this is not a wall
 #ifndef _DEBUG
 ushort nWall = sideP->m_info.nWall;
-if (nWall >= wallManager.WallCount)
+if (nWall >= wallManager.WallCount ())
 	return;
 
 // abort if this wall is not a door

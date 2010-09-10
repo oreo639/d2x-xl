@@ -84,6 +84,8 @@ class CSide {
 public:
 	tSide m_info;
 
+	inline tSide& Info (void) { return m_info; }
+
 	void Read (CFileManager& fp, bool bTextured);
 
 	void Write (CFileManager& fp);

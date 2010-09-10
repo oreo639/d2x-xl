@@ -64,7 +64,7 @@ if (nBaseTex < 0) {
 		bShowTexture = TRUE;
 	else {
 		nWall = sideP->m_info.nWall;
-		bShowTexture = (nWall < wallManager.WallCount);
+		bShowTexture = (nWall < wallManager.WallCount ());
 		}
 	}
 if ((nBaseTex < 0) || (nBaseTex >= textureManager.MaxTextures () + 10))
