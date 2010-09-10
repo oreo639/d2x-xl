@@ -43,7 +43,7 @@ char *aiOptionTable [MAX_AI_OPTIONS_D2] = {
 	"Still", "Normal", "Get behind", "Drop Bombs", "Snipe", "Station", "Follow", "Static", "Smart Bombs"
 };
 
-byte objectList [MAX_OBJECT_NUMBER] = {
+byte objectTypeList [MAX_OBJECT_NUMBER] = {
 	OBJ_ROBOT,
 	OBJ_HOSTAGE,
 	OBJ_PLAYER,
@@ -340,7 +340,7 @@ CreateImgWnd (&m_showSpawnWnd, IDC_OBJ_SHOW_SPAWN);
 CreateImgWnd (&m_showTextureWnd, IDC_OBJ_SHOW_TEXTURE);
 InitSliders ();
 UpdateSliders ();
-CBInit (CBObjType (), (char**) objectNameTable, objectList, null, MAX_OBJECT_NUMBER);
+CBInit (CBObjType (), (char**) objectNameTable, objectTypeList, null, MAX_OBJECT_NUMBER);
 CBInit (CBSpawnType (), (char**) objectNameTable, contentsList, null, MAX_CONTAINS_NUMBER, 0, true);
 CBInit (CBObjAI (), (char**) aiOptionTable, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
 CBInit (CBObjClassAI (), (char**) aiOptionTable, null, aiBehaviorTable, (DLE.IsD1File ()) ? MAX_AI_OPTIONS_D1: MAX_AI_OPTIONS_D2);
@@ -670,7 +670,7 @@ void CObjectTool::RefreshRobot ()
   CRobotInfo robotInfo;
 
   // get selection
-if ((nType = objectList [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
+if ((nType = objectTypeList [CBObjType ()->GetCurSel ()]) != OBJ_ROBOT) {
 	CBContId ()->SetCurSel (-1);
 	CBWeapon1 ()->SetCurSel (-1);
 	CBWeapon2 ()->SetCurSel (-1);
@@ -1241,7 +1241,7 @@ return true;
 void CObjectTool::OnSetObjType () 
 {
 CGameObject *objP = current.Object ();
-int selection = objectList [CBObjType ()->GetCurSel ()];
+int selection = objectTypeList [CBObjType ()->GetCurSel ()];
 if (DLE.IsD1File () && (selection == OBJ_WEAPON)) {
 	ErrorMsg ("You can not use this type of object in a Descent 1 level");
 	return;
@@ -1545,7 +1545,7 @@ if (objP->m_info.renderType == RT_POLYOBJ) {
 
 void CObjectTool::OnDefault ()
 {
-if (objectList [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
+if (objectTypeList [CBObjType ()->GetCurSel ()] != OBJ_ROBOT)
 	return;
 int i = int (CBObjId ()->GetItemData (CBObjId ()->GetCurSel ()));
 undoManager.Begin (udRobots);

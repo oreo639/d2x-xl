@@ -298,7 +298,8 @@ for (nSegment = 0; nSegment < h; nSegment++) {
 //--------------------------------------------------------------------------
 // DrawSegment()
 //--------------------------------------------------------------------------
-#define IN_RANGE (value,absolute_range) ((-absolute_range <= value) && (value <= absolute_range))
+
+#define IN_RANGE(value,absolute_range) ((-absolute_range <= value) && (value <= absolute_range))
 
 bool CMineView::InRange (short *pv, short i)
 {

@@ -13,21 +13,8 @@
 #define WALL_HPS				I2X (100) // Normal wall's hp 
 #define WALL_DOOR_INTERVAL	I2X (5)	 // How many seconds a door is open 
 
-ushort wallFlags [MAX_WALL_FLAGS] = {
-	WALL_BLASTED,
-	WALL_DOOR_OPENED,
-	WALL_DOOR_LOCKED,
-	WALL_DOOR_AUTO,
-	WALL_ILLUSION_OFF,
-	WALL_WALL_SWITCH,
-	WALL_BUDDY_PROOF,
-	WALL_RENDER_ADDITIVE,
-	WALL_IGNORE_MARKER
-	};
-
 extern byte animClipTable [NUM_OF_CLIPS_D2];
 extern byte doorClipTable [NUM_OF_CLIPS_D2];
-
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
