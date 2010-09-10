@@ -144,9 +144,10 @@ CHECKMINE;
 	short		point1,vert1;
 	short		point2,vert2;
 
+undoManager.Begin (udVertices | udSegments);
 xPos = m_releasePos.x;
 yPos = m_releasePos.y;
-point1 = sideVertTable [current.m_nSide] [current.m_nPoint];
+point1 = sideVertTable [current.m_nSide][current.m_nPoint];
 vert1 = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [point1];
 // find point to merge with
 for (i = 0; i < vertexManager.Count (); i++) {
@@ -164,9 +165,9 @@ if ((count > 1) &&
 	count = 1;
 if (count == 1) {
 // make sure new vert is not one of the current cube's verts
-	for (i=0;i<8;i++) {
+	for (i = 0; i < 8; i++) {
 		if (i!=point1) {
-			vert2 = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [i];
+			vert2 = current.Segment ()->m_info.verts [i];
 			if (new_vert == vert2) {
 				ErrorMsg ("Cannot drop point onto another corner of the current cube.");
 				break;
@@ -175,20 +176,20 @@ if (count == 1) {
 		}
 	if (i==8 && new_vert!=vert1) {
 	// make sure the new line lengths are close enough
-		for (i=0;i<3;i++) {
+		for (i = 0; i < 3; i++) {
 			point2 = connectPointTable [point1] [i];
 			vert2 = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [point2];
-			if (Distance (*theMine->Vertices (new_vert), *theMine->Vertices (vert2)) >= 1000.0) {
+			if (Distance (*vertexManager.Vertex (new_vert), *vertexManager.Vertex (vert2)) >= 1000.0) {
 				ErrorMsg ("Cannot move this point so far away.");
 				break;
 				}
 			}
 		if (i==3) { //
 			// replace origional vertex with new vertex
-			segmentManager.Segment () [current.m_nSegment].m_info.verts [point1] = new_vert;
+			current.Segment ()->m_info.verts [point1] = new_vert;
 			// all unused vertices
-			theMine->DeleteUnusedVertices ();
-			theMine->FixChildren ();
+			vertexManager.DeleteUnused ();
+			segmentManager.FixChildren ();
 			segmentManager.SetLinesToDraw ();
 			}
 		}	
@@ -199,8 +200,9 @@ else {
 	apoint.x = (short) xPos;
 	apoint.y = (short) yPos;
 	apoint.z = m_viewPoints [vert1].z;
-	m_view.Unproject (*theMine->Vertices (vert1), apoint);
+	m_view.Unproject (*vertexManager.Vertex (vert1), apoint);
 	}
+undoManager.End ();
 Refresh ();
 }
 

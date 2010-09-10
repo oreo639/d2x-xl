@@ -42,7 +42,7 @@ i = vertexManager.Count ();
 APOINT *a = m_viewPoints + i;
 CVertex* vertP = vertexManager.Vertex (i);
 for (; i--; ) {
-	if ((--vertP)->m_status == 255)
+	if ((--vertP)->Status () == 255)
 		continue;
 	m_view.Project (*(vertP), *(--a));
 	x = a->x;
@@ -107,9 +107,9 @@ CHECKMINE;
 	static short segRef [SEGMENT_LIMIT];
 
 for (i = segNum, segI = segmentManager.Segment (0); i; i--, segI++)
-	segI->m_info.nIndex = -1;
+	segI->Index () = -1;
 segRef [0] = current.m_nSegment;	
-current.Segment ()->m_info.nIndex = 0;
+current.Segment ()->Index () = 0;
 i = 1;
 h = j = 0;
 for (nDist = 1; (j < segNum) && (h < i); nDist++) {
@@ -120,9 +120,9 @@ for (nDist = 1; (j < segNum) && (h < i); nDist++) {
 			if (c < 0) 
 				continue;
 			segJ = segmentManager.Segment (c);
-			if (segJ->m_info.nIndex != -1)
+			if (segJ->Index () != -1)
 				continue;
-			segJ->m_info.nIndex = nDist;
+			segJ->Index () = nDist;
 			segRef [i++] = c;
 			}
 		}
@@ -212,7 +212,7 @@ for (nSegment=0, segP = segmentManager.Segment (0);nSegment<segmentManager.Count
 	if (!Visible (segP))
 		continue;
 	DrawCube (segP, bPartial);
-	if (nSegment == m_Current->nSegment) {
+	if (nSegment == current.m_nSegment) {
 		DrawCurrentCube (segP, bPartial);
 		m_pDC->SelectObject (m_penGray);
 		}
@@ -528,7 +528,7 @@ if (!Visible (segP))
 	short y_max = m_viewHeight * 2;
 	int	chSegI, chSideI, chVertI, i, j, commonVerts;
 	CSegment	*childP;
-	short *pv = segP->m_info.verts;
+	ushort *pv = segP->m_info.verts;
 
 for (i = 0; i < 8; i++, pv++) {
 	int	v = *pv;
@@ -850,7 +850,7 @@ void CMineView::DrawCubePoints (CSegment *segP)
 {
 CHECKMINE;
 
-	short		*pv = segP->m_info.verts;
+	ushort	*pv = segP->m_info.verts;
 	COLORREF	color = RGB (128,128,128);
 	int		h, i;
 
@@ -960,9 +960,9 @@ void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
 {
 CHECKMINE;
 
-	short nSide = m_Current->nSide;
-	short linenum = m_Current->nPoint;
-	short pointnum = m_Current->nPoint;
+	short nSide = current.m_nSide;
+	short linenum = current.m_nPoint;
+	short pointnum = current.m_nPoint;
 
 	if (segP->m_info.wallFlags & MARKED_MASK) {
 		m_pDC->SelectObject(m_penCyan);
@@ -1074,13 +1074,13 @@ CHECKMINE;
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
-for (i=0;i<wallManager.WallCount;i++) {
+for (i = 0; i < wallManager.WallCount (); i++) {
 	if (walls [i].m_nSegment > segmentManager.Count ())
 		continue;
 	segP = segments + (int)walls [i].m_nSegment;
 	if (!Visible (segP))
 		continue;
-	switch (walls [i].m_info.type) {
+	switch (walls [i].Type ()) {
 		case WALL_NORMAL:
 			m_pDC->SelectObject(m_penLtGray);
 			break;
@@ -1088,7 +1088,7 @@ for (i=0;i<wallManager.WallCount;i++) {
 			m_pDC->SelectObject(m_penLtGray);
 			break;
 		case WALL_DOOR:
-			switch(walls [i].m_info.keys) {
+			switch(walls [i].Info ().keys) {
 				case KEY_NONE:
 					m_pDC->SelectObject(m_penLtGray);
 					break;
@@ -1130,8 +1130,8 @@ for (i=0;i<wallManager.WallCount;i++) {
 			CVertex	center, orthog, vector;
 			APOINT	point;
 
-		center = theMine->CalcSideCenter (walls [i].m_nSegment, walls [i].m_nSide);
-		orthog = theMine->CalcSideNormal (walls [i].m_nSegment, walls [i].m_nSide);
+		center = segmentManager.CalcSideCenter (walls [i]);
+		orthog = segmentManager.CalcSideNormal (walls [i]);
 		vector = center - orthog;
 		m_view.Project (vector, point);
 		for (j = 0; j < 4; j++) {
@@ -1139,7 +1139,7 @@ for (i=0;i<wallManager.WallCount;i++) {
 			m_pDC->LineTo (m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide] [j]]].x,
 			m_viewPoints [segP->m_info.verts [sideVertTable [walls [i].m_nSide] [j]]].y);
 			}
-		if (walls [i].m_info.nTrigger != NO_TRIGGER) {
+		if (walls [i].Info ().nTrigger != NO_TRIGGER) {
 				APOINT arrowStartPoint,arrowEndPoint,arrow1Point,arrow2Point;
 				CVertex fin;
 
@@ -1186,7 +1186,7 @@ if (!m_pDC) return;
   m_pDC->SelectObject(m_penYellow);
 
   // find variable light from
-CVariableLight* flP = theMine->VariableLights (0);
+CVariableLight* flP = lightManager.VariableLight (0);
 for (INT i = 0; i < lightManager.Count (); i++, flP++)
 	if (Visible (segmentManager.Segment (flP->m_nSegment)))
 	   DrawOctagon(flP->m_nSide, flP->m_nSegment);
@@ -1243,14 +1243,14 @@ if (nSegment >=0 && nSegment <=segmentManager.Count () && nSide>=0 && nSide<=5 )
 // draw_spline()
 //----------------------------------------------------------------------------
 
-void CMineView::DrawSpline (void) 
+void CMineView::DrawTunnel (void) 
 {
 	int h, i, j;
 
 //  SelectObject(hdc, hrgnAll);
 m_pDC->SelectObject (m_penRed);
 m_pDC->SelectObject ((HBRUSH)GetStockObject(NULL_BRUSH));
-theMine->CalcSpline ();
+tunnelMaker.ComputeTunnel ();
 APOINT point;
 m_view.Project (points [1], point);
 if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
@@ -1274,10 +1274,10 @@ if (IN_RANGE(point.x, x_max) && IN_RANGE(point.y, y_max)){
 	}
 m_pDC->SelectObject (m_penBlue);
 j = MAX_VERTICES;
-for (h = n_splines * 4, i = 0; i < h; i++)
-	m_view.Project (*theMine->Vertices (--j), m_viewPoints [j]);
+for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++)
+	m_view.Project (*vertexManager.Vertex (--j), m_viewPoints [j]);
 CSegment *segP = segmentManager.Segment (MAX_SEGMENTS - 1);
-for (i = 0; i < n_splines; i++, segP--)
+for (i = 0; i < tunnelMaker.Length (); i++, segP--)
 	DrawCubeQuick (segP);
 }
 
@@ -1285,7 +1285,7 @@ for (i = 0; i < n_splines; i++, segP--)
 //			  DrawObject()
 //
 // Changed: 0=normal,1=gray,2=black
-//        if (objnum == (objectManager.Count ()
+//        if (nObject == (objectManager.Count ()
 //        then its a secret return point)
 //--------------------------------------------------------------------------
 
@@ -1297,7 +1297,7 @@ dest += offs;
 }
 
 
-void CMineView::DrawObject(short objnum,short clear_it) 
+void CMineView::DrawObject(short nObject,short clear_it) 
 {
 CHECKMINE;
 
@@ -1318,8 +1318,8 @@ CHECKMINE;
 	short y_max = m_viewHeight * 2;
 
 //  m_pDC->SelectObject(hrgnBackground);
-if (objnum >=0 && objnum < objectManager.Count ()) {
-	objP = objectManager.Object (objnum);
+if (nObject >=0 && nObject < objectManager.Count ()) {
+	objP = objectManager.Object (nObject);
 	if (!Visible (segmentManager.Segment (objP->m_info.nSegment)))
 		return;
 	}
@@ -1337,13 +1337,13 @@ else {
 		nSegment = 0;
 	if (!Visible (segmentManager.Segment (nSegment)))
 		return;
-	theMine->CalcSegCenter (objP->m_location.pos, nSegment); // define objP->position
+	segmentManager.CalcCenter (objP->m_location.pos, nSegment); // define objP->position
 	}
 
 switch (clear_it) {
 	case 0: // normal
 	case 1: // gray
-		if (m_selectMode == OBJECT_MODE && objnum == current.m_nObject) 
+		if (m_selectMode == OBJECT_MODE && nObject == current.m_nObject) 
 			m_pDC->SelectObject(m_penRed); // RED
 		else {
 			switch(objP->m_info.type) {
@@ -1387,7 +1387,7 @@ switch (clear_it) {
 
 // rotate object shape using object's orient matrix
 // then translate object
-//CBRK (objnum == 45);
+//CBRK (nObject == 45);
 for (poly = 0; poly < MAX_POLY; poly++) {
 	::TransformModelPoint (pt [poly], object_shape [poly], objP->m_location.orient, objP->m_location.pos);
 	m_view.Project (pt [poly], poly_draw [poly]);
@@ -1402,21 +1402,21 @@ for (i = 0; i < 6; i++)
 		return;
 
 if ((DLE.IsD2File ()) &&
-	 (objnum == current.m_nObject) &&
+	 (nObject == current.m_nObject) &&
 	 (objP->m_info.type != OBJ_CAMBOT) && (objP->m_info.type != OBJ_MONSTERBALL) && 
 	 (objP->m_info.type != OBJ_EXPLOSION) && (objP->m_info.type != OBJ_SMOKE) && (objP->m_info.type != OBJ_EFFECT) &&
 	 (objP->m_info.renderType == RT_POLYOBJ) &&
-	 !SetupModel(objP)) {
+	 !modelRenderer.Setup (objP, &m_view, m_pDC)) {
 	if (clear_it)
-		m_pDC->SelectObject(GetStockObject(BLACK_PEN));
-	m_pDC->SelectObject((HBRUSH)GetStockObject(BLACK_BRUSH));
-	DrawModel();
+		m_pDC->SelectObject (GetStockObject(BLACK_PEN));
+	m_pDC->SelectObject ((HBRUSH)GetStockObject(BLACK_BRUSH));
+	modelRenderer.Draw ();
 	}
 else {
 	m_pDC->MoveTo (poly_draw [0].x,poly_draw [0].y);
 	for (poly = 0; poly < 6; poly++)
 		m_pDC->LineTo (poly_draw [poly].x, poly_draw [poly].y);
-	if (objnum == current.m_nObject) {
+	if (nObject == current.m_nObject) {
 		int dx,dy;
 		for (dx = -1; dx < 2; dx++) {
 			for (dy = -1; dy < 2; dy++) {
@@ -1427,7 +1427,7 @@ else {
 			}
 		}
 	}
-if ((objnum == current.m_nObject) || (objnum == other.m_nObject)) {
+if ((nObject == current.m_nObject) || (nObject == other.m_nObject)) {
 	CPen     pen, *pOldPen;
 	int		d;
 
@@ -1445,7 +1445,7 @@ if ((objnum == current.m_nObject) || (objnum == other.m_nObject)) {
 	d = (poly_draw [2].x - poly_draw [1].x);
 	if (d < 24)
 		d = 24;
-	pen.CreatePen (PS_SOLID, 2, (objnum == current.m_nObject) ? RGB (255,0,0) : RGB (255,208,0));
+	pen.CreatePen (PS_SOLID, 2, (nObject == current.m_nObject) ? RGB (255,0,0) : RGB (255,208,0));
 	pOldPen = m_pDC->SelectObject (&pen);
 	m_pDC->SelectObject ((HBRUSH)GetStockObject(HOLLOW_BRUSH));
 	m_pDC->Ellipse (poly_draw [0].x - d, poly_draw [0].y - d, poly_draw [0].x + d, poly_draw [0].y + d);
@@ -1468,7 +1468,7 @@ int i, j;
 if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
 	for(i = 0; i < triggerManager.WallTriggerCount (); i++)
-	if (wallManager.Trigger (i)->m_info.type == TT_SECRET_EXIT) {
+	if (triggerManager.Trigger (i)->Type () == TT_SECRET_EXIT) {
 		DrawObject ((short)objectManager.Count (), 0);
 		break; // only draw one secret exit
 		}
@@ -1503,15 +1503,15 @@ if (!clear_it) {
   }
 
 // draw highlighted Segments () (other first, then current)
-if (theMine->Current () == &theMine->Current1 ()) {
-	if (theMine->selections [0].m_nSegment != theMine->selections [1].m_nSegment)
-		DrawCube (theMine->selections [1].m_nSegment, theMine->selections [1].m_nSide, theMine->selections [1].m_nLine, theMine->selections [1].m_nPoint,clear_it);
-	DrawCube (theMine->selections [0].m_nSegment, theMine->selections [0].m_nSide, theMine->selections [0].m_nLine, theMine->selections [0].m_nPoint,clear_it);
+if (current == selections [0]) {
+	if (selections [0].m_nSegment != selections [1].m_nSegment)
+		DrawCube (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
+	DrawCube (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
 	}
 else {
-	if (theMine->selections [0].m_nSegment != theMine->selections [1].m_nSegment)
-		DrawCube (theMine->selections [0].m_nSegment, theMine->selections [0].m_nSide, theMine->selections [0].m_nLine, theMine->selections [0].m_nPoint,clear_it);
-	DrawCube (theMine->selections [1].m_nSegment, theMine->selections [1].m_nSide, theMine->selections [1].m_nLine, theMine->selections [1].m_nPoint,clear_it);
+	if (selections [0].m_nSegment != selections [1].m_nSegment)
+		DrawCube (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
+	DrawCube (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
 	}
 
 // draw Walls ()
@@ -1523,8 +1523,8 @@ if (ViewFlag (eViewMineLights))
 	  DrawLights ();
 
 // draw spline
-if (theMine->TunnelMaker.Active ())
-	DrawSpline ();
+if (tunnelMaker.Active ())
+	DrawTunnel ();
 
 *message = '\0';
 if (preferences & PREFS_SHOW_POINT_COORDINATES) {
@@ -1532,7 +1532,7 @@ if (preferences & PREFS_SHOW_POINT_COORDINATES) {
    short vertex = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]];
 	char	szCoord [20];
 	sprintf_s (szCoord, sizeof (szCoord), "%1.4f,%1.4f,%1.4f)", 
-				  theMine->Vertices (vertex)->v.x, theMine->Vertices (vertex)->v.y, theMine->Vertices (vertex)->v.z);
+				  vertexManager.Vertex (vertex)->v.x, vertexManager.Vertex (vertex)->v.y, vertexManager.Vertex (vertex)->v.z);
 	strcat_s (message, sizeof (message), szCoord);
 	}
 else {
@@ -1540,18 +1540,18 @@ else {
 	strcat_s (message, sizeof (message), "  cube size: ");
 	CDoubleVector center1,center2;
    double length;
-   center1 = theMine->CalcSideCenter (current.m_nSegment, 0);
-	center2 = theMine->CalcSideCenter (current.m_nSegment, 2);
+   center1 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 0));
+	center2 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 2));
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = theMine->CalcSideCenter (current.m_nSegment, 1);
-   center2 = theMine->CalcSideCenter (current.m_nSegment, 3);
+   center1 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 1));
+   center2 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 3));
    length = Distance (center1, center2);
    sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	strcat_s (message, sizeof (message), " x ");
-   center1 = theMine->CalcSideCenter (current.m_nSegment, 4);
-   center2 = theMine->CalcSideCenter (current.m_nSegment, 5);
+   center1 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 4));
+   center2 = segmentManager.CalcSideCenter (CSideKey (current.m_nSegment, 5));
    length = Distance (center1, center2);
 	sprintf_s (message + strlen (message), sizeof (message) - strlen (message), "%.1f", (double) length);
 	}

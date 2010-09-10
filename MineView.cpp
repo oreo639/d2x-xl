@@ -339,8 +339,6 @@ if (m_bUpdate) {
 		SetViewPoints ();
 		ShiftViewPoints ();
 		// make a local copy the mine's selection
-		m_Current = &current;
-
 		// draw the level
 		switch(m_viewOption)	{
 			case eViewAllLines:

@@ -52,6 +52,8 @@ class CTunnelMaker {
 
 		inline int Length (void) { return m_nLength; }
 
+		void ComputeTunnel (void); 
+
 	private:
 		long Faculty (int n); 
 
@@ -72,8 +74,6 @@ class CTunnelMaker {
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
 
 		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
-
-		void ComputeTunnel (void); 
 	};
 
 extern CTunnelMaker tunnelMaker;

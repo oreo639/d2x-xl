@@ -38,16 +38,16 @@ closest_object = 0;
 closest_radius = 1.0E30;
 
 // if there is a secret exit, then enable it in search
-int enable_secret = FALSE;
+int enable_secret = false;
 if (DLE.IsD2File ())
 	for(i=0;i<(short)triggerManager.WallTriggerCount ();i++)
-		if (wallManager.Trigger (i)->m_info.type ==TT_SECRET_EXIT) {
-			enable_secret = TRUE;
+		if (triggerManager.Trigger (i)->Type () == TT_SECRET_EXIT) {
+			enable_secret = true;
 			break;
 			}
 
 for (i = 0; i < objectManager.Count (); i++) {
-	BOOL drawable = FALSE;
+	BOOL drawable = false;
 	// define temp object type and position for secret object selection
 	if (i == objectManager.Count () && DLE.IsD2File () && enable_secret) {
 		objP = &temp_obj;
@@ -61,16 +61,16 @@ for (i = 0; i < objectManager.Count (); i++) {
 	switch(objP->m_info.type) {
 		case OBJ_WEAPON:
 			if (ViewObject (eViewObjectsPowerups | eViewObjectsWeapons)) {
-				drawable = TRUE;
+				drawable = true;
 				}
 		case OBJ_POWERUP:
 			if (ViewObject (powerupTypeTable [objP->m_info.id])) {
-				drawable = TRUE;
+				drawable = true;
 				}
 			break;
 		default:
 			if(ViewObject (1<<objP->m_info.type))
-				drawable = TRUE;
+				drawable = true;
 		}
 	if (drawable) 
 #else
@@ -396,7 +396,7 @@ ForwardCube (-1);
 
 void CMineView::SelectOtherSegment () 
 {
-theMine->Current () = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 (): &theMine->Current1 ();
+current = selections [current == selections [0]];
 Refresh (true);
 DLE.ToolView ()->CubeTool ()->Refresh ();
 }
@@ -405,13 +405,12 @@ DLE.ToolView ()->CubeTool ()->Refresh ();
 
 bool CMineView::SelectOtherSide () 
 {
-short nOppSeg, nOppSide;
+CSideKey opp;
 
-if (theMine->OppositeSide (nOppSeg, nOppSide))
+if (segmentManager.OppositeSide (opp) == null)
 	return false;
 
-current.m_nSegment = nOppSeg;
-current.m_nSide = nOppSide;
+(CSideKey) current = opp;
 Refresh (true);
 DLE.ToolView ()->CubeTool ()->Refresh ();
 return true;

@@ -398,7 +398,7 @@ else if (m_nClass) {
 	DrawObjectImage ();
 	}
 else {
-	m_triggerP = wallManager.Trigger (m_nTrigger);
+	m_triggerP = triggerManager.Trigger (m_nTrigger);
 	ClearObjWindow ();
 	}
 }
@@ -600,7 +600,7 @@ if (m_nClass) {
 	}
 else {
 	m_triggerP = theMine->AddTrigger (-1, m_nType, (BOOL) m_bAutoAddWall /*TT_OPEN_DOOR*/);
-	m_nTrigger = m_triggerP ? int (m_triggerP - wallManager.Trigger (0)) : -1;
+	m_nTrigger = m_triggerP ? int (m_triggerP - triggerManager.Trigger (0)) : -1;
 	}
 // Redraw trigger window
 Refresh ();
@@ -881,7 +881,7 @@ AddTarget (nSegment, nSide);
 
 void CTriggerTool::OnAddWallTarget ()
 {
-CSelection *other = (theMine->Current () == &theMine->Current1 ()) ? &theMine->Current2 () : &theMine->Current1 ();
+CSelection *other = (current == selections [0]) ? &theMine->Current2 () : selections [0];
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
@@ -979,7 +979,7 @@ void CTriggerTool::OnCopyTrigger ()
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
-m_defTrigger = wallManager.Trigger () [m_nTrigger];
+m_defTrigger = triggerManager.Trigger () [m_nTrigger];
 }
 
                         /*--------------------------*/

@@ -284,7 +284,7 @@ void CMineView::CenterCube (void)
 {
 CHECKMINE;
 
-	CSegment& seg = segmentManager.Segment (0) [m_Current->nSegment];
+	CSegment& seg = segmentManager.Segment (0) [current.m_nSegment];
 	CVertex *vMine = vertexManager.Vertex (0);
 	short *vSeg = seg.m_info.verts;
 
@@ -310,7 +310,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -objectManager.Object (m_Current->nObject)->m_location.pos;
+m_move = -objectManager.Object (current.nObject)->m_location.pos;
 Refresh (false);
 }
 

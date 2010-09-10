@@ -494,7 +494,7 @@ for (i = 0; i < objectManager.Count (); i++, objP++) {
 	}
 // add secret object to list
 for (i = 0; i < triggerManager.WallTriggerCount (); i++)
-	if (wallManager.Trigger (i)->m_info.type == TT_SECRET_EXIT) {
+	if (triggerManager.Trigger (i)->m_info.type == TT_SECRET_EXIT) {
 		CBObjNo ()->AddString ("secret object");
 		break;
 		}

@@ -134,8 +134,6 @@ protected: // create from serialization only
 	uint			m_selectMode;
 	HCURSOR		m_hCursors [eMouseStateCount];
 
-	CSelection	*m_Current;
-
 	CPen*			m_penCyan;
 	CPen*			m_penRed;
 	CPen*			m_penMedRed;
@@ -294,7 +292,7 @@ public:
 	void	DrawObject (short objnum, short clear_it = 0);
 	void	DrawObjects (short clear_it = 0);
 	void	DrawHighlight (short clear_it = 0);
-	void  DrawSpline (void);
+	void  DrawTunnel (void);
 
 	//void	ReadPolyModel (tPolyModel& polyModel, CFileManager& file);
 
