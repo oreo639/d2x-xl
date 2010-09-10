@@ -47,30 +47,31 @@ wallManager.WallCount () = 0;
 wallManager.DoorCount () = 0;
 triggerManager.WallTriggerCount () = 0;
 triggerManager.ObjTriggerCount () = 0;
-triggerManager.ReactorCount () = 0;
+triggerManager.ReactorTriggerCount () = 0;
 objectManager.Count () = 0;
 m_levelVersion = 7;
 m_fileType = RL2_FILE;
 lightManager.Count () = 0;
-Current () = &Current1 ();
+current = selections [0];
+other = selections [1];
 *m_szBlockFile = '\0';
-MineInfo ().objects.Reset ();
-MineInfo ().walls.Reset ();
-MineInfo ().doors.Reset ();
-MineInfo ().triggers.Reset ();
-MineInfo ().control.Reset ();
-MineInfo ().botGen.Reset ();
-MineInfo ().equipGen.Reset ();
-MineInfo ().lightDeltaIndices.Reset ();
-MineInfo ().lightDeltaValues.Reset ();
+Info ().objects.Reset ();
+Info ().walls.Reset ();
+Info ().doors.Reset ();
+Info ().triggers.Reset ();
+Info ().control.Reset ();
+Info ().botGen.Reset ();
+Info ().equipGen.Reset ();
+Info ().lightDeltaIndices.Reset ();
+Info ().lightDeltaValues.Reset ();
 m_nNoLightDeltas = 2;
 m_lightRenderDepth = MAX_LIGHT_DEPTH;
 m_deltaLightRenderDepth = MAX_LIGHT_DEPTH;
-m_bSortObjects = TRUE;
+objectManager.SortObjects () = true;
 m_bVertigo = false;
 m_pHxmExtraData = null;
 m_nHxmExtraDataSize = 0;
-m_bUseTexColors = false;
+lightManager.UseTexColors () = false;
 LoadDefaultLightAndColor ();
 Reset ();
 Default ();
@@ -92,7 +93,6 @@ Default ();
 
 void CMine::Reset (void)
 {
-Current () = &Current1 ();
 current = selections [0];
 other = selections [1];
 selections [0].m_nSegment = DEFAULT_SEGMENT;
@@ -125,7 +125,7 @@ if (!dataP)
 
 CFileManager::SplitPath ((m_fileType== RDL_FILE) ? descentPath [0] : missionPath, m_startFolder , null, null);
 sprintf_s (message, sizeof (message),  (m_fileType== RDL_FILE) ? "%sNEW.RDL" : "%sNEW.RL2", m_startFolder );
-ASSIGN (RobotInfo (), DefRobotInfo ());
+ASSIGN (robotManager.RobotInfo (), robotManager.DefRobotInfo ());
 CFileManager fp;
 if (fp.Open (message, "wb")) 
 	return 2;
@@ -133,7 +133,7 @@ size_t nBytes = fp.Write (dataP, sizeof (byte), (ushort) res.Size ());
 fp.Close ();
 if (nBytes != res.Size ())
 	return 1;
-ObjTriggerCount () = 0;
+triggerManager.ObjTriggerCount () = 0;
 return 0;
 }
 
@@ -151,8 +151,7 @@ if (m_pHxmExtraData) {
 	m_nHxmExtraDataSize = 0;
 	}
 
-CSegment& seg = *Segments (0);
-CVertex *vert = vertexManager.Vertex (0);
+CSegment& seg = *segmentManager.Segment (0);
 
 seg.m_sides [0].m_info.nWall = NO_WALL;
 seg.m_sides [0].m_info.nBaseTex = 0;
@@ -276,14 +275,16 @@ seg.m_info.wallFlags = 0;
 seg.m_info.nIndex = 0;
 seg.m_info.mapBitmask = 0;
 
-vert [0] = CVertex (+10, +10, -10);
-vert [1] = CVertex (+10, -10, -10);
-vert [2] = CVertex (-10, -10, -10);
-vert [3] = CVertex (-10, +10, -10);
-vert [4] = CVertex (+10, +10, +10);
-vert [5] = CVertex (+10, -10, +10);
-vert [6] = CVertex (-10, -10, +10);
-vert [7] = CVertex (-10, +10, +10);
+CVertex *vertP = vertexManager.Vertex (0);
+
+vertP [0] = CVertex (+10, +10, -10);
+vertP [1] = CVertex (+10, -10, -10);
+vertP [2] = CVertex (-10, -10, -10);
+vertP [3] = CVertex (-10, +10, -10);
+vertP [4] = CVertex (+10, +10, +10);
+vertP [5] = CVertex (+10, -10, +10);
+vertP [6] = CVertex (-10, -10, +10);
+vertP [7] = CVertex (-10, +10, +10);
 
 segmentManager.Count () = 1;
 vertexManager.Count () = 8;
@@ -293,30 +294,27 @@ vertexManager.Count () = 8;
 // ClearMineData()
 // -----------------------------------------------------------------------------
 
-void CMine::ClearMineData() 
+void CMine::ClearMineData () 
 {
 	short i;
 
 // initialize Segments ()
-CSegment *segP = Segments (0);
+CSegment *segP = segmentManager.Segment (0);
 for (i = 0; i < MAX_SEGMENTS; i++, segP++)
-	segP->m_info.wallFlags &= ~MARKED_MASK;
-SegCount () = 0;
+	segP->Unmark ();
+segmentManager.Count () = 0;
 // initialize vertices
 for (i = 0; i < MAX_VERTICES; i++) 
 	vertexManager.Status (i) &= ~MARKED_MASK;
 vertexManager.Count () = 0;
 lightManager.Count () = 0;
 // reset "howmany"
-MineInfo ().objects.Reset ();
-MineInfo ().walls.Reset ();
-MineInfo ().doors.Reset ();
-MineInfo ().triggers.Reset ();
-MineInfo ().control.Reset ();
-MineInfo ().botGen.Reset ();
-MineInfo ().equipGen.Reset ();
-MineInfo ().lightDeltaIndices.Reset ();
-MineInfo ().lightDeltaValues.Reset ();
+segmentManager.ResetInfo ();
+wallManager.ResetInfo ();
+triggerManager.ResetInfo ();
+lightManager.ResetInfo ();
+objectManager.ResetInfo ();
+robotManager.ResetInfo ();
 }
 
 // ----------------------------------------------------------------------------------

@@ -204,7 +204,7 @@ AddTarget (nSegment, nSide);
 
 void CReactorTool::OnAddWallTarget ()
 {
-CSelection& other = selections [current == selections [0]];
+other = selections [current == selections [0]];
 int i = FindTarget (other.m_nSegment, other.m_nSide);
 if (i >= 0)
 	return;
@@ -242,7 +242,7 @@ return m_triggerP->Find (nSegment, nSide);
 
 void CReactorTool::OnDeleteWallTarget ()
 {
-CSelection& other = selections [current == selections [0]];
+other = selections [current == selections [0]];
 int i = FindTarget (other.m_nSegment, other.m_nSide);
 if (i < 0) {
 	DEBUGMSG (" Reactor tool: Trigger doesn't target other cube's current side.");

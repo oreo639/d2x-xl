@@ -881,7 +881,7 @@ AddTarget (nSegment, nSide);
 
 void CTriggerTool::OnAddWallTarget ()
 {
-CSelection& other = selections [current == selections [0]];
+other = selections [current == selections [0]];
 m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nTrigger == -1)
 	return;
