@@ -115,7 +115,7 @@ class CSegmentManager {
 
 		inline CWall* Wall (void) { return Wall (CSideKey ()); }
 
-		int IsWall (CSideKey key);
+		int IsWall (CSideKey key = CSideKey ());
 
 		//inline CTrigger* Trigger (short nSegment = -1, short nSide = -1) {
 		inline CTrigger* Trigger (CSideKey key) { return Side (key)->Trigger (); }
@@ -234,7 +234,7 @@ class CSegmentManager {
 
 		bool HaveMarkedSides (void);
 
-		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, bool bAlign1st, bool bAlign2nd, char bAlignedSides = 0);
+		int AlignTextures (short nStartSeg, short nStartSide, short onlyChild, int bAlign1st, int bAlign2nd, char bAlignedSides = 0);
 
 		CSide* OppSide (void);
 

@@ -149,7 +149,7 @@ for (x = -32 * y; x < 32 * y; x += 32) {
 	pDC->LineTo ((int) (offset.x + dy), (int) (offset.y + dx));
 	}	
 
-if (theMine->IsWall ()) {
+if (segmentManager.IsWall ()) {
 	// define array of screen points for (u,v) coordinates
 	for (i = 0; i < 4; i++) {
 		x = offset.x + (int)(m_zoom * (double)sideP->m_info.uvls[i].u / 64.0);
@@ -173,10 +173,10 @@ if (theMine->IsWall ()) {
 	m_maxPt.y = min(m_maxPt.y, maxRect.y);
 
 	if (false && m_bShowChildren) {
-		int nChildSide, nChild, nChildLine;
+		short nChildSide, nChild, nChildLine;
 		int point0, point1, vert0, vert1;
-		int childs_side, childs_line;
-		int childs_point0, childs_point1, childs_vert0, childs_vert1;
+		short iChildSide, iChildLine;
+		short childPoint0, childPoint1, childVert0, childVert1;
 		int x0, y0;
 		POINT child_pts[4];
 
@@ -195,20 +195,20 @@ if (theMine->IsWall ()) {
 			if (nChild > -1) {
 				childSegP = segmentManager.Segment (nChild);
 				// figure out which side of child shares two points w/ current->side
-				for (childs_side = 0; childs_side < 6; childs_side++) {
+				for (iChildSide = 0; iChildSide < 6; iChildSide++) {
 					// ignore children of different textures (or no texture)
-					CSide *childSideP = childSegP->m_sides + childs_side;
-					if (theMine->IsWall (nChild, childs_side) &&
+					CSide *childSideP = childSegP->m_sides + iChildSide;
+					if (segmentManager.IsWall (CSideKey (nChild, iChildSide)) &&
 						 (childSideP->m_info.nBaseTex == sideP->m_info.nBaseTex)) {
-						for (childs_line=0;childs_line<4;childs_line++) {
+						for (iChildLine=0;iChildLine<4;iChildLine++) {
 							// find vert numbers for the line's two end points
-							childs_point0 = lineVertTable [sideLineTable [childs_side][childs_line]][0];
-							childs_point1 = lineVertTable [sideLineTable [childs_side][childs_line]][1];
-							childs_vert0  = childSegP->m_info.verts [childs_point0];
-							childs_vert1  = childSegP->m_info.verts [childs_point1];
+							childPoint0 = lineVertTable [sideLineTable [iChildSide][iChildLine]][0];
+							childPoint1 = lineVertTable [sideLineTable [iChildSide][iChildLine]][1];
+							childVert0  = childSegP->m_info.verts [childPoint0];
+							childVert1  = childSegP->m_info.verts [childPoint1];
 							// if both points of line == either point of parent
-							if ((childs_vert0 == vert0 && childs_vert1 == vert1) ||
-								 (childs_vert0 == vert1 && childs_vert1 == vert0)) {
+							if ((childVert0 == vert0 && childVert1 == vert1) ||
+								 (childVert0 == vert1 && childVert1 == vert0)) {
 
 								// now we know the child's side & line which touches the parent
 								// so, we need to translate the child's points by even increments
@@ -221,7 +221,7 @@ if (theMine->IsWall ()) {
 									child_pts[i].y = y;
 									}
 								// now, calculate offset
-								uv = (childs_line+1)&3;
+								uv = (iChildLine+1)&3;
 								x0 = child_pts[uv].x - m_apts [nChildLine].x;
 								y0 = child_pts[uv].y - m_apts [nChildLine].y;
 								x0 = round_int(x0,(int)(32.0*m_zoom));
@@ -672,19 +672,19 @@ UpdateAlignWnd ();
 
 void CTextureTool::OnAlignResetMarked ()
 {	
-	CSegment *segP;
-	short nSegment, nSide, nWalls = wallManager.WallCount;
+	short nWalls = wallManager.WallCount ();
 	BOOL bModified = FALSE;
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
-	for (nSide = 0; nSide < 6; nSide++) {
+for (CSegmentIterator si; si; si++) {
+	CSegment* segP = &(*si);
+	short nSegment = si.Index ();
+	for (short nSide = 0; nSide < 6; nSide++) {
 		if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) {
-			if ((segP->Child (nSide) == -1) || 
-				 (segP->m_sides [nSide].m_info.nWall < nWalls)) {
+			if ((segP->Child (nSide) == -1) || (segP->m_sides [nSide].m_info.nWall < nWalls)) {
 				segP->m_sides [nSide].m_info.nOvlTex &= 0x3fff; // rotate 0
-				segmentManager.Segment (nSegment)->SetUV (nSide,0,0);
+				segP->SetUV (nSide,0,0);
 				bModified = TRUE;
 				}
 			}
@@ -739,10 +739,10 @@ if (bStart) {
 	CSegment *segP = segmentManager.Segment (0);
 	int i;
 	for (i = segmentManager.Count (); i; i--, segP++)
-		 segP->m_info.nIndex = 0; // all six sides not aligned yet
+		 segP->Index () = 0; // all six sides not aligned yet
 	}
 // mark current side as aligned
-segmentManager.Segment (nSegment)->m_info.nIndex = 1;
+segmentManager.Segment (nSegment)->Index () = 1;
 // call recursive function which aligns one at a time
 AlignChildTextures (nSegment, nSide, MAX_SEGMENTS);
 }
@@ -763,11 +763,11 @@ void CTextureTool::OnAlignAll (void)
 
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-bool bAll = theMine->GotMarkedSegments ();
+bool bAll = segmentManager.HaveMarkedSegments ();
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++)
-	 segP->m_info.nIndex = 0;
+	 segP->Index () = 0;
 for (nSegment = 0, segP = segmentManager.Segment (0); nSegment < segmentManager.Count (); nSegment++, segP++) {
-	if (segP->m_info.nIndex)
+	if (segP->Index ())
 		continue;
 	childSideP = segP->m_sides + nSide;
 	if (m_bUse1st && (sideP->m_info.nBaseTex != childSideP->m_info.nBaseTex))
@@ -806,13 +806,12 @@ void CTextureTool::OnAlignChildren ()
 // set all segment sides as not aligned yet
 UpdateData (TRUE);
 undoManager.Begin (udSegments);
-if (theMine->GotMarkedSegments ())
+if (segmentManager.HaveMarkedSegments ())
 	// call recursive function which aligns one at a time
 	AlignChildren (current.m_nSegment, current.m_nSide, true);
 else {	// use all marked sides as alignment source
-	int nSegment, nSide;
-	for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++)
-		for (nSide = 0; nSide < 6; nSide++)
+	for (short nSegment = 0; nSegment < segmentManager.Count (); nSegment++)
+		for (short nSide = 0; nSide < 6; nSide++)
 			if (segmentManager.IsMarked (CSideKey (nSegment, nSide))) 
 				AlignChildren (nSegment, nSide, true);
 	}
@@ -833,20 +832,14 @@ static const int sideChildTable[6][4] = {
 
 void CTextureTool::AlignChildTextures (int nSegment, int nSide, int nDepth)  
 {
-	CSegment	*segP, *childSeg;
-	CSide		*sideP, *childSideP; 
-	int			child_segnum;
-	int			child_sidenum;
-	int			nLine, h;
-	short			nBaseTex;
 	char			bAlignedSides = 0;
 
 if (nDepth <= 0)
 	return;
 if ((nSegment < 0) || (nSegment >= segmentManager.Count ()))
 	return;
-segP = segmentManager.Segment (nSegment);
-if (segP->m_info.nIndex < 0)
+CSegment* segP = segmentManager.Segment (nSegment);
+if (segP->Index () < 0)
 	return;
 
 	short			*childList = new short [segmentManager.Count ()];
@@ -856,84 +849,86 @@ if (!childList)
 	return;
 
 childList [tos++] = nSegment;
-segP->m_info.nIndex = nSide;
+segP->Index () = nSide;
 
 if (m_bIgnorePlane) {
-	sideP = segP->m_sides + nSide;
-	nBaseTex = sideP->m_info.nBaseTex;
+	CSide* sideP = segP->m_sides + nSide;
+	short nBaseTex = sideP->m_info.nBaseTex;
 	bAlignedSides = 1 << nSide;
-	h = theMine->AlignTextures (nSegment, nSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
-	for (nLine = 0; nLine < 4; nLine++) {
-		child_sidenum = sideChildTable[nSide][nLine];
-		if (!(bAlignedSides & (1 << child_sidenum))) {
-			bAlignedSides |= (1 << child_sidenum);
-			childSideP = segP->m_sides + child_sidenum;
+	int h = segmentManager.AlignTextures (nSegment, nSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
+	for (short nLine = 0; nLine < 4; nLine++) {
+		short nChildSide = sideChildTable[nSide][nLine];
+		if (!(bAlignedSides & (1 << nChildSide))) {
+			bAlignedSides |= (1 << nChildSide);
+			CSide* childSideP = segP->m_sides + nChildSide;
 			if (childSideP->m_info.nBaseTex == nBaseTex)
-				theMine->AlignTextures (nSegment, child_sidenum, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
+				segmentManager.AlignTextures (nSegment, nChildSide, nSegment, m_bUse1st, m_bUse2nd, bAlignedSides);
 			}
 		}
 	if (h >= 0) {
-		for (child_sidenum = 0, childSideP = segP->m_sides; child_sidenum < 6; child_sidenum++, childSideP++) {
-			if (childSideP->m_info.nBaseTex == nBaseTex) {
-				for (nLine = 0; nLine < 4; nLine++) {
-					child_segnum = segP->Child (sideChildTable[child_sidenum][nLine]);
-					if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
+		CSide* childSideP = segP->m_sides;
+		for (short nChildSide = 0; nChildSide < 6; nChildSide++, childSideP++) {
+			if (childSideP->BaseTex () == nBaseTex) {
+				for (short nLine = 0; nLine < 4; nLine++) {
+					short nChildSeg = segP->Child (sideChildTable[nChildSide][nLine]);
+					if ((nChildSeg < 0) || (nChildSeg >= segmentManager.Count ()))
 						continue;
-					childSeg = segmentManager.Segment (child_segnum);
-					if (childSeg->m_info.nIndex != 0)
+					CSegment* childSegP = segmentManager.Segment (nChildSeg);
+					if (childSegP->Index () != 0)
 						continue;
-					h = theMine->AlignTextures (nSegment, child_sidenum, child_segnum, m_bUse1st, m_bUse2nd, 0);
-					childSeg->m_info.nIndex = h + 1;
+					h = segmentManager.AlignTextures (nSegment, nChildSide, nChildSeg, m_bUse1st, m_bUse2nd, 0);
+					childSegP->Index () = h + 1;
 					}
 				}
 			}
 		}
-	segP->m_info.nIndex = -1;
+	segP->Index () = -1;
 	--nDepth;
-	for (nSide = 0, childSideP = segP->m_sides; nSide < 6; nSide++, childSideP++) {
+	CSide* childSideP = segP->m_sides;
+	for (short nSide = 0; nSide < 6; nSide++, childSideP++) {
 //			if (childSideP->m_info.nBaseTex != sideP->m_info.nBaseTex)
 //				continue;
-		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
-			if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
+		for (short nLine = 0; nLine < 4; nLine++) {
+			short nChildSeg = segP->Child (sideChildTable[nSide][nLine]);
+			if ((nChildSeg < 0) || (nChildSeg >= segmentManager.Count ()))
 				continue;
-			childSeg = segmentManager.Segment (child_segnum);
-			child_sidenum = childSeg->m_info.nIndex - 1;
-			if (child_sidenum < 0)
+			CSegment* childSegP = segmentManager.Segment (nChildSeg);
+			short nChildSide = childSegP->Index () - 1;
+			if (nChildSide < 0)
 				continue;
-			AlignChildTextures (child_segnum, child_sidenum, nDepth);
+			AlignChildTextures (nChildSeg, nChildSide, nDepth);
 			}
 		}
 	}
 else {
 	while (pos < tos) {
-		nSegment = childList [pos++];
-		segP = segmentManager.Segment (nSegment);
-		nSide = segP->m_info.nIndex;
-		segP->m_info.nIndex = -1;
-		for (nLine = 0; nLine < 4; nLine++) {
+		short nSegment = childList [pos++];
+		CSegment* segP = segmentManager.Segment (nSegment);
+		short nSide = segP->Index ();
+		segP->Index () = -1;
+		for (short nLine = 0; nLine < 4; nLine++) {
 			if (nSide < 0)
 				continue;
-			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
-			if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
+			short nChildSeg = segP->Child (sideChildTable[nSide][nLine]);
+			if ((nChildSeg < 0) || (nChildSeg >= segmentManager.Count ()))
 				continue;
-			childSeg = segmentManager.Segment (child_segnum);
-			if (childSeg->m_info.nIndex)
+			CSegment* childSegP = segmentManager.Segment (nChildSeg);
+			if (childSegP->Index ())
 				continue;
-			childSeg->m_info.nIndex = theMine->AlignTextures (nSegment, nSide, child_segnum, m_bUse1st, m_bUse2nd, 0);
-			if (childSeg->m_info.nIndex >= 0)
-				childList [tos++] = child_segnum;
+			childSegP->Index () = segmentManager.AlignTextures (nSegment, nSide, nChildSeg, m_bUse1st, m_bUse2nd, 0);
+			if (childSegP->Index () >= 0)
+				childList [tos++] = nChildSeg;
 			}
 /*
 		for (nLine = 0; nLine < 4; nLine++) {
-			child_segnum = segP->Child (sideChildTable[nSide][nLine]);
-			if ((child_segnum < 0) || (child_segnum >= segmentManager.Count ()))
+			nChildSeg = segP->Child (sideChildTable[nSide][nLine]);
+			if ((nChildSeg < 0) || (nChildSeg >= segmentManager.Count ()))
 				continue;
-			childSeg = segmentManager.Segment (child_segnum);
-			child_sidenum = childSeg->m_info.nIndex;
-			if (child_sidenum < 0)
+			childSeg = segmentManager.Segment (nChildSeg);
+			nChildSide = childSeg->Index ();
+			if (nChildSide < 0)
 				continue;
-			AlignChildTextures (child_segnum, child_sidenum, --nDepth);
+			AlignChildTextures (nChildSeg, nChildSide, --nDepth);
 			}
 */
 		}

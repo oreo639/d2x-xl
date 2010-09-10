@@ -37,7 +37,7 @@ return true;
 
 // ------------------------------------------------------------------------ 
 
-int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, bool bAlign1st, bool bAlign2nd, char bAlignedSides)
+int CSegmentManager::AlignTextures (short nStartSeg, short nStartSide, short nOnlyChildSeg, int bAlign1st, int bAlign2nd, char bAlignedSides)
 {
 	CSegment*	segP = Segment (nStartSeg); 
 	CSegment*	childSegP; 

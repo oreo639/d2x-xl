@@ -196,7 +196,7 @@ for (;;) {
 	if (m_nTail == m_nCurrent)
 		break;
 	if (--m_nTail < 0)
-		m_nTail = sizeof (m_buffer) - 1;
+		m_nTail = m_maxSize - 1;
 	}
 if (m_nCurrent == m_nHead) {
 	m_nHead = m_nTail = m_nCurrent = -1;
@@ -204,7 +204,7 @@ if (m_nCurrent == m_nHead) {
 	}
 else {
 	if (--m_nTail < 0)
-		m_nTail = sizeof (m_buffer) - 1;
+		m_nTail = m_maxSize - 1;
 	m_nCurrent = m_nTail;
 	m_nId = Current ()->Id ();
 	}
@@ -219,8 +219,14 @@ if (maxSize < 1)
 else if (maxSize > MAX_UNDOS)
 	maxSize = MAX_UNDOS;
 Enable (maxSize > 0);
-while (m_size > maxSize)
+int nExcess = Count () - maxSize;
+if (nExcess > 0) {
+	for (m_nCurrent = m_nTail; nExcess > 0; nExcess--) {
+		if (--m_nCurrent < 0)
+			m_nCurrent = m_maxSize - 1;
+		}
 	Truncate ();
+	}
 return m_maxSize = maxSize;
 }
 
@@ -236,7 +242,7 @@ int nId = Current ()->Id ();
 do {
 	Current ()->Restore ();
 	if (--m_nCurrent < 0)
-		m_nCurrent = sizeof (m_buffer) - 1;
+		m_nCurrent = m_maxSize - 1;
 	} while ((m_nCurrent != m_nHead) && (Current ()->Id () == nId));
 return true;
 }
@@ -252,7 +258,7 @@ if (m_nCurrent == m_nTail)
 int nId = Current ()->Id ();
 do {
 	Current ()->Restore ();
-	m_nCurrent = ++m_nCurrent % sizeof (m_buffer);
+	m_nCurrent = ++m_nCurrent % m_maxSize;
 	} while ((m_nCurrent != m_nTail) && (Current ()->Id () == nId));
 return true;
 }
@@ -265,11 +271,11 @@ if (m_nHead = -1)
 	m_nHead = m_nTail = m_nCurrent = 0;
 else {
 	Truncate ();
-	m_nTail = ++m_nTail % sizeof (m_buffer);
+	m_nTail = ++m_nTail % m_maxSize;
 	if (m_nTail == m_nHead) {	// buffer full
 		int nId = Head ()->Id ();
 		do { // remove all items with same backup id from buffer start
-			m_nHead = ++m_nHead % sizeof (m_buffer);
+			m_nHead = ++m_nHead % m_maxSize;
 #if DETAIL_BACKUP
 			delete Head ()->m_item;
 #else
@@ -324,7 +330,7 @@ else {
 
 int CUndoManager::Count (void)
 {
-return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - sizeof (m_buffer);
+return (m_nTail > m_nHead) ? (m_nTail - m_nHead + 1) : m_nTail + m_nHead - m_maxSize;
 }
 
 //------------------------------------------------------------------------------

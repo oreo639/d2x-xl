@@ -1199,10 +1199,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\RobotTool.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\SettingsTool.cpp"
 					>
 				</File>

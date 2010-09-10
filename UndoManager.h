@@ -239,17 +239,17 @@ class CUndoManager
 
 		void Delay (bool bDelay);
 
-		int Count ();
+		int Count (void);
 
 		int Enable (int bEnable);
 
 		int SetMaxSize (int maxSize);
 
-		inline int GetMaxSize (void) { return m_maxSize; }
+		inline int MaxSize (void) { return m_maxSize; }
 
-		inline void Lock () { Delay (true); }
+		inline void Lock (void) { Delay (true); }
 
-		inline void Unlock () { Delay (false); }
+		inline void Unlock (void) { Delay (false); }
 
 		void SetModified (bool bModified);
 

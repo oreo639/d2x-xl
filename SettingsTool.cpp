@@ -322,7 +322,7 @@ strcpy_s (m_missionsPath, sizeof (m_missionsPath), missionPath);
 m_mineViewFlags = DLE.MineView ()->GetMineViewFlags ();
 m_objViewFlags = DLE.MineView ()->GetObjectViewFlags ();
 m_texViewFlags = DLE.TextureView ()->GetViewFlags ();
-m_nMaxUndo = DLE.m_undoList.GetMaxSize ();
+m_nMaxUndo = undoManager.MaxSize ();
 for (i = 0; i < 4; i++)
 	if (depthPerception == m_depthPerceptions [i]) {
 		m_iDepthPerception = i;
@@ -334,7 +334,7 @@ for (i = 0; i < 5; i++)
 		break;
 		}
 m_moveRate = moveRate;
-m_bUseTexColors = theMine->UseTexColors ();
+m_bUseTexColors = lightManager.UseTexColors ();
 m_bSplashScreen = DLE.m_bSplashScreen;
 }
 
@@ -418,11 +418,11 @@ if (!bInitApp) {
 angleRate = m_rotateRates [m_iRotateRate];
 moveRate = m_moveRate;
 bExpertMode = (m_bExpertMode != 0);
-theMine->UseTexColors () = m_bUseTexColors != 0;
+lightManager.UseTexColors () = m_bUseTexColors != 0;
 if (!bInitApp)
 	SaveAppSettings (false);
 DLE.m_bSplashScreen = m_bSplashScreen;
-DLE.m_undoList.SetMaxSize (m_nMaxUndo);
+undoManager.SetMaxSize (m_nMaxUndo);
 }
 
                         /*--------------------------*/
