@@ -78,7 +78,7 @@ CMineItemInfo links; // unused
 links.Read (fp);
 triggerManager.ReadReactorInfo (fp);
 segmentManager.ReadRobotMakerInfo (fp);
-LightManager.ReadLightDeltaInfo (fp);
+lightManager.ReadLightDeltaInfo (fp);
 if (fileInfo.size > 143)
 	segmentManager.ReadEquipMakerInfo (fp);
 }

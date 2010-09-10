@@ -197,6 +197,11 @@ class CLightManager {
 			ReadDeltaValueInfo (fp);
 			}
 
+		inline void WriteLightDeltaInfo (CFileManager& fp) {
+			WriteDeltaIndexInfo (fp);
+			WriteDeltaValueInfo (fp);
+			}
+
 		void SortDeltaIndex (void);
 
 	private:

@@ -138,7 +138,7 @@ void CSegmentManager::MarkSelected (void)
 	CSegment *segP = current.Segment (); 
 	int i, p [8], nPoints; 
 
-switch (theApp.MineView ()->SelectMode ()) {
+switch (DLE.MineView ()->SelectMode ()) {
 	case eSelectPoint:
 		nPoints = 1; 
 		p [0] = segP->verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
@@ -146,8 +146,8 @@ switch (theApp.MineView ()->SelectMode ()) {
 
 	case eSelectLine:
 		nPoints = 2; 
-		p [0] = segP->verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
-		p [1] = segP->verts [sideVertTable [current.m_nSide][(current.m_nPoint + 1) & 3]]; 
+		p [0] = segP->m_info.verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
+		p [1] = segP->m_info.verts [sideVertTable [current.m_nSide][(current.m_nPoint + 1) & 3]]; 
 		break; 
 
 	case eSelectSide:
@@ -164,21 +164,21 @@ if (bSegMark)
 else {
 	// set i to nPoints if all verts are marked
 	for (i = 0; i < nPoints; i++)
-		if (!(*vertexManager.Status (p [i]) & MARKED_MASK)) 
+		if (!(vertexManager.Status (p [i]) & MARKED_MASK)) 
 			break; 
 		// if all verts are marked, then unmark them
 	if (i== nPoints) {
 		for (i = 0; i < nPoints; i++)
-			*vertexManager.Status (p [i]) &= ~MARKED_MASK; 
+			vertexManager.Status (p [i]) &= ~MARKED_MASK; 
 		}
 	else {
 		// otherwise mark all the points
 		for (i = 0; i < nPoints; i++)
-			*vertexManager.Status (p [i]) |= MARKED_MASK; 
+			vertexManager.Status (p [i]) |= MARKED_MASK; 
 		}
 	UpdateMarked (); 
 	}
-theApp.MineView ()->Refresh (); 
+DLE.MineView ()->Refresh (); 
 }
 
 // ------------------------------------------------------------------------

@@ -103,7 +103,7 @@ if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
 	int dlIdxCount = lightManager.DeltaIndexCount ();
 	CLightDeltaValue* lightDeltaValues;
-	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
+	if (!lightManager.LightStatus (face.m_nSegment, face.m_nSide)->bIsOn &&
 		 (lightDeltaIndices = lightManager.LightDeltaIndex (0)) &&
 		 (lightDeltaValues = lightManager.LightDeltaValue (0))) {
 		// search delta light index to see if current side has a light
@@ -111,7 +111,7 @@ if (bEnableDeltaShading) {
 		for (i = 0; i < dlIdxCount; i++, dli++) {
 //				if (dli->m_info.nSegment == current->segP) {
 			// loop on each delta light till the segP/side is found
-				CLightDeltaValue *dlP = theMine->LightDeltaValues (dli->m_info.index);
+				CLightDeltaValue *dlP = theMine->LightDeltaValue (dli->m_info.index);
 				h = dli->m_info.count;
 				for (j = 0; j < h; j++, dlP++) {
 					if (*dlP == face) {

@@ -286,8 +286,7 @@ void CTunnelMaker::Create (void)
 //  undoManager.UpdateBuffer(0);
 
 double		length;
-int			i, nVertex, nSegment;
-CSegment*	segP;
+int			i;
 
 if (!m_bActive) {
 	m_nMaxSegments = MAX_SEGMENTS - segmentManager.Count ();

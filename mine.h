@@ -104,7 +104,7 @@ class CMine {
 
 		inline int& SecretSegment (void) { return objectManager.SecretSegment (); }
 
-		inline CDoubleMatrix& SecretOrient (void) { objectManager.SecretOrient (); }
+		inline CDoubleMatrix& SecretOrient (void) { return objectManager.SecretOrient (); }
 
 		short Load (const char *filename = null, bool bLoadFromHog = false);
 
