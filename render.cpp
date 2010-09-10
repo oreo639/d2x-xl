@@ -39,7 +39,7 @@ void RenderFace (CSegment *segP, short nSide,
 	
 	// TEMPORARY
 	CSideKey face (short (segP - segmentManager.Segment (0)), nSide);
-	short flickLight = lightManager.VariableLight (face.m_nSegment, face.m_nSide);
+	short flickLight = lightManager.VariableLight (face);
 	short deltaLight, scanLight;
 	short light [4];
 	ushort bmWidth2;
@@ -104,8 +104,8 @@ if (bEnableDeltaShading) {
 	int dlIdxCount = lightManager.DeltaIndexCount ();
 	CLightDeltaValue* lightDeltaValues;
 	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
-		 (lightDeltaIndices = theMine->LightDeltaIndex (0)) &&
-		 (lightDeltaValues = theMine->LightDeltaValues (0))) {
+		 (lightDeltaIndices = lightManager.LightDeltaIndex (0)) &&
+		 (lightDeltaValues = lightManager.LightDeltaValue (0))) {
 		// search delta light index to see if current side has a light
 		CLightDeltaIndex	*dli = lightDeltaIndices;
 		for (i = 0; i < dlIdxCount; i++, dli++) {

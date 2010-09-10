@@ -135,19 +135,21 @@ return nCount;
 void CSegmentManager::MarkSelected (void)
 {
 	bool	bSegMark = false; 
-	CDSegment *segP = CurrSeg (); 
+	CSegment *segP = current.Segment (); 
 	int i, p [8], nPoints; 
 
-switch (theApp.MineView ()->GetSelectMode ()) {
+switch (theApp.MineView ()->SelectMode ()) {
 	case eSelectPoint:
 		nPoints = 1; 
 		p [0] = segP->verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
 		break; 
+
 	case eSelectLine:
 		nPoints = 2; 
 		p [0] = segP->verts [sideVertTable [current.m_nSide][current.m_nPoint]]; 
 		p [1] = segP->verts [sideVertTable [current.m_nSide][(current.m_nPoint + 1) & 3]]; 
 		break; 
+
 	case eSelectSide:
 		nPoints = 4; 
 		for (i = 0; i < nPoints; i++)
@@ -158,7 +160,7 @@ switch (theApp.MineView ()->GetSelectMode ()) {
 	}
 
 if (bSegMark)
-	MarkSegment (current.m_nSegment); 
+	Mark (current.m_nSegment); 
 else {
 	// set i to nPoints if all verts are marked
 	for (i = 0; i < nPoints; i++)

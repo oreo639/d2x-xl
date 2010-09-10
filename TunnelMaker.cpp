@@ -218,12 +218,12 @@ z2 = x1 * sin (ySpin) + z1 * cos (ySpin);
 void CTunnelMaker::Realize (void)
 {
 undoManager.Begin (udSegments | udVertices);
-for (nSegment = 0; nSegment < m_nLength; nSegment++) {
-	segP = segmentManager.Segment (m_nSegments [nSegment]);
+for (short nSegment = 0; nSegment < m_nLength; nSegment++) {
+	CSegment* segP = segmentManager.Segment (m_nSegments [nSegment]);
 	// copy current segment
 	*segP = *segmentManager.Segment (current.m_nSegment);
 	for (short j = 0; j < 4; j++) {
-		nVertex = 4 * nSegment + j;
+		ushort nVertex = 4 * nSegment + j;
 		if (nSegment == 0) {         // 1st segment
 			segP->m_info.verts [sideVertTable [m_info [0].m_nSide][j]] = m_nVertices [nVertex];
 			segP->m_info.verts [oppSideVertTable [m_info [0].m_nSide][j]] = m_info [0].Segment ()->m_info.verts [sideVertTable [m_info [0].m_nSide][j]];

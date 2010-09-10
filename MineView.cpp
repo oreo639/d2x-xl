@@ -465,8 +465,8 @@ for (h = 0; h < lightManager.DeltaIndexCount (); h++, ldiP++) {
 				continue;
 			}
 		pls = m_lightStatus [nSegment] + nSide;
-		ltP = m_lightTimers + j;
-		pls->bIsOn = (flP [j].m_info.mask & (1 << m_lightTimers [j].impulse)) != 0;
+		ltP = lightManager.LightTimer (j);
+		pls->bIsOn = (flP [j].m_info.mask & (1 << lightManager.LightTimers (j)->impulse)) != 0;
 		if (pls->bWasOn != pls->bIsOn)
 			bChange = true;
 		}
@@ -518,8 +518,7 @@ if (bEnableDeltaShading = bEnable) {
 		m_nFrameRate = nFrameRate;
 	if (bShowLightSource != -1)
 		m_bShowLightSource = bShowLightSource;
-	memset (m_lightTimers, 0, sizeof (m_lightTimers));
-	memset (m_lightStatus, 0xff, sizeof (m_lightStatus));
+	lightManager.AnimInfo ().Clear ();
 	}
 else if (m_lightTimer != -1) {
 	KillTimer (m_lightTimer);

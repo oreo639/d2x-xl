@@ -98,12 +98,10 @@ CMineItemInfo links; // unused
 links.Write (fp);
 triggerManager.WriteReactorInfo (fp);
 segmentManager.WriteRobotMakerInfo (fp);
-LightManager.WriteLightDeltaInfo (fp);
+lightManager.WriteLightDeltaInfo (fp);
 if (fileInfo.size > 143)
 	segmentManager.WriteEquipMakerInfo (fp);
 }
 
 // -----------------------------------------------------------------------------
-
-#endif // __mineinfo_h
 

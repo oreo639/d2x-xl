@@ -95,20 +95,6 @@ enum eMouseStates
 
 // -----------------------------------------------------------------------------
 
-typedef struct {
-	short	ticks;
-	short	impulse;
-} tLightTimer;
-
-// -----------------------------------------------------------------------------
-
-typedef struct {
-	bool	bIsOn;
-	bool	bWasOn;
-} tLightStatus;
-
-// -----------------------------------------------------------------------------
-
 class CMineView : public CView
 {
 protected: // create from serialization only
@@ -205,9 +191,6 @@ protected: // create from serialization only
 					m_yRenderOffs;
 	int			m_nViewDist;
 	int			m_nMineCenter;
-
-	tLightTimer		m_lightTimers [MAX_VARIABLE_LIGHTS];
-	tLightStatus	m_lightStatus [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 
 
 #if OGL_RENDERING

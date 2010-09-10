@@ -255,28 +255,6 @@ double CTexture::Scale (short nTexture)
 return m_info.width ? (double) m_info.width / 64.0 : 1.0;
 }
 
-// -----------------------------------------------------------------------------
-// make a copy of this segment for the undo manager
-// if segment was modified, make a copy of the current segment
-// if segment was added or deleted, just make a new CGameItem instance and 
-// mark the operation there
-
-CGameItem* CTexture::Clone (void)
-{
-cloneP = new CTexture;	// only make a copy if modified
-if (cloneP != null)
-	*cloneP = *this;
-return cloneP;
-}
-
-// -----------------------------------------------------------------------------
-
-void CTexture::Backup (eEditType editType = opModify)
-{
-if (m_nBackup != undoManager.Id ())
-	m_nBackup = undoManager.Backup (this, editType);
-}
-
 //------------------------------------------------------------------------
 
 //eof textures.cpp

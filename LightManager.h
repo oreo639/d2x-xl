@@ -13,10 +13,37 @@
 #define MAX_LIGHT_DEPTH 6
 
 // -----------------------------------------------------------------------------
+
+typedef struct {
+	short	ticks;
+	short	impulse;
+} tLightTimer;
+
 // -----------------------------------------------------------------------------
+
+typedef struct {
+	bool	bIsOn;
+	bool	bWasOn;
+} tLightStatus;
+
 // -----------------------------------------------------------------------------
 
 #define MAX_VARIABLE_LIGHTS 100
+
+class CLightAnimInfo {
+	public:
+		tLightTimer		m_timers [MAX_VARIABLE_LIGHTS];
+		tLightStatus	m_status [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
+
+		inline void Clear (void) {
+			memset (m_timers (), 0, sizeof (m_timers));
+			memset (m_status, 0xff, sizeof (m_status));
+			};
+	};
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #ifdef _DEBUG
 
@@ -65,6 +92,7 @@ class CLightManager {
 		double					m_cornerLights [4];
 		double					m_fLightScale;
 		//long						m_defLightMap [MAX_TEXTURES_D2];
+		CLightAnimInfo			m_animInfo;
 
 	public:
 		inline void ResetInfo (void) {
@@ -89,6 +117,12 @@ class CLightManager {
 		inline CVertexColor* VertexColor (int i) { return &m_vertexColors [i]; }
 
 		inline CTextureColor* TexColor (short nTexture = 0) { return &m_texColors [nTexture & 0x1FFF]; }
+
+		inline CLightAnimInfo& AnimInfo (void) { return m_animInfo; }
+
+		inline tLightTimer* LightTimer (int i = 0) { return &m_animInfo.m_timers [i]; }
+
+		inline tLightStatus* LightStatus (short nSegment = 0, short nSide = 0) { return &m_animInfo.m_status [nSegment][nSide]; }
 
 		inline bool& UseTexColors (void) { return m_bUseTexColors; }
 

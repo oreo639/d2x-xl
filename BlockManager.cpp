@@ -143,7 +143,7 @@ while (!fp.EoF ()) {
 						if (!triggerManager.HaveResources ())
 							w.Info ().nTrigger = NO_TRIGGER;
 						else {
-							w.Info ().nTrigger = (byte) triggerManager.Add (false);
+							w.Info ().nTrigger = (byte) triggerManager.Add ();
 							CTrigger* trigP = triggerManager.Trigger (w.Info ().nTrigger);
 							*trigP = t;
 							trigP->Backup (opAdd);
