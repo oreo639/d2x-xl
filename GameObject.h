@@ -24,6 +24,8 @@ extern byte robotClip [MAX_ROBOT_IDS_TOTAL];
 
 extern byte powerupClip [MAX_POWERUP_IDS_D2];
 
+extern byte powerupTypeTable [MAX_POWERUP_IDS_D2];
+
 //------------------------------------------------------------------------
 
 typedef struct {

@@ -2,6 +2,8 @@
 #include "Mine.h"
 #include "dle-xp.h"
 
+CVertexManager vertexManager;
+
 // ----------------------------------------------------------------------------- 
 
 bool CVertexManager::Full (void) 

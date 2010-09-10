@@ -3,7 +3,7 @@
 #include "Mine.h"
 #include "dle-xp.h"
 
-extern CBlockManager blockManager;
+CBlockManager blockManager;
 
 //------------------------------------------------------------------------------
 
