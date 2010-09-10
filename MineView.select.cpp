@@ -399,7 +399,7 @@ void CMineView::SelectOtherSegment ()
 {
 current = selections [current == selections [0]];
 Refresh (true);
-DLE.ToolView ()->CubeTool ()->Refresh ();
+DLE.ToolView ()->SegmentTool ()->Refresh ();
 }
 
 
@@ -413,7 +413,7 @@ if (segmentManager.OppositeSide (opp) == null)
 
 (CSideKey) current = opp;
 Refresh (true);
-DLE.ToolView ()->CubeTool ()->Refresh ();
+DLE.ToolView ()->SegmentTool ()->Refresh ();
 return true;
 }
 

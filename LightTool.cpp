@@ -49,12 +49,12 @@ void CLightTool::SetDefaults (void)
 m_bIlluminate = 1;
 m_bAvgCornerLight = 1;
 m_bScaleLight = 0;
-m_bCubeLight = 1;
-m_bDynCubeLights = 1;
+m_bSegmentLight = 1;
+m_bDynSegmentLights = 1;
 m_bDeltaLight = 1;
 m_fBrightness = 100.0;
 m_fLightScale = 100.0;
-m_fCubeLight = 50.0;
+m_fSegmentLight = 50.0;
 m_fDeltaLight = 50.0;
 m_fVertexLight = 50.0;
 m_nNoLightDeltas = 2;
@@ -89,12 +89,12 @@ if (!HaveData (pDX))
 DDX_Check (pDX, IDC_LIGHT_ILLUMINATE, m_bIlluminate);
 DDX_Check (pDX, IDC_LIGHT_AVGCORNERLIGHT, m_bAvgCornerLight);
 DDX_Check (pDX, IDC_LIGHT_SCALE, m_bScaleLight);
-DDX_Check (pDX, IDC_LIGHT_CUBELIGHT, m_bCubeLight);
-DDX_Check (pDX, IDC_LIGHT_DYNCUBELIGHTS, m_bDynCubeLights);
+DDX_Check (pDX, IDC_LIGHT_CUBELIGHT, m_bSegmentLight);
+DDX_Check (pDX, IDC_LIGHT_DYNCUBELIGHTS, m_bDynSegmentLights);
 DDX_Check (pDX, IDC_LIGHT_CALCDELTA, m_bDeltaLight);
 DDX_Double (pDX, IDC_LIGHT_EDIT_ILLUMINATE, m_fBrightness, 0, 1000, null, "brightness must be between 0 and 1000");
 DDX_Double (pDX, IDC_LIGHT_EDIT_SCALE, m_fLightScale, 0, 200, null, "light scale must be between 0 and 200%");
-DDX_Double (pDX, IDC_LIGHT_EDIT_CUBELIGHT, m_fCubeLight, 0, 100, null, "robot brightness must be between 0 and 100%");
+DDX_Double (pDX, IDC_LIGHT_EDIT_CUBELIGHT, m_fSegmentLight, 0, 100, null, "robot brightness must be between 0 and 100%");
 DDX_Double (pDX, IDC_LIGHT_EDIT_DELTA, m_fDeltaLight, 0, 1000, null, "exploding/blinking light brightness must be between 0 and 1000");
 DDX_Radio (pDX, IDC_LIGHT_DELTA_ALL, m_nNoLightDeltas);
 DDX_Slider (pDX, IDC_LIGHT_RENDER_DEPTH, m_lightRenderDepth);
@@ -131,8 +131,8 @@ if (m_bAvgCornerLight)
 	lightManager.CalcAverageCornerLight (bAll);
 if (m_bScaleLight)
 	lightManager.ScaleCornerLight (m_fLightScale, bAll);
-if (m_bCubeLight)
-	lightManager.SetSegmentLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
+if (m_bSegmentLight)
+	lightManager.SetSegmentLight (m_fSegmentLight, (int) bAll, m_bDynSegmentLights != 0);
 if (m_bDeltaLight)
 	lightManager.ComputeVariableLight (m_fDeltaLight, (int) bAll);
 undoManager.End ();

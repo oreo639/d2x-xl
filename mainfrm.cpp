@@ -697,7 +697,7 @@ ToolView ()->EditWall ();
 void CMainFrame::OnEditCube() 
 {
 ShowTools ();
-ToolView ()->EditCube();
+ToolView ()->EditSegment ();
 }
 
 void CMainFrame::OnEditTrigger() 
@@ -889,7 +889,7 @@ segmentManager.JoinLines ();
 
 void CMainFrame::OnJoinSides ()
 {
-segmentManager.Join ();
+segmentManager.Join (0);
 }
 
 void CMainFrame::OnJoinCurrentSide ()
@@ -914,7 +914,7 @@ segmentManager.Split ();
 
 void CMainFrame::OnSplitCurrentSide ()
 {
-segmentManager.Split (1);
+segmentManager.Split ();
 }
 
 void CMainFrame::UpdateInsModeButtons (short mode)
