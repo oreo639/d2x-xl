@@ -835,85 +835,11 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath="advobjdlg.cpp"
+					RelativePath=".\AdvancedObjTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="CHECK.CPP"
+					RelativePath="advobjdlg.cpp"
 					>
 					<FileConfiguration
 						Name="Demo|Win32"
@@ -1225,160 +1151,12 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="cubedlg.cpp"
+					RelativePath=".\Diagnosis.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="diagdlg.cpp"
+					RelativePath=".\DiagTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="dlcDoc.cpp"
@@ -1541,82 +1319,8 @@
 					>
 				</File>
 				<File
-					RelativePath="lightdlg.cpp"
+					RelativePath=".\LightTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="MainFrm.cpp"
@@ -1795,82 +1499,8 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="objectdlg.cpp"
+					RelativePath=".\ObjectTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="Parser.cpp"
@@ -2035,82 +1665,16 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="reactordlg.cpp"
+					RelativePath=".\ReactorTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\RobotTool.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SettingsTools.cpp"
+					>
 				</File>
 				<File
 					RelativePath="StdAfx.cpp"
@@ -2191,82 +1755,8 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="texaligndlg.cpp"
+					RelativePath=".\TexAlignTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="TEXEDIT.CPP"
@@ -2347,160 +1837,16 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="texlightdlg.cpp"
+					RelativePath=".\TexFilterTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="texturedlg.cpp"
+					RelativePath=".\TexLightTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\TextureTool.cpp"
+					>
 				</File>
 				<File
 					RelativePath="textureView.cpp"
@@ -2815,86 +2161,12 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\txtfilterdlg.cpp"
+					RelativePath=".\TriggerTool.cpp"
 					>
 				</File>
 				<File
-					RelativePath="walldlg.cpp"
+					RelativePath=".\WallTool.cpp"
 					>
-					<FileConfiguration
-						Name="Demo|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Demo|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Intel Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -2995,15 +2267,11 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath=".\Resource\bitmaps\10000.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\10000.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10001.bmp"
+				RelativePath=".\Resource\bitmaps\10000.bmp"
 				>
 			</File>
 			<File
@@ -3011,7 +2279,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10004.bmp"
+				RelativePath=".\Resource\bitmaps\10001.bmp"
 				>
 			</File>
 			<File
@@ -3019,11 +2287,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10005.bmp"
+				RelativePath=".\Resource\bitmaps\10004.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\10005.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\10005.bmp"
 				>
 			</File>
 			<File
@@ -3035,15 +2307,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10007.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\10007.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10008.bmp"
+				RelativePath=".\Resource\bitmaps\10007.bmp"
 				>
 			</File>
 			<File
@@ -3051,11 +2319,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10009.bmp"
+				RelativePath=".\Resource\bitmaps\10008.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\10009.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\10009.bmp"
 				>
 			</File>
 			<File
@@ -3067,15 +2339,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\10011.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\10011.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\10012.BMP"
+				RelativePath="Resource\10011.BMP"
 				>
 			</File>
 			<File
@@ -3083,7 +2351,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\10013.BMP"
+				RelativePath="Resource\10012.BMP"
 				>
 			</File>
 			<File
@@ -3091,11 +2359,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10014.bmp"
+				RelativePath="Resource\10013.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\10014.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\10014.bmp"
 				>
 			</File>
 			<File
@@ -3107,15 +2379,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\10016.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\10016.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10017.bmp"
+				RelativePath="Resource\10016.BMP"
 				>
 			</File>
 			<File
@@ -3123,11 +2391,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10018.bmp"
+				RelativePath=".\Resource\bitmaps\10017.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\10018.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\10018.bmp"
 				>
 			</File>
 			<File
@@ -3139,15 +2411,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\10020.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\10020.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\10021.BMP"
+				RelativePath="Resource\10020.BMP"
 				>
 			</File>
 			<File
@@ -3155,7 +2423,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10022.bmp"
+				RelativePath="Resource\10021.BMP"
 				>
 			</File>
 			<File
@@ -3163,11 +2431,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10023.bmp"
+				RelativePath=".\Resource\bitmaps\10022.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\10023.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\10023.bmp"
 				>
 			</File>
 			<File
@@ -3179,15 +2451,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10025.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\10025.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\10026.BMP"
+				RelativePath=".\Resource\bitmaps\10025.bmp"
 				>
 			</File>
 			<File
@@ -3195,11 +2463,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\10027.BMP"
+				RelativePath="Resource\10026.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\10027.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\10027.BMP"
 				>
 			</File>
 			<File
@@ -3211,15 +2483,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\10029.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\10029.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\10030.BMP"
+				RelativePath="Resource\10029.BMP"
 				>
 			</File>
 			<File
@@ -3227,7 +2495,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\10031.bmp"
+				RelativePath="Resource\10030.BMP"
 				>
 			</File>
 			<File
@@ -3235,11 +2503,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12000.bmp"
+				RelativePath=".\Resource\bitmaps\10031.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\12000.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\12000.bmp"
 				>
 			</File>
 			<File
@@ -3251,15 +2523,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12004.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\12004.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\12005.BMP"
+				RelativePath="Resource\12004.BMP"
 				>
 			</File>
 			<File
@@ -3267,11 +2535,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12006.BMP"
+				RelativePath="Resource\12005.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\12006.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\12006.BMP"
 				>
 			</File>
 			<File
@@ -3283,15 +2555,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12008.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\12008.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12009.bmp"
+				RelativePath=".\Resource\bitmaps\12008.bmp"
 				>
 			</File>
 			<File
@@ -3299,11 +2567,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12010.BMP"
+				RelativePath=".\Resource\bitmaps\12009.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\12010.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\12010.BMP"
 				>
 			</File>
 			<File
@@ -3319,15 +2591,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12013.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\12013.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\12014.BMP"
+				RelativePath="Resource\12013.BMP"
 				>
 			</File>
 			<File
@@ -3335,11 +2603,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12015.bmp"
+				RelativePath="Resource\12014.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\12015.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\12015.bmp"
 				>
 			</File>
 			<File
@@ -3351,15 +2623,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12017.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\12017.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\12018.BMP"
+				RelativePath=".\Resource\bitmaps\12017.bmp"
 				>
 			</File>
 			<File
@@ -3367,7 +2635,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12019.BMP"
+				RelativePath="Resource\12018.BMP"
 				>
 			</File>
 			<File
@@ -3375,11 +2643,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12020.BMP"
+				RelativePath="Resource\12019.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\12020.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\12020.BMP"
 				>
 			</File>
 			<File
@@ -3391,15 +2663,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12022.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\12022.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12023.bmp"
+				RelativePath=".\Resource\bitmaps\12022.bmp"
 				>
 			</File>
 			<File
@@ -3407,11 +2675,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\12024.BMP"
+				RelativePath=".\Resource\bitmaps\12023.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\12024.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\12024.BMP"
 				>
 			</File>
 			<File
@@ -3423,15 +2695,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12026.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\12026.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12027.bmp"
+				RelativePath=".\Resource\bitmaps\12026.bmp"
 				>
 			</File>
 			<File
@@ -3439,7 +2707,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12028.bmp"
+				RelativePath=".\Resource\bitmaps\12027.bmp"
 				>
 			</File>
 			<File
@@ -3447,11 +2715,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12029.bmp"
+				RelativePath=".\Resource\bitmaps\12028.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\12029.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\12029.bmp"
 				>
 			</File>
 			<File
@@ -3463,15 +2735,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\12031.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\12031.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\addlight.bmp"
+				RelativePath=".\Resource\bitmaps\12031.bmp"
 				>
 			</File>
 			<File
@@ -3479,11 +2747,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\cursors\arrow.cur"
+				RelativePath=".\Resource\bitmaps\addlight.bmp"
 				>
 			</File>
 			<File
 				RelativePath="res\arrow.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\cursors\arrow.cur"
 				>
 			</File>
 			<File
@@ -3495,15 +2767,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\bmp00002.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\bmp00002.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00003.bmp"
+				RelativePath="Resource\bmp00002.bmp"
 				>
 			</File>
 			<File
@@ -3511,7 +2779,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00004.bmp"
+				RelativePath=".\Resource\bitmaps\bmp00003.bmp"
 				>
 			</File>
 			<File
@@ -3519,11 +2787,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00005.bmp"
+				RelativePath=".\Resource\bitmaps\bmp00004.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\bmp00005.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\bmp00005.bmp"
 				>
 			</File>
 			<File
@@ -3535,15 +2807,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00007.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\bmp00007.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\bmp00008.bmp"
+				RelativePath=".\Resource\bitmaps\bmp00007.bmp"
 				>
 			</File>
 			<File
@@ -3551,11 +2819,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00009.bmp"
+				RelativePath="Resource\bmp00008.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\bmp00009.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\bmp00009.bmp"
 				>
 			</File>
 			<File
@@ -3567,15 +2839,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00011.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\bmp00011.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00012.bmp"
+				RelativePath=".\Resource\bitmaps\bmp00011.bmp"
 				>
 			</File>
 			<File
@@ -3583,7 +2851,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\bmp00013.bmp"
+				RelativePath=".\Resource\bitmaps\bmp00012.bmp"
 				>
 			</File>
 			<File
@@ -3591,11 +2859,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00014.bmp"
+				RelativePath="Resource\bmp00013.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\bmp00014.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\bmp00014.bmp"
 				>
 			</File>
 			<File
@@ -3607,15 +2879,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\bmp00016.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bmp00016.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bmp00017.bmp"
+				RelativePath=".\Resource\bitmaps\bmp00016.bmp"
 				>
 			</File>
 			<File
@@ -3623,11 +2891,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bmp00018.bmp"
+				RelativePath=".\Resource\bmp00017.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\bmp00018.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bmp00018.bmp"
 				>
 			</File>
 			<File
@@ -3639,15 +2911,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\btnd2.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\btnd2.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnd3.bmp"
+				RelativePath=".\Resource\bitmaps\btnd2.bmp"
 				>
 			</File>
 			<File
@@ -3655,7 +2923,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnd4.bmp"
+				RelativePath="Resource\btnd3.bmp"
 				>
 			</File>
 			<File
@@ -3663,11 +2931,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\btnd5.bmp"
+				RelativePath="Resource\btnd4.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\btnd5.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\btnd5.bmp"
 				>
 			</File>
 			<File
@@ -3679,15 +2951,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\btnd7.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\btnd7.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnd8.bmp"
+				RelativePath=".\Resource\bitmaps\btnd7.bmp"
 				>
 			</File>
 			<File
@@ -3695,11 +2963,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnu1.bmp"
+				RelativePath="Resource\btnd8.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\btnu1.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\btnu1.bmp"
 				>
 			</File>
 			<File
@@ -3711,15 +2983,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnu3.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\btnu3.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnu4.bmp"
+				RelativePath="Resource\btnu3.bmp"
 				>
 			</File>
 			<File
@@ -3727,7 +2995,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnu5.bmp"
+				RelativePath="Resource\btnu4.bmp"
 				>
 			</File>
 			<File
@@ -3735,11 +3003,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnu6.bmp"
+				RelativePath="Resource\btnu5.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\btnu6.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\btnu6.bmp"
 				>
 			</File>
 			<File
@@ -3751,15 +3023,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\btnu8.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\btnu8.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\childali.bmp"
+				RelativePath="Resource\btnu8.bmp"
 				>
 			</File>
 			<File
@@ -3767,11 +3035,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\CUBE.BMP"
+				RelativePath="Resource\childali.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Cube.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\CUBE.BMP"
 				>
 			</File>
 			<File
@@ -3827,15 +3099,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\dlc.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\dlc.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\Dlc.ico"
+				RelativePath=".\Resource\dlc.bmp"
 				>
 			</File>
 			<File
@@ -3844,6 +3112,10 @@
 			</File>
 			<File
 				RelativePath="res\dlc.ico"
+				>
+			</File>
+			<File
+				RelativePath="Resource\Dlc.ico"
 				>
 			</File>
 			<File
@@ -3859,15 +3131,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\dle-xp_logo.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\dle-xp_logo.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\DLE-XP_logo2.bmp"
+				RelativePath="Resource\dle-xp_logo.bmp"
 				>
 			</File>
 			<File
@@ -3875,15 +3143,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Resource\bitmaps\DLE-XP_logo2.bmp"
+				>
+			</File>
+			<File
 				RelativePath="Resource\dle.ico"
 				>
 			</File>
 			<File
-				RelativePath="Resource\DLE_icon.bmp"
+				RelativePath=".\Resource\bitmaps\DLE_icon.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\DLE_icon.bmp"
+				RelativePath="Resource\DLE_icon.bmp"
 				>
 			</File>
 			<File
@@ -3903,11 +3175,11 @@
 				>
 			</File>
 			<File
-				RelativePath="res\drag.cur"
+				RelativePath=".\Resource\cursors\drag.cur"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\cursors\drag.cur"
+				RelativePath="res\drag.cur"
 				>
 			</File>
 			<File
@@ -3915,11 +3187,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\editbar.bmp"
+				RelativePath=".\Resource\bitmaps\editbar.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\editbar.bmp"
+				RelativePath="Resource\editbar.bmp"
 				>
 			</File>
 			<File
@@ -3931,15 +3203,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeod1.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\edtgeod1.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeod2.bmp"
+				RelativePath=".\Resource\bitmaps\edtgeod1.bmp"
 				>
 			</File>
 			<File
@@ -3947,7 +3215,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeod3.bmp"
+				RelativePath="Resource\edtgeod2.bmp"
 				>
 			</File>
 			<File
@@ -3955,11 +3223,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeod4.bmp"
+				RelativePath="Resource\edtgeod3.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\edtgeod4.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\edtgeod4.bmp"
 				>
 			</File>
 			<File
@@ -3971,15 +3243,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeod6.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\edtgeod6.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeod7.bmp"
+				RelativePath=".\Resource\bitmaps\edtgeod6.bmp"
 				>
 			</File>
 			<File
@@ -3987,11 +3255,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeod8.bmp"
+				RelativePath="Resource\edtgeod7.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\edtgeod8.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\edtgeod8.bmp"
 				>
 			</File>
 			<File
@@ -4003,15 +3275,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeou0.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\edtgeou0.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeou1.bmp"
+				RelativePath="Resource\edtgeou0.bmp"
 				>
 			</File>
 			<File
@@ -4019,7 +3287,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeou2.bmp"
+				RelativePath=".\Resource\bitmaps\edtgeou1.bmp"
 				>
 			</File>
 			<File
@@ -4027,11 +3295,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeou3.bmp"
+				RelativePath=".\Resource\bitmaps\edtgeou2.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\edtgeou3.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\edtgeou3.bmp"
 				>
 			</File>
 			<File
@@ -4043,15 +3315,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeou5.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\edtgeou5.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeou6.bmp"
+				RelativePath="Resource\edtgeou5.bmp"
 				>
 			</File>
 			<File
@@ -4059,11 +3327,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeou7.bmp"
+				RelativePath=".\Resource\bitmaps\edtgeou6.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\edtgeou7.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\edtgeou7.bmp"
 				>
 			</File>
 			<File
@@ -4075,11 +3347,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\edtgeou9.bmp"
+				RelativePath="Resource\edtgeou9.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\edtgeou9.bmp"
+				RelativePath=".\Resource\bitmaps\edtgeou9.bmp"
 				>
 			</File>
 			<File
@@ -4111,15 +3383,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\none.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\none.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Nopig.bmp"
+				RelativePath=".\Resource\bitmaps\none.bmp"
 				>
 			</File>
 			<File
@@ -4127,11 +3395,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_000.BMP"
+				RelativePath=".\Resource\bitmaps\Nopig.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_000.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_000.BMP"
 				>
 			</File>
 			<File
@@ -4143,15 +3415,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_002.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_002.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_003.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_002.bmp"
 				>
 			</File>
 			<File
@@ -4159,7 +3427,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_004.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_003.bmp"
 				>
 			</File>
 			<File
@@ -4167,11 +3435,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_005.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_004.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_005.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_005.BMP"
 				>
 			</File>
 			<File
@@ -4183,15 +3455,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_007.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_007.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_008.bmp"
+				RelativePath="Resource\OBJ_007.BMP"
 				>
 			</File>
 			<File
@@ -4199,11 +3467,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_009.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_008.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_009.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_009.BMP"
 				>
 			</File>
 			<File
@@ -4215,15 +3487,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_011.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_011.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_012.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_011.bmp"
 				>
 			</File>
 			<File
@@ -4231,7 +3499,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_013.BMP"
+				RelativePath="Resource\OBJ_012.BMP"
 				>
 			</File>
 			<File
@@ -4239,11 +3507,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_014.bmp"
+				RelativePath="Resource\OBJ_013.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_014.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_014.bmp"
 				>
 			</File>
 			<File
@@ -4255,15 +3527,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_016.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_016.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_017.bmp"
+				RelativePath="Resource\OBJ_016.BMP"
 				>
 			</File>
 			<File
@@ -4271,11 +3539,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_018.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_017.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_018.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_018.bmp"
 				>
 			</File>
 			<File
@@ -4287,15 +3559,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_020.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_020.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_021.BMP"
+				RelativePath="Resource\OBJ_020.BMP"
 				>
 			</File>
 			<File
@@ -4303,7 +3571,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_022.bmp"
+				RelativePath="Resource\OBJ_021.BMP"
 				>
 			</File>
 			<File
@@ -4311,11 +3579,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_023.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_022.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_023.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_023.BMP"
 				>
 			</File>
 			<File
@@ -4327,15 +3599,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_025.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_025.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_026.bmp"
+				RelativePath="Resource\OBJ_025.BMP"
 				>
 			</File>
 			<File
@@ -4343,11 +3611,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_027.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_026.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_027.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_027.bmp"
 				>
 			</File>
 			<File
@@ -4359,15 +3631,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_029.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_029.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_030.BMP"
+				RelativePath="Resource\OBJ_029.BMP"
 				>
 			</File>
 			<File
@@ -4375,7 +3643,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_031.BMP"
+				RelativePath="Resource\OBJ_030.BMP"
 				>
 			</File>
 			<File
@@ -4383,11 +3651,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_032.BMP"
+				RelativePath="Resource\OBJ_031.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_032.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_032.BMP"
 				>
 			</File>
 			<File
@@ -4399,15 +3671,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_034.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_034.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_035.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_034.bmp"
 				>
 			</File>
 			<File
@@ -4415,11 +3683,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_036.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_035.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_036.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_036.bmp"
 				>
 			</File>
 			<File
@@ -4431,15 +3703,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_038.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_038.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_039.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_038.bmp"
 				>
 			</File>
 			<File
@@ -4447,7 +3715,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_040.BMP"
+				RelativePath="Resource\OBJ_039.BMP"
 				>
 			</File>
 			<File
@@ -4455,11 +3723,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_041.bmp"
+				RelativePath="Resource\OBJ_040.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_041.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_041.bmp"
 				>
 			</File>
 			<File
@@ -4471,15 +3743,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_043.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_043.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_044.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_043.bmp"
 				>
 			</File>
 			<File
@@ -4487,11 +3755,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_045.bmp"
+				RelativePath="Resource\OBJ_044.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_045.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_045.bmp"
 				>
 			</File>
 			<File
@@ -4503,15 +3775,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_047.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_047.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_048.bmp"
+				RelativePath="Resource\OBJ_047.BMP"
 				>
 			</File>
 			<File
@@ -4519,7 +3787,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_049.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_048.bmp"
 				>
 			</File>
 			<File
@@ -4527,11 +3795,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_050.BMP"
+				RelativePath="Resource\OBJ_049.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_050.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_050.BMP"
 				>
 			</File>
 			<File
@@ -4543,15 +3815,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_052.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_052.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_053.BMP"
+				RelativePath="Resource\OBJ_052.BMP"
 				>
 			</File>
 			<File
@@ -4559,11 +3827,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_054.BMP"
+				RelativePath="Resource\OBJ_053.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_054.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_054.BMP"
 				>
 			</File>
 			<File
@@ -4575,15 +3847,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_056.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_056.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_057.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_056.bmp"
 				>
 			</File>
 			<File
@@ -4591,7 +3859,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_058.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_057.bmp"
 				>
 			</File>
 			<File
@@ -4599,11 +3867,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_059.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_058.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_059.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_059.BMP"
 				>
 			</File>
 			<File
@@ -4615,15 +3887,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_061.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_061.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_062.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_061.bmp"
 				>
 			</File>
 			<File
@@ -4631,11 +3899,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_063.bmp"
+				RelativePath="Resource\OBJ_062.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_063.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_063.bmp"
 				>
 			</File>
 			<File
@@ -4647,15 +3919,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_065.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_065.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_066.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_065.bmp"
 				>
 			</File>
 			<File
@@ -4663,7 +3931,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_067.bmp"
+				RelativePath="Resource\OBJ_066.BMP"
 				>
 			</File>
 			<File
@@ -4671,11 +3939,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_068.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_067.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_068.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_068.BMP"
 				>
 			</File>
 			<File
@@ -4687,15 +3959,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_070.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_070.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_071.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_070.bmp"
 				>
 			</File>
 			<File
@@ -4703,11 +3971,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_072.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_071.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_072.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_072.BMP"
 				>
 			</File>
 			<File
@@ -4719,15 +3991,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_074.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_074.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_075.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_074.bmp"
 				>
 			</File>
 			<File
@@ -4735,7 +4003,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_076.bmp"
+				RelativePath="Resource\OBJ_075.BMP"
 				>
 			</File>
 			<File
@@ -4743,11 +4011,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_077.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_076.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_077.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_077.BMP"
 				>
 			</File>
 			<File
@@ -4759,15 +4031,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_079.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_079.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_080.BMP"
+				RelativePath="Resource\OBJ_079.BMP"
 				>
 			</File>
 			<File
@@ -4775,11 +4043,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_081.bmp"
+				RelativePath="Resource\OBJ_080.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_081.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_081.bmp"
 				>
 			</File>
 			<File
@@ -4791,15 +4063,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_083.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_083.BMP"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_084.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_083.bmp"
 				>
 			</File>
 			<File
@@ -4807,7 +4075,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_085.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_084.bmp"
 				>
 			</File>
 			<File
@@ -4815,11 +4083,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_086.BMP"
+				RelativePath="Resource\OBJ_085.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_086.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_086.BMP"
 				>
 			</File>
 			<File
@@ -4831,15 +4103,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_088.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_088.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_089.bmp"
+				RelativePath="Resource\OBJ_088.BMP"
 				>
 			</File>
 			<File
@@ -4847,11 +4115,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_090.bmp"
+				RelativePath=".\Resource\bitmaps\Obj_089.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_090.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_090.bmp"
 				>
 			</File>
 			<File
@@ -4863,15 +4135,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_092.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_092.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_093.BMP"
+				RelativePath="Resource\OBJ_092.BMP"
 				>
 			</File>
 			<File
@@ -4879,7 +4147,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_094.BMP"
+				RelativePath="Resource\OBJ_093.BMP"
 				>
 			</File>
 			<File
@@ -4887,11 +4155,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_095.BMP"
+				RelativePath="Resource\OBJ_094.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_095.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_095.BMP"
 				>
 			</File>
 			<File
@@ -4903,15 +4175,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_097.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_097.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_098.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_097.bmp"
 				>
 			</File>
 			<File
@@ -4919,11 +4187,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_099.bmp"
+				RelativePath="Resource\OBJ_098.BMP"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OBJ_099.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Obj_099.bmp"
 				>
 			</File>
 			<File
@@ -4935,15 +4207,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_101.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_101.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_102.bmp"
+				RelativePath="Resource\OBJ_101.BMP"
 				>
 			</File>
 			<File
@@ -4951,7 +4219,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_103.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_102.bmp"
 				>
 			</File>
 			<File
@@ -4959,11 +4227,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_104.BMP"
+				RelativePath="Resource\OBJ_103.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_104.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_104.BMP"
 				>
 			</File>
 			<File
@@ -4975,15 +4247,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_106.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_106.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_107.bmp"
+				RelativePath="Resource\OBJ_106.BMP"
 				>
 			</File>
 			<File
@@ -4991,11 +4259,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_108.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_107.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_108.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_108.BMP"
 				>
 			</File>
 			<File
@@ -5007,15 +4279,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Obj_110.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\OBJ_110.BMP"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_111.BMP"
+				RelativePath=".\Resource\bitmaps\Obj_110.bmp"
 				>
 			</File>
 			<File
@@ -5023,7 +4291,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_112.BMP"
+				RelativePath="Resource\OBJ_111.BMP"
 				>
 			</File>
 			<File
@@ -5031,11 +4299,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_113.BMP"
+				RelativePath="Resource\OBJ_112.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_113.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_113.BMP"
 				>
 			</File>
 			<File
@@ -5047,15 +4319,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_115.BMP"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\Obj_115.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_116.BMP"
+				RelativePath="Resource\OBJ_115.BMP"
 				>
 			</File>
 			<File
@@ -5063,11 +4331,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\OBJ_117.BMP"
+				RelativePath="Resource\OBJ_116.BMP"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\Obj_117.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\OBJ_117.BMP"
 				>
 			</File>
 			<File
@@ -5079,15 +4351,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_119.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\obj_119.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_120.bmp"
+				RelativePath="Resource\obj_119.bmp"
 				>
 			</File>
 			<File
@@ -5095,7 +4363,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_121.bmp"
+				RelativePath="Resource\obj_120.bmp"
 				>
 			</File>
 			<File
@@ -5103,11 +4371,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_122.bmp"
+				RelativePath="Resource\obj_121.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\obj_122.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\obj_122.bmp"
 				>
 			</File>
 			<File
@@ -5119,15 +4391,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_124.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\obj_124.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_125.bmp"
+				RelativePath="Resource\obj_124.bmp"
 				>
 			</File>
 			<File
@@ -5135,11 +4403,15 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\obj_126.bmp"
+				RelativePath="Resource\obj_125.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\bitmaps\obj_126.bmp"
+				>
+			</File>
+			<File
+				RelativePath="Resource\obj_126.bmp"
 				>
 			</File>
 			<File
@@ -5151,15 +4423,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\obj_128.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\obj_128.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\obj_129.bmp"
+				RelativePath=".\Resource\bitmaps\obj_128.bmp"
 				>
 			</File>
 			<File
@@ -5167,11 +4435,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\Oldpig.bmp"
+				RelativePath=".\Resource\bitmaps\obj_129.bmp"
 				>
 			</File>
 			<File
 				RelativePath="Resource\OLDPIG.BMP"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\bitmaps\Oldpig.bmp"
 				>
 			</File>
 			<File
@@ -5187,15 +4459,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\resetd.bmp"
-				>
-			</File>
-			<File
 				RelativePath="Resource\resetd.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\resetmar.bmp"
+				RelativePath=".\Resource\bitmaps\resetd.bmp"
 				>
 			</File>
 			<File
@@ -5203,11 +4471,15 @@
 				>
 			</File>
 			<File
-				RelativePath="res\rotate.cur"
+				RelativePath="Resource\resetmar.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource\cursors\rotate.cur"
+				>
+			</File>
+			<File
+				RelativePath="res\rotate.cur"
 				>
 			</File>
 			<File
@@ -5219,10 +4491,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource\toolbar.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\bitmaps\toolbar.bmp"
 				>
 			</File>
@@ -5231,7 +4499,7 @@
 				>
 			</File>
 			<File
-				RelativePath="res\toolbar2.bmp"
+				RelativePath="Resource\toolbar.bmp"
 				>
 			</File>
 			<File
@@ -5239,15 +4507,19 @@
 				>
 			</File>
 			<File
+				RelativePath="res\toolbar2.bmp"
+				>
+			</File>
+			<File
 				RelativePath="res\toolbarx.bmp"
 				>
 			</File>
 			<File
-				RelativePath="Resource\walledit.bmp"
+				RelativePath=".\Resource\bitmaps\walledit.bmp"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\bitmaps\walledit.bmp"
+				RelativePath="Resource\walledit.bmp"
 				>
 			</File>
 			<File
@@ -5259,15 +4531,11 @@
 				>
 			</File>
 			<File
-				RelativePath="res\zoom.cur"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource\cursors\zoom.cur"
 				>
 			</File>
 			<File
-				RelativePath="res\zoomin.cur"
+				RelativePath="res\zoom.cur"
 				>
 			</File>
 			<File
@@ -5275,11 +4543,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\cursors\zoomout.cur"
+				RelativePath="res\zoomin.cur"
 				>
 			</File>
 			<File
 				RelativePath="res\zoomout.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\cursors\zoomout.cur"
 				>
 			</File>
 		</Filter>
@@ -5336,11 +4608,11 @@
 			Name="Data Files"
 			>
 			<File
-				RelativePath="Resource\ALIEN1.256"
+				RelativePath=".\Resource\palettes\Alien1.256"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\palettes\Alien1.256"
+				RelativePath="Resource\ALIEN1.256"
 				>
 			</File>
 			<File
@@ -5356,19 +4628,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\registry\ComMine.rgs"
-				>
-			</File>
-			<File
 				RelativePath="res\ComMine.rgs"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\registry\ComObj.rgs"
+				RelativePath=".\Resource\registry\ComMine.rgs"
 				>
 			</File>
 			<File
 				RelativePath="ComObj.rgs"
+				>
+			</File>
+			<File
+				RelativePath=".\Resource\registry\ComObj.rgs"
 				>
 			</File>
 			<File
@@ -5420,11 +4692,11 @@
 				>
 			</File>
 			<File
-				RelativePath="res\NEW_SAVE.RDL"
+				RelativePath=".\Resource\levels\new_save.rdl"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\levels\new_save.rdl"
+				RelativePath="res\NEW_SAVE.RDL"
 				>
 			</File>
 			<File
@@ -5452,11 +4724,11 @@
 				>
 			</File>
 			<File
-				RelativePath="res\ROBOT.HXM"
+				RelativePath=".\Resource\data\robot.hxm"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\data\robot.hxm"
+				RelativePath="res\ROBOT.HXM"
 				>
 			</File>
 			<File
@@ -5464,11 +4736,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Resource\data\ship.dat"
+				RelativePath="res\SHIP.DAT"
 				>
 			</File>
 			<File
-				RelativePath="res\SHIP.DAT"
+				RelativePath=".\Resource\data\ship.dat"
 				>
 			</File>
 			<File
