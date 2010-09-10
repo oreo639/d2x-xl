@@ -73,6 +73,9 @@ public:
 	CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
 
 	inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null);
+
+	int ScrollSpeed (UINT16 texture, int *x, int *y);
+
 }
 
 

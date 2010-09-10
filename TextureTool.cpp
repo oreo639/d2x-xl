@@ -651,7 +651,7 @@ texture [1] = sideP->m_info.nOvlTex;
 
 // if texture1 is a scrolling texture, then offset the textures and
 // redraw them, then return
-bScroll = theMine->ScrollSpeed (texture [0], &x, &y);
+bScroll = textureManager.ScrollSpeed (texture [0], &x, &y);
 if (bScroll) {
 	DrawTexture (texture [0], texture [1], scroll_offset_x, scroll_offset_y);
 	if (old_x != x || old_y != y) {

@@ -744,7 +744,7 @@ else
 void CMineView::DrawAnimDirArrows (short texture1, CTexture *pTx)
 {
 	int sx,sy;
-	int bScroll = theMine->ScrollSpeed (texture1, &sx, &sy);
+	int bScroll = textureManager.ScrollSpeed (texture1, &sx, &sy);
 
 if (!bScroll)
 	return;

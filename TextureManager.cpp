@@ -503,6 +503,32 @@ if (nCustom) {
 }
 
 //------------------------------------------------------------------------
+
+int CTextureManager::ScrollSpeed (UINT16 texture, int *x, int *y)
+{
+if (file_type == RDL_FILE)
+	return 0;
+*x = 0; 
+*y = 0; 
+switch (texture) {
+	case 399: *x = - 2; break; 
+	case 400: *y = - 8; break; 
+	case 402: *x = - 4; break; 
+	case 405: *y = - 2; break; 
+	case 406: *y = - 4; break; 
+	case 407: *y = - 2; break; 
+	case 348: *x = - 2; *y = - 2; break; 
+	case 349: *x = - 2; *y = - 2; break; 
+	case 350: *x = + 2; *y = - 2; break; 
+	case 401: *y = - 8; break; 
+	case 408: *y = - 2; break; 
+	default:
+		return 0; 
+	}
+return 1; 
+}
+
+//------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
