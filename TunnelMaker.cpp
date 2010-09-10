@@ -264,9 +264,9 @@ undoManager.End ();
 
 void CTunnelMaker::Destroy (void)
 {
-for (i = m_nLength; i > 0; )
+for (int i = m_nLength; i > 0; )
 	segmentManager.Delete (m_nSegments [--i]);
-for (i = m_nLength * 4; i > 0; )
+for (int i = m_nLength * 4; i > 0; )
 	vertexManager.Delete (m_nVertices [--i]);
 m_bActive = false;
 DLE.MineView ()->Refresh (false);
@@ -355,8 +355,6 @@ else {
 		Destroy ();
 	else
 		Realize ();
-		return;
-		}
 	}
 segmentManager.SetLinesToDraw ();
 DLE.MineView ()->Refresh ();

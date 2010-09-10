@@ -36,7 +36,7 @@ class CLightAnimInfo {
 		tLightStatus	m_status [SEGMENT_LIMIT][MAX_SIDES_PER_SEGMENT];
 
 		inline void Clear (void) {
-			memset (m_timers (), 0, sizeof (m_timers));
+			memset (m_timers, 0, sizeof (m_timers));
 			memset (m_status, 0xff, sizeof (m_status));
 			};
 	};
