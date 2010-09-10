@@ -3,7 +3,13 @@
 #include "Mine.h"
 #include "dle-xp.h"
 
+extern CBlockManager blockManager;
+
+//------------------------------------------------------------------------------
+
 #define CURRENT_POINT(a) ((current.m_nPoint + (a))&0x03)
+
+//------------------------------------------------------------------------------
 
 char *BLOCKOP_HINT =
 	"The block of cubes will be saved relative to the current cube.\n"

@@ -1132,7 +1132,6 @@ CHECKMINE;
 	APOINT	*pa = m_viewPoints;
 	int		x, y;
 
-int i;
 for (int i = 0, j = vertexManager.Count (); i < j; i++, pa++) {
 	x = pa->x;
 	y = pa->y;

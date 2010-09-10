@@ -561,12 +561,12 @@ triggerManager.AddRobotMaker ();
 
 void CDlcDoc::OnInsertTriggerShieldDrain ()
 {
-triggerManager.AddShield ();
+triggerManager.AddShieldDrain ();
 }
 
 void CDlcDoc::OnInsertTriggerEnergyDrain ()
 {
-triggerManager.AddEnergy ();
+triggerManager.AddEnergyDrain ();
 }
 
 void CDlcDoc::OnInsertTriggerControlPanel ()
@@ -581,7 +581,7 @@ wallManager.CreateFuelCell ();
 
 void CDlcDoc::OnInsertWallIllusion ()
 {
-wallManager.CreateIllusionaryWall ();
+wallManager.CreateIllusion ();
 }
 
 void CDlcDoc::OnInsertWallForceField ()
@@ -673,7 +673,7 @@ if ((QueryMsg ("Are you sure you want to delete this object?") == IDYES))
 
 void CDlcDoc::OnDeleteWall ()
 {
-wallManager.Delete ();
+wallManager.Delete (current.m_nWall);
 }
 
 void CDlcDoc::OnDeleteTrigger ()
@@ -691,22 +691,22 @@ void CDlcDoc::OnCopyBlock ()
 blockManager.Copy();
 }
 
-void CDlcDoc::OnQuickCopy()
+void CDlcDoc::OnQuickCopyBlock ()
 {
 blockManager.Copy("dle_temp.blx");
 }
 
-void CDlcDoc::OnPaste()
+void CDlcDoc::OnPasteBlock ()
 {
 blockManager.Paste();
 }
 
-void CDlcDoc::OnQuickPaste()
+void CDlcDoc::OnQuickPasteBlock ()
 {
 blockManager.QuickPaste();
 }
 
-void CDlcDoc::OnDelete()
+void CDlcDoc::OnDeleteBlock ()
 {
 blockManager.Delete();
 }
