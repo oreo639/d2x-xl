@@ -191,9 +191,9 @@ class CSegmentManager {
 
 		bool IsLineOfSide (CSegment *segP, int nSide, int nLine);
 
-		void Join (int automatic = 0);
+		void JoinSegments (int automatic = 0);
 
-		void Split (int solidify = 0, int nSide = -1);
+		void SplitSegments (int solidify = 0, int nSide = -1);
 
 		void JoinLines (void);
 

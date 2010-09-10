@@ -6,27 +6,24 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <stdio.h>
-#include "stophere.h"
-#include "define.h"
-#include "types.h"
+
 #include "mine.h"
 #include "dle-xp.h"
-#include "global.h"
 
                         /*--------------------------*/
 
 BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_SETCOORD, OnSetCoord)
 	ON_BN_CLICKED (IDC_CUBE_RESETCOORD, OnResetCoord)
-	ON_BN_CLICKED (IDC_CUBE_ADD, OnAddCube)
+	ON_BN_CLICKED (IDC_CUBE_ADD, OnAddSegment)
 	ON_BN_CLICKED (IDC_CUBE_ADD_MATCEN, OnAddRobotMaker)
 	ON_BN_CLICKED (IDC_CUBE_ADD_EQUIPMAKER, OnAddEquipMaker)
 	ON_BN_CLICKED (IDC_CUBE_ADD_FUELCEN, OnAddFuelCen)
 	ON_BN_CLICKED (IDC_CUBE_ADD_REPAIRCEN, OnAddRepairCen)
 	ON_BN_CLICKED (IDC_CUBE_ADD_CONTROLCEN, OnAddControlCen)
-	ON_BN_CLICKED (IDC_CUBE_SPLIT, OnSplitCube)
-	ON_BN_CLICKED (IDC_CUBE_DEL, OnDeleteCube)
-	ON_BN_CLICKED (IDC_CUBE_OTHER, OnOtherCube)
+	ON_BN_CLICKED (IDC_CUBE_SPLIT, OnSplitSegment)
+	ON_BN_CLICKED (IDC_CUBE_DEL, OnDeleteSegment)
+	ON_BN_CLICKED (IDC_CUBE_OTHER, OnOtherSegment)
 	ON_BN_CLICKED (IDC_CUBE_ENDOFEXIT, OnEndOfExit)
 	ON_BN_CLICKED (IDC_CUBE_WATER, OnProp1)
 	ON_BN_CLICKED (IDC_CUBE_LAVA, OnProp2)
@@ -47,7 +44,7 @@ BEGIN_MESSAGE_MAP (CSegmentTool, CToolDlg)
 	ON_BN_CLICKED (IDC_CUBE_DELBOT, OnDeleteMatCenter)
 	ON_BN_CLICKED (IDC_CUBE_TRIGGERDETAILS, OnTriggerDetails)
 	ON_BN_CLICKED (IDC_CUBE_WALLDETAILS, OnWallDetails)
-	ON_CBN_SELCHANGE (IDC_CUBE_CUBENO, OnSetCube)
+	ON_CBN_SELCHANGE (IDC_CUBE_CUBENO, OnSetSegment)
 	ON_CBN_SELCHANGE (IDC_CUBE_TYPE, OnSetType)
 	ON_CBN_SELCHANGE (IDC_CUBE_OWNER, OnSetOwner)
 	ON_EN_KILLFOCUS (IDC_CUBE_LIGHT, OnLight)
@@ -82,7 +79,7 @@ m_bEndOfExit = 0;
 m_nDamage [0] =
 m_nDamage [1] = 0;
 m_nLight = 0;
-m_nLastCube =
+m_nLastSegment =
 m_nLastSide = -1;
 m_bSetDefTexture = 0;
 m_nOwner = segmentManager.Segment (0)->m_info.owner;
@@ -92,10 +89,10 @@ memset (m_nCoord, 0, sizeof (m_nCoord));
 
                         /*--------------------------*/
 
-void CSegmentTool::InitCBCubeNo (void)
+void CSegmentTool::InitCBSegmentNo (void)
 {
 CHECKMINE;
-CComboBox *pcb = CBCubeNo ();
+CComboBox *pcb = CBSegmentNo ();
 if (segmentManager.Count () != pcb->GetCount ()) {
 	pcb->ResetContent ();
 	for (int i = 0; i < segmentManager.Count (); i++) {
@@ -113,7 +110,7 @@ BOOL CSegmentTool::OnInitDialog ()
 if (!CToolDlg::OnInitDialog ())
 	return FALSE;
 
-	static char* pszCubeFuncs [] = {
+	static char* pszSegmentFuncs [] = {
 		"None",
 		"Fuel Center",
 		"Repair Center",
@@ -132,8 +129,8 @@ CComboBox *pcb = CBType ();
 pcb->ResetContent ();
 
 int h, i, j;
-for (j = sizeof (pszCubeFuncs) / sizeof (*pszCubeFuncs), i = 0; i < j; i++) {
-	h = pcb->AddString (pszCubeFuncs [i]);
+for (j = sizeof (pszSegmentFuncs) / sizeof (*pszSegmentFuncs), i = 0; i < j; i++) {
+	h = pcb->AddString (pszSegmentFuncs [i]);
 	pcb->SetItemData (h, i);
 	}
 pcb = CBOwner ();
@@ -212,7 +209,7 @@ bool CSegmentTool::IsRobotMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < segmentManager.RobotMakerCount);
+	(segP->m_info.nMatCen < segmentManager.RobotMakerCount ());
 }
 
                         /*--------------------------*/
@@ -222,7 +219,7 @@ bool CSegmentTool::IsEquipMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < segmentManager.EquipMakerCount);
+	(segP->m_info.nMatCen < segmentManager.EquipMakerCount ());
 }
 
                         /*--------------------------*/
@@ -235,7 +232,7 @@ CSegment *segP = current.Segment ();
 EndOfExit ()->EnableWindow (segP->Child (m_nSide) < 0);
 // enable/disable add cube button
 GetDlgItem (IDC_CUBE_ADD)->EnableWindow ((segmentManager.Count () < MAX_SEGMENTS) &&
-													  (theMine->vertexManager.Count () < MAX_VERTICES - 4) &&
+													  (vertexManager.Count () < MAX_VERTICES - 4) &&
 													  (segP->Child (m_nSide) < 0));
 GetDlgItem (IDC_CUBE_DEL)->EnableWindow (segmentManager.Count () > 1);
 // enable/disable add robot button
@@ -332,7 +329,7 @@ if (m_bSetDefTexture = ((CButton *) GetDlgItem (IDC_CUBE_SETDEFTEXTURE))->GetChe
 	int i;
 	for (i = 0; i < 6; i++)
 		if (segP->Child (i) == -1)
-			segmentManager.SetTextures (m_nSegment, i, nTexture, 0);
+			segmentManager.SetTextures (CSideKey (m_nSegment, i), nTexture, 0);
 	}
 }
 
@@ -344,14 +341,14 @@ void CSegmentTool::Refresh (void)
 {
 if (!(m_bInited && theMine))
 	return;
-InitCBCubeNo ();
+InitCBSegmentNo ();
 OnResetCoord ();
 
 int h, i, j;
 
 // update automatic data
-theMine->RenumberBotGens ();
-theMine->RenumberEquipGens ();
+segmentManager.RenumberRobotMakers ();
+segmentManager.RenumberEquipMakers ();
 // update cube number combo box if number of cubes has changed
 CSegment *segP = current.Segment ();
 m_bEndOfExit = (segP->Child (current.m_nSide) == -2);
@@ -390,7 +387,7 @@ for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, tr
 		}
 	}
 // show if this is cube/side is trigPed by the control_center
-CReactorTrigger* reactorTrigger = theMine->ReactorTriggers (0);
+CReactorTrigger* reactorTrigger = ReactorTriggers (0);
 int control;
 for (control = 0; control < MAX_REACTOR_TRIGGERS; control++, reactorTrigger++) {
 	if (-1 < (reactorTrigger->Find (m_nSegment, m_nSide))) {
@@ -417,7 +414,7 @@ if (IsRobotMaker (segP)) {
 
 	for (i = 0; i < 2; i++)
 		objFlags [i] = segmentManager.RobotMaker (nMatCen)->m_info.objFlags [i];
-	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
+	if ((m_nLastSegment != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
 			for (j = 0; j < 64; j++) {
@@ -442,8 +439,8 @@ else if (IsEquipMaker (segP)) {
 	CStringResource res;
 
 	for (i = 0; i < 2; i++)
-		objFlags [i] = theMine->EquipMakers (nMatCen)->m_info.objFlags [i];
-	if ((m_nLastCube != m_nSegment) || (m_nLastSide != m_nSide)) {
+		objFlags [i] = segmentManager.EquipMaker (nMatCen)->m_info.objFlags [i];
+	if ((m_nLastSegment != m_nSegment) || (m_nLastSide != m_nSide)) {
 		for (i = 0; i < 2; i++) {
 			plb [i]->ResetContent ();
 			for (j = 0; j < MAX_POWERUP_IDS_D2; j++) {
@@ -469,7 +466,7 @@ else {
 		plb [i]->AddString(message);
 		}
 	}
-m_nLastCube = m_nSegment;
+m_nLastSegment = m_nSegment;
 m_nLastSide = m_nSide;
 EnableControls (TRUE);
 UpdateData (FALSE);
@@ -491,24 +488,24 @@ undoManager.End ();
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - Add Cube
+// CSegmentTool - Add Segment
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnAddCube () 
+void CSegmentTool::OnAddSegment () 
 {
 CHECKMINE;
-theMine->AddSegment ();
+AddSegment ();
 DLE.MineView ()->Refresh ();
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - Delete Cube
+// CSegmentTool - Delete Segment
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnDeleteCube () 
+void CSegmentTool::OnDeleteSegment () 
 {
 CHECKMINE;
-theMine->DeleteSegment (current.m_nSegment);
+DeleteSegment (current.m_nSegment);
 DLE.MineView ()->Refresh ();
 }
 
@@ -519,7 +516,7 @@ void CSegmentTool::OnSetOwner (void)
 CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
-	BOOL	bMarked = theMine->GotMarkedSegments ();
+	BOOL	bMarked = segmentManager.HaveMarkedSegments ();
 
 
 undoManager.Begin (udSegments);
@@ -544,7 +541,7 @@ void CSegmentTool::OnSetGroup (void)
 CHECKMINE;
 
 	BOOL	bChangeOk = TRUE;
-	BOOL	bMarked = theMine->GotMarkedSegments ();
+	BOOL	bMarked = segmentManager.HaveMarkedSegments ();
 
 undoManager.Begin (udSegments);
 DLE.MineView ()->DelayRefresh (true);
@@ -552,7 +549,7 @@ UpdateData (TRUE);
 if (bMarked) {
 	CSegment *segP = segmentManager.Segment (0);
 	for (short nSegNum = 0; nSegNum < segmentManager.Count (); nSegNum++, segP++)
-		if (segP->Marked ())
+		if (segP->IsMarked ())
 			segP->m_info.group = m_nGroup;
 	}
 else 					
@@ -570,11 +567,11 @@ void CSegmentTool::OnSetType (void)
 CHECKMINE;
 
 	BOOL		bChangeOk = TRUE;
-	BOOL		bMarked = theMine->GotMarkedSegments ();
+	BOOL		bMarked = segmentManager.HaveMarkedSegments ();
 	int		nSegNum, nMinSeg, nMaxSeg;
 
 DLE.MineView ()->DelayRefresh (true);
-m_nLastCube = -1; //force Refresh() to rebuild all dialog data
+m_nLastSegment = -1; //force Refresh() to rebuild all dialog data
 byte nType = byte (CBType ()->GetItemData (CBType ()->GetCurSel ()));
 if (bMarked) {
 	nMinSeg = 0;
@@ -595,7 +592,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_ROBOTMAKER:
 			if (nType == m_nType)
 				goto errorExit;
-			if ((theMine == null)->AddRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
+			if (segmentManager.CreateRobotMaker (nSegNum, false, m_bSetDefTexture == 1)) {
 				undoManager.Unroll ();
 				goto funcExit;
 				}
@@ -603,7 +600,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 
 		// check to see if we are adding a fuel center
 		case SEGMENT_FUNC_REPAIRCEN:
-			if (theMine->IsStdLevel ()) {
+			if (IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -613,7 +610,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_FUELCEN:
 			if (nType == m_nType)
 				continue;
-			if ((theMine == null)->AddFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
+			if (segmentManager.CreateFuelCenter (nSegNum, nType, false, (nType == SEGMENT_FUNC_FUELCEN) && (m_bSetDefTexture == 1))) {
 				undoManager.Unroll ();
 				goto funcExit;
 				}
@@ -622,7 +619,7 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_REACTOR:
 			if (nType == m_nType)
 				continue;
-			if ((theMine == null)->AddReactor (nSegNum, false, m_bSetDefTexture == 1)) {
+			if (segmentManager.CreateReactor (nSegNum, false, m_bSetDefTexture == 1)) {
 				undoManager.Unroll ();
 				goto funcExit;
 				}
@@ -632,13 +629,13 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 		case SEGMENT_FUNC_GOAL_RED:
 			if (nType == m_nType)
 				continue;
-			if ((theMine == null)->AddGoalCube (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
+			if (segmentManager.CreateGoalSegment (nSegNum, false, m_bSetDefTexture == 1, nType, -1))
 				goto errorExit;		
 			break;
 
 		case SEGMENT_FUNC_TEAM_BLUE:
 		case SEGMENT_FUNC_TEAM_RED:
-			if (theMine->IsStdLevel ()) {
+			if (IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
@@ -646,45 +643,45 @@ for (nSegNum = nMinSeg; nSegNum < nMaxSeg; nSegNum++, segP++) {
 				}
 			if (nType == m_nType)
 				continue;
-			if ((theMine == null)->AddTeamCube (nSegNum, false, false, nType, -1))
+			if (segmentManager.CreateTeamSegment (nSegNum, false, false, nType, -1))
 				goto errorExit;		
 			break;
 
 		case SEGMENT_FUNC_SPEEDBOOST:
-			if (theMine->IsStdLevel ()) {
+			if (IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if ((theMine == null)->AddSpeedBoostCube (nSegNum, false))
+			if (segmentManager.CreateSpeedBoostSegment (nSegNum, false))
 				goto errorExit;
 			break;
 
 		case SEGMENT_FUNC_SKYBOX:
-			if (theMine->IsStdLevel ()) {
+			if (IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if ((theMine == null)->AddSkyboxCube (nSegNum, false))
+			if (segmentManager.CreateSkyboxSegment (nSegNum, false))
 				goto errorExit;
 			break;
 
 		case SEGMENT_FUNC_EQUIPMAKER:
-			if (theMine->IsStdLevel ()) {
+			if (IsStdLevel ()) {
 				m_nType = nType;
 				if (!bExpertMode)
 					ErrorMsg ("Convert the level to a D2X-XL level to use this segment type.");
 				break;
 				}
-			if ((theMine == null)->AddEquipMaker (nSegNum, false))
+			if (segmentManager.CreateEquipMaker (nSegNum, false))
 				goto errorExit;
 			break;
 
 		case SEGMENT_FUNC_NONE:
-			theMine->UndefineSegment (nSegNum);
+			UndefineSegment (nSegNum);
 			break;
 
 		default:
@@ -705,13 +702,13 @@ UpdateData (TRUE);
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - Cube Number Message
+// CSegmentTool - Segment Number Message
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnSetCube () 
+void CSegmentTool::OnSetSegment () 
 {
 CHECKMINE;
-current.m_nSegment = CBCubeNo ()->GetCurSel ();
+current.m_nSegment = CBSegmentNo ()->GetCurSel ();
 DLE.MineView ()->Refresh ();
 }
 
@@ -808,7 +805,7 @@ int i = FindEquip (LBAvailBots (), szObj);
 if ((i < 0) || (i >= MAX_POWERUP_IDS_D2))
 	return;
 undoManager.Begin (udEquipMaker);
-theMine->EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
+EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] |= (1L << (i % 32));
 undoManager.End ();
 int h = LBAvailBots ()->GetCurSel ();
 LBAvailBots ()->DeleteString (h);
@@ -868,7 +865,7 @@ int i = FindEquip (LBUsedBots (), szObj);
 if ((i < 0) || (i >= 64))
 	return;
 undoManager.Begin (udEquipMaker);
-theMine->EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
+EquipMakers (segP->m_info.nMatCen)->m_info.objFlags [i / 32] &= ~(1L << (i % 32));
 undoManager.End ();
 int h = LBUsedBots ()->GetCurSel ();
 LBUsedBots ()->DeleteString (h);
@@ -893,16 +890,16 @@ else if (IsEquipMaker (segP))
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - OtherCubeMsg
+// CSegmentTool - OtherSegmentMsg
 //------------------------------------------------------------------------
 
-void CSegmentTool::OnOtherCube () 
+void CSegmentTool::OnOtherSegment () 
 {
 DLE.MineView ()->SelectOtherSegment ();
 }
 
 //------------------------------------------------------------------------
-// CSegmentTool - CubeButtonMsg
+// CSegmentTool - SegmentButtonMsg
 //------------------------------------------------------------------------
 
 void CSegmentTool::OnWallDetails () 
@@ -946,8 +943,8 @@ DLE.MineView ()->Refresh ();
 void CSegmentTool::OnAddBotGen ()
 {
 CHECKMINE;
-theMine->AddRobotMaker ();
-m_nLastCube = -1;
+AddRobotMaker ();
+m_nLastSegment = -1;
 Refresh ();
 }
 
@@ -956,8 +953,8 @@ Refresh ();
 void CSegmentTool::OnAddEquipGen ()
 {
 CHECKMINE;
-theMine->AddEquipMaker ();
-m_nLastCube = -1;
+AddEquipMaker ();
+m_nLastSegment = -1;
 Refresh ();
 }
 
@@ -966,7 +963,7 @@ Refresh ();
 void CSegmentTool::OnAddFuelCen ()
 {
 CHECKMINE;
-theMine->AddFuelCenter ();
+AddFuelCenter ();
 }
 
                         /*--------------------------*/
@@ -974,7 +971,7 @@ theMine->AddFuelCenter ();
 void CSegmentTool::OnAddRepairCen ()
 {
 CHECKMINE;
-theMine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
+AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 }
 
                         /*--------------------------*/
@@ -982,15 +979,15 @@ theMine->AddFuelCenter (-1, SEGMENT_FUNC_REPAIRCEN);
 void CSegmentTool::OnAddControlCen ()
 {
 CHECKMINE;
-theMine->AddReactor ();
+AddReactor ();
 }
 
                         /*--------------------------*/
 
-void CSegmentTool::OnSplitCube ()
+void CSegmentTool::OnSplitSegment ()
 {
 CHECKMINE;
-theMine->SplitSegment ();
+SplitSegment ();
 }
 
                         /*--------------------------*/

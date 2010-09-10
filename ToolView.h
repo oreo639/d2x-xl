@@ -560,7 +560,7 @@ class CSegmentTool : public CToolDlg
 		short		m_nDamage [2];
 		double	m_nLight;
 		double	m_nCoord [3];
-		int		m_nLastCube;
+		int		m_nLastSegment;
 		int		m_nLastSide;
 		int		m_bSetDefTexture;
 
@@ -568,7 +568,7 @@ class CSegmentTool : public CToolDlg
 		virtual BOOL OnInitDialog ();
 		virtual void DoDataExchange (CDataExchange *pDX);
 		virtual BOOL OnSetActive ();
-		void InitCBCubeNo ();
+		void InitCBSegmentNo ();
 		void Reset ();
 		void EnableControls (BOOL bEnable);
 		void Refresh ();
@@ -580,7 +580,7 @@ class CSegmentTool : public CToolDlg
 		bool IsEquipMaker (CSegment *segP);
 		void SetDefTexture (short nTexture);
 	
-		afx_msg void OnSetCube ();
+		afx_msg void OnSetSegment ();
 		afx_msg void OnSetType ();
 		afx_msg void OnSetOwner ();
 		afx_msg void OnSetGroup ();
@@ -608,13 +608,13 @@ class CSegmentTool : public CToolDlg
 		afx_msg void OnPoint2 ();
 		afx_msg void OnPoint3 ();
 		afx_msg void OnPoint4 ();
-		afx_msg void OnAddCube ();
+		afx_msg void OnAddSegment ();
 		afx_msg void OnAddFuelCen ();
 		afx_msg void OnAddRepairCen ();
 		afx_msg void OnAddControlCen ();
-		afx_msg void OnSplitCube ();
+		afx_msg void OnSplitSegment ();
 		afx_msg void OnDeleteSegment ();
-		afx_msg void OnOtherCube ();
+		afx_msg void OnOtherSegment ();
 		afx_msg void OnAddMatCenter ();
 		afx_msg void OnDeleteMatCenter ();
 		afx_msg void OnAddRobotMaker ();
@@ -628,7 +628,7 @@ class CSegmentTool : public CToolDlg
 		void AddEquipMaker (void);
 		void DeleteEquipMaker (void);
 
-		inline CComboBox *CBCubeNo ()
+		inline CComboBox *CBSegmentNo ()
 			{ return CBCtrl(IDC_CUBE_CUBENO); }
 		inline CComboBox *CBType ()
 			{ return CBCtrl(IDC_CUBE_TYPE); }
@@ -1175,12 +1175,12 @@ class CLightTool : public CToolDlg
 		int		m_bIlluminate;
 		int		m_bAvgCornerLight;
 		int		m_bScaleLight;
-		int		m_bCubeLight;
-		int		m_bDynCubeLights;
+		int		m_bSegmentLight;
+		int		m_bDynSegmentLights;
 		int		m_bDeltaLight;
 		double	m_fBrightness;
 		double	m_fLightScale;
-		double	m_fCubeLight;
+		double	m_fSegmentLight;
 		double	m_fDeltaLight;
 		double	m_fVertexLight;
 		int		m_nNoLightDeltas;
@@ -1320,7 +1320,7 @@ class CToolView : public CWnd {
 		void SetActive (int nPage);
 		inline void EditTexture ()
 			{ SetActive (0); }
-		inline void EditCube ()
+		inline void EditSegment ()
 			{ SetActive (1); }
 		inline void EditWall ()
 			{ SetActive (2); }
@@ -1344,7 +1344,7 @@ class CToolView : public CWnd {
 			{ SetActive (11); }
 		inline void EditPrefs ()
 			{ SetActive (12); }
-		inline CSegmentTool *CubeTool ()
+		inline CSegmentTool *SegmentTool ()
 			{ return m_segmentTool; }
 		inline CTextureTool *TextureTool ()
 			{ return m_textureTool; }
