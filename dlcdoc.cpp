@@ -678,7 +678,7 @@ wallManager.Delete ();
 
 void CDlcDoc::OnDeleteTrigger ()
 {
-theMine->DeleteTrigger ();
+triggerManager.Delete ();
 }
 
 void CDlcDoc::OnCutBlock ()

@@ -621,7 +621,7 @@ m_nTrigger = CBTriggerNo ()->GetCurSel ();
 if (m_nClass)
 	theMine->DeleteObjTrigger (m_nTrigger);
 else
-	theMine->DeleteTrigger (m_nTrigger);
+	triggerManager.Delete (m_nTrigger);
 // Redraw trigger window
 Refresh ();
 DLE.MineView ()->Refresh ();
@@ -648,7 +648,7 @@ for (i = segmentManager.Count (); i; i--, segP++) {
 		if (wallP->Info ().nTrigger >= NumTriggers ())
 			continue;
 		if (bAll || segmentManager.IsMarked (CSideKey (i, j))) {
-			theMine->DeleteTrigger (wallP->Info ().nTrigger);
+			triggerManager.Delete (wallP->Info ().nTrigger);
 			nDeleted++;
 			}
 		}
@@ -678,10 +678,10 @@ if (m_nClass) {
 	current.m_nObject = theMine->ObjTriggers (m_nTrigger)->m_info.nObject;
 	}
 else {
-	for (nWall = 0, wallP = wallManager.Wall (0); nWall < theMine->Info ().walls.count; nWall++, wallP++)
+	for (nWall = 0, wallP = wallManager.Wall (0); nWall < wallManager.WallCount; nWall++, wallP++)
 		if (wallP->Info ().nTrigger == m_nTrigger)
 			break;
-	if (nWall >= theMine->Info ().walls.count) {
+	if (nWall >= wallManager.WallCount) {
 		EnableControls (FALSE);
 		GetDlgItem (IDC_TRIGGER_DELETE)->EnableWindow (TRUE);
 		return;

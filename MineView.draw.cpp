@@ -1074,7 +1074,7 @@ CHECKMINE;
 	short x_max = m_viewWidth * 2;
 	short y_max = m_viewHeight * 2;
 
-for (i=0;i<theMine->Info ().walls.count;i++) {
+for (i=0;i<wallManager.WallCount;i++) {
 	if (walls [i].m_nSegment > segmentManager.Count ())
 		continue;
 	segP = segments + (int)walls [i].m_nSegment;
@@ -1467,7 +1467,7 @@ if (!ViewObject ())
 int i, j;
 if (DLE.IsD2File ()) {
 	// see if there is a secret exit trigger
-	for(i = 0; i < theMine->Info ().triggers.count; i++)
+	for(i = 0; i < triggerManager.WallTriggerCount (); i++)
 	if (wallManager.Trigger (i)->m_info.type == TT_SECRET_EXIT) {
 		DrawObject ((short)objectManager.Count (), 0);
 		break; // only draw one secret exit

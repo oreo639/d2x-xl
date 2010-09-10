@@ -212,7 +212,7 @@ bool CSegmentTool::IsRobotMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < theMine->Info ().botGen.count);
+	(segP->m_info.nMatCen < segmentManager.RobotMakerCount);
 }
 
                         /*--------------------------*/
@@ -222,7 +222,7 @@ bool CSegmentTool::IsEquipMaker (CSegment *segP)
 return 
 	(segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) &&
 	(segP->m_info.nMatCen >= 0) &&
-	(segP->m_info.nMatCen < theMine->Info ().equipGen.count);
+	(segP->m_info.nMatCen < segmentManager.EquipMakerCount);
 }
 
                         /*--------------------------*/
@@ -369,19 +369,19 @@ SelectItemData (CBType (), m_nType);
 OnResetCoord ();
   // show Triggers () that point at this cube
 LBTriggers()->ResetContent();
-CTrigger *trigP = wallManager.Trigger (0);
+CTrigger *trigP = triggerManager.Trigger (0);
 int nTrigger;
-for (nTrigger = 0; nTrigger < theMine->Info ().triggers.count; nTrigger++, trigP++) {
+for (nTrigger = 0; nTrigger < triggerManager.WallTriggerCount (); nTrigger++, trigP++) {
 	for (i = 0; i < trigP->m_count; i++) {
 		if (trigP->m_targets [i] == CSideKey (m_nSegment, m_nSide)) {
 			// find the wallP with this trigP
 			CWall *wallP = wallManager.Wall (0);
 			int nWall;
-			for (nWall = 0; nWall < theMine->Info ().walls.count ;nWall++, wallP++) {
+			for (nWall = 0; nWall < wallManager.WallCount ;nWall++, wallP++) {
 				if (wallP->Info ().nTrigger == nTrigger) 
 					break;
 				}
-			if (nWall < theMine->Info ().walls.count) {
+			if (nWall < wallManager.WallCount) {
 				sprintf_s (message, sizeof (message),  "%d,%d", (int) wallP->m_nSegment, (int) wallP->m_nSide + 1);
 				int h = LBTriggers ()->AddString (message);
 				LBTriggers ()->SetItemData (h, (int) wallP->m_nSegment * 0x10000L + wallP->m_nSide);

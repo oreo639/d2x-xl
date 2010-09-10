@@ -40,7 +40,7 @@ closest_radius = 1.0E30;
 // if there is a secret exit, then enable it in search
 int enable_secret = FALSE;
 if (DLE.IsD2File ())
-	for(i=0;i<(short)theMine->Info ().triggers.count;i++)
+	for(i=0;i<(short)triggerManager.WallTriggerCount ();i++)
 		if (wallManager.Trigger (i)->m_info.type ==TT_SECRET_EXIT) {
 			enable_secret = TRUE;
 			break;

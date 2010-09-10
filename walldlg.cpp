@@ -172,7 +172,7 @@ void CWallTool::InitCBWallNo ()
 CComboBox *pcb = CBWallNo ();
 pcb->ResetContent ();
 int i;
-for (i = 0; i < theMine->Info ().walls.count; i++) {
+for (i = 0; i < wallManager.WallCount; i++) {
 	_itoa_s (i, message, sizeof (message), 10);
 	pcb->AddString (message);
 	}
@@ -294,7 +294,7 @@ else {
 	GetOtherWall ();
 	m_nSegment = m_wallP [0]->m_nSegment;
 	m_nSide = m_wallP [0]->m_nSide + 1;
-	m_nTrigger = (m_wallP [0]->m_info.nTrigger < theMine->Info ().triggers.count) ? m_wallP [0]->m_info.nTrigger : -1;
+	m_nTrigger = (m_wallP [0]->m_info.nTrigger < triggerManager.WallTriggerCount ()) ? m_wallP [0]->m_info.nTrigger : -1;
 	m_nType = m_wallP [0]->m_info.type;
 	m_nClip = m_wallP [0]->m_info.nClip;
 	m_nStrength = ((double) m_wallP [0]->m_info.hps) / F1_0;
@@ -331,9 +331,9 @@ else {
    }
 GetDlgItem (IDC_WALL_BOTHSIDES)->EnableWindow (TRUE);
 GetDlgItem (IDC_WALL_OTHERSIDE)->EnableWindow (TRUE);
-GetDlgItem (IDC_WALL_WALLNO)->EnableWindow (theMine->Info ().walls.count > 0);
+GetDlgItem (IDC_WALL_WALLNO)->EnableWindow (wallManager.WallCount > 0);
 CTexToolDlg::Refresh ();
-CToolDlg::EnableControls (IDC_WALL_DELETEALL, IDC_WALL_DELETEALL, theMine->Info ().walls.count > 0);
+CToolDlg::EnableControls (IDC_WALL_DELETEALL, IDC_WALL_DELETEALL, wallManager.WallCount > 0);
 CBWallNo ()->SetCurSel (m_nWall [0]);
 UpdateData (FALSE);
 }
@@ -364,9 +364,9 @@ if (theMine->OppositeSide (nSegment [1], nSide [1], nSegment [0], nSide [0])) {
 	}
 
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
-	if (sideP [bSide]->m_info.nWall < theMine->Info ().walls.count)
+	if (sideP [bSide]->m_info.nWall < wallManager.WallCount)
 		ErrorMsg ("There is already a wall at that side of the current cube.");
-	else if (theMine->Info ().walls.count >= MAX_WALLS)
+	else if (wallManager.WallCount >= MAX_WALLS)
 		ErrorMsg ("The maximum number of walls is already reached.");
 	else {
 		if ((DLE.IsD2File ()) && (segP [bSide]->Child (nSide [bSide]) == -1))
@@ -417,7 +417,7 @@ for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++) {
 		bRefresh = true;
 		}
 	else if (!bExpertMode)
-		if (theMine->Info ().walls.count == 0)
+		if (wallManager.WallCount == 0)
 			ErrorMsg ("There are no walls in this mine.");
 		else
 			ErrorMsg ("There is no wall at this side of the current cube.");
@@ -479,7 +479,7 @@ short nOppSeg, nOppSide;
 if ((theMine == null)->OppositeSide (nOppSeg, nOppSide))
 	return m_wallP [1] = null;
 m_nWall [1] = segmentManager.Segment (nOppSeg)->m_sides [nOppSide].m_info.nWall;
-return m_wallP [1] = (m_nWall [1] < theMine->Info ().walls.count ? wallManager.Wall (m_nWall [1]) : null);
+return m_wallP [1] = (m_nWall [1] < wallManager.WallCount ? wallManager.Wall (m_nWall [1]) : null);
 }
 
                         /*--------------------------*/
@@ -568,7 +568,7 @@ m_nClip = CBClipNo ()->GetCurSel ();
 for (BOOL bSide = FALSE; bSide <= m_bBothSides; bSide++)
 	if (wallP = m_wallP [bSide])
 		if ((wallP->Type () == WALL_BLASTABLE) || (wallP->Type () == WALL_DOOR)) {
-			if (m_nWall [bSide] < theMine->Info ().walls.count) {
+			if (m_nWall [bSide] < wallManager.WallCount) {
 				undoManager.Begin (udWalls);
 				nClip = animClipTable [m_nClip];
 				wallP->Info ().nClip = nClip;

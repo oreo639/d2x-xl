@@ -671,7 +671,7 @@ return (m_cornerLights [0] != 0.0) || (m_cornerLights [1] != 0.0) || (m_cornerLi
 
 // -----------------------------------------------------------------------------
 
-void CLightManager::SetLight (double fLight, bool bAll, bool bDynSegLights)
+void CLightManager::SetSegmentLight (double fLight, bool bAll, bool bDynSegLights)
 {
 	long nLight = (int) (fLight * 65536); //24.0 * 327.68);
 

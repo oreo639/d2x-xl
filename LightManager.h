@@ -126,7 +126,7 @@ class CLightManager {
 		void ScaleCornerLight (double fLight, bool bAll = false);
 		void CalcAverageCornerLight (bool bAll = false);
 		void ComputeStaticLight (double fBrightness, bool bAll = false, bool bCopyTexLights = false);
-		void SetLight (double fLight, bool bAll = false, bool bDynSegLights = false);
+		void SetSegmentLight (double fLight, bool bAll = false, bool bDynSegLights = false);
 
 		int FindLight (int nTexture, tTextureLight* texLightP, int nLights);
 

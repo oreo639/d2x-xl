@@ -101,7 +101,7 @@ for (i = 0; i < 4; i++) {
 	// first make sure we have allocated space for delta lights
 if (bEnableDeltaShading) {
 	CLightDeltaIndex *lightDeltaIndices;
-	int dlIdxCount = theMine->Info ().lightDeltaIndices.count;
+	int dlIdxCount = lightManager.DeltaIndexCount ();
 	CLightDeltaValue* lightDeltaValues;
 	if (!lightStatus [face.m_nSegment][face.m_nSide].bIsOn &&
 		 (lightDeltaIndices = theMine->LightDeltaIndex (0)) &&

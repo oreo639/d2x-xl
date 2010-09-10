@@ -513,7 +513,7 @@ if (segP->Child (nSide)==-1)
 	bShowTexture = TRUE;
 else {
 	ushort nWall = sideP->m_info.nWall;
-	bShowTexture = (nWall < theMine->Info ().walls.count);
+	bShowTexture = (nWall < wallManager.WallCount);
 	}
 if (bShowTexture) {
 	if ((texture1!=last_texture1) || (texture2!=last_texture2) || (mode!=last_mode)) {
@@ -673,7 +673,7 @@ scroll_offset_y = 0;
 // abort if this is not a wall
 #ifndef _DEBUG
 ushort nWall = sideP->m_info.nWall;
-if (nWall >= theMine->Info ().walls.count)
+if (nWall >= wallManager.WallCount)
 	return;
 
 // abort if this wall is not a door
@@ -1080,7 +1080,7 @@ if (nChild < 0 || nChild >= segmentManager.Count ())
 	return false;
 for (nChildSide = 0; nChildSide < 6; nChildSide++) {
 	segP = segmentManager.Segment (nChild);
-	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < theMine->Info ().walls.count)) {
+	if ((segP->Child (nChildSide) == -1) || (segP->m_sides [nChildSide].m_info.nWall < wallManager.WallCount)) {
 		for (nChildLine = 0; nChildLine < 4;nChildLine++) {
 			// find vert numbers for the line's two end points
 			nChildPoint0 = lineVertTable [sideLineTable [nChildSide][nChildLine]][0];

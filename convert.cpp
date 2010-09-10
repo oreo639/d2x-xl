@@ -210,10 +210,10 @@ CHECKMINE;
   CGameObject	*objP;
   short			nSegment, nSide, d1Texture, mode,
 					segCount = segmentManager.Count (),
-					wallCount = theMine->Info ().walls.count;
+					wallCount = wallManager.WallCount ();
 
 textureManager.Release ();
-DLE.ResetUndoBuffer ();	//no undo possible; palette changes to difficult to handle
+undoManager.Reset ();	//no undo possible; palette changes to difficult to handle
 // reload internal stuff for d2
 theMine->SetFileType (RL2_FILE);
 paletteManager.Reload ();
@@ -251,8 +251,8 @@ for (i = 0, wallP = wallManager.Wall (0); i < wallCount; i++, wallP++) {
 
 // change trigP type and flags
 //-------------------------------------------
-for (i = 0, trigP = wallManager.Trigger (0); i < theMine->Info ().triggers.count; i++, trigP++) {
-	switch (trigP->m_info.flags) {
+for (i = 0, trigP = triggerManager.Trigger (0); i < triggerManager.WallTriggerCount (); i++, trigP++) {
+	switch (trigP->Info ().flags) {
 		case TRIGGER_CONTROL_DOORS:
 			trigP->Type () = TT_OPEN_DOOR;
 			break;
@@ -279,17 +279,17 @@ for (i = 0, trigP = wallManager.Trigger (0); i < theMine->Info ().triggers.count
 		case TRIGGER_ENERGY_DRAIN:
 		default:
 			DEBUGMSG (" Level converter: Unsupported trigP type; trigP deleted")
-			theMine->DeleteTrigger (i);
+			triggerManager.Delete (i);
 			i--;
 			trigP--;
 			continue;
 		}
-	trigP->m_info.flags = 0;
+	trigP->Info ().flags = 0;
 	}
 
 // set robot_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < theMine->Info ().botGen.count; i++) {
+for (i = 0; i < segmentManager.RobotMakerCount (); i++) {
 	segmentManager.RobotMaker (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = segmentManager.Segment (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_ROBOTMAKER) && (segP->m_info.nMatCen == i))
@@ -298,11 +298,11 @@ for (i = 0; i < theMine->Info ().botGen.count; i++) {
 
 // set equip_center nFuelCen and robot_flags2
 //-----------------------------------------------
-for (i = 0; i < theMine->Info ().equipGen.count; i++) {
-	theMine->EquipMakers (i)->m_info.objFlags [1] = 0;
+for (i = 0; i < segmentManager.EquipMakerCount (); i++) {
+	segmentManager.EquipMaker (i)->m_info.objFlags [1] = 0;
 	for (j = 0, segP = segmentManager.Segment (0); j <= segCount; j++, segP++)
 		if ((segP->m_info.function == SEGMENT_FUNC_EQUIPMAKER) && (segP->m_info.nMatCen == i))
-				theMine->EquipMakers (i)->m_info.nFuelCen = (short)(segP->m_info.value);
+				segmentManager.EquipMaker (i)->m_info.nFuelCen = (short)(segP->m_info.value);
 	}
 
 // Objects ()
@@ -325,8 +325,8 @@ for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, ob
 
 // d2 light data and indicies
 //--------------------------------------------
-theMine->Info ().lightDeltaIndices.count = 0;
-theMine->Info ().lightDeltaValues.count = 0;
+lightManager.DeltaIndexCount () = 0;
+lightManager.DeltaValueCount () = 0;
 lightManager.Count () = 0;
 lightManager.ComputeStaticLight (50.0, true);
 lightManager.CalcAverageCornerLight (true);

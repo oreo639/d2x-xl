@@ -142,7 +142,7 @@ int CDiagTool::CountTextures (void)
 	CSegment *segP = segmentManager.Segment (0);
 	CSide *sideP;
 	char bUsed [(MAX_TEXTURES_D2 + 7) / 8];
-	int t, i, j, h = theMine->Info ().walls.count;
+	int t, i, j, h = wallManager.WallCount;
 	int nUsed = 0;
 
 memset (bUsed, 0, sizeof (bUsed));
