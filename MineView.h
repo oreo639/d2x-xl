@@ -271,17 +271,17 @@ public:
 	void	ClearView();
 	void	ResetView (bool bRefresh = false);
 	bool	InitViewDimensions (void);
-	void	DrawWireFrame(bool bPartial);
-	void	DrawTextureMappedCubes(void);
-	void	DrawMarkedCubes (short clear_it = 0);
-	void	DrawCube(CSegment *segP, bool bPartial);
-	void	DrawCube (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
-	void	DrawCubePartial (CSegment *segP);
-	void	DrawCubeQuick(CSegment *segP, bool bPartial = false);
-	void	DrawCubeTextured(CSegment *segP, byte* light_index);
+	void	DrawWireFrame (bool bPartial);
+	void	DrawSegmentsTextured (void);
+	void	DrawMarkedSegments (short clear_it = 0);
+	void	DrawSegment (CSegment *segP, bool bPartial);
+	void	DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it = 0);
+	void	DrawSegmentPartial (CSegment *segP);
+	void	DrawSegmentQuick (CSegment *segP, bool bPartial = false);
+	void	DrawSegmentTextured (CSegment *segP, byte* light_index);
 	void	DrawCubePoints (CSegment *segP);
 
-	void	DrawCurrentCube(CSegment *segP, bool bPartial);
+	void	DrawCurrentSegment (CSegment *segP, bool bPartial);
 	void	DrawLine(CSegment *segP,short vert1,short vert2);
 	void	DrawLine (CTexture *pTx, POINT pt0, POINT pt1, byte color);
 	void	DrawAnimDirArrows (short texture1, CTexture *pTx);
@@ -307,7 +307,7 @@ public:
 	void	AlignSide();
 	void MarkVisibleVerts (bool bReset = false);
 	void	CenterMine();
-	void	CenterCube();
+	void	CenterSegment();
 	void	CenterObject();
 	void	SetViewOption(eViewOptions option);
 	void	ToggleViewMine(eMineViewFlags flag);

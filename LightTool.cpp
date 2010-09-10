@@ -74,8 +74,7 @@ if (!CToolDlg::OnInitDialog ())
 InitSlider (IDC_LIGHT_RENDER_DEPTH, 1, 10);
 InitSlider (IDC_LIGHT_DELTA_RENDER_DEPTH, 1, 10);
 InitSlider (IDC_LIGHT_DELTA_FRAMERATE, 10, 100);
-int i;
-for (i = 20; i < 100; i += 10)
+for (int i = 20; i < 100; i += 10)
 	SlCtrl (IDC_LIGHT_DELTA_FRAMERATE)->SetTic (i);
 m_bInited = true;
 return TRUE;
@@ -195,7 +194,8 @@ nVertexLight = (int) (m_fVertexLight * f1_0 / 100.0);
 	bool			bChange = false;
 
 undoManager.Begin (udSegments);
-for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
+for (CSegmentIterator si; si; si++) {
+	segP = &(*si);
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			nVertex = segP->m_info.verts [sideVertTable [nSide][i]];

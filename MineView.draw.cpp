@@ -101,29 +101,28 @@ void CMineView::CalcSegDist (void)
 {
 CHECKMINE;
 
-	int			h, i, j, c, nDist, segNum = segmentManager.Count (), sideNum;
-	CSegment	*segI, *segJ;
-
 	static short segRef [SEGMENT_LIMIT];
 
-for (i = segNum, segI = segmentManager.Segment (0); i; i--, segI++)
-	segI->Index () = -1;
+for (CSegmentIterator si; si; si++)
+	si->Index () = -1;
 segRef [0] = current.m_nSegment;	
 current.Segment ()->Index () = 0;
-i = 1;
-h = j = 0;
-for (nDist = 1; (j < segNum) && (h < i); nDist++) {
+
+int i = 1, h = 0, j = 0;
+int segCount = segmentManager.Count ();
+
+for (short nDist = 1; (j < segCount) && (h < i); nDist++) {
 	for (h = i; j < h; j++) {
-		segI = segmentManager.Segment (segRef [j]);
-		for (sideNum = 0; sideNum < 6; sideNum++) {
-			c = segI->Child (sideNum);
-			if (c < 0) 
+		CSegment* segI = segmentManager.Segment (segRef [j]);
+		for (short nSide = 0; nSide < 6; nSide++) {
+			short nChild = segI->Child (nSide);
+			if (nChild < 0) 
 				continue;
-			segJ = segmentManager.Segment (c);
+			CSegment* segJ = segmentManager.Segment (nChild);
 			if (segJ->Index () != -1)
 				continue;
 			segJ->Index () = nDist;
-			segRef [i++] = c;
+			segRef [i++] = nChild;
 			}
 		}
 	}
@@ -203,24 +202,22 @@ void CMineView::DrawWireFrame (bool bPartial)
 {
 CHECKMINE;
 
-	int			nSegment;
-	CSegment	*segP;
-
 CalcSegDist ();
 m_pDC->SelectObject(m_penGray);
-for (nSegment=0, segP = segmentManager.Segment (0);nSegment<segmentManager.Count ();nSegment++, segP++) {
+for (CSegmentIterator si; si; si++) {
+	CSegment* segP = &(*si);
 	if (!Visible (segP))
 		continue;
-	DrawCube (segP, bPartial);
-	if (nSegment == current.m_nSegment) {
-		DrawCurrentCube (segP, bPartial);
+	DrawSegment (segP, bPartial);
+	if (si.Index () == current.m_nSegment) {
+		DrawCurrentSegment (segP, bPartial);
 		m_pDC->SelectObject (m_penGray);
 		}
 	}
 }
 
 //----------------------------------------------------------------------------
-// DrawTextureMappedCubes
+// DrawSegmentsTextured
 //----------------------------------------------------------------------------
 
 typedef struct tSegZOrder {
@@ -262,7 +259,7 @@ if (left < r)
 
 //----------------------------------------------------------------------------
 
-void CMineView::DrawTextureMappedCubes (void)
+void CMineView::DrawSegmentsTextured (void)
 {
 CHECKMINE;
 
@@ -294,12 +291,12 @@ CalcSegDist ();
 for (nSegment = 0; nSegment < h; nSegment++) {
 	CSegment* segP = segmentManager.Segment (szo [nSegment].iSeg);
 	if (Visible (segP))
-	 	DrawCubeTextured (segP, light_index);
+	 	DrawSegmentTextured (segP, light_index);
 	}
 }
 
 //--------------------------------------------------------------------------
-// DrawCube()
+// DrawSegment()
 //--------------------------------------------------------------------------
 #define IN_RANGE(value,absolute_range) ((-absolute_range <= value) && (value <= absolute_range))
 
@@ -318,12 +315,12 @@ return true;
 
 								/*-----------------------*/
 
-void CMineView::DrawCube (CSegment *segP, bool bPartial)
+void CMineView::DrawSegment (CSegment *segP, bool bPartial)
 {
-DrawCubeQuick (segP, bPartial);
+DrawSegmentQuick (segP, bPartial);
 }
 
-void CMineView::DrawCube (short nSegment,short nSide, short linenum, short pointnum, short clear_it) 
+void CMineView::DrawSegment (short nSegment,short nSide, short linenum, short pointnum, short clear_it) 
 {
 CHECKMINE;
 
@@ -348,29 +345,29 @@ CHECKMINE;
 			}
 		if (segP->m_info.wallFlags & MARKED_MASK) {
 			m_pDC->SelectObject (m_penCyan);
-			DrawCubeQuick (segP);
+			DrawSegmentQuick (segP);
 			} 
 		else {
 			if (m_viewOption == eViewPartialLines) {
 				m_pDC->SelectObject (GetStockObject(BLACK_PEN));  // BLACK
-				DrawCubeQuick (segP);   // clear all cube lines
+				DrawSegmentQuick (segP);   // clear all cube lines
 				m_pDC->SelectObject (m_penGray); // GRAY
-				DrawCubePartial (segP); // then redraw the ones we need
+				DrawSegmentPartial (segP); // then redraw the ones we need
 				}
 			if ((m_viewOption == eViewAllLines) || 
 				 (m_viewOption == eViewNearbyCubeLines) || 
 				 (m_viewOption == eViewTextureMapped)) {
 				m_pDC->SelectObject (m_penGray); // GRAY
-				DrawCubeQuick (segP);
+				DrawSegmentQuick (segP);
 				}
 			if (m_viewOption == eViewHideLines) {
 				m_pDC->SelectObject (GetStockObject(BLACK_PEN));  // BLACK
-				DrawCubeQuick (segP);   // clear all cube lines
+				DrawSegmentQuick (segP);   // clear all cube lines
 				}
 			}
 			if (m_viewOption == eViewNearbyCubeLines) {
 			m_pDC->SelectObject (GetStockObject(BLACK_PEN));  // BLACK
-			DrawCubeQuick (segP);   // clear all cube lines
+			DrawSegmentQuick (segP);   // clear all cube lines
 			m_pDC->SelectObject (GetStockObject(WHITE_PEN)); // WHITE
 			DrawCubePoints (segP);  // then draw the points
 			}
@@ -386,9 +383,9 @@ CHECKMINE;
 			else
 				m_pDC->SelectObject (m_penHiGray);        // LIGHT_GRAY
 		if (m_viewOption == eViewPartialLines)
-			DrawCubePartial (segP); // then redraw the ones we need
+			DrawSegmentPartial (segP); // then redraw the ones we need
 		else
-			DrawCubeQuick (segP);
+			DrawSegmentQuick (segP);
 		}
 
 	// draw current side
@@ -455,24 +452,21 @@ CHECKMINE;
 //			 draw_partial_segment()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubePartial (CSegment *segP) 
+void CMineView::DrawSegmentPartial (CSegment *segP) 
 {
 CHECKMINE;
 
-  short line;
-  short vert0,vert1;
-
 if (!Visible (segP))
 	return;
-for (line=0;line<12;line++) {
-	if (segP->m_info.mapBitmask & (1<<line)) {
-      if (IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [0]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [0]]].y,y_max) &&
-			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [1]]].x,x_max) &&
-			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [line] [1]]].y,y_max)) {
-			vert0 = lineVertTable [line] [0];
-			vert1 = lineVertTable [line] [1];
-			if (vert1>vert0) {
+for (short nLine = 0; nLine < 12; nLine++) {
+	if (segP->m_info.mapBitmask & (1<<nLine)) {
+      if (IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [nLine] [0]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [nLine] [0]]].y,y_max) &&
+			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [nLine] [1]]].x,x_max) &&
+			 IN_RANGE(m_viewPoints [segP->m_info.verts [lineVertTable [nLine] [1]]].y,y_max)) {
+			short vert0 = lineVertTable [nLine][0];
+			short vert1 = lineVertTable [nLine][1];
+			if (vert1 > vert0) {
 				m_pDC->MoveTo (m_viewPoints [segP->m_info.verts [vert0]].x, m_viewPoints [segP->m_info.verts [vert0]].y);
 				m_pDC->LineTo (m_viewPoints [segP->m_info.verts [vert1]].x, m_viewPoints [segP->m_info.verts [vert1]].y);
 				}
@@ -486,7 +480,7 @@ for (line=0;line<12;line++) {
 }
 
 //--------------------------------------------------------------------------
-// DrawCube()
+// DrawSegment()
 //--------------------------------------------------------------------------
 
 void QSortLineRef (POINT *lineRef, short left, short right)
@@ -517,7 +511,7 @@ if (left < r)
 
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubeQuick	(CSegment *segP, bool bPartial)
+void CMineView::DrawSegmentQuick	(CSegment *segP, bool bPartial)
 {
 CHECKMINE;
 
@@ -537,8 +531,7 @@ for (i = 0; i < 8; i++, pv++) {
 		return;
 	}
 if (bPartial) {
-	uint nSide;
-	for (nSide=0; nSide<6; nSide++) {
+	for (short nSide = 0; nSide < 6; nSide++) {
 		if (segP->Child (nSide) >= 0)
 			continue;
 		
@@ -611,9 +604,9 @@ else {	//!bPartial
 		if (0 > k)
 			break;
 		v = segP->m_info.verts [k];
-		l = i/2;
-		j = i&1;
-		if (!j)
+		l = i / 2;
+		j = i & 1;
+		if (j == 0)
 			lineRef [l].y = LONG_MIN;
 		lines [l][j].x = m_viewPoints [v].x;
 		lines [l][j].y = m_viewPoints [v].y;
@@ -780,10 +773,10 @@ DrawLine (pTx, pt [0], pt [3], 1);
 }
 
 //--------------------------------------------------------------------------
-// DrawCubeTextured()
+// DrawSegmentTextured()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCubeTextured(CSegment *segP, byte* light_index) 
+void CMineView::DrawSegmentTextured(CSegment *segP, byte* light_index) 
 {
 CHECKMINE;
 
@@ -874,7 +867,7 @@ pDC->SetPixel (m_viewPoints [segP.verts [7]].x, m_viewPoints [segP.verts [7]].y,
 //			draw_marked_segments()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawMarkedCubes (short clear_it) 
+void CMineView::DrawMarkedSegments (short clear_it) 
 {
 CHECKMINE;
 
@@ -889,7 +882,7 @@ if (!clear_it) {
 		segP = segmentManager.Segment (i);
 		if (segP->m_info.wallFlags & MARKED_MASK) {
 			m_pDC->SelectObject (SelectMode (eSelectBlock) ? m_penRed: m_penCyan);
-			DrawCubeQuick (segP);
+			DrawSegmentQuick (segP);
 			}
 		else {
 			//    if (show_special) {
@@ -898,30 +891,30 @@ if (!clear_it) {
 				case SEGMENT_FUNC_FUELCEN:
 				case SEGMENT_FUNC_SPEEDBOOST:
 					m_pDC->SelectObject (m_penYellow);
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 				case SEGMENT_FUNC_REACTOR:
 					m_pDC->SelectObject (m_penOrange);
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 				case SEGMENT_FUNC_REPAIRCEN:
 					m_pDC->SelectObject (m_penLtBlue);
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 				case SEGMENT_FUNC_ROBOTMAKER:
 				case SEGMENT_FUNC_EQUIPMAKER:
 					m_pDC->SelectObject (m_penMagenta);
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 				case SEGMENT_FUNC_GOAL_BLUE:
 				case SEGMENT_FUNC_TEAM_BLUE:
 					m_pDC->SelectObject (m_penBlue);
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 				case SEGMENT_FUNC_GOAL_RED:
 				case SEGMENT_FUNC_TEAM_RED:
 					m_pDC->SelectObject (m_penRed);
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 				default:
 					if (segP->m_info.props & SEGMENT_PROP_WATER)
@@ -930,7 +923,7 @@ if (!clear_it) {
 						m_pDC->SelectObject (m_penMedRed);
 					else
 						break;
-					DrawCubeQuick (segP);
+					DrawSegmentQuick (segP);
 					break;
 					}
 				}
@@ -953,10 +946,10 @@ for (i=0;i<vertexManager.Count ();i++)
 }
 
 //--------------------------------------------------------------------------
-// DrawCurrentCube()
+// DrawCurrentSegment()
 //--------------------------------------------------------------------------
 
-void CMineView::DrawCurrentCube(CSegment *segP, bool bPartial)
+void CMineView::DrawCurrentSegment(CSegment *segP, bool bPartial)
 {
 CHECKMINE;
 
@@ -1278,7 +1271,7 @@ for (h = tunnelMaker.Length () * 4, i = 0; i < h; i++)
 	m_view.Project (*vertexManager.Vertex (--j), m_viewPoints [j]);
 CSegment *segP = segmentManager.Segment (MAX_SEGMENTS - 1);
 for (i = 0; i < tunnelMaker.Length (); i++, segP--)
-	DrawCubeQuick (segP);
+	DrawSegmentQuick (segP);
 }
 
 //--------------------------------------------------------------------------
@@ -1499,19 +1492,19 @@ if (segmentManager.Count ()==0)
 if (!clear_it) {
 	DrawObjects (clear_it);
 //	if (/*!(preferences & PREFS_HIDE_MARKED_BLOCKS) ||*/ SelectMode (eSelectBlock))
-	DrawMarkedCubes(clear_it);
+	DrawMarkedSegments(clear_it);
   }
 
 // draw highlighted Segments () (other first, then current)
 if (current == selections [0]) {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawCube (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
-	DrawCube (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
+		DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
+	DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
 	}
 else {
 	if (selections [0].m_nSegment != selections [1].m_nSegment)
-		DrawCube (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
-	DrawCube (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
+		DrawSegment (selections [0].m_nSegment, selections [0].m_nSide, selections [0].m_nLine, selections [0].m_nPoint,clear_it);
+	DrawSegment (selections [1].m_nSegment, selections [1].m_nSide, selections [1].m_nLine, selections [1].m_nPoint,clear_it);
 	}
 
 // draw Walls ()

@@ -280,22 +280,21 @@ Refresh (false);
 
                         /*--------------------------*/
 
-void CMineView::CenterCube (void)
+void CMineView::CenterSegment (void)
 {
 CHECKMINE;
 
-	CSegment& seg = segmentManager.Segment (0) [current.m_nSegment];
-	CVertex *vMine = vertexManager.Vertex (0);
-	short *vSeg = seg.m_info.verts;
+	CVertex *vertP = vertexManager.Vertex (0);
+	ushort *indexP = current.Segment ()->m_info.verts;
 
-m_move = (vMine [vSeg [0]] +
-			 vMine [vSeg [1]] +
-			 vMine [vSeg [2]] +
-			 vMine [vSeg [3]] +
-			 vMine [vSeg [4]] +
-			 vMine [vSeg [5]] +
-			 vMine [vSeg [6]] +
-			 vMine [vSeg [7]]);
+m_move = (vertP [indexP [0]] +
+			 vertP [indexP [1]] +
+			 vertP [indexP [2]] +
+			 vertP [indexP [3]] +
+			 vertP [indexP [4]] +
+			 vertP [indexP [5]] +
+			 vertP [indexP [6]] +
+			 vertP [indexP [7]]);
 m_move /= -8.0;
 Refresh (false);
 }
@@ -310,7 +309,7 @@ CDlcDoc* pDoc = GetDocument();
 ASSERT_VALID(pDoc);
 if (!pDoc) return;
 
-m_move = -objectManager.Object (current.nObject)->m_location.pos;
+m_move = -current.Object ()->Position ();
 Refresh (false);
 }
 

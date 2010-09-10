@@ -818,7 +818,7 @@ void CMainFrame::OnViewCenterentiremine()
 
 void CMainFrame::OnViewCenteroncurrentcube() 
 {
-	GetMineView()->CenterCube();	
+	GetMineView()->CenterSegment();	
 }
 
 void CMainFrame::OnViewCenteroncurrentobject() 

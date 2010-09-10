@@ -124,8 +124,7 @@ m_penHiBlue		= new CPen(PS_SOLID, 2, RGB(  0,  0,255));
 m_penHiYellow  = new CPen(PS_SOLID, 2, RGB(255,196,  0));
 m_penHiOrange  = new CPen(PS_SOLID, 2, RGB(255,128,  0));
 m_penHiMagenta = new CPen(PS_SOLID, 2, RGB(255,  0,255));
-int i;
-for (i = eMouseStateIdle; i < eMouseStateCount; i++)
+for (int i = eMouseStateIdle; i < eMouseStateCount; i++)
 	m_hCursors [i] = LoadCursor ((nIdCursors [i] == IDC_ARROW) ? null: DLE.m_hInstance, nIdCursors [i]);
 m_viewObjectFlags = eViewObjectsAll;
 m_viewMineFlags = eViewMineLights | eViewMineWalls | eViewMineSpecial;
@@ -358,7 +357,7 @@ if (m_bUpdate) {
 				break;
 
 			case eViewTextureMapped:
-				DrawTextureMappedCubes();
+				DrawSegmentsTextured();
 				break;
 			}
 /*
@@ -406,12 +405,12 @@ CHECKMINE;
 
 	tLightTimer *ltP = m_lightTimers;
 	CVariableLight *flP = lightManager.VariableLight (0);
-	int i, light_delay;
+	int i, delay;
 
 for (i = lightManager.Count (); i; i--, flP++, ltP++) {
-	light_delay = (flP->m_info.delay * 100 /*+ F0_5*/) / F1_0;
-	if (light_delay) {
-		if (++ltP->ticks == light_delay) {
+	delay = (flP->m_info.delay * 100 /*+ F0_5*/) / F1_0;
+	if (delay) {
+		if (++ltP->ticks == delay) {
 			ltP->ticks = 0;
 			ltP->impulse = (ltP->impulse + 1) % 32;
 			}
@@ -735,8 +734,9 @@ CGameObject *objP = current.Object ();
 if ((objP->m_info.type != OBJ_EFFECT) || (objP->m_info.id != LIGHTNING_ID))
 	return;
 other.m_nObject = current.m_nObject;
-if (nTarget = objP->rType.lightningInfo.nTarget)
-	for (i = 0, objP = objectManager.Object (0); i < objectManager.Count (); i++, objP++)
+if (nTarget = objP->rType.lightningInfo.nTarget) {
+	CObject* objP = objectManager.Object (0);
+	for (i = objectManager.Count (); i; i--, objP++)
 		if ((objP->m_info.type == OBJ_EFFECT) && (objP->m_info.id == LIGHTNING_ID) && (objP->rType.lightningInfo.nId == nTarget)) {
 			other.m_nObject = i;
 			break;
@@ -1114,10 +1114,12 @@ bool CMineView::VertexVisible (int v)
 
 if (!m_nViewDist)
 	return true;
-for (i = segmentManager.Count (), segP = segmentManager.Segment (0); i; i--, segP++)
+for (CSegmentIterator si; si; si++) {
+	segP = &(*si);
 	for (j = 0; j < MAX_VERTICES_PER_SEGMENT; j++)
 		if ((segP->m_info.verts [j] == v) && Visible (segP))
 			return true;
+	}
 return false;
 }
 
@@ -1131,7 +1133,7 @@ CHECKMINE;
 	int		x, y;
 
 int i;
-for (i = 0; i < vertexManager.Count (); i++, pa++) {
+for (int i = 0, j = vertexManager.Count (); i < j; i++, pa++) {
 	x = pa->x;
 	y = pa->y;
 	if (BETWEEN (m_clickPos.x, x, m_releasePos.x) &&
