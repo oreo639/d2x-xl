@@ -72,29 +72,26 @@ class CTextureManager {
 		
 		CTexture* Texture (short nTexture) { return &m_textures [Version ()][nTexture]; }
 
-		inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null);
+		inline bool IsLava (short nTexture) { return (strstr (Name (nTexture), "lava") != null); }
 
 		int ScrollSpeed (UINT16 texture, int *x, int *y);
-	};
 
-
-
-	CTextureManager() {}
+		CTextureManager() {}
 	
-	void Setup (void);
-	void Destroy (void);
+		void Setup (void);
+		void Destroy (void);
 
-	~CTextureManager() { Destroy (); }
+		~CTextureManager() { Destroy (); }
 
-private:
-	int LoadIndex (int nVersion);
-	void LoadNames (int nVersion);
-	void LoadInfo (int nVersion);
-	void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
-	void Create (int nVersion);
-	void Destroy (int nVersion);
+	private:
+		int LoadIndex (int nVersion);
+		void LoadNames (int nVersion);
+		void LoadInfo (int nVersion);
+		void Release (int nVersion, bool bDeleteAll, bool bDeleteUnused);
+		void Create (int nVersion);
+		void Destroy (int nVersion);
 
-};
+	};
 
 extern CTextureManager textureManager;
 
