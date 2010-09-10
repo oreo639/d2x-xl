@@ -314,7 +314,7 @@ public:
 	afx_msg void OnSelPrevObject ();
 	afx_msg void OnSelFwdCube ();
 	afx_msg void OnSelBackCube ();
-	afx_msg void OnSelOtherCube ();
+	afx_msg void OnSelOtherSegment ();
 	afx_msg void OnSelOtherSide ();
 	afx_msg void OnIncSpline ();
 	afx_msg void OnDecSpline ();

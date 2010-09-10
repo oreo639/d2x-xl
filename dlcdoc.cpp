@@ -136,7 +136,7 @@ class CNewFileDlg : public CDialog {
 			}
       virtual BOOL OnInitDialog () {
 			CDialog::OnInitDialog ();
-			if ((theMine == null)->m_bVertigo)
+			if (theMine->m_bVertigo)
 				GetDlgItem (IDC_D2VLEVEL)->EnableWindow (FALSE);
 			return TRUE;
 			}

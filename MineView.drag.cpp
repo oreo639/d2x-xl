@@ -103,7 +103,7 @@ HighlightDrag (nVert, m_lastMousePos.x, m_lastMousePos.y);
 m_lastDragPos = m_lastMousePos;
 
 m_pDC->SetROP2 (R2_NOT);
-for (i = 0; i < theMine->vertexManager.Count (); i++) {
+for (i = 0; i < vertexManager.Count (); i++) {
 	x = m_viewPoints [i].x;
 	y = m_viewPoints [i].y;
 	if ((abs (x - m_lastMousePos.x) < 5) && (abs (y - m_lastMousePos.y) < 5)) {
@@ -120,7 +120,7 @@ for (i = 0; i < theMine->vertexManager.Count (); i++) {
 		}
 	}
 // if no point found near cursor
-if ((i >= theMine->vertexManager.Count ()) && (m_highlightPos.x != -1))
+if ((i >= vertexManager.Count ()) && (m_highlightPos.x != -1))
 	// erase last point
 	m_pDC->Ellipse (m_highlightPos.x-8, m_highlightPos.y-8, m_highlightPos.x+8, m_highlightPos.y+8);
 m_pDC->SetROP2 (R2_COPYPEN);
@@ -149,7 +149,7 @@ yPos = m_releasePos.y;
 point1 = sideVertTable [current.m_nSide] [current.m_nPoint];
 vert1 = segmentManager.Segment (0) [current.m_nSegment].m_info.verts [point1];
 // find point to merge with
-for (i = 0; i < theMine->vertexManager.Count (); i++) {
+for (i = 0; i < vertexManager.Count (); i++) {
 	xPoint = m_viewPoints [i].x;
 	yPoint = m_viewPoints [i].y;
 	if (abs(xPos - xPoint) < 5 && abs(yPos - yPoint)<5) {

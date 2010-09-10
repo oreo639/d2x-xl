@@ -131,8 +131,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_SEL_PREVOBJECT, OnSelPrevObject)
 	ON_COMMAND(ID_SEL_FWDCUBE, OnSelFwdCube)
 	ON_COMMAND(ID_SEL_BACKCUBE, OnSelBackCube)
-	ON_COMMAND(ID_SEL_OTHERCUBE, OnSelOtherCube)
-	ON_COMMAND(ID_SEL_OTHERSIDE, OnSelother.Side)
+	ON_COMMAND(ID_SEL_OTHERCUBE, OnSelOtherSegment)
+	ON_COMMAND(ID_SEL_OTHERSIDE, OnSelOtherSide)
 	ON_COMMAND(ID_SEL_NEXTCUBEELEM, OnSelNextCubeElem)
 	ON_COMMAND(ID_SEL_PREVCUBEELEM, OnSelPrevCubeElem)
 	ON_COMMAND(ID_TOOLS_TEXTUREEDIT, OnEditTexture)
@@ -484,7 +484,7 @@ if (CreateToolBars ())
 	return -1;
 if (CreateStatusBar ())
 	return -1;
-UpdateInsModeButtons (segmentManager.GetAddMode ());
+UpdateInsModeButtons (segmentManager.AddMode ());
 return 0;
 }
 
@@ -670,28 +670,28 @@ m_paneMode = 0;
 
 void CMainFrame::OnEditMark() 
 {
-theMine->Mark();
+segmentManager.MarkSelected ();
 }
 
 void CMainFrame::OnEditMarkAll() 
 {
-theMine->MarkAll();
+segmentManager.MarkAll ();
 }
 
 void CMainFrame::OnEditUnmarkAll() 
 {
-theMine->UnmarkAll();
+segmentManager.UnmarkAll ();
 }
 
-void CMainFrame::OnEditTexture() 
+void CMainFrame::OnEditTexture () 
 {
-ToolView ()->EditTexture();
+ToolView ()->EditTexture ();
 }
 
-void CMainFrame::OnEditWall() 
+void CMainFrame::OnEditWall () 
 {
 ShowTools ();
-ToolView ()->EditWall();
+ToolView ()->EditWall ();
 }
 
 void CMainFrame::OnEditCube() 
@@ -746,7 +746,7 @@ ToolView ()->EditReactor ();
 void CMainFrame::OnTunnelGenerator () 
 {
 ShowTools ();
-theMine->TunnelGenerator ();
+tunnelMaker.Create ();
 }
 
 void CMainFrame::OnTxtFilters () 
@@ -757,12 +757,12 @@ ToolView ()->TextureFilter ();
 
 void CMainFrame::OnIncSpline () 
 {
-theMine->IncreaseSpline ();
+tunnelMaker.Stretch ();
 }
 
 void CMainFrame::OnDecSpline () 
 {
-theMine->DecreaseSpline ();
+tunnelMaker.Shrink ();
 }
 
 void CMainFrame::OnRedraw() 
@@ -879,42 +879,42 @@ void CMainFrame::OnViewUsedTextures()
 
 void CMainFrame::OnJoinPoints ()
 {
-theMine->JoinPoints ();
+segmentManager.JoinPoints ();
 }
 
 void CMainFrame::OnJoinLines ()
 {
-theMine->JoinLines ();
+segmentManager.JoinLines ();
 }
 
 void CMainFrame::OnJoinSides ()
 {
-theMine->JoinSegments ();
+segmentManager.JoinSegments ();
 }
 
 void CMainFrame::OnJoinCurrentSide ()
 {
-theMine->JoinSegments (1);
+segmentManager.JoinSegments (1);
 }
 
 void CMainFrame::OnSplitPoints ()
 {
-theMine->SplitPoints ();
+segmentManager.SplitPoints ();
 }
 
 void CMainFrame::OnSplitLines ()
 {
-theMine->SplitLines ();
+segmentManager.SplitLines ();
 }
 
 void CMainFrame::OnSplitSides ()
 {
-theMine->SplitSegments ();
+segmentManager.SplitSegments ();
 }
 
 void CMainFrame::OnSplitCurrentSide ()
 {
-theMine->SplitSegments (1);
+segmentManager.SplitSegments (1);
 }
 
 void CMainFrame::UpdateInsModeButtons (short mode)
@@ -949,7 +949,7 @@ SetInsertMode (MIRROR);
 
 void CMainFrame::OnToggleInsMode ()
 {
-UpdateInsModeButtons (segmentManager.SetAddMode (segmentManager.GetAddMode () + 1) % 3);
+UpdateInsModeButtons (segmentManager.SetAddMode (segmentManager.AddMode () + 1) % 3);
 }
 
 void CMainFrame::OnEditorToolbar ()
@@ -1027,17 +1027,17 @@ pCmdUI->SetCheck(m_bEditorTB);
 
 void CMainFrame::OnUpdateInsModeNormal (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck (segmentManager.GetAddMode () == ORTHOGONAL);
+pCmdUI->SetCheck (segmentManager.AddMode () == ORTHOGONAL);
 }
 
 void CMainFrame::OnUpdateInsModeExtend (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck(segmentManager.GetAddMode () == EXTEND);
+pCmdUI->SetCheck(segmentManager.AddMode () == EXTEND);
 }
 
 void CMainFrame::OnUpdateInsModeMirror (CCmdUI* pCmdUI)
 {
-pCmdUI->SetCheck(segmentManager.GetAddMode () == MIRROR);
+pCmdUI->SetCheck(segmentManager.AddMode () == MIRROR);
 }
 
 void CMainFrame::UpdateSelectButtons (eSelectModes mode)
@@ -1321,7 +1321,7 @@ void CMainFrame::OnUpdateViewTexturemapped(CCmdUI* pCmdUI)
 
 bool CMainFrame::EditGeoFwd (void)
 {
-if ((theMine == null)->EditGeoFwd ())
+if (theMine->EditGeoFwd ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1329,7 +1329,7 @@ return true;
 
 bool CMainFrame::EditGeoUp (void)
 {
-if ((theMine == null)->EditGeoUp ())
+if (theMine->EditGeoUp ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1337,7 +1337,7 @@ return true;
 
 bool CMainFrame::EditGeoBack (void)
 {
-if ((theMine == null)->EditGeoBack ())
+if (theMine->EditGeoBack ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1345,7 +1345,7 @@ return true;
 
 bool CMainFrame::EditGeoRotLeft (void)
 {
-if ((theMine == null)->EditGeoRotLeft ())
+if (theMine->EditGeoRotLeft ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1353,7 +1353,7 @@ return true;
 
 bool CMainFrame::EditGeoGrow (void)
 {
-if ((theMine == null)->EditGeoGrow ())
+if (theMine->EditGeoGrow ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1361,7 +1361,7 @@ return true;
 
 bool CMainFrame::EditGeoRotRight (void)
 {
-if ((theMine == null)->EditGeoRotRight ())
+if (theMine->EditGeoRotRight ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1369,7 +1369,7 @@ return true;
 
 bool CMainFrame::EditGeoLeft (void)
 {
-if ((theMine == null)->EditGeoLeft ())
+if (theMine->EditGeoLeft ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1377,7 +1377,7 @@ return true;
 
 bool CMainFrame::EditGeoDown (void)
 {
-if ((theMine == null)->EditGeoDown ())
+if (theMine->EditGeoDown ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1385,7 +1385,7 @@ return true;
 
 bool CMainFrame::EditGeoRight (void)
 {
-if ((theMine == null)->EditGeoRight ())
+if (theMine->EditGeoRight ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1393,7 +1393,7 @@ return true;
 
 bool CMainFrame::EditGeoShrink (void)
 {
-if ((theMine == null)->EditGeoShrink ())
+if (theMine->EditGeoShrink ())
 	return false;
 MineView ()->Refresh ();
 return true;
@@ -1553,25 +1553,25 @@ void CMainFrame::OnSelBackCube ()
 MineView ()->BackwardsCube ();
 }
 
-void CMainFrame::OnSelOtherCube ()
+void CMainFrame::OnSelOtherSegment ()
 {
 MineView ()->SelectOtherSegment ();
 }
 
-void CMainFrame::OnSelother.Side () 
+void CMainFrame::OnSelOtherSide () 
 {
-MineView ()->Selectother.Side ();
+MineView ()->SelectOtherSide ();
 }
 
 void CMainFrame::OnUndo () 
 {
-if (DLE.Undo ())
+if (undoManager.Undo ())
 	MineView ()->Refresh ();
 }
 
 void CMainFrame::OnRedo () 
 {
-if (DLE.Redo ())
+if (undoManager.Redo ())
 	MineView ()->Refresh ();
 }
 
@@ -1594,7 +1594,7 @@ if (theMine->IsD1File ()) {
 			INFOMSG (" Mine converted to a Descent 2 level")
 		else
 			ErrorMsg ("Mine converted to a Descent 2 level.");
-		theMine->ConvertWallNum (MAX_WALLS_D1 + 1, MAX_WALLS_D2 + 1);
+		segmentManager.UpdateWalls (MAX_WALLS_D1 + 1, MAX_WALLS_D2 + 1);
 		}
 	}
 else {
@@ -1611,8 +1611,8 @@ else {
 			INFOMSG (" Mine converted to a D2X-XL level")
 		else
 			ErrorMsg ("Mine converted to a D2X-XL level.");
-		theMine->ConvertWallNum (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
-		theMine->ObjTriggerCount () = 0;
+		segmentManager.UpdateWalls (MAX_WALLS_D2 + 1, WALL_LIMIT + 1);
+		triggerManager.ObjTriggerCount () = 0;
 		}
 	else {
 		theMine->SetLevelVersion (7);
@@ -1620,7 +1620,7 @@ else {
 			INFOMSG (" Mine converted to a non-Vertigo level")
 		else
 			ErrorMsg ("Mine converted to a non-Vertigo level.\n\nWarning - You should now remove all Vertigo and D2X-XL objects.");
-		theMine->ConvertWallNum (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
+		segmentManager.UpdateWalls (WALL_LIMIT + 1, MAX_WALLS_D2 + 1);
 		}
 	}
 }

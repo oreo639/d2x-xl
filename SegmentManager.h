@@ -143,6 +143,7 @@ class CSegmentManager {
 		inline CMatCenter* EquipMaker (int i) { return MatCenter (i, 1); }
 
 		inline int SetAddMode (int nMode) { return m_nAddMode = nMode; }
+
 		inline int AddMode (void) { return m_nAddMode; }
 
 		CSegment* FindRobotMaker (short i = 0);
@@ -218,6 +219,8 @@ class CSegmentManager {
 		void MarkAll (byte mask = MARKED_MASK);
 
 		void UnmarkAll (byte mask = MARKED_MASK);
+
+		void MarkSelected (void);
 
 		void UpdateMarked (void);
 

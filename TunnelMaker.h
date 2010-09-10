@@ -44,6 +44,10 @@ class CTunnelMaker {
 
 		void Disable (void) { m_bActive = false; }
 
+		void Stretch (void); 
+
+		void Shrink (void); 
+
 		inline int Length (void) { return m_nLength; }
 
 	private:
@@ -66,10 +70,6 @@ class CTunnelMaker {
 		CDoubleVector RectPoints (double angle, double radius, CVertex* origin, CVertex* normal); 
 
 		void PolarPoints (double *angle, double *radius, CVertex* vertex, CVertex* origin, CVertex* normal); 
-
-		void Stretch (void); 
-
-		void Shrink (void); 
 
 		void ComputeTunnel (void); 
 	};

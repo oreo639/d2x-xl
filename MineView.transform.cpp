@@ -84,7 +84,7 @@ if (!(m_xRenderOffs && m_yRenderOffs))
 	APOINT *a = m_viewPoints;
 
 int i;
-for (i = theMine->vertexManager.Count (); i; i--, a++) {
+for (i = vertexManager.Count (); i; i--, a++) {
 	a->x += m_xRenderOffs;
 	a->y += m_yRenderOffs;
 	}
@@ -228,7 +228,7 @@ segP = segmentManager.Segment (0);
 for (i = 0, h = segmentManager.Count (); i < h; i++, segP++) {
 	byte status = bReset ? 0 : Visible (segP) ? 1 : 255;
 	for (int j = 0; j < 8; j++)
-		theMine->vertexManager.Status (segP->m_info.verts [j]) = status;
+		vertexManager.Status (segP->m_info.verts [j]) = status;
 	}
 }
 
@@ -245,9 +245,9 @@ CHECKMINE;
 	CVertex		vMin (0x7fffffff, 0x7fffffff, 0x7fffffff), vMax (-0x7fffffff, -0x7fffffff, -0x7fffffff);
 
 MarkVisibleVerts ();
-vertP = theMine->vertexManager.Vertex (0);
-for (int i = 0, h = theMine->vertexManager.Count (); i < h; i++, vertP++) {
-	if (theMine->vertexManager.Status (i)) {
+vertP = vertexManager.Vertex (0);
+for (int i = 0, h = vertexManager.Count (); i < h; i++, vertP++) {
+	if (vertexManager.Status (i)) {
 		vMin = Min (vMin, *vertP);
 		vMax = Max (vMax, *vertP);
 		}
@@ -285,7 +285,7 @@ void CMineView::CenterCube (void)
 CHECKMINE;
 
 	CSegment& seg = segmentManager.Segment (0) [m_Current->nSegment];
-	CVertex *vMine = theMine->vertexManager.Vertex (0);
+	CVertex *vMine = vertexManager.Vertex (0);
 	short *vSeg = seg.m_info.verts;
 
 m_move = (vMine [vSeg [0]] +

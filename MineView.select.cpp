@@ -215,7 +215,7 @@ return true;
 //==========================================================================
 void CMineView::NextPoint(int dir) 
 {
-//if ((theMine == null)->SplineActive ())
+//if (theMine->SplineActive ())
 //	DrawHighlight (1);
 //if (m_selectMode==POINT_MODE)
 wrap(&current.m_nPoint,dir,0,4-1);
@@ -403,11 +403,11 @@ DLE.ToolView ()->CubeTool ()->Refresh ();
 
 
 
-bool CMineView::Selectother.Side () 
+bool CMineView::SelectOtherSide () 
 {
 short nOppSeg, nOppSide;
 
-if ((theMine == null)->OppositeSide (nOppSeg, nOppSide))
+if (theMine->OppositeSide (nOppSeg, nOppSide))
 	return false;
 
 current.m_nSegment = nOppSeg;

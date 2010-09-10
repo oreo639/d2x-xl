@@ -467,7 +467,7 @@ else
 
 void CWallTool::Onother.Side () 
 {
-DLE.MineView ()->Selectother.Side ();
+DLE.MineView ()->SelectOtherSide ();
 }
 
                         /*--------------------------*/
@@ -476,7 +476,7 @@ CWall *CWallTool::GetOtherWall (void)
 {
 short nOppSeg, nOppSide;
 
-if ((theMine == null)->OppositeSide (nOppSeg, nOppSide))
+if (theMine->OppositeSide (nOppSeg, nOppSide))
 	return m_wallP [1] = null;
 m_nWall [1] = segmentManager.Segment (nOppSeg)->m_sides [nOppSide].m_info.nWall;
 return m_wallP [1] = (m_nWall [1] < wallManager.WallCount ? wallManager.Wall (m_nWall [1]) : null);

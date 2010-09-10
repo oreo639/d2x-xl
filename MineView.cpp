@@ -1133,16 +1133,16 @@ CHECKMINE;
 	int		x, y;
 
 int i;
-for (i = 0; i < theMine->vertexManager.Count (); i++, pa++) {
+for (i = 0; i < vertexManager.Count (); i++, pa++) {
 	x = pa->x;
 	y = pa->y;
 	if (BETWEEN (m_clickPos.x, x, m_releasePos.x) &&
 		 BETWEEN (m_clickPos.y, y, m_releasePos.y) &&
 		 VertexVisible (i)) {
 		if (m_clickState & MK_SHIFT)
-			theMine->vertexManager.Status (i) &= ~MARKED_MASK;
+			vertexManager.Status (i) &= ~MARKED_MASK;
 		else
-			theMine->vertexManager.Status (i) |= MARKED_MASK;
+			vertexManager.Status (i) |= MARKED_MASK;
 		m_bUpdate = true;
 		}
 	}
@@ -1169,7 +1169,7 @@ Refresh (false);
 void CMineView::CalcSegmentCenter (CVertex& pos, short nSegment)
 {
 CSegment *segP = segmentManager.Segment (nSegment);
-CVertex *vMine = theMine->vertexManager.Vertex (0);
+CVertex *vMine = vertexManager.Vertex (0);
 short *vSeg = segP->m_info.verts;
 pos  =
    vMine [vSeg [0]] +

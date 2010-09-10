@@ -127,15 +127,15 @@ if (bAll = !segmentManager.HaveMarkedSides ())
 	INFOMSG (" light processing entire mine");
 undoManager.Begin (udLight | udSegments);
 if (m_bIlluminate)
-	theMine->ComputeStaticLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
+	lightManager.ComputeStaticLight (m_fBrightness, bAll, m_bCopyTexLights != 0);
 if (m_bAvgCornerLight)
-	theMine->CalcAverageCornerLight (bAll);
+	lightManager.CalcAverageCornerLight (bAll);
 if (m_bScaleLight)
-	theMine->ScaleCornerLight (m_fLightScale, bAll);
+	lightManager.ScaleCornerLight (m_fLightScale, bAll);
 if (m_bCubeLight)
-	theMine->SetSegmentLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
+	lightManager.SetSegmentLight (m_fCubeLight, (int) bAll, m_bDynCubeLights != 0);
 if (m_bDeltaLight)
-	theMine->ComputeVariableLight (m_fDeltaLight, (int) bAll);
+	lightManager.ComputeVariableLight (m_fDeltaLight, (int) bAll);
 undoManager.End ();
 DLE.MineView ()->Refresh ();
 }
@@ -199,7 +199,7 @@ for (nSegment = 0; nSegment < segmentManager.Count (); nSegment++, segP++) {
 	for (nSide = 0, sideP = segP->m_sides; nSide < 6; nSide++, sideP++) {
 		for (i = 0; i < 4; i++) {
 			nVertex = segP->m_info.verts [sideVertTable [nSide][i]];
-			if (theMine->vertexManager.Status (nVertex) & MARKED_MASK) {
+			if (vertexManager.Status (nVertex) & MARKED_MASK) {
 				sideP->m_info.uvls [i].l = nVertexLight;
 				bChange = true;
 				}
@@ -214,7 +214,7 @@ DLE.MineView ()->Refresh ();
 
 void CLightTool::OnDefaultLightAndColor ()
 {
-theMine->LoadDefaultLightAndColor ();
+lightManager.LoadDefaults ();
 }
 
                         /*--------------------------*/
