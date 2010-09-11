@@ -150,6 +150,29 @@ m_deltaValues.Restore ();
 }
 
 //------------------------------------------------------------------------------
+
+void CUndoData::Reset (void) 
+{
+m_vertices.Reset ();
+m_segments.Reset ();
+m_robotMakers.Reset ();
+m_equipMakers.Reset ();
+m_walls.Reset ();
+m_triggers [0].Reset ();
+m_reactorData.Reset ();
+m_triggers [1].Reset ();
+m_objects.Reset ();
+m_secretExit.Reset ();
+m_robotInfo.Reset ();
+m_variableLights.Reset ();
+m_faceColors.Reset ();
+m_textureColors.Reset ();
+m_vertexColors.Reset ();
+m_deltaIndices.Reset ();
+m_deltaValues.Reset ();
+}
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -320,6 +343,7 @@ if (!m_current.Cleanup ()) {
 	SetModified (true);
 	Append ();
 	*Tail () = m_current;
+	m_current.Reset ();
 	Id ()++;
 	}
 }

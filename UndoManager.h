@@ -183,7 +183,9 @@ public:
 
 	void Restore (void);
 
-	void Destroy ();
+	void Destroy (void);
+
+	void Reset (void);
 
 	CUndoData () : m_nId (0) { }
 
