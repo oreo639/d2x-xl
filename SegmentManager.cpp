@@ -87,7 +87,7 @@ void CSegmentManager::DeleteWalls (short nSegment)
 	CSide *sideP = Segment (nSegment)->m_sides; 
 
 for (int i = MAX_SIDES_PER_SEGMENT; i; i--, sideP++)
-	wallManager.Delete (sideP [i].m_info.nWall);
+	wallManager.Delete (sideP->m_info.nWall);
 }
 
 // ----------------------------------------------------------------------------- 
